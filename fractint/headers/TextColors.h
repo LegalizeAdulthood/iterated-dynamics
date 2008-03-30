@@ -1,6 +1,6 @@
 #pragma once
 
-// text colors 
+// text colors
 enum TextColorType
 {
 	TEXTCOLOR_BLACK = 0,
@@ -9,11 +9,11 @@ enum TextColorType
 	TEXTCOLOR_CYAN = 3,
 	TEXTCOLOR_RED = 4,
 	TEXTCOLOR_MAGENTA = 5,
-	// dirty yellow on cga 
+	// dirty yellow on cga
 	TEXTCOLOR_BROWN = 6,
 	TEXTCOLOR_WHITE = 7,
-	// use values below this for foreground only, they don't work background 
-	// don't use this much - is black on cga 
+	// use values below this for foreground only, they don't work background
+	// don't use this much - is black on cga
 	TEXTCOLOR_GRAY = 8,
 	TEXTCOLOR_LIGHT_BLUE = 9,
 	TEXTCOLOR_LIGHT_GREEN = 10,

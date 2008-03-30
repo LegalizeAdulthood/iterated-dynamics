@@ -65,7 +65,7 @@ At the moment these arrays reuse extraseg and g_string_location, respectively.
 
 */
 
-static int numsaves = 0;        // For adjusting 'save-to-disk' filenames 
+static int numsaves = 0;        // For adjusting 'save-to-disk' filenames
 static FILE *s_outfile;
 static int last_colorbar;
 static bool s_save_16bit;
@@ -73,13 +73,13 @@ static int outcolor1s, outcolor2s;
 static int startbits;
 
 static BYTE paletteBW[] =
-{                               // B&W palette 
+{                               // B&W palette
 	0, 0, 0, COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX,
 };
 
 #ifndef XFRACT
 static BYTE paletteCGA[] =
-{                               // 4-color (CGA) palette  
+{                               // 4-color (CGA) palette
 	0, 0, 0,
 	COLOR_CHANNEL_MAX/3, COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX,
 	COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX/3, COLOR_CHANNEL_MAX,
@@ -88,7 +88,7 @@ static BYTE paletteCGA[] =
 #endif
 
 static BYTE paletteEGA[] =
-{                               // 16-color (EGA/CGA) pal 
+{                               // 16-color (EGA/CGA) pal
 	0, 0, 0,
 	0, 0, 2*COLOR_CHANNEL_MAX/3,
 	0, 2*COLOR_CHANNEL_MAX/3, 0,
@@ -107,9 +107,9 @@ static BYTE paletteEGA[] =
 	COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX
 };
 
-static int gif_save_to_disk(char *filename)      // save-to-disk routine 
+static int gif_save_to_disk(char *filename)      // save-to-disk routine
 {
-	char tmpmsg[41];                 // before openfile in case of overrun 
+	char tmpmsg[41];                 // before openfile in case of overrun
 	char openfile[FILE_MAX_PATH];
 	char openfiletype[10];
 	char tmpfile[FILE_MAX_PATH];
@@ -121,13 +121,13 @@ static int gif_save_to_disk(char *filename)      // save-to-disk routine
 
 restart:
 	s_save_16bit = g_disk_16bit;
-	if (g_gif87a_flag)             // not storing non-standard fractal info 
+	if (g_gif87a_flag)             // not storing non-standard fractal info
 	{
 		s_save_16bit = false;
 	}
 
-	strcpy(openfile, filename);  // decode and open the filename 
-	strcpy(openfiletype, GIF_EXTENSION);    // determine the file extension 
+	strcpy(openfile, filename);  // decode and open the filename
+	strcpy(openfiletype, GIF_EXTENSION);    // determine the file extension
 	if (s_save_16bit)
 	{
 		strcpy(openfiletype, ".pot");
@@ -136,17 +136,17 @@ restart:
 	ensure_extension(openfile, openfiletype);
 	if (g_resave_mode != RESAVE_YES)
 	{
-		update_save_name(filename); // for next time 
+		update_save_name(filename); // for next time
 	}
 
 	strcpy(tmpfile, openfile);
 	bool new_file;
-	if (!exists(openfile)) // file doesn't exist 
+	if (!exists(openfile)) // file doesn't exist
 	{
 		new_file = true;
 	}
 	else
-	{                                  // file already exists 
+	{                                  // file already exists
 		if (!g_fractal_overwrite)
 		{
 			if (g_resave_mode == RESAVE_NO)
@@ -154,7 +154,7 @@ restart:
 				goto restart;
 			}
 			if (!g_started_resaves)
-			{                      // first save of a savetime set 
+			{                      // first save of a savetime set
 				update_save_name(filename);
 				goto restart;
 			}
@@ -174,7 +174,7 @@ restart:
 	}
 
 	g_started_resaves = (g_resave_mode == RESAVE_YES);
-	if (g_resave_mode == RESAVE_DONE)        // final save of savetime set? 
+	if (g_resave_mode == RESAVE_DONE)        // final save of savetime set?
 	{
 		g_resave_mode = RESAVE_NO;
 	}
@@ -187,14 +187,14 @@ restart:
 	}
 
 	if (driver_diskp())
-	{                            // disk-video 
+	{                            // disk-video
 		extract_filename(tmpmsg, openfile);
 		disk_video_status(1, std::string("Saving ") + tmpmsg);
 	}
 
 	{
 		BusyMarker marker;
-		// invoke encoder() via timer 
+		// invoke encoder() via timer
 		interrupted = (g_debug_mode == DEBUGMODE_TIME_ENCODER)
 			? timer_encoder() : encoder();
 	}
@@ -219,13 +219,13 @@ restart:
 	}
 
 	if (!new_file && interrupted >= 0)
-	{                            // replace the real file 
-		unlink(openfile);         // success assumed since we checked 
-		rename(tmpfile, openfile); // earlier with access              
+	{                            // replace the real file
+		unlink(openfile);         // success assumed since we checked
+		rename(tmpfile, openfile); // earlier with access
 	}
 
 	if (!driver_diskp())
-	{                            // supress this on disk-video 
+	{                            // supress this on disk-video
 		outcolor1 = outcolor1s;
 		outcolor2 = outcolor2s;
 		for (j = 0; j <= last_colorbar; j++)
@@ -242,14 +242,14 @@ restart:
 				}
 			}
 			for (i = 0; 250*i < g_x_dots; i++)
-			{  // clear vert status bars 
+			{  // clear vert status bars
 				g_plot_color_put_color(i, j, get_color(i, j) ^ outcolor1);
 				g_plot_color_put_color(g_x_dots - 1 - i, j,
 					get_color(g_x_dots - 1 - i, j) ^ outcolor2);
 			}
 		}
 	}
-	else                         // disk-video 
+	else                         // disk-video
 	{
 		disk_video_status(1, "");
 	}
@@ -259,7 +259,7 @@ restart:
 		text_temp_message(" *interrupted* save ");
 		if (g_initialize_batch >= INITBATCH_NORMAL)
 		{
-			g_initialize_batch = INITBATCH_BAILOUT_ERROR;         // if batch mode, set error level 
+			g_initialize_batch = INITBATCH_BAILOUT_ERROR;         // if batch mode, set error level
 		}
 		return -1;
 	}
@@ -286,7 +286,7 @@ enum SaveFormatType
 	SAVEFORMAT_JPEG
 };
 
-// TODO: implement PNG case 
+// TODO: implement PNG case
 int save_to_disk(char *filename)
 {
 	SaveFormatType format = SAVEFORMAT_GIF;
@@ -331,7 +331,7 @@ int encoder()
 	BYTE bitsperpixel, x;
 	fractal_info save_info;
 
-	if (g_initialize_batch)               // flush any impending keystrokes 
+	if (g_initialize_batch)               // flush any impending keystrokes
 	{
 		while (driver_key_pressed())
 		{
@@ -342,13 +342,13 @@ int encoder()
 	setup_save_info(&save_info);
 
 #ifndef XFRACT
-	bitsperpixel = 0;            // calculate bits/pixel 
+	bitsperpixel = 0;            // calculate bits/pixel
 	for (i = g_colors; i >= 2; i /= 2)
 	{
 		bitsperpixel++;
 	}
 
-	startbits = bitsperpixel + 1; // start coding with this many bits 
+	startbits = bitsperpixel + 1; // start coding with this many bits
 #else
 	bitsperpixel = 8;
 	startbits = 9;
@@ -358,12 +358,12 @@ int encoder()
 	{
 		if (fwrite("GIF87a", 6, 1, s_outfile) != 1)
 		{
-			goto oops;             // old GIF Signature 
+			goto oops;             // old GIF Signature
 		}
 	}
 	else if (fwrite("GIF89a", 6, 1, s_outfile) != 1)
 	{
-		goto oops;             // new GIF Signature 
+		goto oops;             // new GIF Signature
 	}
 
 	width = g_x_dots;
@@ -379,13 +379,13 @@ int encoder()
 	}
 	if (write_short(width) != 1)
 	{
-		goto oops;                // screen descriptor 
+		goto oops;                // screen descriptor
 	}
 	if (write_short(g_y_dots) != 1)
 	{
 		goto oops;
 	}
-	// color resolution == 6 bits worth 
+	// color resolution == 6 bits worth
 	x = BYTE(128 + ((6 - 1) << 4) + (bitsperpixel - 1));
 	if (write_byte(x) != 1)
 	{
@@ -393,17 +393,17 @@ int encoder()
 	}
 	if (fputc(0, s_outfile) != 0)
 	{
-		goto oops;                // background color 
+		goto oops;                // background color
 	}
 	i = 0;
 
-	// TODO: pixel aspect ratio should be 1:1? 
-	if (g_viewWindow.Visible()                               // less than full screen?  
-		&& (g_viewWindow.Width() == 0 || g_viewWindow.Height() == 0))   // and we picked the dots? 
+	// TODO: pixel aspect ratio should be 1:1?
+	if (g_viewWindow.Visible()                               // less than full screen?
+		&& (g_viewWindow.Width() == 0 || g_viewWindow.Height() == 0))   // and we picked the dots?
 	{
 		i = int((double(g_screen_height)/double(g_screen_width))*64.0/g_screen_aspect_ratio - 14.5);
 	}
-	else   // must risk loss of precision if numbers low 
+	else   // must risk loss of precision if numbers low
 	{
 		i = int(((double(g_y_dots)/double(g_x_dots))/g_viewWindow.AspectRatio())*64 - 14.5);
 	}
@@ -417,24 +417,24 @@ int encoder()
 	}
 	if (g_gif87a_flag)
 	{
-		i = 0;                    // for some decoders which can't handle aspect 
-	}
-									
-	if (fputc(i, s_outfile) != i)
-	{
-		goto oops;                // pixel aspect ratio 
+		i = 0;                    // for some decoders which can't handle aspect
 	}
 
-	// write out the 256-color palette 
+	if (fputc(i, s_outfile) != i)
+	{
+		goto oops;                // pixel aspect ratio
+	}
+
+	// write out the 256-color palette
 	if (g_.RealDAC())
-	{                         // got a DAC - must be a VGA 
+	{                         // got a DAC - must be a VGA
 		if (!shftwrite(g_.DAC(), g_colors))
 		{
 			goto oops;
 		}
 	}
 	else
-	{                         // uh oh - better fake it 
+	{                         // uh oh - better fake it
 		for (i = 0; i < 256; i += 16)
 		{
 			if (!shftwrite((BYTE *)paletteEGA, 16))
@@ -446,7 +446,7 @@ int encoder()
 
 	if (fwrite(",", 1, 1, s_outfile) != 1)
 	{
-		goto oops;                // Image Descriptor 
+		goto oops;                // Image Descriptor
 	}
 	i = 0;
 	if (write_short(i) != 1)
@@ -490,16 +490,16 @@ int encoder()
 	}
 
 	if (!g_gif87a_flag)
-	{                            // store non-standard fractal info 
-		// loadfile.c has notes about extension g_block structure 
+	{                            // store non-standard fractal info
+		// loadfile.c has notes about extension g_block structure
 		if (interrupted)
 		{
-			save_info.calculation_status = CALCSTAT_PARAMS_CHANGED;     // partial save is not resumable 
+			save_info.calculation_status = CALCSTAT_PARAMS_CHANGED;     // partial save is not resumable
 		}
 		save_info.tot_extend_len = 0;
 		if (g_resume_info != 0 && save_info.calculation_status == CALCSTAT_RESUMABLE)
 		{
-			// resume info g_block, 002 
+			// resume info g_block, 002
 			save_info.tot_extend_len += extend_blk_len(g_resume_length);
 			if (!put_extend_blk(2, g_resume_length, g_resume_info))
 			{
@@ -523,7 +523,7 @@ int encoder()
 		if ((g_display_3d == DISPLAY3D_GENERATED || g_display_3d == DISPLAY3D_NONE)
 			&& g_ranges_length)
 		{
-			// ranges g_block, 004 
+			// ranges g_block, 004
 			save_info.tot_extend_len += extend_blk_len(g_ranges_length*2);
 #ifdef XFRACT
 			fix_ranges(g_ranges, g_ranges_length, 0);
@@ -533,7 +533,7 @@ int encoder()
 				goto oops;
 			}
 		}
-		// Extended parameters g_block 005 
+		// Extended parameters g_block 005
 		if (g_bf_math)
 		{
 			save_info.tot_extend_len += extend_blk_len(22*(g_bf_length + 2));
@@ -545,7 +545,7 @@ int encoder()
 			}
 		}
 
-		// Extended parameters g_block 006 
+		// Extended parameters g_block 006
 		if (g_evolving_flags & EVOLVE_FIELD_MAP)
 		{
 			evolution_info esave_info;
@@ -569,9 +569,9 @@ int encoder()
 				esave_info.evolving = short(g_evolving_flags);
 				esave_info.this_generation_random_seed = (unsigned short)g_this_generation_random_seed;
 				esave_info.fiddle_factor = g_fiddle_factor;
-				esave_info.ecount = short(g_grid_size*g_grid_size); // flag for done 
+				esave_info.ecount = short(g_grid_size*g_grid_size); // flag for done
 			}
-			else  // we will need the resuming information 
+			else  // we will need the resuming information
 			{
 				resume_e_info = *g_evolve_info;
 				esave_info.parameter_range_x = resume_e_info.parameter_range_x;
@@ -602,11 +602,11 @@ int encoder()
 				esave_info.future[i] = 0;
 			}
 
-			// some XFRACT logic for the doubles needed here 
+			// some XFRACT logic for the doubles needed here
 #ifdef XFRACT
 			decode_evolver_info(&esave_info, 0);
 #endif
-			// evolution info g_block, 006 
+			// evolution info g_block, 006
 			save_info.tot_extend_len += extend_blk_len(sizeof(esave_info));
 			if (!put_extend_blk(6, sizeof(esave_info), (char *) &esave_info))
 			{
@@ -614,7 +614,7 @@ int encoder()
 			}
 		}
 
-		// Extended parameters g_block 007 
+		// Extended parameters g_block 007
 		if (g_externs.StandardCalculationMode() == CALCMODE_ORBITS)
 		{
 			orbits_info osave_info;
@@ -632,11 +632,11 @@ int encoder()
 				osave_info.future[i] = 0;
 			}
 
-			// some XFRACT logic for the doubles needed here 
+			// some XFRACT logic for the doubles needed here
 #ifdef XFRACT
 			decode_orbits_info(&osave_info, 0);
 #endif
-			// orbits info g_block, 007 
+			// orbits info g_block, 007
 			save_info.tot_extend_len += extend_blk_len(sizeof(osave_info));
 			if (!put_extend_blk(7, sizeof(osave_info), (char *) &osave_info))
 			{
@@ -644,7 +644,7 @@ int encoder()
 			}
 		}
 
-		// main and last g_block, 001 
+		// main and last g_block, 001
 		save_info.tot_extend_len += extend_blk_len(FRACTAL_INFO_SIZE);
 #ifdef XFRACT
 		decode_fractal_info(&save_info, 0);
@@ -657,7 +657,7 @@ int encoder()
 
 	if (fwrite(";", 1, 1, s_outfile) != 1)
 	{
-		goto oops;                // GIF Terminator 
+		goto oops;                // GIF Terminator
 	}
 
 	return interrupted;
@@ -691,8 +691,8 @@ static int shftwrite(const ColormapTable &colormap, int num_colors)
 	return 1;
 }
 
-// TODO: should we be doing this?  We need to store full colors, not the VGA truncated business. 
-// shift IBM colors to GIF 
+// TODO: should we be doing this?  We need to store full colors, not the VGA truncated business.
+// shift IBM colors to GIF
 static int shftwrite(const BYTE *color, int num_colors)
 {
 	BYTE thiscolor;
@@ -717,7 +717,7 @@ static int shftwrite(const BYTE *color, int num_colors)
 static int extend_blk_len(int datalen)
 {
 	return datalen + (datalen + 254)/255 + 15;
-	// data   +     1.per.block   + 14 for id + 1 for null at end  
+	// data   +     1.per.block   + 14 for id + 1 for null at end
 }
 
 static int put_extend_blk(int block_id, int block_len, char *block_data)
@@ -762,7 +762,7 @@ static int store_item_name(const char *nameptr)
 	int i;
 	for (i = 0; i < 40; i++)
 	{
-		fsave_info.form_name[i] = 0;      // initialize string 
+		fsave_info.form_name[i] = 0;      // initialize string
 	}
 	strcpy(fsave_info.form_name, nameptr);
 	if (fractal_type_formula(g_fractal_type))
@@ -789,7 +789,7 @@ static int store_item_name(const char *nameptr)
 	{
 		fsave_info.future[i] = 0;
 	}
-	// formula/lsys/ifs info g_block, 003 
+	// formula/lsys/ifs info g_block, 003
 	put_extend_blk(3, sizeof(fsave_info), (char *) &fsave_info);
 	return extend_blk_len(sizeof(fsave_info));
 }
@@ -801,7 +801,7 @@ static void setup_save_info(fractal_info *save_info)
 	{
 		g_formula_state.set_max_fn(0);
 	}
-	// set save parameters in save structure 
+	// set save parameters in save structure
 	strcpy(save_info->info_id, INFO_ID);
 	save_info->version = FRACTAL_INFO_VERSION;
 
@@ -822,7 +822,7 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->x_dots = short(g_.VideoEntry().x_dots);
 	save_info->y_dots = short(g_.VideoEntry().y_dots);
 	save_info->colors = short(g_.VideoEntry().colors);
-	save_info->parm3 = 0;        // pre version == 7 fields 
+	save_info->parm3 = 0;        // pre version == 7 fields
 	save_info->parm4 = 0;
 	save_info->dparm3 = g_parameters[2];
 	save_info->dparm4 = g_parameters[3];
@@ -910,7 +910,7 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->orbittype = short(g_new_orbit_type);
 	save_info->juli3Dmode = short(g_juli_3d_mode);
 	save_info->max_fn = char(g_formula_state.max_fn());
-	save_info->inversejulia = short((g_major_method << 8) + g_minor_method);      // MVS 
+	save_info->inversejulia = short((g_major_method << 8) + g_minor_method);      // MVS
 	save_info->bail_out = g_externs.BailOut();
 	save_info->bailoutest = short(g_externs.BailOutTest());
 	save_info->iterations = g_max_iteration;
@@ -951,7 +951,7 @@ static void setup_save_info(fractal_info *save_info)
 enum
 {
 	BITSF = 12,
-	HSIZE = 5003            // 80% occupancy 
+	HSIZE = 5003            // 80% occupancy
 };
 
 /*
@@ -969,17 +969,17 @@ enum
  *
  */
 
-// prototypes 
+// prototypes
 
 static void output(int code);
 static void char_out(int c);
 static void flush_char();
 static void cl_block();
 
-static int n_bits;                        // number of bits/code 
-static int maxbits = BITSF;                // user settable max # bits/code 
-static int maxcode;                  // maximum code, given n_bits 
-static int maxmaxcode = 1 << BITSF; // should NEVER generate this code 
+static int n_bits;                        // number of bits/code
+static int maxbits = BITSF;                // user settable max # bits/code
+static int maxcode;                  // maximum code, given n_bits
+static int maxmaxcode = 1 << BITSF; // should NEVER generate this code
 inline int MAXCODE(int n_bits)
 {
 	return ((1 << (n_bits)) - 1);
@@ -1002,7 +1002,7 @@ static unsigned short *codetab = (unsigned short *)g_string_location;
  * possible stack (stack used to be 8000 characters).
  */
 
-static int free_ent;                  // first unused entry 
+static int free_ent;                  // first unused entry
 
 /*
  * g_block compression parameters -- after all codes are used up,
@@ -1028,14 +1028,14 @@ static int clear_flg = 0;
 
 static int ClearCode;
 static int EOFCode;
-static int a_count; // Number of characters so far in this 'packet' 
+static int a_count; // Number of characters so far in this 'packet'
 static unsigned long cur_accum = 0;
 static int  cur_bits = 0;
 
 /*
  * Define the storage for the packet accumulator
  */
-static char *accum; // 256 bytes 
+static char *accum; // 256 bytes
 
 static int compress(int rowlimit)
 {
@@ -1057,11 +1057,11 @@ static int compress(int rowlimit)
 	char accum_stack[256];
 	accum = accum_stack;
 
-	outcolor1 = 2;               // use these colors to show progress 
-	outcolor2 = 3;               // (this has nothing to do with GIF) 
+	outcolor1 = 2;               // use these colors to show progress
+	outcolor2 = 3;               // (this has nothing to do with GIF)
 
 	if (((++numsaves) & 1) == 0)
-	{                            // reverse the colors on alt saves 
+	{                            // reverse the colors on alt saves
 		i = outcolor1;
 		outcolor1 = outcolor2;
 		outcolor2 = i;
@@ -1089,7 +1089,7 @@ static int compress(int rowlimit)
 	{
 		hshift++;
 	}
-	hshift = 8 - hshift;                // set hash code range bound 
+	hshift = 8 - hshift;                // set hash code range bound
 
 	memset(htab, 0xff, unsigned(HSIZE)*sizeof(long));
 	hsize_reg = HSIZE;
@@ -1097,7 +1097,7 @@ static int compress(int rowlimit)
 	output(int(ClearCode));
 
 	for (rownum = 0; rownum < g_y_dots; rownum++)
-	{                            // scan through the dots 
+	{                            // scan through the dots
 		for (ydot = rownum; ydot < rowlimit; ydot += g_y_dots)
 		{
 			for (xdot = 0; xdot < g_x_dots; xdot++)
@@ -1111,18 +1111,18 @@ static int compress(int rowlimit)
 					continue;
 				}
 				fcode = long((long(color) << maxbits) + ent);
-				i = ((int(color) << hshift) ^ ent);    // xor hashing 
+				i = ((int(color) << hshift) ^ ent);    // xor hashing
 
 				if (htab[i] == fcode)
 				{
 					ent = codetab[i];
 					continue;
 				}
-				else if (long(htab[i]) < 0)      // empty slot 
+				else if (long(htab[i]) < 0)      // empty slot
 				{
 					goto nomatch;
 				}
-				disp = hsize_reg - i;           // secondary hash (after G. Knott) 
+				disp = hsize_reg - i;           // secondary hash (after G. Knott)
 				if (i == 0)
 				{
 					disp = 1;
@@ -1148,7 +1148,7 @@ nomatch:
 				ent = color;
 				if (free_ent < maxmaxcode)
 				{
-					// code -> hashtable 
+					// code -> hashtable
 					codetab[i] = (unsigned short)free_ent++;
 					htab[i] = fcode;
 				}
@@ -1156,8 +1156,8 @@ nomatch:
 				{
 					cl_block();
 				}
-			} // end for xdot 
-			if (! driver_diskp()		// supress this on disk-video 
+			} // end for xdot
+			if (! driver_diskp()		// supress this on disk-video
 				&& ydot == rownum)
 			{
 				if ((ydot & 4) == 0)
@@ -1172,16 +1172,16 @@ nomatch:
 					}
 				}
 				for (i = 0; 250*i < g_x_dots; i++)
-				{  // display vert status bars 
-					// (this is NOT GIF-related)  
+				{  // display vert status bars
+					// (this is NOT GIF-related)
 					g_plot_color_put_color(i, ydot, get_color(i, ydot) ^ outcolor1);
 					g_plot_color_put_color(g_x_dots - 1 - i, ydot,
 						get_color(g_x_dots - 1 - i, ydot) ^ outcolor2);
 				}
 				last_colorbar = ydot;
-			} // end if !driver_diskp() 
+			} // end if !driver_diskp()
 			tempkey = driver_key_pressed();
-			if (tempkey && (tempkey != int('s')))  // keyboard hit - bail out 
+			if (tempkey && (tempkey != int('s')))  // keyboard hit - bail out
 			{
 				interrupted = 1;
 				rownum = g_y_dots;
@@ -1189,10 +1189,10 @@ nomatch:
 			}
 			if (tempkey == int('s'))
 			{
-				driver_get_key();   // eat the keystroke 
+				driver_get_key();   // eat the keystroke
 			}
-		} // end for ydot 
-	} // end for rownum 
+		} // end for ydot
+	} // end for rownum
 
 	/*
 	* Put out the final code.
@@ -1291,7 +1291,7 @@ static void output(int code)
 /*
  * Clear out the hash table
  */
-static void cl_block()             // table clear for g_block compress 
+static void cl_block()             // table clear for g_block compress
 {
 		memset(htab, 0xff, unsigned(HSIZE)*sizeof(long));
 		free_ent = ClearCode + 2;

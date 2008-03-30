@@ -163,9 +163,9 @@ ApplicationStateType BigWhileLoopImpl::Execute()
 		if (StatusNotResumableOrShowFilePending())
 		{
 			_g.SetVideoEntry(_g.Adapter());
-			_externs.SetXDots(_g.VideoEntry().x_dots);       // # dots across the screen 
-			_externs.SetYDots(_g.VideoEntry().y_dots);       // # dots down the screen   
-			_externs.SetColors(_g.VideoEntry().colors);      // # colors available 
+			_externs.SetXDots(_g.VideoEntry().x_dots);       // # dots across the screen
+			_externs.SetYDots(_g.VideoEntry().y_dots);       // # dots down the screen
+			_externs.SetColors(_g.VideoEntry().colors);      // # colors available
 			_externs.SetScreenWidth(_externs.XDots());
 			_externs.SetScreenHeight(_externs.YDots());
 			_data.SetScreenOffset(0, 0);
@@ -176,13 +176,13 @@ ApplicationStateType BigWhileLoopImpl::Execute()
 
 			if (_externs.Overlay3D() && !_externs.InitializeBatch())
 			{
-				_driver->unstack_screen();            // restore old graphics image 
+				_driver->unstack_screen();            // restore old graphics image
 				_externs.SetOverlay3D(false);
 			}
 			else
 			{
-				_app->change_video_mode(_g.VideoEntry()); // switch video modes 
-				// switching video modes may have changed drivers or disk flag... 
+				_app->change_video_mode(_g.VideoEntry()); // switch video modes
+				// switching video modes may have changed drivers or disk flag...
 				if (!_g.GoodMode())
 				{
 					if (!_driver->diskp())
@@ -191,8 +191,8 @@ ApplicationStateType BigWhileLoopImpl::Execute()
 					}
 					_externs.UiState().ask_video = true;
 					_g.SetInitialVideoModeNone();
-					_driver->set_for_text(); // switch to text mode 
-					// goto restorestart; 
+					_driver->set_for_text(); // switch to text mode
+					// goto restorestart;
 					return APPSTATE_RESTORE_START;
 				}
 
@@ -203,34 +203,34 @@ ApplicationStateType BigWhileLoopImpl::Execute()
 
 			if (_g.SaveDAC() || _externs.ColorPreloaded())
 			{
-				_g.PopDAC(); // restore the DAC 
+				_g.PopDAC(); // restore the DAC
 				_app->load_dac();
 				_externs.SetColorPreloaded(false);
 			}
 			else
-			{	// reset DAC to defaults, which setvideomode has done for us 
+			{	// reset DAC to defaults, which setvideomode has done for us
 				if (_g.MapDAC())
-				{	// but there's a map=, so load that 
+				{	// but there's a map=, so load that
 					_g.DAC() = *_g.MapDAC();
 					_app->load_dac();
 				}
 				_g.SetColorState(COLORSTATE_DEFAULT);
 			}
 			HandleVisibleViewWindow();
-			_externs.SetDxSize(_externs.XDots() - 1);				// convert just once now 
+			_externs.SetDxSize(_externs.XDots() - 1);				// convert just once now
 			_externs.SetDySize(_externs.YDots() - 1);
 		}
-		// assume we save next time (except jb) 
+		// assume we save next time (except jb)
 		_g.SetSaveDAC((_g.SaveDAC() == SAVEDAC_NO) ? SAVEDAC_NEXT : SAVEDAC_YES);
 		if (_externs.InitializeBatch() == INITBATCH_NONE)
 		{
-			_driver->set_mouse_mode(-IDK_PAGE_UP);			// mouse left button == pgup 
+			_driver->set_mouse_mode(-IDK_PAGE_UP);			// mouse left button == pgup
 		}
 
 		if (_externs.ShowFile() == SHOWFILE_PENDING)
-		{               // loading an image 
-			_externs.SetOutLineCleanup(_externs.OutLineCleanupNull());	// g_out_line routine can set this 
-			if (_externs.Display3D())							// set up 3D decoding 
+		{               // loading an image
+			_externs.SetOutLineCleanup(_externs.OutLineCleanupNull());	// g_out_line routine can set this
+			if (_externs.Display3D())							// set up 3D decoding
 			{
 				_externs.SetOutLine(_externs.OutLine3D());
 			}
@@ -239,22 +239,22 @@ ApplicationStateType BigWhileLoopImpl::Execute()
 				_externs.SetOutLine(_externs.OutLineCompare());
 			}
 			else if (_externs.Potential16Bit())
-			{            // .pot format input file 
+			{            // .pot format input file
 				if (_app->disk_start_potential() < 0)
-				{                           // pot file failed?  
+				{                           // pot file failed?
 					_externs.SetShowFile(SHOWFILE_DONE);
 					_externs.SetPotentialFlag(false);
 					_externs.SetPotential16Bit(false);
 					_g.SetInitialVideoModeNone();
-					_externs.SetCalculationStatus(CALCSTAT_RESUMABLE);         // "resume" without 16-bit 
+					_externs.SetCalculationStatus(CALCSTAT_RESUMABLE);         // "resume" without 16-bit
 					_driver->set_for_text();
 					_app->get_fractal_type();
-					// goto imagestart; 
+					// goto imagestart;
 					return APPSTATE_IMAGE_START;
 				}
 				_externs.SetOutLine(_externs.OutLinePotential());
 			}
-			else if ((_externs.Sound().flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !_externs.EvolvingFlags()) // regular gif/fra input file 
+			else if ((_externs.Sound().flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !_externs.EvolvingFlags()) // regular gif/fra input file
 			{
 				_externs.SetOutLine(_externs.OutLineSound());
 			}
@@ -289,10 +289,10 @@ ApplicationStateType BigWhileLoopImpl::Execute()
 			}
 		}
 
-		_externs.SetZoomOff(true);                      // zooming is enabled 
+		_externs.SetZoomOff(true);                      // zooming is enabled
 		if (_driver->diskp() || (_data.CurrentFractalSpecificFlags() & FRACTALFLAG_NO_ZOOM) != 0)
 		{
-			_externs.SetZoomOff(false);;                   // for these cases disable zooming 
+			_externs.SetZoomOff(false);;                   // for these cases disable zooming
 		}
 		if (!_externs.EvolvingFlags())
 		{
@@ -300,7 +300,7 @@ ApplicationStateType BigWhileLoopImpl::Execute()
 		}
 		_driver->schedule_alarm(1);
 
-		_externs.SetSxMin(_externs.EscapeTime().m_grid_fp.x_min()); // save 3 corners for zoom.c ref points 
+		_externs.SetSxMin(_externs.EscapeTime().m_grid_fp.x_min()); // save 3 corners for zoom.c ref points
 		_externs.SetSxMax(_externs.EscapeTime().m_grid_fp.x_max());
 		_externs.SetSx3rd(_externs.EscapeTime().m_grid_fp.x_3rd());
 		_externs.SetSyMin(_externs.EscapeTime().m_grid_fp.y_min());
@@ -319,32 +319,32 @@ ApplicationStateType BigWhileLoopImpl::Execute()
 		_app->history_save_info();
 
 		if (_externs.ShowFile() == SHOWFILE_PENDING)
-		{               // image has been loaded 
+		{               // image has been loaded
 			_externs.SetShowFile(SHOWFILE_DONE);
 			if (_externs.InitializeBatch() == INITBATCH_NORMAL && _externs.CalculationStatus() == CALCSTAT_RESUMABLE)
 			{
-				_externs.SetInitializeBatch(INITBATCH_FINISH_CALC); // flag to finish calc before save 
+				_externs.SetInitializeBatch(INITBATCH_FINISH_CALC); // flag to finish calc before save
 			}
-			if (_externs.Loaded3D())      // 'r' of image created with '3' 
+			if (_externs.Loaded3D())      // 'r' of image created with '3'
 			{
-				_externs.SetDisplay3D(DISPLAY3D_YES);  // so set flag for 'b' command 
+				_externs.SetDisplay3D(DISPLAY3D_YES);  // so set flag for 'b' command
 			}
 		}
 		else
-		{                            // draw an image 
-			if (_externs.SaveTime() != 0          // autosave and resumable? 
+		{                            // draw an image
+			if (_externs.SaveTime() != 0          // autosave and resumable?
 				&& (_data.CurrentFractalSpecificFlags() & FRACTALFLAG_NOT_RESUMABLE) == 0)
 			{
-				_externs.SetSaveBase(_app->read_ticker()); // calc's start time 
-				_externs.SetSaveTicks(_externs.SaveTime()*60*1000); // in milliseconds 
+				_externs.SetSaveBase(_app->read_ticker()); // calc's start time
+				_externs.SetSaveTicks(_externs.SaveTime()*60*1000); // in milliseconds
 				_externs.SetFinishRow(-1);
 			}
-			_externs.Browse().SetBrowsing(false);      // regenerate image, turn off browsing 
+			_externs.Browse().SetBrowsing(false);      // regenerate image, turn off browsing
 			_data.SetNameStackPointer(-1);
 			_externs.Browse().SetName("");
 			if (_data.GetViewWindow().Visible() && (_externs.EvolvingFlags() & EVOLVE_FIELD_MAP) && (_externs.CalculationStatus() != CALCSTAT_COMPLETED))
 			{
-				// generate a set of images with varied parameters on each one 
+				// generate a set of images with varied parameters on each one
 				int grout;
 				int ecount;
 				int tmpxdots;
@@ -383,20 +383,20 @@ ApplicationStateType BigWhileLoopImpl::Execute()
 					_externs.SetEvolve(0);
 				}
 				else
-				{ // not resuming, start from the beginning 
+				{ // not resuming, start from the beginning
 					int mid = _externs.GridSize()/2;
 					if ((_externs.Px() != mid) || (_externs.Py() != mid))
 					{
-						_externs.SetThisGenerationRandomSeed((unsigned int) _app->clock_ticks()); // time for new set 
+						_externs.SetThisGenerationRandomSeed((unsigned int) _app->clock_ticks()); // time for new set
 					}
 					_app->save_parameter_history();
 					ecount = 0;
 					_externs.SetFiddleFactor(_externs.FiddleFactor()*_externs.FiddleReduction());
 					_externs.SetParameterOffsetX(_externs.NewParameterOffsetX());
 					_externs.SetParameterOffsetY(_externs.NewParameterOffsetY());
-					// odpx used for discrete parms like inside, outside, trigfn etc 
+					// odpx used for discrete parms like inside, outside, trigfn etc
 					_externs.SetDiscreteParameterOffsetX(_externs.NewDiscreteParameterOffsetX());
-					_externs.SetDiscreteParameterOffsetY(_externs.NewDiscreteParameterOffsetY()); 
+					_externs.SetDiscreteParameterOffsetY(_externs.NewDiscreteParameterOffsetY());
 				}
 				_externs.SetParameterBoxCount(0);
 				_externs.SetDeltaParameterImageX(_externs.ParameterRangeX()/(_externs.GridSize() - 1));
@@ -407,7 +407,7 @@ ApplicationStateType BigWhileLoopImpl::Execute()
 				gridsqr = _externs.GridSize()*_externs.GridSize();
 				while (ecount < gridsqr)
 				{
-					_app->spiral_map(ecount); // sets px & py 
+					_app->spiral_map(ecount); // sets px & py
 					_data.SetScreenOffset(tmpxdots*_externs.Px(), tmpydots*_externs.Py());
 					_app->restore_parameter_history();
 					_app->fiddle_parameters(_externs.Genes(), ecount);
@@ -426,10 +426,10 @@ done:
 				if (ecount == gridsqr)
 				{
 					i = 0;
-					_driver->buzzer(BUZZER_COMPLETE); // finished!! 
+					_driver->buzzer(BUZZER_COMPLETE); // finished!!
 				}
 				else
-				{	// interrupted screen generation, save info 
+				{	// interrupted screen generation, save info
 					if (_externs.Evolve() == 0)
 					{
 						_externs.SetEvolve(new evolution_info);
@@ -455,37 +455,37 @@ done:
 				}
 				_data.SetScreenOffset(0, 0);
 				_externs.SetXDots(_externs.ScreenWidth());
-				_externs.SetYDots(_externs.ScreenHeight()); // otherwise save only saves a sub image and boxes get clipped 
+				_externs.SetYDots(_externs.ScreenHeight()); // otherwise save only saves a sub image and boxes get clipped
 
-				// set up for 1st selected image, this reuses px and py 
+				// set up for 1st selected image, this reuses px and py
 				_externs.SetPx(_externs.GridSize()/2);
 				_externs.SetPy(_externs.GridSize()/2);
-				_app->unspiral_map(); // first time called, w/above line sets up array 
+				_app->unspiral_map(); // first time called, w/above line sets up array
 				_app->restore_parameter_history();
 				_app->fiddle_parameters(_externs.Genes(), 0);
 			}
-			// end of evolution loop 
+			// end of evolution loop
 			else
 			{
 				i = _app->calculate_fractal();       // draw the fractal
 				if (i == 0)
 				{
-					_driver->buzzer(BUZZER_COMPLETE); // finished!! 
+					_driver->buzzer(BUZZER_COMPLETE); // finished!!
 				}
 			}
 
-			_externs.SetSaveTicks(0);                 // turn off autosave timer 
-			if (_driver->diskp() && i == 0) // disk-video 
+			_externs.SetSaveTicks(0);                 // turn off autosave timer
+			if (_driver->diskp() && i == 0) // disk-video
 			{
 				_app->disk_video_status(0, "Image has been completed");
 			}
 		}
-		_externs.Zoom().set_count(0);                     // no zoom box yet  
+		_externs.Zoom().set_count(0);                     // no zoom box yet
 		_externs.SetZWidth(0);
 
 		if (_externs.FractalType() == FRACTYPE_PLASMA)
 		{
-			_externs.SetCycleLimit(256);              // plasma clouds need quick spins 
+			_externs.SetCycleLimit(256);              // plasma clouds need quick spins
 			_g.SetDACSleepCount(256);
 		}
 
@@ -497,31 +497,31 @@ resumeloop:
 		_keyboardMore = true;
 		int kbdchar;
 		while (_keyboardMore)
-		{           // loop through command keys 
+		{           // loop through command keys
 			if (_externs.TimedSave() != TIMEDSAVE_DONE)
 			{
 				if (_externs.TimedSave() == TIMEDSAVE_START)
-				{       // woke up for timed save 
-					_driver->get_key();     // eat the dummy char 
-					kbdchar = 's'; // do the save 
+				{       // woke up for timed save
+					_driver->get_key();     // eat the dummy char
+					kbdchar = 's'; // do the save
 					_externs.SetResaveMode(RESAVE_YES);
 					_externs.SetTimedSave(TIMEDSAVE_PENDING);
 				}
 				else
-				{                      // save done, resume 
+				{                      // save done, resume
 					_externs.SetTimedSave(TIMEDSAVE_DONE);
 					_externs.SetResaveMode(RESAVE_DONE);
 					kbdchar = IDK_ENTER;
 				}
 			}
-			else if (_externs.InitializeBatch() == INITBATCH_NONE)      // not batch mode 
+			else if (_externs.InitializeBatch() == INITBATCH_NONE)      // not batch mode
 			{
 				_driver->set_mouse_mode((_externs.ZWidth() == 0) ? -IDK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX);
 				if (_externs.CalculationStatus() == CALCSTAT_RESUMABLE && _externs.ZWidth() == 0 && !_driver->key_pressed())
 				{
-					kbdchar = IDK_ENTER;  // no visible reason to stop, continue 
+					kbdchar = IDK_ENTER;  // no visible reason to stop, continue
 				}
-				else      // wait for a real keystroke 
+				else      // wait for a real keystroke
 				{
 					if (_externs.Browse().AutoBrowse() && _externs.Browse().SubImages())
 					{
@@ -536,7 +536,7 @@ resumeloop:
 					{
 						if (kbdchar == IDK_ESC && _externs.EscapeExitFlag())
 						{
-							// don't ask, just get out 
+							// don't ask, just get out
 							_app->goodbye();
 						}
 						_driver->stack_screen();
@@ -561,22 +561,22 @@ resumeloop:
 					}
 				}
 			}
-			else          // batch mode, fake next keystroke 
+			else          // batch mode, fake next keystroke
 			{
-				// _externs.InitializeBatch == -1  flag to finish calc before save 
-				// _externs.InitializeBatch == 0   not in batch mode 
-				// _externs.InitializeBatch == 1   normal batch mode 
-				// _externs.InitializeBatch == 2   was 1, now do a save 
-				// _externs.InitializeBatch == 3   bailout with errorlevel == 2, error occurred, no save 
-				// _externs.InitializeBatch == 4   bailout with errorlevel == 1, interrupted, try to save 
-				// _externs.InitializeBatch == 5   was 4, now do a save 
+				// _externs.InitializeBatch == -1  flag to finish calc before save
+				// _externs.InitializeBatch == 0   not in batch mode
+				// _externs.InitializeBatch == 1   normal batch mode
+				// _externs.InitializeBatch == 2   was 1, now do a save
+				// _externs.InitializeBatch == 3   bailout with errorlevel == 2, error occurred, no save
+				// _externs.InitializeBatch == 4   bailout with errorlevel == 1, interrupted, try to save
+				// _externs.InitializeBatch == 5   was 4, now do a save
 
-				if (_externs.InitializeBatch() == INITBATCH_FINISH_CALC)       // finish calc 
+				if (_externs.InitializeBatch() == INITBATCH_FINISH_CALC)       // finish calc
 				{
 					kbdchar = IDK_ENTER;
 					_externs.SetInitializeBatch(INITBATCH_NORMAL);
 				}
-				else if (_externs.InitializeBatch() == INITBATCH_NORMAL || _externs.InitializeBatch() == INITBATCH_BAILOUT_INTERRUPTED) // save-to-disk 
+				else if (_externs.InitializeBatch() == INITBATCH_NORMAL || _externs.InitializeBatch() == INITBATCH_BAILOUT_INTERRUPTED) // save-to-disk
 				{
 					kbdchar = (DEBUGMODE_COMPARE_RESTORED == _externs.DebugMode()) ? 'r' : 's';
 					if (_externs.InitializeBatch() == INITBATCH_NORMAL)
@@ -592,9 +592,9 @@ resumeloop:
 				{
 					if (_externs.CalculationStatus() != CALCSTAT_COMPLETED)
 					{
-						_externs.SetInitializeBatch(INITBATCH_BAILOUT_ERROR); // bailout with error 
+						_externs.SetInitializeBatch(INITBATCH_BAILOUT_ERROR); // bailout with error
 					}
-					_app->goodbye();               // done, exit 
+					_app->goodbye();               // done, exit
 				}
 			}
 
@@ -612,7 +612,7 @@ resumeloop:
 			case APPSTATE_CONTINUE:			continue;
 			default:						break;
 			}
-			if (_externs.ZoomOff() && _keyboardMore) // draw/clear a zoom box? 
+			if (_externs.ZoomOff() && _keyboardMore) // draw/clear a zoom box?
 			{
 				_app->zoom_box_draw(true);
 			}

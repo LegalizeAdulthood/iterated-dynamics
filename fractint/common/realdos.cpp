@@ -27,7 +27,7 @@
 #include "realdos.h"
 #include "TextColors.h"
 
-// uncomment following for production version 
+// uncomment following for production version
 /*
 #define PRODUCTION
 */
@@ -35,13 +35,13 @@ enum
 {
 	MENU_HDG = 3,
 	MENU_ITEM = 1,
-	SWAPBLKLEN = 4096 // must be a power of 2 
+	SWAPBLKLEN = 4096 // must be a power of 2
 };
 
 BYTE g_suffix[10000];
-int g_release = 2099;	// this has 2 implied decimals; increment it every synch 
-int g_patch_level = 9;	// patchlevel for this version 
-//int g_video_table_len;                 // number of entries in above           
+int g_release = 2099;	// this has 2 implied decimals; increment it every synch
+int g_patch_level = 9;	// patchlevel for this version
+//int g_video_table_len;                 // number of entries in above
 int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
 
 static BYTE *s_temp_text_save = 0;
@@ -67,7 +67,7 @@ int text_temp_message(const char *msgparm)
 		return -1;
 	}
 
-	driver_wait_key_pressed(0); // wait for a keystroke but don't eat it 
+	driver_wait_key_pressed(0); // wait for a keystroke but don't eat it
 	clear_temp_message();
 	return 0;
 }
@@ -95,13 +95,13 @@ int show_temp_message(const char *msgparm)
 	int save_syoffs;
 
 	strncpy(msg, msgparm, 40);
-	msg[40] = 0; // ensure max message len of 40 chars 
-	if (driver_diskp())  // disk video, screen in text mode, easy 
+	msg[40] = 0; // ensure max message len of 40 chars
+	if (driver_diskp())  // disk video, screen in text mode, easy
 	{
 		disk_video_status(0, msg);
 		return 0;
 	}
-	if (g_command_initialize)      // & command_files hasn't finished 1st try 
+	if (g_command_initialize)      // & command_files hasn't finished 1st try
 	{
 		// TODO : don't use printf!
 #if 0
@@ -115,7 +115,7 @@ int show_temp_message(const char *msgparm)
 	s_text_x_dots = int(strlen(msg))*xrepeat*8;
 	s_text_y_dots = yrepeat*8;
 
-	// worst case needs 10k 
+	// worst case needs 10k
 	if (s_temp_text_save != 0)
 	{
 		if (size != long(s_text_x_dots)*s_text_y_dots)
@@ -128,12 +128,12 @@ int show_temp_message(const char *msgparm)
 	save_syoffs = g_screen_y_offset;
 	g_screen_x_offset = 0;
 	g_screen_y_offset = 0;
-	if (s_temp_text_save == 0) // only save screen first time called 
+	if (s_temp_text_save == 0) // only save screen first time called
 	{
 		s_temp_text_save = new BYTE[s_text_x_dots*s_text_y_dots];
 		if (s_temp_text_save == 0)
 		{
-			return -1; // sorry, message not displayed 
+			return -1; // sorry, message not displayed
 		}
 		for (i = 0; i < s_text_y_dots; ++i)
 		{
@@ -141,7 +141,7 @@ int show_temp_message(const char *msgparm)
 		}
 	}
 
-	g_.DAC().FindSpecialColors(); // get g_.DAC().Dark() & g_color_medium set 
+	g_.DAC().FindSpecialColors(); // get g_.DAC().Dark() & g_color_medium set
 	driver_display_string(0, 0, g_.DAC().Medium(), g_.DAC().Dark(), msg);
 	g_screen_x_offset = save_sxoffs;
 	g_screen_y_offset = save_syoffs;
@@ -154,7 +154,7 @@ void clear_temp_message()
 	int i;
 	int save_sxoffs;
 	int save_syoffs;
-	if (driver_diskp()) // disk video, easy 
+	if (driver_diskp()) // disk video, easy
 	{
 		disk_video_status(0, "");
 	}
@@ -168,7 +168,7 @@ void clear_temp_message()
 		{
 			put_line(i, 0, s_text_x_dots-1, &s_temp_text_save[i*s_text_x_dots]);
 		}
-		if (!g_using_jiim)  // jiim frees memory with free_temp_message() 
+		if (!g_using_jiim)  // jiim frees memory with free_temp_message()
 		{
 			delete[] s_temp_text_save;
 			s_temp_text_save = 0;
@@ -180,7 +180,7 @@ void clear_temp_message()
 
 void help_title()
 {
-	driver_set_clear(); // clear the screen 
+	driver_set_clear(); // clear the screen
 	std::ostringstream message;
 	message << boost::format("Iterated Dynamics Version %d.%01d") % (g_release/100) % ((g_release % 100)/10);
 	if (g_release % 10)
@@ -193,7 +193,7 @@ void help_title()
 	}
 	put_string_center(0, 0, 80, C_TITLE, message.str().c_str());
 
-// uncomment next for production executable: 
+// uncomment next for production executable:
 #if defined(PRODUCTION) || defined(XFRACT)
 	return;
 	/*NOTREACHED*/
@@ -226,42 +226,42 @@ int put_string_center(int row, int col, int width, int attr, const char *msg)
 	int k;
 	i = 0;
 #ifdef XFRACT
-	if (width >= 80) // Some systems choke in column 80  
+	if (width >= 80) // Some systems choke in column 80
 	{
 		width = 79;
 	}
 #endif
 	while (msg[i])
 	{
-		++i; // strlen for a 
+		++i; // strlen for a
 	}
 	if (i == 0)
 	{
 		return -1;
 	}
-	if (i >= width) // sanity check  
+	if (i >= width) // sanity check
 	{
 		i = width - 1;
 	}
 	j = (width - i)/2;
-	j -= (width + 10 - i)/20; // when wide a bit left of center looks better 
+	j -= (width + 10 - i)/20; // when wide a bit left of center looks better
 	memset(buf, ' ', width);
 	buf[width] = 0;
 	i = 0;
 	k = j;
 	while (msg[i])
 	{
-		buf[k++] = msg[i++]; // strcpy for a 
+		buf[k++] = msg[i++]; // strcpy for a
 	}
 	driver_put_string(row, col, attr, buf);
 	return j;
 }
 
-// ------------------------------------------------------------------------ 
+// ------------------------------------------------------------------------
 
 int main_menu(bool full_menu)
 {
-	const char *choices[44]; // 2 columns*22 rows 
+	const char *choices[44]; // 2 columns*22 rows
 	int attributes[44];
 	int choicekey[44];
 	int i;
@@ -290,14 +290,14 @@ top:
 		attributes[nextleft] = 256 + MENU_HDG;
 
 		nextleft += 2;
-		choicekey[nextleft] = 13; // enter 
+		choicekey[nextleft] = 13; // enter
 		attributes[nextleft] = MENU_ITEM;
 		choices[nextleft] = (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE) ?
 			"continue calculation        " :
 			"return to image             ";
 
 		nextleft += 2;
-		choicekey[nextleft] = 9; // tab 
+		choicekey[nextleft] = 9; // tab
 		attributes[nextleft] = MENU_ITEM;
 		choices[nextleft] = "info about image      <tab> ";
 
@@ -546,7 +546,7 @@ top:
 			"MAIN MENU",
 			0, 0, nextleft, (char **) choices, attributes,
 			2, nextleft/2, 29, 0, 0, 0, 0, menu_check_key);
-		if (i == -1)     // escape 
+		if (i == -1)     // escape
 		{
 			i = IDK_ESC;
 		}
@@ -554,7 +554,7 @@ top:
 		{
 			i = -i;
 		}
-		else                      // user selected a choice 
+		else                      // user selected a choice
 		{
 			i = choicekey[i];
 			if (-10 == i)
@@ -565,7 +565,7 @@ top:
 			}
 		}
 	}
-	if (i == IDK_ESC)             // escape from menu exits Fractint 
+	if (i == IDK_ESC)             // escape from menu exits Fractint
 	{
 		help_title();
 		driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
@@ -597,19 +597,19 @@ top:
 	}
 	if (i == IDK_ENTER || i == IDK_ENTER_2)
 	{
-		i = 0;                 // don't trigger new calc 
+		i = 0;                 // don't trigger new calc
 	}
 	g_tab_display_enabled = save_tab_display_enabled;
 	return i;
 }
 
 static int menu_check_key(int curkey, int choice)
-{ // choice is dummy used by other routines called by full_screen_choice() 
+{ // choice is dummy used by other routines called by full_screen_choice()
 	int testkey;
-	testkey = choice; // for warning only 
+	testkey = choice; // for warning only
 	testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey + ('a'-'A') : curkey;
 #ifdef XFRACT
-	// We use F2 for shift-@, annoyingly enough 
+	// We use F2 for shift-@, annoyingly enough
 	if (testkey == IDK_F2)
 	{
 		return -testkey;
@@ -628,7 +628,7 @@ static int menu_check_key(int curkey, int choice)
 	{
 		if (strchr("\\sobpkrh", testkey) || testkey == IDK_TAB
 			|| testkey == IDK_CTL_A || testkey == IDK_CTL_E || testkey == IDK_BACKSPACE
-			|| testkey == IDK_CTL_S || testkey == IDK_CTL_U) // ctrl-A, E, H, P, S, U 
+			|| testkey == IDK_CTL_S || testkey == IDK_CTL_U) // ctrl-A, E, H, P, S, U
 		{
 			return -testkey;
 		}
@@ -653,7 +653,7 @@ static int menu_check_key(int curkey, int choice)
 				return -testkey;
 			}
 		}
-		// Alt-A and Alt-S 
+		// Alt-A and Alt-S
 		if (testkey == IDK_ALT_A || testkey == IDK_ALT_S )
 		{
 			return -testkey;
@@ -667,13 +667,13 @@ static int menu_check_key(int curkey, int choice)
 }
 
 int input_field(
-		int options,          // &1 numeric, &2 integer, &4 double 
-		int attr,             // display attribute 
-		char *fld,            // the field itself 
-		int len,              // field length (declare as 1 larger for \0) 
-		int row,              // display row 
-		int col,              // display column 
-		int (*check_keystroke)(int key)  // routine to check non data keys, or 0 
+		int options,          // &1 numeric, &2 integer, &4 double
+		int attr,             // display attribute
+		char *fld,            // the field itself
+		int len,              // field length (declare as 1 larger for \0)
+		int row,              // display row
+		int col,              // display column
+		int (*check_keystroke)(int key)  // routine to check non data keys, or 0
 		)
 {
 	char savefld[81];
@@ -701,13 +701,13 @@ int input_field(
 			buf[i++] = ' ';
 		}
 		buf[len] = 0;
-		if (display)  // display current value 
+		if (display)  // display current value
 		{
 			driver_put_string(row, col, attr, buf);
 			display = 0;
 		}
-		curkey = driver_key_cursor(row + insert, col + offset);  // get a keystroke 
-		if (curkey == 1047) // numeric slash  
+		curkey = driver_key_cursor(row + insert, col + offset);  // get a keystroke
+		if (curkey == 1047) // numeric slash
 		{
 			curkey = 47;
 		}
@@ -742,7 +742,7 @@ int input_field(
 			started = true;
 			break;
 		case IDK_BACKSPACE:
-		case 127:                              // backspace 
+		case 127:                              // backspace
 			assert(127 != curkey);
 			if (offset > 0)
 			{
@@ -756,7 +756,7 @@ int input_field(
 			started = true;
 			display = 1;
 			break;
-		case IDK_DELETE:                           // delete 
+		case IDK_DELETE:                           // delete
 			j = int(strlen(fld));
 			for (i = offset; i < j; ++i)
 			{
@@ -765,7 +765,7 @@ int input_field(
 			started = true;
 			display = 1;
 			break;
-		case IDK_INSERT:                           // insert 
+		case IDK_INSERT:                           // insert
 			insert ^= 0x8000;
 			started = true;
 			break;
@@ -787,15 +787,15 @@ int input_field(
 						goto inpfld_end;
 					}
 				}
-				break;                                // non alphanum char 
+				break;                                // non alphanum char
 			}
-			if (offset >= len)                // at end of field 
+			if (offset >= len)                // at end of field
 			{
 				break;
 			}
 			if (insert && started && strlen(fld) >= (size_t)len)
 			{
-				break;                                // insert & full 
+				break;                                // insert & full
 			}
 			if ((options & INPUTFIELD_NUMERIC)
 					&& (curkey < '0' || curkey > '9')
@@ -805,7 +805,7 @@ int input_field(
 				{
 					break;
 				}
-				// allow scientific notation, and specials "e" and "p" 
+				// allow scientific notation, and specials "e" and "p"
 				if (((curkey != 'e' && curkey != 'E') || offset >= 18)
 						&& ((curkey != 'p' && curkey != 'P') || offset != 0 )
 						&& curkey != '.')
@@ -813,7 +813,7 @@ int input_field(
 					break;
 				}
 			}
-			if (!started) // first char is data, zap field 
+			if (!started) // first char is data, zap field
 			{
 				fld[0] = 0;
 			}
@@ -831,8 +831,8 @@ int input_field(
 				fld[offset + 1] = 0;
 			}
 			fld[offset++] = (char)curkey;
-			// if "e" or "p" in first col make number e or pi 
-			if ((options & (INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER)) == INPUTFIELD_NUMERIC)  // floating point 
+			// if "e" or "p" in first col make number e or pi
+			if ((options & (INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER)) == INPUTFIELD_NUMERIC)  // floating point
 			{
 				double tmpd;
 				bool specialv = false;
@@ -866,11 +866,11 @@ inpfld_end:
 }
 
 int field_prompt(
-		char *hdg,						// heading, \n delimited lines 
-		char *instr,					// additional instructions or 0 
-		char *fld,						// the field itself 
-		int len,						// field length (declare as 1 larger for \0) 
-		int (*check_keystroke)(int key) // routine to check non data keys, or 0 
+		char *hdg,						// heading, \n delimited lines
+		char *instr,					// additional instructions or 0
+		char *fld,						// the field itself
+		int len,						// field length (declare as 1 larger for \0)
+		int (*check_keystroke)(int key) // routine to check non data keys, or 0
 		)
 {
 	char *charptr;
@@ -882,9 +882,9 @@ int field_prompt(
 	int i;
 	int j;
 	char buf[81];
-	help_title();                           // clear screen, display title 
-	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);     // init rest to background 
-	charptr = hdg;                         // count title lines, find widest 
+	help_title();                           // clear screen, display title
+	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);     // init rest to background
+	charptr = hdg;                         // count title lines, find widest
 	i = 0;
 	boxwidth = 0;
 	titlelines = 1;
@@ -904,13 +904,13 @@ int field_prompt(
 	{
 		boxwidth = len;
 	}
-	i = titlelines + 4;                    // total rows in box 
-	titlerow = (25 - i)/2;               // top row of it all when centered 
-	titlerow -= titlerow/4;              // higher is better if lots extra 
-	titlecol = (80 - boxwidth)/2;        // center the box 
+	i = titlelines + 4;                    // total rows in box
+	titlerow = (25 - i)/2;               // top row of it all when centered
+	titlerow -= titlerow/4;              // higher is better if lots extra
+	titlecol = (80 - boxwidth)/2;        // center the box
 	titlecol -= (90 - boxwidth)/20;
 	promptcol = titlecol - (boxwidth-len)/2;
-	j = titlecol;                          // add margin at each side of box 
+	j = titlecol;                          // add margin at each side of box
 	i = (82-boxwidth)/4;
 	if (i > 3)
 	{
@@ -918,15 +918,15 @@ int field_prompt(
 	}
 	j -= i;
 	boxwidth += i*2;
-	for (i = -1; i < titlelines + 3; ++i)    // draw empty box 
+	for (i = -1; i < titlelines + 3; ++i)    // draw empty box
 	{
 		driver_set_attr(titlerow + i, j, C_PROMPT_LO, boxwidth);
 	}
-	g_text_cbase = titlecol;                  // set left margin for driver_put_string 
-	driver_put_string(titlerow, 0, C_PROMPT_HI, hdg); // display heading 
+	g_text_cbase = titlecol;                  // set left margin for driver_put_string
+	driver_put_string(titlerow, 0, C_PROMPT_HI, hdg); // display heading
 	g_text_cbase = 0;
 	i = titlerow + titlelines + 4;
-	if (instr)  // display caller's instructions 
+	if (instr)  // display caller's instructions
 	{
 		charptr = instr;
 		j = -1;
@@ -941,7 +941,7 @@ int field_prompt(
 		}
 		put_string_center(i, 0, 80, C_PROMPT_BKGRD, buf);
 	}
-	else                                   // default instructions 
+	else                                   // default instructions
 	{
 		put_string_center(i, 0, 80, C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
 	}
@@ -992,7 +992,7 @@ int thinking(int options, char *msg)
 	}
 	count = 0;
 	driver_put_string(4, thinkcol, C_GENERAL_HI, wheel[thinkstate]);
-	driver_hide_text_cursor(); // turn off cursor 
+	driver_hide_text_cursor(); // turn off cursor
 	thinkstate = (thinkstate + 1) & 3;
 	return driver_key_pressed();
 }
@@ -1000,11 +1000,11 @@ int thinking(int options, char *msg)
 int check_video_mode_key(int k)
 {
 	int i;
-	// returns g_video_table entry number if the passed keystroke is a  
-	// function key currently assigned to a video mode, -1 otherwise 
-	if (k == 1400)              // special value from select_vid_mode  
+	// returns g_video_table entry number if the passed keystroke is a
+	// function key currently assigned to a video mode, -1 otherwise
+	if (k == 1400)              // special value from select_vid_mode
 	{
-		return MAXVIDEOMODES-1; // for last entry with no key assigned 
+		return MAXVIDEOMODES-1; // for last entry with no key assigned
 	}
 	if (k != 0)
 	{
@@ -1021,7 +1021,7 @@ int check_video_mode_key(int k)
 
 int check_vidmode_keyname(char const *kname)
 {
-	// returns key number for the passed keyname, 0 if not a keyname 
+	// returns key number for the passed keyname, 0 if not a keyname
 	int i;
 	int keyset;
 	keyset = 1058;

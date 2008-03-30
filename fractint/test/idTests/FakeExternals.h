@@ -348,8 +348,8 @@ public:
 	virtual void SetTempSqrXL(long value) 			{ throw not_implemented("SetTempSqrXL"); }
 	virtual long TempSqrYL() const					{ throw not_implemented("TempSqrYL"); }
 	virtual void SetTempSqrYL(long value) 			{ throw not_implemented("SetTempSqrYL"); }
-	virtual ComplexL TmpZL() const					{ throw not_implemented("TmpZL"); }
-	virtual void SetTmpZL(ComplexL value) 			{ throw not_implemented("SetTmpZL"); }
+	virtual ComplexL TempZL() const					{ throw not_implemented("TempZL"); }
+	virtual void SetTempZL(ComplexL value) 			{ throw not_implemented("SetTempZL"); }
 	virtual TrigFunction *Trig0L() const 			{ throw not_implemented("Trig0L"); }
 	virtual void SetTrig0L(TrigFunction *value)		{ throw not_implemented("SetTrig0L"); }
 	virtual TrigFunction *Trig1L() const 			{ throw not_implemented("Trig1L"); }

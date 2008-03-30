@@ -1,4 +1,4 @@
-// biginit.cpp - routines for bignumbers 
+// biginit.cpp - routines for bignumbers
 #include <string>
 
 #include <string.h>
@@ -20,7 +20,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 
-// globals 
+// globals
 int g_step_bn = 0;
 int g_bn_length = 0;
 int g_int_length = 0;
@@ -32,86 +32,86 @@ int g_bf_length = 0;
 int g_rbf_length = 0;
 int g_bf_decimals = 0;
 
-// used internally by bignum.c routines 
+// used internally by bignum.c routines
 static char s_storage[4096];
 static bn_t bnroot = 0;
-static bn_t stack_ptr = 0;			// memory allocator base after global variables 
+static bn_t stack_ptr = 0;			// memory allocator base after global variables
 bn_t bntmp1 = 0;
 bn_t bntmp2 = 0;
 bn_t bntmp3 = 0;
 bn_t bntmp4 = 0;
 bn_t bntmp5 = 0;
-bn_t bntmp6 = 0;						// g_r_length  
+bn_t bntmp6 = 0;						// g_r_length
 bn_t bntmpcpy1 = 0;
-bn_t bntmpcpy2 = 0;					// g_bn_length 
+bn_t bntmpcpy2 = 0;					// g_bn_length
 
-// used by other routines 
+// used by other routines
 bn_t bnxmin = 0;
 bn_t bnxmax = 0;
 bn_t bnymin = 0;
 bn_t bnymax = 0;
 bn_t bnx3rd = 0;
-bn_t bny3rd = 0;						// g_bn_length 
+bn_t bny3rd = 0;						// g_bn_length
 bn_t bnxdel = 0;
 bn_t bnydel = 0;
 bn_t bnxdel2 = 0;
 bn_t bnydel2 = 0;
-bn_t bnclosenuff = 0;				// g_bn_length 
+bn_t bnclosenuff = 0;				// g_bn_length
 bn_t bntmpsqrx = 0;
 bn_t bntmpsqry = 0;
-bn_t bntmp = 0;						// g_r_length  
+bn_t bntmp = 0;						// g_r_length
 ComplexBigNum g_old_z_bn = { 0, 0 };
 ComplexBigNum bnparm = { 0, 0 };
-ComplexBigNum bnsaved = { 0, 0 };		// g_bn_length 
-ComplexBigNum g_new_z_bn = { 0, 0 };		// g_r_length 
-bn_t bn_pi = 0;						// TAKES NO SPACE 
+ComplexBigNum bnsaved = { 0, 0 };		// g_bn_length
+ComplexBigNum g_new_z_bn = { 0, 0 };		// g_r_length
+bn_t bn_pi = 0;						// TAKES NO SPACE
 
 bf_t bftmp1 = 0;
 bf_t bftmp2 = 0;
 bf_t bftmp3 = 0;
 bf_t bftmp4 = 0;
 bf_t bftmp5 = 0;
-bf_t bftmp6 = 0;						// g_rbf_length + 2 
+bf_t bftmp6 = 0;						// g_rbf_length + 2
 bf_t bftmpcpy1 = 0;
-bf_t bftmpcpy2 = 0;					// g_rbf_length + 2 
+bf_t bftmpcpy2 = 0;					// g_rbf_length + 2
 bf_t bfxdel = 0;
 bf_t bfydel = 0;
 bf_t bfxdel2 = 0;
 bf_t bfydel2 = 0;
-bf_t bfclosenuff = 0;				// g_rbf_length + 2 
+bf_t bfclosenuff = 0;				// g_rbf_length + 2
 bf_t bftmpsqrx = 0;
-bf_t bftmpsqry = 0;					// g_rbf_length + 2 
-ComplexBigFloat bfparm = {0, 0};			// g_bf_length + 2 
-										// g_bf_length + 2 
-ComplexBigFloat bfsaved = {0, 0};		// g_old_z_bf,  g_new_z_bf, 
-										// g_bf_length + 2 
+bf_t bftmpsqry = 0;					// g_rbf_length + 2
+ComplexBigFloat bfparm = {0, 0};			// g_bf_length + 2
+										// g_bf_length + 2
+ComplexBigFloat bfsaved = {0, 0};		// g_old_z_bf,  g_new_z_bf,
+										// g_bf_length + 2
 ComplexBigFloat g_old_z_bf = {0, 0};
-ComplexBigFloat g_new_z_bf = {0, 0};			// g_rbf_length + 2 
-bf_t bf_pi = 0;						// TAKES NO SPACE 
-bf_t big_pi = 0;						// g_bf_length + 2 
+ComplexBigFloat g_new_z_bf = {0, 0};			// g_rbf_length + 2
+bf_t bf_pi = 0;						// TAKES NO SPACE
+bf_t big_pi = 0;						// g_bf_length + 2
 
-// for testing only 
+// for testing only
 
-// used by other routines 
+// used by other routines
 bf_t g_sx_min_bf = 0;
 bf_t g_sx_max_bf = 0;
 bf_t g_sy_min_bf = 0;
 bf_t g_sy_max_bf = 0;
 bf_t g_sx_3rd_bf = 0;
-bf_t g_sy_3rd_bf = 0;					// g_bf_length + 2 
-bf_t bfparms[10];						// (g_bf_length + 2)*10 
+bf_t g_sy_3rd_bf = 0;					// g_bf_length + 2
+bf_t bfparms[10];						// (g_bf_length + 2)*10
 bf_t bftmp = 0;
 
-bf_t bf10tmp = 0;					// dec + 4 
+bf_t bf10tmp = 0;					// dec + 4
 
 static int save_bf_vars();
 static int restore_bf_vars();
 
 /*********************************************************************/
-// given g_bn_length, calculate_bignum_lengths will calculate all the other lengths 
+// given g_bn_length, calculate_bignum_lengths will calculate all the other lengths
 void calculate_bignum_lengths()
 {
-	g_step_bn = 4;  // use 4 in all cases 
+	g_step_bn = 4;  // use 4 in all cases
 
 	if (g_bn_length % g_step_bn != 0)
 	{
@@ -121,17 +121,17 @@ void calculate_bignum_lengths()
 	g_r_length = g_bn_length + g_padding;
 
 	// This shiftfactor assumes non-full multiplications will be performed.
-	// Change to g_bn_length-g_int_length for full multiplications.              
+	// Change to g_bn_length-g_int_length for full multiplications.
 	g_shift_factor = g_padding - g_int_length;
 
-	g_bf_length = g_bn_length + g_step_bn; // one extra step for added precision 
+	g_bf_length = g_bn_length + g_step_bn; // one extra step for added precision
 	g_rbf_length = g_bf_length + g_padding;
 	g_bf_decimals = int((g_bf_length-2)*LOG10_256);
 }
 
 /************************************************************************/
-// intended only to be called from init_bf_dec() or init_bf_length().   
-// initialize bignumber global variables                                
+// intended only to be called from init_bf_dec() or init_bf_length().
+// initialize bignumber global variables
 
 long g_bn_max_stack = 0;
 long startstack = 0;
@@ -167,7 +167,7 @@ static big_t advance_ptr_rbf_length_plus_2(long &ptr)
 
 static void init_bf_2()
 {
-	save_bf_vars(); // copy corners values for conversion 
+	save_bf_vars(); // copy corners values for conversion
 
 	calculate_bignum_lengths();
 
@@ -183,13 +183,13 @@ static void init_bf_2()
 	else
 	{
 		alt = find_alternate_math(BIGFLT);
-		// 1 => maybe called from cmdfiles.c and g_fractal_type not set 
+		// 1 => maybe called from cmdfiles.c and g_fractal_type not set
 		g_bf_math = alt ? alt->math : BIGNUM;
 	}
 	g_float_flag = true;
 
-	// Now split up the memory among the pointers 
-	// internal pointers 
+	// Now split up the memory among the pointers
+	// internal pointers
 	long ptr = 0;
 	bntmp1     = advance_ptr_r_length(ptr);
 	bntmp2     = advance_ptr_r_length(ptr);
@@ -258,27 +258,27 @@ static void init_bf_2()
 	}
 	bf10tmp    = advance_ptr(ptr, g_bf_decimals + 4);
 
-	// ptr needs to be 16-bit aligned on some systems 
+	// ptr needs to be 16-bit aligned on some systems
 	ptr = (ptr + 1) & ~1;
 
 	stack_ptr  = bnroot + ptr;
 	startstack = ptr;
 
-	// max stack offset from bnroot 
+	// max stack offset from bnroot
 	maxstack = long(0x10000l-(g_bf_length + 2)*22);
 
-	// sanity check 
-	// leave room for NUMVARS variables allocated from stack 
-	// also leave room for the safe area at top of segment 
+	// sanity check
+	// leave room for NUMVARS variables allocated from stack
+	// also leave room for the safe area at top of segment
 	if (ptr + NUMVARS*(g_bf_length + 2) > maxstack)
 	{
 		stop_message(STOPMSG_NORMAL, str(boost::format("Requested precision of %d too high, aborting") % g_decimals));
 		goodbye();
 	}
 
-	// room for 6 corners + 6 save corners + 10 params at top of extraseg 
+	// room for 6 corners + 6 save corners + 10 params at top of extraseg
 	// this area is safe - use for variables that are used outside fractal
-	// generation - e.g. zoom box variables 
+	// generation - e.g. zoom box variables
 	ptr  = maxstack;
 	g_escape_time_state.m_grid_bf.x_min()     = advance_ptr_bf_length_plus_2(ptr);
 	g_escape_time_state.m_grid_bf.x_max()     = advance_ptr_bf_length_plus_2(ptr);
@@ -297,43 +297,43 @@ static void init_bf_2()
 	g_sy_max_bf    = advance_ptr_bf_length_plus_2(ptr);
 	g_sx_3rd_bf    = advance_ptr_bf_length_plus_2(ptr);
 	g_sy_3rd_bf    = advance_ptr_bf_length_plus_2(ptr);
-	// end safe vars 
+	// end safe vars
 
-	// good citizens initialize variables 
-	if (g_bf_save_len)  // leave save area 
+	// good citizens initialize variables
+	if (g_bf_save_len)  // leave save area
 	{
 		memset(bnroot + (g_bf_save_len + 2)*22, 0, (unsigned)(startstack-(g_bf_save_len + 2)*22));
 	}
-	else // first time through - nothing saved 
+	else // first time through - nothing saved
 	{
-		// high variables 
+		// high variables
 		memset(bnroot + maxstack, 0, (g_bf_length + 2)*22);
-		// low variables 
+		// low variables
 		memset(bnroot, 0, (unsigned)startstack);
 	}
 
 	restore_bf_vars();
 
-	// Initialize the value of pi.  Needed for trig functions. 
-	// init_big_pi(); 
-	// call to init_big_pi() has been moved to fractal setup routine 
-	// so as to use only when necessary. 
+	// Initialize the value of pi.  Needed for trig functions.
+	// init_big_pi();
+	// call to init_big_pi() has been moved to fractal setup routine
+	// so as to use only when necessary.
 }
 
 
 /**********************************************************/
-// save current corners and parameters to start of bnroot 
-// to preserve values across calls to init_bf()           
+// save current corners and parameters to start of bnroot
+// to preserve values across calls to init_bf()
 static int save_bf_vars()
 {
 	int ret;
 	unsigned int mem;
 	if (bnroot != 0)
 	{
-		mem = (g_bf_length + 2)*22;  // 6 corners + 6 save corners + 10 params 
+		mem = (g_bf_length + 2)*22;  // 6 corners + 6 save corners + 10 params
 		g_bf_save_len = g_bf_length;
 		memcpy(bnroot, g_escape_time_state.m_grid_bf.x_min(), mem);
-		// scrub old high area 
+		// scrub old high area
 		memset(g_escape_time_state.m_grid_bf.x_min(), 0, mem);
 		ret = 0;
 	}
@@ -346,7 +346,7 @@ static int save_bf_vars()
 }
 
 /************************************************************************/
-// copy current corners and parameters from save location               
+// copy current corners and parameters from save location
 static int restore_bf_vars()
 {
 	bf_t ptr;
@@ -374,13 +374,13 @@ static int restore_bf_vars()
 	convert_bf(g_sx_3rd_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
 	convert_bf(g_sy_3rd_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
 
-	// scrub save area 
+	// scrub save area
 	memset(bnroot, 0, (g_bf_save_len + 2)*22);
 	return 0;
 }
 
 /*******************************************/
-// free corners and parameters save memory 
+// free corners and parameters save memory
 void free_bf_vars()
 {
 	g_bf_save_len = 0;
@@ -398,9 +398,9 @@ void free_bf_vars()
 }
 
 /************************************************************************/
-// Memory allocator routines start here.                                
+// Memory allocator routines start here.
 /************************************************************************/
-// Allocates a bn_t variable on stack                                   
+// Allocates a bn_t variable on stack
 bn_t alloc_stack(size_t size)
 {
 	long stack_addr;
@@ -409,59 +409,59 @@ bn_t alloc_stack(size_t size)
 		stop_message(STOPMSG_NORMAL, "alloc_stack called with g_bf_math == 0");
 		return 0;
 	}
-	stack_addr = long(stack_ptr - bnroot + size); // part of bnroot 
+	stack_addr = long(stack_ptr - bnroot + size); // part of bnroot
 
 	if (stack_addr > maxstack)
 	{
 		stop_message(STOPMSG_NORMAL, "Aborting, Out of Bignum Stack Space");
 		goodbye();
 	}
-	// keep track of max ptr 
+	// keep track of max ptr
 	if (stack_addr > g_bn_max_stack)
 	{
 		g_bn_max_stack = stack_addr;
 	}
-	stack_ptr += size;   // increment stack pointer 
+	stack_ptr += size;   // increment stack pointer
 	return stack_ptr - size;
 }
 
 /************************************************************************/
-// Returns stack pointer offset so it can be saved.                            
+// Returns stack pointer offset so it can be saved.
 int save_stack()
 {
 	return int(stack_ptr - bnroot);
 }
 
 /************************************************************************/
-// Restores stack pointer, effectively freeing local variables          
-// allocated since save_stack()                                   
+// Restores stack pointer, effectively freeing local variables
+// allocated since save_stack()
 void restore_stack(int old_offset)
 {
 	stack_ptr  = bnroot + old_offset;
 }
 
 /************************************************************************/
-// Memory allocator routines end here.                                  
+// Memory allocator routines end here.
 /************************************************************************/
 
 /************************************************************************/
-// initialize bignumber global variables                                
-// dec = decimal places after decimal point                           
-// intl = bytes for integer part (1, 2, or 4)                         
+// initialize bignumber global variables
+// dec = decimal places after decimal point
+// intl = bytes for integer part (1, 2, or 4)
 
 void init_bf_dec(int dec)
 {
 	g_decimals = g_bf_digits ? g_bf_digits : dec;
-	if (g_externs.BailOut() > 10)    // arbitrary value 
+	if (g_externs.BailOut() > 10)    // arbitrary value
 	{
-		// using 2 doesn't gain much and requires another test 
+		// using 2 doesn't gain much and requires another test
 		g_int_length = 4;
 	}
 	else if (g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_FP || g_fractal_type == FRACTYPE_JULIA_Z_POWER_FP)
 	{
 		g_int_length = 2;
 	}
-	// the bailout tests need greater dynamic range 
+	// the bailout tests need greater dynamic range
 	else if (g_externs.BailOutTest() == BAILOUT_REAL || g_externs.BailOutTest() == BAILOUT_IMAGINARY || g_externs.BailOutTest() == BAILOUT_AND ||
 				g_externs.BailOutTest() == BAILOUT_MANHATTAN_R)
 	{
@@ -471,29 +471,29 @@ void init_bf_dec(int dec)
 	{
 		g_int_length = 1;
 	}
-	// conservative estimate 
-	g_bn_length = g_int_length + int(g_decimals/LOG10_256) + 1; // round up 
+	// conservative estimate
+	g_bn_length = g_int_length + int(g_decimals/LOG10_256) + 1; // round up
 	init_bf_2();
 }
 
 /************************************************************************/
-// initialize bignumber global variables                                
-// bnl = bignumber length                                             
-// intl = bytes for integer part (1, 2, or 4)                         
+// initialize bignumber global variables
+// bnl = bignumber length
+// intl = bytes for integer part (1, 2, or 4)
 void init_bf_length(int bnl)
 {
 	g_bn_length = bnl;
 
-	if (g_externs.BailOut() > 10)    // arbitrary value 
+	if (g_externs.BailOut() > 10)    // arbitrary value
 	{
-		// using 2 doesn't gain much and requires another test 
+		// using 2 doesn't gain much and requires another test
 		g_int_length = 4;
 	}
 	else if (g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_FP || g_fractal_type == FRACTYPE_JULIA_Z_POWER_FP)
 	{
 		g_int_length = 2;
 	}
-	// the bailout tests need greater dynamic range 
+	// the bailout tests need greater dynamic range
 	else if (g_externs.BailOutTest() == BAILOUT_REAL || g_externs.BailOutTest() == BAILOUT_IMAGINARY || g_externs.BailOutTest() == BAILOUT_AND ||
 				g_externs.BailOutTest() == BAILOUT_MANHATTAN_R)
 	{
@@ -503,7 +503,7 @@ void init_bf_length(int bnl)
 	{
 		g_int_length = 1;
 	}
-	// conservative estimate 
+	// conservative estimate
 	g_decimals = int((g_bn_length-g_int_length)*LOG10_256);
 	init_bf_2();
 }
@@ -511,8 +511,8 @@ void init_bf_length(int bnl)
 
 void init_big_pi()
 {
-	// What, don't you recognize the first 700 digits of pi, 
-	// in base 256, in reverse order?                        
+	// What, don't you recognize the first 700 digits of pi,
+	// in base 256, in reverse order?
 	int length;
 	int pi_offset;
 	static BYTE pi_table[] =
@@ -588,15 +588,15 @@ void init_big_pi()
 			0x09, 0xA4, 0x44, 0x73, 0x70, 0x03, 0x2E, 0x8A, 0x19, 0x13,
 			0xD3, 0x08, 0xA3, 0x85, 0x88, 0x6A, 0x3F, 0x24,
 			// .   0x03, 0x00, 0x00, 0x00
-			// <- up to g_int_length 4 -> 
-			// or bf_t int length of 2 + 2 byte exp  
+			// <- up to g_int_length 4 ->
+			// or bf_t int length of 2 + 2 byte exp
 			};
 
-	length = g_bf_length + 2; // 2 byte exp 
+	length = g_bf_length + 2; // 2 byte exp
 	pi_offset = sizeof pi_table - length;
 	memcpy(big_pi, pi_table + pi_offset, length);
 
-	// notice that bf_pi and bn_pi can share the same memory space 
+	// notice that bf_pi and bn_pi can share the same memory space
 	bf_pi = big_pi;
 	bn_pi = big_pi + (g_bf_length-2) - (g_bn_length-g_int_length);
 	return;

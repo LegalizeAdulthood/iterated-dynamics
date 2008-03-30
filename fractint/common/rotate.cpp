@@ -24,15 +24,15 @@
 #include "prompts2.h"
 #include "rotate.h"
 
-// routines in this module      
+// routines in this module
 
 static void pause_rotate();
 static void set_palette(BYTE start[3], BYTE finish[3]);
 static void set_palette2(BYTE start[3], BYTE finish[3]);
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3]);
 
-static bool s_paused;                      // rotate-is-paused flag 
-static BYTE Red[3]    = {COLOR_CHANNEL_MAX, 0, 0};     // for shifted-Fkeys 
+static bool s_paused;                      // rotate-is-paused flag
+static BYTE Red[3]    = {COLOR_CHANNEL_MAX, 0, 0};     // for shifted-Fkeys
 static BYTE Green[3]  = { 0,COLOR_CHANNEL_MAX, 0};
 static BYTE Blue[3]   = { 0, 0,COLOR_CHANNEL_MAX};
 static BYTE Black[3]  = { 0, 0, 0};
@@ -42,14 +42,14 @@ static BYTE Brown[3]  = {COLOR_CHANNEL_MAX/2,COLOR_CHANNEL_MAX/2, 0};
 
 static char mapmask[13] = {"*.map"};
 
-void rotate(int direction)      // rotate-the-palette routine 
+void rotate(int direction)      // rotate-the-palette routine
 {
-	static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; // (for Fkeys) 
+	static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; // (for Fkeys)
 
 #ifndef XFRACT
-	if (!g_.RealDAC())					// ??? no DAC to rotate! 
+	if (!g_.RealDAC())					// ??? no DAC to rotate!
 #else
-	if (!(g_.RealDAC() || g_fake_lut))		// ??? no DAC to rotate! 
+	if (!(g_.RealDAC() || g_fake_lut))		// ??? no DAC to rotate!
 #endif
 	{
 		driver_buzzer(BUZZER_ERROR);
@@ -58,26 +58,26 @@ void rotate(int direction)      // rotate-the-palette routine
 
 	HelpModeSaver saved_help(FIHELP_COLOR_CYCLING);
 
-	s_paused = false;						// not paused                   
-	int fkey = 0;							// no random coloring           
+	s_paused = false;						// not paused
+	int fkey = 0;							// no random coloring
 	int step = 1;
-	int oldstep = 1;						// single-step                  
+	int oldstep = 1;						// single-step
 	int fstep = 1;
-	int change_color = -1;					// no color (rgb) to change     
-	int change_direction = 0;				// no color direction to change 
-	int incr = 999;							// ready to randomize           
-	srand((unsigned) time(0));			// randomize things             
+	int change_color = -1;					// no color (rgb) to change
+	int change_direction = 0;				// no color direction to change
+	int incr = 999;							// ready to randomize
+	srand((unsigned) time(0));			// randomize things
 
-	if (direction == 0)  // firing up in paused mode?    
+	if (direction == 0)  // firing up in paused mode?
 	{
-		pause_rotate();                    // then force a pause           
-		direction = 1;                    // and set a rotate direction   
+		pause_rotate();                    // then force a pause
+		direction = 1;                    // and set a rotate direction
 	}
 
 	int rotate_max = (g_rotate_hi < g_colors) ? g_rotate_hi : g_colors-1;
 	int rotate_size = rotate_max - g_rotate_lo + 1;
-	int last = rotate_max;                   // last box that was filled     
-	int next = g_rotate_lo;                    // next box to be filled        
+	int last = rotate_max;                   // last box that was filled
+	int next = g_rotate_lo;                    // next box to be filled
 	if (direction < 0)
 	{
 		last = g_rotate_lo;
@@ -94,9 +94,9 @@ void rotate(int direction)      // rotate-the-palette routine
 				pause_rotate();
 			}
 		}
-		else while (!driver_key_pressed())  // rotate until key hit, at least once so step = oldstep ok 
+		else while (!driver_key_pressed())  // rotate until key hit, at least once so step = oldstep ok
 		{
-			if (fkey > 0)  // randomizing is on 
+			if (fkey > 0)  // randomizing is on
 			{
 				int fromred = 0;
 				int fromblue = 0;
@@ -115,9 +115,9 @@ void rotate(int direction)      // rotate-the-palette routine
 					{
 						jstep -= rotate_size;
 					}
-					if (++incr > fstep)  // time to randomize 
+					if (++incr > fstep)  // time to randomize
 					{
-						// TODO: revirew for case when COLOR_CHANNEL_MAX != 63 
+						// TODO: revirew for case when COLOR_CHANNEL_MAX != 63
 						incr = 1;
 						fstep = ((fsteps[fkey-1]* (rand15() >> 8)) >> 6) + 1;
 						fromred   = g_.DAC().Red(last);
@@ -127,7 +127,7 @@ void rotate(int direction)      // rotate-the-palette routine
 						togreen   = rand15() >> 9;
 						toblue    = rand15() >> 9;
 					}
-					// TODO: revirew for case when COLOR_CHANNEL_MAX != 63 
+					// TODO: revirew for case when COLOR_CHANNEL_MAX != 63
 					g_.DAC().Set(jstep,
 						BYTE(fromred   + (((tored    - fromred)*incr)/fstep)),
 						BYTE(fromgreen + (((togreen - fromgreen)*incr)/fstep)),
@@ -151,30 +151,30 @@ void rotate(int direction)      // rotate-the-palette routine
 				&& kbdchar != IDK_HOME
 				&& kbdchar != 'C'))
 		{
-			s_paused = false;                    // clear paused condition       
+			s_paused = false;                    // clear paused condition
 		}
 		switch (kbdchar)
 		{
-		case '+':                      // '+' means rotate forward     
-		case IDK_RIGHT_ARROW:              // RightArrow = rotate fwd      
+		case '+':                      // '+' means rotate forward
+		case IDK_RIGHT_ARROW:              // RightArrow = rotate fwd
 			fkey = 0;
 			direction = 1;
 			last = rotate_max;
 			next = g_rotate_lo;
 			incr = 999;
 			break;
-		case '-':                      // '-' means rotate backward    
-		case IDK_LEFT_ARROW:               // LeftArrow = rotate bkwd      
+		case '-':                      // '-' means rotate backward
+		case IDK_LEFT_ARROW:               // LeftArrow = rotate bkwd
 			fkey = 0;
 			direction = -1;
 			last = g_rotate_lo;
 			next = rotate_max;
 			incr = 999;
 			break;
-		case IDK_UP_ARROW:                 // UpArrow means speed up       
+		case IDK_UP_ARROW:                 // UpArrow means speed up
 			g_.IncreaseDACSleepCount();
 			break;
-		case IDK_DOWN_ARROW:               // DownArrow means slow down    
+		case IDK_DOWN_ARROW:               // DownArrow means slow down
 			g_.DecreaseDACSleepCount();
 			break;
 		case '1':
@@ -186,14 +186,14 @@ void rotate(int direction)      // rotate-the-palette routine
 		case '7':
 		case '8':
 		case '9':
-			step = kbdchar - '0';   // change step-size 
+			step = kbdchar - '0';   // change step-size
 			if (step > rotate_size)
 			{
 				step = rotate_size;
 			}
 			break;
-		case IDK_F1:                       // IDK_F1 - IDK_F10:                    
-		case IDK_F2:                       // select a shading factor      
+		case IDK_F1:                       // IDK_F1 - IDK_F10:
+		case IDK_F2:                       // select a shading factor
 		case IDK_F3:
 		case IDK_F4:
 		case IDK_F5:
@@ -222,25 +222,25 @@ void rotate(int direction)      // rotate-the-palette routine
 			fstep = 1;
 			incr = 999;
 			break;
-		case IDK_ENTER:                    // enter key: randomize all colors 
-		case IDK_ENTER_2:                  // also the Numeric-Keypad Enter 
+		case IDK_ENTER:                    // enter key: randomize all colors
+		case IDK_ENTER_2:                  // also the Numeric-Keypad Enter
 			fkey = rand15()/3277 + 1;
 			fstep = 1;
 			incr = 999;
 			oldstep = step;
 			step = rotate_size;
 			break;
-		case 'r':                      // color changes 
+		case 'r':                      // color changes
 			if (change_color    == -1)
 			{
 				change_color = 0;
 			}
-		case 'g':                      // color changes 
+		case 'g':                      // color changes
 			if (change_color    == -1)
 			{
 				change_color = 1;
 			}
-		case 'b':                      // color changes 
+		case 'b':                      // color changes
 			if (change_color    == -1)
 			{
 				change_color = 2;
@@ -249,17 +249,17 @@ void rotate(int direction)      // rotate-the-palette routine
 			{
 				change_direction = -1;
 			}
-		case 'R':                      // color changes 
+		case 'R':                      // color changes
 			if (change_color    == -1)
 			{
 				change_color = 0;
 			}
-		case 'G':                      // color changes 
+		case 'G':                      // color changes
 			if (change_color    == -1)
 			{
 				change_color = 1;
 			}
-		case 'B':                      // color changes 
+		case 'B':                      // color changes
 			if (driver_diskp())
 			{
 				break;
@@ -284,15 +284,15 @@ void rotate(int direction)      // rotate-the-palette routine
 					g_.DAC().SetChannel(i, change_color, 0);
 				}
 			}
-			change_color = -1;				// clear flags for next time 
+			change_color = -1;				// clear flags for next time
 			change_direction = 0;
-			s_paused = false;				// clear any pause 
-		case ' ':							// use the spacebar as a "pause" toggle 
-		case 'c':							// for completeness' sake, the 'c' too 
+			s_paused = false;				// clear any pause
+		case ' ':							// use the spacebar as a "pause" toggle
+		case 'c':							// for completeness' sake, the 'c' too
 		case 'C':
-			pause_rotate();					// pause 
+			pause_rotate();					// pause
 			break;
-		case '>':							// single-step 
+		case '>':							// single-step
 		case '.':
 		case '<':
 		case ',':
@@ -314,57 +314,57 @@ void rotate(int direction)      // rotate-the-palette routine
 			spin_dac(direction, 1);
 			if (! s_paused)
 			{
-				pause_rotate();				// pause 
+				pause_rotate();				// pause
 			}
 			break;
 
-		case 'd':							// load colors from "default.map" 
+		case 'd':							// load colors from "default.map"
 		case 'D':
 			if (validate_luts("default"))
 			{
 				break;
 			}
-			fkey = 0;                   // disable random generation 
-			pause_rotate();              // update palette and pause 
+			fkey = 0;                   // disable random generation
+			pause_rotate();              // update palette and pause
 			break;
 
-		case 'a':                      // load colors from "altern.map" 
+		case 'a':                      // load colors from "altern.map"
 		case 'A':
 			if (validate_luts("altern"))
 			{
 				break;
 			}
-			fkey = 0;                   // disable random generation 
-			pause_rotate();              // update palette and pause 
+			fkey = 0;                   // disable random generation
+			pause_rotate();              // update palette and pause
 			break;
 
-		case 'l':                      // load colors from a specified map 
-#ifndef XFRACT // L is used for IDK_RIGHT_ARROW in Unix keyboard mapping 
+		case 'l':                      // load colors from a specified map
+#ifndef XFRACT // L is used for IDK_RIGHT_ARROW in Unix keyboard mapping
 		case 'L':
 #endif
 			load_palette();
-			fkey = 0;                   // disable random generation 
-			pause_rotate();              // update palette and pause 
+			fkey = 0;                   // disable random generation
+			pause_rotate();              // update palette and pause
 			break;
 
-		case 's':                      // save the palette 
+		case 's':                      // save the palette
 		case 'S':
 			save_palette();
-			fkey = 0;                   // disable random generation 
-			pause_rotate();              // update palette and pause 
+			fkey = 0;                   // disable random generation
+			pause_rotate();              // update palette and pause
 			break;
 
-		case IDK_ESC:                      // escape 
-			more = false;                   // time to bail out 
+		case IDK_ESC:                      // escape
+			more = false;                   // time to bail out
 			break;
 
-		case IDK_HOME:                     // restore palette 
+		case IDK_HOME:                     // restore palette
 			g_.PopDAC();
-			pause_rotate();              // pause 
+			pause_rotate();              // pause
 			break;
 
-		default:						// maybe a new palette 
-			fkey = 0;                   // disable random generation 
+		default:						// maybe a new palette
+			fkey = 0;                   // disable random generation
 			switch (kbdchar)
 			{
 			case IDK_SF1:		set_palette(Black, White);			break;
@@ -398,50 +398,50 @@ void rotate(int direction)      // rotate-the-palette routine
 			case IDK_ALT_F9:	set_palette3(Green, Green, White);	break;
 			case IDK_ALT_F10:	set_palette3(Red, Blue, White);		break;
 			}
-			pause_rotate();  // update palette and pause 
+			pause_rotate();  // update palette and pause
 			break;
 		}
 	}
 }
 
-static void pause_rotate()               // pause-the-rotate routine 
+static void pause_rotate()               // pause-the-rotate routine
 {
-	// saved dac-count value goes here 
-	if (s_paused)                          // if already paused , just clear 
+	// saved dac-count value goes here
+	if (s_paused)                          // if already paused , just clear
 	{
 		s_paused = false;
 		return;
 	}
 
-	// set border, wait for a key 
+	// set border, wait for a key
 	int olddaccount = g_.DACSleepCount();
 	BYTE olddac0 = g_.DAC().Red(0);
 	BYTE olddac1 = g_.DAC().Green(0);
 	BYTE olddac2 = g_.DAC().Blue(0);
 	g_.SetDACSleepCount(256);
 	g_.DAC().Set(0, 3*COLOR_CHANNEL_MAX/4, 3*COLOR_CHANNEL_MAX/4, 3*COLOR_CHANNEL_MAX/4);
-	load_dac();                     // show white border 
+	load_dac();                     // show white border
 	if (driver_diskp())
 	{
 		disk_video_status(100, " Paused in \"color cycling\" mode ");
 	}
-	driver_wait_key_pressed(0);                // wait for any key 
+	driver_wait_key_pressed(0);                // wait for any key
 
 	if (driver_diskp())
 	{
 		disk_video_status(0, "");
 	}
 	g_.DAC().Set(0, olddac0, olddac1, olddac2);
-	load_dac();                     // show black border 
+	load_dac();                     // show black border
 	g_.SetDACSleepCount(olddaccount);
 	s_paused = true;
 }
 
-// TODO: review case when COLOR_CHANNEL_MAX != 63 
+// TODO: review case when COLOR_CHANNEL_MAX != 63
 static void set_palette(BYTE start[3], BYTE finish[3])
 {
 	g_.DAC().Set(0, 0, 0, 0);
-	for (int i = 1; i <= 255; i++)                  // fill the palette     
+	for (int i = 1; i <= 255; i++)                  // fill the palette
 	{
 		for (int j = 0; j < 3; j++)
 		{
@@ -450,7 +450,7 @@ static void set_palette(BYTE start[3], BYTE finish[3])
 	}
 }
 
-// TODO: review case when COLOR_CHANNEL_MAX != 63 
+// TODO: review case when COLOR_CHANNEL_MAX != 63
 static void set_palette2(BYTE start[3], BYTE finish[3])
 {
 	g_.DAC().Set(0, 0, 0, 0);
@@ -464,7 +464,7 @@ static void set_palette2(BYTE start[3], BYTE finish[3])
 	}
 }
 
-// TODO: review case when COLOR_CHANNEL_MAX != 63 
+// TODO: review case when COLOR_CHANNEL_MAX != 63
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 {
 	g_.DAC().Set(0, 0, 0, 0);
@@ -512,7 +512,7 @@ void save_palette()
 	{
 		for (int i = 0; i < g_colors; i++)
 		{
-			// TODO: review case when COLOR_CHANNEL_MAX != 63 
+			// TODO: review case when COLOR_CHANNEL_MAX != 63
 			dac_file << boost::format("%3d %3d %3d\n")
 				% (g_.DAC().Red(i) << 2)
 				% (g_.DAC().Green(i) << 2)

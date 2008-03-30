@@ -117,7 +117,7 @@ void Introduction::GetCredits()
 	m_credits[i++] = '\0';
 
 	m_num_authors = 0;
-	m_authors[m_num_authors] = 0;              // find the start of each credit-line 
+	m_authors[m_num_authors] = 0;              // find the start of each credit-line
 	for (i = 0; m_credits[i] != 0; i++)
 	{
 		if (m_credits[i] == 10)
@@ -148,8 +148,8 @@ void Introduction::PaintScreen()
 	driver_set_attr(m_top_row, 0, C_CONTRIB, (21-END_MAIN_AUTHOR)*80);
 	m_current_author = m_bottom_row - m_top_row;
 	srand((unsigned int) clock_ticks());
-	int j = rand() % (m_num_authors - m_current_author); // first to use 
-	m_current_author += j; // last to use 
+	int j = rand() % (m_num_authors - m_current_author); // first to use
+	m_current_author += j; // last to use
 
 	char oldchar = m_credits[m_authors[m_current_author + 1]];
 	m_credits[m_authors[m_current_author + 1]] = 0;
@@ -163,8 +163,8 @@ void Introduction::PaintScreen()
 
 void Introduction::Show()
 {
-	g_timer_start -= clock_ticks();                // "time out" during help 
-	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);                     // de-activate full mouse checking 
+	g_timer_start -= clock_ticks();                // "time out" during help
+	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);                     // de-activate full mouse checking
 
 	GetCredits();
 
@@ -178,7 +178,7 @@ void Introduction::Show()
 
 bool Introduction::ProcessWaitingKey(int key)
 {
-	// spacebar pauses 
+	// spacebar pauses
 	if (IDK_SPACE == key)
 	{
 		driver_get_key();
@@ -216,7 +216,7 @@ bool Introduction::ProcessIdle()
 	driver_put_string(m_bottom_row, 0, C_CONTRIB, &m_credits[m_authors[m_current_author]]);
 	driver_set_attr(m_bottom_row, 0, C_CONTRIB, 80);
 	m_credits[m_authors[m_current_author + 1]] = oldchar;
-	driver_hide_text_cursor(); // turn it off 
+	driver_hide_text_cursor(); // turn it off
 	return false;
 }
 

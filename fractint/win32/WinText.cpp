@@ -158,7 +158,7 @@ WinText::WinText() :
 	}
 }
 
-// EGA/VGA 16-color palette (which doesn't match Windows palette exactly) 
+// EGA/VGA 16-color palette (which doesn't match Windows palette exactly)
 /*
 COLORREF wintext_color[] =
 {
@@ -180,7 +180,7 @@ COLORREF wintext_color[] =
 	RGB(255, 255, 255)
 };
 */
-// 16-color Windows Palette 
+// 16-color Windows Palette
 
 static COLORREF wintext_color[] =
 {
@@ -192,7 +192,7 @@ static COLORREF wintext_color[] =
 	RGB(128, 0, 128),
 	RGB(128, 128, 0),
 	RGB(192, 192, 192),
-// RGB(128, 128, 128),  This looks lousy - make it black 
+// RGB(128, 128, 128),  This looks lousy - make it black
 	RGB(0, 0, 0),
 	RGB(0, 0, 255),
 	RGB(0, 255, 0),
@@ -251,7 +251,7 @@ BOOL WinText::initialize(HINSTANCE hInstance, HWND hWndParent, LPCSTR titletext)
 		return_value = ::RegisterClass(&wc);
 	}
 
-	// set up the font characteristics 
+	// set up the font characteristics
 	m_char_font = OEM_FIXED_FONT;
 	m_font = static_cast<HFONT>(::GetStockObject(m_char_font));
 	hDC = ::GetDC(hWndParent);
@@ -264,12 +264,12 @@ BOOL WinText::initialize(HINSTANCE hInstance, HWND hWndParent, LPCSTR titletext)
 	m_char_xchars = WINTEXT_MAX_COL;
 	m_char_ychars = WINTEXT_MAX_ROW;
 
-	// maximum screen width 
+	// maximum screen width
 	m_max_width = m_char_xchars*m_char_width;
-	// maximum screen height 
+	// maximum screen height
 	m_max_height = m_char_ychars*m_char_height;
 
-	// set up the font and caret information 
+	// set up the font and caret information
 	for (int i = 0; i < 3; i++)
 	{
 		size_t count = NUM_OF(m_cursor_pattern[0])*sizeof(m_cursor_pattern[0][0]);
@@ -302,11 +302,11 @@ void WinText::destroy()
 
 	ODS("wintext_destroy");
 
-	if (m_text_mode == 2)  // text is still active! 
+	if (m_text_mode == 2)  // text is still active!
 	{
 		textoff();
 	}
-	if (m_text_mode != 1)  // not in the right mode 
+	if (m_text_mode != 1)  // not in the right mode
 	{
 		return;
 	}
@@ -327,12 +327,12 @@ void WinText::create(HWND parent)
 {
 	ODS("wintext_create");
 
-	if (m_text_mode != 1)  // not in the right mode 
+	if (m_text_mode != 1)  // not in the right mode
 	{
 		return;
 	}
 
-	// initialize the cursor 
+	// initialize the cursor
 	m_cursor_x    = 0;
 	m_cursor_y    = 0;
 	m_cursor_type = 0;
@@ -353,8 +353,8 @@ void WinText::create(HWND parent)
 	HWND hWnd = ::CreateWindow(s_window_class,
 		m_title_text,
 		(0 == m_parent_window) ? WS_OVERLAPPEDWINDOW : WS_CHILD,
-		CW_USEDEFAULT,               // default horizontal position 
-		CW_USEDEFAULT,               // default vertical position 
+		CW_USEDEFAULT,               // default horizontal position
+		CW_USEDEFAULT,               // default vertical position
 		m_max_width,
 		m_max_height,
 		m_parent_window,
@@ -363,7 +363,7 @@ void WinText::create(HWND parent)
 		0);
 	assert(hWnd);
 
-	// squirrel away a global copy of 'hWnd' for later 
+	// squirrel away a global copy of 'hWnd' for later
 	m_window = hWnd;
 
 	m_text_mode = 2;
@@ -382,7 +382,7 @@ int WinText::textoff()
 {
 	ODS("wintext_textoff");
 	m_alt_f4_hit = 0;
-	if (m_text_mode != 2)  // not in the right mode 
+	if (m_text_mode != 2)  // not in the right mode
 	{
 		return 0;
 	}
@@ -401,8 +401,8 @@ void WinText::OnClose(HWND window)
 void WinText::OnSetFocus(HWND window, HWND old_focus)
 {
 	ODS("wintext_OnSetFocus");
-	// get focus - display caret 
-	// create caret & display 
+	// get focus - display caret
+	// create caret & display
 	if (s_me->m_showing_cursor)
 	{
 		s_me->m_cursor_owned = 1;
@@ -414,7 +414,7 @@ void WinText::OnSetFocus(HWND window, HWND old_focus)
 
 void WinText::OnKillFocus(HWND window, HWND old_focus)
 {
-	// kill focus - hide caret 
+	// kill focus - hide caret
 	ODS("wintext_OnKillFocus");
 	if (s_me->m_showing_cursor)
 	{
@@ -439,7 +439,7 @@ void WinText::OnPaint(HWND window)
 	PAINTSTRUCT ps;
 	HDC hDC = ::BeginPaint(window, &ps);
 
-	// the routine below handles *all* window updates 
+	// the routine below handles *all* window updates
 	int x_min = ps.rcPaint.left/s_me->m_char_width;
 	int x_max = (ps.rcPaint.right + s_me->m_char_width - 1)/s_me->m_char_width;
 	int y_min = ps.rcPaint.top/s_me->m_char_height;
@@ -479,7 +479,7 @@ LRESULT CALLBACK WinText::proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 	{
 		s_me->m_window = hWnd;
 	}
-	else if (hWnd != s_me->m_window)  // ??? not the text-mode window! 
+	else if (hWnd != s_me->m_window)  // ??? not the text-mode window!
 	{
 		return ::DefWindowProc(hWnd, message, wParam, lParam);
 	}
@@ -578,8 +578,8 @@ void WinText::scroll_up(int top, int bot)
 */
 
 void WinText::paintscreen(
-	int x_min,       // update this rectangular section 
-	int x_max,       // of the 'screen'                 
+	int x_min,       // update this rectangular section
+	int x_max,       // of the 'screen'
 	int y_min,
 	int y_max)
 {
@@ -591,12 +591,12 @@ void WinText::paintscreen(
 
 	ODS("wintext_paintscreen");
 
-	if (m_text_mode != 2)  // not in the right mode 
+	if (m_text_mode != 2)  // not in the right mode
 	{
 		return;
 	}
 
-	// first time through?  Initialize the 'screen' 
+	// first time through?  Initialize the 'screen'
 	if (m_buffer_init == 0)
 	{
 		m_buffer_init = 1;
@@ -696,7 +696,7 @@ void WinText::cursor(int xpos, int ypos, int m_cursor_type)
 	int x, y;
 	ODS("wintext_cursor");
 
-	if (m_text_mode != 2)  // not in the right mode 
+	if (m_text_mode != 2)  // not in the right mode
 	{
 		return;
 	}

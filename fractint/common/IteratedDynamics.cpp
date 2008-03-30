@@ -8,7 +8,7 @@
 #include <string.h>
 #include <time.h>
 #include <signal.h>
-// for getcwd() 
+// for getcwd()
 #if defined(LINUX)
 #include <unistd.h>
 #endif
@@ -56,7 +56,7 @@ static std::string null_string(char const *ptr)
 	return !ptr ? "" : ptr;
 }
 
-// Do nothing if math error 
+// Do nothing if math error
 static Externals *s_fpu_error_externs = 0;
 
 static void my_floating_point_err(int sig)
@@ -138,14 +138,14 @@ void IteratedDynamicsImpl::Initialize()
 	}
 	_externs.SetFractDir2(SOURCE_DIR);
 
-	// this traps non-math library floating point errors 
+	// this traps non-math library floating point errors
 	s_fpu_error_externs = &_externs;
 	_app.signal(SIGFPE, my_floating_point_err);
 
 	_externs.SetOverflow(false);
 	_app.InitMemory();
 
-	// let drivers add their video modes 
+	// let drivers add their video modes
 	if (!_app.open_drivers(_argc, _argv))
 	{
 		_app.init_failure("Sorry, I couldn't find any working video drivers for your system\n");
@@ -165,7 +165,7 @@ void IteratedDynamicsImpl::ImageStart()
 
 	if (_externs.ShowFile() != SHOWFILE_PENDING)
 	{
-		if (_externs.CalculationStatus() > CALCSTAT_PARAMS_CHANGED)              // goto imagestart implies re-calc 
+		if (_externs.CalculationStatus() > CALCSTAT_PARAMS_CHANGED)              // goto imagestart implies re-calc
 		{
 			_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		}
@@ -173,40 +173,40 @@ void IteratedDynamicsImpl::ImageStart()
 
 	if (!_externs.InitializeBatch())
 	{
-		_driver->set_mouse_mode(-IDK_PAGE_UP);           // just mouse left button, == pgup 
+		_driver->set_mouse_mode(-IDK_PAGE_UP);           // just mouse left button, == pgup
 	}
 
 	_externs.SetCycleLimit(_externs.InitialCycleLimit()); // default cycle limit
-	_g.SetAdapter(_g.InitialVideoMode());                  // set the video adapter up 
-	_g.SetInitialVideoModeNone();                       // (once)                   
+	_g.SetAdapter(_g.InitialVideoMode());                  // set the video adapter up
+	_g.SetInitialVideoModeNone();                       // (once)
 
-	while (_g.Adapter() < 0)                // cycle through instructions 
+	while (_g.Adapter() < 0)                // cycle through instructions
 	{
-		if (_externs.InitializeBatch())                          // batch, nothing to do 
+		if (_externs.InitializeBatch())                          // batch, nothing to do
 		{
-			_externs.SetInitializeBatch(INITBATCH_BAILOUT_INTERRUPTED); // exit with error condition set 
+			_externs.SetInitializeBatch(INITBATCH_BAILOUT_INTERRUPTED); // exit with error condition set
 			_app.goodbye();
 		}
 		int kbdchar = _app.main_menu(false);
-		if (kbdchar == IDK_INSERT) // restart pgm on Insert Key  
+		if (kbdchar == IDK_INSERT) // restart pgm on Insert Key
 		{
 			_state = APPSTATE_RESTART;
 			return;
 		}
-		if (kbdchar == IDK_DELETE)                    // select video mode list 
+		if (kbdchar == IDK_DELETE)                    // select video mode list
 		{
 			kbdchar = _app.select_video_mode(-1);
 		}
 		_g.SetAdapter(_app.check_video_mode_key(kbdchar));
 		if (_g.Adapter() >= 0)
 		{
-			break;                                 // got a video mode now 
+			break;                                 // got a video mode now
 		}
 		if ('A' <= kbdchar && kbdchar <= 'Z')
 		{
 			kbdchar = tolower(kbdchar);
 		}
-		if (kbdchar == 'd')  // shell to DOS 
+		if (kbdchar == 'd')  // shell to DOS
 		{
 			_driver->set_clear();
 			_driver->shell();
@@ -215,9 +215,9 @@ void IteratedDynamicsImpl::ImageStart()
 		}
 
 #ifndef XFRACT
-		if (kbdchar == '@' || kbdchar == '2')  // execute commands 
+		if (kbdchar == '@' || kbdchar == '2')  // execute commands
 #else
-		if (kbdchar == IDK_F2 || kbdchar == '@')  // We mapped @ to F2 
+		if (kbdchar == IDK_F2 || kbdchar == '@')  // We mapped @ to F2
 #endif
 		{
 			if ((_app.get_commands() & COMMANDRESULT_3D_YES) == 0)
@@ -225,7 +225,7 @@ void IteratedDynamicsImpl::ImageStart()
 				_state = APPSTATE_IMAGE_START;
 				return;
 			}
-			kbdchar = '3';                         // 3d=y so fall thru '3' code 
+			kbdchar = '3';                         // 3d=y so fall thru '3' code
 		}
 #ifndef XFRACT
 		if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#')
@@ -240,39 +240,39 @@ void IteratedDynamicsImpl::ImageStart()
 			}
 			if (_externs.ColorPreloaded())
 			{
-				_g.PushDAC();     // save in case colors= present 
+				_g.PushDAC();     // save in case colors= present
 			}
-			_driver->set_for_text(); // switch to text mode 
+			_driver->set_for_text(); // switch to text mode
 			_externs.SetShowFile(SHOWFILE_CANCELLED);
 			_state = APPSTATE_RESTORE_START;
 			return;
 		}
-		if (kbdchar == 't')  // set fractal type 
+		if (kbdchar == 't')  // set fractal type
 		{
 			_externs.SetJulibrot(false);
 			_app.get_fractal_type();
 			_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == 'x')  // generic toggle switch 
+		if (kbdchar == 'x')  // generic toggle switch
 		{
 			_app.get_toggles();
 			_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == 'y')  // generic toggle switch 
+		if (kbdchar == 'y')  // generic toggle switch
 		{
 			_app.get_toggles2();
 			_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == 'z')  // type specific parms 
+		if (kbdchar == 'z')  // type specific parms
 		{
 			_app.get_fractal_parameters(true);
 			_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == 'v')  // view parameters 
+		if (kbdchar == 'v')  // view parameters
 		{
 			_app.get_view_params();
 			_state = APPSTATE_IMAGE_START;
@@ -290,30 +290,30 @@ void IteratedDynamicsImpl::ImageStart()
 			_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == 'f')  // floating pt toggle 
+		if (kbdchar == 'f')  // floating pt toggle
 		{
 			_externs.SetUserFloatFlag(_externs.UserFloatFlag());
 			_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == 'i')  // set 3d fractal parms 
+		if (kbdchar == 'i')  // set 3d fractal parms
 		{
-			_app.get_fractal_3d_parameters(); // get the parameters 
+			_app.get_fractal_3d_parameters(); // get the parameters
 			_state = APPSTATE_IMAGE_START;
 			return;
 		}
 		if (kbdchar == 'g')
 		{
-			_app.get_command_string(); // get command string 
+			_app.get_command_string(); // get command string
 			_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		// buzzer(2); */                          /* unrecognized key 
+		// buzzer(2); */                          /* unrecognized key
 	}
 
-	_externs.SetZoomOff(true);			// zooming is enabled 
-	_app.set_help_mode(FIHELP_MAIN);         // now use this help mode 
-	_resumeFlag = false;  // allows taking goto inside big_while_loop() 
+	_externs.SetZoomOff(true);			// zooming is enabled
+	_app.set_help_mode(FIHELP_MAIN);         // now use this help mode
+	_resumeFlag = false;  // allows taking goto inside big_while_loop()
 
 	_state = APPSTATE_RESUME_LOOP;
 }
@@ -323,7 +323,7 @@ void IteratedDynamicsImpl::Restart()
 	_externs.Browse().Restart();
 	_externs.Browse().SetSubImages(true);
 	_externs.Browse().SetName("");
-	_externs.SetNameStackPtr(-1); // init loaded files stack 
+	_externs.SetNameStackPtr(-1); // init loaded files stack
 
 	_externs.SetEvolvingFlags(EVOLVE_NONE);
 	_externs.SetParameterRangeX(4);
@@ -340,32 +340,32 @@ void IteratedDynamicsImpl::Restart()
 	_externs.SetThisGenerationRandomSeed(unsigned int(_app.clock_ticks()));
 	_app.srand(_externs.ThisGenerationRandomSeed());
 	_externs.SetStartShowOrbit(false);
-	_externs.SetShowDot(-1); // turn off g_show_dot if entered with <g> command 
-	_externs.SetCalculationStatus(CALCSTAT_NO_FRACTAL);                    // no active fractal image 
+	_externs.SetShowDot(-1); // turn off g_show_dot if entered with <g> command
+	_externs.SetCalculationStatus(CALCSTAT_NO_FRACTAL);                    // no active fractal image
 
-	_app.command_files(_argc, _argv);         // process the command-line 
-	_app.pause_error(PAUSE_ERROR_NO_BATCH); // pause for error msg if not batch 
-	_app.init_msg("", 0, 0);  // this causes _driver->get_key if init_msg called on runup 
+	_app.command_files(_argc, _argv);         // process the command-line
+	_app.pause_error(PAUSE_ERROR_NO_BATCH); // pause for error msg if not batch
+	_app.init_msg("", 0, 0);  // this causes _driver->get_key if init_msg called on runup
 
 	_app.history_allocate();
 
-	if (DEBUGMODE_ABORT_SAVENAME == _externs.DebugMode() && _externs.InitializeBatch() == INITBATCH_NORMAL)   // abort if savename already exists 
+	if (DEBUGMODE_ABORT_SAVENAME == _externs.DebugMode() && _externs.InitializeBatch() == INITBATCH_NORMAL)   // abort if savename already exists
 	{
 		_app.check_same_name();
 	}
 	_driver->window();
-	_g.PushDAC();      // save in case colors= present 
+	_g.PushDAC();      // save in case colors= present
 
-	_driver->set_for_text();					// switch to text mode 
-	_g.SetSaveDAC(SAVEDAC_NO);					// don't save the VGA DAC 
+	_driver->set_for_text();					// switch to text mode
+	_g.SetSaveDAC(SAVEDAC_NO);					// don't save the VGA DAC
 
 	_externs.SetColors(256);
-	_externs.SetMaxInputCounter(80);			// check the keyboard this often 
+	_externs.SetMaxInputCounter(80);			// check the keyboard this often
 
 	if ((_externs.ShowFile() != SHOWFILE_PENDING) && _g.InitialVideoMode() < 0)
 	{
 		// TODO: refactor to IInputContext
-		_app.intro();                          // display the credits screen 
+		_app.intro();                          // display the credits screen
 		if (_driver->key_pressed() == IDK_ESC)
 		{
 			_driver->get_key();
@@ -388,12 +388,12 @@ void IteratedDynamicsImpl::RestoreStart()
 {
 	if (_externs.ColorPreloaded())
 	{
-		_g.PopDAC();   // restore in case colors= present 
+		_g.PopDAC();   // restore in case colors= present
 	}
 
-	_driver->set_mouse_mode(LOOK_MOUSE_NONE);			// ignore mouse 
+	_driver->set_mouse_mode(LOOK_MOUSE_NONE);			// ignore mouse
 
-	// image is to be loaded 
+	// image is to be loaded
 	while (_externs.ShowFile() == SHOWFILE_PENDING || _externs.ShowFile() == SHOWFILE_CANCELLED)
 	{
 		char *hdg;
@@ -418,12 +418,12 @@ void IteratedDynamicsImpl::RestoreStart()
 			if (_externs.ShowFile() == SHOWFILE_CANCELLED
 				&& _app.get_a_filename(hdg, _externs.GIFMask(), _externs.ReadName()) < 0)
 			{
-				_externs.SetShowFile(SHOWFILE_DONE);               // cancelled 
+				_externs.SetShowFile(SHOWFILE_DONE);               // cancelled
 				_g.SetInitialVideoModeNone();
 				break;
 			}
 
-			_externs.SetNameStackPtr(0); // 'r' reads first filename for browsing 
+			_externs.SetNameStackPtr(0); // 'r' reads first filename for browsing
 			_externs.SetFileNameStackTop(_externs.Browse().Name());
 		}
 
@@ -438,22 +438,22 @@ void IteratedDynamicsImpl::RestoreStart()
 			_driver->set_for_text();
 			_screenStacked = false;
 		}
-		if (_app.read_overlay() == 0)       // read hdr, get video mode 
+		if (_app.read_overlay() == 0)       // read hdr, get video mode
 		{
-			break;                      // got it, exit 
+			break;                      // got it, exit
 		}
 		_externs.SetShowFile(_externs.Browse().Browsing() ? SHOWFILE_DONE : SHOWFILE_CANCELLED);
 	}
 
-	_app.set_help_mode(FIHELP_MENU);                 // now use this help mode 
+	_app.set_help_mode(FIHELP_MENU);                 // now use this help mode
 	_externs.SetTabDisplayEnabled(true);
-	_driver->set_mouse_mode(LOOK_MOUSE_NONE);                     // ignore mouse 
+	_driver->set_mouse_mode(LOOK_MOUSE_NONE);                     // ignore mouse
 
-	if (((_externs.Overlay3D() && !_externs.InitializeBatch()) || _screenStacked) && _g.InitialVideoMode() < 0)        // overlay command failed 
+	if (((_externs.Overlay3D() && !_externs.InitializeBatch()) || _screenStacked) && _g.InitialVideoMode() < 0)        // overlay command failed
 	{
-		_driver->unstack_screen();                  // restore the graphics screen 
+		_driver->unstack_screen();                  // restore the graphics screen
 		_screenStacked = false;
-		_externs.SetOverlay3D(0);					// forget overlays 
+		_externs.SetOverlay3D(0);					// forget overlays
 		_externs.SetDisplay3D(DISPLAY3D_NONE);
 		if (_externs.CalculationStatus() == CALCSTAT_NON_RESUMABLE)
 		{
@@ -463,7 +463,7 @@ void IteratedDynamicsImpl::RestoreStart()
 		_state = APPSTATE_RESUME_LOOP;
 	}
 
-	_g.SetSaveDAC(SAVEDAC_NO);                         // don't save the VGA DAC 
+	_g.SetSaveDAC(SAVEDAC_NO);                         // don't save the VGA DAC
 	_state = APPSTATE_IMAGE_START;
 }
 

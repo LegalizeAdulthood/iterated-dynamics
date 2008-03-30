@@ -139,7 +139,7 @@ struct LSystemGrammar : public grammar<LSystemGrammar>
 			file = *entry >> end_p;
 
 			entry = (id >> body)[&AssignEntry];
-			
+
 			id = lexeme_d[+(print_p - blank_p - eol_p - '{')][&AssignId];
 
 			body = '{' >> eol_p >> *(statement >> eol_p) >> '}' >> eol_p;
@@ -186,7 +186,7 @@ struct LSystemGrammar : public grammar<LSystemGrammar>
 			BOOST_SPIRIT_DEBUG_NODE(symbol_decrement_color);
 			BOOST_SPIRIT_DEBUG_NODE(symbol_segment_size);
 		}
-		
+
         rule_t const &start() const
 		{
 			return file;
@@ -218,7 +218,7 @@ struct SpaceGrammar : public grammar<SpaceGrammar>
 
 			BOOST_SPIRIT_DEBUG_NODE(space);
 		}
-		
+
         rule_t const &start() const
 		{
 			return space;
@@ -235,7 +235,7 @@ bool LSystemParser::Parse(const string &text)
 	parse_info<string::const_iterator> results =
 		parse(text.begin(), text.end(), systems, blank_p | (";" >> *(anychar_p - eol_p)));
 	s_impl = 0;
-	
+
 	return results.full;
 }
 

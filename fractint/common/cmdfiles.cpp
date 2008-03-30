@@ -48,88 +48,88 @@
 #include "ThreeDimensionalState.h"
 #include "ViewWindow.h"
 
-// variables defined by the command line/files processor 
-int     g_pseudo_x = 0;							// g_x_dots to use for video independence 
-int     g_pseudo_y = 0;							// g_y_dots to use for video independence 
-int     g_bf_digits = 0;						// digits to use (force) for g_bf_math 
-int     g_show_dot = -1;						// color to show crawling graphics cursor 
-int     g_size_dot;								// size of dot crawling cursor 
-RecordColorsKind g_record_colors;				// default PAR color-writing method 
-AutoShowDotKind g_auto_show_dot = AUTOSHOWDOT_DEFAULT; // dark, medium, bright 
-bool g_start_show_orbit = false;				// show orbits on at start of fractal 
-std::string g_read_name;						// name of fractal input file 
-boost::filesystem::path g_temp_dir("");			// name of temporary directory 
-boost::filesystem::path g_work_dir("");			// name of directory for misc files 
+// variables defined by the command line/files processor
+int     g_pseudo_x = 0;							// g_x_dots to use for video independence
+int     g_pseudo_y = 0;							// g_y_dots to use for video independence
+int     g_bf_digits = 0;						// digits to use (force) for g_bf_math
+int     g_show_dot = -1;						// color to show crawling graphics cursor
+int     g_size_dot;								// size of dot crawling cursor
+RecordColorsKind g_record_colors;				// default PAR color-writing method
+AutoShowDotKind g_auto_show_dot = AUTOSHOWDOT_DEFAULT; // dark, medium, bright
+bool g_start_show_orbit = false;				// show orbits on at start of fractal
+std::string g_read_name;						// name of fractal input file
+boost::filesystem::path g_temp_dir("");			// name of temporary directory
+boost::filesystem::path g_work_dir("");			// name of directory for misc files
 boost::filesystem::path g_organize_formula_dir(""); // name of directory for orgfrm files
 std::string g_gif_mask;
-std::string g_save_name = "id001";				// save files using this name 
-std::string g_autokey_name = "auto.key";		// record auto keystrokes here 
-bool g_potential_flag = false;					// continuous potential enabled? 
-bool g_potential_16bit;							// store 16 bit continuous potential values 
-bool g_gif87a_flag;								// 1 if GIF87a format, 0 otherwise 
-bool g_dither_flag;								// 1 if want to dither GIFs 
+std::string g_save_name = "id001";				// save files using this name
+std::string g_autokey_name = "auto.key";		// record auto keystrokes here
+bool g_potential_flag = false;					// continuous potential enabled?
+bool g_potential_16bit;							// store 16 bit continuous potential values
+bool g_gif87a_flag;								// 1 if GIF87a format, 0 otherwise
+bool g_dither_flag;								// 1 if want to dither GIFs
 bool g_float_flag;
 int     g_user_biomorph;
-int     g_force_symmetry;						// force symmetry 
-ShowFileType g_show_file;						// zero if file display pending 
+int     g_force_symmetry;						// force symmetry
+ShowFileType g_show_file;						// zero if file display pending
 bool g_use_fixed_random_seed;
-int g_random_seed;								// Random number seeding flag and value 
-int     g_decomposition[2];						// Decomposition coloring 
+int g_random_seed;								// Random number seeding flag and value
+int     g_decomposition[2];						// Decomposition coloring
 long    g_distance_test;
 int     g_distance_test_width;
-bool g_fractal_overwrite = false;				// 0 if file overwrite not allowed 
-int     g_debug_mode;							// internal use only - you didn't see this 
-bool g_timer_flag;								// you didn't see this, either 
-int     g_cycle_limit;							// color-rotator upper limit 
-int     g_fill_color;							// fillcolor: -1=normal     
-int     g_finite_attractor;						// finite attractor logic 
-Display3DType g_display_3d;						// 3D display flag: 0 = OFF 
-bool g_overlay_3d;								// 3D overlay flag: 0 = OFF 
-int     g_init_3d[20];							// '3d=nn/nn/nn/...' values 
-InitializeBatchType g_initialize_batch = INITBATCH_NONE; // !0 if batch run (no kbd)  
-int     g_save_time;							// autosave minutes         
-ComplexD  g_initial_orbit_z;					// initial orbitvalue 
-int     g_initial_cycle_limit;					// initial cycle limit      
-bool g_use_center_mag;							// use center-mag corners   
-double  g_inversion[NUM_INVERSION];				// radius, xcenter, ycenter 
+bool g_fractal_overwrite = false;				// 0 if file overwrite not allowed
+int     g_debug_mode;							// internal use only - you didn't see this
+bool g_timer_flag;								// you didn't see this, either
+int     g_cycle_limit;							// color-rotator upper limit
+int     g_fill_color;							// fillcolor: -1=normal
+int     g_finite_attractor;						// finite attractor logic
+Display3DType g_display_3d;						// 3D display flag: 0 = OFF
+bool g_overlay_3d;								// 3D overlay flag: 0 = OFF
+int     g_init_3d[20];							// '3d=nn/nn/nn/...' values
+InitializeBatchType g_initialize_batch = INITBATCH_NONE; // !0 if batch run (no kbd)
+int     g_save_time;							// autosave minutes
+ComplexD  g_initial_orbit_z;					// initial orbitvalue
+int     g_initial_cycle_limit;					// initial cycle limit
+bool g_use_center_mag;							// use center-mag corners
+double  g_inversion[NUM_INVERSION];				// radius, xcenter, ycenter
 int g_rotate_lo;
-int g_rotate_hi;								// cycling color range      
-int	*g_ranges = 0;								// iter->color ranges mapping 
-int     g_ranges_length = 0;					// size of ranges array     
+int g_rotate_hi;								// cycling color range
+int	*g_ranges = 0;								// iter->color ranges mapping
+int     g_ranges_length = 0;					// size of ranges array
 int     g_save_release;							// release creating PAR file
-bool g_dont_read_color = false;					// flag for reading color from GIF 
-double  g_math_tolerance[2] = {.05, .05};		// For math transition 
-bool g_targa_output = false;					// 3D fullcolor flag 
-bool g_true_color = false;						// escape time truecolor flag 
-bool g_true_mode_iterates = false;				// truecolor iterates coloring scheme 
-bool g_function_preloaded;						// if function loaded for new bifurcations 
-float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;	// aspect ratio of the screen 
-float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;	
+bool g_dont_read_color = false;					// flag for reading color from GIF
+double  g_math_tolerance[2] = {.05, .05};		// For math transition
+bool g_targa_output = false;					// 3D fullcolor flag
+bool g_true_color = false;						// escape time truecolor flag
+bool g_true_mode_iterates = false;				// truecolor iterates coloring scheme
+bool g_function_preloaded;						// if function loaded for new bifurcations
+float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;	// aspect ratio of the screen
+float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;
 bool g_fast_restore = false;					// true - reset viewwindows prior to a restore
 												//	and do not display warnings when video
 												//	mode changes during restore
 bool g_organize_formula_search = false;			// 1 - user has specified a directory for
 												//	Orgform formula compilation files
-int     g_orbit_save = ORBITSAVE_NONE;			// for IFS and LORENZ to output acrospin file 
-int		g_orbit_delay;							// clock ticks delating orbit release 
-int     g_transparent[2];						// transparency min/max values 
-long    g_log_palette_mode;						// Logarithmic palette flag: 0 = no 
-int     g_log_dynamic_calculate = LOGDYNAMIC_NONE;	// calculate logmap on-the-fly 
-bool g_log_automatic_flag = false;				// auto calculate logmap 
-bool g_beauty_of_fractals = true;				// Flag to make inside=bof options not duplicate bof images 
-bool g_escape_exit_flag;						// set to 1 to avoid the "are you sure?" screen 
-bool g_command_initialize = true;				// first time into command_files? 
+int     g_orbit_save = ORBITSAVE_NONE;			// for IFS and LORENZ to output acrospin file
+int		g_orbit_delay;							// clock ticks delating orbit release
+int     g_transparent[2];						// transparency min/max values
+long    g_log_palette_mode;						// Logarithmic palette flag: 0 = no
+int     g_log_dynamic_calculate = LOGDYNAMIC_NONE;	// calculate logmap on-the-fly
+bool g_log_automatic_flag = false;				// auto calculate logmap
+bool g_beauty_of_fractals = true;				// Flag to make inside=bof options not duplicate bof images
+bool g_escape_exit_flag;						// set to 1 to avoid the "are you sure?" screen
+bool g_command_initialize = true;				// first time into command_files?
 FractalTypeSpecificData *g_current_fractal_specific = 0;
-std::string g_l_system_filename;				// file to find (type=)L-System's in 
-std::string g_l_system_name;					// Name of L-System 
-std::string g_command_file;						// file to find command sets in 
-std::string g_command_name;						// Name of Command set 
-std::string g_command_comment[4];				// comments for command set 
-std::string g_ifs_filename;						// file to find (type=)IFS in 
-std::string g_ifs_name;							// Name of the IFS def'n (if not null) 
+std::string g_l_system_filename;				// file to find (type=)L-System's in
+std::string g_l_system_name;					// Name of L-System
+std::string g_command_file;						// file to find command sets in
+std::string g_command_name;						// Name of Command set
+std::string g_command_comment[4];				// comments for command set
+std::string g_ifs_filename;						// file to find (type=)IFS in
+std::string g_ifs_name;							// Name of the IFS def'n (if not null)
 search_path g_search_for;
-float	*g_ifs_definition = 0;				// ifs parameters 
-int		g_ifs_type;								// 0 = 2d, 1 = 3d 
+float	*g_ifs_definition = 0;				// ifs parameters
+int		g_ifs_type;								// 0 = 2d, 1 = 3d
 bool g_make_par_flag = true;
 bool g_make_par_colors_only = true;
 
@@ -159,13 +159,13 @@ static int is_a_big_float(char *str);
 //				indirect files ('id @myfile')
 //
 
-// This probably ought to go somewhere else, but it's used here.        
-// get_power_10(x) returns the magnitude of x.  This rounds               
-// a little so 9.95 rounds to 10, but we're using a binary base anyway, 
-// so there's nothing magic about changing to the next power of 10.     
+// This probably ought to go somewhere else, but it's used here.
+// get_power_10(x) returns the magnitude of x.  This rounds
+// a little so 9.95 rounds to 10, but we're using a binary base anyway,
+// so there's nothing magic about changing to the next power of 10.
 int get_power_10(LDBL x)
 {
-	char string[11]; // space for "+x.xe-xxxx" 
+	char string[11]; // space for "+x.xe-xxxx"
 	int p;
 
 #ifdef USE_LONG_DOUBLE
@@ -195,44 +195,44 @@ bool is_gif_file(const char *path)
 
 void command_files(int argc, char **argv)
 {
-	if (g_command_initialize) // once per run initialization  
+	if (g_command_initialize) // once per run initialization
 	{
 		initialize_variables_once();
 	}
-	initialize_variables_restart();                  // <ins> key initialization 
-	initialize_variables_fractal();                  // image initialization 
+	initialize_variables_restart();                  // <ins> key initialization
+	initialize_variables_fractal();                  // image initialization
 
 	char    curarg[141];
 	strcpy(curarg, "sstools.ini");
 	char    tempstring[101];
-	find_path(curarg, tempstring); // look for SSTOOLS.INI 
+	find_path(curarg, tempstring); // look for SSTOOLS.INI
 	std::ifstream initfile;
-	if (tempstring[0] != 0)              // found it! 
+	if (tempstring[0] != 0)              // found it!
 	{
 		initfile.open(tempstring);
 		if (initfile.is_open())
 		{
-			command_file(initfile, CMDFILE_SSTOOLS_INI);           // process it 
+			command_file(initfile, CMDFILE_SSTOOLS_INI);           // process it
 		}
 	}
 
-	for (int i = 1; i < argc; i++)  // cycle through args 
+	for (int i = 1; i < argc; i++)  // cycle through args
 	{
 #ifdef XFRACT
-		// Let the xfract code take a look at the argument 
+		// Let the xfract code take a look at the argument
 		if (unixarg(argc, argv, &i))
 		{
 			continue;
 		}
 #endif
 		strcpy(curarg, argv[i]);
-		if (curarg[0] == ';')             // start of comments? 
+		if (curarg[0] == ';')             // start of comments?
 		{
 			break;
 		}
-		if (curarg[0] != '@')  // simple command? 
+		if (curarg[0] != '@')  // simple command?
 		{
-			if (strchr(curarg, '=') == 0)  // not xxx = yyy, so check for gif 
+			if (strchr(curarg, '=') == 0)  // not xxx = yyy, so check for gif
 			{
 				strcpy(tempstring, curarg);
 				ensure_extension(tempstring, ".gif");
@@ -246,13 +246,13 @@ void command_files(int argc, char **argv)
 			}
 			if (curarg[0])
 			{
-				process_command(curarg, CMDFILE_AT_CMDLINE);           // process simple command 
+				process_command(curarg, CMDFILE_AT_CMDLINE);           // process simple command
 			}
 		}
 		else
 		{
 			char *sptr = strchr(curarg, '/');
-			if (sptr != 0)  // @filename/setname? 
+			if (sptr != 0)  // @filename/setname?
 			{
 				*sptr = 0;
 				if (merge_path_names(true, g_command_file, &curarg[1]) < 0)
@@ -266,7 +266,7 @@ void command_files(int argc, char **argv)
 				}
 				command_file(initfile, CMDFILE_AT_CMDLINE_SETNAME);
 			}
-			else  // @filename 
+			else  // @filename
 			{
 				initfile.open(&curarg[1]);
 				if (!initfile.is_open())
@@ -280,8 +280,8 @@ void command_files(int argc, char **argv)
 
 	if (!g_command_initialize)
 	{
-		g_.SetInitialVideoModeNone();			// don't set video when <ins> key used 
-		g_show_file = SHOWFILE_DONE;	// nor startup image file              
+		g_.SetInitialVideoModeNone();			// don't set video when <ins> key used
+		g_show_file = SHOWFILE_DONE;	// nor startup image file
 	}
 
 	init_msg("", 0, 0);
@@ -290,7 +290,7 @@ void command_files(int argc, char **argv)
 	{
 		g_command_initialize = false;
 	}
-	// PAR reads a file and sets color 
+	// PAR reads a file and sets color
 	g_dont_read_color = (g_color_preloaded && (g_show_file == SHOWFILE_PENDING));
 
 	// set structure of search directories
@@ -302,12 +302,12 @@ void command_files(int argc, char **argv)
 
 int load_commands(std::ifstream &infile)
 {
-	// when called, file is open in binary mode, positioned at the 
-	// '(' or '{' following the desired parameter set's name       
+	// when called, file is open in binary mode, positioned at the
+	// '(' or '{' following the desired parameter set's name
 	s_initial_corners = false;
-	s_initial_parameters = false; // reset flags for type= 
+	s_initial_parameters = false; // reset flags for type=
 	int ret = command_file(infile, CMDFILE_AT_AFTER_STARTUP);
-	// PAR reads a file and sets color 
+	// PAR reads a file and sets color
 	g_dont_read_color = (g_color_preloaded && (g_show_file == SHOWFILE_PENDING));
 	return ret;
 }
@@ -332,33 +332,33 @@ static void initialize_temp_directory()
 	}
 }
 
-static void initialize_variables_once()              // once per run init 
+static void initialize_variables_once()              // once per run init
 {
 	s_init_random_seed = int(time(0));
 	init_comments();
 	initialize_temp_directory();
 }
 
-static void initialize_variables_restart()          // <ins> key init 
+static void initialize_variables_restart()          // <ins> key init
 {
 	int i;
-	g_record_colors = RECORDCOLORS_AUTO;			// don't use mapfiles in PARs 
-	g_save_release = g_release;						// this release number 
-	g_gif87a_flag = false;							// turn on GIF89a processing 
-	g_dither_flag = false;							// no dithering 
-	g_ui_state.ask_video = true;					// turn on video-prompt flag 
-	g_fractal_overwrite = false;					// don't overwrite           
-	g_sound_state.set_speaker_beep();				// sound is on to PC speaker 
-	g_initialize_batch = INITBATCH_NONE;			// not in batch mode         
-	g_externs.SetCheckCurrentDir(false);					// flag to check current dir for files 
-	g_save_time = 0;								// no auto-save              
-	g_.SetInitialVideoModeNone();					// no initial video mode     
+	g_record_colors = RECORDCOLORS_AUTO;			// don't use mapfiles in PARs
+	g_save_release = g_release;						// this release number
+	g_gif87a_flag = false;							// turn on GIF89a processing
+	g_dither_flag = false;							// no dithering
+	g_ui_state.ask_video = true;					// turn on video-prompt flag
+	g_fractal_overwrite = false;					// don't overwrite
+	g_sound_state.set_speaker_beep();				// sound is on to PC speaker
+	g_initialize_batch = INITBATCH_NONE;			// not in batch mode
+	g_externs.SetCheckCurrentDir(false);					// flag to check current dir for files
+	g_save_time = 0;								// no auto-save
+	g_.SetInitialVideoModeNone();					// no initial video mode
 	g_viewWindow.InitializeRestart();
-	g_orbit_delay = 0;								// full speed orbits 
-	g_orbit_interval = 1;							// plot all orbits 
-	g_debug_mode = DEBUGMODE_NONE;					// debugging flag(s) are off 
-	g_timer_flag = false;							// timer flags are off       
-	g_formula_state.set_filename("id.frm");			// default formula file      
+	g_orbit_delay = 0;								// full speed orbits
+	g_orbit_interval = 1;							// plot all orbits
+	g_debug_mode = DEBUGMODE_NONE;					// debugging flag(s) are off
+	g_timer_flag = false;							// timer flags are off
+	g_formula_state.set_filename("id.frm");			// default formula file
 	g_formula_state.set_formula(0);
 	g_l_system_filename = "id.l";
 	g_l_system_name = "";
@@ -371,89 +371,89 @@ static void initialize_variables_restart()          // <ins> key init
 	g_ifs_filename = "id.ifs";
 	g_ifs_name = "";
 	reset_ifs_definition();
-	g_use_fixed_random_seed = false;				// not a fixed srand() seed 
+	g_use_fixed_random_seed = false;				// not a fixed srand() seed
 	g_random_seed = s_init_random_seed;
-	g_read_name = DOTSLASH;							// initially current directory 
+	g_read_name = DOTSLASH;							// initially current directory
 	g_show_file = SHOWFILE_DONE;
-	// next should perhaps be fractal re-init, not just <ins> ? 
-	g_initial_cycle_limit = 55;						// spin-DAC default speed limit 
-	g_.SetMapSet(false);								// no map= name active 
+	// next should perhaps be fractal re-init, not just <ins> ?
+	g_initial_cycle_limit = 55;						// spin-DAC default speed limit
+	g_.SetMapSet(false);								// no map= name active
 	delete g_.MapDAC();
 	g_.SetMapDAC(0);
 
-	g_major_method = MAJORMETHOD_BREADTH_FIRST;		// default inverse julia methods 
-	g_minor_method = MINORMETHOD_LEFT_FIRST;		// default inverse julia methods 
-	g_true_color = false;							// truecolor output flag 
-	g_true_mode_iterates = false;					// set to default color scheme 
+	g_major_method = MAJORMETHOD_BREADTH_FIRST;		// default inverse julia methods
+	g_minor_method = MINORMETHOD_LEFT_FIRST;		// default inverse julia methods
+	g_true_color = false;							// truecolor output flag
+	g_true_mode_iterates = false;					// set to default color scheme
 }
 
-static void initialize_variables_fractal()          // init vars affecting calculation 
+static void initialize_variables_fractal()          // init vars affecting calculation
 {
 	int i;
-	g_escape_exit_flag = false;								// don't disable the "are you sure?" screen 
-	g_user_periodicity_check = 1;							// turn on periodicity    
-	g_externs.SetInside(1);											// inside color = blue    
-	g_fill_color = -1;										// no special fill color 
-	g_externs.SetUserBiomorph(-1);									// turn off biomorph flag 
-	g_externs.SetOutside(COLORMODE_ITERATION);						// outside color = -1 (not used) 
-	g_max_iteration = 150;									// initial maxiter        
+	g_escape_exit_flag = false;								// don't disable the "are you sure?" screen
+	g_user_periodicity_check = 1;							// turn on periodicity
+	g_externs.SetInside(1);											// inside color = blue
+	g_fill_color = -1;										// no special fill color
+	g_externs.SetUserBiomorph(-1);									// turn off biomorph flag
+	g_externs.SetOutside(COLORMODE_ITERATION);						// outside color = -1 (not used)
+	g_max_iteration = 150;									// initial maxiter
 	g_externs.SetUserStandardCalculationMode(CALCMODE_SOLID_GUESS);
-	g_externs.SetStopPass(0);										// initial guessing stop pass 
+	g_externs.SetStopPass(0);										// initial guessing stop pass
 	g_quick_calculate = false;
 	g_proximity = 0.01;
-	g_is_mandelbrot = true;									// default formula mand/jul toggle 
+	g_is_mandelbrot = true;									// default formula mand/jul toggle
 	g_user_float_flag = false;
 	g_finite_attractor = FINITE_ATTRACTOR_NO;
-	g_fractal_type = 0;										// initial type Set flag  
+	g_fractal_type = 0;										// initial type Set flag
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	s_initial_corners = false;
 	s_initial_parameters = false;
-	g_externs.SetBailOut(0);											// no user-entered bailout 
-	g_beauty_of_fractals = true;							// use normal bof initialization to make bof images 
+	g_externs.SetBailOut(0);											// no user-entered bailout
+	g_beauty_of_fractals = true;							// use normal bof initialization to make bof images
 	g_externs.SetUseInitialOrbitZ(INITIALZ_NONE);
 	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
-		g_parameters[i] = 0.0;								// initial parameter values 
+		g_parameters[i] = 0.0;								// initial parameter values
 	}
 	for (i = 0; i < 3; i++)
 	{
-		g_potential_parameter[i] = 0.0;					// initial potential values 
-		g_inversion[i] = 0.0;								// initial invert values 
+		g_potential_parameter[i] = 0.0;					// initial potential values
+		g_inversion[i] = 0.0;								// initial invert values
 	}
-	g_initial_orbit_z.x = g_initial_orbit_z.y = 0.0;		// initial orbit values 
+	g_initial_orbit_z.x = g_initial_orbit_z.y = 0.0;		// initial orbit values
 	g_invert = 0;
 	g_decomposition[0] = g_decomposition[1] = 0;
 	g_user_distance_test = 0;
 	g_pseudo_x = 0;
 	g_pseudo_y = 0;
 	g_distance_test_width = 71;
-	g_force_symmetry = FORCESYMMETRY_NONE;					// symmetry not forced 
+	g_force_symmetry = FORCESYMMETRY_NONE;					// symmetry not forced
 	g_escape_time_state.m_grid_fp.x_3rd() = -2.5;
 	g_escape_time_state.m_grid_fp.x_min() = -2.5;
-	g_escape_time_state.m_grid_fp.x_max() = 1.5;			// initial corner values  
+	g_escape_time_state.m_grid_fp.x_max() = 1.5;			// initial corner values
 	g_escape_time_state.m_grid_fp.y_3rd() = -1.5;
 	g_escape_time_state.m_grid_fp.y_min() = -1.5;
-	g_escape_time_state.m_grid_fp.y_max() = 1.5;			// initial corner values  
+	g_escape_time_state.m_grid_fp.y_max() = 1.5;			// initial corner values
 	g_bf_math = 0;
 	g_potential_16bit = false;
 	g_potential_flag = false;
-	g_log_palette_mode = LOGPALETTE_NONE;					// no logarithmic palette 
-	set_function_array(0, "sin");							// trigfn defaults 
+	g_log_palette_mode = LOGPALETTE_NONE;					// no logarithmic palette
+	set_function_array(0, "sin");							// trigfn defaults
 	set_function_array(1, "sqr");
 	set_function_array(2, "sinh");
 	set_function_array(3, "cosh");
 	delete[] g_ranges;
 	g_ranges = 0;
 	g_ranges_length = 0;
-	g_use_center_mag = true;								// use center-mag, not corners 
+	g_use_center_mag = true;								// use center-mag, not corners
 
 	g_.SetColorState(COLORSTATE_DEFAULT);
 	g_color_preloaded = false;
-	g_rotate_lo = 1; g_rotate_hi = 255;						// color cycling default range 
-	g_orbit_delay = 0;										// full speed orbits 
-	g_orbit_interval = 1;									// plot all orbits 
+	g_rotate_lo = 1; g_rotate_hi = 255;						// color cycling default range
+	g_orbit_delay = 0;										// full speed orbits
+	g_orbit_interval = 1;									// plot all orbits
 	g_keep_screen_coords = false;
-	g_orbit_draw_mode = ORBITDRAW_RECTANGLE;				// passes=orbits draw mode 
+	g_orbit_draw_mode = ORBITDRAW_RECTANGLE;				// passes=orbits draw mode
 	g_set_orbit_corners = false;
 	g_orbit_x_min = g_current_fractal_specific->x_min;
 	g_orbit_x_max = g_current_fractal_specific->x_max;
@@ -466,7 +466,7 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	g_math_tolerance[1] = 0.05;
 
 	g_display_3d = DISPLAY3D_NONE;
-	g_overlay_3d = false;									// 3D overlay is off        
+	g_overlay_3d = false;									// 3D overlay is off
 
 	g_old_demm_colors = false;
 	g_externs.SetBailOutTest(BAILOUT_MODULUS);
@@ -475,8 +475,8 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	g_externs.SetBailOutBn(bail_out_mod_bn);
 	g_externs.SetBailOutBf(bail_out_mod_bf);
 
-	
-	g_function_preloaded = false;							// old bifurcation function support 
+
+	g_function_preloaded = false;							// old bifurcation function support
 	g_m_x_min_fp = -.83;
 	g_m_y_min_fp = -.25;
 	g_m_x_max_fp = -.83;
@@ -493,7 +493,7 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	g_sound_state.initialize();
 }
 
-static void initialize_variables_3d()						// init vars affecting 3d 
+static void initialize_variables_3d()						// init vars affecting 3d
 {
 	g_3d_state.set_raytrace_output(RAYTRACE_NONE);
 	g_3d_state.set_raytrace_brief(0);
@@ -512,7 +512,7 @@ static void initialize_variables_3d()						// init vars affecting 3d
 	g_3d_state.set_red().set_bright(80);
 	g_3d_state.set_blue().set_bright(100);
 	g_3d_state.set_transparent0(0);
-	g_3d_state.set_transparent1(0);							// no min/max transparency 
+	g_3d_state.set_transparent1(0);							// no min/max transparency
 	g_3d_state.set_defaults();
 }
 
@@ -524,16 +524,16 @@ static void reset_ifs_definition()
 
 
 static int command_file(std::ifstream &handle, CommandFileType mode)
-	// mode = 0 command line @filename         
-	// 1 sstools.ini                    
-	// 2 <@> command after startup      
-	// 3 command line @filename/setname 
+	// mode = 0 command line @filename
+	// 1 sstools.ini
+	// 2 <@> command after startup
+	// 3 command line @filename/setname
 {
-	// note that command_file could be open as text OR as binary 
-	// binary is used in @ command processing for reasonable speed note/point 
+	// note that command_file could be open as text OR as binary
+	// binary is used in @ command processing for reasonable speed note/point
 	int i;
 	int lineoffset = 0;
-	int changeflag = 0; // &1 fractal stuff chgd, &2 3d stuff chgd 
+	int changeflag = 0; // &1 fractal stuff chgd, &2 3d stuff chgd
 	char linebuf[513];
 	char cmdbuf[10000] = { 0 };
 
@@ -584,7 +584,7 @@ static int next_command(char *cmdbuf, int maxlen,
 	{
 		while (*lineptr <= ' ' || *lineptr == ';')
 		{
-			if (cmdlen)  // space or ; marks end of command 
+			if (cmdlen)  // space or ; marks end of command
 			{
 				cmdbuf[cmdlen] = 0;
 				*lineoffset = int(lineptr - linebuf);
@@ -592,7 +592,7 @@ static int next_command(char *cmdbuf, int maxlen,
 			}
 			while (*lineptr && *lineptr <= ' ')
 			{
-				++lineptr;                  // skip spaces and tabs 
+				++lineptr;                  // skip spaces and tabs
 			}
 			if (*lineptr == ';' || *lineptr == 0)
 			{
@@ -601,7 +601,7 @@ static int next_command(char *cmdbuf, int maxlen,
 					&& (g_command_comment[0].length() == 0 || g_command_comment[1].length() == 0 ||
 						g_command_comment[2].length() == 0 || g_command_comment[3].length() == 0))
 				{
-					// save comment 
+					// save comment
 					while (*(++lineptr)
 						&& (*lineptr == ' ' || *lineptr == '\t'))
 					{
@@ -624,28 +624,28 @@ static int next_command(char *cmdbuf, int maxlen,
 				}
 				if (next_line(handle, linebuf, mode) != 0)
 				{
-					return -1; // eof 
+					return -1; // eof
 				}
-				lineptr = linebuf; // start new line 
+				lineptr = linebuf; // start new line
 			}
 		}
-		if (*lineptr == '\\'              // continuation onto next line? 
+		if (*lineptr == '\\'              // continuation onto next line?
 			&& *(lineptr + 1) == 0)
 		{
 			if (next_line(handle, linebuf, mode) != 0)
 			{
-				arg_error(cmdbuf);           // missing continuation 
+				arg_error(cmdbuf);           // missing continuation
 				return -1;
 			}
 			lineptr = linebuf;
 			while (*lineptr && *lineptr <= ' ')
 			{
-				++lineptr;                  // skip white space @ start next line 
+				++lineptr;                  // skip white space @ start next line
 			}
-			continue;                      // loop to check end of line again 
+			continue;                      // loop to check end of line again
 		}
-		cmdbuf[cmdlen] = *(lineptr++);    // copy character to command buffer 
-		if (++cmdlen >= maxlen)  // command too long? 
+		cmdbuf[cmdlen] = *(lineptr++);    // copy character to command buffer
+		if (++cmdlen >= maxlen)  // command too long?
 		{
 			arg_error(cmdbuf);
 			return -1;
@@ -660,13 +660,13 @@ static int next_line(std::ifstream &handle, char *linebuf, int mode)
 	toolssection = 0;
 	while (file_gets(linebuf, 512, handle) >= 0)
 	{
-		if (mode == CMDFILE_SSTOOLS_INI && linebuf[0] == '[')  // check for [id] 
+		if (mode == CMDFILE_SSTOOLS_INI && linebuf[0] == '[')  // check for [id]
 		{
 			strncpy(tmpbuf, &linebuf[1], 9);
 			tmpbuf[9] = 0;
 			strlwr(tmpbuf);
 			toolssection = strncmp(tmpbuf, "id]", 9);
-			continue;                              // skip tools section heading 
+			continue;                              // skip tools section heading
 		}
 		if (toolssection == 0)
 		{
@@ -731,7 +731,7 @@ static int max_history_arg(const cmd_context &context)
 
 static int adapter_arg(const cmd_context &context)
 {
-	// adapter parameter no longer used; check for bad argument anyway 
+	// adapter parameter no longer used; check for bad argument anyway
 	named_int args[] =
 	{
 		{ "egamono", -1 },
@@ -753,13 +753,13 @@ static int adapter_arg(const cmd_context &context)
 
 static int text_safe_arg(const cmd_context &context)
 {
-	// textsafe no longer used, do validity checking, but gobble argument 
+	// textsafe no longer used, do validity checking, but gobble argument
 	if (g_command_initialize)
 	{
-		if (!((context.charval[0] == 'n')	// no 
-				|| (context.charval[0] == 'y')	// yes 
-				|| (context.charval[0] == 'b')	// bios 
-				|| (context.charval[0] == 's'))) // save 
+		if (!((context.charval[0] == 'n')	// no
+				|| (context.charval[0] == 'y')	// yes
+				|| (context.charval[0] == 'b')	// bios
+				|| (context.charval[0] == 's'))) // save
 		{
 			return bad_arg(context.curarg);
 		}
@@ -888,7 +888,7 @@ static int reset_arg(const cmd_context &context)
 {
 	initialize_variables_fractal();
 
-	// PAR release unknown unless specified 
+	// PAR release unknown unless specified
 	if (context.numval >= 0)
 	{
 		g_save_release = context.numval;
@@ -917,7 +917,7 @@ static int filename_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	if (context.mode == CMDFILE_AT_AFTER_STARTUP && g_display_3d == DISPLAY3D_NONE) // can't do this in @ command 
+	if (context.mode == CMDFILE_AT_AFTER_STARTUP && g_display_3d == DISPLAY3D_NONE) // can't do this in @ command
 	{
 		return bad_arg(context.curarg);
 	}
@@ -976,7 +976,7 @@ static int map_arg(const cmd_context &context)
 	}
 	if (existdir > 0)
 	{
-		return COMMANDRESULT_OK;    // got a directory 
+		return COMMANDRESULT_OK;    // got a directory
 	}
 	else if (existdir < 0)
 	{
@@ -1022,7 +1022,7 @@ static int parse_arg(const cmd_context &context)
 	return COMMANDRESULT_OK;
 }
 
-// maxcolorres no longer used, validate value and gobble argument 
+// maxcolorres no longer used, validate value and gobble argument
 static int max_color_res_arg(const cmd_context &context)
 {
 	if (context.numval == 1
@@ -1036,7 +1036,7 @@ static int max_color_res_arg(const cmd_context &context)
 	return bad_arg(context.curarg);
 }
 
-// pixelzoom no longer used, validate value and gobble argument 
+// pixelzoom no longer used, validate value and gobble argument
 static int pixel_zoom_arg(const cmd_context &context)
 {
 	if (context.numval >= 5)
@@ -1046,7 +1046,7 @@ static int pixel_zoom_arg(const cmd_context &context)
 	return COMMANDRESULT_OK;
 }
 
-// keep this for backward compatibility 
+// keep this for backward compatibility
 static int warn_arg(const cmd_context &context)
 {
 	if (context.yesnoval[0] < 0)
@@ -1115,7 +1115,7 @@ static int type_arg(const cmd_context &context)
 	{
 		value[--valuelen] = 0;
 	}
-	// kludge because type ifs3d has an asterisk in front 
+	// kludge because type ifs3d has an asterisk in front
 	if (strcmp(value, "ifs3d") == 0)
 	{
 		value[3] = 0;
@@ -1221,7 +1221,7 @@ static int function_arg(const cmd_context &context)
 		}
 		++value;
 	}
-	g_function_preloaded = true;			// old bifurcation function support 
+	g_function_preloaded = true;			// old bifurcation function support
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
 
@@ -1366,18 +1366,18 @@ static int ranges_arg(const cmd_context &context)
 	entries = 0;
 	prev = 0;
 	i = 0;
-	g_log_palette_mode = LOGPALETTE_NONE; // ranges overrides logmap 
+	g_log_palette_mode = LOGPALETTE_NONE; // ranges overrides logmap
 	while (i < context.totparms)
 	{
 		j = context.intval[i++];
-		if (j < 0) // striping 
+		if (j < 0) // striping
 		{
 			j = -j;
 			if (j < 1 || j >= 16384 || i >= context.totparms)
 			{
 				return bad_arg(context.curarg);
 			}
-			tmpranges[entries++] = -1; // {-1,width,limit} for striping 
+			tmpranges[entries++] = -1; // {-1,width,limit} for striping
 			tmpranges[entries++] = j;
 			j = context.intval[i++];
 		}
@@ -1435,7 +1435,7 @@ static int math_tolerance_arg(const cmd_context &context)
 {
 	if (context.charval[0] == '/')
 	{
-		; // leave g_math_tolerance[0] at the default value 
+		; // leave g_math_tolerance[0] at the default value
 	}
 	else if (context.totparms >= 1)
 	{
@@ -1574,7 +1574,7 @@ static int miim_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 
-	// keep this next part in for backwards compatibility with old PARs ??? 
+	// keep this next part in for backwards compatibility with old PARs ???
 
 	if (context.totparms > 2)
 	{
@@ -1691,7 +1691,7 @@ static int corners_arg(const cmd_context &context)
 	int dec;
 	if (g_fractal_type == FRACTYPE_CELLULAR)
 	{
-		return COMMANDRESULT_FRACTAL_PARAMETER; // skip setting the corners 
+		return COMMANDRESULT_FRACTAL_PARAMETER; // skip setting the corners
 	}
 	if (context.floatparms != context.totparms
 		|| (context.totparms != 0 && context.totparms != 4 && context.totparms != 6))
@@ -1701,10 +1701,10 @@ static int corners_arg(const cmd_context &context)
 	g_use_center_mag = false;
 	if (context.totparms == 0)
 	{
-		return COMMANDRESULT_OK; // turns corners mode on 
+		return COMMANDRESULT_OK; // turns corners mode on
 	}
 	s_initial_corners = true;
-	// good first approx, but dec could be too big 
+	// good first approx, but dec could be too big
 	dec = get_max_curarg_len((char **) context.floatvalstr, context.totparms) + 1;
 	if ((dec > DBL_DIG + 1 || DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode) && g_debug_mode != DEBUGMODE_NO_INT_TO_FLOAT)
 	{
@@ -1724,39 +1724,39 @@ static int corners_arg(const cmd_context &context)
 			}
 		}
 
-		// x3rd = xmin = floatval[0]; 
+		// x3rd = xmin = floatval[0];
 		get_bf(g_escape_time_state.m_grid_bf.x_min(), context.floatvalstr[0]);
 		get_bf(g_escape_time_state.m_grid_bf.x_3rd(), context.floatvalstr[0]);
 
-		// xmax = floatval[1]; 
+		// xmax = floatval[1];
 		get_bf(g_escape_time_state.m_grid_bf.x_max(), context.floatvalstr[1]);
 
-		// y3rd = ymin = floatval[2]; 
+		// y3rd = ymin = floatval[2];
 		get_bf(g_escape_time_state.m_grid_bf.y_min(), context.floatvalstr[2]);
 		get_bf(g_escape_time_state.m_grid_bf.y_3rd(), context.floatvalstr[2]);
 
-		// ymax = floatval[3]; 
+		// ymax = floatval[3];
 		get_bf(g_escape_time_state.m_grid_bf.y_max(), context.floatvalstr[3]);
 
 		if (context.totparms == 6)
 		{
-			// x3rd = floatval[4]; 
+			// x3rd = floatval[4];
 			get_bf(g_escape_time_state.m_grid_bf.x_3rd(), context.floatvalstr[4]);
 
-			// y3rd = floatval[5]; 
+			// y3rd = floatval[5];
 			get_bf(g_escape_time_state.m_grid_bf.y_3rd(), context.floatvalstr[5]);
 		}
 
-		// now that all the corners have been read in, get a more 
-		// accurate value for dec and do it all again             
+		// now that all the corners have been read in, get a more
+		// accurate value for dec and do it all again
 
 		dec = get_precision_mag_bf();
 		if (dec < 0)
 		{
-			return bad_arg(context.curarg);     // ie: Magnification is +-1.#INF 
+			return bad_arg(context.curarg);     // ie: Magnification is +-1.#INF
 		}
 
-		if (dec > g_decimals)  // get corners again if need more precision 
+		if (dec > g_decimals)  // get corners again if need more precision
 		{
 			int k;
 
@@ -1768,26 +1768,26 @@ static int corners_arg(const cmd_context &context)
 				floattobf(bfparms[k], g_parameters[k]);
 			}
 
-			// x3rd = xmin = floatval[0]; 
+			// x3rd = xmin = floatval[0];
 			get_bf(g_escape_time_state.m_grid_bf.x_min(), context.floatvalstr[0]);
 			get_bf(g_escape_time_state.m_grid_bf.x_3rd(), context.floatvalstr[0]);
 
-			// xmax = floatval[1]; 
+			// xmax = floatval[1];
 			get_bf(g_escape_time_state.m_grid_bf.x_max(), context.floatvalstr[1]);
 
-			// y3rd = ymin = floatval[2]; 
+			// y3rd = ymin = floatval[2];
 			get_bf(g_escape_time_state.m_grid_bf.y_min(), context.floatvalstr[2]);
 			get_bf(g_escape_time_state.m_grid_bf.y_3rd(), context.floatvalstr[2]);
 
-			// ymax = floatval[3]; 
+			// ymax = floatval[3];
 			get_bf(g_escape_time_state.m_grid_bf.y_max(), context.floatvalstr[3]);
 
 			if (context.totparms == 6)
 			{
-				// x3rd = floatval[4]; 
+				// x3rd = floatval[4];
 				get_bf(g_escape_time_state.m_grid_bf.x_3rd(), context.floatvalstr[4]);
 
-				// y3rd = floatval[5]; 
+				// y3rd = floatval[5];
 				get_bf(g_escape_time_state.m_grid_bf.y_3rd(), context.floatvalstr[5]);
 			}
 		}
@@ -1869,35 +1869,35 @@ static int center_mag_arg(const cmd_context &context)
 	}
 	if (g_fractal_type == FRACTYPE_CELLULAR)
 	{
-		return COMMANDRESULT_FRACTAL_PARAMETER; // skip setting the corners 
+		return COMMANDRESULT_FRACTAL_PARAMETER; // skip setting the corners
 	}
 	g_use_center_mag = true;
 	if (context.totparms == 0)
 	{
-		return COMMANDRESULT_OK; // turns center-mag mode on 
+		return COMMANDRESULT_OK; // turns center-mag mode on
 	}
 	s_initial_corners = true;
-	// dec = get_max_curarg_len(floatvalstr, context.totparms); 
+	// dec = get_max_curarg_len(floatvalstr, context.totparms);
 #ifdef USE_LONG_DOUBLE
 	sscanf(context.floatvalstr[2], "%Lf", &Magnification);
 #else
 	sscanf(context.floatvalstr[2], "%lf", &Magnification);
 #endif
 
-	// I don't know if this is portable, but something needs to 
-	// be used in case compiler's LDBL_MAX is not big enough    
+	// I don't know if this is portable, but something needs to
+	// be used in case compiler's LDBL_MAX is not big enough
 	if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
 	{
-		return bad_arg(context.curarg);     // ie: Magnification is +-1.#INF 
+		return bad_arg(context.curarg);     // ie: Magnification is +-1.#INF
 	}
 
-	dec = get_power_10(Magnification) + 4; // 4 digits of padding sounds good 
+	dec = get_power_10(Magnification) + 4; // 4 digits of padding sounds good
 
-	if ((dec <= DBL_DIG + 1 && g_debug_mode != DEBUGMODE_NO_BIG_TO_FLOAT) || DEBUGMODE_NO_INT_TO_FLOAT == g_debug_mode)  // rough estimate that double is OK 
+	if ((dec <= DBL_DIG + 1 && g_debug_mode != DEBUGMODE_NO_BIG_TO_FLOAT) || DEBUGMODE_NO_INT_TO_FLOAT == g_debug_mode)  // rough estimate that double is OK
 	{
 		Xctr = context.floatval[0];
 		Yctr = context.floatval[1];
-		// Magnification = context.floatval[2]; already done above 
+		// Magnification = context.floatval[2]; already done above
 		Xmagfactor = 1;
 		Rotation = 0;
 		Skew = 0;
@@ -1917,11 +1917,11 @@ static int center_mag_arg(const cmd_context &context)
 		{
 			Skew = context.floatval[5];
 		}
-		// calculate bounds 
+		// calculate bounds
 		convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
 		return COMMANDRESULT_FRACTAL_PARAMETER;
 	}
-	else  // use arbitrary precision 
+	else  // use arbitrary precision
 	{
 		int old_bf_math;
 		int saved;
@@ -1943,11 +1943,11 @@ static int center_mag_arg(const cmd_context &context)
 		saved = save_stack();
 		bXctr = alloc_stack(g_bf_length + 2);
 		bYctr = alloc_stack(g_bf_length + 2);
-		// Xctr = context.floatval[0]; 
+		// Xctr = context.floatval[0];
 		get_bf(bXctr, context.floatvalstr[0]);
-		// Yctr = context.floatval[1]; 
+		// Yctr = context.floatval[1];
 		get_bf(bYctr, context.floatvalstr[1]);
-		// Magnification = context.floatval[2]; already done above 
+		// Magnification = context.floatval[2]; already done above
 		Xmagfactor = 1;
 		Rotation = 0;
 		Skew = 0;
@@ -1967,7 +1967,7 @@ static int center_mag_arg(const cmd_context &context)
 		{
 			Skew = context.floatval[5];
 		}
-		// calculate bounds 
+		// calculate bounds
 		convert_corners_bf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
 		corners_bf_to_float();
 		restore_stack(saved);
@@ -2003,7 +2003,7 @@ static int invert_arg(const cmd_context &context)
 
 static int ignore_arg(const cmd_context &context)
 {
-	return COMMANDRESULT_OK; // just ignore and return, for old time's sake 
+	return COMMANDRESULT_OK; // just ignore and return, for old time's sake
 }
 
 static int float_arg(const cmd_context &context)
@@ -2180,7 +2180,7 @@ static int periodicity_arg(const cmd_context &context)
 	{
 		g_user_periodicity_check = 1;
 	}
-	else if (context.charval[0] == 's')   // 's' for 'show' 
+	else if (context.charval[0] == 's')   // 's' for 'show'
 	{
 		g_user_periodicity_check = -1;
 	}
@@ -2205,10 +2205,10 @@ static int periodicity_arg(const cmd_context &context)
 
 static int log_map_arg(const cmd_context &context)
 {
-	g_log_automatic_flag = false;   // turn this off if loading a PAR 
+	g_log_automatic_flag = false;   // turn this off if loading a PAR
 	if (context.charval[0] == 'y')
 	{
-		g_log_palette_mode = LOGPALETTE_STANDARD;                           // palette is logarithmic 
+		g_log_palette_mode = LOGPALETTE_STANDARD;                           // palette is logarithmic
 	}
 	else if (context.charval[0] == 'n')
 	{
@@ -2216,7 +2216,7 @@ static int log_map_arg(const cmd_context &context)
 	}
 	else if (context.charval[0] == 'o')
 	{
-		g_log_palette_mode = LOGPALETTE_OLD;                          // old log palette 
+		g_log_palette_mode = LOGPALETTE_OLD;                          // old log palette
 	}
 	else
 	{
@@ -2227,19 +2227,19 @@ static int log_map_arg(const cmd_context &context)
 
 static int log_mode_arg(const cmd_context &context)
 {
-	g_log_dynamic_calculate = LOGDYNAMIC_NONE;                         // turn off if error 
+	g_log_dynamic_calculate = LOGDYNAMIC_NONE;                         // turn off if error
 	g_log_automatic_flag = false;
 	if (context.charval[0] == 'f')
 	{
-		g_log_dynamic_calculate = LOGDYNAMIC_DYNAMIC;                      // calculate on the fly 
+		g_log_dynamic_calculate = LOGDYNAMIC_DYNAMIC;                      // calculate on the fly
 	}
 	else if (context.charval[0] == 't')
 	{
-		g_log_dynamic_calculate = LOGDYNAMIC_TABLE;                      // force use of g_log_table 
+		g_log_dynamic_calculate = LOGDYNAMIC_TABLE;                      // force use of g_log_table
 	}
 	else if (context.charval[0] == 'a')
 	{
-		g_log_automatic_flag = true;                     // force auto calc of logmap 
+		g_log_automatic_flag = true;                     // force auto calc of logmap
 	}
 	else
 	{
@@ -2251,7 +2251,7 @@ static int log_mode_arg(const cmd_context &context)
 static int debug_flag_arg(const cmd_context &context)
 {
 	g_debug_mode = context.numval;
-	g_timer_flag = ((g_debug_mode & 1) != 0);                // separate timer flag 
+	g_timer_flag = ((g_debug_mode & 1) != 0);                // separate timer flag
 	g_debug_mode &= ~1;
 	return COMMANDRESULT_OK;
 }
@@ -2334,7 +2334,7 @@ static int decomposition_arg(const cmd_context &context)
 	}
 	g_decomposition[0] = context.intval[0];
 	g_decomposition[1] = 0;
-	if (context.totparms > 1) // backward compatibility 
+	if (context.totparms > 1) // backward compatibility
 	{
 		g_externs.SetBailOut(g_decomposition[1] = context.intval[1]);
 	}
@@ -2531,7 +2531,7 @@ static int threed_arg(const cmd_context &context)
 	if (strcmp(context.value, "overlay") == 0)
 	{
 		yesno = 1;
-		if (g_externs.CalculationStatus() > CALCSTAT_NO_FRACTAL) // if no image, treat same as 3D=yes 
+		if (g_externs.CalculationStatus() > CALCSTAT_NO_FRACTAL) // if no image, treat same as 3D=yes
 		{
 			g_overlay_3d = true;
 		}
@@ -2628,14 +2628,14 @@ static int haze_arg(const cmd_context &context)
 
 static int true_mode_arg(const cmd_context &context)
 {
-	g_true_mode_iterates = false;				// use default if error 
+	g_true_mode_iterates = false;				// use default if error
 	if (context.charval[0] == 'd')
 	{
-		g_true_mode_iterates = false;			// use default color output 
+		g_true_mode_iterates = false;			// use default color output
 	}
 	if (context.charval[0] == 'i' || context.intval[0] == 1)
 	{
-		g_true_mode_iterates = true;			// use iterates output 
+		g_true_mode_iterates = true;			// use iterates output
 	}
 	return COMMANDRESULT_FRACTAL_PARAMETER | COMMANDRESULT_3D_PARAMETER;
 }
@@ -2808,10 +2808,10 @@ static int cur_dir_arg(const cmd_context &context)
 //		| 8 means reset specified
 //
 
-int process_command(char *curarg, int mode) // process a single argument 
+int process_command(char *curarg, int mode) // process a single argument
 {
 	cmd_context context;
-	char    variable[21];                // variable name goes here   
+	char    variable[21];                // variable name goes here
 	double  ftemp;
 	int i;
 	int j;
@@ -2823,14 +2823,14 @@ int process_command(char *curarg, int mode) // process a single argument
 	argptr = curarg;
 	context.curarg = curarg;
 	while (*argptr)
-	{                    // convert to lower case 
+	{                    // convert to lower case
 		if (*argptr >= 'A' && *argptr <= 'Z')
 		{
 			*argptr += 'a' - 'A';
 		}
 		else if (*argptr == '=')
 		{
-			// don't convert colors=value or comment=value 
+			// don't convert colors=value or comment=value
 			if ((strncmp(curarg, "colors=", 7) == 0) || (strncmp(curarg, "comment", 7) == 0))
 			{
 				break;
@@ -2845,7 +2845,7 @@ int process_command(char *curarg, int mode) // process a single argument
 		j = int((context.value++) - curarg);
 		if (j > 1 && curarg[j-1] == ':')
 		{
-			--j;                           // treat := same as =     
+			--j;                           // treat := same as =
 		}
 	}
 	else
@@ -2855,13 +2855,13 @@ int process_command(char *curarg, int mode) // process a single argument
 	}
 	if (j > 20)
 	{
-		return bad_arg(context.curarg);             // keyword too long 
+		return bad_arg(context.curarg);             // keyword too long
 	}
-	strncpy(variable, curarg, j);          // get the variable name  
-	variable[j] = 0;                     // truncate variable name 
-	context.valuelen = int(strlen(context.value));            // note value's length    
-	context.charval[0] = context.value[0];               // first letter of value  
-	context.yesnoval[0] = -1;                    // note yes|no value      
+	strncpy(variable, curarg, j);          // get the variable name
+	variable[j] = 0;                     // truncate variable name
+	context.valuelen = int(strlen(context.value));            // note value's length
+	context.charval[0] = context.value[0];               // first letter of value
+	context.yesnoval[0] = -1;                    // note yes|no value
 	if (context.charval[0] == 'n')
 	{
 		context.yesnoval[0] = 0;
@@ -2873,12 +2873,12 @@ int process_command(char *curarg, int mode) // process a single argument
 
 	argptr = context.value;
 	context.numval = context.totparms = context.intparms = context.floatparms = 0;
-	while (*argptr)                    // count and pre-parse parms 
+	while (*argptr)                    // count and pre-parse parms
 	{
 		long ll;
 		lastarg = 0;
 		argptr2 = strchr(argptr, '/');
-		if (argptr2 == 0)     // find next '/' 
+		if (argptr2 == 0)     // find next '/'
 		{
 			argptr2 = argptr + strlen(argptr);
 			*argptr2 = '/';
@@ -2891,7 +2891,7 @@ int process_command(char *curarg, int mode) // process a single argument
 		i = -1;
 		if (context.totparms < 16)
 		{
-			context.charval[context.totparms] = *argptr;                      // first letter of value  
+			context.charval[context.totparms] = *argptr;                      // first letter of value
 			if (context.charval[context.totparms] == 'n')
 			{
 				context.yesnoval[context.totparms] = 0;
@@ -2902,7 +2902,7 @@ int process_command(char *curarg, int mode) // process a single argument
 			}
 		}
 		j = 0;
-		if (sscanf(argptr, "%c%c", (char *) &j, &tmpc) > 0    // 0 entry 
+		if (sscanf(argptr, "%c%c", (char *) &j, &tmpc) > 0    // 0 entry
 			&& ((char) j == '/' || (char) j == '=') && tmpc == '/')
 		{
 			j = 0;
@@ -2922,8 +2922,8 @@ int process_command(char *curarg, int mode) // process a single argument
 				context.numval = j;
 			}
 		}
-		else if (sscanf(argptr, "%ld%c", &ll, &tmpc) > 0       // got an integer 
-			&& tmpc == '/')        // needs a long int, ll, here for lyapunov 
+		else if (sscanf(argptr, "%ld%c", &ll, &tmpc) > 0       // got an integer
+			&& tmpc == '/')        // needs a long int, ll, here for lyapunov
 		{
 			++context.floatparms;
 			++context.intparms;
@@ -2942,9 +2942,9 @@ int process_command(char *curarg, int mode) // process a single argument
 			}
 		}
 #ifndef XFRACT
-		else if (sscanf(argptr, "%lg%c", &ftemp, &tmpc) > 0  // got a float 
+		else if (sscanf(argptr, "%lg%c", &ftemp, &tmpc) > 0  // got a float
 #else
-		else if (sscanf(argptr, "%lf%c", &ftemp, &tmpc) > 0  // got a float 
+		else if (sscanf(argptr, "%lf%c", &ftemp, &tmpc) > 0  // got a float
 #endif
 				&& tmpc == '/')
 		{
@@ -2955,8 +2955,8 @@ int process_command(char *curarg, int mode) // process a single argument
 				context.floatvalstr[context.totparms] = argptr;
 			}
 		}
-		// using arbitrary precision and above failed 
-		else if ((int(strlen(argptr)) > 513)  // very long command 
+		// using arbitrary precision and above failed
+		else if ((int(strlen(argptr)) > 513)  // very long command
 					|| (context.totparms > 0 && context.floatval[context.totparms-1] == FLT_MAX
 						&& context.totparms < 6)
 					|| is_a_big_float(argptr))
@@ -2966,7 +2966,7 @@ int process_command(char *curarg, int mode) // process a single argument
 			context.floatvalstr[context.totparms] = argptr;
 		}
 		++context.totparms;
-		argptr = argptr2;                                 // on to the next 
+		argptr = argptr2;                                 // on to the next
 		if (lastarg)
 		{
 			*argptr = 0;
@@ -2979,7 +2979,7 @@ int process_command(char *curarg, int mode) // process a single argument
 
 	context.mode = mode;
 	context.variable = variable;
-	// these commands are allowed only at startup 
+	// these commands are allowed only at startup
 	if (mode != CMDFILE_AT_AFTER_STARTUP || DEBUGMODE_NO_FIRST_INIT == g_debug_mode)
 	{
 		command_processor processors[] =
@@ -2987,7 +2987,7 @@ int process_command(char *curarg, int mode) // process a single argument
 			{ "batch",		batch_arg },
 			{ "maxhistory", max_history_arg },
 			{ "adapter",	adapter_arg },
-			{ "afi",		ignore_arg }, // 8514 API no longer used; silently gobble any argument 
+			{ "afi",		ignore_arg }, // 8514 API no longer used; silently gobble any argument
 			{ "textsafe",	text_safe_arg },
 			{ "vesadetect", gobble_flag_arg },
 			{ "biospalette", gobble_flag_arg },
@@ -3007,78 +3007,78 @@ int process_command(char *curarg, int mode) // process a single argument
 		command_processor processors[] =
 		{
 			{ "reset",			reset_arg },
-			{ "filename",		filename_arg },			// filename=?     
-			{ "video",			video_arg },			// video=? 
- 			{ "map",			map_arg },				// map=, set default colors 
-			{ "colors",			colors_arg },			// colors=, set current colors 
-			{ "recordcolors",	record_colors_arg },	// recordcolors= 
-			{ "maxlinelength",	max_line_length_arg },	// maxlinelength= 
-			{ "comment",		parse_arg },			// comment= 
-			{ "tplus",			gobble_flag_arg },		// tplus no longer used 
-			{ "noninterlaced",	gobble_flag_arg },		// noninterlaced no longer used 
-			{ "maxcolorres",	max_color_res_arg },	// Change default color resolution 
+			{ "filename",		filename_arg },			// filename=?
+			{ "video",			video_arg },			// video=?
+ 			{ "map",			map_arg },				// map=, set default colors
+			{ "colors",			colors_arg },			// colors=, set current colors
+			{ "recordcolors",	record_colors_arg },	// recordcolors=
+			{ "maxlinelength",	max_line_length_arg },	// maxlinelength=
+			{ "comment",		parse_arg },			// comment=
+			{ "tplus",			gobble_flag_arg },		// tplus no longer used
+			{ "noninterlaced",	gobble_flag_arg },		// noninterlaced no longer used
+			{ "maxcolorres",	max_color_res_arg },	// Change default color resolution
 			{ "pixelzoom",		pixel_zoom_arg },
-			{ "warn",			warn_arg },				// warn=? 
-			{ "overwrite",		overwrite_arg },		// overwrite=? 
+			{ "warn",			warn_arg },				// warn=?
+			{ "overwrite",		overwrite_arg },		// overwrite=?
 			{ "gif87a",			gif87a_arg },
 			{ "dither",			dither_arg },
-			{ "savetime",		save_time_arg },		// savetime=? 
-			{ "autokey",		auto_key_arg },			// autokey=? 
-			{ "autokeyname",	auto_key_name_arg },	// autokeyname=? 
-			{ "type",			type_arg },				// type=? 
-			{ "inside",			inside_arg },			// inside=? 
-			{ "proximity",		proximity_arg },		// proximity=? 
-			{ "fillcolor",		fill_color_arg },		// fillcolor 
+			{ "savetime",		save_time_arg },		// savetime=?
+			{ "autokey",		auto_key_arg },			// autokey=?
+			{ "autokeyname",	auto_key_name_arg },	// autokeyname=?
+			{ "type",			type_arg },				// type=?
+			{ "inside",			inside_arg },			// inside=?
+			{ "proximity",		proximity_arg },		// proximity=?
+			{ "fillcolor",		fill_color_arg },		// fillcolor
 			{ "finattract",		finite_attractor_arg },
 			{ "nobof",			no_bof_arg },
-			{ "function",		function_arg },			// function=?,? 
-			{ "outside",		outside_arg },			// outside=? 
-			{ "bfdigits",		bf_digits_arg },		// bfdigits=? 
-			{ "maxiter",		max_iter_arg },			// maxiter=? 
-			{ "iterincr",		ignore_arg },			// iterincr=? 
-			{ "passes",			passes_arg },			// passes=? 
+			{ "function",		function_arg },			// function=?,?
+			{ "outside",		outside_arg },			// outside=?
+			{ "bfdigits",		bf_digits_arg },		// bfdigits=?
+			{ "maxiter",		max_iter_arg },			// maxiter=?
+			{ "iterincr",		ignore_arg },			// iterincr=?
+			{ "passes",			passes_arg },			// passes=?
 			{ "ismand",			is_mand_arg },
-			{ "cyclelimit",		cycle_limit_arg },		// cyclelimit=? 
+			{ "cyclelimit",		cycle_limit_arg },		// cyclelimit=?
 			{ "makemig",		make_mig_arg },
 			{ "cyclerange",		cycle_range_arg },
 			{ "ranges",			ranges_arg },
-			{ "savename", 		save_name_arg },		// savename=? 
-			{ "tweaklzw", 		ignore_arg },			// tweaklzw=? 
-			{ "minstack", 		min_stack_arg },		// minstack=? 
-			{ "mathtolerance", 	math_tolerance_arg },	// mathtolerance=? 
-			{ "tempdir", 		temp_dir_arg },			// tempdir=? 
-			{ "workdir", 		work_dir_arg },			// workdir=? 
-			{ "exitmode", 		ignore_arg },			// exitmode=? 
+			{ "savename", 		save_name_arg },		// savename=?
+			{ "tweaklzw", 		ignore_arg },			// tweaklzw=?
+			{ "minstack", 		min_stack_arg },		// minstack=?
+			{ "mathtolerance", 	math_tolerance_arg },	// mathtolerance=?
+			{ "tempdir", 		temp_dir_arg },			// tempdir=?
+			{ "workdir", 		work_dir_arg },			// workdir=?
+			{ "exitmode", 		ignore_arg },			// exitmode=?
 			{ "textcolors", 	text_colors_arg },
-			{ "potential", 		potential_arg },		// potential=? 
-			{ "params", 		params_arg },			// params=?,? 
-			{ "miim", 			miim_arg },				// miim=?[/?[/?[/?]]] 
-			{ "initorbit", 		init_orbit_arg },		// initorbit=?,? 
-			{ "orbitname", 		orbit_name_arg },		// orbitname=? 
-			{ "3dmode", 		threed_mode_arg },		// orbitname=? 
-			{ "julibrot3d", 	julibrot_3d_arg },		// julibrot3d=?,?,?,? 
-			{ "julibroteyes", 	julibrot_eyes_arg },	// julibroteyes=?,?,?,? 
-			{ "julibrotfromto", julibrot_from_to_arg },	// julibrotfromto=?,?,?,? 
-			{ "corners", 		corners_arg },			// corners=?,?,?,? 
-			{ "orbitcorners", 	orbit_corners_arg },	// orbit corners=?,?,?,? 
+			{ "potential", 		potential_arg },		// potential=?
+			{ "params", 		params_arg },			// params=?,?
+			{ "miim", 			miim_arg },				// miim=?[/?[/?[/?]]]
+			{ "initorbit", 		init_orbit_arg },		// initorbit=?,?
+			{ "orbitname", 		orbit_name_arg },		// orbitname=?
+			{ "3dmode", 		threed_mode_arg },		// orbitname=?
+			{ "julibrot3d", 	julibrot_3d_arg },		// julibrot3d=?,?,?,?
+			{ "julibroteyes", 	julibrot_eyes_arg },	// julibroteyes=?,?,?,?
+			{ "julibrotfromto", julibrot_from_to_arg },	// julibrotfromto=?,?,?,?
+			{ "corners", 		corners_arg },			// corners=?,?,?,?
+			{ "orbitcorners", 	orbit_corners_arg },	// orbit corners=?,?,?,?
 			{ "screencoords", 	screencoords_arg },
-			{ "orbitdrawmode", 	orbit_draw_mode_arg },	// orbitdrawmode=? 
-			{ "viewwindows", 	view_windows_arg },		// viewwindows=?,?,?,?,? 
-			{ "center-mag", 	center_mag_arg },		// center-mag=?,?,?[,?,?,?] 
-			{ "aspectdrift", 	aspect_drift_arg },		// aspectdrift=? 
-			{ "invert", 		invert_arg },			// invert=?,?,? 
+			{ "orbitdrawmode", 	orbit_draw_mode_arg },	// orbitdrawmode=?
+			{ "viewwindows", 	view_windows_arg },		// viewwindows=?,?,?,?,?
+			{ "center-mag", 	center_mag_arg },		// center-mag=?,?,?[,?,?,?]
+			{ "aspectdrift", 	aspect_drift_arg },		// aspectdrift=?
+			{ "invert", 		invert_arg },			// invert=?,?,?
 			{ "olddemmcolors", 	olddemmcolors_arg },
 			{ "askvideo", 		ask_video_arg },
-			{ "ramvideo", 		ignore_arg },			// ramvideo=?   
-			{ "float", 			float_arg },			// float=? 
-			{ "fastrestore", 	fast_restore_arg },		// fastrestore=? 
-			{ "orgfrmdir", 		organize_formula_dir_arg },		// orgfrmdir=? 
-			{ "biomorph", 		biomorph_arg },			// biomorph=? 
-			{ "orbitsave", 		orbit_save_arg },		// orbitsave=? 
-			{ "bailout", 		bail_out_arg },			// bailout=? 
-			{ "bailoutest", 	bail_out_test_arg },	// bailoutest=? 
-			{ "symmetry", 		symmetry_arg },			// symmetry=? 
-			{ "printer", 		ignore_arg },			// deprecated print parameters 
+			{ "ramvideo", 		ignore_arg },			// ramvideo=?
+			{ "float", 			float_arg },			// float=?
+			{ "fastrestore", 	fast_restore_arg },		// fastrestore=?
+			{ "orgfrmdir", 		organize_formula_dir_arg },		// orgfrmdir=?
+			{ "biomorph", 		biomorph_arg },			// biomorph=?
+			{ "orbitsave", 		orbit_save_arg },		// orbitsave=?
+			{ "bailout", 		bail_out_arg },			// bailout=?
+			{ "bailoutest", 	bail_out_test_arg },	// bailoutest=?
+			{ "symmetry", 		symmetry_arg },			// symmetry=?
+			{ "printer", 		ignore_arg },			// deprecated print parameters
 			{ "printfile", 		ignore_arg },
 			{ "rleps", 			ignore_arg },
 			{ "colorps", 		ignore_arg },
@@ -3089,75 +3089,75 @@ int process_command(char *curarg, int mode) // process a single argument
 			{ "halftone", 		ignore_arg },
 			{ "linefeed", 		ignore_arg },
 			{ "comport", 		ignore_arg },
-			{ "sound", 			sound_arg },			// sound=?,?,? 
-			{ "hertz", 			hertz_arg },			// Hertz=? 
-			{ "volume", 		volume_arg },			// Volume =? 
+			{ "sound", 			sound_arg },			// sound=?,?,?
+			{ "hertz", 			hertz_arg },			// Hertz=?
+			{ "volume", 		volume_arg },			// Volume =?
 			{ "attenuate", 		attenuate_arg },
 			{ "polyphony", 		polyphony_arg },
-			{ "wavetype", 		wave_type_arg },		// wavetype = ? 
-			{ "attack", 		attack_arg },			// attack = ? 
-			{ "decay", 			decay_arg },			// decay = ? 
-			{ "sustain", 		sustain_arg },			// sustain = ? 
-			{ "srelease", 		sustain_release_arg },	// srelease = ? 
-			{ "scalemap", 		scale_map_arg },		// Scalemap=?,?,?,?,?,?,?,?,?,?,? 
-			{ "periodicity", 	periodicity_arg },		// periodicity=? 
-			{ "logmap", 		log_map_arg },			// logmap=? 
-			{ "logmode", 		log_mode_arg },			// logmode=? 
+			{ "wavetype", 		wave_type_arg },		// wavetype = ?
+			{ "attack", 		attack_arg },			// attack = ?
+			{ "decay", 			decay_arg },			// decay = ?
+			{ "sustain", 		sustain_arg },			// sustain = ?
+			{ "srelease", 		sustain_release_arg },	// srelease = ?
+			{ "scalemap", 		scale_map_arg },		// Scalemap=?,?,?,?,?,?,?,?,?,?,?
+			{ "periodicity", 	periodicity_arg },		// periodicity=?
+			{ "logmap", 		log_map_arg },			// logmap=?
+			{ "logmode", 		log_mode_arg },			// logmode=?
 			{ "debugflag", 		debug_flag_arg },
-			{ "debug", 			debug_flag_arg },		// internal use only 
+			{ "debug", 			debug_flag_arg },		// internal use only
 			{ "rseed", 			random_seed_arg },
 			{ "orbitdelay", 	orbit_delay_arg },
 			{ "orbitinterval", 	orbit_interval_arg },
 			{ "showdot", 		show_dot_arg },
-			{ "showorbit", 		show_orbit_arg },		// showorbit=yes|no 
+			{ "showorbit", 		show_orbit_arg },		// showorbit=yes|no
 			{ "decomp", 		decomposition_arg },
 			{ "distest", 		distance_test_arg },
-			{ "formulafile", 	formula_file_arg },		// formulafile=? 
-			{ "formulaname", 	formula_name_arg },		// formulaname=? 
-			{ "lfile", 			l_file_arg },			// lfile=? 
+			{ "formulafile", 	formula_file_arg },		// formulafile=?
+			{ "formulaname", 	formula_name_arg },		// formulaname=?
+			{ "lfile", 			l_file_arg },			// lfile=?
 			{ "lname", 			l_name_arg },
-			{ "ifsfile", 		ifs_file_arg },			// ifsfile=?? 
+			{ "ifsfile", 		ifs_file_arg },			// ifsfile=??
 			{ "ifs", 			ifs_arg },
-			{ "ifs3d", 			ifs_arg },				// ifs3d for old time's sake 
-			{ "parmfile", 		parm_file_arg },		// parmfile=? 
-			{ "stereo", 		stereo_arg },			// stereo=? 
-			{ "rotation", 		rotation_arg },			// rotation=?/?/? 
-			{ "perspective", 	perspective_arg },		// perspective=? 
-			{ "xyshift", 		xy_shift_arg },			// xyshift=?/?  
-			{ "interocular", 	inter_ocular_arg },		// interocular=? 
-			{ "converge", 		converge_arg },			// converg=? 
-			{ "crop", 			crop_arg },				// crop=? 
-			{ "bright", 		bright_arg },			// bright=? 
-			{ "xyadjust", 		xy_adjust_arg },		// xyadjust=?/? 
-			{ "3d", 			threed_arg },			// 3d=?/?/..    
+			{ "ifs3d", 			ifs_arg },				// ifs3d for old time's sake
+			{ "parmfile", 		parm_file_arg },		// parmfile=?
+			{ "stereo", 		stereo_arg },			// stereo=?
+			{ "rotation", 		rotation_arg },			// rotation=?/?/?
+			{ "perspective", 	perspective_arg },		// perspective=?
+			{ "xyshift", 		xy_shift_arg },			// xyshift=?/?
+			{ "interocular", 	inter_ocular_arg },		// interocular=?
+			{ "converge", 		converge_arg },			// converg=?
+			{ "crop", 			crop_arg },				// crop=?
+			{ "bright", 		bright_arg },			// bright=?
+			{ "xyadjust", 		xy_adjust_arg },		// xyadjust=?/?
+			{ "3d", 			threed_arg },			// 3d=?/?/..
 			{ "sphere", 		sphere_arg },
-			{ "scalexyz", 		scale_xyz_arg },		// scalexyz=?/?/? 
-			{ "roughness", 		roughness_arg },		// roughness=?  
-			{ "waterline", 		water_line_arg },		// waterline=?  
-			{ "filltype", 		fill_type_arg },		// filltype=?   
-			{ "lightsource", 	light_source_arg },		// lightsource=?/?/? 
-			{ "smoothing", 		smoothing_arg },		// smoothing=?  
-			{ "latitude", 		lattitude_arg },			// latitude=?/? 
-			{ "longitude", 		longitude_arg },		// longitude=?/? 
-			{ "radius", 		radius_arg },			// radius=? 
-			{ "transparent", 	transparent_arg },		// transparent? 
+			{ "scalexyz", 		scale_xyz_arg },		// scalexyz=?/?/?
+			{ "roughness", 		roughness_arg },		// roughness=?
+			{ "waterline", 		water_line_arg },		// waterline=?
+			{ "filltype", 		fill_type_arg },		// filltype=?
+			{ "lightsource", 	light_source_arg },		// lightsource=?/?/?
+			{ "smoothing", 		smoothing_arg },		// smoothing=?
+			{ "latitude", 		lattitude_arg },			// latitude=?/?
+			{ "longitude", 		longitude_arg },		// longitude=?/?
+			{ "radius", 		radius_arg },			// radius=?
+			{ "transparent", 	transparent_arg },		// transparent?
 			{ "preview", 		preview_arg },
 			{ "showbox", 		showbox_arg },
-			{ "coarse", 		coarse_arg },			// coarse=? 
-			{ "randomize", 		randomize_arg },		// randomize=? 
-			{ "ambient", 		ambient_arg },			// ambient=? 
-			{ "haze", 			haze_arg },				// haze=? 
+			{ "coarse", 		coarse_arg },			// coarse=?
+			{ "randomize", 		randomize_arg },		// randomize=?
+			{ "ambient", 		ambient_arg },			// ambient=?
+			{ "haze", 			haze_arg },				// haze=?
 			{ "fullcolor", 		fullcolor_arg },
 			{ "truecolor", 		truecolor_arg },
-			{ "truemode", 		true_mode_arg },		// truemode=? 
+			{ "truemode", 		true_mode_arg },		// truemode=?
 			{ "usegrayscale", 	use_grayscale_depth_arg },
-			{ "monitorwidth", 	monitor_width_arg },	// monitorwidth=? 
+			{ "monitorwidth", 	monitor_width_arg },	// monitorwidth=?
 			{ "targa_overlay", 	targa_overlay_arg },
-			{ "background", 	background_arg },		// background=?/? 
-			{ "lightname", 		light_name_arg },		// lightname=?   
-			{ "ray", 			ray_arg },				// ray=? 
+			{ "background", 	background_arg },		// background=?/?
+			{ "lightname", 		light_name_arg },		// lightname=?
+			{ "ray", 			ray_arg },				// ray=?
 			{ "brief", 			brief_arg },
-			{ "release", 		release_arg },			// release 
+			{ "release", 		release_arg },			// release
 			{ "curdir", 		cur_dir_arg },
 			{ "virtual", 		gobble_flag_arg }
 		};
@@ -3306,7 +3306,7 @@ static int parse_colors(char *value)
 		{
 			goto badcolor;
 		}
-		while (i < 256)   // zap unset entries 
+		while (i < 256)   // zap unset entries
 		{
 			g_.DAC().Set(i, 63*COLOR_CHANNEL_MAX/100, 63*COLOR_CHANNEL_MAX/100, 63*COLOR_CHANNEL_MAX/100);
 			++i;
@@ -3321,7 +3321,7 @@ badcolor:
 	return -1;
 }
 
-static void arg_error(const char *bad_arg)      // oops. couldn't decode this 
+static void arg_error(const char *bad_arg)      // oops. couldn't decode this
 {
 	char spillover[71];
 	if (int(strlen(bad_arg)) > NUM_OF(spillover) - 1)
@@ -3333,7 +3333,7 @@ static void arg_error(const char *bad_arg)      // oops. couldn't decode this
 	std::ostringstream msg;
 	msg << boost::format("Oops. I couldn't understand the argument:\n  %s") % bad_arg;
 
-	if (g_command_initialize)       // this is 1st call to command_files 
+	if (g_command_initialize)       // this is 1st call to command_files
 	{
 		msg << "\n"
 			"\n"
@@ -3349,7 +3349,7 @@ static void arg_error(const char *bad_arg)      // oops. couldn't decode this
 	}
 }
 
-// copy a big number from a string, up to slash 
+// copy a big number from a string, up to slash
 static int get_bf(bf_t bf, char *curarg)
 {
 	char *s = strchr(curarg, '/');
@@ -3365,8 +3365,8 @@ static int get_bf(bf_t bf, char *curarg)
 	return 0;
 }
 
-// Get length of current args 
-// TODO: this shouldn't modify the curarg! 
+// Get length of current args
+// TODO: this shouldn't modify the curarg!
 int get_curarg_len(char *curarg)
 {
 	int len;
@@ -3383,7 +3383,7 @@ int get_curarg_len(char *curarg)
 	return len;
 }
 
-// Get max length of current args 
+// Get max length of current args
 int get_max_curarg_len(char *floatvalstr[], int totparms)
 {
 	int i;
@@ -3401,12 +3401,12 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 	return max_str;
 }
 
-// mode = 0 command line @filename         
-// 1 sstools.ini                    
-// 2 <@> command after startup      
-// 3 command line @filename/setname 
-// this is like stop_message() but can be used in command_files()      
-// call with 0 for badfilename to get pause for driver_get_key() 
+// mode = 0 command line @filename
+// 1 sstools.ini
+// 2 <@> command after startup
+// 3 command line @filename/setname
+// this is like stop_message() but can be used in command_files()
+// call with 0 for badfilename to get pause for driver_get_key()
 int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 {
 	char const *modestr[4] =
@@ -3416,7 +3416,7 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 	char cmd[80];
 	static int row = 1;
 
-	if (g_initialize_batch == INITBATCH_NORMAL)  // in batch mode 
+	if (g_initialize_batch == INITBATCH_NORMAL)  // in batch mode
 	{
 		if (bad_filename)
 		{
@@ -3436,7 +3436,7 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 		bad_filename_message = str(boost::format("Can't find %s%s, please check %s")
 			% cmd % bad_filename % modestr[mode]);
 	}
-	if (g_command_initialize)  // & command_files hasn't finished 1st try 
+	if (g_command_initialize)  // & command_files hasn't finished 1st try
 	{
 		if (row == 1 && bad_filename)
 		{
@@ -3451,7 +3451,7 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 		{
 			driver_put_string(++row, 0, 15, "Press Escape to abort, any other key to continue");
 			driver_move_cursor(row + 1, 0);
-			pause_error(PAUSE_ERROR_GOODBYE);  // defer get_key_no_help until after parsing 
+			pause_error(PAUSE_ERROR_GOODBYE);  // defer get_key_no_help until after parsing
 		}
 	}
 	else if (bad_filename)
@@ -3461,7 +3461,7 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 	return 0;
 }
 
-// defer pause until after parsing so we know if in batch mode 
+// defer pause until after parsing so we know if in batch mode
 void pause_error(int action)
 {
 	static int needpause = PAUSE_ERROR_NO_BATCH;
@@ -3500,7 +3500,7 @@ void pause_error(int action)
 //
 static int is_a_big_float(char *str)
 {
-	// [+|-]numbers][.]numbers[+|-][e|g]numbers 
+	// [+|-]numbers][.]numbers[+|-][e|g]numbers
 	int result = 1;
 	char *s = str;
 	int numdot = 0;

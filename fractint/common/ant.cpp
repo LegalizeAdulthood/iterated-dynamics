@@ -68,7 +68,7 @@ private:
 	// for x 0, 1, 0, -1
 	// for y 1, 0, -1, 0
 	//
-	int *m_incx[DIRS];         // tab for 4 directions 
+	int *m_incx[DIRS];         // tab for 4 directions
 	int *m_incy[DIRS];
 	int m_last_xdots;
 	int m_last_ydots;
@@ -90,7 +90,7 @@ private:
 	void SetMaxAnts();
 	void SetRandomSeedForReproducibility();
 
-	// Generate Random Number 0 <= r < n 
+	// Generate Random Number 0 <= r < n
 	static int random_number(long n)
 	{
 		return int((long(rand())*n) >> 15);
@@ -162,7 +162,7 @@ void Ant::turk_mite1(long maxpts)
 	int rule[MAX_ANTS + 1];
 	if (m_rule_len == 0)
 	{
-		// random rule 
+		// random rule
 		for (color = 0; color < MAX_ANTS; color++)
 		{
 			// init the rules and colors for the
@@ -170,12 +170,12 @@ void Ant::turk_mite1(long maxpts)
 			rule[color] = 1 - (random_number(2)*2);
 			next_col[color] = color + 1;
 		}
-		// close the cycle 
+		// close the cycle
 		next_col[color] = 0;
 	}
 	else
 	{
-		// user defined rule 
+		// user defined rule
 		for (color = 0; color < m_rule_len; color++)
 		{
 			// init the rules and colors for the
@@ -183,7 +183,7 @@ void Ant::turk_mite1(long maxpts)
 			rule[color] = (m_rule[color]*2) - 1;
 			next_col[color] = color + 1;
 		}
-		// repeats to last color 
+		// repeats to last color
 		for (color = m_rule_len; color < MAX_ANTS; color++)
 		{
 			// init the rules and colors for the
@@ -191,7 +191,7 @@ void Ant::turk_mite1(long maxpts)
 			rule[color] = rule[color % m_rule_len];
 			next_col[color] = color + 1;
 		}
-		// close the cycle 
+		// close the cycle
 		next_col[color] = 0;
 	}
 	int x[MAX_ANTS + 1];
@@ -219,7 +219,7 @@ void Ant::turk_mite1(long maxpts)
 	for (count = 0; count < maxpts; count++)
 	{
 		// TODO: refactor to IInputContext
-		// check for a key only every inner_loop times 
+		// check for a key only every inner_loop times
 		int kbdchar = _driver->key_pressed();
 		if (kbdchar || step)
 		{
@@ -268,8 +268,8 @@ void Ant::turk_mite1(long maxpts)
 			if (m_wait > 0 && step == 0)
 			{
 				for (color = m_max_ants; color; color--)
-				{                   // move the various turmites 
-					ix = x[color];   // temp vars 
+				{                   // move the various turmites
+					ix = x[color];   // temp vars
 					iy = y[color];
 					idir = dir[color];
 
@@ -297,8 +297,8 @@ void Ant::turk_mite1(long maxpts)
 			else
 			{
 				for (color = m_max_ants; color; color--)
-				{                   // move the various turmites without delay 
-					ix = x[color];   // temp vars 
+				{                   // move the various turmites without delay
+					ix = x[color];   // temp vars
 					iy = y[color];
 					idir = dir[color];
 					pixel = get_color(ix, iy);
@@ -324,7 +324,7 @@ void Ant::turk_mite1(long maxpts)
 	}
 }
 
-// this one ignore the color of the current cell is more like a white ant 
+// this one ignore the color of the current cell is more like a white ant
 void Ant::turk_mite2(long maxpts)
 {
 	int step = int(m_wait);
@@ -342,7 +342,7 @@ void Ant::turk_mite2(long maxpts)
 	int rule[MAX_ANTS + 1];
 	if (m_rule_len == 0)
 	{
-		// random rule 
+		// random rule
 		for (int color = MAX_ANTS - 1; color; color--)
 		{
 			// init the various turmites N.B. don't use
@@ -373,13 +373,13 @@ void Ant::turk_mite2(long maxpts)
 			y[color] = g_y_dots/2;
 		}
 	}
-	// use this rule when a black pixel is found 
+	// use this rule when a black pixel is found
 	rule[0] = 0;
 	int rule_mask = 1;
 	maxpts /= long(INNER_LOOP);
 	for (int count = 0; count < maxpts; count++)
 	{
-		// check for a key only every inner_loop times 
+		// check for a key only every inner_loop times
 		int kbdchar = _driver->key_pressed();
 		if (kbdchar || step)
 		{
@@ -422,8 +422,8 @@ void Ant::turk_mite2(long maxpts)
 		for (int i = INNER_LOOP; i; i--)
 		{
 			for (int color = m_max_ants; color; color--)
-			{                      // move the various turmites 
-				int ix = x[color];      // temp vars 
+			{                      // move the various turmites
+				int ix = x[color];      // temp vars
 				int iy = y[color];
 				int idir = dir[color];
 				int pixel = get_color(ix, iy);
@@ -436,13 +436,13 @@ void Ant::turk_mite2(long maxpts)
 
 				if (rule[pixel] & rule_mask)
 				{
-					// turn right 
+					// turn right
 					idir--;
 					g_plot_color_put_color(ix, iy, 0);
 				}
 				else
 				{
-					// turn left 
+					// turn left
 					idir++;
 					g_plot_color_put_color(ix, iy, color);
 				}
@@ -491,12 +491,12 @@ void Ant::initialize_increments()
 	{
 		m_incx[3][i] = i + 1;
 	}
-	m_incx[3][g_x_dots-1] = 0; // wrap from right of the screen to left 
+	m_incx[3][g_x_dots-1] = 0; // wrap from right of the screen to left
 	for (int i = 1; i < g_x_dots; i++)
 	{
 		m_incx[1][i] = i - 1;
 	}
-	m_incx[1][0] = g_x_dots-1; // wrap from left of the screen to right 
+	m_incx[1][0] = g_x_dots-1; // wrap from left of the screen to right
 
 	for (int i = 0; i < g_y_dots; i++)
 	{
@@ -507,12 +507,12 @@ void Ant::initialize_increments()
 	{
 		m_incy[0][i] = i + 1;
 	}
-	m_incy[0][g_y_dots - 1] = 0;      // wrap from the top of the screen to the bottom 
+	m_incy[0][g_y_dots - 1] = 0;      // wrap from the top of the screen to the bottom
 	for (int i = 1; i < g_y_dots; i++)
 	{
 		m_incy[2][i] = i - 1;
 	}
-	m_incy[2][0] = g_y_dots - 1;      // wrap from the bottom of the screen to the top 
+	m_incy[2][0] = g_y_dots - 1;      // wrap from the bottom of the screen to the top
 }
 
 int Ant::Compute()
@@ -522,7 +522,7 @@ int Ant::Compute()
 		m_last_xdots = g_x_dots;
 		m_last_ydots = g_y_dots;
 
-		free_storage();	// free old memory 
+		free_storage();	// free old memory
 		for (int i = 0; i < DIRS; i++)
 		{
 			m_incx[i] = new int[g_x_dots];
@@ -538,7 +538,7 @@ int Ant::Compute()
 	strcpy(m_rule, boost::format("%.17g") % g_parameters[0]);
 	m_rule_len = int(strlen(m_rule));
 	if (m_rule_len > 1)
-	{                            // if m_rule_len == 0 random rule 
+	{                            // if m_rule_len == 0 random rule
 		for (int i = 0; i < m_rule_len; i++)
 		{
 			m_rule[i] = (m_rule[i] != '1') ? 0 : 1;

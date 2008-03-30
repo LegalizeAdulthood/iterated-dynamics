@@ -74,11 +74,11 @@ static int calculation_mode()
 
 static int inside_mode()
 {
-	if (g_externs.Inside() >= 0)  // numb 
+	if (g_externs.Inside() >= 0)  // numb
 	{
 		return 0;
 	}
-	
+
 	switch (g_externs.Inside())
 	{
 	case COLORMODE_ITERATION:					return 1;
@@ -102,7 +102,7 @@ static std::string save_name()
 	return (pos == std::string::npos) ? g_save_name : g_save_name.substr(pos + 1);
 }
 
-// --------------------------------------------------------------------- 
+// ---------------------------------------------------------------------
 /*
 		get_toggles() is called from FRACTINT.C whenever the 'x' key
 		is pressed.  This routine prompts for several options,
@@ -198,7 +198,7 @@ int get_toggles()
 	{
 		g_externs.SetStopPass(0);
 	}
-	// Oops, lyapunov type doesn't use 'new' & breaks orbits 
+	// Oops, lyapunov type doesn't use 'new' & breaks orbits
 	if (g_externs.UserStandardCalculationMode() == CALCMODE_ORBITS
 		&& g_fractal_type == FRACTYPE_LYAPUNOV)
 	{
@@ -310,7 +310,7 @@ int get_toggles()
 	if (g_save_name != previous_save_name)
 	{
 		g_resave_mode = RESAVE_NO;
-		g_started_resaves = false; // forget pending increment 
+		g_started_resaves = false; // forget pending increment
 	}
 
 	g_fractal_overwrite = (dialog.values(++k).uval.ch.val != 0);
@@ -327,7 +327,7 @@ int get_toggles()
 	if (g_log_palette_mode != old_log_palette_flag)
 	{
 		j++;
-		g_log_automatic_flag = false;  // turn it off, use the supplied value 
+		g_log_automatic_flag = false;  // turn it off, use the supplied value
 	}
 
 	{
@@ -429,7 +429,7 @@ int get_toggles2()
 	}
 
 	int k = -1;
-	int j = 0;   // return code 
+	int j = 0;   // return code
 	if (dialog.values(++k).uval.ch.val != g_finite_attractor)
 	{
 		g_finite_attractor = dialog.values(k).uval.ch.val;
@@ -465,20 +465,20 @@ int get_toggles2()
 	if (dialog.values(++k).uval.ch.val != (g_potential_16bit ? 1 : 0))
 	{
 		g_potential_16bit = (dialog.values(k).uval.ch.val != 0);
-		if (g_potential_16bit)  // turned it on 
+		if (g_potential_16bit)  // turned it on
 		{
 			if (g_potential_parameter[0] != 0.0)
 			{
 				j = 1;
 			}
 		}
-		else // turned it off 
+		else // turned it off
 		{
-			if (!driver_diskp()) // ditch the disk video 
+			if (!driver_diskp()) // ditch the disk video
 			{
 				disk_end();
 			}
-			else // keep disk video, but ditch the fraction part at end 
+			else // keep disk video, but ditch the fraction part at end
 			{
 				g_disk_16bit = false;
 			}
@@ -631,11 +631,11 @@ pass_option_restart:
 }
 
 
-// for videomodes added new options "virtual x/y" that change "sx/g_y_dots" 
-// for diskmode changed "viewx/g_y_dots" to "virtual x/y" that do as above  
-// (since for diskmode they were updated by x/g_y_dots that should be the   
-// same as sx/g_y_dots for that mode)                                       
-// g_video_table and g_.VideoEntry() are now updated even for non-disk modes     
+// for videomodes added new options "virtual x/y" that change "sx/g_y_dots"
+// for diskmode changed "viewx/g_y_dots" to "virtual x/y" that do as above
+// (since for diskmode they were updated by x/g_y_dots that should be the
+// same as sx/g_y_dots for that mode)
+// g_video_table and g_.VideoEntry() are now updated even for non-disk modes
 
 int get_disk_view_params()
 {
@@ -677,7 +677,7 @@ int get_disk_view_params()
 	return (g_screen_width != old_sxdots || g_screen_height != old_sydots) ? 1 : 0;
 }
 
-// --------------------------------------------------------------------- 
+// ---------------------------------------------------------------------
 /*
 	get_view_params() is called from FRACTINT.C whenever the 'v' key
 	is pressed.  Return codes are:
@@ -720,7 +720,7 @@ int get_command_string()
 }
 
 
-// --------------------------------------------------------------------- 
+// ---------------------------------------------------------------------
 
 
 
@@ -744,9 +744,9 @@ int get_a_number(double *x, double *y)
 	return i;
 }
 
-// --------------------------------------------------------------------- 
+// ---------------------------------------------------------------------
 
-int get_commands()              // execute commands from file 
+int get_commands()              // execute commands from file
 {
 	std::ifstream::pos_type point;
 	static char commandmask[13] = {"*.par"};
@@ -765,7 +765,7 @@ int get_commands()              // execute commands from file
 	return 0;
 }
 
-// --------------------------------------------------------------------- 
+// ---------------------------------------------------------------------
 
 void goodbye()
 {
@@ -803,7 +803,7 @@ void goodbye()
 	g_slideShow.Stop();
 	end_help();
 	ret = 0;
-	if (g_initialize_batch == INITBATCH_BAILOUT_ERROR) // exit with error code for batch file 
+	if (g_initialize_batch == INITBATCH_BAILOUT_ERROR) // exit with error code for batch file
 	{
 		ret = 2;
 	}
@@ -868,7 +868,7 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 }
 #endif
 
-int lccompare(VOIDPTR arg1, VOIDPTR arg2) // for sort 
+int lccompare(VOIDPTR arg1, VOIDPTR arg2) // for sort
 {
 	char **choice1 = (char **) arg1;
 	char **choice2 = (char **) arg2;
@@ -902,13 +902,13 @@ int cmpdbl(double old, double new_value)
 	char buf[81];
 	full_screen_values val;
 
-	// change the old value with the same torture the new value had 
-	val.type = 'd'; // most values on this screen are type d 
+	// change the old value with the same torture the new value had
+	val.type = 'd'; // most values on this screen are type d
 	val.uval.dval = old;
-	prompt_value_string(buf, &val);   // convert "old" to string 
+	prompt_value_string(buf, &val);   // convert "old" to string
 
-	old = atof(buf);                // convert back 
-	return fabs(old-new_value) < DBL_EPSILON?0:1;  // zero if same 
+	old = atof(buf);                // convert back
+	return fabs(old-new_value) < DBL_EPSILON?0:1;  // zero if same
 }
 
 int get_corners()
@@ -993,7 +993,7 @@ gc_loop:
 			return -1;
 		}
 
-		if (result == IDK_F4)  // reset to type defaults 
+		if (result == IDK_F4)  // reset to type defaults
 		{
 			g_escape_time_state.m_grid_fp.x_3rd() = g_current_fractal_specific->x_min;
 			g_escape_time_state.m_grid_fp.x_min() = g_current_fractal_specific->x_min;
@@ -1063,7 +1063,7 @@ gc_loop:
 			}
 		}
 
-		if (result == IDK_F7 && g_orbit_draw_mode != ORBITDRAW_LINE)  // toggle corners/center-mag mode 
+		if (result == IDK_F7 && g_orbit_draw_mode != ORBITDRAW_LINE)  // toggle corners/center-mag mode
 		{
 			if (!g_use_center_mag)
 			{
@@ -1080,7 +1080,7 @@ gc_loop:
 		if (!cmpdbl(oxxmin, g_escape_time_state.m_grid_fp.x_min()) && !cmpdbl(oxxmax, g_escape_time_state.m_grid_fp.x_max()) && !cmpdbl(oyymin, g_escape_time_state.m_grid_fp.y_min()) &&
 			!cmpdbl(oyymax, g_escape_time_state.m_grid_fp.y_max()) && !cmpdbl(oxx3rd, g_escape_time_state.m_grid_fp.x_3rd()) && !cmpdbl(oyy3rd, g_escape_time_state.m_grid_fp.y_3rd()))
 		{
-			// no change, restore values to avoid drift 
+			// no change, restore values to avoid drift
 			g_escape_time_state.m_grid_fp.x_min() = oxxmin;
 			g_escape_time_state.m_grid_fp.x_max() = oxxmax;
 			g_escape_time_state.m_grid_fp.y_min() = oyymin;
@@ -1102,8 +1102,8 @@ static int get_screen_corners()
 	const char *yprompt = "          Y";
 	const char *zprompt = "          Z";
 	bool ousemag = g_use_center_mag;
-	double svxxmin = g_escape_time_state.m_grid_fp.x_min();  // save these for later since convert_corners modifies them 
-	double svxxmax = g_escape_time_state.m_grid_fp.x_max();  // and we need to set them for convert_center_mag to work 
+	double svxxmin = g_escape_time_state.m_grid_fp.x_min();  // save these for later since convert_corners modifies them
+	double svxxmax = g_escape_time_state.m_grid_fp.x_max();  // and we need to set them for convert_center_mag to work
 	double svxx3rd = g_escape_time_state.m_grid_fp.x_3rd();
 	double svyymin = g_escape_time_state.m_grid_fp.y_min();
 	double svyymax = g_escape_time_state.m_grid_fp.y_max();
@@ -1182,7 +1182,7 @@ gsc_loop:
 			g_orbit_y_max = oyymax;
 			g_orbit_x_3rd = oxx3rd;
 			g_orbit_y_3rd = oyy3rd;
-			// restore corners 
+			// restore corners
 			g_escape_time_state.m_grid_fp.x_min() = svxxmin;
 			g_escape_time_state.m_grid_fp.x_max() = svxxmax;
 			g_escape_time_state.m_grid_fp.y_min() = svyymin;
@@ -1192,7 +1192,7 @@ gsc_loop:
 			return -1;
 		}
 
-		if (prompt_ret == IDK_F4)  // reset to type defaults 
+		if (prompt_ret == IDK_F4)  // reset to type defaults
 		{
 			g_orbit_x_min = g_current_fractal_specific->x_min;
 			g_orbit_x_max = g_current_fractal_specific->x_max;
@@ -1239,7 +1239,7 @@ gsc_loop:
 					Xmagfactor = 1;
 				}
 				convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
-				// set screen corners 
+				// set screen corners
 				g_orbit_x_min = g_escape_time_state.m_grid_fp.x_min();
 				g_orbit_x_max = g_escape_time_state.m_grid_fp.x_max();
 				g_orbit_y_min = g_escape_time_state.m_grid_fp.y_min();
@@ -1266,7 +1266,7 @@ gsc_loop:
 			}
 		}
 
-		if (prompt_ret == IDK_F7)  // toggle corners/center-mag mode 
+		if (prompt_ret == IDK_F7)  // toggle corners/center-mag mode
 		{
 			if (!g_use_center_mag)
 			{
@@ -1283,14 +1283,14 @@ gsc_loop:
 		if (!cmpdbl(oxxmin, g_orbit_x_min) && !cmpdbl(oxxmax, g_orbit_x_max) && !cmpdbl(oyymin, g_orbit_y_min) &&
 			!cmpdbl(oyymax, g_orbit_y_max) && !cmpdbl(oxx3rd, g_orbit_x_3rd) && !cmpdbl(oyy3rd, g_orbit_y_3rd))
 		{
-			// no change, restore values to avoid drift 
+			// no change, restore values to avoid drift
 			g_orbit_x_min = oxxmin;
 			g_orbit_x_max = oxxmax;
 			g_orbit_y_min = oyymin;
 			g_orbit_y_max = oyymax;
 			g_orbit_x_3rd = oxx3rd;
 			g_orbit_y_3rd = oyy3rd;
-			// restore corners 
+			// restore corners
 			g_escape_time_state.m_grid_fp.x_min() = svxxmin;
 			g_escape_time_state.m_grid_fp.x_max() = svxxmax;
 			g_escape_time_state.m_grid_fp.y_min() = svyymin;
@@ -1303,7 +1303,7 @@ gsc_loop:
 		{
 			g_set_orbit_corners = true;
 			g_keep_screen_coords = true;
-			// restore corners 
+			// restore corners
 			g_escape_time_state.m_grid_fp.x_min() = svxxmin;
 			g_escape_time_state.m_grid_fp.x_max() = svxxmax;
 			g_escape_time_state.m_grid_fp.y_min() = svyymin;
@@ -1315,10 +1315,10 @@ gsc_loop:
 	}
 }
 
-// merge existing full path with new one  
-// attempt to detect if file or directory 
+// merge existing full path with new one
+// attempt to detect if file or directory
 
-// I tried heap sort also - this is faster! 
+// I tried heap sort also - this is faster!
 void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, VOIDPTR arg2))
 {
 	int gap;

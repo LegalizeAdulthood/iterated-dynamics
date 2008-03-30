@@ -568,7 +568,7 @@ enum
 	FRACTAL_INFO_SIZE = sizeof(fractal_info)
 };
 #else
-// This value should be the MSDOS size, not the Unix size. 
+// This value should be the MSDOS size, not the Unix size.
 enum
 {
 	FRACTAL_INFO_SIZE = 504
@@ -737,7 +737,7 @@ enum FractalFlags
 	FRACTALFLAG_INFINITE_CALCULATION	= 0x20,			// this type calculates forever
 	FRACTALFLAG_FUNCTION_SHIFT			= 6,			// number of trig functions in formula
 	FRACTALFLAG_FUNCTION_MASK			= 0x7,
-	FRACTALFLAG_1_FUNCTION				= (1 << FRACTALFLAG_FUNCTION_SHIFT),	
+	FRACTALFLAG_1_FUNCTION				= (1 << FRACTALFLAG_FUNCTION_SHIFT),
 	FRACTALFLAG_2_FUNCTIONS				= (2 << FRACTALFLAG_FUNCTION_SHIFT),
 	FRACTALFLAG_4_FUNCTIONS				= (4 << FRACTALFLAG_FUNCTION_SHIFT),
 	FRACTALFLAG_3D_PARAMETERS			= 0x400,		// uses 3d parameters

@@ -90,14 +90,14 @@ private:
 
 	enum
 	{
-		CURSOR_SIZE = 5     // length of one side of the x-hair cursor 
+		CURSOR_SIZE = 5     // length of one side of the x-hair cursor
 	};
 	int _x;
 	int _y;
-	int _hidden;       // true if mouse hidden 
+	int _hidden;       // true if mouse hidden
 	long _last_blink;
 	bool _blink;
-	BYTE _top[CURSOR_SIZE];        // save line segments here 
+	BYTE _top[CURSOR_SIZE];        // save line segments here
 	BYTE _bottom[CURSOR_SIZE];
 	BYTE _left[CURSOR_SIZE];
 	BYTE _right[CURSOR_SIZE];

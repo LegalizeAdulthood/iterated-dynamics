@@ -1,24 +1,24 @@
 #if !defined(WORK_LIST_H)
 #define WORK_LIST_H
 
-struct WorkListItem    // work list entry for std escape time engines 
+struct WorkListItem    // work list entry for std escape time engines
 {
-	int xx_start;    // screen window for this entry 
+	int xx_start;    // screen window for this entry
 	int xx_stop;
 	int yy_start;
 	int yy_stop;
-	int yy_begin;    // start row within window, for 2pass/ssg resume 
-	int sym;        // if symmetry in window, prevents bad combines 
-	int pass;       // for 2pass and solid guessing 
-	int xx_begin;    // start col within window, =0 except on resume 
+	int yy_begin;    // start row within window, for 2pass/ssg resume
+	int sym;        // if symmetry in window, prevents bad combines
+	int pass;       // for 2pass and solid guessing
+	int xx_begin;    // start col within window, =0 except on resume
 };
 
 enum
 {
 	MAX_WORK_LIST = 40,
-	MAX_Y_BLOCK = 7,		// MAX_X_BLOCK*MAX_Y_BLOCK*2 <= 4096, the size of "prefix" 
-	MAX_X_BLOCK = 202		// each maxnblk is oversize by 2 for a "border" 
-							// MAX_X_BLOCK defn must match fracsubr.c 
+	MAX_Y_BLOCK = 7,		// MAX_X_BLOCK*MAX_Y_BLOCK*2 <= 4096, the size of "prefix"
+	MAX_X_BLOCK = 202		// each maxnblk is oversize by 2 for a "border"
+							// MAX_X_BLOCK defn must match fracsubr.c
 };
 
 class WorkList

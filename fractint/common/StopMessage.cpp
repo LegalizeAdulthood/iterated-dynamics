@@ -13,7 +13,7 @@ int StopMessage::Execute(int flags, const std::string &msg)
 	static unsigned char batchmode = 0;
 	if (_externs.DebugMode() || _externs.InitializeBatch() >= INITBATCH_NORMAL)
 	{
-		std::ofstream stream((_externs.WorkDirectory() / "stop_message.txt").string().c_str(), 
+		std::ofstream stream((_externs.WorkDirectory() / "stop_message.txt").string().c_str(),
 			std::ios_base::out | ((_externs.InitializeBatch() == INITBATCH_NONE) ? 0 : std::ios_base::ate));
 		if (stream)
 		{
@@ -21,15 +21,15 @@ int StopMessage::Execute(int flags, const std::string &msg)
 			stream.close();
 		}
 	}
-	if (_externs.CommandInitialize())  // & command_files hasn't finished 1st try 
+	if (_externs.CommandInitialize())  // & command_files hasn't finished 1st try
 	{
 		_app.InitializationFailure(msg);
 		_app.GoodBye();
 	}
-	if (_externs.InitializeBatch() >= INITBATCH_NORMAL || batchmode)  // in batch mode 
+	if (_externs.InitializeBatch() >= INITBATCH_NORMAL || batchmode)  // in batch mode
 	{
-		_externs.SetInitializeBatch(INITBATCH_BAILOUT_INTERRUPTED); // used to set errorlevel 
-		batchmode = 1; // fixes *second* stop_message in batch mode bug 
+		_externs.SetInitializeBatch(INITBATCH_BAILOUT_INTERRUPTED); // used to set errorlevel
+		batchmode = 1; // fixes *second* stop_message in batch mode bug
 		return -1;
 	}
 	ret = 0;
@@ -44,7 +44,7 @@ int StopMessage::Execute(int flags, const std::string &msg)
 		toprow = 4;
 		_driver->move_cursor(4, 0);
 	}
-	_externs.SetTextCbase(2); // left margin is 2 
+	_externs.SetTextCbase(2); // left margin is 2
 	_driver->put_string(toprow, 0, 7, msg);
 	if (flags & STOPMSG_CANCEL)
 	{
@@ -54,15 +54,15 @@ int StopMessage::Execute(int flags, const std::string &msg)
 	{
 		_driver->put_string(_externs.TextRow() + 2, 0, 7, "Any key to continue...");
 	}
-	_externs.SetTextCbase(0);			// back to full line 
+	_externs.SetTextCbase(0);			// back to full line
 	color = (flags & STOPMSG_INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
 	_driver->set_attr(toprow, 0, color, (_externs.TextRow() + 1-toprow)*80);
-	_driver->hide_text_cursor();			// cursor off 
+	_driver->hide_text_cursor();			// cursor off
 	if ((flags & STOPMSG_NO_BUZZER) == 0)
 	{
 		_driver->buzzer((flags & STOPMSG_INFO_ONLY) ? 0 : 2);
 	}
-	while (_driver->key_pressed()) // flush any keyahead 
+	while (_driver->key_pressed()) // flush any keyahead
 	{
 		_driver->get_key();
 	}

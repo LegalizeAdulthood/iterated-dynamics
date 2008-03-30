@@ -58,7 +58,7 @@ static void lsysf_plus(lsys_turtle_state_fp *cmd)
 	}
 }
 
-// This is the same as lsys_doplus, except max_angle is a power of 2. 
+// This is the same as lsys_doplus, except max_angle is a power of 2.
 static void lsysf_plus_pow2(lsys_turtle_state_fp *cmd)
 {
 	if (cmd->reverse)
@@ -286,7 +286,7 @@ find_size(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int dep
 	lsys_cmd **rulind;
 	bool tran;
 
-	if (g_overflow)     // integer math routines overflowed 
+	if (g_overflow)     // integer math routines overflowed
 	{
 		return 0;
 	}
@@ -295,7 +295,7 @@ find_size(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int dep
 	{
 		if (! (ts->counter++))
 		{
-			// let user know we're not dead 
+			// let user know we're not dead
 			if (thinking(1, "L-System thinking (higher orders take longer)"))
 			{
 				ts->counter--;
@@ -367,7 +367,7 @@ find_size(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int dep
 	return command;
 }
 
-int 
+int
 lsysf_find_scale(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int depth)
 {
 	float horiz;
@@ -394,7 +394,7 @@ lsysf_find_scale(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, 
 	ts->realangle = 0;
 	ts->size = 1;
 	fsret = find_size(command, ts, rules, depth);
-	thinking(0, 0); // erase thinking message if any 
+	thinking(0, 0); // erase thinking message if any
 	x_min = ts->x_min;
 	x_max = ts->x_max;
 	y_min = ts->y_min;
@@ -420,7 +420,7 @@ draw_lsysf(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int de
 	lsys_cmd **rulind;
 	bool tran;
 
-	if (g_overflow)     // integer math routines overflowed 
+	if (g_overflow)     // integer math routines overflowed
 	{
 		return 0;
 	}

@@ -10,8 +10,8 @@
 #include "id.h"
 #include "drivers.h"
 
-// list of drivers that are supported by source code in fractint 
-// default driver is first one in the list that initializes. 
+// list of drivers that are supported by source code in fractint
+// default driver is first one in the list that initializes.
 #if defined(HAVE_X11_DRIVER)
 extern AbstractDriver *x11_driver;
 #endif
@@ -85,7 +85,7 @@ int DriverManager::open_drivers(int &argc, char **argv)
 	load(gdi_driver, argc, argv);
 #endif
 
-	return s_num_drivers;		// number of drivers supported at runtime 
+	return s_num_drivers;		// number of drivers supported at runtime
 }
 
 /* add_video_mode
@@ -94,7 +94,7 @@ int DriverManager::open_drivers(int &argc, char **argv)
  */
 void add_video_mode(AbstractDriver *drv, VIDEOINFO &mode)
 {
-	// stash away driver pointer so we can init driver for selected mode 
+	// stash away driver pointer so we can init driver for selected mode
 	mode.driver = drv;
 	g_.AddVideoModeToTable(mode);
 }

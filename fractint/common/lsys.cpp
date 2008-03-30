@@ -25,8 +25,8 @@
 
 enum
 {
-	MAXRULES = 27, // this limits rules to 25 
-	MAX_LSYS_LINE_LEN = 255 // this limits line length to 255 
+	MAXRULES = 27, // this limits rules to 25
+	MAX_LSYS_LINE_LEN = 255 // this limits line length to 255
 };
 
 // The number by which to multiply sines, cosines and other
@@ -137,7 +137,7 @@ LDBL get_number(char **str)
 	(*str)--;
 	numstr[i] = 0;
 	ret = atof(numstr);
-	if (ret <= 0.0) // this is a sanity check, JCO 8/31/94 
+	if (ret <= 0.0) // this is a sanity check, JCO 8/31/94
 	{
 		return 0;
 	}
@@ -195,17 +195,17 @@ static int read_l_system_file(std::string &item)
 	linenum = 0;
 	message = "";
 
-	while (file_gets(inline1, MAX_LSYS_LINE_LEN, infile) > -1)  // Max line length chars 
+	while (file_gets(inline1, MAX_LSYS_LINE_LEN, infile) > -1)  // Max line length chars
 	{
 		linenum++;
 		word = strchr(inline1, ';');
-		if (word != 0) // strip comment 
+		if (word != 0) // strip comment
 		{
 			*word = 0;
 		}
 		strlwr(inline1);
 
-		if (int(strspn(inline1, " \t\n")) < int(strlen(inline1))) // not a blank line 
+		if (int(strspn(inline1, " \t\n")) < int(strlen(inline1))) // not a blank line
 		{
 			word = strtok(inline1, " =\t\n");
 			if (!strcmp(word, "axiom"))
@@ -319,7 +319,7 @@ int l_system()
 		return -1;
 	}
 
-	g_overflow = false;                // reset integer math overflow flag 
+	g_overflow = false;                // reset integer math overflow flag
 
 	order = int(g_parameters[0]);
 	if (order <= 0)
@@ -360,7 +360,7 @@ int l_system()
 			}
 			*sc = 0;
 
-			// !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR 
+			// !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
 			ts.curcolor = 15;
 			if (ts.curcolor > g_colors)
 			{
@@ -407,7 +407,7 @@ int l_system()
 			}
 			*sc = 0;
 
-			// !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR 
+			// !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
 			ts.curcolor = 15;
 			if (ts.curcolor > g_colors)
 			{
@@ -425,7 +425,7 @@ int l_system()
 
 int l_load()
 {
-	if (read_l_system_file(g_l_system_name))  // error occurred 
+	if (read_l_system_file(g_l_system_name))  // error occurred
 	{
 		free_rules_mem();
 		s_loaded = false;
@@ -511,7 +511,7 @@ static void free_l_cmds()
 	}
 }
 
-// integer specific routines 
+// integer specific routines
 static void lsysi_plus(lsys_turtle_state_l *cmd)
 {
 	if (cmd->reverse)
@@ -534,7 +534,7 @@ static void lsysi_plus(lsys_turtle_state_l *cmd)
 	}
 }
 
-// This is the same as lsys_doplus, except max_angle is a power of 2. 
+// This is the same as lsys_doplus, except max_angle is a power of 2.
 static void lsysi_plus_pow2(lsys_turtle_state_l *cmd)
 {
 	if (cmd->reverse)
@@ -660,8 +660,8 @@ static void lsysi_size_gf(lsys_turtle_state_l *cmd)
 {
 	cmd->xpos = cmd->xpos + (multiply(cmd->size, s_coss[int(cmd->angle)], 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sins[int(cmd->angle)], 29));
-	// xpos += size*coss[angle]; 
-	// ypos += size*sins[angle]; 
+	// xpos += size*coss[angle];
+	// ypos += size*sins[angle];
 	if (cmd->xpos > cmd->x_max)
 	{
 		cmd->x_max = cmd->xpos;
@@ -721,8 +721,8 @@ static void lsysi_draw_g(lsys_turtle_state_l *cmd)
 {
 	cmd->xpos = cmd->xpos + (multiply(cmd->size, s_coss[int(cmd->angle)], 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sins[int(cmd->angle)], 29));
-	// xpos += size*coss[angle]; 
-	// ypos += size*sins[angle]; 
+	// xpos += size*coss[angle];
+	// ypos += size*sins[angle];
 }
 
 static void lsysi_draw_f(lsys_turtle_state_l *cmd)
@@ -731,8 +731,8 @@ static void lsysi_draw_f(lsys_turtle_state_l *cmd)
 	int lasty = int(cmd->ypos >> 19);
 	cmd->xpos = cmd->xpos + (multiply(cmd->size, s_coss[int(cmd->angle)], 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sins[int(cmd->angle)], 29));
-	// xpos += size*coss[angle]; 
-	// ypos += size*sins[angle]; 
+	// xpos += size*coss[angle];
+	// ypos += size*sins[angle];
 	driver_draw_line(lastx, lasty, int(cmd->xpos >> 19), int(cmd->ypos >> 19), cmd->curcolor);
 }
 
@@ -766,7 +766,7 @@ static lsys_cmd *find_size(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd 
 	lsys_cmd **rulind;
 	bool tran;
 
-	if (g_overflow)     // integer math routines overflowed 
+	if (g_overflow)     // integer math routines overflowed
 	{
 		return 0;
 	}
@@ -775,7 +775,7 @@ static lsys_cmd *find_size(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd 
 	{
 		if (! (ts->counter++))
 		{
-			// let user know we're not dead 
+			// let user know we're not dead
 			if (thinking(1, "L-System thinking (higher orders take longer)"))
 			{
 				ts->counter--;
@@ -854,7 +854,7 @@ lsysi_find_scale(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, i
 	ts->counter = 0;
 	ts->size = FIXEDPT(1L);
 	lsys_cmd *fsret = find_size(command, ts, rules, depth);
-	thinking(0, 0); // erase thinking message if any 
+	thinking(0, 0); // erase thinking message if any
 	double x_min = double(ts->x_min)/FIXEDMUL;
 	double x_max = double(ts->x_max)/FIXEDMUL;
 	double y_min = double(ts->y_min)/FIXEDMUL;
@@ -882,7 +882,7 @@ draw_lsysi(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int dep
 	lsys_cmd **rulind;
 	bool tran;
 
-	if (g_overflow)     // integer math routines overflowed 
+	if (g_overflow)     // integer math routines overflowed
 	{
 		return 0;
 	}

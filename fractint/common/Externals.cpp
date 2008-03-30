@@ -250,8 +250,6 @@ public:
 	virtual void SetIfsDefinition(float const *value)			{ /*g_ifs_definition = value;*/ }
 	virtual int IfsType() const									{ return g_ifs_type; }
 	virtual void SetIfsType(int value)							{ g_ifs_type = value; }
-	virtual ComplexD InitialZ() const							{ return g_initial_z; }
-	virtual void SetInitialZ(ComplexD value)					{ g_initial_z = value; }
 	virtual InitializeBatchType InitializeBatch() const			{ return g_initialize_batch; }
 	virtual void SetInitializeBatch(InitializeBatchType value)	{ g_initialize_batch = value; }
 	virtual int InitialCycleLimit() const						{ return g_initial_cycle_limit; }
@@ -307,8 +305,6 @@ public:
 	virtual void SetInitialYL(long value)						{ g_initial_y_l = value; }
 	virtual long MagnitudeL() const								{ return g_magnitude_l; }
 	virtual void SetMagnitudeL(long value)						{ g_magnitude_l = value; }
-	virtual ComplexL NewZL() const								{ return g_new_z_l; }
-	virtual void SetNewZL(ComplexL value)						{ g_new_z_l = value; }
 	virtual bool Loaded3D() const								{ return g_loaded_3d; }
 	virtual void SetLoaded3D(bool value)						{ g_loaded_3d = value; }
 	virtual bool LogAutomaticFlag() const						{ return g_log_automatic_flag; }
@@ -321,8 +317,6 @@ public:
 	virtual void SetLogPaletteMode(long value)					{ g_log_palette_mode = value; }
 	virtual BYTE const *LogTable() const						{ return g_log_table; }
 	virtual void SetLogTable(BYTE const *value)					{ /*g_log_table = value;*/ }
-	virtual ComplexL OldZL() const								{ return g_old_z_l; }
-	virtual void SetOldZL(ComplexL value)						{ g_old_z_l = value; }
 	virtual ComplexL const *LongParameter() const				{ return g_long_parameter; }
 	virtual void SetLongParameter(ComplexL const *value)		{ /*g_long_parameter = value;*/ }
 	virtual ComplexL Parameter2L() const						{ return g_parameter2_l; }
@@ -333,8 +327,21 @@ public:
 	virtual void SetTempSqrXL(long value)						{ g_temp_sqr_x_l = value; }
 	virtual long TempSqrYL() const								{ return g_temp_sqr_y_l; }
 	virtual void SetTempSqrYL(long value)						{ g_temp_sqr_y_l = value; }
-	virtual ComplexL TmpZL() const								{ return g_temp_z_l; }
-	virtual void SetTmpZL(ComplexL value)						{ g_temp_z_l = value; }
+
+	virtual ComplexD InitialZ() const							{ return g_initial_z; }
+	virtual void SetInitialZ(ComplexD value)					{ g_initial_z = value; }
+	virtual ComplexD NewZ() const								{ return g_new_z; }
+	virtual void SetNewZ(ComplexD value)						{ g_new_z = value; }
+	virtual ComplexL NewZL() const								{ return g_new_z_l; }
+	virtual void SetNewZL(ComplexL value)						{ g_new_z_l = value; }
+	virtual ComplexD OldZ() const								{ return g_old_z; }
+	virtual void SetOldZ(ComplexD value)						{ g_old_z = value; }
+	virtual ComplexL OldZL() const								{ return g_old_z_l; }
+	virtual void SetOldZL(ComplexL value)						{ g_old_z_l = value; }
+	virtual ComplexD TempZ() const								{ return g_temp_z; }
+	virtual void SetTempZ(ComplexD value)						{ g_temp_z = value; }
+	virtual ComplexL TempZL() const								{ return g_temp_z_l; }
+	virtual void SetTempZL(ComplexL value)						{ g_temp_z_l = value; }
 
 	virtual double DxPixel()									{ assert(_dxPixel); return _dxPixel(); }
 	virtual void SetDxPixel(DxPixelFunction *value)				{ _dxPixel = value; }
@@ -410,8 +417,6 @@ public:
 	virtual void SetMYMinFp(double value)						{ g_m_y_min_fp = value; }
 	virtual int NameStackPtr() const							{ return g_name_stack_ptr; }
 	virtual void SetNameStackPtr(int value)						{ g_name_stack_ptr = value; }
-	virtual ComplexD NewZ() const								{ return g_new_z; }
-	virtual void SetNewZ(ComplexD value)						{ g_new_z = value; }
 	virtual int NewDiscreteParameterOffsetX() const				{ return g_new_discrete_parameter_offset_x; }
 	virtual void SetNewDiscreteParameterOffsetX(int value)		{ g_new_discrete_parameter_offset_x = value; }
 	virtual int NewDiscreteParameterOffsetY() const				{ return g_new_discrete_parameter_offset_y; }
@@ -434,8 +439,6 @@ public:
 	virtual void SetNextScreenFlag(bool value)					{ g_next_screen_flag = value; }
 	virtual bool OkToPrint() const								{ return g_ok_to_print; }
 	virtual void SetOkToPrint(bool value)						{ g_ok_to_print = value; }
-	virtual ComplexD OldZ() const								{ return g_old_z; }
-	virtual void SetOldZ(ComplexD value)						{ g_old_z = value; }
 	virtual long OldColorIter() const							{ return g_old_color_iter; }
 	virtual void SetOldColorIter(long value)					{ g_old_color_iter = value; }
 	virtual bool OldDemmColors() const							{ return g_old_demm_colors; }
@@ -657,8 +660,6 @@ public:
 	virtual void SetTimerInterval(long value)					{ g_timer_interval = value; }
 	virtual long TimerStart() const								{ return g_timer_start; }
 	virtual void SetTimerStart(long value)						{ g_timer_start = value; }
-	virtual ComplexD TempZ() const								{ return g_temp_z; }
-	virtual void SetTempZ(ComplexD value)						{ g_temp_z = value; }
 	virtual int const *FunctionIndex() const					{ return g_function_index; }
 	virtual void SetFunctionIndex(int const *value)				{ /*g_function_index = value;*/ }
 	virtual bool TrueColor() const								{ return g_true_color; }
@@ -831,10 +832,10 @@ private:
 	InitialZType _useInitialOrbitZ;
 	CalculationMode _standardCalculationMode;
 	CalculationMode _userStandardCalculationMode;
-	TabStatusType _tabStatus; // -1 if not, 0 for 1or2pass, 1 for ssg, 
-			  // 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan 
+	TabStatusType _tabStatus; // -1 if not, 0 for 1or2pass, 1 for ssg,
+			  // 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan
               // 6 for orbits
-	float _aspectDrift; // how much drift is allowed and still forced to g_screen_aspect_ratio  
+	float _aspectDrift; // how much drift is allowed and still forced to g_screen_aspect_ratio
 	int _atanColors;
 	double _autoStereoWidth;
 	bool _badOutside;
@@ -844,14 +845,14 @@ private:
 	int _biomorph;
 	int _userBiomorph;
 	CalculationStatusType _calculationStatus;
-	bool _checkCurrentDirectory;						// flag to check current dir for files 
+	bool _checkCurrentDirectory;						// flag to check current dir for files
 	int _inside;
 	int _outside;
 	BailOutFunction *_bailOutFp;
 	BailOutFunction *_bailOutL;
 	BailOutFunction *_bailOutBf;
 	BailOutFunction *_bailOutBn;
-	std::string _colorFile;								// from last <l> <s> or colors=@filename 
+	std::string _colorFile;								// from last <l> <s> or colors=@filename
 	double (*_dxPixel)();
 	double (*_dyPixel)();
 	long (*_lxPixel)();

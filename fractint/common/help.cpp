@@ -27,13 +27,13 @@
 
 enum
 {
-	MAX_HIST = 16,					// number of pages we'll remember 
-	F_HIST = (1 << 0),				// flags for help_topic() 
+	MAX_HIST = 16,					// number of pages we'll remember
+	F_HIST = (1 << 0),				// flags for help_topic()
 	F_INDEX = (1 << 1),
-	MAX_PAGE_SIZE = (80*25),		// no page of text may be larger 
-	TEXT_START_ROW = 2,				// start print the help text here 
-	PRINT_BUFFER_SIZE = 32767,		// max. size of help topic in doc. 
-	MAX_NUM_TOPIC_SEC = 10			// max. number of topics under any single section (CONTENT)     
+	MAX_PAGE_SIZE = (80*25),		// no page of text may be larger
+	TEXT_START_ROW = 2,				// start print the help text here
+	PRINT_BUFFER_SIZE = 32767,		// max. size of help topic in doc.
+	MAX_NUM_TOPIC_SEC = 10			// max. number of topics under any single section (CONTENT)
 };
 
 struct LINK
@@ -69,34 +69,34 @@ struct help_sig_info
 {
 	unsigned long sig;
 	int           version;
-	unsigned long base;     // only if added to fractint.exe 
+	unsigned long base;     // only if added to fractint.exe
 };
 
 struct PRINT_DOC_INFO
 {
-	int       cnum;          // current CONTENT num 
-	int       tnum;          // current topic num 
+	int       cnum;          // current CONTENT num
+	int       tnum;          // current topic num
 
-	long      content_pos;   // current CONTENT item offset in file 
-	int       num_page;      // total number of pages in document 
+	long      content_pos;   // current CONTENT item offset in file
+	int       num_page;      // total number of pages in document
 
-	int       num_contents;  // total number of CONTENT entries 
-	int num_topic;			// number of topics in current CONTENT 
+	int       num_contents;  // total number of CONTENT entries
+	int num_topic;			// number of topics in current CONTENT
 
-	int       topic_num[MAX_NUM_TOPIC_SEC]; // topic_num[] for current CONTENT entry 
+	int       topic_num[MAX_NUM_TOPIC_SEC]; // topic_num[] for current CONTENT entry
 
-	char buffer[PRINT_BUFFER_SIZE];        // text buffer 
+	char buffer[PRINT_BUFFER_SIZE];        // text buffer
 
-	char      id[81];        // s_buffer to store id in 
-	char      title[81];     // s_buffer to store title in 
+	char      id[81];        // s_buffer to store id in
+	char      title[81];     // s_buffer to store title in
 
 	int     (*msg_func)(int pnum, int num_page);
 	int pnum;
 
-	FILE     *file;          // file to sent output to 
-	int       margin;        // indent text by this much 
-	int       start_of_line; // are we at the beginning of a line? 
-	int       spaces;        // number of spaces in a row 
+	FILE     *file;          // file to sent output to
+	int       margin;        // indent text by this much
+	int       start_of_line; // are we at the beginning of a line?
+	int       spaces;        // number of spaces in a row
 };
 
 class HelpSystem
@@ -126,14 +126,14 @@ private:
 	int topicCount_;
 	int historyPosition_;
 
-	std::vector<off_type> topicOffset_;		// 4*s_num_topic 
-	std::vector<LABEL> labels_;				// 4*s_num_label 
-	std::vector<HIST> history_;				// 6*MAX_HIST 
+	std::vector<off_type> topicOffset_;		// 4*s_num_topic
+	std::vector<LABEL> labels_;				// 4*s_num_label
+	std::vector<HIST> history_;				// 6*MAX_HIST
 
-	// these items alloc'ed only while help is active... 
-	std::vector<char> buffer_;				// MAX_PAGE_SIZE 
-	std::vector<LINK> linkTable_;			// 10*s_max_links 
-	std::vector<PAGE> pageTable_;			// 4*s_max_pages  
+	// these items alloc'ed only while help is active...
+	std::vector<char> buffer_;				// MAX_PAGE_SIZE
+	std::vector<LINK> linkTable_;			// 10*s_max_links
+	std::vector<PAGE> pageTable_;			// 4*s_max_pages
 
 	int  currentTopic_;
 	long currentBase_;
@@ -287,7 +287,7 @@ void HelpSystem::DisplayParseText(char const *text, unsigned len, int start_marg
 
 					if (token == TOK_PARA)
 					{
-						col = 0;   // fake a new-line 
+						col = 0;   // fake a new-line
 						row++;
 						break;
 					}
@@ -299,16 +299,16 @@ void HelpSystem::DisplayParseText(char const *text, unsigned len, int start_marg
 						continue;
 					}
 
-					// now tok is TOK_SPACE or TOK_LINK or TOK_WORD 
+					// now tok is TOK_SPACE or TOK_LINK or TOK_WORD
 
 					if (col + width > SCREEN_WIDTH)
-					{          // go to next line... 
+					{          // go to next line...
 						col = margin;
 						++row;
 
 						if (token == TOK_SPACE)
 						{
-							width = 0;   // skip spaces at start of a line 
+							width = 0;   // skip spaces at start of a line
 						}
 					}
 
@@ -369,9 +369,9 @@ void HelpSystem::DisplayParseText(char const *text, unsigned len, int start_marg
 			}
 			break;
 
-		case TOK_XONLINE:  // skip 
-		case TOK_FF:       // ignore 
-		case TOK_XDOC:     // ignore 
+		case TOK_XONLINE:  // skip
+		case TOK_FF:       // ignore
+		case TOK_XDOC:     // ignore
 		case TOK_DONE:
 		case TOK_SPACE:
 			break;
@@ -379,7 +379,7 @@ void HelpSystem::DisplayParseText(char const *text, unsigned len, int start_marg
 		case TOK_WORD:
 			DisplayText(row, col, C_HELP_BODY, curr, width);
 			break;
-		} // switch 
+		} // switch
 
 		curr += size;
 		len  -= size;
@@ -391,7 +391,7 @@ void HelpSystem::DisplayParseText(char const *text, unsigned len, int start_marg
 		}
 
 		token = find_token_length(ONLINE, curr, len, &size, &width);
-	} // while (true) 
+	} // while (true)
 
 	g_text_cbase = 0;
 	g_text_rbase = 0;
@@ -451,7 +451,7 @@ void HelpSystem::DisplayPage(char *title, char *text, unsigned text_len,
 	driver_set_attr(2, 0, C_HELP_BODY, 80*22);
 	put_string_center(1, 0, 80, C_HELP_HDG, title);
 
-	// Some systems (Ultrix) mess up if you write to column 80 
+	// Some systems (Ultrix) mess up if you write to column 80
 	driver_put_string(1, 78 - (6 + ((num_pages >= 10) ? 2 : 1)), C_HELP_INSTR,
 		str(boost::format("%2d of %d") % (page + 1) % num_pages));
 
@@ -497,18 +497,18 @@ int HelpSystem::Overlap(int a, int a2, int b, int b2)
 	{
 		if (b2 >= a2)
 		{
-			return a2 - a;            // case (5) 
+			return a2 - a;            // case (5)
 		}
 
-		return b2 - a;               // case (1), case (3) 
+		return b2 - a;               // case (1), case (3)
 	}
 
 	if (b2 <= a2)
 	{
-		return b2 - b;               // case (6) 
+		return b2 - b;               // case (6)
 	}
 
-	return a2 - b;                  // case (2), case (4) 
+	return a2 - b;                  // case (2), case (4)
 }
 
 int HelpSystem::FindLinkUpDown(LINK *link, int num_link, int curr_link, int up)
@@ -526,7 +526,7 @@ int HelpSystem::FindLinkUpDown(LINK *link, int num_link, int curr_link, int up)
 			((up && temp->r < curr->r) || (!up && temp->r > curr->r)))
 		{
 			temp_overlap = Overlap(curr->c, curr_c2, temp->c, temp->c + temp->width-1);
-			// if >= 3 lines between, prioritize on vertical distance: 
+			// if >= 3 lines between, prioritize on vertical distance:
 			temp_dist = std::abs(temp->r - curr->r);
 			if (temp_dist >= 4)
 			{
@@ -536,7 +536,7 @@ int HelpSystem::FindLinkUpDown(LINK *link, int num_link, int curr_link, int up)
 			if (best != 0)
 			{
 				if (best_overlap >= 0 && temp_overlap >= 0)
-				{     // if they're both under curr set to closest in y dir 
+				{     // if they're both under curr set to closest in y dir
 					if (std::abs(best->r - curr->r) > temp_dist)
 					{
 						best = 0;
@@ -582,7 +582,7 @@ int HelpSystem::FindLinkLeftRight(LINK *link, int num_link, int curr_link, int l
 
 			if (best != 0)
 			{
-				if (best_dist == 0 && temp_dist == 0)  // if both on curr's line... 
+				if (best_dist == 0 && temp_dist == 0)  // if both on curr's line...
 				{
 					if ((left && std::abs(curr->c - best_c2) > std::abs(curr->c - temp_c2)) ||
 						(!left && std::abs(curr_c2 - best->c) > std::abs(curr_c2 - temp->c)))
@@ -590,7 +590,7 @@ int HelpSystem::FindLinkLeftRight(LINK *link, int num_link, int curr_link, int l
 						best = 0;
 					}
 				}
-				else if (best_dist >= temp_dist)   // if temp is closer... 
+				else if (best_dist >= temp_dist)   // if temp is closer...
 				{
 					best = 0;
 				}
@@ -642,7 +642,7 @@ bool HelpSystem::MoveLink(LINK *link, int num_link, int *curr, int (*f)(LINK *, 
 
 HelpAction HelpSystem::Topic(HIST *curr, HIST *next, int flags)
 {
-	off_type where_to = topicOffset_[curr->topic_num] + sizeof(int); // to skip flags 
+	off_type where_to = topicOffset_[curr->topic_num] + sizeof(int); // to skip flags
 	int curr_link = curr->link;
 
 	Seek(where_to);
@@ -805,11 +805,11 @@ HelpAction HelpSystem::Topic(HIST *curr, HIST *next, int flags)
 			MoveLink(&linkTable_[0], num_link, &curr_link, FindLinkLeftRight, 0);
 			break;
 
-		case IDK_ESC:         // exit help 
+		case IDK_ESC:         // exit help
 			action = ACTION_QUIT;
 			break;
 
-		case IDK_BACKSPACE:   // prev topic 
+		case IDK_BACKSPACE:   // prev topic
 		case IDK_ALT_F1:
 			if (flags & F_HIST)
 			{
@@ -817,7 +817,7 @@ HelpAction HelpSystem::Topic(HIST *curr, HIST *next, int flags)
 			}
 			break;
 
-		case IDK_F1:    // help index 
+		case IDK_F1:    // help index
 			if (!(flags & F_INDEX))
 			{
 				action = ACTION_INDEX;
@@ -833,7 +833,7 @@ HelpAction HelpSystem::Topic(HIST *curr, HIST *next, int flags)
 				action = ACTION_CALL;
 			}
 			break;
-		} // switch 
+		} // switch
 	}
 	while (action == HelpAction(-1));
 
@@ -845,7 +845,7 @@ HelpAction HelpSystem::Topic(HIST *curr, HIST *next, int flags)
 
 void HelpSystem::Help(HelpAction action)
 {
-	if (mode_ == -1)   // is help disabled? 
+	if (mode_ == -1)   // is help disabled?
 	{
 		return;
 	}
@@ -880,7 +880,7 @@ void HelpSystem::Help(HelpAction action)
 
 	if (historyPosition_ <= 0)
 	{
-		action = ACTION_CALL;  // make sure it isn't ACTION_PREV! 
+		action = ACTION_CALL;  // make sure it isn't ACTION_PREV!
 	}
 
 	HIST curr;
@@ -893,7 +893,7 @@ void HelpSystem::Help(HelpAction action)
 			{
 				curr = history_[--historyPosition_];
 			}
-			// fall-through 
+			// fall-through
 
 		case ACTION_PREV:
 			if (historyPosition_ > 0)
@@ -908,7 +908,7 @@ void HelpSystem::Help(HelpAction action)
 		case ACTION_INDEX:
 			next.topic_num = labels_[FIHELP_INDEX].topic_num;
 			next.topic_off = labels_[FIHELP_INDEX].topic_off;
-			// fall-through 
+			// fall-through
 
 		case ACTION_CALL:
 			curr = next;
@@ -956,10 +956,10 @@ void HelpSystem::Help(HelpAction action)
 					case IDK_ESC:      action = ACTION_QUIT;  break;
 					case IDK_ALT_F1:   action = ACTION_PREV;  break;
 					case IDK_F1:       action = ACTION_INDEX; break;
-					} // switch 
-				} // while 
+					} // switch
+				} // while
 			}
-		} // else 
+		} // else
 
 		if (action != ACTION_PREV && action != ACTION_PREV2)
 		{
@@ -1000,26 +1000,26 @@ int HelpSystem::ReadTopic(int topic, int off, int len, VOIDPTR buf)
 
 		currentBase_ = topicOffset_[topic];
 
-		currentBase_ += sizeof(int);					// skip flags 
+		currentBase_ += sizeof(int);					// skip flags
 
 		Seek(currentBase_);
 		int t;
-		Get(t);						// read num_pages 
-		currentBase_ += sizeof(int) + t*3*sizeof(int); // skip page info 
+		Get(t);						// read num_pages
+		currentBase_ += sizeof(int) + t*3*sizeof(int); // skip page info
 
 		if (t > 0)
 		{
 			Seek(currentBase_);
 		}
-		// read title_len 
+		// read title_len
 		t = Get();
-		currentBase_ += 1 + t;							// skip title 
+		currentBase_ += 1 + t;							// skip title
 
 		if (t > 0)
 		{
 			Seek(currentBase_);
 		}
-		Get(currentLength_);				// read topic len 
+		Get(currentLength_);				// read topic len
 		currentBase_ += sizeof(int);
 	}
 
@@ -1044,7 +1044,7 @@ void HelpSystem::PrintCharacter(PRINT_DOC_INFO *info, int c, int n)
 		else if (c == '\n' || c == '\f')
 		{
 			info->start_of_line = 1;
-			info->spaces = 0;   // strip spaces before a new-line 
+			info->spaces = 0;   // strip spaces before a new-line
 			fputc(c, info->file);
 		}
 		else
@@ -1099,29 +1099,29 @@ int HelpSystem::GetInfo(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 
 		Seek(info->content_pos);
 
-		Get(t);							// read flags 
+		Get(t);							// read flags
 		info->content_pos += sizeof(int);
 		pd->new_page = (t & 1) ? 1 : 0;
 
-		t = Get();						// read id len 
+		t = Get();						// read id len
 		if (t >= 80)
 		{
 			tmp = stream_.tellg();
 		}
 		assert(t < 80);
-		Get(info->id, t);				// read the id 
+		Get(info->id, t);				// read the id
 		info->content_pos += 1 + t;
 		info->id[t] = '\0';
 
-		t = Get();						// read title len 
+		t = Get();						// read title len
 		assert(t < 80);
-		Get(info->title, t);				// read the title 
+		Get(info->title, t);				// read the title
 		info->content_pos += 1 + t;
 		info->title[t] = '\0';
 
-		t = Get();						// read num topics 
+		t = Get();						// read num topics
 		assert(t < MAX_NUM_TOPIC_SEC);
-		Get(info->topic_num, t);			// read topic_num[] 
+		Get(info->topic_num, t);			// read topic_num[]
 		info->num_topic = t;
 		info->content_pos += 1 + t*sizeof(int);
 
@@ -1142,7 +1142,7 @@ int HelpSystem::GetInfo(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 		assert(t <= 0);
 
 		pd->curr = info->buffer;
-		pd->len  = PRINT_BUFFER_SIZE + t;   // same as ...SIZE - abs(t) 
+		pd->len  = PRINT_BUFFER_SIZE + t;   // same as ...SIZE - abs(t)
 		return 1;
 
 	case PD_GET_LINK_PAGE:
@@ -1271,11 +1271,11 @@ int HelpSystem::PrintMessage(int pnum, int num_pages)
 		key = driver_get_key();
 		if (key == IDK_ESC)
 		{
-			return 0;    // user abort 
+			return 0;    // user abort
 		}
 	}
 
-	return 1;   // AOK -- continue 
+	return 1;   // AOK -- continue
 }
 
 int makedoc_msg_func(int pnum, int num_pages)
@@ -1313,7 +1313,7 @@ void HelpSystem::PrintDocument(char const *outfname, int (*msg_func)(int, int), 
 
 	if (msg_func != 0)
 	{
-		msg_func(PRINTDOC_INITIALIZATION, info.num_page);   // initialize 
+		msg_func(PRINTDOC_INITIALIZATION, info.num_page);   // initialize
 	}
 
 	info.file = fopen(outfname, "wt");
@@ -1356,7 +1356,7 @@ bool HelpSystem::OpenHelpFile()
 void HelpSystem::Init()
 {
 	help_sig_info hs = { 0 };
-	if (!stream_.is_open())            // look for id.hlp 
+	if (!stream_.is_open())            // look for id.hlp
 	{
 		if (OpenHelpFile())
 		{
@@ -1382,7 +1382,7 @@ void HelpSystem::Init()
 		}
 	}
 
-	if (!stream_)         // Can't find the help files anywhere! 
+	if (!stream_)         // Can't find the help files anywhere!
 	{
 		stop_message(STOPMSG_NO_STACK,
 			"Couldn't find id.hlp; set FRACTDIR to proper directory with setenv.\n");
@@ -1395,18 +1395,18 @@ void HelpSystem::Init()
 	Get(maxLinks_);
 	Get(topicCount_);
 	Get(labelCount_);
-	Seek(6*sizeof(int));  // skip num_contents and num_doc_pages 
+	Seek(6*sizeof(int));  // skip num_contents and num_doc_pages
 
 	assert(maxPages_ > 0);
 	assert(maxLinks_ >= 0);
 	assert(topicCount_ > 0);
 	assert(labelCount_ > 0);
 
-	// allocate all three arrays 
+	// allocate all three arrays
 	topicOffset_.resize(topicCount_);
 	labels_.resize(labelCount_);
 
-	// read in the tables... 
+	// read in the tables...
 	Get(&topicOffset_[0], topicCount_);
 	Get(&labels_[0], labelCount_);
 }
