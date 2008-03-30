@@ -226,12 +226,12 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 
 			// simple formula: z = z^2 + conj(z*(-1 + ai)) 
 			// but it's the attractor that makes this so interesting 
-			g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_frothy_data.f.a*g_old_z.y;
+			g_new_z.real(g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_frothy_data.f.a*g_old_z.y);
 			g_old_z.y += (g_old_z.x + g_old_z.x)*g_old_z.y - s_frothy_data.f.a*g_old_z.x;
 			g_old_z.x = g_new_z.x;
 			if (s_frothy_data.repeat_mapping)
 			{
-				g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_frothy_data.f.a*g_old_z.y;
+				g_new_z.real(sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_frothy_data.f.a*g_old_z.y);
 				g_old_z.y += (g_old_z.x + g_old_z.x)*g_old_z.y - s_frothy_data.f.a*g_old_z.x;
 				g_old_z.x = g_new_z.x;
 			}
@@ -493,12 +493,12 @@ int froth_per_orbit()
 {
 	if (!g_integer_fractal) // fp mode 
 	{
-		g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_frothy_data.f.a*g_old_z.y;
+		g_new_z.real(g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_frothy_data.f.a*g_old_z.y);
 		g_new_z.y = 2.0*g_old_z.x*g_old_z.y - s_frothy_data.f.a*g_old_z.x + g_old_z.y;
 		if (s_frothy_data.repeat_mapping)
 		{
 			g_old_z = g_new_z;
-			g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_frothy_data.f.a*g_old_z.y;
+			g_new_z.real(sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_frothy_data.f.a*g_old_z.y);
 			g_new_z.y = 2.0*g_old_z.x*g_old_z.y - s_frothy_data.f.a*g_old_z.x + g_old_z.y;
 		}
 

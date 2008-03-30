@@ -438,12 +438,12 @@ int barnsley1_orbit_fp()
 	// orbit calculation 
 	if (g_old_z.x >= 0)
 	{
-		g_new_z.x = (s_old_x_init_x_fp - g_float_parameter->x - s_old_y_init_y_fp);
+		g_new_z.real((s_old_x_init_x_fp - g_float_parameter->x - s_old_y_init_y_fp));
 		g_new_z.y = (s_old_y_init_x_fp - g_float_parameter->y + s_old_x_init_y_fp);
 	}
 	else
 	{
-		g_new_z.x = (s_old_x_init_x_fp + g_float_parameter->x - s_old_y_init_y_fp);
+		g_new_z.real((s_old_x_init_x_fp + g_float_parameter->x - s_old_y_init_y_fp));
 		g_new_z.y = (s_old_y_init_x_fp + g_float_parameter->y + s_old_x_init_y_fp);
 	}
 	return g_externs.BailOutFp();
@@ -493,12 +493,12 @@ int barnsley2_orbit_fp()
 	// orbit calculation 
 	if (s_old_x_init_y_fp + s_old_y_init_x_fp >= 0)
 	{
-		g_new_z.x = s_old_x_init_x_fp - g_float_parameter->x - s_old_y_init_y_fp;
+		g_new_z.real(s_old_x_init_x_fp - g_float_parameter->x - s_old_y_init_y_fp);
 		g_new_z.y = s_old_y_init_x_fp - g_float_parameter->y + s_old_x_init_y_fp;
 	}
 	else
 	{
-		g_new_z.x = s_old_x_init_x_fp + g_float_parameter->x - s_old_y_init_y_fp;
+		g_new_z.real(s_old_x_init_x_fp + g_float_parameter->x - s_old_y_init_y_fp);
 		g_new_z.y = s_old_y_init_x_fp + g_float_parameter->y + s_old_x_init_y_fp;
 	}
 	return g_externs.BailOutFp();
@@ -517,7 +517,7 @@ int julia_orbit_fp()
 {
 	// floating point version of classical Mandelbrot/Julia 
 	// note that fast >= 287 equiv in fracsuba.asm must be kept in step 
-	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x;
+	g_new_z.real(g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x);
 	g_new_z.y = 2.0*g_old_z.x*g_old_z.y + g_float_parameter->y;
 	return g_externs.BailOutFp();
 }
@@ -531,7 +531,7 @@ int lambda_orbit_fp()
 	g_temp_sqr_y = -(g_old_z.y*g_old_z.x);
 	g_temp_sqr_y += g_temp_sqr_y + g_old_z.y;
 
-	g_new_z.x = g_float_parameter->x*g_temp_sqr_x - g_float_parameter->y*g_temp_sqr_y;
+	g_new_z.real(g_float_parameter->x*g_temp_sqr_x - g_float_parameter->y*g_temp_sqr_y);
 	g_new_z.y = g_float_parameter->x*g_temp_sqr_y + g_float_parameter->y*g_temp_sqr_x;
 	return g_externs.BailOutFp();
 }
@@ -582,7 +582,7 @@ int sierpinski_orbit_fp()
 	// following code translated from basic - see "Fractals
 	// Everywhere" by Michael Barnsley, p. 251, Program 7.1.1
 
-	g_new_z.x = g_old_z.x + g_old_z.x;
+	g_new_z.real(g_old_z.x + g_old_z.x);
 	g_new_z.y = g_old_z.y + g_old_z.y;
 	if (g_old_z.y > .5)
 	{
@@ -590,7 +590,7 @@ int sierpinski_orbit_fp()
 	}
 	else if (g_old_z.x > .5)
 	{
-		g_new_z.x = g_new_z.x - 1;
+		g_new_z.real(g_new_z.x - 1);
 	}
 
 	// end barnsley code 
@@ -616,7 +616,7 @@ int lambda_exponent_orbit_fp()
 	g_temp_z.y = s_temp_exp*s_sin_y;
 
 	// multiply by lamda
-	g_new_z.x = g_float_parameter->x*g_temp_z.x - g_float_parameter->y*g_temp_z.y;
+	g_new_z.real(g_float_parameter->x*g_temp_z.x - g_float_parameter->y*g_temp_z.y);
 	g_new_z.y = g_float_parameter->y*g_temp_z.x + g_float_parameter->x*g_temp_z.y;
 	g_old_z = g_new_z;
 	return 0;
@@ -728,7 +728,7 @@ int marks_lambda_orbit_fp()
 	g_temp_z.x = g_temp_sqr_x - g_temp_sqr_y;
 	g_temp_z.y = g_old_z.x*g_old_z.y *2;
 
-	g_new_z.x = g_coefficient.x*g_temp_z.x - g_coefficient.y*g_temp_z.y + g_float_parameter->x;
+	g_new_z.real(g_coefficient.x*g_temp_z.x - g_coefficient.y*g_temp_z.y + g_float_parameter->x);
 	g_new_z.y = g_coefficient.x*g_temp_z.y + g_coefficient.y*g_temp_z.x + g_float_parameter->y;
 
 	return g_externs.BailOutFp();
@@ -798,7 +798,7 @@ int mandel4_orbit()
 int mandel4_orbit_fp()
 {
 	// first, compute (x + iy)**2 
-	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y;
+	g_new_z.real(g_temp_sqr_x - g_temp_sqr_y);
 	g_new_z.y = g_old_z.x*g_old_z.y*2;
 	if (g_externs.BailOutFp())
 	{
@@ -806,7 +806,7 @@ int mandel4_orbit_fp()
 	}
 
 	// then, compute ((x + iy)**2)**2 + lambda 
-	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x;
+	g_new_z.real(g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x);
 	g_new_z.y =  g_old_z.x*g_old_z.y*2 + g_float_parameter->y;
 	return g_externs.BailOutFp();
 }
@@ -815,7 +815,7 @@ int z_to_z_plus_z_orbit_fp()
 {
 	complex_power(&g_old_z, int(g_parameters[2]), &g_new_z);
 	g_old_z = ComplexPower(g_old_z, g_old_z);
-	g_new_z.x = g_new_z.x + g_old_z.x +g_float_parameter->x;
+	g_new_z.real(g_new_z.x + g_old_z.x +g_float_parameter->x);
 	g_new_z.y = g_new_z.y + g_old_z.y +g_float_parameter->y;
 	return g_externs.BailOutFp();
 }
@@ -921,12 +921,12 @@ int barnsley3_orbit_fp()
 	// orbit calculation 
 	if (g_old_z.x > 0)
 	{
-		g_new_z.x = s_old_x_init_x_fp - s_old_y_init_y_fp - 1.0;
+		g_new_z.real(s_old_x_init_x_fp - s_old_y_init_y_fp - 1.0);
 		g_new_z.y = s_old_x_init_y_fp*2;
 	}
 	else
 	{
-		g_new_z.x = s_old_x_init_x_fp - s_old_y_init_y_fp -1.0 + g_float_parameter->x*g_old_z.x;
+		g_new_z.real(s_old_x_init_x_fp - s_old_y_init_y_fp -1.0 + g_float_parameter->x*g_old_z.x);
 		g_new_z.y = s_old_x_init_y_fp*2;
 
 		// This term added by Tim Wegner to make dependent on the
@@ -998,7 +998,7 @@ int popcorn_old_orbit_fp()
 	g_temp_z.y = s_sin_y/s_cos_y + g_old_z.y;
 	FPUsincos(&g_temp_z.x, &g_sin_x, &g_cos_x);
 	FPUsincos(&g_temp_z.y, &s_sin_y, &s_cos_y);
-	g_new_z.x = g_old_z.x - g_parameter.x*s_sin_y;
+	g_new_z.real(g_old_z.x - g_parameter.x*s_sin_y);
 	g_new_z.y = g_old_z.y - g_parameter.x*g_sin_x;
 	if (g_plot_color == plot_color_none)
 	{
@@ -1036,10 +1036,10 @@ int popcorn_orbit_fp()
 	g_temp_z.y = s_sin_y/s_cos_y + g_old_z.y;
 	FPUsincos(&g_temp_z.x, &g_sin_x, &g_cos_x);
 	FPUsincos(&g_temp_z.y, &s_sin_y, &s_cos_y);
-	g_new_z.x = g_old_z.x - g_parameter.x*s_sin_y;
+	g_new_z.real(g_old_z.x - g_parameter.x*s_sin_y);
 	g_new_z.y = g_old_z.y - g_parameter.x*g_sin_x;
 	//
-	// g_new_z.x = g_old_z.x - g_parameter.x*sin(g_old_z.y + tan(3*g_old_z.y));
+	// g_new_z.real(g_old_z.x - g_parameter.x*sin(g_old_z.y + tan(3*g_old_z.y)));
 	// g_new_z.y = g_old_z.y - g_parameter.x*sin(g_old_z.x + tan(3*g_old_z.x));
 	//
 	if (g_plot_color == plot_color_none)
@@ -1171,7 +1171,7 @@ int popcorn_fn_orbit_fp()
 
 	CMPLXmult(g_temp_z, g_parameter, tmpy);         // tmpy = tmp*h            
 
-	g_new_z.x = g_old_z.x - tmpx.x - tmpy.y;
+	g_new_z.real(g_old_z.x - tmpx.x - tmpy.y);
 	g_new_z.y = g_old_z.y - tmpy.x - tmpx.y;
 
 	if (g_plot_color == plot_color_none)
@@ -1264,7 +1264,7 @@ int marks_complex_mandelbrot_orbit()
 int spider_orbit_fp()
 {
 	// Spider(XAXIS) { c = z=pixel: z = z*z + c; c = c/2 + z, |z| <= 4 } 
-	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_temp_z.x;
+	g_new_z.real(g_temp_sqr_x - g_temp_sqr_y + g_temp_z.x);
 	g_new_z.y = 2*g_old_z.x*g_old_z.y + g_temp_z.y;
 	g_temp_z.x = g_temp_z.x/2 + g_new_z.x;
 	g_temp_z.y = g_temp_z.y/2 + g_new_z.y;
@@ -1508,7 +1508,7 @@ int phoenix_orbit_fp()
 {
 	// z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) 
 	g_temp_z.x = g_old_z.x*g_old_z.y;
-	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x + (g_float_parameter->y*s_temp2.x);
+	g_new_z.real(g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x + (g_float_parameter->y*s_temp2.x));
 	g_new_z.y = (g_temp_z.x + g_temp_z.x) + (g_float_parameter->y*s_temp2.y);
 	s_temp2 = g_old_z; // set s_temp2 to Y value 
 	return g_externs.BailOutFp();
@@ -1532,7 +1532,7 @@ int phoenix_complex_orbit_fp()
 {
 	// z(n + 1) = z(n)^2 + p1 + p2*y(n),  y(n + 1) = z(n) 
 	g_temp_z.x = g_old_z.x*g_old_z.y;
-	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x + (g_parameter2.x*s_temp2.x) - (g_parameter2.y*s_temp2.y);
+	g_new_z.real(g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x + (g_parameter2.x*s_temp2.x) - (g_parameter2.y*s_temp2.y));
 	g_new_z.y = (g_temp_z.x + g_temp_z.x) + g_float_parameter->y + (g_parameter2.x*s_temp2.y) + (g_parameter2.y*s_temp2.x);
 	s_temp2 = g_old_z; // set s_temp2 to Y value 
 	return g_externs.BailOutFp();
@@ -1575,7 +1575,7 @@ int phoenix_plus_orbit_fp()
 	}
 	oldplus.x += g_float_parameter->x;
 	FPUcplxmul(&g_temp_z, &oldplus, &newminus);
-	g_new_z.x = newminus.x + (g_float_parameter->y*s_temp2.x);
+	g_new_z.real(newminus.x + (g_float_parameter->y*s_temp2.x));
 	g_new_z.y = newminus.y + (g_float_parameter->y*s_temp2.y);
 	s_temp2 = g_old_z; // set s_temp2 to Y value 
 	return g_externs.BailOutFp();
@@ -1618,7 +1618,7 @@ int phoenix_minus_orbit_fp()
 	}
 	oldsqr.x += g_float_parameter->x;
 	FPUcplxmul(&g_temp_z, &oldsqr, &newminus);
-	g_new_z.x = newminus.x + (g_float_parameter->y*s_temp2.x);
+	g_new_z.real(newminus.x + (g_float_parameter->y*s_temp2.x));
 	g_new_z.y = newminus.y + (g_float_parameter->y*s_temp2.y);
 	s_temp2 = g_old_z; // set s_temp2 to Y value 
 	return g_externs.BailOutFp();
@@ -1665,7 +1665,7 @@ int phoenix_complex_plus_orbit_fp()
 	oldplus.y += g_float_parameter->y;
 	FPUcplxmul(&g_temp_z, &oldplus, &newminus);
 	FPUcplxmul(&g_parameter2, &s_temp2, &g_temp_z);
-	g_new_z.x = newminus.x + g_temp_z.x;
+	g_new_z.real(newminus.x + g_temp_z.x);
 	g_new_z.y = newminus.y + g_temp_z.y;
 	s_temp2 = g_old_z; // set s_temp2 to Y value 
 	return g_externs.BailOutFp();
@@ -1712,7 +1712,7 @@ int phoenix_complex_minus_orbit_fp()
 	oldsqr.y += g_float_parameter->y;
 	FPUcplxmul(&g_temp_z, &oldsqr, &newminus);
 	FPUcplxmul(&g_parameter2, &s_temp2, &g_temp_z);
-	g_new_z.x = newminus.x + g_temp_z.x;
+	g_new_z.real(newminus.x + g_temp_z.x);
 	g_new_z.y = newminus.y + g_temp_z.y;
 	s_temp2 = g_old_z; // set s_temp2 to Y value 
 	return g_externs.BailOutFp();
@@ -1950,7 +1950,7 @@ int magnet1_orbit_fp()    // Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
 	tmp.x = (top.x*bot.x + top.y*bot.y)/div;
 	tmp.y = (top.y*bot.x - top.x*bot.y)/div;
 
-	g_new_z.x = (tmp.x + tmp.y)*(tmp.x - tmp.y);      // Z = tmp**2     
+	g_new_z.real((tmp.x + tmp.y)*(tmp.x - tmp.y));      // Z = tmp**2     
 	g_new_z.y = tmp.x*tmp.y;
 	g_new_z.y += g_new_z.y;
 
@@ -1990,7 +1990,7 @@ int magnet2_orbit_fp()
 	tmp.x = (top.x*bot.x + top.y*bot.y)/div;
 	tmp.y = (top.y*bot.x - top.x*bot.y)/div;
 
-	g_new_z.x = (tmp.x + tmp.y)*(tmp.x - tmp.y);      // Z = tmp**2     
+	g_new_z.real((tmp.x + tmp.y)*(tmp.x - tmp.y));      // Z = tmp**2     
 	g_new_z.y = tmp.x*tmp.y;
 	g_new_z.y += g_new_z.y;
 
@@ -2105,7 +2105,7 @@ int man_o_war_orbit_fp()
 {
 	// From Art Matrix via Lee Skinner 
 	// note that fast >= 287 equiv in fracsuba.asm must be kept in step 
-	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_temp_z.x + g_float_parameter->x;
+	g_new_z.real(g_temp_sqr_x - g_temp_sqr_y + g_temp_z.x + g_float_parameter->x);
 	g_new_z.y = 2.0*g_old_z.x*g_old_z.y + g_temp_z.y + g_float_parameter->y;
 	g_temp_z = g_old_z;
 	return g_externs.BailOutFp();
@@ -2149,7 +2149,7 @@ int marks_mandel_power_orbit()
 int tims_error_orbit_fp()
 {
 	CMPLXtrig0(g_old_z, g_new_z);
-	g_new_z.x = g_new_z.x*g_temp_z.x - g_new_z.y*g_temp_z.y;
+	g_new_z.real(g_new_z.x*g_temp_z.x - g_new_z.y*g_temp_z.y);
 	g_new_z.y = g_new_z.x*g_temp_z.y - g_new_z.y*g_temp_z.x;
 	g_new_z.x += g_float_parameter->x;
 	g_new_z.y += g_float_parameter->y;
@@ -2775,7 +2775,7 @@ int hyper_complex_orbit_fp()
 	hnew.t += g_c_quaternion.R_component_4();
 
 	g_old_z.x = hnew.x;
-	g_new_z.x = hnew.x;
+	g_new_z.real(hnew.x);
 	g_old_z.y = hnew.y;
 	g_new_z.y = hnew.y;
 	g_float_parameter->x = hnew.z;
@@ -2800,7 +2800,7 @@ int volterra_lotka_orbit_fp()
 	double a = g_old_z.x + g_parameters[1]*u;
 	double b = g_old_z.y + g_parameters[1]*w;
 	double ab = a*b;
-	g_new_z.x = g_old_z.x + half*(u + (a - ab));
+	g_new_z.real(g_old_z.x + half*(u + (a - ab)));
 	g_new_z.y = g_old_z.y + half*(w + (-b + ab));
 	return g_externs.BailOutFp();
 }
@@ -2808,7 +2808,7 @@ int volterra_lotka_orbit_fp()
 // Science of Fractal Images pp. 185, 187 
 int escher_orbit_fp()
 {
-	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y; // standard Julia with C == (0.0, 0.0i) 
+	g_new_z.real(g_temp_sqr_x - g_temp_sqr_y); // standard Julia with C == (0.0, 0.0i) 
 	g_new_z.y = 2.0*g_old_z.x*g_old_z.y;
 	ComplexD oldtest;
 	oldtest.x = g_new_z.x*15.0;    // scale it 
@@ -2966,7 +2966,7 @@ int mandelbrot_mix4_orbit_fp() // from formula by Jim Muth
 	ComplexD z_f;
 	CMPLXpwr(g_old_z, s_mandelmix4_b, z_b);     // (z^b)     
 	CMPLXpwr(g_old_z, s_mandelmix4_f, z_f);     // (z^f)     
-	g_new_z.x = s_mandelmix4_k.x*s_mandelmix4_a.x*z_b.x + s_mandelmix4_k.x*s_mandelmix4_d.x*z_f.x + s_mandelmix4_c.x;
+	g_new_z.real(s_mandelmix4_k.x*s_mandelmix4_a.x*z_b.x + s_mandelmix4_k.x*s_mandelmix4_d.x*z_f.x + s_mandelmix4_c.x);
 	g_new_z.y = s_mandelmix4_k.x*s_mandelmix4_a.x*z_b.y + s_mandelmix4_k.x*s_mandelmix4_d.x*z_f.y + s_mandelmix4_c.y;
 	return g_externs.BailOutFp();
 }

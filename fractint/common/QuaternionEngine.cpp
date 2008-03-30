@@ -51,7 +51,7 @@ int quaternion_orbit_fp()
 		return 1;
 	}
 	g_old_z.x = n0;
-	g_new_z.x = n0;
+	g_new_z.real(n0);
 	g_old_z.y = n1;
 	g_new_z.y = n1;
 	g_float_parameter->x = n2;
