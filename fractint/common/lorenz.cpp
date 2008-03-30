@@ -614,7 +614,7 @@ bool orbit_3d_setup_fp()
 rwalk:
 			s_init_orbit_fp[0] = 1 + Sqrt.x/2;
 			s_init_orbit_fp[1] = Sqrt.y/2;
-			g_new_z.y = s_init_orbit_fp[1];
+			g_new_z.imag(s_init_orbit_fp[1]);
 			g_new_z.real(s_init_orbit_fp[0]);
 			break;
 		case MAJORMETHOD_RANDOM_RUN:       // random run, choose intervals 
@@ -622,7 +622,7 @@ rwalk:
 			s_init_orbit_fp[0] = 1 + Sqrt.x/2;
 			s_init_orbit_fp[1] = Sqrt.y/2;
 			g_new_z.real(s_init_orbit_fp[0]);
-			g_new_z.y = s_init_orbit_fp[1];
+			g_new_z.imag(s_init_orbit_fp[1]);
 			break;
 		}
 	}
@@ -681,7 +681,7 @@ int Minverse_julia_orbit()
 		if (RANDOM(2))
 		{
 			g_new_z.real(-g_new_z.x);
-			g_new_z.y = -g_new_z.y;
+			g_new_z.imag(-g_new_z.y);
 		}
 #endif
 		break;
@@ -699,13 +699,13 @@ int Minverse_julia_orbit()
 			break;
 		case DIRECTION_RIGHT:
 			g_new_z.real(-g_new_z.x);
-			g_new_z.y = -g_new_z.y;
+			g_new_z.imag(-g_new_z.y);
 			break;
 		case DIRECTION_RANDOM:
 			if (RANDOM(2))
 			{
 				g_new_z.real(-g_new_z.x);
-				g_new_z.y = -g_new_z.y;
+				g_new_z.imag(-g_new_z.y);
 			}
 			break;
 		}
@@ -798,11 +798,11 @@ int Minverse_julia_orbit()
 			break;
 		case DIRECTION_RIGHT:
 			g_new_z.real(-g_new_z.x);
-			g_new_z.y = -g_new_z.y;
+			g_new_z.imag(-g_new_z.y);
 			break;
 		case DIRECTION_RANDOM:
 			g_new_z.real(leftright*g_new_z.x);
-			g_new_z.y = leftright*g_new_z.y;
+			g_new_z.imag(leftright*g_new_z.y);
 			break;
 		}
 		if (color < g_colors-1)
@@ -816,7 +816,7 @@ int Minverse_julia_orbit()
 			g_plot_color_put_color(newcol, newrow, color + 1);
 		}
 		g_new_z.real(leftright*g_new_z.x);
-		g_new_z.y = leftright*g_new_z.y;
+		g_new_z.imag(leftright*g_new_z.y);
 		break;
 	}
 	return 1;

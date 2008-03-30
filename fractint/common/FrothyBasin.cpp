@@ -494,12 +494,12 @@ int froth_per_orbit()
 	if (!g_integer_fractal) // fp mode 
 	{
 		g_new_z.real(g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_frothy_data.f.a*g_old_z.y);
-		g_new_z.y = 2.0*g_old_z.x*g_old_z.y - s_frothy_data.f.a*g_old_z.x + g_old_z.y;
+		g_new_z.imag(2.0*g_old_z.x*g_old_z.y - s_frothy_data.f.a*g_old_z.x + g_old_z.y);
 		if (s_frothy_data.repeat_mapping)
 		{
 			g_old_z = g_new_z;
 			g_new_z.real(sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_frothy_data.f.a*g_old_z.y);
-			g_new_z.y = 2.0*g_old_z.x*g_old_z.y - s_frothy_data.f.a*g_old_z.x + g_old_z.y;
+			g_new_z.imag(2.0*g_old_z.x*g_old_z.y - s_frothy_data.f.a*g_old_z.x + g_old_z.y);
 		}
 
 		g_temp_sqr_x = sqr(g_new_z.x);
