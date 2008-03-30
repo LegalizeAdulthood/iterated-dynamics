@@ -1233,7 +1233,7 @@ bool detect_finite_attractor_l()
 	ComplexL attractor_l;
 	for (int i = 0; i < g_num_attractors; i++)
 	{
-		attractor_l.x = g_new_z_l.x - g_attractors_l[i].x;
+		attractor_l.x = g_new_z_l.real() - g_attractors_l[i].x;
 		attractor_l.x = lsqr(attractor_l.x);
 		if (attractor_l.x < g_attractor_radius_l)
 		{
@@ -1718,7 +1718,7 @@ void StandardFractal::show_orbit()
 	}
 	else
 	{
-		plot_orbit_i(g_new_z_l.x, g_new_z_l.imag(), -1);
+		plot_orbit_i(g_new_z_l.real(), g_new_z_l.imag(), -1);
 	}
 }
 void StandardFractal::set_new_z_if_bigmath()
@@ -1767,7 +1767,7 @@ void StandardFractal::check_periodicity()
 		{
 			if (g_integer_fractal)     // floating-pt periodicity chk 
 			{
-				if (labs(m_saved_z_l.x - g_new_z_l.x) < g_close_enough_l)
+				if (labs(m_saved_z_l.x - g_new_z_l.real()) < g_close_enough_l)
 				{
 					if (labs(m_saved_z_l.y - g_new_z_l.imag()) < g_close_enough_l)
 					{
@@ -1852,7 +1852,7 @@ bool StandardFractal::colormode_epsilon_cross_update()
 	m_colormode_epsilon_cross_hooper = HOOPER_NONE;
 	if (g_integer_fractal)
 	{
-		if (labs(g_new_z_l.x) < labs(m_colormode_epsilon_cross_proximity_l))
+		if (labs(g_new_z_l.real()) < labs(m_colormode_epsilon_cross_proximity_l))
 		{
 			// close to y axis 
 			m_colormode_epsilon_cross_hooper = (m_colormode_epsilon_cross_proximity_l > 0) ?
@@ -1904,7 +1904,7 @@ void StandardFractal::colormode_beauty_of_fractals_update()
 	{
 		if (g_magnitude_l == 0 || !g_no_magnitude_calculation)
 		{
-			g_magnitude_l = lsqr(g_new_z_l.x) + lsqr(g_new_z_l.imag());
+			g_magnitude_l = lsqr(g_new_z_l.real()) + lsqr(g_new_z_l.imag());
 		}
 		g_magnitude = FudgeToDouble(g_magnitude_l);
 	}
@@ -2166,7 +2166,7 @@ void StandardFractal::compute_decomposition_and_biomorph()
 	{
 		if (g_integer_fractal)
 		{
-			if (labs(g_new_z_l.x) < g_rq_limit2_l || labs(g_new_z_l.imag()) < g_rq_limit2_l)
+			if (labs(g_new_z_l.real()) < g_rq_limit2_l || labs(g_new_z_l.imag()) < g_rq_limit2_l)
 			{
 				g_color_iter = g_externs.Biomorph();
 			}
@@ -2499,10 +2499,10 @@ static void decomposition()
 			g_new_z_l.imag(-g_new_z_l.imag());
 		}
 
-		if (g_new_z_l.x < 0)
+		if (g_new_z_l.real() < 0)
 		{
 			++temp;
-			g_new_z_l.real(-g_new_z_l.x);
+			g_new_z_l.real(-g_new_z_l.real());
 		}
 		if (g_decomposition[0] == 2)
 		{
@@ -2520,10 +2520,10 @@ static void decomposition()
 		if (g_decomposition[0] >= 8)
 		{
 			temp <<= 1;
-			if (g_new_z_l.x < g_new_z_l.imag())
+			if (g_new_z_l.real() < g_new_z_l.imag())
 			{
 				++temp;
-				lalt.x = g_new_z_l.x; // just 
+				lalt.x = g_new_z_l.real(); // just 
 				g_new_z_l.real(g_new_z_l.imag()); // swap 
 				g_new_z_l.imag(lalt.x); // them 
 			}
@@ -2531,7 +2531,7 @@ static void decomposition()
 			if (g_decomposition[0] >= 16)
 			{
 				temp <<= 1;
-				if (multiply(g_new_z_l.x, ltan22_5, g_bit_shift) < g_new_z_l.imag())
+				if (multiply(g_new_z_l.real(), ltan22_5, g_bit_shift) < g_new_z_l.imag())
 				{
 					++temp;
 					lalt = g_new_z_l;
@@ -2544,7 +2544,7 @@ static void decomposition()
 				if (g_decomposition[0] >= 32)
 				{
 					temp <<= 1;
-					if (multiply(g_new_z_l.x, ltan11_25, g_bit_shift) < g_new_z_l.imag())
+					if (multiply(g_new_z_l.real(), ltan11_25, g_bit_shift) < g_new_z_l.imag())
 					{
 						++temp;
 						lalt = g_new_z_l;
@@ -2557,7 +2557,7 @@ static void decomposition()
 					if (g_decomposition[0] >= 64)
 					{
 						temp <<= 1;
-						if (multiply(g_new_z_l.x, ltan5_625, g_bit_shift) < g_new_z_l.imag())
+						if (multiply(g_new_z_l.real(), ltan5_625, g_bit_shift) < g_new_z_l.imag())
 						{
 							++temp;
 							lalt = g_new_z_l;
@@ -2570,7 +2570,7 @@ static void decomposition()
 						if (g_decomposition[0] >= 128)
 						{
 							temp <<= 1;
-							if (multiply(g_new_z_l.x, ltan2_8125, g_bit_shift) < g_new_z_l.imag())
+							if (multiply(g_new_z_l.real(), ltan2_8125, g_bit_shift) < g_new_z_l.imag())
 							{
 								++temp;
 								lalt = g_new_z_l;
@@ -2583,9 +2583,9 @@ static void decomposition()
 							if (g_decomposition[0] == 256)
 							{
 								temp <<= 1;
-								if (multiply(g_new_z_l.x, ltan1_4063, g_bit_shift) < g_new_z_l.imag())
+								if (multiply(g_new_z_l.real(), ltan1_4063, g_bit_shift) < g_new_z_l.imag())
 								{
-									if ((g_new_z_l.x*ltan1_4063 < g_new_z_l.imag()))
+									if ((g_new_z_l.real()*ltan1_4063 < g_new_z_l.imag()))
 									{
 										++temp;
 									}
