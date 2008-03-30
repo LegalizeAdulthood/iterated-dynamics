@@ -221,7 +221,7 @@ static ApplicationStateType handle_fractal_type(bool &frommandel)
 		g_save_release = g_release;
 		g_no_magnitude_calculation = false;
 		g_use_old_periodicity = false;
-		g_bad_outside = false;
+		g_externs.SetBadOutside(false);
 		g_use_old_complex_power = true;
 		set_current_parameters();
 		g_discrete_parameter_offset_x = 0;

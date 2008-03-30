@@ -12,8 +12,9 @@
 #include "fractype.h"
 #include "externs.h"
 #include "drivers.h"
-#include "fracsubr.h"
 
+#include "Externals.h"
+#include "fracsubr.h"
 #include "MathUtil.h"
 
 static int inside_color, periodicity_color;
@@ -26,6 +27,33 @@ void calculate_mandelbrot_start_fp_asm()
 }
 
 #define ABS(x) ((x) < 0?-(x):(x))
+
+
+static long OutsideColorModeInverseTangent(ComplexD const &new_z)
+{
+	return long(fabs(atan2(new_z.y, new_z.x)*g_externs.AtanColors()/MathUtil::Pi));
+}
+
+static long OutsideColorModeSum(long color_iter, ComplexD const &new_z)
+{
+	return color_iter + long(new_z.x + new_z.y);
+}
+
+static long OutsideColorModeMultiply(long color_iter, ComplexD const &new_z)
+{
+	return (new_z.y != 0.0) ?
+		long(double(color_iter)*(new_z.x/new_z.y)) : color_iter;
+}
+
+static long OutsideColorModeImaginary(long color_iter, ComplexD const &new_z)
+{
+	return color_iter + long(new_z.y + 7);
+}
+
+static long OutsideColorModeReal(long color_iter, ComplexD const &new_z)
+{
+	return color_iter + long(new_z.x + 7);
+}
 
 long calculate_mandelbrot_fp_asm()
 {
@@ -204,23 +232,23 @@ over_bailout_87:
 		// special_outside 
 		if (g_outside == COLORMODE_REAL)
 		{
-			g_color_iter += long(g_new_z.x + 7);
+			g_color_iter = OutsideColorModeReal(g_color_iter, g_new_z);
 		}
 		else if (g_outside == COLORMODE_IMAGINARY)
 		{
-			g_color_iter += long(g_new_z.y + 7);
+			g_color_iter = OutsideColorModeImaginary(g_color_iter, g_new_z);
 		}
-		else if (g_outside == COLORMODE_MULTIPLY && g_new_z.y != 0.0)
+		else if (g_outside == COLORMODE_MULTIPLY)
 		{
-			g_color_iter = long(double(g_color_iter)*(g_new_z.x/g_new_z.y));
+			g_color_iter = OutsideColorModeMultiply(g_color_iter, g_new_z);
 		}
 		else if (g_outside == COLORMODE_SUM)
 		{
-			g_color_iter +=  long(g_new_z.x + g_new_z.y);
+			g_color_iter = OutsideColorModeSum(g_color_iter, g_new_z);
 		}
 		else if (g_outside == COLORMODE_INVERSE_TANGENT)
 		{
-			g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi));
+			g_color_iter = OutsideColorModeInverseTangent(g_new_z);
 		}
 		// check_color 
 		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != COLORMODE_FLOAT_MODULUS)

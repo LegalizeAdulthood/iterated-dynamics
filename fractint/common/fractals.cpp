@@ -78,7 +78,6 @@ ComplexL g_parameter2_l = { 0, 0 };
 long g_temp_sqr_x_l = 0;
 long g_temp_sqr_y_l = 0;
 int g_degree = 0;
-int g_basin = 0;
 double g_threshold = 0.0;
 ComplexD g_coefficient = { 0.0, 0.0 };
 ComplexD g_power = { 0.0, 0.0};
@@ -2961,7 +2960,7 @@ bool mandelbrot_mix4_setup()
 		g_temp_z.y = -g_temp_z.y;
 	}
 
-	if (g_bail_out == 0)
+	if (g_externs.BailOut() == 0)
 	{
 		g_rq_limit = s_mandelmix4_l.x;
 		g_rq_limit2 = g_rq_limit*g_rq_limit;

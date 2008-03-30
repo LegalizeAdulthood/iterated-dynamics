@@ -850,7 +850,7 @@ enum ColoringModeType
 };
 
 // defines for bailoutest
-enum bailouts
+enum BailOutType
 {
 	BAILOUT_MODULUS,
 	BAILOUT_REAL,

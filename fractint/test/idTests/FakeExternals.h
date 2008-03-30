@@ -55,8 +55,8 @@ public:
 	virtual void SetBailOutBf(BailOutFunction *value) { throw not_implemented("SetBailOutBf"); }
 	virtual BailOutFunction *BailOutBn() const		{ throw not_implemented("BailOutBn"); }
 	virtual void SetBailOutBn(BailOutFunction *value) { throw not_implemented("SetBailOutBn"); }
-	virtual enum bailouts BailOutTest() const		{ throw not_implemented("BailOutTest"); }
-	virtual void SetBailOutTest(bailouts value)		{ throw not_implemented("SetBailOutTest"); }
+	virtual BailOutType BailOutTest() const			{ throw not_implemented("BailOutTest"); }
+	virtual void SetBailOutTest(BailOutType value)	{ throw not_implemented("SetBailOutTest"); }
 	virtual int Basin() const						{ throw not_implemented("Basin"); }
 	virtual void SetBasin(int value)				{ throw not_implemented("SetBasin"); }
 	virtual int BfSaveLen() const					{ throw not_implemented("BfSaveLen"); }

@@ -15,6 +15,7 @@
 #include "biginit.h"
 #include "calcfrac.h"
 #include "EscapeTime.h"
+#include "Externals.h"
 #include "fractalp.h"
 #include "prompts2.h"
 #include "realdos.h"
@@ -451,7 +452,7 @@ void restore_stack(int old_offset)
 void init_bf_dec(int dec)
 {
 	g_decimals = g_bf_digits ? g_bf_digits : dec;
-	if (g_bail_out > 10)    // arbitrary value 
+	if (g_externs.BailOut() > 10)    // arbitrary value 
 	{
 		// using 2 doesn't gain much and requires another test 
 		g_int_length = 4;
@@ -461,8 +462,8 @@ void init_bf_dec(int dec)
 		g_int_length = 2;
 	}
 	// the bailout tests need greater dynamic range 
-	else if (g_bail_out_test == BAILOUT_REAL || g_bail_out_test == BAILOUT_IMAGINARY || g_bail_out_test == BAILOUT_AND ||
-				g_bail_out_test == BAILOUT_MANHATTAN_R)
+	else if (g_externs.BailOutTest() == BAILOUT_REAL || g_externs.BailOutTest() == BAILOUT_IMAGINARY || g_externs.BailOutTest() == BAILOUT_AND ||
+				g_externs.BailOutTest() == BAILOUT_MANHATTAN_R)
 	{
 		g_int_length = 2;
 	}
@@ -483,7 +484,7 @@ void init_bf_length(int bnl)
 {
 	g_bn_length = bnl;
 
-	if (g_bail_out > 10)    // arbitrary value 
+	if (g_externs.BailOut() > 10)    // arbitrary value 
 	{
 		// using 2 doesn't gain much and requires another test 
 		g_int_length = 4;
@@ -493,8 +494,8 @@ void init_bf_length(int bnl)
 		g_int_length = 2;
 	}
 	// the bailout tests need greater dynamic range 
-	else if (g_bail_out_test == BAILOUT_REAL || g_bail_out_test == BAILOUT_IMAGINARY || g_bail_out_test == BAILOUT_AND ||
-				g_bail_out_test == BAILOUT_MANHATTAN_R)
+	else if (g_externs.BailOutTest() == BAILOUT_REAL || g_externs.BailOutTest() == BAILOUT_IMAGINARY || g_externs.BailOutTest() == BAILOUT_AND ||
+				g_externs.BailOutTest() == BAILOUT_MANHATTAN_R)
 	{
 		g_int_length = 2;
 	}

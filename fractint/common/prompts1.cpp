@@ -1695,7 +1695,7 @@ int get_fractal_parameters(bool type_specific)        // prompt for type-specifi
 	int lastparm  = MAX_PARAMETERS;
 	double oldparam[MAX_PARAMETERS];
 	int f_key_mask = 0x40;
-	old_bail_out = g_bail_out;
+	old_bail_out = g_externs.BailOut();
 	if (fractal_type_julibrot(g_fractal_type))
 	{
 		g_julibrot = true;
@@ -1963,7 +1963,7 @@ get_fractal_parameters_top:
 			&& (g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 		{
 			parameter_values[prompt].type = 'l';
-			parameter_values[prompt].uval.ch.val  = int(g_bail_out_test);
+			parameter_values[prompt].uval.ch.val  = int(g_externs.BailOutTest());
 			parameter_values[prompt].uval.ch.llen = 7;
 			parameter_values[prompt].uval.ch.vlen = 6;
 			parameter_values[prompt].uval.ch.list = bailnameptr;
@@ -1981,7 +1981,7 @@ get_fractal_parameters_top:
 			{
 				choices[prompt] = "Bailout value (0 means use default)";
 				parameter_values[prompt].type = 'L';
-				old_bail_out = g_bail_out;
+				old_bail_out = g_externs.BailOut();
 				parameter_values[prompt++].uval.Lval = old_bail_out;
 				parameter_values[prompt].type = '*';
 				const char *tmpptr = type_name;
@@ -2188,18 +2188,18 @@ get_fractal_parameters_top:
 		if (i != 0 && g_current_fractal_specific->calculate_type == standard_fractal &&
 			(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 		{
-			if (parameter_values[prompt].uval.ch.val != int(g_bail_out_test))
+			if (parameter_values[prompt].uval.ch.val != int(g_externs.BailOutTest()))
 			{
-				g_bail_out_test = (enum bailouts)parameter_values[prompt].uval.ch.val;
+				g_externs.SetBailOutTest(BailOutType(parameter_values[prompt].uval.ch.val));
 				command_result = COMMANDRESULT_FRACTAL_PARAMETER;
 			}
 			prompt++;
 		}
 		else
 		{
-			g_bail_out_test = BAILOUT_MODULUS;
+			g_externs.SetBailOutTest(BAILOUT_MODULUS);
 		}
-		set_bail_out_formula(g_bail_out_test);
+		set_bail_out_formula(g_externs.BailOutTest());
 
 		if (i)
 		{
@@ -2210,14 +2210,10 @@ get_fractal_parameters_top:
 			}
 			else
 			{
-				g_bail_out = parameter_values[prompt++].uval.Lval;
-				if (g_bail_out != 0
-					&& (g_bail_out < 1 || g_bail_out > 2100000000L))
+				long value = parameter_values[prompt++].uval.Lval;
+				if (value >= 1 && value <= 2100000000L && value != old_bail_out)
 				{
-					g_bail_out = old_bail_out;
-				}
-				if (g_bail_out != old_bail_out)
-				{
+					g_externs.SetBailOut(value);
 					command_result = COMMANDRESULT_FRACTAL_PARAMETER;
 				}
 				prompt++;
@@ -3543,7 +3539,7 @@ static int get_funny_glasses_params()
 	return 0;
 }
 
-void set_bail_out_formula(enum bailouts test)
+void set_bail_out_formula(BailOutType test)
 {
 	switch (test)
 	{

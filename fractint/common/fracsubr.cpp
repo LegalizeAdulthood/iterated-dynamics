@@ -84,9 +84,9 @@ void calculate_fractal_initialize_bail_out_limit()
 	{
 		g_rq_limit = g_potential_parameter[2];
 	}
-	else if (g_bail_out) // user input bailout 
+	else if (g_externs.BailOut()) // user input bailout 
 	{
-		g_rq_limit = g_bail_out;
+		g_rq_limit = g_externs.BailOut();
 	}
 	else if (g_biomorph != -1) // biomorph benefits from larger bailout 
 	{
@@ -368,7 +368,7 @@ init_restart:
 			&& (g_outside > COLORMODE_REAL || g_outside < COLORMODE_INVERSE_TANGENT)         // and no funny outside stuff 
 			&& g_debug_mode != DEBUGMODE_FORCE_BITSHIFT	// and not debugging 
 			&& g_proximity <= 2.0                       // and g_proximity not too large 
-			&& g_bail_out_test == BAILOUT_MODULUS)                     // and bailout test = mod 
+			&& g_externs.BailOutTest() == BAILOUT_MODULUS)                     // and bailout test = mod 
 		{
 			g_bit_shift = FUDGE_FACTOR;                  // use the larger g_bit_shift 
 		}

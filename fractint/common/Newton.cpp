@@ -8,11 +8,12 @@
 #include "fractype.h"
 #include "mpmath.h"
 #include "fpu.h"
-#include "calcfrac.h"
-#include "fractals.h"
 
-#include "Newton.h"
+#include "calcfrac.h"
+#include "Externals.h"
+#include "fractals.h"
 #include "MathUtil.h"
+#include "Newton.h"
 
 extern double TwoPi;
 extern ComplexD temp;
@@ -108,7 +109,7 @@ bool Newton::setup()           // Newton/NewtBasin Routines
 	m_degree_minus_1_over_degree = double(g_degree - 1)/double(g_degree);
 	g_threshold = .3*MathUtil::Pi/g_degree; // less than half distance between roots 
 
-	g_basin = 0;
+	g_externs.SetBasin(0);
 	if (s_roots != s_static_roots)
 	{
 		delete[] s_roots;
@@ -117,7 +118,7 @@ bool Newton::setup()           // Newton/NewtBasin Routines
 
 	if (g_fractal_type == FRACTYPE_NEWTON_BASIN)
 	{
-		g_basin = g_parameter.y ? 2 : 1; // stripes
+		g_externs.SetBasin(g_parameter.y ? 2 : 1); // stripes
 		if (g_degree > 16)
 		{
 			s_roots = new ComplexD[g_degree];
@@ -168,7 +169,7 @@ int Newton::orbit()
 				// which root of 1 it converged to
 				if (distance(s_roots[i], g_old_z) < g_threshold)
 				{
-					tmpcolor = (g_basin == 2) ?
+					tmpcolor = (g_externs.Basin() == 2) ?
 						(1 + (i & 7) + ((g_color_iter & 1) << 3)) : (1 + i);
 					break;
 				}

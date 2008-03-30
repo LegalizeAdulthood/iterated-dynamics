@@ -36,8 +36,8 @@ public:
 	virtual void SetBailOutBf(BailOutFunction *value) = 0;
 	virtual BailOutFunction *BailOutBn() const = 0;
 	virtual void SetBailOutBn(BailOutFunction *value) = 0;
-	virtual enum bailouts BailOutTest() const = 0;
-	virtual void SetBailOutTest(bailouts value) = 0;
+	virtual BailOutType BailOutTest() const = 0;
+	virtual void SetBailOutTest(BailOutType value) = 0;
 	virtual int Basin() const = 0;
 	virtual void SetBasin(int value) = 0;
 	virtual int BfSaveLen() const = 0;
