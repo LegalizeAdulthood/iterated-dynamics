@@ -136,8 +136,7 @@ int Halley::per_pixel()
 	}
 	else
 	{
-		g_initial_z.x = g_externs.DxPixel();
-		g_initial_z.y = g_externs.DyPixel();
+		g_initial_z = g_externs.DPixel();
 	}
 
 	g_old_z = g_initial_z;

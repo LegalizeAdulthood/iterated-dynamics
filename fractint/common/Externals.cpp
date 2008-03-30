@@ -349,6 +349,7 @@ public:
 	virtual long LyPixel()										{ assert(_lyPixel); return _lyPixel(); }
 	virtual void SetLyPixel(PixelFunctionL *value)				{ _lyPixel = value; }
 	virtual ComplexL LPixel()									{ ComplexL pixel; pixel.x = LxPixel(); pixel.y = LyPixel(); return pixel; }
+	virtual ComplexD DPixel()									{ ComplexD pixel; pixel.x = DxPixel(); pixel.y = DyPixel(); return pixel; }
 
 	virtual TrigFunction *Trig0L() const						{ return g_trig0_l; }
 	virtual void SetTrig0L(TrigFunction *value)					{ g_trig0_l = value; }

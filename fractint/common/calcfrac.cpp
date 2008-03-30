@@ -1308,8 +1308,7 @@ int calculate_mandelbrot_fp()
 	}
 	else
 	{
-		g_initial_z.x = g_externs.DxPixel();
-		g_initial_z.y = g_externs.DyPixel();
+		g_initial_z = g_externs.DPixel();
 	}
 	if (g_calculate_mandelbrot_asm_fp() >= 0)
 	{

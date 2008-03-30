@@ -149,6 +149,7 @@ public:
 	virtual void SetDxSize(double value) = 0;
 	typedef double DyPixelFunction();
 	virtual double DyPixel() = 0;
+	virtual ComplexD DPixel() = 0;
 	virtual void SetDyPixel(DyPixelFunction *value) = 0;
 	virtual double DySize() const = 0;
 	virtual void SetDySize(double value) = 0;
