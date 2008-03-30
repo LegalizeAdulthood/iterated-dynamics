@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="AbstractInput.obj BigWhileLoop.obj FullScreenChooser.obj IteratedDynamics.obj EscapeTime.obj filesystem.obj VideoModeKeyName.obj miscfrac.obj LSystemParser.obj IFSParser.obj TextColors.obj strncasecmp.obj"
+				AdditionalDependencies="AbstractInput.obj BigWhileLoop.obj FullScreenChooser.obj IteratedDynamics.obj EscapeTime.obj EnsureExtension.obj VideoModeKeyName.obj miscfrac.obj LSystemParser.obj IFSParser.obj TextColors.obj strncasecmp.obj"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="c:\data\id\Debug"
 				GenerateDebugInformation="true"
@@ -213,7 +213,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TestFileSystem.cpp"
+				RelativePath=".\TestEnsureExtension.cpp"
 				>
 			</File>
 			<File
