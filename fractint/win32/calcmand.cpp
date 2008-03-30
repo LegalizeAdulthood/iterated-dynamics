@@ -134,8 +134,8 @@ static long cdecl calculate_mandelbrot_asm1()
 		{
 			if (g_externs.Outside() <= COLORMODE_REAL)
 			{
-				g_new_z_l.x = x;
-				g_new_z_l.y = y;
+				g_new_z_l.real(x);
+				g_new_z_l.imag(y);
 			}
 			g_old_color_iter = (cx - 10 > 0) ? cx - 10 : 0;
 			g_real_color_iter = g_max_iteration - cx;
@@ -162,19 +162,19 @@ static long cdecl calculate_mandelbrot_asm1()
 				}
 				else if (g_externs.Outside() == COLORMODE_IMAGINARY)
 				{
-					g_color_iter += g_new_z_l.y + 7;
+					g_color_iter += g_new_z_l.imag() + 7;
 				}
-				else if (g_externs.Outside() == COLORMODE_MULTIPLY && g_new_z_l.y != 0)
+				else if (g_externs.Outside() == COLORMODE_MULTIPLY && g_new_z_l.imag() != 0)
 				{
-					g_color_iter = FUDGE_MUL(g_color_iter, g_new_z_l.x)/g_new_z_l.y;
+					g_color_iter = FUDGE_MUL(g_color_iter, g_new_z_l.x)/g_new_z_l.imag();
 				}
 				else if (g_externs.Outside() == COLORMODE_SUM)
 				{
-					g_color_iter += g_new_z_l.x + g_new_z_l.y;
+					g_color_iter += g_new_z_l.x + g_new_z_l.imag();
 				}
 				else if (g_externs.Outside() == COLORMODE_INVERSE_TANGENT)
 				{
-					g_color_iter = (long) fabs(atan2(double(g_new_z_l.y), double(g_new_z_l.x))*g_externs.AtanColors()/MathUtil::Pi);
+					g_color_iter = (long) fabs(atan2(double(g_new_z_l.imag()), double(g_new_z_l.x))*g_externs.AtanColors()/MathUtil::Pi);
 				}
 				// check_color 
 				if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_externs.Outside() != COLORMODE_FLOAT_MODULUS)
