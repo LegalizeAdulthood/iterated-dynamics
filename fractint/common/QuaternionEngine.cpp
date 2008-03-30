@@ -13,8 +13,7 @@ QuaternionD g_c_quaternion(0.0, 0.0, 0.0, 0.0);
 
 int quaternion_julia_per_pixel_fp()
 {
-	g_old_z.x = g_externs.DxPixel();
-	g_old_z.y = g_externs.DyPixel();
+	g_old_z = g_externs.DPixel();
 	g_float_parameter->x = g_parameters[4];
 	g_float_parameter->y = g_parameters[5];
 	g_c_quaternion = QuaternionD(g_parameters[0], g_parameters[1], g_parameters[2], g_parameters[3]);

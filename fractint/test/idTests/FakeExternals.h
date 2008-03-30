@@ -170,6 +170,7 @@ public:
 	virtual long LyPixel()				 			{ throw not_implemented("LyPixel"); }
 	virtual void SetLyPixel(PixelFunctionL *value)	{ throw not_implemented("SetLyPixel"); }
 	virtual ComplexL LPixel()						{ throw not_implemented("LPixel"); }
+	virtual ComplexD DPixel()						{ throw not_implemented("DPixel"); }
 	virtual double DxSize() const					{ throw not_implemented("DxSize"); }
 	virtual void SetDxSize(double value)			{ throw not_implemented("SetDxSize"); }
 	virtual double DySize() const					{ throw not_implemented("DySize"); }

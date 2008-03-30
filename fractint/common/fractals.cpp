@@ -2196,8 +2196,7 @@ int circle_orbit()
 // transform points with reciprocal function 
 void invert_z(ComplexD *z)
 {
-	z->x = g_externs.DxPixel();
-	z->y = g_externs.DyPixel();
+	*z = g_externs.DPixel();
 	z->x -= g_f_x_center;
 	z->y -= g_f_y_center;  // Normalize values to center of circle 
 
@@ -2235,8 +2234,6 @@ int julia_per_pixel_l()
 	else
 	{
 		g_old_z_l = g_externs.LPixel();
-		g_old_z_l.x = g_externs.LxPixel();
-		g_old_z_l.y = g_externs.LyPixel();
 	}
 	return 0;
 #else
@@ -2262,8 +2259,7 @@ int mandelbrot_per_pixel_l()
 	// integer mandel types 
 	// barnsleym1 
 	// barnsleym2 
-	g_initial_z_l.x = g_externs.LxPixel();
-	g_initial_z_l.y = g_externs.LyPixel();
+	g_initial_z_l = g_externs.LPixel();
 
 	if (g_invert)
 	{
@@ -2320,8 +2316,7 @@ int julia_per_pixel()
 	}
 	else
 	{
-		g_old_z_l.x = g_externs.LxPixel();
-		g_old_z_l.y = g_externs.LyPixel();
+		g_old_z_l = g_externs.LPixel();
 	}
 
 	g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
@@ -2369,8 +2364,7 @@ int mandelbrot_per_pixel()
 	}
 	else
 	{
-		g_initial_z_l.x = g_externs.LxPixel();
-		g_initial_z_l.y = g_externs.LyPixel();
+		g_initial_z_l = g_externs.LPixel();
 	}
 	switch (g_fractal_type)
 	{
@@ -2432,8 +2426,7 @@ int marks_mandelbrot_per_pixel()
 	}
 	else
 	{
-		g_initial_z_l.x = g_externs.LxPixel();
-		g_initial_z_l.y = g_externs.LyPixel();
+		g_initial_z_l = g_externs.LPixel();
 	}
 
 	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_l : g_initial_z_l;
@@ -2477,8 +2470,7 @@ int marks_mandelbrot_per_pixel_fp()
 	}
 	else
 	{
-		g_initial_z.x = g_externs.DxPixel();
-		g_initial_z.y = g_externs.DyPixel();
+		g_initial_z = g_externs.DPixel();
 	}
 
 	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
@@ -2531,8 +2523,7 @@ int mandelbrot_per_pixel_fp()
 	}
 	else
 	{
-		g_initial_z.x = g_externs.DxPixel();
-		g_initial_z.y = g_externs.DyPixel();
+		g_initial_z = g_externs.DPixel();
 	}
 	switch (g_fractal_type)
 	{
@@ -2589,8 +2580,7 @@ int julia_per_pixel_fp()
 	}
 	else
 	{
-		g_old_z.x = g_externs.DxPixel();
-		g_old_z.y = g_externs.DyPixel();
+		g_old_z = g_externs.DPixel();
 	}
 	g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value for regular Julia 
 	g_temp_sqr_y = sqr(g_old_z.y);
@@ -2619,8 +2609,7 @@ int other_mandelbrot_per_pixel_fp()
 	}
 	else
 	{
-		g_initial_z.x = g_externs.DxPixel();
-		g_initial_z.y = g_externs.DyPixel();
+		g_initial_z = g_externs.DPixel();
 	}
 
 	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
@@ -2639,8 +2628,7 @@ int other_julia_per_pixel_fp()
 	}
 	else
 	{
-		g_old_z.x = g_externs.DxPixel();
-		g_old_z.y = g_externs.DyPixel();
+		g_old_z = g_externs.DPixel();
 	}
 	return 0;
 }
@@ -2653,8 +2641,7 @@ int marks_complex_mandelbrot_per_pixel()
 	}
 	else
 	{
-		g_initial_z.x = g_externs.DxPixel();
-		g_initial_z.y = g_externs.DyPixel();
+		g_initial_z = g_externs.DPixel();
 	}
 	g_old_z.x = g_initial_z.x + g_parameter.x; // initial pertubation of parameters set 
 	g_old_z.y = g_initial_z.y + g_parameter.y;
@@ -2684,8 +2671,7 @@ int phoenix_per_pixel()
 	}
 	else
 	{
-		g_old_z_l.x = g_externs.LxPixel();
-		g_old_z_l.y = g_externs.LyPixel();
+		g_old_z_l = g_externs.LPixel();
 	}
 	g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
 	g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
@@ -2705,8 +2691,7 @@ int phoenix_per_pixel_fp()
 	}
 	else
 	{
-		g_old_z.x = g_externs.DxPixel();
-		g_old_z.y = g_externs.DyPixel();
+		g_old_z = g_externs.DPixel();
 	}
 	g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value 
 	g_temp_sqr_y = sqr(g_old_z.y);
@@ -2718,8 +2703,7 @@ int phoenix_per_pixel_fp()
 int mandelbrot_phoenix_per_pixel()
 {
 #if !defined(XFRACT)
-	g_initial_z_l.x = g_externs.LxPixel();
-	g_initial_z_l.y = g_externs.LyPixel();
+	g_initial_z_l = g_externs.LPixel();
 
 	if (g_invert)
 	{
@@ -2759,8 +2743,7 @@ int mandelbrot_phoenix_per_pixel_fp()
 	}
 	else
 	{
-		g_initial_z.x = g_externs.DxPixel();
-		g_initial_z.y = g_externs.DyPixel();
+		g_initial_z = g_externs.DPixel();
 	}
 
 	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
@@ -2969,8 +2952,7 @@ int mandelbrot_mix4_per_pixel_fp()
 	}
 	else
 	{
-		g_initial_z.x = g_externs.DxPixel();
-		g_initial_z.y = g_externs.DyPixel();
+		g_initial_z = g_externs.DPixel();
 	}
 	g_old_z = g_temp_z;
 	CMPLXtrig0(g_initial_z, s_mandelmix4_c);        // c = fn1(pixel): 

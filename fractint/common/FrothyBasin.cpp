@@ -212,8 +212,7 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 		}
 		else
 		{
-			g_old_z.x = g_externs.DxPixel();
-			g_old_z.y = g_externs.DyPixel();
+			g_old_z = g_externs.DPixel();
 		}
 
 		while (!found_attractor)
@@ -316,8 +315,7 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 		}
 		else
 		{
-			g_old_z_l.x = g_externs.LxPixel();
-			g_old_z_l.y = g_externs.LyPixel();
+			g_old_z_l = g_externs.LPixel();
 		}
 
 		while (!found_attractor)
@@ -478,15 +476,13 @@ int froth_per_pixel()
 {
 	if (!g_integer_fractal) // fp mode 
 	{
-		g_old_z.x = g_externs.DxPixel();
-		g_old_z.y = g_externs.DyPixel();
+		g_old_z = g_externs.DPixel();
 		g_temp_sqr_x = sqr(g_old_z.x);
 		g_temp_sqr_y = sqr(g_old_z.y);
 	}
 	else  // integer mode 
 	{
-		g_old_z_l.x = g_externs.LxPixel();
-		g_old_z_l.y = g_externs.LyPixel();
+		g_old_z_l = g_externs.LPixel();
 		g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
 		g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
 	}
