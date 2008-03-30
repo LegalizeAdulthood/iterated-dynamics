@@ -243,7 +243,7 @@ init_restart:
 	g_distance_test = g_user_distance_test;
 	g_externs.SetBiomorph(g_externs.UserBiomorph());
 
-	if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER)
+	if (g_externs.Inside() == COLORMODE_INVERSE_TANGENT_INTEGER)
 	{
 		g_periodicity_check = 0;
 	}
@@ -365,7 +365,7 @@ init_restart:
 			&& !g_invert                                // and not inverting 
 			&& g_externs.Biomorph() == BIOMORPH_NONE	// and not biomorphing 
 			&& g_rq_limit <= 4.0						// and bailout not too high 
-			&& (g_outside > COLORMODE_REAL || g_outside < COLORMODE_INVERSE_TANGENT)         // and no funny outside stuff 
+			&& (g_externs.Outside() > COLORMODE_REAL || g_externs.Outside() < COLORMODE_INVERSE_TANGENT)         // and no funny outside stuff 
 			&& g_debug_mode != DEBUGMODE_FORCE_BITSHIFT	// and not debugging 
 			&& g_proximity <= 2.0                       // and g_proximity not too large 
 			&& g_externs.BailOutTest() == BAILOUT_MODULUS) // and bailout test = mod 

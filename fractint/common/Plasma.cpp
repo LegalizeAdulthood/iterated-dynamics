@@ -9,6 +9,7 @@
 #include "drivers.h"
 
 #include "diskvid.h"
+#include "Externals.h"
 #include "Plasma.h"
 
 typedef void (*PLOT)(int, int, int);
@@ -64,7 +65,7 @@ static void put_potential_border(int x, int y, U16 color)
 {
 	if ((x == 0) || (y == 0) || (x == g_x_dots-1) || (y == g_y_dots-1))
 	{
-		color = U16(g_outside);
+		color = U16(g_externs.Outside());
 	}
 	put_potential(x, y, color);
 }
@@ -74,7 +75,7 @@ static void put_color_border(int x, int y, int color)
 {
 	if ((x == 0) || (y == 0) || (x == g_x_dots-1) || (y == g_y_dots-1))
 	{
-		color = g_outside;
+		color = g_externs.Outside();
 	}
 	if (color < 1)
 	{
@@ -365,7 +366,7 @@ int plasma()
 		{
 			// s_max_plasma = (U16)(1L << 16) -1; 
 			s_max_plasma = 0xFFFF;
-			g_plot_color = (g_outside >= 0) ? PLOT(put_potential_border) : PLOT(put_potential);
+			g_plot_color = (g_externs.Outside() >= 0) ? PLOT(put_potential_border) : PLOT(put_potential);
 			s_get_pixels =  get_potential;
 			OldPotFlag = g_potential_flag;
 			OldPot16bit = g_potential_16bit;
@@ -374,13 +375,13 @@ int plasma()
 		{
 			s_max_plasma = 0;        // can't do potential (disk_start failed) 
 			g_parameters[3] = 0;
-			g_plot_color = (g_outside >= 0) ? put_color_border : g_plot_color_put_color;
+			g_plot_color = (g_externs.Outside() >= 0) ? put_color_border : g_plot_color_put_color;
 			s_get_pixels = (U16(*)(int, int))get_color;
 		}
 	}
 	else
 	{
-		g_plot_color = (g_outside >= 0) ? put_color_border : g_plot_color_put_color;
+		g_plot_color = (g_externs.Outside() >= 0) ? put_color_border : g_plot_color_put_color;
 		s_get_pixels = (U16(*)(int, int))get_color;
 	}
 	srand(g_random_seed);

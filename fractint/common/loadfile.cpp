@@ -83,7 +83,7 @@ static void read_info_version_0(const fractal_info &read_info)
 		g_potential_flag = (g_potential_parameter[0] != 0.0);
 		g_use_fixed_random_seed = (read_info.random_flag != 0);
 		g_random_seed = read_info.random_seed;
-		g_inside = read_info.inside;
+		g_externs.SetInside(read_info.inside);
 		g_log_palette_mode = read_info.logmapold;
 		g_inversion[0] = read_info.invert[0];
 		g_inversion[1] = read_info.invert[1];
@@ -132,7 +132,7 @@ static void read_info_version_2(const fractal_info &read_info)
 	if (read_info.version > 2)
 	{
 		g_save_release = 1300;
-		g_outside = read_info.outside;
+		g_externs.SetOutside(read_info.outside);
 	}
 }
 
@@ -320,11 +320,11 @@ static void read_info_pre_version_18(const fractal_info &read_info)
 	{
 		/* g_force_symmetry==FORCESYMMETRY_SEARCH means we want to force symmetry but don't
 		know which symmetry yet, will find out in setsymmetry() */
-		if (g_outside == COLORMODE_REAL
-			|| g_outside == COLORMODE_IMAGINARY
-			|| g_outside == COLORMODE_MULTIPLY
-			|| g_outside == COLORMODE_SUM
-			|| g_outside == COLORMODE_INVERSE_TANGENT)
+		if (g_externs.Outside() == COLORMODE_REAL
+			|| g_externs.Outside() == COLORMODE_IMAGINARY
+			|| g_externs.Outside() == COLORMODE_MULTIPLY
+			|| g_externs.Outside() == COLORMODE_SUM
+			|| g_externs.Outside() == COLORMODE_INVERSE_TANGENT)
 		{
 			if (g_force_symmetry == FORCESYMMETRY_NONE)
 			{
@@ -1433,12 +1433,12 @@ void backwards_v20()
 	// TODO: but the current code doesn't emulate the buggy behavior.
 	// TODO: See calmanfp.asm and calmanfp5.asm in the DOS code.
 	g_externs.SetBadOutside((fractal_type_mandelbrot(g_fractal_type) || fractal_type_julia(g_fractal_type))
-		&& g_outside <= COLORMODE_REAL
-		&& g_outside >= COLORMODE_SUM
+		&& g_externs.Outside() <= COLORMODE_REAL
+		&& g_externs.Outside() >= COLORMODE_SUM
 		&& g_save_release <= 1960);
 	g_use_old_complex_power = (fractal_type_formula(g_fractal_type)
 		&& (g_save_release < 1900 || DEBUGMODE_OLD_POWER == g_debug_mode));
-	if (g_inside == COLORMODE_EPSILON_CROSS && g_save_release < 1961)
+	if (g_externs.Inside() == COLORMODE_EPSILON_CROSS && g_save_release < 1961)
 	{
 		g_proximity = 0.01;
 	}
@@ -1463,16 +1463,16 @@ bool check_back()
 		|| (fractal_type_formula(g_fractal_type) && g_save_release <= 1920)
 		|| (g_log_palette_mode != 0 && g_save_release <= 2001)
 		|| (g_fractal_type == FRACTYPE_FUNC_SQR && g_save_release < 1900)
-		|| (g_inside == COLORMODE_STAR_TRAIL && g_save_release < 1825)
+		|| (g_externs.Inside() == COLORMODE_STAR_TRAIL && g_save_release < 1825)
 		|| (g_max_iteration > 32767 && g_save_release <= 1950)
 		|| (g_distance_test && g_save_release <= 1950)
-		|| ((g_outside <= COLORMODE_REAL && g_outside >= COLORMODE_INVERSE_TANGENT) && g_save_release <= 1960)
+		|| ((g_externs.Outside() <= COLORMODE_REAL && g_externs.Outside() >= COLORMODE_INVERSE_TANGENT) && g_save_release <= 1960)
 		|| (g_fractal_type == FRACTYPE_POPCORN_FP && g_save_release <= 1960)
 		|| (g_fractal_type == FRACTYPE_POPCORN_L && g_save_release <= 1960)
 		|| (g_fractal_type == FRACTYPE_POPCORN_JULIA_FP && g_save_release <= 1960)
 		|| (g_fractal_type == FRACTYPE_POPCORN_JULIA_L && g_save_release <= 1960)
-		|| (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER && g_save_release <= 2000)
-		|| ((g_inside == COLORMODE_INVERSE_TANGENT_INTEGER || g_outside == COLORMODE_INVERSE_TANGENT) && g_save_release <= 2005)
+		|| (g_externs.Inside() == COLORMODE_FLOAT_MODULUS_INTEGER && g_save_release <= 2000)
+		|| ((g_externs.Inside() == COLORMODE_INVERSE_TANGENT_INTEGER || g_externs.Outside() == COLORMODE_INVERSE_TANGENT) && g_save_release <= 2005)
 		|| (g_fractal_type == FRACTYPE_LAMBDA_FUNC_FP && g_function_index[0] == FUNCTION_EXP && g_save_release <= 2002)
 		|| (fractal_type_julibrot(g_fractal_type)
 			&& (g_new_orbit_type == FRACTYPE_QUATERNION_FP || g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_FP)

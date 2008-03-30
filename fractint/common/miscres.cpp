@@ -1255,7 +1255,7 @@ static void area()
 	int y;
 	char buf[160];
 	long cnt = 0;
-	if (g_inside < 0)
+	if (g_externs.Inside() < 0)
 	{
 		stop_message(STOPMSG_NORMAL, "Need solid inside to compute area");
 		return;
@@ -1264,13 +1264,13 @@ static void area()
 	{
 		for (x = 0; x < g_x_dots; x++)
 		{
-			if (get_color(x, y) == g_inside)
+			if (get_color(x, y) == g_externs.Inside())
 			{
 				cnt++;
 			}
 		}
 	}
-	if (g_inside > 0 && g_outside < 0 && g_max_iteration > g_inside)
+	if (g_externs.Inside() > 0 && g_externs.Outside() < 0 && g_max_iteration > g_externs.Inside())
 	{
 		msg = "Warning: inside may not be unique\n";
 	}

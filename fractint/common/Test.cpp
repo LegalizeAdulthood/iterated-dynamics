@@ -52,7 +52,7 @@ int test()
 					put_resume(sizeof(passes), &passes);
 					return -1;
 				}
-				color = test_per_pixel(g_initial_z.x, g_initial_z.y, g_parameter.x, g_parameter.y, g_max_iteration, g_inside);
+				color = test_per_pixel(g_initial_z.x, g_initial_z.y, g_parameter.x, g_parameter.y, g_max_iteration, g_externs.Inside());
 				if (color >= g_colors)  // avoid trouble if color is 0 
 				{
 					color = ((color-1) % g_and_color) + 1; // skip color zero 

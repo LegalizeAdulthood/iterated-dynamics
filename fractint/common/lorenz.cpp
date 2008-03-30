@@ -1455,7 +1455,7 @@ int orbit_2d_fp()
 	case PROJECTION_XY: p0 = &x; p1 = &y; p2 = &z; break;
 	}
 
-	color = (g_inside > 0) ? g_inside : 2;
+	color = (g_externs.Inside() > 0) ? g_externs.Inside() : 2;
 
 	oldcol = -1;
 	oldrow = -1;
@@ -1587,7 +1587,7 @@ int orbit_2d()
 	}
 
 	int color;
-	color = (g_inside > 0) ? g_inside : 2;
+	color = (g_externs.Inside() > 0) ? g_externs.Inside() : 2;
 	if (color >= g_colors)
 	{
 		color = 1;
@@ -1979,7 +1979,7 @@ bool dynamic_2d_setup_fp()
 			s_dt = 0.01;
 		}
 	}
-	if (g_outside == COLORMODE_SUM)
+	if (g_externs.Outside() == COLORMODE_SUM)
 	{
 		g_plot_color = plot_color_histogram;
 	}
@@ -2022,7 +2022,7 @@ int dynamic_2d_fp()
 	p1 = &y;
 
 	count = 0;
-	color = (g_inside > 0) ? g_inside : 1;
+	color = (g_externs.Inside() > 0) ? g_externs.Inside() : 1;
 	if (color >= g_colors)
 	{
 		color = 1;
@@ -2223,7 +2223,7 @@ int plot_orbits_2d_setup()
 
 	s_o_color = 1;
 
-	if (g_outside == COLORMODE_SUM)
+	if (g_externs.Outside() == COLORMODE_SUM)
 	{
 		g_plot_color = plot_color_histogram;
 	}
@@ -2251,9 +2251,9 @@ int plotorbits2dfloat()
 		end_resume();
 	}
 
-	if (g_inside > 0)
+	if (g_externs.Inside() > 0)
 	{
-		s_o_color = g_inside;
+		s_o_color = g_externs.Inside();
 	}
 	else  // inside <= 0 
 	{

@@ -21,7 +21,7 @@ static int inside_color, periodicity_color;
 
 void calculate_mandelbrot_start_fp_asm()
 {
-	inside_color = (g_inside < 0) ? g_max_iteration : g_inside;
+	inside_color = (g_externs.Inside() < 0) ? g_max_iteration : g_externs.Inside();
 	periodicity_color = (g_periodicity_check < 0) ? 7 : inside_color;
 	g_old_color_iter = 0;
 }
@@ -200,7 +200,7 @@ pop_stack:
 	return g_color_iter;
 
 over_bailout_87:
-	if (g_outside <= COLORMODE_REAL)
+	if (g_externs.Outside() <= COLORMODE_REAL)
 	{
 		g_new_z.x = x;
 		g_new_z.y = y;
@@ -220,38 +220,38 @@ over_bailout_87:
 		g_color_iter = 1;
 	}
 	g_input_counter -= g_real_color_iter;
-	if (g_outside == COLORMODE_ITERATION)
+	if (g_externs.Outside() == COLORMODE_ITERATION)
 	{
 	}
-	else if (g_outside > COLORMODE_REAL)
+	else if (g_externs.Outside() > COLORMODE_REAL)
 	{
-		g_color_iter = g_outside;
+		g_color_iter = g_externs.Outside();
 	}
 	else
 	{
 		// special_outside 
-		if (g_outside == COLORMODE_REAL)
+		if (g_externs.Outside() == COLORMODE_REAL)
 		{
 			g_color_iter = OutsideColorModeReal(g_color_iter, g_new_z);
 		}
-		else if (g_outside == COLORMODE_IMAGINARY)
+		else if (g_externs.Outside() == COLORMODE_IMAGINARY)
 		{
 			g_color_iter = OutsideColorModeImaginary(g_color_iter, g_new_z);
 		}
-		else if (g_outside == COLORMODE_MULTIPLY)
+		else if (g_externs.Outside() == COLORMODE_MULTIPLY)
 		{
 			g_color_iter = OutsideColorModeMultiply(g_color_iter, g_new_z);
 		}
-		else if (g_outside == COLORMODE_SUM)
+		else if (g_externs.Outside() == COLORMODE_SUM)
 		{
 			g_color_iter = OutsideColorModeSum(g_color_iter, g_new_z);
 		}
-		else if (g_outside == COLORMODE_INVERSE_TANGENT)
+		else if (g_externs.Outside() == COLORMODE_INVERSE_TANGENT)
 		{
 			g_color_iter = OutsideColorModeInverseTangent(g_new_z);
 		}
 		// check_color 
-		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != COLORMODE_FLOAT_MODULUS)
+		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_externs.Outside() != COLORMODE_FLOAT_MODULUS)
 		{
 			g_color_iter = 1;
 		}

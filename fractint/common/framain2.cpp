@@ -292,7 +292,7 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 		g_true_color = false; // truecolor doesn't play well with the evolver 
 	}
 	if (g_max_iteration > *old_maxit
-		&& g_inside >= 0
+		&& g_externs.Inside() >= 0
 		&& g_externs.CalculationStatus() == CALCSTAT_COMPLETED
 		&& g_current_fractal_specific->calculate_type == standard_fractal
 		&& !g_log_palette_mode
@@ -300,7 +300,7 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 		&& !(g_externs.UserStandardCalculationMode() == CALCMODE_TESSERAL && g_fill_color > -1) // tesseral with fill doesn't work 
 		&& !(g_externs.UserStandardCalculationMode() == CALCMODE_ORBITS)
 		&& i == COMMANDRESULT_FRACTAL_PARAMETER // nothing else changed 
-		&& g_outside != COLORMODE_INVERSE_TANGENT)
+		&& g_externs.Outside() != COLORMODE_INVERSE_TANGENT)
 	{
 		g_quick_calculate = true;
 		g_standard_calculation_mode_old = g_externs.UserStandardCalculationMode();

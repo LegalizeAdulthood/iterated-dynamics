@@ -89,8 +89,8 @@ public:
 	virtual void SetRow(int value)				{ g_row = value; }
 	virtual int Column() const					{ return g_col; }
 	virtual void SetColumn(int value)			{ g_col = value; }
-	virtual int Inside() const					{ return g_inside; }
-	virtual int Outside() const					{ return g_outside; }
+	virtual int Inside() const					{ return g_externs.Inside(); }
+	virtual int Outside() const					{ return g_externs.Outside(); }
 	virtual int IXStart() const					{ return g_ix_start; }
 	virtual int IYStart() const					{ return g_iy_start; }
 	virtual int XStop() const					{ return g_x_stop; }

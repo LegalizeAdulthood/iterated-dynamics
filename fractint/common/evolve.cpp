@@ -126,8 +126,8 @@ GENEBASE g_genes[NUM_GENES] =
 	{ &g_parameters[7],		vary_double,		0, "Param 4 imag", 1 },
 	{ &g_parameters[8],		vary_double,		0, "Param 5 real", 1 },
 	{ &g_parameters[9],		vary_double,		0, "Param 5 imag", 1 },
-	{ &g_inside,			vary_inside,		0, "inside color", 2 },
-	{ &g_outside,			vary_outside,		0, "outside color", 3 },
+	{ 0,					vary_inside,		0, "inside color", 2 },
+	{ 0,					vary_outside,		0, "outside color", 3 },
 	{ &g_decomposition[0],	vary_power2,		0, "decomposition", 4 },
 	{ &g_inversion[0],		vary_invert,		0, "invert radius", 7 },
 	{ &g_inversion[1],		vary_invert,		0, "invert center x", 7 },
@@ -144,8 +144,8 @@ void restore_parameter_history()
 	std::copy(&s_old_history.parameters[0],
 		&s_old_history.parameters[MAX_PARAMETERS],
 		&g_parameters[0]);
-	g_inside = s_old_history.inside;
-	g_outside = s_old_history.outside;
+	g_externs.SetInside(s_old_history.inside);
+	g_externs.SetOutside(s_old_history.outside);
 	g_decomposition[0] = s_old_history.decomposition0;
 	std::copy(&s_old_history.inversion[0],
 		&s_old_history.inversion[NUM_INVERSION],
@@ -162,8 +162,8 @@ void save_parameter_history()
 	std::copy(&g_parameters[0],
 		&g_parameters[MAX_PARAMETERS],
 		&s_old_history.parameters[0]);
-	s_old_history.inside = g_inside;
-	s_old_history.outside = g_outside;
+	s_old_history.inside = g_externs.Inside();
+	s_old_history.outside = g_externs.Outside();
 	s_old_history.decomposition0 = g_decomposition[0];
 	std::copy(&g_inversion[0],
 		&g_inversion[NUM_INVERSION],
@@ -267,9 +267,8 @@ static void vary_inside(GENEBASE gene[], int randval, int i)
 	};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 9, gene[i].mutate)];
+		g_externs.SetInside(choices[wrapped_positive_vary_int(randval, 9, gene[i].mutate)]);
 	}
-	return;
 }
 
 static void vary_outside(GENEBASE gene[], int randval, int i)
@@ -287,7 +286,7 @@ static void vary_outside(GENEBASE gene[], int randval, int i)
 	};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 8, gene[i].mutate)];
+		g_externs.SetOutside(choices[wrapped_positive_vary_int(randval, 8, gene[i].mutate)]);
 	}
 	return;
 }

@@ -403,10 +403,10 @@ int bifurcation()
 	s_mono = false;
 	if (s_mono)
 	{
-		if (g_inside)
+		if (g_externs.Inside())
 		{
 			s_outside_x = 0;
-			g_inside = 1;
+			g_externs.SetInside(1);
 		}
 		else
 		{
@@ -456,7 +456,7 @@ int bifurcation()
 			int color = s_verhulst_array[row];
 			if (s_mono)
 			{
-				color = color ? g_inside : s_outside_x;
+				color = color ? g_externs.Inside() : s_outside_x;
 			}
 			else if (color >= g_colors)
 			{
