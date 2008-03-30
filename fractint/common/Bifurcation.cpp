@@ -116,7 +116,7 @@ static void verhulst()          // P. F. Verhulst (1845)
 
 		// assign population value to Y coordinate in pixels
 		int pixel_row = g_integer_fractal
-			? (g_y_stop - int((s_population_l - g_initial_z_l.y)/g_escape_time_state.m_grid_l.delta_y()))
+			? (g_y_stop - int((s_population_l - g_initial_z_l.imag())/g_escape_time_state.m_grid_l.delta_y()))
 			: (g_y_stop - int((s_population - g_initial_z.imag())/g_escape_time_state.m_grid_fp.delta_y()));
 
 		// if it's visible on the screen, save it in the column array
@@ -422,13 +422,14 @@ int bifurcation()
 		s_half_time_check = true;
 	}
 
+	// Y-value of bottom pixels
 	if (g_integer_fractal)
 	{
-		g_initial_z_l.y = g_escape_time_state.m_grid_l.y_max() - g_y_stop*g_escape_time_state.m_grid_l.delta_y();            // Y-value of
+		g_initial_z_l.imag(g_escape_time_state.m_grid_l.y_max() - g_y_stop*g_escape_time_state.m_grid_l.delta_y());
 	}
 	else
 	{
-		g_initial_z.imag(double(g_escape_time_state.m_grid_fp.y_max() - g_y_stop*g_escape_time_state.m_grid_fp.delta_y())); // bottom pixels
+		g_initial_z.imag(g_escape_time_state.m_grid_fp.y_max() - g_y_stop*g_escape_time_state.m_grid_fp.delta_y());
 	}
 
 	while (column <= g_x_stop)

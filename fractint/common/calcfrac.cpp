@@ -1594,7 +1594,7 @@ void StandardFractal::initialize_integer()
 		m_saved_z_l.x = 0;
 		m_saved_z_l.y = 0;
 	}
-	g_initial_z_l.y = g_externs.LyPixel();
+	g_initial_z_l.imag(g_externs.LyPixel());
 }
 void StandardFractal::initialize_periodicity_cycle_check_size()
 {
