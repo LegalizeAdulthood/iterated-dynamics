@@ -124,7 +124,7 @@ int Halley::orbit()
 	relax.y = g_parameters[3];
 	FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
 	g_new_z.real(g_old_z.x - Halnumer2.x);
-	g_new_z.y = g_old_z.y - Halnumer2.y;
+	g_new_z.imag(g_old_z.y - Halnumer2.y);
 	return bail_out();
 }
 

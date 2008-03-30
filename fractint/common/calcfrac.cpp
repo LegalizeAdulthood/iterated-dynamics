@@ -1997,12 +1997,12 @@ void StandardFractal::potential_set_new_z()
 	else if (g_bf_math == BIGNUM)
 	{
 		g_new_z.real(double(bntofloat(g_new_z_bn.x)));
-		g_new_z.y = double(bntofloat(g_new_z_bn.y));
+		g_new_z.imag(double(bntofloat(g_new_z_bn.y)));
 	}
 	else if (g_bf_math == BIGFLT)
 	{
 		g_new_z.real(double(bftofloat(g_new_z_bf.x)));
-		g_new_z.y = double(bftofloat(g_new_z_bf.y));
+		g_new_z.imag(double(bftofloat(g_new_z_bf.y)));
 	}
 }
 void StandardFractal::potential_compute()
@@ -2047,7 +2047,7 @@ void StandardFractal::outside_colormode_set_new_z_final()
 	else if (g_bf_math == BIGNUM)
 	{
 		g_new_z.real(double(bntofloat(g_new_z_bn.x)));
-		g_new_z.y = double(bntofloat(g_new_z_bn.y));
+		g_new_z.imag(double(bntofloat(g_new_z_bn.y)));
 	}
 }
 void StandardFractal::outside_colormode_real_final()
@@ -2604,7 +2604,7 @@ static void decomposition()
 		if (g_new_z.y < 0)
 		{
 			temp = 2;
-			g_new_z.y = -g_new_z.y;
+			g_new_z.imag(-g_new_z.y);
 		}
 		if (g_new_z.x < 0)
 		{
@@ -2631,7 +2631,7 @@ static void decomposition()
 				++temp;
 				alt.x = g_new_z.x; // just 
 				g_new_z.real(g_new_z.y); // swap 
-				g_new_z.y = alt.x; // them 
+				g_new_z.imag(alt.x); // them 
 			}
 			if (g_decomposition[0] >= 16)
 			{
@@ -2641,7 +2641,7 @@ static void decomposition()
 					++temp;
 					alt = g_new_z;
 					g_new_z.real(alt.x*cos45 + alt.y*sin45);
-					g_new_z.y = alt.x*sin45 - alt.y*cos45;
+					g_new_z.imag(alt.x*sin45 - alt.y*cos45);
 				}
 
 				if (g_decomposition[0] >= 32)
@@ -2652,7 +2652,7 @@ static void decomposition()
 						++temp;
 						alt = g_new_z;
 						g_new_z.real(alt.x*cos22_5 + alt.y*sin22_5);
-						g_new_z.y = alt.x*sin22_5 - alt.y*cos22_5;
+						g_new_z.imag(alt.x*sin22_5 - alt.y*cos22_5);
 					}
 
 					if (g_decomposition[0] >= 64)
@@ -2663,7 +2663,7 @@ static void decomposition()
 							++temp;
 							alt = g_new_z;
 							g_new_z.real(alt.x*cos11_25 + alt.y*sin11_25);
-							g_new_z.y = alt.x*sin11_25 - alt.y*cos11_25;
+							g_new_z.imag(alt.x*sin11_25 - alt.y*cos11_25);
 						}
 
 						if (g_decomposition[0] >= 128)
@@ -2674,7 +2674,7 @@ static void decomposition()
 								++temp;
 								alt = g_new_z;
 								g_new_z.real(alt.x*cos5_625 + alt.y*sin5_625);
-								g_new_z.y = alt.x*sin5_625 - alt.y*cos5_625;
+								g_new_z.imag(alt.x*sin5_625 - alt.y*cos5_625);
 							}
 
 							if (g_decomposition[0] == 256)

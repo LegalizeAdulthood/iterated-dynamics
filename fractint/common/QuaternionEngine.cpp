@@ -53,7 +53,7 @@ int quaternion_orbit_fp()
 	g_old_z.x = n0;
 	g_new_z.real(n0);
 	g_old_z.y = n1;
-	g_new_z.y = n1;
+	g_new_z.imag(n1);
 	g_float_parameter->x = n2;
 	g_float_parameter->y = n3;
 	return 0;

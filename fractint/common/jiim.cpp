@@ -843,7 +843,7 @@ void JIIM::Execute()
 						g_old_z.x = s_lucky_x;
 						g_old_z.y = s_lucky_y;
 						g_new_z.real(s_lucky_x);
-						g_new_z.y = s_lucky_y;
+						g_new_z.imag(s_lucky_y);
 						s_lucky_x = 0.0f;
 						s_lucky_y = 0.0f;
 						for (int i = 0; i < 199; i++)
@@ -901,7 +901,7 @@ void JIIM::Execute()
 					g_new_z.real(-g_new_z.x);
 				}
 
-				g_new_z.y = sqrt(fabs((r - g_old_z.x)/2));
+				g_new_z.imag(sqrt(fabs((r - g_old_z.x)/2)));
 
 				switch (s_secret_experimental_mode)
 				{
@@ -910,7 +910,7 @@ void JIIM::Execute()
 					if (rand() % 2)
 					{
 						g_new_z.real(-g_new_z.x);
-						g_new_z.y = -g_new_z.y;
+						g_new_z.imag(-g_new_z.y);
 					}
 					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
 					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
@@ -920,7 +920,7 @@ void JIIM::Execute()
 					if (g_save_c.y < 0)
 					{
 						g_new_z.real(-g_new_z.x);
-						g_new_z.y = -g_new_z.y;
+						g_new_z.imag(-g_new_z.y);
 					}
 					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
 					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
@@ -929,7 +929,7 @@ void JIIM::Execute()
 					if (g_save_c.y < 0)
 					{
 						g_new_z.real(-g_new_z.x);
-						g_new_z.y = -g_new_z.y;
+						g_new_z.imag(-g_new_z.y);
 					}
 					x = int(-g_new_z.x*x_factor*_zoom + _xCenter);
 					y = int(-g_new_z.y*y_factor*_zoom + _yCenter);
@@ -940,14 +940,14 @@ void JIIM::Execute()
 					if (c_getcolor(x, y) == g_colors - 1)
 					{
 						g_new_z.real(-g_new_z.x);
-						g_new_z.y = -g_new_z.y;
+						g_new_z.imag(-g_new_z.y);
 						x = int(g_new_z.x*x_factor*_zoom + _xCenter);
 						y = int(g_new_z.y*y_factor*_zoom + _yCenter);
 					}
 					break;
 				case SECRETMODE_POSITIVE_MAX_COLOR:                     // go positive if max color 
 					g_new_z.real(-g_new_z.x);
-					g_new_z.y = -g_new_z.y;
+					g_new_z.imag(-g_new_z.y);
 					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
 					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
 					if (c_getcolor(x, y) == g_colors - 1)
@@ -960,7 +960,7 @@ void JIIM::Execute()
 					if (g_save_c.y < 0)
 					{
 						g_new_z.real(-g_new_z.x);
-						g_new_z.y = -g_new_z.y;
+						g_new_z.imag(-g_new_z.y);
 					}
 					x = int(-g_new_z.x*x_factor*_zoom + _xCenter);
 					y = int(-g_new_z.y*y_factor*_zoom + _yCenter);
@@ -994,7 +994,7 @@ void JIIM::Execute()
 					if (random_count < 0)
 					{
 						g_new_z.real(-g_new_z.x);
-						g_new_z.y = -g_new_z.y;
+						g_new_z.imag(-g_new_z.y);
 					}
 					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
 					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
@@ -1006,7 +1006,7 @@ void JIIM::Execute()
 						if (rand() % 2)
 						{
 							g_new_z.real(-g_new_z.x);
-							g_new_z.y = -g_new_z.y;
+							g_new_z.imag(-g_new_z.y);
 						}
 						if (++random_count > 1024)
 						{
@@ -1016,7 +1016,7 @@ void JIIM::Execute()
 						break;
 					case 1:             // now go negative dir for a while 
 						g_new_z.real(-g_new_z.x);
-						g_new_z.y = -g_new_z.y;
+						g_new_z.imag(-g_new_z.y);
 						// fall through 
 					case -1:            // now go positive dir for a while 
 						if (++random_count > 512)
