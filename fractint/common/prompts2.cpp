@@ -71,12 +71,12 @@ static int calculation_mode()
 
 static int inside_mode()
 {
-	if (g_inside >= 0)  // numb 
+	if (g_externs.Inside() >= 0)  // numb 
 	{
 		return 0;
 	}
 	
-	switch (g_inside)
+	switch (g_externs.Inside())
 	{
 	case COLORMODE_ITERATION:					return 1;
 	case COLORMODE_Z_MAGNITUDE:					return 2;
@@ -88,7 +88,7 @@ static int inside_mode()
 	case COLORMODE_INVERSE_TANGENT_INTEGER:		return 8;
 	case COLORMODE_FLOAT_MODULUS_INTEGER:		return 9;
 	default:
-		assert(!"Bad g_inside");
+		assert(!"Bad inside value");
 	}
 	return -1;
 }
@@ -121,8 +121,8 @@ int get_toggles()
 	CalculationMode old_user_standard_calculation_mode = g_externs.UserStandardCalculationMode();
 	int old_stop_pass = g_externs.StopPass();
 	long old_max_iteration = g_max_iteration;
-	int old_inside = g_inside;
-	int old_outside = g_outside;
+	int old_inside = g_externs.Inside();
+	int old_outside = g_externs.Outside();
 	std::string previous_save_name = g_save_name;
 	int old_sound_flags = g_sound_state.flags();
 	long old_log_palette_flag = g_log_palette_mode;
@@ -142,7 +142,7 @@ int get_toggles()
 		calculation_modes, NUM_OF(calculation_modes), calculation_mode());
 	dialog.push("Floating Point Algorithm", g_user_float_flag);
 	dialog.push("Maximum Iterations (2 to 2,147,483,647)", g_max_iteration);
-	dialog.push("Inside Color (0-# of colors, if Inside=numb)", (g_inside >= 0) ? g_inside : 0);
+	dialog.push("Inside Color (0-# of colors, if Inside=numb)", (g_externs.Inside() >= 0) ? g_externs.Inside() : 0);
 	const char *insidemodes[] =
 	{
 		"numb", "maxiter", "zmag", "bof60", "bof61",
@@ -150,14 +150,14 @@ int get_toggles()
 	};
 	dialog.push("Inside (numb,maxit,zmag,bof60,bof61,epscr,star,per,atan,fmod)",
 		insidemodes, NUM_OF(insidemodes), inside_mode());
-	dialog.push("Outside Color (0-# of colors, if Outside=numb)", g_outside >= 0 ? g_outside : 0);
+	dialog.push("Outside Color (0-# of colors, if Outside=numb)", g_externs.Outside() >= 0 ? g_externs.Outside() : 0);
 	const char *outsidemodes[] =
 	{
 		"numb", "iter", "real", "imag", "mult",
 		"summ", "atan", "fmod", "tdis"
 	};
 	dialog.push("Outside (numb,iter,real,imag,mult,summ,atan,fmod,tdis)",
-		outsidemodes, NUM_OF(outsidemodes), g_outside >= 0 ? 0 : -g_outside);
+		outsidemodes, NUM_OF(outsidemodes), g_externs.Outside() >= 0 ? 0 : -g_externs.Outside());
 	dialog.push("Savename (.GIF implied)", save_name().c_str());
 	dialog.push("File Overwrite ('overwrite=')", g_fractal_overwrite);
 	const char *soundmodes[5] =
@@ -232,14 +232,17 @@ int get_toggles()
 		j++;
 	}
 
-	g_inside = dialog.values(++k).uval.ival;
-	if (g_inside < 0)
 	{
-		g_inside = -g_inside;
-	}
-	if (g_inside >= g_colors)
-	{
-		g_inside = (g_inside % g_colors) + (g_inside/g_colors);
+		int value = dialog.values(++k).uval.ival;
+		if (value < 0)
+		{
+			value = -value;
+		}
+		if (value >= g_colors)
+		{
+			value = (value % g_colors) + (value/g_colors);
+		}
+		g_externs.SetInside(value);
 	}
 
 	{
@@ -259,35 +262,37 @@ int get_toggles()
 		};
 		if (tmp > 0 && tmp < NUM_OF(insides))
 		{
-			g_inside = insides[tmp];
+			g_externs.SetInside(insides[tmp]);
 		}
 	}
-	if (g_inside != old_inside)
+	if (g_externs.Inside() != old_inside)
 	{
 		j++;
 	}
 
-	g_outside = dialog.values(++k).uval.ival;
-	if (g_outside < 0)
 	{
-		g_outside = -g_outside;
-	}
-	if (g_outside >= g_colors)
-	{
-		g_outside = (g_outside % g_colors) + (g_outside/g_colors);
-	}
-	{
-		int tmp = dialog.values(++k).uval.ch.val;
-		if (tmp > 0)
+		int value = dialog.values(++k).uval.ival;
+		if (value < 0)
 		{
-			g_outside = -tmp;
+			value = -value;
+		}
+		if (value >= g_colors)
+		{
+			value = (value % g_colors) + (value/g_colors);
+		}
+		{
+			int tmp = dialog.values(++k).uval.ch.val;
+			if (tmp > 0)
+			{
+				value = -tmp;
+			}
+		}
+		if (value != old_outside)
+		{
+			g_externs.SetOutside(value);
+			j++;
 		}
 	}
-	if (g_outside != old_outside)
-	{
-		j++;
-	}
-
 	{
 		std::string::size_type pos = g_save_name.find_last_of(SLASHC);
 		if (pos != std::string::npos)
@@ -776,7 +781,7 @@ int starfield()
 				return 1;
 			}
 			c = get_color(g_col, g_row);
-			if (c == g_inside)
+			if (c == g_externs.Inside())
 			{
 				c = g_colors-1;
 			}

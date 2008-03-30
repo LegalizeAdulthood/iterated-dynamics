@@ -297,7 +297,7 @@ void history_save_info()
 	current.potential[2] = g_potential_parameter[2];
 	current.use_fixed_random_seed = g_use_fixed_random_seed;
 	current.random_seed = g_random_seed;
-	current.inside = g_inside;
+	current.inside = g_externs.Inside();
 	current.logmap = g_log_palette_mode;
 	current.invert[0] = g_inversion[0];
 	current.invert[1] = g_inversion[1];
@@ -319,7 +319,7 @@ void history_save_info()
 	current.yadjust = g_3d_state.y_adjust();
 	current.eye_separation = g_3d_state.eye_separation();
 	current.glasses_type = g_3d_state.glasses_type();
-	current.outside = g_outside;
+	current.outside = g_externs.Outside();
 	current.x_3rd = g_escape_time_state.m_grid_fp.x_3rd();
 	current.y_3rd = g_escape_time_state.m_grid_fp.y_3rd();
 	current.standard_calculation_mode = g_externs.UserStandardCalculationMode();
@@ -470,7 +470,7 @@ void history_restore_info()
 	g_potential_parameter[2] = last.potential[2];
 	g_use_fixed_random_seed = last.use_fixed_random_seed;
 	g_random_seed = last.random_seed;
-	g_inside = last.inside;
+	g_externs.SetInside(last.inside);
 	g_log_palette_mode = last.logmap;
 	g_inversion[0] = last.invert[0];
 	g_inversion[1] = last.invert[1];
@@ -493,7 +493,7 @@ void history_restore_info()
 	g_3d_state.set_y_adjust(last.yadjust);
 	g_3d_state.set_eye_separation(last.eye_separation);
 	g_3d_state.set_glasses_type(GlassesType(last.glasses_type));
-	g_outside = last.outside;
+	g_externs.SetOutside(last.outside);
 	g_escape_time_state.m_grid_fp.x_3rd() = last.x_3rd;
 	g_escape_time_state.m_grid_fp.y_3rd() = last.y_3rd;
 	g_externs.SetUserStandardCalculationMode(CalculationMode(last.standard_calculation_mode));

@@ -81,9 +81,7 @@ bool g_fractal_overwrite = false;				// 0 if file overwrite not allowed
 int     g_debug_mode;							// internal use only - you didn't see this 
 bool g_timer_flag;								// you didn't see this, either 
 int     g_cycle_limit;							// color-rotator upper limit 
-int     g_inside;								// inside color: 1=blue     
 int     g_fill_color;							// fillcolor: -1=normal     
-int     g_outside;								// outside color    
 int     g_finite_attractor;						// finite attractor logic 
 Display3DType g_display_3d;						// 3D display flag: 0 = OFF 
 bool g_overlay_3d;								// 3D overlay flag: 0 = OFF 
@@ -395,10 +393,10 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	int i;
 	g_escape_exit_flag = false;								// don't disable the "are you sure?" screen 
 	g_user_periodicity_check = 1;							// turn on periodicity    
-	g_inside = 1;											// inside color = blue    
+	g_externs.SetInside(1);											// inside color = blue    
 	g_fill_color = -1;										// no special fill color 
 	g_externs.SetUserBiomorph(-1);									// turn off biomorph flag 
-	g_outside = COLORMODE_ITERATION;						// outside color = -1 (not used) 
+	g_externs.SetOutside(COLORMODE_ITERATION);						// outside color = -1 (not used) 
 	g_max_iteration = 150;									// initial maxiter        
 	g_externs.SetUserStandardCalculationMode(CALCMODE_SOLID_GUESS);
 	g_externs.SetStopPass(0);										// initial guessing stop pass 
@@ -1166,8 +1164,10 @@ static int inside_arg(const cmd_context &context)
 		{ "atan", COLORMODE_INVERSE_TANGENT_INTEGER },
 		{ "maxiter", COLORMODE_ITERATION }
 	};
-	if (named_value(args, NUM_OF(args), context.value, &g_inside))
+	int value = g_externs.Inside();
+	if (named_value(args, NUM_OF(args), context.value, &value))
 	{
+		g_externs.SetInside(value);
 		return COMMANDRESULT_FRACTAL_PARAMETER;
 	}
 	if (context.numval == NON_NUMERIC)
@@ -1176,7 +1176,7 @@ static int inside_arg(const cmd_context &context)
 	}
 	else
 	{
-		g_inside = context.numval;
+		g_externs.SetInside(context.numval);
 	}
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
@@ -1239,15 +1239,17 @@ static int outside_arg(const cmd_context &context)
 		{ "fmod", COLORMODE_FLOAT_MODULUS },
 		{ "tdis", COLORMODE_TOTAL_DISTANCE }
 	};
-	if (named_value(args, NUM_OF(args), context.value, &g_outside))
+	int value = g_externs.Outside();
+	if (named_value(args, NUM_OF(args), context.value, &value))
 	{
+		g_externs.SetOutside(value);
 		return COMMANDRESULT_FRACTAL_PARAMETER;
 	}
 	if ((context.numval == NON_NUMERIC) || (context.numval < COLORMODE_TOTAL_DISTANCE || context.numval > 255))
 	{
 		return bad_arg(context.curarg);
 	}
-	g_outside = context.numval;
+	g_externs.SetOutside(context.numval);
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
 

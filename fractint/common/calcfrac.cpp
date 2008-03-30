@@ -1144,7 +1144,7 @@ static int standard_calculate(int passnum)
 			if (g_quick_calculate && !g_resuming)
 			{
 				g_color = get_color(g_col, g_row);
-				if (g_color != g_inside)
+				if (g_color != g_externs.Inside())
 				{
 					++g_col;
 					continue;
@@ -1206,7 +1206,7 @@ int calculate_mandelbrot_l()              // fast per pixel 1/2/b/g, called with
 	{
 		if ((g_log_table || g_log_calculation) // map color, but not if maxit & adjusted for inside, etc 
 			&& (g_real_color_iter < g_max_iteration
-				|| (g_inside < 0 && g_color_iter == g_max_iteration)))
+				|| (g_externs.Inside() < 0 && g_color_iter == g_max_iteration)))
 		{
 			g_color_iter = logtablecalc(g_color_iter);
 		}
@@ -1318,7 +1318,7 @@ int calculate_mandelbrot_fp()
 			g_color_iter = potential(g_magnitude, g_real_color_iter);
 		}
 		if ((g_log_table || g_log_calculation) // map color, but not if maxit & adjusted for inside, etc 
-				&& (g_real_color_iter < g_max_iteration || (g_inside < 0 && g_color_iter == g_max_iteration)))
+				&& (g_real_color_iter < g_max_iteration || (g_externs.Inside() < 0 && g_color_iter == g_max_iteration)))
 		{
 			g_color_iter = logtablecalc(g_color_iter);
 		}
@@ -1524,7 +1524,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
 void StandardFractal::inside_colormode_star_trail_initialize()
 {
-	if (g_inside == COLORMODE_STAR_TRAIL)
+	if (g_externs.Inside() == COLORMODE_STAR_TRAIL)
 	{
 		for (int i = 0; i < 16; i++)
 		{
@@ -1535,11 +1535,11 @@ void StandardFractal::inside_colormode_star_trail_initialize()
 }
 void StandardFractal::initialize_periodicity()
 {
-	if (g_periodicity_check == 0 || g_inside == COLORMODE_Z_MAGNITUDE || g_inside == COLORMODE_STAR_TRAIL)
+	if (g_periodicity_check == 0 || g_externs.Inside() == COLORMODE_Z_MAGNITUDE || g_externs.Inside() == COLORMODE_STAR_TRAIL)
 	{
 		g_old_color_iter = 2147483647L;       // don't check periodicity at all 
 	}
-	else if (g_inside == COLORMODE_PERIOD)   // for display-periodicity 
+	else if (g_externs.Inside() == COLORMODE_PERIOD)   // for display-periodicity 
 	{
 		g_old_color_iter = (g_max_iteration/5)*4;       // don't check until nearly done 
 	}
@@ -1599,7 +1599,7 @@ void StandardFractal::initialize_integer()
 }
 void StandardFractal::initialize_periodicity_cycle_check_size()
 {
-	if (g_inside == COLORMODE_PERIOD)
+	if (g_externs.Inside() == COLORMODE_PERIOD)
 	{
 		m_periodicity_cycle_check_size = 16;           // begin checking every 16th cycle 
 	}
@@ -1624,7 +1624,7 @@ void StandardFractal::inside_colormode_beauty_of_fractals_initialize()
 }
 void StandardFractal::outside_colormode_total_distance_initialize()
 {
-	if (g_outside == COLORMODE_TOTAL_DISTANCE)
+	if (g_externs.Outside() == COLORMODE_TOTAL_DISTANCE)
 	{
 		if (g_integer_fractal)
 		{
@@ -1923,18 +1923,18 @@ void StandardFractal::colormode_beauty_of_fractals_update()
 bool StandardFractal::inside_colormode_update()
 {
 	bool go_plot_inside = false;
-	if (g_inside < COLORMODE_ITERATION)
+	if (g_externs.Inside() < COLORMODE_ITERATION)
 	{
 		set_new_z_if_bigmath();
-		if (g_inside == COLORMODE_STAR_TRAIL)
+		if (g_externs.Inside() == COLORMODE_STAR_TRAIL)
 		{
 			colormode_star_trail_update();
 		}
-		else if (g_inside == COLORMODE_EPSILON_CROSS)
+		else if (g_externs.Inside() == COLORMODE_EPSILON_CROSS)
 		{
 			go_plot_inside = colormode_epsilon_cross_update();
 		}
-		else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER)
+		else if (g_externs.Inside() == COLORMODE_FLOAT_MODULUS_INTEGER)
 		{
 			colormode_float_modulus_integer_update();
 		}
@@ -1976,14 +1976,14 @@ void StandardFractal::outside_colormode_float_modulus_update()
 }
 void StandardFractal::outside_colormode_update()
 {
-	if (g_outside == COLORMODE_TOTAL_DISTANCE || g_outside == COLORMODE_FLOAT_MODULUS)
+	if (g_externs.Outside() == COLORMODE_TOTAL_DISTANCE || g_externs.Outside() == COLORMODE_FLOAT_MODULUS)
 	{
 		outside_colormode_set_new_z_update();
-		if (g_outside == COLORMODE_TOTAL_DISTANCE)
+		if (g_externs.Outside() == COLORMODE_TOTAL_DISTANCE)
 		{
 			outside_colormode_total_distance_update();
 		}
-		else if (g_outside == COLORMODE_FLOAT_MODULUS)
+		else if (g_externs.Outside() == COLORMODE_FLOAT_MODULUS)
 		{
 			outside_colormode_float_modulus_update();
 		}
@@ -2084,7 +2084,7 @@ void StandardFractal::outside_colormode_total_distance_final()
 void StandardFractal::eliminate_negative_colors_and_wrap_arounds()
 {
 	// eliminate negative colors & wrap arounds 
-	if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != COLORMODE_FLOAT_MODULUS)
+	if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_externs.Outside() != COLORMODE_FLOAT_MODULUS)
 	{
 		g_color_iter = 1;
 	}
@@ -2092,31 +2092,31 @@ void StandardFractal::eliminate_negative_colors_and_wrap_arounds()
 void StandardFractal::outside_colormode_final()
 {
 	outside_colormode_set_new_z_final();
-	if (g_outside == COLORMODE_REAL)
+	if (g_externs.Outside() == COLORMODE_REAL)
 	{
 		outside_colormode_real_final();
 	}
-	else if (g_outside == COLORMODE_IMAGINARY)
+	else if (g_externs.Outside() == COLORMODE_IMAGINARY)
 	{
 		outside_colormode_imaginary_final();
 	}
-	else if (g_outside == COLORMODE_MULTIPLY && g_new_z.y)
+	else if (g_externs.Outside() == COLORMODE_MULTIPLY && g_new_z.y)
 	{
 		outside_colormode_multiply_final();
 	}
-	else if (g_outside == COLORMODE_SUM)
+	else if (g_externs.Outside() == COLORMODE_SUM)
 	{
 		outside_colormode_sum_final();
 	}
-	else if (g_outside == COLORMODE_INVERSE_TANGENT)
+	else if (g_externs.Outside() == COLORMODE_INVERSE_TANGENT)
 	{
 		outside_colormode_inverse_tangent_final();
 	}
-	else if (g_outside == COLORMODE_FLOAT_MODULUS)
+	else if (g_externs.Outside() == COLORMODE_FLOAT_MODULUS)
 	{
 		outside_colormode_float_modulus_final();
 	}
-	else if (g_outside == COLORMODE_TOTAL_DISTANCE)
+	else if (g_externs.Outside() == COLORMODE_TOTAL_DISTANCE)
 	{
 		outside_colormode_total_distance_final();
 	}
@@ -2182,9 +2182,9 @@ void StandardFractal::compute_decomposition_and_biomorph()
 }
 void StandardFractal::merge_escape_time_stripes()
 {
-	if (g_outside >= 0 && !m_attracted) // merge escape-time stripes 
+	if (g_externs.Outside() >= 0 && !m_attracted) // merge escape-time stripes 
 	{
-		g_color_iter = g_outside;
+		g_color_iter = g_externs.Outside();
 	}
 	else if (g_log_table || g_log_calculation)
 	{
@@ -2265,45 +2265,45 @@ void StandardFractal::inside_colormode_final()
 	{
 		g_color_iter = 7;           // show periodicity 
 	}
-	else if (g_inside >= 0)
+	else if (g_externs.Inside() >= 0)
 	{
-		g_color_iter = g_inside;              // set to specified color, ignore logpal 
+		g_color_iter = g_externs.Inside();              // set to specified color, ignore logpal 
 	}
 	else
 	{
-		if (g_inside == COLORMODE_STAR_TRAIL)
+		if (g_externs.Inside() == COLORMODE_STAR_TRAIL)
 		{
 			inside_colormode_star_trail_final();
 		}
-		else if (g_inside == COLORMODE_PERIOD)
+		else if (g_externs.Inside() == COLORMODE_PERIOD)
 		{
 			inside_colormode_period_final();
 		}
-		else if (g_inside == COLORMODE_EPSILON_CROSS)
+		else if (g_externs.Inside() == COLORMODE_EPSILON_CROSS)
 		{
 			inside_colormode_epsilon_cross_final();
 		}
-		else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER)
+		else if (g_externs.Inside() == COLORMODE_FLOAT_MODULUS_INTEGER)
 		{
 			inside_colormode_float_modulus_final();
 		}
-		else if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER)
+		else if (g_externs.Inside() == COLORMODE_INVERSE_TANGENT_INTEGER)
 		{
 			inside_colormode_inverse_tangent_final();
 		}
-		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60)
+		else if (g_externs.Inside() == COLORMODE_BEAUTY_OF_FRACTALS_60)
 		{
 			inside_colormode_beauty_of_fractals_60_final();
 		}
-		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_61)
+		else if (g_externs.Inside() == COLORMODE_BEAUTY_OF_FRACTALS_61)
 		{
 			inside_colormode_beauty_of_fractals_61_final();
 		}
-		else if (g_inside == COLORMODE_Z_MAGNITUDE)
+		else if (g_externs.Inside() == COLORMODE_Z_MAGNITUDE)
 		{
 			inside_colormode_z_magnitude_final();
 		}
-		else // inside == -1 
+		else if (g_externs.Inside() == COLORMODE_ITERATION)
 		{
 			g_color_iter = g_max_iteration;
 		}
@@ -2354,7 +2354,7 @@ int StandardFractal::Execute()
 			break;
 		}
 		// the usual case 
-		else if ((g_current_fractal_specific->orbitcalc() && g_inside != COLORMODE_STAR_TRAIL)
+		else if ((g_current_fractal_specific->orbitcalc() && g_externs.Inside() != COLORMODE_STAR_TRAIL)
 				|| g_overflow)
 		{
 			break;
@@ -2408,7 +2408,7 @@ int StandardFractal::Execute()
 		goto plot_inside;         // distest, decomp, biomorph don't apply 
 	}
 
-	if (g_outside < COLORMODE_ITERATION)
+	if (g_externs.Outside() < COLORMODE_ITERATION)
 	{
 		outside_colormode_final();
 	}
@@ -2787,9 +2787,9 @@ static int potential(double mag, long iterations)
 			pot = 1.0f; // avoid color 0 
 		}
 	}
-	else if (g_inside >= 0)
+	else if (g_externs.Inside() >= 0)
 	{
-		pot = float(g_inside);
+		pot = float(g_externs.Inside());
 	}
 	else // inside < 0 implies inside = maxit, so use 1st pot param instead 
 	{
@@ -2981,14 +2981,14 @@ static void set_symmetry(int symmetry, bool use_list) // set up proper symmetric
 	{
 		g_force_symmetry = symmetry;  // for backwards compatibility 
 	}
-	else if (g_outside == COLORMODE_REAL
-			|| g_outside == COLORMODE_IMAGINARY
-			|| g_outside == COLORMODE_MULTIPLY
-			|| g_outside == COLORMODE_SUM
-			|| g_outside == COLORMODE_INVERSE_TANGENT
-			|| g_outside == COLORMODE_FLOAT_MODULUS
-			|| g_outside == COLORMODE_TOTAL_DISTANCE
-			|| g_inside == COLORMODE_FLOAT_MODULUS_INTEGER
+	else if (g_externs.Outside() == COLORMODE_REAL
+			|| g_externs.Outside() == COLORMODE_IMAGINARY
+			|| g_externs.Outside() == COLORMODE_MULTIPLY
+			|| g_externs.Outside() == COLORMODE_SUM
+			|| g_externs.Outside() == COLORMODE_INVERSE_TANGENT
+			|| g_externs.Outside() == COLORMODE_FLOAT_MODULUS
+			|| g_externs.Outside() == COLORMODE_TOTAL_DISTANCE
+			|| g_externs.Inside() == COLORMODE_FLOAT_MODULUS_INTEGER
 			|| g_externs.BailOutTest() == BAILOUT_MANHATTAN_R)
 	{
 		return;

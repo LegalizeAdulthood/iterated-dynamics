@@ -33,7 +33,9 @@ public:
 		_biomorph(BIOMORPH_NONE),
 		_userBiomorph(BIOMORPH_NONE),
 		_calculationStatus(CALCSTAT_NO_FRACTAL),
-		_checkCurrentDirectory(false)
+		_checkCurrentDirectory(false),
+		_inside(0),
+		_outside(0)
 	{ }
 	virtual ~ExternalsImpl() { }
 
@@ -260,8 +262,6 @@ public:
 
 	virtual int SaveTime() const								{ return g_save_time; }
 	virtual void SetSaveTime(int value)							{ g_save_time = value; }
-	virtual int Inside() const									{ return g_inside; }
-	virtual void SetInside(int value)							{ g_inside = value; }
 	virtual int IntegerFractal() const							{ return g_integer_fractal; }
 	virtual void SetIntegerFractal(int value)					{ g_integer_fractal = value; }
 	virtual double const *Inversion() const						{ return g_inversion; }
@@ -461,8 +461,6 @@ public:
 	virtual float OriginFp() const								{ return g_origin_fp; }
 	virtual void SetOriginFp(float value)						{ g_origin_fp = value; }
 
-	virtual int Outside() const									{ return g_outside; }
-	virtual void SetOutside(int value)							{ g_outside = value; }
 	virtual bool Overflow() const								{ return g_overflow; }
 	virtual void SetOverflow(bool value)						{ g_overflow = value; }
 	virtual bool Overlay3D() const								{ return g_overlay_3d; }
@@ -808,6 +806,11 @@ public:
 	virtual PlotColorStandardFunction *PlotColorStandard() const { return g_plot_color_standard; }
 	virtual void SetPlotColorStandard(PlotColorStandardFunction *value) { g_plot_color_standard = value; }
 
+	virtual int Inside() const									{ return _inside; }
+	virtual void SetInside(int value)							{ _inside = value; }
+	virtual int Outside() const									{ return _outside; }
+	virtual void SetOutside(int value)							{ _outside = value; }
+
 private:
 	int _currentPass;
 	int _totalPasses;
@@ -829,6 +832,8 @@ private:
 	int _userBiomorph;
 	CalculationStatusType _calculationStatus;
 	bool _checkCurrentDirectory;						// flag to check current dir for files 
+	int _inside;
+	int _outside;
 };
 
 static ExternalsImpl s_externs;

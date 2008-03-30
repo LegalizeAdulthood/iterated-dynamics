@@ -838,7 +838,7 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->potential[2] = float(g_potential_parameter[2]);
 	save_info->random_flag = short(g_use_fixed_random_seed) ? 1 : 0;
 	save_info->random_seed = short(g_random_seed);
-	save_info->inside = short(g_inside);
+	save_info->inside = short(g_externs.Inside());
 	save_info->logmapold = (g_log_palette_mode <= SHRT_MAX) ? short(g_log_palette_mode) : short(SHRT_MAX);
 	save_info->invert[0] = float(g_inversion[0]);
 	save_info->invert[1] = float(g_inversion[1]);
@@ -860,7 +860,7 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->yadjust = short(g_3d_state.y_adjust());
 	save_info->eyeseparation = short(g_3d_state.eye_separation());
 	save_info->glassestype = short(g_3d_state.glasses_type());
-	save_info->outside = short(g_outside);
+	save_info->outside = short(g_externs.Outside());
 	save_info->x_3rd = g_escape_time_state.m_grid_fp.x_3rd();
 	save_info->y_3rd = g_escape_time_state.m_grid_fp.y_3rd();
 	save_info->calculation_status = short(g_externs.CalculationStatus());

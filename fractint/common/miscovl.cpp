@@ -186,13 +186,13 @@ void MakeBatchFile::set_max_color()
 	--m_max_color;
 	// if (g_max_iteration < maxcolor)  remove 2 lines 
 	// maxcolor = g_max_iteration;   so that whole palette is always saved 
-	if (g_inside > 0 && g_inside > m_max_color)
+	if (g_externs.Inside() > 0 && g_externs.Inside() > m_max_color)
 	{
-		m_max_color = g_inside;
+		m_max_color = g_externs.Inside();
 	}
-	if (g_outside > 0 && g_outside > m_max_color)
+	if (g_externs.Outside() > 0 && g_externs.Outside() > m_max_color)
 	{
-		m_max_color = g_outside;
+		m_max_color = g_externs.Outside();
 	}
 	if (g_distance_test < 0 && -g_distance_test > m_max_color)
 	{
@@ -1132,48 +1132,48 @@ static void write_batch_parms_fill_color()
 
 static void write_batch_parms_inside()
 {
-	if (g_inside != 1)
+	if (g_externs.Inside() != 1)
 	{
 		put_parm(" inside=");
-		if (g_inside == COLORMODE_ITERATION)
+		if (g_externs.Inside() == COLORMODE_ITERATION)
 		{
 			put_parm("maxiter");
 		}
-		else if (g_inside == COLORMODE_Z_MAGNITUDE)
+		else if (g_externs.Inside() == COLORMODE_Z_MAGNITUDE)
 		{
 			put_parm("zmag");
 		}
-		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60)
+		else if (g_externs.Inside() == COLORMODE_BEAUTY_OF_FRACTALS_60)
 		{
 			put_parm("bof60");
 		}
-		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_61)
+		else if (g_externs.Inside() == COLORMODE_BEAUTY_OF_FRACTALS_61)
 		{
 			put_parm("bof61");
 		}
-		else if (g_inside == COLORMODE_EPSILON_CROSS)
+		else if (g_externs.Inside() == COLORMODE_EPSILON_CROSS)
 		{
 			put_parm("epsiloncross");
 		}
-		else if (g_inside == COLORMODE_STAR_TRAIL)
+		else if (g_externs.Inside() == COLORMODE_STAR_TRAIL)
 		{
 			put_parm("startrail");
 		}
-		else if (g_inside == COLORMODE_PERIOD)
+		else if (g_externs.Inside() == COLORMODE_PERIOD)
 		{
 			put_parm("period");
 		}
-		else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER)
+		else if (g_externs.Inside() == COLORMODE_FLOAT_MODULUS_INTEGER)
 		{
 			put_parm("fmod");
 		}
-		else if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER)
+		else if (g_externs.Inside() == COLORMODE_INVERSE_TANGENT_INTEGER)
 		{
 			put_parm("atan");
 		}
 		else
 		{
-			put_parm(format("%d") % g_inside);
+			put_parm(format("%d") % g_externs.Inside());
 		}
 	}
 }
@@ -1181,9 +1181,9 @@ static void write_batch_parms_inside()
 static void write_batch_parms_proximity()
 {
 	if (g_proximity != 0.01
-		&& (g_inside == COLORMODE_EPSILON_CROSS
-		|| g_inside == COLORMODE_FLOAT_MODULUS_INTEGER
-		|| g_outside == COLORMODE_FLOAT_MODULUS))
+		&& (g_externs.Inside() == COLORMODE_EPSILON_CROSS
+		|| g_externs.Inside() == COLORMODE_FLOAT_MODULUS_INTEGER
+		|| g_externs.Outside() == COLORMODE_FLOAT_MODULUS))
 	{
 		put_parm(format(" proximity=%.15g") % g_proximity);
 	}
@@ -1191,40 +1191,40 @@ static void write_batch_parms_proximity()
 
 static void write_batch_parms_outside()
 {
-	if (g_outside != COLORMODE_ITERATION)
+	if (g_externs.Outside() != COLORMODE_ITERATION)
 	{
 		put_parm(" outside=");
-		if (g_outside == COLORMODE_REAL)
+		if (g_externs.Outside() == COLORMODE_REAL)
 		{
 			put_parm("real");
 		}
-		else if (g_outside == COLORMODE_IMAGINARY)
+		else if (g_externs.Outside() == COLORMODE_IMAGINARY)
 		{
 			put_parm("imag");
 		}
-		else if (g_outside == COLORMODE_MULTIPLY)
+		else if (g_externs.Outside() == COLORMODE_MULTIPLY)
 		{
 			put_parm("mult");
 		}
-		else if (g_outside == COLORMODE_SUM)
+		else if (g_externs.Outside() == COLORMODE_SUM)
 		{
 			put_parm("summ");
 		}
-		else if (g_outside == COLORMODE_INVERSE_TANGENT)
+		else if (g_externs.Outside() == COLORMODE_INVERSE_TANGENT)
 		{
 			put_parm("atan");
 		}
-		else if (g_outside == COLORMODE_FLOAT_MODULUS)
+		else if (g_externs.Outside() == COLORMODE_FLOAT_MODULUS)
 		{
 			put_parm("fmod");
 		}
-		else if (g_outside == COLORMODE_TOTAL_DISTANCE)
+		else if (g_externs.Outside() == COLORMODE_TOTAL_DISTANCE)
 		{
 			put_parm("tdis");
 		}
 		else
 		{
-			put_parm(format("%d") % g_outside);
+			put_parm(format("%d") % g_externs.Outside());
 		}
 	}
 }

@@ -69,9 +69,9 @@ int lyapunov()
 		b = g_dx_pixel();
 	}
 	g_color = lyapunov_cycles(s_filter_cycles, a, b);
-	if (g_inside > 0 && g_color == 0)
+	if (g_externs.Inside() > 0 && g_color == 0)
 	{
-		g_color = g_inside;
+		g_color = g_externs.Inside();
 	}
 	else if (g_color >= g_colors)
 	{
@@ -135,10 +135,10 @@ bool lyapunov_setup()
 		s_lyapunov_r_xy[s_lyapunov_length++] = (i & (1 << t)) != 0;
 	}
 	s_lyapunov_r_xy[s_lyapunov_length++] = 0;
-	if (g_inside < 0)
+	if (g_externs.Inside() < 0)
 	{
 		stop_message(STOPMSG_NORMAL, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
-		g_inside = 1;
+		g_externs.SetInside(1);
 	}
 	if (g_externs.UserStandardCalculationMode() == CALCMODE_ORBITS)  // Oops, lyapunov type 
 	{

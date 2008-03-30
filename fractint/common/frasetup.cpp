@@ -37,8 +37,8 @@ bool mandelbrot_setup()           // Mandelbrot Routine
 		&& g_bit_shift == 29
 		&& !g_potential_flag
 		&& g_externs.Biomorph() == BIOMORPH_NONE
-		&& g_inside > COLORMODE_Z_MAGNITUDE
-		&& g_outside >= COLORMODE_ITERATION
+		&& g_externs.Inside() > COLORMODE_Z_MAGNITUDE
+		&& g_externs.Outside() >= COLORMODE_ITERATION
 		&& g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT
 		&& !g_using_jiim
 		&& g_externs.BailOutTest() == BAILOUT_MODULUS
@@ -64,8 +64,8 @@ bool julia_setup()            // Julia Routine
 		&& g_bit_shift == 29
 		&& !g_potential_flag
 		&& g_externs.Biomorph() == BIOMORPH_NONE
-		&& g_inside > COLORMODE_Z_MAGNITUDE
-		&& g_outside >= COLORMODE_ITERATION
+		&& g_externs.Inside() > COLORMODE_Z_MAGNITUDE
+		&& g_externs.Outside() >= COLORMODE_ITERATION
 		&& (g_finite_attractor == FINITE_ATTRACTOR_NO)
 		&& !g_using_jiim
 		&& g_externs.BailOutTest() == BAILOUT_MODULUS
@@ -134,9 +134,9 @@ bool mandelbrot_setup_fp()
 			&& !g_distance_test
 			&& g_decomposition[0] == 0
 			&& g_externs.Biomorph() == BIOMORPH_NONE
-			&& (g_inside >= COLORMODE_ITERATION)
+			&& (g_externs.Inside() >= COLORMODE_ITERATION)
 			// uncomment this next line if more outside options are added 
-			&& g_outside >= COLORMODE_INVERSE_TANGENT
+			&& g_externs.Outside() >= COLORMODE_INVERSE_TANGENT
 			&& g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT
 			&& (g_sound_state.flags() & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 			&& !g_using_jiim
@@ -265,9 +265,9 @@ bool julia_setup_fp()
 			&& !g_distance_test
 			&& g_decomposition[0] == 0
 			&& g_externs.Biomorph() == BIOMORPH_NONE
-			&& (g_inside >= COLORMODE_ITERATION)
+			&& (g_externs.Inside() >= COLORMODE_ITERATION)
 			// uncomment this next line if more outside options are added 
-			&& g_outside >= COLORMODE_INVERSE_TANGENT
+			&& g_externs.Outside() >= COLORMODE_INVERSE_TANGENT
 			&& g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT
 			&& (g_sound_state.flags() & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 			&& (g_finite_attractor == FINITE_ATTRACTOR_NO)
@@ -371,9 +371,9 @@ bool julia_setup_fp()
 		}
 		break;
 	case FRACTYPE_CIRCLE_FP:
-		if (g_inside == COLORMODE_STAR_TRAIL) // FRACTYPE_CIRCLE_FP locks up when used with STARTRAIL 
+		if (g_externs.Inside() == COLORMODE_STAR_TRAIL) // FRACTYPE_CIRCLE_FP locks up when used with STARTRAIL 
 		{
-			g_inside = 0; // arbitrarily set inside = NUMB 
+			g_externs.SetInside(0); // arbitrarily set inside = NUMB 
 		}
 		get_julia_attractor(0.0, 0.0);   // another attractor? 
 		break;

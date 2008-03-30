@@ -18,6 +18,7 @@
 #include "fractype.h"
 
 #include "cmdfiles.h"
+#include "Externals.h"
 #include "fractalb.h"
 #include "fractalp.h"
 
@@ -481,7 +482,7 @@ bool mandelbrot_setup_bf()
 
 bool inside_coloring_beauty_of_fractals()
 {
-	return (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60 || g_inside == COLORMODE_BEAUTY_OF_FRACTALS_61);
+	return (g_externs.Inside() == COLORMODE_BEAUTY_OF_FRACTALS_60 || g_externs.Inside() == COLORMODE_BEAUTY_OF_FRACTALS_61);
 }
 
 bool inside_coloring_beauty_of_fractals_allowed()
