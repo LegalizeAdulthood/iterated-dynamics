@@ -303,7 +303,7 @@ void history_save_info()
 	current.invert[1] = g_inversion[1];
 	current.invert[2] = g_inversion[2];
 	current.decomposition = g_decomposition[0];
-	current.biomorph = g_biomorph;
+	current.biomorph = g_externs.Biomorph();
 	current.symmetry = g_force_symmetry;
 	g_3d_state.get_raytrace_parameters(&current.init_3d[0]);
 	current.preview_factor = g_3d_state.preview_factor();
@@ -447,7 +447,7 @@ void history_restore_info()
 	last = s_history[s_history_index];
 
 	g_invert = 0;
-	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+	g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 	g_resuming = false;
 	g_fractal_type = last.fractal_type;
 	g_escape_time_state.m_grid_fp.x_min() = last.x_min;
@@ -476,8 +476,8 @@ void history_restore_info()
 	g_inversion[1] = last.invert[1];
 	g_inversion[2] = last.invert[2];
 	g_decomposition[0] = last.decomposition;
-	g_user_biomorph = last.biomorph;
-	g_biomorph = last.biomorph;
+	g_externs.SetUserBiomorph(last.biomorph);
+	g_externs.SetBiomorph(last.biomorph);
 	g_force_symmetry = last.symmetry;
 	g_3d_state.set_raytrace_parameters(&last.init_3d[0]);
 	g_3d_state.set_preview_factor(last.preview_factor);

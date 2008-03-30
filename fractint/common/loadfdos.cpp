@@ -366,9 +366,9 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 		&& g_file_y_dots == g_.VideoEntry().y_dots)
 	{
 		// pull image into a view window 
-		if (g_calculation_status != CALCSTAT_COMPLETED) // if not complete 
+		if (g_externs.CalculationStatus() != CALCSTAT_COMPLETED) // if not complete 
 		{
-			g_calculation_status = CALCSTAT_PARAMS_CHANGED;  // can't resume anyway 
+			g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);  // can't resume anyway 
 		}
 		g_viewWindow.SetReductionFromVideoEntry(g_.VideoEntry());
 		g_skip_x_dots = short(g_viewWindow.Reduction() - 1);
@@ -381,9 +381,9 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 	if (g_.VideoEntry().x_dots < g_file_x_dots || g_.VideoEntry().y_dots < g_file_y_dots)
 	{
 		// set up to load only every nth pixel to make image fit 
-		if (g_calculation_status != CALCSTAT_COMPLETED) // if not complete 
+		if (g_externs.CalculationStatus() != CALCSTAT_COMPLETED) // if not complete 
 		{
-			g_calculation_status = CALCSTAT_PARAMS_CHANGED;  // can't resume anyway 
+			g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);  // can't resume anyway 
 		}
 		g_skip_x_dots = get_skip_factor(g_.VideoEntry().x_dots, g_file_x_dots);
 		g_skip_y_dots = get_skip_factor(g_.VideoEntry().y_dots, g_file_y_dots);

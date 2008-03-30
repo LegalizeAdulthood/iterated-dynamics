@@ -14,6 +14,8 @@
 #include "prototyp.h"
 #include "strcpy.h"
 
+#include "EnsureExtension.h"
+#include "Externals.h"
 #include "filesystem.h"
 #include "miscres.h"
 
@@ -435,7 +437,7 @@ void find_path(const char *filename, char *fullpathname)
 	split_path(filename , 0, 0, fname, ext);
 	make_path(temp_path, "", "", fname, ext);
 
-	if (g_check_current_dir && exists(temp_path))
+	if (g_externs.CheckCurrentDir() && exists(temp_path))
 	{
 		strcpy(fullpathname, temp_path);
 		return;
@@ -553,21 +555,6 @@ void update_save_name(char *filename) // go to the next file name
 fs::path make_path(const char *drive, const char *dir, const char *fname, const char *ext)
 {
 	return fs::path(drive) / dir / (std::string(fname) + ext);
-}
-
-void ensure_extension(char *filename, const char *extension)
-{
-	fs::path path = filename;
-	ensure_extension(path, extension);
-	strcpy(filename, path.string().c_str());
-}
-
-void ensure_extension(fs::path &path, const char *extension)
-{
-	if (fs::extension(path).length() == 0)
-	{
-		path.remove_leaf() /= (path.leaf() + extension);
-	}
 }
 
 bool is_a_directory(const char *s)

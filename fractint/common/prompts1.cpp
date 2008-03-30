@@ -1985,7 +1985,7 @@ get_fractal_parameters_top:
 				parameter_values[prompt++].uval.Lval = old_bail_out;
 				parameter_values[prompt].type = '*';
 				const char *tmpptr = type_name;
-				if (g_user_biomorph != -1)
+				if (g_externs.UserBiomorph() != BIOMORPH_NONE)
 				{
 					bail_out_value = 100;
 					tmpptr = "biomorph";

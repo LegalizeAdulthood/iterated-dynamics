@@ -19,6 +19,7 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "Externals.h"
 #include "realdos.h"
 #include "slideshw.h"
 
@@ -29,7 +30,7 @@ SlideShow g_slideShow;
 class SlideShowImpl
 {
 public:
-	SlideShowImpl(int &calculationStatus, bool &busy)
+	SlideShowImpl(CalculationStatusType calculationStatus, bool &busy)
 		: _slideFile(),
 		_start_tick(0),
 		_ticks(0),
@@ -69,7 +70,7 @@ private:
 	bool _calc_wait;
 	int _repeats;
 	int _last1;
-	const int &_calculationStatus;
+	const CalculationStatusType _calculationStatus;
 	const bool &_busy;
 	std::string _autoKeyFile;
 	SlideType _mode;
@@ -473,7 +474,7 @@ void SlideShowImpl::Error(const std::string &msg)
 }
 
 SlideShow::SlideShow()
-	: _impl(new SlideShowImpl(g_calculation_status, g_busy))
+	: _impl(new SlideShowImpl(g_externs.CalculationStatus(), g_busy))
 {
 }
 

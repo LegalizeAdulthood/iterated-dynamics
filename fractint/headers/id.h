@@ -330,7 +330,7 @@ enum FullScreenChoiceFlag
 	CHOICE_NOT_SORTED	= 32
 };
 
-// g_calculation_status values
+// calculation status values
 enum CalculationStatusType
 {
 	CALCSTAT_NO_FRACTAL		= -1,
@@ -847,6 +847,11 @@ enum ColoringModeType
 	COLORMODE_PERIOD = -102,
 	COLORMODE_FLOAT_MODULUS_INTEGER = -103,
 	COLORMODE_INVERSE_TANGENT_INTEGER = -104
+};
+
+enum BiomorphType
+{
+	BIOMORPH_NONE = -1
 };
 
 // defines for bailoutest

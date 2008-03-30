@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="headers"
-				PreprocessorDefinitions="HAVESTRI;_SCL_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="HAVESTRI;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -123,7 +123,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="headers"
-				PreprocessorDefinitions="HAVESTRI;_SCL_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="HAVESTRI;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -957,6 +957,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\common\EnsureExtension.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\evolve.cpp"
 					>
 					<FileConfiguration
@@ -1716,6 +1720,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\encoder.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\EnsureExtension.h"
 					>
 				</File>
 				<File

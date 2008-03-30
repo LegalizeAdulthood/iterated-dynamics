@@ -91,7 +91,7 @@ int Win32BaseDriver::handle_timed_save(int ch)
 		{
 			if (1 == g_finish_row)
 			{
-				if (g_calculation_status != CALCSTAT_IN_PROGRESS)
+				if (g_externs.CalculationStatus() != CALCSTAT_IN_PROGRESS)
 				{
 					if ((g_externs.TabStatus() != TAB_STATUS_12PASS) && (g_externs.TabStatus() != TAB_STATUS_GUESSING))
 					{

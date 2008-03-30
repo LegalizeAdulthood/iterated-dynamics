@@ -8,6 +8,7 @@
 #include "fractype.h"
 
 #include "calcfrac.h"
+#include "Externals.h"
 #include "resume.h"
 
 int popcorn()   // subset of std engine 
@@ -37,6 +38,6 @@ int popcorn()   // subset of std engine
 			g_reset_periodicity = false;
 		}
 	}
-	g_calculation_status = CALCSTAT_COMPLETED;
+	g_externs.SetCalculationStatus(CALCSTAT_COMPLETED);
 	return 0;
 }

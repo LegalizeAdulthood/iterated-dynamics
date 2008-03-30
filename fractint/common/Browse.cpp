@@ -16,6 +16,7 @@
 #include "drivers.h"
 #include "encoder.h"
 #include "EscapeTime.h"
+#include "Externals.h"
 #include "fihelp.h"
 #include "filesystem.h"
 #include "Formula.h"
@@ -723,9 +724,10 @@ int look_get_window()
 	g_bf_math = BIGFLT;
 	if (!oldbf_math)
 	{
-		int oldcalc_status = g_calculation_status; // kludge because next sets it = 0 
+		// kludge because next sets it = 0 
+		CalculationStatusType oldcalc_status = g_externs.CalculationStatus();
 		fractal_float_to_bf();
-		g_calculation_status = oldcalc_status;
+		g_externs.SetCalculationStatus(oldcalc_status);
 	}
 	saved = save_stack();
 	bt_a = alloc_stack(g_rbf_length + 2);

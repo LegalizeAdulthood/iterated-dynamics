@@ -743,7 +743,7 @@ int tab_display_2(char *msg)
 	show_str_var("map", g_.MapName(), row, msg);
 	write_row(row++, boost::format("Sizeof g_fractal_specific array %d")
 		% (g_num_fractal_types*int(sizeof(FractalTypeSpecificData))));
-	write_row(row++, boost::format("CalculationStatus %d pixel [%d, %d]") % g_calculation_status % g_col % g_row);
+	write_row(row++, boost::format("CalculationStatus %d pixel [%d, %d]") % g_externs.CalculationStatus() % g_col % g_row);
 	if (fractal_type_formula(g_fractal_type))
 	{
 		write_row(row++, g_formula_state.info_line1());
@@ -767,8 +767,8 @@ int tab_display_2(char *msg)
 	write_row(row++, "ixstart %d g_x_stop %d iystart %d g_y_stop %d g_bit_shift %d",
 	ixstart, g_x_stop, iystart, g_y_stop, g_bit_shift);
 	*/
-	write_row(row++, boost::format("g_limit2_l %ld g_use_grid %s")
-		% g_limit2_l % (g_escape_time_state.m_use_grid ? "true" : "false"));
+	write_row(row++, boost::format("g_rq_limit2_l %ld g_use_grid %s")
+		% g_rq_limit2_l % (g_escape_time_state.m_use_grid ? "true" : "false"));
 	put_string_center(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
 	*msg = 0;
 
@@ -804,11 +804,11 @@ int tab_display()       // display the status of the current image
 	int k;
 	int hasformparam = 0;
 
-	if (g_calculation_status < CALCSTAT_PARAMS_CHANGED)        // no active fractal image 
+	if (g_externs.CalculationStatus() < CALCSTAT_PARAMS_CHANGED)        // no active fractal image 
 	{
 		return 0;                // (no TAB on the credits screen) 
 	}
-	if (g_calculation_status == CALCSTAT_IN_PROGRESS)        // next assumes CLK_TCK is 10^n, n >= 2 
+	if (g_externs.CalculationStatus() == CALCSTAT_IN_PROGRESS)        // next assumes CLK_TCK is 10^n, n >= 2 
 	{
 		g_calculation_time += (clock_ticks() - g_timer_start)/(CLK_TCK/100);
 	}
@@ -882,7 +882,7 @@ top:
 		}
 	}
 
-	switch (g_calculation_status)
+	switch (g_externs.CalculationStatus())
 	{
 	case CALCSTAT_PARAMS_CHANGED:	msgptr = "Parms chgd since generated"; break;
 	case CALCSTAT_IN_PROGRESS:		msgptr = "Still being generated"; break;
@@ -892,7 +892,7 @@ top:
 	default:						msgptr = "";
 	}
 	driver_put_string(s_row, 45, C_GENERAL_HI, msgptr);
-	if (g_initialize_batch && g_calculation_status != CALCSTAT_PARAMS_CHANGED)
+	if (g_initialize_batch && g_externs.CalculationStatus() != CALCSTAT_PARAMS_CHANGED)
 	{
 		driver_put_string(-1, -1, C_GENERAL_HI, " (Batch mode)");
 	}
@@ -942,7 +942,7 @@ top:
 
 	s_row += i;
 
-	if (g_calculation_status == CALCSTAT_IN_PROGRESS || g_calculation_status == CALCSTAT_RESUMABLE)
+	if (g_externs.CalculationStatus() == CALCSTAT_IN_PROGRESS || g_externs.CalculationStatus() == CALCSTAT_RESUMABLE)
 	{
 		if (g_current_fractal_specific->flags & FRACTALFLAG_NOT_RESUMABLE)
 		{
@@ -957,7 +957,7 @@ top:
 	++s_row;
 
 	if ((g_externs.TabStatus() >= TAB_STATUS_12PASS) &&
-		(g_calculation_status == CALCSTAT_IN_PROGRESS || g_calculation_status == CALCSTAT_RESUMABLE))
+		(g_externs.CalculationStatus() == CALCSTAT_IN_PROGRESS || g_externs.CalculationStatus() == CALCSTAT_RESUMABLE))
 	{
 		switch (g_externs.TabStatus())
 		{
@@ -1036,7 +1036,7 @@ top:
 	driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
 	get_calculation_time(msg, g_calculation_time);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
-	if ((g_externs.TabStatus() == TAB_STATUS_DIFFUSION) && (g_calculation_status == CALCSTAT_IN_PROGRESS))  // estimate total time 
+	if ((g_externs.TabStatus() == TAB_STATUS_DIFFUSION) && (g_externs.CalculationStatus() == CALCSTAT_IN_PROGRESS))  // estimate total time 
 	{
 		driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
 		driver_put_string(-1, -1, C_GENERAL_HI, g_diffusionScan.CalculationTime());
@@ -1457,7 +1457,7 @@ bool find_file_item(std::string &filename, const std::string &item_name, std::if
 			}
 		}
 
-		if (!found && g_check_current_dir)
+		if (!found && g_externs.CheckCurrentDir())
 		{
 			make_path(fullpath, "", DOTSLASH, fname, ext);
 			infile.open(fullpath, std::ios::in | std::ios::binary);

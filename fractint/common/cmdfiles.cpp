@@ -20,6 +20,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "EnsureExtension.h"
 #include "Externals.h"
 #include "fihelp.h"
 #include "filesystem.h"
@@ -68,7 +69,6 @@ bool g_potential_16bit;							// store 16 bit continuous potential values
 bool g_gif87a_flag;								// 1 if GIF87a format, 0 otherwise 
 bool g_dither_flag;								// 1 if want to dither GIFs 
 bool g_float_flag;
-int     g_biomorph;								// flag for g_biomorph 
 int     g_user_biomorph;
 int     g_force_symmetry;						// force symmetry 
 ShowFileType g_show_file;						// zero if file display pending 
@@ -88,7 +88,6 @@ int     g_finite_attractor;						// finite attractor logic
 Display3DType g_display_3d;						// 3D display flag: 0 = OFF 
 bool g_overlay_3d;								// 3D overlay flag: 0 = OFF 
 int     g_init_3d[20];							// '3d=nn/nn/nn/...' values 
-bool g_check_current_dir;						// flag to check current dir for files 
 InitializeBatchType g_initialize_batch = INITBATCH_NONE; // !0 if batch run (no kbd)  
 int     g_save_time;							// autosave minutes         
 ComplexD  g_initial_orbit_z;					// initial orbitvalue 
@@ -354,7 +353,7 @@ static void initialize_variables_restart()          // <ins> key init
 	g_fractal_overwrite = false;					// don't overwrite           
 	g_sound_state.set_speaker_beep();				// sound is on to PC speaker 
 	g_initialize_batch = INITBATCH_NONE;			// not in batch mode         
-	g_check_current_dir = false;					// flag to check current dir for files 
+	g_externs.SetCheckCurrentDir(false);					// flag to check current dir for files 
 	g_save_time = 0;								// no auto-save              
 	g_.SetInitialVideoModeNone();					// no initial video mode     
 	g_viewWindow.InitializeRestart();
@@ -398,7 +397,7 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	g_user_periodicity_check = 1;							// turn on periodicity    
 	g_inside = 1;											// inside color = blue    
 	g_fill_color = -1;										// no special fill color 
-	g_user_biomorph = -1;									// turn off g_biomorph flag 
+	g_externs.SetUserBiomorph(-1);									// turn off biomorph flag 
 	g_outside = COLORMODE_ITERATION;						// outside color = -1 (not used) 
 	g_max_iteration = 150;									// initial maxiter        
 	g_externs.SetUserStandardCalculationMode(CALCMODE_SOLID_GUESS);
@@ -2040,7 +2039,7 @@ static int organize_formula_dir_arg(const cmd_context &context)
 
 static int biomorph_arg(const cmd_context &context)
 {
-	g_user_biomorph = context.numval;
+	g_externs.SetUserBiomorph(context.numval);
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
 
@@ -2531,7 +2530,7 @@ static int threed_arg(const cmd_context &context)
 	if (strcmp(context.value, "overlay") == 0)
 	{
 		yesno = 1;
-		if (g_calculation_status > CALCSTAT_NO_FRACTAL) // if no image, treat same as 3D=yes 
+		if (g_externs.CalculationStatus() > CALCSTAT_NO_FRACTAL) // if no image, treat same as 3D=yes 
 		{
 			g_overlay_3d = true;
 		}
@@ -2791,7 +2790,10 @@ static int ask_video_arg(const cmd_context &context)
 
 static int cur_dir_arg(const cmd_context &context)
 {
-	return FlagParser<bool>(g_check_current_dir, COMMANDRESULT_OK).parse(context);
+	bool flag = g_externs.CheckCurrentDir();
+	int result = FlagParser<bool>(flag, COMMANDRESULT_OK).parse(context);
+	g_externs.SetCheckCurrentDir(flag);
+	return result;
 }
 
 //

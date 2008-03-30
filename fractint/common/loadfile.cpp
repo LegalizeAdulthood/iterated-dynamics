@@ -94,7 +94,7 @@ static void read_info_version_0(const fractal_info &read_info)
 		}
 		g_decomposition[0] = read_info.decomposition[0];
 		g_decomposition[1] = read_info.decomposition[1];
-		g_user_biomorph = read_info.biomorph;
+		g_externs.SetUserBiomorph(read_info.biomorph);
 		g_force_symmetry = read_info.symmetry;
 	}
 }
@@ -138,7 +138,7 @@ static void read_info_version_2(const fractal_info &read_info)
 
 static void read_info_version_3(const fractal_info &read_info)
 {
-	g_calculation_status = CALCSTAT_PARAMS_CHANGED;       // defaults if version < 4 
+	g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);       // defaults if version < 4 
 	g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
 	g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
 	g_user_distance_test = 0;
@@ -150,7 +150,7 @@ static void read_info_version_3(const fractal_info &read_info)
 		g_save_release = 1400;
 		g_escape_time_state.m_grid_fp.x_3rd() = read_info.x_3rd;
 		g_escape_time_state.m_grid_fp.y_3rd() = read_info.y_3rd;
-		g_calculation_status = read_info.calculation_status;
+		g_externs.SetCalculationStatus(CalculationStatusType(read_info.calculation_status));
 		g_externs.SetUserStandardCalculationMode(CalculationMode(read_info.stdcalcmode));
 		g_three_pass = false;
 		if (g_externs.UserStandardCalculationMode() == CalculationMode(127))
@@ -542,9 +542,9 @@ static void got_evolver_info(const fractal_info &read_info, evolver_info_extensi
 		evolver_info.ecount = evolver_info.mutate[NUM_GENES - 4];
 	}
 	if (evolver_info.ecount != evolver_info.grid_size*evolver_info.grid_size
-		&& g_calculation_status != CALCSTAT_COMPLETED)
+		&& g_externs.CalculationStatus() != CALCSTAT_COMPLETED)
 	{
-		g_calculation_status = CALCSTAT_RESUMABLE;
+		g_externs.SetCalculationStatus(CALCSTAT_RESUMABLE);
 		evolution_info resume_e_info;
 		if (g_evolve_info == 0)
 		{
@@ -573,7 +573,7 @@ static void got_evolver_info(const fractal_info &read_info, evolver_info_extensi
 	{
 		delete g_evolve_info;
 		g_evolve_info = 0;
-		g_calculation_status = CALCSTAT_COMPLETED;
+		g_externs.SetCalculationStatus(CALCSTAT_COMPLETED);
 	}
 	g_parameter_range_x = evolver_info.parameter_range_x;
 	g_parameter_range_y = evolver_info.parameter_range_y;
@@ -684,7 +684,7 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, formu
 
 	if (g_display_3d)
 	{
-		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		g_fractal_type = FRACTYPE_PLASMA;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		g_parameters[0] = 0;

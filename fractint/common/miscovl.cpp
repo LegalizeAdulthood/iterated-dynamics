@@ -1326,9 +1326,9 @@ static void write_batch_parms_old_dem_colors()
 
 static void write_batch_parms_biomorph()
 {
-	if (g_user_biomorph != -1)
+	if (g_externs.UserBiomorph() != BIOMORPH_NONE)
 	{
-		put_parm(format(" biomorph=%d") % g_user_biomorph);
+		put_parm(format(" biomorph=%d") % g_externs.UserBiomorph());
 	}
 }
 
@@ -2864,8 +2864,8 @@ void flip_image(int key)
 {
 	// fractal must be rotate-able and be finished 
 	if (g_current_fractal_specific->no_zoom_box_rotate()
-		|| g_calculation_status == CALCSTAT_IN_PROGRESS
-		|| g_calculation_status == CALCSTAT_RESUMABLE)
+		|| g_externs.CalculationStatus() == CALCSTAT_IN_PROGRESS
+		|| g_externs.CalculationStatus() == CALCSTAT_RESUMABLE)
 	{
 		return;
 	}
@@ -2887,7 +2887,7 @@ void flip_image(int key)
 		break;
 	}
 	reset_zoom_corners();
-	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+	g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 }
 
 static std::string expand_var(const std::string &var)

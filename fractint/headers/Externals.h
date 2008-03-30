@@ -60,8 +60,8 @@ public:
 	typedef int CalculateTypeFunction();
 	virtual CalculateTypeFunction *CalculateType() const = 0;
 	virtual void SetCalculateType(CalculateTypeFunction *value) = 0;
-	virtual int CalculationStatus() const = 0;
-	virtual void SetCalculationStatus(int value) = 0;
+	virtual CalculationStatusType CalculationStatus() const = 0;
+	virtual void SetCalculationStatus(CalculationStatusType value) = 0;
 	virtual int const *CfgLineNums() const = 0;
 	virtual void SetCfgLineNums(int const *value)= 0;
 	virtual bool CheckCurrentDir() const = 0;
@@ -289,10 +289,10 @@ public:
 	virtual void SetInitialXL(long value) = 0;
 	virtual long InitialYL() const = 0;
 	virtual void SetInitialYL(long value) = 0;
-	virtual long Limit2L() const = 0;
-	virtual void SetLimit2L(long value) = 0;
-	virtual long LimitL() const = 0;
-	virtual void SetLimitL(long value) = 0;
+	virtual long RqLimit2L() const = 0;
+	virtual void SetRqLimit2L(long value) = 0;
+	virtual long RqLimitL() const = 0;
+	virtual void SetRqLimitL(long value) = 0;
 	virtual long MagnitudeL() const = 0;
 	virtual void SetMagnitudeL(long value) = 0;
 	virtual ComplexL NewZL() const = 0;
@@ -347,7 +347,7 @@ public:
 	virtual void SetTrig3D(TrigFunction *value) = 0;
 	virtual double Magnitude() const = 0;
 	virtual void SetMagnitude(double value) = 0;
-	virtual unsigned long magnitudeLimit() const = 0;
+	virtual unsigned long MagnitudeLimit() const = 0;
 	virtual void SetMagnitudeLimit(long value) = 0;
 	virtual MajorMethodType MajorMethod() const = 0;
 	virtual void SetMajorMethod(MajorMethodType value) = 0;
