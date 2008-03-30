@@ -75,7 +75,7 @@ int bail_out_manhattan_l()
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.real());
 	g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
-	g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
+	g_magnitude = fabs(g_new_z.real()) + fabs(g_new_z.imag());
 	if (g_magnitude*g_magnitude >= g_rq_limit)
 	{
 		return 1;
@@ -88,7 +88,7 @@ int bail_out_manhattan_r_l()
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.real());
 	g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
-	g_magnitude = fabs(g_new_z.x + g_new_z.y);
+	g_magnitude = fabs(g_new_z.real() + g_new_z.imag());
 	if (g_magnitude*g_magnitude >= g_rq_limit)
 	{
 		return 1;

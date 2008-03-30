@@ -677,17 +677,17 @@ int Minverse_julia_orbit()
 		break;
 	case MAJORMETHOD_RANDOM_WALK:
 #if 0
-		g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy);
+		g_new_z = ComplexSqrtFloat(g_new_z.real() - s_cx, g_new_z.imag() - s_cy);
 		if (RANDOM(2))
 		{
-			g_new_z.real(-g_new_z.x);
-			g_new_z.imag(-g_new_z.y);
+			g_new_z.real(-g_new_z.real());
+			g_new_z.imag(-g_new_z.imag());
 		}
 #endif
 		break;
 	case MAJORMETHOD_RANDOM_RUN:
 #if 0
-		g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy);
+		g_new_z = ComplexSqrtFloat(g_new_z.real() - s_cx, g_new_z.imag() - s_cy);
 		if (random_len == 0)
 		{
 			random_len = RANDOM(s_run_length);
@@ -698,14 +698,14 @@ int Minverse_julia_orbit()
 		case DIRECTION_LEFT:
 			break;
 		case DIRECTION_RIGHT:
-			g_new_z.real(-g_new_z.x);
-			g_new_z.imag(-g_new_z.y);
+			g_new_z.real(-g_new_z.real());
+			g_new_z.imag(-g_new_z.imag());
 			break;
 		case DIRECTION_RANDOM:
 			if (RANDOM(2))
 			{
-				g_new_z.real(-g_new_z.x);
-				g_new_z.imag(-g_new_z.y);
+				g_new_z.real(-g_new_z.real());
+				g_new_z.imag(-g_new_z.imag());
 			}
 			break;
 		}
@@ -714,12 +714,12 @@ int Minverse_julia_orbit()
 	}
 
 	// Next, find its pixel position
-	newcol = int(s_cvt.a*g_new_z.x + s_cvt.b*g_new_z.y + s_cvt.e);
-	newrow = int(s_cvt.c*g_new_z.x + s_cvt.d*g_new_z.y + s_cvt.f);
+	newcol = int(s_cvt.a*g_new_z.real() + s_cvt.b*g_new_z.imag() + s_cvt.e);
+	newrow = int(s_cvt.c*g_new_z.real() + s_cvt.d*g_new_z.imag() + s_cvt.f);
 
 	// Now find the next point(s), and flip a coin to choose one.
 
-	g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy);
+	g_new_z = ComplexSqrtFloat(g_new_z.real() - s_cx, g_new_z.imag() - s_cy);
 	leftright = (RANDOM(2)) ? 1 : -1;
 
 	if (newcol < 1 || newcol >= g_x_dots || newrow < 1 || newrow >= g_y_dots)
@@ -729,10 +729,10 @@ int Minverse_julia_orbit()
 		switch (g_major_method)
 		{
 		case MAJORMETHOD_BREADTH_FIRST:
-			EnQueueFloat(float(leftright*g_new_z.x), float(leftright*g_new_z.y));
+			EnQueueFloat(float(leftright*g_new_z.real()), float(leftright*g_new_z.imag()));
 			return 1;
 		case MAJORMETHOD_DEPTH_FIRST:
-			PushFloat   (float(leftright*g_new_z.x), float(leftright*g_new_z.y));
+			PushFloat   (float(leftright*g_new_z.real()), float(leftright*g_new_z.imag()));
 			return 1;
 		case MAJORMETHOD_RANDOM_RUN:
 		case MAJORMETHOD_RANDOM_WALK:
@@ -750,38 +750,38 @@ int Minverse_julia_orbit()
 		if (color < s_max_hits)
 		{
 			g_plot_color_put_color(newcol, newrow, color + 1);
-			// g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy);
-			EnQueueFloat(float(g_new_z.x), float(g_new_z.y));
-			EnQueueFloat(float(-g_new_z.x), float(-g_new_z.y));
+			// g_new_z = ComplexSqrtFloat(g_new_z.real() - s_cx, g_new_z.imag() - s_cy);
+			EnQueueFloat(float(g_new_z.real()), float(g_new_z.imag()));
+			EnQueueFloat(float(-g_new_z.real()), float(-g_new_z.imag()));
 		}
 		break;
 	case MAJORMETHOD_DEPTH_FIRST:
 		if (color < s_max_hits)
 		{
 			g_plot_color_put_color(newcol, newrow, color + 1);
-			// g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy);
+			// g_new_z = ComplexSqrtFloat(g_new_z.real() - s_cx, g_new_z.imag() - s_cy);
 			if (g_minor_method == MINORMETHOD_LEFT_FIRST)
 			{
 				if (QueueFullAlmost())
 				{
-					PushFloat(float(-g_new_z.x), float(-g_new_z.y));
+					PushFloat(float(-g_new_z.real()), float(-g_new_z.imag()));
 				}
 				else
 				{
-					PushFloat(float(g_new_z.x), float(g_new_z.y));
-					PushFloat(float(-g_new_z.x), float(-g_new_z.y));
+					PushFloat(float(g_new_z.real()), float(g_new_z.imag()));
+					PushFloat(float(-g_new_z.real()), float(-g_new_z.imag()));
 				}
 			}
 			else
 			{
 				if (QueueFullAlmost())
 				{
-					PushFloat(float(g_new_z.x), float(g_new_z.y));
+					PushFloat(float(g_new_z.real()), float(g_new_z.imag()));
 				}
 				else
 				{
-					PushFloat(float(-g_new_z.x), float(-g_new_z.y));
-					PushFloat(float(g_new_z.x), float(g_new_z.y));
+					PushFloat(float(-g_new_z.real()), float(-g_new_z.imag()));
+					PushFloat(float(g_new_z.real()), float(g_new_z.imag()));
 				}
 			}
 		}
@@ -797,12 +797,12 @@ int Minverse_julia_orbit()
 		case DIRECTION_LEFT:
 			break;
 		case DIRECTION_RIGHT:
-			g_new_z.real(-g_new_z.x);
-			g_new_z.imag(-g_new_z.y);
+			g_new_z.real(-g_new_z.real());
+			g_new_z.imag(-g_new_z.imag());
 			break;
 		case DIRECTION_RANDOM:
-			g_new_z.real(leftright*g_new_z.x);
-			g_new_z.imag(leftright*g_new_z.y);
+			g_new_z.real(leftright*g_new_z.real());
+			g_new_z.imag(leftright*g_new_z.imag());
 			break;
 		}
 		if (color < g_colors-1)
@@ -815,8 +815,8 @@ int Minverse_julia_orbit()
 		{
 			g_plot_color_put_color(newcol, newrow, color + 1);
 		}
-		g_new_z.real(leftright*g_new_z.x);
-		g_new_z.imag(leftright*g_new_z.y);
+		g_new_z.real(leftright*g_new_z.real());
+		g_new_z.imag(leftright*g_new_z.imag());
 		break;
 	}
 	return 1;
@@ -1379,21 +1379,21 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 	g_old_z.real(yold*g_parameters[1]);
 	g_old_z.imag(0);          // old = (y*B) + 0i (in the complex)
 	CMPLXtrig0(g_old_z, g_new_z);
-	tmp = double(g_new_z.x);
+	tmp = double(g_new_z.real());
 	g_old_z.real(xold*g_parameters[1]);
 	g_old_z.imag(0);          // old = (x*B) + 0i
 	CMPLXtrig1(g_old_z, g_new_z);
-	*x = g_parameters[2]*g_new_z.x + tmp;
+	*x = g_parameters[2]*g_new_z.real() + tmp;
 
 // *y = sin(xold*PAR_A) + PAR_D*sin(yold*PAR_A);
 	g_old_z.real(xold*g_parameters[0]);
 	g_old_z.imag(0);          // old = (y*A) + 0i (in the complex)
 	CMPLXtrig2(g_old_z, g_new_z);
-	tmp = double(g_new_z.x);
+	tmp = double(g_new_z.real());
 	g_old_z.real(yold*g_parameters[0]);
 	g_old_z.imag(0);          // old = (x*B) + 0i
 	CMPLXtrig3(g_old_z, g_new_z);
-	*y = g_parameters[3]*g_new_z.x + tmp;
+	*y = g_parameters[3]*g_new_z.real() + tmp;
 
 	return 0;
 }
@@ -2279,8 +2279,8 @@ int plotorbits2dfloat()
 		}
 
 		// else count >= g_orbit_delay and we want to plot it
-		col = int(s_o_cvt.a*g_new_z.x + s_o_cvt.b*g_new_z.y + s_o_cvt.e);
-		row = int(s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
+		col = int(s_o_cvt.a*g_new_z.real() + s_o_cvt.b*g_new_z.imag() + s_o_cvt.e);
+		row = int(s_o_cvt.c*g_new_z.real() + s_o_cvt.d*g_new_z.imag() + s_o_cvt.f);
 		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{             // plot if on the screen
 			g_plot_color(col, row, s_o_color % g_colors);

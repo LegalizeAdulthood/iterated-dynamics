@@ -849,8 +849,8 @@ void JIIM::Execute()
 						for (int i = 0; i < 199; i++)
 						{
 							g_old_z = ComplexSqrtFloat(g_old_z.real() - _cReal, g_old_z.imag() - _cImag);
-							g_new_z = ComplexSqrtFloat(g_new_z.x - _cReal, g_new_z.y - _cImag);
-							EnQueueFloat(float(g_new_z.x),  float(g_new_z.y));
+							g_new_z = ComplexSqrtFloat(g_new_z.real() - _cReal, g_new_z.imag() - _cImag);
+							EnQueueFloat(float(g_new_z.real()),  float(g_new_z.imag()));
 							EnQueueFloat(float(-g_old_z.real()), float(-g_old_z.imag()));
 						}
 						s_max_hits++;
@@ -869,8 +869,8 @@ void JIIM::Execute()
 				{
 					plot_color_clip(x, y, color + 1);
 					g_new_z = ComplexSqrtFloat(g_old_z.real() - _cReal, g_old_z.imag() - _cImag);
-					EnQueueFloat(float(g_new_z.x),  float(g_new_z.y));
-					EnQueueFloat(float(-g_new_z.x), float(-g_new_z.y));
+					EnQueueFloat(float(g_new_z.real()),  float(g_new_z.imag()));
+					EnQueueFloat(float(-g_new_z.real()), float(-g_new_z.imag()));
 				}
 			}
 			else
@@ -898,7 +898,7 @@ void JIIM::Execute()
 				g_new_z.real(sqrt(fabs((r + g_old_z.real())/2)));
 				if (g_old_z.imag() < 0)
 				{
-					g_new_z.real(-g_new_z.x);
+					g_new_z.real(-g_new_z.real());
 				}
 
 				g_new_z.imag(sqrt(fabs((r - g_old_z.real())/2)));
@@ -909,61 +909,61 @@ void JIIM::Execute()
 				default:
 					if (rand() % 2)
 					{
-						g_new_z.real(-g_new_z.x);
-						g_new_z.imag(-g_new_z.y);
+						g_new_z.real(-g_new_z.real());
+						g_new_z.imag(-g_new_z.imag());
 					}
-					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
-					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
+					x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
 					break;
 
 				case SECRETMODE_ONE_DIRECTION:                     // always go one direction
 					if (g_save_c.y < 0)
 					{
-						g_new_z.real(-g_new_z.x);
-						g_new_z.imag(-g_new_z.y);
+						g_new_z.real(-g_new_z.real());
+						g_new_z.imag(-g_new_z.imag());
 					}
-					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
-					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
+					x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
 					break;
 				case SECRETMODE_ONE_DIR_DRAW_OTHER:                     // go one dir, draw the other
 					if (g_save_c.y < 0)
 					{
-						g_new_z.real(-g_new_z.x);
-						g_new_z.imag(-g_new_z.y);
+						g_new_z.real(-g_new_z.real());
+						g_new_z.imag(-g_new_z.imag());
 					}
-					x = int(-g_new_z.x*x_factor*_zoom + _xCenter);
-					y = int(-g_new_z.y*y_factor*_zoom + _yCenter);
+					x = int(-g_new_z.real()*x_factor*_zoom + _xCenter);
+					y = int(-g_new_z.imag()*y_factor*_zoom + _yCenter);
 					break;
 				case SECRETMODE_NEGATIVE_MAX_COLOR:                     // go negative if max color
-					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
-					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
+					x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
 					if (c_getcolor(x, y) == g_colors - 1)
 					{
-						g_new_z.real(-g_new_z.x);
-						g_new_z.imag(-g_new_z.y);
-						x = int(g_new_z.x*x_factor*_zoom + _xCenter);
-						y = int(g_new_z.y*y_factor*_zoom + _yCenter);
+						g_new_z.real(-g_new_z.real());
+						g_new_z.imag(-g_new_z.imag());
+						x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
+						y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
 					}
 					break;
 				case SECRETMODE_POSITIVE_MAX_COLOR:                     // go positive if max color
-					g_new_z.real(-g_new_z.x);
-					g_new_z.imag(-g_new_z.y);
-					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
-					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
+					g_new_z.real(-g_new_z.real());
+					g_new_z.imag(-g_new_z.imag());
+					x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
 					if (c_getcolor(x, y) == g_colors - 1)
 					{
-						x = int(g_new_z.x*x_factor*_zoom + _xCenter);
-						y = int(g_new_z.y*y_factor*_zoom + _yCenter);
+						x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
+						y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
 					}
 					break;
 				case SECRETMODE_7:
 					if (g_save_c.y < 0)
 					{
-						g_new_z.real(-g_new_z.x);
-						g_new_z.imag(-g_new_z.y);
+						g_new_z.real(-g_new_z.real());
+						g_new_z.imag(-g_new_z.imag());
 					}
-					x = int(-g_new_z.x*x_factor*_zoom + _xCenter);
-					y = int(-g_new_z.y*y_factor*_zoom + _yCenter);
+					x = int(-g_new_z.real()*x_factor*_zoom + _xCenter);
+					y = int(-g_new_z.imag()*y_factor*_zoom + _yCenter);
 					if (iter > 10)
 					{
 						if (s_mode == JIIM_PIXEL)
@@ -983,8 +983,8 @@ void JIIM::Execute()
 						old_x = x;
 						old_y = y;
 					}
-					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
-					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
+					x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
 					break;
 				case SECRETMODE_ZIGZAG:                     // go in long zig zags
 					if (random_count >= 300)
@@ -993,11 +993,11 @@ void JIIM::Execute()
 					}
 					if (random_count < 0)
 					{
-						g_new_z.real(-g_new_z.x);
-						g_new_z.imag(-g_new_z.y);
+						g_new_z.real(-g_new_z.real());
+						g_new_z.imag(-g_new_z.imag());
 					}
-					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
-					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
+					x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
 					break;
 				case SECRETMODE_RANDOM_RUN:                     // "random run"
 					switch (random_direction)
@@ -1005,8 +1005,8 @@ void JIIM::Execute()
 					case 0:             // go random direction for a while
 						if (rand() % 2)
 						{
-							g_new_z.real(-g_new_z.x);
-							g_new_z.imag(-g_new_z.y);
+							g_new_z.real(-g_new_z.real());
+							g_new_z.imag(-g_new_z.imag());
 						}
 						if (++random_count > 1024)
 						{
@@ -1015,8 +1015,8 @@ void JIIM::Execute()
 						}
 						break;
 					case 1:             // now go negative dir for a while
-						g_new_z.real(-g_new_z.x);
-						g_new_z.imag(-g_new_z.y);
+						g_new_z.real(-g_new_z.real());
+						g_new_z.imag(-g_new_z.imag());
 						// fall through
 					case -1:            // now go positive dir for a while
 						if (++random_count > 512)
@@ -1026,8 +1026,8 @@ void JIIM::Execute()
 						}
 						break;
 					}
-					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
-					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
+					x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
 					break;
 				} // end switch SecretMode (sorry about the indentation)
 			} // end if not MIIM
