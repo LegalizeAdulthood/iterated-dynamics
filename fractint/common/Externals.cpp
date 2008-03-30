@@ -1,3 +1,4 @@
+#include <cassert>
 #include <complex>
 
 #include "port.h"
@@ -39,21 +40,19 @@ public:
 		_bailOutFp(0),
 		_bailOutL(0),
 		_bailOutBf(0),
-		_bailOutBn(0)
+		_bailOutBn(0),
+		_colorFile()
 	{ }
 	virtual ~ExternalsImpl() { }
 
 	virtual float AspectDrift() const							{ return _aspectDrift; }
 	virtual void SetAspectDrift(float value)					{ _aspectDrift = value; }
 
-	// outside=atan
-	virtual int AtanColors() const								{ return _atanColors; }
-	virtual void SetAtanColors(int value)						{ _atanColors = value; }
-
 	// used for stereo output
 	virtual double AutoStereoWidth() const						{ return _autoStereoWidth; }
 	virtual void SetAutoStereoWidth(double value)				{ _autoStereoWidth = value; }
 
+	// backwards compatability
 	virtual bool BadOutside() const								{ return _badOutside; }
 	virtual void SetBadOutside(bool value)						{ _badOutside = value; }
 
@@ -62,18 +61,14 @@ public:
 	virtual void SetBailOutTest(BailOutType value)				{ _bailOutTest = value; }
 	virtual long BailOut() const								{ return _bailOut; }
 	virtual void SetBailOut(long value)							{ _bailOut = value; }
-	virtual int BailOutFp()										{ return _bailOutFp(); }
+	virtual int BailOutFp()										{ assert(_bailOutFp); return _bailOutFp(); }
 	virtual void SetBailOutFp(BailOutFunction *value)			{ _bailOutFp = value; }
-	virtual int BailOutL()										{ return _bailOutL(); }
+	virtual int BailOutL()										{ assert(_bailOutL); return _bailOutL(); }
 	virtual void SetBailOutL(BailOutFunction *value)			{ _bailOutL = value; }
-	virtual int BailOutBf()										{ return _bailOutBf(); }
+	virtual int BailOutBf()										{ assert(_bailOutBf); return _bailOutBf(); }
 	virtual void SetBailOutBf(BailOutFunction *value)			{ _bailOutBf = value; }
-	virtual int BailOutBn()										{ return _bailOutBn(); }
+	virtual int BailOutBn()										{ assert(_bailOutBn); return _bailOutBn(); }
 	virtual void SetBailOutBn(BailOutFunction *value)			{ _bailOutBn = value; }
-
-	// used only for newton types
-	virtual int Basin() const									{ return _basin; }
-	virtual void SetBasin(int value)							{ _basin = value; }
 
 	virtual int BfSaveLen() const								{ return g_bf_save_len; }
 	virtual void SetBfSaveLen(int value)						{ g_bf_save_len = value; }
@@ -115,8 +110,6 @@ public:
 	virtual void SetColors(int value)							{ g_colors = value; }
 	virtual bool CompareGif() const								{ return g_compare_gif; }
 	virtual void SetCompareGif(bool value)						{ g_compare_gif = value; }
-	virtual long GaussianConstant() const						{ return g_gaussian_constant; }
-	virtual void SetGaussianConstant(long value)				{ g_gaussian_constant = value; }
 	virtual double CosX() const									{ return g_cos_x; }
 	virtual void SetCosX(double value)							{ g_cos_x = value; }
 	virtual long CReal() const									{ return g_c_real; }
@@ -159,8 +152,17 @@ public:
 	virtual void SetDistanceTestWidth(int value)				{ g_distance_test_width = value; }
 	virtual float ScreenDistanceFp() const						{ return g_screen_distance_fp; }
 	virtual void SetScreenDistanceFp(float value)				{ g_screen_distance_fp = value; }
+
+	// gaussian distribution
+	virtual long GaussianConstant() const						{ return g_gaussian_constant; }
+	virtual void SetGaussianConstant(long value)				{ g_gaussian_constant = value; }
 	virtual int GaussianDistribution() const					{ return g_gaussian_distribution; }
 	virtual void SetGaussianDistribution(int value)				{ g_gaussian_distribution = value; }
+	virtual int GaussianOffset() const							{ return g_gaussian_offset; }
+	virtual void SetGaussianOffset(int value)					{ g_gaussian_offset = value; }
+	virtual int GaussianSlope() const							{ return g_gaussian_slope; }
+	virtual void SetGaussianSlope(int value)					{ g_gaussian_slope = value; }
+
 	virtual bool DitherFlag() const								{ return g_dither_flag; }
 	virtual void SetDitherFlag(bool value)						{ g_dither_flag = value; }
 	virtual bool DontReadColor() const							{ return g_dont_read_color; }
@@ -431,8 +433,6 @@ public:
 	virtual int NumFractalTypes() const							{ return g_num_fractal_types; }
 	virtual bool NextScreenFlag() const							{ return g_next_screen_flag; }
 	virtual void SetNextScreenFlag(bool value)					{ g_next_screen_flag = value; }
-	virtual int GaussianOffset() const							{ return g_gaussian_offset; }
-	virtual void SetGaussianOffset(int value)					{ g_gaussian_offset = value; }
 	virtual bool OkToPrint() const								{ return g_ok_to_print; }
 	virtual void SetOkToPrint(bool value)						{ g_ok_to_print = value; }
 	virtual ComplexD OldZ() const								{ return g_old_z; }
@@ -602,8 +602,6 @@ public:
 	virtual void SetSkipXDots(int value)						{ g_skip_x_dots = value; }
 	virtual int SkipYDots() const								{ return g_skip_y_dots; }
 	virtual void SetSkipYDots(int value)						{ g_skip_y_dots = value; }
-	virtual int GaussianSlope() const							{ return g_gaussian_slope; }
-	virtual void SetGaussianSlope(int value)					{ g_gaussian_slope = value; }
 	virtual bool StartShowOrbit() const							{ return g_start_show_orbit; }
 	virtual void SetStartShowOrbit(bool value)					{ g_start_show_orbit = value; }
 	virtual bool StartedResaves() const							{ return g_started_resaves; }
@@ -757,10 +755,10 @@ public:
 	virtual unsigned int ThisGenerationRandomSeed() const		{ return g_this_generation_random_seed; }
 	virtual void SetThisGenerationRandomSeed(unsigned int value) { g_this_generation_random_seed = value; }
 	virtual GIFViewFunction *GIFView() const					{ return gifview; }
-	virtual std::string &GIFMask()								{ return g_gif_mask; }
 	virtual ViewWindow const &View() const						{ return g_viewWindow; }
 	virtual ViewWindow &View()									{ return g_viewWindow; }
 
+	// output line
 	virtual OutLineFunction *OutLine() const					{ return g_out_line; }
 	virtual void SetOutLine(OutLineFunction *value)				{ g_out_line = value; }
 	virtual OutLineCleanupFunction *OutLineCleanup() const		{ return g_out_line_cleanup; }
@@ -772,6 +770,8 @@ public:
 	virtual OutLineFunction *OutLine3D() const					{ return out_line_3d; }
 	virtual OutLineFunction *OutLineCompare() const				{ return out_line_compare; }
 
+	// files and folders
+	virtual std::string &GIFMask()								{ return g_gif_mask; }
 	virtual bool CheckCurrentDir() const						{ return _checkCurrentDirectory; }
 	virtual void SetCheckCurrentDir(bool value)					{ _checkCurrentDirectory = value; }
 	virtual std::string const &FractDir1() const				{ return g_fract_dir1; }
@@ -783,10 +783,13 @@ public:
 	virtual void SetReadName(std::string const &value)			{ g_read_name = value; }
 	virtual void SetFileNameStackTop(std::string const &value)	{ g_file_name_stack[g_name_stack_ptr] = value; }
 	virtual boost::filesystem::path const &WorkDirectory() const { return g_work_dir; }
+	virtual std::string const &ColorFile() const				{ return _colorFile; }
+	virtual void SetColorFile(std::string const &value)			{ _colorFile = value; }
 
+
+	// scanner
 	virtual bool ThreePass() const								{ return g_three_pass; }
 	virtual void SetThreePass(bool value)						{ g_three_pass = value; }
-
 	virtual CalculationMode UserStandardCalculationMode() const	{ return _userStandardCalculationMode; }
 	virtual void SetUserStandardCalculationMode(CalculationMode value) { _userStandardCalculationMode = value; }
 	virtual CalculationMode StandardCalculationMode() const		{ return _standardCalculationMode; }
@@ -815,6 +818,12 @@ public:
 	virtual void SetBiomorph(int value)							{ _biomorph = value; }
 	virtual int UserBiomorph() const							{ return _userBiomorph; }
 	virtual void SetUserBiomorph(int value)						{ _userBiomorph = value; }
+	// used only for coloring newton types
+	virtual int Basin() const									{ return _basin; }
+	virtual void SetBasin(int value)							{ _basin = value; }
+	// outside=atan
+	virtual int AtanColors() const								{ return _atanColors; }
+	virtual void SetAtanColors(int value)						{ _atanColors = value; }
 
 private:
 	int _currentPass;
@@ -843,6 +852,7 @@ private:
 	BailOutFunction *_bailOutL;
 	BailOutFunction *_bailOutBf;
 	BailOutFunction *_bailOutBn;
+	std::string _colorFile;								// from last <l> <s> or colors=@filename 
 };
 
 static ExternalsImpl s_externs;

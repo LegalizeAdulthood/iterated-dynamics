@@ -34,7 +34,6 @@ public:
 	virtual void ExtractReadName() = 0;
 	virtual int GetParameters() = 0;
 	virtual void MakePath(const char *fname, const char *ext) = 0;
-	virtual void MergePathNames(char *read_name) = 0;
 	virtual void MergePathNames(std::string &read_name) = 0;
 	virtual void Restart() = 0;
 };

@@ -15,3 +15,9 @@ void ensure_extension(boost::filesystem::path &path, const char *extension)
 	}
 }
 
+std::string ensure_extension(std::string const &text, const char *extension)
+{
+	boost::filesystem::path path = text;
+	ensure_extension(path, extension);
+	return path.string();
+}

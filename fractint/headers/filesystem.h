@@ -25,8 +25,13 @@ struct DIR_SEARCH				// Allocate	DTA	and	define structure
 extern DIR_SEARCH g_dta;
 
 extern int merge_path_names(char *old_full_path, char *new_filename, int mode);
+extern int merge_path_names(bool copy_directory, char *old_full_path, char *new_filename);
 extern int merge_path_names(std::string &old_full_path, char *new_filename, int mode);
+extern int merge_path_names(bool copy_directory, std::string &old_full_path, char *new_filename);
 extern int merge_path_names(char *old_full_path, std::string &new_filename, int mode);
+extern int merge_path_names(bool copy_directory, char *old_full_path, std::string &new_filename);
+extern int merge_path_names(std::string &old_full_path, std::string &new_filename, int mode);
+extern int merge_path_names(bool copy_directory, std::string &old_full_path, std::string &new_filename);
 extern void ensure_slash_on_directory(char *dirname);
 extern void ensure_slash_on_directory(std::string &dirname);
 extern int fr_find_first(char *path);

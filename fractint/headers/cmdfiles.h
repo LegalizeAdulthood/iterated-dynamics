@@ -42,7 +42,6 @@ struct search_path
 	std::string lsys;
 };
 
-extern std::string g_color_file;
 extern std::string g_command_comment[4];
 extern std::string g_command_file;
 extern std::string g_command_name;

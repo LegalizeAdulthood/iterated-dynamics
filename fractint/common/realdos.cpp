@@ -868,11 +868,11 @@ inpfld_end:
 }
 
 int field_prompt(
-		char *hdg,      // heading, \n delimited lines 
-		char *instr,    // additional instructions or 0 
-		char *fld,          // the field itself 
-		int len,            // field length (declare as 1 larger for \0) 
-		int (*check_keystroke)(int key)   // routine to check non data keys, or 0 
+		char *hdg,						// heading, \n delimited lines 
+		char *instr,					// additional instructions or 0 
+		char *fld,						// the field itself 
+		int len,						// field length (declare as 1 larger for \0) 
+		int (*check_keystroke)(int key) // routine to check non data keys, or 0 
 		)
 {
 	char *charptr;

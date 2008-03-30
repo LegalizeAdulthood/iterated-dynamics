@@ -85,7 +85,6 @@ public:
 	void ExtractReadName();
 	int GetParameters();
 	void MakePath(const char *fname, const char *ext);
-	void MergePathNames(char *read_name);
 	void MergePathNames(std::string &read_name);
 	void Restart();
 
@@ -154,17 +153,9 @@ void BrowseStateImpl::MakePath(const char *fname, const char *ext)
 	_name = ::make_path("", "", fname, ext).string();
 }
 
-void BrowseStateImpl::MergePathNames(char *read_name)
-{
-	::merge_path_names(read_name, _name, false);
-}
-
 void BrowseStateImpl::MergePathNames(std::string &read_name)
 {
-	char buffer[FILE_MAX_PATH];
-	strcpy(buffer, read_name.c_str());
-	MergePathNames(buffer);
-	read_name = buffer;
+	::merge_path_names(false, read_name, _name);
 }
 
 void BrowseStateImpl::Restart()

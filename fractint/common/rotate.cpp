@@ -16,6 +16,7 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "Externals.h"
 #include "fihelp.h"
 #include "filesystem.h"
 #include "loadmap.h"
@@ -497,10 +498,12 @@ void save_palette()
 	{
 		strcat(temp1, ".map");
 	}
-	char palname[FILE_MAX_PATH];
-	strcpy(palname, g_.MapName().c_str());
-	merge_path_names(palname, temp1, false);
-	std::ofstream dac_file(palname);
+
+	std::string mapName = g_.MapName();
+	std::string arg = temp1;
+	merge_path_names(false, mapName, arg);
+	g_.SetMapName(mapName);
+	std::ofstream dac_file(mapName.c_str());
 	if (!dac_file)
 	{
 		driver_buzzer(BUZZER_ERROR);
@@ -517,7 +520,7 @@ void save_palette()
 		}
 		g_.PushDAC();
 		g_.SetColorState(COLORSTATE_MAP);
-		g_color_file = temp1;
+		g_externs.SetColorFile(temp1);
 	}
 	dac_file.close();
 }
@@ -538,7 +541,8 @@ int load_palette()
 			g_.PushDAC();
 		}
 		std::string mapName = g_.MapName();
-		merge_path_names(mapName, filename, true);
+		std::string arg = filename;
+		merge_path_names(true, mapName, arg);
 		g_.SetMapName(mapName);
 	}
 	return i;

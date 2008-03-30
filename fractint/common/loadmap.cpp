@@ -7,6 +7,7 @@
 
 #include "cmdfiles.h"
 #include "EnsureExtension.h"
+#include "Externals.h"
 #include "filesystem.h"
 #include "loadmap.h"
 #include "miscres.h"
@@ -28,18 +29,12 @@ static BYTE map_to_dac(int value)
 
 bool validate_luts(const char *fn)
 {
-	char temp[FILE_MAX_PATH + 1];
-	strcpy(temp, g_.MapName().c_str());
-	char temp_fn[FILE_MAX_PATH];
-	strcpy(temp_fn, fn);
-#ifdef XFRACT
-	merge_path_names(temp, temp_fn, false);
-#else
-	merge_path_names(temp, temp_fn, true);
-#endif
-	ensure_extension(temp, ".map");
+	std::string temp = g_.MapName();
+	std::string temp_fn = fn;
+	merge_path_names(true, temp, temp_fn);
+	temp = ensure_extension(temp, ".map");
 	char name[160];
-	find_path(temp, name);        // search the dos path 
+	find_path(temp.c_str(), name);        // search the dos path 
 	std::ifstream f(name);
 	if (!f)
 	{
@@ -69,7 +64,7 @@ bool validate_luts(const char *fn)
 		++index;
 	}
 	g_.SetColorState(COLORSTATE_MAP);
-	g_color_file = fn;
+	g_externs.SetColorFile(fn);
 	return false;
 }
 

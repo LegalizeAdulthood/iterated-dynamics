@@ -3410,16 +3410,15 @@ static bool check_mapfile()
 	{
 		return false;
 	}
-	char temp1[256];
-	strcpy(temp1, "*");
+	std::string temp1 = "*";
 	if (g_.MapSet())
 	{
-		strcpy(temp1, g_.MapName().c_str());
+		temp1 = g_.MapName();
 	}
 	bool askflag;
 	if (g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 	{
-		merge_path_names(temp1, s_funny_glasses_map_name, true);
+		merge_path_names(true, temp1, s_funny_glasses_map_name);
 		askflag = false;
 	}
 	else
@@ -3431,11 +3430,16 @@ static bool check_mapfile()
 	{
 		if (askflag)
 		{
-			if (field_prompt_help(-1, "Enter name of .MAP file to use,\n"
-					"or '*' to use palette from the image to be loaded.",
-					0, temp1, 60, 0) < 0)
 			{
-				return true;
+				char buffer[256];
+				strcpy(buffer, temp1.c_str());
+				if (field_prompt_help(-1, "Enter name of .MAP file to use,\n"
+						"or '*' to use palette from the image to be loaded.",
+						0, buffer, 60, 0) < 0)
+				{
+					return true;
+				}
+				temp1 = buffer;
 			}
 			if (temp1[0] == '*')
 			{
@@ -3455,7 +3459,7 @@ static bool check_mapfile()
 		}
 		g_.SetMapSet(true);
 		std::string mapName = g_.MapName();
-		merge_path_names(mapName, temp1, true);
+		merge_path_names(true, mapName, temp1);
 		g_.SetMapName(mapName);
 		break;
 	}

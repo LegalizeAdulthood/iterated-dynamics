@@ -90,7 +90,7 @@ private:
 	int _dacSleepCount;
 	ColorStateType _colorState;			// 0, g_dac_box matches default (bios or map=) 
 										// 1, g_dac_box matches no known defined map 
-										// 2, g_dac_box matches the g_color_file map 
+										// 2, g_dac_box matches the color file map 
 	bool _mapSet;
 	std::string _mapName;
 	int _numColors;
