@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Externals.h"
+
 extern void cdecl invert_z(ComplexD *);
 extern void magnet2_precalculate_fp();
 extern void complex_power(ComplexD *, int, ComplexD *);
@@ -159,6 +161,7 @@ extern int phoenix_per_pixel_fp();
 extern int mandelbrot_phoenix_per_pixel();
 extern int mandelbrot_phoenix_per_pixel_fp();
 extern void set_pixel_calc_functions();
+extern void initialize_pixel_calc_functions(Externals &externs);
 extern int mandelbrot_mix4_per_pixel_fp();
 extern int mandelbrot_mix4_orbit_fp();
 extern bool mandelbrot_mix4_setup();

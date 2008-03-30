@@ -42,8 +42,8 @@ int test()
 			for (g_col = 0; g_col <= g_x_stop; g_col++)       // look at each point on screen 
 			{
 				register int color;
-				g_initial_z.x = g_dx_pixel();
-				g_initial_z.y = g_dy_pixel();
+				g_initial_z.x = g_externs.DxPixel();
+				g_initial_z.y = g_externs.DyPixel();
 				if (driver_key_pressed())
 				{
 					test_end();

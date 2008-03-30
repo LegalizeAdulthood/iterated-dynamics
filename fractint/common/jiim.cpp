@@ -55,6 +55,7 @@
 #include "drivers.h"
 #include "editpal.h"
 #include "EscapeTime.h"
+#include "Externals.h"
 #include "fihelp.h"
 #include "filesystem.h"
 #include "FrothyBasin.h"
@@ -754,13 +755,13 @@ void JIIM::Execute()
 			{
 				if (g_integer_fractal)
 				{
-					_cReal = FudgeToDouble(g_lx_pixel());
-					_cImag = FudgeToDouble(g_ly_pixel());
+					_cReal = FudgeToDouble(g_externs.LxPixel());
+					_cImag = FudgeToDouble(g_externs.LyPixel());
 				}
 				else
 				{
-					_cReal = g_dx_pixel();
-					_cImag = g_dy_pixel();
+					_cReal = g_externs.DxPixel();
+					_cImag = g_externs.DyPixel();
 				}
 			}
 			actively_computing = true;

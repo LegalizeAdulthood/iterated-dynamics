@@ -65,8 +65,8 @@ int lyapunov()
 	}
 	else
 	{
-		a = g_dy_pixel();
-		b = g_dx_pixel();
+		a = g_externs.DyPixel();
+		b = g_externs.DxPixel();
 	}
 	g_color = lyapunov_cycles(s_filter_cycles, a, b);
 	if (g_externs.Inside() > 0 && g_color == 0)

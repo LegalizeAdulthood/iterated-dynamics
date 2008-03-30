@@ -1200,8 +1200,8 @@ static void SetBoundaryTraceDebugColor()
 int calculate_mandelbrot_l()              // fast per pixel 1/2/b/g, called with row & col set 
 {
 	// setup values from array to avoid using es reg in calcmand.asm 
-	g_initial_x_l = g_lx_pixel();
-	g_initial_y_l = g_ly_pixel();
+	g_initial_x_l = g_externs.LxPixel();
+	g_initial_y_l = g_externs.LyPixel();
 	if (calculate_mandelbrot_asm() >= 0)
 	{
 		if ((g_log_table || g_log_calculation) // map color, but not if maxit & adjusted for inside, etc 
@@ -1308,8 +1308,8 @@ int calculate_mandelbrot_fp()
 	}
 	else
 	{
-		g_initial_z.x = g_dx_pixel();
-		g_initial_z.y = g_dy_pixel();
+		g_initial_z.x = g_externs.DxPixel();
+		g_initial_z.y = g_externs.DyPixel();
 	}
 	if (g_calculate_mandelbrot_asm_fp() >= 0)
 	{
@@ -1576,7 +1576,7 @@ void StandardFractal::initialize_float()
 			clear_bf(bfsaved.y);
 		}
 	}
-	g_initial_z.y = g_dy_pixel();
+	g_initial_z.y = g_externs.DyPixel();
 	if (g_distance_test)
 	{
 		m_distance_test_derivative.x = 1;
@@ -1595,7 +1595,7 @@ void StandardFractal::initialize_integer()
 		m_saved_z_l.x = 0;
 		m_saved_z_l.y = 0;
 	}
-	g_initial_z_l.y = g_ly_pixel();
+	g_initial_z_l.y = g_externs.LyPixel();
 }
 void StandardFractal::initialize_periodicity_cycle_check_size()
 {

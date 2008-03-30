@@ -161,12 +161,17 @@ public:
 	virtual void SetDeltaParameterImageY(double value) { throw not_implemented("SetDeltaParameterImageY"); }
 	virtual BYTE const *Stack() const				{ throw not_implemented("Stack"); }
 	virtual void SetStack(BYTE const *value)		{ throw not_implemented("SetStack"); }
-	virtual DxPixelFunction *DxPixel() const		{ throw not_implemented("DxPixel"); }
+	virtual double DxPixel()						{ throw not_implemented("DxPixel"); }
 	virtual void SetDxPixel(DxPixelFunction *value) { throw not_implemented("SetDxPixel"); }
+	virtual double DyPixel()						{ throw not_implemented("DyPixel"); }
+	virtual void SetDyPixel(DyPixelFunction *value) { throw not_implemented("SetDyPixel"); }
+	virtual long LxPixel()				 			{ throw not_implemented("LxPixel"); }
+	virtual void SetLxPixel(PixelFunctionL *value)	{ throw not_implemented("SetLxPixel"); }
+	virtual long LyPixel()				 			{ throw not_implemented("LyPixel"); }
+	virtual void SetLyPixel(PixelFunctionL *value)	{ throw not_implemented("SetLyPixel"); }
+	virtual ComplexL LPixel()						{ throw not_implemented("LPixel"); }
 	virtual double DxSize() const					{ throw not_implemented("DxSize"); }
 	virtual void SetDxSize(double value)			{ throw not_implemented("SetDxSize"); }
-	virtual DyPixelFunction *DyPixel() const		{ throw not_implemented("DyPixel"); }
-	virtual void SetDyPixel(DyPixelFunction *value) { throw not_implemented("SetDyPixel"); }
 	virtual double DySize() const					{ throw not_implemented("DySize"); }
 	virtual void SetDySize(double value)			{ throw not_implemented("SetDySize"); }
 	virtual bool EscapeExitFlag() const				{ throw not_implemented("EscapeExitFlag"); }
@@ -344,10 +349,6 @@ public:
 	virtual void SetTempSqrYL(long value) 			{ throw not_implemented("SetTempSqrYL"); }
 	virtual ComplexL TmpZL() const					{ throw not_implemented("TmpZL"); }
 	virtual void SetTmpZL(ComplexL value) 			{ throw not_implemented("SetTmpZL"); }
-	virtual PixelFunction *LxPixel() const 			{ throw not_implemented("LxPixel"); }
-	virtual void SetLxPixel(PixelFunction *value)	{ throw not_implemented("SetLxPixel"); }
-	virtual PixelFunction *LyPixel() const 			{ throw not_implemented("LyPixel"); }
-	virtual void SetLyPixel(PixelFunction *value)	{ throw not_implemented("SetLyPixel"); }
 	virtual TrigFunction *Trig0L() const 			{ throw not_implemented("Trig0L"); }
 	virtual void SetTrig0L(TrigFunction *value)		{ throw not_implemented("SetTrig0L"); }
 	virtual TrigFunction *Trig1L() const 			{ throw not_implemented("Trig1L"); }
