@@ -93,10 +93,6 @@ double g_cos_x = 0.0;
 double g_sin_x = 0.0;
 double g_temp_sqr_x = 0.0;
 double g_temp_sqr_y = 0.0;
-int (*g_bail_out_fp)();
-int (*g_bail_out_l)();
-int (*g_bail_out_bn)();
-int (*g_bail_out_bf)();
 long g_one_fudge = 0;
 long g_two_fudge = 0;
 double (*g_dx_pixel)() = dx_pixel_calc;
@@ -426,7 +422,7 @@ int barnsley1_orbit()
 		g_new_z_l.x = (s_old_x_init_x + g_long_parameter->x - s_old_y_init_y);
 		g_new_z_l.y = (s_old_y_init_x + g_long_parameter->y + s_old_x_init_y);
 	}
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -454,7 +450,7 @@ int barnsley1_orbit_fp()
 		g_new_z.x = (s_old_x_init_x_fp + g_float_parameter->x - s_old_y_init_y_fp);
 		g_new_z.y = (s_old_y_init_x_fp + g_float_parameter->y + s_old_x_init_y_fp);
 	}
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int barnsley2_orbit()
@@ -481,7 +477,7 @@ int barnsley2_orbit()
 		g_new_z_l.x = s_old_x_init_x + g_long_parameter->x - s_old_y_init_y;
 		g_new_z_l.y = s_old_y_init_x + g_long_parameter->y + s_old_x_init_y;
 	}
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -509,7 +505,7 @@ int barnsley2_orbit_fp()
 		g_new_z.x = s_old_x_init_x_fp + g_float_parameter->x - s_old_y_init_y_fp;
 		g_new_z.y = s_old_y_init_x_fp + g_float_parameter->y + s_old_x_init_y_fp;
 	}
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int julia_orbit()
@@ -518,7 +514,7 @@ int julia_orbit()
 	// Mandelbrot and Julia
 	g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x;
 	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_long_parameter->y;
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 }
 
 int julia_orbit_fp()
@@ -527,7 +523,7 @@ int julia_orbit_fp()
 	// note that fast >= 287 equiv in fracsuba.asm must be kept in step 
 	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x;
 	g_new_z.y = 2.0*g_old_z.x*g_old_z.y + g_float_parameter->y;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int lambda_orbit_fp()
@@ -541,7 +537,7 @@ int lambda_orbit_fp()
 
 	g_new_z.x = g_float_parameter->x*g_temp_sqr_x - g_float_parameter->y*g_temp_sqr_y;
 	g_new_z.y = g_float_parameter->x*g_temp_sqr_y + g_float_parameter->y*g_temp_sqr_x;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int lambda_orbit()
@@ -557,7 +553,7 @@ int lambda_orbit()
 		- multiply(g_long_parameter->y, g_temp_sqr_y_l, g_bit_shift);
 	g_new_z_l.y = multiply(g_long_parameter->x, g_temp_sqr_y_l, g_bit_shift)
 		+ multiply(g_long_parameter->y, g_temp_sqr_x_l, g_bit_shift);
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -579,7 +575,7 @@ int sierpinski_orbit()
 		g_new_z_l.x = g_new_z_l.x - g_tmp_z_l.x; // new.x = 2*old.x - 1 
 	}
 	// end barnsley code 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -602,7 +598,7 @@ int sierpinski_orbit_fp()
 	}
 
 	// end barnsley code 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int lambda_exponent_orbit_fp()
@@ -681,7 +677,7 @@ int trig_plus_exponent_orbit_fp()
 	// new =   trig(old) + e**old + C
 	g_new_z.x += s_temp_exp*s_cos_y + g_float_parameter->x;
 	g_new_z.y += s_temp_exp*s_sin_y + g_float_parameter->y;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int trig_plus_exponent_orbit()
@@ -702,7 +698,7 @@ int trig_plus_exponent_orbit()
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
 	g_new_z_l.x += multiply(tmp,    s_cos_y_l,   g_bit_shift) + g_long_parameter->x;
 	g_new_z_l.y += multiply(tmp,    s_sin_y_l,   g_bit_shift) + g_long_parameter->y;
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -722,7 +718,7 @@ int marks_lambda_orbit()
 	g_new_z_l.y = multiply(g_coefficient_l.x, g_tmp_z_l.y, g_bit_shift)
 		+ multiply(g_coefficient_l.y, g_tmp_z_l.x, g_bit_shift) + g_long_parameter->y;
 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -739,7 +735,7 @@ int marks_lambda_orbit_fp()
 	g_new_z.x = g_coefficient.x*g_temp_z.x - g_coefficient.y*g_temp_z.y + g_float_parameter->x;
 	g_new_z.y = g_coefficient.x*g_temp_z.y + g_coefficient.y*g_temp_z.x + g_float_parameter->y;
 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int unity_orbit()
@@ -789,7 +785,7 @@ int mandel4_orbit()
 #if !defined(XFRACT)
 	g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l;
 	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1);
-	if (g_bail_out_l())
+	if (g_externs.BailOutL())
 	{
 		return 1;
 	}
@@ -797,7 +793,7 @@ int mandel4_orbit()
 	// then, compute ((x + iy)**2)**2 + lambda 
 	g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x;
 	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_long_parameter->y;
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -808,7 +804,7 @@ int mandel4_orbit_fp()
 	// first, compute (x + iy)**2 
 	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y;
 	g_new_z.y = g_old_z.x*g_old_z.y*2;
-	if (g_bail_out_fp())
+	if (g_externs.BailOutFp())
 	{
 		return 1;
 	}
@@ -816,7 +812,7 @@ int mandel4_orbit_fp()
 	// then, compute ((x + iy)**2)**2 + lambda 
 	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x;
 	g_new_z.y =  g_old_z.x*g_old_z.y*2 + g_float_parameter->y;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int z_to_z_plus_z_orbit_fp()
@@ -825,7 +821,7 @@ int z_to_z_plus_z_orbit_fp()
 	g_old_z = ComplexPower(g_old_z, g_old_z);
 	g_new_z.x = g_new_z.x + g_old_z.x +g_float_parameter->x;
 	g_new_z.y = g_new_z.y + g_old_z.y +g_float_parameter->y;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int z_power_orbit()
@@ -837,7 +833,7 @@ int z_power_orbit()
 	}
 	g_new_z_l.x += g_long_parameter->x;
 	g_new_z_l.y += g_long_parameter->y;
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -859,7 +855,7 @@ int complex_z_power_orbit()
 	}
 	g_new_z_l.x += g_long_parameter->x;
 	g_new_z_l.y += g_long_parameter->y;
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -870,7 +866,7 @@ int z_power_orbit_fp()
 	complex_power(&g_old_z, g_c_exp, &g_new_z);
 	g_new_z.x += g_float_parameter->x;
 	g_new_z.y += g_float_parameter->y;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int complex_z_power_orbit_fp()
@@ -878,7 +874,7 @@ int complex_z_power_orbit_fp()
 	g_new_z = ComplexPower(g_old_z, g_parameter2);
 	g_new_z.x += g_float_parameter->x;
 	g_new_z.y += g_float_parameter->y;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int barnsley3_orbit()
@@ -909,7 +905,7 @@ int barnsley3_orbit()
 		// is uninteresting.
 		g_new_z_l.y += multiply(g_long_parameter->y, g_old_z_l.x, g_bit_shift);
 	}
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -942,7 +938,7 @@ int barnsley3_orbit_fp()
 		// is uninteresting.
 		g_new_z.y += g_float_parameter->y*g_old_z.x;
 	}
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 // From Scientific American, July 1989 
@@ -954,7 +950,7 @@ int trig_plus_z_squared_orbit()
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
 	g_new_z_l.x += g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x;
 	g_new_z_l.y += multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_long_parameter->y;
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -968,7 +964,7 @@ int trig_plus_z_squared_orbit_fp()
 	CMPLXtrig0(g_old_z, g_new_z);
 	g_new_z.x += g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x;
 	g_new_z.y += 2.0*g_old_z.x*g_old_z.y + g_float_parameter->y;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 // Richard8 {c = z = pixel: z = sin(z) + sin(pixel), |z| <= 50} 
@@ -978,7 +974,7 @@ int richard8_orbit_fp()
 	// CMPLXtrig1(*g_float_parameter, g_temp_z); 
 	g_new_z.x += g_temp_z.x;
 	g_new_z.y += g_temp_z.y;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 // Richard8 {c = z = pixel: z = sin(z) + sin(pixel), |z| <= 50} 
@@ -989,7 +985,7 @@ int richard8_orbit()
 	// LCMPLXtrig1(*g_long_parameter, g_tmp_z_l); 
 	g_new_z_l.x += g_tmp_z_l.x;
 	g_new_z_l.y += g_tmp_z_l.y;
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1266,7 +1262,7 @@ int marks_complex_mandelbrot_orbit()
 	FPUcplxmul(&g_temp_z, &g_coefficient, &g_new_z);
 	g_new_z.x += g_float_parameter->x;
 	g_new_z.y += g_float_parameter->y;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int spider_orbit_fp()
@@ -1276,7 +1272,7 @@ int spider_orbit_fp()
 	g_new_z.y = 2*g_old_z.x*g_old_z.y + g_temp_z.y;
 	g_temp_z.x = g_temp_z.x/2 + g_new_z.x;
 	g_temp_z.y = g_temp_z.y/2 + g_new_z.y;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int spider_orbit()
@@ -1287,7 +1283,7 @@ int spider_orbit()
 	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_tmp_z_l.y;
 	g_tmp_z_l.x = (g_tmp_z_l.x >> 1) + g_new_z_l.x;
 	g_tmp_z_l.y = (g_tmp_z_l.y >> 1) + g_new_z_l.y;
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1297,7 +1293,7 @@ int tetrate_orbit_fp()
 {
 	// Tetrate(XAXIS) { c = z=pixel: z = c^z, |z| <= (P1 + 3) } 
 	g_new_z = ComplexPower(*g_float_parameter, g_old_z);
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int z_trig_z_plus_z_orbit()
@@ -1309,7 +1305,7 @@ int z_trig_z_plus_z_orbit()
 	LCMPLXmult(g_old_z_l, g_tmp_z_l, g_tmp_z2_l);      // g_tmp_z2_l = p1*old*trig(old)      
 	LCMPLXmult(g_parameter2_l, g_old_z_l, g_tmp_z_l);     // g_tmp_z_l  = p2*old                
 	LCMPLXadd(g_tmp_z2_l, g_tmp_z_l, g_new_z_l);       // g_new_z_l  = p1*trig(old) + p2*old 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1322,7 +1318,7 @@ int scott_z_trig_z_plus_z_orbit()
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);          // g_tmp_z_l  = trig(old)       
 	LCMPLXmult(g_old_z_l, g_tmp_z_l, g_new_z_l);       // g_new_z_l  = old*trig(old)   
 	LCMPLXadd(g_new_z_l, g_old_z_l, g_new_z_l);        // g_new_z_l  = trig(old) + old 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1335,7 +1331,7 @@ int skinner_z_trig_z_minus_z_orbit()
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);          // g_tmp_z_l  = trig(old)       
 	LCMPLXmult(g_old_z_l, g_tmp_z_l, g_new_z_l);       // g_new_z_l  = old*trig(old)   
 	LCMPLXsub(g_new_z_l, g_old_z_l, g_new_z_l);        // g_new_z_l  = trig(old) - old 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1349,7 +1345,7 @@ int z_trig_z_plus_z_orbit_fp()
 	CMPLXmult(g_old_z, g_temp_z, s_temp2);      // s_temp2 = p1*old*trig(old)      
 	CMPLXmult(g_parameter2, g_old_z, g_temp_z);     // tmp  = p2*old                
 	CMPLXadd(s_temp2, g_temp_z, g_new_z);       // new  = p1*trig(old) + p2*old 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int scott_z_trig_z_plus_z_orbit_fp()
@@ -1358,7 +1354,7 @@ int scott_z_trig_z_plus_z_orbit_fp()
 	CMPLXtrig0(g_old_z, g_temp_z);         // tmp  = trig(old)       
 	CMPLXmult(g_old_z, g_temp_z, g_new_z);       // new  = old*trig(old)   
 	CMPLXadd(g_new_z, g_old_z, g_new_z);        // new  = trig(old) + old 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int skinner_z_trig_z_minus_z_orbit_fp()
@@ -1367,7 +1363,7 @@ int skinner_z_trig_z_minus_z_orbit_fp()
 	CMPLXtrig0(g_old_z, g_temp_z);         // tmp  = trig(old)       
 	CMPLXmult(g_old_z, g_temp_z, g_new_z);       // new  = old*trig(old)   
 	CMPLXsub(g_new_z, g_old_z, g_new_z);        // new  = trig(old) - old 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int sqr_1_over_trig_z_orbit()
@@ -1377,7 +1373,7 @@ int sqr_1_over_trig_z_orbit()
 	LCMPLXtrig0(g_old_z_l, g_old_z_l);
 	LCMPLXrecip(g_old_z_l, g_old_z_l);
 	LCMPLXsqr(g_old_z_l, g_new_z_l);
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1389,7 +1385,7 @@ int sqr_1_over_trig_z_orbit_fp()
 	CMPLXtrig0(g_old_z, g_old_z);
 	CMPLXrecip(g_old_z, g_old_z);
 	CMPLXsqr(g_old_z, g_new_z);
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int trig_plus_trig_orbit()
@@ -1401,7 +1397,7 @@ int trig_plus_trig_orbit()
 	LCMPLXtrig1(g_old_z_l, g_tmp_z2_l);
 	LCMPLXmult(g_parameter2_l, g_tmp_z2_l, g_old_z_l);
 	LCMPLXadd(g_tmp_z_l, g_old_z_l, g_new_z_l);
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1415,7 +1411,7 @@ int trig_plus_trig_orbit_fp()
 	CMPLXtrig1(g_old_z, g_old_z);
 	CMPLXmult(g_parameter2, g_old_z, g_old_z);
 	CMPLXadd(g_temp_z, g_old_z, g_new_z);
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 // The following four fractals are based on the idea of parallel
@@ -1437,7 +1433,7 @@ int lambda_trig_or_trig_orbit()
 		LCMPLXtrig1(g_old_z_l, g_tmp_z_l);
 		LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);
 	}
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1457,7 +1453,7 @@ int lambda_trig_or_trig_orbit_fp()
 		CMPLXtrig1(g_old_z, g_old_z);
 		FPUcplxmul(g_float_parameter, &g_old_z, &g_new_z);
 	}
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int julia_trig_or_trig_orbit()
@@ -1475,7 +1471,7 @@ int julia_trig_or_trig_orbit()
 		LCMPLXtrig1(g_old_z_l, g_tmp_z_l);
 		LCMPLXadd(*g_long_parameter, g_tmp_z_l, g_new_z_l);
 	}
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1495,7 +1491,7 @@ int julia_trig_or_trig_orbit_fp()
 		CMPLXtrig1(g_old_z, g_old_z);
 		CMPLXadd(*g_float_parameter, g_old_z, g_new_z);
 	}
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int phoenix_orbit()
@@ -1506,7 +1502,7 @@ int phoenix_orbit()
 	g_new_z_l.x = g_temp_sqr_x_l-g_temp_sqr_y_l + g_long_parameter->x + multiply(g_long_parameter->y, g_tmp_z2_l.x, g_bit_shift);
 	g_new_z_l.y = (g_tmp_z_l.x + g_tmp_z_l.x) + multiply(g_long_parameter->y, g_tmp_z2_l.y, g_bit_shift);
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1519,7 +1515,7 @@ int phoenix_orbit_fp()
 	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x + (g_float_parameter->y*s_temp2.x);
 	g_new_z.y = (g_temp_z.x + g_temp_z.x) + (g_float_parameter->y*s_temp2.y);
 	s_temp2 = g_old_z; // set s_temp2 to Y value 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int phoenix_complex_orbit()
@@ -1530,7 +1526,7 @@ int phoenix_complex_orbit()
 	g_new_z_l.x = g_temp_sqr_x_l-g_temp_sqr_y_l + g_long_parameter->x + multiply(g_parameter2_l.x, g_tmp_z2_l.x, g_bit_shift)-multiply(g_parameter2_l.y, g_tmp_z2_l.y, g_bit_shift);
 	g_new_z_l.y = (g_tmp_z_l.x + g_tmp_z_l.x) + g_long_parameter->y + multiply(g_parameter2_l.x, g_tmp_z2_l.y, g_bit_shift) + multiply(g_parameter2_l.y, g_tmp_z2_l.x, g_bit_shift);
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1543,7 +1539,7 @@ int phoenix_complex_orbit_fp()
 	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x + (g_parameter2.x*s_temp2.x) - (g_parameter2.y*s_temp2.y);
 	g_new_z.y = (g_temp_z.x + g_temp_z.x) + g_float_parameter->y + (g_parameter2.x*s_temp2.y) + (g_parameter2.y*s_temp2.x);
 	s_temp2 = g_old_z; // set s_temp2 to Y value 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int phoenix_plus_orbit()
@@ -1563,7 +1559,7 @@ int phoenix_plus_orbit()
 	g_new_z_l.x = lnewminus.x + multiply(g_long_parameter->y, g_tmp_z2_l.x, g_bit_shift);
 	g_new_z_l.y = lnewminus.y + multiply(g_long_parameter->y, g_tmp_z2_l.y, g_bit_shift);
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1586,7 +1582,7 @@ int phoenix_plus_orbit_fp()
 	g_new_z.x = newminus.x + (g_float_parameter->y*s_temp2.x);
 	g_new_z.y = newminus.y + (g_float_parameter->y*s_temp2.y);
 	s_temp2 = g_old_z; // set s_temp2 to Y value 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int phoenix_minus_orbit()
@@ -1606,7 +1602,7 @@ int phoenix_minus_orbit()
 	g_new_z_l.x = lnewminus.x + multiply(g_long_parameter->y, g_tmp_z2_l.x, g_bit_shift);
 	g_new_z_l.y = lnewminus.y + multiply(g_long_parameter->y, g_tmp_z2_l.y, g_bit_shift);
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1629,7 +1625,7 @@ int phoenix_minus_orbit_fp()
 	g_new_z.x = newminus.x + (g_float_parameter->y*s_temp2.x);
 	g_new_z.y = newminus.y + (g_float_parameter->y*s_temp2.y);
 	s_temp2 = g_old_z; // set s_temp2 to Y value 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int phoenix_complex_plus_orbit()
@@ -1651,7 +1647,7 @@ int phoenix_complex_plus_orbit()
 	g_new_z_l.x = lnewminus.x + g_tmp_z_l.x;
 	g_new_z_l.y = lnewminus.y + g_tmp_z_l.y;
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1676,7 +1672,7 @@ int phoenix_complex_plus_orbit_fp()
 	g_new_z.x = newminus.x + g_temp_z.x;
 	g_new_z.y = newminus.y + g_temp_z.y;
 	s_temp2 = g_old_z; // set s_temp2 to Y value 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int phoenix_complex_minus_orbit()
@@ -1698,7 +1694,7 @@ int phoenix_complex_minus_orbit()
 	g_new_z_l.x = lnewminus.x + g_tmp_z_l.x;
 	g_new_z_l.y = lnewminus.y + g_tmp_z_l.y;
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1723,7 +1719,7 @@ int phoenix_complex_minus_orbit_fp()
 	g_new_z.x = newminus.x + g_temp_z.x;
 	g_new_z.y = newminus.y + g_temp_z.y;
 	s_temp2 = g_old_z; // set s_temp2 to Y value 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int scott_trig_plus_trig_orbit()
@@ -1733,7 +1729,7 @@ int scott_trig_plus_trig_orbit()
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
 	LCMPLXtrig1(g_old_z_l, g_old_z_l);
 	LCMPLXadd(g_tmp_z_l, g_old_z_l, g_new_z_l);
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1745,7 +1741,7 @@ int scott_trig_plus_trig_orbit_fp()
 	CMPLXtrig0(g_old_z, g_temp_z);
 	CMPLXtrig1(g_old_z, s_temp2);
 	CMPLXadd(g_temp_z, s_temp2, g_new_z);
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int skinner_trig_sub_trig_orbit()
@@ -1755,7 +1751,7 @@ int skinner_trig_sub_trig_orbit()
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
 	LCMPLXtrig1(g_old_z_l, g_tmp_z2_l);
 	LCMPLXsub(g_tmp_z_l, g_tmp_z2_l, g_new_z_l);
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1767,7 +1763,7 @@ int skinner_trig_sub_trig_orbit_fp()
 	CMPLXtrig0(g_old_z, g_temp_z);
 	CMPLXtrig1(g_old_z, s_temp2);
 	CMPLXsub(g_temp_z, s_temp2, g_new_z);
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int trig_trig_orbit_fp()
@@ -1776,7 +1772,7 @@ int trig_trig_orbit_fp()
 	CMPLXtrig0(g_old_z, g_temp_z);
 	CMPLXtrig1(g_old_z, g_old_z);
 	CMPLXmult(g_temp_z, g_old_z, g_new_z);
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 #if !defined(XFRACT)
@@ -1806,7 +1802,7 @@ int trig_trig_orbit()
 	{
 		try_float_fractal(trig_trig_orbit_fp);
 	}
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1825,7 +1821,7 @@ int trig_plus_sqr_orbit() // generalization of Scott and Skinner types
 	LCMPLXsqr_old(g_tmp_z_l);         // g_tmp_z_l = sqr(g_old_z_l)                         
 	LCMPLXmult(g_parameter2_l, g_tmp_z_l, g_tmp_z_l); // g_tmp_z_l = g_parameter2_l*sqr(g_old_z_l)                  
 	LCMPLXadd(g_new_z_l, g_tmp_z_l, g_new_z_l);   // g_new_z_l = g_parameter_l*trig(g_old_z_l) + g_parameter2_l*sqr(g_old_z_l) 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1840,7 +1836,7 @@ int trig_plus_sqr_orbit_fp() // generalization of Scott and Skinner types
 	CMPLXsqr_old(g_temp_z);        // tmp = sqr(old)                      
 	CMPLXmult(g_parameter2, g_temp_z, s_temp2); // tmp = g_parameter2*sqr(old)                
 	CMPLXadd(g_new_z, s_temp2, g_new_z);    // new = g_parameter*trig(old) + g_parameter2*sqr(old) 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int scott_trig_plus_sqr_orbit()
@@ -1850,7 +1846,7 @@ int scott_trig_plus_sqr_orbit()
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);    // g_new_z_l = trig(g_old_z_l)           
 	LCMPLXsqr_old(g_tmp_z_l);        // g_old_z_l = sqr(g_old_z_l)            
 	LCMPLXadd(g_tmp_z_l, g_new_z_l, g_new_z_l);  // g_new_z_l = trig(g_old_z_l) + sqr(g_old_z_l) 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1862,7 +1858,7 @@ int scott_trig_plus_sqr_orbit_fp() // float version
 	CMPLXtrig0(g_old_z, g_new_z);       // new = trig(old)          
 	CMPLXsqr_old(g_temp_z);          // tmp = sqr(old)           
 	CMPLXadd(g_new_z, g_temp_z, g_new_z);      // new = trig(old) + sqr(old) 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int skinner_trig_sub_sqr_orbit()
@@ -1872,7 +1868,7 @@ int skinner_trig_sub_sqr_orbit()
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);    // g_new_z_l = trig(g_old_z_l)           
 	LCMPLXsqr_old(g_tmp_z_l);        // g_old_z_l = sqr(g_old_z_l)            
 	LCMPLXsub(g_new_z_l, g_tmp_z_l, g_new_z_l);  // g_new_z_l = trig(g_old_z_l)-sqr(g_old_z_l) 
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1884,7 +1880,7 @@ int skinner_trig_sub_sqr_orbit_fp()
 	CMPLXtrig0(g_old_z, g_new_z);       // new = trig(old) 
 	CMPLXsqr_old(g_temp_z);          // old = sqr(old)  
 	CMPLXsub(g_new_z, g_temp_z, g_new_z);      // new = trig(old)-sqr(old) 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int trig_z_squared_orbit_fp()
@@ -1892,7 +1888,7 @@ int trig_z_squared_orbit_fp()
 	// { z = pixel: z = trig(z*z), |z|<TEST } 
 	CMPLXsqr_old(g_temp_z);
 	CMPLXtrig0(g_temp_z, g_new_z);
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int trig_z_squared_orbit() // this doesn't work very well 
@@ -1910,7 +1906,7 @@ int trig_z_squared_orbit() // this doesn't work very well
 	{
 		try_float_fractal(trig_z_squared_orbit_fp);
 	}
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1922,7 +1918,7 @@ int sqr_trig_orbit()
 	// { z = pixel: z = sqr(trig(z)), |z|<TEST} 
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
 	LCMPLXsqr(g_tmp_z_l, g_new_z_l);
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -1933,7 +1929,7 @@ int sqr_trig_orbit_fp()
 	// SZSB(XYAXIS) { z = pixel, TEST = (p1 + 3): z = sin(z)*sin(z), |z|<TEST} 
 	CMPLXtrig0(g_old_z, g_temp_z);
 	CMPLXsqr(g_temp_z, g_new_z);
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int magnet1_orbit_fp()    // Z = ((Z**2 + C - 1)/(2Z + C - 2))**2    
@@ -1962,7 +1958,7 @@ int magnet1_orbit_fp()    // Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
 	g_new_z.y = tmp.x*tmp.y;
 	g_new_z.y += g_new_z.y;
 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 // Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2))/     
@@ -2002,7 +1998,7 @@ int magnet2_orbit_fp()
 	g_new_z.y = tmp.x*tmp.y;
 	g_new_z.y += g_new_z.y;
 
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int lambda_trig_orbit()
@@ -2103,7 +2099,7 @@ int man_o_war_orbit()
 	g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l + g_tmp_z_l.x + g_long_parameter->x;
 	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_tmp_z_l.y + g_long_parameter->y;
 	g_tmp_z_l = g_old_z_l;
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -2116,7 +2112,7 @@ int man_o_war_orbit_fp()
 	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_temp_z.x + g_float_parameter->x;
 	g_new_z.y = 2.0*g_old_z.x*g_old_z.y + g_temp_z.y + g_float_parameter->y;
 	g_temp_z = g_old_z;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 //	MarksMandelPwr (XAXIS)
@@ -2132,7 +2128,7 @@ int marks_mandel_power_orbit_fp()
 	CMPLXmult(g_temp_z, g_new_z, g_new_z);
 	g_new_z.x += g_float_parameter->x;
 	g_new_z.y += g_float_parameter->y;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int marks_mandel_power_orbit()
@@ -2142,7 +2138,7 @@ int marks_mandel_power_orbit()
 	LCMPLXmult(g_tmp_z_l, g_new_z_l, g_new_z_l);
 	g_new_z_l.x += g_long_parameter->x;
 	g_new_z_l.y += g_long_parameter->y;
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -2161,7 +2157,7 @@ int tims_error_orbit_fp()
 	g_new_z.y = g_new_z.x*g_temp_z.y - g_new_z.y*g_temp_z.x;
 	g_new_z.x += g_float_parameter->x;
 	g_new_z.y += g_float_parameter->y;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 int tims_error_orbit()
@@ -2172,7 +2168,7 @@ int tims_error_orbit()
 	g_new_z_l.y = multiply(g_new_z_l.x, g_tmp_z_l.y, g_bit_shift)-multiply(g_new_z_l.y, g_tmp_z_l.x, g_bit_shift);
 	g_new_z_l.x += g_long_parameter->x;
 	g_new_z_l.y += g_long_parameter->y;
-	return g_bail_out_l();
+	return g_externs.BailOutL();
 #else
 	return 0;
 #endif
@@ -2826,7 +2822,7 @@ int volterra_lotka_orbit_fp()
 	double ab = a*b;
 	g_new_z.x = g_old_z.x + half*(u + (a - ab));
 	g_new_z.y = g_old_z.y + half*(w + (-b + ab));
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 // Science of Fractal Images pp. 185, 187 
@@ -2855,7 +2851,7 @@ int escher_orbit_fp()
 	}
 	if (testsize > g_rq_limit) // point not in target set  
 	{
-		return g_bail_out_fp();
+		return g_externs.BailOutFp();
 	}
 	else // make distinct level sets if point stayed in target set 
 	{
@@ -2993,7 +2989,7 @@ int mandelbrot_mix4_orbit_fp() // from formula by Jim Muth
 	CMPLXpwr(g_old_z, s_mandelmix4_f, z_f);     // (z^f)     
 	g_new_z.x = s_mandelmix4_k.x*s_mandelmix4_a.x*z_b.x + s_mandelmix4_k.x*s_mandelmix4_d.x*z_f.x + s_mandelmix4_c.x;
 	g_new_z.y = s_mandelmix4_k.x*s_mandelmix4_a.x*z_b.y + s_mandelmix4_k.x*s_mandelmix4_d.x*z_f.y + s_mandelmix4_c.y;
-	return g_bail_out_fp();
+	return g_externs.BailOutFp();
 }
 
 //

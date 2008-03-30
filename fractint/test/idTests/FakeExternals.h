@@ -47,13 +47,13 @@ public:
 	virtual void SetBadOutside(bool value)			{ throw not_implemented("SetBadOutside"); }
 	virtual long BailOut() const					{ throw not_implemented("BailOut"); }
 	virtual void SetBailOut(long value)				{ throw not_implemented("SetBailOut"); }
-	virtual BailOutFunction *BailOutFp() const		{ throw not_implemented("BailOutFp"); }
+	virtual int BailOutFp()							{ throw not_implemented("BailOutFp"); }
 	virtual void SetBailOutFp(BailOutFunction *value) { throw not_implemented("SetBailOutFp"); }
-	virtual BailOutFunction *BailOutL() const		{ throw not_implemented("BailOutL"); }
+	virtual int BailOutL()							{ throw not_implemented("BailOutL"); }
 	virtual void SetBailOutL(BailOutFunction *value) { throw not_implemented("SetBailOutL"); }
-	virtual BailOutFunction *BailOutBf() const		{ throw not_implemented("BailOutBf"); }
+	virtual int BailOutBf()							{ throw not_implemented("BailOutBf"); }
 	virtual void SetBailOutBf(BailOutFunction *value) { throw not_implemented("SetBailOutBf"); }
-	virtual BailOutFunction *BailOutBn() const		{ throw not_implemented("BailOutBn"); }
+	virtual int BailOutBn()							{ throw not_implemented("BailOutBn"); }
 	virtual void SetBailOutBn(BailOutFunction *value) { throw not_implemented("SetBailOutBn"); }
 	virtual BailOutType BailOutTest() const			{ throw not_implemented("BailOutTest"); }
 	virtual void SetBailOutTest(BailOutType value)	{ throw not_implemented("SetBailOutTest"); }

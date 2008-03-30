@@ -471,10 +471,10 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 
 	g_old_demm_colors = false;
 	g_externs.SetBailOutTest(BAILOUT_MODULUS);
-	g_bail_out_fp = bail_out_mod_fp;
-	g_bail_out_l = bail_out_mod_l;
-	g_bail_out_bn = bail_out_mod_bn;
-	g_bail_out_bf = bail_out_mod_bf;
+	g_externs.SetBailOutFp(bail_out_mod_fp);
+	g_externs.SetBailOutL(bail_out_mod_l);
+	g_externs.SetBailOutBn(bail_out_mod_bn);
+	g_externs.SetBailOutBf(bail_out_mod_bf);
 
 	
 	g_function_preloaded = false;							// old bifurcation function support 
