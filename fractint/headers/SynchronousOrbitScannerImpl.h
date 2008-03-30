@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(SYCHRONOUS_ORBIT_SCANNER_IMPL_H)
+#define SYCHRONOUS_ORBIT_SCANNER_IMPL_H
 
 #include "calcfrac.h"
 
@@ -18,3 +19,5 @@ private:
 	void soi_double();
 	void soi_long_double();
 };
+
+#endif

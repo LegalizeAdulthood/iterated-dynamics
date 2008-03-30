@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(COLORMAP_TABLE_H)
+#define COLORMAP_TABLE_H
 
 class ColormapTable
 {
@@ -87,3 +88,5 @@ inline bool operator!=(const ColormapTable &lhs, const ColormapTable &rhs)
 {
 	return !(lhs == rhs);
 }
+
+#endif

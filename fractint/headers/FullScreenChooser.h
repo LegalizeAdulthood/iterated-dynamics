@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FULL_SCREEN_CHOOSER_H)
+#define FULL_SCREEN_CHOOSER_H
 
 #include <string>
 #include "drivers.h"
@@ -85,3 +86,5 @@ extern int full_screen_choice_help(int help_mode, int options,
 	void (*format_item)(int, char *),
 	char *speed_string, int (*speed_prompt)(int, int, int, char *, int),
 	int (*check_keystroke)(int, int));
+
+#endif

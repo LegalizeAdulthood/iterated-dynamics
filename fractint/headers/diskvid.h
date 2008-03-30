@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(DISK_VID_H)
+#define DISK_VID_H
 
 extern int disk_start_potential();
 extern int disk_start_targa(FILE *, int);
@@ -13,3 +14,5 @@ extern void disk_video_status(int line, const std::string &str);
 extern int  disk_start_common(long, long, int);
 extern int disk_from_memory(long, int, void *);
 extern int disk_to_memory(long, int, void *);
+
+#endif

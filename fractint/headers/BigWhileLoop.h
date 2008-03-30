@@ -1,4 +1,6 @@
-#pragma once
+#if !defined(BIG_WHILE_LOOP_H)
+#define BIG_WHILE_LOOP_H
+
 #include <cstdlib>
 #include "port.h"
 #include "id.h"
@@ -74,3 +76,5 @@ public:
 };
 
 extern ApplicationStateType big_while_loop(bool &keyboardMore, bool &screenStacked, bool resumeFlag);
+
+#endif

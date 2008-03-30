@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(GLOBALS_H)
+#define GLOBALS_H
 
 #include "id.h"
 #include "ColormapTable.h"
@@ -56,3 +57,5 @@ public:
 };
 
 extern IGlobals &g_;
+
+#endif

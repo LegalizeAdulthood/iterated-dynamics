@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(D_WIN32_H)
+#define D_WIN32_H
 
 #define WIN32_MAXSCREENS 10
 
@@ -89,3 +90,5 @@ private:
 	long m_last;
 	static const long m_frames_per_second = 10;
 };
+
+#endif

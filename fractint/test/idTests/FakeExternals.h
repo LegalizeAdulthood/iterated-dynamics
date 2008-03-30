@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FAKE_EXTERNALS_H)
+#define FAKE_EXTERNALS_H
 
 #include <boost/filesystem/path.hpp>
 
@@ -871,3 +872,5 @@ private:
 	bool _zoomOffCalled;
 	bool _zoomOffFakeResult;
 };
+
+#endif

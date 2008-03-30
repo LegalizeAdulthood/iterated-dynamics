@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(DIFFUSION_SCAN_H)
+#define DIFFUSION_SCAN_H
 
 #include "calcfrac.h"
 
@@ -14,3 +15,5 @@ protected:
 };
 
 extern DiffusionScan &g_diffusionScan;
+
+#endif

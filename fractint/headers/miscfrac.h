@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(MISC_FRAC_H)
+#define MISC_FRAC_H
 
 extern int bifurcation();
 extern int bifurcation_lambda();
@@ -21,3 +22,5 @@ extern bool lyapunov_setup();
 extern int cellular();
 extern bool cellular_setup();
 extern std::string precision_format(const char *specifier, int precision);
+
+#endif

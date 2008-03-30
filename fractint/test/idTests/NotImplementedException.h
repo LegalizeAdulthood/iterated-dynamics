@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(NOT_IMPLEMENTED_EXCEPTION_H)
+#define NOT_IMPLEMENTED_EXCEPTION_H
 
 #include <stdexcept>
 
@@ -15,3 +16,5 @@ public:
 	{
 	}
 };
+
+#endif

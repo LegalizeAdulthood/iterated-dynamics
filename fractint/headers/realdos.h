@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(REAL_DOS_H)
+#define REAL_DOS_H
 
 #include "StopMessage.h"
 #include "strncasecmp.h"
@@ -20,3 +21,5 @@ extern int check_video_mode_key(int key);
 extern int check_vidmode_keyname(char const *name);
 extern void free_temp_message();
 extern void load_video_table(int);
+
+#endif

@@ -1,4 +1,6 @@
-#pragma once
+#if !defined(CMPLX_H)
+#define CMPLX_H
+
 // various complex number defs
 
 #include "id.h"
@@ -82,3 +84,5 @@ inline void LCMPLXconj(ComplexL &z)
 {
 	z.imag(-z.imag());
 }
+
+#endif

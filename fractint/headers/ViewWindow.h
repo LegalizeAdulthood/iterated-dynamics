@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(VIEW_WINDOW_H)
+#define VIEW_WINDOW_H
 
 #include "CommandParser.h"
 
@@ -32,3 +33,5 @@ public:
 };
 
 extern ViewWindow &g_viewWindow;
+
+#endif

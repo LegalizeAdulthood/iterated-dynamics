@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FAKE_ZOOM_BOX_H)
+#define FAKE_ZOOM_BOX_H
 
 #include "ZoomBox.h"
 #include "NotImplementedException.h"
@@ -32,3 +33,5 @@ private:
 	bool _setCountCalled;
 	int _setCountLastValue;
 };
+
+#endif

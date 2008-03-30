@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(CMD_FILES_H)
+#define CMD_FILES_H
 
 #include <boost/filesystem.hpp>
 
@@ -75,3 +76,5 @@ extern int process_command(char *curarg, int mode);
 extern int get_power_10(LDBL x);
 extern void pause_error(int);
 extern CommandResultType bad_arg(const char *curarg);
+
+#endif

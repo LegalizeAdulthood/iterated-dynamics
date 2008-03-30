@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FAKE_BIG_WHILE_LOOP_APPLICATION_H)
+#define FAKE_BIG_WHILE_LOOP_APPLICATION_H
 
 class FakeBigWhileLoopApplication : public IBigWhileLoopApplication
 {
@@ -89,3 +90,5 @@ private:
 	bool _mainMenuSwitchLastScreenStacked;
 	ApplicationStateType _mainMenuSwitchFakeResult;
 };
+
+#endif
