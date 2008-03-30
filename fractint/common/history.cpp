@@ -91,7 +91,7 @@ struct HISTORY_ITEM
 	double dparm9;
 	double dparm10;
 	long bail_out;
-	bailouts bail_out_test;
+	BailOutType bail_out_test;
 	long iterations;
 	int bf_math;
 	int bflength;
@@ -363,8 +363,8 @@ void history_save_info()
 	current.max_fn = g_formula_state.max_fn();
 	current.major_method = g_major_method;
 	current.minor_method = g_minor_method;
-	current.bail_out = g_bail_out;
-	current.bail_out_test = g_bail_out_test;
+	current.bail_out = g_externs.BailOut();
+	current.bail_out_test = g_externs.BailOutTest();
 	current.iterations = g_max_iteration;
 	current.old_demm_colors = g_old_demm_colors;
 	current.log_dynamic_calculate = g_log_dynamic_calculate;
@@ -540,8 +540,8 @@ void history_restore_info()
 	g_formula_state.set_max_fn(int(last.max_fn));
 	g_major_method = MajorMethodType(last.major_method);
 	g_minor_method = MinorMethodType(last.minor_method);
-	g_bail_out = last.bail_out;
-	g_bail_out_test = (enum bailouts) last.bail_out_test;
+	g_externs.SetBailOut(last.bail_out);
+	g_externs.SetBailOutTest(BailOutType(last.bail_out_test));
 	g_max_iteration = last.iterations;
 	g_old_demm_colors = last.old_demm_colors;
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];

@@ -18,7 +18,7 @@ extern int get_fractal_parameters(bool type_specific);
 extern int get_fractal_3d_parameters();
 extern int get_3d_parameters();
 extern int prompt_value_string(char *buf, full_screen_values *val);
-extern void set_bail_out_formula(enum bailouts);
+extern void set_bail_out_formula(BailOutType value);
 extern int find_extra_parameter(int);
 extern void load_parameters(int g_fractal_type);
 extern int check_orbit_name(char *);

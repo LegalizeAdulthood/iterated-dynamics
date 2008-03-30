@@ -9,10 +9,11 @@
 #include "fractype.h"
 #include "externs.h"
 #include "drivers.h"
-#include "calcmand.h"
-#include "prompts2.h"
 
+#include "calcmand.h"
+#include "Externals.h"
 #include "MathUtil.h"
+#include "prompts2.h"
 
 #define FUDGE_FACTOR_BITS 29
 #define FUDGE_FACTOR ((1L << FUDGE_FACTOR_BITS)-1)
@@ -20,8 +21,6 @@
 
 #define KEYPRESSDELAY 32767
 #define ABS(x) ((x) < 0?-(x):(x))
-
-extern int g_atan_colors;
 
 static int inside_color;
 static int periodicity_color;
@@ -175,7 +174,7 @@ static long cdecl calculate_mandelbrot_asm1()
 				}
 				else if (g_outside == COLORMODE_INVERSE_TANGENT)
 				{
-					g_color_iter = (long) fabs(atan2(double(g_new_z_l.y), double(g_new_z_l.x))*g_atan_colors/MathUtil::Pi);
+					g_color_iter = (long) fabs(atan2(double(g_new_z_l.y), double(g_new_z_l.x))*g_externs.AtanColors()/MathUtil::Pi);
 				}
 				// check_color 
 				if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != COLORMODE_FLOAT_MODULUS)

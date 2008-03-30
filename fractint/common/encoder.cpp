@@ -868,7 +868,7 @@ static void setup_save_info(fractal_info *save_info)
 			127 : g_externs.StandardCalculationMode());
 	save_info->distestold = (g_distance_test <= 32000) ? short(g_distance_test) : 32000;
 	save_info->float_flag = g_float_flag ? 1 : 0;
-	save_info->bailoutold = (g_bail_out >= 4 && g_bail_out <= 32000) ? short(g_bail_out) : 0;
+	save_info->bailoutold = (g_externs.BailOut() >= 4 && g_externs.BailOut() <= 32000) ? short(g_externs.BailOut()) : 0;
 
 	save_info->calculation_time = g_calculation_time;
 	save_info->function_index[0] = BYTE(g_function_index[0]);
@@ -910,8 +910,8 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->juli3Dmode = short(g_juli_3d_mode);
 	save_info->max_fn = char(g_formula_state.max_fn());
 	save_info->inversejulia = short((g_major_method << 8) + g_minor_method);      // MVS 
-	save_info->bail_out = g_bail_out;
-	save_info->bailoutest = short(g_bail_out_test);
+	save_info->bail_out = g_externs.BailOut();
+	save_info->bailoutest = short(g_externs.BailOutTest());
 	save_info->iterations = g_max_iteration;
 	save_info->bflength = short(g_bn_length);
 	save_info->bf_math = short(g_bf_math);

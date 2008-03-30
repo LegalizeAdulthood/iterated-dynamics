@@ -23,21 +23,32 @@ public:
 		_useInitialOrbitZ(INITIALZ_NONE),
 		_standardCalculationMode(CALCMODE_SOLID_GUESS),
 		_tabStatus(TAB_STATUS_NONE),
-		_aspectDrift(DEFAULT_ASPECT_DRIFT)
+		_aspectDrift(DEFAULT_ASPECT_DRIFT),
+		_atanColors(180),
+		_autoStereoWidth(10.0),
+		_badOutside(false),
+		_bailOut(0),
+		_bailOutTest(),
+		_basin(0)
 	{ }
 	virtual ~ExternalsImpl() { }
 
 	virtual float AspectDrift() const							{ return _aspectDrift; }
 	virtual void SetAspectDrift(float value)					{ _aspectDrift = value; }
-	virtual int AtanColors() const								{ return g_atan_colors; }
-	virtual void SetAtanColors(int value)						{ g_atan_colors = value; }
-	virtual double AutoStereoWidth() const						{ return g_auto_stereo_width; }
-	virtual void SetAutoStereoWidth(double value)				{ g_auto_stereo_width = value; }
-	virtual bool BadOutside() const								{ return g_bad_outside; }
-	virtual void SetBadOutside(bool value)						{ g_bad_outside = value; }
 
-	virtual long BailOut() const								{ return g_bail_out; }
-	virtual void SetBailOut(long value)							{ g_bail_out = value; }
+	// outside=atan
+	virtual int AtanColors() const								{ return _atanColors; }
+	virtual void SetAtanColors(int value)						{ _atanColors = value; }
+
+	// used for stereo output
+	virtual double AutoStereoWidth() const						{ return _autoStereoWidth; }
+	virtual void SetAutoStereoWidth(double value)				{ _autoStereoWidth = value; }
+
+	virtual bool BadOutside() const								{ return _badOutside; }
+	virtual void SetBadOutside(bool value)						{ _badOutside = value; }
+
+	virtual long BailOut() const								{ return _bailOut; }
+	virtual void SetBailOut(long value)							{ _bailOut = value; }
 	virtual BailOutFunction *BailOutFp() const					{ return g_bail_out_fp; }
 	virtual void SetBailOutFp(BailOutFunction *value)			{ g_bail_out_fp = value; }
 	virtual BailOutFunction *BailOutL() const					{ return g_bail_out_l; }
@@ -46,11 +57,13 @@ public:
 	virtual void SetBailOutBf(BailOutFunction *value)			{ g_bail_out_bf = value; }
 	virtual BailOutFunction *BailOutBn() const					{ return g_bail_out_bn; }
 	virtual void SetBailOutBn(BailOutFunction *value)			{ g_bail_out_bn = value; }
-	virtual enum bailouts BailOutTest() const					{ return g_bail_out_test; }
-	virtual void SetBailOutTest(bailouts value)					{ g_bail_out_test = value; }
+	virtual BailOutType BailOutTest() const						{ return _bailOutTest; }
+	virtual void SetBailOutTest(BailOutType value)				{ _bailOutTest = value; }
 
-	virtual int Basin() const									{ return g_basin; }
-	virtual void SetBasin(int value)							{ g_basin = value; }
+	// used only for newton types
+	virtual int Basin() const									{ return _basin; }
+	virtual void SetBasin(int value)							{ _basin = value; }
+
 	virtual int BfSaveLen() const								{ return g_bf_save_len; }
 	virtual void SetBfSaveLen(int value)						{ g_bf_save_len = value; }
 	virtual int BfDigits() const								{ return g_bf_digits; }
@@ -799,6 +812,12 @@ private:
 			  // 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan 
               // 6 for orbits
 	float _aspectDrift; // how much drift is allowed and still forced to g_screen_aspect_ratio  
+	int _atanColors;
+	double _autoStereoWidth;
+	bool _badOutside;
+	long _bailOut;
+	BailOutType _bailOutTest;
+	int _basin;
 };
 
 static ExternalsImpl s_externs;

@@ -16,6 +16,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "encoder.h"
+#include "Externals.h"
 #include "fihelp.h"
 #include "filesystem.h"
 #include "gifview.h"
@@ -29,7 +30,6 @@
 
 std::string g_stereo_map_name = "";
 static int s_auto_stereo_depth = 100;
-double g_auto_stereo_width = 10;
 bool g_grayscale_depth = false; // flag to use gray value rather than color number 
 static StereogramCalibrateType s_stereogram_calibrate = CALIBRATE_MIDDLE;	// add calibration bars to image 
 static bool s_image_map = false;
@@ -221,7 +221,7 @@ int auto_stereo()
 	}
 
 	// empircally determined adjustment to make s_width scale correctly 
-	s_width = g_auto_stereo_width*.67;
+	s_width = g_externs.AutoStereoWidth()*.67;
 	if (s_width < 1)
 	{
 		s_width = 1;
@@ -348,7 +348,7 @@ int get_random_dot_stereogram_parameters()
 	{
 		UIChoices dialog(FIHELP_RANDOM_DOT_STEREOGRAM, "Random Dot Stereogram Parameters", 0);
 		dialog.push("Depth Effect (negative reverses front and back)", s_auto_stereo_depth);
-		dialog.push("Image width in inches", g_auto_stereo_width);
+		dialog.push("Image width in inches", g_externs.AutoStereoWidth());
 		dialog.push("Use grayscale value for depth? (if \"no\" uses color number)", g_grayscale_depth);
 		dialog.push("Calibration bars", stereobars, NUM_OF(stereobars), s_stereogram_calibrate);
 		dialog.push("Use image map? (if \"no\" uses random dots)", s_image_map);
@@ -379,7 +379,7 @@ int get_random_dot_stereogram_parameters()
 		{
 			int k = 0;
 			s_auto_stereo_depth = dialog.values(k++).uval.ival;
-			g_auto_stereo_width = dialog.values(k++).uval.dval;
+			g_externs.SetAutoStereoWidth(dialog.values(k++).uval.dval);
 			g_grayscale_depth = (dialog.values(k++).uval.ch.val != 0);
 			s_stereogram_calibrate = StereogramCalibrateType(dialog.values(k++).uval.ch.val);
 			s_image_map = (dialog.values(k++).uval.ch.val != 0);

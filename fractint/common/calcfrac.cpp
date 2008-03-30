@@ -151,7 +151,6 @@ BYTE g_stack[4096];              // common temp, two put_line calls
 // For periodicity testing, only in standard_fractal() 
 int g_next_saved_incr;
 int g_first_saved_and;
-int g_atan_colors = 180;
 long (*g_calculate_mandelbrot_asm_fp)();
 
 int g_ix_start;
@@ -205,7 +204,7 @@ static OrbitScanner s_orbitScanner;
 static double fmod_test()
 {
 	double result;
-	switch (g_bail_out_test)
+	switch (g_externs.BailOutTest())
 	{
 	case BAILOUT_MODULUS:
 		result = (g_magnitude == 0.0 || !g_no_magnitude_calculation || g_integer_fractal) ?
@@ -529,7 +528,7 @@ int calculate_fractal()
 	g_math_error_count = 0;
 	g_num_attractors = 0;          // default to no known finite attractors  
 	g_display_3d = DISPLAY3D_NONE;
-	g_basin = 0;
+	g_externs.SetBasin(0);
 	// added yet another level of indirection to g_plot_color_put_color!!! TW 
 	g_plot_color_put_color = putcolor_a;
 	if (g_is_true_color && g_true_mode_iterates)
@@ -665,7 +664,7 @@ int calculate_fractal()
 	}
 	g_magnitude_limit = 4L << g_bit_shift;                 // CALCMAND magnitude limit 
 
-	g_atan_colors = g_colors;
+	g_externs.SetAtanColors(g_colors);
 
 	// orbit stuff 
 	g_show_orbit = g_start_show_orbit;
@@ -789,7 +788,8 @@ int calculate_fractal()
 	}
 	else // standard escape-time engine 
 	{
-		if (g_externs.StandardCalculationMode() == CALCMODE_TRIPLE_PASS)  // convoluted 'g' + '2' hybrid 
+		// convoluted solid guessing plus two-pass ('g' + '2') hybrid
+		if (g_externs.StandardCalculationMode() == CALCMODE_TRIPLE_PASS)
 		{
 			CalculationMode oldcalcmode = g_externs.StandardCalculationMode();
 			if (!g_resuming || g_three_pass)
@@ -2071,7 +2071,7 @@ void StandardFractal::outside_colormode_sum_final()
 }
 void StandardFractal::outside_colormode_inverse_tangent_final()
 {
-	g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi));
+	g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_externs.AtanColors()/MathUtil::Pi));
 }
 void StandardFractal::outside_colormode_float_modulus_final()
 {
@@ -2232,7 +2232,7 @@ void StandardFractal::inside_colormode_inverse_tangent_final()
 	{
 		g_new_z = ComplexFudgeToDouble(g_new_z_l);
 	}
-	g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi));
+	g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_externs.AtanColors()/MathUtil::Pi));
 }
 void StandardFractal::inside_colormode_float_modulus_final()
 {
@@ -2989,7 +2989,7 @@ static void set_symmetry(int symmetry, bool use_list) // set up proper symmetric
 			|| g_outside == COLORMODE_FLOAT_MODULUS
 			|| g_outside == COLORMODE_TOTAL_DISTANCE
 			|| g_inside == COLORMODE_FLOAT_MODULUS_INTEGER
-			|| g_bail_out_test == BAILOUT_MANHATTAN_R)
+			|| g_externs.BailOutTest() == BAILOUT_MANHATTAN_R)
 	{
 		return;
 	}
@@ -3116,7 +3116,7 @@ xsym:
 	case SYMMETRY_X_AXIS:
 		if (x_symmetry_split(xaxis_row, xaxis_between) == 0)
 		{
-			g_plot_color = g_basin ? plot_color_symmetry_x_axis_basin : plot_color_symmetry_x_axis;
+			g_plot_color = g_externs.Basin() ? plot_color_symmetry_x_axis_basin : plot_color_symmetry_x_axis;
 		}
 		break;
 	case SYMMETRY_Y_AXIS_NO_PARAMETER:
@@ -3141,10 +3141,10 @@ xsym:
 		switch (g_work_sym & 3)
 		{
 		case SYMMETRY_X_AXIS: // just xaxis symmetry 
-			g_plot_color = g_basin ? plot_color_symmetry_x_axis_basin : plot_color_symmetry_x_axis;
+			g_plot_color = g_externs.Basin() ? plot_color_symmetry_x_axis_basin : plot_color_symmetry_x_axis;
 			break;
 		case SYMMETRY_Y_AXIS: // just yaxis symmetry 
-			if (g_basin) // got no routine for this case 
+			if (g_externs.Basin()) // got no routine for this case 
 			{
 				g_x_stop = g_WorkList.xx_stop(); // fix what split should not have done 
 				g_symmetry = SYMMETRY_X_AXIS;
@@ -3155,7 +3155,7 @@ xsym:
 			}
 			break;
 		case SYMMETRY_XY_AXIS:
-			g_plot_color = g_basin ? plot_color_symmetry_xy_axis_basin : plot_color_symmetry_xy_axis;
+			g_plot_color = g_externs.Basin() ? plot_color_symmetry_xy_axis_basin : plot_color_symmetry_xy_axis;
 		}
 		break;
 	case SYMMETRY_ORIGIN_NO_PARAMETER:
@@ -3473,11 +3473,16 @@ static void plot_color_symmetry_xy_axis(int x, int y, int color)
 	}
 }
 
+static int Stripe(int color)
+{
+	return (g_externs.Basin() == 2 && color > 8) ? 8 : 0;
+}
+
 // Symmetry plot for X Axis Symmetry - Striped Newtbasin version 
 static void plot_color_symmetry_x_axis_basin(int x, int y, int color)
 {
 	g_plot_color_put_color(x, y, color);
-	int stripe = (g_basin == 2 && color > 8) ? 8 : 0;
+	int stripe = Stripe(color);
 	int i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
 	if (i > g_y_stop && i < g_y_dots)
 	{
@@ -3496,7 +3501,7 @@ static void plot_color_symmetry_xy_axis_basin(int x, int y, int color)
 		plot_color_symmetry_xy_axis(x, y, color);
 		return;
 	}
-	int stripe = (g_basin == 2 && color > 8) ? 8 : 0;
+	int stripe = Stripe(color);
 	color -= stripe;               // reconstruct unstriped color 
 	int color1 = (color < g_degree/2 + 2) ?
 		(g_degree/2 + 2 - color) : (g_degree/2 + g_degree + 2 - color);

@@ -1083,35 +1083,35 @@ static void write_batch_parms_max_iteration()
 
 static void write_batch_parms_bail_out()
 {
-	if (g_bail_out && (!g_potential_flag || g_potential_parameter[2] == 0.0))
+	if (g_externs.BailOut() && (!g_potential_flag || g_potential_parameter[2] == 0.0))
 	{
-		put_parm(format(" bailout=%ld") % g_bail_out);
+		put_parm(format(" bailout=%ld") % g_externs.BailOut());
 	}
 
-	if (g_bail_out_test != BAILOUT_MODULUS)
+	if (g_externs.BailOutTest() != BAILOUT_MODULUS)
 	{
 		put_parm(" bailoutest=");
-		if (g_bail_out_test == BAILOUT_REAL)
+		if (g_externs.BailOutTest() == BAILOUT_REAL)
 		{
 			put_parm("real");
 		}
-		else if (g_bail_out_test == BAILOUT_IMAGINARY)
+		else if (g_externs.BailOutTest() == BAILOUT_IMAGINARY)
 		{
 			put_parm("imag");
 		}
-		else if (g_bail_out_test == BAILOUT_OR)
+		else if (g_externs.BailOutTest() == BAILOUT_OR)
 		{
 			put_parm("or");
 		}
-		else if (g_bail_out_test == BAILOUT_AND)
+		else if (g_externs.BailOutTest() == BAILOUT_AND)
 		{
 			put_parm("and");
 		}
-		else if (g_bail_out_test == BAILOUT_MANHATTAN)
+		else if (g_externs.BailOutTest() == BAILOUT_MANHATTAN)
 		{
 			put_parm("manh");
 		}
-		else if (g_bail_out_test == BAILOUT_MANHATTAN_R)
+		else if (g_externs.BailOutTest() == BAILOUT_MANHATTAN_R)
 		{
 			put_parm("manr");
 		}

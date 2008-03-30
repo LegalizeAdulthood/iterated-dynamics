@@ -10,6 +10,7 @@
 
 #include "calcfrac.h"
 #include "evolve.h"
+#include "Externals.h"
 #include "fihelp.h"
 #include "fractalp.h"
 #include "history.h"
@@ -135,7 +136,7 @@ GENEBASE g_genes[NUM_GENES] =
 	{ &g_function_index[1],	vary_function,		0, "trig fn 2", 5 },
 	{ &g_function_index[2],	vary_function,		0, "trig fn 3", 5 },
 	{ &g_function_index[3],	vary_function,		0, "trig fn 4", 5 },
-	{ &g_bail_out_test,		vary_bail_out_test,	0, "bailout test", 6 }
+	{ 0,					vary_bail_out_test,	0, "bailout test", 6 }
 };
 
 void restore_parameter_history()
@@ -153,7 +154,7 @@ void restore_parameter_history()
 	std::copy(&s_old_history.function_index[0],
 		&s_old_history.function_index[NUM_FUNCTION_INDEX],
 		&g_function_index[0]);
-	g_bail_out_test = (bailouts) s_old_history.bailoutest;
+	g_externs.SetBailOutTest(BailOutType(s_old_history.bailoutest));
 }
 
 void save_parameter_history()
@@ -170,7 +171,7 @@ void save_parameter_history()
 	std::copy(&g_function_index[0],
 		&g_function_index[NUM_FUNCTION_INDEX],
 		&s_old_history.function_index[0]);
-	s_old_history.bailoutest = g_bail_out_test;
+	s_old_history.bailoutest = g_externs.BailOutTest();
 }
 
 static void vary_double(GENEBASE gene[], int randval, int i) // routine to vary doubles 
@@ -293,7 +294,7 @@ static void vary_outside(GENEBASE gene[], int randval, int i)
 
 static void vary_bail_out_test(GENEBASE gene[], int randval, int i)
 {
-	int choices[7] =
+	BailOutType choices[7] =
 	{
 		BAILOUT_MODULUS,
 		BAILOUT_REAL,
@@ -305,9 +306,9 @@ static void vary_bail_out_test(GENEBASE gene[], int randval, int i)
 	};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 7, gene[i].mutate)];
+		g_externs.SetBailOutTest(choices[wrapped_positive_vary_int(randval, 7, gene[i].mutate)]);
 		// move this next bit to varybot where it belongs 
-		set_bail_out_formula(g_bail_out_test);
+		set_bail_out_formula(g_externs.BailOutTest());
 	}
 	return;
 }

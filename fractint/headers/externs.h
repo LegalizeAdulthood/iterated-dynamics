@@ -6,16 +6,10 @@
 #include "UserInterfaceState.h"
 
 // keep var names in column 30 for sorting via sort /+30 <in >out 
-extern int					g_atan_colors;
-extern double				g_auto_stereo_width;
-extern bool					g_bad_outside;
-extern long					g_bail_out;
 extern int					(*g_bail_out_fp)();
 extern int					(*g_bail_out_l)();
 extern int					(*g_bail_out_bn)();
 extern int					(*g_bail_out_bf)();
-extern enum bailouts		g_bail_out_test;
-extern int					g_basin;
 extern int					g_bf_save_len;
 extern int					g_bf_digits;
 extern int					g_biomorph;

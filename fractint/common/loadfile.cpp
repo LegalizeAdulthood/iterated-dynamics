@@ -60,7 +60,6 @@ int g_file_colors = 0;
 float g_file_aspect_ratio = 0.0;
 int g_skip_x_dots = 0;
 int g_skip_y_dots = 0;      // for decoder, when reducing image 
-bool g_bad_outside = false;
 bool g_use_old_complex_power = false;
 
 static void read_info_version_0(const fractal_info &read_info)
@@ -161,7 +160,7 @@ static void read_info_version_3(const fractal_info &read_info)
 		}
 		g_user_distance_test = read_info.distestold;
 		g_user_float_flag = (read_info.float_flag != 0);
-		g_bail_out = read_info.bailoutold;
+		g_externs.SetBailOut(read_info.bailoutold);
 		g_calculation_time = read_info.calculation_time;
 		g_function_index[0] = read_info.function_index[0];
 		g_function_index[1] = read_info.function_index[1];
@@ -300,7 +299,7 @@ static void read_info_pre_version_15(const fractal_info &read_info)
 		}
 		if (g_decomposition[0] > 0 && g_decomposition[1] > 0)
 		{
-			g_bail_out = g_decomposition[1];
+			g_externs.SetBailOut(g_decomposition[1]);
 		}
 	}
 
@@ -350,14 +349,14 @@ static void read_info_version_9(const fractal_info &read_info)
 	// TODO: handle old crap or abort?
 	if (read_info.version > 9)
 	{ // post-version 18.22 
-		g_bail_out = read_info.bail_out; // use long bailout 
-		g_bail_out_test = (enum bailouts) read_info.bailoutest;
+		g_externs.SetBailOut(read_info.bail_out); // use long bailout 
+		g_externs.SetBailOutTest(BailOutType(read_info.bailoutest));
 	}
 	else
 	{
-		g_bail_out_test = BAILOUT_MODULUS;
+		g_externs.SetBailOutTest(BAILOUT_MODULUS);
 	}
-	set_bail_out_formula(g_bail_out_test);
+	set_bail_out_formula(g_externs.BailOutTest());
 	if (read_info.version > 9)
 	{
 		// post-version 18.23 
@@ -1383,15 +1382,12 @@ void backwards_v18()
 	{
 		set_if_old_bif(); // old bifurcations need function set 
 	}
-	if (g_fractal_type == FRACTYPE_MANDELBROT_FUNC && g_user_float_flag
-		&& g_save_release < 1800 && g_bail_out == 0)
+	if (g_user_float_flag
+		&& (g_save_release < 1800)
+		&& (g_externs.BailOut() == 0)
+		&& ((g_fractal_type == FRACTYPE_MANDELBROT_FUNC) || (g_fractal_type == FRACTYPE_LAMBDA_FUNC)))
 	{
-		g_bail_out = 2500;
-	}
-	if (g_fractal_type == FRACTYPE_LAMBDA_FUNC && g_user_float_flag
-		&& g_save_release < 1800 && g_bail_out == 0)
-	{
-		g_bail_out = 2500;
+		g_externs.SetBailOut(2500);
 	}
 }
 
@@ -1433,13 +1429,15 @@ void backwards_v19()
 void backwards_v20()
 {
 	// Fractype == FP type is not seen from PAR file ????? 
-	// TODO: g_bad_outside is a compatability flag with buggy old code,
-	// but the current code doesn't emulate the buggy behavior.
-	// See calmanfp.asm and calmanfp5.asm in the DOS code.
-	g_bad_outside = ((fractal_type_mandelbrot(g_fractal_type) || fractal_type_julia(g_fractal_type))
-					&& (g_outside <= COLORMODE_REAL && g_outside >= COLORMODE_SUM) && g_save_release <= 1960);
+	// TODO: BadOutside is a compatability flag with buggy old code,
+	// TODO: but the current code doesn't emulate the buggy behavior.
+	// TODO: See calmanfp.asm and calmanfp5.asm in the DOS code.
+	g_externs.SetBadOutside((fractal_type_mandelbrot(g_fractal_type) || fractal_type_julia(g_fractal_type))
+		&& g_outside <= COLORMODE_REAL
+		&& g_outside >= COLORMODE_SUM
+		&& g_save_release <= 1960);
 	g_use_old_complex_power = (fractal_type_formula(g_fractal_type)
-				&& (g_save_release < 1900 || DEBUGMODE_OLD_POWER == g_debug_mode));
+		&& (g_save_release < 1900 || DEBUGMODE_OLD_POWER == g_debug_mode));
 	if (g_inside == COLORMODE_EPSILON_CROSS && g_save_release < 1961)
 	{
 		g_proximity = 0.01;

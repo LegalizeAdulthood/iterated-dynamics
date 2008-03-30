@@ -94,8 +94,6 @@ int     g_save_time;							// autosave minutes
 ComplexD  g_initial_orbit_z;					// initial orbitvalue 
 int     g_initial_cycle_limit;					// initial cycle limit      
 bool g_use_center_mag;							// use center-mag corners   
-long    g_bail_out;								// user input bailout value 
-enum bailouts g_bail_out_test;					// test used for determining bailout 
 double  g_inversion[NUM_INVERSION];				// radius, xcenter, ycenter 
 int g_rotate_lo;
 int g_rotate_hi;								// cycling color range      
@@ -414,7 +412,7 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	s_initial_corners = false;
 	s_initial_parameters = false;
-	g_bail_out = 0;											// no user-entered bailout 
+	g_externs.SetBailOut(0);											// no user-entered bailout 
 	g_beauty_of_fractals = true;							// use normal bof initialization to make bof images 
 	g_externs.SetUseInitialOrbitZ(INITIALZ_NONE);
 	for (i = 0; i < MAX_PARAMETERS; i++)
@@ -475,7 +473,7 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	g_overlay_3d = false;									// 3D overlay is off        
 
 	g_old_demm_colors = false;
-	g_bail_out_test = BAILOUT_MODULUS;
+	g_externs.SetBailOutTest(BAILOUT_MODULUS);
 	g_bail_out_fp = bail_out_mod_fp;
 	g_bail_out_l = bail_out_mod_l;
 	g_bail_out_bn = bail_out_mod_bn;
@@ -2066,7 +2064,7 @@ static int bail_out_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_bail_out = long(context.floatval[0]);
+	g_externs.SetBailOut(long(context.floatval[0]));
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
 
@@ -2085,8 +2083,8 @@ static int bail_out_test_arg(const cmd_context &context)
 	int value;
 	if (named_value(args, NUM_OF(args), context.value, &value))
 	{
-		g_bail_out_test = (enum bailouts) value;
-		set_bail_out_formula(g_bail_out_test);
+		g_externs.SetBailOutTest(BailOutType(value));
+		set_bail_out_formula(g_externs.BailOutTest());
 		return COMMANDRESULT_FRACTAL_PARAMETER;
 	}
 
@@ -2338,7 +2336,7 @@ static int decomposition_arg(const cmd_context &context)
 	g_decomposition[1] = 0;
 	if (context.totparms > 1) // backward compatibility 
 	{
-		g_bail_out = g_decomposition[1] = context.intval[1];
+		g_externs.SetBailOut(g_decomposition[1] = context.intval[1]);
 	}
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
@@ -2648,7 +2646,7 @@ static int monitor_width_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_auto_stereo_width = context.floatval[0];
+	g_externs.SetAutoStereoWidth(context.floatval[0]);
 	return COMMANDRESULT_3D_PARAMETER;
 }
 
