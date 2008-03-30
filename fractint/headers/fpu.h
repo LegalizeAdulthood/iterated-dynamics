@@ -22,4 +22,13 @@ extern long RegSftFloat(long, int);
 extern void FPUaptan387(double *, double *, double *);
 extern void FPUcplxexp387(ComplexD const *, ComplexD *);
 
+inline float em2float(long l)
+{
+	return *reinterpret_cast<float *>(&l);
+}
+inline long float2em(float f)
+{
+	return *reinterpret_cast<long *>(&f);
+}
+
 #endif

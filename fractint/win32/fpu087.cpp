@@ -65,18 +65,16 @@ void FPUsinhcosh(double *Angle, double *Sinh, double *Cosh)
 
 void FPUcplxlog(ComplexD const *x, ComplexD *z)
 {
-	double mod, zx, zy;
-	mod = sqrt(x->x*x->x + x->y*x->y);
-	zx = log(mod);
-	zy = atan2(x->y, x->x);
-
+	double const mod = sqrt(x->x*x->x + x->y*x->y);
+	double const zx = log(mod);
+	double const zy = atan2(x->y, x->x);
 	z->x = zx;
 	z->y = zy;
 }
 
 void FPUcplxexp387(ComplexD const *x, ComplexD *z)
 {
-	double pow = exp(x->x);
+	double const pow = exp(x->x);
 	z->x = pow*cos(x->y);
 	z->y = pow*sin(x->y);
 }
@@ -84,27 +82,22 @@ void FPUcplxexp387(ComplexD const *x, ComplexD *z)
 // Integer Routines
 void SinCos086(long x, long *sinx, long *cosx)
 {
-	double a;
-	a = x/double(1 << 16);
-	*sinx = long(sin(a)*double(1 << 16));
-	*cosx = long(cos(a)*double(1 << 16));
+	double const angle = x/double(1 << 16);
+	*sinx = long(sin(angle)*double(1 << 16));
+	*cosx = long(cos(angle)*double(1 << 16));
 }
 
 void SinhCosh086(long x, long *sinx, long *cosx)
 {
-	double a;
-	a = x/double(1 << 16);
-	*sinx = long(sinh(a)*double(1 << 16));
-	*cosx = long(cosh(a)*double(1 << 16));
+	double const angle = x/double(1 << 16);
+	*sinx = long(sinh(angle)*double(1 << 16));
+	*cosx = long(cosh(angle)*double(1 << 16));
 }
 
 long Exp086(long x)
 {
 	return long(exp(double(x)/double(1 << 16))*double(1 << 16));
 }
-
-#define em2float(l) (*(float *) &(l))
-#define float2em(f) (*(long *) &(f))
 
 /*
  * Input is a 16 bit offset number.  Output is shifted by Fudge.

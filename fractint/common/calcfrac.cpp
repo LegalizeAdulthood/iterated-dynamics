@@ -1406,9 +1406,9 @@ void ColorModeStarTrail::update()
 
 		clamp(g_new_z.x);
 		clamp(g_new_z.y);
-		g_temp_sqr_x = g_new_z.real()*g_new_z.real();
-		g_temp_sqr_y = g_new_z.imag()*g_new_z.imag();
-		g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+		g_temp_sqr.real(g_new_z.real()*g_new_z.real());
+		g_temp_sqr.imag(g_new_z.imag()*g_new_z.imag());
+		g_magnitude = g_temp_sqr.real() + g_temp_sqr.imag();
 		g_old_z = g_new_z;
 		{
 			int tmpcolor = int(((g_color_iter - 1) % g_and_color) + 1);
@@ -1835,9 +1835,9 @@ void StandardFractal::colormode_star_trail_update()
 
 		colormode_star_trail_clamp(g_new_z.x);
 		colormode_star_trail_clamp(g_new_z.y);
-		g_temp_sqr_x = g_new_z.real()*g_new_z.real();
-		g_temp_sqr_y = g_new_z.imag()*g_new_z.imag();
-		g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+		g_temp_sqr.real(g_new_z.real()*g_new_z.real());
+		g_temp_sqr.imag(g_new_z.imag()*g_new_z.imag());
+		g_magnitude = g_temp_sqr.real() + g_temp_sqr.imag();
 		g_old_z = g_new_z;
 		{
 			int tmpcolor = int(((g_color_iter - 1) % g_and_color) + 1);
@@ -2730,24 +2730,24 @@ static int potential(double mag, long iterations)
 	float pot;
 	double d_tmp;
 	int i_pot;
-	long l_pot;
+	long potential_l;
 
 	if (iterations < g_max_iteration)
 	{
-		l_pot = iterations + 2;
-		pot = float(l_pot);
-		if (l_pot <= 0 || mag <= 1.0)
+		potential_l = iterations + 2;
+		pot = float(potential_l);
+		if (potential_l <= 0 || mag <= 1.0)
 		{
 			pot = 0.0f;
 		}
 		else
 		{
 			 // pot = log(mag)/pow(2.0, double(pot));
-			if (l_pot < 120 && !g_float_flag) // empirically determined limit of fShift
+			if (potential_l < 120 && !g_float_flag) // empirically determined limit of fShift
 			{
 				f_mag = float(mag);
 				fLog14(f_mag, f_tmp); // this SHOULD be non-negative
-				fShift(f_tmp, char(-l_pot), pot);
+				fShift(f_tmp, char(-potential_l), pot);
 			}
 			else
 			{
@@ -2793,12 +2793,12 @@ static int potential(double mag, long iterations)
 		pot = float(g_potential_parameter[0]);
 	}
 
-	l_pot = long(pot)*256;
-	i_pot = int(l_pot >> 8);
+	potential_l = long(pot)*256;
+	i_pot = int(potential_l >> 8);
 	if (i_pot >= g_colors)
 	{
 		i_pot = g_colors - 1;
-		l_pot = 255;
+		potential_l = 255;
 	}
 
 	if (g_potential_16bit)
@@ -2807,7 +2807,7 @@ static int potential(double mag, long iterations)
 		{
 			disk_write(g_col + g_screen_x_offset, g_row + g_screen_y_offset, i_pot);
 		}
-		disk_write(g_col + g_screen_x_offset, g_row + g_screen_height + g_screen_y_offset, int(l_pot));
+		disk_write(g_col + g_screen_x_offset, g_row + g_screen_height + g_screen_y_offset, int(potential_l));
 	}
 
 	return i_pot;

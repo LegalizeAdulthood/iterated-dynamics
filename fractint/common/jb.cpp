@@ -276,8 +276,8 @@ static int z_line(long x, long y)
 		{
 			return -1;
 		}
-		g_temp_sqr_x_l = multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift);
-		g_temp_sqr_y_l = multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift);
+		g_temp_sqr_l.real(multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift));
+		g_temp_sqr_l.imag(multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift));
 		for (n = 0; n < g_max_iteration; n++)
 		{
 			if (g_fractal_specific[g_new_orbit_type].orbitcalc())
@@ -376,8 +376,8 @@ static int z_line_fp(double x, double y)
 			return -1;
 		}
 #endif
-		g_temp_sqr_x = sqr(g_old_z.real());
-		g_temp_sqr_y = sqr(g_old_z.imag());
+		g_temp_sqr.real(sqr(g_old_z.real()));
+		g_temp_sqr.imag(sqr(g_old_z.imag()));
 
 		for (n = 0; n < g_max_iteration; n++)
 		{

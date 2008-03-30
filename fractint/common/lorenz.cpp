@@ -61,7 +61,7 @@ inline int RANDOM(int x)
 
 static long const BAD_PIXEL = 10000L;    // pixels can't get this big
 
-struct l_affine
+struct affine_l
 {
 	// weird order so a, b, e and c, d, f are vectors
 	long a;
@@ -71,6 +71,7 @@ struct l_affine
 	long d;
 	long f;
 };
+
 struct threed_vt_inf // data used by 3d view transform subroutine
 {
 	long orbit[3];       // interated function orbit value
@@ -87,7 +88,7 @@ struct threed_vt_inf // data used by 3d view transform subroutine
 	int col;         // results
 	int row1;
 	int col1;
-	l_affine cvt;
+	affine_l cvt;
 };
 
 struct threed_vt_inf_fp // data used by 3d view transform subroutine
@@ -124,7 +125,7 @@ double g_orbit_y_3rd;
 static affine s_o_cvt;
 static int s_o_color;
 static affine s_cvt;
-static l_affine s_lcvt;
+static affine_l s_lcvt;
 static double s_cx;
 static double s_cy;
 static long   s_x_long, s_y_long;
@@ -153,7 +154,7 @@ static int  ifs_2d();
 static int  ifs_3d();
 static int  ifs_3d_long();
 static int  ifs_3d_float();
-static int  l_setup_convert_to_screen(l_affine *);
+static int  setup_convert_to_screen_l(affine_l *);
 static void setup_matrix(MATRIX);
 static int  threed_view_trans(threed_vt_inf *inf);
 static int  threed_view_trans_fp(threed_vt_inf_fp *inf);
@@ -282,7 +283,7 @@ int setup_convert_to_screen(affine *scrn_cnvt)
 	return 0;
 }
 
-static int l_setup_convert_to_screen(l_affine *l_cvt)
+static int setup_convert_to_screen_l(affine_l *convert_l)
 {
 	affine cvt;
 
@@ -290,12 +291,12 @@ static int l_setup_convert_to_screen(l_affine *l_cvt)
 	{
 		return -1;
 	}
-	l_cvt->a = DoubleToFudge(cvt.a);
-	l_cvt->b = DoubleToFudge(cvt.b);
-	l_cvt->c = DoubleToFudge(cvt.c);
-	l_cvt->d = DoubleToFudge(cvt.d);
-	l_cvt->e = DoubleToFudge(cvt.e);
-	l_cvt->f = DoubleToFudge(cvt.f);
+	convert_l->a = DoubleToFudge(cvt.a);
+	convert_l->b = DoubleToFudge(cvt.b);
+	convert_l->c = DoubleToFudge(cvt.c);
+	convert_l->d = DoubleToFudge(cvt.d);
+	convert_l->e = DoubleToFudge(cvt.e);
+	convert_l->f = DoubleToFudge(cvt.f);
 
 	return 0;
 }
@@ -1569,9 +1570,9 @@ int orbit_2d_fp()
 
 int orbit_2d()
 {
-	l_affine cvt;
+	affine_l cvt;
 	// setup affine screen coord conversion
-	l_setup_convert_to_screen(&cvt);
+	setup_convert_to_screen_l(&cvt);
 
 	// set up projection scheme
 	long *p0 = 0;
@@ -1713,7 +1714,7 @@ static int orbit_3d_calc()
 	int ret;
 
 	// setup affine screen coord conversion
-	l_setup_convert_to_screen(&inf.cvt);
+	setup_convert_to_screen_l(&inf.cvt);
 
 	oldcol1 = -1;
 	oldrow1 = -1;
@@ -2529,9 +2530,9 @@ static int ifs_2d()
 	int i;
 	int j;
 	int k;
-	l_affine cvt;
+	affine_l cvt;
 	// setup affine screen coord conversion
-	l_setup_convert_to_screen(&cvt);
+	setup_convert_to_screen_l(&cvt);
 
 	srand(1);
 	bool color_method = (g_parameters[0] != 0);
@@ -2651,7 +2652,7 @@ static int ifs_3d_long()
 	}
 
 	// setup affine screen coord conversion
-	l_setup_convert_to_screen(&inf.cvt);
+	setup_convert_to_screen_l(&inf.cvt);
 
 	for (i = 0; i < g_num_affine; i++)    // fill in the local IFS array
 	{

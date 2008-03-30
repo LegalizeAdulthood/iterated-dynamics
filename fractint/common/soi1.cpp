@@ -51,8 +51,8 @@ static long iteration(double cr, double ci,
 {
 	g_old_z.real(re);
 	g_old_z.imag(im);
-	g_temp_sqr_x = sqr(g_old_z.real());
-	g_temp_sqr_y = sqr(g_old_z.imag());
+	g_temp_sqr.real(sqr(g_old_z.real()));
+	g_temp_sqr.imag(sqr(g_old_z.imag()));
 	g_float_parameter = &g_initial_z;
 	g_float_parameter->x = cr;
 	g_float_parameter->y = ci;
@@ -560,15 +560,15 @@ scan:
 #define SOI_ORBIT1(zr, rq, zi, iq, cr, ci, esc)	\
 	do											\
 	{											\
-		g_temp_sqr_x = rq;						\
-		g_temp_sqr_y = iq;						\
+		g_temp_sqr.real(rq);						\
+		g_temp_sqr.imag(iq);						\
 		old.x = zr;								\
 		old.y = zi;								\
 		g_float_parameter->x = cr;				\
 		g_float_parameter->y = ci;				\
 		esc = g_fractal_specific[g_fractal_type].orbitcalc();						\
-		rq = g_temp_sqr_x;						\
-		iq = g_temp_sqr_y;						\
+		rq = g_temp_sqr.real();						\
+		iq = g_temp_sqr.imag();						\
 		zr = g_new_z.real();							\
 		zi = g_new_z.imag();							\
 	}											\

@@ -323,10 +323,10 @@ public:
 	virtual void SetParameter2L(ComplexL value)					{ g_parameter2_l = value; }
 	virtual ComplexL ParameterL() const							{ return g_parameter_l; }
 	virtual void SetParameterL(ComplexL value)					{ g_parameter_l = value; }
-	virtual long TempSqrXL() const								{ return g_temp_sqr_x_l; }
-	virtual void SetTempSqrXL(long value)						{ g_temp_sqr_x_l = value; }
-	virtual long TempSqrYL() const								{ return g_temp_sqr_y_l; }
-	virtual void SetTempSqrYL(long value)						{ g_temp_sqr_y_l = value; }
+	virtual long TempSqrXL() const								{ return g_temp_sqr_l.real(); }
+	virtual void SetTempSqrXL(long value)						{ g_temp_sqr_l.real(value); }
+	virtual long TempSqrYL() const								{ return g_temp_sqr_l.imag(); }
+	virtual void SetTempSqrYL(long value)						{ g_temp_sqr_l.imag(value); }
 
 	virtual ComplexD InitialZ() const							{ return g_initial_z; }
 	virtual void SetInitialZ(ComplexD value)					{ g_initial_z = value; }
@@ -636,10 +636,10 @@ public:
 	virtual void SetTargaOutput(bool value)						{ g_targa_output = value; }
 	virtual bool TargaOverlay() const							{ return g_targa_overlay; }
 	virtual void SetTargaOverlay(bool value)					{ g_targa_overlay = value; }
-	virtual double TempSqrX() const								{ return g_temp_sqr_x; }
-	virtual void SetTempSqrX(double value)						{ g_temp_sqr_x = value; }
-	virtual double TempSqrY() const								{ return g_temp_sqr_y; }
-	virtual void SetTempSqrY(double value)						{ g_temp_sqr_y = value; }
+	virtual double TempSqrX() const								{ return g_temp_sqr.real(); }
+	virtual void SetTempSqrX(double value)						{ g_temp_sqr.real(value); }
+	virtual double TempSqrY() const								{ return g_temp_sqr.imag(); }
+	virtual void SetTempSqrY(double value)						{ g_temp_sqr.imag(value); }
 	virtual int TextCbase() const								{ return g_text_cbase; }
 	virtual void SetTextCbase(int value)						{ g_text_cbase = value; }
 	virtual int TextCol() const									{ return g_text_col; }

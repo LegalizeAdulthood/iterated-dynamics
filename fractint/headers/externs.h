@@ -133,8 +133,7 @@ extern ComplexL				g_old_z_l;
 extern ComplexL				*g_long_parameter;
 extern ComplexL				g_parameter2_l;
 extern ComplexL				g_parameter_l;
-extern long					g_temp_sqr_x_l;
-extern long					g_temp_sqr_y_l;
+extern ComplexL				g_temp_sqr_l;
 extern ComplexL				g_temp_z_l;
 extern void					(*g_trig0_l)();
 extern void					(*g_trig1_l)();
@@ -282,8 +281,7 @@ extern int					g_screen_y_offset;
 extern bool					g_tab_display_enabled;
 extern bool					g_targa_output;
 extern bool					g_targa_overlay;
-extern double				g_temp_sqr_x;
-extern double				g_temp_sqr_y;
+extern ComplexD				g_temp_sqr;
 extern int					g_text_cbase;						// g_text_col is relative to this
 extern int					g_text_col;						// current column in text mode
 extern int					g_text_rbase;						// g_text_row is relative to this

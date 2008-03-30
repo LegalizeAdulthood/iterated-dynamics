@@ -82,12 +82,12 @@ inline void CMPLXsqr(ComplexD const &arg, ComplexD &out)
 inline void LCMPLXsqr_old(ComplexL &out)
 {
 	out.y = multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1);
-	out.x = g_temp_sqr_x_l - g_temp_sqr_y_l;
+	out.x = g_temp_sqr_l.real() - g_temp_sqr_l.imag();
 }
 inline void CMPLXsqr_old(ComplexD &out)
 {
 	out.y = (g_old_z.real() + g_old_z.real())*g_old_z.imag();
-	out.x = g_temp_sqr_x - g_temp_sqr_y;
+	out.x = g_temp_sqr.real() - g_temp_sqr.imag();
 }
 
 
