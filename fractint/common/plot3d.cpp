@@ -39,7 +39,7 @@ static int s_blue_local_right;
 static BYTE s_targa_red;
 
 // Bresenham's algorithm for drawing line
-void cdecl draw_line(int X1, int Y1, int X2, int Y2, int color)
+void draw_line(int X1, int Y1, int X2, int Y2, int color)
 
 {               // uses Bresenham algorithm to draw a line
 	int dX;

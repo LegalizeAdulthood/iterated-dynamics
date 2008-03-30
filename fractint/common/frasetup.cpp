@@ -1,10 +1,5 @@
 #include <limits.h>
 #include <string.h>
-#if !defined(__386BSD__)
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
-#endif
 #include <string>
 
 #include "port.h"
@@ -14,12 +9,12 @@
 
 #include "calcfrac.h"
 #include "Externals.h"
+#include "FiniteAttractor.h"
 #include "fracsubr.h"
 #include "fractals.h"
 #include "frasetup.h"
 #include "jb.h"
-
-#include "FiniteAttractor.h"
+#include "mpmath.h"
 #include "SoundState.h"
 
 long calculate_mandelbrot_fp_asm();

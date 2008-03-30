@@ -16,6 +16,7 @@
 #include "Externals.h"
 #include "Formula.h"
 #include "MathUtil.h"
+#include "mpmath.h"
 #include "realdos.h"
 #include "resume.h"
 

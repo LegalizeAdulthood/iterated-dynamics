@@ -1,9 +1,7 @@
-#ifndef PROTOTYP_H
-#define PROTOTYP_H
+#pragma once
 
 // includes needed to define the prototypes
 
-#include "mpmath.h"
 #include "big.h"
 #include "id.h"
 #include "helpcom.h"
@@ -27,8 +25,8 @@ extern void load_dac();
 #include "winprot.h"
 #endif
 
-extern long cdecl divide(long, long, int);
-extern long cdecl multiply(long, long, int);
+extern long divide(long, long, int);
+extern long multiply(long, long, int);
 extern void put_line(int, int, int, BYTE const *);
 extern void get_line(int, int, int, BYTE *);
 extern long read_ticker();
@@ -66,9 +64,3 @@ extern void init_failure(std::string const &message);
 extern int expand_dirname(char *dirname, char *drive);
 extern int abort_message(const char *file, unsigned int line, int flags, const char *msg);
 #define ABORT(flags_, msg_) abort_message(__FILE__, __LINE__, flags_, msg_)
-
-#ifndef DEBUG
-/*#define DEBUG */
-#endif
-
-#endif

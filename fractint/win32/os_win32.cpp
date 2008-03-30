@@ -124,7 +124,6 @@ int g_overflow_mp = 0;
 BYTE g_block[4096] = { 0 };
 bool g_disk_flag = false;
 bool g_disk_targa = false;
-int DivideOverflow = 0;
 int g_is_true_color = 0;
 long g_initial_x_l = 0;
 long g_initial_y_l = 0;

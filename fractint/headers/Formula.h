@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "parser.h"
+
 enum
 {
 	MAX_JUMPS = 200  // size of JUMP_CONTROL array
@@ -427,7 +429,7 @@ extern void dStkAND();
 extern void lStkAND();
 extern void dStkLog();
 extern void lStkLog();
-extern void FPUcplxexp(ComplexD *, ComplexD *);
+extern void FPUcplxexp(ComplexD const *x, ComplexD *z);
 extern void dStkExp();
 extern void lStkExp();
 extern void dStkPwr();

@@ -36,6 +36,7 @@
 #include "fractals.h"
 #include "jiim.h"
 #include "miscres.h"
+#include "mpmath.h"
 #include "parser.h"
 #include "prompts2.h"
 #include "realdos.h"
@@ -1759,7 +1760,7 @@ void lStkLog()
 
 void (*StkLog)() = dStkLog;
 
-void FPUcplxexp(ComplexD *x, ComplexD *z)
+void FPUcplxexp(ComplexD const *x, ComplexD *z)
 {
 	FPUcplxexp387(x, z);
 }

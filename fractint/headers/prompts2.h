@@ -14,7 +14,7 @@ extern int get_view_params();
 extern int get_starfield_params();
 extern int get_commands();
 extern void goodbye();
-extern void shell_sort(void *, int n, unsigned, int (__cdecl *fct)(VOIDPTR, VOIDPTR));
+extern void shell_sort(void *, int n, unsigned, int (*fct)(VOIDPTR, VOIDPTR));
 extern int get_command_string();
 extern int get_a_number(double *, double *);
 extern int lccompare(VOIDPTR, VOIDPTR);

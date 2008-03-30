@@ -2,7 +2,7 @@
 
 #include "Externals.h"
 
-extern void cdecl invert_z(ComplexD *);
+extern void invert_z(ComplexD *);
 extern void magnet2_precalculate_fp();
 extern void complex_power(ComplexD *, int, ComplexD *);
 extern int complex_power_l(ComplexL *, int, ComplexL *, int);

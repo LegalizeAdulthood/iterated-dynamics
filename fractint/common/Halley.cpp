@@ -8,8 +8,8 @@
 #include "fractype.h"
 #include "fpu.h"
 #include "fractals.h"
-
 #include "Halley.h"
+#include "mpmath.h"
 
 static Halley s_halley;
 
