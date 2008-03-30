@@ -1,6 +1,7 @@
 #if !defined(DRIVERS_H)
 #define DRIVERS_H
 
+#include <string>
 #include "id.h"
 
 /* AbstractDriver
