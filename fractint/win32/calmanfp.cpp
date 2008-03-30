@@ -202,7 +202,7 @@ pop_stack:
 over_bailout_87:
 	if (g_externs.Outside() <= COLORMODE_REAL)
 	{
-		g_new_z.x = x;
+		g_new_z.real(x);
 		g_new_z.y = y;
 	}
 	if (cx-10 > 0)

@@ -1996,12 +1996,12 @@ void StandardFractal::potential_set_new_z()
 	}
 	else if (g_bf_math == BIGNUM)
 	{
-		g_new_z.x = double(bntofloat(g_new_z_bn.x));
+		g_new_z.real(double(bntofloat(g_new_z_bn.x)));
 		g_new_z.y = double(bntofloat(g_new_z_bn.y));
 	}
 	else if (g_bf_math == BIGFLT)
 	{
-		g_new_z.x = double(bftofloat(g_new_z_bf.x));
+		g_new_z.real(double(bftofloat(g_new_z_bf.x)));
 		g_new_z.y = double(bftofloat(g_new_z_bf.y));
 	}
 }
@@ -2046,7 +2046,7 @@ void StandardFractal::outside_colormode_set_new_z_final()
 	}
 	else if (g_bf_math == BIGNUM)
 	{
-		g_new_z.x = double(bntofloat(g_new_z_bn.x));
+		g_new_z.real(double(bntofloat(g_new_z_bn.x)));
 		g_new_z.y = double(bntofloat(g_new_z_bn.y));
 	}
 }
@@ -2609,7 +2609,7 @@ static void decomposition()
 		if (g_new_z.x < 0)
 		{
 			++temp;
-			g_new_z.x = -g_new_z.x;
+			g_new_z.real(-g_new_z.x);
 		}
 		if (g_decomposition[0] == 2)
 		{
@@ -2630,7 +2630,7 @@ static void decomposition()
 			{
 				++temp;
 				alt.x = g_new_z.x; // just 
-				g_new_z.x = g_new_z.y; // swap 
+				g_new_z.real(g_new_z.y); // swap 
 				g_new_z.y = alt.x; // them 
 			}
 			if (g_decomposition[0] >= 16)
@@ -2640,7 +2640,7 @@ static void decomposition()
 				{
 					++temp;
 					alt = g_new_z;
-					g_new_z.x = alt.x*cos45 + alt.y*sin45;
+					g_new_z.real(alt.x*cos45 + alt.y*sin45);
 					g_new_z.y = alt.x*sin45 - alt.y*cos45;
 				}
 
@@ -2651,7 +2651,7 @@ static void decomposition()
 					{
 						++temp;
 						alt = g_new_z;
-						g_new_z.x = alt.x*cos22_5 + alt.y*sin22_5;
+						g_new_z.real(alt.x*cos22_5 + alt.y*sin22_5);
 						g_new_z.y = alt.x*sin22_5 - alt.y*cos22_5;
 					}
 
@@ -2662,7 +2662,7 @@ static void decomposition()
 						{
 							++temp;
 							alt = g_new_z;
-							g_new_z.x = alt.x*cos11_25 + alt.y*sin11_25;
+							g_new_z.real(alt.x*cos11_25 + alt.y*sin11_25);
 							g_new_z.y = alt.x*sin11_25 - alt.y*cos11_25;
 						}
 
@@ -2673,7 +2673,7 @@ static void decomposition()
 							{
 								++temp;
 								alt = g_new_z;
-								g_new_z.x = alt.x*cos5_625 + alt.y*sin5_625;
+								g_new_z.real(alt.x*cos5_625 + alt.y*sin5_625);
 								g_new_z.y = alt.x*sin5_625 - alt.y*cos5_625;
 							}
 
