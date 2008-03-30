@@ -30,9 +30,9 @@ LPCSTR Plot::s_window_class = "FractIntPlot";
 
 void Plot::set_dirty_region(int x_min, int y_min, int x_max, int y_max)
 {
-	_ASSERTE(x_min < x_max);
-	_ASSERTE(y_min < y_max);
-	_ASSERTE((m_dirty_region.left <= m_dirty_region.right) && (m_dirty_region.top <= m_dirty_region.bottom));
+	assert(x_min < x_max);
+	assert(y_min < y_max);
+	assert((m_dirty_region.left <= m_dirty_region.right) && (m_dirty_region.top <= m_dirty_region.bottom));
 	if (m_dirty_region.left < 0)
 	{
 		m_dirty_region.left = x_min;
@@ -82,7 +82,7 @@ void Plot::init_pixels()
 	m_row_len = m_width*sizeof(m_pixels[0]);
 	m_row_len = ((m_row_len + 3)/4)*4;
 	m_pixels_len = m_row_len*m_height;
-	_ASSERTE(m_pixels_len > 0);
+	assert(m_pixels_len > 0);
 	m_pixels = new BYTE[m_pixels_len];
 	memset(m_pixels, 0, m_pixels_len);
 	m_dirty = false;
@@ -112,7 +112,7 @@ void Plot::OnPaint(HWND window)
 	int width = r->right - r->left;
 	int height = r->bottom - r->top;
 
-	_ASSERTE(width >= 0 && height >= 0);
+	assert(width >= 0 && height >= 0);
 	if (width > 0 && height > 0)
 	{
 		DWORD status;
@@ -132,7 +132,7 @@ void Plot::OnPaint(HWND window)
 			s_plot->m_pixels, &s_plot->m_bmi, DIB_RGB_COLORS, SRCCOPY);
 #endif
 #endif
-		_ASSERTE(status != GDI_ERROR);
+		assert(status != GDI_ERROR);
 	}
 	::EndPaint(window, &ps);
 }
@@ -169,7 +169,7 @@ void Plot::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 
 LRESULT CALLBACK Plot::proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
-	_ASSERTE(s_plot != 0);
+	assert(s_plot != 0);
 	switch (message)
 	{
 	case WM_PAINT:			HANDLE_WM_PAINT(window, wp, lp, Plot::OnPaint);					break;
@@ -268,7 +268,7 @@ void Plot::terminate()
 
 	{
 		HBITMAP rendering = static_cast<HBITMAP>(::SelectObject(m_memory_dc, static_cast<HGDIOBJ>(m_backup)));
-		_ASSERTE(rendering == m_rendering);
+		assert(rendering == m_rendering);
 	}
 	::DeleteObject(m_rendering);
 	::DeleteDC(m_memory_dc);
@@ -280,18 +280,18 @@ void Plot::create_backing_store()
 	{
 		HDC dc = ::GetDC(m_window);
 		m_memory_dc = ::CreateCompatibleDC(dc);
-		_ASSERTE(m_memory_dc);
+		assert(m_memory_dc);
 		::ReleaseDC(m_window, dc);
 	}
 
 	m_rendering = ::CreateCompatibleBitmap(m_memory_dc, m_width, m_height);
-	_ASSERTE(m_rendering);
+	assert(m_rendering);
 	m_backup = static_cast<HBITMAP>(::SelectObject(m_memory_dc, static_cast<HGDIOBJ>(m_rendering)));
 
 	m_font = ::CreateFont(8, 8, 0, 0, 0, FALSE, FALSE, FALSE, ANSI_CHARSET,
 		OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
 		DEFAULT_PITCH | FF_MODERN, "Courier");
-	_ASSERTE(m_font);
+	assert(m_font);
 	::SelectObject(m_memory_dc, static_cast<HGDIOBJ>(m_font));
 	::SetBkMode(m_memory_dc, OPAQUE);
 }
@@ -319,18 +319,18 @@ void Plot::create(HWND parent)
 
 void Plot::write_pixel(int x, int y, int color)
 {
-	_ASSERTE(m_pixels);
-	_ASSERTE(x >= 0 && x < m_width);
-	_ASSERTE(y >= 0 && y < m_height);
+	assert(m_pixels);
+	assert(x >= 0 && x < m_width);
+	assert(y >= 0 && y < m_height);
 	m_pixels[(m_height - y - 1)*m_row_len + x] = BYTE(color & 0xFF);
 	set_dirty_region(x, y, x + 1, y + 1);
 }
 
 int Plot::read_pixel(int x, int y)
 {
-	_ASSERTE(m_pixels);
-	_ASSERTE(x >= 0 && x < m_width);
-	_ASSERTE(y >= 0 && y < m_height);
+	assert(m_pixels);
+	assert(x >= 0 && x < m_width);
+	assert(y >= 0 && y < m_height);
 	return int(m_pixels[(m_height - 1 - y)*m_row_len + x]);
 }
 
@@ -401,7 +401,7 @@ int Plot::resize()
 
 	init_pixels();
 	status = ::SetWindowPos(m_window, 0, 0, 0, m_width, m_height, SWP_NOZORDER | SWP_NOMOVE);
-	_ASSERTE(status);
+	assert(status);
 
 	return !0;
 }
@@ -447,7 +447,7 @@ void Plot::schedule_alarm(int delay)
 	if (!result)
 	{
 		DWORD error = ::GetLastError();
-		_ASSERTE(result);
+		assert(result);
 	}
 }
 
@@ -498,7 +498,7 @@ void Plot::save_graphics()
 
 void Plot::restore_graphics()
 {
-	_ASSERTE(m_saved_pixels);
+	assert(m_saved_pixels);
 	::memcpy(m_pixels, m_saved_pixels, m_pixels_len);
 	redraw();
 }

@@ -1,3 +1,4 @@
+#include <cassert>
 #include <string>
 
 #define WIN32_LEAN_AND_MEAN
@@ -168,7 +169,7 @@ int FrameImpl::add_key_press(unsigned int key)
 {
 	if (m_keypress_count >= KEYBUFMAX)
 	{
-		_ASSERTE(m_keypress_count < KEYBUFMAX);
+		assert(m_keypress_count < KEYBUFMAX);
 		// no room 
 		return 1;
 	}
@@ -291,8 +292,8 @@ void FrameImpl::OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info)
 
 void FrameImpl::OnTimer(HWND window, UINT id)
 {
-	_ASSERTE(s_frame->m_window == window);
-	_ASSERTE(FRAME_TIMER_ID == id);
+	assert(s_frame->m_window == window);
+	assert(FRAME_TIMER_ID == id);
 	s_frame->m_timed_out = true;
 	KillTimer(window, FRAME_TIMER_ID);
 }
@@ -526,7 +527,7 @@ int FrameImpl::get_key_press(bool wait_for_key)
 
 	if (m_keypress_count == 0)
 	{
-		_ASSERTE(wait_for_key == 0);
+		assert(wait_for_key == 0);
 		return 0;
 	}
 
@@ -580,7 +581,7 @@ void FrameImpl::resize(int width, int height)
 	status = ::SetWindowPos(m_window, 0,
 		0, 0, m_nc_width, m_nc_height,
 		SWP_NOZORDER | SWP_NOMOVE);
-	_ASSERTE(status);
+	assert(status);
 
 }
 
@@ -590,7 +591,7 @@ void FrameImpl::set_keyboard_timeout(int ms)
 	if (!result)
 	{
 		DWORD error = ::GetLastError();
-		_ASSERTE(result == FRAME_TIMER_ID);
+		assert(result == FRAME_TIMER_ID);
 	}
 }
 

@@ -1739,9 +1739,7 @@ int get_fractal_parameters(bool type_specific)        // prompt for type-specifi
 			}
 			else  // this shouldn't happen 
 			{
-#if defined(_WIN32)
-				_ASSERTE(false);
-#endif
+				assert(!"help_formula wasn't L-System or IFS");
 				filename = "";
 				entryname = "";
 			}

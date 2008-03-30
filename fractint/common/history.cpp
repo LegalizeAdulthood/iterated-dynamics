@@ -270,9 +270,7 @@ void history_save_info()
 	{
 		return;
 	}
-#if defined(_WIN32)
-	_ASSERTE(s_save_index >= 0 && s_save_index < g_max_history);
-#endif
+	assert(s_save_index >= 0 && s_save_index < g_max_history);
 	HISTORY_ITEM last = s_history[s_save_index];
 
 	HISTORY_ITEM current = { 0 };
@@ -427,9 +425,7 @@ void history_save_info()
 		{
 			s_history_index = 0;
 		}
-#if defined(_WIN32)
-		_ASSERTE(s_save_index >= 0 && s_save_index < g_max_history);
-#endif
+		assert(s_save_index >= 0 && s_save_index < g_max_history);
 		s_history[s_save_index] = current;
 	}
 }
@@ -441,9 +437,7 @@ void history_restore_info()
 	{
 		return;
 	}
-#if defined(_WIN32)
-	_ASSERTE(s_history_index >= 0 && s_history_index < g_max_history);
-#endif
+	assert(s_history_index >= 0 && s_history_index < g_max_history);
 	last = s_history[s_history_index];
 
 	g_invert = 0;

@@ -281,7 +281,7 @@ int Win32BaseDriver::key_pressed()
 	}
 	flush_output();
 	ch = handle_special_keys(m_frame.get_key_press(false));
-	_ASSERTE(m_key_buffer == 0);
+	assert(m_key_buffer == 0);
 	m_key_buffer = ch;
 
 	return ch;
@@ -294,7 +294,7 @@ int Win32BaseDriver::key_pressed()
  */
 void Win32BaseDriver::unget_key(int key)
 {
-	_ASSERTE(0 == m_key_buffer);
+	assert(0 == m_key_buffer);
 	m_key_buffer = key;
 }
 
@@ -416,8 +416,8 @@ void Win32BaseDriver::put_string(int row, int col, int attr, const char *msg)
 	{
 		int abs_row = g_text_rbase + g_text_row;
 		int abs_col = g_text_cbase + g_text_col;
-		_ASSERTE(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
-		_ASSERTE(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
+		assert(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
+		assert(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
 		m_wintext.putstring(abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
 	}
 }
@@ -480,7 +480,7 @@ void Win32BaseDriver::stack_screen()
 		// already have some stacked 
 		int i = m_screen_count - 1;
 
-		_ASSERTE(i < WIN32_MAXSCREENS);
+		assert(i < WIN32_MAXSCREENS);
 		if (i >= WIN32_MAXSCREENS)
 		{
 			// bug, missing unstack? 
@@ -498,7 +498,7 @@ void Win32BaseDriver::stack_screen()
 
 void Win32BaseDriver::unstack_screen()
 {
-	_ASSERTE(m_screen_count >= 0);
+	assert(m_screen_count >= 0);
 	g_text_row = m_saved_cursor[m_screen_count]/80;
 	g_text_col = m_saved_cursor[m_screen_count] % 80;
 	if (--m_screen_count >= 0)

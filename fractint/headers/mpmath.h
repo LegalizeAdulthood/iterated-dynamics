@@ -328,7 +328,6 @@ extern void SetupLogTable();
 extern long logtablecalc(long);
 extern long ExpFloat14(long);
 extern int complex_basin();
-extern int gaussian_number(int, int);
 extern void Arcsinz(ComplexD z, ComplexD *rz);
 extern void Arccosz(ComplexD z, ComplexD *rz);
 extern void Arcsinhz(ComplexD z, ComplexD *rz);
