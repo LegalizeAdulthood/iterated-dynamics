@@ -5,6 +5,7 @@
 #include "id.h"
 #include "externs.h"
 
+#include "Externals.h"
 #include "QuaternionEngine.h"
 
 // These are for quaternions 
@@ -12,8 +13,8 @@ QuaternionD g_c_quaternion(0.0, 0.0, 0.0, 0.0);
 
 int quaternion_julia_per_pixel_fp()
 {
-	g_old_z.x = g_dx_pixel();
-	g_old_z.y = g_dy_pixel();
+	g_old_z.x = g_externs.DxPixel();
+	g_old_z.y = g_externs.DyPixel();
 	g_float_parameter->x = g_parameters[4];
 	g_float_parameter->y = g_parameters[5];
 	g_c_quaternion = QuaternionD(g_parameters[0], g_parameters[1], g_parameters[2], g_parameters[3]);
@@ -26,7 +27,7 @@ int quaternion_per_pixel_fp()
 	g_old_z.y = 0;
 	g_float_parameter->x = 0;
 	g_float_parameter->y = 0;
-	g_c_quaternion = QuaternionD(g_dx_pixel(), g_dy_pixel(), g_parameters[2], g_parameters[3]);
+	g_c_quaternion = QuaternionD(g_externs.DxPixel(), g_externs.DyPixel(), g_parameters[2], g_parameters[3]);
 	return 0;
 }
 

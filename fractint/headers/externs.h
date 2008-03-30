@@ -51,9 +51,7 @@ extern bool					g_dont_read_color;
 extern double				g_delta_parameter_image_x;
 extern double				g_delta_parameter_image_y;
 extern BYTE					g_stack[];
-extern double				(*g_dx_pixel)(); // set in FRACTALS.C 
 extern double				g_dx_size;
-extern double				(*g_dy_pixel)(); // set in FRACTALS.C 
 extern double				g_dy_size;
 extern bool					g_escape_exit_flag;
 extern int					g_evolving_flags;
@@ -138,8 +136,6 @@ extern ComplexL				g_parameter_l;
 extern long					g_temp_sqr_x_l;
 extern long					g_temp_sqr_y_l;
 extern ComplexL				g_tmp_z_l;
-extern long					(*g_lx_pixel)(); // set in FRACTALS.C 
-extern long					(*g_ly_pixel)(); // set in FRACTALS.C 
 extern void					(*g_trig0_l)();
 extern void					(*g_trig1_l)();
 extern void					(*g_trig2_l)();

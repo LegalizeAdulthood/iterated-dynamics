@@ -95,10 +95,6 @@ double g_temp_sqr_x = 0.0;
 double g_temp_sqr_y = 0.0;
 long g_one_fudge = 0;
 long g_two_fudge = 0;
-double (*g_dx_pixel)() = dx_pixel_calc;
-double (*g_dy_pixel)() = dy_pixel_calc;
-long   (*g_lx_pixel)() = lx_pixel_calc;
-long   (*g_ly_pixel)() = ly_pixel_calc;
 
 // pre-calculated values for fractal types Magnet2M & Magnet2J
 static ComplexD  s_3_c_minus_1 = { 0.0, 0.0 };		// 3*(g_float_parameter - 1)                
@@ -2200,8 +2196,8 @@ int circle_orbit()
 // transform points with reciprocal function 
 void invert_z(ComplexD *z)
 {
-	z->x = g_dx_pixel();
-	z->y = g_dy_pixel();
+	z->x = g_externs.DxPixel();
+	z->y = g_externs.DyPixel();
 	z->x -= g_f_x_center;
 	z->y -= g_f_y_center;  // Normalize values to center of circle 
 
@@ -2238,8 +2234,9 @@ int julia_per_pixel_l()
 	}
 	else
 	{
-		g_old_z_l.x = g_lx_pixel();
-		g_old_z_l.y = g_ly_pixel();
+		g_old_z_l = g_externs.LPixel();
+		g_old_z_l.x = g_externs.LxPixel();
+		g_old_z_l.y = g_externs.LyPixel();
 	}
 	return 0;
 #else
@@ -2265,8 +2262,8 @@ int mandelbrot_per_pixel_l()
 	// integer mandel types 
 	// barnsleym1 
 	// barnsleym2 
-	g_initial_z_l.x = g_lx_pixel();
-	g_initial_z_l.y = g_ly_pixel();
+	g_initial_z_l.x = g_externs.LxPixel();
+	g_initial_z_l.y = g_externs.LyPixel();
 
 	if (g_invert)
 	{
@@ -2323,8 +2320,8 @@ int julia_per_pixel()
 	}
 	else
 	{
-		g_old_z_l.x = g_lx_pixel();
-		g_old_z_l.y = g_ly_pixel();
+		g_old_z_l.x = g_externs.LxPixel();
+		g_old_z_l.y = g_externs.LyPixel();
 	}
 
 	g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
@@ -2372,8 +2369,8 @@ int mandelbrot_per_pixel()
 	}
 	else
 	{
-		g_initial_z_l.x = g_lx_pixel();
-		g_initial_z_l.y = g_ly_pixel();
+		g_initial_z_l.x = g_externs.LxPixel();
+		g_initial_z_l.y = g_externs.LyPixel();
 	}
 	switch (g_fractal_type)
 	{
@@ -2435,8 +2432,8 @@ int marks_mandelbrot_per_pixel()
 	}
 	else
 	{
-		g_initial_z_l.x = g_lx_pixel();
-		g_initial_z_l.y = g_ly_pixel();
+		g_initial_z_l.x = g_externs.LxPixel();
+		g_initial_z_l.y = g_externs.LyPixel();
 	}
 
 	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_l : g_initial_z_l;
@@ -2480,8 +2477,8 @@ int marks_mandelbrot_per_pixel_fp()
 	}
 	else
 	{
-		g_initial_z.x = g_dx_pixel();
-		g_initial_z.y = g_dy_pixel();
+		g_initial_z.x = g_externs.DxPixel();
+		g_initial_z.y = g_externs.DyPixel();
 	}
 
 	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
@@ -2534,8 +2531,8 @@ int mandelbrot_per_pixel_fp()
 	}
 	else
 	{
-		g_initial_z.x = g_dx_pixel();
-		g_initial_z.y = g_dy_pixel();
+		g_initial_z.x = g_externs.DxPixel();
+		g_initial_z.y = g_externs.DyPixel();
 	}
 	switch (g_fractal_type)
 	{
@@ -2592,8 +2589,8 @@ int julia_per_pixel_fp()
 	}
 	else
 	{
-		g_old_z.x = g_dx_pixel();
-		g_old_z.y = g_dy_pixel();
+		g_old_z.x = g_externs.DxPixel();
+		g_old_z.y = g_externs.DyPixel();
 	}
 	g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value for regular Julia 
 	g_temp_sqr_y = sqr(g_old_z.y);
@@ -2622,8 +2619,8 @@ int other_mandelbrot_per_pixel_fp()
 	}
 	else
 	{
-		g_initial_z.x = g_dx_pixel();
-		g_initial_z.y = g_dy_pixel();
+		g_initial_z.x = g_externs.DxPixel();
+		g_initial_z.y = g_externs.DyPixel();
 	}
 
 	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
@@ -2642,8 +2639,8 @@ int other_julia_per_pixel_fp()
 	}
 	else
 	{
-		g_old_z.x = g_dx_pixel();
-		g_old_z.y = g_dy_pixel();
+		g_old_z.x = g_externs.DxPixel();
+		g_old_z.y = g_externs.DyPixel();
 	}
 	return 0;
 }
@@ -2656,8 +2653,8 @@ int marks_complex_mandelbrot_per_pixel()
 	}
 	else
 	{
-		g_initial_z.x = g_dx_pixel();
-		g_initial_z.y = g_dy_pixel();
+		g_initial_z.x = g_externs.DxPixel();
+		g_initial_z.y = g_externs.DyPixel();
 	}
 	g_old_z.x = g_initial_z.x + g_parameter.x; // initial pertubation of parameters set 
 	g_old_z.y = g_initial_z.y + g_parameter.y;
@@ -2687,8 +2684,8 @@ int phoenix_per_pixel()
 	}
 	else
 	{
-		g_old_z_l.x = g_lx_pixel();
-		g_old_z_l.y = g_ly_pixel();
+		g_old_z_l.x = g_externs.LxPixel();
+		g_old_z_l.y = g_externs.LyPixel();
 	}
 	g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
 	g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
@@ -2708,8 +2705,8 @@ int phoenix_per_pixel_fp()
 	}
 	else
 	{
-		g_old_z.x = g_dx_pixel();
-		g_old_z.y = g_dy_pixel();
+		g_old_z.x = g_externs.DxPixel();
+		g_old_z.y = g_externs.DyPixel();
 	}
 	g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value 
 	g_temp_sqr_y = sqr(g_old_z.y);
@@ -2721,8 +2718,8 @@ int phoenix_per_pixel_fp()
 int mandelbrot_phoenix_per_pixel()
 {
 #if !defined(XFRACT)
-	g_initial_z_l.x = g_lx_pixel();
-	g_initial_z_l.y = g_ly_pixel();
+	g_initial_z_l.x = g_externs.LxPixel();
+	g_initial_z_l.y = g_externs.LyPixel();
 
 	if (g_invert)
 	{
@@ -2762,8 +2759,8 @@ int mandelbrot_phoenix_per_pixel_fp()
 	}
 	else
 	{
-		g_initial_z.x = g_dx_pixel();
-		g_initial_z.y = g_dy_pixel();
+		g_initial_z.x = g_externs.DxPixel();
+		g_initial_z.y = g_externs.DyPixel();
 	}
 
 	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
@@ -2972,8 +2969,8 @@ int mandelbrot_mix4_per_pixel_fp()
 	}
 	else
 	{
-		g_initial_z.x = g_dx_pixel();
-		g_initial_z.y = g_dy_pixel();
+		g_initial_z.x = g_externs.DxPixel();
+		g_initial_z.y = g_externs.DyPixel();
 	}
 	g_old_z = g_temp_z;
 	CMPLXtrig0(g_initial_z, s_mandelmix4_c);        // c = fn1(pixel): 
@@ -3011,9 +3008,11 @@ static double dx_pixel_grid()
 }
 
 // Real component, calculation version - does not require arrays 
-static double dx_pixel_calc()
+double dx_pixel_calc()
 {
-	return double(g_escape_time_state.m_grid_fp.x_min() + g_col*g_escape_time_state.m_grid_fp.delta_x() + g_row*g_escape_time_state.m_grid_fp.delta_x2());
+	return double(g_escape_time_state.m_grid_fp.x_min()
+		+ g_col*g_escape_time_state.m_grid_fp.delta_x()
+		+ g_row*g_escape_time_state.m_grid_fp.delta_x2());
 }
 
 // Imaginary component, grid lookup version - requires g_y0/g_y1 arrays 
@@ -3056,16 +3055,24 @@ void set_pixel_calc_functions()
 {
 	if (g_escape_time_state.m_use_grid)
 	{
-		g_dx_pixel = dx_pixel_grid;
-		g_dy_pixel = dy_pixel_grid;
-		g_lx_pixel = lx_pixel_grid;
-		g_ly_pixel = ly_pixel_grid;
+		g_externs.SetDxPixel(dx_pixel_grid);
+		g_externs.SetDyPixel(dy_pixel_grid);
+		g_externs.SetLxPixel(lx_pixel_grid);
+		g_externs.SetLyPixel(ly_pixel_grid);
 	}
 	else
 	{
-		g_dx_pixel = dx_pixel_calc;
-		g_dy_pixel = dy_pixel_calc;
-		g_lx_pixel = lx_pixel_calc;
-		g_ly_pixel = ly_pixel_calc;
+		g_externs.SetDxPixel(dx_pixel_calc);
+		g_externs.SetDyPixel(dy_pixel_calc);
+		g_externs.SetLxPixel(lx_pixel_calc);
+		g_externs.SetLyPixel(ly_pixel_calc);
 	}
+}
+
+void initialize_pixel_calc_functions(Externals &externs)
+{
+	externs.SetDxPixel(dx_pixel_grid);
+	externs.SetDyPixel(dy_pixel_grid);
+	externs.SetLxPixel(lx_pixel_grid);
+	externs.SetLyPixel(ly_pixel_grid);
 }

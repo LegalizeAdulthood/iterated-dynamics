@@ -5,13 +5,14 @@
 #include "id.h"
 #include "cmplx.h"
 #include "externs.h"
-#include "winprot.h"
+#include "prototyp.h"
 
-#include "line3d.h"
+#include "Externals.h"
+#include "fractals.h"
 #include "framain2.h"
 #include "fimain.h"
-#include "Externals.h"
 #include "gifview.h"
+#include "line3d.h"
 #include "ViewWindow.h"
 
 class ExternalsImpl : public Externals
@@ -41,8 +42,14 @@ public:
 		_bailOutL(0),
 		_bailOutBf(0),
 		_bailOutBn(0),
-		_colorFile()
-	{ }
+		_colorFile(),
+		_dxPixel(0),
+		_dyPixel(0),
+		_lxPixel(0),
+		_lyPixel(0)
+	{
+		initialize_pixel_calc_functions(*this);
+	}
 	virtual ~ExternalsImpl() { }
 
 	virtual float AspectDrift() const							{ return _aspectDrift; }
@@ -329,18 +336,19 @@ public:
 	virtual ComplexL TmpZL() const								{ return g_tmp_z_l; }
 	virtual void SetTmpZL(ComplexL value)						{ g_tmp_z_l = value; }
 
-	virtual DxPixelFunction *DxPixel() const					{ return g_dx_pixel; }
-	virtual void SetDxPixel(DxPixelFunction *value)				{ g_dx_pixel = value; }
+	virtual double DxPixel()									{ assert(_dxPixel); return _dxPixel(); }
+	virtual void SetDxPixel(DxPixelFunction *value)				{ _dxPixel = value; }
 	virtual double DxSize() const								{ return g_dx_size; }
 	virtual void SetDxSize(double value)						{ g_dx_size = value; }
-	virtual DyPixelFunction *DyPixel() const					{ return g_dy_pixel; }
-	virtual void SetDyPixel(DyPixelFunction *value)				{ g_dy_pixel = value; }
+	virtual double DyPixel()									{ assert(_dyPixel); return _dyPixel(); }
+	virtual void SetDyPixel(DyPixelFunction *value)				{ _dyPixel = value; }
 	virtual double DySize() const								{ return g_dy_size; }
 	virtual void SetDySize(double value)						{ g_dy_size = value; }
-	virtual PixelFunction *LxPixel() const						{ return g_lx_pixel; }
-	virtual void SetLxPixel(PixelFunction *value)				{ g_lx_pixel = value; }
-	virtual PixelFunction *LyPixel() const						{ return g_ly_pixel; }
-	virtual void SetLyPixel(PixelFunction *value)				{ g_ly_pixel = value; }
+	virtual long LxPixel()										{ assert(_lxPixel); return _lxPixel(); }
+	virtual void SetLxPixel(PixelFunctionL *value)				{ _lxPixel = value; }
+	virtual long LyPixel()										{ assert(_lyPixel); return _lyPixel(); }
+	virtual void SetLyPixel(PixelFunctionL *value)				{ _lyPixel = value; }
+	virtual ComplexL LPixel()									{ ComplexL pixel; pixel.x = LxPixel(); pixel.y = LyPixel(); return pixel; }
 
 	virtual TrigFunction *Trig0L() const						{ return g_trig0_l; }
 	virtual void SetTrig0L(TrigFunction *value)					{ g_trig0_l = value; }
@@ -843,6 +851,10 @@ private:
 	BailOutFunction *_bailOutBf;
 	BailOutFunction *_bailOutBn;
 	std::string _colorFile;								// from last <l> <s> or colors=@filename 
+	double (*_dxPixel)();
+	double (*_dyPixel)();
+	long (*_lxPixel)();
+	long (*_lyPixel)();
 };
 
 static ExternalsImpl s_externs;

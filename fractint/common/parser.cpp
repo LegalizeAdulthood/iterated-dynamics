@@ -2846,13 +2846,13 @@ int Formula::per_pixel()
 		switch (m_math_type)
 		{
 		case FLOATING_POINT_MATH:
-			m_variables[VARIABLE_PIXEL].argument.d.x = g_dx_pixel();
-			m_variables[VARIABLE_PIXEL].argument.d.y = g_dy_pixel();
+			m_variables[VARIABLE_PIXEL].argument.d.x = g_externs.DxPixel();
+			m_variables[VARIABLE_PIXEL].argument.d.y = g_externs.DyPixel();
 			break;
 #if !defined(XFRACT)
 		case FIXED_POINT_MATH:
-			m_variables[VARIABLE_PIXEL].argument.l.x = g_lx_pixel();
-			m_variables[VARIABLE_PIXEL].argument.l.y = g_ly_pixel();
+			m_variables[VARIABLE_PIXEL].argument.l.x = g_externs.LxPixel();
+			m_variables[VARIABLE_PIXEL].argument.l.y = g_externs.LyPixel();
 			break;
 #endif
 		}
