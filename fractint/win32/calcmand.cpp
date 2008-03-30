@@ -98,14 +98,14 @@ static long cdecl calculate_mandelbrot_asm1()
 		// Mandelbrot_87
 		Cx = g_initial_x_l;
 		Cy = g_initial_y_l;
-		x = g_parameter_l.x + Cx;
-		y = g_parameter_l.y + Cy;
+		x = g_parameter_l.real() + Cx;
+		y = g_parameter_l.imag() + Cy;
 	}
 	else
 	{
 		// dojulia_87
-		Cx = g_parameter_l.x;
-		Cy = g_parameter_l.y;
+		Cx = g_parameter_l.real();
+		Cy = g_parameter_l.imag();
 		x = g_initial_x_l;
 		y = g_initial_y_l;
 		x2 = FUDGE_MUL(x, x);

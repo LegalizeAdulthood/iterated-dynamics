@@ -118,7 +118,7 @@ extern void (*g_trig3_d)();
 #define LCMPLXsqr_old(out)													\
 	do																		\
 	{																		\
-		(out).y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1);	\
+		(out).y = multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1);	\
 		(out).x = g_temp_sqr_x_l - g_temp_sqr_y_l;							\
 	}																		\
 	while (0)
@@ -245,7 +245,7 @@ extern void (*g_trig3_d)();
 #define CMPLXsqr_old(out)							\
 	do												\
 	{												\
-		(out).y = (g_old_z.x+g_old_z.x) * g_old_z.y;\
+		(out).y = (g_old_z.real()+g_old_z.real()) * g_old_z.imag();\
 		(out).x = g_temp_sqr_x - g_temp_sqr_y;		\
 	}												\
 	while (0)

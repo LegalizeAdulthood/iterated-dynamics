@@ -53,7 +53,7 @@ bool Halley::setup()
 
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 
-	g_degree = int(g_parameter.x);
+	g_degree = int(g_parameter.real());
 	if (g_degree < 2)
 	{
 		g_degree = 2;
@@ -70,7 +70,7 @@ bool Halley::setup()
 
 int Halley::bail_out()
 {
-	if (fabs(modulus(g_new_z)-modulus(g_old_z)) < g_parameter2.x)
+	if (fabs(modulus(g_new_z)-modulus(g_old_z)) < g_parameter2.real())
 	{
 		return 1;
 	}
@@ -81,7 +81,7 @@ int Halley::bail_out()
 int Halley::orbit()
 {
 	// X(X^a - 1) = 0, Halley Map
-	// a = g_parameter.x = degree, relaxation coeff. = g_parameter.y, epsilon = g_parameter2.x
+	// a = g_parameter.real() = degree, relaxation coeff. = g_parameter.imag(), epsilon = g_parameter2.real()
 
 	int ihal;
 	ComplexD XtoAlessOne;
@@ -117,10 +117,10 @@ int Halley::orbit()
 	FPUcplxdiv(&Halnumer1, &Haldenom, &Halnumer1);         // F"F/2F'
 	CMPLXsub(F1prime, Halnumer1, Halnumer2);          // F' - F"F/2F'
 	FPUcplxdiv(&FX, &Halnumer2, &Halnumer2);
-	// g_parameter.y is relaxation coef.
-	// new.x = g_old_z.real() - (g_parameter.y*Halnumer2.x);
-	// new.y = g_old_z.imag() - (g_parameter.y*Halnumer2.y);
-	relax.x = g_parameter.y;
+	// g_parameter.imag() is relaxation coef.
+	// new.x = g_old_z.real() - (g_parameter.imag()*Halnumer2.x);
+	// new.y = g_old_z.imag() - (g_parameter.imag()*Halnumer2.y);
+	relax.x = g_parameter.imag();
 	relax.y = g_parameters[3];
 	FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
 	g_new_z.real(g_old_z.real() - Halnumer2.x);

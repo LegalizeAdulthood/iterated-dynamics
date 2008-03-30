@@ -116,14 +116,14 @@ long calculate_mandelbrot_fp_asm()
 		// Mandelbrot_87
 		Cx = g_initial_z.real();
 		Cy = g_initial_z.imag();
-		x = g_parameter.x + Cx;
-		y = g_parameter.y + Cy;
+		x = g_parameter.real() + Cx;
+		y = g_parameter.imag() + Cy;
 	}
 	else
 	{
 		// dojulia_87
-		Cx = g_parameter.x;
-		Cy = g_parameter.y;
+		Cx = g_parameter.real();
+		Cy = g_parameter.imag();
 		x = g_initial_z.real();
 		y = g_initial_z.imag();
 		x2 = x*x;

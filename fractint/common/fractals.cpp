@@ -403,12 +403,12 @@ int barnsley1_orbit()
 	// Everywhere" by Michael Barnsley, p. 322
 
 	// calculate intermediate products
-	s_old_x_init_x = multiply(g_old_z_l.x, g_long_parameter->x, g_bit_shift);
-	s_old_y_init_y = multiply(g_old_z_l.y, g_long_parameter->y, g_bit_shift);
-	s_old_x_init_y = multiply(g_old_z_l.x, g_long_parameter->y, g_bit_shift);
-	s_old_y_init_x = multiply(g_old_z_l.y, g_long_parameter->x, g_bit_shift);
+	s_old_x_init_x = multiply(g_old_z_l.real(), g_long_parameter->x, g_bit_shift);
+	s_old_y_init_y = multiply(g_old_z_l.imag(), g_long_parameter->y, g_bit_shift);
+	s_old_x_init_y = multiply(g_old_z_l.real(), g_long_parameter->y, g_bit_shift);
+	s_old_y_init_x = multiply(g_old_z_l.imag(), g_long_parameter->x, g_bit_shift);
 	// orbit calculation
-	if (g_old_z_l.x >= 0)
+	if (g_old_z_l.real() >= 0)
 	{
 		g_new_z_l.real((s_old_x_init_x - g_long_parameter->x - s_old_y_init_y));
 		g_new_z_l.imag((s_old_y_init_x - g_long_parameter->y + s_old_x_init_y));
@@ -457,10 +457,10 @@ int barnsley2_orbit()
 	// note that fast >= 287 equiv in fracsuba.asm must be kept in step
 
 	// calculate intermediate products
-	s_old_x_init_x = multiply(g_old_z_l.x, g_long_parameter->x, g_bit_shift);
-	s_old_y_init_y = multiply(g_old_z_l.y, g_long_parameter->y, g_bit_shift);
-	s_old_x_init_y = multiply(g_old_z_l.x, g_long_parameter->y, g_bit_shift);
-	s_old_y_init_x = multiply(g_old_z_l.y, g_long_parameter->x, g_bit_shift);
+	s_old_x_init_x = multiply(g_old_z_l.real(), g_long_parameter->x, g_bit_shift);
+	s_old_y_init_y = multiply(g_old_z_l.imag(), g_long_parameter->y, g_bit_shift);
+	s_old_x_init_y = multiply(g_old_z_l.real(), g_long_parameter->y, g_bit_shift);
+	s_old_y_init_x = multiply(g_old_z_l.imag(), g_long_parameter->x, g_bit_shift);
 
 	// orbit calculation
 	if (s_old_x_init_y + s_old_y_init_x >= 0)
@@ -509,7 +509,7 @@ int julia_orbit()
 	// used for C prototype of fast integer math routines for classic
 	// Mandelbrot and Julia
 	g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x);
-	g_new_z_l.imag(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_long_parameter->y);
+	g_new_z_l.imag(multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1) + g_long_parameter->y);
 	return g_externs.BailOutL();
 }
 
@@ -542,8 +542,8 @@ int lambda_orbit()
 	// variation of classical Mandelbrot/Julia
 
 	// in complex math) temp = Z*(1-Z)
-	g_temp_sqr_x_l = g_old_z_l.x - g_temp_sqr_x_l + g_temp_sqr_y_l;
-	g_temp_sqr_y_l = g_old_z_l.y - multiply(g_old_z_l.y, g_old_z_l.x, g_bit_shift_minus_1);
+	g_temp_sqr_x_l = g_old_z_l.real() - g_temp_sqr_x_l + g_temp_sqr_y_l;
+	g_temp_sqr_y_l = g_old_z_l.imag() - multiply(g_old_z_l.imag(), g_old_z_l.real(), g_bit_shift_minus_1);
 	// (in complex math) Z = Lambda*Z
 	g_new_z_l.real(multiply(g_long_parameter->x, g_temp_sqr_x_l, g_bit_shift)
 		- multiply(g_long_parameter->y, g_temp_sqr_y_l, g_bit_shift));
@@ -560,13 +560,13 @@ int sierpinski_orbit()
 #if !defined(XFRACT)
 	// following code translated from basic - see "Fractals
 	// Everywhere" by Michael Barnsley, p. 251, Program 7.1.1
-	g_new_z_l.real((g_old_z_l.x << 1));              // new.x = 2*old.x
-	g_new_z_l.imag((g_old_z_l.y << 1));              // new.y = 2*old.y
-	if (g_old_z_l.y > g_temp_z_l.imag())  // if old.y > .5
+	g_new_z_l.real((g_old_z_l.real() << 1));              // new.x = 2*old.x
+	g_new_z_l.imag((g_old_z_l.imag() << 1));              // new.y = 2*old.y
+	if (g_old_z_l.imag() > g_temp_z_l.imag())  // if old.y > .5
 	{
 		g_new_z_l.imag(g_new_z_l.imag() - g_temp_z_l.real()); // new.y = 2*old.y - 1
 	}
-	else if (g_old_z_l.x > g_temp_z_l.imag())     // if old.x > .5
+	else if (g_old_z_l.real() > g_temp_z_l.imag())     // if old.x > .5
 	{
 		g_new_z_l.real(g_new_z_l.real() - g_temp_z_l.real()); // new.x = 2*old.x - 1
 	}
@@ -629,19 +629,19 @@ int lambda_exponent_orbit()
 	// found this in  "Science of Fractal Images"
 	assert((1000L << g_bit_shift) == DoubleToFudge(1000.0));
 	assert((8L << g_bit_shift) == DoubleToFudge(8.0));
-	if ((labs(g_old_z_l.y) >= (1000L << g_bit_shift))
-		|| (labs(g_old_z_l.x) >= (8L << g_bit_shift)))
+	if ((labs(g_old_z_l.imag()) >= (1000L << g_bit_shift))
+		|| (labs(g_old_z_l.real()) >= (8L << g_bit_shift)))
 	{
 		return 1;
 	}
 
-	SinCos086(g_old_z_l.y, &s_sin_y_l,  &s_cos_y_l);
+	SinCos086(g_old_z_l.imag(), &s_sin_y_l,  &s_cos_y_l);
 
-	if (g_old_z_l.x >= g_rq_limit_l && s_cos_y_l >= 0L)
+	if (g_old_z_l.real() >= g_rq_limit_l && s_cos_y_l >= 0L)
 	{
 		return 1;
 	}
-	tmp = Exp086(g_old_z_l.x);
+	tmp = Exp086(g_old_z_l.real());
 
 	g_temp_z_l.real(multiply(tmp,      s_cos_y_l,   g_bit_shift));
 	g_temp_z_l.imag(multiply(tmp,      s_sin_y_l,   g_bit_shift));
@@ -683,14 +683,14 @@ int trig_plus_exponent_orbit()
 	long tmp;
 
 	// domain check for fast transcendental functions
-	if ((labs(g_old_z_l.x) > TRIG_LIMIT_16)
-		|| (labs(g_old_z_l.y) > TRIG_LIMIT_16))
+	if ((labs(g_old_z_l.real()) > TRIG_LIMIT_16)
+		|| (labs(g_old_z_l.imag()) > TRIG_LIMIT_16))
 	{
 		return 1;
 	}
 
-	tmp = Exp086(g_old_z_l.x);
-	SinCos086  (g_old_z_l.y, &s_sin_y_l,  &s_cos_y_l);
+	tmp = Exp086(g_old_z_l.real());
+	SinCos086  (g_old_z_l.imag(), &s_sin_y_l,  &s_cos_y_l);
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
 	g_new_z_l.x += multiply(tmp,    s_cos_y_l,   g_bit_shift) + g_long_parameter->x;
 	g_new_z_l.y += multiply(tmp,    s_sin_y_l,   g_bit_shift) + g_long_parameter->y;
@@ -707,7 +707,7 @@ int marks_lambda_orbit()
 	// Z1 = (C^(exp-1)*Z**2) + C
 #if !defined(XFRACT)
 	g_temp_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l);
-	g_temp_z_l.imag(multiply(g_old_z_l.x , g_old_z_l.y , g_bit_shift_minus_1));
+	g_temp_z_l.imag(multiply(g_old_z_l.real() , g_old_z_l.imag() , g_bit_shift_minus_1));
 
 	g_new_z_l.real(multiply(g_coefficient_l.x, g_temp_z_l.real(), g_bit_shift)
 		- multiply(g_coefficient_l.y, g_temp_z_l.imag(), g_bit_shift) + g_long_parameter->x);
@@ -739,13 +739,13 @@ int unity_orbit()
 #if !defined(XFRACT)
 	// brought to you by Mark Peterson - you won't find this in any fractal
 	// books unless they saw it here first - Mark invented it!
-	long xx_one = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift) + multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
+	long xx_one = multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift) + multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift);
 	if ((xx_one > g_two_fudge) || (labs(xx_one - g_one_fudge) < g_delta_min))
 	{
 		return 1;
 	}
-	g_old_z_l.y = multiply(g_two_fudge - xx_one, g_old_z_l.x, g_bit_shift);
-	g_old_z_l.x = multiply(g_two_fudge - xx_one, g_old_z_l.y, g_bit_shift);
+	g_old_z_l.imag(multiply(g_two_fudge - xx_one, g_old_z_l.real(), g_bit_shift));
+	g_old_z_l.real(multiply(g_two_fudge - xx_one, g_old_z_l.imag(), g_bit_shift));
 	g_new_z_l = g_old_z_l;  // TW added this line
 	return 0;
 #else
@@ -780,7 +780,7 @@ int mandel4_orbit()
 	// first, compute (x + iy)**2
 #if !defined(XFRACT)
 	g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l);
-	g_new_z_l.imag(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1));
+	g_new_z_l.imag(multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1));
 	if (g_externs.BailOutL())
 	{
 		return 1;
@@ -788,7 +788,7 @@ int mandel4_orbit()
 
 	// then, compute ((x + iy)**2)**2 + lambda
 	g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x);
-	g_new_z_l.imag(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_long_parameter->y);
+	g_new_z_l.imag(multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1) + g_long_parameter->y);
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -880,12 +880,12 @@ int barnsley3_orbit()
 
 	// calculate intermediate products
 #if !defined(XFRACT)
-	s_old_x_init_x = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
-	s_old_y_init_y = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
-	s_old_x_init_y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift);
+	s_old_x_init_x = multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift);
+	s_old_y_init_y = multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift);
+	s_old_x_init_y = multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift);
 
 	// orbit calculation
-	if (g_old_z_l.x > 0)
+	if (g_old_z_l.real() > 0)
 	{
 		g_new_z_l.real(s_old_x_init_x   - s_old_y_init_y - g_externs.Fudge());
 		g_new_z_l.imag(s_old_x_init_y << 1);
@@ -893,13 +893,13 @@ int barnsley3_orbit()
 	else
 	{
 		g_new_z_l.real(s_old_x_init_x - s_old_y_init_y - g_externs.Fudge()
-			+ multiply(g_long_parameter->x, g_old_z_l.x, g_bit_shift));
+			+ multiply(g_long_parameter->x, g_old_z_l.real(), g_bit_shift));
 		g_new_z_l.imag(s_old_x_init_y <<1);
 
 		// This term added by Tim Wegner to make dependent on the
 		// imaginary part of the parameter. (Otherwise Mandelbrot
 		// is uninteresting.
-		g_new_z_l.y += multiply(g_long_parameter->y, g_old_z_l.x, g_bit_shift);
+		g_new_z_l.y += multiply(g_long_parameter->y, g_old_z_l.real(), g_bit_shift);
 	}
 	return g_externs.BailOutL();
 #else
@@ -945,7 +945,7 @@ int trig_plus_z_squared_orbit()
 #if !defined(XFRACT)
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
 	g_new_z_l.x += g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x;
-	g_new_z_l.y += multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_long_parameter->y;
+	g_new_z_l.y += multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1) + g_long_parameter->y;
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -998,8 +998,8 @@ int popcorn_old_orbit_fp()
 	g_temp_z.y = s_sin_y/s_cos_y + g_old_z.imag();
 	FPUsincos(&g_temp_z.x, &g_sin_x, &g_cos_x);
 	FPUsincos(&g_temp_z.y, &s_sin_y, &s_cos_y);
-	g_new_z.real(g_old_z.real() - g_parameter.x*s_sin_y);
-	g_new_z.imag(g_old_z.imag() - g_parameter.x*g_sin_x);
+	g_new_z.real(g_old_z.real() - g_parameter.real()*s_sin_y);
+	g_new_z.imag(g_old_z.imag() - g_parameter.real()*g_sin_x);
 	if (g_plot_color == plot_color_none)
 	{
 		plot_orbit(g_new_z.real(), g_new_z.imag(), 1 + g_row % g_colors);
@@ -1036,11 +1036,11 @@ int popcorn_orbit_fp()
 	g_temp_z.y = s_sin_y/s_cos_y + g_old_z.imag();
 	FPUsincos(&g_temp_z.x, &g_sin_x, &g_cos_x);
 	FPUsincos(&g_temp_z.y, &s_sin_y, &s_cos_y);
-	g_new_z.real(g_old_z.real() - g_parameter.x*s_sin_y);
-	g_new_z.imag(g_old_z.imag() - g_parameter.x*g_sin_x);
+	g_new_z.real(g_old_z.real() - g_parameter.real()*s_sin_y);
+	g_new_z.imag(g_old_z.imag() - g_parameter.real()*g_sin_x);
 	//
-	// g_new_z.real(g_old_z.real() - g_parameter.x*sin(g_old_z.imag() + tan(3*g_old_z.imag())));
-	// g_new_z.imag(g_old_z.imag() - g_parameter.x*sin(g_old_z.real() + tan(3*g_old_z.real())));
+	// g_new_z.real(g_old_z.real() - g_parameter.real()*sin(g_old_z.imag() + tan(3*g_old_z.imag())));
+	// g_new_z.imag(g_old_z.imag() - g_parameter.real()*sin(g_old_z.real() + tan(3*g_old_z.real())));
 	//
 	if (g_plot_color == plot_color_none)
 	{
@@ -1076,14 +1076,14 @@ int popcorn_old_orbit()
 	TRIG_ARG_L(g_temp_z_l.y);
 	SinCos086(g_temp_z_l.real(), &s_sin_x_l, &s_cos_x_l);
 	SinCos086(g_temp_z_l.imag(), &s_sin_y_l, &s_cos_y_l);
-	g_temp_z_l.real(divide(s_sin_x_l, s_cos_x_l, g_bit_shift) + g_old_z_l.x);
-	g_temp_z_l.imag(divide(s_sin_y_l, s_cos_y_l, g_bit_shift) + g_old_z_l.y);
+	g_temp_z_l.real(divide(s_sin_x_l, s_cos_x_l, g_bit_shift) + g_old_z_l.real());
+	g_temp_z_l.imag(divide(s_sin_y_l, s_cos_y_l, g_bit_shift) + g_old_z_l.imag());
 	TRIG_ARG_L(g_temp_z_l.x);
 	TRIG_ARG_L(g_temp_z_l.y);
 	SinCos086(g_temp_z_l.real(), &s_sin_x_l, &s_cos_x_l);
 	SinCos086(g_temp_z_l.imag(), &s_sin_y_l, &s_cos_y_l);
-	g_new_z_l.real(g_old_z_l.x - multiply(g_parameter_l.x, s_sin_y_l, g_bit_shift));
-	g_new_z_l.imag(g_old_z_l.y - multiply(g_parameter_l.x, s_sin_x_l, g_bit_shift));
+	g_new_z_l.real(g_old_z_l.real() - multiply(g_parameter_l.real(), s_sin_y_l, g_bit_shift));
+	g_new_z_l.imag(g_old_z_l.imag() - multiply(g_parameter_l.real(), s_sin_x_l, g_bit_shift));
 	if (g_plot_color == plot_color_none)
 	{
 		plot_orbit_i(g_new_z_l.real(), g_new_z_l.imag(), 1 + g_row % g_colors);
@@ -1117,14 +1117,14 @@ int popcorn_orbit()
 	TRIG_ARG_L(g_temp_z_l.y);
 	SinCos086(g_temp_z_l.real(), &s_sin_x_l, &s_cos_x_l);
 	SinCos086(g_temp_z_l.imag(), &s_sin_y_l, &s_cos_y_l);
-	g_temp_z_l.real(divide(s_sin_x_l, s_cos_x_l, g_bit_shift) + g_old_z_l.x);
-	g_temp_z_l.imag(divide(s_sin_y_l, s_cos_y_l, g_bit_shift) + g_old_z_l.y);
+	g_temp_z_l.real(divide(s_sin_x_l, s_cos_x_l, g_bit_shift) + g_old_z_l.real());
+	g_temp_z_l.imag(divide(s_sin_y_l, s_cos_y_l, g_bit_shift) + g_old_z_l.imag());
 	TRIG_ARG_L(g_temp_z_l.x);
 	TRIG_ARG_L(g_temp_z_l.y);
 	SinCos086(g_temp_z_l.real(), &s_sin_x_l, &s_cos_x_l);
 	SinCos086(g_temp_z_l.imag(), &s_sin_y_l, &s_cos_y_l);
-	g_new_z_l.real(g_old_z_l.x - multiply(g_parameter_l.x, s_sin_y_l, g_bit_shift));
-	g_new_z_l.imag(g_old_z_l.y - multiply(g_parameter_l.x, s_sin_x_l, g_bit_shift));
+	g_new_z_l.real(g_old_z_l.real() - multiply(g_parameter_l.real(), s_sin_y_l, g_bit_shift));
+	g_new_z_l.imag(g_old_z_l.imag() - multiply(g_parameter_l.real(), s_sin_x_l, g_bit_shift));
 	if (g_plot_color == plot_color_none)
 	{
 		plot_orbit_i(g_new_z_l.real(), g_new_z_l.imag(), 1 + g_row % g_colors);
@@ -1210,25 +1210,25 @@ int popcorn_fn_orbit()
 	g_overflow = false;
 
 	// ltmpx contains the generalized value of the old real "x" equation
-	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.y, g_temp_z_l); // tmp = (C*old.y)
+	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.imag(), g_temp_z_l); // tmp = (C*old.y)
 	LCMPLXtrig1(g_temp_z_l, ltmpx);             // tmpx = trig1(tmp)
 	fix_overflow(ltmpx);
-	ltmpx.x += g_old_z_l.y;                   // tmpx = old.y + trig1(tmp)
+	ltmpx.x += g_old_z_l.imag();                   // tmpx = old.y + trig1(tmp)
 	LCMPLXtrig0(ltmpx, g_temp_z_l);             // tmp = trig0(tmpx)
 	fix_overflow(g_temp_z_l);
 	LCMPLXmult(g_temp_z_l, g_parameter_l, ltmpx);        // tmpx = tmp*h
 
 	// ltmpy contains the generalized value of the old real "y" equation
-	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.x, g_temp_z_l); // tmp = (C*old.x)
+	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.real(), g_temp_z_l); // tmp = (C*old.x)
 	LCMPLXtrig3(g_temp_z_l, ltmpy);             // tmpy = trig3(tmp)
 	fix_overflow(ltmpy);
-	ltmpy.x += g_old_z_l.x;                   // tmpy = old.x + trig1(tmp)
+	ltmpy.x += g_old_z_l.real();                   // tmpy = old.x + trig1(tmp)
 	LCMPLXtrig2(ltmpy, g_temp_z_l);             // tmp = trig2(tmpy)
 	fix_overflow(g_temp_z_l);
 	LCMPLXmult(g_temp_z_l, g_parameter_l, ltmpy);        // tmpy = tmp*h
 
-	g_new_z_l.real(g_old_z_l.x - ltmpx.x - ltmpy.y);
-	g_new_z_l.imag(g_old_z_l.y - ltmpy.x - ltmpx.y);
+	g_new_z_l.real(g_old_z_l.real() - ltmpx.x - ltmpy.y);
+	g_new_z_l.imag(g_old_z_l.imag() - ltmpy.x - ltmpx.y);
 
 	if (g_plot_color == plot_color_none)
 	{
@@ -1276,7 +1276,7 @@ int spider_orbit()
 #if !defined(XFRACT)
 	// Spider(XAXIS) { c = z=pixel: z = z*z + c; c = c/2 + z, |z| <= 4 }
 	g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l + g_temp_z_l.real());
-	g_new_z_l.imag(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_temp_z_l.imag());
+	g_new_z_l.imag(multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1) + g_temp_z_l.imag());
 	g_temp_z_l.real((g_temp_z_l.real() >> 1) + g_new_z_l.real());
 	g_temp_z_l.imag((g_temp_z_l.imag() >> 1) + g_new_z_l.imag());
 	return g_externs.BailOutL();
@@ -1419,7 +1419,7 @@ int lambda_trig_or_trig_orbit()
 #if !defined(XFRACT)
 	// z = trig0(z)*p1 if mod(old) < p2.x and
 	// trig1(z)*p1 if mod(old) >= p2.x
-	if ((LCMPLXmod(g_old_z_l)) < g_parameter2_l.x)
+	if ((LCMPLXmod(g_old_z_l)) < g_parameter2_l.real())
 	{
 		LCMPLXtrig0(g_old_z_l, g_temp_z_l);
 		LCMPLXmult(*g_long_parameter, g_temp_z_l, g_new_z_l);
@@ -1439,7 +1439,7 @@ int lambda_trig_or_trig_orbit_fp()
 {
 	// z = trig0(z)*p1 if mod(old) < p2.x and
 	//		trig1(z)*p1 if mod(old) >= p2.x
-	if (CMPLXmod(g_old_z) < g_parameter2.x)
+	if (CMPLXmod(g_old_z) < g_parameter2.real())
 	{
 		CMPLXtrig0(g_old_z, g_old_z);
 		FPUcplxmul(g_float_parameter, &g_old_z, &g_new_z);
@@ -1457,7 +1457,7 @@ int julia_trig_or_trig_orbit()
 #if !defined(XFRACT)
 	// z = trig0(z) + p1 if mod(old) < p2.x and
 	//		trig1(z) + p1 if mod(old) >= p2.x
-	if (LCMPLXmod(g_old_z_l) < g_parameter2_l.x)
+	if (LCMPLXmod(g_old_z_l) < g_parameter2_l.real())
 	{
 		LCMPLXtrig0(g_old_z_l, g_temp_z_l);
 		LCMPLXadd(*g_long_parameter, g_temp_z_l, g_new_z_l);
@@ -1477,7 +1477,7 @@ int julia_trig_or_trig_orbit_fp()
 {
 	// z = trig0(z) + p1 if mod(old) < p2.x and
 	//		trig1(z) + p1 if mod(old) >= p2.x
-	if (CMPLXmod(g_old_z) < g_parameter2.x)
+	if (CMPLXmod(g_old_z) < g_parameter2.real())
 	{
 		CMPLXtrig0(g_old_z, g_old_z);
 		CMPLXadd(*g_float_parameter, g_old_z, g_new_z);
@@ -1494,7 +1494,7 @@ int phoenix_orbit()
 {
 #if !defined(XFRACT)
 	// z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n)
-	g_temp_z_l.real(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift));
+	g_temp_z_l.real(multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift));
 	g_new_z_l.real(g_temp_sqr_x_l-g_temp_sqr_y_l + g_long_parameter->x + multiply(g_long_parameter->y, g_tmp_z2_l.x, g_bit_shift));
 	g_new_z_l.imag((g_temp_z_l.real() + g_temp_z_l.real()) + multiply(g_long_parameter->y, g_tmp_z2_l.y, g_bit_shift));
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value
@@ -1518,9 +1518,9 @@ int phoenix_complex_orbit()
 {
 #if !defined(XFRACT)
 	// z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n)
-	g_temp_z_l.real(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift));
-	g_new_z_l.real(g_temp_sqr_x_l-g_temp_sqr_y_l + g_long_parameter->x + multiply(g_parameter2_l.x, g_tmp_z2_l.x, g_bit_shift)-multiply(g_parameter2_l.y, g_tmp_z2_l.y, g_bit_shift));
-	g_new_z_l.imag((g_temp_z_l.real() + g_temp_z_l.real()) + g_long_parameter->y + multiply(g_parameter2_l.x, g_tmp_z2_l.y, g_bit_shift) + multiply(g_parameter2_l.y, g_tmp_z2_l.x, g_bit_shift));
+	g_temp_z_l.real(multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift));
+	g_new_z_l.real(g_temp_sqr_x_l-g_temp_sqr_y_l + g_long_parameter->x + multiply(g_parameter2_l.real(), g_tmp_z2_l.x, g_bit_shift)-multiply(g_parameter2_l.imag(), g_tmp_z2_l.y, g_bit_shift));
+	g_new_z_l.imag((g_temp_z_l.real() + g_temp_z_l.real()) + g_long_parameter->y + multiply(g_parameter2_l.real(), g_tmp_z2_l.y, g_bit_shift) + multiply(g_parameter2_l.imag(), g_tmp_z2_l.x, g_bit_shift));
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value
 	return g_externs.BailOutL();
 #else
@@ -1532,8 +1532,8 @@ int phoenix_complex_orbit_fp()
 {
 	// z(n + 1) = z(n)^2 + p1 + p2*y(n),  y(n + 1) = z(n)
 	g_temp_z.x = g_old_z.real()*g_old_z.imag();
-	g_new_z.real(g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x + (g_parameter2.x*s_temp2.x) - (g_parameter2.y*s_temp2.y));
-	g_new_z.imag((g_temp_z.x + g_temp_z.x) + g_float_parameter->y + (g_parameter2.x*s_temp2.y) + (g_parameter2.y*s_temp2.x));
+	g_new_z.real(g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x + (g_parameter2.real()*s_temp2.x) - (g_parameter2.imag()*s_temp2.y));
+	g_new_z.imag((g_temp_z.x + g_temp_z.x) + g_float_parameter->y + (g_parameter2.real()*s_temp2.y) + (g_parameter2.imag()*s_temp2.x));
 	s_temp2 = g_old_z; // set s_temp2 to Y value
 	return g_externs.BailOutFp();
 }
@@ -2000,8 +2000,8 @@ int magnet2_orbit_fp()
 int lambda_trig_orbit()
 {
 #if !defined(XFRACT)
-	if (labs(g_old_z_l.x) >= g_rq_limit2_l
-		|| labs(g_old_z_l.y) >= g_rq_limit2_l)
+	if (labs(g_old_z_l.real()) >= g_rq_limit2_l
+		|| labs(g_old_z_l.imag()) >= g_rq_limit2_l)
 	{
 		return 1;
 	}
@@ -2031,7 +2031,7 @@ int lambda_trig_orbit_fp()
 int lambda_trig1_orbit()
 {
 #if !defined(XFRACT)
-	if (labs(g_old_z_l.y) >= g_rq_limit2_l)
+	if (labs(g_old_z_l.imag()) >= g_rq_limit2_l)
 	{
 		return 1;
 	}
@@ -2059,7 +2059,7 @@ int lambda_trig1_orbit_fp()
 int lambda_trig2_orbit()
 {
 #if !defined(XFRACT)
-	if (labs(g_old_z_l.x) >= g_rq_limit2_l)
+	if (labs(g_old_z_l.real()) >= g_rq_limit2_l)
 	{
 		return 1;
 	}
@@ -2093,7 +2093,7 @@ int man_o_war_orbit()
 #if !defined(XFRACT)
 	// From Art Matrix via Lee Skinner
 	g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l + g_temp_z_l.real() + g_long_parameter->x);
-	g_new_z_l.imag(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_temp_z_l.imag() + g_long_parameter->y);
+	g_new_z_l.imag(multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1) + g_temp_z_l.imag() + g_long_parameter->y);
 	g_temp_z_l = g_old_z_l;
 	return g_externs.BailOutL();
 #else
@@ -2182,7 +2182,7 @@ int circle_orbit_fp()
 int circle_orbit()
 {
 	long i;
-	i = multiply(g_parameter_l.x, (g_temp_sqr_x_l + g_temp_sqr_y_l), g_bit_shift);
+	i = multiply(g_parameter_l.real(), (g_temp_sqr_x_l + g_temp_sqr_y_l), g_bit_shift);
 	i >>= g_bit_shift;
 	g_color_iter = i % g_colors);
 	return 1;
@@ -2279,8 +2279,8 @@ int mandelbrot_per_pixel_l()
 
 	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_l : g_initial_z_l;
 
-	g_old_z_l.x += g_parameter_l.x;    // initial pertubation of parameters set
-	g_old_z_l.y += g_parameter_l.y;
+	g_old_z_l.x += g_parameter_l.real();    // initial pertubation of parameters set
+	g_old_z_l.y += g_parameter_l.imag();
 	return 1; // 1st iteration has been done
 #else
 	return 0;
@@ -2319,8 +2319,8 @@ int julia_per_pixel()
 		g_old_z_l = g_externs.LPixel();
 	}
 
-	g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
-	g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
+	g_temp_sqr_x_l = multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift);
+	g_temp_sqr_y_l = multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift);
 	g_temp_z_l = g_old_z_l;
 	return 0;
 }
@@ -2369,8 +2369,8 @@ int mandelbrot_per_pixel()
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_MANDELBROT_LAMBDA:              // Critical Value 0.5 + 0.0i
-		g_old_z_l.x = g_externs.Fudge() >> 1;
-		g_old_z_l.y = 0;
+		g_old_z_l.real(g_externs.Fudge() >> 1);
+		g_old_z_l.imag(0);
 		break;
 	default:
 		g_old_z_l = g_initial_z_l;
@@ -2391,18 +2391,17 @@ int mandelbrot_per_pixel()
 	{
 		// kludge to match "Beauty of Fractals" picture since we start
 		// Mandelbrot iteration with g_initial_z rather than 0
-		g_old_z_l.x = g_parameter_l.x; // initial pertubation of parameters set
-		g_old_z_l.y = g_parameter_l.y;
+		g_old_z_l = g_parameter_l;				// initial pertubation of parameters set
 		g_color_iter = -1;
 	}
 	else
 	{
-		g_old_z_l.x += g_parameter_l.x; // initial pertubation of parameters set
-		g_old_z_l.y += g_parameter_l.y;
+		g_old_z_l.x += g_parameter_l.real(); // initial pertubation of parameters set
+		g_old_z_l.y += g_parameter_l.imag();
 	}
 	g_temp_z_l = g_initial_z_l; // for spider
-	g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
-	g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
+	g_temp_sqr_x_l = multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift);
+	g_temp_sqr_y_l = multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift);
 	return 1; // 1st iteration has been done
 }
 
@@ -2431,8 +2430,8 @@ int marks_mandelbrot_per_pixel()
 
 	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_l : g_initial_z_l;
 
-	g_old_z_l.x += g_parameter_l.x;    // initial pertubation of parameters set
-	g_old_z_l.y += g_parameter_l.y;
+	g_old_z_l.x += g_parameter_l.real();    // initial pertubation of parameters set
+	g_old_z_l.y += g_parameter_l.imag();
 
 	if (g_c_exp > 3)
 	{
@@ -2440,9 +2439,9 @@ int marks_mandelbrot_per_pixel()
 	}
 	else if (g_c_exp == 3)
 	{
-		g_coefficient_l.x = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift)
-			- multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
-		g_coefficient_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1);
+		g_coefficient_l.x = multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift)
+			- multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift);
+		g_coefficient_l.y = multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1);
 	}
 	else if (g_c_exp == 2)
 	{
@@ -2454,8 +2453,8 @@ int marks_mandelbrot_per_pixel()
 		g_coefficient_l.y = 0L;
 	}
 
-	g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
-	g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
+	g_temp_sqr_x_l = multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift);
+	g_temp_sqr_y_l = multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift);
 #endif
 	return 1; // 1st iteration has been done
 }
@@ -2475,8 +2474,8 @@ int marks_mandelbrot_per_pixel_fp()
 
 	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
 
-	g_old_z.x += g_parameter.x;      // initial pertubation of parameters set
-	g_old_z.y += g_parameter.y;
+	g_old_z.x += g_parameter.real();      // initial pertubation of parameters set
+	g_old_z.y += g_parameter.imag();
 
 	g_temp_sqr_x = sqr(g_old_z.real());
 	g_temp_sqr_y = sqr(g_old_z.imag());
@@ -2555,14 +2554,13 @@ int mandelbrot_per_pixel_fp()
 	{
 		// kludge to match "Beauty of Fractals" picture since we start
 		// Mandelbrot iteration with g_initial_z rather than 0
-		g_old_z.real(g_parameter.x); // initial pertubation of parameters set
-		g_old_z.imag(g_parameter.y);
+		g_old_z = g_parameter;				// initial pertubation of parameters set
 		g_color_iter = -1;
 	}
 	else
 	{
-		g_old_z.x += g_parameter.x;
-		g_old_z.y += g_parameter.y;
+		g_old_z.x += g_parameter.real();
+		g_old_z.y += g_parameter.imag();
 	}
 	g_temp_z = g_initial_z; // for spider
 	g_temp_sqr_x = sqr(g_old_z.real());  // precalculated value for regular Mandelbrot
@@ -2614,8 +2612,8 @@ int other_mandelbrot_per_pixel_fp()
 
 	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
 
-	g_old_z.x += g_parameter.x;      // initial pertubation of parameters set
-	g_old_z.y += g_parameter.y;
+	g_old_z.x += g_parameter.real();      // initial pertubation of parameters set
+	g_old_z.y += g_parameter.imag();
 
 	return 1; // 1st iteration has been done
 }
@@ -2643,8 +2641,8 @@ int marks_complex_mandelbrot_per_pixel()
 	{
 		g_initial_z = g_externs.DPixel();
 	}
-	g_old_z.real(g_initial_z.real() + g_parameter.x); // initial pertubation of parameters set
-	g_old_z.imag(g_initial_z.imag() + g_parameter.y);
+	g_old_z.real(g_initial_z.real() + g_parameter.real()); // initial pertubation of parameters set
+	g_old_z.imag(g_initial_z.imag() + g_parameter.imag());
 	g_temp_sqr_x = sqr(g_old_z.real());  // precalculated value
 	g_temp_sqr_y = sqr(g_old_z.imag());
 	g_coefficient = ComplexPower(g_initial_z, g_power);
@@ -2673,8 +2671,8 @@ int phoenix_per_pixel()
 	{
 		g_old_z_l = g_externs.LPixel();
 	}
-	g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
-	g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
+	g_temp_sqr_x_l = multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift);
+	g_temp_sqr_y_l = multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift);
 	g_tmp_z2_l.x = 0; // use g_tmp_z2_l as the complex Y value
 	g_tmp_z2_l.y = 0;
 	return 0;
@@ -2723,10 +2721,10 @@ int mandelbrot_phoenix_per_pixel()
 
 	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_l : g_initial_z_l;
 
-	g_old_z_l.x += g_parameter_l.x;    // initial pertubation of parameters set
-	g_old_z_l.y += g_parameter_l.y;
-	g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
-	g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
+	g_old_z_l.x += g_parameter_l.real();    // initial pertubation of parameters set
+	g_old_z_l.y += g_parameter_l.imag();
+	g_temp_sqr_x_l = multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift);
+	g_temp_sqr_y_l = multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift);
 	g_tmp_z2_l.x = 0;
 	g_tmp_z2_l.y = 0;
 	return 1; // 1st iteration has been done
@@ -2748,8 +2746,8 @@ int mandelbrot_phoenix_per_pixel_fp()
 
 	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
 
-	g_old_z.x += g_parameter.x;      // initial pertubation of parameters set
-	g_old_z.y += g_parameter.y;
+	g_old_z.x += g_parameter.real();      // initial pertubation of parameters set
+	g_old_z.y += g_parameter.imag();
 	g_temp_sqr_x = sqr(g_old_z.real());  // precalculated value
 	g_temp_sqr_y = sqr(g_old_z.imag());
 	s_temp2.x = 0;

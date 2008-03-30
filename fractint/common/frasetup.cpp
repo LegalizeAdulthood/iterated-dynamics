@@ -183,7 +183,7 @@ bool mandelbrot_setup_fp()
 
 	case FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_FP:
 	case FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_FP:
-		g_symmetry = (g_parameter.y == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
+		g_symmetry = (g_parameter.imag() == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
 		if ((g_function_index[0] == FUNCTION_LOG) || (g_function_index[0] == FUNCTION_FLIP))
 		{
 			g_symmetry = SYMMETRY_NONE;
@@ -308,7 +308,7 @@ bool julia_setup_fp()
 		break;
 	// TODO: should this really be here?
 	case FRACTYPE_OBSOLETE_LAMBDA_EXP:
-		if (g_parameter.y == 0.0)
+		if (g_parameter.imag() == 0.0)
 		{
 			g_symmetry = SYMMETRY_X_AXIS;
 		}
@@ -318,7 +318,7 @@ bool julia_setup_fp()
 
 	case FRACTYPE_JULIA_FUNC_PLUS_EXP_FP:
 	case FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_FP:
-		g_symmetry = (g_parameter.y == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
+		g_symmetry = (g_parameter.imag() == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
 		if ((g_function_index[0] == FUNCTION_LOG) || (g_function_index[0] == FUNCTION_FLIP))
 		{
 			g_symmetry = SYMMETRY_NONE;
@@ -350,9 +350,9 @@ bool julia_setup_fp()
 				g_function_index[1] == FUNCTION_TAN &&
 				g_function_index[2] == FUNCTION_SIN &&
 				g_function_index[3] == FUNCTION_TAN &&
-				fabs(g_parameter2.x - 3.0) < .0001 &&
-				g_parameter2.y == 0 &&
-				g_parameter.y == 0)
+				fabs(g_parameter2.real() - 3.0) < .0001 &&
+				g_parameter2.imag() == 0 &&
+				g_parameter.imag() == 0)
 			{
 				default_functions = true;
 				if (g_fractal_type == FRACTYPE_POPCORN_JULIA_FP)
@@ -414,7 +414,7 @@ bool mandelbrot_setup_l()
 
 	if ((g_fractal_type == FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_L) || (g_fractal_type == FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_L))
 	{
-		g_symmetry = (g_parameter.y == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
+		g_symmetry = (g_parameter.imag() == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
 		if ((g_function_index[0] == FUNCTION_LOG) || (g_function_index[0] == FUNCTION_FLIP))
 		{
 			g_symmetry = SYMMETRY_NONE;
@@ -469,7 +469,7 @@ bool julia_setup_l()
 		get_julia_attractor(0.5, 0.0);   // another attractor?
 		break;
 	case FRACTYPE_OBSOLETE_LAMBDA_EXP_L:
-		if (g_parameter_l.y == 0)
+		if (g_parameter_l.imag() == 0)
 		{
 			g_symmetry = SYMMETRY_X_AXIS;
 		}
@@ -478,7 +478,7 @@ bool julia_setup_l()
 
 	case FRACTYPE_JULIA_FUNC_PLUS_EXP_L:
 	case FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_L:
-		g_symmetry = (g_parameter.y == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
+		g_symmetry = (g_parameter.imag() == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
 		if ((g_function_index[0] == FUNCTION_LOG) || (g_function_index[0] == FUNCTION_FLIP))
 		{
 			g_symmetry = SYMMETRY_NONE;
@@ -493,9 +493,9 @@ bool julia_setup_l()
 				g_function_index[1] == FUNCTION_TAN &&
 				g_function_index[2] == FUNCTION_SIN &&
 				g_function_index[3] == FUNCTION_TAN &&
-				fabs(g_parameter2.x - 3.0) < .0001 &&
-				g_parameter2.y == 0 &&
-				g_parameter.y == 0)
+				fabs(g_parameter2.real() - 3.0) < .0001 &&
+				g_parameter2.imag() == 0 &&
+				g_parameter.imag() == 0)
 			{
 				default_functions = true;
 				if (g_fractal_type == FRACTYPE_POPCORN_JULIA_L)
@@ -524,14 +524,14 @@ bool trig_plus_sqr_setup_l()
 {
 	int (*per_pixel)(void) = julia_per_pixel;
 	int (*orbit_calc)(void) = trig_plus_sqr_orbit;
-	if (g_parameter_l.x == g_externs.Fudge() && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
+	if (g_parameter_l.real() == g_externs.Fudge() && g_parameter_l.imag() == 0L && g_parameter2_l.imag() == 0L
 		&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 	{
-		if (g_parameter2_l.x == g_externs.Fudge())        // Scott variant
+		if (g_parameter2_l.real() == g_externs.Fudge())        // Scott variant
 		{
 			orbit_calc =  scott_trig_plus_sqr_orbit;
 		}
-		else if (g_parameter2_l.x == -g_externs.Fudge())  // Skinner variant
+		else if (g_parameter2_l.real() == -g_externs.Fudge())  // Skinner variant
 		{
 			orbit_calc =  skinner_trig_sub_sqr_orbit;
 		}
@@ -546,14 +546,14 @@ bool trig_plus_sqr_setup_fp()
 {
 	int (*per_pixel)(void) = julia_per_pixel_fp;
 	int (*orbit_calc)(void) = trig_plus_sqr_orbit_fp;
-	if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
+	if (g_parameter.real() == 1.0 && g_parameter.imag() == 0.0 && g_parameter2.imag() == 0.0
 		&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 	{
-		if (g_parameter2.x == 1.0)        // Scott variant
+		if (g_parameter2.real() == 1.0)        // Scott variant
 		{
 			orbit_calc =  scott_trig_plus_sqr_orbit_fp;
 		}
-		else if (g_parameter2.x == -1.0)  // Skinner variant
+		else if (g_parameter2.real() == -1.0)  // Skinner variant
 		{
 			orbit_calc =  skinner_trig_sub_sqr_orbit_fp;
 		}
@@ -577,7 +577,7 @@ static int fn_plus_fn_symmetry() // set symmetry matrix for fn + fn type
 	// log 	{ SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS },
 	// sqr 	{ SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_XY_AXIS }
 	};
-	if (g_parameter.y == 0.0 && g_parameter2.y == 0.0)
+	if (g_parameter.imag() == 0.0 && g_parameter2.imag() == 0.0)
 	{
 		if (g_function_index[0] <= NUM_OF(fnplusfn) && g_function_index[1] <= NUM_OF(fnplusfn))
 		{
@@ -604,14 +604,14 @@ bool trig_plus_trig_setup_l()
 	}
 	int (*per_pixel)(void) = julia_per_pixel_l;
 	int (*orbit_calc)(void) =  trig_plus_trig_orbit;
-	if (g_parameter_l.x == g_externs.Fudge() && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
+	if (g_parameter_l.real() == g_externs.Fudge() && g_parameter_l.imag() == 0L && g_parameter2_l.imag() == 0L
 		&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 	{
-		if (g_parameter2_l.x == g_externs.Fudge())        // Scott variant
+		if (g_parameter2_l.real() == g_externs.Fudge())        // Scott variant
 		{
 			orbit_calc =  scott_trig_plus_trig_orbit;
 		}
-		else if (g_parameter2_l.x == -g_externs.Fudge())  // Skinner variant
+		else if (g_parameter2_l.real() == -g_externs.Fudge())  // Skinner variant
 		{
 			orbit_calc =  skinner_trig_sub_trig_orbit;
 		}
@@ -632,14 +632,14 @@ bool trig_plus_trig_setup_fp()
 	}
 	int (*per_pixel)(void) =  other_julia_per_pixel_fp;
 	int (*orbit_calc)(void) =  trig_plus_trig_orbit_fp;
-	if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
+	if (g_parameter.real() == 1.0 && g_parameter.imag() == 0.0 && g_parameter2.imag() == 0.0
 		&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 	{
-		if (g_parameter2.x == 1.0)        // Scott variant
+		if (g_parameter2.real() == 1.0)        // Scott variant
 		{
 			orbit_calc =  scott_trig_plus_trig_orbit_fp;
 		}
-		else if (g_parameter2.x == -1.0)  // Skinner variant
+		else if (g_parameter2.real() == -1.0)  // Skinner variant
 		{
 			orbit_calc =  skinner_trig_sub_trig_orbit_fp;
 		}
@@ -671,7 +671,7 @@ bool julia_trig_or_trig_setup()
 	// default symmetry is SYMMETRY_X_AXIS
 	g_long_parameter = &g_parameter_l; // added to consolidate code 10/1/92 JCO
 	g_float_parameter = &g_parameter;
-	if (g_parameter.y != 0.0)
+	if (g_parameter.imag() != 0.0)
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
@@ -763,14 +763,14 @@ bool z_trig_plus_z_setup()
 	if (g_current_fractal_specific->isinteger)
 	{
 		int (*orbit_calc)(void) =  z_trig_z_plus_z_orbit;
-		if (g_parameter_l.x == g_externs.Fudge() && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
+		if (g_parameter_l.real() == g_externs.Fudge() && g_parameter_l.imag() == 0L && g_parameter2_l.imag() == 0L
 			&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 		{
-			if (g_parameter2_l.x == g_externs.Fudge())     // Scott variant
+			if (g_parameter2_l.real() == g_externs.Fudge())     // Scott variant
 			{
 				orbit_calc =  scott_z_trig_z_plus_z_orbit;
 			}
-			else if (g_parameter2_l.x == -g_externs.Fudge())  // Skinner variant
+			else if (g_parameter2_l.real() == -g_externs.Fudge())  // Skinner variant
 			{
 				orbit_calc =  skinner_z_trig_z_minus_z_orbit;
 			}
@@ -781,14 +781,14 @@ bool z_trig_plus_z_setup()
 	}
 
 	int (*orbit_calc)(void) = z_trig_z_plus_z_orbit_fp;
-	if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
+	if (g_parameter.real() == 1.0 && g_parameter.imag() == 0.0 && g_parameter2.imag() == 0.0
 		&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 	{
-		if (g_parameter2.x == 1.0)     // Scott variant
+		if (g_parameter2.real() == 1.0)     // Scott variant
 		{
 			orbit_calc =  scott_z_trig_z_plus_z_orbit_fp;
 		}
-		else if (g_parameter2.x == -1.0)       // Skinner variant
+		else if (g_parameter2.real() == -1.0)       // Skinner variant
 		{
 			orbit_calc =  skinner_z_trig_z_minus_z_orbit_fp;
 		}
@@ -958,8 +958,8 @@ bool marks_julia_setup()
 	}
 	else if (g_c_exp == 3)
 	{
-		g_coefficient_l.x = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift) - multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
-		g_coefficient_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1);
+		g_coefficient_l.x = multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift) - multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift);
+		g_coefficient_l.y = multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1);
 	}
 	else if (g_c_exp == 2)
 	{
@@ -1029,7 +1029,7 @@ bool phoenix_setup()
 {
 	g_long_parameter = &g_parameter_l; // added to consolidate code 10/1/92 JCO
 	g_float_parameter = &g_parameter;
-	g_degree = int(g_parameter2.x);
+	g_degree = int(g_parameter2.real());
 	if (g_degree < 2 && g_degree > -3)
 	{
 		g_degree = 0;
@@ -1069,8 +1069,8 @@ bool phoenix_complex_setup()
 	int (*orbit_calc)(void) = 0;
 	if (g_degree == 0)
 	{
-		g_symmetry = (g_parameter2.x != 0 || g_parameter2.y != 0) ? SYMMETRY_NONE : SYMMETRY_ORIGIN;
-		if (g_parameter.y == 0 && g_parameter2.y == 0)
+		g_symmetry = (g_parameter2.real() != 0 || g_parameter2.imag() != 0) ? SYMMETRY_NONE : SYMMETRY_ORIGIN;
+		if (g_parameter.imag() == 0 && g_parameter2.imag() == 0)
 		{
 			g_symmetry = SYMMETRY_X_AXIS;
 		}
@@ -1079,13 +1079,13 @@ bool phoenix_complex_setup()
 	if (g_degree >= 2)
 	{
 		g_degree--;
-		g_symmetry = (g_parameter.y == 0 && g_parameter2.y == 0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
+		g_symmetry = (g_parameter.imag() == 0 && g_parameter2.imag() == 0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
 		orbit_calc = g_user_float_flag ? phoenix_complex_plus_orbit_fp : phoenix_complex_plus_orbit;
 	}
 	if (g_degree <= -3)
 	{
 		g_degree = abs(g_degree) - 2;
-		g_symmetry = (g_parameter.y == 0 && g_parameter2.y == 0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
+		g_symmetry = (g_parameter.imag() == 0 && g_parameter2.imag() == 0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
 		orbit_calc = g_user_float_flag ? phoenix_complex_minus_orbit_fp : phoenix_complex_minus_orbit;
 	}
 	// TODO: don't write to g_current_fractal_specific
@@ -1098,7 +1098,7 @@ bool mandelbrot_phoenix_setup()
 {
 	g_long_parameter = &g_initial_z_l; // added to consolidate code 10/1/92 JCO
 	g_float_parameter = &g_initial_z;
-	g_degree = int(g_parameter2.x);
+	g_degree = int(g_parameter2.real());
 	if (g_degree < 2 && g_degree > -3)
 	{
 		g_degree = 0;
@@ -1135,7 +1135,7 @@ bool mandelbrot_phoenix_complex_setup()
 		g_degree = 0;
 	}
 	g_parameters[4] = double(g_degree);
-	if (g_parameter.y != 0 || g_parameter2.y != 0)
+	if (g_parameter.imag() != 0 || g_parameter2.imag() != 0)
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
