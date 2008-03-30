@@ -107,8 +107,6 @@ public:
 	virtual void SetColors(int value)				{ throw not_implemented("SetColors"); }
 	virtual bool CompareGif() const					{ throw not_implemented("CompareGif"); }
 	virtual void SetCompareGif(bool value)			{ throw not_implemented("SetCompareGif"); }
-	virtual long GaussianConstant() const			{ throw not_implemented("GaussianConstant"); }
-	virtual void SetGaussianConstant(long value)	{ throw not_implemented("SetGaussianConstant"); }
 	virtual double CosX() const						{ throw not_implemented("CosX"); }
 	virtual void SetCosX(double value)				{ throw not_implemented("SetCosX"); }
 	virtual long CReal() const						{ throw not_implemented("CReal"); }
@@ -153,8 +151,6 @@ public:
 	virtual void SetDistanceTestWidth(int value)	{ throw not_implemented("SetDistanceTestWidth"); }
 	virtual float ScreenDistanceFp() const			{ throw not_implemented("ScreenDistanceFp"); }
 	virtual void SetScreenDistanceFp(float value)	{ throw not_implemented("SetScreenDistanceFp"); }
-	virtual int GaussianDistribution() const		{ throw not_implemented("GaussianDistribution"); }
-	virtual void SetGaussianDistribution(int value) { throw not_implemented("SetGaussianDistribution"); }
 	virtual bool DitherFlag() const					{ throw not_implemented("DitherFlag"); }
 	virtual void SetDitherFlag(bool value)			{ throw not_implemented("SetDitherFlag"); }
 	virtual bool DontReadColor() const				{ throw not_implemented("DontReadColor"); }
@@ -433,8 +429,6 @@ public:
 	virtual void SetNumFractalTypes(int value)		{ throw not_implemented("SetNumFractalTypes"); }
 	virtual bool NextScreenFlag() const 			{ throw not_implemented("NextScreenFlag"); }
 	virtual void SetNextScreenFlag(bool value)		{ throw not_implemented("SetNextScreenFlag"); }
-	virtual int GaussianOffset() const 				{ throw not_implemented("GaussianOffset"); }
-	virtual void SetGaussianOffset(int value) 		{ throw not_implemented("SetGaussianOffset"); }
 	virtual bool OkToPrint() const 					{ throw not_implemented("OkToPrint"); }
 	virtual void SetOkToPrint(bool value)			{ throw not_implemented("SetOkToPrint"); }
 	virtual ComplexD OldZ() const					{ throw not_implemented("OldZ"); }
@@ -615,8 +609,6 @@ public:
 	virtual void SetSkipXDots(int value) 			{ throw not_implemented("SetSkipXDots"); }
 	virtual int SkipYDots() const 					{ throw not_implemented("SkipYDots"); }
 	virtual void SetSkipYDots(int value) 			{ throw not_implemented("SetSkipYDots"); }
-	virtual int GaussianSlope() const 				{ throw not_implemented("GaussianSlope"); }
-	virtual void SetGaussianSlope(int value) 		{ throw not_implemented("SetGaussianSlope"); }
 	virtual PlotColorStandardFunction *PlotColorStandard() const { throw not_implemented("PlotColorStandard"); }
 	virtual void SetPlotColorStandard(PlotColorStandardFunction *value) { throw not_implemented("SetPlotColorStandard"); }
 	virtual bool StartShowOrbit() const 			{ throw not_implemented("StartShowOrbit"); }

@@ -88,8 +88,6 @@ public:
 	virtual void SetColors(int value) = 0;
 	virtual bool CompareGif() const = 0;
 	virtual void SetCompareGif(bool value) = 0;
-	virtual long GaussianConstant() const = 0;
-	virtual void SetGaussianConstant(long value) = 0;
 	virtual double CosX() const = 0;
 	virtual void SetCosX(double value) = 0;
 	virtual long CReal() const = 0;
@@ -134,8 +132,6 @@ public:
 	virtual void SetDistanceTestWidth(int value) = 0;
 	virtual float ScreenDistanceFp() const = 0;
 	virtual void SetScreenDistanceFp(float value) = 0;
-	virtual int GaussianDistribution() const = 0;
-	virtual void SetGaussianDistribution(int value) = 0;
 	virtual bool DitherFlag() const = 0;
 	virtual void SetDitherFlag(bool value) = 0;
 	virtual bool DontReadColor() const = 0;
@@ -411,8 +407,6 @@ public:
 	virtual int NumFractalTypes() const = 0;
 	virtual bool NextScreenFlag() const = 0;
 	virtual void SetNextScreenFlag(bool value) = 0;
-	virtual int GaussianOffset() const = 0;
-	virtual void SetGaussianOffset(int value) = 0;
 	virtual bool OkToPrint() const = 0;
 	virtual void SetOkToPrint(bool value) = 0;
 	virtual ComplexD OldZ() const = 0;
@@ -589,8 +583,6 @@ public:
 	virtual void SetSkipXDots(int value) = 0;
 	virtual int SkipYDots() const = 0;
 	virtual void SetSkipYDots(int value) = 0;
-	virtual int GaussianSlope() const = 0;
-	virtual void SetGaussianSlope(int value) = 0;
 	typedef void PlotColorStandardFunction(int x, int y, int color);
 	virtual PlotColorStandardFunction *PlotColorStandard() const = 0;
 	virtual void SetPlotColorStandard(PlotColorStandardFunction *value) = 0;
