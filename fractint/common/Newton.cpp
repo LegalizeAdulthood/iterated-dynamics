@@ -23,7 +23,7 @@ extern ComplexD croot;
 
 static Newton s_newton;
 static NewtonComplex s_newton_complex;
-static ComplexD s_static_roots[16] = { { 0.0, 0.0 } }; // roots array for degree 16 or less 
+static ComplexD s_static_roots[16] = { { 0.0, 0.0 } }; // roots array for degree 16 or less
 static ComplexD *s_roots = s_static_roots;
 
 static double distance(const ComplexD &z1, const ComplexD &z2)
@@ -69,7 +69,7 @@ int complex_newton()
 	return s_newton_complex.orbit();
 }
 
-bool Newton::setup()           // Newton/NewtBasin Routines 
+bool Newton::setup()           // Newton/NewtBasin Routines
 {
 	int i;
 #if !defined(XFRACT)
@@ -97,17 +97,17 @@ bool Newton::setup()           // Newton/NewtBasin Routines
 
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 #endif
-	// set up table of roots of 1 along unit circle 
+	// set up table of roots of 1 along unit circle
 	g_degree = int(g_parameter.x);
 	if (g_degree < 2)
 	{
-		g_degree = 3;   // defaults to 3, but 2 is possible 
+		g_degree = 3;   // defaults to 3, but 2 is possible
 	}
 
-	// precalculated values 
+	// precalculated values
 	m_root_over_degree = 1.0/double(g_degree);
 	m_degree_minus_1_over_degree = double(g_degree - 1)/double(g_degree);
-	g_threshold = .3*MathUtil::Pi/g_degree; // less than half distance between roots 
+	g_threshold = .3*MathUtil::Pi/g_degree; // less than half distance between roots
 
 	g_externs.SetBasin(0);
 	if (s_roots != s_static_roots)
@@ -133,7 +133,7 @@ bool Newton::setup()           // Newton/NewtBasin Routines
 			s_roots = s_static_roots;
 		}
 
-		// list of roots to discover where we converged for newtbasin 
+		// list of roots to discover where we converged for newtbasin
 		for (i = 0; i < g_degree; i++)
 		{
 			s_roots[i].x = cos(i*g_two_pi/double(g_degree));
@@ -181,7 +181,7 @@ int Newton::orbit()
 	g_new_z.real(m_degree_minus_1_over_degree*g_new_z.x + m_root_over_degree);
 	g_new_z.y *= m_degree_minus_1_over_degree;
 
-	// Watch for divide underflow 
+	// Watch for divide underflow
 	double s_t2 = g_temp_z.x*g_temp_z.x + g_temp_z.y*g_temp_z.y;
 	if (s_t2 < FLT_MIN)
 	{

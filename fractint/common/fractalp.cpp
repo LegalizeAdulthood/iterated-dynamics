@@ -7,7 +7,7 @@
 
 #include <string.h>
 
-// includes needed for g_fractal_specific 
+// includes needed for g_fractal_specific
 
 #include "port.h"
 #include "prototyp.h"
@@ -36,32 +36,32 @@
 #include "QuaternionEngine.h"
 #include "Test.h"
 
-// functions defined elswhere needed for g_fractal_specific 
-// moved to prototyp.h 
+// functions defined elswhere needed for g_fractal_specific
+// moved to prototyp.h
 
-// parameter descriptions 
-// Note: parameters preceded by + are integer parameters 
-// parameters preceded by # are U32 parameters 
+// parameter descriptions
+// Note: parameters preceded by + are integer parameters
+// parameters preceded by # are U32 parameters
 
-// for Mandelbrots 
+// for Mandelbrots
 static char s_real_z0[] = "Real Perturbation of Z(0)";
 static char s_imag_z0[] = "Imaginary Perturbation of Z(0)";
 
-// for Julias 
+// for Julias
 static char s_parameter_real[] = "Real Part of Parameter";
 static char s_parameter_imag[] = "Imaginary Part of Parameter";
 
-// for Newtons 
+// for Newtons
 static char s_newton_degree[] = "+Polynomial Degree (>= 2)";
 
-// for MarksMandel/Julia 
+// for MarksMandel/Julia
 static char s_exponent[] = "Real part of Exponent";
 static char s_exponent_imag[] = "Imag part of Exponent";
 
-// for Lorenz 
+// for Lorenz
 static char s_time_step[] = "Time Step";
 
-// for formula 
+// for formula
 static char s_p1_real[] = "Real portion of p1";
 static char s_p2_real[] = "Real portion of p2";
 static char s_p3_real[] = "Real portion of p3";
@@ -73,53 +73,53 @@ static char s_p3_imag[] = "Imaginary portion of p3";
 static char s_p4_imag[] = "Imaginary portion of p4";
 static char s_p5_imag[] = "Imaginary portion of p5";
 
-// trig functions 
+// trig functions
 static char s_trig1_coefficient_re[] = "Real Coefficient First Function";
 static char s_trig1_coefficient_im[] = "Imag Coefficient First Function";
 static char s_trig2_coefficient_re[] = "Real Coefficient Second Function";
 static char s_trig2_coefficient_im[] = "Imag Coefficient Second Function";
 
-// KAM Torus 
+// KAM Torus
 static char s_kam_angle[] = "Angle (radians)";
 static char s_kam_step[] =  "Step size";
 static char s_kam_stop[] =  "Stop value";
 static char s_points_per_orbit[] = "+Points per orbit";
 
-// popcorn and julia popcorn generalized 
+// popcorn and julia popcorn generalized
 static char s_step_x[] = "Step size (real)";
 static char s_step_y[] = "Step size (imaginary)";
 static char s_constant_x[] = "Constant C (real)";
 static char s_constant_y[] = "Constant C (imaginary)";
 
-// bifurcations 
+// bifurcations
 static char s_filter_cycles[] = "+Filter Cycles";
 static char s_seed_population[] = "Seed Population";
 
-// frothy basins 
+// frothy basins
 static char s_frothy_mapping[] = "+Apply mapping once (1) or twice (2)";
 static char s_frothy_shade[] =  "+Enter non-zero value for alternate color shading";
 static char s_frothy_a_value[] =  "A (imaginary part of C)";
 
-// plasma and ant 
+// plasma and ant
 
 static char s_random_seed[] = "+Random Seed Value (0 = Random, 1 = Reuse Last)";
 
-// ifs 
+// ifs
 static char s_color_method[] = "+Coloring method (0,1)";
 
-// phoenix fractals 
+// phoenix fractals
 static char s_degree_z[] = "Degree = 0 | >= 2 | <= -3";
 
-// julia inverse 
+// julia inverse
 static char s_max_hits_per_pixel[] = "Max Hits per Pixel";
 
-// halley 
+// halley
 static char s_order[] = {"+Order (integer > 1)"};
 static char s_real_relaxation_coefficient[] = {"Real Relaxation coefficient"};
 static char s_epsilon[] = {"Epsilon"};
 static char s_imag_relaxation_coefficient[] = {"Imag Relaxation coefficient"};
 
-// bailout defines 
+// bailout defines
 enum
 {
 	ORBIT_BAILOUT_TRIG_L		= 64,
@@ -186,7 +186,7 @@ static alternate_math s_alternate_math[] =
 	}
 };
 
-// These are only needed for types with both integer and float variations 
+// These are only needed for types with both integer and float variations
 static char s_barnsleyj1_name[] = "*barnsleyj1";
 static char s_barnsleyj2_name[] = "*barnsleyj2";
 static char s_barnsleyj3_name[] = "*barnsleyj3";
@@ -254,7 +254,7 @@ static char s_unity_name[] = "*unity";
 static char s_frothybasin_name[] = "*frothybasin";
 static char s_halley_name[] = "*halley";
 
-// use next to cast orbitcalcs() that have arguments 
+// use next to cast orbitcalcs() that have arguments
 typedef int (*VF)();
 
 class IFractal
@@ -479,7 +479,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_NONE
 	},
 
-	{ // FRACTYPE_OBSOLETE_LAMBDA_SINE, FRACTYPE_MANDELBROT_FUNC_FP 
+	{ // FRACTYPE_OBSOLETE_LAMBDA_SINE, FRACTYPE_MANDELBROT_FUNC_FP
 	FRACTYPE_MANDELBROT_FUNC_FP,
 	s_mandelfn_name,
 		{s_real_z0, s_imag_z0, "", ""},
@@ -493,7 +493,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_TRIG_L
 	},
 
-	{ // FRACTYPE_OBSOLETE_LAMBDA_COS, FRACTYPE_MAN_O_WAR_FP 
+	{ // FRACTYPE_OBSOLETE_LAMBDA_COS, FRACTYPE_MAN_O_WAR_FP
 	FRACTYPE_MAN_O_WAR_FP,
 	s_manowar_name,
 		{s_real_z0, s_imag_z0, "", ""},
@@ -507,7 +507,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_STANDARD
 	},
 
-	{ // FRACTYPE_OBSOLETE_LAMBDA_EXP, FRACTYPE_MAN_O_WAR 
+	{ // FRACTYPE_OBSOLETE_LAMBDA_EXP, FRACTYPE_MAN_O_WAR
 	FRACTYPE_MAN_O_WAR,
 	s_manowar_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
@@ -609,7 +609,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_STANDARD
 	},
 
-	{ // FRACTYPE_OBSOLETE_MANDELBROT_SINE, FRACTYPE_SQR_FUNC 
+	{ // FRACTYPE_OBSOLETE_MANDELBROT_SINE, FRACTYPE_SQR_FUNC
 	FRACTYPE_SQR_FUNC,
 	s_sqr_fn__name + 1,
 		{"", "", "", ""},
@@ -623,7 +623,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_TRIG_L
 	},
 
-	{ // FRACTYPE_OBSOLETE_MANDELBROT_COS, FRACTYPE_SQR_FUNC_FP 
+	{ // FRACTYPE_OBSOLETE_MANDELBROT_COS, FRACTYPE_SQR_FUNC_FP
 	FRACTYPE_SQR_FUNC_FP,
 	s_sqr_fn__name,
 		{"", "", "", ""},
@@ -637,7 +637,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_TRIG_L
 	},
 
-	{ // FRACTYPE_OBSOLETE_MANDELBROT_EXP, FRACTYPE_FUNC_PLUS_FUNC 
+	{ // FRACTYPE_OBSOLETE_MANDELBROT_EXP, FRACTYPE_FUNC_PLUS_FUNC
 	FRACTYPE_FUNC_PLUS_FUNC,
 	s_fnplusfn_name + 1,
 		{s_trig1_coefficient_re, s_trig1_coefficient_im, s_trig2_coefficient_re, s_trig2_coefficient_im},
@@ -791,7 +791,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_STANDARD
 	},
 
-	{ // FRACTYPE_OBSOLETE_DEM_MANDELBROT, FRACTYPE_FUNC_SQR 
+	{ // FRACTYPE_OBSOLETE_DEM_MANDELBROT, FRACTYPE_FUNC_SQR
 	FRACTYPE_FUNC_SQR,
 	s_fn_zz__name + 1,
 		{"", "", "", ""},
@@ -805,7 +805,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_STANDARD
 	},
 
-	{ // FRACTYPE_OBSOLETE_DEM_JULIA, FRACTYPE_FUNC_SQR_FP 
+	{ // FRACTYPE_OBSOLETE_DEM_JULIA, FRACTYPE_FUNC_SQR_FP
 	FRACTYPE_FUNC_SQR_FP,
 	s_fn_zz__name,
 		{"", "", "", ""},
@@ -833,7 +833,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_NONE
 	},
 
-	{ // FRACTYPE_OBSOLETE_MANDELBROT_SINH, FRACTYPE_FUNC_PLUS_FUNC_FP 
+	{ // FRACTYPE_OBSOLETE_MANDELBROT_SINH, FRACTYPE_FUNC_PLUS_FUNC_FP
 	FRACTYPE_FUNC_PLUS_FUNC_FP,
 	s_fnplusfn_name,
 		{s_trig1_coefficient_re, s_trig1_coefficient_im, s_trig2_coefficient_re, s_trig2_coefficient_im},
@@ -847,7 +847,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_TRIG_L
 	},
 
-	{ // FRACTYPE_OBSOLETE_LAMBDA_SINH, FRACTYPE_FUNC_TIMES_FUNC 
+	{ // FRACTYPE_OBSOLETE_LAMBDA_SINH, FRACTYPE_FUNC_TIMES_FUNC
 	FRACTYPE_FUNC_TIMES_FUNC,
 	s_fnfn_name + 1,
 		{"", "", "", ""},
@@ -861,7 +861,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_TRIG_L
 	},
 
-	{ // FRACTYPE_OBSOLETE_MANDELBROT_COSH, FRACTYPE_FUNC_TIMES_FUNC_FP 
+	{ // FRACTYPE_OBSOLETE_MANDELBROT_COSH, FRACTYPE_FUNC_TIMES_FUNC_FP
 	FRACTYPE_FUNC_TIMES_FUNC_FP,
 	s_fnfn_name,
 		{"", "", "", ""},
@@ -875,7 +875,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_TRIG_L
 	},
 
-	{ // FRACTYPE_OBSOLETE_LAMBDA_COSH, FRACTYPE_SQR_RECIPROCAL_FUNC 
+	{ // FRACTYPE_OBSOLETE_LAMBDA_COSH, FRACTYPE_SQR_RECIPROCAL_FUNC
 	FRACTYPE_SQR_RECIPROCAL_FUNC,
 	s_sqr_1divfn__name + 1,
 		{"", "", "", ""},
@@ -889,7 +889,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_TRIG_L
 	},
 
-	{ // FRACTYPE_OBSOLETE_MANDELBROT_SINE_L, FRACTYPE_SQR_RECIPROCAL_FUNC_FP 
+	{ // FRACTYPE_OBSOLETE_MANDELBROT_SINE_L, FRACTYPE_SQR_RECIPROCAL_FUNC_FP
 	FRACTYPE_SQR_RECIPROCAL_FUNC_FP,
 	s_sqr_1divfn__name,
 		{"", "", "", ""},
@@ -903,7 +903,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_TRIG_L
 	},
 
-	{ // FRACTYPE_OBSOLETE_LAMBDA_SINE_L, FRACTYPE_FUNC_TIMES_Z_PLUS_Z 
+	{ // FRACTYPE_OBSOLETE_LAMBDA_SINE_L, FRACTYPE_FUNC_TIMES_Z_PLUS_Z
 	FRACTYPE_FUNC_TIMES_Z_PLUS_Z,
 	s_fnzplusz_name + 1,
 		{s_trig1_coefficient_re, s_trig1_coefficient_im, "Real Coefficient Second Term", "Imag Coefficient Second Term"},
@@ -917,7 +917,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_TRIG_L
 	},
 
-	{ // FRACTYPE_OBSOLETE_MANDELBROT_COS_L, FRACTYPE_FUNC_TIMES_Z_PLUS_Z_FP 
+	{ // FRACTYPE_OBSOLETE_MANDELBROT_COS_L, FRACTYPE_FUNC_TIMES_Z_PLUS_Z_FP
 	FRACTYPE_FUNC_TIMES_Z_PLUS_Z_FP,
 	s_fnzplusz_name,
 		{s_trig1_coefficient_re, s_trig1_coefficient_im, "Real Coefficient Second Term", "Imag Coefficient Second Term"},
@@ -931,7 +931,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_TRIG_L
 	},
 
-	{ // FRACTYPE_OBSOLETE_LAMBDA_COS_L, FRACTYPE_KAM_TORUS_FP 
+	{ // FRACTYPE_OBSOLETE_LAMBDA_COS_L, FRACTYPE_KAM_TORUS_FP
 	FRACTYPE_KAM_TORUS_FP,
 	s_kamtorus_name,
 		{s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
@@ -945,7 +945,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_NONE
 	},
 
-	{ // FRACTYPE_OBSOLETE_MANDELBROT_SINH_L, FRACTYPE_KAM_TORUS 
+	{ // FRACTYPE_OBSOLETE_MANDELBROT_SINH_L, FRACTYPE_KAM_TORUS
 	FRACTYPE_KAM_TORUS,
 	s_kamtorus_name + 1,
 		{s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
@@ -959,7 +959,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_NONE
 	},
 
-	{ // FRACTYPE_OBSOLETE_LAMBDA_SINH_L, FRACTYPE_KAM_TORUS_3D_FP 
+	{ // FRACTYPE_OBSOLETE_LAMBDA_SINH_L, FRACTYPE_KAM_TORUS_3D_FP
 	FRACTYPE_KAM_TORUS_3D_FP,
 	s_kamtorus3d_name,
 		{s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
@@ -973,7 +973,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_NONE
 	},
 
-	{ // FRACTYPE_OBSOLETE_MANDELBROT_COSH_L, FRACTYPE_KAM_TORUS_3D 
+	{ // FRACTYPE_OBSOLETE_MANDELBROT_COSH_L, FRACTYPE_KAM_TORUS_3D
 	FRACTYPE_KAM_TORUS_3D,
 	s_kamtorus3d_name + 1,
 		{s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
@@ -987,7 +987,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_NONE
 	},
 
-	{ // FRACTYPE_OBSOLETE_LAMBDA_COSH_L, FRACTYPE_LAMBDA_FUNC 
+	{ // FRACTYPE_OBSOLETE_LAMBDA_COSH_L, FRACTYPE_LAMBDA_FUNC
 	FRACTYPE_LAMBDA_FUNC,
 	s_lambdafn_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
@@ -1057,7 +1057,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_STANDARD
 	},
 
-	{ // FRACTYPE_OBSOLETE_MANDELBROT_EXP_L, FRACTYPE_LAMBDA_FUNC_FP 
+	{ // FRACTYPE_OBSOLETE_MANDELBROT_EXP_L, FRACTYPE_LAMBDA_FUNC_FP
 	FRACTYPE_LAMBDA_FUNC_FP,
 	s_lambdafn_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
@@ -1070,7 +1070,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_TRIG_L
 	},
 
-	{ // FRACTYPE_OBSOLETE_LAMBDA_EXP_L, FRACTYPE_MANDELBROT_FUNC 
+	{ // FRACTYPE_OBSOLETE_LAMBDA_EXP_L, FRACTYPE_MANDELBROT_FUNC
 	FRACTYPE_MANDELBROT_FUNC,
 	s_mandelfn_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
@@ -2638,7 +2638,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_STANDARD
 	},
 
-	// dmf 
+	// dmf
 	{
 	FRACTYPE_ICON,
 	"icons",
@@ -2653,7 +2653,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_NONE
 	},
 
-	// dmf 
+	// dmf
 	{
 	FRACTYPE_ICON_3D,
 	"icons3d",
@@ -2812,9 +2812,9 @@ FractalTypeSpecificData g_fractal_specific[] =
 		ORBIT_BAILOUT_STANDARD
 	},
 
-	// From Pickovers' "Chaos in Wonderland"      
-	// included by Humberto R. Baptista           
-	// code adapted from king.cpp bt James Rankin 
+	// From Pickovers' "Chaos in Wonderland"
+	// included by Humberto R. Baptista
+	// code adapted from king.cpp bt James Rankin
 	{
 	FRACTYPE_LATOOCARFIAN,
 	"latoocarfian",
@@ -2844,7 +2844,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 	},
 	{
 		0,
-		0,            // marks the END of the list 
+		0,            // marks the END of the list
 		{0, 0, 0, 0},
 		{0, 0, 0, 0},
 		-1, -1, 0,
@@ -2920,7 +2920,7 @@ bool type_has_parameter(int type, int parameter)
 	return (parameter_prompt(type, parameter) != 0);
 }
 
-// locate alternate math record 
+// locate alternate math record
 alternate_math *find_alternate_math(int math)
 {
 	if (math == 0)

@@ -3,12 +3,12 @@
 
 #include "port.h"
 
-// big.h 
+// big.h
 
-// Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer 
+// Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer
 
-// Number of bytes to use for integer part for fixed decimal math, 
-// does not effect floating point math at all. 
+// Number of bytes to use for integer part for fixed decimal math,
+// does not effect floating point math at all.
 enum
 {
 	BN_INT_LENGTH = 4
@@ -21,17 +21,17 @@ enum
 extern double const LOG10_256;
 extern double const LOG_256;
 
-// values that g_bf_math can hold, 
-// 0 = g_bf_math is not being used 
-// 1 = g_bf_math is being used     
+// values that g_bf_math can hold,
+// 0 = g_bf_math is not being used
+// 1 = g_bf_math is being used
 enum
 {
-	BIGNUM = 1,  // g_bf_math is being used with bn_t numbers 
-	BIGFLT = 2  // g_bf_math is being used with bf_t numbers 
+	BIGNUM = 1,  // g_bf_math is being used with bn_t numbers
+	BIGFLT = 2  // g_bf_math is being used with bf_t numbers
 };
 
 typedef unsigned char *big_t;
-#define bn_t   big_t  // for clarification purposes 
+#define bn_t   big_t  // for clarification purposes
 #define bf_t   big_t
 #define bf10_t big_t
 
@@ -59,30 +59,30 @@ extern bn_t bntmp2;
 extern bn_t bntmp3;
 extern bn_t bntmp4;
 extern bn_t bntmp5;
-extern bn_t bntmp6;							// g_r_length 
+extern bn_t bntmp6;							// g_r_length
 extern bn_t bntest1;
 extern bn_t bntest2;
-extern bn_t bntest3;						// g_r_length 
+extern bn_t bntest3;						// g_r_length
 extern bn_t bntmpcpy1;
-extern bn_t bntmpcpy2;						// g_bn_length 
+extern bn_t bntmpcpy2;						// g_bn_length
 extern bn_t bn_pi;
-extern bn_t bntmp;							// g_r_length  
+extern bn_t bntmp;							// g_r_length
 
 extern bf_t bftmp1;
 extern bf_t bftmp2;
 extern bf_t bftmp3;
 extern bf_t bftmp4;
 extern bf_t bftmp5;
-extern bf_t bftmp6;							// g_rbf_length+2 
+extern bf_t bftmp6;							// g_rbf_length+2
 extern bf_t bftest1;
 extern bf_t bftest2;
-extern bf_t bftest3;						// g_rbf_length+2 
+extern bf_t bftest3;						// g_rbf_length+2
 extern bf_t bftmpcpy1;
-extern bf_t bftmpcpy2;						// g_bf_length+2  
+extern bf_t bftmpcpy2;						// g_bf_length+2
 extern bf_t bf_pi;
-extern bf_t bftmp;							// g_rbf_length  
+extern bf_t bftmp;							// g_rbf_length
 
-extern bf10_t bf10tmp;						// dec+4 
+extern bf10_t bf10tmp;						// dec+4
 extern big_t big_pi;
 
 void calculate_bignum_lengths();
@@ -90,7 +90,7 @@ void init_big_dec(int dec);
 void init_big_length(int bnl);
 void init_big_pi();
 
-// functions defined in bignuma.asm or bignumc.c 
+// functions defined in bignuma.asm or bignumc.c
 extern bn_t clear_bn(bn_t r);
 extern bn_t max_bn(bn_t r);
 extern bn_t copy_bn(bn_t r, bn_t n);
@@ -116,7 +116,7 @@ extern bn_t mult_a_bn_int(bn_t r, U16 u);
 extern bn_t unsafe_div_bn_int(bn_t r, bn_t n, U16 u);
 extern bn_t div_a_bn_int(bn_t r, U16 u);
 
-// used to be in bigflta.asm or bigfltc.c 
+// used to be in bigflta.asm or bigfltc.c
 extern bf_t clear_bf(bf_t r);
 extern bf_t copy_bf(bf_t r, bf_t n);
 extern bf_t floattobf(bf_t r, LDBL f);
@@ -125,9 +125,9 @@ extern LDBL bntofloat(bn_t n);
 extern LDBL extract_256(LDBL f, int *exp_ptr);
 extern LDBL scale_256( LDBL f, int n );
 
-// functions defined in bignum.c 
+// functions defined in bignum.c
 #ifdef ACCESS_BY_BYTE
-// prototypes 
+// prototypes
 extern U32 big_access32(BYTE *addr);
 extern U16 big_access16(BYTE *addr);
 extern S16 big_accessS16(S16 *addr);
@@ -135,7 +135,7 @@ extern U32 big_set32(BYTE *addr, U32 val);
 extern U16 big_set16(BYTE *addr, U16 val);
 extern S16 big_setS16(S16 *addr, S16 val);
 #else
-// equivalent defines 
+// equivalent defines
 #define big_access32(addr)   (*(U32 *)(addr))
 #define big_access16(addr)   (*(U16 *)(addr))
 #define big_accessS16(addr)   (*(S16 *)(addr))
@@ -162,7 +162,7 @@ extern bn_t unsafe_atan_bn(bn_t r, bn_t n);
 extern bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx);
 extern int convert_bn(bn_t result,bn_t old,int newbnlength,int newintlength,int oldbnlength,int oldintlength);
 
-    // "safe" versions 
+    // "safe" versions
 extern bn_t full_mult_bn(bn_t r, bn_t n1, bn_t n2);
 extern bn_t mult_bn(bn_t r, bn_t n1, bn_t n2);
 extern bn_t full_square_bn(bn_t r, bn_t n);
@@ -176,12 +176,12 @@ extern bn_t sincos_bn(bn_t s, bn_t c, bn_t n);
 extern bn_t atan_bn(bn_t r, bn_t n);
 extern bn_t atan2_bn(bn_t r, bn_t ny, bn_t nx);
 
-    // misc 
+    // misc
 extern bool is_bn_zero(bn_t n);
 extern bn_t floattobn(bn_t r, LDBL f);
 
 /************/
-// bigflt.c 
+// bigflt.c
 extern bf_t strtobf(bf_t r, char *s);
 extern int strlen_needed_bf();
 extern char *unsafe_bftostr(char *s, int dec, bf_t r);
@@ -239,7 +239,7 @@ extern bf10_t div_a_bf10_int (bf10_t s, int dec, U16 n);
 extern char  *bf10tostr_e(char *s, int dec, bf10_t n);
 extern char  *bf10tostr_f(char *s, int dec, bf10_t n);
 
-// functions defined in bigfltc.c 
+// functions defined in bigfltc.c
 extern bf_t norm_bf(bf_t r);
 extern void norm_sign_bf(bf_t r, int positive);
 extern S16 adjust_bf_add(bf_t n1, bf_t n2);
@@ -267,7 +267,7 @@ extern bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u);
 extern bf_t div_a_bf_int(bf_t r, U16 u);
 
 /****************************/
-// bigcmplx.c 
+// bigcmplx.c
 extern ComplexD complex_bn_to_float(ComplexBigNum *s);
 extern ComplexD complex_bf_to_float(ComplexBigFloat *s);
 extern ComplexBigFloat *complex_log_bf(ComplexBigFloat *t, ComplexBigFloat *s);
@@ -277,6 +277,6 @@ extern ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, Comp
 extern ComplexBigNum *complex_log_bn(ComplexBigNum *t, ComplexBigNum *s);
 extern ComplexBigNum *complex_multiply_bn( ComplexBigNum *t, ComplexBigNum *x, ComplexBigNum *y);
 
-#include "biginit.h" // fractint only 
+#include "biginit.h" // fractint only
 
-#endif // _BIG_H 
+#endif // _BIG_H

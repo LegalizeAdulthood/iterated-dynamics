@@ -21,17 +21,17 @@
 //
 #include "testpt.h"
 
-int test_start()     // this routine is called just before the fractal starts 
+int test_start()     // this routine is called just before the fractal starts
 {
 	return  0;
 }
 
-void test_end()       // this routine is called just after the fractal ends 
+void test_end()       // this routine is called just after the fractal ends
 {
 }
 
-// this routine is called once for every pixel 
-// (note: possibly using the dual-pass/solid-guessing options 
+// this routine is called once for every pixel
+// (note: possibly using the dual-pass/solid-guessing options
 
 int test_per_pixel(double initreal, double initimag, double parm1, double parm2,
 	long g_max_iteration, int inside)

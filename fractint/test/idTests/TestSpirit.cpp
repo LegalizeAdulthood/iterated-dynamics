@@ -28,7 +28,7 @@ struct TestGrammar : public grammar<TestGrammar>
 		typedef rule<ScannerT> rule_t;
 		rule_t file;
 		rule_t token;
-		
+
 		definition(const TestGrammar &self)
 		{
 			file = *token >> end_p;

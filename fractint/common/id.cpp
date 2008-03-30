@@ -8,7 +8,7 @@
 #include <string.h>
 #include <time.h>
 #include <signal.h>
-// for getcwd() 
+// for getcwd()
 #if defined(LINUX)
 #include <unistd.h>
 #endif
@@ -77,7 +77,7 @@ static void check_same_name();
 
 VIDEOINFO g_video_entry;
 long g_timer_start;
-long g_timer_interval;        // timer(...) start & total 
+long g_timer_interval;        // timer(...) start & total
 std::string g_fract_dir1;
 std::string g_fract_dir2;
 boost::filesystem::path g_exe_path;
@@ -86,86 +86,86 @@ boost::filesystem::path g_exe_path;
 	the following variables are out here only so
 	that the calculate_fractal() and assembler routines can get at them easily
 */
-int     textsafe2;              // textsafe override from g_video_table 
-bool g_ok_to_print;              // 0 if printf() won't work 
+int     textsafe2;              // textsafe override from g_video_table
+bool g_ok_to_print;              // 0 if printf() won't work
 int     g_screen_width;
-int		g_screen_height;          // # of dots on the physical screen    
+int		g_screen_height;          // # of dots on the physical screen
 int     g_screen_x_offset;
-int		g_screen_y_offset;          // physical top left of logical screen 
+int		g_screen_y_offset;          // physical top left of logical screen
 int     g_x_dots;
-int		g_y_dots;           // # of dots on the logical screen     
+int		g_y_dots;           // # of dots on the logical screen
 double  g_dx_size;
-double	g_dy_size;         // g_x_dots-1, g_y_dots-1         
-int     g_colors = 256;           // maximum colors available 
-long    g_max_iteration;                  // try this many iterations 
-int     g_z_rotate;                // zoombox rotation         
+double	g_dy_size;         // g_x_dots-1, g_y_dots-1
+int     g_colors = 256;           // maximum colors available
+long    g_max_iteration;                  // try this many iterations
+int     g_z_rotate;                // zoombox rotation
 double  g_zbx;
-double	g_zby;                // topleft of zoombox       
+double	g_zby;                // topleft of zoombox
 double  g_z_width;
 double	g_z_depth;
-double	g_z_skew;    // zoombox size & shape     
-int     g_fractal_type;               // if == 0, use Mandelbrot  
+double	g_z_skew;    // zoombox size & shape
+int     g_fractal_type;               // if == 0, use Mandelbrot
 long    g_c_real;
-long	g_c_imag;           // real, imag'ry parts of C 
-long    g_delta_min;                 // for calcfrac/calculate_mandelbrot_l 
-double  g_delta_min_fp;                // same as a double         
-double  g_parameters[MAX_PARAMETERS];       // parameters               
+long	g_c_imag;           // real, imag'ry parts of C
+long    g_delta_min;                 // for calcfrac/calculate_mandelbrot_l
+double  g_delta_min_fp;                // same as a double
+double  g_parameters[MAX_PARAMETERS];       // parameters
 double  g_potential_parameter[3];            // three potential parameters
-long    g_fudge;                  // 2**fudgefactor           
-long    g_attractor_radius_l;               // finite attractor radius  
-double  g_attractor_radius_fp;               // finite attractor radius  
-int     g_bit_shift;               // fudgefactor              
+long    g_fudge;                  // 2**fudgefactor
+long    g_attractor_radius_l;               // finite attractor radius
+double  g_attractor_radius_fp;               // finite attractor radius
+int     g_bit_shift;               // fudgefactor
 
 bool g_has_inverse = false;
-// note that integer grid is set when g_integer_fractal && !invert;    
-// otherwise the floating point grid is set; never both at once     
+// note that integer grid is set when g_integer_fractal && !invert;
+// otherwise the floating point grid is set; never both at once
 long    *g_x0_l;
-long	*g_y0_l;     // x, y grid                
+long	*g_y0_l;     // x, y grid
 long    *g_x1_l;
-long	*g_y1_l;     // adjustment for rotate    
-// note that g_x1_l & g_y1_l values can overflow into sign bit; since     
-// they're used only to add to g_x0_l/g_y0_l, 2s comp straightens it out  
+long	*g_y1_l;     // adjustment for rotate
+// note that g_x1_l & g_y1_l values can overflow into sign bit; since
+// they're used only to add to g_x0_l/g_y0_l, 2s comp straightens it out
 double	*g_x0;
-double	*g_y0;      // floating pt equivs 
+double	*g_y0;      // floating pt equivs
 double	*g_x1;
 double	*g_y1;
-int     g_integer_fractal;         // true if fractal uses integer math 
-// usr_xxx is what the user wants, vs what we may be forced to do 
+int     g_integer_fractal;         // true if fractal uses integer math
+// usr_xxx is what the user wants, vs what we may be forced to do
 CalculationMode g_user_standard_calculation_mode;
 int     g_user_periodicity_check;
 long    g_user_distance_test;
 bool g_user_float_flag;
 int		g_max_history = 10;
-// variables defined by the command line/files processor 
-bool g_compare_gif = false;					// compare two gif files flag 
-TimedSaveType g_timed_save = TIMEDSAVE_DONE;// when doing a timed save 
-int     g_resave_mode = RESAVE_NO;			// tells encoder not to incr filename 
-bool g_started_resaves = false;				// but incr on first resave 
-bool g_tab_display_enabled = true;			// tab display enabled 
-// for historical reasons (before rotation):         
-// top    left  corner of screen is (g_xx_min, g_yy_max) 
-// bottom left  corner of screen is (g_xx_3rd, g_yy_3rd) 
-// bottom right corner of screen is (g_xx_max, g_yy_min) 
+// variables defined by the command line/files processor
+bool g_compare_gif = false;					// compare two gif files flag
+TimedSaveType g_timed_save = TIMEDSAVE_DONE;// when doing a timed save
+int     g_resave_mode = RESAVE_NO;			// tells encoder not to incr filename
+bool g_started_resaves = false;				// but incr on first resave
+bool g_tab_display_enabled = true;			// tab display enabled
+// for historical reasons (before rotation):
+// top    left  corner of screen is (g_xx_min, g_yy_max)
+// bottom left  corner of screen is (g_xx_3rd, g_yy_3rd)
+// bottom right corner of screen is (g_xx_max, g_yy_min)
 long    g_x_min;
 long	g_x_max;
 long	g_y_min;
 long	g_y_max;
 long	g_x_3rd;
-long	g_y_3rd;  // integer equivs           
+long	g_y_3rd;  // integer equivs
 double  g_sx_min;
 double	g_sx_max;
 double	g_sy_min;
 double	g_sy_max;
 double	g_sx_3rd;
-double	g_sy_3rd; // displayed screen corners 
+double	g_sy_3rd; // displayed screen corners
 double  g_plot_mx1;
 double	g_plot_mx2;
 double	g_plot_my1;
-double	g_plot_my2;     // real->screen multipliers 
+double	g_plot_my2;     // real->screen multipliers
 long	g_calculation_time;
-int		g_max_colors;                         // maximum palette size 
-bool g_zoom_off;                     // = 0 when zoom is disabled    
-std::string g_file_name_stack[16];		// array of file names used while browsing 
+int		g_max_colors;                         // maximum palette size
+bool g_zoom_off;                     // = 0 when zoom is disabled
+std::string g_file_name_stack[16];		// array of file names used while browsing
 int		g_name_stack_ptr;
 
 UserInterfaceState g_ui_state;
@@ -201,7 +201,7 @@ int check_key()
 	return 0;
 }
 
-// timer type values 
+// timer type values
 enum TimerType
 {
 	TIMER_ENGINE	= 0,
@@ -216,10 +216,10 @@ enum TimerType
 */
 static int timer(TimerType timertype, int (*engine)(), ...)
 {
-	va_list arg_marker;  // variable arg list 
+	va_list arg_marker;  // variable arg list
 	va_start(arg_marker, engine);
 
-	bool do_bench = g_timer_flag; // record time? 
+	bool do_bench = g_timer_flag; // record time?
 	if (timertype == TIMER_ENCODER)
 	{
 		do_bench = (DEBUGMODE_TIME_ENCODER == g_debug_mode);
@@ -241,13 +241,13 @@ static int timer(TimerType timertype, int (*engine)(), ...)
 		out = engine();
 		break;
 	case TIMER_DECODER:
-		out = int(decoder(short(va_arg(arg_marker, int)))); // not indirect, safer with overlays 
+		out = int(decoder(short(va_arg(arg_marker, int)))); // not indirect, safer with overlays
 		break;
 	case TIMER_ENCODER:
-		out = encoder();            // not indirect, safer with overlays 
+		out = encoder();            // not indirect, safer with overlays
 		break;
 	}
-	// next assumes CLK_TCK is 10^n, n >= 2 
+	// next assumes CLK_TCK is 10^n, n >= 2
 	g_timer_interval = (clock_ticks() - g_timer_start)/(CLK_TCK/100);
 
 	if (do_bench)

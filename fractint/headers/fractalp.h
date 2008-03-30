@@ -3,11 +3,11 @@
 
 struct alternate_math
 {
-	int type;                    // index in fractalname of the fractal 
-	int math;                    // kind of math used 
-	int (*orbitcalc)();      // function that calculates one orbit 
-	int (*per_pixel)();      // once-per-pixel init 
-	bool (*per_image)();      // once-per-image setup 
+	int type;                    // index in fractalname of the fractal
+	int math;                    // kind of math used
+	int (*orbitcalc)();      // function that calculates one orbit
+	int (*per_pixel)();      // once-per-pixel init
+	bool (*per_image)();      // once-per-image setup
 };
 
 extern bool type_has_parameter(int type, int parameter);

@@ -82,7 +82,7 @@ private:
 	int handle_special_keys(int ch);
 
 	bool m_inside_help;
-	int m_save_check_time;				// time of last autosave check 
+	int m_save_check_time;				// time of last autosave check
 
 	time_t m_start;
 	long m_ticks_per_second;

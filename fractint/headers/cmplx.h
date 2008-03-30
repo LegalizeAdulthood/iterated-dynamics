@@ -1,4 +1,4 @@
-// various complex number defs 
+// various complex number defs
 #ifndef _CMPLX_DEFINED
 #define _CMPLX_DEFINED
 

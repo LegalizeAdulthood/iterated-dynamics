@@ -31,7 +31,7 @@
 #include "realdos.h"
 #include "ViewWindow.h"
 
-// routines in this module      
+// routines in this module
 
 static int video_mode_compare(const void *, const void *);
 static void format_item(int, char *);
@@ -41,22 +41,22 @@ static std::string format_video_info(int i, const char *err);
 
 struct video_mode_sort_info
 {
-	int index;     // g_video_entry subscript 
-	unsigned flags; // flags for sort's compare, defined below 
+	int index;     // g_video_entry subscript
+	unsigned flags; // flags for sort's compare, defined below
 };
 /* defines for flags; done this way instead of bit union to ensure ordering;
 	these bits represent the sort sequence for video mode list */
 enum
 {
-	VI_EXACT   = 0x8000, // unless the one and only exact match 
-	VI_NOKEY   = 512,  // if no function key assigned 
-	VI_SSMALL  = 128,  // screen smaller than file's screen 
-	VI_SBIG    =  64,  // screen bigger than file's screen 
-	VI_VSMALL  =  32,  // screen smaller than file's view 
-	VI_VBIG    =  16,  // screen bigger than file's view 
-	VI_CSMALL  =   8,  // mode has too few colors 
-	VI_CBIG    =   4,  // mode has excess colors 
-	VI_ASPECT  =   1  // aspect ratio bad 
+	VI_EXACT   = 0x8000, // unless the one and only exact match
+	VI_NOKEY   = 512,  // if no function key assigned
+	VI_SSMALL  = 128,  // screen smaller than file's screen
+	VI_SBIG    =  64,  // screen bigger than file's screen
+	VI_VSMALL  =  32,  // screen smaller than file's view
+	VI_VBIG    =  16,  // screen bigger than file's view
+	VI_CSMALL  =   8,  // mode has too few colors
+	VI_CBIG    =   4,  // mode has excess colors
+	VI_ASPECT  =   1  // aspect ratio bad
 };
 
 static int video_mode_compare(const void *p1, const void *p2)
@@ -90,7 +90,7 @@ static std::string format_video_info(int i, const char *err)
 {
 	g_.SetVideoEntry(i);
 	std::string key_name = video_mode_key_name(g_.VideoEntry().keynum);
-	std::string result = str(boost::format("%-5s %-25s %-4s %5d %5d %3d %-25s")  // 78 chars 
+	std::string result = str(boost::format("%-5s %-25s %-4s %5d %5d %3d %-25s")  // 78 chars
 			% key_name.c_str() % g_.VideoEntry().name % err
 			% g_.VideoEntry().x_dots % g_.VideoEntry().y_dots
 			% g_.VideoEntry().colors % g_.VideoEntry().comment);
@@ -105,7 +105,7 @@ static void format_video_info(int i, const char *err, char *buf)
 }
 
 double video_mode_aspect_ratio(int width, int height)
-{  // calc resulting aspect ratio for specified dots in current mode 
+{  // calc resulting aspect ratio for specified dots in current mode
 	return double(height)/double(width)
 		*double(g_.VideoEntry().x_dots)/double(g_.VideoEntry().y_dots)
 		*g_screen_aspect_ratio;
@@ -203,7 +203,7 @@ static std::string GetHeading(fractal_info const *info, formula_info_extension_b
 		heading = "Type: " + std::string(nameptr);
 		if ((!strcmp(nameptr, "formula")) ||
 			(!strcmp(nameptr, "lsystem")) ||
-			(!strncmp(nameptr, "ifs", 3))) // for ifs and ifs3d 
+			(!strncmp(nameptr, "ifs", 3))) // for ifs and ifs3d
 		{
 			heading += std::string(" -> ") + formula_info->form_name;
 		}
@@ -255,7 +255,7 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 	int tmpydots;
 	g_.SetInitialVideoModeNone();
 
-	// try to find exact match for vid mode 
+	// try to find exact match for vid mode
 	for (int i = 0; i < g_.VideoTableLength(); ++i)
 	{
 		const VIDEOINFO &vident = g_.VideoTable(i);
@@ -267,13 +267,13 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 		}
 	}
 
-	// exit in makepar mode if no exact match of video mode in file 
+	// exit in makepar mode if no exact match of video mode in file
 	if (!g_make_par_flag && g_.InitialVideoMode() == -1)
 	{
 		return 0;
 	}
 
-	if (g_.InitialVideoMode() == -1) // try to find very good match for vid mode 
+	if (g_.InitialVideoMode() == -1) // try to find very good match for vid mode
 	{
 		for (int i = 0; i < g_.VideoTableLength(); ++i)
 		{
@@ -287,7 +287,7 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 		}
 	}
 
-	// setup table entry for each vid mode, flagged for how well it matches 
+	// setup table entry for each vid mode, flagged for how well it matches
 	video_mode_sort_info sort_table[MAXVIDEOMODES];
 	initialize_video_sort_table(info, sort_table);
 	if (g_fast_restore  && !g_ui_state.ask_video)
@@ -301,16 +301,16 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 		/* no exact match or (askvideo=yes and batch=no), and not
 		in makepar mode, talk to user */
 
-		qsort(sort_table, g_.VideoTableLength(), sizeof(sort_table[0]), video_mode_compare); // sort modes 
+		qsort(sort_table, g_.VideoTableLength(), sizeof(sort_table[0]), video_mode_compare); // sort modes
 
 		std::vector<int> attributes(g_.VideoTableLength());
 		for (int i = 0; i < g_.VideoTableLength(); ++i)
 		{
 			attributes[i] = 1;
 		}
-		vidptr = &sort_table[0]; // for format_item 
+		vidptr = &sort_table[0]; // for format_item
 
-		// format heading 
+		// format heading
 		int i = full_screen_choice_help(FIHELP_LOAD_FILE, 0, GetHeading(info, formula_info).c_str(),
 			"key...name......................err...xdot..ydot.clr.comment..................",
 			GetInstructions(info).c_str(), g_.VideoTableLength(), 0, &attributes[0],
@@ -319,7 +319,7 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 		{
 			return -1;
 		}
-		if (i < 0)  // returned -100 - g_video_table entry number 
+		if (i < 0)  // returned -100 - g_video_table entry number
 		{
 			g_.SetInitialVideoMode(-100 - i);
 			got_real_mode = true;
@@ -330,7 +330,7 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 		}
 	}
 
-	if (!got_real_mode)  // translate from temp table to permanent 
+	if (!got_real_mode)  // translate from temp table to permanent
 	{
 		int i = g_.InitialVideoMode();
 		int key = g_.VideoTable(i).keynum;
@@ -351,24 +351,24 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 				key = 0;
 			}
 		}
-		if (key == 0) // mode has no key, add to reserved slot at end 
+		if (key == 0) // mode has no key, add to reserved slot at end
 		{
 			g_.SetInitialVideoMode(MAXVIDEOMODES-1);
 			g_.SetVideoTable(g_.InitialVideoMode(), g_.VideoTable(i));
 		}
 	}
 
-	// ok, we're going to return with a video mode 
+	// ok, we're going to return with a video mode
 	g_.SetVideoEntry(g_.InitialVideoMode());
 
 	if (g_viewWindow.Visible()
 		&& g_file_x_dots == g_.VideoEntry().x_dots
 		&& g_file_y_dots == g_.VideoEntry().y_dots)
 	{
-		// pull image into a view window 
-		if (g_externs.CalculationStatus() != CALCSTAT_COMPLETED) // if not complete 
+		// pull image into a view window
+		if (g_externs.CalculationStatus() != CALCSTAT_COMPLETED) // if not complete
 		{
-			g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);  // can't resume anyway 
+			g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);  // can't resume anyway
 		}
 		g_viewWindow.SetReductionFromVideoEntry(g_.VideoEntry());
 		g_skip_x_dots = short(g_viewWindow.Reduction() - 1);
@@ -377,13 +377,13 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 	}
 
 	g_skip_x_dots = 0;
-	g_skip_y_dots = 0; // set for no reduction 
+	g_skip_y_dots = 0; // set for no reduction
 	if (g_.VideoEntry().x_dots < g_file_x_dots || g_.VideoEntry().y_dots < g_file_y_dots)
 	{
-		// set up to load only every nth pixel to make image fit 
-		if (g_externs.CalculationStatus() != CALCSTAT_COMPLETED) // if not complete 
+		// set up to load only every nth pixel to make image fit
+		if (g_externs.CalculationStatus() != CALCSTAT_COMPLETED) // if not complete
 		{
-			g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);  // can't resume anyway 
+			g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);  // can't resume anyway
 		}
 		g_skip_x_dots = get_skip_factor(g_.VideoEntry().x_dots, g_file_x_dots);
 		g_skip_y_dots = get_skip_factor(g_.VideoEntry().y_dots, g_file_y_dots);
@@ -393,20 +393,20 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 		{
 			tmpxdots = (g_file_x_dots + g_skip_x_dots - 1)/g_skip_x_dots;
 			tmpydots = (g_file_y_dots + g_skip_y_dots - 1)/g_skip_y_dots;
-			// reduce further if that improves aspect 
+			// reduce further if that improves aspect
 			double ftemp = video_mode_aspect_ratio(tmpxdots, tmpydots);
 			double ftemp2;
 			if (ftemp > g_file_aspect_ratio)
 			{
 				if (reduced_x)
 				{
-					break; // already reduced x, don't reduce y 
+					break; // already reduced x, don't reduce y
 				}
 				ftemp2 = video_mode_aspect_ratio(tmpxdots, (g_file_y_dots + g_skip_y_dots)/(g_skip_y_dots + 1));
 				if (ftemp2 < g_file_aspect_ratio &&
 					ftemp/g_file_aspect_ratio *0.9 <= g_file_aspect_ratio/ftemp2)
 				{
-					break; // further y reduction is worse 
+					break; // further y reduction is worse
 				}
 				++g_skip_y_dots;
 				reduced_y = true;
@@ -415,13 +415,13 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 			{
 				if (reduced_y)
 				{
-					break; // already reduced y, don't reduce x 
+					break; // already reduced y, don't reduce x
 				}
 				ftemp2 = video_mode_aspect_ratio((g_file_x_dots + g_skip_x_dots)/(g_skip_x_dots + 1), tmpydots);
 				if (ftemp2 > g_file_aspect_ratio &&
 					g_file_aspect_ratio/ftemp *0.9 <= ftemp2/g_file_aspect_ratio)
 				{
-					break; // further x reduction is worse 
+					break; // further x reduction is worse
 				}
 				++g_skip_x_dots;
 				reduced_x = true;

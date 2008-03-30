@@ -1,7 +1,7 @@
 #ifndef PROTOTYP_H
 #define PROTOTYP_H
 
-// includes needed to define the prototypes 
+// includes needed to define the prototypes
 
 #include "mpmath.h"
 #include "big.h"
@@ -33,12 +33,12 @@ extern void put_line(int, int, int, BYTE const *);
 extern void get_line(int, int, int, BYTE *);
 extern long read_ticker();
 
-// fractint -- C file prototypes 
+// fractint -- C file prototypes
 
 extern int application_main(int argc, char **argv);
 extern int elapsed_time(int);
 
-// memory -- C file prototypes 
+// memory -- C file prototypes
 /* TODO: Get rid of this and use regular memory routines;
 ** see about creating standard disk memory routines for disk video
 */
@@ -52,7 +52,7 @@ extern bool MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 
 extern bool SetMemory(int value, U16 size, long count, long offset, U16 handle);
 
 /*
- *  uclock -- C file prototypes 
+ *  uclock -- C file prototypes
  *  The  uclock_t typedef placed here because uclock.h
  *  prototype is for DOS version only.
  */

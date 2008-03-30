@@ -320,8 +320,6 @@ public:
 	virtual void SetTempSqrXL(long value) = 0;
 	virtual long TempSqrYL() const = 0;
 	virtual void SetTempSqrYL(long value) = 0;
-	virtual ComplexL TmpZL() const = 0;
-	virtual void SetTmpZL(ComplexL value) = 0;
 	typedef long PixelFunctionL();
 	virtual long LxPixel() = 0;
 	virtual void SetLxPixel(PixelFunctionL *value) = 0;
@@ -648,8 +646,12 @@ public:
 	virtual void SetTimerInterval(long value) = 0;
 	virtual long TimerStart() const = 0;
 	virtual void SetTimerStart(long value) = 0;
+
 	virtual ComplexD TempZ() const = 0;
 	virtual void SetTempZ(ComplexD value) = 0;
+	virtual ComplexL TempZL() const = 0;
+	virtual void SetTempZL(ComplexL value) = 0;
+
 	virtual int TotalPasses() const = 0;
 	virtual void SetTotalPasses(int value) = 0;
 	virtual int const *FunctionIndex() const = 0;

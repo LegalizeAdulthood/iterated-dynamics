@@ -259,10 +259,10 @@ bool operator!=(const HISTORY_ITEM &lhs, const HISTORY_ITEM &rhs)
 	return !(lhs == rhs);
 }
 
-static HISTORY_ITEM *s_history = 0;		// history storage 
-static int s_history_index = -1;			// user pointer into history tbl  
-static int s_save_index = 0;				// save ptr into history tbl      
-static bool s_history_flag;				// are we backing off in history? 
+static HISTORY_ITEM *s_history = 0;		// history storage
+static int s_history_index = -1;			// user pointer into history tbl
+static int s_save_index = 0;				// save ptr into history tbl
+static bool s_history_flag;				// are we backing off in history?
 
 void history_save_info()
 {
@@ -401,7 +401,7 @@ void history_save_info()
 		current.item_name = "";
 		break;
 	}
-	if (s_history_index == -1)        // initialize the history file 
+	if (s_history_index == -1)        // initialize the history file
 	{
 		for (int i = 0; i < g_max_history; i++)
 		{
@@ -409,19 +409,19 @@ void history_save_info()
 		}
 		s_history_flag = false;
 		s_save_index = 0;
-		s_history_index = 0;   // initialize history ptr 
+		s_history_index = 0;   // initialize history ptr
 	}
 	else if (s_history_flag)
 	{
-		s_history_flag = false;   // coming from user history command, don't save 
+		s_history_flag = false;   // coming from user history command, don't save
 	}
 	else if (current != last)
 	{
-		if (++s_save_index >= g_max_history)  // back to beginning of circular buffer 
+		if (++s_save_index >= g_max_history)  // back to beginning of circular buffer
 		{
 			s_save_index = 0;
 		}
-		if (++s_history_index >= g_max_history)  // move user pointer in parallel 
+		if (++s_history_index >= g_max_history)  // move user pointer in parallel
 		{
 			s_history_index = 0;
 		}
@@ -594,7 +594,7 @@ void history_restore_info()
 
 void history_allocate()
 {
-	while (g_max_history > 0) // decrease history if necessary 
+	while (g_max_history > 0) // decrease history if necessary
 	{
 		s_history = new HISTORY_ITEM[g_max_history];
 		if (s_history)

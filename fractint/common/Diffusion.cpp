@@ -16,7 +16,7 @@
 #include "miscres.h"
 #include "resume.h"
 
-// for diffusion type 
+// for diffusion type
 enum DiffusionType
 {
 	DIFFUSION_CENTRAL	= 0,
@@ -24,7 +24,7 @@ enum DiffusionType
 	DIFFUSION_SQUARE	= 2
 };
 
-static int s_keyboard_check;                        // to limit kbd checking 
+static int s_keyboard_check;                        // to limit kbd checking
 
 inline int RANDOM(int x)
 {
@@ -38,14 +38,14 @@ int diffusion()
 	int x_max;
 	int y_max;
 	int x_min;
-	int y_min;     // Current maximum coordinates 
-	int border;   // Distance between release point and fractal 
-	// Determines diffusion type:  0 = central (classic) 
-	// 1 = falling particles 
-	// 2 = square cavity     
+	int y_min;     // Current maximum coordinates
+	int border;   // Distance between release point and fractal
+	// Determines diffusion type:  0 = central (classic)
+	// 1 = falling particles
+	// 2 = square cavity
 	DiffusionType mode;
-	int colorshift; // If zero, select colors at random, otherwise shift 
-					// the color every colorshift points 
+	int colorshift; // If zero, select colors at random, otherwise shift
+					// the color every colorshift points
 	int colorcount;
 	int currentcolor;
 	int i;
@@ -80,7 +80,7 @@ int diffusion()
 	}
 
 	colorshift = int(g_parameters[2]);
-	colorcount = colorshift; // Counts down from colorshift 
+	colorcount = colorshift; // Counts down from colorshift
 	currentcolor = 1;  // Start at color 1 (color 0 is probably invisible)
 
 	srand(g_random_seed);
@@ -92,14 +92,14 @@ int diffusion()
 	switch (mode)
 	{
 	case DIFFUSION_CENTRAL:
-		x_max = g_x_dots/2 + border;  // Initial box 
+		x_max = g_x_dots/2 + border;  // Initial box
 		x_min = g_x_dots/2 - border;
 		y_max = g_y_dots/2 + border;
 		y_min = g_y_dots/2 - border;
 		break;
 
 	case DIFFUSION_LINE:
-		x_max = g_x_dots/2 + border;  // Initial box 
+		x_max = g_x_dots/2 + border;  // Initial box
 		x_min = g_x_dots/2 - border;
 		y_min = g_y_dots - border;
 		break;
@@ -109,7 +109,7 @@ int diffusion()
 		break;
 	}
 
-	if (g_resuming) // restore g_work_list, if we can't the above will stay in place 
+	if (g_resuming) // restore g_work_list, if we can't the above will stay in place
 	{
 		start_resume();
 		if (mode != DIFFUSION_SQUARE)
@@ -131,16 +131,16 @@ int diffusion()
 
 	switch (mode)
 	{
-	case DIFFUSION_CENTRAL: // Single seed point in the center 
+	case DIFFUSION_CENTRAL: // Single seed point in the center
 		g_plot_color_put_color(g_x_dots/2, g_y_dots/2, currentcolor);
 		break;
-	case DIFFUSION_LINE: // Line along the bottom 
+	case DIFFUSION_LINE: // Line along the bottom
 		for (i = 0; i <= g_x_dots; i++)
 		{
 			g_plot_color_put_color(i, g_y_dots-1, currentcolor);
 		}
 		break;
-	case DIFFUSION_SQUARE: // Large square that fills the screen 
+	case DIFFUSION_SQUARE: // Large square that fills the screen
 		if (g_x_dots > g_y_dots)
 		{
 			for (i = 0; i < g_y_dots; i++)
@@ -168,7 +168,7 @@ int diffusion()
 	{
 		switch (mode)
 		{
-		case DIFFUSION_CENTRAL: // Release new point on a circle inside the box 
+		case DIFFUSION_CENTRAL: // Release new point on a circle inside the box
 			angle = 2*double(rand())/(RAND_MAX/MathUtil::Pi);
 			FPUsincos(&angle, &sine, &cosine);
 			x = int(cosine*(x_max-x_min) + g_x_dots);
@@ -176,7 +176,7 @@ int diffusion()
 			x /= 2;
 			y /= 2;
 			break;
-		case DIFFUSION_LINE: // Release new point on the line y_min somewhere between x_min and x_max 
+		case DIFFUSION_LINE: // Release new point on the line y_min somewhere between x_min and x_max
 			y = y_min;
 			x = RANDOM(x_max-x_min) + (g_x_dots-x_max + x_min)/2;
 			break;
@@ -192,21 +192,21 @@ int diffusion()
 			break;
 		}
 
-		// Loop as long as the point (x, y) is surrounded by color 0 
-		// on all eight sides                                       
+		// Loop as long as the point (x, y) is surrounded by color 0
+		// on all eight sides
 
 		while ((get_color(x + 1, y + 1) == 0) && (get_color(x + 1, y) == 0) &&
 			(get_color(x + 1, y-1) == 0) && (get_color(x  , y + 1) == 0) &&
 			(get_color(x  , y-1) == 0) && (get_color(x-1, y + 1) == 0) &&
 			(get_color(x-1, y) == 0) && (get_color(x-1, y-1) == 0))
 		{
-			// Erase moving point 
+			// Erase moving point
 			if (g_show_orbit)
 			{
 				g_plot_color_put_color(x, y, 0);
 			}
 
-			if (mode == DIFFUSION_CENTRAL) // Make sure point is inside the box 
+			if (mode == DIFFUSION_CENTRAL) // Make sure point is inside the box
 			{
 				if (x == x_max)
 				{
@@ -244,11 +244,11 @@ int diffusion()
 				}
 			}
 
-			// Take one random step 
+			// Take one random step
 			x += RANDOM(3) - 1;
 			y += RANDOM(3) - 1;
 
-			// Check keyboard 
+			// Check keyboard
 			if ((++s_keyboard_check & 0x7f) == 1)
 			{
 				if (check_key())
@@ -273,13 +273,13 @@ int diffusion()
 				}
 			}
 
-			// Show the moving point 
+			// Show the moving point
 			if (g_show_orbit)
 			{
 				g_plot_color_put_color(x, y, RANDOM(g_colors-1) + 1);
 			}
 
-		} // End of loop, now fix the point 
+		} // End of loop, now fix the point
 
 		// If we're doing colorshifting then use currentcolor, otherwise
 		// pick one at random
@@ -290,13 +290,13 @@ int diffusion()
 		{
 			if (!--colorcount) // If the counter reaches zero then shift
 			{
-				currentcolor++;      // Increase the current color and wrap 
-				currentcolor %= g_colors;  // around skipping zero 
+				currentcolor++;      // Increase the current color and wrap
+				currentcolor %= g_colors;  // around skipping zero
 				if (!currentcolor)
 				{
 					currentcolor++;
 				}
-				colorcount = colorshift;  // and reset the counter 
+				colorcount = colorshift;  // and reset the counter
 			}
 		}
 
@@ -310,7 +310,7 @@ int diffusion()
 			if (((x + border) > x_max) || ((x-border) < x_min)
 				|| ((y-border) < y_min) || ((y + border) > y_max))
 			{
-				// Increase box size, but not past the edge of the screen 
+				// Increase box size, but not past the edge of the screen
 				y_min--;
 				y_max++;
 				x_min--;
@@ -321,7 +321,7 @@ int diffusion()
 				}
 			}
 			break;
-		case DIFFUSION_LINE: // Decrease g_y_min, but not past top of screen 
+		case DIFFUSION_LINE: // Decrease g_y_min, but not past top of screen
 			if (y-border < y_min)
 			{
 				y_min--;

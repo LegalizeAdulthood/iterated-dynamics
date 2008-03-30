@@ -2,7 +2,7 @@
 #include "strncasecmp.h"
 
 #ifndef XFRACT
-// case independent version of strncmp 
+// case independent version of strncmp
 int strncasecmp(const char *s, const char *t, int ct)
 {
 	std::locale C("C");

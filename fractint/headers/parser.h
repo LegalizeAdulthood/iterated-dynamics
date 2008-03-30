@@ -1,7 +1,7 @@
 #if !defined(PARSER_H)
 #define PARSER_H
 
-typedef void OLD_FN();  // old C functions  
+typedef void OLD_FN();  // old C functions
 
 OLD_FN StkLod;
 OLD_FN StkClr;

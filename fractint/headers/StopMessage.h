@@ -2,7 +2,7 @@
 
 #include <string>
 
-// stop_message() flags 
+// stop_message() flags
 enum StopMessageFlag
 {
 	STOPMSG_NORMAL		= 0,

@@ -5,7 +5,7 @@
 
 #include "globals.h"
 
-bool g_color_preloaded;					// if g_dac_box preloaded for next mode select 
+bool g_color_preloaded;					// if g_dac_box preloaded for next mode select
 
 class Globals : public IGlobals
 {
@@ -84,13 +84,13 @@ private:
 	bool _goodMode;
 	ColormapTable _dac;
 	ColormapTable _oldDAC;
-	ColormapTable *_mapDAC;				// map= (default colors) 
+	ColormapTable *_mapDAC;				// map= (default colors)
 	bool _realDAC;
 	SaveDACType _saveDAC;
 	int _dacSleepCount;
-	ColorStateType _colorState;			// 0, g_dac_box matches default (bios or map=) 
-										// 1, g_dac_box matches no known defined map 
-										// 2, g_dac_box matches the color file map 
+	ColorStateType _colorState;			// 0, g_dac_box matches default (bios or map=)
+										// 1, g_dac_box matches no known defined map
+										// 2, g_dac_box matches the color file map
 	bool _mapSet;
 	std::string _mapName;
 	int _numColors;

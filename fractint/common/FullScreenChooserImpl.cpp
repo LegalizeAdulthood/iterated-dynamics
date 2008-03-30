@@ -49,21 +49,21 @@ return is:
 */
 int full_screen_choice(
 	int options,
-	const char *heading,				// heading info, \n delimited 
-	const char *heading2,				// column heading or 0 
-	const char *instructions,			// instructions, \n delimited, or 0 
-	int num_choices,					// How many choices in list 
-	char **choices,						// array of choice strings 
-	const int *attributes,				// &3: 0 normal color, 1, 3 highlight 
-										// &256 marks a dummy entry 
-	int box_width,						// box width, 0 for calc (in items) 
-	int box_depth,						// box depth, 0 for calc, 99 for max 
-	int column_width,					// data width of a column, 0 for calc 
-	int current,						// start with this item 
-	void (*format_item)(int, char*),	// routine to display an item or 0 
-	char *speed_string,					// returned speed key value, or 0 
-	int (*speed_prompt)(int, int, int, char *, int), // routine to display prompt or 0 
-	int (*check_keystroke)(int, int)			// routine to check keystroke or 0 
+	const char *heading,				// heading info, \n delimited
+	const char *heading2,				// column heading or 0
+	const char *instructions,			// instructions, \n delimited, or 0
+	int num_choices,					// How many choices in list
+	char **choices,						// array of choice strings
+	const int *attributes,				// &3: 0 normal color, 1, 3 highlight
+										// &256 marks a dummy entry
+	int box_width,						// box width, 0 for calc (in items)
+	int box_depth,						// box depth, 0 for calc, 99 for max
+	int column_width,					// data width of a column, 0 for calc
+	int current,						// start with this item
+	void (*format_item)(int, char*),	// routine to display an item or 0
+	char *speed_string,					// returned speed key value, or 0
+	int (*speed_prompt)(int, int, int, char *, int), // routine to display prompt or 0
+	int (*check_keystroke)(int, int)			// routine to check keystroke or 0
 	)
 {
 	FullScreenChooserApp app;

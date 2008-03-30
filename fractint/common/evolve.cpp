@@ -38,11 +38,11 @@ enum VaryIntType
 
 enum
 {
-	MAX_GRID_SIZE = 51  // This is arbitrary, = 1024/20 
+	MAX_GRID_SIZE = 51  // This is arbitrary, = 1024/20
 };
 
-// g_px and g_py are coordinates in the parameter grid (small images on screen) 
-// g_evolving_flags = flag, g_grid_size = dimensions of image grid (g_grid_size x g_grid_size) 
+// g_px and g_py are coordinates in the parameter grid (small images on screen)
+// g_evolving_flags = flag, g_grid_size = dimensions of image grid (g_grid_size x g_grid_size)
 int g_px;
 int g_py;
 int g_evolving_flags;
@@ -66,7 +66,7 @@ int  g_discrete_parameter_offset_y;
 int g_new_discrete_parameter_offset_x;
 int  g_new_discrete_parameter_offset_y;
 // offset for discrete parameters x and y..
-// used for things like inside or outside types, bailout tests, trig fn etc 
+// used for things like inside or outside types, bailout tests, trig fn etc
 /* variation factors, g_parameter_offset_x, g_parameter_offset_y, g_parameter_range_x/y g_delta_parameter_image_x, g_delta_parameter_image_y.. used in field mapping
 	for smooth variation across screen. g_parameter_offset_x = offset param x, g_delta_parameter_image_x = delta param
 	per image, g_parameter_range_x = variation across grid of param ...likewise for g_py */
@@ -86,7 +86,7 @@ static ParameterBox s_parameter_box = { 0, 0, 0};
 static ParameterBox s_image_box = { 0, 0, 0 };
 static int s_image_box_count;
 
-struct PARAMETER_HISTORY      // for saving evolution data of center image 
+struct PARAMETER_HISTORY      // for saving evolution data of center image
 {
 	double parameters[MAX_PARAMETERS];
 	int inside;
@@ -174,7 +174,7 @@ void save_parameter_history()
 	s_old_history.bailoutest = g_externs.BailOutTest();
 }
 
-static void vary_double(GENEBASE gene[], int randval, int i) // routine to vary doubles 
+static void vary_double(GENEBASE gene[], int randval, int i) // routine to vary doubles
 {
 	int lclpy = g_grid_size - g_py - 1;
 	switch (gene[i].mutate)
@@ -197,7 +197,7 @@ static void vary_double(GENEBASE gene[], int randval, int i) // routine to vary 
 	case VARYINT_RANDOM:
 		*(double *)gene[i].addr += ((double(randval)/RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor;
 		break;
-	case VARYINT_RANDOM_WEIGHTED:  // weighted random mutation, further out = further change 
+	case VARYINT_RANDOM_WEIGHTED:  // weighted random mutation, further out = further change
 		{
 			int mid = g_grid_size /2;
 			double radius =  sqrt(double(sqr(g_px - mid) + sqr(lclpy - mid)));
@@ -217,22 +217,22 @@ static int vary_int(int randvalue, int limit, int mode)
 	default:
 	case VARYINT_NONE:
 		break;
-	case VARYINT_WITH_X: // vary with x 
+	case VARYINT_WITH_X: // vary with x
 		ret = (g_discrete_parameter_offset_x + g_px) % limit;
 		break;
-	case VARYINT_WITH_Y: // vary with y 
+	case VARYINT_WITH_Y: // vary with y
 		ret = (g_discrete_parameter_offset_y + lclpy) % limit;
 		break;
-	case VARYINT_WITH_X_PLUS_Y: // vary with x + y 
+	case VARYINT_WITH_X_PLUS_Y: // vary with x + y
 		ret = (g_discrete_parameter_offset_x + g_px + g_discrete_parameter_offset_y + lclpy) % limit;
 		break;
-	case VARYINT_WITH_X_MINUS_Y: // vary with x-y 
+	case VARYINT_WITH_X_MINUS_Y: // vary with x-y
 		ret = (g_discrete_parameter_offset_x + g_px)-(g_discrete_parameter_offset_y + lclpy) % limit;
 		break;
-	case VARYINT_RANDOM: // random mutation 
+	case VARYINT_RANDOM: // random mutation
 		ret = randvalue % limit;
 		break;
-	case VARYINT_RANDOM_WEIGHTED:  // weighted random mutation, further out = further change 
+	case VARYINT_RANDOM_WEIGHTED:  // weighted random mutation, further out = further change
 		{
 			int mid = g_grid_size /2;
 			double radius =  sqrt(double(sqr(g_px - mid) + sqr(lclpy - mid)));
@@ -306,7 +306,7 @@ static void vary_bail_out_test(GENEBASE gene[], int randval, int i)
 	if (gene[i].mutate)
 	{
 		g_externs.SetBailOutTest(choices[wrapped_positive_vary_int(randval, 7, gene[i].mutate)]);
-		// move this next bit to varybot where it belongs 
+		// move this next bit to varybot where it belongs
 		set_bail_out_formula(g_externs.BailOutTest());
 	}
 	return;
@@ -326,12 +326,12 @@ static void vary_function(GENEBASE gene[], int randval, int i)
 {
 	if (gene[i].mutate)
 	{
-		// Changed following to BYTE since trigfn is an array of BYTEs and if one 
-		// of the functions isn't varied, it's value was being zeroed by the high 
-		// BYTE of the preceeding function.  JCO  2 MAY 2001 
+		// Changed following to BYTE since trigfn is an array of BYTEs and if one
+		// of the functions isn't varied, it's value was being zeroed by the high
+		// BYTE of the preceeding function.  JCO  2 MAY 2001
 		*(BYTE *) gene[i].addr = (BYTE) wrapped_positive_vary_int(randval, g_num_function_list, gene[i].mutate);
 	}
-	// replaced '30' with g_num_function_list, set in prompts1.c 
+	// replaced '30' with g_num_function_list, set in prompts1.c
 	set_trig_pointers(5); /*set all trig ptrs up*/
 	return;
 }
@@ -345,7 +345,7 @@ static void vary_invert(GENEBASE gene[], int randval, int i)
 	g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
 }
 
-// --------------------------------------------------------------------- 
+// ---------------------------------------------------------------------
 /*
 	get_evolve_params() is called from FRACTINT.C whenever the 'ctrl_e' key
 	is pressed.  Return codes are:
@@ -386,21 +386,21 @@ restart:
 		int i = dialog.prompt();
 		switch (i)
 		{
-		case IDK_F2: // set all off 
+		case IDK_F2: // set all off
 			for (int num = MAX_PARAMETERS; num < NUM_GENES; num++)
 			{
 				g_genes[num].mutate = VARYINT_NONE;
 			}
 			goto restart;
 
-		case IDK_F3: // set all on..alternate x and y for field map 
+		case IDK_F3: // set all on..alternate x and y for field map
 			for (int num = MAX_PARAMETERS; num < NUM_GENES; num ++)
 			{
 				g_genes[num].mutate = (char)((num % 2) + 1);
 			}
 			goto restart;
 
-		case IDK_F4: // Randomize all 
+		case IDK_F4: // Randomize all
 			for (int num = MAX_PARAMETERS; num < NUM_GENES; num ++)
 			{
 				g_genes[num].mutate = (char)(rand() % 6);
@@ -431,7 +431,7 @@ restart:
 			g_genes[NUM_GENES - 1].mutate = dialog.values(++k).uval.ch.val;
 		}
 
-		return 1; // if you were here, you want to regenerate 
+		return 1; // if you were here, you want to regenerate
 	}
 }
 
@@ -441,7 +441,7 @@ static int get_variations()
 	int lastparm  = MAX_PARAMETERS;
 	if (fractal_type_formula(g_fractal_type))
 	{
-		if (g_formula_state.uses_p1())  // set first parameter 
+		if (g_formula_state.uses_p1())  // set first parameter
 		{
 			firstparm = 0;
 		}
@@ -459,10 +459,10 @@ static int get_variations()
 		}
 		else
 		{
-			firstparm = 8; // g_formula_state.uses_p5() or no parameter 
+			firstparm = 8; // g_formula_state.uses_p5() or no parameter
 		}
 
-		if (g_formula_state.uses_p5()) // set last parameter 
+		if (g_formula_state.uses_p5()) // set last parameter
 		{
 			lastparm = 10;
 		}
@@ -480,7 +480,7 @@ static int get_variations()
 		}
 		else
 		{
-			lastparm = 2; // g_formula_state.uses_p1() or no parameter 
+			lastparm = 2; // g_formula_state.uses_p1() or no parameter
 		}
 	}
 
@@ -509,7 +509,7 @@ static int get_variations()
 restart:
 	{
 		UIChoices dialog("Variable tweak central 1 of 2", 92);
-		const char *evolvmodes[] = 
+		const char *evolvmodes[] =
 		{
 			"no", "x", "y", "x+y", "x-y", "random", "spread"
 		};
@@ -534,25 +534,25 @@ restart:
 		int chngd = -1;
 		switch (i)
 		{
-		case IDK_F2: // set all off 
+		case IDK_F2: // set all off
 			for (int num = 0; num < MAX_PARAMETERS; num++)
 			{
 				g_genes[num].mutate = VARYINT_NONE;
 			}
 			goto restart;
-		case IDK_F3: // set all on..alternate x and y for field map 
+		case IDK_F3: // set all on..alternate x and y for field map
 			for (int num = 0; num < MAX_PARAMETERS; num ++)
 			{
 				g_genes[num].mutate = (char) ((num % 2) + 1);
 			}
 			goto restart;
-		case IDK_F4: // Randomize all 
+		case IDK_F4: // Randomize all
 			for (int num = 0; num < MAX_PARAMETERS; num ++)
 			{
 				g_genes[num].mutate = (char) (rand() % 6);
 			}
 			goto restart;
-		case IDK_F6: // go to second screen, put array away first 
+		case IDK_F6: // go to second screen, put array away first
 			{
 				GENEBASE save[NUM_GENES];
 				for (int g = 0; g < NUM_GENES; g++)
@@ -585,24 +585,24 @@ restart:
 			g_genes[num].mutate = (char)(dialog.values(k++).uval.ch.val);
 		}
 
-		return 1; // if you were here, you want to regenerate 
+		return 1; // if you were here, you want to regenerate
 	}
 }
 
 void set_mutation_level(int strength)
 {
-	// scan through the gene array turning on random variation for all parms that 
-	// are suitable for this level of mutation 
+	// scan through the gene array turning on random variation for all parms that
+	// are suitable for this level of mutation
 	for (int i = 0; i < NUM_GENES; i++)
 	{
-		g_genes[i].mutate = (g_genes[i].level <= strength) ? VARYINT_RANDOM : VARYINT_NONE; // 5 = random mutation mode 
+		g_genes[i].mutate = (g_genes[i].level <= strength) ? VARYINT_RANDOM : VARYINT_NONE; // 5 = random mutation mode
 	}
 }
 
 int get_evolve_parameters()
 {
 	int old_variations = 0;
-	// fill up the previous values arrays 
+	// fill up the previous values arrays
 	int old_evolving = g_evolving_flags;
 	int old_gridsz = g_grid_size;
 	double old_paramrangex = g_parameter_range_x;
@@ -616,20 +616,20 @@ get_evol_restart:
 	if ((g_evolving_flags & EVOLVE_RANDOM_WALK) || (g_evolving_flags & EVOLVE_RANDOM_PARAMETER))
 	{
 		// adjust field param to make some sense when changing from random modes
-		// maybe should adjust for aspect ratio here? 
+		// maybe should adjust for aspect ratio here?
 		g_parameter_range_x = g_parameter_range_y = g_fiddle_factor*2;
 		g_parameter_offset_x = g_parameters[0] - g_fiddle_factor;
 		g_parameter_offset_y = g_parameters[1] - g_fiddle_factor;
-		// set middle image to last selected and edges to +- g_fiddle_factor 
+		// set middle image to last selected and edges to +- g_fiddle_factor
 	}
 
 	{
 		UIChoices dialog(FIHELP_EVOLVER, "Evolution Mode Options", 255);
 		dialog.push("Evolution mode? (no for full screen)", (g_evolving_flags & EVOLVE_FIELD_MAP) != 0);
 		dialog.push("Image grid size (odd numbers only)", g_grid_size);
-		if (explore_check())  // test to see if any parms are set to linear 
+		if (explore_check())  // test to see if any parms are set to linear
 		{
-			// variation 'explore mode' 
+			// variation 'explore mode'
 			dialog.push("Show parameter zoom box?", (g_evolving_flags & EVOLVE_PARAMETER_BOX) != 0);
 			dialog.push("x parameter range (across screen)", float(g_parameter_range_x));
 			dialog.push("x parameter offset (left hand edge)", float(g_parameter_offset_x));
@@ -647,7 +647,7 @@ get_evol_restart:
 		int i = dialog.prompt();
 		if (i < 0)
 		{
-			// in case this point has been reached after calling sub menu with F6 
+			// in case this point has been reached after calling sub menu with F6
 			g_evolving_flags      = old_evolving;
 			g_grid_size        = old_gridsz;
 			g_parameter_range_x   = old_paramrangex;
@@ -691,16 +691,16 @@ get_evol_restart:
 		g_evolving_flags = dialog.values(++k).uval.ch.val;
 		g_viewWindow.Show(g_evolving_flags != 0);
 
-		if (!g_evolving_flags && i != IDK_F6)  // don't need any of the other parameters 
+		if (!g_evolving_flags && i != IDK_F6)  // don't need any of the other parameters
 		{
-			return 1;              // the following code can set g_evolving_flags even if it's off 
+			return 1;              // the following code can set g_evolving_flags even if it's off
 		}
 
 		g_grid_size = dialog.values(++k).uval.ival;
-		// (g_screen_width/20), max # of subimages @ 20 pixels per subimage 
-		// MAX_GRID_SIZE == 1024/20 == 51 
+		// (g_screen_width/20), max # of subimages @ 20 pixels per subimage
+		// MAX_GRID_SIZE == 1024/20 == 51
 		g_grid_size = MathUtil::Clamp(g_grid_size, 3, std::min(int(MAX_GRID_SIZE), g_screen_width/(int(MIN_PIXELS) << 1)));
-		g_grid_size |= 1; // make sure g_grid_size is odd 
+		g_grid_size |= 1; // make sure g_grid_size is odd
 		if (explore_check())
 		{
 			int temp = (EVOLVE_PARAMETER_BOX*dialog.values(++k).uval.ch.val);
@@ -749,7 +749,7 @@ get_evol_restart:
 		if (old_variations > 0)
 		{
 			g_viewWindow.Show();
-			g_evolving_flags |= EVOLVE_FIELD_MAP;   // leave other settings alone 
+			g_evolving_flags |= EVOLVE_FIELD_MAP;   // leave other settings alone
 		}
 		g_fiddle_factor = 1;
 		g_fiddle_reduction = 1.0;
@@ -763,7 +763,7 @@ void setup_parameter_box()
 	int vidsize;
 	g_parameter_box_count = 0;
 	g_parameter_zoom = (double(g_grid_size)-1.0)/2.0;
-	// need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values 
+	// need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values
 	vidsize = (g_x_dots + g_y_dots)*4*sizeof(int);
 	vidsize += g_x_dots + g_y_dots + 2;
 	if (!s_parameter_box.box_x)
@@ -779,8 +779,8 @@ void setup_parameter_box()
 	}
 	g_parameter_box_count = 0;
 
-	// vidsize = (vidsize/g_grid_size) + 3; */ /* allocate less mem for smaller box 
-	// taken out above as *all* pixels get plotted in small boxes 
+	// vidsize = (vidsize/g_grid_size) + 3; */ /* allocate less mem for smaller box
+	// taken out above as *all* pixels get plotted in small boxes
 	if (!s_image_box.box_x)
 	{
 		s_image_box.box_x = new int[g_x_dots*2];
@@ -821,15 +821,15 @@ void set_current_parameters()
 void fiddle_parameters(GENEBASE *gene, int ecount)
 {
 	// call with g_px, g_py ... parameter set co-ords
-	// set random seed then call rnd enough times to get to g_px, g_py 
-	// 5/2/96 adding in indirection 
-	// 26/2/96 adding in multiple methods and field map 
-	// 29/4/96 going for proper handling of the whole gene array 
+	// set random seed then call rnd enough times to get to g_px, g_py
+	// 5/2/96 adding in indirection
+	// 26/2/96 adding in multiple methods and field map
+	// 29/4/96 going for proper handling of the whole gene array
 	/*         bung in a pile of switches to allow for expansion to any
 			future variable types */
 	/* 11/6/96 scrapped most of switches above and used function pointers
 			instead */
-	// 4/1/97  picking it up again after the last step broke it all horribly! 
+	// 4/1/97  picking it up again after the last step broke it all horribly!
 
 	/* when writing routines to vary param types make sure that rand() gets called
 	the same number of times whether gene[].mutate is set or not to allow
@@ -841,12 +841,12 @@ void fiddle_parameters(GENEBASE *gene, int ecount)
 	the variables referenced in the gene array and call the functions required
 	to vary them, aren't pointers marvellous! */
 
-	if ((g_px == g_grid_size/2) && (g_py == g_grid_size/2)) // return if middle image 
+	if ((g_px == g_grid_size/2) && (g_py == g_grid_size/2)) // return if middle image
 	{
 		return;
 	}
 
-	set_random(ecount);   // generate the right number of pseudo randoms 
+	set_random(ecount);   // generate the right number of pseudo randoms
 
 	for (int i = 0; i < NUM_GENES; i++)
 	{
@@ -856,10 +856,10 @@ void fiddle_parameters(GENEBASE *gene, int ecount)
 
 static void set_random(int ecount)
 {
-	// This must be called with ecount set correctly for the spiral map. 
-	// Call this routine to set the random # to the proper value 
-	// if it may have changed, before fiddle_parameters() is called. 
-	// Now called by fiddle_parameters(). 
+	// This must be called with ecount set correctly for the spiral map.
+	// Call this routine to set the random # to the proper value
+	// if it may have changed, before fiddle_parameters() is called.
+	// Now called by fiddle_parameters().
 	srand(g_this_generation_random_seed);
 	for (int index = 0; index < ecount; index++)
 	{
@@ -872,9 +872,9 @@ static void set_random(int ecount)
 
 static bool explore_check()
 {
-	// checks through gene array to see if any of the parameters are set to 
-	// one of the non random variation modes. Used to see if g_parameter_zoom box is 
-	// needed 
+	// checks through gene array to see if any of the parameters are set to
+	// one of the non random variation modes. Used to see if g_parameter_zoom box is
+	// needed
 	bool nonrandom = false;
 
 	for (int i = 0; i < NUM_GENES && !(nonrandom); i++)
@@ -889,22 +889,22 @@ static bool explore_check()
 
 void draw_parameter_box(bool clear_not_redraw)
 {
-	// draws parameter zoom box in evolver mode 
-	// clears boxes off screen if mode = 1, otherwise, redraws boxes 
+	// draws parameter zoom box in evolver mode
+	// clears boxes off screen if mode = 1, otherwise, redraws boxes
 	if (!(g_evolving_flags & EVOLVE_PARAMETER_BOX))
 	{
-		return; // don't draw if not asked to! 
+		return; // don't draw if not asked to!
 	}
 	int grout = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 	s_image_box_count = g_zoomBox.count();
 	if (g_zoomBox.count())
 	{
-		// stash normal zoombox pixels 
+		// stash normal zoombox pixels
 		g_zoomBox.save(s_image_box.box_x, s_image_box.box_y,
 			s_image_box.box_values, g_zoomBox.count());
-		g_zoomBox.clear(); // to avoid probs when one box overlaps the other 
+		g_zoomBox.clear(); // to avoid probs when one box overlaps the other
 	}
-	if (g_parameter_box_count != 0)   // clear last parmbox 
+	if (g_parameter_box_count != 0)   // clear last parmbox
 	{
 		g_zoomBox.set_count(g_parameter_box_count);
 		g_zoomBox.restore(s_parameter_box.box_x, s_parameter_box.box_y,
@@ -950,7 +950,7 @@ void draw_parameter_box(bool clear_not_redraw)
 	if (g_zoomBox.count())
 	{
 		g_zoomBox.display();
-		// stash pixel values for later 
+		// stash pixel values for later
 		g_zoomBox.save(s_parameter_box.box_x, s_parameter_box.box_y,
 			s_parameter_box.box_values, g_zoomBox.count());
 	}
@@ -958,7 +958,7 @@ void draw_parameter_box(bool clear_not_redraw)
 	g_zoomBox.set_count(s_image_box_count);
 	if (s_image_box_count)
 	{
-		// and move back old values so that everything can proceed as normal 
+		// and move back old values so that everything can proceed as normal
 		g_zoomBox.restore(s_image_box.box_x, s_image_box.box_y,
 			s_image_box.box_values, g_zoomBox.count());
 		g_zoomBox.display();
@@ -969,7 +969,7 @@ void draw_parameter_box(bool clear_not_redraw)
 void set_evolve_ranges()
 {
 	int lclpy = g_grid_size - g_py - 1;
-	// set up ranges and offsets for parameter explorer/evolver 
+	// set up ranges and offsets for parameter explorer/evolver
 	g_parameter_range_x = g_delta_parameter_image_x*(g_parameter_zoom*2.0);
 	g_parameter_range_y = g_delta_parameter_image_y*(g_parameter_zoom*2.0);
 	g_new_parameter_offset_x = g_parameter_offset_x + ((double(g_px)-g_parameter_zoom)*g_delta_parameter_image_x);
@@ -982,12 +982,12 @@ void set_evolve_ranges()
 
 void spiral_map(int count)
 {
-	// maps out a clockwise spiral for a prettier and possibly   
-	// more intuitively useful order of drawing the sub images.  
-	// All the malarky with count is to allow resuming 
+	// maps out a clockwise spiral for a prettier and possibly
+	// more intuitively useful order of drawing the sub images.
+	// All the malarky with count is to allow resuming
 
 	int mid = g_grid_size/2;
-	if (count == 0)  // start in the middle 
+	if (count == 0)  // start in the middle
 	{
 		g_px = mid;
 		g_py = mid;
@@ -996,7 +996,7 @@ void spiral_map(int count)
 	int i = 0;
 	for (int offset = 1; offset <= mid; offset ++)
 	{
-		// first do the top row 
+		// first do the top row
 		g_py = (mid - offset);
 		for (g_px = (mid - offset) + 1; g_px <mid + offset; g_px++)
 		{
@@ -1006,7 +1006,7 @@ void spiral_map(int count)
 				return;
 			}
 		}
-		// then do the right hand column 
+		// then do the right hand column
 		for (; g_py < mid + offset; g_py++)
 		{
 			i++;
@@ -1015,7 +1015,7 @@ void spiral_map(int count)
 				return;
 			}
 		}
-		// then reverse along the bottom row 
+		// then reverse along the bottom row
 		for (; g_px > mid - offset; g_px--)
 		{
 			i++;
@@ -1024,7 +1024,7 @@ void spiral_map(int count)
 				return;
 			}
 		}
-		// then up the left to finish 
+		// then up the left to finish
 		for (; g_py >= mid - offset; g_py--)
 		{
 			i++;
@@ -1038,16 +1038,16 @@ void spiral_map(int count)
 
 int unspiral_map()
 {
-	// unmaps the clockwise spiral 
-	// All this malarky is to allow selecting different subimages 
-	// Returns the count from the center subimage to the current g_px & g_py 
+	// unmaps the clockwise spiral
+	// All this malarky is to allow selecting different subimages
+	// Returns the count from the center subimage to the current g_px & g_py
 	static int last_grid_size = 0;
 
 	int mid = g_grid_size/2;
 	if ((g_px == mid && g_py == mid) || (last_grid_size != g_grid_size))
 	{
-		// set up array and return 
-		ecountbox[g_px][g_py] = 0;  // we know the first one, do the rest 
+		// set up array and return
+		ecountbox[g_px][g_py] = 0;  // we know the first one, do the rest
 		for (int i = 1; i < (g_grid_size*g_grid_size); i++)
 		{
 			spiral_map(i);

@@ -28,15 +28,15 @@
  */
 enum
 {
-	FONT_DEPTH          = 8,		// font size 
-	CSIZE_MIN           = 8,		// csize cannot be smaller than this 
+	FONT_DEPTH          = 8,		// font size
+	CSIZE_MIN           = 8,		// csize cannot be smaller than this
 #ifndef XFRACT
-	CURSOR_BLINK_RATE   = 3,		// timer ticks between cursor blinks 
+	CURSOR_BLINK_RATE   = 3,		// timer ticks between cursor blinks
 #else
-	CURSOR_BLINK_RATE   = 300,		// timer ticks between cursor blinks 
+	CURSOR_BLINK_RATE   = 300,		// timer ticks between cursor blinks
 #endif
-	FAR_RESERVE			= 8192L,	// amount of mem we will leave avail. 
-	MAX_WIDTH			= 1024,		// palette editor cannot be wider than this 
+	FAR_RESERVE			= 8192L,	// amount of mem we will leave avail.
+	MAX_WIDTH			= 1024,		// palette editor cannot be wider than this
 	TITLE_LEN			= 8
 };
 static char const *TITLE = "Id";
@@ -44,11 +44,11 @@ static char const *TITLE = "Id";
 #ifdef XFRACT
 int g_edit_pal_cursor = 0;
 #endif
-std::string g_screen_file = "Id.$$1";  // file where screen portion is stored 
-BYTE     *g_line_buffer;   // must be alloced!!! 
+std::string g_screen_file = "Id.$$1";  // file where screen portion is stored
+BYTE     *g_line_buffer;   // must be alloced!!!
 bool g_using_jiim = false;
 
-static char s_undo_file[] = "Id.$$2";  // file where undo list is stored 
+static char s_undo_file[] = "Id.$$2";  // file where undo list is stored
 static BYTE		s_fg_color,
 				s_bg_color;
 static bool s_reserve_colors;
@@ -92,7 +92,7 @@ static void get_pal_range(int first, int how_many, PALENTRY *pal)
 }
 
 static void rotate_pal(PALENTRY *pal, int dir, int lo, int hi)
-{             // rotate in either direction 
+{             // rotate in either direction
 	PALENTRY hold;
 	int      size;
 
@@ -300,7 +300,7 @@ static void make_pal_range(ColormapTable &colormap, int p1, int p2, int pal, int
 	{
 		if (s_gamma_val == 1)
 		{
-			colormap.Set(pal + curr, 
+			colormap.Set(pal + curr,
 				Expr1(colormap.Red(p1), colormap.Red(p2), curr, rm),
 				Expr1(colormap.Green(p1), colormap.Green(p2), curr, gm),
 				Expr1(colormap.Blue(p1), colormap.Blue(p2), curr, bm));
@@ -315,7 +315,7 @@ static void make_pal_range(ColormapTable &colormap, int p1, int p2, int pal, int
 	}
 }
 
-// Swap RG GB & RB columns 
+// Swap RG GB & RB columns
 static void swap_columns_rg(PALENTRY pal[], int num)
 {
 	int    curr;
@@ -576,7 +576,7 @@ void cursor_end_mouse_tracking()
 }
 #endif
 
-// See if the cursor should blink yet, and blink it if so 
+// See if the cursor should blink yet, and blink it if so
 void cursor::check_blink()
 {
 	long tick;
@@ -597,7 +597,7 @@ void cursor::check_blink()
 	}
 }
 
-int cursor::wait_key()   // blink cursor while waiting for a key 
+int cursor::wait_key()   // blink cursor while waiting for a key
 {
 	while (!driver_wait_key_pressed(1))
 	{
@@ -619,7 +619,7 @@ public:
 	void move(int key);
 	move_box(int x, int y, int csize, int base_width, int base_depth);
 	~move_box();
-	// returns false if ESCAPED 
+	// returns false if ESCAPED
 	bool process();
 	bool moved() const { return _moved; }
 	bool should_hide() const { return _should_hide; }
@@ -752,18 +752,18 @@ void move_box::move(int key)
 		{
 			if (!first)
 			{
-				driver_get_key();       // delete key from buffer 
+				driver_get_key();       // delete key from buffer
 			}
 			else
 			{
 				first = false;
 			}
-			key = driver_key_pressed();   // peek at the next one... 
+			key = driver_key_pressed();   // peek at the next one...
 		}
 	}
 
 	xoff += _x;
-	yoff += _y;   // (xoff, yoff) = new position 
+	yoff += _y;   // (xoff, yoff) = new position
 
 	if (xoff < 0)
 	{
@@ -829,7 +829,7 @@ bool move_box::process()
 			move(key);
 			break;
 
-		case IDK_PAGE_UP:   // shrink 
+		case IDK_PAGE_UP:   // shrink
 			if (_csize > CSIZE_MIN)
 			{
 				int t = _csize - CSIZE_INC;
@@ -850,7 +850,7 @@ bool move_box::process()
 			}
 			break;
 
-		case IDK_PAGE_DOWN:   // grow 
+		case IDK_PAGE_DOWN:   // grow
 			{
 				int max_width = std::min(g_screen_width, int(MAX_WIDTH));
 
@@ -1082,8 +1082,8 @@ int color_editor::edit()
 		default:
 			_other_key(key, this, _info);
 			break;
-		} // switch 
-	} // while 
+		} // switch
+	} // while
 #ifdef XFRACT
 	cursor_end_mouse_tracking();
 #endif
@@ -1129,12 +1129,12 @@ private:
 	void change(color_editor *ceditor, VOIDPTR info);
 
 	int _x;
-	int _y;            // position 
-	int _current_channel;            // 0 = r, 1 = g, 2 = b 
-	int _palette_number;             // palette number 
+	int _y;            // position
+	int _current_channel;            // 0 = r, 1 = g, 2 = b
+	int _palette_number;             // palette number
 	bool _done;
 	bool _hidden;
-	color_editor *_color_editor[3];        // color editors 0 = r, 1 = g, 2 = b 
+	color_editor *_color_editor[3];        // color editors 0 = r, 1 = g, 2 = b
 	void (*_other_key)(int key, rgb_editor *e, VOIDPTR info);
 	void (*_change)(rgb_editor *e, VOIDPTR info);
 	void *_info;
@@ -1229,7 +1229,7 @@ void rgb_editor::rgb_editor_other_key(int key, color_editor *ceditor)
 		}
 		break;
 
-	case IDK_DELETE:   // move to next color_editor 
+	case IDK_DELETE:   // move to next color_editor
 	case IDK_CTL_ENTER_2:    /*double click rt mouse also! */
 		if (++_current_channel > 2)
 		{
@@ -1238,7 +1238,7 @@ void rgb_editor::rgb_editor_other_key(int key, color_editor *ceditor)
 		ceditor->set_done(true);
 		break;
 
-	case IDK_INSERT:   // move to prev color_editor 
+	case IDK_INSERT:   // move to prev color_editor
 		if (--_current_channel < 0)
 		{
 			_current_channel = 2;
@@ -1257,7 +1257,7 @@ void rgb_editor::rgb_editor_other_key(int key, color_editor *ceditor)
 }
 
 #ifdef __CLINT__
-#   pragma argsused   // kills "arg not used" warning 
+#   pragma argsused   // kills "arg not used" warning
 #endif
 
 void rgb_editor::rgb_editor_change()
@@ -1466,7 +1466,7 @@ private:
 	int _x;
 	int _y;
 	int _csize;
-	int _active;   // which rgb_editor is active (0, 1) 
+	int _active;   // which rgb_editor is active (0, 1)
 	int _current[2];
 	rgb_editor *_rgb_editors[2];
 	move_box *_move_box;
@@ -1484,7 +1484,7 @@ private:
 	PALENTRY *_save_palette[8];
 	PALENTRY _fs_color;
 	int _top;
-	int _bottom; // top and bottom colours of freestyle band 
+	int _bottom; // top and bottom colours of freestyle band
 	int _color_band_width; /*size of freestyle colour band */
 	bool _freestyle;
 };
@@ -1498,7 +1498,7 @@ enum
 	UNDO_ROTATE = 3
 };
 
-// - Freestyle code - 
+// - Freestyle code -
 
 void pal_table::calc_top_bottom()
 {
@@ -1510,10 +1510,10 @@ void pal_table::calc_top_bottom()
 
 void pal_table::put_band(PALENTRY *pal)
 {
-	// clip top and bottom values to stop them running off the end of the DAC 
+	// clip top and bottom values to stop them running off the end of the DAC
 	calc_top_bottom();
 
-	// put bands either side of current colour 
+	// put bands either side of current colour
 	int a = _current[_active];
 	int b = _bottom;
 	int r = _top;
@@ -1556,7 +1556,7 @@ std::ostream &put(std::ostream &stream, const T value)
 	return stream;
 }
 
-// - Undo.Redo code - 
+// - Undo.Redo code -
 void pal_table::save_undo_data(int first, int last)
 {
 	if (!_undo_stream.is_open())
@@ -1607,8 +1607,8 @@ void pal_table::save_undo_rotate(int dir, int first, int last)
 	_num_redo = 0;
 }
 
-void pal_table::undo_process(int delta)   // undo/redo common code 
-{              // delta = -1 for undo, +1 for redo 
+void pal_table::undo_process(int delta)   // undo/redo common code
+{              // delta = -1 for undo, +1 for redo
 	int cmd = _undo_stream.get();
 
 	switch (cmd)
@@ -1626,7 +1626,7 @@ void pal_table::undo_process(int delta)   // undo/redo common code
 				first = static_cast<unsigned char>(_undo_stream.get());
 				last = static_cast<unsigned char>(_undo_stream.get());
 			}
-			else  // UNDO_DATA_SINGLE 
+			else  // UNDO_DATA_SINGLE
 			{
 				first = static_cast<unsigned char>(_undo_stream.get());
 				last = first;
@@ -1674,20 +1674,20 @@ void pal_table::undo_process(int delta)   // undo/redo common code
 		break;
 	}
 
-	_undo_stream.seekg(0, std::ios_base::cur);  // to put us in read mode 
-	get<int>(_undo_stream);  // read size 
+	_undo_stream.seekg(0, std::ios_base::cur);  // to put us in read mode
+	get<int>(_undo_stream);  // read size
 }
 
 void pal_table::undo()
 {
-	if (_undo_stream.tellg() <= 0)   // at beginning of file? 
-	{                                  // nothing to undo -- exit 
+	if (_undo_stream.tellg() <= 0)   // at beginning of file?
+	{                                  // nothing to undo -- exit
 		return;
 	}
 
-	_undo_stream.seekg(-int(sizeof(int)), std::ios_base::cur);  // go back to get size 
+	_undo_stream.seekg(-int(sizeof(int)), std::ios_base::cur);  // go back to get size
 	int size = get<int>(_undo_stream);
-	_undo_stream.seekg(-size, std::ios_base::cur);   // go to start of undo 
+	_undo_stream.seekg(-size, std::ios_base::cur);   // go to start of undo
 
 #ifdef DEBUG_UNDO
 	mprintf("%6ld Undo:", ftell(undo_file));
@@ -1695,7 +1695,7 @@ void pal_table::undo()
 
 	std::istream::pos_type pos = _undo_stream.tellg();
 	undo_process(-1);
-	_undo_stream.seekg(pos, SEEK_SET);   // go to start of me g_block 
+	_undo_stream.seekg(pos, SEEK_SET);   // go to start of me g_block
 	++_num_redo;
 }
 
@@ -1710,7 +1710,7 @@ void pal_table::redo()
 	mprintf("%6ld Redo:", ftell(undo_file));
 #endif
 
-	_undo_stream.seekg(0, std::ios_base::cur);  // to make sure we are in "read" mode 
+	_undo_stream.seekg(0, std::ios_base::cur);  // to make sure we are in "read" mode
 	undo_process(1);
 
 	--_num_redo;
@@ -1730,7 +1730,7 @@ void pal_table::draw_status(bool stripe_mode)
 		int x = _x + 2 + RGB_EDITOR_WIDTH;
 		int y = _y + PALTABLE_PALY - 10;
 		int color = get_cursor_color();
-		if (color < 0 || color >= g_colors) // hmm, the border returns -1 
+		if (color < 0 || color >= g_colors) // hmm, the border returns -1
 		{
 			color = 0;
 		}
@@ -1910,14 +1910,14 @@ bool pal_table::memory_alloc(long size)
 	if (DEBUGMODE_USE_DISK == g_debug_mode)
 	{
 		_stored_at = NOWHERE;
-		return false;   // can't do it 
+		return false;   // can't do it
 	}
 
-	char *temp = new char[FAR_RESERVE];   // minimum free space 
+	char *temp = new char[FAR_RESERVE];   // minimum free space
 	if (temp == 0)
 	{
 		_stored_at = NOWHERE;
-		return false;   // can't do it 
+		return false;   // can't do it
 	}
 	delete[] temp;
 
@@ -1937,14 +1937,14 @@ bool pal_table::memory_alloc(long size)
 
 void pal_table::save_rect()
 {
-	// first, do any de-allocationg 
+	// first, do any de-allocationg
 	if (_stored_at == MEMORY)
 	{
 		delete [] _memory;
 		_memory = 0;
 	}
 
-	// allocate space and store the rectangle 
+	// allocate space and store the rectangle
 
 	int width = PALTABLE_PALX + _csize * 16 + 1 + 1;
 	int depth = PALTABLE_PALY + _csize * 16 + 1 + 1;
@@ -1952,7 +1952,7 @@ void pal_table::save_rect()
 	if (memory_alloc(long(width)*depth))
 	{
 		BYTE *ptr = reinterpret_cast<BYTE *>(_memory);
-		BYTE *bufptr = buff; // MSC needs me indirection to get it right 
+		BYTE *bufptr = buff; // MSC needs me indirection to get it right
 
 		cursor::cursor_hide();
 		for (int yoff = 0; yoff < depth; yoff++)
@@ -1964,7 +1964,7 @@ void pal_table::save_rect()
 		}
 		cursor::cursor_show();
 	}
-	else // to disk 
+	else // to disk
 	{
 		_stored_at = DISK;
 
@@ -2030,7 +2030,7 @@ void pal_table::restore_rect()
 	case MEMORY:
 		{
 			BYTE  *ptr = reinterpret_cast<BYTE *>(_memory);
-			BYTE *bufptr = buff; // MSC needs me indirection to get it right 
+			BYTE *bufptr = buff; // MSC needs me indirection to get it right
 
 			cursor::cursor_hide();
 			for (int yoff = 0; yoff < depth; yoff++)
@@ -2045,7 +2045,7 @@ void pal_table::restore_rect()
 
 	case NOWHERE:
 		break;
-	} // switch 
+	} // switch
 }
 
 
@@ -2077,7 +2077,7 @@ int pal_table::get_cursor_color()
 	if (is_reserved(color))
 	{
 		if (is_in_box(x, y, _x, _y, 1 + (_csize*16) + 1 + 1, 2 + RGB_EDITOR_DEPTH + 2 + (_csize*16) + 1 + 1))
-		{  // is the cursor over the editor? 
+		{  // is the cursor over the editor?
 			x -= _x + PALTABLE_PALX;
 			y -= _y + PALTABLE_PALY;
 			size = _csize;
@@ -2140,13 +2140,13 @@ void pal_table::do_cursor(int key)
 		{
 			if (!first)
 			{
-				driver_get_key();       // delete key from buffer 
+				driver_get_key();       // delete key from buffer
 			}
 			else
 			{
 				first = false;
 			}
-			key = driver_key_pressed();   // peek at the next one... 
+			key = driver_key_pressed();   // peek at the next one...
 		}
 	}
 
@@ -2230,7 +2230,7 @@ void pal_table::update_dac()
 
 		if (_freestyle)
 		{
-			put_band(g_.DAC());   // apply band to g_dac_box 
+			put_band(g_.DAC());   // apply band to g_dac_box
 		}
 	}
 
@@ -2258,11 +2258,11 @@ void pal_table::rotate(int dir, int lo, int hi)
 
 	cursor::cursor_hide();
 
-	// update the DAC.  
+	// update the DAC.
 
 	update_dac();
 
-	// update the editors. 
+	// update the editors.
 
 	_rgb_editors[0]->set_rgb(_current[0], &(_palette[_current[0]]));
 	_rgb_editors[1]->set_rgb(_current[1], &(_palette[_current[1]]));
@@ -2277,10 +2277,10 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 {
 	switch (key)
 	{
-	case '\\':    // move/resize 
+	case '\\':    // move/resize
 		if (_hidden)
 		{
-			break;           // cannot move a hidden pal 
+			break;           // cannot move a hidden pal
 		}
 		cursor::cursor_hide();
 		restore_rect();
@@ -2310,14 +2310,14 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		}
 		break;
 
-	case 'Y':    // exclude range 
+	case 'Y':    // exclude range
 	case 'y':
 		_exclude = (_exclude == EXCLUDE_RANGE) ? EXCLUDE_NONE : EXCLUDE_RANGE;
 		update_dac();
 		break;
 
 	case 'X':
-	case 'x':     // exclude current entry 
+	case 'x':     // exclude current entry
 		_exclude = (_exclude == EXCLUDE_CURRENT) ? EXCLUDE_NONE : EXCLUDE_CURRENT;
 		update_dac();
 		break;
@@ -2338,7 +2338,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		rgb->set_done(true);
 		break;
 
-	case ' ':     // select the other palette register 
+	case ' ':     // select the other palette register
 		_active = (_active == 0) ? 1 : 0;
 		if (_auto_select)
 		{
@@ -2355,8 +2355,8 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		rgb->set_done(true);
 		break;
 
-	case IDK_ENTER:    // set register to color under cursor.  useful when not 
-	case IDK_ENTER_2:  // in auto_select mode 
+	case IDK_ENTER:    // set register to color under cursor.  useful when not
+	case IDK_ENTER_2:  // in auto_select mode
 		if (_freestyle)
 		{
 			save_undo_data(_bottom, _top);
@@ -2373,7 +2373,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		rgb->set_done(true);
 		break;
 
-	case 'D':    // copy (Duplicate?) color in inactive to color in active 
+	case 'D':    // copy (Duplicate?) color in inactive to color in active
 	case 'd':
 		{
 			int a = _active;
@@ -2392,7 +2392,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			break;
 		}
 
-	case '=':    // create a shade range between the two entries 
+	case '=':    // create a shade range between the two entries
 		{
 			int a = _current[0];
 			int b = _current[1];
@@ -2415,7 +2415,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			break;
 		}
 
-	case '!':    // swap r<->g 
+	case '!':    // swap r<->g
 		{
 			int a = _current[0];
 			int b = _current[1];
@@ -2437,9 +2437,9 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			break;
 		}
 
-	case '@':    // swap g<->b 
-	case '"':    // UK keyboards 
-	case 151:    // French keyboards 
+	case '@':    // swap g<->b
+	case '"':    // UK keyboards
+	case 151:    // French keyboards
 		{
 			int a = _current[0];
 			int b = _current[1];
@@ -2462,9 +2462,9 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			break;
 		}
 
-	case '#':    // swap r<->b 
-	case 156:    // UK keyboards (pound sign) 
-	case '$':    // For French keyboards 
+	case '#':    // swap r<->b
+	case 156:    // UK keyboards (pound sign)
+	case '$':    // For French keyboards
 		{
 			int a = _current[0];
 			int b = _current[1];
@@ -2488,7 +2488,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		}
 
 	case 'T':
-	case 't':   // s(T)ripe mode 
+	case 't':   // s(T)ripe mode
 		{
 			int key;
 
@@ -2520,7 +2520,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			break;
 		}
 
-	case 'M':   // set gamma 
+	case 'M':   // set gamma
 	case 'm':
 		{
 			int i;
@@ -2542,7 +2542,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		}
 		break;
 
-	case 'A':   // toggle auto-select mode 
+	case 'A':   // toggle auto-select mode
 	case 'a':
 		_auto_select = !_auto_select;
 		if (_auto_select)
@@ -2556,13 +2556,13 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		break;
 
 	case 'H':
-	case 'h': // toggle hide/display of palette editor 
+	case 'h': // toggle hide/display of palette editor
 		cursor::cursor_hide();
 		hide(rgb, !_hidden);
 		cursor::cursor_show();
 		break;
 
-	case '.':   // rotate once 
+	case '.':   // rotate once
 	case ',':
 		{
 			int dir = (key == '.') ? 1 : -1;
@@ -2572,7 +2572,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			break;
 		}
 
-	case '>':   // continuous rotation (until a key is pressed) 
+	case '>':   // continuous rotation (until a key is pressed)
 	case '<':
 		{
 			int  dir;
@@ -2598,7 +2598,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 					tick = read_ticker();
 					rotate(dir, g_rotate_lo, g_rotate_hi);
 					diff += dir;
-					while (read_ticker() == tick)   // wait until a tick passes 
+					while (read_ticker() == tick)   // wait until a tick passes
 					{
 					}
 				}
@@ -2624,14 +2624,14 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			break;
 		}
 
-	case 'I':     // invert the fg & bg g_colors 
+	case 'I':     // invert the fg & bg g_colors
 	case 'i':
 		s_inverse = !s_inverse;
 		update_dac();
 		break;
 
 	case 'V':
-	case 'v':  // set the reserved g_colors to the editor colors 
+	case 'v':  // set the reserved g_colors to the editor colors
 		if (_current[0] >= g_colors || _current[1] >= g_colors ||
 			_current[0] == _current[1])
 		{
@@ -2653,7 +2653,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		_rgb_editors[_active]->set_done(true);
 		break;
 
-	case 'O':    // set rotate_lo and rotate_hi to editors 
+	case 'O':    // set rotate_lo and rotate_hi to editors
 	case 'o':
 		if (_current[0] > _current[1])
 		{
@@ -2667,7 +2667,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		}
 		break;
 
-	case IDK_F2:    // restore a palette 
+	case IDK_F2:    // restore a palette
 	case IDK_F3:
 	case IDK_F4:
 	case IDK_F5:
@@ -2692,12 +2692,12 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			}
 			else
 			{
-				driver_buzzer(BUZZER_ERROR);   // error buzz 
+				driver_buzzer(BUZZER_ERROR);   // error buzz
 			}
 			break;
 		}
 
-	case IDK_SF2:   // save a palette 
+	case IDK_SF2:   // save a palette
 	case IDK_SF3:
 	case IDK_SF4:
 	case IDK_SF5:
@@ -2714,12 +2714,12 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			}
 			else
 			{
-				driver_buzzer(BUZZER_ERROR); // oops! short on memory! 
+				driver_buzzer(BUZZER_ERROR); // oops! short on memory!
 			}
 			break;
 		}
 
-	case 'L':     // load a .map palette 
+	case 'L':     // load a .map palette
 	case 'l':
 		save_undo_data(0, 255);
 		load_palette();
@@ -2731,14 +2731,14 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		_rgb_editors[1]->update();
 		break;
 
-	case 'S':     // save a .map palette 
+	case 'S':     // save a .map palette
 	case 's':
 		set_pal_range(0, g_colors, _palette);
 		save_palette();
 		update_dac();
 		break;
 
-	case 'C':     // color cycling sub-mode 
+	case 'C':     // color cycling sub-mode
 	case 'c':
 		{
 			bool oldhidden = _hidden;
@@ -2765,16 +2765,16 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		}
 
 	case 'F':
-	case 'f':    // toggle freestyle palette edit mode 
+	case 'f':    // toggle freestyle palette edit mode
 		_freestyle = !_freestyle;
 		set_current(-1, 0);
-		if (!_freestyle)   // if turning off... 
+		if (!_freestyle)   // if turning off...
 		{
 			update_dac();
 		}
 		break;
 
-	case IDK_CTL_DEL:  // rt plus down 
+	case IDK_CTL_DEL:  // rt plus down
 		if (_color_band_width >0)
 		{
 			_color_band_width--;
@@ -2786,7 +2786,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		set_current(-1, 0);
 		break;
 
-	case IDK_CTL_INSERT: // rt plus up 
+	case IDK_CTL_INSERT: // rt plus up
 		if (_color_band_width <255)
 		{
 			_color_band_width ++;
@@ -2798,21 +2798,21 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		set_current(-1, 0);
 		break;
 
-	case 'W':   // convert to greyscale 
+	case 'W':   // convert to greyscale
 	case 'w':
 		switch (_exclude)
 		{
-		case EXCLUDE_NONE:   // normal mode.  convert all colors to grey scale 
+		case EXCLUDE_NONE:   // normal mode.  convert all colors to grey scale
 			save_undo_data(0, 255);
 			pal_range_to_grey(_palette, 0, 256);
 			break;
 
-		case EXCLUDE_CURRENT:   // 'x' mode. convert current color to grey scale.  
+		case EXCLUDE_CURRENT:   // 'x' mode. convert current color to grey scale.
 			save_undo_data(_current[_active], _current[_active]);
 			pal_range_to_grey(_palette, _current[_active], 1);
 			break;
 
-		case EXCLUDE_RANGE:  // 'y' mode.  convert range between editors to grey. 
+		case EXCLUDE_RANGE:  // 'y' mode.  convert range between editors to grey.
 			{
 				int a = _current[0];
 				int b = _current[1];
@@ -2837,21 +2837,21 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		_rgb_editors[1]->update();
 		break;
 
-	case 'N':   // convert to negative color 
+	case 'N':   // convert to negative color
 	case 'n':
 		switch (_exclude)
 		{
-		case EXCLUDE_NONE:      // normal mode.  convert all colors to grey scale 
+		case EXCLUDE_NONE:      // normal mode.  convert all colors to grey scale
 			save_undo_data(0, 255);
 			pal_range_to_negative(_palette, 0, 256);
 			break;
 
-		case EXCLUDE_CURRENT:      // 'x' mode. convert current color to grey scale.  
+		case EXCLUDE_CURRENT:      // 'x' mode. convert current color to grey scale.
 			save_undo_data(_current[_active], _current[_active]);
 			pal_range_to_negative(_palette, _current[_active], 1);
 			break;
 
-		case EXCLUDE_RANGE:  // 'y' mode.  convert range between editors to grey. 
+		case EXCLUDE_RANGE:  // 'y' mode.  convert range between editors to grey.
 			{
 				int a = _current[0];
 				int b = _current[1];
@@ -2876,22 +2876,22 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		_rgb_editors[1]->update();
 		break;
 
-	case 'U':     // Undo 
+	case 'U':     // Undo
 	case 'u':
 		undo();
 		break;
 
-	case 'e':    // Redo 
+	case 'e':    // Redo
 	case 'E':
 		redo();
 		break;
-	} // switch 
+	} // switch
 	draw_status(false);
 }
 
-void pal_table::make_default_palettes()  // creates default Fkey palettes 
+void pal_table::make_default_palettes()  // creates default Fkey palettes
 {
-	for (int i = 0; i < 8; i++) // copy original palette to save areas 
+	for (int i = 0; i < 8; i++) // copy original palette to save areas
 	{
 		if (_save_palette[i] != 0)
 		{
@@ -2971,7 +2971,7 @@ void pal_table::hide(rgb_editor *rgb, bool hidden)
 	{
 		set_hidden(false);
 		s_reserve_colors = true;
-		if (_stored_at == NOWHERE)  // do we need to save screen? 
+		if (_stored_at == NOWHERE)  // do we need to save screen?
 		{
 			save_rect();
 		}
@@ -3028,7 +3028,7 @@ void pal_table::process()
 {
 	get_pal_range(0, g_colors, _palette);
 
-	// Make sure all palette entries are 0-COLOR_CHANNEL_MAX 
+	// Make sure all palette entries are 0-COLOR_CHANNEL_MAX
 	for (int ctr = 0; ctr < 768; ctr++)
 	{
 		((char *)_palette)[ctr] &= COLOR_CHANNEL_MAX;
@@ -3055,11 +3055,11 @@ void pal_table::process()
 		if (_move_box->should_hide())
 		{
 			set_hidden(true);
-			s_reserve_colors = false;   // <EAN> 
+			s_reserve_colors = false;   // <EAN>
 		}
 		else
 		{
-			s_reserve_colors = true;    // <EAN> 
+			s_reserve_colors = true;    // <EAN>
 			save_rect();
 			draw();
 		}
@@ -3088,11 +3088,11 @@ void pal_table::process()
 
 
 
-void palette_edit()       // called by fractint 
+void palette_edit()       // called by fractint
 {
 	if (g_screen_width < 133 || g_screen_height < 174)
 	{
-		return; // prevents crash when physical screen is too small 
+		return; // prevents crash when physical screen is too small
 	}
 
 	HelpModeSaver saved_help(FIHELP_PALETTE_EDITING);

@@ -13,14 +13,14 @@
 #include "fractals.h"
 #include "realdos.h"
 
-// data local to this module 
+// data local to this module
 static int s_lyapunov_length;
 static int s_lyapunov_r_xy[34];
 static double	s_population;
 static long		s_filter_cycles;
 static double	s_rate;
 
-// routines local to this module 
+// routines local to this module
 static int lyapunov_cycles(long, double, double);
 
 // standalone engine for "lyapunov"
@@ -60,8 +60,8 @@ int lyapunov()
 	if (g_invert)
 	{
 		invert_z(&g_initial_z);
-		a = g_initial_z.y;
-		b = g_initial_z.x;
+		a = g_initial_z.imag();
+		b = g_initial_z.real();
 	}
 	else
 	{
@@ -140,7 +140,7 @@ bool lyapunov_setup()
 		stop_message(STOPMSG_NORMAL, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
 		g_externs.SetInside(1);
 	}
-	if (g_externs.UserStandardCalculationMode() == CALCMODE_ORBITS)  // Oops, lyapunov type 
+	if (g_externs.UserStandardCalculationMode() == CALCMODE_ORBITS)  // Oops, lyapunov type
 	{
 		ForceOnePass();
 	}
@@ -156,7 +156,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 	double lyap;
 	double total;
 	double temp;
-	// e10 = 22026.4657948  e-10 = 0.0000453999297625 
+	// e10 = 22026.4657948  e-10 = 0.0000453999297625
 
 	total = 1.0;
 	lnadjust = 0;

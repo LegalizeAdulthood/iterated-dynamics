@@ -188,7 +188,7 @@ static BoundaryTraceExterns s_boundaryTraceExterns;
 static BoundaryTrace s_boundaryTrace(s_boundaryTraceApp, s_boundaryTraceExterns);
 WorkListScanner &g_boundaryTraceScan(s_boundaryTrace);
 
-// take one step in the direction of _goingTo 
+// take one step in the direction of _goingTo
 void BoundaryTrace::step_col_row()
 {
 	switch (_goingTo)
@@ -232,7 +232,7 @@ void BoundaryTrace::Scan()
 
 bool BoundaryTrace::TraceRow(int row)
 {
-	_externs.SetResetPeriodicity(true); // reset for a new row 
+	_externs.SetResetPeriodicity(true); // reset for a new row
 	_externs.SetColor(BACKGROUND_COLOR);
 	for (_externs.SetCurrentColumn(_externs.IXStart()); _externs.CurrentColumn() <= _externs.XStop(); _externs.NextCurrentColumn())
 	{
@@ -253,15 +253,15 @@ bool BoundaryTrace::TraceColumn(int row, int column)
 	_trailColor = _externs.Color();
 	_externs.SetRow(row);
 	_externs.SetColumn(column);
-	if (_app.calculate_type() == -1) // color, row, col are global 
+	if (_app.calculate_type() == -1) // color, row, col are global
 	{
-		if (_externs.ShowDot() != BACKGROUND_COLOR) // remove show dot pixel 
+		if (_externs.ShowDot() != BACKGROUND_COLOR) // remove show dot pixel
 		{
 			_app.plot_color(_externs.Column(), _externs.Row(), BACKGROUND_COLOR);
 		}
-		if (_externs.YStop() != _externs.GetWorkList().yy_stop())  // DG 
+		if (_externs.YStop() != _externs.GetWorkList().yy_stop())  // DG
 		{
-			_externs.SetYStop(_externs.GetWorkList().yy_stop() - (row - _externs.GetWorkList().yy_start())); // allow for sym 
+			_externs.SetYStop(_externs.GetWorkList().yy_stop() - (row - _externs.GetWorkList().yy_start())); // allow for sym
 		}
 		_externs.GetWorkList().add(_externs.GetWorkList().xx_start(), _externs.GetWorkList().xx_stop(), column,
 			row, _externs.YStop(), row,
@@ -269,16 +269,16 @@ bool BoundaryTrace::TraceColumn(int row, int column)
 		_result = -1;
 		return true;
 	}
-	_externs.SetResetPeriodicity(false); // normal periodicity checking 
+	_externs.SetResetPeriodicity(false); // normal periodicity checking
 
 	// This next line may cause a few more pixels to be calculated,
 	// but at the savings of quite a bit of overhead
-	if (_externs.Color() != _trailColor)  // DG 
+	if (_externs.Color() != _trailColor)  // DG
 	{
 		return false;
 	}
 
-	// sweep clockwise to trace outline 
+	// sweep clockwise to trace outline
 	_trailRow = row;
 	_trailCol = column;
 	_trailColor = _externs.Color();
@@ -296,9 +296,9 @@ bool BoundaryTrace::TraceColumn(int row, int column)
 	}
 	while (_needMoreTracing && (_externs.Column() != column || _externs.Row() != row));
 
-	if (_numMatchesFound <= 3)  // DG 
+	if (_numMatchesFound <= 3)  // DG
 	{
-		// no hole 
+		// no hole
 		_externs.SetColor(BACKGROUND_COLOR);
 		_externs.SetResetPeriodicity(true);
 		return false;
@@ -321,11 +321,11 @@ bool BoundaryTrace::TraceColumn(int row, int column)
 				&& _externs.Column() <= _externs.XStop()
 				&& _externs.Row() <= _externs.YStop()
 				&& _app.get_color(_externs.Column(), _externs.Row()) == _trailColor)
-				// get_color() must be last 
+				// get_color() must be last
 			{
 				if (_goingTo == South
 					|| (_goingTo == West && _comingFrom != East))
-				{ // fill a row, but only once 
+				{ // fill a row, but only once
 					_right = _externs.Column();
 					while (--_right >= _externs.IXStart())
 					{
@@ -335,21 +335,21 @@ bool BoundaryTrace::TraceColumn(int row, int column)
 							break;
 						}
 					}
-					if (_externs.Color() == BACKGROUND_COLOR) // check last color 
+					if (_externs.Color() == BACKGROUND_COLOR) // check last color
 					{
 						_left = _right;
 						while (_app.get_color(--_left, _externs.Row()) == BACKGROUND_COLOR)
-							// Should NOT be possible for _left < _externs.IXStart() 
+							// Should NOT be possible for _left < _externs.IXStart()
 						{
-							// do nothing 
+							// do nothing
 						}
-						_left++; // one pixel too far 
-						if (_right == _left) // only one hole 
+						_left++; // one pixel too far
+						if (_right == _left) // only one hole
 						{
 							_app.plot_color(_left, _externs.Row(), _fillColorUsed);
 						}
 						else
-						{ // fill the line to the _left 
+						{ // fill the line to the _left
 							_length = _right-_left + 1;
 							if (_fillColorUsed != _lastFillColorUsed || _length > _maxPutLineLength)
 							{
@@ -360,16 +360,16 @@ bool BoundaryTrace::TraceColumn(int row, int column)
 							}
 							_app.sym_fill_line(_externs.Row(), _left, _right, &_outputPixels[0]);
 						}
-					} // end of fill line 
+					} // end of fill line
 
-#if 0 // don't interupt with a check_key() during fill 
+#if 0 // don't interupt with a check_key() during fill
 					if (--g_input_counter <= 0)
 					{
 						if (check_key())
 						{
 							if (_externs.YStop() != _externs.GetWorkList().yy_stop())
 							{
-								_externs.SetYStop(_externs.GetWorkList().yy_stop() - (row - _externs.GetWorkList().yy_start())); // allow for sym 
+								_externs.SetYStop(_externs.GetWorkList().yy_stop() - (row - _externs.GetWorkList().yy_start())); // allow for sym
 							}
 							_externs.GetWorkList().add(_externs.GetWorkList().xx_start(), _externs.GetWorkList().xx_stop(), column,
 								row, _externs.YStop(), row,
@@ -393,7 +393,7 @@ bool BoundaryTrace::TraceColumn(int row, int column)
 		while ((_numMatchesFound == 0) && _goingTo != _comingFrom);
 
 		if (_numMatchesFound == 0)
-		{ // next one has to be a match 
+		{ // next one has to be a match
 			step_col_row();
 			_trailRow = _externs.Row();
 			_trailCol = _externs.Column();
@@ -401,7 +401,7 @@ bool BoundaryTrace::TraceColumn(int row, int column)
 		}
 	}
 	while (_trailCol != column || _trailRow != row);
-	_externs.SetResetPeriodicity(true); // reset after a trace/fill 
+	_externs.SetResetPeriodicity(true); // reset after a trace/fill
 	_externs.SetColor(BACKGROUND_COLOR);
 
 	return false;
@@ -415,18 +415,18 @@ bool BoundaryTrace::TraceStep(int row, int column)
 		&& _externs.Column() <= _externs.XStop()
 		&& _externs.Row() <= _externs.YStop())
 	{
-		// the order of operations in this next line is critical 
+		// the order of operations in this next line is critical
 		_externs.SetColor(_app.get_color(_externs.Column(), _externs.Row()));
 		if (_externs.Color() == BACKGROUND_COLOR && _app.calculate_type() == -1)
-					// color, row, col are global for calculate_type() 
+					// color, row, col are global for calculate_type()
 		{
-			if (_externs.ShowDot() != BACKGROUND_COLOR) // remove show dot pixel 
+			if (_externs.ShowDot() != BACKGROUND_COLOR) // remove show dot pixel
 			{
 				_app.plot_color(_externs.Column(), _externs.Row(), BACKGROUND_COLOR);
 			}
-			if (_externs.YStop() != _externs.GetWorkList().yy_stop())  // DG 
+			if (_externs.YStop() != _externs.GetWorkList().yy_stop())  // DG
 			{
-				_externs.SetYStop(_externs.GetWorkList().yy_stop() - (row - _externs.GetWorkList().yy_start())); // allow for sym 
+				_externs.SetYStop(_externs.GetWorkList().yy_stop() - (row - _externs.GetWorkList().yy_start())); // allow for sym
 			}
 			_externs.GetWorkList().add(_externs.GetWorkList().xx_start(), _externs.GetWorkList().xx_stop(), column,
 				row, _externs.YStop(), row,
@@ -436,7 +436,7 @@ bool BoundaryTrace::TraceStep(int row, int column)
 		}
 		else if (_externs.Color() == _trailColor)
 		{
-			if (_numMatchesFound < 4) // to keep it from overflowing 
+			if (_numMatchesFound < 4) // to keep it from overflowing
 			{
 				_numMatchesFound++;
 			}

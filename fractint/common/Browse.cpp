@@ -97,26 +97,26 @@ private:
 	bool _autoBrowse;
 	bool _subImages;
 	int _crossHairBoxSize;
-	bool _doubleCaution;				// confirm for deleting 
+	bool _doubleCaution;				// confirm for deleting
 	float _tooSmall;
 };
 
 static BrowseStateImpl s_browse_state;
 BrowseState &g_browse_state(s_browse_state);
 
-struct CoordinateWindow  // for look_get_window on screen browser 
+struct CoordinateWindow  // for look_get_window on screen browser
 {
-	Coordinate itl; // screen coordinates 
+	Coordinate itl; // screen coordinates
 	Coordinate ibl;
 	Coordinate itr;
 	Coordinate ibr;
-	double win_size;   // box size for draw_window() 
-	std::string name;     // for filename 
-	int box_count;      // bytes of saved screen info 
+	double win_size;   // box size for draw_window()
+	std::string name;     // for filename
+	int box_count;      // bytes of saved screen info
 };
 
 static int oldbf_math;
-// here because must be visible inside several routines 
+// here because must be visible inside several routines
 static bf_t bt_a;
 static bf_t bt_b;
 static bf_t bt_c;
@@ -132,7 +132,7 @@ static bf_t n_f;
 static affine *cvt;
 static CoordinateWindow browse_windows[MAX_WINDOWS_OPEN];
 
-// prototypes 
+// prototypes
 static void check_history(const char *, const char *);
 static void transform(CoordinateD *);
 static void transform_bf(bf_t, bf_t, CoordinateD *);
@@ -231,7 +231,7 @@ restart:
 		{
 			i = -3;
 		}
-		if (g_evolving_flags)  // can't browse 
+		if (g_evolving_flags)  // can't browse
 		{
 			_autoBrowse = false;
 			i = 0;
@@ -256,14 +256,14 @@ static void transform_bf(bf_t bt_x, bf_t bt_y, CoordinateD *point)
 	bf_t bt_tmp1 = alloc_stack(g_rbf_length + 2);
 	bf_t bt_tmp2 = alloc_stack(g_rbf_length + 2);
 
-	// point->x = cvt->a*point->x + cvt->b*point->y + cvt->e; 
+	// point->x = cvt->a*point->x + cvt->b*point->y + cvt->e;
 	mult_bf(bt_tmp1, n_a, bt_x);
 	mult_bf(bt_tmp2, n_b, bt_y);
 	add_a_bf(bt_tmp1, bt_tmp2);
 	add_a_bf(bt_tmp1, n_e);
 	point->x = double(bftofloat(bt_tmp1));
 
-	// point->y = cvt->c*point->x + cvt->d*point->y + cvt->f; 
+	// point->y = cvt->c*point->x + cvt->d*point->y + cvt->f;
 	mult_bf(bt_tmp1, n_c, bt_x);
 	mult_bf(bt_tmp2, n_d, bt_y);
 	add_a_bf(bt_tmp1, bt_tmp2);
@@ -318,7 +318,7 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	double toobig = sqrt(sqr(double(g_screen_width)) + sqr(double(g_screen_height)))*1.5;
 	int saved = save_stack();
 
-	// Save original values. 
+	// Save original values.
 	int orig_bflength = g_bf_length;
 	int orig_bnlength = g_bn_length;
 	int orig_padding = g_padding;
@@ -401,21 +401,21 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	list->ibr.y = int(br.y + 0.5);
 
 	double tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
-	list->win_size = tmp_sqrt; // used for box vs crosshair in draw_window() 
-	// arbitrary value... stops browser zooming out too far 
+	list->win_size = tmp_sqrt; // used for box vs crosshair in draw_window()
+	// arbitrary value... stops browser zooming out too far
 	bool cant_see = false;
 	if (tmp_sqrt < g_browse_state.TooSmall())
 	{
 		cant_see = true;
 	}
-	// reject anything too small onscreen 
+	// reject anything too small onscreen
 	if (tmp_sqrt > toobig)
 	{
 		cant_see = true;
 	}
-	// or too big... 
+	// or too big...
 
-	// restore original values 
+	// restore original values
 	g_bf_length = orig_bflength;
 	g_bn_length = orig_bnlength;
 	g_padding = orig_padding;
@@ -424,12 +424,12 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	g_rbf_length = orig_rbflength;
 
 	restore_stack(saved);
-	if (cant_see) // do it this way so bignum stack is released 
+	if (cant_see) // do it this way so bignum stack is released
 	{
 		return false;
 	}
 
-	// now see how many corners are on the screen, accept if one or more 
+	// now see how many corners are on the screen, accept if one or more
 	return is_visible(tl) || is_visible(bl) || is_visible(tr) || is_visible(br);
 }
 
@@ -445,15 +445,15 @@ static void draw_window(int color, CoordinateWindow *info)
 	g_zoomBox.set_count(0);
 	if (info->win_size >= g_browse_state.CrossHairBoxSize())
 	{
-		// big enough on screen to show up as a box so draw it 
-		// corner pixels 
+		// big enough on screen to show up as a box so draw it
+		// corner pixels
 #ifndef XFRACT
 		add_box(info->itl);
 		add_box(info->itr);
 		add_box(info->ibl);
 		add_box(info->ibr);
-		draw_lines(info->itl, info->itr, info->ibl.x-info->itl.x, info->ibl.y-info->itl.y); // top & bottom lines 
-		draw_lines(info->itl, info->ibl, info->itr.x-info->itl.x, info->itr.y-info->itl.y); // left & right lines 
+		draw_lines(info->itl, info->itr, info->ibl.x-info->itl.x, info->ibl.y-info->itl.y); // top & bottom lines
+		draw_lines(info->itl, info->ibl, info->itr.x-info->itl.x, info->itr.y-info->itl.y); // left & right lines
 #else
 		g_box_x[0] = info->itl.x + g_screen_x_offset;
 		g_box_y[0] = info->itl.y + g_screen_y_offset;
@@ -467,7 +467,7 @@ static void draw_window(int color, CoordinateWindow *info)
 #endif
 		g_zoomBox.display();
 	}
-	else  // draw crosshairs 
+	else  // draw crosshairs
 	{
 #ifndef XFRACT
 		cross_size = g_y_dots/45;
@@ -479,8 +479,8 @@ static void draw_window(int color, CoordinateWindow *info)
 		itr.y = info->itl.y;
 		ibl.y = info->itl.y - cross_size;
 		ibl.x = info->itl.x;
-		draw_lines(info->itl, itr, ibl.x-itr.x, 0); // top & bottom lines 
-		draw_lines(info->itl, ibl, 0, itr.y-ibl.y); // left & right lines 
+		draw_lines(info->itl, itr, ibl.x-itr.x, 0); // top & bottom lines
+		draw_lines(info->itl, ibl, 0, itr.y-ibl.y); // left & right lines
 		g_zoomBox.display();
 #endif
 	}
@@ -488,8 +488,8 @@ static void draw_window(int color, CoordinateWindow *info)
 
 static void bfsetup_convert_to_screen()
 {
-	// setup_convert_to_screen() in LORENZ.C, converted to bf_math 
-	// Call only from within look_get_window() 
+	// setup_convert_to_screen() in LORENZ.C, converted to bf_math
+	// Call only from within look_get_window()
 	int saved = save_stack();
 	bf_t bt_inter1 = alloc_stack(g_rbf_length + 2);
 	bf_t bt_inter2 = alloc_stack(g_rbf_length + 2);
@@ -499,70 +499,70 @@ static void bfsetup_convert_to_screen()
 	bf_t bt_tmp1 = alloc_stack(g_rbf_length + 2);
 	bf_t bt_tmp2 = alloc_stack(g_rbf_length + 2);
 
-	// x3rd-xmin 
+	// x3rd-xmin
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
-	// ymin-ymax 
+	// ymin-ymax
 	sub_bf(bt_inter2, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
-	// (x3rd-xmin)*(ymin-ymax) 
+	// (x3rd-xmin)*(ymin-ymax)
 	mult_bf(bt_tmp1, bt_inter1, bt_inter2);
 
-	// ymax-y3rd 
+	// ymax-y3rd
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
-	// xmax-xmin 
+	// xmax-xmin
 	sub_bf(bt_inter2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
-	// (ymax-y3rd)*(xmax-xmin) 
+	// (ymax-y3rd)*(xmax-xmin)
 	mult_bf(bt_tmp2, bt_inter1, bt_inter2);
 
-	// det = (x3rd-xmin)*(ymin-ymax) + (ymax-y3rd)*(xmax-xmin) 
+	// det = (x3rd-xmin)*(ymin-ymax) + (ymax-y3rd)*(xmax-xmin)
 	add_bf(bt_det, bt_tmp1, bt_tmp2);
 
-	// xd = g_dx_size/det 
+	// xd = g_dx_size/det
 	floattobf(bt_tmp1, g_dx_size);
 	div_bf(bt_xd, bt_tmp1, bt_det);
 
-	// a = xd*(ymax-y3rd) 
+	// a = xd*(ymax-y3rd)
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 	mult_bf(bt_a, bt_xd, bt_inter1);
 
-	// b = xd*(x3rd-xmin) 
+	// b = xd*(x3rd-xmin)
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
 	mult_bf(bt_b, bt_xd, bt_inter1);
 
-	// e = -(a*xmin + b*ymax) 
+	// e = -(a*xmin + b*ymax)
 	mult_bf(bt_tmp1, bt_a, g_escape_time_state.m_grid_bf.x_min());
 	mult_bf(bt_tmp2, bt_b, g_escape_time_state.m_grid_bf.y_max());
 	neg_a_bf(add_bf(bt_e, bt_tmp1, bt_tmp2));
 
-	// x3rd-xmax 
+	// x3rd-xmax
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_max());
-	// ymin-ymax 
+	// ymin-ymax
 	sub_bf(bt_inter2, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
-	// (x3rd-xmax)*(ymin-ymax) 
+	// (x3rd-xmax)*(ymin-ymax)
 	mult_bf(bt_tmp1, bt_inter1, bt_inter2);
 
-	// ymin-y3rd 
+	// ymin-y3rd
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
-	// xmax-xmin 
+	// xmax-xmin
 	sub_bf(bt_inter2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
-	// (ymin-y3rd)*(xmax-xmin) 
+	// (ymin-y3rd)*(xmax-xmin)
 	mult_bf(bt_tmp2, bt_inter1, bt_inter2);
 
-	// det = (x3rd-xmax)*(ymin-ymax) + (ymin-y3rd)*(xmax-xmin) 
+	// det = (x3rd-xmax)*(ymin-ymax) + (ymin-y3rd)*(xmax-xmin)
 	add_bf(bt_det, bt_tmp1, bt_tmp2);
 
-	// yd = g_dy_size/det 
+	// yd = g_dy_size/det
 	floattobf(bt_tmp2, g_dy_size);
 	div_bf(bt_yd, bt_tmp2, bt_det);
 
-	// c = yd*(ymin-y3rd) 
+	// c = yd*(ymin-y3rd)
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
 	mult_bf(bt_c, bt_yd, bt_inter1);
 
-	// d = yd*(x3rd-xmax) 
+	// d = yd*(x3rd-xmax)
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_max());
 	mult_bf(bt_d, bt_yd, bt_inter1);
 
-	// f = -(c*xmin + d*ymax) 
+	// f = -(c*xmin + d*ymax)
 	mult_bf(bt_tmp1, bt_c, g_escape_time_state.m_grid_bf.x_min());
 	mult_bf(bt_tmp2, bt_d, g_escape_time_state.m_grid_bf.y_max());
 	neg_a_bf(add_bf(bt_f, bt_tmp1, bt_tmp2));
@@ -581,7 +581,7 @@ static bool fractal_types_match(const fractal_info &info, const formula_info_ext
 		}
 		else
 		{
-			return false; // two formulas but names don't match 
+			return false; // two formulas but names don't match
 		}
 	}
 	else if (info.fractal_type == g_fractal_type ||
@@ -590,7 +590,7 @@ static bool fractal_types_match(const fractal_info &info, const formula_info_ext
 		int num_functions = g_current_fractal_specific->num_functions();
 		return (num_functions > 0) ? functions_match(info, num_functions) : true;
 	}
-	return false; // no match 
+	return false; // no match
 }
 
 static bool functions_match(const fractal_info &info, int num_functions)
@@ -643,7 +643,7 @@ static bool parameters_match(const fractal_info &info)
 		parameter10 = info.dparm10;
 	}
 
-	// parameters are in range? 
+	// parameters are in range?
 	return
 		epsilon_equal(info.c_real, g_parameters[0]) &&
 		epsilon_equal(info.c_imag, g_parameters[1]) &&
@@ -661,22 +661,22 @@ static bool parameters_match(const fractal_info &info)
 
 static void check_history(const char *oldname, const char *newname)
 {
-	// g_file_name_stack[] is maintained in framain2.c.  It is the history 
-	// file for the browser and holds a maximum of 16 images.  The history 
-	// file needs to be adjusted if the rename or delete functions of the 
-	// browser are used. 
-	// g_name_stack_ptr is also maintained in framain2.c.  It is the index into 
-	// g_file_name_stack[]. 
+	// g_file_name_stack[] is maintained in framain2.c.  It is the history
+	// file for the browser and holds a maximum of 16 images.  The history
+	// file needs to be adjusted if the rename or delete functions of the
+	// browser are used.
+	// g_name_stack_ptr is also maintained in framain2.c.  It is the index into
+	// g_file_name_stack[].
 	for (int i = 0; i < g_name_stack_ptr; i++)
 	{
-		if (stricmp(g_file_name_stack[i].c_str(), oldname) == 0) // we have a match 
+		if (stricmp(g_file_name_stack[i].c_str(), oldname) == 0) // we have a match
 		{
-			g_file_name_stack[i] = newname;    // insert the new name 
+			g_file_name_stack[i] = newname;    // insert the new name
 		}
 	}
 }
 
-// look_get_window reads all .GIF files and draws window outlines on the screen 
+// look_get_window reads all .GIF files and draws window outlines on the screen
 int look_get_window()
 {
 	affine stack_cvt;
@@ -715,7 +715,7 @@ int look_get_window()
 	g_bf_math = BIGFLT;
 	if (!oldbf_math)
 	{
-		// kludge because next sets it = 0 
+		// kludge because next sets it = 0
 		CalculationStatusType oldcalc_status = g_externs.CalculationStatus();
 		fractal_float_to_bf();
 		g_externs.SetCalculationStatus(oldcalc_status);
@@ -733,10 +733,10 @@ int look_get_window()
 	{
 		vid_too_big = 2;
 	}
-	// 4096 based on 4096B in g_box_x... max 1/4 pixels plotted, and need words 
-	// 4096 = 10240/2.5 based on size of g_box_x + g_box_y + g_box_values 
+	// 4096 based on 4096B in g_box_x... max 1/4 pixels plotted, and need words
+	// 4096 = 10240/2.5 based on size of g_box_x + g_box_y + g_box_values
 #ifdef XFRACT
-	vidlength = 4; // Xfractint only needs the 4 corners saved. 
+	vidlength = 4; // Xfractint only needs the 4 corners saved.
 #endif
 	int *boxx_storage = new int[vidlength*MAX_WINDOWS_OPEN];
 	int *boxy_storage = new int[vidlength*MAX_WINDOWS_OPEN];
@@ -746,16 +746,16 @@ int look_get_window()
 		no_memory = true;
 	}
 
-	// set up complex-plane-to-screen transformation 
+	// set up complex-plane-to-screen transformation
 	if (oldbf_math)
 	{
 		bfsetup_convert_to_screen();
 	}
 	else
 	{
-		cvt = &stack_cvt; // use stack 
+		cvt = &stack_cvt; // use stack
 		setup_convert_to_screen(cvt);
-		// put in bf variables 
+		// put in bf variables
 		floattobf(bt_a, cvt->a);
 		floattobf(bt_b, cvt->b);
 		floattobf(bt_c, cvt->c);
@@ -766,7 +766,7 @@ int look_get_window()
 	g_.DAC().FindSpecialColors();
 	box_color = g_.DAC().Medium();
 
-rescan:  // entry for changed browse parms 
+rescan:  // entry for changed browse parms
 	time(&lastime);
 	bool toggle = false;
 	wincount = 0;
@@ -775,7 +775,7 @@ rescan:  // entry for changed browse parms
 	split_path(g_browse_state.Mask(), 0, 0, fname, ext);
 	make_path(tmpmask, drive, dir, fname, ext);
 	done = (vid_too_big == 2) || no_memory || fr_find_first(tmpmask);
-	// draw all visible windows 
+	// draw all visible windows
 	while (!done)
 	{
 		if (driver_key_pressed())
@@ -795,7 +795,7 @@ rescan:  // entry for changed browse parms
 		{
 			winlist.name = g_dta.filename;
 			draw_window(box_color, &winlist);
-			g_zoomBox.set_count(g_zoomBox.count()*2); // double for byte count 
+			g_zoomBox.set_count(g_zoomBox.count()*2); // double for byte count
 			winlist.box_count = g_zoomBox.count();
 			browse_windows[wincount] = winlist;
 
@@ -805,15 +805,15 @@ rescan:  // entry for changed browse parms
 			wincount++;
 		}
 
-		if (resume_info_blk.got_data == 1) // Clean up any memory allocated 
+		if (resume_info_blk.got_data == 1) // Clean up any memory allocated
 		{
 			delete[] resume_info_blk.resume_data;
 		}
-		if (ranges_info.got_data == 1) // Clean up any memory allocated 
+		if (ranges_info.got_data == 1) // Clean up any memory allocated
 		{
 			delete[] ranges_info.range_data;
 		}
-		if (mp_info.got_data == 1) // Clean up any memory allocated 
+		if (mp_info.got_data == 1) // Clean up any memory allocated
 		{
 			delete[] mp_info.apm_data;
 		}
@@ -823,10 +823,10 @@ rescan:  // entry for changed browse parms
 
 	if (no_memory)
 	{
-		text_temp_message("Sorry...not enough memory to browse."); // doesn't work if NO memory available, go figure 
+		text_temp_message("Sorry...not enough memory to browse."); // doesn't work if NO memory available, go figure
 	}
 	if (wincount >= MAX_WINDOWS_OPEN)
-	{ // hard code message at MAX_WINDOWS_OPEN = 450 
+	{ // hard code message at MAX_WINDOWS_OPEN = 450
 		text_temp_message("Sorry...no more space, 450 displayed.");
 	}
 	if (vid_too_big == 2)
@@ -863,13 +863,13 @@ rescan:  // entry for changed browse parms
 					lastime = thistime;
 					toggle = !toggle;
 				}
-				draw_window(toggle ? g_.DAC().Bright() : g_.DAC().Dark(), &winlist);   // flash current window 
+				draw_window(toggle ? g_.DAC().Bright() : g_.DAC().Dark(), &winlist);   // flash current window
 #ifdef XFRACT
 				blinks++;
 #endif
 			}
 #ifdef XFRACT
-			if ((blinks & 1) == 1)   // Need an odd # of blinks, so next one leaves box turned off 
+			if ((blinks & 1) == 1)   // Need an odd # of blinks, so next one leaves box turned off
 			{
 				draw_window(g_.DAC().Bright(), &winlist);
 			}
@@ -883,10 +883,10 @@ rescan:  // entry for changed browse parms
 			case IDK_DOWN_ARROW:
 			case IDK_UP_ARROW:
 				clear_temp_message();
-				draw_window(box_color, &winlist); // dim last window 
+				draw_window(box_color, &winlist); // dim last window
 				if (c == IDK_RIGHT_ARROW || c == IDK_UP_ARROW)
 				{
-					index++;                     // shift attention to next window 
+					index++;                     // shift attention to next window
 					if (index >= wincount)
 					{
 						index = 0;
@@ -902,7 +902,7 @@ rescan:  // entry for changed browse parms
 				}
 				winlist = browse_windows[index];
 				g_zoomBox.restore(&boxx_storage[index*vidlength],
-					&boxy_storage[index*vidlength], 
+					&boxy_storage[index*vidlength],
 					&boxvalues_storage[index*vidlength/2], vidlength);
 				show_temp_message(winlist.name);
 				break;
@@ -930,7 +930,7 @@ rescan:  // entry for changed browse parms
 				break;
 #endif
 			case IDK_ENTER:
-			case IDK_ENTER_2:   // this file please 
+			case IDK_ENTER_2:   // this file please
 				g_browse_state.SetName(winlist.name);
 				done = 1;
 				break;
@@ -939,14 +939,14 @@ rescan:  // entry for changed browse parms
 			case 'l':
 			case 'L':
 #ifdef XFRACT
-				// Need all boxes turned on, turn last one back on. 
+				// Need all boxes turned on, turn last one back on.
 				draw_window(g_.DAC().Bright(), &winlist);
 #endif
 				g_browse_state.SetAutoBrowse(false);
 				done = 2;
 				break;
 
-			case 'D': // delete file 
+			case 'D': // delete file
 				clear_temp_message();
 				show_temp_message("Delete " + winlist.name + "? (Y/N)");
 				driver_wait_key_pressed(0);
@@ -967,7 +967,7 @@ rescan:  // entry for changed browse parms
 					make_path(tmpmask, drive, dir, fname, ext);
 					if (!unlink(tmpmask))
 					{
-						// do a rescan 
+						// do a rescan
 						done = 3;
 						oldname = winlist.name;
 						tmpmask[0] = '\0';
@@ -1030,9 +1030,9 @@ rescan:  // entry for changed browse parms
 				show_temp_message(winlist.name);
 				break;
 
-			case 's': // save image with boxes 
+			case 's': // save image with boxes
 				g_browse_state.SetAutoBrowse(false);
-				draw_window(box_color, &winlist); // current window white 
+				draw_window(box_color, &winlist); // current window white
 				done = 4;
 				break;
 
@@ -1045,22 +1045,22 @@ rescan:  // entry for changed browse parms
 			}
 		}
 
-		// now clean up memory (and the screen if necessary) 
+		// now clean up memory (and the screen if necessary)
 		clear_temp_message();
 		if (done >= 1 && done < 4)
 		{
-			for (index = wincount-1; index >= 0; index--) // don't need index, reuse it 
+			for (index = wincount-1; index >= 0; index--) // don't need index, reuse it
 			{
 				winlist = browse_windows[index];
 				g_zoomBox.set_count(winlist.box_count);
-				g_zoomBox.restore(&boxx_storage[index*vidlength], 
-					&boxy_storage[index*vidlength], 
+				g_zoomBox.restore(&boxx_storage[index*vidlength],
+					&boxy_storage[index*vidlength],
 					&boxvalues_storage[index*vidlength/2], vidlength);
 				g_zoomBox.set_count(g_zoomBox.count()*2);
 				if (g_zoomBox.count() > 0)
 				{
 #ifdef XFRACT
-					// Turn all boxes off 
+					// Turn all boxes off
 					draw_window(g_.DAC().Bright(), &winlist);
 #else
 					g_zoomBox.clear();
@@ -1070,7 +1070,7 @@ rescan:  // entry for changed browse parms
 		}
 		if (done == 3)
 		{
-			goto rescan; // hey everybody I just used the g word! 
+			goto rescan; // hey everybody I just used the g word!
 		}
 	}
 	else
@@ -1100,8 +1100,8 @@ static bool look(bool &stacked)
 	{
 	case IDK_ENTER:
 	case IDK_ENTER_2:
-		g_show_file = SHOWFILE_PENDING;       // trigger load 
-		g_browse_state.SetBrowsing(true);    // but don't ask for the file name as it's just been selected 
+		g_show_file = SHOWFILE_PENDING;       // trigger load
+		g_browse_state.SetBrowsing(true);    // but don't ask for the file name as it's just been selected
 		if (g_name_stack_ptr == 15)
 		{
 			// about to run off the end of the file
@@ -1118,22 +1118,22 @@ static bool look(bool &stacked)
 		g_browse_state.MergePathNames(g_read_name);
 		if (g_ui_state.ask_video)
 		{
-				driver_stack_screen();   // save graphics image 
+				driver_stack_screen();   // save graphics image
 				stacked = true;
 		}
-		return true;       // hop off and do it!! 
+		return true;       // hop off and do it!!
 
 	case '\\':
 		if (g_name_stack_ptr >= 1)
 		{
-			// go back one file if somewhere to go (ie. browsing) 
+			// go back one file if somewhere to go (ie. browsing)
 			g_name_stack_ptr--;
 			while (g_file_name_stack[g_name_stack_ptr].length() == 0
 					&& g_name_stack_ptr >= 0)
 			{
 				g_name_stack_ptr--;
 			}
-			if (g_name_stack_ptr < 0) // oops, must have deleted first one 
+			if (g_name_stack_ptr < 0) // oops, must have deleted first one
 			{
 				break;
 			}
@@ -1143,13 +1143,13 @@ static bool look(bool &stacked)
 			g_show_file = SHOWFILE_PENDING;
 			if (g_ui_state.ask_video)
 			{
-				driver_stack_screen(); // save graphics image 
+				driver_stack_screen(); // save graphics image
 				stacked = true;
 			}
 			return true;
 		}                   // otherwise fall through and turn off browsing
 	case IDK_ESC:
-	case 'l':              // turn it off 
+	case 'l':              // turn it off
 	case 'L':
 		g_browse_state.SetBrowsing(false);
 		break;
@@ -1159,7 +1159,7 @@ static bool look(bool &stacked)
 		save_to_disk(g_save_name);
 		break;
 
-	default:               // or no files found, leave the state of browsing alone 
+	default:               // or no files found, leave the state of browsing alone
 		break;
 	}
 
@@ -1171,7 +1171,7 @@ ApplicationStateType handle_look_for_files(bool &stacked)
 	if ((g_z_width != 0) || driver_diskp())
 	{
 		g_browse_state.SetBrowsing(false);
-		driver_buzzer(BUZZER_ERROR);             // can't browse if zooming or disk video 
+		driver_buzzer(BUZZER_ERROR);             // can't browse if zooming or disk video
 	}
 	else if (look(stacked))
 	{

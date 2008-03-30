@@ -62,7 +62,7 @@ long iteration(LDBL cr, LDBL ci,
 	LDBL sim;
 #ifdef INTEL
 	float mag;
-	unsigned long bail = 0x41800000, magi; // bail = 16.0 
+	unsigned long bail = 0x41800000, magi; // bail = 16.0
 	unsigned long eq = *(unsigned long *)&equal;
 #else
 	LDBL mag;
@@ -166,12 +166,12 @@ long iteration(LDBL cr, LDBL ci,
 					return BASIN_COLOR;
 				}
 			}
-#else // INTEL 
+#else // INTEL
 			if (fabsl(sre-re) < equal && fabsl(sim-im) < equal)
 			{
 				return BASIN_COLOR;
 			}
-#endif // INTEL 
+#endif // INTEL
 
 			k -= 8;
 			if (k <= 0)
@@ -349,11 +349,11 @@ enum
 	// subdividing
 	SCAN = 16,
 
-	// pixel interleave used in scanning 
+	// pixel interleave used in scanning
 	INTERLEAVE = 4
 };
 
-// compute the value of the interpolation polynomial at (x, y) 
+// compute the value of the interpolation polynomial at (x, y)
 #define GET_REAL(x, y) \
 	interpolate(cim1, midi, cim2, \
 		interpolate(cre1, midr, cre2, zre1, zre5, zre2, x), \
@@ -404,7 +404,7 @@ enum
 	}													\
 	while (0)
 
-// evaluate Newton polynomial given by (x0, b0), (x1, b1) at x:=t 
+// evaluate Newton polynomial given by (x0, b0), (x1, b1) at x:=t
 #define EVALUATE(x0, x1, b0, b1, b2, t) \
 	((b2*(t-x1) + b1)*(t-x0) + b0)
 
@@ -505,8 +505,8 @@ static LDBL zim9;
 static bool rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 				int x1, int x2, int y1, int y2, long iter)
 {
-	// The following variables do not need their values saved 
-	// used in scanning 
+	// The following variables do not need their values saved
+	// used in scanning
 	static long savecolor;
 	static long color;
 	static long helpcolor;
@@ -521,7 +521,7 @@ static bool rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 	static LDBL interstep;
 	static LDBL helpre;
 	static LDBL zre, zim;
-	// interpolation coefficients 
+	// interpolation coefficients
 	static LDBL br10;
 	static LDBL br11;
 	static LDBL br12;
@@ -540,10 +540,10 @@ static bool rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 	static LDBL bi30;
 	static LDBL bi31;
 	static LDBL bi32;
-	// ratio of interpolated test point to iterated one 
+	// ratio of interpolated test point to iterated one
 	static LDBL l1;
 	static LDBL l2;
-	// squares of key values 
+	// squares of key values
 	static LDBL rq1;
 	static LDBL iq1;
 	static LDBL rq2;
@@ -563,7 +563,7 @@ static bool rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 	static LDBL rq9;
 	static LDBL iq9;
 
-	// test points 
+	// test points
 	static LDBL cr1;
 	static LDBL cr2;
 	static LDBL ci1;
@@ -584,15 +584,15 @@ static bool rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 	static LDBL tiq3;
 	static LDBL trq4;
 	static LDBL tiq4;
-	// number of iterations before SOI iteration cycle 
+	// number of iterations before SOI iteration cycle
 	static long before;
 	static int avail;
 
-	// center of rectangle 
+	// center of rectangle
 	LDBL midr = (cre1 + cre2) / 2;
 	LDBL midi = (cim1 + cim2) / 2;
 
-	// saved values of key values 
+	// saved values of key values
 	LDBL sr1;
 	LDBL si1;
 	LDBL sr2;
@@ -611,7 +611,7 @@ static bool rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 	LDBL si8;
 	LDBL sr9;
 	LDBL si9;
-	// key values for subsequent rectangles 
+	// key values for subsequent rectangles
 	LDBL re10;
 	LDBL re11;
 	LDBL re12;
@@ -662,7 +662,7 @@ static bool rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 
 	if (y2-y1 <= SCAN)
 	{
-		// finish up the image by scanning the rectangle 
+		// finish up the image by scanning the rectangle
 scan:
 		INTERPOLATE(cre1, midr, cre2, zre1, zre5, zre2, br10, br11, br12);
 		INTERPOLATE(cre1, midr, cre2, zre6, zre9, zre7, br20, br21, br22);
@@ -842,7 +842,7 @@ scan:
 		sr9 = zre9;
 		si9 = zim9;
 
-		// iterate key values 
+		// iterate key values
 		zim1 = (zim1 + zim1)*zre1 + cim1;
 		zre1 = rq1-iq1 + cre1;
 		rq1 = zre1*zre1;
@@ -888,7 +888,7 @@ scan:
 		rq9 = zre9*zre9;
 		iq9 = zim9*zim9;
 
-		// iterate test point 
+		// iterate test point
 		tzi1 = (tzi1 + tzi1)*tzr1 + ci1;
 		tzr1 = trq1-tiq1 + cr1;
 		trq1 = tzr1*tzr1;
@@ -911,7 +911,7 @@ scan:
 
 		iter++;
 
-		// if one of the iterated values bails out, subdivide 
+		// if one of the iterated values bails out, subdivide
 		if ((rq1 + iq1) > 16.0||
 				(rq2 + iq2) > 16.0||
 				(rq3 + iq3) > 16.0||
@@ -1005,7 +1005,7 @@ scan:
 
 	iter--;
 
-	// this is a little heuristic I tried to improve performance. 
+	// this is a little heuristic I tried to improve performance.
 	if (iter-before < 10)
 	{
 		zre1 = sr1; zim1 = si1;
@@ -1020,7 +1020,7 @@ scan:
 		goto scan;
 	}
 
-	// compute key values for subsequent rectangles 
+	// compute key values for subsequent rectangles
 
 	re10 = interpolate(cre1, midr, cre2, sr1, sr5, sr2, cr1);
 	im10 = interpolate(cre1, midr, cre2, si1, si5, si2, cr1);

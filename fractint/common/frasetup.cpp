@@ -24,11 +24,11 @@
 
 long calculate_mandelbrot_fp_asm();
 
-// -------------------------------------------------------------------- 
-// Setup (once per fractal image) routines                 
-// -------------------------------------------------------------------- 
+// --------------------------------------------------------------------
+// Setup (once per fractal image) routines
+// --------------------------------------------------------------------
 
-bool mandelbrot_setup()           // Mandelbrot Routine 
+bool mandelbrot_setup()           // Mandelbrot Routine
 {
 	if (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL
 		&& !g_invert
@@ -44,18 +44,18 @@ bool mandelbrot_setup()           // Mandelbrot Routine
 		&& g_externs.BailOutTest() == BAILOUT_MODULUS
 		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 	{
-		g_calculate_type = calculate_mandelbrot_l; // the normal case - use CALCMAND 
+		g_calculate_type = calculate_mandelbrot_l; // the normal case - use CALCMAND
 	}
 	else
 	{
-		// special case: use the main processing loop 
+		// special case: use the main processing loop
 		g_calculate_type = standard_fractal;
 		g_long_parameter = &g_initial_z_l;
 	}
 	return true;
 }
 
-bool julia_setup()            // Julia Routine 
+bool julia_setup()            // Julia Routine
 {
 	if (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL
 		&& !g_invert
@@ -71,14 +71,14 @@ bool julia_setup()            // Julia Routine
 		&& g_externs.BailOutTest() == BAILOUT_MODULUS
 		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 	{
-		g_calculate_type = calculate_mandelbrot_l; // the normal case - use CALCMAND 
+		g_calculate_type = calculate_mandelbrot_l; // the normal case - use CALCMAND
 	}
 	else
 	{
-		// special case: use the main processing loop 
+		// special case: use the main processing loop
 		g_calculate_type = standard_fractal;
 		g_long_parameter = &g_parameter_l;
-		get_julia_attractor(0.0, 0.0);   // another attractor? 
+		get_julia_attractor(0.0, 0.0);   // another attractor?
 	}
 	return true;
 }
@@ -86,7 +86,7 @@ bool julia_setup()            // Julia Routine
 bool stand_alone_setup()
 {
 	timer_engine(g_current_fractal_specific->calculate_type);
-	return false;           // effectively disable solid-guessing 
+	return false;           // effectively disable solid-guessing
 }
 
 bool unity_setup()
@@ -114,7 +114,7 @@ bool mandelbrot_setup_fp()
 		}
 		if (!(g_c_exp & 1))
 		{
-			g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;    // odd exponents 
+			g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;    // odd exponents
 		}
 		if (g_c_exp & 1)
 		{
@@ -135,7 +135,7 @@ bool mandelbrot_setup_fp()
 			&& g_decomposition[0] == 0
 			&& g_externs.Biomorph() == BIOMORPH_NONE
 			&& (g_externs.Inside() >= COLORMODE_ITERATION)
-			// uncomment this next line if more outside options are added 
+			// uncomment this next line if more outside options are added
 			&& g_externs.Outside() >= COLORMODE_INVERSE_TANGENT
 			&& g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT
 			&& (g_sound_state.flags() & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
@@ -143,17 +143,17 @@ bool mandelbrot_setup_fp()
 			&& g_externs.BailOutTest() == BAILOUT_MODULUS
 			&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 		{
-			g_calculate_type = calculate_mandelbrot_fp; // the normal case - use calculate_mandelbrot_fp 
+			g_calculate_type = calculate_mandelbrot_fp; // the normal case - use calculate_mandelbrot_fp
 			g_calculate_mandelbrot_asm_fp = calculate_mandelbrot_fp_asm;
 		}
 		else
 		{
-			// special case: use the main processing loop 
+			// special case: use the main processing loop
 			g_calculate_type = standard_fractal;
 		}
 		break;
 	case FRACTYPE_MANDELBROT_Z_POWER_FP:
-		if (double(g_c_exp) == g_parameters[2] && (g_c_exp & 1)) // odd exponents 
+		if (double(g_c_exp) == g_parameters[2] && (g_c_exp & 1)) // odd exponents
 		{
 			g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;
 		}
@@ -165,13 +165,13 @@ bool mandelbrot_setup_fp()
 		break;
 	case FRACTYPE_MAGNET_1M:
 	case FRACTYPE_MAGNET_2M:
-		g_attractors[0].x = 1.0;      // 1.0 + 0.0i always attracts 
-		g_attractors[0].y = 0.0;      // - both MAGNET1 and MAGNET2 
+		g_attractors[0].x = 1.0;      // 1.0 + 0.0i always attracts
+		g_attractors[0].y = 0.0;      // - both MAGNET1 and MAGNET2
 		g_attractor_period[0] = 1;
 		g_num_attractors = 1;
 		break;
 	case FRACTYPE_SPIDER_FP:
-		if (g_periodicity_check == 1) // if not user set 
+		if (g_periodicity_check == 1) // if not user set
 		{
 			g_periodicity_check = 4;
 		}
@@ -179,7 +179,7 @@ bool mandelbrot_setup_fp()
 	case FRACTYPE_OBSOLETE_MANDELBROT_EXP:
 		g_symmetry = SYMMETRY_X_AXIS_NO_PARAMETER;
 		break;
-// Added to account for symmetry in manfn + exp and manfn + zsqrd 
+// Added to account for symmetry in manfn + exp and manfn + zsqrd
 
 	case FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_FP:
 	case FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_FP:
@@ -266,7 +266,7 @@ bool julia_setup_fp()
 			&& g_decomposition[0] == 0
 			&& g_externs.Biomorph() == BIOMORPH_NONE
 			&& (g_externs.Inside() >= COLORMODE_ITERATION)
-			// uncomment this next line if more outside options are added 
+			// uncomment this next line if more outside options are added
 			&& g_externs.Outside() >= COLORMODE_INVERSE_TANGENT
 			&& g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT
 			&& (g_sound_state.flags() & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
@@ -275,14 +275,14 @@ bool julia_setup_fp()
 			&& g_externs.BailOutTest() == BAILOUT_MODULUS
 			&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 		{
-			g_calculate_type = calculate_mandelbrot_fp; // the normal case - use calculate_mandelbrot_fp 
+			g_calculate_type = calculate_mandelbrot_fp; // the normal case - use calculate_mandelbrot_fp
 			g_calculate_mandelbrot_asm_fp = calculate_mandelbrot_fp_asm;
 		}
 		else
 		{
-			// special case: use the main processing loop 
+			// special case: use the main processing loop
 			g_calculate_type = standard_fractal;
-			get_julia_attractor(0.0, 0.0);   // another attractor? 
+			get_julia_attractor(0.0, 0.0);   // another attractor?
 		}
 		break;
 	case FRACTYPE_JULIA_Z_POWER_FP:
@@ -291,30 +291,30 @@ bool julia_setup_fp()
 			g_symmetry = SYMMETRY_NONE;
 		}
 		standard_4d_fractal_set_orbit_calc(z_power_orbit_fp, complex_z_power_orbit_fp);
-		get_julia_attractor(g_parameters[0], g_parameters[1]); // another attractor? 
+		get_julia_attractor(g_parameters[0], g_parameters[1]); // another attractor?
 		break;
 	case FRACTYPE_MAGNET_2J:
 		magnet2_precalculate_fp();
 	case FRACTYPE_MAGNET_1J:
-		g_attractors[0].x = 1.0;      // 1.0 + 0.0i always attracts 
-		g_attractors[0].y = 0.0;      // - both MAGNET1 and MAGNET2 
+		g_attractors[0].x = 1.0;      // 1.0 + 0.0i always attracts
+		g_attractors[0].y = 0.0;      // - both MAGNET1 and MAGNET2
 		g_attractor_period[0] = 1;
 		g_num_attractors = 1;
-		get_julia_attractor(0.0, 0.0);   // another attractor? 
+		get_julia_attractor(0.0, 0.0);   // another attractor?
 		break;
 	case FRACTYPE_LAMBDA_FP:
-		get_julia_attractor(0.0, 0.0);   // another attractor? 
-		get_julia_attractor(0.5, 0.0);   // another attractor? 
+		get_julia_attractor(0.0, 0.0);   // another attractor?
+		get_julia_attractor(0.5, 0.0);   // another attractor?
 		break;
-	// TODO: should this really be here? 
+	// TODO: should this really be here?
 	case FRACTYPE_OBSOLETE_LAMBDA_EXP:
 		if (g_parameter.y == 0.0)
 		{
 			g_symmetry = SYMMETRY_X_AXIS;
 		}
-		get_julia_attractor(0.0, 0.0);   // another attractor? 
+		get_julia_attractor(0.0, 0.0);   // another attractor?
 		break;
-	// Added to account for symmetry in julfn + exp and julfn + zsqrd 
+	// Added to account for symmetry in julfn + exp and julfn + zsqrd
 
 	case FRACTYPE_JULIA_FUNC_PLUS_EXP_FP:
 	case FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_FP:
@@ -323,7 +323,7 @@ bool julia_setup_fp()
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
-		get_julia_attractor(0.0, 0.0);   // another attractor? 
+		get_julia_attractor(0.0, 0.0);   // another attractor?
 		break;
 	case FRACTYPE_HYPERCOMPLEX_JULIA_FP:
 		if (g_parameters[2] != 0)
@@ -335,7 +335,7 @@ bool julia_setup_fp()
 			g_symmetry = SYMMETRY_NONE;
 		}
 	case FRACTYPE_QUATERNION_JULIA_FP:
-		g_num_attractors = 0;   // attractors broken since code checks r, i not j, k 
+		g_num_attractors = 0;   // attractors broken since code checks r, i not j, k
 		g_periodicity_check = 0;
 		if (g_parameters[4] != 0.0 || g_parameters[5] != 0)
 		{
@@ -367,18 +367,18 @@ bool julia_setup_fp()
 			}
 			// TODO: don't write to g_current_fractal_specific
 			current_fractal_specific_set_orbit_calc(orbit_calc);
-			get_julia_attractor(0.0, 0.0);   // another attractor? 
+			get_julia_attractor(0.0, 0.0);   // another attractor?
 		}
 		break;
 	case FRACTYPE_CIRCLE_FP:
-		if (g_externs.Inside() == COLORMODE_STAR_TRAIL) // FRACTYPE_CIRCLE_FP locks up when used with STARTRAIL 
+		if (g_externs.Inside() == COLORMODE_STAR_TRAIL) // FRACTYPE_CIRCLE_FP locks up when used with STARTRAIL
 		{
-			g_externs.SetInside(0); // arbitrarily set inside = NUMB 
+			g_externs.SetInside(0); // arbitrarily set inside = NUMB
 		}
-		get_julia_attractor(0.0, 0.0);   // another attractor? 
+		get_julia_attractor(0.0, 0.0);   // another attractor?
 		break;
 	default:
-		get_julia_attractor(0.0, 0.0);   // another attractor? 
+		get_julia_attractor(0.0, 0.0);   // another attractor?
 		break;
 	}
 	return true;
@@ -395,7 +395,7 @@ bool mandelbrot_setup_l()
 	if ((g_fractal_type == FRACTYPE_MARKS_MANDELBROT   && !(g_c_exp & 1)) ||
 		(g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_L && (g_c_exp & 1)))
 	{
-		g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;    // odd exponents 
+		g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;    // odd exponents
 	}
 	if ((g_fractal_type == FRACTYPE_MARKS_MANDELBROT && (g_c_exp & 1)) || g_fractal_type == FRACTYPE_OBSOLETE_MANDELBROT_EXP_L)
 	{
@@ -410,7 +410,7 @@ bool mandelbrot_setup_l()
 			g_symmetry = SYMMETRY_NONE;
 		}
 	}
-	// Added to account for symmetry in manfn + exp and manfn + zsqrd 
+	// Added to account for symmetry in manfn + exp and manfn + zsqrd
 
 	if ((g_fractal_type == FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_L) || (g_fractal_type == FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_L))
 	{
@@ -465,8 +465,8 @@ bool julia_setup_l()
 		standard_4d_fractal_set_orbit_calc(z_power_orbit, complex_z_power_orbit);
 		break;
 	case FRACTYPE_LAMBDA:
-		get_julia_attractor(0.0, 0.0);   // another attractor? 
-		get_julia_attractor(0.5, 0.0);   // another attractor? 
+		get_julia_attractor(0.0, 0.0);   // another attractor?
+		get_julia_attractor(0.5, 0.0);   // another attractor?
 		break;
 	case FRACTYPE_OBSOLETE_LAMBDA_EXP_L:
 		if (g_parameter_l.y == 0)
@@ -474,7 +474,7 @@ bool julia_setup_l()
 			g_symmetry = SYMMETRY_X_AXIS;
 		}
 		break;
-	// Added to account for symmetry in julfn + exp and julfn + zsqrd 
+	// Added to account for symmetry in julfn + exp and julfn + zsqrd
 
 	case FRACTYPE_JULIA_FUNC_PLUS_EXP_L:
 	case FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_L:
@@ -483,7 +483,7 @@ bool julia_setup_l()
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
-		get_julia_attractor(0.0, 0.0);   // another attractor? 
+		get_julia_attractor(0.0, 0.0);   // another attractor?
 		break;
 	case FRACTYPE_POPCORN_L:
 	case FRACTYPE_POPCORN_JULIA_L:
@@ -510,11 +510,11 @@ bool julia_setup_l()
 			}
 			// TODO: don't write to g_current_fractal_specific
 			current_fractal_specific_set_orbit_calc(orbit_calc);
-			get_julia_attractor(0.0, 0.0);   // another attractor? 
+			get_julia_attractor(0.0, 0.0);   // another attractor?
 		}
 		break;
 	default:
-		get_julia_attractor(0.0, 0.0);   // another attractor? 
+		get_julia_attractor(0.0, 0.0);   // another attractor?
 		break;
 	}
 	return true;
@@ -527,11 +527,11 @@ bool trig_plus_sqr_setup_l()
 	if (g_parameter_l.x == g_externs.Fudge() && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
 		&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 	{
-		if (g_parameter2_l.x == g_externs.Fudge())        // Scott variant 
+		if (g_parameter2_l.x == g_externs.Fudge())        // Scott variant
 		{
 			orbit_calc =  scott_trig_plus_sqr_orbit;
 		}
-		else if (g_parameter2_l.x == -g_externs.Fudge())  // Skinner variant 
+		else if (g_parameter2_l.x == -g_externs.Fudge())  // Skinner variant
 		{
 			orbit_calc =  skinner_trig_sub_sqr_orbit;
 		}
@@ -549,11 +549,11 @@ bool trig_plus_sqr_setup_fp()
 	if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
 		&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 	{
-		if (g_parameter2.x == 1.0)        // Scott variant 
+		if (g_parameter2.x == 1.0)        // Scott variant
 		{
 			orbit_calc =  scott_trig_plus_sqr_orbit_fp;
 		}
-		else if (g_parameter2.x == -1.0)  // Skinner variant 
+		else if (g_parameter2.x == -1.0)  // Skinner variant
 		{
 			orbit_calc =  skinner_trig_sub_sqr_orbit_fp;
 		}
@@ -564,11 +564,11 @@ bool trig_plus_sqr_setup_fp()
 	return julia_setup_fp();
 }
 
-static int fn_plus_fn_symmetry() // set symmetry matrix for fn + fn type 
+static int fn_plus_fn_symmetry() // set symmetry matrix for fn + fn type
 {
 	static SymmetryType fnplusfn[7][7] =
-	{	// fn2 -> sin				cos					sinh				cosh				exp					log					sqr  
-	// fn1 
+	{	// fn2 -> sin				cos					sinh				cosh				exp					log					sqr
+	// fn1
 	// sin 	{ SYMMETRY_PI,		SYMMETRY_X_AXIS,	SYMMETRY_XY_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS },
 	// cos 	{ SYMMETRY_X_AXIS,	SYMMETRY_PI,		SYMMETRY_X_AXIS,	SYMMETRY_XY_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS },
 	// sinh	{ SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS,	SYMMETRY_XY_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS },
@@ -587,7 +587,7 @@ static int fn_plus_fn_symmetry() // set symmetry matrix for fn + fn type
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
-	}                 // defaults to SYMMETRY_X_AXIS symmetry 
+	}                 // defaults to SYMMETRY_X_AXIS symmetry
 	else
 	{
 		g_symmetry = SYMMETRY_NONE;
@@ -607,11 +607,11 @@ bool trig_plus_trig_setup_l()
 	if (g_parameter_l.x == g_externs.Fudge() && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
 		&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 	{
-		if (g_parameter2_l.x == g_externs.Fudge())        // Scott variant 
+		if (g_parameter2_l.x == g_externs.Fudge())        // Scott variant
 		{
 			orbit_calc =  scott_trig_plus_trig_orbit;
 		}
-		else if (g_parameter2_l.x == -g_externs.Fudge())  // Skinner variant 
+		else if (g_parameter2_l.x == -g_externs.Fudge())  // Skinner variant
 		{
 			orbit_calc =  skinner_trig_sub_trig_orbit;
 		}
@@ -635,11 +635,11 @@ bool trig_plus_trig_setup_fp()
 	if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
 		&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 	{
-		if (g_parameter2.x == 1.0)        // Scott variant 
+		if (g_parameter2.x == 1.0)        // Scott variant
 		{
 			orbit_calc =  scott_trig_plus_trig_orbit_fp;
 		}
-		else if (g_parameter2.x == -1.0)  // Skinner variant 
+		else if (g_parameter2.x == -1.0)  // Skinner variant
 		{
 			orbit_calc =  skinner_trig_sub_trig_orbit_fp;
 		}
@@ -662,31 +662,31 @@ bool lambda_trig_or_trig_setup()
 	{
 		g_symmetry = SYMMETRY_X_AXIS;
 	}
-	get_julia_attractor(0.0, 0.0);      // an attractor? 
+	get_julia_attractor(0.0, 0.0);      // an attractor?
 	return true;
 }
 
 bool julia_trig_or_trig_setup()
 {
-	// default symmetry is SYMMETRY_X_AXIS 
-	g_long_parameter = &g_parameter_l; // added to consolidate code 10/1/92 JCO 
+	// default symmetry is SYMMETRY_X_AXIS
+	g_long_parameter = &g_parameter_l; // added to consolidate code 10/1/92 JCO
 	g_float_parameter = &g_parameter;
 	if (g_parameter.y != 0.0)
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
-	if (g_function_index[0] == FUNCTION_FLIP || g_function_index[1] == FUNCTION_FLIP) // FLIP 
+	if (g_function_index[0] == FUNCTION_FLIP || g_function_index[1] == FUNCTION_FLIP) // FLIP
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
-	get_julia_attractor(0.0, 0.0);      // an attractor? 
+	get_julia_attractor(0.0, 0.0);      // an attractor?
 	return true;
 }
 
 bool mandelbrot_lambda_trig_or_trig_setup()
-{ // psuedo 
-	// default symmetry is SYMMETRY_X_AXIS 
-	g_long_parameter = &g_initial_z_l; // added to consolidate code 10/1/92 JCO 
+{ // psuedo
+	// default symmetry is SYMMETRY_X_AXIS
+	g_long_parameter = &g_initial_z_l; // added to consolidate code 10/1/92 JCO
 	g_float_parameter = &g_initial_z;
 	if (g_function_index[0] == FUNCTION_SQR)
 	{
@@ -701,10 +701,10 @@ bool mandelbrot_lambda_trig_or_trig_setup()
 
 bool mandelbrot_trig_or_trig_setup()
 {
-	// default symmetry is SYMMETRY_XY_AXIS_NO_PARAMETER 
-	g_long_parameter = &g_initial_z_l; // added to consolidate code 10/1/92 JCO 
+	// default symmetry is SYMMETRY_XY_AXIS_NO_PARAMETER
+	g_long_parameter = &g_initial_z_l; // added to consolidate code 10/1/92 JCO
 	g_float_parameter = &g_initial_z;
-	if ((g_function_index[0] == FUNCTION_FLIP) || (g_function_index[1] == FUNCTION_FLIP)) // FLIP  JCO 5/28/92 
+	if ((g_function_index[0] == FUNCTION_FLIP) || (g_function_index[1] == FUNCTION_FLIP)) // FLIP  JCO 5/28/92
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
@@ -713,16 +713,16 @@ bool mandelbrot_trig_or_trig_setup()
 
 bool z_trig_plus_z_setup()
 {
-	// static char ZXTrigPlusZSym1[] = 
-	// fn1 ->  sin   cos    sinh  cosh exp   log   sqr 
-	// {SYMMETRY_X_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_NONE, SYMMETRY_XY_AXIS}; 
-	// static char ZXTrigPlusZSym2[] = 
-	// fn1 ->  sin   cos    sinh  cosh exp   log   sqr 
-	// {SYMMETRY_NONE, SYMMETRY_ORIGIN, SYMMETRY_NONE, SYMMETRY_ORIGIN, SYMMETRY_NONE, SYMMETRY_NONE, SYMMETRY_ORIGIN}; 
+	// static char ZXTrigPlusZSym1[] =
+	// fn1 ->  sin   cos    sinh  cosh exp   log   sqr
+	// {SYMMETRY_X_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_NONE, SYMMETRY_XY_AXIS};
+	// static char ZXTrigPlusZSym2[] =
+	// fn1 ->  sin   cos    sinh  cosh exp   log   sqr
+	// {SYMMETRY_NONE, SYMMETRY_ORIGIN, SYMMETRY_NONE, SYMMETRY_ORIGIN, SYMMETRY_NONE, SYMMETRY_NONE, SYMMETRY_ORIGIN};
 
 	if (g_parameters[1] == 0.0 && g_parameters[3] == 0.0)
 	{
-		// symmetry = ZXTrigPlusZSym1[g_function_index[0]]; 
+		// symmetry = ZXTrigPlusZSym1[g_function_index[0]];
 		switch (g_function_index[0])
 		{
 		case FUNCTION_COSXX:
@@ -766,11 +766,11 @@ bool z_trig_plus_z_setup()
 		if (g_parameter_l.x == g_externs.Fudge() && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
 			&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 		{
-			if (g_parameter2_l.x == g_externs.Fudge())     // Scott variant 
+			if (g_parameter2_l.x == g_externs.Fudge())     // Scott variant
 			{
 				orbit_calc =  scott_z_trig_z_plus_z_orbit;
 			}
-			else if (g_parameter2_l.x == -g_externs.Fudge())  // Skinner variant 
+			else if (g_parameter2_l.x == -g_externs.Fudge())  // Skinner variant
 			{
 				orbit_calc =  skinner_z_trig_z_minus_z_orbit;
 			}
@@ -784,11 +784,11 @@ bool z_trig_plus_z_setup()
 	if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
 		&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 	{
-		if (g_parameter2.x == 1.0)     // Scott variant 
+		if (g_parameter2.x == 1.0)     // Scott variant
 		{
 			orbit_calc =  scott_z_trig_z_plus_z_orbit_fp;
 		}
-		else if (g_parameter2.x == -1.0)       // Skinner variant 
+		else if (g_parameter2.x == -1.0)       // Skinner variant
 		{
 			orbit_calc =  skinner_z_trig_z_minus_z_orbit_fp;
 		}
@@ -830,15 +830,15 @@ bool lambda_trig_setup()
 	}
 	// TODO: don't write to g_current_fractal_specific
 	current_fractal_specific_set_orbit_calc(orbit_calc);
-	get_julia_attractor(0.0, 0.0);      // an attractor? 
+	get_julia_attractor(0.0, 0.0);      // an attractor?
 	return is_integer ? julia_setup_l() : julia_setup_fp();
 }
 
 bool julia_fn_plus_z_squared_setup()
 {
-	// static char fnpluszsqrd[] = 
-	// fn1 ->  sin   cos    sinh  cosh   sqr    exp   log  
-	// sin    {SYMMETRY_NONE, SYMMETRY_ORIGIN, SYMMETRY_NONE, SYMMETRY_ORIGIN, SYMMETRY_ORIGIN, SYMMETRY_NONE, SYMMETRY_NONE}; 
+	// static char fnpluszsqrd[] =
+	// fn1 ->  sin   cos    sinh  cosh   sqr    exp   log
+	// sin    {SYMMETRY_NONE, SYMMETRY_ORIGIN, SYMMETRY_NONE, SYMMETRY_ORIGIN, SYMMETRY_ORIGIN, SYMMETRY_NONE, SYMMETRY_NONE};
 
 	switch (g_function_index[0])
 	{
@@ -855,10 +855,10 @@ bool julia_fn_plus_z_squared_setup()
 
 bool sqr_trig_setup()
 {
-	// static char SqrTrigSym[] = 
-	// fn1 ->  sin    cos    sinh   cosh   sqr    exp   log  
-	// {SYMMETRY_PI, SYMMETRY_PI, SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS}; 
-	// symmetry = SqrTrigSym[g_function_index[0]];      JCO  5/9/92 
+	// static char SqrTrigSym[] =
+	// fn1 ->  sin    cos    sinh   cosh   sqr    exp   log
+	// {SYMMETRY_PI, SYMMETRY_PI, SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS};
+	// symmetry = SqrTrigSym[g_function_index[0]];      JCO  5/9/92
 	switch (g_function_index[0])
 	{
 	case FUNCTION_SIN:
@@ -872,8 +872,8 @@ bool sqr_trig_setup()
 bool fn_fn_setup()
 {
 	static SymmetryType fnxfn[7][7] =
-	{// fn2 ->sin     cos    sinh    cosh  exp    log    sqr 
-	// fn1 
+	{// fn2 ->sin     cos    sinh    cosh  exp    log    sqr
+	// fn1
 	// sin  {SYMMETRY_PI, SYMMETRY_Y_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_NONE, SYMMETRY_XY_AXIS},
 	// cos  {SYMMETRY_Y_AXIS, SYMMETRY_PI, SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_NONE, SYMMETRY_XY_AXIS},
 	// sinh {SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_NONE, SYMMETRY_XY_AXIS},
@@ -933,7 +933,7 @@ bool mandelbrot_trig_setup()
 	case FUNCTION_LOG:
 		g_symmetry = SYMMETRY_X_AXIS_NO_PARAMETER;
 		break;
-	default:   // added for additional functions, JCO 5/25/92 
+	default:   // added for additional functions, JCO 5/25/92
 		g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;
 		break;
 	}
@@ -971,7 +971,7 @@ bool marks_julia_setup()
 		g_coefficient_l.x = 1L << g_bit_shift;
 		g_coefficient_l.y = 0L;
 	}
-	get_julia_attractor(0.0, 0.0);      // an attractor? 
+	get_julia_attractor(0.0, 0.0);      // an attractor?
 #endif
 	return true;
 }
@@ -1003,14 +1003,14 @@ bool marks_julia_setup_fp()
 		g_coefficient.x = 1.0;
 		g_coefficient.y = 0.0;
 	}
-	get_julia_attractor(0.0, 0.0);      // an attractor? 
+	get_julia_attractor(0.0, 0.0);      // an attractor?
 	return true;
 }
 
 bool sierpinski_setup()
 {
-	// sierpinski 
-	g_periodicity_check = 0;					// disable periodicity checks 
+	// sierpinski
+	g_periodicity_check = 0;					// disable periodicity checks
 	g_temp_z_l.real(DoubleToFudge(1.0));
 	g_temp_z_l.imag(DoubleToFudge(0.5));
 	return true;
@@ -1018,8 +1018,8 @@ bool sierpinski_setup()
 
 bool sierpinski_setup_fp()
 {
-	// sierpinski 
-	g_periodicity_check = 0;                // disable periodicity checks 
+	// sierpinski
+	g_periodicity_check = 0;                // disable periodicity checks
 	g_temp_z.x = 1;
 	g_temp_z.y = 0.5;
 	return true;
@@ -1027,7 +1027,7 @@ bool sierpinski_setup_fp()
 
 bool phoenix_setup()
 {
-	g_long_parameter = &g_parameter_l; // added to consolidate code 10/1/92 JCO 
+	g_long_parameter = &g_parameter_l; // added to consolidate code 10/1/92 JCO
 	g_float_parameter = &g_parameter;
 	g_degree = int(g_parameter2.x);
 	if (g_degree < 2 && g_degree > -3)
@@ -1096,7 +1096,7 @@ bool phoenix_complex_setup()
 
 bool mandelbrot_phoenix_setup()
 {
-	g_long_parameter = &g_initial_z_l; // added to consolidate code 10/1/92 JCO 
+	g_long_parameter = &g_initial_z_l; // added to consolidate code 10/1/92 JCO
 	g_float_parameter = &g_initial_z;
 	g_degree = int(g_parameter2.x);
 	if (g_degree < 2 && g_degree > -3)
@@ -1127,7 +1127,7 @@ bool mandelbrot_phoenix_setup()
 
 bool mandelbrot_phoenix_complex_setup()
 {
-	g_long_parameter = &g_initial_z_l; // added to consolidate code 10/1/92 JCO 
+	g_long_parameter = &g_initial_z_l; // added to consolidate code 10/1/92 JCO
 	g_float_parameter = &g_initial_z;
 	g_degree = int(g_parameters[4]);
 	if (g_degree < 2 && g_degree > -3)

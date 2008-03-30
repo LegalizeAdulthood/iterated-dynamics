@@ -57,7 +57,7 @@
 #if defined(_WIN32)
 #include <io.h>
 #define _CRT_SECURE_NO_DEPRECATE
-// disable unsafe CRT warnings 
+// disable unsafe CRT warnings
 #pragma warning(disable: 4996)
 #endif
 
@@ -82,7 +82,7 @@
 
 #include <assert.h>
 
-// see Fractint.c for a description of the "include"  hierarchy 
+// see Fractint.c for a description of the "include"  hierarchy
 #include "port.h"
 #include "helpcom.h"
 
@@ -119,9 +119,9 @@ static char const *SWAP_FNAME = "HCSWAP.$$$";
 
 enum
 {
-	MAX_ERRORS = 25,   // stop after this many errors 
-	MAX_WARNINGS = 25   // stop after this many warnings 
-                                 // 0 = never stop 
+	MAX_ERRORS = 25,   // stop after this many errors
+	MAX_WARNINGS = 25   // stop after this many warnings
+                                 // 0 = never stop
 };
 
 static char const *INDEX_LABEL = "FIHELP_INDEX";
@@ -134,61 +134,61 @@ enum
 
 struct LINK
 {
-	int      type;            // 0 = name is topic title, 1 = name is label, 
-							 // 2 = "special topic"; name is NULL and 
-							 // topic_num/topic_off is valid 
-	int      topic_num;       // topic number to link to 
-	unsigned topic_off;       // offset into topic to link to 
-	int      doc_page;        // document page # to link to 
-	char    *name;            // name of label or title of topic to link to 
-	char const *srcfile;         // .SRC file link appears in 
-	int      srcline;         // .SRC file line # link appears in 
+	int      type;            // 0 = name is topic title, 1 = name is label,
+							 // 2 = "special topic"; name is NULL and
+							 // topic_num/topic_off is valid
+	int      topic_num;       // topic number to link to
+	unsigned topic_off;       // offset into topic to link to
+	int      doc_page;        // document page # to link to
+	char    *name;            // name of label or title of topic to link to
+	char const *srcfile;         // .SRC file link appears in
+	int      srcline;         // .SRC file line # link appears in
 };
 
 
 struct PAGE
 {
-	unsigned offset;     // offset from start of topic text 
-	unsigned length;     // length of page (in chars) 
-	int      margin;     // if > 0 then page starts in_para and text 
-						// should be indented by this much 
+	unsigned offset;     // offset from start of topic text
+	unsigned length;     // length of page (in chars)
+	int      margin;     // if > 0 then page starts in_para and text
+						// should be indented by this much
 };
 
 
-// values for TOPIC.flags 
+// values for TOPIC.flags
 enum
 {
-	TF_IN_DOC = 1,       // 1 if topic is part of the printed document 
-	TF_DATA = 2       // 1 if it is a "data" topic 
+	TF_IN_DOC = 1,       // 1 if topic is part of the printed document
+	TF_DATA = 2       // 1 if it is a "data" topic
 };
 
 struct TOPIC
 {
-	unsigned  flags;          // see #defines for TF_??? 
-	int       doc_page;       // page number in document where topic starts 
-	unsigned  title_len;      // length of title 
-	char     *title;          // title for this topic 
-	int       num_page;       // number of pages 
-	PAGE     *page;           // list of pages 
-	unsigned  text_len;       // lenth of topic text 
-	long      text;           // topic text (all pages) 
-	long      offset;         // offset to topic from start of file 
+	unsigned  flags;          // see #defines for TF_???
+	int       doc_page;       // page number in document where topic starts
+	unsigned  title_len;      // length of title
+	char     *title;          // title for this topic
+	int       num_page;       // number of pages
+	PAGE     *page;           // list of pages
+	unsigned  text_len;       // lenth of topic text
+	long      text;           // topic text (all pages)
+	long      offset;         // offset to topic from start of file
 };
 
 
 struct LABEL
 {
-	char    *name;            // its name 
-	int      topic_num;       // topic number 
-	unsigned topic_off;       // offset of label in the topic's text 
+	char    *name;            // its name
+	int      topic_num;       // topic number
+	unsigned topic_off;       // offset of label in the topic's text
 	int      doc_page;
 };
 
 
-// values for CONTENT.flags 
+// values for CONTENT.flags
 enum
 {
-	CF_NEW_PAGE = 1,     // true if section starts on a new page 
+	CF_NEW_PAGE = 1,     // true if section starts on a new page
 	MAX_CONTENT_TOPIC = 10
 };
 
@@ -217,56 +217,56 @@ struct help_sig_info
 };
 
 
-int      num_topic        = 0;    // topics 
+int      num_topic        = 0;    // topics
 TOPIC   *topic;
 
-int      num_label        = 0;    // labels 
+int      num_label        = 0;    // labels
 LABEL   *label;
 
-int      num_plabel       = 0;    // private labels 
+int      num_plabel       = 0;    // private labels
 LABEL   *plabel;
 
-int      num_link         = 0;    // all links 
+int      num_link         = 0;    // all links
 LINK    *a_link           = 0;
 
-int      num_contents     = 0;    // the table-of-contents 
+int      num_contents     = 0;    // the table-of-contents
 CONTENT *contents;
 
-int      quiet_mode       = 0;    // true if "/Q" option used 
+int      quiet_mode       = 0;    // true if "/Q" option used
 
-int      max_pages        = 0;    // max. pages in any topic 
-int      max_links        = 0;    // max. links on any page 
-int      num_doc_pages    = 0;    // total number of pages in document 
+int      max_pages        = 0;    // max. pages in any topic
+int      max_links        = 0;    // max. links on any page
+int      num_doc_pages    = 0;    // total number of pages in document
 
-FILE    *srcfile;                 // .SRC file 
-int      srcline          = 0;    // .SRC line number (used for errors) 
-int      srccol           = 0;    // .SRC column. 
+FILE    *srcfile;                 // .SRC file
+int      srcline          = 0;    // .SRC line number (used for errors)
+int      srccol           = 0;    // .SRC column.
 
-int      version          = -1;   // help file version 
+int      version          = -1;   // help file version
 
 int errors = 0;
-int warnings = 0;    // number of warnings reported 
+int warnings = 0;    // number of warnings reported
 
-char     src_fname[81]    = "";   // command-line .SRC filename 
-char     hdr_fname[81]    = "";   // .H filename 
-char     hlp_fname[81]    = "";   // .HLP filename 
-char const *src_cfname       = NULL; // current .SRC filename 
+char     src_fname[81]    = "";   // command-line .SRC filename
+char     hdr_fname[81]    = "";   // .H filename
+char     hlp_fname[81]    = "";   // .HLP filename
+char const *src_cfname       = NULL; // current .SRC filename
 
-int      format_exclude   = 0;    // disable formatting at this col, 0 to 
-                                  // never disable formatting 
+int      format_exclude   = 0;    // disable formatting at this col, 0 to
+                                  // never disable formatting
 FILE    *swapfile;
 long     swappos;
 
-char    *buffer;                  // alloc'ed as BUFFER_SIZE bytes 
-char    *curr;                    // current position in the buffer 
-char     cmd[128];                // holds the current command 
+char    *buffer;                  // alloc'ed as BUFFER_SIZE bytes
+char    *curr;                    // current position in the buffer
+char     cmd[128];                // holds the current command
 int      compress_spaces;
 bool xonline = false;
 bool xdoc = false;
 
 enum
 {
-	MAX_INCLUDE_STACK = 5    // allow 5 nested includes 
+	MAX_INCLUDE_STACK = 5    // allow 5 nested includes
 };
 
 struct includes
@@ -622,7 +622,7 @@ enum
 
 int add_label(LABEL *l)
 {
-	if (l->name[0] == '@')    // if it's a private label... 
+	if (l->name[0] == '@')    // if it's a private label...
 	{
 		if (num_plabel == 0)
 		{
@@ -718,7 +718,7 @@ void unread_string(char *s)
 }
 
 
-int eos()    // end-of-source ? 
+int eos()    // end-of-source ?
 {
 	return !((read_char_sp == 0) && (read_char_buff_pos == 0) && feof(srcfile));
 }
@@ -757,7 +757,7 @@ int _read_char()
 
 		switch (ch)
 		{
-			case '\t':    // expand a tab 
+			case '\t':    // expand a tab
 			{
 				int diff = (((srccol/8) + 1) * 8) - srccol;
 
@@ -772,12 +772,12 @@ int _read_char()
 				break;
 
 			case '\n':
-				read_char_sp = 0;   // delete spaces before a \n 
+				read_char_sp = 0;   // delete spaces before a \n
 				srccol = 0;
 				++srcline;
 				return '\n';
 
-			case -1:               // EOF 
+			case -1:               // EOF
 				if (read_char_sp > 0)
 				{
 					--read_char_sp;
@@ -796,7 +796,7 @@ int _read_char()
 				++srccol;
 				return ch;
 
-		} // switch 
+		} // switch
 	}
 }
 
@@ -807,7 +807,7 @@ int read_char()
 
 	ch = _read_char();
 
-	while (ch == ';' && srccol == 1)    // skip over comments 
+	while (ch == ';' && srccol == 1)    // skip over comments
 	{
 		ch = _read_char();
 
@@ -819,7 +819,7 @@ int read_char()
 		ch = _read_char();
 	}
 
-	if (ch == '\\')   // process an escape code 
+	if (ch == '\\')   // process an escape code
 	{
 		ch = _read_char();
 
@@ -843,7 +843,7 @@ int read_char()
 		}
 
 #ifdef XFRACT
-		// Convert graphics arrows into keyboard chars 
+		// Convert graphics arrows into keyboard chars
 		if (ch>=24 && ch<=27)
 		{
 			ch = "KJHL"[ch-24];
@@ -855,8 +855,8 @@ int read_char()
 	if ((ch & 0xFF) == 0)
 	{
 		error(0, "Null character (\'\\0\') not allowed!");
-		ch = 0x1FF; // since we've had an error the file will not be written; 
-						// the value we return doesn't really matter 
+		ch = 0x1FF; // since we've had an error the file will not be written;
+						// the value we return doesn't really matter
 	}
 
 	return(ch);
@@ -931,7 +931,7 @@ int find_topic_title(char const *title)
 		}
 	}
 
-	return -1;   // not found 
+	return -1;   // not found
 }
 
 
@@ -944,18 +944,18 @@ int validate_label_name(char *name)
 {
 	if (!isalpha(*name) && *name != '@' && *name != '_')
 	{
-		return 0;  // invalid 
+		return 0;  // invalid
 	}
 
 	while (*(++name) != '\0')
 	{
 		if (!isalpha(*name) && !isdigit(*name) && *name != '_')
 		{
-			return(0);  // invalid 
+			return(0);  // invalid
 		}
 	}
 
-	return 1;  // valid 
+	return 1;  // valid
 }
 
 
@@ -1051,13 +1051,13 @@ void put_spaces(int how_many)
 }
 
 
-bool get_next_item()   // used by parse_contents() 
+bool get_next_item()   // used by parse_contents()
 {
 	skip_over(" \t\n");
 	char *ptr = read_until(cmd, 128, ",}");
 	bool last = (*ptr == '}');
 	--ptr;
-	while (ptr >= cmd && strchr(" \t\n", *ptr))   // strip trailing spaces 
+	while (ptr >= cmd && strchr(" \t\n", *ptr))   // strip trailing spaces
 	{
 		--ptr;
 	}
@@ -1098,7 +1098,7 @@ void process_contents()
 	{
 		ch = read_char();
 
-		if (ch == '{')   // process a CONTENT entry 
+		if (ch == '{')   // process a CONTENT entry
 		{
 			c.flags = 0;
 			c.num_topic = 0;
@@ -1144,7 +1144,7 @@ void process_contents()
 				c.name = dupstr(cmd, 0);
 			}
 
-			// now, make the entry in the buffer 
+			// now, make the entry in the buffer
 
 			sprintf(curr, "%-5s %*.0s%s", c.id, indent*2, "", c.name);
 			ptr = curr + (int) strlen(curr);
@@ -1199,7 +1199,7 @@ void process_contents()
 
 			add_content(&c);
 		}
-		else if (ch == '~')   // end at any command 
+		else if (ch == '~')   // end at any command
 		{
 			unread_char(ch);
 			break;
@@ -1217,7 +1217,7 @@ void process_contents()
 }
 
 
-int parse_link()   // returns length of link or 0 on error 
+int parse_link()   // returns length of link or 0 on error
 {
 	char *ptr;
 	char *end;
@@ -1231,7 +1231,7 @@ int parse_link()   // returns length of link or 0 on error
 	l.srcline  = srcline;
 	l.doc_page = -1;
 
-	end = read_until(cmd, 128, "}\n");   // get the entire hot-link 
+	end = read_until(cmd, 128, "}\n");   // get the entire hot-link
 
 	if (*end == '\0')
 	{
@@ -1251,7 +1251,7 @@ int parse_link()   // returns length of link or 0 on error
 
 	*end = '\0';
 
-	if (cmd[0] == '=')   // it's an "explicit" link to a label or "special" 
+	if (cmd[0] == '=')   // it's an "explicit" link to a label or "special"
 	{
 		ptr = strchr(cmd, ' ');
 
@@ -1268,14 +1268,14 @@ int parse_link()   // returns length of link or 0 on error
 
 		if (cmd[1] == '-')
 		{
-			l.type      = 2;          // type 2 = "special" 
+			l.type      = 2;          // type 2 = "special"
 			l.topic_num = atoi(cmd+1);
 			l.topic_off = 0;
 			l.name      = NULL;
 		}
 		else
 		{
-			l.type = 1;           // type 1 = to a label 
+			l.type = 1;           // type 1 = to a label
 			if (cmd[1] == '\0')
 			{
 				error(err_off, "Explicit hot-link has no Label.");
@@ -1294,7 +1294,7 @@ int parse_link()   // returns length of link or 0 on error
 	else
 	{
 		ptr = cmd;
-		l.type = 0;   // type 0 = topic title 
+		l.type = 0;   // type 0 = topic title
 		len = (int) (end - ptr);
 		if (len == 0)
 		{
@@ -1351,7 +1351,7 @@ int create_table()
 
 	if (ptr == NULL)
 	{
-		return 0;   // should never happen! 
+		return 0;   // should never happen!
 	}
 
 	ptr++;
@@ -1376,7 +1376,7 @@ int create_table()
 	table_start = curr;
 	count = 0;
 
-	// first, read all the links in the table 
+	// first, read all the links in the table
 
 	do
 	{
@@ -1403,7 +1403,7 @@ int create_table()
 				fatal(0, "Table is too large.");
 			}
 			len = parse_link();
-			curr = table_start;   // reset to the start... 
+			curr = table_start;   // reset to the start...
 			title[count] = dupstr(curr+3*sizeof(int) + 1, len+1);
 			if (len >= width)
 			{
@@ -1463,7 +1463,7 @@ int create_table()
 	}
 	while (!done);
 
-	// now, put all the links into the buffer... 
+	// now, put all the links into the buffer...
 
 	rows = 1 + (count / cols);
 
@@ -1608,7 +1608,7 @@ void end_topic(TOPIC *t)
 }
 
 
-int end_of_sentence(char *ptr)  // true if ptr is at the end of a sentence 
+int end_of_sentence(char *ptr)  // true if ptr is at the end of a sentence
 {
 	if (*ptr == ')')
 	{
@@ -1623,13 +1623,13 @@ int end_of_sentence(char *ptr)  // true if ptr is at the end of a sentence
 }
 
 
-void add_blank_for_split()   // add space at curr for merging two lines 
+void add_blank_for_split()   // add space at curr for merging two lines
 {
-	if (!is_hyphen(curr-1))   // no spaces if it's a hyphen 
+	if (!is_hyphen(curr-1))   // no spaces if it's a hyphen
 	{
 		if (end_of_sentence(curr-1))
 		{
-			*curr++ = ' ';  // two spaces at end of a sentence 
+			*curr++ = ' ';  // two spaces at end of a sentence
 		}
 		*curr++ = ' ';
 	}
@@ -1638,7 +1638,7 @@ void add_blank_for_split()   // add space at curr for merging two lines
 
 void put_a_char(int ch, TOPIC *t)
 {
-	if (ch == '{' && !(t->flags & TF_DATA))   // is it a hot-link? 
+	if (ch == '{' && !(t->flags & TF_DATA))   // is it a hot-link?
 	{
 		parse_link();
 	}
@@ -1653,18 +1653,18 @@ void put_a_char(int ch, TOPIC *t)
 }
 
 
-enum STATES   // states for FSM's 
+enum STATES   // states for FSM's
 {
-	S_Start,                 // initial state, between paragraphs           
-	S_StartFirstLine,        // spaces at start of first line               
-	S_FirstLine,             // text on the first line                      
-	S_FirstLineSpaces,       // spaces on the first line                    
-	S_StartSecondLine,       // spaces at start of second line              
-	S_Line,                  // text on lines after the first               
-	S_LineSpaces,            // spaces on lines after the first             
-	S_StartLine,             // spaces at start of lines after second       
-	S_FormatDisabled,        // format automatically disabled for this line 
-	S_FormatDisabledSpaces,  // spaces in line which format is disabled     
+	S_Start,                 // initial state, between paragraphs
+	S_StartFirstLine,        // spaces at start of first line
+	S_FirstLine,             // text on the first line
+	S_FirstLineSpaces,       // spaces on the first line
+	S_StartSecondLine,       // spaces at start of second line
+	S_Line,                  // text on lines after the first
+	S_LineSpaces,            // spaces on lines after the first
+	S_StartLine,             // spaces at start of lines after second
+	S_FormatDisabled,        // format automatically disabled for this line
+	S_FormatDisabledSpaces,  // spaces in line which format is disabled
 	S_Spaces
 } ;
 
@@ -1769,7 +1769,7 @@ void ReadSource::Execute()
 	{
 		int ch = read_char();
 
-		if (ch == -1)   // EOF? 
+		if (ch == -1)   // EOF?
 		{
 			if (include_stack_top >= 0)
 			{
@@ -1783,7 +1783,7 @@ void ReadSource::Execute()
 			}
 			else
 			{
-				if (_inTopic)  // if we're in a topic, finish it 
+				if (_inTopic)  // if we're in a topic, finish it
 				{
 					end_topic(&_topic);
 				}
@@ -1795,7 +1795,7 @@ void ReadSource::Execute()
 			}
 		}
 
-		if (ch == '~')   // is is a command? 
+		if (ch == '~')   // is is a command?
 		{
 			ch = ProcessCommand();
 			continue;
@@ -1827,7 +1827,7 @@ void ReadSource::Execute()
 			ProcessNormally(ch);
 		}
 		CHK_BUFFER(0);
-	} // while (1) 
+	} // while (1)
 
 	fclose(srcfile);
 
@@ -1876,7 +1876,7 @@ void ReadSource::TopicCommand()
 
 void ReadSource::DataCommand()
 {
-	if (_inTopic)  // if we're in a topic, finish it 
+	if (_inTopic)  // if we're in a topic, finish it
 	{
 		end_topic(&_topic);
 	}
@@ -2996,7 +2996,7 @@ void make_hot_links()
 					src_cfname = c->srcfile;
 					srcline = c->srcline;
 					error(0, "Cannot find DocContent topic \"%s\".", c->topic_name[ctr]);
-					srcline = -1;  // back to reality 
+					srcline = -1;  // back to reality
 				}
 				else
 				{
@@ -3024,14 +3024,14 @@ void make_hot_links()
 	{
 		switch (l->type)
 		{
-		case 0:      // name is the title of the topic 
+		case 0:      // name is the title of the topic
 			t = find_topic_title(l->name);
 			if (t == -1)
 			{
 				src_cfname = l->srcfile;
-				srcline = l->srcline; // pretend we are still in the source... 
+				srcline = l->srcline; // pretend we are still in the source...
 				error(0, "Cannot find implicit hot-link \"%s\".", l->name);
-				srcline = -1;  // back to reality 
+				srcline = -1;  // back to reality
 			}
 			else
 			{
@@ -3041,12 +3041,12 @@ void make_hot_links()
 			}
 			break;
 
-		case 1:  // name is the name of a label 
+		case 1:  // name is the name of a label
 			lbl = find_label(l->name);
 			if (lbl == NULL)
 			{
 				src_cfname = l->srcfile;
-				srcline = l->srcline; // pretend again 
+				srcline = l->srcline; // pretend again
 				error(0, "Cannot find explicit hot-link \"%s\".", l->name);
 				srcline = -1;
 			}
@@ -3068,7 +3068,7 @@ void make_hot_links()
 			}
 			break;
 
-		case 2:   // it's a "special" link; topic_off already has the value 
+		case 2:   // it's a "special" link; topic_off already has the value
 			break;
 		}
 	}
@@ -3097,8 +3097,8 @@ void add_page_break(TOPIC *t, int margin, char *text, char *start, char *curr, i
 }
 
 
-void paginate_online()    // paginate the text for on-line help 
-{                   // also calculates max_pages and max_links 
+void paginate_online()    // paginate the text for on-line help
+{                   // also calculates max_pages and max_links
 	int       lnum;
 	char     *start;
 	char     *curr;
@@ -3120,7 +3120,7 @@ void paginate_online()    // paginate the text for on-line help
 	{
 		if (t->flags & TF_DATA)
 		{
-			continue;    // don't paginate data topics 
+			continue;    // don't paginate data topics
 		}
 
 		text = get_topic_text(t);
@@ -3159,7 +3159,7 @@ void paginate_online()    // paginate the text for on-line help
 
 						if (tok == TOK_PARA)
 						{
-							col = 0;   // fake a nl 
+							col = 0;   // fake a nl
 							++lnum;
 							break;
 						}
@@ -3171,12 +3171,12 @@ void paginate_online()    // paginate the text for on-line help
 							continue;
 						}
 
-						// now tok is TOK_SPACE or TOK_LINK or TOK_WORD 
+						// now tok is TOK_SPACE or TOK_LINK or TOK_WORD
 
 						if (col+width > SCREEN_WIDTH)
-						{          // go to next line... 
+						{          // go to next line...
 							if (++lnum >= SCREEN_DEPTH)
-							{           // go to next page... 
+							{           // go to next page...
 								add_page_break(t, start_margin, text, start, curr, num_links);
 								start = curr + ((tok == TOK_SPACE) ? size : 0);
 								start_margin = margin;
@@ -3185,7 +3185,7 @@ void paginate_online()    // paginate the text for on-line help
 							}
 							if (tok == TOK_SPACE)
 							{
-								width = 0;   // skip spaces at start of a line 
+								width = 0;   // skip spaces at start of a line
 							}
 
 							col = margin;
@@ -3236,26 +3236,26 @@ void paginate_online()    // paginate the text for on-line help
 				break;
 
 			case TOK_DONE:
-			case TOK_XONLINE:   // skip 
-			case TOK_XDOC:      // ignore 
-			case TOK_CENTER:    // ignore 
+			case TOK_XONLINE:   // skip
+			case TOK_XDOC:      // ignore
+			case TOK_CENTER:    // ignore
 				break;
 
 			case TOK_LINK:
 				++num_links;
 
-				// fall-through 
+				// fall-through
 
-			default:    // TOK_SPACE, TOK_LINK, TOK_WORD 
+			default:    // TOK_SPACE, TOK_LINK, TOK_WORD
 				skip_blanks = 0;
 				break;
 
-			} // switch 
+			} // switch
 
 			curr += size;
 			len  -= size;
 			col  += width;
-		} // while 
+		} // while
 
 		if (!skip_blanks)
 		{
@@ -3268,7 +3268,7 @@ void paginate_online()    // paginate the text for on-line help
 		}
 
 		release_topic_text(t, 0);
-	} // for 
+	} // for
 }
 
 
@@ -3286,7 +3286,7 @@ enum
 
 struct PAGINATE_DOC_INFO
 {
-	int cnum;  // must match above #defines so pd_get_info() will work 
+	int cnum;  // must match above #defines so pd_get_info() will work
 	int tnum;
 	int link_dest_warn;
 	char *start;
@@ -3358,14 +3358,14 @@ void set_hot_link_doc_page()
 	{
 		switch (l->type)
 		{
-		case 0:      // name is the title of the topic 
+		case 0:      // name is the title of the topic
 			t = find_topic_title(l->name);
 			if (t == -1)
 			{
 				src_cfname = l->srcfile;
-				srcline = l->srcline; // pretend we are still in the source... 
+				srcline = l->srcline; // pretend we are still in the source...
 				error(0, "Cannot find implicit hot-link \"%s\".", l->name);
-				srcline = -1;  // back to reality 
+				srcline = -1;  // back to reality
 			}
 			else
 			{
@@ -3373,12 +3373,12 @@ void set_hot_link_doc_page()
 			}
 			break;
 
-		case 1:  // name is the name of a label 
+		case 1:  // name is the name of a label
 			lbl = find_label(l->name);
 			if (lbl == NULL)
 			{
 				src_cfname = l->srcfile;
-				srcline = l->srcline; // pretend again 
+				srcline = l->srcline; // pretend again
 				error(0, "Cannot find explicit hot-link \"%s\".", l->name);
 				srcline = -1;
 			}
@@ -3388,7 +3388,7 @@ void set_hot_link_doc_page()
 			}
 			break;
 
-		case 2:   // special topics don't appear in the document 
+		case 2:   // special topics don't appear in the document
 			break;
 		}
 	}
@@ -3428,7 +3428,7 @@ void set_content_doc_page()
 
 
 int pd_get_info(int cmd, PD_INFO *pd, int *info)
-{             // this funtion also used by print_document() 
+{             // this funtion also used by print_document()
 	CONTENT *c;
 
 	switch (cmd)
@@ -3558,7 +3558,7 @@ int fcmp_LABEL(const void *a, const void *b)
 	char *bn = ((LABEL*)b)->name;
 	int   diff;
 
-	// compare the names, making sure that the index goes first 
+	// compare the names, making sure that the index goes first
 
 	if ((diff = strcmp(an,bn)) == 0)
 	{
@@ -3591,11 +3591,11 @@ void sort_labels()
  */
 
 
-int compare_files(FILE *f1, FILE *f2) // returns TRUE if different 
+int compare_files(FILE *f1, FILE *f2) // returns TRUE if different
 {
 	if (filelength(fileno(f1)) != filelength(fileno(f2)))
 	{
-		return 1;   // different if sizes are not the same 
+		return 1;   // different if sizes are not the same
 	}
 
 	while (!feof(f1) && !feof(f2))
@@ -3631,7 +3631,7 @@ void _write_hdr(char *fname, FILE *file)
 
 	for (ctr = 0; ctr < num_label; ctr++)
 	{
-		if (label[ctr].name[0] != '@')  // if it's not a local label... 
+		if (label[ctr].name[0] != '@')  // if it's not a local label...
 		{
 			fprintf(file, "#define %-32s %3d", label[ctr].name, ctr);
 			if (strcmp(label[ctr].name, INDEX_LABEL) == 0)
@@ -3654,7 +3654,7 @@ void write_hdr(char *fname)
 	hdr = fopen(fname, "rt");
 
 	if (hdr == NULL)
-	{         // if no prev. hdr file generate a new one 
+	{         // if no prev. hdr file generate a new one
 		hdr = fopen(fname, "wt");
 		if (hdr == NULL)
 		{
@@ -3686,25 +3686,25 @@ void write_hdr(char *fname)
 		fatal(0, "Cannot open temporary file: \"%s\".", TEMP_FNAME);
 	}
 
-	if (compare_files(temp, hdr))   // if they are different... 
+	if (compare_files(temp, hdr))   // if they are different...
 	{
 		msg("Updating: %s", fname);
 		fclose(temp);
 		fclose(hdr);
-		unlink(fname);               // delete the old hdr file 
-		rename(TEMP_FNAME, fname);   // rename the temp to the hdr file 
+		unlink(fname);               // delete the old hdr file
+		rename(TEMP_FNAME, fname);   // rename the temp to the hdr file
 		notice("FRACTINT must be re-compiled.");
 	}
 	else
-	{   // if they are the same leave the original alone. 
+	{   // if they are the same leave the original alone.
 		fclose(temp);
 		fclose(hdr);
-		unlink(TEMP_FNAME);      // delete the temp 
+		unlink(TEMP_FNAME);      // delete the temp
 	}
 }
 
 
-void calc_offsets()    // calc file offset to each topic 
+void calc_offsets()    // calc file offset to each topic
 {
 	int      t;
 	TOPIC   *tp;
@@ -3712,38 +3712,38 @@ void calc_offsets()    // calc file offset to each topic
 	CONTENT *cp;
 	int      c;
 
-	// NOTE: offsets do NOT include 6 bytes for signature & version! 
+	// NOTE: offsets do NOT include 6 bytes for signature & version!
 
-	offset = sizeof(int) +           // max_pages 
-				sizeof(int) +           // max_links 
-				sizeof(int) +           // num_topic 
-				sizeof(int) +           // num_label 
-				sizeof(int) +           // num_contents 
-				sizeof(int) +           // num_doc_pages 
-				num_topic*sizeof(long) +// offsets to each topic 
-				num_label*2*sizeof(int);// topic_num/topic_off for all public labels 
+	offset = sizeof(int) +           // max_pages
+				sizeof(int) +           // max_links
+				sizeof(int) +           // num_topic
+				sizeof(int) +           // num_label
+				sizeof(int) +           // num_contents
+				sizeof(int) +           // num_doc_pages
+				num_topic*sizeof(long) +// offsets to each topic
+				num_label*2*sizeof(int);// topic_num/topic_off for all public labels
 
 	for (c = 0, cp = contents; c < num_contents; c++, cp++)
 	{
-		offset += sizeof(int) +       // flags 
-			1 +                 // id length 
-			(int) strlen(cp->id) +    // id text 
-			1 +                 // name length 
-			(int) strlen(cp->name) +  // name text 
-			1 +                 // number of topics 
-			cp->num_topic*sizeof(int);    // topic numbers 
+		offset += sizeof(int) +       // flags
+			1 +                 // id length
+			(int) strlen(cp->id) +    // id text
+			1 +                 // name length
+			(int) strlen(cp->name) +  // name text
+			1 +                 // number of topics
+			cp->num_topic*sizeof(int);    // topic numbers
 	}
 
 	for (t = 0, tp = topic; t < num_topic; t++, tp++)
 	{
 		tp->offset = offset;
-		offset += (long)sizeof(int) + // topic flags 
-				sizeof(int) +       // number of pages 
-				tp->num_page*3*sizeof(int) +   // page offset, length & starting margin 
-				1 +                 // length of title 
-				tp->title_len +     // title 
-				sizeof(int) +       // length of text 
-				tp->text_len;       // text 
+		offset += (long)sizeof(int) + // topic flags
+				sizeof(int) +       // number of pages
+				tp->num_page*3*sizeof(int) +   // page offset, length & starting margin
+				1 +                 // length of title
+				tp->title_len +     // title
+				sizeof(int) +       // length of text
+				tp->text_len;       // text
 	}
 }
 
@@ -3787,36 +3787,36 @@ void _write_help(FILE *file)
 	CONTENT              *cp;
 	help_sig_info  hs;
 
-	// write the signature and version 
+	// write the signature and version
 
-	hs.sig = HELP_SIG; // Edit line 17 of helpcom.h if this is a syntax error 
+	hs.sig = HELP_SIG; // Edit line 17 of helpcom.h if this is a syntax error
 	hs.version = version;
 
 	fwrite(&hs, sizeof(long)+sizeof(int), 1, file);
 
-	// write max_pages & max_links 
+	// write max_pages & max_links
 
 	putw(max_pages, file);
 	putw(max_links, file);
 
-	// write num_topic, num_label and num_contents 
+	// write num_topic, num_label and num_contents
 
 	putw(num_topic, file);
 	putw(num_label, file);
 	putw(num_contents, file);
 
-	// write num_doc_page 
+	// write num_doc_page
 
 	putw(num_doc_pages, file);
 
-	// write the offsets to each topic 
+	// write the offsets to each topic
 
 	for (t = 0; t < num_topic; t++)
 	{
 		fwrite(&topic[t].offset, sizeof(long), 1, file);
 	}
 
-	// write all public labels 
+	// write all public labels
 
 	for (l = 0; l < num_label; l++)
 	{
@@ -3824,7 +3824,7 @@ void _write_help(FILE *file)
 		putw(label[l].topic_off, file);
 	}
 
-	// write contents 
+	// write contents
 
 	for (c = 0, cp = contents; c < num_contents; c++, cp++)
 	{
@@ -3842,15 +3842,15 @@ void _write_help(FILE *file)
 		fwrite(cp->topic_num, sizeof(int), cp->num_topic, file);
 	}
 
-	// write topics 
+	// write topics
 
 	for (t = 0, tp = topic; t < num_topic; t++, tp++)
 	{
-		// write the topics flags 
+		// write the topics flags
 
 		putw(tp->flags, file);
 
-		// write offset, length and starting margin for each page 
+		// write offset, length and starting margin for each page
 
 		putw(tp->num_page, file);
 		for (p = 0; p < tp->num_page; p++)
@@ -3860,16 +3860,16 @@ void _write_help(FILE *file)
 			putw(tp->page[p].margin, file);
 		}
 
-		// write the help title 
+		// write the help title
 
 		putc((BYTE)tp->title_len, file);
 		fwrite(tp->title, 1, tp->title_len, file);
 
-		// insert hot-link info & write the help text 
+		// insert hot-link info & write the help text
 
 		text = get_topic_text(tp);
 
-		if (!(tp->flags & TF_DATA))   // don't process data topics... 
+		if (!(tp->flags & TF_DATA))   // don't process data topics...
 		{
 			insert_real_link_info(text, tp->text_len);
 		}
@@ -3877,10 +3877,10 @@ void _write_help(FILE *file)
 		putw(tp->text_len, file);
 		fwrite(text, 1, tp->text_len, file);
 
-		release_topic_text(tp, 0);  // don't save the text even though        
-									// insert_real_link_info() modified it    
-									// because we don't access the info after 
-									// this.                                  
+		release_topic_text(tp, 0);  // don't save the text even though
+									// insert_real_link_info() modified it
+									// because we don't access the info after
+									// this.
 	}
 }
 
@@ -3918,7 +3918,7 @@ struct PRINT_DOC_INFO
 
 	int      cnum;
 	int      tnum;
-	int      link_dest_warn;   // = 0 
+	int      link_dest_warn;   // = 0
 
 	FILE    *file;
 	int      margin;
@@ -3938,7 +3938,7 @@ void printerc(PRINT_DOC_INFO *info, int c, int n)
 		else if (c == '\n' || c == '\f')
 		{
 			info->start_of_line = 1;
-			info->spaces = 0;   // strip spaces before a new-line 
+			info->spaces = 0;   // strip spaces before a new-line
 			putc(c, info->file);
 		}
 		else
@@ -4071,10 +4071,10 @@ void print_document(const char *fname)
 
 void report_memory()
 {
-	long string = 0;   // bytes in strings 
-	long text   = 0;   // bytes in topic text (stored on disk) 
-	long data   = 0;   // bytes in active data structure 
-	long dead   = 0;   // bytes in unused data structure 
+	long string = 0;   // bytes in strings
+	long text   = 0;   // bytes in topic text (stored on disk)
+	long data   = 0;   // bytes in active data structure
+	long dead   = 0;   // bytes in unused data structure
 	int ctr;
 	int ctr2;
 
@@ -4181,7 +4181,7 @@ void report_stats()
 
 void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 {
-	int exe;   // handles 
+	int exe;   // handles
 	int hlp;
 	long len;
 	long count;
@@ -4200,7 +4200,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 
 	msg("Appending %s to %s", hlp_fname, exe_fname);
 
-	// first, check and see if any help is currently installed 
+	// first, check and see if any help is currently installed
 
 	lseek(exe, filelength(exe) - sizeof(help_sig_info), SEEK_SET);
 
@@ -4215,7 +4215,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 		hs.base = filelength(exe);
 	}
 
-	// now, let's see if their help file is for real (and get the version) 
+	// now, let's see if their help file is for real (and get the version)
 
 	read(hlp, (char *)&hs, sizeof(long)+sizeof(int));
 
@@ -4226,11 +4226,11 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 
 	msg("Help file %s Version=%d", hlp_fname, hs.version);
 
-	// append the help stuff, overwriting old help (if any) 
+	// append the help stuff, overwriting old help (if any)
 
 	lseek(exe, hs.base, SEEK_SET);
 
-	len = filelength(hlp) - sizeof(long) - sizeof(int); // adjust for the file signature & version 
+	len = filelength(hlp) - sizeof(long) - sizeof(int); // adjust for the file signature & version
 
 	for (count = 0; count < len; )
 	{
@@ -4240,11 +4240,11 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 		count += size;
 	}
 
-	// add on the signature, version and offset 
+	// add on the signature, version and offset
 
 	write(exe, (char *)&hs, 10);
 
-	chsize(exe, lseek(exe,0L,SEEK_CUR));// truncate if old help was longer 
+	chsize(exe, lseek(exe,0L,SEEK_CUR));// truncate if old help was longer
 
 	close(exe);
 	close(hlp);
@@ -4253,7 +4253,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 
 void delete_hlp_from_exe(const char *exe_fname)
 {
-	int   exe;   // file handle 
+	int   exe;   // file handle
 	struct help_sig_info hs;
 
 	if ((exe = open(exe_fname, O_RDWR|O_BINARY)) == -1)
@@ -4263,7 +4263,7 @@ void delete_hlp_from_exe(const char *exe_fname)
 
 	msg("Deleting help from %s", exe_fname);
 
-	// see if any help is currently installed 
+	// see if any help is currently installed
 
 #ifndef XFRACT
 	lseek(exe, filelength(exe) - 10, SEEK_SET);
@@ -4275,7 +4275,7 @@ void delete_hlp_from_exe(const char *exe_fname)
 
 	if (hs.sig == HELP_SIG)
 	{
-		chsize(exe, hs.base);   // truncate at the start of the help 
+		chsize(exe, hs.base);   // truncate at the start of the help
 		close(exe);
 	}
 	else
@@ -4447,10 +4447,10 @@ void compile(int show_stats, int show_mem, char fname1[81], char fname2[81], cha
 		warn(0, "No help version has been defined.  (Use \"~Version=\")");
 	}
 
-	// order of these is very important... 
+	// order of these is very important...
 
-	make_hot_links();	// do even if errors since it may report 
-	// more... 
+	make_hot_links();	// do even if errors since it may report
+	// more...
 
 	if (!errors)
 	{
@@ -4574,7 +4574,7 @@ int main(int argc, char *argv[])
 			parse_argument(show_stats, show_mem, mode, arg, swappath);
 			break;
 
-		default:   // assume it is a fname 
+		default:   // assume it is a fname
 			if (fname1[0] == '\0')
 			{
 				strcpy(fname1, *arg);
@@ -4620,7 +4620,7 @@ int main(int argc, char *argv[])
 
 	free(buffer);
 
-	return errors;   // return the number of errors 
+	return errors;   // return the number of errors
 }
 
 void check_buffer(char *current, unsigned offset, char *buffer)

@@ -11,7 +11,7 @@
 #include "Externals.h"
 #include "resume.h"
 
-int popcorn()   // subset of std engine 
+int popcorn()   // subset of std engine
 {
 	int start_row;
 	start_row = 0;
@@ -23,13 +23,13 @@ int popcorn()   // subset of std engine
 	}
 	g_input_counter = g_max_input_counter;
 	g_plot_color = plot_color_none;
-	g_temp_sqr_x = g_temp_sqr_x_l = 0; // PB added this to cover weird BAILOUTs 
+	g_temp_sqr_x = g_temp_sqr_x_l = 0; // PB added this to cover weird BAILOUTs
 	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{
 		g_reset_periodicity = true;
 		for (g_col = 0; g_col <= g_x_stop; g_col++)
 		{
-			if (standard_fractal() == -1) // interrupted 
+			if (standard_fractal() == -1) // interrupted
 			{
 				alloc_resume(10, 1);
 				put_resume(sizeof(g_row), &g_row);

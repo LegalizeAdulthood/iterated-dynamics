@@ -231,7 +231,7 @@ public:
 	}
 	MouseModeSaver(AbstractDriver *driver, int new_mode)
 		: m_old_mode(driver->get_mouse_mode()),
-		_driver(driver)		
+		_driver(driver)
 	{
 		set(new_mode);
 	}
@@ -262,4 +262,4 @@ public:
 	}
 };
 
-#endif // DRIVERS_H 
+#endif // DRIVERS_H

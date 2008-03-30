@@ -24,38 +24,38 @@ enum
 	BOX_COL		= 11,
 	BOX_WIDTH	= 57,
 	BOX_DEPTH	= 12,
-	BLOCK_LEN	= 2048,   // must be a power of 2, must match next 
-	BLOCK_SHIFT	= 11,   // must match above 
-	CACHE_MIN	= 4,      // minimum cache size in Kbytes 
-	CACHE_MAX	= 64,     // maximum cache size in Kbytes 
-	FREE_MEM	= 33,     // try to leave this much memory unallocated 
-	HASH_SIZE	= 1024   // power of 2, near CACHE_MAX/(BLOCK_LEN + 8) 
+	BLOCK_LEN	= 2048,   // must be a power of 2, must match next
+	BLOCK_SHIFT	= 11,   // must match above
+	CACHE_MIN	= 4,      // minimum cache size in Kbytes
+	CACHE_MAX	= 64,     // maximum cache size in Kbytes
+	FREE_MEM	= 33,     // try to leave this much memory unallocated
+	HASH_SIZE	= 1024   // power of 2, near CACHE_MAX/(BLOCK_LEN + 8)
 };
 
-bool g_disk_16bit = false;	// storing 16 bit values for continuous potential 
+bool g_disk_16bit = false;	// storing 16 bit values for continuous potential
 
 static int s_time_to_display;
 static FILE *s_file = 0;
 static bool s_disk_targa = false;
-static struct cache		// structure of each cache entry 
+static struct cache		// structure of each cache entry
 {
-	long offset;				// pixel offset in image 
-	BYTE pixel[BLOCK_LEN];		// one pixel per byte (this *is* faster) 
-	unsigned int hashlink;		// ptr to next cache entry with same hash 
-	bool dirty;					// changed since read? 
-	bool lru;					// recently used? 
+	long offset;				// pixel offset in image
+	BYTE pixel[BLOCK_LEN];		// one pixel per byte (this *is* faster)
+	unsigned int hashlink;		// ptr to next cache entry with same hash
+	bool dirty;					// changed since read?
+	bool lru;					// recently used?
 } *s_cache_end, *s_cache_lru, *s_cur_cache;
 static cache *s_cache_start = 0;
-static long s_high_offset;           // highwater mark of writes 
-static long s_seek_offset;           // what we'll get next if we don't seek 
-static long s_cur_offset;            // offset of last g_block referenced 
+static long s_high_offset;           // highwater mark of writes
+static long s_seek_offset;           // what we'll get next if we don't seek
+static long s_cur_offset;            // offset of last g_block referenced
 static int s_cur_row;
 static long s_cur_row_base;
 static unsigned int s_hash_ptr[HASH_SIZE] = { 0 };
 static int s_pixel_shift;
 static int s_header_length;
-static int s_row_size = 0;   // doubles as a disk video not ok flag 
-static int s_col_size;       // g_screen_height, *2 when g_potential_16bit 
+static int s_row_size = 0;   // doubles as a disk video not ok flag
+static int s_col_size;       // g_screen_height, *2 when g_potential_16bit
 static BYTE *s_memory_buffer;
 static U16 s_disk_video_handle = 0;
 static long s_memory_offset = 0;
@@ -79,7 +79,7 @@ int disk_start()
 int disk_start_potential()
 {
 	int i;
-	if (driver_diskp())			// ditch the original disk file 
+	if (driver_diskp())			// ditch the original disk file
 	{
 		disk_end();
 	}
@@ -102,16 +102,16 @@ int disk_start_potential()
 int disk_start_targa(FILE *targafp, int overhead)
 {
 	int i;
-	if (driver_diskp())	// ditch the original file, make just the targa 
+	if (driver_diskp())	// ditch the original file, make just the targa
 	{
-		disk_end();      // close the 'screen' 
-		set_null_video(); // set readdot and writedot routines to do nothing 
+		disk_end();      // close the 'screen'
+		set_null_video(); // set readdot and writedot routines to do nothing
 	}
 	s_header_length = overhead;
 	s_file = targafp;
 	s_disk_targa = true;
 	i = disk_start_common(g_x_dots*3, g_y_dots, g_colors);
-	s_high_offset = 100000000L; // targa not necessarily init'd to zeros 
+	s_high_offset = 100000000L; // targa not necessarily init'd to zeros
 
 	return i;
 }
@@ -130,13 +130,13 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	{
 		disk_end();
 	}
-	if (driver_diskp()) // otherwise, real screen also in use, don't hit it 
+	if (driver_diskp()) // otherwise, real screen also in use, don't hit it
 	{
 		help_title();
-		driver_set_attr(1, 0, C_DVID_BKGRD, 24*80);  // init rest to background 
+		driver_set_attr(1, 0, C_DVID_BKGRD, 24*80);  // init rest to background
 		for (i = 0; i < BOX_DEPTH; ++i)
 		{
-			driver_set_attr(BOX_ROW + i, BOX_COL, C_DVID_LO, BOX_WIDTH);  // init box 
+			driver_set_attr(BOX_ROW + i, BOX_COL, C_DVID_LO, BOX_WIDTH);  // init box
 		}
 		driver_put_string(BOX_ROW + 2, BOX_COL + 4, C_DVID_HI, "'Disk-Video' mode");
 		driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO,
@@ -171,7 +171,7 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 			--s_pixel_shift;
 		}
 	}
-	s_time_to_display = g_bf_math ? 10 : 1000;  // time-to-display-status counter 
+	s_time_to_display = g_bf_math ? 10 : 1000;  // time-to-display-status counter
 
 	/* allocate cache: try for the max; leave FREEMEMk free if we can get
 		that much or more; if we can't get that much leave 1/2 of whatever
@@ -200,7 +200,7 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	s_cache_start = reinterpret_cast<cache *>(new BYTE[longtmp]);
 	if (cache_size == 64)
 	{
-		--longtmp; // safety for next line 
+		--longtmp; // safety for next line
 	}
 	s_cache_lru = s_cache_start;
 	s_cache_end = s_cache_lru + longtmp/sizeof(*s_cache_start);
@@ -216,10 +216,10 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 			str(boost::format("Cache size: %dK") % cache_size));
 	}
 
-	// preset cache to all invalid entries so we don't need free list logic 
+	// preset cache to all invalid entries so we don't need free list logic
 	for (i = 0; i < HASH_SIZE; ++i)
 	{
-		s_hash_ptr[i] = 0xffff; // 0xffff marks the end of a hash chain 
+		s_hash_ptr[i] = 0xffff; // 0xffff marks the end of a hash chain
 	}
 	longtmp = 100000000L;
 	for (ptr1 = s_cache_start; ptr1 < s_cache_end; ++ptr1)
@@ -247,7 +247,7 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 
 	if (s_disk_targa)
 	{
-		// Retrieve the header information first 
+		// Retrieve the header information first
 		BYTE *tmpptr;
 		tmpptr = s_memory_buffer;
 		fseek(s_file, 0L, SEEK_SET);
@@ -280,7 +280,7 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 
 	if (s_disk_targa)
 	{
-		// Put header information in the file 
+		// Put header information in the file
 		MoveToMemory(s_memory_buffer, (U16)s_header_length, 1L, 0, s_disk_video_handle);
 	}
 	else
@@ -289,14 +289,14 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 		{
 			SetMemory(0, (U16)BLOCK_LEN, 1L, offset, s_disk_video_handle);
 			// TODO: just do it all, don't abort in the middle
-			if (driver_key_pressed())           // user interrupt 
+			if (driver_key_pressed())           // user interrupt
 			{
-				// esc to cancel, else continue 
+				// esc to cancel, else continue
 				if (stop_message(STOPMSG_CANCEL, "Disk Video initialization interrupted:\n"))
 				{
 					disk_end();
 					g_.SetGoodMode(false);
-					return -2;            // -1 == failed, -2 == cancel   
+					return -2;            // -1 == failed, -2 == cancel
 				}
 			}
 		}
@@ -313,7 +313,7 @@ void disk_end()
 {
 	if (s_file != 0)
 	{
-		if (s_disk_targa) // flush the cache 
+		if (s_disk_targa) // flush the cache
 		{
 			for (s_cache_lru = s_cache_start; s_cache_lru < s_cache_end; ++s_cache_lru)
 			{
@@ -343,7 +343,7 @@ void disk_end()
 
 static void disk_line_status(bool reading, int row)
 {
-	// adjust when potfile 
+	// adjust when potfile
 	disk_video_status(0, str(boost::format(" %s line %4d")
 			% (reading ? "reading" : "writing")
 			% ((row >= g_screen_height) ? row-g_screen_height : row)));
@@ -353,17 +353,17 @@ int disk_read(int col, int row)
 {
 	int col_subscr;
 	long offset;
-	if (--s_time_to_display < 0)  // time to display status? 
+	if (--s_time_to_display < 0)  // time to display status?
 	{
 		if (driver_diskp())
 		{
 			disk_line_status(true, row);
 		}
-		s_time_to_display = g_bf_math ? 10 : 1000;  // time-to-display-status counter 
+		s_time_to_display = g_bf_math ? 10 : 1000;  // time-to-display-status counter
 	}
-	if (row != s_cur_row) // try to avoid ghastly code generated for multiply 
+	if (row != s_cur_row) // try to avoid ghastly code generated for multiply
 	{
-		if (row >= s_col_size) // while we're at it avoid this test if not needed  
+		if (row >= s_col_size) // while we're at it avoid this test if not needed
 		{
 			return 0;
 		}
@@ -375,8 +375,8 @@ int disk_read(int col, int row)
 		return 0;
 	}
 	offset = s_cur_row_base + col;
-	col_subscr = offset & (BLOCK_LEN-1); // offset within cache entry 
-	if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref? 
+	col_subscr = offset & (BLOCK_LEN-1); // offset within cache entry
+	if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref?
 	{
 		find_load_cache(offset & (0L-BLOCK_LEN));
 	}
@@ -386,11 +386,11 @@ int disk_read(int col, int row)
 int disk_from_memory(long offset, int size, void *dest)
 {
 	int col_subscr = int(offset & (BLOCK_LEN - 1));
-	if (col_subscr + size > BLOCK_LEN)            // access violates  a 
+	if (col_subscr + size > BLOCK_LEN)            // access violates  a
 	{
-		return 0;                                 // cache boundary   
+		return 0;                                 // cache boundary
 	}
-	if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref? 
+	if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref?
 	{
 		find_load_cache(offset & (0L-BLOCK_LEN));
 	}
@@ -413,7 +413,7 @@ void disk_write(int col, int row, int color)
 {
 	int col_subscr;
 	long offset;
-	if (--s_time_to_display < 0)  // time to display status? 
+	if (--s_time_to_display < 0)  // time to display status?
 	{
 		if (driver_diskp())
 		{
@@ -421,9 +421,9 @@ void disk_write(int col, int row, int color)
 		}
 		s_time_to_display = 1000;
 	}
-	if (row != (unsigned int) s_cur_row)     // try to avoid ghastly code generated for multiply 
+	if (row != (unsigned int) s_cur_row)     // try to avoid ghastly code generated for multiply
 	{
-		if (row >= s_col_size) // while we're at it avoid this test if not needed  
+		if (row >= s_col_size) // while we're at it avoid this test if not needed
 		{
 			return;
 		}
@@ -436,7 +436,7 @@ void disk_write(int col, int row, int color)
 	}
 	offset = s_cur_row_base + col;
 	col_subscr = offset & (BLOCK_LEN-1);
-	if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref? 
+	if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref?
 	{
 		find_load_cache(offset & (0L-BLOCK_LEN));
 	}
@@ -451,12 +451,12 @@ int disk_to_memory(long offset, int size, void *src)
 {
 	int col_subscr =  int(offset & (BLOCK_LEN - 1));
 
-	if (col_subscr + size > BLOCK_LEN)            // access violates  a 
+	if (col_subscr + size > BLOCK_LEN)            // access violates  a
 	{
-		return 0;                                 // cache boundary   
+		return 0;                                 // cache boundary
 	}
 
-	if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref? 
+	if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref?
 	{
 		find_load_cache (offset & (0L-BLOCK_LEN));
 	}
@@ -474,7 +474,7 @@ void disk_write_targa(unsigned int col, unsigned int row,
 	disk_write(col + 1, row, red);
 }
 
-static void find_load_cache(long offset) // used by read/write 
+static void find_load_cache(long offset) // used by read/write
 {
 #ifndef XFRACT
 	unsigned int tbloffset;
@@ -483,21 +483,21 @@ static void find_load_cache(long offset) // used by read/write
 	unsigned int *fwd_link;
 	BYTE *pixelptr;
 	BYTE tmpchar;
-	s_cur_offset = offset; // note this for next reference 
-	// check if required entry is in cache - lookup by hash 
+	s_cur_offset = offset; // note this for next reference
+	// check if required entry is in cache - lookup by hash
 	tbloffset = s_hash_ptr[ ((unsigned short)offset >> BLOCK_SHIFT) & (HASH_SIZE-1) ];
-	while (tbloffset != 0xffff)  // follow the hash chain 
+	while (tbloffset != 0xffff)  // follow the hash chain
 	{
 		s_cur_cache = (cache *)((char *)s_cache_start + tbloffset);
-		if (s_cur_cache->offset == offset)  // great, it is in the cache 
+		if (s_cur_cache->offset == offset)  // great, it is in the cache
 		{
 			s_cur_cache->lru = true;
 			return;
 		}
 		tbloffset = s_cur_cache->hashlink;
 	}
-	// must load the cache entry from backing store 
-	while (true)  // look around for something not recently used 
+	// must load the cache entry from backing store
+	while (true)  // look around for something not recently used
 	{
 		if (++s_cache_lru >= s_cache_end)
 		{
@@ -509,11 +509,11 @@ static void find_load_cache(long offset) // used by read/write
 		}
 		s_cache_lru->lru = false;
 	}
-	if (s_cache_lru->dirty) // must write this g_block before reusing it 
+	if (s_cache_lru->dirty) // must write this g_block before reusing it
 	{
 		write_cache_lru();
 	}
-	// remove g_block at s_cache_lru from its hash chain 
+	// remove g_block at s_cache_lru from its hash chain
 	fwd_link = &s_hash_ptr[(((unsigned short) s_cache_lru->offset >> BLOCK_SHIFT) & (HASH_SIZE-1))];
 	tbloffset = int((char *) s_cache_lru - (char *) s_cache_start);
 	while (*fwd_link != tbloffset)
@@ -521,12 +521,12 @@ static void find_load_cache(long offset) // used by read/write
 		fwd_link = &((cache *) ((char *) s_cache_start + *fwd_link))->hashlink;
 	}
 	*fwd_link = s_cache_lru->hashlink;
-	// load g_block 
+	// load g_block
 	s_cache_lru->dirty  = false;
 	s_cache_lru->lru    = true;
 	s_cache_lru->offset = offset;
 	pixelptr = &s_cache_lru->pixel[0];
-	if (offset > s_high_offset)  // never been this high before, just clear it 
+	if (offset > s_high_offset)  // never been this high before, just clear it
 	{
 		s_high_offset = offset;
 		memset(pixelptr, 0, BLOCK_LEN);
@@ -578,7 +578,7 @@ static void find_load_cache(long offset) // used by read/write
 			break;
 		}
 	}
-	// add new g_block to its hash chain 
+	// add new g_block to its hash chain
 	fwd_link = &s_hash_ptr[(((unsigned short)offset >> BLOCK_SHIFT) & (HASH_SIZE-1))];
 	s_cache_lru->hashlink = *fwd_link;
 	*fwd_link = int((char *)s_cache_lru - (char *)s_cache_start);
@@ -586,7 +586,7 @@ static void find_load_cache(long offset) // used by read/write
 #endif
 }
 
-// lookup for write_cache_lru 
+// lookup for write_cache_lru
 static cache *find_cache(long offset)
 {
 #ifndef XFRACT
@@ -614,8 +614,8 @@ static void  write_cache_lru()
 	long offset;
 	BYTE tmpchar = 0;
 	cache *ptr1, *ptr2;
-	int const WRITEGAP = 4; // 1 for no gaps 
-	// scan back to also write any preceding dirty blocks, skipping small gaps 
+	int const WRITEGAP = 4; // 1 for no gaps
+	// scan back to also write any preceding dirty blocks, skipping small gaps
 	ptr1 = s_cache_lru;
 	offset = ptr1->offset;
 	i = 0;
@@ -628,8 +628,8 @@ static void  write_cache_lru()
 			i = 0;
 		}
 	}
-	// write all consecutive dirty blocks (often whole cache in 1pass modes) 
-	// keep going past small gaps 
+	// write all consecutive dirty blocks (often whole cache in 1pass modes)
+	// keep going past small gaps
 
 write_seek:
 	mem_seek(ptr1->offset >> s_pixel_shift);
@@ -701,7 +701,7 @@ write_stuff:
 			goto write_seek;
 		}
 	}
-	s_seek_offset = -1; // force a seek before next read 
+	s_seek_offset = -1; // force a seek before next read
 }
 
 /* Seek, mem_getc, mem_putc routines follow.
@@ -709,7 +709,7 @@ write_stuff:
 	sequences with a seek between them.  A mem_getc is never followed by
 	a mem_putc nor v.v. without a seek between them.
 	*/
-static void mem_seek(long offset)        // mem seek 
+static void mem_seek(long offset)        // mem seek
 {
 	offset += s_header_length;
 	s_memory_offset = offset >> BLOCK_SHIFT;
@@ -722,7 +722,7 @@ static void mem_seek(long offset)        // mem seek
 	s_memory_buffer_ptr = s_memory_buffer + (offset & (BLOCK_LEN - 1));
 }
 
-static BYTE mem_getc()                     // memory get_char 
+static BYTE mem_getc()                     // memory get_char
 {
 	if (s_memory_buffer_ptr - s_memory_buffer >= BLOCK_LEN)
 	{
@@ -735,7 +735,7 @@ static BYTE mem_getc()                     // memory get_char
 	return *(s_memory_buffer_ptr++);
 }
 
-static void mem_putc(BYTE c)     // memory get_char 
+static void mem_putc(BYTE c)     // memory get_char
 {
 	if (s_memory_buffer_ptr - s_memory_buffer >= BLOCK_LEN)
 	{

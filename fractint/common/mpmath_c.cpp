@@ -53,7 +53,7 @@ inline void Sqrtz(ComplexD z, ComplexD *rz)
 	(*(rz) = ComplexSqrtFloat((z).x, (z).y));
 }
 
-// rz=Arcsin(z)=-i*Log{i*z + sqrt(1-z*z)} 
+// rz=Arcsin(z)=-i*Log{i*z + sqrt(1-z*z)}
 void Arcsinz(ComplexD z, ComplexD *rz)
 {
 	ComplexD tempz1;
@@ -61,20 +61,20 @@ void Arcsinz(ComplexD z, ComplexD *rz)
 
 	FPUcplxmul(&z, &z, &tempz1);
 	tempz1.x = 1 - tempz1.x;
-	tempz1.y = -tempz1.y;			// tempz1 = 1 - tempz1 
+	tempz1.y = -tempz1.y;			// tempz1 = 1 - tempz1
 	Sqrtz(tempz1, &tempz1);
 
 	tempz2.x = -z.y;
-	tempz2.y = z.x;                // tempz2 = i*z  
+	tempz2.y = z.x;                // tempz2 = i*z
 	tempz1.x += tempz2.x;
-	tempz1.y += tempz2.y;    // tempz1 += tempz2 
+	tempz1.y += tempz2.y;    // tempz1 += tempz2
 	FPUcplxlog(&tempz1, &tempz1);
 	rz->x = tempz1.y;
-	rz->y = -tempz1.x;           // rz = (-i)*tempz1 
-}   // end. Arcsinz 
+	rz->y = -tempz1.x;           // rz = (-i)*tempz1
+}   // end. Arcsinz
 
 
-// rz=Arccos(z)=-i*Log{z + sqrt(z*z-1)} 
+// rz=Arccos(z)=-i*Log{z + sqrt(z*z-1)}
 void Arccosz(ComplexD z, ComplexD *rz)
 {
 	ComplexD temp;
@@ -88,7 +88,7 @@ void Arccosz(ComplexD z, ComplexD *rz)
 
 	FPUcplxlog(&temp, &temp);
 	rz->x = temp.y;
-	rz->y = -temp.x;              // rz = (-i)*tempz1 
+	rz->y = -temp.x;              // rz = (-i)*tempz1
 }
 
 void Arcsinhz(ComplexD z, ComplexD *rz)
@@ -96,26 +96,26 @@ void Arcsinhz(ComplexD z, ComplexD *rz)
 	ComplexD temp;
 
 	FPUcplxmul(&z, &z, &temp);
-	temp.x += 1;                                 // temp = temp + 1 
+	temp.x += 1;                                 // temp = temp + 1
 	Sqrtz(temp, &temp);
 	temp.x += z.x;
-	temp.y += z.y;                // temp = z + temp 
+	temp.y += z.y;                // temp = z + temp
 	FPUcplxlog(&temp, rz);
-}  // end. Arcsinhz 
+}  // end. Arcsinhz
 
-// rz=Arccosh(z)=Log(z + sqrt(z*z-1)} 
+// rz=Arccosh(z)=Log(z + sqrt(z*z-1)}
 void Arccoshz(ComplexD z, ComplexD *rz)
 {
 	ComplexD tempz;
 	FPUcplxmul(&z, &z, &tempz);
-	tempz.x -= 1;                              // tempz = tempz - 1 
+	tempz.x -= 1;                              // tempz = tempz - 1
 	Sqrtz(tempz, &tempz);
 	tempz.x = z.x + tempz.x;
-	tempz.y = z.y + tempz.y;  // tempz = z + tempz 
+	tempz.y = z.y + tempz.y;  // tempz = z + tempz
 	FPUcplxlog(&tempz, rz);
-}   // end. Arccoshz 
+}   // end. Arccoshz
 
-// rz=Arctanh(z)=1/2*Log{(1 + z)/(1-z)} 
+// rz=Arctanh(z)=1/2*Log{(1 + z)/(1-z)}
 void Arctanhz(ComplexD z, ComplexD *rz)
 {
 	ComplexD temp0;
@@ -143,19 +143,19 @@ void Arctanhz(ComplexD z, ComplexD *rz)
 		else
 		{
 			temp0.x = 1 + z.x;
-			temp0.y = z.y;             // temp0 = 1 + z 
+			temp0.y = z.y;             // temp0 = 1 + z
 			temp1.x = 1 - z.x;
-			temp1.y = -z.y;            // temp1 = 1 - z 
+			temp1.y = -z.y;            // temp1 = 1 - z
 			FPUcplxdiv(&temp0, &temp1, &temp2);
 			FPUcplxlog(&temp2, &temp2);
 			rz->x = .5*temp2.x;
-			rz->y = .5*temp2.y;       // rz = .5*temp2 
+			rz->y = .5*temp2.y;       // rz = .5*temp2
 			return;
 		}
 	}
-}   // end. Arctanhz 
+}   // end. Arctanhz
 
-// rz = Arctan(z) = i/2*Log{(1-i*z)/(1 + i*z)} 
+// rz = Arctan(z) = i/2*Log{(1-i*z)/(1 + i*z)}
 void Arctanz(ComplexD z, ComplexD *rz)
 {
 	ComplexD temp0;
@@ -178,23 +178,23 @@ void Arctanz(ComplexD z, ComplexD *rz)
 		temp0.y = 0.0;
 		Arctanhz(temp0, &temp0);
 		rz->x = -temp0.y;
-		rz->y = temp0.x;              // i*temp0 
+		rz->y = temp0.x;              // i*temp0
 	}
 	else if (z.x != 0.0 && z.y != 0.0)
 	{
 		temp0.x = -z.y;
-		temp0.y = z.x;                  // i*z 
+		temp0.y = z.x;                  // i*z
 		temp1.x = 1 - temp0.x;
-		temp1.y = -temp0.y;      // temp1 = 1 - temp0 
+		temp1.y = -temp0.y;      // temp1 = 1 - temp0
 		temp2.x = 1 + temp0.x;
-		temp2.y = temp0.y;       // temp2 = 1 + temp0 
+		temp2.y = temp0.y;       // temp2 = 1 + temp0
 
 		FPUcplxdiv(&temp1, &temp2, &temp3);
 		FPUcplxlog(&temp3, &temp3);
 		rz->x = -temp3.y*.5;
-		rz->y = .5*temp3.x;           // .5*i*temp0 
+		rz->y = .5*temp3.x;           // .5*i*temp0
 	}
-}   // end. Arctanz 
+}   // end. Arctanz
 
 static long const SinCosFudge = 0x10000L;
 
@@ -203,7 +203,7 @@ long lsqrt(long f)
 {
 	int N;
 	unsigned long y0, z;
-	static long a = 0, b = 0, c = 0;                  // constant factors 
+	static long a = 0, b = 0, c = 0;                  // constant factors
 
 	if (f == 0)
 	{
@@ -214,7 +214,7 @@ long lsqrt(long f)
 		return 0;
 	}
 
-	if (a == 0)                                   // one-time compute consts 
+	if (a == 0)                                   // one-time compute consts
 	{
 		a = long(g_externs.Fudge()*.41731);
 		b = long(g_externs.Fudge()*.59016);
@@ -222,8 +222,8 @@ long lsqrt(long f)
 	}
 
 	N  = 0;
-	while (f & 0xff000000L)                     // shift arg f into the 
-	{                                           // range: 0.5 <= f < 1  
+	while (f & 0xff000000L)                     // shift arg f into the
+	{                                           // range: 0.5 <= f < 1
 		N++;
 		f /= 2;
 	}
@@ -233,7 +233,7 @@ long lsqrt(long f)
 		f *= 2;
 	}
 
-	y0 = a + multiply(b, f,  g_bit_shift);         // Newton's approximation 
+	y0 = a + multiply(b, f,  g_bit_shift);         // Newton's approximation
 
 	z  = y0 + divide (f, y0, g_bit_shift);
 	y0 = (z >> 2) + divide(f, z,  g_bit_shift);
@@ -244,7 +244,7 @@ long lsqrt(long f)
 		y0 = multiply(c, y0, g_bit_shift);
 	}
 	N /= 2;
-	return (N >= 0) ? (y0 << N) : (y0 >> -N); // correct for shift above 
+	return (N >= 0) ? (y0 << N) : (y0 >> -N); // correct for shift above
 }
 #endif
 ComplexL ComplexSqrtLong(long x, long y)
@@ -314,9 +314,9 @@ void SetupLogTable()
 {
 	unsigned long prev;
 
-	if (g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC)  // set up on-the-fly variables 
+	if (g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC)  // set up on-the-fly variables
 	{
-		if (g_log_palette_mode > LOGPALETTE_NONE)  // new log function 
+		if (g_log_palette_mode > LOGPALETTE_NONE)  // new log function
 		{
 			lf = (g_log_palette_mode > LOGPALETTE_STANDARD) ? g_log_palette_mode : 0;
 			if (lf >= (unsigned long)g_max_log_table_size)
@@ -325,11 +325,11 @@ void SetupLogTable()
 			}
 			mlf = (g_colors - (lf ? 2 : 1 ))/log(double(g_max_log_table_size - lf));
 		}
-		else if (g_log_palette_mode == LOGPALETTE_OLD)  // old log function 
+		else if (g_log_palette_mode == LOGPALETTE_OLD)  // old log function
 		{
 			mlf = (g_colors - 1)/log(double(g_max_log_table_size));
 		}
-		else if (g_log_palette_mode <= -2)  // sqrt function 
+		else if (g_log_palette_mode <= -2)  // sqrt function
 		{
 			lf = -g_log_palette_mode;
 			if (lf >= (unsigned long)g_max_log_table_size)
@@ -342,22 +342,22 @@ void SetupLogTable()
 
 	if (g_log_calculation)
 	{
-		return; // g_log_table not defined, bail out now 
+		return; // g_log_table not defined, bail out now
 	}
 
-	g_log_calculation = true;   // turn it on 
+	g_log_calculation = true;   // turn it on
 	for (prev = 0; prev <= (unsigned long)g_max_log_table_size; prev++)
 	{
 		g_log_table[prev] = BYTE(logtablecalc(long(prev)));
 	}
-	g_log_calculation = false;   // turn it off, again 
+	g_log_calculation = false;   // turn it off, again
 }
 
 long logtablecalc(long citer)
 {
 	long ret = 0;
 
-	if (g_log_palette_mode == LOGPALETTE_NONE && !g_ranges_length) // Oops, how did we get here? 
+	if (g_log_palette_mode == LOGPALETTE_NONE && !g_ranges_length) // Oops, how did we get here?
 	{
 		return citer;
 	}
@@ -366,7 +366,7 @@ long logtablecalc(long citer)
 		return g_log_table[std::min(citer, g_max_log_table_size)];
 	}
 
-	if (g_log_palette_mode > LOGPALETTE_NONE)  // new log function 
+	if (g_log_palette_mode > LOGPALETTE_NONE)  // new log function
 	{
 		if ((unsigned long)citer <= lf + 1)
 		{
@@ -381,11 +381,11 @@ long logtablecalc(long citer)
 			ret = long(mlf*log(double(citer - lf))) + 1;
 		}
 	}
-	else if (g_log_palette_mode == LOGPALETTE_OLD)  // old log function 
+	else if (g_log_palette_mode == LOGPALETTE_OLD)  // old log function
 	{
 		ret = (citer == 0) ? 1 : long(mlf*log(double(citer))) + 1;
 	}
-	else if (g_log_palette_mode <= -2)  // sqrt function 
+	else if (g_log_palette_mode <= -2)  // sqrt function
 	{
 		if ((unsigned long)citer <= lf)
 		{

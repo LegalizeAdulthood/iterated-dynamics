@@ -9,11 +9,11 @@
 #include "resume.h"
 #include "StopMessage.h"
 
-char *g_resume_info = 0;					// resume info if allocated 
-int g_resume_length = 0;					// length of resume info 
-bool g_resuming;							// true if resuming after interrupt 
+char *g_resume_info = 0;					// resume info if allocated
+int g_resume_length = 0;					// length of resume info
+bool g_resuming;							// true if resuming after interrupt
 
-static int s_resume_offset;					// offset in resume info gets 
+static int s_resume_offset;					// offset in resume info gets
 static int s_resume_info_length = 0;
 
 // Save/resume stuff:
@@ -93,7 +93,7 @@ int put_resume(int len, void const *source_ptr)
 }
 
 int alloc_resume(int alloclen, int version)
-{ // WARNING! if alloclen > 4096B, problems may occur with GIF save/restore 
+{ // WARNING! if alloclen > 4096B, problems may occur with GIF save/restore
 	end_resume();
 
 	s_resume_info_length = alloclen*alloclen;

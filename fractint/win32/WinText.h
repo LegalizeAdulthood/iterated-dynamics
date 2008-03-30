@@ -58,12 +58,12 @@ private:
 	int m_alt_f4_hit;
 	bool m_showing_cursor;
 
-	// Local copy of the "screen" characters and attributes 
+	// Local copy of the "screen" characters and attributes
 	char m_chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
 	char m_attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
-	int m_buffer_init;     // zero if 'screen' is uninitialized 
+	int m_buffer_init;     // zero if 'screen' is uninitialized
 
-	// font information 
+	// font information
 
 	HFONT m_font;
 	int m_char_font;
@@ -74,7 +74,7 @@ private:
 	int m_max_width;
 	int m_max_height;
 
-	// "cursor" variables (AKA the "caret" in Window-Speak) 
+	// "cursor" variables (AKA the "caret" in Window-Speak)
 	int m_cursor_x;
 	int m_cursor_y;
 	int m_cursor_type;
@@ -82,13 +82,13 @@ private:
 	HBITMAP m_bitmap[3];
 	short m_cursor_pattern[3][40];
 
-	char m_title_text[128];			// title-bar text 
+	char m_title_text[128];			// title-bar text
 
-	// a few Windows variables we need to remember globally 
+	// a few Windows variables we need to remember globally
 
-	HWND m_window;					// a Global copy of hWnd 
-	HWND m_parent_window;				// a Global copy of hWnd's Parent 
-	HINSTANCE m_instance;			// a global copy of hInstance 
+	HWND m_window;					// a Global copy of hWnd
+	HWND m_parent_window;				// a Global copy of hWnd's Parent
+	HINSTANCE m_instance;			// a global copy of hInstance
 };
 
 #endif

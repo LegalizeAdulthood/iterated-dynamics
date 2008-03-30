@@ -39,16 +39,16 @@
 #define timebx timeb
 #endif
 
-// g_fudge all values up by 2 << FUDGE_FACTOR{,2} 
+// g_fudge all values up by 2 << FUDGE_FACTOR{,2}
 enum
 {
 	FUDGE_FACTOR	= 29,
 	FUDGE_FACTOR2	= 24,
 };
 
-static int s_save_orbit[1500] = { 0 };	// array to save orbit values 
+static int s_save_orbit[1500] = { 0 };	// array to save orbit values
 
-// routines in this module      
+// routines in this module
 static void   adjust_to_limits(double expand);
 static void   smallest_add(double *);
 static int    ratio_bad(double, double);
@@ -84,11 +84,11 @@ void calculate_fractal_initialize_bail_out_limit()
 	{
 		g_rq_limit = g_potential_parameter[2];
 	}
-	else if (g_externs.BailOut()) // user input bailout 
+	else if (g_externs.BailOut()) // user input bailout
 	{
 		g_rq_limit = g_externs.BailOut();
 	}
-	else if (g_externs.Biomorph() != BIOMORPH_NONE) // biomorph benefits from larger bailout 
+	else if (g_externs.Biomorph() != BIOMORPH_NONE) // biomorph benefits from larger bailout
 	{
 		g_rq_limit = 100;
 	}
@@ -96,7 +96,7 @@ void calculate_fractal_initialize_bail_out_limit()
 	{
 		g_rq_limit = g_current_fractal_specific->orbit_bailout;
 	}
-	if (g_integer_fractal) // the bailout limit mustn't be too high here 
+	if (g_integer_fractal) // the bailout limit mustn't be too high here
 	{
 		if (g_rq_limit > 127.0)
 		{
@@ -120,16 +120,16 @@ static void ForceSinglePassForSynchronousOrbitNotMandelbrot()
 	}
 }
 
-// initialize a *pile* of stuff for fractal calculation 
+// initialize a *pile* of stuff for fractal calculation
 void calculate_fractal_initialize()
 {
 	int tries = 0;
 	g_color_iter = 0;
 	g_old_color_iter = 0;
 
-	// set up grid array compactly leaving space at end 
-	// space req for grid is 2(g_x_dots + g_y_dots)*sizeof(long or double) 
-	// space available in extraseg is 65536 Bytes 
+	// set up grid array compactly leaving space at end
+	// space req for grid is 2(g_x_dots + g_y_dots)*sizeof(long or double)
+	// space available in extraseg is 65536 Bytes
 	{
 		long xytemp = g_x_dots + g_y_dots;
 		if ((!g_user_float_flag && (xytemp*sizeof(long) > 32768))
@@ -166,7 +166,7 @@ void calculate_fractal_initialize()
 		}
 	}
 
-	// switch back to double when zooming out if using arbitrary precision 
+	// switch back to double when zooming out if using arbitrary precision
 	if (g_bf_math)
 	{
 		int gotprec = get_precision_bf(CURRENTREZ);
@@ -218,11 +218,11 @@ void calculate_fractal_initialize()
 		free_bf_vars();
 	}
 	g_float_flag = (g_bf_math || g_user_float_flag);
-	if (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE)  // on resume, ensure g_float_flag correct 
+	if (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE)  // on resume, ensure g_float_flag correct
 	{
 		g_float_flag = (g_current_fractal_specific->isinteger == 0);
 	}
-	// if floating pt only, set g_float_flag for TAB screen 
+	// if floating pt only, set g_float_flag for TAB screen
 	if (!g_current_fractal_specific->isinteger
 		&& fractal_type_none(g_current_fractal_specific->tofloat))
 	{
@@ -256,15 +256,15 @@ init_restart:
 	{
 		g_potential_flag = true;
 		g_distance_test = 0;
-		g_user_distance_test = 0;    // can't do distest too 
+		g_user_distance_test = 0;    // can't do distest too
 	}
 
 	if (g_distance_test)
 	{
-		g_float_flag = true;  // force floating point for dist est 
+		g_float_flag = true;  // force floating point for dist est
 	}
 
-	if (g_float_flag)  // ensure type matches g_float_flag 
+	if (g_float_flag)  // ensure type matches g_float_flag
 	{
 		if (g_current_fractal_specific->isinteger != 0
 			&& !fractal_type_none(g_current_fractal_specific->tofloat))
@@ -280,7 +280,7 @@ init_restart:
 			g_fractal_type = g_current_fractal_specific->tofloat;
 		}
 	}
-	// match Julibrot with integer mode of orbit 
+	// match Julibrot with integer mode of orbit
 	if (g_fractal_type == FRACTYPE_JULIBROT_FP)
 	{
 		if (g_fractal_specific[g_new_orbit_type].isinteger)
@@ -317,7 +317,7 @@ init_restart:
 	double ftemp;
 	if (g_current_fractal_specific->no_zoom_box_rotate())
 	{
-		// ensure min < max and unrotated rectangle 
+		// ensure min < max and unrotated rectangle
 		if (g_escape_time_state.m_grid_fp.x_min() > g_escape_time_state.m_grid_fp.x_max())
 		{
 			ftemp = g_escape_time_state.m_grid_fp.x_max();
@@ -334,43 +334,43 @@ init_restart:
 		g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
 	}
 
-	// set up g_bit_shift for integer math 
-	g_bit_shift = FUDGE_FACTOR2; // by default, the smaller shift 
-	if (g_integer_fractal > 1)  // use specific override from table 
+	// set up g_bit_shift for integer math
+	g_bit_shift = FUDGE_FACTOR2; // by default, the smaller shift
+	if (g_integer_fractal > 1)  // use specific override from table
 	{
 		g_bit_shift = g_integer_fractal;
 	}
-	if (g_integer_fractal == 0)  // float? 
+	if (g_integer_fractal == 0)  // float?
 	{
 		int i = g_current_fractal_specific->tofloat;
-		if (!fractal_type_none(i)) // -> int? 
+		if (!fractal_type_none(i)) // -> int?
 		{
-			if (g_fractal_specific[i].isinteger > 1) // specific shift? 
+			if (g_fractal_specific[i].isinteger > 1) // specific shift?
 			{
 				g_bit_shift = g_fractal_specific[i].isinteger;
 			}
 		}
 		else
 		{
-			g_bit_shift = 16;  // to allow larger corners 
+			g_bit_shift = 16;  // to allow larger corners
 		}
 	}
 
-	// We want this code if we're using the assembler calculate_mandelbrot_l 
-	if (g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_JULIA)  // adust shift bits if.. 
+	// We want this code if we're using the assembler calculate_mandelbrot_l
+	if (g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_JULIA)  // adust shift bits if..
 	{
-		if (!g_potential_flag							// not using potential 
-			&& (g_parameters[0] > -2.0 && g_parameters[0] < 2.0)  // parameters not too large 
+		if (!g_potential_flag							// not using potential
+			&& (g_parameters[0] > -2.0 && g_parameters[0] < 2.0)  // parameters not too large
 			&& (g_parameters[1] > -2.0 && g_parameters[1] < 2.0)
-			&& !g_invert                                // and not inverting 
-			&& g_externs.Biomorph() == BIOMORPH_NONE	// and not biomorphing 
-			&& g_rq_limit <= 4.0						// and bailout not too high 
-			&& (g_externs.Outside() > COLORMODE_REAL || g_externs.Outside() < COLORMODE_INVERSE_TANGENT)         // and no funny outside stuff 
-			&& g_debug_mode != DEBUGMODE_FORCE_BITSHIFT	// and not debugging 
-			&& g_proximity <= 2.0                       // and g_proximity not too large 
-			&& g_externs.BailOutTest() == BAILOUT_MODULUS) // and bailout test = mod 
+			&& !g_invert                                // and not inverting
+			&& g_externs.Biomorph() == BIOMORPH_NONE	// and not biomorphing
+			&& g_rq_limit <= 4.0						// and bailout not too high
+			&& (g_externs.Outside() > COLORMODE_REAL || g_externs.Outside() < COLORMODE_INVERSE_TANGENT)         // and no funny outside stuff
+			&& g_debug_mode != DEBUGMODE_FORCE_BITSHIFT	// and not debugging
+			&& g_proximity <= 2.0                       // and g_proximity not too large
+			&& g_externs.BailOutTest() == BAILOUT_MODULUS) // and bailout test = mod
 		{
-			g_bit_shift = FUDGE_FACTOR;					// use the larger g_bit_shift 
+			g_bit_shift = FUDGE_FACTOR;					// use the larger g_bit_shift
 		}
 	}
 
@@ -379,24 +379,24 @@ init_restart:
 	g_attractor_radius_l = g_externs.Fudge()/32768L;
 	g_attractor_radius_fp = 1.0/32768L;
 
-	// now setup arrays of real coordinates corresponding to each pixel 
+	// now setup arrays of real coordinates corresponding to each pixel
 	if (g_bf_math)
 	{
-		adjust_to_limits_bf(1.0); // make sure all corners in valid range 
+		adjust_to_limits_bf(1.0); // make sure all corners in valid range
 	}
 	else
 	{
-		adjust_to_limits(1.0); // make sure all corners in valid range 
-		g_escape_time_state.m_grid_fp.delta_x() = (LDBL)(g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())/(LDBL)g_dx_size; // calculate stepsizes 
+		adjust_to_limits(1.0); // make sure all corners in valid range
+		g_escape_time_state.m_grid_fp.delta_x() = (LDBL)(g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())/(LDBL)g_dx_size; // calculate stepsizes
 		g_escape_time_state.m_grid_fp.delta_y() = (LDBL)(g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd())/(LDBL)g_dy_size;
 		g_escape_time_state.m_grid_fp.delta_x2() = (LDBL)(g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min())/(LDBL)g_dy_size;
 		g_escape_time_state.m_grid_fp.delta_y2() = (LDBL)(g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min())/(LDBL)g_dx_size;
 		g_escape_time_state.fill_grid_fp();
 	}
 
-	if (!fractal_type_ant_or_cellular(g_fractal_type))  // DoubleToFudge fails w >10 digits in double 
+	if (!fractal_type_ant_or_cellular(g_fractal_type))  // DoubleToFudge fails w >10 digits in double
 	{
-		g_c_real = DoubleToFudge(g_parameters[0]); // integer equivs for it all 
+		g_c_real = DoubleToFudge(g_parameters[0]); // integer equivs for it all
 		g_c_imag = DoubleToFudge(g_parameters[1]);
 		g_escape_time_state.m_grid_l.x_min() = DoubleToFudge(g_escape_time_state.m_grid_fp.x_min());
 		g_escape_time_state.m_grid_l.x_max() = DoubleToFudge(g_escape_time_state.m_grid_fp.x_max());
@@ -410,10 +410,10 @@ init_restart:
 		g_escape_time_state.m_grid_l.delta_y2() = DoubleToFudge(g_escape_time_state.m_grid_fp.delta_y2());
 	}
 
-	// skip this if plasma to avoid 3d problems 
-	// skip if g_bf_math to avoid extraseg conflict with g_x0 arrays 
-	// skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance 
-	// is set.  These types don't auto switch between float and integer math 
+	// skip this if plasma to avoid 3d problems
+	// skip if g_bf_math to avoid extraseg conflict with g_x0 arrays
+	// skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance
+	// is set.  These types don't auto switch between float and integer math
 	if (g_fractal_type != FRACTYPE_PLASMA
 		&& g_bf_math == 0
 		&& !fractal_type_ifs(g_fractal_type)
@@ -429,31 +429,31 @@ init_restart:
 				goto expand_retry;
 			}
 
-			g_escape_time_state.fill_grid_l();   // fill up the x, y grids 
-			// past max res?  check corners within 10% of expected 
+			g_escape_time_state.fill_grid_l();   // fill up the x, y grids
+			// past max res?  check corners within 10% of expected
 			if (   ratio_bad(double(g_escape_time_state.m_grid_l.x0(g_x_dots - 1)) - g_escape_time_state.m_grid_l.x_min(), double(g_escape_time_state.m_grid_l.x_max()) - g_escape_time_state.m_grid_l.x_3rd())
 				|| ratio_bad(double(g_escape_time_state.m_grid_l.y0(g_y_dots - 1)) - g_escape_time_state.m_grid_l.y_max(), double(g_escape_time_state.m_grid_l.y_3rd()) - g_escape_time_state.m_grid_l.y_max())
 				|| ratio_bad(double(g_escape_time_state.m_grid_l.x1((g_y_dots/2) - 1)), (double(g_escape_time_state.m_grid_l.x_3rd()) - g_escape_time_state.m_grid_l.x_min())/2)
 				|| ratio_bad(double(g_escape_time_state.m_grid_l.y1((g_x_dots/2) - 1)), (double(g_escape_time_state.m_grid_l.y_min()) - g_escape_time_state.m_grid_l.y_3rd())/2))
 			{
 expand_retry:
-				if (g_integer_fractal          // integer fractal type? 
+				if (g_integer_fractal          // integer fractal type?
 					&& !fractal_type_none(g_current_fractal_specific->tofloat))
 				{
-					g_float_flag = true;           // switch to floating pt 
+					g_float_flag = true;           // switch to floating pt
 				}
 				else
 				{
-					adjust_to_limits(2.0);   // double the size 
+					adjust_to_limits(2.0);   // double the size
 				}
-				if (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE)       // due to restore of an old file? 
+				if (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE)       // due to restore of an old file?
 				{
-					g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);         // whatever, it isn't resumable 
+					g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);         // whatever, it isn't resumable
 				}
 				goto init_restart;
-			} // end if ratio bad 
+			} // end if ratio bad
 
-			// re-set corners to match reality 
+			// re-set corners to match reality
 			g_escape_time_state.m_grid_l.x_max() = g_escape_time_state.m_grid_l.x0(g_x_dots-1) + g_escape_time_state.m_grid_l.x1(g_y_dots-1);
 			g_escape_time_state.m_grid_l.y_min() = g_escape_time_state.m_grid_l.y0(g_y_dots-1) + g_escape_time_state.m_grid_l.y1(g_x_dots-1);
 			g_escape_time_state.m_grid_l.x_3rd() = g_escape_time_state.m_grid_l.x_min() + g_escape_time_state.m_grid_l.x1(g_y_dots-1);
@@ -464,12 +464,12 @@ expand_retry:
 			g_escape_time_state.m_grid_fp.y_min() = FudgeToDouble(g_escape_time_state.m_grid_l.y_min());
 			g_escape_time_state.m_grid_fp.y_max() = FudgeToDouble(g_escape_time_state.m_grid_l.y_max());
 			g_escape_time_state.m_grid_fp.y_3rd() = FudgeToDouble(g_escape_time_state.m_grid_l.y_3rd());
-		} // end if (g_integer_fractal && !g_invert && g_escape_time_state.m_use_grid) 
+		} // end if (g_integer_fractal && !g_invert && g_escape_time_state.m_use_grid)
 		else
 		{
-			// set up dx0 and dy0 analogs of g_x0_l and g_y0_l 
-			// put fractal parameters in doubles 
-			double dx0 = g_escape_time_state.m_grid_fp.x_min();                // fill up the x, y grids 
+			// set up dx0 and dy0 analogs of g_x0_l and g_y0_l
+			// put fractal parameters in doubles
+			double dx0 = g_escape_time_state.m_grid_fp.x_min();                // fill up the x, y grids
 			double dy0 = g_escape_time_state.m_grid_fp.y_max();
 			double dx1 = 0;
 			double dy1 = 0;
@@ -486,7 +486,7 @@ expand_retry:
 				dy0 = double(dy0 - double(g_escape_time_state.m_grid_fp.delta_y()));
 				dx1 = double(dx1 + double(g_escape_time_state.m_grid_fp.delta_x2()));
 			}
-			if (g_bf_math == 0) // redundant test, leave for now 
+			if (g_bf_math == 0) // redundant test, leave for now
 			{
 				// Following is the old logic for detecting failure of double
 				// precision. It has two advantages: it is independent of the
@@ -494,7 +494,7 @@ expand_retry:
 				// (allows depper zooms at lower resolution. However it fails
 				// for rotations of exactly 90 degrees, so we added a safety net
 				// by using the magnification.
-				if (++tries < 2) // for safety 
+				if (++tries < 2) // for safety
 				{
 					if (tries > 1)
 					{
@@ -540,23 +540,23 @@ expand_retry:
 							goto init_restart;
 						}
 						goto expand_retry;
-					} // end if ratio_bad etc. 
-				} // end if tries < 2 
-			} // end if g_bf_math == 0 
+					} // end if ratio_bad etc.
+				} // end if tries < 2
+			} // end if g_bf_math == 0
 
-			// if long double available, this is more accurate 
-			g_escape_time_state.fill_grid_fp();       // fill up the x, y grids 
+			// if long double available, this is more accurate
+			g_escape_time_state.fill_grid_fp();       // fill up the x, y grids
 
-			// re-set corners to match reality 
+			// re-set corners to match reality
 			g_escape_time_state.m_grid_fp.x_max() = double(g_escape_time_state.m_grid_fp.x_min() + (g_x_dots-1)*g_escape_time_state.m_grid_fp.delta_x() + (g_y_dots-1)*g_escape_time_state.m_grid_fp.delta_x2());
 			g_escape_time_state.m_grid_fp.y_min() = double(g_escape_time_state.m_grid_fp.y_max() - (g_y_dots-1)*g_escape_time_state.m_grid_fp.delta_y() - (g_x_dots-1)*g_escape_time_state.m_grid_fp.delta_y2());
 			g_escape_time_state.m_grid_fp.x_3rd() = double(g_escape_time_state.m_grid_fp.x_min() + (g_y_dots-1)*g_escape_time_state.m_grid_fp.delta_x2());
 			g_escape_time_state.m_grid_fp.y_3rd() = double(g_escape_time_state.m_grid_fp.y_max() - (g_y_dots-1)*g_escape_time_state.m_grid_fp.delta_y());
-		} // end else 
-	} // end if not plasma 
+		} // end else
+	} // end if not plasma
 
-	// for periodicity close-enough, and for unity: 
-	// std::min(std::max(g_delta_x, g_delta_x2), std::max(g_delta_y, g_delta_y2)      
+	// for periodicity close-enough, and for unity:
+	// std::min(std::max(g_delta_x, g_delta_x2), std::max(g_delta_y, g_delta_y2)
 	g_delta_min_fp = fabs(double(g_escape_time_state.m_grid_fp.delta_x()));
 	if (fabs(double(g_escape_time_state.m_grid_fp.delta_x2())) > g_delta_min_fp)
 	{
@@ -575,8 +575,8 @@ expand_retry:
 	}
 	g_delta_min = DoubleToFudge(g_delta_min_fp);
 
-	// calculate factors which plot real values to screen co-ords 
-	// calcfrac.c plot_orbit routines have comments about this    
+	// calculate factors which plot real values to screen co-ords
+	// calcfrac.c plot_orbit routines have comments about this
 	ftemp = double(-g_escape_time_state.m_grid_fp.delta_y2()*g_escape_time_state.m_grid_fp.delta_x2()*g_dx_size*g_dy_size - (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())*(g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_max()));
 	if (ftemp != 0.0)
 	{
@@ -593,8 +593,8 @@ expand_retry:
 
 void adjust_corner_bf(float aspect_drift)
 {
-	// make edges very near vert/horiz exact, to ditch rounding errs and 
-	// to avoid problems when delta per axis makes too large a ratio     
+	// make edges very near vert/horiz exact, to ditch rounding errs and
+	// to avoid problems when delta per axis makes too large a ratio
 	double ftemp;
 	double Xmagfactor;
 	double Rotation;
@@ -608,8 +608,8 @@ void adjust_corner_bf(float aspect_drift)
 	bftemp2 = alloc_stack(g_rbf_length + 2);
 	btmp1 =  alloc_stack(g_rbf_length + 2);
 
-	// While we're at it, let's adjust the Xmagfactor as well 
-	// use bftemp, bftemp2 as bfXctr, bfYctr 
+	// While we're at it, let's adjust the Xmagfactor as well
+	// use bftemp, bftemp2 as bfXctr, bfYctr
 	convert_center_mag_bf(bftemp, bftemp2, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	ftemp = fabs(Xmagfactor);
 	if (ftemp != 1 && ftemp >= (1-aspect_drift) && ftemp <= (1 + aspect_drift))
@@ -618,55 +618,55 @@ void adjust_corner_bf(float aspect_drift)
 		convert_corners_bf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
 	}
 
-	// ftemp = fabs(x3rd-xmin); 
+	// ftemp = fabs(x3rd-xmin);
 	abs_a_bf(sub_bf(bftemp, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min()));
 
-	// ftemp2 = fabs(xmax-x3rd); 
+	// ftemp2 = fabs(xmax-x3rd);
 	abs_a_bf(sub_bf(bftemp2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd()));
 
-	// if ((ftemp = fabs(x3rd-xmin)) < (ftemp2 = fabs(xmax-x3rd))) 
+	// if ((ftemp = fabs(x3rd-xmin)) < (ftemp2 = fabs(xmax-x3rd)))
 	if (cmp_bf(bftemp, bftemp2) < 0)
 	{
-		// if (ftemp*10000 < ftemp2 && y3rd != ymax) 
+		// if (ftemp*10000 < ftemp2 && y3rd != ymax)
 		if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
 			&& cmp_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_max()) != 0)
 		{
-			// x3rd = xmin; 
+			// x3rd = xmin;
 			copy_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
 		}
 	}
 
-	// else if (ftemp2*10000 < ftemp && y3rd != ymin) 
+	// else if (ftemp2*10000 < ftemp && y3rd != ymin)
 	if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
 		&& cmp_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min()) != 0)
 	{
-		// x3rd = xmax; 
+		// x3rd = xmax;
 		copy_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_max());
 	}
 
-	// ftemp = fabs(y3rd-ymin); 
+	// ftemp = fabs(y3rd-ymin);
 	abs_a_bf(sub_bf(bftemp, g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min()));
 
-	// ftemp2 = fabs(ymax-y3rd); 
+	// ftemp2 = fabs(ymax-y3rd);
 	abs_a_bf(sub_bf(bftemp2, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd()));
 
-	// if ((ftemp = fabs(y3rd-ymin)) < (ftemp2 = fabs(ymax-y3rd))) 
+	// if ((ftemp = fabs(y3rd-ymin)) < (ftemp2 = fabs(ymax-y3rd)))
 	if (cmp_bf(bftemp, bftemp2) < 0)
 	{
-		// if (ftemp*10000 < ftemp2 && x3rd != xmax) 
+		// if (ftemp*10000 < ftemp2 && x3rd != xmax)
 		if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
 			&& cmp_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_max()) != 0)
 		{
-			// y3rd = ymin; 
+			// y3rd = ymin;
 			copy_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min());
 		}
 	}
 
-	// else if (ftemp2*10000 < ftemp && x3rd != xmin) 
+	// else if (ftemp2*10000 < ftemp && x3rd != xmin)
 	if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
 		&& cmp_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min()) != 0)
 	{
-		// y3rd = ymax; 
+		// y3rd = ymax;
 		copy_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_max());
 	}
 
@@ -681,8 +681,8 @@ void adjust_corner_bf()
 
 static void adjust_corner(float aspect_drift)
 {
-	// make edges very near vert/horiz exact, to ditch rounding errs and 
-	// to avoid problems when delta per axis makes too large a ratio     
+	// make edges very near vert/horiz exact, to ditch rounding errs and
+	// to avoid problems when delta per axis makes too large a ratio
 	double Xctr;
 	double Yctr;
 	double Xmagfactor;
@@ -693,7 +693,7 @@ static void adjust_corner(float aspect_drift)
 	double ftemp;
 	if (!g_integer_fractal)
 	{
-		// While we're at it, let's adjust the Xmagfactor as well 
+		// While we're at it, let's adjust the Xmagfactor as well
 		convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 		ftemp = fabs(Xmagfactor);
 		if (ftemp != 1 && ftemp >= (1-aspect_drift) && ftemp <= (1 + aspect_drift))
@@ -780,129 +780,129 @@ static void adjust_to_limits_bf(double expand)
 	add_bf(bcenterx, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_max());
 	half_a_bf(bcenterx);
 
-	// centery = (ymin + ymax)/2; 
+	// centery = (ymin + ymax)/2;
 	add_bf(bcentery, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 	half_a_bf(bcentery);
 
-	// if (xmin == centerx) { 
-	if (cmp_bf(g_escape_time_state.m_grid_bf.x_min(), bcenterx) == 0)  // ohoh, infinitely thin, fix it 
+	// if (xmin == centerx) {
+	if (cmp_bf(g_escape_time_state.m_grid_bf.x_min(), bcenterx) == 0)  // ohoh, infinitely thin, fix it
 	{
 		smallest_add_bf(g_escape_time_state.m_grid_bf.x_max());
-		// bfxmin -= bfxmax-centerx; 
+		// bfxmin -= bfxmax-centerx;
 		sub_a_bf(g_escape_time_state.m_grid_bf.x_min(), sub_bf(btmp1, g_escape_time_state.m_grid_bf.x_max(), bcenterx));
 	}
 
-	// if (bfymin == centery) 
+	// if (bfymin == centery)
 	if (cmp_bf(g_escape_time_state.m_grid_bf.y_min(), bcentery) == 0)
 	{
 		smallest_add_bf(g_escape_time_state.m_grid_bf.y_max());
-		// bfymin -= bfymax-centery; 
+		// bfymin -= bfymax-centery;
 		sub_a_bf(g_escape_time_state.m_grid_bf.y_min(), sub_bf(btmp1, g_escape_time_state.m_grid_bf.y_max(), bcentery));
 	}
 
-	// if (bfx3rd == centerx) 
+	// if (bfx3rd == centerx)
 	if (cmp_bf(g_escape_time_state.m_grid_bf.x_3rd(), bcenterx) == 0)
 	{
 		smallest_add_bf(g_escape_time_state.m_grid_bf.x_3rd());
 	}
 
-	// if (bfy3rd == centery) 
+	// if (bfy3rd == centery)
 	if (cmp_bf(g_escape_time_state.m_grid_bf.y_3rd(), bcentery) == 0)
 	{
 		smallest_add_bf(g_escape_time_state.m_grid_bf.y_3rd());
 	}
 
-	// setup array for easier manipulation 
-	// cornerx[0] = xmin; 
+	// setup array for easier manipulation
+	// cornerx[0] = xmin;
 	copy_bf(bcornerx[0], g_escape_time_state.m_grid_bf.x_min());
 
-	// cornerx[1] = xmax; 
+	// cornerx[1] = xmax;
 	copy_bf(bcornerx[1], g_escape_time_state.m_grid_bf.x_max());
 
-	// cornerx[2] = x3rd; 
+	// cornerx[2] = x3rd;
 	copy_bf(bcornerx[2], g_escape_time_state.m_grid_bf.x_3rd());
 
-	// cornerx[3] = xmin + (xmax-x3rd); 
+	// cornerx[3] = xmin + (xmax-x3rd);
 	sub_bf(bcornerx[3], g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
 	add_a_bf(bcornerx[3], g_escape_time_state.m_grid_bf.x_min());
 
-	// cornery[0] = ymax; 
+	// cornery[0] = ymax;
 	copy_bf(bcornery[0], g_escape_time_state.m_grid_bf.y_max());
 
-	// cornery[1] = ymin; 
+	// cornery[1] = ymin;
 	copy_bf(bcornery[1], g_escape_time_state.m_grid_bf.y_min());
 
-	// cornery[2] = y3rd; 
+	// cornery[2] = y3rd;
 	copy_bf(bcornery[2], g_escape_time_state.m_grid_bf.y_3rd());
 
-	// cornery[3] = ymin + (ymax-y3rd); 
+	// cornery[3] = ymin + (ymax-y3rd);
 	sub_bf(bcornery[3], g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 	add_a_bf(bcornery[3], g_escape_time_state.m_grid_bf.y_min());
 
-	// if caller wants image size adjusted, do that first 
+	// if caller wants image size adjusted, do that first
 	if (expand != 1.0)
 	{
 		for (i = 0; i < 4; ++i)
 		{
-			// cornerx[i] = centerx + (cornerx[i]-centerx)*expand; 
+			// cornerx[i] = centerx + (cornerx[i]-centerx)*expand;
 			sub_bf(btmp1, bcornerx[i], bcenterx);
 			mult_bf(bcornerx[i], btmp1, bexpand);
 			add_a_bf(bcornerx[i], bcenterx);
 
-			// cornery[i] = centery + (cornery[i]-centery)*expand; 
+			// cornery[i] = centery + (cornery[i]-centery)*expand;
 			sub_bf(btmp1, bcornery[i], bcentery);
 			mult_bf(bcornery[i], btmp1, bexpand);
 			add_a_bf(bcornery[i], bcentery);
 		}
 	}
 
-	// get min/max x/y values 
-	// lowx = highx = cornerx[0]; 
+	// get min/max x/y values
+	// lowx = highx = cornerx[0];
 	copy_bf(blowx, bcornerx[0]);
 	copy_bf(bhighx, bcornerx[0]);
 
-	// lowy = highy = cornery[0]; 
+	// lowy = highy = cornery[0];
 	copy_bf(blowy, bcornery[0]);
 	copy_bf(bhighy, bcornery[0]);
 
 	for (i = 1; i < 4; ++i)
 	{
-		// if (cornerx[i] < lowx)               lowx  = cornerx[i]; 
+		// if (cornerx[i] < lowx)               lowx  = cornerx[i];
 		if (cmp_bf(bcornerx[i], blowx) < 0)
 		{
 			copy_bf(blowx, bcornerx[i]);
 		}
 
-		// if (cornerx[i] > highx)              highx = cornerx[i]; 
+		// if (cornerx[i] > highx)              highx = cornerx[i];
 		if (cmp_bf(bcornerx[i], bhighx) > 0)
 		{
 			copy_bf(bhighx, bcornerx[i]);
 		}
 
-		// if (cornery[i] < lowy)               lowy  = cornery[i]; 
+		// if (cornery[i] < lowy)               lowy  = cornery[i];
 		if (cmp_bf(bcornery[i], blowy) < 0)
 		{
 			copy_bf(blowy, bcornery[i]);
 		}
 
-		// if (cornery[i] > highy)              highy = cornery[i]; 
+		// if (cornery[i] > highy)              highy = cornery[i];
 		if (cmp_bf(bcornery[i], bhighy) > 0)
 		{
 			copy_bf(bhighy, bcornery[i]);
 		}
 	}
 
-	// if image is too large, downsize it maintaining center 
-	// ftemp = highx-lowx; 
+	// if image is too large, downsize it maintaining center
+	// ftemp = highx-lowx;
 	sub_bf(bftemp, bhighx, blowx);
 
-	// if (highy-lowy > ftemp) ftemp = highy-lowy; 
+	// if (highy-lowy > ftemp) ftemp = highy-lowy;
 	if (cmp_bf(sub_bf(btmp1, bhighy, blowy), bftemp) > 0)
 	{
 		copy_bf(bftemp, btmp1);
 	}
 
-	// if image is too large, downsize it maintaining center 
+	// if image is too large, downsize it maintaining center
 
 	floattobf(btmp1, limit*2.0);
 	copy_bf(btmp2, bftemp);
@@ -912,20 +912,20 @@ static void adjust_to_limits_bf(double expand)
 	{
 		for (i = 0; i < 4; ++i)
 		{
-			// cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp; 
+			// cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp;
 			sub_bf(btmp1, bcornerx[i], bcenterx);
 			mult_bf(bcornerx[i], btmp1, bftemp);
 			add_a_bf(bcornerx[i], bcenterx);
 
-			// cornery[i] = centery + (cornery[i]-centery)*ftemp; 
+			// cornery[i] = centery + (cornery[i]-centery)*ftemp;
 			sub_bf(btmp1, bcornery[i], bcentery);
 			mult_bf(bcornery[i], btmp1, bftemp);
 			add_a_bf(bcornery[i], bcentery);
 		}
 	}
 
-	// if any corner has x or y past limit, move the image 
-	// adjx = adjy = 0; 
+	// if any corner has x or y past limit, move the image
+	// adjx = adjy = 0;
 	clear_bf(badjx);
 	clear_bf(badjy);
 
@@ -972,20 +972,20 @@ static void adjust_to_limits_bf(double expand)
 		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 	}
 
-	// xmin = cornerx[0] - adjx; 
+	// xmin = cornerx[0] - adjx;
 	sub_bf(g_escape_time_state.m_grid_bf.x_min(), bcornerx[0], badjx);
-	// xmax = cornerx[1] - adjx; 
+	// xmax = cornerx[1] - adjx;
 	sub_bf(g_escape_time_state.m_grid_bf.x_max(), bcornerx[1], badjx);
-	// x3rd = cornerx[2] - adjx; 
+	// x3rd = cornerx[2] - adjx;
 	sub_bf(g_escape_time_state.m_grid_bf.x_3rd(), bcornerx[2], badjx);
-	// ymax = cornery[0] - adjy; 
+	// ymax = cornery[0] - adjy;
 	sub_bf(g_escape_time_state.m_grid_bf.y_max(), bcornery[0], badjy);
-	// ymin = cornery[1] - adjy; 
+	// ymin = cornery[1] - adjy;
 	sub_bf(g_escape_time_state.m_grid_bf.y_min(), bcornery[1], badjy);
-	// y3rd = cornery[2] - adjy; 
+	// y3rd = cornery[2] - adjy;
 	sub_bf(g_escape_time_state.m_grid_bf.y_3rd(), bcornery[2], badjy);
 
-	adjust_corner_bf(); // make 3rd corner exact if very near other co-ords 
+	adjust_corner_bf(); // make 3rd corner exact if very near other co-ords
 	restore_stack(saved);
 }
 
@@ -1023,7 +1023,7 @@ static void adjust_to_limits(double expand)
 	centerx = g_escape_time_state.m_grid_fp.x_center();
 	centery = g_escape_time_state.m_grid_fp.y_center();
 
-	if (g_escape_time_state.m_grid_fp.x_min() == centerx)  // ohoh, infinitely thin, fix it 
+	if (g_escape_time_state.m_grid_fp.x_min() == centerx)  // ohoh, infinitely thin, fix it
 	{
 		smallest_add(&g_escape_time_state.m_grid_fp.x_max());
 		g_escape_time_state.m_grid_fp.x_min() -= g_escape_time_state.m_grid_fp.x_max()-centerx;
@@ -1045,7 +1045,7 @@ static void adjust_to_limits(double expand)
 		smallest_add(&g_escape_time_state.m_grid_fp.y_3rd());
 	}
 
-	// setup array for easier manipulation 
+	// setup array for easier manipulation
 	cornerx[0] = g_escape_time_state.m_grid_fp.x_min();
 	cornerx[1] = g_escape_time_state.m_grid_fp.x_max();
 	cornerx[2] = g_escape_time_state.m_grid_fp.x_3rd();
@@ -1056,7 +1056,7 @@ static void adjust_to_limits(double expand)
 	cornery[2] = g_escape_time_state.m_grid_fp.y_3rd();
 	cornery[3] = g_escape_time_state.m_grid_fp.y_min() + (g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_3rd());
 
-	// if caller wants image size adjusted, do that first 
+	// if caller wants image size adjusted, do that first
 	if (expand != 1.0)
 	{
 		for (i = 0; i < 4; ++i)
@@ -1065,7 +1065,7 @@ static void adjust_to_limits(double expand)
 			cornery[i] = centery + (cornery[i]-centery)*expand;
 		}
 	}
-	// get min/max x/y values 
+	// get min/max x/y values
 	lowx = cornerx[0];
 	highx = cornerx[0];
 	lowy = cornery[0];
@@ -1091,7 +1091,7 @@ static void adjust_to_limits(double expand)
 		}
 	}
 
-	// if image is too large, downsize it maintaining center 
+	// if image is too large, downsize it maintaining center
 	ftemp = highx-lowx;
 
 	if (highy-lowy > ftemp)
@@ -1099,7 +1099,7 @@ static void adjust_to_limits(double expand)
 		ftemp = highy-lowy;
 	}
 
-	// if image is too large, downsize it maintaining center 
+	// if image is too large, downsize it maintaining center
 	ftemp = limit*2/ftemp;
 	if (ftemp < 1.0)
 	{
@@ -1110,7 +1110,7 @@ static void adjust_to_limits(double expand)
 		}
 	}
 
-	// if any corner has x or y past limit, move the image 
+	// if any corner has x or y past limit, move the image
 	adjx = 0;
 	adjy = 0;
 
@@ -1160,7 +1160,7 @@ static void adjust_to_limits(double expand)
 	g_escape_time_state.m_grid_fp.y_min() = cornery[1] - adjy;
 	g_escape_time_state.m_grid_fp.y_3rd() = cornery[2] - adjy;
 
-	adjust_corner(); // make 3rd corner exact if very near other co-ords 
+	adjust_corner(); // make 3rd corner exact if very near other co-ords
 }
 
 static void smallest_add(double *num)
@@ -1226,38 +1226,38 @@ static int ratio_bad(double actual, double desired)
 //						/((-g_delta_y2_fp)*W*g_delta_x2_fp*D-Ys*Xs)
 //
 
-// sleep N*a tenth of a millisecond 
+// sleep N*a tenth of a millisecond
 static void sleep_ms_old(long ms)
 {
 	static long scalems = 0L;
 	struct timebx t1, t2;
-	int const SLEEPINIT = 250; // milliseconds for calibration 
+	int const SLEEPINIT = 250; // milliseconds for calibration
 	bool save_tab_display_enabled = g_tab_display_enabled;
 	HelpModeSaver saved_help(-1);
 	g_tab_display_enabled = false;
-	if (scalems == 0L) // calibrate 
+	if (scalems == 0L) // calibrate
 	{
 		// selects a value of scalems that makes the units
 		// 10000 per sec independent of CPU speed
 		int i;
 		int elapsed;
 		scalems = 1L;
-		if (driver_key_pressed()) // check at start, hope to get start of timeslice 
+		if (driver_key_pressed()) // check at start, hope to get start of timeslice
 		{
 			goto sleepexit;
 		}
-		// calibrate, assume slow computer first 
+		// calibrate, assume slow computer first
 		show_temp_message("Calibrating timer");
 		do
 		{
 			scalems *= 2;
 			ftimex(&t2);
-			do  // wait for the start of a new tick 
+			do  // wait for the start of a new tick
 			{
 				ftimex(&t1);
 			}
 			while (t2.time == t1.time && t2.millitm == t1.millitm);
-			sleep_ms_old(10L*SLEEPINIT); // about 1/4 sec 
+			sleep_ms_old(10L*SLEEPINIT); // about 1/4 sec
 			ftimex(&t2);
 			if (driver_key_pressed())
 			{
@@ -1268,8 +1268,8 @@ static void sleep_ms_old(long ms)
 			elapsed = int(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
 		}
 		while (elapsed < SLEEPINIT);
-		// once more to see if faster (eg multi-tasking) 
-		do  // wait for the start of a new tick 
+		// once more to see if faster (eg multi-tasking)
+		do  // wait for the start of a new tick
 		{
 			ftimex(&t1);
 		}
@@ -1284,7 +1284,7 @@ static void sleep_ms_old(long ms)
 		scalems = long(float(SLEEPINIT)/float(elapsed)*scalems);
 		clear_temp_message();
 	}
-	if (ms > 10L*SLEEPINIT)  // using ftime is probably more accurate 
+	if (ms > 10L*SLEEPINIT)  // using ftime is probably more accurate
 	{
 		ms /= 10;
 		ftimex(&t1);
@@ -1361,7 +1361,7 @@ void wait_until(int index, uclock_t wait_time)
 				break;
 			}
 		}
-		next_time[index] = now + wait_time*100; // wait until this time next call 
+		next_time[index] = now + wait_time*100; // wait until this time next call
 	}
 }
 
@@ -1398,7 +1398,7 @@ static void plot_orbit_d(double dx, double dy, int color)
 	{
 		ValueSaver<int> save_sx_offset(g_screen_x_offset, 0);
 		ValueSaver<int> save_sy_offset(g_screen_y_offset, 0);
-		// save orbit value 
+		// save orbit value
 		if (color == -1)
 		{
 			*(s_save_orbit + g_orbit_index++) = i;
@@ -1413,7 +1413,7 @@ static void plot_orbit_d(double dx, double dy, int color)
 		}
 	}
 	g_sound_state.orbit(i, j);
-	// placing sleep_ms here delays each dot 
+	// placing sleep_ms here delays each dot
 }
 
 void plot_orbit_i(long ix, long iy, int color)
@@ -1446,25 +1446,25 @@ void orbit_scrub()
 
 void get_julia_attractor(double real, double imag)
 {
-	if (g_num_attractors == 0 && g_finite_attractor == FINITE_ATTRACTOR_NO) // not magnet & not requested 
+	if (g_num_attractors == 0 && g_finite_attractor == FINITE_ATTRACTOR_NO) // not magnet & not requested
 	{
 		return;
 	}
 
-	if (g_num_attractors >= MAX_NUM_ATTRACTORS)     // space for more attractors ?  
+	if (g_num_attractors >= MAX_NUM_ATTRACTORS)     // space for more attractors ?
 	{
-		return;                  // Bad luck - no room left !    
+		return;                  // Bad luck - no room left !
 	}
 
 	int save_periodicity_check = g_periodicity_check;
 	ValueSaver<long> save_max_iteration(g_max_iteration, g_max_iteration);
 	g_periodicity_check = 0;
-	g_old_z.real(real);                    // prepare for f.p orbit calc 
+	g_old_z.real(real);                    // prepare for f.p orbit calc
 	g_old_z.imag(imag);
 	g_temp_sqr_x = sqr(g_old_z.real());
 	g_temp_sqr_y = sqr(g_old_z.imag());
 
-	g_old_z_l.x = (long(real)) << g_bit_shift;		// prepare for int orbit calc 
+	g_old_z_l.x = (long(real)) << g_bit_shift;		// prepare for int orbit calc
 	assert(g_old_z_l.x == DoubleToFudge(real));
 	g_old_z_l.y = (long(imag)) << g_bit_shift;
 	assert(g_old_z_l.y == DoubleToFudge(imag));
@@ -1473,7 +1473,7 @@ void get_julia_attractor(double real, double imag)
 	g_temp_sqr_y_l = (long(g_temp_sqr_y)) << g_bit_shift;
 	assert(g_temp_sqr_y_l == DoubleToFudge(g_temp_sqr_y));
 
-	if (g_max_iteration < 500)         // we're going to try at least this hard 
+	if (g_max_iteration < 500)         // we're going to try at least this hard
 	{
 		g_max_iteration = 500;
 	}
@@ -1486,11 +1486,11 @@ void get_julia_attractor(double real, double imag)
 			break;
 		}
 	}
-	if (g_color_iter >= g_max_iteration)      // if orbit stays in the lake 
+	if (g_color_iter >= g_max_iteration)      // if orbit stays in the lake
 	{
 		ComplexL result_l;
 		ComplexD result;
-		if (g_integer_fractal)   // remember where it went to 
+		if (g_integer_fractal)   // remember where it went to
 		{
 			result_l = g_new_z_l;
 		}
@@ -1502,7 +1502,7 @@ void get_julia_attractor(double real, double imag)
 		{
 			g_overflow = false;
 			if (!g_current_fractal_specific->orbitcalc() && !g_overflow)
-			// if it stays in the lake and doesn't move far, probably found a finite attractor 
+			// if it stays in the lake and doesn't move far, probably found a finite attractor
 			{
 				if (g_integer_fractal)
 				{
@@ -1511,7 +1511,7 @@ void get_julia_attractor(double real, double imag)
 					{
 						g_attractors_l[g_num_attractors] = g_new_z_l;
 						g_attractor_period[g_num_attractors] = i + 1;
-						g_num_attractors++;   // another attractor - coloured lakes ! 
+						g_num_attractors++;   // another attractor - coloured lakes !
 						break;
 					}
 				}
@@ -1522,7 +1522,7 @@ void get_julia_attractor(double real, double imag)
 					{
 						g_attractors[g_num_attractors] = g_new_z;
 						g_attractor_period[g_num_attractors] = i + 1;
-						g_num_attractors++;   // another attractor - coloured lakes ! 
+						g_num_attractors++;   // another attractor - coloured lakes !
 						break;
 					}
 				}
@@ -1539,9 +1539,9 @@ void get_julia_attractor(double real, double imag)
 	}
 }
 
-int solid_guess_block_size(int width, int height) // used by solidguessing and by zoom panning 
+int solid_guess_block_size(int width, int height) // used by solidguessing and by zoom panning
 {
-	// blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >= 1200 
+	// blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >= 1200
 	int blocksize = 4;
 	int i = 300;
 	while (i <= height)
@@ -1549,7 +1549,7 @@ int solid_guess_block_size(int width, int height) // used by solidguessing and b
 		blocksize *= 2;
 		i *= 2;
 	}
-	// increase blocksize if prefix array not big enough 
+	// increase blocksize if prefix array not big enough
 	while (blocksize*(MAX_X_BLOCK - 2) < width || blocksize*(MAX_Y_BLOCK - 2)*16 < height)
 	{
 		blocksize *= 2;

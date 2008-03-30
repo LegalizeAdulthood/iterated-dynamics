@@ -72,7 +72,7 @@ public:
 
 	void fill()
 	{
-		m_x0[0] = m_x_min;              // fill up the x, y grids 
+		m_x0[0] = m_x_min;              // fill up the x, y grids
 		m_y0[0] = m_y_max;
 		m_x1[0] = 0;
 		m_y1[0] = 0;
@@ -149,7 +149,7 @@ public:
 	void fill_grid_fp();
 	void fill_grid_l();
 
-	bool m_use_grid;	
+	bool m_use_grid;
 	SampleGrid<bf_t>	m_grid_bf;
 	SampleGrid<double>	m_grid_fp;
 	SampleGrid<long>	m_grid_l;

@@ -5,7 +5,7 @@
 #include "Globals.h"
 #include "UserInterfaceState.h"
 
-// keep var names in column 30 for sorting via sort /+30 <in >out 
+// keep var names in column 30 for sorting via sort /+30 <in >out
 extern int					g_bf_save_len;
 extern int					g_bf_digits;
 extern int					g_bit_shift;
@@ -40,7 +40,7 @@ extern int					g_degree;
 extern long					g_delta_min;
 extern float				g_depth_fp;
 extern bool					g_disk_16bit;
-extern bool					g_disk_flag;						// disk video active flag 
+extern bool					g_disk_flag;						// disk video active flag
 extern bool					g_disk_targa;
 extern Display3DType		g_display_3d;
 extern long					g_distance_test;
@@ -245,7 +245,7 @@ extern char					g_rle_buffer[];
 extern int					g_rotate_hi;
 extern int					g_rotate_lo;
 extern int					g_row;
-extern int					g_row_count;						// row-counter for decoder and out_line 
+extern int					g_row_count;						// row-counter for decoder and out_line
 extern double				g_rq_limit2;
 extern double				g_rq_limit;
 extern int					g_random_seed;
@@ -284,10 +284,10 @@ extern bool					g_targa_output;
 extern bool					g_targa_overlay;
 extern double				g_temp_sqr_x;
 extern double				g_temp_sqr_y;
-extern int					g_text_cbase;						// g_text_col is relative to this 
-extern int					g_text_col;						// current column in text mode 
-extern int					g_text_rbase;						// g_text_row is relative to this 
-extern int					g_text_row;						// current row in text mode 
+extern int					g_text_cbase;						// g_text_col is relative to this
+extern int					g_text_col;						// current column in text mode
+extern int					g_text_rbase;						// g_text_row is relative to this
+extern int					g_text_row;						// current row in text mode
 extern unsigned int			g_this_generation_random_seed;
 extern bool					g_three_pass;
 extern double				g_threshold;

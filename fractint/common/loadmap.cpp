@@ -34,7 +34,7 @@ bool validate_luts(const char *fn)
 	merge_path_names(true, temp, temp_fn);
 	temp = ensure_extension(temp, ".map");
 	char name[160];
-	find_path(temp.c_str(), name);        // search the dos path 
+	find_path(temp.c_str(), name);        // search the dos path
 	std::ifstream f(name);
 	if (!f)
 	{
@@ -58,7 +58,7 @@ bool validate_luts(const char *fn)
 		g_.DAC().Set(index, map_to_dac(r), map_to_dac(g), map_to_dac(b));
 	}
 	f.close();
-	while (index < 256)   // zap unset entries 
+	while (index < 256)   // zap unset entries
 	{
 		g_.DAC().Set(index, 40, 40, 40);
 		++index;

@@ -185,10 +185,10 @@ struct IFSGrammar : public grammar<IFSGrammar>
 			ifs_file = *ifs_entry >> end_p;
 
 			ifs_entry = (ifs_id >> ifs_body)[&AssignEntry];
-			
+
 			ifs_id = lexeme_d[+(print_p - blank_p - eol_p - '(' - '{')][&AssignId];
 
-			ifs_body = 
+			ifs_body =
 					(lexeme_d[as_lower_d["(3d)"]] >> '{' >> ifs_3d_body >> '}')
 				|	(!lexeme_d[as_lower_d["(2d)"]] >> '{' >> ifs_2d_body >> '}')
 				;
@@ -204,7 +204,7 @@ struct IFSGrammar : public grammar<IFSGrammar>
 			BOOST_SPIRIT_DEBUG_NODE(ifs_2d_body);
 			BOOST_SPIRIT_DEBUG_NODE(ifs_3d_body);
 		}
-		
+
         rule_t const &start() const
 		{
 			return ifs_file;
@@ -229,7 +229,7 @@ bool IFSParser::Parse(const string &text)
 	parse_info<string::const_iterator> results =
 		parse(text.begin(), text.end(), g, space_p | comment_p(";"));
 	s_impl = 0;
-	
+
 	return results.full;
 }
 

@@ -89,11 +89,11 @@ enum
 	// subdividing
 	SCAN = 16,
 
-	// pixel interleave used in scanning 
+	// pixel interleave used in scanning
 	INTERLEAVE = 4
 };
 
-// compute the value of the interpolation polynomial at (x, y) 
+// compute the value of the interpolation polynomial at (x, y)
 #define GET_REAL(x, y) \
 	interpolate(cim1, midi, cim2, \
 		interpolate(cre1, midr, cre2, zre1, zre5, zre2, x), \
@@ -143,7 +143,7 @@ void Interpolate(T x0, T x1, T x2, T w0, T w1, T w2, T &b0, T &b1, T &b2)
 	b2 = ((w2 - w1)/(x2 - x1) - b1)/(x2 - x0);
 }
 
-// evaluate Newton polynomial given by (x0, b0), (x1, b1) at x:=t 
+// evaluate Newton polynomial given by (x0, b0), (x1, b1) at x:=t
 template <typename T>
 T Evaluate(T x0, T x1, T b0, T b1, T b2, T t)
 {
@@ -228,8 +228,8 @@ static double zim9;
 static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	int x1, int x2, int y1, int y2, long iter)
 {
-	// The following variables do not need their values saved 
-	// used in scanning 
+	// The following variables do not need their values saved
+	// used in scanning
 	static long savecolor;
 	static long color;
 	static long helpcolor;
@@ -245,7 +245,7 @@ static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	static double helpre;
 	static double zre;
 	static double zim;
-	// interpolation coefficients 
+	// interpolation coefficients
 	static double br10;
 	static double br11;
 	static double br12;
@@ -264,10 +264,10 @@ static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	static double bi30;
 	static double bi31;
 	static double bi32;
-	// ratio of interpolated test point to iterated one 
+	// ratio of interpolated test point to iterated one
 	static double l1;
 	static double l2;
-	// squares of key values 
+	// squares of key values
 	static double rq1;
 	static double iq1;
 	static double rq2;
@@ -287,7 +287,7 @@ static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	static double rq9;
 	static double iq9;
 
-	// test points 
+	// test points
 	static double cr1;
 	static double cr2;
 	static double ci1;
@@ -309,10 +309,10 @@ static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	static double trq4;
 	static double tiq4;
 
-	// center of rectangle 
+	// center of rectangle
 	double midr = (cre1 + cre2)/2, midi = (cim1 + cim2)/2;
 
-	// saved values of key values 
+	// saved values of key values
 	double sr1;
 	double si1;
 	double sr2;
@@ -331,7 +331,7 @@ static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	double si8;
 	double sr9;
 	double si9;
-	// key values for subsequent rectangles 
+	// key values for subsequent rectangles
 	double re10;
 	double re11;
 	double re12;
@@ -395,7 +395,7 @@ static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 
 	if (y2-y1 <= SCAN)
 	{
-		// finish up the image by scanning the rectangle 
+		// finish up the image by scanning the rectangle
 scan:
 		Interpolate(cre1, midr, cre2, zre1, zre5, zre2, br10, br11, br12);
 		Interpolate(cre1, midr, cre2, zre6, zre9, zre7, br20, br21, br22);
@@ -585,7 +585,7 @@ scan:
 	}											\
 	while (0)
 
-		// iterate key values 
+		// iterate key values
 		SOI_ORBIT(zre1, rq1, zim1, iq1, cre1, cim1, esc1);
 		/*
 		zim1 = (zim1 + zim1)*zre1 + cim1;
@@ -649,7 +649,7 @@ scan:
 		rq9 = zre9*zre9;
 		iq9 = zim9*zim9;
 		*/
-		// iterate test point 
+		// iterate test point
 		SOI_ORBIT(tzr1, trq1, tzi1, tiq1, cr1, ci1, tesc1);
 		/*
 		tzi1 = (tzi1 + tzi1)*tzr1 + ci1;
@@ -681,7 +681,7 @@ scan:
 		*/
 		iter++;
 
-		// if one of the iterated values bails out, subdivide 
+		// if one of the iterated values bails out, subdivide
 		/*
 		if ((rq1 + iq1) > 16.0||
 				(rq2 + iq2) > 16.0||
@@ -784,7 +784,7 @@ scan:
 
 	iter--;
 
-	// this is a little heuristic I tried to improve performance. 
+	// this is a little heuristic I tried to improve performance.
 	if (iter-before < 10)
 	{
 		zre1 = sr1; zim1 = si1;
@@ -799,7 +799,7 @@ scan:
 		goto scan;
 	}
 
-	// compute key values for subsequent rectangles 
+	// compute key values for subsequent rectangles
 
 	re10 = interpolate(cre1, midr, cre2, sr1, sr5, sr2, cr1);
 	im10 = interpolate(cre1, midr, cre2, si1, si5, si2, cr1);

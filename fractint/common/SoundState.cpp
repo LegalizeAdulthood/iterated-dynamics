@@ -25,7 +25,7 @@
 
 enum
 {
-	KEYON = 0x20     // 0010 0000 key-on bit in regs b0 - b8 
+	KEYON = 0x20     // 0010 0000 key-on bit in regs b0 - b8
 };
 
 class SoundStateImpl : public SoundState
@@ -70,7 +70,7 @@ private:
 	};
 
 	int _flags;
-	int _base_hertz;				// sound=x/y/z hertz value 
+	int _base_hertz;				// sound=x/y/z hertz value
 	int _fm_attack;
 	int _fm_decay;
 	int _fm_release;
@@ -79,7 +79,7 @@ private:
 	int _fm_wave_type;
 	int _note_attenuation;
 	int _polyphony;
-	int _scale_map[NUM_OCTAVES];	// array for mapping notes to a (user defined) scale 
+	int _scale_map[NUM_OCTAVES];	// array for mapping notes to a (user defined) scale
 
 	enum
 	{
@@ -243,22 +243,22 @@ SoundStateImpl::~SoundStateImpl()
 
 void SoundStateImpl::initialize()
 {
-	_base_hertz = 440;						// basic hertz rate          
-	_fm_volume = 63;						// full volume on soundcard o/p 
-	_note_attenuation = ATTENUATE_NONE;	// no attenuation of hi notes 
-	_fm_attack = 5;						// fast attack     
-	_fm_decay = 10;						// long decay      
-	_fm_sustain = 13;						// fairly high sustain level   
-	_fm_release = 5;						// short release   
-	_fm_wave_type = 0;						// sin wave 
-	_polyphony = 0;						// no polyphony    
+	_base_hertz = 440;						// basic hertz rate
+	_fm_volume = 63;						// full volume on soundcard o/p
+	_note_attenuation = ATTENUATE_NONE;	// no attenuation of hi notes
+	_fm_attack = 5;						// fast attack
+	_fm_decay = 10;						// long decay
+	_fm_sustain = 13;						// fairly high sustain level
+	_fm_release = 5;						// short release
+	_fm_wave_type = 0;						// sin wave
+	_polyphony = 0;						// no polyphony
 	for (int i = 0; i < NUM_OCTAVES; i++)
 	{
-		_scale_map[i] = i + 1;				// straight mapping of notes in octave 
+		_scale_map[i] = i + 1;				// straight mapping of notes in octave
 	}
 }
 
-// open sound file 
+// open sound file
 bool SoundStateImpl::open()
 {
 	if ((g_orbit_save & ORBITSAVE_SOUND) != 0 && !_fp)
@@ -278,7 +278,7 @@ bool SoundStateImpl::open()
 
 void SoundStateImpl::close()
 {
-	if ((_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) // close sound write file 
+	if ((_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) // close sound write file
 	{
 		if (_fp)
 		{
@@ -300,15 +300,15 @@ void SoundStateImpl::tone(int tone)
 			_fp << boost::format("%-d\n") % tone;
 		}
 	}
-	static int s_tab_or_help = 0;			// kludge for sound and tab or help key press 
+	static int s_tab_or_help = 0;			// kludge for sound and tab or help key press
 	s_tab_or_help = 0;
-	if (!driver_key_pressed())  // driver_key_pressed calls driver_sound_off() if TAB or F1 pressed 
+	if (!driver_key_pressed())  // driver_key_pressed calls driver_sound_off() if TAB or F1 pressed
 	{
-		// must not then call sound_off(), else indexes out of synch 
+		// must not then call sound_off(), else indexes out of synch
 		if (driver_sound_on(tone))
 		{
 			wait_until(0, g_orbit_delay);
-			if (!s_tab_or_help) // kludge because wait_until() calls driver_key_pressed 
+			if (!s_tab_or_help) // kludge because wait_until() calls driver_key_pressed
 			{
 				driver_sound_off();
 			}
@@ -328,63 +328,63 @@ int SoundStateImpl::sound_on(int freq)
 {
 	/* wrapper to previous fractint snd routine, uses fm synth or midi if
 	available and selected */
-	// Returns a 1 if sound is turned on, a 0 if not. 
+	// Returns a 1 if sound is turned on, a 0 if not.
 	unsigned int mult;
-	// clip to 5 Khz to match the limits set in asm routine that drives pc speaker 
-	// and get rid of really silly bass notes too 
+	// clip to 5 Khz to match the limits set in asm routine that drives pc speaker
+	// and get rid of really silly bass notes too
 	if (freq > 5000 || freq < 20)
 	{
 		return 0;
 	}
 
-	// convert tone to note number for midi 
+	// convert tone to note number for midi
 	double logbase = log(8.176);
 	int note = int(12 * (log(double(freq)) - logbase)/log(2.0) + 0.5);
 
-	int oct = (note/12) * 12; // round to nearest octave 
-	int chrome = note % 12; // extract which note in octave it was 
-	note = oct + _scale_map[chrome]; // remap using scale mapping array 
+	int oct = (note/12) * 12; // round to nearest octave
+	int chrome = note % 12; // extract which note in octave it was
+	note = oct + _scale_map[chrome]; // remap using scale mapping array
 
 	if (_flags & SOUNDFLAG_QUANTIZED)
 	{
 		freq = int(exp((double(note)/12.0)*log(2.0))*8.176);
 	}
-	// pitch quantize note for FM and speaker 
+	// pitch quantize note for FM and speaker
 
-	// fm flag set 
+	// fm flag set
 	if (_flags & SOUNDFLAG_OPL3_FM)
 	{
 		double temp_freq = double(freq)*1048576.0;
 		unsigned int block = 0;
 		mult = 1;
 		unsigned int fn = int(temp_freq/(1 << block)/mult/50000.0);
-		while (fn > 1023) // fn must have ten bit value so tweak mult and block until it fits 
+		while (fn > 1023) // fn must have ten bit value so tweak mult and block until it fits
 		{
 			if (block < 8)
 			{
-				block++;  // go up an octave 
+				block++;  // go up an octave
 			}
 			else
 			{
 				mult++; // if we're out of octaves then increment the multiplier
-				block = 0; // reset the block 
+				block = 0; // reset the block
 			}
 			fn = int(temp_freq/((1 << block)*mult*50000.0));
 		}
 
-		// then send the right values to the fm registers 
+		// then send the right values to the fm registers
 		fm(0x23 + _fm_offset[_fm_channel], 0x20 | (mult & 0xF));
-		// 0x20 sets sustained envelope, low nibble is multiply number 
+		// 0x20 sets sustained envelope, low nibble is multiply number
 		fm(0xA0 + _fm_channel, (fn & 0xFF));
-		// save next to use as keyoff value 
+		// save next to use as keyoff value
 		fmtemp[_fm_channel] = (unsigned char) (((fn >> 8) & 0x3) | (block << 2));
 		fm(0xB0 + _fm_channel, fmtemp[_fm_channel] | KEYON);
-		// then increment the channel number ready for the next note 
+		// then increment the channel number ready for the next note
 		if (++_fm_channel >= 9)
 		{
 			_fm_channel = 0;
 		}
-		// May have changed some parameters, put them in the registers. 
+		// May have changed some parameters, put them in the registers.
 		initialize();
 	}
 
@@ -397,7 +397,7 @@ int SoundStateImpl::sound_on(int freq)
 
 void SoundStateImpl::sound_off()
 {
-	if (_flags & SOUNDFLAG_OPL3_FM)// switch off old note 
+	if (_flags & SOUNDFLAG_OPL3_FM)// switch off old note
 	{
 		if (offvoice >= 0)
 		{
@@ -406,7 +406,7 @@ void SoundStateImpl::sound_off()
 		offvoice++;
 		/* then increment channel number (letting old note die away properly prevents
 		nasty clicks between notes as OPL has no zero crossing logic and switches
-		frequencies immediately thus creating an easily audible glitch, especially 
+		frequencies immediately thus creating an easily audible glitch, especially
 		in bass notes... also allows chords :-) */
 		if(offvoice >= 9)
 		{
@@ -415,13 +415,13 @@ void SoundStateImpl::sound_off()
 	}
 	if (_flags & SOUNDFLAG_SPEAKER)
 	{
-		driver_mute(); // shut off pc speaker 
+		driver_mute(); // shut off pc speaker
 	}
 }
 
 void SoundStateImpl::mute()
 {
-	// shut everything up routine 
+	// shut everything up routine
 	int i;
 	if (_flags & SOUNDFLAG_OPL3_FM)
 	{
@@ -433,7 +433,7 @@ void SoundStateImpl::mute()
 	}
 	if (_flags & SOUNDFLAG_SPEAKER)
 	{
-		driver_mute(); // shut off pc speaker 
+		driver_mute(); // shut off pc speaker
 	}
 	_fm_channel = 0;
 	offvoice = (char) -_polyphony;
@@ -451,7 +451,7 @@ void SoundStateImpl::buzzer(int tone)
 		if (_flags & SOUNDFLAG_OPL3_FM)
 		{
 			int oldsoundflag = _flags;
-			sleep_ms(1); // to allow quiet timer calibration first time 
+			sleep_ms(1); // to allow quiet timer calibration first time
 			_flags &= ~SOUNDFLAG_SPEAKER; /*switch off sound_on stuff for pc spkr */
 			switch(tone)
 			{
@@ -494,7 +494,7 @@ void SoundStateImpl::buzzer(int tone)
 
 int SoundStateImpl::get_parameters()
 {
-	// routine to get sound settings  
+	// routine to get sound settings
 	int old_soundflag = _flags;
 	int old_orbit_delay = g_orbit_delay;
 	bool old_start_show_orbit = g_start_show_orbit;
@@ -533,7 +533,7 @@ get_sound_restart:
 		_base_hertz = dialog.values(++k).uval.ival;
 		g_start_show_orbit = (dialog.values(++k).uval.ch.val != 0);
 
-		// now do any intialization needed and check for soundcard 
+		// now do any intialization needed and check for soundcard
 		if ((_flags & SOUNDFLAG_OPL3_FM) && !(old_soundflag & SOUNDFLAG_OPL3_FM))
 		{
 			initfm();
@@ -542,17 +542,17 @@ get_sound_restart:
 		switch (i)
 		{
 		case IDK_F6:
-			get_music_parameters();// see below, for controlling fmsynth 
+			get_music_parameters();// see below, for controlling fmsynth
 			goto get_sound_restart;
 			break;
 
 		case IDK_F7:
-			get_scale_map();// see below, for setting scale mapping 
+			get_scale_map();// see below, for setting scale mapping
 			goto get_sound_restart;
 			break;
 
 		case IDK_F4:
-			_flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // reset to default 
+			_flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // reset to default
 			g_orbit_delay = 0;
 			_base_hertz = 440;
 			g_start_show_orbit = false;
@@ -606,7 +606,7 @@ get_map_restart:
 
 		if (i == IDK_F6 && _menu_count == 1)
 		{
-			get_music_parameters();// see below, for controling fmsynth 
+			get_music_parameters();// see below, for controling fmsynth
 			goto get_map_restart;
 		}
 		else if (i == IDK_F6 && _menu_count == 2)
@@ -673,7 +673,7 @@ get_music_restart:
 
 		if (i == IDK_F7 && _menu_count == 1)
 		{
-			get_scale_map();// see above, for setting scale mapping 
+			get_scale_map();// see above, for setting scale mapping
 			goto get_music_restart;
 		}
 		else if (i == IDK_F7 && _menu_count == 2)
@@ -704,11 +704,11 @@ get_music_restart:
 
 void SoundStateImpl::old_orbit(int i, int j)
 {
-	if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) // sound = x 
+	if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) // sound = x
 	{
 		tone(int(i*1000/g_x_dots + _base_hertz));
 	}
-	else if ((_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) // sound = y or z 
+	else if ((_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) // sound = y or z
 	{
 		tone(int(j*1000/g_y_dots + _base_hertz));
 	}
@@ -720,15 +720,15 @@ void SoundStateImpl::old_orbit(int i, int j)
 
 void SoundStateImpl::new_orbit(int i, int j)
 {
-	if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) // sound = x 
+	if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) // sound = x
 	{
 		tone(int(i + _base_hertz));
 	}
-	else if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) // sound = y 
+	else if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) // sound = y
 	{
 		tone(int(j + _base_hertz));
 	}
-	else if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) // sound = z 
+	else if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) // sound = z
 	{
 		tone(int(i + j + _base_hertz));
 	}
@@ -865,7 +865,7 @@ std::string SoundStateImpl::parameter_text() const
 		text << " srelease=" << _fm_release;
 	}
 
-	if ((_flags & SOUNDFLAG_QUANTIZED) && !default_scale_map())  // quantize turned on 
+	if ((_flags & SOUNDFLAG_QUANTIZED) && !default_scale_map())  // quantize turned on
 	{
 		text << " scalemap=" << _scale_map[0];
 		for (int i = 1; i < NUM_OCTAVES; i++)
@@ -896,10 +896,10 @@ int SoundStateImpl::parse_sound(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	_flags = SOUNDFLAG_OFF; // start with a clean slate, add bits as we go 
+	_flags = SOUNDFLAG_OFF; // start with a clean slate, add bits as we go
 	if (context.totparms == 1)
 	{
-		_flags = SOUNDFLAG_SPEAKER; // old command, default to PC speaker 
+		_flags = SOUNDFLAG_SPEAKER; // old command, default to PC speaker
 	}
 
 	/* g_sound_flags is used as a bitfield... bit 0, 1, 2 used for whether sound
@@ -937,11 +937,11 @@ int SoundStateImpl::parse_sound(const cmd_context &context)
 	}
 	if (context.totparms > 1)
 	{
-		_flags &= SOUNDFLAG_ORBITMASK; // reset options 
+		_flags &= SOUNDFLAG_ORBITMASK; // reset options
 		for (int i = 1; i < context.totparms; i++)
 		{
-			// this is for 2 or more options at the same time 
-			if (context.charval[i] == 'f')  // (try to)switch on opl3 fm synth 
+			// this is for 2 or more options at the same time
+			if (context.charval[i] == 'f')  // (try to)switch on opl3 fm synth
 			{
 				if (driver_init_fm())
 				{

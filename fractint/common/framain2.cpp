@@ -53,7 +53,7 @@
 #include "SoundState.h"
 #include "ViewWindow.h"
 
-// displays differences between current image file and new image 
+// displays differences between current image file and new image
 class LineCompare
 {
 public:
@@ -89,7 +89,7 @@ private:
 	int *m_save_zoom;
 };
 
-// routines in this module      
+// routines in this module
 
 ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdmore, bool &screen_stacked);
 ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_manelbrot, bool &kbdmore, bool &stacked);
@@ -99,7 +99,7 @@ void out_line_cleanup_null();
 static void move_zoombox(int keynum);
 static void out_line_cleanup_compare();
 
-bool g_from_text_flag = false;         // = 1 if we're in graphics mode 
+bool g_from_text_flag = false;         // = 1 if we're in graphics mode
 evolution_info *g_evolve_info = 0;
 CalculationMode g_standard_calculation_mode_old;
 void (*g_out_line_cleanup)() = out_line_cleanup_null;
@@ -121,7 +121,7 @@ int LineCompare::compare(BYTE const *pixels, int line_length)
 			std::ios::out | (g_initialize_batch ? std::ios::ate : 0));
 		g_out_line_cleanup = out_line_cleanup_compare;
 	}
-	if (g_potential_16bit)  // 16 bit info, ignore odd numbered rows 
+	if (g_potential_16bit)  // 16 bit info, ignore odd numbered rows
 	{
 		if (row & 1)
 		{
@@ -179,16 +179,16 @@ static void out_line_cleanup_compare()
 
 void ZoomSaver::save()
 {
-	if (g_zoomBox.count() > 0)  // save zoombox stuff in mem before encode (mem reused) 
+	if (g_zoomBox.count() > 0)  // save zoombox stuff in mem before encode (mem reused)
 	{
 		m_save_zoom = new int[3*g_zoomBox.count()];
 		if (m_save_zoom == 0)
 		{
-			clear_zoom_box(); // not enuf mem so clear the box 
+			clear_zoom_box(); // not enuf mem so clear the box
 		}
 		else
 		{
-			reset_zoom_corners(); // reset these to overall image, not box 
+			reset_zoom_corners(); // reset these to overall image, not box
 			g_zoomBox.save(m_save_zoom,
 				m_save_zoom + g_zoomBox.count(),
 				m_save_zoom + g_zoomBox.count()*2, g_zoomBox.count());
@@ -198,13 +198,13 @@ void ZoomSaver::save()
 
 void ZoomSaver::restore()
 {
-	if (g_zoomBox.count() > 0)  // restore zoombox arrays 
+	if (g_zoomBox.count() > 0)  // restore zoombox arrays
 	{
 		g_zoomBox.restore(m_save_zoom,
 			m_save_zoom + g_zoomBox.count(),
 			m_save_zoom + g_zoomBox.count()*2, g_zoomBox.count());
 		delete[] m_save_zoom;
-		zoom_box_draw(true); // get the g_xx_min etc variables recalc'd by redisplaying 
+		zoom_box_draw(true); // get the g_xx_min etc variables recalc'd by redisplaying
 	}
 }
 
@@ -230,7 +230,7 @@ static ApplicationStateType handle_fractal_type(bool &frommandel)
 		g_discrete_parameter_offset_y = 0;
 		g_new_discrete_parameter_offset_x = 0;
 		g_new_discrete_parameter_offset_y = 0;
-		g_fiddle_factor = 1;           // reset param evolution stuff 
+		g_fiddle_factor = 1;           // reset param evolution stuff
 		g_set_orbit_corners = false;
 		save_parameter_history();
 		if (i == 0)
@@ -238,9 +238,9 @@ static ApplicationStateType handle_fractal_type(bool &frommandel)
 			g_.SetInitialVideoMode(g_.Adapter());
 			frommandel = false;
 		}
-		else if (g_.InitialVideoMode() < 0) // it is supposed to be... 
+		else if (g_.InitialVideoMode() < 0) // it is supposed to be...
 		{
-			driver_set_for_text();     // reset to text mode      
+			driver_set_for_text();     // reset to text mode
 		}
 		return APPSTATE_IMAGE_START;
 	}
@@ -291,17 +291,17 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 	driver_unstack_screen();
 	if (g_evolving_flags && g_true_color)
 	{
-		g_true_color = false; // truecolor doesn't play well with the evolver 
+		g_true_color = false; // truecolor doesn't play well with the evolver
 	}
 	if (g_max_iteration > *old_maxit
 		&& g_externs.Inside() >= 0
 		&& g_externs.CalculationStatus() == CALCSTAT_COMPLETED
 		&& g_current_fractal_specific->calculate_type == standard_fractal
 		&& !g_log_palette_mode
-		&& !g_true_color // recalc not yet implemented with truecolor 
-		&& !(g_externs.UserStandardCalculationMode() == CALCMODE_TESSERAL && g_fill_color > -1) // tesseral with fill doesn't work 
+		&& !g_true_color // recalc not yet implemented with truecolor
+		&& !(g_externs.UserStandardCalculationMode() == CALCMODE_TESSERAL && g_fill_color > -1) // tesseral with fill doesn't work
 		&& !(g_externs.UserStandardCalculationMode() == CALCMODE_ORBITS)
-		&& i == COMMANDRESULT_FRACTAL_PARAMETER // nothing else changed 
+		&& i == COMMANDRESULT_FRACTAL_PARAMETER // nothing else changed
 		&& g_externs.Outside() != COLORMODE_INVERSE_TANGENT)
 	{
 		g_quick_calculate = true;
@@ -311,7 +311,7 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 		g_externs.SetCalculationStatus(CALCSTAT_RESUMABLE);
 	}
 	else if (i > 0)
-	{              // time to redraw? 
+	{              // time to redraw?
 		g_quick_calculate = false;
 		save_parameter_history();
 		kbdmore = false;
@@ -350,9 +350,9 @@ static void handle_evolver_options(int kbdchar, bool &kbdmore)
 	driver_unstack_screen();
 	if (g_evolving_flags && g_true_color)
 	{
-		g_true_color = false; // truecolor doesn't play well with the evolver 
+		g_true_color = false; // truecolor doesn't play well with the evolver
 	}
-	if (i > COMMANDRESULT_OK)              // time to redraw? 
+	if (i > COMMANDRESULT_OK)              // time to redraw?
 	{
 		save_parameter_history();
 		kbdmore = false;
@@ -366,29 +366,29 @@ static bool handle_execute_commands(int &kbdchar, bool &kbdmore)
 	driver_stack_screen();
 	i = get_commands();
 	if (g_.InitialVideoMode() != -1)
-	{                         // video= was specified 
+	{                         // video= was specified
 		g_.SetAdapter(g_.InitialVideoMode());
 		g_.SetInitialVideoModeNone();
 		i |= COMMANDRESULT_FRACTAL_PARAMETER;
 		g_.SetSaveDAC(SAVEDAC_NO);
 	}
 	else if (g_color_preloaded)
-	{                         // colors= was specified 
+	{                         // colors= was specified
 		load_dac();
 		g_color_preloaded = false;
 	}
-	else if (i & COMMANDRESULT_RESET)         // reset was specified 
+	else if (i & COMMANDRESULT_RESET)         // reset was specified
 	{
 		g_.SetSaveDAC(SAVEDAC_NO);
 	}
 	if (i & COMMANDRESULT_3D_YES)
-	{                         // 3d = was specified 
+	{                         // 3d = was specified
 		kbdchar = '3';
 		driver_unstack_screen();
 		return true;
 	}
 	if (i & COMMANDRESULT_FRACTAL_PARAMETER)
-	{                         // fractal parameter changed 
+	{                         // fractal parameter changed
 		driver_discard_screen();
 		kbdmore = false;
 		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
@@ -407,7 +407,7 @@ static ApplicationStateType handle_toggle_float()
 	{
 		g_user_float_flag = true;
 	}
-	else if (g_externs.StandardCalculationMode() != CALCMODE_ORBITS) // don't go there 
+	else if (g_externs.StandardCalculationMode() != CALCMODE_ORBITS) // don't go there
 	{
 		g_user_float_flag = false;
 	}
@@ -477,21 +477,21 @@ static ApplicationStateType handle_recalc(int (*continue_check)(), int (*recalc_
 
 static void handle_3d_params(bool &kbdmore)
 {
-	if (get_fractal_3d_parameters() >= 0)    // get the parameters 
+	if (get_fractal_3d_parameters() >= 0)    // get the parameters
 	{
 		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
-		kbdmore = false;    // time to redraw 
+		kbdmore = false;    // time to redraw
 	}
 }
 
 static void handle_orbits()
 {
-	// must use standard fractal and have a float variant 
+	// must use standard fractal and have a float variant
 	if ((g_fractal_specific[g_fractal_type].calculate_type == standard_fractal
 			|| g_fractal_specific[g_fractal_type].calculate_type == froth_calc)
 		&& (g_fractal_specific[g_fractal_type].isinteger == 0
 			|| !fractal_type_none(g_fractal_specific[g_fractal_type].tofloat))
-		&& !g_bf_math // for now no arbitrary precision support 
+		&& !g_bf_math // for now no arbitrary precision support
 		&& !(g_is_true_color && g_true_mode_iterates))
 	{
 		clear_zoom_box();
@@ -510,7 +510,7 @@ static void set_fractal_specific_to_julia_mandelbrot(int to_julia_type, int to_m
 
 static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 {
-	static double  jxxmin, jxxmax, jyymin, jyymax; // "Julia mode" entry point 
+	static double  jxxmin, jxxmax, jyymin, jyymax; // "Julia mode" entry point
 	static double  jxx3rd, jyy3rd;
 
 	if (g_bf_math || g_evolving_flags)
@@ -541,11 +541,11 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 		&& g_parameters[0] == 0.0
 		&& g_parameters[1] == 0.0)
 	{
-		// switch to corresponding Julia set 
+		// switch to corresponding Julia set
 		g_has_inverse = fractal_type_mandelbrot(g_fractal_type) && (g_bf_math == 0);
 		clear_zoom_box();
 		Jiim(false);
-		int key = driver_get_key();    // flush keyboard buffer 
+		int key = driver_get_key();    // flush keyboard buffer
 		if (key != IDK_SPACE)
 		{
 			driver_unget_key(key);
@@ -594,7 +594,7 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 	}
 	else if (!fractal_type_none(g_current_fractal_specific->tomandel))
 	{
-		// switch to corresponding Mandel set 
+		// switch to corresponding Mandel set
 		g_fractal_type = g_current_fractal_specific->tomandel;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		if (frommandel)
@@ -625,7 +625,7 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 	}
 	else
 	{
-		driver_buzzer(BUZZER_ERROR);          // can't switch 
+		driver_buzzer(BUZZER_ERROR);          // can't switch
 	}
 }
 
@@ -660,14 +660,14 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 {
 	if (g_name_stack_ptr >= 1)
 	{
-		// go back one file if somewhere to go (ie. browsing) 
+		// go back one file if somewhere to go (ie. browsing)
 		g_name_stack_ptr--;
 		while (g_file_name_stack[g_name_stack_ptr].length() == 0
 			&& g_name_stack_ptr >= 0)
 		{
 			g_name_stack_ptr--;
 		}
-		if (g_name_stack_ptr < 0) // oops, must have deleted first one 
+		if (g_name_stack_ptr < 0) // oops, must have deleted first one
 		{
 			return APPSTATE_NO_CHANGE;
 		}
@@ -678,7 +678,7 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 		g_show_file = SHOWFILE_PENDING;
 		if (g_ui_state.ask_video)
 		{
-			driver_stack_screen();      // save graphics image 
+			driver_stack_screen();      // save graphics image
 			stacked = true;
 		}
 		return APPSTATE_RESTORE_START;
@@ -727,7 +727,7 @@ static ApplicationStateType handle_color_cycling(int kbdchar)
 
 static ApplicationStateType handle_color_editing(bool &kbdmore)
 {
-	if (g_is_true_color && !g_initialize_batch) // don't enter palette editor 
+	if (g_is_true_color && !g_initialize_batch) // don't enter palette editor
 	{
 		if (load_palette() >= 0)
 		{
@@ -759,7 +759,7 @@ static ApplicationStateType handle_save_to_disk()
 {
 	if (driver_diskp() && g_disk_targa)
 	{
-		return APPSTATE_CONTINUE;  // disk video and targa, nothing to save 
+		return APPSTATE_CONTINUE;  // disk video and targa, nothing to save
 	}
 	s_zoom_saver.save();
 	save_to_disk(g_save_name);
@@ -778,7 +778,7 @@ static ApplicationStateType handle_evolver_save_to_disk()
 
 	if (driver_diskp() && g_disk_targa)
 	{
-		return APPSTATE_CONTINUE;  // disk video and targa, nothing to save 
+		return APPSTATE_CONTINUE;  // disk video and targa, nothing to save
 	}
 
 	oldsxoffs = g_screen_x_offset;
@@ -790,7 +790,7 @@ static ApplicationStateType handle_evolver_save_to_disk()
 	g_screen_x_offset = 0;
 	g_screen_y_offset = 0;
 	g_x_dots = g_screen_width;
-	g_y_dots = g_screen_height; // for full screen save and pointer move stuff 
+	g_y_dots = g_screen_height; // for full screen save and pointer move stuff
 	g_px = g_grid_size/2;
 	g_py = g_grid_size/2;
 	restore_parameter_history();
@@ -821,7 +821,7 @@ static ApplicationStateType handle_restore_from(bool &frommandel, int kbdchar, b
 			g_overlay_3d = true;
 			if (g_initialize_batch == INITBATCH_SAVE)
 			{
-				driver_stack_screen();   // save graphics image 
+				driver_stack_screen();   // save graphics image
 				g_read_name = g_save_name;
 				g_show_file = SHOWFILE_PENDING;
 				return APPSTATE_RESTORE_START;
@@ -834,11 +834,11 @@ static ApplicationStateType handle_restore_from(bool &frommandel, int kbdchar, b
 		}
 		g_display_3d = DISPLAY3D_NONE;
 	}
-	driver_stack_screen();            // save graphics image 
+	driver_stack_screen();            // save graphics image
 	stacked = !g_overlay_3d;
 	if (g_resave_mode)
 	{
-		update_save_name(g_save_name);      // do the pending increment 
+		update_save_name(g_save_name);      // do the pending increment
 		g_resave_mode = RESAVE_NO;
 		g_started_resaves = false;
 	}
@@ -852,11 +852,11 @@ static void handle_zoom_in(bool &kbdmore)
 	XZoomWaiting = 0;
 #endif
 	if (g_z_width != 0.0)
-	{                         // do a zoom 
+	{                         // do a zoom
 		init_pan_or_recalc(false);
 		kbdmore = false;
 	}
-	if (g_externs.CalculationStatus() != CALCSTAT_COMPLETED)     // don't restart if image complete 
+	if (g_externs.CalculationStatus() != CALCSTAT_COMPLETED)     // don't restart if image complete
 	{
 		kbdmore = false;
 	}
@@ -868,7 +868,7 @@ static void handle_zoom_out(bool &kbdmore)
 	{
 		init_pan_or_recalc(true);
 		kbdmore = false;
-		zoom_box_out();                // calc corners for zooming out 
+		zoom_box_out();                // calc corners for zooming out
 	}
 }
 
@@ -904,7 +904,7 @@ static void handle_select_video(int &kbdchar)
 {
 	driver_stack_screen();
 	kbdchar = select_video_mode(g_.Adapter());
-	if (check_video_mode_key(kbdchar) >= 0)  // picked a new mode? 
+	if (check_video_mode_key(kbdchar) >= 0)  // picked a new mode?
 	{
 		driver_discard_screen();
 	}
@@ -982,7 +982,7 @@ static void handle_zoom_resize(bool zoom_in)
 		if (g_zoom_off)
 		{
 			if (g_z_width == 0)
-			{                      // start zoombox 
+			{                      // start zoombox
 				g_z_width = 1.0;
 				g_z_depth = 1.0;
 				g_z_skew = 0.0;
@@ -993,7 +993,7 @@ static void handle_zoom_resize(bool zoom_in)
 				g_zoomBox.set_color(g_.DAC().Bright());
 				g_px = g_grid_size/2;
 				g_py = g_grid_size/2;
-				zoom_box_move(0.0, 0.0); // force scrolling 
+				zoom_box_move(0.0, 0.0); // force scrolling
 			}
 			else
 			{
@@ -1003,10 +1003,10 @@ static void handle_zoom_resize(bool zoom_in)
 	}
 	else
 	{
-		// zoom out 
+		// zoom out
 		if (g_zoomBox.count())
 		{
-			if (g_z_width >= 0.999 && g_z_depth >= 0.999) // end zoombox 
+			if (g_z_width >= 0.999 && g_z_depth >= 0.999) // end zoombox
 			{
 				g_z_width = 0.0;
 			}
@@ -1029,7 +1029,7 @@ static void handle_zoom_stretch(bool narrower)
 
 static ApplicationStateType handle_restart()
 {
-	driver_set_for_text();           // force text mode 
+	driver_set_for_text();           // force text mode
 	return APPSTATE_RESTART;
 }
 
@@ -1056,10 +1056,10 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 		flip_image(kbdchar);
 		break;
 
-	case 'x':                    // invoke options screen        
+	case 'x':                    // invoke options screen
 	case 'y':
-	case 'p':                    // passes options      
-	case 'z':                    // type specific parms 
+	case 'p':                    // passes options
+	case 'z':                    // type specific parms
 	case 'g':
 	case 'v':
 	case IDK_CTL_B:
@@ -1072,7 +1072,7 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 	case '2':
 		if (handle_execute_commands(kbdchar, kbdmore))
 		{
-			goto do_3d_transform;  // pretend '3' was keyed 
+			goto do_3d_transform;  // pretend '3' was keyed
 		}
 		break;
 
@@ -1133,14 +1133,14 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 	case '#':
 		clear_zoom_box();
 		g_overlay_3d = true;
-		// fall through 
+		// fall through
 
 do_3d_transform:
-	case '3':                    // restore-from (3d)            
-		g_display_3d = g_overlay_3d ? DISPLAY3D_OVERLAY : DISPLAY3D_YES; // for <b> command               
-		// fall through 
+	case '3':                    // restore-from (3d)
+		g_display_3d = g_overlay_3d ? DISPLAY3D_OVERLAY : DISPLAY3D_YES; // for <b> command
+		// fall through
 
-	case 'r':                    // restore-from                 
+	case 'r':                    // restore-from
 		return handle_restore_from(frommandel, kbdchar, screen_stacked);
 
 	case 'l':
@@ -1201,7 +1201,7 @@ do_3d_transform:
 		handle_box_color(IDK_CTL_INSERT == kbdchar);
 		break;
 
-	case IDK_ALT_1: // alt + number keys set mutation level and start evolution engine 
+	case IDK_ALT_1: // alt + number keys set mutation level and start evolution engine
 	case IDK_ALT_2:
 	case IDK_ALT_3:
 	case IDK_ALT_4:
@@ -1213,11 +1213,11 @@ do_3d_transform:
 
 	case IDK_DELETE:
 		handle_select_video(kbdchar);
-		// fall through 
+		// fall through
 
-	default:                     // other (maybe a valid Fn key) 
+	default:                     // other (maybe a valid Fn key)
 		return handle_video_mode(kbdchar, kbdmore);
-	}                            // end of the big switch 
+	}                            // end of the big switch
 
 	return APPSTATE_NO_CHANGE;
 }
@@ -1263,8 +1263,8 @@ static ApplicationStateType handle_evolver_history(int kbdchar)
 
 static void handle_evolver_move_selection(int kbdchar)
 {
-	// borrow ctrl cursor keys for moving selection box 
-	// in evolver mode 
+	// borrow ctrl cursor keys for moving selection box
+	// in evolver mode
 	if (g_zoomBox.count())
 	{
 		int grout;
@@ -1307,14 +1307,14 @@ static void handle_evolver_move_selection(int kbdchar)
 			g_screen_y_offset = g_py*int(g_dy_size + 1 + grout);
 
 			restore_parameter_history();
-			fiddle_parameters(g_genes, unspiral_map()); // change all parameters 
-						// to values appropriate to the image selected 
+			fiddle_parameters(g_genes, unspiral_map()); // change all parameters
+						// to values appropriate to the image selected
 			set_evolve_ranges();
 			zoom_box_change_i(0, 0);
 			draw_parameter_box(false);
 		}
 	}
-	else                       // if no zoombox, scroll by arrows 
+	else                       // if no zoombox, scroll by arrows
 	{
 		move_zoombox(kbdchar);
 	}
@@ -1354,7 +1354,7 @@ static void handle_evolver_zoom(int zoom_in)
 		if (g_zoom_off)
 		{
 			if (g_z_width == 0)
-			{                      // start zoombox 
+			{                      // start zoombox
 				g_z_width = 1;
 				g_z_depth = 1;
 				g_z_skew = 0;
@@ -1373,7 +1373,7 @@ static void handle_evolver_zoom(int zoom_in)
 					setup_parameter_box();
 					draw_parameter_box(false);
 				}
-				zoom_box_move(0.0, 0.0); // force scrolling 
+				zoom_box_move(0.0, 0.0); // force scrolling
 			}
 			else
 			{
@@ -1385,12 +1385,12 @@ static void handle_evolver_zoom(int zoom_in)
 	{
 		if (g_zoomBox.count())
 		{
-			if (g_z_width >= 0.999 && g_z_depth >= 0.999) // end zoombox 
+			if (g_z_width >= 0.999 && g_z_depth >= 0.999) // end zoombox
 			{
 				g_z_width = 0;
 				if (g_evolving_flags & EVOLVE_FIELD_MAP)
 				{
-					draw_parameter_box(true); // clear boxes off screen 
+					draw_parameter_box(true); // clear boxes off screen
 					release_parameter_box();
 				}
 			}
@@ -1434,7 +1434,7 @@ static void handle_evolver_grid_size(int decrement, bool &kbdmore)
 	{
 		if (g_grid_size > 3)
 		{
-			g_grid_size -= 2;  // g_grid_size must have odd value only 
+			g_grid_size -= 2;  // g_grid_size must have odd value only
 			kbdmore = false;
 			g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		}
@@ -1481,17 +1481,17 @@ ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_
 {
 	switch (kbdchar)
 	{
-	case 't':                    // new fractal type             
+	case 't':                    // new fractal type
 		if (handle_fractal_type(julia_entered_from_manelbrot))
 		{
 			return APPSTATE_IMAGE_START;
 		}
 		break;
 
-	case 'x':                    // invoke options screen        
+	case 'x':                    // invoke options screen
 	case 'y':
-	case 'p':                    // passes options      
-	case 'z':                    // type specific parms 
+	case 'p':                    // passes options
+	case 'z':                    // type specific parms
 	case 'g':
 	case IDK_CTL_E:
 	case IDK_SPACE:
@@ -1580,13 +1580,13 @@ ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_
 	/* grabbed a couple of video mode keys, user can change to these using
 		delete and the menu if necessary */
 
-	case IDK_F2: // halve mutation params and regen 
+	case IDK_F2: // halve mutation params and regen
 	case IDK_F3: /*double mutation parameters and regenerate */
 		handle_evolver_mutation(IDK_F2 == kbdchar, kbdmore);
 		break;
 
 	case IDK_F4: /*decrement  gridsize and regen */
-	case IDK_F5: // increment gridsize and regen 
+	case IDK_F5: // increment gridsize and regen
 		handle_evolver_grid_size(IDK_F4 == kbdchar, kbdmore);
 		break;
 
@@ -1595,7 +1595,7 @@ ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_
 		handle_evolver_toggle(kbdmore);
 		break;
 
-	case IDK_ALT_1: // alt + number keys set mutation level 
+	case IDK_ALT_1: // alt + number keys set mutation level
 	case IDK_ALT_2:
 	case IDK_ALT_3:
 	case IDK_ALT_4:
@@ -1621,16 +1621,16 @@ ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_
 
 	case IDK_DELETE:
 		handle_select_video(kbdchar);
-		// fall through 
+		// fall through
 
-	default:             // other (maybe valid Fn key 
+	default:             // other (maybe valid Fn key
 		return handle_video_mode(kbdchar, kbdmore);
-	}                            // end of the big evolver switch 
+	}                            // end of the big evolver switch
 
 	return APPSTATE_NO_CHANGE;
 }
 
-// do all pending movement at once for smooth mouse diagonal moves 
+// do all pending movement at once for smooth mouse diagonal moves
 static void move_zoombox(int keynum)
 {
 	int vertical = 0;
@@ -1664,18 +1664,18 @@ static void move_zoombox(int keynum)
 			break;
 		case IDK_CTL_DOWN_ARROW:
 			vertical += 8;
-			break;                      // += 8 needed by VESA scrolling 
+			break;                      // += 8 needed by VESA scrolling
 		default:
 			getmore = 0;
 		}
 		if (getmore)
 		{
-			if (getmore == 2)              // eat last key used 
+			if (getmore == 2)              // eat last key used
 			{
 				driver_get_key();
 			}
 			getmore = 2;
-			keynum = driver_key_pressed();         // next pending key 
+			keynum = driver_key_pressed();         // next pending key
 		}
 	}
 	if (g_zoomBox.count())
@@ -1710,8 +1710,8 @@ void reset_zoom_corners()
 	}
 }
 
-// read keystrokes while = specified key, return 1 + count;       
-// used to catch up when moving zoombox is slower than keyboard 
+// read keystrokes while = specified key, return 1 + count;
+// used to catch up when moving zoombox is slower than keyboard
 int key_count(int keynum)
 {
 	int ctr;
