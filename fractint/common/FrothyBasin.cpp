@@ -330,7 +330,7 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 
 			// simple formula: z = z^2 + conj(z*(-1 + ai)) 
 			// but it's the attractor that makes this so interesting 
-			g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(s_frothy_data.l.a, g_old_z_l.y, g_bit_shift);
+			g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(s_frothy_data.l.a, g_old_z_l.y, g_bit_shift));
 			g_old_z_l.y += (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.x, g_bit_shift);
 			g_old_z_l.x = g_new_z_l.x;
 			if (s_frothy_data.repeat_mapping)
@@ -342,7 +342,7 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 				{
 					break;
 				}
-				g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(s_frothy_data.l.a, g_old_z_l.y, g_bit_shift);
+				g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(s_frothy_data.l.a, g_old_z_l.y, g_bit_shift));
 				g_old_z_l.y += (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.x, g_bit_shift);
 				g_old_z_l.x = g_new_z_l.x;
 			}
@@ -512,22 +512,22 @@ int froth_per_orbit()
 	}
 	else  // integer mode 
 	{
-		g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(s_frothy_data.l.a, g_old_z_l.y, g_bit_shift);
-		g_new_z_l.y = g_old_z_l.y + (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.x, g_bit_shift);
+		g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(s_frothy_data.l.a, g_old_z_l.y, g_bit_shift));
+		g_new_z_l.imag(g_old_z_l.y + (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.x, g_bit_shift));
 		if (s_frothy_data.repeat_mapping)
 		{
 			g_temp_sqr_x_l = lsqr(g_new_z_l.x);
-			g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+			g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
 			if (g_temp_sqr_x_l + g_temp_sqr_y_l >= g_rq_limit_l)
 			{
 				return 1;
 			}
 			g_old_z_l = g_new_z_l;
-			g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(s_frothy_data.l.a, g_old_z_l.y, g_bit_shift);
-			g_new_z_l.y = g_old_z_l.y + (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.x, g_bit_shift);
+			g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(s_frothy_data.l.a, g_old_z_l.y, g_bit_shift));
+			g_new_z_l.imag(g_old_z_l.y + (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.x, g_bit_shift));
 		}
 		g_temp_sqr_x_l = lsqr(g_new_z_l.x);
-		g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+		g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
 		if (g_temp_sqr_x_l + g_temp_sqr_y_l >= g_rq_limit_l)
 		{
 			return 1;

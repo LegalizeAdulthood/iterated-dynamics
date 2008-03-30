@@ -7,10 +7,10 @@
 int bail_out_mod_l()
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
-	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
 	g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
 	if (g_magnitude_l >= g_rq_limit_l || g_magnitude_l < 0 || labs(g_new_z_l.x) > g_rq_limit2_l
-		|| labs(g_new_z_l.y) > g_rq_limit2_l || g_overflow)
+		|| labs(g_new_z_l.imag()) > g_rq_limit2_l || g_overflow)
 	{
 		g_overflow = false;
 		return 1;
@@ -22,7 +22,7 @@ int bail_out_mod_l()
 int bail_out_real_l()
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
-	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
 	if (g_temp_sqr_x_l >= g_rq_limit_l || g_overflow)
 	{
 		g_overflow = false;
@@ -35,7 +35,7 @@ int bail_out_real_l()
 int bail_out_imag_l()
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
-	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
 	if (g_temp_sqr_y_l >= g_rq_limit_l || g_overflow)
 	{
 		g_overflow = false;
@@ -48,7 +48,7 @@ int bail_out_imag_l()
 int bail_out_or_l()
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
-	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
 	if (g_temp_sqr_x_l >= g_rq_limit_l || g_temp_sqr_y_l >= g_rq_limit_l || g_overflow)
 	{
 		g_overflow = false;
@@ -61,7 +61,7 @@ int bail_out_or_l()
 int bail_out_and_l()
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
-	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
 	if ((g_temp_sqr_x_l >= g_rq_limit_l && g_temp_sqr_y_l >= g_rq_limit_l) || g_overflow)
 	{
 		g_overflow = false;
@@ -74,7 +74,7 @@ int bail_out_and_l()
 int bail_out_manhattan_l()
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
-	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
 	g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
 	if (g_magnitude*g_magnitude >= g_rq_limit)
 	{
@@ -87,7 +87,7 @@ int bail_out_manhattan_l()
 int bail_out_manhattan_r_l()
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
-	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
 	g_magnitude = fabs(g_new_z.x + g_new_z.y);
 	if (g_magnitude*g_magnitude >= g_rq_limit)
 	{

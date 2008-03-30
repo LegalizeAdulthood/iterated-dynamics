@@ -1237,7 +1237,7 @@ bool detect_finite_attractor_l()
 		attractor_l.x = lsqr(attractor_l.x);
 		if (attractor_l.x < g_attractor_radius_l)
 		{
-			attractor_l.y = g_new_z_l.y - g_attractors_l[i].y;
+			attractor_l.y = g_new_z_l.imag() - g_attractors_l[i].y;
 			attractor_l.y = lsqr(attractor_l.y);
 			if (attractor_l.y < g_attractor_radius_l)
 			{
@@ -1718,7 +1718,7 @@ void StandardFractal::show_orbit()
 	}
 	else
 	{
-		plot_orbit_i(g_new_z_l.x, g_new_z_l.y, -1);
+		plot_orbit_i(g_new_z_l.x, g_new_z_l.imag(), -1);
 	}
 }
 void StandardFractal::set_new_z_if_bigmath()
@@ -1769,7 +1769,7 @@ void StandardFractal::check_periodicity()
 			{
 				if (labs(m_saved_z_l.x - g_new_z_l.x) < g_close_enough_l)
 				{
-					if (labs(m_saved_z_l.y - g_new_z_l.y) < g_close_enough_l)
+					if (labs(m_saved_z_l.y - g_new_z_l.imag()) < g_close_enough_l)
 					{
 						m_caught_a_cycle = true;
 					}
@@ -1859,7 +1859,7 @@ bool StandardFractal::colormode_epsilon_cross_update()
 				HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS;
 			go_plot_inside = true;
 		}
-		else if (labs(g_new_z_l.y) < labs(m_colormode_epsilon_cross_proximity_l))
+		else if (labs(g_new_z_l.imag()) < labs(m_colormode_epsilon_cross_proximity_l))
 		{
 			// close to x axis 
 			m_colormode_epsilon_cross_hooper = (m_colormode_epsilon_cross_proximity_l > 0) ?
@@ -1904,7 +1904,7 @@ void StandardFractal::colormode_beauty_of_fractals_update()
 	{
 		if (g_magnitude_l == 0 || !g_no_magnitude_calculation)
 		{
-			g_magnitude_l = lsqr(g_new_z_l.x) + lsqr(g_new_z_l.y);
+			g_magnitude_l = lsqr(g_new_z_l.x) + lsqr(g_new_z_l.imag());
 		}
 		g_magnitude = FudgeToDouble(g_magnitude_l);
 	}
@@ -2166,7 +2166,7 @@ void StandardFractal::compute_decomposition_and_biomorph()
 	{
 		if (g_integer_fractal)
 		{
-			if (labs(g_new_z_l.x) < g_rq_limit2_l || labs(g_new_z_l.y) < g_rq_limit2_l)
+			if (labs(g_new_z_l.x) < g_rq_limit2_l || labs(g_new_z_l.imag()) < g_rq_limit2_l)
 			{
 				g_color_iter = g_externs.Biomorph();
 			}
@@ -2493,16 +2493,16 @@ static void decomposition()
 			ltan2_8125	= DoubleToFudge(tan2_8125);
 			ltan1_4063	= DoubleToFudge(tan1_4063);
 		}
-		if (g_new_z_l.y < 0)
+		if (g_new_z_l.imag() < 0)
 		{
 			temp = 2;
-			g_new_z_l.y = -g_new_z_l.y;
+			g_new_z_l.imag(-g_new_z_l.imag());
 		}
 
 		if (g_new_z_l.x < 0)
 		{
 			++temp;
-			g_new_z_l.x = -g_new_z_l.x;
+			g_new_z_l.real(-g_new_z_l.x);
 		}
 		if (g_decomposition[0] == 2)
 		{
@@ -2520,72 +2520,72 @@ static void decomposition()
 		if (g_decomposition[0] >= 8)
 		{
 			temp <<= 1;
-			if (g_new_z_l.x < g_new_z_l.y)
+			if (g_new_z_l.x < g_new_z_l.imag())
 			{
 				++temp;
 				lalt.x = g_new_z_l.x; // just 
-				g_new_z_l.x = g_new_z_l.y; // swap 
-				g_new_z_l.y = lalt.x; // them 
+				g_new_z_l.real(g_new_z_l.imag()); // swap 
+				g_new_z_l.imag(lalt.x); // them 
 			}
 
 			if (g_decomposition[0] >= 16)
 			{
 				temp <<= 1;
-				if (multiply(g_new_z_l.x, ltan22_5, g_bit_shift) < g_new_z_l.y)
+				if (multiply(g_new_z_l.x, ltan22_5, g_bit_shift) < g_new_z_l.imag())
 				{
 					++temp;
 					lalt = g_new_z_l;
-					g_new_z_l.x = multiply(lalt.x, lcos45, g_bit_shift) +
-						multiply(lalt.y, lsin45, g_bit_shift);
-					g_new_z_l.y = multiply(lalt.x, lsin45, g_bit_shift) -
-						multiply(lalt.y, lcos45, g_bit_shift);
+					g_new_z_l.real(multiply(lalt.x, lcos45, g_bit_shift) +
+						multiply(lalt.y, lsin45, g_bit_shift));
+					g_new_z_l.imag(multiply(lalt.x, lsin45, g_bit_shift) -
+						multiply(lalt.y, lcos45, g_bit_shift));
 				}
 
 				if (g_decomposition[0] >= 32)
 				{
 					temp <<= 1;
-					if (multiply(g_new_z_l.x, ltan11_25, g_bit_shift) < g_new_z_l.y)
+					if (multiply(g_new_z_l.x, ltan11_25, g_bit_shift) < g_new_z_l.imag())
 					{
 						++temp;
 						lalt = g_new_z_l;
-						g_new_z_l.x = multiply(lalt.x, lcos22_5, g_bit_shift) +
-							multiply(lalt.y, lsin22_5, g_bit_shift);
-						g_new_z_l.y = multiply(lalt.x, lsin22_5, g_bit_shift) -
-							multiply(lalt.y, lcos22_5, g_bit_shift);
+						g_new_z_l.real(multiply(lalt.x, lcos22_5, g_bit_shift) +
+							multiply(lalt.y, lsin22_5, g_bit_shift));
+						g_new_z_l.imag(multiply(lalt.x, lsin22_5, g_bit_shift) -
+							multiply(lalt.y, lcos22_5, g_bit_shift));
 					}
 
 					if (g_decomposition[0] >= 64)
 					{
 						temp <<= 1;
-						if (multiply(g_new_z_l.x, ltan5_625, g_bit_shift) < g_new_z_l.y)
+						if (multiply(g_new_z_l.x, ltan5_625, g_bit_shift) < g_new_z_l.imag())
 						{
 							++temp;
 							lalt = g_new_z_l;
-							g_new_z_l.x = multiply(lalt.x, lcos11_25, g_bit_shift) +
-								multiply(lalt.y, lsin11_25, g_bit_shift);
-							g_new_z_l.y = multiply(lalt.x, lsin11_25, g_bit_shift) -
-								multiply(lalt.y, lcos11_25, g_bit_shift);
+							g_new_z_l.real(multiply(lalt.x, lcos11_25, g_bit_shift) +
+								multiply(lalt.y, lsin11_25, g_bit_shift));
+							g_new_z_l.imag(multiply(lalt.x, lsin11_25, g_bit_shift) -
+								multiply(lalt.y, lcos11_25, g_bit_shift));
 						}
 
 						if (g_decomposition[0] >= 128)
 						{
 							temp <<= 1;
-							if (multiply(g_new_z_l.x, ltan2_8125, g_bit_shift) < g_new_z_l.y)
+							if (multiply(g_new_z_l.x, ltan2_8125, g_bit_shift) < g_new_z_l.imag())
 							{
 								++temp;
 								lalt = g_new_z_l;
-								g_new_z_l.x = multiply(lalt.x, lcos5_625, g_bit_shift) +
-									multiply(lalt.y, lsin5_625, g_bit_shift);
-								g_new_z_l.y = multiply(lalt.x, lsin5_625, g_bit_shift) -
-									multiply(lalt.y, lcos5_625, g_bit_shift);
+								g_new_z_l.real(multiply(lalt.x, lcos5_625, g_bit_shift) +
+									multiply(lalt.y, lsin5_625, g_bit_shift));
+								g_new_z_l.imag(multiply(lalt.x, lsin5_625, g_bit_shift) -
+									multiply(lalt.y, lcos5_625, g_bit_shift));
 							}
 
 							if (g_decomposition[0] == 256)
 							{
 								temp <<= 1;
-								if (multiply(g_new_z_l.x, ltan1_4063, g_bit_shift) < g_new_z_l.y)
+								if (multiply(g_new_z_l.x, ltan1_4063, g_bit_shift) < g_new_z_l.imag())
 								{
-									if ((g_new_z_l.x*ltan1_4063 < g_new_z_l.y))
+									if ((g_new_z_l.x*ltan1_4063 < g_new_z_l.imag()))
 									{
 										++temp;
 									}
