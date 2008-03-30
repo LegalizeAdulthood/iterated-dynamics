@@ -91,8 +91,8 @@ int g_and_color;
 // magnitude of current orbit z
 long g_magnitude_l = 0;
 
-long g_limit_l = 0;
-long g_limit2_l = 0;
+long g_rq_limit_l = 0;
+long g_rq_limit2_l = 0;
 long g_close_enough_l = 0;
 ComplexD g_initial_z = { 0, 0 };
 ComplexD g_old_z = { 0, 0 };
@@ -719,16 +719,16 @@ int calculate_fractal()
 	{
 		g_parameter_l = ComplexDoubleToFudge(g_parameter); // Lambda
 		g_parameter2_l = ComplexDoubleToFudge(g_parameter2); // Lambda2
-		g_limit_l = DoubleToFudge(g_rq_limit);      // stop if magnitude exceeds this 
-		if (g_limit_l <= 0)
+		g_rq_limit_l = DoubleToFudge(g_rq_limit);      // stop if magnitude exceeds this 
+		if (g_rq_limit_l <= 0)
 		{
-			g_limit_l = 0x7fffffffL; // klooge for integer math 
+			g_rq_limit_l = 0x7fffffffL; // klooge for integer math 
 		}
-		g_limit2_l = DoubleToFudge(g_rq_limit2);    // stop if magnitude exceeds this 
+		g_rq_limit2_l = DoubleToFudge(g_rq_limit2);    // stop if magnitude exceeds this 
 		g_close_enough_l = DoubleToFudge(g_close_enough); // "close enough" value 
 		g_initial_orbit_l = ComplexDoubleToFudge(g_initial_orbit_z);
 	}
-	g_resuming = (g_calculation_status == CALCSTAT_RESUMABLE);
+	g_resuming = (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE);
 	if (!g_resuming) // free resume_info memory if any is hanging around 
 	{
 		end_resume();
@@ -762,7 +762,7 @@ int calculate_fractal()
 		g_WorkList.set_yy_stop(g_y_dots - 1);
 		g_x_stop = g_x_dots - 1;
 		g_WorkList.set_xx_stop(g_x_dots - 1);
-		g_calculation_status = CALCSTAT_IN_PROGRESS;
+		g_externs.SetCalculationStatus(CALCSTAT_IN_PROGRESS);
 		// only standard escape time engine supports distest 
 		g_distance_test = 0;
 		if (g_current_fractal_specific->per_image())
@@ -776,14 +776,14 @@ int calculate_fractal()
 		}
 		if (check_key())
 		{
-			if (g_calculation_status == CALCSTAT_IN_PROGRESS) // calctype didn't set this itself, 
+			if (g_externs.CalculationStatus() == CALCSTAT_IN_PROGRESS) // calctype didn't set this itself, 
 			{
-				g_calculation_status = CALCSTAT_NON_RESUMABLE;   // so mark it interrupted, non-resumable 
+				g_externs.SetCalculationStatus(CALCSTAT_NON_RESUMABLE);   // so mark it interrupted, non-resumable 
 			}
 		}
 		else
 		{
-			g_calculation_status = CALCSTAT_COMPLETED; // no key, so assume it completed 
+			g_externs.SetCalculationStatus(CALCSTAT_COMPLETED); // no key, so assume it completed 
 		}
 	}
 	else // standard escape-time engine 
@@ -797,7 +797,7 @@ int calculate_fractal()
 				g_externs.SetStandardCalculationMode(CALCMODE_SOLID_GUESS);
 				g_three_pass = true;
 				timer_engine((int (*)()) perform_work_list);
-				if (g_calculation_status == CALCSTAT_COMPLETED)
+				if (g_externs.CalculationStatus() == CALCSTAT_COMPLETED)
 				{
 					// '2' is silly after 'g' for low rez 
 					g_externs.SetStandardCalculationMode((g_x_dots >= 640) ? CALCMODE_DUAL_PASS : CALCMODE_SINGLE_PASS);
@@ -833,7 +833,7 @@ int calculate_fractal()
 	{
 		disk_end();
 	}
-	return (g_calculation_status == CALCSTAT_COMPLETED) ? 0 : -1;
+	return (g_externs.CalculationStatus() == CALCSTAT_COMPLETED) ? 0 : -1;
 }
 
 // general escape-time engine routines
@@ -2165,18 +2165,18 @@ void StandardFractal::compute_decomposition_and_biomorph()
 	{
 		decomposition();
 	}
-	else if (g_biomorph != -1)
+	else if (g_externs.Biomorph() != BIOMORPH_NONE)
 	{
 		if (g_integer_fractal)
 		{
-			if (labs(g_new_z_l.x) < g_limit2_l || labs(g_new_z_l.y) < g_limit2_l)
+			if (labs(g_new_z_l.x) < g_rq_limit2_l || labs(g_new_z_l.y) < g_rq_limit2_l)
 			{
-				g_color_iter = g_biomorph;
+				g_color_iter = g_externs.Biomorph();
 			}
 		}
 		else if (fabs(g_new_z.x) < g_rq_limit2 || fabs(g_new_z.y) < g_rq_limit2)
 		{
-			g_color_iter = g_biomorph;
+			g_color_iter = g_externs.Biomorph();
 		}
 	}
 }
@@ -3857,7 +3857,7 @@ void PerformWorkList::interrupted_or_completed()
 	}
 	else
 	{
-		g_calculation_status = CALCSTAT_COMPLETED; // completed 
+		g_externs.SetCalculationStatus(CALCSTAT_COMPLETED); // completed 
 	}
 }
 
@@ -3876,7 +3876,7 @@ void PerformWorkList::calculate()
 	{
 		setup_per_image();
 		get_top_work_list_item();
-		g_calculation_status = CALCSTAT_IN_PROGRESS;
+		g_externs.SetCalculationStatus(CALCSTAT_IN_PROGRESS);
 
 		g_current_fractal_specific->per_image();
 		if (g_show_dot >= 0)

@@ -126,7 +126,7 @@ int get_toggles()
 	std::string previous_save_name = g_save_name;
 	int old_sound_flags = g_sound_state.flags();
 	long old_log_palette_flag = g_log_palette_mode;
-	int old_biomorph = g_user_biomorph;
+	int old_biomorph = g_externs.UserBiomorph();
 	int old_decomposition = g_decomposition[0];
 	int old_fill_color = g_fill_color;
 	double old_proximity = g_proximity;
@@ -174,7 +174,7 @@ int get_toggles()
 	{
 		dialog.push("Log Palette (n/a, ranges= parameter is in effect)");
 	}
-	dialog.push("Biomorph Color (-1 means OFF)", g_user_biomorph);
+	dialog.push("Biomorph Color (-1 means OFF)", g_externs.UserBiomorph());
 	dialog.push("Decomp Option (2,4,8,..,256, 0=OFF)", g_decomposition[0]);
 	std::string fill_buffer = "normal";
 	if (g_fill_color >= 0)
@@ -322,14 +322,17 @@ int get_toggles()
 		g_log_automatic_flag = false;  // turn it off, use the supplied value 
 	}
 
-	g_user_biomorph = dialog.values(++k).uval.ival;
-	if (g_user_biomorph >= g_colors)
 	{
-		g_user_biomorph = (g_user_biomorph % g_colors) + (g_user_biomorph/g_colors);
-	}
-	if (g_user_biomorph != old_biomorph)
-	{
-		j++;
+		int value = dialog.values(++k).uval.ival;
+		if (value >= g_colors)
+		{
+			value = (value % g_colors) + (value/g_colors);
+		}
+		if (value != old_biomorph)
+		{
+			g_externs.SetUserBiomorph(value);
+			j++;
+		}
 	}
 
 	g_decomposition[0] = dialog.values(++k).uval.ival;

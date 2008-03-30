@@ -2745,7 +2745,7 @@ static int once_per_image(int line_length, VECTOR v)
 	g_calculation_time = 0;
 	s_even_odd_row = 0;
 	// mark as in-progress 
-	g_calculation_status = CALCSTAT_IN_PROGRESS;
+	g_externs.SetCalculationStatus(CALCSTAT_IN_PROGRESS);
 
 	s_ambient = (unsigned int) (255*float(100 - g_3d_state.ambient())/100.0);
 	if (s_ambient < 1)

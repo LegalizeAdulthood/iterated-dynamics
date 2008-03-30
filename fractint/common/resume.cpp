@@ -4,6 +4,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "Externals.h"
 #include "realdos.h"
 #include "resume.h"
 #include "StopMessage.h"
@@ -21,10 +22,10 @@ static int s_resume_info_length = 0;
 //
 //	Before calling the (per_image, calctype) routines (engine), calculate_fractal sets:
 //		"g_resuming" to false if new image, true if resuming a partially done image
-//		"g_calculation_status" to CALCSTAT_IN_PROGRESS
+//		"calculation status" to CALCSTAT_IN_PROGRESS
 //	If an engine is interrupted and wants to be able to resume it must:
 //		store whatever status info it needs to be able to resume later
-//		set g_calculation_status to CALCSTAT_RESUMABLE and return
+//		set calculation status to CALCSTAT_RESUMABLE and return
 //	If subsequently called with g_resuming true, the engine must restore status
 //	info and continue from where it left off.
 //
@@ -38,7 +39,7 @@ static int s_resume_info_length = 0;
 //			undersize is not checked and probably causes serious misbehaviour.
 //			Version is an arbitrary number so that subsequent revisions of the
 //			engine can be made backward compatible.
-//			Alloc_resume sets g_calculation_status to CALCSTAT_RESUMABLE if it succeeds;
+//			Alloc_resume sets calculation status to CALCSTAT_RESUMABLE if it succeeds;
 //			to CALCSTAT_NON_RESUMABLE if it cannot allocate memory
 //			(and issues warning to user).
 //		put_resume(count, ptr)
@@ -66,7 +67,7 @@ static int s_resume_info_length = 0;
 //		end_resume();
 //
 //	Engines which allocate a large memory chunk of their own might
-//	directly set g_resume_info, g_resume_length, g_calculation_status to avoid doubling
+//	directly set g_resume_info, g_resume_length, calculation status to avoid doubling
 //	transient memory needs by using these routines.
 //
 //	standard_fractal, calculate_mandelbrot_l, solid_guess, and boundary_trace_main are a related
@@ -101,13 +102,13 @@ int alloc_resume(int alloclen, int version)
 	{
 		stop_message(STOPMSG_NORMAL, "Warning - insufficient free memory to save status.\n"
 			"You will not be able to resume calculating this image.");
-		g_calculation_status = CALCSTAT_NON_RESUMABLE;
+		g_externs.SetCalculationStatus(CALCSTAT_NON_RESUMABLE);
 		s_resume_info_length = 0;
 		return -1;
 	}
 	g_resume_length = 0;
 	put_resume(sizeof(version), &version);
-	g_calculation_status = CALCSTAT_RESUMABLE;
+	g_externs.SetCalculationStatus(CALCSTAT_RESUMABLE);
 	return 0;
 }
 

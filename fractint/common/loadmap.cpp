@@ -6,6 +6,7 @@
 #include "prototyp.h"
 
 #include "cmdfiles.h"
+#include "EnsureExtension.h"
 #include "filesystem.h"
 #include "loadmap.h"
 #include "miscres.h"

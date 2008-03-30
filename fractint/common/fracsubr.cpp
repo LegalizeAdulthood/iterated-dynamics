@@ -74,7 +74,7 @@ void fractal_float_to_bf()
 			floattobf(bfparms[i], g_parameters[i]);
 		}
 	}
-	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+	g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 }
 
 
@@ -88,7 +88,7 @@ void calculate_fractal_initialize_bail_out_limit()
 	{
 		g_rq_limit = g_externs.BailOut();
 	}
-	else if (g_biomorph != -1) // biomorph benefits from larger bailout 
+	else if (g_externs.Biomorph() != BIOMORPH_NONE) // biomorph benefits from larger bailout 
 	{
 		g_rq_limit = 100;
 	}
@@ -218,7 +218,7 @@ void calculate_fractal_initialize()
 		free_bf_vars();
 	}
 	g_float_flag = (g_bf_math || g_user_float_flag);
-	if (g_calculation_status == CALCSTAT_RESUMABLE)  // on resume, ensure g_float_flag correct 
+	if (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE)  // on resume, ensure g_float_flag correct 
 	{
 		g_float_flag = (g_current_fractal_specific->isinteger == 0);
 	}
@@ -241,7 +241,7 @@ init_restart:
 	g_externs.SetStandardCalculationMode(g_externs.UserStandardCalculationMode());
 	g_periodicity_check = g_user_periodicity_check;
 	g_distance_test = g_user_distance_test;
-	g_biomorph = g_user_biomorph;
+	g_externs.SetBiomorph(g_externs.UserBiomorph());
 
 	if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER)
 	{
@@ -359,18 +359,18 @@ init_restart:
 	// We want this code if we're using the assembler calculate_mandelbrot_l 
 	if (g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_JULIA)  // adust shift bits if.. 
 	{
-		if (!g_potential_flag                            // not using potential 
+		if (!g_potential_flag							// not using potential 
 			&& (g_parameters[0] > -2.0 && g_parameters[0] < 2.0)  // parameters not too large 
 			&& (g_parameters[1] > -2.0 && g_parameters[1] < 2.0)
 			&& !g_invert                                // and not inverting 
-			&& g_biomorph == -1                         // and not biomorphing 
-			&& g_rq_limit <= 4.0                           // and bailout not too high 
+			&& g_externs.Biomorph() == BIOMORPH_NONE	// and not biomorphing 
+			&& g_rq_limit <= 4.0						// and bailout not too high 
 			&& (g_outside > COLORMODE_REAL || g_outside < COLORMODE_INVERSE_TANGENT)         // and no funny outside stuff 
 			&& g_debug_mode != DEBUGMODE_FORCE_BITSHIFT	// and not debugging 
 			&& g_proximity <= 2.0                       // and g_proximity not too large 
-			&& g_externs.BailOutTest() == BAILOUT_MODULUS)                     // and bailout test = mod 
+			&& g_externs.BailOutTest() == BAILOUT_MODULUS) // and bailout test = mod 
 		{
-			g_bit_shift = FUDGE_FACTOR;                  // use the larger g_bit_shift 
+			g_bit_shift = FUDGE_FACTOR;					// use the larger g_bit_shift 
 		}
 	}
 
@@ -446,9 +446,9 @@ expand_retry:
 				{
 					adjust_to_limits(2.0);   // double the size 
 				}
-				if (g_calculation_status == CALCSTAT_RESUMABLE)       // due to restore of an old file? 
+				if (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE)       // due to restore of an old file? 
 				{
-					g_calculation_status = CALCSTAT_PARAMS_CHANGED;         // whatever, it isn't resumable 
+					g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);         // whatever, it isn't resumable 
 				}
 				goto init_restart;
 			} // end if ratio bad 
@@ -964,12 +964,12 @@ static void adjust_to_limits_bf(double expand)
 		}
 	}
 
-	// if (g_calculation_status == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (g_z_width == 1.0))
-	// g_calculation_status = CALCSTAT_PARAMS_CHANGED; */
-	if (g_calculation_status == CALCSTAT_RESUMABLE
+	// if (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (g_z_width == 1.0))
+	// g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED); */
+	if (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE
 		&& (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (g_z_width == 1.0))
 	{
-		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 	}
 
 	// xmin = cornerx[0] - adjx; 
@@ -1149,9 +1149,9 @@ static void adjust_to_limits(double expand)
 			}
 		}
 	}
-	if (g_calculation_status == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (g_z_width == 1.0))
+	if (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (g_z_width == 1.0))
 	{
-		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 	}
 	g_escape_time_state.m_grid_fp.x_min() = cornerx[0] - adjx;
 	g_escape_time_state.m_grid_fp.x_max() = cornerx[1] - adjx;

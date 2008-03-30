@@ -292,7 +292,7 @@ top:
 		nextleft += 2;
 		choicekey[nextleft] = 13; // enter 
 		attributes[nextleft] = MENU_ITEM;
-		choices[nextleft] = (g_calculation_status == CALCSTAT_RESUMABLE) ?
+		choices[nextleft] = (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE) ?
 			"continue calculation        " :
 			"return to image             ";
 

@@ -293,7 +293,7 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 	}
 	if (g_max_iteration > *old_maxit
 		&& g_inside >= 0
-		&& g_calculation_status == CALCSTAT_COMPLETED
+		&& g_externs.CalculationStatus() == CALCSTAT_COMPLETED
 		&& g_current_fractal_specific->calculate_type == standard_fractal
 		&& !g_log_palette_mode
 		&& !g_true_color // recalc not yet implemented with truecolor 
@@ -306,14 +306,14 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 		g_standard_calculation_mode_old = g_externs.UserStandardCalculationMode();
 		g_externs.SetUserStandardCalculationMode(CALCMODE_SINGLE_PASS);
 		kbdmore = false;
-		g_calculation_status = CALCSTAT_RESUMABLE;
+		g_externs.SetCalculationStatus(CALCSTAT_RESUMABLE);
 	}
 	else if (i > 0)
 	{              // time to redraw? 
 		g_quick_calculate = false;
 		save_parameter_history();
 		kbdmore = false;
-		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 	}
 }
 
@@ -354,7 +354,7 @@ static void handle_evolver_options(int kbdchar, bool &kbdmore)
 	{
 		save_parameter_history();
 		kbdmore = false;
-		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 	}
 }
 
@@ -389,7 +389,7 @@ static bool handle_execute_commands(int &kbdchar, bool &kbdmore)
 	{                         // fractal parameter changed 
 		driver_discard_screen();
 		kbdmore = false;
-		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 	}
 	else
 	{
@@ -443,7 +443,7 @@ static ApplicationStateType handle_ant()
 		driver_unstack_screen();
 		if (ant() >= 0)
 		{
-			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+			g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		}
 	}
 	else
@@ -468,7 +468,7 @@ static ApplicationStateType handle_recalc(int (*continue_check)(), int (*recalc_
 	{
 		if (recalc_check() >= 0)
 		{
-			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+			g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		}
 		return APPSTATE_CONTINUE;
 	}
@@ -479,7 +479,7 @@ static void handle_3d_params(bool &kbdmore)
 {
 	if (get_fractal_3d_parameters() >= 0)    // get the parameters 
 	{
-		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		kbdmore = false;    // time to redraw 
 	}
 }
@@ -520,7 +520,7 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 	if (g_fractal_type == FRACTYPE_CELLULAR)
 	{
 		g_next_screen_flag = !g_next_screen_flag;
-		g_calculation_status = CALCSTAT_RESUMABLE;
+		g_externs.SetCalculationStatus(CALCSTAT_RESUMABLE);
 		kbdmore = false;
 		return;
 	}
@@ -578,7 +578,7 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 		g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
 		g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
 		if (g_user_distance_test == 0
-			&& g_user_biomorph != -1
+			&& g_externs.UserBiomorph() != BIOMORPH_NONE
 			&& g_bit_shift != 29)
 		{
 			g_escape_time_state.m_grid_fp.x_min() *= 3.0;
@@ -589,7 +589,7 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 			g_escape_time_state.m_grid_fp.y_3rd() *= 3.0;
 		}
 		g_zoom_off = true;
-		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		kbdmore = false;
 	}
 	else if (!fractal_type_none(g_current_fractal_specific->tomandel))
@@ -620,7 +620,7 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 		g_parameters[0] = 0;
 		g_parameters[1] = 0;
 		g_zoom_off = true;
-		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		kbdmore = false;
 	}
 	else
@@ -647,7 +647,7 @@ static void handle_inverse_julia_toggle(bool &kbdmore)
 		}
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		g_zoom_off = true;
-		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		kbdmore = false;
 	}
 	else
@@ -732,7 +732,7 @@ static ApplicationStateType handle_color_editing(bool &kbdmore)
 		if (load_palette() >= 0)
 		{
 			kbdmore = false;
-			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+			g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 			return APPSTATE_NO_CHANGE;
 		}
 		else
@@ -856,7 +856,7 @@ static void handle_zoom_in(bool &kbdmore)
 		init_pan_or_recalc(false);
 		kbdmore = false;
 	}
-	if (g_calculation_status != CALCSTAT_COMPLETED)     // don't restart if image complete 
+	if (g_externs.CalculationStatus() != CALCSTAT_COMPLETED)     // don't restart if image complete 
 	{
 		kbdmore = false;
 	}
@@ -928,7 +928,7 @@ static void handle_mutation_level(bool forward, int amount, bool &kbdmore)
 		save_parameter_history();
 	}
 	kbdmore = false;
-	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+	g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 }
 
 static ApplicationStateType handle_video_mode(int kbdchar, bool &kbdmore)
@@ -941,7 +941,7 @@ static ApplicationStateType handle_video_mode(int kbdchar, bool &kbdmore)
 		{
 			g_.SetSaveDAC(SAVEDAC_NO);
 		}
-		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		kbdmore = false;
 		return APPSTATE_CONTINUE;
 	}
@@ -1039,7 +1039,7 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 
 	if (g_quick_calculate)
 	{
-		if (CALCSTAT_COMPLETED == g_calculation_status)
+		if (CALCSTAT_COMPLETED == g_externs.CalculationStatus())
 		{
 			g_quick_calculate = false;
 		}
@@ -1228,7 +1228,7 @@ static void handle_evolver_exit(bool &kbdmore)
 	g_viewWindow.Hide();
 	save_parameter_history();
 	kbdmore = false;
-	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+	g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 }
 
 static ApplicationStateType handle_evolver_history(int kbdchar)
@@ -1425,7 +1425,7 @@ static void handle_evolver_mutation(int halve, bool &kbdmore)
 		g_new_parameter_offset_y = centery - g_parameter_range_y/2;
 	}
 	kbdmore = false;
-	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+	g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 }
 
 static void handle_evolver_grid_size(int decrement, bool &kbdmore)
@@ -1436,7 +1436,7 @@ static void handle_evolver_grid_size(int decrement, bool &kbdmore)
 		{
 			g_grid_size -= 2;  // g_grid_size must have odd value only 
 			kbdmore = false;
-			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+			g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		}
 	}
 	else
@@ -1445,7 +1445,7 @@ static void handle_evolver_grid_size(int decrement, bool &kbdmore)
 		{
 			g_grid_size += 2;
 			kbdmore = false;
-			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+			g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		}
 	}
 }
@@ -1466,7 +1466,7 @@ static void handle_evolver_toggle(bool &kbdmore)
 		}
 	}
 	kbdmore = false;
-	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+	g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 }
 
 static void handle_mutation_off(bool &kbdmore)
@@ -1474,7 +1474,7 @@ static void handle_mutation_off(bool &kbdmore)
 	g_evolving_flags = EVOLVE_NONE;
 	g_viewWindow.Hide();
 	kbdmore = false;
-	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+	g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 }
 
 ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_manelbrot, bool &kbdmore, bool &stacked)

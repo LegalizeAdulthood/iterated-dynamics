@@ -21,6 +21,7 @@
 
 #include "decoder.h"
 #include "diskvid.h"
+#include "Externals.h"
 #include "filesystem.h"
 #include "fracsubr.h"
 #include "framain2.h"
@@ -307,9 +308,9 @@ int gifview()
 			// initialize the row count for write-lines 
 			g_row_count = 0;
 
-			if (g_calculation_status == CALCSTAT_IN_PROGRESS) // should never be so, but make sure 
+			if (g_externs.CalculationStatus() == CALCSTAT_IN_PROGRESS) // should never be so, but make sure 
 			{
-				g_calculation_status = CALCSTAT_PARAMS_CHANGED;
+				g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 			}
 			/*
 			* Call decoder(width) via timer.
@@ -323,17 +324,17 @@ int gifview()
 				BusyMarker marker;
 				status = timer_decoder(width);
 			}
-			if (g_calculation_status == CALCSTAT_IN_PROGRESS) // e.g., set by line3d 
+			if (g_externs.CalculationStatus() == CALCSTAT_IN_PROGRESS) // e.g., set by line3d 
 			{
 				g_calculation_time = g_timer_interval; // note how long it took 
 				if (driver_key_pressed() != 0)
 				{
-					g_calculation_status = CALCSTAT_NON_RESUMABLE; // interrupted, not resumable 
+					g_externs.SetCalculationStatus(CALCSTAT_NON_RESUMABLE); // interrupted, not resumable 
 					finished = true;
 				}
 				else
 				{
-					g_calculation_status = CALCSTAT_COMPLETED; // complete 
+					g_externs.SetCalculationStatus(CALCSTAT_COMPLETED); // complete 
 				}
 			}
 			// Hey! the decoder doesn't read the last (0-length) g_block!! 

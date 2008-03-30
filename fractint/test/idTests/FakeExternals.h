@@ -11,7 +11,7 @@ class FakeExternals : public Externals
 {
 public:
 	FakeExternals() : _showFileCalled(false), _showFileFakeResult(SHOWFILE_PENDING),
-		_calculationStatusCalled(false), _calculationStatusFakeResult(0),
+		_calculationStatusCalled(false), _calculationStatusFakeResult(CALCSTAT_NO_FRACTAL),
 		_initializeBatchCalled(false), _initializeBatchFakeResult(INITBATCH_NONE),
 		_setZoomOffCalled(false), _setZoomOffLastValue(false),
 		_evolvingFlagsCalled(false), _evolvingFlagsFakeResult(0),
@@ -77,10 +77,10 @@ public:
 	virtual void SetCalculateMandelbrotAsmFp(CalculateMandelbrotFunction *value) { throw not_implemented("SetCalculateMandelbrotAsmFp"); }
 	virtual CalculateTypeFunction *CalculateType() const { throw not_implemented("CalculateType"); }
 	virtual void SetCalculateType(CalculateTypeFunction *value)	{ throw not_implemented("SetCalculateType"); }
-	virtual int CalculationStatus() const			{ mutate()->_calculationStatusCalled = true; return _calculationStatusFakeResult; }
+	virtual CalculationStatusType CalculationStatus() const { mutate()->_calculationStatusCalled = true; return _calculationStatusFakeResult; }
 	bool CalculationStatusCalled() const			{ return _calculationStatusCalled; }
-	virtual void SetCalculationStatusFakeResult(int value) { _calculationStatusFakeResult = value; }
-	virtual void SetCalculationStatus(int value)	{ throw not_implemented("SetCalculationStatus"); }
+	virtual void SetCalculationStatusFakeResult(CalculationStatusType value) { _calculationStatusFakeResult = value; }
+	virtual void SetCalculationStatus(CalculationStatusType value)	{ throw not_implemented("SetCalculationStatus"); }
 	virtual int const *CfgLineNums() const	{ throw not_implemented("CfgLineNums"); }
 	virtual void SetCfgLineNums(int const *value)	{ throw not_implemented("SetCfgLineNums"); }
 	virtual bool CheckCurrentDir() const			{ throw not_implemented("CheckCurrentDir"); }
@@ -312,10 +312,10 @@ public:
 	virtual void SetInitialXL(long value) 			{ throw not_implemented("SetInitialXL"); }
 	virtual long InitialYL() const 					{ throw not_implemented("InitialYL"); }
 	virtual void SetInitialYL(long value) 			{ throw not_implemented("SetInitialYL"); }
-	virtual long Limit2L() const 					{ throw not_implemented("Limit2L"); }
-	virtual void SetLimit2L(long value) 			{ throw not_implemented("SetLimit2L"); }
-	virtual long LimitL() const 					{ throw not_implemented("LimitL"); }
-	virtual void SetLimitL(long value) 				{ throw not_implemented("SetLimitL"); }
+	virtual long RqLimit2L() const 					{ throw not_implemented("RqLimit2L"); }
+	virtual void SetRqLimit2L(long value) 			{ throw not_implemented("SetRqLimit2L"); }
+	virtual long RqLimitL() const 					{ throw not_implemented("RqLimitL"); }
+	virtual void SetRqLimitL(long value) 			{ throw not_implemented("SetRqLimitL"); }
 	virtual long MagnitudeL() const 				{ throw not_implemented("MagnitudeL"); }
 	virtual void SetMagnitudeL(long value) 			{ throw not_implemented("SetMagnitudeL"); }
 	virtual ComplexL NewZL() const 					{ throw not_implemented("NewZL"); }
@@ -368,7 +368,7 @@ public:
 	virtual void SetTrig3D(TrigFunction *value)		{ throw not_implemented("SetTrig3D"); }
 	virtual double Magnitude() const 				{ throw not_implemented("Magnitude"); }
 	virtual void SetMagnitude(double value) 		{ throw not_implemented("SetMagnitude"); }
-	virtual unsigned long magnitudeLimit() const	{ throw not_implemented("magnitudeLimit"); }
+	virtual unsigned long MagnitudeLimit() const	{ throw not_implemented("MagnitudeLimit"); }
 	virtual void SetMagnitudeLimit(long value) 		{ throw not_implemented("SetMagnitudeLimit"); }
 	virtual MajorMethodType MajorMethod() const		{ throw not_implemented("MajorMethod"); }
 	virtual void SetMajorMethod(MajorMethodType value) { throw not_implemented("SetMajorMethod"); }
@@ -831,7 +831,7 @@ private:
 	bool _showFileCalled;
 	ShowFileType _showFileFakeResult;
 	bool _calculationStatusCalled;
-	int _calculationStatusFakeResult;
+	CalculationStatusType _calculationStatusFakeResult;
 	bool _initializeBatchCalled;
 	InitializeBatchType _initializeBatchFakeResult;
 	bool _setZoomOffCalled;

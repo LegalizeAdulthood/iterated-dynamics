@@ -590,7 +590,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 {
 	int i;
 	int j;
-	if ((g_calculation_status != CALCSTAT_RESUMABLE && g_calculation_status != CALCSTAT_COMPLETED) || g_evolving_flags)
+	if ((g_externs.CalculationStatus() != CALCSTAT_RESUMABLE && g_externs.CalculationStatus() != CALCSTAT_COMPLETED) || g_evolving_flags)
 	{
 		return 0; // not resumable, not complete 
 	}
@@ -621,7 +621,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 
 	// can pan if we get this far 
 
-	if (g_calculation_status == CALCSTAT_COMPLETED)
+	if (g_externs.CalculationStatus() == CALCSTAT_COMPLETED)
 	{
 		return 1; // image completed, align on any pixel 
 	}
@@ -694,19 +694,19 @@ void init_pan_or_recalc(bool do_zoomout) // decide to recalc, or to chg g_work_l
 	int listfull;
 	if (g_z_width == 0.0)
 	{
-		return; // no zoombox, leave g_calculation_status as is 
+		return; // no zoombox, leave calculation status as is 
 	}
 	// got a zoombox 
 	alignmask = check_pan()-1;
 	if (alignmask < 0 || g_evolving_flags)
 	{
-		g_calculation_status = CALCSTAT_PARAMS_CHANGED; // can't pan, trigger recalc 
+		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED); // can't pan, trigger recalc 
 		return;
 	}
 	if (g_zbx == 0.0 && g_zby == 0.0)
 	{
 		g_zoomBox.clear();
-		return; // box is full screen, leave g_calculation_status as is 
+		return; // box is full screen, leave calculation status as is 
 	}
 	col = int(g_zbx*(g_dx_size + PIXELROUND)); // calc dest col, row of topleft pixel 
 	row = int(g_zby*(g_dy_size + PIXELROUND));
@@ -717,13 +717,13 @@ void init_pan_or_recalc(bool do_zoomout) // decide to recalc, or to chg g_work_l
 	}
 	if ((row&alignmask) != 0 || (col&alignmask) != 0)
 	{
-		g_calculation_status = CALCSTAT_PARAMS_CHANGED; // not on useable pixel alignment, trigger recalc 
+		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED); // not on useable pixel alignment, trigger recalc 
 		return;
 	}
 	// pan 
 
 	g_WorkList.reset_items();
-	if (g_calculation_status == CALCSTAT_RESUMABLE)
+	if (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE)
 	{
 		start_resume();
 		g_WorkList.get_resume();
@@ -770,12 +770,12 @@ void init_pan_or_recalc(bool do_zoomout) // decide to recalc, or to chg g_work_l
 		}
 		else
 		{
-			g_calculation_status = CALCSTAT_PARAMS_CHANGED; // trigger recalc 
+			g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED); // trigger recalc 
 		}
 		return;
 	}
 	// now we're committed 
-	g_calculation_status = CALCSTAT_RESUMABLE;
+	g_externs.SetCalculationStatus(CALCSTAT_RESUMABLE);
 	g_zoomBox.clear();
 	if (row > 0) // move image up 
 	{

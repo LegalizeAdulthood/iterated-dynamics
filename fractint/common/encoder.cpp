@@ -18,6 +18,7 @@
 #include "drivers.h"
 #include "diskvid.h"
 #include "encoder.h"
+#include "EnsureExtension.h"
 #include "Externals.h"
 #include "filesystem.h"
 #include "loadfile.h"
@@ -550,7 +551,7 @@ int encoder()
 			evolution_info esave_info;
 			int i;
 			evolution_info resume_e_info;
-			if (g_evolve_info == 0 || g_calculation_status == CALCSTAT_COMPLETED)
+			if (g_evolve_info == 0 || g_externs.CalculationStatus() == CALCSTAT_COMPLETED)
 			{
 				esave_info.parameter_range_x = g_parameter_range_x;
 				esave_info.parameter_range_y = g_parameter_range_y;
@@ -843,7 +844,7 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->invert[1] = float(g_inversion[1]);
 	save_info->invert[2] = float(g_inversion[2]);
 	save_info->decomposition[0] = short(g_decomposition[0]);
-	save_info->biomorph = short(g_user_biomorph);
+	save_info->biomorph = short(g_externs.UserBiomorph());
 	save_info->symmetry = short(g_force_symmetry);
 	g_3d_state.get_raytrace_parameters(&save_info->init_3d[0]);
 	save_info->previewfactor = short(g_3d_state.preview_factor());
@@ -862,7 +863,7 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->outside = short(g_outside);
 	save_info->x_3rd = g_escape_time_state.m_grid_fp.x_3rd();
 	save_info->y_3rd = g_escape_time_state.m_grid_fp.y_3rd();
-	save_info->calculation_status = short(g_calculation_status);
+	save_info->calculation_status = short(g_externs.CalculationStatus());
 	save_info->stdcalcmode = char(
 		(g_three_pass && g_externs.StandardCalculationMode() == CALCMODE_TRIPLE_PASS) ?
 			127 : g_externs.StandardCalculationMode());

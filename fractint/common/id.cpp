@@ -162,13 +162,6 @@ double  g_plot_mx1;
 double	g_plot_mx2;
 double	g_plot_my1;
 double	g_plot_my2;     // real->screen multipliers 
-int		g_calculation_status = CALCSTAT_NO_FRACTAL;
-					  // -1 no fractal                   
-					  // 0 parms changed, recalc reqd   
-					  // 1 actively calculating         
-					  // 2 interrupted, resumable       
-					  // 3 interrupted, not resumable   
-					  // 4 completed                    
 long	g_calculation_time;
 int		g_max_colors;                         // maximum palette size 
 bool g_zoom_off;                     // = 0 when zoom is disabled    

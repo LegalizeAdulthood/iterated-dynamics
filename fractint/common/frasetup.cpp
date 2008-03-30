@@ -31,10 +31,17 @@ long calculate_mandelbrot_fp_asm();
 bool mandelbrot_setup()           // Mandelbrot Routine 
 {
 	if (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL
-		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
-		&& g_bit_shift == 29 && !g_potential_flag
-		&& g_biomorph == -1 && g_inside > COLORMODE_Z_MAGNITUDE && g_outside >= COLORMODE_ITERATION
-		&& g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT && !g_using_jiim && g_externs.BailOutTest() == BAILOUT_MODULUS
+		&& !g_invert
+		&& g_decomposition[0] == 0
+		&& g_rq_limit == 4.0
+		&& g_bit_shift == 29
+		&& !g_potential_flag
+		&& g_externs.Biomorph() == BIOMORPH_NONE
+		&& g_inside > COLORMODE_Z_MAGNITUDE
+		&& g_outside >= COLORMODE_ITERATION
+		&& g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT
+		&& !g_using_jiim
+		&& g_externs.BailOutTest() == BAILOUT_MODULUS
 		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 	{
 		g_calculate_type = calculate_mandelbrot_l; // the normal case - use CALCMAND 
@@ -51,10 +58,17 @@ bool mandelbrot_setup()           // Mandelbrot Routine
 bool julia_setup()            // Julia Routine 
 {
 	if (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL
-		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
-		&& g_bit_shift == 29 && !g_potential_flag
-		&& g_biomorph == -1 && g_inside > COLORMODE_Z_MAGNITUDE && g_outside >= COLORMODE_ITERATION
-		&& (g_finite_attractor == FINITE_ATTRACTOR_NO) && !g_using_jiim && g_externs.BailOutTest() == BAILOUT_MODULUS
+		&& !g_invert
+		&& g_decomposition[0] == 0
+		&& g_rq_limit == 4.0
+		&& g_bit_shift == 29
+		&& !g_potential_flag
+		&& g_externs.Biomorph() == BIOMORPH_NONE
+		&& g_inside > COLORMODE_Z_MAGNITUDE
+		&& g_outside >= COLORMODE_ITERATION
+		&& (g_finite_attractor == FINITE_ATTRACTOR_NO)
+		&& !g_using_jiim
+		&& g_externs.BailOutTest() == BAILOUT_MODULUS
 		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 	{
 		g_calculate_type = calculate_mandelbrot_l; // the normal case - use CALCMAND 
@@ -119,13 +133,14 @@ bool mandelbrot_setup_fp()
 		if (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL
 			&& !g_distance_test
 			&& g_decomposition[0] == 0
-			&& g_biomorph == -1
+			&& g_externs.Biomorph() == BIOMORPH_NONE
 			&& (g_inside >= COLORMODE_ITERATION)
 			// uncomment this next line if more outside options are added 
 			&& g_outside >= COLORMODE_INVERSE_TANGENT
 			&& g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT
 			&& (g_sound_state.flags() & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
-			&& !g_using_jiim && g_externs.BailOutTest() == BAILOUT_MODULUS
+			&& !g_using_jiim
+			&& g_externs.BailOutTest() == BAILOUT_MODULUS
 			&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 		{
 			g_calculate_type = calculate_mandelbrot_fp; // the normal case - use calculate_mandelbrot_fp 
@@ -249,14 +264,15 @@ bool julia_setup_fp()
 		if (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL
 			&& !g_distance_test
 			&& g_decomposition[0] == 0
-			&& g_biomorph == -1
+			&& g_externs.Biomorph() == BIOMORPH_NONE
 			&& (g_inside >= COLORMODE_ITERATION)
 			// uncomment this next line if more outside options are added 
 			&& g_outside >= COLORMODE_INVERSE_TANGENT
 			&& g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT
 			&& (g_sound_state.flags() & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 			&& (g_finite_attractor == FINITE_ATTRACTOR_NO)
-			&& !g_using_jiim && g_externs.BailOutTest() == BAILOUT_MODULUS
+			&& !g_using_jiim
+			&& g_externs.BailOutTest() == BAILOUT_MODULUS
 			&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 		{
 			g_calculate_type = calculate_mandelbrot_fp; // the normal case - use calculate_mandelbrot_fp 

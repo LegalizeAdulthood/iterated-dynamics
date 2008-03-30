@@ -29,7 +29,11 @@ public:
 		_badOutside(false),
 		_bailOut(0),
 		_bailOutTest(),
-		_basin(0)
+		_basin(0),
+		_biomorph(BIOMORPH_NONE),
+		_userBiomorph(BIOMORPH_NONE),
+		_calculationStatus(CALCSTAT_NO_FRACTAL),
+		_checkCurrentDirectory(false)
 	{ }
 	virtual ~ExternalsImpl() { }
 
@@ -80,12 +84,10 @@ public:
 	virtual void SetCalculateMandelbrotAsmFp(CalculateMandelbrotFunction *value) { g_calculate_mandelbrot_asm_fp = value; }
 	virtual CalculateTypeFunction *CalculateType() const		{ return g_calculate_type; }
 	virtual void SetCalculateType(CalculateTypeFunction *value) { g_calculate_type = value; }
-	virtual int CalculationStatus() const						{ return g_calculation_status; }
-	virtual void SetCalculationStatus(int value)				{ g_calculation_status = value; }
+	virtual CalculationStatusType CalculationStatus() const		{ return _calculationStatus; }
+	virtual void SetCalculationStatus(CalculationStatusType value) { _calculationStatus = value; }
 	virtual int const *CfgLineNums() const						{ return g_cfg_line_nums; }
 	virtual void SetCfgLineNums(int const *value)				{ /*g_cfg_line_nums = value;*/ }
-	virtual bool CheckCurrentDir() const						{ return g_check_current_dir; }
-	virtual void SetCheckCurrentDir(bool value)					{ g_check_current_dir = value; }
 	virtual long CImag() const									{ return g_c_imag; }
 	virtual void SetCImag(long value)							{ g_c_imag = value; }
 	virtual double CloseEnough() const							{ return g_close_enough; }
@@ -299,10 +301,6 @@ public:
 	virtual void SetInitialXL(long value)						{ g_initial_x_l = value; }
 	virtual long InitialYL() const								{ return g_initial_y_l; }
 	virtual void SetInitialYL(long value)						{ g_initial_y_l = value; }
-	virtual long Limit2L() const								{ return g_limit2_l; }
-	virtual void SetLimit2L(long value)							{ g_limit2_l = value; }
-	virtual long LimitL() const									{ return g_limit_l; }
-	virtual void SetLimitL(long value)							{ g_limit_l = value; }
 	virtual long MagnitudeL() const								{ return g_magnitude_l; }
 	virtual void SetMagnitudeL(long value)						{ g_magnitude_l = value; }
 	virtual ComplexL NewZL() const								{ return g_new_z_l; }
@@ -366,7 +364,7 @@ public:
 
 	virtual double Magnitude() const							{ return g_magnitude; }
 	virtual void SetMagnitude(double value)						{ g_magnitude = value; }
-	virtual unsigned long magnitudeLimit() const				{ return g_magnitude_limit; }
+	virtual unsigned long MagnitudeLimit() const				{ return g_magnitude_limit; }
 	virtual void SetMagnitudeLimit(long value)					{ g_magnitude_limit = value; }
 	virtual MajorMethodType MajorMethod() const					{ return g_major_method; }
 	virtual void SetMajorMethod(MajorMethodType value)			{ g_major_method = value; }
@@ -557,10 +555,16 @@ public:
 	virtual void SetRow(int value)								{ g_row = value; }
 	virtual int RowCount() const								{ return g_row_count; }
 	virtual void SetRowCount(int value)							{ g_row_count = value; }
-	virtual double RqLimit2() const								{ return g_rq_limit2; }
-	virtual void SetRqLimit2(double value)						{ g_rq_limit2 = value; }
+
 	virtual double RqLimit() const								{ return g_rq_limit; }
 	virtual void SetRqLimit(double value)						{ g_rq_limit = value; }
+	virtual double RqLimit2() const								{ return g_rq_limit2; }
+	virtual void SetRqLimit2(double value)						{ g_rq_limit2 = value; }
+	virtual long RqLimitL() const								{ return g_rq_limit_l; }
+	virtual void SetRqLimitL(long value)						{ g_rq_limit_l = value; }
+	virtual long RqLimit2L() const								{ return g_rq_limit2_l; }
+	virtual void SetRqLimit2L(long value)						{ g_rq_limit2_l = value; }
+
 	virtual int RandomSeed() const								{ return g_random_seed; }
 	virtual void SetRandomSeed(int value)						{ g_random_seed = value; }
 	virtual long SaveBase() const								{ return g_save_base; }
@@ -765,6 +769,8 @@ public:
 	virtual OutLineFunction *OutLine3D() const					{ return out_line_3d; }
 	virtual OutLineFunction *OutLineCompare() const				{ return out_line_compare; }
 
+	virtual bool CheckCurrentDir() const						{ return _checkCurrentDirectory; }
+	virtual void SetCheckCurrentDir(bool value)					{ _checkCurrentDirectory = value; }
 	virtual std::string const &FractDir1() const				{ return g_fract_dir1; }
 	virtual void SetFractDir1(std::string const &value)			{ g_fract_dir1 = value; }
 	virtual std::string const &FractDir2() const				{ return g_fract_dir2; }
@@ -775,10 +781,11 @@ public:
 	virtual void SetFileNameStackTop(std::string const &value)	{ g_file_name_stack[g_name_stack_ptr] = value; }
 	virtual boost::filesystem::path const &WorkDirectory() const { return g_work_dir; }
 
-	virtual int Biomorph() const								{ return g_biomorph; }
-	virtual void SetBiomorph(int value)							{ g_biomorph = value; }
-	virtual int UserBiomorph() const							{ return g_user_biomorph; }
-	virtual void SetUserBiomorph(int value)						{ g_user_biomorph = value; }
+	// biomorph coloring option
+	virtual int Biomorph() const								{ return _biomorph; }
+	virtual void SetBiomorph(int value)							{ _biomorph = value; }
+	virtual int UserBiomorph() const							{ return _userBiomorph; }
+	virtual void SetUserBiomorph(int value)						{ _userBiomorph = value; }
 
 	virtual bool ThreePass() const								{ return g_three_pass; }
 	virtual void SetThreePass(bool value)						{ g_three_pass = value; }
@@ -818,6 +825,10 @@ private:
 	long _bailOut;
 	BailOutType _bailOutTest;
 	int _basin;
+	int _biomorph;
+	int _userBiomorph;
+	CalculationStatusType _calculationStatus;
+	bool _checkCurrentDirectory;						// flag to check current dir for files 
 };
 
 static ExternalsImpl s_externs;

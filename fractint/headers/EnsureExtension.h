@@ -1,0 +1,6 @@
+#pragma once
+
+#include <boost/filesystem.hpp>
+
+extern void ensure_extension(char *filename, const char *extension);
+extern void ensure_extension(boost::filesystem::path &path, const char *extension);

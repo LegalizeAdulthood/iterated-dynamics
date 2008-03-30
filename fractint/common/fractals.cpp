@@ -645,7 +645,7 @@ int lambda_exponent_orbit()
 
 	SinCos086(g_old_z_l.y, &s_sin_y_l,  &s_cos_y_l);
 
-	if (g_old_z_l.x >= g_limit_l && s_cos_y_l >= 0L)
+	if (g_old_z_l.x >= g_rq_limit_l && s_cos_y_l >= 0L)
 	{
 		return 1;
 	}
@@ -1105,8 +1105,8 @@ int popcorn_old_orbit()
 		g_temp_sqr_y_l = lsqr(g_new_z_l.y);
 	}
 	g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
-	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0 || labs(g_new_z_l.x) > g_limit2_l
-			|| labs(g_new_z_l.y) > g_limit2_l)
+	if (g_magnitude_l >= g_rq_limit_l || g_magnitude_l < 0 || labs(g_new_z_l.x) > g_rq_limit2_l
+			|| labs(g_new_z_l.y) > g_rq_limit2_l)
 					return 1;
 	g_old_z_l = g_new_z_l;
 	return 0;
@@ -1143,10 +1143,10 @@ int popcorn_orbit()
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
 	g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
-	if (g_magnitude_l >= g_limit_l
+	if (g_magnitude_l >= g_rq_limit_l
 		|| g_magnitude_l < 0
-		|| labs(g_new_z_l.x) > g_limit2_l
-		|| labs(g_new_z_l.y) > g_limit2_l)
+		|| labs(g_new_z_l.x) > g_rq_limit2_l
+		|| labs(g_new_z_l.y) > g_rq_limit2_l)
 	{
 		return 1;
 	}
@@ -1246,9 +1246,9 @@ int popcorn_fn_orbit()
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
 	g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
-	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0
-		|| labs(g_new_z_l.x) > g_limit2_l
-		|| labs(g_new_z_l.y) > g_limit2_l)
+	if (g_magnitude_l >= g_rq_limit_l || g_magnitude_l < 0
+		|| labs(g_new_z_l.x) > g_rq_limit2_l
+		|| labs(g_new_z_l.y) > g_rq_limit2_l)
 	{
 		return 1;
 	}
@@ -2008,8 +2008,8 @@ int magnet2_orbit_fp()
 int lambda_trig_orbit()
 {
 #if !defined(XFRACT)
-	if (labs(g_old_z_l.x) >= g_limit2_l
-		|| labs(g_old_z_l.y) >= g_limit2_l)
+	if (labs(g_old_z_l.x) >= g_rq_limit2_l
+		|| labs(g_old_z_l.y) >= g_rq_limit2_l)
 	{
 		return 1;
 	}
@@ -2039,7 +2039,7 @@ int lambda_trig_orbit_fp()
 int lambda_trig1_orbit()
 {
 #if !defined(XFRACT)
-	if (labs(g_old_z_l.y) >= g_limit2_l)
+	if (labs(g_old_z_l.y) >= g_rq_limit2_l)
 	{
 		return 1;
 	}
@@ -2067,7 +2067,7 @@ int lambda_trig1_orbit_fp()
 int lambda_trig2_orbit()
 {
 #if !defined(XFRACT)
-	if (labs(g_old_z_l.x) >= g_limit2_l)
+	if (labs(g_old_z_l.x) >= g_rq_limit2_l)
 	{
 		return 1;
 	}
