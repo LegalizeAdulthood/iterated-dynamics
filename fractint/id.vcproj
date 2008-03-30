@@ -1447,6 +1447,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\Starfield.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\StopMessage.cpp"
 					>
 				</File>
@@ -1920,6 +1924,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\realdos.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\Starfield.h"
 					>
 				</File>
 				<File
