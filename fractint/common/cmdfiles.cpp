@@ -102,7 +102,6 @@ double  g_math_tolerance[2] = {.05, .05};		// For math transition
 bool g_targa_output = false;					// 3D fullcolor flag 
 bool g_true_color = false;						// escape time truecolor flag 
 bool g_true_mode_iterates = false;				// truecolor iterates coloring scheme 
-std::string g_color_file;						// from last <l> <s> or colors=@filename 
 bool g_function_preloaded;						// if function loaded for new bifurcations 
 float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;	// aspect ratio of the screen 
 float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;	
@@ -256,7 +255,7 @@ void command_files(int argc, char **argv)
 			if (sptr != 0)  // @filename/setname? 
 			{
 				*sptr = 0;
-				if (merge_path_names(g_command_file, &curarg[1], true) < 0)
+				if (merge_path_names(true, g_command_file, &curarg[1]) < 0)
 				{
 					init_msg("", g_command_file.c_str(), 0);
 				}
@@ -3194,7 +3193,7 @@ static int parse_colors(char *value)
 		int result;
 		{
 			std::string mapName = g_.MapName();
-			result = merge_path_names(mapName, &value[1], false);
+			result = merge_path_names(false, mapName, &value[1]);
 			g_.SetMapName(mapName);
 		}
 		if (result < 0)
@@ -3211,9 +3210,14 @@ static int parse_colors(char *value)
 		}
 		else
 		{
-			if (merge_path_names(g_color_file, &value[1], false) < 0)
+			std::string colorFile = g_externs.ColorFile();
+			if (merge_path_names(false, colorFile, &value[1]) < 0)
 			{
 				init_msg("", &value[1], 3);
+			}
+			else
+			{
+				g_externs.SetColorFile(colorFile);
 			}
 			g_.SetColorState(COLORSTATE_MAP);
 		}

@@ -78,6 +78,8 @@ public:
 	virtual void SetCol(int value) = 0;
 	virtual int Color() const = 0;
 	virtual void SetColor(int value) = 0;
+	virtual std::string const &ColorFile() const = 0;
+	virtual void SetColorFile(std::string const &value) = 0;
 	virtual long ColorIter() const = 0;
 	virtual void SetColorIter(long value) = 0;
 	virtual bool ColorPreloaded() const = 0;

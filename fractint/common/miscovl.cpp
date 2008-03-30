@@ -224,9 +224,9 @@ void MakeBatchFile::set_color_spec()
 		}
 	}
 	else if (g_.ColorState() == COLORSTATE_MAP)
-	{                         // colors match g_color_file 
+	{                         // colors match color file 
 		m_color_spec[0] = '@';
-		color_spec_name = g_color_file;
+		color_spec_name = g_externs.ColorFile();
 	}
 	else                      // colors match no .map that we know of 
 	{

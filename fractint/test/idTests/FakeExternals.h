@@ -97,6 +97,8 @@ public:
 	virtual void SetCol(int value)					{ throw not_implemented("SetCol"); }
 	virtual int Color() const						{ throw not_implemented("Color"); }
 	virtual void SetColor(int value)				{ throw not_implemented("SetColor"); }
+	virtual std::string const &ColorFile() const	{ throw not_implemented("ColorFile"); }
+	virtual void SetColorFile(std::string const &value) { throw not_implemented("SetColorFile"); }
 	virtual long ColorIter() const					{ throw not_implemented("ColorIter"); }
 	virtual void SetColorIter(long value)			{ throw not_implemented("SetColorIter"); }
 	virtual bool ColorPreloaded() const				{ throw not_implemented("ColorPreloaded"); }

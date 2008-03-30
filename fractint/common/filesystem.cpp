@@ -21,7 +21,7 @@
 
 struct DIR_SEARCH g_dta;          // Allocate DTA and define structure 
 
-int merge_path_names(char *old_full_path, char *new_filename, bool copy_directory)
+int merge_path_names(bool copy_directory, char *old_full_path, char *new_filename)
 {
 	// no dot or slash so assume a file 
 	bool is_file = (strchr(new_filename, '.') == 0 && strchr(new_filename, SLASHC) == 0);
@@ -150,12 +150,39 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 	return is_directory;
 }
 
+int merge_path_names(bool copy_directory, std::string &old_full_path, char *new_filename)
+{
+	char buffer[FILE_MAX_PATH] = { 0 };
+	strcpy(buffer, old_full_path.c_str());
+	int result = merge_path_names(copy_directory, buffer, new_filename);
+	old_full_path = buffer;
+	return result;
+}
+
+int merge_path_names(bool copy_directory, char *old_full_path, std::string &new_filename)
+{
+	char buffer[FILE_MAX_PATH] = { 0 };
+	strcpy(buffer, new_filename.c_str());
+	int result = merge_path_names(copy_directory, old_full_path, buffer);
+	new_filename = buffer;
+	return result;
+}
+
+int merge_path_names(bool copy_directory, std::string &old_full_path, std::string &new_filename)
+{
+	char buffer[FILE_MAX_PATH] = { 0 };
+	strcpy(buffer, old_full_path.c_str());
+	int result = merge_path_names(copy_directory, buffer, new_filename);
+	old_full_path = buffer;
+	return result;
+}
+
 // copies the proposed new filename to the fullpath variable 
 // does not copy directories for PAR files (modes 2 and 3)   
 // attempts to extract directory and test for existence (modes 0 and 1) 
 int merge_path_names(char *old_full_path, char *new_filename, int mode)
 {
-	return merge_path_names(old_full_path, new_filename, mode < 2);
+	return merge_path_names(mode < 2, old_full_path, new_filename);
 }
 
 int merge_path_names(std::string &old_full_path, char *new_filename, int mode)
@@ -173,6 +200,15 @@ int merge_path_names(char *old_full_path, std::string &new_filename, int mode)
 	strcpy(buffer, new_filename.c_str());
 	int result = merge_path_names(old_full_path, buffer, mode);
 	new_filename = buffer;
+	return result;
+}
+
+int merge_path_names(std::string &old_full_path, std::string &new_filename, int mode)
+{
+	char buffer[FILE_MAX_PATH] = { 0 };
+	strcpy(buffer, old_full_path.c_str());
+	int result = merge_path_names(buffer, new_filename, mode);
+	old_full_path = buffer;
 	return result;
 }
 

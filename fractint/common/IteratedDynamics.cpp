@@ -415,7 +415,8 @@ void IteratedDynamicsImpl::RestoreStart()
 				hdg = "Select File to Restore";
 				_app.set_help_mode(FIHELP_SAVE_RESTORE);
 			}
-			if (_externs.ShowFile() == SHOWFILE_CANCELLED && _app.get_a_filename(hdg, _externs.GIFMask(), _externs.ReadName()) < 0)
+			if (_externs.ShowFile() == SHOWFILE_CANCELLED
+				&& _app.get_a_filename(hdg, _externs.GIFMask(), _externs.ReadName()) < 0)
 			{
 				_externs.SetShowFile(SHOWFILE_DONE);               // cancelled 
 				_g.SetInitialVideoModeNone();

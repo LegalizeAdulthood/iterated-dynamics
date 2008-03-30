@@ -309,7 +309,8 @@ void Formula::set_formula(const char *value)
 
 bool Formula::merge_formula_filename(char *new_filename, int mode)
 {
-	return ::merge_path_names(m_filename, new_filename, mode) < 0;
+	std::string arg = new_filename;
+	return ::merge_path_names(m_filename, arg, mode) < 0;
 }
 
 bool Formula::find_item(std::ifstream &file)
