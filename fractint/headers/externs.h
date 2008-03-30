@@ -6,10 +6,6 @@
 #include "UserInterfaceState.h"
 
 // keep var names in column 30 for sorting via sort /+30 <in >out 
-extern int					(*g_bail_out_fp)();
-extern int					(*g_bail_out_l)();
-extern int					(*g_bail_out_bn)();
-extern int					(*g_bail_out_bf)();
 extern int					g_bf_save_len;
 extern int					g_bf_digits;
 extern int					g_bit_shift;

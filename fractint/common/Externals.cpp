@@ -35,7 +35,11 @@ public:
 		_calculationStatus(CALCSTAT_NO_FRACTAL),
 		_checkCurrentDirectory(false),
 		_inside(0),
-		_outside(0)
+		_outside(0),
+		_bailOutFp(0),
+		_bailOutL(0),
+		_bailOutBf(0),
+		_bailOutBn(0)
 	{ }
 	virtual ~ExternalsImpl() { }
 
@@ -53,18 +57,19 @@ public:
 	virtual bool BadOutside() const								{ return _badOutside; }
 	virtual void SetBadOutside(bool value)						{ _badOutside = value; }
 
-	virtual long BailOut() const								{ return _bailOut; }
-	virtual void SetBailOut(long value)							{ _bailOut = value; }
-	virtual BailOutFunction *BailOutFp() const					{ return g_bail_out_fp; }
-	virtual void SetBailOutFp(BailOutFunction *value)			{ g_bail_out_fp = value; }
-	virtual BailOutFunction *BailOutL() const					{ return g_bail_out_l; }
-	virtual void SetBailOutL(BailOutFunction *value)			{ g_bail_out_l = value; }
-	virtual BailOutFunction *BailOutBf() const					{ return g_bail_out_bf; }
-	virtual void SetBailOutBf(BailOutFunction *value)			{ g_bail_out_bf = value; }
-	virtual BailOutFunction *BailOutBn() const					{ return g_bail_out_bn; }
-	virtual void SetBailOutBn(BailOutFunction *value)			{ g_bail_out_bn = value; }
+	// iteration bail out control
 	virtual BailOutType BailOutTest() const						{ return _bailOutTest; }
 	virtual void SetBailOutTest(BailOutType value)				{ _bailOutTest = value; }
+	virtual long BailOut() const								{ return _bailOut; }
+	virtual void SetBailOut(long value)							{ _bailOut = value; }
+	virtual int BailOutFp()										{ return _bailOutFp(); }
+	virtual void SetBailOutFp(BailOutFunction *value)			{ _bailOutFp = value; }
+	virtual int BailOutL()										{ return _bailOutL(); }
+	virtual void SetBailOutL(BailOutFunction *value)			{ _bailOutL = value; }
+	virtual int BailOutBf()										{ return _bailOutBf(); }
+	virtual void SetBailOutBf(BailOutFunction *value)			{ _bailOutBf = value; }
+	virtual int BailOutBn()										{ return _bailOutBn(); }
+	virtual void SetBailOutBn(BailOutFunction *value)			{ _bailOutBn = value; }
 
 	// used only for newton types
 	virtual int Basin() const									{ return _basin; }
@@ -779,12 +784,6 @@ public:
 	virtual void SetFileNameStackTop(std::string const &value)	{ g_file_name_stack[g_name_stack_ptr] = value; }
 	virtual boost::filesystem::path const &WorkDirectory() const { return g_work_dir; }
 
-	// biomorph coloring option
-	virtual int Biomorph() const								{ return _biomorph; }
-	virtual void SetBiomorph(int value)							{ _biomorph = value; }
-	virtual int UserBiomorph() const							{ return _userBiomorph; }
-	virtual void SetUserBiomorph(int value)						{ _userBiomorph = value; }
-
 	virtual bool ThreePass() const								{ return g_three_pass; }
 	virtual void SetThreePass(bool value)						{ g_three_pass = value; }
 
@@ -806,10 +805,16 @@ public:
 	virtual PlotColorStandardFunction *PlotColorStandard() const { return g_plot_color_standard; }
 	virtual void SetPlotColorStandard(PlotColorStandardFunction *value) { g_plot_color_standard = value; }
 
+	// coloring
 	virtual int Inside() const									{ return _inside; }
 	virtual void SetInside(int value)							{ _inside = value; }
 	virtual int Outside() const									{ return _outside; }
 	virtual void SetOutside(int value)							{ _outside = value; }
+	// biomorph coloring option
+	virtual int Biomorph() const								{ return _biomorph; }
+	virtual void SetBiomorph(int value)							{ _biomorph = value; }
+	virtual int UserBiomorph() const							{ return _userBiomorph; }
+	virtual void SetUserBiomorph(int value)						{ _userBiomorph = value; }
 
 private:
 	int _currentPass;
@@ -834,6 +839,10 @@ private:
 	bool _checkCurrentDirectory;						// flag to check current dir for files 
 	int _inside;
 	int _outside;
+	BailOutFunction *_bailOutFp;
+	BailOutFunction *_bailOutL;
+	BailOutFunction *_bailOutBf;
+	BailOutFunction *_bailOutBn;
 };
 
 static ExternalsImpl s_externs;

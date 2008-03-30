@@ -28,13 +28,13 @@ public:
 	virtual long BailOut() const = 0;
 	virtual void SetBailOut(long value) = 0;
 	typedef int BailOutFunction();
-	virtual BailOutFunction *BailOutFp() const = 0;
+	virtual int BailOutFp() = 0;
 	virtual void SetBailOutFp(BailOutFunction *value) = 0;
-	virtual BailOutFunction *BailOutL() const = 0;
+	virtual int BailOutL() = 0;
 	virtual void SetBailOutL(BailOutFunction *value) = 0;
-	virtual BailOutFunction *BailOutBf() const = 0;
+	virtual int BailOutBf() = 0;
 	virtual void SetBailOutBf(BailOutFunction *value) = 0;
-	virtual BailOutFunction *BailOutBn() const = 0;
+	virtual int BailOutBn() = 0;
 	virtual void SetBailOutBn(BailOutFunction *value) = 0;
 	virtual BailOutType BailOutTest() const = 0;
 	virtual void SetBailOutTest(BailOutType value) = 0;
