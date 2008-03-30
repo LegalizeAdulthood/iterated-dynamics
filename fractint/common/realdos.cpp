@@ -743,9 +743,7 @@ int input_field(
 			break;
 		case IDK_BACKSPACE:
 		case 127:                              // backspace 
-#if defined(_WIN32)
-			_ASSERTE(127 != curkey);
-#endif
+			assert(127 != curkey);
 			if (offset > 0)
 			{
 				j = int(strlen(fld));

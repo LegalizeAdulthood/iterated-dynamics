@@ -865,7 +865,7 @@ static int make_par_arg(const cmd_context &context)
 #if !defined(XFRACT)
 #if defined(_WIN32)
 	ABORT(0, "Don't call standard I/O without a console on Windows");
-	_ASSERTE(0 && "Don't call standard I/O without a console on Windows");
+	assert(!"Don't call standard I/O without a console on Windows");
 #else
 	if (*g_read_name != 0)
 	{

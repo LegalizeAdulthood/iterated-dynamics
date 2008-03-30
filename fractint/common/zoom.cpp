@@ -285,9 +285,7 @@ void draw_lines(Coordinate fr, Coordinate to,
 
 void add_box(Coordinate point)
 {
-#if defined(_WIN32)
-	_ASSERTE(g_zoomBox.count() < NUM_BOXES);
-#endif
+	assert(g_zoomBox.count() < NUM_BOXES);
 	point.x += g_screen_x_offset;
 	point.y += g_screen_y_offset;
 	if (point.x >= 0 && point.x < g_screen_width &&

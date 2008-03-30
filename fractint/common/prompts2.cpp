@@ -26,6 +26,7 @@
 #include "fimain.h"
 #include "FiniteAttractor.h"
 #include "fracsubr.h"
+#include "GaussianDistribution.h"
 #include "history.h"
 #include "line3d.h"
 #include "loadfile.h"

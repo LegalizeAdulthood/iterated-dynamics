@@ -225,10 +225,10 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
 
 	BOOL status = SetWindowPos(m_plot.window(), 0,
 		plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
-	_ASSERTE(status);
+	assert(status);
 	status = SetWindowPos(m_wintext.window(), 0,
 		text_pos.x, text_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
-	_ASSERTE(status);
+	assert(status);
 }
 
 /***********************************************************************
@@ -636,7 +636,7 @@ void GDIDriver::resume()
 
 void GDIDriver::display_string(int x, int y, int fg, int bg, const char *text)
 {
-	_ASSERTE(!m_text_not_graphics);
+	assert(!m_text_not_graphics);
 	m_plot.display_string(x, y, fg, bg, text);
 }
 

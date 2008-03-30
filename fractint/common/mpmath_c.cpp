@@ -477,38 +477,4 @@ int complex_basin()
 	return 0;
 }
 
-/*
- * Generate a gaussian distributed number.
- * The right half of the distribution is folded onto the lower half.
- * That is, the curve slopes up to the peak and then drops to 0.
- * The larger slope is, the smaller the standard deviation.
- * The values vary from 0 + offset to range + offset, with the peak
- * at range + offset.
- * To make this more complicated, you only have a
- * 1 in Distribution*(1-Probability/Range*con) + 1 chance of getting a
- * Gaussian; otherwise you just get offset.
- */
-int gaussian_number(int probability, int range)
-{
-	long p = divide(long(probability) << 16, long(range) << 16, 16);
-	p = multiply(p, g_gaussian_constant, 16);
-	p = multiply(long(g_gaussian_distribution) << 16, p, 16);
-	if (!(rand15() % (g_gaussian_distribution - int(p >> 16) + 1)))
-	{
-		long accum = 0;
-		for (int n = 0; n < g_gaussian_slope; n++)
-		{
-			accum += rand15();
-		}
-		accum /= g_gaussian_slope;
-		int r = int(multiply(long(range) << 15, accum, 15) >> 14);
-		r -= range;
-		if (r < 0)
-		{
-			r = -r;
-		}
-		return range - r + g_gaussian_offset;
-	}
-	return g_gaussian_offset;
-}
 #endif

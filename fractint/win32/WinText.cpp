@@ -361,7 +361,7 @@ void WinText::create(HWND parent)
 		0,
 		m_instance,
 		0);
-	_ASSERTE(hWnd);
+	assert(hWnd);
 
 	// squirrel away a global copy of 'hWnd' for later 
 	m_window = hWnd;
@@ -774,7 +774,7 @@ BYTE *WinText::screen_get()
 {
 	size_t count = sizeof(BYTE)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
 	BYTE *copy = new BYTE[count*2];
-	_ASSERTE(copy);
+	assert(copy);
 	::memcpy(copy, m_chars, count);
 	::memcpy(copy + count, m_attrs, count);
 	return copy;
@@ -809,7 +809,7 @@ void WinText::schedule_alarm(int delay)
 	if (!result)
 	{
 		DWORD error = ::GetLastError();
-		_ASSERTE(result);
+		assert(result);
 	}
 }
 
@@ -820,8 +820,8 @@ int WinText::get_char_attr(int row, int col)
 
 void WinText::put_char_attr(int row, int col, int char_attr)
 {
-	_ASSERTE(WINTEXT_MAX_ROW > row);
-	_ASSERTE(WINTEXT_MAX_COL > col);
+	assert(WINTEXT_MAX_ROW > row);
+	assert(WINTEXT_MAX_COL > col);
 	m_chars[row][col] = (char_attr >> 8) & 0xFF;
 	m_attrs[row][col] = (char_attr & 0xFF);
 	invalidate(col, row, col, row);

@@ -1,3 +1,4 @@
+#include <cassert>
 #include <fstream>
 #include <string>
 
@@ -460,9 +461,7 @@ static ApplicationStateType handle_ant()
 
 static ApplicationStateType handle_recalc(int (*continue_check)(), int (*recalc_check)())
 {
-#if defined(_WIN32)
-	_ASSERTE(continue_check && recalc_check);
-#endif
+	assert(continue_check && recalc_check);
 	clear_zoom_box();
 	if (continue_check() >= 0)
 	{

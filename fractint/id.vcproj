@@ -1327,6 +1327,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\GaussianDistribution.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\hcmplx.cpp"
 					>
 				</File>
@@ -1804,6 +1808,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\fpu.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\GaussianDistribution.h"
 					>
 				</File>
 				<File
