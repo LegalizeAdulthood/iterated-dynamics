@@ -49,10 +49,10 @@ static long iteration(double cr, double ci,
 			double re, double im,
 			long start)
 {
-	g_old_z.x = re;
-	g_old_z.y = im;
-	g_temp_sqr_x = sqr(g_old_z.x);
-	g_temp_sqr_y = sqr(g_old_z.y);
+	g_old_z.real(re);
+	g_old_z.imag(im);
+	g_temp_sqr_x = sqr(g_old_z.real());
+	g_temp_sqr_y = sqr(g_old_z.imag());
 	g_float_parameter = &g_initial_z;
 	g_float_parameter->x = cr;
 	g_float_parameter->y = ci;

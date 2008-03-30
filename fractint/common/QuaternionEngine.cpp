@@ -22,8 +22,8 @@ int quaternion_julia_per_pixel_fp()
 
 int quaternion_per_pixel_fp()
 {
-	g_old_z.x = 0;
-	g_old_z.y = 0;
+	g_old_z.real(0);
+	g_old_z.imag(0);
 	g_float_parameter->x = 0;
 	g_float_parameter->y = 0;
 	g_c_quaternion = QuaternionD(g_externs.DxPixel(), g_externs.DyPixel(), g_parameters[2], g_parameters[3]);
@@ -32,11 +32,11 @@ int quaternion_per_pixel_fp()
 
 int quaternion_orbit_fp()
 {
-	QuaternionD a(g_old_z.x, g_old_z.y, g_float_parameter->x, g_float_parameter->y);
+	QuaternionD a(g_old_z.real(), g_old_z.imag(), g_float_parameter->x, g_float_parameter->y);
 	a *= a;
 	a += g_c_quaternion;
-	double a0 = g_old_z.x;
-	double a1 = g_old_z.y;
+	double a0 = g_old_z.real();
+	double a1 = g_old_z.imag();
 	double a2 = g_float_parameter->x;
 	double a3 = g_float_parameter->y;
 
@@ -50,9 +50,9 @@ int quaternion_orbit_fp()
 	{
 		return 1;
 	}
-	g_old_z.x = n0;
+	g_old_z.real(n0);
 	g_new_z.real(n0);
-	g_old_z.y = n1;
+	g_old_z.imag(n1);
 	g_new_z.imag(n1);
 	g_float_parameter->x = n2;
 	g_float_parameter->y = n3;

@@ -355,8 +355,8 @@ static int z_line_fp(double x, double y)
 		// Special initialization for Mandelbrot types 
 		if (g_new_orbit_type == FRACTYPE_QUATERNION_FP || g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_FP)
 		{
-			g_old_z.x = 0.0;
-			g_old_z.y = 0.0;
+			g_old_z.real(0.0);
+			g_old_z.imag(0.0);
 			s_jbc_fp.x = 0.0;
 			s_jbc_fp.y = 0.0;
 			g_c_quaternion = QuaternionD(s_jx_fp, s_jy_fp, s_mx_fp, s_my_fp);
@@ -376,8 +376,8 @@ static int z_line_fp(double x, double y)
 			return -1;
 		}
 #endif
-		g_temp_sqr_x = sqr(g_old_z.x);
-		g_temp_sqr_y = sqr(g_old_z.y);
+		g_temp_sqr_x = sqr(g_old_z.real());
+		g_temp_sqr_y = sqr(g_old_z.imag());
 
 		for (n = 0; n < g_max_iteration; n++)
 		{

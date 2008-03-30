@@ -217,8 +217,8 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 
 		while (!found_attractor)
 		{
-			g_temp_sqr_x = sqr(g_old_z.x);
-			g_temp_sqr_y = sqr(g_old_z.y);
+			g_temp_sqr_x = sqr(g_old_z.real());
+			g_temp_sqr_y = sqr(g_old_z.imag());
 			if ((g_temp_sqr_x + g_temp_sqr_y < g_rq_limit) && (g_color_iter < g_max_iteration))
 			{
 				break;
@@ -226,14 +226,14 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 
 			// simple formula: z = z^2 + conj(z*(-1 + ai)) 
 			// but it's the attractor that makes this so interesting 
-			g_new_z.real(g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_frothy_data.f.a*g_old_z.y);
-			g_old_z.y += (g_old_z.x + g_old_z.x)*g_old_z.y - s_frothy_data.f.a*g_old_z.x;
-			g_old_z.x = g_new_z.x;
+			g_new_z.real(g_temp_sqr_x - g_temp_sqr_y - g_old_z.real() - s_frothy_data.f.a*g_old_z.imag());
+			g_old_z.y += (g_old_z.real() + g_old_z.real())*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real();
+			g_old_z.real(g_new_z.x);
 			if (s_frothy_data.repeat_mapping)
 			{
-				g_new_z.real(sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_frothy_data.f.a*g_old_z.y);
-				g_old_z.y += (g_old_z.x + g_old_z.x)*g_old_z.y - s_frothy_data.f.a*g_old_z.x;
-				g_old_z.x = g_new_z.x;
+				g_new_z.real(sqr(g_old_z.real()) - sqr(g_old_z.imag()) - g_old_z.real() - s_frothy_data.f.a*g_old_z.imag());
+				g_old_z.y += (g_old_z.real() + g_old_z.real())*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real();
+				g_old_z.real(g_new_z.x);
 			}
 
 			g_color_iter++;
@@ -244,28 +244,28 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 				{
 					break;
 				}
-				plot_orbit(g_old_z.x, g_old_z.y, -1);
+				plot_orbit(g_old_z.real(), g_old_z.imag(), -1);
 			}
 
-			if (fabs(s_frothy_data.f.halfa-g_old_z.y) < FROTH_CLOSE
-					&& g_old_z.x >= s_frothy_data.f.top_x1 && g_old_z.x <= s_frothy_data.f.top_x2)
+			if (fabs(s_frothy_data.f.halfa-g_old_z.imag()) < FROTH_CLOSE
+					&& g_old_z.real() >= s_frothy_data.f.top_x1 && g_old_z.real() <= s_frothy_data.f.top_x2)
 			{
 				if ((!s_frothy_data.repeat_mapping && s_frothy_data.attractors == 2)
 					|| (s_frothy_data.repeat_mapping && s_frothy_data.attractors == 3))
 				{
 					found_attractor = 1;
 				}
-				else if (g_old_z.x <= s_frothy_data.f.top_x3)
+				else if (g_old_z.real() <= s_frothy_data.f.top_x3)
 				{
 					found_attractor = 1;
 				}
-				else if (g_old_z.x >= s_frothy_data.f.top_x4)
+				else if (g_old_z.real() >= s_frothy_data.f.top_x4)
 				{
 					found_attractor = !s_frothy_data.repeat_mapping ? 1 : 2;
 				}
 			}
-			else if (fabs(FROTH_SLOPE*g_old_z.x - s_frothy_data.f.a - g_old_z.y) < FROTH_CLOSE
-						&& g_old_z.x <= s_frothy_data.f.right_x1 && g_old_z.x >= s_frothy_data.f.right_x2)
+			else if (fabs(FROTH_SLOPE*g_old_z.real() - s_frothy_data.f.a - g_old_z.imag()) < FROTH_CLOSE
+						&& g_old_z.real() <= s_frothy_data.f.right_x1 && g_old_z.real() >= s_frothy_data.f.right_x2)
 			{
 				if (!s_frothy_data.repeat_mapping && s_frothy_data.attractors == 2)
 				{
@@ -275,17 +275,17 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 				{
 					found_attractor = 3;
 				}
-				else if (g_old_z.x >= s_frothy_data.f.right_x3)
+				else if (g_old_z.real() >= s_frothy_data.f.right_x3)
 				{
 					found_attractor = !s_frothy_data.repeat_mapping ? 2 : 4;
 				}
-				else if (g_old_z.x <= s_frothy_data.f.right_x4)
+				else if (g_old_z.real() <= s_frothy_data.f.right_x4)
 				{
 					found_attractor = !s_frothy_data.repeat_mapping ? 3 : 6;
 				}
 			}
-			else if (fabs(-FROTH_SLOPE*g_old_z.x - s_frothy_data.f.a - g_old_z.y) < FROTH_CLOSE
-						&& g_old_z.x <= s_frothy_data.f.left_x1 && g_old_z.x >= s_frothy_data.f.left_x2)
+			else if (fabs(-FROTH_SLOPE*g_old_z.real() - s_frothy_data.f.a - g_old_z.imag()) < FROTH_CLOSE
+						&& g_old_z.real() <= s_frothy_data.f.left_x1 && g_old_z.real() >= s_frothy_data.f.left_x2)
 			{
 				if (!s_frothy_data.repeat_mapping && s_frothy_data.attractors == 2)
 				{
@@ -295,11 +295,11 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 				{
 					found_attractor = 2;
 				}
-				else if (g_old_z.x >= s_frothy_data.f.left_x3)
+				else if (g_old_z.real() >= s_frothy_data.f.left_x3)
 				{
 					found_attractor = !s_frothy_data.repeat_mapping ? 3 : 5;
 				}
-				else if (g_old_z.x <= s_frothy_data.f.left_x4)
+				else if (g_old_z.real() <= s_frothy_data.f.left_x4)
 				{
 					found_attractor = !s_frothy_data.repeat_mapping ? 2 : 3;
 				}
@@ -477,8 +477,8 @@ int froth_per_pixel()
 	if (!g_integer_fractal) // fp mode 
 	{
 		g_old_z = g_externs.DPixel();
-		g_temp_sqr_x = sqr(g_old_z.x);
-		g_temp_sqr_y = sqr(g_old_z.y);
+		g_temp_sqr_x = sqr(g_old_z.real());
+		g_temp_sqr_y = sqr(g_old_z.imag());
 	}
 	else  // integer mode 
 	{
@@ -493,13 +493,13 @@ int froth_per_orbit()
 {
 	if (!g_integer_fractal) // fp mode 
 	{
-		g_new_z.real(g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_frothy_data.f.a*g_old_z.y);
-		g_new_z.imag(2.0*g_old_z.x*g_old_z.y - s_frothy_data.f.a*g_old_z.x + g_old_z.y);
+		g_new_z.real(g_temp_sqr_x - g_temp_sqr_y - g_old_z.real() - s_frothy_data.f.a*g_old_z.imag());
+		g_new_z.imag(2.0*g_old_z.real()*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real() + g_old_z.imag());
 		if (s_frothy_data.repeat_mapping)
 		{
 			g_old_z = g_new_z;
-			g_new_z.real(sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_frothy_data.f.a*g_old_z.y);
-			g_new_z.imag(2.0*g_old_z.x*g_old_z.y - s_frothy_data.f.a*g_old_z.x + g_old_z.y);
+			g_new_z.real(sqr(g_old_z.real()) - sqr(g_old_z.imag()) - g_old_z.real() - s_frothy_data.f.a*g_old_z.imag());
+			g_new_z.imag(2.0*g_old_z.real()*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real() + g_old_z.imag());
 		}
 
 		g_temp_sqr_x = sqr(g_new_z.x);

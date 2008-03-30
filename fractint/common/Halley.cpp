@@ -118,13 +118,13 @@ int Halley::orbit()
 	CMPLXsub(F1prime, Halnumer1, Halnumer2);          // F' - F"F/2F'  
 	FPUcplxdiv(&FX, &Halnumer2, &Halnumer2);
 	// g_parameter.y is relaxation coef. 
-	// new.x = g_old_z.x - (g_parameter.y*Halnumer2.x);
-	// new.y = g_old_z.y - (g_parameter.y*Halnumer2.y);
+	// new.x = g_old_z.real() - (g_parameter.y*Halnumer2.x);
+	// new.y = g_old_z.imag() - (g_parameter.y*Halnumer2.y);
 	relax.x = g_parameter.y;
 	relax.y = g_parameters[3];
 	FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
-	g_new_z.real(g_old_z.x - Halnumer2.x);
-	g_new_z.imag(g_old_z.y - Halnumer2.y);
+	g_new_z.real(g_old_z.real() - Halnumer2.x);
+	g_new_z.imag(g_old_z.imag() - Halnumer2.y);
 	return bail_out();
 }
 
