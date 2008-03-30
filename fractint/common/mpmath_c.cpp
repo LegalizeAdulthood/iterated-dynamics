@@ -23,8 +23,9 @@
 #include "prototyp.h"
 #include "fpu.h"
 #include "jiim.h"
+#include "mpmath.h"
 
-ComplexD ComplexPower(ComplexD xx, ComplexD yy)
+ComplexD ComplexPower(ComplexD const &xx, ComplexD const &yy)
 {
 	ComplexD z;
 	ComplexD cLog;

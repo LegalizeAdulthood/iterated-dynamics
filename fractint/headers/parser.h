@@ -1,5 +1,45 @@
-#if !defined(PARSER_H)
-#define PARSER_H
+#pragma once
+
+/*** Formula Declarations ***/
+enum MathType
+{
+	FLOATING_POINT_MATH,
+	FIXED_POINT_MATH
+};
+
+// the following are declared 4 dimensional as an experiment
+// changing declarations to ComplexD and ComplexL restores the code
+// to 2D
+union Arg
+{
+   ComplexD d;
+   ComplexL l;
+};
+
+struct ConstArg
+{
+   const char *name;
+   int name_length;
+   union Arg argument;
+};
+
+extern Arg *g_argument1;
+extern Arg *g_argument2;
+
+extern void lStkSin();
+extern void lStkCos();
+extern void lStkSinh();
+extern void lStkCosh();
+extern void lStkLog();
+extern void lStkExp();
+extern void lStkSqr();
+extern void dStkSin();
+extern void dStkCos();
+extern void dStkSinh();
+extern void dStkCosh();
+extern void dStkLog();
+extern void dStkExp();
+extern void dStkSqr();
 
 typedef void OLD_FN();  // old C functions
 
@@ -59,5 +99,3 @@ OLD_FN StkJump;
 OLD_FN dStkJumpOnTrue;
 OLD_FN dStkJumpOnFalse;
 OLD_FN dStkOne;
-
-#endif

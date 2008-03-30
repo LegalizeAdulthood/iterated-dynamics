@@ -56,7 +56,7 @@
 #include "fracsubr.h"
 #include "fractals.h"
 #include "hcmplx.h"
-
+#include "mpmath.h"
 #include "EscapeTime.h"
 #include "Formula.h"
 #include "MathUtil.h"

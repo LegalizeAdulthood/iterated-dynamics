@@ -1,6 +1,5 @@
+#pragma once
 // various complex number defs
-#ifndef _CMPLX_DEFINED
-#define _CMPLX_DEFINED
 
 #include "id.h"
 
@@ -83,5 +82,3 @@ inline void LCMPLXconj(ComplexL &z)
 {
 	z.imag(-z.imag());
 }
-
-#endif
