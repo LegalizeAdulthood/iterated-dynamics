@@ -492,14 +492,14 @@ bool inside_coloring_beauty_of_fractals_allowed()
 
 int mandelbrot_per_pixel_bn()
 {
-	// g_parameter.x = xmin + col*delx + row*g_delta_x2
+	// g_parameter.real() = xmin + col*delx + row*g_delta_x2
 	mult_bn_int(bnparm.x, bnxdel, (U16)g_col);
 	mult_bn_int(bntmp, bnxdel2, (U16)g_row);
 
 	add_a_bn(bnparm.x, bntmp);
 	add_a_bn(bnparm.x, bnxmin);
 
-	// g_parameter.y = ymax - row*dely - col*g_delta_y2;
+	// g_parameter.imag() = ymax - row*dely - col*g_delta_y2;
 	// note: in next four lines, g_old_z_bn is just used as a temporary variable
 	mult_bn_int(g_old_z_bn.x, bnydel,  (U16)g_row);
 	mult_bn_int(g_old_z_bn.y, bnydel2, (U16)g_col);
@@ -538,14 +538,14 @@ int mandelbrot_per_pixel_bn()
 
 int mandelbrot_per_pixel_bf()
 {
-	// g_parameter.x = xmin + col*delx + row*g_delta_x2
+	// g_parameter.real() = xmin + col*delx + row*g_delta_x2
 	mult_bf_int(bfparm.x, bfxdel, (U16)g_col);
 	mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
 	add_a_bf(bfparm.x, bftmp);
 	add_a_bf(bfparm.x, g_escape_time_state.m_grid_bf.x_min());
 
-	// g_parameter.y = ymax - row*dely - col*g_delta_y2;
+	// g_parameter.imag() = ymax - row*dely - col*g_delta_y2;
 	// note: in next four lines, g_old_z_bf is just used as a temporary variable
 	mult_bf_int(g_old_z_bf.x, bfydel,  (U16)g_row);
 	mult_bf_int(g_old_z_bf.y, bfydel2, (U16)g_col);
@@ -644,11 +644,11 @@ int julia_orbit_bn()
 	// bntmpsqrx and bntmpsqry were previously squared before getting to
 	// this function, so they must be shifted.
 
-	// new.x = tmpsqrx - tmpsqry + g_parameter.x;
+	// new.x = tmpsqrx - tmpsqry + g_parameter.real();
 	sub_a_bn(bntmpsqrx + g_shift_factor, bntmpsqry + g_shift_factor);
 	add_bn(g_new_z_bn.x, bntmpsqrx + g_shift_factor, bnparm.x);
 
-	// new.y = 2*g_old_z_bn.x*g_old_z_bn.y + g_parameter.y;
+	// new.y = 2*g_old_z_bn.x*g_old_z_bn.y + g_parameter.imag();
 	mult_bn(bntmp, g_old_z_bn.x, g_old_z_bn.y); // ok to use unsafe here
 	double_a_bn(bntmp + g_shift_factor);
 	add_bn(g_new_z_bn.y, bntmp + g_shift_factor, bnparm.y);
@@ -658,11 +658,11 @@ int julia_orbit_bn()
 
 int julia_orbit_bf()
 {
-	// new.x = tmpsqrx - tmpsqry + g_parameter.x;
+	// new.x = tmpsqrx - tmpsqry + g_parameter.real();
 	sub_a_bf(bftmpsqrx, bftmpsqry);
 	add_bf(g_new_z_bf.x, bftmpsqrx, bfparm.x);
 
-	// new.y = 2*g_old_z_bf.x*g_old_z_bf.y + g_parameter.y;
+	// new.y = 2*g_old_z_bf.x*g_old_z_bf.y + g_parameter.imag();
 	mult_bf(bftmp, g_old_z_bf.x, g_old_z_bf.y); // ok to use unsafe here
 	double_a_bf(bftmp);
 	add_bf(g_new_z_bf.y, bftmp, bfparm.y);

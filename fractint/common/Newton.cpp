@@ -98,7 +98,7 @@ bool Newton::setup()           // Newton/NewtBasin Routines
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 #endif
 	// set up table of roots of 1 along unit circle
-	g_degree = int(g_parameter.x);
+	g_degree = int(g_parameter.real());
 	if (g_degree < 2)
 	{
 		g_degree = 3;   // defaults to 3, but 2 is possible
@@ -118,7 +118,7 @@ bool Newton::setup()           // Newton/NewtBasin Routines
 
 	if (g_fractal_type == FRACTYPE_NEWTON_BASIN)
 	{
-		g_externs.SetBasin(g_parameter.y ? 2 : 1); // stripes
+		g_externs.SetBasin(g_parameter.imag() ? 2 : 1); // stripes
 		if (g_degree > 16)
 		{
 			s_roots = new ComplexD[g_degree];

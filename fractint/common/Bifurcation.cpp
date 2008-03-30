@@ -51,7 +51,7 @@ static long		s_beta;
 static void verhulst()          // P. F. Verhulst (1845)
 {
 	{
-		double const population = (g_parameter.y == 0) ? SEED : g_parameter.y;
+		double const population = (g_parameter.imag() == 0) ? SEED : g_parameter.imag();
 		if (g_integer_fractal)
 		{
 			s_population_l = DoubleToFudge(population);
@@ -320,7 +320,7 @@ int bifurcation_may()
 #if !defined(XFRACT)
 	g_temp_z_l.real(s_population_l + g_externs.Fudge());
 	g_temp_z_l.imag(0);
-	g_parameter2_l.x = DoubleToFudge(s_beta);
+	g_parameter2_l.real(DoubleToFudge(s_beta));
 	LCMPLXpwr(g_temp_z_l, g_parameter2_l, g_temp_z_l);
 	s_population_l = multiply(s_rate_l, s_population_l, g_bit_shift);
 	s_population_l = divide(s_population_l, g_temp_z_l.real(), g_bit_shift);
@@ -414,7 +414,7 @@ int bifurcation()
 		}
 	}
 
-	s_filter_cycles = (g_parameter.x <= 0) ? DEFAULT_FILTER : long(g_parameter.x);
+	s_filter_cycles = (g_parameter.real() <= 0) ? DEFAULT_FILTER : long(g_parameter.real());
 	s_half_time_check = false;
 	if (g_periodicity_check && g_max_iteration < s_filter_cycles)
 	{

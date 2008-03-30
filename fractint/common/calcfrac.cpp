@@ -565,10 +565,10 @@ int calculate_fractal()
 	{
 		g_distance_test = 0;
 	}
-	g_parameter.x = g_parameters[0];
-	g_parameter.y = g_parameters[1];
-	g_parameter2.x = g_parameters[2];
-	g_parameter2.y = g_parameters[3];
+	g_parameter.real(g_parameters[0]);
+	g_parameter.imag(g_parameters[1]);
+	g_parameter2.real(g_parameters[2]);
+	g_parameter2.imag(g_parameters[3]);
 
 	if (g_use_old_periodicity)
 	{
@@ -1233,15 +1233,13 @@ bool detect_finite_attractor_l()
 	ComplexL attractor_l;
 	for (int i = 0; i < g_num_attractors; i++)
 	{
-		attractor_l.x = g_new_z_l.real() - g_attractors_l[i].x;
-		attractor_l.x = lsqr(attractor_l.x);
-		if (attractor_l.x < g_attractor_radius_l)
+		attractor_l.real(lsqr(g_new_z_l.real() - g_attractors_l[i].real()));
+		if (attractor_l.real() < g_attractor_radius_l)
 		{
-			attractor_l.y = g_new_z_l.imag() - g_attractors_l[i].y;
-			attractor_l.y = lsqr(attractor_l.y);
-			if (attractor_l.y < g_attractor_radius_l)
+			attractor_l.imag(lsqr(g_new_z_l.imag() - g_attractors_l[i].imag()));
+			if (attractor_l.imag() < g_attractor_radius_l)
 			{
-				if ((attractor_l.x + attractor_l.y) < g_attractor_radius_l)
+				if ((attractor_l.real() + attractor_l.imag()) < g_attractor_radius_l)
 				{
 					attracted = true;
 					if (g_finite_attractor == FINITE_ATTRACTOR_PHASE)
@@ -2990,8 +2988,8 @@ static void set_symmetry(int symmetry, bool use_list) // set up proper symmetric
 	{
 		return;
 	}
-	bool parameters_have_zero_real = (g_parameter.x == 0.0 && g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT);
-	bool parameters_have_zero_imaginary = (g_parameter.y == 0.0 && g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT);
+	bool parameters_have_zero_real = (g_parameter.real() == 0.0 && g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT);
+	bool parameters_have_zero_imaginary = (g_parameter.imag() == 0.0 && g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT);
 	bool parameters_are_zero = parameters_have_zero_real && parameters_have_zero_imaginary;
 	switch (g_fractal_type)
 	{
@@ -3019,7 +3017,7 @@ static void set_symmetry(int symmetry, bool use_list) // set up proper symmetric
 						&& g_parameters[7] == 0.0 && g_parameters[9] == 0.0);
 		break;
 	default:   // Check P2 for the rest
-		parameters_are_zero = (parameters_are_zero && g_parameter2.x == 0.0 && g_parameter2.y == 0.0);
+		parameters_are_zero = (parameters_are_zero && g_parameter2.real() == 0.0 && g_parameter2.imag() == 0.0);
 	}
 	bool xaxis_on_screen = false;
 	bool yaxis_on_screen = false;
@@ -3207,7 +3205,7 @@ originsym:
 			&& y_symmetry_split(yaxis_col, yaxis_between) == 0)
 		{
 			// both axes or origin
-			g_plot_color = (g_parameter.y == 0.0) ? plot_color_symmetry_pi_xy_axis : plot_color_symmetry_pi_origin;
+			g_plot_color = (g_parameter.imag() == 0.0) ? plot_color_symmetry_pi_xy_axis : plot_color_symmetry_pi_origin;
 		}
 		else
 		{

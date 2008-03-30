@@ -769,8 +769,8 @@ void JIIM::Execute()
 			iter = 1;
 			g_old_z.real(0);
 			g_old_z.imag(0);
-			g_old_z_l.x = 0;
-			g_old_z_l.y = 0;
+			g_old_z_l.real(0);
+			g_old_z_l.imag(0);
 			g_save_c.x = _cReal;
 			g_save_c.y = _cImag;
 			g_initial_z.imag( _cImag);

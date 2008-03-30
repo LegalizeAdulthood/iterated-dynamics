@@ -19,7 +19,7 @@ static U16 adjust(int xa, int ya, int x, int y, int xb, int yb);
 static void subdivide(int x1, int y1, int x2, int y2);
 static int new_subdivision(int x1, int y1, int x2, int y2, int recur);
 
-static int s_iparm_x;      // s_iparm_x = g_parameter.x*8
+static int s_iparm_x;      // s_iparm_x = g_parameter.real()*8
 static int s_shift_value;  // shift based on #colors
 static int s_recur1 = 1;
 static int s_plasma_colors;
@@ -316,11 +316,11 @@ int plasma()
 	s_plasma_check = 0;
 
 	s_iparm_x = int(g_parameters[0]*8);
-	if (g_parameter.x <= 0.0)
+	if (g_parameter.real() <= 0.0)
 	{
 		s_iparm_x = 0;
 	}
-	if (g_parameter.x >= 100)
+	if (g_parameter.real() >= 100)
 	{
 		s_iparm_x = 800;
 	}

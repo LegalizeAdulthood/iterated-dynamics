@@ -1464,10 +1464,10 @@ void get_julia_attractor(double real, double imag)
 	g_temp_sqr_x = sqr(g_old_z.real());
 	g_temp_sqr_y = sqr(g_old_z.imag());
 
-	g_old_z_l.x = (long(real)) << g_bit_shift;		// prepare for int orbit calc
-	assert(g_old_z_l.x == DoubleToFudge(real));
-	g_old_z_l.y = (long(imag)) << g_bit_shift;
-	assert(g_old_z_l.y == DoubleToFudge(imag));
+	g_old_z_l.real((long(real)) << g_bit_shift);		// prepare for int orbit calc
+	assert(g_old_z_l.real() == DoubleToFudge(real));
+	g_old_z_l.imag((long(imag)) << g_bit_shift);
+	assert(g_old_z_l.imag() == DoubleToFudge(imag));
 	g_temp_sqr_x_l = (long(g_temp_sqr_x)) << g_bit_shift;
 	assert(g_temp_sqr_x_l == DoubleToFudge(g_temp_sqr_x));
 	g_temp_sqr_y_l = (long(g_temp_sqr_y)) << g_bit_shift;
