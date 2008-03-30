@@ -17,17 +17,17 @@ struct ComplexT
 template <class Type>
 bool operator==(const ComplexT<Type> &left, const ComplexT<Type> &right)
 {
-	return (left.x == right.x) && (left.y == right.y);
+	return (left.real() == right.real()) && (left.imag() == right.imag());
 }
 template <class Type>
 bool operator==(const ComplexT<Type> &left, const Type &right)
 {
-	return (left.x == right) && (left.y == 0);
+	return (left.real() == right) && (left.imag() == 0);
 }
 template <class Type>
 bool operator==(const Type &left, const ComplexT<Type> &right)
 {
-	return (left == right.x) && (right.y == 0);
+	return (left == right.real()) && (right.imag() == 0);
 }
 
 
@@ -56,32 +56,32 @@ inline long DoubleToFudge(double x)
 inline ComplexD ComplexFudgeToDouble(const ComplexL &l)
 {
 	ComplexD z;
-	z.x = FudgeToDouble(l.x);
-	z.y = FudgeToDouble(l.y);
+	z.real(FudgeToDouble(l.real()));
+	z.imag(FudgeToDouble(l.imag()));
 	return z;
 }
 
 inline ComplexL ComplexDoubleToFudge(const ComplexD &d)
 {
 	ComplexL z;
-	z.x = DoubleToFudge(d.x);
-	z.y = DoubleToFudge(d.y);
+	z.real(DoubleToFudge(d.real()));
+	z.imag(DoubleToFudge(d.imag()));
 	return z;
 }
 
 inline void CMPLXconj(ComplexD &z)
 {
-	((z).y =  -((z).y));
+	z.imag(-z.imag());
 }
 
 inline long LCMPLXmod(ComplexL const &z)
 {
-	return lsqr(z.x) + lsqr(z.y);
+	return lsqr(z.real()) + lsqr(z.imag());
 }
 
 inline void LCMPLXconj(ComplexL &z)
 {
-	z.y = -z.y;
+	z.imag(-z.imag());
 }
 
 #endif

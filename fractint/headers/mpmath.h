@@ -84,10 +84,10 @@ extern void (*g_trig3_d)();
 // in parser.c to be used here thus avoiding duplicated code.         
 // -------------------------------------------------------------------- 
 
-#define CMPLXmod(z)		(sqr((z).x) + sqr((z).y))
-#define CMPLXconj(z)	((z).y = -((z).y))
-#define LCMPLXmod(z)	(lsqr((z).x)+lsqr((z).y))
-#define LCMPLXconj(z)	((z).y =  -((z).y))
+#define CMPLXmod(z)		(sqr((z).real()) + sqr((z).imag()))
+#define CMPLXconj(z)	((z).imag(-(z).imag()))
+#define LCMPLXmod(z)	(lsqr((z).real())+lsqr((z).imag()))
+#define LCMPLXconj(z)	((z).imag(-(z).imag()))
 
 
 #define LCMPLXtrig0(arg, out) do { g_argument1->l = (arg); g_trig0_l(); (out)=g_argument1->l; } while (0)
