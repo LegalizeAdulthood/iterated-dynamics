@@ -217,16 +217,16 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 
 		while (!found_attractor)
 		{
-			g_temp_sqr_x = sqr(g_old_z.real());
-			g_temp_sqr_y = sqr(g_old_z.imag());
-			if ((g_temp_sqr_x + g_temp_sqr_y < g_rq_limit) && (g_color_iter < g_max_iteration))
+			g_temp_sqr.real(sqr(g_old_z.real()));
+			g_temp_sqr.imag(sqr(g_old_z.imag()));
+			if ((g_temp_sqr.real() + g_temp_sqr.imag() < g_rq_limit) && (g_color_iter < g_max_iteration))
 			{
 				break;
 			}
 
 			// simple formula: z = z^2 + conj(z*(-1 + ai))
 			// but it's the attractor that makes this so interesting
-			g_new_z.real(g_temp_sqr_x - g_temp_sqr_y - g_old_z.real() - s_frothy_data.f.a*g_old_z.imag());
+			g_new_z.real(g_temp_sqr.real() - g_temp_sqr.imag() - g_old_z.real() - s_frothy_data.f.a*g_old_z.imag());
 			g_old_z.y += (g_old_z.real() + g_old_z.real())*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real();
 			g_old_z.real(g_new_z.real());
 			if (s_frothy_data.repeat_mapping)
@@ -320,9 +320,9 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 
 		while (!found_attractor)
 		{
-			g_temp_sqr_x_l = lsqr(g_old_z_l.real());
-			g_temp_sqr_y_l = lsqr(g_old_z_l.imag());
-			g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
+			g_temp_sqr_l.real(lsqr(g_old_z_l.real()));
+			g_temp_sqr_l.imag(lsqr(g_old_z_l.imag()));
+			g_magnitude_l = g_temp_sqr_l.real() + g_temp_sqr_l.imag();
 			if ((g_magnitude_l < g_rq_limit_l) && (g_magnitude_l >= 0) && (g_color_iter < g_max_iteration))
 			{
 				break;
@@ -330,19 +330,19 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 
 			// simple formula: z = z^2 + conj(z*(-1 + ai))
 			// but it's the attractor that makes this so interesting
-			g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.real() - multiply(s_frothy_data.l.a, g_old_z_l.imag(), g_bit_shift));
+			g_new_z_l.real(g_temp_sqr_l.real() - g_temp_sqr_l.imag() - g_old_z_l.real() - multiply(s_frothy_data.l.a, g_old_z_l.imag(), g_bit_shift));
 			g_old_z_l.y += (multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.real(), g_bit_shift);
 			g_old_z_l.real(g_new_z_l.real());
 			if (s_frothy_data.repeat_mapping)
 			{
-				g_temp_sqr_x_l = lsqr(g_old_z_l.real());
-				g_temp_sqr_y_l = lsqr(g_old_z_l.imag());
-				g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
+				g_temp_sqr_l.real(lsqr(g_old_z_l.real()));
+				g_temp_sqr_l.imag(lsqr(g_old_z_l.imag()));
+				g_magnitude_l = g_temp_sqr_l.real() + g_temp_sqr_l.imag();
 				if ((g_magnitude_l > g_rq_limit_l) || (g_magnitude_l < 0))
 				{
 					break;
 				}
-				g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.real() - multiply(s_frothy_data.l.a, g_old_z_l.imag(), g_bit_shift));
+				g_new_z_l.real(g_temp_sqr_l.real() - g_temp_sqr_l.imag() - g_old_z_l.real() - multiply(s_frothy_data.l.a, g_old_z_l.imag(), g_bit_shift));
 				g_old_z_l.y += (multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.real(), g_bit_shift);
 				g_old_z_l.real(g_new_z_l.real());
 			}
@@ -477,14 +477,14 @@ int froth_per_pixel()
 	if (!g_integer_fractal) // fp mode
 	{
 		g_old_z = g_externs.DPixel();
-		g_temp_sqr_x = sqr(g_old_z.real());
-		g_temp_sqr_y = sqr(g_old_z.imag());
+		g_temp_sqr.real(sqr(g_old_z.real()));
+		g_temp_sqr.imag(sqr(g_old_z.imag()));
 	}
 	else  // integer mode
 	{
 		g_old_z_l = g_externs.LPixel();
-		g_temp_sqr_x_l = multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift);
-		g_temp_sqr_y_l = multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift);
+		g_temp_sqr_l.real(multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift));
+		g_temp_sqr_l.imag(multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift));
 	}
 	return 0;
 }
@@ -493,7 +493,7 @@ int froth_per_orbit()
 {
 	if (!g_integer_fractal) // fp mode
 	{
-		g_new_z.real(g_temp_sqr_x - g_temp_sqr_y - g_old_z.real() - s_frothy_data.f.a*g_old_z.imag());
+		g_new_z.real(g_temp_sqr.real() - g_temp_sqr.imag() - g_old_z.real() - s_frothy_data.f.a*g_old_z.imag());
 		g_new_z.imag(2.0*g_old_z.real()*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real() + g_old_z.imag());
 		if (s_frothy_data.repeat_mapping)
 		{
@@ -502,9 +502,9 @@ int froth_per_orbit()
 			g_new_z.imag(2.0*g_old_z.real()*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real() + g_old_z.imag());
 		}
 
-		g_temp_sqr_x = sqr(g_new_z.real());
-		g_temp_sqr_y = sqr(g_new_z.imag());
-		if (g_temp_sqr_x + g_temp_sqr_y >= g_rq_limit)
+		g_temp_sqr.real(sqr(g_new_z.real()));
+		g_temp_sqr.imag(sqr(g_new_z.imag()));
+		if (g_temp_sqr.real() + g_temp_sqr.imag() >= g_rq_limit)
 		{
 			return 1;
 		}
@@ -512,23 +512,23 @@ int froth_per_orbit()
 	}
 	else  // integer mode
 	{
-		g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.real() - multiply(s_frothy_data.l.a, g_old_z_l.imag(), g_bit_shift));
+		g_new_z_l.real(g_temp_sqr_l.real() - g_temp_sqr_l.imag() - g_old_z_l.real() - multiply(s_frothy_data.l.a, g_old_z_l.imag(), g_bit_shift));
 		g_new_z_l.imag(g_old_z_l.imag() + (multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.real(), g_bit_shift));
 		if (s_frothy_data.repeat_mapping)
 		{
-			g_temp_sqr_x_l = lsqr(g_new_z_l.real());
-			g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
-			if (g_temp_sqr_x_l + g_temp_sqr_y_l >= g_rq_limit_l)
+			g_temp_sqr_l.real(lsqr(g_new_z_l.real()));
+			g_temp_sqr_l.imag(lsqr(g_new_z_l.imag()));
+			if (g_temp_sqr_l.real() + g_temp_sqr_l.imag() >= g_rq_limit_l)
 			{
 				return 1;
 			}
 			g_old_z_l = g_new_z_l;
-			g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.real() - multiply(s_frothy_data.l.a, g_old_z_l.imag(), g_bit_shift));
+			g_new_z_l.real(g_temp_sqr_l.real() - g_temp_sqr_l.imag() - g_old_z_l.real() - multiply(s_frothy_data.l.a, g_old_z_l.imag(), g_bit_shift));
 			g_new_z_l.imag(g_old_z_l.imag() + (multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.real(), g_bit_shift));
 		}
-		g_temp_sqr_x_l = lsqr(g_new_z_l.real());
-		g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
-		if (g_temp_sqr_x_l + g_temp_sqr_y_l >= g_rq_limit_l)
+		g_temp_sqr_l.real(lsqr(g_new_z_l.real()));
+		g_temp_sqr_l.imag(lsqr(g_new_z_l.imag()));
+		if (g_temp_sqr_l.real() + g_temp_sqr_l.imag() >= g_rq_limit_l)
 		{
 			return 1;
 		}
