@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Externals.h"
-
 /*
  * Generate a gaussian distributed number.
  * The right half of the distribution is folded onto the lower half.
@@ -16,20 +14,15 @@
 class GaussianDistribution
 {
 public:
-	GaussianDistribution(int distribution, int offset, int slope, long constant) : _distribution(distribution),
-		_offset(offset),
-		_slope(slope),
-		_constant(constant)
-	{
-	}
-
-	int operator()(int probability, int range);
+	static int Evaluate(int probability, int range);
+	static void SetDistribution(int value)	{ s_distribution = value; }
+	static void SetOffset(int value)		{ s_offset = value; }
+	static void SetSlope(int value)			{ s_slope = value; }
+	static void SetConstant(long value)		{ s_constant = value; }
 
 private:
-	int _distribution;
-	int _offset;
-	int _slope;
-	long _constant;
+	static int s_distribution;
+	static int s_offset;
+	static int s_slope;
+	static long s_constant;
 };
-
-extern int gaussian_number(int probability, int range, Externals &externs = g_externs);

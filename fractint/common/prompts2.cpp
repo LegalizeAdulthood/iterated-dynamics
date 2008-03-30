@@ -720,10 +720,6 @@ int get_command_string()
 
 // --------------------------------------------------------------------- 
 
-int g_gaussian_distribution = 30;
-int g_gaussian_offset = 0;
-int g_gaussian_slope = 25;
-long g_gaussian_constant;
 
 
 double starfield_values[4] =
@@ -762,9 +758,9 @@ int starfield()
 		starfield_values[2] = 100.0;
 	}
 
-	g_gaussian_distribution = int(starfield_values[0]);
-	g_gaussian_constant  = long(((starfield_values[1])/100.0)*(1L << 16));
-	g_gaussian_slope = int(starfield_values[2]);
+	GaussianDistribution::SetDistribution(int(starfield_values[0]));
+	GaussianDistribution::SetConstant(long(((starfield_values[1])/100.0)*(1L << 16)));
+	GaussianDistribution::SetSlope(int(starfield_values[2]));
 
 	if (validate_luts(GREY_MAP))
 	{
@@ -786,7 +782,7 @@ int starfield()
 			{
 				c = g_colors-1;
 			}
-			g_plot_color_put_color(g_col, g_row, gaussian_number(c, g_colors));
+			g_plot_color_put_color(g_col, g_row, GaussianDistribution::Evaluate(c, g_colors));
 		}
 	}
 	driver_buzzer(BUZZER_COMPLETE);

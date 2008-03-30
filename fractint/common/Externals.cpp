@@ -153,16 +153,6 @@ public:
 	virtual float ScreenDistanceFp() const						{ return g_screen_distance_fp; }
 	virtual void SetScreenDistanceFp(float value)				{ g_screen_distance_fp = value; }
 
-	// gaussian distribution
-	virtual long GaussianConstant() const						{ return g_gaussian_constant; }
-	virtual void SetGaussianConstant(long value)				{ g_gaussian_constant = value; }
-	virtual int GaussianDistribution() const					{ return g_gaussian_distribution; }
-	virtual void SetGaussianDistribution(int value)				{ g_gaussian_distribution = value; }
-	virtual int GaussianOffset() const							{ return g_gaussian_offset; }
-	virtual void SetGaussianOffset(int value)					{ g_gaussian_offset = value; }
-	virtual int GaussianSlope() const							{ return g_gaussian_slope; }
-	virtual void SetGaussianSlope(int value)					{ g_gaussian_slope = value; }
-
 	virtual bool DitherFlag() const								{ return g_dither_flag; }
 	virtual void SetDitherFlag(bool value)						{ g_dither_flag = value; }
 	virtual bool DontReadColor() const							{ return g_dont_read_color; }
