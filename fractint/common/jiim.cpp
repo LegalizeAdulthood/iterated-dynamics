@@ -767,8 +767,8 @@ void JIIM::Execute()
 			actively_computing = true;
 			WriteCoordinatesOnScreen(actively_computing);
 			iter = 1;
-			g_old_z.x = 0;
-			g_old_z.y = 0;
+			g_old_z.real(0);
+			g_old_z.imag(0);
 			g_old_z_l.x = 0;
 			g_old_z_l.y = 0;
 			g_save_c.x = _cReal;
@@ -840,18 +840,18 @@ void JIIM::Execute()
 					{
 						s_l_size = 0;
 						s_l_max = 0;
-						g_old_z.x = s_lucky_x;
-						g_old_z.y = s_lucky_y;
+						g_old_z.real(s_lucky_x);
+						g_old_z.imag(s_lucky_y);
 						g_new_z.real(s_lucky_x);
 						g_new_z.imag(s_lucky_y);
 						s_lucky_x = 0.0f;
 						s_lucky_y = 0.0f;
 						for (int i = 0; i < 199; i++)
 						{
-							g_old_z = ComplexSqrtFloat(g_old_z.x - _cReal, g_old_z.y - _cImag);
+							g_old_z = ComplexSqrtFloat(g_old_z.real() - _cReal, g_old_z.imag() - _cImag);
 							g_new_z = ComplexSqrtFloat(g_new_z.x - _cReal, g_new_z.y - _cImag);
 							EnQueueFloat(float(g_new_z.x),  float(g_new_z.y));
-							EnQueueFloat(float(-g_old_z.x), float(-g_old_z.y));
+							EnQueueFloat(float(-g_old_z.real()), float(-g_old_z.imag()));
 						}
 						s_max_hits++;
 					}
@@ -862,13 +862,13 @@ void JIIM::Execute()
 				}
 
 				g_old_z = DeQueueFloat();
-				x = int(g_old_z.x*x_factor*_zoom + _xCenter);
-				y = int(g_old_z.y*y_factor*_zoom + _yCenter);
+				x = int(g_old_z.real()*x_factor*_zoom + _xCenter);
+				y = int(g_old_z.imag()*y_factor*_zoom + _yCenter);
 				color = c_getcolor(x, y);
 				if (color < s_max_hits)
 				{
 					plot_color_clip(x, y, color + 1);
-					g_new_z = ComplexSqrtFloat(g_old_z.x - _cReal, g_old_z.y - _cImag);
+					g_new_z = ComplexSqrtFloat(g_old_z.real() - _cReal, g_old_z.imag() - _cImag);
 					EnQueueFloat(float(g_new_z.x),  float(g_new_z.y));
 					EnQueueFloat(float(-g_new_z.x), float(-g_new_z.y));
 				}
@@ -878,11 +878,11 @@ void JIIM::Execute()
 				// if not MIIM 
 				g_old_z.x -= _cReal;
 				g_old_z.y -= _cImag;
-				r = g_old_z.x*g_old_z.x + g_old_z.y*g_old_z.y;
+				r = g_old_z.real()*g_old_z.real() + g_old_z.imag()*g_old_z.imag();
 				if (r > 10.0)
 				{
-					g_old_z.x = 0.0;
-					g_old_z.y = 0.0; // avoids math error 
+					g_old_z.real(0.0);
+					g_old_z.imag(0.0); // avoids math error 
 					iter = 1;
 					r = 0;
 				}
@@ -893,15 +893,15 @@ void JIIM::Execute()
 					color = 1;
 				}
 
-				// r = sqrt(g_old_z.x*g_old_z.x + g_old_z.y*g_old_z.y); calculated above 
+				// r = sqrt(g_old_z.real()*g_old_z.real() + g_old_z.imag()*g_old_z.imag()); calculated above 
 				r = sqrt(r);
-				g_new_z.real(sqrt(fabs((r + g_old_z.x)/2)));
-				if (g_old_z.y < 0)
+				g_new_z.real(sqrt(fabs((r + g_old_z.real())/2)));
+				if (g_old_z.imag() < 0)
 				{
 					g_new_z.real(-g_new_z.x);
 				}
 
-				g_new_z.imag(sqrt(fabs((r - g_old_z.x)/2)));
+				g_new_z.imag(sqrt(fabs((r - g_old_z.real())/2)));
 
 				switch (s_secret_experimental_mode)
 				{
@@ -1041,8 +1041,8 @@ void JIIM::Execute()
 				{
 					g_old_z = ComplexFudgeToDouble(g_old_z_l);
 				}
-				x = int((g_old_z.x - g_initial_z.x)*x_factor*3*_zoom + _xCenter);
-				y = int((g_old_z.y - g_initial_z.y)*y_factor*3*_zoom + _yCenter);
+				x = int((g_old_z.real() - g_initial_z.x)*x_factor*3*_zoom + _xCenter);
+				y = int((g_old_z.imag() - g_initial_z.y)*y_factor*3*_zoom + _yCenter);
 				if (g_fractal_specific[g_fractal_type].orbitcalc())
 				{
 					iter = g_max_iteration;

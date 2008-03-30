@@ -190,8 +190,8 @@ int Newton::orbit()
 	else
 	{
 		s_t2 = 1.0/s_t2;
-		g_old_z.x = s_t2*(g_new_z.x*g_temp_z.x + g_new_z.y*g_temp_z.y);
-		g_old_z.y = s_t2*(g_new_z.y*g_temp_z.x - g_new_z.x*g_temp_z.y);
+		g_old_z.real(s_t2*(g_new_z.x*g_temp_z.x + g_new_z.y*g_temp_z.y));
+		g_old_z.imag(s_t2*(g_new_z.y*g_temp_z.x - g_new_z.x*g_temp_z.y));
 	}
 	return 0;
 }

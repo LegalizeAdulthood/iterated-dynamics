@@ -2822,20 +2822,20 @@ int Formula::per_pixel()
 		switch (m_math_type)
 		{
 		case FLOATING_POINT_MATH:
-			m_variables[VARIABLE_PIXEL].argument.d.x = g_old_z.x;
-			m_variables[VARIABLE_PIXEL].argument.d.y = g_old_z.y;
+			m_variables[VARIABLE_PIXEL].argument.d.x = g_old_z.real();
+			m_variables[VARIABLE_PIXEL].argument.d.y = g_old_z.imag();
 			break;
 #if !defined(XFRACT)
 		case FIXED_POINT_MATH:
 			// watch out for overflow 
-			if (sqr(g_old_z.x) + sqr(g_old_z.y) >= 127)
+			if (sqr(g_old_z.real()) + sqr(g_old_z.imag()) >= 127)
 			{
-				g_old_z.x = 8;  // value to bail out in one iteration 
-				g_old_z.y = 8;
+				g_old_z.real(8);  // value to bail out in one iteration 
+				g_old_z.imag(8);
 			}
 			// convert to fudged longs 
-			m_variables[VARIABLE_PIXEL].argument.l.x = fixpoint_from_double(g_old_z.x);
-			m_variables[VARIABLE_PIXEL].argument.l.y = fixpoint_from_double(g_old_z.y);
+			m_variables[VARIABLE_PIXEL].argument.l.x = fixpoint_from_double(g_old_z.real());
+			m_variables[VARIABLE_PIXEL].argument.l.y = fixpoint_from_double(g_old_z.imag());
 			break;
 #endif
 		}

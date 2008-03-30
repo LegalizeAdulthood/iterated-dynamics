@@ -1376,22 +1376,22 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 	yold = *y;
 
 // *x = sin(yold*PAR_B) + PAR_C*sin(xold*PAR_B); 
-	g_old_z.x = yold*g_parameters[1];
-	g_old_z.y = 0;          // old = (y*B) + 0i (in the complex)
+	g_old_z.real(yold*g_parameters[1]);
+	g_old_z.imag(0);          // old = (y*B) + 0i (in the complex)
 	CMPLXtrig0(g_old_z, g_new_z);
 	tmp = double(g_new_z.x);
-	g_old_z.x = xold*g_parameters[1];
-	g_old_z.y = 0;          // old = (x*B) + 0i 
+	g_old_z.real(xold*g_parameters[1]);
+	g_old_z.imag(0);          // old = (x*B) + 0i 
 	CMPLXtrig1(g_old_z, g_new_z);
 	*x = g_parameters[2]*g_new_z.x + tmp;
 
 // *y = sin(xold*PAR_A) + PAR_D*sin(yold*PAR_A); 
-	g_old_z.x = xold*g_parameters[0];
-	g_old_z.y = 0;          // old = (y*A) + 0i (in the complex)
+	g_old_z.real(xold*g_parameters[0]);
+	g_old_z.imag(0);          // old = (y*A) + 0i (in the complex)
 	CMPLXtrig2(g_old_z, g_new_z);
 	tmp = double(g_new_z.x);
-	g_old_z.x = yold*g_parameters[0];
-	g_old_z.y = 0;          // old = (x*B) + 0i 
+	g_old_z.real(yold*g_parameters[0]);
+	g_old_z.imag(0);          // old = (x*B) + 0i 
 	CMPLXtrig3(g_old_z, g_new_z);
 	*y = g_parameters[3]*g_new_z.x + tmp;
 

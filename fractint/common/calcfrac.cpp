@@ -1637,8 +1637,8 @@ void StandardFractal::outside_colormode_total_distance_initialize()
 		{
 			g_old_z = complex_bf_to_float(&g_old_z_bf);
 		}
-		m_colormode_total_distance_last_z.x = g_old_z.x;
-		m_colormode_total_distance_last_z.y = g_old_z.y;
+		m_colormode_total_distance_last_z.x = g_old_z.real();
+		m_colormode_total_distance_last_z.y = g_old_z.imag();
 	}
 }
 void StandardFractal::initialize()
@@ -1683,8 +1683,7 @@ void StandardFractal::initialize()
 	m_attracted = false;
 	outside_colormode_total_distance_initialize();
 	m_check_freq = (((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0)
-			&& g_orbit_delay > 0) ?
-		16 : 2048;
+			&& g_orbit_delay > 0) ? 16 : 2048;
 
 	if (g_show_orbit)
 	{
@@ -1857,14 +1856,14 @@ bool StandardFractal::colormode_epsilon_cross_update()
 		{
 			// close to y axis 
 			m_colormode_epsilon_cross_hooper = (m_colormode_epsilon_cross_proximity_l > 0) ?
-HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS;
+				HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS;
 			go_plot_inside = true;
 		}
 		else if (labs(g_new_z_l.y) < labs(m_colormode_epsilon_cross_proximity_l))
 		{
 			// close to x axis 
 			m_colormode_epsilon_cross_hooper = (m_colormode_epsilon_cross_proximity_l > 0) ?
-HOOPER_POSITIVE_X_AXIS : HOOPER_NEGATIVE_X_AXIS;
+				HOOPER_POSITIVE_X_AXIS : HOOPER_NEGATIVE_X_AXIS;
 			go_plot_inside = true;
 		}
 	}
@@ -1874,14 +1873,14 @@ HOOPER_POSITIVE_X_AXIS : HOOPER_NEGATIVE_X_AXIS;
 		{
 			// close to y axis 
 			m_colormode_epsilon_cross_hooper = (g_proximity > 0) ?
-HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS;
+				HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS;
 			go_plot_inside = true;
 		}
 		else if (fabs(g_new_z.y) < fabs(g_proximity))
 		{
 			// close to x axis 
 			m_colormode_epsilon_cross_hooper = (g_proximity > 0) ?
-HOOPER_POSITIVE_X_AXIS : HOOPER_NEGATIVE_X_AXIS;
+				HOOPER_POSITIVE_X_AXIS : HOOPER_NEGATIVE_X_AXIS;
 			go_plot_inside = true;
 		}
 	}
@@ -2020,10 +2019,9 @@ bool StandardFractal::distance_test_compute()
 	// Distance estimator for points near Mandelbrot set 
 	// Original code by Phil Wilson, hacked around by PB 
 	// Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198 
-	double ftemp = s_dem_mandelbrot
-		? 2*(g_old_z.x*m_distance_test_derivative.x - g_old_z.y*m_distance_test_derivative.y) + 1
-		: 2*(g_old_z.x*m_distance_test_derivative.x - g_old_z.y*m_distance_test_derivative.y);
-	m_distance_test_derivative.y = 2*(g_old_z.y*m_distance_test_derivative.x + g_old_z.x*m_distance_test_derivative.y);
+	double ftemp = (s_dem_mandelbrot ? 1 : 0)
+		+ 2*(g_old_z.real()*m_distance_test_derivative.x - g_old_z.imag()*m_distance_test_derivative.y);
+	m_distance_test_derivative.y = 2*(g_old_z.imag()*m_distance_test_derivative.x + g_old_z.real()*m_distance_test_derivative.y);
 	m_distance_test_derivative.x = ftemp;
 	if (std::max(fabs(m_distance_test_derivative.x), fabs(m_distance_test_derivative.y)) > s_dem_too_big)
 	{
@@ -3697,8 +3695,8 @@ void PerformWorkList::setup_distance_estimator()
 	ftemp = g_distance_test_width;
 	// multiply by thickness desired 
 	s_dem_delta *= (g_distance_test_width > 0) ? sqr(ftemp)/10000 : 1/(sqr(ftemp)*10000);
-	s_dem_width = (sqrt(sqr(g_escape_time_state.m_grid_fp.width()) + sqr(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min()) )*aspect
-		+ sqrt(sqr(g_escape_time_state.m_grid_fp.height()) + sqr(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_min()) ) )/g_distance_test;
+	s_dem_width = (sqrt(sqr(g_escape_time_state.m_grid_fp.width()) + sqr(g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min()) )*aspect
+		+ sqrt(sqr(g_escape_time_state.m_grid_fp.height()) + sqr(g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) ) )/g_distance_test;
 	ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
 	ftemp += 3; // bailout plus just a bit 
 	double ftemp2 = log(ftemp);

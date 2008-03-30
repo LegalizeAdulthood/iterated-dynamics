@@ -436,9 +436,9 @@ int complex_basin()
 	g_temp_z.y = g_new_z.y - croot.y;
 	if ((sqr(g_temp_z.x) + sqr(g_temp_z.y)) < g_threshold)
 	{
-		if (fabs(g_old_z.y) < .01)
+		if (fabs(g_old_z.imag()) < .01)
 		{
-			g_old_z.y = 0.0;
+			g_old_z.imag(0.0);
 		}
 		FPUcplxlog(&g_old_z, &temp);
 		FPUcplxmul(&temp, &cdegree, &g_temp_z);

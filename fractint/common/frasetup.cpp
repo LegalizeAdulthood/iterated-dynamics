@@ -991,8 +991,8 @@ bool marks_julia_setup_fp()
 	}
 	else if (g_c_exp == 3)
 	{
-		g_coefficient.x = sqr(g_old_z.x) - sqr(g_old_z.y);
-		g_coefficient.y = g_old_z.x*g_old_z.y*2;
+		g_coefficient.x = sqr(g_old_z.real()) - sqr(g_old_z.imag());
+		g_coefficient.y = g_old_z.real()*g_old_z.imag()*2;
 	}
 	else if (g_c_exp == 2)
 	{

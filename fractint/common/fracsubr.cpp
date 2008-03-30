@@ -1459,10 +1459,10 @@ void get_julia_attractor(double real, double imag)
 	int save_periodicity_check = g_periodicity_check;
 	ValueSaver<long> save_max_iteration(g_max_iteration, g_max_iteration);
 	g_periodicity_check = 0;
-	g_old_z.x = real;                    // prepare for f.p orbit calc 
-	g_old_z.y = imag;
-	g_temp_sqr_x = sqr(g_old_z.x);
-	g_temp_sqr_y = sqr(g_old_z.y);
+	g_old_z.real(real);                    // prepare for f.p orbit calc 
+	g_old_z.imag(imag);
+	g_temp_sqr_x = sqr(g_old_z.real());
+	g_temp_sqr_y = sqr(g_old_z.imag());
 
 	g_old_z_l.x = (long(real)) << g_bit_shift;		// prepare for int orbit calc 
 	assert(g_old_z_l.x == DoubleToFudge(real));
