@@ -1011,9 +1011,8 @@ bool sierpinski_setup()
 {
 	// sierpinski 
 	g_periodicity_check = 0;					// disable periodicity checks 
-	g_tmp_z_l.x = 1;
-	g_tmp_z_l.x = g_tmp_z_l.x << g_bit_shift;	// g_tmp_z_l.x = 1 
-	g_tmp_z_l.y = g_tmp_z_l.x >> 1;				// g_tmp_z_l.y = .5 
+	g_temp_z_l.real(DoubleToFudge(1.0));
+	g_temp_z_l.imag(DoubleToFudge(0.5));
 	return true;
 }
 

@@ -212,11 +212,11 @@ int bifurcation_verhulst_trig_fp()
 int bifurcation_verhulst_trig()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = s_population_l;
-	g_tmp_z_l.y = 0;
-	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
-	g_tmp_z_l.y = g_tmp_z_l.x - multiply(g_tmp_z_l.x, g_tmp_z_l.x, g_bit_shift);
-	s_population_l += multiply(s_rate_l, g_tmp_z_l.y, g_bit_shift);
+	g_temp_z_l.real(s_population_l);
+	g_temp_z_l.imag(0);
+	LCMPLXtrig0(g_temp_z_l, g_temp_z_l);
+	g_temp_z_l.imag(g_temp_z_l.real() - multiply(g_temp_z_l.real(), g_temp_z_l.real(), g_bit_shift));
+	s_population_l += multiply(s_rate_l, g_temp_z_l.imag(), g_bit_shift);
 #endif
 	return g_overflow;
 }
@@ -233,10 +233,10 @@ int bifurcation_stewart_trig_fp()
 int bifurcation_stewart_trig()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = s_population_l;
-	g_tmp_z_l.y = 0;
-	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
-	s_population_l = multiply(g_tmp_z_l.x, g_tmp_z_l.x, g_bit_shift);
+	g_temp_z_l.real(s_population_l);
+	g_temp_z_l.imag(0);
+	LCMPLXtrig0(g_temp_z_l, g_temp_z_l);
+	s_population_l = multiply(g_temp_z_l.real(), g_temp_z_l.real(), g_bit_shift);
 	s_population_l = multiply(s_population_l, s_rate_l,      g_bit_shift);
 	s_population_l -= g_externs.Fudge();
 #endif
@@ -255,10 +255,10 @@ int bifurcation_set_trig_pi_fp()
 int bifurcation_set_trig_pi()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = multiply(s_population_l, s_pi_l, g_bit_shift);
-	g_tmp_z_l.y = 0;
-	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
-	s_population_l = multiply(s_rate_l, g_tmp_z_l.x, g_bit_shift);
+	g_temp_z_l.real(multiply(s_population_l, s_pi_l, g_bit_shift));
+	g_temp_z_l.imag(0);
+	LCMPLXtrig0(g_temp_z_l, g_temp_z_l);
+	s_population_l = multiply(s_rate_l, g_temp_z_l.real(), g_bit_shift);
 #endif
 	return g_overflow;
 }
@@ -275,10 +275,10 @@ int bifurcation_add_trig_pi_fp()
 int bifurcation_add_trig_pi()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = multiply(s_population_l, s_pi_l, g_bit_shift);
-	g_tmp_z_l.y = 0;
-	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
-	s_population_l += multiply(s_rate_l, g_tmp_z_l.x, g_bit_shift);
+	g_temp_z_l.real(multiply(s_population_l, s_pi_l, g_bit_shift));
+	g_temp_z_l.imag(0);
+	LCMPLXtrig0(g_temp_z_l, g_temp_z_l);
+	s_population_l += multiply(s_rate_l, g_temp_z_l.real(), g_bit_shift);
 #endif
 	return g_overflow;
 }
@@ -296,11 +296,11 @@ int bifurcation_lambda_trig_fp()
 int bifurcation_lambda_trig()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = s_population_l;
-	g_tmp_z_l.y = 0;
-	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
-	g_tmp_z_l.y = g_tmp_z_l.x - multiply(g_tmp_z_l.x, g_tmp_z_l.x, g_bit_shift);
-	s_population_l = multiply(s_rate_l, g_tmp_z_l.y, g_bit_shift);
+	g_temp_z_l.real(s_population_l);
+	g_temp_z_l.imag(0);
+	LCMPLXtrig0(g_temp_z_l, g_temp_z_l);
+	g_temp_z_l.imag(g_temp_z_l.real() - multiply(g_temp_z_l.real(), g_temp_z_l.real(), g_bit_shift));
+	s_population_l = multiply(s_rate_l, g_temp_z_l.imag(), g_bit_shift);
 #endif
 	return g_overflow;
 }
@@ -318,12 +318,12 @@ int bifurcation_may_fp()
 int bifurcation_may()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = s_population_l + g_externs.Fudge();
-	g_tmp_z_l.y = 0;
+	g_temp_z_l.real(s_population_l + g_externs.Fudge());
+	g_temp_z_l.imag(0);
 	g_parameter2_l.x = DoubleToFudge(s_beta);
-	LCMPLXpwr(g_tmp_z_l, g_parameter2_l, g_tmp_z_l);
+	LCMPLXpwr(g_temp_z_l, g_parameter2_l, g_temp_z_l);
 	s_population_l = multiply(s_rate_l, s_population_l, g_bit_shift);
-	s_population_l = divide(s_population_l, g_tmp_z_l.x, g_bit_shift);
+	s_population_l = divide(s_population_l, g_temp_z_l.real(), g_bit_shift);
 #endif
 	return g_overflow;
 }

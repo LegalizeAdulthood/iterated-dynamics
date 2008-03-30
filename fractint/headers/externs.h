@@ -135,7 +135,7 @@ extern ComplexL				g_parameter2_l;
 extern ComplexL				g_parameter_l;
 extern long					g_temp_sqr_x_l;
 extern long					g_temp_sqr_y_l;
-extern ComplexL				g_tmp_z_l;
+extern ComplexL				g_temp_z_l;
 extern void					(*g_trig0_l)();
 extern void					(*g_trig1_l)();
 extern void					(*g_trig2_l)();

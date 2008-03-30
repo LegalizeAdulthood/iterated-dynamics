@@ -333,8 +333,8 @@ public:
 	virtual void SetTempSqrXL(long value)						{ g_temp_sqr_x_l = value; }
 	virtual long TempSqrYL() const								{ return g_temp_sqr_y_l; }
 	virtual void SetTempSqrYL(long value)						{ g_temp_sqr_y_l = value; }
-	virtual ComplexL TmpZL() const								{ return g_tmp_z_l; }
-	virtual void SetTmpZL(ComplexL value)						{ g_tmp_z_l = value; }
+	virtual ComplexL TmpZL() const								{ return g_temp_z_l; }
+	virtual void SetTmpZL(ComplexL value)						{ g_temp_z_l = value; }
 
 	virtual double DxPixel()									{ assert(_dxPixel); return _dxPixel(); }
 	virtual void SetDxPixel(DxPixelFunction *value)				{ _dxPixel = value; }

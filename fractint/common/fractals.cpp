@@ -72,7 +72,7 @@ ComplexL g_old_z_l = { 0, 0 };
 ComplexL g_new_z_l = { 0, 0 };
 ComplexL g_parameter_l = { 0, 0 };
 ComplexL g_initial_z_l = { 0, 0 };
-ComplexL g_tmp_z_l = { 0, 0 };
+ComplexL g_temp_z_l = { 0, 0 };
 ComplexL g_tmp_z2_l = { 0, 0 };
 ComplexL g_parameter2_l = { 0, 0 };
 long g_temp_sqr_x_l = 0;
@@ -562,13 +562,13 @@ int sierpinski_orbit()
 	// Everywhere" by Michael Barnsley, p. 251, Program 7.1.1
 	g_new_z_l.real((g_old_z_l.x << 1));              // new.x = 2*old.x  
 	g_new_z_l.imag((g_old_z_l.y << 1));              // new.y = 2*old.y  
-	if (g_old_z_l.y > g_tmp_z_l.y)  // if old.y > .5 
+	if (g_old_z_l.y > g_temp_z_l.imag())  // if old.y > .5 
 	{
-		g_new_z_l.imag(g_new_z_l.imag() - g_tmp_z_l.x); // new.y = 2*old.y - 1 
+		g_new_z_l.imag(g_new_z_l.imag() - g_temp_z_l.real()); // new.y = 2*old.y - 1 
 	}
-	else if (g_old_z_l.x > g_tmp_z_l.y)     // if old.x > .5 
+	else if (g_old_z_l.x > g_temp_z_l.imag())     // if old.x > .5 
 	{
-		g_new_z_l.real(g_new_z_l.real() - g_tmp_z_l.x); // new.x = 2*old.x - 1 
+		g_new_z_l.real(g_new_z_l.real() - g_temp_z_l.real()); // new.x = 2*old.x - 1 
 	}
 	// end barnsley code 
 	return g_externs.BailOutL();
@@ -643,13 +643,13 @@ int lambda_exponent_orbit()
 	}
 	tmp = Exp086(g_old_z_l.x);
 
-	g_tmp_z_l.x = multiply(tmp,      s_cos_y_l,   g_bit_shift);
-	g_tmp_z_l.y = multiply(tmp,      s_sin_y_l,   g_bit_shift);
+	g_temp_z_l.real(multiply(tmp,      s_cos_y_l,   g_bit_shift));
+	g_temp_z_l.imag(multiply(tmp,      s_sin_y_l,   g_bit_shift));
 
-	g_new_z_l.real(multiply(g_long_parameter->x, g_tmp_z_l.x, g_bit_shift)
-			- multiply(g_long_parameter->y, g_tmp_z_l.y, g_bit_shift));
-	g_new_z_l.imag(multiply(g_long_parameter->x, g_tmp_z_l.y, g_bit_shift)
-			+ multiply(g_long_parameter->y, g_tmp_z_l.x, g_bit_shift));
+	g_new_z_l.real(multiply(g_long_parameter->x, g_temp_z_l.real(), g_bit_shift)
+			- multiply(g_long_parameter->y, g_temp_z_l.imag(), g_bit_shift));
+	g_new_z_l.imag(multiply(g_long_parameter->x, g_temp_z_l.imag(), g_bit_shift)
+			+ multiply(g_long_parameter->y, g_temp_z_l.real(), g_bit_shift));
 	g_old_z_l = g_new_z_l;
 	return 0;
 #else
@@ -706,13 +706,13 @@ int marks_lambda_orbit()
 
 	// Z1 = (C^(exp-1)*Z**2) + C 
 #if !defined(XFRACT)
-	g_tmp_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l;
-	g_tmp_z_l.y = multiply(g_old_z_l.x , g_old_z_l.y , g_bit_shift_minus_1);
+	g_temp_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l);
+	g_temp_z_l.imag(multiply(g_old_z_l.x , g_old_z_l.y , g_bit_shift_minus_1));
 
-	g_new_z_l.real(multiply(g_coefficient_l.x, g_tmp_z_l.x, g_bit_shift)
-		- multiply(g_coefficient_l.y, g_tmp_z_l.y, g_bit_shift) + g_long_parameter->x);
-	g_new_z_l.imag(multiply(g_coefficient_l.x, g_tmp_z_l.y, g_bit_shift)
-		+ multiply(g_coefficient_l.y, g_tmp_z_l.x, g_bit_shift) + g_long_parameter->y);
+	g_new_z_l.real(multiply(g_coefficient_l.x, g_temp_z_l.real(), g_bit_shift)
+		- multiply(g_coefficient_l.y, g_temp_z_l.imag(), g_bit_shift) + g_long_parameter->x);
+	g_new_z_l.imag(multiply(g_coefficient_l.x, g_temp_z_l.imag(), g_bit_shift)
+		+ multiply(g_coefficient_l.y, g_temp_z_l.real(), g_bit_shift) + g_long_parameter->y);
 
 	return g_externs.BailOutL();
 #else
@@ -978,9 +978,9 @@ int richard8_orbit()
 {
 #if !defined(XFRACT)
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
-	// LCMPLXtrig1(*g_long_parameter, g_tmp_z_l); 
-	g_new_z_l.x += g_tmp_z_l.x;
-	g_new_z_l.y += g_tmp_z_l.y;
+	// LCMPLXtrig1(*g_long_parameter, g_temp_z_l); 
+	g_new_z_l.x += g_temp_z_l.real();
+	g_new_z_l.y += g_temp_z_l.imag();
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -1069,19 +1069,19 @@ int popcorn_orbit_fp()
 int popcorn_old_orbit()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l = g_old_z_l;
-	g_tmp_z_l.x *= 3L;
-	g_tmp_z_l.y *= 3L;
-	TRIG_ARG_L(g_tmp_z_l.x);
-	TRIG_ARG_L(g_tmp_z_l.y);
-	SinCos086(g_tmp_z_l.x, &s_sin_x_l, &s_cos_x_l);
-	SinCos086(g_tmp_z_l.y, &s_sin_y_l, &s_cos_y_l);
-	g_tmp_z_l.x = divide(s_sin_x_l, s_cos_x_l, g_bit_shift) + g_old_z_l.x;
-	g_tmp_z_l.y = divide(s_sin_y_l, s_cos_y_l, g_bit_shift) + g_old_z_l.y;
-	TRIG_ARG_L(g_tmp_z_l.x);
-	TRIG_ARG_L(g_tmp_z_l.y);
-	SinCos086(g_tmp_z_l.x, &s_sin_x_l, &s_cos_x_l);
-	SinCos086(g_tmp_z_l.y, &s_sin_y_l, &s_cos_y_l);
+	g_temp_z_l = g_old_z_l;
+	g_temp_z_l.x *= 3L;
+	g_temp_z_l.y *= 3L;
+	TRIG_ARG_L(g_temp_z_l.x);
+	TRIG_ARG_L(g_temp_z_l.y);
+	SinCos086(g_temp_z_l.real(), &s_sin_x_l, &s_cos_x_l);
+	SinCos086(g_temp_z_l.imag(), &s_sin_y_l, &s_cos_y_l);
+	g_temp_z_l.real(divide(s_sin_x_l, s_cos_x_l, g_bit_shift) + g_old_z_l.x);
+	g_temp_z_l.imag(divide(s_sin_y_l, s_cos_y_l, g_bit_shift) + g_old_z_l.y);
+	TRIG_ARG_L(g_temp_z_l.x);
+	TRIG_ARG_L(g_temp_z_l.y);
+	SinCos086(g_temp_z_l.real(), &s_sin_x_l, &s_cos_x_l);
+	SinCos086(g_temp_z_l.imag(), &s_sin_y_l, &s_cos_y_l);
 	g_new_z_l.real(g_old_z_l.x - multiply(g_parameter_l.x, s_sin_y_l, g_bit_shift));
 	g_new_z_l.imag(g_old_z_l.y - multiply(g_parameter_l.x, s_sin_x_l, g_bit_shift));
 	if (g_plot_color == plot_color_none)
@@ -1110,19 +1110,19 @@ int popcorn_old_orbit()
 int popcorn_orbit()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l = g_old_z_l;
-	g_tmp_z_l.x *= 3L;
-	g_tmp_z_l.y *= 3L;
-	TRIG_ARG_L(g_tmp_z_l.x);
-	TRIG_ARG_L(g_tmp_z_l.y);
-	SinCos086(g_tmp_z_l.x, &s_sin_x_l, &s_cos_x_l);
-	SinCos086(g_tmp_z_l.y, &s_sin_y_l, &s_cos_y_l);
-	g_tmp_z_l.x = divide(s_sin_x_l, s_cos_x_l, g_bit_shift) + g_old_z_l.x;
-	g_tmp_z_l.y = divide(s_sin_y_l, s_cos_y_l, g_bit_shift) + g_old_z_l.y;
-	TRIG_ARG_L(g_tmp_z_l.x);
-	TRIG_ARG_L(g_tmp_z_l.y);
-	SinCos086(g_tmp_z_l.x, &s_sin_x_l, &s_cos_x_l);
-	SinCos086(g_tmp_z_l.y, &s_sin_y_l, &s_cos_y_l);
+	g_temp_z_l = g_old_z_l;
+	g_temp_z_l.x *= 3L;
+	g_temp_z_l.y *= 3L;
+	TRIG_ARG_L(g_temp_z_l.x);
+	TRIG_ARG_L(g_temp_z_l.y);
+	SinCos086(g_temp_z_l.real(), &s_sin_x_l, &s_cos_x_l);
+	SinCos086(g_temp_z_l.imag(), &s_sin_y_l, &s_cos_y_l);
+	g_temp_z_l.real(divide(s_sin_x_l, s_cos_x_l, g_bit_shift) + g_old_z_l.x);
+	g_temp_z_l.imag(divide(s_sin_y_l, s_cos_y_l, g_bit_shift) + g_old_z_l.y);
+	TRIG_ARG_L(g_temp_z_l.x);
+	TRIG_ARG_L(g_temp_z_l.y);
+	SinCos086(g_temp_z_l.real(), &s_sin_x_l, &s_cos_x_l);
+	SinCos086(g_temp_z_l.imag(), &s_sin_y_l, &s_cos_y_l);
 	g_new_z_l.real(g_old_z_l.x - multiply(g_parameter_l.x, s_sin_y_l, g_bit_shift));
 	g_new_z_l.imag(g_old_z_l.y - multiply(g_parameter_l.x, s_sin_x_l, g_bit_shift));
 	if (g_plot_color == plot_color_none)
@@ -1210,22 +1210,22 @@ int popcorn_fn_orbit()
 	g_overflow = false;
 
 	// ltmpx contains the generalized value of the old real "x" equation 
-	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.y, g_tmp_z_l); // tmp = (C*old.y)         
-	LCMPLXtrig1(g_tmp_z_l, ltmpx);             // tmpx = trig1(tmp)         
+	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.y, g_temp_z_l); // tmp = (C*old.y)         
+	LCMPLXtrig1(g_temp_z_l, ltmpx);             // tmpx = trig1(tmp)         
 	fix_overflow(ltmpx);
 	ltmpx.x += g_old_z_l.y;                   // tmpx = old.y + trig1(tmp) 
-	LCMPLXtrig0(ltmpx, g_tmp_z_l);             // tmp = trig0(tmpx)         
-	fix_overflow(g_tmp_z_l);
-	LCMPLXmult(g_tmp_z_l, g_parameter_l, ltmpx);        // tmpx = tmp*h            
+	LCMPLXtrig0(ltmpx, g_temp_z_l);             // tmp = trig0(tmpx)         
+	fix_overflow(g_temp_z_l);
+	LCMPLXmult(g_temp_z_l, g_parameter_l, ltmpx);        // tmpx = tmp*h            
 
 	// ltmpy contains the generalized value of the old real "y" equation 
-	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.x, g_tmp_z_l); // tmp = (C*old.x)         
-	LCMPLXtrig3(g_tmp_z_l, ltmpy);             // tmpy = trig3(tmp)         
+	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.x, g_temp_z_l); // tmp = (C*old.x)         
+	LCMPLXtrig3(g_temp_z_l, ltmpy);             // tmpy = trig3(tmp)         
 	fix_overflow(ltmpy);
 	ltmpy.x += g_old_z_l.x;                   // tmpy = old.x + trig1(tmp) 
-	LCMPLXtrig2(ltmpy, g_tmp_z_l);             // tmp = trig2(tmpy)         
-	fix_overflow(g_tmp_z_l);
-	LCMPLXmult(g_tmp_z_l, g_parameter_l, ltmpy);        // tmpy = tmp*h            
+	LCMPLXtrig2(ltmpy, g_temp_z_l);             // tmp = trig2(tmpy)         
+	fix_overflow(g_temp_z_l);
+	LCMPLXmult(g_temp_z_l, g_parameter_l, ltmpy);        // tmpy = tmp*h            
 
 	g_new_z_l.real(g_old_z_l.x - ltmpx.x - ltmpy.y);
 	g_new_z_l.imag(g_old_z_l.y - ltmpy.x - ltmpx.y);
@@ -1275,10 +1275,10 @@ int spider_orbit()
 {
 #if !defined(XFRACT)
 	// Spider(XAXIS) { c = z=pixel: z = z*z + c; c = c/2 + z, |z| <= 4 } 
-	g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l + g_tmp_z_l.x);
-	g_new_z_l.imag(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_tmp_z_l.y);
-	g_tmp_z_l.x = (g_tmp_z_l.x >> 1) + g_new_z_l.real();
-	g_tmp_z_l.y = (g_tmp_z_l.y >> 1) + g_new_z_l.imag();
+	g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l + g_temp_z_l.real());
+	g_new_z_l.imag(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_temp_z_l.imag());
+	g_temp_z_l.real((g_temp_z_l.real() >> 1) + g_new_z_l.real());
+	g_temp_z_l.imag((g_temp_z_l.imag() >> 1) + g_new_z_l.imag());
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -1296,11 +1296,11 @@ int z_trig_z_plus_z_orbit()
 {
 #if !defined(XFRACT)
 	// z = (p1*z*trig(z)) + p2*z 
-	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);          // g_tmp_z_l = trig(old)             
-	LCMPLXmult(g_parameter_l, g_tmp_z_l, g_tmp_z_l);      // g_tmp_z_l  = p1*trig(old)          
-	LCMPLXmult(g_old_z_l, g_tmp_z_l, g_tmp_z2_l);      // g_tmp_z2_l = p1*old*trig(old)      
-	LCMPLXmult(g_parameter2_l, g_old_z_l, g_tmp_z_l);     // g_tmp_z_l  = p2*old                
-	LCMPLXadd(g_tmp_z2_l, g_tmp_z_l, g_new_z_l);       // g_new_z_l  = p1*trig(old) + p2*old 
+	LCMPLXtrig0(g_old_z_l, g_temp_z_l);          // g_temp_z_l = trig(old)             
+	LCMPLXmult(g_parameter_l, g_temp_z_l, g_temp_z_l);      // g_temp_z_l  = p1*trig(old)          
+	LCMPLXmult(g_old_z_l, g_temp_z_l, g_tmp_z2_l);      // g_tmp_z2_l = p1*old*trig(old)      
+	LCMPLXmult(g_parameter2_l, g_old_z_l, g_temp_z_l);     // g_temp_z_l  = p2*old                
+	LCMPLXadd(g_tmp_z2_l, g_temp_z_l, g_new_z_l);       // g_new_z_l  = p1*trig(old) + p2*old 
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -1311,8 +1311,8 @@ int scott_z_trig_z_plus_z_orbit()
 {
 #if !defined(XFRACT)
 	// z = (z*trig(z)) + z 
-	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);          // g_tmp_z_l  = trig(old)       
-	LCMPLXmult(g_old_z_l, g_tmp_z_l, g_new_z_l);       // g_new_z_l  = old*trig(old)   
+	LCMPLXtrig0(g_old_z_l, g_temp_z_l);          // g_temp_z_l  = trig(old)       
+	LCMPLXmult(g_old_z_l, g_temp_z_l, g_new_z_l);       // g_new_z_l  = old*trig(old)   
 	LCMPLXadd(g_new_z_l, g_old_z_l, g_new_z_l);        // g_new_z_l  = trig(old) + old 
 	return g_externs.BailOutL();
 #else
@@ -1324,8 +1324,8 @@ int skinner_z_trig_z_minus_z_orbit()
 {
 #if !defined(XFRACT)
 	// z = (z*trig(z))-z 
-	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);          // g_tmp_z_l  = trig(old)       
-	LCMPLXmult(g_old_z_l, g_tmp_z_l, g_new_z_l);       // g_new_z_l  = old*trig(old)   
+	LCMPLXtrig0(g_old_z_l, g_temp_z_l);          // g_temp_z_l  = trig(old)       
+	LCMPLXmult(g_old_z_l, g_temp_z_l, g_new_z_l);       // g_new_z_l  = old*trig(old)   
 	LCMPLXsub(g_new_z_l, g_old_z_l, g_new_z_l);        // g_new_z_l  = trig(old) - old 
 	return g_externs.BailOutL();
 #else
@@ -1388,11 +1388,11 @@ int trig_plus_trig_orbit()
 {
 #if !defined(XFRACT)
 	// z = trig(0, z)*p1 + trig1(z)*p2 
-	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
-	LCMPLXmult(g_parameter_l, g_tmp_z_l, g_tmp_z_l);
+	LCMPLXtrig0(g_old_z_l, g_temp_z_l);
+	LCMPLXmult(g_parameter_l, g_temp_z_l, g_temp_z_l);
 	LCMPLXtrig1(g_old_z_l, g_tmp_z2_l);
 	LCMPLXmult(g_parameter2_l, g_tmp_z2_l, g_old_z_l);
-	LCMPLXadd(g_tmp_z_l, g_old_z_l, g_new_z_l);
+	LCMPLXadd(g_temp_z_l, g_old_z_l, g_new_z_l);
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -1421,13 +1421,13 @@ int lambda_trig_or_trig_orbit()
 	// trig1(z)*p1 if mod(old) >= p2.x
 	if ((LCMPLXmod(g_old_z_l)) < g_parameter2_l.x)
 	{
-		LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
-		LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);
+		LCMPLXtrig0(g_old_z_l, g_temp_z_l);
+		LCMPLXmult(*g_long_parameter, g_temp_z_l, g_new_z_l);
 	}
 	else
 	{
-		LCMPLXtrig1(g_old_z_l, g_tmp_z_l);
-		LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);
+		LCMPLXtrig1(g_old_z_l, g_temp_z_l);
+		LCMPLXmult(*g_long_parameter, g_temp_z_l, g_new_z_l);
 	}
 	return g_externs.BailOutL();
 #else
@@ -1459,13 +1459,13 @@ int julia_trig_or_trig_orbit()
 	//		trig1(z) + p1 if mod(old) >= p2.x
 	if (LCMPLXmod(g_old_z_l) < g_parameter2_l.x)
 	{
-		LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
-		LCMPLXadd(*g_long_parameter, g_tmp_z_l, g_new_z_l);
+		LCMPLXtrig0(g_old_z_l, g_temp_z_l);
+		LCMPLXadd(*g_long_parameter, g_temp_z_l, g_new_z_l);
 	}
 	else
 	{
-		LCMPLXtrig1(g_old_z_l, g_tmp_z_l);
-		LCMPLXadd(*g_long_parameter, g_tmp_z_l, g_new_z_l);
+		LCMPLXtrig1(g_old_z_l, g_temp_z_l);
+		LCMPLXadd(*g_long_parameter, g_temp_z_l, g_new_z_l);
 	}
 	return g_externs.BailOutL();
 #else
@@ -1494,9 +1494,9 @@ int phoenix_orbit()
 {
 #if !defined(XFRACT)
 	// z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) 
-	g_tmp_z_l.x = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift);
+	g_temp_z_l.real(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift));
 	g_new_z_l.real(g_temp_sqr_x_l-g_temp_sqr_y_l + g_long_parameter->x + multiply(g_long_parameter->y, g_tmp_z2_l.x, g_bit_shift));
-	g_new_z_l.imag((g_tmp_z_l.x + g_tmp_z_l.x) + multiply(g_long_parameter->y, g_tmp_z2_l.y, g_bit_shift));
+	g_new_z_l.imag((g_temp_z_l.real() + g_temp_z_l.real()) + multiply(g_long_parameter->y, g_tmp_z2_l.y, g_bit_shift));
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value 
 	return g_externs.BailOutL();
 #else
@@ -1518,9 +1518,9 @@ int phoenix_complex_orbit()
 {
 #if !defined(XFRACT)
 	// z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) 
-	g_tmp_z_l.x = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift);
+	g_temp_z_l.real(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift));
 	g_new_z_l.real(g_temp_sqr_x_l-g_temp_sqr_y_l + g_long_parameter->x + multiply(g_parameter2_l.x, g_tmp_z2_l.x, g_bit_shift)-multiply(g_parameter2_l.y, g_tmp_z2_l.y, g_bit_shift));
-	g_new_z_l.imag((g_tmp_z_l.x + g_tmp_z_l.x) + g_long_parameter->y + multiply(g_parameter2_l.x, g_tmp_z2_l.y, g_bit_shift) + multiply(g_parameter2_l.y, g_tmp_z2_l.x, g_bit_shift));
+	g_new_z_l.imag((g_temp_z_l.real() + g_temp_z_l.real()) + g_long_parameter->y + multiply(g_parameter2_l.x, g_tmp_z2_l.y, g_bit_shift) + multiply(g_parameter2_l.y, g_tmp_z2_l.x, g_bit_shift));
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value 
 	return g_externs.BailOutL();
 #else
@@ -1545,13 +1545,13 @@ int phoenix_plus_orbit()
 	int i;
 	ComplexL loldplus, lnewminus;
 	loldplus = g_old_z_l;
-	g_tmp_z_l = g_old_z_l;
+	g_temp_z_l = g_old_z_l;
 	for (i = 1; i < g_degree; i++)  // degree >= 2, degree = degree-1 in setup 
 	{
-		LCMPLXmult(g_old_z_l, g_tmp_z_l, g_tmp_z_l); // = old^(degree-1) 
+		LCMPLXmult(g_old_z_l, g_temp_z_l, g_temp_z_l); // = old^(degree-1) 
 	}
 	loldplus.x += g_long_parameter->x;
-	LCMPLXmult(g_tmp_z_l, loldplus, lnewminus);
+	LCMPLXmult(g_temp_z_l, loldplus, lnewminus);
 	g_new_z_l.real(lnewminus.x + multiply(g_long_parameter->y, g_tmp_z2_l.x, g_bit_shift));
 	g_new_z_l.imag(lnewminus.y + multiply(g_long_parameter->y, g_tmp_z2_l.y, g_bit_shift));
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value 
@@ -1588,13 +1588,13 @@ int phoenix_minus_orbit()
 	int i;
 	ComplexL loldsqr, lnewminus;
 	LCMPLXmult(g_old_z_l, g_old_z_l, loldsqr);
-	g_tmp_z_l = g_old_z_l;
+	g_temp_z_l = g_old_z_l;
 	for (i = 1; i < g_degree; i++)  // degree >= 3, degree = degree-2 in setup 
 	{
-		LCMPLXmult(g_old_z_l, g_tmp_z_l, g_tmp_z_l); // = old^(degree-2) 
+		LCMPLXmult(g_old_z_l, g_temp_z_l, g_temp_z_l); // = old^(degree-2) 
 	}
 	loldsqr.x += g_long_parameter->x;
-	LCMPLXmult(g_tmp_z_l, loldsqr, lnewminus);
+	LCMPLXmult(g_temp_z_l, loldsqr, lnewminus);
 	g_new_z_l.real(lnewminus.x + multiply(g_long_parameter->y, g_tmp_z2_l.x, g_bit_shift));
 	g_new_z_l.imag(lnewminus.y + multiply(g_long_parameter->y, g_tmp_z2_l.y, g_bit_shift));
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value 
@@ -1631,17 +1631,17 @@ int phoenix_complex_plus_orbit()
 	int i;
 	ComplexL loldplus, lnewminus;
 	loldplus = g_old_z_l;
-	g_tmp_z_l = g_old_z_l;
+	g_temp_z_l = g_old_z_l;
 	for (i = 1; i < g_degree; i++)  // degree >= 2, degree = degree-1 in setup 
 	{
-		LCMPLXmult(g_old_z_l, g_tmp_z_l, g_tmp_z_l); // = old^(degree-1) 
+		LCMPLXmult(g_old_z_l, g_temp_z_l, g_temp_z_l); // = old^(degree-1) 
 	}
 	loldplus.x += g_long_parameter->x;
 	loldplus.y += g_long_parameter->y;
-	LCMPLXmult(g_tmp_z_l, loldplus, lnewminus);
-	LCMPLXmult(g_parameter2_l, g_tmp_z2_l, g_tmp_z_l);
-	g_new_z_l.real(lnewminus.x + g_tmp_z_l.x);
-	g_new_z_l.imag(lnewminus.y + g_tmp_z_l.y);
+	LCMPLXmult(g_temp_z_l, loldplus, lnewminus);
+	LCMPLXmult(g_parameter2_l, g_tmp_z2_l, g_temp_z_l);
+	g_new_z_l.real(lnewminus.x + g_temp_z_l.real());
+	g_new_z_l.imag(lnewminus.y + g_temp_z_l.imag());
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value 
 	return g_externs.BailOutL();
 #else
@@ -1678,17 +1678,17 @@ int phoenix_complex_minus_orbit()
 	int i;
 	ComplexL loldsqr, lnewminus;
 	LCMPLXmult(g_old_z_l, g_old_z_l, loldsqr);
-	g_tmp_z_l = g_old_z_l;
+	g_temp_z_l = g_old_z_l;
 	for (i = 1; i < g_degree; i++)  // degree >= 3, degree = degree-2 in setup 
 	{
-		LCMPLXmult(g_old_z_l, g_tmp_z_l, g_tmp_z_l); // = old^(degree-2) 
+		LCMPLXmult(g_old_z_l, g_temp_z_l, g_temp_z_l); // = old^(degree-2) 
 	}
 	loldsqr.x += g_long_parameter->x;
 	loldsqr.y += g_long_parameter->y;
-	LCMPLXmult(g_tmp_z_l, loldsqr, lnewminus);
-	LCMPLXmult(g_parameter2_l, g_tmp_z2_l, g_tmp_z_l);
-	g_new_z_l.real(lnewminus.x + g_tmp_z_l.x);
-	g_new_z_l.imag(lnewminus.y + g_tmp_z_l.y);
+	LCMPLXmult(g_temp_z_l, loldsqr, lnewminus);
+	LCMPLXmult(g_parameter2_l, g_tmp_z2_l, g_temp_z_l);
+	g_new_z_l.real(lnewminus.x + g_temp_z_l.real());
+	g_new_z_l.imag(lnewminus.y + g_temp_z_l.imag());
 	g_tmp_z2_l = g_old_z_l; // set g_tmp_z2_l to Y value 
 	return g_externs.BailOutL();
 #else
@@ -1722,9 +1722,9 @@ int scott_trig_plus_trig_orbit()
 {
 #if !defined(XFRACT)
 	// z = trig0(z) + trig1(z) 
-	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
+	LCMPLXtrig0(g_old_z_l, g_temp_z_l);
 	LCMPLXtrig1(g_old_z_l, g_old_z_l);
-	LCMPLXadd(g_tmp_z_l, g_old_z_l, g_new_z_l);
+	LCMPLXadd(g_temp_z_l, g_old_z_l, g_new_z_l);
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -1744,9 +1744,9 @@ int skinner_trig_sub_trig_orbit()
 {
 #if !defined(XFRACT)
 	// z = trig(0, z)-trig1(z) 
-	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
+	LCMPLXtrig0(g_old_z_l, g_temp_z_l);
 	LCMPLXtrig1(g_old_z_l, g_tmp_z2_l);
-	LCMPLXsub(g_tmp_z_l, g_tmp_z2_l, g_new_z_l);
+	LCMPLXsub(g_temp_z_l, g_tmp_z2_l, g_new_z_l);
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -1791,9 +1791,9 @@ int trig_trig_orbit()
 #if !defined(XFRACT)
 	ComplexL g_tmp_z2_l;
 	// z = trig0(z)*trig1(z) 
-	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
+	LCMPLXtrig0(g_old_z_l, g_temp_z_l);
 	LCMPLXtrig1(g_old_z_l, g_tmp_z2_l);
-	LCMPLXmult(g_tmp_z_l, g_tmp_z2_l, g_new_z_l);
+	LCMPLXmult(g_temp_z_l, g_tmp_z2_l, g_new_z_l);
 	if (g_overflow)
 	{
 		try_float_fractal(trig_trig_orbit_fp);
@@ -1812,11 +1812,11 @@ int trig_plus_sqr_orbit() // generalization of Scott and Skinner types
 {
 #if !defined(XFRACT)
 	// { z = pixel: z = (p1, p2)*trig(z) + (p3, p4)*sqr(z), |z|<BAILOUT } 
-	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);     // g_tmp_z_l = trig(g_old_z_l)                        
-	LCMPLXmult(g_parameter_l, g_tmp_z_l, g_new_z_l); // g_new_z_l = g_parameter_l*trig(g_old_z_l)                  
-	LCMPLXsqr_old(g_tmp_z_l);         // g_tmp_z_l = sqr(g_old_z_l)                         
-	LCMPLXmult(g_parameter2_l, g_tmp_z_l, g_tmp_z_l); // g_tmp_z_l = g_parameter2_l*sqr(g_old_z_l)                  
-	LCMPLXadd(g_new_z_l, g_tmp_z_l, g_new_z_l);   // g_new_z_l = g_parameter_l*trig(g_old_z_l) + g_parameter2_l*sqr(g_old_z_l) 
+	LCMPLXtrig0(g_old_z_l, g_temp_z_l);     // g_temp_z_l = trig(g_old_z_l)                        
+	LCMPLXmult(g_parameter_l, g_temp_z_l, g_new_z_l); // g_new_z_l = g_parameter_l*trig(g_old_z_l)                  
+	LCMPLXsqr_old(g_temp_z_l);         // g_temp_z_l = sqr(g_old_z_l)                         
+	LCMPLXmult(g_parameter2_l, g_temp_z_l, g_temp_z_l); // g_temp_z_l = g_parameter2_l*sqr(g_old_z_l)                  
+	LCMPLXadd(g_new_z_l, g_temp_z_l, g_new_z_l);   // g_new_z_l = g_parameter_l*trig(g_old_z_l) + g_parameter2_l*sqr(g_old_z_l) 
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -1840,8 +1840,8 @@ int scott_trig_plus_sqr_orbit()
 #if !defined(XFRACT)
 	// { z = pixel: z = trig(z) + sqr(z), |z|<BAILOUT } 
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);    // g_new_z_l = trig(g_old_z_l)           
-	LCMPLXsqr_old(g_tmp_z_l);        // g_old_z_l = sqr(g_old_z_l)            
-	LCMPLXadd(g_tmp_z_l, g_new_z_l, g_new_z_l);  // g_new_z_l = trig(g_old_z_l) + sqr(g_old_z_l) 
+	LCMPLXsqr_old(g_temp_z_l);        // g_old_z_l = sqr(g_old_z_l)            
+	LCMPLXadd(g_temp_z_l, g_new_z_l, g_new_z_l);  // g_new_z_l = trig(g_old_z_l) + sqr(g_old_z_l) 
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -1862,8 +1862,8 @@ int skinner_trig_sub_sqr_orbit()
 #if !defined(XFRACT)
 	// { z = pixel: z = sin(z)-sqr(z), |z|<BAILOUT }               
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);    // g_new_z_l = trig(g_old_z_l)           
-	LCMPLXsqr_old(g_tmp_z_l);        // g_old_z_l = sqr(g_old_z_l)            
-	LCMPLXsub(g_new_z_l, g_tmp_z_l, g_new_z_l);  // g_new_z_l = trig(g_old_z_l)-sqr(g_old_z_l) 
+	LCMPLXsqr_old(g_temp_z_l);        // g_old_z_l = sqr(g_old_z_l)            
+	LCMPLXsub(g_new_z_l, g_temp_z_l, g_new_z_l);  // g_new_z_l = trig(g_old_z_l)-sqr(g_old_z_l) 
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -1892,8 +1892,8 @@ int trig_z_squared_orbit() // this doesn't work very well
 #if !defined(XFRACT)
 	// { z = pixel: z = trig(z*z), |z|<TEST } 
 	long l16triglim_2 = 8L << 15;
-	LCMPLXsqr_old(g_tmp_z_l);
-	if (labs(g_tmp_z_l.x) > l16triglim_2 || labs(g_tmp_z_l.y) > l16triglim_2)
+	LCMPLXsqr_old(g_temp_z_l);
+	if (labs(g_temp_z_l.real()) > l16triglim_2 || labs(g_temp_z_l.imag()) > l16triglim_2)
 	{
 		g_overflow = true;
 	}
@@ -1912,8 +1912,8 @@ int sqr_trig_orbit()
 {
 #if !defined(XFRACT)
 	// { z = pixel: z = sqr(trig(z)), |z|<TEST} 
-	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
-	LCMPLXsqr(g_tmp_z_l, g_new_z_l);
+	LCMPLXtrig0(g_old_z_l, g_temp_z_l);
+	LCMPLXsqr(g_temp_z_l, g_new_z_l);
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -2005,8 +2005,8 @@ int lambda_trig_orbit()
 	{
 		return 1;
 	}
-	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);           // g_tmp_z_l = trig(g_old_z_l)           
-	LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);   // g_new_z_l = g_long_parameter*trig(g_old_z_l)  
+	LCMPLXtrig0(g_old_z_l, g_temp_z_l);           // g_temp_z_l = trig(g_old_z_l)           
+	LCMPLXmult(*g_long_parameter, g_temp_z_l, g_new_z_l);   // g_new_z_l = g_long_parameter*trig(g_old_z_l)  
 	g_old_z_l = g_new_z_l;
 	return 0;
 #else
@@ -2035,8 +2035,8 @@ int lambda_trig1_orbit()
 	{
 		return 1;
 	}
-	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);           // g_tmp_z_l = trig(g_old_z_l)           
-	LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);   // g_new_z_l = g_long_parameter*trig(g_old_z_l)  
+	LCMPLXtrig0(g_old_z_l, g_temp_z_l);           // g_temp_z_l = trig(g_old_z_l)           
+	LCMPLXmult(*g_long_parameter, g_temp_z_l, g_new_z_l);   // g_new_z_l = g_long_parameter*trig(g_old_z_l)  
 	g_old_z_l = g_new_z_l;
 	return 0;
 #else
@@ -2063,8 +2063,8 @@ int lambda_trig2_orbit()
 	{
 		return 1;
 	}
-	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);           // g_tmp_z_l = trig(g_old_z_l)           
-	LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);   // g_new_z_l = g_long_parameter*trig(g_old_z_l)  
+	LCMPLXtrig0(g_old_z_l, g_temp_z_l);           // g_temp_z_l = trig(g_old_z_l)           
+	LCMPLXmult(*g_long_parameter, g_temp_z_l, g_new_z_l);   // g_new_z_l = g_long_parameter*trig(g_old_z_l)  
 	g_old_z_l = g_new_z_l;
 	return 0;
 #else
@@ -2092,9 +2092,9 @@ int man_o_war_orbit()
 {
 #if !defined(XFRACT)
 	// From Art Matrix via Lee Skinner 
-	g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l + g_tmp_z_l.x + g_long_parameter->x);
-	g_new_z_l.imag(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_tmp_z_l.y + g_long_parameter->y);
-	g_tmp_z_l = g_old_z_l;
+	g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l + g_temp_z_l.real() + g_long_parameter->x);
+	g_new_z_l.imag(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_temp_z_l.imag() + g_long_parameter->y);
+	g_temp_z_l = g_old_z_l;
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -2131,7 +2131,7 @@ int marks_mandel_power_orbit()
 {
 #if !defined(XFRACT)
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
-	LCMPLXmult(g_tmp_z_l, g_new_z_l, g_new_z_l);
+	LCMPLXmult(g_temp_z_l, g_new_z_l, g_new_z_l);
 	g_new_z_l.x += g_long_parameter->x;
 	g_new_z_l.y += g_long_parameter->y;
 	return g_externs.BailOutL();
@@ -2160,8 +2160,8 @@ int tims_error_orbit()
 {
 #if !defined(XFRACT)
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
-	g_new_z_l.real(multiply(g_new_z_l.real(), g_tmp_z_l.x, g_bit_shift)-multiply(g_new_z_l.imag(), g_tmp_z_l.y, g_bit_shift));
-	g_new_z_l.imag(multiply(g_new_z_l.real(), g_tmp_z_l.y, g_bit_shift)-multiply(g_new_z_l.imag(), g_tmp_z_l.x, g_bit_shift));
+	g_new_z_l.real(multiply(g_new_z_l.real(), g_temp_z_l.real(), g_bit_shift)-multiply(g_new_z_l.imag(), g_temp_z_l.imag(), g_bit_shift));
+	g_new_z_l.imag(multiply(g_new_z_l.real(), g_temp_z_l.imag(), g_bit_shift)-multiply(g_new_z_l.imag(), g_temp_z_l.real(), g_bit_shift));
 	g_new_z_l.x += g_long_parameter->x;
 	g_new_z_l.y += g_long_parameter->y;
 	return g_externs.BailOutL();
@@ -2245,8 +2245,8 @@ int richard8_per_pixel()
 {
 #if !defined(XFRACT)
 	mandelbrot_per_pixel_l();
-	LCMPLXtrig1(*g_long_parameter, g_tmp_z_l);
-	LCMPLXmult(g_tmp_z_l, g_parameter2_l, g_tmp_z_l);
+	LCMPLXtrig1(*g_long_parameter, g_temp_z_l);
+	LCMPLXmult(g_temp_z_l, g_parameter2_l, g_temp_z_l);
 	return 1;
 #else
 	return 0;
@@ -2321,7 +2321,7 @@ int julia_per_pixel()
 
 	g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
 	g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
-	g_tmp_z_l = g_old_z_l;
+	g_temp_z_l = g_old_z_l;
 	return 0;
 }
 
@@ -2329,9 +2329,9 @@ int marks_mandelbrot_power_per_pixel()
 {
 #if !defined(XFRACT)
 	mandelbrot_per_pixel();
-	g_tmp_z_l = g_old_z_l;
-	g_tmp_z_l.x -= g_externs.Fudge();
-	LCMPLXpwr(g_old_z_l, g_tmp_z_l, g_tmp_z_l);
+	g_temp_z_l = g_old_z_l;
+	g_temp_z_l.x -= g_externs.Fudge();
+	LCMPLXpwr(g_old_z_l, g_temp_z_l, g_temp_z_l);
 	return 1;
 #else
 	return 0;
@@ -2400,7 +2400,7 @@ int mandelbrot_per_pixel()
 		g_old_z_l.x += g_parameter_l.x; // initial pertubation of parameters set 
 		g_old_z_l.y += g_parameter_l.y;
 	}
-	g_tmp_z_l = g_initial_z_l; // for spider 
+	g_temp_z_l = g_initial_z_l; // for spider 
 	g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
 	g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
 	return 1; // 1st iteration has been done 
