@@ -848,15 +848,15 @@ int Linverse_julia_orbit()
 		g_new_z_l = PopLong();
 		break;
 	case MAJORMETHOD_RANDOM_WALK:
-		g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.imag() - s_y_long);
+		g_new_z_l = ComplexSqrtLong(g_new_z_l.real() - s_x_long, g_new_z_l.imag() - s_y_long);
 		if (RANDOM(2))
 		{
-			g_new_z_l.real(-g_new_z_l.x);
+			g_new_z_l.real(-g_new_z_l.real());
 			g_new_z_l.imag(-g_new_z_l.imag());
 		}
 		break;
 	case MAJORMETHOD_RANDOM_RUN:
-		g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.imag() - s_y_long);
+		g_new_z_l = ComplexSqrtLong(g_new_z_l.real() - s_x_long, g_new_z_l.imag() - s_y_long);
 		if (random_len == 0)
 		{
 			random_len = RANDOM(s_run_length);
@@ -867,13 +867,13 @@ int Linverse_julia_orbit()
 		case DIRECTION_LEFT:
 			break;
 		case DIRECTION_RIGHT:
-			g_new_z_l.real(-g_new_z_l.x);
+			g_new_z_l.real(-g_new_z_l.real());
 			g_new_z_l.imag(-g_new_z_l.imag());
 			break;
 		case DIRECTION_RANDOM:
 			if (RANDOM(2))
 			{
-				g_new_z_l.real(-g_new_z_l.x);
+				g_new_z_l.real(-g_new_z_l.real());
 				g_new_z_l.imag(-g_new_z_l.imag());
 			}
 			break;
@@ -886,9 +886,9 @@ int Linverse_julia_orbit()
 	// otherwise the values of s_lcvt were truncated.  Used g_bit_shift
 	// of 24 otherwise, for increased precision.
 	//
-	newcol = int((multiply(s_lcvt.a, g_new_z_l.x >> (g_bit_shift - 21), 21) +
+	newcol = int((multiply(s_lcvt.a, g_new_z_l.real() >> (g_bit_shift - 21), 21) +
 			multiply(s_lcvt.b, g_new_z_l.imag() >> (g_bit_shift - 21), 21) + s_lcvt.e) >> 21);
-	newrow = int((multiply(s_lcvt.c, g_new_z_l.x >> (g_bit_shift - 21), 21) +
+	newrow = int((multiply(s_lcvt.c, g_new_z_l.real() >> (g_bit_shift - 21), 21) +
 			multiply(s_lcvt.d, g_new_z_l.imag() >> (g_bit_shift - 21), 21) + s_lcvt.f) >> 21);
 
 	if (newcol < 1 || newcol >= g_x_dots || newrow < 1 || newrow >= g_y_dots)
@@ -900,12 +900,12 @@ int Linverse_julia_orbit()
 		switch (g_major_method)
 		{
 		case MAJORMETHOD_BREADTH_FIRST:
-			g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.imag() - s_y_long);
-			EnQueueLong(color*g_new_z_l.x, color*g_new_z_l.imag());
+			g_new_z_l = ComplexSqrtLong(g_new_z_l.real() - s_x_long, g_new_z_l.imag() - s_y_long);
+			EnQueueLong(color*g_new_z_l.real(), color*g_new_z_l.imag());
 			break;
 		case MAJORMETHOD_DEPTH_FIRST:
-			g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.imag() - s_y_long);
-			PushLong(color*g_new_z_l.x, color*g_new_z_l.imag());
+			g_new_z_l = ComplexSqrtLong(g_new_z_l.real() - s_x_long, g_new_z_l.imag() - s_y_long);
+			PushLong(color*g_new_z_l.real(), color*g_new_z_l.imag());
 			break;
 		case MAJORMETHOD_RANDOM_RUN:
 			random_len--;
@@ -926,38 +926,38 @@ int Linverse_julia_orbit()
 		if (color < s_max_hits)
 		{
 			g_plot_color_put_color(newcol, newrow, color + 1);
-			g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.imag() - s_y_long);
-			EnQueueLong(g_new_z_l.x,  g_new_z_l.imag());
-			EnQueueLong(-g_new_z_l.x, -g_new_z_l.imag());
+			g_new_z_l = ComplexSqrtLong(g_new_z_l.real() - s_x_long, g_new_z_l.imag() - s_y_long);
+			EnQueueLong(g_new_z_l.real(),  g_new_z_l.imag());
+			EnQueueLong(-g_new_z_l.real(), -g_new_z_l.imag());
 		}
 		break;
 	case MAJORMETHOD_DEPTH_FIRST:
 		if (color < s_max_hits)
 		{
 			g_plot_color_put_color(newcol, newrow, color + 1);
-			g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.imag() - s_y_long);
+			g_new_z_l = ComplexSqrtLong(g_new_z_l.real() - s_x_long, g_new_z_l.imag() - s_y_long);
 			if (g_minor_method == MINORMETHOD_LEFT_FIRST)
 			{
 				if (QueueFullAlmost())
 				{
-					PushLong(-g_new_z_l.x, -g_new_z_l.imag());
+					PushLong(-g_new_z_l.real(), -g_new_z_l.imag());
 				}
 				else
 				{
-					PushLong(g_new_z_l.x,  g_new_z_l.imag());
-					PushLong(-g_new_z_l.x, -g_new_z_l.imag());
+					PushLong(g_new_z_l.real(),  g_new_z_l.imag());
+					PushLong(-g_new_z_l.real(), -g_new_z_l.imag());
 				}
 			}
 			else
 			{
 				if (QueueFullAlmost())
 				{
-					PushLong(g_new_z_l.x,  g_new_z_l.imag());
+					PushLong(g_new_z_l.real(),  g_new_z_l.imag());
 				}
 				else
 				{
-					PushLong(-g_new_z_l.x, -g_new_z_l.imag());
-					PushLong(g_new_z_l.x,  g_new_z_l.imag());
+					PushLong(-g_new_z_l.real(), -g_new_z_l.imag());
+					PushLong(g_new_z_l.real(),  g_new_z_l.imag());
 				}
 			}
 		}

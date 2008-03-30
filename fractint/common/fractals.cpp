@@ -14,7 +14,7 @@
 //		value. These have names like "XxxxFractal", and their function
 //		pointers are stored in g_fractal_specific[g_fractal_type].orbitcalc. EVERY
 //		new fractal type needs one of these. Return 0 to continue iterations,
-//		1 if we're done. Results for integer fractals are left in 'g_new_z_l.x' and
+//		1 if we're done. Results for integer fractals are left in 'g_new_z_l.real()' and
 //		'g_new_z_l.imag()', for floating point fractals in 'new.x' and 'new.y'.
 //
 //	2. Routines that are called once per pixel to set various variables
@@ -568,7 +568,7 @@ int sierpinski_orbit()
 	}
 	else if (g_old_z_l.x > g_tmp_z_l.y)     // if old.x > .5 
 	{
-		g_new_z_l.real(g_new_z_l.x - g_tmp_z_l.x); // new.x = 2*old.x - 1 
+		g_new_z_l.real(g_new_z_l.real() - g_tmp_z_l.x); // new.x = 2*old.x - 1 
 	}
 	// end barnsley code 
 	return g_externs.BailOutL();
@@ -1086,18 +1086,18 @@ int popcorn_old_orbit()
 	g_new_z_l.imag(g_old_z_l.y - multiply(g_parameter_l.x, s_sin_x_l, g_bit_shift));
 	if (g_plot_color == plot_color_none)
 	{
-		plot_orbit_i(g_new_z_l.x, g_new_z_l.imag(), 1 + g_row % g_colors);
+		plot_orbit_i(g_new_z_l.real(), g_new_z_l.imag(), 1 + g_row % g_colors);
 		g_old_z_l = g_new_z_l;
 	}
 	else
 	{
 		// LONGBAILOUT(); 
 		// PB above still the old way, is weird, see notes in FP popcorn case 
-		g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+		g_temp_sqr_x_l = lsqr(g_new_z_l.real());
 		g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
 	}
 	g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
-	if (g_magnitude_l >= g_rq_limit_l || g_magnitude_l < 0 || labs(g_new_z_l.x) > g_rq_limit2_l
+	if (g_magnitude_l >= g_rq_limit_l || g_magnitude_l < 0 || labs(g_new_z_l.real()) > g_rq_limit2_l
 			|| labs(g_new_z_l.imag()) > g_rq_limit2_l)
 					return 1;
 	g_old_z_l = g_new_z_l;
@@ -1127,17 +1127,17 @@ int popcorn_orbit()
 	g_new_z_l.imag(g_old_z_l.y - multiply(g_parameter_l.x, s_sin_x_l, g_bit_shift));
 	if (g_plot_color == plot_color_none)
 	{
-		plot_orbit_i(g_new_z_l.x, g_new_z_l.imag(), 1 + g_row % g_colors);
+		plot_orbit_i(g_new_z_l.real(), g_new_z_l.imag(), 1 + g_row % g_colors);
 		g_old_z_l = g_new_z_l;
 	}
 	// else 
 	// JCO: sqr's should always be done, else magnitude could be wrong 
-	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_x_l = lsqr(g_new_z_l.real());
 	g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
 	g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
 	if (g_magnitude_l >= g_rq_limit_l
 		|| g_magnitude_l < 0
-		|| labs(g_new_z_l.x) > g_rq_limit2_l
+		|| labs(g_new_z_l.real()) > g_rq_limit2_l
 		|| labs(g_new_z_l.imag()) > g_rq_limit2_l)
 	{
 		return 1;
@@ -1232,14 +1232,14 @@ int popcorn_fn_orbit()
 
 	if (g_plot_color == plot_color_none)
 	{
-		plot_orbit_i(g_new_z_l.x, g_new_z_l.imag(), 1 + g_row % g_colors);
+		plot_orbit_i(g_new_z_l.real(), g_new_z_l.imag(), 1 + g_row % g_colors);
 		g_old_z_l = g_new_z_l;
 	}
-	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_x_l = lsqr(g_new_z_l.real());
 	g_temp_sqr_y_l = lsqr(g_new_z_l.imag());
 	g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
 	if (g_magnitude_l >= g_rq_limit_l || g_magnitude_l < 0
-		|| labs(g_new_z_l.x) > g_rq_limit2_l
+		|| labs(g_new_z_l.real()) > g_rq_limit2_l
 		|| labs(g_new_z_l.imag()) > g_rq_limit2_l)
 	{
 		return 1;
@@ -1277,7 +1277,7 @@ int spider_orbit()
 	// Spider(XAXIS) { c = z=pixel: z = z*z + c; c = c/2 + z, |z| <= 4 } 
 	g_new_z_l.real(g_temp_sqr_x_l - g_temp_sqr_y_l + g_tmp_z_l.x);
 	g_new_z_l.imag(multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_tmp_z_l.y);
-	g_tmp_z_l.x = (g_tmp_z_l.x >> 1) + g_new_z_l.x;
+	g_tmp_z_l.x = (g_tmp_z_l.x >> 1) + g_new_z_l.real();
 	g_tmp_z_l.y = (g_tmp_z_l.y >> 1) + g_new_z_l.imag();
 	return g_externs.BailOutL();
 #else
@@ -2160,8 +2160,8 @@ int tims_error_orbit()
 {
 #if !defined(XFRACT)
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
-	g_new_z_l.real(multiply(g_new_z_l.x, g_tmp_z_l.x, g_bit_shift)-multiply(g_new_z_l.imag(), g_tmp_z_l.y, g_bit_shift));
-	g_new_z_l.imag(multiply(g_new_z_l.x, g_tmp_z_l.y, g_bit_shift)-multiply(g_new_z_l.imag(), g_tmp_z_l.x, g_bit_shift));
+	g_new_z_l.real(multiply(g_new_z_l.real(), g_tmp_z_l.x, g_bit_shift)-multiply(g_new_z_l.imag(), g_tmp_z_l.y, g_bit_shift));
+	g_new_z_l.imag(multiply(g_new_z_l.real(), g_tmp_z_l.y, g_bit_shift)-multiply(g_new_z_l.imag(), g_tmp_z_l.x, g_bit_shift));
 	g_new_z_l.x += g_long_parameter->x;
 	g_new_z_l.y += g_long_parameter->y;
 	return g_externs.BailOutL();

@@ -1506,7 +1506,7 @@ void get_julia_attractor(double real, double imag)
 			{
 				if (g_integer_fractal)
 				{
-					if (labs(result_l.x - g_new_z_l.x) < g_close_enough_l
+					if (labs(result_l.x - g_new_z_l.real()) < g_close_enough_l
 						&& labs(result_l.y - g_new_z_l.imag()) < g_close_enough_l)
 					{
 						g_attractors_l[g_num_attractors] = g_new_z_l;
