@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(MPMATH_H)
+#define MPMATH_H
 
 #include "cmplx.h"
 #include "externs.h"
@@ -243,3 +244,5 @@ inline void CMPLXneg(ComplexD const &arg, ComplexD &out)
 	out.x = -arg.x;
 	out.y = -arg.y;
 }
+
+#endif

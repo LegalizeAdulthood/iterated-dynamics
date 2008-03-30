@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(GAUSSIAN_DISTRIBUTION_H)
+#define GAUSSIAN_DISTRIBUTION_H
 
 /*
  * Generate a gaussian distributed number.
@@ -26,3 +27,5 @@ private:
 	static int s_slope;
 	static long s_constant;
 };
+
+#endif

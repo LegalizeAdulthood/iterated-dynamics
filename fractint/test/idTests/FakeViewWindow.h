@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FAKE_VIEW_WINDOW_H)
+#define FAKE_VIEW_WINDOW_H
 
 #include "ViewWindow.h"
 
@@ -30,3 +31,5 @@ public:
 	virtual void Show() { }
 	virtual void Show(bool value) { }
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FRACTALS_H)
+#define FRACTALS_H
 
 #include "Externals.h"
 
@@ -165,3 +166,5 @@ extern void initialize_pixel_calc_functions(Externals &externs);
 extern int mandelbrot_mix4_per_pixel_fp();
 extern int mandelbrot_mix4_orbit_fp();
 extern bool mandelbrot_mix4_setup();
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FAKE_BROWSE_STATE_H)
+#define FAKE_BROWSE_STATE_H
 
 #include "Browse.h"
 #include "NotImplementedException.h"
@@ -53,3 +54,5 @@ private:
 	bool _setNameCalled;
 	std::string _setNameLastValue;
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(ZOOM_BOX_H)
+#define ZOOM_BOX_H
 
 enum
 {
@@ -25,3 +26,5 @@ public:
 };
 
 extern ZoomBox &g_zoomBox;
+
+#endif

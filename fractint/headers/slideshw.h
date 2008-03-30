@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(SLIDE_SHW_H)
+#define SLIDE_SHW_H
 
 class SlideShowImpl;
 
@@ -31,3 +32,5 @@ private:
 };
 
 extern SlideShow g_slideShow;
+
+#endif

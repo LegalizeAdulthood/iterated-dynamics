@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FILESYSTEM_H)
+#define FILESYSTEM_H
 
 #include <boost/filesystem.hpp>
 
@@ -62,3 +63,5 @@ extern bool write_access(const char *path);
 extern bool read_write_access(const char *path);
 extern bool exists(const char *path);
 extern bool exists(const std::string &path);
+
+#endif

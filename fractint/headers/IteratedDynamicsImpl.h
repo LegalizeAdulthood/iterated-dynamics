@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(ITERATED_DYNAMICS_IMPL_H)
+#define ITERATED_DYNAMICS_IMPL_H
 
 #include "IteratedDynamics.h"
 
@@ -73,3 +74,5 @@ private:
 	Externals &_externs;
 	IGlobals &_g;
 };
+
+#endif

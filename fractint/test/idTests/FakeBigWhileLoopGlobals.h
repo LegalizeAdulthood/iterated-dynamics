@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FAKE_BIG_WHILE_LOOP_GLOBALS_H)
+#define FAKE_BIG_WHILE_LOOP_GLOBALS_H
 
 #include "FakeViewWindow.h"
 
@@ -67,3 +68,5 @@ public:
 private:
 	FakeViewWindow _viewWindow;
 };
+
+#endif

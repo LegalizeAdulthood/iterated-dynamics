@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(BIG_WHILE_LOOP_IMPL_H)
+#define BIG_WHILE_LOOP_IMPL_H
 
 #include "drivers.h"
 #include "globals.h"
@@ -42,3 +43,5 @@ private:
 	IGlobals &_g;
 	Externals &_externs;
 };
+
+#endif

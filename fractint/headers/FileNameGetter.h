@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FILE_NAME_GETTER_H)
+#define FILE_NAME_GETTER_H
 
 #include <string>
 
@@ -34,3 +35,5 @@ private:
 	static int CheckSpecialKeys(int key, int);
 	static int SpeedPrompt(int row, int col, int vid, char *speedstring, int speed_match);
 };
+
+#endif

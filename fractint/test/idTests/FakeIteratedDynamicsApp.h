@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FAKE_ITERATED_DYNAMICS_APP_H)
+#define FAKE_ITERATED_DYNAMICS_APP_H
 
 #include "IteratedDynamics.h"
 #include "NotImplementedException.h"
@@ -75,3 +76,5 @@ public:
 	virtual int get_a_filename(const std::string &heading, std::string &fileTemplate, std::string &filename)
 	{ throw not_implemented("get_a_filename"); }
 };
+
+#endif

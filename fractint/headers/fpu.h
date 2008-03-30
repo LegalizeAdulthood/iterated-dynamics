@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FPU_H)
+#define FPU_H
 
 extern int DivideOverflow;
 
@@ -20,3 +21,5 @@ extern long RegFg2Float(long, int);
 extern long RegSftFloat(long, int);
 extern void FPUaptan387(double *, double *, double *);
 extern void FPUcplxexp387(ComplexD const *, ComplexD *);
+
+#endif

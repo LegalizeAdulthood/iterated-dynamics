@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FAKE_DRIVER_H)
+#define FAKE_DRIVER_H
 
 #include <vector>
 #include "NotImplementedException.h"
@@ -189,3 +190,5 @@ private:
 	bool _resizeCalled;
 	int _resizeFakeResult;
 };
+
+#endif

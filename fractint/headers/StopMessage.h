@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(STOP_MESSAGE_H)
+#define STOP_MESSAGE_H
 
 #include <string>
 
@@ -22,3 +23,5 @@ public:
 };
 
 extern int stop_message(int flags, const std::string &message);
+
+#endif

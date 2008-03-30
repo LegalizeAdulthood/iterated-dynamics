@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FORMULA_H)
+#define FORMULA_H
 
 #include <fstream>
 #include <string>
@@ -465,3 +466,5 @@ extern int form_per_pixel();
 extern bool formula_setup_fp();
 extern bool formula_setup_int();
 extern void EndInit();
+
+#endif

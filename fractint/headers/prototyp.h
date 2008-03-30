@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(PROTOTYP_H)
+#define PROTOTYP_H
 
 // includes needed to define the prototypes
 
@@ -64,3 +65,5 @@ extern void init_failure(std::string const &message);
 extern int expand_dirname(char *dirname, char *drive);
 extern int abort_message(const char *file, unsigned int line, int flags, const char *msg);
 #define ABORT(flags_, msg_) abort_message(__FILE__, __LINE__, flags_, msg_)
+
+#endif

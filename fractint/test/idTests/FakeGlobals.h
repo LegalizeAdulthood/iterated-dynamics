@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(FAKE_GLOBALS_H)
+#define FAKE_GLOBALS_H
 
 #include "Globals.h"
 #include "NotImplementedException.h"
@@ -76,3 +77,5 @@ private:
 	bool _setSaveDACCalled;
 	SaveDACType _setSaveDACLastValue;
 };
+
+#endif

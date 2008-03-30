@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(ENDIAN_H)
+#define ENDIAN_H
 
 #include <ostream>
 
@@ -18,3 +19,5 @@ public:
 		return stream.write(reinterpret_cast<char *>(&value), sizeof(int));
 	}
 };
+
+#endif

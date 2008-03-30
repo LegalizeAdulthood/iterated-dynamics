@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(TEXT_COLORS_H)
+#define TEXT_COLORS_H
 
 // text colors
 enum TextColorType
@@ -72,3 +73,5 @@ inline int text_color_inverse(int index)
 #define C_AUTHDIV2        text_color_inverse(28)
 #define C_PRIMARY         get_text_color(29)
 #define C_CONTRIB         get_text_color(30)
+
+#endif

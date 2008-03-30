@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(EXTERNALS_H)
+#define EXTERNALS_H
 
 #include <complex>
 #include <boost/filesystem/path.hpp>
@@ -776,3 +777,5 @@ public:
 };
 
 extern Externals &g_externs;
+
+#endif

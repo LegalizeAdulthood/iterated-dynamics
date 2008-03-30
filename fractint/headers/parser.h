@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(PARSER_H)
+#define PARSER_H
 
 /*** Formula Declarations ***/
 enum MathType
@@ -99,3 +100,5 @@ OLD_FN StkJump;
 OLD_FN dStkJumpOnTrue;
 OLD_FN dStkJumpOnFalse;
 OLD_FN dStkOne;
+
+#endif
