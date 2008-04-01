@@ -551,6 +551,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\common\FractalSpecificData.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\frasetup.cpp"
 					>
 					<FileConfiguration

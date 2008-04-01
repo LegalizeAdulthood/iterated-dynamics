@@ -130,19 +130,67 @@ enum
 
 more_parameters g_more_parameters[] =
 {
-	{FRACTYPE_ICON             , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
-	{FRACTYPE_ICON_3D           , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
-	{FRACTYPE_HYPERCOMPLEX_JULIA_FP    , { "zj",      "zk",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{FRACTYPE_QUATERNION_JULIA_FP        , { "zj",      "zk",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{FRACTYPE_PHOENIX_COMPLEX      , { s_degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{FRACTYPE_PHOENIX_COMPLEX_FP    , { s_degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{FRACTYPE_MANDELBROT_PHOENIX_COMPLEX  , { s_degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{FRACTYPE_MANDELBROT_PHOENIX_COMPLEX_FP, { s_degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{FRACTYPE_FORMULA  , { s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag}, {0, 0, 0, 0, 0, 0}},
-	{FRACTYPE_FORMULA_FP , { s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag}, {0, 0, 0, 0, 0, 0}},
-	{FRACTYPE_ANT              , { "+Wrap?", s_random_seed, "", "", "", ""}, {1, 0, 0, 0, 0, 0}},
-	{FRACTYPE_MANDELBROT_MIX4   , { s_p3_real, s_p3_imag,        "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{-1               , { 0, 0, 0, 0, 0, 0    }, {0, 0, 0, 0, 0, 0}}
+	{
+		FRACTYPE_ICON,
+		{ "Omega", "+Degree of symmetry", "", "", "", "" },
+		{ 0, 3, 0, 0, 0, 0 }
+	},
+	{
+		FRACTYPE_ICON_3D,
+		{ "Omega", "+Degree of symmetry", "", "", "", "" },
+		{ 0, 3, 0, 0, 0, 0 }
+	},
+	{
+		FRACTYPE_HYPERCOMPLEX_JULIA_FP,
+		{ "zj", "zk", "", "", "", "" },
+		{ 0, 0, 0, 0, 0, 0 }
+	},
+	{
+		FRACTYPE_QUATERNION_JULIA_FP,
+		{ "zj", "zk", "", "", "", "" },
+		{ 0, 0, 0, 0, 0, 0 }
+	},
+	{
+		FRACTYPE_PHOENIX_COMPLEX,
+		{ s_degree_z, "", "", "", "", "" },
+		{ 0, 0, 0, 0, 0, 0 }
+	},
+	{
+		FRACTYPE_PHOENIX_COMPLEX_FP,
+		{ s_degree_z, "", "", "", "", "" },
+		{ 0, 0, 0, 0, 0, 0 }
+	},
+	{
+		FRACTYPE_MANDELBROT_PHOENIX_COMPLEX,
+		{ s_degree_z, "", "", "", "", "" },
+		{ 0, 0, 0, 0, 0, 0 }
+	},
+	{
+		FRACTYPE_MANDELBROT_PHOENIX_COMPLEX_FP,
+		{ s_degree_z, "", "", "", "", "" },
+		{ 0, 0, 0, 0, 0, 0 }
+	},
+	{
+		FRACTYPE_FORMULA,
+		{ s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag },
+		{ 0, 0, 0, 0, 0, 0 }
+	},
+	{
+		FRACTYPE_FORMULA_FP,
+		{ s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag },
+		{ 0, 0, 0, 0, 0, 0 }
+	},
+	{
+		FRACTYPE_ANT,
+		{ "+Wrap?", s_random_seed, "", "", "", "" },
+		{ 1, 0, 0, 0, 0, 0 }
+	},
+	{
+		FRACTYPE_MANDELBROT_MIX4,
+		{ s_p3_real, s_p3_imag, "", "", "", "" },
+		{ 0, 0, 0, 0, 0, 0 }
+	},
+	{ -1 }
 };
 
 //
