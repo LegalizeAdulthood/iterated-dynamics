@@ -793,39 +793,14 @@ struct FractalTypeSpecificData
 	int (*calculate_type)();			// name of main fractal function
 	int orbit_bailout;					// usual bailout value for orbit calc
 
-	int num_functions() const
-	{
-		return (flags >> FRACTALFLAG_FUNCTION_SHIFT) & FRACTALFLAG_FUNCTION_MASK;
-	}
-
-	bool no_boundary_tracing() const
-	{
-		return (flags & FRACTALFLAG_NO_BOUNDARY_TRACING) != 0;
-	}
-
-	bool no_solid_guessing() const
-	{
-		return (flags & FRACTALFLAG_NO_SOLID_GUESSING) != 0;
-	}
-
-	bool arbitrary_precision() const
-	{
-		return (flags & FRACTALFLAG_ARBITRARY_PRECISION) != 0;
-	}
-
-	bool no_zoom_box_rotate() const
-	{
-		return (flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) != 0;
-	}
-
-	const char *get_type() const
-	{
-		return &name[is_hidden() ? 1 : 0];
-	}
-	bool is_hidden() const
-	{
-		return (name[0] == '*');
-	}
+	int num_functions() const				{ return (flags >> FRACTALFLAG_FUNCTION_SHIFT) & FRACTALFLAG_FUNCTION_MASK; }
+	bool flag(FractalFlags flag) const		{ return (flags & flag) != 0; }
+	bool no_boundary_tracing() const		{ return flag(FRACTALFLAG_NO_BOUNDARY_TRACING); }
+	bool no_solid_guessing() const			{ return flag(FRACTALFLAG_NO_SOLID_GUESSING); }
+	bool arbitrary_precision() const		{ return flag(FRACTALFLAG_ARBITRARY_PRECISION); }
+	bool no_zoom_box_rotate() const			{ return flag(FRACTALFLAG_NO_ZOOM_BOX_ROTATE); }
+	const char *get_type() const			{ return &name[is_hidden() ? 1 : 0]; }
+	bool is_hidden() const					{ return (name[0] == '*'); }
 };
 
 // defines for inside/outside

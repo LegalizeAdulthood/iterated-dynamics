@@ -38,6 +38,7 @@ static int period = 0;
 
 long calculate_mandelbrot_asm()
 {
+	// TODO: implement integer mandelbrot routine -- see calculate_mandelbrot_l()
 	return integer_unsupported();
 }
 
