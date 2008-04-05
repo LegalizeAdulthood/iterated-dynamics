@@ -2276,7 +2276,7 @@ int mandelbrot_per_pixel_l()
 		g_initial_z_l = ComplexDoubleToFudge(g_initial_z);
 	}
 
-	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_l : g_initial_z_l;
+	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z_l : g_initial_z_l;
 
 	g_old_z_l.x += g_parameter_l.real();    // initial pertubation of parameters set
 	g_old_z_l.y += g_parameter_l.imag();
@@ -2379,7 +2379,7 @@ int mandelbrot_per_pixel()
 	// alter g_initial_z value
 	if (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT)
 	{
-		g_old_z_l = g_initial_orbit_l;
+		g_old_z_l = g_initial_orbit_z_l;
 	}
 	else if (g_externs.UseInitialOrbitZ() == INITIALZ_PIXEL)
 	{
@@ -2427,7 +2427,7 @@ int marks_mandelbrot_per_pixel()
 		g_initial_z_l = g_externs.LPixel();
 	}
 
-	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_l : g_initial_z_l;
+	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z_l : g_initial_z_l;
 
 	g_old_z_l.x += g_parameter_l.real();    // initial pertubation of parameters set
 	g_old_z_l.y += g_parameter_l.imag();
@@ -2718,7 +2718,7 @@ int mandelbrot_phoenix_per_pixel()
 		g_initial_z_l = ComplexDoubleToFudge(g_initial_z);
 	}
 
-	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_l : g_initial_z_l;
+	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z_l : g_initial_z_l;
 
 	g_old_z_l.x += g_parameter_l.real();    // initial pertubation of parameters set
 	g_old_z_l.y += g_parameter_l.imag();
