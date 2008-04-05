@@ -86,7 +86,7 @@ public:
 
 // variables exported from this file
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
-ComplexL g_initial_orbit_l = { 0, 0 };
+ComplexL g_initial_orbit_z_l = { 0, 0 };
 
 int g_and_color;
 
@@ -728,7 +728,7 @@ int calculate_fractal()
 		}
 		g_rq_limit2_l = DoubleToFudge(g_rq_limit2);    // stop if magnitude exceeds this
 		g_close_enough_l = DoubleToFudge(g_close_enough); // "close enough" value
-		g_initial_orbit_l = ComplexDoubleToFudge(g_initial_orbit_z);
+		g_initial_orbit_z_l = ComplexDoubleToFudge(g_initial_orbit_z);
 	}
 	g_resuming = (g_externs.CalculationStatus() == CALCSTAT_RESUMABLE);
 	if (!g_resuming) // free resume_info memory if any is hanging around
@@ -1587,7 +1587,7 @@ void StandardFractal::initialize_integer()
 {
 	if (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT)
 	{
-		m_saved_z_l = g_initial_orbit_l;
+		m_saved_z_l = g_initial_orbit_z_l;
 	}
 	else
 	{
