@@ -888,34 +888,6 @@ inline long lsqr(long x)
 	return multiply(x, x, g_bit_shift);
 }
 
-enum
-{
-	CMAX = 4,				// maximum column (4 x 4 matrix)
-	RMAX = 4,				// maximum row    (4 x 4 matrix)
-	DIM = 3					// number of dimensions
-};
-
-// TODO: use a template type for different kinds of matrices
-typedef double MATRIX[RMAX][CMAX];  // matrix of doubles
-typedef long  MATRIX_L[RMAX][CMAX];  // matrix of longs
-
-/* A MATRIX is used to describe a transformation from one coordinate
-system to another.  Multiple transformations may be concatenated by
-multiplying their transformation matrices. */
-
-// TODO: use a template type for different kinds of vectors
-typedef double VECTOR[DIM];  // vector of doubles
-typedef long  VECTOR_L[DIM];  // vector of longs
-
-/* A VECTOR is an array of three coordinates [x,y,z] representing magnitude
-and direction. A fourth dimension is assumed to always have the value 1, but
-is not in the data structure */
-
-inline double DOT_PRODUCT(VECTOR const v1,VECTOR const v2)
-{
-	return ((v1)[0]*(v2)[0]+(v1)[1]*(v2)[1]+(v1)[2]*(v2)[2]);
-}
-
 // Math definitions (normally in float.h) that are missing on some systems.
 #ifndef FLT_MIN
 #define FLT_MIN 1.17549435e-38
