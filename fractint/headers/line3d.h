@@ -1,6 +1,9 @@
 #if !defined(LINE_3D_H)
 #define LINE_3D_H
 
+#include <string>
+#include "3d.h"
+
 extern std::string g_light_name;
 extern VECTOR g_view;
 
