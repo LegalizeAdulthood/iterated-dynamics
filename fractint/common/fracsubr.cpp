@@ -6,7 +6,7 @@
 #include <string>
 
 #include <assert.h>
-#include <memory.h>
+//#include <memory.h>
 #include <stdarg.h>
 #ifndef XFRACT
 #include <sys/timeb.h>

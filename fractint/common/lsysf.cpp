@@ -597,7 +597,7 @@ lsysf_size_transform(char *s, lsys_turtle_state_fp *ts)
 				ts->stackoflow = true;
 				return 0;
 			}
-			memcpy(doub, ret, max*sizeof(lsys_cmd));
+			std::copy(ret, ret + max, doub);
 			delete[] ret;
 			ret = doub;
 			max <<= 1;
@@ -616,7 +616,7 @@ lsysf_size_transform(char *s, lsys_turtle_state_fp *ts)
 		ts->stackoflow = true;
 		return 0;
 	}
-	memcpy(doub, ret, n*sizeof(lsys_cmd));
+	std::copy(ret, ret + n, doub);
 	delete[] ret;
 	return doub;
 }
@@ -690,7 +690,7 @@ lsysf_draw_transform(char *s, lsys_turtle_state_fp *ts)
 				ts->stackoflow = true;
 				return 0;
 			}
-			memcpy(doub, ret, max*sizeof(lsys_cmd));
+			std::copy(ret, ret + max, doub);
 			delete[] ret;
 			ret = doub;
 			max <<= 1;
@@ -709,7 +709,7 @@ lsysf_draw_transform(char *s, lsys_turtle_state_fp *ts)
 		ts->stackoflow = true;
 		return 0;
 	}
-	memcpy(doub, ret, n*sizeof(lsys_cmd));
+	std::copy(ret, ret + n, doub);
 	delete[] ret;
 	return doub;
 }

@@ -13,6 +13,6 @@ extern void disk_video_status(int line, const char *message);
 extern void disk_video_status(int line, const std::string &str);
 extern int  disk_start_common(long, long, int);
 extern int disk_from_memory(long, int, void *);
-extern int disk_to_memory(long, int, void *);
+extern int disk_to_memory(long, int, void const *source);
 
 #endif

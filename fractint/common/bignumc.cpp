@@ -4,7 +4,7 @@
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 */
 #include <cstdio>
-#include <memory.h>
+//#include <memory.h>
 #include <string.h>
 
 #include "port.h"
