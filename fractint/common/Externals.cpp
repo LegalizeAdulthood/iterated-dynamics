@@ -255,10 +255,10 @@ public:
 	virtual int InitialCycleLimit() const						{ return g_initial_cycle_limit; }
 	virtual void SetInitialCycleLimit(int value)				{ g_initial_cycle_limit = value; }
 
-	virtual ComplexL InitialOrbitL() const						{ return g_initial_orbit_z_l; }
-	virtual void SetInitialOrbitL(ComplexL value)				{ g_initial_orbit_z_l = value; }
 	virtual ComplexD InitialOrbitZ() const						{ return g_initial_orbit_z; }
 	virtual void SetInitialOrbitZ(ComplexD value)				{ g_initial_orbit_z = value; }
+	virtual ComplexL InitialOrbitZL() const						{ return g_initial_orbit_z_l; }
+	virtual void SetInitialOrbitZL(ComplexL value)				{ g_initial_orbit_z_l = value; }
 	virtual InitialZType UseInitialOrbitZ() const				{ return _useInitialOrbitZ; }
 	virtual void SetUseInitialOrbitZ(InitialZType value)		{ _useInitialOrbitZ = value; }
 

@@ -41,11 +41,11 @@ int lyapunov()
 		return -1;
 	}
 	g_overflow = false;
-	if (g_parameters[1] == 1)
+	if (g_parameters[P1_IMAG] == 1)
 	{
 		s_population = (1.0 + rand())/(2.0 + RAND_MAX);
 	}
-	else if (g_parameters[1] == 0)
+	else if (g_parameters[P1_IMAG] == 0)
 	{
 		if (fabs(s_population) > BIG || s_population == 0 || s_population == 1)
 		{
@@ -54,7 +54,7 @@ int lyapunov()
 	}
 	else
 	{
-		s_population = g_parameters[1];
+		s_population = g_parameters[P1_IMAG];
 	}
 	g_plot_color(g_col, g_row, 1);
 	if (g_invert)
@@ -114,14 +114,14 @@ bool lyapunov_setup()
 	long i;
 	int t;
 
-	s_filter_cycles = long(g_parameters[2]);
+	s_filter_cycles = long(g_parameters[P2_REAL]);
 	if (s_filter_cycles == 0)
 	{
 		s_filter_cycles = g_max_iteration/2;
 	}
 	s_lyapunov_length = 1;
 
-	i = long(g_parameters[0]);
+	i = long(g_parameters[P1_REAL]);
 	s_lyapunov_r_xy[0] = 1;
 	for (t = 31; t >= 0; t--)
 	{

@@ -360,8 +360,8 @@ init_restart:
 	if (g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_JULIA)  // adust shift bits if..
 	{
 		if (!g_potential_flag							// not using potential
-			&& (g_parameters[0] > -2.0 && g_parameters[0] < 2.0)  // parameters not too large
-			&& (g_parameters[1] > -2.0 && g_parameters[1] < 2.0)
+			&& (g_parameters[P1_REAL] > -2.0 && g_parameters[P1_REAL] < 2.0)  // parameters not too large
+			&& (g_parameters[P1_IMAG] > -2.0 && g_parameters[P1_IMAG] < 2.0)
 			&& !g_invert                                // and not inverting
 			&& g_externs.Biomorph() == BIOMORPH_NONE	// and not biomorphing
 			&& g_rq_limit <= 4.0						// and bailout not too high
@@ -396,8 +396,8 @@ init_restart:
 
 	if (!fractal_type_ant_or_cellular(g_fractal_type))  // DoubleToFudge fails w >10 digits in double
 	{
-		g_c_real = DoubleToFudge(g_parameters[0]); // integer equivs for it all
-		g_c_imag = DoubleToFudge(g_parameters[1]);
+		g_c_real = DoubleToFudge(g_parameters[P1_REAL]); // integer equivs for it all
+		g_c_imag = DoubleToFudge(g_parameters[P1_IMAG]);
 		g_escape_time_state.m_grid_l.x_min() = DoubleToFudge(g_escape_time_state.m_grid_fp.x_min());
 		g_escape_time_state.m_grid_l.x_max() = DoubleToFudge(g_escape_time_state.m_grid_fp.x_max());
 		g_escape_time_state.m_grid_l.x_3rd() = DoubleToFudge(g_escape_time_state.m_grid_fp.x_3rd());

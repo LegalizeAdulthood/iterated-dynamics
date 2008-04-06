@@ -645,16 +645,16 @@ static bool parameters_match(const fractal_info &info)
 
 	// parameters are in range?
 	return
-		epsilon_equal(info.c_real, g_parameters[0]) &&
-		epsilon_equal(info.c_imag, g_parameters[1]) &&
-		epsilon_equal(parameter3, g_parameters[2]) &&
-		epsilon_equal(parameter4, g_parameters[3]) &&
-		epsilon_equal(parameter5, g_parameters[4]) &&
-		epsilon_equal(parameter6, g_parameters[5]) &&
-		epsilon_equal(parameter7, g_parameters[6]) &&
-		epsilon_equal(parameter8, g_parameters[7]) &&
-		epsilon_equal(parameter9, g_parameters[8]) &&
-		epsilon_equal(parameter10, g_parameters[9]) &&
+		epsilon_equal(info.c_real, g_parameters[P1_REAL]) &&
+		epsilon_equal(info.c_imag, g_parameters[P1_IMAG]) &&
+		epsilon_equal(parameter3, g_parameters[P2_REAL]) &&
+		epsilon_equal(parameter4, g_parameters[P2_IMAG]) &&
+		epsilon_equal(parameter5, g_parameters[P3_REAL]) &&
+		epsilon_equal(parameter6, g_parameters[P3_IMAG]) &&
+		epsilon_equal(parameter7, g_parameters[P4_REAL]) &&
+		epsilon_equal(parameter8, g_parameters[P4_IMAG]) &&
+		epsilon_equal(parameter9, g_parameters[P5_REAL]) &&
+		epsilon_equal(parameter10, g_parameters[P5_IMAG]) &&
 		epsilon_equal(info.invert[0], g_inversion[0]);
 }
 

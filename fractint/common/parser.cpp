@@ -2420,34 +2420,34 @@ void Formula::parse_string_set_center_magnification_variables()
 }
 void Formula::parse_string_set_parameters_float()
 {
-	m_variables[VARIABLE_P1].argument.d.x = g_parameters[0];
-	m_variables[VARIABLE_P1].argument.d.y = g_parameters[1];
-	m_variables[VARIABLE_P2].argument.d.x = g_parameters[2];
-	m_variables[VARIABLE_P2].argument.d.y = g_parameters[3];
+	m_variables[VARIABLE_P1].argument.d.x = g_parameters[P1_REAL];
+	m_variables[VARIABLE_P1].argument.d.y = g_parameters[P1_IMAG];
+	m_variables[VARIABLE_P2].argument.d.x = g_parameters[P2_REAL];
+	m_variables[VARIABLE_P2].argument.d.y = g_parameters[P2_IMAG];
 	m_variables[VARIABLE_PI].argument.d.x = MathUtil::Pi;
 	m_variables[VARIABLE_PI].argument.d.y = 0.0;
 	m_variables[VARIABLE_E].argument.d.x = MathUtil::e;
 	m_variables[VARIABLE_E].argument.d.y = 0.0;
-	m_variables[VARIABLE_P3].argument.d.x = g_parameters[4];
-	m_variables[VARIABLE_P3].argument.d.y = g_parameters[5];
-	m_variables[VARIABLE_P4].argument.d.x = g_parameters[6];
-	m_variables[VARIABLE_P4].argument.d.y = g_parameters[7];
-	m_variables[VARIABLE_P5].argument.d.x = g_parameters[8];
-	m_variables[VARIABLE_P5].argument.d.y = g_parameters[9];
+	m_variables[VARIABLE_P3].argument.d.x = g_parameters[P3_REAL];
+	m_variables[VARIABLE_P3].argument.d.y = g_parameters[P3_IMAG];
+	m_variables[VARIABLE_P4].argument.d.x = g_parameters[P4_REAL];
+	m_variables[VARIABLE_P4].argument.d.y = g_parameters[P4_IMAG];
+	m_variables[VARIABLE_P5].argument.d.x = g_parameters[P5_REAL];
+	m_variables[VARIABLE_P5].argument.d.y = g_parameters[P5_IMAG];
 }
 void Formula::parse_string_set_parameters_int()
 {
 #if !defined(XFRACT)
-	m_variables[VARIABLE_P1].argument.l.x = fixpoint_from_double(g_parameters[0]);
-	m_variables[VARIABLE_P1].argument.l.y = fixpoint_from_double(g_parameters[1]);
-	m_variables[VARIABLE_P2].argument.l.x = fixpoint_from_double(g_parameters[2]);
-	m_variables[VARIABLE_P2].argument.l.y = fixpoint_from_double(g_parameters[3]);
+	m_variables[VARIABLE_P1].argument.l.x = fixpoint_from_double(g_parameters[P1_REAL]);
+	m_variables[VARIABLE_P1].argument.l.y = fixpoint_from_double(g_parameters[P1_IMAG]);
+	m_variables[VARIABLE_P2].argument.l.x = fixpoint_from_double(g_parameters[P2_REAL]);
+	m_variables[VARIABLE_P2].argument.l.y = fixpoint_from_double(g_parameters[P2_IMAG]);
 	m_variables[VARIABLE_PI].argument.l.x = fixpoint_from_double(MathUtil::Pi);
 	m_variables[VARIABLE_PI].argument.l.y = 0L;
 	m_variables[VARIABLE_E].argument.l.x = fixpoint_from_double(MathUtil::e);
 	m_variables[VARIABLE_E].argument.l.y = 0L;
-	m_variables[VARIABLE_P3].argument.l.x = fixpoint_from_double(g_parameters[4]);
-	m_variables[VARIABLE_P3].argument.l.y = fixpoint_from_double(g_parameters[5]);
+	m_variables[VARIABLE_P3].argument.l.x = fixpoint_from_double(g_parameters[P3_REAL]);
+	m_variables[VARIABLE_P3].argument.l.y = fixpoint_from_double(g_parameters[P3_IMAG]);
 	m_variables[VARIABLE_SCRN_MAX].argument.l.x = g_x_dots << g_bit_shift;
 	m_variables[VARIABLE_SCRN_MAX].argument.l.y = g_y_dots << g_bit_shift;
 	m_variables[VARIABLE_MAX_IT].argument.l.x = g_max_iteration << g_bit_shift;
@@ -2460,10 +2460,10 @@ void Formula::parse_string_set_parameters_int()
 	m_variables[VARIABLE_MAG_X_MAG].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].argument.d.y);
 	m_variables[VARIABLE_ROT_SKEW].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.x);
 	m_variables[VARIABLE_ROT_SKEW].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.y);
-	m_variables[VARIABLE_P4].argument.l.x = fixpoint_from_double(g_parameters[6]);
-	m_variables[VARIABLE_P4].argument.l.y = fixpoint_from_double(g_parameters[7]);
-	m_variables[VARIABLE_P5].argument.l.x = fixpoint_from_double(g_parameters[8]);
-	m_variables[VARIABLE_P5].argument.l.y = fixpoint_from_double(g_parameters[9]);
+	m_variables[VARIABLE_P4].argument.l.x = fixpoint_from_double(g_parameters[P4_REAL]);
+	m_variables[VARIABLE_P4].argument.l.y = fixpoint_from_double(g_parameters[P4_IMAG]);
+	m_variables[VARIABLE_P5].argument.l.x = fixpoint_from_double(g_parameters[P5_REAL]);
+	m_variables[VARIABLE_P5].argument.l.y = fixpoint_from_double(g_parameters[P5_IMAG]);
 #endif
 }
 

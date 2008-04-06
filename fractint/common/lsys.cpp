@@ -321,7 +321,7 @@ int l_system()
 
 	g_overflow = false;                // reset integer math overflow flag
 
-	order = int(g_parameters[0]);
+	order = int(g_parameters[P1_REAL]);
 	if (order <= 0)
 	{
 		order = 0;

@@ -332,7 +332,7 @@ top:
 	if (full_menu)
 	{
 		if ((!fractal_type_none(g_current_fractal_specific->tojulia)
-				&& g_parameters[0] == 0.0 && g_parameters[1] == 0.0)
+				&& g_parameters[P1_REAL] == 0.0 && g_parameters[P1_IMAG] == 0.0)
 			|| !fractal_type_none(g_current_fractal_specific->tomandel))
 		{
 			nextleft += 2;
@@ -635,8 +635,8 @@ static int menu_check_key(int curkey, int choice)
 		if (testkey == ' ')
 		{
 			if ((!fractal_type_none(g_current_fractal_specific->tojulia)
-					&& g_parameters[0] == 0.0
-					&& g_parameters[1] == 0.0)
+					&& g_parameters[P1_REAL] == 0.0
+					&& g_parameters[P1_IMAG] == 0.0)
 				|| !fractal_type_none(g_current_fractal_specific->tomandel))
 			{
 				return -testkey;

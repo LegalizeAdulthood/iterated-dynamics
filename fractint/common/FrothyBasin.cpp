@@ -109,17 +109,17 @@ bool froth_setup()
 
 	// for the all important backwards compatibility
 	{
-		if (g_parameters[0] != 2)
+		if (g_parameters[P1_REAL] != 2)
 		{
-			g_parameters[0] = 1;
+			g_parameters[P1_REAL] = 1;
 		}
-		s_frothy_data.repeat_mapping = int(g_parameters[0]) == 2;
-		if (g_parameters[1] != 0)
+		s_frothy_data.repeat_mapping = int(g_parameters[P1_REAL]) == 2;
+		if (g_parameters[P1_IMAG] != 0)
 		{
-			g_parameters[1] = 1;
+			g_parameters[P1_IMAG] = 1;
 		}
-		s_frothy_data.altcolor = int(g_parameters[1]);
-		s_frothy_data.f.a = g_parameters[2];
+		s_frothy_data.altcolor = int(g_parameters[P1_IMAG]);
+		s_frothy_data.f.a = g_parameters[P2_REAL];
 
 		s_frothy_data.attractors = fabs(s_frothy_data.f.a) <= FROTH_CRITICAL_A ? (!s_frothy_data.repeat_mapping ? 3 : 6)
 																: (!s_frothy_data.repeat_mapping ? 2 : 3);

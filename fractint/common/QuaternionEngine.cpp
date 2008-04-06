@@ -14,9 +14,9 @@ QuaternionD g_c_quaternion(0.0, 0.0, 0.0, 0.0);
 int quaternion_julia_per_pixel_fp()
 {
 	g_old_z = g_externs.DPixel();
-	g_float_parameter->x = g_parameters[4];
-	g_float_parameter->y = g_parameters[5];
-	g_c_quaternion = QuaternionD(g_parameters[0], g_parameters[1], g_parameters[2], g_parameters[3]);
+	g_float_parameter->x = g_parameters[P3_REAL];
+	g_float_parameter->y = g_parameters[P3_IMAG];
+	g_c_quaternion = QuaternionD(g_parameters[P1_REAL], g_parameters[P1_IMAG], g_parameters[P2_REAL], g_parameters[P2_IMAG]);
 	return 0;
 }
 
@@ -26,7 +26,7 @@ int quaternion_per_pixel_fp()
 	g_old_z.imag(0);
 	g_float_parameter->x = 0;
 	g_float_parameter->y = 0;
-	g_c_quaternion = QuaternionD(g_externs.DxPixel(), g_externs.DyPixel(), g_parameters[2], g_parameters[3]);
+	g_c_quaternion = QuaternionD(g_externs.DxPixel(), g_externs.DyPixel(), g_parameters[P2_REAL], g_parameters[P2_IMAG]);
 	return 0;
 }
 

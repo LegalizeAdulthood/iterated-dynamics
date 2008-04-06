@@ -123,9 +123,9 @@ int cellular()
 	double n;
 	set_cellular_palette();
 
-	randparam = (S32)g_parameters[0];
-	lnnmbr = (U32)g_parameters[3];
-	kr = U16(g_parameters[2]);
+	randparam = (S32)g_parameters[P1_REAL];
+	lnnmbr = (U32)g_parameters[P2_IMAG];
+	kr = U16(g_parameters[P2_REAL]);
 	switch (kr)
 	{
 	case 21:
@@ -160,7 +160,7 @@ int cellular()
 	}
 	if (randparam != 0 && randparam != -1)
 	{
-		n = g_parameters[0];
+		n = g_parameters[P1_REAL];
 		std::string buf = str(boost::format("%.16g") % n); // # of digits in initial string
 		t = S16(buf.length());
 		if (t > 16 || t <= 0)
@@ -191,7 +191,7 @@ int cellular()
 	}
 
 // generate rule table from parameter 1
-	n = g_parameters[1];
+	n = g_parameters[P1_IMAG];
 	if (n == 0)  // calculate a random rule
 	{
 		n = rand() % int(k);
@@ -200,7 +200,7 @@ int cellular()
 			n *= 10;
 			n += rand() % int(k);
 		}
-		g_parameters[1] = n;
+		g_parameters[P1_IMAG] = n;
 	}
 	std::string buf = str(boost::format(precision_format("g", s_rule_digits)) % n);
 	t = S16(buf.length());
@@ -248,7 +248,7 @@ int cellular()
 		start_resume();
 		end_resume();
 		get_line(g_y_stop, 0, g_x_stop, s_cell_array[filled]);
-		g_parameters[3] += g_y_stop + 1;
+		g_parameters[P2_IMAG] += g_y_stop + 1;
 		start_row = -1; // after 1st iteration its = 0
 	}
 	else
@@ -407,7 +407,7 @@ contloop:
 	}
 	if (g_next_screen_flag)
 	{
-		g_parameters[3] += g_y_stop + 1;
+		g_parameters[P2_IMAG] += g_y_stop + 1;
 		start_row = 0;
 		goto contloop;
 	}

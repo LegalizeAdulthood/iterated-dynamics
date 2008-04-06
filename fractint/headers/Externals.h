@@ -241,10 +241,10 @@ public:
 	virtual int InitialCycleLimit() const = 0;
 	virtual void SetInitialCycleLimit(int value) = 0;
 
-	virtual ComplexL InitialOrbitL() const = 0;
-	virtual void SetInitialOrbitL(ComplexL value) = 0;
 	virtual ComplexD InitialOrbitZ() const = 0;
 	virtual void SetInitialOrbitZ(ComplexD value) = 0;
+	virtual ComplexL InitialOrbitZL() const = 0;
+	virtual void SetInitialOrbitZL(ComplexL value) = 0;
 
 	virtual int SaveTime() const = 0;
 	virtual void SetSaveTime(int value) = 0;

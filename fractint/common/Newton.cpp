@@ -141,7 +141,7 @@ bool Newton::setup()           // Newton/NewtBasin Routines
 		}
 	}
 
-	g_parameters[0] = double(g_degree);
+	g_parameters[P1_REAL] = double(g_degree);
 	g_symmetry = (g_degree % 4 == 0) ? SYMMETRY_XY_AXIS : SYMMETRY_X_AXIS;
 
 	g_calculate_type = standard_fractal;
@@ -200,13 +200,13 @@ bool NewtonComplex::setup()
 {
 	g_threshold = 0.001;
 	g_periodicity_check = 0;
-	if (g_parameters[0] != 0.0 || g_parameters[1] != 0.0 || g_parameters[2] != 0.0 ||
-		g_parameters[3] != 0.0)
+	if (g_parameters[P1_REAL] != 0.0 || g_parameters[P1_IMAG] != 0.0 || g_parameters[P2_REAL] != 0.0 ||
+		g_parameters[P2_IMAG] != 0.0)
 	{
-		croot.x = g_parameters[2];
-		croot.y = g_parameters[3];
-		cdegree.x = g_parameters[0];
-		cdegree.y = g_parameters[1];
+		croot.x = g_parameters[P2_REAL];
+		croot.y = g_parameters[P2_IMAG];
+		cdegree.x = g_parameters[P1_REAL];
+		cdegree.y = g_parameters[P1_IMAG];
 		FPUcplxlog(&croot, &BaseLog);
 		TwoPi = asin(1.0)*4;
 	}

@@ -538,8 +538,8 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 	}
 
 	if (!fractal_type_none(g_current_fractal_specific->tojulia)
-		&& g_parameters[0] == 0.0
-		&& g_parameters[1] == 0.0)
+		&& g_parameters[P1_REAL] == 0.0
+		&& g_parameters[P1_IMAG] == 0.0)
 	{
 		// switch to corresponding Julia set
 		g_has_inverse = fractal_type_mandelbrot(g_fractal_type) && (g_bf_math == 0);
@@ -555,13 +555,13 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		if (g_julia_c.real() == BIG || g_julia_c.imag() == BIG)
 		{
-			g_parameters[0] = g_escape_time_state.m_grid_fp.x_center();
-			g_parameters[1] = g_escape_time_state.m_grid_fp.y_center();
+			g_parameters[P1_REAL] = g_escape_time_state.m_grid_fp.x_center();
+			g_parameters[P1_IMAG] = g_escape_time_state.m_grid_fp.y_center();
 		}
 		else
 		{
-			g_parameters[0] = g_julia_c.real();
-			g_parameters[1] = g_julia_c.imag();
+			g_parameters[P1_REAL] = g_julia_c.real();
+			g_parameters[P1_IMAG] = g_julia_c.imag();
 			g_julia_c = std::complex<double>(BIG, BIG);
 		}
 		jxxmin = g_sx_min;
@@ -615,10 +615,10 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 			g_escape_time_state.m_grid_fp.x_3rd() = g_current_fractal_specific->x_min;
 			g_escape_time_state.m_grid_fp.y_3rd() = g_current_fractal_specific->y_min;
 		}
-		g_save_c.x = g_parameters[0];
-		g_save_c.y = g_parameters[1];
-		g_parameters[0] = 0;
-		g_parameters[1] = 0;
+		g_save_c.x = g_parameters[P1_REAL];
+		g_save_c.y = g_parameters[P1_IMAG];
+		g_parameters[P1_REAL] = 0;
+		g_parameters[P1_IMAG] = 0;
 		g_zoom_off = true;
 		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		kbdmore = false;

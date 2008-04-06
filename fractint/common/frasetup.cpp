@@ -95,9 +95,9 @@ bool unity_setup()
 bool mandelbrot_setup_fp()
 {
 	g_bf_math = 0;
-	g_c_exp = int(g_parameters[2]);
-	g_power.x = g_parameters[2] - 1.0;
-	g_power.y = g_parameters[3];
+	g_c_exp = int(g_parameters[P2_REAL]);
+	g_power.x = g_parameters[P2_REAL] - 1.0;
+	g_power.y = g_parameters[P2_IMAG];
 	g_float_parameter = &g_initial_z;
 	switch (g_fractal_type)
 	{
@@ -105,7 +105,7 @@ bool mandelbrot_setup_fp()
 		if (g_c_exp < 1)
 		{
 			g_c_exp = 1;
-			g_parameters[2] = 1;
+			g_parameters[P2_REAL] = 1;
 		}
 		if (!(g_c_exp & 1))
 		{
@@ -148,11 +148,11 @@ bool mandelbrot_setup_fp()
 		}
 		break;
 	case FRACTYPE_MANDELBROT_Z_POWER_FP:
-		if (double(g_c_exp) == g_parameters[2] && (g_c_exp & 1)) // odd exponents
+		if (double(g_c_exp) == g_parameters[P2_REAL] && (g_c_exp & 1)) // odd exponents
 		{
 			g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;
 		}
-		if (g_parameters[3] != 0)
+		if (g_parameters[P2_IMAG] != 0)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -193,7 +193,7 @@ bool mandelbrot_setup_fp()
 		g_float_parameter = &g_temp_z;
 		g_num_attractors = 0;
 		g_periodicity_check = 0;
-		if (g_parameters[2] != 0)
+		if (g_parameters[P2_REAL] != 0)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -238,12 +238,12 @@ void current_fractal_specific_set_per_pixel(int (*per_pixel)(void))
 
 bool julia_setup_fp()
 {
-	g_c_exp = int(g_parameters[2]);
+	g_c_exp = int(g_parameters[P2_REAL]);
 	g_float_parameter = &g_parameter;
 	if (g_fractal_type == FRACTYPE_MARKS_JULIA_COMPLEX)
 	{
-		g_power.x = g_parameters[2] - 1.0;
-		g_power.y = g_parameters[3];
+		g_power.x = g_parameters[P2_REAL] - 1.0;
+		g_power.y = g_parameters[P2_IMAG];
 		g_coefficient = ComplexPower(*g_float_parameter, g_power);
 	}
 	switch (g_fractal_type)
@@ -281,12 +281,12 @@ bool julia_setup_fp()
 		}
 		break;
 	case FRACTYPE_JULIA_Z_POWER_FP:
-		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || double(g_c_exp) != g_parameters[2])
+		if ((g_c_exp & 1) || g_parameters[P2_IMAG] != 0.0 || double(g_c_exp) != g_parameters[P2_REAL])
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
 		standard_4d_fractal_set_orbit_calc(z_power_orbit_fp, complex_z_power_orbit_fp);
-		get_julia_attractor(g_parameters[0], g_parameters[1]); // another attractor?
+		get_julia_attractor(g_parameters[P1_REAL], g_parameters[P1_IMAG]); // another attractor?
 		break;
 	case FRACTYPE_MAGNET_2J:
 		magnet2_precalculate_fp();
@@ -321,7 +321,7 @@ bool julia_setup_fp()
 		get_julia_attractor(0.0, 0.0);   // another attractor?
 		break;
 	case FRACTYPE_HYPERCOMPLEX_JULIA_FP:
-		if (g_parameters[2] != 0)
+		if (g_parameters[P2_REAL] != 0)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -332,7 +332,7 @@ bool julia_setup_fp()
 	case FRACTYPE_QUATERNION_JULIA_FP:
 		g_num_attractors = 0;   // attractors broken since code checks r, i not j, k
 		g_periodicity_check = 0;
-		if (g_parameters[4] != 0.0 || g_parameters[5] != 0)
+		if (g_parameters[P3_REAL] != 0.0 || g_parameters[P3_IMAG] != 0)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -381,11 +381,11 @@ bool julia_setup_fp()
 
 bool mandelbrot_setup_l()
 {
-	g_c_exp = int(g_parameters[2]);
+	g_c_exp = int(g_parameters[P2_REAL]);
 	if (g_fractal_type == FRACTYPE_MARKS_MANDELBROT && g_c_exp < 1)
 	{
 		g_c_exp = 1;
-		g_parameters[2] = 1;
+		g_parameters[P2_REAL] = 1;
 	}
 	if ((g_fractal_type == FRACTYPE_MARKS_MANDELBROT   && !(g_c_exp & 1)) ||
 		(g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_L && (g_c_exp & 1)))
@@ -400,7 +400,7 @@ bool mandelbrot_setup_l()
 	if (g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_L)
 	{
 		standard_4d_fractal_set_orbit_calc(z_power_orbit, complex_z_power_orbit);
-		if (g_parameters[3] != 0 || double(g_c_exp) != g_parameters[2])
+		if (g_parameters[P2_IMAG] != 0 || double(g_c_exp) != g_parameters[P2_REAL])
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -448,12 +448,12 @@ bool spider_setup_l()
 
 bool julia_setup_l()
 {
-	g_c_exp = int(g_parameters[2]);
+	g_c_exp = int(g_parameters[P2_REAL]);
 	g_long_parameter = &g_parameter_l;
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_JULIA_Z_POWER_L:
-		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || double(g_c_exp) != g_parameters[2])
+		if ((g_c_exp & 1) || g_parameters[P2_IMAG] != 0.0 || double(g_c_exp) != g_parameters[P2_REAL])
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -715,7 +715,7 @@ bool z_trig_plus_z_setup()
 	// fn1 ->  sin   cos    sinh  cosh exp   log   sqr
 	// {SYMMETRY_NONE, SYMMETRY_ORIGIN, SYMMETRY_NONE, SYMMETRY_ORIGIN, SYMMETRY_NONE, SYMMETRY_NONE, SYMMETRY_ORIGIN};
 
-	if (g_parameters[1] == 0.0 && g_parameters[3] == 0.0)
+	if (g_parameters[P1_IMAG] == 0.0 && g_parameters[P2_IMAG] == 0.0)
 	{
 		// symmetry = ZXTrigPlusZSym1[g_function_index[0]];
 		switch (g_function_index[0])
@@ -940,11 +940,11 @@ bool mandelbrot_trig_setup()
 bool marks_julia_setup()
 {
 #if !defined(XFRACT)
-	if (g_parameters[2] < 1)
+	if (g_parameters[P2_REAL] < 1)
 	{
-		g_parameters[2] = 1;
+		g_parameters[P2_REAL] = 1;
 	}
-	g_c_exp = int(g_parameters[2]);
+	g_c_exp = int(g_parameters[P2_REAL]);
 	g_long_parameter = &g_parameter_l;
 	g_old_z_l = *g_long_parameter;
 	if (g_c_exp > 3)
@@ -973,11 +973,11 @@ bool marks_julia_setup()
 
 bool marks_julia_setup_fp()
 {
-	if (g_parameters[2] < 1)
+	if (g_parameters[P2_REAL] < 1)
 	{
-		g_parameters[2] = 1;
+		g_parameters[P2_REAL] = 1;
 	}
-	g_c_exp = int(g_parameters[2]);
+	g_c_exp = int(g_parameters[P2_REAL]);
 	g_float_parameter = &g_parameter;
 	g_old_z = *g_float_parameter;
 	if (g_c_exp > 3)
@@ -1029,7 +1029,7 @@ bool phoenix_setup()
 	{
 		g_degree = 0;
 	}
-	g_parameters[2] = double(g_degree);
+	g_parameters[P2_REAL] = double(g_degree);
 	int (*orbit_calc)(void) = 0;
 	if (g_degree == 0)
 	{
@@ -1055,12 +1055,12 @@ bool phoenix_complex_setup()
 {
 	g_long_parameter = &g_parameter_l;
 	g_float_parameter = &g_parameter;
-	g_degree = int(g_parameters[4]);
+	g_degree = int(g_parameters[P3_REAL]);
 	if (g_degree < 2 && g_degree > -3)
 	{
 		g_degree = 0;
 	}
-	g_parameters[4] = double(g_degree);
+	g_parameters[P3_REAL] = double(g_degree);
 	int (*orbit_calc)(void) = 0;
 	if (g_degree == 0)
 	{
@@ -1098,7 +1098,7 @@ bool mandelbrot_phoenix_setup()
 	{
 		g_degree = 0;
 	}
-	g_parameters[2] = double(g_degree);
+	g_parameters[P2_REAL] = double(g_degree);
 	int (*orbit_calc)(void) = 0;
 	if (g_degree == 0)
 	{
@@ -1124,12 +1124,12 @@ bool mandelbrot_phoenix_complex_setup()
 {
 	g_long_parameter = &g_initial_z_l; // added to consolidate code 10/1/92 JCO
 	g_float_parameter = &g_initial_z;
-	g_degree = int(g_parameters[4]);
+	g_degree = int(g_parameters[P3_REAL]);
 	if (g_degree < 2 && g_degree > -3)
 	{
 		g_degree = 0;
 	}
-	g_parameters[4] = double(g_degree);
+	g_parameters[P3_REAL] = double(g_degree);
 	if (g_parameter.imag() != 0 || g_parameter2.imag() != 0)
 	{
 		g_symmetry = SYMMETRY_NONE;
@@ -1166,21 +1166,21 @@ bool standard_setup()
 
 bool volterra_lotka_setup()
 {
-	if (g_parameters[0] < 0.0)
+	if (g_parameters[P1_REAL] < 0.0)
 	{
-		g_parameters[0] = 0.0;
+		g_parameters[P1_REAL] = 0.0;
 	}
-	if (g_parameters[1] < 0.0)
+	if (g_parameters[P1_IMAG] < 0.0)
 	{
-		g_parameters[1] = 0.0;
+		g_parameters[P1_IMAG] = 0.0;
 	}
-	if (g_parameters[0] > 1.0)
+	if (g_parameters[P1_REAL] > 1.0)
 	{
-		g_parameters[0] = 1.0;
+		g_parameters[P1_REAL] = 1.0;
 	}
-	if (g_parameters[1] > 1.0)
+	if (g_parameters[P1_IMAG] > 1.0)
 	{
-		g_parameters[1] = 1.0;
+		g_parameters[P1_IMAG] = 1.0;
 	}
 	g_float_parameter = &g_parameter;
 	return true;
