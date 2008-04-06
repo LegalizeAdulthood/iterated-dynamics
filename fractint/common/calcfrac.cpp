@@ -1371,7 +1371,7 @@ public:
 private:
 	double m_tangent_table[16];
 
-	void clamp(double x)
+	double clamp(double x)
 	{
 		if (x > STARTRAILMAX)
 		{
@@ -1381,6 +1381,7 @@ private:
 		{
 			x = -STARTRAILMAX;
 		}
+		return x;
 	}
 };
 
@@ -1402,8 +1403,8 @@ void ColorModeStarTrail::update()
 			g_new_z = ComplexFudgeToDouble(g_new_z_l);
 		}
 
-		clamp(g_new_z.x);
-		clamp(g_new_z.y);
+		g_new_z.real(clamp(g_new_z.real()));
+		g_new_z.imag(clamp(g_new_z.imag()));
 		g_temp_sqr.real(g_new_z.real()*g_new_z.real());
 		g_temp_sqr.imag(g_new_z.imag()*g_new_z.imag());
 		g_magnitude = g_temp_sqr.real() + g_temp_sqr.imag();
@@ -1479,7 +1480,7 @@ private:
 	void colormode_float_modulus_integer_update();
 	bool colormode_epsilon_cross_update();
 	void colormode_star_trail_update();
-	void colormode_star_trail_clamp(double &x);
+	double colormode_star_trail_clamp(double x);
 	void check_periodicity();
 	void set_new_z_if_bigmath();
 	void show_orbit();
@@ -1810,7 +1811,7 @@ void StandardFractal::check_periodicity()
 		}
 	}
 }
-void StandardFractal::colormode_star_trail_clamp(double &x)
+double StandardFractal::colormode_star_trail_clamp(double x)
 {
 	if (x > STARTRAILMAX)
 	{
@@ -1820,6 +1821,7 @@ void StandardFractal::colormode_star_trail_clamp(double &x)
 	{
 		x = -STARTRAILMAX;
 	}
+	return x;
 }
 void StandardFractal::colormode_star_trail_update()
 {
@@ -1830,8 +1832,8 @@ void StandardFractal::colormode_star_trail_update()
 			g_new_z = ComplexFudgeToDouble(g_new_z_l);
 		}
 
-		colormode_star_trail_clamp(g_new_z.x);
-		colormode_star_trail_clamp(g_new_z.y);
+		g_new_z.real(colormode_star_trail_clamp(g_new_z.real()));
+		g_new_z.imag(colormode_star_trail_clamp(g_new_z.imag()));
 		g_temp_sqr.real(g_new_z.real()*g_new_z.real());
 		g_temp_sqr.imag(g_new_z.imag()*g_new_z.imag());
 		g_magnitude = g_temp_sqr.real() + g_temp_sqr.imag();

@@ -179,7 +179,7 @@ int Newton::orbit()
 		return 1;
 	}
 	g_new_z.real(m_degree_minus_1_over_degree*g_new_z.real() + m_root_over_degree);
-	g_new_z.y *= m_degree_minus_1_over_degree;
+	g_new_z.imag(g_new_z.imag()*m_degree_minus_1_over_degree);
 
 	// Watch for divide underflow
 	double s_t2 = g_temp_z.x*g_temp_z.x + g_temp_z.y*g_temp_z.y;
