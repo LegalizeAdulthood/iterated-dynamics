@@ -876,7 +876,7 @@ void JIIM::Execute()
 			else
 			{
 				// if not MIIM
-				g_old_z.x -= _cReal;
+				g_old_z.real(g_old_z.real() - _cReal);
 				g_old_z.y -= _cImag;
 				r = g_old_z.real()*g_old_z.real() + g_old_z.imag()*g_old_z.imag();
 				if (r > 10.0)

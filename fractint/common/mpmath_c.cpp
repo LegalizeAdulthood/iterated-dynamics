@@ -286,7 +286,7 @@ ComplexD ComplexSqrtFloat(double x, double y)
 	{
 		mag   = sqrt(sqrt(x*x + y*y));
 		theta = atan2(y, x)/2;
-		FPUsincos(&theta, &result.y, &result.x);
+		FPUsincos(theta, &result.y, &result.x);
 		result.x *= mag;
 		result.y *= mag;
 	}

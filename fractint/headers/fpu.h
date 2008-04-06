@@ -5,8 +5,8 @@ extern int DivideOverflow;
 
 extern void FPUcplxmul(ComplexD const *, ComplexD const *, ComplexD *);
 extern void FPUcplxdiv(ComplexD *, ComplexD *, ComplexD *);
-extern void FPUsincos(double *, double *, double *);
-extern void FPUsinhcosh(double *, double *, double *);
+extern void FPUsincos(double angle, double *sinAngle, double *cosAngle);
+extern void FPUsinhcosh(double angle, double *sinhAngle, double *coshAngle);
 extern void FPUcplxlog(ComplexD const *, ComplexD *);
 extern void SinCos086(long, long *, long *);
 extern void SinhCosh086(long, long *, long *);

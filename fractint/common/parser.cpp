@@ -1156,10 +1156,10 @@ void dStkSin()
 {
 	double sinx;
 	double cosx;
-	FPUsincos(&g_argument1->d.x, &sinx, &cosx);
+	FPUsincos(g_argument1->d.x, &sinx, &cosx);
 	double sinhy;
 	double coshy;
-	FPUsinhcosh(&g_argument1->d.y, &sinhy, &coshy);
+	FPUsinhcosh(g_argument1->d.y, &sinhy, &coshy);
 	g_argument1->d.x = sinx*coshy;
 	g_argument1->d.y = cosx*sinhy;
 }
@@ -1191,10 +1191,10 @@ void dStkTan()
 	g_argument1->d.y *= 2;
 	double sinx;
 	double cosx;
-	FPUsincos(&g_argument1->d.x, &sinx, &cosx);
+	FPUsincos(g_argument1->d.x, &sinx, &cosx);
 	double sinhy;
 	double coshy;
-	FPUsinhcosh(&g_argument1->d.y, &sinhy, &coshy);
+	FPUsinhcosh(g_argument1->d.y, &sinhy, &coshy);
 	double denom = cosx + coshy;
 	ChkFloatDenom(denom);
 	g_argument1->d.x = sinx/denom;
@@ -1227,10 +1227,10 @@ void dStkTanh()
 	g_argument1->d.y *= 2;
 	double siny;
 	double cosy;
-	FPUsincos(&g_argument1->d.y, &siny, &cosy);
+	FPUsincos(g_argument1->d.y, &siny, &cosy);
 	double sinhx;
 	double coshx;
-	FPUsinhcosh(&g_argument1->d.x, &sinhx, &coshx);
+	FPUsinhcosh(g_argument1->d.x, &sinhx, &coshx);
 	double denom = coshx + cosy;
 	ChkFloatDenom(denom);
 	g_argument1->d.x = sinhx/denom;
@@ -1265,10 +1265,10 @@ void dStkCoTan()
 	g_argument1->d.y *= 2;
 	double sinx;
 	double cosx;
-	FPUsincos(&g_argument1->d.x, &sinx, &cosx);
+	FPUsincos(g_argument1->d.x, &sinx, &cosx);
 	double sinhy;
 	double coshy;
-	FPUsinhcosh(&g_argument1->d.y, &sinhy, &coshy);
+	FPUsinhcosh(g_argument1->d.y, &sinhy, &coshy);
 	double denom = coshy - cosx;
 	ChkFloatDenom(denom);
 	g_argument1->d.x = sinx/denom;
@@ -1303,10 +1303,10 @@ void dStkCoTanh()
 	g_argument1->d.y *= 2;
 	double siny;
 	double cosy;
-	FPUsincos(&g_argument1->d.y, &siny, &cosy);
+	FPUsincos(g_argument1->d.y, &siny, &cosy);
 	double sinhx;
 	double coshx;
-	FPUsinhcosh(&g_argument1->d.x, &sinhx, &coshx);
+	FPUsinhcosh(g_argument1->d.x, &sinhx, &coshx);
 	double denom = coshx - cosy;
 	ChkFloatDenom(denom);
 	g_argument1->d.x = sinhx/denom;
@@ -1370,10 +1370,10 @@ void dStkSinh()
 {
 	double siny;
 	double cosy;
-	FPUsincos(&g_argument1->d.y, &siny, &cosy);
+	FPUsincos(g_argument1->d.y, &siny, &cosy);
 	double sinhx;
 	double coshx;
-	FPUsinhcosh(&g_argument1->d.x, &sinhx, &coshx);
+	FPUsinhcosh(g_argument1->d.x, &sinhx, &coshx);
 	g_argument1->d.x = sinhx*cosy;
 	g_argument1->d.y = coshx*siny;
 }
@@ -1400,10 +1400,10 @@ void dStkCos()
 {
 	double sinx;
 	double cosx;
-	FPUsincos(&g_argument1->d.x, &sinx, &cosx);
+	FPUsincos(g_argument1->d.x, &sinx, &cosx);
 	double sinhy;
 	double coshy;
-	FPUsinhcosh(&g_argument1->d.y, &sinhy, &coshy);
+	FPUsinhcosh(g_argument1->d.y, &sinhy, &coshy);
 	g_argument1->d.x = cosx*coshy;
 	g_argument1->d.y = -sinx*sinhy;
 }
@@ -1448,10 +1448,10 @@ void dStkCosh()
 {
 	double siny;
 	double cosy;
-	FPUsincos(&g_argument1->d.y, &siny, &cosy);
+	FPUsincos(g_argument1->d.y, &siny, &cosy);
 	double sinhx;
 	double coshx;
-	FPUsinhcosh(&g_argument1->d.x, &sinhx, &coshx);
+	FPUsinhcosh(g_argument1->d.x, &sinhx, &coshx);
 	g_argument1->d.x = coshx*cosy;
 	g_argument1->d.y = sinhx*siny;
 }

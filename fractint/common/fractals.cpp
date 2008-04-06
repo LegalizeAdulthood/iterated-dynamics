@@ -233,17 +233,6 @@ int bail_out_manhattan_r_fp()
 
 static long const TRIG_LIMIT_16 = (8L << 16);		// domain limit of fast trig functions
 
-#if 0
-// this define uses usual trig instead of fast trig
-#define FPUsincos(px, psinx, pcosx) \
-	*(psinx) = sin(*(px)); \
-	*(pcosx) = cos(*(px));
-
-#define FPUsinhcosh(px, psinhx, pcoshx) \
-	*(psinhx) = sinh(*(px)); \
-	*(pcoshx) = cosh(*(px));
-#endif
-
 inline void TRIG_ARG_L(long &x)
 {
 	if (labs(x) > TRIG_LIMIT_16)
@@ -387,7 +376,7 @@ z_to_the_z(ComplexD *z, ComplexD *out)
 
 	s_temp_exp = exp(tmp2.real());
 
-	FPUsincos(&tmp2.y, &s_sin_y, &s_cos_y);
+	FPUsincos(tmp2.y, &s_sin_y, &s_cos_y);
 	out->real() = s_temp_exp*s_cos_y;
 	out->y = s_temp_exp*s_sin_y;
 	return errno_xxx;
@@ -604,7 +593,7 @@ int lambda_exponent_orbit_fp()
 	{
 		return 1;
 	}
-	FPUsincos(&g_old_z.y, &s_sin_y, &s_cos_y);
+	FPUsincos(g_old_z.y, &s_sin_y, &s_cos_y);
 
 	if (g_old_z.real() >= g_rq_limit && s_cos_y >= 0.0)
 	{
@@ -666,7 +655,7 @@ int trig_plus_exponent_orbit_fp()
 		return 1;
 	}
 	s_temp_exp = exp(g_old_z.real());
-	FPUsincos(&g_old_z.y, &s_sin_y, &s_cos_y);
+	FPUsincos(g_old_z.y, &s_sin_y, &s_cos_y);
 	CMPLXtrig0(g_old_z, g_new_z);
 
 	// new =   trig(old) + e**old + C
@@ -991,12 +980,12 @@ int popcorn_old_orbit_fp()
 	g_temp_z = g_old_z;
 	g_temp_z.real(g_temp_z.real()*3.0);
 	g_temp_z.y *= 3.0;
-	FPUsincos(&g_temp_z.x, &g_sin_x, &g_cos_x);
-	FPUsincos(&g_temp_z.y, &s_sin_y, &s_cos_y);
+	FPUsincos(g_temp_z.x, &g_sin_x, &g_cos_x);
+	FPUsincos(g_temp_z.y, &s_sin_y, &s_cos_y);
 	g_temp_z.real(g_sin_x/g_cos_x + g_old_z.real());
 	g_temp_z.y = s_sin_y/s_cos_y + g_old_z.imag();
-	FPUsincos(&g_temp_z.x, &g_sin_x, &g_cos_x);
-	FPUsincos(&g_temp_z.y, &s_sin_y, &s_cos_y);
+	FPUsincos(g_temp_z.x, &g_sin_x, &g_cos_x);
+	FPUsincos(g_temp_z.y, &s_sin_y, &s_cos_y);
 	g_new_z.real(g_old_z.real() - g_parameter.real()*s_sin_y);
 	g_new_z.imag(g_old_z.imag() - g_parameter.real()*g_sin_x);
 	if (g_plot_color == plot_color_none)
@@ -1029,12 +1018,12 @@ int popcorn_orbit_fp()
 	g_temp_z = g_old_z;
 	g_temp_z.real(g_temp_z.real()*3.0);
 	g_temp_z.y *= 3.0;
-	FPUsincos(&g_temp_z.x, &g_sin_x, &g_cos_x);
-	FPUsincos(&g_temp_z.y, &s_sin_y, &s_cos_y);
+	FPUsincos(g_temp_z.x, &g_sin_x, &g_cos_x);
+	FPUsincos(g_temp_z.y, &s_sin_y, &s_cos_y);
 	g_temp_z.real(g_sin_x/g_cos_x + g_old_z.real());
 	g_temp_z.y = s_sin_y/s_cos_y + g_old_z.imag();
-	FPUsincos(&g_temp_z.x, &g_sin_x, &g_cos_x);
-	FPUsincos(&g_temp_z.y, &s_sin_y, &s_cos_y);
+	FPUsincos(g_temp_z.x, &g_sin_x, &g_cos_x);
+	FPUsincos(g_temp_z.y, &s_sin_y, &s_cos_y);
 	g_new_z.real(g_old_z.real() - g_parameter.real()*s_sin_y);
 	g_new_z.imag(g_old_z.imag() - g_parameter.real()*g_sin_x);
 	//

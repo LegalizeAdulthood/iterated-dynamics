@@ -170,7 +170,7 @@ int diffusion()
 		{
 		case DIFFUSION_CENTRAL: // Release new point on a circle inside the box
 			angle = 2*double(rand())/(RAND_MAX/MathUtil::Pi);
-			FPUsincos(&angle, &sine, &cosine);
+			FPUsincos(angle, &sine, &cosine);
 			x = int(cosine*(x_max-x_min) + g_x_dots);
 			y = int(sine  *(y_max-y_min) + g_y_dots);
 			x /= 2;
@@ -184,7 +184,7 @@ int diffusion()
 			// Release new point on a circle inside the box with radius
 			// given by the radius variable
 			angle = 2*double(rand())/(RAND_MAX/MathUtil::Pi);
-			FPUsincos(&angle, &sine, &cosine);
+			FPUsincos(angle, &sine, &cosine);
 			x = int(cosine*radius + g_x_dots);
 			y = int(sine  *radius + g_y_dots);
 			x /= 2;
