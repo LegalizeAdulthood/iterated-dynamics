@@ -227,7 +227,7 @@ bn_t bftobn(bn_t n, bf_t f)
 	int movebytes;
 	BYTE hibyte;
 
-	fexp = (S16)big_access16(f + g_bf_length);
+	fexp = S16(big_access16(f + g_bf_length));
 	if (fexp >= g_int_length)
 	{ // if it's too big, use max value
 		max_bn(n);
@@ -246,9 +246,9 @@ bn_t bftobn(bn_t n, bf_t f)
 
 	// already checked for over/underflow, this should be ok
 	movebytes = g_bn_length - g_int_length + fexp + 1;
-	memcpy(n, f + g_bf_length-movebytes-1, movebytes);
+	memcpy(n.storage(), f + g_bf_length-movebytes-1, movebytes);
 	hibyte = *(f + g_bf_length-1);
-	memset(n + movebytes, hibyte, g_bn_length-movebytes); // sign extends
+	memset(n.storage() + movebytes, hibyte, g_bn_length-movebytes); // sign extends
 	return n;
 }
 
@@ -258,7 +258,7 @@ bn_t bftobn(bn_t n, bf_t f)
 // g_bf_length must be at least g_bn_length + 2
 bf_t bntobf(bf_t f, bn_t n)
 {
-	memcpy(f + g_bf_length-g_bn_length-1, n, g_bn_length);
+	memcpy(f + g_bf_length-g_bn_length-1, n.storage(), g_bn_length);
 	memset(f, 0, g_bf_length - g_bn_length - 1);
 	*(f + g_bf_length-1) = BYTE(is_bn_neg(n) ? 0xFF : 0x00); // sign extend
 	big_set16(f + g_bf_length, (S16)(g_int_length - 1)); // exp
@@ -612,10 +612,9 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 bf_t exp_bf(bf_t r, bf_t n)
 {
 	U16 fact = 1;
-	S16 *testexp, *rexp;
 
-	testexp = (S16 *)(bftmp2 + g_bf_length);
-	rexp = (S16 *)(r + g_bf_length);
+	BYTE *testexp = (bftmp2 + g_bf_length);
+	BYTE *rexp = (r + g_bf_length);
 
 	if (is_bf_zero(n))
 	{
@@ -775,13 +774,13 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 	int switch_sincos = 0;
 	int sin_done = 0;
 	int cos_done = 0;
-	S16 *testexp;
-	S16 *cexp;
-	S16 *sexp;
+	BYTE *testexp;
+	BYTE *cexp;
+	BYTE *sexp;
 
-	testexp = (S16 *)(bftmp1 + g_bf_length);
-	cexp = (S16 *)(c + g_bf_length);
-	sexp = (S16 *)(s + g_bf_length);
+	testexp = (bftmp1 + g_bf_length);
+	cexp = (c + g_bf_length);
+	sexp = (s + g_bf_length);
 
 	// assure range 0 <= x < pi/4
 
@@ -1349,9 +1348,7 @@ bf_t norm_bf(bf_t r)
 {
 	int scale;
 	BYTE hi_byte;
-	S16 *rexp;
-
-	rexp  = (S16 *)(r + g_bf_length);
+	BYTE *rexp = (r + g_bf_length);
 
 	// check for overflow
 	hi_byte = r[g_bf_length-1];
@@ -1361,7 +1358,6 @@ bf_t norm_bf(bf_t r)
 		r[g_bf_length-1] = BYTE(hi_byte & 0x80 ? 0xFF : 0x00);
 		big_setS16(rexp, big_accessS16(rexp) + (S16)1);   // exp
 	}
-
 	// check for underflow
 	else
 	{
@@ -1406,13 +1402,13 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
 	int scale;
 	int fill_byte;
 	S16 rexp;
-	S16 *n1exp;
-	S16 *n2exp;
+	BYTE *n1exp;
+	BYTE *n2exp;
 
 	// scale n1 or n2
 	// compare exp's
-	n1exp = (S16 *)(n1 + g_bf_length);
-	n2exp = (S16 *)(n2 + g_bf_length);
+	n1exp = (n1 + g_bf_length);
+	n2exp = (n2 + g_bf_length);
 	if (big_accessS16(n1exp) > big_accessS16(n2exp))
 	{ // scale n2
 		scale = big_accessS16(n1exp) - big_accessS16(n2exp); // n1exp - n2exp
@@ -1473,8 +1469,8 @@ int cmp_bf(bf_t n1, bf_t n2)
 	int i;
 	int sign1;
 	int sign2;
-	S16 *n1exp;
-	S16 *n2exp;
+	BYTE *n1exp;
+	BYTE *n2exp;
 	U16 value1;
 	U16 value2;
 
@@ -1493,8 +1489,8 @@ int cmp_bf(bf_t n1, bf_t n2)
 	// signs are the same
 
 	// compare exponents, using signed comparisons
-	n1exp = (S16 *)(n1 + g_bf_length);
-	n2exp = (S16 *)(n2 + g_bf_length);
+	n1exp = (n1 + g_bf_length);
+	n2exp = (n2 + g_bf_length);
 	if (big_accessS16(n1exp) > big_accessS16(n2exp))
 	{
 		return sign1*(g_bf_length);
@@ -1541,7 +1537,7 @@ bool is_bf_not_zero(bf_t n)
 {
 	int bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	bool retval = is_bn_not_zero(n);
+	bool retval = is_bn_not_zero(bn_t(n));
 	g_bn_length = bnl;
 	return retval;
 }
@@ -1552,7 +1548,7 @@ bool is_bf_not_zero(bf_t n)
 bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2)
 {
 	int bnl;
-	S16 *rexp;
+	BYTE *rexp;
 
 	if (is_bf_zero(n1))
 	{
@@ -1565,12 +1561,12 @@ bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2)
 		return r;
 	}
 
-	rexp = (S16 *)(r + g_bf_length);
+	rexp = (r + g_bf_length);
 	big_setS16(rexp, adjust_bf_add(n1, n2));
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	add_bn(r, n1, n2);
+	add_bn(bn_t(r), bn_t(n1), bn_t(n2));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1597,7 +1593,7 @@ bf_t unsafe_add_a_bf(bf_t r, bf_t n)
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	add_a_bn(r, n);
+	add_a_bn(bn_t(r), bn_t(n));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1611,7 +1607,6 @@ bf_t unsafe_add_a_bf(bf_t r, bf_t n)
 bf_t unsafe_sub_bf(bf_t r, bf_t n1, bf_t n2)
 {
 	int bnl;
-	S16 *rexp;
 
 	if (is_bf_zero(n1))
 	{
@@ -1624,12 +1619,12 @@ bf_t unsafe_sub_bf(bf_t r, bf_t n1, bf_t n2)
 		return r;
 	}
 
-	rexp = (S16 *)(r + g_bf_length);
+	BYTE *rexp = (r + g_bf_length);
 	big_setS16(rexp, adjust_bf_add(n1, n2));
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	sub_bn(r, n1, n2);
+	sub_bn(bn_t(r), bn_t(n1), bn_t(n2));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1656,7 +1651,7 @@ bf_t unsafe_sub_a_bf(bf_t r, bf_t n)
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	sub_a_bn(r, n);
+	sub_a_bn(bn_t(r), bn_t(n));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1668,15 +1663,15 @@ bf_t unsafe_sub_a_bf(bf_t r, bf_t n)
 bf_t neg_bf(bf_t r, bf_t n)
 {
 	int bnl;
-	S16 *rexp, *nexp;
+	BYTE *rexp, *nexp;
 
-	rexp = (S16 *)(r + g_bf_length);
-	nexp = (S16 *)(n + g_bf_length);
+	rexp = (r + g_bf_length);
+	nexp = (n + g_bf_length);
 	big_setS16(rexp, big_accessS16(nexp)); // *rexp = *nexp;
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	neg_bn(r, n);
+	neg_bn(bn_t(r), bn_t(n));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1691,7 +1686,7 @@ bf_t neg_a_bf(bf_t r)
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	neg_a_bn(r);
+	neg_a_bn(bn_t(r));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1703,15 +1698,15 @@ bf_t neg_a_bf(bf_t r)
 bf_t double_bf(bf_t r, bf_t n)
 {
 	int bnl;
-	S16 *rexp, *nexp;
+	BYTE *rexp, *nexp;
 
-	rexp = (S16 *)(r + g_bf_length);
-	nexp = (S16 *)(n + g_bf_length);
+	rexp = (r + g_bf_length);
+	nexp = (n + g_bf_length);
 	big_setS16(rexp, big_accessS16(nexp)); // *rexp = *nexp;
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	double_bn(r, n);
+	double_bn(bn_t(r), bn_t(n));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1726,7 +1721,7 @@ bf_t double_a_bf(bf_t r)
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	double_a_bn(r);
+	double_a_bn(bn_t(r));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1738,15 +1733,15 @@ bf_t double_a_bf(bf_t r)
 bf_t half_bf(bf_t r, bf_t n)
 {
 	int bnl;
-	S16 *rexp, *nexp;
+	BYTE *rexp, *nexp;
 
-	rexp = (S16 *)(r + g_bf_length);
-	nexp = (S16 *)(n + g_bf_length);
+	rexp = (r + g_bf_length);
+	nexp = (n + g_bf_length);
 	big_setS16(rexp, big_accessS16(nexp)); // *rexp = *nexp;
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	half_bn(r, n);
+	half_bn(bn_t(r), bn_t(n));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1761,7 +1756,7 @@ bf_t half_a_bf(bf_t r)
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	half_a_bn(r);
+	half_a_bn(bn_t(r));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1777,9 +1772,9 @@ bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 {
 	int bnl;
 	int dbfl;
-	S16 *rexp;
-	S16 *n1exp;
-	S16 *n2exp;
+	BYTE *rexp;
+	BYTE *n1exp;
+	BYTE *n2exp;
 
 	if (is_bf_zero(n1) || is_bf_zero(n2))
 	{
@@ -1790,15 +1785,15 @@ bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 	}
 
 	dbfl = 2*g_bf_length; // double width g_bf_length
-	rexp  = (S16 *)(r + dbfl); // note: 2*g_bf_length
-	n1exp = (S16 *)(n1 + g_bf_length);
-	n2exp = (S16 *)(n2 + g_bf_length);
+	rexp  = (r + dbfl); // note: 2*g_bf_length
+	n1exp = (n1 + g_bf_length);
+	n2exp = (n2 + g_bf_length);
 	// add exp's
 	big_setS16(rexp, (S16)(big_accessS16(n1exp) + big_accessS16(n2exp)));
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	unsafe_full_mult_bn(r, n1, n2);
+	unsafe_full_mult_bn(bn_t(r), bn_t(n1), bn_t(n2));
 	g_bn_length = bnl;
 
 	// handle normalizing full mult on individual basis
@@ -1819,8 +1814,8 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 	int bfl;
 	int rl;
 	int rexp;
-	S16 *n1exp;
-	S16 *n2exp;
+	BYTE *n1exp;
+	BYTE *n2exp;
 
 	if (is_bf_zero(n1) || is_bf_zero(n2))
 	{
@@ -1828,8 +1823,8 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 		return r;
 	}
 
-	n1exp = (S16 *)(n1 + g_bf_length);
-	n2exp = (S16 *)(n2 + g_bf_length);
+	n1exp = (n1 + g_bf_length);
+	n2exp = (n2 + g_bf_length);
 	// add exp's
 	rexp = big_accessS16(n1exp) + big_accessS16(n2exp);
 
@@ -1839,7 +1834,7 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 	g_bn_length = g_bf_length;
 	rl = g_r_length;
 	g_r_length = g_rbf_length;
-	unsafe_mult_bn(r, n1, n2);
+	unsafe_mult_bn(bn_t(r), bn_t(n1), bn_t(n2));
 	g_bn_length = bnl;
 	g_r_length = rl;
 
@@ -1867,8 +1862,6 @@ bf_t unsafe_full_square_bf(bf_t r, bf_t n)
 {
 	int bnl;
 	int dbfl;
-	S16 *rexp;
-	S16 *nexp;
 
 	if (is_bf_zero(n))
 	{
@@ -1879,13 +1872,13 @@ bf_t unsafe_full_square_bf(bf_t r, bf_t n)
 	}
 
 	dbfl = 2*g_bf_length; // double width g_bf_length
-	rexp  = (S16 *)(r + dbfl); // note: 2*g_bf_length
-	nexp = (S16 *)(n + g_bf_length);
+	BYTE *rexp  = (r + dbfl); // note: 2*g_bf_length
+	BYTE *nexp = (n + g_bf_length);
 	big_setS16(rexp, 2*big_accessS16(nexp));
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	unsafe_full_square_bn(r, n);
+	unsafe_full_square_bn(bn_t(r), bn_t(n));
 	g_bn_length = bnl;
 
 	// handle normalizing full mult on individual basis
@@ -1912,7 +1905,6 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 	int bfl;
 	int rl;
 	int rexp;
-	S16 *nexp;
 
 	if (is_bf_zero(n))
 	{
@@ -1920,14 +1912,14 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 		return r;
 	}
 
-	nexp = (S16 *)(n + g_bf_length);
+	BYTE *nexp = (n + g_bf_length);
 	rexp = (S16)(2*big_accessS16(nexp));
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
 	rl = g_r_length;
 	g_r_length = g_rbf_length;
-	unsafe_square_bn(r, n);
+	unsafe_square_bn(bn_t(r), bn_t(n));
 	g_bn_length = bnl;
 	g_r_length = rl;
 
@@ -1949,10 +1941,9 @@ bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
 {
 	int positive;
 	int bnl;
-	S16 *rexp, *nexp;
 
-	rexp = (S16 *)(r + g_bf_length);
-	nexp = (S16 *)(n + g_bf_length);
+	BYTE *rexp = (r + g_bf_length);
+	BYTE *nexp = (n + g_bf_length);
 	big_setS16(rexp, big_accessS16(nexp)); // *rexp = *nexp;
 
 	positive = !is_bf_neg(n);
@@ -1970,7 +1961,7 @@ bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	mult_bn_int(r, n, u);
+	mult_bn_int(bn_t(r), bn_t(n), u);
 	g_bn_length = bnl;
 
 	norm_sign_bf(r, positive);
@@ -1983,16 +1974,15 @@ bf_t mult_a_bf_int(bf_t r, U16 u)
 {
 	int positive;
 	int bnl;
-	S16 *rexp;
 
-	rexp = (S16 *)(r + g_bf_length);
+	BYTE *rexp = (r + g_bf_length);
 	positive = !is_bf_neg(r);
 
-/*
-if u > 0x00FF, then the integer part of the mantissa will overflow the
-2 byte (16 bit) integer size.  Therefore, make adjustment before
-multiplication is performed.
-*/
+	/*
+	if u > 0x00FF, then the integer part of the mantissa will overflow the
+	2 byte (16 bit) integer size.  Therefore, make adjustment before
+	multiplication is performed.
+	*/
 	if (u > 0x00FF)
 	{ // un-normalize n
 		memmove(r, r + 1, g_bf_length-1);  // this sign extends as well
@@ -2001,7 +1991,7 @@ multiplication is performed.
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	mult_a_bn_int(r, u);
+	mult_a_bn_int(bn_t(r), u);
 	g_bn_length = bnl;
 
 	norm_sign_bf(r, positive);
@@ -2013,7 +2003,6 @@ multiplication is performed.
 bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u)
 {
 	int bnl;
-	S16 *rexp, *nexp;
 
 	if (u == 0) // division by zero
 	{
@@ -2025,13 +2014,13 @@ bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u)
 		return r;
 	}
 
-	rexp = (S16 *)(r + g_bf_length);
-	nexp = (S16 *)(n + g_bf_length);
+	BYTE *rexp = (r + g_bf_length);
+	BYTE *nexp = (n + g_bf_length);
 	big_setS16(rexp, big_accessS16(nexp)); // *rexp = *nexp;
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	unsafe_div_bn_int(r, n, u);
+	unsafe_div_bn_int(bn_t(r), bn_t(n), u);
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -2060,7 +2049,7 @@ bf_t div_a_bf_int(bf_t r, U16 u)
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	div_a_bn_int(r, u);
+	div_a_bn_int(bn_t(r), u);
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -2254,7 +2243,7 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
 	{
 		// pretend it's a bn_t instead of a bf_t
 		// this leaves n un-normalized, which is what we want here
-		mult_a_bn_int(n, 10);
+		mult_a_bn_int(bn_t(n), 10);
 
 		r[d] = *onesbyte;
 		if (d == 1 && r[d] == 0)

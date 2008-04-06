@@ -15,7 +15,7 @@ static Halley s_halley;
 
 static double modulus(const ComplexD &z)
 {
-	return sqr(z.x) + sqr(z.y);
+	return sqr(z.real()) + sqr(z.imag());
 }
 
 bool halley_setup()
@@ -104,27 +104,27 @@ int Halley::orbit()
 	FPUcplxmul(&g_old_z, &XtoA, &XtoAplusOne);
 
 	CMPLXsub(XtoAplusOne, g_old_z, FX);        // FX = X^(a + 1) - X = F
-	F2prime.x = m_a_plus_1_degree*XtoAlessOne.x; // g_a_plus_1_degree in setup
-	F2prime.y = m_a_plus_1_degree*XtoAlessOne.y;        // F"
+	F2prime.real(m_a_plus_1_degree*XtoAlessOne.real()); // g_a_plus_1_degree in setup
+	F2prime.imag(m_a_plus_1_degree*XtoAlessOne.imag());        // F"
 
-	F1prime.x = m_a_plus_1*XtoA.x - 1.0;
-	F1prime.y = m_a_plus_1*XtoA.y;                             // F'
+	F1prime.real(m_a_plus_1*XtoA.real() - 1.0);
+	F1prime.imag(m_a_plus_1*XtoA.imag());                             // F'
 
 	FPUcplxmul(&F2prime, &FX, &Halnumer1);                  // F*F"
-	Haldenom.x = F1prime.x + F1prime.x;
-	Haldenom.y = F1prime.y + F1prime.y;                     // 2*F'
+	Haldenom.real(F1prime.real() + F1prime.real());
+	Haldenom.imag(F1prime.imag() + F1prime.imag());                     // 2*F'
 
 	FPUcplxdiv(&Halnumer1, &Haldenom, &Halnumer1);         // F"F/2F'
 	CMPLXsub(F1prime, Halnumer1, Halnumer2);          // F' - F"F/2F'
 	FPUcplxdiv(&FX, &Halnumer2, &Halnumer2);
 	// g_parameter.imag() is relaxation coef.
-	// new.x = g_old_z.real() - (g_parameter.imag()*Halnumer2.x);
-	// new.y = g_old_z.imag() - (g_parameter.imag()*Halnumer2.y);
-	relax.x = g_parameter.imag();
-	relax.y = g_parameters[P2_IMAG];
+	// new.real(g_old_z.real() - (g_parameter.imag()*Halnumer2.real()));
+	// new.imag(g_old_z.imag() - (g_parameter.imag()*Halnumer2.imag()));
+	relax.real(g_parameter.imag());
+	relax.imag(g_parameters[P2_IMAG]);
 	FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
-	g_new_z.real(g_old_z.real() - Halnumer2.x);
-	g_new_z.imag(g_old_z.imag() - Halnumer2.y);
+	g_new_z.real(g_old_z.real() - Halnumer2.real());
+	g_new_z.imag(g_old_z.imag() - Halnumer2.imag());
 	return bail_out();
 }
 

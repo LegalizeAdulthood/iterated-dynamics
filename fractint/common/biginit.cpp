@@ -33,45 +33,45 @@ int g_rbf_length = 0;
 int g_bf_decimals = 0;
 
 // used internally by bignum.c routines
-static char s_storage[4096];
-static bn_t bnroot = 0;
-static bn_t stack_ptr = 0;			// memory allocator base after global variables
-bn_t bntmp1 = 0;
-bn_t bntmp2 = 0;
-bn_t bntmp3 = 0;
-bn_t bntmp4 = 0;
-bn_t bntmp5 = 0;
-bn_t bntmp6 = 0;						// g_r_length
-bn_t bntmpcpy1 = 0;
-bn_t bntmpcpy2 = 0;					// g_bn_length
+static unsigned char s_storage[4096];
+static bn_t bnroot;
+static bn_t stack_ptr;			// memory allocator base after global variables
+bn_t bntmp1;
+bn_t bntmp2;
+bn_t bntmp3;
+bn_t bntmp4;
+bn_t bntmp5;
+bn_t bntmp6;					// g_r_length
+bn_t bntmpcpy1;
+bn_t bntmpcpy2;					// g_bn_length
 
 // used by other routines
-bn_t bnxmin = 0;
-bn_t bnxmax = 0;
-bn_t bnymin = 0;
-bn_t bnymax = 0;
-bn_t bnx3rd = 0;
-bn_t bny3rd = 0;						// g_bn_length
-bn_t bnxdel = 0;
-bn_t bnydel = 0;
-bn_t bnxdel2 = 0;
-bn_t bnydel2 = 0;
-bn_t bnclosenuff = 0;				// g_bn_length
-bn_t bntmpsqrx = 0;
-bn_t bntmpsqry = 0;
-bn_t bntmp = 0;						// g_r_length
-ComplexBigNum g_old_z_bn = { 0, 0 };
-ComplexBigNum bnparm = { 0, 0 };
-ComplexBigNum bnsaved = { 0, 0 };		// g_bn_length
-ComplexBigNum g_new_z_bn = { 0, 0 };		// g_r_length
-bn_t bn_pi = 0;						// TAKES NO SPACE
+bn_t bnxmin;
+bn_t bnxmax;
+bn_t bnymin;
+bn_t bnymax;
+bn_t bnx3rd;
+bn_t bny3rd;					// g_bn_length
+bn_t bnxdel;
+bn_t bnydel;
+bn_t bnxdel2;
+bn_t bnydel2;
+bn_t bnclosenuff;				// g_bn_length
+bn_t bntmpsqrx;
+bn_t bntmpsqry;
+bn_t bntmp;						// g_r_length
+ComplexBigNum g_old_z_bn;
+ComplexBigNum bnparm;
+ComplexBigNum bnsaved;			// g_bn_length
+ComplexBigNum g_new_z_bn;		// g_r_length
+bn_t bn_pi;						// TAKES NO SPACE
 
 bf_t bftmp1 = 0;
 bf_t bftmp2 = 0;
 bf_t bftmp3 = 0;
 bf_t bftmp4 = 0;
 bf_t bftmp5 = 0;
-bf_t bftmp6 = 0;						// g_rbf_length + 2
+bf_t bftmp6 = 0;					// g_rbf_length + 2
 bf_t bftmpcpy1 = 0;
 bf_t bftmpcpy2 = 0;					// g_rbf_length + 2
 bf_t bfxdel = 0;
@@ -82,13 +82,13 @@ bf_t bfclosenuff = 0;				// g_rbf_length + 2
 bf_t bftmpsqrx = 0;
 bf_t bftmpsqry = 0;					// g_rbf_length + 2
 ComplexBigFloat bfparm = {0, 0};			// g_bf_length + 2
-										// g_bf_length + 2
+									// g_bf_length + 2
 ComplexBigFloat bfsaved = {0, 0};		// g_old_z_bf,  g_new_z_bf,
-										// g_bf_length + 2
+									// g_bf_length + 2
 ComplexBigFloat g_old_z_bf = {0, 0};
 ComplexBigFloat g_new_z_bf = {0, 0};			// g_rbf_length + 2
 bf_t bf_pi = 0;						// TAKES NO SPACE
-bf_t big_pi = 0;						// g_bf_length + 2
+bf_t big_pi = 0;					// g_bf_length + 2
 
 // for testing only
 
@@ -98,8 +98,8 @@ bf_t g_sx_max_bf = 0;
 bf_t g_sy_min_bf = 0;
 bf_t g_sy_max_bf = 0;
 bf_t g_sx_3rd_bf = 0;
-bf_t g_sy_3rd_bf = 0;					// g_bf_length + 2
-bf_t bfparms[10];						// (g_bf_length + 2)*10
+bf_t g_sy_3rd_bf = 0;				// g_bf_length + 2
+bf_t bfparms[10];					// (g_bf_length + 2)*10
 bf_t bftmp = 0;
 
 bf_t bf10tmp = 0;					// dec + 4
@@ -140,7 +140,7 @@ int g_bf_save_len = 0;
 
 static big_t advance_ptr(long &ptr, int length)
 {
-	big_t result = bnroot + ptr;
+	big_t result = bnroot.storage() + ptr;
 	ptr += length;
 	return result;
 }
@@ -171,7 +171,7 @@ static void init_bf_2()
 
 	calculate_bignum_lengths();
 
-	bnroot = (bf_t) &s_storage[0];
+	bnroot = bn_t(&s_storage[0]);
 
 	/* at present time one call would suffice, but this logic allows
 		multiple kinds of alternate math eg long double */
@@ -191,50 +191,50 @@ static void init_bf_2()
 	// Now split up the memory among the pointers
 	// internal pointers
 	long ptr = 0;
-	bntmp1     = advance_ptr_r_length(ptr);
-	bntmp2     = advance_ptr_r_length(ptr);
-	bntmp3     = advance_ptr_r_length(ptr);
-	bntmp4     = advance_ptr_r_length(ptr);
-	bntmp5     = advance_ptr_r_length(ptr);
-	bntmp6     = advance_ptr_r_length(ptr);
+	bntmp1 = bn_t(advance_ptr_r_length(ptr));
+	bntmp2 = bn_t(advance_ptr_r_length(ptr));
+	bntmp3 = bn_t(advance_ptr_r_length(ptr));
+	bntmp4 = bn_t(advance_ptr_r_length(ptr));
+	bntmp5 = bn_t(advance_ptr_r_length(ptr));
+	bntmp6 = bn_t(advance_ptr_r_length(ptr));
 
-	bftmp1     = advance_ptr_rbf_length_plus_2(ptr);
-	bftmp2     = advance_ptr_rbf_length_plus_2(ptr);
-	bftmp3     = advance_ptr_rbf_length_plus_2(ptr);
-	bftmp4     = advance_ptr_rbf_length_plus_2(ptr);
-	bftmp5     = advance_ptr_rbf_length_plus_2(ptr);
-	bftmp6     = advance_ptr_rbf_length_plus_2(ptr);
+	bftmp1 = advance_ptr_rbf_length_plus_2(ptr);
+	bftmp2 = advance_ptr_rbf_length_plus_2(ptr);
+	bftmp3 = advance_ptr_rbf_length_plus_2(ptr);
+	bftmp4 = advance_ptr_rbf_length_plus_2(ptr);
+	bftmp5 = advance_ptr_rbf_length_plus_2(ptr);
+	bftmp6 = advance_ptr_rbf_length_plus_2(ptr);
 
-	bftmpcpy1  = advance_ptr(ptr, (g_rbf_length + 2)*2);
-	bftmpcpy2  = advance_ptr(ptr, (g_rbf_length + 2)*2);
+	bftmpcpy1 = advance_ptr(ptr, (g_rbf_length + 2)*2);
+	bftmpcpy2 = advance_ptr(ptr, (g_rbf_length + 2)*2);
 
-	bntmpcpy1  = advance_ptr(ptr, g_r_length*2);
-	bntmpcpy2  = advance_ptr(ptr, g_r_length*2);
+	bntmpcpy1 = bn_t(advance_ptr(ptr, g_r_length*2));
+	bntmpcpy2 = bn_t(advance_ptr(ptr, g_r_length*2));
 
 	if (g_bf_math == BIGNUM)
 	{
-		bnxmin     = advance_ptr_bn_length(ptr);
-		bnxmax     = advance_ptr_bn_length(ptr);
-		bnymin     = advance_ptr_bn_length(ptr);
-		bnymax     = advance_ptr_bn_length(ptr);
-		bnx3rd     = advance_ptr_bn_length(ptr);
-		bny3rd     = advance_ptr_bn_length(ptr);
-		bnxdel     = advance_ptr_bn_length(ptr);
-		bnydel     = advance_ptr_bn_length(ptr);
-		bnxdel2    = advance_ptr_bn_length(ptr);
-		bnydel2    = advance_ptr_bn_length(ptr);
-		g_old_z_bn.x    = advance_ptr_r_length(ptr);
-		g_old_z_bn.y    = advance_ptr_r_length(ptr);
-		g_new_z_bn.x    = advance_ptr_r_length(ptr);
-		g_new_z_bn.y    = advance_ptr_r_length(ptr);
-		bnsaved.x  = advance_ptr_bn_length(ptr);
-		bnsaved.y  = advance_ptr_bn_length(ptr);
-		bnclosenuff = advance_ptr_bn_length(ptr);
-		bnparm.x   = advance_ptr_bn_length(ptr);
-		bnparm.y   = advance_ptr_bn_length(ptr);
-		bntmpsqrx  = advance_ptr_r_length(ptr);
-		bntmpsqry  = advance_ptr_r_length(ptr);
-		bntmp      = advance_ptr_r_length(ptr);
+		bnxmin = bn_t(advance_ptr_bn_length(ptr));
+		bnxmax = bn_t(advance_ptr_bn_length(ptr));
+		bnymin = bn_t(advance_ptr_bn_length(ptr));
+		bnymax = bn_t(advance_ptr_bn_length(ptr));
+		bnx3rd = bn_t(advance_ptr_bn_length(ptr));
+		bny3rd = bn_t(advance_ptr_bn_length(ptr));
+		bnxdel = bn_t(advance_ptr_bn_length(ptr));
+		bnydel = bn_t(advance_ptr_bn_length(ptr));
+		bnxdel2 = bn_t(advance_ptr_bn_length(ptr));
+		bnydel2 = bn_t(advance_ptr_bn_length(ptr));
+		g_old_z_bn.real(bn_t(advance_ptr_r_length(ptr)));
+		g_old_z_bn.imag(bn_t(advance_ptr_r_length(ptr)));
+		g_new_z_bn.real(bn_t(advance_ptr_r_length(ptr)));
+		g_new_z_bn.imag(bn_t(advance_ptr_r_length(ptr)));
+		bnsaved.real(bn_t(advance_ptr_bn_length(ptr)));
+		bnsaved.imag(bn_t(advance_ptr_bn_length(ptr)));
+		bnclosenuff = bn_t(advance_ptr_bn_length(ptr));
+		bnparm.real(bn_t(advance_ptr_bn_length(ptr)));
+		bnparm.imag(bn_t(advance_ptr_bn_length(ptr)));
+		bntmpsqrx = bn_t(advance_ptr_r_length(ptr));
+		bntmpsqry = bn_t(advance_ptr_r_length(ptr));
+		bntmp = bn_t(advance_ptr_r_length(ptr));
 	}
 	if (g_bf_math == BIGFLT)
 	{
@@ -242,15 +242,15 @@ static void init_bf_2()
 		bfydel     = advance_ptr_bf_length_plus_2(ptr);
 		bfxdel2    = advance_ptr_bf_length_plus_2(ptr);
 		bfydel2    = advance_ptr_bf_length_plus_2(ptr);
-		g_old_z_bf.x    = advance_ptr_rbf_length_plus_2(ptr);
-		g_old_z_bf.y    = advance_ptr_rbf_length_plus_2(ptr);
-		g_new_z_bf.x    = advance_ptr_rbf_length_plus_2(ptr);
-		g_new_z_bf.y    = advance_ptr_rbf_length_plus_2(ptr);
-		bfsaved.x  = advance_ptr_bf_length_plus_2(ptr);
-		bfsaved.y  = advance_ptr_bf_length_plus_2(ptr);
+		g_old_z_bf.real(advance_ptr_rbf_length_plus_2(ptr));
+		g_old_z_bf.imag(advance_ptr_rbf_length_plus_2(ptr));
+		g_new_z_bf.real(advance_ptr_rbf_length_plus_2(ptr));
+		g_new_z_bf.imag(advance_ptr_rbf_length_plus_2(ptr));
+		bfsaved.real(advance_ptr_bf_length_plus_2(ptr));
+		bfsaved.imag(advance_ptr_bf_length_plus_2(ptr));
 		bfclosenuff = advance_ptr_bf_length_plus_2(ptr);
-		bfparm.x   = advance_ptr_bf_length_plus_2(ptr);
-		bfparm.y   = advance_ptr_bf_length_plus_2(ptr);
+		bfparm.real(advance_ptr_bf_length_plus_2(ptr));
+		bfparm.imag(advance_ptr_bf_length_plus_2(ptr));
 		bftmpsqrx  = advance_ptr_rbf_length_plus_2(ptr);
 		bftmpsqry  = advance_ptr_rbf_length_plus_2(ptr);
 		big_pi     = advance_ptr_bf_length_plus_2(ptr);
@@ -261,7 +261,7 @@ static void init_bf_2()
 	// ptr needs to be 16-bit aligned on some systems
 	ptr = (ptr + 1) & ~1;
 
-	stack_ptr  = bnroot + ptr;
+	stack_ptr  = bn_t(bnroot, ptr);
 	startstack = ptr;
 
 	// max stack offset from bnroot
@@ -288,7 +288,7 @@ static void init_bf_2()
 	g_escape_time_state.m_grid_bf.y_3rd()     = advance_ptr_bf_length_plus_2(ptr);
 	for (int i = 0; i < 10; i++)
 	{
-		bfparms[i]  = bnroot + ptr;
+		bfparms[i]  = bnroot.storage() + ptr;
 		ptr += g_bf_length + 2;
 	}
 	g_sx_min_bf    = advance_ptr_bf_length_plus_2(ptr);
@@ -302,14 +302,14 @@ static void init_bf_2()
 	// good citizens initialize variables
 	if (g_bf_save_len)  // leave save area
 	{
-		memset(bnroot + (g_bf_save_len + 2)*22, 0, (unsigned)(startstack-(g_bf_save_len + 2)*22));
+		memset(bnroot.storage() + (g_bf_save_len + 2)*22, 0, (unsigned)(startstack-(g_bf_save_len + 2)*22));
 	}
 	else // first time through - nothing saved
 	{
 		// high variables
-		memset(bnroot + maxstack, 0, (g_bf_length + 2)*22);
+		memset(bnroot.storage() + maxstack, 0, (g_bf_length + 2)*22);
 		// low variables
-		memset(bnroot, 0, (unsigned)startstack);
+		memset(bnroot.storage(), 0, (unsigned)startstack);
 	}
 
 	restore_bf_vars();
@@ -328,11 +328,11 @@ static int save_bf_vars()
 {
 	int ret;
 	unsigned int mem;
-	if (bnroot != 0)
+	if (bnroot.storage() != 0)
 	{
 		mem = (g_bf_length + 2)*22;  // 6 corners + 6 save corners + 10 params
 		g_bf_save_len = g_bf_length;
-		memcpy(bnroot, g_escape_time_state.m_grid_bf.x_min(), mem);
+		memcpy(bnroot.storage(), g_escape_time_state.m_grid_bf.x_min(), mem);
 		// scrub old high area
 		memset(g_escape_time_state.m_grid_bf.x_min(), 0, mem);
 		ret = 0;
@@ -355,7 +355,7 @@ static int restore_bf_vars()
 	{
 		return -1;
 	}
-	ptr  = bnroot;
+	ptr  = bnroot.storage();
 	convert_bf(g_escape_time_state.m_grid_bf.x_min(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
 	convert_bf(g_escape_time_state.m_grid_bf.x_max(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
 	convert_bf(g_escape_time_state.m_grid_bf.y_min(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
@@ -375,7 +375,7 @@ static int restore_bf_vars()
 	convert_bf(g_sy_3rd_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
 
 	// scrub save area
-	memset(bnroot, 0, (g_bf_save_len + 2)*22);
+	memset(bnroot.storage(), 0, (g_bf_save_len + 2)*22);
 	return 0;
 }
 
@@ -401,7 +401,7 @@ void free_bf_vars()
 // Memory allocator routines start here.
 /************************************************************************/
 // Allocates a bn_t variable on stack
-bn_t alloc_stack(size_t size)
+big_t alloc_stack(size_t size)
 {
 	long stack_addr;
 	if (g_bf_math == 0)
@@ -409,7 +409,7 @@ bn_t alloc_stack(size_t size)
 		stop_message(STOPMSG_NORMAL, "alloc_stack called with g_bf_math == 0");
 		return 0;
 	}
-	stack_addr = long(stack_ptr - bnroot + size); // part of bnroot
+	stack_addr = long(stack_ptr.storage() - bnroot.storage() + size); // part of bnroot
 
 	if (stack_addr > maxstack)
 	{
@@ -421,15 +421,15 @@ bn_t alloc_stack(size_t size)
 	{
 		g_bn_max_stack = stack_addr;
 	}
-	stack_ptr += size;   // increment stack pointer
-	return stack_ptr - size;
+	stack_ptr = bn_t(stack_ptr, int(size));
+	return stack_ptr.storage() - size;
 }
 
 /************************************************************************/
 // Returns stack pointer offset so it can be saved.
 int save_stack()
 {
-	return int(stack_ptr - bnroot);
+	return int(stack_ptr.storage() - bnroot.storage());
 }
 
 /************************************************************************/
@@ -437,7 +437,7 @@ int save_stack()
 // allocated since save_stack()
 void restore_stack(int old_offset)
 {
-	stack_ptr  = bnroot + old_offset;
+	stack_ptr = bn_t(bnroot, old_offset);
 }
 
 /************************************************************************/
@@ -598,6 +598,5 @@ void init_big_pi()
 
 	// notice that bf_pi and bn_pi can share the same memory space
 	bf_pi = big_pi;
-	bn_pi = big_pi + (g_bf_length-2) - (g_bn_length-g_int_length);
-	return;
+	bn_pi = bn_t(big_pi + (g_bf_length-2) - (g_bn_length-g_int_length));
 }

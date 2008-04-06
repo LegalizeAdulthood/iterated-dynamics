@@ -11,6 +11,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "biginit.h"
 #include "calcfrac.h"
 #include "drivers.h"
 #include "Externals.h"

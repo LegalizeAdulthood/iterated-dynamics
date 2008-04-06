@@ -31,28 +31,28 @@ void calculate_mandelbrot_start_fp_asm()
 
 static long OutsideColorModeInverseTangent(ComplexD const &new_z)
 {
-	return long(fabs(atan2(new_z.y, new_z.x)*g_externs.AtanColors()/MathUtil::Pi));
+	return long(fabs(atan2(new_z.imag(), new_z.real())*g_externs.AtanColors()/MathUtil::Pi));
 }
 
 static long OutsideColorModeSum(long color_iter, ComplexD const &new_z)
 {
-	return color_iter + long(new_z.x + new_z.y);
+	return color_iter + long(new_z.real() + new_z.imag());
 }
 
 static long OutsideColorModeMultiply(long color_iter, ComplexD const &new_z)
 {
-	return (new_z.y != 0.0) ?
-		long(double(color_iter)*(new_z.x/new_z.y)) : color_iter;
+	return (new_z.imag() != 0.0) ?
+		long(double(color_iter)*(new_z.real()/new_z.imag())) : color_iter;
 }
 
 static long OutsideColorModeImaginary(long color_iter, ComplexD const &new_z)
 {
-	return color_iter + long(new_z.y + 7);
+	return color_iter + long(new_z.imag() + 7);
 }
 
 static long OutsideColorModeReal(long color_iter, ComplexD const &new_z)
 {
-	return color_iter + long(new_z.x + 7);
+	return color_iter + long(new_z.real() + 7);
 }
 
 long calculate_mandelbrot_fp_asm()

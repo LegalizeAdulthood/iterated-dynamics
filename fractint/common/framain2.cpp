@@ -16,6 +16,7 @@
 #include "helpdefs.h"
 
 #include "ant.h"
+#include "biginit.h"
 #include "Browse.h"
 #include "calcfrac.h"
 #include "diskvid.h"
@@ -615,8 +616,8 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 			g_escape_time_state.m_grid_fp.x_3rd() = g_current_fractal_specific->x_min;
 			g_escape_time_state.m_grid_fp.y_3rd() = g_current_fractal_specific->y_min;
 		}
-		g_save_c.x = g_parameters[P1_REAL];
-		g_save_c.y = g_parameters[P1_IMAG];
+		g_save_c.real(g_parameters[P1_REAL]);
+		g_save_c.imag(g_parameters[P1_IMAG]);
 		g_parameters[P1_REAL] = 0;
 		g_parameters[P1_IMAG] = 0;
 		g_zoom_off = true;

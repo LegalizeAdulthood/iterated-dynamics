@@ -8,11 +8,13 @@
 template <typename T>
 struct ComplexT
 {
-	T x, y;
-	T real() const { return x; }
-	T imag() const { return y; }
-	T real(T right) { return (x = right); }
-	T imag(T right) { return (y = right); }
+	T real() const { return _real; }
+	T imag() const { return _imag; }
+	T real(T right) { return (_real = right); }
+	T imag(T right) { return (_imag = right); }
+
+	T _real;
+	T _imag;
 };
 
 template <class Type>
@@ -35,12 +37,30 @@ bool operator==(const Type &left, const ComplexT<Type> &right)
 template <typename T>
 struct HyperComplexT : public ComplexT<T>
 {
-	T z, t;
+public:
+	T z() { return _z; }
+	T t() { return _t; }
+	T z(T value) { return (_z = value); }
+	T t(T value) { return (_t = value); }
+private:
+	T _z, _t;
 };
 
-typedef struct ComplexT<double> ComplexD;
-typedef struct ComplexT<long> ComplexL;
-typedef struct HyperComplexT<double> HyperComplexD;
+template <typename T>
+class InitializedComplexT : public ComplexT<T>
+{
+public:
+	InitializedComplexT(T re, T im) : ComplexT()
+	{
+		real(re);
+		imag(im);
+	}
+};
+
+typedef ComplexT<double> ComplexD;
+typedef InitializedComplexT<double> InitializedComplexD;
+typedef ComplexT<long> ComplexL;
+typedef HyperComplexT<double> HyperComplexD;
 
 inline double FudgeToDouble(long x)
 {

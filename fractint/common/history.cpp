@@ -329,8 +329,8 @@ void history_save_info()
 	current.function_index[2] = g_function_index[2];
 	current.function_index[3] = g_function_index[3];
 	current.finite_attractor = g_finite_attractor;
-	current.initial_orbit_z[0] = g_initial_orbit_z.x;
-	current.initial_orbit_z[1] = g_initial_orbit_z.y;
+	current.initial_orbit_z[0] = g_initial_orbit_z.real();
+	current.initial_orbit_z[1] = g_initial_orbit_z.imag();
 	current.use_initial_orbit_z = g_externs.UseInitialOrbitZ();
 	current.periodicity = g_periodicity_check;
 	current.potential_16bit = g_disk_16bit;
@@ -501,8 +501,8 @@ void history_restore_info()
 	g_function_index[2] = last.function_index[2];
 	g_function_index[3] = last.function_index[3];
 	g_finite_attractor = last.finite_attractor;
-	g_initial_orbit_z.x = last.initial_orbit_z[0];
-	g_initial_orbit_z.y = last.initial_orbit_z[1];
+	g_initial_orbit_z.real(last.initial_orbit_z[0]);
+	g_initial_orbit_z.imag(last.initial_orbit_z[1]);
 	g_externs.SetUseInitialOrbitZ(InitialZType(last.use_initial_orbit_z));
 	g_periodicity_check = last.periodicity;
 	g_user_periodicity_check = last.periodicity;

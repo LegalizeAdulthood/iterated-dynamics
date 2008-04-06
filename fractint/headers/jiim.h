@@ -1,6 +1,10 @@
 #if !defined(JIIM_H)
 #define JIIM_H
 
+#include "cmplx.h"
+
+extern InitializedComplexD	g_save_c;
+
 extern void Jiim(bool which);
 extern ComplexL PopLong();
 extern ComplexD PopFloat();

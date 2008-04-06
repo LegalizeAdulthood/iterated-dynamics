@@ -18,6 +18,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 
+#include "biginit.h"
 #include "calcfrac.h"
 #include "drivers.h"
 #include "Externals.h"
@@ -1517,8 +1518,8 @@ void get_julia_attractor(double real, double imag)
 				}
 				else
 				{
-					if (fabs(result.x - g_new_z.real()) < g_close_enough
-						&& fabs(result.y - g_new_z.imag()) < g_close_enough)
+					if (fabs(result.real() - g_new_z.real()) < g_close_enough
+						&& fabs(result.imag() - g_new_z.imag()) < g_close_enough)
 					{
 						g_attractors[g_num_attractors] = g_new_z;
 						g_attractor_period[g_num_attractors] = i + 1;

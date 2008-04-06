@@ -11,6 +11,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 
+#include "biginit.h"
 #include "calcfrac.h"
 #include "drivers.h"
 #include "EscapeTime.h"
@@ -167,8 +168,8 @@ static void read_info_version_3(const fractal_info &read_info)
 		g_function_index[2] = read_info.function_index[2];
 		g_function_index[3] = read_info.function_index[3];
 		g_finite_attractor = read_info.finattract;
-		g_initial_orbit_z.x = read_info.initial_orbit_z[0];
-		g_initial_orbit_z.y = read_info.initial_orbit_z[1];
+		g_initial_orbit_z.real(read_info.initial_orbit_z[0]);
+		g_initial_orbit_z.imag(read_info.initial_orbit_z[1]);
 		g_externs.SetUseInitialOrbitZ(InitialZType(read_info.use_initial_orbit_z));
 		g_user_periodicity_check = read_info.periodicity;
 	}

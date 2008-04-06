@@ -270,8 +270,8 @@ static int z_line(long x, long y)
 	{
 		g_old_z_l.real(s_jx);
 		g_old_z_l.imag(s_jy);
-		s_jbc.x = s_mx;
-		s_jbc.y = s_my;
+		s_jbc.real(s_mx);
+		s_jbc.imag(s_my);
 		if (driver_key_pressed())
 		{
 			return -1;
@@ -357,8 +357,8 @@ static int z_line_fp(double x, double y)
 		{
 			g_old_z.real(0.0);
 			g_old_z.imag(0.0);
-			s_jbc_fp.x = 0.0;
-			s_jbc_fp.y = 0.0;
+			s_jbc_fp.real(0.0);
+			s_jbc_fp.imag(0.0);
 			g_c_quaternion = QuaternionD(s_jx_fp, s_jy_fp, s_mx_fp, s_my_fp);
 		}
 #ifdef XFRACT

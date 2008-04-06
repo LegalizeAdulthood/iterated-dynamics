@@ -7,11 +7,13 @@
 #include "externs.h"
 #include "prototyp.h"
 
+#include "biginit.h"
 #include "Externals.h"
 #include "fractals.h"
 #include "framain2.h"
 #include "fimain.h"
 #include "gifview.h"
+#include "jiim.h"
 #include "line3d.h"
 #include "ViewWindow.h"
 
@@ -355,8 +357,8 @@ public:
 	virtual void SetLxPixel(PixelFunctionL *value)				{ _lxPixel = value; }
 	virtual long LyPixel()										{ assert(_lyPixel); return _lyPixel(); }
 	virtual void SetLyPixel(PixelFunctionL *value)				{ _lyPixel = value; }
-	virtual ComplexL LPixel()									{ ComplexL pixel; pixel.x = LxPixel(); pixel.y = LyPixel(); return pixel; }
-	virtual ComplexD DPixel()									{ ComplexD pixel; pixel.x = DxPixel(); pixel.y = DyPixel(); return pixel; }
+	virtual ComplexL LPixel()									{ ComplexL pixel; pixel.real(LxPixel()); pixel.imag(LyPixel()); return pixel; }
+	virtual ComplexD DPixel()									{ ComplexD pixel; pixel.real(DxPixel()); pixel.imag(DyPixel()); return pixel; }
 
 	virtual TrigFunction *Trig0L() const						{ return g_trig0_l; }
 	virtual void SetTrig0L(TrigFunction *value)					{ g_trig0_l = value; }
@@ -575,7 +577,7 @@ public:
 	virtual long SaveBase() const								{ return g_save_base; }
 	virtual void SetSaveBase(long value)						{ g_save_base = value; }
 	virtual ComplexD SaveC() const								{ return g_save_c; }
-	virtual void SetSaveC(ComplexD value)						{ g_save_c = value; }
+	virtual void SetSaveC(ComplexD value)						{ g_save_c.real(value.real()); g_save_c.imag(value.imag()); }
 	virtual long SaveTicks() const								{ return g_save_ticks; }
 	virtual void SetSaveTicks(long value)						{ g_save_ticks = value; }
 	virtual int SaveRelease() const								{ return g_save_release; }

@@ -35,10 +35,10 @@ ComplexD ComplexPower(ComplexD const &xx, ComplexD const &yy)
 		goes here TIW 3/95 */
 	if (!g_use_old_complex_power)
 	{
-		if (xx.x == 0 && xx.y == 0)
+		if (xx.real() == 0 && xx.imag() == 0)
 		{
-			z.x = 0.0;
-			z.y = 0.0;
+			z.real(0.0);
+			z.imag(0.0);
 			return z;
 		}
 	}
@@ -51,7 +51,7 @@ ComplexD ComplexPower(ComplexD const &xx, ComplexD const &yy)
 
 inline void Sqrtz(ComplexD z, ComplexD *rz)
 {
-	(*(rz) = ComplexSqrtFloat((z).x, (z).y));
+	(*(rz) = ComplexSqrtFloat((z).real(), (z).imag()));
 }
 
 // rz=Arcsin(z)=-i*Log{i*z + sqrt(1-z*z)}
@@ -61,17 +61,17 @@ void Arcsinz(ComplexD z, ComplexD *rz)
 	ComplexD tempz2;
 
 	FPUcplxmul(&z, &z, &tempz1);
-	tempz1.x = 1 - tempz1.x;
-	tempz1.y = -tempz1.y;			// tempz1 = 1 - tempz1
+	tempz1.real(1 - tempz1.real());
+	tempz1.imag(-tempz1.imag());			// tempz1 = 1 - tempz1
 	Sqrtz(tempz1, &tempz1);
 
-	tempz2.x = -z.y;
-	tempz2.y = z.x;                // tempz2 = i*z
-	tempz1.x += tempz2.x;
-	tempz1.y += tempz2.y;    // tempz1 += tempz2
+	tempz2.real(-z.imag());
+	tempz2.imag(z.real());                // tempz2 = i*z
+	tempz1.real(tempz1.real() + tempz2.real());
+	tempz1.imag(tempz1.imag() + tempz2.imag());    // tempz1 += tempz2
 	FPUcplxlog(&tempz1, &tempz1);
-	rz->x = tempz1.y;
-	rz->y = -tempz1.x;           // rz = (-i)*tempz1
+	rz->real(tempz1.imag());
+	rz->imag(-tempz1.real());           // rz = (-i)*tempz1
 }   // end. Arcsinz
 
 
@@ -81,15 +81,15 @@ void Arccosz(ComplexD z, ComplexD *rz)
 	ComplexD temp;
 
 	FPUcplxmul(&z, &z, &temp);
-	temp.x -= 1;
+	temp.real(temp.real() - 1);
 	Sqrtz(temp, &temp);
 
-	temp.x += z.x;
-	temp.y += z.y;
+	temp.real(temp.real() + z.real());
+	temp.imag(temp.imag() + z.imag());
 
 	FPUcplxlog(&temp, &temp);
-	rz->x = temp.y;
-	rz->y = -temp.x;              // rz = (-i)*tempz1
+	rz->real(temp.imag());
+	rz->imag(-temp.real());              // rz = (-i)*tempz1
 }
 
 void Arcsinhz(ComplexD z, ComplexD *rz)
@@ -97,10 +97,10 @@ void Arcsinhz(ComplexD z, ComplexD *rz)
 	ComplexD temp;
 
 	FPUcplxmul(&z, &z, &temp);
-	temp.x += 1;                                 // temp = temp + 1
+	temp.real(temp.real() + 1);                                 // temp = temp + 1
 	Sqrtz(temp, &temp);
-	temp.x += z.x;
-	temp.y += z.y;                // temp = z + temp
+	temp.real(temp.real() + z.real());
+	temp.imag(temp.imag() + z.imag());                // temp = z + temp
 	FPUcplxlog(&temp, rz);
 }  // end. Arcsinhz
 
@@ -109,10 +109,10 @@ void Arccoshz(ComplexD z, ComplexD *rz)
 {
 	ComplexD tempz;
 	FPUcplxmul(&z, &z, &tempz);
-	tempz.x -= 1;                              // tempz = tempz - 1
+	tempz.real(tempz.real() - 1);                              // tempz = tempz - 1
 	Sqrtz(tempz, &tempz);
-	tempz.x = z.x + tempz.x;
-	tempz.y = z.y + tempz.y;  // tempz = z + tempz
+	tempz.real(z.real() + tempz.real());
+	tempz.imag(z.imag() + tempz.imag());  // tempz = z + tempz
 	FPUcplxlog(&tempz, rz);
 }   // end. Arccoshz
 
@@ -123,34 +123,34 @@ void Arctanhz(ComplexD z, ComplexD *rz)
 	ComplexD temp1;
 	ComplexD temp2;
 
-	if (z.x == 0.0)
+	if (z.real() == 0.0)
 	{
-		rz->x = 0;
-		rz->y = atan(z.y);
+		rz->real(0);
+		rz->imag(atan(z.imag()));
 		return;
 	}
 	else
 	{
-		if (fabs(z.x) == 1.0 && z.y == 0.0)
+		if (fabs(z.real()) == 1.0 && z.imag() == 0.0)
 		{
 			return;
 		}
-		else if (fabs(z.x) < 1.0 && z.y == 0.0)
+		else if (fabs(z.real()) < 1.0 && z.imag() == 0.0)
 		{
-			rz->x = log((1 + z.x)/(1-z.x))/2;
-			rz->y = 0;
+			rz->real(log((1 + z.real())/(1-z.real()))/2);
+			rz->imag(0);
 			return;
 		}
 		else
 		{
-			temp0.x = 1 + z.x;
-			temp0.y = z.y;             // temp0 = 1 + z
-			temp1.x = 1 - z.x;
-			temp1.y = -z.y;            // temp1 = 1 - z
+			temp0.real(1 + z.real());
+			temp0.imag(z.imag());             // temp0 = 1 + z
+			temp1.real(1 - z.real());
+			temp1.imag(-z.imag());            // temp1 = 1 - z
 			FPUcplxdiv(&temp0, &temp1, &temp2);
 			FPUcplxlog(&temp2, &temp2);
-			rz->x = .5*temp2.x;
-			rz->y = .5*temp2.y;       // rz = .5*temp2
+			rz->real(.5*temp2.real());
+			rz->imag(.5*temp2.imag());       // rz = .5*temp2
 			return;
 		}
 	}
@@ -163,37 +163,37 @@ void Arctanz(ComplexD z, ComplexD *rz)
 	ComplexD temp1;
 	ComplexD temp2;
 	ComplexD temp3;
-	if (z.x == 0.0 && z.y == 0.0)
+	if (z.real() == 0.0 && z.imag() == 0.0)
 	{
-		rz->x = 0;
-		rz->y = 0;
+		rz->real(0);
+		rz->imag(0);
 	}
-	else if (z.x != 0.0 && z.y == 0.0)
+	else if (z.real() != 0.0 && z.imag() == 0.0)
 	{
-		rz->x = atan(z.x);
-		rz->y = 0;
+		rz->real(atan(z.real()));
+		rz->imag(0);
 	}
-	else if (z.x == 0.0 && z.y != 0.0)
+	else if (z.real() == 0.0 && z.imag() != 0.0)
 	{
-		temp0.x = z.y;
-		temp0.y = 0.0;
+		temp0.real(z.imag());
+		temp0.imag(0.0);
 		Arctanhz(temp0, &temp0);
-		rz->x = -temp0.y;
-		rz->y = temp0.x;              // i*temp0
+		rz->real(-temp0.imag());
+		rz->imag(temp0.real());              // i*temp0
 	}
-	else if (z.x != 0.0 && z.y != 0.0)
+	else if (z.real() != 0.0 && z.imag() != 0.0)
 	{
-		temp0.x = -z.y;
-		temp0.y = z.x;                  // i*z
-		temp1.x = 1 - temp0.x;
-		temp1.y = -temp0.y;      // temp1 = 1 - temp0
-		temp2.x = 1 + temp0.x;
-		temp2.y = temp0.y;       // temp2 = 1 + temp0
+		temp0.real(-z.imag());
+		temp0.imag(z.real());                  // i*z
+		temp1.real(1 - temp0.real());
+		temp1.imag(-temp0.imag());      // temp1 = 1 - temp0
+		temp2.real(1 + temp0.real());
+		temp2.imag(temp0.imag());       // temp2 = 1 + temp0
 
 		FPUcplxdiv(&temp1, &temp2, &temp3);
 		FPUcplxlog(&temp3, &temp3);
-		rz->x = -temp3.y*.5;
-		rz->y = .5*temp3.x;           // .5*i*temp0
+		rz->real(-temp3.imag()*.5);
+		rz->imag(.5*temp3.real());           // .5*i*temp0
 	}
 }   // end. Arctanz
 
@@ -265,9 +265,10 @@ ComplexL ComplexSqrtLong(long x, long y)
 #endif
 	theta     = atan2(FudgeToDouble(y), FudgeToDouble(x))/2;
 	thetalong = long(theta*SinCosFudge);
-	SinCos086(thetalong, &result.y, &result.x);
-	result.x  = multiply(result.x << (g_bit_shift - 16), maglong, g_bit_shift);
-	result.y  = multiply(result.y << (g_bit_shift - 16), maglong, g_bit_shift);
+	long sinTheta, cosTheta;
+	SinCos086(thetalong, &sinTheta, &cosTheta);
+	result.real(multiply(cosTheta << (g_bit_shift - 16), maglong, g_bit_shift));
+	result.imag(multiply(sinTheta << (g_bit_shift - 16), maglong, g_bit_shift));
 	return result;
 }
 
@@ -279,16 +280,17 @@ ComplexD ComplexSqrtFloat(double x, double y)
 
 	if (x == 0.0 && y == 0.0)
 	{
-		result.x = 0.0;
-		result.y = 0.0;
+		result.real(0.0);
+		result.imag(0.0);
 	}
 	else
 	{
 		mag   = sqrt(sqrt(x*x + y*y));
 		theta = atan2(y, x)/2;
-		FPUsincos(theta, &result.y, &result.x);
-		result.x *= mag;
-		result.y *= mag;
+		double cosTheta, sinTheta;
+		FPUsincos(theta, &sinTheta, &cosTheta);
+		result.real(cosTheta*mag);
+		result.imag(sinTheta*mag);
 	}
 	return result;
 }
@@ -415,35 +417,35 @@ long ExpFloat14(long xx)
 double TwoPi;
 ComplexD temp;
 ComplexD BaseLog;
-ComplexD cdegree = { 3.0, 0.0 };
-ComplexD croot   = { 1.0, 0.0 };
+InitializedComplexD g_c_degree(3.0, 0.0);
+InitializedComplexD g_c_root(1.0, 0.0);
 
 int complex_basin()
 {
 	ComplexD cd1;
 	double mod;
 
-	/* new = ((cdegree-1)*old**cdegree) + croot
+	/* new = ((g_c_degree-1)*old**g_c_degree) + g_c_root
 				----------------------------------
-                 cdegree*old**(cdegree-1)         */
+                 g_c_degree*old**(g_c_degree-1)         */
 
-	cd1.x = cdegree.x - 1.0;
-	cd1.y = cdegree.y;
+	cd1.real(g_c_degree.real() - 1.0);
+	cd1.imag(g_c_degree.imag());
 
 	temp = ComplexPower(g_old_z, cd1);
 	FPUcplxmul(&temp, &g_old_z, &g_new_z);
 
-	g_temp_z.x = g_new_z.real() - croot.x;
-	g_temp_z.y = g_new_z.imag() - croot.y;
-	if ((sqr(g_temp_z.x) + sqr(g_temp_z.y)) < g_threshold)
+	g_temp_z.real(g_new_z.real() - g_c_root.real());
+	g_temp_z.imag(g_new_z.imag() - g_c_root.imag());
+	if ((sqr(g_temp_z.real()) + sqr(g_temp_z.imag())) < g_threshold)
 	{
 		if (fabs(g_old_z.imag()) < .01)
 		{
 			g_old_z.imag(0.0);
 		}
 		FPUcplxlog(&g_old_z, &temp);
-		FPUcplxmul(&temp, &cdegree, &g_temp_z);
-		mod = g_temp_z.y/TwoPi;
+		FPUcplxmul(&temp, &g_c_degree, &g_temp_z);
+		mod = g_temp_z.imag()/TwoPi;
 		g_color_iter = long(mod);
 		if (fabs(mod - g_color_iter) > 0.5)
 		{
@@ -465,10 +467,10 @@ int complex_basin()
 	}
 
 	FPUcplxmul(&g_new_z, &cd1, &g_temp_z);
-	g_temp_z.x += croot.x;
-	g_temp_z.y += croot.y;
+	g_temp_z.real(g_temp_z.real() + g_c_root.real());
+	g_temp_z.imag(g_temp_z.imag() + g_c_root.imag());
 
-	FPUcplxmul(&temp, &cdegree, &cd1);
+	FPUcplxmul(&temp, &g_c_degree, &cd1);
 	FPUcplxdiv(&g_temp_z, &cd1, &g_old_z);
 	if (g_overflow)
 	{

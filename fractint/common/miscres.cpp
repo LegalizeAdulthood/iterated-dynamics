@@ -19,6 +19,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 
+#include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "DiffusionScan.h"

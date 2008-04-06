@@ -16,6 +16,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 
+#include "biginit.h"
 #include "Browse.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -420,7 +421,8 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 		g_potential_parameter[i] = 0.0;					// initial potential values
 		g_inversion[i] = 0.0;								// initial invert values
 	}
-	g_initial_orbit_z.x = g_initial_orbit_z.y = 0.0;		// initial orbit values
+	g_initial_orbit_z.real(0.0);
+	g_initial_orbit_z.imag(0.0);		// initial orbit values
 	g_invert = 0;
 	g_decomposition[0] = g_decomposition[1] = 0;
 	g_user_distance_test = 0;
@@ -1600,8 +1602,8 @@ static int init_orbit_arg(const cmd_context &context)
 		{
 			return bad_arg(context.curarg);
 		}
-		g_initial_orbit_z.x = context.floatval[0];
-		g_initial_orbit_z.y = context.floatval[1];
+		g_initial_orbit_z.real(context.floatval[0]);
+		g_initial_orbit_z.imag(context.floatval[1]);
 		g_externs.SetUseInitialOrbitZ(INITIALZ_ORBIT);
 	}
 	return COMMANDRESULT_FRACTAL_PARAMETER;

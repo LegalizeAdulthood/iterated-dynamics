@@ -108,14 +108,14 @@ struct FormulaToken
 	}
 	void SetValue(double real)
 	{
-		value.x = real;
-		value.y = 0.0;
+		value.real(real);
+		value.imag(0.0);
 		type = TOKENTYPE_REAL_CONSTANT;
 	}
 	void SetValue(double real, double imaginary)
 	{
-		value.x = real;
-		value.y = imaginary;
+		value.real(real);
+		value.imag(imaginary);
 		type = TOKENTYPE_COMPLEX_CONSTANT;
 	}
 };
@@ -268,7 +268,7 @@ Formula::Formula()
 	m_initial_op_pointer(0)
 {
 	{
-		Arg zero_arg = { 0 };
+		Arg zero_arg = { { 0, 0 } };
 		for (int i = 0; i < NUM_OF(m_argument_stack); i++)
 		{
 			m_argument_stack[i] = zero_arg;
@@ -538,14 +538,14 @@ static void lStkFunct(void (*function)())   // call lStk via dStk
 		intermediate variable needed for safety because of
 		different size of double and long in Arg union
 	*/
-	double y = double_from_fixpoint(g_argument1->l.y);
-	g_argument1->d.x = double_from_fixpoint(g_argument1->l.x);
-	g_argument1->d.y = y;
+	double y = double_from_fixpoint(g_argument1->l.imag());
+	g_argument1->d.real(double_from_fixpoint(g_argument1->l.real()));
+	g_argument1->d.imag(y);
 	(*function)();
-	if (fabs(g_argument1->d.x) < g_fudge_limit && fabs(g_argument1->d.y) < g_fudge_limit)
+	if (fabs(g_argument1->d.real()) < g_fudge_limit && fabs(g_argument1->d.imag()) < g_fudge_limit)
 	{
-		g_argument1->l.x = fixpoint_from_double(g_argument1->d.x);
-		g_argument1->l.y = fixpoint_from_double(g_argument1->d.y);
+		g_argument1->l.real(fixpoint_from_double(g_argument1->d.real()));
+		g_argument1->l.imag(fixpoint_from_double(g_argument1->d.imag()));
 	}
 	else
 	{
@@ -577,8 +577,8 @@ static long fixpoint_to_long(long quantity)
 
 void Formula::Random_l()
 {
-	m_variables[VARIABLE_RAND].argument.l.x = fixpoint_to_long(new_random_number());
-	m_variables[VARIABLE_RAND].argument.l.y = fixpoint_to_long(new_random_number());
+	m_variables[VARIABLE_RAND].argument.l.real(fixpoint_to_long(new_random_number()));
+	m_variables[VARIABLE_RAND].argument.l.imag(fixpoint_to_long(new_random_number()));
 }
 
 void dRandom()
@@ -592,8 +592,8 @@ void Formula::Random_d()
           the same fractals when the srand() function is used. */
 	long x = fixpoint_to_long(new_random_number());
 	long y = fixpoint_to_long(new_random_number());
-	m_variables[VARIABLE_RAND].argument.d.x = (double(x)/(1L << g_bit_shift));
-	m_variables[VARIABLE_RAND].argument.d.y = (double(y)/(1L << g_bit_shift));
+	m_variables[VARIABLE_RAND].argument.d.real((double(x)/(1L << g_bit_shift)));
+	m_variables[VARIABLE_RAND].argument.d.imag((double(y)/(1L << g_bit_shift)));
 
 }
 
@@ -603,7 +603,7 @@ void Random::set_random_function()
 
 	if (!m_set_random)
 	{
-		m_random_number = g_argument1->l.x ^ g_argument1->l.y;
+		m_random_number = g_argument1->l.real() ^ g_argument1->l.imag();
 	}
 
 	Seed = unsigned(m_random_number)^unsigned(m_random_number >> 16);
@@ -661,8 +661,8 @@ void dStkSRand()
 
 void Formula::StackStoreRandom_d()
 {
-	g_argument1->l.x = long(g_argument1->d.x*(1L << g_bit_shift));
-	g_argument1->l.y = long(g_argument1->d.y*(1L << g_bit_shift));
+	g_argument1->l.real(long(g_argument1->d.real()*(1L << g_bit_shift)));
+	g_argument1->l.imag(long(g_argument1->d.imag()*(1L << g_bit_shift)));
 	SetRandFnct();
 	dRandom();
 	g_argument1->d = m_variables[VARIABLE_RAND].argument.d;
@@ -688,8 +688,8 @@ void Formula::StackLoadSqr_d()
 {
 	g_argument1++;
 	g_argument2++;
-	g_argument1->d.y = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.y*2.0;
-	g_argument1->d.x = (m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.x) - (m_load[m_load_ptr]->d.y*m_load[m_load_ptr]->d.y);
+	g_argument1->d.imag(m_load[m_load_ptr]->d.real()*m_load[m_load_ptr]->d.imag()*2.0);
+	g_argument1->d.real((m_load[m_load_ptr]->d.real()*m_load[m_load_ptr]->d.real()) - (m_load[m_load_ptr]->d.imag()*m_load[m_load_ptr]->d.imag()));
 	m_load_ptr++;
 }
 
@@ -702,12 +702,12 @@ void Formula::StackLoadSqr2_d()
 {
 	g_argument1++;
 	g_argument2++;
-	m_variables[VARIABLE_LAST_SQR].argument.d.x = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.x;
-	m_variables[VARIABLE_LAST_SQR].argument.d.y = m_load[m_load_ptr]->d.y*m_load[m_load_ptr]->d.y;
-	g_argument1->d.y = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.y*2.0;
-	g_argument1->d.x = m_variables[VARIABLE_LAST_SQR].argument.d.x - m_variables[VARIABLE_LAST_SQR].argument.d.y;
-	m_variables[VARIABLE_LAST_SQR].argument.d.x += m_variables[VARIABLE_LAST_SQR].argument.d.y;
-	m_variables[VARIABLE_LAST_SQR].argument.d.y = 0;
+	m_variables[VARIABLE_LAST_SQR].argument.d.real(m_load[m_load_ptr]->d.real()*m_load[m_load_ptr]->d.real());
+	m_variables[VARIABLE_LAST_SQR].argument.d.imag(m_load[m_load_ptr]->d.imag()*m_load[m_load_ptr]->d.imag());
+	g_argument1->d.imag(m_load[m_load_ptr]->d.real()*m_load[m_load_ptr]->d.imag()*2.0);
+	g_argument1->d.real(m_variables[VARIABLE_LAST_SQR].argument.d.real() - m_variables[VARIABLE_LAST_SQR].argument.d.imag());
+	m_variables[VARIABLE_LAST_SQR].argument.d.real(m_variables[VARIABLE_LAST_SQR].argument.d.real() + m_variables[VARIABLE_LAST_SQR].argument.d.imag());
+	m_variables[VARIABLE_LAST_SQR].argument.d.imag(0);
 	m_load_ptr++;
 }
 
@@ -720,8 +720,8 @@ void Formula::StackLoadDouble()
 {
 	g_argument1++;
 	g_argument2++;
-	g_argument1->d.x = m_load[m_load_ptr]->d.x*2.0;
-	g_argument1->d.y = m_load[m_load_ptr]->d.y*2.0;
+	g_argument1->d.real(m_load[m_load_ptr]->d.real()*2.0);
+	g_argument1->d.imag(m_load[m_load_ptr]->d.imag()*2.0);
 	m_load_ptr++;
 }
 
@@ -732,27 +732,27 @@ void dStkSqr0()
 
 void Formula::StackSqr0()
 {
-	m_variables[VARIABLE_LAST_SQR].argument.d.y = g_argument1->d.y*g_argument1->d.y; // use LastSqr as temp storage
-	g_argument1->d.y = g_argument1->d.x*g_argument1->d.y*2.0;
-	g_argument1->d.x = g_argument1->d.x*g_argument1->d.x - m_variables[VARIABLE_LAST_SQR].argument.d.y;
+	m_variables[VARIABLE_LAST_SQR].argument.d.imag(g_argument1->d.imag()*g_argument1->d.imag()); // use LastSqr as temp storage
+	g_argument1->d.imag(g_argument1->d.real()*g_argument1->d.imag()*2.0);
+	g_argument1->d.real(g_argument1->d.real()*g_argument1->d.real() - m_variables[VARIABLE_LAST_SQR].argument.d.imag());
 }
 
 void dStkSqr3()
 {
-	g_argument1->d.x = g_argument1->d.x*g_argument1->d.x;
+	g_argument1->d.real(g_argument1->d.real()*g_argument1->d.real());
 }
 
 void dStkAbs()
 {
-	g_argument1->d.x = fabs(g_argument1->d.x);
-	g_argument1->d.y = fabs(g_argument1->d.y);
+	g_argument1->d.real(fabs(g_argument1->d.real()));
+	g_argument1->d.imag(fabs(g_argument1->d.imag()));
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkAbs()
 {
-	g_argument1->l.x = labs(g_argument1->l.x);
-	g_argument1->l.y = labs(g_argument1->l.y);
+	g_argument1->l.real(labs(g_argument1->l.real()));
+	g_argument1->l.imag(labs(g_argument1->l.imag()));
 }
 #endif
 
@@ -765,12 +765,12 @@ void dStkSqr()
 
 void Formula::StackSqr_d()
 {
-	m_variables[VARIABLE_LAST_SQR].argument.d.x = g_argument1->d.x*g_argument1->d.x;
-	m_variables[VARIABLE_LAST_SQR].argument.d.y = g_argument1->d.y*g_argument1->d.y;
-	g_argument1->d.y = g_argument1->d.x*g_argument1->d.y*2.0;
-	g_argument1->d.x = m_variables[VARIABLE_LAST_SQR].argument.d.x - m_variables[VARIABLE_LAST_SQR].argument.d.y;
-	m_variables[VARIABLE_LAST_SQR].argument.d.x += m_variables[VARIABLE_LAST_SQR].argument.d.y;
-	m_variables[VARIABLE_LAST_SQR].argument.d.y = 0;
+	m_variables[VARIABLE_LAST_SQR].argument.d.real(g_argument1->d.real()*g_argument1->d.real());
+	m_variables[VARIABLE_LAST_SQR].argument.d.imag(g_argument1->d.imag()*g_argument1->d.imag());
+	g_argument1->d.imag(g_argument1->d.real()*g_argument1->d.imag()*2.0);
+	g_argument1->d.real(m_variables[VARIABLE_LAST_SQR].argument.d.real() - m_variables[VARIABLE_LAST_SQR].argument.d.imag());
+	m_variables[VARIABLE_LAST_SQR].argument.d.real(m_variables[VARIABLE_LAST_SQR].argument.d.real() + m_variables[VARIABLE_LAST_SQR].argument.d.imag());
+	m_variables[VARIABLE_LAST_SQR].argument.d.imag(0);
 }
 
 void lStkSqr()
@@ -781,12 +781,12 @@ void lStkSqr()
 void Formula::StackSqr_l()
 {
 #if !defined(NO_FIXED_POINT_MATH)
-	m_variables[VARIABLE_LAST_SQR].argument.l.x = multiply(g_argument1->l.x, g_argument1->l.x, g_bit_shift);
-	m_variables[VARIABLE_LAST_SQR].argument.l.y = multiply(g_argument1->l.y, g_argument1->l.y, g_bit_shift);
-	g_argument1->l.y = multiply(g_argument1->l.x, g_argument1->l.y, g_bit_shift) << 1;
-	g_argument1->l.x = m_variables[VARIABLE_LAST_SQR].argument.l.x - m_variables[VARIABLE_LAST_SQR].argument.l.y;
-	m_variables[VARIABLE_LAST_SQR].argument.l.x += m_variables[VARIABLE_LAST_SQR].argument.l.y;
-	m_variables[VARIABLE_LAST_SQR].argument.l.y = 0L;
+	m_variables[VARIABLE_LAST_SQR].argument.l.real(multiply(g_argument1->l.real(), g_argument1->l.real(), g_bit_shift));
+	m_variables[VARIABLE_LAST_SQR].argument.l.imag(multiply(g_argument1->l.imag(), g_argument1->l.imag(), g_bit_shift));
+	g_argument1->l.imag(multiply(g_argument1->l.real(), g_argument1->l.imag(), g_bit_shift) << 1);
+	g_argument1->l.real(m_variables[VARIABLE_LAST_SQR].argument.l.real() - m_variables[VARIABLE_LAST_SQR].argument.l.imag());
+	m_variables[VARIABLE_LAST_SQR].argument.l.real(m_variables[VARIABLE_LAST_SQR].argument.l.real() + m_variables[VARIABLE_LAST_SQR].argument.l.imag());
+	m_variables[VARIABLE_LAST_SQR].argument.l.imag(0L);
 #endif
 }
 
@@ -794,8 +794,8 @@ void (*StkSqr)() = dStkSqr;
 
 void dStkAdd()
 {
-	g_argument2->d.x += g_argument1->d.x;
-	g_argument2->d.y += g_argument1->d.y;
+	g_argument2->d.real(g_argument2->d.real() + g_argument1->d.real());
+	g_argument2->d.imag(g_argument2->d.imag() + g_argument1->d.imag());
 	g_argument1--;
 	g_argument2--;
 }
@@ -803,8 +803,8 @@ void dStkAdd()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkAdd()
 {
-	g_argument2->l.x += g_argument1->l.x;
-	g_argument2->l.y += g_argument1->l.y;
+	g_argument2->l.real(g_argument2->l.real() + g_argument1->l.real());
+	g_argument2->l.imag(g_argument2->l.imag() + g_argument1->l.imag());
 	g_argument1--;
 	g_argument2--;
 }
@@ -814,8 +814,8 @@ void (*StkAdd)() = dStkAdd;
 
 void dStkSub()
 {
-	g_argument2->d.x -= g_argument1->d.x;
-	g_argument2->d.y -= g_argument1->d.y;
+	g_argument2->d.real(g_argument2->d.real() - g_argument1->d.real());
+	g_argument2->d.imag(g_argument2->d.imag() - g_argument1->d.imag());
 	g_argument1--;
 	g_argument2--;
 }
@@ -823,8 +823,8 @@ void dStkSub()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkSub()
 {
-	g_argument2->l.x -= g_argument1->l.x;
-	g_argument2->l.y -= g_argument1->l.y;
+	g_argument2->l.real(g_argument2->l.real() - g_argument1->l.real());
+	g_argument2->l.imag(g_argument2->l.imag() - g_argument1->l.imag());
 	g_argument1--;
 	g_argument2--;
 }
@@ -834,13 +834,13 @@ void (*StkSub)() = dStkSub;
 
 void dStkConj()
 {
-	g_argument1->d.y = -g_argument1->d.y;
+	g_argument1->d.imag(-g_argument1->d.imag());
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkConj()
 {
-	g_argument1->l.y = -g_argument1->l.y;
+	g_argument1->l.imag(-g_argument1->l.imag());
 }
 #endif
 
@@ -848,8 +848,8 @@ void (*StkConj)() = dStkConj;
 
 void dStkFloor()
 {
-	g_argument1->d.x = floor(g_argument1->d.x);
-	g_argument1->d.y = floor(g_argument1->d.y);
+	g_argument1->d.real(floor(g_argument1->d.real()));
+	g_argument1->d.imag(floor(g_argument1->d.imag()));
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -859,10 +859,10 @@ void lStkFloor()
 	* Kill fractional part. This operation truncates negative numbers
 	* toward negative infinity as desired.
 	*/
-	g_argument1->l.x = (g_argument1->l.x) >> g_bit_shift;
-	g_argument1->l.y = (g_argument1->l.y) >> g_bit_shift;
-	g_argument1->l.x = (g_argument1->l.x) << g_bit_shift;
-	g_argument1->l.y = (g_argument1->l.y) << g_bit_shift;
+	g_argument1->l.real((g_argument1->l.real()) >> g_bit_shift);
+	g_argument1->l.imag((g_argument1->l.imag()) >> g_bit_shift);
+	g_argument1->l.real((g_argument1->l.real()) << g_bit_shift);
+	g_argument1->l.imag((g_argument1->l.imag()) << g_bit_shift);
 }
 #endif
 
@@ -870,8 +870,8 @@ void (*StkFloor)() = dStkFloor;
 
 void dStkCeil()
 {
-	g_argument1->d.x = ceil(g_argument1->d.x);
-	g_argument1->d.y = ceil(g_argument1->d.y);
+	g_argument1->d.real(ceil(g_argument1->d.real()));
+	g_argument1->d.imag(ceil(g_argument1->d.imag()));
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -879,10 +879,10 @@ void lStkCeil()
 {
 	/* the shift operation does the "floor" operation, so we
 		negate everything before the operation */
-	g_argument1->l.x = (-g_argument1->l.x) >> g_bit_shift;
-	g_argument1->l.y = (-g_argument1->l.y) >> g_bit_shift;
-	g_argument1->l.x = -((g_argument1->l.x) << g_bit_shift);
-	g_argument1->l.y = -((g_argument1->l.y) << g_bit_shift);
+	g_argument1->l.real((-g_argument1->l.real()) >> g_bit_shift);
+	g_argument1->l.imag((-g_argument1->l.imag()) >> g_bit_shift);
+	g_argument1->l.real(-((g_argument1->l.real()) << g_bit_shift));
+	g_argument1->l.imag(-((g_argument1->l.imag()) << g_bit_shift));
 }
 #endif
 
@@ -890,8 +890,8 @@ void (*StkCeil)() = dStkCeil;
 
 void dStkTrunc()
 {
-	g_argument1->d.x = int(g_argument1->d.x);
-	g_argument1->d.y = int(g_argument1->d.y);
+	g_argument1->d.real(int(g_argument1->d.real()));
+	g_argument1->d.imag(int(g_argument1->d.imag()));
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -899,16 +899,16 @@ void lStkTrunc()
 {
 	/* shifting and shifting back truncates positive numbers,
 		so we make the numbers positive */
-	int signx = sign(g_argument1->l.x);
-	int signy = sign(g_argument1->l.y);
-	g_argument1->l.x = labs(g_argument1->l.x);
-	g_argument1->l.y = labs(g_argument1->l.y);
-	g_argument1->l.x = (g_argument1->l.x) >> g_bit_shift;
-	g_argument1->l.y = (g_argument1->l.y) >> g_bit_shift;
-	g_argument1->l.x = (g_argument1->l.x) << g_bit_shift;
-	g_argument1->l.y = (g_argument1->l.y) << g_bit_shift;
-	g_argument1->l.x = signx*g_argument1->l.x;
-	g_argument1->l.y = signy*g_argument1->l.y;
+	int signx = sign(g_argument1->l.real());
+	int signy = sign(g_argument1->l.imag());
+	g_argument1->l.real(labs(g_argument1->l.real()));
+	g_argument1->l.imag(labs(g_argument1->l.imag()));
+	g_argument1->l.real((g_argument1->l.real()) >> g_bit_shift);
+	g_argument1->l.imag((g_argument1->l.imag()) >> g_bit_shift);
+	g_argument1->l.real((g_argument1->l.real()) << g_bit_shift);
+	g_argument1->l.imag((g_argument1->l.imag()) << g_bit_shift);
+	g_argument1->l.real(signx*g_argument1->l.real());
+	g_argument1->l.imag(signy*g_argument1->l.imag());
 }
 #endif
 
@@ -916,16 +916,16 @@ void (*StkTrunc)() = dStkTrunc;
 
 void dStkRound()
 {
-	g_argument1->d.x = floor(g_argument1->d.x + .5);
-	g_argument1->d.y = floor(g_argument1->d.y + .5);
+	g_argument1->d.real(floor(g_argument1->d.real() + .5));
+	g_argument1->d.imag(floor(g_argument1->d.imag() + .5));
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkRound()
 {
 	// Add .5 then truncate
-	g_argument1->l.x += (1L << g_bit_shift_minus_1);
-	g_argument1->l.y += (1L << g_bit_shift_minus_1);
+	g_argument1->l.real(g_argument1->l.real() + (1L << g_bit_shift_minus_1));
+	g_argument1->l.imag(g_argument1->l.imag() + (1L << g_bit_shift_minus_1));
 	lStkFloor();
 }
 #endif
@@ -934,15 +934,15 @@ void (*StkRound)() = dStkRound;
 
 void dStkZero()
 {
-	g_argument1->d.y = 0.0;
-	g_argument1->d.x = 0.0;
+	g_argument1->d.imag(0.0);
+	g_argument1->d.real(0.0);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkZero()
 {
-	g_argument1->l.y = 0;
-	g_argument1->l.x = 0;
+	g_argument1->l.imag(0);
+	g_argument1->l.real(0);
 }
 #endif
 
@@ -950,15 +950,15 @@ void (*StkZero)() = dStkZero;
 
 void dStkOne()
 {
-	g_argument1->d.x = 1.0;
-	g_argument1->d.y = 0.0;
+	g_argument1->d.real(1.0);
+	g_argument1->d.imag(0.0);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkOne()
 {
-	g_argument1->l.x = long(s_fudge);
-	g_argument1->l.y = 0L;
+	g_argument1->l.real(long(s_fudge));
+	g_argument1->l.imag(0L);
 }
 #endif
 
@@ -967,13 +967,13 @@ void (*StkOne)() = dStkOne;
 
 void dStkReal()
 {
-	g_argument1->d.y = 0.0;
+	g_argument1->d.imag(0.0);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkReal()
 {
-	g_argument1->l.y = 0l;
+	g_argument1->l.imag(0L);
 }
 #endif
 
@@ -981,15 +981,15 @@ void (*StkReal)() = dStkReal;
 
 void dStkImag()
 {
-	g_argument1->d.x = g_argument1->d.y;
-	g_argument1->d.y = 0.0;
+	g_argument1->d.real(g_argument1->d.imag());
+	g_argument1->d.imag(0.0);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkImag()
 {
-	g_argument1->l.x = g_argument1->l.y;
-	g_argument1->l.y = 0l;
+	g_argument1->l.real(g_argument1->l.imag());
+	g_argument1->l.imag(0L);
 }
 #endif
 
@@ -997,15 +997,15 @@ void (*StkImag)() = dStkImag;
 
 void dStkNeg()
 {
-	g_argument1->d.x = -g_argument1->d.x;
-	g_argument1->d.y = -g_argument1->d.y;
+	g_argument1->d.real(-g_argument1->d.real());
+	g_argument1->d.imag(-g_argument1->d.imag());
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkNeg()
 {
-	g_argument1->l.x = -g_argument1->l.x;
-	g_argument1->l.y = -g_argument1->l.y;
+	g_argument1->l.real(-g_argument1->l.real());
+	g_argument1->l.imag(-g_argument1->l.imag());
 }
 #endif
 
@@ -1021,12 +1021,12 @@ void dStkMul()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkMul()
 {
-	long x = multiply(g_argument2->l.x, g_argument1->l.x, g_bit_shift) -
-		multiply(g_argument2->l.y, g_argument1->l.y, g_bit_shift);
-	long y = multiply(g_argument2->l.y, g_argument1->l.x, g_bit_shift) +
-		multiply(g_argument2->l.x, g_argument1->l.y, g_bit_shift);
-	g_argument2->l.x = x;
-	g_argument2->l.y = y;
+	long x = multiply(g_argument2->l.real(), g_argument1->l.real(), g_bit_shift) -
+		multiply(g_argument2->l.imag(), g_argument1->l.imag(), g_bit_shift);
+	long y = multiply(g_argument2->l.imag(), g_argument1->l.real(), g_bit_shift) +
+		multiply(g_argument2->l.real(), g_argument1->l.imag(), g_bit_shift);
+	g_argument2->l.real(x);
+	g_argument2->l.imag(y);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1044,14 +1044,14 @@ void dStkDiv()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkDiv()
 {
-	long mod = multiply(g_argument1->l.x, g_argument1->l.x, g_bit_shift) +
-		multiply(g_argument1->l.y, g_argument1->l.y, g_bit_shift);
-	long x = divide(g_argument1->l.x, mod, g_bit_shift);
-	long y = -divide(g_argument1->l.y, mod, g_bit_shift);
-	long x2 = multiply(g_argument2->l.x, x, g_bit_shift) - multiply(g_argument2->l.y, y, g_bit_shift);
-	long y2 = multiply(g_argument2->l.y, x, g_bit_shift) + multiply(g_argument2->l.x, y, g_bit_shift);
-	g_argument2->l.x = x2;
-	g_argument2->l.y = y2;
+	long mod = multiply(g_argument1->l.real(), g_argument1->l.real(), g_bit_shift) +
+		multiply(g_argument1->l.imag(), g_argument1->l.imag(), g_bit_shift);
+	long x = divide(g_argument1->l.real(), mod, g_bit_shift);
+	long y = -divide(g_argument1->l.imag(), mod, g_bit_shift);
+	long x2 = multiply(g_argument2->l.real(), x, g_bit_shift) - multiply(g_argument2->l.imag(), y, g_bit_shift);
+	long y2 = multiply(g_argument2->l.imag(), x, g_bit_shift) + multiply(g_argument2->l.real(), y, g_bit_shift);
+	g_argument2->l.real(x2);
+	g_argument2->l.imag(y2);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1061,31 +1061,31 @@ void (*StkDiv)() = dStkDiv;
 
 void dStkMod()
 {
-	g_argument1->d.x = (g_argument1->d.x*g_argument1->d.x) + (g_argument1->d.y*g_argument1->d.y);
-	g_argument1->d.y = 0.0;
+	g_argument1->d.real((g_argument1->d.real()*g_argument1->d.real()) + (g_argument1->d.imag()*g_argument1->d.imag()));
+	g_argument1->d.imag(0.0);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkMod()
 {
-	g_argument1->l.x = multiply(g_argument1->l.x, g_argument1->l.x, g_bit_shift) +
-	multiply(g_argument1->l.y, g_argument1->l.y, g_bit_shift);
-	if (g_argument1->l.x < 0)
+	g_argument1->l.real(multiply(g_argument1->l.real(), g_argument1->l.real(), g_bit_shift) +
+		multiply(g_argument1->l.imag(), g_argument1->l.imag(), g_bit_shift));
+	if (g_argument1->l.real() < 0)
 	{
 		g_overflow = true;
 	}
-	g_argument1->l.y = 0L;
+	g_argument1->l.imag(0L);
 }
 
 void lStkModOld()
 {
-	g_argument1->l.x = multiply(g_argument2->l.x, g_argument1->l.x, g_bit_shift) +
-	multiply(g_argument2->l.y, g_argument1->l.y, g_bit_shift);
-	if (g_argument1->l.x < 0)
+	g_argument1->l.real(multiply(g_argument2->l.real(), g_argument1->l.real(), g_bit_shift) +
+		multiply(g_argument2->l.imag(), g_argument1->l.imag(), g_bit_shift));
+	if (g_argument1->l.real() < 0)
 	{
 		g_overflow = true;
 	}
-	g_argument1->l.y = 0L;
+	g_argument1->l.imag(0L);
 }
 #endif
 
@@ -1134,9 +1134,9 @@ void dStkFlip()
 {
 	double t;
 
-	t = g_argument1->d.x;
-	g_argument1->d.x = g_argument1->d.y;
-	g_argument1->d.y = t;
+	t = g_argument1->d.real();
+	g_argument1->d.real(g_argument1->d.imag());
+	g_argument1->d.imag(t);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -1144,9 +1144,9 @@ void lStkFlip()
 {
 	long t;
 
-	t = g_argument1->l.x;
-	g_argument1->l.x = g_argument1->l.y;
-	g_argument1->l.y = t;
+	t = g_argument1->l.real();
+	g_argument1->l.real(g_argument1->l.imag());
+	g_argument1->l.imag(t);
 }
 #endif
 
@@ -1156,27 +1156,27 @@ void dStkSin()
 {
 	double sinx;
 	double cosx;
-	FPUsincos(g_argument1->d.x, &sinx, &cosx);
+	FPUsincos(g_argument1->d.real(), &sinx, &cosx);
 	double sinhy;
 	double coshy;
-	FPUsinhcosh(g_argument1->d.y, &sinhy, &coshy);
-	g_argument1->d.x = sinx*coshy;
-	g_argument1->d.y = cosx*sinhy;
+	FPUsinhcosh(g_argument1->d.imag(), &sinhy, &coshy);
+	g_argument1->d.real(sinx*coshy);
+	g_argument1->d.imag(cosx*sinhy);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkSin()
 {
-	long x = g_argument1->l.x >> s_delta16;
-	long y = g_argument1->l.y >> s_delta16;
+	long x = g_argument1->l.real() >> s_delta16;
+	long y = g_argument1->l.imag() >> s_delta16;
 	long sinx;
 	long cosx;
 	SinCos086(x, &sinx, &cosx);
 	long sinhy;
 	long coshy;
 	SinhCosh086(y, &sinhy, &coshy);
-	g_argument1->l.x = multiply(sinx, coshy, s_shift_back);
-	g_argument1->l.y = multiply(cosx, sinhy, s_shift_back);
+	g_argument1->l.real(multiply(sinx, coshy, s_shift_back));
+	g_argument1->l.imag(multiply(cosx, sinhy, s_shift_back));
 }
 #endif
 
@@ -1187,25 +1187,25 @@ void (*StkSin)() = dStkSin;
 
 void dStkTan()
 {
-	g_argument1->d.x *= 2;
-	g_argument1->d.y *= 2;
+	g_argument1->d.real(g_argument1->d.real()*2);
+	g_argument1->d.imag(g_argument1->d.imag()*2);
 	double sinx;
 	double cosx;
-	FPUsincos(g_argument1->d.x, &sinx, &cosx);
+	FPUsincos(g_argument1->d.real(), &sinx, &cosx);
 	double sinhy;
 	double coshy;
-	FPUsinhcosh(g_argument1->d.y, &sinhy, &coshy);
+	FPUsinhcosh(g_argument1->d.imag(), &sinhy, &coshy);
 	double denom = cosx + coshy;
 	ChkFloatDenom(denom);
-	g_argument1->d.x = sinx/denom;
-	g_argument1->d.y = sinhy/denom;
+	g_argument1->d.real(sinx/denom);
+	g_argument1->d.imag(sinhy/denom);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkTan()
 {
-	long x = (g_argument1->l.x >> s_delta16)*2;
-	long y = (g_argument1->l.y >> s_delta16)*2;
+	long x = (g_argument1->l.real() >> s_delta16)*2;
+	long y = (g_argument1->l.imag() >> s_delta16)*2;
 	long sinx;
 	long cosx;
 	SinCos086(x, &sinx, &cosx);
@@ -1214,8 +1214,8 @@ void lStkTan()
 	SinhCosh086(y, &sinhy, &coshy);
 	long denom = cosx + coshy;
 	ChkLongDenom(denom);
-	g_argument1->l.x = divide(sinx, denom, g_bit_shift);
-	g_argument1->l.y = divide(sinhy, denom, g_bit_shift);
+	g_argument1->l.real(divide(sinx, denom, g_bit_shift));
+	g_argument1->l.imag(divide(sinhy, denom, g_bit_shift));
 }
 #endif
 
@@ -1223,26 +1223,26 @@ void (*StkTan)() = dStkTan;
 
 void dStkTanh()
 {
-	g_argument1->d.x *= 2;
-	g_argument1->d.y *= 2;
+	g_argument1->d.real(g_argument1->d.real()*2);
+	g_argument1->d.imag(g_argument1->d.imag()*2);
 	double siny;
 	double cosy;
-	FPUsincos(g_argument1->d.y, &siny, &cosy);
+	FPUsincos(g_argument1->d.imag(), &siny, &cosy);
 	double sinhx;
 	double coshx;
-	FPUsinhcosh(g_argument1->d.x, &sinhx, &coshx);
+	FPUsinhcosh(g_argument1->d.real(), &sinhx, &coshx);
 	double denom = coshx + cosy;
 	ChkFloatDenom(denom);
-	g_argument1->d.x = sinhx/denom;
-	g_argument1->d.y = siny/denom;
+	g_argument1->d.real(sinhx/denom);
+	g_argument1->d.imag(siny/denom);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkTanh()
 {
-	long x = g_argument1->l.x >> s_delta16;
+	long x = g_argument1->l.real() >> s_delta16;
 	x <<= 1;
-	long y = g_argument1->l.y >> s_delta16;
+	long y = g_argument1->l.imag() >> s_delta16;
 	y <<= 1;
 	long siny;
 	long cosy;
@@ -1252,8 +1252,8 @@ void lStkTanh()
 	SinhCosh086(x, &sinhx, &coshx);
 	long denom = coshx + cosy;
 	ChkLongDenom(denom);
-	g_argument1->l.x = divide(sinhx, denom, g_bit_shift);
-	g_argument1->l.y = divide(siny, denom, g_bit_shift);
+	g_argument1->l.real(divide(sinhx, denom, g_bit_shift));
+	g_argument1->l.imag(divide(siny, denom, g_bit_shift));
 }
 #endif
 
@@ -1261,26 +1261,26 @@ void (*StkTanh)() = dStkTanh;
 
 void dStkCoTan()
 {
-	g_argument1->d.x *= 2;
-	g_argument1->d.y *= 2;
+	g_argument1->d.real(g_argument1->d.real()*2);
+	g_argument1->d.imag(g_argument1->d.imag()*2);
 	double sinx;
 	double cosx;
-	FPUsincos(g_argument1->d.x, &sinx, &cosx);
+	FPUsincos(g_argument1->d.real(), &sinx, &cosx);
 	double sinhy;
 	double coshy;
-	FPUsinhcosh(g_argument1->d.y, &sinhy, &coshy);
+	FPUsinhcosh(g_argument1->d.imag(), &sinhy, &coshy);
 	double denom = coshy - cosx;
 	ChkFloatDenom(denom);
-	g_argument1->d.x = sinx/denom;
-	g_argument1->d.y = -sinhy/denom;
+	g_argument1->d.real(sinx/denom);
+	g_argument1->d.imag(-sinhy/denom);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkCoTan()
 {
-	long x = g_argument1->l.x >> s_delta16;
+	long x = g_argument1->l.real() >> s_delta16;
 	x <<= 1;
-	long y = g_argument1->l.y >> s_delta16;
+	long y = g_argument1->l.imag() >> s_delta16;
 	y <<= 1;
 	long sinx;
 	long cosx;
@@ -1290,8 +1290,8 @@ void lStkCoTan()
 	SinhCosh086(y, &sinhy, &coshy);
 	long denom = coshy - cosx;
 	ChkLongDenom(denom);
-	g_argument1->l.x = divide(sinx, denom, g_bit_shift);
-	g_argument1->l.y = -divide(sinhy, denom, g_bit_shift);
+	g_argument1->l.real(divide(sinx, denom, g_bit_shift));
+	g_argument1->l.imag(-divide(sinhy, denom, g_bit_shift));
 }
 #endif
 
@@ -1299,26 +1299,26 @@ void (*StkCoTan)() = dStkCoTan;
 
 void dStkCoTanh()
 {
-	g_argument1->d.x *= 2;
-	g_argument1->d.y *= 2;
+	g_argument1->d.real(g_argument1->d.real()*2);
+	g_argument1->d.imag(g_argument1->d.imag()*2);
 	double siny;
 	double cosy;
-	FPUsincos(g_argument1->d.y, &siny, &cosy);
+	FPUsincos(g_argument1->d.imag(), &siny, &cosy);
 	double sinhx;
 	double coshx;
-	FPUsinhcosh(g_argument1->d.x, &sinhx, &coshx);
+	FPUsinhcosh(g_argument1->d.real(), &sinhx, &coshx);
 	double denom = coshx - cosy;
 	ChkFloatDenom(denom);
-	g_argument1->d.x = sinhx/denom;
-	g_argument1->d.y = -siny/denom;
+	g_argument1->d.real(sinhx/denom);
+	g_argument1->d.imag(-siny/denom);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkCoTanh()
 {
-	long x = g_argument1->l.x >> s_delta16;
+	long x = g_argument1->l.real() >> s_delta16;
 	x <<= 1;
-	long y = g_argument1->l.y >> s_delta16;
+	long y = g_argument1->l.imag() >> s_delta16;
 	y <<= 1;
 	long siny;
 	long cosy;
@@ -1328,8 +1328,8 @@ void lStkCoTanh()
 	SinhCosh086(x, &sinhx, &coshx);
 	long denom = coshx - cosy;
 	ChkLongDenom(denom);
-	g_argument1->l.x = divide(sinhx, denom, g_bit_shift);
-	g_argument1->l.y = -divide(siny, denom, g_bit_shift);
+	g_argument1->l.real(divide(sinhx, denom, g_bit_shift));
+	g_argument1->l.imag(-divide(siny, denom, g_bit_shift));
 }
 #endif
 
@@ -1344,21 +1344,21 @@ void (*StkCoTanh)() = dStkCoTanh;
 void dStkRecip()
 {
 	double mod;
-	mod = g_argument1->d.x*g_argument1->d.x + g_argument1->d.y*g_argument1->d.y;
+	mod = g_argument1->d.real()*g_argument1->d.real() + g_argument1->d.imag()*g_argument1->d.imag();
 	ChkFloatDenom(mod);
-	g_argument1->d.x =  g_argument1->d.x/mod;
-	g_argument1->d.y = -g_argument1->d.y/mod;
+	g_argument1->d.real( g_argument1->d.real()/mod);
+	g_argument1->d.imag(-g_argument1->d.imag()/mod);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkRecip()
 {
 	long mod;
-	mod = multiply(g_argument1->l.x, g_argument1->l.x, g_bit_shift)
-		+ multiply(g_argument1->l.y, g_argument1->l.y, g_bit_shift);
+	mod = multiply(g_argument1->l.real(), g_argument1->l.real(), g_bit_shift)
+		+ multiply(g_argument1->l.imag(), g_argument1->l.imag(), g_bit_shift);
 	ChkLongDenom(mod);
-	g_argument1->l.x =  divide(g_argument1->l.x, mod, g_bit_shift);
-	g_argument1->l.y = -divide(g_argument1->l.y, mod, g_bit_shift);
+	g_argument1->l.real( divide(g_argument1->l.real(), mod, g_bit_shift));
+	g_argument1->l.imag(-divide(g_argument1->l.imag(), mod, g_bit_shift));
 }
 #endif
 
@@ -1370,27 +1370,27 @@ void dStkSinh()
 {
 	double siny;
 	double cosy;
-	FPUsincos(g_argument1->d.y, &siny, &cosy);
+	FPUsincos(g_argument1->d.imag(), &siny, &cosy);
 	double sinhx;
 	double coshx;
-	FPUsinhcosh(g_argument1->d.x, &sinhx, &coshx);
-	g_argument1->d.x = sinhx*cosy;
-	g_argument1->d.y = coshx*siny;
+	FPUsinhcosh(g_argument1->d.real(), &sinhx, &coshx);
+	g_argument1->d.real(sinhx*cosy);
+	g_argument1->d.imag(coshx*siny);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkSinh()
 {
-	long x = g_argument1->l.x >> s_delta16;
-	long y = g_argument1->l.y >> s_delta16;
+	long x = g_argument1->l.real() >> s_delta16;
+	long y = g_argument1->l.imag() >> s_delta16;
 	long siny;
 	long cosy;
 	SinCos086(y, &siny, &cosy);
 	long sinhx;
 	long coshx;
 	SinhCosh086(x, &sinhx, &coshx);
-	g_argument1->l.x = multiply(cosy, sinhx, s_shift_back);
-	g_argument1->l.y = multiply(siny, coshx, s_shift_back);
+	g_argument1->l.real(multiply(cosy, sinhx, s_shift_back));
+	g_argument1->l.imag(multiply(siny, coshx, s_shift_back));
 }
 #endif
 
@@ -1400,27 +1400,27 @@ void dStkCos()
 {
 	double sinx;
 	double cosx;
-	FPUsincos(g_argument1->d.x, &sinx, &cosx);
+	FPUsincos(g_argument1->d.real(), &sinx, &cosx);
 	double sinhy;
 	double coshy;
-	FPUsinhcosh(g_argument1->d.y, &sinhy, &coshy);
-	g_argument1->d.x = cosx*coshy;
-	g_argument1->d.y = -sinx*sinhy;
+	FPUsinhcosh(g_argument1->d.imag(), &sinhy, &coshy);
+	g_argument1->d.real(cosx*coshy);
+	g_argument1->d.imag(-sinx*sinhy);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkCos()
 {
-	long x = g_argument1->l.x >> s_delta16;
-	long y = g_argument1->l.y >> s_delta16;
+	long x = g_argument1->l.real() >> s_delta16;
+	long y = g_argument1->l.imag() >> s_delta16;
 	long sinx;
 	long cosx;
 	SinCos086(x, &sinx, &cosx);
 	long sinhy;
 	long coshy;
 	SinhCosh086(y, &sinhy, &coshy);
-	g_argument1->l.x = multiply(cosx, coshy, s_shift_back);
-	g_argument1->l.y = -multiply(sinx, sinhy, s_shift_back);
+	g_argument1->l.real(multiply(cosx, coshy, s_shift_back));
+	g_argument1->l.imag(-multiply(sinx, sinhy, s_shift_back));
 }
 #endif
 
@@ -1431,14 +1431,14 @@ void (*StkCos)() = dStkCos;
 void dStkCosXX()
 {
 	dStkCos();
-	g_argument1->d.y = -g_argument1->d.y;
+	g_argument1->d.imag(-g_argument1->d.imag());
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkCosXX()
 {
 	lStkCos();
-	g_argument1->l.y = -g_argument1->l.y;
+	g_argument1->l.imag(-g_argument1->l.imag());
 }
 #endif
 
@@ -1448,27 +1448,27 @@ void dStkCosh()
 {
 	double siny;
 	double cosy;
-	FPUsincos(g_argument1->d.y, &siny, &cosy);
+	FPUsincos(g_argument1->d.imag(), &siny, &cosy);
 	double sinhx;
 	double coshx;
-	FPUsinhcosh(g_argument1->d.x, &sinhx, &coshx);
-	g_argument1->d.x = coshx*cosy;
-	g_argument1->d.y = sinhx*siny;
+	FPUsinhcosh(g_argument1->d.real(), &sinhx, &coshx);
+	g_argument1->d.real(coshx*cosy);
+	g_argument1->d.imag(sinhx*siny);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkCosh()
 {
-	long x = g_argument1->l.x >> s_delta16;
-	long y = g_argument1->l.y >> s_delta16;
+	long x = g_argument1->l.real() >> s_delta16;
+	long y = g_argument1->l.imag() >> s_delta16;
 	long siny;
 	long cosy;
 	SinCos086(y, &siny, &cosy);
 	long sinhx;
 	long coshx;
 	SinhCosh086(x, &sinhx, &coshx);
-	g_argument1->l.x = multiply(cosy, coshx, s_shift_back);
-	g_argument1->l.y = multiply(siny, sinhx, s_shift_back);
+	g_argument1->l.real(multiply(cosy, coshx, s_shift_back));
+	g_argument1->l.imag(multiply(siny, sinhx, s_shift_back));
 }
 #endif
 
@@ -1560,13 +1560,13 @@ void (*StkATanh)() = dStkATanh;
 
 void dStkSqrt()
 {
-	g_argument1->d = ComplexSqrtFloat(g_argument1->d.x, g_argument1->d.y);
+	g_argument1->d = ComplexSqrtFloat(g_argument1->d.real(), g_argument1->d.imag());
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkSqrt()
 {
-	g_argument1->l = ComplexSqrtLong(g_argument1->l.x, g_argument1->l.y);
+	g_argument1->l = ComplexSqrtLong(g_argument1->l.real(), g_argument1->l.imag());
 }
 #endif
 
@@ -1574,8 +1574,8 @@ void (*StkSqrt)() = dStkSqrt;
 
 void dStkCAbs()
 {
-	g_argument1->d.x = sqrt(sqr(g_argument1->d.x) + sqr(g_argument1->d.y));
-	g_argument1->d.y = 0.0;
+	g_argument1->d.real(sqrt(sqr(g_argument1->d.real()) + sqr(g_argument1->d.imag())));
+	g_argument1->d.imag(0.0);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -1589,8 +1589,8 @@ void (*StkCAbs)() = dStkCAbs;
 
 void dStkLT()
 {
-	g_argument2->d.x = double(g_argument2->d.x < g_argument1->d.x);
-	g_argument2->d.y = 0.0;
+	g_argument2->d.real(double(g_argument2->d.real() < g_argument1->d.real()));
+	g_argument2->d.imag(0.0);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1598,8 +1598,8 @@ void dStkLT()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkLT()
 {
-	g_argument2->l.x = long(g_argument2->l.x < g_argument1->l.x) << g_bit_shift;
-	g_argument2->l.y = 0l;
+	g_argument2->l.real(long(g_argument2->l.real() < g_argument1->l.real()) << g_bit_shift);
+	g_argument2->l.imag(0L);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1609,8 +1609,8 @@ void (*StkLT)() = dStkLT;
 
 void dStkGT()
 {
-	g_argument2->d.x = double(g_argument2->d.x > g_argument1->d.x);
-	g_argument2->d.y = 0.0;
+	g_argument2->d.real(double(g_argument2->d.real() > g_argument1->d.real()));
+	g_argument2->d.imag(0.0);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1618,8 +1618,8 @@ void dStkGT()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkGT()
 {
-	g_argument2->l.x = long(g_argument2->l.x > g_argument1->l.x) << g_bit_shift;
-	g_argument2->l.y = 0l;
+	g_argument2->l.real(long(g_argument2->l.real() > g_argument1->l.real()) << g_bit_shift);
+	g_argument2->l.imag(0L);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1629,8 +1629,8 @@ void (*StkGT)() = dStkGT;
 
 void dStkLTE()
 {
-	g_argument2->d.x = double(g_argument2->d.x <= g_argument1->d.x);
-	g_argument2->d.y = 0.0;
+	g_argument2->d.real(double(g_argument2->d.real() <= g_argument1->d.real()));
+	g_argument2->d.imag(0.0);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1638,8 +1638,8 @@ void dStkLTE()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkLTE()
 {
-	g_argument2->l.x = long(g_argument2->l.x <= g_argument1->l.x) << g_bit_shift;
-	g_argument2->l.y = 0l;
+	g_argument2->l.real(long(g_argument2->l.real() <= g_argument1->l.real()) << g_bit_shift);
+	g_argument2->l.imag(0L);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1649,8 +1649,8 @@ void (*StkLTE)() = dStkLTE;
 
 void dStkGTE()
 {
-	g_argument2->d.x = double(g_argument2->d.x >= g_argument1->d.x);
-	g_argument2->d.y = 0.0;
+	g_argument2->d.real(double(g_argument2->d.real() >= g_argument1->d.real()));
+	g_argument2->d.imag(0.0);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1658,8 +1658,8 @@ void dStkGTE()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkGTE()
 {
-	g_argument2->l.x = long(g_argument2->l.x >= g_argument1->l.x) << g_bit_shift;
-	g_argument2->l.y = 0l;
+	g_argument2->l.real(long(g_argument2->l.real() >= g_argument1->l.real()) << g_bit_shift);
+	g_argument2->l.imag(0L);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1669,8 +1669,8 @@ void (*StkGTE)() = dStkGTE;
 
 void dStkEQ()
 {
-	g_argument2->d.x = double(g_argument2->d.x == g_argument1->d.x);
-	g_argument2->d.y = 0.0;
+	g_argument2->d.real(double(g_argument2->d.real() == g_argument1->d.real()));
+	g_argument2->d.imag(0.0);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1678,8 +1678,8 @@ void dStkEQ()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkEQ()
 {
-	g_argument2->l.x = long(g_argument2->l.x == g_argument1->l.x) << g_bit_shift;
-	g_argument2->l.y = 0l;
+	g_argument2->l.real(long(g_argument2->l.real() == g_argument1->l.real()) << g_bit_shift);
+	g_argument2->l.imag(0L);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1689,8 +1689,8 @@ void (*StkEQ)() = dStkEQ;
 
 void dStkNE()
 {
-	g_argument2->d.x = double(g_argument2->d.x != g_argument1->d.x);
-	g_argument2->d.y = 0.0;
+	g_argument2->d.real(double(g_argument2->d.real() != g_argument1->d.real()));
+	g_argument2->d.imag(0.0);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1698,8 +1698,8 @@ void dStkNE()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkNE()
 {
-	g_argument2->l.x = long(g_argument2->l.x != g_argument1->l.x) << g_bit_shift;
-	g_argument2->l.y = 0l;
+	g_argument2->l.real(long(g_argument2->l.real() != g_argument1->l.real()) << g_bit_shift);
+	g_argument2->l.imag(0L);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1709,8 +1709,8 @@ void (*StkNE)() = dStkNE;
 
 void dStkOR()
 {
-	g_argument2->d.x = double(g_argument2->d.x || g_argument1->d.x);
-	g_argument2->d.y = 0.0;
+	g_argument2->d.real(double(g_argument2->d.real() || g_argument1->d.real()));
+	g_argument2->d.imag(0.0);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1718,8 +1718,8 @@ void dStkOR()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkOR()
 {
-	g_argument2->l.x = long(g_argument2->l.x || g_argument1->l.x) << g_bit_shift;
-	g_argument2->l.y = 0l;
+	g_argument2->l.real(long(g_argument2->l.real() || g_argument1->l.real()) << g_bit_shift);
+	g_argument2->l.imag(0L);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1729,8 +1729,8 @@ void (*StkOR)() = dStkOR;
 
 void dStkAND()
 {
-	g_argument2->d.x = double(g_argument2->d.x && g_argument1->d.x);
-	g_argument2->d.y = 0.0;
+	g_argument2->d.real(double(g_argument2->d.real() && g_argument1->d.real()));
+	g_argument2->d.imag(0.0);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1738,8 +1738,8 @@ void dStkAND()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkAND()
 {
-	g_argument2->l.x = long(g_argument2->l.x && g_argument1->l.x) << g_bit_shift;
-	g_argument2->l.y = 0l;
+	g_argument2->l.real(long(g_argument2->l.real() && g_argument1->l.real()) << g_bit_shift);
+	g_argument2->l.imag(0L);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1792,15 +1792,15 @@ void lStkPwr()
 	ComplexD x;
 	ComplexD y;
 
-	x.x = double_from_fixpoint(g_argument2->l.x);
-	x.y = double_from_fixpoint(g_argument2->l.y);
-	y.x = double_from_fixpoint(g_argument1->l.x);
-	y.y = double_from_fixpoint(g_argument1->l.y);
+	x.real(double_from_fixpoint(g_argument2->l.real()));
+	x.imag(double_from_fixpoint(g_argument2->l.imag()));
+	y.real(double_from_fixpoint(g_argument1->l.real()));
+	y.imag(double_from_fixpoint(g_argument1->l.imag()));
 	x = ComplexPower(x, y);
-	if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
+	if (fabs(x.real()) < g_fudge_limit && fabs(x.imag()) < g_fudge_limit)
 	{
-		g_argument2->l.x = fixpoint_from_double(x.x);
-		g_argument2->l.y = fixpoint_from_double(x.y);
+		g_argument2->l.real(fixpoint_from_double(x.real()));
+		g_argument2->l.imag(fixpoint_from_double(x.imag()));
 	}
 	else
 	{
@@ -1839,7 +1839,7 @@ void dStkJumpOnFalse()
 
 void Formula::StackJumpOnFalse_d()
 {
-	if (g_argument1->d.x == 0)
+	if (g_argument1->d.real() == 0)
 	{
 		StkJump();
 	}
@@ -1856,7 +1856,7 @@ void lStkJumpOnFalse()
 
 void Formula::StackJumpOnFalse_l()
 {
-	if (g_argument1->l.x == 0)
+	if (g_argument1->l.real() == 0)
 	{
 		StkJump();
 	}
@@ -1875,7 +1875,7 @@ void dStkJumpOnTrue()
 
 void Formula::StackJumpOnTrue_d()
 {
-	if (g_argument1->d.x)
+	if (g_argument1->d.real())
 	{
 		StkJump();
 	}
@@ -1892,7 +1892,7 @@ void lStkJumpOnTrue()
 
 void Formula::StackJumpOnTrue_l()
 {
-	if (g_argument1->l.x)
+	if (g_argument1->l.real())
 	{
 		StkJump();
 	}
@@ -1985,16 +1985,16 @@ ConstArg *Formula::is_constant(const char *text, int length)
 	}
 	m_variables[m_parser_vsp].name = text;
 	m_variables[m_parser_vsp].name_length = length;
-	m_variables[m_parser_vsp].argument.d.x = 0.0;
-	m_variables[m_parser_vsp].argument.d.y = 0.0;
+	m_variables[m_parser_vsp].argument.d.real(0.0);
+	m_variables[m_parser_vsp].argument.d.imag(0.0);
 
 	// m_variables[m_parser_vsp].a should already be zeroed out
 	switch (m_math_type)
 	{
 #if !defined(NO_FIXED_POINT_MATH)
 	case FIXED_POINT_MATH:
-		m_variables[m_parser_vsp].argument.l.x = 0;
-		m_variables[m_parser_vsp].argument.l.y = 0;
+		m_variables[m_parser_vsp].argument.l.real(0);
+		m_variables[m_parser_vsp].argument.l.imag(0);
 		break;
 #endif
 	}
@@ -2021,7 +2021,7 @@ ConstArg *Formula::is_constant(const char *text, int length)
 				|| (text[j] == '-' && (isdigit(text[j + 1]) || text[j + 1] == '.'))
 				|| text[j] == '.')
 			{
-				z.y = atof(&text[j]);
+				z.imag(atof(&text[j]));
 				for (; isdigit(text[j]) || text[j] == '.' || text[j] == '-'; j++)
 				{
 				}
@@ -2029,14 +2029,14 @@ ConstArg *Formula::is_constant(const char *text, int length)
 			}
 			else
 			{
-				z.y = 0.0;
+				z.imag(0.0);
 			}
 		}
 		else
 		{
-			z.y = 0.0;
+			z.imag(0.0);
 		}
-		z.x = atof(text);
+		z.real(atof(text));
 		switch (m_math_type)
 		{
 		case FLOATING_POINT_MATH:
@@ -2044,8 +2044,8 @@ ConstArg *Formula::is_constant(const char *text, int length)
 			break;
 #if !defined(NO_FIXED_POINT_MATH)
 		case FIXED_POINT_MATH:
-			m_variables[m_parser_vsp].argument.l.x = fixpoint_from_double(z.x);
-			m_variables[m_parser_vsp].argument.l.y = fixpoint_from_double(z.y);
+			m_variables[m_parser_vsp].argument.l.real(fixpoint_from_double(z.real()));
+			m_variables[m_parser_vsp].argument.l.imag(fixpoint_from_double(z.imag()));
 			break;
 #endif
 		}
@@ -2403,67 +2403,67 @@ void Formula::parse_string_set_center_magnification_variables()
 	double rotation;
 	double skew;
 	convert_center_mag(&center_real, &center_imag, &magnification, &x_magnification_factor, &rotation, &skew);
-	m_variables[VARIABLE_RAND].argument.d.x = 0.0;
-	m_variables[VARIABLE_RAND].argument.d.y = 0.0;
-	m_variables[VARIABLE_SCRN_MAX].argument.d.x = double(g_x_dots);
-	m_variables[VARIABLE_SCRN_MAX].argument.d.y = double(g_y_dots);
-	m_variables[VARIABLE_MAX_IT].argument.d.x = double(g_max_iteration);
-	m_variables[VARIABLE_MAX_IT].argument.d.y = 0;
-	m_variables[VARIABLE_IS_MAND].argument.d.x = g_is_mandelbrot ? 1.0 : 0.0;
-	m_variables[VARIABLE_IS_MAND].argument.d.y = 0;
-	m_variables[VARIABLE_CENTER].argument.d.x = center_real;
-	m_variables[VARIABLE_CENTER].argument.d.y = center_imag;
-	m_variables[VARIABLE_MAG_X_MAG].argument.d.x = double(magnification);
-	m_variables[VARIABLE_MAG_X_MAG].argument.d.y = x_magnification_factor;
-	m_variables[VARIABLE_ROT_SKEW].argument.d.x = rotation;
-	m_variables[VARIABLE_ROT_SKEW].argument.d.y = skew;
+	m_variables[VARIABLE_RAND].argument.d.real(0.0);
+	m_variables[VARIABLE_RAND].argument.d.imag(0.0);
+	m_variables[VARIABLE_SCRN_MAX].argument.d.real(double(g_x_dots));
+	m_variables[VARIABLE_SCRN_MAX].argument.d.imag(double(g_y_dots));
+	m_variables[VARIABLE_MAX_IT].argument.d.real(double(g_max_iteration));
+	m_variables[VARIABLE_MAX_IT].argument.d.imag(0);
+	m_variables[VARIABLE_IS_MAND].argument.d.real(g_is_mandelbrot ? 1.0 : 0.0);
+	m_variables[VARIABLE_IS_MAND].argument.d.imag(0);
+	m_variables[VARIABLE_CENTER].argument.d.real(center_real);
+	m_variables[VARIABLE_CENTER].argument.d.imag(center_imag);
+	m_variables[VARIABLE_MAG_X_MAG].argument.d.real(double(magnification));
+	m_variables[VARIABLE_MAG_X_MAG].argument.d.imag(x_magnification_factor);
+	m_variables[VARIABLE_ROT_SKEW].argument.d.real(rotation);
+	m_variables[VARIABLE_ROT_SKEW].argument.d.imag(skew);
 }
 void Formula::parse_string_set_parameters_float()
 {
-	m_variables[VARIABLE_P1].argument.d.x = g_parameters[P1_REAL];
-	m_variables[VARIABLE_P1].argument.d.y = g_parameters[P1_IMAG];
-	m_variables[VARIABLE_P2].argument.d.x = g_parameters[P2_REAL];
-	m_variables[VARIABLE_P2].argument.d.y = g_parameters[P2_IMAG];
-	m_variables[VARIABLE_PI].argument.d.x = MathUtil::Pi;
-	m_variables[VARIABLE_PI].argument.d.y = 0.0;
-	m_variables[VARIABLE_E].argument.d.x = MathUtil::e;
-	m_variables[VARIABLE_E].argument.d.y = 0.0;
-	m_variables[VARIABLE_P3].argument.d.x = g_parameters[P3_REAL];
-	m_variables[VARIABLE_P3].argument.d.y = g_parameters[P3_IMAG];
-	m_variables[VARIABLE_P4].argument.d.x = g_parameters[P4_REAL];
-	m_variables[VARIABLE_P4].argument.d.y = g_parameters[P4_IMAG];
-	m_variables[VARIABLE_P5].argument.d.x = g_parameters[P5_REAL];
-	m_variables[VARIABLE_P5].argument.d.y = g_parameters[P5_IMAG];
+	m_variables[VARIABLE_P1].argument.d.real(g_parameters[P1_REAL]);
+	m_variables[VARIABLE_P1].argument.d.imag(g_parameters[P1_IMAG]);
+	m_variables[VARIABLE_P2].argument.d.real(g_parameters[P2_REAL]);
+	m_variables[VARIABLE_P2].argument.d.imag(g_parameters[P2_IMAG]);
+	m_variables[VARIABLE_PI].argument.d.real(MathUtil::Pi);
+	m_variables[VARIABLE_PI].argument.d.imag(0.0);
+	m_variables[VARIABLE_E].argument.d.real(MathUtil::e);
+	m_variables[VARIABLE_E].argument.d.imag(0.0);
+	m_variables[VARIABLE_P3].argument.d.real(g_parameters[P3_REAL]);
+	m_variables[VARIABLE_P3].argument.d.imag(g_parameters[P3_IMAG]);
+	m_variables[VARIABLE_P4].argument.d.real(g_parameters[P4_REAL]);
+	m_variables[VARIABLE_P4].argument.d.imag(g_parameters[P4_IMAG]);
+	m_variables[VARIABLE_P5].argument.d.real(g_parameters[P5_REAL]);
+	m_variables[VARIABLE_P5].argument.d.imag(g_parameters[P5_IMAG]);
 }
 void Formula::parse_string_set_parameters_int()
 {
 #if !defined(NO_FIXED_POINT_MATH)
-	m_variables[VARIABLE_P1].argument.l.x = fixpoint_from_double(g_parameters[P1_REAL]);
-	m_variables[VARIABLE_P1].argument.l.y = fixpoint_from_double(g_parameters[P1_IMAG]);
-	m_variables[VARIABLE_P2].argument.l.x = fixpoint_from_double(g_parameters[P2_REAL]);
-	m_variables[VARIABLE_P2].argument.l.y = fixpoint_from_double(g_parameters[P2_IMAG]);
-	m_variables[VARIABLE_PI].argument.l.x = fixpoint_from_double(MathUtil::Pi);
-	m_variables[VARIABLE_PI].argument.l.y = 0L;
-	m_variables[VARIABLE_E].argument.l.x = fixpoint_from_double(MathUtil::e);
-	m_variables[VARIABLE_E].argument.l.y = 0L;
-	m_variables[VARIABLE_P3].argument.l.x = fixpoint_from_double(g_parameters[P3_REAL]);
-	m_variables[VARIABLE_P3].argument.l.y = fixpoint_from_double(g_parameters[P3_IMAG]);
-	m_variables[VARIABLE_SCRN_MAX].argument.l.x = g_x_dots << g_bit_shift;
-	m_variables[VARIABLE_SCRN_MAX].argument.l.y = g_y_dots << g_bit_shift;
-	m_variables[VARIABLE_MAX_IT].argument.l.x = g_max_iteration << g_bit_shift;
-	m_variables[VARIABLE_MAX_IT].argument.l.y = 0L;
-	m_variables[VARIABLE_IS_MAND].argument.l.x = (g_is_mandelbrot ? 1 : 0) << g_bit_shift;
-	m_variables[VARIABLE_IS_MAND].argument.l.y = 0L;
-	m_variables[VARIABLE_CENTER].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.x);
-	m_variables[VARIABLE_CENTER].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.y);
-	m_variables[VARIABLE_MAG_X_MAG].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].argument.d.x);
-	m_variables[VARIABLE_MAG_X_MAG].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].argument.d.y);
-	m_variables[VARIABLE_ROT_SKEW].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.x);
-	m_variables[VARIABLE_ROT_SKEW].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.y);
-	m_variables[VARIABLE_P4].argument.l.x = fixpoint_from_double(g_parameters[P4_REAL]);
-	m_variables[VARIABLE_P4].argument.l.y = fixpoint_from_double(g_parameters[P4_IMAG]);
-	m_variables[VARIABLE_P5].argument.l.x = fixpoint_from_double(g_parameters[P5_REAL]);
-	m_variables[VARIABLE_P5].argument.l.y = fixpoint_from_double(g_parameters[P5_IMAG]);
+	m_variables[VARIABLE_P1].argument.l.real(fixpoint_from_double(g_parameters[P1_REAL]));
+	m_variables[VARIABLE_P1].argument.l.imag(fixpoint_from_double(g_parameters[P1_IMAG]));
+	m_variables[VARIABLE_P2].argument.l.real(fixpoint_from_double(g_parameters[P2_REAL]));
+	m_variables[VARIABLE_P2].argument.l.imag(fixpoint_from_double(g_parameters[P2_IMAG]));
+	m_variables[VARIABLE_PI].argument.l.real(fixpoint_from_double(MathUtil::Pi));
+	m_variables[VARIABLE_PI].argument.l.imag(0L);
+	m_variables[VARIABLE_E].argument.l.real(fixpoint_from_double(MathUtil::e));
+	m_variables[VARIABLE_E].argument.l.imag(0L);
+	m_variables[VARIABLE_P3].argument.l.real(fixpoint_from_double(g_parameters[P3_REAL]));
+	m_variables[VARIABLE_P3].argument.l.imag(fixpoint_from_double(g_parameters[P3_IMAG]));
+	m_variables[VARIABLE_SCRN_MAX].argument.l.real(g_x_dots << g_bit_shift);
+	m_variables[VARIABLE_SCRN_MAX].argument.l.imag(g_y_dots << g_bit_shift);
+	m_variables[VARIABLE_MAX_IT].argument.l.real(g_max_iteration << g_bit_shift);
+	m_variables[VARIABLE_MAX_IT].argument.l.imag(0L);
+	m_variables[VARIABLE_IS_MAND].argument.l.real((g_is_mandelbrot ? 1 : 0) << g_bit_shift);
+	m_variables[VARIABLE_IS_MAND].argument.l.imag(0L);
+	m_variables[VARIABLE_CENTER].argument.l.real(fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.real()));
+	m_variables[VARIABLE_CENTER].argument.l.imag(fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.imag()));
+	m_variables[VARIABLE_MAG_X_MAG].argument.l.real(fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].argument.d.real()));
+	m_variables[VARIABLE_MAG_X_MAG].argument.l.imag(fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].argument.d.imag()));
+	m_variables[VARIABLE_ROT_SKEW].argument.l.real(fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.real()));
+	m_variables[VARIABLE_ROT_SKEW].argument.l.imag(fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.imag()));
+	m_variables[VARIABLE_P4].argument.l.real(fixpoint_from_double(g_parameters[P4_REAL]));
+	m_variables[VARIABLE_P4].argument.l.imag(fixpoint_from_double(g_parameters[P4_IMAG]));
+	m_variables[VARIABLE_P5].argument.l.real(fixpoint_from_double(g_parameters[P5_REAL]));
+	m_variables[VARIABLE_P5].argument.l.imag(fixpoint_from_double(g_parameters[P5_IMAG]));
 #endif
 }
 
@@ -2760,7 +2760,7 @@ int Formula::orbit()
 	{
 	case FLOATING_POINT_MATH:
 		g_old_z = g_new_z = m_variables[VARIABLE_Z].argument.d;
-		return g_argument1->d.x == 0.0;
+		return g_argument1->d.real() == 0.0;
 #if !defined(NO_FIXED_POINT_MATH)
 	case FIXED_POINT_MATH:
 		g_old_z_l = g_new_z_l = m_variables[VARIABLE_Z].argument.l;
@@ -2768,7 +2768,7 @@ int Formula::orbit()
 		{
 			return 1;
 		}
-		return g_argument1->l.x == 0L;
+		return g_argument1->l.real() == 0L;
 #endif
 	}
 	return 1;
@@ -2793,25 +2793,25 @@ int Formula::per_pixel()
 	g_argument2--;
 
 
-	m_variables[VARIABLE_SCRN_PIX].argument.d.x = double(g_col);
-	m_variables[VARIABLE_SCRN_PIX].argument.d.y = double(g_row);
+	m_variables[VARIABLE_SCRN_PIX].argument.d.real(double(g_col));
+	m_variables[VARIABLE_SCRN_PIX].argument.d.imag(double(g_row));
 
 	switch (m_math_type)
 	{
 	case FLOATING_POINT_MATH:
-		m_variables[VARIABLE_WHITE_SQ].argument.d.x = ((g_row + g_col) & 1) ? 1.0 : 0.0;
-		m_variables[VARIABLE_WHITE_SQ].argument.d.y = 0.0;
+		m_variables[VARIABLE_WHITE_SQ].argument.d.real(((g_row + g_col) & 1) ? 1.0 : 0.0);
+		m_variables[VARIABLE_WHITE_SQ].argument.d.imag(0.0);
 		break;
 
 
 #if !defined(NO_FIXED_POINT_MATH)
 	case FIXED_POINT_MATH:
-		m_variables[VARIABLE_WHITE_SQ].argument.l.x = fixpoint_from_double((g_row + g_col) & 1);
-		m_variables[VARIABLE_WHITE_SQ].argument.l.y = 0L;
-		m_variables[VARIABLE_SCRN_PIX].argument.l.x = g_col;
-		m_variables[VARIABLE_SCRN_PIX].argument.l.x <<= g_bit_shift;
-		m_variables[VARIABLE_SCRN_PIX].argument.l.y = g_row;
-		m_variables[VARIABLE_SCRN_PIX].argument.l.y <<= g_bit_shift;
+		m_variables[VARIABLE_WHITE_SQ].argument.l.real(fixpoint_from_double((g_row + g_col) & 1));
+		m_variables[VARIABLE_WHITE_SQ].argument.l.imag(0L);
+		m_variables[VARIABLE_SCRN_PIX].argument.l.real(g_col);
+		m_variables[VARIABLE_SCRN_PIX].argument.l.real(m_variables[VARIABLE_SCRN_PIX].argument.l.real() << g_bit_shift);
+		m_variables[VARIABLE_SCRN_PIX].argument.l.imag(g_row);
+		m_variables[VARIABLE_SCRN_PIX].argument.l.imag(m_variables[VARIABLE_SCRN_PIX].argument.l.imag() << g_bit_shift);
 		break;
 #endif
 	}
@@ -2823,8 +2823,8 @@ int Formula::per_pixel()
 		switch (m_math_type)
 		{
 		case FLOATING_POINT_MATH:
-			m_variables[VARIABLE_PIXEL].argument.d.x = g_old_z.real();
-			m_variables[VARIABLE_PIXEL].argument.d.y = g_old_z.imag();
+			m_variables[VARIABLE_PIXEL].argument.d.real(g_old_z.real());
+			m_variables[VARIABLE_PIXEL].argument.d.imag(g_old_z.imag());
 			break;
 #if !defined(NO_FIXED_POINT_MATH)
 		case FIXED_POINT_MATH:
@@ -2835,8 +2835,8 @@ int Formula::per_pixel()
 				g_old_z.imag(8);
 			}
 			// convert to fudged longs
-			m_variables[VARIABLE_PIXEL].argument.l.x = fixpoint_from_double(g_old_z.real());
-			m_variables[VARIABLE_PIXEL].argument.l.y = fixpoint_from_double(g_old_z.imag());
+			m_variables[VARIABLE_PIXEL].argument.l.real(fixpoint_from_double(g_old_z.real()));
+			m_variables[VARIABLE_PIXEL].argument.l.imag(fixpoint_from_double(g_old_z.imag()));
 			break;
 #endif
 		}
@@ -3096,8 +3096,8 @@ static bool formula_get_constant(std::ifstream &openfile, FormulaToken *token)
 	int i = 1;
 	bool getting_base = true;
 	std::ifstream::pos_type filepos = openfile.tellg();
-	token->value.x = 0.0;          /*initialize values to 0*/
-	token->value.y = 0.0;
+	token->value.real(0.0);          /*initialize values to 0*/
+	token->value.imag(0.0);
 	bool got_decimal_already = (token->text[0] == '.');
 	bool done = false;
 	while (!done)
@@ -3262,18 +3262,18 @@ static void is_complex_constant(std::ifstream &openfile, FormulaToken *token)
 			if (getting_real && c == ',')  /*we have the real part now*/
 			{
 				append_value(token, temp_tok, sign_value, ",");
-				token->value.x = temp_tok.value.x*sign_value;
+				token->value.real(temp_tok.value.real()*sign_value);
 				getting_real = false;
 				sign_value = 1;
 			}
 			else if (!getting_real && c == ')')  // we have the complex part
 			{
 				append_value(token, temp_tok, sign_value, ")");
-				token->value.y = temp_tok.value.x*sign_value;
-				token->type = token->value.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT;
+				token->value.imag(temp_tok.value.real()*sign_value);
+				token->type = token->value.imag() ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT;
 				token->id   = 0;
 				debug_dump(debug_token, boost::format("Exiting with type set to %d\n")
-					% (token->value.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT));
+					% (token->value.imag() ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT));
 				return;
 			}
 			else
@@ -3288,8 +3288,8 @@ static void is_complex_constant(std::ifstream &openfile, FormulaToken *token)
 	}
 	openfile.seekg(filepos, SEEK_SET);
 	token->text[1] = 0;
-	token->value.y = 0.0;
-	token->value.x = 0.0;
+	token->value.imag(0.0);
+	token->value.real(0.0);
 	token->type = TOKENTYPE_PARENTHESIS;
 	token->id = TOKENID_OPEN_PARENS;
 	debug_dump(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
@@ -3594,8 +3594,8 @@ void Formula::get_parameter(const char *name)
 				<< boost::format("token_id is %d\n") % current_token.id;
 			if (current_token.type == TOKENTYPE_REAL_CONSTANT || current_token.type == TOKENTYPE_COMPLEX_CONSTANT)
 			{
-				debug_token << boost::format("Real value is %f\n") % current_token.value.x
-					<< boost::format("Imag value is %f\n") % current_token.value.y;
+				debug_token << boost::format("Real value is %f\n") % current_token.value.real()
+					<< boost::format("Imag value is %f\n") % current_token.value.imag();
 			}
 			debug_token << "\n";
 		}
@@ -4224,7 +4224,7 @@ void Formula::display_const_list(const char *title, const std::vector<ComplexD> 
 	stop_message(STOPMSG_NORMAL, title);
 	for (std::vector<ComplexD>::size_type i = 0; i < list.size(); i++)
 	{
-		if (stop_message(STOPMSG_NORMAL, str(boost::format("%f, %f\n") % list[i].x % list[i].y)) < 0)
+		if (stop_message(STOPMSG_NORMAL, str(boost::format("%f, %f\n") % list[i].real() % list[i].imag())) < 0)
 		{
 			break;
 		}
@@ -4471,7 +4471,7 @@ bool Formula::prescan(std::ifstream &open_file)
 				record_error(PE_SHOULD_BE_OPERATOR);
 			}
 			expecting_argument = false;
-			add_new(m_real_list, this_token.value.x);
+			add_new(m_real_list, this_token.value.real());
 			// TODO: handle out of memory with container
 			//if (m_real_list == 0)
 			//{
