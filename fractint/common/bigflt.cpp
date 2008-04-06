@@ -17,7 +17,7 @@ double const LOG_256 = 5.5451774444795;
 // It may use scientific notation.
 // USES: bftmp1
 
-bf_t strtobf(bf_t r, char const *s)
+static bf_t strtobf(bf_t r, char const *s)
 {
 	BYTE onesbyte;
 	int signflag = 0;
