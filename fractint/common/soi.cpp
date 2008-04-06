@@ -30,7 +30,7 @@
 
 // the following needs to be changed back to frexpl once the portability
 // issue has been addressed
-#ifndef XFRACT
+#if !defined(NO_FIXED_POINT_MATH)
 #define FREXP(x, y) frexpl(x, y)
 #else
 #define FREXP(x, y) frexp(x, y)
