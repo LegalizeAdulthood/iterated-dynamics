@@ -364,7 +364,7 @@ bool mandelbrot_setup_bn()
 		}
 	}
 
-	g_c_exp = int(g_parameters[2]);
+	g_c_exp = int(g_parameters[P2_REAL]);
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_JULIA_FP:
@@ -373,11 +373,11 @@ bool mandelbrot_setup_bn()
 		break;
 	case FRACTYPE_MANDELBROT_Z_POWER_FP:
 		init_big_pi();
-		if (double(g_c_exp) == g_parameters[2] && (g_c_exp & 1)) // odd exponents
+		if (double(g_c_exp) == g_parameters[P2_REAL] && (g_c_exp & 1)) // odd exponents
 		{
 			g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;
 		}
-		if (g_parameters[3] != 0)
+		if (g_parameters[P2_IMAG] != 0)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -386,7 +386,7 @@ bool mandelbrot_setup_bn()
 		init_big_pi();
 		bftobn(bnparm.x, bfparms[0]);
 		bftobn(bnparm.y, bfparms[1]);
-		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || double(g_c_exp) != g_parameters[2])
+		if ((g_c_exp & 1) || g_parameters[P2_IMAG] != 0.0 || double(g_c_exp) != g_parameters[P2_REAL])
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -447,7 +447,7 @@ bool mandelbrot_setup_bf()
 		}
 	}
 
-	g_c_exp = int(g_parameters[2]);
+	g_c_exp = int(g_parameters[P2_REAL]);
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_JULIA_FP:
@@ -456,11 +456,11 @@ bool mandelbrot_setup_bf()
 		break;
 	case FRACTYPE_MANDELBROT_Z_POWER_FP:
 		init_big_pi();
-		if (double(g_c_exp) == g_parameters[2] && (g_c_exp & 1)) // odd exponents
+		if (double(g_c_exp) == g_parameters[P2_REAL] && (g_c_exp & 1)) // odd exponents
 		{
 			g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;
 		}
-		if (g_parameters[3] != 0)
+		if (g_parameters[P2_IMAG] != 0)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -469,7 +469,7 @@ bool mandelbrot_setup_bf()
 		init_big_pi();
 		copy_bf(bfparm.x, bfparms[0]);
 		copy_bf(bfparm.y, bfparms[1]);
-		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || double(g_c_exp) != g_parameters[2])
+		if ((g_c_exp & 1) || g_parameters[P2_IMAG] != 0.0 || double(g_c_exp) != g_parameters[P2_REAL])
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -513,14 +513,14 @@ int mandelbrot_per_pixel_bn()
 	{
 		// kludge to match "Beauty of Fractals" picture since we start
 		// Mandelbrot iteration with init rather than 0
-		floattobn(g_old_z_bn.x, g_parameters[0]); // initial pertubation of parameters set
-		floattobn(g_old_z_bn.y, g_parameters[1]);
+		floattobn(g_old_z_bn.x, g_parameters[P1_REAL]); // initial pertubation of parameters set
+		floattobn(g_old_z_bn.y, g_parameters[P1_IMAG]);
 		g_color_iter = -1;
 	}
 	else
 	{
-		floattobn(g_new_z_bn.x, g_parameters[0]);
-		floattobn(g_new_z_bn.y, g_parameters[1]);
+		floattobn(g_new_z_bn.x, g_parameters[P1_REAL]);
+		floattobn(g_new_z_bn.y, g_parameters[P1_IMAG]);
 		add_a_bn(g_old_z_bn.x, g_new_z_bn.x);
 		add_a_bn(g_old_z_bn.y, g_new_z_bn.y);
 	}
@@ -559,14 +559,14 @@ int mandelbrot_per_pixel_bf()
 	{
 		// kludge to match "Beauty of Fractals" picture since we start
 		// Mandelbrot iteration with g_initial_z rather than 0
-		floattobf(g_old_z_bf.x, g_parameters[0]); // initial pertubation of parameters set
-		floattobf(g_old_z_bf.y, g_parameters[1]);
+		floattobf(g_old_z_bf.x, g_parameters[P1_REAL]); // initial pertubation of parameters set
+		floattobf(g_old_z_bf.y, g_parameters[P1_IMAG]);
 		g_color_iter = -1;
 	}
 	else
 	{
-		floattobf(g_new_z_bf.x, g_parameters[0]);
-		floattobf(g_new_z_bf.y, g_parameters[1]);
+		floattobf(g_new_z_bf.x, g_parameters[P1_REAL]);
+		floattobf(g_new_z_bf.y, g_parameters[P1_IMAG]);
 		add_a_bf(g_old_z_bf.x, g_new_z_bf.x);
 		add_a_bf(g_old_z_bf.y, g_new_z_bf.y);
 	}
@@ -677,8 +677,8 @@ int julia_z_power_orbit_bn()
 	parm2.x = alloc_stack(g_bn_length);
 	parm2.y = alloc_stack(g_bn_length);
 
-	floattobn(parm2.x, g_parameters[2]);
-	floattobn(parm2.y, g_parameters[3]);
+	floattobn(parm2.x, g_parameters[P2_REAL]);
+	floattobn(parm2.y, g_parameters[P2_IMAG]);
 	complex_power_bn(&g_new_z_bn, &g_old_z_bn, &parm2);
 	add_bn(g_new_z_bn.x, bnparm.x, g_new_z_bn.x + g_shift_factor);
 	add_bn(g_new_z_bn.y, bnparm.y, g_new_z_bn.y + g_shift_factor);
@@ -694,8 +694,8 @@ int julia_z_power_orbit_bf()
 	parm2.x = alloc_stack(g_bf_length + 2);
 	parm2.y = alloc_stack(g_bf_length + 2);
 
-	floattobf(parm2.x, g_parameters[2]);
-	floattobf(parm2.y, g_parameters[3]);
+	floattobf(parm2.x, g_parameters[P2_REAL]);
+	floattobf(parm2.y, g_parameters[P2_IMAG]);
 	ComplexPower_bf(&g_new_z_bf, &g_old_z_bf, &parm2);
 	add_bf(g_new_z_bf.x, bfparm.x, g_new_z_bf.x);
 	add_bf(g_new_z_bf.y, bfparm.y, g_new_z_bf.y);

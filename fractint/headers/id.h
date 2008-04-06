@@ -390,6 +390,11 @@ enum MiscellaneousConstants
 
 	MESSAGE_LEN = 80,			// handy buffer size for messages
 	MAX_COMMENT = 57,			// length of par comments
+	P1_REAL = 0, P1_IMAG = 1,
+	P2_REAL = 2, P2_IMAG = 3,
+	P3_REAL = 4, P3_IMAG = 5,
+	P4_REAL = 6, P4_IMAG = 7,
+	P5_REAL = 8, P5_IMAG = 9,
 	MAX_PARAMETERS = 10,		// maximum number of parameters
 	MAX_PIXELS = 32767,			// Maximum pixel count across/down the screen
 	OLD_MAX_PIXELS = 2048,		// Limit of some old fixed arrays

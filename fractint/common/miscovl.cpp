@@ -961,19 +961,19 @@ static void write_batch_parms_parameters()
 	{
 		if (fractal_type_ant_or_cellular(g_fractal_type))
 		{
-			put_parm(format(" params=%.1f") % g_parameters[0]);
+			put_parm(format(" params=%.1f") % g_parameters[P1_REAL]);
 		}
 		else
 		{
 #ifdef USE_LONG_DOUBLE
 			if (DEBUGMODE_MORE_DIGITS == g_debug_mode)
 			{
-				put_parm(format(" params=%.17Lg") % (long double)g_parameters[0]);
+				put_parm(format(" params=%.17Lg") % (long double)g_parameters[P1_REAL]);
 			}
 			else
 #endif
 			{
-				put_parm(format(" params=%.17g") % g_parameters[0]);
+				put_parm(format(" params=%.17g") % g_parameters[P1_REAL]);
 			}
 		}
 		for (int j = 1; j <= i; ++j)

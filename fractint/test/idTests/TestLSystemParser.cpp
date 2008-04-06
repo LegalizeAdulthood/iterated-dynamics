@@ -798,4 +798,3 @@ const std::string TestData::s_l_system_file =
 	"  Axiom F++F++F++F\n"
 	"  F=F+++F---F+F---F++F--F++F\n"
 	"}\n";
-;

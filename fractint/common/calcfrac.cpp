@@ -567,10 +567,10 @@ int calculate_fractal()
 	{
 		g_distance_test = 0;
 	}
-	g_parameter.real(g_parameters[0]);
-	g_parameter.imag(g_parameters[1]);
-	g_parameter2.real(g_parameters[2]);
-	g_parameter2.imag(g_parameters[3]);
+	g_parameter.real(g_parameters[P1_REAL]);
+	g_parameter.imag(g_parameters[P1_IMAG]);
+	g_parameter2.real(g_parameters[P2_REAL]);
+	g_parameter2.imag(g_parameters[P2_IMAG]);
 
 	if (g_use_old_periodicity)
 	{
@@ -1263,15 +1263,13 @@ bool detect_finite_attractor_fp()
 	ComplexD attractor;
 	for (int i = 0; i < g_num_attractors; i++)
 	{
-		attractor.x = g_new_z.real() - g_attractors[i].x;
-		attractor.x = sqr(attractor.x);
-		if (attractor.x < g_attractor_radius_fp)
+		attractor.real(sqr(g_new_z.real() - g_attractors[i].real()));
+		if (attractor.real() < g_attractor_radius_fp)
 		{
-			attractor.y = g_new_z.imag() - g_attractors[i].y;
-			attractor.y = sqr(attractor.y);
-			if (attractor.y < g_attractor_radius_fp)
+			attractor.imag(sqr(g_new_z.imag() - g_attractors[i].imag()));
+			if (attractor.imag() < g_attractor_radius_fp)
 			{
-				if ((attractor.x + attractor.y) < g_attractor_radius_fp)
+				if ((attractor.real() + attractor.imag()) < g_attractor_radius_fp)
 				{
 					attracted = true;
 					if (g_finite_attractor == FINITE_ATTRACTOR_PHASE)
@@ -1555,8 +1553,8 @@ void StandardFractal::initialize_float()
 	}
 	else
 	{
-		s_saved_z.x = 0;
-		s_saved_z.y = 0;
+		s_saved_z.real(0);
+		s_saved_z.imag(0);
 	}
 	if (g_bf_math)
 	{
@@ -1578,8 +1576,8 @@ void StandardFractal::initialize_float()
 	g_initial_z.imag(g_externs.DyPixel());
 	if (g_distance_test)
 	{
-		m_distance_test_derivative.x = 1;
-		m_distance_test_derivative.y = 0;
+		m_distance_test_derivative.real(1);
+		m_distance_test_derivative.imag(0);
 		g_magnitude = 0;
 	}
 }
@@ -1591,8 +1589,8 @@ void StandardFractal::initialize_integer()
 	}
 	else
 	{
-		m_saved_z_l.x = 0;
-		m_saved_z_l.y = 0;
+		m_saved_z_l.real(0);
+		m_saved_z_l.imag(0);
 	}
 	g_initial_z_l.imag(g_externs.LyPixel());
 }
@@ -1637,8 +1635,7 @@ void StandardFractal::outside_colormode_total_distance_initialize()
 		{
 			g_old_z = complex_bf_to_float(&g_old_z_bf);
 		}
-		m_colormode_total_distance_last_z.x = g_old_z.real();
-		m_colormode_total_distance_last_z.y = g_old_z.imag();
+		m_colormode_total_distance_last_z = g_old_z;
 	}
 }
 void StandardFractal::initialize()
@@ -1961,8 +1958,7 @@ void StandardFractal::outside_colormode_set_new_z_update()
 void StandardFractal::outside_colormode_total_distance_update()
 {
 	m_colormode_total_distance += sqrt(sqr(m_colormode_total_distance_last_z.x-g_new_z.real()) + sqr(m_colormode_total_distance_last_z.y-g_new_z.imag()));
-	m_colormode_total_distance_last_z.x = g_new_z.real();
-	m_colormode_total_distance_last_z.y = g_new_z.imag();
+	m_colormode_total_distance_last_z = g_new_z;
 }
 void StandardFractal::outside_colormode_float_modulus_update()
 {
@@ -2021,9 +2017,9 @@ bool StandardFractal::distance_test_compute()
 	// Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198
 	double ftemp = (s_dem_mandelbrot ? 1 : 0)
 		+ 2*(g_old_z.real()*m_distance_test_derivative.x - g_old_z.imag()*m_distance_test_derivative.y);
-	m_distance_test_derivative.y = 2*(g_old_z.imag()*m_distance_test_derivative.x + g_old_z.real()*m_distance_test_derivative.y);
-	m_distance_test_derivative.x = ftemp;
-	if (std::max(fabs(m_distance_test_derivative.x), fabs(m_distance_test_derivative.y)) > s_dem_too_big)
+	m_distance_test_derivative.imag(2*(g_old_z.imag()*m_distance_test_derivative.real() + g_old_z.real()*m_distance_test_derivative.imag()));
+	m_distance_test_derivative.real(ftemp);
+	if (std::max(fabs(m_distance_test_derivative.real()), fabs(m_distance_test_derivative.imag())) > s_dem_too_big)
 	{
 		return true;
 	}
@@ -2523,7 +2519,7 @@ static void decomposition()
 			if (g_new_z_l.real() < g_new_z_l.imag())
 			{
 				++temp;
-				lalt.x = g_new_z_l.real(); // just
+				lalt.real(g_new_z_l.real()); // just
 				g_new_z_l.real(g_new_z_l.imag()); // swap
 				g_new_z_l.imag(lalt.x); // them
 			}
@@ -2627,9 +2623,9 @@ static void decomposition()
 			if (g_new_z.real() < g_new_z.imag())
 			{
 				++temp;
-				alt.x = g_new_z.real(); // just
+				alt.real(g_new_z.real()); // just
 				g_new_z.real(g_new_z.imag()); // swap
-				g_new_z.imag(alt.x); // them
+				g_new_z.imag(alt.real()); // them
 			}
 			if (g_decomposition[0] >= 16)
 			{
@@ -3009,14 +3005,15 @@ static void set_symmetry(int symmetry, bool use_list) // set up proper symmetric
 		break;
 	case FRACTYPE_FORMULA:  // Check P2, P3, P4 and P5
 	case FRACTYPE_FORMULA_FP:
-		parameters_are_zero = (parameters_are_zero && g_parameters[2] == 0.0 && g_parameters[3] == 0.0
-						&& g_parameters[4] == 0.0 && g_parameters[5] == 0.0
-						&& g_parameters[6] == 0.0 && g_parameters[7] == 0.0
-						&& g_parameters[8] == 0.0 && g_parameters[9] == 0.0);
-		parameters_have_zero_real = (parameters_have_zero_real && g_parameters[2] == 0.0 && g_parameters[4] == 0.0
-						&& g_parameters[6] == 0.0 && g_parameters[8] == 0.0);
-		parameters_have_zero_imaginary = (parameters_have_zero_imaginary && g_parameters[3] == 0.0 && g_parameters[5] == 0.0
-						&& g_parameters[7] == 0.0 && g_parameters[9] == 0.0);
+		parameters_are_zero = (parameters_are_zero
+			&& g_parameters[P2_REAL] == 0.0 && g_parameters[P2_IMAG] == 0.0
+			&& g_parameters[P3_REAL] == 0.0 && g_parameters[P3_IMAG] == 0.0
+			&& g_parameters[P4_REAL] == 0.0 && g_parameters[P4_IMAG] == 0.0
+			&& g_parameters[P5_REAL] == 0.0 && g_parameters[P5_IMAG] == 0.0);
+		parameters_have_zero_real = (parameters_have_zero_real && g_parameters[P2_REAL] == 0.0 && g_parameters[P3_REAL] == 0.0
+						&& g_parameters[P4_REAL] == 0.0 && g_parameters[P5_REAL] == 0.0);
+		parameters_have_zero_imaginary = (parameters_have_zero_imaginary && g_parameters[P2_IMAG] == 0.0 && g_parameters[P3_IMAG] == 0.0
+						&& g_parameters[P4_IMAG] == 0.0 && g_parameters[P5_IMAG] == 0.0);
 		break;
 	default:   // Check P2 for the rest
 		parameters_are_zero = (parameters_are_zero && g_parameter2.real() == 0.0 && g_parameter2.imag() == 0.0);

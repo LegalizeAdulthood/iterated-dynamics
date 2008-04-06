@@ -116,16 +116,16 @@ void release_parameter_box();
 
 GENEBASE g_genes[NUM_GENES] =
 {
-	{ &g_parameters[0],		vary_double,		5, "Param 1 real", 1 },
-	{ &g_parameters[1],		vary_double,		5, "Param 1 imag", 1 },
-	{ &g_parameters[2],		vary_double,		0, "Param 2 real", 1 },
-	{ &g_parameters[3],		vary_double,		0, "Param 2 imag", 1 },
-	{ &g_parameters[4],		vary_double,		0, "Param 3 real", 1 },
-	{ &g_parameters[5],		vary_double,		0, "Param 3 imag", 1 },
-	{ &g_parameters[6],		vary_double,		0, "Param 4 real", 1 },
-	{ &g_parameters[7],		vary_double,		0, "Param 4 imag", 1 },
-	{ &g_parameters[8],		vary_double,		0, "Param 5 real", 1 },
-	{ &g_parameters[9],		vary_double,		0, "Param 5 imag", 1 },
+	{ &g_parameters[P1_REAL],		vary_double,		5, "Param 1 real", 1 },
+	{ &g_parameters[P1_IMAG],		vary_double,		5, "Param 1 imag", 1 },
+	{ &g_parameters[P2_REAL],		vary_double,		0, "Param 2 real", 1 },
+	{ &g_parameters[P2_IMAG],		vary_double,		0, "Param 2 imag", 1 },
+	{ &g_parameters[P3_REAL],		vary_double,		0, "Param 3 real", 1 },
+	{ &g_parameters[P3_IMAG],		vary_double,		0, "Param 3 imag", 1 },
+	{ &g_parameters[P4_REAL],		vary_double,		0, "Param 4 real", 1 },
+	{ &g_parameters[P4_IMAG],		vary_double,		0, "Param 4 imag", 1 },
+	{ &g_parameters[P5_REAL],		vary_double,		0, "Param 5 real", 1 },
+	{ &g_parameters[P5_IMAG],		vary_double,		0, "Param 5 imag", 1 },
 	{ 0,					vary_inside,		0, "inside color", 2 },
 	{ 0,					vary_outside,		0, "outside color", 3 },
 	{ &g_decomposition[0],	vary_power2,		0, "decomposition", 4 },
@@ -143,7 +143,7 @@ void restore_parameter_history()
 {
 	std::copy(&s_old_history.parameters[0],
 		&s_old_history.parameters[MAX_PARAMETERS],
-		&g_parameters[0]);
+		&g_parameters[P1_REAL]);
 	g_externs.SetInside(s_old_history.inside);
 	g_externs.SetOutside(s_old_history.outside);
 	g_decomposition[0] = s_old_history.decomposition0;
@@ -159,9 +159,7 @@ void restore_parameter_history()
 
 void save_parameter_history()
 {
-	std::copy(&g_parameters[0],
-		&g_parameters[MAX_PARAMETERS],
-		&s_old_history.parameters[0]);
+	std::copy(&g_parameters[0], &g_parameters[MAX_PARAMETERS], &s_old_history.parameters[0]);
 	s_old_history.inside = g_externs.Inside();
 	s_old_history.outside = g_externs.Outside();
 	s_old_history.decomposition0 = g_decomposition[0];
@@ -618,8 +616,8 @@ get_evol_restart:
 		// adjust field param to make some sense when changing from random modes
 		// maybe should adjust for aspect ratio here?
 		g_parameter_range_x = g_parameter_range_y = g_fiddle_factor*2;
-		g_parameter_offset_x = g_parameters[0] - g_fiddle_factor;
-		g_parameter_offset_y = g_parameters[1] - g_fiddle_factor;
+		g_parameter_offset_x = g_parameters[P1_REAL] - g_fiddle_factor;
+		g_parameter_offset_y = g_parameters[P1_IMAG] - g_fiddle_factor;
 		// set middle image to last selected and edges to +- g_fiddle_factor
 	}
 

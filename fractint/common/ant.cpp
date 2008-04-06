@@ -533,9 +533,9 @@ int Ant::Compute()
 	initialize_increments();
 
 	HelpModeSaver saved_help(FIHELP_ANT_COMMANDS);
-	long maxpts = std::abs(long(g_parameters[1]));
+	long maxpts = std::abs(long(g_parameters[P1_IMAG]));
 	m_wait = std::abs(g_orbit_delay);
-	strcpy(m_rule, boost::format("%.17g") % g_parameters[0]);
+	strcpy(m_rule, boost::format("%.17g") % g_parameters[P1_REAL]);
 	m_rule_len = int(strlen(m_rule));
 	if (m_rule_len > 1)
 	{                            // if m_rule_len == 0 random rule
@@ -553,7 +553,7 @@ int Ant::Compute()
 
 	SetMaxAnts();
 	SetAntType();
-	m_wrap = (g_parameters[4] != 0);
+	m_wrap = (g_parameters[P3_REAL] != 0);
 
 	switch (_type)
 	{
@@ -569,13 +569,13 @@ int Ant::Compute()
 
 void Ant::SetRandomSeedForReproducibility()
 {
-	if (!g_use_fixed_random_seed && (g_parameters[5] == 1))
+	if (!g_use_fixed_random_seed && (g_parameters[P3_IMAG] == 1))
 	{
 		--g_random_seed;
 	}
-	if (g_parameters[5] != 0 && g_parameters[5] != 1)
+	if (g_parameters[P3_IMAG] != 0 && g_parameters[P3_IMAG] != 1)
 	{
-		g_random_seed = int(g_parameters[5]);
+		g_random_seed = int(g_parameters[P3_IMAG]);
 	}
 
 	srand(g_random_seed);
@@ -587,7 +587,7 @@ void Ant::SetRandomSeedForReproducibility()
 
 void Ant::SetMaxAnts()
 {
-	m_max_ants = int(g_parameters[2]);
+	m_max_ants = int(g_parameters[P2_REAL]);
 	if (m_max_ants < 1)             // if m_max_ants == 0 maxants random
 	{
 		m_max_ants = 2 + random_number(MAX_ANTS - 2);
@@ -595,14 +595,14 @@ void Ant::SetMaxAnts()
 	else if (m_max_ants > MAX_ANTS)
 	{
 		m_max_ants = MAX_ANTS;
-		g_parameters[2] = m_max_ants;
+		g_parameters[P2_REAL] = m_max_ants;
 
 	}
 }
 
 void Ant::SetAntType()
 {
-	_type = AntType(int(g_parameters[3]) - 1);
+	_type = AntType(int(g_parameters[P2_IMAG]) - 1);
 	if (_type < ANTTYPE_MOVE_COLOR || _type > ANTTYPE_MOVE_RULE)
 	{
 		// if param[3] == 0 choose a random type

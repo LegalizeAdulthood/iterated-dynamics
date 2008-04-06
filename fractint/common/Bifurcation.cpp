@@ -331,12 +331,12 @@ int bifurcation_may()
 
 bool bifurcation_may_setup()
 {
-	s_beta = long(g_parameters[2]);
+	s_beta = long(g_parameters[P2_REAL]);
 	if (s_beta < 2)
 	{
 		s_beta = 2;
 	}
-	g_parameters[2] = double(s_beta);
+	g_parameters[P2_REAL] = double(s_beta);
 
 	timer_engine(g_current_fractal_specific->calculate_type);
 	return false;

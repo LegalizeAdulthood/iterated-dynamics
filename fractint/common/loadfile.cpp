@@ -69,10 +69,10 @@ static void read_info_version_0(const fractal_info &read_info)
 	// TODO: handle old crap or abort?
 	if (read_info.version > 0)
 	{
-		g_parameters[2] = read_info.parm3;
-		round_float_d(&g_parameters[2]);
-		g_parameters[3] = read_info.parm4;
-		round_float_d(&g_parameters[3]);
+		g_parameters[P2_REAL] = read_info.parm3;
+		round_float_d(&g_parameters[P2_REAL]);
+		g_parameters[P2_IMAG] = read_info.parm4;
+		round_float_d(&g_parameters[P2_IMAG]);
 		g_potential_parameter[0] = read_info.potential[0];
 		g_potential_parameter[1] = read_info.potential[1];
 		g_potential_parameter[2] = read_info.potential[2];
@@ -230,8 +230,8 @@ static void read_info_version_6(const fractal_info &read_info)
 	// TODO: handle old crap or abort?
 	if (read_info.version > 6)
 	{
-		g_parameters[2] = read_info.dparm3;
-		g_parameters[3] = read_info.dparm4;
+		g_parameters[P2_REAL] = read_info.dparm3;
+		g_parameters[P2_IMAG] = read_info.dparm4;
 	}
 }
 
@@ -265,12 +265,12 @@ static void read_info_version_8(const fractal_info &read_info)
 		g_formula_state.set_max_fn(read_info.max_fn);
 		g_major_method = MajorMethodType(read_info.inversejulia >> 8);
 		g_minor_method = MinorMethodType(read_info.inversejulia & 255);
-		g_parameters[4] = read_info.dparm5;
-		g_parameters[5] = read_info.dparm6;
-		g_parameters[6] = read_info.dparm7;
-		g_parameters[7] = read_info.dparm8;
-		g_parameters[8] = read_info.dparm9;
-		g_parameters[9] = read_info.dparm10;
+		g_parameters[P3_REAL] = read_info.dparm5;
+		g_parameters[P3_IMAG] = read_info.dparm6;
+		g_parameters[P4_REAL] = read_info.dparm7;
+		g_parameters[P4_IMAG] = read_info.dparm8;
+		g_parameters[P5_REAL] = read_info.dparm9;
+		g_parameters[P5_IMAG] = read_info.dparm10;
 	}
 }
 
@@ -687,7 +687,7 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, formu
 		g_externs.SetCalculationStatus(CALCSTAT_PARAMS_CHANGED);
 		g_fractal_type = FRACTYPE_PLASMA;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-		g_parameters[0] = 0;
+		g_parameters[P1_REAL] = 0;
 		if (!g_initialize_batch)
 		{
 			if (get_3d_parameters() < 0)
@@ -742,8 +742,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 	g_escape_time_state.m_grid_fp.x_max() = read_info.x_max;
 	g_escape_time_state.m_grid_fp.y_min() = read_info.y_min;
 	g_escape_time_state.m_grid_fp.y_max() = read_info.y_max;
-	g_parameters[0] = read_info.c_real;
-	g_parameters[1] = read_info.c_imag;
+	g_parameters[P1_REAL] = read_info.c_real;
+	g_parameters[P1_IMAG] = read_info.c_imag;
 	g_save_release = 1100; // unless we find out better later on
 
 	read_info_version_0(read_info);
@@ -1395,24 +1395,24 @@ void backwards_v19()
 {
 	if (g_fractal_type == FRACTYPE_MARKS_JULIA && g_save_release < 1825)
 	{
-		if (g_parameters[2] == 0)
+		if (g_parameters[P2_REAL] == 0)
 		{
-			g_parameters[2] = 2;
+			g_parameters[P2_REAL] = 2;
 		}
 		else
 		{
-			g_parameters[2]++;
+			g_parameters[P2_REAL]++;
 		}
 	}
 	if (g_fractal_type == FRACTYPE_MARKS_JULIA_FP && g_save_release < 1825)
 	{
-		if (g_parameters[2] == 0)
+		if (g_parameters[P2_REAL] == 0)
 		{
-			g_parameters[2] = 2;
+			g_parameters[P2_REAL] = 2;
 		}
 		else
 		{
-			g_parameters[2]++;
+			g_parameters[P2_REAL]++;
 		}
 	}
 	if (fractal_type_formula(g_fractal_type) && g_save_release < 1824)

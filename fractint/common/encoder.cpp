@@ -812,8 +812,8 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->x_max = g_escape_time_state.m_grid_fp.x_max();
 	save_info->y_min = g_escape_time_state.m_grid_fp.y_min();
 	save_info->y_max = g_escape_time_state.m_grid_fp.y_max();
-	save_info->c_real = g_parameters[0];
-	save_info->c_imag = g_parameters[1];
+	save_info->c_real = g_parameters[P1_REAL];
+	save_info->c_imag = g_parameters[P1_IMAG];
 	save_info->deprecated_video_mode_ax = 0;
 	save_info->deprecated_video_mode_bx = 0;
 	save_info->deprecated_video_mode_cx = 0;
@@ -824,14 +824,14 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->colors = short(g_.VideoEntry().colors);
 	save_info->parm3 = 0;        // pre version == 7 fields
 	save_info->parm4 = 0;
-	save_info->dparm3 = g_parameters[2];
-	save_info->dparm4 = g_parameters[3];
-	save_info->dparm5 = g_parameters[4];
-	save_info->dparm6 = g_parameters[5];
-	save_info->dparm7 = g_parameters[6];
-	save_info->dparm8 = g_parameters[7];
-	save_info->dparm9 = g_parameters[8];
-	save_info->dparm10 = g_parameters[9];
+	save_info->dparm3 = g_parameters[P2_REAL];
+	save_info->dparm4 = g_parameters[P2_IMAG];
+	save_info->dparm5 = g_parameters[P3_REAL];
+	save_info->dparm6 = g_parameters[P3_IMAG];
+	save_info->dparm7 = g_parameters[P4_REAL];
+	save_info->dparm8 = g_parameters[P4_IMAG];
+	save_info->dparm9 = g_parameters[P5_REAL];
+	save_info->dparm10 = g_parameters[P5_IMAG];
 	save_info->fill_color = short(g_fill_color);
 	save_info->potential[0] = float(g_potential_parameter[0]);
 	save_info->potential[1] = float(g_potential_parameter[1]);

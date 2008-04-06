@@ -58,7 +58,7 @@ bool Halley::setup()
 	{
 		g_degree = 2;
 	}
-	g_parameters[0] = double(g_degree);
+	g_parameters[P1_REAL] = double(g_degree);
 
 	// precalculated values
 	m_a_plus_1 = g_degree + 1; // a + 1
@@ -121,7 +121,7 @@ int Halley::orbit()
 	// new.x = g_old_z.real() - (g_parameter.imag()*Halnumer2.x);
 	// new.y = g_old_z.imag() - (g_parameter.imag()*Halnumer2.y);
 	relax.x = g_parameter.imag();
-	relax.y = g_parameters[3];
+	relax.y = g_parameters[P2_IMAG];
 	FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
 	g_new_z.real(g_old_z.real() - Halnumer2.x);
 	g_new_z.imag(g_old_z.imag() - Halnumer2.y);

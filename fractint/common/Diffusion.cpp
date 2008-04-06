@@ -67,19 +67,19 @@ int diffusion()
 	g_bit_shift = 16;
 	g_fudge = 1L << 16;
 
-	border = int(g_parameters[0]);
+	border = int(g_parameters[P1_REAL]);
 	if (border <= 0)
 	{
 		border = 10;
 	}
 
-	mode = DiffusionType(int(g_parameters[1]));
+	mode = DiffusionType(int(g_parameters[P1_IMAG]));
 	if ((mode > DIFFUSION_SQUARE) || (mode < DIFFUSION_CENTRAL))
 	{
 		mode = DIFFUSION_CENTRAL;
 	}
 
-	colorshift = int(g_parameters[2]);
+	colorshift = int(g_parameters[P2_REAL]);
 	colorcount = colorshift; // Counts down from colorshift
 	currentcolor = 1;  // Start at color 1 (color 0 is probably invisible)
 

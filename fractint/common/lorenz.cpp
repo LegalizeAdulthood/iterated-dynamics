@@ -330,22 +330,22 @@ bool orbit_3d_setup()
 
 	if (g_fractal_type == FRACTYPE_HENON_L)
 	{
-		s_l_a =  DoubleToFudge(g_parameters[0]);
-		s_l_b =  DoubleToFudge(g_parameters[1]);
-		s_l_c =  DoubleToFudge(g_parameters[2]);
-		s_l_d =  DoubleToFudge(g_parameters[3]);
+		s_l_a =  DoubleToFudge(g_parameters[P1_REAL]);
+		s_l_b =  DoubleToFudge(g_parameters[P1_IMAG]);
+		s_l_c =  DoubleToFudge(g_parameters[P2_REAL]);
+		s_l_d =  DoubleToFudge(g_parameters[P2_IMAG]);
 	}
 	else if (fractal_type_kam_torus(g_fractal_type))
 	{
 		g_max_count = 1L;
-		s_a = g_parameters[0];           // angle
-		if (g_parameters[1] <= 0.0)
+		s_a = g_parameters[P1_REAL];           // angle
+		if (g_parameters[P1_IMAG] <= 0.0)
 		{
-			g_parameters[1] = .01;
+			g_parameters[P1_IMAG] = .01;
 		}
-		s_l_b =  DoubleToFudge(g_parameters[1]);    // stepsize
-		s_l_c =  DoubleToFudge(g_parameters[2]);    // stop
-		s_l_d =  long(g_parameters[3]);
+		s_l_b =  DoubleToFudge(g_parameters[P1_IMAG]);    // stepsize
+		s_l_c =  DoubleToFudge(g_parameters[P2_REAL]);    // stop
+		s_l_d =  long(g_parameters[P2_IMAG]);
 		s_t = int(s_l_d);     // points per orbit
 
 		s_l_sinx = DoubleToFudge(sin(s_a));
@@ -359,11 +359,11 @@ bool orbit_3d_setup()
 	{
 		ComplexL Sqrt;
 
-		s_x_long = DoubleToFudge(g_parameters[0]);
-		s_y_long = DoubleToFudge(g_parameters[1]);
+		s_x_long = DoubleToFudge(g_parameters[P1_REAL]);
+		s_y_long = DoubleToFudge(g_parameters[P1_IMAG]);
 
-		s_max_hits = int(g_parameters[2]);
-		s_run_length = int(g_parameters[3]);
+		s_max_hits = int(g_parameters[P2_REAL]);
+		s_run_length = int(g_parameters[P2_IMAG]);
 		if (s_max_hits <= 0)
 		{
 			s_max_hits = 1;
@@ -372,7 +372,7 @@ bool orbit_3d_setup()
 		{
 			s_max_hits = g_colors - 1;
 		}
-		g_parameters[2] = s_max_hits;
+		g_parameters[P2_REAL] = s_max_hits;
 
 		setup_convert_to_screen(&s_cvt);
 		// Note: using g_bit_shift of 21 for affine, 24 otherwise
@@ -434,10 +434,10 @@ lrwalk:
 	}
 	else
 	{
-		s_l_dt = DoubleToFudge(g_parameters[0]);
-		s_l_a =  DoubleToFudge(g_parameters[1]);
-		s_l_b =  DoubleToFudge(g_parameters[2]);
-		s_l_c =  DoubleToFudge(g_parameters[3]);
+		s_l_dt = DoubleToFudge(g_parameters[P1_REAL]);
+		s_l_a =  DoubleToFudge(g_parameters[P1_IMAG]);
+		s_l_b =  DoubleToFudge(g_parameters[P2_REAL]);
+		s_l_c =  DoubleToFudge(g_parameters[P2_IMAG]);
 	}
 
 	// precalculations for speed
@@ -483,8 +483,8 @@ bool orbit_3d_setup_fp()
 	s_init_orbit_fp[2] = 1;
 	if (g_fractal_type == FRACTYPE_GINGERBREAD_FP)
 	{
-		s_init_orbit_fp[0] = g_parameters[0];        // initial conditions
-		s_init_orbit_fp[1] = g_parameters[1];
+		s_init_orbit_fp[0] = g_parameters[P1_REAL];        // initial conditions
+		s_init_orbit_fp[1] = g_parameters[P1_IMAG];
 	}
 
 	if (g_fractal_type == FRACTYPE_ICON || g_fractal_type == FRACTYPE_ICON_3D)        // DMF
@@ -502,10 +502,10 @@ bool orbit_3d_setup_fp()
 
 	if (g_fractal_type == FRACTYPE_HENON_FP || g_fractal_type == FRACTYPE_PICKOVER_FP)
 	{
-		s_a =  g_parameters[0];
-		s_b =  g_parameters[1];
-		s_c =  g_parameters[2];
-		s_d =  g_parameters[3];
+		s_a =  g_parameters[P1_REAL];
+		s_b =  g_parameters[P1_IMAG];
+		s_c =  g_parameters[P2_REAL];
+		s_d =  g_parameters[P2_IMAG];
 	}
 	else if (g_fractal_type == FRACTYPE_ICON || g_fractal_type == FRACTYPE_ICON_3D)        // DMF
 	{
@@ -514,22 +514,22 @@ bool orbit_3d_setup_fp()
 		s_connect_points = false;
 		s_initial_orbit_skip_count = 2000;
 		// Initialize parameters
-		s_a =   g_parameters[0];
-		s_b =   g_parameters[1];
-		s_c =   g_parameters[2];
-		s_d =   g_parameters[3];
+		s_a =   g_parameters[P1_REAL];
+		s_b =   g_parameters[P1_IMAG];
+		s_c =   g_parameters[P2_REAL];
+		s_d =   g_parameters[P2_IMAG];
 	}
 	else if (fractal_type_kam_torus_fp(g_fractal_type))
 	{
 		g_max_count = 1L;
-		s_a = g_parameters[0];           // angle
-		if (g_parameters[1] <= 0.0)
+		s_a = g_parameters[P1_REAL];           // angle
+		if (g_parameters[P1_IMAG] <= 0.0)
 		{
-			g_parameters[1] = .01;
+			g_parameters[P1_IMAG] = .01;
 		}
-		s_b =  g_parameters[1];    // stepsize
-		s_c =  g_parameters[2];    // stop
-		s_l_d =  long(g_parameters[3]);
+		s_b =  g_parameters[P1_IMAG];    // stepsize
+		s_c =  g_parameters[P2_REAL];    // stop
+		s_l_d =  long(g_parameters[P2_IMAG]);
 		s_t = int(s_l_d);     // points per orbit
 		g_sin_x = sin(s_a);
 		g_cos_x = cos(s_a);
@@ -548,10 +548,10 @@ bool orbit_3d_setup_fp()
 		s_init_orbit_fp[1] = 0;
 		s_init_orbit_fp[2] = 0;
 		s_connect_points = false;
-		s_a =  g_parameters[0];
-		s_b =  g_parameters[1];
-		s_c =  g_parameters[2];
-		s_d =  g_parameters[3];
+		s_a =  g_parameters[P1_REAL];
+		s_b =  g_parameters[P1_IMAG];
+		s_c =  g_parameters[P2_REAL];
+		s_d =  g_parameters[P2_IMAG];
 		if (g_fractal_type == FRACTYPE_THREE_PLY)
 		{
 			s_dx = cos(s_b);
@@ -562,11 +562,11 @@ bool orbit_3d_setup_fp()
 	{
 		ComplexD Sqrt;
 
-		s_cx = g_parameters[0];
-		s_cy = g_parameters[1];
+		s_cx = g_parameters[P1_REAL];
+		s_cy = g_parameters[P1_IMAG];
 
-		s_max_hits = int(g_parameters[2]);
-		s_run_length = int(g_parameters[3]);
+		s_max_hits = int(g_parameters[P2_REAL]);
+		s_run_length = int(g_parameters[P2_IMAG]);
 		if (s_max_hits <= 0)
 		{
 			s_max_hits = 1;
@@ -575,7 +575,7 @@ bool orbit_3d_setup_fp()
 		{
 			s_max_hits = g_colors - 1;
 		}
-		g_parameters[2] = s_max_hits;
+		g_parameters[P2_REAL] = s_max_hits;
 
 		setup_convert_to_screen(&s_cvt);
 
@@ -630,10 +630,10 @@ rwalk:
 	}
 	else
 	{
-		s_dt = g_parameters[0];
-		s_a =  g_parameters[1];
-		s_b =  g_parameters[2];
-		s_c =  g_parameters[3];
+		s_dt = g_parameters[P1_REAL];
+		s_a =  g_parameters[P1_IMAG];
+		s_b =  g_parameters[P2_REAL];
+		s_c =  g_parameters[P2_IMAG];
 
 	}
 
@@ -1321,12 +1321,12 @@ int dynamic_orbit_fp(double *x, double *y, double *z)
 }
 
 //
-//	LAMBDA  g_parameters[0]
-//	ALPHA   g_parameters[1]
-//	BETA    g_parameters[2]
-//	GAMMA   g_parameters[3]
-//	OMEGA   g_parameters[4]
-//	DEGREE  g_parameters[5]
+//	LAMBDA  g_parameters[P1_REAL]
+//	ALPHA   g_parameters[P1_IMAG]
+//	BETA    g_parameters[P2_REAL]
+//	GAMMA   g_parameters[P2_IMAG]
+//	OMEGA   g_parameters[P3_REAL]
+//	DEGREE  g_parameters[P3_IMAG]
 //
 int icon_orbit_fp(double *x, double *y, double *z)
 {
@@ -1347,7 +1347,7 @@ int icon_orbit_fp(double *x, double *y, double *z)
 	zreal = oldx;
 	zimag = oldy;
 
-	int degree = int(g_parameters[5]);
+	int degree = int(g_parameters[P3_IMAG]);
 	for (int i = 1; i <= degree-2; i++)
 	{
 		za = zreal*oldx - zimag*oldy;
@@ -1356,9 +1356,9 @@ int icon_orbit_fp(double *x, double *y, double *z)
 		zimag = zb;
 	}
 	zn = oldx*zreal - oldy*zimag;
-	p = g_parameters[0] + g_parameters[1]*zzbar + g_parameters[2]*zn;
-	*x = p*oldx + g_parameters[3]*zreal - g_parameters[4]*oldy;
-	*y = p*oldy - g_parameters[3]*zimag + g_parameters[4]*oldx;
+	p = g_parameters[P1_REAL] + g_parameters[P1_IMAG]*zzbar + g_parameters[P2_REAL]*zn;
+	*x = p*oldx + g_parameters[P2_IMAG]*zreal - g_parameters[P3_REAL]*oldy;
+	*y = p*oldy - g_parameters[P2_IMAG]*zimag + g_parameters[P3_REAL]*oldx;
 
 	*z = zzbar;
 	return 0;
@@ -1378,24 +1378,24 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 	yold = *y;
 
 // *x = sin(yold*PAR_B) + PAR_C*sin(xold*PAR_B);
-	g_old_z.real(yold*g_parameters[1]);
+	g_old_z.real(yold*g_parameters[P1_IMAG]);
 	g_old_z.imag(0);          // old = (y*B) + 0i (in the complex)
 	CMPLXtrig0(g_old_z, g_new_z);
 	tmp = double(g_new_z.real());
-	g_old_z.real(xold*g_parameters[1]);
+	g_old_z.real(xold*g_parameters[P1_IMAG]);
 	g_old_z.imag(0);          // old = (x*B) + 0i
 	CMPLXtrig1(g_old_z, g_new_z);
-	*x = g_parameters[2]*g_new_z.real() + tmp;
+	*x = g_parameters[P2_REAL]*g_new_z.real() + tmp;
 
 // *y = sin(xold*PAR_A) + PAR_D*sin(yold*PAR_A);
-	g_old_z.real(xold*g_parameters[0]);
+	g_old_z.real(xold*g_parameters[P1_REAL]);
 	g_old_z.imag(0);          // old = (y*A) + 0i (in the complex)
 	CMPLXtrig2(g_old_z, g_new_z);
 	tmp = double(g_new_z.real());
-	g_old_z.real(yold*g_parameters[0]);
+	g_old_z.real(yold*g_parameters[P1_REAL]);
 	g_old_z.imag(0);          // old = (x*B) + 0i
 	CMPLXtrig3(g_old_z, g_new_z);
-	*y = g_parameters[3]*g_new_z.real() + tmp;
+	*y = g_parameters[P2_IMAG]*g_new_z.real() + tmp;
 
 	return 0;
 }
@@ -1956,7 +1956,7 @@ bool dynamic_2d_setup_fp()
 {
 	s_connect_points = false;
 	s_use_euler_approximation = false;
-	s_d = g_parameters[0]; // number of intervals
+	s_d = g_parameters[P1_REAL]; // number of intervals
 	if (s_d < 0)
 	{
 		s_d = -s_d;
@@ -1968,9 +1968,9 @@ bool dynamic_2d_setup_fp()
 	}
 	if (g_fractal_type == FRACTYPE_DYNAMIC_FP)
 	{
-		s_a = g_parameters[2]; // parameter
-		s_b = g_parameters[3]; // parameter
-		s_dt = g_parameters[1]; // step size
+		s_a = g_parameters[P2_REAL]; // parameter
+		s_b = g_parameters[P2_IMAG]; // parameter
+		s_dt = g_parameters[P1_IMAG]; // step size
 		if (s_dt < 0)
 		{
 			s_dt = -s_dt;
@@ -2380,7 +2380,7 @@ static int ifs_3d_float()
 	// setup affine screen coord conversion
 	setup_convert_to_screen(&inf.cvt);
 	srand(1);
-	bool color_method = (g_parameters[0] != 0);
+	bool color_method = (g_parameters[P1_REAL] != 0);
 	if (driver_diskp())                // this would KILL a disk drive!
 	{
 		not_disk_message();
@@ -2535,7 +2535,7 @@ static int ifs_2d()
 	setup_convert_to_screen_l(&cvt);
 
 	srand(1);
-	bool color_method = (g_parameters[0] != 0);
+	bool color_method = (g_parameters[P1_REAL] != 0);
 	long *localifs = new long[g_num_affine*IFSPARM];
 	if (localifs == 0)
 	{
@@ -2643,7 +2643,7 @@ static int ifs_3d_long()
 
 	threed_vt_inf inf;
 	srand(1);
-	bool color_method = (g_parameters[0] != 0);
+	bool color_method = (g_parameters[P1_REAL] != 0);
 	long *localifs = new long[g_num_affine*IFS3DPARM];
 	if (localifs == 0)
 	{

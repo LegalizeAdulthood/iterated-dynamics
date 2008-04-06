@@ -315,7 +315,7 @@ int plasma()
 	OldPot16bit = false;
 	s_plasma_check = 0;
 
-	s_iparm_x = int(g_parameters[0]*8);
+	s_iparm_x = int(g_parameters[P1_REAL]*8);
 	if (g_parameter.real() <= 0.0)
 	{
 		s_iparm_x = 0;
@@ -324,41 +324,41 @@ int plasma()
 	{
 		s_iparm_x = 800;
 	}
-	g_parameters[0] = double(s_iparm_x)/8.0;  // let user know what was used
-	if (g_parameters[1] < 0) // limit parameter values
+	g_parameters[P1_REAL] = double(s_iparm_x)/8.0;  // let user know what was used
+	if (g_parameters[P1_IMAG] < 0) // limit parameter values
 	{
-		g_parameters[1] = 0;
+		g_parameters[P1_IMAG] = 0;
 	}
-	if (g_parameters[1] > 1)
+	if (g_parameters[P1_IMAG] > 1)
 	{
-		g_parameters[1] = 1;
+		g_parameters[P1_IMAG] = 1;
 	}
-	if (g_parameters[2] < 0) // limit parameter values
+	if (g_parameters[P2_REAL] < 0) // limit parameter values
 	{
-		g_parameters[2] = 0;
+		g_parameters[P2_REAL] = 0;
 	}
-	if (g_parameters[2] > 1)
+	if (g_parameters[P2_REAL] > 1)
 	{
-		g_parameters[2] = 1;
+		g_parameters[P2_REAL] = 1;
 	}
-	if (g_parameters[3] < 0) // limit parameter values
+	if (g_parameters[P2_IMAG] < 0) // limit parameter values
 	{
-		g_parameters[3] = 0;
+		g_parameters[P2_IMAG] = 0;
 	}
-	if (g_parameters[3] > 1)
+	if (g_parameters[P2_IMAG] > 1)
 	{
-		g_parameters[3] = 1;
+		g_parameters[P2_IMAG] = 1;
 	}
 
-	if (!g_use_fixed_random_seed && (g_parameters[2] == 1))
+	if (!g_use_fixed_random_seed && (g_parameters[P2_REAL] == 1))
 	{
 		--g_random_seed;
 	}
-	if (g_parameters[2] != 0 && g_parameters[2] != 1)
+	if (g_parameters[P2_REAL] != 0 && g_parameters[P2_REAL] != 1)
 	{
-		g_random_seed = int(g_parameters[2]);
+		g_random_seed = int(g_parameters[P2_REAL]);
 	}
-	s_max_plasma = U16(g_parameters[3]);  // s_max_plasma is used as a flag for potential
+	s_max_plasma = U16(g_parameters[P2_IMAG]);  // s_max_plasma is used as a flag for potential
 
 	if (s_max_plasma != 0)
 	{
@@ -374,7 +374,7 @@ int plasma()
 		else
 		{
 			s_max_plasma = 0;        // can't do potential (disk_start failed)
-			g_parameters[3] = 0;
+			g_parameters[P2_IMAG] = 0;
 			g_plot_color = (g_externs.Outside() >= 0) ? put_color_border : g_plot_color_put_color;
 			s_get_pixels = (U16(*)(int, int))get_color;
 		}
@@ -427,7 +427,7 @@ int plasma()
 	g_plot_color(0, g_y_dots-1,  rnd[3]);
 
 	s_recur_level = 0;
-	if (g_parameters[1] == 0)
+	if (g_parameters[P1_IMAG] == 0)
 	{
 		subdivide(0, 0, g_x_dots-1, g_y_dots-1);
 	}
