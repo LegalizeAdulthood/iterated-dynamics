@@ -149,7 +149,7 @@ static void initialize_variables_3d();
 static void reset_ifs_definition();
 static void parse_text_colors(const char *value);
 static int parse_colors(char *value);
-static int get_bf(bf_t bf, char *curarg);
+static int get_bf(bf_t bf, char const *curarg);
 static int is_a_big_float(char *str);
 
 //
@@ -3346,18 +3346,15 @@ static void arg_error(const char *bad_arg)      // oops. couldn't decode this
 }
 
 // copy a big number from a string, up to slash
-static int get_bf(bf_t bf, char *curarg)
+static int get_bf(bf_t bf, char const *curarg)
 {
-	char *s = strchr(curarg, '/');
-	if (s)
+	std::string text = curarg;
+	std::string::size_type slash = text.find_first_of('/');
+	if (slash != text.npos)
 	{
-		*s = 0;
+		text = text.substr(0, slash-1);
 	}
-	strtobf(bf, curarg);
-	if (s)
-	{
-		*s = '/';
-	}
+	strtobf(bf, text);
 	return 0;
 }
 

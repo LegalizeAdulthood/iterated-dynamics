@@ -3,7 +3,7 @@
 /*
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 */
-#include <string.h>
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "big.h"
@@ -1016,14 +1016,7 @@ bf_t floattobf(bf_t r, LDBL f)
 // Converts a double to a bigfloat
 bf_t floattobf1(bf_t r, LDBL f)
 {
-	char msg[80];
-#ifdef USE_LONG_DOUBLE
-	sprintf(msg, "%-.22Le", f);
-#else
-	sprintf(msg, "%-.22le", f);
-#endif
-	strtobf(r, msg);
-	return r;
+	return strtobf(r, (boost::format("%-.22Le") % f).str());
 }
 
 /*********************************************************************/
