@@ -1,7 +1,7 @@
 #include <locale>
 #include "strncasecmp.h"
 
-#ifndef XFRACT
+#if !defined(XFRACT)
 // case independent version of strncmp
 int strncasecmp(const char *s, const char *t, int ct)
 {

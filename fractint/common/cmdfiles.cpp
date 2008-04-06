@@ -2941,11 +2941,7 @@ int process_command(char *curarg, int mode) // process a single argument
 				context.numval = int(ll);
 			}
 		}
-#ifndef XFRACT
 		else if (sscanf(argptr, "%lg%c", &ftemp, &tmpc) > 0  // got a float
-#else
-		else if (sscanf(argptr, "%lf%c", &ftemp, &tmpc) > 0  // got a float
-#endif
 				&& tmpc == '/')
 		{
 			++context.floatparms;

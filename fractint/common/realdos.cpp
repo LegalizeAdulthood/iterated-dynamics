@@ -318,11 +318,7 @@ top:
 	nextleft += 2;
 	choicekey[nextleft] = IDK_DELETE;
 	attributes[nextleft] = MENU_ITEM;
-#ifdef XFRACT
-	choices[nextleft] = "draw fractal           <D>  ";
-#else
 	choices[nextleft] = "select video mode...  <del> ";
-#endif
 
 	nextleft += 2;
 	choicekey[nextleft] = 't';
@@ -415,12 +411,10 @@ top:
 		choices[nextleft] = "evolver parms...     <ctl-e>";
 
 		// TODO: sound support for unix/X11
-#if !defined(XFRACT)
 		nextleft += 2;
 		choicekey[nextleft] = IDK_CTL_F;
 		attributes[nextleft] = MENU_ITEM;
 		choices[nextleft] = "sound parms...       <ctl-f>";
-#endif
 	}
 
 	nextright += 2;
@@ -471,11 +465,7 @@ top:
 	nextright += 2;
 	choicekey[nextright] = 'd';
 	attributes[nextright] = MENU_ITEM;
-#ifdef XFRACT
-	choices[nextright] = "shell to Linux/Unix      <d>  ";
-#else
-	choices[nextright] = "shell to dos             <d>  ";
-#endif
+	choices[nextright] = "start command shell      <d>  ";
 
 	nextright += 2;
 	choicekey[nextright] = 'g';
@@ -492,11 +482,7 @@ top:
 	attributes[nextright] = MENU_ITEM;
 	choices[nextright] = "restart Iterated Dynamics<ins>";
 
-#ifdef XFRACT
-	if (full_menu && (g_.RealDAC() || g_fake_lut))
-#else
 	if (full_menu && g_.RealDAC())
-#endif
 	{
 		nextright += 2;
 		choices[nextright] = "       COLORS                 ";
@@ -574,12 +560,7 @@ top:
 			driver_set_attr(i, 18, C_GENERAL_INPUT, 40);
 		}
 		put_string_center(10, 18, 40, C_GENERAL_INPUT,
-#ifdef XFRACT
-			"Exit from Xfractint (y/n)? y"
-#else
-			"Exit from Fractint (y/n)? y"
-#endif
-);
+			"Exit from Iterated Dynamics (y/n)? y");
 		driver_hide_text_cursor();
 		while ((i = driver_get_key()) != 'y' && i != 'Y' && i != 13)
 		{
@@ -608,13 +589,6 @@ static int menu_check_key(int curkey, int choice)
 	int testkey;
 	testkey = choice; // for warning only
 	testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey + ('a'-'A') : curkey;
-#ifdef XFRACT
-	// We use F2 for shift-@, annoyingly enough
-	if (testkey == IDK_F2)
-	{
-		return -testkey;
-	}
-#endif
 	if (testkey == '2')
 	{
 		testkey = '@';
