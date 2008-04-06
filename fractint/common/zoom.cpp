@@ -2,10 +2,6 @@
 	zoom.cpp - routines for zoombox manipulation and for panning
 
 */
-#include <algorithm>
-#include <string>
-#include <vector>
-
 #include <string.h>
 
 #include "port.h"

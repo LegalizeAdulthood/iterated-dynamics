@@ -1,11 +1,6 @@
 // biginit.cpp - routines for bignumbers
 #include <string>
 
-#include <string.h>
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
-
 #include <boost/format.hpp>
 
 #include "port.h"

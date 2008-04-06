@@ -3,7 +3,7 @@
 //	for 3D, used by lorenz.c and line3d.c
 //	By Tim Wegner and Marc Reinig.
 //
-#include <assert.h>
+#include <cassert>
 #include <string>
 
 #include "port.h"

@@ -1,10 +1,7 @@
 #include <cassert>
+#include <ctime>
 #include <string>
-
-#include <signal.h>
-#include <string.h>
 #include <sys/timeb.h>
-#include <time.h>
 
 #include <boost/format.hpp>
 

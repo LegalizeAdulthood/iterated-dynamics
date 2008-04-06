@@ -3,16 +3,15 @@
 //	fractals.cpp, i.e. which are non-fractal-specific fractal engine subroutines.
 //
 #include <algorithm>
+#include <cassert>
+#include <cstdarg>
+#include <ctime>
 #include <string>
 
-#include <assert.h>
-//#include <memory.h>
-#include <stdarg.h>
 #ifndef XFRACT
 #include <sys/timeb.h>
 #endif
 #include <sys/types.h>
-#include <time.h>
 
 #include "port.h"
 #include "prototyp.h"

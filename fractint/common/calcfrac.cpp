@@ -15,12 +15,10 @@
 //	  and more
 //
 #include <algorithm>
+#include <cassert>
+#include <climits>
+#include <ctime>
 #include <string>
-
-#include <assert.h>
-#include <string.h>
-#include <limits.h>
-#include <time.h>
 
 #include "port.h"
 #include "prototyp.h"

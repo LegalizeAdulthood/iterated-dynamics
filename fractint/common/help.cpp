@@ -1,12 +1,9 @@
 /*
  * help.cpp
  */
-
+#include <cassert>
 #include <string>
 #include <vector>
-
-#include <assert.h>
-#include <string.h>
 
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>

@@ -2,15 +2,10 @@
 // These routines are called by driver_get_key to allow keystrokes to control
 // Fractint to be read from a file.
 /***********************************************************************/
+#include <cctype>
+#include <ctime>
 #include <fstream>
 #include <string>
-
-#include <ctype.h>
-#include <time.h>
-#include <string.h>
-#ifndef XFRACT
-#include <conio.h>
-#endif
 
 #include <boost/format.hpp>
 
@@ -460,9 +455,8 @@ void SlideShowImpl::Record(int key)
 // suspend process # of seconds
 void SlideShowImpl::SleepSeconds(int secs)
 {
-	long stop;
-	stop = clock_ticks() + long(secs)*CLK_TCK;
-	while (clock_ticks() < stop && kbhit() == 0)
+	long stop = clock_ticks() + long(secs)*CLK_TCK;
+	while (clock_ticks() < stop && driver_key_pressed() == 0)
 	{
 	} // bailout if key hit
 }

@@ -1,6 +1,6 @@
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
+#include <cassert>
+#include <cstdio>
+#include <cstring>
 
 #include "port.h"
 #include "id.h"

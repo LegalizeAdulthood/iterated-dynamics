@@ -12,7 +12,7 @@
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
 
 #ifndef XFRACT
-#include <time.h>
+#include <ctime>
 
 inline int clock_ticks()
 {

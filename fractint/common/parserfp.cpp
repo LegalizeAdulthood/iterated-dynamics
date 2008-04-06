@@ -29,10 +29,9 @@
 
 // Use startup parameter "debugflag = 324" to show debug messages after
 // compiling with above #define uncommented.
+#include <cctype>
 #include <fstream>
 #include <string>
-
-#include <ctype.h>
 
 #include <boost/format.hpp>
 

@@ -1,12 +1,3 @@
-/*
-		Various routines that prompt for things.
-*/
-#include <sstream>
-#include <string>
-
-#include <string.h>
-#include <ctype.h>
-
 #include <boost/format.hpp>
 
 #include "port.h"

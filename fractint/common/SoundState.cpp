@@ -1,9 +1,7 @@
+#include <ctime>
 #include <fstream>
 #include <sstream>
 #include <string>
-
-#include <string.h>
-#include <time.h>
 
 #include <boost/format.hpp>
 

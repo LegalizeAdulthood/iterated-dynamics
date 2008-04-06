@@ -2,10 +2,8 @@
  * encoder.c - GIF Encoder and associated routines
  */
 #include <algorithm>
+#include <climits>
 #include <string>
-
-#include <string.h>
-#include <limits.h>
 
 #include <boost/format.hpp>
 

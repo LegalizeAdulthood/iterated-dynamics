@@ -1,6 +1,3 @@
-#include <string.h>
-
-#include <cassert>
 #include <string>
 
 #include "port.h"

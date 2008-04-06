@@ -1,12 +1,5 @@
-#include <string>
-
-#include <string.h>
-#include <limits.h>
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
-#include <ctype.h>
-#include <errno.h>
+#include <cctype>
+#include <cerrno>
 
 #include <boost/format.hpp>
 

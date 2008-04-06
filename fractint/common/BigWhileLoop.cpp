@@ -1,10 +1,6 @@
 #include <fstream>
 #include <string>
 
-#include <string.h>
-#include <time.h>
-#include <ctype.h>
-
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 

@@ -10,9 +10,9 @@
 #ifndef PORT_H          // If this is defined, this file has been
 #define PORT_H          // included already in this module.
 
+#include <cstdlib>
 #if defined(_WIN32)
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
 #define _CRT_SECURE_NO_DEPRECATE
 // disable unsafe CRT warnings
@@ -20,10 +20,6 @@
 
 #endif
 
-#if !defined(_WIN32)
-#include <unistd.h>
-#endif
-#include <cstdlib>
 #include <cmath>
 #include <cfloat>
 
