@@ -1,10 +1,8 @@
 // bigflt.c - C routines for big floating point numbers
-
+#include <vector>
 /*
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 */
-#include <string.h>
-
 #include "port.h"
 #include "big.h"
 
@@ -19,13 +17,13 @@ double const LOG_256 = 5.5451774444795;
 // It may use scientific notation.
 // USES: bftmp1
 
-bf_t strtobf(bf_t r, char *s)
+bf_t strtobf(bf_t r, char const *s)
 {
 	BYTE onesbyte;
 	int signflag = 0;
-	char *l;
-	char *d;
-	char *e; // pointer to s, ".", "[eE]"
+	char const *l;
+	char const *d;
+	char const *e; // pointer to s, ".", "[eE]"
 	int powerten = 0;
 	int keeplooping;
 
@@ -121,6 +119,14 @@ bf_t strtobf(bf_t r, char *s)
 	}
 
 	return r;
+}
+
+bf_t strtobf(bf_t r, std::string const &s)
+{
+	std::vector<char> buffer;
+	buffer.resize(s.length());
+	std::copy(s.c_str(), s.c_str() + s.length(), &buffer[0]);
+	return strtobf(r, &buffer[0]);
 }
 
 /********************************************************************/
