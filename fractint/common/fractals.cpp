@@ -593,7 +593,7 @@ int lambda_exponent_orbit_fp()
 	{
 		return 1;
 	}
-	FPUsincos(g_old_z.y, &s_sin_y, &s_cos_y);
+	FPUsincos(g_old_z.imag(), &s_sin_y, &s_cos_y);
 
 	if (g_old_z.real() >= g_rq_limit && s_cos_y >= 0.0)
 	{
@@ -655,7 +655,7 @@ int trig_plus_exponent_orbit_fp()
 		return 1;
 	}
 	s_temp_exp = exp(g_old_z.real());
-	FPUsincos(g_old_z.y, &s_sin_y, &s_cos_y);
+	FPUsincos(g_old_z.imag(), &s_sin_y, &s_cos_y);
 	CMPLXtrig0(g_old_z, g_new_z);
 
 	// new =   trig(old) + e**old + C
@@ -2463,7 +2463,7 @@ int marks_mandelbrot_per_pixel_fp()
 	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.real(g_old_z.real() + g_parameter.real());      // initial pertubation of parameters set
-	g_old_z.y += g_parameter.imag();
+	g_old_z.imag(g_old_z.imag() + g_parameter.imag());
 
 	g_temp_sqr.real(sqr(g_old_z.real()));
 	g_temp_sqr.imag(sqr(g_old_z.imag()));
@@ -2548,7 +2548,7 @@ int mandelbrot_per_pixel_fp()
 	else
 	{
 		g_old_z.real(g_old_z.real() + g_parameter.real());
-		g_old_z.y += g_parameter.imag();
+		g_old_z.imag(g_old_z.imag() + g_parameter.imag());
 	}
 	g_temp_z = g_initial_z; // for spider
 	g_temp_sqr.real(sqr(g_old_z.real()));  // precalculated value for regular Mandelbrot
@@ -2601,7 +2601,7 @@ int other_mandelbrot_per_pixel_fp()
 	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.real(g_old_z.real() + g_parameter.real());      // initial pertubation of parameters set
-	g_old_z.y += g_parameter.imag();
+	g_old_z.imag(g_old_z.imag() + g_parameter.imag());
 
 	return 1; // 1st iteration has been done
 }
@@ -2735,7 +2735,7 @@ int mandelbrot_phoenix_per_pixel_fp()
 	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.real(g_old_z.real() + g_parameter.real());      // initial pertubation of parameters set
-	g_old_z.y += g_parameter.imag();
+	g_old_z.imag(g_old_z.imag() + g_parameter.imag());
 	g_temp_sqr.real(sqr(g_old_z.real()));  // precalculated value
 	g_temp_sqr.imag(sqr(g_old_z.imag()));
 	s_temp2.real(0.0);
