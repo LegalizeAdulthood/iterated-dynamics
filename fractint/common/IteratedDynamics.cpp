@@ -214,11 +214,7 @@ void IteratedDynamicsImpl::ImageStart()
 			return;
 		}
 
-#ifndef XFRACT
 		if (kbdchar == '@' || kbdchar == '2')  // execute commands
-#else
-		if (kbdchar == IDK_F2 || kbdchar == '@')  // We mapped @ to F2
-#endif
 		{
 			if ((_app.get_commands() & COMMANDRESULT_3D_YES) == 0)
 			{
@@ -227,11 +223,7 @@ void IteratedDynamicsImpl::ImageStart()
 			}
 			kbdchar = '3';                         // 3d=y so fall thru '3' code
 		}
-#ifndef XFRACT
 		if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#')
-#else
-		if (kbdchar == 'r' || kbdchar == '3' || kbdchar == IDK_F3)
-#endif
 		{
 			_externs.SetDisplay3D(DISPLAY3D_NONE);
 			if (kbdchar == '3' || kbdchar == '#' || kbdchar == IDK_F3)

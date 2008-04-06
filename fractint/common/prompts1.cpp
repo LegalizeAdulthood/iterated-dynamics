@@ -1585,7 +1585,7 @@ FunctionListItem g_function_list[] =
 // changing the order of these alters meaning of *.fra file
 // maximum 6 characters in function names or recheck all related code
 {
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	{"sin",   lStkSin,   dStkSin   },
 	{"cosxx", lStkCosXX, dStkCosXX },
 	{"sinh",  lStkSinh,  dStkSinh  },
@@ -2590,12 +2590,7 @@ top:
 // subrtn of get_file_entry, separated so that storage gets freed up
 static long gfe_choose_entry(int type, const char *title, const char *filename, char *entryname)
 {
-#ifdef XFRACT
-	char *o_instr = "Press "FK_F6" to select file, "FK_F2" for details, "FK_F4" to toggle sort ";
-	// keep the above line length < 80 characters
-#else
 	char *o_instr = "Press "FK_F6" to select different file, "FK_F2" for details, "FK_F4" to toggle sort ";
-#endif
 	int numentries;
 	int i;
 	char buf[101];

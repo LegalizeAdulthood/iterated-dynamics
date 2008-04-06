@@ -1274,15 +1274,12 @@ int martin_2d_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-int mandel_cloud_orbit_fp(double *x, double *y, double *z)
+int mandel_cloud_orbit_fp(double *x, double *y, double *)
 {
 	double newx;
 	double newy;
 	double x2;
 	double y2;
-#ifndef XFRACT
-	newx = *z; // for warning only
-#endif
 	x2 = (*x)*(*x);
 	y2 = (*y)*(*y);
 	if (x2 + y2 > 2)

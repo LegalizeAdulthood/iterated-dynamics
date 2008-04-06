@@ -553,7 +553,7 @@ int g_function_index[NUM_FUNCTION_INDEX] =
 	FUNCTION_SINH,
 	FUNCTION_SINH
 };
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void (*g_trig0_l)() = lStkSin;
 void (*g_trig1_l)() = lStkSqr;
 void (*g_trig2_l)() = lStkSinh;
@@ -632,25 +632,25 @@ void set_trig_pointers(int which)
 	switch (which)
 	{
 	case 0:
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 		g_trig0_l = g_function_list[g_function_index[0]].lfunct;
 #endif
 		g_trig0_d = g_function_list[g_function_index[0]].dfunct;
 		break;
 	case 1:
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 		g_trig1_l = g_function_list[g_function_index[1]].lfunct;
 #endif
 		g_trig1_d = g_function_list[g_function_index[1]].dfunct;
 		break;
 	case 2:
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 		g_trig2_l = g_function_list[g_function_index[2]].lfunct;
 #endif
 		g_trig2_d = g_function_list[g_function_index[2]].dfunct;
 		break;
 	case 3:
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 		g_trig3_l = g_function_list[g_function_index[3]].lfunct;
 #endif
 		g_trig3_d = g_function_list[g_function_index[3]].dfunct;
@@ -664,11 +664,7 @@ void set_trig_pointers(int which)
 	}
 }
 
-#ifdef XFRACT
-static char spressanykey[] = {"Press any key to continue, F6 for area, F7 for next page"};
-#else
 static char spressanykey[] = {"Press any key to continue, F6 for area, CTRL-TAB for next page"};
-#endif
 
 void get_calculation_time(char *msg, long ctime)
 {
@@ -753,7 +749,7 @@ int tab_display_2(char *msg)
 	write_row(row++, boost::format("%dx%d %s (%s)") % g_x_dots % g_y_dots % driver_name() % driver_description());
 	write_row(row++, boost::format("xx: start %d, stop %d; yy: start %d, stop %d %s UsesIsMand %d")
 		% g_WorkList.xx_start() % g_WorkList.xx_stop() % g_WorkList.yy_start() % g_WorkList.yy_stop()
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(NO_FIXED_POINT_MATH) && !defined(_WIN32)
 		g_current_fractal_specific->orbitcalc == fFormula ? "fast parser" :
 #endif
 		% (g_current_fractal_specific->orbitcalc ==  formula_orbit ? "slow parser" :
