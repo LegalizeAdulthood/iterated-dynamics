@@ -448,7 +448,7 @@ void MakeBatchFile::execute_step3(int i, int j)
 	s_parameter_file << '\n';
 	{
 		char buf[25];
-		memset(buf, ' ', 23);
+		std::fill(buf, buf + 23, ' ');
 		buf[23] = 0;
 		buf[21] = ';';
 		for (int k = 1; k < 4; k++)
@@ -2527,7 +2527,7 @@ void MakeMIG::display_error_messages()
 }
 void MakeMIG::read_block_header()
 {
-	memset(m_buffer, 0, 10);
+	std::fill(m_buffer, m_buffer + 10, 0);
 	if (fread(m_buffer, 1, 1, m_in) != 1)    // read the block identifier
 	{
 		m_input_error_flag = 3;

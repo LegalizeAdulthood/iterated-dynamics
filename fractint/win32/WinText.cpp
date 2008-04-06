@@ -273,7 +273,7 @@ BOOL WinText::initialize(HINSTANCE hInstance, HWND hWndParent, LPCSTR titletext)
 	for (int i = 0; i < 3; i++)
 	{
 		size_t count = NUM_OF(m_cursor_pattern[0])*sizeof(m_cursor_pattern[0][0]);
-		::memset(&m_cursor_pattern[i][0], 0, count);
+		std::fill(&m_cursor_pattern[i][0], &m_cursor_pattern[i][0] + count, 0);
 	}
 	for (int i = m_char_height-2; i < m_char_height; i++)
 	{
@@ -568,8 +568,8 @@ void WinText::scroll_up(int top, int bot)
 			*attrs++ = *next_attrs++;
 		}
 	}
-	::memset(&m_chars[bot][0], 0,  (size_t) WINTEXT_MAX_COL);
-	::memset(&m_attrs[bot][0], 0, (size_t) WINTEXT_MAX_COL);
+	std::fill(&m_chars[bot][0], &m_chars[bot][0] + WINTEXT_MAX_COL, 0);
+	std::fill(&m_attrs[bot][0], &m_attrs[bot][0] + WINTEXT_MAX_COL, 0);
 	invalidate(0, bot, WINTEXT_MAX_COL, top);
 }
 
@@ -764,8 +764,8 @@ void WinText::clear()
 {
 	for (int y = 0; y < WINTEXT_MAX_ROW; y++)
 	{
-		::memset(&m_chars[y][0], ' ', (size_t) WINTEXT_MAX_COL);
-		::memset(&m_attrs[y][0], ' ', (size_t) WINTEXT_MAX_COL);
+		std::fill(&m_chars[y][0], &m_chars[y][0] + WINTEXT_MAX_COL, ' ');
+		std::fill(&m_attrs[y][0], &m_attrs[y][0] + WINTEXT_MAX_COL, ' ');
 	}
 	::InvalidateRect(m_window, 0, FALSE);
 }

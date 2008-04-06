@@ -21,7 +21,7 @@ struct ConstArg
 {
    const char *name;
    int name_length;
-   union Arg argument;
+   Arg argument;
 };
 
 extern Arg *g_argument1;

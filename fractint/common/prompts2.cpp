@@ -704,7 +704,7 @@ int get_command_string()
 	int i;
 	static char cmdbuf[61];
 
-	i = field_prompt_help(FIHELP_COMMANDS, "Enter command string to use.", 0, cmdbuf, 60, 0);
+	i = field_prompt_help(FIHELP_COMMANDS, "Enter command string to use.", cmdbuf, 60);
 	if (i >= 0 && cmdbuf[0] != 0)
 	{
 		i = process_command(cmdbuf, CMDFILE_AT_AFTER_STARTUP);

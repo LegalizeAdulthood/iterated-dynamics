@@ -60,10 +60,13 @@ private:
 	BYTE *_storage;
 };
 
+
+
 typedef BigT bn_t;
+
 //#define bn_t   big_t  // for clarification purposes
-#define bf_t   big_t
-#define bf10_t big_t
+typedef big_t bf_t;
+typedef big_t bf10_t;
 
 #include "cmplx.h"
 

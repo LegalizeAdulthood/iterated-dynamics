@@ -193,7 +193,7 @@ static int clip_get_color(int x, int y)
 
 static void horizontal_line(int x, int y, int width, int color)
 {
-	memset(g_line_buffer, color, width);
+	std::fill(g_line_buffer, g_line_buffer + width, color);
 	clip_put_line(y, x, x + width-1, g_line_buffer);
 }
 
@@ -2528,7 +2528,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			strcpy(buf, boost::format("%.3f") % (1.0/s_gamma_val));
 			{
 				ScreenStacker stacker;
-				i = field_prompt("Enter gamma value", 0, buf, 20, 0);
+				i = field_prompt("Enter gamma value", buf, 20);
 			}
 			if (i != -1)
 			{

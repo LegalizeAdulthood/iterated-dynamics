@@ -455,6 +455,14 @@ static int PassesFromBlockSize(int i)
 	return passes;
 }
 
+static void fill_prefix(int idx, int value)
+{
+	for (int yBlock = 0; yBlock < MAX_Y_BLOCK; yBlock++)
+	{
+		std::fill(&s_t_prefix[idx][yBlock][0], &s_t_prefix[idx][yBlock][MAX_X_BLOCK], value);
+	}
+}
+
 // super solid guessing
 int solid_guess()
 {
@@ -492,7 +500,7 @@ int solid_guess()
 		if (g_iy_start <= g_WorkList.yy_start()) // first time for this window, init it
 		{
 			g_current_row = 0;
-			memset(&s_t_prefix[1][0][0], 0, MAX_X_BLOCK*MAX_Y_BLOCK*2); // noskip flags off
+			fill_prefix(1, 0);
 			g_reset_periodicity = true;
 			g_row = g_iy_start;
 			for (g_col = g_ix_start; g_col <= g_x_stop; g_col += s_max_block)
@@ -509,7 +517,8 @@ int solid_guess()
 		}
 		else
 		{
-			memset(&s_t_prefix[1][0][0], -1, MAX_X_BLOCK*MAX_Y_BLOCK*2); // noskip flags on
+			// noskip flags on
+			fill_prefix(1, -1);
 		}
 		for (int y = g_iy_start; y <= g_y_stop; y += blocksize)
 		{
@@ -594,7 +603,8 @@ int solid_guess()
 	}
 	else // first pass already done
 	{
-		memset(&s_t_prefix[0][0][0], -1, MAX_X_BLOCK*MAX_Y_BLOCK*2); // noskip flags on
+		// noskip flags on
+		fill_prefix(0, -1);
 	}
 	if (g_three_pass)
 	{

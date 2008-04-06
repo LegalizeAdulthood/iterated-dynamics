@@ -18,20 +18,14 @@
 // disable unsafe CRT warnings
 #pragma warning(disable: 4996)
 
-#if defined(_DEBUG)
-#define DEBUG_CLIENTBLOCK new(_CLIENT_BLOCK, __FILE__, __LINE__)
-#define new DEBUG_CLIENTBLOCK
-#else
-#endif
-
 #endif
 
 #if !defined(_WIN32)
 #include <unistd.h>
 #endif
-#include <stdlib.h>
-#include <math.h>
-#include <float.h>
+#include <cstdlib>
+#include <cmath>
+#include <cfloat>
 
 // If endian.h is not present, it can be handled in the code below,
 // but if you have this file, it can make it more fool proof.
@@ -278,4 +272,5 @@ typedef long double LDBL;
 #define cosl            cos
 #endif
 
-#endif  // PORT_H
+// PORT_H
+#endif

@@ -997,7 +997,7 @@ rescan:  // entry for changed browse parms
 				strcpy(new_name, tmpmask);
 				strcat(message, tmpmask);
 				{
-					int i = field_prompt(message, 0, new_name, 60, 0);
+					int i = field_prompt(message, new_name, 60);
 					driver_unstack_screen();
 					if (i != -1)
 					{

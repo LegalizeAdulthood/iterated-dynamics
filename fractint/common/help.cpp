@@ -1168,7 +1168,7 @@ int HelpSystem::Output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 			info->margin = 0;
 
 			char line[81];
-			memset(line, ' ', 81);
+			std::fill(line, line + 81, ' ');
 			char buff[40];
 			strcpy(buff, boost::format("Iterated Dynamics Version %d.%01d%c")
 				% (g_release/100) % ((g_release % 100)/10)
@@ -1475,11 +1475,19 @@ public:
 };
 
 int field_prompt_help(int help_mode,
-	char *hdg, char *instr, char *fld, int len, int (*checkkey)(int key))
+					  std::string const &hdg, std::string const &instr,
+					  char *fld, int len, int (*checkkey)(int key))
 {
 	HelpModePushPop pusher(help_mode);
 	return field_prompt(hdg, instr, fld, len, checkkey);
 }
+int field_prompt_help(int help_mode,
+					  std::string const &hdg,
+					  char *fld, int len, int (*check_keystroke)(int key))
+{
+	return field_prompt_help(help_mode, hdg, "", fld, len, check_keystroke);
+}
+
 
 long get_file_entry_help(int help_mode, int type,
 	const char *title, char *fmask, char *filename, char *entryname)

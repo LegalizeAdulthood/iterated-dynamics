@@ -525,7 +525,7 @@ void FullScreenPrompter::DisplayFooter()
 #define S6 "+" // ur corner
 #endif
 	char buffer[81];
-	memset(buffer, S1, 80);
+	std::fill(buffer, buffer + 80, S1);
 	buffer[_boxWidth-2] = 0;
 	g_text_cbase = _boxColumn + 1;
 	driver_put_string(_footerRow, 0, C_PROMPT_BKGRD, buffer);
@@ -847,7 +847,7 @@ int FullScreenPrompter::Prompt()
 		driver_put_string(_promptRow + current_choice, _promptColumn, C_PROMPT_LO, _prompts[current_choice]);
 		{
 			int j = int(strlen(buffer));
-			memset(&buffer[j], ' ', 80-j);
+			std::fill(&buffer[j], buffer + 80, ' ');
 			buffer[current_length] = 0;
 		}
 		driver_put_string(_promptRow + current_choice, _valueColumn, C_PROMPT_LO,  buffer);
@@ -2681,7 +2681,7 @@ static int check_gfe_key(int curkey, int choice)
 	int done = 0;
 	int rewrite_infbuf = 0;  // if 1: rewrite the entry portion of screen
 	char blanks[79];         // used to clear the entry portion of screen
-	memset(blanks, ' ', 78);
+	std::fill(blanks, blanks + 78, ' ');
 	blanks[78] = (char) 0;
 
 	if (curkey == IDK_F6)
@@ -3428,7 +3428,7 @@ static bool check_mapfile()
 				strcpy(buffer, temp1.c_str());
 				if (field_prompt_help(-1, "Enter name of .MAP file to use,\n"
 						"or '*' to use palette from the image to be loaded.",
-						0, buffer, 60, 0) < 0)
+						buffer, 60) < 0)
 				{
 					return true;
 				}

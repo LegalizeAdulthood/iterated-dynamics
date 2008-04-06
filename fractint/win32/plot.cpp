@@ -84,7 +84,7 @@ void Plot::init_pixels()
 	m_pixels_len = m_row_len*m_height;
 	assert(m_pixels_len > 0);
 	m_pixels = new BYTE[m_pixels_len];
-	memset(m_pixels, 0, m_pixels_len);
+	std::fill(m_pixels, m_pixels + m_pixels_len, 0);
 	m_dirty = false;
 	{
 		RECT dirty_rect = { -1, -1, -1, -1 };
@@ -456,7 +456,7 @@ void Plot::clear()
 	RECT r = { 0, 0, m_width, m_height };
 	m_dirty_region = r;
 	m_dirty = true;
-	::memset(m_pixels, 0, m_pixels_len);
+	std::fill(m_pixels, m_pixels + m_pixels_len, 0);
 }
 
 void Plot::redraw()
@@ -491,7 +491,7 @@ void Plot::save_graphics()
 	if (0 == m_saved_pixels)
 	{
 		m_saved_pixels = new BYTE[m_pixels_len];
-		::memset(m_saved_pixels, 0, m_pixels_len);
+		std::fill(m_saved_pixels, m_saved_pixels + m_pixels_len, 0);
 	}
 	::memcpy(m_saved_pixels, m_pixels, m_pixels_len);
 }

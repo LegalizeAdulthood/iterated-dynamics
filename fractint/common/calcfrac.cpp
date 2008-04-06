@@ -3773,7 +3773,7 @@ void PerformWorkList::show_dot_start()
 		{
 			s_save_dots_len /= 2;
 			s_fill_buffer = s_save_dots + s_save_dots_len;
-			memset(s_fill_buffer, s_show_dot_color, s_save_dots_len);
+			std::fill(&s_fill_buffer[0], &s_fill_buffer[s_save_dots_len], s_show_dot_color);
 			break;
 		}
 		// There's even less free memory than we thought, so reduce

@@ -1,6 +1,8 @@
 #if !defined(FRACTAL_B_H)
 #define FRACTAL_B_H
 
+#include "big.h"
+
 extern ComplexD complex_bn_to_float(ComplexBigNum *);
 extern ComplexD complex_bf_to_float(ComplexBigFloat *);
 extern void compare_values(char *, LDBL, bn_t);

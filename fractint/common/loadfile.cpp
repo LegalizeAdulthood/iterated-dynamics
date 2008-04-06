@@ -1119,7 +1119,6 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 	fractint005     extended precision parameters
 	fractint006     evolver params
 	*/
-
 	memset(info, 0, FRACTAL_INFO_SIZE);
 	int fractinf_len = FRACTAL_INFO_SIZE + (FRACTAL_INFO_SIZE + 254)/255;
 	s_gif->SeekFromEnd(-1-fractinf_len);

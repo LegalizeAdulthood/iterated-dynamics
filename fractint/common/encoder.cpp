@@ -1091,7 +1091,7 @@ static int compress(int rowlimit)
 	}
 	hshift = 8 - hshift;                // set hash code range bound
 
-	memset(htab, 0xff, unsigned(HSIZE)*sizeof(long));
+	std::fill(htab, htab + unsigned(HSIZE)*sizeof(long), 0xff);
 	hsize_reg = HSIZE;
 
 	output(int(ClearCode));
@@ -1293,10 +1293,10 @@ static void output(int code)
  */
 static void cl_block()             // table clear for g_block compress
 {
-		memset(htab, 0xff, unsigned(HSIZE)*sizeof(long));
-		free_ent = ClearCode + 2;
-		clear_flg = 1;
-		output(int(ClearCode));
+	std::fill(htab, htab + unsigned(HSIZE)*sizeof(long), 0xff);
+	free_ent = ClearCode + 2;
+	clear_flg = 1;
+	output(int(ClearCode));
 }
 
 /*
