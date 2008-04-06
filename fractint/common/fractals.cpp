@@ -2268,7 +2268,7 @@ int mandelbrot_per_pixel_l()
 	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z_l : g_initial_z_l;
 
 	g_old_z_l.real(g_old_z_l.real() + g_parameter_l.real());    // initial pertubation of parameters set
-	g_old_z_l.y += g_parameter_l.imag();
+	g_old_z_l.imag(g_old_z_l.imag() + g_parameter_l.imag());
 	return 1; // 1st iteration has been done
 #else
 	return 0;
@@ -2385,7 +2385,7 @@ int mandelbrot_per_pixel()
 	else
 	{
 		g_old_z_l.real(g_old_z_l.real() + g_parameter_l.real()); // initial pertubation of parameters set
-		g_old_z_l.y += g_parameter_l.imag();
+		g_old_z_l.imag(g_old_z_l.imag() + g_parameter_l.imag());
 	}
 	g_temp_z_l = g_initial_z_l; // for spider
 	g_temp_sqr_l.real(multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift));
@@ -2419,7 +2419,7 @@ int marks_mandelbrot_per_pixel()
 	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z_l : g_initial_z_l;
 
 	g_old_z_l.real(g_old_z_l.real() + g_parameter_l.real());    // initial pertubation of parameters set
-	g_old_z_l.y += g_parameter_l.imag();
+	g_old_z_l.imag(g_old_z_l.imag() + g_parameter_l.imag());
 
 	if (g_c_exp > 3)
 	{
@@ -2710,7 +2710,7 @@ int mandelbrot_phoenix_per_pixel()
 	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z_l : g_initial_z_l;
 
 	g_old_z_l.real(g_old_z_l.real() + g_parameter_l.real());    // initial pertubation of parameters set
-	g_old_z_l.y += g_parameter_l.imag();
+	g_old_z_l.imag(g_old_z_l.imag() + g_parameter_l.imag());
 	g_temp_sqr_l.real(multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift));
 	g_temp_sqr_l.imag(multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift));
 	g_tmp_z2_l.real(0L);
