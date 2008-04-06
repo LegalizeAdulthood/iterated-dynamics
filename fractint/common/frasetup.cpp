@@ -599,7 +599,9 @@ bool trig_plus_trig_setup_l()
 	}
 	int (*per_pixel)(void) = julia_per_pixel_l;
 	int (*orbit_calc)(void) =  trig_plus_trig_orbit;
-	if (g_parameter_l.real() == g_externs.Fudge() && g_parameter_l.imag() == 0L && g_parameter2_l.imag() == 0L
+	if (g_parameter_l.real() == g_externs.Fudge()
+		&& g_parameter_l.imag() == 0L
+		&& g_parameter2_l.imag() == 0L
 		&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 	{
 		if (g_parameter2_l.real() == g_externs.Fudge())        // Scott variant
