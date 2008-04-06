@@ -72,7 +72,7 @@ int complex_newton()
 bool Newton::setup()           // Newton/NewtBasin Routines
 {
 	int i;
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	if (g_debug_mode != DEBUGMODE_FORCE_FP_NEWTON)
 	{
 		if (g_fractal_type == FRACTYPE_NEWTON_MP)

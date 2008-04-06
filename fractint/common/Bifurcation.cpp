@@ -212,7 +212,7 @@ int bifurcation_verhulst_trig_fp()
 
 int bifurcation_verhulst_trig()
 {
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	g_temp_z_l.real(s_population_l);
 	g_temp_z_l.imag(0);
 	LCMPLXtrig0(g_temp_z_l, g_temp_z_l);
@@ -233,7 +233,7 @@ int bifurcation_stewart_trig_fp()
 
 int bifurcation_stewart_trig()
 {
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	g_temp_z_l.real(s_population_l);
 	g_temp_z_l.imag(0);
 	LCMPLXtrig0(g_temp_z_l, g_temp_z_l);
@@ -255,7 +255,7 @@ int bifurcation_set_trig_pi_fp()
 
 int bifurcation_set_trig_pi()
 {
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	g_temp_z_l.real(multiply(s_population_l, s_pi_l, g_bit_shift));
 	g_temp_z_l.imag(0);
 	LCMPLXtrig0(g_temp_z_l, g_temp_z_l);
@@ -275,7 +275,7 @@ int bifurcation_add_trig_pi_fp()
 
 int bifurcation_add_trig_pi()
 {
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	g_temp_z_l.real(multiply(s_population_l, s_pi_l, g_bit_shift));
 	g_temp_z_l.imag(0);
 	LCMPLXtrig0(g_temp_z_l, g_temp_z_l);
@@ -296,7 +296,7 @@ int bifurcation_lambda_trig_fp()
 
 int bifurcation_lambda_trig()
 {
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	g_temp_z_l.real(s_population_l);
 	g_temp_z_l.imag(0);
 	LCMPLXtrig0(g_temp_z_l, g_temp_z_l);
@@ -318,7 +318,7 @@ int bifurcation_may_fp()
 
 int bifurcation_may()
 {
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	g_temp_z_l.real(s_population_l + g_externs.Fudge());
 	g_temp_z_l.imag(0);
 	g_parameter2_l.real(DoubleToFudge(s_beta));

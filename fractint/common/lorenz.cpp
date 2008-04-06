@@ -2184,7 +2184,7 @@ int setup_orbits_to_screen(affine *scrn_cnvt)
 int plot_orbits_2d_setup()
 {
 
-#ifndef XFRACT
+#ifndef NO_FIXED_POINT_MATH
 	if (g_current_fractal_specific->isinteger != 0)
 	{
 		int tofloat = g_current_fractal_specific->tofloat;

@@ -393,7 +393,7 @@ static PEND_OP s_ops[2300];
 Arg *g_argument1;
 Arg *g_argument2;
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 #define ChkLongDenom(denom)										\
 	do															\
 	{															\
@@ -531,7 +531,7 @@ static int int_strlen(const char *text)
 /* use the following when only float functions are implemented to
 	get MP math and Integer math */
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 static void lStkFunct(void (*function)())   // call lStk via dStk
 {
 	/*
@@ -647,7 +647,7 @@ void lStkSRand()
 
 void Formula::StackStoreRandom_l()
 {
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	SetRandFnct();
 	lRandom();
 	g_argument1->l = m_variables[VARIABLE_RAND].argument.l;
@@ -748,7 +748,7 @@ void dStkAbs()
 	g_argument1->d.y = fabs(g_argument1->d.y);
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkAbs()
 {
 	g_argument1->l.x = labs(g_argument1->l.x);
@@ -780,7 +780,7 @@ void lStkSqr()
 
 void Formula::StackSqr_l()
 {
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	m_variables[VARIABLE_LAST_SQR].argument.l.x = multiply(g_argument1->l.x, g_argument1->l.x, g_bit_shift);
 	m_variables[VARIABLE_LAST_SQR].argument.l.y = multiply(g_argument1->l.y, g_argument1->l.y, g_bit_shift);
 	g_argument1->l.y = multiply(g_argument1->l.x, g_argument1->l.y, g_bit_shift) << 1;
@@ -800,7 +800,7 @@ void dStkAdd()
 	g_argument2--;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkAdd()
 {
 	g_argument2->l.x += g_argument1->l.x;
@@ -820,7 +820,7 @@ void dStkSub()
 	g_argument2--;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkSub()
 {
 	g_argument2->l.x -= g_argument1->l.x;
@@ -837,7 +837,7 @@ void dStkConj()
 	g_argument1->d.y = -g_argument1->d.y;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkConj()
 {
 	g_argument1->l.y = -g_argument1->l.y;
@@ -852,7 +852,7 @@ void dStkFloor()
 	g_argument1->d.y = floor(g_argument1->d.y);
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkFloor()
 {
 	/*
@@ -874,7 +874,7 @@ void dStkCeil()
 	g_argument1->d.y = ceil(g_argument1->d.y);
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkCeil()
 {
 	/* the shift operation does the "floor" operation, so we
@@ -894,7 +894,7 @@ void dStkTrunc()
 	g_argument1->d.y = int(g_argument1->d.y);
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkTrunc()
 {
 	/* shifting and shifting back truncates positive numbers,
@@ -920,7 +920,7 @@ void dStkRound()
 	g_argument1->d.y = floor(g_argument1->d.y + .5);
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkRound()
 {
 	// Add .5 then truncate
@@ -938,7 +938,7 @@ void dStkZero()
 	g_argument1->d.x = 0.0;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkZero()
 {
 	g_argument1->l.y = 0;
@@ -954,7 +954,7 @@ void dStkOne()
 	g_argument1->d.y = 0.0;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkOne()
 {
 	g_argument1->l.x = long(s_fudge);
@@ -970,7 +970,7 @@ void dStkReal()
 	g_argument1->d.y = 0.0;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkReal()
 {
 	g_argument1->l.y = 0l;
@@ -985,7 +985,7 @@ void dStkImag()
 	g_argument1->d.y = 0.0;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkImag()
 {
 	g_argument1->l.x = g_argument1->l.y;
@@ -1001,7 +1001,7 @@ void dStkNeg()
 	g_argument1->d.y = -g_argument1->d.y;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkNeg()
 {
 	g_argument1->l.x = -g_argument1->l.x;
@@ -1018,7 +1018,7 @@ void dStkMul()
 	g_argument2--;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkMul()
 {
 	long x = multiply(g_argument2->l.x, g_argument1->l.x, g_bit_shift) -
@@ -1041,7 +1041,7 @@ void dStkDiv()
 	g_argument2--;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkDiv()
 {
 	long mod = multiply(g_argument1->l.x, g_argument1->l.x, g_bit_shift) +
@@ -1065,7 +1065,7 @@ void dStkMod()
 	g_argument1->d.y = 0.0;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkMod()
 {
 	g_argument1->l.x = multiply(g_argument1->l.x, g_argument1->l.x, g_bit_shift) +
@@ -1139,7 +1139,7 @@ void dStkFlip()
 	g_argument1->d.y = t;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkFlip()
 {
 	long t;
@@ -1164,7 +1164,7 @@ void dStkSin()
 	g_argument1->d.y = cosx*sinhy;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkSin()
 {
 	long x = g_argument1->l.x >> s_delta16;
@@ -1201,7 +1201,7 @@ void dStkTan()
 	g_argument1->d.y = sinhy/denom;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkTan()
 {
 	long x = (g_argument1->l.x >> s_delta16)*2;
@@ -1237,7 +1237,7 @@ void dStkTanh()
 	g_argument1->d.y = siny/denom;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkTanh()
 {
 	long x = g_argument1->l.x >> s_delta16;
@@ -1275,7 +1275,7 @@ void dStkCoTan()
 	g_argument1->d.y = -sinhy/denom;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkCoTan()
 {
 	long x = g_argument1->l.x >> s_delta16;
@@ -1313,7 +1313,7 @@ void dStkCoTanh()
 	g_argument1->d.y = -siny/denom;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkCoTanh()
 {
 	long x = g_argument1->l.x >> s_delta16;
@@ -1350,7 +1350,7 @@ void dStkRecip()
 	g_argument1->d.y = -g_argument1->d.y/mod;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkRecip()
 {
 	long mod;
@@ -1378,7 +1378,7 @@ void dStkSinh()
 	g_argument1->d.y = coshx*siny;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkSinh()
 {
 	long x = g_argument1->l.x >> s_delta16;
@@ -1408,7 +1408,7 @@ void dStkCos()
 	g_argument1->d.y = -sinx*sinhy;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkCos()
 {
 	long x = g_argument1->l.x >> s_delta16;
@@ -1434,7 +1434,7 @@ void dStkCosXX()
 	g_argument1->d.y = -g_argument1->d.y;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkCosXX()
 {
 	lStkCos();
@@ -1456,7 +1456,7 @@ void dStkCosh()
 	g_argument1->d.y = sinhx*siny;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkCosh()
 {
 	long x = g_argument1->l.x >> s_delta16;
@@ -1479,7 +1479,7 @@ void dStkASin()
 	Arcsinz(g_argument1->d, &(g_argument1->d));
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkASin()
 {
 	lStkFunct(dStkASin);
@@ -1493,7 +1493,7 @@ void dStkASinh()
 	Arcsinhz(g_argument1->d, &(g_argument1->d));
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkASinh()
 {
 	lStkFunct(dStkASinh);
@@ -1507,7 +1507,7 @@ void dStkACos()
 	Arccosz(g_argument1->d, &(g_argument1->d));
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkACos()
 {
 	lStkFunct(dStkACos);
@@ -1521,7 +1521,7 @@ void dStkACosh()
 	Arccoshz(g_argument1->d, &(g_argument1->d));
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkACosh()
 {
 	lStkFunct(dStkACosh);
@@ -1535,7 +1535,7 @@ void dStkATan()
 	Arctanz(g_argument1->d, &(g_argument1->d));
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkATan()
 {
 	lStkFunct(dStkATan);
@@ -1549,7 +1549,7 @@ void dStkATanh()
 	Arctanhz(g_argument1->d, &(g_argument1->d));
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkATanh()
 {
 	lStkFunct(dStkATanh);
@@ -1563,7 +1563,7 @@ void dStkSqrt()
 	g_argument1->d = ComplexSqrtFloat(g_argument1->d.x, g_argument1->d.y);
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkSqrt()
 {
 	g_argument1->l = ComplexSqrtLong(g_argument1->l.x, g_argument1->l.y);
@@ -1578,7 +1578,7 @@ void dStkCAbs()
 	g_argument1->d.y = 0.0;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkCAbs()
 {
 	lStkFunct(dStkCAbs);
@@ -1595,7 +1595,7 @@ void dStkLT()
 	g_argument2--;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkLT()
 {
 	g_argument2->l.x = long(g_argument2->l.x < g_argument1->l.x) << g_bit_shift;
@@ -1615,7 +1615,7 @@ void dStkGT()
 	g_argument2--;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkGT()
 {
 	g_argument2->l.x = long(g_argument2->l.x > g_argument1->l.x) << g_bit_shift;
@@ -1635,7 +1635,7 @@ void dStkLTE()
 	g_argument2--;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkLTE()
 {
 	g_argument2->l.x = long(g_argument2->l.x <= g_argument1->l.x) << g_bit_shift;
@@ -1655,7 +1655,7 @@ void dStkGTE()
 	g_argument2--;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkGTE()
 {
 	g_argument2->l.x = long(g_argument2->l.x >= g_argument1->l.x) << g_bit_shift;
@@ -1675,7 +1675,7 @@ void dStkEQ()
 	g_argument2--;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkEQ()
 {
 	g_argument2->l.x = long(g_argument2->l.x == g_argument1->l.x) << g_bit_shift;
@@ -1695,7 +1695,7 @@ void dStkNE()
 	g_argument2--;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkNE()
 {
 	g_argument2->l.x = long(g_argument2->l.x != g_argument1->l.x) << g_bit_shift;
@@ -1715,7 +1715,7 @@ void dStkOR()
 	g_argument2--;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkOR()
 {
 	g_argument2->l.x = long(g_argument2->l.x || g_argument1->l.x) << g_bit_shift;
@@ -1735,7 +1735,7 @@ void dStkAND()
 	g_argument2--;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkAND()
 {
 	g_argument2->l.x = long(g_argument2->l.x && g_argument1->l.x) << g_bit_shift;
@@ -1751,7 +1751,7 @@ void dStkLog()
 	FPUcplxlog(&g_argument1->d, &g_argument1->d);
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkLog()
 {
 	lStkFunct(dStkLog);
@@ -1770,7 +1770,7 @@ void dStkExp()
 	FPUcplxexp(&g_argument1->d, &g_argument1->d);
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkExp()
 {
 	lStkFunct(dStkExp);
@@ -1786,7 +1786,7 @@ void dStkPwr()
 	g_argument2--;
 }
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 void lStkPwr()
 {
 	ComplexD x;
@@ -1968,7 +1968,7 @@ ConstArg *Formula::is_constant(const char *text, int length)
 				case VARIABLE_SCRN_PIX:
 				case VARIABLE_SCRN_MAX:
 				case VARIABLE_MAX_IT:
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 					if (m_math_type == FIXED_POINT_MATH)
 					{
 						driver_unget_key('f');
@@ -1991,7 +1991,7 @@ ConstArg *Formula::is_constant(const char *text, int length)
 	// m_variables[m_parser_vsp].a should already be zeroed out
 	switch (m_math_type)
 	{
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	case FIXED_POINT_MATH:
 		m_variables[m_parser_vsp].argument.l.x = 0;
 		m_variables[m_parser_vsp].argument.l.y = 0;
@@ -2042,7 +2042,7 @@ ConstArg *Formula::is_constant(const char *text, int length)
 		case FLOATING_POINT_MATH:
 			m_variables[m_parser_vsp].argument.d = z;
 			break;
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 		case FIXED_POINT_MATH:
 			m_variables[m_parser_vsp].argument.l.x = fixpoint_from_double(z.x);
 			m_variables[m_parser_vsp].argument.l.y = fixpoint_from_double(z.y);
@@ -2326,7 +2326,7 @@ void Formula::parse_string_set_math()
 		StkJumpOnFalse = dStkJumpOnFalse;
 		StkOne = dStkOne;
 		break;
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	case FIXED_POINT_MATH:
 		s_delta16 = g_bit_shift - 16;
 		s_shift_back = 32 - g_bit_shift;
@@ -2437,7 +2437,7 @@ void Formula::parse_string_set_parameters_float()
 }
 void Formula::parse_string_set_parameters_int()
 {
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	m_variables[VARIABLE_P1].argument.l.x = fixpoint_from_double(g_parameters[P1_REAL]);
 	m_variables[VARIABLE_P1].argument.l.y = fixpoint_from_double(g_parameters[P1_IMAG]);
 	m_variables[VARIABLE_P2].argument.l.x = fixpoint_from_double(g_parameters[P2_REAL]);
@@ -2740,7 +2740,7 @@ int Formula::orbit()
 		case FLOATING_POINT_MATH:
 			dRandom();
 			break;
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 		case FIXED_POINT_MATH:
 			lRandom();
 			break;
@@ -2761,7 +2761,7 @@ int Formula::orbit()
 	case FLOATING_POINT_MATH:
 		g_old_z = g_new_z = m_variables[VARIABLE_Z].argument.d;
 		return g_argument1->d.x == 0.0;
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	case FIXED_POINT_MATH:
 		g_old_z_l = g_new_z_l = m_variables[VARIABLE_Z].argument.l;
 		if (g_overflow)
@@ -2804,7 +2804,7 @@ int Formula::per_pixel()
 		break;
 
 
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	case FIXED_POINT_MATH:
 		m_variables[VARIABLE_WHITE_SQ].argument.l.x = fixpoint_from_double((g_row + g_col) & 1);
 		m_variables[VARIABLE_WHITE_SQ].argument.l.y = 0L;
@@ -2826,7 +2826,7 @@ int Formula::per_pixel()
 			m_variables[VARIABLE_PIXEL].argument.d.x = g_old_z.real();
 			m_variables[VARIABLE_PIXEL].argument.d.y = g_old_z.imag();
 			break;
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 		case FIXED_POINT_MATH:
 			// watch out for overflow
 			if (sqr(g_old_z.real()) + sqr(g_old_z.imag()) >= 127)
@@ -2849,7 +2849,7 @@ int Formula::per_pixel()
 		case FLOATING_POINT_MATH:
 			m_variables[VARIABLE_PIXEL].argument.d = g_externs.DPixel();
 			break;
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 		case FIXED_POINT_MATH:
 			m_variables[VARIABLE_PIXEL].argument.l = g_externs.LPixel();
 			break;
@@ -2875,7 +2875,7 @@ int Formula::per_pixel()
 	case FLOATING_POINT_MATH:
 		g_old_z = m_variables[VARIABLE_Z].argument.d;
 		break;
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	case FIXED_POINT_MATH:
 		g_old_z_l = m_variables[VARIABLE_Z].argument.l;
 		break;
@@ -3955,7 +3955,7 @@ bool Formula::setup_fp()
 {
 	bool result;
 	// TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32)
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(NO_FIXED_POINT_MATH) && !defined(_WIN32)
 	MathType = D_MATH;
 	// CAE changed below for fp
 	result = !run_formula(g_formula_state.get_formula(), false); // run_formula() returns 1 for failure
@@ -3983,7 +3983,7 @@ bool Formula::setup_fp()
 
 bool Formula::setup_int()
 {
-#if defined(XFRACT)
+#if defined(NO_FIXED_POINT_MATH)
 	return integer_unsupported();
 #else
 	m_math_type = FIXED_POINT_MATH;

@@ -939,7 +939,7 @@ bool mandelbrot_trig_setup()
 
 bool marks_julia_setup()
 {
-#if !defined(XFRACT)
+#if !defined(NO_FIXED_POINT_MATH)
 	if (g_parameters[P2_REAL] < 1)
 	{
 		g_parameters[P2_REAL] = 1;

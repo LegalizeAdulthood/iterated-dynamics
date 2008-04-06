@@ -101,7 +101,7 @@ static long s_eyes;
 
 bool julibrot_setup()
 {
-#ifndef XFRACT
+#ifndef NO_FIXED_POINT_MATH
 	long origin;
 #endif
 	int r = 0;
@@ -125,7 +125,7 @@ bool julibrot_setup()
 	s_right_eye_fp.zy = g_screen_distance_fp;
 	s_b_base = 128;
 
-#ifndef XFRACT
+#ifndef NO_FIXED_POINT_MATH
 	if (g_fractal_specific[g_fractal_type].isinteger > 0)
 	{
 		long jxmin;
