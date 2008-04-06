@@ -1,8 +1,11 @@
 #if !defined(CMPLX_H)
 #define CMPLX_H
-
+//
+// c m p l x . h
+//
 // various complex number defs
-
+//
+#include <complex>
 #include "id.h"
 
 template <typename T>
@@ -57,6 +60,8 @@ public:
 	}
 };
 
+//typedef std::complex<double> ComplexD;
+//typedef std::complex<double> InitializedComplexD;
 typedef ComplexT<double> ComplexD;
 typedef InitializedComplexT<double> InitializedComplexD;
 typedef ComplexT<long> ComplexL;

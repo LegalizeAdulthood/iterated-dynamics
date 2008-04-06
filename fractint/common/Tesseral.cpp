@@ -298,7 +298,7 @@ void TesseralScanImpl::Scan()
 				}
 				else  // use put_line for speed
 				{
-					memset(&g_stack[OLD_MAX_PIXELS], tp->top, j);
+					std::fill(&g_stack[OLD_MAX_PIXELS], &g_stack[OLD_MAX_PIXELS] + j, tp->top);
 					for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
 					{
 						put_line(g_row, tp->x1 + 1, tp->x2-1, &g_stack[OLD_MAX_PIXELS]);

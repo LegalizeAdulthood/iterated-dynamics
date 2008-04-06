@@ -99,8 +99,8 @@ Introduction::Introduction(AbstractDriver *driver)
 	{
 		m_authors[i] = 0;
 	}
-	::memset(m_credits, 0, NUM_OF(m_credits));
-	::memset(m_screen_text, 0, NUM_OF(m_screen_text));
+	std::fill(m_credits, m_credits + NUM_OF(m_credits), 0);
+	std::fill(m_screen_text, m_screen_text + NUM_OF(m_screen_text), 0);
 	PushContext(this);
 }
 

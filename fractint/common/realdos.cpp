@@ -60,7 +60,7 @@ int text_temp_message(const std::string &message)
 {
 	return text_temp_message(message.c_str());
 }
-int text_temp_message(const char *msgparm)
+int text_temp_message(char const *msgparm)
 {
 	if (show_temp_message(msgparm))
 	{
@@ -83,7 +83,7 @@ int show_temp_message(const std::string &message)
 	return show_temp_message(message.c_str());
 }
 
-int show_temp_message(const char *msgparm)
+int show_temp_message(char const *msgparm)
 {
 	static long size = 0;
 	char msg[41];
@@ -218,7 +218,7 @@ int put_string_center(int row, int col, int width, int attr, const std::string &
 	return put_string_center(row, col, width, attr, msg.c_str());
 }
 
-int put_string_center(int row, int col, int width, int attr, const char *msg)
+int put_string_center(int row, int col, int width, int attr, char const *msg)
 {
 	char buf[81];
 	int i;
@@ -245,7 +245,7 @@ int put_string_center(int row, int col, int width, int attr, const char *msg)
 	}
 	j = (width - i)/2;
 	j -= (width + 10 - i)/20; // when wide a bit left of center looks better
-	memset(buf, ' ', width);
+	std::fill(buf, buf + width, ' ');
 	buf[width] = 0;
 	i = 0;
 	k = j;
@@ -261,7 +261,7 @@ int put_string_center(int row, int col, int width, int attr, const char *msg)
 
 int main_menu(bool full_menu)
 {
-	const char *choices[44]; // 2 columns*22 rows
+	char const *choices[44]; // 2 columns*22 rows
 	int attributes[44];
 	int choicekey[44];
 	int i;
@@ -730,7 +730,7 @@ int input_field(
 			started = true;
 			display = 1;
 			break;
-		case IDK_DELETE:                           // delete
+		case IDK_DELETE:
 			j = int(strlen(fld));
 			for (i = offset; i < j; ++i)
 			{
@@ -739,7 +739,7 @@ int input_field(
 			started = true;
 			display = 1;
 			break;
-		case IDK_INSERT:                           // insert
+		case IDK_INSERT:
 			insert ^= 0x8000;
 			started = true;
 			break;
@@ -839,15 +839,49 @@ inpfld_end:
 	return ret;
 }
 
-int field_prompt(
-		char *hdg,						// heading, \n delimited lines
-		char *instr,					// additional instructions or 0
+static int line_count(std::string const &text)
+{
+	using namespace std;
+	return 1 + int(count_if(text.begin(), text.end(), bind1st(equal_to<char>(), '\n')));
+}
+
+static void field_prompt_lines_boxwidth(std::string const &hdg, int len, int &titlelines, int &boxwidth)
+{
+	char const *charptr = hdg.c_str();                         // count title lines, find widest
+	int lineLength = 0;
+	boxwidth = 0;
+	titlelines = 1;
+	while (*charptr)
+	{
+		if (*(charptr++) == '\n')
+		{
+			++titlelines;
+			lineLength = -1;
+		}
+		if (++lineLength > boxwidth)
+		{
+			boxwidth = lineLength;
+		}
+	}
+	if (len > boxwidth)
+	{
+		boxwidth = len;
+	}
+}
+
+int field_prompt(std::string const &hdg,
+				 char *fld, int len, int (*check_keystroke)(int key))
+{
+	return field_prompt(hdg, "", fld, len, check_keystroke);
+}
+
+int field_prompt(std::string const &hdg, // heading, \n delimited lines
+		std::string const &instr,		// additional instructions or 0
 		char *fld,						// the field itself
 		int len,						// field length (declare as 1 larger for \0)
 		int (*check_keystroke)(int key) // routine to check non data keys, or 0
 		)
 {
-	char *charptr;
 	int boxwidth;
 	int titlelines;
 	int titlecol;
@@ -858,26 +892,7 @@ int field_prompt(
 	char buf[81];
 	help_title();                           // clear screen, display title
 	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);     // init rest to background
-	charptr = hdg;                         // count title lines, find widest
-	i = 0;
-	boxwidth = 0;
-	titlelines = 1;
-	while (*charptr)
-	{
-		if (*(charptr++) == '\n')
-		{
-			++titlelines;
-			i = -1;
-		}
-		if (++i > boxwidth)
-		{
-			boxwidth = i;
-		}
-	}
-	if (len > boxwidth)
-	{
-		boxwidth = len;
-	}
+	field_prompt_lines_boxwidth(hdg, len, titlelines, boxwidth);
 	i = titlelines + 4;                    // total rows in box
 	titlerow = (25 - i)/2;               // top row of it all when centered
 	titlerow -= titlerow/4;              // higher is better if lots extra
@@ -900,9 +915,9 @@ int field_prompt(
 	driver_put_string(titlerow, 0, C_PROMPT_HI, hdg); // display heading
 	g_text_cbase = 0;
 	i = titlerow + titlelines + 4;
-	if (instr)  // display caller's instructions
+	if (instr.length())  // display caller's instructions
 	{
-		charptr = instr;
+		char const *charptr = instr.c_str();
 		j = -1;
 		while ((buf[++j] = *(charptr++)) != 0)
 		{
@@ -932,7 +947,7 @@ int field_prompt(
 		call this when thinking phase is done
 	*/
 
-int thinking(int options, char *msg)
+int thinking(int options, char const *msg)
 {
 	static int thinkstate = -1;
 	char *wheel[] = {"-", "\\", "|", "/"};

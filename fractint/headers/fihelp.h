@@ -22,7 +22,10 @@ extern void end_help();
 extern void set_help_mode(int new_mode);
 extern int get_help_mode();
 extern int field_prompt_help(int help_mode,
-	char *hdg, char *instr, char *fld, int len, int (*checkkey)(int));
+							 std::string const &hdg, std::string const &instr,
+							 char *fld, int len, int (*checkkey)(int) = 0);
+extern int field_prompt_help(int help_mode, std::string const &hdg,
+							 char *fld, int len, int (*check_keystroke)(int key) = 0);
 extern long get_file_entry_help(int help_mode, int type,
 	const char *title, char *fmask, char *filename, char *entryname);
 long get_file_entry_help(int help_mode, int type,

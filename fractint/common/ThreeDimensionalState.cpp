@@ -1,7 +1,7 @@
 #include <cassert>
 #include <string>
 #include <sstream>
-#include <string.h>
+#include <cstring>
 
 #include "port.h"
 #include "prototyp.h"

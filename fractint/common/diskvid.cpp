@@ -12,6 +12,7 @@
 #include "prototyp.h"
 #include "externs.h"
 
+#include "big.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "diskvid.h"
@@ -529,7 +530,7 @@ static void find_load_cache(long offset) // used by read/write
 	if (offset > s_high_offset)  // never been this high before, just clear it
 	{
 		s_high_offset = offset;
-		memset(pixelptr, 0, BLOCK_LEN);
+		std::fill(pixelptr, pixelptr + BLOCK_LEN, 0);
 		pixelptr += BLOCK_LEN;
 	}
 	else
@@ -753,8 +754,8 @@ void disk_video_status(int line, const char *msg)
 {
 	char buf[41];
 	int attrib;
-	memset(buf, ' ', 40);
-	memcpy(buf, msg, int(strlen(msg)));
+	std::fill(&buf[0], &buf[40], ' ');
+	strncpy(buf, msg, 40);
 	buf[40] = 0;
 	attrib = C_DVID_HI;
 	if (line >= 100)

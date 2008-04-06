@@ -69,7 +69,7 @@ enum VariableNames
 struct function_load_store
 {
 	void (*function)();
-	union Arg *operand;
+	Arg *operand;
 };
 
 // token_type definitions

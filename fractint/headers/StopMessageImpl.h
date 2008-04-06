@@ -31,7 +31,7 @@ private:
 	void blank_rows(int row, int rows, int attr)
 	{
 		char buf[81];
-		memset(buf, ' ', 80);
+		std::fill(buf, buf + 80, ' ');
 		buf[80] = 0;
 		while (--rows >= 0)
 		{

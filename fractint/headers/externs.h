@@ -2,6 +2,7 @@
 #define EXTERNS_H
 
 #include <complex>
+#include "cmplx.h"
 #include "Globals.h"
 #include "UserInterfaceState.h"
 

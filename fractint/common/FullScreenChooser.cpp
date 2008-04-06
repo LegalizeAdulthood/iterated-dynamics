@@ -174,7 +174,7 @@ int AbstractFullScreenChooser::Execute()
 	{
 		if (redisplay)                       // display the current choices
 		{
-			memset(buf, ' ', 80);
+			std::fill(buf, buf + 80, ' ');
 			buf[_boxWidth*_columnWidth] = 0;
 			for (int i = (_heading2) ? 0 : -1; i <= _boxDepth; ++i)  // blank the box
 			{
@@ -659,7 +659,7 @@ void AbstractFullScreenChooser::show_speed_string(int speedrow)
 	int i;
 	int j;
 	char buf[81];
-	memset(buf, ' ', 80);
+	std::fill(buf, buf + 80, ' ');
 	buf[80] = 0;
 	_driver->put_string(speedrow, 0, C_PROMPT_BKGRD, buf);
 	if (*_speedString)  // got a speedstring on the go

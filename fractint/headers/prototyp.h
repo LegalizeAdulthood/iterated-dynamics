@@ -3,7 +3,6 @@
 
 // includes needed to define the prototypes
 
-#include "big.h"
 #include "id.h"
 #include "helpcom.h"
 #include "externs.h"

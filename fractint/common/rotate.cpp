@@ -484,7 +484,7 @@ void save_palette()
 	char temp1[256] = { 0 };
 	{
 		ScreenStacker stacker;
-		if (field_prompt_help(FIHELP_COLORMAP, "Name of map file to write", 0, temp1, 60, 0) < 0)
+		if (field_prompt_help(FIHELP_COLORMAP, "Name of map file to write", temp1, 60) < 0)
 		{
 			return;
 		}

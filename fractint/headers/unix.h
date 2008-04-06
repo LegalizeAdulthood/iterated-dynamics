@@ -1,5 +1,6 @@
 /* UNIX.H - unix port declarations */
-#pragma once
+#if !defined(UNIX_H)
+#define UNIX_H
 
 #ifndef RAND_MAX
 #define RAND_MAX 0x7fffffff
@@ -58,3 +59,5 @@ struct timebx
 	int timezone;
 	int dstflag;
 };
+
+#endif
