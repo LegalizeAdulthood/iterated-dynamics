@@ -1765,9 +1765,9 @@ void StandardFractal::check_periodicity()
 		{
 			if (g_integer_fractal)     // floating-pt periodicity chk
 			{
-				if (labs(m_saved_z_l.x - g_new_z_l.real()) < g_close_enough_l)
+				if (labs(m_saved_z_l.real() - g_new_z_l.real()) < g_close_enough_l)
 				{
-					if (labs(m_saved_z_l.y - g_new_z_l.imag()) < g_close_enough_l)
+					if (labs(m_saved_z_l.imag() - g_new_z_l.imag()) < g_close_enough_l)
 					{
 						m_caught_a_cycle = true;
 					}
@@ -2523,7 +2523,7 @@ static void decomposition()
 				++temp;
 				lalt.real(g_new_z_l.real()); // just
 				g_new_z_l.real(g_new_z_l.imag()); // swap
-				g_new_z_l.imag(lalt.x); // them
+				g_new_z_l.imag(lalt.real()); // them
 			}
 
 			if (g_decomposition[0] >= 16)
@@ -2533,10 +2533,10 @@ static void decomposition()
 				{
 					++temp;
 					lalt = g_new_z_l;
-					g_new_z_l.real(multiply(lalt.x, lcos45, g_bit_shift) +
-						multiply(lalt.y, lsin45, g_bit_shift));
-					g_new_z_l.imag(multiply(lalt.x, lsin45, g_bit_shift) -
-						multiply(lalt.y, lcos45, g_bit_shift));
+					g_new_z_l.real(multiply(lalt.real(), lcos45, g_bit_shift) +
+						multiply(lalt.imag(), lsin45, g_bit_shift));
+					g_new_z_l.imag(multiply(lalt.real(), lsin45, g_bit_shift) -
+						multiply(lalt.imag(), lcos45, g_bit_shift));
 				}
 
 				if (g_decomposition[0] >= 32)
@@ -2546,10 +2546,10 @@ static void decomposition()
 					{
 						++temp;
 						lalt = g_new_z_l;
-						g_new_z_l.real(multiply(lalt.x, lcos22_5, g_bit_shift) +
-							multiply(lalt.y, lsin22_5, g_bit_shift));
-						g_new_z_l.imag(multiply(lalt.x, lsin22_5, g_bit_shift) -
-							multiply(lalt.y, lcos22_5, g_bit_shift));
+						g_new_z_l.real(multiply(lalt.real(), lcos22_5, g_bit_shift) +
+							multiply(lalt.imag(), lsin22_5, g_bit_shift));
+						g_new_z_l.imag(multiply(lalt.real(), lsin22_5, g_bit_shift) -
+							multiply(lalt.imag(), lcos22_5, g_bit_shift));
 					}
 
 					if (g_decomposition[0] >= 64)
@@ -2559,10 +2559,10 @@ static void decomposition()
 						{
 							++temp;
 							lalt = g_new_z_l;
-							g_new_z_l.real(multiply(lalt.x, lcos11_25, g_bit_shift) +
-								multiply(lalt.y, lsin11_25, g_bit_shift));
-							g_new_z_l.imag(multiply(lalt.x, lsin11_25, g_bit_shift) -
-								multiply(lalt.y, lcos11_25, g_bit_shift));
+							g_new_z_l.real(multiply(lalt.real(), lcos11_25, g_bit_shift) +
+								multiply(lalt.imag(), lsin11_25, g_bit_shift));
+							g_new_z_l.imag(multiply(lalt.real(), lsin11_25, g_bit_shift) -
+								multiply(lalt.imag(), lcos11_25, g_bit_shift));
 						}
 
 						if (g_decomposition[0] >= 128)
@@ -2572,10 +2572,10 @@ static void decomposition()
 							{
 								++temp;
 								lalt = g_new_z_l;
-								g_new_z_l.real(multiply(lalt.x, lcos5_625, g_bit_shift) +
-									multiply(lalt.y, lsin5_625, g_bit_shift));
-								g_new_z_l.imag(multiply(lalt.x, lsin5_625, g_bit_shift) -
-									multiply(lalt.y, lcos5_625, g_bit_shift));
+								g_new_z_l.real(multiply(lalt.real(), lcos5_625, g_bit_shift) +
+									multiply(lalt.imag(), lsin5_625, g_bit_shift));
+								g_new_z_l.imag(multiply(lalt.real(), lsin5_625, g_bit_shift) -
+									multiply(lalt.imag(), lcos5_625, g_bit_shift));
 							}
 
 							if (g_decomposition[0] == 256)
