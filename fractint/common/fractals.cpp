@@ -233,12 +233,13 @@ int bail_out_manhattan_r_fp()
 
 static long const TRIG_LIMIT_16 = (8L << 16);		// domain limit of fast trig functions
 
-inline void TRIG_ARG_L(long &x)
+inline long TRIG_ARG_L(long x)
 {
 	if (labs(x) > TRIG_LIMIT_16)
 	{
-		x = DoubleToFudge(fmod(FudgeToDouble(x), g_two_pi));
+		return DoubleToFudge(fmod(FudgeToDouble(x), g_two_pi));
 	}
+	return x;
 }
 
 // --------------------------------------------------------------------
@@ -1059,15 +1060,15 @@ int popcorn_old_orbit()
 #if !defined(NO_FIXED_POINT_MATH)
 	g_temp_z_l = g_old_z_l;
 	g_temp_z_l.real(g_temp_z_l.real()*3L);
-	g_temp_z_l.y *= 3L;
-	TRIG_ARG_L(g_temp_z_l.x);
-	TRIG_ARG_L(g_temp_z_l.y);
+	g_temp_z_l.imag(g_temp_z_l.imag()*3L);
+	g_temp_z_l.real(TRIG_ARG_L(g_temp_z_l.real()));
+	g_temp_z_l.imag(TRIG_ARG_L(g_temp_z_l.imag()));
 	SinCos086(g_temp_z_l.real(), &s_sin_x_l, &s_cos_x_l);
 	SinCos086(g_temp_z_l.imag(), &s_sin_y_l, &s_cos_y_l);
 	g_temp_z_l.real(divide(s_sin_x_l, s_cos_x_l, g_bit_shift) + g_old_z_l.real());
 	g_temp_z_l.imag(divide(s_sin_y_l, s_cos_y_l, g_bit_shift) + g_old_z_l.imag());
-	TRIG_ARG_L(g_temp_z_l.x);
-	TRIG_ARG_L(g_temp_z_l.y);
+	g_temp_z_l.real(TRIG_ARG_L(g_temp_z_l.real()));
+	g_temp_z_l.imag(TRIG_ARG_L(g_temp_z_l.imag()));
 	SinCos086(g_temp_z_l.real(), &s_sin_x_l, &s_cos_x_l);
 	SinCos086(g_temp_z_l.imag(), &s_sin_y_l, &s_cos_y_l);
 	g_new_z_l.real(g_old_z_l.real() - multiply(g_parameter_l.real(), s_sin_y_l, g_bit_shift));
@@ -1100,15 +1101,15 @@ int popcorn_orbit()
 #if !defined(NO_FIXED_POINT_MATH)
 	g_temp_z_l = g_old_z_l;
 	g_temp_z_l.real(g_temp_z_l.real()*3L);
-	g_temp_z_l.y *= 3L;
-	TRIG_ARG_L(g_temp_z_l.x);
-	TRIG_ARG_L(g_temp_z_l.y);
+	g_temp_z_l.imag(g_temp_z_l.imag()*3L);
+	g_temp_z_l.real(TRIG_ARG_L(g_temp_z_l.real()));
+	g_temp_z_l.imag(TRIG_ARG_L(g_temp_z_l.imag()));
 	SinCos086(g_temp_z_l.real(), &s_sin_x_l, &s_cos_x_l);
 	SinCos086(g_temp_z_l.imag(), &s_sin_y_l, &s_cos_y_l);
 	g_temp_z_l.real(divide(s_sin_x_l, s_cos_x_l, g_bit_shift) + g_old_z_l.real());
 	g_temp_z_l.imag(divide(s_sin_y_l, s_cos_y_l, g_bit_shift) + g_old_z_l.imag());
-	TRIG_ARG_L(g_temp_z_l.x);
-	TRIG_ARG_L(g_temp_z_l.y);
+	g_temp_z_l.real(TRIG_ARG_L(g_temp_z_l.real()));
+	g_temp_z_l.imag(TRIG_ARG_L(g_temp_z_l.imag()));
 	SinCos086(g_temp_z_l.real(), &s_sin_x_l, &s_cos_x_l);
 	SinCos086(g_temp_z_l.imag(), &s_sin_y_l, &s_cos_y_l);
 	g_new_z_l.real(g_old_z_l.real() - multiply(g_parameter_l.real(), s_sin_y_l, g_bit_shift));
