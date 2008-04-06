@@ -35,13 +35,7 @@
 //	to the 'g_fractal_specific' structure, writing (or re-using one of the existing)
 //	an appropriate setup, per_image, per_pixel, and orbit routines.
 //
-#include <limits.h>
-#include <string.h>
-#if !defined(__386BSD__)
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
-#endif
+#include <climits>
 #include <string>
 
 #include "port.h"

@@ -1,9 +1,7 @@
 #include <algorithm>
+#include <climits>
 #include <sstream>
 #include <string>
-
-#include <string.h>
-#include <limits.h>
 
 #include <boost/format.hpp>
 

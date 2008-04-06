@@ -1,10 +1,8 @@
 /*
 		loadfile.c - load an existing fractal image, control level
 */
+#include <ctime>
 #include <string>
-
-#include <string.h>
-#include <time.h>
 
 #include "port.h"
 #include "prototyp.h"

@@ -5,8 +5,6 @@
 #include <fstream>
 #include <string>
 
-#include <string.h>
-
 // includes needed for g_fractal_specific
 
 #include "port.h"

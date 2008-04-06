@@ -1,12 +1,3 @@
-/*
-		Miscellaneous C routines used only in DOS Fractint.
-*/
-#include <fstream>
-#include <sstream>
-#include <string>
-
-#include <string.h>
-
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 

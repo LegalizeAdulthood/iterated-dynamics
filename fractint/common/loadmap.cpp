@@ -1,5 +1,4 @@
 /** loadmap.c **/
-#include <string.h>
 #include <string>
 
 #include "port.h"

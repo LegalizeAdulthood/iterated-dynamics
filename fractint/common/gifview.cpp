@@ -13,8 +13,6 @@
 #include <sstream>
 #include <string>
 
-#include <string.h>
-
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"

@@ -1,7 +1,5 @@
+#include <cassert>
 #include <string>
-
-#include <assert.h>
-#include <string.h>
 
 #include "port.h"
 #include "prototyp.h"

@@ -1,9 +1,5 @@
 #define _CRTDBG_MAP_ALLOC
-#include <string>
-
-#include <assert.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cassert>
 #include <crtdbg.h>
 
 #define STRICT

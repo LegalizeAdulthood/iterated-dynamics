@@ -16,8 +16,6 @@
 */
 #include <string>
 
-#include <string.h>
-
 #include <boost/format.hpp>
 
 #include "port.h"

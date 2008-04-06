@@ -10,13 +10,12 @@
 //
 #include <algorithm>
 #include <cassert>
+#include <climits>
 #include <cmath>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
-
-#include <limits.h>
 
 #include <boost/format.hpp>
 

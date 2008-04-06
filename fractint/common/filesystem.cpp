@@ -1,9 +1,8 @@
 #include <algorithm>
+#include <cctype>
 #include <string>
 #include <sstream>
 
-#include <string.h>
-#include <ctype.h>
 #include <direct.h>
 #include <sys/stat.h>
 

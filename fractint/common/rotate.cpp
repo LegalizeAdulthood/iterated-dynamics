@@ -1,11 +1,9 @@
 /*
 	rotate.cpp - Routines that manipulate the colormap
 */
+#include <ctime>
 #include <fstream>
 #include <string>
-
-#include <string.h>
-#include <time.h>
 
 #include <boost/format.hpp>
 

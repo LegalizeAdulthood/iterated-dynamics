@@ -2,8 +2,6 @@
 #include <string>
 #include <vector>
 
-#include <string.h>
-
 #include "port.h"
 #include "cmplx.h"
 #include "id.h"

@@ -2,15 +2,8 @@
 //	This file contains the "big number" high precision versions of the
 //	fractal routines.
 //
+#include <climits>
 #include <string>
-
-#include <limits.h>
-#include <string.h>
-#if !defined(__386BSD__)
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
-#endif
 
 #include "port.h"
 #include "prototyp.h"

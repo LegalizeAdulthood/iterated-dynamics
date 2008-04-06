@@ -2,12 +2,10 @@
 	stereo.cpp a module to view 3D images.
 	From an idea in "New Scientist" 9 October 1993 pages 26 - 29.
 */
+#include <ctime>
 #include <sstream>
 #include <string>
 #include <vector>
-
-#include <string.h>
-#include <time.h>
 
 #include "port.h"
 #include "prototyp.h"
@@ -25,8 +23,6 @@
 #include "rotate.h"
 #include "stereo.h"
 #include "UIChoices.h"
-
-#include <malloc.h>
 
 std::string g_stereo_map_name = "";
 static int s_auto_stereo_depth = 100;

@@ -1,8 +1,5 @@
 #include <algorithm>
 
-#include <stdio.h>
-#include <string.h>
-
 #include "port.h"
 #include "id.h"
 #include "TextColors.h"

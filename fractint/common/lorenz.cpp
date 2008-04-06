@@ -3,11 +3,9 @@
 //	generators - IFS and LORENZ3D, along with code to generate
 //	red/blue 3D images. Tim Wegner
 //
+#include <cassert>
 #include <fstream>
 #include <string>
-
-#include <assert.h>
-#include <string.h>
 
 #include <boost/format.hpp>
 

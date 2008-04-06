@@ -18,10 +18,9 @@
 */
 #include <algorithm>
 #include <cassert>
+#include <ctime>
 #include <sstream>
 #include <string>
-
-#include <time.h>
 
 #include <boost/format.hpp>
 
@@ -43,11 +42,6 @@
 
 #include "Formula.h"
 #include "MathUtil.h"
-
-#if defined(_WIN32)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
 
 #ifdef WATCH_MP
 double x1;

@@ -1,19 +1,4 @@
-/*
-		FRACTINT - The Ultimate Fractal Generator
-                        Main Routine
-*/
-#include <fstream>
-#include <string>
-
-#include <string.h>
-#include <time.h>
-#include <signal.h>
-// for getcwd()
-#if defined(LINUX)
-#include <unistd.h>
-#endif
-#include <stdarg.h>
-#include <ctype.h>
+#include <csignal>
 
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>

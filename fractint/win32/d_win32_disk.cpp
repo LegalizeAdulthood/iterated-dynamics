@@ -2,9 +2,8 @@
  *
  * Routines for a Win32 disk video mode driver for fractint.
  */
+#include <cassert>
 #include <string>
-
-#include <assert.h>
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT

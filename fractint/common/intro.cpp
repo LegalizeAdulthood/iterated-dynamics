@@ -6,11 +6,7 @@
  *
  */
 #include <cassert>
-#include <cstring>
-#include <string>
 #include <vector>
-
-#include <time.h>
 
 #include "port.h"
 #include "prototyp.h"

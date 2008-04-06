@@ -1,17 +1,3 @@
-/*
-		Resident odds and ends that don't fit anywhere else.
-*/
-#include <algorithm>
-#include <string>
-
-#include <string.h>
-#include <ctype.h>
-#include <time.h>
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
-#include <stdarg.h>
-
 #include <boost/format.hpp>
 
 #include "port.h"

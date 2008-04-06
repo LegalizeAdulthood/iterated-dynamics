@@ -1,7 +1,6 @@
 //  history.cpp
 //	History routines taken out of framain2.c to make them accessable
 //	to WinFract
-#include <string.h>
 #include <string>
 
 #include "port.h"

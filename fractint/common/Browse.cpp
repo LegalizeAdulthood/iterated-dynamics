@@ -1,8 +1,6 @@
+#include <cerrno>
+#include <ctime>
 #include <string>
-
-#include <string.h>
-#include <time.h>
-#include <errno.h>
 
 #include <boost/filesystem/path.hpp>
 

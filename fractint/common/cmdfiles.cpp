@@ -1,14 +1,12 @@
 //
 //		Command-line/Command-File Parser Routines
 //
+#include <cassert>
+#include <cctype>
+#include <cmath>
 #include <sstream>
+#include <ctime>
 #include <string>
-
-#include <assert.h>
-#include <ctype.h>
-#include <math.h>
-#include <string.h>
-#include <time.h>
 
 #include <boost/format.hpp>
 
