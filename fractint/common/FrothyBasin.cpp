@@ -227,12 +227,12 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 			// simple formula: z = z^2 + conj(z*(-1 + ai))
 			// but it's the attractor that makes this so interesting
 			g_new_z.real(g_temp_sqr.real() - g_temp_sqr.imag() - g_old_z.real() - s_frothy_data.f.a*g_old_z.imag());
-			g_old_z.y += (g_old_z.real() + g_old_z.real())*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real();
+			g_old_z.imag(g_old_z.imag() + (g_old_z.real() + g_old_z.real())*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real());
 			g_old_z.real(g_new_z.real());
 			if (s_frothy_data.repeat_mapping)
 			{
 				g_new_z.real(sqr(g_old_z.real()) - sqr(g_old_z.imag()) - g_old_z.real() - s_frothy_data.f.a*g_old_z.imag());
-				g_old_z.y += (g_old_z.real() + g_old_z.real())*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real();
+				g_old_z.imag(g_old_z.imag() + (g_old_z.real() + g_old_z.real())*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real());
 				g_old_z.real(g_new_z.real());
 			}
 
