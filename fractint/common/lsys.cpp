@@ -631,7 +631,7 @@ static void lsysi_size_dm(lsys_turtle_state_l *cmd)
 	long fixedsin;
 	long fixedcos;
 
-	FPUsincos(&angle, &s, &c);
+	FPUsincos(angle, &s, &c);
 	fixedsin = long(s*FIXEDLT1);
 	fixedcos = long(c*FIXEDLT1);
 
@@ -690,7 +690,7 @@ static void lsysi_draw_d(lsys_turtle_state_l *cmd)
 	int lastx;
 	int lasty;
 
-	FPUsincos(&angle, &s, &c);
+	FPUsincos(angle, &s, &c);
 	fixedsin = long(s*FIXEDLT1);
 	fixedcos = long(c*FIXEDLT1);
 
@@ -709,7 +709,7 @@ static void lsysi_draw_m(lsys_turtle_state_l *cmd)
 	long fixedsin;
 	long fixedcos;
 
-	FPUsincos(&angle, &s, &c);
+	FPUsincos(angle, &s, &c);
 	fixedsin = long(s*FIXEDLT1);
 	fixedcos = long(c*FIXEDLT1);
 
@@ -1137,7 +1137,7 @@ static void lsysi_sin_cos()
 		double twopimaxi = i*twopimax;
 		double s;
 		double c;
-		FPUsincos(&twopimaxi, &s, &c);
+		FPUsincos(twopimaxi, &s, &c);
 		s_sins[i] = long(s*FIXEDLT1);
 		s_coss[i] = long((locaspect*c)*FIXEDLT1);
 	}

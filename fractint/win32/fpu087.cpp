@@ -51,16 +51,16 @@ void FPUcplxdiv(ComplexD *x, ComplexD *y, ComplexD *z)
 	z->x = tx;
 }
 
-void FPUsincos(double *Angle, double *Sin, double *Cos)
+void FPUsincos(double angle, double *Sin, double *Cos)
 {
-	*Sin = sin(*Angle);
-	*Cos = cos(*Angle);
+	*Sin = sin(angle);
+	*Cos = cos(angle);
 }
 
-void FPUsinhcosh(double *Angle, double *Sinh, double *Cosh)
+void FPUsinhcosh(double angle, double *Sinh, double *Cosh)
 {
-	*Sinh = sinh(*Angle);
-	*Cosh = cosh(*Angle);
+	*Sinh = sinh(angle);
+	*Cosh = cosh(angle);
 }
 
 void FPUcplxlog(ComplexD const *x, ComplexD *z)
