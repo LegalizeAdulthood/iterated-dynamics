@@ -671,7 +671,7 @@ int trig_plus_exponent_orbit_fp()
 
 	// new =   trig(old) + e**old + C
 	g_new_z.real(g_new_z.real() + s_temp_exp*s_cos_y + g_float_parameter->real());
-	g_new_z.y += s_temp_exp*s_sin_y + g_float_parameter->y;
+	g_new_z.imag(g_new_z.imag() + s_temp_exp*s_sin_y + g_float_parameter->imag());
 	return g_externs.BailOutFp();
 }
 
@@ -860,7 +860,7 @@ int z_power_orbit_fp()
 {
 	complex_power(&g_old_z, g_c_exp, &g_new_z);
 	g_new_z.real(g_new_z.real() + g_float_parameter->real());
-	g_new_z.y += g_float_parameter->y;
+	g_new_z.imag(g_new_z.imag() + g_float_parameter->imag());
 	return g_externs.BailOutFp();
 }
 
@@ -868,7 +868,7 @@ int complex_z_power_orbit_fp()
 {
 	g_new_z = ComplexPower(g_old_z, g_parameter2);
 	g_new_z.real(g_new_z.real() + g_float_parameter->real());
-	g_new_z.y += g_float_parameter->y;
+	g_new_z.imag(g_new_z.imag() + g_float_parameter->imag());
 	return g_externs.BailOutFp();
 }
 
@@ -931,7 +931,7 @@ int barnsley3_orbit_fp()
 		// This term added by Tim Wegner to make dependent on the
 		// imaginary part of the parameter. (Otherwise Mandelbrot
 		// is uninteresting.
-		g_new_z.y += g_float_parameter->y*g_old_z.real();
+		g_new_z.imag(g_new_z.imag() + g_float_parameter->imag()*g_old_z.real());
 	}
 	return g_externs.BailOutFp();
 }
@@ -958,7 +958,7 @@ int trig_plus_z_squared_orbit_fp()
 {
 	CMPLXtrig0(g_old_z, g_new_z);
 	g_new_z.real(g_new_z.real() + g_temp_sqr.real() - g_temp_sqr.imag() + g_float_parameter->real());
-	g_new_z.y += 2.0*g_old_z.real()*g_old_z.imag() + g_float_parameter->y;
+	g_new_z.imag(g_new_z.imag() + 2.0*g_old_z.real()*g_old_z.imag() + g_float_parameter->imag());
 	return g_externs.BailOutFp();
 }
 
@@ -968,7 +968,7 @@ int richard8_orbit_fp()
 	CMPLXtrig0(g_old_z, g_new_z);
 	// CMPLXtrig1(*g_float_parameter, g_temp_z);
 	g_new_z.real(g_new_z.real() + g_temp_z.real());
-	g_new_z.y += g_temp_z.y;
+	g_new_z.imag(g_new_z.imag() + g_temp_z.imag());
 	return g_externs.BailOutFp();
 }
 
@@ -1256,7 +1256,7 @@ int marks_complex_mandelbrot_orbit()
 	g_temp_z.y = 2*g_old_z.real()*g_old_z.imag();
 	FPUcplxmul(&g_temp_z, &g_coefficient, &g_new_z);
 	g_new_z.real(g_new_z.real() + g_float_parameter->real());
-	g_new_z.y += g_float_parameter->y;
+	g_new_z.imag(g_new_z.imag() + g_float_parameter->imag());
 	return g_externs.BailOutFp();
 }
 
@@ -1951,7 +1951,7 @@ int magnet1_orbit_fp()    // Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
 
 	g_new_z.real((tmp.real() + tmp.y)*(tmp.real() - tmp.y));      // Z = tmp**2
 	g_new_z.imag(tmp.real()*tmp.y);
-	g_new_z.y += g_new_z.imag();
+	g_new_z.imag(g_new_z.imag() + g_new_z.imag());
 
 	return g_externs.BailOutFp();
 }
@@ -1991,7 +1991,7 @@ int magnet2_orbit_fp()
 
 	g_new_z.real((tmp.real() + tmp.y)*(tmp.real() - tmp.y));      // Z = tmp**2
 	g_new_z.imag(tmp.real()*tmp.y);
-	g_new_z.y += g_new_z.imag();
+	g_new_z.imag(g_new_z.imag() + g_new_z.imag());
 
 	return g_externs.BailOutFp();
 }
@@ -2122,7 +2122,7 @@ int marks_mandel_power_orbit_fp()
 	CMPLXtrig0(g_old_z, g_new_z);
 	CMPLXmult(g_temp_z, g_new_z, g_new_z);
 	g_new_z.real(g_new_z.real() + g_float_parameter->real());
-	g_new_z.y += g_float_parameter->y;
+	g_new_z.imag(g_new_z.imag() + g_float_parameter->imag());
 	return g_externs.BailOutFp();
 }
 
@@ -2151,7 +2151,7 @@ int tims_error_orbit_fp()
 	g_new_z.real(g_new_z.real()*g_temp_z.real() - g_new_z.imag()*g_temp_z.y);
 	g_new_z.imag(g_new_z.real()*g_temp_z.y - g_new_z.imag()*g_temp_z.real());
 	g_new_z.real(g_new_z.real() + g_float_parameter->real());
-	g_new_z.y += g_float_parameter->y;
+	g_new_z.imag(g_new_z.imag() + g_float_parameter->imag());
 	return g_externs.BailOutFp();
 }
 
