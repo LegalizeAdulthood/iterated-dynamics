@@ -681,7 +681,7 @@ int trig_plus_exponent_orbit()
 	SinCos086  (g_old_z_l.imag(), &s_sin_y_l,  &s_cos_y_l);
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
 	g_new_z_l.real(g_new_z_l.real() + multiply(tmp, s_cos_y_l, g_bit_shift) + g_long_parameter->real());
-	g_new_z_l.y += multiply(tmp,    s_sin_y_l,   g_bit_shift) + g_long_parameter->y;
+	g_new_z_l.imag(g_new_z_l.imag() + multiply(tmp, s_sin_y_l, g_bit_shift) + g_long_parameter->imag());
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -816,7 +816,7 @@ int z_power_orbit()
 		g_new_z_l.real(g_new_z_l.imag(8L << g_bit_shift));
 	}
 	g_new_z_l.real(g_new_z_l.real() + g_long_parameter->real());
-	g_new_z_l.y += g_long_parameter->y;
+	g_new_z_l.imag(g_new_z_l.imag() + g_long_parameter->imag());
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -838,7 +838,7 @@ int complex_z_power_orbit()
 		g_overflow = true;
 	}
 	g_new_z_l.real(g_new_z_l.real() + g_long_parameter->real());
-	g_new_z_l.y += g_long_parameter->y;
+	g_new_z_l.imag(g_new_z_l.imag() + g_long_parameter->imag());
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -887,7 +887,7 @@ int barnsley3_orbit()
 		// This term added by Tim Wegner to make dependent on the
 		// imaginary part of the parameter. (Otherwise Mandelbrot
 		// is uninteresting.
-		g_new_z_l.y += multiply(g_long_parameter->y, g_old_z_l.real(), g_bit_shift);
+		g_new_z_l.imag(g_new_z_l.imag() + multiply(g_long_parameter->imag(), g_old_z_l.real(), g_bit_shift));
 	}
 	return g_externs.BailOutL();
 #else
@@ -933,7 +933,7 @@ int trig_plus_z_squared_orbit()
 #if !defined(NO_FIXED_POINT_MATH)
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
 	g_new_z_l.real(g_new_z_l.real() + g_temp_sqr_l.real() - g_temp_sqr_l.imag() + g_long_parameter->real());
-	g_new_z_l.y += multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1) + g_long_parameter->y;
+	g_new_z_l.imag(g_new_z_l.imag() + multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1) + g_long_parameter->imag());
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -968,7 +968,7 @@ int richard8_orbit()
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
 	// LCMPLXtrig1(*g_long_parameter, g_temp_z_l);
 	g_new_z_l.real(g_new_z_l.real() + g_temp_z_l.real());
-	g_new_z_l.y += g_temp_z_l.imag();
+	g_new_z_l.imag(g_new_z_l.imag() + g_temp_z_l.imag());
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -2121,7 +2121,7 @@ int marks_mandel_power_orbit()
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
 	LCMPLXmult(g_temp_z_l, g_new_z_l, g_new_z_l);
 	g_new_z_l.real(g_new_z_l.real() + g_long_parameter->real());
-	g_new_z_l.y += g_long_parameter->y;
+	g_new_z_l.imag(g_new_z_l.imag() + g_long_parameter->imag());
 	return g_externs.BailOutL();
 #else
 	return 0;
@@ -2151,7 +2151,7 @@ int tims_error_orbit()
 	g_new_z_l.real(multiply(g_new_z_l.real(), g_temp_z_l.real(), g_bit_shift)-multiply(g_new_z_l.imag(), g_temp_z_l.imag(), g_bit_shift));
 	g_new_z_l.imag(multiply(g_new_z_l.real(), g_temp_z_l.imag(), g_bit_shift)-multiply(g_new_z_l.imag(), g_temp_z_l.real(), g_bit_shift));
 	g_new_z_l.real(g_new_z_l.real() + g_long_parameter->real());
-	g_new_z_l.y += g_long_parameter->y;
+	g_new_z_l.imag(g_new_z_l.imag() + g_long_parameter->imag());
 	return g_externs.BailOutL();
 #else
 	return 0;
