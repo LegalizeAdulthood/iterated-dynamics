@@ -953,8 +953,8 @@ bool marks_julia_setup()
 	}
 	else if (g_c_exp == 3)
 	{
-		g_coefficient_l.x = multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift) - multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift);
-		g_coefficient_l.y = multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1);
+		g_coefficient_l.real(multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift) - multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift));
+		g_coefficient_l.imag(multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1));
 	}
 	else if (g_c_exp == 2)
 	{
@@ -963,8 +963,8 @@ bool marks_julia_setup()
 	else if (g_c_exp < 2)
 	{
 		assert((1L << g_bit_shift) == DoubleToFudge(1.0));
-		g_coefficient_l.x = 1L << g_bit_shift;
-		g_coefficient_l.y = 0L;
+		g_coefficient_l.real(1L << g_bit_shift);
+		g_coefficient_l.imag(0L);
 	}
 	get_julia_attractor(0.0, 0.0);      // an attractor?
 #endif

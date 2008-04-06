@@ -331,7 +331,7 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 			// simple formula: z = z^2 + conj(z*(-1 + ai))
 			// but it's the attractor that makes this so interesting
 			g_new_z_l.real(g_temp_sqr_l.real() - g_temp_sqr_l.imag() - g_old_z_l.real() - multiply(s_frothy_data.l.a, g_old_z_l.imag(), g_bit_shift));
-			g_old_z_l.y += (multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.real(), g_bit_shift);
+			g_old_z_l.imag(g_old_z_l.imag() + (multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.real(), g_bit_shift));
 			g_old_z_l.real(g_new_z_l.real());
 			if (s_frothy_data.repeat_mapping)
 			{
@@ -343,7 +343,7 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 					break;
 				}
 				g_new_z_l.real(g_temp_sqr_l.real() - g_temp_sqr_l.imag() - g_old_z_l.real() - multiply(s_frothy_data.l.a, g_old_z_l.imag(), g_bit_shift));
-				g_old_z_l.y += (multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.real(), g_bit_shift);
+				g_old_z_l.imag(g_old_z_l.imag() + (multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.real(), g_bit_shift));
 				g_old_z_l.real(g_new_z_l.real());
 			}
 			g_color_iter++;
