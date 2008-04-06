@@ -395,8 +395,8 @@ bool orbit_3d_setup()
 				g_major_method = MAJORMETHOD_RANDOM_WALK;
 				goto lrwalk;
 			}
-			EnQueueLong((g_externs.Fudge() + Sqrt.x)/2,  Sqrt.y/2);
-			EnQueueLong((g_externs.Fudge() - Sqrt.x)/2, -Sqrt.y/2);
+			EnQueueLong((g_externs.Fudge() + Sqrt.real())/2,  Sqrt.imag()/2);
+			EnQueueLong((g_externs.Fudge() - Sqrt.real())/2, -Sqrt.imag()/2);
 			break;
 		case MAJORMETHOD_DEPTH_FIRST:
 			if (!Init_Queue(32*1024))
@@ -408,25 +408,25 @@ bool orbit_3d_setup()
 			switch (g_minor_method)
 			{
 				case MINORMETHOD_LEFT_FIRST:
-					PushLong((g_externs.Fudge() + Sqrt.x)/2,  Sqrt.y/2);
-					PushLong((g_externs.Fudge() - Sqrt.x)/2, -Sqrt.y/2);
+					PushLong((g_externs.Fudge() + Sqrt.real())/2,  Sqrt.imag()/2);
+					PushLong((g_externs.Fudge() - Sqrt.real())/2, -Sqrt.imag()/2);
 					break;
 				case MINORMETHOD_RIGHT_FIRST:
-					PushLong((g_externs.Fudge() - Sqrt.x)/2, -Sqrt.y/2);
-					PushLong((g_externs.Fudge() + Sqrt.x)/2,  Sqrt.y/2);
+					PushLong((g_externs.Fudge() - Sqrt.real())/2, -Sqrt.imag()/2);
+					PushLong((g_externs.Fudge() + Sqrt.real())/2,  Sqrt.imag()/2);
 					break;
 			}
 			break;
 		case MAJORMETHOD_RANDOM_WALK:
 lrwalk:
-			s_init_orbit_long[0] = g_externs.Fudge() + Sqrt.x/2;
-			s_init_orbit_long[1] =         Sqrt.y/2;
+			s_init_orbit_long[0] = g_externs.Fudge() + Sqrt.real()/2;
+			s_init_orbit_long[1] =         Sqrt.imag()/2;
 			g_new_z_l.real(s_init_orbit_long[0]);
 			g_new_z_l.imag(s_init_orbit_long[1]);
 			break;
 		case MAJORMETHOD_RANDOM_RUN:
-			s_init_orbit_long[0] = g_externs.Fudge() + Sqrt.x/2;
-			s_init_orbit_long[1] =         Sqrt.y/2;
+			s_init_orbit_long[0] = g_externs.Fudge() + Sqrt.real()/2;
+			s_init_orbit_long[1] =         Sqrt.imag()/2;
 			g_new_z_l.real(s_init_orbit_long[0]);
 			g_new_z_l.imag(s_init_orbit_long[1]);
 			break;
@@ -590,8 +590,8 @@ bool orbit_3d_setup_fp()
 				g_major_method = MAJORMETHOD_RANDOM_WALK;
 				goto rwalk;
 			}
-			EnQueueFloat(float((1 + Sqrt.x)/2), float(Sqrt.y/2));
-			EnQueueFloat(float((1 - Sqrt.x)/2), float(-Sqrt.y/2));
+			EnQueueFloat(float((1 + Sqrt.real())/2), float(Sqrt.imag()/2));
+			EnQueueFloat(float((1 - Sqrt.real())/2), float(-Sqrt.imag()/2));
 			break;
 		case MAJORMETHOD_DEPTH_FIRST:                      // depth first (choose direction)
 			if (!Init_Queue(32*1024))
@@ -603,26 +603,26 @@ bool orbit_3d_setup_fp()
 			switch (g_minor_method)
 			{
 			case MINORMETHOD_LEFT_FIRST:
-				PushFloat(float((1 + Sqrt.x)/2), float(Sqrt.y/2));
-				PushFloat(float((1 - Sqrt.x)/2), float(-Sqrt.y/2));
+				PushFloat(float((1 + Sqrt.real())/2), float(Sqrt.imag()/2));
+				PushFloat(float((1 - Sqrt.real())/2), float(-Sqrt.imag()/2));
 				break;
 			case MINORMETHOD_RIGHT_FIRST:
-				PushFloat(float((1 - Sqrt.x)/2), float(-Sqrt.y/2));
-				PushFloat(float((1 + Sqrt.x)/2), float(Sqrt.y/2));
+				PushFloat(float((1 - Sqrt.real())/2), float(-Sqrt.imag()/2));
+				PushFloat(float((1 + Sqrt.real())/2), float(Sqrt.imag()/2));
 				break;
 			}
 			break;
 		case MAJORMETHOD_RANDOM_WALK:
 rwalk:
-			s_init_orbit_fp[0] = 1 + Sqrt.x/2;
-			s_init_orbit_fp[1] = Sqrt.y/2;
+			s_init_orbit_fp[0] = 1 + Sqrt.real()/2;
+			s_init_orbit_fp[1] = Sqrt.imag()/2;
 			g_new_z.imag(s_init_orbit_fp[1]);
 			g_new_z.real(s_init_orbit_fp[0]);
 			break;
 		case MAJORMETHOD_RANDOM_RUN:       // random run, choose intervals
 			g_major_method = MAJORMETHOD_RANDOM_RUN;
-			s_init_orbit_fp[0] = 1 + Sqrt.x/2;
-			s_init_orbit_fp[1] = Sqrt.y/2;
+			s_init_orbit_fp[0] = 1 + Sqrt.real()/2;
+			s_init_orbit_fp[1] = Sqrt.imag()/2;
 			g_new_z.real(s_init_orbit_fp[0]);
 			g_new_z.imag(s_init_orbit_fp[1]);
 			break;
@@ -1299,19 +1299,19 @@ int dynamic_orbit_fp(double *x, double *y, double *z)
 	ComplexD tmp;
 	double newx;
 	double newy;
-	cp.x = s_b* *x;
-	cp.y = 0;
+	cp.real(s_b* *x);
+	cp.imag(0);
 	CMPLXtrig0(cp, tmp);
-	newy = *y + s_dt*sin(*x + s_a*tmp.x);
+	newy = *y + s_dt*sin(*x + s_a*tmp.real());
 	if (s_use_euler_approximation)
 	{
 		*y = newy;
 	}
 
-	cp.x = s_b* *y;
-	cp.y = 0;
+	cp.real(s_b* *y);
+	cp.imag(0);
 	CMPLXtrig0(cp, tmp);
-	newx = *x - s_dt*sin(*y + s_a*tmp.x);
+	newx = *x - s_dt*sin(*y + s_a*tmp.real());
 	*x = newx;
 	*y = newy;
 	return 0;

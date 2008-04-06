@@ -18,28 +18,26 @@
 extern double TwoPi;
 extern ComplexD temp;
 extern ComplexD BaseLog;
-extern ComplexD cdegree;
-extern ComplexD croot;
 
 static Newton s_newton;
 static NewtonComplex s_newton_complex;
-static ComplexD s_static_roots[16] = { { 0.0, 0.0 } }; // roots array for degree 16 or less
+static ComplexD s_static_roots[16]; // roots array for degree 16 or less
 static ComplexD *s_roots = s_static_roots;
 
 static double distance(const ComplexD &z1, const ComplexD &z2)
 {
-	return sqr(z1.x - z2.x) + sqr(z1.y - z2.y);
+	return sqr(z1.real() - z2.real()) + sqr(z1.imag() - z2.imag());
 }
 
 static double distance_from_1(const ComplexD &z)
 {
-	return (((z).x-1.0)*((z).x-1.0) + ((z).y)*((z).y));
+	return (z.real() - 1.0)*(z.real() - 1.0) + z.imag()*z.imag();
 }
 
 static int complex_multiply(ComplexD arg1, ComplexD arg2, ComplexD *pz)
 {
-	pz->x = arg1.x*arg2.x - arg1.y*arg2.y;
-	pz->y = arg1.x*arg2.y + arg1.y*arg2.x;
+	pz->real(arg1.real()*arg2.real() - arg1.imag()*arg2.imag());
+	pz->imag(arg1.real()*arg2.imag() + arg1.imag()*arg2.real());
 	return 0;
 }
 
@@ -136,8 +134,8 @@ bool Newton::setup()           // Newton/NewtBasin Routines
 		// list of roots to discover where we converged for newtbasin
 		for (i = 0; i < g_degree; i++)
 		{
-			s_roots[i].x = cos(i*g_two_pi/double(g_degree));
-			s_roots[i].y = sin(i*g_two_pi/double(g_degree));
+			s_roots[i].real(cos(i*g_two_pi/double(g_degree)));
+			s_roots[i].imag(sin(i*g_two_pi/double(g_degree)));
 		}
 	}
 
@@ -182,7 +180,7 @@ int Newton::orbit()
 	g_new_z.imag(g_new_z.imag()*m_degree_minus_1_over_degree);
 
 	// Watch for divide underflow
-	double s_t2 = g_temp_z.x*g_temp_z.x + g_temp_z.y*g_temp_z.y;
+	double s_t2 = g_temp_z.real()*g_temp_z.real() + g_temp_z.imag()*g_temp_z.imag();
 	if (s_t2 < FLT_MIN)
 	{
 		return 1;
@@ -190,8 +188,8 @@ int Newton::orbit()
 	else
 	{
 		s_t2 = 1.0/s_t2;
-		g_old_z.real(s_t2*(g_new_z.real()*g_temp_z.x + g_new_z.imag()*g_temp_z.y));
-		g_old_z.imag(s_t2*(g_new_z.imag()*g_temp_z.x - g_new_z.real()*g_temp_z.y));
+		g_old_z.real(s_t2*(g_new_z.real()*g_temp_z.real() + g_new_z.imag()*g_temp_z.imag()));
+		g_old_z.imag(s_t2*(g_new_z.imag()*g_temp_z.real() - g_new_z.real()*g_temp_z.imag()));
 	}
 	return 0;
 }
@@ -203,11 +201,11 @@ bool NewtonComplex::setup()
 	if (g_parameters[P1_REAL] != 0.0 || g_parameters[P1_IMAG] != 0.0 || g_parameters[P2_REAL] != 0.0 ||
 		g_parameters[P2_IMAG] != 0.0)
 	{
-		croot.x = g_parameters[P2_REAL];
-		croot.y = g_parameters[P2_IMAG];
-		cdegree.x = g_parameters[P1_REAL];
-		cdegree.y = g_parameters[P1_IMAG];
-		FPUcplxlog(&croot, &BaseLog);
+		g_c_root.real(g_parameters[P2_REAL]);
+		g_c_root.imag(g_parameters[P2_IMAG]);
+		g_c_degree.real(g_parameters[P1_REAL]);
+		g_c_degree.imag(g_parameters[P1_IMAG]);
+		FPUcplxlog(&g_c_root, &BaseLog);
 		TwoPi = asin(1.0)*4;
 	}
 	return true;
@@ -217,28 +215,28 @@ int NewtonComplex::orbit()
 {
 	ComplexD cd1;
 
-	// new = ((cdegree-1)*old**cdegree) + croot
+	// new = ((g_c_degree-1)*old**g_c_degree) + g_c_root
 	//		 ----------------------------------
-	//       cdegree*old**(cdegree-1)
+	//       g_c_degree*old**(g_c_degree-1)
 
-	cd1.x = cdegree.x - 1.0;
-	cd1.y = cdegree.y;
+	cd1.real(g_c_degree.real() - 1.0);
+	cd1.imag(g_c_degree.imag());
 
 	temp = ComplexPower(g_old_z, cd1);
 	FPUcplxmul(&temp, &g_old_z, &g_new_z);
 
-	g_temp_z.x = g_new_z.real() - croot.x;
-	g_temp_z.y = g_new_z.imag() - croot.y;
-	if ((sqr(g_temp_z.x) + sqr(g_temp_z.y)) < g_threshold)
+	g_temp_z.real(g_new_z.real() - g_c_root.real());
+	g_temp_z.imag(g_new_z.imag() - g_c_root.imag());
+	if ((sqr(g_temp_z.real()) + sqr(g_temp_z.imag())) < g_threshold)
 	{
 		return 1;
 	}
 
 	FPUcplxmul(&g_new_z, &cd1, &g_temp_z);
-	g_temp_z.x += croot.x;
-	g_temp_z.y += croot.y;
+	g_temp_z.real(g_temp_z.real() + g_c_root.real());
+	g_temp_z.imag(g_temp_z.imag() + g_c_root.imag());
 
-	FPUcplxmul(&temp, &cdegree, &cd1);
+	FPUcplxmul(&temp, &g_c_degree, &cd1);
 	FPUcplxdiv(&g_temp_z, &cd1, &g_old_z);
 	if (g_overflow)
 	{

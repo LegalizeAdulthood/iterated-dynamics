@@ -31,13 +31,43 @@ enum
 };
 
 typedef unsigned char *big_t;
-#define bn_t   big_t  // for clarification purposes
+
+extern U16 big_set16(BYTE *addr, U16 val);
+extern U32 big_set32(BYTE *addr, U32 val);
+extern U16 big_access16(BYTE const *addr);
+extern U32 big_access32(BYTE const *addr);
+
+class BigT
+{
+public:
+	BigT() : _storage(0)					{ }
+	explicit BigT(unsigned char *storage) : _storage(storage) { }
+	explicit BigT(BigT &rhs, int offset) : _storage(rhs._storage + offset) { }
+
+	BYTE *storage()							{ return _storage; }
+	void setStorage(unsigned char *value)	{ _storage = value; }
+	void set8(BYTE value)					{ set8(0, value); }
+	void set8(int idx, BYTE value)			{ _storage[idx] = value; }
+	U16 set16(U16 value)					{ return set16(0, value); }
+	U16 set16(int idx, U16 value)			{ return big_set16(_storage + idx, value); }
+	U32 set32(long value)					{ return set32(0, value); }
+	U32 set32(int idx, long value)			{ return big_set32(_storage + idx, value); }
+	BYTE get8(int idx = 0) const			{ return *(_storage + idx); }
+	U16 get16(int idx = 0) const			{ return big_access16(_storage + idx); }
+	U32 get32(int idx = 0) const			{ return big_access32(_storage + idx); }
+
+private:
+	BYTE *_storage;
+};
+
+typedef BigT bn_t;
+//#define bn_t   big_t  // for clarification purposes
 #define bf_t   big_t
 #define bf10_t big_t
 
 #include "cmplx.h"
 
-typedef ComplexT<bn_t> ComplexBigFloat;
+typedef ComplexT<bf_t> ComplexBigFloat;
 typedef ComplexT<bn_t> ComplexBigNum;
 
 extern int g_bf_math;
@@ -126,23 +156,11 @@ extern LDBL extract_256(LDBL f, int *exp_ptr);
 extern LDBL scale_256( LDBL f, int n );
 
 // functions defined in bignum.c
-#ifdef ACCESS_BY_BYTE
 // prototypes
-extern U32 big_access32(BYTE *addr);
-extern U16 big_access16(BYTE *addr);
-extern S16 big_accessS16(S16 *addr);
+extern S16 big_accessS16(BYTE const *addr);
 extern U32 big_set32(BYTE *addr, U32 val);
 extern U16 big_set16(BYTE *addr, U16 val);
-extern S16 big_setS16(S16 *addr, S16 val);
-#else
-// equivalent defines
-#define big_access32(addr)   (*(U32 *)(addr))
-#define big_access16(addr)   (*(U16 *)(addr))
-#define big_accessS16(addr)   (*(S16 *)(addr))
-#define big_set32(addr, val) (*(U32 *)(addr) = (U32)(val))
-#define big_set16(addr, val) (*(U16 *)(addr) = (U16)(val))
-#define big_setS16(addr, val) (*(S16 *)(addr) = (S16)(val))
-#endif
+extern S16 big_setS16(BYTE *addr, S16 val);
 
 extern bn_t strtobn(bn_t r, char *s);
 extern char *unsafe_bntostr(char *s, int dec, bn_t r);
@@ -188,7 +206,7 @@ extern char *unsafe_bftostr(char *s, int dec, bf_t r);
 extern char *unsafe_bftostr_e(char *s, int dec, bf_t r);
 extern char *unsafe_bftostr_f(char *s, int dec, bf_t r);
 extern bn_t bftobn(bn_t n, bf_t f);
-extern bn_t bntobf(bf_t f, bn_t n);
+extern bf_t bntobf(bf_t f, bn_t n);
 extern long bftoint(bf_t f);
 extern bf_t inttobf(bf_t r, long longval);
 
@@ -276,7 +294,5 @@ extern ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx,
 extern ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigNum *yy);
 extern ComplexBigNum *complex_log_bn(ComplexBigNum *t, ComplexBigNum *s);
 extern ComplexBigNum *complex_multiply_bn( ComplexBigNum *t, ComplexBigNum *x, ComplexBigNum *y);
-
-#include "biginit.h" // fractint only
 
 #endif // _BIG_H

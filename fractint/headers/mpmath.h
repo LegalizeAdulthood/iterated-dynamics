@@ -14,6 +14,8 @@ extern void (*g_trig0_d)();
 extern void (*g_trig1_d)();
 extern void (*g_trig2_d)();
 extern void (*g_trig3_d)();
+extern InitializedComplexD g_c_degree;
+extern InitializedComplexD g_c_root;
 
 extern ComplexD ComplexPower(ComplexD const &x, ComplexD const &y);
 extern void SetupLogTable();
@@ -70,24 +72,24 @@ inline void LCMPLXexp(ComplexL const &arg, ComplexL &out)
 
 inline void LCMPLXsqr(ComplexL const &arg, ComplexL &out)
 {
-	out.x = lsqr(arg.x) - lsqr(arg.y);
-	out.y = multiply(arg.x, arg.y, g_bit_shift_minus_1);
+	out.real(lsqr(arg.real()) - lsqr(arg.imag()));
+	out.imag(multiply(arg.real(), arg.imag(), g_bit_shift_minus_1));
 }
 inline void CMPLXsqr(ComplexD const &arg, ComplexD &out)
 {
-	out.x = sqr(arg.x) - sqr(arg.y);
-	out.y = (arg.x+arg.x) * arg.y;
+	out.real(sqr(arg.real()) - sqr(arg.imag()));
+	out.imag((arg.real()+arg.real()) * arg.imag());
 }
 
 inline void LCMPLXsqr_old(ComplexL &out)
 {
-	out.y = multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1);
-	out.x = g_temp_sqr_l.real() - g_temp_sqr_l.imag();
+	out.imag(multiply(g_old_z_l.real(), g_old_z_l.imag(), g_bit_shift_minus_1));
+	out.real(g_temp_sqr_l.real() - g_temp_sqr_l.imag());
 }
 inline void CMPLXsqr_old(ComplexD &out)
 {
-	out.y = (g_old_z.real() + g_old_z.real())*g_old_z.imag();
-	out.x = g_temp_sqr.real() - g_temp_sqr.imag();
+	out.imag((g_old_z.real() + g_old_z.real())*g_old_z.imag());
+	out.real(g_temp_sqr.real() - g_temp_sqr.imag());
 }
 
 
@@ -113,33 +115,33 @@ inline void LCMPLXmult(ComplexL const &arg1, ComplexL const &arg2, ComplexL &out
 
 inline void LCMPLXadd(ComplexL const &arg1, ComplexL const &arg2, ComplexL &out)
 {
-	out.x = arg1.x + arg2.x;
-	out.y = arg1.y + arg2.y;
+	out.real(arg1.real() + arg2.real());
+	out.imag(arg1.imag() + arg2.imag());
 }
 
 inline void LCMPLXsub(ComplexL const &arg1, ComplexL const &arg2, ComplexL &out)
 {
-	out.x = arg1.x - arg2.x;
-	out.y = arg1.y - arg2.y;
+	out.real(arg1.real() - arg2.real());
+	out.imag(arg1.imag() - arg2.imag());
 }
 
 inline void LCMPLXtimesreal(ComplexL const &arg, long real, ComplexL &out)
 {
-	out.x = multiply(arg.x, real, g_bit_shift);
-	out.y = multiply(arg.y, real, g_bit_shift);
+	out.real(multiply(arg.real(), real, g_bit_shift));
+	out.imag(multiply(arg.imag(), real, g_bit_shift));
 }
 
 inline void LCMPLXrecip(ComplexL const &arg, ComplexL &out)
 {
-	long denom = lsqr(arg.x) + lsqr(arg.y);
+	long denom = lsqr(arg.real()) + lsqr(arg.imag());
 	if (denom == 0L)
 	{
 		g_overflow = true;
 	}
 	else
 	{
-		out.x = divide(arg.x, denom, g_bit_shift);
-		out.y = -divide(arg.y, denom, g_bit_shift);
+		out.real(divide(arg.real(), denom, g_bit_shift));
+		out.imag(-divide(arg.imag(), denom, g_bit_shift));
 	}
 }
 
@@ -201,48 +203,48 @@ inline void CMPLXmult1(ComplexD const &arg1, ComplexD const &arg2, ComplexD &out
 inline void CMPLXmult(ComplexD const &arg1, ComplexD const &arg2, ComplexD &out)
 {
 	ComplexD tmp;
-	tmp.x = arg1.x*arg2.x - arg1.y*arg2.y;
-	tmp.y = arg1.x*arg2.y + arg1.y*arg2.x;
+	tmp.real(arg1.real()*arg2.real() - arg1.imag()*arg2.imag());
+	tmp.imag(arg1.real()*arg2.imag() + arg1.imag()*arg2.real());
 	out = tmp;
 }
 
 inline void CMPLXadd(ComplexD const &arg1, ComplexD const &arg2, ComplexD &out)
 {
-	out.x = arg1.x + arg2.x;
-	out.y = arg1.y + arg2.y;
+	out.real(arg1.real() + arg2.real());
+	out.imag(arg1.imag() + arg2.imag());
 }
 
 inline void CMPLXsub(ComplexD const &arg1, ComplexD const &arg2, ComplexD &out)
 {
-	out.x = arg1.x - arg2.x;
-	out.y = arg1.y - arg2.y;
+	out.real(arg1.real() - arg2.real());
+	out.imag(arg1.imag() - arg2.imag());
 }
 
 inline void CMPLXtimesreal(ComplexD const &arg, double real, ComplexD &out)
 {
-	out.x = arg.x*real;
-	out.y = arg.y*real;
+	out.real(arg.real()*real);
+	out.imag(arg.imag()*real);
 }
 
 inline void CMPLXrecip(ComplexD const &arg, ComplexD &out)
 {
-	double const denom = sqr(arg.x) + sqr(arg.y);
+	double const denom = sqr(arg.real()) + sqr(arg.imag());
 	if (denom == 0.0)
 	{
-		out.x = 1.0e10;
-		out.y = 1.0e10;
+		out.real(1.0e10);
+		out.imag(1.0e10);
 	}
 	else
 	{
-		out.x =  arg.x/denom;
-		out.y = -arg.y/denom;
+		out.real( arg.real()/denom);
+		out.imag(-arg.imag()/denom);
 	}
 }
 
 inline void CMPLXneg(ComplexD const &arg, ComplexD &out)
 {
-	out.x = -arg.x;
-	out.y = -arg.y;
+	out.real(-arg.real());
+	out.imag(-arg.imag());
 }
 
 #endif

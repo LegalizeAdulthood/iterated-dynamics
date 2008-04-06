@@ -38,7 +38,7 @@ bn_t clear_bn(bn_t r)
 #ifdef BIG_FAR
 	_fmemset(r, 0, g_bn_length); // set array to zero
 #else
-	memset(r, 0, g_bn_length); // set array to zero
+	memset(r.storage(), 0, g_bn_length); // set array to zero
 #endif
 #endif
 	return r;
@@ -54,10 +54,10 @@ bn_t max_bn(bn_t r)
 #ifdef BIG_FAR
 	_fmemset(r, 0xFF, g_bn_length-1); // set to max values
 #else
-	memset(r, 0xFF, g_bn_length-1); // set to max values
+	memset(r.storage(), 0xFF, g_bn_length-1); // set to max values
 #endif
 #endif
-	r[g_bn_length-1] = 0x7F;  // turn off the sign bit
+	r.storage()[g_bn_length-1] = 0x7F;  // turn off the sign bit
 	return r;
 }
 
@@ -71,7 +71,7 @@ bn_t copy_bn(bn_t r, bn_t n)
 #ifdef BIG_FAR
 	_fmemcpy(r, n, g_bn_length);
 #else
-	memcpy(r, n, g_bn_length);
+	memcpy(r.storage(), n.storage(), g_bn_length);
 #endif
 #endif
 	return r;
@@ -93,8 +93,8 @@ int cmp_bn(bn_t n1, bn_t n2)
 
 	// two bytes at a time
 	// signed comparison for msb
-	Svalue1 = big_accessS16((S16 *)(n1 + g_bn_length-2));
-	Svalue2 = big_accessS16((S16 *)(n2 + g_bn_length-2));
+	Svalue1 = big_accessS16((n1.storage() + g_bn_length-2));
+	Svalue2 = big_accessS16((n2.storage() + g_bn_length-2));
 	if (Svalue1 > Svalue2)
 	{
 		// now determine which of the two bytes was different
@@ -111,8 +111,8 @@ int cmp_bn(bn_t n1, bn_t n2)
 	// unsigned comparison for the rest
 	for (i = g_bn_length-4; i >= 0; i -= 2)
 	{
-		value1 = big_access16(n1 + i);
-		value2 = big_access16(n2 + i);
+		value1 = big_access16(n1.storage() + i);
+		value2 = big_access16(n2.storage() + i);
 		if (value1 > value2)
 		{
 			// now determine which of the two bytes was different
@@ -134,7 +134,7 @@ int cmp_bn(bn_t n1, bn_t n2)
 // returns 1 if negative, 0 if positive or zero
 bool is_bn_neg(bn_t n)
 {
-	return (S8)n[g_bn_length-1] < 0;
+	return (S8)n.storage()[g_bn_length-1] < 0;
 }
 
 /********************************************************************/
@@ -146,7 +146,7 @@ bool is_bn_not_zero(bn_t n)
 	// two bytes at a time
 	for (int i = 0; i < g_bn_length; i += 2)
 	{
-		if (big_access16(n + i) != 0)
+		if (n.get16(i) != 0)
 		{
 			return true;
 		}
@@ -158,15 +158,14 @@ bool is_bn_not_zero(bn_t n)
 // r = n1 + n2
 bn_t add_bn(bn_t r, bn_t n1, bn_t n2)
 {
-	int i;
 	U32 sum = 0;
 
 	// two bytes at a time
-	for (i = 0; i < g_bn_length; i += 2)
+	for (int i = 0; i < g_bn_length; i += 2)
 	{
-		sum += (U32)big_access16(n1 + i) + (U32)big_access16(n2 + i); // add 'em up
-		big_set16(r + i, (U16)sum);   // store the lower 2 bytes
-		sum >>= 16; // shift the overflow for next time
+		sum += U32(n1.get16(i)) + U32(n2.get16(i)); // add 'em up
+		r.set16(i, U16(sum));;			// store the lower 2 bytes
+		sum >>= 16;						// shift the overflow for next time
 	}
 	return r;
 }
@@ -175,15 +174,14 @@ bn_t add_bn(bn_t r, bn_t n1, bn_t n2)
 // r += n
 bn_t add_a_bn(bn_t r, bn_t n)
 {
-	int i;
 	U32 sum = 0;
 
 	// two bytes at a time
-	for (i = 0; i < g_bn_length; i += 2)
+	for (int i = 0; i < g_bn_length; i += 2)
 	{
-		sum += (U32)big_access16(r + i) + (U32)big_access16(n + i); // add 'em up
-		big_set16(r + i, (U16)sum);   // store the lower 2 bytes
-		sum >>= 16; // shift the overflow for next time
+		sum += U32(r.get16(i)) + U32(n.get16(i)); // add 'em up
+		r.set16(i, U16(sum));			// store the lower 2 bytes
+		sum >>= 16;						// shift the overflow for next time
 	}
 	return r;
 }
@@ -192,15 +190,14 @@ bn_t add_a_bn(bn_t r, bn_t n)
 // r = n1 - n2
 bn_t sub_bn(bn_t r, bn_t n1, bn_t n2)
 {
-	int i;
 	U32 diff = 0;
 
 	// two bytes at a time
-	for (i = 0; i < g_bn_length; i += 2)
+	for (int i = 0; i < g_bn_length; i += 2)
 	{
-		diff = (U32)big_access16(n1 + i) - ((U32)big_access16(n2 + i)-(S32)(S16)diff); // subtract with borrow
-		big_set16(r + i, (U16)diff);   // store the lower 2 bytes
-		diff >>= 16; // shift the underflow for next time
+		diff = U32(n1.get16(i)) - (U32(n2.get16(i)) - S32(S16(diff))); // subtract with borrow
+		r.set16(i, U16(diff));		// store the lower 2 bytes
+		diff >>= 16;				// shift the underflow for next time
 	}
 	return r;
 }
@@ -209,15 +206,14 @@ bn_t sub_bn(bn_t r, bn_t n1, bn_t n2)
 // r -= n
 bn_t sub_a_bn(bn_t r, bn_t n)
 {
-	int i;
 	U32 diff = 0;
 
 	// two bytes at a time
-	for (i = 0; i < g_bn_length; i += 2)
+	for (int i = 0; i < g_bn_length; i += 2)
 	{
-		diff = (U32)big_access16(r + i) - ((U32)big_access16(n + i)-(S32)(S16)diff); // subtract with borrow
-		big_set16(r + i, (U16)diff);   // store the lower 2 bytes
-		diff >>= 16; // shift the underflow for next time
+		diff = U32(r.get16(i)) - (U32(n.get16(i)) - S32(S16(diff))); // subtract with borrow
+		r.set16(i, U16(diff));				// store the lower 2 bytes
+		diff >>= 16;						// shift the underflow for next time
 	}
 	return r;
 }
@@ -233,15 +229,15 @@ bn_t neg_bn(bn_t r, bn_t n)
 	// two bytes at a time
 	for (i = 0; neg != 0 && i < g_bn_length; i += 2)
 	{
-		t_short = ~big_access16(n + i);
+		t_short = ~n.get16(i);
 		neg += ((U32)t_short); // two's complement
-		big_set16(r + i, (U16)neg);   // store the lower 2 bytes
+		r.set16(i, (U16)neg);   // store the lower 2 bytes
 		neg >>= 16; // shift the sign bit for next time
 	}
 	// if neg was 0, then just "not" the rest
 	for (; i < g_bn_length; i += 2)
 	{ // notice that big_access16() and big_set16() are not needed here
-		*(U16 *)(r + i) = ~*(U16 *)(n + i); // toggle all the bits
+		r.set16(i, ~n.get16(i)); // toggle all the bits
 	}
 	return r;
 }
@@ -257,15 +253,15 @@ bn_t neg_a_bn(bn_t r)
 	// two bytes at a time
 	for (i = 0; neg != 0 && i < g_bn_length; i += 2)
 	{
-		t_short = ~big_access16(r + i);
+		t_short = ~r.get16(i);
 		neg += ((U32)t_short); // two's complement
-		big_set16(r + i, (U16)neg);   // store the lower 2 bytes
+		r.set16(i, (U16)neg);   // store the lower 2 bytes
 		neg >>= 16; // shift the sign bit for next time
 	}
 	// if neg was 0, then just "not" the rest
 	for (; i < g_bn_length; i += 2)
 	{ // notice that big_access16() and big_set16() are not needed here
-		*(U16 *)(r + i) = ~*(U16 *)(r + i); // toggle all the bits
+		r.set16(i, ~r.get16(i)); // toggle all the bits
 	}
 	return r;
 }
@@ -280,8 +276,8 @@ bn_t double_bn(bn_t r, bn_t n)
 	// two bytes at a time
 	for (i = 0; i < g_bn_length; i += 2)
 	{
-		prod += (U32)big_access16(n + i) << 1; // double it
-		big_set16(r + i, (U16)prod);   // store the lower 2 bytes
+		prod += (U32) n.get16(i) << 1; // double it
+		r.set16(i, (U16)prod);   // store the lower 2 bytes
 		prod >>= 16; // shift the overflow for next time
 	}
 	return r;
@@ -297,8 +293,8 @@ bn_t double_a_bn(bn_t r)
 	// two bytes at a time
 	for (i = 0; i < g_bn_length; i += 2)
 	{
-		prod += (U32)big_access16(r + i) << 1; // double it
-		big_set16(r + i, (U16)prod);   // store the lower 2 bytes
+		prod += (U32) r.get16(i) << 1; // double it
+		r.set16(i, U16(prod));   // store the lower 2 bytes
 		prod >>= 16; // shift the overflow for next time
 	}
 	return r;
@@ -315,15 +311,15 @@ bn_t half_bn(bn_t r, bn_t n)
 
 	// start with an arithmetic shift
 	i = g_bn_length-2;
-	quot += (U32)(((S32)(S16)big_access16(n + i) << 16) >> 1); // shift to upper 2 bytes and half it
-	big_set16(r + i, (U16)(quot >> 16));   // store the upper 2 bytes
+	quot += (U32)(((S32)(S16)n.get16(i) << 16) >> 1); // shift to upper 2 bytes and half it
+	r.set16(i, (U16)(quot >> 16));   // store the upper 2 bytes
 	quot <<= 16; // shift the underflow for next time
 
 	for (i = g_bn_length-4; i >= 0; i -= 2)
 	{
 		// looks wierd, but properly sign extends argument
-		quot += (U32)(((U32)big_access16(n + i) << 16) >> 1); // shift to upper 2 bytes and half it
-		big_set16(r + i, (U16)(quot >> 16));   // store the upper 2 bytes
+		quot += (U32)(((U32)n.get16(i) << 16) >> 1); // shift to upper 2 bytes and half it
+		r.set16(i, (U16)(quot >> 16));   // store the upper 2 bytes
 		quot <<= 16; // shift the underflow for next time
 	}
 
@@ -341,15 +337,15 @@ bn_t half_a_bn(bn_t r)
 
 	// start with an arithmetic shift
 	i = g_bn_length-2;
-	quot += (U32)(((S32)(S16)big_access16(r + i) << 16) >> 1); // shift to upper 2 bytes and half it
-	big_set16(r + i, (U16)(quot >> 16));   // store the upper 2 bytes
+	quot += (U32)(((S32)(S16)r.get16(i) << 16) >> 1); // shift to upper 2 bytes and half it
+	r.set16(i, (U16)(quot >> 16));   // store the upper 2 bytes
 	quot <<= 16; // shift the underflow for next time
 
 	for (i = g_bn_length-4; i >= 0; i -= 2)
 	{
 		// looks wierd, but properly sign extends argument
-		quot += (U32)(((U32)(U16)big_access16(r + i) << 16) >> 1); // shift to upper 2 bytes and half it
-		big_set16(r + i, (U16)(quot >> 16));   // store the upper 2 bytes
+		quot += (U32)(((U32)(U16)r.get16(i) << 16) >> 1); // shift to upper 2 bytes and half it
+		r.set16(i, (U16)(quot >> 16));   // store the upper 2 bytes
 		quot <<= 16; // shift the underflow for next time
 	}
 	return r;
@@ -368,11 +364,11 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 	int steps;
 	int doublesteps;
 	int carry_steps;
-	big_t n1p;
-	big_t n2p;      // pointers for n1, n2
-	big_t rp1;
-	big_t rp2;
-	big_t rp3; // pointers for r
+	bn_t n1p;
+	bn_t n2p;      // pointers for n1, n2
+	bn_t rp1;
+	bn_t rp2;
+	bn_t rp3; // pointers for r
 	U32 prod;
 	U32 sum;
 
@@ -381,7 +377,7 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 	{
 		neg_a_bn(n1);
 	}
-	bool same_variable = (n1 == n2);
+	bool same_variable = (n1.storage() == n2.storage());
 	bool sign2 = false;
 	if (!same_variable) // check to see if they're the same pointer
 	{
@@ -405,27 +401,27 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 		n2p = n2;
 		for (j = 0; j < steps; j++)
 		{
-			prod = (U32)big_access16(n1p)*(U32)big_access16(n2p); // U16*U16 = U32
-			sum = (U32)big_access16(rp2) + prod; // add to previous, including overflow
-			big_set16(rp2, (U16)sum); // save the lower 2 bytes
+			prod = (U32)n1p.get16()*(U32)n2p.get16(); // U16*U16 = U32
+			sum = (U32)rp2.get16() + prod; // add to previous, including overflow
+			rp2.set16((U16)sum); // save the lower 2 bytes
 			sum >>= 16;             // keep just the upper 2 bytes
-			rp3 = rp2 + 2;          // move over 2 bytes
-			sum += big_access16(rp3);     // add what was the upper two bytes
-			big_set16(rp3, (U16)sum); // save what was the upper two bytes
+			rp3 = bn_t(rp2, 2);          // move over 2 bytes
+			sum += rp3.get16();     // add what was the upper two bytes
+			rp3.set16((U16)sum); // save what was the upper two bytes
 			sum >>= 16;             // keep just the overflow
 			for (k = 0; sum != 0 && k < carry_steps; k++)
 			{
-				rp3 += 2;               // move over 2 bytes
-				sum += big_access16(rp3);     // add to what was the overflow
-				big_set16(rp3, (U16)sum); // save what was the overflow
+				rp3 = bn_t(rp3, 2);               // move over 2 bytes
+				sum += rp3.get16();     // add to what was the overflow
+				rp3.set16((U16)sum); // save what was the overflow
 				sum >>= 16;             // keep just the new overflow
 			}
-			n2p += 2;       // to next word
-			rp2 += 2;
+			n2p = bn_t(n2p, 2);       // to next word
+			rp2 = bn_t(rp2, 2);
 			carry_steps--;  // use one less step
 		}
-		n1p += 2;           // to next word
-		rp2 = rp1 += 2;
+		n1p = bn_t(n1p, 2);           // to next word
+		rp2 = bn_t(rp1, 2);
 		carry_steps = --doublesteps; // decrease doubles steps and reset carry_steps
 	}
 
@@ -454,11 +450,11 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 	int doublesteps;
 	int carry_steps;
 	int skips;
-	big_t n1p;
-	big_t n2p;      // pointers for n1, n2
-	big_t rp1;
-	big_t rp2;
-	big_t rp3; // pointers for r
+	bn_t n1p;
+	bn_t n2p;      // pointers for n1, n2
+	bn_t rp1;
+	bn_t rp2;
+	bn_t rp3; // pointers for r
 	U32 prod;
 	U32 sum;
 	int bnl; // temp g_bn_length holder
@@ -469,7 +465,7 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 	{
 		neg_a_bn(n1);
 	}
-	bool samevar = (n1 == n2);
+	bool samevar = (n1.storage() == n2.storage());
 	bool sign2 = false;
 	if (!samevar) // check to see if they're the same pointer
 	{
@@ -480,7 +476,7 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 		}
 	}
 	n1p = n1;
-	n2 += (g_bn_length << 1) - g_r_length;  // shift n2 over to where it is needed
+	n2 = bn_t(n2, (g_bn_length << 1) - g_r_length);  // shift n2 over to where it is needed
 
 	g_bn_length = g_r_length;
 	clear_bn(r);        // zero out r, g_r_length width
@@ -496,36 +492,36 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 		n2p = n2;
 		for (j = 0; j < steps; j++)
 		{
-			prod = (U32)big_access16(n1p)*(U32)big_access16(n2p); // U16*U16 = U32
-			sum = (U32)big_access16(rp2) + prod; // add to previous, including overflow
-			big_set16(rp2, (U16)sum); // save the lower 2 bytes
+			prod = (U32)n1p.get16()*(U32)n2p.get16(); // U16*U16 = U32
+			sum = (U32)rp2.get16() + prod; // add to previous, including overflow
+			rp2.set16(U16(sum)); // save the lower 2 bytes
 			sum >>= 16;             // keep just the upper 2 bytes
-			rp3 = rp2 + 2;          // move over 2 bytes
-			sum += big_access16(rp3);     // add what was the upper two bytes
-			big_set16(rp3, (U16)sum); // save what was the upper two bytes
+			rp3 = bn_t(rp2, 2);          // move over 2 bytes
+			sum += rp3.get16();     // add what was the upper two bytes
+			rp3.set16(U16(sum)); // save what was the upper two bytes
 			sum >>= 16;             // keep just the overflow
 			for (k = 0; sum != 0 && k < carry_steps; k++)
 			{
-				rp3 += 2;               // move over 2 bytes
-				sum += big_access16(rp3);     // add to what was the overflow
-				big_set16(rp3, (U16)sum); // save what was the overflow
+				rp3 = bn_t(rp3, 2);               // move over 2 bytes
+				sum += rp3.get16();     // add to what was the overflow
+				rp3.set16(U16(sum)); // save what was the overflow
 				sum >>= 16;             // keep just the new overflow
 			}
-			n2p += 2;                   // increase by two bytes
-			rp2 += 2;
+			n2p = bn_t(n2p, 2);                   // increase by two bytes
+			rp2 = bn_t(rp2, 2);
 			carry_steps--;
 		}
-		n1p += 2;   // increase by two bytes
+		n1p = bn_t(n1p, 2);   // increase by two bytes
 
 		if (skips != 0)
 		{
-			n2 -= 2;    // shift n2 back a word
+			n2 = bn_t(n2, -2);    // shift n2 back a word
 			steps++;    // one more step this time
 			skips--;    // keep track of how many times we've done this
 		}
 		else
 		{
-			rp1 += 2;           // shift forward a word
+			rp1 = bn_t(rp1, 2);           // shift forward a word
 			doublesteps--;      // reduce the carry steps needed next time
 		}
 		rp2 = rp1;
@@ -560,11 +556,11 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 	int steps;
 	int doublesteps;
 	int carry_steps;
-	big_t n1p;
-	big_t n2p;
-	big_t rp1;
-	big_t rp2;
-	big_t rp3;
+	bn_t n1p;
+	bn_t n2p;
+	bn_t rp1;
+	bn_t rp2;
+	bn_t rp3;
 	U32 prod;
 	U32 sum;
 
@@ -579,37 +575,38 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 
 	steps = (g_bn_length >> 1)-1;
 	carry_steps = doublesteps = (steps << 1) - 1;
-	rp2 = r + 2;
-	rp1 = r + 2;  // start with second two-byte word
+	rp2 = bn_t(r, 2);
+	rp1 = bn_t(r, 2);  // start with second two-byte word
 	n1p = n;
 	if (steps != 0) // if zero, then skip all the middle term calculations
 	{
 		for (i = steps; i > 0; i--) // steps gets altered, count backwards
 		{
-			n2p = n1p + 2;  // set n2p pointer to 1 step beyond n1p
+			n2p = bn_t(n1p, 2);  // set n2p pointer to 1 step beyond n1p
 			for (j = 0; j < steps; j++)
 			{
-				prod = (U32)big_access16(n1p)*(U32)big_access16(n2p); // U16*U16 = U32
-				sum = (U32)big_access16(rp2) + prod; // add to previous, including overflow
-				big_set16(rp2, (U16)sum); // save the lower 2 bytes
+				prod = (U32)n1p.get16()*(U32)n2p.get16(); // U16*U16 = U32
+				sum = (U32)rp2.get16() + prod; // add to previous, including overflow
+				rp2.set16(U16(sum)); // save the lower 2 bytes
 				sum >>= 16;             // keep just the upper 2 bytes
-				rp3 = rp2 + 2;          // move over 2 bytes
-				sum += big_access16(rp3);     // add what was the upper two bytes
-				big_set16(rp3, (U16)sum); // save what was the upper two bytes
+				rp3 = bn_t(rp2, 2);          // move over 2 bytes
+				sum += rp3.get16();     // add what was the upper two bytes
+				rp3.set16(U16(sum)); // save what was the upper two bytes
 				sum >>= 16;             // keep just the overflow
 				for (k = 0; sum != 0 && k < carry_steps; k++)
 				{
-					rp3 += 2;               // move over 2 bytes
-					sum += big_access16(rp3);     // add to what was the overflow
-					big_set16(rp3, (U16)sum); // save what was the overflow
+					rp3 = bn_t(rp3, 2);               // move over 2 bytes
+					sum += rp3.get16();     // add to what was the overflow
+					rp3.set16(U16(sum)); // save what was the overflow
 					sum >>= 16;             // keep just the new overflow
 				}
-				n2p += 2;       // increase by two bytes
-				rp2 += 2;
+				n2p = bn_t(n2p, 2);       // increase by two bytes
+				rp2 = bn_t(rp2, 2);
 				carry_steps--;
 			}
-			n1p += 2;           // increase by two bytes
-			rp2 = rp1 += 4;     // increase by 2*two bytes
+			n1p = bn_t(n1p, 2);           // increase by two bytes
+			rp1 = bn_t(rp1, 4);     // increase by 2*two bytes
+			rp2 = rp1;
 			carry_steps = doublesteps -= 2;   // reduce the carry steps needed
 			steps--;
 		}
@@ -628,23 +625,23 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 	for (i = 0; i < steps; i++)
 	{
 		// square it
-		prod = (U32)big_access16(n1p)*(U32)big_access16(n1p); // U16*U16 = U32
-		sum = (U32)big_access16(rp1) + prod; // add to previous, including overflow
-		big_set16(rp1, (U16)sum); // save the lower 2 bytes
+		prod = (U32)n1p.get16()*(U32)n1p.get16(); // U16*U16 = U32
+		sum = (U32)rp1.get16() + prod; // add to previous, including overflow
+		rp1.set16(U16(sum)); // save the lower 2 bytes
 		sum >>= 16;             // keep just the upper 2 bytes
-		rp3 = rp1 + 2;          // move over 2 bytes
-		sum += big_access16(rp3);     // add what was the upper two bytes
-		big_set16(rp3, (U16)sum); // save what was the upper two bytes
+		rp3 = bn_t(rp1, 2);          // move over 2 bytes
+		sum += rp3.get16();     // add what was the upper two bytes
+		rp3.set16(U16(sum)); // save what was the upper two bytes
 		sum >>= 16;             // keep just the overflow
 		for (k = 0; sum != 0 && k < carry_steps; k++)
 		{
-			rp3 += 2;               // move over 2 bytes
-			sum += big_access16(rp3);     // add to what was the overflow
-			big_set16(rp3, (U16)sum); // save what was the overflow
+			rp3 = bn_t(rp3, 2);               // move over 2 bytes
+			sum += rp3.get16();     // add to what was the overflow
+			rp3.set16(U16(sum)); // save what was the overflow
 			sum >>= 16;             // keep just the new overflow
 		}
-		n1p += 2;       // increase by 2 bytes
-		rp1 += 4;       // increase by 4 bytes
+		n1p = bn_t(n1p, 2);       // increase by 2 bytes
+		rp1 = bn_t(rp1, 4);       // increase by 4 bytes
 		carry_steps = doublesteps -= 2;
 	}
 	return r;
@@ -673,12 +670,12 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 	int carry_steps;
 	int skips;
 	int rodd;
-	big_t n1p;
-	big_t n2p;
-	big_t n3p;
-	big_t rp1;
-	big_t rp2;
-	big_t rp3;
+	bn_t n1p;
+	bn_t n2p;
+	bn_t n3p;
+	bn_t rp1;
+	bn_t rp2;
+	bn_t rp3;
 	U32 prod;
 	U32 sum;
 	int bnl;
@@ -710,7 +707,8 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 	rp2 = r;
 	rp1 = r;
 	n1p = n;
-	n3p = n2p = n1p + (((g_bn_length >> 1)-steps) << 1);    // n2p = n1p + 2*(g_bn_length/2 - steps)
+	n2p = bn_t(n1p, (((g_bn_length >> 1)-steps) << 1));    // n2p = n1p + 2*(g_bn_length/2 - steps)
+	n3p = n2p;
 	if (i != 0) // if zero, skip middle term calculations
 	{
 		// i is already set
@@ -718,29 +716,30 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 		{
 			for (j = 0; j < steps; j++)
 			{
-				prod = (U32)big_access16(n1p)*(U32)big_access16(n2p); // U16*U16 = U32
-				sum = (U32)big_access16(rp2) + prod; // add to previous, including overflow
-				big_set16(rp2, (U16)sum); // save the lower 2 bytes
+				prod = (U32)n1p.get16()*(U32)n2p.get16(); // U16*U16 = U32
+				sum = (U32)rp2.get16() + prod; // add to previous, including overflow
+				rp2.set16(U16(sum)); // save the lower 2 bytes
 				sum >>= 16;             // keep just the upper 2 bytes
-				rp3 = rp2 + 2;          // move over 2 bytes
-				sum += big_access16(rp3);     // add what was the upper two bytes
-				big_set16(rp3, (U16)sum); // save what was the upper two bytes
+				rp3 = bn_t(rp2, 2);          // move over 2 bytes
+				sum += rp3.get16();     // add what was the upper two bytes
+				rp3.set16(U16(sum)); // save what was the upper two bytes
 				sum >>= 16;             // keep just the overflow
 				for (k = 0; sum != 0 && k < carry_steps; k++)
 				{
-					rp3 += 2;               // move over 2 bytes
-					sum += big_access16(rp3);     // add to what was the overflow
-					big_set16(rp3, (U16)sum); // save what was the overflow
+					rp3 = bn_t(rp3, 2);               // move over 2 bytes
+					sum += rp3.get16();     // add to what was the overflow
+					rp3.set16(U16(sum)); // save what was the overflow
 					sum >>= 16;             // keep just the new overflow
 				}
-				n2p += 2;       // increase by 2-byte word size
-				rp2 += 2;
+				n2p = bn_t(n2p, 2);       // increase by 2-byte word size
+				rp2 = bn_t(rp2, 2);
 				carry_steps--;
 			}
-			n1p += 2;       // increase by 2-byte word size
+			n1p = bn_t(n1p, 2);       // increase by 2-byte word size
 			if (skips > 0)
 			{
-				n2p = n3p -= 2;
+				n3p = bn_t(n3p, -2);
+				n2p = n3p;
 				steps++;
 				skips--;
 			}
@@ -748,16 +747,16 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 			{
 				steps -= rodd;  // rodd is 1 or 0
 				doublesteps -= rodd + 1;
-				rp1 += (rodd + 1) << 1;
-				n2p = n1p + 2;
+				rp1 = bn_t(rp1, (rodd + 1) << 1);
+				n2p = bn_t(n1p, 2);
 				skips--;
 			}
 			else // skips < 0
 			{
 				steps--;
 				doublesteps -= 2;
-				rp1 += 4;           // add two 2-byte words
-				n2p = n1p + 2;
+				rp1 = bn_t(rp1, 4);           // add two 2-byte words
+				n2p = bn_t(n1p, 2);
 			}
 			rp2 = rp1;
 			carry_steps = doublesteps;
@@ -773,9 +772,9 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 	// determine whether r is on an odd or even word in the number
 	// using i as a temporary variable here
 	i = (g_bn_length << 1)-g_r_length;
-	rp1 = r + ((U16)i & (U16)0x0002);
+	rp1 = bn_t(r, ((U16)i & (U16)0x0002));
 	i = (U16)((i >> 1) + 1) & (U16)0xFFFE;
-	n1p = n + i;
+	n1p = bn_t(n, i);
 	// i here is no longer a temp var., but will be used as a loop counter
 	i = (g_bn_length - i) >> 1;
 	carry_steps = doublesteps = (i << 1)-2;
@@ -783,23 +782,23 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 	for (; i > 0; i--)
 	{
 		// square it
-		prod = (U32)big_access16(n1p)*(U32)big_access16(n1p); // U16*U16 = U32
-		sum = (U32)big_access16(rp1) + prod; // add to previous, including overflow
-		big_set16(rp1, (U16)sum); // save the lower 2 bytes
+		prod = (U32)n1p.get16()*(U32)n1p.get16(); // U16*U16 = U32
+		sum = (U32)rp1.get16() + prod; // add to previous, including overflow
+		rp1.set16(U16(sum)); // save the lower 2 bytes
 		sum >>= 16;             // keep just the upper 2 bytes
-		rp3 = rp1 + 2;          // move over 2 bytes
-		sum += big_access16(rp3);     // add what was the upper two bytes
-		big_set16(rp3, (U16)sum); // save what was the upper two bytes
+		rp3 = bn_t(rp1, 2);          // move over 2 bytes
+		sum += rp3.get16();     // add what was the upper two bytes
+		rp3.set16(U16(sum)); // save what was the upper two bytes
 		sum >>= 16;             // keep just the overflow
 		for (k = 0; sum != 0 && k < carry_steps; k++)
 		{
-			rp3 += 2;               // move over 2 bytes
-			sum += big_access16(rp3);     // add to what was the overflow
-			big_set16(rp3, (U16)sum); // save what was the overflow
+			rp3 = bn_t(rp3, 2);               // move over 2 bytes
+			sum += rp3.get16();     // add to what was the overflow
+			rp3.set16(U16(sum)); // save what was the overflow
 			sum >>= 16;             // keep just the new overflow
 		}
-		n1p += 2;
-		rp1 += 4;
+		n1p = bn_t(n1p, 2);
+		rp1 = bn_t(rp1, 4);
 		carry_steps = doublesteps -= 2;
 	}
 	return r;
@@ -815,8 +814,8 @@ bn_t mult_bn_int(bn_t r, bn_t n, U16 u)
 	// two bytes at a time
 	for (i = 0; i < g_bn_length; i += 2)
 	{
-		prod += (U32)big_access16(n + i)*u; // n*u
-		big_set16(r + i, (U16)prod);   // store the lower 2 bytes
+		prod += (U32)n.get16(i)*u; // n*u
+		r.set16(i, U16(prod));   // store the lower 2 bytes
 		prod >>= 16; // shift the overflow for next time
 	}
 	return r;
@@ -832,8 +831,8 @@ bn_t mult_a_bn_int(bn_t r, U16 u)
 	// two bytes at a time
 	for (i = 0; i < g_bn_length; i += 2)
 	{
-		prod += (U32)big_access16(r + i)*u; // r*u
-		big_set16(r + i, (U16)prod);   // store the lower 2 bytes
+		prod += (U32)r.get16(i)*u; // r*u
+		r.set16(i, U16(prod));   // store the lower 2 bytes
 		prod >>= 16; // shift the overflow for next time
 	}
 	return r;
@@ -867,10 +866,10 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 	// two bytes at a time
 	for (i = g_bn_length-2; i >= 0; i -= 2)
 	{
-		full_number = ((U32)rem << 16) + (U32)big_access16(n + i);
+		full_number = ((U32)rem << 16) + (U32)n.get16(i);
 		quot = (U16)(full_number/u);
 		rem  = (U16)(full_number % u);
-		big_set16(r + i, quot);
+		r.set16(i, quot);
 	}
 
 	if (sign)
@@ -908,10 +907,10 @@ bn_t div_a_bn_int(bn_t r, U16 u)
 	// two bytes at a time
 	for (i = g_bn_length-2; i >= 0; i -= 2)
 	{
-		full_number = ((U32)rem << 16) + (U32)big_access16(r + i);
+		full_number = ((U32)rem << 16) + (U32)r.get16(i);
 		quot = (U16)(full_number/u);
 		rem  = (U16)(full_number % u);
-		big_set16(r + i, quot);
+		r.set16(i, quot);
 	}
 
 	if (sign)
@@ -939,18 +938,18 @@ LDBL bntofloat(bn_t n)
 	}
 
 	expon = g_int_length - 1;
-	getbyte = n + g_bn_length - 1;
-	while (*getbyte == 0 && getbyte >= n)
+	getbyte = bn_t(n, g_bn_length - 1);
+	while (*getbyte.storage() == 0 && getbyte.storage() >= n.storage())
 	{
-		getbyte--;
+		getbyte = bn_t(getbyte, -1);
 		expon--;
 	}
 
 	// There is no need to use all g_bn_length bytes.  To get the full
 	// precision of LDBL, all you need is LDBL_MANT_DIG/8 + 1.
-	for (i = 0; i < (LDBL_MANT_DIG/8 + 1) && getbyte >= n; i++, getbyte--)
+	for (i = 0; i < (LDBL_MANT_DIG/8 + 1) && getbyte.storage() >= n.storage(); i++, getbyte = bn_t(getbyte, -1))
 	{
-		f += scale_256(*getbyte, -i);
+		f += scale_256(*getbyte.storage(), -i);
 	}
 
 	f = scale_256(f, expon);
@@ -1003,7 +1002,8 @@ bf_t floattobf(bf_t r, LDBL f)
 	g_bn_length = g_bf_length;
 	il = g_int_length;
 	g_int_length = 2;
-	floattobn(r, f);
+	bn_t rbn(r);
+	floattobn(rbn, f);
 	g_bn_length = bnl;
 	g_int_length = il;
 
@@ -1041,7 +1041,8 @@ LDBL bftofloat(bf_t n)
 	g_bn_length = g_bf_length;
 	il = g_int_length;
 	g_int_length = 2;
-	f = bntofloat(n);
+	bn_t nbn(n);
+	f = bntofloat(nbn);
 	g_bn_length = bnl;
 	g_int_length = il;
 

@@ -29,9 +29,9 @@ void FPUaptan387(double *y, double *x, double *atan)
 
 void FPUcplxmul(ComplexD const *x, ComplexD const *y, ComplexD *z)
 {
-	double tx = x->x*y->x - x->y*y->y;
-	z->y = x->x*y->y + x->y*y->x;
-	z->x = tx;
+	double tx = x->real()*y->real() - x->imag()*y->imag();
+	z->imag(x->real()*y->imag() + x->imag()*y->real());
+	z->real(tx);
 }
 
 int DivideOverflow = 0;
@@ -39,16 +39,16 @@ int DivideOverflow = 0;
 void FPUcplxdiv(ComplexD *x, ComplexD *y, ComplexD *z)
 {
 	double mod, tx, yxmod, yymod;
-	mod = y->x*y->x + y->y*y->y;
+	mod = y->real()*y->real() + y->imag()*y->imag();
 	if (mod == 0)
 	{
 		DivideOverflow++;
 	}
-	yxmod = y->x/mod;
-	yymod = - y->y/mod;
-	tx = x->x*yxmod - x->y*yymod;
-	z->y = x->x*yymod + x->y*yxmod;
-	z->x = tx;
+	yxmod = y->real()/mod;
+	yymod = - y->imag()/mod;
+	tx = x->real()*yxmod - x->imag()*yymod;
+	z->imag(x->real()*yymod + x->imag()*yxmod);
+	z->real(tx);
 }
 
 void FPUsincos(double angle, double *Sin, double *Cos)
@@ -65,18 +65,18 @@ void FPUsinhcosh(double angle, double *Sinh, double *Cosh)
 
 void FPUcplxlog(ComplexD const *x, ComplexD *z)
 {
-	double const mod = sqrt(x->x*x->x + x->y*x->y);
+	double const mod = sqrt(x->real()*x->real() + x->imag()*x->imag());
 	double const zx = log(mod);
-	double const zy = atan2(x->y, x->x);
-	z->x = zx;
-	z->y = zy;
+	double const zy = atan2(x->imag(), x->real());
+	z->real(zx);
+	z->imag(zy);
 }
 
 void FPUcplxexp387(ComplexD const *x, ComplexD *z)
 {
-	double const pow = exp(x->x);
-	z->x = pow*cos(x->y);
-	z->y = pow*sin(x->y);
+	double const pow = exp(x->real());
+	z->real(pow*cos(x->imag()));
+	z->imag(pow*sin(x->imag()));
 }
 
 // Integer Routines

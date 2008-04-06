@@ -247,7 +247,6 @@ extern double				g_rq_limit2;
 extern long					g_rq_limit2_l;
 extern int					g_random_seed;
 extern long					g_save_base;
-extern ComplexD				g_save_c;
 extern long					g_save_ticks;
 extern int					g_save_release;
 extern float				g_screen_aspect_ratio;

@@ -15,7 +15,7 @@
 //		pointers are stored in g_fractal_specific[g_fractal_type].orbitcalc. EVERY
 //		new fractal type needs one of these. Return 0 to continue iterations,
 //		1 if we're done. Results for integer fractals are left in 'g_new_z_l.real()' and
-//		'g_new_z_l.imag()', for floating point fractals in 'new.real()' and 'new.y'.
+//		'g_new_z_l.imag()', for floating point fractals in 'new.real()' and 'new.imag()'.
 //
 //	2. Routines that are called once per pixel to set various variables
 //		prior to the orbit calculation. These have names like xxx_per_pixel
@@ -514,10 +514,10 @@ int sierpinski_orbit()
 	// following code translated from basic - see "Fractals
 	// Everywhere" by Michael Barnsley, p. 251, Program 7.1.1
 	g_new_z_l.real((g_old_z_l.real() << 1));				// new.real() = 2*old.real()
-	g_new_z_l.imag((g_old_z_l.imag() << 1));				// new.y = 2*old.y
-	if (g_old_z_l.imag() > g_temp_z_l.imag())				// if old.y > .5
+	g_new_z_l.imag((g_old_z_l.imag() << 1));				// new.imag() = 2*old.imag()
+	if (g_old_z_l.imag() > g_temp_z_l.imag())				// if old.imag() > .5
 	{
-		g_new_z_l.imag(g_new_z_l.imag() - g_temp_z_l.real()); // new.y = 2*old.y - 1
+		g_new_z_l.imag(g_new_z_l.imag() - g_temp_z_l.real()); // new.imag() = 2*old.imag() - 1
 	}
 	else if (g_old_z_l.real() > g_temp_z_l.imag())			// if old.real() > .5
 	{
@@ -1110,9 +1110,9 @@ int popcorn_fn_orbit_fp()
 	ComplexD tmpy;
 
 	// tmpx contains the generalized value of the old real "x" equation
-	CMPLXtimesreal(g_parameter2, g_old_z.imag(), g_temp_z);  // tmp = (C*old.y)
+	CMPLXtimesreal(g_parameter2, g_old_z.imag(), g_temp_z);  // tmp = (C*old.imag())
 	CMPLXtrig1(g_temp_z, tmpx);             // tmpx = trig1(tmp)
-	tmpx.real(tmpx.real() + g_old_z.imag());                  // tmpx = old.y + trig1(tmp)
+	tmpx.real(tmpx.real() + g_old_z.imag());                  // tmpx = old.imag() + trig1(tmp)
 	CMPLXtrig0(tmpx, g_temp_z);             // tmp = trig0(tmpx)
 	CMPLXmult(g_temp_z, g_parameter, tmpx);         // tmpx = tmp*h
 
@@ -1163,10 +1163,10 @@ int popcorn_fn_orbit()
 	g_overflow = false;
 
 	// ltmpx contains the generalized value of the old real "x" equation
-	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.imag(), g_temp_z_l); // tmp = (C*old.y)
+	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.imag(), g_temp_z_l); // tmp = (C*old.imag())
 	LCMPLXtrig1(g_temp_z_l, ltmpx);             // tmpx = trig1(tmp)
 	fix_overflow(ltmpx);
-	ltmpx.real(ltmpx.real() + g_old_z_l.imag());                   // tmpx = old.y + trig1(tmp)
+	ltmpx.real(ltmpx.real() + g_old_z_l.imag());                   // tmpx = old.imag() + trig1(tmp)
 	LCMPLXtrig0(ltmpx, g_temp_z_l);             // tmp = trig0(tmpx)
 	fix_overflow(g_temp_z_l);
 	LCMPLXmult(g_temp_z_l, g_parameter_l, ltmpx);        // tmpx = tmp*h
@@ -2723,25 +2723,24 @@ int mandelbrot_phoenix_per_pixel_fp()
 int hyper_complex_orbit_fp()
 {
 	HyperComplexD hold;
-	hold.x = g_old_z.real();
-	hold.y = g_old_z.imag();
-	hold.z = g_float_parameter->real();
-	hold.t = g_float_parameter->imag();
+	hold.real(g_old_z.real());
+	hold.imag(g_old_z.imag());
+	hold.z(g_float_parameter->real());
+	hold.t(g_float_parameter->imag());
 
-// HComplexSqr(&hold, &hnew);
 	HyperComplexD hnew;
 	HComplexTrig0(&hold, &hnew);
 
-	hnew.x = hnew.real() + g_c_quaternion.real();
-	hnew.y += g_c_quaternion.R_component_2();
-	hnew.z += g_c_quaternion.R_component_3();
-	hnew.t += g_c_quaternion.R_component_4();
+	hnew.real(hnew.real() + g_c_quaternion.real());
+	hnew.imag(hnew.imag() + g_c_quaternion.R_component_2());
+	hnew.z(hnew.z() + g_c_quaternion.R_component_3());
+	hnew.t(hnew.t() + g_c_quaternion.R_component_4());
 
-	g_old_z.real(hnew.x);
-	g_old_z.imag(hnew.y);
+	g_old_z.real(hnew.real());
+	g_old_z.imag(hnew.imag());
 	g_new_z = g_old_z;
-	g_float_parameter->real(hnew.z);
-	g_float_parameter->imag(hnew.t);
+	g_float_parameter->real(hnew.z());
+	g_float_parameter->imag(hnew.t());
 
 	// Check bailout
 	g_magnitude = sqr(g_old_z.real()) + sqr(g_old_z.imag())
@@ -2868,7 +2867,7 @@ bool mandelbrot_mix4_setup()
 		sign_array += 1;
 	}
 	// TODO: does this really do anything? 0.0 == -0.0
-	if (g_temp_z.imag() == 0.0) // we know tmp.y IS zero but ...
+	if (g_temp_z.imag() == 0.0) // we know tmp.imag() IS zero but ...
 	{
 		switch (sign_array)
 		{

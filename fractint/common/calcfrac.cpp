@@ -26,6 +26,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 
+#include "biginit.h"
 #include "calcfrac.h"
 #include "calcmand.h"
 #include "drivers.h"
@@ -1565,13 +1566,13 @@ void StandardFractal::initialize_float()
 		}
 		if (g_bf_math == BIGNUM)
 		{
-			clear_bn(bnsaved.x);
-			clear_bn(bnsaved.y);
+			clear_bn(bnsaved.real());
+			clear_bn(bnsaved.imag());
 		}
 		else if (g_bf_math == BIGFLT)
 		{
-			clear_bf(bfsaved.x);
-			clear_bf(bfsaved.y);
+			clear_bf(bfsaved.real());
+			clear_bf(bfsaved.imag());
 		}
 	}
 	g_initial_z.imag(g_externs.DyPixel());
@@ -1743,13 +1744,13 @@ void StandardFractal::check_periodicity()
 			}
 			else if (g_bf_math == BIGNUM)
 			{
-				copy_bn(bnsaved.x, g_new_z_bn.x);
-				copy_bn(bnsaved.y, g_new_z_bn.y);
+				copy_bn(bnsaved.real(), g_new_z_bn.real());
+				copy_bn(bnsaved.imag(), g_new_z_bn.imag());
 			}
 			else if (g_bf_math == BIGFLT)
 			{
-				copy_bf(bfsaved.x, g_new_z_bf.x);
-				copy_bf(bfsaved.y, g_new_z_bf.y);
+				copy_bf(bfsaved.real(), g_new_z_bf.real());
+				copy_bf(bfsaved.imag(), g_new_z_bf.imag());
 			}
 			else
 			{
@@ -1775,9 +1776,9 @@ void StandardFractal::check_periodicity()
 			}
 			else if (g_bf_math == BIGNUM)
 			{
-				if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.x, g_new_z_bn.x)), bnclosenuff) < 0)
+				if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.real(), g_new_z_bn.real())), bnclosenuff) < 0)
 				{
-					if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.y, g_new_z_bn.y)), bnclosenuff) < 0)
+					if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.imag(), g_new_z_bn.imag())), bnclosenuff) < 0)
 					{
 						m_caught_a_cycle = true;
 					}
@@ -1785,9 +1786,9 @@ void StandardFractal::check_periodicity()
 			}
 			else if (g_bf_math == BIGFLT)
 			{
-				if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.x, g_new_z_bf.x)), bfclosenuff) < 0)
+				if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.real(), g_new_z_bf.real())), bfclosenuff) < 0)
 				{
-					if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.y, g_new_z_bf.y)), bfclosenuff) < 0)
+					if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.imag(), g_new_z_bf.imag())), bfclosenuff) < 0)
 					{
 						m_caught_a_cycle = true;
 					}
@@ -1795,9 +1796,9 @@ void StandardFractal::check_periodicity()
 			}
 			else
 			{
-				if (fabs(s_saved_z.x - g_new_z.real()) < g_close_enough)
+				if (fabs(s_saved_z.real() - g_new_z.real()) < g_close_enough)
 				{
-					if (fabs(s_saved_z.y - g_new_z.imag()) < g_close_enough)
+					if (fabs(s_saved_z.imag() - g_new_z.imag()) < g_close_enough)
 					{
 						m_caught_a_cycle = true;
 					}
@@ -1959,7 +1960,7 @@ void StandardFractal::outside_colormode_set_new_z_update()
 }
 void StandardFractal::outside_colormode_total_distance_update()
 {
-	m_colormode_total_distance += sqrt(sqr(m_colormode_total_distance_last_z.x-g_new_z.real()) + sqr(m_colormode_total_distance_last_z.y-g_new_z.imag()));
+	m_colormode_total_distance += sqrt(sqr(m_colormode_total_distance_last_z.real()-g_new_z.real()) + sqr(m_colormode_total_distance_last_z.imag()-g_new_z.imag()));
 	m_colormode_total_distance_last_z = g_new_z;
 }
 void StandardFractal::outside_colormode_float_modulus_update()
@@ -1993,13 +1994,13 @@ void StandardFractal::potential_set_new_z()
 	}
 	else if (g_bf_math == BIGNUM)
 	{
-		g_new_z.real(double(bntofloat(g_new_z_bn.x)));
-		g_new_z.imag(double(bntofloat(g_new_z_bn.y)));
+		g_new_z.real(double(bntofloat(g_new_z_bn.real())));
+		g_new_z.imag(double(bntofloat(g_new_z_bn.imag())));
 	}
 	else if (g_bf_math == BIGFLT)
 	{
-		g_new_z.real(double(bftofloat(g_new_z_bf.x)));
-		g_new_z.imag(double(bftofloat(g_new_z_bf.y)));
+		g_new_z.real(double(bftofloat(g_new_z_bf.real())));
+		g_new_z.imag(double(bftofloat(g_new_z_bf.imag())));
 	}
 }
 void StandardFractal::potential_compute()
@@ -2018,7 +2019,7 @@ bool StandardFractal::distance_test_compute()
 	// Original code by Phil Wilson, hacked around by PB
 	// Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198
 	double ftemp = (s_dem_mandelbrot ? 1 : 0)
-		+ 2*(g_old_z.real()*m_distance_test_derivative.x - g_old_z.imag()*m_distance_test_derivative.y);
+		+ 2*(g_old_z.real()*m_distance_test_derivative.real() - g_old_z.imag()*m_distance_test_derivative.imag());
 	m_distance_test_derivative.imag(2*(g_old_z.imag()*m_distance_test_derivative.real() + g_old_z.real()*m_distance_test_derivative.imag()));
 	m_distance_test_derivative.real(ftemp);
 	if (std::max(fabs(m_distance_test_derivative.real()), fabs(m_distance_test_derivative.imag())) > s_dem_too_big)
@@ -2042,8 +2043,8 @@ void StandardFractal::outside_colormode_set_new_z_final()
 	}
 	else if (g_bf_math == BIGNUM)
 	{
-		g_new_z.real(double(bntofloat(g_new_z_bn.x)));
-		g_new_z.imag(double(bntofloat(g_new_z_bn.y)));
+		g_new_z.real(double(bntofloat(g_new_z_bn.real())));
+		g_new_z.imag(double(bntofloat(g_new_z_bn.imag())));
 	}
 }
 void StandardFractal::outside_colormode_real_final()
@@ -2128,7 +2129,7 @@ double StandardFractal::distance_compute()
 	}
 	else
 	{
-		dist *= sqr(log(dist))/(sqr(m_distance_test_derivative.x) + sqr(m_distance_test_derivative.y));
+		dist *= sqr(log(dist))/(sqr(m_distance_test_derivative.real()) + sqr(m_distance_test_derivative.imag()));
 	}
 	return dist;
 }
@@ -2636,8 +2637,8 @@ static void decomposition()
 				{
 					++temp;
 					alt = g_new_z;
-					g_new_z.real(alt.x*cos45 + alt.y*sin45);
-					g_new_z.imag(alt.x*sin45 - alt.y*cos45);
+					g_new_z.real(alt.real()*cos45 + alt.imag()*sin45);
+					g_new_z.imag(alt.real()*sin45 - alt.imag()*cos45);
 				}
 
 				if (g_decomposition[0] >= 32)
@@ -2647,8 +2648,8 @@ static void decomposition()
 					{
 						++temp;
 						alt = g_new_z;
-						g_new_z.real(alt.x*cos22_5 + alt.y*sin22_5);
-						g_new_z.imag(alt.x*sin22_5 - alt.y*cos22_5);
+						g_new_z.real(alt.real()*cos22_5 + alt.imag()*sin22_5);
+						g_new_z.imag(alt.real()*sin22_5 - alt.imag()*cos22_5);
 					}
 
 					if (g_decomposition[0] >= 64)
@@ -2658,8 +2659,8 @@ static void decomposition()
 						{
 							++temp;
 							alt = g_new_z;
-							g_new_z.real(alt.x*cos11_25 + alt.y*sin11_25);
-							g_new_z.imag(alt.x*sin11_25 - alt.y*cos11_25);
+							g_new_z.real(alt.real()*cos11_25 + alt.imag()*sin11_25);
+							g_new_z.imag(alt.real()*sin11_25 - alt.imag()*cos11_25);
 						}
 
 						if (g_decomposition[0] >= 128)
@@ -2669,8 +2670,8 @@ static void decomposition()
 							{
 								++temp;
 								alt = g_new_z;
-								g_new_z.real(alt.x*cos5_625 + alt.y*sin5_625);
-								g_new_z.imag(alt.x*sin5_625 - alt.y*cos5_625);
+								g_new_z.real(alt.real()*cos5_625 + alt.imag()*sin5_625);
+								g_new_z.imag(alt.real()*sin5_625 - alt.imag()*cos5_625);
 							}
 
 							if (g_decomposition[0] == 256)

@@ -96,8 +96,8 @@ bool mandelbrot_setup_fp()
 {
 	g_bf_math = 0;
 	g_c_exp = int(g_parameters[P2_REAL]);
-	g_power.x = g_parameters[P2_REAL] - 1.0;
-	g_power.y = g_parameters[P2_IMAG];
+	g_power.real(g_parameters[P2_REAL] - 1.0);
+	g_power.imag(g_parameters[P2_IMAG]);
 	g_float_parameter = &g_initial_z;
 	switch (g_fractal_type)
 	{
@@ -160,8 +160,8 @@ bool mandelbrot_setup_fp()
 		break;
 	case FRACTYPE_MAGNET_1M:
 	case FRACTYPE_MAGNET_2M:
-		g_attractors[0].x = 1.0;      // 1.0 + 0.0i always attracts
-		g_attractors[0].y = 0.0;      // - both MAGNET1 and MAGNET2
+		g_attractors[0].real(1.0);      // 1.0 + 0.0i always attracts
+		g_attractors[0].imag(0.0);      // - both MAGNET1 and MAGNET2
 		g_attractor_period[0] = 1;
 		g_num_attractors = 1;
 		break;
@@ -242,8 +242,8 @@ bool julia_setup_fp()
 	g_float_parameter = &g_parameter;
 	if (g_fractal_type == FRACTYPE_MARKS_JULIA_COMPLEX)
 	{
-		g_power.x = g_parameters[P2_REAL] - 1.0;
-		g_power.y = g_parameters[P2_IMAG];
+		g_power.real(g_parameters[P2_REAL] - 1.0);
+		g_power.imag(g_parameters[P2_IMAG]);
 		g_coefficient = ComplexPower(*g_float_parameter, g_power);
 	}
 	switch (g_fractal_type)
@@ -291,8 +291,8 @@ bool julia_setup_fp()
 	case FRACTYPE_MAGNET_2J:
 		magnet2_precalculate_fp();
 	case FRACTYPE_MAGNET_1J:
-		g_attractors[0].x = 1.0;      // 1.0 + 0.0i always attracts
-		g_attractors[0].y = 0.0;      // - both MAGNET1 and MAGNET2
+		g_attractors[0].real(1.0);      // 1.0 + 0.0i always attracts
+		g_attractors[0].imag(0.0);      // - both MAGNET1 and MAGNET2
 		g_attractor_period[0] = 1;
 		g_num_attractors = 1;
 		get_julia_attractor(0.0, 0.0);   // another attractor?
@@ -988,8 +988,8 @@ bool marks_julia_setup_fp()
 	}
 	else if (g_c_exp == 3)
 	{
-		g_coefficient.x = sqr(g_old_z.real()) - sqr(g_old_z.imag());
-		g_coefficient.y = g_old_z.real()*g_old_z.imag()*2;
+		g_coefficient.real(sqr(g_old_z.real()) - sqr(g_old_z.imag()));
+		g_coefficient.imag(g_old_z.real()*g_old_z.imag()*2);
 	}
 	else if (g_c_exp == 2)
 	{
@@ -997,8 +997,8 @@ bool marks_julia_setup_fp()
 	}
 	else if (g_c_exp < 2)
 	{
-		g_coefficient.x = 1.0;
-		g_coefficient.y = 0.0;
+		g_coefficient.real(1.0);
+		g_coefficient.imag(0.0);
 	}
 	get_julia_attractor(0.0, 0.0);      // an attractor?
 	return true;
@@ -1017,8 +1017,8 @@ bool sierpinski_setup_fp()
 {
 	// sierpinski
 	g_periodicity_check = 0;                // disable periodicity checks
-	g_temp_z.x = 1;
-	g_temp_z.y = 0.5;
+	g_temp_z.real(1);
+	g_temp_z.imag(0.5);
 	return true;
 }
 

@@ -451,15 +451,33 @@ ComplexD PopFloat()
 		if (disk_from_memory(8*s_list_front, sizeof(popx), &popx) &&
 			disk_from_memory(8*s_list_front +sizeof(popx), sizeof(popy), &popy))
 		{
-			pop.x = popx;
-			pop.y = popy;
+			pop.real(popx);
+			pop.imag(popy);
 			--s_l_size;
 		}
 		return pop;
 	}
-	pop.x = 0;
-	pop.y = 0;
+	pop.real(0);
+	pop.imag(0);
 	return pop;
+}
+
+template <typename T>
+int disk_from_memory(long offset, ComplexT<T> &dest)
+{
+	T real;
+	int result = disk_from_memory(offset, sizeof(real), &real);
+	if (result)
+	{
+		T imag;
+		result = disk_from_memory(offset + sizeof(imag), sizeof(imag), &imag);
+		if (result)
+		{
+			dest.real(real);
+			dest.imag(imag);
+		}
+	}
+	return result;
 }
 
 ComplexL PopLong()
@@ -473,15 +491,14 @@ ComplexL PopLong()
 		{
 			s_list_front = s_list_size - 1;
 		}
-		if (disk_from_memory(8*s_list_front, sizeof(pop.x), &pop.x) &&
-			disk_from_memory(8*s_list_front +sizeof(pop.x), sizeof(pop.y), &pop.y))
+		if (disk_from_memory(8*s_list_front, pop))
 		{
 			--s_l_size;
 		}
 		return pop;
 	}
-	pop.x = 0;
-	pop.y = 0;
+	pop.real(0L);
+	pop.imag(0L);
 	return pop;
 }
 
@@ -498,44 +515,38 @@ int EnQueueLong(long x, long y)
 ComplexD DeQueueFloat()
 {
 	ComplexD out;
-	float outx;
-	float outy;
 
 	if (s_list_back != s_list_front)
 	{
-		if (disk_from_memory(8*s_list_back, sizeof(outx), &outx) &&
-			disk_from_memory(8*s_list_back +sizeof(outx), sizeof(outy), &outy))
+		if (disk_from_memory(8*s_list_back, out))
 		{
 			s_list_back = (s_list_back + 1) % s_list_size;
-			out.x = outx;
-			out.y = outy;
 			s_l_size--;
 		}
 		return out;
 	}
-	out.x = 0;
-	out.y = 0;
+	out.real(0);
+	out.imag(0);
 	return out;
 }
 
 ComplexL DeQueueLong()
 {
 	ComplexL out;
-	out.x = 0;
-	out.y = 0;
+	out.real(0);
+	out.imag(0);
 
 	if (s_list_back != s_list_front)
 	{
-		if (disk_from_memory(8*s_list_back, sizeof(out.x), &out.x) &&
-			disk_from_memory(8*s_list_back +sizeof(out.x), sizeof(out.y), &out.y))
+		if (disk_from_memory(8*s_list_back, out))
 		{
 			s_list_back = (s_list_back + 1) % s_list_size;
 			s_l_size--;
 		}
 		return out;
 	}
-	out.x = 0;
-	out.y = 0;
+	out.real(0);
+	out.imag(0);
 	return out;
 }
 
@@ -580,7 +591,7 @@ static void RestoreRect(int x, int y, int width, int height)
  * interface to FRACTINT
  */
 
-ComplexD g_save_c = {-3000.0, -3000.0};
+InitializedComplexD g_save_c(-3000.0, -3000.0);
 
 void Jiim(bool which)
 {
@@ -589,7 +600,8 @@ void Jiim(bool which)
 
 bool JIIM::UsesStandardFractalOrFrothCalc()
 {
-	return (g_fractal_specific[g_fractal_type].calculate_type == standard_fractal || g_fractal_specific[g_fractal_type].calculate_type == froth_calc);
+	return (g_fractal_specific[g_fractal_type].calculate_type == standard_fractal
+		|| g_fractal_specific[g_fractal_type].calculate_type == froth_calc);
 }
 
 void JIIM::Execute()
@@ -691,8 +703,8 @@ void JIIM::Execute()
 	setup_convert_to_screen(&_convert);
 
 	// reuse last location if inside window
-	g_col = int(_convert.a*g_save_c.x + _convert.b*g_save_c.y + _convert.e + .5);
-	g_row = int(_convert.c*g_save_c.x + _convert.d*g_save_c.y + _convert.f + .5);
+	g_col = int(_convert.a*g_save_c.real() + _convert.b*g_save_c.imag() + _convert.e + .5);
+	g_row = int(_convert.c*g_save_c.real() + _convert.d*g_save_c.imag() + _convert.f + .5);
 	if (g_col < 0 || g_col >= g_x_dots ||
 		g_row < 0 || g_row >= g_y_dots)
 	{
@@ -701,8 +713,8 @@ void JIIM::Execute()
 	}
 	else
 	{
-		_cReal = g_save_c.x;
-		_cImag = g_save_c.y;
+		_cReal = g_save_c.real();
+		_cImag = g_save_c.imag();
 	}
 
 	old_x = -1;
@@ -771,8 +783,8 @@ void JIIM::Execute()
 			g_old_z.imag(0);
 			g_old_z_l.real(0);
 			g_old_z_l.imag(0);
-			g_save_c.x = _cReal;
-			g_save_c.y = _cImag;
+			g_save_c.real(_cReal);
+			g_save_c.imag(_cImag);
 			g_initial_z.imag( _cImag);
 			g_initial_z.real( _cReal);
 			g_initial_z_l = ComplexDoubleToFudge(g_initial_z);
@@ -787,15 +799,15 @@ void JIIM::Execute()
 				ComplexD Sqrt;        // Fixed points of Julia
 
 				Sqrt = ComplexSqrtFloat(1 - 4*_cReal, -4*_cImag);
-				f1.x = (1 + Sqrt.x)/2;
-				f2.x = (1 - Sqrt.x)/2;
-				f1.y =  Sqrt.y/2;
-				f2.y = -Sqrt.y/2;
+				f1.real((1 + Sqrt.real())/2);
+				f2.real((1 - Sqrt.real())/2);
+				f1.imag(Sqrt.imag()/2);
+				f2.imag(-Sqrt.imag()/2);
 
 				ClearQueue();
 				s_max_hits = 1;
-				EnQueueFloat(float(f1.x), float(f1.y));
-				EnQueueFloat(float(f2.x), float(f2.y));
+				EnQueueFloat(float(f1.real()), float(f1.imag()));
+				EnQueueFloat(float(f2.real()), float(f2.imag()));
 			}
 			if (_orbits)
 			{
@@ -917,7 +929,7 @@ void JIIM::Execute()
 					break;
 
 				case SECRETMODE_ONE_DIRECTION:                     // always go one direction
-					if (g_save_c.y < 0)
+					if (g_save_c.imag() < 0)
 					{
 						g_new_z.real(-g_new_z.real());
 						g_new_z.imag(-g_new_z.imag());
@@ -926,7 +938,7 @@ void JIIM::Execute()
 					y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
 					break;
 				case SECRETMODE_ONE_DIR_DRAW_OTHER:                     // go one dir, draw the other
-					if (g_save_c.y < 0)
+					if (g_save_c.imag() < 0)
 					{
 						g_new_z.real(-g_new_z.real());
 						g_new_z.imag(-g_new_z.imag());
@@ -957,7 +969,7 @@ void JIIM::Execute()
 					}
 					break;
 				case SECRETMODE_7:
-					if (g_save_c.y < 0)
+					if (g_save_c.imag() < 0)
 					{
 						g_new_z.real(-g_new_z.real());
 						g_new_z.imag(-g_new_z.imag());

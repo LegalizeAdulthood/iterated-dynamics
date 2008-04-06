@@ -19,6 +19,7 @@
 #include "helpdefs.h"
 #include "strcpy.h"
 
+#include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
@@ -1007,7 +1008,7 @@ static void write_batch_parms_initial_orbit()
 	}
 	else if (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT)
 	{
-		put_parm(format(" initorbit=%.15g/%.15g") % g_initial_orbit_z.x % g_initial_orbit_z.y);
+		put_parm(format(" initorbit=%.15g/%.15g") % g_initial_orbit_z.real() % g_initial_orbit_z.imag());
 	}
 }
 

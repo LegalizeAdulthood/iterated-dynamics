@@ -464,7 +464,7 @@ void Formula::peephole_optimize_load(t_function_pointer &function)
 	{
 		peephole_optimize_load_lastsqr_real(function);
 	}
-	else if (s_p1_constant && m_load[m_load_ptr]->d.y == 0.0)
+	else if (s_p1_constant && m_load[m_load_ptr]->d.imag() == 0.0)
 	{
 		peephole_optimize_load_real_constant(function);
 	}
@@ -757,7 +757,7 @@ void Formula::peephole_optimize_mul_load(t_function_pointer &function)
 	peephole_optimize_mul_load_push2(function);
 	peephole_optimize_mul_load_swap_loads();
 
-	if (is_function(s_convert_index-1, fStkLodRealC) && (m_load[m_load_ptr-2]->d.x == 2.0))
+	if (is_function(s_convert_index-1, fStkLodRealC) && (m_load[m_load_ptr-2]->d.real() == 2.0))
 	{
 		peephole_optimize_mul_load_2(function);
 	}
@@ -784,7 +784,7 @@ void Formula::peephole_optimize_mul_real(t_function_pointer &function)
 	function = fStkLodRealMul;
 
 	if (s_previous_function == fStkLodRealC  // use s_previous_function here
-		&& m_load[m_load_ptr-1]->d.x == 2.0)
+		&& m_load[m_load_ptr-1]->d.real() == 2.0)
 	{
 		if (is_function(s_convert_index, fStkPush2))
 		{
@@ -908,8 +908,8 @@ void Formula::peephole_optimize_divide(t_function_pointer &function)
 		}
 		m_variables[m_parser_vsp].name = 0;  // this constant has no name
 		m_variables[m_parser_vsp].name_length = 0;
-		m_variables[m_parser_vsp].argument.d.x = 1.0/m_load[m_load_ptr - 1]->d.x;
-		m_variables[m_parser_vsp].argument.d.y = 0.0;
+		m_variables[m_parser_vsp].argument.d.real(1.0/m_load[m_load_ptr - 1]->d.real());
+		m_variables[m_parser_vsp].argument.d.imag(0.0);
 		set_operand(s_convert_index, &m_variables[m_parser_vsp++].argument);
 		function = fStkLodRealMul;
 	}
@@ -1112,7 +1112,7 @@ void Formula::peephole_optimize_power_load_real_constant_other(t_function_pointe
 
 void Formula::peephole_optimize_power_load_real_constant(t_function_pointer &function)
 {
-	double constant = m_load[m_load_ptr-1]->d.x;
+	double constant = m_load[m_load_ptr-1]->d.real();
 	if (constant == 2.0 || constant == 1.0 || constant == -1.0 || constant == 0.0)
 	{
 		peephole_optimize_power_load_real_constant_special(function, constant);
@@ -1589,7 +1589,7 @@ void Formula::convert_stack()  // convert the array of ptrs
 	}
 
 	m_last_op = s_convert_index;  // save the new operator count
-	m_variables[VARIABLE_LAST_SQR].argument.d.y = 0.0;  // do this once per image
+	m_variables[VARIABLE_LAST_SQR].argument.d.imag(0.0);  // do this once per image
 
 	// now change the pointers
 	if (formula_defined() &&

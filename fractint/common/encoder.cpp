@@ -877,8 +877,8 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->function_index[2] = BYTE(g_function_index[2]);
 	save_info->function_index[3] = BYTE(g_function_index[3]);
 	save_info->finattract = short(g_finite_attractor);
-	save_info->initial_orbit_z[0] = g_initial_orbit_z.x;
-	save_info->initial_orbit_z[1] = g_initial_orbit_z.y;
+	save_info->initial_orbit_z[0] = g_initial_orbit_z.real();
+	save_info->initial_orbit_z[1] = g_initial_orbit_z.imag();
 	save_info->use_initial_orbit_z = char(g_externs.UseInitialOrbitZ());
 	save_info->periodicity = short(g_periodicity_check);
 	save_info->potential_16bit = short(g_disk_16bit) ? 1 : 0;

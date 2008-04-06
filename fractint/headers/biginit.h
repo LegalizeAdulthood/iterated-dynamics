@@ -6,6 +6,8 @@
 #ifndef BIGINIT_H
 #define BIGINIT_H
 
+#include "big.h"
+
 enum
 {
 	MATHBITS = 32,
@@ -96,7 +98,7 @@ extern bf_t bftmp;
 extern bf_t bf10tmp;                                              // dec+4
 
 void free_bf_vars();
-bn_t alloc_stack(size_t size);
+big_t alloc_stack(size_t size);
 int save_stack();
 void restore_stack(int old_offset);
 void init_bf_dec(int dec);

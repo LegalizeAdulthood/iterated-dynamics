@@ -11,6 +11,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 
+#include "biginit.h"
 #include "Browse.h"
 #include "cmdfiles.h"
 #include "drivers.h"
