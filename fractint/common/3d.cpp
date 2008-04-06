@@ -54,7 +54,6 @@
 //
 //                       --  Tim Wegner  April 22, 1989
 //
-#include <string.h>
 #include <string>
 
 #include "port.h"
@@ -92,7 +91,7 @@ static void mat_mul(MATRIX left, MATRIX right, MATRIX destination)
 							left[j][3]*right[3][i];
 		}
 	}
-	memcpy(destination, newmat, sizeof(newmat));
+	destination = newmat;
 }
 
 // multiply a matrix by a scalar
@@ -211,7 +210,7 @@ int vmult(VECTOR s, MATRIX m, VECTOR t)
 		tmp[j] += m[3][j];
 	}
 	// set target = tmp. Necessary to use tmp in case source = target
-	memcpy(t, tmp, sizeof(tmp));
+	t = tmp;
 	return 0;
 }
 
@@ -233,7 +232,7 @@ void mult_vec(VECTOR s, MATRIX m)
 		tmp[j] += m[3][j];
 	}
 	// set target = tmp. Necessary to use tmp in case source = target
-	memcpy(s, tmp, sizeof(tmp));
+	s = tmp;
 }
 
 // perspective projection of vector v with respect to viewpont vector g_view

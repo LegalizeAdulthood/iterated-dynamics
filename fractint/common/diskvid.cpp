@@ -395,7 +395,7 @@ int disk_from_memory(long offset, int size, void *dest)
 	{
 		find_load_cache(offset & (0L-BLOCK_LEN));
 	}
-	memcpy(dest, (void *) &s_cur_cache->pixel[col_subscr], size);
+	std::copy(&s_cur_cache->pixel[col_subscr], &s_cur_cache->pixel[col_subscr] + size, static_cast<BYTE *>(dest));
 	s_cur_cache->dirty = false;
 	return 1;
 }
@@ -448,7 +448,7 @@ void disk_write(int col, int row, int color)
 	}
 }
 
-int disk_to_memory(long offset, int size, void *src)
+int disk_to_memory(long offset, int size, void const *src)
 {
 	int col_subscr =  int(offset & (BLOCK_LEN - 1));
 
@@ -461,8 +461,8 @@ int disk_to_memory(long offset, int size, void *src)
 	{
 		find_load_cache (offset & (0L-BLOCK_LEN));
 	}
-
-	memcpy((void *) &s_cur_cache->pixel[col_subscr], src, size);
+	BYTE const *source = static_cast<BYTE const *>(src);
+	std::copy(source, source + size, &s_cur_cache->pixel[col_subscr]);
 	s_cur_cache->dirty = true;
 	return 1;
 }

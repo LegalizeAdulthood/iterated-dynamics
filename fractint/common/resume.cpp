@@ -86,7 +86,8 @@ int put_resume(int len, void const *source_ptr)
 		return -1;
 	}
 	assert(g_resume_length + len <= s_resume_info_length);
-	memcpy(&g_resume_info[g_resume_length], source_ptr, len);
+	char const *source = static_cast<char const *>(source_ptr);
+	std::copy(source, source + len, &g_resume_info[g_resume_length]);
 	g_resume_length += len;
 
 	return 0;
@@ -119,7 +120,8 @@ int get_resume(int len, void *dest_ptr)
 		return -1;
 	}
 	assert(s_resume_offset + len <= s_resume_info_length);
-	memcpy(dest_ptr, &g_resume_info[s_resume_offset], len);
+	char *dest = static_cast<char *>(dest_ptr);
+	std::copy(&g_resume_info[s_resume_offset], &g_resume_info[s_resume_offset + len], dest);
 	s_resume_offset += len;
 	return 0;
 }
