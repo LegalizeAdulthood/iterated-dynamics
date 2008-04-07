@@ -1,6 +1,6 @@
 /* d_win32.c
  *
- * Routines for a Win32 GDI driver for fractint.
+ * Routines for a Win32 GDI driver
  */
 #include <cassert>
 #include <ctime>
@@ -248,7 +248,7 @@ void Win32BaseDriver::terminate()
 */
 bool Win32BaseDriver::initialize(int &argc, char **argv)
 {
-	LPCSTR title = "FractInt for Windows";
+	LPCSTR title = "Iterated Dynamics";
 
 	ODS("win32_init");
 	m_frame.init(g_instance, title);

@@ -590,7 +590,7 @@ int calculate_fractal()
 	g_max_log_table_size = g_max_iteration;
 	g_log_calculation = false;
 
-	// below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint.
+	// below, INT_MAX = 32767 only when an integer is two bytes, which is not true for 32-bit environments.
 	// Since 32767 is what was meant, replaced the instances of INT_MAX with 32767.
 	if (g_log_palette_mode
 		&& (((g_max_iteration > 32767) && true) || g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC))

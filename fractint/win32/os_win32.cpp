@@ -40,82 +40,6 @@ static int (*s_dot_read)(int, int) = 0;
 static void (*s_line_write)(int, int, int, BYTE const *) = 0;
 static void (*s_line_read)(int, int, int, BYTE *) = 0;
 
-typedef enum
-{
-	FE_UNKNOWN = -1,
-	FE_IMAGE_INFO,					// TAB
-	FE_RESTART,						// INSERT
-	FE_SELECT_VIDEO_MODE,			// DELETE
-	FE_EXECUTE_COMMANDS,			// @
-	FE_COMMAND_SHELL,				// d
-	FE_ORBITS_WINDOW,				// o
-	FE_SELECT_FRACTAL_TYPE,			// t
-	FE_TOGGLE_JULIA,				// IDK_SPACE
-	FE_TOGGLE_INVERSE,				// j
-	FE_PRIOR_IMAGE,					// h
-	FE_REVERSE_HISTORY,				// ^H
-	FE_BASIC_OPTIONS,				// x
-	FE_EXTENDED_OPTIONS,			// y
-	FE_TYPE_SPECIFIC_PARAMS,		// z
-	FE_PASSES_OPTIONS,				// p
-	FE_VIEW_WINDOW_OPTIONS,			// v
-	FE_3D_PARAMS,					// i
-	FE_BROWSE_PARAMS,				// ^B
-	FE_EVOLVER_PARAMS,				// ^E
-	FE_SOUND_PARAMS,				// ^F
-	FE_SAVE_IMAGE,					// s
-	FE_LOAD_IMAGE,					// r
-	FE_3D_TRANSFORM,				// 3
-	FE_3D_OVERLAY,					// #
-	FE_SAVE_CURRENT_PARAMS,			// b
-	FE_PRINT_IMAGE,					// ^P
-	FE_GIVE_COMMAND_STRING,			// g
-	FE_QUIT,						// ESC
-	FE_COLOR_CYCLING_MODE,			// c
-	FE_ROTATE_PALETTE_DOWN,			// -
-	FE_ROTATE_PALETTE_UP,			// +
-	FE_EDIT_PALETTE,				// e
-	FE_MAKE_STARFIELD,				// a
-	FE_ANT_AUTOMATON,				// ^A
-	FE_STEREOGRAM,					// ^S
-	FE_VIDEO_F1,
-	FE_VIDEO_F2,
-	FE_VIDEO_F3,
-	FE_VIDEO_F4,
-	FE_VIDEO_F5,
-	FE_VIDEO_F6,
-	FE_VIDEO_F7,
-	FE_VIDEO_F8,
-	FE_VIDEO_F9,
-	FE_VIDEO_F10,
-	FE_VIDEO_F11,
-	FE_VIDEO_F12,
-	FE_VIDEO_AF1,
-	FE_VIDEO_AF2,
-	FE_VIDEO_AF3,
-	FE_VIDEO_AF4,
-	FE_VIDEO_AF5,
-	FE_VIDEO_AF6,
-	FE_VIDEO_AF7,
-	FE_VIDEO_AF8,
-	FE_VIDEO_AF9,
-	FE_VIDEO_AF10,
-	FE_VIDEO_AF11,
-	FE_VIDEO_AF12,
-	FE_VIDEO_CF1,
-	FE_VIDEO_CF2,
-	FE_VIDEO_CF3,
-	FE_VIDEO_CF4,
-	FE_VIDEO_CF5,
-	FE_VIDEO_CF6,
-	FE_VIDEO_CF7,
-	FE_VIDEO_CF8,
-	FE_VIDEO_CF9,
-	FE_VIDEO_CF10,
-	FE_VIDEO_CF11,
-	FE_VIDEO_CF12
-} fractint_event;
-
 // Global variables (yuck!)
 int g_overflow_mp = 0;
 BYTE g_block[4096] = { 0 };
@@ -142,69 +66,6 @@ int g_vx_dots = 0;
  * they have assembly language equivalents that we provide
  * here in a slower C form for portability.
  */
-
-/* keyboard_event
-**
-** Map a keypress into an event id.
-*/
-static fractint_event keyboard_event(int key)
-{
-	struct
-	{
-		int key;
-		fractint_event event;
-	}
-	mapping[] =
-	{
-		IDK_CTL_A,	FE_ANT_AUTOMATON,
-		IDK_CTL_B,	FE_BROWSE_PARAMS,
-		IDK_CTL_E,	FE_EVOLVER_PARAMS,
-		IDK_CTL_F,	FE_SOUND_PARAMS,
-		IDK_BACKSPACE,	FE_REVERSE_HISTORY,
-		IDK_TAB,		FE_IMAGE_INFO,
-		IDK_CTL_S,	FE_STEREOGRAM,
-		IDK_ESC,		FE_QUIT,
-		IDK_SPACE,	FE_TOGGLE_JULIA,
-		IDK_INSERT,		FE_RESTART,
-		DELETE,		FE_SELECT_VIDEO_MODE,
-		'@',		FE_EXECUTE_COMMANDS,
-		'#',		FE_3D_OVERLAY,
-		'3',		FE_3D_TRANSFORM,
-		'a',		FE_MAKE_STARFIELD,
-		'b',		FE_SAVE_CURRENT_PARAMS,
-		'c',		FE_COLOR_CYCLING_MODE,
-		'd',		FE_COMMAND_SHELL,
-		'e',		FE_EDIT_PALETTE,
-		'g',		FE_GIVE_COMMAND_STRING,
-		'h',		FE_PRIOR_IMAGE,
-		'j',		FE_TOGGLE_INVERSE,
-		'i',		FE_3D_PARAMS,
-		'o',		FE_ORBITS_WINDOW,
-		'p',		FE_PASSES_OPTIONS,
-		'r',		FE_LOAD_IMAGE,
-		's',		FE_SAVE_IMAGE,
-		't',		FE_SELECT_FRACTAL_TYPE,
-		'v',		FE_VIEW_WINDOW_OPTIONS,
-		'x',		FE_BASIC_OPTIONS,
-		'y',		FE_EXTENDED_OPTIONS,
-		'z',		FE_TYPE_SPECIFIC_PARAMS,
-		'-',		FE_ROTATE_PALETTE_DOWN,
-		'+',		FE_ROTATE_PALETTE_UP
-	};
-	key = tolower(key);
-	{
-		int i;
-		for (i = 0; i < NUM_OF(mapping); i++)
-		{
-			if (mapping[i].key == key)
-			{
-				return mapping[i].event;
-			}
-		}
-	}
-
-	return FE_UNKNOWN;
-}
 
 /*
 ;
@@ -463,7 +324,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 {
 	MiniDumpWriteDumpProc *dumper = 0;
 	HMODULE debughlp = LoadLibrary("dbghelp.dll");
-	std::string minidump = "fractint.dmp";
+	std::string minidump = "id.dmp";
 	MINIDUMP_EXCEPTION_INFORMATION mdei =
 	{
 		GetCurrentThreadId(),
@@ -476,15 +337,15 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 
 	if (debughlp == 0)
 	{
-		MessageBox(0, "An unexpected error occurred.  FractInt will now exit.",
-			"FractInt: Unexpected Error", MB_OK);
+		MessageBox(0, "An unexpected error occurred.  Iterated Dynamics will now exit.",
+			"id: Unexpected Error", MB_OK);
 		return;
 	}
 	dumper = (MiniDumpWriteDumpProc *) GetProcAddress(debughlp, "MiniDumpWriteDump");
 
 	while (PathFileExists(minidump.c_str()))
 	{
-		minidump = str(boost::format("fractint-%d.dmp") % i++);
+		minidump = str(boost::format("id-%d.dmp") % i++);
 	}
 	dump_file = CreateFile(minidump.c_str(), GENERIC_READ | GENERIC_WRITE,
 		0, 0, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
@@ -511,7 +372,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 	{
 		MessageBox(0, ("Unexpected error, crash dump saved to '" + minidump + "'.\n"
 			"Please include this file with your bug report.").c_str(),
-			"FractInt: Unexpected Error", MB_OK);
+			"id: Unexpected Error", MB_OK);
 	}
 }
 
@@ -786,5 +647,5 @@ int out_line(BYTE const *pixels, int linelen)
 
 void init_failure(std::string const &message)
 {
-	MessageBox(0, message.c_str(), "FractInt: Fatal Error", MB_OK);
+	MessageBox(0, message.c_str(), "id: Fatal Error", MB_OK);
 }

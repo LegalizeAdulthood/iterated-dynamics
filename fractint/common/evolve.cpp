@@ -343,7 +343,7 @@ static void vary_invert(GENEBASE gene[], int randval, int i)
 
 // ---------------------------------------------------------------------
 /*
-	get_evolve_params() is called from FRACTINT.C whenever the 'ctrl_e' key
+	get_evolve_params() is called whenever the 'ctrl_e' key
 	is pressed.  Return codes are:
 		-1  routine was ESCAPEd - no need to re-generate the images
 		0  minor variable changed.  No need to re-generate the image.

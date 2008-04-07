@@ -1,7 +1,7 @@
-/*
-		FRACTINT - The Ultimate Fractal Generator
-                        Main Routine
-*/
+// i d . c p p
+//
+// Iterated Dynamics -- The Next Generation Ultimate Fractal Generator
+//
 #include <csignal>
 #include <cstdarg>
 #include <fstream>
@@ -46,14 +46,14 @@
 static void set_exe_path(const char *path);
 static void check_same_name();
 
-/* #include hierarchy for fractint is a follows:
-		Each module should include port.h as the first fractint specific
+/* #include hierarchy is a follows:
+		Each module should include port.h as the first specific
 				include. port.h includes <stdlib.h>, <math.h>, <float.h>
 		Most modules should include prototyp.h, which incorporates by
 				direct or indirect reference the following header files:
 				mpmath.h
 				cmplx.h
-				fractint.h
+				id.h
 				big.h
 				biginit.h
 				helpcom.h

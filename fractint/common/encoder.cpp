@@ -46,11 +46,11 @@ static void setup_save_info(fractal_info *save_info);
 The following routines perform the GIF encoding when the 's' key is pressed.
 
 The compression logic in this file has been replaced by the classic
-UNIX compress code. We have extensively modified the sources to fit
-Fractint's needs, but have left the original credits where they
+UNIX compress code. We have extensively modified the sources,
+but have left the original credits where they
 appear. Thanks to the original authors for making available these
 classic and reliable sources. Of course, they are not responsible for
-all the changes we have made to integrate their sources into Fractint.
+all the changes we have made to integrate their sources.
 
 MEMORY ALLOCATION
 
@@ -722,10 +722,8 @@ static int put_extend_blk(int block_id, int block_len, char *block_data)
 {
 	int i;
 	int j;
-	char header[15];
-	strcpy(header, "!\377\013fractint");
-	strcpy(&header[11], boost::format("%03u") % block_id);
-	if (fwrite(header, 14, 1, s_outfile) != 1)
+	std::string header = (boost::format("!\377\013fractint%03u") % block_id).str();
+	if (fwrite(header.c_str(), 14, 1, s_outfile) != 1)
 	{
 		return 0;
 	}
@@ -942,7 +940,6 @@ static void setup_save_info(fractal_info *save_info)
  *
  *  Lempel-Ziv compression based on 'compress'.  GIF modifications by
  *  David Rowley (mgardi@watdcsu.waterloo.edu).
- *  Thoroughly massaged by the Stone Soup team for Fractint's purposes.
  *
  ***************************************************************************/
 

@@ -23,14 +23,14 @@
 extern int slowdisplay;
 #endif
 
-class FractIntDialog : public AbstractDialog
+class IteratedDynamicsDialog : public AbstractDialog
 {
 public:
-	FractIntDialog(AbstractDriver *driver) : AbstractDialog(driver), m_contexts()
+	IteratedDynamicsDialog(AbstractDriver *driver) : AbstractDialog(driver), m_contexts()
 	{
 	}
 
-	virtual ~FractIntDialog()
+	virtual ~IteratedDynamicsDialog()
 	{
 		assert(m_contexts.size() == 0);
 	}
@@ -45,17 +45,17 @@ private:
 	std::vector<AbstractInputContext *> m_contexts;
 };
 
-bool FractIntDialog::ProcessWaitingKey(int key)
+bool IteratedDynamicsDialog::ProcessWaitingKey(int key)
 {
 	return (m_contexts.size() > 0) ? m_contexts.back()->ProcessWaitingKey(key) : true;
 }
 
-bool FractIntDialog::ProcessIdle()
+bool IteratedDynamicsDialog::ProcessIdle()
 {
 	return (m_contexts.size() > 0) ? m_contexts.back()->ProcessIdle() : true;
 }
 
-class Introduction : public FractIntDialog
+class Introduction : public IteratedDynamicsDialog
 {
 public:
 	Introduction(AbstractDriver *driver);
@@ -82,7 +82,7 @@ private:
 };
 
 Introduction::Introduction(AbstractDriver *driver)
-	: FractIntDialog(driver),
+	: IteratedDynamicsDialog(driver),
 	m_paused(false),
 	m_top_row(0),
 	m_bottom_row(0),

@@ -63,9 +63,6 @@ struct PALENTRY
 	BYTE red, green, blue;
 };
 
-/*
- * Interface to FRACTINT's graphics stuff
- */
 static void set_pal(int pal, int r, int g, int b)
 {
 	g_.DAC().Set(pal, BYTE(r), BYTE(g), BYTE(b));
@@ -363,7 +360,6 @@ static void pal_range_to_grey(PALENTRY pal[], int first, int how_many)
 	PALENTRY      *curr;
 	BYTE  val;
 
-
 	for (curr = &pal[first]; how_many > 0; how_many--, curr++)
 	{
 		val = BYTE((int(curr->red)*30 + int(curr->green)*59 + int(curr->blue)*11)/100);
@@ -420,7 +416,6 @@ static void dotted_rectangle(int x, int y, int width, int depth)
 	vertical_dotted_line(x, y, depth);
 	vertical_dotted_line(x + width-1, y, depth);
 }
-
 
 /*
  * misc. routines
@@ -690,7 +685,6 @@ void move_box::draw()
 	int depth = _base_depth + _csize * 16 + 1;
 	int x = _x;
 	int y = _y;
-
 
 	get_row (x, y,         width, _top);
 	get_row (x, y + depth-1, width, _bottom);
@@ -1158,8 +1152,6 @@ enum
 	RGB_EDITOR_BOX_WIDTH = (RGB_EDITOR_WIDTH - (2 + COLOR_EDITOR_WIDTH + 1 + 2)),
 	RGB_EDITOR_BOX_DEPTH = (RGB_EDITOR_DEPTH - 4)
 };
-
-
 
 rgb_editor::rgb_editor(int x, int y, void (*other_key)(int, rgb_editor*, void*),
 	void (*change)(rgb_editor*, void*), VOIDPTR info)
@@ -1904,7 +1896,6 @@ bool pal_table::set_current(int which, int curr)
 	return true;
 }
 
-
 bool pal_table::memory_alloc(long size)
 {
 	if (DEBUGMODE_USE_DISK == g_debug_mode)
@@ -1933,7 +1924,6 @@ bool pal_table::memory_alloc(long size)
 		return true;
 	}
 }
-
 
 void pal_table::save_rect()
 {
@@ -1997,7 +1987,6 @@ void pal_table::save_rect()
 	}
 }
 
-
 void pal_table::restore_rect()
 {
 	if (_hidden)
@@ -2048,7 +2037,6 @@ void pal_table::restore_rect()
 	} // switch
 }
 
-
 void pal_table::set_position(int x, int y)
 {
 	_x = x;
@@ -2059,13 +2047,11 @@ void pal_table::set_position(int x, int y)
 	_rgb_editors[1]->set_position(x + width-2-RGB_EDITOR_WIDTH, y + 2);
 }
 
-
 void pal_table::set_csize(int csize)
 {
 	_csize = csize;
 	set_position(_x, _y);
 }
-
 
 int pal_table::get_cursor_color()
 {
@@ -2158,7 +2144,6 @@ void pal_table::do_cursor(int key)
 	}
 }
 
-
 void pal_table::change(rgb_editor *rgb)
 {
 	int pnum = _current[_active];
@@ -2191,7 +2176,6 @@ void pal_table::change(rgb_editor *rgb)
 		cursor::cursor_show();
 	}
 }
-
 
 void pal_table::update_dac()
 {
@@ -2251,7 +2235,6 @@ void pal_table::update_dac()
 	load_dac();
 }
 
-
 void pal_table::rotate(int dir, int lo, int hi)
 {
 	rotate_pal(_palette, dir, lo, hi);
@@ -2271,7 +2254,6 @@ void pal_table::rotate(int dir, int lo, int hi)
 
 	cursor::cursor_show();
 }
-
 
 void pal_table::other_key(int key, rgb_editor *rgb)
 {
@@ -2944,7 +2926,6 @@ pal_table::pal_table()
 	set_csize(csize);
 }
 
-
 void pal_table::set_hidden(bool hidden)
 {
 	_hidden = hidden;
@@ -2952,8 +2933,6 @@ void pal_table::set_hidden(bool hidden)
 	_rgb_editors[1]->set_hidden(hidden);
 	update_dac();
 }
-
-
 
 void pal_table::hide(rgb_editor *rgb, bool hidden)
 {
@@ -3023,7 +3002,6 @@ pal_table::~pal_table()
 	destroy(_move_box);
 }
 
-
 void pal_table::process()
 {
 	get_pal_range(0, g_colors, _palette);
@@ -3081,14 +3059,7 @@ void pal_table::process()
 	set_pal_range(0, g_colors, _palette);
 }
 
-
-/*
- * interface to FRACTINT
- */
-
-
-
-void palette_edit()       // called by fractint
+void palette_edit()
 {
 	if (g_screen_width < 133 || g_screen_height < 174)
 	{

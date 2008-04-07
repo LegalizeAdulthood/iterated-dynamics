@@ -1,7 +1,7 @@
 // biginit.h
-// Used for fractint only.
+//
 // Many of these are redundant from big.h
-// but the fractint specific ones are not.
+// but the application specific ones are not.
 
 #ifndef BIGINIT_H
 #define BIGINIT_H

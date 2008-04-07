@@ -1,9 +1,3 @@
-/* calmanfp.c
- * This file contains routines to replace calmanfp.asm.
- *
- * This file Copyright 1992 Ken Shirriff.  It may be used according to the
- * fractint license conditions, blah blah blah.
- */
 #include <string>
 
 #include "port.h"

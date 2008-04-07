@@ -8,7 +8,7 @@
 #include "id.h"
 #include "drivers.h"
 
-// list of drivers that are supported by source code in fractint
+// list of drivers that are supported by source code
 // default driver is first one in the list that initializes.
 #if defined(HAVE_X11_DRIVER)
 extern AbstractDriver *x11_driver;

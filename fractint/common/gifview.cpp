@@ -1,5 +1,4 @@
 /*
- * This GIF decoder is designed for use with the FRACTINT program.
  * This decoder code lacks full generality in the following respects:
  * supports non-interlaced GIF files only, and calmly ignores any
  * local color maps and non-Fractint-specific extension blocks.
@@ -64,7 +63,7 @@ int get_bytes(BYTE *destination, int how_many)
 /*
  * DECODERLINEWIDTH is the width of the pixel buffer used by the decoder. A
  * larger buffer gives better performance. However, this buffer does not
- * have to be a whole line width, although historically in Fractint it has
+ * have to be a whole line width, although historically it has
  * been: images were decoded line by line and a whole line written to the
  * screen at once. The requirement to have a whole line buffered at once
  * has now been relaxed in order to support larger images. The one exception

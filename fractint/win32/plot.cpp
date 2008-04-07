@@ -24,7 +24,7 @@ enum
 };
 
 Plot *Plot::s_plot = 0;
-LPCSTR Plot::s_window_class = "FractIntPlot";
+LPCSTR Plot::s_window_class = "IteratedDynamicsPlot";
 
 void Plot::set_dirty_region(int x_min, int y_min, int x_max, int y_max)
 {

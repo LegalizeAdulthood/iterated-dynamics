@@ -232,7 +232,7 @@ int cellular()
 		return -1;
 	}
 
-	// g_next_screen_flag toggled by space bar in fractint.cpp, 1 for continuous
+	// g_next_screen_flag toggled by space bar, 1 for continuous
 	// 0 to stop on next screen
 	filled = 0;
 	notfilled = (S16)(1-filled);

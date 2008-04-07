@@ -581,10 +581,6 @@ static void RestoreRect(int x, int y, int width, int height)
 	cursor::cursor_show();
 }
 
-/*
- * interface to FRACTINT
- */
-
 InitializedComplexD g_save_c(-3000.0, -3000.0);
 
 void Jiim(bool which)

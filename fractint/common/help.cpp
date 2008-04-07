@@ -66,7 +66,7 @@ struct help_sig_info
 {
 	unsigned long sig;
 	int           version;
-	unsigned long base;     // only if added to fractint.exe
+	unsigned long base;     // only if added to exe
 };
 
 struct PRINT_DOC_INFO

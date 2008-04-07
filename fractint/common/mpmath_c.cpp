@@ -296,8 +296,6 @@ ComplexD ComplexSqrtFloat(double x, double y)
 }
 
 
-/***** FRACTINT specific routines and variables *****/
-
 #ifndef TESTING_MATH
 
 BYTE *g_log_table = 0;

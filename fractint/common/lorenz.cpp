@@ -53,7 +53,7 @@ inline int RANDOM(int x)
 // to test the actual floating point orbit values, but this seems safe for now.
 // A higher value cannot be used - to test, turn off math coprocessor and
 // use +2.24 for type ICONS. If BAD_PIXEL is set to 20000, this will abort
-// Fractint with a math error. Note that this approach precludes zooming in very
+// with a math error. Note that this approach precludes zooming in very
 // far to an orbit type.
 //
 

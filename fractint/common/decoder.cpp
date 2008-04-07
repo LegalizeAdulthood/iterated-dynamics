@@ -14,7 +14,7 @@
 // which is similar, structurally, to the original routine by Steve Wilhite.
 // It is, however, somewhat noticably faster in most cases.
 //
-// == This routine was modified for use in FRACTINT in two ways.
+// == This routine was modified for use in two ways.
 // ==
 // == 1) The original #includes were folded into the routine strictly to hold
 // ==    down the number of files we were dealing with.
