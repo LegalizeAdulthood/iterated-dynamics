@@ -430,7 +430,7 @@ LRESULT CALLBACK FrameImpl::proc(HWND window, UINT message, WPARAM wp, LPARAM lp
 void FrameImpl::init(HINSTANCE instance, LPCSTR title)
 {
 	BOOL status;
-	LPCSTR windowClass = "FractintFrame";
+	LPCSTR windowClass = "IteratedDynamicFrame";
 	WNDCLASS  wc;
 
 	status = ::GetClassInfo(instance, windowClass, &wc);
@@ -556,7 +556,7 @@ void FrameImpl::create(int width, int height)
 	{
 		s_frame = this;
 		adjust_size(width, height);
-		m_window = ::CreateWindow("FractintFrame",
+		m_window = ::CreateWindow("IteratedDynamicsFrame",
 			m_title,
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,               // default horizontal position

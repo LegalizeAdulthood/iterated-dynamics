@@ -28,7 +28,7 @@ public:
 			when set, "Escape to cancel, any other key to continue..."
 			-1 is returned for cancel, 0 for continue
 		&4 set to suppress buzzer
-		&8 for Fractint for Windows & parser - use a fixed pitch font
+		&8 for a fixed pitch font
 		&16 for info only message (green box instead of red in DOS vsn)
 */
 int stop_message(int flags, const std::string &msg)

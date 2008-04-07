@@ -552,7 +552,7 @@ skip_UI:
 				stop_message(STOPMSG_NORMAL, "Can't write " + g_command_file);
 				continue;
 			}
-			m_out_name = (boost::filesystem::path(m_out_name).branch_path() / "fractint.tmp").string();
+			m_out_name = (boost::filesystem::path(m_out_name).branch_path() / "id.tmp").string();
 			input_file.open(g_command_file.c_str(), std::ios::in);
 		}
 		s_parameter_file.open(m_out_name.c_str(), std::ios::out);
@@ -627,7 +627,7 @@ skip_UI:
 		}
 		if (m_xm > 1 || m_ym > 1)
 		{
-			fpbat << boost::format("Fractint makemig=%d/%d\n") % m_xm % m_ym
+			fpbat << boost::format("id makemig=%d/%d\n") % m_xm % m_ym
 				<< "Rem Simplgif fractmig.gif simplgif.gif  in case you need it\n"
 					":oops\n";
 			fpbat.close();
@@ -1910,7 +1910,7 @@ static int getprec(double a, double b, double c)
 }
 
 /* This function calculates the precision needed to distiguish adjacent
-	pixels at Fractint's maximum resolution of MAX_PIXELS by MAX_PIXELS
+	pixels at maximum resolution of MAX_PIXELS by MAX_PIXELS
 	(if rez == MAXREZ) or at current resolution (if rez == CURRENTREZ)    */
 int get_precision_bf(int rezflag)
 {
@@ -1981,7 +1981,7 @@ int get_precision_bf(int rezflag)
 }
 
 /* This function calculates the precision needed to distiguish adjacent
-	pixels at Fractint's maximum resolution of MAX_PIXELS by MAX_PIXELS
+	pixels at maximum resolution of MAX_PIXELS by MAX_PIXELS
 	(if rez == MAXREZ) or at current resolution (if rez == CURRENTREZ)    */
 int get_precision_dbl(int rezflag)
 {
@@ -2028,8 +2028,7 @@ int get_precision_dbl(int rezflag)
 /*
 	Strips zeros from the non-exponent part of a number. This logic
 	was originally in put_bf(), but is split into this routine so it can be
-	shared with put_float(), which had a bug in Fractint 19.2 (used to strip
-	zeros from the exponent as well.)
+	shared with put_float().
 */
 
 static void strip_zeros(char *buf)
@@ -2272,7 +2271,7 @@ int select_video_mode(int curmode)
 	// the selected entry now in g_video_entry
 	g_.SetVideoEntry(i);
 
-	// copy fractint.cfg table to resident table, note selected entry
+	// copy id.cfg table to resident table, note selected entry
 	k = 0;
 	for (i = 0; i < g_.VideoTableLength(); ++i)
 	{
@@ -2366,7 +2365,7 @@ static int entcompare(const void *p1, const void *p2)
 
 /* make_mig() takes a collection of individual GIF images (all
 	presumably the same resolution and all presumably generated
-	by Fractint and its "divide and conquer" algorithm) and builds
+	by its "divide and conquer" algorithm) and builds
 	a single multiple-image GIF out of them.  This routine is
 	invoked by the "batch=stitchmode/x/y" option, and is called
 	with the 'x' and 'y' parameters

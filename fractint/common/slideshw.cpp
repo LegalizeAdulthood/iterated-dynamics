@@ -1,7 +1,6 @@
-/***********************************************************************/
-// These routines are called by driver_get_key to allow keystrokes to control
-// Fractint to be read from a file.
-/***********************************************************************/
+// These routines are called by driver_get_key to allow controlling
+// keystrokes to be read from a file.
+
 #include <cctype>
 #include <ctime>
 #include <fstream>

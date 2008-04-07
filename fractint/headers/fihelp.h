@@ -1,5 +1,5 @@
-#if !defined(FRACTINT_HELP_H)
-#define FRACTINT_HELP_H
+#if !defined(ID_HELP_H)
+#define ID_HELP_H
 
 #include <string>
 

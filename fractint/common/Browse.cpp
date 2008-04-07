@@ -168,7 +168,7 @@ void BrowseStateImpl::Restart()
 	_mask = "*.gif";
 }
 
-// get browse parameters , called from fractint.c and loadfile.c
+// get browse parameters
 // returns 3 if anything changes.  code pinched from get_view_params
 
 int BrowseStateImpl::GetParameters()
@@ -735,7 +735,7 @@ int look_get_window()
 	// 4096 based on 4096B in g_box_x... max 1/4 pixels plotted, and need words
 	// 4096 = 10240/2.5 based on size of g_box_x + g_box_y + g_box_values
 #ifdef XFRACT
-	vidlength = 4; // Xfractint only needs the 4 corners saved.
+	vidlength = 4; // X11 only needs the 4 corners saved.
 #endif
 	int *boxx_storage = new int[vidlength*MAX_WINDOWS_OPEN];
 	int *boxy_storage = new int[vidlength*MAX_WINDOWS_OPEN];

@@ -6,7 +6,7 @@
 
 /* AbstractDriver
  *
- * Abstract interface for a user interface driver for FractInt.  The sound
+ * Abstract interface for a user interface driver.  The sound
  * routines should be refactored out of this object at some point.
  */
 class AbstractDriver
@@ -24,7 +24,7 @@ public:
 										virtual void pause() = 0;
 	// resume this driver
 										virtual void resume() = 0;
-	// validate a fractint.cfg mode
+	// validate a id.cfg mode
 										virtual int validate_mode(const VIDEOINFO &mode) = 0;
 										virtual void set_video_mode(const VIDEOINFO &mode) = 0;
 	// find max screen extents
@@ -142,7 +142,7 @@ private:
 /* Define the drivers to be included in the compilation:
 
     HAVE_CURSES_DRIVER		Curses based disk driver
-    HAVE_X11_DRIVER			XFractint code path
+    HAVE_X11_DRIVER			X11 code path
     HAVE_GDI_DRIVER			Win32 GDI driver
     HAVE_WIN32_DISK_DRIVER	Win32 disk driver
 */

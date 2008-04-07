@@ -324,7 +324,7 @@ void SoundStateImpl::write_time()
 
 int SoundStateImpl::sound_on(int freq)
 {
-	/* wrapper to previous fractint snd routine, uses fm synth or midi if
+	/* wrapper to previous snd routine, uses fm synth or midi if
 	available and selected */
 	// Returns a 1 if sound is turned on, a 0 if not.
 	unsigned int mult;

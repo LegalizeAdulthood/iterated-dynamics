@@ -3,8 +3,6 @@
 
 #include "port.h"
 
-// FRACTINT.H - common structures and values for the FRACTINT routines
-
 /* Returns the number of items in an array declared of fixed size, i.e:
 	int stuff[100];
 	NUM_OF(stuff) returns 100.
@@ -704,7 +702,7 @@ extern char CheckOrbitsInfoSize[sizeof(orbits_info) == 200];
 
 enum
 {
-	MAXVIDEOMODES  = 300       // maximum entries in fractint.cfg
+	MAXVIDEOMODES  = 300       // maximum entries in id.cfg
 };
 
 extern double const AUTO_INVERT;
@@ -968,7 +966,7 @@ inline bool nonalpha(int c)
 }
 
 /* keys; IDK = "Iterated Dynamics Key"
- * Use this prefix to disambiguate key name symbols used in the fractint source
+ * Use this prefix to disambiguate key name symbols used in the source
  * from symbols defined by the external environment, i.e. "DELETE" on Win32
  */
 enum IdKey
@@ -1202,7 +1200,7 @@ struct affine
 	double f;
 };
 
-struct GENEBASE  // smallest part of a fractint 'gene'
+struct GENEBASE  // smallest part of a fractal 'gene'
 {
 	void *addr; // address of variable to be referenced
 	void (*varyfunc)(GENEBASE *,int,int); // pointer to func used to vary it

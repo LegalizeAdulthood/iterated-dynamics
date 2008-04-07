@@ -1,6 +1,6 @@
 /* d_win32_disk.cpp
  *
- * Routines for a Win32 disk video mode driver for fractint.
+ * Routines for a Win32 disk video mode driver.
  */
 #include <cassert>
 #include <string>
@@ -49,7 +49,7 @@ public:
 
 	// initialize the driver
 										virtual bool initialize(int &argc, char **argv);
-	// validate a fractint.cfg mode
+	// validate a id.cfg mode
 										virtual int validate_mode(const VIDEOINFO &mode);
 										virtual void set_video_mode(const VIDEOINFO &mode);
 	// find max screen extents
@@ -264,7 +264,7 @@ static void parse_geometry(const char *spec, int *x, int *y, int *width, int *he
 */
 bool Win32DiskDriver::initialize(int &argc, char **argv)
 {
-	LPCTSTR title = "FractInt for Windows";
+	LPCTSTR title = "Iterated Dynamics";
 
 	m_frame.init(g_instance, title);
 	if (!m_wintext.initialize(g_instance, 0, title))

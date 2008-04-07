@@ -95,7 +95,7 @@ static std::string save_name()
 
 // ---------------------------------------------------------------------
 /*
-		get_toggles() is called from FRACTINT.C whenever the 'x' key
+		get_toggles() is called whenever the 'x' key
 		is pressed.  This routine prompts for several options,
 		sets the appropriate variables, and returns the following code
 		to the calling routine:
@@ -670,7 +670,7 @@ int get_disk_view_params()
 
 // ---------------------------------------------------------------------
 /*
-	get_view_params() is called from FRACTINT.C whenever the 'v' key
+	get_view_params() is called whenever the 'v' key
 	is pressed.  Return codes are:
 		-1  routine was ESCAPEd - no need to re-generate the image.
 			0  minor variable changed.  No need to re-generate the image.
@@ -683,7 +683,7 @@ int get_view_params()
 }
 
 /*
-	get_command_string() is called from FRACTINT.C whenever the 'g' key
+	get_command_string() is called whenever the 'g' key
 	is pressed.  Return codes are:
 		-1  routine was ESCAPEd - no need to re-generate the image.
 			0  parameter changed, no need to regenerate

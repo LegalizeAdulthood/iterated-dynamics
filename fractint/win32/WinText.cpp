@@ -107,7 +107,7 @@ long FAR PASCAL WinText::proc(HANDLE, UINT, WPARAM, LPARAM);
 		but the application program hasn't officially closed the window yet.
 */
 
-LPCTSTR WinText::s_window_class = "FractIntText";
+LPCTSTR WinText::s_window_class = "IteratedDynamicsText";
 bool WinText::s_showing_cursor = false;
 WinText *WinText::s_me = 0;
 

@@ -5,7 +5,7 @@
 	get_video_mode should return with:
 		return code 0 for ok, -1 for error or cancelled by user
 		video parameters setup for the mainline, in the dos case this means
-		setting g_.InitialVideoMode to video mode, based on this fractint.c will set up
+		setting g_.InitialVideoMode to video mode, based on this will set up
 		for and call setvideomode
 		set view window on if file going to be loaded into a view smaller than
 		physical screen, in this case also set view reduction, view x dots,

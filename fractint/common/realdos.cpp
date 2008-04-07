@@ -542,7 +542,7 @@ top:
 			}
 		}
 	}
-	if (i == IDK_ESC)             // escape from menu exits Fractint
+	if (i == IDK_ESC)             // escape from menu exits
 	{
 		help_title();
 		driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
