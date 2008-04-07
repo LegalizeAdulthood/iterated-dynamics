@@ -1,4 +1,4 @@
-#ifndef FRACTYPE_H
+#if !defined(FRACTYPE_H)
 #define FRACTYPE_H
 
 // these are indices into prompts1.cpp:function_list

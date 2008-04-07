@@ -1,8 +1,3 @@
-/* lsys.h
- *      Header file for L-system code.
- *      Nicholas Wilt, 6/26/93.
- */
-
 #ifndef LSYS_H
 #define LSYS_H
 

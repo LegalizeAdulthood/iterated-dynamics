@@ -1415,6 +1415,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\helpcom.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\id.cpp"
 					>
 				</File>
@@ -1525,10 +1529,6 @@
 			</File>
 			<File
 				RelativePath=".\headers\fractype.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\helpcom.h"
 				>
 			</File>
 			<File
@@ -1891,7 +1891,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\common\helpcom.cpp"
+					RelativePath=".\headers\helpcom.h"
 					>
 				</File>
 				<File
