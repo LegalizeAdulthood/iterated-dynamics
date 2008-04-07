@@ -12,7 +12,7 @@
 #include "drivers.h"
 #include "EscapeTime.h"
 #include "Externals.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "Formula.h"
 #include "fracsubr.h"

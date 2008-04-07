@@ -15,7 +15,7 @@
 #include "EscapeTime.h"
 #include "evolve.h"
 #include "Externals.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "FiniteAttractor.h"
 #include "Formula.h"

@@ -8,7 +8,7 @@
 #include "calcfrac.h"
 #include "drivers.h"
 #include "EscapeTime.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "Formula.h"
 #include "fracsuba.h"

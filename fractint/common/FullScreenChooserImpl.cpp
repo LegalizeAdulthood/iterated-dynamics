@@ -1,4 +1,4 @@
-#include "fihelp.h"
+#include "idhelp.h"
 #include "FullScreenChooser.h"
 #include "miscres.h"
 #include "realdos.h"

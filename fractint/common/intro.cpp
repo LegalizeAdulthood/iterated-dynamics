@@ -14,7 +14,7 @@
 
 #include "AbstractInput.h"
 #include "drivers.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "intro.h"
 #include "realdos.h"
 #include "TextColors.h"

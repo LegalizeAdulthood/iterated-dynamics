@@ -15,7 +15,7 @@
 #include "drivers.h"
 #include "encoder.h"
 #include "Externals.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "gifview.h"
 #include "prompts2.h"

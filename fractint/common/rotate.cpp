@@ -15,7 +15,7 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "Externals.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "loadmap.h"
 #include "prompts1.h"

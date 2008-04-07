@@ -10,7 +10,7 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "FullScreenChooser.h"
 #include "miscres.h"

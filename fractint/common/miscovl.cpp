@@ -23,7 +23,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "FiniteAttractor.h"
 #include "fractalp.h"

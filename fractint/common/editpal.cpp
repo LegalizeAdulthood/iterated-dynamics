@@ -17,7 +17,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "editpal.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "prompts2.h"
 #include "realdos.h"

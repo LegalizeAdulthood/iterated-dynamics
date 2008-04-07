@@ -5,7 +5,7 @@
 #include "helpdefs.h"
 
 #include "drivers.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "intro.h"
 #include "realdos.h"
 

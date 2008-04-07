@@ -1524,15 +1524,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\headers\fimain.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\fractype.h"
 				>
 			</File>
 			<File
 				RelativePath=".\headers\id.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\idmain.h"
 				>
 			</File>
 			<File
@@ -1875,10 +1875,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\headers\fihelp.h"
-					>
-				</File>
-				<File
 					RelativePath=".\headers\FileNameGetter.h"
 					>
 				</File>
@@ -1892,6 +1888,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\helpcom.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\idhelp.h"
 					>
 				</File>
 				<File
