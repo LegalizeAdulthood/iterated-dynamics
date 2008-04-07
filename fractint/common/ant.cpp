@@ -18,7 +18,7 @@
 #include "AbstractInput.h"
 #include "ant.h"
 #include "drivers.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "fracsubr.h"
 #include "realdos.h"
 

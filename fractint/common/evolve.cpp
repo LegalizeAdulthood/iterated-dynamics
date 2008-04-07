@@ -9,7 +9,7 @@
 #include "calcfrac.h"
 #include "evolve.h"
 #include "Externals.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "fractalp.h"
 #include "history.h"
 #include "miscres.h"

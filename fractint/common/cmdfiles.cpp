@@ -21,7 +21,7 @@
 #include "drivers.h"
 #include "EnsureExtension.h"
 #include "Externals.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "fracsuba.h"
 #include "fracsubr.h"

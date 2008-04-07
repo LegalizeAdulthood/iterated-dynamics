@@ -10,7 +10,7 @@
 #include "drivers.h"
 #include "FileNameGetter.h"
 #include "filesystem.h"
-#include "fimain.h"
+#include "idmain.h"
 #include "FullScreenChooser.h"
 #include "prompts2.h"
 #include "realdos.h"

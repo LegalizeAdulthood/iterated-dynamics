@@ -23,7 +23,7 @@
 #include "helpdefs.h"
 
 #include "cmdfiles.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "FullScreenChooser.h"
 #include "loadfdos.h"
 #include "realdos.h"

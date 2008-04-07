@@ -20,7 +20,7 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "Externals.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "miscovl.h"
 #include "miscres.h"
 #include "realdos.h"

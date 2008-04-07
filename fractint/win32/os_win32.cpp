@@ -21,7 +21,7 @@
 #include "calcfrac.h"
 #include "diskvid.h"
 #include "drivers.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "mpmath.h"
 #include "prompts2.h"

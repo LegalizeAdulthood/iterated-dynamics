@@ -18,7 +18,7 @@
 #include "calcfrac.h"
 #include "diskvid.h"
 #include "drivers.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "miscres.h"
 #include "slideshw.h"
 #include "ZoomBox.h"

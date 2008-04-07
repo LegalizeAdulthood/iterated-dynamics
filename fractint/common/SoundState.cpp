@@ -13,7 +13,7 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "realdos.h"
 

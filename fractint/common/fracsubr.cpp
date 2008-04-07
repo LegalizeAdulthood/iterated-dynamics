@@ -21,7 +21,7 @@
 #include "calcfrac.h"
 #include "drivers.h"
 #include "Externals.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "fracsubr.h"
 #include "fractalb.h"
 #include "fractalp.h"

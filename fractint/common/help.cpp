@@ -14,7 +14,7 @@
 #include "strcpy.h"
 
 #include "drivers.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "miscres.h"
 #include "prompts1.h"

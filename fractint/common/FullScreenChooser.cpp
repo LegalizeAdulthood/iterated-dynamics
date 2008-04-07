@@ -5,7 +5,7 @@
 #include "id.h"
 
 #include "drivers.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "FullScreenChooser.h"
 #include "miscres.h"
 #include "realdos.h"

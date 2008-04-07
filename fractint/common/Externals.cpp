@@ -11,7 +11,7 @@
 #include "Externals.h"
 #include "fractals.h"
 #include "framain2.h"
-#include "fimain.h"
+#include "idmain.h"
 #include "gifview.h"
 #include "jiim.h"
 #include "line3d.h"

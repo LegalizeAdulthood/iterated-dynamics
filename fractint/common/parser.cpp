@@ -29,7 +29,7 @@
 #include "helpdefs.h"
 
 #include "drivers.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "fpu.h"
 #include "fractals.h"
