@@ -1,4 +1,4 @@
-#ifndef EXTERNS_H
+#if !defined(EXTERNS_H)
 #define EXTERNS_H
 
 #include <complex>

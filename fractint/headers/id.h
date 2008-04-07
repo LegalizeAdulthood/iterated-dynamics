@@ -1,5 +1,5 @@
-#ifndef FRACTINT_H
-#define FRACTINT_H
+#if !defined(ID_H)
+#define ID_H
 
 #include "port.h"
 

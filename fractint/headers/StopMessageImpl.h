@@ -1,4 +1,5 @@
-#pragma once
+#if !defined(STOP_MESSAGE_IMPL_H)
+#define STOP_MESSAGE_IMPL_H
 
 #include "drivers.h"
 #include "Externals.h"
@@ -43,3 +44,5 @@ private:
 	AbstractDriver *_driver;
 	Externals &_externs;
 };
+
+#endif
