@@ -25,10 +25,10 @@
 #include "miscres.h"
 #include "prompts1.h"
 #include "prompts2.h"
-#include "realdos.h"
 #include "resume.h"
 #include "slideshw.h"
 #include "stereo.h"
+#include "StopMessage.h"
 #include "TextColors.h"
 #include "zoom.h"
 

@@ -40,7 +40,7 @@
 
 #include "parser.h"
 #include "parsera.h"
-#include "realdos.h"
+#include "StopMessage.h"
 
 #include "Formula.h"
 

@@ -60,12 +60,20 @@ public:
 	}
 };
 
+typedef std::complex<double> StdComplexD;
 //typedef std::complex<double> ComplexD;
 //typedef std::complex<double> InitializedComplexD;
+
 typedef ComplexT<double> ComplexD;
 typedef InitializedComplexT<double> InitializedComplexD;
 typedef ComplexT<long> ComplexL;
 typedef HyperComplexT<double> HyperComplexD;
+
+inline void Assign(StdComplexD &left, ComplexD const &right)
+{
+	left.real(right.real());
+	left.imag(right.imag());
+}
 
 inline double FudgeToDouble(long x)
 {

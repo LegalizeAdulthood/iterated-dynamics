@@ -27,6 +27,8 @@
 #include "FullScreenChooser.h"
 #include "loadfdos.h"
 #include "realdos.h"
+#include "StopMessage.h"
+#include "VideoModeKeyName.h"
 #include "ViewWindow.h"
 
 // routines in this module

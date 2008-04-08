@@ -15,7 +15,7 @@
 #include "drivers.h"
 #include "idhelp.h"
 #include "filesystem.h"
-#include "realdos.h"
+#include "StopMessage.h"
 
 #include "SoundState.h"
 #include "CommandParser.h"

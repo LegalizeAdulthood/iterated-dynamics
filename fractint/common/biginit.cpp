@@ -13,7 +13,7 @@
 #include "Externals.h"
 #include "fractalp.h"
 #include "prompts2.h"
-#include "realdos.h"
+#include "StopMessage.h"
 
 // globals
 int g_step_bn = 0;

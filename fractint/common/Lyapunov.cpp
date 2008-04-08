@@ -11,7 +11,7 @@
 #include "drivers.h"
 #include "Externals.h"
 #include "fractals.h"
-#include "realdos.h"
+#include "StopMessage.h"
 
 // data local to this module
 static int s_lyapunov_length;

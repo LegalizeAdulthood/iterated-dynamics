@@ -58,6 +58,7 @@
 #include "miscfrac.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "StopMessage.h"
 #include "TextColors.h"
 #include "ViewWindow.h"
 

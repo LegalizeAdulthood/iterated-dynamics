@@ -15,6 +15,7 @@
 #include "drivers.h"
 #include "diskvid.h"
 #include "realdos.h"
+#include "StopMessage.h"
 #include "TextColors.h"
 
 enum

@@ -22,6 +22,7 @@
 #include "realdos.h"
 #include "rotate.h"
 #include "stereo.h"
+#include "StopMessage.h"
 #include "UIChoices.h"
 
 std::string g_stereo_map_name = "";
