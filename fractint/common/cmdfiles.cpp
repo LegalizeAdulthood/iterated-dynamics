@@ -37,6 +37,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "slideshw.h"
+#include "StopMessage.h"
 #include "TextColors.h"
 
 #include "CommandParser.h"

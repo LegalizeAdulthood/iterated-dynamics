@@ -15,8 +15,8 @@
 #include "Formula.h"
 #include "MathUtil.h"
 #include "mpmath.h"
-#include "realdos.h"
 #include "resume.h"
+#include "StopMessage.h"
 
 // for bifurcation type:
 static long const DEFAULT_FILTER = 1000;

@@ -38,7 +38,7 @@
 #include "mpmath.h"
 #include "parser.h"
 #include "prompts2.h"
-#include "realdos.h"
+#include "StopMessage.h"
 
 #include "Formula.h"
 #include "MathUtil.h"

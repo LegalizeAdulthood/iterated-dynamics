@@ -16,6 +16,8 @@
 #include "Externals.h"
 #include "realdos.h"
 #include "slideshw.h"
+#include "StopMessage.h"
+#include "VideoModeKeyName.h"
 
 bool g_busy = false;
 

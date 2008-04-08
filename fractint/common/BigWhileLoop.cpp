@@ -33,9 +33,9 @@
 #include "miscres.h"
 #include "prompts1.h"
 #include "prompts2.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "stereo.h"
+#include "StopMessage.h"
 #include "zoom.h"
 #include "ZoomBox.h"
 

@@ -20,6 +20,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "StopMessage.h"
 #include "TextColors.h"
 
 enum

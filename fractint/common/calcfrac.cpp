@@ -52,11 +52,11 @@
 #include "miscres.h"
 #include "mpmath.h"
 #include "prompts2.h"
-#include "realdos.h"
 #include "resume.h"
 #include "soi.h"
 #include "SolidGuess.h"
 #include "SoundState.h"
+#include "StopMessage.h"
 #include "Tesseral.h"
 #include "WorkList.h"
 
@@ -138,8 +138,8 @@ int g_current_col;
 bool g_three_pass;
 bool g_next_screen_flag; // for cellular next screen generation
 int     g_num_attractors;                 // number of finite attractors
-ComplexD  g_attractors[MAX_NUM_ATTRACTORS];       // finite attractor vals (f.p)
-ComplexL g_attractors_l[MAX_NUM_ATTRACTORS];      // finite attractor vals (int)
+StdComplexD g_attractors[MAX_NUM_ATTRACTORS];		// finite attractor vals (f.p)
+ComplexL g_attractors_l[MAX_NUM_ATTRACTORS];		// finite attractor vals (int)
 int    g_attractor_period[MAX_NUM_ATTRACTORS];          // period of the finite attractor
 int g_periodicity_check;
 // next has a skip bit for each s_max_block unit;

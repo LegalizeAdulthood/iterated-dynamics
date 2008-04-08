@@ -34,6 +34,7 @@
 #include "realdos.h"
 #include "rotate.h"
 #include "stereo.h"
+#include "StopMessage.h"
 #include "zoom.h"
 #include "ZoomBox.h"
 

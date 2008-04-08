@@ -1,9 +1,10 @@
 #if !defined(REAL_DOS_H)
 #define REAL_DOS_H
 
-#include "StopMessage.h"
-#include "strncasecmp.h"
-#include "VideoModeKeyName.h"
+#include <string>
+//#include "StopMessage.h"
+//#include "strncasecmp.h"
+//#include "VideoModeKeyName.h"
 
 extern int text_temp_message(char const *message);
 extern int text_temp_message(const std::string &message);

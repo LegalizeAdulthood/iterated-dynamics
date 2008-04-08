@@ -11,7 +11,7 @@
 #include "filesystem.h"
 #include "line3d.h"
 #include "prompts2.h"
-#include "realdos.h"
+#include "StopMessage.h"
 
 // Memory allocation routines.
 

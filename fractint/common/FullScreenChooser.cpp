@@ -8,7 +8,7 @@
 #include "idhelp.h"
 #include "FullScreenChooser.h"
 #include "miscres.h"
-#include "realdos.h"
+#include "strncasecmp.h"
 #include "TextColors.h"
 
 int AbstractFullScreenChooser::prompt_color(int attributes)

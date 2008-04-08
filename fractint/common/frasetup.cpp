@@ -159,8 +159,8 @@ bool mandelbrot_setup_fp()
 		break;
 	case FRACTYPE_MAGNET_1M:
 	case FRACTYPE_MAGNET_2M:
-		g_attractors[0].real(1.0);      // 1.0 + 0.0i always attracts
-		g_attractors[0].imag(0.0);      // - both MAGNET1 and MAGNET2
+		// 1.0 + 0.0i always attracts - both MAGNET1 and MAGNET2
+		g_attractors[0] = StdComplexD(1.0, 0.0);
 		g_attractor_period[0] = 1;
 		g_num_attractors = 1;
 		break;
@@ -290,8 +290,8 @@ bool julia_setup_fp()
 	case FRACTYPE_MAGNET_2J:
 		magnet2_precalculate_fp();
 	case FRACTYPE_MAGNET_1J:
-		g_attractors[0].real(1.0);      // 1.0 + 0.0i always attracts
-		g_attractors[0].imag(0.0);      // - both MAGNET1 and MAGNET2
+		// 1.0 + 0.0i always attracts - both MAGNET1 and MAGNET2
+		g_attractors[0] = StdComplexD(1.0, 0.0);
 		g_attractor_period[0] = 1;
 		g_num_attractors = 1;
 		get_julia_attractor(0.0, 0.0);   // another attractor?
