@@ -1299,7 +1299,7 @@ int dynamic_orbit_fp(double *x, double *y, double *z)
 	double newy;
 	cp.real(s_b* *x);
 	cp.imag(0);
-	CMPLXtrig0(cp, tmp);
+	tmp = CMPLXtrig0(cp);
 	newy = *y + s_dt*std::sin(*x + s_a*tmp.real());
 	if (s_use_euler_approximation)
 	{
@@ -1308,7 +1308,7 @@ int dynamic_orbit_fp(double *x, double *y, double *z)
 
 	cp.real(s_b* *y);
 	cp.imag(0);
-	CMPLXtrig0(cp, tmp);
+	tmp = CMPLXtrig0(cp);
 	newx = *x - s_dt*std::sin(*y + s_a*tmp.real());
 	*x = newx;
 	*y = newy;
@@ -1375,21 +1375,21 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 // *x = sin(yold*PAR_B) + PAR_C*sin(xold*PAR_B);
 	g_old_z.real(yold*g_parameters[P1_IMAG]);
 	g_old_z.imag(0);          // old = (y*B) + 0i (in the complex)
-	CMPLXtrig0(g_old_z, g_new_z);
+	g_new_z = CMPLXtrig0(g_old_z);
 	tmp = double(g_new_z.real());
 	g_old_z.real(xold*g_parameters[P1_IMAG]);
 	g_old_z.imag(0);          // old = (x*B) + 0i
-	CMPLXtrig1(g_old_z, g_new_z);
+	g_new_z = CMPLXtrig1(g_old_z);
 	*x = g_parameters[P2_REAL]*g_new_z.real() + tmp;
 
 // *y = sin(xold*PAR_A) + PAR_D*sin(yold*PAR_A);
 	g_old_z.real(xold*g_parameters[P1_REAL]);
 	g_old_z.imag(0);          // old = (y*A) + 0i (in the complex)
-	CMPLXtrig2(g_old_z, g_new_z);
+	g_new_z = CMPLXtrig2(g_old_z);
 	tmp = double(g_new_z.real());
 	g_old_z.real(yold*g_parameters[P1_REAL]);
 	g_old_z.imag(0);          // old = (x*B) + 0i
-	CMPLXtrig3(g_old_z, g_new_z);
+	g_new_z = CMPLXtrig3(g_old_z);
 	*y = g_parameters[P2_IMAG]*g_new_z.real() + tmp;
 
 	return 0;

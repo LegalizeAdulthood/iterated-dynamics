@@ -203,7 +203,7 @@ int bifurcation_verhulst_trig_fp()
 {
 	g_temp_z.real(s_population);
 	g_temp_z.imag(0);
-	CMPLXtrig0(g_temp_z, g_temp_z);
+	g_temp_z = CMPLXtrig0(g_temp_z);
 	s_population += s_rate*g_temp_z.real()*(1 - g_temp_z.real());
 	return std::abs(s_population) > BIG;
 }
@@ -224,7 +224,7 @@ int bifurcation_stewart_trig_fp()
 {
 	g_temp_z.real(s_population);
 	g_temp_z.imag(0);
-	CMPLXtrig0(g_temp_z, g_temp_z);
+	g_temp_z = CMPLXtrig0(g_temp_z);
 	s_population = (s_rate*g_temp_z.real()*g_temp_z.real()) - 1.0;
 	return std::abs(s_population) > BIG;
 }
@@ -246,7 +246,7 @@ int bifurcation_set_trig_pi_fp()
 {
 	g_temp_z.real(s_population*MathUtil::Pi);
 	g_temp_z.imag(0);
-	CMPLXtrig0(g_temp_z, g_temp_z);
+	g_temp_z = CMPLXtrig0(g_temp_z);
 	s_population = s_rate*g_temp_z.real();
 	return std::abs(s_population) > BIG;
 }
@@ -266,7 +266,7 @@ int bifurcation_add_trig_pi_fp()
 {
 	g_temp_z.real(s_population*MathUtil::Pi);
 	g_temp_z.imag(0);
-	CMPLXtrig0(g_temp_z, g_temp_z);
+	g_temp_z = CMPLXtrig0(g_temp_z);
 	s_population += s_rate*g_temp_z.real();
 	return std::abs(s_population) > BIG;
 }
@@ -287,7 +287,7 @@ int bifurcation_lambda_trig_fp()
 	// s_population = s_rate*fn(s_population)*(1 - fn(s_population))
 	g_temp_z.real(s_population);
 	g_temp_z.imag(0);
-	CMPLXtrig0(g_temp_z, g_temp_z);
+	g_temp_z = CMPLXtrig0(g_temp_z);
 	s_population = s_rate*g_temp_z.real()*(1 - g_temp_z.real());
 	return std::abs(s_population) > BIG;
 }
