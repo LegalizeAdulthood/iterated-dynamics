@@ -99,10 +99,10 @@ int Halley::orbit()
 	XtoAlessOne = g_old_z;
 	for (ihal = 2; ihal < g_degree; ihal++)
 	{
-		FPUcplxmul(&g_old_z, &XtoAlessOne, &XtoAlessOne);
+		XtoAlessOne = g_old_z*XtoAlessOne;
 	}
-	FPUcplxmul(&g_old_z, &XtoAlessOne, &XtoA);
-	FPUcplxmul(&g_old_z, &XtoA, &XtoAplusOne);
+	XtoA = g_old_z*XtoAlessOne;
+	XtoAplusOne = g_old_z*XtoA;
 
 	CMPLXsub(XtoAplusOne, g_old_z, FX);        // FX = X^(a + 1) - X = F
 	F2prime.real(m_a_plus_1_degree*XtoAlessOne.real()); // g_a_plus_1_degree in setup
@@ -111,7 +111,7 @@ int Halley::orbit()
 	F1prime.real(m_a_plus_1*XtoA.real() - 1.0);
 	F1prime.imag(m_a_plus_1*XtoA.imag());                             // F'
 
-	FPUcplxmul(&F2prime, &FX, &Halnumer1);                  // F*F"
+	Halnumer1 = F2prime*FX;                  // F*F"
 	Haldenom.real(F1prime.real() + F1prime.real());
 	Haldenom.imag(F1prime.imag() + F1prime.imag());                     // 2*F'
 
@@ -123,7 +123,7 @@ int Halley::orbit()
 	// new.imag(g_old_z.imag() - (g_parameter.imag()*Halnumer2.imag()));
 	relax.real(g_parameter.imag());
 	relax.imag(g_parameters[P2_IMAG]);
-	FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
+	Halnumer2 = relax*Halnumer2;
 	g_new_z.real(g_old_z.real() - Halnumer2.real());
 	g_new_z.imag(g_old_z.imag() - Halnumer2.imag());
 	return bail_out();

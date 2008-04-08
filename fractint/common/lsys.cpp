@@ -620,15 +620,9 @@ static void lsysi_exclamation(lsys_turtle_state_l *cmd)
 
 static void lsysi_size_dm(lsys_turtle_state_l *cmd)
 {
-	double angle = double(cmd->realangle)*ANGLE2DOUBLE;
-	double s;
-	double c;
-	long fixedsin;
-	long fixedcos;
-
-	FPUsincos(angle, &s, &c);
-	fixedsin = long(s*FIXEDLT1);
-	fixedcos = long(c*FIXEDLT1);
+	double const angle = double(cmd->realangle)*ANGLE2DOUBLE;
+	long fixedsin = long(sin(angle)*FIXEDLT1);
+	long fixedcos = long(cos(angle)*FIXEDLT1);
 
 	cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
@@ -677,20 +671,11 @@ static void lsysi_size_gf(lsys_turtle_state_l *cmd)
 
 static void lsysi_draw_d(lsys_turtle_state_l *cmd)
 {
-	double angle = double(cmd->realangle)*ANGLE2DOUBLE;
-	double s;
-	double c;
-	long fixedsin;
-	long fixedcos;
-	int lastx;
-	int lasty;
-
-	FPUsincos(angle, &s, &c);
-	fixedsin = long(s*FIXEDLT1);
-	fixedcos = long(c*FIXEDLT1);
-
-	lastx = int(cmd->xpos >> 19);
-	lasty = int(cmd->ypos >> 19);
+	double const angle = double(cmd->realangle)*ANGLE2DOUBLE;
+	long const fixedsin = long(sin(angle)*FIXEDLT1);
+	long const fixedcos = long(cos(angle)*FIXEDLT1);
+	int const lastx = int(cmd->xpos >> 19);
+	int const lasty = int(cmd->ypos >> 19);
 	cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
 	driver_draw_line(lastx, lasty, int(cmd->xpos >> 19), int(cmd->ypos >> 19), cmd->curcolor);
@@ -698,16 +683,9 @@ static void lsysi_draw_d(lsys_turtle_state_l *cmd)
 
 static void lsysi_draw_m(lsys_turtle_state_l *cmd)
 {
-	double angle = double(cmd->realangle)*ANGLE2DOUBLE;
-	double s;
-	double c;
-	long fixedsin;
-	long fixedcos;
-
-	FPUsincos(angle, &s, &c);
-	fixedsin = long(s*FIXEDLT1);
-	fixedcos = long(c*FIXEDLT1);
-
+	double const angle = double(cmd->realangle)*ANGLE2DOUBLE;
+	long const fixedsin = long(sin(angle)*FIXEDLT1);
+	long const fixedcos = long(cos(angle)*FIXEDLT1);
 	cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
 }
@@ -1130,10 +1108,7 @@ static void lsysi_sin_cos()
 	for (int i = 0; i < g_max_angle; i++)
 	{
 		double twopimaxi = i*twopimax;
-		double s;
-		double c;
-		FPUsincos(twopimaxi, &s, &c);
-		s_sins[i] = long(s*FIXEDLT1);
-		s_coss[i] = long((locaspect*c)*FIXEDLT1);
+		s_sins[i] = long(sin(twopimaxi)*FIXEDLT1);
+		s_coss[i] = long((locaspect*cos(twopimaxi))*FIXEDLT1);
 	}
 }

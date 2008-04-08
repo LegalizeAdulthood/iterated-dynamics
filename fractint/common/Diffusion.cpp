@@ -49,8 +49,6 @@ int diffusion()
 	int colorcount;
 	int currentcolor;
 	int i;
-	double cosine;
-	double sine;
 	double angle;
 	int x;
 	int y;
@@ -170,9 +168,8 @@ int diffusion()
 		{
 		case DIFFUSION_CENTRAL: // Release new point on a circle inside the box
 			angle = 2*double(rand())/(RAND_MAX/MathUtil::Pi);
-			FPUsincos(angle, &sine, &cosine);
-			x = int(cosine*(x_max-x_min) + g_x_dots);
-			y = int(sine  *(y_max-y_min) + g_y_dots);
+			x = int(cos(angle)*(x_max-x_min) + g_x_dots);
+			y = int(sin(angle)*(y_max-y_min) + g_y_dots);
 			x /= 2;
 			y /= 2;
 			break;
@@ -184,9 +181,8 @@ int diffusion()
 			// Release new point on a circle inside the box with radius
 			// given by the radius variable
 			angle = 2*double(rand())/(RAND_MAX/MathUtil::Pi);
-			FPUsincos(angle, &sine, &cosine);
-			x = int(cosine*radius + g_x_dots);
-			y = int(sine  *radius + g_y_dots);
+			x = int(cos(angle)*radius + g_x_dots);
+			y = int(sin(angle)*radius + g_y_dots);
 			x /= 2;
 			y /= 2;
 			break;

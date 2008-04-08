@@ -2739,12 +2739,12 @@ static int potential(double mag, long iterations)
 		}
 		else
 		{
-			 // pot = log(mag)/pow(2.0, double(pot));
+			// pot = log(mag)/pow(2.0, double(pot));
 			if (potential_l < 120 && !g_float_flag) // empirically determined limit of fShift
 			{
 				f_mag = float(mag);
 				fLog14(f_mag, f_tmp); // this SHOULD be non-negative
-				fShift(f_tmp, char(-potential_l), pot);
+				fShift(f_tmp, -potential_l, pot);
 			}
 			else
 			{
