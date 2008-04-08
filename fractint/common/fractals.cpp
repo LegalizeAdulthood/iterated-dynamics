@@ -243,11 +243,11 @@ inline long TRIG_ARG_L(long x)
 // Raise complex number (base) to the (exp) power, storing the result
 // in complex (result).
 //
-void complex_power(ComplexD const *base, int exp, ComplexD *result)
+void pow(ComplexD const *base, int exp, ComplexD *result)
 {
 	if (exp < 0)
 	{
-		complex_power(base, -exp, result);
+		pow(base, -exp, result);
 		CMPLXrecip(*result, *result);
 		return;
 	}
@@ -762,7 +762,7 @@ int mandel4_orbit_fp()
 
 int z_to_z_plus_z_orbit_fp()
 {
-	complex_power(&g_old_z, int(g_parameters[P2_REAL]), &g_new_z);
+	pow(&g_old_z, int(g_parameters[P2_REAL]), &g_new_z);
 	g_old_z = std::pow(g_old_z, g_old_z);
 	g_new_z.real(g_new_z.real() + g_old_z.real() +g_float_parameter->real());
 	g_new_z.imag(g_new_z.imag() + g_old_z.imag() +g_float_parameter->imag());
@@ -808,7 +808,7 @@ int complex_z_power_orbit()
 
 int z_power_orbit_fp()
 {
-	complex_power(&g_old_z, g_c_exp, &g_new_z);
+	pow(&g_old_z, g_c_exp, &g_new_z);
 	g_new_z.real(g_new_z.real() + g_float_parameter->real());
 	g_new_z.imag(g_new_z.imag() + g_float_parameter->imag());
 	return g_externs.BailOutFp();
@@ -2459,7 +2459,7 @@ int marks_mandelbrot_per_pixel_fp()
 
 	if (g_c_exp > 3)
 	{
-		complex_power(g_old_z, g_c_exp-1, g_coefficient);
+		pow(g_old_z, g_c_exp-1, g_coefficient);
 	}
 	else if (g_c_exp == 3)
 	{
