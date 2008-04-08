@@ -139,7 +139,7 @@ bool g_three_pass;
 bool g_next_screen_flag; // for cellular next screen generation
 int     g_num_attractors;                 // number of finite attractors
 StdComplexD g_attractors[MAX_NUM_ATTRACTORS];		// finite attractor vals (f.p)
-ComplexL g_attractors_l[MAX_NUM_ATTRACTORS];		// finite attractor vals (int)
+StdComplexL g_attractors_l[MAX_NUM_ATTRACTORS];		// finite attractor vals (int)
 int    g_attractor_period[MAX_NUM_ATTRACTORS];          // period of the finite attractor
 int g_periodicity_check;
 // next has a skip bit for each s_max_block unit;
