@@ -19,12 +19,6 @@
      Waterbury, CT 06704
      (203) 754-1162
 
-     Notes below document changes to Mark's original file:
-
-     Date       Change                                    Changer
-     ============================================================
-     07-16-89 - Added sqrt define per Mark's suggestion   TIW
-     07-26-89 - Added documentation and complex support   MCP
 */
 
 /*****************

@@ -11,7 +11,6 @@ extern ComplexD PopFloat();
 extern ComplexL DeQueueLong();
 extern ComplexD DeQueueFloat();
 extern ComplexL ComplexSqrtLong(long,  long);
-extern ComplexD ComplexSqrtFloat(double, double);
 extern bool Init_Queue(unsigned long request);
 extern void   Free_Queue();
 extern int    QueueEmpty();

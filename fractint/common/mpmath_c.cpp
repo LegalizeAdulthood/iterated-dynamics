@@ -27,60 +27,31 @@
 
 // returns x^y
 namespace std {
-ComplexD pow(ComplexD const &xx, ComplexD const &yy)
+// x^y
+ComplexD pow(ComplexD const &x, ComplexD const &y)
 {
-	ComplexD z;
-	ComplexD cLog;
-	ComplexD t;
-
-	/* fixes power bug - if any complaints, backwards compatibility hook
-		goes here TIW 3/95 */
-	if (!g_use_old_complex_power)
+	if (x.real() == 0 && x.imag() == 0)
 	{
-		if (xx.real() == 0 && xx.imag() == 0)
-		{
-			z.real(0.0);
-			z.imag(0.0);
-			return z;
-		}
+		return MakeComplexT(0.0);
 	}
 
-	// exp(log(xx)*yy)
-	cLog = FPUcplxlog(xx);
-	t = cLog*yy;
+	// exp(log(x)*y)
+	ComplexD cLog = FPUcplxlog(x);
+	ComplexD t = cLog*y;
+	ComplexD z;
 	FPUcplxexp387(&t, &z);
 	return z;
 }
 }
 
-inline void Sqrtz(ComplexD z, ComplexD *rz)
-{
-	(*(rz) = ComplexSqrtFloat(z.real(), z.imag()));
-}
-
-// rz=Arcsin(z)=-i*Log{i*z + sqrt(1-z*z)}
-ComplexD Arcsinz(ComplexD z)
-{
-	ComplexD tempz1 = 1.0 - z*z;
-	tempz1.real(1 - tempz1.real());
-	tempz1.imag(-tempz1.imag());			// tempz1 = 1 - tempz1
-	Sqrtz(tempz1, &tempz1);
-
-	ComplexD tempz2 = MakeComplexT(-z.imag(), z.real()); // tempz2 = i*z
-	tempz1 = tempz1 + tempz2;				// tempz1 += tempz2
-	tempz1 = FPUcplxlog(tempz1);
-	return MakeComplexT(tempz1.imag(), -tempz1.real());           // rz = (-i)*tempz1
-}
-
-
-// rz=Arccos(z)=-i*Log{z + sqrt(z*z-1)}
+// rz = Arccos(z) = -i*Log(z + sqrt(z*z-1))
 void Arccosz(ComplexD z, ComplexD *rz)
 {
 	ComplexD temp;
 
 	temp = z*z;
 	temp.real(temp.real() - 1);
-	Sqrtz(temp, &temp);
+	temp = sqrt(temp);
 
 	temp.real(temp.real() + z.real());
 	temp.imag(temp.imag() + z.imag());
@@ -90,25 +61,13 @@ void Arccosz(ComplexD z, ComplexD *rz)
 	rz->imag(-temp.real());              // rz = (-i)*tempz1
 }
 
-void Arcsinhz(ComplexD z, ComplexD *rz)
-{
-	ComplexD temp;
-
-	temp = z*z;
-	temp.real(temp.real() + 1);                                 // temp = temp + 1
-	Sqrtz(temp, &temp);
-	temp.real(temp.real() + z.real());
-	temp.imag(temp.imag() + z.imag());                // temp = z + temp
-	*rz = FPUcplxlog(temp);
-}
-
 // rz=Arccosh(z)=Log(z + sqrt(z*z-1)}
 void Arccoshz(ComplexD z, ComplexD *rz)
 {
 	ComplexD tempz;
 	tempz = z*z;
 	tempz.real(tempz.real() - 1);                              // tempz = tempz - 1
-	Sqrtz(tempz, &tempz);
+	tempz = sqrt(tempz);
 	tempz.real(z.real() + tempz.real());
 	tempz.imag(z.imag() + tempz.imag());  // tempz = z + tempz
 	*rz = FPUcplxlog(tempz);
