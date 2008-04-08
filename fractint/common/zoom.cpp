@@ -95,8 +95,8 @@ void zoom_box_draw(bool drawit)
 		bffxadj   = alloc_stack(g_rbf_length + 2);
 	}
 	ftemp1 = MathUtil::Pi*g_z_rotate/72; // convert to radians
-	rotcos = cos(ftemp1);   // sin & cos of rotation
-	rotsin = sin(ftemp1);
+	rotcos = std::cos(ftemp1);   // sin & cos of rotation
+	rotsin = std::sin(ftemp1);
 
 	// do some calcs just once here to reduce fp work a bit
 	fxwidth = g_sx_max-g_sx_3rd;

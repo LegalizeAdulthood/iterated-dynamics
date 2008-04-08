@@ -437,7 +437,7 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 	g_viewWindow.SetFromVideoEntry();
 
 	if (g_make_par_flag && !g_fast_restore && !g_initialize_batch &&
-		(fabs(g_viewWindow.AspectRatio() - g_screen_aspect_ratio) > .00001 || g_viewWindow.Width() != 0))
+		(std::abs(g_viewWindow.AspectRatio() - g_screen_aspect_ratio) > .00001 || g_viewWindow.Width() != 0))
 	{
 		stop_message(STOPMSG_NO_BUZZER,
 			"Warning: <V>iew parameters are being set to non-standard values.\n"

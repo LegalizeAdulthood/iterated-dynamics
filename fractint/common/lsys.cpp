@@ -621,8 +621,8 @@ static void lsysi_exclamation(lsys_turtle_state_l *cmd)
 static void lsysi_size_dm(lsys_turtle_state_l *cmd)
 {
 	double const angle = double(cmd->realangle)*ANGLE2DOUBLE;
-	long fixedsin = long(sin(angle)*FIXEDLT1);
-	long fixedcos = long(cos(angle)*FIXEDLT1);
+	long fixedsin = long(std::sin(angle)*FIXEDLT1);
+	long fixedcos = long(std::cos(angle)*FIXEDLT1);
 
 	cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
@@ -672,8 +672,8 @@ static void lsysi_size_gf(lsys_turtle_state_l *cmd)
 static void lsysi_draw_d(lsys_turtle_state_l *cmd)
 {
 	double const angle = double(cmd->realangle)*ANGLE2DOUBLE;
-	long const fixedsin = long(sin(angle)*FIXEDLT1);
-	long const fixedcos = long(cos(angle)*FIXEDLT1);
+	long const fixedsin = long(std::sin(angle)*FIXEDLT1);
+	long const fixedcos = long(std::cos(angle)*FIXEDLT1);
 	int const lastx = int(cmd->xpos >> 19);
 	int const lasty = int(cmd->ypos >> 19);
 	cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
@@ -684,8 +684,8 @@ static void lsysi_draw_d(lsys_turtle_state_l *cmd)
 static void lsysi_draw_m(lsys_turtle_state_l *cmd)
 {
 	double const angle = double(cmd->realangle)*ANGLE2DOUBLE;
-	long const fixedsin = long(sin(angle)*FIXEDLT1);
-	long const fixedcos = long(cos(angle)*FIXEDLT1);
+	long const fixedsin = long(std::sin(angle)*FIXEDLT1);
+	long const fixedcos = long(std::cos(angle)*FIXEDLT1);
 	cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
 }
@@ -1108,7 +1108,7 @@ static void lsysi_sin_cos()
 	for (int i = 0; i < g_max_angle; i++)
 	{
 		double twopimaxi = i*twopimax;
-		s_sins[i] = long(sin(twopimaxi)*FIXEDLT1);
-		s_coss[i] = long((locaspect*cos(twopimaxi))*FIXEDLT1);
+		s_sins[i] = long(std::sin(twopimaxi)*FIXEDLT1);
+		s_coss[i] = long((locaspect*std::cos(twopimaxi))*FIXEDLT1);
 	}
 }

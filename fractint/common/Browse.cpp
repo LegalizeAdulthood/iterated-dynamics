@@ -606,7 +606,7 @@ static bool functions_match(const fractal_info &info, int num_functions)
 
 static bool epsilon_equal(double x, double y, double epsilon = 0.001)
 {
-	return fabs(x - y) < epsilon;
+	return std::abs(x - y) < epsilon;
 }
 
 static bool parameters_match(const fractal_info &info)

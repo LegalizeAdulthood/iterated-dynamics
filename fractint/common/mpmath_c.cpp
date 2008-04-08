@@ -25,7 +25,9 @@
 #include "jiim.h"
 #include "mpmath.h"
 
-ComplexD ComplexPower(ComplexD const &xx, ComplexD const &yy)
+// returns x^y
+namespace std {
+ComplexD pow(ComplexD const &xx, ComplexD const &yy)
 {
 	ComplexD z;
 	ComplexD cLog;
@@ -43,10 +45,12 @@ ComplexD ComplexPower(ComplexD const &xx, ComplexD const &yy)
 		}
 	}
 
+	// exp(log(xx)*yy)
 	FPUcplxlog(&xx, &cLog);
 	t = cLog*yy;
 	FPUcplxexp387(&t, &z);
 	return z;
+}
 }
 
 inline void Sqrtz(ComplexD z, ComplexD *rz)
@@ -126,18 +130,18 @@ void Arctanhz(ComplexD z, ComplexD *rz)
 	if (z.real() == 0.0)
 	{
 		rz->real(0);
-		rz->imag(atan(z.imag()));
+		rz->imag(std::atan(z.imag()));
 		return;
 	}
 	else
 	{
-		if (fabs(z.real()) == 1.0 && z.imag() == 0.0)
+		if (std::abs(z.real()) == 1.0 && z.imag() == 0.0)
 		{
 			return;
 		}
-		else if (fabs(z.real()) < 1.0 && z.imag() == 0.0)
+		else if (std::abs(z.real()) < 1.0 && z.imag() == 0.0)
 		{
-			rz->real(log((1 + z.real())/(1-z.real()))/2);
+			rz->real(std::log((1 + z.real())/(1-z.real()))/2);
 			rz->imag(0);
 			return;
 		}
@@ -170,7 +174,7 @@ void Arctanz(ComplexD z, ComplexD *rz)
 	}
 	else if (z.real() != 0.0 && z.imag() == 0.0)
 	{
-		rz->real(atan(z.real()));
+		rz->real(std::atan(z.real()));
 		rz->imag(0);
 	}
 	else if (z.real() == 0.0 && z.imag() != 0.0)
@@ -263,7 +267,7 @@ ComplexL ComplexSqrtLong(long x, long y)
 #else
 	maglong   = lsqrt(lsqrt(multiply(x, x, g_bit_shift) + multiply(y, y, g_bit_shift)));
 #endif
-	theta     = atan2(FudgeToDouble(y), FudgeToDouble(x))/2;
+	theta     = std::atan2(FudgeToDouble(y), FudgeToDouble(x))/2;
 	thetalong = long(theta*SinCosFudge);
 	long sinTheta, cosTheta;
 	SinCos086(thetalong, &sinTheta, &cosTheta);
@@ -286,9 +290,9 @@ ComplexD ComplexSqrtFloat(double x, double y)
 	else
 	{
 		mag   = sqrt(sqrt(x*x + y*y));
-		theta = atan2(y, x)/2;
-		result.real(cos(theta)*mag);
-		result.imag(sin(theta)*mag);
+		theta = std::atan2(y, x)/2;
+		result.real(std::cos(theta)*mag);
+		result.imag(std::sin(theta)*mag);
 	}
 	return result;
 }
@@ -322,11 +326,11 @@ void SetupLogTable()
 			{
 				lf = g_max_log_table_size - 1;
 			}
-			mlf = (g_colors - (lf ? 2 : 1 ))/log(double(g_max_log_table_size - lf));
+			mlf = (g_colors - (lf ? 2 : 1 ))/std::log(double(g_max_log_table_size - lf));
 		}
 		else if (g_log_palette_mode == LOGPALETTE_OLD)  // old log function
 		{
-			mlf = (g_colors - 1)/log(double(g_max_log_table_size));
+			mlf = (g_colors - 1)/std::log(double(g_max_log_table_size));
 		}
 		else if (g_log_palette_mode <= -2)  // sqrt function
 		{
@@ -371,18 +375,18 @@ long logtablecalc(long citer)
 		{
 			ret = 1;
 		}
-		else if ((citer - lf)/log(double(citer - lf)) <= mlf)
+		else if ((citer - lf)/std::log(double(citer - lf)) <= mlf)
 		{
 			ret = long(citer - lf);
 		}
 		else
 		{
-			ret = long(mlf*log(double(citer - lf))) + 1;
+			ret = long(mlf*std::log(double(citer - lf))) + 1;
 		}
 	}
 	else if (g_log_palette_mode == LOGPALETTE_OLD)  // old log function
 	{
-		ret = (citer == 0) ? 1 : long(mlf*log(double(citer))) + 1;
+		ret = (citer == 0) ? 1 : long(mlf*std::log(double(citer))) + 1;
 	}
 	else if (g_log_palette_mode <= -2)  // sqrt function
 	{
@@ -420,14 +424,14 @@ int complex_basin()
 	cd1.real(g_c_degree.real() - 1.0);
 	cd1.imag(g_c_degree.imag());
 
-	temp = ComplexPower(g_old_z, cd1);
+	temp = std::pow(g_old_z, cd1);
 	g_new_z = temp*g_old_z;
 
 	g_temp_z.real(g_new_z.real() - g_c_root.real());
 	g_temp_z.imag(g_new_z.imag() - g_c_root.imag());
 	if ((sqr(g_temp_z.real()) + sqr(g_temp_z.imag())) < g_threshold)
 	{
-		if (fabs(g_old_z.imag()) < .01)
+		if (std::abs(g_old_z.imag()) < .01)
 		{
 			g_old_z.imag(0.0);
 		}
@@ -435,7 +439,7 @@ int complex_basin()
 		g_temp_z = temp*g_c_degree;
 		mod = g_temp_z.imag()/TwoPi;
 		g_color_iter = long(mod);
-		if (fabs(mod - g_color_iter) > 0.5)
+		if (std::abs(mod - g_color_iter) > 0.5)
 		{
 			if (mod < 0.0)
 			{

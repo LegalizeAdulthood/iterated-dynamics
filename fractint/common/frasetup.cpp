@@ -243,7 +243,7 @@ bool julia_setup_fp()
 	{
 		g_power.real(g_parameters[P2_REAL] - 1.0);
 		g_power.imag(g_parameters[P2_IMAG]);
-		g_coefficient = ComplexStdFromT(ComplexPower(*g_float_parameter, g_power));
+		g_coefficient = ComplexStdFromT(std::pow(*g_float_parameter, g_power));
 	}
 	switch (g_fractal_type)
 	{
@@ -344,7 +344,7 @@ bool julia_setup_fp()
 				g_function_index[1] == FUNCTION_TAN &&
 				g_function_index[2] == FUNCTION_SIN &&
 				g_function_index[3] == FUNCTION_TAN &&
-				fabs(g_parameter2.real() - 3.0) < .0001 &&
+				std::abs(g_parameter2.real() - 3.0) < .0001 &&
 				g_parameter2.imag() == 0 &&
 				g_parameter.imag() == 0)
 			{
@@ -487,7 +487,7 @@ bool julia_setup_l()
 				g_function_index[1] == FUNCTION_TAN &&
 				g_function_index[2] == FUNCTION_SIN &&
 				g_function_index[3] == FUNCTION_TAN &&
-				fabs(g_parameter2.real() - 3.0) < .0001 &&
+				std::abs(g_parameter2.real() - 3.0) < .0001 &&
 				g_parameter2.imag() == 0 &&
 				g_parameter.imag() == 0)
 			{
@@ -1042,7 +1042,7 @@ bool phoenix_setup()
 	}
 	if (g_degree <= -3)
 	{
-		g_degree = abs(g_degree) - 2;
+		g_degree = std::abs(g_degree) - 2;
 		orbit_calc = g_user_float_flag ? phoenix_minus_orbit_fp : phoenix_minus_orbit;
 	}
 	// TODO: don't write to g_current_fractal_specific
@@ -1079,7 +1079,7 @@ bool phoenix_complex_setup()
 	}
 	if (g_degree <= -3)
 	{
-		g_degree = abs(g_degree) - 2;
+		g_degree = std::abs(g_degree) - 2;
 		g_symmetry = (g_parameter.imag() == 0 && g_parameter2.imag() == 0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
 		orbit_calc = g_user_float_flag ? phoenix_complex_minus_orbit_fp : phoenix_complex_minus_orbit;
 	}
@@ -1111,7 +1111,7 @@ bool mandelbrot_phoenix_setup()
 	}
 	if (g_degree <= -3)
 	{
-		g_degree = abs(g_degree) - 2;
+		g_degree = std::abs(g_degree) - 2;
 		orbit_calc = g_user_float_flag ? phoenix_minus_orbit_fp : phoenix_minus_orbit;
 	}
 	// TODO: don't write to g_current_fractal_specific
@@ -1146,7 +1146,7 @@ bool mandelbrot_phoenix_complex_setup()
 	}
 	if (g_degree <= -3)
 	{
-		g_degree = abs(g_degree) - 2;
+		g_degree = std::abs(g_degree) - 2;
 		orbit_calc = g_user_float_flag ? phoenix_complex_minus_orbit_fp : phoenix_complex_minus_orbit;
 	}
 	// TODO: don't write to g_current_fractal_specific

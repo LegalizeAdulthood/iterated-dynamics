@@ -225,7 +225,7 @@ static double fmod_test()
 		}
 		break;
 	case BAILOUT_MANHATTAN:
-		result = sqr(fabs(g_new_z.real()) + fabs(g_new_z.imag()));
+		result = sqr(std::abs(g_new_z.real()) + std::abs(g_new_z.imag()));
 		break;
 	case BAILOUT_MANHATTAN_R:
 		result = sqr(g_new_z.real() + g_new_z.imag());
@@ -680,8 +680,8 @@ int calculate_fractal()
 
 		if (g_inversion[0] == AUTO_INVERT)  // auto calc radius 1/6 screen
 		{
-			g_inversion[0] = std::min(fabs(g_escape_time_state.m_grid_fp.width()),
-								fabs(g_escape_time_state.m_grid_fp.height()))/6.0;
+			g_inversion[0] = std::min(std::abs(g_escape_time_state.m_grid_fp.width()),
+								std::abs(g_escape_time_state.m_grid_fp.height()))/6.0;
 			fix_inversion(&g_inversion[0]);
 			g_f_radius = g_inversion[0];
 		}
@@ -691,7 +691,7 @@ int calculate_fractal()
 			g_inversion[1] = g_escape_time_state.m_grid_fp.x_center();
 			fix_inversion(&g_inversion[1]);
 			g_f_x_center = g_inversion[1];
-			if (fabs(g_f_x_center) < fabs(g_escape_time_state.m_grid_fp.width())/100)
+			if (std::abs(g_f_x_center) < std::abs(g_escape_time_state.m_grid_fp.width())/100)
 			{
 				g_f_x_center = 0.0;
 				g_inversion[1] = 0.0;
@@ -703,7 +703,7 @@ int calculate_fractal()
 			g_inversion[2] = g_escape_time_state.m_grid_fp.y_center();
 			fix_inversion(&g_inversion[2]);
 			g_f_y_center = g_inversion[2];
-			if (fabs(g_f_y_center) < fabs(g_escape_time_state.m_grid_fp.height())/100)
+			if (std::abs(g_f_y_center) < std::abs(g_escape_time_state.m_grid_fp.height())/100)
 			{
 				g_f_y_center = 0.0;
 				g_inversion[2] = 0.0;
@@ -713,7 +713,7 @@ int calculate_fractal()
 		g_invert = 3; // so values will not be changed if we come back
 	}
 
-	g_close_enough = g_delta_min_fp*pow(2.0, -double(abs(g_periodicity_check)));
+	g_close_enough = g_delta_min_fp*std::pow(2.0, -double(std::abs(g_periodicity_check)));
 	s_rq_limit_save = g_rq_limit;
 	g_rq_limit2 = sqrt(g_rq_limit);
 	if (g_integer_fractal)          // for integer routines (lambda)
@@ -770,7 +770,7 @@ int calculate_fractal()
 		{
 			// not a stand-alone
 			// next two lines in case periodicity changed
-			g_close_enough = g_delta_min_fp*pow(2.0, -double(abs(g_periodicity_check)));
+			g_close_enough = g_delta_min_fp*std::pow(2.0, -double(std::abs(g_periodicity_check)));
 			g_close_enough_l = DoubleToFudge(g_close_enough); // "close enough" value
 			set_symmetry(g_symmetry, false);
 			timer_engine(g_calculate_type); // non-standard fractal engine
@@ -882,7 +882,7 @@ static int draw_line_orbits()
 	{
 		positive_slope = !positive_slope;
 	}
-	if (abs(dX) > abs(dY))                // shallow line case
+	if (std::abs(dX) > std::abs(dY))                // shallow line case
 	{
 		if (dX > 0)         // determine start point and last column
 		{
@@ -896,9 +896,9 @@ static int draw_line_orbits()
 			g_row = g_y_stop;
 			final = g_WorkList.xx_begin();
 		}
-		inc1 = 2*abs(dY);            // determine increments and initial G
-		G = inc1 - abs(dX);
-		inc2 = 2*(abs(dY) - abs(dX));
+		inc1 = 2*std::abs(dY);            // determine increments and initial G
+		G = inc1 - std::abs(dX);
+		inc2 = 2*(std::abs(dY) - std::abs(dX));
 		if (positive_slope)
 		{
 			while (g_col <= final)    // step through columns checking for new row
@@ -960,9 +960,9 @@ static int draw_line_orbits()
 			g_row = g_y_stop;
 			final = g_WorkList.yy_begin();
 		}
-		inc1 = 2*abs(dX);            // determine increments and initial G
-		G = inc1 - abs(dY);
-		inc2 = 2*(abs(dX) - abs(dY));
+		inc1 = 2*std::abs(dX);            // determine increments and initial G
+		G = inc1 - std::abs(dY);
+		inc2 = 2*(std::abs(dX) - std::abs(dY));
 		if (positive_slope)
 		{
 			while (g_row <= final)    // step through rows checking for new column
@@ -1038,8 +1038,8 @@ static int draw_function_orbits()
 	while (angle < Rotation)
 	{
 		theta = MathUtil::DegreesToRadians(angle);
-		g_col = int(xfactor + (Xctr + Xmagfactor*cos(theta)));
-		g_row = int(yfactor + (Yctr + Xmagfactor*sin(theta)));
+		g_col = int(xfactor + (Xctr + Xmagfactor*std::cos(theta)));
+		g_row = int(yfactor + (Yctr + Xmagfactor*std::sin(theta)));
 		if (plotorbits2dfloat() == -1)
 		{
 			g_WorkList.add(angle, 0, 0,
@@ -1211,7 +1211,7 @@ int calculate_mandelbrot_l()              // fast per pixel 1/2/b/g, called with
 		{
 			g_color_iter = logtablecalc(g_color_iter);
 		}
-		g_color = abs(int(g_color_iter));
+		g_color = std::abs(int(g_color_iter));
 		if (g_color_iter >= g_colors)  // don't use color 0 unless from inside/outside
 		{
 			g_color = int(((g_color_iter - 1) % g_and_color) + 1);
@@ -1318,7 +1318,7 @@ int calculate_mandelbrot_fp()
 		{
 			g_color_iter = logtablecalc(g_color_iter);
 		}
-		g_color = abs(int(g_color_iter));
+		g_color = std::abs(int(g_color_iter));
 		if (g_color_iter >= g_colors)  // don't use color 0 unless from inside/outside
 		{
 			g_color = int(((g_color_iter - 1) % g_and_color) + 1);
@@ -1420,7 +1420,7 @@ void ColorModeStarTrail::final()
 	g_color_iter = 0;
 	for (int i = 1; i < 16; i++)
 	{
-		if (fabs(m_tangent_table[0] - m_tangent_table[i]) < .05)
+		if (std::abs(m_tangent_table[0] - m_tangent_table[i]) < .05)
 		{
 			g_color_iter = i;
 			break;
@@ -1794,9 +1794,9 @@ void StandardFractal::check_periodicity()
 			}
 			else
 			{
-				if (fabs(s_saved_z.real() - g_new_z.real()) < g_close_enough)
+				if (std::abs(s_saved_z.real() - g_new_z.real()) < g_close_enough)
 				{
-					if (fabs(s_saved_z.imag() - g_new_z.imag()) < g_close_enough)
+					if (std::abs(s_saved_z.imag() - g_new_z.imag()) < g_close_enough)
 					{
 						m_caught_a_cycle = true;
 					}
@@ -1867,14 +1867,14 @@ bool StandardFractal::colormode_epsilon_cross_update()
 	}
 	else
 	{
-		if (fabs(g_new_z.real()) < fabs(g_proximity))
+		if (std::abs(g_new_z.real()) < std::abs(g_proximity))
 		{
 			// close to y axis
 			m_colormode_epsilon_cross_hooper = (g_proximity > 0) ?
 				HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS;
 			go_plot_inside = true;
 		}
-		else if (fabs(g_new_z.imag()) < fabs(g_proximity))
+		else if (std::abs(g_new_z.imag()) < std::abs(g_proximity))
 		{
 			// close to x axis
 			m_colormode_epsilon_cross_hooper = (g_proximity > 0) ?
@@ -2020,7 +2020,7 @@ bool StandardFractal::distance_test_compute()
 		+ 2*(g_old_z.real()*m_distance_test_derivative.real() - g_old_z.imag()*m_distance_test_derivative.imag());
 	m_distance_test_derivative.imag(2*(g_old_z.imag()*m_distance_test_derivative.real() + g_old_z.real()*m_distance_test_derivative.imag()));
 	m_distance_test_derivative.real(ftemp);
-	if (std::max(fabs(m_distance_test_derivative.real()), fabs(m_distance_test_derivative.imag())) > s_dem_too_big)
+	if (std::max(std::abs(m_distance_test_derivative.real()), std::abs(m_distance_test_derivative.imag())) > s_dem_too_big)
 	{
 		return true;
 	}
@@ -2065,7 +2065,7 @@ void StandardFractal::outside_colormode_sum_final()
 }
 void StandardFractal::outside_colormode_inverse_tangent_final()
 {
-	g_color_iter = long(fabs(atan2(g_new_z.imag(), g_new_z.real())*g_externs.AtanColors()/MathUtil::Pi));
+	g_color_iter = long(std::abs(std::atan2(g_new_z.imag(), g_new_z.real())*g_externs.AtanColors()/MathUtil::Pi));
 }
 void StandardFractal::outside_colormode_float_modulus_final()
 {
@@ -2127,7 +2127,7 @@ double StandardFractal::distance_compute()
 	}
 	else
 	{
-		dist *= sqr(log(dist))/(sqr(m_distance_test_derivative.real()) + sqr(m_distance_test_derivative.imag()));
+		dist *= sqr(std::log(dist))/(sqr(m_distance_test_derivative.real()) + sqr(m_distance_test_derivative.imag()));
 	}
 	return dist;
 }
@@ -2168,7 +2168,7 @@ void StandardFractal::compute_decomposition_and_biomorph()
 				g_color_iter = g_externs.Biomorph();
 			}
 		}
-		else if (fabs(g_new_z.real()) < g_rq_limit2 || fabs(g_new_z.imag()) < g_rq_limit2)
+		else if (std::abs(g_new_z.real()) < g_rq_limit2 || std::abs(g_new_z.imag()) < g_rq_limit2)
 		{
 			g_color_iter = g_externs.Biomorph();
 		}
@@ -2190,7 +2190,7 @@ void StandardFractal::inside_colormode_star_trail_final()
 	g_color_iter = 0;
 	for (int i = 1; i < 16; i++)
 	{
-		if (fabs(m_tangent_table[0] - m_tangent_table[i]) < .05)
+		if (std::abs(m_tangent_table[0] - m_tangent_table[i]) < .05)
 		{
 			g_color_iter = i;
 			break;
@@ -2226,7 +2226,7 @@ void StandardFractal::inside_colormode_inverse_tangent_final()
 	{
 		g_new_z = ComplexFudgeToDouble(g_new_z_l);
 	}
-	g_color_iter = long(fabs(atan2(g_new_z.imag(), g_new_z.real())*g_externs.AtanColors()/MathUtil::Pi));
+	g_color_iter = long(std::abs(std::atan2(g_new_z.imag(), g_new_z.real())*g_externs.AtanColors()/MathUtil::Pi));
 }
 void StandardFractal::inside_colormode_float_modulus_final()
 {
@@ -2306,7 +2306,7 @@ void StandardFractal::inside_colormode_final()
 }
 void StandardFractal::set_final_color_and_plot()
 {
-	g_color = abs(int(g_color_iter));
+	g_color = std::abs(int(g_color_iter));
 	if (g_color_iter >= g_colors)  // don't use color 0 unless from inside/outside
 	{
 		g_color = int(((g_color_iter - 1) % g_and_color) + 1);
@@ -2317,7 +2317,7 @@ void StandardFractal::set_final_color_and_plot()
 int StandardFractal::check_if_interrupted()
 {
 	int result = g_color;
-	g_input_counter -= abs(int(g_real_color_iter));
+	g_input_counter -= std::abs(int(g_real_color_iter));
 	if (g_input_counter <= 0)
 	{
 		if (check_key())
@@ -2748,7 +2748,7 @@ static int potential(double mag, long iterations)
 			}
 			else
 			{
-				d_tmp = log(mag)/double(pow(2.0, double(pot)));
+				d_tmp = std::log(mag)/double(std::pow(2.0, double(pot)));
 				// prevent float type underflow
 				pot = (d_tmp > FLT_MIN) ? float(d_tmp) : 0.0f;
 			}
@@ -3190,7 +3190,7 @@ originsym:
 		}
 		else
 		{
-			if (fabs(g_escape_time_state.m_grid_fp.width()) < MathUtil::Pi/4)
+			if (std::abs(g_escape_time_state.m_grid_fp.width()) < MathUtil::Pi/4)
 			{
 				break; // no point in pi symmetry if values too close
 			}
@@ -3220,7 +3220,7 @@ originsym:
 		}
 		else
 		{
-			s_pi_in_pixels = int(MathUtil::Pi/fabs(g_escape_time_state.m_grid_fp.width())*g_x_dots);
+			s_pi_in_pixels = int(MathUtil::Pi/std::abs(g_escape_time_state.m_grid_fp.width())*g_x_dots);
 		}
 
 		g_x_stop = g_WorkList.xx_start() + s_pi_in_pixels-1;
@@ -3697,8 +3697,8 @@ void PerformWorkList::setup_distance_estimator()
 		+ sqrt(sqr(g_escape_time_state.m_grid_fp.height()) + sqr(g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) ) )/g_distance_test;
 	ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
 	ftemp += 3; // bailout plus just a bit
-	double ftemp2 = log(ftemp);
-	s_dem_too_big = fabs(ftemp)*fabs(ftemp2)*2/sqrt(s_dem_delta);
+	double ftemp2 = std::log(ftemp);
+	s_dem_too_big = std::abs(ftemp)*std::abs(ftemp2)*2/sqrt(s_dem_delta);
 }
 
 void PerformWorkList::setup_per_image()
@@ -3796,7 +3796,7 @@ void PerformWorkList::show_dot_finish()
 void PerformWorkList::common_escape_time_initialization()
 {
 	// some common initialization for escape-time pixel level routines
-	g_close_enough = g_delta_min_fp*pow(2.0, double(-abs(g_periodicity_check)));
+	g_close_enough = g_delta_min_fp*std::pow(2.0, double(-std::abs(g_periodicity_check)));
 	g_close_enough_l = DoubleToFudge(g_close_enough); // "close enough" value
 	g_input_counter = g_max_input_counter;
 

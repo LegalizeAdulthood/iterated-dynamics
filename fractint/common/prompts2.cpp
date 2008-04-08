@@ -898,7 +898,7 @@ int cmpdbl(double old, double new_value)
 	prompt_value_string(buf, &val);   // convert "old" to string
 
 	old = atof(buf);                // convert back
-	return fabs(old-new_value) < DBL_EPSILON?0:1;  // zero if same
+	return std::abs(old-new_value) < DBL_EPSILON?0:1;  // zero if same
 }
 
 int get_corners()

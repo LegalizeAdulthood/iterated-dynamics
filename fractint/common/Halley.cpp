@@ -71,7 +71,7 @@ bool Halley::setup()
 
 int Halley::bail_out()
 {
-	if (fabs(modulus(g_new_z)-modulus(g_old_z)) < g_parameter2.real())
+	if (std::abs(modulus(g_new_z)-modulus(g_old_z)) < g_parameter2.real())
 	{
 		return 1;
 	}

@@ -875,9 +875,9 @@ static void write_batch_parms_center_mag_yes(bf_t bfXctr, bf_t bfYctr)
 #endif
 	// Round to avoid ugly decimals, precision here is not critical
 	// Don't round Xmagfactor if it's small
-	if (fabs(Xmagfactor) > 0.5) // or so, exact value isn't important
+	if (std::abs(Xmagfactor) > 0.5) // or so, exact value isn't important
 	{
-		Xmagfactor = (sign(Xmagfactor)*long(fabs(Xmagfactor)*1e4 + 0.5))/1e4;
+		Xmagfactor = (sign(Xmagfactor)*long(std::abs(Xmagfactor)*1e4 + 0.5))/1e4;
 	}
 	// Just truncate these angles.  Who cares about 1/1000 of a degree
 	// Somebody does.  Some rotated and/or skewed images are slightly
@@ -891,7 +891,7 @@ static void write_batch_parms_center_mag_yes(bf_t bfXctr, bf_t bfYctr)
 	{	// Only put what is necessary
 		// The difference with Xmagfactor is that it is normally
 		// near 1 while the others are normally near 0
-		if (fabs(Xmagfactor) >= 1)
+		if (std::abs(Xmagfactor) >= 1)
 		{
 			put_float(1, Xmagfactor, 5); // put_float() uses %g
 		}
@@ -1875,12 +1875,12 @@ static int getprec(double a, double b, double c)
 	double temp;
 	int digits;
 	double highv = 1.0E20;
-	diff = fabs(a - b);
+	diff = std::abs(a - b);
 	if (diff == 0.0)
 	{
 		diff = highv;
 	}
-	temp = fabs(a - c);
+	temp = std::abs(a - c);
 	if (temp == 0.0)
 	{
 		temp = highv;
@@ -1889,7 +1889,7 @@ static int getprec(double a, double b, double c)
 	{
 		diff = temp;
 	}
-	temp = fabs(b - c);
+	temp = std::abs(b - c);
 	if (temp == 0.0)
 	{
 		temp = highv;

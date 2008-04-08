@@ -168,8 +168,8 @@ int diffusion()
 		{
 		case DIFFUSION_CENTRAL: // Release new point on a circle inside the box
 			angle = 2*double(rand())/(RAND_MAX/MathUtil::Pi);
-			x = int(cos(angle)*(x_max-x_min) + g_x_dots);
-			y = int(sin(angle)*(y_max-y_min) + g_y_dots);
+			x = int(std::cos(angle)*(x_max-x_min) + g_x_dots);
+			y = int(std::sin(angle)*(y_max-y_min) + g_y_dots);
 			x /= 2;
 			y /= 2;
 			break;
@@ -181,8 +181,8 @@ int diffusion()
 			// Release new point on a circle inside the box with radius
 			// given by the radius variable
 			angle = 2*double(rand())/(RAND_MAX/MathUtil::Pi);
-			x = int(cos(angle)*radius + g_x_dots);
-			y = int(sin(angle)*radius + g_y_dots);
+			x = int(std::cos(angle)*radius + g_x_dots);
+			y = int(std::sin(angle)*radius + g_y_dots);
 			x /= 2;
 			y /= 2;
 			break;

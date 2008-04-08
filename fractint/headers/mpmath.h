@@ -17,7 +17,9 @@ extern void (*g_trig3_d)();
 extern InitializedComplexD g_c_degree;
 extern InitializedComplexD g_c_root;
 
-extern ComplexD ComplexPower(ComplexD const &x, ComplexD const &y);
+namespace std {
+extern ComplexD pow(ComplexD const &x, ComplexD const &y);
+}
 extern void SetupLogTable();
 extern long logtablecalc(long);
 extern long ExpFloat14(long);
@@ -187,7 +189,7 @@ inline void CMPLXexp(ComplexD const &arg, ComplexD &out)
 
 inline void CMPLXpwr(ComplexD const &arg1, ComplexD const &arg2, ComplexD &out)
 {
-	out = ComplexPower(arg1, arg2);
+	out = std::pow(arg1, arg2);
 }
 
 inline void CMPLXmult1(ComplexD const &arg1, ComplexD const &arg2, ComplexD &out)

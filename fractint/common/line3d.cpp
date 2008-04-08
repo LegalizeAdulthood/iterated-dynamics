@@ -1268,7 +1268,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 	{
 		for (int j = -3; j < 4; j++)
 		{
-			if (abs(i) + abs(j) < 6)
+			if (std::abs(i) + std::abs(j) < 6)
 			{
 				g_plot_color(int(S[1][2][0] + i), int(S[1][2][1] + j), 10);
 			}
@@ -1294,8 +1294,8 @@ static void draw_rectangle(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color
 
 	for (int i = 0; i < 4; i++)
 	{
-		if (fabs(V[i][0] - V[(i + 1) % 4][0]) < -2*BAD_CHECK &&
-			fabs(V[i][1] - V[(i + 1) % 4][1]) < -2*BAD_CHECK)
+		if (std::abs(V[i][0] - V[(i + 1) % 4][0]) < -2*BAD_CHECK &&
+			std::abs(V[i][1] - V[(i + 1) % 4][1]) < -2*BAD_CHECK)
 		{
 			vdraw_line(V[i], V[(i + 1) % 4], color);
 		}
@@ -1308,8 +1308,8 @@ static void draw_rectangle_lines(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int
 	pack_rectangle_vector(V, V0, V1, V2, V3);
 	for (int i = 0; i < 3; i += 2)
 	{
-		if (fabs(V[i][0] - V[i + 1][0]) < -2*BAD_CHECK &&
-			fabs(V[i][1] - V[i + 1][1]) < -2*BAD_CHECK)
+		if (std::abs(V[i][0] - V[i + 1][0]) < -2*BAD_CHECK &&
+			std::abs(V[i][1] - V[i + 1][1]) < -2*BAD_CHECK)
 		{
 			vdraw_line(V[i], V[i + 1], color);
 		}
@@ -1439,7 +1439,7 @@ static int off_screen(point pt)
 		return 0;      // point is ok
 	}
 
-	if (abs(pt.x) > -BAD_CHECK || abs(pt.y) > -BAD_CHECK)
+	if (std::abs(pt.x) > -BAD_CHECK || std::abs(pt.y) > -BAD_CHECK)
 	{
 		return 99;              // point is bad
 	}
@@ -1504,9 +1504,9 @@ static void interp_color(int x, int y, int color)
 	// it uses ONLY additions (almost) and it DOES go to zero as the points
 	// get close.
 
-	int d1 = abs(s_p1.x - x) + abs(s_p1.y - y);
-	int d2 = abs(s_p2.x - x) + abs(s_p2.y - y);
-	int d3 = abs(s_p3.x - x) + abs(s_p3.y - y);
+	int d1 = std::abs(s_p1.x - x) + std::abs(s_p1.y - y);
+	int d2 = std::abs(s_p2.x - x) + std::abs(s_p2.y - y);
+	int d3 = std::abs(s_p3.x - x) + std::abs(s_p3.y - y);
 
 	int D = (d1 + d2 + d3) << 1;
 	if (D)
@@ -2702,13 +2702,13 @@ static void initialize_trig_tables(int linelen)
 	float deltatheta = float(theta2 - theta1)/float(linelen);
 
 	// initial sin, cos theta
-	s_sin_theta_array[0] = float(sin(double(theta)));
-	s_cos_theta_array[0] = float(cos(double(theta)));
-	s_sin_theta_array[1] = float(sin(double(theta + deltatheta)));
-	s_cos_theta_array[1] = float(cos(double(theta + deltatheta)));
+	s_sin_theta_array[0] = float(std::sin(double(theta)));
+	s_cos_theta_array[0] = float(std::cos(double(theta)));
+	s_sin_theta_array[1] = float(std::sin(double(theta + deltatheta)));
+	s_cos_theta_array[1] = float(std::cos(double(theta + deltatheta)));
 
 	// sin, cos delta theta
-	float two_cos_delta_theta = float(2.0*cos(double(deltatheta)));
+	float two_cos_delta_theta = float(2.0*std::cos(double(deltatheta)));
 
 	// build table of other sin, cos with trig identity
 	for (int i = 2; i < int(linelen); i++)
@@ -2725,15 +2725,15 @@ static void initialize_trig_tables(int linelen)
 		float delta_phi = float(phi2 - phi1)/float(g_height);
 
 		// initial sin, cos phi
-		s_old_sin_phi1 = float(sin(double(phi1)));
+		s_old_sin_phi1 = float(std::sin(double(phi1)));
 		s_sin_phi = s_old_sin_phi1;
-		s_old_cos_phi1 = float(cos(double(phi1)));
+		s_old_cos_phi1 = float(std::cos(double(phi1)));
 		s_cos_phi = s_old_cos_phi1;
-		s_old_sin_phi2 = float(sin(double(phi1 + delta_phi)));
-		s_old_cos_phi2 = float(cos(double(phi1 + delta_phi)));
+		s_old_sin_phi2 = float(std::sin(double(phi1 + delta_phi)));
+		s_old_cos_phi2 = float(std::cos(double(phi1 + delta_phi)));
 
 		// sin, cos delta phi
-		s_two_cos_delta_phi = float(2.0*cos(double(delta_phi)));
+		s_two_cos_delta_phi = float(2.0*std::cos(double(delta_phi)));
 	}
 }
 
@@ -2979,8 +2979,8 @@ static int once_per_image(int line_length, VECTOR v)
 			// from being written
 			zview = -long(double(g_y_dots)*double(g_3d_state.z_viewer())/100.0);
 			radius = double(g_y_dots)/2;
-			angle = atan(-radius/(zview + radius));
-			s_z_cutoff = -radius - sin(angle)*radius;
+			angle = std::atan(-radius/(zview + radius));
+			s_z_cutoff = -radius - std::sin(angle)*radius;
 			s_z_cutoff *= 1.1;        // for safety
 			s_z_cutoff *= 65536L;
 		}

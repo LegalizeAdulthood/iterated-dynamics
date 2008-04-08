@@ -134,8 +134,8 @@ bool Newton::setup()           // Newton/NewtBasin Routines
 		// list of roots to discover where we converged for newtbasin
 		for (i = 0; i < g_degree; i++)
 		{
-			s_roots[i].real(cos(i*g_two_pi/double(g_degree)));
-			s_roots[i].imag(sin(i*g_two_pi/double(g_degree)));
+			s_roots[i].real(std::cos(i*g_two_pi/double(g_degree)));
+			s_roots[i].imag(std::sin(i*g_two_pi/double(g_degree)));
 		}
 	}
 
@@ -222,7 +222,7 @@ int NewtonComplex::orbit()
 	cd1.real(g_c_degree.real() - 1.0);
 	cd1.imag(g_c_degree.imag());
 
-	temp = ComplexPower(g_old_z, cd1);
+	temp = std::pow(g_old_z, cd1);
 	g_new_z = temp*g_old_z;
 
 	g_temp_z.real(g_new_z.real() - g_c_root.real());

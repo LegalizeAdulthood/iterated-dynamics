@@ -59,7 +59,7 @@ void draw_line(int X1, int Y1, int X2, int Y2, int color)
 	{
 		positive_slope = !positive_slope;
 	}
-	if (abs(dX) > abs(dY))                // shallow line case
+	if (std::abs(dX) > std::abs(dY))                // shallow line case
 	{
 		if (dX > 0)         // determine start point and last column
 		{
@@ -73,9 +73,9 @@ void draw_line(int X1, int Y1, int X2, int Y2, int color)
 			row = Y2;
 			final = X1;
 		}
-		inc1 = 2*abs(dY);            // determine increments and initial G
-		G = inc1 - abs(dX);
-		inc2 = 2*(abs(dY) - abs(dX));
+		inc1 = 2*std::abs(dY);            // determine increments and initial G
+		G = inc1 - std::abs(dX);
+		inc2 = 2*(std::abs(dY) - std::abs(dX));
 		if (positive_slope)
 		{
 			while (col <= final)    // step through columns checking for new row
@@ -125,9 +125,9 @@ void draw_line(int X1, int Y1, int X2, int Y2, int color)
 			row = Y2;
 			final = Y1;
 		}
-		inc1 = 2*abs(dX);            // determine increments and initial G
-		G = inc1 - abs(dY);
-		inc2 = 2*(abs(dX) - abs(dY));
+		inc1 = 2*std::abs(dX);            // determine increments and initial G
+		G = inc1 - std::abs(dY);
+		inc2 = 2*(std::abs(dX) - std::abs(dY));
 		if (positive_slope)
 		{
 			while (row <= final)    // step through rows checking for new column

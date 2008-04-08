@@ -181,7 +181,7 @@ static int bifurcation_periodic(long time)
 		}
 		else
 		{
-			if (fabs(s_bifurcation_saved_population-s_population) <= s_bifurcation_close_enough)
+			if (std::abs(s_bifurcation_saved_population-s_population) <= s_bifurcation_close_enough)
 			{
 				return 1;
 			}
@@ -196,7 +196,7 @@ static int bifurcation_periodic(long time)
 int bifurcation_lambda() // Used by lyanupov
 {
 	s_population = s_rate*s_population*(1 - s_population);
-	return fabs(s_population) > BIG;
+	return std::abs(s_population) > BIG;
 }
 
 int bifurcation_verhulst_trig_fp()
@@ -205,7 +205,7 @@ int bifurcation_verhulst_trig_fp()
 	g_temp_z.imag(0);
 	CMPLXtrig0(g_temp_z, g_temp_z);
 	s_population += s_rate*g_temp_z.real()*(1 - g_temp_z.real());
-	return fabs(s_population) > BIG;
+	return std::abs(s_population) > BIG;
 }
 
 int bifurcation_verhulst_trig()
@@ -226,7 +226,7 @@ int bifurcation_stewart_trig_fp()
 	g_temp_z.imag(0);
 	CMPLXtrig0(g_temp_z, g_temp_z);
 	s_population = (s_rate*g_temp_z.real()*g_temp_z.real()) - 1.0;
-	return fabs(s_population) > BIG;
+	return std::abs(s_population) > BIG;
 }
 
 int bifurcation_stewart_trig()
@@ -248,7 +248,7 @@ int bifurcation_set_trig_pi_fp()
 	g_temp_z.imag(0);
 	CMPLXtrig0(g_temp_z, g_temp_z);
 	s_population = s_rate*g_temp_z.real();
-	return fabs(s_population) > BIG;
+	return std::abs(s_population) > BIG;
 }
 
 int bifurcation_set_trig_pi()
@@ -268,7 +268,7 @@ int bifurcation_add_trig_pi_fp()
 	g_temp_z.imag(0);
 	CMPLXtrig0(g_temp_z, g_temp_z);
 	s_population += s_rate*g_temp_z.real();
-	return fabs(s_population) > BIG;
+	return std::abs(s_population) > BIG;
 }
 
 int bifurcation_add_trig_pi()
@@ -289,7 +289,7 @@ int bifurcation_lambda_trig_fp()
 	g_temp_z.imag(0);
 	CMPLXtrig0(g_temp_z, g_temp_z);
 	s_population = s_rate*g_temp_z.real()*(1 - g_temp_z.real());
-	return fabs(s_population) > BIG;
+	return std::abs(s_population) > BIG;
 }
 
 int bifurcation_lambda_trig()
@@ -309,9 +309,9 @@ int bifurcation_may_fp()
 	// X = (lambda * X)/(1 + X)^s_beta, from R.May as described in Pickover,
 	//			Computers, Pattern, Chaos, and Beauty, page 153
 	g_temp_z.real(1.0 + s_population);
-	g_temp_z.real(pow(g_temp_z.real(), -s_beta)); // pow in math.h included with mpmath.h
+	g_temp_z.real(std::pow(g_temp_z.real(), -s_beta)); // pow in math.h included with mpmath.h
 	s_population = (s_rate*s_population)*g_temp_z.real();
-	return fabs(s_population) > BIG;
+	return std::abs(s_population) > BIG;
 }
 
 int bifurcation_may()

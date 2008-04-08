@@ -510,7 +510,7 @@ expand_retry:
 					// to arbitrary precision sooner, but always later.
 					double testx_try;
 					double testx_exact;
-					if (fabs(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd()) > fabs(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min()))
+					if (std::abs(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd()) > std::abs(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min()))
 					{
 						testx_exact = g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd();
 						testx_try = dx0-g_escape_time_state.m_grid_fp.x_min();
@@ -522,7 +522,7 @@ expand_retry:
 					}
 					double testy_exact;
 					double testy_try;
-					if (fabs(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_max()) > fabs(g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_3rd()))
+					if (std::abs(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_max()) > std::abs(g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_3rd()))
 					{
 						testy_exact = g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_max();
 						testy_try = dy0-g_escape_time_state.m_grid_fp.y_max();
@@ -558,21 +558,21 @@ expand_retry:
 
 	// for periodicity close-enough, and for unity:
 	// std::min(std::max(g_delta_x, g_delta_x2), std::max(g_delta_y, g_delta_y2)
-	g_delta_min_fp = fabs(double(g_escape_time_state.m_grid_fp.delta_x()));
-	if (fabs(double(g_escape_time_state.m_grid_fp.delta_x2())) > g_delta_min_fp)
+	g_delta_min_fp = std::abs(double(g_escape_time_state.m_grid_fp.delta_x()));
+	if (std::abs(double(g_escape_time_state.m_grid_fp.delta_x2())) > g_delta_min_fp)
 	{
-		g_delta_min_fp = fabs(double(g_escape_time_state.m_grid_fp.delta_x2()));
+		g_delta_min_fp = std::abs(double(g_escape_time_state.m_grid_fp.delta_x2()));
 	}
-	if (fabs(double(g_escape_time_state.m_grid_fp.delta_y())) > fabs(double(g_escape_time_state.m_grid_fp.delta_y2())))
+	if (std::abs(double(g_escape_time_state.m_grid_fp.delta_y())) > std::abs(double(g_escape_time_state.m_grid_fp.delta_y2())))
 	{
-		if (fabs(double(g_escape_time_state.m_grid_fp.delta_y())) < g_delta_min_fp)
+		if (std::abs(double(g_escape_time_state.m_grid_fp.delta_y())) < g_delta_min_fp)
 		{
-			g_delta_min_fp = fabs(double(g_escape_time_state.m_grid_fp.delta_y()));
+			g_delta_min_fp = std::abs(double(g_escape_time_state.m_grid_fp.delta_y()));
 		}
 	}
-	else if (fabs(double(g_escape_time_state.m_grid_fp.delta_y2())) < g_delta_min_fp)
+	else if (std::abs(double(g_escape_time_state.m_grid_fp.delta_y2())) < g_delta_min_fp)
 	{
-		g_delta_min_fp = fabs(double(g_escape_time_state.m_grid_fp.delta_y2()));
+		g_delta_min_fp = std::abs(double(g_escape_time_state.m_grid_fp.delta_y2()));
 	}
 	g_delta_min = DoubleToFudge(g_delta_min_fp);
 
@@ -612,7 +612,7 @@ void adjust_corner_bf(float aspect_drift)
 	// While we're at it, let's adjust the Xmagfactor as well
 	// use bftemp, bftemp2 as bfXctr, bfYctr
 	convert_center_mag_bf(bftemp, bftemp2, &Magnification, &Xmagfactor, &Rotation, &Skew);
-	ftemp = fabs(Xmagfactor);
+	ftemp = std::abs(Xmagfactor);
 	if (ftemp != 1 && ftemp >= (1-aspect_drift) && ftemp <= (1 + aspect_drift))
 	{
 		Xmagfactor = sign(Xmagfactor);
@@ -696,7 +696,7 @@ static void adjust_corner(float aspect_drift)
 	{
 		// While we're at it, let's adjust the Xmagfactor as well
 		convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-		ftemp = fabs(Xmagfactor);
+		ftemp = std::abs(Xmagfactor);
 		if (ftemp != 1 && ftemp >= (1-aspect_drift) && ftemp <= (1 + aspect_drift))
 		{
 			Xmagfactor = sign(Xmagfactor);
@@ -704,9 +704,9 @@ static void adjust_corner(float aspect_drift)
 		}
 	}
 
-	ftemp = fabs(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min());
+	ftemp = std::abs(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min());
 	double ftemp2;
-	ftemp2 = fabs(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd());
+	ftemp2 = std::abs(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd());
 	if (ftemp < ftemp2)
 	{
 		if (ftemp*10000 < ftemp2 && g_escape_time_state.m_grid_fp.y_3rd() != g_escape_time_state.m_grid_fp.y_max())
@@ -720,8 +720,8 @@ static void adjust_corner(float aspect_drift)
 		g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_max();
 	}
 
-	ftemp = fabs(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_min());
-	ftemp2 = fabs(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_3rd());
+	ftemp = std::abs(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_min());
+	ftemp2 = std::abs(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_3rd());
 	if (ftemp < ftemp2)
 	{
 		if (ftemp*10000 < ftemp2 && g_escape_time_state.m_grid_fp.x_3rd() != g_escape_time_state.m_grid_fp.x_max())
@@ -1518,8 +1518,8 @@ void get_julia_attractor(double real, double imag)
 				}
 				else
 				{
-					if (fabs(result.real() - g_new_z.real()) < g_close_enough
-						&& fabs(result.imag() - g_new_z.imag()) < g_close_enough)
+					if (std::abs(result.real() - g_new_z.real()) < g_close_enough
+						&& std::abs(result.imag() - g_new_z.imag()) < g_close_enough)
 					{
 						g_attractors[g_num_attractors] = ComplexStdFromT(g_new_z);
 						g_attractor_period[g_num_attractors] = i + 1;
