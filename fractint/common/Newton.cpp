@@ -223,7 +223,7 @@ int NewtonComplex::orbit()
 	cd1.imag(g_c_degree.imag());
 
 	temp = ComplexPower(g_old_z, cd1);
-	FPUcplxmul(&temp, &g_old_z, &g_new_z);
+	g_new_z = temp*g_old_z;
 
 	g_temp_z.real(g_new_z.real() - g_c_root.real());
 	g_temp_z.imag(g_new_z.imag() - g_c_root.imag());
@@ -232,11 +232,11 @@ int NewtonComplex::orbit()
 		return 1;
 	}
 
-	FPUcplxmul(&g_new_z, &cd1, &g_temp_z);
+	g_temp_z = g_new_z*cd1;
 	g_temp_z.real(g_temp_z.real() + g_c_root.real());
 	g_temp_z.imag(g_temp_z.imag() + g_c_root.imag());
 
-	FPUcplxmul(&temp, &g_c_degree, &cd1);
+	cd1 = temp*g_c_degree;
 	FPUcplxdiv(&g_temp_z, &cd1, &g_old_z);
 	if (g_overflow)
 	{

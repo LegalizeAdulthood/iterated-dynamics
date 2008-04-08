@@ -44,7 +44,7 @@ ComplexD ComplexPower(ComplexD const &xx, ComplexD const &yy)
 	}
 
 	FPUcplxlog(&xx, &cLog);
-	FPUcplxmul(&cLog, &yy, &t);
+	t = cLog*yy;
 	FPUcplxexp387(&t, &z);
 	return z;
 }
@@ -60,7 +60,7 @@ void Arcsinz(ComplexD z, ComplexD *rz)
 	ComplexD tempz1;
 	ComplexD tempz2;
 
-	FPUcplxmul(&z, &z, &tempz1);
+	tempz1 = z*z;
 	tempz1.real(1 - tempz1.real());
 	tempz1.imag(-tempz1.imag());			// tempz1 = 1 - tempz1
 	Sqrtz(tempz1, &tempz1);
@@ -80,7 +80,7 @@ void Arccosz(ComplexD z, ComplexD *rz)
 {
 	ComplexD temp;
 
-	FPUcplxmul(&z, &z, &temp);
+	temp = z*z;
 	temp.real(temp.real() - 1);
 	Sqrtz(temp, &temp);
 
@@ -96,7 +96,7 @@ void Arcsinhz(ComplexD z, ComplexD *rz)
 {
 	ComplexD temp;
 
-	FPUcplxmul(&z, &z, &temp);
+	temp = z*z;
 	temp.real(temp.real() + 1);                                 // temp = temp + 1
 	Sqrtz(temp, &temp);
 	temp.real(temp.real() + z.real());
@@ -108,7 +108,7 @@ void Arcsinhz(ComplexD z, ComplexD *rz)
 void Arccoshz(ComplexD z, ComplexD *rz)
 {
 	ComplexD tempz;
-	FPUcplxmul(&z, &z, &tempz);
+	tempz = z*z;
 	tempz.real(tempz.real() - 1);                              // tempz = tempz - 1
 	Sqrtz(tempz, &tempz);
 	tempz.real(z.real() + tempz.real());
@@ -287,10 +287,8 @@ ComplexD ComplexSqrtFloat(double x, double y)
 	{
 		mag   = sqrt(sqrt(x*x + y*y));
 		theta = atan2(y, x)/2;
-		double cosTheta, sinTheta;
-		FPUsincos(theta, &sinTheta, &cosTheta);
-		result.real(cosTheta*mag);
-		result.imag(sinTheta*mag);
+		result.real(cos(theta)*mag);
+		result.imag(sin(theta)*mag);
 	}
 	return result;
 }
@@ -404,14 +402,6 @@ long logtablecalc(long citer)
 	return ret;
 }
 
-long ExpFloat14(long xx)
-{
-	static float fLogTwo = 0.6931472f;
-	int f = 23 - int(RegFloat2Fg(RegDivFloat(xx, *(long*) &fLogTwo), 0));
-	long answer = ExpFudged(RegFloat2Fg(xx, 16), f);
-	return RegFg2Float(answer, (char) f);
-}
-
 double TwoPi;
 ComplexD temp;
 ComplexD BaseLog;
@@ -431,7 +421,7 @@ int complex_basin()
 	cd1.imag(g_c_degree.imag());
 
 	temp = ComplexPower(g_old_z, cd1);
-	FPUcplxmul(&temp, &g_old_z, &g_new_z);
+	g_new_z = temp*g_old_z;
 
 	g_temp_z.real(g_new_z.real() - g_c_root.real());
 	g_temp_z.imag(g_new_z.imag() - g_c_root.imag());
@@ -442,7 +432,7 @@ int complex_basin()
 			g_old_z.imag(0.0);
 		}
 		FPUcplxlog(&g_old_z, &temp);
-		FPUcplxmul(&temp, &g_c_degree, &g_temp_z);
+		g_temp_z = temp*g_c_degree;
 		mod = g_temp_z.imag()/TwoPi;
 		g_color_iter = long(mod);
 		if (fabs(mod - g_color_iter) > 0.5)
@@ -464,11 +454,11 @@ int complex_basin()
 		return 1;
 	}
 
-	FPUcplxmul(&g_new_z, &cd1, &g_temp_z);
+	g_temp_z = g_new_z*cd1;
 	g_temp_z.real(g_temp_z.real() + g_c_root.real());
 	g_temp_z.imag(g_temp_z.imag() + g_c_root.imag());
 
-	FPUcplxmul(&temp, &g_c_degree, &cd1);
+	cd1 = temp*g_c_degree;
 	FPUcplxdiv(&g_temp_z, &cd1, &g_old_z);
 	if (g_overflow)
 	{

@@ -552,7 +552,8 @@ int lambda_exponent_orbit_fp()
 	{
 		return 1;
 	}
-	FPUsincos(g_old_z.imag(), &s_sin_y, &s_cos_y);
+	s_sin_y = sin(g_old_z.imag());
+	s_cos_y = cos(g_old_z.imag());
 
 	if (g_old_z.real() >= g_rq_limit && s_cos_y >= 0.0)
 	{
@@ -614,7 +615,8 @@ int trig_plus_exponent_orbit_fp()
 		return 1;
 	}
 	s_temp_exp = exp(g_old_z.real());
-	FPUsincos(g_old_z.imag(), &s_sin_y, &s_cos_y);
+	s_sin_y = sin(g_old_z.imag());
+	s_cos_y = cos(g_old_z.imag());
 	CMPLXtrig0(g_old_z, g_new_z);
 
 	// new =   trig(old) + e**old + C
@@ -939,12 +941,16 @@ int popcorn_old_orbit_fp()
 	g_temp_z = g_old_z;
 	g_temp_z.real(g_temp_z.real()*3.0);
 	g_temp_z.imag(g_temp_z.imag()*3.0);
-	FPUsincos(g_temp_z.real(), &g_sin_x, &g_cos_x);
-	FPUsincos(g_temp_z.imag(), &s_sin_y, &s_cos_y);
+	g_sin_x = sin(g_temp_z.real());
+	g_cos_x = cos(g_temp_z.real());
+	s_sin_y = sin(g_temp_z.imag());
+	s_cos_y = cos(g_temp_z.imag());
 	g_temp_z.real(g_sin_x/g_cos_x + g_old_z.real());
 	g_temp_z.imag(s_sin_y/s_cos_y + g_old_z.imag());
-	FPUsincos(g_temp_z.real(), &g_sin_x, &g_cos_x);
-	FPUsincos(g_temp_z.imag(), &s_sin_y, &s_cos_y);
+	g_sin_x = sin(g_temp_z.real());
+	g_cos_x = cos(g_temp_z.real());
+	s_sin_y = sin(g_temp_z.imag());
+	s_cos_y = cos(g_temp_z.imag());
 	g_new_z.real(g_old_z.real() - g_parameter.real()*s_sin_y);
 	g_new_z.imag(g_old_z.imag() - g_parameter.real()*g_sin_x);
 	if (g_plot_color == plot_color_none)
@@ -977,12 +983,16 @@ int popcorn_orbit_fp()
 	g_temp_z = g_old_z;
 	g_temp_z.real(g_temp_z.real()*3.0);
 	g_temp_z.imag(g_temp_z.imag()*3.0);
-	FPUsincos(g_temp_z.real(), &g_sin_x, &g_cos_x);
-	FPUsincos(g_temp_z.imag(), &s_sin_y, &s_cos_y);
+	g_sin_x = sin(g_temp_z.real());
+	g_cos_x = cos(g_temp_z.real());
+	s_sin_y = sin(g_temp_z.imag());
+	s_cos_y = cos(g_temp_z.imag());
 	g_temp_z.real(g_sin_x/g_cos_x + g_old_z.real());
 	g_temp_z.imag(s_sin_y/s_cos_y + g_old_z.imag());
-	FPUsincos(g_temp_z.real(), &g_sin_x, &g_cos_x);
-	FPUsincos(g_temp_z.imag(), &s_sin_y, &s_cos_y);
+	g_sin_x = sin(g_temp_z.real());
+	g_cos_x = cos(g_temp_z.real());
+	s_sin_y = sin(g_temp_z.imag());
+	s_cos_y = cos(g_temp_z.imag());
 	g_new_z.real(g_old_z.real() - g_parameter.real()*s_sin_y);
 	g_new_z.imag(g_old_z.imag() - g_parameter.real()*g_sin_x);
 	//
@@ -1204,7 +1214,7 @@ inline ComplexD operator*(ComplexD const &left, StdComplexD const &right)
 	temp.real(right.real());
 	temp.imag(right.imag());
 	ComplexD result;
-	FPUcplxmul(&left, &temp, &result);
+	result = left*temp;
 	return result;
 }
 
@@ -1401,13 +1411,12 @@ int lambda_trig_or_trig_orbit_fp()
 	if (CMPLXmod(g_old_z) < g_parameter2.real())
 	{
 		CMPLXtrig0(g_old_z, g_old_z);
-		FPUcplxmul(g_float_parameter, &g_old_z, &g_new_z);
 	}
 	else
 	{
 		CMPLXtrig1(g_old_z, g_old_z);
-		FPUcplxmul(g_float_parameter, &g_old_z, &g_new_z);
 	}
+	g_new_z = *g_float_parameter * g_old_z;
 	return g_externs.BailOutFp();
 }
 
@@ -1536,10 +1545,10 @@ int phoenix_plus_orbit_fp()
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  // degree >= 2, degree = degree-1 in setup
 	{
-		FPUcplxmul(&g_old_z, &g_temp_z, &g_temp_z); // = old^(degree-1)
+		g_temp_z = g_old_z*g_temp_z; // = old^(degree-1)
 	}
 	oldplus.real(oldplus.real() + g_float_parameter->real());
-	FPUcplxmul(&g_temp_z, &oldplus, &newminus);
+	newminus = g_temp_z*oldplus;
 	g_new_z.real(newminus.real() + (g_float_parameter->imag()*s_temp2.real()));
 	g_new_z.imag(newminus.imag() + (g_float_parameter->imag()*s_temp2.imag()));
 	s_temp2 = g_old_z; // set s_temp2 to Y value
@@ -1576,14 +1585,14 @@ int phoenix_minus_orbit_fp()
 	int i;
 	ComplexD oldsqr;
 	ComplexD newminus;
-	FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
+	oldsqr = g_old_z*g_old_z;
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  // degree >= 3, degree = degree-2 in setup
 	{
-		FPUcplxmul(&g_old_z, &g_temp_z, &g_temp_z); // = old^(degree-2)
+		g_temp_z = g_old_z*g_temp_z; // = old^(degree-2)
 	}
 	oldsqr.real(oldsqr.real() + g_float_parameter->real());
-	FPUcplxmul(&g_temp_z, &oldsqr, &newminus);
+	newminus = g_temp_z*oldsqr;
 	g_new_z.real(newminus.real() + (g_float_parameter->imag()*s_temp2.real()));
 	g_new_z.imag(newminus.imag() + (g_float_parameter->imag()*s_temp2.imag()));
 	s_temp2 = g_old_z; // set s_temp2 to Y value
@@ -1626,12 +1635,12 @@ int phoenix_complex_plus_orbit_fp()
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  // degree >= 2, degree = degree-1 in setup
 	{
-		FPUcplxmul(&g_old_z, &g_temp_z, &g_temp_z); // = old^(degree-1)
+		g_temp_z = g_old_z*g_temp_z; // = old^(degree-1)
 	}
 	oldplus.real(oldplus.real() + g_float_parameter->real());
 	oldplus.imag(oldplus.imag() + g_float_parameter->imag());
-	FPUcplxmul(&g_temp_z, &oldplus, &newminus);
-	FPUcplxmul(&g_parameter2, &s_temp2, &g_temp_z);
+	newminus = g_temp_z*oldplus;
+	g_temp_z = g_parameter2*s_temp2;
 	g_new_z.real(newminus.real() + g_temp_z.real());
 	g_new_z.imag(newminus.imag() + g_temp_z.imag());
 	s_temp2 = g_old_z; // set s_temp2 to Y value
@@ -1670,16 +1679,16 @@ int phoenix_complex_minus_orbit_fp()
 	int i;
 	ComplexD oldsqr;
 	ComplexD newminus;
-	FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
+	oldsqr = g_old_z*g_old_z;
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  // degree >= 3, degree = degree-2 in setup
 	{
-		FPUcplxmul(&g_old_z, &g_temp_z, &g_temp_z); // = old^(degree-2)
+		g_temp_z = g_old_z*g_temp_z; // = old^(degree-2)
 	}
 	oldsqr.real(oldsqr.real() + g_float_parameter->real());
 	oldsqr.imag(oldsqr.imag() + g_float_parameter->imag());
-	FPUcplxmul(&g_temp_z, &oldsqr, &newminus);
-	FPUcplxmul(&g_parameter2, &s_temp2, &g_temp_z);
+	newminus = g_temp_z*oldsqr;
+	g_temp_z = g_parameter2*s_temp2;
 	g_new_z.real(newminus.real() + g_temp_z.real());
 	g_new_z.imag(newminus.imag() + g_temp_z.imag());
 	s_temp2 = g_old_z; // set s_temp2 to Y value

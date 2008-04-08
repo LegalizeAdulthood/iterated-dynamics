@@ -1008,7 +1008,7 @@ void (*StkNeg)() = dStkNeg;
 
 void dStkMul()
 {
-	FPUcplxmul(&g_argument2->d, &g_argument1->d, &g_argument2->d);
+	g_argument2->d = g_argument2->d * g_argument1->d;
 	g_argument1--;
 	g_argument2--;
 }
@@ -1149,12 +1149,10 @@ void (*StkFlip)() = dStkFlip;
 
 void dStkSin()
 {
-	double sinx;
-	double cosx;
-	FPUsincos(g_argument1->d.real(), &sinx, &cosx);
-	double sinhy;
-	double coshy;
-	FPUsinhcosh(g_argument1->d.imag(), &sinhy, &coshy);
+	double const sinx = sin(g_argument1->d.real());
+	double const cosx = cos(g_argument1->d.real());
+	double const sinhy = sinh(g_argument1->d.imag());
+	double const coshy = cosh(g_argument1->d.imag());
 	g_argument1->d.real(sinx*coshy);
 	g_argument1->d.imag(cosx*sinhy);
 }
@@ -1184,9 +1182,8 @@ void dStkTan()
 {
 	g_argument1->d.real(g_argument1->d.real()*2);
 	g_argument1->d.imag(g_argument1->d.imag()*2);
-	double sinx;
-	double cosx;
-	FPUsincos(g_argument1->d.real(), &sinx, &cosx);
+	double const sinx = sin(g_argument1->d.real());
+	double const cosx = cos(g_argument1->d.real());
 	double sinhy;
 	double coshy;
 	FPUsinhcosh(g_argument1->d.imag(), &sinhy, &coshy);
@@ -1220,9 +1217,8 @@ void dStkTanh()
 {
 	g_argument1->d.real(g_argument1->d.real()*2);
 	g_argument1->d.imag(g_argument1->d.imag()*2);
-	double siny;
-	double cosy;
-	FPUsincos(g_argument1->d.imag(), &siny, &cosy);
+	double const siny = sin(g_argument1->d.imag());
+	double const cosy = cos(g_argument1->d.imag());
 	double sinhx;
 	double coshx;
 	FPUsinhcosh(g_argument1->d.real(), &sinhx, &coshx);
@@ -1258,9 +1254,8 @@ void dStkCoTan()
 {
 	g_argument1->d.real(g_argument1->d.real()*2);
 	g_argument1->d.imag(g_argument1->d.imag()*2);
-	double sinx;
-	double cosx;
-	FPUsincos(g_argument1->d.real(), &sinx, &cosx);
+	double const sinx = sin(g_argument1->d.real());
+	double const cosx = cos(g_argument1->d.real());
 	double sinhy;
 	double coshy;
 	FPUsinhcosh(g_argument1->d.imag(), &sinhy, &coshy);
@@ -1296,9 +1291,8 @@ void dStkCoTanh()
 {
 	g_argument1->d.real(g_argument1->d.real()*2);
 	g_argument1->d.imag(g_argument1->d.imag()*2);
-	double siny;
-	double cosy;
-	FPUsincos(g_argument1->d.imag(), &siny, &cosy);
+	double const siny = sin(g_argument1->d.imag());
+	double const cosy = cos(g_argument1->d.imag());
 	double sinhx;
 	double coshx;
 	FPUsinhcosh(g_argument1->d.real(), &sinhx, &coshx);
@@ -1363,9 +1357,8 @@ void StkIdent()  // do nothing - the function Z
 
 void dStkSinh()
 {
-	double siny;
-	double cosy;
-	FPUsincos(g_argument1->d.imag(), &siny, &cosy);
+	double const siny = sin(g_argument1->d.imag());
+	double const cosy = cos(g_argument1->d.imag());
 	double sinhx;
 	double coshx;
 	FPUsinhcosh(g_argument1->d.real(), &sinhx, &coshx);
@@ -1393,9 +1386,8 @@ void (*StkSinh)() = dStkSinh;
 
 void dStkCos()
 {
-	double sinx;
-	double cosx;
-	FPUsincos(g_argument1->d.real(), &sinx, &cosx);
+	double const sinx = sin(g_argument1->d.real());
+	double const cosx = cos(g_argument1->d.real());
 	double sinhy;
 	double coshy;
 	FPUsinhcosh(g_argument1->d.imag(), &sinhy, &coshy);
@@ -1441,9 +1433,8 @@ void (*StkCosXX)() = dStkCosXX;
 
 void dStkCosh()
 {
-	double siny;
-	double cosy;
-	FPUsincos(g_argument1->d.imag(), &siny, &cosy);
+	double const siny = sin(g_argument1->d.imag());
+	double const cosy = cos(g_argument1->d.imag());
 	double sinhx;
 	double coshx;
 	FPUsinhcosh(g_argument1->d.real(), &sinhx, &coshx);

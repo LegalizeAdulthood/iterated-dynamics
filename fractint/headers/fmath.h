@@ -88,77 +88,36 @@
 Just be sure to declare x, y, and z as type floats instead of type double.
 */
 
+#include "fpu.h"
 
-long RegFg2Float(long x, int FudgeFact);
-long RegSftFloat(long x, int Shift);
-long RegFloat2Fg(long x, int Fudge);
-long RegAddFloat(long x, long y);
-long RegDivFloat(long x, long y);
-long RegMulFloat(long x, long y);
-long RegSqrFloat(long x);
-long RegSubFloat(long x, long y);
-long r16Mul(long x, long y);
-long r16Sqr(long x);
-int sin13(long x);
-int cos13(long x);
-int FastCosine(int x);
-int FastSine(int x);
-long FastHypCosine(int x);
-long FastHypSine(int x);
-long sinh13(long x);
-long cosh13(long x);
-long LogFudged(unsigned long x, int Fudge);
-long LogFloat14(unsigned long x);
-unsigned long ExpFudged(long x, int Fudge);
-long ExpFloat14(long x);
-
-#define fAdd(x, y, z) ((*(long*)&z) = RegAddFloat(*(long*)&x, *(long*)&y))
-#define fMul(x, y, z) ((*(long*)&z) = RegMulFloat(*(long*)&x, *(long*)&y))
-#define fDiv(x, y, z) ((*(long*)&z) = RegDivFloat(*(long*)&x, *(long*)&y))
-#define fSub(x, y, z) ((*(long*)&z) = RegSubFloat(*(long*)&x, *(long*)&y))
-#define fMul16(x, y, z) ((*(long*)&z) = r16Mul(*(long*)&x, *(long*)&y))
-#define fSqr16(x, z) ((*(long*)&z) = r16Sqr(*(long*)&x))
-#define fSqr(x, z) ((*(long*)&z) = RegSqrFloat(*(long*)&x))
-#define fShift(x, Shift, z) ((*(long*)&z) = RegSftFloat(*(long*)&x, Shift))
-#define Fg2Float(x, f, z) ((*(long*)&z) = RegFg2Float(x, f))
-#define Float2Fg(x, f) RegFloat2Fg(*(long*)&x, f)
-#define fSin12(x, z) ((*(long*)&z) = RegFg2Float((long)sin13(Float2Fg(x, 13)), 13))
-#define fCos12(x, z) ((*(long*)&z) = RegFg2Float((long)cos13(Float2Fg(x, 13)), 13))
-#define fSinh12(x, z) ((*(long*)&z) = RegFg2Float(sinh13(Float2Fg(x, 13)), 13))
-#define fCosh12(x, z) ((*(long*)&z) = RegFg2Float(cosh13(Float2Fg(x, 13)), 13))
-#define fLog14(x, z) ((*(long*)&z) = RegFg2Float(LogFloat14(*(long*)&x), 16))
-#define fExp14(x, z) ((*(long*)&z) = ExpFloat14(*(long*)&x));
-#define fPow14(x, y, z)		\
-	do						\
-	{						\
-		fLog14(x, z);		\
-		fMul16(z, y, z);	\
-		fExp14(z, z);		\
-	} while (0)
-#define fSqrt14(x, z)		\
-	do						\
-	{						\
-		fLog14(x, z);		\
-		fShift(z, -1, z);	\
-		fExp14(z, z);		\
-	}						\
-	while (0)
-
-struct fComplex
+inline void fShift(float x, int shift, float &z)
 {
-   float x, y, mod;
-};
+	z = LongAsFloat(RegSftFloat(FloatAsLong(x), shift));
+}
 
-void fSqrZ(fComplex *x, fComplex *z);
-void fMod(fComplex *x);
-void fInvZ(fComplex *x, fComplex *z);
-void fMulZ(fComplex *x, fComplex *y, fComplex *z);
-void fDivZ(fComplex *x, fComplex *y, fComplex *z);
-void fSinZ(fComplex *x, fComplex *z);
-void fCosZ(fComplex *x, fComplex *z);
-void fTanZ(fComplex *x, fComplex *z);
-void fSinhZ(fComplex *x, fComplex *z);
-void fCoshZ(fComplex *x, fComplex *z);
-void fTanhZ(fComplex *x, fComplex *z);
+inline void fLog14(float x, float &z)
+{
+	z = LongAsFloat(RegFg2Float(LogFloat14(FloatAsLong(x)), 16));
+}
+
+inline long ExpFloat14(long xx)
+{
+	const float fLogTwo = 0.6931472f;
+	const int f = 23 - int(RegFloat2Fg(RegDivFloat(xx, *(long*) &fLogTwo), 0));
+	const long answer = ExpFudged(RegFloat2Fg(xx, 16), f);
+	return RegFg2Float(answer, f);
+}
+
+inline void fExp14(float x, float &z)
+{
+	z = LongAsFloat(ExpFloat14(FloatAsLong(x)));
+}
+
+inline void fSqrt14(float x, float &z)
+{
+	fLog14(x, z);
+	fShift(z, -1, z);
+	fExp14(z, z);
+}
 
 #endif
