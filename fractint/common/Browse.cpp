@@ -314,7 +314,7 @@ inline bool is_visible(CoordinateD const &pt)
 static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	multiple_precision_info_extension_block *mp_info)
 {
-	double toobig = sqrt(sqr(double(g_screen_width)) + sqr(double(g_screen_height)))*1.5;
+	double toobig = std::sqrt(sqr(double(g_screen_width)) + sqr(double(g_screen_height)))*1.5;
 	int saved = save_stack();
 
 	// Save original values.
@@ -399,7 +399,7 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	list->ibr.x = int(br.x + 0.5);
 	list->ibr.y = int(br.y + 0.5);
 
-	double tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
+	double tmp_sqrt = std::sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
 	list->win_size = tmp_sqrt; // used for box vs crosshair in draw_window()
 	// arbitrary value... stops browser zooming out too far
 	bool cant_see = false;

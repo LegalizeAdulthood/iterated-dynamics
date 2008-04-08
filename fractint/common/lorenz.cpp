@@ -1015,7 +1015,7 @@ int lorenz_3d1_orbit_fp(double *x, double *y, double *z)
 	s_zdt = (*z)*s_dt;
 
 	// 1-lobe Lorenz
-	norm = sqrt((*x)*(*x) + (*y)*(*y));
+	norm = std::sqrt((*x)*(*x) + (*y)*(*y));
 	s_dx = (-s_adt-s_dt)*(*x) + (s_adt-s_bdt)*(*y) + (s_dt-s_adt)*norm + s_ydt*(*z);
 	s_dy = (s_bdt-s_adt)*(*x) - (s_adt + s_dt)*(*y) + (s_bdt + s_adt)*norm - s_xdt*(*z) -
 			norm*s_zdt;
@@ -1036,7 +1036,7 @@ int lorenz_3d3_orbit_fp(double *x, double *y, double *z)
 	s_zdt = (*z)*s_dt;
 
 	// 3-lobe Lorenz
-	norm = sqrt((*x)*(*x) + (*y)*(*y));
+	norm = std::sqrt((*x)*(*x) + (*y)*(*y));
 	s_dx = (-(s_adt + s_dt)*(*x) + (s_adt-s_bdt + s_zdt)*(*y))/3 +
 			((s_dt-s_adt)*((*x)*(*x)-(*y)*(*y)) +
 			2*(s_bdt + s_adt-s_zdt)*(*x)*(*y))/(3*norm);
@@ -1207,7 +1207,7 @@ int hopalong_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; // for warning only
-	tmp = *y - sign(*x)*sqrt(std::abs(s_b*(*x)-s_c));
+	tmp = *y - sign(*x)*std::sqrt(std::abs(s_b*(*x)-s_c));
 	*y = s_a - *x;
 	*x = tmp;
 	return 0;

@@ -206,7 +206,7 @@ bool NewtonComplex::setup()
 		g_c_degree.real(g_parameters[P1_REAL]);
 		g_c_degree.imag(g_parameters[P1_IMAG]);
 		FPUcplxlog(&g_c_root, &BaseLog);
-		TwoPi = asin(1.0)*4;
+		TwoPi = std::asin(1.0)*4;
 	}
 	return true;
 }

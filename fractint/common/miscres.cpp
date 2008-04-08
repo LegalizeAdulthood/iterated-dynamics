@@ -173,15 +173,15 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 		tmpx1 = g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd();
 		tmpy1 = g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
 		a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
-		a = sqrt(a2);
+		a = std::sqrt(a2);
 		*Rotation = -MathUtil::RadiansToDegrees(std::atan2(tmpy1, tmpx1)); // negative for image rotation
 
 		tmpx2 = g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
 		tmpy2 = g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd();
 		b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
-		b = sqrt(b2);
+		b = std::sqrt(b2);
 
-		tmpa = acos((a2 + b2-c2)/(2*a*b)); // save tmpa for later use
+		tmpa = std::acos((a2 + b2-c2)/(2*a*b)); // save tmpa for later use
 		*Skew = 90.0 - MathUtil::RadiansToDegrees(tmpa);
 
 		*Xctr = g_escape_time_state.m_grid_fp.x_center();
@@ -399,7 +399,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
 		b = sqrtl(b2);
 
-		tmpa = acos(double((a2 + b2-c2)/(2*a*b))); // save tmpa for later use
+		tmpa = std::acos(double((a2 + b2-c2)/(2*a*b))); // save tmpa for later use
 		*Skew = 90 - MathUtil::RadiansToDegrees(tmpa);
 
 		// these are the only two variables that must use big precision
