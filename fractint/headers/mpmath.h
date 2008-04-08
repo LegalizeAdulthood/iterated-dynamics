@@ -24,7 +24,7 @@ extern void SetupLogTable();
 extern long logtablecalc(long);
 extern long ExpFloat14(long);
 extern int complex_basin();
-extern void Arcsinz(ComplexD z, ComplexD *rz);
+extern ComplexD Arcsinz(ComplexD z);
 extern void Arccosz(ComplexD z, ComplexD *rz);
 extern void Arcsinhz(ComplexD z, ComplexD *rz);
 extern void Arccoshz(ComplexD z, ComplexD *rz);
@@ -50,14 +50,14 @@ inline void LCMPLXtrig2(ComplexL const &arg, ComplexL &out)
 inline void LCMPLXtrig3(ComplexL const &arg, ComplexL &out)
 { g_argument1->l = arg; g_trig3_l(); out = g_argument1->l; }
 
-inline void CMPLXtrig0(ComplexD const &arg, ComplexD &out)
-{ g_argument1->d = arg; g_trig0_d(); out = g_argument1->d; }
-inline void CMPLXtrig1(ComplexD const &arg, ComplexD &out)
-{ g_argument1->d = arg; g_trig1_d(); out = g_argument1->d; }
-inline void CMPLXtrig2(ComplexD const &arg, ComplexD &out)
-{ g_argument1->d = arg; g_trig2_d(); out = g_argument1->d; }
-inline void CMPLXtrig3(ComplexD const &arg, ComplexD &out)
-{ g_argument1->d = arg; g_trig3_d(); out = g_argument1->d; }
+inline ComplexD CMPLXtrig0(ComplexD const &arg)
+{ g_argument1->d = arg; g_trig0_d(); return g_argument1->d; }
+inline ComplexD CMPLXtrig1(ComplexD const &arg)
+{ g_argument1->d = arg; g_trig1_d(); return g_argument1->d; }
+inline ComplexD CMPLXtrig2(ComplexD const &arg)
+{ g_argument1->d = arg; g_trig2_d(); return g_argument1->d; }
+inline ComplexD CMPLXtrig3(ComplexD const &arg)
+{ g_argument1->d = arg; g_trig3_d(); return g_argument1->d; }
 
 inline void LCMPLXsin(ComplexL const &arg, ComplexL &out)
 { g_argument1->l = arg; lStkSin();  out = g_argument1->l; }

@@ -39,13 +39,12 @@ inline void FPUsinhcosh(double angle, double *Sinh, double *Cosh)
 	*Cosh = std::cosh(angle);
 }
 
-inline void FPUcplxlog(ComplexD const *x, ComplexD *z)
+inline ComplexD FPUcplxlog(ComplexD const &x)
 {
-	double const mod = std::sqrt(x->real()*x->real() + x->imag()*x->imag());
+	double const mod = std::sqrt(x.real()*x.real() + x.imag()*x.imag());
 	double const zx = std::log(mod);
-	double const zy = std::atan2(x->imag(), x->real());
-	z->real(zx);
-	z->imag(zy);
+	double const zy = std::atan2(x.imag(), x.real());
+	return MakeComplexT(zx, zy);
 }
 
 inline void SinCos086(long x, long *sinx, long *cosx)

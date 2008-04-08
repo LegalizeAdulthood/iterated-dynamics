@@ -615,7 +615,7 @@ int trig_plus_exponent_orbit_fp()
 	s_temp_exp = std::exp(g_old_z.real());
 	s_sin_y = std::sin(g_old_z.imag());
 	s_cos_y = std::cos(g_old_z.imag());
-	CMPLXtrig0(g_old_z, g_new_z);
+	g_new_z = CMPLXtrig0(g_old_z);
 
 	// new =   trig(old) + e**old + C
 	g_new_z = g_new_z + s_temp_exp*MakeComplexT(s_cos_y, s_sin_y) + *g_float_parameter;
@@ -900,7 +900,7 @@ int trig_plus_z_squared_orbit()
 // z(n + 1) = trig(z(n)) + z(n)**2 + C
 int trig_plus_z_squared_orbit_fp()
 {
-	CMPLXtrig0(g_old_z, g_new_z);
+	g_new_z = CMPLXtrig0(g_old_z);
 	g_new_z = g_new_z + MakeComplexT(g_temp_sqr.real() - g_temp_sqr.imag(), 2.0*g_old_z.real()*g_old_z.imag())
 		+ *g_float_parameter;
 	return g_externs.BailOutFp();
@@ -909,8 +909,8 @@ int trig_plus_z_squared_orbit_fp()
 // Richard8 {c = z = pixel: z = sin(z) + sin(pixel), |z| <= 50}
 int richard8_orbit_fp()
 {
-	CMPLXtrig0(g_old_z, g_new_z);
-	// CMPLXtrig1(*g_float_parameter, g_temp_z);
+	g_new_z = CMPLXtrig0(g_old_z);
+	// g_temp_z = CMPLXtrig1(*g_float_parameter);
 	g_new_z = g_new_z + g_temp_z;
 	return g_externs.BailOutFp();
 }
@@ -1100,21 +1100,20 @@ int popcorn_fn_orbit_fp()
 
 	// tmpx contains the generalized value of the old real "x" equation
 	g_temp_z = g_parameter2*g_old_z.imag();		// tmp = (C*old.imag())
-	CMPLXtrig1(g_temp_z, tmpx);					// tmpx = trig1(tmp)
+	tmpx = CMPLXtrig1(g_temp_z);				// tmpx = trig1(tmp)
 	tmpx.real(tmpx.real() + g_old_z.imag());	// tmpx = old.imag() + trig1(tmp)
-	CMPLXtrig0(tmpx, g_temp_z);					// tmp = trig0(tmpx)
+	g_temp_z = CMPLXtrig0(tmpx);				// tmp = trig0(tmpx)
 	tmpx = g_temp_z*g_parameter;				// tmpx = tmp*h
 
 	// tmpy contains the generalized value of the old real "y" equation
 	g_temp_z = g_parameter2*g_old_z.real();		// tmp = (C*old.real())
-	CMPLXtrig3(g_temp_z, tmpy);             // tmpy = trig3(tmp)
+	tmpy = CMPLXtrig3(g_temp_z);				// tmpy = trig3(tmp)
 	tmpy.real(tmpy.real() + g_old_z.real());	// tmpy = old.real() + trig1(tmp)
-	CMPLXtrig2(tmpy, g_temp_z);					// tmp = trig2(tmpy)
+	g_temp_z = CMPLXtrig2(tmpy);				// tmp = trig2(tmpy)
 
 	tmpy = g_temp_z*g_parameter;				// tmpy = tmp*h
 
-	g_new_z.real(g_old_z.real() - tmpx.real() - tmpy.imag());
-	g_new_z.imag(g_old_z.imag() - tmpy.real() - tmpx.imag());
+	g_new_z = g_old_z - MakeComplexT(tmpx.real() + tmpy.imag(), tmpy.real() + tmpx.imag());
 
 	if (g_plot_color == plot_color_none)
 	{
@@ -1206,8 +1205,7 @@ int spider_orbit_fp()
 	// Spider(XAXIS) { c = z=pixel: z = z*z + c; c = c/2 + z, |z| <= 4 }
 	g_new_z.real(g_temp_sqr.real() - g_temp_sqr.imag() + g_temp_z.real());
 	g_new_z.imag(2*g_old_z.real()*g_old_z.imag() + g_temp_z.imag());
-	g_temp_z.real(g_temp_z.real()/2 + g_new_z.real());
-	g_temp_z.imag(g_temp_z.imag()/2 + g_new_z.imag());
+	g_temp_z = g_temp_z/2.0 + g_new_z;
 	return g_externs.BailOutFp();
 }
 
@@ -1277,7 +1275,7 @@ int skinner_z_trig_z_minus_z_orbit()
 int z_trig_z_plus_z_orbit_fp()
 {
 	// z = (p1*z*trig(z)) + p2*z
-	CMPLXtrig0(g_old_z, g_temp_z);				// tmp  = trig(old)
+	g_temp_z = CMPLXtrig0(g_old_z);				// tmp  = trig(old)
 	g_temp_z = g_parameter*g_temp_z;			// tmp  = p1*trig(old)
 	s_temp2 = g_old_z*g_temp_z;					// s_temp2 = p1*old*trig(old)
 	g_temp_z = g_parameter2*g_old_z;			// tmp  = p2*old
@@ -1288,7 +1286,7 @@ int z_trig_z_plus_z_orbit_fp()
 int scott_z_trig_z_plus_z_orbit_fp()
 {
 	// z = (z*trig(z)) + z
-	CMPLXtrig0(g_old_z, g_temp_z);				// tmp  = trig(old)
+	g_temp_z = CMPLXtrig0(g_old_z);				// tmp  = trig(old)
 	g_new_z = g_old_z*g_temp_z;					// new  = old*trig(old)
 	g_new_z = g_new_z + g_old_z;				// new  = trig(old) + old
 	return g_externs.BailOutFp();
@@ -1297,7 +1295,7 @@ int scott_z_trig_z_plus_z_orbit_fp()
 int skinner_z_trig_z_minus_z_orbit_fp()
 {
 	// z = (z*trig(z))-z
-	CMPLXtrig0(g_old_z, g_temp_z);         // tmp  = trig(old)
+	g_temp_z = CMPLXtrig0(g_old_z);         // tmp  = trig(old)
 	g_new_z = g_old_z*g_temp_z - g_old_z;
 	return g_externs.BailOutFp();
 }
@@ -1318,7 +1316,7 @@ int sqr_1_over_trig_z_orbit()
 int sqr_1_over_trig_z_orbit_fp()
 {
 	// z = sqr(1/trig(z))
-	CMPLXtrig0(g_old_z, g_old_z);
+	g_old_z = CMPLXtrig0(g_old_z);
 	CMPLXrecip(g_old_z, g_old_z);
 	CMPLXsqr(g_old_z, g_new_z);
 	return g_externs.BailOutFp();
@@ -1343,9 +1341,9 @@ int trig_plus_trig_orbit()
 int trig_plus_trig_orbit_fp()
 {
 	// z = trig0(z)*p1 + trig1(z)*p2
-	CMPLXtrig0(g_old_z, g_temp_z);
+	g_temp_z = CMPLXtrig0(g_old_z);
 	g_temp_z = g_parameter*g_temp_z;
-	CMPLXtrig1(g_old_z, g_old_z);
+	g_old_z = CMPLXtrig1(g_old_z);
 	g_old_z = g_parameter2*g_old_z;
 	g_new_z = g_temp_z + g_old_z;
 	return g_externs.BailOutFp();
@@ -1382,11 +1380,11 @@ int lambda_trig_or_trig_orbit_fp()
 	//		trig1(z)*p1 if mod(old) >= p2.real()
 	if (CMPLXmod(g_old_z) < g_parameter2.real())
 	{
-		CMPLXtrig0(g_old_z, g_old_z);
+		g_old_z = CMPLXtrig0(g_old_z);
 	}
 	else
 	{
-		CMPLXtrig1(g_old_z, g_old_z);
+		g_old_z = CMPLXtrig1(g_old_z);
 	}
 	g_new_z = *g_float_parameter * g_old_z;
 	return g_externs.BailOutFp();
@@ -1419,11 +1417,11 @@ int julia_trig_or_trig_orbit_fp()
 	//     trig1(z) + p1 if mod(old) >= p2.real()
 	if (CMPLXmod(g_old_z) < g_parameter2.real())
 	{
-		CMPLXtrig0(g_old_z, g_old_z);
+		g_old_z = CMPLXtrig0(g_old_z);
 	}
 	else
 	{
-		CMPLXtrig1(g_old_z, g_old_z);
+		g_old_z = CMPLXtrig1(g_old_z);
 	}
 	g_new_z = *g_float_parameter + g_old_z;
 	return g_externs.BailOutFp();
@@ -1681,8 +1679,8 @@ int scott_trig_plus_trig_orbit()
 int scott_trig_plus_trig_orbit_fp()
 {
 	// z = trig0(z) + trig1(z)
-	CMPLXtrig0(g_old_z, g_temp_z);
-	CMPLXtrig1(g_old_z, s_temp2);
+	g_temp_z = CMPLXtrig0(g_old_z);
+	s_temp2 = CMPLXtrig1(g_old_z);
 	g_new_z = g_temp_z + s_temp2;
 	return g_externs.BailOutFp();
 }
@@ -1703,8 +1701,8 @@ int skinner_trig_sub_trig_orbit()
 int skinner_trig_sub_trig_orbit_fp()
 {
 	// z = trig0(z)-trig1(z)
-	CMPLXtrig0(g_old_z, g_temp_z);
-	CMPLXtrig1(g_old_z, s_temp2);
+	g_temp_z = CMPLXtrig0(g_old_z);
+	s_temp2 = CMPLXtrig1(g_old_z);
 	g_new_z = g_temp_z - s_temp2;
 	return g_externs.BailOutFp();
 }
@@ -1712,8 +1710,8 @@ int skinner_trig_sub_trig_orbit_fp()
 int trig_trig_orbit_fp()
 {
 	// z = trig0(z)*trig1(z)
-	CMPLXtrig0(g_old_z, g_temp_z);
-	CMPLXtrig1(g_old_z, g_old_z);
+	g_temp_z = CMPLXtrig0(g_old_z);
+	g_old_z = CMPLXtrig1(g_old_z);
 	g_new_z = g_temp_z*g_old_z;
 	return g_externs.BailOutFp();
 }
@@ -1773,7 +1771,7 @@ int trig_plus_sqr_orbit() // generalization of Scott and Skinner types
 int trig_plus_sqr_orbit_fp() // generalization of Scott and Skinner types
 {
 	// { z = pixel: z = (p1, p2)*trig(z) + (p3, p4)*sqr(z), |z|<BAILOUT }
-	CMPLXtrig0(g_old_z, g_temp_z);		// tmp = trig(old)
+	g_temp_z = CMPLXtrig0(g_old_z);		// tmp = trig(old)
 	g_new_z = g_parameter*g_temp_z;		// new = g_parameter*trig(old)
 
 	CMPLXsqr_old(g_temp_z);				// tmp = sqr(old)
@@ -1798,7 +1796,7 @@ int scott_trig_plus_sqr_orbit()
 int scott_trig_plus_sqr_orbit_fp() // float version
 {
 	// { z = pixel: z = sin(z) + sqr(z), |z|<BAILOUT }
-	CMPLXtrig0(g_old_z, g_new_z);		// new = trig(old)
+	g_new_z = CMPLXtrig0(g_old_z);		// new = trig(old)
 	CMPLXsqr_old(g_temp_z);				// tmp = sqr(old)
 	g_new_z = g_new_z + g_temp_z;		// new = trig(old) + sqr(old)
 	return g_externs.BailOutFp();
@@ -1820,7 +1818,7 @@ int skinner_trig_sub_sqr_orbit()
 int skinner_trig_sub_sqr_orbit_fp()
 {
 	// { z = pixel: z = sin(z)-sqr(z), |z|<BAILOUT }
-	CMPLXtrig0(g_old_z, g_new_z);       // new = trig(old)
+	g_new_z = CMPLXtrig0(g_old_z);       // new = trig(old)
 	CMPLXsqr_old(g_temp_z);				// old = sqr(old)
 	g_new_z = g_new_z - g_temp_z;		// new = trig(old)-sqr(old)
 	return g_externs.BailOutFp();
@@ -1830,7 +1828,7 @@ int trig_z_squared_orbit_fp()
 {
 	// { z = pixel: z = trig(z*z), |z|<TEST }
 	CMPLXsqr_old(g_temp_z);
-	CMPLXtrig0(g_temp_z, g_new_z);
+	g_new_z = CMPLXtrig0(g_temp_z);
 	return g_externs.BailOutFp();
 }
 
@@ -1870,7 +1868,7 @@ int sqr_trig_orbit()
 int sqr_trig_orbit_fp()
 {
 	// SZSB(XYAXIS) { z = pixel, TEST = (p1 + 3): z = sin(z)*sin(z), |z|<TEST}
-	CMPLXtrig0(g_old_z, g_temp_z);
+	g_temp_z = CMPLXtrig0(g_old_z);
 	CMPLXsqr(g_temp_z, g_new_z);
 	return g_externs.BailOutFp();
 }
@@ -1968,7 +1966,7 @@ int lambda_trig_orbit_fp()
 	{
 		return 1;
 	}
-	CMPLXtrig0(g_old_z, g_temp_z);              // tmp = trig(old)
+	g_temp_z = CMPLXtrig0(g_old_z);              // tmp = trig(old)
 	g_new_z = *g_float_parameter*g_temp_z;		// new = g_long_parameter*trig(old)
 	g_old_z = g_new_z;
 	return 0;
@@ -1997,7 +1995,7 @@ int lambda_trig1_orbit_fp()
 	{
 		return 1;
 	}
-	CMPLXtrig0(g_old_z, g_temp_z);              // tmp = trig(old)
+	g_temp_z = CMPLXtrig0(g_old_z);              // tmp = trig(old)
 	g_new_z = *g_float_parameter*g_temp_z;		// new = g_long_parameter*trig(old)
 	g_old_z = g_new_z;
 	return 0;
@@ -2026,7 +2024,7 @@ int lambda_trig2_orbit_fp()
 	{
 		return 1;
 	}
-	CMPLXtrig0(g_old_z, g_temp_z);              // tmp = trig(old)
+	g_temp_z = CMPLXtrig0(g_old_z);              // tmp = trig(old)
 	g_new_z = *g_float_parameter*g_temp_z;		// new = g_long_parameter*trig(old)
 	g_old_z = g_new_z;
 	return 0;
@@ -2066,7 +2064,7 @@ int man_o_war_orbit_fp()
 //
 int marks_mandel_power_orbit_fp()
 {
-	CMPLXtrig0(g_old_z, g_new_z);
+	g_new_z = CMPLXtrig0(g_old_z);
 	g_new_z = g_temp_z*g_new_z + *g_float_parameter;
 	return g_externs.BailOutFp();
 }
@@ -2092,7 +2090,7 @@ int marks_mandel_power_orbit()
 //
 int tims_error_orbit_fp()
 {
-	CMPLXtrig0(g_old_z, g_new_z);
+	g_new_z = CMPLXtrig0(g_old_z);
 	g_new_z.real(g_new_z.real()*g_temp_z.real() - g_new_z.imag()*g_temp_z.imag());
 	g_new_z.imag(g_new_z.real()*g_temp_z.imag() - g_new_z.imag()*g_temp_z.real());
 	g_new_z.real(g_new_z.real() + g_float_parameter->real());
@@ -2537,7 +2535,7 @@ int julia_per_pixel_mpc()
 int other_richard8_per_pixel_fp()
 {
 	other_mandelbrot_per_pixel_fp();
-	CMPLXtrig1(*g_float_parameter, g_temp_z);
+	g_temp_z = CMPLXtrig1(*g_float_parameter);
 	g_temp_z = g_temp_z*g_parameter2;
 	return 1;
 }
@@ -2780,6 +2778,7 @@ int escher_orbit_fp()
 	}
 }
 
+// from formula by Jim Muth
 class MandelbrotMix4
 {
 public:
@@ -2902,7 +2901,7 @@ int MandelbrotMix4::per_pixel()
 		g_initial_z = g_externs.DPixel();
 	}
 	g_old_z = g_temp_z;
-	CMPLXtrig0(g_initial_z, _c);        // c = fn1(pixel):
+	_c = CMPLXtrig0(g_initial_z);        // c = fn1(pixel):
 	return 0; // 1st iteration has been NOT been done
 }
 
@@ -2925,7 +2924,7 @@ int mandelbrot_mix4_per_pixel_fp()
 	return s_mandelmix4.per_pixel();
 }
 
-int mandelbrot_mix4_orbit_fp() // from formula by Jim Muth
+int mandelbrot_mix4_orbit_fp()
 {
 	return s_mandelmix4.orbit();
 }

@@ -46,7 +46,7 @@ ComplexD pow(ComplexD const &xx, ComplexD const &yy)
 	}
 
 	// exp(log(xx)*yy)
-	FPUcplxlog(&xx, &cLog);
+	cLog = FPUcplxlog(xx);
 	t = cLog*yy;
 	FPUcplxexp387(&t, &z);
 	return z;
@@ -55,28 +55,22 @@ ComplexD pow(ComplexD const &xx, ComplexD const &yy)
 
 inline void Sqrtz(ComplexD z, ComplexD *rz)
 {
-	(*(rz) = ComplexSqrtFloat((z).real(), (z).imag()));
+	(*(rz) = ComplexSqrtFloat(z.real(), z.imag()));
 }
 
 // rz=Arcsin(z)=-i*Log{i*z + sqrt(1-z*z)}
-void Arcsinz(ComplexD z, ComplexD *rz)
+ComplexD Arcsinz(ComplexD z)
 {
-	ComplexD tempz1;
-	ComplexD tempz2;
-
-	tempz1 = z*z;
+	ComplexD tempz1 = 1.0 - z*z;
 	tempz1.real(1 - tempz1.real());
 	tempz1.imag(-tempz1.imag());			// tempz1 = 1 - tempz1
 	Sqrtz(tempz1, &tempz1);
 
-	tempz2.real(-z.imag());
-	tempz2.imag(z.real());                // tempz2 = i*z
-	tempz1.real(tempz1.real() + tempz2.real());
-	tempz1.imag(tempz1.imag() + tempz2.imag());    // tempz1 += tempz2
-	FPUcplxlog(&tempz1, &tempz1);
-	rz->real(tempz1.imag());
-	rz->imag(-tempz1.real());           // rz = (-i)*tempz1
-}   // end. Arcsinz
+	ComplexD tempz2 = MakeComplexT(-z.imag(), z.real()); // tempz2 = i*z
+	tempz1 = tempz1 + tempz2;				// tempz1 += tempz2
+	tempz1 = FPUcplxlog(tempz1);
+	return MakeComplexT(tempz1.imag(), -tempz1.real());           // rz = (-i)*tempz1
+}
 
 
 // rz=Arccos(z)=-i*Log{z + sqrt(z*z-1)}
@@ -91,7 +85,7 @@ void Arccosz(ComplexD z, ComplexD *rz)
 	temp.real(temp.real() + z.real());
 	temp.imag(temp.imag() + z.imag());
 
-	FPUcplxlog(&temp, &temp);
+	temp = FPUcplxlog(temp);
 	rz->real(temp.imag());
 	rz->imag(-temp.real());              // rz = (-i)*tempz1
 }
@@ -105,8 +99,8 @@ void Arcsinhz(ComplexD z, ComplexD *rz)
 	Sqrtz(temp, &temp);
 	temp.real(temp.real() + z.real());
 	temp.imag(temp.imag() + z.imag());                // temp = z + temp
-	FPUcplxlog(&temp, rz);
-}  // end. Arcsinhz
+	*rz = FPUcplxlog(temp);
+}
 
 // rz=Arccosh(z)=Log(z + sqrt(z*z-1)}
 void Arccoshz(ComplexD z, ComplexD *rz)
@@ -117,8 +111,8 @@ void Arccoshz(ComplexD z, ComplexD *rz)
 	Sqrtz(tempz, &tempz);
 	tempz.real(z.real() + tempz.real());
 	tempz.imag(z.imag() + tempz.imag());  // tempz = z + tempz
-	FPUcplxlog(&tempz, rz);
-}   // end. Arccoshz
+	*rz = FPUcplxlog(tempz);
+}
 
 // rz=Arctanh(z)=1/2*Log{(1 + z)/(1-z)}
 void Arctanhz(ComplexD z, ComplexD *rz)
@@ -152,7 +146,7 @@ void Arctanhz(ComplexD z, ComplexD *rz)
 			temp1.real(1 - z.real());
 			temp1.imag(-z.imag());            // temp1 = 1 - z
 			FPUcplxdiv(&temp0, &temp1, &temp2);
-			FPUcplxlog(&temp2, &temp2);
+			temp2 = FPUcplxlog(temp2);
 			rz->real(.5*temp2.real());
 			rz->imag(.5*temp2.imag());       // rz = .5*temp2
 			return;
@@ -195,7 +189,7 @@ void Arctanz(ComplexD z, ComplexD *rz)
 		temp2.imag(temp0.imag());       // temp2 = 1 + temp0
 
 		FPUcplxdiv(&temp1, &temp2, &temp3);
-		FPUcplxlog(&temp3, &temp3);
+		temp3 = FPUcplxlog(temp3);
 		rz->real(-temp3.imag()*.5);
 		rz->imag(.5*temp3.real());           // .5*i*temp0
 	}
@@ -278,25 +272,15 @@ ComplexL ComplexSqrtLong(long x, long y)
 
 ComplexD ComplexSqrtFloat(double x, double y)
 {
-	double mag;
-	double theta;
-	ComplexD  result;
-
 	if (x == 0.0 && y == 0.0)
 	{
-		result.real(0.0);
-		result.imag(0.0);
+		return MakeComplexT(0.0);
 	}
-	else
-	{
-		mag   = std::sqrt(std::sqrt(x*x + y*y));
-		theta = std::atan2(y, x)/2;
-		result.real(std::cos(theta)*mag);
-		result.imag(std::sin(theta)*mag);
-	}
-	return result;
-}
 
+	double const mag = std::sqrt(std::sqrt(x*x + y*y));
+	double const theta = std::atan2(y, x)/2;
+	return MakeComplexT(std::cos(theta)*mag, std::sin(theta)*mag);
+}
 
 #ifndef TESTING_MATH
 
@@ -435,7 +419,7 @@ int complex_basin()
 		{
 			g_old_z.imag(0.0);
 		}
-		FPUcplxlog(&g_old_z, &temp);
+		temp = FPUcplxlog(g_old_z);
 		g_temp_z = temp*g_c_degree;
 		mod = g_temp_z.imag()/TwoPi;
 		g_color_iter = long(mod);

@@ -160,6 +160,9 @@ template <typename T>
 inline ComplexT<T> operator*(ComplexT<T> const &left, T const &right)
 { return MakeComplexT(left.real()*right, left.imag()*right); }
 
+inline ComplexD operator/(ComplexD const &left, double right)
+{ return MakeComplexT(left.real()/right, left.imag()/right); }
+
 inline ComplexD operator-(ComplexD const &right)
 { return MakeComplexT(-right.real(), -right.imag()); }
 

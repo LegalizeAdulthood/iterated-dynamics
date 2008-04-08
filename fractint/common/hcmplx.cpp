@@ -93,8 +93,8 @@ void HComplexTrig0(HyperComplexD *h, HyperComplexD *out)
 	b.imag(h->imag() - h->z());
 
 	// apply function to each part
-	CMPLXtrig0(a, resulta);
-	CMPLXtrig0(b, resultb);
+	resulta = CMPLXtrig0(a);
+	resultb = CMPLXtrig0(b);
 
 	// convert back
 	out->real((resulta.real() + resultb.real())/2);

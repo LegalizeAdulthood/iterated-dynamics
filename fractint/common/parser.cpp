@@ -1462,7 +1462,7 @@ void (*StkCosh)() = dStkCosh;
 
 void dStkASin()
 {
-	Arcsinz(g_argument1->d, &(g_argument1->d));
+	g_argument1->d = Arcsinz(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -1734,7 +1734,7 @@ void lStkAND()
 void (*StkAND)() = dStkAND;
 void dStkLog()
 {
-	FPUcplxlog(&g_argument1->d, &g_argument1->d);
+	g_argument1->d = FPUcplxlog(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)

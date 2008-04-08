@@ -198,7 +198,7 @@ bool NewtonComplex::setup()
 		g_c_root.imag(g_parameters[P2_IMAG]);
 		g_c_degree.real(g_parameters[P1_REAL]);
 		g_c_degree.imag(g_parameters[P1_IMAG]);
-		FPUcplxlog(&g_c_root, &BaseLog);
+		BaseLog = FPUcplxlog(g_c_root);
 		TwoPi = std::asin(1.0)*4;
 	}
 	return true;
