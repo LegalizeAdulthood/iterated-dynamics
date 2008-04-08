@@ -1008,7 +1008,7 @@ void (*StkNeg)() = dStkNeg;
 
 void dStkMul()
 {
-	g_argument2->d = g_argument2->d * g_argument1->d;
+	g_argument2->d = (g_argument2->d)*(g_argument1->d);
 	g_argument1--;
 	g_argument2--;
 }

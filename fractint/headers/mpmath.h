@@ -192,42 +192,6 @@ inline void CMPLXpwr(ComplexD const &arg1, ComplexD const &arg2, ComplexD &out)
 	out = std::pow(arg1, arg2);
 }
 
-inline void CMPLXmult1(ComplexD const &arg1, ComplexD const &arg2, ComplexD &out)
-{
-	g_argument2->d = arg1;
-	g_argument1->d = arg2;
-	dStkMul();
-	g_argument1++;
-	g_argument2++;
-	out = g_argument2->d;
-}
-
-inline void CMPLXmult(ComplexD const &arg1, ComplexD const &arg2, ComplexD &out)
-{
-	ComplexD tmp;
-	tmp.real(arg1.real()*arg2.real() - arg1.imag()*arg2.imag());
-	tmp.imag(arg1.real()*arg2.imag() + arg1.imag()*arg2.real());
-	out = tmp;
-}
-
-inline void CMPLXadd(ComplexD const &arg1, ComplexD const &arg2, ComplexD &out)
-{
-	out.real(arg1.real() + arg2.real());
-	out.imag(arg1.imag() + arg2.imag());
-}
-
-inline void CMPLXsub(ComplexD const &arg1, ComplexD const &arg2, ComplexD &out)
-{
-	out.real(arg1.real() - arg2.real());
-	out.imag(arg1.imag() - arg2.imag());
-}
-
-inline void CMPLXtimesreal(ComplexD const &arg, double real, ComplexD &out)
-{
-	out.real(arg.real()*real);
-	out.imag(arg.imag()*real);
-}
-
 inline void CMPLXrecip(ComplexD const &arg, ComplexD &out)
 {
 	double const denom = sqr(arg.real()) + sqr(arg.imag());

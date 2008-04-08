@@ -117,7 +117,7 @@ inline long LCMPLXmod(ComplexL const &z)
 }
 
 template <typename T>
-inline ComplexT<T> MakeComplexT(T re, T im)
+inline ComplexT<T> MakeComplexT(T re = T(), T im = T())
 {
 	ComplexT<T> z;
 	z.real(re);
@@ -147,11 +147,23 @@ inline ComplexT<T> operator-(T const &left, ComplexT<T> const &right)
 
 inline ComplexD operator*(ComplexD const &left, ComplexD const &right)
 {
-	return MakeComplexT(left.real()*right.real() - left.imag()*right.imag(),
+	return MakeComplexT(
+		left.real()*right.real() - left.imag()*right.imag(),
 		left.real()*right.imag() + left.imag()*right.real());
 }
-
 inline ComplexD operator*(ComplexD const &left, StdComplexD const &right)
 { return left*MakeComplexT(right.real(), right.imag()); }
+template <typename T>
+inline ComplexT<T> operator*(T const &left, ComplexT<T> const &right)
+{ return MakeComplexT(left*right.real(), left*right.imag()); }
+template <typename T>
+inline ComplexT<T> operator*(ComplexT<T> const &left, T const &right)
+{ return MakeComplexT(left.real()*right, left.imag()*right); }
+
+inline ComplexD operator-(ComplexD const &right)
+{ return MakeComplexT(-right.real(), -right.imag()); }
+
+inline ComplexD dot(ComplexD const &left, ComplexD const &right)
+{ return MakeComplexT(left.real()*right.real(), left.imag()*right.imag()); }
 
 #endif
