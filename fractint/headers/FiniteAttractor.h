@@ -17,7 +17,7 @@ extern int g_finite_attractor;
 extern StdComplexD g_attractors[];
 extern double g_attractor_radius_fp;
 
-extern ComplexL g_attractors_l[];
+extern StdComplexL g_attractors_l[];
 extern long g_attractor_radius_l;
 
 #endif

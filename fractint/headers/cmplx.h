@@ -61,25 +61,26 @@ public:
 };
 
 typedef std::complex<double> StdComplexD;
-//typedef std::complex<double> ComplexD;
-//typedef std::complex<double> InitializedComplexD;
+typedef std::complex<long> StdComplexL;
 
 typedef ComplexT<double> ComplexD;
 typedef InitializedComplexT<double> InitializedComplexD;
 typedef ComplexT<long> ComplexL;
 typedef HyperComplexT<double> HyperComplexD;
 
-inline ComplexD ComplexDFromStd(StdComplexD const &right)
+template <typename T>
+inline ComplexT<T> ComplexTFromStd(std::complex<T> const &right)
 {
-	ComplexD result;
+	ComplexT<T> result;
 	result.real(right.real());
 	result.imag(right.imag());
 	return result;
 }
 
-inline StdComplexD ComplexStdFromD(ComplexD const &right)
+template <typename T>
+inline std::complex<T> ComplexStdFromT(ComplexT<T> const &right)
 {
-	return StdComplexD(right.real(), right.imag());
+	return std::complex<T>(right.real(), right.imag());
 }
 
 inline double FudgeToDouble(long x)

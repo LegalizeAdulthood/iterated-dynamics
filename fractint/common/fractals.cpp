@@ -2459,7 +2459,7 @@ int marks_mandelbrot_per_pixel_fp()
 	}
 	else if (g_c_exp == 2)
 	{
-		g_coefficient = ComplexStdFromD(g_old_z);
+		g_coefficient = ComplexStdFromT(g_old_z);
 	}
 	else if (g_c_exp < 2)
 	{
@@ -2612,7 +2612,7 @@ int marks_complex_mandelbrot_per_pixel()
 	g_old_z.imag(g_initial_z.imag() + g_parameter.imag());
 	g_temp_sqr.real(sqr(g_old_z.real()));  // precalculated value
 	g_temp_sqr.imag(sqr(g_old_z.imag()));
-	g_coefficient = ComplexStdFromD(ComplexPower(g_initial_z, g_power));
+	g_coefficient = ComplexStdFromT(ComplexPower(g_initial_z, g_power));
 	return 1;
 }
 
