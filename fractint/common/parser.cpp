@@ -1560,7 +1560,7 @@ void (*StkSqrt)() = dStkSqrt;
 
 void dStkCAbs()
 {
-	g_argument1->d.real(sqrt(sqr(g_argument1->d.real()) + sqr(g_argument1->d.imag())));
+	g_argument1->d.real(std::sqrt(sqr(g_argument1->d.real()) + sqr(g_argument1->d.imag())));
 	g_argument1->d.imag(0.0);
 }
 

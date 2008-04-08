@@ -897,14 +897,14 @@ void JIIM::Execute()
 				}
 
 				// r = sqrt(g_old_z.real()*g_old_z.real() + g_old_z.imag()*g_old_z.imag()); calculated above
-				r = sqrt(r);
-				g_new_z.real(sqrt(std::abs((r + g_old_z.real())/2)));
+				r = std::sqrt(r);
+				g_new_z.real(std::sqrt(std::abs((r + g_old_z.real())/2)));
 				if (g_old_z.imag() < 0)
 				{
 					g_new_z.real(-g_new_z.real());
 				}
 
-				g_new_z.imag(sqrt(std::abs((r - g_old_z.real())/2)));
+				g_new_z.imag(std::sqrt(std::abs((r - g_old_z.real())/2)));
 
 				switch (s_secret_experimental_mode)
 				{

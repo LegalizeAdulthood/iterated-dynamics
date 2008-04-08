@@ -261,7 +261,7 @@ ComplexL ComplexSqrtLong(long x, long y)
 	ComplexL    result;
 
 #ifndef LONGSQRT
-	mag       = sqrt(sqrt(FudgeToDouble(multiply(x, x, g_bit_shift)) +
+	mag       = std::sqrt(std::sqrt(FudgeToDouble(multiply(x, x, g_bit_shift)) +
 						  FudgeToDouble(multiply(y, y, g_bit_shift))));
 	maglong   = DoubleToFudge(mag);
 #else
@@ -289,7 +289,7 @@ ComplexD ComplexSqrtFloat(double x, double y)
 	}
 	else
 	{
-		mag   = sqrt(sqrt(x*x + y*y));
+		mag   = std::sqrt(std::sqrt(x*x + y*y));
 		theta = std::atan2(y, x)/2;
 		result.real(std::cos(theta)*mag);
 		result.imag(std::sin(theta)*mag);
@@ -339,7 +339,7 @@ void SetupLogTable()
 			{
 				lf = g_max_log_table_size - 1;
 			}
-			mlf = (g_colors - 2)/sqrt(double(g_max_log_table_size - lf));
+			mlf = (g_colors - 2)/std::sqrt(double(g_max_log_table_size - lf));
 		}
 	}
 
@@ -400,7 +400,7 @@ long logtablecalc(long citer)
 		}
 		else
 		{
-			ret = long(mlf*sqrt(double(citer - lf))) + 1;
+			ret = long(mlf*std::sqrt(double(citer - lf))) + 1;
 		}
 	}
 	return ret;

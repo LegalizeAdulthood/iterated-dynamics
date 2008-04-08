@@ -715,7 +715,7 @@ int calculate_fractal()
 
 	g_close_enough = g_delta_min_fp*std::pow(2.0, -double(std::abs(g_periodicity_check)));
 	s_rq_limit_save = g_rq_limit;
-	g_rq_limit2 = sqrt(g_rq_limit);
+	g_rq_limit2 = std::sqrt(g_rq_limit);
 	if (g_integer_fractal)          // for integer routines (lambda)
 	{
 		g_parameter_l = ComplexDoubleToFudge(g_parameter); // Lambda
@@ -1958,7 +1958,7 @@ void StandardFractal::outside_colormode_set_new_z_update()
 }
 void StandardFractal::outside_colormode_total_distance_update()
 {
-	m_colormode_total_distance += sqrt(sqr(m_colormode_total_distance_last_z.real()-g_new_z.real()) + sqr(m_colormode_total_distance_last_z.imag()-g_new_z.imag()));
+	m_colormode_total_distance += std::sqrt(sqr(m_colormode_total_distance_last_z.real()-g_new_z.real()) + sqr(m_colormode_total_distance_last_z.imag()-g_new_z.imag()));
 	m_colormode_total_distance_last_z = g_new_z;
 }
 void StandardFractal::outside_colormode_float_modulus_update()
@@ -2142,7 +2142,7 @@ bool StandardFractal::distance_get_color(double dist)
 	{
 		if (g_old_demm_colors) // this one is needed for old color scheme
 		{
-			g_color_iter = long(sqrt(sqrt(dist)/s_dem_width + 1));
+			g_color_iter = long(std::sqrt(std::sqrt(dist)/s_dem_width + 1));
 		}
 		else
 		{
@@ -2234,7 +2234,7 @@ void StandardFractal::inside_colormode_float_modulus_final()
 }
 void StandardFractal::inside_colormode_beauty_of_fractals_60_final()
 {
-	g_color_iter = long(sqrt(m_colormode_bof60_min_magnitude)*75);
+	g_color_iter = long(std::sqrt(m_colormode_bof60_min_magnitude)*75);
 }
 void StandardFractal::inside_colormode_beauty_of_fractals_61_final()
 {
@@ -2763,7 +2763,7 @@ static int potential(double mag, long iterations)
 		{
 			if (g_float_flag)
 			{
-				pot = float(sqrt(double(pot)));
+				pot = float(std::sqrt(double(pot)));
 			}
 			else
 			{
@@ -3693,12 +3693,12 @@ void PerformWorkList::setup_distance_estimator()
 	ftemp = g_distance_test_width;
 	// multiply by thickness desired
 	s_dem_delta *= (g_distance_test_width > 0) ? sqr(ftemp)/10000 : 1/(sqr(ftemp)*10000);
-	s_dem_width = (sqrt(sqr(g_escape_time_state.m_grid_fp.width()) + sqr(g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min()) )*aspect
-		+ sqrt(sqr(g_escape_time_state.m_grid_fp.height()) + sqr(g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) ) )/g_distance_test;
+	s_dem_width = (std::sqrt(sqr(g_escape_time_state.m_grid_fp.width()) + sqr(g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min()) )*aspect
+		+ std::sqrt(sqr(g_escape_time_state.m_grid_fp.height()) + sqr(g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) ) )/g_distance_test;
 	ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
 	ftemp += 3; // bailout plus just a bit
 	double ftemp2 = std::log(ftemp);
-	s_dem_too_big = std::abs(ftemp)*std::abs(ftemp2)*2/sqrt(s_dem_delta);
+	s_dem_too_big = std::abs(ftemp)*std::abs(ftemp2)*2/std::sqrt(s_dem_delta);
 }
 
 void PerformWorkList::setup_per_image()
