@@ -111,19 +111,9 @@ inline ComplexL ComplexDoubleToFudge(const ComplexD &d)
 	return z;
 }
 
-inline void CMPLXconj(ComplexD &z)
-{
-	z.imag(-z.imag());
-}
-
 inline long LCMPLXmod(ComplexL const &z)
 {
 	return lsqr(z.real()) + lsqr(z.imag());
-}
-
-inline void LCMPLXconj(ComplexL &z)
-{
-	z.imag(-z.imag());
 }
 
 #endif
