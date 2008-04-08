@@ -23,7 +23,7 @@
 #include "editpal.h"
 #include "encoder.h"
 #include "evolve.h"
-#include "fihelp.h"
+#include "idhelp.h"
 #include "filesystem.h"
 #include "fracsubr.h"
 #include "fractals.h"
