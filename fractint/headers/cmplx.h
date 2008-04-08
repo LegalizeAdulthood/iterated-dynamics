@@ -5,6 +5,7 @@
 //
 // various complex number defs
 //
+#include <cmath>
 #include <complex>
 #include "id.h"
 
@@ -67,6 +68,8 @@ typedef ComplexT<double> ComplexD;
 typedef InitializedComplexT<double> InitializedComplexD;
 typedef ComplexT<long> ComplexL;
 typedef HyperComplexT<double> HyperComplexD;
+
+extern ComplexD ComplexSqrtFloat(double re, double im);
 
 template <typename T>
 inline ComplexT<T> ComplexTFromStd(std::complex<T> const &right)
@@ -168,5 +171,34 @@ inline ComplexD operator-(ComplexD const &right)
 
 inline ComplexD dot(ComplexD const &left, ComplexD const &right)
 { return MakeComplexT(left.real()*right.real(), left.imag()*right.imag()); }
+
+inline ComplexD sqrt(ComplexD const &z)
+{
+	return ComplexSqrtFloat(z.real(), z.imag());
+}
+
+inline ComplexD TimesI(ComplexD const &z)
+{
+	return MakeComplexT(-z.imag(), z.real());
+}
+
+inline ComplexD FPUcplxlog(ComplexD const &x)
+{
+	double const mod = std::sqrt(x.real()*x.real() + x.imag()*x.imag());
+	double const zx = std::log(mod);
+	double const zy = std::atan2(x.imag(), x.real());
+	return MakeComplexT(zx, zy);
+}
+
+// rz = Arcsin(z) = -i*Log(i*z + sqrt(1-z*z))
+inline ComplexD asin(ComplexD z)
+{
+	return -TimesI(FPUcplxlog(TimesI(z) + sqrt(1.0 - z*z)));
+}
+
+inline ComplexD asinh(ComplexD const &z)
+{
+	return FPUcplxlog(sqrt(z*z + 1.0) + z);
+}
 
 #endif

@@ -1462,7 +1462,7 @@ void (*StkCosh)() = dStkCosh;
 
 void dStkASin()
 {
-	g_argument1->d = Arcsinz(g_argument1->d);
+	g_argument1->d = asin(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -1476,7 +1476,7 @@ void (*StkASin)() = dStkASin;
 
 void dStkASinh()
 {
-	Arcsinhz(g_argument1->d, &(g_argument1->d));
+	g_argument1->d = asinh(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
