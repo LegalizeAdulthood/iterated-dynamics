@@ -3,7 +3,8 @@
 
 #include <string>
 #include "drivers.h"
-#include "Externals.h"
+
+class Externals;
 
 class IFullScreenChooserApp
 {

@@ -4,6 +4,9 @@
 #include <cstdlib>
 #include "port.h"
 #include "id.h"
+
+#include "big.h"
+#include "calcfrac.h"
 #include "drivers.h"
 
 class Globals;

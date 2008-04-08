@@ -243,7 +243,8 @@ bool julia_setup_fp()
 	{
 		g_power.real(g_parameters[P2_REAL] - 1.0);
 		g_power.imag(g_parameters[P2_IMAG]);
-		g_coefficient = ComplexPower(*g_float_parameter, g_power);
+		ComplexD temp = ComplexPower(*g_float_parameter, g_power);
+		Assign(g_coefficient, temp);
 	}
 	switch (g_fractal_type)
 	{
@@ -983,7 +984,7 @@ bool marks_julia_setup_fp()
 	g_old_z = *g_float_parameter;
 	if (g_c_exp > 3)
 	{
-		complex_power(&g_old_z, g_c_exp-1, &g_coefficient);
+		complex_power(g_old_z, g_c_exp-1, g_coefficient);
 	}
 	else if (g_c_exp == 3)
 	{
@@ -992,12 +993,11 @@ bool marks_julia_setup_fp()
 	}
 	else if (g_c_exp == 2)
 	{
-		g_coefficient = g_old_z;
+		Assign(g_coefficient, g_old_z);
 	}
 	else if (g_c_exp < 2)
 	{
-		g_coefficient.real(1.0);
-		g_coefficient.imag(0.0);
+		g_coefficient = StdComplexD(1.0, 0.0);
 	}
 	get_julia_attractor(0.0, 0.0);      // an attractor?
 	return true;

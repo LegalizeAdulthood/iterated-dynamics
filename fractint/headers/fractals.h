@@ -1,11 +1,17 @@
 #if !defined(FRACTALS_H)
 #define FRACTALS_H
 
-#include "Externals.h"
+#include "cmplx.h"
 
 extern void invert_z(ComplexD *);
 extern void magnet2_precalculate_fp();
-extern void complex_power(ComplexD *, int, ComplexD *);
+extern void complex_power(ComplexD const *base, int exp, ComplexD *result);
+inline void complex_power(ComplexD const &base, int exp, StdComplexD &result)
+{
+	ComplexD temp;
+	complex_power(&base, exp, &temp);
+	Assign(result, temp);
+}
 extern int complex_power_l(ComplexL *, int, ComplexL *, int);
 extern int lcomplex_mult(ComplexL, ComplexL, ComplexL *, int);
 extern int barnsley1_orbit();
@@ -162,7 +168,6 @@ extern int phoenix_per_pixel_fp();
 extern int mandelbrot_phoenix_per_pixel();
 extern int mandelbrot_phoenix_per_pixel_fp();
 extern void set_pixel_calc_functions();
-extern void initialize_pixel_calc_functions(Externals &externs);
 extern int mandelbrot_mix4_per_pixel_fp();
 extern int mandelbrot_mix4_orbit_fp();
 extern bool mandelbrot_mix4_setup();

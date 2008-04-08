@@ -8,7 +8,7 @@
 #include "calcfrac.h"
 #include "drivers.h"
 #include "EscapeTime.h"
-#include "idhelp.h"
+#include "Externals.h"
 #include "filesystem.h"
 #include "Formula.h"
 #include "fracsuba.h"
@@ -16,6 +16,7 @@
 #include "fractalp.h"
 #include "fractals.h"
 #include "FullScreenChooser.h"
+#include "idhelp.h"
 #include "line3d.h"
 #include "loadfile.h"
 #include "loadmap.h"
@@ -31,7 +32,6 @@
 #include "UIChoices.h"
 #include "ViewWindow.h"
 #include "zoom.h"
-
 
 #ifdef __hpux
 #include <sys/param.h>

@@ -29,10 +29,11 @@
 #include "helpdefs.h"
 
 #include "drivers.h"
-#include "idhelp.h"
+#include "Externals.h"
 #include "filesystem.h"
 #include "fpu.h"
 #include "fractals.h"
+#include "idhelp.h"
 #include "jiim.h"
 #include "miscres.h"
 #include "mpmath.h"

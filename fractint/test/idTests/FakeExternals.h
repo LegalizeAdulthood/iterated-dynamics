@@ -92,8 +92,8 @@ public:
 	virtual void SetCloseEnough(double value)		{ throw not_implemented("SetCloseEnough"); }
 	virtual double Proximity() const				{ throw not_implemented("Proximity"); }
 	virtual void SetProximity(double value)			{ throw not_implemented("SetProximity"); }
-	virtual ComplexD Coefficient() const			{ throw not_implemented("Coefficient"); }
-	virtual void SetCoefficient(ComplexD value)		{ throw not_implemented("SetCoefficient"); }
+	virtual StdComplexD Coefficient() const			{ throw not_implemented("Coefficient"); }
+	virtual void SetCoefficient(StdComplexD value)	{ throw not_implemented("SetCoefficient"); }
 	virtual int Col() const							{ throw not_implemented("Col"); }
 	virtual void SetCol(int value)					{ throw not_implemented("SetCol"); }
 	virtual int Color() const						{ throw not_implemented("Color"); }

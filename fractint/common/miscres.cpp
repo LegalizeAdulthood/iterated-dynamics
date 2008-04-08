@@ -12,11 +12,11 @@
 #include "drivers.h"
 #include "EscapeTime.h"
 #include "Externals.h"
-#include "idhelp.h"
 #include "filesystem.h"
 #include "Formula.h"
 #include "fracsubr.h"
 #include "fractalp.h"
+#include "idhelp.h"
 #include "line3d.h"
 #include "MathUtil.h"
 #include "miscres.h"
@@ -27,7 +27,6 @@
 #include "StopMessage.h"
 #include "TextColors.h"
 #include "WorkList.h"
-
 
 extern long g_bn_max_stack;
 extern long maxstack;

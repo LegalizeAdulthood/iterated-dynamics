@@ -18,8 +18,8 @@
 #include "AbstractInput.h"
 #include "ant.h"
 #include "drivers.h"
-#include "idhelp.h"
 #include "fracsubr.h"
+#include "idhelp.h"
 #include "realdos.h"
 
 class Ant : public AbstractInputContext

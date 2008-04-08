@@ -70,7 +70,7 @@ ComplexL g_temp_sqr_l = { 0, 0 };
 ComplexL g_parameter_l = { 0, 0 };
 ComplexL g_parameter2_l = { 0, 0 };
 
-ComplexD g_coefficient = { 0.0, 0.0 };
+StdComplexD g_coefficient(0.0, 0.0);
 ComplexD g_temp_sqr = { 0.0, 0.0 };
 ComplexD g_parameter = { 0, 0 };
 ComplexD g_parameter2 = { 0, 0 };
@@ -243,7 +243,7 @@ inline long TRIG_ARG_L(long x)
 // Raise complex number (base) to the (exp) power, storing the result
 // in complex (result).
 //
-void complex_power(ComplexD *base, int exp, ComplexD *result)
+void complex_power(ComplexD const *base, int exp, ComplexD *result)
 {
 	if (exp < 0)
 	{
@@ -1198,11 +1198,21 @@ int popcorn_fn_orbit()
 #endif
 }
 
+inline ComplexD operator*(ComplexD const &left, StdComplexD const &right)
+{
+	ComplexD temp;
+	temp.real(right.real());
+	temp.imag(right.imag());
+	ComplexD result;
+	FPUcplxmul(&left, &temp, &result);
+	return result;
+}
+
 int marks_complex_mandelbrot_orbit()
 {
 	g_temp_z.real(g_temp_sqr.real() - g_temp_sqr.imag());
 	g_temp_z.imag(2*g_old_z.real()*g_old_z.imag());
-	FPUcplxmul(&g_temp_z, &g_coefficient, &g_new_z);
+	g_new_z = g_temp_z*g_coefficient;
 	g_new_z.real(g_new_z.real() + g_float_parameter->real());
 	g_new_z.imag(g_new_z.imag() + g_float_parameter->imag());
 	return g_externs.BailOutFp();
@@ -2441,7 +2451,7 @@ int marks_mandelbrot_per_pixel_fp()
 
 	if (g_c_exp > 3)
 	{
-		complex_power(&g_old_z, g_c_exp-1, &g_coefficient);
+		complex_power(g_old_z, g_c_exp-1, g_coefficient);
 	}
 	else if (g_c_exp == 3)
 	{
@@ -2450,12 +2460,11 @@ int marks_mandelbrot_per_pixel_fp()
 	}
 	else if (g_c_exp == 2)
 	{
-		g_coefficient = g_old_z;
+		Assign(g_coefficient, g_old_z);
 	}
 	else if (g_c_exp < 2)
 	{
-		g_coefficient.real(1.0);
-		g_coefficient.imag(0.0);
+		g_coefficient = StdComplexD(1.0, 0.0);
 	}
 
 	return 1; // 1st iteration has been done
@@ -2604,7 +2613,7 @@ int marks_complex_mandelbrot_per_pixel()
 	g_old_z.imag(g_initial_z.imag() + g_parameter.imag());
 	g_temp_sqr.real(sqr(g_old_z.real()));  // precalculated value
 	g_temp_sqr.imag(sqr(g_old_z.imag()));
-	g_coefficient = ComplexPower(g_initial_z, g_power);
+	Assign(g_coefficient, ComplexPower(g_initial_z, g_power));
 	return 1;
 }
 

@@ -6,7 +6,6 @@
 
 #include "idhelp.h"
 #include "prompts1.h"
-
 #include "UIChoices.h"
 
 UIChoices::UIChoices(const char *heading, int key_mask)

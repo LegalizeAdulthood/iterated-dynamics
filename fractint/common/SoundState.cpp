@@ -12,13 +12,12 @@
 #include "helpdefs.h"
 
 #include "cmdfiles.h"
-#include "drivers.h"
-#include "idhelp.h"
-#include "filesystem.h"
-#include "StopMessage.h"
-
-#include "SoundState.h"
 #include "CommandParser.h"
+#include "drivers.h"
+#include "filesystem.h"
+#include "idhelp.h"
+#include "SoundState.h"
+#include "StopMessage.h"
 #include "UIChoices.h"
 
 enum
