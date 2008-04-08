@@ -105,8 +105,8 @@ public:
 	virtual void SetCloseEnough(double value)					{ g_close_enough = value; }
 	virtual double Proximity() const							{ return g_proximity; }
 	virtual void SetProximity(double value)						{ g_proximity = value; }
-	virtual ComplexD Coefficient() const						{ return g_coefficient; }
-	virtual void SetCoefficient(ComplexD value)					{ g_coefficient = value; }
+	virtual StdComplexD Coefficient() const						{ return g_coefficient; }
+	virtual void SetCoefficient(StdComplexD value)				{ g_coefficient = value; }
 	virtual int Col() const										{ return g_col; }
 	virtual void SetCol(int value)								{ g_col = value; }
 	virtual int Color() const									{ return g_color; }

@@ -20,7 +20,7 @@ extern long					g_c_imag;
 extern double				g_close_enough;
 extern long					g_close_enough_l;
 extern double				g_proximity; // escape time parameter for epscross and fmod coloring methods
-extern ComplexD				g_coefficient;
+extern StdComplexD			g_coefficient;
 extern ComplexL				g_coefficient_l;
 extern int					g_col;
 extern int					g_color;

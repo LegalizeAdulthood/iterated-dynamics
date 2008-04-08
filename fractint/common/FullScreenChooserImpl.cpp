@@ -1,5 +1,6 @@
-#include "idhelp.h"
+#include "Externals.h"
 #include "FullScreenChooser.h"
+#include "idhelp.h"
 #include "miscres.h"
 #include "realdos.h"
 

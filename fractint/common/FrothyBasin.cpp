@@ -6,8 +6,9 @@
 #include "cmplx.h"
 #include "externs.h"
 #include "prototyp.h"
-#include "drivers.h"
 
+#include "drivers.h"
+#include "Externals.h"
 #include "fracsubr.h"
 #include "fractals.h"
 #include "framain2.h"

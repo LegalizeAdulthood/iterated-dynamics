@@ -2,8 +2,9 @@
 #define STOP_MESSAGE_IMPL_H
 
 #include "drivers.h"
-#include "Externals.h"
 #include "StopMessage.h"
+
+class Externals;
 
 class IStopMessageApp
 {

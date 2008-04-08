@@ -73,8 +73,8 @@ public:
 	virtual void SetCloseEnough(double value) = 0;
 	virtual double Proximity() const = 0;
 	virtual void SetProximity(double value) = 0;
-	virtual ComplexD Coefficient() const = 0;
-	virtual void SetCoefficient(ComplexD value) = 0;
+	virtual StdComplexD Coefficient() const = 0;
+	virtual void SetCoefficient(StdComplexD value) = 0;
 	virtual int Col() const = 0;
 	virtual void SetCol(int value) = 0;
 	virtual int Color() const = 0;
@@ -776,6 +776,7 @@ public:
 	virtual void SetUserStandardCalculationMode(CalculationMode value) = 0;
 };
 
+extern void initialize_pixel_calc_functions(Externals &externs);
 extern Externals &g_externs;
 
 #endif

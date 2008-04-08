@@ -1,5 +1,7 @@
 #include <string>
 #include "prototyp.h"
+
+#include "Externals.h"
 #include "prompts2.h"
 #include "StopMessageImpl.h"
 

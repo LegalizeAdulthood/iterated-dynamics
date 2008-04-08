@@ -5,8 +5,9 @@
 #include "id.h"
 
 #include "drivers.h"
-#include "idhelp.h"
+#include "Externals.h"
 #include "FullScreenChooser.h"
+#include "idhelp.h"
 #include "miscres.h"
 #include "strncasecmp.h"
 #include "TextColors.h"

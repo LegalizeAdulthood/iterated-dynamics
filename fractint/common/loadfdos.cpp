@@ -23,8 +23,9 @@
 #include "helpdefs.h"
 
 #include "cmdfiles.h"
-#include "idhelp.h"
+#include "Externals.h"
 #include "FullScreenChooser.h"
+#include "idhelp.h"
 #include "loadfdos.h"
 #include "realdos.h"
 #include "StopMessage.h"

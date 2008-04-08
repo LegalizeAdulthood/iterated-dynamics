@@ -1,6 +1,7 @@
 #include <fstream>
 #include <string>
 
+#include "Externals.h"
 #include "TextColors.h"
 #include "StopMessageImpl.h"
 
