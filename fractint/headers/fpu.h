@@ -12,14 +12,6 @@ inline long FloatAsLong(float f)
 	return *reinterpret_cast<long *>(&f);
 }
 
-inline ComplexD operator*(ComplexD const &left, ComplexD const &right)
-{
-	ComplexD z;
-	z.real(left.real()*right.real() - left.imag()*right.imag());
-	z.imag(left.real()*right.imag() + left.imag()*right.real());
-	return z;
-}
-
 inline void FPUcplxdiv(ComplexD *x, ComplexD *y, ComplexD *z)
 {
 	double mod, tx, yxmod, yymod;
