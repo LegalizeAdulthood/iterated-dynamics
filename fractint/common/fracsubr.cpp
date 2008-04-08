@@ -1521,7 +1521,7 @@ void get_julia_attractor(double real, double imag)
 					if (fabs(result.real() - g_new_z.real()) < g_close_enough
 						&& fabs(result.imag() - g_new_z.imag()) < g_close_enough)
 					{
-						Assign(g_attractors[g_num_attractors], g_new_z);
+						g_attractors[g_num_attractors] = ComplexStdFromD(g_new_z);
 						g_attractor_period[g_num_attractors] = i + 1;
 						g_num_attractors++;   // another attractor - coloured lakes !
 						break;

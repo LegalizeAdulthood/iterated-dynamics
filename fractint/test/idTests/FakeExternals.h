@@ -290,8 +290,8 @@ public:
 	virtual void SetXStop(int value) 				{ throw not_implemented("SetXStop"); }
 	virtual int YStop() const 						{ throw not_implemented("YStop"); }
 	virtual void SetYStop(int value) 				{ throw not_implemented("SetYStop"); }
-	virtual std::complex<double> JuliaC() const 	{ throw not_implemented("JuliaC"); }
-	virtual void SetJuliaC(std::complex<double> const &value) { throw not_implemented("SetJuliaC"); }
+	virtual StdComplexD JuliaC() const 				{ throw not_implemented("JuliaC"); }
+	virtual void SetJuliaC(StdComplexD const &value) { throw not_implemented("SetJuliaC"); }
 	virtual int Juli3DMode() const					{ throw not_implemented("Juli3DMode"); }
 	virtual void SetJuli3DMode(int value) 			{ throw not_implemented("SetJuli3DMode"); }
 	virtual char const **Juli3DOptions() const		{ throw not_implemented("Juli3DOptions"); }

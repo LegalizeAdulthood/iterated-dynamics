@@ -280,8 +280,8 @@ public:
 	virtual void SetXStop(int value)							{ g_x_stop = value; }
 	virtual int YStop() const									{ return g_y_stop; }
 	virtual void SetYStop(int value)							{ g_y_stop = value; }
-	virtual std::complex<double> JuliaC() const					{ return g_julia_c; }
-	virtual void SetJuliaC(std::complex<double> const &value)	{ g_julia_c = value; }
+	virtual StdComplexD JuliaC() const							{ return g_julia_c; }
+	virtual void SetJuliaC(StdComplexD const &value)			{ g_julia_c = value; }
 	virtual int Juli3DMode() const								{ return g_juli_3d_mode; }
 	virtual void SetJuli3DMode(int value)						{ g_juli_3d_mode = value; }
 	virtual char const **Juli3DOptions() const					{ return &g_juli_3d_options[0]; }

@@ -264,8 +264,8 @@ public:
 	virtual void SetXStop(int value) = 0;
 	virtual int YStop() const = 0;
 	virtual void SetYStop(int value) = 0;
-	virtual std::complex<double> JuliaC() const = 0;
-	virtual void SetJuliaC(std::complex<double> const &value) = 0;
+	virtual StdComplexD JuliaC() const = 0;
+	virtual void SetJuliaC(StdComplexD const &value) = 0;
 	virtual int Juli3DMode() const = 0;
 	virtual void SetJuli3DMode(int value) = 0;
 	virtual char const **Juli3DOptions() const = 0;

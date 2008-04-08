@@ -556,7 +556,7 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 		{
 			g_parameters[P1_REAL] = g_julia_c.real();
 			g_parameters[P1_IMAG] = g_julia_c.imag();
-			g_julia_c = std::complex<double>(BIG, BIG);
+			g_julia_c = StdComplexD(BIG, BIG);
 		}
 		jxxmin = g_sx_min;
 		jxxmax = g_sx_max;

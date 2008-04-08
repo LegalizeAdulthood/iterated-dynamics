@@ -72,7 +72,7 @@ ComplexL g_parameter2_l = { 0, 0 };
 
 StdComplexD g_coefficient(0.0, 0.0);
 ComplexD g_temp_sqr = { 0.0, 0.0 };
-ComplexD g_parameter = { 0, 0 };
+ComplexD g_parameter = { 0.0, 0.0 };
 ComplexD g_parameter2 = { 0, 0 };
 
 int g_degree = 0;
@@ -1435,17 +1435,16 @@ int julia_trig_or_trig_orbit()
 int julia_trig_or_trig_orbit_fp()
 {
 	// z = trig0(z) + p1 if mod(old) < p2.real() and
-	//		trig1(z) + p1 if mod(old) >= p2.real()
+	//     trig1(z) + p1 if mod(old) >= p2.real()
 	if (CMPLXmod(g_old_z) < g_parameter2.real())
 	{
 		CMPLXtrig0(g_old_z, g_old_z);
-		CMPLXadd(*g_float_parameter, g_old_z, g_new_z);
 	}
 	else
 	{
 		CMPLXtrig1(g_old_z, g_old_z);
-		CMPLXadd(*g_float_parameter, g_old_z, g_new_z);
 	}
+	CMPLXadd(*g_float_parameter, g_old_z, g_new_z);
 	return g_externs.BailOutFp();
 }
 
@@ -2460,7 +2459,7 @@ int marks_mandelbrot_per_pixel_fp()
 	}
 	else if (g_c_exp == 2)
 	{
-		Assign(g_coefficient, g_old_z);
+		g_coefficient = ComplexStdFromD(g_old_z);
 	}
 	else if (g_c_exp < 2)
 	{
@@ -2613,7 +2612,7 @@ int marks_complex_mandelbrot_per_pixel()
 	g_old_z.imag(g_initial_z.imag() + g_parameter.imag());
 	g_temp_sqr.real(sqr(g_old_z.real()));  // precalculated value
 	g_temp_sqr.imag(sqr(g_old_z.imag()));
-	Assign(g_coefficient, ComplexPower(g_initial_z, g_power));
+	g_coefficient = ComplexStdFromD(ComplexPower(g_initial_z, g_power));
 	return 1;
 }
 
