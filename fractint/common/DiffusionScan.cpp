@@ -162,7 +162,7 @@ static bool diffusion_block_lim(int row, int col, int sqsz)
 
 int DiffusionScanImpl::Engine()
 {
-	double log2 = double(log(2.0));
+	double log2 = double(std::log(2.0));
 	int i;
 	int j;
 	int nx;
@@ -261,7 +261,7 @@ int DiffusionScanImpl::Engine()
 		// with progressive filling :
 		while (s_diffusionCounter < (s_diffusionLimit >> 1))
 		{
-			sqsz = 1 << (int(s_bits - int(log(s_diffusionCounter + 0.5)/log2 )-1)/2 );
+			sqsz = 1 << (int(s_bits - int(std::log(s_diffusionCounter + 0.5)/log2 )-1)/2 );
 			count_to_int(dif_offset, s_diffusionCounter, &colo, &rowo);
 
 			i = 0;
@@ -384,12 +384,12 @@ int DiffusionScanImpl::Engine()
 
 inline double log_length(int start, int stop)
 {
-	return log(double(stop - start + 1));
+	return std::log(double(stop - start + 1));
 }
 
 void DiffusionScanImpl::Scan()
 {
-	double log2 = double(log(2.0));
+	double log2 = double(std::log(2.0));
 
 	g_externs.SetTabStatus(TAB_STATUS_DIFFUSION);
 

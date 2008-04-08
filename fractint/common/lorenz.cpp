@@ -346,8 +346,8 @@ bool orbit_3d_setup()
 		s_l_d =  long(g_parameters[P2_IMAG]);
 		s_t = int(s_l_d);     // points per orbit
 
-		s_l_sinx = DoubleToFudge(sin(s_a));
-		s_l_cosx = DoubleToFudge(cos(s_a));
+		s_l_sinx = DoubleToFudge(std::sin(s_a));
+		s_l_cosx = DoubleToFudge(std::cos(s_a));
 		s_l_orbit = 0;
 		s_init_orbit_long[0] = 0;
 		s_init_orbit_long[1] = 0;
@@ -529,8 +529,8 @@ bool orbit_3d_setup_fp()
 		s_c =  g_parameters[P2_REAL];    // stop
 		s_l_d =  long(g_parameters[P2_IMAG]);
 		s_t = int(s_l_d);     // points per orbit
-		g_sin_x = sin(s_a);
-		g_cos_x = cos(s_a);
+		g_sin_x = std::sin(s_a);
+		g_cos_x = std::cos(s_a);
 		s_orbit = 0;
 		s_init_orbit_fp[0] = 0;
 		s_init_orbit_fp[1] = 0;
@@ -552,8 +552,8 @@ bool orbit_3d_setup_fp()
 		s_d =  g_parameters[P2_IMAG];
 		if (g_fractal_type == FRACTYPE_THREE_PLY)
 		{
-			s_dx = cos(s_b);
-			s_dy = sin(s_a + s_b + s_c);
+			s_dx = std::cos(s_b);
+			s_dy = std::sin(s_a + s_b + s_c);
 		}
 	}
 	else if (g_fractal_type == FRACTYPE_INVERSE_JULIA_FP)
@@ -1118,9 +1118,9 @@ int pickover_orbit_fp(double *x, double *y, double *z)
 	double newx;
 	double newy;
 	double newz;
-	newx = sin(s_a*(*y)) - (*z)*cos(s_b*(*x));
-	newy = (*z)*sin(s_c*(*x)) - cos(s_d*(*y));
-	newz = sin(*x);
+	newx = std::sin(s_a*(*y)) - (*z)*std::cos(s_b*(*x));
+	newy = (*z)*std::sin(s_c*(*x)) - std::cos(s_d*(*y));
+	newz = std::sin(*x);
 	*x = newx;
 	*y = newy;
 	*z = newz;
@@ -1132,7 +1132,7 @@ int gingerbread_orbit_fp(double *x, double *y, double *z)
 {
 	double newx;
 	*z = *x; // for warning only
-	newx = 1 - (*y) + fabs(*x);
+	newx = 1 - (*y) + std::abs(*x);
 	*y = *x;
 	*x = newx;
 	return 0;
@@ -1207,7 +1207,7 @@ int hopalong_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; // for warning only
-	tmp = *y - sign(*x)*sqrt(fabs(s_b*(*x)-s_c));
+	tmp = *y - sign(*x)*sqrt(std::abs(s_b*(*x)-s_c));
 	*y = s_a - *x;
 	*x = tmp;
 	return 0;
@@ -1216,17 +1216,17 @@ int hopalong_2d_orbit_fp(double *x, double *y, double *z)
 // common subexpressions for chip_2d and quadrup_two_2d
 static double log_fabs(double b, double c, double x)
 {
-	return log(fabs(b*x - c));
+	return std::log(std::abs(b*x - c));
 }
 
 static double atan_sqr_log_fabs(double b, double c, double x)
 {
-	return atan(sqr(log(fabs(c*x - b))));
+	return std::atan(sqr(std::log(std::abs(c*x - b))));
 }
 
 static double cos_sqr(double x)
 {
-	return cos(sqr(x));
+	return std::cos(sqr(x));
 }
 
 static int orbit_aux(double (*fn)(double x), double *x, double *y, double *z)
@@ -1256,7 +1256,7 @@ int three_ply_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; // for warning only
-	tmp = *y - sign(*x)*(fabs(sin(*x)*s_dx + s_c-(*x)*s_dy));
+	tmp = *y - sign(*x)*(std::abs(std::sin(*x)*s_dx + s_c-(*x)*s_dy));
 	*y = s_a - *x;
 	*x = tmp;
 	return 0;
@@ -1266,7 +1266,7 @@ int martin_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x;  // for warning only
-	tmp = *y - sin(*x);
+	tmp = *y - std::sin(*x);
 	*y = s_a - *x;
 	*x = tmp;
 	return 0;
@@ -1300,7 +1300,7 @@ int dynamic_orbit_fp(double *x, double *y, double *z)
 	cp.real(s_b* *x);
 	cp.imag(0);
 	CMPLXtrig0(cp, tmp);
-	newy = *y + s_dt*sin(*x + s_a*tmp.real());
+	newy = *y + s_dt*std::sin(*x + s_a*tmp.real());
 	if (s_use_euler_approximation)
 	{
 		*y = newy;
@@ -1309,7 +1309,7 @@ int dynamic_orbit_fp(double *x, double *y, double *z)
 	cp.real(s_b* *y);
 	cp.imag(0);
 	CMPLXtrig0(cp, tmp);
-	newx = *x - s_dt*sin(*y + s_a*tmp.real());
+	newx = *x - s_dt*std::sin(*y + s_a*tmp.real());
 	*x = newx;
 	*y = newy;
 	return 0;

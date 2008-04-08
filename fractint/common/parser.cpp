@@ -409,7 +409,7 @@ Arg *g_argument2;
 #define ChkFloatDenom(denom)			\
 	do									\
 	{									\
-		if (fabs(denom) <= DBL_MIN)		\
+		if (std::abs(denom) <= DBL_MIN)		\
 		{								\
 			g_overflow = true;			\
 			return;						\
@@ -537,7 +537,7 @@ static void lStkFunct(void (*function)())   // call lStk via dStk
 	g_argument1->d.real(double_from_fixpoint(g_argument1->l.real()));
 	g_argument1->d.imag(y);
 	(*function)();
-	if (fabs(g_argument1->d.real()) < g_fudge_limit && fabs(g_argument1->d.imag()) < g_fudge_limit)
+	if (std::abs(g_argument1->d.real()) < g_fudge_limit && std::abs(g_argument1->d.imag()) < g_fudge_limit)
 	{
 		g_argument1->l.real(fixpoint_from_double(g_argument1->d.real()));
 		g_argument1->l.imag(fixpoint_from_double(g_argument1->d.imag()));
@@ -739,8 +739,8 @@ void dStkSqr3()
 
 void dStkAbs()
 {
-	g_argument1->d.real(fabs(g_argument1->d.real()));
-	g_argument1->d.imag(fabs(g_argument1->d.imag()));
+	g_argument1->d.real(std::abs(g_argument1->d.real()));
+	g_argument1->d.imag(std::abs(g_argument1->d.imag()));
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -1149,10 +1149,10 @@ void (*StkFlip)() = dStkFlip;
 
 void dStkSin()
 {
-	double const sinx = sin(g_argument1->d.real());
-	double const cosx = cos(g_argument1->d.real());
-	double const sinhy = sinh(g_argument1->d.imag());
-	double const coshy = cosh(g_argument1->d.imag());
+	double const sinx = std::sin(g_argument1->d.real());
+	double const cosx = std::cos(g_argument1->d.real());
+	double const sinhy = std::sinh(g_argument1->d.imag());
+	double const coshy = std::cosh(g_argument1->d.imag());
 	g_argument1->d.real(sinx*coshy);
 	g_argument1->d.imag(cosx*sinhy);
 }
@@ -1182,8 +1182,8 @@ void dStkTan()
 {
 	g_argument1->d.real(g_argument1->d.real()*2);
 	g_argument1->d.imag(g_argument1->d.imag()*2);
-	double const sinx = sin(g_argument1->d.real());
-	double const cosx = cos(g_argument1->d.real());
+	double const sinx = std::sin(g_argument1->d.real());
+	double const cosx = std::cos(g_argument1->d.real());
 	double sinhy;
 	double coshy;
 	FPUsinhcosh(g_argument1->d.imag(), &sinhy, &coshy);
@@ -1217,8 +1217,8 @@ void dStkTanh()
 {
 	g_argument1->d.real(g_argument1->d.real()*2);
 	g_argument1->d.imag(g_argument1->d.imag()*2);
-	double const siny = sin(g_argument1->d.imag());
-	double const cosy = cos(g_argument1->d.imag());
+	double const siny = std::sin(g_argument1->d.imag());
+	double const cosy = std::cos(g_argument1->d.imag());
 	double sinhx;
 	double coshx;
 	FPUsinhcosh(g_argument1->d.real(), &sinhx, &coshx);
@@ -1254,8 +1254,8 @@ void dStkCoTan()
 {
 	g_argument1->d.real(g_argument1->d.real()*2);
 	g_argument1->d.imag(g_argument1->d.imag()*2);
-	double const sinx = sin(g_argument1->d.real());
-	double const cosx = cos(g_argument1->d.real());
+	double const sinx = std::sin(g_argument1->d.real());
+	double const cosx = std::cos(g_argument1->d.real());
 	double sinhy;
 	double coshy;
 	FPUsinhcosh(g_argument1->d.imag(), &sinhy, &coshy);
@@ -1291,8 +1291,8 @@ void dStkCoTanh()
 {
 	g_argument1->d.real(g_argument1->d.real()*2);
 	g_argument1->d.imag(g_argument1->d.imag()*2);
-	double const siny = sin(g_argument1->d.imag());
-	double const cosy = cos(g_argument1->d.imag());
+	double const siny = std::sin(g_argument1->d.imag());
+	double const cosy = std::cos(g_argument1->d.imag());
 	double sinhx;
 	double coshx;
 	FPUsinhcosh(g_argument1->d.real(), &sinhx, &coshx);
@@ -1357,8 +1357,8 @@ void StkIdent()  // do nothing - the function Z
 
 void dStkSinh()
 {
-	double const siny = sin(g_argument1->d.imag());
-	double const cosy = cos(g_argument1->d.imag());
+	double const siny = std::sin(g_argument1->d.imag());
+	double const cosy = std::cos(g_argument1->d.imag());
 	double sinhx;
 	double coshx;
 	FPUsinhcosh(g_argument1->d.real(), &sinhx, &coshx);
@@ -1386,8 +1386,8 @@ void (*StkSinh)() = dStkSinh;
 
 void dStkCos()
 {
-	double const sinx = sin(g_argument1->d.real());
-	double const cosx = cos(g_argument1->d.real());
+	double const sinx = std::sin(g_argument1->d.real());
+	double const cosx = std::cos(g_argument1->d.real());
 	double sinhy;
 	double coshy;
 	FPUsinhcosh(g_argument1->d.imag(), &sinhy, &coshy);
@@ -1433,8 +1433,8 @@ void (*StkCosXX)() = dStkCosXX;
 
 void dStkCosh()
 {
-	double const siny = sin(g_argument1->d.imag());
-	double const cosy = cos(g_argument1->d.imag());
+	double const siny = std::sin(g_argument1->d.imag());
+	double const cosy = std::cos(g_argument1->d.imag());
 	double sinhx;
 	double coshx;
 	FPUsinhcosh(g_argument1->d.real(), &sinhx, &coshx);
@@ -1767,7 +1767,7 @@ void (*StkExp)() = dStkExp;
 
 void dStkPwr()
 {
-	g_argument2->d = ComplexPower(g_argument2->d, g_argument1->d);
+	g_argument2->d = std::pow(g_argument2->d, g_argument1->d);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1782,8 +1782,8 @@ void lStkPwr()
 	x.imag(double_from_fixpoint(g_argument2->l.imag()));
 	y.real(double_from_fixpoint(g_argument1->l.real()));
 	y.imag(double_from_fixpoint(g_argument1->l.imag()));
-	x = ComplexPower(x, y);
-	if (fabs(x.real()) < g_fudge_limit && fabs(x.imag()) < g_fudge_limit)
+	x = std::pow(x, y);
+	if (std::abs(x.real()) < g_fudge_limit && std::abs(x.imag()) < g_fudge_limit)
 	{
 		g_argument2->l.real(fixpoint_from_double(x.real()));
 		g_argument2->l.imag(fixpoint_from_double(x.imag()));

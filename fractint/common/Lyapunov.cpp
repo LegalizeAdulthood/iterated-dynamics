@@ -47,7 +47,7 @@ int lyapunov()
 	}
 	else if (g_parameters[P1_IMAG] == 0)
 	{
-		if (fabs(s_population) > BIG || s_population == 0 || s_population == 1)
+		if (std::abs(s_population) > BIG || s_population == 0 || s_population == 1)
 		{
 			s_population = (1.0 + rand())/(2.0 + RAND_MAX);
 		}
@@ -182,7 +182,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 				g_overflow = true;
 				goto jumpout;
 			}
-			temp = fabs(s_rate-2.0*s_rate*s_population);
+			temp = std::abs(s_rate-2.0*s_rate*s_population);
 			total *= temp;
 			if (total == 0)
 			{
@@ -203,7 +203,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 	}
 
 jumpout:
-	temp = log(total) + lnadjust;
+	temp = std::log(total) + lnadjust;
 	if (g_overflow || total <= 0 || temp > 0)
 	{
 		color = 0;
@@ -212,7 +212,7 @@ jumpout:
 	{
 		lyap = g_log_palette_mode
 			? -temp/(double(s_lyapunov_length)*i)
-			: 1 - exp(temp/(double(s_lyapunov_length)*i));
+			: 1 - std::exp(temp/(double(s_lyapunov_length)*i));
 		color = 1 + int(lyap*(g_colors-1));
 	}
 	return color;

@@ -201,7 +201,7 @@ int bail_out_manhattan_fp()
 	g_temp_sqr.real(sqr(g_new_z.real()));
 	g_temp_sqr.imag(sqr(g_new_z.imag()));
 	g_magnitude = g_temp_sqr.real() + g_temp_sqr.imag();
-	manhmag = fabs(g_new_z.real()) + fabs(g_new_z.imag());
+	manhmag = std::abs(g_new_z.real()) + std::abs(g_new_z.imag());
 	if ((manhmag*manhmag) >= g_rq_limit)
 	{
 		return 1;
@@ -216,7 +216,7 @@ int bail_out_manhattan_r_fp()
 	g_temp_sqr.real(sqr(g_new_z.real()));
 	g_temp_sqr.imag(sqr(g_new_z.imag()));
 	g_magnitude = g_temp_sqr.real() + g_temp_sqr.imag();
-	manrmag = g_new_z.real() + g_new_z.imag(); // don't need abs() since we square it next
+	manrmag = g_new_z.real() + g_new_z.imag(); // don't need std::abs() since we square it next
 	if ((manrmag*manrmag) >= g_rq_limit)
 	{
 		return 1;
@@ -547,19 +547,19 @@ int sierpinski_orbit_fp()
 int lambda_exponent_orbit_fp()
 {
 	// found this in  "Science of Fractal Images"
-	if ((fabs(g_old_z.imag()) >= 1.0e3)
-		|| (fabs(g_old_z.real()) >= 8))
+	if ((std::abs(g_old_z.imag()) >= 1.0e3)
+		|| (std::abs(g_old_z.real()) >= 8))
 	{
 		return 1;
 	}
-	s_sin_y = sin(g_old_z.imag());
-	s_cos_y = cos(g_old_z.imag());
+	s_sin_y = std::sin(g_old_z.imag());
+	s_cos_y = std::cos(g_old_z.imag());
 
 	if (g_old_z.real() >= g_rq_limit && s_cos_y >= 0.0)
 	{
 		return 1;
 	}
-	s_temp_exp = exp(g_old_z.real());
+	s_temp_exp = std::exp(g_old_z.real());
 	g_temp_z.real(s_temp_exp*s_cos_y);
 	g_temp_z.imag(s_temp_exp*s_sin_y);
 
@@ -610,13 +610,13 @@ int trig_plus_exponent_orbit_fp()
 	// another Scientific American biomorph type
 	// z(n + 1) = e**z(n) + trig(z(n)) + C
 
-	if (fabs(g_old_z.real()) >= 6.4e2) // DOMAIN errors
+	if (std::abs(g_old_z.real()) >= 6.4e2) // DOMAIN errors
 	{
 		return 1;
 	}
-	s_temp_exp = exp(g_old_z.real());
-	s_sin_y = sin(g_old_z.imag());
-	s_cos_y = cos(g_old_z.imag());
+	s_temp_exp = std::exp(g_old_z.real());
+	s_sin_y = std::sin(g_old_z.imag());
+	s_cos_y = std::cos(g_old_z.imag());
 	CMPLXtrig0(g_old_z, g_new_z);
 
 	// new =   trig(old) + e**old + C
@@ -707,7 +707,7 @@ int unity_orbit_fp()
 	// brought to you by Mark Peterson - you won't find this in any fractal
 	// books unless they saw it here first - Mark invented it!
 	double xx_one = sqr(g_old_z.real()) + sqr(g_old_z.imag());
-	if ((xx_one > 2.0) || (fabs(xx_one - 1.0) < g_delta_min_fp))
+	if ((xx_one > 2.0) || (std::abs(xx_one - 1.0) < g_delta_min_fp))
 	{
 		return 1;
 	}
@@ -763,7 +763,7 @@ int mandel4_orbit_fp()
 int z_to_z_plus_z_orbit_fp()
 {
 	complex_power(&g_old_z, int(g_parameters[P2_REAL]), &g_new_z);
-	g_old_z = ComplexPower(g_old_z, g_old_z);
+	g_old_z = std::pow(g_old_z, g_old_z);
 	g_new_z.real(g_new_z.real() + g_old_z.real() +g_float_parameter->real());
 	g_new_z.imag(g_new_z.imag() + g_old_z.imag() +g_float_parameter->imag());
 	return g_externs.BailOutFp();
@@ -789,8 +789,8 @@ int complex_z_power_orbit()
 #if !defined(NO_FIXED_POINT_MATH)
 	ComplexD x = ComplexFudgeToDouble(g_old_z_l);
 	ComplexD y = ComplexFudgeToDouble(g_parameter2_l);
-	x = ComplexPower(x, y);
-	if (fabs(x.real()) < g_fudge_limit && fabs(x.imag()) < g_fudge_limit)
+	x = std::pow(x, y);
+	if (std::abs(x.real()) < g_fudge_limit && std::abs(x.imag()) < g_fudge_limit)
 	{
 		g_new_z_l = ComplexDoubleToFudge(x);
 	}
@@ -816,7 +816,7 @@ int z_power_orbit_fp()
 
 int complex_z_power_orbit_fp()
 {
-	g_new_z = ComplexPower(g_old_z, g_parameter2);
+	g_new_z = std::pow(g_old_z, g_parameter2);
 	g_new_z.real(g_new_z.real() + g_float_parameter->real());
 	g_new_z.imag(g_new_z.imag() + g_float_parameter->imag());
 	return g_externs.BailOutFp();
@@ -941,16 +941,16 @@ int popcorn_old_orbit_fp()
 	g_temp_z = g_old_z;
 	g_temp_z.real(g_temp_z.real()*3.0);
 	g_temp_z.imag(g_temp_z.imag()*3.0);
-	g_sin_x = sin(g_temp_z.real());
-	g_cos_x = cos(g_temp_z.real());
-	s_sin_y = sin(g_temp_z.imag());
-	s_cos_y = cos(g_temp_z.imag());
+	g_sin_x = std::sin(g_temp_z.real());
+	g_cos_x = std::cos(g_temp_z.real());
+	s_sin_y = std::sin(g_temp_z.imag());
+	s_cos_y = std::cos(g_temp_z.imag());
 	g_temp_z.real(g_sin_x/g_cos_x + g_old_z.real());
 	g_temp_z.imag(s_sin_y/s_cos_y + g_old_z.imag());
-	g_sin_x = sin(g_temp_z.real());
-	g_cos_x = cos(g_temp_z.real());
-	s_sin_y = sin(g_temp_z.imag());
-	s_cos_y = cos(g_temp_z.imag());
+	g_sin_x = std::sin(g_temp_z.real());
+	g_cos_x = std::cos(g_temp_z.real());
+	s_sin_y = std::sin(g_temp_z.imag());
+	s_cos_y = std::cos(g_temp_z.imag());
 	g_new_z.real(g_old_z.real() - g_parameter.real()*s_sin_y);
 	g_new_z.imag(g_old_z.imag() - g_parameter.real()*g_sin_x);
 	if (g_plot_color == plot_color_none)
@@ -983,16 +983,16 @@ int popcorn_orbit_fp()
 	g_temp_z = g_old_z;
 	g_temp_z.real(g_temp_z.real()*3.0);
 	g_temp_z.imag(g_temp_z.imag()*3.0);
-	g_sin_x = sin(g_temp_z.real());
-	g_cos_x = cos(g_temp_z.real());
-	s_sin_y = sin(g_temp_z.imag());
-	s_cos_y = cos(g_temp_z.imag());
+	g_sin_x = std::sin(g_temp_z.real());
+	g_cos_x = std::cos(g_temp_z.real());
+	s_sin_y = std::sin(g_temp_z.imag());
+	s_cos_y = std::cos(g_temp_z.imag());
 	g_temp_z.real(g_sin_x/g_cos_x + g_old_z.real());
 	g_temp_z.imag(s_sin_y/s_cos_y + g_old_z.imag());
-	g_sin_x = sin(g_temp_z.real());
-	g_cos_x = cos(g_temp_z.real());
-	s_sin_y = sin(g_temp_z.imag());
-	s_cos_y = cos(g_temp_z.imag());
+	g_sin_x = std::sin(g_temp_z.real());
+	g_cos_x = std::cos(g_temp_z.real());
+	s_sin_y = std::sin(g_temp_z.imag());
+	s_cos_y = std::cos(g_temp_z.imag());
 	g_new_z.real(g_old_z.real() - g_parameter.real()*s_sin_y);
 	g_new_z.imag(g_old_z.imag() - g_parameter.real()*g_sin_x);
 	//
@@ -1015,7 +1015,7 @@ int popcorn_orbit_fp()
 	g_temp_sqr.real(sqr(g_new_z.real()));
 	g_temp_sqr.imag(sqr(g_new_z.imag()));
 	g_magnitude = g_temp_sqr.real() + g_temp_sqr.imag();
-	if (g_magnitude >= g_rq_limit || fabs(g_new_z.real()) > g_rq_limit2 || fabs(g_new_z.imag()) > g_rq_limit2)
+	if (g_magnitude >= g_rq_limit || std::abs(g_new_z.real()) > g_rq_limit2 || std::abs(g_new_z.imag()) > g_rq_limit2)
 	{
 		return 1;
 	}
@@ -1141,7 +1141,7 @@ int popcorn_fn_orbit_fp()
 	g_temp_sqr.imag(sqr(g_new_z.imag()));
 	g_magnitude = g_temp_sqr.real() + g_temp_sqr.imag();
 	if (g_magnitude >= g_rq_limit
-		|| fabs(g_new_z.real()) > g_rq_limit2 || fabs(g_new_z.imag()) > g_rq_limit2)
+		|| std::abs(g_new_z.real()) > g_rq_limit2 || std::abs(g_new_z.imag()) > g_rq_limit2)
 	{
 		return 1;
 	}
@@ -1255,7 +1255,7 @@ int spider_orbit()
 int tetrate_orbit_fp()
 {
 	// Tetrate(XAXIS) { c = z=pixel: z = c^z, |z| <= (P1 + 3) }
-	g_new_z = ComplexPower(*g_float_parameter, g_old_z);
+	g_new_z = std::pow(*g_float_parameter, g_old_z);
 	return g_externs.BailOutFp();
 }
 
@@ -1993,8 +1993,8 @@ int lambda_trig_orbit()
 
 int lambda_trig_orbit_fp()
 {
-	if (fabs(g_old_z.real()) >= g_rq_limit2
-		|| fabs(g_old_z.imag()) >= g_rq_limit2)
+	if (std::abs(g_old_z.real()) >= g_rq_limit2
+		|| std::abs(g_old_z.imag()) >= g_rq_limit2)
 	{
 		return 1;
 	}
@@ -2023,7 +2023,7 @@ int lambda_trig1_orbit()
 
 int lambda_trig1_orbit_fp()
 {
-	if (fabs(g_old_z.imag()) >= g_rq_limit2)
+	if (std::abs(g_old_z.imag()) >= g_rq_limit2)
 	{
 		return 1;
 	}
@@ -2052,7 +2052,7 @@ int lambda_trig2_orbit()
 int lambda_trig2_orbit_fp()
 {
 #if !defined(NO_FIXED_POINT_MATH)
-	if (fabs(g_old_z.real()) >= g_rq_limit2)
+	if (std::abs(g_old_z.real()) >= g_rq_limit2)
 	{
 		return 1;
 	}
@@ -2178,7 +2178,7 @@ void invert_z(ComplexD *z)
 	z->imag(z->imag() - g_f_y_center);  // Normalize values to center of circle
 
 	g_temp_sqr.real(sqr(z->real()) + sqr(z->imag()));  // Get old radius
-	g_temp_sqr.real((fabs(g_temp_sqr.real()) > FLT_MIN) ? (g_f_radius/g_temp_sqr.real()) : FLT_MAX);
+	g_temp_sqr.real((std::abs(g_temp_sqr.real()) > FLT_MIN) ? (g_f_radius/g_temp_sqr.real()) : FLT_MAX);
 	z->real(z->real()*g_temp_sqr.real());
 	z->imag(z->imag()*g_temp_sqr.real());      // Perform inversion
 	z->real(z->real() + g_f_x_center);
@@ -2621,7 +2621,7 @@ int marks_complex_mandelbrot_per_pixel()
 	g_old_z.imag(g_initial_z.imag() + g_parameter.imag());
 	g_temp_sqr.real(sqr(g_old_z.real()));  // precalculated value
 	g_temp_sqr.imag(sqr(g_old_z.imag()));
-	g_coefficient = ComplexStdFromT(ComplexPower(g_initial_z, g_power));
+	g_coefficient = ComplexStdFromT(std::pow(g_initial_z, g_power));
 	return 1;
 }
 

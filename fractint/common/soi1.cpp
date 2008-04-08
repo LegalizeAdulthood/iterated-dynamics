@@ -715,7 +715,7 @@ scan:
 		l1 = GET_REAL(cr1, ci1);
 		l1 = (tzr1 == 0.0) ?
 			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr1;
-		if (fabs(1.0-l1) > s_so_data.twidth)
+		if (std::abs(1.0-l1) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -723,7 +723,7 @@ scan:
 		l2 = GET_IMAG(cr1, ci1);
 		l2 = (tzi1 == 0.0) ?
 			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi1;
-		if (fabs(1.0-l2) > s_so_data.twidth)
+		if (std::abs(1.0-l2) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -731,7 +731,7 @@ scan:
 		l1 = GET_REAL(cr2, ci1);
 		l1 = (tzr2 == 0.0) ?
 			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr2;
-		if (fabs(1.0-l1) > s_so_data.twidth)
+		if (std::abs(1.0-l1) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -739,7 +739,7 @@ scan:
 		l2 = GET_IMAG(cr2, ci1);
 		l2 = (tzi2 == 0.0) ?
 			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi2;
-		if (fabs(1.0-l2) > s_so_data.twidth)
+		if (std::abs(1.0-l2) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -747,7 +747,7 @@ scan:
 		l1 = GET_REAL(cr1, ci2);
 		l1 = (tzr3 == 0.0) ?
 			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr3;
-		if (fabs(1.0-l1) > s_so_data.twidth)
+		if (std::abs(1.0-l1) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -755,7 +755,7 @@ scan:
 		l2 = GET_IMAG(cr1, ci2);
 		l2 = (tzi3 == 0.0) ?
 			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi3;
-		if (fabs(1.0-l2) > s_so_data.twidth)
+		if (std::abs(1.0-l2) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -763,7 +763,7 @@ scan:
 		l1 = GET_REAL(cr2, ci2);
 		l1 = (tzr4 == 0.0) ?
 			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr4;
-		if (fabs(1.0-l1) > s_so_data.twidth)
+		if (std::abs(1.0-l1) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -771,7 +771,7 @@ scan:
 		l2 = GET_IMAG(cr2, ci2);
 		l2 = (tzi4 == 0.0) ?
 			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi4;
-		if (fabs(1.0-l2) > s_so_data.twidth)
+		if (std::abs(1.0-l2) > s_so_data.twidth)
 		{
 			break;
 		}

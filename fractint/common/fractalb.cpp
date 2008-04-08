@@ -350,7 +350,7 @@ bool mandelbrot_setup_bn()
 		copy_bn(bnclosenuff, bntemp2);
 	}
 	{
-		int t = abs(g_periodicity_check);
+		int t = std::abs(g_periodicity_check);
 		while (t--)
 		{
 			half_a_bn(bnclosenuff);
@@ -433,7 +433,7 @@ bool mandelbrot_setup_bf()
 		copy_bf(bfclosenuff, bftemp2);
 	}
 	{
-		int t = abs(g_periodicity_check);
+		int t = std::abs(g_periodicity_check);
 		while (t--)
 		{
 			half_a_bf(bfclosenuff);

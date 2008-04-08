@@ -260,7 +260,7 @@ static BYTE Expr1(BYTE value1, BYTE value2, int curr, double scale)
  */
 static BYTE Expr2(BYTE value1, BYTE value2, int num, int curr, double rm)
 {
-	return BYTE((value1 == value2) ? value1 : int(value1 + pow(curr/double(num-1), double(s_gamma_val))*num*rm));
+	return BYTE((value1 == value2) ? value1 : int(value1 + std::pow(curr/double(num-1), double(s_gamma_val))*num*rm));
 }
 
 static void make_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int skip)

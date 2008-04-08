@@ -37,21 +37,21 @@ inline void FPUcplxdiv(ComplexD *x, ComplexD *y, ComplexD *z)
 
 inline void FPUsincos2(double angle, double *Sin, double *Cos)
 {
-	*Sin = sin(angle);
-	*Cos = cos(angle);
+	*Sin = std::sin(angle);
+	*Cos = std::cos(angle);
 }
 
 inline void FPUsinhcosh(double angle, double *Sinh, double *Cosh)
 {
-	*Sinh = sinh(angle);
-	*Cosh = cosh(angle);
+	*Sinh = std::sinh(angle);
+	*Cosh = std::cosh(angle);
 }
 
 inline void FPUcplxlog(ComplexD const *x, ComplexD *z)
 {
 	double const mod = sqrt(x->real()*x->real() + x->imag()*x->imag());
-	double const zx = log(mod);
-	double const zy = atan2(x->imag(), x->real());
+	double const zx = std::log(mod);
+	double const zy = std::atan2(x->imag(), x->real());
 	z->real(zx);
 	z->imag(zy);
 }
@@ -59,20 +59,20 @@ inline void FPUcplxlog(ComplexD const *x, ComplexD *z)
 inline void SinCos086(long x, long *sinx, long *cosx)
 {
 	double const angle = x/double(1 << 16);
-	*sinx = long(sin(angle)*double(1 << 16));
-	*cosx = long(cos(angle)*double(1 << 16));
+	*sinx = long(std::sin(angle)*double(1 << 16));
+	*cosx = long(std::cos(angle)*double(1 << 16));
 }
 
 inline void SinhCosh086(long x, long *sinx, long *cosx)
 {
 	double const angle = x/double(1 << 16);
-	*sinx = long(sinh(angle)*double(1 << 16));
-	*cosx = long(cosh(angle)*double(1 << 16));
+	*sinx = long(std::sinh(angle)*double(1 << 16));
+	*cosx = long(std::cosh(angle)*double(1 << 16));
 }
 
 inline long Exp086(long x)
 {
-	return long(exp(double(x)/double(1 << 16))*double(1 << 16));
+	return long(std::exp(double(x)/double(1 << 16))*double(1 << 16));
 }
 
 /*
@@ -80,7 +80,7 @@ inline long Exp086(long x)
  */
 inline unsigned long ExpFudged(long x, int Fudge)
 {
-	return long(exp(double(x)/double(1 << 16))*double(1 << Fudge));
+	return long(std::exp(double(x)/double(1 << 16))*double(1 << Fudge));
 }
 
 // This multiplies two e/m numbers and returns an e/m number.
@@ -93,7 +93,7 @@ inline long r16Mul(long x, long y)
 // This takes an exp/mant number and returns a shift-16 number
 inline long LogFloat14(unsigned long x)
 {
-	return long(log(double(LongAsFloat(x))))*(1 << 16);
+	return long(std::log(double(LongAsFloat(x))))*(1 << 16);
 }
 
 // This divides two e/m numbers and returns an e/m number.
@@ -140,9 +140,9 @@ inline long RegSftFloat(long x, int Shift)
 
 inline void FPUcplxexp387(ComplexD const *x, ComplexD *z)
 {
-	double const pow = exp(x->real());
-	z->real(pow*cos(x->imag()));
-	z->imag(pow*sin(x->imag()));
+	double const pow = std::exp(x->real());
+	z->real(pow*std::cos(x->imag()));
+	z->imag(pow*std::sin(x->imag()));
 }
 
 #endif

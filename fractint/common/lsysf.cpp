@@ -156,8 +156,8 @@ static void lsysf_size_dm(lsys_turtle_state_fp *cmd)
 	double s;
 	double c;
 
-	s = sin(angle);
-	c = cos(angle);
+	s = std::sin(angle);
+	c = std::cos(angle);
 
 	cmd->xpos += cmd->size*cmd->aspect*c;
 	cmd->ypos += cmd->size*s;
@@ -210,8 +210,8 @@ static void lsysf_draw_d(lsys_turtle_state_fp *cmd)
 	double c;
 	int lastx;
 	int lasty;
-	s = sin(angle);
-	c = cos(angle);
+	s = std::sin(angle);
+	c = std::cos(angle);
 
 	lastx = int(cmd->xpos);
 	lasty = int(cmd->ypos);
@@ -228,8 +228,8 @@ static void lsysf_draw_m(lsys_turtle_state_fp *cmd)
 	double s;
 	double c;
 
-	s = sin(angle);
-	c = cos(angle);
+	s = std::sin(angle);
+	c = std::cos(angle);
 
 	cmd->xpos += cmd->size*cmd->aspect*c;
 	cmd->ypos += cmd->size*s;

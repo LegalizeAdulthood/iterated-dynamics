@@ -804,12 +804,12 @@ int input_field(
 				bool specialv = false;
 				if (fld[0] == 'e' || fld[0] == 'E')
 				{
-					tmpd = exp(1.0);
+					tmpd = std::exp(1.0);
 					specialv = true;
 				}
 				if (fld[0] == 'p' || fld[0] == 'P')
 				{
-					tmpd = atan(1.0)*4.0;
+					tmpd = std::atan(1.0)*4.0;
 					specialv = true;
 				}
 				if (specialv)

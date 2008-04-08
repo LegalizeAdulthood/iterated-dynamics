@@ -335,8 +335,8 @@ int SoundStateImpl::sound_on(int freq)
 	}
 
 	// convert tone to note number for midi
-	double logbase = log(8.176);
-	int note = int(12 * (log(double(freq)) - logbase)/log(2.0) + 0.5);
+	double logbase = std::log(8.176);
+	int note = int(12 * (std::log(double(freq)) - logbase)/std::log(2.0) + 0.5);
 
 	int oct = (note/12) * 12; // round to nearest octave
 	int chrome = note % 12; // extract which note in octave it was
@@ -344,7 +344,7 @@ int SoundStateImpl::sound_on(int freq)
 
 	if (_flags & SOUNDFLAG_QUANTIZED)
 	{
-		freq = int(exp((double(note)/12.0)*log(2.0))*8.176);
+		freq = int(std::exp((double(note)/12.0)*std::log(2.0))*8.176);
 	}
 	// pitch quantize note for FM and speaker
 

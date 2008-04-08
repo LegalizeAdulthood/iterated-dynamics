@@ -174,7 +174,7 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 		tmpy1 = g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
 		a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 		a = sqrt(a2);
-		*Rotation = -MathUtil::RadiansToDegrees(atan2(tmpy1, tmpx1)); // negative for image rotation
+		*Rotation = -MathUtil::RadiansToDegrees(std::atan2(tmpy1, tmpx1)); // negative for image rotation
 
 		tmpx2 = g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
 		tmpy2 = g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd();
@@ -187,7 +187,7 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 		*Xctr = g_escape_time_state.m_grid_fp.x_center();
 		*Yctr = g_escape_time_state.m_grid_fp.y_center();
 
-		Height = b*sin(tmpa);
+		Height = b*std::sin(tmpa);
 
 		*Magnification  = 2.0/Height; // 1/(h/2)
 		*Xmagfactor = Height/(DEFAULT_ASPECT_RATIO*a);
@@ -271,7 +271,7 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 	}
 
 	// in unrotated, untranslated coordinate system
-	tanskew = tan(MathUtil::DegreesToRadians(Skew));
+	tanskew = std::tan(MathUtil::DegreesToRadians(Skew));
 	g_escape_time_state.m_grid_fp.x_min() = -w + h*tanskew;
 	g_escape_time_state.m_grid_fp.x_max() =  w - h*tanskew;
 	g_escape_time_state.m_grid_fp.x_3rd() = -w - h*tanskew;
@@ -281,8 +281,8 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 
 	// rotate coord system and then translate it
 	Rotation = MathUtil::DegreesToRadians(Rotation);
-	sinrot = sin(Rotation);
-	cosrot = cos(Rotation);
+	sinrot = std::sin(Rotation);
+	cosrot = std::cos(Rotation);
 
 	// top left
 	x = g_escape_time_state.m_grid_fp.x_min()*cosrot + g_escape_time_state.m_grid_fp.y_max()*sinrot;
@@ -410,7 +410,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		add_bf(Yctr, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 		half_a_bf(Yctr);
 
-		Height = b*sin(tmpa);
+		Height = b*std::sin(tmpa);
 		*Magnification  = 2/Height; // 1/(h/2)
 		*Xmagfactor = double(Height/(DEFAULT_ASPECT_RATIO*a));
 
@@ -486,7 +486,7 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 
 	bftmp = alloc_stack(g_bf_length + 2);
 	// in unrotated, untranslated coordinate system
-	tanskew = tan(MathUtil::DegreesToRadians(Skew));
+	tanskew = std::tan(MathUtil::DegreesToRadians(Skew));
 	x_min = -w + h*tanskew;
 	x_max =  w - h*tanskew;
 	x_3rd = -w - h*tanskew;
@@ -496,8 +496,8 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 
 	// rotate coord system and then translate it
 	Rotation = MathUtil::DegreesToRadians(Rotation);
-	sinrot = sin(Rotation);
-	cosrot = cos(Rotation);
+	sinrot = std::sin(Rotation);
+	cosrot = std::cos(Rotation);
 
 	// top left
 	x =  x_min*cosrot + y_max*sinrot;
