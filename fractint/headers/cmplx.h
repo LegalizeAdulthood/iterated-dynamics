@@ -69,10 +69,17 @@ typedef InitializedComplexT<double> InitializedComplexD;
 typedef ComplexT<long> ComplexL;
 typedef HyperComplexT<double> HyperComplexD;
 
-inline void Assign(StdComplexD &left, ComplexD const &right)
+inline ComplexD ComplexDFromStd(StdComplexD const &right)
 {
-	left.real(right.real());
-	left.imag(right.imag());
+	ComplexD result;
+	result.real(right.real());
+	result.imag(right.imag());
+	return result;
+}
+
+inline StdComplexD ComplexStdFromD(ComplexD const &right)
+{
+	return StdComplexD(right.real(), right.imag());
 }
 
 inline double FudgeToDouble(long x)

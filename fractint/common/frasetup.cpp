@@ -243,8 +243,7 @@ bool julia_setup_fp()
 	{
 		g_power.real(g_parameters[P2_REAL] - 1.0);
 		g_power.imag(g_parameters[P2_IMAG]);
-		ComplexD temp = ComplexPower(*g_float_parameter, g_power);
-		Assign(g_coefficient, temp);
+		g_coefficient = ComplexStdFromD(ComplexPower(*g_float_parameter, g_power));
 	}
 	switch (g_fractal_type)
 	{
@@ -993,7 +992,7 @@ bool marks_julia_setup_fp()
 	}
 	else if (g_c_exp == 2)
 	{
-		Assign(g_coefficient, g_old_z);
+		g_coefficient = ComplexStdFromD(g_old_z);
 	}
 	else if (g_c_exp < 2)
 	{

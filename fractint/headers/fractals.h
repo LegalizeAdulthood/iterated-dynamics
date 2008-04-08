@@ -10,7 +10,7 @@ inline void complex_power(ComplexD const &base, int exp, StdComplexD &result)
 {
 	ComplexD temp;
 	complex_power(&base, exp, &temp);
-	Assign(result, temp);
+	result = ComplexStdFromD(temp);
 }
 extern int complex_power_l(ComplexL *, int, ComplexL *, int);
 extern int lcomplex_mult(ComplexL, ComplexL, ComplexL *, int);

@@ -141,7 +141,7 @@ static int s_window_corner_y;                       // corners of the window
 static int s_window_dots_x;
 static int s_window_dots_y;                       // dots in the window
 
-std::complex<double> g_julia_c(BIG, BIG);
+StdComplexD g_julia_c(BIG, BIG);
 
 // circle routines from Dr. Dobbs June 1990
 static int s_x_base;
@@ -744,7 +744,7 @@ void JIIM::Execute()
 
 				_dColumn = 0;
 				_dRow = 0;
-				g_julia_c = std::complex<double>(BIG, BIG);
+				g_julia_c = StdComplexD(BIG, BIG);
 				if (ProcessKeyPress(kbdchar))
 				{
 					goto finish;
@@ -1288,7 +1288,7 @@ bool JIIM::ProcessKeyPress(int kbdchar)
 		_zoom *= 1.15f;
 		break;
 	case IDK_SPACE:
-		g_julia_c = std::complex<double>(_cReal, _cImag);
+		g_julia_c = StdComplexD(_cReal, _cImag);
 		return true;
 
 	case 'c':   // circle toggle

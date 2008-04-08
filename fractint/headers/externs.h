@@ -109,7 +109,7 @@ extern int					g_is_true_color;
 extern bool					g_is_mandelbrot;
 extern int					g_x_stop;
 extern int					g_y_stop;
-extern std::complex<double> g_julia_c;
+extern StdComplexD			g_julia_c;
 extern int					g_juli_3d_mode;
 extern const char			*g_juli_3d_options[];
 extern bool					g_julibrot;
