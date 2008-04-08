@@ -34,13 +34,6 @@ static double distance_from_1(const ComplexD &z)
 	return (z.real() - 1.0)*(z.real() - 1.0) + z.imag()*z.imag();
 }
 
-static int complex_multiply(ComplexD arg1, ComplexD arg2, ComplexD *pz)
-{
-	pz->real(arg1.real()*arg2.real() - arg1.imag()*arg2.imag());
-	pz->imag(arg1.real()*arg2.imag() + arg1.imag()*arg2.real());
-	return 0;
-}
-
 bool newton_setup()
 {
 	return s_newton.setup();
@@ -149,7 +142,7 @@ bool Newton::setup()           // Newton/NewtBasin Routines
 int Newton::orbit()
 {
 	pow(&g_old_z, g_degree-1, &g_temp_z);
-	complex_multiply(g_temp_z, g_old_z, &g_new_z);
+	g_new_z = g_temp_z*g_old_z;
 
 	if (distance_from_1(g_new_z) < g_threshold)
 	{

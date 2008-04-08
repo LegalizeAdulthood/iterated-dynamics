@@ -1382,6 +1382,8 @@ private:
 		}
 		return x;
 	}
+	ComplexD clamp(ComplexD x)
+	{ return MakeComplexT(clamp(x.real()), clamp(x.imag())); }
 };
 
 void ColorModeStarTrail::initialize()
@@ -1402,8 +1404,7 @@ void ColorModeStarTrail::update()
 			g_new_z = ComplexFudgeToDouble(g_new_z_l);
 		}
 
-		g_new_z.real(clamp(g_new_z.real()));
-		g_new_z.imag(clamp(g_new_z.imag()));
+		g_new_z = clamp(g_new_z);
 		g_temp_sqr.real(g_new_z.real()*g_new_z.real());
 		g_temp_sqr.imag(g_new_z.imag()*g_new_z.imag());
 		g_magnitude = g_temp_sqr.real() + g_temp_sqr.imag();

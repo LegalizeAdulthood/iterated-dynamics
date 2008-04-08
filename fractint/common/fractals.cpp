@@ -528,9 +528,7 @@ int sierpinski_orbit_fp()
 {
 	// following code translated from basic - see "Fractals
 	// Everywhere" by Michael Barnsley, p. 251, Program 7.1.1
-
-	g_new_z.real(g_old_z.real() + g_old_z.real());
-	g_new_z.imag(g_old_z.imag() + g_old_z.imag());
+	g_new_z = g_old_z + g_old_z;
 	if (g_old_z.imag() > .5)
 	{
 		g_new_z.imag(g_new_z.imag() - 1);
@@ -620,8 +618,7 @@ int trig_plus_exponent_orbit_fp()
 	CMPLXtrig0(g_old_z, g_new_z);
 
 	// new =   trig(old) + e**old + C
-	g_new_z.real(g_new_z.real() + s_temp_exp*s_cos_y + g_float_parameter->real());
-	g_new_z.imag(g_new_z.imag() + s_temp_exp*s_sin_y + g_float_parameter->imag());
+	g_new_z = g_new_z + MakeComplexT(s_temp_exp*s_cos_y, s_temp_exp*s_sin_y) + *g_float_parameter;
 	return g_externs.BailOutFp();
 }
 
@@ -674,11 +671,13 @@ int marks_lambda_orbit_fp()
 	// Mark Peterson's variation of "lambda" function
 
 	// Z1 = (C^(exp-1)*Z**2) + C
-	g_temp_z.real(g_temp_sqr.real() - g_temp_sqr.imag());
-	g_temp_z.imag(g_old_z.real()*g_old_z.imag()*2);
+	g_temp_z = MakeComplexT(g_temp_sqr.real() - g_temp_sqr.imag(),
+		g_old_z.real()*g_old_z.imag()*2);
 
-	g_new_z.real(g_coefficient.real()*g_temp_z.real() - g_coefficient.imag()*g_temp_z.imag() + g_float_parameter->real());
-	g_new_z.imag(g_coefficient.real()*g_temp_z.imag() + g_coefficient.imag()*g_temp_z.real() + g_float_parameter->imag());
+	g_new_z = MakeComplexT(
+			g_coefficient.real()*g_temp_z.real() - g_coefficient.imag()*g_temp_z.imag(),
+			g_coefficient.real()*g_temp_z.imag() + g_coefficient.imag()*g_temp_z.real())
+		+ *g_float_parameter;
 
 	return g_externs.BailOutFp();
 }
@@ -755,8 +754,8 @@ int mandel4_orbit_fp()
 	}
 
 	// then, compute ((x + iy)**2)**2 + lambda
-	g_new_z.real(g_temp_sqr.real() - g_temp_sqr.imag() + g_float_parameter->real());
-	g_new_z.imag( g_old_z.real()*g_old_z.imag()*2 + g_float_parameter->imag());
+	g_new_z.real(g_temp_sqr.real() - g_temp_sqr.imag()	+ g_float_parameter->real());
+	g_new_z.imag( g_old_z.real()*g_old_z.imag()*2		+ g_float_parameter->imag());
 	return g_externs.BailOutFp();
 }
 
@@ -764,8 +763,7 @@ int z_to_z_plus_z_orbit_fp()
 {
 	pow(&g_old_z, int(g_parameters[P2_REAL]), &g_new_z);
 	g_old_z = std::pow(g_old_z, g_old_z);
-	g_new_z.real(g_new_z.real() + g_old_z.real() +g_float_parameter->real());
-	g_new_z.imag(g_new_z.imag() + g_old_z.imag() +g_float_parameter->imag());
+	g_new_z = g_new_z + g_old_z + *g_float_parameter;
 	return g_externs.BailOutFp();
 }
 
@@ -809,16 +807,14 @@ int complex_z_power_orbit()
 int z_power_orbit_fp()
 {
 	pow(&g_old_z, g_c_exp, &g_new_z);
-	g_new_z.real(g_new_z.real() + g_float_parameter->real());
-	g_new_z.imag(g_new_z.imag() + g_float_parameter->imag());
+	g_new_z = g_new_z + *g_float_parameter;
 	return g_externs.BailOutFp();
 }
 
 int complex_z_power_orbit_fp()
 {
 	g_new_z = std::pow(g_old_z, g_parameter2);
-	g_new_z.real(g_new_z.real() + g_float_parameter->real());
-	g_new_z.imag(g_new_z.imag() + g_float_parameter->imag());
+	g_new_z = g_new_z + *g_float_parameter;
 	return g_externs.BailOutFp();
 }
 
@@ -908,7 +904,7 @@ int trig_plus_z_squared_orbit_fp()
 {
 	CMPLXtrig0(g_old_z, g_new_z);
 	g_new_z.real(g_new_z.real() + g_temp_sqr.real() - g_temp_sqr.imag() + g_float_parameter->real());
-	g_new_z.imag(g_new_z.imag() + 2.0*g_old_z.real()*g_old_z.imag() + g_float_parameter->imag());
+	g_new_z.imag(g_new_z.imag() + 2.0*g_old_z.real()*g_old_z.imag()		+ g_float_parameter->imag());
 	return g_externs.BailOutFp();
 }
 
@@ -917,8 +913,7 @@ int richard8_orbit_fp()
 {
 	CMPLXtrig0(g_old_z, g_new_z);
 	// CMPLXtrig1(*g_float_parameter, g_temp_z);
-	g_new_z.real(g_new_z.real() + g_temp_z.real());
-	g_new_z.imag(g_new_z.imag() + g_temp_z.imag());
+	g_new_z = g_new_z + g_temp_z;
 	return g_externs.BailOutFp();
 }
 
@@ -1208,23 +1203,11 @@ int popcorn_fn_orbit()
 #endif
 }
 
-inline ComplexD operator*(ComplexD const &left, StdComplexD const &right)
-{
-	ComplexD temp;
-	temp.real(right.real());
-	temp.imag(right.imag());
-	ComplexD result;
-	result = left*temp;
-	return result;
-}
-
 int marks_complex_mandelbrot_orbit()
 {
 	g_temp_z.real(g_temp_sqr.real() - g_temp_sqr.imag());
 	g_temp_z.imag(2*g_old_z.real()*g_old_z.imag());
-	g_new_z = g_temp_z*g_coefficient;
-	g_new_z.real(g_new_z.real() + g_float_parameter->real());
-	g_new_z.imag(g_new_z.imag() + g_float_parameter->imag());
+	g_new_z = g_temp_z*g_coefficient + *g_float_parameter;
 	return g_externs.BailOutFp();
 }
 
@@ -1477,8 +1460,8 @@ int phoenix_orbit_fp()
 {
 	// z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n)
 	g_temp_z.real(g_old_z.real()*g_old_z.imag());
-	g_new_z.real(g_temp_sqr.real() - g_temp_sqr.imag() + g_float_parameter->real() + (g_float_parameter->imag()*s_temp2.real()));
-	g_new_z.imag((g_temp_z.real() + g_temp_z.real()) + (g_float_parameter->imag()*s_temp2.imag()));
+	g_new_z.real(g_temp_sqr.real() - g_temp_sqr.imag() + g_float_parameter->real() + g_float_parameter->imag()*s_temp2.real());
+	g_new_z.imag(g_temp_z.real()   + g_temp_z.real()   + g_float_parameter->imag()*s_temp2.imag());
 	s_temp2 = g_old_z; // set s_temp2 to Y value
 	return g_externs.BailOutFp();
 }
@@ -1505,8 +1488,10 @@ int phoenix_complex_orbit_fp()
 {
 	// z(n + 1) = z(n)^2 + p1 + p2*y(n),  y(n + 1) = z(n)
 	g_temp_z.real(g_old_z.real()*g_old_z.imag());
-	g_new_z.real(g_temp_sqr.real() - g_temp_sqr.imag() + g_float_parameter->real() + (g_parameter2.real()*s_temp2.real()) - (g_parameter2.imag()*s_temp2.imag()));
-	g_new_z.imag((g_temp_z.real() + g_temp_z.real()) + g_float_parameter->imag() + (g_parameter2.real()*s_temp2.imag()) + (g_parameter2.imag()*s_temp2.real()));
+	g_new_z.real(g_temp_sqr.real()  - g_temp_sqr.imag() + g_float_parameter->real()
+		+ g_parameter2.real()*s_temp2.real() - g_parameter2.imag()*s_temp2.imag());
+	g_new_z.imag(g_temp_z.real()	+ g_temp_z.real()	+ g_float_parameter->imag()
+		+ g_parameter2.real()*s_temp2.imag() + g_parameter2.imag()*s_temp2.real());
 	s_temp2 = g_old_z; // set s_temp2 to Y value
 	return g_externs.BailOutFp();
 }
@@ -1640,9 +1625,7 @@ int phoenix_complex_plus_orbit_fp()
 	oldplus.real(oldplus.real() + g_float_parameter->real());
 	oldplus.imag(oldplus.imag() + g_float_parameter->imag());
 	newminus = g_temp_z*oldplus;
-	g_temp_z = g_parameter2*s_temp2;
-	g_new_z.real(newminus.real() + g_temp_z.real());
-	g_new_z.imag(newminus.imag() + g_temp_z.imag());
+	g_new_z = newminus + g_parameter2*s_temp2;
 	s_temp2 = g_old_z; // set s_temp2 to Y value
 	return g_externs.BailOutFp();
 }
@@ -1688,9 +1671,7 @@ int phoenix_complex_minus_orbit_fp()
 	oldsqr.real(oldsqr.real() + g_float_parameter->real());
 	oldsqr.imag(oldsqr.imag() + g_float_parameter->imag());
 	newminus = g_temp_z*oldsqr;
-	g_temp_z = g_parameter2*s_temp2;
-	g_new_z.real(newminus.real() + g_temp_z.real());
-	g_new_z.imag(newminus.imag() + g_temp_z.imag());
+	g_new_z = newminus + g_parameter2*s_temp2;
 	s_temp2 = g_old_z; // set s_temp2 to Y value
 	return g_externs.BailOutFp();
 }
@@ -2081,9 +2062,8 @@ int man_o_war_orbit()
 int man_o_war_orbit_fp()
 {
 	// From Art Matrix via Lee Skinner
-	// note that fast >= 287 equiv in fracsuba.asm must be kept in step
-	g_new_z.real(g_temp_sqr.real() - g_temp_sqr.imag() + g_temp_z.real() + g_float_parameter->real());
-	g_new_z.imag(2.0*g_old_z.real()*g_old_z.imag() + g_temp_z.imag() + g_float_parameter->imag());
+	g_new_z.real(g_temp_sqr.real() - g_temp_sqr.imag()	+ g_temp_z.real() + g_float_parameter->real());
+	g_new_z.imag(2.0*g_old_z.real()*g_old_z.imag()		+ g_temp_z.imag() + g_float_parameter->imag());
 	g_temp_z = g_old_z;
 	return g_externs.BailOutFp();
 }
