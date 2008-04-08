@@ -983,7 +983,7 @@ bool marks_julia_setup_fp()
 	g_old_z = *g_float_parameter;
 	if (g_c_exp > 3)
 	{
-		complex_power(g_old_z, g_c_exp-1, g_coefficient);
+		pow(g_old_z, g_c_exp-1, g_coefficient);
 	}
 	else if (g_c_exp == 3)
 	{

@@ -148,7 +148,7 @@ bool Newton::setup()           // Newton/NewtBasin Routines
 
 int Newton::orbit()
 {
-	complex_power(&g_old_z, g_degree-1, &g_temp_z);
+	pow(&g_old_z, g_degree-1, &g_temp_z);
 	complex_multiply(g_temp_z, g_old_z, &g_new_z);
 
 	if (distance_from_1(g_new_z) < g_threshold)

@@ -5,11 +5,11 @@
 
 extern void invert_z(ComplexD *);
 extern void magnet2_precalculate_fp();
-extern void complex_power(ComplexD const *base, int exp, ComplexD *result);
-inline void complex_power(ComplexD const &base, int exp, StdComplexD &result)
+extern void pow(ComplexD const *base, int exp, ComplexD *result);
+inline void pow(ComplexD const &base, int exp, StdComplexD &result)
 {
 	ComplexD temp;
-	complex_power(&base, exp, &temp);
+	pow(&base, exp, &temp);
 	result = ComplexStdFromT(temp);
 }
 extern int complex_power_l(ComplexL *, int, ComplexL *, int);
