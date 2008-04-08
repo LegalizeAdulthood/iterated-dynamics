@@ -1460,18 +1460,17 @@ void get_julia_attractor(double real, double imag)
 	int save_periodicity_check = g_periodicity_check;
 	ValueSaver<long> save_max_iteration(g_max_iteration, g_max_iteration);
 	g_periodicity_check = 0;
-	g_old_z.real(real);                    // prepare for f.p orbit calc
-	g_old_z.imag(imag);
+	g_old_z = MakeComplexT(real, imag);				// prepare for f.p orbit calc
 	g_temp_sqr.real(sqr(g_old_z.real()));
 	g_temp_sqr.imag(sqr(g_old_z.imag()));
 
-	g_old_z_l.real((long(real)) << g_bit_shift);		// prepare for int orbit calc
+	g_old_z_l.real(long(real) << g_bit_shift);		// prepare for int orbit calc
 	assert(g_old_z_l.real() == DoubleToFudge(real));
-	g_old_z_l.imag((long(imag)) << g_bit_shift);
+	g_old_z_l.imag(long(imag) << g_bit_shift);
 	assert(g_old_z_l.imag() == DoubleToFudge(imag));
-	g_temp_sqr_l.real((long(g_temp_sqr.real())) << g_bit_shift);
+	g_temp_sqr_l.real(long(g_temp_sqr.real()) << g_bit_shift);
 	assert(g_temp_sqr_l.real() == DoubleToFudge(g_temp_sqr.real()));
-	g_temp_sqr_l.imag((long(g_temp_sqr.imag())) << g_bit_shift);
+	g_temp_sqr_l.imag(long(g_temp_sqr.imag()) << g_bit_shift);
 	assert(g_temp_sqr_l.imag() == DoubleToFudge(g_temp_sqr.imag()));
 
 	if (g_max_iteration < 500)         // we're going to try at least this hard

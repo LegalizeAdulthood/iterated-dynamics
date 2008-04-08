@@ -94,7 +94,6 @@ int Halley::orbit()
 	ComplexD Halnumer1;
 	ComplexD Halnumer2;
 	ComplexD Haldenom;
-	ComplexD relax;
 
 	XtoAlessOne = g_old_z;
 	for (ihal = 2; ihal < g_degree; ihal++)
@@ -104,7 +103,7 @@ int Halley::orbit()
 	XtoA = g_old_z*XtoAlessOne;
 	XtoAplusOne = g_old_z*XtoA;
 
-	CMPLXsub(XtoAplusOne, g_old_z, FX);        // FX = X^(a + 1) - X = F
+	FX = XtoAplusOne - g_old_z;			// FX = X^(a + 1) - X = F
 	F2prime.real(m_a_plus_1_degree*XtoAlessOne.real()); // g_a_plus_1_degree in setup
 	F2prime.imag(m_a_plus_1_degree*XtoAlessOne.imag());        // F"
 
@@ -116,16 +115,14 @@ int Halley::orbit()
 	Haldenom.imag(F1prime.imag() + F1prime.imag());                     // 2*F'
 
 	FPUcplxdiv(&Halnumer1, &Haldenom, &Halnumer1);         // F"F/2F'
-	CMPLXsub(F1prime, Halnumer1, Halnumer2);          // F' - F"F/2F'
+	Halnumer2 = F1prime - Halnumer1;				// F' - F"F/2F'
 	FPUcplxdiv(&FX, &Halnumer2, &Halnumer2);
 	// g_parameter.imag() is relaxation coef.
 	// new.real(g_old_z.real() - (g_parameter.imag()*Halnumer2.real()));
 	// new.imag(g_old_z.imag() - (g_parameter.imag()*Halnumer2.imag()));
-	relax.real(g_parameter.imag());
-	relax.imag(g_parameters[P2_IMAG]);
+	ComplexD relax = MakeComplexT(g_parameter.imag(), g_parameters[P2_IMAG]);
 	Halnumer2 = relax*Halnumer2;
-	g_new_z.real(g_old_z.real() - Halnumer2.real());
-	g_new_z.imag(g_old_z.imag() - Halnumer2.imag());
+	g_new_z = g_old_z - Halnumer2;
 	return bail_out();
 }
 
