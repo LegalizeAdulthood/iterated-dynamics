@@ -243,7 +243,7 @@ bool julia_setup_fp()
 	{
 		g_power.real(g_parameters[P2_REAL] - 1.0);
 		g_power.imag(g_parameters[P2_IMAG]);
-		g_coefficient = ComplexStdFromT(std::pow(*g_float_parameter, g_power));
+		g_coefficient = ComplexStdFromT(pow(*g_float_parameter, g_power));
 	}
 	switch (g_fractal_type)
 	{

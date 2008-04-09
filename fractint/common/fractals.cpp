@@ -761,7 +761,7 @@ int mandel4_orbit_fp()
 int z_to_z_plus_z_orbit_fp()
 {
 	pow(&g_old_z, int(g_parameters[P2_REAL]), &g_new_z);
-	g_old_z = std::pow(g_old_z, g_old_z);
+	g_old_z = pow(g_old_z, g_old_z);
 	g_new_z = g_new_z + g_old_z + *g_float_parameter;
 	return g_externs.BailOutFp();
 }
@@ -786,7 +786,7 @@ int complex_z_power_orbit()
 #if !defined(NO_FIXED_POINT_MATH)
 	ComplexD x = ComplexFudgeToDouble(g_old_z_l);
 	ComplexD y = ComplexFudgeToDouble(g_parameter2_l);
-	x = std::pow(x, y);
+	x = pow(x, y);
 	if (std::abs(x.real()) < g_fudge_limit && std::abs(x.imag()) < g_fudge_limit)
 	{
 		g_new_z_l = ComplexDoubleToFudge(x);
@@ -812,7 +812,7 @@ int z_power_orbit_fp()
 
 int complex_z_power_orbit_fp()
 {
-	g_new_z = std::pow(g_old_z, g_parameter2) + *g_float_parameter;
+	g_new_z = pow(g_old_z, g_parameter2) + *g_float_parameter;
 	return g_externs.BailOutFp();
 }
 
@@ -1226,7 +1226,7 @@ int spider_orbit()
 int tetrate_orbit_fp()
 {
 	// Tetrate(XAXIS) { c = z=pixel: z = c^z, |z| <= (P1 + 3) }
-	g_new_z = std::pow(*g_float_parameter, g_old_z);
+	g_new_z = pow(*g_float_parameter, g_old_z);
 	return g_externs.BailOutFp();
 }
 
@@ -2448,7 +2448,7 @@ int marks_mandelbrot_power_per_pixel_fp()
 	mandelbrot_per_pixel_fp();
 	g_temp_z = g_old_z;
 	g_temp_z.real(g_temp_z.real() - 1.0);
-	g_temp_z = std::pow(g_old_z, g_temp_z);
+	g_temp_z = pow(g_old_z, g_temp_z);
 	return 1;
 }
 
@@ -2586,7 +2586,7 @@ int marks_complex_mandelbrot_per_pixel()
 	g_old_z.imag(g_initial_z.imag() + g_parameter.imag());
 	g_temp_sqr.real(sqr(g_old_z.real()));  // precalculated value
 	g_temp_sqr.imag(sqr(g_old_z.imag()));
-	g_coefficient = ComplexStdFromT(std::pow(g_initial_z, g_power));
+	g_coefficient = ComplexStdFromT(pow(g_initial_z, g_power));
 	return 1;
 }
 
@@ -2875,7 +2875,7 @@ bool MandelbrotMix4::setup()
 		}
 	}
 
-	g_temp_z = std::pow(g_temp_z, _j);   // note: z is old
+	g_temp_z = pow(g_temp_z, _j);   // note: z is old
 	// in case our kludge failed, let the user fix it
 	if (g_parameters[P4_REAL] < 0.0)
 	{
@@ -2908,8 +2908,8 @@ int MandelbrotMix4::per_pixel()
 int MandelbrotMix4::orbit()
 {
 	// z = k*((a*(z^b)) + (d*(z^f))) + c,
-	ComplexD z_b = std::pow(g_old_z, MakeComplexT(_b));     // (z^b)
-	ComplexD z_f = std::pow(g_old_z, MakeComplexT(_f));     // (z^f)
+	ComplexD z_b = pow(g_old_z, MakeComplexT(_b));     // (z^b)
+	ComplexD z_f = pow(g_old_z, MakeComplexT(_f));     // (z^f)
 	g_new_z = _k*(_a*z_b + _d*z_f) + _c;
 	return g_externs.BailOutFp();
 }

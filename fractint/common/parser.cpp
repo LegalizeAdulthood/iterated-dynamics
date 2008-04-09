@@ -508,16 +508,6 @@ const char *Formula::error_messages(int which)
 	return error_strings[which > last_error ? last_error : which];
 }
 
-static double double_from_fixpoint(long quantity)
-{
-	return double(quantity)/s_fudge;
-}
-
-static long fixpoint_from_double(double quantity)
-{
-	return long(quantity*s_fudge);
-}
-
 static int int_strlen(const char *text)
 {
 	return int(strlen(text));
@@ -533,14 +523,15 @@ static void lStkFunct(void (*function)())   // call lStk via dStk
 		intermediate variable needed for safety because of
 		different size of double and long in Arg union
 	*/
-	double y = double_from_fixpoint(g_argument1->l.imag());
-	g_argument1->d.real(double_from_fixpoint(g_argument1->l.real()));
+	ComplexD arg = ComplexFudgeToDouble(g_argument1->l);
+	double y = FudgeToDouble(g_argument1->l.imag());
+	g_argument1->d.real(FudgeToDouble(g_argument1->l.real()));
 	g_argument1->d.imag(y);
 	(*function)();
 	if (std::abs(g_argument1->d.real()) < g_fudge_limit && std::abs(g_argument1->d.imag()) < g_fudge_limit)
 	{
-		g_argument1->l.real(fixpoint_from_double(g_argument1->d.real()));
-		g_argument1->l.imag(fixpoint_from_double(g_argument1->d.imag()));
+		g_argument1->l.real(DoubleToFudge(g_argument1->d.real()));
+		g_argument1->l.imag(DoubleToFudge(g_argument1->d.imag()));
 	}
 	else
 	{
@@ -1031,7 +1022,7 @@ void (*StkMul)() = dStkMul;
 
 void dStkDiv()
 {
-	FPUcplxdiv(&g_argument2->d, &g_argument1->d, &g_argument2->d);
+	g_argument2->d = g_argument2->d/g_argument1->d;
 	g_argument1--;
 	g_argument2--;
 }
@@ -1490,7 +1481,7 @@ void (*StkASinh)() = dStkASinh;
 
 void dStkACos()
 {
-	Arccosz(g_argument1->d, &(g_argument1->d));
+	g_argument1->d = acos(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -1504,7 +1495,7 @@ void (*StkACos)() = dStkACos;
 
 void dStkACosh()
 {
-	Arccoshz(g_argument1->d, &(g_argument1->d));
+	g_argument1->d = acosh(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -1518,7 +1509,7 @@ void (*StkACosh)() = dStkACosh;
 
 void dStkATan()
 {
-	Arctanz(g_argument1->d, &(g_argument1->d));
+	g_argument1->d = atan(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -1532,7 +1523,7 @@ void (*StkATan)() = dStkATan;
 
 void dStkATanh()
 {
-	Arctanhz(g_argument1->d, &(g_argument1->d));
+	g_argument1->d = atanh(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -1734,7 +1725,7 @@ void lStkAND()
 void (*StkAND)() = dStkAND;
 void dStkLog()
 {
-	g_argument1->d = FPUcplxlog(g_argument1->d);
+	g_argument1->d = ComplexLog(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -1748,7 +1739,7 @@ void (*StkLog)() = dStkLog;
 
 void FPUcplxexp(ComplexD const *x, ComplexD *z)
 {
-	FPUcplxexp387(x, z);
+	*z = ComplexExp(*x);
 }
 
 void dStkExp()
@@ -1767,7 +1758,7 @@ void (*StkExp)() = dStkExp;
 
 void dStkPwr()
 {
-	g_argument2->d = std::pow(g_argument2->d, g_argument1->d);
+	g_argument2->d = pow(g_argument2->d, g_argument1->d);
 	g_argument1--;
 	g_argument2--;
 }
@@ -1775,18 +1766,11 @@ void dStkPwr()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkPwr()
 {
-	ComplexD x;
-	ComplexD y;
-
-	x.real(double_from_fixpoint(g_argument2->l.real()));
-	x.imag(double_from_fixpoint(g_argument2->l.imag()));
-	y.real(double_from_fixpoint(g_argument1->l.real()));
-	y.imag(double_from_fixpoint(g_argument1->l.imag()));
-	x = std::pow(x, y);
-	if (std::abs(x.real()) < g_fudge_limit && std::abs(x.imag()) < g_fudge_limit)
+	ComplexD x = pow(ComplexFudgeToDouble(g_argument2->l), ComplexFudgeToDouble(g_argument1->l));
+	if (std::abs(x.real()) < g_fudge_limit
+		&& std::abs(x.imag()) < g_fudge_limit)
 	{
-		g_argument2->l.real(fixpoint_from_double(x.real()));
-		g_argument2->l.imag(fixpoint_from_double(x.imag()));
+		g_argument2->l = ComplexDoubleToFudge(x);
 	}
 	else
 	{
@@ -2030,8 +2014,7 @@ ConstArg *Formula::is_constant(const char *text, int length)
 			break;
 #if !defined(NO_FIXED_POINT_MATH)
 		case FIXED_POINT_MATH:
-			m_variables[m_parser_vsp].argument.l.real(fixpoint_from_double(z.real()));
-			m_variables[m_parser_vsp].argument.l.imag(fixpoint_from_double(z.imag()));
+			m_variables[m_parser_vsp].argument.l = ComplexDoubleToFudge(z);
 			break;
 #endif
 		}
@@ -2424,32 +2407,29 @@ void Formula::parse_string_set_parameters_float()
 void Formula::parse_string_set_parameters_int()
 {
 #if !defined(NO_FIXED_POINT_MATH)
-	m_variables[VARIABLE_P1].argument.l.real(fixpoint_from_double(g_parameters[P1_REAL]));
-	m_variables[VARIABLE_P1].argument.l.imag(fixpoint_from_double(g_parameters[P1_IMAG]));
-	m_variables[VARIABLE_P2].argument.l.real(fixpoint_from_double(g_parameters[P2_REAL]));
-	m_variables[VARIABLE_P2].argument.l.imag(fixpoint_from_double(g_parameters[P2_IMAG]));
-	m_variables[VARIABLE_PI].argument.l.real(fixpoint_from_double(MathUtil::Pi));
+	m_variables[VARIABLE_P1].argument.l.real(DoubleToFudge(g_parameters[P1_REAL]));
+	m_variables[VARIABLE_P1].argument.l.imag(DoubleToFudge(g_parameters[P1_IMAG]));
+	m_variables[VARIABLE_P2].argument.l.real(DoubleToFudge(g_parameters[P2_REAL]));
+	m_variables[VARIABLE_P2].argument.l.imag(DoubleToFudge(g_parameters[P2_IMAG]));
+	m_variables[VARIABLE_PI].argument.l.real(DoubleToFudge(MathUtil::Pi));
 	m_variables[VARIABLE_PI].argument.l.imag(0L);
-	m_variables[VARIABLE_E].argument.l.real(fixpoint_from_double(MathUtil::e));
+	m_variables[VARIABLE_E].argument.l.real(DoubleToFudge(MathUtil::e));
 	m_variables[VARIABLE_E].argument.l.imag(0L);
-	m_variables[VARIABLE_P3].argument.l.real(fixpoint_from_double(g_parameters[P3_REAL]));
-	m_variables[VARIABLE_P3].argument.l.imag(fixpoint_from_double(g_parameters[P3_IMAG]));
+	m_variables[VARIABLE_P3].argument.l.real(DoubleToFudge(g_parameters[P3_REAL]));
+	m_variables[VARIABLE_P3].argument.l.imag(DoubleToFudge(g_parameters[P3_IMAG]));
 	m_variables[VARIABLE_SCRN_MAX].argument.l.real(g_x_dots << g_bit_shift);
 	m_variables[VARIABLE_SCRN_MAX].argument.l.imag(g_y_dots << g_bit_shift);
 	m_variables[VARIABLE_MAX_IT].argument.l.real(g_max_iteration << g_bit_shift);
 	m_variables[VARIABLE_MAX_IT].argument.l.imag(0L);
 	m_variables[VARIABLE_IS_MAND].argument.l.real((g_is_mandelbrot ? 1 : 0) << g_bit_shift);
 	m_variables[VARIABLE_IS_MAND].argument.l.imag(0L);
-	m_variables[VARIABLE_CENTER].argument.l.real(fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.real()));
-	m_variables[VARIABLE_CENTER].argument.l.imag(fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.imag()));
-	m_variables[VARIABLE_MAG_X_MAG].argument.l.real(fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].argument.d.real()));
-	m_variables[VARIABLE_MAG_X_MAG].argument.l.imag(fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].argument.d.imag()));
-	m_variables[VARIABLE_ROT_SKEW].argument.l.real(fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.real()));
-	m_variables[VARIABLE_ROT_SKEW].argument.l.imag(fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.imag()));
-	m_variables[VARIABLE_P4].argument.l.real(fixpoint_from_double(g_parameters[P4_REAL]));
-	m_variables[VARIABLE_P4].argument.l.imag(fixpoint_from_double(g_parameters[P4_IMAG]));
-	m_variables[VARIABLE_P5].argument.l.real(fixpoint_from_double(g_parameters[P5_REAL]));
-	m_variables[VARIABLE_P5].argument.l.imag(fixpoint_from_double(g_parameters[P5_IMAG]));
+	m_variables[VARIABLE_CENTER].argument.l = ComplexDoubleToFudge(m_variables[VARIABLE_CENTER].argument.d);
+	m_variables[VARIABLE_MAG_X_MAG].argument.l = ComplexDoubleToFudge(m_variables[VARIABLE_MAG_X_MAG].argument.d);
+	m_variables[VARIABLE_ROT_SKEW].argument.l = ComplexDoubleToFudge(m_variables[VARIABLE_ROT_SKEW].argument.d);
+	m_variables[VARIABLE_P4].argument.l.real(DoubleToFudge(g_parameters[P4_REAL]));
+	m_variables[VARIABLE_P4].argument.l.imag(DoubleToFudge(g_parameters[P4_IMAG]));
+	m_variables[VARIABLE_P5].argument.l.real(DoubleToFudge(g_parameters[P5_REAL]));
+	m_variables[VARIABLE_P5].argument.l.imag(DoubleToFudge(g_parameters[P5_IMAG]));
 #endif
 }
 
@@ -2792,7 +2772,7 @@ int Formula::per_pixel()
 
 #if !defined(NO_FIXED_POINT_MATH)
 	case FIXED_POINT_MATH:
-		m_variables[VARIABLE_WHITE_SQ].argument.l.real(fixpoint_from_double((g_row + g_col) & 1));
+		m_variables[VARIABLE_WHITE_SQ].argument.l.real(DoubleToFudge((g_row + g_col) & 1));
 		m_variables[VARIABLE_WHITE_SQ].argument.l.imag(0L);
 		m_variables[VARIABLE_SCRN_PIX].argument.l.real(g_col);
 		m_variables[VARIABLE_SCRN_PIX].argument.l.real(m_variables[VARIABLE_SCRN_PIX].argument.l.real() << g_bit_shift);
@@ -2821,8 +2801,7 @@ int Formula::per_pixel()
 				g_old_z.imag(8);
 			}
 			// convert to fudged longs
-			m_variables[VARIABLE_PIXEL].argument.l.real(fixpoint_from_double(g_old_z.real()));
-			m_variables[VARIABLE_PIXEL].argument.l.imag(fixpoint_from_double(g_old_z.imag()));
+			m_variables[VARIABLE_PIXEL].argument.l = ComplexDoubleToFudge(g_old_z);
 			break;
 #endif
 		}
@@ -3974,7 +3953,7 @@ bool Formula::setup_int()
 #else
 	m_math_type = FIXED_POINT_MATH;
 	s_fudge = double(1L << g_bit_shift);
-	g_fudge_limit = double_from_fixpoint(0x7fffffffL);
+	g_fudge_limit = FudgeToDouble(0x7fffffffL);
 	s_shift_back = 32 - g_bit_shift;
 	return !run_formula(g_formula_state.get_formula(), false);
 #endif
@@ -3985,7 +3964,7 @@ void Formula::init_misc()
 	g_argument1 = &m_arg1;
 	g_argument2 = &m_arg2; // needed by all the ?Stk* functions
 	s_fudge = double(1L << g_bit_shift);
-	g_fudge_limit = double_from_fixpoint(0x7fffffffL);
+	g_fudge_limit = FudgeToDouble(0x7fffffffL);
 	s_shift_back = 32 - g_bit_shift;
 	s_delta16 = g_bit_shift - 16;
 	g_bit_shift_minus_1 = g_bit_shift-1;

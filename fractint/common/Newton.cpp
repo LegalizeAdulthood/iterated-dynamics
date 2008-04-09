@@ -198,7 +198,7 @@ bool NewtonComplex::setup()
 		g_c_root.imag(g_parameters[P2_IMAG]);
 		g_c_degree.real(g_parameters[P1_REAL]);
 		g_c_degree.imag(g_parameters[P1_IMAG]);
-		BaseLog = FPUcplxlog(g_c_root);
+		BaseLog = ComplexLog(g_c_root);
 		TwoPi = std::asin(1.0)*4;
 	}
 	return true;
@@ -215,7 +215,7 @@ int NewtonComplex::orbit()
 	cd1.real(g_c_degree.real() - 1.0);
 	cd1.imag(g_c_degree.imag());
 
-	temp = std::pow(g_old_z, cd1);
+	temp = pow(g_old_z, cd1);
 	g_new_z = temp*g_old_z;
 
 	g_temp_z.real(g_new_z.real() - g_c_root.real());
@@ -230,7 +230,7 @@ int NewtonComplex::orbit()
 	g_temp_z.imag(g_temp_z.imag() + g_c_root.imag());
 
 	cd1 = temp*g_c_degree;
-	FPUcplxdiv(&g_temp_z, &cd1, &g_old_z);
+	g_old_z = g_temp_z/cd1;
 	if (g_overflow)
 	{
 		return 1;

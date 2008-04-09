@@ -25,135 +25,6 @@
 #include "jiim.h"
 #include "mpmath.h"
 
-// returns x^y
-namespace std {
-// x^y
-ComplexD pow(ComplexD const &x, ComplexD const &y)
-{
-	if (x.real() == 0 && x.imag() == 0)
-	{
-		return MakeComplexT(0.0);
-	}
-
-	// exp(log(x)*y)
-	ComplexD cLog = FPUcplxlog(x);
-	ComplexD t = cLog*y;
-	ComplexD z;
-	FPUcplxexp387(&t, &z);
-	return z;
-}
-}
-
-// rz = Arccos(z) = -i*Log(z + sqrt(z*z-1))
-void Arccosz(ComplexD z, ComplexD *rz)
-{
-	ComplexD temp;
-
-	temp = z*z;
-	temp.real(temp.real() - 1);
-	temp = sqrt(temp);
-
-	temp.real(temp.real() + z.real());
-	temp.imag(temp.imag() + z.imag());
-
-	temp = FPUcplxlog(temp);
-	rz->real(temp.imag());
-	rz->imag(-temp.real());              // rz = (-i)*tempz1
-}
-
-// rz=Arccosh(z)=Log(z + sqrt(z*z-1)}
-void Arccoshz(ComplexD z, ComplexD *rz)
-{
-	ComplexD tempz;
-	tempz = z*z;
-	tempz.real(tempz.real() - 1);                              // tempz = tempz - 1
-	tempz = sqrt(tempz);
-	tempz.real(z.real() + tempz.real());
-	tempz.imag(z.imag() + tempz.imag());  // tempz = z + tempz
-	*rz = FPUcplxlog(tempz);
-}
-
-// rz=Arctanh(z)=1/2*Log{(1 + z)/(1-z)}
-void Arctanhz(ComplexD z, ComplexD *rz)
-{
-	ComplexD temp0;
-	ComplexD temp1;
-	ComplexD temp2;
-
-	if (z.real() == 0.0)
-	{
-		rz->real(0);
-		rz->imag(std::atan(z.imag()));
-		return;
-	}
-	else
-	{
-		if (std::abs(z.real()) == 1.0 && z.imag() == 0.0)
-		{
-			return;
-		}
-		else if (std::abs(z.real()) < 1.0 && z.imag() == 0.0)
-		{
-			rz->real(std::log((1 + z.real())/(1-z.real()))/2);
-			rz->imag(0);
-			return;
-		}
-		else
-		{
-			temp0.real(1 + z.real());
-			temp0.imag(z.imag());             // temp0 = 1 + z
-			temp1.real(1 - z.real());
-			temp1.imag(-z.imag());            // temp1 = 1 - z
-			FPUcplxdiv(&temp0, &temp1, &temp2);
-			temp2 = FPUcplxlog(temp2);
-			rz->real(.5*temp2.real());
-			rz->imag(.5*temp2.imag());       // rz = .5*temp2
-			return;
-		}
-	}
-}   // end. Arctanhz
-
-// rz = Arctan(z) = i/2*Log{(1-i*z)/(1 + i*z)}
-void Arctanz(ComplexD z, ComplexD *rz)
-{
-	ComplexD temp0;
-	ComplexD temp1;
-	ComplexD temp2;
-	ComplexD temp3;
-	if (z.real() == 0.0 && z.imag() == 0.0)
-	{
-		rz->real(0);
-		rz->imag(0);
-	}
-	else if (z.real() != 0.0 && z.imag() == 0.0)
-	{
-		rz->real(std::atan(z.real()));
-		rz->imag(0);
-	}
-	else if (z.real() == 0.0 && z.imag() != 0.0)
-	{
-		temp0.real(z.imag());
-		temp0.imag(0.0);
-		Arctanhz(temp0, &temp0);
-		rz->real(-temp0.imag());
-		rz->imag(temp0.real());              // i*temp0
-	}
-	else if (z.real() != 0.0 && z.imag() != 0.0)
-	{
-		temp0.real(-z.imag());
-		temp0.imag(z.real());                  // i*z
-		temp1.real(1 - temp0.real());
-		temp1.imag(-temp0.imag());      // temp1 = 1 - temp0
-		temp2.real(1 + temp0.real());
-		temp2.imag(temp0.imag());       // temp2 = 1 + temp0
-
-		FPUcplxdiv(&temp1, &temp2, &temp3);
-		temp3 = FPUcplxlog(temp3);
-		rz->real(-temp3.imag()*.5);
-		rz->imag(.5*temp3.real());           // .5*i*temp0
-	}
-}   // end. Arctanz
-
 static long const SinCosFudge = 0x10000L;
 
 #ifdef LONGSQRT
@@ -367,7 +238,7 @@ int complex_basin()
 	cd1.real(g_c_degree.real() - 1.0);
 	cd1.imag(g_c_degree.imag());
 
-	temp = std::pow(g_old_z, cd1);
+	temp = pow(g_old_z, cd1);
 	g_new_z = temp*g_old_z;
 
 	g_temp_z.real(g_new_z.real() - g_c_root.real());
@@ -378,7 +249,7 @@ int complex_basin()
 		{
 			g_old_z.imag(0.0);
 		}
-		temp = FPUcplxlog(g_old_z);
+		temp = ComplexLog(g_old_z);
 		g_temp_z = temp*g_c_degree;
 		mod = g_temp_z.imag()/TwoPi;
 		g_color_iter = long(mod);
@@ -406,7 +277,7 @@ int complex_basin()
 	g_temp_z.imag(g_temp_z.imag() + g_c_root.imag());
 
 	cd1 = temp*g_c_degree;
-	FPUcplxdiv(&g_temp_z, &cd1, &g_old_z);
+	g_old_z = g_temp_z/cd1;
 	if (g_overflow)
 	{
 		return 1;

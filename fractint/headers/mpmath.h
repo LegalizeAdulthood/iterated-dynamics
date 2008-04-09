@@ -24,10 +24,6 @@ extern void SetupLogTable();
 extern long logtablecalc(long);
 extern long ExpFloat14(long);
 extern int complex_basin();
-extern void Arccosz(ComplexD z, ComplexD *rz);
-extern void Arccoshz(ComplexD z, ComplexD *rz);
-extern void Arctanhz(ComplexD z, ComplexD *rz);
-extern void Arctanz(ComplexD z, ComplexD *rz);
 
 // --------------------------------------------------------------------
 // The following inline functions allow the complex transcendental functions
