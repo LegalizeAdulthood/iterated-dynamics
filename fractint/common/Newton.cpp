@@ -191,43 +191,35 @@ bool NewtonComplex::setup()
 {
 	g_threshold = 0.001;
 	g_periodicity_check = 0;
-	if (g_parameters[P1_REAL] != 0.0 || g_parameters[P1_IMAG] != 0.0 || g_parameters[P2_REAL] != 0.0 ||
-		g_parameters[P2_IMAG] != 0.0)
+	if (g_parameters[P1_REAL] != 0.0 || g_parameters[P1_IMAG] != 0.0
+		|| g_parameters[P2_REAL] != 0.0 || g_parameters[P2_IMAG] != 0.0)
 	{
-		g_c_root.real(g_parameters[P2_REAL]);
-		g_c_root.imag(g_parameters[P2_IMAG]);
-		g_c_degree.real(g_parameters[P1_REAL]);
-		g_c_degree.imag(g_parameters[P1_IMAG]);
+		g_c_root = MakeComplexT(g_parameters[P2_REAL], g_parameters[P2_IMAG]);
+		g_c_degree = MakeComplexT(g_parameters[P1_REAL], g_parameters[P1_IMAG]);
 		BaseLog = ComplexLog(g_c_root);
-		TwoPi = std::asin(1.0)*4;
+		TwoPi = MathUtil::Pi*2.0;
 	}
 	return true;
 }
 
 int NewtonComplex::orbit()
 {
-	ComplexD cd1;
-
 	// new = ((g_c_degree-1)*old**g_c_degree) + g_c_root
 	//		 ----------------------------------
 	//       g_c_degree*old**(g_c_degree-1)
 
-	cd1.real(g_c_degree.real() - 1.0);
-	cd1.imag(g_c_degree.imag());
+	ComplexD cd1 = g_c_degree - 1.0;
 
 	temp = pow(g_old_z, cd1);
 	g_new_z = temp*g_old_z;
 
-	g_temp_z.real(g_new_z.real() - g_c_root.real());
-	g_temp_z.imag(g_new_z.imag() - g_c_root.imag());
+	g_temp_z = g_new_z - g_c_root;
 	if ((sqr(g_temp_z.real()) + sqr(g_temp_z.imag())) < g_threshold)
 	{
 		return 1;
 	}
 
-	g_temp_z = g_new_z*cd1;
-	g_temp_z.real(g_temp_z.real() + g_c_root.real());
-	g_temp_z.imag(g_temp_z.imag() + g_c_root.imag());
+	g_temp_z = g_new_z*cd1 + g_c_root;
 
 	cd1 = temp*g_c_degree;
 	g_old_z = g_temp_z/cd1;
