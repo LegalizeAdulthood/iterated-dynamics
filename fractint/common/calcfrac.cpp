@@ -1959,7 +1959,7 @@ void StandardFractal::outside_colormode_set_new_z_update()
 }
 void StandardFractal::outside_colormode_total_distance_update()
 {
-	m_colormode_total_distance += std::sqrt(sqr(m_colormode_total_distance_last_z.real()-g_new_z.real()) + sqr(m_colormode_total_distance_last_z.imag()-g_new_z.imag()));
+	m_colormode_total_distance += std::sqrt(sqr(m_colormode_total_distance_last_z.real() - g_new_z.real()) + sqr(m_colormode_total_distance_last_z.imag() - g_new_z.imag()));
 	m_colormode_total_distance_last_z = g_new_z;
 }
 void StandardFractal::outside_colormode_float_modulus_update()
@@ -2120,8 +2120,7 @@ void StandardFractal::outside_colormode_final()
 }
 double StandardFractal::distance_compute()
 {
-	double dist;
-	dist = (g_new_z.real()) + sqr(g_new_z.imag());
+	double dist = (g_new_z.real()) + sqr(g_new_z.imag());
 	if (dist == 0 || g_overflow)
 	{
 		dist = 0;
@@ -2625,9 +2624,9 @@ static void decomposition()
 			if (g_new_z.real() < g_new_z.imag())
 			{
 				++temp;
-				alt.real(g_new_z.real()); // just
-				g_new_z.real(g_new_z.imag()); // swap
-				g_new_z.imag(alt.real()); // them
+				alt.real(g_new_z.real());		// just
+				g_new_z.real(g_new_z.imag());	// swap
+				g_new_z.imag(alt.real());		// them
 			}
 			if (g_decomposition[0] >= 16)
 			{

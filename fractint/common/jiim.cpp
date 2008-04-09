@@ -770,14 +770,10 @@ void JIIM::Execute()
 			actively_computing = true;
 			WriteCoordinatesOnScreen(actively_computing);
 			iter = 1;
-			g_old_z.real(0);
-			g_old_z.imag(0);
-			g_old_z_l.real(0);
-			g_old_z_l.imag(0);
-			g_save_c.real(_cReal);
-			g_save_c.imag(_cImag);
-			g_initial_z.imag( _cImag);
-			g_initial_z.real( _cReal);
+			g_old_z = MakeComplexT(0.0);
+			g_old_z_l = MakeComplexT(0L);
+			g_save_c = MakeComplexT(_cReal, _cImag);
+			g_initial_z = g_save_c;
 			g_initial_z_l = ComplexDoubleToFudge(g_initial_z);
 
 			old_x = -1;
@@ -785,15 +781,10 @@ void JIIM::Execute()
 			// compute fixed points and use them as starting points of JIIM
 			if (!_orbits && s_ok_to_miim)
 			{
-				ComplexD f1;
-				ComplexD f2;
-				ComplexD Sqrt;        // Fixed points of Julia
-
-				Sqrt = ComplexSqrtFloat(1 - 4*_cReal, -4*_cImag);
-				f1.real((1 + Sqrt.real())/2);
-				f2.real((1 - Sqrt.real())/2);
-				f1.imag(Sqrt.imag()/2);
-				f2.imag(-Sqrt.imag()/2);
+				// Fixed points of Julia
+				ComplexD Sqrt = ComplexSqrtFloat(1 - 4*_cReal, -4*_cImag);
+				ComplexD f1 = MakeComplexT((1 + Sqrt.real())/2, Sqrt.imag()/2);
+				ComplexD f2 = MakeComplexT((1 - Sqrt.real())/2, -Sqrt.imag()/2);
 
 				ClearQueue();
 				s_max_hits = 1;
@@ -912,8 +903,7 @@ void JIIM::Execute()
 				default:
 					if (rand() % 2)
 					{
-						g_new_z.real(-g_new_z.real());
-						g_new_z.imag(-g_new_z.imag());
+						g_new_z = -g_new_z;
 					}
 					x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
 					y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
@@ -922,8 +912,7 @@ void JIIM::Execute()
 				case SECRETMODE_ONE_DIRECTION:                     // always go one direction
 					if (g_save_c.imag() < 0)
 					{
-						g_new_z.real(-g_new_z.real());
-						g_new_z.imag(-g_new_z.imag());
+						g_new_z = -g_new_z;
 					}
 					x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
 					y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
@@ -931,8 +920,7 @@ void JIIM::Execute()
 				case SECRETMODE_ONE_DIR_DRAW_OTHER:                     // go one dir, draw the other
 					if (g_save_c.imag() < 0)
 					{
-						g_new_z.real(-g_new_z.real());
-						g_new_z.imag(-g_new_z.imag());
+						g_new_z = -g_new_z;
 					}
 					x = int(-g_new_z.real()*x_factor*_zoom + _xCenter);
 					y = int(-g_new_z.imag()*y_factor*_zoom + _yCenter);
@@ -942,15 +930,13 @@ void JIIM::Execute()
 					y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
 					if (c_getcolor(x, y) == g_colors - 1)
 					{
-						g_new_z.real(-g_new_z.real());
-						g_new_z.imag(-g_new_z.imag());
+						g_new_z = -g_new_z;
 						x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
 						y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
 					}
 					break;
 				case SECRETMODE_POSITIVE_MAX_COLOR:                     // go positive if max color
-					g_new_z.real(-g_new_z.real());
-					g_new_z.imag(-g_new_z.imag());
+					g_new_z = -g_new_z;
 					x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
 					y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
 					if (c_getcolor(x, y) == g_colors - 1)
@@ -962,8 +948,7 @@ void JIIM::Execute()
 				case SECRETMODE_7:
 					if (g_save_c.imag() < 0)
 					{
-						g_new_z.real(-g_new_z.real());
-						g_new_z.imag(-g_new_z.imag());
+						g_new_z = -g_new_z;
 					}
 					x = int(-g_new_z.real()*x_factor*_zoom + _xCenter);
 					y = int(-g_new_z.imag()*y_factor*_zoom + _yCenter);
@@ -996,8 +981,7 @@ void JIIM::Execute()
 					}
 					if (random_count < 0)
 					{
-						g_new_z.real(-g_new_z.real());
-						g_new_z.imag(-g_new_z.imag());
+						g_new_z = -g_new_z;
 					}
 					x = int(g_new_z.real()*x_factor*_zoom + _xCenter);
 					y = int(g_new_z.imag()*y_factor*_zoom + _yCenter);
@@ -1008,8 +992,7 @@ void JIIM::Execute()
 					case 0:             // go random direction for a while
 						if (rand() % 2)
 						{
-							g_new_z.real(-g_new_z.real());
-							g_new_z.imag(-g_new_z.imag());
+							g_new_z = -g_new_z;
 						}
 						if (++random_count > 1024)
 						{
@@ -1018,8 +1001,7 @@ void JIIM::Execute()
 						}
 						break;
 					case 1:             // now go negative dir for a while
-						g_new_z.real(-g_new_z.real());
-						g_new_z.imag(-g_new_z.imag());
+						g_new_z = -g_new_z;
 						// fall through
 					case -1:            // now go positive dir for a while
 						if (++random_count > 512)
