@@ -114,9 +114,9 @@ int Halley::orbit()
 	Haldenom.real(F1prime.real() + F1prime.real());
 	Haldenom.imag(F1prime.imag() + F1prime.imag());                     // 2*F'
 
-	FPUcplxdiv(&Halnumer1, &Haldenom, &Halnumer1);         // F"F/2F'
+	Halnumer1 = Halnumer1/Haldenom;         // F"F/2F'
 	Halnumer2 = F1prime - Halnumer1;				// F' - F"F/2F'
-	FPUcplxdiv(&FX, &Halnumer2, &Halnumer2);
+	Halnumer2 = FX/Halnumer2;
 	// g_parameter.imag() is relaxation coef.
 	// new.real(g_old_z.real() - (g_parameter.imag()*Halnumer2.real()));
 	// new.imag(g_old_z.imag() - (g_parameter.imag()*Halnumer2.imag()));

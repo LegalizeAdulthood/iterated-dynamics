@@ -12,21 +12,6 @@ inline long FloatAsLong(float f)
 	return *reinterpret_cast<long *>(&f);
 }
 
-inline void FPUcplxdiv(ComplexD *x, ComplexD *y, ComplexD *z)
-{
-	double mod, tx, yxmod, yymod;
-	mod = y->real()*y->real() + y->imag()*y->imag();
-	if (mod == 0)
-	{
-		DivideOverflow++;
-	}
-	yxmod = y->real()/mod;
-	yymod = - y->imag()/mod;
-	tx = x->real()*yxmod - x->imag()*yymod;
-	z->imag(x->real()*yymod + x->imag()*yxmod);
-	z->real(tx);
-}
-
 inline void FPUsincos2(double angle, double *Sin, double *Cos)
 {
 	*Sin = std::sin(angle);
@@ -119,13 +104,6 @@ inline long RegSftFloat(long x, int Shift)
 		f /= (1 << Shift);
 	}
 	return FloatAsLong(f);
-}
-
-inline void FPUcplxexp387(ComplexD const *x, ComplexD *z)
-{
-	double const pow = std::exp(x->real());
-	z->real(pow*std::cos(x->imag()));
-	z->imag(pow*std::sin(x->imag()));
 }
 
 #endif

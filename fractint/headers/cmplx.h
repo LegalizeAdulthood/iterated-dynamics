@@ -8,6 +8,7 @@
 #include <cmath>
 #include <complex>
 #include "id.h"
+#include "fpu.h"
 
 template <typename T>
 struct ComplexT
@@ -163,6 +164,18 @@ template <typename T>
 inline ComplexT<T> operator*(ComplexT<T> const &left, T const &right)
 { return MakeComplexT(left.real()*right, left.imag()*right); }
 
+inline ComplexD operator/(ComplexD const &x, ComplexD const &y)
+{
+	double const mod = y.real()*y.real() + y.imag()*y.imag();
+	if (mod == 0.0)
+	{
+		DivideOverflow++;
+	}
+	double const yxmod = y.real()/mod;
+	double const yymod = -y.imag()/mod;
+	double const tx = x.real()*yxmod - x.imag()*yymod;
+	return MakeComplexT(tx, x.real()*yymod + x.imag()*yxmod);
+}
 inline ComplexD operator/(ComplexD const &left, double right)
 { return MakeComplexT(left.real()/right, left.imag()/right); }
 
@@ -182,7 +195,7 @@ inline ComplexD TimesI(ComplexD const &z)
 	return MakeComplexT(-z.imag(), z.real());
 }
 
-inline ComplexD FPUcplxlog(ComplexD const &x)
+inline ComplexD ComplexLog(ComplexD const &x)
 {
 	double const mod = std::sqrt(x.real()*x.real() + x.imag()*x.imag());
 	double const zx = std::log(mod);
@@ -190,15 +203,90 @@ inline ComplexD FPUcplxlog(ComplexD const &x)
 	return MakeComplexT(zx, zy);
 }
 
-// rz = Arcsin(z) = -i*Log(i*z + sqrt(1-z*z))
-inline ComplexD asin(ComplexD z)
+// rz = Arccosh(z) = Log(z + sqrt(z*z-1)}
+inline ComplexD acosh(ComplexD const &z)
 {
-	return -TimesI(FPUcplxlog(TimesI(z) + sqrt(1.0 - z*z)));
+	return ComplexLog(z + sqrt(z*z - 1.0));
 }
 
 inline ComplexD asinh(ComplexD const &z)
 {
-	return FPUcplxlog(sqrt(z*z + 1.0) + z);
+	return ComplexLog(sqrt(z*z + 1.0) + z);
+}
+
+// rz = Arctanh(z) = 1/2*Log((1 + z)/(1 - z))
+inline ComplexD atanh(ComplexD const &z)
+{
+	if (z.real() == 0.0)
+	{
+		return MakeComplexT(0.0, std::atan(z.imag()));
+	}
+	if (std::abs(z.real()) == 1.0 && z.imag() == 0.0)
+	{
+		return z;
+	}
+	if (std::abs(z.real()) < 1.0 && z.imag() == 0.0)
+	{
+		return MakeComplexT(std::log((1 + z.real())/(1.0 - z.real()))/2.0);
+	}
+
+	return 0.5*ComplexLog((1.0 + z)/(1.0 - z));
+}
+
+// rz = Arccos(z) = -i*Log(z + sqrt(z*z-1))
+inline ComplexD acos(ComplexD const &z)
+{
+	return -TimesI(ComplexLog(sqrt(z*z - 1.0) + z));
+}
+
+// rz = Arcsin(z) = -i*Log(i*z + sqrt(1-z*z))
+inline ComplexD asin(ComplexD z)
+{
+	return -TimesI(ComplexLog(TimesI(z) + sqrt(1.0 - z*z)));
+}
+
+// rz = Arctan(z) = i/2*Log{(1-i*z)/(1 + i*z)}
+inline ComplexD atan(ComplexD const &z)
+{
+	if (z.imag() == 0.0)
+	{
+		if (z.real() == 0.0)
+		{
+			return MakeComplexT(0.0);
+		}
+		else
+		{
+			return MakeComplexT(std::atan(z.real()));
+		}
+	}
+	else
+	{
+		if (z.real() == 0.0)
+		{
+			return TimesI(atanh(MakeComplexT(z.imag())));
+		}
+		else
+		{
+			ComplexD const zi = TimesI(z);
+			return 0.5*TimesI(ComplexLog((1.0 - zi)/(1.0 + zi)));
+		}
+	}
+}
+
+inline ComplexD ComplexExp(ComplexD const &x)
+{
+	return std::exp(x.real())*MakeComplexT(std::cos(x.imag()), std::sin(x.imag()));
+}
+
+// returns x^y
+inline ComplexD pow(ComplexD const &x, ComplexD const &y)
+{
+	if (x.real() == 0 && x.imag() == 0)
+	{
+		return MakeComplexT(0.0);
+	}
+
+	return ComplexExp(ComplexLog(x)*y);
 }
 
 #endif
