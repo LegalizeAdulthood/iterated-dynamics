@@ -60,6 +60,11 @@ public:
 		real(re);
 		imag(im);
 	}
+	InitializedComplexT(ComplexT<T> const &rhs) : ComplexT()
+	{
+		real(rhs.real());
+		imag(rhs.imag());
+	}
 };
 
 typedef std::complex<double> StdComplexD;
