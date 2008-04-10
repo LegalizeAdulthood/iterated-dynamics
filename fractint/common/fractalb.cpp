@@ -669,7 +669,7 @@ int julia_z_power_orbit_bn()
 
 	floattobn(parm2.real(), g_parameters[P2_REAL]);
 	floattobn(parm2.imag(), g_parameters[P2_IMAG]);
-	complex_power_bn(&g_new_z_bn, &g_old_z_bn, &parm2);
+	complex_power_bn(g_new_z_bn, g_old_z_bn, parm2);
 	add_bn(g_new_z_bn.real(), bnparm.real(), bn_t(g_new_z_bn.real(), g_shift_factor));
 	add_bn(g_new_z_bn.imag(), bnparm.imag(), bn_t(g_new_z_bn.imag(), g_shift_factor));
 	return g_externs.BailOutBn();
@@ -685,7 +685,7 @@ int julia_z_power_orbit_bf()
 
 	floattobf(parm2.real(), g_parameters[P2_REAL]);
 	floattobf(parm2.imag(), g_parameters[P2_IMAG]);
-	ComplexPower_bf(&g_new_z_bf, &g_old_z_bf, &parm2);
+	ComplexPower_bf(g_new_z_bf, g_old_z_bf, parm2);
 	add_bf(g_new_z_bf.real(), bfparm.real(), g_new_z_bf.real());
 	add_bf(g_new_z_bf.imag(), bfparm.imag(), g_new_z_bf.imag());
 	return g_externs.BailOutBf();
@@ -763,32 +763,30 @@ julia_orbit_bn()
 }
 #endif
 
-ComplexBigFloat *complex_log_bf(ComplexBigFloat *t, ComplexBigFloat *s)
+void complex_log_bf(ComplexBigFloat &t, ComplexBigFloat const &s)
 {
-	square_bf(t->real(), s->real());
-	square_bf(t->imag(), s->imag());
-	add_a_bf(t->real(), t->imag());
-	ln_bf(t->real(), t->real());
-	half_a_bf(t->real());
-	atan2_bf(t->imag(), s->imag(), s->real());
-	return t;
+	square_bf(t.real(), s.real());
+	square_bf(t.imag(), s.imag());
+	add_a_bf(t.real(), t.imag());
+	ln_bf(t.real(), t.real());
+	half_a_bf(t.real());
+	atan2_bf(t.imag(), s.imag(), s.real());
 }
 
-ComplexBigFloat *cplxmul_bf(ComplexBigFloat *t, ComplexBigFloat *x, ComplexBigFloat *y)
+void cplxmul_bf(ComplexBigFloat &t, ComplexBigFloat const &x, ComplexBigFloat const &y)
 {
 	BigStackSaver savedStack;
 	bf_t tmp1(g_rbf_length);
-	mult_bf(t->real(), x->real(), y->real());
-	mult_bf(t->imag(), x->imag(), y->imag());
-	sub_bf(t->real(), t->real(), t->imag());
+	mult_bf(t.real(), x.real(), y.real());
+	mult_bf(t.imag(), x.imag(), y.imag());
+	sub_bf(t.real(), t.real(), t.imag());
 
-	mult_bf(tmp1, x->real(), y->imag());
-	mult_bf(t->imag(), x->imag(), y->real());
-	add_bf(t->imag(), tmp1, t->imag());
-	return t;
+	mult_bf(tmp1, x.real(), y.imag());
+	mult_bf(t.imag(), x.imag(), y.real());
+	add_bf(t.imag(), tmp1, t.imag());
 }
 
-ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, ComplexBigFloat *yy)
+void ComplexPower_bf(ComplexBigFloat &t, ComplexBigFloat const &xx, ComplexBigFloat const &yy)
 {
 	ComplexBigFloat tmp;
 	BigStackSaver savedStack;
@@ -799,49 +797,46 @@ ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, Comple
 	tmp.imag(bf_t(g_rbf_length));
 
 	// 0 raised to anything is 0
-	if (is_bf_zero(xx->real()) && is_bf_zero(xx->imag()))
+	if (is_bf_zero(xx.real()) && is_bf_zero(xx.imag()))
 	{
-		clear_bf(t->real());
-		clear_bf(t->imag());
-		return t;
+		clear_bf(t.real());
+		clear_bf(t.imag());
+		return;
 	}
 
 	complex_log_bf(t, xx);
-	cplxmul_bf(&tmp, t, yy);
+	cplxmul_bf(tmp, t, yy);
 	exp_bf(e2x, tmp.real());
 	sincos_bf(siny, cosy, tmp.imag());
-	mult_bf(t->real(), e2x, cosy);
-	mult_bf(t->imag(), e2x, siny);
-	return t;
+	mult_bf(t.real(), e2x, cosy);
+	mult_bf(t.imag(), e2x, siny);
 }
 
-ComplexBigNum *complex_log_bn(ComplexBigNum *t, ComplexBigNum *s)
+void complex_log_bn(ComplexBigNum &t, ComplexBigNum const &s)
 {
-	square_bn(t->real(), s->real());
-	square_bn(t->imag(), s->imag());
-	add_a_bn(bn_t(t->real(), g_shift_factor), bn_t(t->imag(), g_shift_factor));
-	ln_bn(t->real(), bn_t(t->real(), g_shift_factor));
-	half_a_bn(t->real());
-	atan2_bn(t->imag(), s->imag(), s->real());
-	return t;
+	square_bn(t.real(), s.real());
+	square_bn(t.imag(), s.imag());
+	add_a_bn(bn_t(t.real(), g_shift_factor), bn_t(t.imag(), g_shift_factor));
+	ln_bn(t.real(), bn_t(t.real(), g_shift_factor));
+	half_a_bn(t.real());
+	atan2_bn(t.imag(), s.imag(), s.real());
 }
 
-ComplexBigNum *complex_multiply_bn(ComplexBigNum *t, ComplexBigNum *x, ComplexBigNum *y)
+void complex_multiply_bn(ComplexBigNum &t, ComplexBigNum const &x, ComplexBigNum const &y)
 {
 	BigStackSaver savedStack;
 	bn_t tmp1(g_r_length);
-	mult_bn(t->real(), x->real(), y->real());
-	mult_bn(t->imag(), x->imag(), y->imag());
-	sub_bn(t->real(), bn_t(t->real(), g_shift_factor), bn_t(t->imag(), g_shift_factor));
+	mult_bn(t.real(), x.real(), y.real());
+	mult_bn(t.imag(), x.imag(), y.imag());
+	sub_bn(t.real(), bn_t(t.real(), g_shift_factor), bn_t(t.imag(), g_shift_factor));
 
-	mult_bn(tmp1, x->real(), y->imag());
-	mult_bn(t->imag(), x->imag(), y->real());
-	add_bn(t->imag(), bn_t(tmp1, g_shift_factor), bn_t(t->imag(), g_shift_factor));
-	return t;
+	mult_bn(tmp1, x.real(), y.imag());
+	mult_bn(t.imag(), x.imag(), y.real());
+	add_bn(t.imag(), bn_t(tmp1, g_shift_factor), bn_t(t.imag(), g_shift_factor));
 }
 
 // note: complex_power_bn() returns need to be +g_shift_factor'ed
-ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigNum *yy)
+void complex_power_bn(ComplexBigNum &t, ComplexBigNum const &xx, ComplexBigNum const &yy)
 {
 	BigStackSaver savedStack;
 	bn_t e2x(g_bn_length);
@@ -852,18 +847,17 @@ ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigN
 	tmp.imag(bn_t(g_r_length));
 
 	// 0 raised to anything is 0
-	if (is_bn_zero(xx->real()) && is_bn_zero(xx->imag()))
+	if (is_bn_zero(xx.real()) && is_bn_zero(xx.imag()))
 	{
-		clear_bn(t->real());
-		clear_bn(t->imag());
-		return t;
+		clear_bn(t.real());
+		clear_bn(t.imag());
+		return;
 	}
 
 	complex_log_bn(t, xx);
-	complex_multiply_bn(&tmp, t, yy);
+	complex_multiply_bn(tmp, t, yy);
 	exp_bn(e2x, tmp.real());
 	sincos_bn(siny, cosy, tmp.imag());
-	mult_bn(t->real(), e2x, cosy);
-	mult_bn(t->imag(), e2x, siny);
-	return t;
+	mult_bn(t.real(), e2x, cosy);
+	mult_bn(t.imag(), e2x, siny);
 }
