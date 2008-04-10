@@ -36,9 +36,9 @@ static void move_row(int fromrow, int torow, int col);
 // big number declarations
 static void calculate_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 {
-	bf_t btmp1(alloc_stack(g_rbf_length + 2));
-	bf_t btmp2(alloc_stack(g_rbf_length + 2));
-	bf_t btmp3(alloc_stack(g_rbf_length + 2));
+	bf_t btmp1(g_rbf_length);
+	bf_t btmp2(g_rbf_length);
+	bf_t btmp3(g_rbf_length);
 	BigStackSaver savedStack;
 
 	// use target as temporary variable
@@ -86,11 +86,11 @@ void zoom_box_draw(bool drawit)
 	BigStackSaver savedStack;
 	if (g_bf_math)
 	{
-		bffxwidth = bf_t(alloc_stack(g_rbf_length + 2));
-		bffxskew = bf_t(alloc_stack(g_rbf_length + 2));
-		bffydepth = bf_t(alloc_stack(g_rbf_length + 2));
-		bffyskew = bf_t(alloc_stack(g_rbf_length + 2));
-		bffxadj = bf_t(alloc_stack(g_rbf_length + 2));
+		bffxwidth = bf_t(g_rbf_length);
+		bffxskew = bf_t(g_rbf_length);
+		bffydepth = bf_t(g_rbf_length);
+		bffyskew = bf_t(g_rbf_length);
+		bffxadj = bf_t(g_rbf_length);
 	}
 	ftemp1 = MathUtil::Pi*g_z_rotate/72; // convert to radians
 	rotcos = std::cos(ftemp1);   // sin & cos of rotation
@@ -372,14 +372,14 @@ static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
 {
 	BigStackSaver savedStack;
 
-	bf_t btmp1(alloc_stack(g_rbf_length + 2));
-	bf_t btmp2(alloc_stack(g_rbf_length + 2));
-	bf_t btmp3(alloc_stack(g_rbf_length + 2));
-	bf_t btmp4(alloc_stack(g_rbf_length + 2));
-	bf_t btmp2a(alloc_stack(g_rbf_length + 2));
-	bf_t btmp4a(alloc_stack(g_rbf_length + 2));
-	bf_t btempx(alloc_stack(g_rbf_length + 2));
-	bf_t btempy(alloc_stack(g_rbf_length + 2));
+	bf_t btmp1(g_rbf_length);
+	bf_t btmp2(g_rbf_length);
+	bf_t btmp3(g_rbf_length);
+	bf_t btmp4(g_rbf_length);
+	bf_t btmp2a(g_rbf_length);
+	bf_t btmp4a(g_rbf_length);
+	bf_t btempx(g_rbf_length);
+	bf_t btempy(g_rbf_length);
 
 	/* calc cur screen corner relative to zoombox, when zoombox co-ords
 		are taken as (0, 0) topleft thru (1, 1) bottom right */
@@ -442,19 +442,19 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
 	new actual corners
 	*/
 	BigStackSaver savedStack;
-	bf_t savbfxmin(alloc_stack(g_rbf_length + 2));
-	bf_t savbfymax(alloc_stack(g_rbf_length + 2));
-	bf_t bfftemp(alloc_stack(g_rbf_length + 2));
-	bf_t tmp1(alloc_stack(g_rbf_length + 2));
-	bf_t tmp2(alloc_stack(g_rbf_length + 2));
-	bf_t tmp3(alloc_stack(g_rbf_length + 2));
-	bf_t tmp4(alloc_stack(g_rbf_length + 2));
-	bf_t tmp5(alloc_stack(g_rbf_length + 2));
-	bf_t tmp6(alloc_stack(g_rbf_length + 2));
-	bf_t bfplotmx1(alloc_stack(g_rbf_length + 2));
-	bf_t bfplotmx2(alloc_stack(g_rbf_length + 2));
-	bf_t bfplotmy1(alloc_stack(g_rbf_length + 2));
-	bf_t bfplotmy2(alloc_stack(g_rbf_length + 2));
+	bf_t savbfxmin(g_rbf_length);
+	bf_t savbfymax(g_rbf_length);
+	bf_t bfftemp(g_rbf_length);
+	bf_t tmp1(g_rbf_length);
+	bf_t tmp2(g_rbf_length);
+	bf_t tmp3(g_rbf_length);
+	bf_t tmp4(g_rbf_length);
+	bf_t tmp5(g_rbf_length);
+	bf_t tmp6(g_rbf_length);
+	bf_t bfplotmx1(g_rbf_length);
+	bf_t bfplotmx2(g_rbf_length);
+	bf_t bfplotmy1(g_rbf_length);
+	bf_t bfplotmy2(g_rbf_length);
 	// ftemp = (ymin-y3rd)*(x3rd-xmin) - (xmax-x3rd)*(y3rd-ymax);
 	sub_bf(tmp1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
 	sub_bf(tmp2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());

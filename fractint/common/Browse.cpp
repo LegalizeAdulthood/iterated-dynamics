@@ -252,8 +252,8 @@ static void transform(CoordinateD *point)
 static void transform_bf(bf_t bt_x, bf_t bt_y, CoordinateD *point)
 {
 	BigStackSaver savedStack;
-	bf_t bt_tmp1(alloc_stack(g_rbf_length + 2));
-	bf_t bt_tmp2(alloc_stack(g_rbf_length + 2));
+	bf_t bt_tmp1(g_rbf_length);
+	bf_t bt_tmp2(g_rbf_length);
 
 	// point->x = cvt->a*point->x + cvt->b*point->y + cvt->e;
 	mult_bf(bt_tmp1, n_a, bt_x);
@@ -324,14 +324,14 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	int orig_rbflength = g_rbf_length;
 
 	int two_len = g_bf_length + 2;
-	bf_t bt_x(alloc_stack(two_len));
-	bf_t bt_y(alloc_stack(two_len));
-	bf_t bt_xmin(alloc_stack(two_len));
-	bf_t bt_xmax(alloc_stack(two_len));
-	bf_t bt_ymin(alloc_stack(two_len));
-	bf_t bt_ymax(alloc_stack(two_len));
-	bf_t bt_x3rd(alloc_stack(two_len));
-	bf_t bt_y3rd(alloc_stack(two_len));
+	bf_t bt_x(g_bf_length);
+	bf_t bt_y(g_bf_length);
+	bf_t bt_xmin(g_bf_length);
+	bf_t bt_xmax(g_bf_length);
+	bf_t bt_ymin(g_bf_length);
+	bf_t bt_ymax(g_bf_length);
+	bf_t bt_x3rd(g_bf_length);
+	bf_t bt_y3rd(g_bf_length);
 
 	if (info->bf_math)
 	{
@@ -339,12 +339,12 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 		int two_di_len = di_bflength + 2;
 		int two_rbf = g_rbf_length + 2;
 
-		n_a = bf_t(alloc_stack(two_rbf));
-		n_b = bf_t(alloc_stack(two_rbf));
-		n_c = bf_t(alloc_stack(two_rbf));
-		n_d = bf_t(alloc_stack(two_rbf));
-		n_e = bf_t(alloc_stack(two_rbf));
-		n_f = bf_t(alloc_stack(two_rbf));
+		n_a = bf_t(g_rbf_length);
+		n_b = bf_t(g_rbf_length);
+		n_c = bf_t(g_rbf_length);
+		n_d = bf_t(g_rbf_length);
+		n_e = bf_t(g_rbf_length);
+		n_f = bf_t(g_rbf_length);
 
 		convert_bf(n_a, bt_a, g_rbf_length, orig_rbflength);
 		convert_bf(n_b, bt_b, g_rbf_length, orig_rbflength);
@@ -353,12 +353,12 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 		convert_bf(n_e, bt_e, g_rbf_length, orig_rbflength);
 		convert_bf(n_f, bt_f, g_rbf_length, orig_rbflength);
 
-		bf_t bt_t1(alloc_stack(two_di_len));
-		bf_t bt_t2(alloc_stack(two_di_len));
-		bf_t bt_t3(alloc_stack(two_di_len));
-		bf_t bt_t4(alloc_stack(two_di_len));
-		bf_t bt_t5(alloc_stack(two_di_len));
-		bf_t bt_t6(alloc_stack(two_di_len));
+		bf_t bt_t1(di_bflength);
+		bf_t bt_t2(di_bflength);
+		bf_t bt_t3(di_bflength);
+		bf_t bt_t4(di_bflength);
+		bf_t bt_t5(di_bflength);
+		bf_t bt_t6(di_bflength);
 
 		memcpy(bt_t1.storage(), mp_info->apm_data, two_di_len);
 		memcpy(bt_t2.storage(), mp_info->apm_data + two_di_len, two_di_len);
@@ -487,13 +487,13 @@ static void bfsetup_convert_to_screen()
 	// setup_convert_to_screen() in LORENZ.C, converted to bf_math
 	// Call only from within look_get_window()
 	BigStackSaver savedStack;
-	bf_t bt_inter1(alloc_stack(g_rbf_length + 2));
-	bf_t bt_inter2(alloc_stack(g_rbf_length + 2));
-	bf_t bt_det(alloc_stack(g_rbf_length + 2));
-	bf_t bt_xd(alloc_stack(g_rbf_length + 2));
-	bf_t bt_yd(alloc_stack(g_rbf_length + 2));
-	bf_t bt_tmp1(alloc_stack(g_rbf_length + 2));
-	bf_t bt_tmp2(alloc_stack(g_rbf_length + 2));
+	bf_t bt_inter1(g_rbf_length);
+	bf_t bt_inter2(g_rbf_length);
+	bf_t bt_det(g_rbf_length);
+	bf_t bt_xd(g_rbf_length);
+	bf_t bt_yd(g_rbf_length);
+	bf_t bt_tmp1(g_rbf_length);
+	bf_t bt_tmp2(g_rbf_length);
 
 	// x3rd-xmin
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
@@ -714,12 +714,12 @@ int look_get_window()
 		g_externs.SetCalculationStatus(oldcalc_status);
 	}
 	BigStackSaver savedStack;
-	bt_a = bf_t(alloc_stack(g_rbf_length + 2));
-	bt_b = bf_t(alloc_stack(g_rbf_length + 2));
-	bt_c = bf_t(alloc_stack(g_rbf_length + 2));
-	bt_d = bf_t(alloc_stack(g_rbf_length + 2));
-	bt_e = bf_t(alloc_stack(g_rbf_length + 2));
-	bt_f = bf_t(alloc_stack(g_rbf_length + 2));
+	bt_a = bf_t(g_rbf_length);
+	bt_b = bf_t(g_rbf_length);
+	bt_c = bf_t(g_rbf_length);
+	bt_d = bf_t(g_rbf_length);
+	bt_e = bf_t(g_rbf_length);
+	bt_f = bf_t(g_rbf_length);
 
 	vidlength = g_screen_width + g_screen_height;
 	if (vidlength > 4096)

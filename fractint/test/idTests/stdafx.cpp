@@ -10,3 +10,8 @@
 void set_pixel_calc_functions()
 {
 }
+
+BYTE *alloc_stack(size_t size)
+{
+	return 0;
+}

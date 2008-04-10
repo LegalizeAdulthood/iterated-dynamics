@@ -334,8 +334,8 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 	// if (x3rd == xmin && y3rd == ymin)
 	if (!cmp_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min()) && !cmp_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min()))
 	{ // no rotation or skewing, but stretching is allowed
-		bfWidth = bf_t(alloc_stack(g_bf_length + 2));
-		bfHeight = bf_t(alloc_stack(g_bf_length + 2));
+		bfWidth = bf_t(g_bf_length);
+		bfHeight = bf_t(g_bf_length);
 		// Width  = xmax - xmin;
 		sub_bf(bfWidth, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 		Width  = bftofloat(bfWidth);
@@ -355,8 +355,8 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 	}
 	else
 	{
-		bftmpx = bf_t(alloc_stack(g_bf_length + 2));
-		bftmpy = bf_t(alloc_stack(g_bf_length + 2));
+		bftmpx = bf_t(g_bf_length);
+		bftmpy = bf_t(g_bf_length);
 
 		// set up triangle ABC, having sides abc
 		// side a = bottom, b = left, c = diagonal not containing (x3rd, y3rd)
@@ -434,8 +434,8 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
 	BigStackSaver savedStack;
-	bf_t bfh(alloc_stack(g_bf_length + 2));
-	bf_t bfw(alloc_stack(g_bf_length + 2));
+	bf_t bfh(g_bf_length);
+	bf_t bfw(g_bf_length);
 
 	if (Xmagfactor == 0.0)
 	{
@@ -462,7 +462,7 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 		return;
 	}
 
-	bf_t bftmp(alloc_stack(g_bf_length + 2));
+	bf_t bftmp(g_bf_length);
 	// in unrotated, untranslated coordinate system
 	double tanskew = std::tan(MathUtil::DegreesToRadians(Skew));
 	LDBL x_min = -w + h*tanskew;
@@ -773,8 +773,8 @@ int tab_display()       // display the status of the current image
 	BigStackSaver savedStack;
 	if (g_bf_math)
 	{
-		bfXctr = bf_t(alloc_stack(g_bf_length + 2));
-		bfYctr = bf_t(alloc_stack(g_bf_length + 2));
+		bfXctr = bf_t(g_bf_length);
+		bfYctr = bf_t(g_bf_length);
 	}
 	if (fractal_type_formula(g_fractal_type))
 	{

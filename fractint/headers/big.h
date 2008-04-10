@@ -41,12 +41,26 @@ extern U16 big_access16(BYTE const *addr);
 extern S16 big_accessS16(BYTE const *addr);
 extern U32 big_access32(BYTE const *addr);
 
+big_t alloc_stack(size_t size);
+int save_stack();
+void restore_stack(int old_offset);
+
+class BigStackSaver
+{
+public:
+	BigStackSaver() : _stack(save_stack()) { }
+	~BigStackSaver() { restore_stack(_stack); }
+private:
+	int _stack;
+};
+
 class BigT
 {
 public:
 	BigT() : _storage(0)					{ }
 	explicit BigT(BYTE *storage) : _storage(storage) { }
 	explicit BigT(BigT &rhs, int offset) : _storage(rhs._storage + offset) { }
+	explicit BigT(int digits) : _storage(alloc_stack(digits)) { }
 
 	BYTE *storage()							{ return _storage; }
 	void setStorage(BYTE *value)			{ _storage = value; }
@@ -71,16 +85,17 @@ private:
 	BYTE *_storage;
 };
 
-class BigNumT : public BigT
+class BigFloatT : public BigT
 {
 public:
-	BigNumT() : BigT() { }
-	explicit BigNumT(BYTE *storage) : BigT(storage) { }
-	explicit BigNumT(BigNumT &rhs, int offset) : BigT(rhs, offset) { }
+	BigFloatT() : BigT() { }
+	explicit BigFloatT(BYTE *storage) : BigT(storage) { }
+	explicit BigFloatT(BigFloatT &rhs, int offset) : BigT(rhs, offset) { }
+	explicit BigFloatT(int digits) : BigT(digits + 2) { }
 };
 
 typedef BigT bn_t;
-typedef BigNumT bf_t;
+typedef BigFloatT bf_t;
 typedef big_t bf10_t;
 
 #include "cmplx.h"

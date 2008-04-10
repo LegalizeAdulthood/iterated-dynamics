@@ -3023,7 +3023,7 @@ static void set_symmetry(int symmetry, bool use_list) // set up proper symmetric
 	BigStackSaver savedStack;
 	if (g_bf_math)
 	{
-		bft1 = bf_t(alloc_stack(g_rbf_length + 2));
+		bft1 = bf_t(g_rbf_length);
 		xaxis_on_screen = (sign_bf(g_escape_time_state.m_grid_bf.y_min()) != sign_bf(g_escape_time_state.m_grid_bf.y_max()));
 		yaxis_on_screen = (sign_bf(g_escape_time_state.m_grid_bf.x_min()) != sign_bf(g_escape_time_state.m_grid_bf.x_max()));
 	}

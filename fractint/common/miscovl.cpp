@@ -1679,8 +1679,8 @@ void write_batch_parms(std::string const &colorinf, bool colors_only, int maxcol
 	BigStackSaver savedStack;
 	if (g_bf_math)
 	{
-		bfXctr = bf_t(alloc_stack(g_bf_length + 2));
-		bfYctr = bf_t(alloc_stack(g_bf_length + 2));
+		bfXctr = bf_t(g_bf_length);
+		bfYctr = bf_t(g_bf_length);
 	}
 
 	s_wbdata.len = 0; // force first parm to start on new line
@@ -1849,8 +1849,8 @@ int get_precision_mag_bf()
 
 	{
 		BigStackSaver savedStack;
-		bf_t bXctr(alloc_stack(g_bf_length + 2));
-		bf_t bYctr(alloc_stack(g_bf_length + 2));
+		bf_t bXctr(g_bf_length);
+		bf_t bYctr(g_bf_length);
 		// this is just to find Magnification
 		convert_center_mag_bf(bXctr, bYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	}
@@ -1914,13 +1914,13 @@ static int getprec(double a, double b, double c)
 int get_precision_bf(int rezflag)
 {
 	BigStackSaver savedStack;
-	bf_t del1(alloc_stack(g_bf_length + 2));
-	bf_t del2(alloc_stack(g_bf_length + 2));
-	bf_t one(alloc_stack(g_bf_length + 2));
-	bf_t bfxxdel(alloc_stack(g_bf_length + 2));
-	bf_t bfxxdel2(alloc_stack(g_bf_length + 2));
-	bf_t bfyydel(alloc_stack(g_bf_length + 2));
-	bf_t bfyydel2(alloc_stack(g_bf_length + 2));
+	bf_t del1(g_bf_length);
+	bf_t del2(g_bf_length);
+	bf_t one(g_bf_length);
+	bf_t bfxxdel(g_bf_length);
+	bf_t bfxxdel2(g_bf_length);
+	bf_t bfyydel(g_bf_length);
+	bf_t bfyydel2(g_bf_length);
 	floattobf(one, 1.0);
 	int rez = (rezflag == MAXREZ) ? (OLD_MAX_PIXELS - 1) : (g_x_dots - 1);
 

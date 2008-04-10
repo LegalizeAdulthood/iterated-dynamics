@@ -603,9 +603,9 @@ void adjust_corner_bf(float aspect_drift)
 	LDBL Magnification;
 
 	BigStackSaver savedStack;
-	bf_t bftemp(alloc_stack(g_rbf_length + 2));
-	bf_t bftemp2(alloc_stack(g_rbf_length + 2));
-	bf_t btmp1(alloc_stack(g_rbf_length + 2));
+	bf_t bftemp(g_rbf_length);
+	bf_t bftemp2(g_rbf_length);
+	bf_t btmp1(g_rbf_length);
 
 	// While we're at it, let's adjust the Xmagfactor as well
 	// use bftemp, bftemp2 as bfXctr, bfYctr
@@ -743,28 +743,28 @@ static void adjust_to_limits_bf(double expand)
 	int i;
 	BigStackSaver savedStack;
 	bf_t bcornerx[4];
-	bcornerx[0] = bf_t(alloc_stack(g_rbf_length + 2));
-	bcornerx[1] = bf_t(alloc_stack(g_rbf_length + 2));
-	bcornerx[2] = bf_t(alloc_stack(g_rbf_length + 2));
-	bcornerx[3] = bf_t(alloc_stack(g_rbf_length + 2));
+	bcornerx[0] = bf_t(g_rbf_length);
+	bcornerx[1] = bf_t(g_rbf_length);
+	bcornerx[2] = bf_t(g_rbf_length);
+	bcornerx[3] = bf_t(g_rbf_length);
 	bf_t bcornery[4];
-	bcornery[0] = bf_t(alloc_stack(g_rbf_length + 2));
-	bcornery[1] = bf_t(alloc_stack(g_rbf_length + 2));
-	bcornery[2] = bf_t(alloc_stack(g_rbf_length + 2));
-	bcornery[3] = bf_t(alloc_stack(g_rbf_length + 2));
-	bf_t blowx(alloc_stack(g_rbf_length + 2));
-	bf_t bhighx(alloc_stack(g_rbf_length + 2));
-	bf_t blowy(alloc_stack(g_rbf_length + 2));
-	bf_t bhighy(alloc_stack(g_rbf_length + 2));
-	bf_t blimit(alloc_stack(g_rbf_length + 2));
-	bf_t bftemp(alloc_stack(g_rbf_length + 2));
-	bf_t bcenterx(alloc_stack(g_rbf_length + 2));
-	bf_t bcentery(alloc_stack(g_rbf_length + 2));
-	bf_t badjx(alloc_stack(g_rbf_length + 2));
-	bf_t badjy(alloc_stack(g_rbf_length + 2));
-	bf_t btmp1(alloc_stack(g_rbf_length + 2));
-	bf_t btmp2(alloc_stack(g_rbf_length + 2));
-	bf_t bexpand(alloc_stack(g_rbf_length + 2));
+	bcornery[0] = bf_t(g_rbf_length);
+	bcornery[1] = bf_t(g_rbf_length);
+	bcornery[2] = bf_t(g_rbf_length);
+	bcornery[3] = bf_t(g_rbf_length);
+	bf_t blowx(g_rbf_length);
+	bf_t bhighx(g_rbf_length);
+	bf_t blowy(g_rbf_length);
+	bf_t bhighy(g_rbf_length);
+	bf_t blimit(g_rbf_length);
+	bf_t bftemp(g_rbf_length);
+	bf_t bcenterx(g_rbf_length);
+	bf_t bcentery(g_rbf_length);
+	bf_t badjx(g_rbf_length);
+	bf_t badjy(g_rbf_length);
+	bf_t btmp1(g_rbf_length);
+	bf_t btmp2(g_rbf_length);
+	bf_t bexpand(g_rbf_length);
 
 	limit = 32767.99;
 
@@ -1164,7 +1164,7 @@ static void smallest_add(double *num)
 static void smallest_add_bf(bf_t num)
 {
 	BigStackSaver savedStack;
-	bf_t btmp1(alloc_stack(g_bf_length + 2));
+	bf_t btmp1(g_bf_length);
 	mult_bf(btmp1, floattobf(btmp1, 5.0e-16), num);
 	add_a_bf(num, btmp1);
 }
