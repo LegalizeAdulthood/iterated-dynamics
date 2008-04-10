@@ -305,8 +305,8 @@ bool mandelbrot_setup_bn()
 {
 	// this should be set up dynamically based on corners
 	BigStackSaver savedStack;
-	bn_t bntemp1(alloc_stack(g_bn_length));
-	bn_t bntemp2(alloc_stack(g_bn_length));
+	bn_t bntemp1(g_bn_length);
+	bn_t bntemp2(g_bn_length);
 
 	bftobn(bnxmin, g_escape_time_state.m_grid_bf.x_min());
 	bftobn(bnxmax, g_escape_time_state.m_grid_bf.x_max());
@@ -664,8 +664,8 @@ int julia_z_power_orbit_bn()
 	ComplexBigNum parm2;
 	BigStackSaver savedStack;
 
-	parm2.real(bn_t(alloc_stack(g_bn_length)));
-	parm2.imag(bn_t(alloc_stack(g_bn_length)));
+	parm2.real(bn_t(g_bn_length));
+	parm2.imag(bn_t(g_bn_length));
 
 	floattobn(parm2.real(), g_parameters[P2_REAL]);
 	floattobn(parm2.imag(), g_parameters[P2_IMAG]);
@@ -829,7 +829,7 @@ ComplexBigNum *complex_log_bn(ComplexBigNum *t, ComplexBigNum *s)
 ComplexBigNum *complex_multiply_bn(ComplexBigNum *t, ComplexBigNum *x, ComplexBigNum *y)
 {
 	BigStackSaver savedStack;
-	bn_t tmp1(alloc_stack(g_r_length));
+	bn_t tmp1(g_r_length);
 	mult_bn(t->real(), x->real(), y->real());
 	mult_bn(t->imag(), x->imag(), y->imag());
 	sub_bn(t->real(), bn_t(t->real(), g_shift_factor), bn_t(t->imag(), g_shift_factor));
@@ -844,12 +844,12 @@ ComplexBigNum *complex_multiply_bn(ComplexBigNum *t, ComplexBigNum *x, ComplexBi
 ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigNum *yy)
 {
 	BigStackSaver savedStack;
-	bn_t e2x(alloc_stack(g_bn_length));
-	bn_t siny(alloc_stack(g_bn_length));
-	bn_t cosy(alloc_stack(g_bn_length));
+	bn_t e2x(g_bn_length);
+	bn_t siny(g_bn_length);
+	bn_t cosy(g_bn_length);
 	ComplexBigNum tmp;
-	tmp.real(bn_t(alloc_stack(g_r_length)));
-	tmp.imag(bn_t(alloc_stack(g_r_length)));
+	tmp.real(bn_t(g_r_length));
+	tmp.imag(bn_t(g_r_length));
 
 	// 0 raised to anything is 0
 	if (is_bn_zero(xx->real()) && is_bn_zero(xx->imag()))
