@@ -14,7 +14,7 @@ extern int mandelbrot_per_pixel_bn();
 extern int julia_per_pixel_bn();
 extern int julia_orbit_bn();
 extern int julia_z_power_orbit_bn();
-extern void complex_log_bn(ComplexBigNum &t, ComplexBigNum &s);
+extern void complex_log_bn(ComplexBigNum &t, ComplexBigNum const &s);
 extern void complex_multiply_bn(ComplexBigNum &t, ComplexBigNum const &x, ComplexBigNum const &y);
 extern void complex_power_bn(ComplexBigNum &t, ComplexBigNum const &xx, ComplexBigNum const &yy);
 extern bool mandelbrot_setup_bf();
