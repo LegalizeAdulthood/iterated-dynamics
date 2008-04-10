@@ -14,16 +14,16 @@ extern int mandelbrot_per_pixel_bn();
 extern int julia_per_pixel_bn();
 extern int julia_orbit_bn();
 extern int julia_z_power_orbit_bn();
-extern ComplexBigNum *complex_log_bn(ComplexBigNum *t, ComplexBigNum *s);
-extern ComplexBigNum *complex_multiply_bn(ComplexBigNum *t, ComplexBigNum *x, ComplexBigNum *y);
-extern ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigNum *yy);
+extern void complex_log_bn(ComplexBigNum &t, ComplexBigNum &s);
+extern void complex_multiply_bn(ComplexBigNum &t, ComplexBigNum const &x, ComplexBigNum const &y);
+extern void complex_power_bn(ComplexBigNum &t, ComplexBigNum const &xx, ComplexBigNum const &yy);
 extern bool mandelbrot_setup_bf();
 extern int mandelbrot_per_pixel_bf();
 extern int julia_per_pixel_bf();
 extern int julia_orbit_bf();
 extern int julia_z_power_orbit_bf();
-extern ComplexBigFloat *complex_log_bf(ComplexBigFloat *t, ComplexBigFloat *s);
-extern ComplexBigFloat *cplxmul_bf(ComplexBigFloat *t, ComplexBigFloat *x, ComplexBigFloat *y);
-extern ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, ComplexBigFloat *yy);
+extern void complex_log_bf(ComplexBigFloat &t, ComplexBigFloat const &s);
+extern void cplxmul_bf(ComplexBigFloat &t, ComplexBigFloat const &x, ComplexBigFloat const &y);
+extern void ComplexPower_bf(ComplexBigFloat &t, ComplexBigFloat const &xx, ComplexBigFloat const &yy);
 
 #endif
