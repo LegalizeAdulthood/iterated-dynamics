@@ -1630,11 +1630,11 @@ void StandardFractal::outside_colormode_total_distance_initialize()
 		}
 		else if (g_bf_math == BIGNUM)
 		{
-			g_old_z = complex_bn_to_float(&g_old_z_bn);
+			g_old_z = ComplexBigNumToDouble(g_old_z_bn);
 		}
 		else if (g_bf_math == BIGFLT)
 		{
-			g_old_z = complex_bf_to_float(&g_old_z_bf);
+			g_old_z = ComplexBigFloatToDouble(g_old_z_bf);
 		}
 		m_colormode_total_distance_last_z = g_old_z;
 	}
@@ -1706,11 +1706,11 @@ void StandardFractal::show_orbit()
 	{
 		if (g_bf_math == BIGNUM)
 		{
-			g_new_z = complex_bn_to_float(&g_new_z_bn);
+			g_new_z = ComplexBigNumToDouble(g_new_z_bn);
 		}
 		else if (g_bf_math == BIGFLT)
 		{
-			g_new_z = complex_bf_to_float(&g_new_z_bf);
+			g_new_z = ComplexBigFloatToDouble(g_new_z_bf);
 		}
 		plot_orbit(g_new_z.real(), g_new_z.imag(), -1);
 	}
@@ -1723,11 +1723,11 @@ void StandardFractal::set_new_z_if_bigmath()
 {
 	if (g_bf_math == BIGNUM)
 	{
-		g_new_z = complex_bn_to_float(&g_new_z_bn);
+		g_new_z = ComplexBigNumToDouble(g_new_z_bn);
 	}
 	else if (g_bf_math == BIGFLT)
 	{
-		g_new_z = complex_bf_to_float(&g_new_z_bf);
+		g_new_z = ComplexBigFloatToDouble(g_new_z_bf);
 	}
 }
 void StandardFractal::check_periodicity()
@@ -1950,11 +1950,11 @@ void StandardFractal::outside_colormode_set_new_z_update()
 	}
 	else if (g_bf_math == BIGNUM)
 	{
-		g_new_z = complex_bn_to_float(&g_new_z_bn);
+		g_new_z = ComplexBigNumToDouble(g_new_z_bn);
 	}
 	else if (g_bf_math == BIGFLT)
 	{
-		g_new_z = complex_bf_to_float(&g_new_z_bf);
+		g_new_z = ComplexBigFloatToDouble(g_new_z_bf);
 	}
 }
 void StandardFractal::outside_colormode_total_distance_update()
@@ -1985,6 +1985,7 @@ void StandardFractal::outside_colormode_update()
 		}
 	}
 }
+
 void StandardFractal::potential_set_new_z()
 {
 	if (g_integer_fractal)       // adjust integer fractals
@@ -1993,13 +1994,11 @@ void StandardFractal::potential_set_new_z()
 	}
 	else if (g_bf_math == BIGNUM)
 	{
-		g_new_z.real(double(bntofloat(g_new_z_bn.real())));
-		g_new_z.imag(double(bntofloat(g_new_z_bn.imag())));
+		g_new_z = ComplexBigNumToDouble(g_new_z_bn);
 	}
 	else if (g_bf_math == BIGFLT)
 	{
-		g_new_z.real(double(bftofloat(g_new_z_bf.real())));
-		g_new_z.imag(double(bftofloat(g_new_z_bf.imag())));
+		g_new_z = ComplexBigFloatToDouble(g_new_z_bf);
 	}
 }
 void StandardFractal::potential_compute()
@@ -2042,8 +2041,7 @@ void StandardFractal::outside_colormode_set_new_z_final()
 	}
 	else if (g_bf_math == BIGNUM)
 	{
-		g_new_z.real(double(bntofloat(g_new_z_bn.real())));
-		g_new_z.imag(double(bntofloat(g_new_z_bn.imag())));
+		g_new_z = ComplexBigNumToDouble(g_new_z_bn);
 	}
 }
 void StandardFractal::outside_colormode_real_final()
@@ -3022,11 +3020,10 @@ static void set_symmetry(int symmetry, bool use_list) // set up proper symmetric
 	bool xaxis_on_screen = false;
 	bool yaxis_on_screen = false;
 	bf_t bft1;
-	int saved = 0;
+	BigStackSaver savedStack;
 	if (g_bf_math)
 	{
-		saved = save_stack();
-		bft1 = alloc_stack(g_rbf_length + 2);
+		bft1 = bf_t(alloc_stack(g_rbf_length + 2));
 		xaxis_on_screen = (sign_bf(g_escape_time_state.m_grid_bf.y_min()) != sign_bf(g_escape_time_state.m_grid_bf.y_max()));
 		yaxis_on_screen = (sign_bf(g_escape_time_state.m_grid_bf.x_min()) != sign_bf(g_escape_time_state.m_grid_bf.x_max()));
 	}
@@ -3239,10 +3236,6 @@ originsym:
 		break;
 	default:                  // no symmetry
 		break;
-	}
-	if (g_bf_math)
-	{
-		restore_stack(saved);
 	}
 }
 

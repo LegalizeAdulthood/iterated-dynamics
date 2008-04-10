@@ -322,21 +322,20 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 	LDBL tmpy1;
 	LDBL tmpy2;
 	double tmpa; // temporary x, y, angle
-	big_t bfWidth;
-	big_t bfHeight;
-	big_t bftmpx;
-	big_t bftmpy;
-	int saved;
+	bf_t bfWidth;
+	bf_t bfHeight;
+	bf_t bftmpx;
+	bf_t bftmpy;
 	int signx;
 
-	saved = save_stack();
+	BigStackSaver savedStack;
 
 	// simple normal case first
 	// if (x3rd == xmin && y3rd == ymin)
 	if (!cmp_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min()) && !cmp_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min()))
 	{ // no rotation or skewing, but stretching is allowed
-		bfWidth  = alloc_stack(g_bf_length + 2);
-		bfHeight = alloc_stack(g_bf_length + 2);
+		bfWidth = bf_t(alloc_stack(g_bf_length + 2));
+		bfHeight = bf_t(alloc_stack(g_bf_length + 2));
 		// Width  = xmax - xmin;
 		sub_bf(bfWidth, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 		Width  = bftofloat(bfWidth);
@@ -356,8 +355,8 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 	}
 	else
 	{
-		bftmpx = alloc_stack(g_bf_length + 2);
-		bftmpy = alloc_stack(g_bf_length + 2);
+		bftmpx = bf_t(alloc_stack(g_bf_length + 2));
+		bftmpy = bf_t(alloc_stack(g_bf_length + 2));
 
 		// set up triangle ABC, having sides abc
 		// side a = bottom, b = left, c = diagonal not containing (x3rd, y3rd)
@@ -428,44 +427,24 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		*Magnification = -*Magnification;
 		*Rotation += 180;
 	}
-	restore_stack(saved);
-	return;
 }
 
 
 // convert center/mag to corners using bf
 void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
-	LDBL x;
-	LDBL y;
-	LDBL h;
-	LDBL w; // half height, width
-	LDBL x_min;
-	LDBL y_min;
-	LDBL x_max;
-	LDBL y_max;
-	LDBL x_3rd;
-	LDBL y_3rd;
-	double tanskew;
-	double sinrot;
-	double cosrot;
-	big_t bfh;
-	big_t bfw;
-	bf_t bftmp;
-	int saved;
-
-	saved = save_stack();
-	bfh = alloc_stack(g_bf_length + 2);
-	bfw = alloc_stack(g_bf_length + 2);
+	BigStackSaver savedStack;
+	bf_t bfh(alloc_stack(g_bf_length + 2));
+	bf_t bfw(alloc_stack(g_bf_length + 2));
 
 	if (Xmagfactor == 0.0)
 	{
 		Xmagfactor = 1.0;
 	}
 
-	h = 1/Magnification;
+	LDBL h = 1/Magnification;
 	floattobf(bfh, h);
-	w = h/(DEFAULT_ASPECT_RATIO*Xmagfactor);
+	LDBL w = h/(DEFAULT_ASPECT_RATIO*Xmagfactor);
 	floattobf(bfw, w);
 
 	if (Rotation == 0.0 && Skew == 0.0)
@@ -480,28 +459,27 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 		copy_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min());
 		// ymax = Yctr + h;
 		add_bf(g_escape_time_state.m_grid_bf.y_max(), Yctr, bfh);
-		restore_stack(saved);
 		return;
 	}
 
-	bftmp = alloc_stack(g_bf_length + 2);
+	bf_t bftmp(alloc_stack(g_bf_length + 2));
 	// in unrotated, untranslated coordinate system
-	tanskew = std::tan(MathUtil::DegreesToRadians(Skew));
-	x_min = -w + h*tanskew;
-	x_max =  w - h*tanskew;
-	x_3rd = -w - h*tanskew;
-	y_max = h;
-	y_3rd = -h;
-	y_min = -h;
+	double tanskew = std::tan(MathUtil::DegreesToRadians(Skew));
+	LDBL x_min = -w + h*tanskew;
+	LDBL x_max =  w - h*tanskew;
+	LDBL x_3rd = -w - h*tanskew;
+	LDBL y_max = h;
+	LDBL y_3rd = -h;
+	LDBL y_min = -h;
 
 	// rotate coord system and then translate it
 	Rotation = MathUtil::DegreesToRadians(Rotation);
-	sinrot = std::sin(Rotation);
-	cosrot = std::cos(Rotation);
+	double sinrot = std::sin(Rotation);
+	double cosrot = std::cos(Rotation);
 
 	// top left
-	x =  x_min*cosrot + y_max*sinrot;
-	y = -x_min*sinrot + y_max*cosrot;
+	LDBL x =  x_min*cosrot + y_max*sinrot;
+	LDBL y = -x_min*sinrot + y_max*cosrot;
 	// xmin = x + Xctr;
 	floattobf(bftmp, x);
 	add_bf(g_escape_time_state.m_grid_bf.x_min(), bftmp, Xctr);
@@ -528,9 +506,6 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 	// y3rd = y + Yctr;
 	floattobf(bftmp, y);
 	add_bf(g_escape_time_state.m_grid_bf.y_3rd(), bftmp, Yctr);
-
-	restore_stack(saved);
-	return;
 }
 
 int g_function_index[NUM_FUNCTION_INDEX] =
@@ -777,12 +752,11 @@ int tab_display()       // display the status of the current image
 	double Xmagfactor;
 	double Rotation;
 	double Skew;
-	big_t bfXctr = 0;
-	big_t bfYctr = 0;
+	bf_t bfXctr;
+	bf_t bfYctr;
 	char msg[350];
 	char *msgptr;
 	int key;
-	int saved = 0;
 	int dec;
 	int k;
 	int hasformparam = 0;
@@ -796,11 +770,11 @@ int tab_display()       // display the status of the current image
 		g_calculation_time += (clock_ticks() - g_timer_start)/(CLK_TCK/100);
 	}
 	ScreenStacker stacker;
+	BigStackSaver savedStack;
 	if (g_bf_math)
 	{
-		saved = save_stack();
-		bfXctr = alloc_stack(g_bf_length + 2);
-		bfYctr = alloc_stack(g_bf_length + 2);
+		bfXctr = bf_t(alloc_stack(g_bf_length + 2));
+		bfYctr = bf_t(alloc_stack(g_bf_length + 2));
 	}
 	if (fractal_type_formula(g_fractal_type))
 	{
@@ -1223,10 +1197,6 @@ top:
 		}
 	}
 	g_timer_start = clock_ticks(); // tab display was "time out"
-	if (g_bf_math)
-	{
-		restore_stack(saved);
-	}
 	return 0;
 }
 

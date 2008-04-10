@@ -968,7 +968,7 @@ LDBL bntofloat(bn_t n)
 // r = 0
 bf_t clear_bf(bf_t r)
 {
-	memset(r, 0, g_bf_length + 2); // set array to zero
+	memset(r.storage(), 0, g_bf_length + 2); // set array to zero
 	return r;
 }
 
@@ -976,7 +976,7 @@ bf_t clear_bf(bf_t r)
 // r = n
 bf_t copy_bf(bf_t r, bf_t n)
 {
-	memcpy(r, n, g_bf_length + 2);
+	memcpy(r.storage(), n.storage(), g_bf_length + 2);
 	return r;
 }
 
@@ -1006,7 +1006,7 @@ bf_t floattobf(bf_t r, LDBL f)
 	g_bn_length = bnl;
 	g_int_length = il;
 
-	big_set16(r + g_bf_length, (S16)power); // exp
+	r.set16(g_bf_length, power); // exp
 
 	return r;
 }
@@ -1038,7 +1038,7 @@ LDBL bftofloat(bf_t n)
 	g_bn_length = bnl;
 	g_int_length = il;
 
-	power = (S16)big_access16(n + g_bf_length);
+	power = (S16) n.get16(g_bf_length);
 	f = scale_256(f, power);
 
 	return f;

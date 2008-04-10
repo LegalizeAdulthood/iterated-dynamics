@@ -42,7 +42,7 @@ public:
 	virtual int text_temp_message(const char *msgparm)
 	{ return 0; }
 	virtual bf_t copy_bf(bf_t r, bf_t n)
-	{ return 0; }
+	{ return bf_t(); }
 	virtual void history_save_info()
 	{ }
 	virtual void save_parameter_history()

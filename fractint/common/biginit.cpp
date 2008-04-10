@@ -61,43 +61,43 @@ ComplexBigNum bnsaved;			// g_bn_length
 ComplexBigNum g_new_z_bn;		// g_r_length
 bn_t bn_pi;						// TAKES NO SPACE
 
-bf_t bftmp1 = 0;
-bf_t bftmp2 = 0;
-bf_t bftmp3 = 0;
-bf_t bftmp4 = 0;
-bf_t bftmp5 = 0;
-bf_t bftmp6 = 0;					// g_rbf_length + 2
-bf_t bftmpcpy1 = 0;
-bf_t bftmpcpy2 = 0;					// g_rbf_length + 2
-bf_t bfxdel = 0;
-bf_t bfydel = 0;
-bf_t bfxdel2 = 0;
-bf_t bfydel2 = 0;
-bf_t bfclosenuff = 0;				// g_rbf_length + 2
-bf_t bftmpsqrx = 0;
-bf_t bftmpsqry = 0;					// g_rbf_length + 2
-ComplexBigFloat bfparm = {0, 0};			// g_bf_length + 2
+bf_t bftmp1;
+bf_t bftmp2;
+bf_t bftmp3;
+bf_t bftmp4;
+bf_t bftmp5;
+bf_t bftmp6;					// g_rbf_length + 2
+bf_t bftmpcpy1;
+bf_t bftmpcpy2;					// g_rbf_length + 2
+bf_t bfxdel;
+bf_t bfydel;
+bf_t bfxdel2;
+bf_t bfydel2;
+bf_t bfclosenuff;				// g_rbf_length + 2
+bf_t bftmpsqrx;
+bf_t bftmpsqry;					// g_rbf_length + 2
+ComplexBigFloat bfparm;			// g_bf_length + 2
 									// g_bf_length + 2
-ComplexBigFloat bfsaved = {0, 0};		// g_old_z_bf,  g_new_z_bf,
+ComplexBigFloat bfsaved;		// g_old_z_bf,  g_new_z_bf,
 									// g_bf_length + 2
-ComplexBigFloat g_old_z_bf = {0, 0};
-ComplexBigFloat g_new_z_bf = {0, 0};			// g_rbf_length + 2
-bf_t bf_pi = 0;						// TAKES NO SPACE
-bf_t big_pi = 0;					// g_bf_length + 2
+ComplexBigFloat g_old_z_bf;
+ComplexBigFloat g_new_z_bf;			// g_rbf_length + 2
+bf_t bf_pi;						// TAKES NO SPACE
+bf_t big_pi;						// g_bf_length + 2
 
 // for testing only
 
 // used by other routines
-bf_t g_sx_min_bf = 0;
-bf_t g_sx_max_bf = 0;
-bf_t g_sy_min_bf = 0;
-bf_t g_sy_max_bf = 0;
-bf_t g_sx_3rd_bf = 0;
-bf_t g_sy_3rd_bf = 0;				// g_bf_length + 2
+bf_t g_sx_min_bf;
+bf_t g_sx_max_bf;
+bf_t g_sy_min_bf;
+bf_t g_sy_max_bf;
+bf_t g_sx_3rd_bf;
+bf_t g_sy_3rd_bf;				// g_bf_length + 2
 bf_t bfparms[10];					// (g_bf_length + 2)*10
-bf_t bftmp = 0;
+bf_t bftmp;
 
-bf_t bf10tmp = 0;					// dec + 4
+bf10_t bf10tmp;					// dec + 4
 
 static int save_bf_vars();
 static int restore_bf_vars();
@@ -193,15 +193,15 @@ static void init_bf_2()
 	bntmp5 = bn_t(advance_ptr_r_length(ptr));
 	bntmp6 = bn_t(advance_ptr_r_length(ptr));
 
-	bftmp1 = advance_ptr_rbf_length_plus_2(ptr);
-	bftmp2 = advance_ptr_rbf_length_plus_2(ptr);
-	bftmp3 = advance_ptr_rbf_length_plus_2(ptr);
-	bftmp4 = advance_ptr_rbf_length_plus_2(ptr);
-	bftmp5 = advance_ptr_rbf_length_plus_2(ptr);
-	bftmp6 = advance_ptr_rbf_length_plus_2(ptr);
+	bftmp1 = bf_t(advance_ptr_rbf_length_plus_2(ptr));
+	bftmp2 = bf_t(advance_ptr_rbf_length_plus_2(ptr));
+	bftmp3 = bf_t(advance_ptr_rbf_length_plus_2(ptr));
+	bftmp4 = bf_t(advance_ptr_rbf_length_plus_2(ptr));
+	bftmp5 = bf_t(advance_ptr_rbf_length_plus_2(ptr));
+	bftmp6 = bf_t(advance_ptr_rbf_length_plus_2(ptr));
 
-	bftmpcpy1 = advance_ptr(ptr, (g_rbf_length + 2)*2);
-	bftmpcpy2 = advance_ptr(ptr, (g_rbf_length + 2)*2);
+	bftmpcpy1 = bf_t(advance_ptr(ptr, (g_rbf_length + 2)*2));
+	bftmpcpy2 = bf_t(advance_ptr(ptr, (g_rbf_length + 2)*2));
 
 	bntmpcpy1 = bn_t(advance_ptr(ptr, g_r_length*2));
 	bntmpcpy2 = bn_t(advance_ptr(ptr, g_r_length*2));
@@ -233,23 +233,23 @@ static void init_bf_2()
 	}
 	if (g_bf_math == BIGFLT)
 	{
-		bfxdel     = advance_ptr_bf_length_plus_2(ptr);
-		bfydel     = advance_ptr_bf_length_plus_2(ptr);
-		bfxdel2    = advance_ptr_bf_length_plus_2(ptr);
-		bfydel2    = advance_ptr_bf_length_plus_2(ptr);
-		g_old_z_bf.real(advance_ptr_rbf_length_plus_2(ptr));
-		g_old_z_bf.imag(advance_ptr_rbf_length_plus_2(ptr));
-		g_new_z_bf.real(advance_ptr_rbf_length_plus_2(ptr));
-		g_new_z_bf.imag(advance_ptr_rbf_length_plus_2(ptr));
-		bfsaved.real(advance_ptr_bf_length_plus_2(ptr));
-		bfsaved.imag(advance_ptr_bf_length_plus_2(ptr));
-		bfclosenuff = advance_ptr_bf_length_plus_2(ptr);
-		bfparm.real(advance_ptr_bf_length_plus_2(ptr));
-		bfparm.imag(advance_ptr_bf_length_plus_2(ptr));
-		bftmpsqrx  = advance_ptr_rbf_length_plus_2(ptr);
-		bftmpsqry  = advance_ptr_rbf_length_plus_2(ptr);
-		big_pi     = advance_ptr_bf_length_plus_2(ptr);
-		bftmp      = advance_ptr_rbf_length_plus_2(ptr);
+		bfxdel     = bf_t(advance_ptr_bf_length_plus_2(ptr));
+		bfydel     = bf_t(advance_ptr_bf_length_plus_2(ptr));
+		bfxdel2    = bf_t(advance_ptr_bf_length_plus_2(ptr));
+		bfydel2    = bf_t(advance_ptr_bf_length_plus_2(ptr));
+		g_old_z_bf.real(bf_t(advance_ptr_rbf_length_plus_2(ptr)));
+		g_old_z_bf.imag(bf_t(advance_ptr_rbf_length_plus_2(ptr)));
+		g_new_z_bf.real(bf_t(advance_ptr_rbf_length_plus_2(ptr)));
+		g_new_z_bf.imag(bf_t(advance_ptr_rbf_length_plus_2(ptr)));
+		bfsaved.real(bf_t(advance_ptr_bf_length_plus_2(ptr)));
+		bfsaved.imag(bf_t(advance_ptr_bf_length_plus_2(ptr)));
+		bfclosenuff = bf_t(advance_ptr_bf_length_plus_2(ptr));
+		bfparm.real(bf_t(advance_ptr_bf_length_plus_2(ptr)));
+		bfparm.imag(bf_t(advance_ptr_bf_length_plus_2(ptr)));
+		bftmpsqrx  = bf_t(advance_ptr_rbf_length_plus_2(ptr));
+		bftmpsqry  = bf_t(advance_ptr_rbf_length_plus_2(ptr));
+		big_pi     = bf_t(advance_ptr_bf_length_plus_2(ptr));
+		bftmp      = bf_t(advance_ptr_rbf_length_plus_2(ptr));
 	}
 	bf10tmp    = advance_ptr(ptr, g_bf_decimals + 4);
 
@@ -275,23 +275,23 @@ static void init_bf_2()
 	// this area is safe - use for variables that are used outside fractal
 	// generation - e.g. zoom box variables
 	ptr  = maxstack;
-	g_escape_time_state.m_grid_bf.x_min()     = advance_ptr_bf_length_plus_2(ptr);
-	g_escape_time_state.m_grid_bf.x_max()     = advance_ptr_bf_length_plus_2(ptr);
-	g_escape_time_state.m_grid_bf.y_min()     = advance_ptr_bf_length_plus_2(ptr);
-	g_escape_time_state.m_grid_bf.y_max()     = advance_ptr_bf_length_plus_2(ptr);
-	g_escape_time_state.m_grid_bf.x_3rd()     = advance_ptr_bf_length_plus_2(ptr);
-	g_escape_time_state.m_grid_bf.y_3rd()     = advance_ptr_bf_length_plus_2(ptr);
+	g_escape_time_state.m_grid_bf.x_min()     = bf_t(advance_ptr_bf_length_plus_2(ptr));
+	g_escape_time_state.m_grid_bf.x_max()     = bf_t(advance_ptr_bf_length_plus_2(ptr));
+	g_escape_time_state.m_grid_bf.y_min()     = bf_t(advance_ptr_bf_length_plus_2(ptr));
+	g_escape_time_state.m_grid_bf.y_max()     = bf_t(advance_ptr_bf_length_plus_2(ptr));
+	g_escape_time_state.m_grid_bf.x_3rd()     = bf_t(advance_ptr_bf_length_plus_2(ptr));
+	g_escape_time_state.m_grid_bf.y_3rd()     = bf_t(advance_ptr_bf_length_plus_2(ptr));
 	for (int i = 0; i < 10; i++)
 	{
-		bfparms[i]  = bnroot.storage() + ptr;
+		bfparms[i]  = bf_t(bnroot.storage() + ptr);
 		ptr += g_bf_length + 2;
 	}
-	g_sx_min_bf    = advance_ptr_bf_length_plus_2(ptr);
-	g_sx_max_bf    = advance_ptr_bf_length_plus_2(ptr);
-	g_sy_min_bf    = advance_ptr_bf_length_plus_2(ptr);
-	g_sy_max_bf    = advance_ptr_bf_length_plus_2(ptr);
-	g_sx_3rd_bf    = advance_ptr_bf_length_plus_2(ptr);
-	g_sy_3rd_bf    = advance_ptr_bf_length_plus_2(ptr);
+	g_sx_min_bf    = bf_t(advance_ptr_bf_length_plus_2(ptr));
+	g_sx_max_bf    = bf_t(advance_ptr_bf_length_plus_2(ptr));
+	g_sy_min_bf    = bf_t(advance_ptr_bf_length_plus_2(ptr));
+	g_sy_max_bf    = bf_t(advance_ptr_bf_length_plus_2(ptr));
+	g_sx_3rd_bf    = bf_t(advance_ptr_bf_length_plus_2(ptr));
+	g_sy_3rd_bf    = bf_t(advance_ptr_bf_length_plus_2(ptr));
 	// end safe vars
 
 	// good citizens initialize variables
@@ -327,9 +327,9 @@ static int save_bf_vars()
 	{
 		mem = (g_bf_length + 2)*22;  // 6 corners + 6 save corners + 10 params
 		g_bf_save_len = g_bf_length;
-		memcpy(bnroot.storage(), g_escape_time_state.m_grid_bf.x_min(), mem);
+		memcpy(bnroot.storage(), g_escape_time_state.m_grid_bf.x_min().storage(), mem);
 		// scrub old high area
-		memset(g_escape_time_state.m_grid_bf.x_min(), 0, mem);
+		memset(g_escape_time_state.m_grid_bf.x_min().storage(), 0, mem);
 		ret = 0;
 	}
 	else
@@ -340,37 +340,43 @@ static int save_bf_vars()
 	return ret;
 }
 
+static void restore_bf_vars_convert(bf_t &dest, bf_t &ptr, int &convert_count)
+{
+	convert_bf(dest, ptr, g_bf_length, g_bf_save_len);
+	ptr = bf_t(ptr.storage() + g_bf_save_len + 2);
+	convert_count++;
+}
+
 /************************************************************************/
 // copy current corners and parameters from save location
 static int restore_bf_vars()
 {
-	bf_t ptr;
 	int i;
 	if (g_bf_save_len == 0)
 	{
 		return -1;
 	}
-	ptr  = bnroot.storage();
-	convert_bf(g_escape_time_state.m_grid_bf.x_min(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(g_escape_time_state.m_grid_bf.x_max(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(g_escape_time_state.m_grid_bf.y_min(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(g_escape_time_state.m_grid_bf.y_max(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(g_escape_time_state.m_grid_bf.x_3rd(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(g_escape_time_state.m_grid_bf.y_3rd(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
+	bf_t ptr(bnroot.storage());
+	int convert_count = 0;
+	restore_bf_vars_convert(g_escape_time_state.m_grid_bf.x_min(), ptr, convert_count);
+	restore_bf_vars_convert(g_escape_time_state.m_grid_bf.x_max(), ptr, convert_count);
+	restore_bf_vars_convert(g_escape_time_state.m_grid_bf.y_min(), ptr, convert_count);
+	restore_bf_vars_convert(g_escape_time_state.m_grid_bf.y_max(), ptr, convert_count);
+	restore_bf_vars_convert(g_escape_time_state.m_grid_bf.x_3rd(), ptr, convert_count);
+	restore_bf_vars_convert(g_escape_time_state.m_grid_bf.y_3rd(), ptr, convert_count);
 	for (i = 0; i < 10; i++)
 	{
-		convert_bf(bfparms[i], ptr, g_bf_length, g_bf_save_len);
-		ptr += g_bf_save_len + 2;
+		restore_bf_vars_convert(bfparms[i], ptr, convert_count);
 	}
-	convert_bf(g_sx_min_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(g_sx_max_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(g_sy_min_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(g_sy_max_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(g_sx_3rd_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(g_sy_3rd_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
+	restore_bf_vars_convert(g_sx_min_bf, ptr, convert_count);
+	restore_bf_vars_convert(g_sx_max_bf, ptr, convert_count);
+	restore_bf_vars_convert(g_sy_min_bf, ptr, convert_count);
+	restore_bf_vars_convert(g_sy_max_bf, ptr, convert_count);
+	restore_bf_vars_convert(g_sx_3rd_bf, ptr, convert_count);
+	restore_bf_vars_convert(g_sy_3rd_bf, ptr, convert_count);
 
 	// scrub save area
-	memset(bnroot.storage(), 0, (g_bf_save_len + 2)*22);
+	std::fill(bnroot.storage(), bnroot.storage() + (g_bf_save_len + 2)*convert_count, 0);
 	return 0;
 }
 
@@ -589,9 +595,9 @@ void init_big_pi()
 
 	length = g_bf_length + 2; // 2 byte exp
 	pi_offset = sizeof pi_table - length;
-	memcpy(big_pi, pi_table + pi_offset, length);
+	std::copy(pi_table + pi_offset, pi_table + pi_offset + length, big_pi.storage());
 
 	// notice that bf_pi and bn_pi can share the same memory space
 	bf_pi = big_pi;
-	bn_pi = bn_t(big_pi + (g_bf_length-2) - (g_bn_length-g_int_length));
+	bn_pi = bn_t(big_pi.storage() + (g_bf_length-2) - (g_bn_length-g_int_length));
 }

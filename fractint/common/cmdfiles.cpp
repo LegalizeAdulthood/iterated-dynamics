@@ -1859,8 +1859,8 @@ static int center_mag_arg(const cmd_context &context)
 	double Rotation;
 	double Skew;
 	LDBL Magnification;
-	big_t bXctr;
-	big_t bYctr;
+	bf_t bXctr;
+	bf_t bYctr;
 
 	if ((context.totparms != context.floatparms)
 		|| (context.totparms != 0 && context.totparms < 3)
@@ -1924,26 +1924,23 @@ static int center_mag_arg(const cmd_context &context)
 	}
 	else  // use arbitrary precision
 	{
-		int old_bf_math;
-		int saved;
 		s_initial_corners = true;
-		old_bf_math = g_bf_math;
+		int old_bf_math = g_bf_math;
 		if (!g_bf_math || dec > g_decimals)
 		{
 			init_bf_dec(dec);
 		}
 		if (old_bf_math == 0)
 		{
-			int k;
-			for (k = 0; k < MAX_PARAMETERS; k++)
+			for (int k = 0; k < MAX_PARAMETERS; k++)
 			{
 				floattobf(bfparms[k], g_parameters[k]);
 			}
 		}
 		g_use_center_mag = true;
-		saved = save_stack();
-		bXctr = alloc_stack(g_bf_length + 2);
-		bYctr = alloc_stack(g_bf_length + 2);
+		BigStackSaver savedStack;
+		bXctr = bf_t(alloc_stack(g_bf_length + 2));
+		bYctr = bf_t(alloc_stack(g_bf_length + 2));
 		// Xctr = context.floatval[0];
 		get_bf(bXctr, context.floatvalstr[0]);
 		// Yctr = context.floatval[1];
@@ -1971,7 +1968,6 @@ static int center_mag_arg(const cmd_context &context)
 		// calculate bounds
 		convert_corners_bf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
 		corners_bf_to_float();
-		restore_stack(saved);
 		return COMMANDRESULT_FRACTAL_PARAMETER;
 	}
 }

@@ -538,7 +538,7 @@ int encoder()
 			save_info.tot_extend_len += extend_blk_len(22*(g_bf_length + 2));
 			/* note: this assumes variables allocated in order starting with
 			 * bfxmin in init_bf2() in BIGNUM.C */
-			if (!put_extend_blk(5, 22*(g_bf_length + 2), (char *) g_escape_time_state.m_grid_bf.x_min()))
+			if (!put_extend_blk(5, 22*(g_bf_length + 2), reinterpret_cast<char *>(g_escape_time_state.m_grid_bf.x_min().storage())))
 			{
 				goto oops;
 			}

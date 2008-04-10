@@ -516,7 +516,7 @@ static void got_multiple_precision_info(const fractal_info &read_info, multiple_
 	{
 		g_bf_math = BIGNUM;
 		init_bf_length(read_info.bflength);
-		memcpy((char *) g_escape_time_state.m_grid_bf.x_min(), mp_info.apm_data, mp_info.length);
+		memcpy(g_escape_time_state.m_grid_bf.x_min().storage(), mp_info.apm_data, mp_info.length);
 		delete[] mp_info.apm_data;
 	}
 	else

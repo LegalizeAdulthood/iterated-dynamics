@@ -304,7 +304,7 @@ int bail_out_manhattan_r_bf()
 bool mandelbrot_setup_bn()
 {
 	// this should be set up dynamically based on corners
-	int saved = save_stack();
+	BigStackSaver savedStack;
 	bn_t bntemp1(alloc_stack(g_bn_length));
 	bn_t bntemp2(alloc_stack(g_bn_length));
 
@@ -386,17 +386,15 @@ bool mandelbrot_setup_bn()
 		break;
 	}
 
-	restore_stack(saved);
 	return true;
 }
 
 bool mandelbrot_setup_bf()
 {
 	// this should be set up dynamically based on corners
-	bf_t bftemp1, bftemp2;
-	int saved = save_stack();
-	bftemp1 = alloc_stack(g_bf_length + 2);
-	bftemp2 = alloc_stack(g_bf_length + 2);
+	BigStackSaver savedStack;
+	bf_t bftemp1(alloc_stack(g_bf_length + 2));
+	bf_t bftemp2(alloc_stack(g_bf_length + 2));
 
 	g_bf_math = BIGFLT;
 
@@ -469,7 +467,6 @@ bool mandelbrot_setup_bf()
 		break;
 	}
 
-	restore_stack(saved);
 	return true;
 }
 
@@ -665,7 +662,7 @@ int julia_orbit_bf()
 int julia_z_power_orbit_bn()
 {
 	ComplexBigNum parm2;
-	int saved = save_stack();
+	BigStackSaver savedStack;
 
 	parm2.real(bn_t(alloc_stack(g_bn_length)));
 	parm2.imag(bn_t(alloc_stack(g_bn_length)));
@@ -675,24 +672,22 @@ int julia_z_power_orbit_bn()
 	complex_power_bn(&g_new_z_bn, &g_old_z_bn, &parm2);
 	add_bn(g_new_z_bn.real(), bnparm.real(), bn_t(g_new_z_bn.real(), g_shift_factor));
 	add_bn(g_new_z_bn.imag(), bnparm.imag(), bn_t(g_new_z_bn.imag(), g_shift_factor));
-	restore_stack(saved);
 	return g_externs.BailOutBn();
 }
 
 int julia_z_power_orbit_bf()
 {
 	ComplexBigFloat parm2;
-	int saved = save_stack();
+	BigStackSaver savedStack;
 
-	parm2.real(alloc_stack(g_bf_length + 2));
-	parm2.imag(alloc_stack(g_bf_length + 2));
+	parm2.real(bf_t(alloc_stack(g_bf_length + 2)));
+	parm2.imag(bf_t(alloc_stack(g_bf_length + 2)));
 
 	floattobf(parm2.real(), g_parameters[P2_REAL]);
 	floattobf(parm2.imag(), g_parameters[P2_IMAG]);
 	ComplexPower_bf(&g_new_z_bf, &g_old_z_bf, &parm2);
 	add_bf(g_new_z_bf.real(), bfparm.real(), g_new_z_bf.real());
 	add_bf(g_new_z_bf.imag(), bfparm.imag(), g_new_z_bf.imag());
-	restore_stack(saved);
 	return g_externs.BailOutBf();
 }
 
@@ -768,22 +763,6 @@ julia_orbit_bn()
 }
 #endif
 
-ComplexD complex_bn_to_float(ComplexBigNum *s)
-{
-	ComplexD t;
-	t.real(double(bntofloat(s->real())));
-	t.imag(double(bntofloat(s->imag())));
-	return t;
-}
-
-ComplexD complex_bf_to_float(ComplexBigFloat *s)
-{
-	ComplexD t;
-	t.real(double(bftofloat(s->real())));
-	t.imag(double(bftofloat(s->imag())));
-	return t;
-}
-
 ComplexBigFloat *complex_log_bf(ComplexBigFloat *t, ComplexBigFloat *s)
 {
 	square_bf(t->real(), s->real());
@@ -797,9 +776,8 @@ ComplexBigFloat *complex_log_bf(ComplexBigFloat *t, ComplexBigFloat *s)
 
 ComplexBigFloat *cplxmul_bf(ComplexBigFloat *t, ComplexBigFloat *x, ComplexBigFloat *y)
 {
-	bf_t tmp1;
-	int saved = save_stack();
-	tmp1 = alloc_stack(g_rbf_length + 2);
+	BigStackSaver savedStack;
+	bf_t tmp1(alloc_stack(g_rbf_length + 2));
 	mult_bf(t->real(), x->real(), y->real());
 	mult_bf(t->imag(), x->imag(), y->imag());
 	sub_bf(t->real(), t->real(), t->imag());
@@ -807,20 +785,18 @@ ComplexBigFloat *cplxmul_bf(ComplexBigFloat *t, ComplexBigFloat *x, ComplexBigFl
 	mult_bf(tmp1, x->real(), y->imag());
 	mult_bf(t->imag(), x->imag(), y->real());
 	add_bf(t->imag(), tmp1, t->imag());
-	restore_stack(saved);
 	return t;
 }
 
 ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, ComplexBigFloat *yy)
 {
 	ComplexBigFloat tmp;
-	bf_t e2x, siny, cosy;
-	int saved = save_stack();
-	e2x = alloc_stack(g_rbf_length + 2);
-	siny = alloc_stack(g_rbf_length + 2);
-	cosy = alloc_stack(g_rbf_length + 2);
-	tmp.real(alloc_stack(g_rbf_length + 2));
-	tmp.imag(alloc_stack(g_rbf_length + 2));
+	BigStackSaver savedStack;
+	bf_t e2x(alloc_stack(g_rbf_length + 2));
+	bf_t siny(alloc_stack(g_rbf_length + 2));
+	bf_t cosy(alloc_stack(g_rbf_length + 2));
+	tmp.real(bf_t(alloc_stack(g_rbf_length + 2)));
+	tmp.imag(bf_t(alloc_stack(g_rbf_length + 2)));
 
 	// 0 raised to anything is 0
 	if (is_bf_zero(xx->real()) && is_bf_zero(xx->imag()))
@@ -836,7 +812,6 @@ ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, Comple
 	sincos_bf(siny, cosy, tmp.imag());
 	mult_bf(t->real(), e2x, cosy);
 	mult_bf(t->imag(), e2x, siny);
-	restore_stack(saved);
 	return t;
 }
 
@@ -853,7 +828,7 @@ ComplexBigNum *complex_log_bn(ComplexBigNum *t, ComplexBigNum *s)
 
 ComplexBigNum *complex_multiply_bn(ComplexBigNum *t, ComplexBigNum *x, ComplexBigNum *y)
 {
-	int saved = save_stack();
+	BigStackSaver savedStack;
 	bn_t tmp1(alloc_stack(g_r_length));
 	mult_bn(t->real(), x->real(), y->real());
 	mult_bn(t->imag(), x->imag(), y->imag());
@@ -862,14 +837,13 @@ ComplexBigNum *complex_multiply_bn(ComplexBigNum *t, ComplexBigNum *x, ComplexBi
 	mult_bn(tmp1, x->real(), y->imag());
 	mult_bn(t->imag(), x->imag(), y->real());
 	add_bn(t->imag(), bn_t(tmp1, g_shift_factor), bn_t(t->imag(), g_shift_factor));
-	restore_stack(saved);
 	return t;
 }
 
 // note: complex_power_bn() returns need to be +g_shift_factor'ed
 ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigNum *yy)
 {
-	int saved = save_stack();
+	BigStackSaver savedStack;
 	bn_t e2x(alloc_stack(g_bn_length));
 	bn_t siny(alloc_stack(g_bn_length));
 	bn_t cosy(alloc_stack(g_bn_length));
@@ -891,6 +865,5 @@ ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigN
 	sincos_bn(siny, cosy, tmp.imag());
 	mult_bn(t->real(), e2x, cosy);
 	mult_bn(t->imag(), e2x, siny);
-	restore_stack(saved);
 	return t;
 }

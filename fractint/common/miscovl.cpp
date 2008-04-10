@@ -1298,7 +1298,7 @@ static void write_batch_parms_decomp()
 	}
 }
 
-static void write_batch_parms_center_mag(big_t bfXctr, big_t bfYctr)
+static void write_batch_parms_center_mag(bf_t bfXctr, bf_t bfYctr)
 {
 	if (g_use_center_mag)
 	{
@@ -1674,13 +1674,13 @@ static void write_batch_parms_colors(std::string const &colorinf, int maxcolor)
 
 void write_batch_parms(std::string const &colorinf, bool colors_only, int maxcolor, int ii, int jj)
 {
-	bf_t bfXctr = 0;
-	bf_t bfYctr = 0;
-	int saved = save_stack();
+	bf_t bfXctr;
+	bf_t bfYctr;
+	BigStackSaver savedStack;
 	if (g_bf_math)
 	{
-		bfXctr = alloc_stack(g_bf_length + 2);
-		bfYctr = alloc_stack(g_bf_length + 2);
+		bfXctr = bf_t(alloc_stack(g_bf_length + 2));
+		bfYctr = bf_t(alloc_stack(g_bf_length + 2));
 	}
 
 	s_wbdata.len = 0; // force first parm to start on new line
@@ -1750,7 +1750,6 @@ void write_batch_parms(std::string const &colorinf, bool colors_only, int maxcol
 	}
 
 	write_batch_parms_flush();
-	restore_stack(saved);
 }
 
 static void put_filename(const char *keyword, const char *fname)
@@ -1846,17 +1845,15 @@ int get_precision_mag_bf()
 	double Rotation;
 	double Skew;
 	LDBL Magnification;
-	big_t bXctr;
-	big_t bYctr;
-	int saved;
 	int dec;
 
-	saved = save_stack();
-	bXctr            = alloc_stack(g_bf_length + 2);
-	bYctr            = alloc_stack(g_bf_length + 2);
-	// this is just to find Magnification
-	convert_center_mag_bf(bXctr, bYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-	restore_stack(saved);
+	{
+		BigStackSaver savedStack;
+		bf_t bXctr(alloc_stack(g_bf_length + 2));
+		bf_t bYctr(alloc_stack(g_bf_length + 2));
+		// this is just to find Magnification
+		convert_center_mag_bf(bXctr, bYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+	}
 
 	// I don't know if this is portable, but something needs to
 	// be used in case compiler's LDBL_MAX is not big enough
@@ -1916,27 +1913,16 @@ static int getprec(double a, double b, double c)
 	(if rez == MAXREZ) or at current resolution (if rez == CURRENTREZ)    */
 int get_precision_bf(int rezflag)
 {
-	big_t del1;
-	big_t del2;
-	big_t one;
-	big_t bfxxdel;
-	big_t bfxxdel2;
-	big_t bfyydel;
-	big_t bfyydel2;
-	int digits;
-	int dec;
-	int saved;
-	int rez;
-	saved    = save_stack();
-	del1     = alloc_stack(g_bf_length + 2);
-	del2     = alloc_stack(g_bf_length + 2);
-	one      = alloc_stack(g_bf_length + 2);
-	bfxxdel   = alloc_stack(g_bf_length + 2);
-	bfxxdel2  = alloc_stack(g_bf_length + 2);
-	bfyydel   = alloc_stack(g_bf_length + 2);
-	bfyydel2  = alloc_stack(g_bf_length + 2);
+	BigStackSaver savedStack;
+	bf_t del1(alloc_stack(g_bf_length + 2));
+	bf_t del2(alloc_stack(g_bf_length + 2));
+	bf_t one(alloc_stack(g_bf_length + 2));
+	bf_t bfxxdel(alloc_stack(g_bf_length + 2));
+	bf_t bfxxdel2(alloc_stack(g_bf_length + 2));
+	bf_t bfyydel(alloc_stack(g_bf_length + 2));
+	bf_t bfyydel2(alloc_stack(g_bf_length + 2));
 	floattobf(one, 1.0);
-	rez = (rezflag == MAXREZ) ? (OLD_MAX_PIXELS - 1) : (g_x_dots - 1);
+	int rez = (rezflag == MAXREZ) ? (OLD_MAX_PIXELS - 1) : (g_x_dots - 1);
 
 	// bfxxdel = (bfxmax - bfx3rd)/(g_x_dots-1)
 	sub_bf(bfxxdel, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
@@ -1967,19 +1953,16 @@ int get_precision_bf(int rezflag)
 	}
 	if (cmp_bf(del1, clear_bf(del2)) == 0)
 	{
-		restore_stack(saved);
 		return -1;
 	}
-	digits = 1;
+	int digits = 1;
 	while (cmp_bf(del1, one) < 0)
 	{
 		digits++;
 		mult_a_bf_int(del1, 10);
 	}
 	digits = std::max(digits, 3);
-	restore_stack(saved);
-	dec = get_precision_mag_bf();
-	return std::max(digits, dec);
+	return std::max(digits, get_precision_mag_bf());
 }
 
 /* This function calculates the precision needed to distiguish adjacent
