@@ -98,20 +98,8 @@ extern bf_t bftmp;
 extern bf10_t bf10tmp;                                              // dec+4
 
 void free_bf_vars();
-big_t alloc_stack(size_t size);
-int save_stack();
-void restore_stack(int old_offset);
 void init_bf_dec(int dec);
 void init_bf_length(int bnl);
 void init_big_pi();
-
-class BigStackSaver
-{
-public:
-	BigStackSaver() : _stack(save_stack()) { }
-	~BigStackSaver() { restore_stack(_stack); }
-private:
-	int _stack;
-};
 
 #endif

@@ -393,8 +393,8 @@ bool mandelbrot_setup_bf()
 {
 	// this should be set up dynamically based on corners
 	BigStackSaver savedStack;
-	bf_t bftemp1(alloc_stack(g_bf_length + 2));
-	bf_t bftemp2(alloc_stack(g_bf_length + 2));
+	bf_t bftemp1(g_bf_length);
+	bf_t bftemp2(g_bf_length);
 
 	g_bf_math = BIGFLT;
 
@@ -680,8 +680,8 @@ int julia_z_power_orbit_bf()
 	ComplexBigFloat parm2;
 	BigStackSaver savedStack;
 
-	parm2.real(bf_t(alloc_stack(g_bf_length + 2)));
-	parm2.imag(bf_t(alloc_stack(g_bf_length + 2)));
+	parm2.real(bf_t(g_bf_length));
+	parm2.imag(bf_t(g_bf_length));
 
 	floattobf(parm2.real(), g_parameters[P2_REAL]);
 	floattobf(parm2.imag(), g_parameters[P2_IMAG]);
@@ -777,7 +777,7 @@ ComplexBigFloat *complex_log_bf(ComplexBigFloat *t, ComplexBigFloat *s)
 ComplexBigFloat *cplxmul_bf(ComplexBigFloat *t, ComplexBigFloat *x, ComplexBigFloat *y)
 {
 	BigStackSaver savedStack;
-	bf_t tmp1(alloc_stack(g_rbf_length + 2));
+	bf_t tmp1(g_rbf_length);
 	mult_bf(t->real(), x->real(), y->real());
 	mult_bf(t->imag(), x->imag(), y->imag());
 	sub_bf(t->real(), t->real(), t->imag());
@@ -792,11 +792,11 @@ ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, Comple
 {
 	ComplexBigFloat tmp;
 	BigStackSaver savedStack;
-	bf_t e2x(alloc_stack(g_rbf_length + 2));
-	bf_t siny(alloc_stack(g_rbf_length + 2));
-	bf_t cosy(alloc_stack(g_rbf_length + 2));
-	tmp.real(bf_t(alloc_stack(g_rbf_length + 2)));
-	tmp.imag(bf_t(alloc_stack(g_rbf_length + 2)));
+	bf_t e2x(g_rbf_length);
+	bf_t siny(g_rbf_length);
+	bf_t cosy(g_rbf_length);
+	tmp.real(bf_t(g_rbf_length));
+	tmp.imag(bf_t(g_rbf_length));
 
 	// 0 raised to anything is 0
 	if (is_bf_zero(xx->real()) && is_bf_zero(xx->imag()))

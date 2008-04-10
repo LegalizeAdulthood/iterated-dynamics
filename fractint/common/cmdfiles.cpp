@@ -1939,8 +1939,8 @@ static int center_mag_arg(const cmd_context &context)
 		}
 		g_use_center_mag = true;
 		BigStackSaver savedStack;
-		bXctr = bf_t(alloc_stack(g_bf_length + 2));
-		bYctr = bf_t(alloc_stack(g_bf_length + 2));
+		bXctr = bf_t(g_bf_length);
+		bYctr = bf_t(g_bf_length);
 		// Xctr = context.floatval[0];
 		get_bf(bXctr, context.floatvalstr[0]);
 		// Yctr = context.floatval[1];
