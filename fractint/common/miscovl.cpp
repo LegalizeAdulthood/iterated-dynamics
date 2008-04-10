@@ -1925,11 +1925,11 @@ int get_precision_bf(int rezflag)
 	int rez = (rezflag == MAXREZ) ? (OLD_MAX_PIXELS - 1) : (g_x_dots - 1);
 
 	// bfxxdel = (bfxmax - bfx3rd)/(g_x_dots-1)
-	sub_bf(bfxxdel, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
+	subtract_bf(bfxxdel, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
 	div_a_bf_int(bfxxdel, (U16)rez);
 
 	// bfyydel2 = (bfy3rd - bfymin)/(g_x_dots-1)
-	sub_bf(bfyydel2, g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min());
+	subtract_bf(bfyydel2, g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min());
 	div_a_bf_int(bfyydel2, (U16)rez);
 
 	if (rezflag == CURRENTREZ)
@@ -1938,11 +1938,11 @@ int get_precision_bf(int rezflag)
 	}
 
 	// bfyydel = (bfymax - bfy3rd)/(g_y_dots-1)
-	sub_bf(bfyydel, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
+	subtract_bf(bfyydel, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 	div_a_bf_int(bfyydel, (U16)rez);
 
 	// bfxxdel2 = (bfx3rd - bfxmin)/(g_y_dots-1)
-	sub_bf(bfxxdel2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
+	subtract_bf(bfxxdel2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
 	div_a_bf_int(bfxxdel2, (U16)rez);
 
 	abs_a_bf(add_bf(del1, bfxxdel, bfxxdel2));

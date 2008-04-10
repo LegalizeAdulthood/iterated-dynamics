@@ -256,15 +256,15 @@ static void transform_bf(bf_t bt_x, bf_t bt_y, CoordinateD *point)
 	bf_t bt_tmp2(g_rbf_length);
 
 	// point->x = cvt->a*point->x + cvt->b*point->y + cvt->e;
-	mult_bf(bt_tmp1, n_a, bt_x);
-	mult_bf(bt_tmp2, n_b, bt_y);
+	multiply_bf(bt_tmp1, n_a, bt_x);
+	multiply_bf(bt_tmp2, n_b, bt_y);
 	add_a_bf(bt_tmp1, bt_tmp2);
 	add_a_bf(bt_tmp1, n_e);
 	point->x = double(bftofloat(bt_tmp1));
 
 	// point->y = cvt->c*point->x + cvt->d*point->y + cvt->f;
-	mult_bf(bt_tmp1, n_c, bt_x);
-	mult_bf(bt_tmp2, n_d, bt_y);
+	multiply_bf(bt_tmp1, n_c, bt_x);
+	multiply_bf(bt_tmp2, n_d, bt_y);
 	add_a_bf(bt_tmp1, bt_tmp2);
 	add_a_bf(bt_tmp1, n_f);
 	point->y = double(bftofloat(bt_tmp1));
@@ -286,9 +286,9 @@ static void is_visible_window_corner(const fractal_info &info,
 		}
 		else
 		{
-			neg_a_bf(sub_bf(bt_x, bt_x3rd, bt_xmin));
+			neg_a_bf(subtract_bf(bt_x, bt_x3rd, bt_xmin));
 			add_a_bf(bt_x, bt_xmax);
-			sub_bf(bt_y, bt_ymin, bt_y3rd);
+			subtract_bf(bt_y, bt_ymin, bt_y3rd);
 			add_a_bf(bt_y, bt_ymax);
 		}
 		transform_bf(bt_x, bt_y, &corner);
@@ -496,18 +496,18 @@ static void bfsetup_convert_to_screen()
 	bf_t bt_tmp2(g_rbf_length);
 
 	// x3rd-xmin
-	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
+	subtract_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
 	// ymin-ymax
-	sub_bf(bt_inter2, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
+	subtract_bf(bt_inter2, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 	// (x3rd-xmin)*(ymin-ymax)
-	mult_bf(bt_tmp1, bt_inter1, bt_inter2);
+	multiply_bf(bt_tmp1, bt_inter1, bt_inter2);
 
 	// ymax-y3rd
-	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
+	subtract_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 	// xmax-xmin
-	sub_bf(bt_inter2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
+	subtract_bf(bt_inter2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 	// (ymax-y3rd)*(xmax-xmin)
-	mult_bf(bt_tmp2, bt_inter1, bt_inter2);
+	multiply_bf(bt_tmp2, bt_inter1, bt_inter2);
 
 	// det = (x3rd-xmin)*(ymin-ymax) + (ymax-y3rd)*(xmax-xmin)
 	add_bf(bt_det, bt_tmp1, bt_tmp2);
@@ -517,31 +517,31 @@ static void bfsetup_convert_to_screen()
 	div_bf(bt_xd, bt_tmp1, bt_det);
 
 	// a = xd*(ymax-y3rd)
-	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
-	mult_bf(bt_a, bt_xd, bt_inter1);
+	subtract_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
+	multiply_bf(bt_a, bt_xd, bt_inter1);
 
 	// b = xd*(x3rd-xmin)
-	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
-	mult_bf(bt_b, bt_xd, bt_inter1);
+	subtract_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
+	multiply_bf(bt_b, bt_xd, bt_inter1);
 
 	// e = -(a*xmin + b*ymax)
-	mult_bf(bt_tmp1, bt_a, g_escape_time_state.m_grid_bf.x_min());
-	mult_bf(bt_tmp2, bt_b, g_escape_time_state.m_grid_bf.y_max());
+	multiply_bf(bt_tmp1, bt_a, g_escape_time_state.m_grid_bf.x_min());
+	multiply_bf(bt_tmp2, bt_b, g_escape_time_state.m_grid_bf.y_max());
 	neg_a_bf(add_bf(bt_e, bt_tmp1, bt_tmp2));
 
 	// x3rd-xmax
-	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_max());
+	subtract_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_max());
 	// ymin-ymax
-	sub_bf(bt_inter2, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
+	subtract_bf(bt_inter2, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 	// (x3rd-xmax)*(ymin-ymax)
-	mult_bf(bt_tmp1, bt_inter1, bt_inter2);
+	multiply_bf(bt_tmp1, bt_inter1, bt_inter2);
 
 	// ymin-y3rd
-	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
+	subtract_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
 	// xmax-xmin
-	sub_bf(bt_inter2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
+	subtract_bf(bt_inter2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 	// (ymin-y3rd)*(xmax-xmin)
-	mult_bf(bt_tmp2, bt_inter1, bt_inter2);
+	multiply_bf(bt_tmp2, bt_inter1, bt_inter2);
 
 	// det = (x3rd-xmax)*(ymin-ymax) + (ymin-y3rd)*(xmax-xmin)
 	add_bf(bt_det, bt_tmp1, bt_tmp2);
@@ -551,16 +551,16 @@ static void bfsetup_convert_to_screen()
 	div_bf(bt_yd, bt_tmp2, bt_det);
 
 	// c = yd*(ymin-y3rd)
-	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
-	mult_bf(bt_c, bt_yd, bt_inter1);
+	subtract_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
+	multiply_bf(bt_c, bt_yd, bt_inter1);
 
 	// d = yd*(x3rd-xmax)
-	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_max());
-	mult_bf(bt_d, bt_yd, bt_inter1);
+	subtract_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_max());
+	multiply_bf(bt_d, bt_yd, bt_inter1);
 
 	// f = -(c*xmin + d*ymax)
-	mult_bf(bt_tmp1, bt_c, g_escape_time_state.m_grid_bf.x_min());
-	mult_bf(bt_tmp2, bt_d, g_escape_time_state.m_grid_bf.y_max());
+	multiply_bf(bt_tmp1, bt_c, g_escape_time_state.m_grid_bf.x_min());
+	multiply_bf(bt_tmp2, bt_d, g_escape_time_state.m_grid_bf.y_max());
 	neg_a_bf(add_bf(bt_f, bt_tmp1, bt_tmp2));
 }
 

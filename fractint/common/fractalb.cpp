@@ -399,19 +399,19 @@ bool mandelbrot_setup_bf()
 	g_bf_math = BIGFLT;
 
 	// bfxdel = (bfxmax - bfx3rd)/(g_x_dots-1)
-	sub_bf(bfxdel, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
+	subtract_bf(bfxdel, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
 	div_a_bf_int(bfxdel, (U16)(g_x_dots - 1));
 
 	// bfydel = (bfymax - bfy3rd)/(g_y_dots-1)
-	sub_bf(bfydel, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
+	subtract_bf(bfydel, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 	div_a_bf_int(bfydel, (U16)(g_y_dots - 1));
 
 	// bfxdel2 = (bfx3rd - bfxmin)/(g_y_dots-1)
-	sub_bf(bfxdel2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
+	subtract_bf(bfxdel2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
 	div_a_bf_int(bfxdel2, (U16)(g_y_dots - 1));
 
 	// bfydel2 = (bfy3rd - bfymin)/(g_x_dots-1)
-	sub_bf(bfydel2, g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min());
+	subtract_bf(bfydel2, g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min());
 	div_a_bf_int(bfydel2, (U16)(g_x_dots - 1));
 
 	abs_bf(bfclosenuff, bfxdel);
@@ -540,7 +540,7 @@ int mandelbrot_per_pixel_bf()
 	mult_bf_int(g_old_z_bf.real(), bfydel,  (U16)g_row);
 	mult_bf_int(g_old_z_bf.imag(), bfydel2, (U16)g_col);
 	add_a_bf(g_old_z_bf.real(), g_old_z_bf.imag());
-	sub_bf(bfparm.imag(), g_escape_time_state.m_grid_bf.y_max(), g_old_z_bf.real());
+	subtract_bf(bfparm.imag(), g_escape_time_state.m_grid_bf.y_max(), g_old_z_bf.real());
 
 	copy_bf(g_old_z_bf.real(), bfparm.real());
 	copy_bf(g_old_z_bf.imag(), bfparm.imag());
@@ -613,7 +613,7 @@ int julia_per_pixel_bf()
 	mult_bf_int(g_new_z_bf.real(), bfydel,  (U16)g_row);
 	mult_bf_int(g_new_z_bf.imag(), bfydel2, (U16)g_col);
 	add_a_bf(g_new_z_bf.real(), g_new_z_bf.imag());
-	sub_bf(g_old_z_bf.imag(), g_escape_time_state.m_grid_bf.y_max(), g_new_z_bf.real());
+	subtract_bf(g_old_z_bf.imag(), g_escape_time_state.m_grid_bf.y_max(), g_new_z_bf.real());
 
 	// square has side effect - must copy first
 	copy_bf(g_new_z_bf.real(), g_old_z_bf.real());
@@ -653,7 +653,7 @@ int julia_orbit_bf()
 	add_bf(g_new_z_bf.real(), bftmpsqrx, bfparm.real());
 
 	// new.imag() = 2*g_old_z_bf.real()*g_old_z_bf.imag() + g_parameter.imag();
-	mult_bf(bftmp, g_old_z_bf.real(), g_old_z_bf.imag()); // ok to use unsafe here
+	multiply_bf(bftmp, g_old_z_bf.real(), g_old_z_bf.imag()); // ok to use unsafe here
 	double_a_bf(bftmp);
 	add_bf(g_new_z_bf.imag(), bftmp, bfparm.imag());
 	return g_externs.BailOutBf();
@@ -773,16 +773,16 @@ void complex_log_bf(ComplexBigFloat &t, ComplexBigFloat const &s)
 	atan2_bf(t.imag(), s.imag(), s.real());
 }
 
-void cplxmul_bf(ComplexBigFloat &t, ComplexBigFloat const &x, ComplexBigFloat const &y)
+void complex_multiply_bf(ComplexBigFloat &t, ComplexBigFloat const &x, ComplexBigFloat const &y)
 {
 	BigStackSaver savedStack;
 	bf_t tmp1(g_rbf_length);
-	mult_bf(t.real(), x.real(), y.real());
-	mult_bf(t.imag(), x.imag(), y.imag());
-	sub_bf(t.real(), t.real(), t.imag());
+	multiply_bf(t.real(), x.real(), y.real());
+	multiply_bf(t.imag(), x.imag(), y.imag());
+	subtract_bf(t.real(), t.real(), t.imag());
 
-	mult_bf(tmp1, x.real(), y.imag());
-	mult_bf(t.imag(), x.imag(), y.real());
+	multiply_bf(tmp1, x.real(), y.imag());
+	multiply_bf(t.imag(), x.imag(), y.real());
 	add_bf(t.imag(), tmp1, t.imag());
 }
 
@@ -805,11 +805,11 @@ void ComplexPower_bf(ComplexBigFloat &t, ComplexBigFloat const &xx, ComplexBigFl
 	}
 
 	complex_log_bf(t, xx);
-	cplxmul_bf(tmp, t, yy);
+	complex_multiply_bf(tmp, t, yy);
 	exp_bf(e2x, tmp.real());
 	sincos_bf(siny, cosy, tmp.imag());
-	mult_bf(t.real(), e2x, cosy);
-	mult_bf(t.imag(), e2x, siny);
+	multiply_bf(t.real(), e2x, cosy);
+	multiply_bf(t.imag(), e2x, siny);
 }
 
 void complex_log_bn(ComplexBigNum &t, ComplexBigNum const &s)

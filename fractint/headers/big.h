@@ -250,10 +250,10 @@ extern bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx);
 
 extern bf_t add_bf(bf_t r, bf_t n1, bf_t n2);
 extern bf_t add_a_bf(bf_t r, bf_t n);
-extern bf_t sub_bf(bf_t r, bf_t n1, bf_t n2);
+extern bf_t subtract_bf(bf_t r, bf_t n1, bf_t n2);
 extern bf_t sub_a_bf(bf_t r, bf_t n);
 extern bf_t full_mult_bf(bf_t r, bf_t n1, bf_t n2);
-extern bf_t mult_bf(bf_t r, bf_t n1, bf_t n2);
+extern bf_t multiply_bf(bf_t r, bf_t n1, bf_t n2);
 extern bf_t full_square_bf(bf_t r, bf_t n);
 extern bf_t square_bf(bf_t r, bf_t n);
 extern bf_t mult_bf_int(bf_t r, bf_t n, U16 u);

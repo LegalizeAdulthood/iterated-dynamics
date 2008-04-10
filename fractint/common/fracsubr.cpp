@@ -618,10 +618,10 @@ void adjust_corner_bf(float aspect_drift)
 	}
 
 	// ftemp = fabs(x3rd-xmin);
-	abs_a_bf(sub_bf(bftemp, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min()));
+	abs_a_bf(subtract_bf(bftemp, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min()));
 
 	// ftemp2 = fabs(xmax-x3rd);
-	abs_a_bf(sub_bf(bftemp2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd()));
+	abs_a_bf(subtract_bf(bftemp2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd()));
 
 	// if ((ftemp = fabs(x3rd-xmin)) < (ftemp2 = fabs(xmax-x3rd)))
 	if (cmp_bf(bftemp, bftemp2) < 0)
@@ -644,10 +644,10 @@ void adjust_corner_bf(float aspect_drift)
 	}
 
 	// ftemp = fabs(y3rd-ymin);
-	abs_a_bf(sub_bf(bftemp, g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min()));
+	abs_a_bf(subtract_bf(bftemp, g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min()));
 
 	// ftemp2 = fabs(ymax-y3rd);
-	abs_a_bf(sub_bf(bftemp2, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd()));
+	abs_a_bf(subtract_bf(bftemp2, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd()));
 
 	// if ((ftemp = fabs(y3rd-ymin)) < (ftemp2 = fabs(ymax-y3rd)))
 	if (cmp_bf(bftemp, bftemp2) < 0)
@@ -783,7 +783,7 @@ static void adjust_to_limits_bf(double expand)
 	{
 		smallest_add_bf(g_escape_time_state.m_grid_bf.x_max());
 		// bfxmin -= bfxmax-centerx;
-		sub_a_bf(g_escape_time_state.m_grid_bf.x_min(), sub_bf(btmp1, g_escape_time_state.m_grid_bf.x_max(), bcenterx));
+		sub_a_bf(g_escape_time_state.m_grid_bf.x_min(), subtract_bf(btmp1, g_escape_time_state.m_grid_bf.x_max(), bcenterx));
 	}
 
 	// if (bfymin == centery)
@@ -791,7 +791,7 @@ static void adjust_to_limits_bf(double expand)
 	{
 		smallest_add_bf(g_escape_time_state.m_grid_bf.y_max());
 		// bfymin -= bfymax-centery;
-		sub_a_bf(g_escape_time_state.m_grid_bf.y_min(), sub_bf(btmp1, g_escape_time_state.m_grid_bf.y_max(), bcentery));
+		sub_a_bf(g_escape_time_state.m_grid_bf.y_min(), subtract_bf(btmp1, g_escape_time_state.m_grid_bf.y_max(), bcentery));
 	}
 
 	// if (bfx3rd == centerx)
@@ -817,7 +817,7 @@ static void adjust_to_limits_bf(double expand)
 	copy_bf(bcornerx[2], g_escape_time_state.m_grid_bf.x_3rd());
 
 	// cornerx[3] = xmin + (xmax-x3rd);
-	sub_bf(bcornerx[3], g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
+	subtract_bf(bcornerx[3], g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
 	add_a_bf(bcornerx[3], g_escape_time_state.m_grid_bf.x_min());
 
 	// cornery[0] = ymax;
@@ -830,7 +830,7 @@ static void adjust_to_limits_bf(double expand)
 	copy_bf(bcornery[2], g_escape_time_state.m_grid_bf.y_3rd());
 
 	// cornery[3] = ymin + (ymax-y3rd);
-	sub_bf(bcornery[3], g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
+	subtract_bf(bcornery[3], g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 	add_a_bf(bcornery[3], g_escape_time_state.m_grid_bf.y_min());
 
 	// if caller wants image size adjusted, do that first
@@ -839,13 +839,13 @@ static void adjust_to_limits_bf(double expand)
 		for (i = 0; i < 4; ++i)
 		{
 			// cornerx[i] = centerx + (cornerx[i]-centerx)*expand;
-			sub_bf(btmp1, bcornerx[i], bcenterx);
-			mult_bf(bcornerx[i], btmp1, bexpand);
+			subtract_bf(btmp1, bcornerx[i], bcenterx);
+			multiply_bf(bcornerx[i], btmp1, bexpand);
 			add_a_bf(bcornerx[i], bcenterx);
 
 			// cornery[i] = centery + (cornery[i]-centery)*expand;
-			sub_bf(btmp1, bcornery[i], bcentery);
-			mult_bf(bcornery[i], btmp1, bexpand);
+			subtract_bf(btmp1, bcornery[i], bcentery);
+			multiply_bf(bcornery[i], btmp1, bexpand);
 			add_a_bf(bcornery[i], bcentery);
 		}
 	}
@@ -888,10 +888,10 @@ static void adjust_to_limits_bf(double expand)
 
 	// if image is too large, downsize it maintaining center
 	// ftemp = highx-lowx;
-	sub_bf(bftemp, bhighx, blowx);
+	subtract_bf(bftemp, bhighx, blowx);
 
 	// if (highy-lowy > ftemp) ftemp = highy-lowy;
-	if (cmp_bf(sub_bf(btmp1, bhighy, blowy), bftemp) > 0)
+	if (cmp_bf(subtract_bf(btmp1, bhighy, blowy), bftemp) > 0)
 	{
 		copy_bf(bftemp, btmp1);
 	}
@@ -907,13 +907,13 @@ static void adjust_to_limits_bf(double expand)
 		for (i = 0; i < 4; ++i)
 		{
 			// cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp;
-			sub_bf(btmp1, bcornerx[i], bcenterx);
-			mult_bf(bcornerx[i], btmp1, bftemp);
+			subtract_bf(btmp1, bcornerx[i], bcenterx);
+			multiply_bf(bcornerx[i], btmp1, bftemp);
 			add_a_bf(bcornerx[i], bcenterx);
 
 			// cornery[i] = centery + (cornery[i]-centery)*ftemp;
-			sub_bf(btmp1, bcornery[i], bcentery);
-			mult_bf(bcornery[i], btmp1, bftemp);
+			subtract_bf(btmp1, bcornery[i], bcentery);
+			multiply_bf(bcornery[i], btmp1, bftemp);
 			add_a_bf(bcornery[i], bcentery);
 		}
 	}
@@ -928,7 +928,7 @@ static void adjust_to_limits_bf(double expand)
 		// if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
 		// adjx = ftemp;
 		if (cmp_bf(bcornerx[i], blimit) > 0 &&
-			cmp_bf(sub_bf(bftemp, bcornerx[i], blimit), badjx) > 0)
+			cmp_bf(subtract_bf(bftemp, bcornerx[i], blimit), badjx) > 0)
 		{
 			copy_bf(badjx, bftemp);
 		}
@@ -944,7 +944,7 @@ static void adjust_to_limits_bf(double expand)
 		// if (cornery[i] > limit  && (ftemp = cornery[i] - limit) > adjy)
 		// adjy = ftemp;
 		if (cmp_bf(bcornery[i], blimit) > 0 &&
-			cmp_bf(sub_bf(bftemp, bcornery[i], blimit), badjy) > 0)
+			cmp_bf(subtract_bf(bftemp, bcornery[i], blimit), badjy) > 0)
 		{
 			copy_bf(badjy, bftemp);
 		}
@@ -967,17 +967,17 @@ static void adjust_to_limits_bf(double expand)
 	}
 
 	// xmin = cornerx[0] - adjx;
-	sub_bf(g_escape_time_state.m_grid_bf.x_min(), bcornerx[0], badjx);
+	subtract_bf(g_escape_time_state.m_grid_bf.x_min(), bcornerx[0], badjx);
 	// xmax = cornerx[1] - adjx;
-	sub_bf(g_escape_time_state.m_grid_bf.x_max(), bcornerx[1], badjx);
+	subtract_bf(g_escape_time_state.m_grid_bf.x_max(), bcornerx[1], badjx);
 	// x3rd = cornerx[2] - adjx;
-	sub_bf(g_escape_time_state.m_grid_bf.x_3rd(), bcornerx[2], badjx);
+	subtract_bf(g_escape_time_state.m_grid_bf.x_3rd(), bcornerx[2], badjx);
 	// ymax = cornery[0] - adjy;
-	sub_bf(g_escape_time_state.m_grid_bf.y_max(), bcornery[0], badjy);
+	subtract_bf(g_escape_time_state.m_grid_bf.y_max(), bcornery[0], badjy);
 	// ymin = cornery[1] - adjy;
-	sub_bf(g_escape_time_state.m_grid_bf.y_min(), bcornery[1], badjy);
+	subtract_bf(g_escape_time_state.m_grid_bf.y_min(), bcornery[1], badjy);
 	// y3rd = cornery[2] - adjy;
-	sub_bf(g_escape_time_state.m_grid_bf.y_3rd(), bcornery[2], badjy);
+	subtract_bf(g_escape_time_state.m_grid_bf.y_3rd(), bcornery[2], badjy);
 
 	adjust_corner_bf(); // make 3rd corner exact if very near other co-ords
 }
@@ -1165,7 +1165,7 @@ static void smallest_add_bf(bf_t num)
 {
 	BigStackSaver savedStack;
 	bf_t btmp1(g_bf_length);
-	mult_bf(btmp1, floattobf(btmp1, 5.0e-16), num);
+	multiply_bf(btmp1, floattobf(btmp1, 5.0e-16), num);
 	add_a_bf(num, btmp1);
 }
 

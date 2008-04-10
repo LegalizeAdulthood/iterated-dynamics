@@ -43,8 +43,8 @@ static void calculate_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4
 
 	// use target as temporary variable
 	floattobf(btmp3, p2);
-	mult_bf(btmp1, btmp3, p3);
-	mult_bf(btmp2, floattobf(target, p4), p5);
+	multiply_bf(btmp1, btmp3, p3);
+	multiply_bf(btmp2, floattobf(target, p4), p5);
 	add_bf(target, btmp1, btmp2);
 	add_a_bf(target, p1);
 }
@@ -106,10 +106,10 @@ void zoom_box_draw(bool drawit)
 	if (g_bf_math)
 	{
 		// do some calcs just once here to reduce fp work a bit
-		sub_bf(bffxwidth, g_sx_max_bf, g_sx_3rd_bf);
-		sub_bf(bffxskew, g_sx_3rd_bf, g_sx_min_bf);
-		sub_bf(bffydepth, g_sy_3rd_bf, g_sy_max_bf);
-		sub_bf(bffyskew, g_sy_min_bf, g_sy_3rd_bf);
+		subtract_bf(bffxwidth, g_sx_max_bf, g_sx_3rd_bf);
+		subtract_bf(bffxskew, g_sx_3rd_bf, g_sx_min_bf);
+		subtract_bf(bffydepth, g_sy_3rd_bf, g_sy_max_bf);
+		subtract_bf(bffyskew, g_sy_min_bf, g_sy_3rd_bf);
 		floattobf(bffxadj, fxadj);
 	}
 
@@ -385,32 +385,32 @@ static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
 		are taken as (0, 0) topleft thru (1, 1) bottom right */
 
 	// tempx = dy*g_plot_mx1 - dx*g_plot_mx2;
-	mult_bf(btmp1, bfdy, bfplotmx1);
-	mult_bf(btmp2, bfdx, bfplotmx2);
-	sub_bf(btempx, btmp1, btmp2);
+	multiply_bf(btmp1, bfdy, bfplotmx1);
+	multiply_bf(btmp2, bfdx, bfplotmx2);
+	subtract_bf(btempx, btmp1, btmp2);
 
 	// tempy = dx*g_plot_my1 - dy*g_plot_my2;
-	mult_bf(btmp1, bfdx, bfplotmy1);
-	mult_bf(btmp2, bfdy, bfplotmy2);
-	sub_bf(btempy, btmp1, btmp2);
+	multiply_bf(btmp1, bfdx, bfplotmy1);
+	multiply_bf(btmp2, bfdy, bfplotmy2);
+	subtract_bf(btempy, btmp1, btmp2);
 
 	// calc new corner by extending from current screen corners
 	// *newx = g_sx_min + tempx*(g_sx_max-g_sx_3rd)/ftemp + tempy*(g_sx_3rd-g_sx_min)/ftemp;
-	sub_bf(btmp1, g_sx_max_bf, g_sx_3rd_bf);
-	mult_bf(btmp2, btempx, btmp1);
+	subtract_bf(btmp1, g_sx_max_bf, g_sx_3rd_bf);
+	multiply_bf(btmp2, btempx, btmp1);
 	div_bf(btmp2a, btmp2, bfftemp);
-	sub_bf(btmp3, g_sx_3rd_bf, g_sx_min_bf);
-	mult_bf(btmp4, btempy, btmp3);
+	subtract_bf(btmp3, g_sx_3rd_bf, g_sx_min_bf);
+	multiply_bf(btmp4, btempy, btmp3);
 	div_bf(btmp4a, btmp4, bfftemp);
 	add_bf(bfnewx, g_sx_min_bf, btmp2a);
 	add_a_bf(bfnewx, btmp4a);
 
 	// *newy = g_sy_max + tempy*(g_sy_3rd-g_sy_max)/ftemp + tempx*(g_sy_min-g_sy_3rd)/ftemp;
-	sub_bf(btmp1, g_sy_3rd_bf, g_sy_max_bf);
-	mult_bf(btmp2, btempy, btmp1);
+	subtract_bf(btmp1, g_sy_3rd_bf, g_sy_max_bf);
+	multiply_bf(btmp2, btempy, btmp1);
 	div_bf(btmp2a, btmp2, bfftemp);
-	sub_bf(btmp3, g_sy_min_bf, g_sy_3rd_bf);
-	mult_bf(btmp4, btempx, btmp3);
+	subtract_bf(btmp3, g_sy_min_bf, g_sy_3rd_bf);
+	multiply_bf(btmp4, btempx, btmp3);
 	div_bf(btmp4a, btmp4, bfftemp);
 	add_bf(bfnewy, g_sy_max_bf, btmp2a);
 	add_a_bf(bfnewy, btmp4a);
@@ -456,13 +456,13 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
 	bf_t bfplotmy1(g_rbf_length);
 	bf_t bfplotmy2(g_rbf_length);
 	// ftemp = (ymin-y3rd)*(x3rd-xmin) - (xmax-x3rd)*(y3rd-ymax);
-	sub_bf(tmp1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
-	sub_bf(tmp2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
-	sub_bf(tmp3, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
-	sub_bf(tmp4, g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_max());
-	mult_bf(tmp5, tmp1, tmp2);
-	mult_bf(tmp6, tmp3, tmp4);
-	sub_bf(bfftemp, tmp5, tmp6);
+	subtract_bf(tmp1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
+	subtract_bf(tmp2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
+	subtract_bf(tmp3, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
+	subtract_bf(tmp4, g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_max());
+	multiply_bf(tmp5, tmp1, tmp2);
+	multiply_bf(tmp6, tmp3, tmp4);
+	subtract_bf(bfftemp, tmp5, tmp6);
 	// g_plot_mx1 = (x3rd-xmin); */; /* reuse the plotxxx vars is safe
 	copy_bf(bfplotmx1, tmp2);
 	// g_plot_mx2 = (y3rd-ymax);
@@ -476,16 +476,16 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
 	copy_bf(savbfxmin, g_escape_time_state.m_grid_bf.x_min());
 	copy_bf(savbfymax, g_escape_time_state.m_grid_bf.y_max());
 
-	sub_bf(tmp1, g_sx_min_bf, savbfxmin);
-	sub_bf(tmp2, g_sy_max_bf, savbfymax);
+	subtract_bf(tmp1, g_sx_min_bf, savbfxmin);
+	subtract_bf(tmp2, g_sy_max_bf, savbfymax);
 	zmo_calcbf(tmp1, tmp2, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.y_max(), bfplotmx1, bfplotmx2, bfplotmy1,
 					bfplotmy2, bfftemp);
-	sub_bf(tmp1, g_sx_max_bf, savbfxmin);
-	sub_bf(tmp2, g_sy_min_bf, savbfymax);
+	subtract_bf(tmp1, g_sx_max_bf, savbfxmin);
+	subtract_bf(tmp2, g_sy_min_bf, savbfymax);
 	zmo_calcbf(tmp1, tmp2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.y_min(), bfplotmx1, bfplotmx2, bfplotmy1,
 					bfplotmy2, bfftemp);
-	sub_bf(tmp1, g_sx_3rd_bf, savbfxmin);
-	sub_bf(tmp2, g_sy_3rd_bf, savbfymax);
+	subtract_bf(tmp1, g_sx_3rd_bf, savbfxmin);
+	subtract_bf(tmp2, g_sy_3rd_bf, savbfymax);
 	zmo_calcbf(tmp1, tmp2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.y_3rd(), bfplotmx1, bfplotmx2, bfplotmy1,
 					bfplotmy2, bfftemp);
 }

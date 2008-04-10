@@ -1785,9 +1785,9 @@ void StandardFractal::check_periodicity()
 			}
 			else if (g_bf_math == BIGFLT)
 			{
-				if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.real(), g_new_z_bf.real())), bfclosenuff) < 0)
+				if (cmp_bf(abs_a_bf(subtract_bf(bftmp, bfsaved.real(), g_new_z_bf.real())), bfclosenuff) < 0)
 				{
-					if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.imag(), g_new_z_bf.imag())), bfclosenuff) < 0)
+					if (cmp_bf(abs_a_bf(subtract_bf(bftmp, bfsaved.imag(), g_new_z_bf.imag())), bfclosenuff) < 0)
 					{
 						m_caught_a_cycle = true;
 					}
@@ -3040,7 +3040,7 @@ static void set_symmetry(int symmetry, bool use_list) // set up proper symmetric
 		if (g_bf_math)
 		{
 			// ftemp = -g_yy_max/(g_yy_min-g_yy_max);
-			sub_bf(bft1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
+			subtract_bf(bft1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 			div_bf(bft1, g_escape_time_state.m_grid_bf.y_max(), bft1);
 			neg_a_bf(bft1);
 			ftemp = double(bftofloat(bft1));
@@ -3067,7 +3067,7 @@ static void set_symmetry(int symmetry, bool use_list) // set up proper symmetric
 		if (g_bf_math)
 		{
 			// ftemp = -g_xx_min/(g_xx_max-g_xx_min);
-			sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
+			subtract_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 			div_bf(bft1, g_escape_time_state.m_grid_bf.x_min(), bft1);
 			neg_a_bf(bft1);
 			ftemp = double(bftofloat(bft1));
@@ -3178,7 +3178,7 @@ originsym:
 	case SYMMETRY_PI:                      // PI symmetry
 		if (g_bf_math)
 		{
-			if (double(bftofloat(abs_a_bf(sub_bf(bft1,
+			if (double(bftofloat(abs_a_bf(subtract_bf(bft1,
 					g_escape_time_state.m_grid_bf.x_max(),
 					g_escape_time_state.m_grid_bf.x_min())))) < MathUtil::Pi/4)
 			{
@@ -3211,7 +3211,7 @@ originsym:
 		}
 		if (g_bf_math)
 		{
-			sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
+			subtract_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 			abs_a_bf(bft1);
 			s_pi_in_pixels = int(MathUtil::Pi/double(bftofloat(bft1))*g_x_dots);
 		}
