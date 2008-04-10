@@ -1132,7 +1132,7 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
 	unsafe_atan_bf(r, bftmp6);
 	if (signx < 0)
 	{
-		sub_bf(r, bf_pi, r);
+		subtract_bf(r, bf_pi, r);
 	}
 	if (signy < 0)
 	{
@@ -1165,7 +1165,7 @@ bf_t add_a_bf(bf_t r, bf_t n)
 }
 
 /**********************************************************************/
-bf_t sub_bf(bf_t r, bf_t n1, bf_t n2)
+bf_t subtract_bf(bf_t r, bf_t n1, bf_t n2)
 {
 	copy_bf(bftmpcpy1, n1);
 	copy_bf(bftmpcpy2, n2);
@@ -1192,7 +1192,7 @@ bf_t full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 }
 
 /**********************************************************************/
-bf_t mult_bf(bf_t r, bf_t n1, bf_t n2)
+bf_t multiply_bf(bf_t r, bf_t n1, bf_t n2)
 {
 	copy_bf(bftmpcpy1, n1);
 	copy_bf(bftmpcpy2, n2);

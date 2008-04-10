@@ -337,10 +337,10 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		bfWidth = bf_t(g_bf_length);
 		bfHeight = bf_t(g_bf_length);
 		// Width  = xmax - xmin;
-		sub_bf(bfWidth, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
+		subtract_bf(bfWidth, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 		Width  = bftofloat(bfWidth);
 		// Height = ymax - ymin;
-		sub_bf(bfHeight, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min());
+		subtract_bf(bfHeight, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min());
 		Height = bftofloat(bfHeight);
 		// *Xctr = (xmin + xmax)/2;
 		add_bf(Xctr, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_max());
@@ -363,19 +363,19 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		// IMPORTANT: convert from bf AFTER subtracting
 
 		// tmpx = xmax - xmin;
-		sub_bf(bftmpx, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
+		subtract_bf(bftmpx, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 		tmpx1 = bftofloat(bftmpx);
 		// tmpy = ymax - ymin;
-		sub_bf(bftmpy, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min());
+		subtract_bf(bftmpy, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min());
 		tmpy1 = bftofloat(bftmpy);
 		c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
 		// tmpx = xmax - x3rd;
-		sub_bf(bftmpx, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
+		subtract_bf(bftmpx, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
 		tmpx1 = bftofloat(bftmpx);
 
 		// tmpy = ymin - y3rd;
-		sub_bf(bftmpy, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
+		subtract_bf(bftmpy, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
 		tmpy1 = bftofloat(bftmpy);
 		a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 		a = sqrtl(a2);
@@ -390,10 +390,10 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		*Rotation = double(-MathUtil::RadiansToDegrees(atan2(double(tmpy), signx))); // negative for image rotation
 
 		// tmpx = xmin - x3rd;
-		sub_bf(bftmpx, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_3rd());
+		subtract_bf(bftmpx, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_3rd());
 		tmpx2 = bftofloat(bftmpx);
 		// tmpy = ymax - y3rd;
-		sub_bf(bftmpy, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
+		subtract_bf(bftmpy, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 		tmpy2 = bftofloat(bftmpy);
 		b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
 		b = sqrtl(b2);
@@ -450,12 +450,12 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 	if (Rotation == 0.0 && Skew == 0.0)
 	{ // simple, faster case
 		// x3rd = xmin = Xctr - w;
-		sub_bf(g_escape_time_state.m_grid_bf.x_min(), Xctr, bfw);
+		subtract_bf(g_escape_time_state.m_grid_bf.x_min(), Xctr, bfw);
 		copy_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
 		// xmax = Xctr + w;
 		add_bf(g_escape_time_state.m_grid_bf.x_max(), Xctr, bfw);
 		// y3rd = ymin = Yctr - h;
-		sub_bf(g_escape_time_state.m_grid_bf.y_min(), Yctr, bfh);
+		subtract_bf(g_escape_time_state.m_grid_bf.y_min(), Yctr, bfh);
 		copy_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min());
 		// ymax = Yctr + h;
 		add_bf(g_escape_time_state.m_grid_bf.y_max(), Yctr, bfh);

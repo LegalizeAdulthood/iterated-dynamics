@@ -23,7 +23,7 @@ extern int julia_per_pixel_bf();
 extern int julia_orbit_bf();
 extern int julia_z_power_orbit_bf();
 extern void complex_log_bf(ComplexBigFloat &t, ComplexBigFloat const &s);
-extern void cplxmul_bf(ComplexBigFloat &t, ComplexBigFloat const &x, ComplexBigFloat const &y);
+extern void complex_multiply_bf(ComplexBigFloat &t, ComplexBigFloat const &x, ComplexBigFloat const &y);
 extern void ComplexPower_bf(ComplexBigFloat &t, ComplexBigFloat const &xx, ComplexBigFloat const &yy);
 
 #endif
