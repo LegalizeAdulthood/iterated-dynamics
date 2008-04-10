@@ -602,12 +602,10 @@ void adjust_corner_bf(float aspect_drift)
 	double Skew;
 	LDBL Magnification;
 
-	bf_t bftemp, bftemp2;
-	bf_t btmp1;
-	int saved = save_stack();
-	bftemp = alloc_stack(g_rbf_length + 2);
-	bftemp2 = alloc_stack(g_rbf_length + 2);
-	btmp1 =  alloc_stack(g_rbf_length + 2);
+	BigStackSaver savedStack;
+	bf_t bftemp(alloc_stack(g_rbf_length + 2));
+	bf_t bftemp2(alloc_stack(g_rbf_length + 2));
+	bf_t btmp1(alloc_stack(g_rbf_length + 2));
 
 	// While we're at it, let's adjust the Xmagfactor as well
 	// use bftemp, bftemp2 as bfXctr, bfYctr
@@ -670,9 +668,6 @@ void adjust_corner_bf(float aspect_drift)
 		// y3rd = ymax;
 		copy_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_max());
 	}
-
-
-	restore_stack(saved);
 }
 
 void adjust_corner_bf()
@@ -745,33 +740,31 @@ void adjust_corner()
 static void adjust_to_limits_bf(double expand)
 {
 	LDBL limit;
-	bf_t bcornerx[4], bcornery[4];
-	bf_t blowx, bhighx, blowy, bhighy, blimit, bftemp;
-	bf_t bcenterx, bcentery, badjx, badjy, btmp1, btmp2;
-	bf_t bexpand;
 	int i;
-	int saved = save_stack();
-	bcornerx[0] = alloc_stack(g_rbf_length + 2);
-	bcornerx[1] = alloc_stack(g_rbf_length + 2);
-	bcornerx[2] = alloc_stack(g_rbf_length + 2);
-	bcornerx[3] = alloc_stack(g_rbf_length + 2);
-	bcornery[0] = alloc_stack(g_rbf_length + 2);
-	bcornery[1] = alloc_stack(g_rbf_length + 2);
-	bcornery[2] = alloc_stack(g_rbf_length + 2);
-	bcornery[3] = alloc_stack(g_rbf_length + 2);
-	blowx       = alloc_stack(g_rbf_length + 2);
-	bhighx      = alloc_stack(g_rbf_length + 2);
-	blowy       = alloc_stack(g_rbf_length + 2);
-	bhighy      = alloc_stack(g_rbf_length + 2);
-	blimit      = alloc_stack(g_rbf_length + 2);
-	bftemp      = alloc_stack(g_rbf_length + 2);
-	bcenterx    = alloc_stack(g_rbf_length + 2);
-	bcentery    = alloc_stack(g_rbf_length + 2);
-	badjx       = alloc_stack(g_rbf_length + 2);
-	badjy       = alloc_stack(g_rbf_length + 2);
-	btmp1       = alloc_stack(g_rbf_length + 2);
-	btmp2       = alloc_stack(g_rbf_length + 2);
-	bexpand     = alloc_stack(g_rbf_length + 2);
+	BigStackSaver savedStack;
+	bf_t bcornerx[4];
+	bcornerx[0] = bf_t(alloc_stack(g_rbf_length + 2));
+	bcornerx[1] = bf_t(alloc_stack(g_rbf_length + 2));
+	bcornerx[2] = bf_t(alloc_stack(g_rbf_length + 2));
+	bcornerx[3] = bf_t(alloc_stack(g_rbf_length + 2));
+	bf_t bcornery[4];
+	bcornery[0] = bf_t(alloc_stack(g_rbf_length + 2));
+	bcornery[1] = bf_t(alloc_stack(g_rbf_length + 2));
+	bcornery[2] = bf_t(alloc_stack(g_rbf_length + 2));
+	bcornery[3] = bf_t(alloc_stack(g_rbf_length + 2));
+	bf_t blowx(alloc_stack(g_rbf_length + 2));
+	bf_t bhighx(alloc_stack(g_rbf_length + 2));
+	bf_t blowy(alloc_stack(g_rbf_length + 2));
+	bf_t bhighy(alloc_stack(g_rbf_length + 2));
+	bf_t blimit(alloc_stack(g_rbf_length + 2));
+	bf_t bftemp(alloc_stack(g_rbf_length + 2));
+	bf_t bcenterx(alloc_stack(g_rbf_length + 2));
+	bf_t bcentery(alloc_stack(g_rbf_length + 2));
+	bf_t badjx(alloc_stack(g_rbf_length + 2));
+	bf_t badjy(alloc_stack(g_rbf_length + 2));
+	bf_t btmp1(alloc_stack(g_rbf_length + 2));
+	bf_t btmp2(alloc_stack(g_rbf_length + 2));
+	bf_t bexpand(alloc_stack(g_rbf_length + 2));
 
 	limit = 32767.99;
 
@@ -987,7 +980,6 @@ static void adjust_to_limits_bf(double expand)
 	sub_bf(g_escape_time_state.m_grid_bf.y_3rd(), bcornery[2], badjy);
 
 	adjust_corner_bf(); // make 3rd corner exact if very near other co-ords
-	restore_stack(saved);
 }
 
 static void adjust_to_limits(double expand)
@@ -1171,12 +1163,10 @@ static void smallest_add(double *num)
 
 static void smallest_add_bf(bf_t num)
 {
-	bf_t btmp1;
-	int saved = save_stack();
-	btmp1 = alloc_stack(g_bf_length + 2);
+	BigStackSaver savedStack;
+	bf_t btmp1(alloc_stack(g_bf_length + 2));
 	mult_bf(btmp1, floattobf(btmp1, 5.0e-16), num);
 	add_a_bf(num, btmp1);
-	restore_stack(saved);
 }
 
 static int ratio_bad(double actual, double desired)

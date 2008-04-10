@@ -232,7 +232,7 @@ bn_t bftobn(bn_t n, bf_t f)
 	int movebytes;
 	BYTE hibyte;
 
-	fexp = S16(big_access16(f + g_bf_length));
+	fexp = S16(f.get16(g_bf_length));
 	if (fexp >= g_int_length)
 	{ // if it's too big, use max value
 		max_bn(n);
@@ -251,8 +251,8 @@ bn_t bftobn(bn_t n, bf_t f)
 
 	// already checked for over/underflow, this should be ok
 	movebytes = g_bn_length - g_int_length + fexp + 1;
-	memcpy(n.storage(), f + g_bf_length-movebytes-1, movebytes);
-	hibyte = *(f + g_bf_length-1);
+	memcpy(n.storage(), f.storage() + g_bf_length - 1 - movebytes, movebytes);
+	hibyte = *(f.storage() + g_bf_length - 1);
 	memset(n.storage() + movebytes, hibyte, g_bn_length-movebytes); // sign extends
 	return n;
 }
@@ -263,10 +263,10 @@ bn_t bftobn(bn_t n, bf_t f)
 // g_bf_length must be at least g_bn_length + 2
 bf_t bntobf(bf_t f, bn_t n)
 {
-	memcpy(f + g_bf_length-g_bn_length-1, n.storage(), g_bn_length);
-	memset(f, 0, g_bf_length - g_bn_length - 1);
-	*(f + g_bf_length-1) = BYTE(is_bn_neg(n) ? 0xFF : 0x00); // sign extend
-	big_set16(f + g_bf_length, (S16)(g_int_length - 1)); // exp
+	memcpy(f.storage() + g_bf_length-g_bn_length-1, n.storage(), g_bn_length);
+	memset(f.storage(), 0, g_bf_length - g_bn_length - 1);
+	*(f.storage() + g_bf_length-1) = BYTE(is_bn_neg(n) ? 0xFF : 0x00); // sign extend
+	f.set16(g_bf_length, (S16)(g_int_length - 1)); // exp
 	norm_bf(f);
 	return f;
 }
@@ -277,8 +277,8 @@ bf_t bntobf(bf_t f, bn_t n)
 bf_t inttobf(bf_t r, long longval)
 {
 	clear_bf(r);
-	big_set32(r + g_bf_length-4, (S32)longval);
-	big_set16(r + g_bf_length, (S16)2);
+	r.set32(g_bf_length - 4, (S32)longval);
+	r.set16(g_bf_length, (S16)2);
 	norm_bf(r);
 	return r;
 }
@@ -292,7 +292,7 @@ long bftoint(bf_t f)
 	int fexp;
 	long longval;
 
-	fexp = (S16)big_access16(f + g_bf_length);
+	fexp = (S16) f.get16(g_bf_length);
 	if (fexp > 3)
 	{
 		longval = 0x7FFFFFFFL;
@@ -302,7 +302,7 @@ long bftoint(bf_t f)
 		}
 		return longval;
 	}
-	longval = big_access32(f + g_bf_length-5);
+	longval = f.get32(g_bf_length - 5);
 	longval >>= 8*(3-fexp);
 	return longval;
 }
@@ -349,8 +349,8 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 	int fexp;
 	int rexp;
 	LDBL f;
-	big_t orig_r;
-	big_t orig_n; // orig_bftmp1 not needed here
+	bf_t orig_r;
+	bf_t orig_n; // orig_bftmp1 not needed here
 	int orig_bflength;
 	int orig_bnlength;
 	int orig_padding;
@@ -366,8 +366,8 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 		neg_a_bf(n);
 	}
 
-	fexp = (S16)big_access16(n + g_bf_length);
-	big_set16(n + g_bf_length, (S16)0); // put within LDBL range
+	fexp = (S16) n.get16(g_bf_length);
+	n.set16(g_bf_length, 0); // put within LDBL range
 
 	f = bftofloat(n);
 	if (f == 0) // division by zero
@@ -399,8 +399,8 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 	calculate_bignum_lengths();
 
 	// adjust pointers
-	r = orig_r + orig_bflength - g_bf_length;
-	n = orig_n + orig_bflength - g_bf_length;
+	r = bf_t(orig_r, orig_bflength - g_bf_length);
+	n = bf_t(orig_n, orig_bflength - g_bf_length);
 	// bftmp1 = orig_bftmp1 + orig_bflength - g_bf_length;
 
 	floattobf(r, f); // start with approximate inverse
@@ -414,8 +414,8 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 			g_bn_length = orig_bnlength;
 		}
 		calculate_bignum_lengths();
-		r = orig_r + orig_bflength - g_bf_length;
-		n = orig_n + orig_bflength - g_bf_length;
+		r = bf_t(orig_r, orig_bflength - g_bf_length);
+		n = bf_t(orig_n, orig_bflength - g_bf_length);
 		// bftmp1 = orig_bftmp1 + orig_bflength - g_bf_length;
 
 		unsafe_mult_bf(bftmp1, r, n); // bftmp1 = rn
@@ -448,9 +448,9 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 	{
 		neg_a_bf(r);
 	}
-	rexp = (S16)big_access16(r + g_bf_length);
+	rexp = (S16) r.get16(g_bf_length);
 	rexp -= fexp;
-	big_set16(r + g_bf_length, (S16)rexp); // adjust result exponent
+	r.set16(g_bf_length, rexp); // adjust result exponent
 	return r;
 }
 
@@ -471,8 +471,8 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
 
 	// first, check for valid data
 
-	aexp = (S16)big_access16(n1 + g_bf_length);
-	big_set16(n1 + g_bf_length, (S16)0); // put within LDBL range
+	aexp = (S16) n1.get16(g_bf_length);
+	n1.set16(g_bf_length, 0); // put within LDBL range
 
 	a = bftofloat(n1);
 	if (a == 0) // division into zero
@@ -481,8 +481,8 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
 		return r;
 	}
 
-	bexp = (S16)big_access16(n2 + g_bf_length);
-	big_set16(n2 + g_bf_length, (S16)0); // put within LDBL range
+	bexp = (S16) n2.get16(g_bf_length);
+	n2.set16(g_bf_length, 0); // put within LDBL range
 
 	b = bftofloat(n2);
 	if (b == 0) // division by zero
@@ -495,9 +495,9 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
 	unsafe_mult_bf(bftmp1, n1, r);
 	copy_bf(r, bftmp1); // r = bftmp1
 
-	rexp = (S16)big_access16(r + g_bf_length);
+	rexp = (S16) r.get16(g_bf_length);
 	rexp += aexp - bexp;
-	big_set16(r + g_bf_length, (S16)rexp); // adjust result exponent
+	r.set16(g_bf_length, rexp); // adjust result exponent
 
 	return r;
 }
@@ -513,8 +513,8 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 	int comp;
 	int almost_match = 0;
 	LDBL f;
-	big_t orig_r;
-	big_t orig_n;
+	bf_t orig_r;
+	bf_t orig_n;
 	int orig_bflength;
 	int orig_bnlength;
 	int orig_padding;
@@ -560,8 +560,8 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 	calculate_bignum_lengths();
 
 	// adjust pointers
-	r = orig_r + orig_bflength - g_bf_length;
-	n = orig_n + orig_bflength - g_bf_length;
+	r = bf_t(orig_r, orig_bflength - g_bf_length);
+	n = bf_t(orig_n, orig_bflength - g_bf_length);
 
 	floattobf(r, f); // start with approximate sqrt
 
@@ -574,8 +574,8 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 			g_bn_length = orig_bnlength;
 		}
 		calculate_bignum_lengths();
-		r = orig_r + orig_bflength - g_bf_length;
-		n = orig_n + orig_bflength - g_bf_length;
+		r = bf_t(orig_r, orig_bflength - g_bf_length);
+		n = bf_t(orig_n, orig_bflength - g_bf_length);
 
 		unsafe_div_bf(bftmp3, n, r);
 		unsafe_add_a_bf(r, bftmp3);
@@ -618,8 +618,8 @@ bf_t exp_bf(bf_t r, bf_t n)
 {
 	U16 fact = 1;
 
-	BYTE *testexp = (bftmp2 + g_bf_length);
-	BYTE *rexp = (r + g_bf_length);
+	bf_t testexp(bftmp2, g_bf_length);
+	bf_t rexp(r, g_bf_length);
 
 	if (is_bf_zero(n))
 	{
@@ -635,7 +635,7 @@ bf_t exp_bf(bf_t r, bf_t n)
 		copy_bf(bftmp1, n);
 		unsafe_mult_bf(bftmp3, bftmp2, bftmp1);
 		unsafe_div_bf_int(bftmp2, bftmp3, fact);
-		if (big_accessS16(testexp) < big_accessS16(rexp)-(g_bf_length-2))
+		if (testexp.getS16() < rexp.getS16()-(g_bf_length-2))
 		{
 			break; // too small to register
 		}
@@ -657,9 +657,9 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 	int comp;
 	int almost_match = 0;
 	LDBL f;
-	big_t orig_r;
-	big_t orig_n;
-	big_t orig_bftmp5;
+	bf_t orig_r;
+	bf_t orig_n;
+	bf_t orig_bftmp5;
 	int orig_bflength;
 	int orig_bnlength;
 	int orig_padding;
@@ -703,9 +703,9 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 	calculate_bignum_lengths();
 
 	// adjust pointers
-	r = orig_r + orig_bflength - g_bf_length;
-	n = orig_n + orig_bflength - g_bf_length;
-	bftmp5 = orig_bftmp5 + orig_bflength - g_bf_length;
+	r = bf_t(orig_r, orig_bflength - g_bf_length);
+	n = bf_t(orig_n, orig_bflength - g_bf_length);
+	bftmp5 = bf_t(orig_bftmp5, orig_bflength - g_bf_length);
 
 	floattobf(r, f); // start with approximate ln
 	neg_a_bf(r); // -r
@@ -720,9 +720,9 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 			g_bn_length = orig_bnlength;
 		}
 		calculate_bignum_lengths();
-		r = orig_r + orig_bflength - g_bf_length;
-		n = orig_n + orig_bflength - g_bf_length;
-		bftmp5 = orig_bftmp5 + orig_bflength - g_bf_length;
+		r = bf_t(orig_r, orig_bflength - g_bf_length);
+		n = bf_t(orig_n, orig_bflength - g_bf_length);
+		bftmp5 = bf_t(orig_bftmp5, orig_bflength - g_bf_length);
 
 		exp_bf(bftmp6, r);     // exp(-r)
 		unsafe_mult_bf(bftmp2, bftmp6, n);  // n*exp(-r)
@@ -779,13 +779,9 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 	int switch_sincos = 0;
 	int sin_done = 0;
 	int cos_done = 0;
-	BYTE *testexp;
-	BYTE *cexp;
-	BYTE *sexp;
-
-	testexp = (bftmp1 + g_bf_length);
-	cexp = (c + g_bf_length);
-	sexp = (s + g_bf_length);
+	bf_t testexp(bftmp1, g_bf_length);
+	bf_t cexp(c, g_bf_length);
+	bf_t sexp(s, g_bf_length);
 
 	// assure range 0 <= x < pi/4
 
@@ -874,7 +870,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 		div_a_bf_int(bftmp1, fact++);
 		if (!cos_done)
 		{
-			cos_done = (big_accessS16(testexp) < big_accessS16(cexp)-(g_bf_length-2)); // too small to register
+			cos_done = (testexp.getS16() < cexp.getS16()-(g_bf_length-2)); // too small to register
 			if (!cos_done)
 			{
 				if (k) // alternate between adding and subtracting
@@ -894,7 +890,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 		div_a_bf_int(bftmp1, fact++);
 		if (!sin_done)
 		{
-			sin_done = (big_accessS16(testexp) < big_accessS16(sexp)-(g_bf_length-2)); // too small to register
+			sin_done = (testexp.getS16() < sexp.getS16()-(g_bf_length-2)); // too small to register
 			if (!sin_done)
 			{
 				if (k) // alternate between adding and subtracting
@@ -952,10 +948,10 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 	int almost_match = 0;
 	int signflag = 0;
 	LDBL f;
-	big_t orig_r;
-	big_t orig_n;
-	big_t orig_bf_pi;
-	big_t orig_bftmp3;
+	bf_t orig_r;
+	bf_t orig_n;
+	bf_t orig_bf_pi;
+	bf_t orig_bftmp3;
 	int orig_bflength;
 	int orig_bnlength;
 	int orig_padding;
@@ -1011,10 +1007,10 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 	calculate_bignum_lengths();
 
 	// adjust pointers
-	r = orig_r + orig_bflength - g_bf_length;
-	n = orig_n + orig_bflength - g_bf_length;
-	bf_pi = orig_bf_pi + orig_bflength - g_bf_length;
-	bftmp3 = orig_bftmp3 + orig_bflength - g_bf_length;
+	r = bf_t(orig_r, orig_bflength - g_bf_length);
+	n = bf_t(orig_n, orig_bflength - g_bf_length);
+	bf_pi = bf_t(orig_bf_pi, orig_bflength - g_bf_length);
+	bftmp3 = bf_t(orig_bftmp3, orig_bflength - g_bf_length);
 
 	f = atanl(f); // approximate arctangent
 	// no need to check overflow
@@ -1031,10 +1027,10 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 			g_bn_length = orig_bnlength;
 		}
 		calculate_bignum_lengths();
-		r = orig_r + orig_bflength - g_bf_length;
-		n = orig_n + orig_bflength - g_bf_length;
-		bf_pi = orig_bf_pi + orig_bflength - g_bf_length;
-		bftmp3 = orig_bftmp3 + orig_bflength - g_bf_length;
+		r = bf_t(orig_r, orig_bflength - g_bf_length);
+		n = bf_t(orig_n, orig_bflength - g_bf_length);
+		bf_pi = bf_t(orig_bf_pi, orig_bflength - g_bf_length);
+		bftmp3 = bf_t(orig_bftmp3, orig_bflength - g_bf_length);
 
 		unsafe_sincos_bf(bftmp4, bftmp5, bftmp3);   // sin(r), cos(r)
 		copy_bf(bftmp3, r); // restore bftmp3 from sincos_bf()
@@ -1337,11 +1333,11 @@ int convert_bf(bf_t newnum, bf_t old, int newbflength, int oldbflength)
 
 	if (newbflength > oldbflength)
 	{
-		memcpy(newnum + newbflength-oldbflength, old, oldbflength + 2);
+		memcpy(newnum.storage() + newbflength - oldbflength, old.storage(), oldbflength + 2);
 	}
 	else
 	{
-		memcpy(newnum, old + oldbflength-newbflength, newbflength + 2);
+		memcpy(newnum.storage(), old.storage() + oldbflength - newbflength, newbflength + 2);
 	}
 	return 0;
 }
@@ -1353,35 +1349,36 @@ bf_t norm_bf(bf_t r)
 {
 	int scale;
 	BYTE hi_byte;
-	BYTE *rexp = (r + g_bf_length);
+	BYTE *rstorage = r.storage();
+	bf_t rexp(r, g_bf_length);
 
 	// check for overflow
-	hi_byte = r[g_bf_length-1];
+	hi_byte = rstorage[g_bf_length-1];
 	if (hi_byte != 0x00 && hi_byte != 0xFF)
 	{
-		memmove(r, r + 1, g_bf_length-1);
-		r[g_bf_length-1] = BYTE(hi_byte & 0x80 ? 0xFF : 0x00);
-		big_setS16(rexp, big_accessS16(rexp) + (S16)1);   // exp
+		memmove(rstorage, rstorage + 1, g_bf_length-1);
+		rstorage[g_bf_length-1] = BYTE(hi_byte & 0x80 ? 0xFF : 0x00);
+		rexp.setS16(rexp.getS16() + (S16)1);   // exp
 	}
 	// check for underflow
 	else
 	{
-		for (scale = 2; scale < g_bf_length && r[g_bf_length-scale] == hi_byte; scale++)
+		for (scale = 2; scale < g_bf_length && rstorage[g_bf_length-scale] == hi_byte; scale++)
 		{
 			; // do nothing
 		}
 		if (scale == g_bf_length && hi_byte == 0) // zero
 		{
-			big_setS16(rexp, 0);
+			rexp.setS16(0);
 		}
 		else
 		{
 			scale -= 2;
 			if (scale > 0) // it did underflow
 			{
-				memmove(r + scale, r, g_bf_length-scale-1);
-				memset(r, 0, scale);
-				big_setS16(rexp, big_accessS16(rexp)-(S16)scale);    // exp
+				memmove(rstorage + scale, rstorage, g_bf_length-scale-1);
+				memset(rstorage, 0, scale);
+				rexp.setS16(rexp.getS16()-(S16)scale);    // exp
 			}
 		}
 	}
@@ -1396,7 +1393,7 @@ bf_t norm_bf(bf_t r)
 void norm_sign_bf(bf_t r, int positive)
 {
 	norm_bf(r);
-	r[g_bf_length-1] = BYTE(positive ? 0x00 : 0xFF);
+	r.storage()[g_bf_length-1] = BYTE(positive ? 0x00 : 0xFF);
 }
 /******************************************************/
 // adjust n1, n2 for before addition or subtraction
@@ -1407,48 +1404,46 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
 	int scale;
 	int fill_byte;
 	S16 rexp;
-	BYTE *n1exp;
-	BYTE *n2exp;
 
 	// scale n1 or n2
 	// compare exp's
-	n1exp = (n1 + g_bf_length);
-	n2exp = (n2 + g_bf_length);
-	if (big_accessS16(n1exp) > big_accessS16(n2exp))
+	bf_t n1exp(n1, g_bf_length);
+	bf_t n2exp(n2, g_bf_length);
+	if (n1exp.getS16() > n2exp.getS16())
 	{ // scale n2
-		scale = big_accessS16(n1exp) - big_accessS16(n2exp); // n1exp - n2exp
+		scale = n1exp.getS16() - n2exp.getS16(); // n1exp - n2exp
 		if (scale < g_bf_length)
 		{
 			fill_byte = is_bf_neg(n2) ? 0xFF : 0x00;
-			memmove(n2, n2 + scale, g_bf_length-scale);
-			memset(n2 + g_bf_length-scale, fill_byte, scale);
+			memmove(n2.storage(), n2.storage() + scale, g_bf_length - scale);
+			memset(n2.storage() + g_bf_length - scale, fill_byte, scale);
 		}
 		else
 		{
 			clear_bf(n2);
 		}
-		big_setS16(n2exp, big_accessS16(n1exp)); // *n2exp = *n1exp; set exp's =
-		rexp = big_accessS16(n2exp);
+		n2exp.setS16(n1exp.getS16()); // *n2exp = *n1exp; set exp's =
+		rexp = n2exp.getS16();
 	}
-	else if (big_accessS16(n1exp) < big_accessS16(n2exp))
+	else if (n1exp.getS16() < n2exp.getS16())
 	{ // scale n1
-		scale = big_accessS16(n2exp) - big_accessS16(n1exp);  // n2exp - n1exp
+		scale = n2exp.getS16() - n1exp.getS16();  // n2exp - n1exp
 		if (scale < g_bf_length)
 		{
 			fill_byte = is_bf_neg(n1) ? 0xFF : 0x00;
-			memmove(n1, n1 + scale, g_bf_length-scale);
-			memset(n1 + g_bf_length-scale, fill_byte, scale);
+			memmove(n1.storage(), n1.storage() + scale, g_bf_length - scale);
+			memset(n1.storage() + g_bf_length - scale, fill_byte, scale);
 		}
 		else
 		{
 			clear_bf(n1);
 		}
-		big_setS16(n1exp, big_accessS16(n2exp)); // *n1exp = *n2exp; set exp's =
-		rexp = big_accessS16(n2exp);
+		n1exp.setS16(n2exp.getS16()); // *n1exp = *n2exp; set exp's =
+		rexp = n2exp.getS16();
 	}
 	else
 	{
-		rexp = big_accessS16(n1exp);
+		rexp = n1exp.getS16();
 	}
 	return rexp;
 }
@@ -1458,7 +1453,7 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
 bf_t max_bf(bf_t r)
 {
 	inttobf(r, 1);
-	big_set16(r + g_bf_length, (S16)(LDBL_MAX_EXP/8));
+	r.setS16(g_bf_length, (S16)(LDBL_MAX_EXP/8));
 	return r;
 }
 
@@ -1474,8 +1469,8 @@ int cmp_bf(bf_t n1, bf_t n2)
 	int i;
 	int sign1;
 	int sign2;
-	BYTE *n1exp;
-	BYTE *n2exp;
+	bf_t n1exp;
+	bf_t n2exp;
 	U16 value1;
 	U16 value2;
 
@@ -1494,13 +1489,13 @@ int cmp_bf(bf_t n1, bf_t n2)
 	// signs are the same
 
 	// compare exponents, using signed comparisons
-	n1exp = (n1 + g_bf_length);
-	n2exp = (n2 + g_bf_length);
-	if (big_accessS16(n1exp) > big_accessS16(n2exp))
+	n1exp = bf_t(n1, g_bf_length);
+	n2exp = bf_t(n2, g_bf_length);
+	if (n1exp.getS16() > n2exp.getS16())
 	{
 		return sign1*(g_bf_length);
 	}
-	else if (big_accessS16(n1exp) < big_accessS16(n2exp))
+	else if (n1exp.getS16() < n2exp.getS16())
 	{
 		return -sign1*(g_bf_length);
 	}
@@ -1510,8 +1505,8 @@ int cmp_bf(bf_t n1, bf_t n2)
 	// two bytes at a time
 	for (i = g_bf_length-2; i >= 0; i -= 2)
 	{
-		value1 = big_access16(n1 + i);
-		value2 = big_access16(n2 + i);
+		value1 = n1.get16(i);
+		value2 = n2.get16(i);
 		if (value1 > value2)
 		{
 			// high byte, low byte was different
@@ -1531,7 +1526,7 @@ int cmp_bf(bf_t n1, bf_t n2)
 // returns 1 if negative, 0 if positive or zero
 bool is_bf_neg(bf_t n)
 {
-	return (S8)n[g_bf_length-1] < 0;
+	return n.getS8(g_bf_length - 1) < 0;
 }
 
 /********************************************************************/
@@ -1542,7 +1537,7 @@ bool is_bf_not_zero(bf_t n)
 {
 	int bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	bool retval = is_bn_not_zero(bn_t(n));
+	bool retval = is_bn_not_zero(bn_t(n.storage()));
 	g_bn_length = bnl;
 	return retval;
 }
@@ -1553,7 +1548,6 @@ bool is_bf_not_zero(bf_t n)
 bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2)
 {
 	int bnl;
-	BYTE *rexp;
 
 	if (is_bf_zero(n1))
 	{
@@ -1566,12 +1560,12 @@ bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2)
 		return r;
 	}
 
-	rexp = (r + g_bf_length);
-	big_setS16(rexp, adjust_bf_add(n1, n2));
+	bf_t rexp(r, g_bf_length);
+	rexp.setS16(adjust_bf_add(n1, n2));
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	add_bn(bn_t(r), bn_t(n1), bn_t(n2));
+	add_bn(bn_t(r.storage()), bn_t(n1.storage()), bn_t(n2.storage()));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1624,12 +1618,12 @@ bf_t unsafe_sub_bf(bf_t r, bf_t n1, bf_t n2)
 		return r;
 	}
 
-	BYTE *rexp = (r + g_bf_length);
-	big_setS16(rexp, adjust_bf_add(n1, n2));
+	bf_t rexp(r, g_bf_length);
+	rexp.setS16(adjust_bf_add(n1, n2));
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	sub_bn(bn_t(r), bn_t(n1), bn_t(n2));
+	sub_bn(bn_t(r.storage()), bn_t(n1.storage()), bn_t(n2.storage()));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1667,16 +1661,13 @@ bf_t unsafe_sub_a_bf(bf_t r, bf_t n)
 // r = -n
 bf_t neg_bf(bf_t r, bf_t n)
 {
-	int bnl;
-	BYTE *rexp, *nexp;
+	bf_t rexp(r, g_bf_length);
+	bf_t nexp(n, g_bf_length);
+	rexp.setS16(nexp.getS16()); // *rexp = *nexp;
 
-	rexp = (r + g_bf_length);
-	nexp = (n + g_bf_length);
-	big_setS16(rexp, big_accessS16(nexp)); // *rexp = *nexp;
-
-	bnl = g_bn_length;
+	int bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	neg_bn(bn_t(r), bn_t(n));
+	neg_bn(bn_t(r.storage()), bn_t(n.storage()));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1702,16 +1693,13 @@ bf_t neg_a_bf(bf_t r)
 // r = 2*n
 bf_t double_bf(bf_t r, bf_t n)
 {
-	int bnl;
-	BYTE *rexp, *nexp;
+	bf_t rexp(r, g_bf_length);
+	bf_t nexp(n, g_bf_length);
+	rexp.setS16(nexp.getS16()); // *rexp = *nexp;
 
-	rexp = (r + g_bf_length);
-	nexp = (n + g_bf_length);
-	big_setS16(rexp, big_accessS16(nexp)); // *rexp = *nexp;
-
-	bnl = g_bn_length;
+	int bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	double_bn(bn_t(r), bn_t(n));
+	double_bn(bn_t(r.storage()), bn_t(n.storage()));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1726,7 +1714,7 @@ bf_t double_a_bf(bf_t r)
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	double_a_bn(bn_t(r));
+	double_a_bn(bn_t(r.storage()));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1737,16 +1725,13 @@ bf_t double_a_bf(bf_t r)
 // r = n/2
 bf_t half_bf(bf_t r, bf_t n)
 {
-	int bnl;
-	BYTE *rexp, *nexp;
+	bf_t rexp(r, g_bf_length);
+	bf_t nexp(n, g_bf_length);
+	rexp.setS16(nexp.getS16()); // *rexp = *nexp;
 
-	rexp = (r + g_bf_length);
-	nexp = (n + g_bf_length);
-	big_setS16(rexp, big_accessS16(nexp)); // *rexp = *nexp;
-
-	bnl = g_bn_length;
+	int bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	half_bn(bn_t(r), bn_t(n));
+	half_bn(bn_t(r.storage()), bn_t(n.storage()));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1761,7 +1746,7 @@ bf_t half_a_bf(bf_t r)
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	half_a_bn(bn_t(r));
+	half_a_bn(bn_t(r.storage()));
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -1775,12 +1760,6 @@ bf_t half_a_bf(bf_t r)
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
 bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 {
-	int bnl;
-	int dbfl;
-	BYTE *rexp;
-	BYTE *n1exp;
-	BYTE *n2exp;
-
 	if (is_bf_zero(n1) || is_bf_zero(n2))
 	{
 		g_bf_length <<= 1;
@@ -1789,16 +1768,16 @@ bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 		return r;
 	}
 
-	dbfl = 2*g_bf_length; // double width g_bf_length
-	rexp  = (r + dbfl); // note: 2*g_bf_length
-	n1exp = (n1 + g_bf_length);
-	n2exp = (n2 + g_bf_length);
+	int dbfl = 2*g_bf_length; // double width g_bf_length
+	bf_t rexp(r, dbfl); // note: 2*g_bf_length
+	bf_t n1exp(n1, g_bf_length);
+	bf_t n2exp(n2, g_bf_length);
 	// add exp's
-	big_setS16(rexp, (S16)(big_accessS16(n1exp) + big_accessS16(n2exp)));
+	rexp.setS16((S16)(n1exp.getS16() + n2exp.getS16()));
 
-	bnl = g_bn_length;
+	int bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	unsafe_full_mult_bn(bn_t(r), bn_t(n1), bn_t(n2));
+	unsafe_full_mult_bn(bn_t(r.storage()), bn_t(n1.storage()), bn_t(n2.storage()));
 	g_bn_length = bnl;
 
 	// handle normalizing full mult on individual basis
@@ -1819,8 +1798,6 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 	int bfl;
 	int rl;
 	int rexp;
-	BYTE *n1exp;
-	BYTE *n2exp;
 
 	if (is_bf_zero(n1) || is_bf_zero(n2))
 	{
@@ -1828,10 +1805,10 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 		return r;
 	}
 
-	n1exp = (n1 + g_bf_length);
-	n2exp = (n2 + g_bf_length);
+	bf_t n1exp(n1, g_bf_length);
+	bf_t n2exp(n2, g_bf_length);
 	// add exp's
-	rexp = big_accessS16(n1exp) + big_accessS16(n2exp);
+	rexp = n1exp.getS16() + n2exp.getS16();
 
 	positive = (is_bf_neg(n1) == is_bf_neg(n2)); // are they the same sign?
 
@@ -1839,16 +1816,16 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 	g_bn_length = g_bf_length;
 	rl = g_r_length;
 	g_r_length = g_rbf_length;
-	unsafe_mult_bn(bn_t(r), bn_t(n1), bn_t(n2));
+	unsafe_mult_bn(bn_t(r.storage()), bn_t(n1.storage()), bn_t(n2.storage()));
 	g_bn_length = bnl;
 	g_r_length = rl;
 
 	bfl = g_bf_length;
 	g_bf_length = g_rbf_length;
-	big_set16(r + g_bf_length, (S16)(rexp + 2)); // adjust after mult
+	r.setS16(g_bf_length, (rexp + 2)); // adjust after mult
 	norm_sign_bf(r, positive);
 	g_bf_length = bfl;
-	memmove(r, r + g_padding, g_bf_length + 2); // shift back
+	memmove(r.storage(), r.storage() + g_padding, g_bf_length + 2); // shift back
 
 	return r;
 }
@@ -1877,13 +1854,13 @@ bf_t unsafe_full_square_bf(bf_t r, bf_t n)
 	}
 
 	dbfl = 2*g_bf_length; // double width g_bf_length
-	BYTE *rexp  = (r + dbfl); // note: 2*g_bf_length
-	BYTE *nexp = (n + g_bf_length);
-	big_setS16(rexp, 2*big_accessS16(nexp));
+	bf_t rexp(r, dbfl); // note: 2*g_bf_length
+	bf_t nexp(n, g_bf_length);
+	rexp.setS16(2*nexp.getS16());
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	unsafe_full_square_bn(bn_t(r), bn_t(n));
+	unsafe_full_square_bn(bn_t(r.storage()), bn_t(n.storage()));
 	g_bn_length = bnl;
 
 	// handle normalizing full mult on individual basis
@@ -1917,24 +1894,24 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 		return r;
 	}
 
-	BYTE *nexp = (n + g_bf_length);
-	rexp = (S16)(2*big_accessS16(nexp));
+	bf_t nexp(n, g_bf_length);
+	rexp = (S16)(2*nexp.getS16());
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
 	rl = g_r_length;
 	g_r_length = g_rbf_length;
-	unsafe_square_bn(bn_t(r), bn_t(n));
+	unsafe_square_bn(bn_t(r.storage()), bn_t(n.storage()));
 	g_bn_length = bnl;
 	g_r_length = rl;
 
 	bfl = g_bf_length;
 	g_bf_length = g_rbf_length;
-	big_set16(r + g_bf_length, (S16)(rexp + 2)); // adjust after mult
+	r.setS16(g_bf_length, (rexp + 2)); // adjust after mult
 
 	norm_sign_bf(r, 1);
 	g_bf_length = bfl;
-	memmove(r, r + g_padding, g_bf_length + 2); // shift back
+	memmove(r.storage(), r.storage() + g_padding, g_bf_length + 2); // shift back
 
 	return r;
 }
@@ -1947,9 +1924,9 @@ bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
 	int positive;
 	int bnl;
 
-	BYTE *rexp = (r + g_bf_length);
-	BYTE *nexp = (n + g_bf_length);
-	big_setS16(rexp, big_accessS16(nexp)); // *rexp = *nexp;
+	bf_t rexp(r, g_bf_length);
+	bf_t nexp(n, g_bf_length);
+	rexp.setS16(nexp.getS16()); // *rexp = *nexp;
 
 	positive = !is_bf_neg(n);
 
@@ -1960,13 +1937,13 @@ bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
 	*/
 	if (u > 0x00FF)
 	{ // un-normalize n
-		memmove(n, n + 1, g_bf_length-1);  // this sign extends as well
-		big_setS16(rexp, big_accessS16(rexp) + (S16)1);
+		memmove(n.storage(), n.storage() + 1, g_bf_length-1);  // this sign extends as well
+		rexp.setS16(rexp.getS16() + (S16)1);
 	}
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	mult_bn_int(bn_t(r), bn_t(n), u);
+	mult_bn_int(bn_t(r.storage()), bn_t(n.storage()), u);
 	g_bn_length = bnl;
 
 	norm_sign_bf(r, positive);
@@ -1980,7 +1957,7 @@ bf_t mult_a_bf_int(bf_t r, U16 u)
 	int positive;
 	int bnl;
 
-	BYTE *rexp = (r + g_bf_length);
+	bf_t rexp(r, g_bf_length);
 	positive = !is_bf_neg(r);
 
 	/*
@@ -1990,13 +1967,13 @@ bf_t mult_a_bf_int(bf_t r, U16 u)
 	*/
 	if (u > 0x00FF)
 	{ // un-normalize n
-		memmove(r, r + 1, g_bf_length-1);  // this sign extends as well
-		big_setS16(rexp, big_accessS16(rexp) + (S16)1);
+		memmove(r.storage(), r.storage() + 1, g_bf_length-1);  // this sign extends as well
+		rexp.setS16(rexp.getS16() + (S16)1);
 	}
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	mult_a_bn_int(bn_t(r), u);
+	mult_a_bn_int(bn_t(r.storage()), u);
 	g_bn_length = bnl;
 
 	norm_sign_bf(r, positive);
@@ -2019,13 +1996,13 @@ bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u)
 		return r;
 	}
 
-	BYTE *rexp = (r + g_bf_length);
-	BYTE *nexp = (n + g_bf_length);
-	big_setS16(rexp, big_accessS16(nexp)); // *rexp = *nexp;
+	bf_t rexp(r, g_bf_length);
+	bf_t nexp(n, g_bf_length);
+	rexp.setS16(nexp.getS16()); // *rexp = *nexp;
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	unsafe_div_bn_int(bn_t(r), bn_t(n), u);
+	unsafe_div_bn_int(bn_t(r.storage()), bn_t(n.storage()), u);
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -2054,7 +2031,7 @@ bf_t div_a_bf_int(bf_t r, U16 u)
 
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	div_a_bn_int(bn_t(r), u);
+	div_a_bn_int(bn_t(r.storage()), u);
 	g_bn_length = bnl;
 
 	norm_bf(r);
@@ -2221,8 +2198,8 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
 		return r;
 	}
 
-	onesbyte = n + g_bf_length - 1;           // really it's n + g_bf_length-2
-	power256 = (S16)big_access16(n + g_bf_length) + 1; // so adjust power256 by 1
+	onesbyte = bf_t(n, g_bf_length - 1);           // really it's n + g_bf_length-2
+	power256 = n.getS16(g_bf_length) + 1; // so adjust power256 by 1
 
 	if (dec == 0)
 	{
@@ -2244,22 +2221,23 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
 	p = -1;  // multiply by 10 right away
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
+	BYTE *rstorage = r;
 	for (d = 1; d <= dec; d++)
 	{
 		// pretend it's a bn_t instead of a bf_t
 		// this leaves n un-normalized, which is what we want here
-		mult_a_bn_int(bn_t(n), 10);
+		mult_a_bn_int(bn_t(n.storage()), 10);
 
-		r[d] = *onesbyte;
-		if (d == 1 && r[d] == 0)
+		rstorage[d] = onesbyte.get8();
+		if (d == 1 && rstorage[d] == 0)
 		{
 			d = 0; // back up a digit
 			p--; // and decrease by a factor of 10
 		}
-		*onesbyte = 0;
+		onesbyte.set8(0);
 	}
 	g_bn_length = bnl;
-	big_set16(power10, (U16)p); // save power of ten
+	big_set16(power10, (U16) p); // save power of ten
 
 	// the digits are all read in, now scale it by 256^power256
 	if (power256 > 0)
@@ -2343,7 +2321,7 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
 	while (overflow)
 	{
 		p++;
-		memmove(r + 2, r + 1, dec-1);
+		memmove(r + 2, r + 1, dec - 1);
 		r[1] = BYTE(overflow % 10);
 		overflow /= 10;
 	}

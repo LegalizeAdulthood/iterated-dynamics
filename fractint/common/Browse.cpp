@@ -251,9 +251,9 @@ static void transform(CoordinateD *point)
 // maps points onto view screen
 static void transform_bf(bf_t bt_x, bf_t bt_y, CoordinateD *point)
 {
-	int saved = save_stack();
-	bf_t bt_tmp1 = alloc_stack(g_rbf_length + 2);
-	bf_t bt_tmp2 = alloc_stack(g_rbf_length + 2);
+	BigStackSaver savedStack;
+	bf_t bt_tmp1(alloc_stack(g_rbf_length + 2));
+	bf_t bt_tmp2(alloc_stack(g_rbf_length + 2));
 
 	// point->x = cvt->a*point->x + cvt->b*point->y + cvt->e;
 	mult_bf(bt_tmp1, n_a, bt_x);
@@ -268,8 +268,6 @@ static void transform_bf(bf_t bt_x, bf_t bt_y, CoordinateD *point)
 	add_a_bf(bt_tmp1, bt_tmp2);
 	add_a_bf(bt_tmp1, n_f);
 	point->y = double(bftofloat(bt_tmp1));
-
-	restore_stack(saved);
 }
 
 static void is_visible_window_corner(const fractal_info &info,
@@ -315,7 +313,7 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	multiple_precision_info_extension_block *mp_info)
 {
 	double toobig = std::sqrt(sqr(double(g_screen_width)) + sqr(double(g_screen_height)))*1.5;
-	int saved = save_stack();
+	BigStackSaver savedStack;
 
 	// Save original values.
 	int orig_bflength = g_bf_length;
@@ -326,14 +324,14 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	int orig_rbflength = g_rbf_length;
 
 	int two_len = g_bf_length + 2;
-	bf_t bt_x = alloc_stack(two_len);
-	bf_t bt_y = alloc_stack(two_len);
-	bf_t bt_xmin = alloc_stack(two_len);
-	bf_t bt_xmax = alloc_stack(two_len);
-	bf_t bt_ymin = alloc_stack(two_len);
-	bf_t bt_ymax = alloc_stack(two_len);
-	bf_t bt_x3rd = alloc_stack(two_len);
-	bf_t bt_y3rd = alloc_stack(two_len);
+	bf_t bt_x(alloc_stack(two_len));
+	bf_t bt_y(alloc_stack(two_len));
+	bf_t bt_xmin(alloc_stack(two_len));
+	bf_t bt_xmax(alloc_stack(two_len));
+	bf_t bt_ymin(alloc_stack(two_len));
+	bf_t bt_ymax(alloc_stack(two_len));
+	bf_t bt_x3rd(alloc_stack(two_len));
+	bf_t bt_y3rd(alloc_stack(two_len));
 
 	if (info->bf_math)
 	{
@@ -341,12 +339,12 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 		int two_di_len = di_bflength + 2;
 		int two_rbf = g_rbf_length + 2;
 
-		n_a = alloc_stack(two_rbf);
-		n_b = alloc_stack(two_rbf);
-		n_c = alloc_stack(two_rbf);
-		n_d = alloc_stack(two_rbf);
-		n_e = alloc_stack(two_rbf);
-		n_f = alloc_stack(two_rbf);
+		n_a = bf_t(alloc_stack(two_rbf));
+		n_b = bf_t(alloc_stack(two_rbf));
+		n_c = bf_t(alloc_stack(two_rbf));
+		n_d = bf_t(alloc_stack(two_rbf));
+		n_e = bf_t(alloc_stack(two_rbf));
+		n_f = bf_t(alloc_stack(two_rbf));
 
 		convert_bf(n_a, bt_a, g_rbf_length, orig_rbflength);
 		convert_bf(n_b, bt_b, g_rbf_length, orig_rbflength);
@@ -355,19 +353,19 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 		convert_bf(n_e, bt_e, g_rbf_length, orig_rbflength);
 		convert_bf(n_f, bt_f, g_rbf_length, orig_rbflength);
 
-		bf_t bt_t1 = alloc_stack(two_di_len);
-		bf_t bt_t2 = alloc_stack(two_di_len);
-		bf_t bt_t3 = alloc_stack(two_di_len);
-		bf_t bt_t4 = alloc_stack(two_di_len);
-		bf_t bt_t5 = alloc_stack(two_di_len);
-		bf_t bt_t6 = alloc_stack(two_di_len);
+		bf_t bt_t1(alloc_stack(two_di_len));
+		bf_t bt_t2(alloc_stack(two_di_len));
+		bf_t bt_t3(alloc_stack(two_di_len));
+		bf_t bt_t4(alloc_stack(two_di_len));
+		bf_t bt_t5(alloc_stack(two_di_len));
+		bf_t bt_t6(alloc_stack(two_di_len));
 
-		memcpy((char *) bt_t1, mp_info->apm_data, two_di_len);
-		memcpy((char *) bt_t2, mp_info->apm_data + two_di_len, two_di_len);
-		memcpy((char *) bt_t3, mp_info->apm_data + 2*two_di_len, two_di_len);
-		memcpy((char *) bt_t4, mp_info->apm_data + 3*two_di_len, two_di_len);
-		memcpy((char *) bt_t5, mp_info->apm_data + 4*two_di_len, two_di_len);
-		memcpy((char *) bt_t6, mp_info->apm_data + 5*two_di_len, two_di_len);
+		memcpy(bt_t1.storage(), mp_info->apm_data, two_di_len);
+		memcpy(bt_t2.storage(), mp_info->apm_data + two_di_len, two_di_len);
+		memcpy(bt_t3.storage(), mp_info->apm_data + 2*two_di_len, two_di_len);
+		memcpy(bt_t4.storage(), mp_info->apm_data + 3*two_di_len, two_di_len);
+		memcpy(bt_t5.storage(), mp_info->apm_data + 4*two_di_len, two_di_len);
+		memcpy(bt_t6.storage(), mp_info->apm_data + 5*two_di_len, two_di_len);
 
 		convert_bf(bt_xmin, bt_t1, two_len, two_di_len);
 		convert_bf(bt_xmax, bt_t2, two_len, two_di_len);
@@ -422,7 +420,6 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	g_shift_factor = orig_shiftfactor;
 	g_rbf_length = orig_rbflength;
 
-	restore_stack(saved);
 	if (cant_see) // do it this way so bignum stack is released
 	{
 		return false;
@@ -489,14 +486,14 @@ static void bfsetup_convert_to_screen()
 {
 	// setup_convert_to_screen() in LORENZ.C, converted to bf_math
 	// Call only from within look_get_window()
-	int saved = save_stack();
-	bf_t bt_inter1 = alloc_stack(g_rbf_length + 2);
-	bf_t bt_inter2 = alloc_stack(g_rbf_length + 2);
-	bf_t bt_det = alloc_stack(g_rbf_length + 2);
-	bf_t bt_xd = alloc_stack(g_rbf_length + 2);
-	bf_t bt_yd = alloc_stack(g_rbf_length + 2);
-	bf_t bt_tmp1 = alloc_stack(g_rbf_length + 2);
-	bf_t bt_tmp2 = alloc_stack(g_rbf_length + 2);
+	BigStackSaver savedStack;
+	bf_t bt_inter1(alloc_stack(g_rbf_length + 2));
+	bf_t bt_inter2(alloc_stack(g_rbf_length + 2));
+	bf_t bt_det(alloc_stack(g_rbf_length + 2));
+	bf_t bt_xd(alloc_stack(g_rbf_length + 2));
+	bf_t bt_yd(alloc_stack(g_rbf_length + 2));
+	bf_t bt_tmp1(alloc_stack(g_rbf_length + 2));
+	bf_t bt_tmp2(alloc_stack(g_rbf_length + 2));
 
 	// x3rd-xmin
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
@@ -565,8 +562,6 @@ static void bfsetup_convert_to_screen()
 	mult_bf(bt_tmp1, bt_c, g_escape_time_state.m_grid_bf.x_min());
 	mult_bf(bt_tmp2, bt_d, g_escape_time_state.m_grid_bf.y_max());
 	neg_a_bf(add_bf(bt_f, bt_tmp1, bt_tmp2));
-
-	restore_stack(saved);
 }
 
 static bool fractal_types_match(const fractal_info &info, const formula_info_extension_block &formula_info)
@@ -704,7 +699,6 @@ int look_get_window()
 	int vid_too_big = 0;
 	bool no_memory = false;
 	int vidlength;
-	int saved;
 #ifdef XFRACT
 	U32 blinks;
 #endif
@@ -719,13 +713,13 @@ int look_get_window()
 		fractal_float_to_bf();
 		g_externs.SetCalculationStatus(oldcalc_status);
 	}
-	saved = save_stack();
-	bt_a = alloc_stack(g_rbf_length + 2);
-	bt_b = alloc_stack(g_rbf_length + 2);
-	bt_c = alloc_stack(g_rbf_length + 2);
-	bt_d = alloc_stack(g_rbf_length + 2);
-	bt_e = alloc_stack(g_rbf_length + 2);
-	bt_f = alloc_stack(g_rbf_length + 2);
+	BigStackSaver savedStack;
+	bt_a = bf_t(alloc_stack(g_rbf_length + 2));
+	bt_b = bf_t(alloc_stack(g_rbf_length + 2));
+	bt_c = bf_t(alloc_stack(g_rbf_length + 2));
+	bt_d = bf_t(alloc_stack(g_rbf_length + 2));
+	bt_e = bf_t(alloc_stack(g_rbf_length + 2));
+	bt_f = bf_t(alloc_stack(g_rbf_length + 2));
 
 	vidlength = g_screen_width + g_screen_height;
 	if (vidlength > 4096)
@@ -1082,7 +1076,6 @@ rescan:  // entry for changed browse parms
 	delete[] boxx_storage;
 	delete[] boxy_storage;
 	delete[] boxvalues_storage;
-	restore_stack(saved);
 	if (!oldbf_math)
 	{
 		free_bf_vars();

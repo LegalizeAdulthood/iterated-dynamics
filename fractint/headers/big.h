@@ -30,42 +30,57 @@ enum
 	BIGFLT = 2  // g_bf_math is being used with bf_t numbers
 };
 
-typedef unsigned char *big_t;
+typedef BYTE *big_t;
 
+// functions defined in bignum.c
+// prototypes
 extern U16 big_set16(BYTE *addr, U16 val);
+extern S16 big_setS16(BYTE *addr, S16 val);
 extern U32 big_set32(BYTE *addr, U32 val);
 extern U16 big_access16(BYTE const *addr);
+extern S16 big_accessS16(BYTE const *addr);
 extern U32 big_access32(BYTE const *addr);
 
 class BigT
 {
 public:
 	BigT() : _storage(0)					{ }
-	explicit BigT(unsigned char *storage) : _storage(storage) { }
+	explicit BigT(BYTE *storage) : _storage(storage) { }
 	explicit BigT(BigT &rhs, int offset) : _storage(rhs._storage + offset) { }
 
 	BYTE *storage()							{ return _storage; }
-	void setStorage(unsigned char *value)	{ _storage = value; }
-	void set8(BYTE value)					{ set8(0, value); }
+	void setStorage(BYTE *value)			{ _storage = value; }
+
+	BYTE get8(int idx = 0) const			{ return *(_storage + idx); }
+	S8 getS8(int idx = 0) const				{ return S8(get8(idx)); }
 	void set8(int idx, BYTE value)			{ _storage[idx] = value; }
-	U16 set16(U16 value)					{ return set16(0, value); }
+	void set8(BYTE value)					{ set8(0, value); }
+
+	U16 get16(int idx = 0) const			{ return big_access16(_storage + idx); }
+	S16 getS16(int idx = 0) const			{ return big_accessS16(_storage + idx); }
 	U16 set16(int idx, U16 value)			{ return big_set16(_storage + idx, value); }
+	U16 set16(U16 value)					{ return set16(0, value); }
+	S16 setS16(int idx, S16 value)			{ return big_setS16(_storage + idx, value); }
+	S16 setS16(S16 value)					{ return setS16(0, value); }
+
+	U32 get32(int idx = 0) const			{ return big_access32(_storage + idx); }
 	U32 set32(long value)					{ return set32(0, value); }
 	U32 set32(int idx, long value)			{ return big_set32(_storage + idx, value); }
-	BYTE get8(int idx = 0) const			{ return *(_storage + idx); }
-	U16 get16(int idx = 0) const			{ return big_access16(_storage + idx); }
-	U32 get32(int idx = 0) const			{ return big_access32(_storage + idx); }
 
 private:
 	BYTE *_storage;
 };
 
-
+class BigNumT : public BigT
+{
+public:
+	BigNumT() : BigT() { }
+	explicit BigNumT(BYTE *storage) : BigT(storage) { }
+	explicit BigNumT(BigNumT &rhs, int offset) : BigT(rhs, offset) { }
+};
 
 typedef BigT bn_t;
-
-//#define bn_t   big_t  // for clarification purposes
-typedef big_t bf_t;
+typedef BigNumT bf_t;
 typedef big_t bf10_t;
 
 #include "cmplx.h"
@@ -116,7 +131,7 @@ extern bf_t bf_pi;
 extern bf_t bftmp;							// g_rbf_length
 
 extern bf10_t bf10tmp;						// dec+4
-extern big_t big_pi;
+extern bf_t big_pi;
 
 void calculate_bignum_lengths();
 void init_big_dec(int dec);
@@ -157,13 +172,6 @@ extern LDBL bftofloat(bf_t n);
 extern LDBL bntofloat(bn_t n);
 extern LDBL extract_256(LDBL f, int *exp_ptr);
 extern LDBL scale_256( LDBL f, int n );
-
-// functions defined in bignum.c
-// prototypes
-extern S16 big_accessS16(BYTE const *addr);
-extern U32 big_set32(BYTE *addr, U32 val);
-extern U16 big_set16(BYTE *addr, U16 val);
-extern S16 big_setS16(BYTE *addr, S16 val);
 
 extern bn_t strtobn(bn_t r, char *s);
 extern char *unsafe_bntostr(char *s, int dec, bn_t r);
@@ -289,8 +297,16 @@ extern bf_t div_a_bf_int(bf_t r, U16 u);
 
 /****************************/
 // bigcmplx.c
-extern ComplexD complex_bn_to_float(ComplexBigNum *s);
-extern ComplexD complex_bf_to_float(ComplexBigFloat *s);
+inline ComplexD ComplexBigNumToDouble(ComplexBigNum const &z)
+{
+	return MakeComplexT(double(bntofloat(z.real())), double(bntofloat(z.imag())));
+}
+
+inline ComplexD ComplexBigFloatToDouble(ComplexBigFloat const &z)
+{
+	return MakeComplexT(double(bftofloat(z.real())), double(bftofloat(z.imag())));
+}
+
 extern ComplexBigFloat *complex_log_bf(ComplexBigFloat *t, ComplexBigFloat *s);
 extern ComplexBigFloat *cplxmul_bf( ComplexBigFloat *t, ComplexBigFloat *x, ComplexBigFloat *y);
 extern ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, ComplexBigFloat *yy);

@@ -36,10 +36,10 @@ static void move_row(int fromrow, int torow, int col);
 // big number declarations
 static void calculate_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 {
-	bf_t btmp1 = alloc_stack(g_rbf_length + 2);
-	bf_t btmp2 = alloc_stack(g_rbf_length + 2);
-	bf_t btmp3 = alloc_stack(g_rbf_length + 2);
-	int saved = save_stack();
+	bf_t btmp1(alloc_stack(g_rbf_length + 2));
+	bf_t btmp2(alloc_stack(g_rbf_length + 2));
+	bf_t btmp3(alloc_stack(g_rbf_length + 2));
+	BigStackSaver savedStack;
 
 	// use target as temporary variable
 	floattobf(btmp3, p2);
@@ -47,7 +47,6 @@ static void calculate_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4
 	mult_bf(btmp2, floattobf(target, p4), p5);
 	add_bf(target, btmp1, btmp2);
 	add_a_bf(target, p1);
-	restore_stack(saved);
 }
 
 void zoom_box_draw(bool drawit)
@@ -69,12 +68,11 @@ void zoom_box_draw(bool drawit)
 	double fydepth;
 	double fyskew;
 	double fxadj;
-	big_t bffxwidth;
-	big_t bffxskew;
-	big_t bffydepth;
-	big_t bffyskew;
-	big_t bffxadj;
-	int saved = 0;
+	bf_t bffxwidth;
+	bf_t bffxskew;
+	bf_t bffydepth;
+	bf_t bffyskew;
+	bf_t bffxadj;
 	if (g_z_width == 0)  // no box to draw
 	{
 		if (g_zoomBox.count() != 0)  // remove the old box from display
@@ -85,14 +83,14 @@ void zoom_box_draw(bool drawit)
 		reset_zoom_corners();
 		return;
 	}
+	BigStackSaver savedStack;
 	if (g_bf_math)
 	{
-		saved = save_stack();
-		bffxwidth = alloc_stack(g_rbf_length + 2);
-		bffxskew  = alloc_stack(g_rbf_length + 2);
-		bffydepth = alloc_stack(g_rbf_length + 2);
-		bffyskew  = alloc_stack(g_rbf_length + 2);
-		bffxadj   = alloc_stack(g_rbf_length + 2);
+		bffxwidth = bf_t(alloc_stack(g_rbf_length + 2));
+		bffxskew = bf_t(alloc_stack(g_rbf_length + 2));
+		bffydepth = bf_t(alloc_stack(g_rbf_length + 2));
+		bffyskew = bf_t(alloc_stack(g_rbf_length + 2));
+		bffxadj = bf_t(alloc_stack(g_rbf_length + 2));
 	}
 	ftemp1 = MathUtil::Pi*g_z_rotate/72; // convert to radians
 	rotcos = std::cos(ftemp1);   // sin & cos of rotation
@@ -162,7 +160,6 @@ void zoom_box_draw(bool drawit)
 	{
 		calculate_corner(g_escape_time_state.m_grid_bf.x_3rd(), g_sx_min_bf, ftemp1, bffxwidth, ftemp2, bffxskew);
 		calculate_corner(g_escape_time_state.m_grid_bf.y_3rd(), g_sy_max_bf, ftemp2, bffydepth, ftemp1, bffyskew);
-		restore_stack(saved);
 	}
 	ftemp1 = g_zbx + g_z_width - dx + fxadj;
 	ftemp2 = g_zby - dy/g_viewWindow.AspectRatio();
@@ -373,24 +370,16 @@ static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
 	bf_t bfnewx, bf_t bfnewy, bf_t bfplotmx1, bf_t bfplotmx2, bf_t bfplotmy1,
 	bf_t bfplotmy2, bf_t bfftemp)
 {
-	big_t btmp1;
-	big_t btmp2;
-	big_t btmp3;
-	big_t btmp4;
-	big_t btempx;
-	big_t btempy;
-	big_t btmp2a;
-	big_t btmp4a;
-	int saved = save_stack();
+	BigStackSaver savedStack;
 
-	btmp1  = alloc_stack(g_rbf_length + 2);
-	btmp2  = alloc_stack(g_rbf_length + 2);
-	btmp3  = alloc_stack(g_rbf_length + 2);
-	btmp4  = alloc_stack(g_rbf_length + 2);
-	btmp2a = alloc_stack(g_rbf_length + 2);
-	btmp4a = alloc_stack(g_rbf_length + 2);
-	btempx = alloc_stack(g_rbf_length + 2);
-	btempy = alloc_stack(g_rbf_length + 2);
+	bf_t btmp1(alloc_stack(g_rbf_length + 2));
+	bf_t btmp2(alloc_stack(g_rbf_length + 2));
+	bf_t btmp3(alloc_stack(g_rbf_length + 2));
+	bf_t btmp4(alloc_stack(g_rbf_length + 2));
+	bf_t btmp2a(alloc_stack(g_rbf_length + 2));
+	bf_t btmp4a(alloc_stack(g_rbf_length + 2));
+	bf_t btempx(alloc_stack(g_rbf_length + 2));
+	bf_t btempy(alloc_stack(g_rbf_length + 2));
 
 	/* calc cur screen corner relative to zoombox, when zoombox co-ords
 		are taken as (0, 0) topleft thru (1, 1) bottom right */
@@ -425,7 +414,6 @@ static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
 	div_bf(btmp4a, btmp4, bfftemp);
 	add_bf(bfnewy, g_sy_max_bf, btmp2a);
 	add_a_bf(bfnewy, btmp4a);
-	restore_stack(saved);
 }
 
 static void zmo_calc(double dx, double dy, double *newx, double *newy, double ftemp)
@@ -453,34 +441,20 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
 	then extend these co-ords from current real screen corners to get
 	new actual corners
 	*/
-	big_t savbfxmin;
-	big_t savbfymax;
-	big_t bfftemp;
-	big_t tmp1;
-	big_t tmp2;
-	big_t tmp3;
-	big_t tmp4;
-	big_t tmp5;
-	big_t tmp6;
-	big_t bfplotmx1;
-	big_t bfplotmx2;
-	big_t bfplotmy1;
-	big_t bfplotmy2;
-	int saved;
-	saved = save_stack();
-	savbfxmin = alloc_stack(g_rbf_length + 2);
-	savbfymax = alloc_stack(g_rbf_length + 2);
-	bfftemp   = alloc_stack(g_rbf_length + 2);
-	tmp1      = alloc_stack(g_rbf_length + 2);
-	tmp2      = alloc_stack(g_rbf_length + 2);
-	tmp3      = alloc_stack(g_rbf_length + 2);
-	tmp4      = alloc_stack(g_rbf_length + 2);
-	tmp5      = alloc_stack(g_rbf_length + 2);
-	tmp6      = alloc_stack(g_rbf_length + 2);
-	bfplotmx1 = alloc_stack(g_rbf_length + 2);
-	bfplotmx2 = alloc_stack(g_rbf_length + 2);
-	bfplotmy1 = alloc_stack(g_rbf_length + 2);
-	bfplotmy2 = alloc_stack(g_rbf_length + 2);
+	BigStackSaver savedStack;
+	bf_t savbfxmin(alloc_stack(g_rbf_length + 2));
+	bf_t savbfymax(alloc_stack(g_rbf_length + 2));
+	bf_t bfftemp(alloc_stack(g_rbf_length + 2));
+	bf_t tmp1(alloc_stack(g_rbf_length + 2));
+	bf_t tmp2(alloc_stack(g_rbf_length + 2));
+	bf_t tmp3(alloc_stack(g_rbf_length + 2));
+	bf_t tmp4(alloc_stack(g_rbf_length + 2));
+	bf_t tmp5(alloc_stack(g_rbf_length + 2));
+	bf_t tmp6(alloc_stack(g_rbf_length + 2));
+	bf_t bfplotmx1(alloc_stack(g_rbf_length + 2));
+	bf_t bfplotmx2(alloc_stack(g_rbf_length + 2));
+	bf_t bfplotmy1(alloc_stack(g_rbf_length + 2));
+	bf_t bfplotmy2(alloc_stack(g_rbf_length + 2));
 	// ftemp = (ymin-y3rd)*(x3rd-xmin) - (xmax-x3rd)*(y3rd-ymax);
 	sub_bf(tmp1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
 	sub_bf(tmp2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
@@ -514,7 +488,6 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
 	sub_bf(tmp2, g_sy_3rd_bf, savbfymax);
 	zmo_calcbf(tmp1, tmp2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.y_3rd(), bfplotmx1, bfplotmx2, bfplotmy1,
 					bfplotmy2, bfftemp);
-	restore_stack(saved);
 }
 
 static void zoom_out_double() // for ctl-enter, calc corners for zooming out

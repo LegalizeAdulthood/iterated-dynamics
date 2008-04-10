@@ -3,8 +3,6 @@
 
 #include "big.h"
 
-extern ComplexD complex_bn_to_float(ComplexBigNum *);
-extern ComplexD complex_bf_to_float(ComplexBigFloat *);
 extern void compare_values(char *, LDBL, bn_t);
 extern void compare_values_bf(char *, LDBL, bf_t);
 extern void show_var_bf(char *s, bf_t n);
