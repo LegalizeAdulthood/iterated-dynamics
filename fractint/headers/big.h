@@ -322,11 +322,4 @@ inline ComplexD ComplexBigFloatToDouble(ComplexBigFloat const &z)
 	return MakeComplexT(double(bftofloat(z.real())), double(bftofloat(z.imag())));
 }
 
-extern ComplexBigFloat *complex_log_bf(ComplexBigFloat *t, ComplexBigFloat *s);
-extern ComplexBigFloat *cplxmul_bf( ComplexBigFloat *t, ComplexBigFloat *x, ComplexBigFloat *y);
-extern ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, ComplexBigFloat *yy);
-extern ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigNum *yy);
-extern ComplexBigNum *complex_log_bn(ComplexBigNum *t, ComplexBigNum *s);
-extern ComplexBigNum *complex_multiply_bn( ComplexBigNum *t, ComplexBigNum *x, ComplexBigNum *y);
-
 #endif // _BIG_H
