@@ -2491,7 +2491,7 @@ static void decomposition()
 		if (g_new_z_l.imag() < 0)
 		{
 			temp = 2;
-			g_new_z_l.imag(-g_new_z_l.imag());
+			g_new_z_l = conj(g_new_z_l);
 		}
 
 		if (g_new_z_l.real() < 0)
@@ -2597,7 +2597,7 @@ static void decomposition()
 		if (g_new_z.imag() < 0)
 		{
 			temp = 2;
-			g_new_z.imag(-g_new_z.imag());
+			g_new_z = conj(g_new_z);
 		}
 		if (g_new_z.real() < 0)
 		{

@@ -196,7 +196,7 @@ bool NewtonComplex::setup()
 	{
 		g_c_root = MakeComplexT(g_parameters[P2_REAL], g_parameters[P2_IMAG]);
 		g_c_degree = MakeComplexT(g_parameters[P1_REAL], g_parameters[P1_IMAG]);
-		BaseLog = ComplexLog(g_c_root);
+		BaseLog = log(g_c_root);
 		TwoPi = MathUtil::Pi*2.0;
 	}
 	return true;

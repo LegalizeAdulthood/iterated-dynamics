@@ -120,7 +120,7 @@ inline ComplexL ComplexDoubleToFudge(const ComplexD &d)
 	return z;
 }
 
-inline long LCMPLXmod(ComplexL const &z)
+inline long norm(ComplexL const &z)
 {
 	return lsqr(z.real()) + lsqr(z.imag());
 }
@@ -143,6 +143,9 @@ inline ComplexT<T> operator+(ComplexT<T> const &left, T const &right)
 template <typename T>
 inline ComplexT<T> operator+(T const &left, ComplexT<T> const &right)
 { return right + left; }
+template <typename T>
+inline ComplexT<T> operator+(ComplexT<T> const &right)
+{ return right; }
 
 template <typename T>
 inline ComplexT<T> operator-(ComplexT<T> const &left, ComplexT<T> const &right)
@@ -153,6 +156,9 @@ inline ComplexT<T> operator-(ComplexT<T> const &left, T const &right)
 template <typename T>
 inline ComplexT<T> operator-(T const &left, ComplexT<T> const &right)
 { return MakeComplexT(left - right.real(), -right.imag()); }
+template <typename T>
+inline ComplexT<T> operator-(ComplexT<T> const &right)
+{ return MakeComplexT(-right.real(), -right.imag()); }
 
 inline ComplexD operator*(ComplexD const &left, ComplexD const &right)
 {
@@ -189,9 +195,6 @@ inline ComplexD operator/(ComplexD const &x, ComplexD const &y)
 inline ComplexD operator/(ComplexD const &left, double right)
 { return MakeComplexT(left.real()/right, left.imag()/right); }
 
-inline ComplexD operator-(ComplexD const &right)
-{ return MakeComplexT(-right.real(), -right.imag()); }
-
 inline ComplexD dot(ComplexD const &left, ComplexD const &right)
 { return MakeComplexT(left.real()*right.real(), left.imag()*right.imag()); }
 
@@ -205,23 +208,31 @@ inline ComplexD TimesI(ComplexD const &z)
 	return MakeComplexT(-z.imag(), z.real());
 }
 
-inline ComplexD ComplexLog(ComplexD const &x)
+inline ComplexD log(ComplexD const &x)
 {
-	double const mod = std::sqrt(norm(x));
-	double const zx = std::log(mod);
+	double const zx = std::log(std::sqrt(norm(x)));
 	double const zy = std::atan2(x.imag(), x.real());
 	return MakeComplexT(zx, zy);
+}
+
+inline ComplexD sin(ComplexD const &angle)
+{
+	double const sinx = std::sin(angle.real());
+	double const cosx = std::cos(angle.real());
+	double const sinhy = std::sinh(angle.imag());
+	double const coshy = std::cosh(angle.imag());
+	return MakeComplexT(sinx*coshy, cosx*sinhy);
 }
 
 // rz = Arccosh(z) = Log(z + sqrt(z*z-1)}
 inline ComplexD acosh(ComplexD const &z)
 {
-	return ComplexLog(z + sqrt(z*z - 1.0));
+	return log(z + sqrt(z*z - 1.0));
 }
 
 inline ComplexD asinh(ComplexD const &z)
 {
-	return ComplexLog(sqrt(z*z + 1.0) + z);
+	return log(sqrt(z*z + 1.0) + z);
 }
 
 // rz = Arctanh(z) = 1/2*Log((1 + z)/(1 - z))
@@ -240,19 +251,19 @@ inline ComplexD atanh(ComplexD const &z)
 		return MakeComplexT(std::log((1 + z.real())/(1.0 - z.real()))/2.0);
 	}
 
-	return 0.5*ComplexLog((1.0 + z)/(1.0 - z));
+	return 0.5*log((1.0 + z)/(1.0 - z));
 }
 
 // rz = Arccos(z) = -i*Log(z + sqrt(z*z-1))
 inline ComplexD acos(ComplexD const &z)
 {
-	return -TimesI(ComplexLog(sqrt(z*z - 1.0) + z));
+	return -TimesI(log(sqrt(z*z - 1.0) + z));
 }
 
 // rz = Arcsin(z) = -i*Log(i*z + sqrt(1-z*z))
 inline ComplexD asin(ComplexD z)
 {
-	return -TimesI(ComplexLog(TimesI(z) + sqrt(1.0 - z*z)));
+	return -TimesI(log(TimesI(z) + sqrt(1.0 - z*z)));
 }
 
 // rz = Arctan(z) = i/2*Log{(1-i*z)/(1 + i*z)}
@@ -278,12 +289,12 @@ inline ComplexD atan(ComplexD const &z)
 		else
 		{
 			ComplexD const zi = TimesI(z);
-			return 0.5*TimesI(ComplexLog((1.0 - zi)/(1.0 + zi)));
+			return 0.5*TimesI(log((1.0 - zi)/(1.0 + zi)));
 		}
 	}
 }
 
-inline ComplexD ComplexExp(ComplexD const &x)
+inline ComplexD exp(ComplexD const &x)
 {
 	return std::exp(x.real())*MakeComplexT(std::cos(x.imag()), std::sin(x.imag()));
 }
@@ -296,7 +307,27 @@ inline ComplexD pow(ComplexD const &x, ComplexD const &y)
 		return MakeComplexT(0.0);
 	}
 
-	return ComplexExp(ComplexLog(x)*y);
+	return exp(log(x)*y);
+}
+
+template <typename T>
+inline ComplexT<T> conj(ComplexT<T> const &value)
+{
+	return MakeComplexT(value.real(), -value.imag());
+}
+
+inline ComplexD reciprocal(ComplexD const &arg)
+{
+	double const denom = norm(arg);
+	if (denom == 0.0)
+	{
+		const double infinity = 1.0e+10;
+		return MakeComplexT(infinity, infinity);
+	}
+	else
+	{
+		return conj(arg)/denom;
+	}
 }
 
 #endif
