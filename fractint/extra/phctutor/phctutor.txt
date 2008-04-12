@@ -653,4 +653,3 @@ Here is an example:
  That's all for now!  I hope you found this text interesting and useful.
  I'm planning an update of Bradley Beacham's Formula Tutorial which could
  include this text and any subject you'd like to see treated.
-
