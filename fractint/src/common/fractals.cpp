@@ -704,7 +704,7 @@ int unity_orbit_fp()
 {
 	// brought to you by Mark Peterson - you won't find this in any fractal
 	// books unless they saw it here first - Mark invented it!
-	double xx_one = sqr(g_old_z.real()) + sqr(g_old_z.imag());
+	double xx_one = norm(g_old_z);
 	if ((xx_one > 2.0) || (std::abs(xx_one - 1.0) < g_delta_min_fp))
 	{
 		return 1;
@@ -857,8 +857,8 @@ int barnsley3_orbit()
 int barnsley3_orbit_fp()
 {
 	// calculate intermediate products
-	s_old_x_init_x_fp = g_old_z.real()*g_old_z.real();
-	s_old_y_init_y_fp = g_old_z.imag()*g_old_z.imag();
+	s_old_x_init_x_fp = sqr(g_old_z.real());
+	s_old_y_init_y_fp = sqr(g_old_z.imag());
 	s_old_x_init_y_fp = g_old_z.real()*g_old_z.imag();
 
 	// orbit calculation
@@ -1378,7 +1378,7 @@ int lambda_trig_or_trig_orbit_fp()
 {
 	// z = trig0(z)*p1 if mod(old) < p2.real() and
 	//		trig1(z)*p1 if mod(old) >= p2.real()
-	if (CMPLXmod(g_old_z) < g_parameter2.real())
+	if (norm(g_old_z) < g_parameter2.real())
 	{
 		g_old_z = CMPLXtrig0(g_old_z);
 	}
@@ -1415,7 +1415,7 @@ int julia_trig_or_trig_orbit_fp()
 {
 	// z = trig0(z) + p1 if mod(old) < p2.real() and
 	//     trig1(z) + p1 if mod(old) >= p2.real()
-	if (CMPLXmod(g_old_z) < g_parameter2.real())
+	if (norm(g_old_z) < g_parameter2.real())
 	{
 		g_old_z = CMPLXtrig0(g_old_z);
 	}
@@ -1887,7 +1887,7 @@ int magnet1_orbit_fp()    // Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
 	bot.real(g_old_z.real() + g_old_z.real() + g_float_parameter->real() - 2);       // bot = 2*Z + C-2
 	bot.imag(g_old_z.imag() + g_old_z.imag() + g_float_parameter->imag());
 
-	div = bot.real()*bot.real() + bot.imag()*bot.imag();                // tmp = top/bot
+	div = norm(bot);                // tmp = top/bot
 	if (div < FLT_MIN)
 	{
 		return 1;
@@ -1927,7 +1927,7 @@ int magnet2_orbit_fp()
 			+ g_old_z.real()*s_3_c_minus_2.imag() + g_old_z.imag()*s_3_c_minus_2.real()
 			+ s_c_minus_1_c_minus_2.imag());
 
-	div = bot.real()*bot.real() + bot.imag()*bot.imag();                // tmp = top/bot
+	div = norm(bot);                // tmp = top/bot
 	if (div < FLT_MIN)
 	{
 		return 1;
@@ -2164,7 +2164,7 @@ int julia_per_pixel_l()
 		invert_z(&g_old_z);
 
 		// watch out for overflow
-		if (sqr(g_old_z.real()) + sqr(g_old_z.imag()) >= 127)
+		if (norm(g_old_z) >= 127)
 		{
 			g_old_z.real(8);  // value to bail out in one iteration
 			g_old_z.imag(8);
@@ -2209,7 +2209,7 @@ int mandelbrot_per_pixel_l()
 		invert_z(&g_initial_z);
 
 		// watch out for overflow
-		if (sqr(g_initial_z.real()) + sqr(g_initial_z.imag()) >= 127)
+		if (norm(g_initial_z) >= 127)
 		{
 			g_initial_z.real(8);  // value to bail out in one iteration
 			g_initial_z.imag(8);
@@ -2241,13 +2241,13 @@ int julia_per_pixel()
 		// watch out for overflow
 		if (g_bit_shift <= 24)
 		{
-			if (sqr(g_old_z.real()) + sqr(g_old_z.imag()) >= 127)
+			if (norm(g_old_z) >= 127)
 			{
 				g_old_z.real(8);  // value to bail out in one iteration
 				g_old_z.imag(8);
 			}
 		}
-		else if (sqr(g_old_z.real()) + sqr(g_old_z.imag()) >= 4.0)
+		else if (norm(g_old_z) >= 4.0)
 		{
 			g_old_z.real(2);  // value to bail out in one iteration
 			g_old_z.imag(2);
@@ -2289,13 +2289,13 @@ int mandelbrot_per_pixel()
 		// watch out for overflow
 		if (g_bit_shift <= 24)
 		{
-			if (sqr(g_initial_z.real()) + sqr(g_initial_z.imag()) >= 127)
+			if (norm(g_initial_z) >= 127)
 			{
 				g_initial_z.real(8);  // value to bail out in one iteration
 				g_initial_z.imag(8);
 			}
 		}
-		else if (sqr(g_initial_z.real()) + sqr(g_initial_z.imag()) >= 4)
+		else if (norm(g_initial_z) >= 4)
 		{
 			g_initial_z.real(2);  // value to bail out in one iteration
 			g_initial_z.imag(2);
@@ -2356,7 +2356,7 @@ int marks_mandelbrot_per_pixel()
 		invert_z(&g_initial_z);
 
 		// watch out for overflow
-		if (sqr(g_initial_z.real()) + sqr(g_initial_z.imag()) >= 127)
+		if (norm(g_initial_z) >= 127)
 		{
 			g_initial_z.real(8);  // value to bail out in one iteration
 			g_initial_z.imag(8);
@@ -2599,7 +2599,7 @@ int phoenix_per_pixel()
 		invert_z(&g_old_z);
 
 		// watch out for overflow
-		if (sqr(g_old_z.real()) + sqr(g_old_z.imag()) >= 127)
+		if (norm(g_old_z) >= 127)
 		{
 			g_old_z.real(8);  // value to bail out in one iteration
 			g_old_z.imag(8);
@@ -2650,7 +2650,7 @@ int mandelbrot_phoenix_per_pixel()
 		invert_z(&g_initial_z);
 
 		// watch out for overflow
-		if (sqr(g_initial_z.real()) + sqr(g_initial_z.imag()) >= 127)
+		if (norm(g_initial_z) >= 127)
 		{
 			g_initial_z.real(8);  // value to bail out in one iteration
 			g_initial_z.imag(8);
@@ -2719,7 +2719,7 @@ int hyper_complex_orbit_fp()
 	g_float_parameter->imag(hnew.t());
 
 	// Check bailout
-	g_magnitude = sqr(g_old_z.real()) + sqr(g_old_z.imag())
+	g_magnitude = norm(g_old_z)
 		+ sqr(g_float_parameter->real()) + sqr(g_float_parameter->imag());
 	if (g_magnitude > g_rq_limit)
 	{

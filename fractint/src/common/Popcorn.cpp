@@ -23,7 +23,8 @@ int popcorn()   // subset of std engine
 	}
 	g_input_counter = g_max_input_counter;
 	g_plot_color = plot_color_none;
-	g_temp_sqr.real(g_temp_sqr_l.real(0)); // PB added this to cover weird BAILOUTs
+	g_temp_sqr.real(0.0); // PB added this to cover weird BAILOUTs
+	g_temp_sqr_l.real(0L);
 	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{
 		g_reset_periodicity = true;

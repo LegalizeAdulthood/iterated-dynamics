@@ -31,7 +31,7 @@ static double distance(const ComplexD &z1, const ComplexD &z2)
 
 static double distance_from_1(const ComplexD &z)
 {
-	return (z.real() - 1.0)*(z.real() - 1.0) + z.imag()*z.imag();
+	return (z.real() - 1.0)*(z.real() - 1.0) + sqr(z.imag());
 }
 
 bool newton_setup()
@@ -173,7 +173,7 @@ int Newton::orbit()
 	g_new_z.imag(g_new_z.imag()*m_degree_minus_1_over_degree);
 
 	// Watch for divide underflow
-	double s_t2 = g_temp_z.real()*g_temp_z.real() + g_temp_z.imag()*g_temp_z.imag();
+	double s_t2 = norm(g_temp_z);
 	if (s_t2 < FLT_MIN)
 	{
 		return 1;
@@ -214,7 +214,7 @@ int NewtonComplex::orbit()
 	g_new_z = temp*g_old_z;
 
 	g_temp_z = g_new_z - g_c_root;
-	if ((sqr(g_temp_z.real()) + sqr(g_temp_z.imag())) < g_threshold)
+	if (norm(g_temp_z) < g_threshold)
 	{
 		return 1;
 	}

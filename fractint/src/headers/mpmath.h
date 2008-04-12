@@ -30,10 +30,6 @@ extern int complex_basin();
 // in parser.cpp to be used here thus avoiding duplicated code.
 // --------------------------------------------------------------------
 
-inline double CMPLXmod(ComplexD const &z)
-{
-	return sqr(z.real()) + sqr(z.imag());
-}
 
 inline void LCMPLXtrig0(ComplexL const &arg, ComplexL &out)
 { g_argument1->l = arg; g_trig0_l(); out = g_argument1->l; }
@@ -188,7 +184,7 @@ inline void CMPLXpwr(ComplexD const &arg1, ComplexD const &arg2, ComplexD &out)
 
 inline void CMPLXrecip(ComplexD const &arg, ComplexD &out)
 {
-	double const denom = sqr(arg.real()) + sqr(arg.imag());
+	double const denom = norm(arg);
 	if (denom == 0.0)
 	{
 		out.real(1.0e10);

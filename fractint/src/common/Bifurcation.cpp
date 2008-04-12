@@ -225,7 +225,7 @@ int bifurcation_stewart_trig_fp()
 	g_temp_z.real(s_population);
 	g_temp_z.imag(0);
 	g_temp_z = CMPLXtrig0(g_temp_z);
-	s_population = (s_rate*g_temp_z.real()*g_temp_z.real()) - 1.0;
+	s_population = (s_rate*sqr(g_temp_z.real())) - 1.0;
 	return std::abs(s_population) > BIG;
 }
 

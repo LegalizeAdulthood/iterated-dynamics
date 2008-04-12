@@ -169,9 +169,14 @@ template <typename T>
 inline ComplexT<T> operator*(ComplexT<T> const &left, T const &right)
 { return MakeComplexT(left.real()*right, left.imag()*right); }
 
+inline double norm(ComplexD const &z)
+{
+	return sqr(z.real()) + sqr(z.imag());
+}
+
 inline ComplexD operator/(ComplexD const &x, ComplexD const &y)
 {
-	double const mod = y.real()*y.real() + y.imag()*y.imag();
+	double const mod = norm(y);
 	if (mod == 0.0)
 	{
 		DivideOverflow++;
@@ -202,7 +207,7 @@ inline ComplexD TimesI(ComplexD const &z)
 
 inline ComplexD ComplexLog(ComplexD const &x)
 {
-	double const mod = std::sqrt(x.real()*x.real() + x.imag()*x.imag());
+	double const mod = std::sqrt(norm(x));
 	double const zx = std::log(mod);
 	double const zy = std::atan2(x.imag(), x.real());
 	return MakeComplexT(zx, zy);
