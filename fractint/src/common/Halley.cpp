@@ -14,11 +14,6 @@
 
 static Halley s_halley;
 
-static double modulus(const ComplexD &z)
-{
-	return sqr(z.real()) + sqr(z.imag());
-}
-
 bool halley_setup()
 {
 	return s_halley.setup();
@@ -71,7 +66,7 @@ bool Halley::setup()
 
 int Halley::bail_out()
 {
-	if (std::abs(modulus(g_new_z)-modulus(g_old_z)) < g_parameter2.real())
+	if (std::abs(norm(g_new_z)-norm(g_old_z)) < g_parameter2.real())
 	{
 		return 1;
 	}

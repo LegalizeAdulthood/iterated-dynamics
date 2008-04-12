@@ -675,7 +675,7 @@ void Formula::StackLoadSqr_d()
 	g_argument1++;
 	g_argument2++;
 	g_argument1->d.imag(m_load[m_load_ptr]->d.real()*m_load[m_load_ptr]->d.imag()*2.0);
-	g_argument1->d.real((m_load[m_load_ptr]->d.real()*m_load[m_load_ptr]->d.real()) - (m_load[m_load_ptr]->d.imag()*m_load[m_load_ptr]->d.imag()));
+	g_argument1->d.real(sqr(m_load[m_load_ptr]->d.real()) - sqr(m_load[m_load_ptr]->d.imag()));
 	m_load_ptr++;
 }
 
@@ -688,8 +688,8 @@ void Formula::StackLoadSqr2_d()
 {
 	g_argument1++;
 	g_argument2++;
-	m_variables[VARIABLE_LAST_SQR].argument.d.real(m_load[m_load_ptr]->d.real()*m_load[m_load_ptr]->d.real());
-	m_variables[VARIABLE_LAST_SQR].argument.d.imag(m_load[m_load_ptr]->d.imag()*m_load[m_load_ptr]->d.imag());
+	m_variables[VARIABLE_LAST_SQR].argument.d.real(sqr(m_load[m_load_ptr]->d.real()));
+	m_variables[VARIABLE_LAST_SQR].argument.d.imag(sqr(m_load[m_load_ptr]->d.imag()));
 	g_argument1->d.imag(m_load[m_load_ptr]->d.real()*m_load[m_load_ptr]->d.imag()*2.0);
 	g_argument1->d.real(m_variables[VARIABLE_LAST_SQR].argument.d.real() - m_variables[VARIABLE_LAST_SQR].argument.d.imag());
 	m_variables[VARIABLE_LAST_SQR].argument.d.real(m_variables[VARIABLE_LAST_SQR].argument.d.real() + m_variables[VARIABLE_LAST_SQR].argument.d.imag());
@@ -718,14 +718,14 @@ void dStkSqr0()
 
 void Formula::StackSqr0()
 {
-	m_variables[VARIABLE_LAST_SQR].argument.d.imag(g_argument1->d.imag()*g_argument1->d.imag()); // use LastSqr as temp storage
+	m_variables[VARIABLE_LAST_SQR].argument.d.imag(sqr(g_argument1->d.imag())); // use LastSqr as temp storage
 	g_argument1->d.imag(g_argument1->d.real()*g_argument1->d.imag()*2.0);
-	g_argument1->d.real(g_argument1->d.real()*g_argument1->d.real() - m_variables[VARIABLE_LAST_SQR].argument.d.imag());
+	g_argument1->d.real(sqr(g_argument1->d.real()) - m_variables[VARIABLE_LAST_SQR].argument.d.imag());
 }
 
 void dStkSqr3()
 {
-	g_argument1->d.real(g_argument1->d.real()*g_argument1->d.real());
+	g_argument1->d.real(sqr(g_argument1->d.real()));
 }
 
 void dStkAbs()
@@ -751,8 +751,8 @@ void dStkSqr()
 
 void Formula::StackSqr_d()
 {
-	m_variables[VARIABLE_LAST_SQR].argument.d.real(g_argument1->d.real()*g_argument1->d.real());
-	m_variables[VARIABLE_LAST_SQR].argument.d.imag(g_argument1->d.imag()*g_argument1->d.imag());
+	m_variables[VARIABLE_LAST_SQR].argument.d.real(sqr(g_argument1->d.real()));
+	m_variables[VARIABLE_LAST_SQR].argument.d.imag(sqr(g_argument1->d.imag()));
 	g_argument1->d.imag(g_argument1->d.real()*g_argument1->d.imag()*2.0);
 	g_argument1->d.real(m_variables[VARIABLE_LAST_SQR].argument.d.real() - m_variables[VARIABLE_LAST_SQR].argument.d.imag());
 	m_variables[VARIABLE_LAST_SQR].argument.d.real(m_variables[VARIABLE_LAST_SQR].argument.d.real() + m_variables[VARIABLE_LAST_SQR].argument.d.imag());
@@ -1047,7 +1047,7 @@ void (*StkDiv)() = dStkDiv;
 
 void dStkMod()
 {
-	g_argument1->d.real((g_argument1->d.real()*g_argument1->d.real()) + (g_argument1->d.imag()*g_argument1->d.imag()));
+	g_argument1->d.real(norm(g_argument1->d));
 	g_argument1->d.imag(0.0);
 }
 
@@ -1324,7 +1324,7 @@ void (*StkCoTanh)() = dStkCoTanh;
 void dStkRecip()
 {
 	double mod;
-	mod = g_argument1->d.real()*g_argument1->d.real() + g_argument1->d.imag()*g_argument1->d.imag();
+	mod = norm(g_argument1->d);
 	ChkFloatDenom(mod);
 	g_argument1->d.real( g_argument1->d.real()/mod);
 	g_argument1->d.imag(-g_argument1->d.imag()/mod);
@@ -1551,7 +1551,7 @@ void (*StkSqrt)() = dStkSqrt;
 
 void dStkCAbs()
 {
-	g_argument1->d.real(std::sqrt(sqr(g_argument1->d.real()) + sqr(g_argument1->d.imag())));
+	g_argument1->d.real(std::sqrt(norm(g_argument1->d)));
 	g_argument1->d.imag(0.0);
 }
 
@@ -2795,7 +2795,7 @@ int Formula::per_pixel()
 #if !defined(NO_FIXED_POINT_MATH)
 		case FIXED_POINT_MATH:
 			// watch out for overflow
-			if (sqr(g_old_z.real()) + sqr(g_old_z.imag()) >= 127)
+			if (norm(g_old_z) >= 127)
 			{
 				g_old_z.real(8);  // value to bail out in one iteration
 				g_old_z.imag(8);

@@ -243,7 +243,7 @@ int complex_basin()
 
 	g_temp_z.real(g_new_z.real() - g_c_root.real());
 	g_temp_z.imag(g_new_z.imag() - g_c_root.imag());
-	if ((sqr(g_temp_z.real()) + sqr(g_temp_z.imag())) < g_threshold)
+	if (norm(g_temp_z) < g_threshold)
 	{
 		if (std::abs(g_old_z.imag()) < .01)
 		{

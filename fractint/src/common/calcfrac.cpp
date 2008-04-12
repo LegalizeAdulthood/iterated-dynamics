@@ -209,7 +209,7 @@ static double fmod_test()
 	{
 	case BAILOUT_MODULUS:
 		result = (g_magnitude == 0.0 || !g_no_magnitude_calculation || g_integer_fractal) ?
-			sqr(g_new_z.real()) + sqr(g_new_z.imag()) : g_magnitude;
+			norm(g_new_z) : g_magnitude;
 		break;
 	case BAILOUT_REAL:
 		result = sqr(g_new_z.real());
@@ -231,7 +231,7 @@ static double fmod_test()
 		result = sqr(g_new_z.real() + g_new_z.imag());
 		break;
 	default:
-		result = sqr(g_new_z.real()) + sqr(g_new_z.imag());
+		result = norm(g_new_z);
 		break;
 	}
 	return result;
@@ -1405,8 +1405,8 @@ void ColorModeStarTrail::update()
 		}
 
 		g_new_z = clamp(g_new_z);
-		g_temp_sqr.real(g_new_z.real()*g_new_z.real());
-		g_temp_sqr.imag(g_new_z.imag()*g_new_z.imag());
+		g_temp_sqr.real(sqr(g_new_z.real()));
+		g_temp_sqr.imag(sqr(g_new_z.imag()));
 		g_magnitude = g_temp_sqr.real() + g_temp_sqr.imag();
 		g_old_z = g_new_z;
 		{
@@ -1834,8 +1834,8 @@ void StandardFractal::colormode_star_trail_update()
 
 		g_new_z.real(colormode_star_trail_clamp(g_new_z.real()));
 		g_new_z.imag(colormode_star_trail_clamp(g_new_z.imag()));
-		g_temp_sqr.real(g_new_z.real()*g_new_z.real());
-		g_temp_sqr.imag(g_new_z.imag()*g_new_z.imag());
+		g_temp_sqr.real(sqr(g_new_z.real()));
+		g_temp_sqr.imag(sqr(g_new_z.imag()));
 		g_magnitude = g_temp_sqr.real() + g_temp_sqr.imag();
 		g_old_z = g_new_z;
 		{
@@ -1909,7 +1909,7 @@ void StandardFractal::colormode_beauty_of_fractals_update()
 	}
 	else if (g_magnitude == 0.0 || !g_no_magnitude_calculation)
 	{
-		g_magnitude = sqr(g_new_z.real()) + sqr(g_new_z.imag());
+		g_magnitude = norm(g_new_z);
 	}
 	if (g_magnitude < m_colormode_bof60_min_magnitude)
 	{
@@ -2004,7 +2004,7 @@ void StandardFractal::potential_set_new_z()
 void StandardFractal::potential_compute()
 {
 	potential_set_new_z();
-	g_magnitude = sqr(g_new_z.real()) + sqr(g_new_z.imag());
+	g_magnitude = norm(g_new_z);
 	g_color_iter = potential(g_magnitude, g_color_iter);
 	if (g_log_table || g_log_calculation)
 	{
@@ -2125,7 +2125,7 @@ double StandardFractal::distance_compute()
 	}
 	else
 	{
-		dist *= sqr(std::log(dist))/(sqr(m_distance_test_derivative.real()) + sqr(m_distance_test_derivative.imag()));
+		dist *= sqr(std::log(dist))/norm(m_distance_test_derivative);
 	}
 	return dist;
 }
@@ -2242,7 +2242,7 @@ void StandardFractal::inside_colormode_z_magnitude_final()
 {
 	g_color_iter = long(g_integer_fractal ?
 		(FudgeToDouble(g_magnitude_l)*(g_max_iteration/2) + 1)
-		: ((sqr(g_new_z.real()) + sqr(g_new_z.imag()))*(g_max_iteration/2) + 1));
+		: (norm(g_new_z)*(g_max_iteration/2) + 1));
 }
 void StandardFractal::adjust_color_log_map()
 {

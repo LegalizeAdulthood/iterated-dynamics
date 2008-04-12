@@ -872,7 +872,7 @@ void JIIM::Execute()
 				// if not MIIM
 				g_old_z.real(g_old_z.real() - _cReal);
 				g_old_z.imag(g_old_z.imag() - _cImag);
-				r = g_old_z.real()*g_old_z.real() + g_old_z.imag()*g_old_z.imag();
+				r = norm(g_old_z);
 				if (r > 10.0)
 				{
 					g_old_z.real(0.0);
@@ -887,7 +887,7 @@ void JIIM::Execute()
 					color = 1;
 				}
 
-				// r = sqrt(g_old_z.real()*g_old_z.real() + g_old_z.imag()*g_old_z.imag()); calculated above
+				// r = sqrt(norm(g_old_z)); calculated above
 				r = std::sqrt(r);
 				g_new_z.real(std::sqrt(std::abs((r + g_old_z.real())/2)));
 				if (g_old_z.imag() < 0)
