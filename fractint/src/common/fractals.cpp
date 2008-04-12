@@ -248,7 +248,7 @@ void pow(ComplexD const *base, int exp, ComplexD *result)
 	if (exp < 0)
 	{
 		pow(base, -exp, result);
-		CMPLXrecip(*result, *result);
+		*result = reciprocal(*result);
 		return;
 	}
 
@@ -1316,9 +1316,8 @@ int sqr_1_over_trig_z_orbit()
 int sqr_1_over_trig_z_orbit_fp()
 {
 	// z = sqr(1/trig(z))
-	g_old_z = CMPLXtrig0(g_old_z);
-	CMPLXrecip(g_old_z, g_old_z);
-	CMPLXsqr(g_old_z, g_new_z);
+	g_old_z = reciprocal(CMPLXtrig0(g_old_z));
+	g_new_z = sqr(g_old_z);
 	return g_externs.BailOutFp();
 }
 
@@ -1358,7 +1357,7 @@ int lambda_trig_or_trig_orbit()
 #if !defined(NO_FIXED_POINT_MATH)
 	// z = trig0(z)*p1 if mod(old) < p2.real() and
 	// trig1(z)*p1 if mod(old) >= p2.real()
-	if ((LCMPLXmod(g_old_z_l)) < g_parameter2_l.real())
+	if ((norm(g_old_z_l)) < g_parameter2_l.real())
 	{
 		LCMPLXtrig0(g_old_z_l, g_temp_z_l);
 		LCMPLXmult(*g_long_parameter, g_temp_z_l, g_new_z_l);
@@ -1395,7 +1394,7 @@ int julia_trig_or_trig_orbit()
 #if !defined(NO_FIXED_POINT_MATH)
 	// z = trig0(z) + p1 if mod(old) < p2.real() and
 	//		trig1(z) + p1 if mod(old) >= p2.real()
-	if (LCMPLXmod(g_old_z_l) < g_parameter2_l.real())
+	if (norm(g_old_z_l) < g_parameter2_l.real())
 	{
 		LCMPLXtrig0(g_old_z_l, g_temp_z_l);
 		LCMPLXadd(*g_long_parameter, g_temp_z_l, g_new_z_l);
@@ -1868,8 +1867,7 @@ int sqr_trig_orbit()
 int sqr_trig_orbit_fp()
 {
 	// SZSB(XYAXIS) { z = pixel, TEST = (p1 + 3): z = sin(z)*sin(z), |z|<TEST}
-	g_temp_z = CMPLXtrig0(g_old_z);
-	CMPLXsqr(g_temp_z, g_new_z);
+	g_new_z = sqr(CMPLXtrig0(g_old_z));
 	return g_externs.BailOutFp();
 }
 
@@ -2819,7 +2817,7 @@ bool MandelbrotMix4::setup()
 	_g = 1.0/_f;							// g = 1/f,
 	_h = 1.0/_d;							// h = 1/d,
 	g_temp_z = MakeComplexT(_f - _b);		// tmp = f-b
-	CMPLXrecip(g_temp_z, _j);				// j = 1/(f-b)
+	_j = reciprocal(g_temp_z);				// j = 1/(f-b)
 	g_temp_z = MakeComplexT(-_a*_b*_g*_h);	// z = (-a*b*g*h)^j,
 
 	//	This code kludge attempts to duplicate the behavior
@@ -2879,7 +2877,7 @@ bool MandelbrotMix4::setup()
 	// in case our kludge failed, let the user fix it
 	if (g_parameters[P4_REAL] < 0.0)
 	{
-		g_temp_z.imag(-g_temp_z.imag());
+		g_temp_z = conj(g_temp_z);
 	}
 
 	if (g_externs.BailOut() == 0)

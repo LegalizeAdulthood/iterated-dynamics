@@ -680,8 +680,7 @@ int Minverse_julia_orbit()
 		g_new_z = ComplexSqrtFloat(g_new_z.real() - s_cx, g_new_z.imag() - s_cy);
 		if (RANDOM(2))
 		{
-			g_new_z.real(-g_new_z.real());
-			g_new_z.imag(-g_new_z.imag());
+			g_new_z = -g_new_z;
 		}
 #endif
 		break;
@@ -698,14 +697,12 @@ int Minverse_julia_orbit()
 		case DIRECTION_LEFT:
 			break;
 		case DIRECTION_RIGHT:
-			g_new_z.real(-g_new_z.real());
-			g_new_z.imag(-g_new_z.imag());
+			g_new_z = -g_new_z;
 			break;
 		case DIRECTION_RANDOM:
 			if (RANDOM(2))
 			{
-				g_new_z.real(-g_new_z.real());
-				g_new_z.imag(-g_new_z.imag());
+				g_new_z = -g_new_z;
 			}
 			break;
 		}
@@ -797,8 +794,7 @@ int Minverse_julia_orbit()
 		case DIRECTION_LEFT:
 			break;
 		case DIRECTION_RIGHT:
-			g_new_z.real(-g_new_z.real());
-			g_new_z.imag(-g_new_z.imag());
+			g_new_z = -g_new_z;
 			break;
 		case DIRECTION_RANDOM:
 			g_new_z.real(leftright*g_new_z.real());
@@ -851,8 +847,7 @@ int Linverse_julia_orbit()
 		g_new_z_l = ComplexSqrtLong(g_new_z_l.real() - s_x_long, g_new_z_l.imag() - s_y_long);
 		if (RANDOM(2))
 		{
-			g_new_z_l.real(-g_new_z_l.real());
-			g_new_z_l.imag(-g_new_z_l.imag());
+			g_new_z_l = -g_new_z_l;
 		}
 		break;
 	case MAJORMETHOD_RANDOM_RUN:
@@ -867,14 +862,12 @@ int Linverse_julia_orbit()
 		case DIRECTION_LEFT:
 			break;
 		case DIRECTION_RIGHT:
-			g_new_z_l.real(-g_new_z_l.real());
-			g_new_z_l.imag(-g_new_z_l.imag());
+			g_new_z_l = -g_new_z_l;
 			break;
 		case DIRECTION_RANDOM:
 			if (RANDOM(2))
 			{
-				g_new_z_l.real(-g_new_z_l.real());
-				g_new_z_l.imag(-g_new_z_l.imag());
+				g_new_z_l = -g_new_z_l;
 			}
 			break;
 		}

@@ -820,13 +820,13 @@ void (*StkSub)() = dStkSub;
 
 void dStkConj()
 {
-	g_argument1->d.imag(-g_argument1->d.imag());
+	g_argument1->d = conj(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkConj()
 {
-	g_argument1->l.imag(-g_argument1->l.imag());
+	g_argument1->l = conj(g_argument1->l);
 }
 #endif
 
@@ -983,15 +983,13 @@ void (*StkImag)() = dStkImag;
 
 void dStkNeg()
 {
-	g_argument1->d.real(-g_argument1->d.real());
-	g_argument1->d.imag(-g_argument1->d.imag());
+	g_argument1->d = -g_argument1->d;
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkNeg()
 {
-	g_argument1->l.real(-g_argument1->l.real());
-	g_argument1->l.imag(-g_argument1->l.imag());
+	g_argument1->l = -g_argument1->l;
 }
 #endif
 
@@ -1140,12 +1138,7 @@ void (*StkFlip)() = dStkFlip;
 
 void dStkSin()
 {
-	double const sinx = std::sin(g_argument1->d.real());
-	double const cosx = std::cos(g_argument1->d.real());
-	double const sinhy = std::sinh(g_argument1->d.imag());
-	double const coshy = std::cosh(g_argument1->d.imag());
-	g_argument1->d.real(sinx*coshy);
-	g_argument1->d.imag(cosx*sinhy);
+	g_argument1->d = sin(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -1409,14 +1402,14 @@ void (*StkCos)() = dStkCos;
 void dStkCosXX()
 {
 	dStkCos();
-	g_argument1->d.imag(-g_argument1->d.imag());
+	g_argument1->d = conj(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkCosXX()
 {
 	lStkCos();
-	g_argument1->l.imag(-g_argument1->l.imag());
+	g_argument1->l = conj(g_argument1->l);
 }
 #endif
 
@@ -1725,7 +1718,7 @@ void lStkAND()
 void (*StkAND)() = dStkAND;
 void dStkLog()
 {
-	g_argument1->d = ComplexLog(g_argument1->d);
+	g_argument1->d = log(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)
@@ -1737,14 +1730,9 @@ void lStkLog()
 
 void (*StkLog)() = dStkLog;
 
-void FPUcplxexp(ComplexD const *x, ComplexD *z)
-{
-	*z = ComplexExp(*x);
-}
-
 void dStkExp()
 {
-	FPUcplxexp(&g_argument1->d, &g_argument1->d);
+	g_argument1->d = exp(g_argument1->d);
 }
 
 #if !defined(NO_FIXED_POINT_MATH)

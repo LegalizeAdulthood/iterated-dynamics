@@ -249,7 +249,7 @@ int complex_basin()
 		{
 			g_old_z.imag(0.0);
 		}
-		temp = ComplexLog(g_old_z);
+		temp = log(g_old_z);
 		g_temp_z = temp*g_c_degree;
 		mod = g_temp_z.imag()/TwoPi;
 		g_color_iter = long(mod);

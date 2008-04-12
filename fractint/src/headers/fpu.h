@@ -93,15 +93,14 @@ inline long RegFloat2Fg(long x, int Fudge)
 
 inline long RegSftFloat(long x, int Shift)
 {
-	float f;
-	f = LongAsFloat(x);
+	float f = LongAsFloat(x);
 	if (Shift > 0)
 	{
 		f *= (1 << Shift);
 	}
 	else
 	{
-		f /= (1 << Shift);
+		f /= (1 << -Shift);
 	}
 	return FloatAsLong(f);
 }
