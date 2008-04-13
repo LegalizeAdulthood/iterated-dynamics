@@ -1565,8 +1565,8 @@ void StandardFractal::initialize_float()
 		}
 		if (g_bf_math == BIGNUM)
 		{
-			clear_bn(bnsaved.real());
-			clear_bn(bnsaved.imag());
+			bnsaved.real().clear();
+			bnsaved.imag().clear();
 		}
 		else if (g_bf_math == BIGFLT)
 		{

@@ -197,7 +197,7 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
 
 	g_int_length     = newintlength;
 	g_bn_length      = newbnlength;
-	clear_bn(newnum);
+	newnum.clear();
 
 	if (newbnlength - newintlength > oldbnlength - oldintlength)
 	{
@@ -233,7 +233,7 @@ bn_t strtobn(bn_t r, char *s)
 	int signflag = 0;
 	long longval;
 
-	clear_bn(r);
+	r.clear();
 	bn_t onesbyte(r, g_bn_length - g_int_length);
 
 	if (s[0] == '+')    // for + sign
@@ -384,7 +384,7 @@ char *unsafe_bntostr(char *s, int dec, bn_t &r)
 // Converts a long to a bignumber
 bn_t inttobn(bn_t &r, long longval)
 {
-	clear_bn(r);
+	r.clear();
 	bn_t onesbyte(r, g_bn_length - g_int_length);
 	switch (g_int_length)
 	{ // only 1, 2, or 4 are allowed
@@ -432,7 +432,7 @@ bn_t floattobn(bn_t &r, LDBL f)
 	int i;
 	int signflag = 0;
 
-	clear_bn(r);
+	r.clear();
 	bn_t onesbyte(r, g_bn_length - g_int_length);
 
 	if (f < 0)
@@ -566,7 +566,7 @@ bn_t unsafe_inv_bn(bn_t &r, bn_t &n)
 	// bntmp1 = orig_bntmp1 + orig_bnlength - g_bn_length;
 
 	floattobn(r, f); // start with approximate inverse
-	clear_bn(bntmp2); // will be used as 1.0 and 2.0
+	bntmp2.clear(); // will be used as 1.0 and 2.0
 
 	for (i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
 	{
@@ -627,7 +627,7 @@ bn_t unsafe_div_bn(bn_t &r, bn_t &n1, bn_t &n2)
 	a = bntofloat(n1);
 	if (a == 0) // division into zero
 	{
-		clear_bn(r); // return 0
+		r.clear(); // return 0
 		return r;
 	}
 	b = bntofloat(n2);
@@ -745,14 +745,14 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 
 	if (is_bn_neg(n))
 	{ // sqrt of a neg, return 0
-		clear_bn(r);
+		r.clear();
 		return r;
 	}
 
 	f = bntofloat(n);
 	if (f == 0) // division by zero will occur
 	{
-		clear_bn(r); // sqrt(0) = 0
+		r.clear(); // sqrt(0) = 0
 		return r;
 	}
 	f = sqrtl(f); // approximate square root
@@ -1000,7 +1000,7 @@ bn_t unsafe_sincos_bn(bn_t &s, bn_t &c, bn_t &n)
 
 	if (is_bn_zero(n))
 	{
-		clear_bn(s);    // sin(0) = 0
+		s.clear();    // sin(0) = 0
 		inttobn(c, 1);  // cos(0) = 1
 		return s;
 	}
@@ -1050,7 +1050,7 @@ bn_t unsafe_sincos_bn(bn_t &s, bn_t &c, bn_t &n)
 	// this looks redundant, but n could now be zero when it wasn't before
 	if (is_bn_zero(n))
 	{
-		clear_bn(s);    // sin(0) = 0
+		s.clear();    // sin(0) = 0
 		inttobn(c, 1);  // cos(0) = 1
 		return s;
 	}
@@ -1183,7 +1183,7 @@ bn_t unsafe_atan_bn(bn_t &r, bn_t &n)
 		f = bntofloat(n);
 	}
 
-	clear_bn(bntmp3); // not really necessary, but makes things more consistent
+	bntmp3.clear(); // not really necessary, but makes things more consistent
 
 	// With Newton's Method, there is no need to calculate all the digits
 	// every time.  The precision approximately doubles each iteration.
@@ -1292,7 +1292,7 @@ bn_t unsafe_atan2_bn(bn_t &r, bn_t &ny, bn_t &nx)
 		}
 		else    // signx >= 0    positive x axis, 0
 		{
-			clear_bn(r);
+			r.clear();
 		}
 		return r;
 	}

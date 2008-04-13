@@ -29,9 +29,9 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 
 /********************************************************************/
 // r = 0
-void clear_bn(bn_t &r)
+void BigT::clear()
 {
-	memset(r.storage(), 0, g_bn_length); // set array to zero
+	memset(_storage, 0, g_bn_length); // set array to zero
 }
 
 /********************************************************************/
@@ -363,7 +363,7 @@ bn_t unsafe_full_mult_bn(bn_t &r, bn_t &n1, bn_t &n2)
 	steps = g_bn_length >> 1; // two bytes at a time
 	carry_steps = doublesteps = (steps << 1) - 2;
 	g_bn_length <<= 1;
-	clear_bn(r);        // double width
+	r.clear();        // double width
 	g_bn_length >>= 1;
 	rp1 = r;
 	rp2 = r;
@@ -450,7 +450,7 @@ bn_t unsafe_mult_bn(bn_t &r, bn_t &n1, bn_t &n2)
 	n2 = bn_t(n2, (g_bn_length << 1) - g_r_length);  // shift n2 over to where it is needed
 
 	g_bn_length = g_r_length;
-	clear_bn(r);        // zero out r, g_r_length width
+	r.clear();        // zero out r, g_r_length width
 	g_bn_length = bnl;
 
 	steps = (g_r_length-g_bn_length) >> 1;
@@ -541,7 +541,7 @@ bn_t unsafe_full_square_bn(bn_t &r, bn_t &n)
 	}
 
 	g_bn_length <<= 1;
-	clear_bn(r);        // zero out r, double width
+	r.clear();        // zero out r, double width
 	g_bn_length >>= 1;
 
 	steps = (g_bn_length >> 1)-1;
@@ -666,7 +666,7 @@ bn_t unsafe_square_bn(bn_t &r, bn_t &n)
 
 	bnl = g_bn_length;
 	g_bn_length = g_r_length;
-	clear_bn(r);        // zero out r, of width g_r_length
+	r.clear();        // zero out r, of width g_r_length
 	g_bn_length = bnl;
 
 	// determine whether r is on an odd or even two-byte word in the number
