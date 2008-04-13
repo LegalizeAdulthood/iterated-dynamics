@@ -529,19 +529,19 @@ bn_t unsafe_inv_bn(bn_t &r, bn_t &n)
 	f = bntofloat(n);
 	if (f == 0) // division by zero
 	{
-		max_bn(r);
+		r.maximum();
 		return r;
 	}
 	f = 1/f; // approximate inverse
 	maxval = (1L << ((g_int_length << 3)-1)) - 1;
 	if (f > maxval) // check for overflow
 	{
-		max_bn(r);
+		r.maximum();
 		return r;
 	}
 	else if (f <= -maxval)
 	{
-		max_bn(r);
+		r.maximum();
 		neg_a_bn(r);
 		return r;
 	}
@@ -578,7 +578,7 @@ bn_t unsafe_inv_bn(bn_t &r, bn_t &n)
 
 		unsafe_mult_bn(bntmp1, r, n); // bntmp1 = rn
 		inttobn(bntmp2, 1);  // bntmp2 = 1.0
-		if (g_bn_length == orig_bnlength && cmp_bn(bntmp2, bn_t(bntmp1, g_shift_factor)) == 0) // if not different
+		if (g_bn_length == orig_bnlength && bntmp2 == bn_t(bntmp1, g_shift_factor)) // if not different
 		{
 			break;  // they must be the same
 		}
@@ -633,19 +633,19 @@ bn_t unsafe_div_bn(bn_t &r, bn_t &n1, bn_t &n2)
 	b = bntofloat(n2);
 	if (b == 0) // division by zero
 	{
-		max_bn(r);
+		r.maximum();
 		return r;
 	}
 	f = a/b; // approximate quotient
 	maxval = (1L << ((g_int_length << 3)-1)) - 1;
 	if (f > maxval) // check for overflow
 	{
-		max_bn(r);
+		r.maximum();
 		return r;
 	}
 	else if (f <= -maxval)
 	{
-		max_bn(r);
+		r.maximum();
 		neg_a_bn(r);
 		return r;
 	}
@@ -887,7 +887,7 @@ bn_t unsafe_ln_bn(bn_t &r, bn_t &n)
 
 	if (is_bn_neg(n) || is_bn_zero(n))
 	{ // error, return largest neg value
-		max_bn(r);
+		r.maximum();
 		neg_a_bn(r);
 		return r;
 	}
@@ -897,12 +897,12 @@ bn_t unsafe_ln_bn(bn_t &r, bn_t &n)
 	maxval = (1L << ((g_int_length << 3)-1)) - 1;
 	if (f > maxval) // check for overflow
 	{
-		max_bn(r);
+		r.maximum();
 		return r;
 	}
 	else if (f <= -maxval)
 	{
-		max_bn(r);
+		r.maximum();
 		neg_a_bn(r);
 		return r;
 	}
@@ -1014,14 +1014,14 @@ bn_t unsafe_sincos_bn(bn_t &s, bn_t &c, bn_t &n)
 
 	double_bn(bntmp1, bn_pi); // 2*pi
 	// this could be done with remainders, but it would probably be slower
-	while (cmp_bn(n, bntmp1) >= 0) // while n >= 2*pi
+	while (n >= bntmp1) // while n >= 2*pi
 	{
 		sub_a_bn(n, bntmp1);
 	}
 	// 0 <= n < 2*pi
 
 	copy_bn(bntmp1, bn_pi); // pi
-	if (cmp_bn(n, bntmp1) >= 0) // if n >= pi
+	if (n >= bntmp1) // if n >= pi
 	{
 		sub_a_bn(n, bntmp1);
 		signsin = !signsin;
@@ -1030,7 +1030,7 @@ bn_t unsafe_sincos_bn(bn_t &s, bn_t &c, bn_t &n)
 	// 0 <= n < pi
 
 	half_bn(bntmp1, bn_pi); // pi/2
-	if (cmp_bn(n, bntmp1) > 0) // if n > pi/2
+	if (n > bntmp1) // if n > pi/2
 	{
 		sub_bn(n, bn_pi, n);   // pi - n
 		signcos = !signcos;
@@ -1039,7 +1039,7 @@ bn_t unsafe_sincos_bn(bn_t &s, bn_t &c, bn_t &n)
 
 	half_bn(bntmp1, bn_pi); // pi/2
 	half_a_bn(bntmp1);      // pi/4
-	if (cmp_bn(n, bntmp1) > 0) // if n > pi/4
+	if (n > bntmp1) // if n > pi/4
 	{
 		half_bn(bntmp1, bn_pi); // pi/2
 		sub_bn(n, bntmp1, n);  // pi/2 - n

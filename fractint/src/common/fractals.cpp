@@ -215,7 +215,7 @@ static long const TRIG_LIMIT_16 = (8L << 16);		// domain limit of fast trig func
 
 inline long TRIG_ARG_L(long x)
 {
-	if (labs(x) > TRIG_LIMIT_16)
+	if (std::abs(x) > TRIG_LIMIT_16)
 	{
 		return DoubleToFudge(fmod(FudgeToDouble(x), g_two_pi));
 	}
@@ -302,7 +302,7 @@ int complex_power_l(ComplexL *base, int exp, ComplexL *result, int bit_shift)
 	while (exp)
 	{
 		//
-		// if (labs(lxt) >= maxarg || labs(lyt) >= maxarg)
+		// if (std::abs(lxt) >= maxarg || std::abs(lyt) >= maxarg)
 		//	return -1;
 		//
 		lt2 = multiply(lxt, lxt, bit_shift) - multiply(lyt, lyt, bit_shift);
@@ -558,8 +558,8 @@ int lambda_exponent_orbit()
 	// found this in  "Science of Fractal Images"
 	assert((1000L << g_bit_shift) == DoubleToFudge(1000.0));
 	assert((8L << g_bit_shift) == DoubleToFudge(8.0));
-	if ((labs(g_old_z_l.imag()) >= (1000L << g_bit_shift))
-		|| (labs(g_old_z_l.real()) >= (8L << g_bit_shift)))
+	if ((std::abs(g_old_z_l.imag()) >= (1000L << g_bit_shift))
+		|| (std::abs(g_old_z_l.real()) >= (8L << g_bit_shift)))
 	{
 		return 1;
 	}
@@ -612,8 +612,8 @@ int trig_plus_exponent_orbit()
 	long tmp;
 
 	// domain check for fast transcendental functions
-	if ((labs(g_old_z_l.real()) > TRIG_LIMIT_16)
-		|| (labs(g_old_z_l.imag()) > TRIG_LIMIT_16))
+	if ((std::abs(g_old_z_l.real()) > TRIG_LIMIT_16)
+		|| (std::abs(g_old_z_l.imag()) > TRIG_LIMIT_16))
 	{
 		return 1;
 	}
@@ -667,7 +667,7 @@ int unity_orbit()
 	// brought to you by Mark Peterson - you won't find this in any fractal
 	// books unless they saw it here first - Mark invented it!
 	long xx_one = multiply(g_old_z_l.real(), g_old_z_l.real(), g_bit_shift) + multiply(g_old_z_l.imag(), g_old_z_l.imag(), g_bit_shift);
-	if ((xx_one > g_two_fudge) || (labs(xx_one - g_one_fudge) < g_delta_min))
+	if ((xx_one > g_two_fudge) || (std::abs(xx_one - g_one_fudge) < g_delta_min))
 	{
 		return 1;
 	}
@@ -1013,9 +1013,13 @@ int popcorn_old_orbit()
 		g_temp_sqr_l.imag(lsqr(g_new_z_l.imag()));
 	}
 	g_magnitude_l = g_temp_sqr_l.real() + g_temp_sqr_l.imag();
-	if (g_magnitude_l >= g_rq_limit_l || g_magnitude_l < 0 || labs(g_new_z_l.real()) > g_rq_limit2_l
-			|| labs(g_new_z_l.imag()) > g_rq_limit2_l)
-					return 1;
+	if (g_magnitude_l >= g_rq_limit_l
+		|| g_magnitude_l < 0
+		|| std::abs(g_new_z_l.real()) > g_rq_limit2_l
+		|| std::abs(g_new_z_l.imag()) > g_rq_limit2_l)
+	{
+		return 1;
+	}
 	g_old_z_l = g_new_z_l;
 	return 0;
 #else
@@ -1053,8 +1057,8 @@ int popcorn_orbit()
 	g_magnitude_l = g_temp_sqr_l.real() + g_temp_sqr_l.imag();
 	if (g_magnitude_l >= g_rq_limit_l
 		|| g_magnitude_l < 0
-		|| labs(g_new_z_l.real()) > g_rq_limit2_l
-		|| labs(g_new_z_l.imag()) > g_rq_limit2_l)
+		|| std::abs(g_new_z_l.real()) > g_rq_limit2_l
+		|| std::abs(g_new_z_l.imag()) > g_rq_limit2_l)
 	{
 		return 1;
 	}
@@ -1099,7 +1103,8 @@ int popcorn_fn_orbit_fp()
 	g_temp_sqr.imag(sqr(g_new_z.imag()));
 	g_magnitude = g_temp_sqr.real() + g_temp_sqr.imag();
 	if (g_magnitude >= g_rq_limit
-		|| std::abs(g_new_z.real()) > g_rq_limit2 || std::abs(g_new_z.imag()) > g_rq_limit2)
+		|| std::abs(g_new_z.real()) > g_rq_limit2
+		|| std::abs(g_new_z.imag()) > g_rq_limit2)
 	{
 		return 1;
 	}
@@ -1154,8 +1159,8 @@ int popcorn_fn_orbit()
 	g_temp_sqr_l.imag(lsqr(g_new_z_l.imag()));
 	g_magnitude_l = g_temp_sqr_l.real() + g_temp_sqr_l.imag();
 	if (g_magnitude_l >= g_rq_limit_l || g_magnitude_l < 0
-		|| labs(g_new_z_l.real()) > g_rq_limit2_l
-		|| labs(g_new_z_l.imag()) > g_rq_limit2_l)
+		|| std::abs(g_new_z_l.real()) > g_rq_limit2_l
+		|| std::abs(g_new_z_l.imag()) > g_rq_limit2_l)
 	{
 		return 1;
 	}
@@ -1796,7 +1801,7 @@ int trig_z_squared_orbit() // this doesn't work very well
 	// { z = pixel: z = trig(z*z), |z|<TEST }
 	long l16triglim_2 = 8L << 15;
 	LCMPLXsqr_old(g_temp_z_l);
-	if (labs(g_temp_z_l.real()) > l16triglim_2 || labs(g_temp_z_l.imag()) > l16triglim_2)
+	if (std::abs(g_temp_z_l.real()) > l16triglim_2 || std::abs(g_temp_z_l.imag()) > l16triglim_2)
 	{
 		g_overflow = true;
 	}
@@ -1881,8 +1886,8 @@ int magnet2_orbit_fp()
 int lambda_trig_orbit()
 {
 #if !defined(NO_FIXED_POINT_MATH)
-	if (labs(g_old_z_l.real()) >= g_rq_limit2_l
-		|| labs(g_old_z_l.imag()) >= g_rq_limit2_l)
+	if (std::abs(g_old_z_l.real()) >= g_rq_limit2_l
+		|| std::abs(g_old_z_l.imag()) >= g_rq_limit2_l)
 	{
 		return 1;
 	}
@@ -1912,7 +1917,7 @@ int lambda_trig_orbit_fp()
 int lambda_trig1_orbit()
 {
 #if !defined(NO_FIXED_POINT_MATH)
-	if (labs(g_old_z_l.imag()) >= g_rq_limit2_l)
+	if (std::abs(g_old_z_l.imag()) >= g_rq_limit2_l)
 	{
 		return 1;
 	}
@@ -1940,7 +1945,7 @@ int lambda_trig1_orbit_fp()
 int lambda_trig2_orbit()
 {
 #if !defined(NO_FIXED_POINT_MATH)
-	if (labs(g_old_z_l.real()) >= g_rq_limit2_l)
+	if (std::abs(g_old_z_l.real()) >= g_rq_limit2_l)
 	{
 		return 1;
 	}

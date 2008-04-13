@@ -334,18 +334,18 @@ bool mandelbrot_setup_bn()
 	div_a_bn_int(bnydel2, (U16)(g_x_dots - 1));
 
 	abs_bn(bnclosenuff, bnxdel);
-	if (cmp_bn(abs_bn(bntemp1, bnxdel2), bnclosenuff) > 0)
+	if (abs_bn(bntemp1, bnxdel2) > bnclosenuff)
 	{
 		copy_bn(bnclosenuff, bntemp1);
 	}
-	if (cmp_bn(abs_bn(bntemp1, bnydel), abs_bn(bntemp2, bnydel2)) > 0)
+	if (abs_bn(bntemp1, bnydel) > abs_bn(bntemp2, bnydel2))
 	{
-		if (cmp_bn(bntemp1, bnclosenuff) > 0)
+		if (bntemp1 > bnclosenuff)
 		{
 			copy_bn(bnclosenuff, bntemp1);
 		}
 	}
-	else if (cmp_bn(bntemp2, bnclosenuff) > 0)
+	else if (bntemp2 > bnclosenuff)
 	{
 		copy_bn(bnclosenuff, bntemp2);
 	}

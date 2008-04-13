@@ -9,8 +9,8 @@ int bail_out_mod_l()
 	g_temp_sqr_l.real(lsqr(g_new_z_l.real()));
 	g_temp_sqr_l.imag(lsqr(g_new_z_l.imag()));
 	g_magnitude_l = g_temp_sqr_l.real() + g_temp_sqr_l.imag();
-	if (g_magnitude_l >= g_rq_limit_l || g_magnitude_l < 0 || labs(g_new_z_l.real()) > g_rq_limit2_l
-		|| labs(g_new_z_l.imag()) > g_rq_limit2_l || g_overflow)
+	if (g_magnitude_l >= g_rq_limit_l || g_magnitude_l < 0 || std::abs(g_new_z_l.real()) > g_rq_limit2_l
+		|| std::abs(g_new_z_l.imag()) > g_rq_limit2_l || g_overflow)
 	{
 		g_overflow = false;
 		return 1;

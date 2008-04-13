@@ -358,7 +358,7 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 				plot_orbit_i(g_old_z_l.real(), g_old_z_l.imag(), -1);
 			}
 
-			if (labs(s_frothy_data.l.halfa-g_old_z_l.imag()) < FROTH_LCLOSE
+			if (std::abs(s_frothy_data.l.halfa-g_old_z_l.imag()) < FROTH_LCLOSE
 				&& g_old_z_l.real() > s_frothy_data.l.top_x1 && g_old_z_l.real() < s_frothy_data.l.top_x2)
 			{
 				if ((!s_frothy_data.repeat_mapping && s_frothy_data.attractors == 2)
@@ -375,7 +375,7 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 					found_attractor = !s_frothy_data.repeat_mapping ? 1 : 2;
 				}
 			}
-			else if (labs(multiply(FROTH_LSLOPE, g_old_z_l.real(), g_bit_shift)-s_frothy_data.l.a-g_old_z_l.imag()) < FROTH_LCLOSE
+			else if (std::abs(multiply(FROTH_LSLOPE, g_old_z_l.real(), g_bit_shift)-s_frothy_data.l.a-g_old_z_l.imag()) < FROTH_LCLOSE
 						&& g_old_z_l.real() <= s_frothy_data.l.right_x1 && g_old_z_l.real() >= s_frothy_data.l.right_x2)
 			{
 				if (!s_frothy_data.repeat_mapping && s_frothy_data.attractors == 2)
@@ -395,7 +395,7 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 					found_attractor = !s_frothy_data.repeat_mapping ? 3 : 6;
 				}
 			}
-			else if (labs(multiply(-FROTH_LSLOPE, g_old_z_l.real(), g_bit_shift)-s_frothy_data.l.a-g_old_z_l.imag()) < FROTH_LCLOSE)
+			else if (std::abs(multiply(-FROTH_LSLOPE, g_old_z_l.real(), g_bit_shift)-s_frothy_data.l.a-g_old_z_l.imag()) < FROTH_LCLOSE)
 			{
 				if (!s_frothy_data.repeat_mapping && s_frothy_data.attractors == 2)
 				{

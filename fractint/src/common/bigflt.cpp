@@ -235,7 +235,7 @@ bn_t bftobn(bn_t &n, bf_t const &f)
 	fexp = S16(f.get16(g_bf_length));
 	if (fexp >= g_int_length)
 	{ // if it's too big, use max value
-		max_bn(n);
+		n.maximum();
 		if (is_bf_neg(f))
 		{
 			neg_a_bn(n);

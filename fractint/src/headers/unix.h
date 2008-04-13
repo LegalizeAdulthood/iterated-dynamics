@@ -14,10 +14,6 @@
 #define chsize(fd,len) ftruncate(fd,len)
 #endif
 
-#ifndef labs
-#define labs(x) ((x)>0?(x):-(x))
-#endif
-
 typedef void (*SignalHandler)(int);
 
 extern int iocount;
