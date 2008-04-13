@@ -849,8 +849,8 @@ void complex_power_bn(ComplexBigNum &t, ComplexBigNum const &xx, ComplexBigNum c
 	// 0 raised to anything is 0
 	if (is_bn_zero(xx.real()) && is_bn_zero(xx.imag()))
 	{
-		clear_bn(t.real());
-		clear_bn(t.imag());
+		t.real().clear();
+		t.imag().clear();
 		return;
 	}
 

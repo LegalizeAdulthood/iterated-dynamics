@@ -170,7 +170,6 @@ void init_big_length(int bnl);
 void init_big_pi();
 
 // functions defined in bignuma.asm or bignumc.c
-extern void clear_bn(bn_t &r);
 extern void max_bn(bn_t &r);
 extern void copy_bn(bn_t &r, bn_t const &n);
 extern int cmp_bn(bn_t const &n1, bn_t const &n2);

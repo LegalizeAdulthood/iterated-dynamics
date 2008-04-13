@@ -245,7 +245,7 @@ bn_t bftobn(bn_t &n, bf_t const &f)
 
 	if (-fexp > g_bn_length - g_int_length) // too small, return zero
 	{
-		clear_bn(n);
+		n.clear();
 		return n;
 	}
 
