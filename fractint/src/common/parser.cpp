@@ -409,7 +409,7 @@ Arg *g_argument2;
 #define ChkFloatDenom(denom)			\
 	do									\
 	{									\
-		if (std::abs(denom) <= DBL_MIN)		\
+		if (std::abs(denom) <= DBL_MIN)	\
 		{								\
 			g_overflow = true;			\
 			return;						\
@@ -737,8 +737,8 @@ void dStkAbs()
 #if !defined(NO_FIXED_POINT_MATH)
 void lStkAbs()
 {
-	g_argument1->l.real(labs(g_argument1->l.real()));
-	g_argument1->l.imag(labs(g_argument1->l.imag()));
+	g_argument1->l.real(std::abs(g_argument1->l.real()));
+	g_argument1->l.imag(std::abs(g_argument1->l.imag()));
 }
 #endif
 
@@ -887,8 +887,8 @@ void lStkTrunc()
 		so we make the numbers positive */
 	int signx = sign(g_argument1->l.real());
 	int signy = sign(g_argument1->l.imag());
-	g_argument1->l.real(labs(g_argument1->l.real()));
-	g_argument1->l.imag(labs(g_argument1->l.imag()));
+	g_argument1->l.real(std::abs(g_argument1->l.real()));
+	g_argument1->l.imag(std::abs(g_argument1->l.imag()));
 	g_argument1->l.real((g_argument1->l.real()) >> g_bit_shift);
 	g_argument1->l.imag((g_argument1->l.imag()) >> g_bit_shift);
 	g_argument1->l.real((g_argument1->l.real()) << g_bit_shift);

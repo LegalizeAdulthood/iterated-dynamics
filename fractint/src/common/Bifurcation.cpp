@@ -174,7 +174,7 @@ static int bifurcation_periodic(long time)
 	{
 		if (g_integer_fractal)
 		{
-			if (labs(s_bifurcation_saved_population_l-s_population_l) <= s_bifurcation_close_enough_l)
+			if (std::abs(s_bifurcation_saved_population_l-s_population_l) <= s_bifurcation_close_enough_l)
 			{
 				return 1;
 			}

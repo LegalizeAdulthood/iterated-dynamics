@@ -226,7 +226,7 @@ int auto_stereo()
 	s_ground = g_x_dots/8;
 	s_reverse = (s_auto_stereo_depth < 0);
 	s_depth = (long(g_x_dots)*long(s_auto_stereo_depth))/4000L;
-	s_depth = labs(s_depth) + 1;
+	s_depth = std::abs(s_depth) + 1;
 	if (get_min_max())
 	{
 		driver_buzzer(BUZZER_INTERRUPT);

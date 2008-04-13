@@ -36,10 +36,10 @@ void BigT::clear()
 
 /********************************************************************/
 // r = max positive value
-void max_bn(bn_t &r)
+void BigT::maximum()
 {
-	memset(r.storage(), 0xFF, g_bn_length-1); // set to max values
-	r.storage()[g_bn_length-1] = 0x7F;  // turn off the sign bit
+	memset(_storage, 0xFF, g_bn_length-1); // set to max values
+	_storage[g_bn_length-1] = 0x7F;  // turn off the sign bit
 }
 
 /********************************************************************/
@@ -826,7 +826,7 @@ bn_t unsafe_div_bn_int(bn_t &r, bn_t &n,  U16 u)
 
 	if (u == 0) // division by zero
 	{
-		max_bn(r);
+		r.maximum();
 		if (sign)
 		{
 			neg_a_bn(r);
@@ -867,7 +867,7 @@ void div_a_bn_int(bn_t &r, U16 u)
 
 	if (u == 0) // division by zero
 	{
-		max_bn(r);
+		r.maximum();
 		if (sign)
 		{
 			neg_a_bn(r);

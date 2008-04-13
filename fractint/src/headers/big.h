@@ -84,6 +84,7 @@ public:
 	U32 set32(int idx, long value)			{ return big_set32(_storage + idx, value); }
 
 	void clear();
+	void maximum();
 
 private:
 	BYTE *_storage;
@@ -170,7 +171,6 @@ void init_big_length(int bnl);
 void init_big_pi();
 
 // functions defined in bignuma.asm or bignumc.c
-extern void max_bn(bn_t &r);
 extern void copy_bn(bn_t &r, bn_t const &n);
 extern int cmp_bn(bn_t const &n1, bn_t const &n2);
 extern bool is_bn_neg(bn_t const &n);
@@ -337,6 +337,31 @@ inline ComplexD ComplexBigNumToDouble(ComplexBigNum const &z)
 inline ComplexD ComplexBigFloatToDouble(ComplexBigFloat const &z)
 {
 	return MakeComplexT(double(bftofloat(z.real())), double(bftofloat(z.imag())));
+}
+
+inline bool operator==(bn_t const &lhs, bn_t const &rhs)
+{
+	return cmp_bn(lhs, rhs) == 0;
+}
+inline bool operator!=(bn_t const &lhs, bn_t const &rhs)
+{
+	return cmp_bn(lhs, rhs) != 0;
+}
+inline bool operator<(bn_t const &lhs, bn_t const &rhs)
+{
+	return cmp_bn(lhs, rhs) < 0;
+}
+inline bool operator<=(bn_t const &lhs, bn_t const &rhs)
+{
+	return cmp_bn(lhs, rhs) <= 0;
+}
+inline bool operator>(bn_t const &lhs, bn_t const &rhs)
+{
+	return cmp_bn(lhs, rhs) > 0;
+}
+inline bool operator>=(bn_t const &lhs, bn_t const &rhs)
+{
+	return cmp_bn(lhs, rhs) >= 0;
 }
 
 #endif // _BIG_H

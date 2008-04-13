@@ -1765,42 +1765,34 @@ void StandardFractal::check_periodicity()
 		{
 			if (g_integer_fractal)     // floating-pt periodicity chk
 			{
-				if (labs(m_saved_z_l.real() - g_new_z_l.real()) < g_close_enough_l)
+				if ((std::abs(m_saved_z_l.real() - g_new_z_l.real()) < g_close_enough_l)
+					&& (std::abs(m_saved_z_l.imag() - g_new_z_l.imag()) < g_close_enough_l))
 				{
-					if (labs(m_saved_z_l.imag() - g_new_z_l.imag()) < g_close_enough_l)
-					{
-						m_caught_a_cycle = true;
-					}
+					m_caught_a_cycle = true;
 				}
 			}
 			else if (g_bf_math == BIGNUM)
 			{
-				if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.real(), g_new_z_bn.real())), bnclosenuff) < 0)
+				if ((abs_a_bn(sub_bn(bntmp, bnsaved.real(), g_new_z_bn.real())) < bnclosenuff)
+					&& (abs_a_bn(sub_bn(bntmp, bnsaved.imag(), g_new_z_bn.imag())) < bnclosenuff))
 				{
-					if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.imag(), g_new_z_bn.imag())), bnclosenuff) < 0)
-					{
-						m_caught_a_cycle = true;
-					}
+					m_caught_a_cycle = true;
 				}
 			}
 			else if (g_bf_math == BIGFLT)
 			{
-				if (cmp_bf(abs_a_bf(subtract_bf(bftmp, bfsaved.real(), g_new_z_bf.real())), bfclosenuff) < 0)
+				if ((cmp_bf(abs_a_bf(subtract_bf(bftmp, bfsaved.real(), g_new_z_bf.real())), bfclosenuff) < 0)
+					&& (cmp_bf(abs_a_bf(subtract_bf(bftmp, bfsaved.imag(), g_new_z_bf.imag())), bfclosenuff) < 0))
 				{
-					if (cmp_bf(abs_a_bf(subtract_bf(bftmp, bfsaved.imag(), g_new_z_bf.imag())), bfclosenuff) < 0)
-					{
-						m_caught_a_cycle = true;
-					}
+					m_caught_a_cycle = true;
 				}
 			}
 			else
 			{
-				if (std::abs(s_saved_z.real() - g_new_z.real()) < g_close_enough)
+				if ((std::abs(s_saved_z.real() - g_new_z.real()) < g_close_enough)
+					&& (std::abs(s_saved_z.imag() - g_new_z.imag()) < g_close_enough))
 				{
-					if (std::abs(s_saved_z.imag() - g_new_z.imag()) < g_close_enough)
-					{
-						m_caught_a_cycle = true;
-					}
+					m_caught_a_cycle = true;
 				}
 			}
 			if (m_caught_a_cycle)
@@ -1851,14 +1843,14 @@ bool StandardFractal::colormode_epsilon_cross_update()
 	m_colormode_epsilon_cross_hooper = HOOPER_NONE;
 	if (g_integer_fractal)
 	{
-		if (labs(g_new_z_l.real()) < labs(m_colormode_epsilon_cross_proximity_l))
+		if (std::abs(g_new_z_l.real()) < std::abs(m_colormode_epsilon_cross_proximity_l))
 		{
 			// close to y axis
 			m_colormode_epsilon_cross_hooper = (m_colormode_epsilon_cross_proximity_l > 0) ?
 				HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS;
 			go_plot_inside = true;
 		}
-		else if (labs(g_new_z_l.imag()) < labs(m_colormode_epsilon_cross_proximity_l))
+		else if (std::abs(g_new_z_l.imag()) < std::abs(m_colormode_epsilon_cross_proximity_l))
 		{
 			// close to x axis
 			m_colormode_epsilon_cross_hooper = (m_colormode_epsilon_cross_proximity_l > 0) ?
@@ -2161,7 +2153,7 @@ void StandardFractal::compute_decomposition_and_biomorph()
 	{
 		if (g_integer_fractal)
 		{
-			if (labs(g_new_z_l.real()) < g_rq_limit2_l || labs(g_new_z_l.imag()) < g_rq_limit2_l)
+			if (std::abs(g_new_z_l.real()) < g_rq_limit2_l || std::abs(g_new_z_l.imag()) < g_rq_limit2_l)
 			{
 				g_color_iter = g_externs.Biomorph();
 			}
@@ -3792,10 +3784,10 @@ void PerformWorkList::common_escape_time_initialization()
 
 	set_symmetry(g_symmetry, true);
 
-	if (!g_resuming && (labs(g_log_palette_mode) == 2 || (g_log_palette_mode && g_log_automatic_flag)))
+	if (!g_resuming && (std::abs(g_log_palette_mode) == 2 || (g_log_palette_mode && g_log_automatic_flag)))
 	{
 		// calculate round screen edges to work out best start for logmap
-		g_log_palette_mode = (automatic_log_map()*(g_log_palette_mode/labs(g_log_palette_mode)));
+		g_log_palette_mode = (automatic_log_map()*(g_log_palette_mode/std::abs(g_log_palette_mode)));
 		SetupLogTable();
 	}
 }
