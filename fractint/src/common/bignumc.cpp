@@ -29,51 +29,24 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 
 /********************************************************************/
 // r = 0
-bn_t clear_bn(bn_t r)
+void clear_bn(bn_t &r)
 {
-#ifdef BIG_BASED
-	_fmemset(r, 0, g_bn_length); // set array to zero
-#else
-#ifdef BIG_FAR
-	_fmemset(r, 0, g_bn_length); // set array to zero
-#else
 	memset(r.storage(), 0, g_bn_length); // set array to zero
-#endif
-#endif
-	return r;
 }
 
 /********************************************************************/
 // r = max positive value
-bn_t max_bn(bn_t r)
+void max_bn(bn_t &r)
 {
-#ifdef BIG_BASED
-	_fmemset(r, 0xFF, g_bn_length-1); // set to max values
-#else
-#ifdef BIG_FAR
-	_fmemset(r, 0xFF, g_bn_length-1); // set to max values
-#else
 	memset(r.storage(), 0xFF, g_bn_length-1); // set to max values
-#endif
-#endif
 	r.storage()[g_bn_length-1] = 0x7F;  // turn off the sign bit
-	return r;
 }
 
 /********************************************************************/
 // r = n
-bn_t copy_bn(bn_t r, bn_t n)
+void copy_bn(bn_t &r, bn_t const &n)
 {
-#ifdef BIG_BASED
-	_fmemcpy(r, n, g_bn_length);
-#else
-#ifdef BIG_FAR
-	_fmemcpy(r, n, g_bn_length);
-#else
 	memcpy(r.storage(), n.storage(), g_bn_length);
-#endif
-#endif
-	return r;
 }
 
 /***************************************************************************/
@@ -82,7 +55,7 @@ bn_t copy_bn(bn_t r, bn_t n)
 // if n1 == n2 returns 0
 // if n1 > n2 returns a positive (bytes left to go when mismatch occured)
 // if n1 < n2 returns a negative (bytes left to go when mismatch occured)
-int cmp_bn(bn_t n1, bn_t n2)
+int cmp_bn(bn_t const &n1, bn_t const &n2)
 {
 	int i;
 	S16 Svalue1;
@@ -131,7 +104,7 @@ int cmp_bn(bn_t n1, bn_t n2)
 /********************************************************************/
 // r < 0 ?
 // returns 1 if negative, 0 if positive or zero
-bool is_bn_neg(bn_t n)
+bool is_bn_neg(bn_t const &n)
 {
 	return (S8)n.storage()[g_bn_length-1] < 0;
 }
@@ -140,7 +113,7 @@ bool is_bn_neg(bn_t n)
 // n != 0 ?
 // RETURNS: if n != 0 returns 1
 // else returns 0
-bool is_bn_not_zero(bn_t n)
+bool is_bn_not_zero(bn_t const &n)
 {
 	// two bytes at a time
 	for (int i = 0; i < g_bn_length; i += 2)
@@ -155,7 +128,7 @@ bool is_bn_not_zero(bn_t n)
 
 /********************************************************************/
 // r = n1 + n2
-bn_t add_bn(bn_t r, bn_t n1, bn_t n2)
+bn_t add_bn(bn_t &r, bn_t const &n1, bn_t const &n2)
 {
 	U32 sum = 0;
 
@@ -171,7 +144,7 @@ bn_t add_bn(bn_t r, bn_t n1, bn_t n2)
 
 /********************************************************************/
 // r += n
-bn_t add_a_bn(bn_t r, bn_t n)
+bn_t add_a_bn(bn_t &r, bn_t const &n)
 {
 	U32 sum = 0;
 
@@ -187,7 +160,7 @@ bn_t add_a_bn(bn_t r, bn_t n)
 
 /********************************************************************/
 // r = n1 - n2
-bn_t sub_bn(bn_t r, bn_t n1, bn_t n2)
+bn_t sub_bn(bn_t &r, bn_t const &n1, bn_t const &n2)
 {
 	U32 diff = 0;
 
@@ -203,7 +176,7 @@ bn_t sub_bn(bn_t r, bn_t n1, bn_t n2)
 
 /********************************************************************/
 // r -= n
-bn_t sub_a_bn(bn_t r, bn_t n)
+bn_t sub_a_bn(bn_t &r, bn_t const &n)
 {
 	U32 diff = 0;
 
@@ -219,7 +192,7 @@ bn_t sub_a_bn(bn_t r, bn_t n)
 
 /********************************************************************/
 // r = -n
-bn_t neg_bn(bn_t r, bn_t n)
+bn_t neg_bn(bn_t &r, bn_t const &n)
 {
 	int i;
 	U16 t_short;
@@ -243,7 +216,7 @@ bn_t neg_bn(bn_t r, bn_t n)
 
 /********************************************************************/
 // r *= -1
-bn_t neg_a_bn(bn_t r)
+bn_t neg_a_bn(bn_t &r)
 {
 	int i;
 	U16 t_short;
@@ -267,7 +240,7 @@ bn_t neg_a_bn(bn_t r)
 
 /********************************************************************/
 // r = 2*n
-bn_t double_bn(bn_t r, bn_t n)
+bn_t double_bn(bn_t &r, bn_t const &n)
 {
 	int i;
 	U32 prod = 0;
@@ -284,13 +257,12 @@ bn_t double_bn(bn_t r, bn_t n)
 
 /********************************************************************/
 // r *= 2
-bn_t double_a_bn(bn_t r)
+bn_t double_a_bn(bn_t &r)
 {
-	int i;
 	U32 prod = 0;
 
 	// two bytes at a time
-	for (i = 0; i < g_bn_length; i += 2)
+	for (int i = 0; i < g_bn_length; i += 2)
 	{
 		prod += (U32) r.get16(i) << 1; // double it
 		r.set16(i, U16(prod));   // store the lower 2 bytes
@@ -301,7 +273,7 @@ bn_t double_a_bn(bn_t r)
 
 /********************************************************************/
 // r = n/2
-bn_t half_bn(bn_t r, bn_t n)
+bn_t half_bn(bn_t &r, bn_t const &n)
 {
 	int i;
 	U32 quot = 0;
@@ -327,7 +299,7 @@ bn_t half_bn(bn_t r, bn_t n)
 
 /********************************************************************/
 // r /= 2
-bn_t half_a_bn(bn_t r)
+bn_t half_a_bn(bn_t &r)
 {
 	int i;
 	U32 quot = 0;
@@ -355,7 +327,7 @@ bn_t half_a_bn(bn_t r)
 // Note: r will be a double wide result, 2*g_bn_length
 // n1 and n2 can be the same pointer
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
-bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
+bn_t unsafe_full_mult_bn(bn_t &r, bn_t &n1, bn_t &n2)
 {
 	int i;
 	int j;
@@ -440,7 +412,7 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 // 2*g_bn_length <= g_r_length < g_bn_length
 // n1 and n2 can be the same pointer
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
-bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
+bn_t unsafe_mult_bn(bn_t &r, bn_t &n1, bn_t &n2)
 {
 	int i;
 	int j;
@@ -547,7 +519,7 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 // uses the fact that (a + b + c + ...)^2 = (a^2 + b^2 + c^2 + ...) + 2(ab + ac + bc + ...)
 //
 // SIDE-EFFECTS: n is changed to its absolute value
-bn_t unsafe_full_square_bn(bn_t r, bn_t n)
+bn_t unsafe_full_square_bn(bn_t &r, bn_t &n)
 {
 	int i;
 	int j;
@@ -659,7 +631,7 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 // Note: r will be of length g_r_length
 // 2*g_bn_length >= g_r_length > g_bn_length
 // SIDE-EFFECTS: n is changed to its absolute value
-bn_t unsafe_square_bn(bn_t r, bn_t n)
+bn_t unsafe_square_bn(bn_t &r, bn_t &n)
 {
 	int i;
 	int j;
@@ -805,7 +777,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 
 /********************************************************************/
 // r = n*u  where u is an unsigned integer
-bn_t mult_bn_int(bn_t r, bn_t n, U16 u)
+bn_t mult_bn_int(bn_t &r, bn_t const &n, U16 u)
 {
 	int i;
 	U32 prod = 0;
@@ -822,7 +794,7 @@ bn_t mult_bn_int(bn_t r, bn_t n, U16 u)
 
 /********************************************************************/
 // r *= u  where u is an unsigned integer
-bn_t mult_a_bn_int(bn_t r, U16 u)
+bn_t mult_a_bn_int(bn_t &r, U16 u)
 {
 	int i;
 	U32 prod = 0;
@@ -839,7 +811,7 @@ bn_t mult_a_bn_int(bn_t r, U16 u)
 
 /********************************************************************/
 // r = n/u  where u is an unsigned integer
-bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
+bn_t unsafe_div_bn_int(bn_t &r, bn_t &n,  U16 u)
 {
 	int i;
 	U32 full_number;
@@ -880,7 +852,7 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 
 /********************************************************************/
 // r /= u  where u is an unsigned integer
-bn_t div_a_bn_int(bn_t r, U16 u)
+void div_a_bn_int(bn_t &r, U16 u)
 {
 	int i;
 	U32 full_number;
@@ -900,7 +872,7 @@ bn_t div_a_bn_int(bn_t r, U16 u)
 		{
 			neg_a_bn(r);
 		}
-		return r;
+		return;
 	}
 
 	// two bytes at a time
@@ -916,13 +888,12 @@ bn_t div_a_bn_int(bn_t r, U16 u)
 	{
 		neg_a_bn(r);
 	}
-	return r;
 }
 
 /*********************************************************************/
 // f = b
 // Converts a bignumber to a double
-LDBL bntofloat(bn_t n)
+LDBL bntofloat(bn_t &n)
 {
 	int i;
 	int signflag = 0;
@@ -966,7 +937,7 @@ LDBL bntofloat(bn_t n)
 
 /********************************************************************/
 // r = 0
-bf_t clear_bf(bf_t r)
+bf_t clear_bf(bf_t &r)
 {
 	memset(r.storage(), 0, g_bf_length + 2); // set array to zero
 	return r;
@@ -974,7 +945,7 @@ bf_t clear_bf(bf_t r)
 
 /********************************************************************/
 // r = n
-bf_t copy_bf(bf_t r, bf_t n)
+bf_t copy_bf(bf_t &r, bf_t const &n)
 {
 	memcpy(r.storage(), n.storage(), g_bf_length + 2);
 	return r;
@@ -983,7 +954,7 @@ bf_t copy_bf(bf_t r, bf_t n)
 /*********************************************************************/
 // b = f
 // Converts a double to a bigfloat
-bf_t floattobf(bf_t r, LDBL f)
+bf_t floattobf(bf_t &r, LDBL f)
 {
 	int power;
 	int bnl;
@@ -1014,7 +985,7 @@ bf_t floattobf(bf_t r, LDBL f)
 /*********************************************************************/
 // b = f
 // Converts a double to a bigfloat
-bf_t floattobf1(bf_t r, LDBL f)
+bf_t floattobf1(bf_t &r, LDBL f)
 {
 	return strtobf(r, (boost::format("%-.22Le") % f).str());
 }
@@ -1022,7 +993,7 @@ bf_t floattobf1(bf_t r, LDBL f)
 /*********************************************************************/
 // f = b
 // Converts a bigfloat to a double
-LDBL bftofloat(bf_t n)
+LDBL bftofloat(bf_t const &n)
 {
 	int power;
 	int bnl;

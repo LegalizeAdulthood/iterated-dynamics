@@ -1840,7 +1840,7 @@ void StandardFractal::colormode_star_trail_update()
 		g_old_z = g_new_z;
 		{
 			int tmpcolor = int(((g_color_iter - 1) % g_and_color) + 1);
-			m_tangent_table[tmpcolor-1] = g_new_z.imag()/(g_new_z.real() + .000001);
+			m_tangent_table[tmpcolor-1] = g_new_z.imag()/(g_new_z.real() + 0.000001);
 		}
 	}
 }
@@ -2433,6 +2433,11 @@ plot_pixel:
 	return check_if_interrupted();
 }
 
+inline ComplexD rotate(ComplexD const &z, double cosa, double sina)
+{
+	return MakeComplexT(z.real()*cosa + z.imag()*sina, z.real()*sina - z.imag()*cosa);
+}
+
 // standardfractal doodad subroutines
 static void decomposition()
 	{
@@ -2580,7 +2585,7 @@ static void decomposition()
 								temp <<= 1;
 								if (multiply(g_new_z_l.real(), ltan1_4063, g_bit_shift) < g_new_z_l.imag())
 								{
-									if ((g_new_z_l.real()*ltan1_4063 < g_new_z_l.imag()))
+									if (g_new_z_l.real()*ltan1_4063 < g_new_z_l.imag())
 									{
 										++temp;
 									}
@@ -2632,9 +2637,7 @@ static void decomposition()
 				if (g_new_z.real()*tan22_5 < g_new_z.imag())
 				{
 					++temp;
-					alt = g_new_z;
-					g_new_z.real(alt.real()*cos45 + alt.imag()*sin45);
-					g_new_z.imag(alt.real()*sin45 - alt.imag()*cos45);
+					g_new_z = rotate(g_new_z, cos45, sin45);
 				}
 
 				if (g_decomposition[0] >= 32)
@@ -2643,9 +2646,7 @@ static void decomposition()
 					if (g_new_z.real()*tan11_25 < g_new_z.imag())
 					{
 						++temp;
-						alt = g_new_z;
-						g_new_z.real(alt.real()*cos22_5 + alt.imag()*sin22_5);
-						g_new_z.imag(alt.real()*sin22_5 - alt.imag()*cos22_5);
+						g_new_z = rotate(g_new_z, cos22_5, sin22_5);
 					}
 
 					if (g_decomposition[0] >= 64)
@@ -2654,9 +2655,7 @@ static void decomposition()
 						if (g_new_z.real()*tan5_625 < g_new_z.imag())
 						{
 							++temp;
-							alt = g_new_z;
-							g_new_z.real(alt.real()*cos11_25 + alt.imag()*sin11_25);
-							g_new_z.imag(alt.real()*sin11_25 - alt.imag()*cos11_25);
+							g_new_z = rotate(g_new_z, cos11_25, sin11_25);
 						}
 
 						if (g_decomposition[0] >= 128)
@@ -2665,9 +2664,7 @@ static void decomposition()
 							if (g_new_z.real()*tan2_8125 < g_new_z.imag())
 							{
 								++temp;
-								alt = g_new_z;
-								g_new_z.real(alt.real()*cos5_625 + alt.imag()*sin5_625);
-								g_new_z.imag(alt.real()*sin5_625 - alt.imag()*cos5_625);
+								g_new_z = rotate(g_new_z, cos5_625, sin5_625);
 							}
 
 							if (g_decomposition[0] == 256)
