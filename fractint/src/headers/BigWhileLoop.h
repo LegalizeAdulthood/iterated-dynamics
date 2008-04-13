@@ -28,7 +28,7 @@ public:
 	virtual int get_fractal_type() = 0;
 	virtual int funny_glasses_call(int (*calc)()) = 0;
 	virtual int text_temp_message(const char *msgparm) = 0;
-	virtual bf_t copy_bf(bf_t r, bf_t n) = 0;
+	virtual bf_t copy_bf(bf_t &r, bf_t const &n) = 0;
 	virtual void history_save_info() = 0;
 	virtual void save_parameter_history() = 0;
 	virtual void restore_parameter_history() = 0;

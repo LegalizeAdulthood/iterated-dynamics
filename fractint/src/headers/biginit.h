@@ -95,7 +95,6 @@ extern bf_t g_sx_3rd_bf;
 extern bf_t g_sy_3rd_bf;// g_bf_length+2
 extern bf_t bfparms[10];                                 // (g_bf_length+2)*10
 extern bf_t bftmp;
-extern bf10_t bf10tmp;                                              // dec+4
 
 void free_bf_vars();
 void init_bf_dec(int dec);

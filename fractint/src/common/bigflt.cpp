@@ -17,7 +17,7 @@ double const LOG_256 = 5.5451774444795;
 // It may use scientific notation.
 // USES: bftmp1
 
-static bf_t strtobf(bf_t r, char const *s)
+static bf_t strtobf(bf_t &r, char const *s)
 {
 	BYTE onesbyte;
 	int signflag = 0;
@@ -121,7 +121,7 @@ static bf_t strtobf(bf_t r, char const *s)
 	return r;
 }
 
-bf_t strtobf(bf_t r, std::string const &s)
+bf_t strtobf(bf_t &r, std::string const &s)
 {
 	std::vector<char> buffer;
 	buffer.resize(s.length());
@@ -157,7 +157,7 @@ int strlen_needed_bf()
 // USES: bftmp1 - bftmp2
 /********************************************************************/
 
-char *unsafe_bftostr(char *s, int dec, bf_t r)
+char *unsafe_bftostr(char *s, int dec, bf_t &r)
 {
 	LDBL value;
 	int power;
@@ -186,7 +186,7 @@ char *unsafe_bftostr(char *s, int dec, bf_t r)
 
 /********************************************************************/
 // the e version puts it in scientific notation, (like printf's %e)
-char *unsafe_bftostr_e(char *s, int dec, bf_t r)
+char *unsafe_bftostr_e(char *s, int dec, bf_t &r)
 {
 	LDBL value;
 
@@ -205,7 +205,7 @@ char *unsafe_bftostr_e(char *s, int dec, bf_t r)
 
 /********************************************************************/
 // the f version puts it in decimal notation, (like printf's %f)
-char *unsafe_bftostr_f(char *s, int dec, bf_t r)
+char *unsafe_bftostr_f(char *s, int dec, bf_t &r)
 {
 	LDBL value;
 
@@ -226,7 +226,7 @@ char *unsafe_bftostr_f(char *s, int dec, bf_t r)
 // bn = floor(bf)
 // Converts a bigfloat to a bignumber (integer)
 // g_bf_length must be at least g_bn_length + 2
-bn_t bftobn(bn_t n, bf_t f)
+bn_t bftobn(bn_t &n, bf_t const &f)
 {
 	int fexp;
 	int movebytes;
@@ -261,7 +261,7 @@ bn_t bftobn(bn_t n, bf_t f)
 // bf = bn
 // Converts a bignumber (integer) to a bigfloat
 // g_bf_length must be at least g_bn_length + 2
-bf_t bntobf(bf_t f, bn_t n)
+bf_t bntobf(bf_t &f, bn_t const &n)
 {
 	memcpy(f.storage() + g_bf_length-g_bn_length-1, n.storage(), g_bn_length);
 	memset(f.storage(), 0, g_bf_length - g_bn_length - 1);
@@ -274,7 +274,7 @@ bf_t bntobf(bf_t f, bn_t n)
 /*********************************************************************/
 // b = l
 // Converts a long to a bigfloat
-bf_t inttobf(bf_t r, long longval)
+bf_t inttobf(bf_t &r, long longval)
 {
 	clear_bf(r);
 	r.set32(g_bf_length - 4, (S32)longval);
@@ -287,7 +287,7 @@ bf_t inttobf(bf_t r, long longval)
 // l = floor(b), floor rounds down
 // Converts a bigfloat to a long
 // note: a bf value of 2.999... will be return a value of 2, not 3
-long bftoint(bf_t f)
+long bftoint(bf_t const &f)
 {
 	int fexp;
 	long longval;
@@ -309,14 +309,14 @@ long bftoint(bf_t f)
 
 /********************************************************************/
 // sign(r)
-int sign_bf(bf_t n)
+int sign_bf(bf_t const &n)
 {
 	return is_bf_neg(n) ? -1 : is_bf_not_zero(n) ? 1 : 0;
 }
 
 /********************************************************************/
 // r = |n|
-bf_t abs_bf(bf_t r, bf_t n)
+bf_t abs_bf(bf_t &r, bf_t const &n)
 {
 	copy_bf(r, n);
 	if (is_bf_neg(r))
@@ -328,7 +328,7 @@ bf_t abs_bf(bf_t r, bf_t n)
 
 /********************************************************************/
 // r = |r|
-bf_t abs_a_bf(bf_t r)
+bf_t abs_a_bf(bf_t &r)
 {
 	if (is_bf_neg(r))
 	{
@@ -342,7 +342,7 @@ bf_t abs_a_bf(bf_t r)
 // uses bftmp1 - bftmp2 - global temp bigfloats
 // SIDE-EFFECTS:
 // n ends up as |n|/256^exp    Make copy first if necessary.
-bf_t unsafe_inv_bf(bf_t r, bf_t n)
+bf_t unsafe_inv_bf(bf_t &r, bf_t &n)
 {
 	int signflag = 0;
 	int i;
@@ -391,12 +391,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 	// orig_bftmp1        = bftmp1;
 
 	// calculate new starting values
-	g_bn_length = g_int_length + int(LDBL_DIG/LOG10_256) + 1; // round up
-	if (g_bn_length > orig_bnlength)
-	{
-		g_bn_length = orig_bnlength;
-	}
-	calculate_bignum_lengths();
+	set_bn_length(g_int_length + int(LDBL_DIG/LOG10_256) + 1, orig_bnlength); // round up
 
 	// adjust pointers
 	r = bf_t(orig_r, orig_bflength - g_bf_length);
@@ -408,12 +403,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 	for (i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
 	{
 		// adjust lengths
-		g_bn_length <<= 1; // double precision
-		if (g_bn_length > orig_bnlength)
-		{
-			g_bn_length = orig_bnlength;
-		}
-		calculate_bignum_lengths();
+		set_bn_length(g_bn_length << 1, orig_bnlength); // double precision
 		r = bf_t(orig_r, orig_bflength - g_bf_length);
 		n = bf_t(orig_n, orig_bflength - g_bf_length);
 		// bftmp1 = orig_bftmp1 + orig_bflength - g_bf_length;
@@ -461,7 +451,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 // SIDE-EFFECTS:
 // n1, n2 end up as |n1|/256^x, |n2|/256^x
 // Make copies first if necessary.
-bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
+bf_t unsafe_div_bf(bf_t &r, bf_t &n1, bf_t &n2)
 {
 	int aexp;
 	int bexp;
@@ -507,7 +497,7 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
 // uses bftmp1 - bftmp3 - global temp bigfloats
 // SIDE-EFFECTS:
 // n ends up as |n|
-bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
+bf_t unsafe_sqrt_bf(bf_t &r, bf_t &n)
 {
 	int i;
 	int comp;
@@ -522,7 +512,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 	int orig_shiftfactor;
 	int orig_rbflength;
 
-// use Newton's recursive method for zeroing in on sqrt(n): r = .5(r + n/r)
+	// use Newton's recursive method for zeroing in on sqrt(n): r = .5(r + n/r)
 
 	if (is_bf_neg(n))
 	{ // sqrt of a neg, return 0
@@ -552,12 +542,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 	orig_n             = n;
 
 	// calculate new starting values
-	g_bn_length = g_int_length + int(LDBL_DIG/LOG10_256) + 1; // round up
-	if (g_bn_length > orig_bnlength)
-	{
-		g_bn_length = orig_bnlength;
-	}
-	calculate_bignum_lengths();
+	set_bn_length(g_int_length + int(LDBL_DIG/LOG10_256) + 1, orig_bnlength); // round up
 
 	// adjust pointers
 	r = bf_t(orig_r, orig_bflength - g_bf_length);
@@ -568,12 +553,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 	for (i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
 	{
 		// adjust lengths
-		g_bn_length <<= 1; // double precision
-		if (g_bn_length > orig_bnlength)
-		{
-			g_bn_length = orig_bnlength;
-		}
-		calculate_bignum_lengths();
+		set_bn_length(g_bn_length << 1, orig_bnlength); // double precision
 		r = bf_t(orig_r, orig_bflength - g_bf_length);
 		n = bf_t(orig_n, orig_bflength - g_bf_length);
 
@@ -614,7 +594,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 /********************************************************************/
 // exp(r)
 // uses bftmp1, bftmp2, bftmp3 - global temp bigfloats
-bf_t exp_bf(bf_t r, bf_t n)
+bf_t exp_bf(bf_t &r, bf_t const &n)
 {
 	U16 fact = 1;
 
@@ -651,7 +631,7 @@ bf_t exp_bf(bf_t r, bf_t n)
 // uses bftmp1 - bftmp6 - global temp bigfloats
 // SIDE-EFFECTS:
 // n ends up as |n|
-bf_t unsafe_ln_bf(bf_t r, bf_t n)
+bf_t unsafe_ln_bf(bf_t &r, bf_t &n)
 {
 	int i;
 	int comp;
@@ -667,7 +647,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 	int orig_shiftfactor;
 	int orig_rbflength;
 
-// use Newton's recursive method for zeroing in on ln(n): r = r + n*exp(-r)-1
+	// use Newton's recursive method for zeroing in on ln(n): r = r + n*exp(-r)-1
 
 	if (is_bf_neg(n) || is_bf_zero(n))
 	{ // error, return largest neg value
@@ -695,12 +675,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 	orig_bftmp5        = bftmp5;
 
 	// calculate new starting values
-	g_bn_length = g_int_length + int(LDBL_DIG/LOG10_256) + 1; // round up
-	if (g_bn_length > orig_bnlength)
-	{
-		g_bn_length = orig_bnlength;
-	}
-	calculate_bignum_lengths();
+	set_bn_length(g_int_length + int(LDBL_DIG/LOG10_256) + 1, orig_bnlength); // round up
 
 	// adjust pointers
 	r = bf_t(orig_r, orig_bflength - g_bf_length);
@@ -714,12 +689,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 	for (i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
 	{
 		// adjust lengths
-		g_bn_length <<= 1; // double precision
-		if (g_bn_length > orig_bnlength)
-		{
-			g_bn_length = orig_bnlength;
-		}
-		calculate_bignum_lengths();
+		set_bn_length(g_bn_length << 1, orig_bnlength); // double precision
 		r = bf_t(orig_r, orig_bflength - g_bf_length);
 		n = bf_t(orig_n, orig_bflength - g_bf_length);
 		bftmp5 = bf_t(orig_bftmp5, orig_bflength - g_bf_length);
@@ -768,7 +738,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 // uses bftmp1 - bftmp2 - global temp bigfloats
 // SIDE-EFFECTS:
 // n ends up as |n| mod (pi/4)
-bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
+bf_t unsafe_sincos_bf(bf_t &s, bf_t &c, bf_t &n)
 {
 	U16 fact = 2;
 	int k = 0;
@@ -941,7 +911,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 // uses bftmp1 - bftmp5 - global temp bigfloats
 // SIDE-EFFECTS:
 // n ends up as |n| or 1/|n|
-bf_t unsafe_atan_bf(bf_t r, bf_t n)
+bf_t unsafe_atan_bf(bf_t &r, bf_t &n)
 {
 	int i;
 	int comp;
@@ -961,7 +931,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 	int large_arg;
 
 
-// use Newton's recursive method for zeroing in on atan(n): r = r-cos(r)(sin(r)-n*cos(r))
+	// use Newton's recursive method for zeroing in on atan(n): r = r-cos(r)(sin(r)-n*cos(r))
 
 	if (is_bf_neg(n))
 	{
@@ -969,9 +939,9 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 		neg_a_bf(n);
 	}
 
-// If n is very large, atanl() won't give enough decimal places to be a
-// good enough initial guess for Newton's Method.  If it is larger than
-// say, 1, atan(n) = pi/2 - acot(n) = pi/2 - atan(1/n).
+	// If n is very large, atanl() won't give enough decimal places to be a
+	// good enough initial guess for Newton's Method.  If it is larger than
+	// say, 1, atan(n) = pi/2 - acot(n) = pi/2 - atan(1/n).
 
 	f = bftofloat(n);
 	large_arg = f > 1.0;
@@ -999,12 +969,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 	orig_bftmp3        = bftmp3;
 
 	// calculate new starting values
-	g_bn_length = g_int_length + int(LDBL_DIG/LOG10_256) + 1; // round up
-	if (g_bn_length > orig_bnlength)
-	{
-		g_bn_length = orig_bnlength;
-	}
-	calculate_bignum_lengths();
+	set_bn_length(g_int_length + int(LDBL_DIG/LOG10_256) + 1, orig_bnlength); // round up
 
 	// adjust pointers
 	r = bf_t(orig_r, orig_bflength - g_bf_length);
@@ -1021,12 +986,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 	for (i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
 	{
 		// adjust lengths
-		g_bn_length <<= 1; // double precision
-		if (g_bn_length > orig_bnlength)
-		{
-			g_bn_length = orig_bnlength;
-		}
-		calculate_bignum_lengths();
+		set_bn_length(g_bn_length << 1, orig_bnlength); // double precision
 		r = bf_t(orig_r, orig_bflength - g_bf_length);
 		n = bf_t(orig_n, orig_bflength - g_bf_length);
 		bf_pi = bf_t(orig_bf_pi, orig_bflength - g_bf_length);
@@ -1089,7 +1049,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 /********************************************************************/
 // atan2(r, ny, nx)
 // uses bftmp1 - bftmp6 - global temp bigfloats
-bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
+bf_t unsafe_atan2_bf(bf_t &r, bf_t &ny, bf_t &nx)
 {
 	int signx;
 	int signy;
@@ -1148,7 +1108,7 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
 /**********************************************************************/
 
 /**********************************************************************/
-bf_t add_bf(bf_t r, bf_t n1, bf_t n2)
+bf_t add_bf(bf_t &r, bf_t const &n1, bf_t const &n2)
 {
 	copy_bf(bftmpcpy1, n1);
 	copy_bf(bftmpcpy2, n2);
@@ -1157,7 +1117,7 @@ bf_t add_bf(bf_t r, bf_t n1, bf_t n2)
 }
 
 /**********************************************************************/
-bf_t add_a_bf(bf_t r, bf_t n)
+bf_t add_a_bf(bf_t &r, bf_t const &n)
 {
 	copy_bf(bftmpcpy1, n);
 	unsafe_add_a_bf(r, bftmpcpy1);
@@ -1165,7 +1125,7 @@ bf_t add_a_bf(bf_t r, bf_t n)
 }
 
 /**********************************************************************/
-bf_t subtract_bf(bf_t r, bf_t n1, bf_t n2)
+bf_t subtract_bf(bf_t &r, bf_t const &n1, bf_t const &n2)
 {
 	copy_bf(bftmpcpy1, n1);
 	copy_bf(bftmpcpy2, n2);
@@ -1174,7 +1134,7 @@ bf_t subtract_bf(bf_t r, bf_t n1, bf_t n2)
 }
 
 /**********************************************************************/
-bf_t sub_a_bf(bf_t r, bf_t n)
+bf_t sub_a_bf(bf_t &r, bf_t const &n)
 {
 	copy_bf(bftmpcpy1, n);
 	unsafe_sub_a_bf(r, bftmpcpy1);
@@ -1183,7 +1143,7 @@ bf_t sub_a_bf(bf_t r, bf_t n)
 
 /**********************************************************************/
 // mult and div only change sign
-bf_t full_mult_bf(bf_t r, bf_t n1, bf_t n2)
+bf_t full_mult_bf(bf_t &r, bf_t const &n1, bf_t const &n2)
 {
 	copy_bf(bftmpcpy1, n1);
 	copy_bf(bftmpcpy2, n2);
@@ -1192,7 +1152,7 @@ bf_t full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 }
 
 /**********************************************************************/
-bf_t multiply_bf(bf_t r, bf_t n1, bf_t n2)
+bf_t multiply_bf(bf_t &r, bf_t const &n1, bf_t const &n2)
 {
 	copy_bf(bftmpcpy1, n1);
 	copy_bf(bftmpcpy2, n2);
@@ -1201,7 +1161,7 @@ bf_t multiply_bf(bf_t r, bf_t n1, bf_t n2)
 }
 
 /**********************************************************************/
-bf_t full_square_bf(bf_t r, bf_t n)
+bf_t full_square_bf(bf_t &r, bf_t const &n)
 {
 	copy_bf(bftmpcpy1, n);
 	unsafe_full_square_bf(r, bftmpcpy1);
@@ -1209,7 +1169,7 @@ bf_t full_square_bf(bf_t r, bf_t n)
 }
 
 /**********************************************************************/
-bf_t square_bf(bf_t r, bf_t n)
+bf_t square_bf(bf_t &r, bf_t const &n)
 {
 	copy_bf(bftmpcpy1, n);
 	unsafe_square_bf(r, bftmpcpy1);
@@ -1217,7 +1177,7 @@ bf_t square_bf(bf_t r, bf_t n)
 }
 
 /**********************************************************************/
-bf_t mult_bf_int(bf_t r, bf_t n, U16 u)
+bf_t mult_bf_int(bf_t &r, bf_t const &n, U16 u)
 {
 	copy_bf(bftmpcpy1, n);
 	unsafe_mult_bf_int(r, bftmpcpy1, u);
@@ -1225,7 +1185,7 @@ bf_t mult_bf_int(bf_t r, bf_t n, U16 u)
 }
 
 /**********************************************************************/
-bf_t div_bf_int(bf_t r, bf_t n,  U16 u)
+bf_t div_bf_int(bf_t &r, bf_t const &n,  U16 u)
 {
 	copy_bf(bftmpcpy1, n);
 	unsafe_div_bf_int(r, bftmpcpy1, u);
@@ -1233,7 +1193,7 @@ bf_t div_bf_int(bf_t r, bf_t n,  U16 u)
 }
 
 /**********************************************************************/
-char *bftostr(char *s, int dec, bf_t r)
+char *bftostr(char *s, int dec, bf_t const &r)
 {
 	copy_bf(bftmpcpy1, r);
 	unsafe_bftostr(s, dec, bftmpcpy1);
@@ -1241,7 +1201,7 @@ char *bftostr(char *s, int dec, bf_t r)
 }
 
 /**********************************************************************/
-char *bftostr_e(char *s, int dec, bf_t r)
+char *bftostr_e(char *s, int dec, bf_t const &r)
 {
 	copy_bf(bftmpcpy1, r);
 	unsafe_bftostr_e(s, dec, bftmpcpy1);
@@ -1249,7 +1209,7 @@ char *bftostr_e(char *s, int dec, bf_t r)
 }
 
 /**********************************************************************/
-char *bftostr_f(char *s, int dec, bf_t r)
+char *bftostr_f(char *s, int dec, bf_t const &r)
 {
 	copy_bf(bftmpcpy1, r);
 	unsafe_bftostr_f(s, dec, bftmpcpy1);
@@ -1257,7 +1217,7 @@ char *bftostr_f(char *s, int dec, bf_t r)
 }
 
 /**********************************************************************/
-bf_t inv_bf(bf_t r, bf_t n)
+bf_t inv_bf(bf_t &r, bf_t const &n)
 {
 	copy_bf(bftmpcpy1, n);
 	unsafe_inv_bf(r, bftmpcpy1);
@@ -1265,7 +1225,7 @@ bf_t inv_bf(bf_t r, bf_t n)
 }
 
 /**********************************************************************/
-bf_t div_bf(bf_t r, bf_t n1, bf_t n2)
+bf_t div_bf(bf_t &r, bf_t const &n1, bf_t const &n2)
 {
 	copy_bf(bftmpcpy1, n1);
 	copy_bf(bftmpcpy2, n2);
@@ -1274,7 +1234,7 @@ bf_t div_bf(bf_t r, bf_t n1, bf_t n2)
 }
 
 /**********************************************************************/
-bf_t sqrt_bf(bf_t r, bf_t n)
+bf_t sqrt_bf(bf_t &r, bf_t const &n)
 {
 	copy_bf(bftmpcpy1, n);
 	unsafe_sqrt_bf(r, bftmpcpy1);
@@ -1282,7 +1242,7 @@ bf_t sqrt_bf(bf_t r, bf_t n)
 }
 
 /**********************************************************************/
-bf_t ln_bf(bf_t r, bf_t n)
+bf_t ln_bf(bf_t &r, bf_t const &n)
 {
 	copy_bf(bftmpcpy1, n);
 	unsafe_ln_bf(r, bftmpcpy1);
@@ -1290,14 +1250,14 @@ bf_t ln_bf(bf_t r, bf_t n)
 }
 
 /**********************************************************************/
-bf_t sincos_bf(bf_t s, bf_t c, bf_t n)
+bf_t sincos_bf(bf_t &s, bf_t &c, bf_t const &n)
 {
 	copy_bf(bftmpcpy1, n);
 	return unsafe_sincos_bf(s, c, bftmpcpy1);
 }
 
 /**********************************************************************/
-bf_t atan_bf(bf_t r, bf_t n)
+bf_t atan_bf(bf_t &r, bf_t const &n)
 {
 	copy_bf(bftmpcpy1, n);
 	unsafe_atan_bf(r, bftmpcpy1);
@@ -1305,7 +1265,7 @@ bf_t atan_bf(bf_t r, bf_t n)
 }
 
 /**********************************************************************/
-bf_t atan2_bf(bf_t r, bf_t ny, bf_t nx)
+bf_t atan2_bf(bf_t &r, bf_t const &ny, bf_t const &nx)
 {
 	copy_bf(bftmpcpy1, ny);
 	copy_bf(bftmpcpy2, nx);
@@ -1314,14 +1274,14 @@ bf_t atan2_bf(bf_t r, bf_t ny, bf_t nx)
 }
 
 /**********************************************************************/
-bool is_bf_zero(bf_t n)
+bool is_bf_zero(bf_t const &n)
 {
 	return !is_bf_not_zero(n);
 }
 
 /************************************************************************/
 // convert_bf  -- convert bigfloat numbers from old to new lengths
-int convert_bf(bf_t newnum, bf_t old, int newbflength, int oldbflength)
+int convert_bf(bf_t &newnum, bf_t const &old, int newbflength, int oldbflength)
 {
 	int savebflength;
 
@@ -1345,7 +1305,7 @@ int convert_bf(bf_t newnum, bf_t old, int newbflength, int oldbflength)
 // The following used to be in bigfltc.c
 /********************************************************************/
 // normalize big float
-bf_t norm_bf(bf_t r)
+bf_t norm_bf(bf_t &r)
 {
 	int scale;
 	BYTE hi_byte;
@@ -1390,7 +1350,7 @@ bf_t norm_bf(bf_t r)
 // normalize big float with forced sign
 // positive = 1, force to be positive
 // = 0, force to be negative
-void norm_sign_bf(bf_t r, int positive)
+void norm_sign_bf(bf_t &r, int positive)
 {
 	norm_bf(r);
 	r.storage()[g_bf_length-1] = BYTE(positive ? 0x00 : 0xFF);
@@ -1399,7 +1359,7 @@ void norm_sign_bf(bf_t r, int positive)
 // adjust n1, n2 for before addition or subtraction
 // by forcing exp's to match.
 // returns the value of the adjusted exponents
-S16 adjust_bf_add(bf_t n1, bf_t n2)
+S16 adjust_bf_add(bf_t &n1, bf_t &n2)
 {
 	int scale;
 	int fill_byte;
@@ -1450,7 +1410,7 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
 
 /********************************************************************/
 // r = max positive value
-bf_t max_bf(bf_t r)
+bf_t max_bf(bf_t &r)
 {
 	inttobf(r, 1);
 	r.setS16(g_bf_length, (S16)(LDBL_MAX_EXP/8));
@@ -1464,7 +1424,7 @@ bf_t max_bf(bf_t r)
 // if n1 > n2 returns a positive (bytes left to go when mismatch occurred)
 // if n1 < n2 returns a negative (bytes left to go when mismatch occurred)
 
-int cmp_bf(bf_t n1, bf_t n2)
+int cmp_bf(bf_t const &n1, bf_t const &n2)
 {
 	int i;
 	int sign1;
@@ -1524,7 +1484,7 @@ int cmp_bf(bf_t n1, bf_t n2)
 /********************************************************************/
 // r < 0 ?
 // returns 1 if negative, 0 if positive or zero
-bool is_bf_neg(bf_t n)
+bool is_bf_neg(bf_t const &n)
 {
 	return n.getS8(g_bf_length - 1) < 0;
 }
@@ -1533,7 +1493,7 @@ bool is_bf_neg(bf_t n)
 // n != 0 ?
 // RETURNS: if n != 0 returns 1
 // else returns 0
-bool is_bf_not_zero(bf_t n)
+bool is_bf_not_zero(bf_t const &n)
 {
 	int bnl = g_bn_length;
 	g_bn_length = g_bf_length;
@@ -1545,7 +1505,7 @@ bool is_bf_not_zero(bf_t n)
 /********************************************************************/
 // r = n1 + n2
 // SIDE-EFFECTS: n1 and n2 can be "de-normalized" and lose precision
-bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2)
+bf_t unsafe_add_bf(bf_t &r, bf_t &n1, bf_t &n2)
 {
 	int bnl;
 
@@ -1574,7 +1534,7 @@ bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2)
 
 /********************************************************************/
 // r += n
-bf_t unsafe_add_a_bf(bf_t r, bf_t n)
+bf_t unsafe_add_a_bf(bf_t &r, bf_t &n)
 {
 	int bnl;
 
@@ -1603,7 +1563,7 @@ bf_t unsafe_add_a_bf(bf_t r, bf_t n)
 /********************************************************************/
 // r = n1 - n2
 // SIDE-EFFECTS: n1 and n2 can be "de-normalized" and lose precision
-bf_t unsafe_sub_bf(bf_t r, bf_t n1, bf_t n2)
+bf_t unsafe_sub_bf(bf_t &r, bf_t &n1, bf_t &n2)
 {
 	int bnl;
 
@@ -1632,7 +1592,7 @@ bf_t unsafe_sub_bf(bf_t r, bf_t n1, bf_t n2)
 
 /********************************************************************/
 // r -= n
-bf_t unsafe_sub_a_bf(bf_t r, bf_t n)
+bf_t unsafe_sub_a_bf(bf_t &r, bf_t &n)
 {
 	int bnl;
 
@@ -1659,7 +1619,7 @@ bf_t unsafe_sub_a_bf(bf_t r, bf_t n)
 
 /********************************************************************/
 // r = -n
-bf_t neg_bf(bf_t r, bf_t n)
+bf_t neg_bf(bf_t &r, bf_t const &n)
 {
 	bf_t rexp(r, g_bf_length);
 	bf_t nexp(n, g_bf_length);
@@ -1676,7 +1636,7 @@ bf_t neg_bf(bf_t r, bf_t n)
 
 /********************************************************************/
 // r *= -1
-bf_t neg_a_bf(bf_t r)
+bf_t neg_a_bf(bf_t &r)
 {
 	int bnl;
 
@@ -1691,7 +1651,7 @@ bf_t neg_a_bf(bf_t r)
 
 /********************************************************************/
 // r = 2*n
-bf_t double_bf(bf_t r, bf_t n)
+bf_t double_bf(bf_t &r, bf_t const &n)
 {
 	bf_t rexp(r, g_bf_length);
 	bf_t nexp(n, g_bf_length);
@@ -1708,7 +1668,7 @@ bf_t double_bf(bf_t r, bf_t n)
 
 /********************************************************************/
 // r *= 2
-bf_t double_a_bf(bf_t r)
+bf_t double_a_bf(bf_t &r)
 {
 	int bnl;
 
@@ -1723,7 +1683,7 @@ bf_t double_a_bf(bf_t r)
 
 /********************************************************************/
 // r = n/2
-bf_t half_bf(bf_t r, bf_t n)
+bf_t half_bf(bf_t &r, bf_t const &n)
 {
 	bf_t rexp(r, g_bf_length);
 	bf_t nexp(n, g_bf_length);
@@ -1740,7 +1700,7 @@ bf_t half_bf(bf_t r, bf_t n)
 
 /********************************************************************/
 // r /= 2
-bf_t half_a_bf(bf_t r)
+bf_t half_a_bf(bf_t &r)
 {
 	int bnl;
 
@@ -1758,7 +1718,7 @@ bf_t half_a_bf(bf_t r)
 // Note: r will be a double wide result, 2*g_bf_length
 // n1 and n2 can be the same pointer
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
-bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
+bf_t unsafe_full_mult_bf(bf_t &r, bf_t &n1, bf_t &n2)
 {
 	if (is_bf_zero(n1) || is_bf_zero(n2))
 	{
@@ -1791,7 +1751,7 @@ bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 // 2*g_bf_length <= g_r_length < g_bf_length
 // n1 and n2 can be the same pointer
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
-bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
+bf_t unsafe_mult_bf(bf_t &r, bf_t &n1, bf_t &n2)
 {
 	int positive;
 	int bnl;
@@ -1840,7 +1800,7 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 // uses the fact that (a + b + c + ...)^2 = (a^2 + b^2 + c^2 + ...) + 2(ab + ac + bc + ...)
 //
 // SIDE-EFFECTS: n is changed to its absolute value
-bf_t unsafe_full_square_bf(bf_t r, bf_t n)
+bf_t unsafe_full_square_bf(bf_t &r, bf_t &n)
 {
 	int bnl;
 	int dbfl;
@@ -1881,7 +1841,7 @@ bf_t unsafe_full_square_bf(bf_t r, bf_t n)
 // Note: r will be of length g_r_length
 // 2*g_bf_length >= g_r_length > g_bf_length
 // SIDE-EFFECTS: n is changed to its absolute value
-bf_t unsafe_square_bf(bf_t r, bf_t n)
+bf_t unsafe_square_bf(bf_t &r, bf_t &n)
 {
 	int bnl;
 	int bfl;
@@ -1919,7 +1879,7 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 /********************************************************************/
 // r = n*u  where u is an unsigned integer
 // SIDE-EFFECTS: n can be "de-normalized" and lose precision
-bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
+bf_t unsafe_mult_bf_int(bf_t &r, bf_t &n, U16 u)
 {
 	int positive;
 	int bnl;
@@ -1952,7 +1912,7 @@ bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
 
 /********************************************************************/
 // r *= u  where u is an unsigned integer
-bf_t mult_a_bf_int(bf_t r, U16 u)
+bf_t mult_a_bf_int(bf_t &r, U16 u)
 {
 	int positive;
 	int bnl;
@@ -1982,7 +1942,7 @@ bf_t mult_a_bf_int(bf_t r, U16 u)
 
 /********************************************************************/
 // r = n/u  where u is an unsigned integer
-bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u)
+bf_t unsafe_div_bf_int(bf_t &r, bf_t &n,  U16 u)
 {
 	int bnl;
 
@@ -2011,7 +1971,7 @@ bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u)
 
 /********************************************************************/
 // r /= u  where u is an unsigned integer
-bf_t div_a_bf_int(bf_t r, U16 u)
+bf_t div_a_bf_int(bf_t &r, U16 u)
 {
 	int bnl;
 
@@ -2183,7 +2143,7 @@ n <><------------- dec --------------><> <->
 // dec - number of decimals, not including the one extra for rounding
 // SIDE-EFFECTS: n is changed to |n|.  Make copy of n if necessary.
 
-bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
+bf10_t unsafe_bftobf10(bf10_t &r, int dec, bf_t &n)
 {
 	int d;
 	int power256;
@@ -2292,7 +2252,7 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
 // r *= n
 // dec - number of decimals, including the one extra for rounding
 
-bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
+bf10_t mult_a_bf10_int(bf10_t &r, int dec, U16 n)
 {
 	int signflag;
 	int d;
@@ -2335,7 +2295,7 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
 // r /= n
 // dec - number of decimals, including the one extra for rounding
 
-bf10_t div_a_bf10_int (bf10_t r, int dec, U16 n)
+bf10_t div_a_bf10_int (bf10_t &r, int dec, U16 n)
 {
 	int src;
 	int dest;
@@ -2387,7 +2347,7 @@ bf10_t div_a_bf10_int (bf10_t r, int dec, U16 n)
 // Takes a bf10 number and converts it to an ascii string, sci. notation
 // dec - number of decimals, not including the one extra for rounding
 
-char *bf10tostr_e(char *s, int dec, bf10_t n)
+char *bf10tostr_e(char *s, int dec, bf10_t const &n)
 {
 	int d;
 	int p;
@@ -2444,7 +2404,7 @@ char *bf10tostr_e(char *s, int dec, bf10_t n)
 // bf10tostr_f()
 // Takes a bf10 number and converts it to an ascii string, decimal notation
 
-char *bf10tostr_f(char *s, int dec, bf10_t n)
+char *bf10tostr_f(char *s, int dec, bf10_t const &n)
 {
 	int d;
 	int p;

@@ -133,6 +133,10 @@ inline ComplexT<T> MakeComplexT(T re = T(), T im = T())
 	z.imag(im);
 	return z;
 }
+inline ComplexD MakeComplexT(StdComplexD const &z)
+{
+	return MakeComplexT(z.real(), z.imag());
+}
 
 template <typename T>
 inline ComplexT<T> operator+(ComplexT<T> const &left, ComplexT<T> const &right)
@@ -298,6 +302,12 @@ inline ComplexD exp(ComplexD const &x)
 {
 	return std::exp(x.real())*MakeComplexT(std::cos(x.imag()), std::sin(x.imag()));
 }
+
+inline ComplexD sqr(ComplexD const &x)
+{
+	return MakeComplexT(x.real()*x.real() - x.imag()*x.imag(), 2.0*x.real()*x.imag());
+}
+
 
 // returns x^y
 inline ComplexD pow(ComplexD const &x, ComplexD const &y)

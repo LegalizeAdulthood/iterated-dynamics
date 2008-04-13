@@ -74,7 +74,7 @@ public:
 	{ return ::funny_glasses_call(calc); }
 	virtual int text_temp_message(const char *msgparm)
 	{ return ::text_temp_message(msgparm); }
-	virtual bf_t copy_bf(bf_t r, bf_t n)
+	virtual bf_t copy_bf(bf_t &r, bf_t const &n)
 	{ return ::copy_bf(r, n); }
 	virtual void history_save_info()
 	{ ::history_save_info(); }
