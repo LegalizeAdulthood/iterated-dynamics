@@ -1327,6 +1327,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\BigNumber.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\bignumc.cpp"
 					>
 				</File>

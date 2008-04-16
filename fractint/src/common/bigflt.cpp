@@ -171,7 +171,7 @@ char *unsafe_bftostr(char *s, int dec, bf_t &r)
 
 	copy_bf(bftmp1, r);
 	unsafe_bftobf10(bf10tmp, dec, bftmp1);
-	power = (S16)big_access16(bf10tmp + dec + 2); // where the exponent is stored
+	power = S16(bf10tmp.get16(dec + 2)); // where the exponent is stored
 	if (power > -4 && power < 6) // tinker with this
 	{
 		bf10tostr_f(s, dec, bf10tmp);
@@ -2150,11 +2150,10 @@ bf10_t unsafe_bftobf10(bf10_t &r, int dec, bf_t &n)
 	int p;
 	int bnl;
 	bf_t onesbyte;
-	bf10_t power10;
 
 	if (is_bf_zero(n))
 	{ // in scientific notation, the leading digit can't be zero
-		r[1] = (BYTE)0; // unless the number is zero
+		r.set8(1, 0); // unless the number is zero
 		return r;
 	}
 
@@ -2166,30 +2165,29 @@ bf10_t unsafe_bftobf10(bf10_t &r, int dec, bf_t &n)
 		dec = g_decimals;
 	}
 	dec++;  // one extra byte for rounding
-	power10 = r + dec + 1;
+	bf10_t power10 = bf10_t(r, dec + 1);
 
 	if (is_bf_neg(n))
 	{
 		neg_a_bf(n);
-		r[0] = 1; // sign flag
+		r.set8(0, 1); // sign flag
 	}
 	else
 	{
-		r[0] = 0;
+		r.set8(0, 0);
 	}
 
 	p = -1;  // multiply by 10 right away
 	bnl = g_bn_length;
 	g_bn_length = g_bf_length;
-	BYTE *rstorage = r;
 	for (d = 1; d <= dec; d++)
 	{
 		// pretend it's a bn_t instead of a bf_t
 		// this leaves n un-normalized, which is what we want here
 		mult_a_bn_int(bn_t(n.storage()), 10);
 
-		rstorage[d] = onesbyte.get8();
-		if (d == 1 && rstorage[d] == 0)
+		r.set8(d, onesbyte.get8());
+		if (d == 1 && r.get8(d) == 0)
 		{
 			d = 0; // back up a digit
 			p--; // and decrease by a factor of 10
@@ -2197,7 +2195,7 @@ bf10_t unsafe_bftobf10(bf10_t &r, int dec, bf_t &n)
 		onesbyte.set8(0);
 	}
 	g_bn_length = bnl;
-	big_set16(power10, (U16) p); // save power of ten
+	power10.set16(U16(p)); // save power of ten
 
 	// the digits are all read in, now scale it by 256^power256
 	if (power256 > 0)
@@ -2218,30 +2216,30 @@ bf10_t unsafe_bftobf10(bf10_t &r, int dec, bf_t &n)
 	// else power256 is zero, don't do anything
 
 	// round the last digit
-	if (r[dec] >= 5)
+	if (r.get8(dec) >= 5)
 	{
 		d = dec-1;
 		while (d > 0) // stop before you get to the sign flag
 		{
-			r[d]++;  // round up
-			if (r[d] < 10)
+			r.set8(d, r.get8(d) + 1);  // round up
+			if (r.get8(d) < 10)
 			{
 				d = -1; // flag for below
 				break; // finished rounding
 			}
-			r[d] = 0;
+			r.set8(d, 0);
 			d--;
 		}
 		if (d == 0) // rounding went back to the first digit and it overflowed
 		{
-			r[1] = 0;
-			memmove(r + 2, r + 1, dec-1);
-			r[1] = 1;
-			p = (S16)big_access16(power10);
-			big_set16(power10, (U16)(p + 1));
+			r.set8(1, 0);
+			memmove(r.storage() + 2, r.storage() + 1, dec-1);
+			r.set8(1, 1);
+			p = S16(power10.get16());
+			power10.set16(U16(p + 1));
 		}
 	}
-	r[dec] = 0; // truncate the rounded digit
+	r.set8(dec, 0);				// truncate the rounded digit
 
 	return r;
 }
@@ -2261,32 +2259,32 @@ bf10_t mult_a_bf10_int(bf10_t &r, int dec, U16 n)
 	unsigned overflow;
 	bf10_t power10;
 
-	if (r[1] == 0 || n == 0)
+	if (r.get8(1) == 0 || n == 0)
 	{
-		r[1] = 0;
+		r.set8(1, 0);
 		return r;
 	}
 
-	power10 = r + dec + 1;
-	p = (S16)big_access16(power10);
+	power10 = bf10_t(r, dec + 1);
+	p = (S16) power10.get16();
 
-	signflag = r[0];  // r[0] to be used as a padding
+	signflag = r.get8(0);  // r[0] to be used as a padding
 	overflow = 0;
 	for (d = dec; d > 0; d--)
 	{
-		value = r[d]*n + overflow;
-		r[d] = BYTE(value % 10);
+		value = r.get8(d)*n + overflow;
+		r.set8(d, BYTE(value % 10));
 		overflow = value/10;
 	}
 	while (overflow)
 	{
 		p++;
-		memmove(r + 2, r + 1, dec - 1);
-		r[1] = BYTE(overflow % 10);
+		memmove(r.storage() + 2, r.storage() + 1, dec - 1);
+		r.set8(1, BYTE(overflow % 10));
 		overflow /= 10;
 	}
-	big_set16(power10, (U16)p); // save power of ten
-	r[0] = (BYTE)signflag; // restore sign flag
+	power10.set16(U16(p));		// save power of ten
+	r.set8(0, (BYTE)signflag); // restore sign flag
 	return r;
 }
 
@@ -2304,22 +2302,22 @@ bf10_t div_a_bf10_int (bf10_t &r, int dec, U16 n)
 	unsigned remainder;
 	bf10_t power10;
 
-	if (r[1] == 0 || n == 0)
+	if (r.get8(1) == 0 || n == 0)
 	{
-		r[1] = 0;
+		r.set8(1, 0);
 		return r;
 	}
 
-	power10 = r + dec + 1;
-	p = (S16)big_access16(power10);
+	power10 = bf10_t(r, dec + 1);
+	p = S16(power10.get16());
 
 	remainder = 0;
 	for (src = dest = 1; src <= dec; dest++, src++)
 	{
-		value = 10*remainder + r[src];
-		r[dest] = BYTE(value/n);
+		value = 10*remainder + r.get8(src);
+		r.set8(dest, BYTE(value/n));
 		remainder = value % n;
-		if (dest == 1 && r[dest] == 0)
+		if (dest == 1 && r.get8(dest) == 0)
 		{
 			dest = 0; // back up a digit
 			p--;      // and decrease by a factor of 10
@@ -2328,16 +2326,16 @@ bf10_t div_a_bf10_int (bf10_t &r, int dec, U16 n)
 	for (; dest <= dec; dest++)
 	{
 		value = 10*remainder;
-		r[dest] = BYTE(value/n);
+		r.set8(dest, BYTE(value/n));
 		remainder = value % n;
-		if (dest == 1 && r[dest] == 0)
+		if (dest == 1 && r.get8(dest) == 0)
 		{
 			dest = 0; // back up a digit
 			p--;      // and decrease by a factor of 10
 		}
 	}
 
-	big_set16(power10, (U16)p); // save power of ten
+	power10.set16(U16(p)); // save power of ten
 	return r;
 }
 
@@ -2353,7 +2351,7 @@ char *bf10tostr_e(char *s, int dec, bf10_t const &n)
 	int p;
 	bf10_t power10;
 
-	if (n[1] == 0)
+	if (n.get8(1) == 0)
 	{
 		strcpy(s, "0.0");
 		return s;
@@ -2364,8 +2362,8 @@ char *bf10tostr_e(char *s, int dec, bf10_t const &n)
 		dec = g_decimals;
 	}
 	dec++;  // one extra byte for rounding
-	power10 = n + dec + 1;
-	p = (S16)big_access16(power10);
+	power10 = bf10_t(n, dec + 1);
+	p = S16(power10.get16());
 
 	// if p is negative, it is not necessary to show all the decimal places
 	if (p < 0 && dec > 8) // 8 sounds like a reasonable value
@@ -2377,15 +2375,15 @@ char *bf10tostr_e(char *s, int dec, bf10_t const &n)
 		}
 	}
 
-	if (n[0] == 1) // sign flag
+	if (n.get8(0) == 1) // sign flag
 	{
 		*(s++) = '-';
 	}
-	*(s++) = (char)(n[1] + '0');
+	*(s++) = (char)(n.get8(1) + '0');
 	*(s++) = '.';
 	for (d = 2; d <= dec; d++)
 	{
-		*(s++) = (char)(n[d] + '0');
+		*(s++) = (char)(n.get8(d) + '0');
 	}
 	// clean up trailing 0's
 	while (*(s-1) == '0')
@@ -2410,7 +2408,7 @@ char *bf10tostr_f(char *s, int dec, bf10_t const &n)
 	int p;
 	bf10_t power10;
 
-	if (n[1] == 0)
+	if (n.get8(1) == 0)
 	{
 		strcpy(s, "0.0");
 		return s;
@@ -2421,8 +2419,8 @@ char *bf10tostr_f(char *s, int dec, bf10_t const &n)
 		dec = g_decimals;
 	}
 	dec++;  // one extra byte for rounding
-	power10 = n + dec + 1;
-	p = (S16)big_access16(power10);
+	power10 = bf10_t(n, dec + 1);
+	p = S16(power10.get16());
 
 	// if p is negative, it is not necessary to show all the decimal places
 	if (p < 0 && dec > 8) // 8 sounds like a reasonable value
@@ -2434,7 +2432,7 @@ char *bf10tostr_f(char *s, int dec, bf10_t const &n)
 		}
 	}
 
-	if (n[0] == 1) // sign flag
+	if (n.get8(0) == 1) // sign flag
 	{
 		*(s++) = '-';
 	}
@@ -2442,12 +2440,12 @@ char *bf10tostr_f(char *s, int dec, bf10_t const &n)
 	{
 		for (d = 1; d <= p + 1; d++)
 		{
-			*(s++) = (char)(n[d] + '0');
+			*(s++) = (char)(n.get8(d) + '0');
 		}
 		*(s++) = '.';
 		for (; d <= dec; d++)
 		{
-			*(s++) = (char)(n[d] + '0');
+			*(s++) = (char)(n.get8(d) + '0');
 		}
 	}
 	else
@@ -2460,7 +2458,7 @@ char *bf10tostr_f(char *s, int dec, bf10_t const &n)
 		}
 		for (d = 1; d <= dec; d++)
 		{
-			*(s++) = (char)(n[d] + '0');
+			*(s++) = (char)(n.get8(d) + '0');
 		}
 	}
 

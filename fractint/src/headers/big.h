@@ -32,15 +32,6 @@ enum
 
 typedef BYTE *big_t;
 
-// functions defined in bignum.c
-// prototypes
-extern U16 big_set16(BYTE *addr, U16 val);
-extern S16 big_setS16(BYTE *addr, S16 val);
-extern U32 big_set32(BYTE *addr, U32 val);
-extern U16 big_access16(BYTE const *addr);
-extern S16 big_accessS16(BYTE const *addr);
-extern U32 big_access32(BYTE const *addr);
-
 big_t alloc_stack(size_t size);
 int save_stack();
 void restore_stack(int old_offset);
@@ -72,16 +63,54 @@ public:
 	void set8(int idx, BYTE value)			{ _storage[idx] = value; }
 	void set8(BYTE value)					{ set8(0, value); }
 
-	U16 get16(int idx = 0) const			{ return big_access16(_storage + idx); }
-	S16 getS16(int idx = 0) const			{ return big_accessS16(_storage + idx); }
-	U16 set16(int idx, U16 value)			{ return big_set16(_storage + idx, value); }
+	/*************************************************************************
+	* The original bignumber code was written specifically for a Little Endian
+	* system (80x86).  The following is not particularly efficient, but was
+	* simple to incorporate.  If speed with a Big Endian machine is critical,
+	* the bignumber format could be reversed.
+	**************************************************************************/
+	U16 get16(int idx = 0) const
+	{
+		BYTE const *addr = &_storage[idx];
+		return U16(addr[0]) | U16(addr[1] << 8);
+	}
+	S16 getS16(int idx = 0) const
+	{
+		BYTE const *addr = &_storage[idx];
+		return S16(addr[0]) | S16(addr[1] << 8);
+	}
+	U16 set16(int idx, U16 value)
+	{
+		BYTE *addr = &_storage[idx];
+		addr[0] = BYTE(value & 0xff);
+		addr[1] = BYTE((value >> 8) & 0xff);
+		return value;
+	}
 	U16 set16(U16 value)					{ return set16(0, value); }
-	S16 setS16(int idx, S16 value)			{ return big_setS16(_storage + idx, value); }
+	S16 setS16(int idx, S16 value)
+	{
+		BYTE *addr = &_storage[idx];
+		addr[0] = BYTE(value & 0xff);
+		addr[1] = BYTE((value >> 8) & 0xff);
+		return value;
+	}
 	S16 setS16(S16 value)					{ return setS16(0, value); }
 
-	U32 get32(int idx = 0) const			{ return big_access32(_storage + idx); }
+	U32 get32(int idx = 0) const
+	{
+		BYTE const *addr = &_storage[idx];
+		return addr[0] | U32(addr[1] << 8) | U32(addr[2] << 16) | U32(addr[3] << 24);
+	}
 	U32 set32(long value)					{ return set32(0, value); }
-	U32 set32(int idx, long value)			{ return big_set32(_storage + idx, value); }
+	U32 set32(int idx, long value)
+	{
+		BYTE *addr = &_storage[idx];
+		addr[0] = BYTE(value & 0xff);
+		addr[1] = BYTE((value >> 8)  & 0xff);
+		addr[2] = BYTE((value >> 16) & 0xff);
+		addr[3] = BYTE((value >> 24) & 0xff);
+		return value; 
+	}
 
 	void clear();
 	void maximum();
@@ -112,7 +141,7 @@ public:
 
 typedef BigT bn_t;
 typedef BigFloatT bf_t;
-typedef big_t bf10_t;
+typedef BigFloat10T bf10_t;
 
 #include "cmplx.h"
 

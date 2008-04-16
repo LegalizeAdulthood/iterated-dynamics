@@ -136,52 +136,6 @@ double wide number can then be ignored.
 #include "prototyp.h"
 #include "big.h"
 
-/*************************************************************************
-* The original bignumber code was written specifically for a Little Endian
-* system (80x86).  The following is not particularly efficient, but was
-* simple to incorporate.  If speed with a Big Endian machine is critical,
-* the bignumber format could be reversed.
-**************************************************************************/
-#ifdef ACCESS_BY_BYTE
-U32 big_access32(BYTE const *addr)
-{
-	return addr[0] | U32(addr[1] << 8) | U32(addr[2] << 16) | U32(addr[3] << 24);
-}
-
-U16 big_access16(BYTE const *addr)
-{
-	return U16(addr[0]) | U16(addr[1] << 8);
-}
-
-S16 big_accessS16(BYTE const *addr)
-{
-	return S16(addr[0]) | S16(addr[1] << 8);
-}
-
-U32 big_set32(BYTE *addr, U32 val)
-{
-	addr[0] = BYTE(val & 0xff);
-	addr[1] = BYTE((val >> 8)  & 0xff);
-	addr[2] = BYTE((val >> 16) & 0xff);
-	addr[3] = BYTE((val >> 24) & 0xff);
-	return val; 
-}
-
-U16 big_set16(BYTE *addr, U16 val)
-{
-	addr[0] = BYTE(val & 0xff);
-	addr[1] = BYTE((val >> 8) & 0xff);
-	return val;
-}
-
-S16 big_setS16(BYTE *addr, S16 val)
-{
-	addr[0] = BYTE(val & 0xff);
-	addr[1] = BYTE((val >> 8) & 0xff);
-	return val;
-}
-
-#endif
 
 /************************************************************************/
 // convert_bn  -- convert bignum numbers from old to new lengths
