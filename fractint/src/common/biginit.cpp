@@ -251,7 +251,7 @@ static void init_bf_2()
 		big_pi     = bf_t(advance_ptr_bf_length_plus_2(ptr));
 		bftmp      = bf_t(advance_ptr_rbf_length_plus_2(ptr));
 	}
-	bf10tmp    = advance_ptr(ptr, g_bf_decimals + 4);
+	bf10tmp    = bf10_t(advance_ptr(ptr, g_bf_decimals + 4));
 
 	// ptr needs to be 16-bit aligned on some systems
 	ptr = (ptr + 1) & ~1;

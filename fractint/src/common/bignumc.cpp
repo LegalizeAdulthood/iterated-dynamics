@@ -65,8 +65,8 @@ int cmp_bn(bn_t const &n1, bn_t const &n2)
 
 	// two bytes at a time
 	// signed comparison for msb
-	Svalue1 = big_accessS16((n1.storage() + g_bn_length-2));
-	Svalue2 = big_accessS16((n2.storage() + g_bn_length-2));
+	Svalue1 = n1.getS16(g_bn_length - 2);
+	Svalue2 = n2.getS16(g_bn_length - 2);
 	if (Svalue1 > Svalue2)
 	{
 		// now determine which of the two bytes was different
@@ -83,8 +83,8 @@ int cmp_bn(bn_t const &n1, bn_t const &n2)
 	// unsigned comparison for the rest
 	for (i = g_bn_length-4; i >= 0; i -= 2)
 	{
-		value1 = big_access16(n1.storage() + i);
-		value2 = big_access16(n2.storage() + i);
+		value1 = n1.get16(i);
+		value2 = n2.get16(i);
 		if (value1 > value2)
 		{
 			// now determine which of the two bytes was different
@@ -208,7 +208,7 @@ bn_t neg_bn(bn_t &r, bn_t const &n)
 	}
 	// if neg was 0, then just "not" the rest
 	for (; i < g_bn_length; i += 2)
-	{ // notice that big_access16() and big_set16() are not needed here
+	{
 		r.set16(i, ~n.get16(i)); // toggle all the bits
 	}
 	return r;
@@ -232,7 +232,7 @@ bn_t neg_a_bn(bn_t &r)
 	}
 	// if neg was 0, then just "not" the rest
 	for (; i < g_bn_length; i += 2)
-	{ // notice that big_access16() and big_set16() are not needed here
+	{
 		r.set16(i, ~r.get16(i)); // toggle all the bits
 	}
 	return r;

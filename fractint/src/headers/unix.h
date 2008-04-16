@@ -18,9 +18,6 @@ typedef void (*SignalHandler)(int);
 
 extern int iocount;
 
-char *strlwr(char *s);
-char *strupr(char *s);
-
 #if defined(_WIN32)
 #define bcopy(src,dst,n) memcpy(dst,src,n)
 #define bzero(buf,siz) memset(buf,0,siz)
