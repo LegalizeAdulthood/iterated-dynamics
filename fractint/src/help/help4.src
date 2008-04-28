@@ -22,7 +22,7 @@
     { 3D Parameters }
 ;
 ;
-~Topic=Summary of all Parameters, Label=FIHELP_COMMANDS
+~Topic=Summary of all Parameters, Label=IDHELP_COMMANDS
 ; This topic is online only.
 ~Format-
 {Startup Parameters}

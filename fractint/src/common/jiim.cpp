@@ -597,24 +597,10 @@ bool JIIM::UsesStandardFractalOrFrothCalc()
 
 void JIIM::Execute()
 {
-	int count = 0;            // coloring julia
+	// coloring julia
 	s_mode = JIIM_PIXEL;
-	int x;
-	int y;
-	int kbdchar = -1;
-	long iter;
-	int color;
-	int old_sx_offset;
-	int old_sy_offset;
-	bool save_has_inverse;
-	int (*old_calculate_type)();
-	int old_x;
-	int old_y;
-	double aspect;
 	static int random_direction = 0;
 	static int random_count = 0;
-	bool actively_computing = true;
-	bool first_time = true;
 	int old_debug_mode = g_debug_mode;
 
 	// must use standard fractal or be froth_calc
@@ -622,22 +608,23 @@ void JIIM::Execute()
 	{
 		return;
 	}
-	HelpModeSaver saved_help(!_orbits ? FIHELP_JIIM : FIHELP_ORBITS);
+	HelpModeSaver saved_help(!_orbits ? IDHELP_JIIM : IDHELP_ORBITS);
 	if (_orbits)
 	{
 		g_has_inverse = true;
 	}
-	old_sx_offset = g_screen_x_offset;
-	old_sy_offset = g_screen_y_offset;
-	old_calculate_type = g_calculate_type;
+	int old_sx_offset = g_screen_x_offset;
+	int old_sy_offset = g_screen_y_offset;
+	int (*old_calculate_type)() = g_calculate_type;
 	s_show_numbers = 0;
 	g_using_jiim = true;
 	g_line_buffer = new BYTE[std::max(g_screen_width, g_screen_height)];
-	aspect = (double(g_x_dots)*3)/(double(g_y_dots)*4);  // assumes 4:3
-	actively_computing = true;
+	double aspect = (double(g_x_dots)*3)/(double(g_y_dots)*4);  // assumes 4:3
+	bool actively_computing = true;
 	SetAspect(aspect);
 	MouseModeSaver saved_mouse(LOOK_MOUSE_ZOOM_BOX);
 
+	int color;
 	if (_orbits)
 	{
 		g_fractal_specific[g_fractal_type].per_image();
@@ -662,6 +649,7 @@ void JIIM::Execute()
 		g_plot_color = plot_color_clip;                // for line with clipping
 	}
 
+	bool save_has_inverse = false;
 	if (g_screen_x_offset != 0 || g_screen_y_offset != 0) // we're in view windows
 	{
 		save_has_inverse = g_has_inverse;
@@ -708,8 +696,8 @@ void JIIM::Execute()
 		_cImag = g_save_c.imag();
 	}
 
-	old_x = -1;
-	old_y = -1;
+	int old_x = -1;
+	int old_y = -1;
 
 	g_col = int(_convert.a*_cReal + _convert.b*_cImag + _convert.e + .5);
 	g_row = int(_convert.c*_cReal + _convert.d*_cImag + _convert.f + .5);
@@ -722,7 +710,6 @@ void JIIM::Execute()
 	cursor::cursor_show();
 	color = g_.DAC().Bright();
 
-	iter = 1;
 	_again = true;
 	_zoom = 1;
 
@@ -731,6 +718,10 @@ void JIIM::Execute()
 #endif
 
 	double r;
+	int count = 0;
+	int kbdchar = -1;
+	long iter = 1;
+	bool first_time = true;
 	while (_again)
 	{
 		UpdateCursor(actively_computing);
@@ -818,6 +809,8 @@ void JIIM::Execute()
 			}
 		} // end if (driver_key_pressed)
 
+		int x;
+		int y;
 		if (!_orbits)
 		{
 			if (!g_has_inverse)

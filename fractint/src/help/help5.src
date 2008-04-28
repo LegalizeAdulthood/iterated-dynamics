@@ -1092,7 +1092,7 @@ palette editing see {Freestyle mode tutorial}
 ;
 ;
 ;
-~Topic=Selecting a video mode when loading a file, Label=FIHELP_LOAD_FILE
+~Topic=Selecting a video mode when loading a file, Label=IDHELP_LOAD_FILE
 ; This topic is only online, context-sensitive.
 ~Format-
 
@@ -1648,7 +1648,7 @@ played further so that you can produce tunes in a particular key, if you're
 so inclined.
 ;
 ;
-~Topic=Advanced Sound Controls, Label=FIHELP_MUSIC
+~Topic=Advanced Sound Controls, Label=IDHELP_MUSIC
 The soundcard output from fractint is a tad more versatile than the simple
 tones of the PC speaker. This comes into its own when playing sounds based
 on fractal orbits, producing results from haunting chordal pulses through to

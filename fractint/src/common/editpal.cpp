@@ -3066,7 +3066,7 @@ void palette_edit()
 		return; // prevents crash when physical screen is too small
 	}
 
-	HelpModeSaver saved_help(FIHELP_PALETTE_EDITING);
+	HelpModeSaver saved_help(IDHELP_PALETTE_EDITING);
 	MouseModeSaver saved_mouse(LOOK_MOUSE_ZOOM_BOX);
 
 	g_plot_color = g_plot_color_put_color;

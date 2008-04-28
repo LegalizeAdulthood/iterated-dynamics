@@ -204,7 +204,7 @@ int auto_stereo()
 		srand((unsigned int) ltime);
 	}
 
-	HelpModeSaver saved_help(FIHELP_RANDOM_DOT_STEREOGRAM_COMMANDS);
+	HelpModeSaver saved_help(IDHELP_RANDOM_DOT_STEREOGRAM_COMMANDS);
 	driver_save_graphics();                      // save graphics image
 	s_save_dac = g_.DAC();  // save colors
 
@@ -343,7 +343,7 @@ int get_random_dot_stereogram_parameters()
 	ScreenStacker stacker;
 	while (true)
 	{
-		UIChoices dialog(FIHELP_RANDOM_DOT_STEREOGRAM, "Random Dot Stereogram Parameters", 0);
+		UIChoices dialog(IDHELP_RANDOM_DOT_STEREOGRAM, "Random Dot Stereogram Parameters", 0);
 		dialog.push("Depth Effect (negative reverses front and back)", s_auto_stereo_depth);
 		dialog.push("Image width in inches", g_externs.AutoStereoWidth());
 		dialog.push("Use grayscale value for depth? (if \"no\" uses color number)", g_grayscale_depth);
