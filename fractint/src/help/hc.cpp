@@ -124,7 +124,7 @@ enum
                                  // 0 = never stop
 };
 
-static char const *INDEX_LABEL = "FIHELP_INDEX";
+static char const *INDEX_LABEL = "IDHELP_INDEX";
 static char const *DOCCONTENTS_TITLE = "DocContent";
 
 enum
@@ -3624,7 +3624,7 @@ void _write_hdr(char *fname, FILE *file)
 
 	fprintf(file, "// current help file version \n");
 	fprintf(file, "\n");
-	fprintf(file, "#define %-32s %3d\n", "FIHELP_VERSION", version);
+	fprintf(file, "#define %-32s %3d\n", "IDHELP_VERSION", version);
 	fprintf(file, "\n\n");
 
 	fprintf(file, "// labels \n\n");

@@ -312,7 +312,7 @@ int get_video_mode(fractal_info const *info, formula_info_extension_block const 
 		vidptr = &sort_table[0]; // for format_item
 
 		// format heading
-		int i = full_screen_choice_help(FIHELP_LOAD_FILE, 0, GetHeading(info, formula_info).c_str(),
+		int i = full_screen_choice_help(IDHELP_LOAD_FILE, 0, GetHeading(info, formula_info).c_str(),
 			"key...name......................err...xdot..ydot.clr.comment..................",
 			GetInstructions(info).c_str(), g_.VideoTableLength(), 0, &attributes[0],
 			1, 13, 78, 0, format_item, 0, 0, check_mode_key);

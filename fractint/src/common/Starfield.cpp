@@ -77,7 +77,7 @@ int starfield()
 
 int get_starfield_params()
 {
-	UIChoices dialog(FIHELP_STARFIELDS, "Starfield Parameters", 0);
+	UIChoices dialog(IDHELP_STARFIELDS, "Starfield Parameters", 0);
 	const char *starfield_prompts[3] =
 	{
 		"Star Density in Pixels per Star",

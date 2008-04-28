@@ -288,7 +288,7 @@ void IteratedDynamicsImpl::ImageStart()
 	}
 
 	_externs.SetZoomOff(true);			// zooming is enabled
-	_app.set_help_mode(FIHELP_MAIN);         // now use this help mode
+	_app.set_help_mode(IDHELP_MAIN);         // now use this help mode
 	_resumeFlag = false;  // allows taking goto inside big_while_loop()
 
 	_state = APPSTATE_RESUME_LOOP;
@@ -379,17 +379,17 @@ void IteratedDynamicsImpl::RestoreStart()
 			if (_externs.Overlay3D())
 			{
 				hdg = "Select File for 3D Overlay";
-				_app.set_help_mode(FIHELP_3D_OVERLAY);
+				_app.set_help_mode(IDHELP_3D_OVERLAY);
 			}
 			else if (_externs.Display3D())
 			{
 				hdg = "Select File for 3D Transform";
-				_app.set_help_mode(FIHELP_3D_IMAGES);
+				_app.set_help_mode(IDHELP_3D_IMAGES);
 			}
 			else
 			{
 				hdg = "Select File to Restore";
-				_app.set_help_mode(FIHELP_SAVE_RESTORE);
+				_app.set_help_mode(IDHELP_SAVE_RESTORE);
 			}
 			if (_externs.ShowFile() == SHOWFILE_CANCELLED
 				&& _app.get_a_filename(hdg, _externs.GIFMask(), _externs.ReadName()) < 0)
@@ -421,7 +421,7 @@ void IteratedDynamicsImpl::RestoreStart()
 		_externs.SetShowFile(_externs.Browse().Browsing() ? SHOWFILE_DONE : SHOWFILE_CANCELLED);
 	}
 
-	_app.set_help_mode(FIHELP_MENU);                 // now use this help mode
+	_app.set_help_mode(IDHELP_MENU);                 // now use this help mode
 	_externs.SetTabDisplayEnabled(true);
 	_driver->set_mouse_mode(LOOK_MOUSE_NONE);                     // ignore mouse
 

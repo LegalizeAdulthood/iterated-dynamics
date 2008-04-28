@@ -904,8 +904,8 @@ void HelpSystem::Help(HelpAction action)
 			break;
 
 		case ACTION_INDEX:
-			next.topic_num = labels_[FIHELP_INDEX].topic_num;
-			next.topic_off = labels_[FIHELP_INDEX].topic_off;
+			next.topic_num = labels_[IDHELP_INDEX].topic_num;
+			next.topic_off = labels_[IDHELP_INDEX].topic_off;
 			// fall-through
 
 		case ACTION_CALL:
@@ -919,7 +919,7 @@ void HelpSystem::Help(HelpAction action)
 		}
 
 		int flags = 0;
-		if (curr.topic_num == labels_[FIHELP_INDEX].topic_num)
+		if (curr.topic_num == labels_[IDHELP_INDEX].topic_num)
 		{
 			flags |= F_INDEX;
 		}
@@ -1367,7 +1367,7 @@ void HelpSystem::Init()
 				stop_message(STOPMSG_NO_STACK, "Invalid help signature in id.hlp!\n");
 				return;
 			}
-			else if (hs.version != FIHELP_VERSION)
+			else if (hs.version != IDHELP_VERSION)
 			{
 				stream_.close();
 				stop_message(STOPMSG_NO_STACK, "Wrong help version in id.hlp!\n");

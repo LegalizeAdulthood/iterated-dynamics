@@ -154,7 +154,7 @@ void Introduction::PaintScreen()
 
 	driver_hide_text_cursor();
 
-	HelpModeSaver saved_help(FIHELP_MENU);
+	HelpModeSaver saved_help(IDHELP_MENU);
 }
 
 void Introduction::Show()

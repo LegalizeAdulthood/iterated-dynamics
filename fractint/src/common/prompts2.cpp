@@ -124,7 +124,7 @@ int get_toggles()
 	int old_fill_color = g_fill_color;
 	double old_proximity = g_proximity;
 
-	UIChoices dialog(FIHELP_TOGGLES, "Basic Options\n(not all combinations make sense)", 0);
+	UIChoices dialog(IDHELP_TOGGLES, "Basic Options\n(not all combinations make sense)", 0);
 	const char *calculation_modes[] =
 	{
 		"1", "2", "3",
@@ -389,7 +389,7 @@ int get_toggles2()
 		old_inversion[i] = g_inversion[i];
 	}
 
-	UIChoices dialog(FIHELP_TOGGLES2, "Extended Options\n(not all combinations make sense)", 0);
+	UIChoices dialog(IDHELP_TOGGLES2, "Extended Options\n(not all combinations make sense)", 0);
 	dialog.push("Look for finite attractor (0=no,>0=yes,<0=phase)", g_finite_attractor);
 	dialog.push("Potential Max Color (0 means off)", int(old_potential_parameter[0]));
 	dialog.push("          Slope", old_potential_parameter[1]);
@@ -537,7 +537,7 @@ int passes_options()
 
 pass_option_restart:
 	{
-		UIChoices dialog(FIHELP_PASSES_OPTIONS, "Passes Options\n"
+		UIChoices dialog(IDHELP_PASSES_OPTIONS, "Passes Options\n"
 			"(not all combinations make sense)\n"
 			"(Press "FK_F2" for corner parameters)\n"
 			"(Press "FK_F6" for calculation parameters)", 0x44);
@@ -636,7 +636,7 @@ int get_disk_view_params()
 	int old_sxdots = g_screen_width;
 	int old_sydots = g_screen_height;
 
-	UIChoices dialog(FIHELP_VIEW_WINDOW, "View Window Options", 16);
+	UIChoices dialog(IDHELP_VIEW_WINDOW, "View Window Options", 16);
 
 	dialog.push("Disk Video x pixels", g_screen_width);
 	dialog.push("           y pixels", g_screen_height);
@@ -694,7 +694,7 @@ int get_command_string()
 	int i;
 	static char cmdbuf[61];
 
-	i = field_prompt_help(FIHELP_COMMANDS, "Enter command string to use.", cmdbuf, 60);
+	i = field_prompt_help(IDHELP_COMMANDS, "Enter command string to use.", cmdbuf, 60);
 	if (i >= 0 && cmdbuf[0] != 0)
 	{
 		i = process_command(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
@@ -741,7 +741,7 @@ int get_commands()              // execute commands from file
 	std::ifstream::pos_type point;
 	static char commandmask[13] = {"*.par"};
 
-	point = std::ifstream::pos_type(get_file_entry_help(FIHELP_PARAMETER_FILES, GETFILE_PARAMETER, "Parameter Set",
+	point = std::ifstream::pos_type(get_file_entry_help(IDHELP_PARAMETER_FILES, GETFILE_PARAMETER, "Parameter Set",
 		commandmask, g_command_file, g_command_name));
 	if (point >= 0)
 	{
@@ -916,7 +916,7 @@ int get_corners()
 
 gc_loop:
 	{
-		UIChoices dialog(FIHELP_IMAGE_COORDINATES, "Image Coordinates", 0x90);
+		UIChoices dialog(IDHELP_IMAGE_COORDINATES, "Image Coordinates", 0x90);
 		bool center_mag = (g_orbit_draw_mode == ORBITDRAW_LINE) ? false : g_use_center_mag;
 		double Yctr;
 		double Xctr;
@@ -1122,7 +1122,7 @@ static int get_screen_corners()
 
 gsc_loop:
 	{
-		UIChoices dialog(FIHELP_SCREEN_COORDINATES, "Screen Coordinates", 0x90);
+		UIChoices dialog(IDHELP_SCREEN_COORDINATES, "Screen Coordinates", 0x90);
 		double Skew;
 		double Rotation;
 		LDBL Magnification;

@@ -1,4 +1,4 @@
-~Topic=Summary of Fractal Types, Label=FIHELP_FRACTAL_TYPE
+~Topic=Summary of Fractal Types, Label=IDHELP_FRACTAL_TYPE
 ~Format-
 ~Doc-
 For detailed descriptions, select a hot-link below, see {Fractal Types},
@@ -19,8 +19,8 @@ SUMMARY OF FRACTAL TYPES
 ;       format ctl char (~xxx, {xxx}, \x)
 ;
 
-{=FIHELP_ANT ant}
-~Label=FIHELP_ANT_TYPE
+{=IDHELP_ANT ant}
+~Label=IDHELP_ANT_TYPE
     Generalized Ant Automaton as described in the July 1994 Scientific
     American. Some ants wander around the screen. A rule string (the first
     parameter) determines the ant's direction. When the type 1 ant leaves a
@@ -32,8 +32,8 @@ SUMMARY OF FRACTAL TYPES
     or stop at the edge.  The 6th parameter is a random seed. You can slow
     down the ants to see them better using the <p> screen Orbit Delay.
 
-{=FIHELP_BARNSLEY barnsleyj1}
-~Label=FIHELP_BARNSLEY_J1_TYPE
+{=IDHELP_BARNSLEY barnsleyj1}
+~Label=IDHELP_BARNSLEY_J1_TYPE
       z(0) = pixel;
       if real(z) >= 0
         z(n+1) = (z-1)*c
@@ -41,8 +41,8 @@ SUMMARY OF FRACTAL TYPES
          z(n+1) = (z+1)*c
     Two parameters: real and imaginary parts of c
 
-{=FIHELP_BARNSLEY barnsleyj2}
-~Label=FIHELP_BARNSLEY_J2_TYPE
+{=IDHELP_BARNSLEY barnsleyj2}
+~Label=IDHELP_BARNSLEY_J2_TYPE
       z(0) = pixel;
       if real(z(n)) * imag(c) + real(c) * imag(z((n)) >= 0
          z(n+1) = (z(n)-1)*c
@@ -50,8 +50,8 @@ SUMMARY OF FRACTAL TYPES
          z(n+1) = (z(n)+1)*c
     Two parameters: real and imaginary parts of c
 
-{=FIHELP_BARNSLEY barnsleyj3}
-~Label=FIHELP_BARNSLEY_J3_TYPE
+{=IDHELP_BARNSLEY barnsleyj3}
+~Label=IDHELP_BARNSLEY_J3_TYPE
       z(0) = pixel;
       if real(z(n) > 0 then z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1)
          + i * (2*real(z((n)) * imag(z((n))) else
@@ -59,16 +59,16 @@ SUMMARY OF FRACTAL TYPES
              + i * (2*real(z((n)) * imag(z((n)) + imag(c) * real(z(n))
     Two parameters: real and imaginary parts of c.
 
-{=FIHELP_BARNSLEY barnsleym1}
-~Label=FIHELP_BARNSLEY_M1_TYPE
+{=IDHELP_BARNSLEY barnsleym1}
+~Label=IDHELP_BARNSLEY_M1_TYPE
       z(0) = c = pixel;
       if real(z) >= 0 then
         z(n+1) = (z-1)*c
       else z(n+1) = (z+1)*c.
     Parameters are perturbations of z(0)
 
-{=FIHELP_BARNSLEY barnsleym2}
-~Label=FIHELP_BARNSLEY_M2_TYPE
+{=IDHELP_BARNSLEY barnsleym2}
+~Label=IDHELP_BARNSLEY_M2_TYPE
       z(0) = c = pixel;
       if real(z)*imag(c) + real(c)*imag(z) >= 0
         z(n+1) = (z-1)*c
@@ -76,8 +76,8 @@ SUMMARY OF FRACTAL TYPES
         z(n+1) = (z+1)*c
     Parameters are perturbations of z(0)
 
-{=FIHELP_BARNSLEY barnsleym3}
-~Label=FIHELP_BARNSLEY_M3_TYPE
+{=IDHELP_BARNSLEY barnsleym3}
+~Label=IDHELP_BARNSLEY_M3_TYPE
       z(0) = c = pixel;
       if real(z(n) > 0 then z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1)
          + i * (2*real(z((n)) * imag(z((n))) else
@@ -85,41 +85,41 @@ SUMMARY OF FRACTAL TYPES
          + i * (2*real(z((n)) * imag(z((n)) + imag(c) * real(z(n))
     Parameters are perturbations of z(0)
 
-{=FIHELP_BIFURCATION bifurcation}
-~Label=FIHELP_BIFURCATION_TYPE
+{=IDHELP_BIFURCATION bifurcation}
+~Label=IDHELP_BIFURCATION_TYPE
     Pictorial representation of a population growth model.
       Let P = new population, p = oldpopulation, r = growth rate
       The model is: P = p + r*fn(p)*(1-fn(p)).
     Three parameters: Filter Cycles, Seed Population, and Function.
 
-{=FIHELP_BIFURCATION bif+sinpi}
-~Label=FIHELP_BIFURCATION_PLUS_SIN_PI_TYPE
+{=IDHELP_BIFURCATION bif+sinpi}
+~Label=IDHELP_BIFURCATION_PLUS_SIN_PI_TYPE
     Bifurcation variation: model is: P = p + r*fn(PI*p).
     Three parameters: Filter Cycles, Seed Population, and Function.
 
-{=FIHELP_BIFURCATION bif=sinpi}
-~Label=FIHELP_BIFURCATION_EQUAL_SIN_PI_TYPE
+{=IDHELP_BIFURCATION bif=sinpi}
+~Label=IDHELP_BIFURCATION_EQUAL_SIN_PI_TYPE
     Bifurcation variation: model is: P = r*fn(PI*p).
     Three parameters: Filter Cycles, Seed Population, and Function.
 
-{=FIHELP_BIFURCATION biflambda}
-~Label=FIHELP_BIFURCATION_LAMBDA_TYPE
+{=IDHELP_BIFURCATION biflambda}
+~Label=IDHELP_BIFURCATION_LAMBDA_TYPE
     Bifurcation variation: model is: P = r*fn(p)*(1-fn(p)).
     Three parameters: Filter Cycles, Seed Population, and Function.
 
-{=FIHELP_BIFURCATION bifstewart}
-~Label=FIHELP_BIFURCATION_STEWART_TYPE
+{=IDHELP_BIFURCATION bifstewart}
+~Label=IDHELP_BIFURCATION_STEWART_TYPE
     Bifurcation variation: model is: P = (r*fn(p)*fn(p)) - 1.
     Three parameters: Filter Cycles, Seed Population, and Function.
 
-{=FIHELP_BIFURCATION bifmay}
-~Label=FIHELP_BIFURCATION_MAY_TYPE
+{=IDHELP_BIFURCATION bifmay}
+~Label=IDHELP_BIFURCATION_MAY_TYPE
     Bifurcation variation: model is: P = r*p / ((1+p)^beta).
     Three parameters: Filter Cycles, Seed Population, and Beta.
 
 ~OnlineFF
-{=FIHELP_CELLULAR cellular}
-~Label=FIHELP_CELLULAR_TYPE
+{=IDHELP_CELLULAR cellular}
+~Label=IDHELP_CELLULAR_TYPE
     One-dimensional cellular automata or line automata.  The type of CA
     is given by kr, where k is the number of different states of the
     automata and r is the radius of the neighborhood.  The next generation
@@ -128,8 +128,8 @@ SUMMARY OF FRACTAL TYPES
     For Type = 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27
         Rule =  4,  7, 10, 13, 16,  6, 11, 16,  8, 15, 10, 12, 14, 16 digits
 
-{=FIHELP_MARTIN chip}
-~Label=FIHELP_CHIP_TYPE
+{=IDHELP_MARTIN chip}
+~Label=IDHELP_CHIP_TYPE
     Chip attractor from Michael Peters - orbit in two dimensions.
       z(0) = y(0) = 0;
       x(n+1) = y(n) - sign(x(n)) * cos(sqr(ln(abs(b*x(n)-c))))
@@ -138,24 +138,24 @@ SUMMARY OF FRACTAL TYPES
     Parameters are a, b, and c.
 
 ~OnlineFF
-{=FIHELP_CIRCLE circle}
-~Label=FIHELP_CIRCLE_TYPE
+{=IDHELP_CIRCLE circle}
+~Label=IDHELP_CIRCLE_TYPE
     Circle pattern by John Connett
       x + iy = pixel
       z = a*(x^2 + y^2)
       c = integer part of z
       color = c modulo(number of colors)
 
-{=FIHELP_MARK_PETERSON cmplxmarksjul}
-~Label=FIHELP_MARKS_JULIA_COMPLEX_TYPE
+{=IDHELP_MARK_PETERSON cmplxmarksjul}
+~Label=IDHELP_MARKS_JULIA_COMPLEX_TYPE
     A generalization of the marksjulia fractal.
       z(0) = pixel;
       z(n+1) = c^(exp-1)*z(n)^2 + c.
     Four parameters: real and imaginary parts of c,
     and real and imaginary parts of exponent.
 
-{=FIHELP_MARK_PETERSON cmplxmarksmand}
-~Label=FIHELP_MARKS_MANDELBROT_COMPLEX_TYPE
+{=IDHELP_MARK_PETERSON cmplxmarksmand}
+~Label=IDHELP_MARKS_MANDELBROT_COMPLEX_TYPE
     A generalization of the marksmandel fractal.
       z(0) = c = pixel;
       z(n+1) = c^(exp-1)*z(n)^2 + c.
@@ -163,8 +163,8 @@ SUMMARY OF FRACTAL TYPES
     of z(0), and real and imaginary parts of exponent.
 
 ~OnlineFF
-{=FIHELP_NEWTON_COMPLEX complexnewton\, complexbasin}
-~Label=FIHELP_NEWTON_COMPLEX_TYPE
+{=IDHELP_NEWTON_COMPLEX complexnewton\, complexbasin}
+~Label=IDHELP_NEWTON_COMPLEX_TYPE
     Newton fractal types extended to complex degrees. Complexnewton
     colors pixels according to the number of iterations required to
     escape to a root. Complexbasin colors pixels according to which
@@ -174,15 +174,15 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = ((p - 1) * z(n)^p + r)/(p * z(n)^(p - 1)).
     Four parameters: real & imaginary parts of degree p and root r.
 
-{=FIHELP_DIFFUSION diffusion}
-~Label=FIHELP_DIFFUSION_TYPE
+{=IDHELP_DIFFUSION diffusion}
+~Label=IDHELP_DIFFUSION_TYPE
     Diffusion Limited Aggregation.  Randomly moving points
     accumulate.  Three parameters: border width (default 10), type,
     and color change rate.
 
 ~OnlineFF
-{=FIHELP_DYNAMIC_SYSTEM dynamic}
-~Label=FIHELP_DYNAMIC_TYPE
+{=IDHELP_DYNAMIC_SYSTEM dynamic}
+~Label=IDHELP_DYNAMIC_TYPE
     Time-discrete dynamic system.
       x(0) = y(0) = start position.
       y(n+1) = y(n) + f( x(n) )
@@ -191,8 +191,8 @@ SUMMARY OF FRACTAL TYPES
     For implicit Euler approximation: x(n+1) = x(n) - f( y(n+1) )
     Five parameters: start position step, dt, a, b, and the function fn1.
 
-{=FIHELP_ESCHER escher_julia}
-~Label=FIHELP_ESCHER_JULIA_TYPE
+{=IDHELP_ESCHER escher_julia}
+~Label=IDHELP_ESCHER_JULIA_TYPE
     Escher-like tiling of Julia sets from The Science of Fractal Images
       z(0) = pixel
       z(n+1) = z(n)^2 + (0, 0i)
@@ -201,59 +201,59 @@ SUMMARY OF FRACTAL TYPES
     Two parameters: real and imaginary parts of c
     Iteration count and bailout size apply to both Julia sets.
 
-{=FIHELP_TAYLOR_SKINNER_VARIATIONS fn(z)+fn(pix)}
-~Label=FIHELP_FUNC_PLUS_FUNC_PIXEL_TYPE
+{=IDHELP_TAYLOR_SKINNER_VARIATIONS fn(z)+fn(pix)}
+~Label=IDHELP_FUNC_PLUS_FUNC_PIXEL_TYPE
       c = z(0) = pixel;
       z(n+1) = fn1(z) + p*fn2(c)
     Six parameters: real and imaginary parts of the perturbation
     of z(0) and factor p, and the functions fn1, and fn2.
 
-{=FIHELP_TAYLOR_SKINNER_VARIATIONS fn(z*z)}
-~Label=FIHELP_FUNC_SQR_TYPE
+{=IDHELP_TAYLOR_SKINNER_VARIATIONS fn(z*z)}
+~Label=IDHELP_FUNC_SQR_TYPE
       z(0) = pixel;
       z(n+1) = fn(z(n)*z(n))
     One parameter: the function fn.
 
 ~OnlineFF
-{=FIHELP_TAYLOR_SKINNER_VARIATIONS fn*fn}
-~Label=FIHELP_FUNC_TIMES_FUNC_TYPE
+{=IDHELP_TAYLOR_SKINNER_VARIATIONS fn*fn}
+~Label=IDHELP_FUNC_TIMES_FUNC_TYPE
       z(0) = pixel; z(n+1) = fn1(n)*fn2(n)
     Two parameters: the functions fn1 and fn2.
 
-{=FIHELP_TAYLOR_SKINNER_VARIATIONS fn*z+z}
-~Label=FIHELP_FUNC_TIMES_Z_PLUS_Z_TYPE
+{=IDHELP_TAYLOR_SKINNER_VARIATIONS fn*z+z}
+~Label=IDHELP_FUNC_TIMES_Z_PLUS_Z_TYPE
       z(0) = pixel; z(n+1) = p1*fn(z(n))*z(n) + p2*z(n)
     Five parameters: the real and imaginary components of
     p1 and p2, and the function fn.
 
-{=FIHELP_TAYLOR_SKINNER_VARIATIONS fn+fn}
-~Label=FIHELP_FUNC_PLUS_FUNC_TYPE
+{=IDHELP_TAYLOR_SKINNER_VARIATIONS fn+fn}
+~Label=IDHELP_FUNC_PLUS_FUNC_TYPE
       z(0) = pixel;
       z(n+1) = p1*fn1(z(n))+p2*fn2(z(n))
     Six parameters: The real and imaginary components of
     p1 and p2, and the functions fn1 and fn2.
 
-{=FIHELP_FORMULA formula}
+{=IDHELP_FORMULA formula}
     Formula interpreter - write your own formulas as text files!
 
 ~OnlineFF
-{=FIHELP_FROTHY_BASINS frothybasin}
-~Label=FIHELP_FROTHY_BASIN_TYPE
+{=IDHELP_FROTHY_BASINS frothybasin}
+~Label=IDHELP_FROTHY_BASIN_TYPE
     Pixel color is determined by which attractor captures the orbit.  The
     shade of color is determined by the number of iterations required to
     capture the orbit.
       Z(0) = pixel;  Z(n+1) = Z(n)^2 - C*conj(Z(n))
       where C = 1 + A*i, critical value of A = 1.028713768218725...
 
-{=FIHELP_GINGERBREAD gingerbread}
-~Label=FIHELP_GINGERBREAD_TYPE
+{=IDHELP_GINGERBREAD gingerbread}
+~Label=IDHELP_GINGERBREAD_TYPE
     Orbit in two dimensions defined by:
       x(n+1) = 1 - y(n) + |x(n)|
       y(n+1) = x(n)
     Two parameters: initial values of x(0) and y(0).
 
-{=FIHELP_HALLEY halley}
-~Label=FIHELP_HALLEY_TYPE
+{=IDHELP_HALLEY halley}
+~Label=IDHELP_HALLEY_TYPE
       Halley map for the function: F = z(z^a - 1) = 0
       z(0) = pixel;
       z(n+1) = z(n) - R * F / [F' - (F" * F / 2 * F')]
@@ -262,15 +262,15 @@ SUMMARY OF FRACTAL TYPES
        and imaginary part of R.
 
 ~OnlineFF
-{=FIHELP_HENON henon}
-~Label=FIHELP_HENON_TYPE
+{=IDHELP_HENON henon}
+~Label=IDHELP_HENON_TYPE
     Orbit in two dimensions defined by:
       x(n+1) = 1 + y(n) - a*x(n)*x(n)
       y(n+1) = b*x(n)
     Two parameters: a and b
 
-{=FIHELP_MARTIN hopalong}
-~Label=FIHELP_HOPALONG_TYPE
+{=IDHELP_MARTIN hopalong}
+~Label=IDHELP_HOPALONG_TYPE
     Hopalong attractor by Barry Martin - orbit in two dimensions.
       z(0) = y(0) = 0;
       x(n+1) = y(n) - sign(x(n))*sqrt(abs(b*x(n)-c))
@@ -278,8 +278,8 @@ SUMMARY OF FRACTAL TYPES
     Parameters are a, b, and c.
 
 ~FF
-{=FIHELP_HYPERCOMPLEX hypercomplex}
-~Label=FIHELP_HYPERCOMPLEX_TYPE
+{=IDHELP_HYPERCOMPLEX hypercomplex}
+~Label=IDHELP_HYPERCOMPLEX_TYPE
     HyperComplex Mandelbrot set.
       h(0)   = (0,0,0,0)
       h(n+1) = fn(h(n)) + C.
@@ -287,8 +287,8 @@ SUMMARY OF FRACTAL TYPES
     Two parameters: cj, ck
     C = (xpixel,ypixel,cj,ck)
 
-{=FIHELP_HYPERCOMPLEX hypercomplexj}
-~Label=FIHELP_HYPERCOMPLEX_JULIA_TYPE
+{=IDHELP_HYPERCOMPLEX hypercomplexj}
+~Label=IDHELP_HYPERCOMPLEX_JULIA_TYPE
     HyperComplex Julia set.
       h(0)   = (xpixel,ypixel,zj,zk)
       h(n+1) = fn(h(n)) + C.
@@ -297,8 +297,8 @@ SUMMARY OF FRACTAL TYPES
     C = (c1,ci,cj,ck)
 
 ~OnlineFF
-{=FIHELP_ICON icon, icon3d}
-~Label=FIHELP_ICON_TYPE
+{=IDHELP_ICON icon, icon3d}
+~Label=IDHELP_ICON_TYPE
     Orbit in three dimensions defined by:
       p = lambda + alpha * magnitude + beta * (x(n)*zreal - y(n)*zimag)
       x(n+1) = p * x(n) + gamma * zreal - omega * y(n)
@@ -306,31 +306,31 @@ SUMMARY OF FRACTAL TYPES
       (3D version uses magnitude for z)
       Parameters:  Lambda, Alpha, Beta, Gamma, Omega, and Degree
 
-{=FIHELP_IFS IFS}
+{=IDHELP_IFS IFS}
     Barnsley IFS (Iterated Function System) fractals. Apply
     contractive affine mappings.
 
-{=FIHELP_PICKOVER_MANDELBROT_JULIA julfn+exp}
-~Label=FIHELP_JULIA_FUNC_PLUS_EXP_TYPE
+{=IDHELP_PICKOVER_MANDELBROT_JULIA julfn+exp}
+~Label=IDHELP_JULIA_FUNC_PLUS_EXP_TYPE
     A generalized Clifford Pickover fractal.
       z(0) = pixel;
       z(n+1) = fn(z(n)) + e^z(n) + c.
     Three parameters: real & imaginary parts of c, and fn
 
-{=FIHELP_PICKOVER_MANDELBROT_JULIA julfn+zsqrd}
-~Label=FIHELP_JULIA_FUNC_PLUS_Z_SQUARED_TYPE
+{=IDHELP_PICKOVER_MANDELBROT_JULIA julfn+zsqrd}
+~Label=IDHELP_JULIA_FUNC_PLUS_Z_SQUARED_TYPE
       z(0) = pixel;
       z(n+1) = fn(z(n)) + z(n)^2 + c
     Three parameters: real & imaginary parts of c, and fn
 
-{=FIHELP_JULIA julia}
-~Label=FIHELP_JULIA_TYPE
+{=IDHELP_JULIA julia}
+~Label=IDHELP_JULIA_TYPE
     Classic Julia set fractal.
       z(0) = pixel; z(n+1) = z(n)^2 + c.
     Two parameters: real and imaginary parts of c.
 
-{=FIHELP_INVERSE_JULIA julia_inverse}
-~Label=FIHELP_INVERSE_JULIA_TYPE
+{=IDHELP_INVERSE_JULIA julia_inverse}
+~Label=IDHELP_INVERSE_JULIA_TYPE
     Inverse Julia function - "orbit" traces Julia set in two dimensions.
       z(0) = a point on the Julia Set boundary; z(n+1) = +- sqrt(z(n) - c)
     Parameters: Real and Imaginary parts of c
@@ -343,8 +343,8 @@ SUMMARY OF FRACTAL TYPES
         cannot be higher than the maximum colors in your video mode.
 
 ~OnlineFF
-{=FIHELP_FUNC_OR_FUNC julia(fn||fn)}
-~Label=FIHELP_JULIA_FUNC_OR_FUNC_TYPE
+{=IDHELP_FUNC_OR_FUNC julia(fn||fn)}
+~Label=IDHELP_JULIA_FUNC_OR_FUNC_TYPE
       z(0) = pixel;
       if modulus(z(n)) < shift value, then
          z(n+1) = fn1(z(n)) + c,
@@ -352,31 +352,31 @@ SUMMARY OF FRACTAL TYPES
          z(n+1) = fn2(z(n)) + c.
     Five parameters: real, imag portions of c, shift value, fn1, fn2.
 
-{=FIHELP_QUARTIC_MANDELBROT_JULIA julia4}
-~Label=FIHELP_JULIA_4_TYPE
+{=IDHELP_QUARTIC_MANDELBROT_JULIA julia4}
+~Label=IDHELP_JULIA_4_TYPE
     Fourth-power Julia set fractals, a special case
     of julzpower kept for speed.
       z(0) = pixel;
       z(n+1) = z(n)^4 + c.
     Two parameters: real and imaginary parts of c.
 
-{=FIHELP_JULIBROT julibrot}
+{=IDHELP_JULIBROT julibrot}
     'Julibrot' 4-dimensional fractals.
 
-{=FIHELP_PICKOVER_MANDELBROT_JULIA julzpower}
-~Label=FIHELP_JULIA_Z_POWER_TYPE
+{=IDHELP_PICKOVER_MANDELBROT_JULIA julzpower}
+~Label=IDHELP_JULIA_Z_POWER_TYPE
       z(0) = pixel;
       z(n+1) = z(n)^m + c.
     Three parameters: real & imaginary parts of c, exponent m
 
-{=FIHELP_PICKOVER_MANDELBROT_JULIA julzzpwr}
-~Label=FIHELP_JULIA_Z_TO_Z_PLUS_POWER_TYPE
+{=IDHELP_PICKOVER_MANDELBROT_JULIA julzzpwr}
+~Label=IDHELP_JULIA_Z_TO_Z_PLUS_POWER_TYPE
       z(0) = pixel;
       z(n+1) = z(n)^z(n) + z(n)^m + c.
     Three parameters: real & imaginary parts of c, exponent m
 
-{=FIHELP_KAM_TORUS kamtorus, kamtorus3d}
-~Label=FIHELP_KAM_TORUS_TYPE
+{=IDHELP_KAM_TORUS kamtorus, kamtorus3d}
+~Label=IDHELP_KAM_TORUS_TYPE
     Series of orbits superimposed.
     3d version has 'orbit' the z dimension.
       x(0) = y(0) = orbit/3;
@@ -386,21 +386,21 @@ SUMMARY OF FRACTAL TYPES
     Parameters: a, step size, stop value for 'orbit', and
     points per orbit.
 
-{=FIHELP_LAMBDA lambda}
-~Label=FIHELP_LAMBDA_TYPE
+{=IDHELP_LAMBDA lambda}
+~Label=IDHELP_LAMBDA_TYPE
     Classic Lambda fractal. 'Julia' variant of Mandellambda.
       z(0) = pixel;
       z(n+1) = lambda*z(n)*(1 - z(n)).
     Two parameters: real and imaginary parts of lambda.
 
-{=FIHELP_LAMBDA_FUNC lambdafn}
-~Label=FIHELP_LAMBDA_FUNC_TYPE
+{=IDHELP_LAMBDA_FUNC lambdafn}
+~Label=IDHELP_LAMBDA_FUNC_TYPE
       z(0) = pixel;
       z(n+1) = lambda * fn(z(n)).
     Three parameters: real, imag portions of lambda, and fn
 
-{=FIHELP_FUNC_OR_FUNC lambda(fn||fn)}
-~Label=FIHELP_LAMBDA_FUNC_OR_FUNC_TYPE
+{=IDHELP_FUNC_OR_FUNC lambda(fn||fn)}
+~Label=IDHELP_LAMBDA_FUNC_OR_FUNC_TYPE
       z(0) = pixel;
       if modulus(z(n)) < shift value, then
          z(n+1) = lambda * fn1(z(n)),
@@ -408,16 +408,16 @@ SUMMARY OF FRACTAL TYPES
          z(n+1) = lambda * fn2(z(n)).
     Five parameters: real, imag portions of lambda, shift value, fn1, fn2
 
-{=FIHELP_LATOOCARFIAN latoocarfian}
-~Label=FIHELP_LATOOCARFIAN_TYPE
+{=IDHELP_LATOOCARFIAN latoocarfian}
+~Label=IDHELP_LATOOCARFIAN_TYPE
        Orbit in two dimensions defined by:
        x(n+1) = fn1 (y(n) * b) + c * fn2(x(n) * b)
        y(n+1) = fn3 (x(n) * a) + d * fn4(y(n) * a)
        Parameters:  a, b, c, d fn1..4 (all sin=original)
 
 ~OnlineFF
-{=FIHELP_LORENZ lorenz, lorenz3d}
-~Label=FIHELP_LORENZ_TYPE
+{=IDHELP_LORENZ lorenz, lorenz3d}
+~Label=IDHELP_LORENZ_TYPE
     Lorenz two lobe attractor - orbit in three dimensions.
     In 2d the x and y components are projected to form the image.
       z(0) = y(0) = z(0) = 1;
@@ -426,8 +426,8 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = z(n) + (-c*z(n)*dt) + (x(n)*y(n)*dt)
     Parameters are dt, a, b, and c.
 
-{=FIHELP_LORENZ lorenz3d1}
-~Label=FIHELP_LORENZ_3D_1_TYPE
+{=IDHELP_LORENZ lorenz3d1}
+~Label=IDHELP_LORENZ_3D_1_TYPE
     Lorenz one lobe attractor, 3D orbit (Rick Miranda and Emily Stone)
       z(0) = y(0) = z(0) = 1; norm = sqrt(x(n)^2 + y(n)^2)
       x(n+1) = x(n) + (-a*dt-dt)*x(n) + (a*dt-b*dt)*y(n)
@@ -438,8 +438,8 @@ SUMMARY OF FRACTAL TYPES
     Parameters are dt, a, b, and c.
 
 ~OnlineFF
-{=FIHELP_LORENZ lorenz3d3}
-~Label=FIHELP_LORENZ_3D_3_TYPE
+{=IDHELP_LORENZ lorenz3d3}
+~Label=IDHELP_LORENZ_3D_3_TYPE
     Lorenz three lobe attractor, 3D orbit (Rick Miranda and Emily Stone)
       z(0) = y(0) = z(0) = 1; norm = sqrt(x(n)^2 + y(n)^2)
       x(n+1) = x(n) +(-(a*dt+dt)*x(n) + (a*dt-b*dt+z(n)*dt)*y(n))/3
@@ -452,8 +452,8 @@ SUMMARY OF FRACTAL TYPES
     Parameters are dt, a, b, and c.
 
 ~OnlineFF
-{=FIHELP_LORENZ lorenz3d4}
-~Label=FIHELP_LORENZ_3D_4_TYPE
+{=IDHELP_LORENZ lorenz3d4}
+~Label=IDHELP_LORENZ_3D_4_TYPE
     Lorenz four lobe attractor, 3D orbit (Rick Miranda and Emily Stone)
       z(0) = y(0) = z(0) = 1;
       x(n+1) = x(n) +(-a*dt*x(n)^3
@@ -465,34 +465,34 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = z(n) +(2*x(n)*dt*x(n)^2*y(n) - 2*x(n)*dt*y(n)^3 - c*dt*z(n))
     Parameters are dt, a, b, and c.
 
-{=FIHELP_L_SYSTEMS lsystem}
+{=IDHELP_L_SYSTEMS lsystem}
     Using a turtle-graphics control language and starting with
     an initial axiom string, carries out string substitutions the
     specified number of times (the order), and plots the result.
 
-{=FIHELP_LYAPUNOV lyapunov}
+{=IDHELP_LYAPUNOV lyapunov}
     Derived from the Bifurcation fractal, the Lyapunov plots the Lyapunov
     Exponent for a population model where the Growth parameter varies between
     two values in a periodic manner.
 
-{=FIHELP_MAGNETIC magnet1j}
-~Label=FIHELP_MAGNET_1J_TYPE
+{=IDHELP_MAGNETIC magnet1j}
+~Label=IDHELP_MAGNET_1J_TYPE
       z(0) = pixel;
                 [  z(n)^2 + (c-1)  ] 2
       z(n+1) =  | ---------------- |
                 [  2*z(n) + (c-2)  ]
     Parameters: the real and imaginary parts of c
 
-{=FIHELP_MAGNETIC magnet1m}
-~Label=FIHELP_MAGNET_1M_TYPE
+{=IDHELP_MAGNETIC magnet1m}
+~Label=IDHELP_MAGNET_1M_TYPE
       z(0) = 0; c = pixel;
                 [  z(n)^2 + (c-1)  ] 2
       z(n+1) =  | ---------------- |
                 [  2*z(n) + (c-2)  ]
     Parameters: the real & imaginary parts of perturbation of z(0)
 
-{=FIHELP_MAGNETIC magnet2j}
-~Label=FIHELP_MAGNET_2J_TYPE
+{=IDHELP_MAGNETIC magnet2j}
+~Label=IDHELP_MAGNET_2J_TYPE
       z(0) = pixel;
                 [  z(n)^3 + 3*(C-1)*z(n) + (C-1)*(C-2)         ] 2
       z(n+1) =  | -------------------------------------------- |
@@ -500,23 +500,23 @@ SUMMARY OF FRACTAL TYPES
     Parameters: the real and imaginary parts of c
 
 ~OnlineFF
-{=FIHELP_MAGNETIC magnet2m}
-~Label=FIHELP_MAGNET_2M_TYPE
+{=IDHELP_MAGNETIC magnet2m}
+~Label=IDHELP_MAGNET_2M_TYPE
       z(0) = 0; c = pixel;
                 [  z(n)^3 + 3*(C-1)*z(n) + (C-1)*(C-2)         ] 2
       z(n+1) =  | -------------------------------------------- |
                 [  3*(z(n)^2) + 3*(C-2)*z(n) + (C-1)*(C-2) + 1 ]
     Parameters: the real and imaginary parts of perturbation of z(0)
 
-{=FIHELP_MANDELBROT mandel}
-~Label=FIHELP_MANDELBROT_TYPE
+{=IDHELP_MANDELBROT mandel}
+~Label=IDHELP_MANDELBROT_TYPE
     Classic Mandelbrot set fractal.
       z(0) = c = pixel;
       z(n+1) = z(n)^2 + c.
     Two parameters: real & imaginary perturbations of z(0)
 
-{=FIHELP_FUNC_OR_FUNC mandel(fn||fn)}
-~Label=FIHELP_MANDELBROT_FUNC_OR_FUNC_TYPE
+{=IDHELP_FUNC_OR_FUNC mandel(fn||fn)}
+~Label=IDHELP_MANDELBROT_FUNC_OR_FUNC_TYPE
       c = pixel;
       z(0) = p1
       if modulus(z(n)) < shift value, then
@@ -526,8 +526,8 @@ SUMMARY OF FRACTAL TYPES
     Five parameters: real, imaginary portions of p1, shift value,
                      fn1 and fn2.
                      
-{=FIHELP_MANDELBROT_MIX_4 mandelbrotmix4}
-~Label=FIHELP_MANDELBROT_MIX4_TYPE
+{=IDHELP_MANDELBROT_MIX_4 mandelbrotmix4}
+~Label=IDHELP_MANDELBROT_MIX4_TYPE
     From a Jim Muth favorite FOTD formula
       a=real(p1), b=imag(p1), d=real(p2), f=imag(p2),
       g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j,
@@ -535,29 +535,29 @@ SUMMARY OF FRACTAL TYPES
       z=k*((a*(z^b))+(d*(z^f)))+c
     Parameters: see above, sixth parameter used for bailout
     
-{=FIHELP_MANDELBROT_CLOUD mandelcloud}
-~Label=FIHELP_MANDELBROT_CLOUD_TYPE
+{=IDHELP_MANDELBROT_CLOUD mandelcloud}
+~Label=IDHELP_MANDELBROT_CLOUD_TYPE
     Displays orbits of Mandelbrot set:
       z(0) = c = pixel;
       z(n+1) = z(n)^2 + c.
     One parameter: number of intervals
 
-{=FIHELP_QUARTIC_MANDELBROT_JULIA mandel4}
-~Label=FIHELP_MANDELBROT_4_TYPE
+{=IDHELP_QUARTIC_MANDELBROT_JULIA mandel4}
+~Label=IDHELP_MANDELBROT_4_TYPE
     Special case of mandelzpower kept for speed.
       z(0) = c = pixel;
       z(n+1) = z(n)^4 + c.
     Parameters: real & imaginary perturbations of z(0)
     
 ~OnlineFF
-{=FIHELP_MANDELBROT_FUNC mandelfn}
-~Label=FIHELP_MANDELBROT_FUNC_TYPE
+{=IDHELP_MANDELBROT_FUNC mandelfn}
+~Label=IDHELP_MANDELBROT_FUNC_TYPE
       z(0) = c = pixel;
       z(n+1) = c*fn(z(n)).
     Parameters: real & imaginary perturbations of z(0), and fn
     
-{=FIHELP_FUNC_OR_FUNC manlam(fn||fn)}
-~Label=FIHELP_MANDELBROT_LAMBDA_FUNC_OR_FUNC_TYPE
+{=IDHELP_FUNC_OR_FUNC manlam(fn||fn)}
+~Label=IDHELP_MANDELBROT_LAMBDA_FUNC_OR_FUNC_TYPE
       c = pixel;
       z(0) = p1
       if modulus(z(n)) < shift value, then
@@ -565,8 +565,8 @@ SUMMARY OF FRACTAL TYPES
          z(n+1) = fn2(z(n)) * c.
     Five parameters: real, imaginary parts of p1, shift value, fn1, fn2.
 
-{=FIHELP_MARTIN Martin}
-~Label=FIHELP_MARTIN_TYPE
+{=IDHELP_MARTIN Martin}
+~Label=IDHELP_MARTIN_TYPE
     Attractor fractal by Barry Martin - orbit in two dimensions.
       z(0) = y(0) = 0;
       x(n+1) = y(n) - sin(x(n))
@@ -574,14 +574,14 @@ SUMMARY OF FRACTAL TYPES
     Parameter is a (try a value near pi)
     
 ~OnlineFF
-{=FIHELP_MANDELBROT_LAMBDA mandellambda}
-~Label=FIHELP_MANDELBROT_LAMBDA_TYPE
+{=IDHELP_MANDELBROT_LAMBDA mandellambda}
+~Label=IDHELP_MANDELBROT_LAMBDA_TYPE
       z(0) = .5; lambda = pixel;
       z(n+1) = lambda*z(n)*(1 - z(n)).
     Parameters: real & imaginary perturbations of z(0)
 
-{=FIHELP_PHOENIX mandphoenix}
-~Label=FIHELP_MANDELBROT_PHOENIX_TYPE
+{=IDHELP_PHOENIX mandphoenix}
+~Label=IDHELP_MANDELBROT_PHOENIX_TYPE
     z(0) = c = pixel, y(0) = 0;
     For degree = 0:
       z(n+1) = z(n)^2 + c.x + c.y*y(n), y(n+1) = z(n)
@@ -594,8 +594,8 @@ SUMMARY OF FRACTAL TYPES
     Three parameters: real & imaginary perturbations of z(0), and degree.
     
 ~OnlineFF
-{=FIHELP_PHOENIX mandphoenixclx}
-~Label=FIHELP_MANDELBROT_PHOENIX_COMPLEX_TYPE
+{=IDHELP_PHOENIX mandphoenixclx}
+~Label=IDHELP_MANDELBROT_PHOENIX_COMPLEX_TYPE
     z(0) = c = pixel, y(0) = 0;
     For degree = 0:
       z(n+1) = z(n)^2 + c + p2*y(n), y(n+1) = z(n)
@@ -606,68 +606,68 @@ SUMMARY OF FRACTAL TYPES
     Five parameters: real & imaginary perturbations of z(0), real &
       imaginary parts of p2, and degree.
 
-{=FIHELP_PICKOVER_MANDELBROT_JULIA manfn+exp}
-~Label=FIHELP_MANDELBROT_FUNC_PLUS_EXP_TYPE
+{=IDHELP_PICKOVER_MANDELBROT_JULIA manfn+exp}
+~Label=IDHELP_MANDELBROT_FUNC_PLUS_EXP_TYPE
     'Mandelbrot-Equivalent' for the julfn+exp fractal.
       z(0) = c = pixel;
       z(n+1) = fn(z(n)) + e^z(n) + C.
     Parameters: real & imaginary perturbations of z(0), and fn
 
-{=FIHELP_PICKOVER_MANDELBROT_JULIA manfn+zsqrd}
-~Label=FIHELP_MANDELBROT_FUNC_PLUS_Z_SQUARED_TYPE
+{=IDHELP_PICKOVER_MANDELBROT_JULIA manfn+zsqrd}
+~Label=IDHELP_MANDELBROT_FUNC_PLUS_Z_SQUARED_TYPE
     'Mandelbrot-Equivalent' for the Julfn+zsqrd fractal.
       z(0) = c = pixel;
       z(n+1) = fn(z(n)) + z(n)^2 + c.
     Parameters: real & imaginary perturbations of z(0), and fn
 
-{=FIHELP_TAYLOR_SKINNER_VARIATIONS manowar}
-~Label=FIHELP_MAN_O_WAR_TYPE
+{=IDHELP_TAYLOR_SKINNER_VARIATIONS manowar}
+~Label=IDHELP_MAN_O_WAR_TYPE
       c = z1(0) = z(0) = pixel;
       z(n+1) = z(n)^2 + z1(n) + c;
       z1(n+1) = z(n);
     Parameters: real & imaginary perturbations of z(0)
 
-{=FIHELP_TAYLOR_SKINNER_VARIATIONS manowarj}
-~Label=FIHELP_MAN_O_WAR_JULIA_TYPE
+{=IDHELP_TAYLOR_SKINNER_VARIATIONS manowarj}
+~Label=IDHELP_MAN_O_WAR_JULIA_TYPE
       z1(0) = z(0) = pixel;
       z(n+1) = z(n)^2 + z1(n) + c;
       z1(n+1) = z(n);
     Parameters: real & imaginary parts of c
     
 ~OnlineFF
-{=FIHELP_PICKOVER_MANDELBROT_JULIA manzpower}
-~Label=FIHELP_MANDELBROT_Z_POWER_TYPE
+{=IDHELP_PICKOVER_MANDELBROT_JULIA manzpower}
+~Label=IDHELP_MANDELBROT_Z_POWER_TYPE
     'Mandelbrot-Equivalent' for julzpower.
       z(0) = c = pixel;
       z(n+1) = z(n)^exp + c; try exp = e = 2.71828...
     Parameters: real & imaginary perturbations of z(0), real &
     imaginary parts of exponent exp.
 
-{=FIHELP_PICKOVER_MANDELBROT_JULIA manzzpwr}
-~Label=FIHELP_MANDELBROT_Z_TO_Z_PLUS_Z_POWER_TYPE
+{=IDHELP_PICKOVER_MANDELBROT_JULIA manzzpwr}
+~Label=IDHELP_MANDELBROT_Z_TO_Z_PLUS_Z_POWER_TYPE
     'Mandelbrot-Equivalent' for the julzzpwr fractal.
       z(0) = c = pixel
       z(n+1) = z(n)^z(n) + z(n)^exp + C.
     Parameters: real & imaginary perturbations of z(0), and exponent
 
 ~OnlineFF
-{=FIHELP_MARK_PETERSON marksjulia}
-~Label=FIHELP_MARKS_JULIA_TYPE
+{=IDHELP_MARK_PETERSON marksjulia}
+~Label=IDHELP_MARKS_JULIA_TYPE
     A variant of the julia-lambda fractal.
       z(0) = pixel;
       z(n+1) = c^(exp-1)*z(n)^2 + c.
     Parameters: real & imaginary parts of c, and exponent
 
-{=FIHELP_MARK_PETERSON marksmandel}
-~Label=FIHELP_MARKS_MANDELBROT_TYPE
+{=IDHELP_MARK_PETERSON marksmandel}
+~Label=IDHELP_MARKS_MANDELBROT_TYPE
     A variant of the mandel-lambda fractal.
       z(0) = c = pixel;
       z(n+1) = c^(exp-1)*z(n)^2 + c.
     Parameters: real & imaginary parts of perturbations of z(0),
     and exponent
 
-{=FIHELP_MARK_PETERSON marksmandelpwr}
-~Label=FIHELP_MARKS_MANDELBROT_POWER_TYPE
+{=IDHELP_MARK_PETERSON marksmandelpwr}
+~Label=IDHELP_MARKS_MANDELBROT_POWER_TYPE
     The marksmandelpwr formula type generalized (it previously
     had fn=sqr hard coded).
       z(0) = pixel, c = z(0) ^ (z(0) - 1):
@@ -675,8 +675,8 @@ SUMMARY OF FRACTAL TYPES
     Parameters: real and imaginary perturbations of z(0), and fn
 
 ~OnlineFF
-{=FIHELP_NEWTON_BASIN newtbasin}
-~Label=FIHELP_NEWTON_BASIN_TYPE
+{=IDHELP_NEWTON_BASIN newtbasin}
+~Label=IDHELP_NEWTON_BASIN_TYPE
     Based on the Newton formula for finding the roots of z^p - 1.
     Pixels are colored according to which root captures the orbit.
       z(0) = pixel;
@@ -684,8 +684,8 @@ SUMMARY OF FRACTAL TYPES
     Two parameters: the polynomial degree p, and a flag to turn
     on color stripes to show alternate iterations.
 
-{=FIHELP_NEWTON newton}
-~Label=FIHELP_NEWTON_TYPE
+{=IDHELP_NEWTON newton}
+~Label=IDHELP_NEWTON_TYPE
     Based on the Newton formula for finding the roots of z^p - 1.
     Pixels are colored according to the iteration when the orbit
     is captured by a root.
@@ -694,8 +694,8 @@ SUMMARY OF FRACTAL TYPES
     One parameter: the polynomial degree p.
 
 ~OnlineFF
-{=FIHELP_PHOENIX phoenix}
-~Label=FIHELP_PHOENIX_TYPE
+{=IDHELP_PHOENIX phoenix}
+~Label=IDHELP_PHOENIX_TYPE
     z(0) = pixel, y(0) = 0;
     For degree = 0: z(n+1) = z(n)^2 + p1.x + p2.x*y(n), y(n+1) = z(n)
     For degree >= 2:
@@ -705,8 +705,8 @@ SUMMARY OF FRACTAL TYPES
             + p2.x*y(n), y(n+1) = z(n)
     Three parameters: real parts of p1 & p2, and degree.
 
-{=FIHELP_PHOENIX phoenixcplx}
-~Label=FIHELP_PHOENIX_COMPLEX_TYPE
+{=IDHELP_PHOENIX phoenixcplx}
+~Label=IDHELP_PHOENIX_COMPLEX_TYPE
     z(0) = pixel, y(0) = 0;
     For degree = 0: z(n+1) = z(n)^2 + p1 + p2*y(n), y(n+1) = z(n)
     For degree >= 2:
@@ -716,16 +716,16 @@ SUMMARY OF FRACTAL TYPES
     Five parameters: real & imaginary parts of p1 & p2, and degree.
 
 ~OnlineFF
-{=FIHELP_PICKOVER pickover}
-~Label=FIHELP_PICKOVER_TYPE
+{=IDHELP_PICKOVER pickover}
+~Label=IDHELP_PICKOVER_TYPE
     Orbit in three dimensions defined by:
       x(n+1) = sin(a*y(n)) - z(n)*cos(b*x(n))
       y(n+1) = z(n)*sin(c*x(n)) - cos(d*y(n))
       z(n+1) = sin(x(n))
     Parameters: a, b, c, and d.
 
-{=FIHELP_PLASMA plasma}
-~Label=FIHELP_PLASMA_TYPE
+{=IDHELP_PLASMA plasma}
+~Label=IDHELP_PLASMA_TYPE
     Random, cloud-like formations.  Requires 4 or more colors.
     A recursive algorithm repeatedly subdivides the screen and
     colors pixels according to an average of surrounding pixels
@@ -734,8 +734,8 @@ SUMMARY OF FRACTAL TYPES
     old/new algorithm, seed value used, 16-bit out output selection.
 
 ~OnlineFF
-{=FIHELP_POPCORN popcorn}
-~Label=FIHELP_POPCORN_TYPE
+{=IDHELP_POPCORN popcorn}
+~Label=IDHELP_POPCORN_TYPE
     The orbits in 2D are plotted superimposed:
       x(0) = xpixel, y(0) = ypixel;
       x(n+1) = x(n) - real(h * fn1( y(n) + fn2(C * y(n) ))
@@ -744,8 +744,8 @@ SUMMARY OF FRACTAL TYPES
                     - imag(h * fn1( y(n) + fn2(C * y(n) ))
     Parameters: step size h, C, functions fn1..4 (original: sin,tan,sin,tan).
 
-{=FIHELP_POPCORN popcornjul}
-~Label=FIHELP_POPCORN_JULIA_TYPE
+{=IDHELP_POPCORN popcornjul}
+~Label=IDHELP_POPCORN_JULIA_TYPE
     Julia using the generalized Pickover Popcorn formula:
       x(0) = xpixel, y(0) = ypixel;
       x(n+1) = x(n) - real(h * fn1( y(n) + fn2(C * y(n) ))
@@ -755,8 +755,8 @@ SUMMARY OF FRACTAL TYPES
     Parameters: step size h, C, functions fn1..4 (original: sin,tan,sin,tan).
 
 ~OnlineFF
-{=FIHELP_MARTIN quadruptwo}
-~Label=FIHELP_QUADRUP_TWO_TYPE
+{=IDHELP_MARTIN quadruptwo}
+~Label=IDHELP_QUADRUP_TWO_TYPE
     Quadruptwo attractor from Michael Peters - orbit in two dimensions.
       z(0) = y(0) = 0;
       x(n+1) = y(n) - sign(x(n)) * sin(ln(abs(b*x(n)-c)))
@@ -764,24 +764,24 @@ SUMMARY OF FRACTAL TYPES
       y(n+1) = a - x(n)
     Parameters are a, b, and c.
 
-{=FIHELP_QUATERNION quatjul}
-~Label=FIHELP_QUATERNION_JULIA_TYPE
+{=IDHELP_QUATERNION quatjul}
+~Label=IDHELP_QUATERNION_JULIA_TYPE
     Quaternion Julia set.
       q(0)   = (xpixel,ypixel,zj,zk)
       q(n+1) = q(n)*q(n) + c.
     Four parameters: c, ci, cj, ck
     c = (c1,ci,cj,ck)
 
-{=FIHELP_QUATERNION quat}
-~Label=FIHELP_QUATERNION_TYPE
+{=IDHELP_QUATERNION quat}
+~Label=IDHELP_QUATERNION_TYPE
     Quaternion Mandelbrot set.
       q(0)   = (0,0,0,0)
       q(n+1) = q(n)*q(n) + c.
     Two parameters: cj,ck
     c = (xpixel,ypixel,cj,ck)
 
-{=FIHELP_ROSSLER rossler3D}
-~Label=FIHELP_ROSSLER_TYPE
+{=IDHELP_ROSSLER rossler3D}
+~Label=IDHELP_ROSSLER_TYPE
     Orbit in three dimensions defined by:
       x(0) = y(0) = z(0) = 1;
       x(n+1) = x(n) - y(n)*dt -   z(n)*dt
@@ -789,48 +789,48 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = z(n) + b*dt + x(n)*z(n)*dt - c*z(n)*dt
     Parameters are dt, a, b, and c.
 
-{=FIHELP_SIERPINSKI sierpinski}
-~Label=FIHELP_SIERPINSKI_TYPE
+{=IDHELP_SIERPINSKI sierpinski}
+~Label=IDHELP_SIERPINSKI_TYPE
     Sierpinski gasket - Julia set producing a 'Swiss cheese triangle'
       z(n+1) = (2*x,2*y-1) if y > .5;
           else (2*x-1,2*y) if x > .5;
           else (2*x,2*y)
     No parameters.
 
-{=FIHELP_TAYLOR_SKINNER_VARIATIONS spider}
-~Label=FIHELP_SPIDER_TYPE
+{=IDHELP_TAYLOR_SKINNER_VARIATIONS spider}
+~Label=IDHELP_SPIDER_TYPE
       c(0) = z(0) = pixel;
       z(n+1) = z(n)^2 + c(n);
       c(n+1) = c(n)/2 + z(n+1)
     Parameters: real & imaginary perturbation of z(0)
 
-{=FIHELP_TAYLOR_SKINNER_VARIATIONS sqr(1/fn)}
-~Label=FIHELP_SQR_RECIPROCAL_FUNC_TYPE
+{=IDHELP_TAYLOR_SKINNER_VARIATIONS sqr(1/fn)}
+~Label=IDHELP_SQR_RECIPROCAL_FUNC_TYPE
       z(0) = pixel;
       z(n+1) = (1/fn(z(n))^2
     One parameter: the function fn.
 
-{=FIHELP_TAYLOR_SKINNER_VARIATIONS sqr(fn)}
-~Label=FIHELP_SQR_FUNC_TYPE
+{=IDHELP_TAYLOR_SKINNER_VARIATIONS sqr(fn)}
+~Label=IDHELP_SQR_FUNC_TYPE
       z(0) = pixel;
       z(n+1) = fn(z(n))^2
     One parameter: the function fn.
 
-{=FIHELP_TEST test}
-~Label=FIHELP_TEST_TYPE
+{=IDHELP_TEST test}
+~Label=IDHELP_TEST_TYPE
     'test' point letting us (and you!) easily add fractal types via
     the c module testpt.c.  Default set up is a mandelbrot fractal.
     Four parameters: user hooks (not used by default testpt.c).
 
-{=FIHELP_TAYLOR_SKINNER_VARIATIONS tetrate}
-~Label=FIHELP_TETRATE_TYPE
+{=IDHELP_TAYLOR_SKINNER_VARIATIONS tetrate}
+~Label=IDHELP_TETRATE_TYPE
       z(0) = c = pixel;
       z(n+1) = c^z(n)
     Parameters: real & imaginary perturbation of z(0)
 
 ~OnlineFF
-{=FIHELP_MARTIN threeply}
-~Label=FIHELP_THREE_PLY_TYPE
+{=IDHELP_MARTIN threeply}
+~Label=IDHELP_THREE_PLY_TYPE
     Threeply attractor by Michael Peters - orbit in two dimensions.
       z(0) = y(0) = 0;
       x(n+1) = y(n) - sign(x(n)) * (abs(sin(x(n))*cos(b)
@@ -838,8 +838,8 @@ SUMMARY OF FRACTAL TYPES
       y(n+1) = a - x(n)
     Parameters are a, b, and c.
 
-{=FIHELP_MARK_PETERSON tim's_error}
-~Label=FIHELP_TIMS_ERROR_TYPE
+{=IDHELP_MARK_PETERSON tim's_error}
+~Label=IDHELP_TIMS_ERROR_TYPE
     A serendipitous coding error in marksmandelpwr brings to life
     an ancient pterodactyl!  (Try setting fn to sqr.)
       z(0) = pixel, c = z(0) ^ (z(0) - 1):
@@ -850,8 +850,8 @@ SUMMARY OF FRACTAL TYPES
     Parameters: real & imaginary perturbations of z(0) and function fn
 
 ~OnlineFF
-{=FIHELP_UNITY unity}
-~Label=FIHELP_UNITY_TYPE
+{=IDHELP_UNITY unity}
+~Label=IDHELP_UNITY_TYPE
       z(0) = pixel;
       x = real(z(n)), y = imag(z(n))
       One = x^2 + y^2;
@@ -860,8 +860,8 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = x + i*y
     No parameters.
 
-{=FIHELP_VOLTERRA_LOTKA volterra-lotka}
-~Label=FIHELP_VOLTERRA_LOTKA_TYPE
+{=IDHELP_VOLTERRA_LOTKA volterra-lotka}
+~Label=IDHELP_VOLTERRA_LOTKA_TYPE
     Volterra-Lotka fractal from The Beauty of Fractals
       x(0) = xpixel, y(0) = ypixel;
       dx/dt =  x - xy = f(x,y)
@@ -950,7 +950,7 @@ Select a fractal type:
 ~Doc+
 ;
 ;
-~Topic=The Mandelbrot Set, Label=FIHELP_MANDELBROT
+~Topic=The Mandelbrot Set, Label=IDHELP_MANDELBROT
 (type=mandel)
 
 This set is the classic: the only one implemented in many plotting
@@ -1033,12 +1033,12 @@ people enjoy, and then never do it again. Go ahead. Just once, now. We
 trust you.
 ;
 ;
-~Topic=Julia Sets, Label=FIHELP_JULIA
+~Topic=Julia Sets, Label=IDHELP_JULIA
 (type=julia)
 
 These sets were named for mathematician Gaston Julia, and can be generated
 by a simple change in the iteration process described for the
-{=FIHELP_MANDELBROT Mandelbrot Set}.  Start with a
+{=IDHELP_MANDELBROT Mandelbrot Set}.  Start with a
 specified value of C, "C-real + i * C-imaginary"; use as the initial value
 of Z "x-coordinate + i * y-coordinate"; and repeat the same iteration,
 Z(n+1) = Z(n)^2 + C.
@@ -1061,7 +1061,7 @@ Historically, the Julia sets came first: it was while looking at the M-set
 as an "index" of all the Julia sets' origins that Mandelbrot noticed its
 properties.
 
-The relationship between the {=FIHELP_MANDELBROT Mandelbrot} set and Julia set can
+The relationship between the {=IDHELP_MANDELBROT Mandelbrot} set and Julia set can
 hold between
 other sets as well.  Many of Fractint's types are "Mandelbrot/Julia" pairs
 (sometimes called "M-sets" or "J-sets". All these are generated by
@@ -1073,7 +1073,7 @@ command. The initial orbit value z(0) is the complex number corresponding
 to the screen pixel. For Mandelbrot sets, the parameter c is the complex
 number corresponding to the screen pixel. The value z(0) is c plus a
 perturbation equal to the values of the first two parameters.  See
-the discussion of {=FIHELP_MANDELBROT_LAMBDA Mandellambda Sets}.
+the discussion of {=IDHELP_MANDELBROT_LAMBDA Mandellambda Sets}.
 This approach may or may not be the
 "standard" way to create "Mandelbrot" sets out of "Julia" sets.
 
@@ -1089,7 +1089,7 @@ an initial value of Z other than 0, the M-set/J-sets correspondence breaks
 down and the spacebar toggle no longer works.
 ;
 ;
-~Topic=Julia Toggle Spacebar Commands, Label=FIHELP_JIIM
+~Topic=Julia Toggle Spacebar Commands, Label=IDHELP_JIIM
 The spacebar toggle has been enhanced for the classic Mandelbrot and Julia
 types. When viewing the Mandelbrot, the spacebar turns on a window mode that
 displays the Inverse Julia corresponding to the cursor position in a window.
@@ -1118,7 +1118,7 @@ matching Julia set in a way similar to the use of the zoom box with the
 Mandelbrot/Julia toggle in previous Fractint versions.
 ;
 ;
-~Topic=Inverse Julias, Label=FIHELP_INVERSE_JULIA
+~Topic=Inverse Julias, Label=IDHELP_INVERSE_JULIA
 (type=julia_inverse)
 
 Pick a function, such as the familiar Z(n) = Z(n-1) squared plus C
@@ -1188,7 +1188,7 @@ The <J> key toggles between the Inverse Julia orbit and the
 corresponding Julia escape time fractal.
 ;
 ;
-~Topic=Newton domains of attraction, Label=FIHELP_NEWTON_BASIN
+~Topic=Newton domains of attraction, Label=IDHELP_NEWTON_BASIN
 (type=newtbasin)
 
 The Newton formula is an algorithm used to find the roots of polynomial
@@ -1225,10 +1225,10 @@ See also: {Newton}
 ~Doc+
 ;
 ;
-~Topic=Newton, Label=FIHELP_NEWTON
+~Topic=Newton, Label=IDHELP_NEWTON
 (type=newton)
 
-The generating formula here is identical to that for {=FIHELP_NEWTON_BASIN newtbasin},
+The generating formula here is identical to that for {=IDHELP_NEWTON_BASIN newtbasin},
 but the
 coloring scheme is different. Pixels are colored not according to the root
 that would be "converged on" if you started using Newton's formula from
@@ -1247,13 +1247,13 @@ Other values are 3 through 10. 8 has twice the symmetry and is faster. As
 with newtbasin, an FPU helps.
 ;
 ;
-~Topic=Complex Newton, Label=FIHELP_NEWTON_COMPLEX
+~Topic=Complex Newton, Label=IDHELP_NEWTON_COMPLEX
 (type=complexnewton/complexbasin)
 
 Well, hey, "Z^n - 1" is so boring when you can use "Z^a - b" where "a" and
 "b" are complex numbers!  The new "complexnewton" and "complexbasin"
-fractal types are just the old {=FIHELP_NEWTON "newton"} and
-{=FIHELP_NEWTON_BASIN "newtbasin"} fractal types with
+fractal types are just the old {=IDHELP_NEWTON "newton"} and
+{=IDHELP_NEWTON_BASIN "newtbasin"} fractal types with
 this little added twist.  When you select these fractal types, you are
 prompted for four values (the real and imaginary portions of "a" and "b").
 If "a" has a complex portion, the fractal has a discontinuity along the
@@ -1261,7 +1261,7 @@ negative axis - relax, we finally figured out that it's *supposed* to be
 there!
 ;
 ;
-~Topic=Lambda Sets, Label=FIHELP_LAMBDA
+~Topic=Lambda Sets, Label=IDHELP_LAMBDA
 (type=lambda)
 
 This type calculates the Julia set of the formula lambda*Z*(1-Z). That is,
@@ -1280,10 +1280,10 @@ redundant, but we include it for reason of it's prominence in the history
 of fractals.
 ;
 ;
-~Topic=Mandellambda Sets, Label=FIHELP_MANDELBROT_LAMBDA
+~Topic=Mandellambda Sets, Label=IDHELP_MANDELBROT_LAMBDA
 (type=mandellambda)
 
-This type is the "Mandelbrot equivalent" of the {=FIHELP_LAMBDA lambda} set.
+This type is the "Mandelbrot equivalent" of the {=IDHELP_LAMBDA lambda} set.
 A comment is
 in order here. Almost all the Fractint "Mandelbrot" sets are created from
 orbits generated using formulas like z(n+1) = f(z(n),C), with z(0) and C
@@ -1311,7 +1311,7 @@ keeping us accurate!
 for a way to experiment with different orbit intializations).
 ;
 ;
-~Topic=Circle, Label=FIHELP_CIRCLE
+~Topic=Circle, Label=IDHELP_CIRCLE
 (type=circle)
 
 This fractal types is from A. K. Dewdney's "Computer Recreations" column
@@ -1333,7 +1333,7 @@ If inside=startrail is used, it will automatically be set to inside=norm by
 Fractint.  This is because type circle and inside=startrail locks up Fractint.
 ;
 ;
-~Topic=Plasma Clouds, Label=FIHELP_PLASMA
+~Topic=Plasma Clouds, Label=IDHELP_PLASMA
 (type=plasma)
 
 Plasma clouds ARE real live fractals, even though we didn't know it at
@@ -1393,7 +1393,7 @@ Saved plasma-cloud screens are EXCELLENT starting images for fractal
 "landscapes" created with the {\"3D\" commands}.
 ;
 ;
-~Topic=Lambdafn, Label=FIHELP_LAMBDA_FUNC
+~Topic=Lambdafn, Label=IDHELP_LAMBDA_FUNC
 (type=lambdafn)
 
 Function=[sin|cos|sinh|cosh|exp|log|sqr|...]) is specified with this type.
@@ -1421,7 +1421,7 @@ To use the old code, invoke with the float=yes option, and, if you DON'T
 have a coprocessor, go on a LONG vacation!
 ;
 ;
-~Topic=Halley, Label=FIHELP_HALLEY
+~Topic=Halley, Label=IDHELP_HALLEY
 (type=halley)
 
 The Halley map is an algorithm used to find the roots of polynomial
@@ -1445,7 +1445,7 @@ the formula has converged. The test for convergence is
 whisker-like projections which generally point to a root.
 ;
 ;
-~Topic=Phoenix, Label=FIHELP_PHOENIX
+~Topic=Phoenix, Label=IDHELP_PHOENIX
 (type=phoenix, mandphoenix, phoenixcplx, mandphoenixclx)
 
 The phoenix type defaults to the original phoenix curve discovered by
@@ -1474,7 +1474,7 @@ mandphoenixclx type has a perturbation of z(0) = (0,0).  The mandphoenixclx
 is an effective index to the phoenixcplx type.
 ;
 ;
-~Topic=fn||fn Fractals, Label=FIHELP_FUNC_OR_FUNC
+~Topic=fn||fn Fractals, Label=IDHELP_FUNC_OR_FUNC
 (type=lambda(fn||fn), manlam(fn||fn), julia(fn||fn), mandel(fn||fn))
 
 Two functions=[sin|cos|sinh|cosh|exp|log|sqr|...]) are specified with
@@ -1512,7 +1512,7 @@ the shift value.  The space bar will generate the corresponding
 julia set, julia(fn||fn).
 ;
 ;
-~Topic=Mandelfn, Label=FIHELP_MANDELBROT_FUNC
+~Topic=Mandelfn, Label=IDHELP_MANDELBROT_FUNC
 (type=mandelfn)
 
 Function=[sin|cos|sinh|cosh|exp|log|sqr|...]) is specified with this type.
@@ -1520,7 +1520,7 @@ Prior to version 14, these types were mandelsine, mandelcos, mandelsinh,
 mandelcos, and mandelexp. Same comment about our lapses into the old
 terminology as above!
 
-These are "pseudo-Mandelbrot" mappings for the {=FIHELP_LAMBDA_FUNC LambdaFn}
+These are "pseudo-Mandelbrot" mappings for the {=IDHELP_LAMBDA_FUNC LambdaFn}
 Julia functions.
 They map to their corresponding Julia sets via the spacebar command in
 exactly the same fashion as the original M/J sets.  In general, they are
@@ -1549,7 +1549,7 @@ want to keep the fractal information in your *.fra files accurate, we
 recommend conversion.  See {GIF Save File Format}.
 ;
 ;
-~Topic=Barnsley Mandelbrot/Julia Sets, Label=FIHELP_BARNSLEY
+~Topic=Barnsley Mandelbrot/Julia Sets, Label=IDHELP_BARNSLEY
 (type=barnsleym1/.../j3)
 
 Michael Barnsley has written a fascinating college-level text, "Fractals
@@ -1571,7 +1571,7 @@ they are the values of C in the generating formulas.
 Be sure to try the <O>rbit function while plotting these types.
 ;
 ;
-~Topic=Barnsley IFS Fractals, Label=FIHELP_IFS
+~Topic=Barnsley IFS Fractals, Label=IDHELP_IFS
 (type=ifs)
 
 One of the most remarkable spin-offs of fractal geometry is the ability to
@@ -1673,7 +1673,7 @@ read this file and will let you view the fractal from any angle using
 the cursor keys. See {=@ACROSPIN Acrospin}.
 ;
 ;
-~Topic=Sierpinski Gasket, Label=FIHELP_SIERPINSKI
+~Topic=Sierpinski Gasket, Label=IDHELP_SIERPINSKI
 (type=sierpinski)
 
 Another pre-Mandelbrot classic, this one found by W. Sierpinski around
@@ -1693,7 +1693,7 @@ There are no parameters for this type. We were able to implement it with
 integer math routines, so it runs fairly quickly even without an FPU.
 ;
 ;
-~Topic=Quartic Mandelbrot/Julia, Label=FIHELP_QUARTIC_MANDELBROT_JULIA
+~Topic=Quartic Mandelbrot/Julia, Label=IDHELP_QUARTIC_MANDELBROT_JULIA
 (type=mandel4/julia4)
 
 These fractal types are the moral equivalent of the original M and J sets,
@@ -1709,7 +1709,7 @@ Other powers, like Z(n)^3 or Z(n)^7, work in exactly the same fashion. We
 used this one only because we're lazy, and Z(n)^4 = (Z(n)^2)^2.
 
 
-~Topic=Mandelbrot Mix 4, Label=FIHELP_MANDELBROT_MIX_4
+~Topic=Mandelbrot Mix 4, Label=IDHELP_MANDELBROT_MIX_4
 (type=mandelbrotmix4)
 
 Jim Muth has been publishing a "Fractal of the Day" on the fractint mailing
@@ -1743,11 +1743,11 @@ can be used to produce higher quality images of M and J sets,
 especially suitable for printing in black and white.
 
 If you have some *.fra files made with the old types demm/demj, you may
-want to convert them to the new form.  See the {=FIHELP_MANDELBROT_FUNC Mandelfn}
+want to convert them to the new form.  See the {=IDHELP_MANDELBROT_FUNC Mandelfn}
 section for directions to carry out the conversion.
 ;
 ;
-~Topic=Pickover Mandelbrot/Julia Types, Label=FIHELP_PICKOVER_MANDELBROT_JULIA
+~Topic=Pickover Mandelbrot/Julia Types, Label=IDHELP_PICKOVER_MANDELBROT_JULIA
 (type=manfn+zsqrd/julfn+zsqrd, manzpowr/julzpowr, manzzpwr/julzzpwr,
 manfn+exp/julfn+exp - formerly included man/julsinzsqrd and
 man/julsinexp which have now been generalized)
@@ -1770,7 +1770,7 @@ the exponent give still other fractals.  Since these WERE the original
 to see a big biomorph digesting little biomorphs!
 ;
 ;
-~Topic=Pickover Popcorn, Label=FIHELP_POPCORN
+~Topic=Pickover Popcorn, Label=IDHELP_POPCORN
 (type=popcorn/popcornjul)
 
 Here is another Pickover idea. This one computes and plots the orbits of
@@ -1798,7 +1798,7 @@ the "O" command, and as you watch the orbit pattern you may get some insight
 as to where the popcorn comes from.
 ;
 ;
-~Topic=Dynamic System, Label=FIHELP_DYNAMIC_SYSTEM
+~Topic=Dynamic System, Label=IDHELP_DYNAMIC_SYSTEM
 (type=dynamic, dynamic2)
 
 These fractals are based on a cyclic system of differential equations:
@@ -1818,7 +1818,7 @@ and the parameters (a,b,fn1) that affect the function f.
 Normally the orbit points are plotted individually, but for a negative
 spacing the points are connected.
 
-This fractal is similar to the {=FIHELP_POPCORN Pickover Popcorn}.
+This fractal is similar to the {=IDHELP_POPCORN Pickover Popcorn}.
 ~OnlineFF
 A variant is the implicit Euler approximation:
          y(n+1) = y(n) + dt*f(x(n))\
@@ -1836,12 +1836,12 @@ These fractals are discussed in Chapter 14 of Pickover's "Computers,
 Pattern, Chaos, and Beauty".
 ;
 ;
-~Topic=Mandelcloud, Label=FIHELP_MANDELBROT_CLOUD
+~Topic=Mandelcloud, Label=IDHELP_MANDELBROT_CLOUD
 (type=mandelcloud)
 
 This fractal computes the Mandelbrot function, but displays it differently.
 It starts with regularly spaced initial pixels and displays the resulting
-orbits.  This idea is somewhat similar to the {=FIHELP_DYNAMIC_SYSTEM Dynamic System}.
+orbits.  This idea is somewhat similar to the {=IDHELP_DYNAMIC_SYSTEM Dynamic System}.
 
 There are two options that have unusual effects on this fractal.  The
 Orbit Delay value controls how many initial points are computed before
@@ -1853,7 +1853,7 @@ This fractal was invented by Noel Giffin.
 
 ;
 ;
-~Topic=Peterson Variations, Label=FIHELP_MARK_PETERSON
+~Topic=Peterson Variations, Label=IDHELP_MARK_PETERSON
 (type=marksmandel, marksjulia, cmplxmarksmand, cmplxmarksjul, marksmandelpwr,
 tim's_error)
 
@@ -1877,7 +1877,7 @@ In the process of coding MarksMandelPwr formula type, Tim Wegner
 created the type "tim's_error" after making an interesting coding mistake.
 ;
 ;
-~Topic=Unity, Label=FIHELP_UNITY
+~Topic=Unity, Label=IDHELP_UNITY
 (type=unity)
 
 This Peterson variation began with curiosity about other "Newton-style"
@@ -1898,11 +1898,11 @@ reveals only a thinner line, up (down?) to the limit of accuracy for the
 algorithm. The same thing happens with other lines in the fractal, such as
 those around |x| = |y| = (1/2)^(1/2) = .7071
 
-Try some other tortuous approximations using the {=FIHELP_TEST TEST stub} and
+Try some other tortuous approximations using the {=IDHELP_TEST TEST stub} and
 let us know what you come up with!
 ;
 ;
-~Topic=Scott Taylor / Lee Skinner Variations, Label=FIHELP_TAYLOR_SKINNER_VARIATIONS
+~Topic=Scott Taylor / Lee Skinner Variations, Label=IDHELP_TAYLOR_SKINNER_VARIATIONS
 (type=fn(z*z), fn*fn, fn*z+z, fn+fn, fn+fn(pix), sqr(1/fn), sqr(fn), spider,
 tetrate, manowar)
 
@@ -1926,7 +1926,7 @@ appearance. For example, the images produced by z = sin(z) + z^2 and z =
 sin(z) - z^2 look very similar, but are different when you zoom in.
 ;
 ;
-~Topic=Kam Torus, Label=FIHELP_KAM_TORUS
+~Topic=Kam Torus, Label=IDHELP_KAM_TORUS
 (type=kamtorus, kamtorus3d)
 
 This type is created by superimposing orbits generated by a set of
@@ -1950,7 +1950,7 @@ With both variants, you can adjust the "maxiter" value (<X> options
 screen or parameter maxiter=) to change the number of orbits plotted.
 ;
 ;
-~Topic=Bifurcation, Label=FIHELP_BIFURCATION
+~Topic=Bifurcation, Label=IDHELP_BIFURCATION
 (type=bifxxx)
 
 The wonder of fractal geometry is that such complex forms can arise from
@@ -2078,7 +2078,7 @@ want to save it.  A nifty program called Acrospin can read these files and
 rapidly rotate them in 3-D - see {=@ACROSPIN Acrospin}.
 ;
 ;
-~Topic=Lorenz Attractors, Label=FIHELP_LORENZ
+~Topic=Lorenz Attractors, Label=IDHELP_LORENZ
 (type=lorenz/lorenz3d)
 
 The "Lorenz Attractor" is a "simple" set of three deterministic equations
@@ -2143,7 +2143,7 @@ differential equation (a, b, and c). The default values are 5, 15, and 1.
 Try changing these a little at a time to see the result.
 ;
 ;
-~Topic=Rossler Attractors, Label=FIHELP_ROSSLER
+~Topic=Rossler Attractors, Label=IDHELP_ROSSLER
 (type=rossler3D)
 
 This fractal is named after the German Otto Rossler, a non-practicing
@@ -2153,7 +2153,7 @@ fractal namesake looks like a band of ribbon with a fold in it. All we can
 say is we used the same calculus-teacher-defeating trick of multiplying
 the equations by "dt" to solve the differential equation and generate the
 orbit.  This time we will skip straight to the orbit generator - if you
-followed what we did above with type {=FIHELP_LORENZ Lorenz} you can easily
+followed what we did above with type {=IDHELP_LORENZ Lorenz} you can easily
 reverse engineer the differential equations.
 
              xnew = x - y*dt -   z*dt\
@@ -2163,7 +2163,7 @@ reverse engineer the differential equations.
 Default parameters are dt = .04, a = .2, b = .2, c = 5.7
 ;
 ;
-~Topic=Henon Attractors, Label=FIHELP_HENON
+~Topic=Henon Attractors, Label=IDHELP_HENON
 (type=henon)
 
 Michel Henon was an astronomer at Nice observatory in southern France. He
@@ -2185,7 +2185,7 @@ again.
 The default parameters are a=1.4 and b=.3.
 ;
 ;
-~Topic=Pickover Attractors, Label=FIHELP_PICKOVER
+~Topic=Pickover Attractors, Label=IDHELP_PICKOVER
 (type=pickover)
 
 Clifford A. Pickover of the IBM Thomas J. Watson Research center is such a
@@ -2202,7 +2202,7 @@ This one is the three dimensional orbit defined by:
 Default parameters are: a = 2.24, b = .43, c = -.65, d = -2.43
 ;
 ;
-~Topic=Gingerbreadman, Label=FIHELP_GINGERBREAD
+~Topic=Gingerbreadman, Label=IDHELP_GINGERBREAD
 (type=gingerbreadman)
 
 This simple fractal is a charming example stolen from "Science of Fractal
@@ -2214,7 +2214,7 @@ Images", p. 149.
 The initial x and y values are set by parameters, defaults x=-.1, y = 0.
 ;
 ;
-~Topic=Martin Attractors, Label=FIHELP_MARTIN
+~Topic=Martin Attractors, Label=IDHELP_MARTIN
 (type=hopalong/martin)
 
 These fractal types are from A. K. Dewdney's "Computer Recreations" column
@@ -2240,7 +2240,7 @@ You will find three of these here: chip, quadruptwo, and threeply.
 ;
 ;
 ;
-~Topic=Icon, Label=FIHELP_ICON
+~Topic=Icon, Label=IDHELP_ICON
 (type=icon/icon3d)
 
   This fractal type was inspired by the book "Symmetry in Chaos"
@@ -2273,7 +2273,7 @@ There are 6 parameters:  Lambda, Alpha, Beta, Gamma, Omega, and Degree
 ; New type include by Humberto R. Baptista, based on the
 ; Pickover book: Chaos In Wonderland
 ;
-~Topic=Latoocarfian, Label=FIHELP_LATOOCARFIAN
+~Topic=Latoocarfian, Label=IDHELP_LATOOCARFIAN
 (type=latoocarfian)
 
 This fractal type first appeared in the book "Chaos in Wonderland"
@@ -2292,7 +2292,7 @@ There are 4 parameters: a, b, c, d and we recomend:
 a > -3,  b < 3,  c > 0.5, d < 1.5
 ;
 ;
-~Topic=Quaternion, Label=FIHELP_QUATERNION
+~Topic=Quaternion, Label=IDHELP_QUATERNION
 (type=quat,quatjul)
 
 These fractals are based on quaternions.  Quaternions are an extension of
@@ -2326,7 +2326,7 @@ See also {HyperComplex} and { Quaternion and Hypercomplex Algebra }
 
 ;
 ;
-~Topic=HyperComplex, Label=FIHELP_HYPERCOMPLEX
+~Topic=HyperComplex, Label=IDHELP_HYPERCOMPLEX
 (type=hypercomplex,hypercomplexj)
 
 These fractals are based on hypercomplex numbers, which like quaternions
@@ -2356,7 +2356,7 @@ See also {Quaternion} and { Quaternion and Hypercomplex Algebra }
 ;
 ;
 
-~Topic=Cellular Automata, Label=FIHELP_CELLULAR
+~Topic=Cellular Automata, Label=IDHELP_CELLULAR
 (type=cellular)
 
 These fractals are generated by 1-dimensional cellular automata.  Consider
@@ -2419,7 +2419,7 @@ American, September, 1984.
 Wentian Li, Computers & Graphics, Volume 13, Number 4.
 ;
 ;
-~Topic=Ant Automaton, Label=FIHELP_ANT
+~Topic=Ant Automaton, Label=IDHELP_ANT
 (type=ant)
 
 This fractal type is the generalized Ant Automaton described in the "Computer
@@ -2466,7 +2466,7 @@ seeded with an image are not (yet) reproducible in PAR files. When started
 using the <Ctrl-a> keys, after the ant is finished the default fractal
 type reverts to that of the underlying fractal.
 
-~Label=FIHELP_ANT_COMMANDS
+~Label=IDHELP_ANT_COMMANDS
 Special keystrokes are in effect during the ant's march. The <space> key
 toggles a step-by-step mode. When in this mode, press <enter> to see each step
 of the ant's progress. When orbit delay (on <p> screen) is set to 1, the step
@@ -2481,7 +2481,7 @@ value in advance from the <p> screen.
 ;
 ;
 ;
-~Topic=Test, Label=FIHELP_TEST
+~Topic=Test, Label=IDHELP_TEST
 (type=test)
 
 This is a stub that we (and you!) use for trying out new fractal types.
@@ -2504,7 +2504,7 @@ parameters supported, preferably formatted as you see here to simplify
 folding it into the documentation.
 ;
 ;
-~Topic=Formula, Label=FIHELP_FORMULA
+~Topic=Formula, Label=IDHELP_FORMULA
 (type=formula)
 
 This is a "roll-your-own" fractal interpreter - you don't even need a
@@ -2697,7 +2697,7 @@ For mathematical formulas of functions used in the parser language, see\
 { Trig Identities}
 ;
 ;
-~Topic=Frothy Basins, Label=FIHELP_FROTHY_BASINS
+~Topic=Frothy Basins, Label=IDHELP_FROTHY_BASINS
 (type=frothybasin)
 
 Frothy Basins, or Riddled Basins, were discovered by James C. Alexander of
@@ -2755,7 +2755,7 @@ than 16 colors are available, then Fractint just colors the basins without
 any shading.
 ;
 ;
-~Topic=Julibrots, Label=FIHELP_JULIBROT
+~Topic=Julibrots, Label=IDHELP_JULIBROT
 (type=julibrot)
 
 The Julibrot fractal type uses a general-purpose renderer for visualizing
@@ -2827,7 +2827,7 @@ The screen dimensions provide the reference frame.
 
 ;
 ;
-~Topic=Diffusion Limited Aggregation, Label=FIHELP_DIFFUSION
+~Topic=Diffusion Limited Aggregation, Label=IDHELP_DIFFUSION
 (type=diffusion)
 
 Standard diffusion begins with a single point in the center of the
@@ -2875,7 +2875,7 @@ Thanks to Adrian Mariano for providing the diffusion code and
 documentation. Juan J. Buhler added additional options.
 ;
 ;
-~Topic=Lyapunov Fractals, Label=FIHELP_LYAPUNOV
+~Topic=Lyapunov Fractals, Label=IDHELP_LYAPUNOV
 (type=lyapunov)
 
 The Bifurcation fractal illustrates what happens in a simple population
@@ -2933,7 +2933,7 @@ Reference.
 A.K. Dewdney, Mathematical Recreations, Scientific American, Sept. 1991
 ;
 ;
-~Topic=Magnetic Fractals, Label=FIHELP_MAGNETIC
+~Topic=Magnetic Fractals, Label=IDHELP_MAGNETIC
 (type=magnet1m/.../magnet2j)
 
 These fractals use formulae derived from the study of hierarchical
@@ -3005,7 +3005,7 @@ information on this aspect of Fractint internals.
 (Thanks to Kevin Allen for Magnetic type documentation above).
 ;
 ;
-~Topic=Volterra-Lotka Fractals, Label=FIHELP_VOLTERRA_LOTKA
+~Topic=Volterra-Lotka Fractals, Label=IDHELP_VOLTERRA_LOTKA
 (type=volterra-lotka)
 
 In The Beauty of Fractals, these images are offered as an example of
@@ -3066,7 +3066,7 @@ Reference: Peitgen, H.-O. and Richter, P.H. The Beauty of Fractals,
 ~Format+
 ;
 ;
-~Topic=Escher-Like Julia Sets, Label=FIHELP_ESCHER
+~Topic=Escher-Like Julia Sets, Label=IDHELP_ESCHER
 (type=escher_julia)
 
 These unique variations on the Julia set theme, presented in The Science of
@@ -3133,7 +3133,7 @@ References:
 ~Format+
 ;
 ;
-~Topic=L-Systems, Label=FIHELP_L_SYSTEMS
+~Topic=L-Systems, Label=IDHELP_L_SYSTEMS
 (type=lsystem)
 
 These fractals are constructed from line segments using rules specified in

@@ -130,7 +130,7 @@ int ViewWindowImpl::GetParameters()
 
 get_view_restart:
 	{
-		UIChoices dialog(FIHELP_VIEW_WINDOW, "View Window Options", 16);
+		UIChoices dialog(IDHELP_VIEW_WINDOW, "View Window Options", 16);
 
 		dialog.push("Preview display? (no for full screen)", _visible);
 		dialog.push("Auto window size reduction factor", _reduction);

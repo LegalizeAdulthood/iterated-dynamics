@@ -183,7 +183,7 @@ int BrowseStateImpl::GetParameters()
 
 restart:
 	{
-		UIChoices dialog(FIHELP_BROWSER_PARAMETERS, "Browse ('L'ook) Mode Options", 16);
+		UIChoices dialog(IDHELP_BROWSER_PARAMETERS, "Browse ('L'ook) Mode Options", 16);
 
 		dialog.push("Autobrowsing? (y/n)", _autoBrowse);
 		dialog.push("Ask about GIF video mode? (y/n)", g_ui_state.ask_video);
@@ -703,7 +703,7 @@ int look_get_window()
 	U32 blinks;
 #endif
 
-	HelpModeSaver saved_help(FIHELP_BROWSE);
+	HelpModeSaver saved_help(IDHELP_BROWSE);
 	oldbf_math = g_bf_math;
 	g_bf_math = BIGFLT;
 	if (!oldbf_math)

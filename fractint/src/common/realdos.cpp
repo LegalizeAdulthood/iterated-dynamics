@@ -519,7 +519,7 @@ top:
 		{
 			nextleft = nextright + 1;
 		}
-		set_help_mode(FIHELP_MAIN);
+		set_help_mode(IDHELP_MAIN);
 		i = full_screen_choice(CHOICE_MENU | CHOICE_CRUNCH,
 			"MAIN MENU",
 			0, 0, nextleft, (char **) choices, attributes,
@@ -537,7 +537,7 @@ top:
 			i = choicekey[i];
 			if (-10 == i)
 			{
-				set_help_mode(FIHELP_ZOOM);
+				set_help_mode(IDHELP_ZOOM);
 				help(ACTION_CALL);
 				i = 0;
 			}

@@ -530,7 +530,7 @@ int Ant::Compute()
 
 	initialize_increments();
 
-	HelpModeSaver saved_help(FIHELP_ANT_COMMANDS);
+	HelpModeSaver saved_help(IDHELP_ANT_COMMANDS);
 	long maxpts = std::abs(long(g_parameters[P1_IMAG]));
 	m_wait = std::abs(g_orbit_delay);
 	strcpy(m_rule, boost::format("%.17g") % g_parameters[P1_REAL]);
