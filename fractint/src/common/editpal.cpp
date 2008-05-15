@@ -958,9 +958,8 @@ void color_editor::draw()
 		return;
 	}
 
-	cursor::cursor_hide();
+	CursorHider hider;
 	displayf(_x + 2, _y + 2, s_fg_color, s_bg_color, boost::format("%c%02d") % _letter % _value);
-	cursor::cursor_show();
 }
 
 int color_editor::edit()
@@ -972,9 +971,8 @@ int color_editor::edit()
 
 	if (!_hidden)
 	{
-		cursor::cursor_hide();
+		CursorHider hider;
 		rectangle(_x, _y, COLOR_EDITOR_WIDTH, COLOR_EDITOR_DEPTH, s_fg_color);
-		cursor::cursor_show();
 	}
 
 #ifdef XFRACT
@@ -1084,9 +1082,8 @@ int color_editor::edit()
 
 	if (!_hidden)
 	{
-		cursor::cursor_hide();
+		CursorHider hider;
 		rectangle(_x, _y, COLOR_EDITOR_WIDTH, COLOR_EDITOR_DEPTH, s_bg_color);
-		cursor::cursor_show();
 	}
 
 	return key;
@@ -1279,9 +1276,8 @@ void rgb_editor::blank_sample_box()
 		return;
 	}
 
-	cursor::cursor_hide();
+	CursorHider hider;
 	fill_rectangle(_x + 2 + COLOR_EDITOR_WIDTH + 1 + 1, _y + 2 + 1, RGB_EDITOR_BOX_WIDTH-2, RGB_EDITOR_BOX_DEPTH-2, s_bg_color);
-	cursor::cursor_show();
 }
 
 void rgb_editor::update()
@@ -1294,14 +1290,12 @@ void rgb_editor::update()
 		return;
 	}
 
-	cursor::cursor_hide();
-
+	CursorHider hider;
 	if (_palette_number >= g_colors)
 	{
 		fill_rectangle(x1, y1, RGB_EDITOR_BOX_WIDTH-2, RGB_EDITOR_BOX_DEPTH-2, s_bg_color);
 		draw_diamond(x1 + (RGB_EDITOR_BOX_WIDTH-5)/2, y1 + (RGB_EDITOR_BOX_DEPTH-5)/2, s_fg_color);
 	}
-
 	else if (is_reserved(_palette_number))
 	{
 		int x2 = x1 + RGB_EDITOR_BOX_WIDTH - 3;
@@ -1319,7 +1313,6 @@ void rgb_editor::update()
 	_color_editor[0]->draw();
 	_color_editor[1]->draw();
 	_color_editor[2]->draw();
-	cursor::cursor_show();
 }
 
 void rgb_editor::draw()
@@ -1329,12 +1322,11 @@ void rgb_editor::draw()
 		return;
 	}
 
-	cursor::cursor_hide();
+	CursorHider hider;
 	dotted_rectangle(_x, _y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH);
 	fill_rectangle(_x + 1, _y + 1, RGB_EDITOR_WIDTH-2, RGB_EDITOR_DEPTH-2, s_bg_color);
 	rectangle(_x + 1 + COLOR_EDITOR_WIDTH + 2, _y + 2, RGB_EDITOR_BOX_WIDTH, RGB_EDITOR_BOX_DEPTH, s_fg_color);
 	update();
-	cursor::cursor_show();
 }
 
 int rgb_editor::edit()
@@ -1345,9 +1337,8 @@ int rgb_editor::edit()
 
 	if (!_hidden)
 	{
-		cursor::cursor_hide();
+		CursorHider hider;
 		rectangle(_x, _y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH, s_fg_color);
-		cursor::cursor_show();
 	}
 
 	while (!_done)
@@ -1357,9 +1348,8 @@ int rgb_editor::edit()
 
 	if (!_hidden)
 	{
-		cursor::cursor_hide();
+		CursorHider hider;
 		dotted_rectangle(_x, _y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH);
-		cursor::cursor_show();
 	}
 
 	return key;
@@ -1726,20 +1716,17 @@ void pal_table::draw_status(bool stripe_mode)
 		{
 			color = 0;
 		}
-		cursor::cursor_hide();
 
-		{
-			driver_display_string(x, y, s_fg_color, s_bg_color,
-				str(boost::format("%c%c%c%c")
-					% (_auto_select ? 'A' : ' ')
-					% ((_exclude == EXCLUDE_CURRENT) ? 'X' : (_exclude == EXCLUDE_RANGE) ? 'Y' : ' ')
-					% (_freestyle ? 'F' : ' ')
-					% (stripe_mode ? 'T' : ' ')));
-			y -= 10;
-			driver_display_string(x, y, s_fg_color, s_bg_color,
-				str(boost::format("%d") % color));
-		}
-		cursor::cursor_show();
+		CursorHider hider;
+		driver_display_string(x, y, s_fg_color, s_bg_color,
+			str(boost::format("%c%c%c%c")
+				% (_auto_select ? 'A' : ' ')
+				% ((_exclude == EXCLUDE_CURRENT) ? 'X' : (_exclude == EXCLUDE_RANGE) ? 'Y' : ' ')
+				% (_freestyle ? 'F' : ' ')
+				% (stripe_mode ? 'T' : ' ')));
+		y -= 10;
+		driver_display_string(x, y, s_fg_color, s_bg_color,
+			str(boost::format("%d") % color));
 	}
 }
 
@@ -1750,7 +1737,7 @@ void pal_table::highlight_pal(int pnum, int color)
 		return;
 	}
 
-	cursor::cursor_hide();
+	CursorHider hider;
 
 	int x = _x + PALTABLE_PALX + (pnum % 16)*_csize;
 	int y = _y + PALTABLE_PALY + (pnum/16)*_csize;
@@ -1762,8 +1749,6 @@ void pal_table::highlight_pal(int pnum, int color)
 	{
 		rectangle(x, y, _csize + 1, _csize + 1, color);
 	}
-
-	cursor::cursor_show();
 }
 
 void pal_table::draw()
@@ -1773,7 +1758,7 @@ void pal_table::draw()
 		return;
 	}
 
-	cursor::cursor_hide();
+	CursorHider hider;
 	int width = 1 + (_csize*16) + 1 + 1;
 	rectangle(_x, _y, width, 2 + RGB_EDITOR_DEPTH + 2 + (_csize*16) + 1 + 1, s_fg_color);
 	fill_rectangle(_x + 1, _y + 1, width-2, 2 + RGB_EDITOR_DEPTH + 2 + (_csize*16) + 1 + 1-2, s_bg_color);
@@ -1826,7 +1811,6 @@ void pal_table::draw()
 	}
 
 	draw_status(false);
-	cursor::cursor_show();
 }
 
 bool pal_table::set_current(int which, int curr)
@@ -1843,7 +1827,7 @@ bool pal_table::set_current(int which, int curr)
 		return false;
 	}
 
-	cursor::cursor_hide();
+	CursorHider hider;
 
 	highlight_pal(_current[0], s_bg_color);
 	highlight_pal(_current[1], s_bg_color);
@@ -1891,7 +1875,6 @@ bool pal_table::set_current(int which, int curr)
 		update_dac();
 	}
 
-	cursor::cursor_show();
 	_current_changed = false;
 	return true;
 }
@@ -1944,7 +1927,7 @@ void pal_table::save_rect()
 		BYTE *ptr = reinterpret_cast<BYTE *>(_memory);
 		BYTE *bufptr = buff; // MSC needs me indirection to get it right
 
-		cursor::cursor_hide();
+		CursorHider hider;
 		for (int yoff = 0; yoff < depth; yoff++)
 		{
 			get_row(_x, _y + yoff, width, buff);
@@ -1952,7 +1935,6 @@ void pal_table::save_rect()
 			memcpy(ptr, bufptr, width);
 			ptr += width;
 		}
-		cursor::cursor_show();
 	}
 	else // to disk
 	{
@@ -1971,7 +1953,7 @@ void pal_table::save_rect()
 
 		_file.seekg(0);
 		_file.seekp(0);
-		cursor::cursor_hide();
+		CursorHider hider;
 		for (int yoff = 0; yoff < depth; yoff++)
 		{
 			get_row(_x, _y + yoff, width, buff);
@@ -1983,7 +1965,6 @@ void pal_table::save_rect()
 				break;
 			}
 		}
-		cursor::cursor_show();
 	}
 }
 
@@ -2002,18 +1983,19 @@ void pal_table::restore_rect()
 	case DISK:
 		_file.seekg(0);
 		_file.seekp(0);
-		cursor::cursor_hide();
-		for (int yoff = 0; yoff < depth; yoff++)
 		{
-			_file.read(reinterpret_cast<char *>(&buff[0]), width*sizeof(buff[0]));
-			if (_file.bad())
+			CursorHider hider;
+			for (int yoff = 0; yoff < depth; yoff++)
 			{
-				driver_buzzer(BUZZER_ERROR);
-				break;
+				_file.read(reinterpret_cast<char *>(&buff[0]), width*sizeof(buff[0]));
+				if (_file.bad())
+				{
+					driver_buzzer(BUZZER_ERROR);
+					break;
+				}
+				put_row(_x, _y + yoff, width, buff);
 			}
-			put_row(_x, _y + yoff, width, buff);
 		}
-		cursor::cursor_show();
 		break;
 
 	case MEMORY:
@@ -2021,14 +2003,13 @@ void pal_table::restore_rect()
 			BYTE  *ptr = reinterpret_cast<BYTE *>(_memory);
 			BYTE *bufptr = buff; // MSC needs me indirection to get it right
 
-			cursor::cursor_hide();
+			CursorHider hider;
 			for (int yoff = 0; yoff < depth; yoff++)
 			{
 				memcpy(bufptr, ptr, width);
 				put_row(_x, _y + yoff, width, buff);
 				ptr += width;
 			}
-			cursor::cursor_show();
 			break;
 		}
 
@@ -2171,9 +2152,8 @@ void pal_table::change(rgb_editor *rgb)
 		color = _rgb_editors[_active]->get_rgb();
 		_rgb_editors[other]->set_rgb(_current[other], &color);
 
-		cursor::cursor_hide();
+		CursorHider hider;
 		_rgb_editors[other]->update();
-		cursor::cursor_show();
 	}
 }
 
@@ -2239,20 +2219,15 @@ void pal_table::rotate(int dir, int lo, int hi)
 {
 	rotate_pal(_palette, dir, lo, hi);
 
-	cursor::cursor_hide();
-
-	// update the DAC.
+	CursorHider hider;
 
 	update_dac();
 
 	// update the editors.
-
 	_rgb_editors[0]->set_rgb(_current[0], &(_palette[_current[0]]));
 	_rgb_editors[1]->set_rgb(_current[1], &(_palette[_current[1]]));
 	_rgb_editors[0]->update();
 	_rgb_editors[1]->update();
-
-	cursor::cursor_show();
 }
 
 void pal_table::other_key(int key, rgb_editor *rgb)
@@ -2264,25 +2239,26 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		{
 			break;           // cannot move a hidden pal
 		}
-		cursor::cursor_hide();
-		restore_rect();
-		_move_box->set_position(_x, _y);
-		_move_box->set_csize(_csize);
-		if (_move_box->process())
 		{
-			if (_move_box->should_hide())
+			CursorHider hider;
+			restore_rect();
+			_move_box->set_position(_x, _y);
+			_move_box->set_csize(_csize);
+			if (_move_box->process())
 			{
-				set_hidden(true);
+				if (_move_box->should_hide())
+				{
+					set_hidden(true);
+				}
+				else if (_move_box->moved())
+				{
+					set_position(_move_box->x(), _move_box->y());
+					set_csize(_move_box->csize());
+					save_rect();
+				}
 			}
-			else if (_move_box->moved())
-			{
-				set_position(_move_box->x(), _move_box->y());
-				set_csize(_move_box->csize());
-				save_rect();
-			}
+			draw();
 		}
-		draw();
-		cursor::cursor_show();
 
 		_rgb_editors[_active]->set_done(true);
 
@@ -2363,14 +2339,12 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			PALENTRY t;
 
 			t = _rgb_editors[b]->get_rgb();
-			cursor::cursor_hide();
+			CursorHider hider;
 
 			_rgb_editors[a]->set_rgb(_current[a], &t);
 			_rgb_editors[a]->update();
 			change(_rgb_editors[a], this);
 			update_dac();
-
-			cursor::cursor_show();
 			break;
 		}
 
@@ -2474,10 +2448,11 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		{
 			int key;
 
-			cursor::cursor_hide();
-			draw_status(true);
-			key = get_key_no_help();
-			cursor::cursor_show();
+			{
+				CursorHider hider;
+				draw_status(true);
+				key = get_key_no_help();
+			}
 
 			if (key >= '1' && key <= '9')
 			{
@@ -2539,9 +2514,10 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 
 	case 'H':
 	case 'h': // toggle hide/display of palette editor
-		cursor::cursor_hide();
-		hide(rgb, !_hidden);
-		cursor::cursor_show();
+		{
+			CursorHider hider;
+			hide(rgb, !_hidden);
+		}
 		break;
 
 	case '.':   // rotate once
@@ -2560,8 +2536,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			int  dir;
 			long tick;
 			int  diff = 0;
-
-			cursor::cursor_hide();
+			CursorHider hider;
 
 			if (!_hidden)
 			{
@@ -2601,8 +2576,6 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			{
 				save_undo_rotate(diff, g_rotate_lo, g_rotate_hi);
 			}
-
-			cursor::cursor_show();
 			break;
 		}
 
@@ -2626,10 +2599,9 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 
 		if (!_hidden)
 		{
-			cursor::cursor_hide();
+			CursorHider hider;
 			update_dac();
 			draw();
-			cursor::cursor_show();
 		}
 
 		_rgb_editors[_active]->set_done(true);
@@ -2662,14 +2634,13 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 
 			if (_save_palette[which] != 0)
 			{
-				cursor::cursor_hide();
+				CursorHider hider;
 
 				save_undo_data(0, 255);
 				memcpy(_palette, _save_palette[which], 256*3);
 				update_dac();
 
 				set_current(-1, 0);
-				cursor::cursor_show();
 				_rgb_editors[_active]->set_done(true);
 			}
 			else
@@ -2727,7 +2698,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 
 			save_undo_data(0, 255);
 
-			cursor::cursor_hide();
+			CursorHider hider;
 			if (!oldhidden)
 			{
 				hide(rgb, true);
@@ -2742,9 +2713,8 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 				_rgb_editors[1]->set_rgb(_current[1], &(_palette[_current[1]]));
 				hide(rgb, false);
 			}
-			cursor::cursor_show();
-			break;
 		}
+		break;
 
 	case 'F':
 	case 'f':    // toggle freestyle palette edit mode

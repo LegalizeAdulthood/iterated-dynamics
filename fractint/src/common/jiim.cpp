@@ -6,36 +6,6 @@
  *
  *  The J-set is generated in a fixed-size window, a third of the screen.
  *
- * The routines used to set/move the cursor and to save/restore the
- * window were "borrowed" from editpal.c (TW - now we *use* the editpal code)
- *     (if you don't know how to write good code, look for someone who does)
- *
- *    JJB  [jbuhler@gidef.edu.ar]
- *    TIW  Tim Wegner
- *    MS   Michael Snyder
- *    KS   Ken Shirriff
- * Revision History:
- *
- *        7-28-92       JJB  Initial release out of editpal.c
- *        7-29-92       JJB  Added SaveRect() & RestoreRect() - now the
- *                           screen is restored after leaving.
- *        7-30-92       JJB  Now, if the cursor goes into the window, the
- *                           window is moved to the other side of the screen.
- *                           Worked from the first time!
- *        10-09-92      TIW  A major rewrite that merged cut routines duplicated
- *                           in EDITPAL.C and added orbits feature.
- *        11-02-92      KS   Made cursor blink
- *        11-18-92      MS   Altered Inverse Julia to use MIIM method.
- *        11-25-92      MS   Modified MIIM support routines to better be
- *                           shared with stand-alone inverse julia in
- *                           LORENZ.C, and to use DISKVID for swap space.
- *        05-05-93      TIW  Boy this change file really got out of date.
- *                           Added orbits capability, various commands, some
- *                           of Dan Farmer's ideas like circles and lines
- *                           connecting orbits points.
- *        12-18-93      TIW  Removed use of float only for orbits, fixed a
- *                           help mode bug.
- *
  */
 #include <boost/format.hpp>
 
@@ -68,6 +38,7 @@ public:
 	JIIM(bool which)
 		: _orbits(which),
 		_exact(false),
+		_mode(JIIM_PIXEL),
 		_xCenter(0),
 		_yCenter(0),
 		_dColumn(0),
@@ -81,15 +52,10 @@ public:
 	}
 	void Execute();
 	void WriteCoordinatesOnScreen(bool &actively_computing);
-
 	void UpdateColumnRow();
-
 	bool ProcessKeyPress(int kbdchar);
-
 	void UpdateCursor(bool actively_computing);
-
 	void SizeWindow();
-
 
 private:
 	enum
@@ -116,7 +82,7 @@ private:
 
 	bool _orbits;
 	bool _exact;
-	static int s_mode;
+	int _mode;
 	int _xCenter;
 	int _yCenter; // center of window
 	int _dColumn;
@@ -128,18 +94,34 @@ private:
 	bool _again;
 
 	bool UsesStandardFractalOrFrothCalc();
+	static void plot_color_clip(int x, int y, int color);
+	static void circle_plot(int x, int y, int color);
+	static void plot8(int x, int y, int color);
+	static void circle(int radius, int color);
+	static int c_getcolor(int x, int y);
+	static int s_show_numbers;					// toggle for display of coords
+	enum WindowSize
+	{
+		WINDOWSIZE_FULL_SCREEN = 0,
+		WINDOWSIZE_NO_OVERLAP = 1,
+		WINDOWSIZE_WHOLE_SCREEN = 2,
+		WINDOWSIZE_HIDE_FRACTAL = 3
+	};
+	static WindowSize s_windows;				// windows management system
+	static int s_window_corner_x;
+	static int s_window_corner_y;				// corners of the window
+	static int s_window_dots_x;
+	static int s_window_dots_y;					// dots in the window
 };
 
-int JIIM::s_mode = JIIM_PIXEL;
+int JIIM::s_show_numbers = 0;
+JIIM::WindowSize JIIM::s_windows = WINDOWSIZE_FULL_SCREEN;
+int JIIM::s_window_corner_x;
+int JIIM::s_window_corner_y;
+int JIIM::s_window_dots_x;
+int JIIM::s_window_dots_y;
 
-static int s_show_numbers = 0;              // toggle for display of coords
 static std::vector<BYTE> s_rect_buff;
-static int s_windows = 0;               // windows management system
-
-static int s_window_corner_x;
-static int s_window_corner_y;                       // corners of the window
-static int s_window_dots_x;
-static int s_window_dots_y;                       // dots in the window
 
 StdComplexD g_julia_c(BIG, BIG);
 
@@ -167,7 +149,7 @@ static void SetAspect(double aspect)
 	}
 }
 
-static void plot_color_clip(int x, int y, int color)
+void JIIM::plot_color_clip(int x, int y, int color)
 {
 	// avoid writing outside window
 	if (x < s_window_corner_x || y < s_window_corner_y || x >= s_window_corner_x + s_window_dots_x || y >= s_window_corner_y + s_window_dots_y)
@@ -178,7 +160,7 @@ static void plot_color_clip(int x, int y, int color)
 	{
 		return;
 	}
-	if (s_windows == 2) // avoid overwriting fractal
+	if (s_windows == WINDOWSIZE_WHOLE_SCREEN) // avoid overwriting fractal
 	{
 		if (0 <= x && x < g_x_dots && 0 <= y && y < g_y_dots)
 		{
@@ -189,7 +171,7 @@ static void plot_color_clip(int x, int y, int color)
 }
 
 
-static int c_getcolor(int x, int y)
+int JIIM::c_getcolor(int x, int y)
 {
 	// avoid reading outside window
 	if (x < s_window_corner_x || y < s_window_corner_y || x >= s_window_corner_x + s_window_dots_x || y >= s_window_corner_y + s_window_dots_y)
@@ -200,7 +182,7 @@ static int c_getcolor(int x, int y)
 	{
 		return 1000;
 	}
-	if (s_windows == 2) // avoid overreading fractal
+	if (s_windows == WINDOWSIZE_WHOLE_SCREEN) // avoid overreading fractal
 	{
 		if (0 <= x && x < g_x_dots && 0 <= y && y < g_y_dots)
 		{
@@ -210,7 +192,7 @@ static int c_getcolor(int x, int y)
 	return get_color(x, y);
 }
 
-static void circle_plot(int x, int y, int color)
+void JIIM::circle_plot(int x, int y, int color)
 {
 	if (s_x_aspect == 0)
 	{
@@ -229,7 +211,7 @@ static void circle_plot(int x, int y, int color)
 	}
 }
 
-static void plot8(int x, int y, int color)
+void JIIM::plot8(int x, int y, int color)
 {
 	circle_plot(x, y, color);
 	circle_plot(-x, y, color);
@@ -241,7 +223,7 @@ static void plot8(int x, int y, int color)
 	circle_plot(-y, -x, color);
 }
 
-static void circle(int radius, int color)
+void JIIM::circle(int radius, int color)
 {
 	int x;
 	int y;
@@ -554,14 +536,13 @@ static void SaveRect(int x, int y, int width, int height)
 	s_rect_buff.resize(width*height);
 	BYTE *buff = &s_rect_buff[0];
 
-	cursor::cursor_hide();
+	CursorHider hider;
 	for (int yoff = 0; yoff < height; yoff++)
 	{
 		get_row(x, y + yoff, width, buff);
 		put_row(x, y + yoff, width, g_stack);
 		buff += width;
 	}
-	cursor::cursor_show();
 }
 
 static void RestoreRect(int x, int y, int width, int height)
@@ -573,13 +554,12 @@ static void RestoreRect(int x, int y, int width, int height)
 		return;
 	}
 
-	cursor::cursor_hide();
+	CursorHider hider;
 	for (int yoff = 0; yoff < height; yoff++)
 	{
 		put_row(x, y + yoff, width, buff);
 		buff += width;
 	}
-	cursor::cursor_show();
 }
 
 InitializedComplexD g_save_c(-3000.0, -3000.0);
@@ -598,7 +578,7 @@ bool JIIM::UsesStandardFractalOrFrothCalc()
 void JIIM::Execute()
 {
 	// coloring julia
-	s_mode = JIIM_PIXEL;
+	_mode = JIIM_PIXEL;
 	static int random_direction = 0;
 	static int random_count = 0;
 	int old_debug_mode = g_debug_mode;
@@ -669,7 +649,7 @@ void JIIM::Execute()
 	{
 		SaveRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
 	}
-	else if (s_windows == 2)  // leave the fractal
+	else if (s_windows == WINDOWSIZE_WHOLE_SCREEN)  // leave the fractal
 	{
 		fillrect(g_x_dots, s_window_corner_y, s_window_dots_x-g_x_dots, s_window_dots_y, g_.DAC().Dark());
 		fillrect(s_window_corner_x   , g_y_dots, g_x_dots, s_window_dots_y-g_y_dots, g_.DAC().Dark());
@@ -798,7 +778,7 @@ void JIIM::Execute()
 				_xCenter = s_window_corner_x + s_window_dots_x/2;
 				SaveRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
 			}
-			if (s_windows == 2)
+			if (s_windows == WINDOWSIZE_WHOLE_SCREEN)
 			{
 				fillrect(g_x_dots, s_window_corner_y, s_window_dots_x-g_x_dots, s_window_dots_y-s_show_numbers, g_.DAC().Dark());
 				fillrect(s_window_corner_x   , g_y_dots, g_x_dots, s_window_dots_y-g_y_dots-s_show_numbers, g_.DAC().Dark());
@@ -947,17 +927,17 @@ void JIIM::Execute()
 					y = int(-g_new_z.imag()*y_factor*_zoom + _yCenter);
 					if (iter > 10)
 					{
-						if (s_mode == JIIM_PIXEL)
+						if (_mode == JIIM_PIXEL)
 						{
 							plot_color_clip(x, y, color);
 						}
-						else if (s_mode & JIIM_CIRCLE)
+						else if (_mode & JIIM_CIRCLE)
 						{
 							s_x_base = x;
 							s_y_base = y;
 							circle(int(_zoom*(s_window_dots_x >> 1)/iter), color);
 						}
-						if ((s_mode & JIIM_LINE) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
+						if ((_mode & JIIM_LINE) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
 						{
 							driver_draw_line(x, y, old_x, old_y, color);
 						}
@@ -1039,17 +1019,17 @@ void JIIM::Execute()
 		}
 		if (_orbits || iter > 10)
 		{
-			if (s_mode == JIIM_PIXEL)
+			if (_mode == JIIM_PIXEL)
 			{
 				plot_color_clip(x, y, color);
 			}
-			else if (s_mode & JIIM_CIRCLE)
+			else if (_mode & JIIM_CIRCLE)
 			{
 				s_x_base = x;
 				s_y_base = y;
 				circle(int(_zoom*(s_window_dots_x >> 1)/iter), color);
 			}
-			if ((s_mode & JIIM_LINE) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
+			if ((_mode & JIIM_LINE) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
 			{
 				driver_draw_line(x, y, old_x, old_y, color);
 			}
@@ -1070,9 +1050,9 @@ finish:
 		{
 			RestoreRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
 		}
-		else if (s_windows >= 2)
+		else if (s_windows == WINDOWSIZE_WHOLE_SCREEN || s_windows == WINDOWSIZE_HIDE_FRACTAL)
 		{
-			if (s_windows == 2)
+			if (s_windows == WINDOWSIZE_WHOLE_SCREEN)
 			{
 				fillrect(g_x_dots, s_window_corner_y, s_window_dots_x-g_x_dots, s_window_dots_y, g_.DAC().Dark());
 				fillrect(s_window_corner_x   , g_y_dots, g_x_dots, s_window_dots_y-g_y_dots, g_.DAC().Dark());
@@ -1081,10 +1061,11 @@ finish:
 			{
 				fillrect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y, g_.DAC().Dark());
 			}
-			if (s_windows == 3 && s_window_dots_x == g_screen_width) // unhide
+			if (s_windows == WINDOWSIZE_HIDE_FRACTAL
+				&& s_window_dots_x == g_screen_width) // unhide
 			{
 				RestoreRect(0, 0, g_x_dots, g_y_dots);
-				s_windows = 2;
+				s_windows = WINDOWSIZE_WHOLE_SCREEN;
 			}
 			cursor::cursor_hide();
 			save_has_inverse = g_has_inverse;
@@ -1143,10 +1124,9 @@ void JIIM::WriteCoordinatesOnScreen(bool &actively_computing)
 			{
 				text.resize(40, ' ');
 			}
-			cursor::cursor_hide();
+			CursorHider hider;
 			actively_computing = true;
 			show_temp_message(text);
-			cursor::cursor_show();
 		}
 		else
 		{
@@ -1268,20 +1248,19 @@ bool JIIM::ProcessKeyPress(int kbdchar)
 
 	case 'c':   // circle toggle
 	case 'C':   // circle toggle
-		s_mode ^= JIIM_CIRCLE;
+		_mode ^= JIIM_CIRCLE;
 		break;
 	case 'l':
 	case 'L':
-		s_mode ^= JIIM_LINE;
+		_mode ^= JIIM_LINE;
 		break;
 	case 'n':
 	case 'N':
 		s_show_numbers = 8 - s_show_numbers;
 		if (s_windows == 0 && s_show_numbers == 0)
 		{
-			cursor::cursor_hide();
+			CursorHider hider;
 			clear_temp_message();
-			cursor::cursor_show();
 		}
 		break;
 	case 'p':
@@ -1295,14 +1274,15 @@ bool JIIM::ProcessKeyPress(int kbdchar)
 		break;
 	case 'h':   // hide fractal toggle
 	case 'H':   // hide fractal toggle
-		if (s_windows == 2)
+		if (s_windows == WINDOWSIZE_WHOLE_SCREEN)
 		{
-			s_windows = 3;
+			s_windows = WINDOWSIZE_HIDE_FRACTAL;
 		}
-		else if (s_windows == 3 && s_window_dots_x == g_screen_width)
+		else if (s_windows == WINDOWSIZE_HIDE_FRACTAL
+			&& s_window_dots_x == g_screen_width)
 		{
 			RestoreRect(0, 0, g_x_dots, g_y_dots);
-			s_windows = 2;
+			s_windows = WINDOWSIZE_WHOLE_SCREEN;
 		}
 		break;
 	case '0':
@@ -1339,14 +1319,15 @@ void JIIM::UpdateCursor(bool actively_computing)
 
 void JIIM::SizeWindow()
 {
-	if (g_x_dots == g_screen_width || g_y_dots == g_screen_height ||
-		g_screen_width-g_x_dots < g_screen_width/3 ||
-		g_screen_height-g_y_dots < g_screen_height/3 ||
-		g_x_dots >= MAXRECT)
+	if (g_x_dots == g_screen_width
+		|| g_y_dots == g_screen_height
+		|| g_screen_width - g_x_dots < g_screen_width/3
+		|| g_screen_height - g_y_dots < g_screen_height/3
+		|| g_x_dots >= MAXRECT)
 	{
 		/* this mode puts orbit/julia in an overlapping window 1/3 the size of
 		the physical screen */
-		s_windows = 0; // full screen or large view window
+		s_windows = WINDOWSIZE_FULL_SCREEN; // full screen or large view window
 		s_window_dots_x = g_screen_width/3;
 		s_window_dots_y = g_screen_height/3;
 		s_window_corner_x = s_window_dots_x*2;
@@ -1354,10 +1335,11 @@ void JIIM::SizeWindow()
 		_xCenter = s_window_dots_x*5/2;
 		_yCenter = s_window_dots_y*5/2;
 	}
-	else if (g_x_dots > g_screen_width/3 && g_y_dots > g_screen_height/3)
+	else if (g_x_dots > g_screen_width/3
+		&& g_y_dots > g_screen_height/3)
 	{
 		// Julia/orbit and fractal don't overlap
-		s_windows = 1;
+		s_windows = WINDOWSIZE_NO_OVERLAP;
 		s_window_dots_x = g_screen_width-g_x_dots;
 		s_window_dots_y = g_screen_height-g_y_dots;
 		s_window_corner_x = g_x_dots;
@@ -1368,7 +1350,7 @@ void JIIM::SizeWindow()
 	else
 	{
 		// Julia/orbit takes whole screen
-		s_windows = 2;
+		s_windows = WINDOWSIZE_WHOLE_SCREEN;
 		s_window_dots_x = g_screen_width;
 		s_window_dots_y = g_screen_height;
 		s_window_corner_x = 0;
