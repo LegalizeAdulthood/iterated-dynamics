@@ -105,4 +105,11 @@ private:
 	static cursor *s_the_cursor;
 };
 
+class CursorHider
+{
+public:
+	CursorHider() { cursor::cursor_hide(); }
+	~CursorHider() { cursor::cursor_show(); }
+};
+
 #endif
