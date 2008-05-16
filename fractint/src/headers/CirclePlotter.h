@@ -13,7 +13,7 @@ public:
 class CirclePlotter
 {
 public:
-	CirclePlotter(IPlotter &plotter) : s_x_base(0), s_y_base(0), s_x_aspect(0), s_y_aspect(0),
+	CirclePlotter(IPlotter &plotter) : _x_base(0), _y_base(0), _x_aspect(0), _y_aspect(0),
 		_plotter(plotter)
 	{
 	}
@@ -21,16 +21,16 @@ public:
 	void circle(int radius, int color);
 	void SetBase(int x, int y)
 	{
-		s_x_base = x;
-		s_y_base = y;
+		_x_base = x;
+		_y_base = y;
 	}
 	void SetAspect(double aspect);
 
 private:
-	int s_x_base;
-	int s_y_base;
-	unsigned int s_x_aspect;
-	unsigned int s_y_aspect;
+	int _x_base;
+	int _y_base;
+	unsigned int _x_aspect;
+	unsigned int _y_aspect;
 	IPlotter &_plotter;
 
 	void circle_plot(int x, int y, int color);
