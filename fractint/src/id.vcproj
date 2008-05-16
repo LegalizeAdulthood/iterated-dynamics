@@ -1457,6 +1457,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\RectangleSaver.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\Starfield.cpp"
 					>
 				</File>
@@ -1930,6 +1934,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\realdos.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\RectangleSaver.h"
 					>
 				</File>
 				<File
