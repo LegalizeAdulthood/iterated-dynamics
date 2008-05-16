@@ -3,20 +3,20 @@
 
 void CirclePlotter::circle_plot(int x, int y, int color)
 {
-	if (s_x_aspect == 0)
+	if (_x_aspect == 0)
 	{
-		if (s_y_aspect == 0)
+		if (_y_aspect == 0)
 		{
-			_plotter.plot(x + s_x_base, y + s_y_base, color);
+			_plotter.plot(x + _x_base, y + _y_base, color);
 		}
 		else
 		{
-			_plotter.plot(x + s_x_base, short(s_y_base + ((long(y)*long(s_y_aspect)) >> 16)), color);
+			_plotter.plot(x + _x_base, short(_y_base + ((long(y)*long(_y_aspect)) >> 16)), color);
 		}
 	}
 	else
 	{
-		_plotter.plot(int(s_x_base + ((long(x)*long(s_x_aspect)) >> 16)), y + s_y_base, color);
+		_plotter.plot(int(_x_base + ((long(x)*long(_x_aspect)) >> 16)), y + _y_base, color);
 	}
 }
 
@@ -60,18 +60,18 @@ void CirclePlotter::circle(int radius, int color)
 
 void CirclePlotter::SetAspect(double aspect)
 {
-	s_x_aspect = 0;
-	s_y_aspect = 0;
+	_x_aspect = 0;
+	_y_aspect = 0;
 	aspect = std::abs(aspect);
 	if (aspect != 1.0)
 	{
 		if (aspect > 1.0)
 		{
-			s_y_aspect = (unsigned int)(65536.0/aspect);
+			_y_aspect = (unsigned int)(65536.0/aspect);
 		}
 		else
 		{
-			s_x_aspect = (unsigned int)(65536.0*aspect);
+			_x_aspect = (unsigned int)(65536.0*aspect);
 		}
 	}
 }
