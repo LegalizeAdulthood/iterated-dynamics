@@ -1,6 +1,11 @@
 #if !defined(EDIT_PAL_H)
 #define EDIT_PAL_H
 
+#include <string>
+
+#include "port.h"
+#include "externs.h"
+
 extern std::string g_screen_file;
 
 extern void palette_edit();

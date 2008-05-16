@@ -28,6 +28,7 @@
 #include "miscfrac.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "RectangleSaver.h"
 #include "StopMessage.h"
 #include "TextColors.h"
 #include "ViewWindow.h"
@@ -47,7 +48,8 @@ public:
 		_zoom(1.0f),
 		_cReal(0.0),
 		_cImag(0.0),
-		_again(false)
+		_again(false),
+		_saver()
 	{
 	}
 	void Execute();
@@ -58,10 +60,6 @@ public:
 	void SizeWindow();
 
 private:
-	enum
-	{
-		MAXRECT = 1024      // largest width of SaveRect/RestoreRect
-	};
 	enum SecretMode
 	{
 		SECRETMODE_RANDOM_WALK			= 0,
@@ -92,6 +90,7 @@ private:
 	double _cReal;
 	double _cImag;
 	bool _again;
+	RectangleSaver _saver;
 
 	bool UsesStandardFractalOrFrothCalc();
 	static void plot_color_clip(int x, int y, int color);
@@ -120,8 +119,6 @@ int JIIM::s_window_corner_x;
 int JIIM::s_window_corner_y;
 int JIIM::s_window_dots_x;
 int JIIM::s_window_dots_y;
-
-static std::vector<BYTE> s_rect_buff;
 
 StdComplexD g_julia_c(BIG, BIG);
 
@@ -527,41 +524,6 @@ ComplexL DeQueueLong()
 	return out;
 }
 
-static void SaveRect(int x, int y, int width, int height)
-{
-	if (!g_has_inverse)
-	{
-		return;
-	}
-	s_rect_buff.resize(width*height);
-	BYTE *buff = &s_rect_buff[0];
-
-	CursorHider hider;
-	for (int yoff = 0; yoff < height; yoff++)
-	{
-		get_row(x, y + yoff, width, buff);
-		put_row(x, y + yoff, width, g_stack);
-		buff += width;
-	}
-}
-
-static void RestoreRect(int x, int y, int width, int height)
-{
-	BYTE *buff = &s_rect_buff[0];
-
-	if (!g_has_inverse)
-	{
-		return;
-	}
-
-	CursorHider hider;
-	for (int yoff = 0; yoff < height; yoff++)
-	{
-		put_row(x, y + yoff, width, buff);
-		buff += width;
-	}
-}
-
 InitializedComplexD g_save_c(-3000.0, -3000.0);
 
 void Jiim(bool which)
@@ -634,10 +596,10 @@ void JIIM::Execute()
 	{
 		save_has_inverse = g_has_inverse;
 		g_has_inverse = true;
-		SaveRect(0, 0, g_x_dots, g_y_dots);
+		_saver.Save(0, 0, g_x_dots, g_y_dots);
 		g_screen_x_offset = 0;
 		g_screen_y_offset = 0;
-		RestoreRect(0, 0, g_x_dots, g_y_dots);
+		_saver.Restore(0, 0, g_x_dots, g_y_dots);
 		g_has_inverse = save_has_inverse;
 	}
 
@@ -647,7 +609,7 @@ void JIIM::Execute()
 
 	if (s_windows == 0)
 	{
-		SaveRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
+		_saver.Save(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
 	}
 	else if (s_windows == WINDOWSIZE_WHOLE_SCREEN)  // leave the fractal
 	{
@@ -773,10 +735,10 @@ void JIIM::Execute()
 				&& g_row > s_window_corner_y
 				&& g_row < s_window_corner_y + s_window_dots_y)
 			{
-				RestoreRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
+				_saver.Restore(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
 				s_window_corner_x = (s_window_corner_x == s_window_dots_x*2) ? 2 : s_window_dots_x*2;
 				_xCenter = s_window_corner_x + s_window_dots_x/2;
-				SaveRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
+				_saver.Save(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
 			}
 			if (s_windows == WINDOWSIZE_WHOLE_SCREEN)
 			{
@@ -1048,7 +1010,7 @@ finish:
 		cursor::cursor_hide();
 		if (s_windows == 0)
 		{
-			RestoreRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
+			_saver.Restore(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
 		}
 		else if (s_windows == WINDOWSIZE_WHOLE_SCREEN || s_windows == WINDOWSIZE_HIDE_FRACTAL)
 		{
@@ -1064,16 +1026,16 @@ finish:
 			if (s_windows == WINDOWSIZE_HIDE_FRACTAL
 				&& s_window_dots_x == g_screen_width) // unhide
 			{
-				RestoreRect(0, 0, g_x_dots, g_y_dots);
+				_saver.Restore(0, 0, g_x_dots, g_y_dots);
 				s_windows = WINDOWSIZE_WHOLE_SCREEN;
 			}
 			cursor::cursor_hide();
 			save_has_inverse = g_has_inverse;
 			g_has_inverse = true;
-			SaveRect(0, 0, g_x_dots, g_y_dots);
+			_saver.Save(0, 0, g_x_dots, g_y_dots);
 			g_screen_x_offset = old_sx_offset;
 			g_screen_y_offset = old_sy_offset;
-			RestoreRect(0, 0, g_x_dots, g_y_dots);
+			_saver.Restore(0, 0, g_x_dots, g_y_dots);
 			g_has_inverse = save_has_inverse;
 		}
 	}
@@ -1083,10 +1045,7 @@ finish:
 #endif
 	delete[] g_line_buffer;
 	g_line_buffer = 0;
-	{
-		std::vector<BYTE> local;
-		s_rect_buff.swap(local);
-	}
+	_saver.Clear();
 
 	g_using_jiim = false;
 	g_calculate_type = old_calculate_type;
@@ -1281,7 +1240,7 @@ bool JIIM::ProcessKeyPress(int kbdchar)
 		else if (s_windows == WINDOWSIZE_HIDE_FRACTAL
 			&& s_window_dots_x == g_screen_width)
 		{
-			RestoreRect(0, 0, g_x_dots, g_y_dots);
+			_saver.Restore(0, 0, g_x_dots, g_y_dots);
 			s_windows = WINDOWSIZE_WHOLE_SCREEN;
 		}
 		break;
@@ -1323,7 +1282,7 @@ void JIIM::SizeWindow()
 		|| g_y_dots == g_screen_height
 		|| g_screen_width - g_x_dots < g_screen_width/3
 		|| g_screen_height - g_y_dots < g_screen_height/3
-		|| g_x_dots >= MAXRECT)
+		|| g_x_dots >= RectangleSaver::MAXRECT)
 	{
 		/* this mode puts orbit/julia in an overlapping window 1/3 the size of
 		the physical screen */
