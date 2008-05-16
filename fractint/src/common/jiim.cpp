@@ -249,17 +249,6 @@ bool Init_Queue(unsigned long request)
 		return false;
 	}
 
-#if 0
-	if (xmmquery() && g_debug_mode != DEBUGMODE_USE_DISK)  // use LARGEST extended mem
-	{
-		largest = xmmlongest();
-		if (largest > request/128)
-		{
-			request   = (unsigned long) largest*128L;
-		}
-	}
-#endif
-
 	for (s_list_size = request; s_list_size > 1024; s_list_size /= 2)
 	{
 		switch (disk_start_common(s_list_size*8, 1, 256))
