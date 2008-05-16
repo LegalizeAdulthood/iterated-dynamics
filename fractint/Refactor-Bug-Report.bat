@@ -1,36 +1,38 @@
 @echo off
 cd c:\data\id
 set dest=Bugs\%1
-mkdir "%dest%\common"
-mkdir "%dest%\headers"
-mkdir "%dest%\help"
+mkdir "%dest%"
+mkdir "%dest%\src"
+mkdir "%dest%\src\common"
+mkdir "%dest%\src\headers"
+mkdir "%dest%\src\help"
 mkdir "%dest%\maps"
-mkdir "%dest%\test\CppUnitLite"
-mkdir "%dest%\test\idTests"
-mkdir "%dest%\win32"
+mkdir "%dest%\src\test\CppUnitLite"
+mkdir "%dest%\src\test\idTests"
+mkdir "%dest%\src\win32"
 
-copy "ID.HLP" "%dest%" > nul:
+copy "src\ID.HLP" "%dest%\src" > nul:
 copy "id.sln" "%dest%" > nul:
-copy "id.vcproj" "%dest%" > nul:
-copy "sstools.ini" "%dest%" > nul:
-copy "unused.vcproj" "%dest%" > nul:
-copy "common\*.cpp" "%dest%\common\" > nul:
-copy "headers\*.h" "%dest%\headers\" > nul:
-copy "help\*.cpp" "%dest%\help\" > nul:
-copy "help\hc.vcproj" "%dest%\help\" > nul:
-copy "help\*.src" "%dest%\help\" > nul:
-copy "help\HELPDEFS.H" "%dest%\help\" > nul:
-copy "help\ID.HLP" "%dest%\help\" > nul:
-copy "maps\default.map" "%dest%\maps\" > nul:
-copy "test\CppUnitLite\CppUnitLite.vcproj" "%dest%\test\CppUnitLite\" > nul:
-copy "test\CppUnitLite\*.cpp" "%dest%\test\CppUnitLite\" > nul:
-copy "test\CppUnitLite\*.h" "%dest%\test\CppUnitLite\" > nul:
-copy "test\idTests\*.cpp" "%dest%\test\idTests\" > nul:
-copy "test\idTests\id-tests.vcproj" "%dest%\test\idTests\" > nul:
-copy "test\idTests\*.h" "%dest%\test\idTests\" > nul:
-copy "win32\Banner.bmp" "%dest%\win32\" > nul:
-copy "win32\*.cpp" "%dest%\win32\" > nul:
-copy "win32\*.h" "%dest%\win32\" > nul:
-copy "win32\FractInt.ico" "%dest%\win32\" > nul:
-copy "win32\fractint.rc" "%dest%\win32\" > nul:
-copy "win32\IteratedDynamicsSetup.vdproj" "%dest%\win32\" > nul:
+copy "src\id.vcproj" "%dest%\src" > nul:
+copy "src\sstools.ini" "%dest%\src" > nul:
+copy "src\unused.vcproj" "%dest%\src" > nul:
+copy "src\common\*.cpp" "%dest%\src\common\" > nul:
+copy "src\headers\*.h" "%dest%\src\headers\" > nul:
+copy "src\help\*.cpp" "%dest%\src\help\" > nul:
+copy "src\help\hc.vcproj" "%dest%\src\help\" > nul:
+copy "src\help\*.src" "%dest%\src\help\" > nul:
+copy "src\help\HELPDEFS.H" "%dest%\src\help\" > nul:
+copy "src\help\ID.HLP" "%dest%\src\help\" > nul:
+copy "src\maps\default.map" "%dest%\src\maps\" > nul:
+copy "src\test\CppUnitLite\CppUnitLite.vcproj" "%dest%\src\test\CppUnitLite\" > nul:
+copy "src\test\CppUnitLite\*.cpp" "%dest%\src\test\CppUnitLite\" > nul:
+copy "src\test\CppUnitLite\*.h" "%dest%\src\test\CppUnitLite\" > nul:
+copy "src\test\idTests\*.cpp" "%dest%\src\test\idTests\" > nul:
+copy "src\test\idTests\id-tests.vcproj" "%dest%\src\test\idTests\" > nul:
+copy "src\test\idTests\*.h" "%dest%\src\test\idTests\" > nul:
+copy "src\win32\Banner.bmp" "%dest%\src\win32\" > nul:
+copy "src\win32\*.cpp" "%dest%\src\win32\" > nul:
+copy "src\win32\*.h" "%dest%\src\win32\" > nul:
+copy "src\win32\FractInt.ico" "%dest%\src\win32\" > nul:
+copy "src\win32\fractint.rc" "%dest%\src\win32\" > nul:
+copy "src\win32\IteratedDynamicsSetup.vdproj" "%dest%\src\win32\" > nul:

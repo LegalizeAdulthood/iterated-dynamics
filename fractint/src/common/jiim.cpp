@@ -49,7 +49,8 @@ public:
 		_cReal(0.0),
 		_cImag(0.0),
 		_again(false),
-		_saver()
+		_saver(),
+		_secret_experimental_mode(SECRETMODE_RANDOM_WALK)
 	{
 	}
 	void Execute();
@@ -91,6 +92,7 @@ private:
 	double _cImag;
 	bool _again;
 	RectangleSaver _saver;
+	SecretMode _secret_experimental_mode;
 
 	bool UsesStandardFractalOrFrothCalc();
 	static void plot_color_clip(int x, int y, int color);
@@ -263,7 +265,6 @@ static long s_l_size;
 static long s_l_max;                    // how many in queue (now, ever)
 static int s_max_hits = 1;
 static bool s_ok_to_miim;
-static int s_secret_experimental_mode;
 static float s_lucky_x = 0;
 static float s_lucky_y = 0;
 
@@ -832,7 +833,7 @@ void JIIM::Execute()
 
 				g_new_z.imag(std::sqrt(std::abs((r - g_old_z.real())/2)));
 
-				switch (s_secret_experimental_mode)
+				switch (_secret_experimental_mode)
 				{
 				case SECRETMODE_RANDOM_WALK:                     // unmodified random walk
 				default:
@@ -1255,7 +1256,7 @@ bool JIIM::ProcessKeyPress(int kbdchar)
 	case '9':
 		if (!_orbits)
 		{
-			s_secret_experimental_mode = kbdchar - '0';
+			_secret_experimental_mode = SecretMode(kbdchar - '0');
 			break;
 		}
 	default:
