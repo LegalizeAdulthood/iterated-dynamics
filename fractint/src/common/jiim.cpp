@@ -15,6 +15,7 @@
 #include "fractype.h"
 
 #include "calcfrac.h"
+#include "CirclePlotter.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "editpal.h"
@@ -33,11 +34,12 @@
 #include "TextColors.h"
 #include "ViewWindow.h"
 
-class JIIM
+class JIIM : public IPlotter
 {
 public:
 	JIIM(bool which)
-		: _orbits(which),
+		: IPlotter(),
+		_orbits(which),
 		_exact(false),
 		_mode(JIIM_PIXEL),
 		_xCenter(0),
@@ -50,9 +52,10 @@ public:
 		_cImag(0.0),
 		_again(false),
 		_saver(),
-		_secret_experimental_mode(SECRETMODE_RANDOM_WALK)
-	{
-	}
+		_secret_experimental_mode(SECRETMODE_RANDOM_WALK),
+		_circle_plotter(*this)
+	{ }
+	virtual ~JIIM() { }
 	void Execute();
 	void WriteCoordinatesOnScreen(bool &actively_computing);
 	void UpdateColumnRow();
@@ -78,6 +81,13 @@ private:
 		JIIM_CIRCLE = 1,
 		JIIM_LINE = 2
 	};
+	enum WindowSize
+	{
+		WINDOWSIZE_FULL_SCREEN = 0,
+		WINDOWSIZE_NO_OVERLAP = 1,
+		WINDOWSIZE_WHOLE_SCREEN = 2,
+		WINDOWSIZE_HIDE_FRACTAL = 3
+	};
 
 	bool _orbits;
 	bool _exact;
@@ -93,26 +103,21 @@ private:
 	bool _again;
 	RectangleSaver _saver;
 	SecretMode _secret_experimental_mode;
+	CirclePlotter _circle_plotter;
 
-	bool UsesStandardFractalOrFrothCalc();
-	static void plot_color_clip(int x, int y, int color);
-	static void circle_plot(int x, int y, int color);
-	static void plot8(int x, int y, int color);
-	static void circle(int radius, int color);
-	static int c_getcolor(int x, int y);
 	static int s_show_numbers;					// toggle for display of coords
-	enum WindowSize
-	{
-		WINDOWSIZE_FULL_SCREEN = 0,
-		WINDOWSIZE_NO_OVERLAP = 1,
-		WINDOWSIZE_WHOLE_SCREEN = 2,
-		WINDOWSIZE_HIDE_FRACTAL = 3
-	};
 	static WindowSize s_windows;				// windows management system
 	static int s_window_corner_x;
 	static int s_window_corner_y;				// corners of the window
 	static int s_window_dots_x;
 	static int s_window_dots_y;					// dots in the window
+
+	bool UsesStandardFractalOrFrothCalc();
+	virtual void plot(int x, int y, int color)
+	{ plot_color_clip(x, y, color); }
+
+	static void plot_color_clip(int x, int y, int color);
+	static int c_getcolor(int x, int y);
 };
 
 int JIIM::s_show_numbers = 0;
@@ -123,30 +128,6 @@ int JIIM::s_window_dots_x;
 int JIIM::s_window_dots_y;
 
 StdComplexD g_julia_c(BIG, BIG);
-
-// circle routines from Dr. Dobbs June 1990
-static int s_x_base;
-static int s_y_base;
-static unsigned int s_x_aspect;
-static unsigned int s_y_aspect;
-
-static void SetAspect(double aspect)
-{
-	s_x_aspect = 0;
-	s_y_aspect = 0;
-	aspect = std::abs(aspect);
-	if (aspect != 1.0)
-	{
-		if (aspect > 1.0)
-		{
-			s_y_aspect = (unsigned int)(65536.0/aspect);
-		}
-		else
-		{
-			s_x_aspect = (unsigned int)(65536.0*aspect);
-		}
-	}
-}
 
 void JIIM::plot_color_clip(int x, int y, int color)
 {
@@ -190,64 +171,6 @@ int JIIM::c_getcolor(int x, int y)
 	}
 	return get_color(x, y);
 }
-
-void JIIM::circle_plot(int x, int y, int color)
-{
-	if (s_x_aspect == 0)
-	{
-		if (s_y_aspect == 0)
-		{
-			plot_color_clip(x + s_x_base, y + s_y_base, color);
-		}
-		else
-		{
-			plot_color_clip(x + s_x_base, short(s_y_base + ((long(y)*long(s_y_aspect)) >> 16)), color);
-		}
-	}
-	else
-	{
-		plot_color_clip(int(s_x_base + ((long(x)*long(s_x_aspect)) >> 16)), y + s_y_base, color);
-	}
-}
-
-void JIIM::plot8(int x, int y, int color)
-{
-	circle_plot(x, y, color);
-	circle_plot(-x, y, color);
-	circle_plot(x, -y, color);
-	circle_plot(-x, -y, color);
-	circle_plot(y, x, color);
-	circle_plot(-y, x, color);
-	circle_plot(y, -x, color);
-	circle_plot(-y, -x, color);
-}
-
-void JIIM::circle(int radius, int color)
-{
-	int x;
-	int y;
-	int sum;
-
-	x = 0;
-	y = radius << 1;
-	sum = 0;
-
-	while (x <= y)
-	{
-		if (!(x & 1))   // plot if x is even
-		{
-			plot8(x >> 1, (y + 1) >> 1, color);
-		}
-		sum += (x << 1) + 1;
-		x++;
-		if (sum > 0)
-		{
-			sum -= (y << 1) - 1;
-			y--;
-		}
-	}
-}
-
 
 /*
  * MIIM section:
@@ -564,7 +487,7 @@ void JIIM::Execute()
 	g_line_buffer = new BYTE[std::max(g_screen_width, g_screen_height)];
 	double aspect = (double(g_x_dots)*3)/(double(g_y_dots)*4);  // assumes 4:3
 	bool actively_computing = true;
-	SetAspect(aspect);
+	_circle_plotter.SetAspect(aspect);
 	MouseModeSaver saved_mouse(LOOK_MOUSE_ZOOM_BOX);
 
 	int color;
@@ -896,9 +819,8 @@ void JIIM::Execute()
 						}
 						else if (_mode & JIIM_CIRCLE)
 						{
-							s_x_base = x;
-							s_y_base = y;
-							circle(int(_zoom*(s_window_dots_x >> 1)/iter), color);
+							_circle_plotter.SetBase(x, y);
+							_circle_plotter.circle(int(_zoom*(s_window_dots_x >> 1)/iter), color);
 						}
 						if ((_mode & JIIM_LINE) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
 						{
@@ -988,9 +910,8 @@ void JIIM::Execute()
 			}
 			else if (_mode & JIIM_CIRCLE)
 			{
-				s_x_base = x;
-				s_y_base = y;
-				circle(int(_zoom*(s_window_dots_x >> 1)/iter), color);
+				_circle_plotter.SetBase(x, y);
+				_circle_plotter.circle(int(_zoom*(s_window_dots_x >> 1)/iter), color);
 			}
 			if ((_mode & JIIM_LINE) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
 			{

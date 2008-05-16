@@ -1393,6 +1393,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\CirclePlotter.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\FileNameGetter.cpp"
 					>
 				</File>
@@ -1878,6 +1882,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\BigWhileLoopImpl.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\CirclePlotter.h"
 					>
 				</File>
 				<File
