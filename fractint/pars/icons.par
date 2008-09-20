@@ -1,0 +1,323 @@
+Sand_Dollar        {
+  reset type=icons corners=-1.424/1.424/-1.068/1.068
+  params=-2.34/2/0.2/0.1/0.0/5 float=y inside=0 
+  colors=000ypa<29>UPF000<4>888000BBB<23>ppp<31>000PFF<27>vcDwdDxeDzfCyfCxeC<2\
+  0>_NE
+  }
+
+Sand_Dollar_3d     {
+  reset type=icons3d corners=-2.242152/2.242152/-1.681614/1.681614
+  params=-2.34/2/0.2/0.1/0.0/5 inside=0 maxiter=32767 rotation=0/0/0
+  perspective=180 xyshift=0/0 stereo=2 interocular=3 converge=-3
+  crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+Sand_Dollar_3d_II  { ; Rotated view
+  reset type=icons3d corners=-2.134489/2.036423/-1.519231/1.608953
+  params=-2.34/2/0.2/0.1/0.0/5 maxiter=32767 inside=0
+  rotation=90/45/270 perspective=180 xyshift=0/0 stereo=2 interocular=3
+  converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+Halloween          {
+  reset type=icons corners=-1.0496/1.0496/-0.7872/0.7872
+  params=-2.7/5/1.5/1/0.0/6 float=y inside=0
+  colors=000TgsSfsSestYS<3>zvErMY<39>fZEqMY<32>FUyrMY<62>0V4rMYqNXqNW
+  }
+
+Halloween3d        {
+  reset type=icons3d corners=-2.0/2.0/-1.5/1.5
+  params=-2.7/5/1.5/1/0.0/6 inside=0
+  maxiter=32767 rotation=0/0/0
+  perspective=180 xyshift=0/0 stereo=2 interocular=3 converge=-3
+  crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+Mayan_Bracelet     {
+  reset type=icons corners=-1.712/1.712/-1.284/1.284
+  params=-2.08/1/-0.1/0.167/0.0/7  float=y inside=0 
+  colors=000dOD<6>ii0d8P<2>sQNZ4PX6OX9QV8N<10>9SD<6>UHPY9M<7>TIIbCN<2>icE`7O<1\
+  2>Xw5`3O<9>W56a5Q<11>naa_4Q<19>BTr`3P<22>ULI`5R<11>gXta5P<5>hJP
+  }
+
+Mayan_Bracelet3d  {
+  reset type=icons3d corners=-2.55102/2.55102/-1.913265/1.913265
+  params=-2.08/1/-0.1/0.167/0.0/7  maxiter=32767 inside=0 rotation=0/0/0
+  perspective=180 xyshift=0/0 stereo=2 interocular=3 converge=-3
+  crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+Mayan_Brac_3d_II   { ; Rotated version
+  reset type=icons3d corners=-2.064835/1.935164/-1.789359/1.21064
+  params=-2.08/1/-0.1/0.167/0.0/7  maxiter=32767 inside=0
+  rotation=-60/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
+  converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+Emperors_Cloak     {
+  reset type=icons corners=-1.064/1.064/-0.798/0.798
+  params=-1.806/1.806/0/1/0.0/3 inside=0
+  }
+
+Emperors_Cloak3d   {
+  reset type=icons3d corners=-2.045102/1.555646/-1.35028/1.35028
+  params=-1.806/1.806/0/1/0/3 maxiter=32767 inside=0 rotation=0/0/0
+  perspective=180 xyshift=0/0 stereo=2 interocular=3 converge=-4
+  crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+Trampoline         {
+  reset type=icons corners=-1.64/1.64/-1.23/1.23 
+  params=1.56/-1/0.1/-0.82/0.0/3
+  float=y inside=0
+  colors=0001O4<2>1F0KF1<6>hZ0<6>OI0KF0F0F<6>Z0U<7>F0FKF0<6>hZ0<7>KF000A<6>00k\
+  <7>00AA00<6>z00<7>A00<6>2r00z00u0<7>0A0<6>eXU<7>0A0AKK<6>mmK<7>AKMFF0<6>zz0<\
+  7>FF0F00M01
+  }
+
+Trampoline3d       {
+  reset type=icons3d corners=-2.1935/2.1935/-1.645125/1.645125
+  params=1.56/-1/0.1/-0.82/0.0/3 inside=0 float=y maxiter=32767
+  rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
+  converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+Pentagon_Attractor {
+  reset type=icons corners=-1.64/1.64/-1.23/1.23 params=2.6/-2/0/-0.5/0.0/5
+  float=y inside=0
+  colors=000AGe<3>8NtDEE<2>4s`M4F<4>xLtF28<19>IScJUeH17<4>W1BI2B<9>qDuG38<14>c\
+  g`K67<5>qe2F58<3>IPCBwNG48<14>_yUG18<10>U1PG28<21>n`_F39<14>Mbk
+  }
+
+Pentagon_Attract3d {
+  reset type=icons3d corners=-2.841922/2.841922/-2.131441/2.131441
+  params=2.6/-2/0/-0.5/0.0/5  float=y maxiter=32767 inside=0
+  rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
+  converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+Kachina_Dolls      {
+  reset type=icons corners=-1.28/1.28/-0.96/0.96 
+  params=2.409/-2.5/0/0.9/0.0/23 float=y inside=0 
+  colors=000JYA<9>DTC_l7<40>7jkck7<4>weCUb8OT9IIB_l7<72>gK5_l7<12>bhE
+  }
+
+Kachina_Dolls3d    {
+  reset type=icons3d corners=-2.182691/2.182691/-1.637018/1.637018
+  params=2.409/-2.5/0/0.9/0.0/23  float=y maxiter=32767 inside=0 
+  rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
+  converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+Santa_Chiara_Icon  {
+  reset type=icons corners=-1.28/1.28/-0.96/0.96
+  params=2.409/-2.5/-0.2/0.81/0.0/24  float=y inside=0 
+  colors=000UFL<26>z00MKS<7>sCMLKP<6>fQ2FNX<3>3_tIKS<36>dLXIKS<27>JHqKKT<11>qW\
+  eIKS<18>D_S
+  }
+
+Santa_Chiara3d     {
+  reset type=icons3d corners=-2.931235/1.170054/-2.283148/0.784799
+  params=2.409/-2.5/-0.2/0.81/0.0/24  float=y maxiter=32767 inside=0
+  rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2
+  interocular=3 converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+French_Glass       {
+  reset type=icons corners=-0.992/0.992/-0.744/0.744
+  params=-2.05/3/-16.79/1/0.0/9  float=y inside=0 
+  colors=000VK`<75>w7Fw7Fw8F<70>qbQ
+  }
+
+French_Glass3d     {
+  reset type=icons3d corners=-1.478161/1.478161/-1.108621/1.108621
+  params=-2.05/3/-16.79/1/0.0/9 float=y maxiter=32767 inside=0
+  rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
+  converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+The_Pentangle      {
+  reset type=icons corners=-1.352/1.352/-1.014/1.014
+  params=-2.32/2.32/0/0.75/0.0/5  float=y inside=0 
+  colors=000AOf<22>I81AOg<16>4RvBOg<28>djZARc<7>Eu4BOg<27>g4dCOg<5>TMkANf<14>H\
+  7HBOg<15>WV`
+  }
+
+The_Pentangle3d    {
+  reset type=icons3d corners=-2.155172/2.155172/-1.616379/1.616379
+  params=-2.32/2.32/0/0.75/0.0/5  float=y maxiter=32767 inside=0 
+  rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
+  converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+Fuzzy_Hex_Knot     { ; Have patience.  This one takes a while!
+                     ; By DMF
+  reset type=icons corners=-1.371568/1.371568/-1.028676/1.028676
+  params=-1.806/1.807/-0.07/1.08/0.0/6  float=y
+  inside=0 colors=0005BD<148>cWHccc<103>ccc
+  }
+
+Fuzzy_Hex_Knot3d   { ; By DMF
+                     ; Have patience.  It's slow!
+  reset type=icons3d corners=-1.648964/1.648964/-1.236723/1.236723
+  params=-1.806/1.807/-0.07/1.08/0.0/6 float=y maxiter=32767 inside=0
+  rotation=0/0/0 perspective=180 xyshift=0/0
+  stereo=2 interocular=3 converge=-3 crop=4/0/0/4 bright=100/100
+  colors=@glasses2.map
+  }
+
+Square             { ; By DMF
+  reset type=icons corners=-0.948083/0.948083/-0.711062/0.711062
+  params=-2.7/5/1.5/1/0.0/4  float=y inside=0 
+  colors=000JYA<9>DTC_l7<40>7jkck7<4>weCUb8OT9IIB_l7<72>gK5_l7<12>bhE
+  }
+
+Square3d           { ; By DMF
+  reset type=icons3d corners=-1.801941/1.801941/-1.351455/1.351455
+  params=-2.7/5/1.5/1/0.0/4  float=y maxiter=32767 inside=0 
+  rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
+  converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+12_Spoke_Wheel     { ; By DMF
+  reset type=icons corners=-1.157312/1.157312/-0.867984/0.867984
+  params=-2.6/4/1.5/1/0.0/12 inside=0
+  colors=000LXt<13>JesONt<13>r3iMOr<18>CdELOs<18>1DZMOs<28>FKRUXsberMOt<39>M9v\
+  N8wMOt<4>QTq
+  }
+
+12_Spoke_Wheel3d   { ; By DMF
+  reset type=icons3d corners=-2.1125/2.1125/-1.584375/1.584375
+  params=-2.6/4/1.5/1/0.0/12  maxiter=32767 inside=0 
+  rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
+  converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+36_Spoke_Wheel     { ; By DMF
+                     ; Takes quite a while to fully "develop"
+  reset type=icons corners=-1.352/1.352/-1.014/1.014
+  params=-2.57/3.2/1.2/-1.75/0.0/36  float=y inside=0 
+  colors=000mP6<2>rS4NED<2>291UFH<25>Q2vUFG<27>K2MTGH<3>POLVGGOQM<15>5tc<17>xm\
+  K<31>cq9<10>0WM0VM0UN
+  }
+
+36_Spoke_Wheel3d   { ; By DMF
+                     ; Takes quite a while to fully "develop"
+  reset type=icons3d corners=-2.183546/2.183546/-1.637659/1.637659
+  params=-2.57/3.2/1.2/-1.75/0.0/36 float=y maxiter=32767 inside=0
+   rotation=0/0/0 perspective=180 xyshift=0/0
+  stereo=2 interocular=3 converge=-3 crop=4/0/0/4 bright=100/100
+  colors=@glasses2.map
+  }
+
+Champagne_Glasses  { ; By DMF
+  reset type=icons corners=-1.352/1.352/-1.014/1.014
+  params=-2.57/3.2/1.35/1.75/0.0/12 float=y maxiter=256 inside=0 
+  colors=000lSJ<47>tYxkRA<15>xJYkR9<85>h4FkR9<37>rS8kR9<50>MmEkR9MmE<8>HqF
+  }
+
+Champagne_Glass3d  { ; By DMF
+  reset type=icons3d corners=-2.11155/2.11155/-1.583662/1.583662
+  params=-2.57/3.2/1.35/1.75/0.0/12  float=y maxiter=32767 inside=0
+  rotation=0/0/0 perspective=180 xyshift=0/0
+  stereo=2 interocular=3 converge=-3 crop=4/0/0/4 bright=100/100
+  colors=@glasses2.map
+  }
+
+Orgami             { ; By DMF
+  reset type=icons corners=-1.568/1.568/-1.176/1.176
+  params=2.409/-2.5/0/0.9/0.0/4 float=y inside=0
+  colors=000U0U<7>M0Mz00<40>M00zz0<40>MM00z0<40>0M000z<13>00l
+  }
+
+Orgami_3d          { ; By DMF
+  reset type=icons3d corners=-2.600703/2.600703/-1.950528/1.950528
+  params=2.409/-2.5/0/0.9/0.0/4 maxiter=32767 inside=0 
+  rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
+  converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
+  }
+
+Two_Triangles      { ; By DMF
+  reset type=icons corners=-1.342208/1.342208/-1.006656/1.006656
+  params=2.4/-2.5/-0.9/0.9/0.0/3 float=y inside=0 
+  colors=000VQ7<59>9Y_VQ8<33>7FyVQ7<38>mVUUP7<12>AA5
+  }
+
+Two_Triangles3d    { ; By DMF
+  reset type=icons3d corners=-2.366346/2.196342/-1.711008/1.711008
+  params=2.4/-2.5/-0.9/0.9/0.0/3 float=y maxiter=32767 inside=0
+  rotation=0/0/0 perspective=180 xyshift=0/0
+  stereo=2 interocular=3 converge=-3 crop=4/0/0/4 bright=100/100
+  colors=@glasses2.map
+  }
+
+Christmas_Bow      { ; By DMF
+  reset type=icons corners=-1.352/1.352/-1.014/1.014
+  params=-2.34/2.2/0.4/0.05/0.0/5 float=y maxiter=32767 inside=0 
+  colors=000bcj<4>fkqI6M<4>3KsIBE<2>CZ8K4G<3>J4FJ4EL5G<26>oe6qg5tk4wn3zr2K6G<2\
+  5>iu8K4Izzz<16>zzzK4H<26>WSjK5G<23>Y_OK5H<25>glvH4HD4I94KL6G<8>VOFL5G<19>vX9\
+  M5I<15>qQuK5H<22>abi
+  }
+
+Christmas_Bow3d    { ; By DMF
+  reset type=icons3d corners=-2.269619/2.269619/-1.702214/1.702214
+  params=-2.34/2.2/0.4/0.05/0.0/5 float=y maxiter=32767 inside=0
+   rotation=0/0/0 perspective=180 xyshift=0/0
+  stereo=2 interocular=3 converge=-3 crop=4/0/0/4 bright=100/100
+  colors=@glasses2.map
+  }
+
+Penti_ummm?        {
+  reset type=icons corners=-0.742016/0.742016/-0.556512/0.556512
+  params=-2.5/8/-0.7/1/0.0/5 float=y inside=0 
+  colors=000Aca9_b8VcU5V<16>L9MP3SF3I538_4`<11>lGcZ4`<38>xfQ_5_<15>xgJZ4`<20>Y\
+  dOXfNZ4`<23>lXqY4`<6>PIV
+  }
+
+French_Glass3d_II  { ; Awesome! Closeup of French_Glass_3d!!
+                     ; Let run "full term" for best effect.
+  reset type=icons3d corners=-0.520313/0.520313/-0.390235/0.390235
+  params=-2.05/3/-16.79/1/0.0/9  float=y maxiter=32767 inside=0 
+  rotation=-90/0/0 perspective=180 xyshift=0/0
+  stereo=2 interocular=3 converge=-3 crop=4/0/0/4 bright=100/100
+  colors=@glasses2.map
+  }
+
+Warriors_Shield    { ; By DMF
+  reset type=icons corners=-1.064/1.064/-0.798/0.798
+  params=-1.806/1.806/0/1.5/0.0/7 float=y inside=0 
+  colors=000zX0<42>z10z00z00y01<82>00z00z11y<17>EEk
+  }
+
+Pendulum_Swing     { ; By DMF
+                     ; Slow.  Have patience.
+  reset type=icons corners=-1.242991/1.242991/-0.932243/0.932243
+  params=-1.9/1.806/-0.85/1.8/0.0/7  float=y inside=0 
+  colors=000BDQ<17>DBV9FF<27>G289FF<16>HKHBJGIKI<8>MNJ9FF<71>fnZ
+  }
+
+Clam_Triple        { ; Figure 1.8 in "Symmetry in Chaos"
+  reset=1732 type=icons corners=-1.712/1.712/-1.186216/1.381784
+  params=1.56/-1/0.1/-0.82/0.1/3  float=y inside=0
+  colors=000z00<82>zy0zz0zz0zz1<82>zzzzzzzyy<82>z00
+  }
+
+Chaotic_Flower     {
+  reset=1732 type=icons corners=-0.949088/0.949088/-0.711816/0.711816
+  params=-2.5/5/-1.9/1/0.2/5  float=y inside=0
+  colors=00000z<83>0z00z01z1<82>zzzzzzyyz<82>00z
+  }
+
+Wingz              {
+  reset type=icons center-mag=-6.26166e-14/-0.161292/0.782258
+  params=1.56/-1/0.1/-0.82/-0.3/3  float=y inside=0
+  colors=000ZBD<31>_Ua`VbZ9B<33>uGpZ9B<38>o6sZ9B<25>GHjgFMpLYySjZAA<39>VxN\
+  Z9A<32>AE2_BB<9>qVPZ9C<17>SMpZAAaGAZBB<7>`MH
+  }
+
+test               {
+  reset=1732 type=icons corners=-2.0/2.0/-1.5/1.5 params=1/2/3/4/5.0/6
+  float=y inside=0
+  colors=00000z<83>0z00z01z1<82>zzzzzzyyz<82>00z
+  }
+

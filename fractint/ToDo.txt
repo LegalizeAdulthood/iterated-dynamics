@@ -1,0 +1,159 @@
+This file contains a list of things that are on the "To Do" list of
+the fractint development team, practiced in the true Stone Soup
+tradition.  Any item on this list is up for grabs and you are
+encouraged to use this as a starting point for your fractint
+contributions!
+
+This document is arranged by the functional area within fractint.  The
+functional areas are listed in alphabetical order with each idea
+that's been suggested for improving the various sections.
+
+This file last updated May 10th, 1999
+
+3D Support
+----------
+- Provide a way to plug-in a 3D driver by name; platform support
+  determines what drivers are available.  Fractint "native" 3D support
+  available on all platforms.
+- Add arcball for iteractive manipulation of 3D viewing parameters
+  (interactively manipulate viewed object by its bounding box)
+
+Arbitrary Precision
+-------------------
+- Extend arbitrary precision arithmetic to other fractal types, most
+  notably formula types
+- Allow arbitrary precision values to be entered into text field boxes
+  and PAR files
+
+Deep Color Support
+------------------
+- 24-bit color modes
+- 32-bit color modes (RGB plus alpha)
+- PNG 24/32-bit output/input
+- Coloring pixels by formulas
+- Texture mapping (probably best integrated into formula coloring)
+
+Formula Parser
+--------------
+- Add type information for expressions and variables
+- Add remainder (modulus) operator/function
+- Make C versions of corresponding assembly functions more efficient
+  (reduce function call overhead, apply optimizations)
+- Provide a way to perform user-defined computations once per-image
+- Provide a way to define and call named user functions like regular
+  functions
+- Generalize the functions (user-defined) defaults and incorporate
+  this in the formula parser and related areas.
+- Extend the parser support to deal w/ orbits (orbit-like fractals)
+
+Fractal Types
+-------------
+- Add 2D cellular automata
+- Add continuously valued automata, a la CAPOW
+- Various 3D fractal types that could be added
+- Volume rendered fractal types (3D projection of quaternion julia set)
+- dL-systems (need more research first)
+- HIFS (Hierachical IFS) seems easy.
+
+Fractal Types: Cellular
+-------------
+- Extend 1D cellular automata types beyond existing totalistic automata
+
+Help Files
+----------
+- Add formula tutorial
+- Add formula coloring methods tutorial
+- Add color editor tutorial
+- Add support to the help compiler for generating postscript / PDF /
+  HTML output.
+- Add support for inlined images in help browser (initially present
+  only in PS/PDF/HTML versions)
+
+Image Computation
+-----------------
+- Provide anti-aliasing support directly (requires deep color)
+- Synchronous Orbits Iteration
+- Gamma correction
+
+Image I/O
+---------
+- Provide PNG support for both 8-bit and deeper video modes; handle
+  gamma correction properly on output
+
+Map Files
+---------
+- Gamma correction
+
+Miscellaneous
+-------------
+- Space mappings (maybe using the parser also) like generalizations to
+  inversion but allowing any distortion/mapping to be applied.
+- Support to plot grids, axes, scales, color scales, legends etc. to
+  illustrate the images onscreen
+- Support fot HSB/HLS color models.
+- Distributed/collaborative computing of fractals over the network.
+
+
+Platform Support
+----------------
+- Create "fractint GUI API" that abstracts out fractint's ideas of
+  dialogs, text boxes, number boxes, keyboard navigation of dialogs,
+  etc., so that ports to other windowing systems are more readily
+  accomplished from the same body of source code a la xfractint/fractint
+  as opposed to the completely native port of winfract (which lags);
+  this will abstract out the interface from the computation engine,
+  which enhances portablity (something fractint sorely lacks) to other
+  platforms and also makes it easy to reuse fractint's compute engine.
+- Support for generalizing the assembly code to other architectures
+  such as 68k, MIPS, etc., by segregating assembly code into
+  architecture specific directories and integrating xfractint C
+  emulation of assembly routines for all other architectures.
+- Support "video modes" by name/number/capability rather than by
+  function key assignment.  Since video modes vary by platform, and
+  even on the same platform they can vary from user to user, a way of
+  specifying the video mode in terms of its capability is needed.
+  Something like video=x-res/y-res/depth, i.e. video=640/480/8.  In a
+  windowed environment, the video "mode" is used to guide window size,
+  palette emulation, etc.
+
+Platform Support: DOS
+---------------------
+- Eliminate overlays / move to 32-bit flat address space DOS protected
+  mode app (gives up 286 support)
+- Option for displaying dialogs and text screens in graphics video
+  mode with image save/restore; eliminates switching back and forth
+  from text mode to graphics mode, saving wear and tear on monitors
+- port code to DOS version of "fractint GUI API"
+- Improve performance of native DOS 3D driver
+- Compute an image larger than the screen resolution and allow panning
+  through the larger image by the screen.
+
+Platform Support: Win95/NT
+--------------------------
+- Win32 port
+- long filename problems?
+- DirectX support?
+- 3D drivers: Direct3D / OpenGL
+- animation support? (AVI, MPEG, etc.)
+
+Platform Support: unix/X
+------------------------
+- Visual selection assumed root is 8-bit psuedocolor; improve to
+  select appropriate visual for requested video mode (could be 24-bit
+  with deep color support)
+- Eliminate use of curses and xterm in favor of native X-based text
+  windows
+- Fix function key support (probably a free side-effect of previous item)
+- Use Xt for interface components of "fractint GUI API"
+- 3D drivers: OpenGL, PEX, native X
+- Generate /bin/sh scripts instead of MS-DOS bat files for "b" command
+- long filename problems?
+
+Platform Support: Mac/Amiga/BeOS/NeXT/other
+-------------------------------------------
+- Someone needs to do the port! :)
+
+Zoom Box
+--------
+- Use XaoS like techniques to speedup the zoom box and/or initialize
+  the screen from the zoomed section.

@@ -1,0 +1,8 @@
+"CC=cl /Gs /DC6 /AM /c /Zpe /W3"
+"AS=masm /ML /W3"
+LINKER=link
+C7=YES
+OptS=/Osleazc
+OptT=/Oeciltaz
+OptN=/Oilc
+

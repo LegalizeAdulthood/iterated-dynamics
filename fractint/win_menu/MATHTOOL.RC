@@ -1,0 +1,25 @@
+#include "mathtool.h"
+
+MathToolIcon ICON mathtool.ico
+
+#include "coord.dlg"
+#include "zoom.dlg"
+
+MathToolsMenu   MENU
+BEGIN
+   MENUITEM    "E&xit",          IDM_EXIT
+
+   POPUP      "&Image"
+   BEGIN
+      MENUITEM    "&Grid Map",   IDM_MT_GRID
+      MENUITEM    "&Load Image", IDM_MT_LOAD
+      MENUITEM    "&Save Image", IDM_MT_SAVE
+   END
+
+   POPUP       "&Boxes"
+   BEGIN
+      MENUITEM    "&Coordinate Box",   IDM_MT_COORD
+      MENUITEM    "&Point Info",       IDM_MT_POINT_INFO
+   END
+
+END
