@@ -1,0 +1,127 @@
+; boilerplate header stuff
+
+NAME		Fractint
+DESCRIPTION	'Fractint for DOS'
+EXETYPE		DOS
+
+; The basics:  The main code and video sections
+
+SEGMENTS	fractint_text ovl:0
+SEGMENTS	general_text  ovl:0
+SEGMENTS	video_text    ovl:0
+SEGMENTS	sound_text    ovl:0
+
+; core fractal-generating routines (in the root segment for speed)
+
+SEGMENTS	calcfrac_text ovl:0
+SEGMENTS	fractals_text ovl:0
+SEGMENTS	fractalb_text ovl:0
+
+; commonly used math routines (in the root segment for speed)
+
+SEGMENTS	fpu087_text   ovl:0
+SEGMENTS	fpu387_text   ovl:0
+SEGMENTS	mpmath_c_text ovl:0
+SEGMENTS	mpmath_a_text ovl:0
+
+; specialized video routines (which could be in overlays if needs be)
+
+SEGMENTS	diskvid_text ovl:61
+SEGMENTS	fr8514a_text ovl:62
+SEGMENTS	hgcfra_text ovl:63
+SEGMENTS	tplus_text ovl:64
+SEGMENTS	tplus_a_text ovl:65
+SEGMENTS	targa_text ovl:67
+SEGMENTS	tgaview_text ovl:68
+SEGMENTS	f16_text ovl:69
+
+; commonly-used 3D routines (which could be in overlays if needs be)
+
+SEGMENTS	plot3d_text ovl:40
+SEGMENTS	$3d_text ovl:40
+
+; now the overlays start: hopefully, nothing runs *too* slowly...
+
+SEGMENTS	cmdfiles_text ovl:1
+
+SEGMENTS	help_text ovl:2
+SEGMENTS	intro_text ovl:3
+
+SEGMENTS	prompts1_text ovl:4
+SEGMENTS	prompts2_text ovl:5
+SEGMENTS	prompts3_text ovl:0
+
+SEGMENTS	gifview_text ovl:6
+SEGMENTS	decoder_text ovl:6
+
+SEGMENTS	encoder_text ovl:7
+
+SEGMENTS	slideshw_text ovl:8
+
+SEGMENTS	loadfile_text ovl:9
+SEGMENTS	loadfdos_text ovl:9
+
+SEGMENTS	line3d_text ovl:10
+
+SEGMENTS	rotate_text ovl:11
+SEGMENTS	editpal_text ovl:11
+
+SEGMENTS	printer_text ovl:12
+
+SEGMENTS	miscovl_text ovl:13
+
+SEGMENTS	zoom_text ovl:14
+
+SEGMENTS	miscres_text ovl:15
+SEGMENTS	realdos_text ovl:0
+SEGMENTS	realdos1_text ovl:16
+
+SEGMENTS	biginit_text ovl:41
+SEGMENTS	bigflt_text ovl:0
+SEGMENTS	bigflt1_text ovl:42
+SEGMENTS	bignum_text ovl:0
+SEGMENTS	bignum1_text ovl:43
+SEGMENTS	bigsetup_text ovl:44
+SEGMENTS        bignuma_text ovl:0
+;SEGMENTS       bignumc_text ovl:0
+
+SEGMENTS	loadmap_text ovl:17
+SEGMENTS	stereo_text ovl:18
+
+; fractal-specific routines, each in its own overlay.
+
+SEGMENTS	fracsubr_text ovl:19
+SEGMENTS	uclock_text    ovl:19
+SEGMENTS	calcmand_text ovl:20
+SEGMENTS	calmanfp_text ovl:21
+SEGMENTS	calmanp5_text ovl:0
+SEGMENTS	testpt_text ovl:22
+SEGMENTS	jiim_text ovl:23
+SEGMENTS	parser_text ovl:0
+SEGMENTS	parser1_text ovl:24
+SEGMENTS	parsera_text ovl:0
+SEGMENTS	parserfp_text ovl:24
+SEGMENTS	lsys_text ovl:25
+SEGMENTS	lsysa_text ovl:25
+SEGMENTS	lsysf_text ovl:25
+SEGMENTS	lsysaf_text ovl:25
+SEGMENTS	lorenz_text ovl:26
+SEGMENTS	jb_text ovl:27
+SEGMENTS	hcmplx_text ovl:28
+SEGMENTS	newton_text ovl:29
+SEGMENTS	lyapunov_text ovl:30
+SEGMENTS	miscfrac_text ovl:30
+SEGMENTS	yourvid_text ovl:31
+SEGMENTS	frasetup_text ovl:32
+SEGMENTS	framain2_text ovl:33
+SEGMENTS	calcfra1_text ovl:45
+SEGMENTS	ant_text ovl:46
+SEGMENTS	mpmath1_text ovl:47
+SEGMENTS	memory_text ovl:48
+SEGMENTS	evolve_text ovl:49
+SEGMENTS	soi_text ovl:50
+SEGMENTS	soi1_text ovl:51
+SEGMENTS	soi2_text ovl:52
+SEGMENTS	soi3_text ovl:53
+SEGMENTS	fractalp_text ovl:0
+

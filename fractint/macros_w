@@ -1,0 +1,8 @@
+"CC=cl /DWINFRACT /AM /Gw /c /Zpe /W3"
+"AS=masm /ML /W3"
+LINKER=link
+C7=YES
+OptS=/Osleazc
+"OptT=/Oeciltaz /Ob2"
+OptN=/Oilc
+

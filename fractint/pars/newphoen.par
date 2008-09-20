@@ -1,0 +1,23 @@
+mandphoenixclx1    { ; by Jonathan Osuch
+  reset=1822 type=mandphoenixclx
+  corners=-0.291827917/-0.281810939/0.125888824/0.133397639
+  params=0/0/0.5 inside=0
+  }
+
+phoenixcplx1       { ; by Jonathan Osuch
+  reset=1822 type=phoenixcplx
+  corners=0.75775444/1.157748/-0.20638394/0.093626022
+  params=-0.29027599096298218/0.12787967920303345/0.5 inside=0
+  }
+
+mandphoenixclx2    { ; by Jonathan Osuch
+  reset=1822 type=mandphoenixclx
+  corners=-0.30382085/0.30695587/0.19807309/-0.077459633/0.034962296/-0.27\
+  305287 params=0/0/0.5/1 inside=0
+  }
+
+phoenixcplx2       { ; by Jonathan Osuch
+  reset=1822 type=phoenixcplx corners=-2/2.000007/-1.500002/1.5
+  params=-0.029776036739349365/0.39949685335159302/0.5/0.5 inside=0
+  }
+

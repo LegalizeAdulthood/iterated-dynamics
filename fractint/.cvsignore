@@ -1,0 +1,8 @@
+Debug
+Release
+*.suo
+*.ncb
+*.user
+FRACTINT.HLP
+fractint.hlp
+hc

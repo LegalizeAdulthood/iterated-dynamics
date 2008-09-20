@@ -1,0 +1,70 @@
+bmc0884x {; Anthony Hanmer 27/1/2005, Designed with BRAZIL:
+; One of my very best "BMC spirals", originating from play with
+; Blancmange Curve variations
+; a.hanmer@gmail.com
+; More work & details to be found in HanmerIFS_01.ZIP at:
+; http://spanky.triumf.ca/pub/fractals/FORMULAS/
+-0.5000000 0.0000000 -0.5000000 0.5000000 3.0000000 2.5000000 0.1428818
+0.4999245 0.4999245 -0.4999245 0.4999245 -2.5005285 2.5003775 0.2856773
+0.4999245 0.4999245 -0.4999245 0.4999245 -2.5005285 2.5003775 0.2856773
+-0.5000000 0.0000000 0.0000000 -0.5000000 -3.0000000 4.5000000 0.1428818
+0.5000000 0.0000000 0.0000000 -0.5000000 3.0000000 4.5000000 0.1428818
+}
+
+DC022b6c {; Tony Hanmer 3/2002, Designed with Brazil:
+; Dragon Curve variation, a favourite, showing play with linear elements
+; a.hanmer@gmail.com
+; More work & details to be found in HanmerIFS_01.ZIP at:
+; http://spanky.triumf.ca/pub/fractals/FORMULAS/
+0.3535534 0.3535534 0.3535534 0.3535534 -3.5251263 4.9362330 -0.1428571
+0.4999245 -0.4999245 0.4999245 0.4999245 0.1356225 2.4994715 0.4901932
+-0.4999245 -0.4999245 0.4999245 -0.4999245 4.2405285 7.4996225 0.4901932
+0.001 0 0 0.5 5.586 2.284 0.0098068
+0.5 0 0 0.001 -3 1.057 0.0098068
+}
+
+Sq0002d {; Anthony Hanmer 18/12/2003, Designed with BRAZIL:
+; One of my best probability-altered Squares
+; a.hanmer@gmail.com
+; More work & details to be found in HanmerIFS_01.ZIP at:
+; http://spanky.triumf.ca/pub/fractals/FORMULAS/
+0.3330000 0.0000000 0.0000000 0.3330000 -4.0020000 -0.6670000 0.1108890
+0.3330000 0.0000000 0.0000000 0.6670000 -4.0020000 3.6630000 0.2921110
+-0.6670000 0.0000000 0.0000000 0.3330000 1.9980000 -0.6670000 0.1521110
+-0.6670000 0.0000000 0.0000000 -0.6670000 1.9980000 10.3330000 0.4448890
+}
+
+sq441 {; Tony Hanmer 5/2002, Designed with BRAZIL:
+; sq079 variation, unaltered post-Brazil
+; One of my best probability-altered Squares:  Temples
+; a.hanmer@gmail.com
+; More work & details to be found in HanmerIFS_01.ZIP at:
+; http://spanky.triumf.ca/pub/fractals/FORMULAS/
+-0.25 0 0 0.75 4.5 -0.25 0.1153846
+0.25 0 0 -0.75 -4.5 10.25 0.1153846
+0.75 0 0 0.25 -1.5 -0.75 0.1153846
+0.5 0 0 0.5 0 2.5 0.1538462
+-0.25 0 0 0.75 4.5 -0.25 0.1153846
+-0.5 0 0 0.5 0 2.5 0.1538462
+-0.75 0 0 -0.25 1.5 10.75 0.1153846
+-0.75 0 0 -0.25 -1.5 1.75 0.1153846
+}
+
+td081 {; Tony Hanmer 4/2002, Designed with BRAZIL:
+; One of my best TwinDragon variations, showing play with linear elements
+; a.hanmer@gmail.com
+; More work & details to be found in HanmerIFS_01.ZIP at:
+; http://spanky.triumf.ca/pub/fractals/FORMULAS/
+-0.4999245 0.4999245 -0.4999245 -0.4999245 -6.0996225 7.5005285 0.2403469
+-1 0 0 -1 0 10 0.4808390
+0.4999245 -0.4999245 0.4999245 0.4999245 -1.1003775 2.4994715 0.2403469
+-0.001 0 0 -0.1 0.594 5.5 0.0048084
+0 0.1 -0.001 0 -0.5 5.594 0.0048084
+-0.001 0 0 -0.1 -0.606 5.5 0.0048084
+0 0.1 -0.001 0 -0.5 4.394 0.0048084
+0.0007071 0.0997021 -0.0007071 0.0997021 -1.0960553 5.0954594 0.0048084
+-0.0007071 0.0997021 -0.0007071 -0.0997021 -1.1045406 4.8960553 0.0048084
+-0.0007071 0.0997021 -0.0007071 -0.0997021 0.0954594 6.0960553 0.0048084
+0.0007071 0.0997021 -0.0007071 0.0997021 0.1039447 3.8954594 0.0048084
+}
+

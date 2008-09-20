@@ -1,0 +1,7 @@
+[OPTIONS]
+TITLE=Help for Winfract
+COMPRESS=true
+
+[FILES]
+winfract.rtf
+mathtool.rtf
