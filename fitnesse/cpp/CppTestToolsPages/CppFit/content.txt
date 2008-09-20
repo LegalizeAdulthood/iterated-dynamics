@@ -1,0 +1,228 @@
+Cpp Fit supports three types of fixtures.  Yes, it is a little behind the other Fit implementations, but is still very useful.
+
+!-A fixture is an adapter that allows FitNesse and CppFit to interact with your application.  Fixtures are invoked by tables on your FitNesse pages.  A FitNesse table will cause a user defined fixture to be created and have members variables assigned and member functions called.  The methods of the fixture will call methods on you application's interface.  Your fixtures must inherit from the CppFit Fixture base classes described below.  Fixtures usually are put in their own library, keeping the CppFit dependencies out of your application.
+
+The Java and C# Fit versions are designed using reflection.  Reflection allows the runtime support for those languages to interrogate the fixtures
+-!
+
+!*> !3 !-ColumnFixture-!
+A !-ColumnFixture-! is used for submitting rows of data into an application.
+
+The top row of the table identifies the fixture.  The column headings represent fields and methods on the !-ColumnFixture-!.  The following row data is eith populated into a member variable of the fixture, or compare to the result of a function call.  This table  defines a set of sensors for testing the home security system.
+
+!|DefineSensors|
+|port|name |Type|submit?|reason?|
+|A1 |Paul's|window|true |OK|
+|A2 |Porch |door|true |OK|
+|A3 |Front |door|true |OK|
+|A4 |Back |door|true|OK|
+|A4 |Back |door|false|duplicate id|
+|A4 |Garage |door|false|duplicate id|
+|A5 |Back |door|false|duplicate name|
+
+DefineSensors is the name of a ColumnFixture
+Fields
+ * port, name, type
+ * all names start with a lower case letter
+ * multiple word names have the spaces squeezed out, letter following the space is made upper case
+Methods
+ * submit, reason
+ * noted by ? ! or () following the name
+ * the result of the function call is compared to the cell value
+Other methods you can override
+ * reset - is called at the beginning of each row
+ * execute - is called at then end of each row.
+Data rows
+ * Each data item from the row is put into its associated field or compared to the result of the associated function call.
+
+The code to support this fixture looks like this.  Note that the table headings and row heading names match the names in the code.  The publish macros make the names known to the !-CppFit-!
+{{{
+class DefineSensors : public ColumnFixture
+{
+         
+  public:
+    explicit DefineSensors()
+      {
+      PUBLISH(DefineSensors,std::string,port);
+      PUBLISH(DefineSensors,std::string,name);
+      PUBLISH(DefineSensors,std::string,type);
+      PUBLISH(DefineSensors,std::string,submit);
+      PUBLISH(DefineSensors,std::string,reason);
+    }
+
+    virtual ~DefineSensors() {};
+
+    std::string submit()
+    {
+    	MockInputPort* p = new MockInputPort(port);
+    	HomeGuardContext::RegisterPort(p);
+    	Sensor::SensorType t;
+    	if (type == "window")
+    		t = Sensor::window;
+    	else if (type == "door")
+    		t = Sensor::window;
+    	else if (type == "fire")
+    		t = Sensor::fire;
+    	else if (type == "waterlevel")
+    		t = Sensor::waterlevel;
+    	else
+    	{
+    		theReason = std::string("Unknown sensor type");
+    		return "false";
+    	}
+    	
+    	if (HomeGuardContext::GetHomeGuard()->addSensor(t, name, p))
+    	{
+    		theReason = "none";
+    	   	return "true";
+    	}
+    	else
+    	{
+    		theReason = "Rejected by homeguard";
+    		return "false";
+    	}
+    }
+
+    std::string reason()
+    {
+      return theReason;
+    }
+
+  private:
+
+    std::string port;
+    std::string name;
+    std::string type;
+    std::string theReason;
+    
+    DefineSensors(const DefineSensors&);
+    DefineSensors& operator=(const DefineSensors&);
+};
+}}}
+*!!*> !3 !-RowFixture-!
+A row fixture is for pulling a collection of data out of the system.  This table defines the expected content of the event log.
+
+!|EventLogOutput|
+|sequence number|event|parameter|
+|1 |armed||
+|2 |disarmed||
+|3 |armed||
+
+!-RowFixture-! is a bit trickier.  There are two classes involved.  One class describes the overall !-RowFixture-!, the other class describes the data in each row.  In this example the row is described using an inner class called !-EventHolder-!.  Here the query method is just populating the list with dummy events. When this work is complete, the query method will talk to the application to get the event log data.
+{{{
+#include "Platform.h"
+#include "Fit/RowFixture.h"
+
+class EventLogOutput : public RowFixture
+{
+public:
+  EventLogOutput();
+  ~EventLogOutput();
+
+	class EventHolder : public Fixture
+	{
+	public:
+
+	    EventHolder(int sequenceNumber, string event, int parameter)
+	    : sequenceNumber(sequenceNumber)
+            , event(event)
+            , parameter(parameter) 
+            { 
+        	PUBLISH(EventHolder,int,sequenceNumber);
+		PUBLISH(EventHolder,string,event);
+		PUBLISH(EventHolder,int,parameter);
+	    }
+
+            int sequenceNumber;
+            string event;
+            int parameter;
+	};
+
+	virtual RowFixture::ObjectList query() const
+        {
+            int sequence = 1;
+            rows.push_back(new EventHolder(sequence++, "dummy event", 42));
+            rows.push_back(new EventHolder(sequence++, "another dummy", 42));
+	    return rows;
+        }
+
+	virtual const Fixture	*getTargetClass() const;
+        {
+	    return &exampleEventHolder;
+        }
+  private:
+
+      EventHolder exampleEventHolder;
+      mutable RowFixture::ObjectList rows;
+
+      EventLogOutput(const EventLogOutput&);
+      EventLogOutput& operator=(const EventLogOutput&);
+};
+}}}
+
+*!!*> !3 !-ActionFixture-!
+An ActionFixture is used for simulating user interactions.  The top row identifies this as an action fixture.  Action fixture have keywords
+ * start - initialize a specific action fixture
+ * check - check the field specified in cell two to have the value in cell three
+ * press - call teh function in cell two
+ * enter - call the function in cell two with cell three as a parameter
+
+!|ActionFixture|
+|start|FrontPanel|
+|check|display|READY|
+|check| arm led | off|
+|press| arm button|
+|check|display|ENTER PIN|
+|enter|digits|3141|
+|press| enter button|
+|check| arm led | on|
+|check|display|ARMED|
+
+The code looks like this.  This fixture needs to be wired to the application.  Right now it returns dummy data.
+{{{
+#include "Fit/ActionFixture.h"
+#include <string>
+
+class FrontPanelController : public Fixture 
+{
+public:
+
+    FrontPanelController()
+    {
+        thedigits = "";
+        display = "not sure";
+        armLed = "not sure";
+
+	PUBLISH_ENTER(FrontPanelController,std::string,digits);
+
+	PUBLISH_COMMAND(FrontPanelController,armButton);
+	PUBLISH_COMMAND(FrontPanelController,enterButton);
+
+	PUBLISH_CHECK(FrontPanelController,std::string,display);
+	PUBLISH_CHECK(FrontPanelController,std::string,armLed);
+      	PUBLISH_CHECK(FrontPanelController, std::string, display);      
+    }
+    
+    void armButton() { display = "arm pressed";}
+    void enterButton() {};
+    
+    std::string display;
+    std::string armLed;
+    std::string thedigits;
+    void digits(std::string d) { display = d; }
+	
+};
+}}}
+*!!*> !3 Fixture
+!-The base class of all the fixture classes.  You will use Fixture as a base for fixtures that are started by and ActionFixture, initialize things, or clean things up, like the SetUp and TearDown examples.-!
+*!!*> !3 !-AppFixtureMaker-!
+!-The AppFixtureMaker is needed to publish the fixtures your tests will use.  See HomeGuardFixtureMaker.h for an example
+*!!*> !3 !-How Does FitNesse Find Your Fixtures-!
+There are two ways for fitnesse to load your fixtures: static loading and dynamic loading
+
+'''Dynamic Loading''' - Currently not supported
+Due to problems in memory allocation dynamic loading has been turned off in C++ FIT. 
+
+'''Static Loading'''
+!-When using C++ FIT fixtures are compiled into a static library, and the library is linked into a fitnesse server main.  AppFixtureMaker creates fixtures.  Your application has to provide a FitNesse server.  See HomeGuardFitnesseServer as an example.  The COMMAND_PATTERN in your FitNesse tests must invoke your application specific fitnesse server.  The main page of the HomeGuard fitnesse pages has an example of the needed COMMAND_PATTERN--!
+*!

@@ -1,0 +1,15 @@
+!3 Simulate some events, and see them in the log
+
+!|Action Fixture|
+|start|Control|
+|enter|digits|1234|
+|press|arm system|
+|press|disarm system|
+|press|arm system|
+
+
+!|Event Log Output|
+|sequence number|event|parameter|
+|1 |armed|1234|
+|2 |disarmed|1234|
+|3 |armed|1234|

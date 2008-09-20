@@ -1,0 +1,6 @@
+!-This script is a lot like NewClass, except it also creates a Mock version of the interface.-!
+
+usage
+{{{
+NewInterface InterfaceClassName
+}}}

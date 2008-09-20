@@ -1,0 +1,10 @@
+!3 Windows Computer setup
+ * JRE 1.5 or later (www.java.sun.com) for fitnesse
+ * One of the following 
+  * VS.NET
+  * VC++6
+  * cygwin Devel package with gcc (v3.4 or later)
+!3 Linux/Unix computer setup
+ * JRE 1.5 or later (www.java.sun.com)
+ * gcc (v3.4 or later)
+ * Mac OS X

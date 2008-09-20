@@ -1,0 +1,5 @@
+----
+Copyright (c) 2006 James W Grenning
+Released under the terms of the GNU General Public License version 2 or later.
+grenning at objectmentor.com
+[.FrontPage] [.RecentChanges]

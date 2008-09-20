@@ -1,0 +1,24 @@
+!3 Define sensors
+
+Id's and names must be unique.
+
+!|Define Sensors|
+|port|name |Type|submit?|reason?|
+|1 |Paul's|window|true |none|
+|2 |Porch |door|true |none|
+|3 |Front |door|true |none|
+|4 |Back |door|true|none|
+|4 |Back |door|false|duplicate id|
+|4 |Garage |door|false|duplicate id|
+|5 |Back |door|false|duplicate name|
+|5 |Garage |door|true|none|
+|-1|Basement sump pump|attention|false|invalid id|
+|0|Basement sump pump|attention|false|invalid id|
+|33|Basement sump pump|attention|false|buy upgrade for 64 sensor system|
+|6 |House Flood|attention|true|none|
+|7 |Backyard Flood|attention|true|none|
+|8 |Attic|smoke|true|none|
+|9|Fridge|temperature|true|none|
+
+
+
