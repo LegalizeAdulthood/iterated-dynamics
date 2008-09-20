@@ -1,0 +1,50 @@
+CppTestTools-20060429
+  Fixed AcionFixture so it works like Java
+  Removed DLL loading of fixtures - memory issues to work out - static       actor's address was changing
+  Removed temp vs files from cvs
+  Added code generation support for C - NewVCModule
+
+CppTestTools-20060402
+  Automated installation
+  First failed test exists
+  NewInterface script
+  NewCModule script
+  
+
+CppTestTools20060119
+ - Added make depend support for GCC
+ - Improved release process support
+ - Enabled some commented out tests in ActiveObjectTest
+ - Got rid of ignore test in DelayTest
+ - Changed CppSourceTemplates - Test files generatate an error
+   so the programmer puts IMPORT_TEST_GROUP in the right place
+
+CppFit Changes
+ - Multiple cell evaluation eliminated
+ - MS version: DLL only opened one time for fixture loading
+ 
+
+ - Changed UnitTestHarness 
+   - assertion macros can be called like funcitons
+     May require adding semicolons to some statements
+   - Added unit tests
+   - Design changes for testability
+   - Got rid of the memory leak tolerate experimental stuff
+   - More accurate memory leak messages
+   - Leaks gone for gcc 3.3.4 and vs.net
+   - vc6 still reports some phantom leaks
+   - Assert macros can be factored out of TEST body into helper functions
+
+
+CppTestTools20040916.zip
+ - Added per test memory leak detection
+ - There are some leaking Fit tests under VC++6.  The memory is released when 
+   the system exits.  The leaks appear to be lazy initialized staics that 
+   get cleaned up at program exit but report as a leak in a particular test.
+ - VC++6 and VS.NET workspaces and solutions supported
+
+CppTestTools20040524.zip
+ - FitLib - fixed spaces in strings bug
+
+
+CppTestTools20040524.zip - initial release

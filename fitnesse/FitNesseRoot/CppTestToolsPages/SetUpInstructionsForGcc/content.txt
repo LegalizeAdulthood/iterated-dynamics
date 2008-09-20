@@ -1,0 +1,31 @@
+!include CppTestToolsEnvironmentVariable
+!* !3 !-Build CppTestTools-!
+Navigate to !-fitnesse/cpp/CppTestTools-!
+{{{
+make depend all test
+}}}
+The test should report
+{{{
+OK (...)
+}}}
+Some older versions of gcc report memory leaks on pass one, but clean on pass two
+*!!*> !3 !-For a C++ example project Build TddCppProject-!
+Navigate to !-fitnesse/cpp/examples/CppProject-!
+{{{
+make depend all test
+}}}
+The test should report
+{{{
+OK (...)
+}}}
+*!!*> !3 !-For a C example project Build TddCProject-!
+Navigate to !-fitnesse/cpp/examples/CProject-!
+{{{
+make depend all test
+}}}
+The test should report
+{{{
+OK (...)
+}}}
+*!
+!include InstallSupportScripts

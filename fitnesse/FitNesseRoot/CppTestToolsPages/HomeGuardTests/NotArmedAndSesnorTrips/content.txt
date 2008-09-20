@@ -1,0 +1,20 @@
+!1 Not Armed and Sensor Trips
+
+When a sensor trips and the system is not armed, nothing happens
+
+!|Define Sensors|
+|port|name |type|submit?|reason?|
+|1 |Paul's room|window|true||
+
+!|Port Control|
+|port|value|
+|1|1|
+
+!|Check Front Panel|
+|visual alarm|siren|display|
+|off|off|READY|
+
+!|Check Phone Line|
+|last number dialed|
+|NONE|
+

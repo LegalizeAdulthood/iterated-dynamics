@@ -1,0 +1,4 @@
+|'''Date: '''|!-8:20:53 AM (CDT) on Wednesday, July 2, 2008-!|
+|'''Command: '''|!-java -cp /Users/unclebob/projects/FitNesse/lib/ant.jar:/Users/unclebob/projects/FitNesse/lib/dummy.jar:/Users/unclebob/projects/FitNesse/lib/fitlibrary.jar:/Users/unclebob/projects/FitNesse/lib/junit.jar:/Users/unclebob/projects/FitNesse/lib/xerces.jar:classes:lib/fitlibrary.jar:fitnesse.jar:fitlibrary.jar fit.FitServer BobsMacbook.local 8080 3-!|
+|'''Exit code: '''|!-0-!|
+|'''Time elapsed: '''|!-0.531 seconds-!|

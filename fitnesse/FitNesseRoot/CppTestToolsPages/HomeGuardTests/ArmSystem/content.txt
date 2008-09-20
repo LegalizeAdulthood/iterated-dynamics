@@ -1,0 +1,23 @@
+Arm and disarm the system
+
+!|Check Front Panel|
+|armed|visual alarm|siren|display|
+|off|off|off|READY|
+
+press the arm button
+
+!|Action Fixture|
+|start|Control|
+|press|arm system|
+
+!|Check Front Panel|
+|armed|visual alarm|siren|display|
+|on|off|off|ARMED|
+
+press the disarm button
+!|Action Fixture|
+|press|disarm system|
+
+!|Check Front Panel|
+|armed|visual alarm|siren|display|
+|off|off|off|READY|
