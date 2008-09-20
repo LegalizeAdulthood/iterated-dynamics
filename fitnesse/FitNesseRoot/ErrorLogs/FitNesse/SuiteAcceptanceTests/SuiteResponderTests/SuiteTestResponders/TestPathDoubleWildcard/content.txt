@@ -1,0 +1,4 @@
+|'''Date: '''|!-2:03:01 PM (CDT) on Wednesday, July 2, 2008-!|
+|'''Command: '''|!-java -cp /Users/unclebob/projects/FitNesse/lib/ant.jar:/Users/unclebob/projects/FitNesse/lib/dummy.jar:/Users/unclebob/projects/FitNesse/lib/fitlibrary.jar:/Users/unclebob/projects/FitNesse/lib/junit.jar:/Users/unclebob/projects/FitNesse/lib/xerces.jar:/Users/unclebob/projects/FitNesse/lib/cobertura-1.8/cobertura.jar:/Users/unclebob/projects/FitNesse/lib/cobertura-1.8/lib/asm-2.2.1.jar:/Users/unclebob/projects/FitNesse/lib/cobertura-1.8/lib/jakarta-oro-2.0.8.jar:/Users/unclebob/projects/FitNesse/lib/cobertura-1.8/lib/log4j-1.2.9.jar:/Users/unclebob/projects/FitNesse/lib/testDirectory/dummy.jar:classes:lib/fitlibrary.jar:fitnesse.jar:fitlibrary.jar fit.FitServer BobsMacbook.local 8080 4-!|
+|'''Exit code: '''|!-0-!|
+|'''Time elapsed: '''|!-0.87 seconds-!|
