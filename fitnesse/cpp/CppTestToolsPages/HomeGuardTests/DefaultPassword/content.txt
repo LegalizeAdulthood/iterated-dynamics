@@ -1,0 +1,25 @@
+!|Action Fixture|
+|start|Control|
+|enter|digits|4321|
+|press|arm system|
+
+!|Check Front Panel|
+|armed|visual alarm|siren|display|
+|off|off|off|BAD PASSWORD|
+
+
+!|Action Fixture|
+|enter|digits|1234|
+|press|arm system|
+
+!|Check Front Panel|
+|armed|visual alarm|siren|display|
+|on|off|off|ARMED|
+
+!|Action Fixture|
+|enter|digits|1234|
+|press|disarm system|
+
+!|Check Front Panel|
+|armed|visual alarm|siren|display|
+|off|off|off|READY|

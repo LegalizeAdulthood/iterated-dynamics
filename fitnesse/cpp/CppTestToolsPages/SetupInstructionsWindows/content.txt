@@ -1,0 +1,32 @@
+!include CppTestToolsEnvironmentVariable
+!* !3 !-Build CppTestTools-!
+Navigate to !-fitnesse\cpp\CppTestTools-!
+!-Double click CppTestTools.dsw-!
+Build it
+In the Build output window the test should report
+{{{
+OK (...)
+}}}
+VC6 will report memory leaks on the first test pass, but the seond pass should be clean.
+
+close visual studio
+*!!*> !3 For a C++ example, !-Build CppProject-!
+Navigate to !-fitnesse\cpp\examples\CppProject-!
+!-Double click CppProject.dsw-!
+Build it
+In the Build output window the test should report
+{{{
+OK (...)
+}}}
+close visual studio
+*!!*> !3 For a C example, !-Build CProject-!
+Navigate to !-fitnesse\cpp\examples\CProject-!
+!-Double click CProject.dsw-!
+Build it
+In the Build output window the test should report
+{{{
+OK (...)
+}}}
+close visual studio
+*!
+!include InstallSupportScripts

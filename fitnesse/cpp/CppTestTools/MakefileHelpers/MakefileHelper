@@ -1,0 +1,17 @@
+
+CPPFLAGS =  -c -Wall  $(INCLUDE) 
+
+.cpp.o : 
+	$(CXX) $(CPPFLAGS) -o $@ $<
+
+all: $(DOTO) $(TARGET)
+
+DEPENDENCY_FILE = .dependencies
+
+depend:
+	rm -f $(DEPENDENCY_FILE)
+	$(CXX) -MM -c $(CPPFLAGS) *.cpp >$(DEPENDENCY_FILE)
+	
+ifeq ($(DEPENDENCY_FILE), $(wildcard $(DEPENDENCY_FILE)))
+include $(DEPENDENCY_FILE)
+endif

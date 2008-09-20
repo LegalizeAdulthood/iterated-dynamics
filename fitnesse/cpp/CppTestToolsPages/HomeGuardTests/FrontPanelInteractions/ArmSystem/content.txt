@@ -1,0 +1,23 @@
+When Home Guard is not armed, pressing the arm button arms the system.  The user is prompted for a password for Arm and Disarm
+
+!|Action Fixture|
+|start|Front Panel Controller|
+|check|display|READY|
+|check| arm led | off|
+|press| arm button|
+|check|display|ENTER PIN|
+|enter|digits|3141|
+|press| enter button|
+|check| arm led | on|
+|check|display|ARMED|
+
+Pressing it again disarms the system. 
+
+!|Action Fixture|
+|press| arm button|
+|check|display|ENTER PIN|
+|enter|digits|3141|
+|press| enter button|
+|check| arm led | off|
+|check|display|READY|
+

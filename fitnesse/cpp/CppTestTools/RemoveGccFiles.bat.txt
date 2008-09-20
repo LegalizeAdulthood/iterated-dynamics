@@ -1,0 +1,7 @@
+rem * To remove the gcc specific file, rename this file, and run it.
+rem * It has this odd file name so that it doe not get run by mistake from eclipse on a windows machine
+del /s Makefile
+del .cdtproject
+del .project
+
+
