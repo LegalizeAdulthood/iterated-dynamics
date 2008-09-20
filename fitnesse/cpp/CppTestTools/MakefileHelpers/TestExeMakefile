@@ -1,0 +1,12 @@
+include $(CPP_TEST_TOOLS)/MakefileHelpers/MakefileHelper
+
+test: $(TARGET)
+	@pwd
+	@./$(TARGET) 
+
+vtest: $(TARGET)
+	@pwd
+	@./$(TARGET) -v
+
+clean:	
+	rm -f *.o $(TARGET) .dependencies

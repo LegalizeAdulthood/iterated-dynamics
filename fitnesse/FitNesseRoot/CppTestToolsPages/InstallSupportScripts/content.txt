@@ -1,0 +1,13 @@
+!3 Install support scripts
+Cygwin or equivalent bash environment is highly recommended.  This will save you lots of time.  If you do not have one, MSYS, a minimal unix command shell system for windows can be quickly downloaded and installed from http://www.mingw.org/download.shtml
+
+Look for the released version under "Current" "MSYS" "bin".
+
+From your unix command prompt (or cygwin or msys command prompt)
+Navigate to !-fitnesse/cpp/CppTestTools/CppSourceTemplates-!
+{{{
+./InstallScripts.sh
+}}}
+This command adds some symbolic links to /usr/local/bin, so you have to run it as root.  
+
+The links are helpful for creating starter implementations for new classes, new C modules, new interfaces and their associated tests.

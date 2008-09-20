@@ -1,0 +1,21 @@
+!-CppTestTools provides a unit test harness and an implementation of FIT for c++.  It also has a starter implementation for a concurrency library.  This library is used by the FitServer.  Implementations are provided for gcc and visual c++ v6.-!
+
+!3 Installation and set up
+[[Computer Setup][^ComputerSetup]]
+[[Setup Instructions - Gcc][^SetUpInstructionsForGcc]]
+[[Setup Instructions - Windows][^SetupInstructionsWindows]]
+!3 !-NewClass and NewInterface scripts-!
+[[!-NewClass script-!][^NewClassScript]]
+[[!-NewInterface script-!][^NewInterfaceScript]]
+!3 Unit test harness
+[[!-UnitTestHarness Documentation-!][^UnitTestHarness]]
+!3 C++ version of FIT
+[[!-CppFit documentation-!][^CppFit]]
+!3 Example Cpp Fit Project
+[[!-HomeGuard-! Security System Specs and Tests][^HomeGuardTests]]
+Note:
+ * None of the Home Guard behavior is implemented.  
+ * The project structure is in place and the Fit fixtures are implemented.  
+ * The fixtures are returning hard coded values.
+ * All the test fail with some green cells.
+

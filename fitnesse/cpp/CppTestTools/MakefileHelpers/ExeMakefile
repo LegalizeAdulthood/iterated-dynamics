@@ -1,0 +1,11 @@
+include $(CPP_TEST_TOOLS)/MakefileHelpers/MakefileHelper
+
+test: $(TARGET)
+	 
+
+vtest: $(TARGET)
+	
+
+clean:
+	rm -f *.o $(TARGET) .dependencies
+

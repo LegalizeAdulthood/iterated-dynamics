@@ -1,0 +1,13 @@
+
+include $(CPP_TEST_TOOLS)/MakefileHelpers/MakefileHelper
+
+$(TARGET) : $(DOTO)
+	ar -rc $@ $(DOTO)
+	ranlib $@
+	cp $@ $(LIBDIR)
+
+clean:
+	rm -f *.o $(TARGET) .dependencies
+	
+test: $(TARGET)
+	

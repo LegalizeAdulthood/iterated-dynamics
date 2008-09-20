@@ -1,0 +1,4 @@
+|'''Date: '''|!-7:59:17 AM (CDT) on Tuesday, June 10, 2008-!|
+|'''Command: '''|!-java -cp zork:classes:lib/fitlibrary.jar:fitnesse.jar:fitlibrary.jar fit.FitServer BobsMacbook.local 8080 21-!|
+|'''Exit code: '''|!-0-!|
+|'''Time elapsed: '''|!-0.581 seconds-!|

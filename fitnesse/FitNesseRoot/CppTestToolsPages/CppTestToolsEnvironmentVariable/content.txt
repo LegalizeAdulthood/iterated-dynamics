@@ -1,0 +1,12 @@
+!3 !-Set CPP_TEST_TOOLS Environment Variable-!
+!-set CPP_TEST_TOOLS to fullPathToWherEverYouPut/fitnesse/cpp/CppTestTools-!
+
+'''Only use forward slashes! Exit any MS developer IDEs, and cygwin/MSYS/MINGW command windows, shells that need to know CPP_TEST_TOOLS '''
+
+In windows navigate to
+ * Windows Start Menu/Control Panel/System/Advanced/Environment Variables
+ * New or Edit
+
+In Unix/Linux/Mac
+Set the variable in your login script
+ * .bashrc or .login or .bashlogin

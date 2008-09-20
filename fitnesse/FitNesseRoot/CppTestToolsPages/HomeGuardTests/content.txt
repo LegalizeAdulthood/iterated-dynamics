@@ -1,0 +1,29 @@
+!3 C/Cpp Fit Example
+!*> !3 Tell !-FitNesse-! how to find your project
+''The COMMAND_PATTERN tells fitness how to find the application to test''
+
+More specifically
+ * Fitnesse sends the test pages to your applicaiton through a Fitserver.  
+ * The COMMAND_PATTERN tells Fitnesse how to invoke the Fitserver.  
+
+There is a COMMAND_PATTERN for the CProject and for the !-CppProject-!.  Edit this page and select the appropriate COMMAND_PATTERN by uncommenting it.
+
+!define COMMAND_PATTERN {cpp/test/HomeGuardFitnesseServer}
+
+*!!* !3 Home Guard is a home security system
+
+Home Guard has a front panel with these capabilities
+ * Segmented display, that can display a message
+ * An arm/disarm button
+ * Numeric keypad with # and *
+ * An audible alarm
+ * A visual alarm
+ * It has a phone line to call the police and fire department
+ * Home guard has a network interface that can be used by a PC to configure the system
+
+Home guard has binary sensor inputs
+
+Here are the stories and tests that define home guard requirements.  !-ArmSystem, BreakIn, and PowerOn-! should pass, the others have failures.
+
+!contents
+*!

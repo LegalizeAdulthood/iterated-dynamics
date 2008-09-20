@@ -1,0 +1,25 @@
+!1 Flood detected
+
+When there is flood the alarm is signaled and the attention number is called.  The system does not need to be armed.
+
+|!-Check Front Panel-!|
+|armed|visual alarm|siren|display|
+|off|off|off|READY|
+
+
+!|Define Sensors|
+|port|name |Type|submit?|
+|1 |Sump full|attention|true|
+|2 |Lift station full|attention|true|
+
+!|Port Control|
+|port|value|
+|1|1|
+
+!|Check Front Panel|
+|visual alarm|siren|display|
+|on|off|Sump full|
+
+!|Check Phone Line|
+|last number dialed|
+|attention number|

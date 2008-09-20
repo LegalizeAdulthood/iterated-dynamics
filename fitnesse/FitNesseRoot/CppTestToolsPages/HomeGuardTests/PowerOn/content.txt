@@ -1,0 +1,11 @@
+When Home Guard initializes itself it is in the following state
+
+|!-Check Front Panel-!|
+|armed|visual alarm|siren|display|
+|off|off|off|READY|
+
+
+Check the phone line, make sure no call has been made
+|!-Check Phone Line-!|
+|last number dialed|
+|NONE|

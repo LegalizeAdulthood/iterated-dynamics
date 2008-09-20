@@ -1,0 +1,31 @@
+!1 Break in detected
+
+When there is a break in, and the system is armed, the alarm is signaled and the police are called.
+
+!|Check Front Panel|
+|visual alarm|siren|display|
+|off|off|READY|
+
+!|Define Sensors|
+|port|name |Type|submit?|reason?|
+|1 |Paul's|window|true|none|
+|2 |Porch |door|true|none|
+|3 |Sump |waterlevel|true|none|
+|4 |Attic|fire|true|none|
+
+!|Action Fixture|
+|start|Control|
+|press|arm system|
+
+!|Port Control|
+|port|value|
+|1|1|
+
+!|Check Front Panel|
+|visual alarm|siren|display|
+|on|on|Paul's Window|
+
+!|Check Phone Line|
+|last number dialed|
+|ThePoliceNumber|
+
