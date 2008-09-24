@@ -28,6 +28,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "idTests", "src\test\idTests
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxCGAWindowControl", "src\test\wxId\wxCGAWindowControl\wxCGAWindowControl.vcproj", "{1596131D-AF51-4205-B27E-36198898F6C4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "idFitnesse", "src\test\idFitnesse\idFitnesse.vcproj", "{28512775-7A16-4628-B424-6D3AA07088A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug Boost|Win32 = Debug Boost|Win32
@@ -74,6 +76,12 @@ Global
 		{1596131D-AF51-4205-B27E-36198898F6C4}.Debug|Win32.Build.0 = Debug|Win32
 		{1596131D-AF51-4205-B27E-36198898F6C4}.Release|Win32.ActiveCfg = Release|Win32
 		{1596131D-AF51-4205-B27E-36198898F6C4}.Release|Win32.Build.0 = Release|Win32
+		{28512775-7A16-4628-B424-6D3AA07088A6}.Debug Boost|Win32.ActiveCfg = Debug|Win32
+		{28512775-7A16-4628-B424-6D3AA07088A6}.Debug Boost|Win32.Build.0 = Debug|Win32
+		{28512775-7A16-4628-B424-6D3AA07088A6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{28512775-7A16-4628-B424-6D3AA07088A6}.Debug|Win32.Build.0 = Debug|Win32
+		{28512775-7A16-4628-B424-6D3AA07088A6}.Release|Win32.ActiveCfg = Release|Win32
+		{28512775-7A16-4628-B424-6D3AA07088A6}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
