@@ -1,0 +1,7 @@
+!contents -R2 -g -p -f -h
+
+!define COMMAND_PATTERN {../id/Debug/idFitnesse.exe}
+
+|Verify Parameter Set Fixture|
+|'''Parameter File'''|'''Parameter Set'''|'''Equal?'''|
+|cellular.par|bugs|true|
