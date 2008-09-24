@@ -11,7 +11,7 @@
 int main(int argc, char* argv[])
 {
 	MemoryLeakWarning::Enable();
-  FixtureMaker* maker = new HomeGuardFixtureMaker();
+	FixtureMaker* maker = new HomeGuardFixtureMaker();
 	int status = FitnesseServer::Main(argc, argv, maker);
 	return status;
 }
