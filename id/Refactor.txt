@@ -138,3 +138,6 @@ Replace homebrew bignum/bigflt with GNU GMP library and other layers:
 == Eliminate sstools.ini processing
 
 == Use gSOAP toolkit for XML web services
+
+== Eliminate use of OLD_MAX_PIXELS and use dynamically resized arrays
+   instead of g_stack.
