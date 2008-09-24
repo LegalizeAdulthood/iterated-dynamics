@@ -184,6 +184,10 @@
 				RelativePath=".\IteratedDynamicsFixtureMaker.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\VerifyParameterSetFixture.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

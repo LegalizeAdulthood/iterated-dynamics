@@ -5,6 +5,21 @@
 
 class VerifyParameterSetFixture : public ColumnFixture
 {
+public:
+	VerifyParameterSetFixture() : ColumnFixture()
+	{
+		PUBLISH(VerifyParameterSetFixture, std::string, parameterFile);
+		PUBLISH(VerifyParameterSetFixture, std::string, parameterSet);
+		PUBLISH(VerifyParameterSetFixture, std::string, referenceImageFile);
+		PUBLISH(VerifyParameterSetFixture, std::string, equal);
+	}
+
+	std::string equal();
+
+private:
+	std::string parameterFile;
+	std::string parameterSet;
+	std::string referenceImageFile;
 };
 
 #endif
