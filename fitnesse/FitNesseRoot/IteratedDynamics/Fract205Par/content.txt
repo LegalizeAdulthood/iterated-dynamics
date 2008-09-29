@@ -1,0 +1,9 @@
+!contents -R2 -g -p -f -h
+
+|Compare Image|
+|'''File'''|'''Parameter Set'''|'''Match?'''|
+|fract205|!-BMC0884x-!|true|
+|fract205|!-DC022b6c-!|true|
+|fract205|!-Sq0002d-!|true|
+|fract205|!-Sq441-!|true|
+|fract205|!-TD081-!|true|

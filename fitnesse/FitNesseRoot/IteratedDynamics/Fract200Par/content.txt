@@ -1,0 +1,10 @@
+!contents -R2 -g -p -f -h
+
+|Compare Image|
+|'''File'''|'''Parameter Set'''|'''Match?'''|
+|fract200|!-ismand_demo_julia-!|true|
+|fract200|!-ismand_demo_mandel-!|true|
+|fract200|!-Latoocarfian-09-!|true|
+|fract200|!-Latoocarfian-11-!|true|
+|fract200|!-Latoocarfian-12-!|true|
+|fract200|!-Latoocarfian-17-!|true|
