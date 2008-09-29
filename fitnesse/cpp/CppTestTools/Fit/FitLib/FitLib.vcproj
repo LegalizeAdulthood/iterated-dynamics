@@ -48,7 +48,7 @@
 				AdditionalIncludeDirectories="..\..\Platforms\VisualCpp,..,..\.."
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				StringPooling="true"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderFile=".\Release/FitLib.pch"
 				AssemblerListingLocation=".\Release/"
@@ -70,7 +70,9 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="Concurrency.lib VisualCpp.lib"
 				OutputFile=".\Release\FitLib.lib"
+				AdditionalLibraryDirectories="..\..\lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -123,13 +125,13 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile=".\Debug/FitLib.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
-				BrowseInformation="2"
+				BrowseInformation="1"
 				BrowseInformationFile=".\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
@@ -148,7 +150,9 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="Concurrency.lib VisualCpp.lib"
 				OutputFile=".\Debug\FitLib.lib"
+				AdditionalLibraryDirectories="..\..\lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool

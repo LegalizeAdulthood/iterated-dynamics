@@ -47,7 +47,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile=".\Debug/Concurrency.pch"
 				AssemblerListingLocation=".\Debug/"
@@ -72,6 +72,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="WS2_32.lib"
 				OutputFile=".\Debug\Concurrency.lib"
 				SuppressStartupBanner="true"
 			/>
@@ -126,7 +127,7 @@
 				AdditionalIncludeDirectories="..,../Platforms/VisualCpp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="true"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderFile=".\Release/Concurrency.pch"
 				AssemblerListingLocation=".\Release/"
@@ -148,6 +149,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="WS2_32.lib"
 				OutputFile=".\Release\Concurrency.lib"
 				SuppressStartupBanner="true"
 			/>

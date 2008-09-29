@@ -1,0 +1,16 @@
+!contents -R2 -g -p -f -h
+
+|Compare Image|
+|'''File'''|'''Parameter Set'''|'''Match?'''|
+|lyapunov|!-Blob1-!|true|
+
+|Comment|
+|lyapunov|!-Blob2-!|true|
+|lyapunov|!-bug-!|true|
+|lyapunov|!-Flames-!|true|
+|lyapunov|!-Hydra-!|true|
+|lyapunov|!-smbird1-!|true|
+|lyapunov|!-smbird2-!|true|
+|lyapunov|!-Snail1-!|true|
+|lyapunov|!-Snail2-!|true|
+|lyapunov|!-Swallow-!|true|
