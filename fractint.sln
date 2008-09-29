@@ -1,36 +1,36 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fractint", "fractint.vcproj", "{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fractint", "fractint\fractint.vcproj", "{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}"
 	ProjectSection(ProjectDependencies) = postProject
 		{92025993-C759-4969-8093-3361B2DC4832} = {92025993-C759-4969-8093-3361B2DC4832}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hc", "dos_help\hc.vcproj", "{92025993-C759-4969-8093-3361B2DC4832}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hc", "fractint\dos_help\hc.vcproj", "{92025993-C759-4969-8093-3361B2DC4832}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FractIntSetup", "win32\FractIntSetup.vdproj", "{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FractIntSetup", "fractint\win32\FractIntSetup.vdproj", "{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45} = {63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unused", "unused.vcproj", "{110FB3C3-5D32-432C-B555-F22DD7283CA4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unused", "fractint\unused.vcproj", "{110FB3C3-5D32-432C-B555-F22DD7283CA4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "idFixtures", "..\idFixtures\idFixtures.vcproj", "{26AFCE93-A05E-4AC9-847C-F1206BD1A43E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "idFixtures", "idFixtures\idFixtures.vcproj", "{26AFCE93-A05E-4AC9-847C-F1206BD1A43E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{260C891E-F256-4F96-85DB-5F5A2B62BF12} = {260C891E-F256-4F96-85DB-5F5A2B62BF12}
 		{79443344-6552-4BA2-A6F4-8DAC003AAE77} = {79443344-6552-4BA2-A6F4-8DAC003AAE77}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FitLib", "..\fitnesse\cpp\CppTestTools\Fit\FitLib\FitLib.vcproj", "{260C891E-F256-4F96-85DB-5F5A2B62BF12}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FitLib", "fitnesse\cpp\CppTestTools\Fit\FitLib\FitLib.vcproj", "{260C891E-F256-4F96-85DB-5F5A2B62BF12}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A71CB80D-B5DA-4794-9524-D86CB7A01411} = {A71CB80D-B5DA-4794-9524-D86CB7A01411}
 		{59AE2E7A-810E-438D-BA7A-A5B4B8F55FB5} = {59AE2E7A-810E-438D-BA7A-A5B4B8F55FB5}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Concurrency", "..\fitnesse\cpp\CppTestTools\Concurrency\Concurrency.vcproj", "{59AE2E7A-810E-438D-BA7A-A5B4B8F55FB5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Concurrency", "fitnesse\cpp\CppTestTools\Concurrency\Concurrency.vcproj", "{59AE2E7A-810E-438D-BA7A-A5B4B8F55FB5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VisualCpp", "..\fitnesse\cpp\CppTestTools\Platforms\VisualCpp\VisualCpp.vcproj", "{A71CB80D-B5DA-4794-9524-D86CB7A01411}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VisualCpp", "fitnesse\cpp\CppTestTools\Platforms\VisualCpp\VisualCpp.vcproj", "{A71CB80D-B5DA-4794-9524-D86CB7A01411}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libungif", "..\idFixtures\giflib-4.1.6\windows\libungif.vcproj", "{79443344-6552-4BA2-A6F4-8DAC003AAE77}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libungif", "idFixtures\giflib-4.1.6\windows\libungif.vcproj", "{79443344-6552-4BA2-A6F4-8DAC003AAE77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
