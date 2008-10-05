@@ -13,14 +13,17 @@ idCompareImageFixture::idCompareImageFixture()
 	parameterSet(),
 	_reference(0),
 	_test(0),
-	_tempFile("tmp.gif")
+	_tempFile("fitnesse.gif"),
+	_lastMatchingColor(0)
 {
 	PUBLISH(idCompareImageFixture, std::string, file);
 	PUBLISH(idCompareImageFixture, std::string, parameterSet);
-	PUBLISH(idCompareImageFixture, std::string, match);
-	PUBLISH(idCompareImageFixture, std::string, matchSize);
-	PUBLISH(idCompareImageFixture, std::string, matchColors);
-	PUBLISH(idCompareImageFixture, std::string, matchPixels);
+	PUBLISH(idCompareImageFixture, bool, match);
+	PUBLISH(idCompareImageFixture, bool, matchSize);
+	PUBLISH(idCompareImageFixture, bool, matchColors);
+	PUBLISH(idCompareImageFixture, bool, matchPixels);
+	PUBLISH(idCompareImageFixture, int, lastMatchingColor);
+	PUBLISH(idCompareImageFixture, std::string, mismatchedColor);
 }
 
 idCompareImageFixture::~idCompareImageFixture()
@@ -29,28 +32,6 @@ idCompareImageFixture::~idCompareImageFixture()
 	_reference = 0;
 	delete _test;
 	_test = 0;
-}
-
-std::string ToString(bool value)
-{
-	return value ? "true" : "false";
-}
-
-std::string idCompareImageFixture::match()
-{
-	return ToString(ResultsMatchReference());
-}
-std::string idCompareImageFixture::matchSize()
-{
-	return ToString(ResultsMatchReferenceSize());
-}
-std::string idCompareImageFixture::matchColors()
-{
-	return ToString(ResultsMatchReferenceColors());
-}
-std::string idCompareImageFixture::matchPixels()
-{
-	return ToString(ResultsMatchReferencePixels());
 }
 
 std::string EscapeChars(std::string const &source)
@@ -67,24 +48,24 @@ std::string EscapeChars(std::string const &source)
 	return dest;
 }
 
-bool idCompareImageFixture::ResultsMatchReference()
+bool idCompareImageFixture::match()
 {
-	return ResultsMatchReferenceSize() && ResultsMatchReferenceColors() && ResultsMatchReferencePixels();
+	return matchSize() && matchColors() && matchPixels();
 }
 
-bool idCompareImageFixture::ResultsMatchReferenceSize()
+bool idCompareImageFixture::matchSize()
 {
 	Prepare();
 	return _reference->SameSize(*_test);
 }
 
-bool idCompareImageFixture::ResultsMatchReferenceColors()
+bool idCompareImageFixture::matchColors()
 {
 	Prepare();
-	return _reference->SameColors(*_test);
+	return _reference->SameColors(*_test, _lastMatchingColor, _mismatchedColor);
 }
 
-bool idCompareImageFixture::ResultsMatchReferencePixels()
+bool idCompareImageFixture::matchPixels()
 {
 	Prepare();
 	return _reference->SamePixels(*_test);
@@ -119,9 +100,10 @@ bool idCompareImageFixture::RunFractInt()
 {
 	CurrentDirectoryPusher currentDirectory("..\\fractint");
 
-	boost::format command("..\\fractint\\debug\\fractint.exe @%1%/%2% batch=yes savename=%3% video=F7");
-	command % file % parameterSet % _tempFile;
-	return 0 == FileSystem::ExecuteCommand(command.str());
+	std::string command =
+		(boost::format("..\\fractint\\debug\\fractint.exe @%1%/%2% batch=yes overwrite=yes savename=%3% video=F7")
+			% file % parameterSet % _tempFile).str();
+	return 0 == FileSystem::ExecuteCommand(command);
 }
 
 bool idCompareImageFixture::CompareImages()

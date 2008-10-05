@@ -2,6 +2,8 @@
 #include <cassert>
 #include <stdexcept>
 
+#include <boost/format.hpp>
+
 #include "FileSystem.h"
 #include "GIFImage.h"
 #include "gif_lib.h"
@@ -70,7 +72,19 @@ bool GIFImage::SameSize(const GIFImage &right)
 		&& (_file->ImageCount == right._file->ImageCount);
 }
 
-bool GIFImage::SameColors(const GIFImage &right)
+bool GIFImage::SameColors(GIFImage const &right)
+{
+	int lastMatchingColorIgnored;
+	return SameColors(right, lastMatchingColorIgnored);
+}
+
+bool GIFImage::SameColors(const GIFImage &right, int &lastMatchingColor)
+{
+	std::string mismatchedColorIgnored;
+	return SameColors(right, lastMatchingColor, mismatchedColorIgnored);
+}
+
+bool GIFImage::SameColors(GIFImage const &right, int &lastMatchingColor, std::string &mismatchedColor)
 {
 	if ((_file->SColorMap && !right._file->SColorMap)
 		|| (!_file->SColorResolution && right._file->SColorMap))
@@ -78,8 +92,8 @@ bool GIFImage::SameColors(const GIFImage &right)
 		return false;
 	}
 
-	ColorMapObject *self = 0;
-	ColorMapObject *other = 0;
+	ColorMapObject const *self = 0;
+	ColorMapObject const *other = 0;
 	if (_file->SColorMap)
 	{
 		self = _file->SColorMap;
@@ -98,14 +112,26 @@ bool GIFImage::SameColors(const GIFImage &right)
 		return false;
 	}
 
+	return SameMaskedColors(lastMatchingColor, mismatchedColor, self, ~0, other);
+}
+
+bool GIFImage::SameMaskedColors(int &lastMatchingColor, std::string &mismatchedColor,
+								ColorMapObject const *self, int mask, ColorMapObject const *other)
+{
+	lastMatchingColor = -1;
+	mismatchedColor = "none";
 	for (int i = 0; i < self->ColorCount; i++)
 	{
-		if ((self->Colors[i].Red != other->Colors[i].Red)
-			|| (self->Colors[i].Green != other->Colors[i].Green)
-			|| (self->Colors[i].Blue != other->Colors[i].Blue))
+		if (((self->Colors[i].Red & mask) != (other->Colors[i].Red & mask))
+			|| ((self->Colors[i].Green & mask) != (other->Colors[i].Green & mask))
+			|| ((self->Colors[i].Blue & mask) != (other->Colors[i].Blue & mask)))
 		{
+			mismatchedColor = (boost::format("(%1%, %2%, %3%) != (%4%, %5%, %6%)")
+				% (self->Colors[i].Red & mask) % (self->Colors[i].Green & mask) % (self->Colors[i].Blue & mask)
+				% (other->Colors[i].Red & mask) % (other->Colors[i].Green & mask) % (other->Colors[i].Blue & mask)).str();
 			return false;
 		}
+		lastMatchingColor++;
 	}
 
 	return true;
