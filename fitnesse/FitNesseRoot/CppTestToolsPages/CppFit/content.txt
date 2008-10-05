@@ -8,7 +8,7 @@ The Java and C# Fit versions are designed using reflection.  Reflection allows t
 !*> !3 !-ColumnFixture-!
 A !-ColumnFixture-! is used for submitting rows of data into an application.
 
-The top row of the table identifies the fixture.  The column headings represent fields and methods on the !-ColumnFixture-!.  The following row data is eith populated into a member variable of the fixture, or compare to the result of a function call.  This table  defines a set of sensors for testing the home security system.
+The top row of the table identifies the fixture.  The column headings represent fields and methods on the !-ColumnFixture-!.  The following row data is either populated into a member variable of the fixture, or compared to the result of a function call.  This table  defines a set of sensors for testing the home security system.
 
 !|DefineSensors|
 |port|name |Type|submit?|reason?|
