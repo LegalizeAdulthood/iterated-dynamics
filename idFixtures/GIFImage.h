@@ -14,9 +14,14 @@ public:
 	bool operator!=(GIFImage const &right);
 	bool SameSize(GIFImage const &right);
 	bool SameColors(GIFImage const &right);
+	bool SameColors(GIFImage const &right, int &lastMatchingColor);
+	bool SameColors(GIFImage const &right, int &lastMatchingColor, std::string &mismatchedColor);
+
 	bool SamePixels(GIFImage const &right);
 
 private:
+	bool SameMaskedColors(int &lastMatchingColor, std::string &mismatchedColor,
+		ColorMapObject const *self, int mask, ColorMapObject const *other);
 	void DecodeGifFile();
 
 	std::string _path;

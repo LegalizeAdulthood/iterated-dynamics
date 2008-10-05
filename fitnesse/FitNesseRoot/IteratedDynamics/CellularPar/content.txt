@@ -1,7 +1,7 @@
 !contents -R2 -g -p -f -h
 
 |Compare Image|
-|'''File'''|'''Parameter Set'''|'''Match Size?'''|'''Match Colors?'''|'''Match Pixels?'''|
+|'''File'''|'''Parameter Set'''|'''Match Size?'''|'''Match Colors?'''|'''Match Pixels?'''|'''Last Matching Color?'''|'''Mismatched Color?'''|
 |cellular|!-bugs-!|true|true|true|
 |cellular|!-BYTE_Photo_6-!|true|true|true|
 |cellular|!-BYTE_Photo_6_rev1-!|true|true|true|
@@ -9,15 +9,11 @@
 |cellular|!-BYTE_Photo_6_rev3-!|true|true|true|
 |cellular|!-checkerboard-!|true|true|true|
 |cellular|!-checkerboard_not-!|true|true|true|
-|cellular|!-pyramid_of_fore-!|true|true|true|
+|cellular|!-pyramid_of_fire-!|true|true|true|
 |cellular|!-Sci_Am_p199#1-!|true|true|true|
 |cellular|!-Sci_Am_p199#2-!|true|true|true|
 |cellular|!-Sci_Am_p199#3-!|true|true|true|
 |cellular|!-Sci_Am_p199#4-!|true|true|true|
-|cellular|!-Sci_Am_p199#5-!|true|true|true|
-|cellular|!-Sci_Am_p199#6-!|true|true|true|
-|cellular|!-Sci_Am_p199#7-!|true|true|true|
-|cellular|!-Sci_Am_p199#8-!|true|true|true|
 |cellular|!-test_41-!|true|true|true|
 |cellular|!-triangles-!|true|true|true|
 |cellular|!-triangles2-!|true|true|true|
@@ -25,5 +21,4 @@
 |cellular|!-triangles4-!|true|true|true|
 |cellular|!-triangles5-!|true|true|true|
 |cellular|!-Type_61-!|true|true|true|
-|cellular|!-Wolfram_1-!|true|true|true|
 |cellular|!-X-mas_tree-!|true|true|true|

@@ -6,6 +6,14 @@
 
 class GIFImage;
 
+namespace
+{
+	inline void Convert(const bool &in, std::string &out)
+	{
+		out = in ? "true" : "false";
+	}
+}
+
 class idCompareImageFixture : public ColumnFixture
 {
 public:
@@ -16,19 +24,19 @@ public:
 private:
 	std::string file;
 	std::string parameterSet;
-	std::string match();
-	std::string matchSize();
-	std::string matchColors();
-	std::string matchPixels();
+	bool match();
+	bool matchSize();
+	bool matchColors();
+	bool matchPixels();
 	GIFImage *_reference;
 	GIFImage *_test;
 	std::string _tempFile;
+	int lastMatchingColor() { return _lastMatchingColor; }
+	int _lastMatchingColor;
+	std::string mismatchedColor() { return _mismatchedColor; }
+	std::string _mismatchedColor;
 
 	bool Prepare();
-	bool ResultsMatchReference();
-	bool ResultsMatchReferenceSize();
-	bool ResultsMatchReferenceColors();
-	bool ResultsMatchReferencePixels();
 	bool RunFractInt();
 	bool CompareImages();
 };
