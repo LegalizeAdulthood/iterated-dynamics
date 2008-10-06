@@ -3685,9 +3685,9 @@ void PerformWorkList::setup_distance_estimator()
 
 void PerformWorkList::setup_per_image()
 {
-	// per_image can override
+	// per_image can override calctype & symmetry
 	g_calculate_type = g_current_fractal_specific->calculate_type;
-	g_symmetry = g_current_fractal_specific->symmetry; // calctype & symmetry
+	g_symmetry = g_current_fractal_specific->symmetry;
 	g_plot_color = g_plot_color_put_color; // defaults when setsymmetry not called or does nothing
 }
 
