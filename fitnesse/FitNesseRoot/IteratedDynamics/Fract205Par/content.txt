@@ -1,9 +1,9 @@
 !contents -R2 -g -p -f -h
 
 |Compare Image|
-|'''File'''|'''Parameter Set'''|'''Match?'''|
-|fract205|!-BMC0884x-!|true|
-|fract205|!-DC022b6c-!|true|
-|fract205|!-Sq0002d-!|true|
-|fract205|!-Sq441-!|true|
-|fract205|!-TD081-!|true|
+|'''File'''|'''Parameter Set'''|'''Match Size?'''|'''Match Colors?'''|'''Pixel Difference?'''|'''Pixel Difference Count?'''|
+|fract205|!-BMC0884x-!|true|true|0|0|
+|fract205|!-DC022b6c-!|true|true|0|0|
+|fract205|!-Sq0002d-!|true|true|0|0|
+|fract205|!-Sq441-!|true|true|0|0|
+|fract205|!-TD081-!|true|true|0|0|

@@ -1,21 +1,21 @@
 !contents -R2 -g -p -f -h
 
 |Compare Image|
-|'''File'''|'''Parameter Set'''|'''Match Size?'''|'''Match Colors?'''|'''Match Pixels?'''|
-|fract18|!-bazzaro-!|true|true|true|
-|fract18|!-bifmay_test-!|true|true|true|
-|fract18|!-bifurclambdafn-!|true|true|true|
-|fract18|!-bifurclambdafnexp-!|true|true|true|
-|fract18|!-cat's_eye-!|true|true|true|
-|fract18|!-daisy-!|true|true|true|
-|fract18|!-eggface-!|true|true|true|
-|fract18|!-face2-!|true|true|true|
-|fract18|!-fireworks-!|true|true|true|
-|fract18|!-logfnbifurc-!|true|true|true|
-|fract18|!-snow_storm-!|true|true|true|
-|fract18|!-star_burst-!|true|true|true|
-|fract18|!-sunburst-!|true|true|true|
-|fract18|!-testbifstewart-!|true|true|true|
-|fract18|!-triple_swirl-!|true|true|true|
-|fract18|!-twirlbifurc-!|true|true|true|
-|fract18|!-twisted_pairs-!|true|true|true|
+|'''File'''|'''Parameter Set'''|'''Match Size?'''|'''Match Colors?'''|'''Pixel Difference?'''|'''Pixel Difference Count?'''|
+|fract18|!-bazzaro-!|true|true|0|0|
+|fract18|!-bifmay_test-!|true|true|0|0|
+|fract18|!-bifurclambdafn-!|true|true|0|0|
+|fract18|!-bifurclambdafnexp-!|true|true|0|0|
+|fract18|!-cat's_eye-!|true|true|0|0|
+|fract18|!-daisy-!|true|true|0|0|
+|fract18|!-eggface-!|true|true|0|0|
+|fract18|!-face2-!|true|true|0|0|
+|fract18|!-fireworks-!|true|true|0|0|
+|fract18|!-logfnbifurc-!|true|true|0|0|
+|fract18|!-snow_storm-!|true|true|0|0|
+|fract18|!-star_burst-!|true|true|0|0|
+|fract18|!-sunburst-!|true|true|0|0|
+|fract18|!-testbifstewart-!|true|true|0|0|
+|fract18|!-triple_swirl-!|true|true|0|0|
+|fract18|!-twirlbifurc-!|true|true|0|0|
+|fract18|!-twisted_pairs-!|true|true|0|0|

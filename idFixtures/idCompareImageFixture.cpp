@@ -21,7 +21,8 @@ idCompareImageFixture::idCompareImageFixture()
 	PUBLISH(idCompareImageFixture, bool, match);
 	PUBLISH(idCompareImageFixture, bool, matchSize);
 	PUBLISH(idCompareImageFixture, bool, matchColors);
-	PUBLISH(idCompareImageFixture, bool, matchPixels);
+	PUBLISH(idCompareImageFixture, int, pixelDifference);
+	PUBLISH(idCompareImageFixture, int, pixelDifferenceCount);
 	PUBLISH(idCompareImageFixture, int, lastMatchingColor);
 	PUBLISH(idCompareImageFixture, std::string, mismatchedColor);
 }
@@ -50,7 +51,7 @@ std::string EscapeChars(std::string const &source)
 
 bool idCompareImageFixture::match()
 {
-	return matchSize() && matchColors() && matchPixels();
+	return matchSize() && matchColors() && 0 == pixelDifference();
 }
 
 bool idCompareImageFixture::matchSize()
@@ -65,10 +66,16 @@ bool idCompareImageFixture::matchColors()
 	return _reference->SameColors(*_test, _lastMatchingColor, _mismatchedColor);
 }
 
-bool idCompareImageFixture::matchPixels()
+int idCompareImageFixture::pixelDifference()
 {
 	Prepare();
-	return _reference->SamePixels(*_test);
+	return _reference->PixelDifference(*_test);
+}
+
+int idCompareImageFixture::pixelDifferenceCount()
+{
+	Prepare();
+	return _reference->PixelDifferenceCount(*_test);
 }
 
 bool idCompareImageFixture::Prepare()

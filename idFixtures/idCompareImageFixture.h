@@ -27,7 +27,8 @@ private:
 	bool match();
 	bool matchSize();
 	bool matchColors();
-	bool matchPixels();
+	int pixelDifference();
+	int pixelDifferenceCount();
 	GIFImage *_reference;
 	GIFImage *_test;
 	std::string _tempFile;

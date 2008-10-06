@@ -1,16 +1,14 @@
 !contents -R2 -g -p -f -h
 
 |Compare Image|
-|'''File'''|'''Parameter Set'''|'''Match?'''|
-|lyapunov|!-Blob1-!|true|
-
-|Comment|
-|lyapunov|!-Blob2-!|true|
-|lyapunov|!-bug-!|true|
-|lyapunov|!-Flames-!|true|
-|lyapunov|!-Hydra-!|true|
-|lyapunov|!-smbird1-!|true|
-|lyapunov|!-smbird2-!|true|
-|lyapunov|!-Snail1-!|true|
-|lyapunov|!-Snail2-!|true|
-|lyapunov|!-Swallow-!|true|
+|'''File'''|'''Parameter Set'''|'''Match Size?'''|'''Match Colors?'''|'''Pixel Difference?'''|'''Pixel Difference Count?'''|
+|lyapunov|!-Blob1-!|true|true|0|0|
+|lyapunov|!-Blob2-!|true|true|0|0|
+|lyapunov|!-bug-!|true|true|0|0|
+|lyapunov|!-Flames-!|true|true|0|0|
+|lyapunov|!-Hydra-!|true|true|0|0|
+|lyapunov|!-smbird1-!|true|true|0|0|
+|lyapunov|!-smbird2-!|true|true|0|0|
+|lyapunov|!-Snail1-!|true|true|0|0|
+|lyapunov|!-Snail2-!|true|true|0|0|
+|lyapunov|!-Swallow-!|true|true|0|0|

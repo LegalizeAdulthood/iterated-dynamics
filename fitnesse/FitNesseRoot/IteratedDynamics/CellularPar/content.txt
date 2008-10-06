@@ -1,24 +1,24 @@
 !contents -R2 -g -p -f -h
 
 |Compare Image|
-|'''File'''|'''Parameter Set'''|'''Match Size?'''|'''Match Colors?'''|'''Match Pixels?'''|'''Last Matching Color?'''|'''Mismatched Color?'''|
-|cellular|!-bugs-!|true|true|true|
-|cellular|!-BYTE_Photo_6-!|true|true|true|
-|cellular|!-BYTE_Photo_6_rev1-!|true|true|true|
-|cellular|!-BYTE_Photo_6_rev2-!|true|true|true|
-|cellular|!-BYTE_Photo_6_rev3-!|true|true|true|
-|cellular|!-checkerboard-!|true|true|true|
-|cellular|!-checkerboard_not-!|true|true|true|
-|cellular|!-pyramid_of_fire-!|true|true|true|
-|cellular|!-Sci_Am_p199#1-!|true|true|true|
-|cellular|!-Sci_Am_p199#2-!|true|true|true|
-|cellular|!-Sci_Am_p199#3-!|true|true|true|
-|cellular|!-Sci_Am_p199#4-!|true|true|true|
-|cellular|!-test_41-!|true|true|true|
-|cellular|!-triangles-!|true|true|true|
-|cellular|!-triangles2-!|true|true|true|
-|cellular|!-triangles3-!|true|true|true|
-|cellular|!-triangles4-!|true|true|true|
-|cellular|!-triangles5-!|true|true|true|
-|cellular|!-Type_61-!|true|true|true|
-|cellular|!-X-mas_tree-!|true|true|true|
+|'''File'''|'''Parameter Set'''|'''Match Size?'''|'''Match Colors?'''|'''Pixel Difference?'''|'''Pixel Difference Count?'''|
+|cellular|!-bugs-!|true|true|0|0|
+|cellular|!-BYTE_Photo_6-!|true|true|0|0|
+|cellular|!-BYTE_Photo_6_rev1-!|true|true|0|0|
+|cellular|!-BYTE_Photo_6_rev2-!|true|true|0|0|
+|cellular|!-BYTE_Photo_6_rev3-!|true|true|0|0|
+|cellular|!-checkerboard-!|true|true|0|0|
+|cellular|!-checkerboard_not-!|true|true|0|0|
+|cellular|!-pyramid_of_fire-!|true|true|0|0|
+|cellular|!-Sci_Am_p199#1-!|true|true|0|0|
+|cellular|!-Sci_Am_p199#2-!|true|true|0|0|
+|cellular|!-Sci_Am_p199#3-!|true|true|0|0|
+|cellular|!-Sci_Am_p199#4-!|true|true|0|0|
+|cellular|!-test_41-!|true|true|0|0|
+|cellular|!-triangles-!|true|true|0|0|
+|cellular|!-triangles2-!|true|true|0|0|
+|cellular|!-triangles3-!|true|true|0|0|
+|cellular|!-triangles4-!|true|true|0|0|
+|cellular|!-triangles5-!|true|true|0|0|
+|cellular|!-Type_61-!|true|true|0|0|
+|cellular|!-X-mas_tree-!|true|true|0|0|

@@ -1,32 +1,32 @@
 !contents -R2 -g -p -f -h
 
 |Compare Image|
-|'''File'''|'''Parameter Set'''|'''Match?'''|
-|fract19|!-30,000-Feet-!|true|
-|fract19|!-Achute-!|true|
-|fract19|!-Aguay-!|true|
-|fract19|!-Ant-!|true|
-|fract19|!-Barnsleyj2-manh-!|true|
-|fract19|!-Barnsleyj2-manr-!|true|
-|fract19|!-Caverns_Of_Mongue-!|true|
-|fract19|!-Chip-!|true|
-|fract19|!-EJ_01-!|true|
-|fract19|!-Fractint-!|true|
-|fract19|!-G-3-03-M-!|true|
-|fract19|!-Graphs-!|true|
-|fract19|!-jdsg4101-!|true|
-|fract19|!-Lumber-!|true|
-|fract19|!-Maculated_1-!|true|
-|fract19|!-Mandel-virus-!|true|
-|fract19|!-Newton-real-!|true|
-|fract19|!-NutcrackerMonsters-!|true|
-|fract19|!-Oortcld-!|true|
-|fract19|!-ptc4m01-!|true|
-|fract19|!-ptcmjn01-!|true|
-|fract19|!-SG8-21-12-!|true|
-|fract19|!-Sliced-Tomato-!|true|
-|fract19|!-Spirals-!|true|
-|fract19|!-Threeply-!|true|
-|fract19|!-TileJulia-!|true|
-|fract19|!-TileMandel-!|true|
-|fract19|!-Zorro-!|true|
+|'''File'''|'''Parameter Set'''|'''Match Size?'''|'''Match Colors?'''|'''Pixel Difference?'''|'''Pixel Difference Count?'''|
+|fract19|!-30,000-Feet-!|true|true|0|0|
+|fract19|!-Achute-!|true|true|0|0|
+|fract19|!-Aguay-!|true|true|0|0|
+|fract19|!-Ant-!|true|true|0|0|
+|fract19|!-Barnsleyj2-manh-!|true|true|0|0|
+|fract19|!-Barnsleyj2-manr-!|true|true|0|0|
+|fract19|!-Caverns_Of_Mongue-!|true|true|0|0|
+|fract19|!-Chip-!|true|true|0|0|
+|fract19|!-EJ_01-!|true|true|0|0|
+|fract19|!-Fractint-!|true|true|0|0|
+|fract19|!-G-3-03-M-!|true|true|0|0|
+|fract19|!-Graphs-!|true|true|0|0|
+|fract19|!-jdsg4101-!|true|true|0|0|
+|fract19|!-Lumber-!|true|true|0|0|
+|fract19|!-Maculated_1-!|true|true|0|0|
+|fract19|!-Mandel-virus-!|true|true|0|0|
+|fract19|!-Newton-real-!|true|true|0|0|
+|fract19|!-NutcrackerMonsters-!|true|true|0|0|
+|fract19|!-Oortcld-!|true|true|0|0|
+|fract19|!-ptc4m01-!|true|true|0|0|
+|fract19|!-ptcmjn01-!|true|true|0|0|
+|fract19|!-SG8-21-12-!|true|true|0|0|
+|fract19|!-Sliced-Tomato-!|true|true|0|0|
+|fract19|!-Spirals-!|true|true|0|0|
+|fract19|!-Threeply-!|true|true|0|0|
+|fract19|!-TileJulia-!|true|true|0|0|
+|fract19|!-TileMandel-!|true|true|0|0|
+|fract19|!-Zorro-!|true|true|0|0|
