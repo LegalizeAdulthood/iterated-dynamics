@@ -1,0 +1,238 @@
+barnsleyj1         {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=barnsleyj1 center-mag=0/-2.22045e-016/0.6666667/0.75
+  params=0.59999999999999998/1.1000000000000001 float=y inside=0
+  colors=@default.map
+  }
+
+barnsleyj2         {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=barnsleyj2 center-mag=0/-2.22045e-016/0.6666667/0.75
+  params=0.59999999999999998/1.1000000000000001 float=y inside=0
+  colors=@default.map
+  }
+
+barnsleyj3         {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=barnsleyj3 center-mag=0/-2.22045e-016/0.6666667/0.75
+  params=0.10000000000000001/0.35999999999999999 float=y inside=0
+  colors=@default.map
+  }
+
+barnsleym1         {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=barnsleym1 center-mag=0/-2.22045e-016/0.6666667/0.75
+  params=0/0 float=y inside=0 colors=@default.map
+  }
+
+barnsleym2         {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=barnsleym2 center-mag=0/-2.22045e-016/0.6666667/0.75
+  params=0/0 float=y inside=0 colors=@default.map
+  }
+
+barnsleym3         {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=barnsleym3 center-mag=0/-2.22045e-016/0.6666667/0.75
+  params=0/0 float=y inside=0 colors=@default.map
+  }
+
+bif+sinpi          {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=bif+sinpi function=sin center-mag=0.8625/1/1/1.7021
+  params=1000/0.66000000000000003 float=y inside=0 colors=@default.map
+  }
+
+bif=sinpi          {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=bif=sinpi function=sin
+  center-mag=0/4.44089e-016/0.2857143/1.4
+  params=1000/0.66000000000000003 float=y inside=0 colors=@default.map
+  }
+
+biflambda          {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=biflambda function=ident
+  center-mag=1/0.5/0.6666667/0.5 params=1000/0.66000000000000003
+  float=y inside=0 colors=@default.map
+  }
+
+bifmay             {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=bifmay center-mag=-2.2/1.35/0.5405405/1.4231
+  params=300/0.90000000000000002/5 float=y inside=0
+  colors=@default.map
+  }
+
+bifstewart         {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=bifstewart function=ident
+  center-mag=1.35/0/0.9090909/1.6923 params=1000/0.66000000000000003
+  float=y inside=0 colors=@default.map
+  }
+
+bifurcation        {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=bifurcation function=ident
+  center-mag=2.45/0.67/1.492537/1.2182 params=1000/0.66000000000000003
+  float=y inside=0 colors=@default.map
+  }
+
+cellular           {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=cellular center-mag=0/0/1
+  params=11.0/3311100320.0/41.0/0.0 float=y inside=0
+  colors=@default.map
+  }
+
+chip               {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=chip center-mag=0/0/0.001754386/0.75
+  params=-15/-19/1 float=y inside=0 colors=@default.map
+  }
+
+circle             {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=circle center-mag=0/-2.22045e-016/0.6666667/0.75
+  params=200000 float=y inside=0 colors=@default.map
+  }
+
+cmplxmrksjul       {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=cmplxmarksjul
+  center-mag=0/-2.22045e-016/0.6666667/0.75
+  params=0.29999999999999999/0.59999999999999998/1/0 float=y inside=0
+  colors=@default.map
+  }
+
+cmplxmarksman      {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=cmplxmarksmand
+  center-mag=0/-2.22045e-016/0.6666667/0.75 params=0/0/1/0 float=y
+  inside=0 colors=@default.map
+  }
+
+complexbasin       {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=complexbasin
+  center-mag=0/-2.22045e-016/0.6666667/0.75 params=3/0/1/0 float=y
+  inside=0 periodicity=0 colors=@default.map
+  }
+
+complexnewton      {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=complexnewton
+  center-mag=0/-2.22045e-016/0.6666667/0.75 params=3/0/1/0 float=y
+  inside=0 periodicity=0 colors=@default.map
+  }
+
+diffusion          {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=diffusion center-mag=0/-2.22045e-016/0.6666667/0.75
+  params=10/0/0 float=y inside=0 colors=@default.map
+  }
+
+dynamic            {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=dynamic function=sin center-mag=0/0/0.05
+  params=50/0.10000000000000001/1/3 float=y inside=0
+  colors=@default.map
+  }
+
+escher_julia       {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=escher_julia center-mag=0/0/0.8333333/0.75
+  params=0.32000000000000001/0.042999999999999997 float=y inside=0
+  colors=@default.map
+  }
+
+fn(z)+fn(pix)      {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=fn(z)+fn(pix) function=sin/sqr
+  center-mag=0/0/0.3703704/0.75 params=0/0/1/0 float=y inside=0
+  colors=@default.map
+  }
+
+fn(z*z)            {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=fn(z*z) function=sin
+  center-mag=0/-4.44089e-016/0.3333333/0.75 float=y inside=0
+  colors=@default.map
+  }
+
+fn(z)*fn(z)        {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=fn*fn function=sin/sqr
+  center-mag=0/-4.44089e-016/0.3333333/0.75 float=y inside=0
+  colors=@default.map
+  }
+
+fn*z+z             {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=fn*z+z function=sin
+  center-mag=0/-4.44089e-016/0.3333333/0.75 params=1/0/1/0 float=y
+  inside=0 colors=@default.map
+  }
+
+fn+fn              {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=fn+fn function=sin/sqr
+  center-mag=0/-4.44089e-016/0.3333333/0.75 params=1/0/1/0 float=y
+  inside=0 colors=@default.map
+  }
+
+formula_3daMand1   {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=formula formulafile=fractint.frm
+  formulaname=3daMand01 center-mag=0/-2.22045e-016/0.6666667/0.75
+  params=0/0/0/0 float=y inside=0 colors=@default.map
+  }
+
+formula_3daMand02  {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=formula formulafile=fractint.frm
+  formulaname=3daMand02 center-mag=0/-2.22045e-016/0.6666667/0.75
+  params=0/0/0/0 float=y inside=0 colors=@default.map
+  }
+
+formula_3RDIM01    {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=formula formulafile=fractint.frm formulaname=3RDIM01
+  center-mag=0/-2.22045e-016/0.6666667/0.75 params=0/0/0/0 float=y
+  inside=0 colors=@default.map
+  }
+
+formula_3RDIM05    {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=formula formulafile=fractint.frm formulaname=3RDIM05
+  function=sin center-mag=0/-2.22045e-016/0.6666667/0.75
+  params=0/0/0/0 float=y inside=0 colors=@default.map
+  }
+
+formula_AltJTet    {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=formula formulafile=fractint.frm formulaname=AltJTet
+  center-mag=0/-2.22045e-016/0.6666667/0.75 params=0/0/0/0 float=y
+  inside=0 colors=@default.map
+  }
+
+formula_AltMTet    {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=formula formulafile=fractint.frm formulaname=AltMTet
+  center-mag=0/-2.22045e-016/0.6666667/0.75 params=0/0 float=y
+  inside=0 colors=@default.map
+  }
+
+formula_Bali       {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=formula formulafile=fractint.frm formulaname=Bali
+  function=sin/sqr center-mag=0/-2.22045e-016/0.6666667/0.75 float=y
+  inside=0 colors=@default.map
+  }
+
+lsystem1           {
+                     ;  Fractint Version 2099 Patchlevel 8
+  reset=2099 type=lsystem lfile=fractint.l lname=DragonCurve
+  center-mag=0/0/1 params=4 float=y inside=0 colors=@default.map
+  }
+
