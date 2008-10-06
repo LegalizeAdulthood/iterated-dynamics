@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <cassert>
+#include <cmath>
 #include <stdexcept>
 
 #include <boost/format.hpp>
@@ -57,7 +58,7 @@ void GIFImage::DecodeGifFile()
 
 bool GIFImage::operator ==(const GIFImage &right)
 {
-	return SameSize(right) && SameColors(right) && SamePixels(right);
+	return SameSize(right) && SameColors(right) && 0 == PixelDifference(right);
 }
 
 bool GIFImage::operator !=(const GIFImage &right)
@@ -137,8 +138,9 @@ bool GIFImage::SameMaskedColors(int &lastMatchingColor, std::string &mismatchedC
 	return true;
 }
 
-bool GIFImage::SamePixels(const GIFImage &right)
+int GIFImage::PixelDifferenceCount(const GIFImage &right)
 {
+	int pixelDifferenceCount = 0;
 	for (int i = 0; i < _file->ImageCount; i++)
 	{
 		int offset = 0;
@@ -149,9 +151,8 @@ bool GIFImage::SamePixels(const GIFImage &right)
 				if (      _file->SavedImages[i].RasterBits[offset] !=
 					right._file->SavedImages[i].RasterBits[offset])
 				{
-					return false;
+					pixelDifferenceCount++;
 				}
-
 				++offset;
 			}
 			if (offset & 3)
@@ -161,5 +162,30 @@ bool GIFImage::SamePixels(const GIFImage &right)
 		}
 	}
 
-	return true;
+	return pixelDifferenceCount;
+}
+
+int GIFImage::PixelDifference(const GIFImage &right)
+{
+	int pixelDifference = 0;
+	for (int i = 0; i < _file->ImageCount; i++)
+	{
+		int offset = 0;
+		for (int y = 0; y < _file->Image.Height; y++)
+		{
+			for (int x = 0; x < _file->Image.Width; x++)
+			{
+				pixelDifference +=
+					std::abs(_file->SavedImages[i].RasterBits[offset] -
+					   right._file->SavedImages[i].RasterBits[offset]);
+				++offset;
+			}
+			if (offset & 3)
+			{
+				offset += 4 - (offset & 3);
+			}
+		}
+	}
+
+	return pixelDifference;
 }

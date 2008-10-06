@@ -17,7 +17,8 @@ public:
 	bool SameColors(GIFImage const &right, int &lastMatchingColor);
 	bool SameColors(GIFImage const &right, int &lastMatchingColor, std::string &mismatchedColor);
 
-	bool SamePixels(GIFImage const &right);
+	int PixelDifference(GIFImage const &right);
+	int PixelDifferenceCount(GIFImage const &right);
 
 private:
 	bool SameMaskedColors(int &lastMatchingColor, std::string &mismatchedColor,
