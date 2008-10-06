@@ -1065,11 +1065,10 @@ int lorenz_3d4_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-int henon_orbit_fp(double *x, double *y, double *z)
+int henon_orbit_fp(double *x, double *y, double *)
 {
 	double newx;
 	double newy;
-	*z = *x; // for warning only
 	newx = 1 + *y - s_a*(*x)*(*x);
 	newy = s_b*(*x);
 	*x = newx;
@@ -1077,11 +1076,10 @@ int henon_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-int henon_orbit(long *l_x, long *l_y, long *l_z)
+int henon_orbit(long *l_x, long *l_y, long *)
 {
 	long newx;
 	long newy;
-	*l_z = *l_x; // for warning only
 	newx = multiply(*l_x, *l_x, g_bit_shift);
 	newx = multiply(newx, s_l_a, g_bit_shift);
 	newx = g_externs.Fudge() + *l_y - newx;
@@ -1121,10 +1119,9 @@ int pickover_orbit_fp(double *x, double *y, double *z)
 }
 
 // page 149 "Science of Fractal Images"
-int gingerbread_orbit_fp(double *x, double *y, double *z)
+int gingerbread_orbit_fp(double *x, double *y, double *)
 {
 	double newx;
-	*z = *x; // for warning only
 	newx = 1 - (*y) + std::abs(*x);
 	*y = *x;
 	*x = newx;
@@ -1196,10 +1193,9 @@ int kam_torus_orbit(long *r, long *s, long *z)
 	return 0;
 }
 
-int hopalong_2d_orbit_fp(double *x, double *y, double *z)
+int hopalong_2d_orbit_fp(double *x, double *y, double *)
 {
 	double tmp;
-	*z = *x; // for warning only
 	tmp = *y - sign(*x)*std::sqrt(std::abs(s_b*(*x)-s_c));
 	*y = s_a - *x;
 	*x = tmp;
@@ -1222,10 +1218,9 @@ static double cos_sqr(double x)
 	return std::cos(sqr(x));
 }
 
-static int orbit_aux(double (*fn)(double x), double *x, double *y, double *z)
+static int orbit_aux(double (*fn)(double x), double *x, double *y, double *)
 {
 	double tmp;
-	*z = *x; // for warning only
 	tmp = *y - sign(*x)*fn(log_fabs(s_b, s_c, *x))*atan_sqr_log_fabs(s_b, s_c, *x);
 	*y = s_a - *x;
 	*x = tmp;
@@ -1245,10 +1240,9 @@ int quadrup_two_2d_orbit_fp(double *x, double *y, double *z)
 }
 
 // from Michael Peters and HOP
-int three_ply_2d_orbit_fp(double *x, double *y, double *z)
+int three_ply_2d_orbit_fp(double *x, double *y, double *)
 {
 	double tmp;
-	*z = *x; // for warning only
 	tmp = *y - sign(*x)*(std::abs(std::sin(*x)*s_dx + s_c-(*x)*s_dy));
 	*y = s_a - *x;
 	*x = tmp;
@@ -1258,7 +1252,6 @@ int three_ply_2d_orbit_fp(double *x, double *y, double *z)
 int martin_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
-	*z = *x;  // for warning only
 	tmp = *y - std::sin(*x);
 	*y = s_a - *x;
 	*x = tmp;
@@ -1359,8 +1352,6 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 	double xold;
 	double yold;
 	double tmp;
-
-	xold = *z; // for warning only
 
 	xold = *x;
 	yold = *y;
