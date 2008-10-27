@@ -115,7 +115,8 @@
 {2.51 , 1, "Volterra-Lotka Fractals"}
 {2.52 , 1, "Escher-Like Julia Sets"}
 {2.53 , 1, "Latoocarfian"}
-{2.54 , 1, "Mandelbrot Mix 4"}
+;{2.54 , 1, "Mandelbrot Mix 4"}
+{2.54 , 1, "DivideBrot5"}
 
 {3.   , 0, Doodads\, Bells\, and Whistles, FF}
 {3.1  , 1, "Drawing Method"}
@@ -281,8 +282,20 @@ typically have a short life and are updated frequently. They may have
 bug fixes, and thus be more stable, but they may also have new features
 which very likely have new bugs.
 
-Version 20.4.8 is an update of Fractint 20.0 based on the developer's
-  version 20.4.7.  New features include:
+Version 20.4.9 is an update of Fractint 20.0 based on the developer's
+  version 20.4.8.  New features include:
+
+Patch 9 to Version 20.4.0\
+
+Added new Fractal type {DivideBrot5} by Jim Muth.  This Fractal type
+  has AP math support.  Note that image skewing and inversion are not
+  supported by the AP math routines. See {Arbitrary Precision and Deep Zooming}
+  for other features not supported.
+
+  Fixed several obscure bugs in the AP math.
+
+  Added MakeFile changes from Michal Januszewski (xfractint maintainer
+  in Gentoo Linux) to increase distribution compatibility.
 
 Patch 8 to Version 20.4.0\
 

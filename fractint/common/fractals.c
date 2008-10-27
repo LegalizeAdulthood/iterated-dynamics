@@ -3431,6 +3431,61 @@ MandelbrotMix4fpFractal(void) /* from formula by Jim Muth */
 #undef K
 #undef L
 
+double b_const;
+
+int DivideBrot5Setup(void)
+{
+   c_exp = -((int)param[0] - 2); /* use negative here so only need it once */
+   b_const = param[1] + 0.00000000000000000001;
+   return(1);
+}
+
+int DivideBrot5fp_per_pixel(void)
+{
+   if(invert)
+      invertz2(&init);
+   else {
+      init.x = dxpixel();
+      init.y = dypixel();
+   }
+
+   tempsqrx = 0.0;  /* precalculated value */
+   tempsqry = 0.0;
+   old.x = 0.0;
+   old.y = 0.0;
+   return(0); /* 1st iteration has NOT been done */
+}
+
+
+int
+DivideBrot5fpFractal(void) /* from formula by Jim Muth */
+{
+   /* z=sqr(z)/(z^(-a)+b)+c */
+   /* we'll set a to -a in setup, so don't need it here */
+   /* z=sqr(z)/(z^(a)+b)+c */
+   _CMPLX tmp_sqr, tmp1, tmp2;
+
+   /* sqr(z) */
+   tmp_sqr.x = tempsqrx - tempsqry;
+   tmp_sqr.y = old.x * old.y * 2.0;
+
+   /* z^(a) = e^(a * log(z))*/
+   FPUcplxlog(&old, &tmp1);
+   tmp1.x *= c_exp;
+   tmp1.y *= c_exp;
+   FPUcplxexp(&tmp1, &tmp2);
+   /* then add b */
+   tmp2.x += b_const;
+   /* sqr(z)/(z^(a)+b) */
+   FPUcplxdiv(&tmp_sqr, &tmp2, &new);
+   /* then add c = init = pixel */
+   new.x += init.x;
+   new.y += init.y;
+
+   return(floatbailout());
+}
+
+
 /*
  * The following functions calculate the real and imaginary complex
  * coordinates of the point in the complex plane corresponding to

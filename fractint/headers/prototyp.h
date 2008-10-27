@@ -510,6 +510,9 @@ extern void set_pixel_calc_functions(void);
 extern int MandelbrotMix4fp_per_pixel(void);
 extern int MandelbrotMix4fpFractal(void);
 extern int MandelbrotMix4Setup(void);
+extern int DivideBrot5fp_per_pixel(void);
+extern int DivideBrot5fpFractal(void);
+extern int DivideBrot5Setup(void);
 
 /*  fractint -- C file prototypes */
 
@@ -1174,18 +1177,24 @@ extern void showcornersdbl(char *);
 extern int MandelbnSetup(void);
 extern int mandelbn_per_pixel(void);
 extern int juliabn_per_pixel(void);
+extern int dividebrot5bn_per_pixel(void);
 extern int JuliabnFractal(void);
 extern int JuliaZpowerbnFractal(void);
+extern int DivideBrot5bnFractal(void);
 extern _BNCMPLX *cmplxlog_bn(_BNCMPLX *t, _BNCMPLX *s);
 extern _BNCMPLX *cplxmul_bn( _BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y);
+extern _BNCMPLX *cplxdiv_bn( _BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y);
 extern _BNCMPLX *ComplexPower_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy);
 extern int MandelbfSetup(void);
 extern int mandelbf_per_pixel(void);
 extern int juliabf_per_pixel(void);
+extern int dividebrot5bf_per_pixel(void);
 extern int JuliabfFractal(void);
 extern int JuliaZpowerbfFractal(void);
+extern int DivideBrot5bfFractal(void);
 extern _BFCMPLX *cmplxlog_bf(_BFCMPLX *t, _BFCMPLX *s);
 extern _BFCMPLX *cplxmul_bf( _BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y);
+extern _BFCMPLX *cplxdiv_bf( _BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y);
 extern _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy);
 
 /*  memory -- C file prototypes */

@@ -37,8 +37,8 @@ bn_t bntmpcpy1, bntmpcpy2;                           /* bnlength */
 bn_t bnxmin, bnxmax, bnymin, bnymax, bnx3rd, bny3rd;        /* bnlength */
 bn_t bnxdel, bnydel, bnxdel2, bnydel2, bnclosenuff;         /* bnlength */
 bn_t bntmpsqrx, bntmpsqry, bntmp;                           /* rlength  */
-_BNCMPLX bnold, /* bnnew, */ bnparm, bnsaved;               /* bnlength */
-_BNCMPLX bnnew;                                              /* rlength */
+_BNCMPLX /* bnold, bnnew, */ bnparm, bnsaved;               /* bnlength */
+_BNCMPLX bnold, bnnew;                                       /* rlength */
 bn_t bn_pi;                                           /* TAKES NO SPACE */
 
 bf_t bftmp1, bftmp2, bftmp3, bftmp4, bftmp5, bftmp6;     /* rbflength+2 */
@@ -206,9 +206,9 @@ static void init_bf_2(void)
     bfparm.y   = bnroot+ptr; ptr += bflength+2;
     bftmpsqrx  = bnroot+ptr; ptr += rbflength+2;
     bftmpsqry  = bnroot+ptr; ptr += rbflength+2;
-    big_pi     = bnroot+ptr; ptr += bflength+2;
     bftmp      = bnroot+ptr; ptr += rbflength+2;
     }
+    big_pi     = bnroot+ptr; ptr += bflength+2; /* needed by both BIGNUM & BIGFLT */
     bf10tmp    = bnroot+ptr; ptr += bfdecimals+4;
 
     /* ptr needs to be 16-bit aligned on some systems */
@@ -407,8 +407,9 @@ void init_bf_dec(int dec)
     if(bailout > 10)    /* arbitrary value */
        /* using 2 doesn't gain much and requires another test */
        intlength = 4;
-    else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
-       intlength = 2;
+    else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER ||
+             fractype == DIVIDEBROT5)
+       intlength = 4; /* 2 leaves artifacts in the center of the lakes */
     /* the bailout tests need greater dynamic range */
     else if(bailoutest == Real || bailoutest == Imag || bailoutest == And ||
             bailoutest == Manr)
@@ -431,8 +432,9 @@ void init_bf_length(int bnl)
     if(bailout > 10)    /* arbitrary value */
        /* using 2 doesn't gain much and requires another test */
        intlength = 4;
-    else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
-       intlength = 2;
+    else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER ||
+             fractype == DIVIDEBROT5)
+       intlength = 4; /* 2 leaves artifacts in the center of the lakes */
     /* the bailout tests need greater dynamic range */
     else if(bailoutest == Real || bailoutest == Imag || bailoutest == And ||
             bailoutest == Manr)

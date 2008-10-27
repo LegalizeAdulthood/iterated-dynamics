@@ -206,5 +206,6 @@
 #define VL                     169
 #define ESCHER                 170
 #define LATOO                  171
-#define MANDELBROTMIX4         172
+/* #define MANDELBROTMIX4         172 */
+#define DIVIDEBROT5            172
 #endif

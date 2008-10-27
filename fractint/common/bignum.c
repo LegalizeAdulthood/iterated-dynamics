@@ -1140,8 +1140,8 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     large_arg = f > 1.0;
     if (large_arg)
         {
-        unsafe_inv_bn(bntmp3, n);
-        copy_bn(n, bntmp3);
+        unsafe_inv_bn(bntmp4, n); /* need to use bntmp4 here since inv uses bntmp3 */
+        copy_bn(n, bntmp4);
         f = bntofloat(n);
         }
 
@@ -1221,7 +1221,8 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
             printf("atan() loop comp=%i\n", comp);
 #endif
 
-        copy_bn(bntmp3, r); /* make a copy for later comparison */
+        /* the following gets set above and not altered before we use it! */
+        /* copy_bn(bntmp3, r); */ /* make a copy for later comparison */
         }
 
     /* restore original values */
