@@ -40,16 +40,19 @@ void FPUcplxmul(_CMPLX *x, _CMPLX *y, _CMPLX *z)
 
 void FPUcplxdiv(_CMPLX *x, _CMPLX *y, _CMPLX *z)
 {
-    double mod,tx,yxmod,yymod;
-    mod = y->x * y->x + y->y * y->y;
-    if (mod==0) {
-	DivideOverflow++;
+    double mod,tx,yxmod,yymod, yx, yy;
+    yx = y->x;
+    yy = y->y;
+    mod = yx * yx + yy * yy;
+    if (mod == 0.0)
+        overflow = 1;
+    else {
+        yxmod = yx/mod;
+        yymod = - yy/mod;
+        tx = x->x * yxmod - x->y * yymod;
+        z->y = x->x * yymod + x->y * yxmod;
+        z->x = tx;
     }
-    yxmod = y->x/mod;
-    yymod = - y->y/mod;
-    tx = x->x * yxmod - x->y * yymod;
-    z->y = x->x * yymod + x->y * yxmod;
-    z->x = tx;
 }
 
 void FPUsincos(double *Angle, double *Sin, double *Cos)
@@ -66,13 +69,16 @@ void FPUsinhcosh(double *Angle, double *Sinh, double *Cosh)
 
 void FPUcplxlog(_CMPLX *x, _CMPLX *z)
 {
-    double mod,zx,zy;
-    mod = sqrt(x->x*x->x + x->y*x->y);
-    zx = log(mod);
-    zy = atan2(x->y,x->x);
-
-    z->x = zx;
-    z->y = zy;
+    double mod, xx, xy;
+    xx = x->x;
+    xy = x->y;
+    if (xx == 0.0 && xy == 0.0) {
+        z->x = z->y = 0.0;
+        return;
+        }
+    mod = xx*xx + xy*xy;
+    z->x = 0.5 * log(mod);
+    z->y = atan2(xy,xx);
 }
 
 void FPUcplxexp387(_CMPLX *x, _CMPLX *z)

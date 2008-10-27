@@ -977,7 +977,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
         unsafe_mult_bf(bftmp2, n, bftmp1);     /* n*cos(r) */
         unsafe_sub_a_bf(bftmp4, bftmp2); /* sin(r) - n*cos(r) */
         unsafe_mult_bf(bftmp1, bftmp5, bftmp4); /* cos(r) * (sin(r) - n*cos(r)) */
-        copy_bf(bftmp3, r);
+        /* copy_bf(bftmp3, r);  already done above! */
         unsafe_sub_a_bf(r, bftmp1); /* r - cos(r) * (sin(r) - n*cos(r)) */
 #ifdef CALCULATING_BIG_PI
         putchar('\n');
@@ -1000,7 +1000,8 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
             printf("atan() loop comp=%i\n", comp);
 #endif
 
-        copy_bf(bftmp3, r); /* make a copy for later comparison */
+        /* the following gets set above and not altered before we use it! */
+        /* copy_bf(bftmp3, r); */ /* make a copy for later comparison */
         }
 
     /* restore original values */

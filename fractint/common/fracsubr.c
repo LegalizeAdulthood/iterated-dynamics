@@ -194,6 +194,13 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
       fractal_floattobf();
       usr_floatflag = 1;
    }
+   else if((fractype==DIVIDEBROT5) && debugflag==3200)
+   {
+      fractype=DIVIDEBROT5;
+      curfractalspecific = &fractalspecific[DIVIDEBROT5];
+      fractal_floattobf();
+      usr_floatflag = 1;
+   }
    else
       free_bf_vars();
    if(bf_math)

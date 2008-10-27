@@ -452,7 +452,8 @@ sci.fractals newsgroup and began to investigate adding arbitrary precision
 to Fractint. High school math and physics teacher Wes Loewer wrote an
 arbitrary precision library in both 80x86 assembler and C, and the Stone Soup
 team incorporated Wes's library into Fractint. Initially, support was added
-for fractal types mandel, julia, manzpower, and julzpower.
+for fractal types mandel, julia, manzpower, and julzpower.  Later, support
+for the fractal type dividebrot5 was added.
 
 Normally, when you reach Fractint's zoom limit, Fractint simply
 refuses to let you zoom any more. When using the fractal types that support
@@ -498,12 +499,12 @@ estimate the size of the universe to be unimaginably larger than the
 Note: many of Fractint's options do not work with arbitrary precision. To
 experiment with arbitrary precision at the speedier ordinary magnifications,
 start Fractint with the debug=3200 command-line option. With the exception
-of mandel and manzpower perturbations, values that would normally be entered
-in the Parameters and Coordinates screens need to be entered using the
-command-line interface or .par files.  Other known things that do not yet
-work with arbitrary precision are: biomorph, decomp, distance estimator,
-inversion, Julia-Mandel switch, history, orbit-in-window, and the browse
-feature.
+of mandel, manzpower, and dividebrot5 perturbations, values that would
+normally be entered in the Parameters and Coordinates screens need to be
+entered using the command-line interface or .par files.  Other known things
+that do not yet work with arbitrary precision are: biomorph, decomp, distance
+estimator, inversion, Julia-Mandel switch, history, orbit-in-window, and
+the browse feature.
 ;
 ;
 ~Topic=The Fractint "Fractal Engine" Architecture

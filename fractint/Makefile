@@ -1,4 +1,6 @@
-SHELL=/bin/sh
+SHELL = /bin/sh
+STRIP = strip
+INSTALL = /usr/bin/install
 
 # Architecture
 # automatic detection
@@ -330,40 +332,18 @@ clean:
 	cd $(UDIR) ; ${MAKE} clean
 
 install: xfractint fractint.hlp
-	strip xfractint
-# only next 6 lines might need su
-	sudo cp xfractint $(BINDIR)/xfractint;
-# install fractint if built	
-	if [ -x fractint ] ; then sudo install -c -s fractint $(BINDIR) ; fi
-	sudo chmod a+x $(BINDIR)/xfractint;
-	sudo cp $(UDIR)/xfractint.man $(MANDIR)/xfractint.1;
-	sudo chmod a+r $(MANDIR)/xfractint.1
-	if [ ! -d $(SRCDIR) ] ; then sudo mkdir $(SRCDIR) ; fi
-	cd $(SRCDIR); cd ..; sudo chmod -R a+rw $(SRCDIR)
-# create directories if they don't exist
-	if [ ! -d $(SRCDIR)/$(PDIR) ] ; then mkdir $(SRCDIR)/$(PDIR) ; fi
-	if [ ! -d $(SRCDIR)/$(FDIR) ] ; then mkdir $(SRCDIR)/$(FDIR) ; fi
-	if [ ! -d $(SRCDIR)/$(IDIR) ] ; then mkdir $(SRCDIR)/$(IDIR) ; fi
-	if [ ! -d $(SRCDIR)/$(LDIR) ] ; then mkdir $(SRCDIR)/$(LDIR) ; fi
-	if [ ! -d $(SRCDIR)/$(MDIR) ] ; then mkdir $(SRCDIR)/$(MDIR) ; fi
-	if [ ! -d $(SRCDIR)/$(XDIR) ] ; then mkdir $(SRCDIR)/$(XDIR) ; fi
-# copy all the files to the appropriate directories
-	cp fractint.hlp sstools.ini $(DOCS) $(SRCDIR)
-	cp $(PARFILES) $(SRCDIR)/$(PDIR)
-	cp $(FRMFILES) $(SRCDIR)/$(FDIR)
-	cp $(IFSFILES) $(SRCDIR)/$(IDIR)
-	cp $(LFILES) $(SRCDIR)/$(LDIR)
-	cp $(MAPFILES) $(SRCDIR)/$(MDIR)
-	cp $(XTRAFILES) $(SRCDIR)/$(XDIR)
-# set permissions
-	cd $(SRCDIR); chmod a+r fractint.hlp
-	cd $(SRCDIR); chmod a+rw sstools.ini
-	cd $(SRCDIR); chmod a+rw $(PARFILES)
-	cd $(SRCDIR); chmod a+rw $(FRMFILES)
-	cd $(SRCDIR); chmod a+rw $(IFSFILES)
-	cd $(SRCDIR); chmod a+rw $(LFILES)
-	cd $(SRCDIR); chmod a+rw $(MAPFILES)
-	cd $(SRCDIR); chmod a+rw $(XTRAFILES)
+	$(STRIP) xfractint
+	$(INSTALL) -d $(BINDIR) $(MANDIR) $(SRCDIR)/$(PDIR) $(SRCDIR)/$(FDIR) \
+		$(SRCDIR)/$(IDIR) $(SRCDIR)/$(LDIR) $(SRCDIR)/$(MDIR) $(SRCDIR)/$(XDIR)
+	$(INSTALL) xfractint -T $(BINDIR)/xfractint;
+	$(INSTALL) -m 644 -T $(UDIR)/xfractint.man $(MANDIR)/xfractint.1;
+	$(INSTALL) -m 644 -t $(SRCDIR) fractint.hlp sstools.ini $(DOCS)
+	$(INSTALL) -m 644 -t $(SRCDIR)/$(PDIR) $(PARFILES)
+	$(INSTALL) -m 644 -t $(SRCDIR)/$(FDIR) $(FRMFILES)
+	$(INSTALL) -m 644 -t $(SRCDIR)/$(IDIR) $(IFSFILES)
+	$(INSTALL) -m 644 -t $(SRCDIR)/$(LDIR) $(LFILES)
+	$(INSTALL) -m 644 -t $(SRCDIR)/$(MDIR) $(MAPFILES)
+	$(INSTALL) -m 644 -t $(SRCDIR)/$(XDIR) $(XTRAFILES)
 
 uninstall:
 	cd $(SRCDIR); rm -f $(PARFILES)
@@ -375,8 +355,8 @@ uninstall:
 	cd $(SRCDIR); rm -f fractint.hlp sstools.ini $(DOCS)
 	cd $(SRCDIR); rmdir $(PDIR) $(FDIR) $(IDIR) $(LDIR) $(MDIR) $(XDIR)
 # only next 2 lines might need su
-	cd $(SRCDIR); cd ..; sudo rmdir $(SRCDIR)
-	sudo rm -f $(BINDIR)/xfractint $(MANDIR)/xfractint.1
+	cd $(SRCDIR); cd ..; rmdir $(SRCDIR)
+	rm -f $(BINDIR)/xfractint $(MANDIR)/xfractint.1
 
 fractint.hlp: hc $(DOSHELPDIR)/$(HELP)
 	cd $(DOSHELPDIR); ../hc /c; mv fractint.hlp ..

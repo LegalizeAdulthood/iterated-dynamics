@@ -1240,7 +1240,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
    int curtype,numparams,numtrig;
    struct fullscreenvalues paramvalues[30];
    char far *choices[30];
-   long oldbailout = 0L;
+   long oldbailout = 0L, long_i;
    int promptnum;
    char msg[120];
    char *typename, *tmpptr;
@@ -1438,9 +1438,9 @@ gfp_top:
    if (*(typename = curfractalspecific->name) == '*')
         ++typename;
 
-   i = curfractalspecific->orbit_bailout;
+   long_i = curfractalspecific->orbit_bailout;
 
-   if( i != 0 && curfractalspecific->calctype == StandardFractal &&
+   if( long_i != 0 && curfractalspecific->calctype == StandardFractal &&
        (curfractalspecific->flags & BAILTEST) ) {
         static FCODE bailteststr[] = {"Bailout Test (mod, real, imag, or, and, manh, manr)"};
       paramvalues[promptnum].type = 'l';
@@ -1451,7 +1451,7 @@ gfp_top:
       choices[promptnum++] = bailteststr;
    }
 
-   if (i) {
+   if (long_i) {
       if (potparam[0] != 0.0 && potparam[2] != 0.0)
       {
         static FCODE bailpotstr[] = {"Bailout: continuous potential (Y screen) value in use"};
@@ -1471,7 +1471,7 @@ gfp_top:
             i = 100;
             tmpptr = "biomorph";
          }
-         sprintf(bailoutmsg,"    (%s default is %d)",tmpptr,i);
+         sprintf(bailoutmsg,"    (%s default is %ld)",tmpptr,long_i);
          choices[promptnum++] = bailoutmsg;
       }
    }
@@ -1634,9 +1634,9 @@ gfp_top:
       curfractalspecific = jborbit;
    }
 
-   i = curfractalspecific->orbit_bailout;
+   long_i = curfractalspecific->orbit_bailout;
 
-   if( i != 0 && curfractalspecific->calctype == StandardFractal &&
+   if( long_i != 0 && curfractalspecific->calctype == StandardFractal &&
        (curfractalspecific->flags & BAILTEST) ) {
       if (paramvalues[promptnum].uval.ch.val != (int)bailoutest) {
         bailoutest = (enum bailouts)paramvalues[promptnum].uval.ch.val;
@@ -1648,7 +1648,7 @@ gfp_top:
       bailoutest = Mod;
    setbailoutformula(bailoutest);
 
-   if (i) {
+   if (long_i) {
       if (potparam[0] != 0.0 && potparam[2] != 0.0)
          promptnum++;
       else
