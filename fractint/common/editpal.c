@@ -2754,6 +2754,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
          PalTable__UpdateDAC(this);
 
          Cursor_Show();
+         colorstate = 1;
          break;
          }
 
@@ -2775,6 +2776,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
             {
             mkpalrange(&this->pal[a], &this->pal[b], &this->pal[a], b-a, 1);
             PalTable__UpdateDAC(this);
+            colorstate = 1;
             }
 
          break;
@@ -2798,6 +2800,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
             {
             rotcolrg(&this->pal[a], b-a);
             PalTable__UpdateDAC(this);
+            colorstate = 1;
             }
 
 
@@ -2824,6 +2827,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
             {
             rotcolgb(&this->pal[a], b-a);
             PalTable__UpdateDAC(this);
+            colorstate = 1;
             }
 
          break;
@@ -2849,6 +2853,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
             {
             rotcolbr(&this->pal[a], b-a);
             PalTable__UpdateDAC(this);
+            colorstate = 1;
             }
 
          break;
@@ -2883,6 +2888,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
                {
                mkpalrange(&this->pal[a], &this->pal[b], &this->pal[a], b-a, key-'0');
                PalTable__UpdateDAC(this);
+               colorstate = 1;
                }
             }
 
@@ -2935,6 +2941,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 
          PalTable__SaveUndoRotate(this, dir, rotate_lo, rotate_hi);
          PalTable__Rotate(this, dir, rotate_lo, rotate_hi);
+         if (colorstate == 0 || colorstate == 2)
+            colorstate = 3;
          break;
          }
 
@@ -2980,7 +2988,11 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
             }
 
          if ( diff != 0 )
+            {
             PalTable__SaveUndoRotate(this, diff, rotate_lo, rotate_hi);
+            if (colorstate == 0 || colorstate == 2)
+               colorstate = 3;
+            }
 
          Cursor_Show();
          break;
@@ -3051,6 +3063,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
             PalTable__SetCurr(this, -1, 0);
             Cursor_Show();
             RGBEditor_SetDone(this->rgb[this->active], TRUE);
+            colorstate = 1;
             }
          else
             buzzer(3);   /* error buzz */
@@ -3141,6 +3154,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 
          if ( !this->freestyle )   /* if turning off... */
             PalTable__UpdateDAC(this);
+         colorstate = 1;
 
          break;
 
@@ -3198,6 +3212,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
          RGBEditor_Update(this->rgb[0]);
          RGBEditor_SetRGB(this->rgb[1], this->curr[1], &(this->pal[this->curr[1]]));
          RGBEditor_Update(this->rgb[1]);
+         colorstate = 1;
          break;
          }
 
@@ -3239,6 +3254,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
          RGBEditor_Update(this->rgb[0]);
          RGBEditor_SetRGB(this->rgb[1], this->curr[1], &(this->pal[this->curr[1]]));
          RGBEditor_Update(this->rgb[1]);
+         colorstate = 1;
          break;
          }
 

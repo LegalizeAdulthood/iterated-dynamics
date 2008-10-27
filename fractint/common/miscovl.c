@@ -167,8 +167,8 @@ void make_batch_file()
             sptr = MAP_name;
          }
       }
-      else if (colorstate == 2)
-      {                         /* colors match colorfile */
+      else if (colorstate == 2 || (colorstate == 3 && recordcolors == 'c'))
+      {  /* colors match colorfile or only rotated and we want map name */
          colorspec[0] = '@';
          sptr = colorfile;
       }
@@ -1135,7 +1135,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
       if(recordcolors=='c' && *colorinf == '@')
       {
          put_parm_line();
-         put_parm("; %s=",s_colors);
+         put_parm(" %s=",s_colors);
          put_parm(colorinf);
          put_parm_line();
       }

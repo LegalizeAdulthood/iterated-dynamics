@@ -6,7 +6,7 @@ SRCDIR = /usr/share/xfractint
 # BINDIR is where you put your X11 binaries
 BINDIR = /usr/X11R6/bin
 # MANDIR is where you put your chapter 1 man pages
-MANDIR = /usr/X11R6/man/man1
+MANDIR = /usr/share/man/man1
 
 HFD = ./headers
 UDIR = ./unix
@@ -91,15 +91,15 @@ ifeq ($(AS),/usr/bin/nasm)
 
 #CFLAGS = -I. -D_CONST $(DEFINES)
 CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -O2 \
-         -march=athlon64 -DNASM -fno-builtin
-#         -march=pentium -DNASM -fno-builtin
+         -march=pentium -DNASM -fno-builtin
+#         -march=athlon64 -DNASM -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -DNASM -fno-builtin
 
 else
 
 CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -O2 \
-         -march=athlon64 -fno-builtin
-#         -march=pentium -fno-builtin
+         -march=pentium -fno-builtin
+#         -march=athlon64 -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -fno-builtin
 
 endif
@@ -121,8 +121,8 @@ CC = /usr/bin/gcc
 # if you get undefined symbols like "w32addch".
 # For Linux, use
 #LIBS = -L/usr/X11R6/lib -lX11 -lm -lncurses
-#LIBS = -L/usr/X11R6/lib -lX11 -lm -lncurses
-LIBS = -L/usr/X11R6/lib64 -lX11 -lm -lncurses
+LIBS = -L/usr/X11R6/lib -lX11 -lm -lncurses
+#LIBS = -L/usr/X11R6/lib64 -lX11 -lm -lncurses
 #LIBS = -lX11 -lm -lcurses
 
 # HPUX fixes thanks to David Allport, Bill Broadley, and R. Lloyd.
@@ -154,7 +154,7 @@ calmanfx.asm
 HEADERS = big.h biginit.h cmplx.h externs.h fmath.h fractint.h fractype.h \
 helpcom.h lsys.h mpmath.h port.h prototyp.h targa.h targa_lc.h tplus.h
 
-DOCS = debugfla.doc fractsrc.doc hc.doc
+DOCS = debugfla.txt fractsrc.txt hc.txt
 
 HELPFILES = help.src help2.src help3.src help4.src help5.src
 
@@ -167,7 +167,7 @@ icons.par lyapunov.par music.par newphoen.par orbits.par phoenix.par
 
 FRMFILES = fractint.frm fract200.frm fract196.frm fract001.frm fract002.frm \
 fract003.frm fract_sy.frm ikenaga.frm julitile.frm new_if.frm \
-newton.frm fend.frm
+newton.frm
 
 IFSFILES = fractint.ifs
 
@@ -262,13 +262,14 @@ clean:
 
 install: xfractint fractint.hlp
 	strip xfractint
-# only next 4 lines might need su
-	cp xfractint $(BINDIR)/xfractint;
-	chmod a+x $(BINDIR)/xfractint;
-	cp $(UDIR)/xfractint.man $(MANDIR)/xfractint.1;
-	chmod a+r $(MANDIR)/xfractint.1
+# only next 6 lines might need su
+	sudo cp xfractint $(BINDIR)/xfractint;
+	sudo chmod a+x $(BINDIR)/xfractint;
+	sudo cp $(UDIR)/xfractint.man $(MANDIR)/xfractint.1;
+	sudo chmod a+r $(MANDIR)/xfractint.1
+	if [ ! -d $(SRCDIR) ] ; then sudo mkdir $(SRCDIR) ; fi
+	cd $(SRCDIR); cd ..; sudo chmod -R a+rw $(SRCDIR)
 # create directories if they don't exist
-	if [ ! -d $(SRCDIR) ] ; then mkdir $(SRCDIR) ; fi
 	if [ ! -d $(SRCDIR)/$(PDIR) ] ; then mkdir $(SRCDIR)/$(PDIR) ; fi
 	if [ ! -d $(SRCDIR)/$(FDIR) ] ; then mkdir $(SRCDIR)/$(FDIR) ; fi
 	if [ ! -d $(SRCDIR)/$(IDIR) ] ; then mkdir $(SRCDIR)/$(IDIR) ; fi
@@ -284,7 +285,6 @@ install: xfractint fractint.hlp
 	cd ./$(MDIR); cp $(MAPFILES) $(SRCDIR)/$(MDIR)
 	cd ./$(XDIR); cp $(XTRAFILES) $(SRCDIR)/$(XDIR)
 # set permissions
-	cd $(SRCDIR); cd ..; chmod -R a+rw $(SRCDIR)
 	cd $(SRCDIR); chmod a+r fractint.hlp
 	cd $(SRCDIR); chmod a+rw sstools.ini
 	cd $(SRCDIR)/$(PDIR); chmod a+rw $(PARFILES)
@@ -303,9 +303,9 @@ uninstall:
 	cd $(SRCDIR)/$(XDIR); rm -f $(XTRAFILES)
 	cd $(SRCDIR); rm -f fractint.hlp sstools.ini $(DOCS)
 	cd $(SRCDIR); rmdir $(PDIR) $(FDIR) $(IDIR) $(LDIR) $(MDIR) $(XDIR)
-	cd $(SRCDIR); cd ..; rmdir $(SRCDIR)
-# only next might need su
-	rm -f $(BINDIR)/xfractint $(MANDIR)/xfractint.1
+# only next 2 lines might need su
+	cd $(SRCDIR); cd ..; sudo rmdir $(SRCDIR)
+	sudo rm -f $(BINDIR)/xfractint $(MANDIR)/xfractint.1
 
 fractint.hlp: hc $(DOSHELPDIR)/$(HELP)
 	cd $(DOSHELPDIR); ../hc /c; mv fractint.hlp ..

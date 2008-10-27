@@ -281,8 +281,23 @@ typically have a short life and are updated frequently. They may have
 bug fixes, and thus be more stable, but they may also have new features
 which very likely have new bugs.
 
-Version 20.4.6 is an update of Fractint 20.0 based on the developer's
-  version 20.4.5.  New features include:
+Version 20.4.7 is an update of Fractint 20.0 based on the developer's
+  version 20.4.6.  New features include:
+
+Patch 7 to Version 20.4.0\
+
+Added feature to write the base map name to the first line of the file when
+  a map file is saved and the only change has been a rotation of the palette.
+  The base map name is then read in and used as the current map name when the
+  new map file is restored.
+  
+  The recordcolors=comment command line option has been modified to not
+  create a comment line in PARs.  Two colors= entries are now created with
+  the first one in the format colors=@fname.map and the second in the format
+  colors=000<24>0n0...010.  When a PAR entry is read, the first colors= sets
+  the map name, and the second colors= effectively rotates the colors.
+
+  Updated the Xfractint Makefile to install using sudo instead of as root.
 
 Patch 6 to Version 20.4.0\
 
