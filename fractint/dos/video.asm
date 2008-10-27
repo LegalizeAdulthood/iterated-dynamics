@@ -5778,6 +5778,7 @@ VESAscroll      endp
 
 VESAvirtscan    proc    near
         xor     ax,ax
+        mov     chkd_vvs,0         ;reset this for video mode changes
 once_again:
         mov     cx,sxdots               ; this should be passed twice
         mov     dx,sydots
@@ -5821,12 +5822,12 @@ bad_vesa:
         mov     cx,vesa_xres            ;  can't set less
         int     10h
         cmp     ax,004fh                ; did that work?
-        je      nofullscr               ;  don't update sxdots
+        je      alreadyset              ;  update sxdots
         jmp     wedonebad               ;  bad luck..
 width_ok:
         int     10h                     ; set the virtual scanline
         cmp     ax,004fh                ; did that work?
-        je      alreadyset
+        je      nofullscr               ;  don't update sxdots
         jmp     wedonebad               ;  bad luck..
 alreadyset:
         mov     sxdots,cx               ; update sxdots to what was set

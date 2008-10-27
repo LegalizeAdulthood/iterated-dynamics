@@ -6,7 +6,7 @@
     PURPOSE: Windows-specific main-driver code for Fractint for Windows
              (look in MAINFRAC.C for the non-windows-specific code)
 
-    Copyright (C) 1990-2007 The Stone Soup Group.  Fractint for Windows
+    Copyright (C) 1990-2008 The Stone Soup Group.  Fractint for Windows
     may be freely copied and distributed, but may not be sold.
 
     We are, of course, copyrighting the code we wrote to implement

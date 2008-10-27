@@ -43,7 +43,8 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
 #ifndef XFRACT
    if (gotrealdac == 0                  /* ??? no DAC to rotate! */
 #else
-   if (!(gotrealdac || fake_lut)        /* ??? no DAC to rotate! */
+/*   if (!(gotrealdac || fake_lut)  */      /* ??? no DAC to rotate! */
+   if (!(gotrealdac) || (fake_lut)        /* ??? no DAC to rotate! */
 #endif
      || colors < 16) {                  /* strange things happen in 2x modes */
       buzzer(2);

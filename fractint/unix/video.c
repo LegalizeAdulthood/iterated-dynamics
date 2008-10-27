@@ -1,5 +1,9 @@
-#include <curses.h>
 #include <string.h>
+#ifdef NCURSES
+#include <curses.h>
+#else
+#include "xfcurses.h"
+#endif
 #include "port.h"
 #include "prototyp.h"
 /*
@@ -7,11 +11,16 @@
  * Copyright 1992 Ken Shirriff
  */
 
+WINDOW *curwin;
+
 extern unsigned char *xgetfont (void);
 extern int startdisk (void);
 extern int waitkeypressed (int);
+extern int ctrl_window;
 
-WINDOW *curwin;
+#ifndef NCURSES
+extern unsigned long pixel[48];
+#endif
 
 int fake_lut = 0;
 int istruecolor = 0;
@@ -75,7 +84,12 @@ int textsafe = 0;		/* 0 = default, runup chgs to 1
 				   2 = no, use 640x200
 				   3 = bios, yes plus use int 10h-1Ch
 				   4 = save, save entire image */
-int text_type = 1;		/* current mode's type of text:
+#ifdef NCURSES
+int text_type = 1;
+#else
+int text_type = 0;
+#endif
+				/* current mode's type of text:
 				   0  = real text, mode 3 (or 7)
 				   1  = 640x200x2, mode 6
 				   2  = some other mode, graphics */
@@ -104,7 +118,7 @@ int video_vram = 0;
 
 struct videoinfo videotable[MAXVIDEOTABLE] = {
   {"xfractint mode           ", "                         ",
-   999, 0, 0, 0, 0, 19, 640, 480, 256},
+   999, 0, 0, 0, 0, 19, 800, 600, 256},
   {"unused  mode             ", "                         ",
    0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
@@ -138,8 +152,13 @@ void
 putprompt (void)
 {
   wclear (curwin);		/* ???? */
-  putstring (0, 0, 0, "Press operation key, or <Esc> to return to Main Menu");
+#ifdef NCURSES
+  putstring (0, 0, 15, "Press operation key ('d' = redraw), or <Esc> to return to Main Menu");
   wrefresh (curwin);
+#else
+  if (ctrl_window)
+     putstring (0, 0, 15, "Press operation key ('d' = redraw), or <Esc> to return to Main Menu");
+#endif
   return;
 }
 
@@ -151,6 +170,7 @@ putprompt (void)
 void
 setvideotext (void)
 {
+  initmode = adapter;
   dotmode = 0;
   setvideomode (3, 0, 0, 0);
 }
@@ -324,17 +344,21 @@ putstring (row, col, attr, msg)
      CHAR far *msg;
 {
   int so = 0;
-
   if (row != -1)
     textrow = row;
   if (col != -1)
     textcol = col;
+
+#ifndef NCURSES
+  curwin->_cur_attr = attr;
+#endif
 
   if (attr & INVERSE || attr & BRIGHT)
     {
       wstandout (curwin);
       so = 1;
     }
+
   wmove (curwin, textrow + textrbase, textcol + textcbase);
   while (1)
     {
@@ -367,8 +391,12 @@ putstring (row, col, attr, msg)
       wstandend (curwin);
     }
 
+#ifdef NCURSES
   wrefresh (curwin);
   fflush (stdout);
+#else
+  XFlush(Xdp);
+#endif
   getyx (curwin, textrow, textcol);
   textrow -= textrbase;
   textcol -= textcbase;
@@ -385,7 +413,31 @@ void
 setattr (row, col, attr, count)
      int row, col, attr, count;
 {
-  movecursor (row, col);
+  int i,j;
+  int so = 0;
+  if (row != -1)
+    textrow = row;
+  if (col != -1)
+    textcol = col;
+
+  if (attr & INVERSE || attr & BRIGHT)
+    {
+      wstandout (curwin);
+      so = 1;
+    }
+
+  wmove (curwin, textrow + textrbase, textcol + textcbase);
+
+#ifndef NCURSES
+  curwin->_cur_attr = attr;
+  for (i=0; i<count; i++)
+    waddch (curwin, '\0');
+#endif
+  if (so)
+    {
+      wstandend (curwin);
+    }
+
 }
 
 /*
@@ -415,7 +467,11 @@ scrollup (top, bot)
   wdeleteln (curwin);
   wmove (curwin, bot, 0);
   winsertln (curwin);
+#ifdef NCURSES
   wrefresh (curwin);
+#else
+  refresh(top, bot+1);
+#endif
 }
 
 /*
@@ -434,7 +490,9 @@ spindac (dir, inc)
   int len;
   if (colors < 16)
     return;
-  if (istruecolor && truemode)
+  if (!(gotrealdac || fake_lut))
+    return;
+  if (istruecolor)
     return;
   if (dir != 0 && rotate_lo < colors && rotate_lo < rotate_hi)
     {
@@ -798,7 +856,11 @@ savecurses (ptr)
      WINDOW **ptr;
 {
   ptr[0] = curwin;
+#ifdef NCURSES
   curwin = newwin (0, 0, 0, 0);
+#else
+  curwin = newwin (LINES, COLS, 0, 0);
+#endif
   touchwin (curwin);
   wrefresh (curwin);
 }
@@ -811,6 +873,9 @@ restorecurses (ptr)
   curwin = ptr[0];
   touchwin (curwin);
   wrefresh (curwin);
+#ifndef NCURSES
+  refresh(0, LINES);
+#endif
 }
 
 /* Moved the following from realdos.c to more cleanly separate the XFRACT
@@ -819,19 +884,12 @@ restorecurses (ptr)
 
 /*
  * The stackscreen()/unstackscreen() functions were originally
- * ported to Xfractint. However, since Xfractint uses a separate
- * text and graphics window, I don't see what these functions
- * are good for, so I have commented them out.
- *
- * To restore the Xfractint versions of these functions,
- * uncomment next.
+ * ported to Xfractint.
  * These functions are useful for switching between different text screens.
  * For example, looking at a parameter entry using F2.
  */
 
-#define USE_XFRACT_STACK_FUNCTIONS
-
-static int screenctr = 0;
+int screenctr = 0;
 
 #define MAXSCREENS 3
 
@@ -840,7 +898,6 @@ static int saverc[MAXSCREENS+1];
 
 void stackscreen()
 {
-#ifdef USE_XFRACT_STACK_FUNCTIONS
    int i;
    BYTE far *ptr;
    saverc[screenctr+1] = textrow*80 + textcol;
@@ -860,12 +917,10 @@ void stackscreen()
       }
    else
       setfortext();
-#endif
 }
 
 void unstackscreen()
 {
-#ifdef USE_XFRACT_STACK_FUNCTIONS
    BYTE far *ptr;
    textrow = saverc[screenctr] / 80;
    textcol = saverc[screenctr] % 80;
@@ -877,16 +932,13 @@ void unstackscreen()
    else
       setforgraphics();
    movecursor(-1,-1);
-#endif
 }
 
 void discardscreen()
 {
    if (--screenctr >= 0) { /* unstack */
       if (savescreen[screenctr]) {
-#ifdef USE_XFRACT_STACK_FUNCTIONS
          farmemfree(savescreen[screenctr]);
-#endif
       }
    }
    else

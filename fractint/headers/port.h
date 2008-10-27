@@ -260,6 +260,36 @@ typedef int sigfunc(int);
 #endif
 #endif
 
+
+/* The following FILE_* #defines were moved here from fractint.h to
+ * avoid inconsistent declarations in dos_help/hc.c and unix/unix.c. */
+
+/* these are used to declare arrays for file names */
+#ifdef XFRACT
+#define FILE_MAX_PATH  256       /* max length of path+filename  */
+#define FILE_MAX_DIR   256       /* max length of directory name */
+#else
+#define FILE_MAX_PATH  80       /* max length of path+filename  */
+#define FILE_MAX_DIR   80       /* max length of directory name */
+#endif
+#define FILE_MAX_DRIVE  3       /* max length of drive letter   */
+
+#if 1
+#define FILE_MAX_FNAME  9       /* max length of filename       */
+#define FILE_MAX_EXT    5       /* max length of extension      */
+#else
+/*
+The filename limits were increased in Xfract 3.02. But alas,
+in this poor program that was originally developed on the
+nearly-brain-dead DOS operating system, quite a few things
+in the UI would break if file names were bigger than DOS 8-3
+names. So for now humor us and let's keep the names short.
+*/
+#define FILE_MAX_FNAME  64       /* max length of filename       */
+#define FILE_MAX_EXT    64       /* max length of extension      */
+#endif
+
+
 /* Uses big_access32(), big_set32(),... functions instead of macros. */
 /* Some little endian machines may require this as well. */
 #if BYTE_ORDER == BIG_ENDIAN

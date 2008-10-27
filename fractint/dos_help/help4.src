@@ -114,12 +114,14 @@
                            to the complex number corresponding to the screen
                            pixel. This is the default for most types.
   rseed=nnnnn              Random number seed, for reproducable Plasma Clouds
+~OnLineFF
   showdot=[auto|bright|medium|dark|nn]/size  Colors the current dot being
                            calculated color nn or an automatically calculated
                            color (-1 disables). The second parameter is the
                            size of the traveling pointer.
   aspectdrift=nn           How much the aspect ratio can vary from normal due
                            to zooming. (default is 0.02)
+
 {Passes Parameters}
   periodicity=[no|show|nnn] Controls periodicity checking. 'no' turns checking
                            off; entering a number nnn controls the tightness
@@ -129,6 +131,7 @@
   orbitinterval=nn         Plots every nth orbit point with passes=o.
   screencoords=yes|no      Maintain screen coordinates constant.
   orbitdrawmode=rect|line  Use rectangular mode or line mode for orbits.
+~OnLineFF
 {Color Parameters}
   inside=nnn|maxiter|zmag|bof60|bof61|epscr|star|per|atan|fmod
                            Fractal interior color (inside=0 for black)
@@ -170,7 +173,7 @@
   invert=nn/nn/nn          Turns on inversion - turns images 'inside out'
   finattract=yes           Look for finite attractor in julia types
   exitnoask=yes            bypasses the final "are you sure?" exit screen
-
+~OnLineFF
 {Sound Parameters}
   sound=off|beep|x|y|z     Nobody ever plays with fractals at work, do they?
         /pc|fm/quant       x|y|z can be used to add sound to attractor
@@ -199,20 +202,24 @@
   attenuate=none|low|mid|high  Attenuation of high pitched notes.
   scalemap=nn/nn/nn/...    Combined with quantization this allows selecting
                            notes on the musical scale.
-
+~OnLineFF
 {File Parameters}
+  filename=.suffix          Sets the default file extension for the <r> command
+  formulafile=<path>\\filename  File for type=formula, default FRACTINT.FRM
+  ifsfile=<path>\\filename  File for type=ifs, default FRACTINT.IFS
+  lfile=<path>\\filename    File for type=lsystem, default FRACTINT.L
+  map=<path>\\filename      Use 'filename' as the default color map (vga/targa)
+  orgfrmdir=<path>          Path to OrgForm directory
+  parmfile=<path>\\filename File for <@> and <b> commands, default FRACTINT.PAR
   savename=<path>\\filename Save files using this name (instead of FRACT001)
-  overwrite=no|yes         Don't over-write existing files
-  savetime=nnn             Autosave image every nnn minutes of calculation
+
+  dither=yes               Dither color GIFs read into a b/w display.
   gif87a=yes               Save GIF files in the older GIF87a format (with
                            no FRACTINT extension blocks)
-  dither=yes               Dither color GIFs read into a b/w display.
-  parmfile=<path>\\filename File for <@> and <b> commands, default FRACTINT.PAR
-  formulafile=<path>\\filename  File for type=formula, default FRACTINT.FRM
-  lfile=<path>\\filename    File for type=lsystem, default FRACTINT.L
-  ifsfile=<path>\\filename  File for type=ifs, default FRACTINT.IFS
   orbitsave=yes            Causes IFS and orbit fractals orbit points to be
                            saved in the file ORBITS.RAW
+  overwrite=no|yes         Don't over-write existing files
+  savetime=nnn             Autosave image every nnn minutes of calculation
 ~FF
 
 {Video Parameters}
@@ -1120,7 +1127,6 @@ screen.  Added at the request of Ward Christensen.  It's his funeral <grin>.
 ;
 ;
 ~Topic=File Parameters
-
 In Fractint you can use various filename variables to specify files, set
 default directories, or both. For example, in the SAVENAME description below,
 [name] can be a filename, a directory name, or a fully qualified pathname
@@ -1131,6 +1137,46 @@ SAVENAME=[<path>\\][name]\
 Set the path and/or filename to use when you <S>ave a screen. The default
 filename is FRACT001. The .GIF extension is optional (Example:
 SAVENAME=myfile)
+
+FILENAME=[.suffix]\
+Sets the default file extension used for the <r> command.
+When this parameter is omitted, the
+default file mask shows .GIF and .POT files.  You might want to specify
+this parameter and the SAVENAME= parameter in your SSTOOLS.INI file if you
+keep your fractal images separate from other .GIF files by using a
+different suffix for them.
+
+FORMULAFILE=[<path>\\][formulafilename]\
+Specifies the formula path and/or file for type=formula fractals (default is
+FRACTINT.FRM).  Handy if you want to generate one of these fractal types
+in batch mode.
+~ONLINEFF
+IFSFILE=[<path>\\][ifsfilename]\
+Specifies the default path and/or file for type=ifs fractals (default is
+FRACTINT.IFS).
+
+LFILE=[<path>\\][lsystemfile]\
+Specifies the default L-System path and/or file for type=lsystem fractals
+(default is FRACTINT.L).
+
+MAP=[filename]\
+Reads in a replacement color map from [filename]. This map replaces the
+default color map of your video adapter. Requires a VGA or higher adapter.
+The difference between this argument and an alternate map read in via <L>
+in color- command mode is that this one applies to the entire run.
+See {Palette Maps}.
+
+ORGFRMDIR=[<path>]\
+When used, Fractint's search for formulas will make a final check of the
+appropriate Orgform compilation file ( see { Other Fractal Products }) in the
+specified directory (e.g. for a formula with the name "abc", the only file
+searched in the specified directory will be _a.frm).  This feature will
+significantly reduce the time taken to find a formula for users of the
+Orgform compilation.
+~ONLINEFF
+PARMFILE=[<path>\\][parmfilename]\
+Specifies the default parameter path and/or file to be used by the <@> (or <2>)
+and <B> commands.  If not specified, the default is FRACTINT.PAR.
 
 OVERWRITE=no|yes\
 Sets the savename overwrite flag (default is 'no'). If 'yes', saved files
@@ -1143,44 +1189,18 @@ Tells Fractint to automatically do a save every nnn minutes while a
 calculation is in progress.  This is mainly useful with long batches - see
 {Batch Mode}.
 
-~ONLINEFF
 GIF87a=yes\
 Backward-compatibility switch to force creation of GIF files in the GIF87a
 format. As of version 14, Fractint defaults to the new GIF89a format which
 permits storage of fractal information within the format. GIF87a=YES is
 only needed if you wish to view Fractint images with a GIF decoder that
 cannot accept the newer format.  See {GIF Save File Format}.
-
+~ONLINEFF
 DITHER=yes\
 Dither a color file into two colors for display on a b/w display.  This give
 a poor-quality display of gray levels.  Note that if you have a 2-color
 display, you can create a 256-color gif with disk video and then read it
 back in dithered.
-
-PARMFILE=[<path>\\][parmfilename]\
-Specifies the default parameter path and/or file to be used by the <@> (or <2>)
-and <B> commands.  If not specified, the default is FRACTINT.PAR.
-
-FORMULAFILE=[<path>\\][formulafilename]\
-Specifies the formula path and/or file for type=formula fractals (default is
-FRACTINT.FRM).  Handy if you want to generate one of these fractal types
-in batch mode.
-
-LFILE=[<path>\\][lsystemfile]\
-Specifies the default L-System path and/or file for type=lsystem fractals
-(default is FRACTINT.L).
-
-IFSFILE=[<path>\\][ifsfilename]\
-Specifies the default path and/or file for type=ifs fractals (default is
-FRACTINT.IFS).
-
-FILENAME=[.suffix]\
-Sets the default file extension used for the <r> command.
-When this parameter is omitted, the
-default file mask shows .GIF and .POT files.  You might want to specify
-this parameter and the SAVENAME= parameter in your SSTOOLS.INI file if you
-keep your fractal images separate from other .GIF files by using a
-different suffix for them.
 
 ORBITSAVE=yes\
 Causes the file ORBITS.RAW to be opened and the points generated by orbit

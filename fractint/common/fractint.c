@@ -228,9 +228,6 @@ main(int argc, char **argv)
    InitMemory();
    checkfreemem(0);
    load_videotable(1); /* load fractint.cfg, no message yet if bad */
-#ifdef XFRACT
-   UnixInit();
-#endif
    init_help();
 
 restart:   /* insert key re-starts here */
@@ -244,7 +241,7 @@ restart:   /* insert key re-starts here */
    strcpy(browsemask,"*.gif");
    strcpy(browsename,"            ");
    name_stack_ptr= -1; /* init loaded files stack */
-   
+
    evolving = FALSE;
    paramrangex = 4;
    opx = newopx = -2.0;
@@ -272,6 +269,9 @@ restart:   /* insert key re-starts here */
 #endif
 
    cmdfiles(argc,argv);         /* process the command-line */
+#ifdef XFRACT
+   UnixInit();
+#endif   
    dopause(0);                  /* pause for error msg if not batch */
    init_msg(0,"",NULL,0);  /* this causes getakey if init_msg called on runup */
    checkfreemem(1);
@@ -321,7 +321,9 @@ restart:   /* insert key re-starts here */
       intro();                          /* display the credits screen */
       if (keypressed() == ESC) {
          getakey();
+/* JPD : do not exit automatically under credits screen ...
          goodbye();
+ */
          }
       }
 
@@ -359,9 +361,9 @@ restorestart:
          break;
          }
 
-           name_stack_ptr = 0; /* 'r' reads first filename for browsing */
-           strcpy(file_name_stack[name_stack_ptr],browsename);
-     }
+      name_stack_ptr = 0; /* 'r' reads first filename for browsing */
+      strcpy(file_name_stack[name_stack_ptr],browsename);
+      }
 
       evolving = viewwindow = 0;
       showfile = 0;
@@ -417,7 +419,6 @@ imagestart:                             /* calc/display a new image */
 
    cyclelimit = initcyclelimit;         /* default cycle limit   */
 
-
    adapter = initmode;                  /* set the video adapter up */
    initmode = -1;                       /* (once)                   */
 
@@ -436,16 +437,19 @@ imagestart:                             /* calc/display a new image */
       if ('A' <= kbdchar && kbdchar <= 'Z')
          kbdchar = tolower(kbdchar);
 #endif
+#ifndef XFRACT
       if (kbdchar == 'd') {                     /* shell to DOS */
          setclear();
-#ifndef XFRACT
          printf("\n\nShelling to DOS - type 'exit' to return\n\n");
-#else
-         printf("\n\nShelling to Linux/Unix - type 'exit' to return\n\n");
-#endif
          shell_to_dos();
          goto imagestart;
          }
+#else
+      if (kbdchar == 'd') {                     /* redraw image in Xfractint */
+         initmode = adapter;
+         goto imagestart;
+         }
+#endif
 
 #ifndef XFRACT
       if (kbdchar == '@' || kbdchar == '2') {    /* execute commands */

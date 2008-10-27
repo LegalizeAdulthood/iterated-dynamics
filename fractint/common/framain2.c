@@ -1054,7 +1054,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          return(IMAGESTART);
       }
       break;
-   case 'd':                    /* shell to MS-DOS              */
+   case 'd':                 /* shell to MS-DOS (redraw image in Xfractint) */
 #ifndef XFRACT
       stackscreen();
       if (75000L > fr_farfree()) {
@@ -1076,11 +1076,8 @@ image.  Sorry - it's the best we could do."};
       shell_to_dos();
       unstackscreen();
 #else
-      setclear();
-      printf("\n\nShelling to Linux/Unix - type 'exit' to return\n\n");
-      shell_to_dos();
-      putprompt();
-      return(CONTINUE);
+      initmode = adapter;
+      return(IMAGESTART);
 #endif
 /*             calc_status = 0; */
       break;
@@ -1269,6 +1266,11 @@ image.  Sorry - it's the best we could do."};
       break;
    case 'b':                    /* make batch file              */
       make_batch_file();
+      break;
+   case 'u':
+      stackscreen();/* save graphics image */
+      intro();
+      unstackscreen();
       break;
    case 16:                    /* print current image          */
       note_zoom();
@@ -1640,6 +1642,11 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       }
       showfile = -1;
       return(RESTORESTART);
+   case 'u':
+      stackscreen();/* save graphics image */
+      intro();
+      unstackscreen();
+      break;
    case ENTER:                  /* Enter                        */
    case ENTER_2:                /* Numeric-Keypad Enter         */
 #ifdef XFRACT

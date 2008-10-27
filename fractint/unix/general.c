@@ -247,6 +247,7 @@ int block;
 {
     int ch;
     int curkey;
+
     if (keybuffer) {
 	ch = keybuffer;
 	keybuffer = 0;

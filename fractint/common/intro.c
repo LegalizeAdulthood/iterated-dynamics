@@ -23,11 +23,7 @@ extern int slowdisplay;
 void intro(void)
    {
    /* following overlayed data safe if "putstrings" are resident */
-#ifdef XFRACT
-   static FCODE PRESS_ENTER[] = {"Press ENTER for main menu, Shift-1 for help."};
-#else
-   static FCODE PRESS_ENTER[] = {"Press ENTER for main menu, F1 for help."};
-#endif
+   static FCODE PRESS_ENTER[] = {"Press ESC for main menu, F1 for help."};
    int       toprow, botrow, i, j, delaymax;
    char      oldchar;
    int       authors[100];              /* this should be enough for awhile */
@@ -63,19 +59,20 @@ void intro(void)
    botrow = 21;
 #else
    botrow = 20;
-   putstringcenter(21,0,80,C_TITLE,
+   putstringcenter(botrow+1,0,80,C_TITLE,
    "Unix/X port of fractint by Ken Shirriff");
 #endif
    putstringcenter(1,0,80,C_TITLE, PRESS_ENTER);
    putstring(2,0,C_CONTRIB,screen_text);
    setattr(2,0,C_AUTHDIV1,80);
    setattr(END_MAIN_AUTHOR,0,C_AUTHDIV1,80);
-   setattr(22,0,C_AUTHDIV2,80);
    setattr(3,0,C_PRIMARY,80*(END_MAIN_AUTHOR-3));
-   setattr(23,0,C_TITLE_LOW,160);
    for (i = 3; i < END_MAIN_AUTHOR; ++i)
       setattr(i,21,C_CONTRIB,58);
-   setattr(toprow,0,C_CONTRIB,(21-END_MAIN_AUTHOR)*80);
+   setattr(toprow,0,C_CONTRIB,(botrow-END_MAIN_AUTHOR)*80);
+   setattr(botrow+1,0,C_AUTHDIV2,80);
+   setattr(botrow+2,0,C_PROMPT_BKGRD,80);
+   setattr(botrow+3,0,C_TITLE_LOW,160);
    i = botrow - toprow;
    srand((unsigned int)clock_ticks());
    j = rand()%(j-(botrow-toprow)); /* first to use */
@@ -87,37 +84,45 @@ void intro(void)
    delaymax = 10;
    movecursor(25,80); /* turn it off */
    helpmode = HELPMENU;
-   while (! keypressed())
-      {
-#ifdef XFRACT
-      if (slowdisplay) delaymax *= 15;
-#endif
-      for (j = 0; j < delaymax && !(keypressed()); j++)
-         delay(100);
-      if (keypressed() == 32)
-         {      /* spacebar pauses */
-         getakey();
-#ifndef XFRACT
-         while (!keypressed()) ;
-#else
-         waitkeypressed(0);
-#endif
-         if (keypressed() == 32)
-            getakey();
-         }
-      delaymax = 15;
-      scrollup(toprow, botrow);
-      i++;
-      if (credits[authors[i]] == 0)
-         i = 0;
-      oldchar = credits[authors[i+1]];
-      credits[authors[i+1]] = 0;
-      putstring(botrow,0,C_CONTRIB,&credits[authors[i]]);
-      setattr(botrow,0,C_CONTRIB,80);
-      credits[authors[i+1]] = oldchar;
-      movecursor(25,80); /* turn it off */
-      }
 
+#ifdef XFRACT
+   if (slowdisplay) delaymax *= 15;
+#endif
+loop_intro:
+   for (j = 0; j < delaymax && !(keypressed()); j++)
+      delay(100);
+   if (j = keypressed()) /* set j to returned key */
+      getakey();
+   if (menu_checkkey(j,0) || j == 109) /* menu key or 'm' */
+      goto intro_end;
+   if (j == 32) { /* spacebar pauses */
+wait_again:
+#ifndef XFRACT
+      while (!keypressed()) ;
+#else
+      waitkeypressed(0);
+#endif
+      if (j = keypressed()) /* set j to returned key */
+         getakey();
+      if (menu_checkkey(j,0) || j == 109) /* menu key or 'm' */
+         goto intro_end;
+      if (j!= 32) /* spacebar */
+         goto wait_again;
+   }
+
+   scrollup(toprow, botrow);
+   i++;
+   if (credits[authors[i]] == 0)
+      i = 0;
+   oldchar = credits[authors[i+1]];
+   credits[authors[i+1]] = 0;
+   putstring(botrow,0,C_CONTRIB,&credits[authors[i]]);
+   credits[authors[i+1]] = oldchar;
+   movecursor(25,80); /* turn it off */
+   goto loop_intro;
+
+intro_end:
+   ungetakey(j);
    lookatmouse = oldlookatmouse;                /* restore the mouse-checking */
    helpmode = oldhelpmode;
    return ;

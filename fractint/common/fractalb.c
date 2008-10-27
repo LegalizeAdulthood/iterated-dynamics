@@ -993,15 +993,17 @@ _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy)
       {
       clear_bf(t->x);
       clear_bf(t->y);
-      return(t);
       }
 
-   cmplxlog_bf(t, xx);
-   cplxmul_bf(&tmp, t, yy);
-   exp_bf(e2x,tmp.x);
-   sincos_bf(siny,cosy,tmp.y);
-   mult_bf(t->x, e2x, cosy);
-   mult_bf(t->y, e2x, siny);
+   else
+      {
+      cmplxlog_bf(t, xx);
+      cplxmul_bf(&tmp, t, yy);
+      exp_bf(e2x,tmp.x);
+      sincos_bf(siny,cosy,tmp.y);
+      mult_bf(t->x, e2x, cosy);
+      mult_bf(t->y, e2x, siny);
+      }
    restore_stack(saved);
    return(t);
 }
@@ -1050,15 +1052,16 @@ _BNCMPLX *ComplexPower_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy)
       {
       clear_bn(t->x);
       clear_bn(t->y);
-      return(t);
       }
-
-   cmplxlog_bn(t, xx);
-   cplxmul_bn(&tmp, t, yy);
-   exp_bn(e2x,tmp.x);
-   sincos_bn(siny,cosy,tmp.y);
-   mult_bn(t->x, e2x, cosy);
-   mult_bn(t->y, e2x, siny);
+   else
+      {
+      cmplxlog_bn(t, xx);
+      cplxmul_bn(&tmp, t, yy);
+      exp_bn(e2x,tmp.x);
+      sincos_bn(siny,cosy,tmp.y);
+      mult_bn(t->x, e2x, cosy);
+      mult_bn(t->y, e2x, siny);
+      }
    restore_stack(saved);
    return(t);
 }

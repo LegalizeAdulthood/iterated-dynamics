@@ -28,8 +28,6 @@ typedef unsigned int UINT4;
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
 #define remove(x) unlink(x)
-#define _MAX_FNAME 20
-#define _MAX_EXT 4
 #define chsize(fd,len) ftruncate(fd,len)
 
 #define inp(x) 0

@@ -179,9 +179,9 @@ int Shift;
     float f;
     f = em2float(x);
     if (Shift>0) {
-	f *= (1<<Shift);
+	f *= (1 << Shift);
     } else {
-	f /= (1<<Shift);
+	f /= (1 << -Shift);
     }
     return float2em(f);
 }

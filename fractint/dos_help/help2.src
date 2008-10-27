@@ -2545,7 +2545,8 @@ For every pixel, Initial Conditions are set, then the Iterations performed
 while the Bailout Criteria remains true or until 'z' turns into a periodic
 loop.  All variables are created automatically by their usage and treated as
 complex.  If you declare 'v = 2' then the variable 'v' is treated as a
-complex with an imaginary value of zero.
+complex with an imaginary value of zero.  Variables must start with a letter
+or an underscore.
 
 NOTE: For periodicity checking, inside options, outside options, and
 the passes=o option to work correctly it is necessary to leave the result
@@ -2577,26 +2578,32 @@ setting periodicity=0\
 Certain values cannot be set with the Per Image Settings.  These include
 'params=', 'corners=', and 'center-mag='.  There may be others.  These values
 get reset after the formula is parsed and before the iteration starts.
-~OnlineFF
+
 Sequential processing of the formula can be altered with the flow control\
 instructions
 
     IF(expr1)\
       statements\
-    ELSEIF(expr2)\
+    ELSEIF(expr2)  [any number of these are permitted in a block]\
        statements\
     .\
     .\
     ELSEIF(exprn)\
        statements\
-    ELSE\
+    ELSE           [if used, only one is permitted in a block]\
       statements\
     ENDIF\
 
-where the expressions are evaluated and the statements executed are those\
-immediately following the first "true" expression (the real part of the\
-complex variable being nonzero). Nesting of IF..ENDIF blocks is permitted.\
-
+where the expressions are evaluated and the statements executed are those
+immediately following the first "true" expression (the real part of the
+complex variable being nonzero). Nesting of IF..ENDIF blocks is permitted.
+Note that ELSEIF() does not require a separate ENDIF. Each branching
+instruction must be a separate formula statement, separated from other
+statements by a comma or an end of line. There is a limit of 200 branching
+instructions per formula (ELSEIF counts as two branching instructions).
+Unlimited nesting is permitted; each ELSEIF, ELSE, and ENDIF relates to
+the immediately preceding "non endif'ed" IF. An IF() and its ENDIF cannot
+traverse the end of the initialization section of the formula.
 ~OnlineFF
 ~Format-
           Predefined Variables (x, y)

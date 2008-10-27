@@ -97,6 +97,10 @@
 #include <varargs.h>
 #endif
 
+#ifdef XFRACT
+extern char *PSviewer;
+#endif
+
 #include <string.h>
 
   /* see Fractint.c for a description of the "include"  hierarchy */
@@ -465,9 +469,11 @@ Print_Screen (void)
       }
 
 #ifdef XFRACT
+/*
       putstring(3,0,0,"Printing to:");
       putstring(4,0,0,PrintName);
       putstring(5,0,0,"               ");
+*/
 #endif
 
     es=MK_FP(extraseg,0);
@@ -1036,15 +1042,22 @@ Print_Screen (void)
     }
 
     if (Print_To_File > 0) fclose(PRFILE);
-#ifndef XFRACT
+#ifdef XFRACT
+/*
+    putstring(5,0,0,"Printing done\n");
+*/
+    {
+    char cmd[256];
+    sprintf(cmd, "%s %s &", PSviewer, PrintName);
+    system(cmd);
+    }
+#else
     if ((LPTn==30)||(LPTn==31))
         {
         for (x=0;x<2000;x++);
         outp((LPTn==30) ? 0x3FC : 0x2FC,0x00);
         outp((LPTn==30) ? 0x3F9 : 0x2F9,0x00);
         }
-#else
-    putstring(5,0,0,"Printing done\n");
 #endif
 }
 
