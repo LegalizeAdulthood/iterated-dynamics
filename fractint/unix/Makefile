@@ -4,14 +4,14 @@ ifeq ($(AS),/usr/bin/nasm)
 
 OBJS = \
 calcmand.o calmanfp.o diskvidu.o fpu087.o fracsuba.o general.o \
-unix.o unixscr.o video.o \
+unix.o unixscr.o video.o xfcurses.o \
 calmanfx.o
 
 else
 
 OBJS = \
 calcmand.o calmanfp.o diskvidu.o fpu087.o fracsuba.o general.o \
-unix.o unixscr.o video.o
+unix.o unixscr.o video.o xfcurses.o
 
 endif
 
@@ -58,6 +58,8 @@ general.o: general.c ${HFD}/port.h
 
 unix.o: unix.c ${HFD}/port.h
 
-unixscr.o: unixscr.c ${HFD}/port.h ${HFD}/prototyp.h ${HFD}/helpdefs.h
+unixscr.o: unixscr.c ${HFD}/port.h ${HFD}/prototyp.h ${HFD}/helpdefs.h ${HFD}/xfcurses.h
 
-video.o: video.c ${HFD}/port.h ${HFD}/prototyp.h
+video.o: video.c ${HFD}/port.h ${HFD}/prototyp.h ${HFD}/xfcurses.h
+
+xfcurses.o: xfcurses.c ${HFD}/port.h ${HFD}/xfcurses.h

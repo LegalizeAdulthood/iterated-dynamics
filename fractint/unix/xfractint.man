@@ -46,7 +46,7 @@ Specifies the number of colors to use.  This number must be a power of two.
 Also, this number can't be greater than the number of colors available.  And, it can't be greater than 256.
 .TP 
 \-geometry \fIWxH[{+\-X}{+\-Y}]\fR
-This sets the size and position of the image window.  The default is 640x480 pixels.
+This sets the size and position of the image window.  The default is 800x600 pixels.
 .TP 
 \-share
 Indicates that xfractint should share the current colormap.  That is,
@@ -68,6 +68,18 @@ Loads parameters from the specified file.
 @filename/groupname
 .br 
 Reads a named group of parameters from the specified file.
+.TP 
+\-psviewer
+Allows the user to change the default postscript viewer.  The viewer is called when the user prints an image with ctrl\-p. The default viewer is gv.
+.TP 
+\-ctrlwindow
+Allows the user to have a separate control window similar to the ncurses interface.
+.TP 
+\-font
+Loads the selected font.
+.TP 
+\-fontbold
+Loads the selected bold font.
 .SH "BUGS"
 There are many bugs and things that haven't been implemented.
 
@@ -79,7 +91,7 @@ Passes=2 has problems??
 Symmetry that is offset slightly doesn't always complete the image.
 .TP 
 The top of the help screens are messed up.  Starting your xterm with
--geometry 80x25 fixes this.
+\-geometry 80x25 fixes this.
 
 .PP 
 Xfractint uses a bizarre (to Unix users) user interface which was
@@ -102,7 +114,7 @@ CTL_PLUS        }
 CTL_MINUS       {
 .fi 
 .SH "COPYRIGHT"
-Copyright 1991 \- 2007 by The Stone Soup Group
+Copyright 1991 \- 2008 by The Stone Soup Group
 .SH "AUTHORS"
 .nf 
 The original Unix port was done by Ken Shirriff (shirriff@eng.sun.com).

@@ -72,8 +72,8 @@
 #   include <dir.h>
 #   define FNSPLIT fnsplit
 #else
-#   define MAXFILE _MAX_FNAME
-#   define MAXEXT  _MAX_EXT
+#   define MAXFILE FILE_MAX_FNAME
+#   define MAXEXT  FILE_MAX_EXT
 #   define FNSPLIT _splitpath
 #endif
 

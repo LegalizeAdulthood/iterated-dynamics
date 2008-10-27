@@ -281,8 +281,36 @@ typically have a short life and are updated frequently. They may have
 bug fixes, and thus be more stable, but they may also have new features
 which very likely have new bugs.
 
-Version 20.4.7 is an update of Fractint 20.0 based on the developer's
-  version 20.4.6.  New features include:
+Version 20.4.8 is an update of Fractint 20.0 based on the developer's
+  version 20.4.7.  New features include:
+
+Patch 8 to Version 20.4.0\
+
+Fixed a bug in the virtual video code where the screen width was being
+  reduced when going from a text screen back to the graphics screen.
+
+  Revised logic that calculates the maximum X and Y resolutions possible
+  with a given initial virtual screen size.  Because of the variable type being
+  used, the maximum size is 32767 even if sufficient video memory is available
+  to support higher resolutions.
+
+  Added back in code that forces passes=1 when either the X or Y
+  resolution is greater than 2048.  This was inadvertently removed with
+  patch 5, and is needed because other passes= options are hard coded to
+  use arrays of this size.
+
+Xfractint changes:\
+  Jean-Pierre Demailly provided extensive changes to eliminate the use of
+  ncurses with Xfractint and also updated the MakeFile.
+
+  Included a patch from Andrew Church and the people at Gentoo that fixes a
+  filename buffer overflow that affected the help compiler.  Also included
+  their xioerror patch.
+
+  Fixed a seg fault in Xfractint caused by not unstacking all the screens before
+  exiting.
+
+  Removed the shell-to-DOS option in Xfractint.
 
 Patch 7 to Version 20.4.0\
 
@@ -1028,7 +1056,8 @@ Commands marked with an '*' are also available at the credits screen.
    Enter           Continue an interrupted calculation (e.g. after a save)
  * f               toggle the floating-point algorithm option ON or OFF
  * i               Set parameters for 3D fractal types
- * Insert          Restart the program (at the credits screen)
+ * Insert          Restart Fractint
+ * u               List of contributors
    a               Convert the current image into a fractal 'starfield'
    Ctrl-A          Turn on screen-eating ant automaton
    Ctrl-S          Convert current image to a Random Dot Stereogram (RDS)
@@ -1171,7 +1200,7 @@ to get the most out of your chip.
 Select a number of eXtended options. Brings up a full-screen menu of
 options, any of which you can change at will.  These options are:\
   "passes=" - see {Drawing Method}\
-  Floating point toggle - see <F> key description below\
+  Floating point toggle - see <F> key description above\
   "maxiter=" - see {Image Calculation Parameters}\
   "inside=" and "outside=" - see {Color Parameters}\
   "savename=" filename - see {File Parameters}\
@@ -1260,11 +1289,15 @@ program is behind the scenes. (See "A Little Code" in
 
 <D>\
 Shell to DOS. Return to Fractint by entering "exit" at a DOS prompt.
+(Not Xfractint)
 
 <Insert>\
 Restart at the "credits" screen and reset most variables to their initial
 state.  Variables which are not reset are: savename, lightname, video,
 startup filename.
+
+<U>\
+Display the "credits" screen.
 
 <L>\
 Enter Browsing Mode.  See {Browse Commands}.

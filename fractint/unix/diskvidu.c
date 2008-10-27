@@ -103,6 +103,9 @@ int _fastcall near common_startdisk(long newrowsize, long newcolsize, int colors
 	 sprintf(buf,"%d",colors);
 	 putstring(-1,-1,C_DVID_LO,buf);
 	 }
+      putstring(BOXROW+6,BOXCOL+4,C_DVID_LO,"Save name: ");
+      sprintf(buf,"%s",savename);
+      putstring(-1,-1,C_DVID_LO,buf);
       putstring(BOXROW+8,BOXCOL+4,C_DVID_LO,"Status:");
       dvid_status(0,"clearing the 'screen'");
       }

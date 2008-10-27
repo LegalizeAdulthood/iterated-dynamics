@@ -1,12 +1,36 @@
 SHELL=/bin/sh
 
+# Architecture
+# automatic detection
+ARCH = `uname -m | tr "_" "-"`
+# ARCH = pentium
+# ARCH = x86-64
+# ARCH = athlon64
+
+# Optimization flags
+OPT = -O2
+# OPT = -O
+
+# Uncomment the second line if you want to compile with ncurses support
+# (as in older versions of xfractint)
+NCURSES =
+# NCURSES = -DNCURSES
+
+ifndef PREFIX
+PREFIX = /usr
+endif
+ifndef DESTDIR
+DESTDIR = $(PREFIX)
+endif
+
 # SRCDIR should be a path to the directory that will hold fractint.hlp
 # SRCDIR should also hold the .par, .frm, etc. files
-SRCDIR = /usr/share/xfractint
+SRCDIR = $(DESTDIR)/share/xfractint
+SHRDIR = $(PREFIX)/share/xfractint
 # BINDIR is where you put your X11 binaries
-BINDIR = /usr/X11R6/bin
+BINDIR = $(DESTDIR)/bin
 # MANDIR is where you put your chapter 1 man pages
-MANDIR = /usr/share/man/man1
+MANDIR = $(DESTDIR)/share/man/man1
 
 HFD = ./headers
 UDIR = ./unix
@@ -19,6 +43,9 @@ LDIR = lsystem
 MDIR = maps
 PDIR = pars
 XDIR = extra
+
+PWD = $(shell pwd)
+BASEDIR = $(shell basename ${PWD})
 
 NOBSTRING =
 HAVESTRI =
@@ -54,7 +81,7 @@ NOBSTRING = -DNOBSTRING
 # AIX may need -D_ALL_SOURCE -D_NONSTD_TYPES to compile help.c
 # For Dec Alpha, add -DFTIME -DNOBSTRING -DDIRENT
 # For SGI, you may have to add -DSYSVSGI
-DEFINES = -DXFRACT $(NOBSTRING) $(HAVESTRI) $(DEBUG)
+DEFINES = -DXFRACT $(NCURSES) $(NOBSTRING) $(HAVESTRI) $(DEBUG)
 
 # Uncomment this if you get errors about "stdarg.h" missing.
 #DEFINES += -DUSE_VARARGS
@@ -89,17 +116,17 @@ AFLAGS = -f elf -w+orphan-labels
 
 ifeq ($(AS),/usr/bin/nasm)
 
+CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -DNASM -fno-builtin
 #CFLAGS = -I. -D_CONST $(DEFINES)
-CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -O2 \
-         -march=pentium -DNASM -fno-builtin
-#         -march=athlon64 -DNASM -fno-builtin
+#CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX \
+#         -march=$(ARCH) -DNASM -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -DNASM -fno-builtin
 
 else
 
-CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -O2 \
-         -march=pentium -fno-builtin
-#         -march=athlon64 -fno-builtin
+CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -fno-builtin
+#CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX \
+#         -march=$(ARCH) -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -fno-builtin
 
 endif
@@ -120,10 +147,18 @@ CC = /usr/bin/gcc
 # For Solaris, add -L/usr/openwin/lib; change -lncurses to -lcurses
 # if you get undefined symbols like "w32addch".
 # For Linux, use
-#LIBS = -L/usr/X11R6/lib -lX11 -lm -lncurses
-LIBS = -L/usr/X11R6/lib -lX11 -lm -lncurses
-#LIBS = -L/usr/X11R6/lib64 -lX11 -lm -lncurses
-#LIBS = -lX11 -lm -lcurses
+# LIBS = -L/usr/X11R6/lib -lX11 -lm -lncurses
+# LIBS = -lX11 -lm -lcurses
+
+ifeq ($(ARCH),athlon64)
+LIBS = -L/usr/X11R6/lib64 -lX11 -lm
+else
+LIBS = -L/usr/X11R6/lib -lX11 -lm
+endif
+
+ifeq ($(NCURSES),-DNCURSES)
+LIBS += -lncurses
+endif
 
 # HPUX fixes thanks to David Allport, Bill Broadley, and R. Lloyd.
 # AIX fixes thanks to David Sanderson & Elliot Jaffe.
@@ -135,56 +170,77 @@ LIBS = -L/usr/X11R6/lib -lX11 -lm -lncurses
 # Solaris fixes thanks to Darryl House
 
 OLDSRC = \
-3d.c ant.c bigflt.c biginit.c bignum.c \
-bignumc.c calcfrac.c cmdfiles.c decoder.c editpal.c \
-encoder.c evolve.c f16.c fracsubr.c fractalb.c fractalp.c \
-fractals.c fractint.c framain2.c \
-frasetup.c gifview.c hc.c hcmplx.c help.c history.c\
-intro.c jb.c jiim.c line3d.c loadfdos.c loadfile.c loadmap.c lorenz.c \
-lsys.c lsysf.c memory.c miscfrac.c miscovl.c miscres.c \
-mpmath_c.c parser.c parserfp.c plot3d.c printer.c prompts1.c \
-prompts2.c realdos.c rotate.c slideshw.c soi.c soi1.c stereo.c \
-targa.c testpt.c tgaview.c zoom.c Makefile
+$(COMDIR)/3d.c $(COMDIR)/ant.c $(COMDIR)/bigflt.c $(COMDIR)/biginit.c \
+$(COMDIR)/bignum.c $(COMDIR)/bignumc.c $(COMDIR)/calcfrac.c \
+$(COMDIR)/cmdfiles.c $(COMDIR)/decoder.c $(COMDIR)/editpal.c \
+$(COMDIR)/encoder.c $(COMDIR)/evolve.c $(COMDIR)/f16.c \
+$(COMDIR)/fracsubr.c $(COMDIR)/fractalb.c $(COMDIR)/fractalp.c \
+$(COMDIR)/fractals.c $(COMDIR)/fractint.c $(COMDIR)/framain2.c \
+$(COMDIR)/frasetup.c $(COMDIR)/gifview.c $(COMDIR)/hcmplx.c \
+$(COMDIR)/help.c $(COMDIR)/history.c $(COMDIR)/intro.c \
+$(COMDIR)/jb.c $(COMDIR)/jiim.c $(COMDIR)/line3d.c \
+$(COMDIR)/loadfdos.c $(COMDIR)/loadfile.c $(COMDIR)/loadmap.c \
+$(COMDIR)/lorenz.c $(COMDIR)/lsys.c $(COMDIR)/lsysf.c \
+$(COMDIR)/memory.c $(COMDIR)/miscfrac.c $(COMDIR)/miscovl.c \
+$(COMDIR)/miscres.c $(COMDIR)/mpmath_c.c $(COMDIR)/parser.c \
+$(COMDIR)/parserfp.c $(COMDIR)/plot3d.c $(COMDIR)/printer.c \
+$(COMDIR)/prompts1.c $(COMDIR)/prompts2.c $(COMDIR)/realdos.c \
+$(COMDIR)/rotate.c $(COMDIR)/slideshw.c $(COMDIR)/soi.c \
+$(COMDIR)/soi1.c $(COMDIR)/stereo.c $(COMDIR)/targa.c \
+$(COMDIR)/testpt.c $(COMDIR)/tgaview.c $(COMDIR)/zoom.c $(COMDIR)/Makefile
 
-NEWSRC = calcmand.c calmanfp.c diskvidu.c \
-fpu087.c fracsuba.c general.c \
-video.c unix.c unixscr.c unix.h Makefile xfract_a.inc \
-calmanfx.asm
+NEWSRC = \
+$(UDIR)/calcmand.c $(UDIR)/calmanfp.c $(UDIR)/diskvidu.c \
+$(UDIR)/fpu087.c $(UDIR)/fracsuba.c $(UDIR)/general.c \
+$(UDIR)/xfcurses.c $(UDIR)/video.c $(UDIR)/unix.c $(UDIR)/unixscr.c \
+$(UDIR)/Makefile $(UDIR)/xfract_a.inc $(UDIR)/calmanfx.asm
 
-HEADERS = big.h biginit.h cmplx.h externs.h fmath.h fractint.h fractype.h \
-helpcom.h lsys.h mpmath.h port.h prototyp.h targa.h targa_lc.h tplus.h
+HEADERS = \
+$(HFD)/big.h $(HFD)/biginit.h $(HFD)/cmplx.h $(HFD)/externs.h \
+$(HFD)/fmath.h $(HFD)/fractint.h $(HFD)/fractype.h $(HFD)/helpcom.h \
+$(HFD)/lsys.h $(HFD)/mpmath.h $(HFD)/port.h $(HFD)/prototyp.h \
+$(HFD)/targa.h $(HFD)/targa_lc.h $(HFD)/tplus.h $(HFD)/unix.h \
+$(HFD)/xfcurses.h
 
 DOCS = debugfla.txt fractsrc.txt hc.txt
 
-HELPFILES = help.src help2.src help3.src help4.src help5.src
+HELPFILES = \
+$(DOSHELPDIR)/help.src $(DOSHELPDIR)/help2.src $(DOSHELPDIR)/help3.src \
+$(DOSHELPDIR)/help4.src $(DOSHELPDIR)/help5.src
 
-SRCFILES = $(COMDIR)/$(OLDSRC) $(UDIR)/$(NEWSRC) $(DOSHELPDIR)/$(HELPFILES) \
-$(HFD)/$(HEADERS) $(DOCS)
+SRCFILES = $(OLDSRC) $(NEWSRC) $(HELPFILES) $(HEADERS) $(DOCS)
 
 PARFILES = \
-cellular.par demo.par fract18.par fract19.par fract200.par fractint.par \
-icons.par lyapunov.par music.par newphoen.par orbits.par phoenix.par
+$(PDIR)/cellular.par $(PDIR)/demo.par $(PDIR)/fract18.par \
+$(PDIR)/fract19.par $(PDIR)/fract200.par $(PDIR)/fractint.par \
+$(PDIR)/icons.par $(PDIR)/lyapunov.par $(PDIR)/music.par \
+$(PDIR)/newphoen.par $(PDIR)/orbits.par $(PDIR)/phoenix.par
 
-FRMFILES = fractint.frm fract200.frm fract196.frm fract001.frm fract002.frm \
-fract003.frm fract_sy.frm ikenaga.frm julitile.frm new_if.frm \
-newton.frm
+FRMFILES = \
+$(FDIR)/fractint.frm $(FDIR)/fract200.frm $(FDIR)/fract196.frm \
+$(FDIR)/fract001.frm $(FDIR)/fract002.frm $(FDIR)/fract003.frm \
+$(FDIR)/fract_sy.frm $(FDIR)/ikenaga.frm $(FDIR)/julitile.frm \
+$(FDIR)/new_if.frm $(FDIR)/newton.frm
 
-IFSFILES = fractint.ifs
+IFSFILES = $(IDIR)/fractint.ifs
 
-LFILES = fractint.l penrose.l tiling.l
+LFILES = $(LDIR)/fractint.l $(LDIR)/penrose.l $(LDIR)/tiling.l
 
 MAPFILES = \
-altern.map blues.map chroma.map default.map firestrm.map \
-froth3.map froth316.map froth6.map froth616.map gamma1.map gamma2.map \
-glasses1.map glasses2.map goodega.map green.map grey.map grid.map headache.map \
-landscap.map lyapunov.map neon.map paintjet.map \
-royal.map topo.map volcano.map
+$(MDIR)/altern.map $(MDIR)/blues.map $(MDIR)/chroma.map \
+$(MDIR)/default.map $(MDIR)/firestrm.map $(MDIR)/froth3.map \
+$(MDIR)/froth316.map $(MDIR)/froth6.map $(MDIR)/froth616.map \
+$(MDIR)/gamma1.map $(MDIR)/gamma2.map $(MDIR)/glasses1.map \
+$(MDIR)/glasses2.map $(MDIR)/goodega.map $(MDIR)/green.map \
+$(MDIR)/grey.map $(MDIR)/grid.map $(MDIR)/headache.map \
+$(MDIR)/landscap.map $(MDIR)/lyapunov.map $(MDIR)/neon.map \
+$(MDIR)/paintjet.map $(MDIR)/royal.map $(MDIR)/topo.map $(MDIR)/volcano.map
 
 XTRAFILES = \
-all_maps.zip frmtut.zip if_else.zip phctutor.zip
+$(XDIR)/all_maps.zip $(XDIR)/frmtut.zip $(XDIR)/if_else.zip \
+$(XDIR)/phctutor.zip
 
-OLDRUN = $(PDIR)/$(PARFILES) $(FDIR)/$(FRMFILES) $(IDIR)/$(IFSFILES) \
-$(LDIR)/$(LFILES) $(MDIR)/$(MAPFILES) demo.key
+OLDRUN = $(PARFILES) $(FRMFILES) $(IFSFILES) $(LFILES) $(MAPFILES)
 
 NEWRUN = fractint.doc read.me $(UDIR)/xfractint.man
 
@@ -218,7 +274,7 @@ ifeq ($(AS),/usr/bin/nasm)
 
 U_OBJS = \
 $(UDIR)/calcmand.o $(UDIR)/calmanfp.o $(UDIR)/diskvidu.o $(UDIR)/fpu087.o \
-$(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/unix.o \
+$(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/unix.o $(UDIR)/xfcurses.o \
 $(UDIR)/unixscr.o $(UDIR)/video.o \
 $(UDIR)/calmanfx.o
 
@@ -226,7 +282,7 @@ else
 
 U_OBJS = \
 $(UDIR)/calcmand.o $(UDIR)/calmanfp.o $(UDIR)/diskvidu.o $(UDIR)/fpu087.o \
-$(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/unix.o \
+$(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/unix.o $(UDIR)/xfcurses.o \
 $(UDIR)/unixscr.o $(UDIR)/video.o
 
 endif
@@ -237,17 +293,29 @@ HOBJS = $(DOSHELPDIR)/hc.o unix.o
 .SUFFIXES:
 .SUFFIXES: .o .c .s .h .asm
 
-xfractint: fractint.hlp .WAIT
+xfractint: fractint.hlp $(SRCFILES)
 	if [ -f $(DOSHELPDIR)/helpdefs.h ] ; then mv -f $(DOSHELPDIR)/helpdefs.h $(HFD) ; fi
-	cd common ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
+	cd common ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS} ${OPT}" "SRCDIR=${SHRDIR}" \
 	          "HFD=.${HFD}"
-	cd unix ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
+	cd unix ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS} ${OPT}" "SRCDIR=${SHRDIR}" \
 	          "AS=${AS}" "AFLAGS=${AFLAGS}" "HFD=.${HFD}"
-	$(CC) -o xfractint $(CFLAGS) $(OBJS) $(U_OBJS) $(LIBS)
+	$(CC) -o xfractint $(CFLAGS) $(OPT) $(OBJS) $(U_OBJS) $(LIBS)
 #	strip xfractint
 
-tar:	$(FILES)
-	tar cfh xfractint.tar $(FILES)
+fractint:
+	if [ -x xfractint ] ; then mv -f xfractint xfractint.x11 ; fi
+	rm -f common/encoder.o common/help.o common/realdos.o
+	rm -f unix/unixscr.o unix/video.o unix/xfcurses.o
+	make NCURSES=-DNCURSES ; mv xfractint fractint
+	rm -f common/encoder.o common/help.o common/realdos.o
+	rm -f unix/unixscr.o unix/video.o unix/xfcurses.o	
+	if [ -x xfractint.x11 ] ; then mv -f xfractint.x11 xfractint ; fi
+	
+# tar: $(FILES)
+#	tar cvfj xfractint.tar.bz2 $(FILES)
+
+tar: clean
+	cd .. ; tar cvfj $(BASEDIR).tar.bz2 $(BASEDIR)
 
 tidy:
 	rm -f $(HOBJS)
@@ -255,7 +323,8 @@ tidy:
 	cd unix ; ${MAKE} tidy
 
 clean:
-	rm -f $(HOBJS) fractint.doc fractint.hlp hc xfractint
+	rm -f build-stamp *~ */*~ core
+	rm -f $(HOBJS) fractint.doc fractint.hlp hc fractint xfractint
 	rm -f $(HFD)/helpdefs.h
 	cd $(COMDIR) ; ${MAKE} clean
 	cd $(UDIR) ; ${MAKE} clean
@@ -264,6 +333,8 @@ install: xfractint fractint.hlp
 	strip xfractint
 # only next 6 lines might need su
 	sudo cp xfractint $(BINDIR)/xfractint;
+# install fractint if built	
+	if [ -x fractint ] ; then sudo install -c -s fractint $(BINDIR) ; fi
 	sudo chmod a+x $(BINDIR)/xfractint;
 	sudo cp $(UDIR)/xfractint.man $(MANDIR)/xfractint.1;
 	sudo chmod a+r $(MANDIR)/xfractint.1
@@ -278,29 +349,29 @@ install: xfractint fractint.hlp
 	if [ ! -d $(SRCDIR)/$(XDIR) ] ; then mkdir $(SRCDIR)/$(XDIR) ; fi
 # copy all the files to the appropriate directories
 	cp fractint.hlp sstools.ini $(DOCS) $(SRCDIR)
-	cd ./$(PDIR); cp $(PARFILES) $(SRCDIR)/$(PDIR)
-	cd ./$(FDIR); cp $(FRMFILES) $(SRCDIR)/$(FDIR)
-	cd ./$(IDIR); cp $(IFSFILES) $(SRCDIR)/$(IDIR)
-	cd ./$(LDIR); cp $(LFILES) $(SRCDIR)/$(LDIR)
-	cd ./$(MDIR); cp $(MAPFILES) $(SRCDIR)/$(MDIR)
-	cd ./$(XDIR); cp $(XTRAFILES) $(SRCDIR)/$(XDIR)
+	cp $(PARFILES) $(SRCDIR)/$(PDIR)
+	cp $(FRMFILES) $(SRCDIR)/$(FDIR)
+	cp $(IFSFILES) $(SRCDIR)/$(IDIR)
+	cp $(LFILES) $(SRCDIR)/$(LDIR)
+	cp $(MAPFILES) $(SRCDIR)/$(MDIR)
+	cp $(XTRAFILES) $(SRCDIR)/$(XDIR)
 # set permissions
 	cd $(SRCDIR); chmod a+r fractint.hlp
 	cd $(SRCDIR); chmod a+rw sstools.ini
-	cd $(SRCDIR)/$(PDIR); chmod a+rw $(PARFILES)
-	cd $(SRCDIR)/$(FDIR); chmod a+rw $(FRMFILES)
-	cd $(SRCDIR)/$(IDIR); chmod a+rw $(IFSFILES)
-	cd $(SRCDIR)/$(LDIR); chmod a+rw $(LFILES)
-	cd $(SRCDIR)/$(MDIR); chmod a+rw $(MAPFILES)
-	cd $(SRCDIR)/$(XDIR); chmod a+rw $(XTRAFILES)
+	cd $(SRCDIR); chmod a+rw $(PARFILES)
+	cd $(SRCDIR); chmod a+rw $(FRMFILES)
+	cd $(SRCDIR); chmod a+rw $(IFSFILES)
+	cd $(SRCDIR); chmod a+rw $(LFILES)
+	cd $(SRCDIR); chmod a+rw $(MAPFILES)
+	cd $(SRCDIR); chmod a+rw $(XTRAFILES)
 
 uninstall:
-	cd $(SRCDIR)/$(PDIR); rm -f $(PARFILES)
-	cd $(SRCDIR)/$(FDIR); rm -f $(FRMFILES)
-	cd $(SRCDIR)/$(IDIR); rm -f $(IFSFILES)
-	cd $(SRCDIR)/$(LDIR); rm -f $(LFILES)
-	cd $(SRCDIR)/$(MDIR); rm -f $(MAPFILES)
-	cd $(SRCDIR)/$(XDIR); rm -f $(XTRAFILES)
+	cd $(SRCDIR); rm -f $(PARFILES)
+	cd $(SRCDIR); rm -f $(FRMFILES)
+	cd $(SRCDIR); rm -f $(IFSFILES)
+	cd $(SRCDIR); rm -f $(LFILES)
+	cd $(SRCDIR); rm -f $(MAPFILES)
+	cd $(SRCDIR); rm -f $(XTRAFILES)
 	cd $(SRCDIR); rm -f fractint.hlp sstools.ini $(DOCS)
 	cd $(SRCDIR); rmdir $(PDIR) $(FDIR) $(IDIR) $(LDIR) $(MDIR) $(XDIR)
 # only next 2 lines might need su
@@ -310,18 +381,16 @@ uninstall:
 fractint.hlp: hc $(DOSHELPDIR)/$(HELP)
 	cd $(DOSHELPDIR); ../hc /c; mv fractint.hlp ..
 
-.WAIT:
-
 fractint.doc: doc
 
-doc: hc $(DOSHELPDIR)/$(HELPFILES)
-	./hc /p
+doc: hc $(HELPFILES)
+	cd $(DOSHELPDIR) ; ../hc /p ; mv -f fractint.doc ..
 
 hc:	$(HOBJS)
 	$(CC) -o hc $(CFLAGS) $(HOBJS)
 
 unix.o: $(UDIR)/unix.c
-	$(CC) $(CFLAGS) -DSRCDIR=\"$(SRCDIR)\" -c $(UDIR)/unix.c
+	$(CC) $(CFLAGS) $(OPT) -DSRCDIR=\"$(SHRDIR)\" -c $(UDIR)/unix.c
 
 copy: $(FILES)
 	mv $(FILES) backup

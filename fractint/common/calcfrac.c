@@ -536,7 +536,7 @@ int calcfract(void)
       else
          truecolor = 0;
    }
-   if(!use_grid)
+   if(!use_grid || (xdots > OLDMAXPIXELS || ydots > OLDMAXPIXELS))
    {
       if (usr_stdcalcmode != 'o')
          usr_stdcalcmode = stdcalcmode = '1';

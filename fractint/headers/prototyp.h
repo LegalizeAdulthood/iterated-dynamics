@@ -1093,7 +1093,8 @@ extern int check_vidmode_key(int ,int );
 extern int check_vidmode_keyname(char *);
 extern void vidmode_keyname(int ,char *);
 extern void freetempmsg(void);
-extern char *despace(char *str);
+extern char *despace(char *);
+extern int menu_checkkey(int ,int );
 #endif
 
 /*  rotate -- C file prototypes */

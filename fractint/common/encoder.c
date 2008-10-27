@@ -149,11 +149,20 @@ restart:
    }
 #ifdef XFRACT
    else
+#ifdef NCURSES
    {
       putstring(3, 0, 0, "Saving to:");
       putstring(4, 0, 0, openfile);
       putstring(5, 0, 0, "               ");
    }
+#else
+   {
+      char cmd[256];
+      sprintf(cmd, "Saving to: %s", openfile);
+      xpopup(cmd);
+      usleep(300000);
+   }
+#endif
 #endif
 
    busy = 1;
@@ -195,9 +204,9 @@ restart:
    }
 
    if (dotmode != 11)
-   {                            /* supress this on disk-video */
+   {                            /* suppress this on disk-video */
       if (active_system == 0)
-      {                         /* no bars in Windows version */
+      {                         /* no bars in Windows/X11 (most) versions */
          outcolor1 = outcolor1s;
          outcolor2 = outcolor2s;
          for (j = 0; j <= last_colorbar; j++)
@@ -217,7 +226,7 @@ restart:
             }
          }
       }
-#ifdef XFRACT
+#ifdef NCURSES
       putstring(5, 0, 0, "Saving done\n");
 #endif
    }
@@ -1006,8 +1015,8 @@ nomatch:
             else
               cl_block();
          } /* end for xdot */
-         if (dotmode != 11      /* supress this on disk-video */
-             && active_system == 0      /* and in Windows version     */
+         if (dotmode != 11      /* suppress this on disk-video */
+             && active_system == 0      /* and in Windows/X11 (most) versions  */
              && ydot == rownum)
          {
             if ((ydot & 4) == 0)

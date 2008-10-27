@@ -2040,7 +2040,7 @@ Editpal changes from Andrew McCarthy.  Removed IIT coprocessor support.
 
 Parser changes: New code is only used to determine which functions
   and variables will appear at top of "z" screen for a formula. Variable
-  names in fomrulas must now start with a letter or "_". Error checking
+  names in formulas must now start with a letter or "_". Error checking
   of formulas expanded. Formulas in Orgform compilation caught by the new
   error checking have been rewritten.
 
@@ -3677,7 +3677,7 @@ Version 1.0, 9/88
 
 
  SPACEBAR toggles scrolling off/on
-   Copyright (C) 1990-2007 The Stone Soup Group.  Fractint may be freely copied
+   Copyright (C) 1990-2008 The Stone Soup Group.  Fractint may be freely copied
    and distributed but may not be sold.  See help for more information.
 ;
 ;
@@ -3707,7 +3707,7 @@ Version 1.0, 9/88
  Lee Crocker          Fast Newton, Inversion, Decomposition..
  Monte Davis          Documentation
  Paul De Leeuw        RDS (Random Dot Stereogram) Feature
- Jean-Pierre Demailly Xfractint truecolor
+ Jean-Pierre Demailly Xfractint truecolor support and pure X11 port
  Chuck Ebbert         cmprsd & sqrt logmap, fpu speedups, fast parser
  Dan Farmer           orbits enhancements
  Richard Finegold     8/16/../256-Way Decomposition option

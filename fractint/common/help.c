@@ -125,16 +125,16 @@ static void displaycc(int row, int col, int color, int ch)
        *
        */
 
-      if (color & INVERSE)
+      if (color & INVERSE)     /* active link */
          color = (signed int)INVERSE;
-      else if (color & BRIGHT)
+      else if (color & BRIGHT) /* inactive link */
          {
          color = 0;   /* normal */
          if (ch>='a' && ch<='z')
             ch += 'A' - 'a';
          }
-      else
-         color = 0;   /* normal */
+      else           /* normal */
+         color = 0;
       }
 
    s[0] = (char)ch;
@@ -247,7 +247,7 @@ static void display_parse_text(char far *text, unsigned len, int start_margin, i
                      }
                   }
                else if (tok == TOK_WORD )
-                  display_text(row, col, C_HELP_BODY, curr, width);
+		  display_text(row, col, C_HELP_BODY, curr, width);
 
                col += width;
                curr += size;

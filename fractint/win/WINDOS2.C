@@ -1428,7 +1428,7 @@ top:
    LOADPROMPTSCHOICES(nextright,   "stereogram             <ctl-s>");
 
    i = (keypressed()) ? getakey() : 0;
-   if (menu_checkkey(i,0) == 0) {
+   if (menu_checkkey(i,1) == 0) {
       helpmode = HELPMAIN;         /* switch help modes */
       if ((nextleft += 2) < nextright)
          nextleft = nextright + 1;

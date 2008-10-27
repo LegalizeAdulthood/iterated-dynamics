@@ -73,8 +73,6 @@ void drawline(int x1, int y1, int x2, int y2);
 /* Draws a line from (x1,y1) to (x2,y2). */
 void setlinemode(int mode);
 /* Sets line mode to draw or xor. */
-void shell_to_dos(void);
-/* Calls a Unix subshell. */
 void xsync(void);
 /* Forces all window events to be processed. */
 void redrawscreen(void);

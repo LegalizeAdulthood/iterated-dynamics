@@ -47,31 +47,6 @@ typedef char * USEGTYPE;
 #define RESTORESTART      3
 #define CONTINUE          4
 
-/* these are used to declare arrays for file names */
-#ifdef XFRACT
-#define FILE_MAX_PATH  256       /* max length of path+filename  */
-#define FILE_MAX_DIR   256       /* max length of directory name */
-#else
-#define FILE_MAX_PATH  80       /* max length of path+filename  */
-#define FILE_MAX_DIR   80       /* max length of directory name */
-#endif
-#define FILE_MAX_DRIVE  3       /* max length of drive letter   */
-
-#if 1
-#define FILE_MAX_FNAME  9       /* max length of filename       */
-#define FILE_MAX_EXT    5       /* max length of extension      */
-#else
-/*
-The filename limits were increased in Xfract 3.02. But alas,
-in this poor program that was originally developed on the
-nearly-brain-dead DOS operating system, quite a few things
-in the UI would break if file names were bigger than DOS 8-3
-names. So for now humor us and let's keep the names short.
-*/
-#define FILE_MAX_FNAME  64       /* max length of filename       */
-#define FILE_MAX_EXT    64       /* max length of extension      */
-#endif
-
 #define MAXMAXLINELENGTH  128   /* upper limit for maxlinelength for PARs */
 #define MINMAXLINELENGTH  40    /* lower limit for maxlinelength for PARs */
 
@@ -750,15 +725,15 @@ is not in the data structure */
 #define DNARR1 "down(J)"
 #define RTARR1 "left(L)"
 #define LTARR1 "right(H)"
-#define FK_F1  "Shift-1"
-#define FK_F2  "Shift-2"
-#define FK_F3  "Shift-3"
-#define FK_F4  "Shift-4"
-#define FK_F5  "Shift-5"
-#define FK_F6  "Shift-6"
-#define FK_F7  "Shift-7"
-#define FK_F8  "Shift-8"
-#define FK_F9  "Shift-9"
+#define FK_F1  "F1"
+#define FK_F2  "F2"
+#define FK_F3  "F3"
+#define FK_F4  "F4"
+#define FK_F5  "F5"
+#define FK_F6  "F6"
+#define FK_F7  "F7"
+#define FK_F8  "F8"
+#define FK_F9  "F9"
 #endif
 
 #ifndef XFRACT

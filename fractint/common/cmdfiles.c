@@ -61,7 +61,7 @@ char    tempdir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
 char    workdir[FILE_MAX_DIR] = {""}; /* name of directory for misc files */
 char    orgfrmdir[FILE_MAX_DIR] = {""};/*name of directory for orgfrm files*/
 char    gifmask[13] = {""};
-char    PrintName[FILE_MAX_PATH]={"fract001.prn"}; /* Name for print-to-file */
+char    PrintName[FILE_MAX_PATH]={"fract001.ps"}; /* Name for print-to-file */
 char    savename[FILE_MAX_PATH]={"fract001"};  /* save files using this name */
 char    autoname[FILE_MAX_PATH]={"auto.key"}; /* record auto keystrokes here */
 int     potflag=0;              /* continuous potential enabled? */
@@ -278,7 +278,7 @@ char s_float[] =            "float";
 char s_formulafile[] =      "formulafile";
 char s_formulaname[] =      "formulaname";
 char s_fpu[] =              "fpu";
-char s_fract001prn[] =     "fract001.prn";
+char s_fract001ps[] =      "fract001.ps";
 char s_fullcolor[] =        "fullcolor";
 char s_function[] =         "function";
 char s_gif87a[] =           "gif87a";
@@ -705,7 +705,7 @@ static void initvars_restart()          /* <ins> key init */
 #endif
    EPSFileType = 0;                     /* Assume no save to .EPS */
    LPTNumber = 1;                       /* assume LPT1 */
-   ColorPS = 0;                         /* Assume NO Color PostScr*/
+   ColorPS = 1;                         /* Assume Color PostScript ...*/
    major_method = breadth_first;        /* default inverse julia methods */
    minor_method = left_first;   /* default inverse julia methods */
    truecolor = 0;              /* truecolor output flag */
@@ -2214,8 +2214,8 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       Print_To_File = 1;
       EPSFileType = numval;
       Printer_Type = 5;
-      if (far_strcmp(PrintName,s_fract001prn)==0)
-         strcpy(PrintName,"fract001.eps");
+      if (far_strcmp(PrintName,s_fract001ps)==0)
+         strcpy(PrintName,"fract001.ps");
       return 0;
       }
 

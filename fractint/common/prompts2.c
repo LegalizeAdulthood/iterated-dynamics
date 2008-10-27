@@ -723,8 +723,14 @@ int get_view_params()
       if (truebytes < 2)
          ++truebytes;
       vidmem /= truebytes;
-      estm_xmax = vesa_yres ? vidmem/vesa_yres : 0;
-      estm_ymax = vesa_xres ? vidmem/vesa_xres : 0;
+      if (vesa_yres)
+         estm_xmax = min(vidmem/vesa_yres,estm_xmax);
+      else
+         estm_xmax = 0;
+      if (vesa_xres)
+         estm_ymax = min(vidmem/vesa_xres,estm_ymax);
+      else
+         estm_ymax = 0;
       estm_xmax &= truebytes&1 ? -8 : truebytes - 6;
    }
 #endif
@@ -890,6 +896,9 @@ get_view_restart:
 
       if ((unsigned long)sxdots > estm_xmax)
          sxdots = (int)estm_xmax;
+#ifndef XFRACT
+      sxdots &= truebytes&1 ? -8 : truebytes - 6;
+#endif
       if (sxdots < 2)
          sxdots = 2;
       if (sydots == 0 && dotmode == 28) { /* auto by aspect ratio request */
