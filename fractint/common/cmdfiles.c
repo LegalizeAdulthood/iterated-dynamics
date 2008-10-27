@@ -109,6 +109,7 @@ BYTE far *mapdacbox = NULL;     /* map= (default colors)    */
 int     colorstate;             /* 0, dacbox matches default (bios or map=) */
                                 /* 1, dacbox matches no known defined map   */
                                 /* 2, dacbox matches the colorfile map      */
+                                /* 3, dacbox rotation of the colorfile map  */
 int     colorpreloaded;         /* if dacbox preloaded for next mode select */
 int     save_release;           /* release creating PAR file*/
 char    dontreadcolor=0;        /* flag for reading color from GIF */
@@ -1054,7 +1055,8 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
    argptr = value;
    numval = totparms = intparms = floatparms = 0;
    while (*argptr) {                    /* count and pre-parse parms */
-      long ll;
+      unsigned long ll;
+      char firstchar;
       lastarg = 0;
       if ((argptr2 = strchr(argptr,'/')) == NULL) {     /* find next '/' */
          argptr2 = argptr + strlen(argptr);
@@ -1077,6 +1079,13 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          if (totparms < 16) {floatval[totparms] = j; floatvalstr[totparms]="0";}
          if (totparms < 64) intval[totparms] = j;
          if (totparms == 0) numval = j;
+         }
+      else if (sscanf(argptr,"%c%ld%c",&firstchar,&ll,&tmpc) > 0
+        && firstchar == '-' && tmpc == '/') { /* got a negative integer */
+         ++floatparms; ++intparms;
+         if (totparms < 16) {floatval[totparms] = 0.0 - ll; floatvalstr[totparms]=argptr;}
+         if (totparms < 64) intval[totparms] = 0 - (int)ll;
+         if (totparms == 0) numval = 0 - (int)ll;
          }
       else if (sscanf(argptr,"%ld%c",&ll,&tmpc) > 0       /* got an integer */
         && tmpc == '/') {        /* needs a long int, ll, here for lyapunov */
@@ -2991,7 +3000,10 @@ static int parse_colors(char *value)
          dacbox[i][0] = dacbox[i][1] = dacbox[i][2] = 40;
          ++i;
          }
-      colorstate = 1;
+      if (colorstate == 2) /* read in map name, but it is rotated */
+         colorstate = 3;
+      else
+         colorstate = 1;
       }
    colorpreloaded = 1;
    memcpy(olddacbox,dacbox,256*3);

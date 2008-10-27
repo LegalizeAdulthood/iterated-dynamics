@@ -36,6 +36,7 @@ int incr, fromred=0, fromblue=0, fromgreen=0, tored=0, toblue=0, togreen=0;
 int i, changecolor, changedirection;
 int oldhelpmode;
 int rotate_max,rotate_size;
+int oldcolorstate;
 
 static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
 
@@ -52,6 +53,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
    oldhelpmode = helpmode;              /* save the old help mode       */
    helpmode = HELPCYCLING;              /* new help mode                */
 
+   oldcolorstate = colorstate;          /* save the old colorstate      */
    paused = 0;                          /* not paused                   */
    fkey = 0;                            /* no random coloring           */
    oldstep = step = 1;                  /* single-step                  */
@@ -198,6 +200,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             incr = 999;
             oldstep = step;
             step = rotate_size;
+            colorstate = 1;             /* not a known color map */
             break;
          case 'r':                      /* color changes */
             if (changecolor    == -1) changecolor = 0;
@@ -218,22 +221,27 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             for (i = 1; i < 256; i++) {
                dacbox[i][changecolor] = (BYTE)(dacbox[i][changecolor] + changedirection);
                if (dacbox[i][changecolor] == 64)
-               dacbox[i][changecolor] = 63;
+                  dacbox[i][changecolor] = 63;
                if (dacbox[i][changecolor] == 255)
                   dacbox[i][changecolor] = 0;
                }
             changecolor    = -1;        /* clear flags for next time */
             changedirection = 0;
             paused          = 0;        /* clear any pause */
+            colorstate = 1;             /* not a known color map */
          case ' ':                      /* use the spacebar as a "pause" toggle */
          case 'c':                      /* for completeness' sake, the 'c' too */
          case 'C':
+            if (colorstate == 0 || colorstate == 2)
+               colorstate = 3;
             pauserotate();              /* pause */
             break;
          case '>':                      /* single-step */
          case '.':
          case '<':
          case ',':
+            if (colorstate == 0 || colorstate == 2)
+               colorstate = 3;
             if (kbdchar == '>' || kbdchar == '.') {
                direction = -1;
                last = rotate_lo;
@@ -285,6 +293,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
          case HOME:                     /* restore palette */
             memcpy(dacbox,olddacbox,256*3);
             pauserotate();              /* pause */
+            colorstate = oldcolorstate;
             break;
          default:                       /* maybe a new palette */
             if (reallyega) break;       /* no sense on real EGAs */
@@ -320,6 +329,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             if (kbdchar == 1112) set_palette3(Green, Green, White);
             if (kbdchar == 1113) set_palette3(Red, Blue, White);
             pauserotate();  /* update palette and pause */
+            colorstate = 1;             /* not a known color map */
             break;
          }
       }
@@ -438,10 +448,21 @@ void save_palette()
       if (dacfile == NULL)
          buzzer(2);
       else {
+         int start = 0;
+         if (colorstate >= 2) {
+            char tmpfilename[FILE_MAX_PATH];
+            extract_filename(tmpfilename, colorfile);
+            fprintf(dacfile, "%3d %3d %3d   Rotated version of map file %s\n",
+                    dacbox[start][0] << 2,
+                    dacbox[start][1] << 2,
+                    dacbox[start][2] << 2,
+                    tmpfilename);
+            start++;
+            }
 #ifndef XFRACT
-         for (i = 0; i < colors; i++)
+         for (i = start; i < colors; i++)
 #else
-         for (i = 0; i < 256; i++)
+         for (i = start; i < 256; i++)
 #endif
             fprintf(dacfile, "%3d %3d %3d\n",
                     dacbox[i][0] << 2,

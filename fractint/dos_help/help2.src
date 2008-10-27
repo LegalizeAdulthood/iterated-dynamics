@@ -2524,8 +2524,9 @@ There are two command-line options that work with type=formula
 ("formulafile=" and "formulaname="), useful when you are using this
 fractal type in batch mode.
 
-The following documentation is supplied by Mark Peterson, who wrote the
-formula interpreter:
+A formula may also be included in a PAR file by preceeding the formulaname with
+frm:, for example:  frm:Mandelbrot \{...\}.  The PAR file will always be
+searched first for any required formula.
 ~OnlineFF
 The general format is:
 
@@ -2537,11 +2538,11 @@ The general format is:
      Initial       Iteration            Bailout\
      Condition                          Criteria\
 
-When initially selected from the fractal type formula screen, the symmetry and
-any per image settings are enforced.  The per image settings will be saved to
+When initially selected from the fractal type formula screen, the Symmetry and
+any Per Image Settings are enforced.  The Per Image Settings will be saved to
 PARs and GIFs, and can be changed from the appropriate screen.
-For every pixel, initial conditions are set, then the iterations performed
-while the bailout criteria remains true or until 'z' turns into a periodic
+For every pixel, Initial Conditions are set, then the Iterations performed
+while the Bailout Criteria remains true or until 'z' turns into a periodic
 loop.  All variables are created automatically by their usage and treated as
 complex.  If you declare 'v = 2' then the variable 'v' is treated as a
 complex with an imaginary value of zero.
@@ -2550,22 +2551,32 @@ NOTE: For periodicity checking, inside options, outside options, and
 the passes=o option to work correctly it is necessary to leave the result
 of the orbit calculation in the variable z.
 ~OnlineFF
-The possible values for symmetry are:\
-XAXIS,  XAXIS_NOPARM\
+The possible values for Symmetry are:\
+XAXIS,  XAXIS_NOPARM,  XAXIS_NOREAL, XAXIS_NOIMAG\
 YAXIS,  YAXIS_NOPARM\
 XYAXIS, XYAXIS_NOPARM\
 ORIGIN, ORIGIN_NOPARM\
 PI_SYM, PI_SYM_NOPARM\
-XAXIS_NOREAL\
-XAXIS_NOIMAG\
 
 These will force the symmetry even if no symmetry is actually present, so try
 your formulas without symmetry before you use these.
 
-The possible values for per image settings are the same as the parameters
-that appear in PAR files, with the exception of 'params='.  Params can't
-be set in the per image settings section, because they get set to
-zero when the formula is parsed.
+For the NOPARM variants, p1 through p5 are checked to make sure that the
+paramaters are equal to zero (0,0).  If they are all zero, the symmetry is
+applied.
+
+For the XAXIS_NOREAL (or XAXIS_NOIMAG) variant, p1 through p5 are checked
+to make sure that the real (or imaginary) part of each parameter is equal to
+zero (0,?)(or (?,0)).  If the real (or imaginary) part of p1 through p5 is
+zero, the XAXIS symmetry is applied.
+~OnlineFF
+The possible uses for Per Image Settings are:\
+setting float=y\
+setting periodicity=0\
+
+Certain values cannot be set with the Per Image Settings.  These include
+'params=', 'corners=', and 'center-mag='.  There may be others.  These values
+get reset after the formula is parsed and before the iteration starts.
 ~OnlineFF
 Sequential processing of the formula can be altered with the flow control\
 instructions

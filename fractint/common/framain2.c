@@ -1092,7 +1092,8 @@ image.  Sorry - it's the best we could do."};
       rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
       if (memcmp(olddacbox, dacbox, 256 * 3))
       {
-         colorstate = 1;
+/*         colorstate = 1;  Move to rotate.c to more precisely define when */
+/*                          colorstate is changed. JCO 11/18/2007 */
          save_history_info();
       }
       return(CONTINUE);
@@ -1116,7 +1117,8 @@ image.  Sorry - it's the best we could do."};
          helpmode = oldhelpmode;
          if (memcmp(olddacbox, dacbox, 256 * 3))
          {
-            colorstate = 1;
+/*           colorstate = 1;  Move to editpal.c to more precisely define when */
+/*                            colorstate is changed. JCO 11/18/2007 */
             save_history_info();
          }
       }

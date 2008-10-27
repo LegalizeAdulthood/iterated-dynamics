@@ -25,6 +25,24 @@ unsigned        r, g, b, index;
 }
 #endif
 
+void get_map_name( char * from_str, char * to_str)
+{ /* called once we know from_str contains ".map" */
+  /* returns xxxxxxxx.map in to_str */
+char   *temp_map_name, *dot_position;
+unsigned int position, name_length;
+
+        temp_map_name = strstr(from_str,".map");
+        dot_position = temp_map_name;
+        while(*temp_map_name != ' ' &&  /* find space before map name */
+              *temp_map_name != '@')    /* find @ symbol before map name */
+           temp_map_name--;
+        temp_map_name++;                           /* start of map name */
+        name_length = (unsigned int)(dot_position - temp_map_name + 4);
+        for( position = 0; position < (name_length); position++)
+           to_str[position] = *temp_map_name++;
+        to_str[position] = '\0';           /* add NULL termination */
+}
+
 int ValidateLuts( char * fn )
 {
 FILE * f;
@@ -48,7 +66,16 @@ char    temp_fn[FILE_MAX_PATH];
                 stopmsg(0,line);
                 return 1;
                 }
-        for( index = 0; index < 256; index++ ) {
+        fgets(line,100,f);
+        if (strstr(line,".map") != NULL) { /* found a map name */
+                get_map_name(line, fn);
+                }
+        sscanf( line, "%u %u %u", &r, &g, &b );
+        /** load global dac values **/
+        dac[0].red   = (BYTE)((r%256) >> 2);/* maps default to 8 bits */
+        dac[0].green = (BYTE)((g%256) >> 2);/* DAC wants 6 bits */
+        dac[0].blue  = (BYTE)((b%256) >> 2);
+        for( index = 1; index < 256; index++ ) {
                 if (fgets(line,100,f) == NULL)
                         break;
                 sscanf( line, "%u %u %u", &r, &g, &b );
