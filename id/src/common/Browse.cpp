@@ -114,7 +114,7 @@ struct CoordinateWindow  // for look_get_window on screen browser
 	int box_count;      // bytes of saved screen info
 };
 
-static int oldbf_math;
+static BigMathType oldbf_math;
 // here because must be visible inside several routines
 static bf_t bt_a;
 static bf_t bt_b;
@@ -705,7 +705,7 @@ int look_get_window()
 
 	HelpModeSaver saved_help(IDHELP_BROWSE);
 	oldbf_math = g_bf_math;
-	g_bf_math = BIGFLT;
+	g_bf_math = BIG_FLOAT;
 	if (!oldbf_math)
 	{
 		// kludge because next sets it = 0

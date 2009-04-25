@@ -137,13 +137,13 @@ void calculate_fractal_initialize()
 			|| (g_user_float_flag && (xytemp*sizeof(double) > 32768))
 			|| DEBUGMODE_NO_PIXEL_GRID == g_debug_mode)
 		{
-			g_escape_time_state.m_use_grid = false;
+			g_escape_time_state.setUseGrid(false);
 			g_float_flag = true;
 			g_user_float_flag = true;
 		}
 		else
 		{
-			g_escape_time_state.m_use_grid = true;
+			g_escape_time_state.setUseGrid(true);
 		}
 	}
 
@@ -154,11 +154,11 @@ void calculate_fractal_initialize()
 		int fractal_type_float = g_current_fractal_specific->tofloat;
 		if (fractal_type_none(fractal_type_float))
 		{
-			g_bf_math = 0;
+			g_bf_math = BIG_NONE;
 		}
 		else if (!g_fractal_specific[fractal_type_float].arbitrary_precision())
 		{
-			g_bf_math = 0;
+			g_bf_math = BIG_NONE;
 		}
 		else if (g_bf_math)
 		{
@@ -174,7 +174,7 @@ void calculate_fractal_initialize()
 		if ((gotprec <= DBL_DIG + 1 && g_debug_mode != DEBUGMODE_NO_BIG_TO_FLOAT) || g_math_tolerance[1] >= 1.0)
 		{
 			corners_bf_to_float();
-			g_bf_math = 0;
+			g_bf_math = BIG_NONE;
 		}
 		else
 		{
@@ -416,11 +416,11 @@ init_restart:
 	// skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance
 	// is set.  These types don't auto switch between float and integer math
 	if (g_fractal_type != FRACTYPE_PLASMA
-		&& g_bf_math == 0
+		&& g_bf_math == BIG_NONE
 		&& !fractal_type_ifs(g_fractal_type)
 		&& g_fractal_type != FRACTYPE_L_SYSTEM)
 	{
-		if (g_integer_fractal && !g_invert && g_escape_time_state.m_use_grid)
+		if (g_integer_fractal && !g_invert && g_escape_time_state.useGrid())
 		{
 			if ((g_escape_time_state.m_grid_l.delta_x() == 0 && g_escape_time_state.m_grid_fp.delta_x()  != 0.0)
 				|| (g_escape_time_state.m_grid_l.delta_x2() == 0 && g_escape_time_state.m_grid_fp.delta_x2() != 0.0)
@@ -465,7 +465,7 @@ expand_retry:
 			g_escape_time_state.m_grid_fp.y_min() = FudgeToDouble(g_escape_time_state.m_grid_l.y_min());
 			g_escape_time_state.m_grid_fp.y_max() = FudgeToDouble(g_escape_time_state.m_grid_l.y_max());
 			g_escape_time_state.m_grid_fp.y_3rd() = FudgeToDouble(g_escape_time_state.m_grid_l.y_3rd());
-		} // end if (g_integer_fractal && !g_invert && g_escape_time_state.m_use_grid)
+		}
 		else
 		{
 			// set up dx0 and dy0 analogs of g_x0_l and g_y0_l
@@ -487,7 +487,7 @@ expand_retry:
 				dy0 = double(dy0 - double(g_escape_time_state.m_grid_fp.delta_y()));
 				dx1 = double(dx1 + double(g_escape_time_state.m_grid_fp.delta_x2()));
 			}
-			if (g_bf_math == 0) // redundant test, leave for now
+			if (g_bf_math == BIG_NONE) // redundant test, leave for now
 			{
 				// Following is the old logic for detecting failure of double
 				// precision. It has two advantages: it is independent of the
@@ -586,7 +586,7 @@ expand_retry:
 		g_plot_my1 = double(-g_escape_time_state.m_grid_fp.delta_y2()*g_dx_size*g_dy_size/ftemp);
 		g_plot_my2 = (g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd())*g_dy_size/ftemp;
 	}
-	if (g_bf_math == 0)
+	if (g_bf_math == BIG_NONE)
 	{
 		free_bf_vars();
 	}

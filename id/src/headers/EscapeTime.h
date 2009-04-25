@@ -149,10 +149,15 @@ public:
 	void fill_grid_fp();
 	void fill_grid_l();
 
-	bool m_use_grid;
+	bool useGrid() const		{ return m_use_grid; }
+	void setUseGrid(bool value) { m_use_grid = value; }
+
 	SampleGrid<bf_t>	m_grid_bf;
 	SampleGrid<double>	m_grid_fp;
 	SampleGrid<long>	m_grid_l;
+
+private:
+	bool m_use_grid;
 };
 
 extern EscapeTimeState g_escape_time_state;

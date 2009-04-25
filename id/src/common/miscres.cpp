@@ -726,7 +726,7 @@ int tab_display_2(char *msg)
 	ixstart, g_x_stop, iystart, g_y_stop, g_bit_shift);
 	*/
 	write_row(row++, boost::format("g_rq_limit2_l %ld g_use_grid %s")
-		% g_rq_limit2_l % (g_escape_time_state.m_use_grid ? "true" : "false"));
+		% g_rq_limit2_l % (g_escape_time_state.useGrid() ? "true" : "false"));
 	put_string_center(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
 	*msg = 0;
 
@@ -859,7 +859,6 @@ top:
 		driver_put_string(s_row + 1, 45, C_GENERAL_HI, "You are in color-cycling mode");
 	}
 	++s_row;
-	// if (g_bf_math == 0)
 	++s_row;
 
 	i = 0;
@@ -876,7 +875,7 @@ top:
 		j = (g_user_float_flag) ? 1 : 2;
 	}
 
-	if (g_bf_math == 0)
+	if (g_bf_math == BIG_NONE)
 	{
 		if (j)
 		{
@@ -1007,13 +1006,13 @@ top:
 	}
 
 	++s_row;
-	if (g_bf_math == 0)
+	if (g_bf_math == BIG_NONE)
 	{
 		++s_row;
 	}
 	driver_put_string(s_row++, 2, C_GENERAL_MED,
 		str(boost::format("driver: %s, %s") % driver_name() % driver_description()));
-	if (g_.VideoEntry().x_dots && g_bf_math == 0)
+	if (g_.VideoEntry().x_dots && g_bf_math == BIG_NONE)
 	{
 		sprintf(msg, "Video: %dx%dx%d %s %s",
 				g_.VideoEntry().x_dots, g_.VideoEntry().y_dots, g_.VideoEntry().colors,

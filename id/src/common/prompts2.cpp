@@ -995,7 +995,7 @@ gc_loop:
 			{
 				aspect_ratio_crop(g_screen_aspect_ratio, g_viewWindow.AspectRatio());
 			}
-			if (g_bf_math != 0)
+			if (g_bf_math != BIG_NONE)
 			{
 				fractal_float_to_bf();
 			}

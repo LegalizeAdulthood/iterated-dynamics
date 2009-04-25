@@ -1400,7 +1400,7 @@ void set_default_parms()
 	}
 	if (g_debug_mode != DEBUGMODE_NO_BIG_TO_FLOAT)
 	{
-		g_bf_math = 0;
+		g_bf_math = BIG_NONE;
 	}
 	else if (g_bf_math)
 	{
@@ -2103,7 +2103,7 @@ get_fractal_parameters_top:
 			sprintf(message, "Parameters for fractal type %s", type_name);
 		}
 	}
-	if (g_bf_math == 0)
+	if (g_bf_math == BIG_NONE)
 	{
 		strcat(message, "\n(Press "FK_F6" for corner parameters)");
 	}
@@ -2133,7 +2133,7 @@ get_fractal_parameters_top:
 		{
 			break;
 		}
-		if (g_bf_math == 0)
+		if (g_bf_math == BIG_NONE)
 		{
 			if (get_corners() > 0)
 			{

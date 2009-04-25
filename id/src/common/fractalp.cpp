@@ -199,35 +199,35 @@ static alternate_math s_alternate_math[] =
 #define USEBN
 #ifdef USEBN
 	{
-		FRACTYPE_JULIA_FP, BIGNUM,
+		FRACTYPE_JULIA_FP, BIG_NUMBER,
 		julia_orbit_bn, julia_per_pixel_bn, mandelbrot_setup_bn
 	},
 	{
-		FRACTYPE_MANDELBROT_FP, BIGNUM,
+		FRACTYPE_MANDELBROT_FP, BIG_NUMBER,
 		julia_orbit_bn, mandelbrot_per_pixel_bn, mandelbrot_setup_bn
 	},
 #else
 	{
-		FRACTYPE_JULIA_FP, BIGFLT,
+		FRACTYPE_JULIA_FP, BIG_FLOAT,
 		julia_orbit_bf, julia_per_pixel_bf,  mandelbrot_setup_bf
 	},
 	{
-		FRACTYPE_MANDELBROT_FP, BIGFLT,
+		FRACTYPE_MANDELBROT_FP, BIG_FLOAT,
 		julia_orbit_bf, mandelbrot_per_pixel_bf, mandelbrot_setup_bf
 	},
 #endif
 	//
-	//	NOTE: The default precision for g_bf_math=BIGNUM is not high enough
-	//	for julia_z_power_orbit_bn.  If you want to test BIGNUM (1) instead
-	//	of the usual BIGFLT (2), then set bfdigits on the command to
+	//	NOTE: The default precision for g_bf_math=BIG_NUMBER is not high enough
+	//	for julia_z_power_orbit_bn.  If you want to test BIG_NUMBER (1) instead
+	//	of the usual BIG_FLOAT (2), then set bfdigits on the command to
 	//	increase the precision.
 	//
 	{
-		FRACTYPE_JULIA_Z_POWER_FP, BIGFLT,
+		FRACTYPE_JULIA_Z_POWER_FP, BIG_FLOAT,
 		julia_z_power_orbit_bf, julia_per_pixel_bf, mandelbrot_setup_bf
 	},
 	{
-		FRACTYPE_MANDELBROT_Z_POWER_FP, BIGFLT,
+		FRACTYPE_MANDELBROT_Z_POWER_FP, BIG_FLOAT,
 		julia_z_power_orbit_bf, mandelbrot_per_pixel_bf, mandelbrot_setup_bf
 	}
 };
