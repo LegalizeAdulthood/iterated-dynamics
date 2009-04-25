@@ -549,7 +549,7 @@ int calculate_fractal()
 			g_true_color = false;
 		}
 	}
-	if (!g_escape_time_state.m_use_grid)
+	if (!g_escape_time_state.useGrid())
 	{
 		if (g_externs.UserStandardCalculationMode() != CALCMODE_ORBITS)
 		{
@@ -1563,12 +1563,12 @@ void StandardFractal::initialize_float()
 		{
 			g_input_counter = -1;
 		}
-		if (g_bf_math == BIGNUM)
+		if (g_bf_math == BIG_NUMBER)
 		{
 			bnsaved.real().clear();
 			bnsaved.imag().clear();
 		}
-		else if (g_bf_math == BIGFLT)
+		else if (g_bf_math == BIG_FLOAT)
 		{
 			clear_bf(bfsaved.real());
 			clear_bf(bfsaved.imag());
@@ -1628,11 +1628,11 @@ void StandardFractal::outside_colormode_total_distance_initialize()
 		{
 			g_old_z = ComplexFudgeToDouble(g_old_z_l);
 		}
-		else if (g_bf_math == BIGNUM)
+		else if (g_bf_math == BIG_NUMBER)
 		{
 			g_old_z = ComplexBigNumToDouble(g_old_z_bn);
 		}
-		else if (g_bf_math == BIGFLT)
+		else if (g_bf_math == BIG_FLOAT)
 		{
 			g_old_z = ComplexBigFloatToDouble(g_old_z_bf);
 		}
@@ -1704,11 +1704,11 @@ void StandardFractal::show_orbit()
 {
 	if (!g_integer_fractal)
 	{
-		if (g_bf_math == BIGNUM)
+		if (g_bf_math == BIG_NUMBER)
 		{
 			g_new_z = ComplexBigNumToDouble(g_new_z_bn);
 		}
-		else if (g_bf_math == BIGFLT)
+		else if (g_bf_math == BIG_FLOAT)
 		{
 			g_new_z = ComplexBigFloatToDouble(g_new_z_bf);
 		}
@@ -1721,11 +1721,11 @@ void StandardFractal::show_orbit()
 }
 void StandardFractal::set_new_z_if_bigmath()
 {
-	if (g_bf_math == BIGNUM)
+	if (g_bf_math == BIG_NUMBER)
 	{
 		g_new_z = ComplexBigNumToDouble(g_new_z_bn);
 	}
-	else if (g_bf_math == BIGFLT)
+	else if (g_bf_math == BIG_FLOAT)
 	{
 		g_new_z = ComplexBigFloatToDouble(g_new_z_bf);
 	}
@@ -1741,12 +1741,12 @@ void StandardFractal::check_periodicity()
 			{
 				m_saved_z_l = g_new_z_l; // integer fractals
 			}
-			else if (g_bf_math == BIGNUM)
+			else if (g_bf_math == BIG_NUMBER)
 			{
 				copy_bn(bnsaved.real(), g_new_z_bn.real());
 				copy_bn(bnsaved.imag(), g_new_z_bn.imag());
 			}
-			else if (g_bf_math == BIGFLT)
+			else if (g_bf_math == BIG_FLOAT)
 			{
 				copy_bf(bfsaved.real(), g_new_z_bf.real());
 				copy_bf(bfsaved.imag(), g_new_z_bf.imag());
@@ -1771,7 +1771,7 @@ void StandardFractal::check_periodicity()
 					m_caught_a_cycle = true;
 				}
 			}
-			else if (g_bf_math == BIGNUM)
+			else if (g_bf_math == BIG_NUMBER)
 			{
 				if ((abs_a_bn(sub_bn(bntmp, bnsaved.real(), g_new_z_bn.real())) < bnclosenuff)
 					&& (abs_a_bn(sub_bn(bntmp, bnsaved.imag(), g_new_z_bn.imag())) < bnclosenuff))
@@ -1779,7 +1779,7 @@ void StandardFractal::check_periodicity()
 					m_caught_a_cycle = true;
 				}
 			}
-			else if (g_bf_math == BIGFLT)
+			else if (g_bf_math == BIG_FLOAT)
 			{
 				if ((cmp_bf(abs_a_bf(subtract_bf(bftmp, bfsaved.real(), g_new_z_bf.real())), bfclosenuff) < 0)
 					&& (cmp_bf(abs_a_bf(subtract_bf(bftmp, bfsaved.imag(), g_new_z_bf.imag())), bfclosenuff) < 0))
@@ -1940,11 +1940,11 @@ void StandardFractal::outside_colormode_set_new_z_update()
 	{
 		g_new_z = ComplexFudgeToDouble(g_new_z_l);
 	}
-	else if (g_bf_math == BIGNUM)
+	else if (g_bf_math == BIG_NUMBER)
 	{
 		g_new_z = ComplexBigNumToDouble(g_new_z_bn);
 	}
-	else if (g_bf_math == BIGFLT)
+	else if (g_bf_math == BIG_FLOAT)
 	{
 		g_new_z = ComplexBigFloatToDouble(g_new_z_bf);
 	}
@@ -1984,11 +1984,11 @@ void StandardFractal::potential_set_new_z()
 	{
 		g_new_z = ComplexFudgeToDouble(g_new_z_l);
 	}
-	else if (g_bf_math == BIGNUM)
+	else if (g_bf_math == BIG_NUMBER)
 	{
 		g_new_z = ComplexBigNumToDouble(g_new_z_bn);
 	}
-	else if (g_bf_math == BIGFLT)
+	else if (g_bf_math == BIG_FLOAT)
 	{
 		g_new_z = ComplexBigFloatToDouble(g_new_z_bf);
 	}
@@ -2031,7 +2031,7 @@ void StandardFractal::outside_colormode_set_new_z_final()
 	{
 		g_new_z = ComplexFudgeToDouble(g_new_z_l);
 	}
-	else if (g_bf_math == BIGNUM)
+	else if (g_bf_math == BIG_NUMBER)
 	{
 		g_new_z = ComplexBigNumToDouble(g_new_z_bn);
 	}
@@ -3574,7 +3574,7 @@ void PerformWorkList::setup_alternate_math()
 	}
 	else
 	{
-		g_bf_math = 0;
+		g_bf_math = BIG_NONE;
 	}
 }
 

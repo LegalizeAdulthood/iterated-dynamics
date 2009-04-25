@@ -170,17 +170,13 @@ static void init_bf_2()
 
 	/* at present time one call would suffice, but this logic allows
 		multiple kinds of alternate math eg long double */
-	alternate_math *alt = find_alternate_math(BIGNUM);
-	if (alt != 0)
+	alternate_math *alt = find_alternate_math(BIG_NUMBER);
+	if (!alt)
 	{
-		g_bf_math = alt->math;
-	}
-	else
-	{
-		alt = find_alternate_math(BIGFLT);
 		// 1 => maybe called from cmdfiles.c and g_fractal_type not set
-		g_bf_math = alt ? alt->math : BIGNUM;
+		alt = find_alternate_math(BIG_FLOAT);
 	}
+	g_bf_math = alt ? alt->math : BIG_NUMBER;
 	g_float_flag = true;
 
 	// Now split up the memory among the pointers
@@ -206,7 +202,7 @@ static void init_bf_2()
 	bntmpcpy1 = bn_t(advance_ptr(ptr, g_r_length*2));
 	bntmpcpy2 = bn_t(advance_ptr(ptr, g_r_length*2));
 
-	if (g_bf_math == BIGNUM)
+	if (g_bf_math == BIG_NUMBER)
 	{
 		bnxmin = bn_t(advance_ptr_bn_length(ptr));
 		bnxmax = bn_t(advance_ptr_bn_length(ptr));
@@ -231,7 +227,7 @@ static void init_bf_2()
 		bntmpsqry = bn_t(advance_ptr_r_length(ptr));
 		bntmp = bn_t(advance_ptr_r_length(ptr));
 	}
-	if (g_bf_math == BIGFLT)
+	if (g_bf_math == BIG_FLOAT)
 	{
 		bfxdel     = bf_t(advance_ptr_bf_length_plus_2(ptr));
 		bfydel     = bf_t(advance_ptr_bf_length_plus_2(ptr));
@@ -385,7 +381,7 @@ static int restore_bf_vars()
 void free_bf_vars()
 {
 	g_bf_save_len = 0;
-	g_bf_math = 0;
+	g_bf_math = BIG_NONE;
 	g_step_bn = 0;
 	g_bn_length = 0;
 	g_int_length = 0;
@@ -405,7 +401,7 @@ void free_bf_vars()
 big_t alloc_stack(size_t size)
 {
 	long stack_addr;
-	if (g_bf_math == 0)
+	if (g_bf_math == BIG_NONE)
 	{
 		stop_message(STOPMSG_NORMAL, "alloc_stack called with g_bf_math == 0");
 		return 0;

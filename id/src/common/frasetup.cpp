@@ -93,7 +93,7 @@ bool unity_setup()
 
 bool mandelbrot_setup_fp()
 {
-	g_bf_math = 0;
+	g_bf_math = BIG_NONE;
 	g_c_exp = int(g_parameters[P2_REAL]);
 	g_power.real(g_parameters[P2_REAL] - 1.0);
 	g_power.imag(g_parameters[P2_IMAG]);

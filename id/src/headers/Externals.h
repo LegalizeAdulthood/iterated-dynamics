@@ -732,8 +732,8 @@ public:
 	virtual SoundState &Sound() = 0;
 	virtual EscapeTimeState const &EscapeTime() const = 0;
 	virtual EscapeTimeState &EscapeTime() = 0;
-	virtual int BfMath() const = 0;
-	virtual void SetBfMath(int value) = 0;
+	virtual BigMathType BfMath() const = 0;
+	virtual void SetBfMath(BigMathType value) = 0;
 	virtual bf_t SxMinBf() const = 0;
 	virtual void SetSxMinBf(bf_t value) = 0;
 	virtual bf_t SxMaxBf() const = 0;

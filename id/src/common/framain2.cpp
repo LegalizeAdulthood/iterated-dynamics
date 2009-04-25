@@ -677,7 +677,7 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 		}
 		return APPSTATE_RESTORE_START;
 	}
-	else if (g_max_history > 0 && g_bf_math == 0)
+	else if (g_max_history > 0 && g_bf_math == BIG_NONE)
 	{
 		if (kbdchar == '\\' || kbdchar == 'h')
 		{
@@ -1227,7 +1227,7 @@ static void handle_evolver_exit(bool &kbdmore)
 
 static ApplicationStateType handle_evolver_history(int kbdchar)
 {
-	if (g_max_history > 0 && g_bf_math == 0)
+	if (g_max_history > 0 && g_bf_math == BIG_NONE)
 	{
 		if (kbdchar == '\\' || kbdchar == 'h')
 		{

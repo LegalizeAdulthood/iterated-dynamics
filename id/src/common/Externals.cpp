@@ -735,8 +735,8 @@ public:
 	virtual SoundState &Sound()									{ return g_sound_state; }
 	virtual EscapeTimeState const &EscapeTime() const			{ return g_escape_time_state; }
 	virtual EscapeTimeState &EscapeTime()						{ return g_escape_time_state; }
-	virtual int BfMath() const									{ return g_bf_math; }
-	virtual void SetBfMath(int value)							{ g_bf_math = value; }
+	virtual BigMathType BfMath() const							{ return g_bf_math; }
+	virtual void SetBfMath(BigMathType value)					{ g_bf_math = value; }
 	virtual bf_t SxMinBf() const								{ return g_sx_min_bf; }
 	virtual void SetSxMinBf(bf_t value)							{ g_sx_min_bf = value; }
 	virtual bf_t SxMaxBf() const								{ return g_sx_max_bf; }

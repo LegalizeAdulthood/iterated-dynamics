@@ -514,14 +514,14 @@ static void got_multiple_precision_info(const fractal_info &read_info, multiple_
 {
 	if (mp_info.got_data == 1)
 	{
-		g_bf_math = BIGNUM;
+		g_bf_math = BIG_NUMBER;
 		init_bf_length(read_info.bflength);
 		memcpy(g_escape_time_state.m_grid_bf.x_min().storage(), mp_info.apm_data, mp_info.length);
 		delete[] mp_info.apm_data;
 	}
 	else
 	{
-		g_bf_math = 0;
+		g_bf_math = BIG_NONE;
 	}
 }
 

@@ -27,14 +27,16 @@
 
 static double const PIXELROUND = 0.00001;
 
-static void zmo_calc(double, double, double *, double *, double);
-static void zmo_calcbf(bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t);
+static void zmo_calc(double dx, double dy, double *newx, double *newy, double ftemp);
+static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
+	bf_t bfnewx, bf_t bfnewy, bf_t bfplotmx1, bf_t bfplotmx2, bf_t bfplotmy1,
+	bf_t bfplotmy2, bf_t bfftemp);
 static int  check_pan();
 static void fix_work_list();
 static void move_row(int fromrow, int torow, int col);
 
 // big number declarations
-static void calculate_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
+static void calculate_corner(bf_t &target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 {
 	bf_t btmp1(g_rbf_length);
 	bf_t btmp2(g_rbf_length);

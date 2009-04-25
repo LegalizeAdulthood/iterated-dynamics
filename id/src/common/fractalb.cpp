@@ -18,7 +18,7 @@
 
 #include "EscapeTime.h"
 
-int g_bf_math = 0;
+BigMathType g_bf_math = BIG_NONE;
 
 void corners_bf_to_float()
 {
@@ -315,7 +315,7 @@ bool mandelbrot_setup_bn()
 	bftobn(bnx3rd, g_escape_time_state.m_grid_bf.x_3rd());
 	bftobn(bny3rd, g_escape_time_state.m_grid_bf.y_3rd());
 
-	g_bf_math = BIGNUM;
+	g_bf_math = BIG_NUMBER;
 
 	// bnxdel = (bnxmax - bnx3rd)/(g_x_dots-1)
 	sub_bn(bnxdel, bnxmax, bnx3rd);
@@ -396,7 +396,7 @@ bool mandelbrot_setup_bf()
 	bf_t bftemp1(g_bf_length);
 	bf_t bftemp2(g_bf_length);
 
-	g_bf_math = BIGFLT;
+	g_bf_math = BIG_FLOAT;
 
 	// bfxdel = (bfxmax - bfx3rd)/(g_x_dots-1)
 	subtract_bf(bfxdel, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());

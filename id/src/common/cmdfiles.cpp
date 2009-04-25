@@ -435,7 +435,7 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	g_escape_time_state.m_grid_fp.y_3rd() = -1.5;
 	g_escape_time_state.m_grid_fp.y_min() = -1.5;
 	g_escape_time_state.m_grid_fp.y_max() = 1.5;			// initial corner values
-	g_bf_math = 0;
+	g_bf_math = BIG_NONE;
 	g_potential_16bit = false;
 	g_potential_flag = false;
 	g_log_palette_mode = LOGPALETTE_NONE;					// no logarithmic palette

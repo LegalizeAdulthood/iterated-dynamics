@@ -24,10 +24,11 @@ extern double const LOG_256;
 // values that g_bf_math can hold,
 // 0 = g_bf_math is not being used
 // 1 = g_bf_math is being used
-enum
+enum BigMathType
 {
-	BIGNUM = 1,  // g_bf_math is being used with bn_t numbers
-	BIGFLT = 2  // g_bf_math is being used with bf_t numbers
+	BIG_NONE = 0,
+	BIG_NUMBER = 1,  // g_bf_math is being used with bn_t numbers
+	BIG_FLOAT = 2  // g_bf_math is being used with bf_t numbers
 };
 
 typedef BYTE *big_t;
@@ -148,7 +149,7 @@ typedef BigFloat10T bf10_t;
 typedef ComplexT<bf_t> ComplexBigFloat;
 typedef ComplexT<bn_t> ComplexBigNum;
 
-extern int g_bf_math;
+extern BigMathType g_bf_math;
 
 extern int g_step_bn;
 extern int g_int_length;

@@ -2910,7 +2910,7 @@ static long ly_pixel_calc()
 
 void set_pixel_calc_functions()
 {
-	if (g_escape_time_state.m_use_grid)
+	if (g_escape_time_state.useGrid())
 	{
 		g_externs.SetDxPixel(dx_pixel_grid);
 		g_externs.SetDyPixel(dy_pixel_grid);
