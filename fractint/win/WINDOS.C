@@ -624,9 +624,9 @@ time_to_load = 0;
         if (colors > 16) colors = 256;
         if (colors >  2 && colors < 16) colors = 16;
         if (xdots < 50) xdots = 50;
-        if (xdots > 2048) xdots = 2048;
+        if (xdots > WINMAXPIXELS) xdots = WINMAXPIXELS;
         if (ydots < 50) ydots = 50;
-        if (ydots > 2048) ydots = 2048;
+        if (ydots > WINMAXPIXELS) ydots = WINMAXPIXELS;
         set_win_offset();
         clear_screen(0);
         }

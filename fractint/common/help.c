@@ -605,21 +605,22 @@ static int help_topic(HIST *curr, HIST *next, int flags)
    int       draw_page;
    int       action;
    BYTE ch;
+   int       dummy; /* to quiet compiler */
 
    where     = topic_offset[curr->topic_num]+sizeof(int); /* to skip flags */
    curr_link = curr->link;
 
    help_seek(where);
 
-   read(help_file, (char *)&num_pages, sizeof(int));
+   dummy = read(help_file, (char *)&num_pages, sizeof(int));
    assert(num_pages>0 && num_pages<=max_pages);
 
    farread(help_file, (char far *)page_table, 3*sizeof(int)*num_pages);
 
-   read(help_file, &ch, 1);
+   dummy = read(help_file, &ch, 1);
    len = ch;
    assert(len<81);
-   read(help_file, (char *)title, len);
+   dummy = read(help_file, (char *)title, len);
    title[len] = '\0';
 
    where += sizeof(int) + num_pages*3*sizeof(int) + 1 + len + sizeof(int);
@@ -1008,6 +1009,7 @@ static int _read_help_topic(int topic, int off, int len, VOIDFARPTR buf)
       {
       int t;
       char ch;
+      int dummy; /* to quiet compiler */
 
       curr_topic = topic;
 
@@ -1016,18 +1018,18 @@ static int _read_help_topic(int topic, int off, int len, VOIDFARPTR buf)
       curr_base += sizeof(int);                 /* skip flags */
 
       help_seek(curr_base);
-      read(help_file, (char *)&t, sizeof(int)); /* read num_pages */
+      dummy = read(help_file, (char *)&t, sizeof(int)); /* read num_pages */
       curr_base += sizeof(int) + t*3*sizeof(int); /* skip page info */
 
       if (t>0)
          help_seek(curr_base);
-      read(help_file, &ch, 1);                  /* read title_len */
+      dummy = read(help_file, &ch, 1);                  /* read title_len */
       t = ch;
       curr_base += 1 + t;                       /* skip title */
 
       if (t>0)
          help_seek(curr_base);
-      read(help_file, (char *)&curr_len, sizeof(int)); /* read topic len */
+      dummy = read(help_file, (char *)&curr_len, sizeof(int)); /* read topic len */
       curr_base += sizeof(int);
       }
 
@@ -1145,6 +1147,7 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
    {
    int t;
    BYTE ch;
+   int dummy; /* to quiet compiler */
 
    switch (cmd)
       {
@@ -1154,28 +1157,28 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 
          help_seek( info->content_pos );
 
-         read(help_file, (char *)&t, sizeof(int));      /* read flags */
+         dummy = read(help_file, (char *)&t, sizeof(int));      /* read flags */
          info->content_pos += sizeof(int);
          pd->new_page = (t & 1) ? 1 : 0;
 
-         read(help_file, &ch, 1);       /* read id len */
+         dummy = read(help_file, &ch, 1);       /* read id len */
          t = ch;
          assert(t<80);
-         read(help_file, (char *)info->id, t);  /* read the id */
+         dummy = read(help_file, (char *)info->id, t);  /* read the id */
          info->content_pos += 1 + t;
          info->id[t] = '\0';
 
-         read(help_file, (char *)&ch, 1);       /* read title len */
+         dummy = read(help_file, (char *)&ch, 1);       /* read title len */
          t = ch;
          assert(t<80);
-         read(help_file, (char *)info->title, t); /* read the title */
+         dummy = read(help_file, (char *)info->title, t); /* read the title */
          info->content_pos += 1 + t;
          info->title[t] = '\0';
 
-         read(help_file, (char *)&ch, 1);       /* read num_topic */
+         dummy = read(help_file, (char *)&ch, 1);       /* read num_topic */
          t = ch;
          assert(t<MAX_NUM_TOPIC_SEC);
-         read(help_file, (char *)info->topic_num, t*sizeof(int));  /* read topic_num[] */
+         dummy = read(help_file, (char *)info->topic_num, t*sizeof(int));  /* read topic_num[] */
          info->num_topic = t;
          info->content_pos += 1 + t*sizeof(int);
 
@@ -1355,13 +1358,14 @@ void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg 
    int            success   = 0;
    int            temp_file = -1;
    char      far *msg = NULL;
+   int            dummy; /* to quiet compiler */
 
    info.buffer = MK_FP(extraseg, 0);
 
 /*   help_seek((long)sizeof(int)+sizeof(long));         Strange -- should be 8 -- CWM */
    help_seek(8L);                               /* indeed it should - Bert */
-   read(help_file, (char *)&info.num_contents, sizeof(int));
-   read(help_file, (char *)&info.num_page, sizeof(int));
+   dummy = read(help_file, (char *)&info.num_contents, sizeof(int));
+   dummy = read(help_file, (char *)&info.num_page, sizeof(int));
 
    info.cnum = info.tnum = -1;
    info.content_pos = sizeof(long)+4*sizeof(int) + num_topic*sizeof(long) + num_label*2*sizeof(int);
@@ -1435,7 +1439,8 @@ ErrorAbort:
 int init_help(void)
    {
    struct help_sig_info hs;
-   char                 path[FILE_MAX_PATH+1];
+   char   path[FILE_MAX_PATH+1];
+   int    dummy; /* to quiet compiler */
 
    help_file = -1;
 
@@ -1463,7 +1468,7 @@ int init_help(void)
             for (help_offset = -((long)sizeof(hs)); help_offset >= -128L; help_offset--)
                {
                lseek(help_file, help_offset, SEEK_END);
-               read(help_file, (char *)&hs, sizeof(hs));
+               dummy = read(help_file, (char *)&hs, sizeof(hs));
                if (hs.sig == HELP_SIG)  break;
                }
 
@@ -1509,7 +1514,7 @@ if (help_file == -1)            /* look for FRACTINT.HLP */
       if ( (help_file = open(path, O_RDONLY|O_BINARY)) != -1 )
 #endif
      {
-         read(help_file, (char *)&hs, sizeof(long)+sizeof(int));
+         dummy = read(help_file, (char *)&hs, sizeof(long)+sizeof(int));
 
          if ( hs.sig != HELP_SIG )
             {
@@ -1544,10 +1549,10 @@ if (help_file == -1)            /* look for FRACTINT.HLP */
 
    help_seek(0L);
 
-   read(help_file, (char *)&max_pages, sizeof(int));
-   read(help_file, (char *)&max_links, sizeof(int));
-   read(help_file, (char *)&num_topic, sizeof(int));
-   read(help_file, (char *)&num_label, sizeof(int));
+   dummy = read(help_file, (char *)&max_pages, sizeof(int));
+   dummy = read(help_file, (char *)&max_links, sizeof(int));
+   dummy = read(help_file, (char *)&num_topic, sizeof(int));
+   dummy = read(help_file, (char *)&num_label, sizeof(int));
    help_seek((long)6*sizeof(int));  /* skip num_contents and num_doc_pages */
 
    assert(max_pages > 0);

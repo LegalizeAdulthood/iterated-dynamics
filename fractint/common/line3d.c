@@ -129,7 +129,7 @@ int haze;
 int Real_V = 0; /* mrr Actual value of V for fillytpe>4 monochrome images */
 char light_name[FILE_MAX_PATH] = "fract001";
 int Targa_Overlay, error;
-char targa_temp[14] = "fractemp.tga";
+char targa_temp[MAX_NAME] = "fractemp.tga";
 int P = 250; /* Perspective dist used when viewing light vector */
 BYTE back_color[3];
 char ray_name[FILE_MAX_PATH] = "fract001";

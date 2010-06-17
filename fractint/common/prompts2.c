@@ -71,7 +71,7 @@ struct DIR_SEARCH DTA;          /* Allocate DTA and define structure */
 #define GETIFS     2
 #define GETPARM    3
 
-char commandmask[13] = {"*.par"};
+char commandmask[MAX_NAME] = {"*.par"};
 
 /* --------------------------------------------------------------------- */
 /*
@@ -1428,8 +1428,8 @@ int  fr_findnext()              /* Find next file (or subdir) meeting above path
              return -1;
          } else if (dirEntry->d_ino != 0) {
              splitpath(dirEntry->d_name,NULL,NULL,thisname,thisext);
-             strncpy(DTA.filename,dirEntry->d_name,13);
-             DTA.filename[12]='\0';
+             strncpy(DTA.filename,dirEntry->d_name,MAX_NAME);
+             DTA.filename[MAX_NAME-1]='\0';
              strcpy(tmpname,searchdir);
              strcat(tmpname,dirEntry->d_name);
              stat(tmpname,&sbuf);
@@ -1501,7 +1501,6 @@ int lccompare(VOIDFARPTR arg1, VOIDFARPTR arg2) /* for sort */
    return(strncasecmp(*((char far * far *)arg1),*((char far *far *)arg2),40));
 }
 
-
 static int speedstate;
 int getafilename(char *hdg,char *template,char *flname)
 {
@@ -1519,7 +1518,7 @@ int getafilename(char *hdg,char *template,char *flname)
    int retried;
    static struct CHOICE
    {
-      char name[13];
+      char name[MAX_NAME];
       char type;
    }
    far *far*choices;
@@ -1600,8 +1599,8 @@ retry_dir:
 #endif
          if(strcmp(DTA.filename,".."))
             strcat(DTA.filename,SLASH);
-         far_strncpy(choices[++filecount]->name,DTA.filename,13);
-         choices[filecount]->name[12] = '\0';
+         far_strncpy(choices[++filecount]->name,DTA.filename,MAX_NAME);
+         choices[filecount]->name[MAX_NAME-1] = '\0';
          choices[filecount]->type = 1;
          dircount++;
          if(strcmp(DTA.filename,"..")==0)
@@ -1632,7 +1631,7 @@ retry_dir:
 #ifndef XFRACT
                strlwr(DTA.filename);
 #endif
-               far_strncpy(choices[++filecount]->name,DTA.filename,13);
+               far_strncpy(choices[++filecount]->name,DTA.filename,MAX_NAME);
                choices[filecount]->type = 0;
             }
             else
@@ -1640,7 +1639,7 @@ retry_dir:
 #ifndef XFRACT
                strlwr(DTA.filename);
 #endif
-               far_strncpy(choices[++filecount]->name,DTA.filename,13);
+               far_strncpy(choices[++filecount]->name,DTA.filename,MAX_NAME);
                choices[filecount]->type = 0;
             }
          }
@@ -1691,7 +1690,7 @@ retry_dir:
    else
       options = 8+32;
    i = fullscreen_choice(options,temp1,NULL,instr,filecount,(char far *far*)choices,
-          attributes,5,99,12,i,NULL,speedstr,filename_speedstr,check_f6_key);
+          attributes,5,99,MAX_NAME-1,i,NULL,speedstr,filename_speedstr,check_f6_key);
    if (i==-F4)
    {
       dosort = 1 - dosort;
@@ -2056,6 +2055,9 @@ FILE *dir_fopen(char *dir, char *filename, char *mode )
 /* converts relative path to absolute path */
 static int expand_dirname(char *dirname,char *drive)
 {
+#ifdef XFRACT
+   char *dummy; /* to quiet compiler */
+#endif
    fix_dirname(dirname);
    if (dirname[0] != SLASHC) {
       char buf[FILE_MAX_DIR+1],curdir[FILE_MAX_DIR+1];
@@ -2072,7 +2074,7 @@ static int expand_dirname(char *dirname,char *drive)
       segread(&sregs);
       intdosx(&regs, &regs, &sregs);
 #else
-      getcwd(curdir,FILE_MAX_DIR);
+      dummy = getcwd(curdir,FILE_MAX_DIR);
 #endif
       strcat(curdir,SLASH);
 #ifndef XFRACT
@@ -2557,7 +2559,7 @@ int get_browse_params()
    int old_autobrowse,old_brwschecktype,old_brwscheckparms,old_doublecaution;
    int old_minbox;
    double old_toosmall;
-   char old_browsemask[13];
+   char old_browsemask[MAX_NAME];
 
    far_strcpy(hdg,o_hdg);
    ptr = (char far *)MK_FP(extraseg,0);

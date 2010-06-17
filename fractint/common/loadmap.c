@@ -50,6 +50,8 @@ unsigned        r, g, b, index;
 char    line[160];
 char    temp[FILE_MAX_PATH+1];
 char    temp_fn[FILE_MAX_PATH];
+char   *dummy; /* to quiet compiler */
+
         strcpy(temp,MAP_name);
         strcpy(temp_fn,fn);
 #ifdef XFRACT
@@ -66,7 +68,7 @@ char    temp_fn[FILE_MAX_PATH];
                 stopmsg(0,line);
                 return 1;
                 }
-        fgets(line,100,f);
+        dummy = fgets(line,100,f);
         if (strstr(line,".map") != NULL) { /* found a map name */
                 get_map_name(line, fn);
                 }

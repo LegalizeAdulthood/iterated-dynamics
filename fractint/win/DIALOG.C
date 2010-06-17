@@ -66,7 +66,7 @@ double far win_oldprompts[20];
 extern int stopmsg(int, char far *);
 
 /* far strings (near space is precious) */
-char far about_msg01[] = "(C) 1990-2008 The Stone Soup Group";
+char far about_msg01[] = "(C) 1990-2009 The Stone Soup Group";
 char far about_msg02[] = "";
 char far about_msg03[] = "";
 char far about_msg04[] = "";
@@ -451,15 +451,18 @@ LPARAM lParam;
             switch (wParam) {
 
                 case IDOK:
+                {
+                     int save_xdots = xdots;
+                     int save_ydots = ydots;
                     /* retrieve and validate the results */
                     GetDlgItemText(hDlg, ID_ISIZEX, temp, 10);
                     xdots = atoi(temp);
                     if (xdots < 50) xdots = 50;
-                    if (xdots > 2048) xdots = 2048;
+                    if (xdots > WINMAXPIXELS) xdots = WINMAXPIXELS;
                     GetDlgItemText(hDlg, ID_ISIZEY, temp, 10);
                     ydots = atoi(temp);
                     if (ydots < 50) ydots = 50;
-                    if (ydots > 2048) ydots = 2048;
+                    if (ydots > WINMAXPIXELS) ydots = WINMAXPIXELS;
                     colors = win_temp1;
                     win_savedac();
                     /* allocate and lock a pixel array for the bitmap */
@@ -468,7 +471,8 @@ LPARAM lParam;
                     if (!clear_screen(0)) {
                         MessageBox(hDlg, "Not Enough Memory for that sized Image",
                             NULL, MB_OK | MB_ICONHAND);
-                        xdots = ydots = 100;
+                        xdots = save_xdots;
+                        ydots = save_ydots;
                         goto tryagain;
                         };
                     ytop    = 0;                /* reset the zoom-box */
@@ -485,7 +489,7 @@ LPARAM lParam;
 
                     EndDialog(hDlg, 1);
                     break;
-
+                }
                 case IDCANCEL:
                     EndDialog(hDlg, 0);
                     break;

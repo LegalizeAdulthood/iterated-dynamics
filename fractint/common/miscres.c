@@ -377,10 +377,11 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
       /* divide tmpx and tmpy by |tmpx| so that double version of atan2() can be used */
       /* atan2() only depends on the ratio, this puts it in double's range */
       signx = sign(tmpx1);
+      tmpy = tmpy1; /* otherwise tmpy could be undefined below */
       if(signx)
          tmpy = tmpy1/tmpx1 * signx;    /* tmpy = tmpy / |tmpx| */
       *Rotation = (double)(-rad_to_deg(atan2( (double)tmpy, signx ))); /* negative for image rotation */
-   
+
       /* tmpx = xxmin - xx3rd; */
       sub_bf(bftmpx, bfxmin, bfx3rd);
       tmpx2 = bftofloat(bftmpx);
@@ -1459,7 +1460,7 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
    char fname[FILE_MAX_FNAME];
    char ext[FILE_MAX_EXT];
    char fullpath[FILE_MAX_PATH];
-   char defaultextension[5];
+   char defaultextension[FILE_MAX_EXT];
 
 
    splitpath(filename,drive,dir,fname,ext);
@@ -1553,12 +1554,12 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
       out = fr_findfirst(fullpath);
       while(out == 0) {
          char msg[200];
-         DTA.filename[FILE_MAX_FNAME+FILE_MAX_EXT-2]=0;
-         sprintf(msg,"Searching %13s for %s      ",DTA.filename,itemname);
-         showtempmsg(msg);
+         DTA.filename[MAX_NAME-1]=0;
          if(!(DTA.attribute & SUBDIR) &&
              strcmp(DTA.filename,".")&&
              strcmp(DTA.filename,"..")) {
+            sprintf(msg,"Searching %s for %s      ",DTA.filename,itemname);
+            showtempmsg(msg);
 #ifndef XFRACT
             strlwr(DTA.filename);
 #endif
