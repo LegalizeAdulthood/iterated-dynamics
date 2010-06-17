@@ -63,11 +63,11 @@ static  int get_funny_glasses_params(void );
 #define GETIFS     2
 #define GETPARM    3
 
-static char funnyglasses_map_name[16];
-char ifsmask[13]     = {"*.ifs"};
-char formmask[13]    = {"*.frm"};
-char lsysmask[13]    = {"*.l"};
-char Glasses1Map[] = "glasses1.map";
+static char funnyglasses_map_name[MAX_NAME];
+char ifsmask[MAX_NAME]     = {"*.ifs"};
+char formmask[MAX_NAME]    = {"*.frm"};
+char lsysmask[MAX_NAME]    = {"*.l"};
+char Glasses1Map[MAX_NAME] = "glasses1.map";
 char MAP_name[FILE_MAX_DIR] = "";
 int  mapset = 0;
 int julibrot;   /* flag for julibrot */

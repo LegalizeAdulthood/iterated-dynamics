@@ -21,6 +21,8 @@ extern void fix_ranges(int *, int, int);
 extern void decode_evolver_info(struct evolution_info *, int);
 extern void decode_fractal_info(struct fractal_info *, int);
 extern void decode_orbits_info(struct orbits_info *, int);
+extern  VOIDPTR cdecl farmemalloc(long);
+extern  long   cdecl normalize(char *);
 
 /*
  *   unix.c -- C file prototypes

@@ -1048,8 +1048,9 @@ Print_Screen (void)
 */
     {
     char cmd[256];
+    int dummy; /* to clear up compiler warning */
     sprintf(cmd, "%s %s &", PSviewer, PrintName);
-    system(cmd);
+    dummy = system(cmd);
     }
 #else
     if ((LPTn==30)||(LPTn==31))

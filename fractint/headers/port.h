@@ -289,6 +289,18 @@ names. So for now humor us and let's keep the names short.
 #define FILE_MAX_EXT    64       /* max length of extension      */
 #endif
 
+#define MAX_NAME FILE_MAX_FNAME+FILE_MAX_EXT-1
+
+struct DIR_SEARCH               /* Allocate DTA and define structure */
+{
+     char path[21];             /* DOS path and filespec */
+     char attribute;            /* File attributes wanted */
+     int  ftime;                /* File creation time */
+     int  fdate;                /* File creation date */
+     long size;                 /* File size in bytes */
+     char filename[MAX_NAME+1];         /* Filename and extension */
+};
+extern struct DIR_SEARCH DTA;   /* Disk Transfer Area */
 
 /* Uses big_access32(), big_set32(),... functions instead of macros. */
 /* Some little endian machines may require this as well. */

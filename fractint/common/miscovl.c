@@ -113,7 +113,7 @@ void make_batch_file()
    char outname[FILE_MAX_PATH+1], buf[256], buf2[128];
    FILE *infile = NULL;
    FILE *fpbat = NULL;
-   char colorspec[14];
+   char colorspec[MAX_NAME+1];
    int maxcolor;
    int maxcolorindex = 0;
    char *sptr = NULL, *sptr2;
@@ -181,8 +181,8 @@ void make_batch_file()
             sptr = sptr2 + 1;
          if ((sptr2 = strrchr(sptr, ':')) != NULL)
             sptr = sptr2 + 1;
-         strncpy(&colorspec[1], sptr, 12);
-         colorspec[13] = 0;
+         strncpy(&colorspec[1], sptr, MAX_NAME-1);
+         colorspec[MAX_NAME] = 0;
       }
    }
    far_strcpy(inpcommandfile, CommandFile);

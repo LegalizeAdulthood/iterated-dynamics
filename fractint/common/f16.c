@@ -47,19 +47,20 @@ FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
     char filename[64];
     U8 header[HEADERSIZE];
     FILE *fp;
+    int dummy; /* to quiet compiler */
 
     strcpy(filename, fname);
     if (has_ext(filename) == NULL) strcat(filename, ".TGA");
     if ((fp = fopen(filename, READMODE)) == NULL) return NULL;
 
-    fread(header, HEADERSIZE, 1, fp);
+    dummy = fread(header, HEADERSIZE, 1, fp);
     if ((header[O_FILETYPE] != T_RLERGB) || (header[O_ESIZE] != 16)) {
         fclose(fp);
         return NULL;
     }
     GET16(header[O_HSIZE], *hs);
     GET16(header[O_VSIZE], *vs);
-    if ((*csize = header[O_COMMENTLEN]) != 0) fread(cp, *csize, 1, fp);
+    if ((*csize = header[O_COMMENTLEN]) != 0) dummy = fread(cp, *csize, 1, fp);
 
     state = count = bufp = 0;
     return fp;
@@ -71,15 +72,16 @@ int t16_getline(FILE *fp, int hs, U16 *data)
 
     for (i=0; i<hs; ++i) {
         if (state == 0) {
+            int dummy; /* to quiet compiler */
             bufp = 0;
             if ((count = getc(fp)) > 127) {
                 state = 1;
                 count -= 127;
-                fread(rlebuf, 2, 1, fp);
+                dummy = fread(rlebuf, 2, 1, fp);
             } else {
                 state = 2;
                 ++count;
-                fread(rlebuf, 2, count, fp);
+                dummy = fread(rlebuf, 2, count, fp);
             }
         }
         GET16(rlebuf[bufp], data[i]);

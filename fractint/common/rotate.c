@@ -26,7 +26,7 @@ static BYTE White[3]  = {63,63,63};
 static BYTE Yellow[3] = {63,63, 0};
 static BYTE Brown[3]  = {31,31, 0};
 
-char mapmask[13] = {"*.map"};
+char mapmask[MAX_NAME] = {"*.map"};
 
 void rotate(int direction)      /* rotate-the-palette routine */
 {

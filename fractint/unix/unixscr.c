@@ -74,7 +74,6 @@ extern	int	dotmode;		/* video access method (= 19)	   */
 extern	int	sxdots, sydots; 	/* total # of dots on the screen   */
 extern	int	sxoffs, syoffs; 	/* offset of drawing area          */
 extern	int	colors; 		/* maximum colors available	   */
-extern	int	initmode;
 extern	int	adapter;
 extern	int	gotrealdac;
 extern	int	inside_help;
@@ -843,6 +842,7 @@ initdacbox()
 {
     int i, j, k, s0, sp;
 
+    if (mapdacbox || colorpreloaded) return;    /* map= specified */
     s0 = step & 1;
     sp = step/2;
 

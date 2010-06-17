@@ -180,7 +180,7 @@ int gifview()
    if (dotmode == 11){ /* disk-video */
       char fname[FILE_MAX_FNAME];
       char ext[FILE_MAX_EXT];
-      char tmpname[15];
+      char tmpname[MAX_NAME];
       char msg[40];
        splitpath(temp1,NULL,NULL,fname,ext);
        makepath(tmpname,NULL,NULL,fname,ext);

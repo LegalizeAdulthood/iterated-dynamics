@@ -249,8 +249,9 @@ start:
          {
             int len;
             char buf[41];
+            char *dummy; /* to quiet compiler */
             buf[40] = 0;
-            fgets(buf,40,fpss);
+            dummy = fgets(buf,40,fpss);
             len = strlen(buf);
             buf[len-1]=0; /* zap newline */
             message(secs,(char far *)buf);

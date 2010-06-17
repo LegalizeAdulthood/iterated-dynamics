@@ -978,7 +978,7 @@ extern unsigned char dacbox[256][3];
 extern unsigned char olddacbox[256][3];
 extern int colorstate;
 extern char        colorfile[];
-char mapmask[13] = {"*.map"};
+char mapmask[MAX_NAME] = {"*.map"};
 
 void save_palette(void)
 {
@@ -1052,7 +1052,7 @@ int win_make_batch_file(void)
    int gotinfile;
    char outname[81],buf[256],buf2[128];
    FILE *infile;
-   char colorspec[14];
+   char colorspec[MAX_NAME+1];
    int colorsonly = 0;
    int maxcolor;
    char *sptr,*sptr2;
@@ -1087,8 +1087,8 @@ int win_make_batch_file(void)
       if (colorspec[0] == '@') {
          if ((sptr2 = strrchr(sptr,'\\'))) sptr = sptr2 + 1;
          if ((sptr2 = strrchr(sptr,':')))  sptr = sptr2 + 1;
-         strncpy(&colorspec[1],sptr,12);
-         colorspec[13] = 0;
+         strncpy(&colorspec[1],sptr,MAX_NAME-1);
+         colorspec[MAX_NAME] = 0;
          }
 
       strcpy(outname,CommandFile);

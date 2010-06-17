@@ -103,14 +103,14 @@ int max_colors;                         /* maximum palette size */
 int        zoomoff;                     /* = 0 when zoom is disabled    */
 int        savedac;                     /* save-the-Video DAC flag      */
 int browsing;                 /* browse mode flag */
-char file_name_stack[16][13]; /* array of file names used while browsing */
+char file_name_stack[16][MAX_NAME]; /* array of file names used while browsing */
 int name_stack_ptr ;
 double toosmall;
 int  minbox;
 int no_sub_images;
 int autobrowse,doublecaution;
 char brwscheckparms,brwschecktype;
-char browsemask[13];
+char browsemask[MAX_NAME];
 int scale_map[12] = {1,2,3,4,5,6,7,8,9,10,11,12}; /*RB, array for mapping notes to a (user defined) scale */
 
 /* fake/not-yet-implemented subroutines */

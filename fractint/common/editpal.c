@@ -1967,6 +1967,7 @@ static void PalTable__UndoProcess(PalTable *this, int delta)   /* undo/redo comm
          {
          int      first, last, num;
          PALENTRY temp[256];
+         int dummy; /* to quiet compiler */
 
          if ( cmd == UNDO_DATA )
             {
@@ -1982,7 +1983,7 @@ static void PalTable__UndoProcess(PalTable *this, int delta)   /* undo/redo comm
          mprintf("          Reading DATA from %d to %d", first, last);
 #endif
 
-         fread(temp, 3, num, this->undo_file);
+         dummy = fread(temp, 3, num, this->undo_file);
 
          fseek(this->undo_file, -(num*3), SEEK_CUR);  /* go to start of undo/redo data */
          fwrite(this->pal+first, 3, num, this->undo_file);  /* write redo/undo data */

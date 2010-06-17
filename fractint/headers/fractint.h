@@ -29,7 +29,7 @@ typedef unsigned USEGTYPE;
 #else
 typedef char * SEGTYPE;
 typedef char * USEGTYPE;
-#   define MK_FP(seg,off) (VOIDFARPTR )(seg+off)
+#   define MK_FP(seg,off) (VOIDFARPTR )((long)seg + (long)off)
 #include <sys/types.h> /* need size_t */
 #endif
 
@@ -951,17 +951,8 @@ struct fullscreenvalues
 #define   SYSTEM         4
 #define   SUBDIR         16
 
-struct DIR_SEARCH               /* Allocate DTA and define structure */
-{
-     char path[21];             /* DOS path and filespec */
-     char attribute;            /* File attributes wanted */
-     int  ftime;                /* File creation time */
-     int  fdate;                /* File creation date */
-     long size;                 /* File size in bytes */
-     char filename[13];         /* Filename and extension */
-};
-
-extern struct DIR_SEARCH DTA;   /* Disk Transfer Area */
+/* structure definition moved to port.h to take advantage of defines */
+/* extern struct DIR_SEARCH DTA;    Disk Transfer Area */
 
 typedef struct palett
 {
