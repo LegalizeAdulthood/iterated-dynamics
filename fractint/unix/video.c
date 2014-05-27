@@ -413,7 +413,7 @@ void
 setattr (row, col, attr, count)
      int row, col, attr, count;
 {
-  int i,j;
+  int i;
   int so = 0;
   if (row != -1)
     textrow = row;

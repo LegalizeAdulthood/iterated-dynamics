@@ -12,6 +12,8 @@
 #endif
 #ifdef __TURBOC__
 #include <alloc.h>
+#elif defined(__APPLE__)
+#include <malloc/malloc.h>
 #elif !defined(__386BSD__)
 #include <malloc.h>
 #endif
@@ -1027,17 +1029,17 @@ sel_type_restart:
      !((oldfractype == BIFADSINPI) || (oldfractype == LBIFADSINPI)))
         set_trig_array(0,s_sin);
 
-   /* 
+   /*
     * Next assumes that user going between popcorn and popcornjul
-    * might not want to change function variables 
+    * might not want to change function variables
     */
    if(((fractype    == FPPOPCORN   ) || (fractype    == LPOPCORN   ) ||
        (fractype    == FPPOPCORNJUL) || (fractype    == LPOPCORNJUL)) &&
      !((oldfractype == FPPOPCORN   ) || (oldfractype == LPOPCORN   ) ||
        (oldfractype == FPPOPCORNJUL) || (oldfractype == LPOPCORNJUL)))
       set_function_parm_defaults();
-        
-   /* set LATOO function defaults */     
+
+   /* set LATOO function defaults */
    if(fractype == LATOO && oldfractype != LATOO)
    {
       set_function_parm_defaults();
@@ -1685,7 +1687,7 @@ gfp_top:
          major_method = (enum Major)paramvalues[promptnum++].uval.ch.val;
          minor_method = (enum Minor)paramvalues[promptnum++].uval.ch.val;
       }
-     if((curtype==FORMULA || curtype==FFORMULA) && uses_ismand) 
+     if((curtype==FORMULA || curtype==FFORMULA) && uses_ismand)
      {
         if (ismand != (short int)paramvalues[promptnum].uval.ch.val)
         {

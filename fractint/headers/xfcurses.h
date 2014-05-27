@@ -58,7 +58,7 @@ extern void mvcur(int oldrow, int oldcol, int newrow, int newcol);
 
 extern void delwin(WINDOW *win);
 extern void waddch(WINDOW *win, const chtype ch);
-extern void waddstr(WINDOW *win, const char *str);
+extern void waddstr(WINDOW *win, char *str);
 extern void wclear(WINDOW *win);
 extern void wdeleteln(WINDOW *win);
 extern void winsertln(WINDOW *win);

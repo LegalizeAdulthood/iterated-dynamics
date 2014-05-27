@@ -1730,9 +1730,8 @@ julibrot_fudge:                                /* dive in here for Julibrots */
                             i = get_commands();
                             if (xx3rd != xxmin || yy3rd != yymin)
                                 stopmsg(4," This image uses a skewed zoom-box,\n a feature not available in Winfract.\n All Skewness has been dropped");
-                            if (colorpreloaded)
-                                win_savedac();
                             }
+                        win_savedac();
                         unstackscreen();
                         SetFocus(hWnd);
                         time_to_cycle = 0;

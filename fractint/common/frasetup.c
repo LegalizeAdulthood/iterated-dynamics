@@ -2,6 +2,8 @@
 #include <string.h>
 #ifdef __TURBOC__
 #include <alloc.h>
+#elif defined(__APPLE__)
+#include <malloc/malloc.h>
 #elif !defined(__386BSD__)
 #include <malloc.h>
 #endif

@@ -222,8 +222,8 @@ static int showdot_width = 0;
 
 /* FMODTEST routine. */
 /* Makes the test condition for the FMOD coloring type
-   that of the current bailout method. 'or' and 'and' 
-   methods are not used - in these cases a normal 
+   that of the current bailout method. 'or' and 'and'
+   methods are not used - in these cases a normal
    modulus test is used                              */
 
 double fmodtest(void)
@@ -280,14 +280,14 @@ double fmodtest(void)
 }
 
 /*
-   The sym_fill_line() routine was pulled out of the boundary tracing 
+   The sym_fill_line() routine was pulled out of the boundary tracing
    code for re-use with showdot. It's purpose is to fill a line with a
    solid color. This assumes that BYTE *str is already filled
    with the color. The routine does write the line using symmetry
    in all cases, however the symmetry logic assumes that the line
    is one color; it is not general enough to handle a row of
-   pixels of different colors. 
-*/  
+   pixels of different colors.
+*/
 static void sym_fill_line(int row, int left, int right, BYTE *str)
 {
    int i,j,k, length;
@@ -303,7 +303,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
       {
          put_line(i,left,right,str);
          kbdcount -= length >> 3;
-      }   
+      }
    }
    else if (plot == symplot2Y) /* Y-axis symmetry */
    {
@@ -346,7 +346,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
   The sym_put_line() routine is the symmetry-aware version of put_line().
   It only works efficiently in the no symmetry or XAXIS symmetry case,
   otherwise it just writes the pixels one-by-one.
-*/    
+*/
 static void sym_put_line(int row, int left, int right, BYTE *str)
 {
    int length,i;
@@ -442,13 +442,13 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
          break;
    }
    if(action == SAVE)
-      (*plot) (col,row, showdotcolor); 
+      (*plot) (col,row, showdotcolor);
 }
 
 int calctypeshowdot(void)
 {
    int out, startx, starty, stopx, stopy, direction, width;
-   direction = JUST_A_POINT;   
+   direction = JUST_A_POINT;
    startx = stopx = col;
    starty = stopy = row;
    width = showdot_width+1;
@@ -541,10 +541,10 @@ int calcfract(void)
       if (usr_stdcalcmode != 'o')
          usr_stdcalcmode = stdcalcmode = '1';
    }
-      
+
    init_misc();  /* set up some variables in parser.c */
    reset_clock();
-   
+
    /* following delta values useful only for types with rotation disabled */
    /* currently used only by bifurcation */
    if (integerfractal)
@@ -801,6 +801,7 @@ int calcfract(void)
       froth_cleanup();
    if((soundflag&7)>1) /* close sound write file */
       close_snd();
+   mute();
    if(truecolor)
       enddisk();
    return((calc_status == 4) ? 0 : -1);
@@ -1549,14 +1550,14 @@ static int sticky_orbits(void)
       double yfactor = ydots / 2.0;
 
       angle = xxbegin;  /* save angle in x parameter */
-      
+
       cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
       if (Rotation <= 0)
          Rotation += 360;
 
       while (angle < Rotation)
       {
-	 theta = (double)angle * factor; 
+	 theta = (double)angle * factor;
          col = (int)(xfactor + (Xctr + Xmagfactor * cos(theta)));
          row = (int)(yfactor + (Yctr + Xmagfactor * sin(theta)));
          if (plotorbits2dfloat() == -1)
@@ -1882,7 +1883,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 
    if (inside <= BOF60 && inside >= BOF61)
    {
-      magnitude = lmagnitud = 0;
+      magnitude = 0.0;
+      lmagnitud = 0;
       min_orbit = 100000.0;
    }
    overflow = 0;                /* reset integer math overflow flag */

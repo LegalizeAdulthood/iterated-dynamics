@@ -3,9 +3,6 @@
 
 /* This file contains prototypes for unix/linux specific functions. */
 
-
-
-
 /*  calmanp5 -- assembler file prototypes */
 
 extern long  cdecl calcmandfpasm_c(void);
@@ -16,13 +13,40 @@ extern void cdecl calcmandfpasmstart_p5(void);
 /*
  *   general.c -- C file prototypes
  */
-extern int waitkeypressed(int);
-extern void fix_ranges(int *, int, int);
+extern void initasmvars(void);
+extern long multiply(long, long, int);
+extern long divide(long, long, int);
+extern int  keypressed(void);
+extern int  waitkeypressed(int);
+extern int  getakeynohelp(void);
+extern int  getakey(void);
+extern int  getkeynowait(void);
+extern int  getkeyint(int);
+extern void buzzer(int);
+extern void delay(int);
+extern void tone(int, int);
+extern void snd(int);
+extern void nosnd(void);
+extern long readticker(void);
+extern void * farmemalloc(long);
+extern void farmemfree(void *);
+extern void erasesegment(int, int);
+extern int  farread(int, void *, unsigned int);
+extern int  farwrite(int, void *, unsigned int);
+extern long normalize(char *);
+extern int  far_strlen (char *);
+extern void far_strcpy (char *, char *);
+extern int  far_strcmp (char *, char *);
+extern int  far_strnicmp (char *, char *, int);
+extern void far_strcat (char *, char *);
+extern void far_memset(VOIDFARPTR, int, unsigned int);
+extern void far_memcpy(VOIDFARPTR, VOIDFARPTR, int);
+extern int  far_memcmp(VOIDFARPTR, VOIDFARPTR, int);
+extern int  far_memicmp(VOIDFARPTR, VOIDFARPTR, int);
 extern void decode_evolver_info(struct evolution_info *, int);
+extern void fix_ranges(int *, int, int);
 extern void decode_fractal_info(struct fractal_info *, int);
 extern void decode_orbits_info(struct orbits_info *, int);
-extern  VOIDPTR cdecl farmemalloc(long);
-extern  long   cdecl normalize(char *);
 
 /*
  *   unix.c -- C file prototypes
@@ -38,6 +62,10 @@ extern int ltoa(long, char *, int);
 extern void ftimex(struct timebx *);
 extern long stackavail(void);
 extern int kbhit(void);
+extern void mute(void);
+extern int soundon(int);
+extern void soundoff(void);
+extern int get_sound_params(void);
 
 /*   unixscr.c -- C file prototypes */
 
@@ -87,14 +115,29 @@ void schedulealarm(int soon);
 /*
  *   video.c -- C file prototypes
  */
-extern void putprompt(void);
+extern void setnullvideo (void);
+extern void movecursor(int, int);
+extern int  keycursor(int, int);
+extern void setattr(int, int, int, int);
+extern void home (void);
+extern void scrollup(int, int);
+extern void spindac(int, int);
+extern void setclear (void);
+extern BYTE *findfont (int);
+extern void adapter_detect(void);
+extern void find_special_colors(void);
+extern char get_a_char (void);
+extern void put_a_char (int);
+extern void get_line(int, int, int, BYTE *);
+extern void put_line(int, int, int, BYTE *);
+extern int  out_line(BYTE *, int);
+extern void setvideotext (void);
 extern void loaddac(void);
 extern void putcolor_a(int, int, int);
 extern int  out_line(BYTE *, int);
 extern int  getcolor(int, int);
 extern void setvideomode(int, int, int, int);
 extern void putstring(int,int,int,char far *);
-extern BYTE *findfont (int);
- 
+
 #endif
 

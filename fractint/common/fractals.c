@@ -41,6 +41,8 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <string.h>
 #ifdef __TURBOC__
 #include <alloc.h>
+#elif defined(__APPLE__)
+#include <malloc/malloc.h>
 #elif !defined(__386BSD__)
 #include <malloc.h>
 #endif

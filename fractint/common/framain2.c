@@ -114,7 +114,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                   TPlusErr = 0;
                   }
                else
-#endif	       
+#endif
 	       if(dotmode == 11) {
                   askvideo = TRUE;
                   }
@@ -1011,7 +1011,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       {
          /* go back one file if somewhere to go (ie. browsing) */
          name_stack_ptr--;
-         while (file_name_stack[name_stack_ptr][0] == '\0' 
+         while (file_name_stack[name_stack_ptr][0] == '\0'
                 && name_stack_ptr >= 0)
             name_stack_ptr--;
          if (name_stack_ptr < 0) /* oops, must have deleted first one */
@@ -1220,7 +1220,7 @@ image.  Sorry - it's the best we could do."};
             {
                /* go back one file if somewhere to go (ie. browsing) */
                name_stack_ptr--;
-               while (file_name_stack[name_stack_ptr][0] == '\0' 
+               while (file_name_stack[name_stack_ptr][0] == '\0'
                       && name_stack_ptr >= 0)
                   name_stack_ptr--;
                if (name_stack_ptr < 0) /* oops, must have deleted first one */
@@ -1385,8 +1385,8 @@ image.  Sorry - it's the best we could do."};
       break;
 
    case 1120: /* alt + number keys set mutation level and start evolution engine */
-   case 1121: 
-   case 1122: 
+   case 1121:
+   case 1122:
    case 1123:
    case 1124:
    case 1125:
@@ -1868,8 +1868,8 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       break;
 
    case 1120: /* alt + number keys set mutation level */
-   case 1121: 
-   case 1122: 
+   case 1121:
+   case 1122:
    case 1123:
    case 1124:
    case 1125:
@@ -1898,7 +1898,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       param_history(1); /* restore old history */
       *kbdmore = calc_status = 0;
       break;
-   case '0': /* mutation level 0 == turn off evolving */ 
+   case '0': /* mutation level 0 == turn off evolving */
       evolving = viewwindow = 0;
       *kbdmore = calc_status = 0;
       break;

@@ -24,52 +24,80 @@
 double _2_ = 2.0;
 double _1_ = 1.0;
 double PointFive = 0.5;
+double infinity = 1.0E+300;
 
 void FPUaptan387(double *y, double *x, double *atan)
 {
-    *atan = atan2(*y,*x);
+    if (isnan(*x) || isnan(*y) || isinf(*x) || isinf(*y))
+      *atan = 1.0;
+    else
+      *atan = (double)atan2l(*y,*x);
 }
 
 void FPUcplxmul(_CMPLX *x, _CMPLX *y, _CMPLX *z)
 {
-    double tx;
-    tx = x->x * y->x - x->y * y->y;
-    z->y = x->x * y->y + x->y * y->x;
-    z->x = tx;
+    LDBL tx, ty;
+    tx = (LDBL)x->x * (LDBL)y->x - (LDBL)x->y * (LDBL)y->y;
+    ty = (LDBL)x->x * (LDBL)y->y + (LDBL)x->y * (LDBL)y->x;
+    if (isnan(ty) || isinf(ty))
+      z->y = infinity;
+    else
+      z->y = (double)ty;
+    if (isnan(tx) || isinf(tx))
+      z->x = infinity;
+    else
+      z->x = (double)tx;
 }
 
 void FPUcplxdiv(_CMPLX *x, _CMPLX *y, _CMPLX *z)
 {
-    double mod,tx,yxmod,yymod, yx, yy;
+    LDBL mod,tx,yxmod,yymod, yx, yy;
     yx = y->x;
     yy = y->y;
     mod = yx * yx + yy * yy;
-    if (mod == 0.0)
-        overflow = 1;
+    if (mod == 0.0 || fabs(mod) <= DBL_MIN) {
+      z->x = infinity;
+      z->y = infinity;
+      overflow = 1;
+    }
     else {
         yxmod = yx/mod;
         yymod = - yy/mod;
         tx = x->x * yxmod - x->y * yymod;
-        z->y = x->x * yymod + x->y * yxmod;
-        z->x = tx;
+        z->y = (double)(x->x * yymod + x->y * yxmod);
+        z->x = (double)tx;
     }
 }
 
 void FPUsincos(double *Angle, double *Sin, double *Cos)
 {
-    *Sin = sin(*Angle);
-    *Cos = cos(*Angle);
+  if (isnan(*Angle) || isinf(*Angle)){
+    *Sin = 0.0;
+    *Cos = 1.0;
+  } else {
+    *Sin = (double)sinl(*Angle);
+    *Cos = (double)cosl(*Angle);
+  }
 }
 
 void FPUsinhcosh(double *Angle, double *Sinh, double *Cosh)
 {
-    *Sinh = sinh(*Angle);
-    *Cosh = cosh(*Angle);
+  if (isnan(*Angle) || isinf(*Angle)){
+    *Sinh = 1.0;
+    *Cosh = 1.0;
+  } else {
+    *Sinh = (double)sinhl(*Angle);
+    *Cosh = (double)coshl(*Angle);
+  }
+  if (isnan(*Sinh) || isinf(*Sinh))
+    *Sinh = 1.0;
+  if (isnan(*Cosh) || isinf(*Cosh))
+    *Cosh = 1.0;
 }
 
 void FPUcplxlog(_CMPLX *x, _CMPLX *z)
 {
-    double mod, xx, xy;
+    LDBL mod, xx, xy;
     xx = x->x;
     xy = x->y;
     if (xx == 0.0 && xy == 0.0) {
@@ -77,17 +105,25 @@ void FPUcplxlog(_CMPLX *x, _CMPLX *z)
         return;
         }
     mod = xx*xx + xy*xy;
-    z->x = 0.5 * log(mod);
-    z->y = atan2(xy,xx);
+    if (isnan(mod) || islessequal(mod,0) || isinf(mod))
+      z->x = 0.5;
+    else
+      z->x = (double)(0.5 * logl(mod));
+    if (isnan(xx) || isnan(xy) || isinf(xx) || isinf(xy))
+      z->y = 1.0;
+    else
+      z->y = (double)atan2l(xy,xx);
 }
 
 void FPUcplxexp387(_CMPLX *x, _CMPLX *z)
 {
-    double pow,y;
+    LDBL pwr,y;
     y = x->y;
-    pow = exp(x->x);
-    z->x = pow*cos(y);
-    z->y = pow*sin(y);
+    pwr = expl(x->x);
+    if (isnan(pwr) || isinf(pwr))
+      pwr = 1.0;
+    z->x = (double)(pwr*cosl(y));
+    z->y = (double)(pwr*sinl(y));
 }
 
 /* Integer Routines */
@@ -152,7 +188,7 @@ long x,y;
 }
 
 /*
- * This routine on the IBM converts shifted integer x,FudgeFact to 
+ * This routine on the IBM converts shifted integer x,FudgeFact to
  * the 4 byte number: exp,mant,mant,mant
  * Instead of using exp/mant format, we'll just use floats.
  * Note: If sizeof(float) != sizeof(long), we're hosed.

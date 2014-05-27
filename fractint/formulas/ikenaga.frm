@@ -71,7 +71,7 @@ IkenagaJULJ.1          { ; formula from a letter from Joyce Haslam Mar 1993.
 IkenagaPwr(XAXIS)   { ; from Jon Horner
                     z = (0,0), c = pixel :
                     z = z * z * z + z * (c-1) - c ^ p1 ,
-                    z| <=4
+                    |z| <=4
 }
 
 IkenagaPwrJul       { ; from Jon Horner - asymmetric

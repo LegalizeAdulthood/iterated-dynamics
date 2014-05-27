@@ -532,9 +532,7 @@ extern int key_count(int);
 extern int main_menu_switch(int *,int *,int *,char *,int);
 extern int pot_line(BYTE *,int );
 extern int sound_line(BYTE *,int );
-#ifndef XFRACT
-extern int _cdecl _matherr(struct exception *);
-#else
+#ifdef XFRACT
 extern int XZoomWaiting;
 #endif
 #ifndef USE_VARARGS
@@ -773,6 +771,9 @@ extern void roundfloatd(double *);
 extern void fix_inversion(double *);
 extern int ungetakey(int);
 extern void get_calculation_time(char *, long);
+#ifndef XFRACT
+extern int _cdecl _matherr(struct exception *);
+#endif
 
 /*  mpmath_c -- C file prototypes */
 
@@ -1081,6 +1082,7 @@ extern int fullscreen_choice(int options, char far *hdg, char far *hdg2, char fa
 #ifndef XFRACT /* Unix should have this in string.h */
 extern int strncasecmp(char far *,char far *,int );
 #endif
+extern int check_exit(void);
 extern int main_menu(int );
 extern int input_field(int ,int ,char *,int ,int ,int ,int (*)(int));
 extern int field_prompt(int ,char far *,char far *,char *,int ,int (*)(int));
@@ -1216,7 +1218,7 @@ extern void soi (void);
 extern void soi_ldbl (void);
 
 /*
- *  uclock -- C file prototypes 
+ *  uclock -- C file prototypes
  *  The  uclock_t typedef placed here because uclock.h
  *  prototype is for DOS version only.
  */

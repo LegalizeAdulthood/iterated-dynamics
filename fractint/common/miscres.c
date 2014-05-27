@@ -5,7 +5,11 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#ifdef __APPLE__
+#include <malloc/malloc.h>
+#else
 #include <malloc.h>
+#endif
 
 #ifndef XFRACT
 #include <io.h>
@@ -163,7 +167,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
    double a, b; /* bottom, left, diagonal */
    double a2, b2, c2; /* squares of above */
    double tmpx1, tmpx2, tmpy1, tmpy2, tmpa; /* temporary x, y, angle */
-  
+
    /* simple normal case first */
    if (xx3rd == xxmin && yy3rd == yymin)
    { /* no rotation or skewing, but stretching is allowed */
@@ -183,29 +187,29 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
       tmpx1 = xxmax - xxmin;
       tmpy1 = yymax - yymin;
       c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
-   
+
       tmpx1 = xxmax - xx3rd;
       tmpy1 = yymin - yy3rd;
       a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
       a = sqrt(a2);
       *Rotation = -rad_to_deg(atan2( tmpy1, tmpx1 )); /* negative for image rotation */
-   
+
       tmpx2 = xxmin - xx3rd;
       tmpy2 = yymax - yy3rd;
       b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
       b = sqrt(b2);
-   
+
       tmpa = acos((a2+b2-c2)/(2*a*b)); /* save tmpa for later use */
       *Skew = 90.0 - rad_to_deg(tmpa);
-   
+
       *Xctr = (xxmin + xxmax)*0.5;
       *Yctr = (yymin + yymax)*0.5;
-   
+
       Height = b * sin(tmpa);
-   
+
       *Magnification  = 2.0/Height; /* 1/(h/2) */
       *Xmagfactor = Height / (DEFAULTASPECT * a);
-   
+
       /* if vector_a cross vector_b is negative */
       /* then adjust for left-hand coordinate system */
       if ( tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != 4010)
@@ -245,8 +249,8 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
       xx3rd = tx3rd;
       yymin = tymin;
       yymax = tymax;
-      yy3rd = ty3rd;         
-   } 
+      yy3rd = ty3rd;
+   }
 #endif
    return;
 }
@@ -351,11 +355,11 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
    {
       bftmpx = alloc_stack(bflength+2);
       bftmpy = alloc_stack(bflength+2);
-   
+
       /* set up triangle ABC, having sides abc */
       /* side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd) */
       /* IMPORTANT: convert from bf AFTER subtracting */
-   
+
       /* tmpx = xxmax - xxmin; */
       sub_bf(bftmpx, bfxmax, bfxmin);
       tmpx1 = bftofloat(bftmpx);
@@ -363,17 +367,17 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
       sub_bf(bftmpy, bfymax, bfymin);
       tmpy1 = bftofloat(bftmpy);
       c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
-   
+
       /* tmpx = xxmax - xx3rd; */
       sub_bf(bftmpx, bfxmax, bfx3rd);
       tmpx1 = bftofloat(bftmpx);
-   
+
       /* tmpy = yymin - yy3rd; */
       sub_bf(bftmpy, bfymin, bfy3rd);
       tmpy1 = bftofloat(bftmpy);
       a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
       a = sqrtl(a2);
-   
+
       /* divide tmpx and tmpy by |tmpx| so that double version of atan2() can be used */
       /* atan2() only depends on the ratio, this puts it in double's range */
       signx = sign(tmpx1);
@@ -390,10 +394,10 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
       tmpy2 = bftofloat(bftmpy);
       b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
       b = sqrtl(b2);
-   
+
       tmpa = acos((double)((a2+b2-c2)/(2*a*b))); /* save tmpa for later use */
       *Skew = 90 - rad_to_deg(tmpa);
-   
+
       /* these are the only two variables that must use big precision */
       /* *Xctr = (xxmin + xxmax)/2; */
       add_bf(Xctr, bfxmin, bfxmax);
@@ -401,7 +405,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
       /* *Yctr = (yymin + yymax)/2; */
       add_bf(Yctr, bfymin, bfymax);
       half_a_bf(Yctr);
-   
+
       Height = b * sin(tmpa);
       *Magnification  = 2/Height; /* 1/(h/2) */
       *Xmagfactor = (double)(Height / (DEFAULTASPECT * a));
@@ -841,7 +845,7 @@ int tab_display_2(char *msg)
       rhombus_stack[9]);
    putstring(s_row++,2,C_GENERAL_HI,msg);
    }
-   
+
 /*
    sprintf(msg,"xdots %d ydots %d sxdots %d sydots %d",xdots,ydots,sxdots,sydots);
    putstring(s_row++,2,C_GENERAL_HI,msg);
@@ -1057,7 +1061,7 @@ top:
          case 4:
             putstring(s_row,2,C_GENERAL_HI,stesseral);
             break;
-         case 5:		
+         case 5:
             putstring(s_row,2,C_GENERAL_HI,sdiffusion);
             break;
          case 6:

@@ -1,6 +1,10 @@
 #include <string.h>
 #include <limits.h>
+#ifdef __APPLE__
+#include <malloc/malloc.h>
+#else
 #include <malloc.h>
+#endif
 
 #if (!defined(XFRACT) && !defined(WINFRACT))
 #include <io.h>
@@ -20,7 +24,7 @@
 
 /* Memory allocation routines. */
 
-#if 1 
+#if 1
 /* For extra seg memory: */
 #define EXTRA_RESERVE   4096L  /* amount of extra mem we will leave avail. */
 /* For far memory: */
