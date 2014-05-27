@@ -2,7 +2,7 @@
 
  To use sound in fractint there are three basic functions:
  soundon(freq) starts a voice sounding with the given frequency (in Hz)
- soundoff() releases a voice 
+ soundoff() releases a voice
  mute() turns off all voices at once
  polyhony controls how many voices are allowed to sound at once (up to nine)
 
@@ -293,7 +293,7 @@ int tmp_atten = hi_atten; /* stupid kludge needed to make attenuation work */
       /* attack (D7-D4) and decay (D3-D0) */
       b = ((15 - fm_sustain) * 0x10) | (15 - fm_release);
       fm(0x83+fm_offset[k],b);
-      /* high sustain level (D7-D4=0), release rate (D3-D0) */ 
+      /* high sustain level (D7-D4=0), release rate (D3-D0) */
       fm(0xE3+fm_offset[k],fm_wavetype);
    }
 }
@@ -328,7 +328,7 @@ int k;
     */
      fm(0x60+fm_offset[k],0x44);
      /* slow attack and decay */
-     fm(0x80+fm_offset[k],0x05); 
+     fm(0x80+fm_offset[k],0x05);
      /* high sustain level, slow release rate */
    }
    initsndvars();
@@ -344,7 +344,7 @@ int soundon(int freq)
     available and selected */
 /* Returns a 1 if sound is turned on, a 0 if not. */
  int note,oct,chrome;
- unsigned int block,mult,fn; 
+ unsigned int block,mult,fn;
  double logbase = log(8.176);
 
  /* clip to 5 Khz to match the limits set in asm routine that drives pc speaker*/
@@ -362,7 +362,10 @@ int soundon(int freq)
       freq=(int)(exp(((double)note/12.0)*log(2.0))*8.176);
          /* pitch quantize note for FM and speaker */
 
-   if (soundflag & 16) { /* fm flag set */
+   if (scale_map[chrome] == -1)
+      freq = 0;
+
+   if ((soundflag & 16) && (freq != 0)) { /* fm flag set */
       double temp_freq = (double)freq * (double)1048576;
       block = 0;
       mult = 1;
@@ -375,7 +378,7 @@ int soundon(int freq)
          }
          fn=(int)(temp_freq / (1 << block) / mult / 50000.0);
       }
-   
+
 /*    printf("on: fn = %i chn= %i  blk = %i  mlt = %i ofs = %i ",fn,fm_channel,block,mult,fm_offset[fm_channel]);
      getch(); */
    /* then send the right values to the fm registers */
@@ -392,7 +395,8 @@ int soundon(int freq)
      initsndvars();
    }
 
-   if (soundflag & 8) snd(freq); /* pc spkr flag set */
+   if ((soundflag & 8) && (freq != 0))
+      snd(freq); /* pc spkr flag set */
    return(1);
 }
 
@@ -402,13 +406,13 @@ void soundoff(void)
    if (soundflag & 16) {/* switch off old note */
       if(offvoice >= 0){
 /*        printf("off: ofv= %i tmp = %i \n",offvoice,fmtemp[offvoice]);
-        getch(); */     
+        getch(); */
         fm(0xB0+offvoice,fmtemp[offvoice]);
        }
       offvoice++;
  /* then increment channel number (letting old note die away properly prevents
  nasty clicks between notes as OPL has no zero crossing logic and switches
- frequencies immediately thus creating an easily audible glitch, especially 
+ frequencies immediately thus creating an easily audible glitch, especially
  in bass notes... also allows chords :-) */
       if(offvoice >= 9) offvoice = 0;
    }
@@ -472,7 +476,7 @@ void buzzer(int tone)
      }
      soundflag = oldsoundflag;
      mute(); /*switch off all currently sounding notes*/
- 
+
    }
 
    /* must try better FM equiv..
@@ -635,52 +639,100 @@ get_map_restart:
    ptr = (char far *)MK_FP(extraseg,0);
 
    LOADCHOICES("Scale map C (1)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = scale_map[0];
+   uvalues[k].type = 's';
+   if (scale_map[0] == -1) {
+      strcpy(uvalues[k].uval.sval,s_pause);
+   } else {
+      sprintf(uvalues[k].uval.sval,"%d",scale_map[0]);
+   }
 
    LOADCHOICES("Scale map C#(2)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = scale_map[1];
+   uvalues[k].type = 's';
+   if (scale_map[1] == -1) {
+      strcpy(uvalues[k].uval.sval,s_pause);
+   } else {
+      sprintf(uvalues[k].uval.sval,"%d",scale_map[1]);
+   }
 
    LOADCHOICES("Scale map D (3)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = scale_map[2];
+   uvalues[k].type = 's';
+   if (scale_map[2] == -1) {
+      strcpy(uvalues[k].uval.sval,s_pause);
+   } else {
+      sprintf(uvalues[k].uval.sval,"%d",scale_map[2]);
+   }
 
    LOADCHOICES("Scale map D#(4)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = scale_map[3];
+   uvalues[k].type = 's';
+   if (scale_map[3] == -1) {
+      strcpy(uvalues[k].uval.sval,s_pause);
+   } else {
+      sprintf(uvalues[k].uval.sval,"%d",scale_map[3]);
+   }
 
    LOADCHOICES("Scale map E (5)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = scale_map[4];
+   uvalues[k].type = 's';
+   if (scale_map[4] == -1) {
+      strcpy(uvalues[k].uval.sval,s_pause);
+   } else {
+      sprintf(uvalues[k].uval.sval,"%d",scale_map[4]);
+   }
 
    LOADCHOICES("Scale map F (6)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = scale_map[5];
+   uvalues[k].type = 's';
+   if (scale_map[5] == -1) {
+      strcpy(uvalues[k].uval.sval,s_pause);
+   } else {
+      sprintf(uvalues[k].uval.sval,"%d",scale_map[5]);
+   }
 
    LOADCHOICES("Scale map F#(7)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = scale_map[6];
+   uvalues[k].type = 's';
+   if (scale_map[6] == -1) {
+      strcpy(uvalues[k].uval.sval,s_pause);
+   } else {
+      sprintf(uvalues[k].uval.sval,"%d",scale_map[6]);
+   }
 
    LOADCHOICES("Scale map G (8)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = scale_map[7];
+   uvalues[k].type = 's';
+   if (scale_map[7] == -1) {
+      strcpy(uvalues[k].uval.sval,s_pause);
+   } else {
+      sprintf(uvalues[k].uval.sval,"%d",scale_map[7]);
+   }
 
    LOADCHOICES("Scale map G#(9)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = scale_map[8];
+   uvalues[k].type = 's';
+   if (scale_map[8] == -1) {
+      strcpy(uvalues[k].uval.sval,s_pause);
+   } else {
+      sprintf(uvalues[k].uval.sval,"%d",scale_map[8]);
+   }
 
    LOADCHOICES("Scale map A (10)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = scale_map[9];
+   uvalues[k].type = 's';
+   if (scale_map[9] == -1) {
+      strcpy(uvalues[k].uval.sval,s_pause);
+   } else {
+      sprintf(uvalues[k].uval.sval,"%d",scale_map[9]);
+   }
 
    LOADCHOICES("Scale map A#(11)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = scale_map[10];
+   uvalues[k].type = 's';
+   if (scale_map[10] == -1) {
+      strcpy(uvalues[k].uval.sval,s_pause);
+   } else {
+      sprintf(uvalues[k].uval.sval,"%d",scale_map[10]);
+   }
 
    LOADCHOICES("Scale map B (12)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = scale_map[11];
+   uvalues[k].type = 's';
+   if (scale_map[11] == -1) {
+      strcpy(uvalues[k].uval.sval,s_pause);
+   } else {
+      sprintf(uvalues[k].uval.sval,"%d",scale_map[11]);
+   }
 
    LOADCHOICES("");
    uvalues[k].type = '*';
@@ -690,7 +742,7 @@ get_map_restart:
    uvalues[k].type = '*';
 
    oldhelpmode = helpmode;     /* this prevents HELP from activating */
-   helpmode = HELPMUSIC; 
+   helpmode = HELPMUSIC;
    i = fullscreen_prompt(hdg,k+1,choices,uvalues,255,NULL);
    helpmode = oldhelpmode;     /* re-enable HELP */
    if (i < 0) {
@@ -700,7 +752,10 @@ get_map_restart:
    k = -1;
 
    for(j=0;j<=11;j++) {
-      scale_map[j] = abs(uvalues[++k].uval.ival);
+      if(strncmp(strlwr(uvalues[++k].uval.sval),s_pause,1) == 0)
+         scale_map[j] = -1;
+      else
+         scale_map[j] = abs(atoi(uvalues[k].uval.sval));
       if (scale_map[j] > 12)
          scale_map[j] = 12;
    }
@@ -832,9 +887,9 @@ get_music_restart:
 
 /*testsound(void)
 {
-int i; 
-for (i=100; (i<5000&&!keypressed()); i+=25) 
-  { 
+int i;
+for (i=100; (i<5000&&!keypressed()); i+=25)
+  {
    soundon(i);
    sleepms(orbit_delay);
    soundoff();

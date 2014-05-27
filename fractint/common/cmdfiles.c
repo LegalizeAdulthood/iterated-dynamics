@@ -339,6 +339,7 @@ char s_overwrite[] =        "overwrite";
 char s_params[] =           "params";
 char s_parmfile[] =         "parmfile";
 char s_passes[] =           "passes";
+char s_pause[] =            "pause";
 char s_periodicity[] =      "periodicity";
 char s_perspective[] =      "perspective";
 char s_pi[] =               "pi";
@@ -929,7 +930,7 @@ static int next_command(char *cmdbuf,int maxlen,
                      if (CommandComment[i][0] == 0)
                      {
                         far_strcpy(CommandComment[i],lineptr);
-                        break;   
+                        break;
                      }
                   }
                }
@@ -1264,11 +1265,11 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          {
             if(*readname != 0)
                extract_filename(CommandName,readname);
-            else if(*MAP_name != 0)   
+            else if(*MAP_name != 0)
                extract_filename(CommandName,MAP_name);
             else
                goto badarg;
-         }   
+         }
          else
          {
             strncpy(CommandName,next,ITEMNAMELEN);
@@ -2326,7 +2327,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
           (according to the western, even tempered system anyway) */
 
       if (charval[0] == 'n' || charval[0] == 'o')
-         soundflag = soundflag & 0xF8; 
+         soundflag = soundflag & 0xF8;
       else if ((far_strncmp(value,"ye",2) == 0) || (charval[0] == 'b'))
          soundflag = soundflag | 1;
       else if (charval[0] == 'x')
@@ -2390,7 +2391,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          goto badarg;
       polyphony = abs(numval-1);
       return(0);
-   } 
+   }
 
    if(far_strcmp(variable,s_wavetype) == 0) { /* wavetype = ? */
       fm_wavetype = numval & 0x0F;
@@ -2411,7 +2412,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       fm_sustain = numval & 0x0F;
       return(0);
    }
-   
+
    if(far_strcmp(variable,s_srelease) == 0) { /* release = ? */
       fm_release = numval & 0x0F;
       return(0);
@@ -2419,14 +2420,16 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
 
    if (far_strcmp(variable,s_scalemap) == 0) {      /* Scalemap=?,?,?,?,?,?,?,?,?,?,? */
       int counter;
-      if (totparms != intparms) goto badarg;
       for(counter=0;counter <=11;counter++)
-         if ((totparms > counter) && (intval[counter] > 0)
-           && (intval[counter] < 13))
-             scale_map[counter] = intval[counter];
+         if (totparms > counter) {
+            if (charval[counter] == 'p')
+               scale_map[counter] = -1;
+            else if ((intval[counter] >= 0) && (intval[counter] < 13))
+               scale_map[counter] = intval[counter];
+         }
 #endif
       return(0);
-   } 
+   }
 
    if (far_strcmp(variable,s_periodicity) == 0 ) {  /* periodicity=? */
       usr_periodicitycheck=1;
@@ -2512,7 +2515,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
             else
                goto badarg;
          }
-         else   
+         else
          {
             showdot=numval;
             if(showdot<0)
@@ -2521,8 +2524,8 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          if(totparms > 1 && intparms > 0)
             sizedot = intval[1];
          if(sizedot < 0)
-            sizedot = 0;   
-      }      
+            sizedot = 0;
+      }
       return 0;
       }
 
@@ -3249,7 +3252,7 @@ void dopause(int action)
    }
 }
 
-/* 
+/*
    Crude function to detect a floating point number. Intended for
    use with arbitrary precision.
 */

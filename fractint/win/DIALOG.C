@@ -66,7 +66,7 @@ double far win_oldprompts[20];
 extern int stopmsg(int, char far *);
 
 /* far strings (near space is precious) */
-char far about_msg01[] = "(C) 1990-2011 The Stone Soup Group";
+char far about_msg01[] = "(C) 1990-2012 The Stone Soup Group";
 char far about_msg02[] = "";
 char far about_msg03[] = "";
 char far about_msg04[] = "";
