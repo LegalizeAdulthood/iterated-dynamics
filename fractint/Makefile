@@ -18,6 +18,13 @@ OPT = -O2
 NCURSES =
 # NCURSES = -DNCURSES
 
+# Use Xft/fontconfig libraries
+WITHXFT = -DWITH_XFT
+XFTHFD = /usr/include/freetype2
+# Or not
+# WITHXFT =
+# XFTHFD =
+
 ifndef PREFIX
 PREFIX = /usr
 endif
@@ -83,7 +90,7 @@ NOBSTRING = -DNOBSTRING
 # AIX may need -D_ALL_SOURCE -D_NONSTD_TYPES to compile help.c
 # For Dec Alpha, add -DFTIME -DNOBSTRING -DDIRENT
 # For SGI, you may have to add -DSYSVSGI
-DEFINES = -DXFRACT $(NCURSES) $(NOBSTRING) $(HAVESTRI) $(DEBUG)
+DEFINES = -DXFRACT $(WITHXFT) $(NCURSES) $(NOBSTRING) $(HAVESTRI) $(DEBUG)
 
 # Uncomment this if you get errors about "stdarg.h" missing.
 #DEFINES += -DUSE_VARARGS
@@ -160,6 +167,10 @@ endif
 
 ifeq ($(NCURSES),-DNCURSES)
 LIBS += -lncurses
+endif
+
+ifeq ($(WITHXFT),-DWITH_XFT)
+LIBS += -lXft -lfontconfig
 endif
 
 # HPUX fixes thanks to David Allport, Bill Broadley, and R. Lloyd.
@@ -299,7 +310,7 @@ xfractint: fractint.hlp $(SRCFILES)
 	if [ -f $(DOSHELPDIR)/helpdefs.h ] ; then mv -f $(DOSHELPDIR)/helpdefs.h $(HFD) ; fi
 	cd common ; ${MAKE} all "CC=${CC}" "CFLAGS= -I.${HFD} ${CFLAGS} ${OPT}" "SRCDIR=${SHRDIR}" \
 	          "HFD=.${HFD}"
-	cd unix ; ${MAKE} all "CC=${CC}" "CFLAGS= -I.${HFD} ${CFLAGS} ${OPT}" "SRCDIR=${SHRDIR}" \
+	cd unix ; ${MAKE} all "CC=${CC}" "CFLAGS= -I.${HFD} -I${XFTHFD} ${CFLAGS} ${OPT}" "SRCDIR=${SHRDIR}" \
 	          "AS=${AS}" "AFLAGS=${AFLAGS}" "HFD=.${HFD}"
 	$(CC) -o xfractint $(CFLAGS) $(OPT) $(OBJS) $(U_OBJS) $(LIBS)
 #	strip xfractint

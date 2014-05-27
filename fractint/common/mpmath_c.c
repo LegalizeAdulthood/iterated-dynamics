@@ -199,12 +199,14 @@ void setMPfunctions(void) {
 
 _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
    _CMPLX z, cLog, t;
-   double e2x, siny, cosy;
+   LDBL e2x;
+   double siny, cosy;
 
    /* fixes power bug - if any complaints, backwards compatibility hook
       goes here TIW 3/95 */
    if(ldcheck == 0)
-      if(xx.x == 0 && xx.y == 0) {
+      if(xx.x == 0.0 && xx.y == 0.0) {
+         overflow = 1;
          z.x = z.y = 0.0;
          return(z);
       }
@@ -216,12 +218,16 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
       FPUcplxexp387(&t, &z);
    else {
       if(t.x < -690)
-         e2x = 0;
+         e2x = 0.0;
       else
-         e2x = exp(t.x);
+         e2x = expl(t.x);
+#ifdef XFRACT
+      if (isnan(e2x) || isinf(e2x))
+         e2x = 1.0;
+#endif
       FPUsincos(&t.y, &siny, &cosy);
-      z.x = e2x * cosy;
-      z.y = e2x * siny;
+      z.x = (double) (e2x * cosy);
+      z.y = (double) (e2x * siny);
    }
    return(z);
 }

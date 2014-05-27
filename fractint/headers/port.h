@@ -46,6 +46,8 @@
 #if (defined(XFRACT) && !defined(__sun))
 #if defined(sgi)
 #include <sys/endian.h>
+#elif defined(__APPLE__)
+#include <machine/endian.h>
 #else
 #include <endian.h>
 #endif
@@ -221,7 +223,7 @@ typedef void sigfunc(int);
 #else
 typedef int sigfunc(int);
 #endif
-  
+
 #ifndef BYTE_ORDER
 /* change for little endians that don't have this defined elsewhere (endian.h) */
 #ifdef LINUX

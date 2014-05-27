@@ -1,4 +1,4 @@
-/* 
+/*
  * soi.c --  SOI
  *
  *	Simultaneous Orbit Iteration Image Generation Method. Computes
@@ -8,12 +8,16 @@
  *
  * This file is distributed under the same conditions as
  * AlmondBread. For further information see
- * <URL:http://www.cs.tu-berlin.de/~rms/AlmondBread>. 
+ * <URL:http://www.cs.tu-berlin.de/~rms/AlmondBread>.
  *
  */
 #include <time.h>
 #include <string.h>
+#ifdef __APPLE__
+#include <malloc/malloc.h>
+#else
 #include <malloc.h>
+#endif
 #include "port.h"
 #include "prototyp.h"
 
@@ -42,7 +46,7 @@ static DBLS twidth;
 static DBLS equal;
 static char baxinxx = FALSE;
 
-				  
+
 long iteration(register DBLS cr, register DBLS ci,
 	      register DBLS re, register DBLS im,
 	      long start)
@@ -59,7 +63,7 @@ long iteration(register DBLS cr, register DBLS ci,
 #endif
   DBLS d;
   int exponent;
-  
+
   if(baxinxx)
     {
       sre=re; sim=im;
@@ -75,7 +79,7 @@ long iteration(register DBLS cr, register DBLS ci,
       else
 	iter=maxit>>3;
       k=n=8;
-      
+
       do
 	{
 	  im=im*re;
@@ -139,7 +143,7 @@ long iteration(register DBLS cr, register DBLS ci,
 	  re=ren*re;
 	  im=imn+ci;
 	  re+=cr;
-	  
+
 #ifdef INTEL
 	  mag=FABS(sre-re);
 	  magi=*(unsigned long *)&mag;
@@ -154,7 +158,7 @@ long iteration(register DBLS cr, register DBLS ci,
 	  if(FABS(sre-re)<equal&&FABS(sim-im)<equal)
 	    return BASIN_COLOR;
 #endif /* INTEL */
-       
+
 	  k-=8;
 	  if(k<=0)
 	    {
@@ -192,7 +196,7 @@ long iteration(register DBLS cr, register DBLS ci,
 	iter=maxit>>3;
 
       do
-	{      
+	{
 	  im=im*re;
 	  re=ren-imn;
 	  im+=im;
@@ -268,7 +272,7 @@ long iteration(register DBLS cr, register DBLS ci,
       while (mag<16.0&&--iter!=0);
 #endif
     }
-  
+
   if(iter==0)
     {
       baxinxx=TRUE;
@@ -293,7 +297,7 @@ long iteration(register DBLS cr, register DBLS ci,
           8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
           8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
           8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8};
-    
+
       baxinxx=FALSE;
 #ifdef INTEL
       d=ren+imn;
@@ -336,7 +340,7 @@ interpolate(cre1,midr,cre2,\
 	    interpolate(cim1,midi,cim2,zim1,zim6,zim3,y),\
 	    interpolate(cim1,midi,cim2,zim5,zim9,zim8,y),\
 	    interpolate(cim1,midi,cim2,zim2,zim7,zim4,y),x)
-     
+
 /* compute the value of the interpolation polynomial at (x,y)
    from saved values before interpolation failed to stay within tolerance */
 #define GET_SAVED_REAL(x,y) \
@@ -349,7 +353,7 @@ interpolate(cre1,midr,cre2,\
 	    interpolate(cim1,midi,cim2,si1,si6,si3,y),\
 	    interpolate(cim1,midi,cim2,si5,si9,si8,y),\
 	    interpolate(cim1,midi,cim2,si2,si7,si4,y),x)
-     
+
 /* compute the value of the interpolation polynomial at (x,y)
    during scanning. Here, key values do not change, so we can precompute
    coefficients in one direction and simply evaluate the polynomial
@@ -372,10 +376,10 @@ b0=w0;\
 b1=(w1-w0)/(LDBL)(x1-x0);\
 b2=((w2-w1)/(LDBL)(x2-x1)-b1)/(x2-x0)
 
-/* evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t */     
+/* evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t */
 #define EVALUATE(x0,x1,b0,b1,b2,t) \
 ((b2*(t-x1)+b1)*(t-x0)+b0)
-     
+
 /* Newton Interpolation.
    It computes the value of the interpolation polynomial given by
    (x0,w0)..(x2,w2) at x:=t */
@@ -407,7 +411,7 @@ static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
    Input: cre1..cim2 : values defining the four corners of the rectangle
           x1..y2     : corresponding pixel values
 	  zre1..zim9 : intermediate iterated values of the key points (key values)
-	  
+
 	  (cre1,cim1)               (cre2,cim1)
 	  (zre1,zim1)  (zre5,zim5)  (zre2,zim2)
 	       +------------+------------+
@@ -424,12 +428,12 @@ static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
 	  */
 static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
             zre6, zim6, zre7, zim7, zre8, zim8, zre9, zim9;
-/* 
-   The purpose of this macro is to reduce the number of parameters of the 
+/*
+   The purpose of this macro is to reduce the number of parameters of the
    function rhombus(), since this is a recursive function, and stack space
-   under DOS is extremely limited. 
+   under DOS is extremely limited.
 */
-   
+
 #define RHOMBUS(CRE1,CRE2,CIM1,CIM2,X1,X2,Y1,Y2,ZRE1,ZIM1,ZRE2,ZIM2,ZRE3,ZIM3,\
  ZRE4, ZIM4, ZRE5, ZIM5,ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9,ITER) \
  zre1=(ZRE1);zim1=(ZIM1);\
@@ -451,7 +455,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
   static long far savecolor, color, helpcolor;
   static int far x,y,z,savex;
 
-#if 0    
+#if 0
   static DBLS far re,im,restep,imstep,interstep,helpre;
   static DBLS far zre,zim;
   /* interpolation coefficients */
@@ -475,7 +479,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
   static DBLS far ci1,ci2;
   static DBLS far tzr1,tzi1,tzr2,tzi2,tzr3,tzi3,tzr4,tzi4;
   static DBLS far trq1,tiq1,trq2,tiq2,trq3,tiq3,trq4,tiq4;
-#else 
+#else
 #define re        mem_static[ 0]
 #define im        mem_static[ 1]
 #define restep    mem_static[ 2]
@@ -554,7 +558,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
   /* center of rectangle */
   DBLS midr=(cre1+cre2)/2,midi=(cim1+cim2)/2;
 
-#if 0    
+#if 0
   /* saved values of key values */
   DBLS sr1,si1,sr2,si2,sr3,si3,sr4,si4;
   DBLS sr5,si5,sr6,si6,sr7,si7,sr8,si8,sr9,si9;
@@ -616,18 +620,18 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 #endif
 
   int status = 0;
-  rhombus_depth++;  
-  
+  rhombus_depth++;
+
 #if 1
   /* what we go through under DOS to deal with memory! We re-use
      the sizeofstring array (8k). The first 660 bytes is for
      static variables, then we make our own "stack" with copies
      for each recursive call of rhombus() for the rest.
-   */  
+   */
   mem_static = (DBLS far *)sizeofstring;
   mem = mem_static+ 66 + 50*rhombus_depth;
 #endif
-  
+
   if((avail = stackavail()) < minstackavail)
      minstackavail = avail;
   if(rhombus_depth > max_rhombus_depth)
@@ -645,7 +649,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
       status = 0;
       goto rhombus_done;
     }
-  
+
   if((y2-y1<=SCAN) || (avail < minstack))
     {
       /* finish up the image by scanning the rectangle */
@@ -653,15 +657,15 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
       INTERPOLATE(cre1,midr,cre2,zre1,zre5,zre2,br10,br11,br12);
       INTERPOLATE(cre1,midr,cre2,zre6,zre9,zre7,br20,br21,br22);
       INTERPOLATE(cre1,midr,cre2,zre3,zre8,zre4,br30,br31,br32);
-      
+
       INTERPOLATE(cim1,midi,cim2,zim1,zim6,zim3,bi10,bi11,bi12);
       INTERPOLATE(cim1,midi,cim2,zim5,zim9,zim8,bi20,bi21,bi22);
       INTERPOLATE(cim1,midi,cim2,zim2,zim7,zim4,bi30,bi31,bi32);
-      
+
       restep=(cre2-cre1)/(x2-x1);
       imstep=(cim2-cim1)/(y2-y1);
       interstep=INTERLEAVE*restep;
-      
+
       for(y=y1, im=cim1; y<y2; y++, im+=imstep)
 	{
 	  if(keypressed())
@@ -676,14 +680,14 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
           {
 	    status = 1;
             goto rhombus_done;
-          }   
+          }
 	  savex=x1;
 	  for(x=x1+INTERLEAVE, re=cre1+interstep; x<x2;
 	      x+=INTERLEAVE, re+=interstep)
 	    {
 	      zre=GET_SCAN_REAL(re,im);
 	      zim=GET_SCAN_IMAG(re,im);
-	      
+
 	      color=iteration(re,im,zre,zim,iter);
               if(color < 0)
                 {
@@ -692,7 +696,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
                 }
               else if(color==savecolor)
 		continue;
-	      
+
 	      for (z=x-1, helpre=re-restep; z>x-INTERLEAVE; z--,helpre-=restep)
 		{
 		  zre=GET_SCAN_REAL(helpre,im);
@@ -707,16 +711,16 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 		    break;
 		  (*plot)(z,y,(int)(helpcolor&255));
 		}
-	      
+
 	      if(savex<z)
 		puthline(savex, y, z, (int)(savecolor&255));
 	      else
 		(*plot)(savex, y, (int)(savecolor&255));
-	      
+
 	      savex = x;
 	      savecolor = color;
 	    }
-	  
+
 	  for (z=x2-1, helpre=cre2-restep; z>savex; z--,helpre-=restep)
 	    {
 	      zre=GET_SCAN_REAL(helpre,im);
@@ -729,10 +733,10 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 		}
 	      else if(helpcolor==savecolor)
 		break;
-	      
+
 	      (*plot)(z,y,(int)(helpcolor&255));
 	    }
-	  
+
 	  if(savex<z)
 	    puthline(savex, y, z, (int)(savecolor&255));
 	  else
@@ -778,9 +782,9 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 
   trq4=tzr4*tzr4;
   tiq4=tzi4*tzi4;
-  
+
   before=iter;
-  
+
   for(;;)
   {
       sr1=zre1; si1=zim1;
@@ -798,17 +802,17 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
       zre1=rq1-iq1+cre1;
       rq1=zre1*zre1;
       iq1=zim1*zim1;
-      
+
       zim2=(zim2+zim2)*zre2+cim1;
       zre2=rq2-iq2+cre2;
       rq2=zre2*zre2;
       iq2=zim2*zim2;
-      
+
       zim3=(zim3+zim3)*zre3+cim2;
       zre3=rq3-iq3+cre1;
       rq3=zre3*zre3;
       iq3=zim3*zim3;
-      
+
       zim4=(zim4+zim4)*zre4+cim2;
       zre4=rq4-iq4+cre2;
       rq4=zre4*zre4;
@@ -818,22 +822,22 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
       zre5=rq5-iq5+midr;
       rq5=zre5*zre5;
       iq5=zim5*zim5;
-      
+
       zim6=(zim6+zim6)*zre6+midi;
       zre6=rq6-iq6+cre1;
       rq6=zre6*zre6;
       iq6=zim6*zim6;
-      
+
       zim7=(zim7+zim7)*zre7+midi;
       zre7=rq7-iq7+cre2;
       rq7=zre7*zre7;
       iq7=zim7*zim7;
-      
+
       zim8=(zim8+zim8)*zre8+cim2;
       zre8=rq8-iq8+midr;
       rq8=zre8*zre8;
       iq8=zim8*zim8;
-      
+
       zim9=(zim9+zim9)*zre9+midi;
       zre9=rq9-iq9+midr;
       rq9=zre9*zre9;
@@ -896,14 +900,14 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	l1/tzr1;
       if(FABS(1.0-l1)>twidth)
 	break;
-      
+
       l2=GET_IMAG(cr1,ci1);
       l2=(tzi1==0.0)?
 	(l2==0.0)?1.0:1000.0:
 	l2/tzi1;
       if(FABS(1.0-l2)>twidth)
 	break;
-      
+
       l1=GET_REAL(cr2,ci1);
       l1=(tzr2==0.0)?
 	(l1==0.0)?1.0:1000.0:
@@ -924,14 +928,14 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	l1/tzr3;
       if(FABS(1.0-l1)>twidth)
 	break;
-      
+
       l2=GET_IMAG(cr1,ci2);
       l2=(tzi3==0.0)?
 	(l2==0.0)?1.0:1000.0:
 	l2/tzi3;
       if(FABS(1.0-l2)>twidth)
 	break;
-      
+
       l1=GET_REAL(cr2,ci2);
       l1=(tzr4==0.0)?
 	(l1==0.0)?1.0:1000.0:
@@ -965,7 +969,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
     }
 
   /* compute key values for subsequent rectangles */
-  
+
   re10=interpolate(cre1,midr,cre2,sr1,sr5,sr2,cr1);
   im10=interpolate(cre1,midr,cre2,si1,si5,si2,cr1);
 
@@ -983,7 +987,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 
   re16=interpolate(cre1,midr,cre2,sr6,sr9,sr7,cr2);
   im16=interpolate(cre1,midr,cre2,si6,si9,si7,cr2);
-  
+
   re12=interpolate(cim1,midi,cim2,sr1,sr6,sr3,ci1);
   im12=interpolate(cim1,midi,cim2,si1,si6,si3,ci1);
 
@@ -1062,7 +1066,7 @@ rhombus_done:
 }
 
 #if (_MSC_VER >= 700)
-#pragma code_seg ()    
+#pragma code_seg ()
 #endif
 
 void soi_ldbl(void)

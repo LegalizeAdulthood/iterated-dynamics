@@ -24,6 +24,8 @@
 #endif
 #ifdef __TURBOC__
 #include <alloc.h>
+#elif defined(__APPLE__)
+#include <malloc/malloc.h>
 #elif !defined(__386BSD__)
 #include <malloc.h>
 #endif
@@ -140,7 +142,7 @@ int get_toggles()
                           : (usr_stdcalcmode == 'g' && stoppass == 4) ? 7
                           : (usr_stdcalcmode == 'g' && stoppass == 5) ? 8
                           : (usr_stdcalcmode == 'g' && stoppass == 6) ? 9
-                          : (usr_stdcalcmode == 'b') ? 10 
+                          : (usr_stdcalcmode == 'b') ? 10
 			  : (usr_stdcalcmode == 's') ? 11
 			  : (usr_stdcalcmode == 't') ? 12
 			  : (usr_stdcalcmode == 'd') ? 13

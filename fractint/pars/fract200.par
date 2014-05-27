@@ -85,8 +85,9 @@ music_1            { ; Music and par Copyright (c) Sylvie Gallet, 1999
   corners=3.751879/0.07802473/7.537395/-3.930215/6.557631/2.54\
   9392 params=8.01/2 float=y maxiter=100 bailout=128
   inside=3 viewwindows=4.2/0.75/yes/0/0 hertz=150
-  sound=x/fm/quant polyphony=9 wavetype=5 attack=1
+  polyphony=9 wavetype=5 attack=1
   sustain=10 srelease=15 scalemap=1/2/1/3/1/4/1/5/1/6/1/7
+  sound=x/fm/quant
   orbitdelay=1300 showorbit=yes colors=@default.map
   }
 
@@ -95,9 +96,10 @@ music_2            { ; Music and par Copyright (c) Sylvie Gallet, 1999
   reset=2000 type=quadruptwo passes=1
   corners=-2.523687/37.52171/-51.15019/-34.31792
   params=-33/1/5 float=y maxiter=20 bailout=64 inside=3
-  viewwindows=4.2/0.75/yes/0/0 hertz=10 sound=z/fm/quant
+  viewwindows=4.2/0.75/yes/0/0 hertz=10
   polyphony=3 attack=1 decay=6 sustain=7 srelease=14
   scalemap=1/2/1/3/1/4/1/5/1/6/1/7 orbitdelay=1900
+  sound=z/fm/quant
   showorbit=yes colors=@default.map
   }
 
@@ -106,9 +108,10 @@ music_3            { ; Music and par Copyright (c) Sylvie Gallet, 1999
   reset=2000 type=quadruptwo passes=1
   corners=-36.04249/11.80311/-35.97947/-15.86855
   params=-25/1/5 float=y maxiter=20 bailout=64 inside=3
-  viewwindows=4.2/0.75/yes/0/0 hertz=10 sound=z/fm/quant
+  viewwindows=4.2/0.75/yes/0/0 hertz=10
   polyphony=9 wavetype=2 attack=1 decay=7 sustain=10
   srelease=13 scalemap=1/2/1/3/1/4/1/5/1/6/1/7
+  sound=z/fm/quant
   orbitdelay=1900 showorbit=yes colors=@default.map
   }
 
@@ -117,9 +120,10 @@ music_4            { ; Music and par Copyright (c) Sylvie Gallet, 1999
   reset=2000 type=quadruptwo passes=1
   corners=-29.41428/9.819112/-37.59262/-21.10167
   params=-25/1/5 float=y maxiter=12 bailout=64 inside=3
-  viewwindows=4.2/0.75/yes/0/0 hertz=8 sound=z/fm/quant
+  viewwindows=4.2/0.75/yes/0/0 hertz=8
   polyphony=6 wavetype=2 attack=9 decay=9 sustain=11
   srelease=13 scalemap=1/1/3/3/3/6/6/8/8/10/10/12
+  sound=z/fm/quant
   orbitdelay=1625 showorbit=yes colors=@default.map
   }
 
@@ -128,9 +132,10 @@ music_5            { ; Music and par Copyright (c) Sylvie Gallet, 1999
   reset=2000 type=hopalong passes=1
   center-mag=-0.406464/-0.371105/0.2523325/0.784/-43.558/0.968
   params=-1/1.101/0.995 float=y maxiter=3
-  viewwindows=4.2/0.75/yes/0/0 hertz=150 sound=x/fm/quant
+  viewwindows=4.2/0.75/yes/0/0 hertz=150
   polyphony=5 wavetype=1 attack=8 decay=8 sustain=11
   scalemap=1/1/3/3/3/6/6/8/8/10/10/11 orbitdelay=1600
+  sound=x/fm/quant
   showorbit=yes colors=@default.map
   }
 
@@ -139,9 +144,10 @@ music_6            { ; Music and par Copyright (c) Sylvie Gallet, 1999
   reset=2000 type=threeply passes=1
   center-mag=4.54747e-013/-4.54747e-013/0.0005274262
   params=1/-1/1 float=y maxiter=3
-  viewwindows=4.2/0.75/yes/0/0 hertz=50 sound=x/fm/quant
+  viewwindows=4.2/0.75/yes/0/0 hertz=50
   polyphony=9 attack=9 sustain=8
   scalemap=1/1/3/3/3/6/6/8/8/10/10/11 orbitdelay=1500
+  sound=x/fm/quant
   showorbit=yes colors=@default.map
   }
 
@@ -150,8 +156,9 @@ Waterfall          { ; Music par Copyright (c) Bill Jemison [70400,2537] 1999
                      ; Compatible with most SB compatible cards (OPL-3 chip)
   reset=2000 type=chip passes=1 center-mag=0/0/0.001754386
   params=-15/-19/1 float=y viewwindows=12/0.75/yes/0/0 hertz=-100
-  sound=x/fm/quant polyphony=3 decay=8 sustain=14 srelease=10
-  scalemap=1/3/5/6/8/10/12/1/3/5/8/10 orbitdelay=1000 showorbit=yes
+  polyphony=3 decay=8 sustain=14 srelease=10
+  scalemap=1/3/5/6/8/10/12/1/3/5/8/10
+  sound=x/fm/quant orbitdelay=1000 showorbit=yes
   }
 
 Mariah             { ; Music par Copyright (c) Bill Jemison [70400,2537] 1999
@@ -160,7 +167,7 @@ Mariah             { ; Music par Copyright (c) Bill Jemison [70400,2537] 1999
   reset=2000 type=mandel passes=1
   center-mag=-0.215153/0.643042/1353.996/0.1539/-7.499/-51.994
   params=0/0 maxiter=1000 viewwindows=16/0.75/yes/0/0 hertz=220
-  sound=y/fm polyphony=6 wavetype=4 orbitdelay=1000 showorbit=yes
+  polyphony=6 wavetype=4 sound=y/fm orbitdelay=1000 showorbit=yes
   }
 
 
@@ -169,8 +176,9 @@ The_Sorceress      { ; Music par Copyright (c) Bill Jemison [70400,2537] 1999
                      ; Compatible with most SB compatible cards (OPL-3 chip)
   reset=2000 type=chip passes=1 center-mag=0/0/0.001754386
   params=-15/-19/1 float=y viewwindows=12/0.75/yes/0/0 hertz=-200
-  sound=x/pc/fm/quant polyphony=6 attack=9 decay=8 sustain=14
+  polyphony=6 attack=9 decay=8 sustain=14
   srelease=10 scalemap=1/4/4/8/8/4/1/4/8/4/4/1 orbitdelay=1000
+  sound=x/pc/fm/quant
   showorbit=yes
   }
 
@@ -179,6 +187,7 @@ Pod_Racers         { ; Music par Copyright (c) Bill Jemison [70400,2537] 1999
                      ; Compatible with most SB compatible cards (OPL-3 chip)
   reset=2000 type=mandelcloud passes=1 center-mag=-0.5/0/0.6666667
   params=50 float=y maxiter=500 viewwindows=12/0.75/yes/0/0 hertz=512
-  sound=x/pc/fm polyphony=3 wavetype=1 decay=8 sustain=14 srelease=10
+  polyphony=3 wavetype=1 decay=8 sustain=14 srelease=10
+  sound=x/pc/fm
   orbitdelay=1000 showorbit=yes
   }

@@ -25,7 +25,7 @@ int menu_checkkey(int curkey,int choice);
 #define PRODUCTION
 */
 int release=2004;  /* this has 2 implied decimals; increment it every synch */
-int patchlevel=10; /* patchlevel for DOS version */
+int patchlevel=11; /* patchlevel for DOS version */
 
 /* fullscreen_choice options */
 #define CHOICERETURNKEY 1
@@ -315,7 +315,7 @@ void helptitle()
    strcpy(msg,"X");
 #else
    *msg=0;
-#endif   
+#endif
    sprintf(buf,"FRACTINT Version %d.%01d",release/100,(release%100)/10);
    strcat(msg,buf);
    if (release%10) {
@@ -327,7 +327,7 @@ void helptitle()
       strcat(msg,buf);
       }
    putstringcenter(0,0,80,C_TITLE,msg);
-   
+
 /* uncomment next for production executable: */
 #ifdef PRODUCTION
     return;
@@ -482,7 +482,7 @@ void discardscreen()
 
 char speed_prompt[]="Speed key string";
 
-/* For file list purposes only, it's a directory name if first 
+/* For file list purposes only, it's a directory name if first
    char is a dot or last char is a slash */
 static int isadirname(char far *name)
 {
@@ -1086,11 +1086,11 @@ static int menutype;
 #define MENU_HDG 3
 #define MENU_ITEM 1
 
-int check_exit()
+int check_exit(void)
 {
       int i;
       static char far s[] = "Exit from "Fractint" (y/n)? y";
-   
+
       exitpending = 1;
       helptitle();
       setattr(1,0,C_GENERAL_MED,24*80);
@@ -1267,7 +1267,7 @@ top:
    choicekey[nextright+=2] = 'g';
    attributes[nextright] = MENU_ITEM;
    LOADPROMPTSCHOICES(nextright,"give command string      <g>  ");
-#ifdef XFRACT   
+#ifdef XFRACT
    choicekey[nextright+=2] = 'u';
    attributes[nextright] = MENU_ITEM;
    LOADPROMPTSCHOICES(nextright,"list of contributors     <u>  ");
@@ -1786,7 +1786,7 @@ int load_fractint_cfg(int options)
    int commas[10];
    int textsafe2;
    char tempstring[150];
-   int truecolorbits; 
+   int truecolorbits;
 
    vidtbl = MK_FP(extraseg,0);
    cfglinenums = (int far *)(&vidtbl[MAXVIDEOMODES]);

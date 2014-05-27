@@ -100,7 +100,7 @@
  *                      X, Y = exclusion modes, F = freesyle mode, T = stripe
  *                      mode is waiting for #.
  *
- *   03-21-97 AMC     Made '"' work the same as '@' and made 'œ' work like
+ *   03-21-97 AMC     Made '"' work the same as '@' and made '?' work like
  *                      '#' for those of us on this side of the Atlantic!
  *                    The original palette is now stored in the other slots
  *                      on startup, so you can 'undo all' if you haven't
