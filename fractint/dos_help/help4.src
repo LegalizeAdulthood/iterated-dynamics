@@ -65,10 +65,10 @@
   mathtolerance=<nnn>/<nnn> This commands controls the logic that automatically
                            selects one of integer/float/arbitrary precision
                            based on precision requirements of the current zoom
-                           depth. The first number controls the integer/float 
-                           transition, and the second number controls the 
-                           float/arbitrary precision transition. 
-  minstack=<nnn>           For SOI (passes=s). This controls the minimum number 
+                           depth. The first number controls the integer/float
+                           transition, and the second number controls the
+                           float/arbitrary precision transition.
+  minstack=<nnn>           For SOI (passes=s). This controls the minimum number
                            stack memory reserved during synchronous orbits.
 ~FF
 {Fractal Type Parameters}
@@ -200,8 +200,8 @@
   volume=nn                Volume adjustment for FM synth card, but NOT the
                            PC speaker.
   attenuate=none|low|mid|high  Attenuation of high pitched notes.
-  scalemap=nn/nn/nn/...    Combined with quantization this allows selecting
-                           notes on the musical scale.
+  scalemap=nn|p/nn|p/nn|p/... Combined with quantization this allows selecting
+                           notes on the musical scale or using a pause.
 ~OnLineFF
 {File Parameters}
   filename=.suffix          Sets the default file extension for the <r> command
@@ -519,7 +519,7 @@ added. If the parfile doesn't exist it will be created.
 Redirection of output to a log file is possible in the DOS version because
 all screen output is written to the standard output.
 
-If you leave the GIF filename out of the command lime but add a map= command, 
+If you leave the GIF filename out of the command lime but add a map= command,
 then the makepar command will write a PAR named for the color map with only
 the colors in the PAR entry. This is a handy tool for converting maps
 into compressed PAR colors entry. For example, you could type:\
@@ -615,7 +615,7 @@ FLOAT=yes\
 Most fractal types have both a fast integer math and a floating point
 version. The faster, but possibly less accurate, integer version is the
 default. The default is to use integer math, but in this age of pentium
-(amd later) CPUS we now recommend your making float=yes the default by 
+(amd later) CPUS we now recommend your making float=yes the default by
 adding this line to your SSTOOLS.INI file.
 Also see {"Limitations of Integer Math (And How We Cope)"}.
 
@@ -632,21 +632,21 @@ precision detection changes to arbitrary precision too late and regular double
 precision is used with poor results.
 
 MATHTOLERANCE=<nnn>/<nnn>\
-This commands controls the logic that automatically selects one of 
-integer/float/arbitrary precision based on precision requirements of the 
-current zoom depth. The first number controls the integer/float transition, 
-and the second number controls the float/arbitrary precision transition. The 
-default value of .05 for both means that the ratio between the exact and 
-calculated width and height is between .95 and 1.05. A larger value than .05 
-(say .10) makes the test looser so that the lower precision math is used 
+This commands controls the logic that automatically selects one of
+integer/float/arbitrary precision based on precision requirements of the
+current zoom depth. The first number controls the integer/float transition,
+and the second number controls the float/arbitrary precision transition. The
+default value of .05 for both means that the ratio between the exact and
+calculated width and height is between .95 and 1.05. A larger value than .05
+(say .10) makes the test looser so that the lower precision math is used
 longer. A value <= 0 means the test is always failed and the higher precision
-math type is used. A value >= 1 means that the test is always passed and the 
+math type is used. A value >= 1 means that the test is always passed and the
 lower precision math type is used.
 
 MINSTACK=<nnn>\
-This sets the minimum number of stack bytes required for passes=s in order to 
+This sets the minimum number of stack bytes required for passes=s in order to
 do another SOI recursion. If you get bad results, try setting this to a
-value above the default value of 1100. If the value is too large, the image 
+value above the default value of 1100. If the value is too large, the image
 will be OK but generation will be slower.
 ;
 ;
@@ -836,7 +836,7 @@ ORBITDRAWMODE=rect|line\
 The rect(angle) method plots the orbits in a rectangle that can be
 zoomed, rotated, and skewed using the <F6> {Image Coordinates Screen}, and
 the straight line method plots the orbits between two points specified
-on the <F6> image coordinates screen.  
+on the <F6> image coordinates screen.
 ;
 ;
 ~Topic=Color Parameters
@@ -1820,7 +1820,7 @@ fractint to save what it has done so far and give your machine back.  A status
 code of 2 is returned by fractint to the batch file.  Kick off the batch
 again when you have another time slice for it.
 
-When the savetime parameter is negative, Fractint will save the image after 
+When the savetime parameter is negative, Fractint will save the image after
 the requested time and exit.  This is useful in batch files where you want to
 generate several images with a time limit on each image.
 
@@ -1839,7 +1839,7 @@ work with fractal types which can be resumed.  See
 Alas, in this day of Windows, video adapter manufacturers do not have much
 incentive to support DOS video modes. Fractint can support any video modes
 included in your board's VESA video bios. Many otherwise good boards do not
-include the higher resolution modes in their bios even though those modes 
+include the higher resolution modes in their bios even though those modes
 are supported in the manufacturer's Windows driver.
 
 Fractint users are particularly fond of the 1600x1200 mode. If you want to
@@ -1853,12 +1853,12 @@ so you will have to edit the fractint.cfg file to support your board. You can
 run the program makefcfg.exe that comes with fractint to generate entries
 for your fractint.cfg file.
 
-Finally, even if your video board VESA Bios supports high resolution video 
-modes, it probably doesn't come with a utility that allows you to set the 
-vertical refresh. If the vertical refresh is set for 60 Hz or less, you may 
+Finally, even if your video board VESA Bios supports high resolution video
+modes, it probably doesn't come with a utility that allows you to set the
+vertical refresh. If the vertical refresh is set for 60 Hz or less, you may
 see flicker and be subject to headaches. Fortunately, there is a wonderful
-freeware utility by Rob Muller that allows you to control the vertical 
-refresh for any VESA video mode. Of course your monitor still needs to be 
+freeware utility by Rob Muller that allows you to control the vertical
+refresh for any VESA video mode. Of course your monitor still needs to be
 able to support higher rates -- software can't help that. To get Rob's
 unirefresh program, email Rob at r.muller@student.utwente.nl or check out
 

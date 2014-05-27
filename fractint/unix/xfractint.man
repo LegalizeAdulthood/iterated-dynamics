@@ -114,7 +114,7 @@ CTL_PLUS        }
 CTL_MINUS       {
 .fi 
 .SH "COPYRIGHT"
-Copyright 1991 \- 2011 by The Stone Soup Group
+Copyright 1991 \- 2012 by The Stone Soup Group
 .SH "AUTHORS"
 .nf 
 The original Unix port was done by Ken Shirriff (shirriff@eng.sun.com).

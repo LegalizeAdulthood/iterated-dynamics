@@ -1057,10 +1057,19 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
    if(soundflag&64) { /* quantize turned on */
       for(i=0;i<=11;i++) if(scale_map[i] != i+1) i=15;
-      if(i>12)
-         put_parm(s_seqd12,s_scalemap,scale_map[0],scale_map[1],scale_map[2],scale_map[3]
-            ,scale_map[4],scale_map[5],scale_map[6],scale_map[7],scale_map[8]
-            ,scale_map[9],scale_map[10],scale_map[11]);
+      if(i>12){
+         put_parm(" %s=",s_scalemap);
+         for(i=0;i<=10;i++){
+            if (scale_map[i] == -1)
+               put_parm("%s/", s_pause);
+            else
+               put_parm("%d/", scale_map[i]);
+         }
+         if (scale_map[11] == -1)
+            put_parm("%s", s_pause);
+         else
+            put_parm("%d", scale_map[11]);
+      }
    }
 
   if(soundflag != 9) {

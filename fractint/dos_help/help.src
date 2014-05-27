@@ -282,8 +282,12 @@ typically have a short life and are updated frequently. They may have
 bug fixes, and thus be more stable, but they may also have new features
 which very likely have new bugs.
 
-Version 20.4.11 is an update of Fractint 20.0 based on the developer's
-  version 20.4.10.  New features include:
+Version 20.4.12 is an update of Fractint 20.0 based on the developer's
+  version 20.4.11.  New features include:
+
+Patch 12 to Version 20.4.0\
+
+Fixed buffer overflow in disk video mode when savename was too long.
 
 Patch 11 to Version 20.4.0\
 
@@ -297,6 +301,9 @@ Marcus Pallinger provided changes to allow compiling Xfractint on an Intel Mac.
 Fixed Xfractint version DivideBrot5 fractal type broken with patch 10.
 
 Fixed Xfractint ncurses interface broken with patch 10.
+
+Added a pause to the sound options via the use of the scalemap feature.
+  See {Advanced Sound Controls}.  Allowed scalemap value of 0 in PAR entries.
 
 Patch 10 to Version 20.4.0\
 
