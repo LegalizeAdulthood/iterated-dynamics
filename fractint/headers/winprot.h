@@ -8,11 +8,6 @@
 extern long cdecl calcmandfpasm_p5(void);
 extern void cdecl calcmandfpasmstart_p5(void);
 
-/*  wgeneral -- assembler file prototypes */
-
-extern long cdecl multiply(long, long, int);
-extern long cdecl divide(long, long, int);
-
 /*  dialog -- C file prototypes */
 
 extern void PrintFile(void);
@@ -34,7 +29,6 @@ extern void far_memset(void far *, int , int);
 extern int getcolor(int, int);
 extern int out_line(BYTE *, int);
 extern void putcolor_a (int, int, int);
-extern void spindac(int, int);
 extern void buzzer (int);
 extern int thinking(int, char far *);
 extern void CalibrateDelay(void);
@@ -45,8 +39,6 @@ extern int get_video_mode(struct fractal_info *,struct ext_blk_3 *);
 extern int check_vidmode_keyname(char *);
 extern void vidmode_keyname(int, char *);
 extern int check_vidmode_key(int, int);
-extern void put_line(int, int, int, BYTE *);
-extern void get_line(int, int, int, BYTE *);
 extern void restoredac(void);
 extern void reset_zoom_corners(void);
 extern void flush_screen(void);
@@ -59,8 +51,6 @@ extern void winfract_help(void);
 
 /*  windos2 -- C file prototypes */
 
-extern void movecursor(int, int);
-extern void setattr(int, int, int, int);
 extern int  putstringcenter(int, int, int, int, char far *);
 extern void putstring(int, int, int, unsigned char far *);
 extern int  strncasecmp(char far *,char far *,int);
@@ -73,7 +63,6 @@ extern void discardgraphics(void);
 extern int load_palette(void);
 extern void save_palette(void);
 extern void fractint_help(void);
-extern int getakeynohelp(void);
 extern int win_make_batch_file(void);
 extern int fractint_getkeypress(int);
 extern int savegraphics(void);
@@ -89,7 +78,6 @@ extern void win_savedac(void);
 /*  winstubs -- C file prototypes */
 
 extern void rotate(int);
-extern void find_special_colors(void);
 extern int showtempmsg(char far *);
 extern void cleartempmsg(void);
 extern void freetempmsg(void);
@@ -116,7 +104,6 @@ extern void targa_writedisk(unsigned int,unsigned int,BYTE,BYTE,BYTE);
 extern void targa_readdisk(unsigned int,unsigned int,BYTE *,BYTE *,BYTE *);
 extern int SetColorPaletteName(char *);
 extern BYTE far *findfont(int);
-extern long cdecl readticker(void);
 extern void EndTGA(void);
 
 extern int key_count(int);
@@ -127,7 +114,6 @@ extern void _fastcall addbox(struct coords);
 extern void _fastcall drawlines(struct coords, struct coords, int, int);
 extern int showvidlength(void);
 
-extern int get_sound_params(void);
 extern int soundon(int);
 extern void soundoff(void);
 extern int initfm(void);
@@ -146,9 +132,6 @@ extern void puttruecolor(int, int, int, int, int);
 extern void scroll_center(int, int);
 extern void scroll_relative(int, int);
 extern void scroll_state(int);
-extern void setnullvideo(void);
 extern void delay(int);
-extern void initasmvars(void);
-extern void adapter_detect(void);
 
 #endif

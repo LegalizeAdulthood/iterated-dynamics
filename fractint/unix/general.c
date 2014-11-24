@@ -81,9 +81,7 @@ void fpe_handler(int signum)
  * multiplication.
  */
 long
-multiply(x, y, n)
-long x,y;
-int n;
+multiply(long x, long y, int n)
 {
     register long l;
     l = ((float)x)* ((float)y)/(float)(1<<n);
@@ -100,10 +98,7 @@ int n;
 ;
 ;       z = divide(x,y,n);       z = x / y;
 */
-long
-divide(x,y,n)
-long x,y;
-int n;
+long divide(long x, long y, int n)
 {
     return (long) ( ((float)x)/ ((float)y)*(float)(1<<n));
 }
@@ -517,7 +512,7 @@ decode_fractal_info(info,dir)
     if (bufPtr-buf != FRACTAL_INFO_SIZE) {
 	printf("Warning: loadfile miscount on fractal_info structure.\n");
 	printf("Components add up to %d bytes, but FRACTAL_INFO_SIZE = %d\n",
-		bufPtr-buf, FRACTAL_INFO_SIZE);
+		(int) (bufPtr-buf), (int) FRACTAL_INFO_SIZE);
     } 
     if (dir==0) {
 	bcopy((char *)buf,(char *)info,FRACTAL_INFO_SIZE);
@@ -763,7 +758,9 @@ fix_ranges(ranges,num,dir)
 	bcopy((char *)ranges, (char *)buf, num*sizeof(int));
     }
     for (i=0;i<num;i++) {
-	getInt(&ranges[i],&bufPtr,dir);
+	short dest = 0;
+	getInt(&dest,&bufPtr,dir);
+	ranges[i] = dest;
     }
     free((char *)buf);
 }
@@ -787,9 +784,9 @@ decode_evolver_info(info,dir)
 	bcopy((char *)info,(char *)buf,sizeof(struct evolution_info));
     }
 
-    getInt(&info->evolving,&bufPtr,dir);
+    getInt((short *) &info->evolving,&bufPtr,dir);
     getInt(&info->gridsz,&bufPtr,dir);
-    getInt(&info->this_gen_rseed,&bufPtr,dir);
+    getInt((short *) &info->this_gen_rseed,&bufPtr,dir);
     getDouble(&info->fiddlefactor,&bufPtr,dir);
     getDouble(&info->paramrangex,&bufPtr,dir);
     getDouble(&info->paramrangey,&bufPtr,dir);
@@ -814,7 +811,7 @@ decode_evolver_info(info,dir)
     if (bufPtr-buf != EVOLVER_INFO_SIZE) {
 	printf("Warning: loadfile miscount on evolution_info structure.\n");
 	printf("Components add up to %d bytes, but EVOLVER_INFO_SIZE = %d\n",
-		bufPtr-buf, EVOLVER_INFO_SIZE);
+		(int) (bufPtr-buf), (int) EVOLVER_INFO_SIZE);
     } 
     if (dir==0) {
 	bcopy((char *)buf,(char *)info,EVOLVER_INFO_SIZE);
@@ -849,8 +846,8 @@ decode_orbits_info(info,dir)
     getDouble(&info->ox3rd,&bufPtr,dir);
     getDouble(&info->oy3rd,&bufPtr,dir);
     getInt(&info->keep_scrn_coords,&bufPtr,dir);
-    getChar(&info->drawmode,&bufPtr,dir);
-    getChar(&info->dummy,&bufPtr,dir);
+    getChar((unsigned char *) &info->drawmode,&bufPtr,dir);
+    getChar((unsigned char *) &info->dummy,&bufPtr,dir);
 
     for (i=0;i<(sizeof(info->future)/sizeof(short));i++) {
         getInt(&info->future[i],&bufPtr,dir);
@@ -858,7 +855,7 @@ decode_orbits_info(info,dir)
     if (bufPtr-buf != ORBITS_INFO_SIZE) {
 	printf("Warning: loadfile miscount on orbits_info structure.\n");
 	printf("Components add up to %d bytes, but ORBITS_INFO_SIZE = %d\n",
-		bufPtr-buf, ORBITS_INFO_SIZE);
+		(int) (bufPtr-buf), (int) ORBITS_INFO_SIZE);
     } 
     if (dir==0) {
 	bcopy((char *)buf,(char *)info,ORBITS_INFO_SIZE);

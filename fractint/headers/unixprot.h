@@ -16,6 +16,7 @@ extern void cdecl calcmandfpasmstart_p5(void);
 /*
  *   general.c -- C file prototypes
  */
+extern int getakey(void);
 extern int waitkeypressed(int);
 extern void fix_ranges(int *, int, int);
 extern void decode_evolver_info(struct evolution_info *, int);

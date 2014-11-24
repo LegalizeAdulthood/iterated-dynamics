@@ -25,6 +25,19 @@
 #include "dosprot.h"
 #endif
 
+extern long multiply(long x, long y, int n);
+extern long divide(long x, long y, int n);
+extern void spindac(int dir, int inc);
+extern void put_line(int row, int startcol, int stopcol, BYTE *pixels);
+extern void get_line(int row, int startcol, int stopcol, BYTE *pixels);
+extern void find_special_colors(void);
+extern int getakeynohelp(void);
+extern long readticker(void);
+extern void initasmvars(void);
+extern void adapter_detect(void);
+extern int get_sound_params(void);
+extern void setnullvideo(void);
+
 /*  calcmand -- assembler file prototypes */
 
 extern long cdecl calcmandasm(void);

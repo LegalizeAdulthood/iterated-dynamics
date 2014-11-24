@@ -1734,7 +1734,7 @@ void discardgraphics() /* release expanded/extended memory if any in use */
 #endif
 }
 
-/*VIDEOINFO *g_video_table;  /* temporarily loaded fractint.cfg info */
+/*VIDEOINFO *g_video_table;*/  /* temporarily loaded fractint.cfg info */
 int g_video_table_len;                 /* number of entries in above           */
 
 int showvidlength()

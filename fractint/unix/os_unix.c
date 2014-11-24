@@ -12,7 +12,6 @@ BYTE block[4096] = { 0 };
 int g_checked_vvs = 0;
 int cpu, fpu;                        /* cpu, fpu flags */
 unsigned char g_dac_box[256][3];
-int disktarga = 0;
 static char extrasegment[0x18000] = { 0 };
 void *extraseg = &extrasegment[0];
 int fm_attack = 0;
@@ -107,5 +106,5 @@ unsigned long get_disk_space(void)
 
 void init_failure(const char *message)
 {
-	fprintf(stderr, message);
+	fputs(message, stderr);
 }

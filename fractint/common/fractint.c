@@ -77,7 +77,7 @@ char *fract_dir1="", *fract_dir2="";
 
         int     fractype;               /* if == 0, use Mandelbrot  */
         char    stdcalcmode;            /* '1', '2', 'g', 'b'       */
-        long    creal, cimag;           /* real, imag'ry parts of C */
+        long    c_real, c_imag;           /* real, imag'ry parts of C */
         long    delx, dely;             /* screen pixel increments  */
         long    delx2, dely2;           /* screen pixel increments  */
         LDBL    delxx, delyy;           /* screen pixel increments  */

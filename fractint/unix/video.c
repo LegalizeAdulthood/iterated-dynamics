@@ -2,6 +2,7 @@
 #include <string.h>
 #include "port.h"
 #include "prototyp.h"
+#include "drivers.h"
 /*
  * This file contains Unix versions of the routines in video.asm
  * Copyright 1992 Ken Shirriff
@@ -458,7 +459,7 @@ spindac (dir, inc)
 	}
     }
   writevideopalette ();
-  delay (colors - g_dac_count - 1);
+  driver_delay(colors - g_dac_count - 1);
 }
 
 /*
@@ -718,10 +719,7 @@ put_a_char (ch)
 ;       Called by the GIF decoder
 */
 
-void
-get_line (row, startcol, stopcol, pixels)
-     int row, startcol, stopcol;
-     BYTE *pixels;
+void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
   if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
     return;

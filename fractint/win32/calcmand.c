@@ -262,10 +262,10 @@ initoldcolor:
 		mov		dword ptr oldcoloriter,	eax	; reset oldcoloriter
 
 initparms:
-		mov		eax, dword ptr creal		; initialize	x == creal
+		mov		eax, dword ptr c_real		; initialize	x == c_real
 		mov		dword ptr x, eax			;  ...
 
-		mov		eax, dword ptr cimag		; initialize	y == cimag
+		mov		eax, dword ptr c_imag		; initialize	y == c_imag
 		mov		dword ptr y, eax			;  ...
 
 		mov		eax, dword ptr maxit		; setup k = maxit

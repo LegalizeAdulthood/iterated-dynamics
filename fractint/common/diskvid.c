@@ -25,7 +25,7 @@ int disk16bit = 0;         /* storing 16 bit values for continuous potential */
 
 static int timetodisplay;
 static FILE *fp = NULL;
-static int disktarga;
+int disktarga;
 
 #define BLOCKLEN 2048   /* must be a power of 2, must match next */
 #define BLOCKSHIFT 11   /* must match above */
@@ -475,7 +475,6 @@ void targa_writedisk(unsigned int col, unsigned int row,
 
 static void _fastcall  findload_cache(long offset) /* used by read/write */
 {
-#ifndef XFRACT
 	unsigned int tbloffset;
 	int i, j;
 	unsigned int *fwd_link;
@@ -574,13 +573,11 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
 	cache_lru->hashlink = *fwd_link;
 	*fwd_link = (int) ((char *)cache_lru - (char *)cache_start);
 	cur_cache = cache_lru;
-#endif
 }
 
 /* lookup for write_cache_lru */
 static struct cache * _fastcall  find_cache(long offset)
 {
-#ifndef XFRACT
 	unsigned int tbloffset;
 	struct cache *ptr1;
 	tbloffset = hash_ptr[((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1)];
@@ -594,7 +591,6 @@ static struct cache * _fastcall  find_cache(long offset)
 		tbloffset = ptr1->hashlink;
 	}
 	return NULL;
-#endif
 }
 
 static void  write_cache_lru()

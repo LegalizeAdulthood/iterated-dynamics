@@ -43,6 +43,7 @@
 #include "helpdefs.h"
 #include "port.h"
 #include "prototyp.h"
+#include "drivers.h"
 
 #ifdef LINUX
 #ifndef FNDELAY
@@ -1541,7 +1542,7 @@ handleesc()
     /* HP escape key sequences. */
     ch1 = getachar();
     if (ch1==-1) {
-	delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+	driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 	ch1 = getachar();
     }
     if (ch1==-1) {
@@ -1562,20 +1563,20 @@ handleesc()
     if (ch1 != '[') return FIK_ESC;
     ch1 = getachar();
     if (ch1==-1) {
-	delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+	driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 	ch1 = getachar();
     }
     if (ch1==-1 || !isdigit(ch1)) return FIK_ESC;
     ch2 = getachar();
     if (ch2==-1) {
-	delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+	driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 	ch2 = getachar();
     }
     if (ch2==-1) return FIK_ESC;
     if (isdigit(ch2)) {
 	ch3 = getachar();
 	if (ch3==-1) {
-	    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+	    driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 	    ch3 = getachar();
 	}
 	if (ch3 != '~') return FIK_ESC;
@@ -1615,7 +1616,7 @@ handleesc()
     /* SUN escape key sequences */
     ch1 = getachar();
     if (ch1==-1) {
-	delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+	driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 	ch1 = getachar();
     }
     if (ch1 != '[') {		/* See if we have esc [ */
@@ -1623,7 +1624,7 @@ handleesc()
     }
     ch1 = getachar();
     if (ch1==-1) {
-	delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+	driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 	ch1 = getachar();
     }
     if (ch1==-1) {
@@ -1643,7 +1644,7 @@ handleesc()
     }
     ch2 = getachar();
     if (ch2==-1) {
-	delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+	driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 	ch2 = getachar();
     }
     if (ch2 == '~') {		/* esc [ ch1 ~ */
@@ -1664,7 +1665,7 @@ handleesc()
     } else {
 	ch3 = getachar();
 	if (ch3==-1) {
-	    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+	    driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 	    ch3 = getachar();
 	}
 	if (ch3 != '~') {	/* esc [ ch1 ch2 ~ */

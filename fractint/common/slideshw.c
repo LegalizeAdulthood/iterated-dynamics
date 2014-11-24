@@ -353,7 +353,7 @@ void recordshw(int key)
          {
             char buf[10];
             vidmode_keyname(key,buf);
-            fprintf(fpss,buf);
+            fputs(buf, fpss);
          }
       else /* not ASCII and not FN key */
          fprintf(fpss,"%4d",key);

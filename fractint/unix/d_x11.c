@@ -15,11 +15,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <X11/Xatom.h>
+#include <X11/Xutil.h>
 #include <signal.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #ifdef _AIX
 #include <sys/select.h>
 #endif
@@ -298,9 +301,6 @@ doneXwindow(DriverX11 *di)
     di->Xpixmap = None;
   }
   XFlush(di->Xdp);
-#if 0
-  XCloseDisplay(di->Xdp);
-#endif
   di->Xdp = NULL;
 }
 
@@ -376,6 +376,7 @@ XErrorEvent *xe;
 	 xe->request_code, xe->minor_code);
   XGetErrorText(dp, xe->error_code, buf, 200);
   printf("%s\n", buf);
+  return 0;
 }
 
 #ifdef FPUERR
@@ -699,10 +700,6 @@ translate_key(int ch)
     case CTL('N'):	return FIK_CTL_PAGE_DOWN;
     case '{':		return FIK_CTL_MINUS;
     case '}':		return FIK_CTL_PLUS;
-#if 0
-      /* we need ^I for tab */
-    case CTL('I'):	return FIK_CTL_INSERT;
-#endif
     case CTL('D'):	return FIK_CTL_DEL;
     case '!':		return FIK_F1;
     case '@':		return FIK_F2;
@@ -1036,6 +1033,7 @@ ev_key_press(DriverX11 *di, XKeyEvent *xevent)
       goodbye();
     }
   }
+  return 0;
 }
 
 /* ev_key_release
@@ -1105,7 +1103,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
     switch (xevent->type) {
     case MotionNotify:
       while (XCheckWindowEvent(di->Xdp, di->Xw, PointerMotionMask, xevent))
-	1;
+	;
       if (banding)
 	XDrawRectangle(di->Xdp, di->Xw, di->Xgc, MIN(bandx0, bandx1), 
 		       MIN(bandy0, bandy1), ABS(bandx1-bandx0), 
@@ -1173,7 +1171,7 @@ ev_motion_notify(DriverX11 *di, XEvent *xevent)
 {
   if (editpal_cursor && !inside_help) {
     while (XCheckWindowEvent(di->Xdp, di->Xw, PointerMotionMask, xevent))
-      1;
+      ;
 	  
     if (xevent->xmotion.state & Button2Mask ||
 	(xevent->xmotion.state & (Button1Mask | Button3Mask))) {
@@ -1212,7 +1210,7 @@ ev_motion_notify(DriverX11 *di, XEvent *xevent)
  *
  *----------------------------------------------------------------------
  */
-static int
+static void
 handle_events(DriverX11 *di)
 {
   XEvent xevent;
@@ -1273,16 +1271,6 @@ static int
 input_pending(DriverX11 *di)
 {
   return XPending(di->Xdp);
-#if 0
-  struct timeval now;
-  fd_set read_fds;
-
-  memset(&now, 0, sizeof(now));
-  FD_ZERO(&read_fds);
-  FD_SET(ConnectionNumber(di->Xdp), &read_fds);
-
-  return select(1, &read_fds, NULL, NULL, &now) > 0;
-#endif
 }
 
 /*----------------------------------------------------------------------
@@ -1417,88 +1405,6 @@ load_font(DriverX11 *di)
   di->font_info = XLoadQueryFont(di->Xdp, di->x_font_name);
   if (di->font_info == NULL)
     di->font_info = XLoadQueryFont(di->Xdp, "6x12");
-}
-
-/*
- *----------------------------------------------------------------------
- *
- * xgetfont --
- *
- *	Get an 8x8 font.
- *
- * Results:
- *	Returns a pointer to the bits.
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
-static BYTE *
-find_font(Driver *drv, int parm)
-{
-  DIX11(drv);
-
-  if (!di->font_table) {
-    XImage *font_image;
-    char str[8];
-    int i, j, k, l;
-    int width;
-    Pixmap font_pixmap;
-    XGCValues values;
-    GC font_gc;
-
-    di->font_table = (unsigned char *) malloc(128*8);
-    bzero(di->font_table, 128*8);
-
-    di->xlastcolor = -1;
-    if (! di->font_info)
-      load_font(di);
-    if (di->font_info == NULL)
-      return NULL;
-    width = di->font_info->max_bounds.width;
-    if (di->font_info->max_bounds.width > 8 ||
-	di->font_info->max_bounds.width != di->font_info->min_bounds.width) {
-      fprintf(stderr, "Bad font\n");
-      free(di->font_table);
-      di->font_table = NULL;
-      return NULL;
-    }
-
-    font_pixmap = XCreatePixmap(di->Xdp, di->Xw, 64, 8, 1);
-    assert(font_pixmap);
-    values.background = 0;
-    values.foreground = 1;
-    values.font = di->font_info->fid;
-    font_gc = XCreateGC(di->Xdp, font_pixmap,
-			GCForeground | GCBackground | GCFont, &values);
-    assert(font_gc);
-
-    for (i = 0; i < 128; i += 8) {
-      for (j = 0; j < 8; j++)
-	str[j] = i+j;
-
-      XDrawImageString(di->Xdp, font_pixmap, di->Xgc, 0, 8, str, 8);
-      font_image =
-	XGetImage(di->Xdp, font_pixmap, 0, 0, 64, 8, AllPlanes, XYPixmap);
-      assert(font_image);
-      for (j = 0; j < 8; j++) {
-	for (k = 0; k < 8; k++) {
-	  for (l = 0; l < width; l++) {
-	    if (XGetPixel(font_image, j*width+l, k)) {
-	      di->font_table[(i+j)*8+k] = (di->font_table[(i+j)*8+k] << 1) | 1;
-	    } else {
-	      di->font_table[(i+j)*8+k] = (di->font_table[(i+j)*8+k] << 1);
-	    }
-	  }
-	}
-      }
-      XDestroyImage(font_image);
-    }
-    
-    XFreeGC(di->Xdp, font_gc);
-    XFreePixmap(di->Xdp, font_pixmap);
-  }
 }
 
 /*----------------------------------------------------------------------
@@ -2363,9 +2269,6 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
   g_good_mode = 1;
   switch (dotmode) {
   case 0:				/* text */
-#if 0
-    clear();
-#endif
     break;
 
   case 19: /* X window */

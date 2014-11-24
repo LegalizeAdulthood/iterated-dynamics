@@ -771,7 +771,8 @@ int tab_display_2(char *msg)
 	show_str_var("map",         MAP_name,     &row, msg);
 	write_row(row++, "Sizeof fractalspecific array %d",
 		num_fractal_types*(int)sizeof(struct fractalspecificstuff));
-	write_row(row++, "calc_status %d pixel [%d, %d]", calc_status, col, row);
+	write_row(row, "calc_status %d pixel [%d, %d]", calc_status, col, row);
+	++row;
 	if (fractype == FORMULA || fractype == FFORMULA)
 	{
 		write_row(row++, "total_formula_mem %ld Max_Ops (posp) %u Max_Args (vsp) %u",

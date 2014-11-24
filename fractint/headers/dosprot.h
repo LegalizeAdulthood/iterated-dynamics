@@ -11,8 +11,6 @@ extern void cdecl calcmandfpasmstart_p5(void);
 
 /*  general -- assembler file prototypes */
 
-extern  long   cdecl multiply(long, long, int);
-extern  long   cdecl divide(long, long, int);
 extern  int    cdecl getakey(void);
 /*extern  void   cdecl buzzer(int); */
 extern  void   cdecl buzzerpcspkr(int);

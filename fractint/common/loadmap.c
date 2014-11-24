@@ -64,7 +64,7 @@ int SetColorPaletteName(char * fn)
 	}
     if (mapdacbox == NULL)
 	{
-		mapdacbox = (char *) malloc(768L);
+		mapdacbox = (BYTE *) malloc(768L);
 		if (mapdacbox == NULL)
 		{
 			stopmsg(0, "Insufficient memory for color map.");

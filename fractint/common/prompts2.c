@@ -744,11 +744,11 @@ get_view_restart:
 	choices[++k] = "";
 	uvalues[k].type = '*';
 
-	sprintf(dim1, "Video memory limits: (for y = %4u) x <= %lu", ymax,  xmax);
+	sprintf(dim1, "Video memory limits: (for y = %4d) x <= %d", ymax,  xmax);
 	choices[++k]= dim1;
 	uvalues[k].type = '*';
 
-	sprintf(dim2, "                     (for x = %4u) y <= %lu", xmax, ymax);
+	sprintf(dim2, "                     (for x = %4d) y <= %d", xmax, ymax);
 	choices[++k]= dim2;
 	uvalues[k].type = '*';
 

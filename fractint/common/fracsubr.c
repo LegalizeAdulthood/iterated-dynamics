@@ -369,8 +369,8 @@ init_restart:
 
    if (fractype != CELLULAR && fractype != ANT)  /* fudgetolong fails w >10 digits in double */
    {
-      creal = fudgetolong(param[0]); /* integer equivs for it all */
-      cimag = fudgetolong(param[1]);
+      c_real = fudgetolong(param[0]); /* integer equivs for it all */
+      c_imag = fudgetolong(param[1]);
       xmin  = fudgetolong(xxmin);
       xmax  = fudgetolong(xxmax);
       x3rd  = fudgetolong(xx3rd);
