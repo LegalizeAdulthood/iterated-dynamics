@@ -2,6 +2,7 @@
 #include "cmplx.h"
 #include "fractint.h"
 #include "mpmath.h"
+#include <sys/statvfs.h>
 
 /* Global variables (yuck!) */
 int MPOverflow = 0;
@@ -98,7 +99,7 @@ long fr_farfree(void)
 	return 0x8FFFFL;
 }
 
-unsigned long GetDiskSpace(void)
+unsigned long get_disk_space(void)
 {
 	/* TODO */
 	return 0x7FFFFFFF;

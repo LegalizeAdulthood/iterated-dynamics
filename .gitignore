@@ -1,0 +1,6 @@
+*.o
+fractint/hc
+fractint/dos_help/fractint.hlp
+fractint/dos_help/helpdefs.h
+fractint/fractint.hlp
+fractint/headers/helpdefs.h

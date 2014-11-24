@@ -91,14 +91,14 @@ ifeq ($(AS),/usr/bin/nasm)
 
 #CFLAGS = -I. -D_CONST $(DEFINES)
 CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -O2 \
-         -march=pentium -DNASM -fno-builtin
+         -DNASM -fno-builtin
 #         -march=athlon64 -DNASM -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -DNASM -fno-builtin
 
 else
 
 CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -O2 \
-         -march=pentium -fno-builtin
+         -fno-builtin
 #         -march=athlon64 -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -fno-builtin
 
@@ -239,7 +239,6 @@ HOBJS = $(DOSHELPDIR)/hc.o unix.o
 .SUFFIXES: .o .c .s .h .asm
 
 xfractint: fractint.hlp .WAIT
-	if [ -f $(DOSHELPDIR)/helpdefs.h ] ; then mv -f $(DOSHELPDIR)/helpdefs.h $(HFD) ; fi
 	cd common ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
 	          "HFD=.${HFD}"
 	cd unix ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
@@ -308,8 +307,15 @@ uninstall:
 # only next might need su
 	rm -f $(BINDIR)/xfractint $(MANDIR)/xfractint.1
 
-fractint.hlp: hc $(DOSHELPDIR)/$(HELP)
-	cd $(DOSHELPDIR); ../hc /c; mv fractint.hlp ..
+$(DOSHELPDIR)/help.src: $(DOSHELPDIR)/help2.src
+$(DOSHELPDIR)/help.src: $(DOSHELPDIR)/help3.src
+$(DOSHELPDIR)/help.src: $(DOSHELPDIR)/help4.src
+$(DOSHELPDIR)/help.src: $(DOSHELPDIR)/help5.src
+
+fractint.hlp $(HFD)/helpdefs.h: $(DOSHELPDIR)/help.src hc
+	cd $(DOSHELPDIR); ../hc /c
+	cp $(DOSHELPDIR)/helpdefs.h $(HFD)
+	cp $(DOSHELPDIR)/fractint.hlp .
 
 .WAIT:
 
