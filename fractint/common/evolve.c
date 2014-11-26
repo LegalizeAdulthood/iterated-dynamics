@@ -807,14 +807,6 @@ void fiddleparms(GENEBASE gene[], int ecount)
 {
 /* call with px,py ... parameter set co-ords*/
 /* set random seed then call rnd enough times to get to px,py */
-/* 5/2/96 adding in indirection */
-/* 26/2/96 adding in multiple methods and field map */
-/* 29/4/96 going for proper handling of the whole gene array */
-/*         bung in a pile of switches to allow for expansion to any
-           future variable types */
-/* 11/6/96 scrapped most of switches above and used function pointers
-           instead */
-/* 4/1/97  picking it up again after the last step broke it all horribly! */
 
  int i;
 

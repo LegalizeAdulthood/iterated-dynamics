@@ -576,7 +576,6 @@ for (;;) {
 }
 
 /* displays differences between current image file and new image */
-/* Bert - suggest add this to video.asm */
 int cmp_line(unsigned char *pixels, int linelen)
 {
    static errcount;

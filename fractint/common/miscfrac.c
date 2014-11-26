@@ -737,8 +737,6 @@ int diffusion()
 /* for Bifurcation fractal typeS.  By rights it now belongs in */
 /* CALCFRACT.C, but it's easier for me to leave it here !      */
 
-/* Original code by Phil Wilson, hacked around by Kev Allen.   */
-
 /* Besides generalisation, enhancements include Periodicity    */
 /* Checking during the plotting phase (AND halfway through the */
 /* filter cycle, if possible, to halve calc times), quicker    */
@@ -1153,7 +1151,7 @@ int popcorn()   /* subset of std engine */
    }
    kbdcount=max_kbdcount;
    plot = noplot;
-   tempsqrx = ltempsqrx = 0; /* PB added this to cover weird BAILOUTs */
+   tempsqrx = ltempsqrx = 0;
    for (row = start_row; row <= iystop; row++)
    {
       reset_periodicity = 1;
@@ -1173,12 +1171,6 @@ int popcorn()   /* subset of std engine */
 }
 
 /******************* standalone engine for "lyapunov" *********************/
-/*** Roy Murphy [76376,721]                                             ***/
-/*** revision history:                                                  ***/
-/*** initial version: Winter '91                                        ***/
-/***    Fall '92 integration of Nicholas Wilt's ASM speedups            ***/
-/***    Jan 93' integration with calcfrac() yielding boundary tracing,  ***/
-/***    tesseral, and solid guessing, and inversion, inside=nnn         ***/
 /*** save_release behavior:                                             ***/
 /***    1730 & prior: ignores inside=, calcmode='1', (a,b)->(x,y)       ***/
 /***    1731: other calcmodes and inside=nnn                            ***/
@@ -1366,17 +1358,6 @@ jumpout:
 
 
 /******************* standalone engine for "cellular" ********************/
-/* Originally coded by Ken Shirriff.
-   Modified beyond recognition by Jonathan Osuch.
-     Original or'd the neighborhood, changed to sum the neighborhood
-     Changed prompts and error messages
-     Added CA types
-     Set the palette to some standard? CA colors
-     Changed *cell_array to near and used dstack so put_line and get_line
-       could be used all the time
-     Made space bar generate next screen
-     Increased string/rule size to 16 digits and added CA types 9/20/92
-*/
 
 #define BAD_T         1
 #define BAD_MEM       2

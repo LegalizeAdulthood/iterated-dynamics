@@ -51,7 +51,7 @@ extern int time_to_restart, time_to_cycle, time_to_reinit, calc_status;
 
 void XorZoomBox(void);
 
-extern int win_xoffset, win_yoffset;   /* BDT 11/6/91 */
+extern int win_xoffset, win_yoffset;
 
 
 /* Global Maintenance */
@@ -252,8 +252,8 @@ void ExecuteZoom(void) {
       bftmpy = alloc_stack(rbflength+2);
     }
 
-   xd = xxmin + ((double)delxx * (ZoomCenter.x + win_xoffset));  /* BDT 11/6/91 */
-   yd = yymax - ((double)delyy * (ZoomCenter.y + win_yoffset));  /* BDT 11/6/91 */
+   xd = xxmin + ((double)delxx * (ZoomCenter.x + win_xoffset));
+   yd = yymax - ((double)delyy * (ZoomCenter.y + win_yoffset));
 
    z = 1.0 - fabs((double)Zooming / 100 * .99);
    if(Zooming > 0)
@@ -475,8 +475,8 @@ void UpdateCoordBox(DWORD dw) {
    double xd, yd, Angle, Modulus;
    char xStr[40], yStr[40];
 
-   xPixel = (unsigned)(dw & 0xFFFF) + win_xoffset;  /* BDT 11/6/91 */
-   yPixel = (unsigned)(dw >> 16) + win_yoffset;  /* BDT 11/6/91 */
+   xPixel = (unsigned)(dw & 0xFFFF) + win_xoffset;
+   yPixel = (unsigned)(dw >> 16) + win_yoffset;
    xd = xxmin + ((double)delxx * xPixel);
    yd = yymax - ((double)delyy * yPixel);
    switch(CoordFormat) {

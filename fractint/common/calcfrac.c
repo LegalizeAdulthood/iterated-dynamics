@@ -43,14 +43,12 @@ static void _fastcall puttruecolor_disk(int,int,int);
 static int diffusion_engine (void);
 static int sticky_orbits(void);
 
-/**CJLT new function prototypes: */
 static int tesseral(void);
 static int _fastcall tesschkcol(int,int,int);
 static int _fastcall tesschkrow(int,int,int);
 static int _fastcall tesscol(int,int,int);
 static int _fastcall tessrow(int,int,int);
 
-/* new drawing method by HB */
 static int diffusion_scan(void);
 
 /* lookup tables to avoid too much bit fiddling : */
@@ -135,7 +133,7 @@ VOIDPTR typespecific_workarea = NULL;
 static double dem_delta, dem_width;     /* distance estimator variables */
 static double dem_toobig;
 static int dem_mandel;
-#define DEM_BAILOUT 535.5  /* (pb: not sure if this is special or arbitrary) */
+#define DEM_BAILOUT 535.5
 
 /* variables which must be visible for tab_display */
 int got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
@@ -336,7 +334,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
    }
    else    /* cheap and easy way out */
    {
-      for (i = left; i <= right; i++)  /* DG */
+      for (i = left; i <= right; i++)
          (*plot)(i,row,str[i-left]);
       kbdcount -= length >> 1;
    }
@@ -363,7 +361,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
    }
    else
    {
-      for (i = left; i <= right; i++)  /* DG */
+      for (i = left; i <= right; i++)
          (*plot)(i,row,str[i-left]);
       kbdcount -= length >> 1;
    }
@@ -1100,7 +1098,7 @@ static int diffusion_scan(void)
 
    /* note: the max size of 2048x2048 gives us a 22 bit counter that will */
    /* fit any 32 bit architecture, the maxinum limit for this case would  */
-   /* be 65536x65536 (HB) */
+   /* be 65536x65536 */
 
    bits = (unsigned) (min ( log (iystop-iystart+1), log(ixstop-ixstart+1) )/log2 );
    bits <<= 1; /* double for two axes */
@@ -1132,7 +1130,6 @@ static int diffusion_scan(void)
        sym_fill_line(ty, (x), min((x)+(s)-1,ixstop), dstack)
 
 /* macro: count_to_int(dif_counter, colo, rowo) */
-/* (inlined  function:) */
 #define count_to_int(C,x,y)\
    \
    tC = C; \
@@ -1141,12 +1138,6 @@ static int diffusion_scan(void)
    x <<=4; x+=dif_la[tC&0xFF]; y <<=4; y+=dif_lb[tC&0xFF]; tC>>=8; \
    x <<=4; x+=dif_la[tC&0xFF]; y <<=4; y+=dif_lb[tC&0xFF]; tC>>=8; \
    x >>= dif_offset;           y >>= dif_offset
-/* end of inlined function */
-
-/* REMOVED: counter byte 3 */                                                          \
-/* (x) <<=4; (x)+=dif_la[tC&0(x)FF]; (y) <<=4; (y)+=dif_lb[tC&0(x)FF]; tC>>=8;
-   --> eliminated this and made (*) because fractint user coordinates up to
-   2048(x)2048 what means a counter of 24 bits or 3 bytes */
 
 /* Calculate the point */
 #define calculate \
@@ -1335,22 +1326,6 @@ static int diffusion_engine (void) {
    }
    return 0;
 }
-
-/* OLD function (less eficient than the lookup code above:
-static void count_to_int (long unsigned C, int *r, int *l) {
-
-   int i;
-
-   *r = *l = 0;
-
-   for (i = bits; i>0; i -= 2){
-      *r <<=1; *r += C % 2; C >>= 1;
-      *l <<=1; *l += C % 2; C >>= 1;
-   }
-   *l = (*l+*r)%(1<<(bits/2));  * a+b mod 2^k *
-
-}
-*/
 
 char drawmode = 'r';
 
@@ -1655,7 +1630,7 @@ int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col
          }
       }
       if (debugflag != 470)
-         if (color <= 0 && stdcalcmode == 'b' )   /* fix BTM bug */
+         if (color <= 0 && stdcalcmode == 'b' )
             color = 1;
       (*plot) (col, row, color);
    }
@@ -1667,9 +1642,9 @@ int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col
 long (*calcmandfpasm)(void);
 
 /************************************************************************/
-/* added by Wes Loewer - sort of a floating point version of calcmand() */
+/* sort of a floating point version of calcmand()                       */
 /* can also handle invert, any rqlim, potflag, zmag, epsilon cross,     */
-/* and all the current outside options    -Wes Loewer 11/03/91          */
+/* and all the current outside options                                  */
 /************************************************************************/
 int calcmandfp(void)
 {
@@ -1703,7 +1678,7 @@ int calcmandfp(void)
          }
       }
       if (debugflag != 470)
-         if (color == 0 && stdcalcmode == 'b' )   /* fix BTM bug */
+         if (color == 0 && stdcalcmode == 'b' )
             color = 1;
       (*plot) (col, row, color);
    }
@@ -1842,7 +1817,6 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
    if (inside == PERIOD) {
        savedand = 16;           /* begin checking every 16th cycle */
    } else {
-     /* Jonathan - don't understand such a low savedand -- how about this? */
 #ifdef MINSAVEDAND
        savedand = MINSAVEDAND;
 #else
@@ -1896,7 +1870,6 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
       {
          double ftemp;
          /* Distance estimator for points near Mandelbrot set */
-         /* Original code by Phil Wilson, hacked around by PB */
          /* Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198 */
          if (dem_mandel)
             ftemp = 2 * (old.x * deriv.x - old.y * deriv.y) + 1;
@@ -2748,11 +2721,7 @@ static void decomposition(void)
 /* Here "magnitude" is the modulus of the orbit value at          */
 /* "iterations". The potparms[] are user-entered paramters        */
 /* controlling the level and slope of the continuous potential    */
-/* surface. Returns color.  - Tim Wegner 6/25/89                  */
-/*                                                                */
-/*                     -- Change history --                       */
-/*                                                                */
-/* 09/12/89   - added floatflag support and fixed float underflow */
+/* surface. Returns color.                                        */
 /*                                                                */
 /******************************************************************/
 
@@ -2830,20 +2799,8 @@ static int _fastcall potential(double mag, long iterations)
 }
 
 
-/******************* boundary trace method ***************************
-Fractint's original btm was written by David Guenther.  There were a few
-rare circumstances in which the original btm would not trace or fill
-correctly, even on Mandelbrot Sets.  The code below was adapted from
-"Mandelbrot Sets by Wesley Loewer" (see calmanfp.asm) which was written
-before I was introduced to Fractint.  It should be noted that without
-David Guenther's implimentation of a btm, I doubt that I would have been
-able to impliment my own code into Fractint.  There are several things in
-the following code that are not original with me but came from David
-Guenther's code.  I've noted these places with the initials DG.
-
-                                        Wesley Loewer 3/8/92
-*********************************************************************/
-#define bkcolor 0  /* I have some ideas for the future with this. -Wes */
+/******************* boundary trace method ***************************/
+#define bkcolor 0
 #define advance_match()     coming_from = ((going_to = (going_to - 1) & 0x03) - 1) & 0x03
 #define advance_no_match()  going_to = (going_to + 1) & 0x03
 
@@ -2884,7 +2841,7 @@ int  bound_trace_main(void)
                 {
                 if (showdot != bkcolor) /* remove showdot pixel */
                    (*plot)(col,row,bkcolor);
-                if (iystop != yystop)  /* DG */
+                if (iystop != yystop)
                    iystop = yystop - (currow - yystart); /* allow for sym */
                 add_worklist(xxstart,xxstop,curcol,currow,iystop,currow,0,worksym);
                 return -1;
@@ -2895,7 +2852,7 @@ int  bound_trace_main(void)
             This next line may cause a few more pixels to be calculated,
             but at the savings of quite a bit of overhead
             */
-            if (color != trail_color)  /* DG */
+            if (color != trail_color)
                 continue;
 
             /* sweep clockwise to trace outline */
@@ -2922,7 +2879,7 @@ int  bound_trace_main(void)
                         {
                         if (showdot != bkcolor) /* remove showdot pixel */
                            (*plot)(col,row,bkcolor);
-                        if (iystop != yystop)  /* DG */
+                        if (iystop != yystop)
                            iystop = yystop - (currow - yystart); /* allow for sym */
                         add_worklist(xxstart,xxstop,curcol,currow,iystop,currow,0,worksym);
                         return -1;
@@ -2948,7 +2905,7 @@ int  bound_trace_main(void)
                     }
                 } while (continue_loop && (col != curcol || row != currow));
 
-            if (match_found <= 3)  /* DG */
+            if (match_found <= 3)
                 { /* no hole */
                 color = bkcolor;
                 reset_periodicity = 1;
@@ -3847,7 +3804,6 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 #endif
 
 /**************** tesseral method by CJLT begins here*********************/
-/*  reworked by PB for speed and resumeability */
 
 struct tess { /* one of these per box to be done gets stacked */
    int x1,x2,y1,y2;      /* left/right top/bottom x/y coords  */
@@ -4105,10 +4061,10 @@ static int _fastcall tessrow(int x1,int x2,int y)
    return rowcolor;
 }
 
-/* added for testing autologmap() */ /* CAE 9211 fixed missing comment */
+/* added for testing autologmap() */
 /* insert at end of CALCFRAC.C */
 
-static long autologmap(void)   /*RB*/
+static long autologmap(void)
 {  /* calculate round screen edges to avoid wasted colours in logmap */
  long mincolour;
  int lag;

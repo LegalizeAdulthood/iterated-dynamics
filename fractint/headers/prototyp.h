@@ -162,8 +162,6 @@ extern int longvmult(LVECTOR,LMATRIX,LVECTOR,int );
 
 /*  biginit -- C file prototypes */
 
-/* CAE removed static functions from header 28 Jan 95  */
-
 void free_bf_vars(void);
 bn_t alloc_stack(size_t size);
 int save_stack(void);
@@ -712,8 +710,8 @@ extern int funny_glasses_call(int (*)(void));
 extern int ifs(void);
 extern int orbit3dfloat(void);
 extern int orbit3dlong(void);
-extern int iconfloatorbit(double *, double *, double *);  /* dmf */
-extern int latoofloatorbit(double *, double *, double *);  /* hb */
+extern int iconfloatorbit(double *, double *, double *);
+extern int latoofloatorbit(double *, double *, double *);
 extern int  setup_convert_to_screen(struct affine *);
 extern int plotorbits2dsetup(void);
 extern int plotorbits2dfloat(void);
@@ -807,7 +805,7 @@ extern double _cos(double );
 
 /*  parser -- C file prototypes */
 
-struct fls { /* function, load, store pointers  CAE fp */
+struct fls { /* function, load, store pointers */
    void (near *function)(void);
    union Arg near *operand;
 };

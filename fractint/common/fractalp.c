@@ -2084,7 +2084,6 @@ struct fractalspecificstuff fractalspecific[]=
       STDBAILOUT
    },
 
-      /* dmf */
    {
    "icons",
       {"Lambda", "Alpha", "Beta", "Gamma"},
@@ -2096,7 +2095,6 @@ struct fractalspecificstuff fractalspecific[]=
       NOBAILOUT
    },
 
-      /* dmf */
    {
    "icons3d",
       {"Lambda", "Alpha", "Beta", "Gamma"},

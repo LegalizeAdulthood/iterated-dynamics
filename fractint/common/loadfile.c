@@ -388,9 +388,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     backwards_v19();
     backwards_v20();
 
-    if (display3d)                   /* PB - a klooge till the meaning of */
+    if (display3d)
     {
-        usr_floatflag = oldfloatflag; /*  floatflag in line3d is clarified */
+        usr_floatflag = oldfloatflag;
     }
 
     if (overlay3d)

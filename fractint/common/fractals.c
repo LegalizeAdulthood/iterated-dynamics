@@ -980,12 +980,10 @@ UnityfpFractal(void)
 int
 Mandel4Fractal(void)
 {
-   /* By writing this code, Bert has left behind the excuse "don't
-      know what a fractal is, just know how to make'em go fast".
-      Bert is hereby declared a bonafide fractal expert! Supposedly
+   /*
       this routine calculates the Mandelbrot/Julia set based on the
-      polynomial z**4 + lambda, but I wouldn't know -- can't follow
-      all that integer math speedup stuff - Tim */
+      polynomial z**4 + lambda
+    */
 
    /* first, compute (x + iy)**2 */
 #if !defined(XFRACT)
@@ -1229,11 +1227,6 @@ PopcornFractal_Old(void)
    }
    else
    /* FLOATBAILOUT(); */
-   /* PB The above line was weird, not what it seems to be!  But, bracketing
-         it or always doing it (either of which seem more likely to be what
-         was intended) changes the image for the worse, so I'm not touching it.
-         Same applies to int form in next routine. */
-   /* PB later: recoded inline, still leaving it weird */
       tempsqrx = sqr(g_new.x);
    tempsqry = sqr(g_new.y);
    if ((magnitude = tempsqrx + tempsqry) >= rqlim) return 1;
@@ -1301,7 +1294,6 @@ LPopcornFractal_Old(void)
    }
    else
    /* LONGBAILOUT(); */
-   /* PB above still the old way, is weird, see notes in FP popcorn case */
    {
       ltempsqrx = lsqr(lnew.x);
       ltempsqry = lsqr(lnew.y);
@@ -1356,7 +1348,7 @@ LPopcornFractal(void)
 #endif
 }
 
-/* Popcorn generalization proposed by HB  */
+/* Popcorn generalization */
 
 int
 PopcornFractalFn(void)

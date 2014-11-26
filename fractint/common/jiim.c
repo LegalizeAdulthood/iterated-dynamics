@@ -478,15 +478,6 @@ void Jiim(int which)         /* called by fractint */
    {
       helpmode = HELP_ORBITS;
       hasinverse = 1;
-
-#if 0 /* I don't think this is needed any more */
-      /* Earth to Chuck Ebbert - remove this code when your code supports
-         my changes to PARSER.C */
-      if (fractype == FFORMULA)
-      {
-         debugflag = 90;
-      }
-#endif
    }
    oldsxoffs = sxoffs;
    oldsyoffs = syoffs;
@@ -947,11 +938,6 @@ void Jiim(int which)         /* called by fractint */
 
             old = DeQueueFloat();
 
-#if 0 /* try a different new method */
-            if (lsize < (lmax / 8) && maxhits < 5)      /* NEW METHOD */
-               if (maxhits < colors - 1)
-                   maxhits++;
-#endif
             x = (int)(old.x * xfactor * zoom + xoff);
             y = (int)(old.y * yfactor * zoom + yoff);
             color = c_getcolor(x, y);

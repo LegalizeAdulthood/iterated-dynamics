@@ -72,7 +72,6 @@ int SetColorPaletteName(char * fn)
         }
     }
     memcpy((char *) mapdacbox, (char *) g_dac_box, 768);
-    /* PB, 900829, removed atexit(RestoreMap) stuff, goodbye covers it */
     return 0;
 }
 

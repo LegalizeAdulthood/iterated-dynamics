@@ -174,7 +174,6 @@ struct const_list_st {
 static void parser_allocate(void);
 
 union Arg *Arg1, *Arg2;
-/* PB 910417 removed unused "a" array */
 
 /* Some of these variables should be renamed for safety */
 union Arg s[20], **Store, **Load;
@@ -892,7 +891,6 @@ void lStkDiv(void) {
    multiply(Arg1->l.y, Arg1->l.y, bitshift);
    x = divide(Arg1->l.x, mod, bitshift);
    y = -divide(Arg1->l.y, mod, bitshift);
-   /* pb 900617 changed next 4 lines to use x2,y2 instead of x,y */
    x2 = multiply(Arg2->l.x, x, bitshift) - multiply(Arg2->l.y, y, bitshift);
    y2 = multiply(Arg2->l.y, x, bitshift) + multiply(Arg2->l.x, y, bitshift);
    Arg2->l.x = x2;
@@ -3767,13 +3765,6 @@ void init_misc()
    uses_p4 = uses_p5 = 0;
 }
 
-
-/* PB 910417 here to end changed.
-        Allocate sub-arrays from one main malloc, using global variable
-        typespecific_workarea; calcfrac.c releases this area when calculation
-        ends or is terminated.
-        Moved the "f" array to be allocated as part of this.
-        */
 
 long total_formula_mem;
 static void parser_allocate(void)

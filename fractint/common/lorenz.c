@@ -1,7 +1,7 @@
 /*
    This file contains two 3 dimensional orbit-type fractal
    generators - IFS and LORENZ3D, along with code to generate
-   red/blue 3D images. Tim Wegner
+   red/blue 3D images.
 */
 
 #include <string.h>
@@ -408,7 +408,7 @@ int orbit3dfloatsetup()
       initorbitfp[1] = param[1];
    }
 
-   if (fractype==ICON || fractype==ICON3D)        /* DMF */
+   if (fractype==ICON || fractype==ICON3D)
    {
       initorbitfp[0] = 0.01;  /* initial conditions */
       initorbitfp[1] = 0.003;
@@ -416,7 +416,7 @@ int orbit3dfloatsetup()
       waste = 2000;
    }
 
-   if (fractype==LATOO)        /* HB */
+   if (fractype==LATOO)
    {
       connect = 0;
    }
@@ -428,7 +428,7 @@ int orbit3dfloatsetup()
       c =  param[2];
       d =  param[3];
    }
-   else if (fractype==ICON || fractype==ICON3D)        /* DMF */
+   else if (fractype==ICON || fractype==ICON3D)
    {
       initorbitfp[0] = 0.01;  /* initial conditions */
       initorbitfp[1] = 0.003;
@@ -551,10 +551,6 @@ rwalk:
 /******************************************************************/
 /*   orbit functions - put in fractalspecific[fractype].orbitcalc */
 /******************************************************************/
-
-/* Julia sets by inverse iterations added by Juan J. Buhler 4/3/92 */
-/* Integrated with Lorenz by Tim Wegner 7/20/92 */
-/* Add Modified Inverse Iteration Method, 11/92 by Michael Snyder  */
 
 int
 Minverse_julia_orbit()
@@ -1125,7 +1121,6 @@ int hopalong2dfloatorbit(double *x, double *y, double *z)
    return(0);
 }
 
-/* from Michael Peters and HOP */
 int chip2dfloatorbit(double *x, double *y, double *z)
 {
    double tmp;
@@ -1137,7 +1132,6 @@ int chip2dfloatorbit(double *x, double *y, double *z)
    return(0);
 }
 
-/* from Michael Peters and HOP */
 int quadruptwo2dfloatorbit(double *x, double *y, double *z)
 {
    double tmp;
@@ -1149,7 +1143,6 @@ int quadruptwo2dfloatorbit(double *x, double *y, double *z)
    return(0);
 }
 
-/* from Michael Peters and HOP */
 int threeply2dfloatorbit(double *x, double *y, double *z)
 {
    double tmp;
@@ -1210,7 +1203,6 @@ int dynamfloat(double *x, double *y, double *z)
       return(0);
 }
 
-/* dmf */
 #undef  LAMBDA
 #define LAMBDA  param[0]
 #define ALPHA   param[1]
@@ -1253,7 +1245,6 @@ int iconfloatorbit(double *x, double *y, double *z)
 #undef GAMMA
 #endif
 
-/* hb */
 #define PAR_A   param[0]
 #define PAR_B   param[1]
 #define PAR_C   param[2]

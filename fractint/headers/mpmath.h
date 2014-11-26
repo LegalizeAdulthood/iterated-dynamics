@@ -1,8 +1,3 @@
-/*
- *  REMOVED FORMAL PARAMETERS FROM FUNCTION DEFINITIONS (1/4/92)
- */
-
-
 #ifndef MPMATH_H
 #define MPMATH_H
 
@@ -38,7 +33,6 @@ extern int DivideOverflow;
    the operation results in an overflow (result < 2**(2**14), or division
    by zero) the global 'MPoverflow' is set to one. */
 
-/* function pointer support added by Tim Wegner 12/07/89 */
 extern int         (*pMPcmp)(struct MP , struct MP );
 extern struct MP  *(*pMPmul)(struct MP , struct MP );
 extern struct MP  *(*pMPdiv)(struct MP , struct MP );

@@ -591,8 +591,8 @@ LPARAM lParam;
                                }
                             }
                         else {
-                            xd = xxmin + (double)(delxx * (Center.x + win_xoffset));  /* BDT 11/6/91 */
-                            yd = yymax - (double)(delyy * (Center.y + win_yoffset));  /* BDT 11/6/91 */
+                            xd = xxmin + (double)(delxx * (Center.x + win_xoffset));
+                            yd = yymax - (double)(delyy * (Center.y + win_yoffset));
                             if(bf_math) {
                                tmpx = Center.x + win_xoffset;
                                tmpy = Center.y + win_yoffset;

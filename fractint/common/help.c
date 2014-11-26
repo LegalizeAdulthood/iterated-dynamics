@@ -1333,8 +1333,7 @@ void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg 
    FILE *temp_file = NULL;
    char      *msg = NULL;
 
-/*   help_seek((long)sizeof(int)+sizeof(long));         Strange -- should be 8 -- CWM */
-   help_seek(16L);                               /* indeed it should - Bert */
+   help_seek(16L);
    fread(&info.num_contents, sizeof(int), 1, help_file);
    fread(&info.num_page, sizeof(int), 1, help_file);
 

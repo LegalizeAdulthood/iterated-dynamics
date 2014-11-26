@@ -31,15 +31,7 @@
  == 4) A call to 'driver_key_pressed()' has been added after the 'outln()' calls
  ==    to check for the presenc of a key-press as a bail-out signal
  ==
- == (Bert Tyler and Timothy Wegner)
  */
-
-/* Rev 01/02/91 - Revised by Mike Gelvin
- *                altered logic to allow newcode to input a line at a time
- *                altered logic to allow decoder to place characters
- *                directly into the output buffer if they fit
- */
-
 
 /***** Application Includes *********************************************/
   /* see Fractint.c for a description of the "include"  hierarchy */
@@ -113,45 +105,8 @@ static short code_mask[13] =
  * is incremented each time an out of range code is read by the decoder.
  * When this value is non-zero after a decode, your GIF file is probably
  * corrupt in some way...
- *
- * whups, here are more globals, added by PB:
- * extern short skipxdots;  0 to get every dot, 1 for every 2nd, 2 every 3rd, ...
- * extern short skipydots;
- *
- * All external declarations now in PROTOTYPE.H
  */
 
-
-/*
-I removed the LOCAL identifiers in the arrays below and replaced them
-with 'extern's so as to declare (and re-use) the space elsewhere.
-The arrays are actually declared in the assembler source.
-                                                Bert Tyler
-*/
-
-#if 0
-/* declarations moved to PROTOTYPE.H - these left for documentation */
-BYTE dstack[MAX_CODES + 1];     /* Stack for storing pixels */
-BYTE suffix[MAX_CODES + 1];     /* Suffix table */
-unsigned short prefix[MAX_CODES + 1];   /* Prefix linked list */
-BYTE decoderline[2];            /* decoded line goes here */
-#endif
-
-/* avoid using fixed near arrays by enabling next */
-#if 0
-BYTE dstack1[MAX_CODES + 1];     /* Stack for storing pixels */
-#define dstack dstack1
-#endif
-
-#if 0 /* remove this when suffix no longer used in diskvid.c */
-BYTE suffix1[MAX_CODES + 1];     /* Suffix table */
-#define suffix suffix1
-#endif
-
-#if 0
-unsigned short prefix1[MAX_CODES + 1];   /* Prefix linked list */
-#define prefix prefix1
-#endif
 
 /* for the time being, use a pointer to a buffer in the gifview stack */
 extern BYTE *decoderline1;
@@ -400,9 +355,6 @@ short decoder(short linewidth)
          }
       }
    }
-   /* PB note that if last line is incomplete, we're not going to try to emit
-    * it;  original code did, but did so via out_line and therefore couldn't
-    * have worked well in all cases... */
    return (0);
 }
 

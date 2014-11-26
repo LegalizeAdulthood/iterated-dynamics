@@ -89,8 +89,7 @@ extern long stackavail();
 #    undef __MSDOS__
 #  endif
 #else
-#  ifdef XFRACT           /* XFRACT forces unix configuration! --CWM-- */
-/* XFRACT forces unix configuration! --CWM-- */
+#  ifdef XFRACT
 
 #    ifdef MSDOS
 #      undef MSDOS
@@ -328,7 +327,6 @@ extern long stackavail();
 
 /* HP-UX support long doubles and allows them to be read in with  */
 /*   scanf(), but does not support the functions sinl, cosl, fabsl, etc.  */
-/* CAE added this 26Jan95 so it would compile (altered by Wes to new macro) */
 #ifdef _HPUX_SOURCE
 #define DO_NOT_USE_LONG_DOUBLE
 #endif

@@ -43,18 +43,6 @@ static void lsysi_dodrawc(struct lsys_turtlestatei *cmd);
 static void lsysi_dodrawgt(struct lsys_turtlestatei *cmd);
 static void lsysi_dodrawlt(struct lsys_turtlestatei *cmd);
 
-/* Some notes to Adrian from PB, made when I integrated with v15:
-     printfs changed to work with new user interface
-     bug at end of readLSystemFile, the line which said rulind=0 fixed
-       to say *rulind=0
-     the calloc was not worthwhile, it was just for a 54 byte area, cheaper
-       to keep it as a static;  but there was a static 201 char buffer I
-       changed to not be static
-     use of strdup was a nono, caused problems running out of space cause
-       the memory allocated each time was never freed; I've changed to
-       use memory and to free when done
-   */
-
 #define sins ((long *)(boxy))
 #define coss (((long *)(boxy)+50)) /* 50 after the start of sins */
 static char *ruleptrs[MAXRULES];

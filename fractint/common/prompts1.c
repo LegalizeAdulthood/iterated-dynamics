@@ -1717,7 +1717,7 @@ long get_file_entry(int type,char *title,char *fmask,
    newfile = 0;
    while (1) {
       firsttry = 0;
-      /* pb: binary mode used here - it is more work, but much faster, */
+      /* binary mode used here - it is more work, but much faster, */
       /*     especially when ftell or fgetpos is used                  */
       while (newfile || (gfe_file = fopen(filename, "rb")) == NULL) {
          char buf[60];
@@ -1806,10 +1806,7 @@ int scan_entries(FILE * infile, struct entryinfo *choices, char *itemname)
       */
    char buf[101];
    int exclude_entry;
-   long name_offset, temp_offset;   /*rev 5/23/96 to add temp_offset,
-                                      used below to skip any '{' that
-                                      does not have a corresponding
-                                      '}' - GGM */
+   long name_offset, temp_offset;
    long file_offset = -1;
    int numentries = 0;
 
@@ -2168,12 +2165,6 @@ static void load_entry_text(
       int startrow,
       int startcol)
 {
-       /* Revised 12/14/96 by George Martin. Up to maxlines of an entry
-          is copied to *buf starting from row "startrow", and skipping
-          characters in each line up to "startcol". The terminating '\n'
-          is deleted if maxlines is reached before the end of the entry.
-       */
-
    int linelen, i;
    int comment=0;
    int c = 0;

@@ -151,7 +151,7 @@ _fFormula          proc far
       push         si
 
    ;;;;align           8
-inner_loop:                            ; new loop             CAE 1 Dec 1998
+inner_loop:                            ; new loop
       mov          si,WORD PTR [bx+2]
       call         WORD PTR [bx]
       add          bx,4
@@ -184,7 +184,6 @@ int fFormula(void)
 ; --------------------------------------------------------------------------
    public          _Img_Setup
    align           2
-   ; Changed to FAR, FRAME/UNFRAME added by CAE 09OCT93
 _Img_Setup         proc far
       FRAME        <si,di>
       les          si,_pfls            ; es:si = &pfls[0]
@@ -192,7 +191,6 @@ _Img_Setup         proc far
       mov          di,_LastOp          ; load index of lastop
 
       dec          di                  ; flastop now points at last operator
-      ; above added by CAE 09OCT93 because of loop logic changes
 
       shl          di,2                ; convert to offset
       mov          bx,offset DGROUP:_fLastOp ; set bx for store

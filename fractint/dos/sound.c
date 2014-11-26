@@ -7,8 +7,7 @@
  polyhony controls how many voices are allowed to sound at once (up to nine)
 
  for more gory detals see below:
-
- RB 20/3/99 */
+*/
 
 
 

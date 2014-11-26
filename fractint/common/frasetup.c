@@ -233,8 +233,6 @@ MandelfpSetup(void)
            the situations that otherwise are using StandardFractal().
            calcmandfp() can currently handle invert, any rqlim, potflag
            zmag, epsilon cross, and all the current outside options
-                                                     Wes Loewer 11/03/91
-           Took out support for inside= options, for speed. 7/13/97
         */
         if (debugflag != 90
             && !distest
@@ -369,8 +367,6 @@ JuliafpSetup(void)
            the situations that otherwise are using StandardFractal().
            calcmandfp() can currently handle invert, any rqlim, potflag
            zmag, epsilon cross, and all the current outside options
-                                                     Wes Loewer 11/03/91
-           Took out support for inside= options, for speed. 7/13/97
         */
         if (debugflag != 90
             && !distest

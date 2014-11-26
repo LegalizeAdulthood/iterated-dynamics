@@ -112,7 +112,7 @@ MATRIX m; /* transformation matrix */
 int Ambient;
 int RANDOMIZE;
 int haze;
-int Real_V = 0; /* mrr Actual value of V for fillytpe>4 monochrome images */
+int Real_V = 0; /* Actual value of V for fillytpe>4 monochrome images */
 char light_name[FILE_MAX_PATH] = "fract001";
 int Targa_Overlay, error;
 char targa_temp[14] = "fractemp.tga";
@@ -236,9 +236,7 @@ int line3d(BYTE * pixels, unsigned linelen)
    /* the last line. For the undrawn lines, only necessary calculations are */
    /* made. As a bonus, in non-sphere mode a box is drawn to help visualize */
    /* the effects of 3D transformations. Thanks to Marc Reinig for this idea*/
-   /* and code -- BTW, Marc did NOT put the goto in, but WE did, to avoid   */
-   /* copying code here, and to avoid a HUGE "if-then" construct. Besides,  */
-   /* we have ALREADY sinned, so why not sin some more?                     */
+   /* and code.                                                             */
    /*************************************************************************/
    lastdot = min(xdots - 1, (int) linelen - 1);
    if (FILLTYPE >= 5)
@@ -331,7 +329,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                r = R;
             /* Allow Ray trace to go through so display ok */
             if (persp || RAY)
-            {  /* mrr how do lv[] and cur and f_cur all relate */
+            {  /* how do lv[] and cur and f_cur all relate */
                /* NOTE: fudge was pre-calculated above in r and R */
                /* (almost) guarantee negative */
                lv[2] = (long) (-R - r * costheta * sinphi);     /* z */
@@ -376,18 +374,17 @@ int line3d(BYTE * pixels, unsigned linelen)
                   cur.y = (int) (v[1] + .5 + yyadjust);
                }
             }
-            /* mrr Not sure how this an 3rd if above relate */
+            /* Not sure how this an 3rd if above relate */
             else if (!(persp && RAY))
             {
-               /* mrr Why the xx- and yyadjust here and not above? */
+               /* Why the xx- and yyadjust here and not above? */
                cur.x = (int) (f_cur.x = (float) (xcenter
                                  + sintheta * sclx * r + xxadjust));
                cur.y = (int) (f_cur.y = (float) (ycenter
                                  + costheta * cosphi * scly * r + yyadjust));
-               if (FILLTYPE >= 5 || RAY)        /* mrr why do we do this for
-                                                 * filltype>5? */
+               if (FILLTYPE >= 5 || RAY)        /* why do we do this for filltype>5? */
                   f_cur.color = (float) (-r * costheta * sinphi * sclz);
-               v[0] = v[1] = v[2] = 0;  /* MRR Why do we do this? */
+               v[0] = v[1] = v[2] = 0;  /* Why do we do this? */
             }
          }
          else
@@ -652,7 +649,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                {
                   cur = bad;
                   f_cur = f_bad;
-                  goto loopbottom;      /* another goto ! */
+                  goto loopbottom;
                }
 
                /* Round and fudge back to original  */
@@ -1642,10 +1639,6 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
 
 /***************************************************************************/
 /*                                                                         */
-/* EB & DG fiddled with outputs for Rayshade so they work. with v4.x.      */
-/* EB == eli brandt.     ebrandt@jarthur.claremont.edu                     */
-/* DG == dan goldwater.  daniel_goldwater@brown.edu & dgold@math.umass.edu */
-/*  (NOTE: all the stuff we fiddled with is commented with "EB & DG" )     */
 /* general raytracing code info/notes:                                     */
 /*                                                                         */
 /*  ray == 0 means no raytracer output  ray == 7 is for dxf                */
@@ -1657,19 +1650,6 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
 /*  the 'heightfield' primitive include rayshade and pov.  anyone want to  */
 /*  write code to make heightfields?  they are *MUCH* faster to trace than */
 /*  triangles when doing landscapes...                                     */
-/*                                                                         */
-/*  stuff EB & DG changed:                                                 */
-/*  made the rayshade output create a "grid" aggregate object (one of      */
-/*  rayshade's primitives), instead  of a global grid.  as a result, the   */
-/*  grid can be optimized based on the number of triangles.                */
-/*  the z component of the grid can always be 1 since the surface formed   */
-/*  by the triangles is flat                                               */
-/*  (ie, it doesnt curve over itself).  this is a major optimization.      */
-/*  the x and y grid size is also optimized for a 4:3 aspect ratio image,  */
-/*  to get the fewest possible traingles in each grid square.              */
-/*  also, we fixed the rayshade code so it actually produces output that   */
-/*  works with rayshade.                                                   */
-/*  (maybe the old code was for a really old version of rayshade?).        */
 /*                                                                         */
 /***************************************************************************/
 
@@ -1731,7 +1711,7 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
    if (RAY != 7)
       fprintf(File_Ptr1, "\n");
 
-   /* EB & DG: open "grid" opject, a speedy way to do aggregates in rayshade */
+   /* open "grid" opject, a speedy way to do aggregates in rayshade */
    if (RAY == 5)
       fprintf(File_Ptr1,
         "/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
@@ -1831,7 +1811,6 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
    {
       if (!BRIEF)
          fprintf(File_Ptr1, "\n");
-      /* EB & DG: removed "T" after "triangle" */
       fprintf(File_Ptr1, "triangle");
    }
 
@@ -1988,7 +1967,7 @@ static int _fastcall end_object(int triout)
    }
 
    if (RAY != 6 && RAY != 5)
-      fprintf(File_Ptr1, "\n");    /* EB & DG: too many newlines */
+      fprintf(File_Ptr1, "\n");
 
    return 0;
 }
@@ -1999,14 +1978,14 @@ static void line3d_cleanup(void)
    if (RAY && File_Ptr1)
    {                            /* Finish up the ray tracing files */
       if (RAY != 5 && RAY != 7)
-         fprintf(File_Ptr1, "\n"); /* EB & DG: too many newlines */
+         fprintf(File_Ptr1, "\n");
       if (RAY == 2)
          fprintf(File_Ptr1, "\n\n//");
       if (RAY == 4)
          fprintf(File_Ptr1, "\n\n#");
 
       if (RAY == 5)
-         /* EB & DG: end grid aggregate */
+         /* end grid aggregate */
          fprintf(File_Ptr1, "end\n\n/*good landscape:*/\n%s%s\n/*",
             "screen 640 480\neyep 0 2.1 0.8\nlookp 0 0 -0.95\nlight 1 point -2 1 1.5\n", "background .3 0 0\nreport verbose\n");
       if (RAY == 6)

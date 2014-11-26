@@ -130,7 +130,7 @@ NEW_FN  fStkConj, fStkNeg, fStkAbs, fStkRecip;
 NEW_FN  fStkLodReal, fStkLodRealC, fStkLodImag;
 NEW_FN  fStkLodRealFlip, fStkLodRealAbs;
 NEW_FN  fStkLodRealMul, fStkLodRealAdd, fStkLodRealSub, fStkLodRealPwr;
-NEW_FN  fStkLodImagMul, fStkLodImagAdd, fStkLodImagSub;  /* CAE 4Dec93  */
+NEW_FN  fStkLodImagMul, fStkLodImagAdd, fStkLodImagSub;
 NEW_FN  fStkLodImagFlip, fStkLodImagAbs;
 NEW_FN  fStkLodConj;
 NEW_FN  fStkLodAdd, fStkLodSub, fStkLodSubMod, fStkLodMul;
@@ -138,8 +138,8 @@ NEW_FN  fStkPLodAdd, fStkPLodSub;  /* push-lod-add/sub  */
 NEW_FN  fStkIdent;
 NEW_FN  fStkStoClr2;  /* store, clear stack by popping  */
 NEW_FN  fStkZero;  /* to support new parser fn.  */
-NEW_FN  fStkDbl;  /* double the stack top  CAE 31OCT93  */
-NEW_FN  fStkOne, fStkSqr3;  /* sqr3 is sqr/mag of a real  CAE 09NOV93  */
+NEW_FN  fStkDbl;  /* double the stack top */
+NEW_FN  fStkOne, fStkSqr3;  /* sqr3 is sqr/mag of a real */
 NEW_FN  fStkSqrt;
 NEW_FN  fStkASin, fStkACos, fStkASinh, fStkACosh;
 NEW_FN  fStkATanh, fStkATan;
@@ -416,7 +416,7 @@ static int CvtFptr(void ( * ffptr)(void), int MinStk, int FreeStk,
    int Max_On_Stack = MAX_STACK - FreeStk;  /* max regs allowed on stack  */
    int Num_To_Push; /* number of regs to push  */
 
-   /* first do some sanity checks  */ /* CAE 15Feb95  */
+   /* first do some sanity checks  */
    if ( (Delta != -2 && Delta != 0 && Delta != 2 && Delta != CLEAR_STK)
          || (FreeStk != 0 && FreeStk != 2 && FreeStk != 4)
          || (MinStk != 0 && MinStk != 2 && MinStk != 4) ){
@@ -536,7 +536,7 @@ awful_error:
       else {
          testload = Load[LodPtr];
          if (testload == &LASTSQR && lastsqrreal ){
-            /* -- LastSqr is a real.  CAE 31OCT93  */
+            /* -- LastSqr is a real. */
             DBUGMSG("(*lod[lastsqr]) -> (*lodreal)" );
             ffptr = fStkLodReal;
          }
@@ -562,7 +562,7 @@ awful_error:
          else if (cvtptrx!=0 && FNPTR(cvtptrx-1) == fStkPush4 ){
             DBUGMSG("push4 *loddup (add) -> push2 (*loddbl),stk+=2" );
             FNPTR(cvtptrx-1) = fStkPush2;
-            stkcnt += 2;  /*  CAE added 12 July 1993 to fix bug  */
+            stkcnt += 2;
          }
          else {
             DBUGMSG("op *loddup (add) -> op (*loddbl)" );
@@ -600,7 +600,7 @@ awful_error:
          }
          ffptr = fStkLodRealAdd;
       }
-      else if (prevfptr == fStkLodImag ){  /* CAE 4DEC93  */
+      else if (prevfptr == fStkLodImag ){
          --cvtptrx;  /* found  ? *lodimag (add)  */
          if (FNPTR(cvtptrx-1) == fStkPush2 ){
             DBUGMSG("*push lodimag (add) -> (*lodimagadd),stk+=2" );
@@ -643,7 +643,7 @@ awful_error:
          }
          ffptr = fStkLodRealSub;
       }
-      else if (prevfptr == fStkLodImag ){  /* CAE 4DEC93  */
+      else if (prevfptr == fStkLodImag ){
          --cvtptrx;  /*  ? *lodimag (sub)  */
          if (FNPTR(cvtptrx-1) == fStkPush2 ){
             DBUGMSG("*push lodimag (sub) -> (*lodimagsub),stk+=2" );
@@ -696,7 +696,6 @@ awful_error:
          }
          ffptr = fStkLodMul;
 
-         /**********************  begin extension  ***  CAE 9 Oct 93  ****/
          /*  change loadreal a, lodmul b --> lod b, lodrealmul a  */
 
          FNPTR(cvtptrx) = NO_FUNCTION;  /* mark the pending fn as null  */
@@ -707,7 +706,7 @@ awful_error:
 
          if (FNPTR(cvtptrx-1) == fStkLodRealC
                && Load[LodPtr-2]->d.x == _2_ ){
-            /* -- Convert '2*a' into 'a+a'.                CAE 31OCT93  */
+            /* -- Convert '2*a' into 'a+a'. */
             if (FNPTR(cvtptrx) == NO_FUNCTION ){
                DBUGMSG("lodreal[2] (*lodmul[b])"
                      " -> (*loddbl[b])" );
@@ -733,7 +732,7 @@ awful_error:
             /* lodreal *?push?? (*?lodmul)  */
             otemp = OPPTR(cvtptrx-1);  /* save previous fn's operand  */
             FNPTR(cvtptrx-1) = fStkLod;  /* prev fn = lod  */
-            /* Moved setting of prev lodptr to below         CAE 31DEC93  */
+            /* Moved setting of prev lodptr to below */
             /* This was a bug causing a bad loadptr to be set here  */
             /* 3 lines marked 'prev lodptr=this' below replace this line  */
             if (FNPTR(cvtptrx) == NO_FUNCTION ){
@@ -778,7 +777,6 @@ awful_error:
          }
          ffptr = fStkLodRealMul;
 
-         /**********************  begin extension  ***  CAE 31OCT93  ****/
          if (prevfptr == fStkLodRealC  /* use prevfptr here  */
                && Load[LodPtr-1]->d.x == _2_ ){
             if (FNPTR(cvtptrx) == fStkPush2 ){
@@ -802,9 +800,8 @@ awful_error:
                ffptr = fStkStoDbl;
             }
          }
-         /************************  end extension  ***  CAE 31OCT93  ****/
       }
-      else if (prevfptr == fStkLodImag ){  /* CAE 4DEC93  */
+      else if (prevfptr == fStkLodImag ){
 
          --cvtptrx;  /* found  lodimag *? (mul)  */
          if (FNPTR(cvtptrx) == fStkPush2 ){
@@ -913,7 +910,7 @@ awful_error:
          --cvtptrx;
          ffptr = fStkLodSubMod;
       }
-      else if (STACK_TOP_IS_REAL){  /* CAE 06NOV93  */
+      else if (STACK_TOP_IS_REAL){
          DBUGMSG("(*mod2[st real]) -> (*sqr3)" );
          ffptr = fStkSqr3;
       }
@@ -981,7 +978,7 @@ awful_error:
          if (!lastsqrused) {
             DBUGMSG("(*sqr) -> (*sqr0)" );
             ffptr = fStkSqr0;  /* don't save lastsqr  */
-            if (STACK_TOP_IS_REAL){  /* CAE 06NOV93  */
+            if (STACK_TOP_IS_REAL){
                DBUGMSG("(*sqr0[st real]) -> (*sqr3)" );
                ffptr = fStkSqr3;
             }
@@ -994,7 +991,7 @@ awful_error:
       if (prevfptr == fStkLodRealC ){
          dTemp = Load[LodPtr-1]->d.x;
          if (dTemp == _2_ || dTemp == _1_ || dTemp == -1.0 || dTemp == 0.0 ){
-            /* change ^[-1,0,1,or 2] to recip,one,ident,sqr  CAE 06NOV93  */
+            /* change ^[-1,0,1,or 2] to recip,one,ident,sqr */
             if (FNPTR(cvtptrx-1) == fStkPush2 ){
                DBUGMSG("LodRealC[-1,0,1,2] Push (*Pwr)"
                      " -> (*[recip,1,ident,Sqr0]), stk+=2" );
@@ -1039,7 +1036,6 @@ awful_error:
          }
       }
       else if (prevfptr == fStkLodReal && FNPTR(cvtptrx-1) == prevfptr ){
-         /* CAE 6NOV93  */
          /* don't handle pushes here, lodrealpwr needs 4 free  */
          DBUGMSG("LodReal (*Pwr) -> (*LodRealPwr)" );
          --cvtptrx;
@@ -1344,7 +1340,7 @@ int CvtStk() {  /* convert the array of ptrs  */
          FNPTR(cvtptrx-1) = fStkLodLTEAnd2;
       }
    }
-   else if (ntst == fStkOR ){  /* CAE 06NOV93  */
+   else if (ntst == fStkOR ){
       DBUGMSG("OR Clr2 -> ORClr2" );
       FNPTR(cvtptrx-1) = fStkORClr2;
    }

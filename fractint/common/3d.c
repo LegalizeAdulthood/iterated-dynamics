@@ -51,8 +51,6 @@ ROTZ(i) =           cosi  sini    0     0
                    -sini  cosi    0     0
                       0     0     1     0
                       0     0     0     1
-
-                      --  Tim Wegner  April 22, 1989
 */
 
 
@@ -169,21 +167,6 @@ int cross_product (VECTOR v, VECTOR w, VECTOR cross)
    cross[2] = tmp[2];
    return 0;
 }
-
-/* cross product integer arguments (not fudged) */
-/*** pb, unused
-int icross_product (IVECTOR v, IVECTOR w, IVECTOR cross)
-{
-   IVECTOR tmp;
-   tmp[0] =  v[1]*w[2] - w[1]*v[2];
-   tmp[1] =  w[0]*v[2] - v[0]*w[2];
-   tmp[2] =  v[0]*w[1] - w[0]*v[1];
-   cross[0] = tmp[0];
-   cross[1] = tmp[1];
-   cross[2] = tmp[2];
-   return 0;
-}
-***/
 
 /* normalize a vector to length 1 */
 int

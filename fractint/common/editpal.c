@@ -3287,11 +3287,11 @@ static void PalTable_Process(PalTable *me)
       if ( MoveBox_ShouldHide(me->movebox) )
          {
          PalTable_SetHidden(me, TRUE);
-         reserve_colors = FALSE;   /* <EAN> */
+         reserve_colors = FALSE;
          }
       else
          {
-         reserve_colors = TRUE;    /* <EAN> */
+         reserve_colors = TRUE;
          PalTable__SaveRect(me);
          PalTable__Draw(me);
          }
