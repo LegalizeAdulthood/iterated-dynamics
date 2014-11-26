@@ -1,0 +1,292 @@
+
+       FRACTINT'S NEW FLOW CONTROL INSTRUCTIONS FOR THE FORMULA PARSER
+
+
+    Version 19.6 of Fractint provides for flow control statements in user
+  created formulas.  This feature should make formulas more readable, and
+  preliminary testing indicates that more complicated formulas will run as
+  much as 2 to 3 times faster when the formula is written using the new
+  instructions.
+
+    This tutorial provides an overview of the new feature.  It assumes that
+  the reader is familiar with the syntax of Fractint formulas.  If you are
+  new to Fractint, the documentation accompanying Fractint provides a good
+  start, and Bradley Beacham's tutorial (available in Library 3 of the
+  CompuServe Graphics Developers Forum as frmtut.zip, and at Noel Giffen's
+  Fractint web page - http://spanky.triumf.ca) will provide a more detailed
+  explanation of Fractint formula writing.  Sylvie Gallet's tutorial on PHC
+  and PTC formulas is a more advanced text, and is available at the same
+  sites. These tutorials are also included in the Fractint v. 19.6 package.
+
+    Until Fractint v. 19.6, each section of a Fractint formula was always
+  executed one instruction at a time, sequentially through the section
+  without exception.  Formula writers worked out ingenious solutions to
+  achieve different results in a formula based on a testing of some
+  condition.  For example, if the writer wanted c to be equal to sin(z) if
+  x==y, and cos(z) if not, the formula would contain the following line:
+
+    c = sin(z)*(x==y) + cos(z)*(x!=y)
+
+    Each time this line is reached in the formula, which in the course of
+  drawing an image could be many millions of times, each element of the line
+  is computed, so both the x==y and the x!=y tests are evaluated (one of
+  which, of course, will be 0 and the other 1), and both sin(z) and cos(z)
+  are computed.  Obviously, it would be much more efficient to evaluate only
+  x==y, and then compute only sin(z) or cos(z) depending on the result.
+
+
+THE NEW FLOW CONTROL INSTRUCTIONS
+
+    Four new formula instructions are now permitted in a Fractint formula.
+  They are:
+
+      IF (expression)
+      ELSEIF (expression)
+      ELSE
+      ENDIF
+
+    Each of these instructions must be a separate statement in the formula,
+  i.e. must end with a comma or an end-of-line character.
+    The easiest way to avoid problems with this requirement is to put each
+  of these instructions on a separate line.  The practice of the people
+  testing the new feature has been to capitalize the flow control
+  instructions and to indent the regular calculations which follow them.
+
+    A group of these instructions beginning with IF and ending with ENDIF
+  constitutes a unit which I'll refer to as an "if block" of instuctions.
+  A formula may contain any number of if blocks, and if blocks may be nested
+  inside other if blocks.  The only limitation is that the end of the
+  initialization section (represented by a ":" in the formula) cannot be
+  inside an if block.
+
+    An if block contains exactly one IF, exactly one ENDIF, no more than 1
+  ELSE (there may be none), and any number of ELSEIFs (there may be none),
+  but all ELSEIFs must precede the block's ELSE instruction.  The format is
+  therefore as follows:
+
+      IF (expression)
+         statements
+      ELSEIF (expression)
+         statements
+      ELSEIF (expression)
+         statements
+      .
+      .
+      ELSE
+         statements
+      ENDIF
+
+    ELSEIF (expression) is the equivalent of two flow control instructions,
+  an ELSE immediately followed by an IF ().  The difference between the
+  single and the separated instructions is that ELSEIF does not require its
+  own ENDIF, whereas ELSE followed by IF would require that the separate IF
+  have its own ENDIF.
+
+    The example above, restated using these instructions, will read as
+  follows:
+
+      IF (x==y)
+         c = sin(z)
+      ELSE
+         c = cos(z)
+      ENDIF
+
+    Not only is this formulation intuitively easier to understand than the
+  earlier one, it also runs much faster, because only the elements necessary
+  to make the desired assignment to c are executed.
+
+    The formula parser does the following with these instructions:
+
+  1. Evaluate the expression inside the parentheses of the IF instruction.
+     Boolean expressions in Fractint (expressions which use the operators
+     ==, !=, >, <, >=, <=, && and ||) alway evaluate to (1,0) if the
+     expression is true and (0,0) if the expression is false.  The nature
+     of branching instructions is such that the expression in the
+     parentheses of an IF instruction will almost always be boolean, but
+     this is not a requirement.  Any expression which evaluates to a
+     single complex number is acceptable.  Thus, though unusual, the
+     instruction IF(x+y) is perfectly valid, since the result of x+y is a
+     complex number.
+
+  2. Look at the real element, and only the real element, of the
+     expression.  If it is nonzero, the expression represents "true".
+     If the real element is zero, the expression represents "false".
+     Thus (1,0), (-1,0), and (3.14, 6) are all "true" results.  (0,0),
+     (0,1) and (0,-1) are all "false" results.
+
+  3. If the expression is true, proceed to the next statement in the
+     formula without any skipping.
+
+  4. If the expression is false, skip to the statement immediately following
+     the next flow control instruction in the if block (of necessity, an
+     ELSE, the ELSE element of an ELSEIF(), or ENDIF), and begin further
+     processing from there.
+
+  5. If an ELSE or the ELSE portion of an ELSEIF() instruction is reached
+     in the course of processing, jump to the instruction following the
+     ENDIF at the end of that if block.
+
+    Looking at the above example, the parser first evaluates the expression
+  x==y.  If it is true, the next statement, c = sin(x) is executed, and then,
+  the ELSE now being reached, execution jumps to the ENDIF.  If x==y is
+  false, execution jumps straight to the statement after the ELSE, which is
+  c = cos(x), and executes it, continuing on from there.
+
+    With a little reflection you will realize that only one of the sets of
+  statements following flow control instructions in an if block is executed.
+  For example,
+
+      IF (expr1)
+         group1_statements
+      ELSEIF (expr2)
+         group2_statements
+      ELSEIF (expr3)
+         group3_statements
+      ELSE
+         group4_statements
+      ENDIF
+
+    If expr1 is true, the group1_statements will be executed and then the
+  execution will jump to the ENDIF.  The fact that expr2 or expr3 may be
+  true is irrelevant; the conditions will not be tested if expr1 is true.
+  If expr1 is false, then expr2 will be tested, and if true the
+  group2_statements will be executed, and when done the execution will jump
+  to the ENDIF.  expr3 is only evaluated if expr1 and expr2 are both false.
+  You can also see that the group4_statements will only be executed if all
+  three of the test expressions are false.
+
+    If there is no ELSE statement in an if block, it is possible that none of
+  the calculation statements in the block will be executed.  For example,
+
+      IF (expression)
+         statements
+      ENDIF
+
+    will cause the statements to be executed only if the expression is true;
+  otherwise they are skipped entirely.
+
+EXAMPLE
+
+    Carr2821 is one of Bob Carr's many formulas which make use of the
+  formula branching technique developed by Sylvie Gallet.  It has received
+  much attention lately because of Lee Skinner's marvelous collection of 186
+  images derived from the formula.
+    Following is the original formula and an IF..ELSE rewrite of it.  In
+  addition to the straightforward switch from the old method of branching to
+  the new, you will see that the flow control instructions make much easier
+  the implementation of other short cuts which speed up execution.
+    The IF..ELSE rewrite produces the same images as the original, but in
+  about 1/2 the time, depending on your processor.
+
+  Carr2821 {; Modified Sylvie Gallet frm. [101324,3444],1996
+            ; passes=1 needs to be used with this PHC formula.
+    b5=pixel-conj(0.1/pixel)
+    b4=pixel-flip(0.1/pixel)-conj(0.001/pixel),
+    c=whitesq*b4-(whitesq==0)*b4
+    z=whitesq*b5-(whitesq==0)*b5
+    c1=1.5*z^1.2,c2=2.25*conj(z),c3=3.375*flip(z),c4=5.0625*flip(z),
+    l1=real(p1),l2=imag(p1),l3=real(p2),l4=imag(p2),
+    bailout=16,iter=0:
+    t1=(iter==l1),t2=(iter==l2),t3=(iter==l3),t4=(iter==l4),
+    t=1-(t1||t2||t3||t4),z=z*t,c=c*t+c1*t1+c2*t2+c3*t3+c4*t4,
+    z=(|z|/5)+z*z+c-0.09/pixel
+    iter=iter+1
+    |z|<=bailout
+  }
+
+  carr2821 {; Modified Sylvie Gallet frm. [101324,3444],1996
+            ; Converted to if.else by Sylvie Gallet and George Martin 3/97
+            ; passes=1 needs to be used with this PHC formula.
+     pixinv = 0.1/pixel
+     p9 = 0.9*pixinv
+     imagp1 = imag(p1)
+     imagp2 = imag(p2)
+     IF (whitesq)
+        z = zorig = pixel - conj(pixinv)
+        c = pixel - flip(pixinv) - conj(0.01*pixinv) - p9
+        mz = |z|
+     ELSE
+        z = zorig = conj(pixinv) - pixel
+        c = flip(pixinv) + conj(0.01*pixinv) - pixel - p9
+        mz = |z|
+     ENDIF
+     bailout = 16
+     iter = 0
+     :
+     IF (iter==p1)
+        z = mz = 0
+        c = 1.5*zorig^1.2 - p9
+     ELSEIF (iter==imagp1)
+        z = mz = 0
+        c = 2.25*conj(zorig) - p9
+     ELSEIF (iter==p2)
+        z = mz = 0
+        c = 3.375*flip(zorig) - p9
+     ELSEIF (iter==imagp2)
+        z = mz = 0
+        c = 5.0625*flip(zorig) - p9
+     ENDIF
+     z = mz*0.2 + z*z + c
+     mz = |z|
+     iter = iter + 1
+     mz <= bailout
+  }
+
+
+REWRITING OLD FORMULAS
+
+    There are more than 1500 existing Fractint formulas which could be
+  written in IF..ELSE format.  If you have occasion to rewrite one, you
+  should test the rewrite to make sure it is drawing the identical images
+  that the original version did.  To perform this test, do the following:
+
+  1. Using a .par file image entry which uses the formula, render the image
+     using the old formula, and save the image (e.g. as oldimage.gif).
+
+  2. Using the same .par file image entry, render the image using the
+     rewritten formula, and save the image (e.g. as newimage.gif).
+
+  3. Exit Fractint, and restart with the following command line options
+     selected:  debug=50  filename=oldimage.gif
+
+  4. With oldimage.gif on the screen, hit <r> and select newimage.gif to
+     restore to the screen. Hit <CR>
+
+  5. The effect of debug=50 is that the pixels which will be shown in the
+     second restored image will only be those which are different than the
+     image previously on the screen.  If the images are identical, you will
+     have a completely blank screen.
+
+  6. Differences are saved to an ASCII file "cmperr".  Exit Fractint and
+     check this file to assure yourself that the two images were in fact
+     identical.
+
+    Images drawn in floating point mode on a computer with a math coprocessor
+  or a 486 or higher processor may have slight pixel variation between an
+  original and an if..else rewrite because of certain optimizations
+  implemented in the "fast parser" code.  If you are seeing these variations
+  and want to make sure the rewritten formula is accurate, draw the images
+  using the original and rewritten formulas with the command line parameter
+  debug=322 selected.  This causes Fractint to skip the optimization code,
+  and differences caused by the optimizer will therefore be eliminated. If 
+  you still have differences and believe your rewrite is accurate, try again
+  with debug=90 selected. This eliminates the use of the fast parser 
+  entirely, and the original formula and your rewrite, if correct, should 
+  produce identical images. 
+
+    
+    If you are satisfied that you have a good rewrite, post the revised
+  formula in a message in the Fractint forum on CompuServe, or send an email
+  with the revised formula to me (76440.1143@compuserve.com).  It will be
+  helpful if the message includes both the old and rewritten formula, and a
+  .par image entry using the formula so that we can easily verify the
+  accuracy of the rewrite.  Good rewrites will be added to the orgform
+  compilation of formulas in place of the old formula, with credit given to
+  the author of the rewrite.
+
+    Thanks to Sylvie Gallet and Les StClair for their help in writing this
+  tutorial.
+
+    George Martin
+    3/23/97
+

@@ -1,4 +1,4 @@
-*.o
+build
 fractint/hc
 fractint/dos_help/fractint.hlp
 fractint/dos_help/helpdefs.h

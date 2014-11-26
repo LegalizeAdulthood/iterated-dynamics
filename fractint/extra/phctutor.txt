@@ -1,0 +1,656 @@
+
+
+
+                    * * * * * * * * * * * * * * * *
+                    *                             *
+                    *   PHC  and  PTC  tutorial   *
+                    *                             *
+                    *            v 2.0            *
+                    *                             *
+                    *           May 1997          *
+                    *                             *
+                    * * * * * * * * * * * * * * * *
+
+
+
+
+    1 - PHC Method: Overlaying two fractals ("16-bit PHC")
+        1-1 - Assignment statements
+        1-2 - Bailout tests
+        1-3 - Examples
+              1-3-1 - Mandel and Julia types
+              1-3-2 - Mandel and Newton types
+    2 - First PTC Method: Overlaying three fractals ("24-bit PTC")
+    3 - Second PTC Method: Overlaying four fractals ("32-bit PTC")
+    4 - Speed ups
+        4-1 - Avoid exponentiation...
+        4-2 - Avoid unnecessary calculations...
+        4-3 - Use the algebraic rules...
+    5 - How to write or modify PHC and PTC formulas
+    6 - Conversion of existing formulas
+        6-1 - Example 1
+        6-2 - Example 2
+        6-3 - Example 3
+        6-4 - Example 4: bailout tests
+    7 - Notes about the formula parser
+        7-1 - Calculation modes
+        7-2 - What's wrong with 3 * trunc(cr / 3) ?
+        7-3 - Precedence
+    8 - Limitations of PHC and PTC
+    9 - Conclusion
+
+
+
+
+    This document is Copyright (c) 1996-1997 by Sylvie Gallet.
+    I encourage you to copy and distribute it, so long as you leave it
+    unchanged.  It may NOT be used for commercial purposes without my
+    explicit prior permission.
+
+    Any comments, questions, corrections... are welcome.
+    My addresses are:
+
+             CompuServe:  Sylvie_Gallet  [101324,3444]
+               Internet:  sylvie_gallet@compuserve.com
+
+
+
+    Pseudo-HiColor (PHC) was co-discovered by Jim Deutch who wrote the
+    very first PHC formula and Lee Skinner who realized the enormous
+    possibilities that this technique offers.  Given the great interest
+    aroused by PHC, the Fractint developers decided to implement three
+    new variables that make formulas much simpler; a big thank you to
+    Tim Wegner, Jonathan Osuch and George Martin for doing this!
+
+    And a MEGA thanks for the IF..ELSE instruction they implemented in
+    Fractint 19.6.  This very powerful instruction considerably improves
+    the readability of the formulas that use conditional statements and
+    makes them generally faster.
+
+    In this second version of the PHC and PTC tutorial, I have rewritten
+    both the explanatory material and the formulas to take advantage
+    of the express branching instructions available now with Fractint 19.6.
+    Some historical perspective may be helpful. Branching instructions have
+    evolved from the technique described by Bradley Beacham in his formula
+    tutorial, to the more direct conditional assignments commonly seen now,
+    to the new IF..ELSE instructions. PHC formulas originally contained
+    rather complex calculations to achieve the checkerboard effect required,
+    but were much simplified when the "whitesq", "scrnpix", and "scrnmax"
+    predefined variables were added to the formula parser.
+
+    Because of these developments, the same PHC formula may be found in
+    different formula files with much different instructions, depending on
+    the "state of the art" when the particular version of the formula was
+    written. I have included samples of formulas written in the previous
+    style in the accompanying phctutor.frm. This should help the Fractint
+    user to understand how the old formulas worked and make easier the
+    conversion of existing formulas written in the prior old formats.
+
+    Pseudo-TrueColor (PTC) is an extension of the PHC concept.  All the
+    PHC and PTC formulas included in this document are by the author of
+    these lines.
+
+    Thanks to Lee Skinner and George Martin for their help, suggestions
+    and encouragements.
+
+
+
+
+1 - PHC Method: Overlaying two fractals ("16-bit PHC")
+======================================================
+ It is possible to combine two fractals (say fractal_0 and fractal_1) in
+ one image.  Imagine that alternate screen pixels form a checkerboard
+ pattern (represented by 0's and 1's) as follows:
+
+                          0 1 0 1 0 . .
+                          1 0 1 0 1 . .
+                          0 1 0 1 0 . .
+                          1 0 1 0 1 . .
+                          . . . . . . .
+
+ If one fractal is drawn on the "white squares" (the 1's) and the other
+ on the black squares (the 0's), the separate fractals will be visible,
+ and at higher screen resolutions you will not be able to see the way the
+ individual pixels intermesh with the others.  The effect is as if the two
+ fractals were drawn on separate transparent sheets and overlaid.
+
+ Fractint v. 19.5 provides a predefined variable "whitesq", which is
+ automatically set to 1 prior to the calculation of a white square pixel,
+ and to 0 prior to calculation of a black square pixel.  Let's see how to
+ use this variable in a formula.
+
+1-1 - Assignment statements
+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+ Suppose that fractal_0 and fractal_1 have the following assignment statements:
+
+          fractal_0
+            var = something
+
+          fractal_1
+            var = somethingelse
+
+ To overlay the two fractals in PHC fashion, you can use the following
+ IF..ELSE instruction in a formula:
+
+     IF (whitesq == 0)         ; "whitesq == 0" is TRUE
+       var = something
+     ELSE                      ; "whitesq == 0" is FALSE
+       var = somethingelse
+     ENDIF
+
+ or, even more simple:
+
+     IF (whitesq)              ; "whitesq == 1" is TRUE
+       var = somethingelse
+     ELSE                      ; "whitesq == 1" is FALSE
+       var = something
+     ENDIF
+
+1-2 - Bailout tests
+-+-+-+-+-+-+-+-+-+-
+ Suppose that fractal_0 and fractal_1 use the bailout tests bailout_0 and
+ bailout_1.  What will be the PHC bailout test?
+
+ Remember that if the answer of a bailout test is "TRUE" (the real portion
+ of the complex number is nonzero), the loop must be performed again;
+ otherwise, it is time to quit iterating.
+
+ The bailout test of the PHC formula must be the translation in the parser
+ language of the following rule:
+
+ PHC_bailout is TRUE only in two cases:
+
+     when (whitesq == 0) and (bailout_0 == TRUE)
+   or
+     when (whitesq == 1) and (bailout_1 == TRUE)
+
+  Under Fractint 19.6, this expression becomes:
+  --------------------------------------------
+
+     IF (whitesq)
+       PHC_bailout = bailout_1
+     ELSE
+       PHC_bailout = bailout_0
+     ENDIF
+     PHC_bailout
+
+ You'll notice that the IF block is followed by the name of a variable.
+ Omitting the last line will produce an error message from Fractint.
+
+1-3 - Examples
+-+-+-+-+-+-+-+
+
+1-3-1 - Mandel and Julia types
+------------------------------
+ This is the easiest case: both fractal use the same iteration instruction
+ and the same bailout test.
+
+   mandel { ; Mandel set of z^2 + c
+     z = c = pixel :
+      z = z*z + c
+       |z| <= 4
+     }
+   julia { ; Julia set of z^2 + (-0.75,0.1234)
+     z = pixel , c = (-0.75,0.1234) :
+      z = z*z + c
+       |z| <= 4
+     }
+
+ Since the only difference is the initial value of c, the PHC formula will
+ use whitesq only in the init section:
+
+   phc_mj { ; overlay the Mandel set of z^2 + c with
+            ; the Julia set of z^2 + (-0.75,0.1234)
+            ; Modified for if..else logic, April 1997
+     z = pixel
+     IF (whitesq)
+       c = (-0.75,0.1234)
+     ELSE
+       c = pixel
+     ENDIF
+     :
+     z = z*z + c
+     |z| <= 4
+     }
+
+1-3-2 - Mandel and Newton types
+-------------------------------
+ Here, except "z = pixel", everything is different.
+
+   mandel { ; Mandel set of z^2 + c
+     z = c = pixel :
+      z = z*z + c
+       |z| <= 4
+     }
+   newton { ; Julia set of Newton's method applied to z^3 - 1 = 0
+     z = pixel :
+      n = z^3 - 1 , d = 3*z^2
+      z = z - n/d
+       |n| >= 0.000001
+     }
+
+ The resulting PHC formula is:
+
+   phc_mn_A { ; overlay the Mandel set of z^2 + c with the Julia
+              ; set of Newton's method applied to z^3 - 1 = 0
+              ; Modified for if..else logic, April 1997
+     z = pixel :
+     IF (whitesq)
+       n = z^3 - 1 , d = 3*z^2 , z = z - n/d
+       PHC_bailout = |n| >= 0.000001
+     ELSE
+       z = z*z + pixel , PHC_bailout = |z| <= 4
+     ENDIF
+     PHC_bailout
+     }
+
+
+2 - First PTC Method: Overlaying three fractals ("24-bit PTC")
+==============================================================
+ Overlaying three fractals can be done with the following pattern:
+
+                          0 1 2 0 1 2 . .
+                          1 2 0 1 2 0 . .
+                          2 0 1 2 0 1 . .
+                          0 1 2 0 1 2 . .
+                          . . . . . . . .
+
+ Fractint v. 19.5 provides a predefined variable "scrnpix", which is set
+ to (column, row) prior to calculation of each pixel.  The upper left hand
+ corner of the screen is (0,0); at resolution 1024x768, the lower right
+ hand corner is therefore (1023,767).
+
+ Here, we'll use scrnpix to assign the value 0, 1 or 2 to a variable r
+ (as you can see, I choose a very explicit name!).
+
+ With col = real(scrnpix) and row = imag(scrnpix), the value of r should
+ be:
+     r = (col + row) modulo 3
+ or, using the parser language:
+     cr = real(scrnpix) + imag(scrnpix)
+     r = cr - 3 * trunc(cr / 3)
+
+ But this instruction doesn't work (see section 7-2).
+
+ The following instruction does work:
+     r = cr - 3 * trunc(cr / real(3))
+
+Now, let's see an example:
+--------------------------
+ Suppose you want to overlay the three following fractals:
+
+   mandel { ; Mandel set of z^2 + c
+     z = c = pixel :
+      z = z*z + c
+       |z| <= 4
+     }
+   julia { ; Julia set of z^2 + (-0.75,0.1234)
+     z = pixel , c = (-0.75,0.1234) :
+      z = z*z + c
+       |z| <= 4
+     }
+   newton { ; Julia set of Newton's method applied to z^3 - 1 = 0
+     z = pixel :
+      n = z^3 - 1 , d = 3*z^2
+      z = z - n/d
+       |n| >= 0.000001
+     }
+
+ We can merge them in the following way:
+
+   ptc_mjn_A { ; overlay the Mandel set of z^2 + c with the Julia set
+               ; of z^2 + (-0.75,0.1234) and the Julia set of Newton's
+               ; method applied to z^3 - 1 = 0
+               ; Modified for if..else logic, April 1997
+     cr = real(scrnpix) + imag(scrnpix)
+     r = cr - 3 * trunc(cr / real(3))
+     z = pixel
+     IF (r == 0)
+       c = pixel
+     ELSEIF (r == 1)
+       c = (-0.75,0.1234)
+     ENDIF
+     :
+     IF (r == 2)
+       n = z^3 - 1 , d = 3*z^2 , z = z - n/d
+       PTC_bailout = |n| >= 0.000001
+     ELSE
+       z = z*z + c
+       PTC_bailout = |z| <= 4
+     ENDIF
+     PTC_bailout
+     }
+
+
+3 - Second PTC Method: Overlaying four fractals ("32-bit PTC")
+==============================================================
+ The best dithering is produced by the following pattern:
+
+                          0 1 2 3 0 1 . .
+                          2 3 0 1 2 3 . .
+                          0 1 2 3 0 1 . .
+                          2 3 0 1 2 3 . .
+                          . . . . . . . .
+
+ and r is given by the formula:
+     r = (col + 2*row) modulo 4
+ or, using the parser language:
+     cr = real(scrnpix) + 2 * imag(scrnpix)
+     r = cr - 4 * trunc(cr / 4)
+
+ and r can then be used as in the previous examples, to combine four
+ fractals in one image.
+
+Here is an example:
+-------------------
+   mand_0 {                        mand_1 {
+     z = c = sin(pixel) :            z = c = pixel :
+      z = z*z + c                     z = z*z + c
+       |real(z)| <= 4                  |z| <= 4
+     }                               }
+   mand_2 {                        mand_3 {
+     z = c = 1/pixel :               z = c = -pixel :
+      z = z*z + c                     z = z*z + c
+       |imag(z)| <= 4                  |real(z)+imag(z)| <= 4
+     }                               }
+
+   ptc_4m_A { ; overlay four Mandels with different initializations
+              ; and bailout tests
+              ; Isn't it terrific???
+              ; Modified for if..else logic, April 1997
+     cr = real(scrnpix) + 2 * imag(scrnpix)
+     r = cr - 4 * trunc(cr / 4)
+     IF (r == 0)
+       z = c = sin(pixel)
+     ELSEIF (r == 1)
+       z = c = pixel
+     ELSEIF (r == 2)
+       z = c = 1/pixel
+     ELSE
+       z = c = -pixel
+     ENDIF
+     :
+     z = z*z + c
+     IF (r == 0)
+       PTC_bailout = |real(z)| <= 4
+     ELSEIF (r == 1)
+       PTC_bailout = |z| <= 4
+     ELSEIF (r == 2)
+       PTC_bailout = |imag(z)| <= 4
+     ELSE
+       PTC_bailout = |real(z)+imag(z)| <= 4
+     ENDIF
+     PTC_bailout
+     }
+
+
+4 - Speed ups
+=============
+ The best way to make your formulas run a little faster would be to read or
+ reread Bradley Beacham's FRMTUTOR.TXT (that'll save me having to plagiarize
+ his work <g>).
+
+4-1 - Avoid exponentiation...
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+ In the newton formula, we can replace
+     n = z^3 - 1 , d = 3*z^2
+ with
+     z2 = z*z , n = z2*z - 1 , d = 3*z2
+
+ This gives:
+
+   newton_B { ; Julia set of Newton's method applied to z^3 - 1 = 0
+     z = pixel :
+      z2 = z*z , n = z2*z - 1 , d = 3*z2
+      z = z - n/d
+       |n| >= 0.000001
+     }
+
+4-2 - Avoid unnecessary calculations...
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+
+  Look at this formula:
+
+  mandelvariation {
+    z = c = pixel:
+    z = z*z + sin(c) - 0.2
+    |z| < 4
+  }
+
+  Once you notice that the expression sin(c) - .2 is the same value every
+  time it is calculated for a pixel (which could be many thousands of times)
+  you will get in the habit of writing formulas like this one as follows:
+
+  mandelvariation {
+    z = pixel
+    c = sin(pixel) - 0.2:
+    z = z*z + c
+    |z| < 4
+  }
+
+  By moving the constant expression into the initialization section, the
+  calculation is made only once per pixel.
+
+
+4-3 - Use the algebraic rules...
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+  An expression such as
+
+  z = (3.5 * a + 3.5 * b) / (10.5 * c)
+
+  is reduced to the simpler
+
+  z = (a + b) / (3 * c)
+
+  While this example seems trivial, cases where such speedups are possible
+  abound in existing formulas; in more complicated formulas, the algebraic
+  reductions may not be as obvious.
+
+
+5 - How to write or modify PHC and PTC formulas
+===============================================
+ As we've seen earlier, the PHC or PTC dithering is based on the value of
+ a variable initialized by Fractint (whitesq) or in the formula (r).
+
+ To write a PHC formula, you just have to use "whitesq" at least once.
+ A PTC formula will start with these lines:
+     cr = real(scrnpix) + imag(scrnpix)
+     r = cr - 3 * trunc(cr / real(3))
+ or these ones:
+     cr = real(scrnpix) + 2 * imag(scrnpix)
+     r = cr - 4 * trunc(cr / 4)
+
+ For a good dithering, it's essential to leave the variables "whitesq", "cr"
+ and "r" intact.
+ For example, if you change:
+     r = cr - 3 * trunc(cr / real(3))
+ to:
+     r = cr - 3 * trunc(cr / real(3.5))
+ the values of r will be:
+     0, 1, 2, 3, 1, 2, 3, 1, 2, 3, 4, ...
+
+ and the result will be quite disappointing.  Also, it will be helpful if
+ you use the templates (including the variable names "r" and "cr") in
+ exactly the form shown above.  This will make it easier to identify and
+ update formulas using PHC and PTC if future changes to Fractint's formula
+ parser would make such updating desirable.
+
+
+6 - Conversion of existing formulas
+===================================
+ The following examples show typical old style PHC statements and their
+ translation for Fractint 19.6.
+ 
+6-1 - Example 1
++-+-+-+-+-+-+-+
+ z = z*z + sin(z)*whitesq + pixel
+
+   IF (whitesq)
+      z = z*z + sin(z) + pixel
+   ELSE
+      z = z*z + pixel
+   ENDIF
+
+6-2 - Example 2
++-+-+-+-+-+-+-+
+ z = z^(z + whitesq - (whitesq == 0))
+
+   IF (whitesq)
+      z = z^(z + 1)
+   ELSE
+      z = z^(z - 1)
+   ENDIF
+
+6-3 - Example 3
++-+-+-+-+-+-+-+
+ z = (z*z + pixel)*whitesq + (exp(z) + c)*(whitesq == 0) + p1
+
+   IF (whitesq)
+      z = z*z + pixel + p1
+   ELSE
+      z = exp(z) + c + p1
+   ENDIF
+
+6-4 - Example 4: bailout test
++-+-+-+-+-+-+-++-+-+-+-+-+-+-
+ The best way to translate a bailout test that uses whitesq is to assign its
+ value to a variable and to end the formula with this variable.
+ For example:
+
+   (|z| <= 4 && whitesq == 0) || (|n| >= 0.000001 && whitesq)
+
+ will read as follow:
+
+   IF (whitesq)
+      PHC_bailout = |n| >= 0.000001
+   ELSE
+      PHC_bailout = |z| <= 4
+   ENDIF
+   PHC_bailout
+
+ Of course, if the iterated section already has an IF block controlled by
+ whitesq, we can put the "PHC_bailout =" statements in this block as in the
+ example below:
+
+   phc_mn_A { ; overlay the Mandel set of z^2 + c with the Julia
+              ; set of Newton's method applied to z^3 - 1 = 0
+     z = c = pixel :
+      n = z^3 - 1 , d = 3*z^2
+      z = (z*z + c) * (whitesq == 0) + (z - n/d) * whitesq
+       (|z| <= 4 && whitesq == 0) || (|n| >= 0.000001 && whitesq)
+   }
+
+   phc_mn_A { ; overlay the Mandel set of z^2 + c with the Julia
+              ; set of Newton's method applied to z^3 - 1 = 0
+              ; Modified for if..else logic, April 1997
+      z = pixel :
+      IF (whitesq)
+         n = z^3 - 1 , d = 3*z^2 , z = z - n/d
+         PHC_bailout = |n| >= 0.000001
+      ELSE
+         z = z*z + pixel , PHC_bailout = |z| <= 4
+      ENDIF
+      PHC_bailout
+      }
+
+
+7 - Notes about the formula parser
+==================================
+
+7-1 - Calculation modes
+-+-+-+-+-+-+-+-+-+-+-+-
+ Fractint provides two calculation modes: integer math and floating point
+ math.
+
+ Though it often produces very nice images, integer math has an important
+ limitation: you can't use numbers greater than 255.999... In integer mode,
+ when you *think* you're using say 372, Fractint uses 116 (372-256=116).
+ For this reason, the Fractint developers decided to force the floating
+ point mode when the formula parser detects the use of one of the predefined
+ variables "scrnpix", "scrnmax" and "maxit".
+
+7-2 - What's wrong with 3 * trunc(cr / 3) ?
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+ When you run a formula in floating point mode, the formula parser uses
+ some tricks to optimize the code.  Trunc(cr / 3) is the victim of one of
+ these tricks.
+
+ The problem is this: trunc(cr/3) is replaced by trunc(cr*(1/3)), but since
+ 1/3 is represented internally as .33333..., cr*(1/3) is slightly less than
+ cr/3.  If cr is a multiple of 3, trunc(cr/3) therefore returns one less
+ than you would expect.  For example trunc(6/3) calculates as
+ trunc(6*.3333333...) or trunc(1.9999...), which in turn evaluates to 1
+ instead of the expected result of 2.
+
+ Replacing 3 with real(3) circumvents this problem and yields the desired
+ result.
+
+7-3 - Precedence
+-+-+-+-+-+-+-+-+
+ Precedence is a way to make mathematical expressions more readable by using
+ less parentheses.  For a better comprehension of this section, you might
+ want to look at the table of precedence in the Fractint documentation.
+
+ The following expressions are mathematically equivalent because division and
+ multiplication have a higher precedence than addition and subtraction (this
+ means that divisions and multiplications will be performed before additions
+ and subtraction):
+
+                2+(3*((5*3)+(4/5))*(7-5))
+                2 + 3 * (5*3 + 4/5) * (7 - 5)
+
+ (they both evaluate to 96.8)
+ I must confess that I tend to prefer the second one... (OK, I'm cheating,
+ I just added a few white spaces... <g>).
+
+ Now, let's see another example:
+ -------------------------------
+ In this expression:
+               (|z| <= 4) && (whitesq == 0)
+
+ the parentheses mean that the comparisons must be performed before the
+ logical AND.  Comparisons have a higher precedence than logical operators
+ thus, we can remove the parentheses:
+               |z| <= 4 && whitesq == 0
+
+ However, with
+
+       (|z| <= 4 && whitesq == 0) || (|n| >= 0.000001 && whitesq)
+
+ Can we remove the parentheses?  The answer is: no!  Without parentheses,
+ and since we know that comparisons are performed first, this expression has
+ the following format:
+                A && B || C && D
+
+ "&&" and "||" have the same precedence and in such a case, the expression
+ must be calculated from the left to the right.  Just look at this:
+                (1 && 1) || (1 && 0) =
+                   1     ||    0     = 1
+
+                  1 && 1 || 1 && 0 =
+                    1    || 1 && 0 =
+                         1    && 0 = 0
+
+
+8 - Limitations of PHC and PTC
+==============================
+ With the new variables introduced in Fractint 19.5, PHC and PTC formulas
+ are now resolution independent and the image can be interrupted, saved and
+ restored.  Panning an even number of pixels for PHC images or multiples of
+ 3 for "24-bit PTC's" and multiples of 4 for "32-bit PTC's is possible
+ without artifacts.
+
+ All PHC and PTC formulas require passes=1.
+
+ The use of symmetry in PHC or PTC formulas or par files is not recommended
+ since symmetry alters the pattern along the axes and results in horizontal
+ or vertical lines.
+
+
+9 - Conclusion
+==============
+ That's all for now!  I hope you found this text interesting and useful.
+ I'm planning an update of Bradley Beacham's Formula Tutorial which could
+ include this text and any subject you'd like to see treated.
+
