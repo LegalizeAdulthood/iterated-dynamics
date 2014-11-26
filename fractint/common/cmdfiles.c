@@ -113,7 +113,7 @@ int Targa_Out = 0;              /* 3D fullcolor flag */
 int truecolor = 0;              /* escape time truecolor flag */
 int truemode = 0;               /* truecolor coloring scheme */
 char    colorfile[FILE_MAX_PATH];/* from last <l> <s> or colors=@filename */
-int functionpreloaded; /* if function loaded for new bifs, JCO 7/5/92 */
+int functionpreloaded;          /* if function loaded for new bifs */
 float   screenaspect = DEFAULTASPECT;   /* aspect ratio of the screen */
 float   aspectdrift = DEFAULTASPECTDRIFT;  /* how much drift is allowed and */
                                            /* still forced to screenaspect  */
@@ -493,7 +493,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
    bignumbailout = (int ( *)(void))bnMODbailout;
    bigfltbailout = (int ( *)(void))bfMODbailout;
 
-   functionpreloaded = 0; /* for old bifs  JCO 7/5/92 */
+   functionpreloaded = 0; /* for old bifs */
    mxminfp = -.83;
    myminfp = -.25;
    mxmaxfp = -.83;
@@ -1456,7 +1456,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             }
             ++value;
         }
-        functionpreloaded = 1; /* for old bifs  JCO 7/5/92 */
+        functionpreloaded = 1; /* for old bifs */
         return 1;
     }
 

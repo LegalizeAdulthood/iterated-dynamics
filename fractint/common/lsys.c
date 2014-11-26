@@ -109,7 +109,7 @@ LDBL _fastcall getnumber(char **str)
    (*str)--;
    numstr[i]=0;
    ret=atof(numstr);
-   if (ret <= 0.0) /* this is a sanity check, JCO 8/31/94 */
+   if (ret <= 0.0) /* this is a sanity check */
       return 0;
    if (root)
      ret=sqrtl(ret);

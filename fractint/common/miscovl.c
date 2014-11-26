@@ -161,7 +161,6 @@ void make_batch_file()
 
    if (CommandName[0] == 0)
       strcpy(inpcommandname, "test");
-   /* TW added these  - and Bert moved them */
    pxdots = xdots;
    pydots = ydots;
    xm = ym = 1;
@@ -631,7 +630,6 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
          /* Just truncate these angles.  Who cares about 1/1000 of a degree */
          /* Somebody does.  Some rotated and/or skewed images are slightly */
          /* off when recreated from a PAR using 1/1000. */
-         /* JCO 08052001 */
 #if 0
          Rotation   = (long)(Rotation   * 1e3)/1e3;
          Skew       = (long)(Skew       * 1e3)/1e3;
@@ -649,8 +647,6 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
                /* Use precision=6 here.  These angle have already been rounded        */
                /* to 3 decimal places, but angles like 123.456 degrees need 6         */
                /* sig figs to get 3 decimal places.  Trailing 0's are dropped anyway. */
-               /* Changed to 18 to address rotated and skewed problem w/ PARs */
-               /* JCO 08052001 */
                put_float(1,Rotation,18);
                if (Skew != 0)
                {
@@ -1102,7 +1098,7 @@ docolors:
          int delta,diff1[4][3],diff2[4][3];
          curc = force = 0;
 #ifdef XFRACT
-         if (fake_lut && !truemode) loaddac(); /* stupid kludge JCO 6/23/2001 */
+         if (fake_lut && !truemode) loaddac(); /* stupid kludge */
 #endif
          while (1) {
             /* emit color in rgb 3 char encoded form */

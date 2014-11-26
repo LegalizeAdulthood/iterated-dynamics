@@ -237,13 +237,13 @@ static int l_setup_convert_to_screen(struct l_affine *l_cvt)
 {
    struct affine cvt;
 
-   /* MCP 7-7-91, This function should return a something! */
+   /* This function should return a something! */
    if (setup_convert_to_screen(&cvt))
       return(-1);
    l_cvt->a = (long)(cvt.a*fudge); l_cvt->b = (long)(cvt.b*fudge); l_cvt->c = (long)(cvt.c*fudge);
    l_cvt->d = (long)(cvt.d*fudge); l_cvt->e = (long)(cvt.e*fudge); l_cvt->f = (long)(cvt.f*fudge);
 
-   /* MCP 7-7-91 */
+
    return(0);
 }
 
@@ -1246,9 +1246,9 @@ int iconfloatorbit(double *x, double *y, double *z)
     *z = zzbar;
     return(0);
 }
-#ifdef LAMBDA  /* Tim says this will make me a "good citizen" */
-#undef LAMBDA  /* Yeah, but you were bad, Dan - LAMBDA was already */
-#undef ALPHA   /* defined! <grin!> TW */
+#ifdef LAMBDA
+#undef LAMBDA
+#undef ALPHA
 #undef BETA
 #undef GAMMA
 #endif

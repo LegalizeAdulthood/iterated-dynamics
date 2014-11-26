@@ -952,14 +952,12 @@ int
 UnityFractal(void)
 {
 #if !defined(XFRACT)
-   /* brought to you by Mark Peterson - you won't find this in any fractal
-      books unless they saw it here first - Mark invented it! */
    XXOne = multiply(lold.x, lold.x, bitshift) + multiply(lold.y, lold.y, bitshift);
    if ((XXOne > FgTwo) || (labs(XXOne - FgOne) < delmin))
       return 1;
    lold.y = multiply(FgTwo - XXOne, lold.x, bitshift);
    lold.x = multiply(FgTwo - XXOne, lold.y, bitshift);
-   lnew=lold;  /* TW added this line */
+   lnew=lold;
    return 0;
 #else
    return 0;
@@ -969,16 +967,13 @@ UnityFractal(void)
 int
 UnityfpFractal(void)
 {
-double XXOne;
-   /* brought to you by Mark Peterson - you won't find this in any fractal
-      books unless they saw it here first - Mark invented it! */
-
+    double XXOne;
    XXOne = sqr(old.x) + sqr(old.y);
    if ((XXOne > 2.0) || (fabs(XXOne - 1.0) < ddelmin))
       return 1;
    old.y = (2.0 - XXOne)* old.x;
    old.x = (2.0 - XXOne)* old.y;
-   g_new=old;  /* TW added this line */
+   g_new=old;
    return 0;
 }
 
@@ -1271,12 +1266,6 @@ PopcornFractal(void)
    }
    /* else */
    /* FLOATBAILOUT(); */
-   /* PB The above line was weird, not what it seems to be!  But, bracketing
-         it or always doing it (either of which seem more likely to be what
-         was intended) changes the image for the worse, so I'm not touching it.
-         Same applies to int form in next routine. */
-   /* PB later: recoded inline, still leaving it weird */
-   /* JCO: sqr's should always be done, else magnitude could be wrong */
    tempsqrx = sqr(g_new.x);
    tempsqry = sqr(g_new.y);
    if ((magnitude = tempsqrx + tempsqry) >= rqlim
@@ -1353,7 +1342,6 @@ LPopcornFractal(void)
       lold = lnew;
    }
    /* else */
-   /* JCO: sqr's should always be done, else magnitude could be wrong */
    ltempsqrx = lsqr(lnew.x);
    ltempsqry = lsqr(lnew.y);
    lmagnitud = ltempsqrx + ltempsqry;
@@ -1637,7 +1625,7 @@ TrigPlusTrigfpFractal(void)
 
 /* The following four fractals are based on the idea of parallel
    or alternate calculations.  The shift is made when the mod
-   reaches a given value.  JCO  5/6/92 */
+   reaches a given value.  */
 
 int
 LambdaTrigOrTrigFractal(void)

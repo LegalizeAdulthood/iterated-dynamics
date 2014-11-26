@@ -95,7 +95,7 @@ BOOL dont_wait_for_a_key = TRUE;
 
 /* Too many functions defaulting to a type 'int' return that should be
    a type 'void'.  I'll just get rid of the warning message for this file
-   only.  MCP 8-6-91 */
+   only.  */
 
    #pragma warn -rvl
 
@@ -212,7 +212,6 @@ long minimum_update;
 long pixelsout;
 int top_changed, bottom_changed;
 
-/* Made global, MCP 6-16-91 */
 unsigned char win_andmask[8];
 unsigned char win_notmask[8];
 unsigned char win_bitshift[8];
@@ -623,7 +622,7 @@ void win_save(void)
     save_system = 1;
     save_release = win_release;
 
-    /* MCP 10-27-91 */
+ 
     if(FileFormat != ID_BMP)
        savetodisk(readname);
     else

@@ -366,7 +366,6 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     }
 
     /* if (read_info.version > 14)  post-version 20.1.12 */
-    /* modified saved evolver structure JCO 12JUL01 */
     Log_Auto_Calc = 0;  /* make sure it's turned off */
 
     orbit_interval = 1;
@@ -528,7 +527,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
             gene_handle = MemoryAlloc((U16) sizeof(gene), 1L, MEMORY);
         }
         MoveFromMemory((BYTE *)&gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
-        if (read_info.version < 15)  /* This is VERY Ugly!  JCO  14JUL01 */
+        if (read_info.version < 15)
         {
             /* Increasing NUMGENES moves ecount in the data structure */
             /* We added 4 to NUMGENES, so ecount is at NUMGENES-4 */
@@ -1072,7 +1071,7 @@ static void backwardscompat(struct fractal_info *info)
 void set_if_old_bif(void)
 {
 /* set functions if not set already, may need to check 'functionpreloaded'
-   before calling this routine.  JCO 7/5/92 */
+   before calling this routine. */
 
    switch (fractype) {
       case BIFURCATION:
@@ -1119,7 +1118,7 @@ void set_function_parm_defaults(void)
 void backwards_v18(void)
 {
   if (!functionpreloaded)
-    set_if_old_bif(); /* old bifs need function set, JCO 7/5/92 */
+    set_if_old_bif(); /* old bifs need function set */
   if (fractype==MANDELTRIG && usr_floatflag==1
          && save_release < 1800 && bailout == 0)
     bailout = 2500;

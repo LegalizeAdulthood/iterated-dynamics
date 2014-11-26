@@ -2,13 +2,10 @@
 **
 ** PORT.H : Miscellaneous definitions for portability.  Please add
 ** to this file for any new machines/compilers you may have.
-**
-** XFRACT file "SHARED.H" merged into PORT.H on 3/14/92 by --CWM--
-** TW also merged in Wes Loewer's BIGPORT.H.
 */
 
-#ifndef PORT_H          /* If this is defined, this file has been       */
-#define PORT_H          /* included already in this module.             */
+#ifndef PORT_H
+#define PORT_H
 
 #if defined(_WIN32)
 #define _CRTDBG_MAP_ALLOC

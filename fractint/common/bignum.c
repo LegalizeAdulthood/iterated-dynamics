@@ -1304,7 +1304,6 @@ bn_t mult_bn(bn_t r, bn_t n1, bn_t n2)
     {
     int sign1, sign2;
 
-    /* TW ENDFIX */
     sign1 = is_bn_neg(n1);
     sign2 = is_bn_neg(n2);
     unsafe_mult_bn(r, n1, n2);

@@ -835,7 +835,6 @@ inpfldl_end:
 
 /* --------------------------------------------------------------------- */
 
-/* MCP 7-7-91, This is static code, but not called anywhere */
 #ifdef DELETE_UNUSED_CODE
 
 /* compare for sort of type table */
@@ -996,7 +995,6 @@ sel_type_restart:
         }
       }
 
-/* Added the following to accommodate fn bifurcations.  JCO 7/2/92 */
    if (((fractype == BIFURCATION) || (fractype == LBIFURCATION)) &&
      !((oldfractype == BIFURCATION) || (oldfractype == LBIFURCATION)))
         set_trig_array(0, "ident");
@@ -1830,7 +1828,7 @@ top:
       name_offset = temp_offset = file_offset;
       /* next equiv roughly to fscanf(..,"%40[^* \n\r\t({\032]",buf) */
       len = 0;
-      /* allow spaces in entry names in next JCO 9/2/2003 */
+      /* allow spaces in entry names in next */
       while (c != ' ' && c != '\t' && c != '(' && c != ';'
            && c != '{' && c != '\n' && c != '\r' && c != EOF && c != '\032')
       {

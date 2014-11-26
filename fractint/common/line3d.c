@@ -2,11 +2,6 @@
 /* This file contains a 3D replacement for the out_line function called */
 /* by the decoder. The purpose is to apply various 3D transformations   */
 /* before displaying points. Called once per line of the input file.    */
-/*                                                                      */
-/* Original Author Tim Wegner, with extensive help from Marc Reinig.    */
-/*    July 1994 - TW broke out several pieces of code and added pragma  */
-/*                to eliminate compiler warnings. Did a long-overdue    */
-/*                formatting cleanup.                                   */
 /************************************************************************/
 
 #include <limits.h>
@@ -2459,7 +2454,6 @@ static int line3dmem(void)
 
    /* lastrow stores the previous row of the original GIF image for
       the purpose of filling in gaps with triangle procedure */
-   /* first 8k of extraseg now used in decoder TW 3/95 */
    /* TODO: allocate real memory, not reuse shared segment */
    lastrow = (struct point *) malloc(sizeof(struct point)*xdots);
 

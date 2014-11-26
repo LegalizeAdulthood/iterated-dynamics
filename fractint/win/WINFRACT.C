@@ -68,7 +68,7 @@ extern int win_syscolorindex[21];
 extern DWORD win_syscolorold[21];
 extern DWORD win_syscolornew[21];
 
-/* MCP 6-16-91 */
+
 extern int pixelshift_per_byte;
 extern long pixels_per_bytem1;        /* pixels / byte - 1 (for ANDing) */
 extern unsigned char win_andmask[8];

@@ -1,13 +1,6 @@
 /*
  * help.c
  *
- *
- *
- * Revision history:
- *
- *   2-26-90  EAN     Initial version.
- *
- *
  */
 
 #ifndef TEST /* kills all those assert macros in production version */

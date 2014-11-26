@@ -11,78 +11,9 @@
 /*       built by parsestr() into an optimized array of function  */
 /*       pointer/operand pointer pairs.  */
 
-/*   As of 31 Dec 93, also generates executable code in memory.  */
+/*   Also generates executable code in memory.  */
 /*       Define the varible COMPILER to generate executable code.  */
 /*       COMPILER must also be defined in PARSERA.ASM. */
-
-
-/* Revision history:  */
-
-/* 15 Mar 1997 TIW  */
-/*    Fixed if/else bug, replaced stopmsg with pstopmsg */
-
-/* 09 Mar 1997 TIW/GGM  */
-/*    Added support for if/else */
-
-/* 30 Jun 1996 TIW  */
-/*    Removed function names if TESTFP not defined to save memory      */
-/*    Function fStkFloor added to support new 'floor' function         */
-/*    Function fStkCeil  added to support new 'ceil'  function         */
-/*    Function fStkTrunc added to support new 'trunc' function         */
-/*    Function fStkRound added to support new 'round' function         */
-
-/* 15 Feb 1995 CAE  */
-/*    added safety tests to pointer conversion code  */
-/*    added the capability for functions to require 4 free regs  */
-
-/* 8 Feb 1995 CAE  */
-/*    Comments changed.  */
-
-/* 8 Jan 1995 JCO  */
-/*    Function fStkASin added to support new 'asin' function in v19    */
-/*    Function fStkASinh added to support new 'asinh' function in v19  */
-/*    Function fStkACos added to support new 'acos' function in v19    */
-/*    Function fStkACosh added to support new 'acosh' function in v19  */
-/*    Function fStkATan added to support new 'atan' function in v19    */
-/*    Function fStkATanh added to support new 'atanh' function in v19  */
-/*    Function fStkSqrt added to support new 'sqrt' function in v19    */
-/*    Function fStkCAbs added to support new 'cabs' function in v19    */
-/*    Added support for a third parameter p3    */
-
-/* 31 Dec 1993 CAE  */
-/*    Fixed optimizer bug discovered while testing compiler.  */
-
-/* 29 Dec 1993 CAE  */
-/*    Added compiler.  */
-
-/* 04 Dec 1993 CAE  */
-/*    Added optimizations for LodImagAdd/Sub/Mul.  */
-
-/* 06 Nov 1993 CAE  */
-/*    Added optimizer support for LodRealPwr and ORClr2 functions.  */
-/*    If stack top is a real, a simpler sqr() or mod() fn will be  */
-/*          called (fStkSqr3() was added.)  */
-/*    The identities x^0=1, x^1=x, and x^-1=recip(x) are now used by the  */
-/*          optimizer.  (fStkOne() was added for this.)  */
-
-/* 31 Oct 1993 CAE  */
-/*    Optimizer converts '2*x' and 'x*2' to 'x+x'. */
-/*        "     recognizes LastSqr as a real if not stored to.  */
-
-/* 9 Oct 1993 CAE  */
-/*    Functions are now converted via table search.                    */
-/*    Added "real" stack count variable and debug msgs for stack size. */
-/*    Added optimizer extension for commutative multiply.              */
-/*    P1, P2 will be treated as consts if they are never stored to.    */
-/*    Function fStkStoClr2 now emitted for sto,clr with 2 on stack.    */
-/*       "     fStkZero added to support new 'zero' function in v18    */
-/*    Added optimization for x^2 -> sqr(x).                            */
-/*    Changed "stopmsg" to "DBUGMSG" and made all macros upper case.   */
-/*       (debugflag=324 now needed for debug msgs to print.)           */
-
-/* 12 July 1993 (for v18.1) by CAE to fix optimizer bug  */
-
-/* 22 MAR 1993 (for Fractint v18.0)  */
 
 /* ******************************************************************* */
 /*                                                                     */

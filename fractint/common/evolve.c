@@ -297,7 +297,7 @@ void varytrig(GENEBASE gene[], int randval, int i)
   if (gene[i].mutate)
   /* Changed following to BYTE since trigfn is an array of BYTEs and if one */
   /* of the functions isn't varied, it's value was being zeroed by the high */
-  /* BYTE of the preceeding function.  JCO  2 MAY 2001 */
+  /* BYTE of the preceeding function. */
      *(BYTE*)gene[i].addr=(BYTE)wrapped_positive_varyint(randval,numtrigfn,gene[i].mutate);
      /* replaced '30' with numtrigfn, set in prompts1.c */
   set_trig_pointers(5); /*set all trig ptrs up*/
@@ -696,7 +696,7 @@ get_evol_restart:
 
    viewwindow = evolving = uvalues[++k].uval.ch.val;
 
-   if (!evolving && i != FIK_F6)  /* don't need any of the other parameters JCO 12JUL2002 */
+   if (!evolving && i != FIK_F6)  /* don't need any of the other parameters */
       return(1);              /* the following code can set evolving even if it's off */
 
    gridsz = uvalues[++k].uval.ival;
@@ -1011,12 +1011,3 @@ int unspiralmap(void)
   }
   return(ecountbox[px][py]);
 }
-
-  /* points to ponder.....
-   watch out for near mem.....            (TW) It's better now.
-   try and keep gene array in overlay?    (TW) No, but try dynamic alloc.
-   how to preserve 'what to mutate ' choices through overlay swaps in
-   prompts... (TW) Needs checking, seems OK. LOADCHOICES copies, so is
-   safe.
-   */
-

@@ -306,15 +306,6 @@ keycursor (row, col)
 ;         row, col = row and column to start printing.
 ;         attr = color attribute.
 ;         string = far pointer to the null terminated string to print.
-;    Written for the A86 assembler (which has much less 'red tape' than MASM)
-;    by Bob Montgomery, Orlando, Fla.             7-11-88
-;    Adapted for MASM 5.1 by Tim Wegner          12-11-89
-;    Furthur mucked up to handle graphics
-;       video modes by Bert Tyler                 1-07-90
-;    Reworked for:  row,col update/inherit;
-;       620x200x2 inverse video;  far ptr to string;
-;       fix to avoid scrolling when last posn chgd;
-;       divider removed;  newline ctl chars;  PB  9-25-90
 */
 void
 putstring (row, col, attr, msg)
@@ -809,7 +800,7 @@ restorecurses (ptr)
 }
 
 /* Moved the following from realdos.c to more cleanly separate the XFRACT
- * code.  Now curses.h is only required in the unix directory. JCO 11/26/2005
+ * code.  Now curses.h is only required in the unix directory.
  */
 
 /*

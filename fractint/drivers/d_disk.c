@@ -1152,14 +1152,6 @@ disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 ;         attr = color attribute.
 ;         string = pointer to the null terminated string to print.
 ;    Written for the A86 assembler (which has much less 'red tape' than MASM)
-;    by Bob Montgomery, Orlando, Fla.             7-11-88
-;    Adapted for MASM 5.1 by Tim Wegner          12-11-89
-;    Furthur mucked up to handle graphics
-;       video modes by Bert Tyler                 1-07-90
-;    Reworked for:  row,col update/inherit;
-;       620x200x2 inverse video;  ptr to string;
-;       fix to avoid scrolling when last posn chgd;
-;       divider removed;  newline ctl chars;  PB  9-25-90
 */
 static void
 disk_put_string(Driver *drv, int row, int col, int attr, const char *msg)

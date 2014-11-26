@@ -1465,7 +1465,7 @@ top:
          if (i == 'n' || i == 'N')
             goto top;
          }
-      goodbye(); /* this needs to be a Windows command JCO */
+      goodbye(); /* this needs to be a Windows command */
       }
    if (i == TAB) {
       tab_display();

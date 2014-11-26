@@ -251,7 +251,7 @@ int get_toggles()
    old_fillcolor = fillcolor;
 
    choices[++k] = "Proximity value for inside=epscross and fmod";
-   uvalues[k].type = 'f'; /* should be 'd', but prompts get messed up JCO */
+   uvalues[k].type = 'f'; /* should be 'd', but prompts get messed up */
    uvalues[k].uval.dval = old_closeprox = closeprox;
 
    oldhelpmode = helpmode;
@@ -375,8 +375,6 @@ int get_toggles()
    ++k;
    closeprox = uvalues[k].uval.dval;
    if (closeprox != old_closeprox) j++;
-
-/* if (j >= 1) j = 1; need to know how many prompts changed for quick_calc JCO 6/23/2001 */
 
    return(j);
 }

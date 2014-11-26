@@ -258,8 +258,6 @@ reinit:
 */
         }
 
-/*  Not used, MCP 8-6-91
-    ccreal = param[0]; ccimag = param[1]; */ /* default C-values */
     frommandel = 0;
 
     if (xxmin > xxmax) {

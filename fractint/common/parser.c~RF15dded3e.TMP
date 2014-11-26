@@ -1929,7 +1929,6 @@ struct ConstArg *isconst(char *Str, int Len) {
 
 
 struct FNCT_LIST {
-   char *s;
    void (**ptr)(void);
 };
 

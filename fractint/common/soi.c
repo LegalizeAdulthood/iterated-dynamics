@@ -23,7 +23,7 @@
 #define DBLS LDBL
 #define FABS(x)  fabsl(x)
 /* the following needs to be changed back to frexpl once the portability
-   issue has been addressed JCO */
+   issue has been addressed */
 #ifndef XFRACT
 #define FREXP(x,y) frexpl(x,y)
 #else

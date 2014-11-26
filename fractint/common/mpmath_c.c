@@ -29,13 +29,11 @@ struct MP *MPsub(struct MP x, struct MP y) {
    return(MPadd(x, y));
 }
 
-/* added by TW */
 struct MP *MPsub086(struct MP x, struct MP y) {
    y.Exp ^= 0x8000;
    return(MPadd086(x, y));
 }
 
-/* added by TW */
 struct MP *MPsub386(struct MP x, struct MP y) {
    y.Exp ^= 0x8000;
    return(MPadd386(x, y));
@@ -193,8 +191,6 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
    _CMPLX z, cLog, t;
    double e2x, siny, cosy;
 
-   /* fixes power bug - if any complaints, backwards compatibility hook
-      goes here TIW 3/95 */
    if (ldcheck == 0)
       if (xx.x == 0 && xx.y == 0) {
          z.x = z.y = 0.0;

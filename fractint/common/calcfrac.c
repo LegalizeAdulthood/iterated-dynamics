@@ -503,7 +503,6 @@ int calcfract(void)
    attractors = 0;          /* default to no known finite attractors  */
    display3d = 0;
    basin = 0;
-   /* added yet another level of indirection to putcolor!!! TW */
    putcolor = putcolor_a;
    if (g_is_true_color && truemode)
       /* Have to force passes=1 */
@@ -2272,7 +2271,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
       goto plot_inside;         /* distest, decomp, biomorph don't apply */
 
 
-   if (outside < -1)  /* these options by Richard Hughes modified by TW */
+   if (outside < -1)
    {
       if (integerfractal)
       {
@@ -3102,7 +3101,7 @@ static int solidguess(void)
 
    /* there seems to be a bug in solid guessing at bottom and side */
    if (debugflag != 472)
-      bottom_guess = right_guess = 0;  /* TIW march 1995 */
+      bottom_guess = right_guess = 0;
 
    i = maxblock = blocksize = ssg_blocksize();
    totpasses = 1;
@@ -3329,7 +3328,7 @@ static int _fastcall guessrow(int firstpass,int y,int blocksize)
          if (bottom_guess==0)
             c23=c33= -1;
          guessed23=guessed33= -1;
-         guessed13=0; /* fix for ydots not divisible by four bug TW 2/16/97 */
+         guessed13=0;
       }
       if (xplushalf>ixstop)
       {

@@ -693,7 +693,7 @@ typedef  _LCMPLX LCMPLX;
 
 /* 3D stuff - formerly in 3d.h */
 #ifndef dot_product
-#define dot_product(v1,v2)  ((v1)[0]*(v2)[0]+(v1)[1]*(v2)[1]+(v1)[2]*(v2)[2])  /* TW 7-09-89 */
+#define dot_product(v1,v2)  ((v1)[0]*(v2)[0]+(v1)[1]*(v2)[1]+(v1)[2]*(v2)[2])
 #endif
 
 #define    CMAX    4   /* maximum column (4 x 4 matrix) */

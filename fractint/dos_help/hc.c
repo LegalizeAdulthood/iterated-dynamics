@@ -4,45 +4,7 @@
  *
  * Stand-alone FRACTINT help compiler.  Compile in the COMPACT memory model.
  *
- * See HC.DOC for source file syntax.
- *
- *
- * Revision History:
- *
- *   02-26-91 EAN     Initial version.
- *
- *   03-21-91 EAN     Modified for automatic paragraph formatting.
- *                    Added several new commands:
- *                       Format[+/-]  Enable/disable paragraph formatting
- *                       Doc[+/-]     Enable/disable output to document.
- *                       Online[+/-]  Enable/disable output to online help.
- *                       Label=       Defines a label. Replaces ~(...)
- *                       FF           Forces a form-feed.  Replaces ~~
- *                       FormatExclude=val Exclude lines past val from
- *                                    formatting.  If before any topic sets
- *                                    global default, otherwise set local.
- *                       FormatExclude= Set to global default.
- *                       FormatExclude=n Disable exclusion. (global or local)
- *                       FormatExclude[+/-] Enable/disable format exclusion.
- *                       Center[+/-]  Enable/disable centering of text.
- *                       \ before nl  Forces the end of a paragraph
- *                    Support for commands embedded in text with new
- *                    ~(...) format.
- *                    Support for multiple commands on a line separated by
- *                    commas.
- *                    Support for implict links; explicit links must now
- *                    start with an equal sign.
- *   04-03-91 EAN     Added "include" command (works like #include)
- *   04-10-91 EAN     Added support for "data" topics.
- *                    Added Comment/EndComment commands for multi-line
- *                       comments.
- *                    Added CompressSpaces[+/-] command.
- *                    Added DocContents command for document printing.
- *                    Added BinInc command which includes a binary file
- *                       in a data topic.
- *                    Fixed tables to flow down instead of across the page.
- *                       Makes no allowances for page breaks within tables.
- *   11-03-94 TIW     Increased buffer size.
+ * See help-compiler.txt for source file syntax.
  *
  */
 

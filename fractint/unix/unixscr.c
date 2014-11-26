@@ -544,7 +544,7 @@ initUnixWindow()
       int offx, offy;
       XParseGeometry(Xgeometry, &offx, &offy, (unsigned int *) &Xwinwidth,
              (unsigned int *) &Xwinheight);
-/* next line breaks -geometry, JCO
+/* next line breaks -geometry
       XWMGeometry(Xdp, Xdscreen, Xgeometry, DEFXY, 0, size_hints,
         &Xwinx, &Xwiny, &Xwinwidth, &Xwinheight, &gravity);
 */
@@ -1878,7 +1878,7 @@ xhandleevents()
 #if 0
 /* The following need to be somewhere else, otherwise these keys are not available */
 /* in any other mode.  For example, the '0' and '=' keys won't work with the <g> command */
-/* or the <b> command. JCO 06-23-2001 */
+/* or the <b> command. */
                     case XK_0:
             case XK_KP_0:
              step = 0;

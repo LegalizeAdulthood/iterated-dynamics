@@ -432,7 +432,7 @@ int encoder()
             goto oops;
       }
 /* save_info.fractal_type gets modified in setup_save_info() in float only
-   version, so we need to use fractype.  JCO 06JAN01 */
+   version, so we need to use fractype. */
 /*    if (save_info.fractal_type == FORMULA || save_info.fractal_type == FFORMULA) */
       if (fractype == FORMULA || fractype == FFORMULA)
            save_info.tot_extend_len += store_item_name(FormName);

@@ -5,37 +5,6 @@
  * the J-set.
  *
  *  The J-set is generated in a fixed-size window, a third of the screen.
- *
- * The routines used to set/move the cursor and to save/restore the
- * window were "borrowed" from editpal.c (TW - now we *use* the editpal code)
- *     (if you don't know how to write good code, look for someone who does)
- *
- *    JJB  [jbuhler@gidef.edu.ar]
- *    TIW  Tim Wegner
- *    MS   Michael Snyder
- *    KS   Ken Shirriff
- * Revision History:
- *
- *        7-28-92       JJB  Initial release out of editpal.c
- *        7-29-92       JJB  Added SaveRect() & RestoreRect() - now the
- *                           screen is restored after leaving.
- *        7-30-92       JJB  Now, if the cursor goes into the window, the
- *                           window is moved to the other side of the screen.
- *                           Worked from the first time!
- *        10-09-92      TIW  A major rewrite that merged cut routines duplicated
- *                           in EDITPAL.C and added orbits feature.
- *        11-02-92      KS   Made cursor blink
- *        11-18-92      MS   Altered Inverse Julia to use MIIM method.
- *        11-25-92      MS   Modified MIIM support routines to better be
- *                           shared with stand-alone inverse julia in
- *                           LORENZ.C, and to use DISKVID for swap space.
- *        05-05-93      TIW  Boy this change file really got out of date.
- *                           Added orbits capability, various commands, some
- *                           of Dan Farmer's ideas like circles and lines
- *                           connecting orbits points.
- *        12-18-93      TIW  Removed use of float only for orbits, fixed a
- *                           helpmode bug.
- *
  */
 
 #include <string.h>

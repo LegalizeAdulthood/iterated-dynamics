@@ -912,11 +912,11 @@ static void verhulst()          /* P. F. Verhulst (1845) */
          pixel_row = iystop - (int)((Population - init.y) / delyy);
 
       /* if it's visible on the screen, save it in the column array */
-      if (pixel_row <= (unsigned int)iystop) /* JCO 6/6/92 */
+      if (pixel_row <= (unsigned int)iystop)
          verhulst_array[ pixel_row ] ++;
       if (periodicitycheck && Bif_Periodic(counter))
       {
-         if (pixel_row <= (unsigned int)iystop) /* JCO 6/6/92 */
+         if (pixel_row <= (unsigned int)iystop)
             verhulst_array[ pixel_row ] --;
          break;
       }
@@ -984,8 +984,6 @@ int BifurcLambda() /* Used by lyanupov */
     return (fabs(Population) > BIG);
   }
 #endif
-
-/* Modified formulas below to generalize bifurcations. JCO 7/3/92 */
 
 #define LCMPLXtrig0(arg,out) Arg1->l = (arg); ltrig0(); (out)=Arg1->l
 #define  CMPLXtrig0(arg,out) Arg1->d = (arg); dtrig0(); (out)=Arg1->d

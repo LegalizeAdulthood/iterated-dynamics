@@ -112,7 +112,7 @@ int fFlags;
                 DSTINVERT);
             break;
 
-        /* MCP 6-3-92 */
+
         case (SL_ZOOM):
            OldROP = SetROP2(hDC, R2_NOTXORPEN);
            MoveTo(hDC, lpSelectRect->left, lpSelectRect->top);
@@ -214,7 +214,7 @@ int fFlags;
     hDC = GetDC(hWnd);
     switch (fFlags & SL_TYPE) {
 
-        /* MCP 6-3-92 */
+
         case (SL_ZOOM):
         case SL_BOX:
             OldROP = SetROP2(hDC, R2_NOTXORPEN);
