@@ -25,8 +25,8 @@ static int menu_checkkey(int curkey,int choice);
 /*
 #define PRODUCTION
 */
-int g_release = 2099;	/* this has 2 implied decimals; increment it every synch */
-int g_patch_level = 8;	/* patchlevel for DOS version */
+int g_release = 2099;   /* this has 2 implied decimals; increment it every synch */
+int g_patch_level = 8;  /* patchlevel for DOS version */
 #ifdef XFRACT
 int xrelease=304;
 #endif
@@ -130,132 +130,132 @@ static int  textxdots,textydots;
       (HCGA hi-res with old bios), or when there isn't 10k of temp mem free. */
 int texttempmsg(char *msgparm)
 {
-	if (showtempmsg(msgparm))
-	{
-		return -1;
-	}
+    if (showtempmsg(msgparm))
+    {
+        return -1;
+    }
 
-	driver_wait_key_pressed(0); /* wait for a keystroke but don't eat it */
-	cleartempmsg();
-	return 0;
+    driver_wait_key_pressed(0); /* wait for a keystroke but don't eat it */
+    cleartempmsg();
+    return 0;
 }
 
 void freetempmsg()
 {
-	if (temptextsave != 0)
-	{
-		MemoryRelease(temptextsave);
-	}
-	temptextsave = 0;
+    if (temptextsave != 0)
+    {
+        MemoryRelease(temptextsave);
+    }
+    temptextsave = 0;
 }
 
 int showtempmsg(char *msgparm)
 {
-	static long size = 0;
-	char msg[41];
-	BYTE buffer[640];
-	BYTE *fontptr = NULL;
-	int i;
-	int xrepeat = 0;
-	int yrepeat = 0;
-	int save_sxoffs, save_syoffs;
+    static long size = 0;
+    char msg[41];
+    BYTE buffer[640];
+    BYTE *fontptr = NULL;
+    int i;
+    int xrepeat = 0;
+    int yrepeat = 0;
+    int save_sxoffs, save_syoffs;
 
-	strncpy(msg, msgparm, 40);
-	msg[40] = 0; /* ensure max message len of 40 chars */
-	if (driver_diskp())  /* disk video, screen in text mode, easy */
-	{
-		dvid_status(0, msg);
-		return 0;
-	}
-	if (first_init)      /* & cmdfiles hasn't finished 1st try */
-	{
-		printf("%s\n", msg);
-		return 0;
-	}
+    strncpy(msg, msgparm, 40);
+    msg[40] = 0; /* ensure max message len of 40 chars */
+    if (driver_diskp())  /* disk video, screen in text mode, easy */
+    {
+        dvid_status(0, msg);
+        return 0;
+    }
+    if (first_init)      /* & cmdfiles hasn't finished 1st try */
+    {
+        printf("%s\n", msg);
+        return 0;
+    }
 
-	xrepeat = (sxdots >= 640) ? 2 : 1;
-	yrepeat = (sydots >= 300) ? 2 : 1;
-	textxdots = (int) strlen(msg) * xrepeat * 8;
-	textydots = yrepeat * 8;
+    xrepeat = (sxdots >= 640) ? 2 : 1;
+    yrepeat = (sydots >= 300) ? 2 : 1;
+    textxdots = (int) strlen(msg) * xrepeat * 8;
+    textydots = yrepeat * 8;
 
-	/* worst case needs 10k */
-	if (temptextsave != 0)
-	{
-		if (size != (long) textxdots * (long) textydots)
-		{
-			freetempmsg();
-		}
-	}
-	size = (long) textxdots * (long) textydots;
-	save_sxoffs = sxoffs;
-	save_syoffs = syoffs;
-	if (g_video_scroll)
-	{
-		sxoffs = g_video_start_x;
-		syoffs = g_video_start_y;
-	}
-	else
-	{
-		sxoffs = syoffs = 0;
-	}
-	if (temptextsave == 0) /* only save screen first time called */
-	{
-		/* TODO: MemoryAlloc, MoveToMemory */
-		temptextsave = MemoryAlloc((U16)textxdots, (long)textydots, MEMORY);
-		if (temptextsave == 0)
-		{
-			return -1; /* sorry, message not displayed */
-		}
-		for (i = 0; i < textydots; ++i)
-		{
-			get_line(i, 0, textxdots-1, buffer);
-			MoveToMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
-		}
-	}
+    /* worst case needs 10k */
+    if (temptextsave != 0)
+    {
+        if (size != (long) textxdots * (long) textydots)
+        {
+            freetempmsg();
+        }
+    }
+    size = (long) textxdots * (long) textydots;
+    save_sxoffs = sxoffs;
+    save_syoffs = syoffs;
+    if (g_video_scroll)
+    {
+        sxoffs = g_video_start_x;
+        syoffs = g_video_start_y;
+    }
+    else
+    {
+        sxoffs = syoffs = 0;
+    }
+    if (temptextsave == 0) /* only save screen first time called */
+    {
+        /* TODO: MemoryAlloc, MoveToMemory */
+        temptextsave = MemoryAlloc((U16)textxdots, (long)textydots, MEMORY);
+        if (temptextsave == 0)
+        {
+            return -1; /* sorry, message not displayed */
+        }
+        for (i = 0; i < textydots; ++i)
+        {
+            get_line(i, 0, textxdots-1, buffer);
+            MoveToMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
+        }
+    }
 
-	find_special_colors(); /* get g_color_dark & g_color_medium set */
-	driver_display_string(0, 0, g_color_medium, g_color_dark, msg);
-	sxoffs = save_sxoffs;
-	syoffs = save_syoffs;
+    find_special_colors(); /* get g_color_dark & g_color_medium set */
+    driver_display_string(0, 0, g_color_medium, g_color_dark, msg);
+    sxoffs = save_sxoffs;
+    syoffs = save_syoffs;
 
-	return 0;
+    return 0;
 }
 
 void cleartempmsg()
 {
-	BYTE buffer[640];
-	int i;
-	int save_sxoffs, save_syoffs;
-	if (driver_diskp()) /* disk video, easy */
-	{
-		dvid_status(0, "");
-	}
-	else if (temptextsave != 0)
-	{
-		save_sxoffs = sxoffs;
-		save_syoffs = syoffs;
-		if (g_video_scroll)
-		{
-			sxoffs = g_video_start_x;
-			syoffs = g_video_start_y;
-		}
-		else
-		{
-			sxoffs = syoffs = 0;
-		}
-		for (i = 0; i < textydots; ++i)
-		{
-			MoveFromMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
-			put_line(i, 0, textxdots-1, buffer);
-		}
-		if (using_jiim == 0)  /* jiim frees memory with freetempmsg() */
-		{
-			MemoryRelease(temptextsave);
-			temptextsave = 0;
-		}
-		sxoffs = save_sxoffs;
-		syoffs = save_syoffs;
-	}
+    BYTE buffer[640];
+    int i;
+    int save_sxoffs, save_syoffs;
+    if (driver_diskp()) /* disk video, easy */
+    {
+        dvid_status(0, "");
+    }
+    else if (temptextsave != 0)
+    {
+        save_sxoffs = sxoffs;
+        save_syoffs = syoffs;
+        if (g_video_scroll)
+        {
+            sxoffs = g_video_start_x;
+            syoffs = g_video_start_y;
+        }
+        else
+        {
+            sxoffs = syoffs = 0;
+        }
+        for (i = 0; i < textydots; ++i)
+        {
+            MoveFromMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
+            put_line(i, 0, textxdots-1, buffer);
+        }
+        if (using_jiim == 0)  /* jiim frees memory with freetempmsg() */
+        {
+            MemoryRelease(temptextsave);
+            temptextsave = 0;
+        }
+        sxoffs = save_sxoffs;
+        syoffs = save_syoffs;
+    }
 }
 
 void blankrows(int row,int rows,int attr)
@@ -310,11 +310,11 @@ void footer_msg(int *i, int options, char *speedstring)
 {
    putstringcenter((*i)++, 0, 80, C_PROMPT_BKGRD,
       (speedstring) ? "Use the cursor keys or type a value to make a selection"
-		: "Use the cursor keys to highlight your selection");
+        : "Use the cursor keys to highlight your selection");
    putstringcenter(*(i++), 0, 80, C_PROMPT_BKGRD,
          (options & CHOICE_MENU) ? "Press ENTER for highlighted choice, or "FK_F1" for help"
       : ((options & CHOICE_HELP) ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
-	  : "Press ENTER for highlighted choice, or ESCAPE to back out"));
+      : "Press ENTER for highlighted choice, or ESCAPE to back out"));
 }
 
 int putstringcenter(int row, int col, int width, int attr, char *msg)
@@ -460,602 +460,602 @@ int fullscreen_choice(
                   speedstring[0] != 0 on return if string is present
     */
 {
-	int titlelines, titlewidth;
-	int reqdrows;
-	int topleftrow, topleftcol;
-	int topleftchoice;
-	int speedrow = 0;  /* speed key prompt */
-	int boxitems;      /* boxwidth*boxdepth */
-	int curkey, increment, rev_increment = 0;
-	int redisplay;
-	int i, j, k = 0;
-	char *charptr;
-	char buf[81];
-	char curitem[81];
-	char *itemptr;
-	int ret, savelookatmouse;
-	int scrunch;  /* scrunch up a line */
+    int titlelines, titlewidth;
+    int reqdrows;
+    int topleftrow, topleftcol;
+    int topleftchoice;
+    int speedrow = 0;  /* speed key prompt */
+    int boxitems;      /* boxwidth*boxdepth */
+    int curkey, increment, rev_increment = 0;
+    int redisplay;
+    int i, j, k = 0;
+    char *charptr;
+    char buf[81];
+    char curitem[81];
+    char *itemptr;
+    int ret, savelookatmouse;
+    int scrunch;  /* scrunch up a line */
 
-	scrunch = (options & CHOICE_CRUNCH) ? 1 : 0;
-	savelookatmouse = lookatmouse;
-	lookatmouse = 0;
-	ret = -1;
-	/* preset current to passed string */
-	if (speedstring && (i = (int) strlen(speedstring)) > 0)
-	{ 
-		current = 0;
-		if (options & CHOICE_NOT_SORTED)
-		{
-			while (current < numchoices && (k = strncasecmp(speedstring, choices[current], i)) != 0)
-			{
-				++current;
-			}
-			if (k != 0)
-			{
-				current = 0;
-			}
-		}
-		else
-		{
-			while (current < numchoices && (k = strncasecmp(speedstring,choices[current],i)) > 0)
-			{
-				++current;
-			}
-			if (k < 0 && current > 0)  /* oops - overshot */
-			{
-				--current;
-			}
-		}
-		if (current >= numchoices) /* bumped end of list */
-		{
-			current = numchoices - 1;
-		}
-	}
-
-	for (;;)
-	{
-		if (current >= numchoices)  /* no real choice in the list? */
-		{
-			goto fs_choice_end;
-		}
-		if ((attributes[current] & 256) == 0)
-		{
-			break;
-		}
-		++current;                  /* scan for a real choice */
-	}
-
-	titlelines = titlewidth = 0;
-	if (hdg)
-	{
-		charptr = hdg;              /* count title lines, find widest */
-		i = 0;
-		titlelines = 1;
-		while (*charptr)
-		{
-			if (*(charptr++) == '\n')
-			{
-				++titlelines;
-				i = -1;
-			}
-			if (++i > titlewidth)
-			{
-				titlewidth = i;
-			}
-		}
-	}
-
-	if (colwidth == 0)             /* find widest column */
-	{
-		for (i = 0; i < numchoices; ++i)
-		{
-			int len;
-			if ((len = (int) strlen(choices[i])) > colwidth)
-			{
-				colwidth = len;
-			}
-		}
-	}
-	/* title(1), blank(1), hdg(n), blank(1), body(n), blank(1), instr(?) */
-	reqdrows = 3 - scrunch;                /* calc rows available */
-	if (hdg)
-	{
-		reqdrows += titlelines + 1;
-	}
-	if (instr)                   /* count instructions lines */
-	{
-		charptr = instr;
-		++reqdrows;
-		while (*charptr)
-		{
-			if (*(charptr++) == '\n')
-			{
-				++reqdrows;
-			}
-		}
-		if ((options & CHOICE_INSTRUCTIONS))          /* show std instr too */
-		{
-			reqdrows += 2;
-		}
-	}
-	else
-	{
-		reqdrows += 2;              /* standard instructions */
-	}
-	if (speedstring)
-	{
-		++reqdrows;   /* a row for speedkey prompt */
-	}
-	if (boxdepth > (i = 25 - reqdrows)) /* limit the depth to max */
-	{
-		boxdepth = i;
-	}
-	if (boxwidth == 0)           /* pick box width and depth */
-	{
-		if (numchoices <= i - 2)  /* single column is 1st choice if we can */
-		{
-			boxdepth = numchoices;
-			boxwidth = 1;
-		}
-		else
-		{                      /* sort-of-wide is 2nd choice */
-			boxwidth = 60 / (colwidth + 1);
-			if (boxwidth == 0
-			|| (boxdepth = (numchoices + boxwidth - 1)/boxwidth) > i - 2)
-			{
-				boxwidth = 80 / (colwidth + 1); /* last gasp, full width */
-				if ((boxdepth = (numchoices + boxwidth - 1)/boxwidth) > i)
-				{
-					boxdepth = i;
-				}
-			}
-		}
-	}
-#if 0
-	if ((i = 77 / boxwidth - colwidth) > 3) /* spaces to add @ left each choice */
-	{
-		i = 3;
-	}
-	if (i == 0)
-	{
-		i = 1;
-	}
-#else
-	i = (80 / boxwidth - colwidth) / 2 - 1;
-	if (i == 0) /* to allow wider prompts */
-	{
-		i = 1;
-	}
-	if (i < 0)
-	{
-		i = 0;
-	}
-	if (i > 3)
-	{
-		i = 3;
-	}
-#endif
-	j = boxwidth * (colwidth += i) + i;     /* overall width of box */
-	if (j < titlewidth+2)
-	{
-		j = titlewidth + 2;
-	}
-	if (j > 80)
-	{
-		j = 80;
-	}
-	if (j <= 70 && boxwidth == 2)         /* special case makes menus nicer */
-	{
-		++j;
-		++colwidth;
+    scrunch = (options & CHOICE_CRUNCH) ? 1 : 0;
+    savelookatmouse = lookatmouse;
+    lookatmouse = 0;
+    ret = -1;
+    /* preset current to passed string */
+    if (speedstring && (i = (int) strlen(speedstring)) > 0)
+    { 
+        current = 0;
+        if (options & CHOICE_NOT_SORTED)
+        {
+            while (current < numchoices && (k = strncasecmp(speedstring, choices[current], i)) != 0)
+            {
+                ++current;
+            }
+            if (k != 0)
+            {
+                current = 0;
+            }
+        }
+        else
+        {
+            while (current < numchoices && (k = strncasecmp(speedstring,choices[current],i)) > 0)
+            {
+                ++current;
+            }
+            if (k < 0 && current > 0)  /* oops - overshot */
+            {
+                --current;
+            }
+        }
+        if (current >= numchoices) /* bumped end of list */
+        {
+            current = numchoices - 1;
+        }
     }
-	k = (80 - j) / 2;                       /* center the box */
-	k -= (90 - j) / 20;
-	topleftcol = k + i;                     /* column of topleft choice */
-	i = (25 - reqdrows - boxdepth) / 2;
-	i -= i / 4;                             /* higher is better if lots extra */
-	topleftrow = 3 + titlelines + i;        /* row of topleft choice */
 
-	/* now set up the overall display */
-	helptitle();                            /* clear, display title line */
-	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);      /* init rest to background */
-	for (i = topleftrow - 1 - titlelines; i < topleftrow + boxdepth + 1; ++i)
-	{
-		driver_set_attr(i, k, C_PROMPT_LO, j);          /* draw empty box */
-	}
-	if (hdg)
-	{
-		g_text_cbase = (80 - titlewidth) / 2;   /* set left margin for putstring */
-		g_text_cbase -= (90 - titlewidth) / 20; /* put heading into box */
-		driver_put_string(topleftrow - titlelines - 1, 0, C_PROMPT_HI, hdg);
-		g_text_cbase = 0;
-	}
-	if (hdg2)                               /* display 2nd heading */
-	{
-		driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_MED, hdg2);
-	}
-	i = topleftrow + boxdepth + 1;
-	if (instr == NULL || (options & CHOICE_INSTRUCTIONS))   /* display default instructions */
-	{
-		if (i < 20)
-		{
-			++i;
-		}
-		if (speedstring)
-		{
-			speedrow = i;
-			*speedstring = 0;
-			if (++i < 22)
-			{
-				++i;
-			}
-		}
-		i -= scrunch;
-		footer_msg(&i, options, speedstring);
-	}
-	if (instr)                            /* display caller's instructions */
-	{
-		charptr = instr;
-		j = -1;
-		while ((buf[++j] = *(charptr++)) != 0)
-		{
-			if (buf[j] == '\n')
-			{
-				buf[j] = 0;
-				putstringcenter(i++, 0, 80, C_PROMPT_BKGRD, buf);
-				j = -1;
-			}
-		}
-		putstringcenter(i, 0, 80, C_PROMPT_BKGRD, buf);
-	}
+    for (;;)
+    {
+        if (current >= numchoices)  /* no real choice in the list? */
+        {
+            goto fs_choice_end;
+        }
+        if ((attributes[current] & 256) == 0)
+        {
+            break;
+        }
+        ++current;                  /* scan for a real choice */
+    }
 
-	boxitems = boxwidth * boxdepth;
-	topleftchoice = 0;                      /* pick topleft for init display */
-	while (current - topleftchoice >= boxitems
-		|| (current - topleftchoice > boxitems/2
-			&& topleftchoice + boxitems < numchoices))
-	{
-		topleftchoice += boxwidth;
-	}
-	redisplay = 1;
-	topleftrow -= scrunch;
-	for (;;) /* main loop */
-	{
-		if (redisplay)                       /* display the current choices */
-		{
-			memset(buf, ' ', 80);
-			buf[boxwidth*colwidth] = 0;
-			for (i = (hdg2) ? 0 : -1; i <= boxdepth; ++i)  /* blank the box */
-			{
-				driver_put_string(topleftrow + i, topleftcol, C_PROMPT_LO, buf);
-			}
-			for (i = 0; i + topleftchoice < numchoices && i < boxitems; ++i)
-			{
-				/* display the choices */
-				k = attributes[j = i + topleftchoice] & 3;
-				if (k == 1)
-				{
-					k = C_PROMPT_LO;
-				}
-				else if (k == 3)
-				{
-					k = C_PROMPT_HI;
-				}
-				else
-				{
-					k = C_PROMPT_MED;
-				}
-				if (formatitem)
-				{
-					(*formatitem)(j, buf);
-					charptr=buf;
-				}
-				else
-				{
-					charptr = choices[j];
-				}
-				driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
-						k, charptr);
-			}
-			/***
-			... format differs for summary/detail, whups, force box width to
-			...  be 72 when detail toggle available?  (2 grey margin each
-			...  side, 1 blue margin each side)
-			***/
-			if (topleftchoice > 0 && hdg2 == NULL)
-			{
-				driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_LO, "(more)");
-			}
-			if (topleftchoice + boxitems < numchoices)
-			{
-				driver_put_string(topleftrow + boxdepth, topleftcol, C_PROMPT_LO, "(more)");
-			}
-			redisplay = 0;
-		}
+    titlelines = titlewidth = 0;
+    if (hdg)
+    {
+        charptr = hdg;              /* count title lines, find widest */
+        i = 0;
+        titlelines = 1;
+        while (*charptr)
+        {
+            if (*(charptr++) == '\n')
+            {
+                ++titlelines;
+                i = -1;
+            }
+            if (++i > titlewidth)
+            {
+                titlewidth = i;
+            }
+        }
+    }
 
-		i = current - topleftchoice;           /* highlight the current choice */
-		if (formatitem)
-		{
-			(*formatitem)(current, curitem);
-			itemptr = curitem;
-		}
-		else
-		{
-			itemptr = choices[current];
-		}
-		driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
-					C_CHOICE_CURRENT, itemptr);
+    if (colwidth == 0)             /* find widest column */
+    {
+        for (i = 0; i < numchoices; ++i)
+        {
+            int len;
+            if ((len = (int) strlen(choices[i])) > colwidth)
+            {
+                colwidth = len;
+            }
+        }
+    }
+    /* title(1), blank(1), hdg(n), blank(1), body(n), blank(1), instr(?) */
+    reqdrows = 3 - scrunch;                /* calc rows available */
+    if (hdg)
+    {
+        reqdrows += titlelines + 1;
+    }
+    if (instr)                   /* count instructions lines */
+    {
+        charptr = instr;
+        ++reqdrows;
+        while (*charptr)
+        {
+            if (*(charptr++) == '\n')
+            {
+                ++reqdrows;
+            }
+        }
+        if ((options & CHOICE_INSTRUCTIONS))          /* show std instr too */
+        {
+            reqdrows += 2;
+        }
+    }
+    else
+    {
+        reqdrows += 2;              /* standard instructions */
+    }
+    if (speedstring)
+    {
+        ++reqdrows;   /* a row for speedkey prompt */
+    }
+    if (boxdepth > (i = 25 - reqdrows)) /* limit the depth to max */
+    {
+        boxdepth = i;
+    }
+    if (boxwidth == 0)           /* pick box width and depth */
+    {
+        if (numchoices <= i - 2)  /* single column is 1st choice if we can */
+        {
+            boxdepth = numchoices;
+            boxwidth = 1;
+        }
+        else
+        {                      /* sort-of-wide is 2nd choice */
+            boxwidth = 60 / (colwidth + 1);
+            if (boxwidth == 0
+            || (boxdepth = (numchoices + boxwidth - 1)/boxwidth) > i - 2)
+            {
+                boxwidth = 80 / (colwidth + 1); /* last gasp, full width */
+                if ((boxdepth = (numchoices + boxwidth - 1)/boxwidth) > i)
+                {
+                    boxdepth = i;
+                }
+            }
+        }
+    }
+#if 0
+    if ((i = 77 / boxwidth - colwidth) > 3) /* spaces to add @ left each choice */
+    {
+        i = 3;
+    }
+    if (i == 0)
+    {
+        i = 1;
+    }
+#else
+    i = (80 / boxwidth - colwidth) / 2 - 1;
+    if (i == 0) /* to allow wider prompts */
+    {
+        i = 1;
+    }
+    if (i < 0)
+    {
+        i = 0;
+    }
+    if (i > 3)
+    {
+        i = 3;
+    }
+#endif
+    j = boxwidth * (colwidth += i) + i;     /* overall width of box */
+    if (j < titlewidth+2)
+    {
+        j = titlewidth + 2;
+    }
+    if (j > 80)
+    {
+        j = 80;
+    }
+    if (j <= 70 && boxwidth == 2)         /* special case makes menus nicer */
+    {
+        ++j;
+        ++colwidth;
+    }
+    k = (80 - j) / 2;                       /* center the box */
+    k -= (90 - j) / 20;
+    topleftcol = k + i;                     /* column of topleft choice */
+    i = (25 - reqdrows - boxdepth) / 2;
+    i -= i / 4;                             /* higher is better if lots extra */
+    topleftrow = 3 + titlelines + i;        /* row of topleft choice */
 
-		if (speedstring)                     /* show speedstring if any */
-		{
-			show_speedstring(speedrow, speedstring, speedprompt);
-		}
-		else
-		{
-			driver_hide_text_cursor();
-		}
+    /* now set up the overall display */
+    helptitle();                            /* clear, display title line */
+    driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);      /* init rest to background */
+    for (i = topleftrow - 1 - titlelines; i < topleftrow + boxdepth + 1; ++i)
+    {
+        driver_set_attr(i, k, C_PROMPT_LO, j);          /* draw empty box */
+    }
+    if (hdg)
+    {
+        g_text_cbase = (80 - titlewidth) / 2;   /* set left margin for putstring */
+        g_text_cbase -= (90 - titlewidth) / 20; /* put heading into box */
+        driver_put_string(topleftrow - titlelines - 1, 0, C_PROMPT_HI, hdg);
+        g_text_cbase = 0;
+    }
+    if (hdg2)                               /* display 2nd heading */
+    {
+        driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_MED, hdg2);
+    }
+    i = topleftrow + boxdepth + 1;
+    if (instr == NULL || (options & CHOICE_INSTRUCTIONS))   /* display default instructions */
+    {
+        if (i < 20)
+        {
+            ++i;
+        }
+        if (speedstring)
+        {
+            speedrow = i;
+            *speedstring = 0;
+            if (++i < 22)
+            {
+                ++i;
+            }
+        }
+        i -= scrunch;
+        footer_msg(&i, options, speedstring);
+    }
+    if (instr)                            /* display caller's instructions */
+    {
+        charptr = instr;
+        j = -1;
+        while ((buf[++j] = *(charptr++)) != 0)
+        {
+            if (buf[j] == '\n')
+            {
+                buf[j] = 0;
+                putstringcenter(i++, 0, 80, C_PROMPT_BKGRD, buf);
+                j = -1;
+            }
+        }
+        putstringcenter(i, 0, 80, C_PROMPT_BKGRD, buf);
+    }
 
-		driver_wait_key_pressed(0); /* enables help */
-		curkey = driver_get_key();
+    boxitems = boxwidth * boxdepth;
+    topleftchoice = 0;                      /* pick topleft for init display */
+    while (current - topleftchoice >= boxitems
+        || (current - topleftchoice > boxitems/2
+            && topleftchoice + boxitems < numchoices))
+    {
+        topleftchoice += boxwidth;
+    }
+    redisplay = 1;
+    topleftrow -= scrunch;
+    for (;;) /* main loop */
+    {
+        if (redisplay)                       /* display the current choices */
+        {
+            memset(buf, ' ', 80);
+            buf[boxwidth*colwidth] = 0;
+            for (i = (hdg2) ? 0 : -1; i <= boxdepth; ++i)  /* blank the box */
+            {
+                driver_put_string(topleftrow + i, topleftcol, C_PROMPT_LO, buf);
+            }
+            for (i = 0; i + topleftchoice < numchoices && i < boxitems; ++i)
+            {
+                /* display the choices */
+                k = attributes[j = i + topleftchoice] & 3;
+                if (k == 1)
+                {
+                    k = C_PROMPT_LO;
+                }
+                else if (k == 3)
+                {
+                    k = C_PROMPT_HI;
+                }
+                else
+                {
+                    k = C_PROMPT_MED;
+                }
+                if (formatitem)
+                {
+                    (*formatitem)(j, buf);
+                    charptr=buf;
+                }
+                else
+                {
+                    charptr = choices[j];
+                }
+                driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
+                        k, charptr);
+            }
+            /***
+            ... format differs for summary/detail, whups, force box width to
+            ...  be 72 when detail toggle available?  (2 grey margin each
+            ...  side, 1 blue margin each side)
+            ***/
+            if (topleftchoice > 0 && hdg2 == NULL)
+            {
+                driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_LO, "(more)");
+            }
+            if (topleftchoice + boxitems < numchoices)
+            {
+                driver_put_string(topleftrow + boxdepth, topleftcol, C_PROMPT_LO, "(more)");
+            }
+            redisplay = 0;
+        }
+
+        i = current - topleftchoice;           /* highlight the current choice */
+        if (formatitem)
+        {
+            (*formatitem)(current, curitem);
+            itemptr = curitem;
+        }
+        else
+        {
+            itemptr = choices[current];
+        }
+        driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
+                    C_CHOICE_CURRENT, itemptr);
+
+        if (speedstring)                     /* show speedstring if any */
+        {
+            show_speedstring(speedrow, speedstring, speedprompt);
+        }
+        else
+        {
+            driver_hide_text_cursor();
+        }
+
+        driver_wait_key_pressed(0); /* enables help */
+        curkey = driver_get_key();
 #ifdef XFRACT
-		if (curkey == FIK_F10)
-		{
-			curkey = ')';
-		}
-		if (curkey == FIK_F9)
-		{
-			curkey = '(';
-		}
-		if (curkey == FIK_F8)
-		{
-			curkey = '*';
-		}
+        if (curkey == FIK_F10)
+        {
+            curkey = ')';
+        }
+        if (curkey == FIK_F9)
+        {
+            curkey = '(';
+        }
+        if (curkey == FIK_F8)
+        {
+            curkey = '*';
+        }
 #endif
 
-		i = current - topleftchoice;           /* unhighlight current choice */
-		k = attributes[current] & 3;
-		if (k == 1)
-		{
-			k = C_PROMPT_LO;
-		}
-		else if (k == 3)
-		{
-			k = C_PROMPT_HI;
-		}
-		else
-		{
-			k = C_PROMPT_MED;
-		}
-		driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
-					k, itemptr);
+        i = current - topleftchoice;           /* unhighlight current choice */
+        k = attributes[current] & 3;
+        if (k == 1)
+        {
+            k = C_PROMPT_LO;
+        }
+        else if (k == 3)
+        {
+            k = C_PROMPT_HI;
+        }
+        else
+        {
+            k = C_PROMPT_MED;
+        }
+        driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
+                    k, itemptr);
 
-		increment = 0;
-		switch (curkey)
-		{                      /* deal with input key */
+        increment = 0;
+        switch (curkey)
+        {                      /* deal with input key */
         case FIK_ENTER:
         case FIK_ENTER_2:
-			ret = current;
-			goto fs_choice_end;
+            ret = current;
+            goto fs_choice_end;
         case FIK_ESC:
-			goto fs_choice_end;
+            goto fs_choice_end;
         case FIK_DOWN_ARROW:
-			rev_increment = 0 - (increment = boxwidth);
-			break;
+            rev_increment = 0 - (increment = boxwidth);
+            break;
         case FIK_CTL_DOWN_ARROW:
-			rev_increment = 0 - (increment = boxwidth);
-			{
-				int newcurrent = current;
-				while ((newcurrent += boxwidth) != current)
-				{
-					if (newcurrent >= numchoices)
-					{
-						newcurrent = (newcurrent % boxwidth) - boxwidth;
-					}
-					else if (!isadirname(choices[newcurrent]))
-					{
-						if (current != newcurrent)
-						{
-							current = newcurrent - boxwidth;
-						}
-						break;  /* breaks the while loop */
-					}
-				}
-			}
-			break;
+            rev_increment = 0 - (increment = boxwidth);
+            {
+                int newcurrent = current;
+                while ((newcurrent += boxwidth) != current)
+                {
+                    if (newcurrent >= numchoices)
+                    {
+                        newcurrent = (newcurrent % boxwidth) - boxwidth;
+                    }
+                    else if (!isadirname(choices[newcurrent]))
+                    {
+                        if (current != newcurrent)
+                        {
+                            current = newcurrent - boxwidth;
+                        }
+                        break;  /* breaks the while loop */
+                    }
+                }
+            }
+            break;
         case FIK_UP_ARROW:
-			increment = 0 - (rev_increment = boxwidth);
-			break;
+            increment = 0 - (rev_increment = boxwidth);
+            break;
         case FIK_CTL_UP_ARROW:
-			increment = 0 - (rev_increment = boxwidth);
-			{
-				int newcurrent = current;
-				while ((newcurrent-=boxwidth) != current)
-				{
-					if (newcurrent < 0)
-					{
-						newcurrent = (numchoices - current) % boxwidth;
-						newcurrent =  numchoices + (newcurrent ? boxwidth - newcurrent: 0);
-					}
-					else if (!isadirname(choices[newcurrent]))
-					{
-						if (current != newcurrent)
-						{
-							current = newcurrent + boxwidth;
-						}
-						break;  /* breaks the while loop */
-					}
-				}
-			}
-			break;
+            increment = 0 - (rev_increment = boxwidth);
+            {
+                int newcurrent = current;
+                while ((newcurrent-=boxwidth) != current)
+                {
+                    if (newcurrent < 0)
+                    {
+                        newcurrent = (numchoices - current) % boxwidth;
+                        newcurrent =  numchoices + (newcurrent ? boxwidth - newcurrent: 0);
+                    }
+                    else if (!isadirname(choices[newcurrent]))
+                    {
+                        if (current != newcurrent)
+                        {
+                            current = newcurrent + boxwidth;
+                        }
+                        break;  /* breaks the while loop */
+                    }
+                }
+            }
+            break;
         case FIK_RIGHT_ARROW:
-			increment = 1; rev_increment = -1;
-			break;
+            increment = 1; rev_increment = -1;
+            break;
          case FIK_CTL_RIGHT_ARROW:  /* move to next file; if at last file, go to
                                  first file */
-			increment = 1; rev_increment = -1;
-			{
-				int newcurrent = current;
-				while (++newcurrent != current)
-				{
-					if (newcurrent >= numchoices)
-					{
-						newcurrent = -1;
-					}
-					else if (!isadirname(choices[newcurrent]))
-					{
-						if (current != newcurrent)
-						{
-							current = newcurrent - 1;
-						}
-						break;  /* breaks the while loop */
-					}
-				}
-			}
-			break;
-		case FIK_LEFT_ARROW:
-			increment = -1; rev_increment = 1;
-			break;
+            increment = 1; rev_increment = -1;
+            {
+                int newcurrent = current;
+                while (++newcurrent != current)
+                {
+                    if (newcurrent >= numchoices)
+                    {
+                        newcurrent = -1;
+                    }
+                    else if (!isadirname(choices[newcurrent]))
+                    {
+                        if (current != newcurrent)
+                        {
+                            current = newcurrent - 1;
+                        }
+                        break;  /* breaks the while loop */
+                    }
+                }
+            }
+            break;
+        case FIK_LEFT_ARROW:
+            increment = -1; rev_increment = 1;
+            break;
         case FIK_CTL_LEFT_ARROW: /* move to previous file; if at first file, go to
                                last file */
-			increment = -1; rev_increment = 1;
-			{
-				int newcurrent = current;
-				while (--newcurrent != current)
-				{
-					if (newcurrent < 0)
-					{
-						newcurrent = numchoices;
-					}
-					else if (!isadirname(choices[newcurrent]))
-					{
-						if (current != newcurrent)
-						{
-							current = newcurrent + 1;
-						}
-						break;  /* breaks the while loop */
-					}
-				}
-			}
+            increment = -1; rev_increment = 1;
+            {
+                int newcurrent = current;
+                while (--newcurrent != current)
+                {
+                    if (newcurrent < 0)
+                    {
+                        newcurrent = numchoices;
+                    }
+                    else if (!isadirname(choices[newcurrent]))
+                    {
+                        if (current != newcurrent)
+                        {
+                            current = newcurrent + 1;
+                        }
+                        break;  /* breaks the while loop */
+                    }
+                }
+            }
             break;
         case FIK_PAGE_UP:
-			if (numchoices > boxitems)
-			{
-				topleftchoice -= boxitems;
-				increment = -boxitems;
-				rev_increment = boxwidth;
-				redisplay = 1;
-			}
-			break;
+            if (numchoices > boxitems)
+            {
+                topleftchoice -= boxitems;
+                increment = -boxitems;
+                rev_increment = boxwidth;
+                redisplay = 1;
+            }
+            break;
         case FIK_PAGE_DOWN:
-			if (numchoices > boxitems)
-			{
-				topleftchoice += boxitems;
-				increment = boxitems;
-				rev_increment = -boxwidth;
-				redisplay = 1;
-			}
-			break;
+            if (numchoices > boxitems)
+            {
+                topleftchoice += boxitems;
+                increment = boxitems;
+                rev_increment = -boxwidth;
+                redisplay = 1;
+            }
+            break;
         case FIK_HOME:
-			current = -1;
-			increment = rev_increment = 1;
-			break;
+            current = -1;
+            increment = rev_increment = 1;
+            break;
         case FIK_CTL_HOME:
-			current = -1;
-			increment = rev_increment = 1;
-			{
-				int newcurrent;
-				for (newcurrent = 0; newcurrent < numchoices; ++newcurrent)
-				{
-					if (!isadirname(choices[newcurrent]))
-					{
-						current = newcurrent - 1;
-						break;  /* breaks the for loop */
-					}
-				}
-			}
-			break;
-		case FIK_END:
-			current = numchoices;
-			increment = rev_increment = -1;
-			break;
-		case FIK_CTL_END:
-			current = numchoices;
-			increment = rev_increment = -1;
-			{
-				int newcurrent;
-				for (newcurrent = numchoices - 1; newcurrent >= 0; --newcurrent)
-				{
-					if (!isadirname(choices[newcurrent]))
-					{
-						current = newcurrent + 1;
-						break;  /* breaks the for loop */
-					}
-				}
-			}
-			break;
+            current = -1;
+            increment = rev_increment = 1;
+            {
+                int newcurrent;
+                for (newcurrent = 0; newcurrent < numchoices; ++newcurrent)
+                {
+                    if (!isadirname(choices[newcurrent]))
+                    {
+                        current = newcurrent - 1;
+                        break;  /* breaks the for loop */
+                    }
+                }
+            }
+            break;
+        case FIK_END:
+            current = numchoices;
+            increment = rev_increment = -1;
+            break;
+        case FIK_CTL_END:
+            current = numchoices;
+            increment = rev_increment = -1;
+            {
+                int newcurrent;
+                for (newcurrent = numchoices - 1; newcurrent >= 0; --newcurrent)
+                {
+                    if (!isadirname(choices[newcurrent]))
+                    {
+                        current = newcurrent + 1;
+                        break;  /* breaks the for loop */
+                    }
+                }
+            }
+            break;
         default:
-			if (checkkey)
-			{
-				if ((ret = (*checkkey)(curkey, current)) < -1 || ret > 0)
-				{
-					goto fs_choice_end;
-				}
-				if (ret == -1)
-				{
-					redisplay = -1;
-				}
-			}
-			ret = -1;
-			if (speedstring)
-			{
-				process_speedstring(speedstring, choices, curkey, &current,
-						numchoices, options & CHOICE_NOT_SORTED);
-			}
-			break;
-		}
-		if (increment)                  /* apply cursor movement */
-		{
-			current += increment;
-			if (speedstring)               /* zap speedstring */
-			{
-				speedstring[0] = 0;
-			}
-		}
-		for (;;)
-		{                 /* adjust to a non-comment choice */
-			if (current < 0 || current >= numchoices)
-			{
-				increment = rev_increment;
-			}
-			else if ((attributes[current] & 256) == 0)
-			{
-				break;
-			}
-			current += increment;
-		}
-		if (topleftchoice > numchoices - boxitems)
-		{
-			topleftchoice = ((numchoices + boxwidth - 1)/boxwidth)*boxwidth - boxitems;
-		}
-		if (topleftchoice < 0)
-		{
-			topleftchoice = 0;
-		}
-		while (current < topleftchoice)
-		{
-			topleftchoice -= boxwidth;
-			redisplay = 1;
-		}
-		while (current >= topleftchoice + boxitems)
-		{
-			topleftchoice += boxwidth;
-			redisplay = 1;
-		}
-	}
+            if (checkkey)
+            {
+                if ((ret = (*checkkey)(curkey, current)) < -1 || ret > 0)
+                {
+                    goto fs_choice_end;
+                }
+                if (ret == -1)
+                {
+                    redisplay = -1;
+                }
+            }
+            ret = -1;
+            if (speedstring)
+            {
+                process_speedstring(speedstring, choices, curkey, &current,
+                        numchoices, options & CHOICE_NOT_SORTED);
+            }
+            break;
+        }
+        if (increment)                  /* apply cursor movement */
+        {
+            current += increment;
+            if (speedstring)               /* zap speedstring */
+            {
+                speedstring[0] = 0;
+            }
+        }
+        for (;;)
+        {                 /* adjust to a non-comment choice */
+            if (current < 0 || current >= numchoices)
+            {
+                increment = rev_increment;
+            }
+            else if ((attributes[current] & 256) == 0)
+            {
+                break;
+            }
+            current += increment;
+        }
+        if (topleftchoice > numchoices - boxitems)
+        {
+            topleftchoice = ((numchoices + boxwidth - 1)/boxwidth)*boxwidth - boxitems;
+        }
+        if (topleftchoice < 0)
+        {
+            topleftchoice = 0;
+        }
+        while (current < topleftchoice)
+        {
+            topleftchoice -= boxwidth;
+            redisplay = 1;
+        }
+        while (current >= topleftchoice + boxitems)
+        {
+            topleftchoice += boxwidth;
+            redisplay = 1;
+        }
+    }
 
 fs_choice_end:
-	lookatmouse = savelookatmouse;
-	return ret;
+    lookatmouse = savelookatmouse;
+    return ret;
 }
 
 #ifndef XFRACT
@@ -1075,351 +1075,351 @@ static int menutype;
 
 int main_menu(int fullmenu)
 {
-	char *choices[44]; /* 2 columns * 22 rows */
-	int attributes[44];
-	int choicekey[44];
-	int i;
-	int nextleft, nextright;
-	int oldtabmode;
-	int showjuliatoggle;
-	oldtabmode = tabmode;
+    char *choices[44]; /* 2 columns * 22 rows */
+    int attributes[44];
+    int choicekey[44];
+    int i;
+    int nextleft, nextright;
+    int oldtabmode;
+    int showjuliatoggle;
+    oldtabmode = tabmode;
 
 top:
-	menutype = fullmenu;
-	tabmode = 0;
-	showjuliatoggle = 0;
-	for (i = 0; i < 44; ++i)
-	{
-		attributes[i] = 256;
-		choices[i] = "";
-		choicekey[i] = -1;
-	}
-	nextleft = -2;
-	nextright = -1;
+    menutype = fullmenu;
+    tabmode = 0;
+    showjuliatoggle = 0;
+    for (i = 0; i < 44; ++i)
+    {
+        attributes[i] = 256;
+        choices[i] = "";
+        choicekey[i] = -1;
+    }
+    nextleft = -2;
+    nextright = -1;
 
-	if (fullmenu)
-	{
-		nextleft += 2;
-		choices[nextleft] = "      CURRENT IMAGE         ";
-		attributes[nextleft] = 256+MENU_HDG;
+    if (fullmenu)
+    {
+        nextleft += 2;
+        choices[nextleft] = "      CURRENT IMAGE         ";
+        attributes[nextleft] = 256+MENU_HDG;
 
-		nextleft += 2;
-		choicekey[nextleft] = 13; /* enter */
-		attributes[nextleft] = MENU_ITEM;
-		choices[nextleft] = (calc_status == CALCSTAT_RESUMABLE) ?
-			"continue calculation        " :
-			"return to image             ";
+        nextleft += 2;
+        choicekey[nextleft] = 13; /* enter */
+        attributes[nextleft] = MENU_ITEM;
+        choices[nextleft] = (calc_status == CALCSTAT_RESUMABLE) ?
+            "continue calculation        " :
+            "return to image             ";
 
-		nextleft += 2;
-		choicekey[nextleft] = 9; /* tab */
-		attributes[nextleft] = MENU_ITEM;
-		choices[nextleft] = "info about image      <tab> ";
+        nextleft += 2;
+        choicekey[nextleft] = 9; /* tab */
+        attributes[nextleft] = MENU_ITEM;
+        choices[nextleft] = "info about image      <tab> ";
 
-		nextleft += 2;
-		choicekey[nextleft] = 'o';
-		attributes[nextleft] = MENU_ITEM;
-		choices[nextleft] = "orbits window          <o>  ";
-		if (!(fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA))
-		{
-			nextleft += 2;
-		}
-	}
+        nextleft += 2;
+        choicekey[nextleft] = 'o';
+        attributes[nextleft] = MENU_ITEM;
+        choices[nextleft] = "orbits window          <o>  ";
+        if (!(fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA))
+        {
+            nextleft += 2;
+        }
+    }
 
-	nextleft += 2;
-	choices[nextleft] = "      NEW IMAGE             ";
-	attributes[nextleft] = 256+MENU_HDG;
+    nextleft += 2;
+    choices[nextleft] = "      NEW IMAGE             ";
+    attributes[nextleft] = 256+MENU_HDG;
 
-	nextleft += 2;
-	choicekey[nextleft] = FIK_DELETE;
-	attributes[nextleft] = MENU_ITEM;
+    nextleft += 2;
+    choicekey[nextleft] = FIK_DELETE;
+    attributes[nextleft] = MENU_ITEM;
 #ifdef XFRACT
-	choices[nextleft] = "draw fractal           <D>  ";
+    choices[nextleft] = "draw fractal           <D>  ";
 #else
-	choices[nextleft] = "select video mode...  <del> ";
+    choices[nextleft] = "select video mode...  <del> ";
 #endif
 
-	nextleft += 2;
-	choicekey[nextleft] = 't';
-	attributes[nextleft] = MENU_ITEM;
-	choices[nextleft] = "select fractal type    <t>  ";
+    nextleft += 2;
+    choicekey[nextleft] = 't';
+    attributes[nextleft] = MENU_ITEM;
+    choices[nextleft] = "select fractal type    <t>  ";
 
-	if (fullmenu)
-	{
-		if ((curfractalspecific->tojulia != NOFRACTAL
-			&& param[0] == 0.0 && param[1] == 0.0)
-			|| curfractalspecific->tomandel != NOFRACTAL)
-		{
-			nextleft += 2;
-			choicekey[nextleft] = FIK_SPACE;
-			attributes[nextleft] = MENU_ITEM;
-			choices[nextleft] = "toggle to/from julia <space>";
-			showjuliatoggle = 1;
-		}
-		if (fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA)
-		{
-			nextleft += 2;
-			choicekey[nextleft] = 'j';
-			attributes[nextleft] = MENU_ITEM;
-			choices[nextleft] = "toggle to/from inverse <j>  ";
-			showjuliatoggle = 1;
-		}
+    if (fullmenu)
+    {
+        if ((curfractalspecific->tojulia != NOFRACTAL
+            && param[0] == 0.0 && param[1] == 0.0)
+            || curfractalspecific->tomandel != NOFRACTAL)
+        {
+            nextleft += 2;
+            choicekey[nextleft] = FIK_SPACE;
+            attributes[nextleft] = MENU_ITEM;
+            choices[nextleft] = "toggle to/from julia <space>";
+            showjuliatoggle = 1;
+        }
+        if (fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA)
+        {
+            nextleft += 2;
+            choicekey[nextleft] = 'j';
+            attributes[nextleft] = MENU_ITEM;
+            choices[nextleft] = "toggle to/from inverse <j>  ";
+            showjuliatoggle = 1;
+        }
 
-		nextleft += 2;
-		choicekey[nextleft] = 'h';
-		attributes[nextleft] = MENU_ITEM;
-		choices[nextleft] = "return to prior image  <h>   ";
+        nextleft += 2;
+        choicekey[nextleft] = 'h';
+        attributes[nextleft] = MENU_ITEM;
+        choices[nextleft] = "return to prior image  <h>   ";
 
-		nextleft += 2;
-		choicekey[nextleft] = FIK_BACKSPACE;
-		attributes[nextleft] = MENU_ITEM;
-		choices[nextleft] = "reverse thru history <ctl-h> ";
-	}
-	else
-	{
-		nextleft += 2;
-	}
+        nextleft += 2;
+        choicekey[nextleft] = FIK_BACKSPACE;
+        attributes[nextleft] = MENU_ITEM;
+        choices[nextleft] = "reverse thru history <ctl-h> ";
+    }
+    else
+    {
+        nextleft += 2;
+    }
 
-	nextleft += 2;
-	choices[nextleft] = "      OPTIONS                ";
-	attributes[nextleft] = 256+MENU_HDG;
+    nextleft += 2;
+    choices[nextleft] = "      OPTIONS                ";
+    attributes[nextleft] = 256+MENU_HDG;
 
-	nextleft += 2;
-	choicekey[nextleft] = 'x';
-	attributes[nextleft] = MENU_ITEM;
-	choices[nextleft] = "basic options...       <x>  ";
+    nextleft += 2;
+    choicekey[nextleft] = 'x';
+    attributes[nextleft] = MENU_ITEM;
+    choices[nextleft] = "basic options...       <x>  ";
 
-	nextleft += 2;
-	choicekey[nextleft] = 'y';
-	attributes[nextleft] = MENU_ITEM;
-	choices[nextleft] = "extended options...    <y>  ";
+    nextleft += 2;
+    choicekey[nextleft] = 'y';
+    attributes[nextleft] = MENU_ITEM;
+    choices[nextleft] = "extended options...    <y>  ";
 
-	nextleft += 2;
-	choicekey[nextleft] = 'z';
-	attributes[nextleft] = MENU_ITEM;
-	choices[nextleft] = "type-specific parms... <z>  ";
+    nextleft += 2;
+    choicekey[nextleft] = 'z';
+    attributes[nextleft] = MENU_ITEM;
+    choices[nextleft] = "type-specific parms... <z>  ";
 
-	nextleft += 2;
-	choicekey[nextleft] = 'p';
-	attributes[nextleft] = MENU_ITEM;
-	choices[nextleft] = "passes options...      <p>  ";
+    nextleft += 2;
+    choicekey[nextleft] = 'p';
+    attributes[nextleft] = MENU_ITEM;
+    choices[nextleft] = "passes options...      <p>  ";
 
-	nextleft += 2;
-	choicekey[nextleft] = 'v';
-	attributes[nextleft] = MENU_ITEM;
-	choices[nextleft] = "view window options... <v>  ";
+    nextleft += 2;
+    choicekey[nextleft] = 'v';
+    attributes[nextleft] = MENU_ITEM;
+    choices[nextleft] = "view window options... <v>  ";
 
-	if (showjuliatoggle == 0)
-	{
-		nextleft += 2;
-		choicekey[nextleft] = 'i';
-		attributes[nextleft] = MENU_ITEM;
-		choices[nextleft] = "fractal 3D parms...    <i>  ";
-	}
+    if (showjuliatoggle == 0)
+    {
+        nextleft += 2;
+        choicekey[nextleft] = 'i';
+        attributes[nextleft] = MENU_ITEM;
+        choices[nextleft] = "fractal 3D parms...    <i>  ";
+    }
 
-	nextleft += 2;
-	choicekey[nextleft] = FIK_CTL_B;
-	attributes[nextleft] = MENU_ITEM;
-	choices[nextleft] = "browse parms...      <ctl-b>";
+    nextleft += 2;
+    choicekey[nextleft] = FIK_CTL_B;
+    attributes[nextleft] = MENU_ITEM;
+    choices[nextleft] = "browse parms...      <ctl-b>";
 
-	if (fullmenu)
-	{
-		nextleft += 2;
-		choicekey[nextleft] = FIK_CTL_E;
-		attributes[nextleft] = MENU_ITEM;
-		choices[nextleft] = "evolver parms...     <ctl-e>";
+    if (fullmenu)
+    {
+        nextleft += 2;
+        choicekey[nextleft] = FIK_CTL_E;
+        attributes[nextleft] = MENU_ITEM;
+        choices[nextleft] = "evolver parms...     <ctl-e>";
 
 #ifndef XFRACT
-		nextleft += 2;
-		choicekey[nextleft] = FIK_CTL_F;
-		attributes[nextleft] = MENU_ITEM;
-		choices[nextleft] = "sound parms...       <ctl-f>";
+        nextleft += 2;
+        choicekey[nextleft] = FIK_CTL_F;
+        attributes[nextleft] = MENU_ITEM;
+        choices[nextleft] = "sound parms...       <ctl-f>";
 #endif
-	}
+    }
 
-	nextright += 2;
-	attributes[nextright] = 256 + MENU_HDG;
-	choices[nextright] = "        FILE                  ";
+    nextright += 2;
+    attributes[nextright] = 256 + MENU_HDG;
+    choices[nextright] = "        FILE                  ";
 
-	nextright += 2;
-	choicekey[nextright] = '@';
-	attributes[nextright] = MENU_ITEM;
-	choices[nextright] = "run saved command set... <@>  ";
+    nextright += 2;
+    choicekey[nextright] = '@';
+    attributes[nextright] = MENU_ITEM;
+    choices[nextright] = "run saved command set... <@>  ";
 
-	if (fullmenu)
-	{
-		nextright += 2;
-		choicekey[nextright] = 's';
-		attributes[nextright] = MENU_ITEM;
-		choices[nextright] = "save image to file       <s>  ";
-	}
+    if (fullmenu)
+    {
+        nextright += 2;
+        choicekey[nextright] = 's';
+        attributes[nextright] = MENU_ITEM;
+        choices[nextright] = "save image to file       <s>  ";
+    }
 
-	nextright += 2;
-	choicekey[nextright] = 'r';
-	attributes[nextright] = MENU_ITEM;
-	choices[nextright] = "load image from file...  <r>  ";
+    nextright += 2;
+    choicekey[nextright] = 'r';
+    attributes[nextright] = MENU_ITEM;
+    choices[nextright] = "load image from file...  <r>  ";
 
-	nextright += 2;
-	choicekey[nextright] = '3';
-	attributes[nextright] = MENU_ITEM;
-	choices[nextright] = "3d transform from file...<3>  ";
+    nextright += 2;
+    choicekey[nextright] = '3';
+    attributes[nextright] = MENU_ITEM;
+    choices[nextright] = "3d transform from file...<3>  ";
 
-	if (fullmenu)
-	{
-		nextright += 2;
-		choicekey[nextright] = '#';
-		attributes[nextright] = MENU_ITEM;
-		choices[nextright] = "3d overlay from file.....<#>  ";
+    if (fullmenu)
+    {
+        nextright += 2;
+        choicekey[nextright] = '#';
+        attributes[nextright] = MENU_ITEM;
+        choices[nextright] = "3d overlay from file.....<#>  ";
 
-		nextright += 2;
-		choicekey[nextright] = 'b';
-		attributes[nextright] = MENU_ITEM;
-		choices[nextright] = "save current parameters..<b>  ";
+        nextright += 2;
+        choicekey[nextright] = 'b';
+        attributes[nextright] = MENU_ITEM;
+        choices[nextright] = "save current parameters..<b>  ";
 
-		nextright += 2;
-		choicekey[nextright] = 16;
-		attributes[nextright] = MENU_ITEM;
-		choices[nextright] = "print image          <ctl-p>  ";
-	}
+        nextright += 2;
+        choicekey[nextright] = 16;
+        attributes[nextright] = MENU_ITEM;
+        choices[nextright] = "print image          <ctl-p>  ";
+    }
 
-	nextright += 2;
-	choicekey[nextright] = 'd';
-	attributes[nextright] = MENU_ITEM;
+    nextright += 2;
+    choicekey[nextright] = 'd';
+    attributes[nextright] = MENU_ITEM;
 #ifdef XFRACT
-	choices[nextright] = "shell to Linux/Unix      <d>  ";
+    choices[nextright] = "shell to Linux/Unix      <d>  ";
 #else
-	choices[nextright] = "shell to dos             <d>  ";
+    choices[nextright] = "shell to dos             <d>  ";
 #endif
 
-	nextright += 2;
-	choicekey[nextright] = 'g';
-	attributes[nextright] = MENU_ITEM;
-	choices[nextright] = "give command string      <g>  ";
+    nextright += 2;
+    choicekey[nextright] = 'g';
+    attributes[nextright] = MENU_ITEM;
+    choices[nextright] = "give command string      <g>  ";
 
-	nextright += 2;
-	choicekey[nextright] = FIK_ESC;
-	attributes[nextright] = MENU_ITEM;
-	choices[nextright] = "quit "FRACTINT"           <esc> ";
+    nextright += 2;
+    choicekey[nextright] = FIK_ESC;
+    attributes[nextright] = MENU_ITEM;
+    choices[nextright] = "quit "FRACTINT"           <esc> ";
 
-	nextright += 2;
-	choicekey[nextright] = FIK_INSERT;
-	attributes[nextright] = MENU_ITEM;
-	choices[nextright] = "restart "FRACTINT"        <ins> ";
+    nextright += 2;
+    choicekey[nextright] = FIK_INSERT;
+    attributes[nextright] = MENU_ITEM;
+    choices[nextright] = "restart "FRACTINT"        <ins> ";
 
 #ifdef XFRACT
-	if (fullmenu && (g_got_real_dac || fake_lut) && colors >= 16)
+    if (fullmenu && (g_got_real_dac || fake_lut) && colors >= 16)
 #else
-	if (fullmenu && g_got_real_dac && colors >= 16)
+    if (fullmenu && g_got_real_dac && colors >= 16)
 #endif
-	{
-		nextright += 2;
-		choices[nextright] = "       COLORS                 ";
-		attributes[nextright] = 256+MENU_HDG;
+    {
+        nextright += 2;
+        choices[nextright] = "       COLORS                 ";
+        attributes[nextright] = 256+MENU_HDG;
 
-		nextright += 2;
-		choicekey[nextright] = 'c';
-		attributes[nextright] = MENU_ITEM;
-		choices[nextright] = "color cycling mode       <c>  ";
+        nextright += 2;
+        choicekey[nextright] = 'c';
+        attributes[nextright] = MENU_ITEM;
+        choices[nextright] = "color cycling mode       <c>  ";
 
-		nextright += 2;
-		choicekey[nextright] = '+';
-		attributes[nextright] = MENU_ITEM;
-		choices[nextright] = "rotate palette      <+>, <->  ";
+        nextright += 2;
+        choicekey[nextright] = '+';
+        attributes[nextright] = MENU_ITEM;
+        choices[nextright] = "rotate palette      <+>, <->  ";
 
-		if (colors > 16)
-		{
-			if (!g_really_ega)
-			{
-				nextright += 2;
-				choicekey[nextright] = 'e';
-				attributes[nextright] = MENU_ITEM;
-				choices[nextright] = "palette editing mode     <e>  ";
-			}
+        if (colors > 16)
+        {
+            if (!g_really_ega)
+            {
+                nextright += 2;
+                choicekey[nextright] = 'e';
+                attributes[nextright] = MENU_ITEM;
+                choices[nextright] = "palette editing mode     <e>  ";
+            }
 
-			nextright += 2;
-			choicekey[nextright] = 'a';
-			attributes[nextright] = MENU_ITEM;
-			choices[nextright] = "make starfield           <a>  ";
-		}
-	}
+            nextright += 2;
+            choicekey[nextright] = 'a';
+            attributes[nextright] = MENU_ITEM;
+            choices[nextright] = "make starfield           <a>  ";
+        }
+    }
 
-	nextright += 2;
-	choicekey[nextright] = FIK_CTL_A;
-	attributes[nextright] = MENU_ITEM;
-	choices[nextright] = "ant automaton          <ctl-a>";
+    nextright += 2;
+    choicekey[nextright] = FIK_CTL_A;
+    attributes[nextright] = MENU_ITEM;
+    choices[nextright] = "ant automaton          <ctl-a>";
 
-	nextright += 2;
-	choicekey[nextright] = FIK_CTL_S;
-	attributes[nextright] = MENU_ITEM;
-	choices[nextright] = "stereogram             <ctl-s>";
+    nextright += 2;
+    choicekey[nextright] = FIK_CTL_S;
+    attributes[nextright] = MENU_ITEM;
+    choices[nextright] = "stereogram             <ctl-s>";
 
-	i = driver_key_pressed() ? driver_get_key() : 0;
-	if (menu_checkkey(i, 0) == 0)
-	{
-		helpmode = HELPMAIN;         /* switch help modes */
-		nextleft += 2;
-		if (nextleft < nextright)
-		{
-			nextleft = nextright + 1;
-		}
-		i = fullscreen_choice(CHOICE_MENU | CHOICE_CRUNCH,
-			"MAIN MENU",
-			NULL, NULL, nextleft, (char **) choices, attributes,
-			2, nextleft/2, 29, 0, NULL, NULL, NULL, menu_checkkey);
-		if (i == -1)     /* escape */
-		{
-			i = FIK_ESC;
-		}
-		else if (i < 0)
-		{
-			i = 0 - i;
-		}
-		else                      /* user selected a choice */
-		{
-			i = choicekey[i];
-			if (-10 == i)
-			{
-				helpmode = HELPZOOM;
-				help(0);
-				i = 0;
-			}
-		}
-	}
-	if (i == FIK_ESC)             /* escape from menu exits Fractint */
-	{
-		helptitle();
-		driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
-		for (i = 9; i <= 11; ++i)
-		{
-			driver_set_attr(i, 18, C_GENERAL_INPUT, 40);
-		}
-		putstringcenter(10, 18, 40, C_GENERAL_INPUT,
+    i = driver_key_pressed() ? driver_get_key() : 0;
+    if (menu_checkkey(i, 0) == 0)
+    {
+        helpmode = HELPMAIN;         /* switch help modes */
+        nextleft += 2;
+        if (nextleft < nextright)
+        {
+            nextleft = nextright + 1;
+        }
+        i = fullscreen_choice(CHOICE_MENU | CHOICE_CRUNCH,
+            "MAIN MENU",
+            NULL, NULL, nextleft, (char **) choices, attributes,
+            2, nextleft/2, 29, 0, NULL, NULL, NULL, menu_checkkey);
+        if (i == -1)     /* escape */
+        {
+            i = FIK_ESC;
+        }
+        else if (i < 0)
+        {
+            i = 0 - i;
+        }
+        else                      /* user selected a choice */
+        {
+            i = choicekey[i];
+            if (-10 == i)
+            {
+                helpmode = HELPZOOM;
+                help(0);
+                i = 0;
+            }
+        }
+    }
+    if (i == FIK_ESC)             /* escape from menu exits Fractint */
+    {
+        helptitle();
+        driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
+        for (i = 9; i <= 11; ++i)
+        {
+            driver_set_attr(i, 18, C_GENERAL_INPUT, 40);
+        }
+        putstringcenter(10, 18, 40, C_GENERAL_INPUT,
 #ifdef XFRACT
-			"Exit from Xfractint (y/n)? y"
+            "Exit from Xfractint (y/n)? y"
 #else
-			"Exit from Fractint (y/n)? y"
+            "Exit from Fractint (y/n)? y"
 #endif
-			);
-		driver_hide_text_cursor();
-		while ((i = driver_get_key()) != 'y' && i != 'Y' && i != 13)
-		{
-			if (i == 'n' || i == 'N')
-			{
-				goto top;
-			}
-		}
-		goodbye();
-	}
-	if (i == FIK_TAB)
-	{
-		tab_display();
-		i = 0;
-	}
-	if (i == FIK_ENTER || i == FIK_ENTER_2)
-	{
-		i = 0;                 /* don't trigger new calc */
-	}
-	tabmode = oldtabmode;
-	return i;
+            );
+        driver_hide_text_cursor();
+        while ((i = driver_get_key()) != 'y' && i != 'Y' && i != 13)
+        {
+            if (i == 'n' || i == 'N')
+            {
+                goto top;
+            }
+        }
+        goodbye();
+    }
+    if (i == FIK_TAB)
+    {
+        tab_display();
+        i = 0;
+    }
+    if (i == FIK_ENTER || i == FIK_ENTER_2)
+    {
+        i = 0;                 /* don't trigger new calc */
+    }
+    tabmode = oldtabmode;
+    return i;
 }
 
 static int menu_checkkey(int curkey, int choice)
@@ -1757,170 +1757,170 @@ int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
  */
 void load_fractint_config(void)
 {
-	FILE *cfgfile;
-	VIDEOINFO vident;
-	int linenum;
-	long xdots, ydots;
-	int i, j, keynum, ax, bx, cx, dx, dotmode, colors;
-	char *fields[11];
-	int textsafe2;
-	char tempstring[150];
-	int truecolorbits;
+    FILE *cfgfile;
+    VIDEOINFO vident;
+    int linenum;
+    long xdots, ydots;
+    int i, j, keynum, ax, bx, cx, dx, dotmode, colors;
+    char *fields[11];
+    int textsafe2;
+    char tempstring[150];
+    int truecolorbits;
 
-	findpath("fractint.cfg",tempstring);
-	if (tempstring[0] == 0                            /* can't find the file */
-		|| (cfgfile = fopen(tempstring,"r")) == NULL)   /* can't open it */
-	{
-		goto bad_fractint_cfg;
-	}
+    findpath("fractint.cfg",tempstring);
+    if (tempstring[0] == 0                            /* can't find the file */
+        || (cfgfile = fopen(tempstring,"r")) == NULL)   /* can't open it */
+    {
+        goto bad_fractint_cfg;
+    }
 
-	linenum = 0;
-	while (g_video_table_len < MAXVIDEOMODES
-		&& fgets(tempstring, 120, cfgfile))
-	{
-		if (strchr(tempstring,'\n') == NULL)
-		{
-			/* finish reading the line */
-			while (fgetc(cfgfile) != '\n' && !feof(cfgfile));
-		}
-		++linenum;
-		if (tempstring[0] == ';')
-		{
-			continue;   /* comment line */
-		}
-		tempstring[120] = 0;
-		tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
-		i = j = -1;
-		/* key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver */
-		for (;;)
-		{
-			if (tempstring[++i] < ' ')
-			{
-				if (tempstring[i] == 0)
-				{
-					break;
-				}
-				tempstring[i] = ' '; /* convert tab (or whatever) to blank */
-			}
-			else if (tempstring[i] == ',' && ++j < 11)
-			{
+    linenum = 0;
+    while (g_video_table_len < MAXVIDEOMODES
+        && fgets(tempstring, 120, cfgfile))
+    {
+        if (strchr(tempstring,'\n') == NULL)
+        {
+            /* finish reading the line */
+            while (fgetc(cfgfile) != '\n' && !feof(cfgfile));
+        }
+        ++linenum;
+        if (tempstring[0] == ';')
+        {
+            continue;   /* comment line */
+        }
+        tempstring[120] = 0;
+        tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
+        i = j = -1;
+        /* key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver */
+        for (;;)
+        {
+            if (tempstring[++i] < ' ')
+            {
+                if (tempstring[i] == 0)
+                {
+                    break;
+                }
+                tempstring[i] = ' '; /* convert tab (or whatever) to blank */
+            }
+            else if (tempstring[i] == ',' && ++j < 11)
+            {
 #if defined(_WIN32)
-				_ASSERTE(j >= 0 && j < 11);
+                _ASSERTE(j >= 0 && j < 11);
 #endif
-				fields[j] = &tempstring[i+1]; /* remember start of next field */
-				tempstring[i] = 0;   /* make field a separate string */
-			}
-		}
-		keynum = check_vidmode_keyname(tempstring);
-		sscanf(fields[1],"%x",&ax);
-		sscanf(fields[2],"%x",&bx);
-		sscanf(fields[3],"%x",&cx);
-		sscanf(fields[4],"%x",&dx);
-		dotmode     = atoi(fields[5]);
-		xdots       = atol(fields[6]);
-		ydots       = atol(fields[7]);
-		colors      = atoi(fields[8]);
-		if (colors == 4 && strchr(strlwr(fields[8]),'g'))
-		{
-			colors = 256;
-			truecolorbits = 4; /* 32 bits */
-		}
-		else if (colors == 16 && strchr(fields[8],'m'))
-		{
-			colors = 256;
-			truecolorbits = 3; /* 24 bits */
-		}
-		else if (colors == 64 && strchr(fields[8],'k'))
-		{
-			colors = 256;
-			truecolorbits = 2; /* 16 bits */
-		}
-		else if (colors == 32 && strchr(fields[8],'k'))
-		{
-			colors = 256;
-			truecolorbits = 1; /* 15 bits */
-		}
-		else
-		{
-			truecolorbits = 0;
-		}
+                fields[j] = &tempstring[i+1]; /* remember start of next field */
+                tempstring[i] = 0;   /* make field a separate string */
+            }
+        }
+        keynum = check_vidmode_keyname(tempstring);
+        sscanf(fields[1],"%x",&ax);
+        sscanf(fields[2],"%x",&bx);
+        sscanf(fields[3],"%x",&cx);
+        sscanf(fields[4],"%x",&dx);
+        dotmode     = atoi(fields[5]);
+        xdots       = atol(fields[6]);
+        ydots       = atol(fields[7]);
+        colors      = atoi(fields[8]);
+        if (colors == 4 && strchr(strlwr(fields[8]),'g'))
+        {
+            colors = 256;
+            truecolorbits = 4; /* 32 bits */
+        }
+        else if (colors == 16 && strchr(fields[8],'m'))
+        {
+            colors = 256;
+            truecolorbits = 3; /* 24 bits */
+        }
+        else if (colors == 64 && strchr(fields[8],'k'))
+        {
+            colors = 256;
+            truecolorbits = 2; /* 16 bits */
+        }
+        else if (colors == 32 && strchr(fields[8],'k'))
+        {
+            colors = 256;
+            truecolorbits = 1; /* 15 bits */
+        }
+        else
+        {
+            truecolorbits = 0;
+        }
 
-		textsafe2   = dotmode / 100;
-		dotmode    %= 100;
-		if (j < 9 ||
-				keynum < 0 ||
-				dotmode < 0 || dotmode > 30 ||
-				textsafe2 < 0 || textsafe2 > 4 ||
-				xdots < MINPIXELS || xdots > MAXPIXELS ||
-				ydots < MINPIXELS || ydots > MAXPIXELS ||
-				(colors != 0 && colors != 2 && colors != 4 && colors != 16 &&
-				colors != 256)
-			)
-		{
-			goto bad_fractint_cfg;
-		}
-		g_cfg_line_nums[g_video_table_len] = linenum; /* for update_fractint_cfg */
+        textsafe2   = dotmode / 100;
+        dotmode    %= 100;
+        if (j < 9 ||
+                keynum < 0 ||
+                dotmode < 0 || dotmode > 30 ||
+                textsafe2 < 0 || textsafe2 > 4 ||
+                xdots < MINPIXELS || xdots > MAXPIXELS ||
+                ydots < MINPIXELS || ydots > MAXPIXELS ||
+                (colors != 0 && colors != 2 && colors != 4 && colors != 16 &&
+                colors != 256)
+            )
+        {
+            goto bad_fractint_cfg;
+        }
+        g_cfg_line_nums[g_video_table_len] = linenum; /* for update_fractint_cfg */
 
-		memset(&vident, 0, sizeof(vident));
-		strncpy(&vident.name[0], fields[0], NUM_OF(vident.name));
-		strncpy(&vident.comment[0], fields[9], NUM_OF(vident.comment));
-		vident.name[25] = vident.comment[25] = 0;
-		vident.keynum      = keynum;
-		vident.videomodeax = ax;
-		vident.videomodebx = bx;
-		vident.videomodecx = cx;
-		vident.videomodedx = dx;
-		vident.dotmode     = truecolorbits * 1000 + textsafe2 * 100 + dotmode;
-		vident.xdots       = (short)xdots;
-		vident.ydots       = (short)ydots;
-		vident.colors      = colors;
+        memset(&vident, 0, sizeof(vident));
+        strncpy(&vident.name[0], fields[0], NUM_OF(vident.name));
+        strncpy(&vident.comment[0], fields[9], NUM_OF(vident.comment));
+        vident.name[25] = vident.comment[25] = 0;
+        vident.keynum      = keynum;
+        vident.videomodeax = ax;
+        vident.videomodebx = bx;
+        vident.videomodecx = cx;
+        vident.videomodedx = dx;
+        vident.dotmode     = truecolorbits * 1000 + textsafe2 * 100 + dotmode;
+        vident.xdots       = (short)xdots;
+        vident.ydots       = (short)ydots;
+        vident.colors      = colors;
 
-		/* if valid, add to supported modes */
-		vident.driver = driver_find_by_name(fields[10]);
-		if (vident.driver != NULL)
-		{
-			if (vident.driver->validate_mode(vident.driver, &vident))
-			{
-				/* look for a synonym mode and if found, overwite its key */
-				int m;
-				int synonym_found = FALSE;
-				for (m = 0; m < g_video_table_len; m++)
-				{
-					VIDEOINFO *mode = &g_video_table[m];
-					if ((mode->driver == vident.driver) && (mode->colors == vident.colors) &&
-						(mode->xdots == vident.xdots) && (mode->ydots == vident.ydots) &&
-						(mode->dotmode == vident.dotmode))
-					{
-						if (0 == mode->keynum)
-						{
-							mode->keynum = vident.keynum;
-						}
-						synonym_found = TRUE;
-						break;
-					}
-				}
-				/* no synonym found, append it to current list of video modes */
-				if (FALSE == synonym_found)
-				{
-					add_video_mode(vident.driver, &vident);
-				}
-			}
-		}
-	}
-	fclose(cfgfile);
-	return;
+        /* if valid, add to supported modes */
+        vident.driver = driver_find_by_name(fields[10]);
+        if (vident.driver != NULL)
+        {
+            if (vident.driver->validate_mode(vident.driver, &vident))
+            {
+                /* look for a synonym mode and if found, overwite its key */
+                int m;
+                int synonym_found = FALSE;
+                for (m = 0; m < g_video_table_len; m++)
+                {
+                    VIDEOINFO *mode = &g_video_table[m];
+                    if ((mode->driver == vident.driver) && (mode->colors == vident.colors) &&
+                        (mode->xdots == vident.xdots) && (mode->ydots == vident.ydots) &&
+                        (mode->dotmode == vident.dotmode))
+                    {
+                        if (0 == mode->keynum)
+                        {
+                            mode->keynum = vident.keynum;
+                        }
+                        synonym_found = TRUE;
+                        break;
+                    }
+                }
+                /* no synonym found, append it to current list of video modes */
+                if (FALSE == synonym_found)
+                {
+                    add_video_mode(vident.driver, &vident);
+                }
+            }
+        }
+    }
+    fclose(cfgfile);
+    return;
 
 bad_fractint_cfg:
-	g_bad_config = -1; /* bad, no message issued yet */
+    g_bad_config = -1; /* bad, no message issued yet */
 }
 
 void bad_fractint_cfg_msg()
 {
-	stopmsg(0,
-		"File FRACTINT.CFG is missing or invalid.\n"
-		"See Hardware Support and Video Modes in the full documentation for help.\n"
-		"I will continue with only the built-in video modes available.");
-	g_bad_config = 1; /* bad, message issued */
+    stopmsg(0,
+        "File FRACTINT.CFG is missing or invalid.\n"
+        "See Hardware Support and Video Modes in the full documentation for help.\n"
+        "I will continue with only the built-in video modes available.");
+    g_bad_config = 1; /* bad, message issued */
 }
 
 int check_vidmode_key(int option,int k)

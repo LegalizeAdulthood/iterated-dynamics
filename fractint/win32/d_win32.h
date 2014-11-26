@@ -5,24 +5,24 @@
 typedef struct tagWin32BaseDriver Win32BaseDriver;
 struct tagWin32BaseDriver
 {
-	Driver pub;
+    Driver pub;
 
-	Frame frame;
-	WinText wintext;
+    Frame frame;
+    WinText wintext;
 
-	/* key_buffer
-	*
-	* When we peeked ahead and saw a keypress, stash it here for later
-	* feeding to our caller.
-	*/
-	int key_buffer;
+    /* key_buffer
+    *
+    * When we peeked ahead and saw a keypress, stash it here for later
+    * feeding to our caller.
+    */
+    int key_buffer;
 
-	int screen_count;
-	BYTE *saved_screens[WIN32_MAXSCREENS];
-	int saved_cursor[WIN32_MAXSCREENS+1];
-	BOOL cursor_shown;
-	int cursor_row;
-	int cursor_col;
+    int screen_count;
+    BYTE *saved_screens[WIN32_MAXSCREENS];
+    int saved_cursor[WIN32_MAXSCREENS+1];
+    BOOL cursor_shown;
+    int cursor_row;
+    int cursor_col;
 };
 
 extern void win32_shell(Driver *drv);

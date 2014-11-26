@@ -3952,10 +3952,10 @@ int main(int argc, char *argv[])
 #endif
 void check_buffer(char *current, unsigned off, char *buffer)
 {
-	if ((unsigned) (curr + off - buffer) >= (BUFFER_SIZE-1024))
-	{
-		fatal(0, "Buffer overflowerd -- Help topic too large.");
-	}
+    if ((unsigned) (curr + off - buffer) >= (BUFFER_SIZE-1024))
+    {
+        fatal(0, "Buffer overflowerd -- Help topic too large.");
+    }
 }
 #if defined(_WIN32)
 #pragma warning(pop)

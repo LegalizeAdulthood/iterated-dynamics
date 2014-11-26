@@ -1061,11 +1061,11 @@ extern int stopmsg(int ,char *);
 extern void blankrows(int ,int ,int );
 extern int texttempmsg(char *);
 extern int fullscreen_choice(int options, char *hdg, char *hdg2,
-							 char *instr, int numchoices, char **choices, int *attributes,
-							 int boxwidth, int boxdepth, int colwidth, int current,
-							 void (*formatitem)(int, char *), char *speedstring,
-							 int (*speedprompt)(int, int, int, char *, int),
-							 int (*checkkey)(int, int));
+                             char *instr, int numchoices, char **choices, int *attributes,
+                             int boxwidth, int boxdepth, int colwidth, int current,
+                             void (*formatitem)(int, char *), char *speedstring,
+                             int (*speedprompt)(int, int, int, char *, int),
+                             int (*checkkey)(int, int));
 #if !defined(WINFRACT)
 extern int showtempmsg(char *);
 extern void cleartempmsg(void);

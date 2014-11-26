@@ -110,21 +110,21 @@ stackavail()
  */
 int
 stricmp(s1, s2)
-    char *s1, *s2;		/* Strings to compare. */
+    char *s1, *s2;      /* Strings to compare. */
 {
     int c1, c2;
 
     while (1) {
-	c1 = *s1++;
-	c2 = *s2++;
-	if (isupper(c1)) c1 = tolower(c1);
-	if (isupper(c2)) c2 = tolower(c2);
-	if (c1 != c2) {
-	    return c1 - c2;
-	}
-	if (c1 == 0) {
-	    return 0;
-	}
+    c1 = *s1++;
+    c2 = *s2++;
+    if (isupper(c1)) c1 = tolower(c1);
+    if (isupper(c2)) c2 = tolower(c2);
+    if (c1 != c2) {
+        return c1 - c2;
+    }
+    if (c1 == 0) {
+        return 0;
+    }
     }
 }
 /*
@@ -144,22 +144,22 @@ stricmp(s1, s2)
  */
 int
 strnicmp(s1, s2, numChars)
-    char *s1, *s2;		/* Strings to compare. */
-    int numChars;		/* Max number of chars to compare. */
+    char *s1, *s2;      /* Strings to compare. */
+    int numChars;       /* Max number of chars to compare. */
 {
     register char c1, c2;
 
     for ( ; numChars > 0; --numChars) {
-	c1 = *s1++;
-	c2 = *s2++;
-	if (isupper(c1)) c1 = tolower(c1);
-	if (isupper(c2)) c2 = tolower(c2);
-	if (c1 != c2) {
-	    return c1 - c2;
-	}
-	if (c1 == '\0') {
-	    return 0;
-	}
+    c1 = *s1++;
+    c2 = *s2++;
+    if (isupper(c1)) c1 = tolower(c1);
+    if (isupper(c2)) c2 = tolower(c2);
+    if (c1 != c2) {
+        return c1 - c2;
+    }
+    if (c1 == '\0') {
+        return 0;
+    }
     }
     return 0;
 }
@@ -186,10 +186,10 @@ strlwr(s)
 {
     register char *sptr=s;
     while (*sptr != '\0') {
-	if (isupper(*sptr)) {
-	    *sptr = tolower(*sptr);
-	}
-	sptr++;
+    if (isupper(*sptr)) {
+        *sptr = tolower(*sptr);
+    }
+    sptr++;
     }
     return s;
 }
@@ -214,10 +214,10 @@ strupr(s)
 {
     register char *sptr=s;
     while (*sptr != '\0') {
-	if (islower(*sptr)) {
-	    *sptr = toupper(*sptr);
-	}
-	sptr++;
+    if (islower(*sptr)) {
+        *sptr = toupper(*sptr);
+    }
+    sptr++;
     }
     return s;
 }
@@ -243,10 +243,10 @@ memicmp(s1, s2, n)
 {
         register char c1,c2;
         while (--n >= 0) {
-		c1 = *s1++;
-		if (isupper(c1)) c1 = tolower(c1);
-		c2 = *s2++;
-		if (isupper(c2)) c2 = tolower(c2);
+        c1 = *s1++;
+        if (isupper(c1)) c1 = tolower(c1);
+        c2 = *s2++;
+        if (isupper(c2)) c2 = tolower(c2);
                 if (c1 != c2)
                         return (c1 - c2);
         }
@@ -259,8 +259,8 @@ memicmp(s1, s2, n)
  * findpath --
  *
  *      Find where a file is.
- *	We return filename if it is an absolute path.
- *	Otherwise we first try FRACTDIR/filename, SRCDIR/filename,
+ *  We return filename if it is an absolute path.
+ *  Otherwise we first try FRACTDIR/filename, SRCDIR/filename,
  *      and then ./filename.
  *
  * Results:
@@ -279,38 +279,38 @@ char *filename, *fullpathname;
     char *fractdir;
 
     if (filename[0]=='/') {
-	strcpy(fullpathname,filename);
-	fd = open(fullpathname,O_RDONLY);
-	if (fd != -1) {
-	    close(fd);
-	    return;
-	}
+    strcpy(fullpathname,filename);
+    fd = open(fullpathname,O_RDONLY);
+    if (fd != -1) {
+        close(fd);
+        return;
+    }
     }
     fractdir = getenv("FRACTDIR");
     if (fractdir != NULL) {
-	strcpy(fullpathname,fractdir);
-	strcat(fullpathname,"/");
-	strcat(fullpathname,filename);
-	fd = open(fullpathname,O_RDONLY);
-	if (fd != -1) {
-	    close(fd);
-	    return;
-	}
+    strcpy(fullpathname,fractdir);
+    strcat(fullpathname,"/");
+    strcat(fullpathname,filename);
+    fd = open(fullpathname,O_RDONLY);
+    if (fd != -1) {
+        close(fd);
+        return;
+    }
     }
     strcpy(fullpathname,SRCDIR);
     strcat(fullpathname,"/");
     strcat(fullpathname,filename);
     fd = open(fullpathname,O_RDONLY);
     if (fd != -1) {
-	close(fd);
-	return;
+    close(fd);
+    return;
     }
     strcpy(fullpathname,"./");
     strcat(fullpathname,filename);
     fd = open(fullpathname,O_RDONLY);
     if (fd != -1) {
-	close(fd);
-	return;
+    close(fd);
+    return;
     }
     fullpathname=NULL;
 }
@@ -402,17 +402,17 @@ splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
    if(length >= 2)
       if(template[1] == ':')
       {
-	 if(drive)
-	 {
-	    drive[0] = template[offset++];
-	    drive[1] = template[offset++];
-	    drive[2] = 0;
-	 }
-	 else
-	 {
-	    offset++;
-	    offset++;
-	 }
+     if(drive)
+     {
+        drive[0] = template[offset++];
+        drive[1] = template[offset++];
+        drive[2] = 0;
+     }
+     else
+     {
+        offset++;
+        offset++;
+     }
       }
 
    /* get dir */
@@ -421,13 +421,13 @@ splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
       tmp = strrchr(template,SLASHC);
       if(tmp)
       {
-	 tmp++;  /* first character after slash */
-	 len = tmp - &template[offset];
-	 if(len >=0 && len < FILE_MAX_DIR && dir)
-	    strncpy(dir,&template[offset],min(len,FILE_MAX_DIR));
-	 if(len < FILE_MAX_DIR && dir)
-	    dir[len] = 0;
-	 offset += len;
+     tmp++;  /* first character after slash */
+     len = tmp - &template[offset];
+     if(len >=0 && len < FILE_MAX_DIR && dir)
+        strncpy(dir,&template[offset],min(len,FILE_MAX_DIR));
+     if(len < FILE_MAX_DIR && dir)
+        dir[len] = 0;
+     offset += len;
       }
    }
    else
@@ -438,25 +438,25 @@ splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
    {
       tmp = strrchr(template,'.');
       if(tmp < strrchr(template,SLASHC) || tmp < strrchr(template,':'))
-	 tmp = 0; /* in this case the '.' must be a directory */
+     tmp = 0; /* in this case the '.' must be a directory */
       if(tmp)
       {
-	 /* tmp++; */ /* first character past "." */
-	 len = tmp - &template[offset];
-	 if((len > 0) && (offset+len < length) && fname)
-	 {
-	    strncpy(fname,&template[offset],min(len,FILE_MAX_FNAME));
+     /* tmp++; */ /* first character past "." */
+     len = tmp - &template[offset];
+     if((len > 0) && (offset+len < length) && fname)
+     {
+        strncpy(fname,&template[offset],min(len,FILE_MAX_FNAME));
             if(len < FILE_MAX_FNAME)
                fname[len] = 0;
             else
                fname[FILE_MAX_FNAME-1] = 0;
-	 }
-	 offset += len;
-	 if((offset < length) && ext)
-	 {
-	    strncpy(ext,&template[offset],FILE_MAX_EXT);
+     }
+     offset += len;
+     if((offset < length) && ext)
+     {
+        strncpy(ext,&template[offset],FILE_MAX_EXT);
             ext[FILE_MAX_EXT-1] = 0;
-	 }
+     }
       }
       else if((offset < length) && fname)
       {

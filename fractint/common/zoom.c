@@ -272,7 +272,7 @@ void _fastcall drawlines(struct coords fr, struct coords to,
 void _fastcall addbox(struct coords point)
 {
 #if defined(_WIN32)
-	_ASSERTE(boxcount < NUM_BOXES);
+    _ASSERTE(boxcount < NUM_BOXES);
 #endif
     point.x += sxoffs;
     point.y += syoffs;
@@ -572,9 +572,9 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
     if (stdcalcmode == 't')
         return(0); /* tesselate, can't do it */
     if (stdcalcmode == 'd')
-	return(0); /* diffusion scan: can't do it either */
+    return(0); /* diffusion scan: can't do it either */
     if (stdcalcmode == 'o')
-	return(0); /* orbits, can't do it */
+    return(0); /* orbits, can't do it */
 
     /* can pan if we get this far */
 
@@ -669,8 +669,8 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
         listfull |= add_worklist(xdots-col,xdots-1,xdots-col,i,j,i,0,0);
     if (listfull != 0) {
         if (stopmsg(STOPMSG_CANCEL,
-				"Tables full, can't pan current image.\n"
-				"Cancel resumes old image, continue pans and calculates a new one.")) {
+                "Tables full, can't pan current image.\n"
+                "Cancel resumes old image, continue pans and calculates a new one.")) {
             zwidth = 0; /* cancel the zoombox */
             drawbox(1); }
         else

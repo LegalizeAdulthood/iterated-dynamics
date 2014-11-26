@@ -754,10 +754,10 @@ MP2d086     ENDP
 */
 double *MP2d086(struct MP x)
 {
-	/* TODO: implement */
-	static double ans = 0.0;
-	_ASSERTE(0 && "MP2d086 called.");
-	return &ans;
+    /* TODO: implement */
+    static double ans = 0.0;
+    _ASSERTE(0 && "MP2d086 called.");
+    return &ans;
 }
 
 /*
@@ -800,49 +800,49 @@ d2MP086     ENDP
 */
 struct MP *d2MP086(double x)
 {
-	/* TODO: implement */
-	if (0.0 == x)
-	{
-		Ans.Exp = 0;
-		Ans.Mant = 0;
-	}
-	else
-	{
-		__asm
-		{
-			mov dx, word ptr [x+6]
-			mov ax, word ptr [x+4]
-			mov bx, word ptr [x+2]
-			mov cx, word ptr [x]
-			xor	esi, esi
-			mov   si, dx
-			shl   si, 1
-			pushf
-			mov   cl, 4
-			shr   si, cl
-			popf
-			rcr   si, 1
-			add   si, (1 SHL 14) - (1 SHL 10)
+    /* TODO: implement */
+    if (0.0 == x)
+    {
+        Ans.Exp = 0;
+        Ans.Mant = 0;
+    }
+    else
+    {
+        __asm
+        {
+            mov dx, word ptr [x+6]
+            mov ax, word ptr [x+4]
+            mov bx, word ptr [x+2]
+            mov cx, word ptr [x]
+            xor esi, esi
+            mov   si, dx
+            shl   si, 1
+            pushf
+            mov   cl, 4
+            shr   si, cl
+            popf
+            rcr   si, 1
+            add   si, (1 SHL 14) - (1 SHL 10)
 
-			mov   di, ax                           ; shl dx:ax:bx 12 bits
-			mov   cl, 12
-			shl   dx, cl
-			shl   ax, cl
-			mov   cl, 4
-			shr   di, cl
-			shr   bx, cl
-			or    dx, di
-			or    ax, bx
-			stc
-			rcr   dx, 1
-			rcr   ax, 1
+            mov   di, ax                           ; shl dx:ax:bx 12 bits
+            mov   cl, 12
+            shl   dx, cl
+            shl   ax, cl
+            mov   cl, 4
+            shr   di, cl
+            shr   bx, cl
+            or    dx, di
+            or    ax, bx
+            stc
+            rcr   dx, 1
+            rcr   ax, 1
 
-			mov   Ans.Exp, esi
-			mov   word ptr Ans.Mant+2, dx
-			mov   word ptr Ans.Mant, ax
-		}
-	}
-	return &Ans;
+            mov   Ans.Exp, esi
+            mov   word ptr Ans.Mant+2, dx
+            mov   word ptr Ans.Mant, ax
+        }
+    }
+    return &Ans;
 }
 
 /*
@@ -993,9 +993,9 @@ MPadd086    ENDP
 */
 struct MP *MPadd086(struct MP x, struct MP y)
 {
-	/* TODO: implement */
-	_ASSERTE(0 && "MPadd086 called.");
-	return &Ans;
+    /* TODO: implement */
+    _ASSERTE(0 && "MPadd086 called.");
+    return &Ans;
 }
 
 /*
@@ -1070,9 +1070,9 @@ MPcmp086    ENDP
 */
 int MPcmp086(struct MP x, struct MP y)
 {
-	/* TODO: implement */
-	_ASSERTE(0 && "MPcmp086 called.");
-	return 0;
+    /* TODO: implement */
+    _ASSERTE(0 && "MPcmp086 called.");
+    return 0;
 }
 
 /*
@@ -1174,9 +1174,9 @@ MPdiv086    ENDP
 */
 struct MP *MPdiv086(struct MP x, struct MP y)
 {
-	/* TODO: implement */
-	_ASSERTE(0 && "MPdiv086 called.");
-	return &Ans;
+    /* TODO: implement */
+    _ASSERTE(0 && "MPdiv086 called.");
+    return &Ans;
 }
 
 /*
@@ -1274,99 +1274,99 @@ MPmul086    ENDP
 */
 struct MP *MPmul086(struct MP x, struct MP y)
 {
-	/* TODO: implement */
-	__asm
-	{
-		xor   eax, eax
-		xor   ebx, ebx
-		mov   eax, x.Exp
-		mov   ebx, y.Exp
-		xor   ch, ch
-		shl   bh, 1
-		rcr   ch, 1
-		shr   bh, 1
-		xor   ah, ch
+    /* TODO: implement */
+    __asm
+    {
+        xor   eax, eax
+        xor   ebx, ebx
+        mov   eax, x.Exp
+        mov   ebx, y.Exp
+        xor   ch, ch
+        shl   bh, 1
+        rcr   ch, 1
+        shr   bh, 1
+        xor   ah, ch
 
-		sub   bx, (1 SHL 14) - 2
-		add   ax, bx
-		jno   NoOverflow
+        sub   bx, (1 SHL 14) - 2
+        add   ax, bx
+        jno   NoOverflow
 
-	Overflow:
-		or    word ptr [x.Mant+2], 0
-		jz    ZeroAns
-		or    word ptr [y.Mant+2], 0
-		jz    ZeroAns
+    Overflow:
+        or    word ptr [x.Mant+2], 0
+        jz    ZeroAns
+        or    word ptr [y.Mant+2], 0
+        jz    ZeroAns
 
-		mov   MPOverflow, 1
+        mov   MPOverflow, 1
 
-	ZeroAns:
-		xor   ax, ax
-		xor   dx, dx
-		mov   Ans.Exp, eax
-		jmp   StoreMant
+    ZeroAns:
+        xor   ax, ax
+        xor   dx, dx
+        mov   Ans.Exp, eax
+        jmp   StoreMant
 
-	NoOverflow:
-		mov   Ans.Exp, eax
+    NoOverflow:
+        mov   Ans.Exp, eax
 
-		mov   si, word ptr [x.Mant+2]
-		mov   bx, word ptr [x.Mant]
-		mov   di, word ptr [y.Mant+2]
-		mov   cx, word ptr [y.Mant]
+        mov   si, word ptr [x.Mant+2]
+        mov   bx, word ptr [x.Mant]
+        mov   di, word ptr [y.Mant+2]
+        mov   cx, word ptr [y.Mant]
 
-		mov   ax, si
-		or    ax, bx
-		jz    ZeroAns
+        mov   ax, si
+        or    ax, bx
+        jz    ZeroAns
 
-		mov   ax, di
-		or    ax, cx
-		jz    ZeroAns
+        mov   ax, di
+        or    ax, cx
+        jz    ZeroAns
 
-		mov   ax, cx
-		mul   bx
-		push  dx
+        mov   ax, cx
+        mul   bx
+        push  dx
 
-		mov   ax, cx
-		mul   si
-		push  ax
-		push  dx
+        mov   ax, cx
+        mul   si
+        push  ax
+        push  dx
 
-		mov   ax, bx
-		mul   di
-		push  ax
-		push  dx
+        mov   ax, bx
+        mul   di
+        push  ax
+        push  dx
 
-		mov   ax, si
-		mul   di
-		pop   bx
-		pop   cx
-		pop   si
-		pop   di
+        mov   ax, si
+        mul   di
+        pop   bx
+        pop   cx
+        pop   si
+        pop   di
 
-		add   ax, bx
-		adc   dx, 0
-		pop   bx
-		add   di, bx
-		adc   ax, 0
-		adc   dx, 0
-		add   di, cx
-		adc   ax, si
-		adc   dx, 0
+        add   ax, bx
+        adc   dx, 0
+        pop   bx
+        add   di, bx
+        adc   ax, 0
+        adc   dx, 0
+        add   di, cx
+        adc   ax, si
+        adc   dx, 0
 
-		or    dx, dx
-		js    StoreMant
+        or    dx, dx
+        js    StoreMant
 
-		shl   di, 1
-		rcl   ax, 1
-		rcl   dx, 1
-		sub   Ans.Exp, 1
-		jo    Overflow
+        shl   di, 1
+        rcl   ax, 1
+        rcl   dx, 1
+        sub   Ans.Exp, 1
+        jo    Overflow
 
-	StoreMant:
-		mov   word ptr Ans.Mant+2, dx
-		mov   word ptr Ans.Mant, ax
-	}
+    StoreMant:
+        mov   word ptr Ans.Mant+2, dx
+        mov   word ptr Ans.Mant, ax
+    }
 
-	return &Ans;
+    return &Ans;
 }
 
 /*
@@ -1409,9 +1409,9 @@ d2MP386     ENDP
 */
 struct MP *d2MP386(double x)
 {
-	/* TODO: implement */
-	_ASSERTE(0 && "d2MP386 called.");
-	return &Ans;
+    /* TODO: implement */
+    _ASSERTE(0 && "d2MP386 called.");
+    return &Ans;
 }
 
 /*
@@ -1456,10 +1456,10 @@ MP2d386     ENDP
 */
 double *MP2d386(struct MP x)
 {
-	/* TODO: implement */
-	static double ans = 0.0;
-	_ASSERTE(0 && "MP2d386 called.");
-	return &ans;
+    /* TODO: implement */
+    static double ans = 0.0;
+    _ASSERTE(0 && "MP2d386 called.");
+    return &ans;
 }
 
 /*
@@ -1610,9 +1610,9 @@ MPadd086    ENDP
 */
 struct MP *MPadd(struct MP x, struct MP y)
 {
-	/* TODO: implement */
-	_ASSERTE(0 && "MPadd called.");
-	return &Ans;
+    /* TODO: implement */
+    _ASSERTE(0 && "MPadd called.");
+    return &Ans;
 }
 
 /*
@@ -1710,9 +1710,9 @@ MPadd386    ENDP
 */
 struct MP *MPadd386(struct MP x, struct MP y)
 {
-	/* TODO: implement */
-	_ASSERTE(0 && "MPadd386 called.");
-	return &Ans;
+    /* TODO: implement */
+    _ASSERTE(0 && "MPadd386 called.");
+    return &Ans;
 }
 
 /*
@@ -1773,9 +1773,9 @@ MPcmp386    ENDP
 */
 int MPcmp386(struct MP x, struct MP y)
 {
-	/* TODO: implement */
-	_ASSERTE(0 && "MPcmp386 called.");
-	return 0;
+    /* TODO: implement */
+    _ASSERTE(0 && "MPcmp386 called.");
+    return 0;
 }
 
 /*
@@ -1835,9 +1835,9 @@ MPdiv386    ENDP
 */
 struct MP *MPdiv386(struct MP x, struct MP y)
 {
-	/* TODO: implement */
-	_ASSERTE(0 && "MPdiv386 called.");
-	return &Ans;
+    /* TODO: implement */
+    _ASSERTE(0 && "MPdiv386 called.");
+    return &Ans;
 }
 
 /*
@@ -1899,31 +1899,31 @@ MPmul386    ENDP
 */
 struct MP *MPmul386(struct MP x, struct MP y)
 {
-	/* TODO: implement */
-	_ASSERTE(0 && "MPmul386 called.");
-	return &Ans;
+    /* TODO: implement */
+    _ASSERTE(0 && "MPmul386 called.");
+    return &Ans;
 }
 
 /*
 */
 struct MP *d2MP(double x)
 {
-	return ((cpu >= 386)? d2MP386 : d2MP086)(x);
+    return ((cpu >= 386)? d2MP386 : d2MP086)(x);
 }
 
 struct MP *MPmul(struct MP x, struct MP y)
 {
-	return ((cpu >= 386) ? MPmul386 : MPmul086)(x, y);
+    return ((cpu >= 386) ? MPmul386 : MPmul086)(x, y);
 }
 
 struct MP *MPdiv(struct MP x, struct MP y)
 {
-	return ((cpu >= 386) ? MPdiv386 : MPdiv086)(x, y);
+    return ((cpu >= 386) ? MPdiv386 : MPdiv086)(x, y);
 }
 
 int MPcmp(struct MP x, struct MP y)
 {
-	return ((cpu >= 386) ? MPcmp386 : MPcmp086)(x, y);
+    return ((cpu >= 386) ? MPcmp386 : MPcmp086)(x, y);
 }
 
 /*
@@ -1964,8 +1964,8 @@ fg2MP086    ENDP
 */
 struct MP *fg2MP086(long x, int fg)
 {
-	_ASSERTE(0 && "fg2MP086 called");
-	return &Ans;
+    _ASSERTE(0 && "fg2MP086 called");
+    return &Ans;
 }
 
 /*
@@ -2005,12 +2005,12 @@ fg2MP386    ENDP
 */
 struct MP *fg2MP386(long x, int fg)
 {
-	_ASSERTE(0 && "fg2MP386 called");
-	return &Ans;
+    _ASSERTE(0 && "fg2MP386 called");
+    return &Ans;
 }
 
 struct MP *fg2MP(long x, int fg)
 {
-	return ((cpu >= 386) ? fg2MP386 : fg2MP086)(x, fg);
+    return ((cpu >= 386) ? fg2MP386 : fg2MP086)(x, fg);
 }
 #endif

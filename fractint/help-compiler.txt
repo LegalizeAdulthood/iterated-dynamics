@@ -3,7 +3,7 @@
 ... for features added in subsequent versions.
 
 
-	       FRACTINT Help Compiler Source File Format
+           FRACTINT Help Compiler Source File Format
 
 
 
@@ -18,15 +18,15 @@
     2.2       Defining the output filenames.
     2.3       Defining the help file version.
     2.4.0     Help topics.
-    2.4.1	Starting a help topic.
-    2.4.2.0	The help text.
-    2.4.2.1	  Special characters.
-    2.4.3	Starting another page.
+    2.4.1   Starting a help topic.
+    2.4.2.0 The help text.
+    2.4.2.1   Special characters.
+    2.4.3   Starting another page.
     2.5.0     Labels.
-    2.5.1	The help index label (HELP_INDEX).
-    2.5.2	Private labels.
+    2.5.1   The help index label (HELP_INDEX).
+    2.5.2   Private labels.
     2.6.0     Hot-links.
-    2.6.1	Special hot-links.
+    2.6.1   Special hot-links.
     2.7       Tables.
 
 
@@ -46,7 +46,7 @@
 1.2 The header (.H) output file.
 
     The header (.H) file contains a #define macro for each non-private label
-  (see 2.5.0) and for the help file version (see 2.3).	The .H file is
+  (see 2.5.0) and for the help file version (see 2.3).  The .H file is
   included in FRACTINT and the macros are used to set the current help mode.
 
     The Help Compiler will only modify the .H file when a non-private label
@@ -71,7 +71,7 @@
     The source file defines output files, help file version, topics, labels
   and hypertext-style hot-links with commands and hot-links.  Commands start
   with a tilde ('~') in the first column of a line and continue to the end
-  of the line.	Hot-links, defined within the text, are surrounded by curly-
+  of the line.  Hot-links, defined within the text, are surrounded by curly-
   braces ('{' and '}').  Comment lines, which may appear anywhere in the
   file, start with a semicolon (';') in the first column and continue to
   the end of the line.
@@ -89,10 +89,10 @@
     The output filenames are defined in the source file by the following
   commands:
 
-	~HdrFile=H_FILE
-	~HlpFile=HLP_FILE
+    ~HdrFile=H_FILE
+    ~HlpFile=HLP_FILE
 
-  H_FILE is the .H filename and HLP_FILE is the .HLP filename.	These
+  H_FILE is the .H filename and HLP_FILE is the .HLP filename.  These
   commands must appear before the first topic.
 
 
@@ -105,11 +105,11 @@
   try to read a help file other than the one the .EXE is expecting.  To
   define the help version:
 
-	~Version=nnn
+    ~Version=nnn
 
   Where nnn is a positive decimal version number.  (Suggested format is 100
   for version 1.00, 150 for version 1.50, etc.)  This command must appear
-  before the first help topic.	-1 will be used if the version is not defined
+  before the first help topic.  -1 will be used if the version is not defined
   in the .SRC file.
 
 
@@ -123,7 +123,7 @@
 
   To start a new help topic use the following format:
 
-	~Topic=TITLE
+    ~Topic=TITLE
 
   "~Topic=" is the command to start a topic and TITLE is the text to display
   at the top of each page.  The title continues to the '\n' and may contain
@@ -131,7 +131,7 @@
 
     In the example:
 
-	~Title=Command Keys available while in Display Mode
+    ~Title=Command Keys available while in Display Mode
 
   "Command Keys avail..." is the TITLE which would displayed at the top of
   each page.
@@ -151,8 +151,8 @@
   (except null) into the text follow a backslash with a decimal (not hex
   or octal) ASCII character code.  For example:
 
-	\~  - puts a tilde in the text.
-	\24 - places an up-arrow in the text.
+    \~  - puts a tilde in the text.
+    \24 - places an up-arrow in the text.
 
 
 2.4.3 Starting another page.
@@ -167,7 +167,7 @@
 2.5.0 Labels.
 
     A label is a name which in used to refer to a help topic.  A label is
-  used in hot-links or in FRACTINT for context-sensitive help.	When help
+  used in hot-links or in FRACTINT for context-sensitive help.  When help
   goes to a label (when a hot-link is selected or context-sensitive help
   is called from FRACTINT) it goes to the page of the topic where the label
   was defined.
@@ -175,7 +175,7 @@
     To define a label for a topic insert the following command into the
   topic's text:
 
-	~(NAME)
+    ~(NAME)
 
   NAME is the name of the label.  The name follows "C"-style conventions
   for variable names.  Case is significant.  The label should start at the
@@ -199,7 +199,7 @@
     When the user wants to go to the "help index" (by pressing F1 while
   in help) help will go to a special label named "HELP_INDEX".  Other than
   the requirement that it be in every .SRC file you may treat it as any
-  other label.	It can be used in links or as context-sensitive help.
+  other label.  It can be used in links or as context-sensitive help.
 
 
 2.5.2 Private labels.
@@ -209,7 +209,7 @@
   label is a label with an "at sign" ('@') as the first character of its
   name.  The "at sign" is part of the name.  In the example:
 
-	~(@HELPPLASMA)
+    ~(@HELPPLASMA)
 
   "@HELPPLASMA" is a private label.
 
@@ -225,13 +225,13 @@
     A hypertext-style hot-link to a label can appear anywhere in the help
     text.  To define a hot-link use the following syntax:
 
-	{LABEL TEXT}
+    {LABEL TEXT}
 
   LABEL is the label to link to and TEXT is the text that will be highlighted.
   Only the TEXT field will appear on the help screen.  No blanks are allowed
   before the LABEL.  In the sample hot-link:
 
-	{HELPMAIN Command Keys in display mode}
+    {HELPMAIN Command Keys in display mode}
 
   "HELPMAIN" is the LABEL and "Command keys in display mode" is the
   TEXT to will be hightlighted.
@@ -250,11 +250,11 @@
     A table is a way of arranging a group of hot-links into evenly-spaced
   columns.  The format for a table is:
 
-	~Table=WIDTH COLS INDENT
+    ~Table=WIDTH COLS INDENT
 
-	<< LINKS... >>
+    << LINKS... >>
 
-	~EndTable
+    ~EndTable
 
   WIDTH is the width of each item, COLS is the number of columns in the
   table and INDENT is the number of spaces to indent the table.  LINKS is
@@ -264,23 +264,23 @@
 
     In the example table:
 
-	~Table=20 3 9
-	{@ONE One}
-	{@TWO Two}
-	{@THREE Three}
-	{@FOUR Four}
-	{@FIVE Five}
-	{SIX Six}
-	{SEVEN Seven}
-	{EIGHT Eight}
-	~EndTable
+    ~Table=20 3 9
+    {@ONE One}
+    {@TWO Two}
+    {@THREE Three}
+    {@FOUR Four}
+    {@FIVE Five}
+    {SIX Six}
+    {SEVEN Seven}
+    {EIGHT Eight}
+    ~EndTable
 
   20 is the WIDTH, 3 is COLS and INDENT is 9.  The following text would
   be produced by the table:
 
-	One		    Two 		Three
-	Four		    Five		Six
-	Seven		    Eight
+    One         Two         Three
+    Four            Five        Six
+    Seven           Eight
 
   Each item would be a hot-link linking to its corresponding label (@ONE for
   "One", etc.)  Any legal hot-link (to private or non-private labels) may be
@@ -294,8 +294,8 @@
 
 ... Second version additional documentation:
 
-		  New features of the Help Compiler (HC)
-		  ======================================
+          New features of the Help Compiler (HC)
+          ======================================
 
 
 Expanded command format
@@ -322,19 +322,19 @@ New commands
 
     Format[+/-]        L   turns formatting on/off.
     Online[+/-]        L   enables/disables display of text in the online
-			   help.
-    Doc[+/-]	       L   enables/disables display of text in the printed
-			   document.  (Currently ignored.)
+               help.
+    Doc[+/-]           L   enables/disables display of text in the printed
+               document.  (Currently ignored.)
     FormatExclude=NUM  G/L Set the column number in which formatting is
-			   automatically disabled.  (ie. all text after
-			   column NUM is unformatted.)	If before any topics
-			   sets global value, if in a topic sets only for
-			   that topic.
+               automatically disabled.  (ie. all text after
+               column NUM is unformatted.)  If before any topics
+               sets global value, if in a topic sets only for
+               that topic.
     FormatExclude=n    G/L Turn this feature off.  This is the default at the
-			   start of the source file.  Global if before topic,
-			   local otherwise
+               start of the source file.  Global if before topic,
+               local otherwise
     FormatExclude[+/-] G/L Temporarily enable/disable this feature.  Has no
-			   effect if "FormatDisable=n" is in effect.
+               effect if "FormatDisable=n" is in effect.
     FormatExclude=     L   Resets FormatExclude to its global value.
     Center[+/-]        L   Enable/Disable automatic centering of text.
 
@@ -349,8 +349,8 @@ New commands
 Modified commands
 =================
 
-  Label=NAME		replaces the ~(...) command
-  FF			replaces the ~~ command
+  Label=NAME        replaces the ~(...) command
+  FF            replaces the ~~ command
 
 
 Hot-Links
@@ -396,10 +396,10 @@ Paragraph formatting
 
   1. Paragraph headings.
 
-	Heading
-	Text which follows the heading.  This text is supposed
-	to be a separate "paragraph" from the heading but the HC
-	doesn't know that!
+    Heading
+    Text which follows the heading.  This text is supposed
+    to be a separate "paragraph" from the heading but the HC
+    doesn't know that!
 
   This text would be formatted into a single paragraph.  (The word "Text"
   would immediately follow "Heading".)  To make it format correctly append
@@ -407,14 +407,14 @@ Paragraph formatting
 
   2. Single-line bullets.
 
-	o Don't branch.
-	o Use string instructions, but don't go much out of your way
-	  to do so.
-	o Keep memory accesses to a minimum by avoiding memory operands
-	  and keeping instructions short.
+    o Don't branch.
+    o Use string instructions, but don't go much out of your way
+      to do so.
+    o Keep memory accesses to a minimum by avoiding memory operands
+      and keeping instructions short.
 
     Since the HC cannot tell that the first bullet is a separate paragraph
-  from the second bullet it would put both bullets into one paragraph.	Any
+  from the second bullet it would put both bullets into one paragraph.  Any
   bullet of two lines or more (assuming the intentation for the second line
   of the bullet is different from the first) is OK.  Always add a backslash
   to the end of single-line bullets.
@@ -448,25 +448,25 @@ Paragraph formatting
   ~BinInc filename
     Includes a file in binray format (no processing) into a data topic.
     This command only works for data topics.  Example:
-	~Data=TPLUS_DAT
-	~BinInc tplus.dat
+    ~Data=TPLUS_DAT
+    ~BinInc tplus.dat
 
   ~DocContents
-    Defines the documents table of contents.  Text is allowed.	Table of
+    Defines the documents table of contents.  Text is allowed.  Table of
     content entries have the following format:
 
       { id, indent, name, [topic, ...] [, FF] }
 
-    id	   is it's identification (ie, 1.2.1)
+    id     is it's identification (ie, 1.2.1)
     indent is the indentation level, (ie. 2)
     name   is the text to display to display (ie. Fractint Commands)
-	   If name is in quotes it is also assumed to also be the
-	   title of the first topic.
+       If name is in quotes it is also assumed to also be the
+       title of the first topic.
     topic  list of 0 or more topics to print under this item.  Entries
-	   in quotes are assumed to be the title of a topic, other
-	   entries are assumed to be labels.
-    FF	   If this keyword is present the entry will start on a new page in
-	   the document.
+       in quotes are assumed to be the title of a topic, other
+       entries are assumed to be labels.
+    FF     If this keyword is present the entry will start on a new page in
+       the document.
     It isn't as complex as it sounds; see "~DocContents" in HELP.SRC for
     examples.
 
@@ -502,8 +502,8 @@ Paragraph formatting
 
    The function prototype (in HELP.C) to print the document is:
 
-	void print_document(char *outfname, int (*msg_func)(int,int),
-			    int save_extraseg);
+    void print_document(char *outfname, int (*msg_func)(int,int),
+                int save_extraseg);
 
    outfname is the file to "print" to (usually "FRACTINT.DOC"), msg_func
    is a function which is called at the top of each page, and save_extraseg
@@ -519,12 +519,12 @@ Paragraph formatting
    There are hooks to print the document from a help topic by selecting a
    "special" hot-link. I suggest a format like:
 
-	~Topic=Generating FRACINT.DOC
+    ~Topic=Generating FRACINT.DOC
 
-	Explain that selecting yes will print the document, etc...
+    Explain that selecting yes will print the document, etc...
 
-	{=-2  Yes, generate FRACTINT.DOC now. }
-	{=-1  No, do NOT generate FRACTINT.DOC. }
+    {=-2  Yes, generate FRACTINT.DOC now. }
+    {=-1  No, do NOT generate FRACTINT.DOC. }
 
    Selecting yes will generate the document and then return to the previous
    topic.  Selecting no will simply return to the previous topic (like

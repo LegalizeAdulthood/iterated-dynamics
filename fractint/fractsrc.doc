@@ -170,7 +170,7 @@ Overlays
 Note: generally you won't have to worry about this!
 Only the addition of huge code (new overlays), or work which changes the
 relationship between major components of Fractint, are likely to affect
-the overlay structure.	However, if you make changes in a module which has a
+the overlay structure.  However, if you make changes in a module which has a
 comment at the start saying it is an overlay, please follow the guidelines
 for use of ENTER_OVLY and EXIT_OVLY described after the next paragraph.
 
@@ -219,88 +219,88 @@ at all have been wandering through the FRACTINT source code just to get at
 some of the neat tricks buried therein.  Here are a few hints as to where
 to look:
 
-FRACTINT.C	- The main routine.  Nothing special here.
-FRACTINT.H	- General Include file.  Nothing special here, either.
-FRACTYPE.H	- Fractal type-specific Include file.
+FRACTINT.C  - The main routine.  Nothing special here.
+FRACTINT.H  - General Include file.  Nothing special here, either.
+FRACTYPE.H  - Fractal type-specific Include file.
 
-PROMPTS.C	- The full-screen prompting code (using support routines
-		  in VIDEO.ASM)
-CMDFILES.C	- Command line and sstools.ini parsing.
+PROMPTS.C   - The full-screen prompting code (using support routines
+          in VIDEO.ASM)
+CMDFILES.C  - Command line and sstools.ini parsing.
 
-FRACTALS.C,	- Most of the fractal-specific code.  If you want to know
- CALCFRAC.C,	  how a fractal is calculated, look in here.  Specific
- FRACSUBR.C	  speed-em-up support for special fractal types is in:
+FRACTALS.C, - Most of the fractal-specific code.  If you want to know
+ CALCFRAC.C,      how a fractal is calculated, look in here.  Specific
+ FRACSUBR.C   speed-em-up support for special fractal types is in:
  FRACSUBA.ASM
-CALCMAND.ASM	- Mandelbrot/Julia set calculations.
-NEWTON.ASM	- Newton calculations
-LORENZ.C	- Attractor fractals and IFS
-JB.C		- "Julibrot" fractal type calculations
-TESTPT.C	- "Roll-your-own" fractal routine
-MPMATH_C.C,	- Mark Peterson's "fast-math" support routines.
- MPMATH_A.ASM,	  (this stuff puts some of the routines supplied by your
- FPU387.ASM,	  favorite "C" compiler to shame!)
- FPU087.ASM,	  ...
- FMATH.H,	  ...
- MPMATH.H	  ...
-PARSER.C	- The "type=formula" formula parser routines
-LSYS.C		- L-Systems code
+CALCMAND.ASM    - Mandelbrot/Julia set calculations.
+NEWTON.ASM  - Newton calculations
+LORENZ.C    - Attractor fractals and IFS
+JB.C        - "Julibrot" fractal type calculations
+TESTPT.C    - "Roll-your-own" fractal routine
+MPMATH_C.C, - Mark Peterson's "fast-math" support routines.
+ MPMATH_A.ASM,    (this stuff puts some of the routines supplied by your
+ FPU387.ASM,      favorite "C" compiler to shame!)
+ FPU087.ASM,      ...
+ FMATH.H,     ...
+ MPMATH.H     ...
+PARSER.C    - The "type=formula" formula parser routines
+LSYS.C      - L-Systems code
 
-VIDEO.ASM	- Assembler code containing all of the video routines
-		  (setting up the video, reading/writing pixels, zoom-box
-		  code, color-cycling, graphics-to-text "help" switch,
-		  ... with help from the routines below for special adapters:
-LOADMAP.C	- Load .map files.
-TARGA.C,	- TARGA Video Routines
- TARGA.H,	  ...
-FR8514A.ASM	- 8514/A Routines
-TPLUS.C 	- Targa+ video routines
- TPLUS.H	  ...
- TPLUS_A.ASM	  ...
-HGCFRA.ASM	- Hercules Video Routines
-DISKVID.C	- "DISK'RAM" video routines
-YOURVID.C	- "Roll-your-own" video routines
+VIDEO.ASM   - Assembler code containing all of the video routines
+          (setting up the video, reading/writing pixels, zoom-box
+          code, color-cycling, graphics-to-text "help" switch,
+          ... with help from the routines below for special adapters:
+LOADMAP.C   - Load .map files.
+TARGA.C,    - TARGA Video Routines
+ TARGA.H,     ...
+FR8514A.ASM - 8514/A Routines
+TPLUS.C     - Targa+ video routines
+ TPLUS.H      ...
+ TPLUS_A.ASM      ...
+HGCFRA.ASM  - Hercules Video Routines
+DISKVID.C   - "DISK'RAM" video routines
+YOURVID.C   - "Roll-your-own" video routines
 
-GENERAL.ASM	- General assembler code having nothing to do with fractals.
-		  Lots of the tricky stuff is in here, and many of the "C"
-		  routines that perform tricky functions rely on support
-		  code buried in here.	In particular, this routine has the:
-			CPU, FPU Detectors
-			Keyboard routines
-			Mouse routines
-			Expanded memory routines
-			32-bit scaled integer multiply and divide routines
+GENERAL.ASM - General assembler code having nothing to do with fractals.
+          Lots of the tricky stuff is in here, and many of the "C"
+          routines that perform tricky functions rely on support
+          code buried in here.  In particular, this routine has the:
+            CPU, FPU Detectors
+            Keyboard routines
+            Mouse routines
+            Expanded memory routines
+            32-bit scaled integer multiply and divide routines
 
-ENCODER.C	- GIF Encoder routine.
-GIFVIEW.C,	- GIF Decoder routines.
+ENCODER.C   - GIF Encoder routine.
+GIFVIEW.C,  - GIF Decoder routines.
  DECODER.C,
- TGAVIEW.C,	  (including a TARGA-format decoder currently used only for
- F16.C, 	  loading obsolete .tga format "Continuous Potential" files)
- TARGA_LC.H	  ...
-LOADFILE.C	- Loads the Fractint parameter info from a GIF file.
- LOADFDOS.C	  subroutines for DOS Fractint only
+ TGAVIEW.C,   (including a TARGA-format decoder currently used only for
+ F16.C,       loading obsolete .tga format "Continuous Potential" files)
+ TARGA_LC.H   ...
+LOADFILE.C  - Loads the Fractint parameter info from a GIF file.
+ LOADFDOS.C   subroutines for DOS Fractint only
 
-LINE3D.C,	- 3D manipulation routines
+LINE3D.C,   - 3D manipulation routines
  3D.C
-PLOT3D		- 3D subroutines for LINE3D.C and LORENZ.C
+PLOT3D      - 3D subroutines for LINE3D.C and LORENZ.C
 
-ROTATE.C	- routines which "spin" the VGA video-DAC.
-EDITPAL.C	- palette-editing mode
+ROTATE.C    - routines which "spin" the VGA video-DAC.
+EDITPAL.C   - palette-editing mode
 
-HELP.C		- HELP support
-INTRO.C 	- title screen
+HELP.C      - HELP support
+INTRO.C     - title screen
 
-ZOOM.C		- Zoombox manipulation.
+ZOOM.C      - Zoombox manipulation.
 
-PRINTER.C,	- The Printer Routines
- PRINTERA.ASM	  Data used by PRINTER.C
+PRINTER.C,  - The Printer Routines
+ PRINTERA.ASM     Data used by PRINTER.C
 
-MISCRES.C	- Miscellaneous resident subroutines; nothing special.
-MISCOVL.C	- Miscellaneous overlayed subroutines; includes <B>atch
-		  command.
-REALDOS.C	- Some subroutines isolated from Windows development work;
-		  nothing special in here.
+MISCRES.C   - Miscellaneous resident subroutines; nothing special.
+MISCOVL.C   - Miscellaneous overlayed subroutines; includes <B>atch
+          command.
+REALDOS.C   - Some subroutines isolated from Windows development work;
+          nothing special in here.
 
-PORT.H		- Some portability stuff, nothing special here.
+PORT.H      - Some portability stuff, nothing special here.
 
 How things are set up
 =====================
@@ -323,8 +323,8 @@ curfractalspecific->calctype.
 
 main calls calcfracinit.
 calcfractint: this sets up curfractalspecific, which is the appropriate entry
-	from the fractalspecific table.  This routine does the int/float
-	conversion.
+    from the fractalspecific table.  This routine does the int/float
+    conversion.
 
 main calls calcfract, which calls timer, which calls perform_worklist
 perform_worklist calls curfractalspecific->per_image, which is eg.  MandelSetup
@@ -349,33 +349,33 @@ restorestart:
     if loading, look after specifying image
 imagestart:
     while (adapter<0) {
-	process keys from short main menu
+    process keys from short main menu
     }
 
     while (1) {
-	if (calc_status != 2 || showfile==0) {
-	    initialize videoentry from videotable[adapter]
-	    initialize size, color, etc. from videoentry
-	    setvideomode()
-	}
-	if (showfile==0) {
-	    load file
-	}
-	calcfracinit();
-	save corners, zoom data
-	if (showfile != 0) {
-	    calcfract(); /* calculates the fractal until interrupted */
-	}
+    if (calc_status != 2 || showfile==0) {
+        initialize videoentry from videotable[adapter]
+        initialize size, color, etc. from videoentry
+        setvideomode()
+    }
+    if (showfile==0) {
+        load file
+    }
+    calcfracinit();
+    save corners, zoom data
+    if (showfile != 0) {
+        calcfract(); /* calculates the fractal until interrupted */
+    }
 resumeloop:
-	if (no key pressed) {
-	    set keypress = 13 to continue
-	} else if (key pressed) {
-	    check input key
-	} else if (batch mode) {
-	    look after batch key
-	}
+    if (no key pressed) {
+        set keypress = 13 to continue
+    } else if (key pressed) {
+        check input key
+    } else if (batch mode) {
+        look after batch key
+    }
 
-	process key from long menu
+    process key from long menu
     }
 }
 

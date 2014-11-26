@@ -237,21 +237,21 @@ static int _fastcall new_subD (int x1,int y1,int x2,int y2, int recur)
          }
 
          i = getpix(nx, y);
-		 if (i == 0)
+         if (i == 0)
             i = adjust(nx,ny1,nx,y ,nx,ny);
          v = i;
          i = getpix(x, ny);
-		 if (i == 0)
+         if (i == 0)
             i = adjust(nx1,ny,x ,ny,nx,ny);
          v += i;
          if (getpix(x,y) == 0)
          {
             i = getpix(x, ny1);
-			if (i == 0)
+            if (i == 0)
                i = adjust(nx1,ny1,x ,ny1,nx,ny1);
             v += i;
             i = getpix(nx1, y);
-			if (i == 0)
+            if (i == 0)
                i = adjust(nx1,ny1,nx1,y ,nx1,ny);
             v += i;
             plot(x,y,(U16)((v + 2) >> 2));
@@ -320,9 +320,9 @@ int plasma()
 
    if (colors < 4) {
       stopmsg(0,
-		"Plasma Clouds can currently only be run in a 4-or-more-color video\n"
-		"mode (and color-cycled only on VGA adapters [or EGA adapters in their\n"
-		"640x350x16 mode]).");
+        "Plasma Clouds can currently only be run in a 4-or-more-color video\n"
+        "mode (and color-cycled only on VGA adapters [or EGA adapters in their\n"
+        "640x350x16 mode]).");
       return(-1);
    }
    iparmx = (int)(param[0] * 8);
@@ -1338,7 +1338,7 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b) {
                 }
             temp = fabs(Rate-2.0*Rate*Population);
                 total *= temp;
-				if (total==0) {
+                if (total==0) {
                 overflow = TRUE;
                 goto jumpout;
                 }

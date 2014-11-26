@@ -238,24 +238,24 @@ restart:
 
 enum tag_save_format
 {
-	SAVEFORMAT_GIF = 0,
-	SAVEFORMAT_PNG,
-	SAVEFORMAT_JPEG
+    SAVEFORMAT_GIF = 0,
+    SAVEFORMAT_PNG,
+    SAVEFORMAT_JPEG
 };
 typedef enum tag_save_format e_save_format;
 
 int savetodisk(char *filename)
 {
-	e_save_format format = SAVEFORMAT_GIF;
+    e_save_format format = SAVEFORMAT_GIF;
 
-	switch (format)
-	{
-	case SAVEFORMAT_GIF:
-		return gif_savetodisk(filename);
+    switch (format)
+    {
+    case SAVEFORMAT_GIF:
+        return gif_savetodisk(filename);
 
-	default:
-		return -1;
-	}
+    default:
+        return -1;
+    }
 }
 
 int encoder()
@@ -1017,7 +1017,7 @@ nomatch:
             else
               cl_block();
          } /* end for xdot */
-         if (! driver_diskp()		/* supress this on disk-video */
+         if (! driver_diskp()       /* supress this on disk-video */
              && ydot == rownum)
          {
             if ((ydot & 4) == 0)

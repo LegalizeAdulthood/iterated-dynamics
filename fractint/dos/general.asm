@@ -2229,4 +2229,4 @@ xmmmoveextended proc uses si, MoveStruct:word
 
 xmmmoveextended endp
 
-	END
+    END

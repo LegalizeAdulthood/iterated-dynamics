@@ -8,10 +8,10 @@
 
 
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
-extern int                   g_adapter;							/* index into g_video_table[] */
-extern AlternateMath         alternatemath[];					/* alternate math function pointers */
-extern int                   Ambient;							/* Ambient= parameter value */
-extern int                   g_and_color;						/* AND mask for iteration to get color index */
+extern int                   g_adapter;                         /* index into g_video_table[] */
+extern AlternateMath         alternatemath[];                   /* alternate math function pointers */
+extern int                   Ambient;                           /* Ambient= parameter value */
+extern int                   g_and_color;                       /* AND mask for iteration to get color index */
 extern struct MP             Ans;
 extern int                   Ap1deg;
 extern int                   AplusOne;
@@ -73,9 +73,9 @@ extern long                  coloriter;
 extern int                   colorpreloaded;
 extern int                   colors;
 extern int                   colorstate;
-extern int                   g_color_bright;					/* brightest color in palette */
-extern int                   g_color_dark;						/* darkest color in palette */
-extern int                   g_color_medium;					/* nearest to medbright grey in palette */
+extern int                   g_color_bright;                    /* brightest color in palette */
+extern int                   g_color_dark;                      /* darkest color in palette */
+extern int                   g_color_medium;                    /* nearest to medbright grey in palette */
 extern char                  CommandComment[4][MAXCMT];
 extern char                  CommandFile[FILE_MAX_PATH];
 extern char                  CommandName[ITEMNAMELEN + 1];
@@ -112,7 +112,7 @@ extern float                 depthfp;
 extern unsigned long         dif_counter;
 extern unsigned long         dif_limit;
 extern int                   disk16bit;
-extern int                   g_disk_flag;						/* disk video active flag */
+extern int                   g_disk_flag;                       /* disk video active flag */
 extern int                   disktarga;
 extern int                   display3d;
 extern long                  distest;
@@ -127,12 +127,12 @@ extern double                dpx;
 extern double                dpy;
 extern char                  drawmode;
 extern BYTE                  dstack[];
-extern double *				 dx0;
-extern double *				 dx1;
+extern double *              dx0;
+extern double *              dx1;
 extern double (_fastcall *   dxpixel)(void); /* set in FRACTALS.C */
 extern double                dxsize;
-extern double *				 dy0;
-extern double *				 dy1;
+extern double *              dy0;
+extern double *              dy1;
 extern double (_fastcall *   dypixel)(void); /* set in FRACTALS.C */
 extern double                dysize;
 //extern int                   EPSFileType;
@@ -191,8 +191,8 @@ extern int                   gif87a_flag;
 extern char                  gifmask[];
 extern char                  Glasses1Map[];
 extern int                   g_glasses_type;
-extern int                   g_good_mode;						/* video mode ok? */
-extern int                   g_got_real_dac;					/* loaddac worked, really got a dac */
+extern int                   g_good_mode;                       /* video mode ok? */
+extern int                   g_got_real_dac;                    /* loaddac worked, really got a dac */
 extern int                   got_status;
 extern char                  grayflag;
 extern char                  GreyFile[];
@@ -305,7 +305,7 @@ extern int                   minbox;
 extern enum Minor            minor_method;
 extern int                   minstack;
 extern int                   minstackavail;
-extern int                   g_mode_7_text;						/* for egamono and hgc */
+extern int                   g_mode_7_text;                     /* for egamono and hgc */
 extern MOREPARAMS            moreparams[];
 extern struct MP             mpAp1deg;
 extern struct MP             mpAplusOne;
@@ -418,7 +418,7 @@ extern int                   RAY;
 extern char                  ray_name[];
 extern char                  readname[];
 extern long                  realcoloriter;
-extern int                   g_really_ega;						/* "really an EGA" (faking a VGA) flag */
+extern int                   g_really_ega;                      /* "really an EGA" (faking a VGA) flag */
 extern char                  recordcolors;
 extern int                   red_bright;
 extern int                   red_crop_left;
@@ -438,7 +438,7 @@ extern int                   rotate_hi;
 extern int                   rotate_lo;
 extern double                roverd;
 extern int                   row;
-extern int                   g_row_count;						/* row-counter for decoder and out_line */
+extern int                   g_row_count;                       /* row-counter for decoder and out_line */
 extern double                rqlim2;
 extern double                rqlim;
 extern int                   rseed;
@@ -447,7 +447,7 @@ extern _CMPLX                SaveC;
 extern int                   savedac;
 extern char                  savename[];
 extern long                  saveticks;
-extern int	 				 save_orbit[];
+extern int                   save_orbit[];
 extern int                   save_release;
 extern int                   save_system;
 extern int                   scale_map[];
@@ -461,7 +461,7 @@ extern int                   showfile;
 extern int                   show_orbit;
 extern double                sinx;
 extern int                   sizedot;
-extern short				 sizeofstring[];
+extern short                 sizeofstring[];
 extern short                 skipxdots;
 extern short                 skipydots;
 extern int                   g_slides;
@@ -480,11 +480,11 @@ extern int                   stoppass;
 extern unsigned int          strlocn[];
 extern BYTE                  suffix[];
 #if defined(_WIN32)
-extern char					 supervga_list[];
+extern char                  supervga_list[];
 #else
 extern char                  supervga_list;
 #endif
-extern int                   g_svga_type;						/* SuperVGA video adapter type */
+extern int                   g_svga_type;                       /* SuperVGA video adapter type */
 extern double                sx3rd;
 extern int                   sxdots;
 extern double                sxmax;
@@ -505,10 +505,10 @@ extern char                  temp1[];
 extern double                tempsqrx;
 extern double                tempsqry;
 extern BYTE                  teststring[];
-extern int                   g_text_cbase;						/* g_text_col is relative to this */
-extern int                   g_text_col;						/* current column in text mode */
-extern int                   g_text_rbase;						/* g_text_row is relative to this */
-extern int                   g_text_row;						/* current row in text mode */
+extern int                   g_text_cbase;                      /* g_text_col is relative to this */
+extern int                   g_text_col;                        /* current column in text mode */
+extern int                   g_text_rbase;                      /* g_text_row is relative to this */
+extern int                   g_text_row;                        /* current row in text mode */
 extern unsigned int          this_gen_rseed;
 extern unsigned *        tga16;
 extern long *            tga32;
@@ -531,7 +531,7 @@ extern char                  tstack[];
 extern double                twopi;
 extern VOIDPTR               typespecific_workarea;
 extern char                  useinitorbit;
-extern int                   use_grid;	
+extern int                   use_grid;  
 extern BYTE                  usemag;
 extern short                 uses_ismand;
 extern short                 uses_p1;
@@ -551,12 +551,12 @@ extern int                   g_vesa_x_res;
 extern int                   g_vesa_y_res;
 extern struct videoinfo      g_video_entry;
 extern VIDEOINFO             g_video_table[];
-extern int					 g_video_table_len;
+extern int                   g_video_table_len;
 extern int                   video_cutboth;
 extern int                   g_video_scroll;
 extern int                   g_video_start_x;
 extern int                   g_video_start_y;
-extern int                   g_video_type;						/* video adapter type */
+extern int                   g_video_type;                      /* video adapter type */
 extern VECTOR                view;
 extern int                   viewcrop;
 extern float                 viewreduction;

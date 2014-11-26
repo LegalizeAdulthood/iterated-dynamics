@@ -51,7 +51,7 @@ add_executable(id
     fractint/common/plot3d.c
 
     fractint/common/calcfrac.c
-	fractint/common/calmanfp.c
+    fractint/common/calmanfp.c
     fractint/common/fracsubr.c
     fractint/common/fractalb.c
     fractint/common/fractalp.c

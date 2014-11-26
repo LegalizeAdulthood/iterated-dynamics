@@ -30,17 +30,17 @@ BYTE olddacbox[256][3];
 extern int tabmode;
 
 int DivideOverflow = 0;
-int cpu=0;		/* cpu type: 86, 186, 286, or 386 */
-int fpu=0;		/* fpu type: 0, 87, 287, 387 */
+int cpu=0;      /* cpu type: 86, 186, 286, or 386 */
+int fpu=0;      /* fpu type: 0, 87, 287, 387 */
 
 /* ********************** Mouse Support Variables ************************** */
 
-int lookatmouse=0;	/* see notes at mouseread routine */
-int finishrow=0;	/* save when this row is finished */
+int lookatmouse=0;  /* see notes at mouseread routine */
+int finishrow=0;    /* save when this row is finished */
 
 int inside_help = 0;
 
-extern int g_slides;	/* 1 for playback */
+extern int g_slides;    /* 1 for playback */
 
 /*
 ; ****************** Function initasmvars() *****************************
@@ -86,7 +86,7 @@ multiply(long x, long y, int n)
     register long l;
     l = ((float)x)* ((float)y)/(float)(1<<n);
     if (l==0x7fffffff) {
-	overflow = 1;
+    overflow = 1;
     }
     return l;
 }
@@ -135,15 +135,15 @@ keypressed(void) {
     if (!ch) return 0;
     keybuffer = ch;
     if (ch==FIK_F1 && helpmode) {
-	keybuffer = 0;
-	inside_help = 1;
-	help(0);
-	inside_help = 0;
-	return 0;
+    keybuffer = 0;
+    inside_help = 1;
+    help(0);
+    inside_help = 0;
+    return 0;
     } else if (ch==FIK_TAB && tabmode) {
-	keybuffer = 0;
-	tab_display();
-	return 0;
+    keybuffer = 0;
+    tab_display();
+    return 0;
     }
     return ch;
 }
@@ -158,8 +158,8 @@ waitkeypressed(timeout)
 int timeout;
 {
     while (!keybuffer) {
-	keybuffer = getkeyint(1);
-	if (timeout) break;
+    keybuffer = getkeyint(1);
+    if (timeout) break;
     }
     return keypressed();
 }
@@ -171,8 +171,8 @@ int
 getakeynohelp(void) {
     int ch;
     while (1) {
-	ch = getakey();
-	if (ch != FIK_F1) break;
+    ch = getakey();
+    if (ch != FIK_F1) break;
     }
     return ch;
 }
@@ -185,7 +185,7 @@ getakey(void)
     int ch;
 
     do {
-	ch = getkeyint(1);
+    ch = getkeyint(1);
     } while (ch==0);
     return ch;
 }
@@ -212,30 +212,30 @@ int block;
     int ch;
     int curkey;
     if (keybuffer) {
-	ch = keybuffer;
-	keybuffer = 0;
-	return ch;
+    ch = keybuffer;
+    keybuffer = 0;
+    return ch;
     }
     curkey = xgetkey(0);
     if (g_slides==SLIDES_PLAY && curkey == FIK_ESC) {
-	stopslideshow();
-	return 0;
+    stopslideshow();
+    return 0;
     }
 
     if (curkey==0 && g_slides==SLIDES_PLAY) {
-	curkey = slideshw();
+    curkey = slideshw();
     }
 
     if (curkey==0 && block) {
-	curkey = xgetkey(1);
-	if (g_slides==SLIDES_PLAY && curkey == FIK_ESC) {
-	    stopslideshow();
-	    return 0;
-	}
+    curkey = xgetkey(1);
+    if (g_slides==SLIDES_PLAY && curkey == FIK_ESC) {
+        stopslideshow();
+        return 0;
+    }
     }
 
     if (curkey && g_slides==SLIDES_RECORD) {
-	recordshw(curkey);
+    recordshw(curkey);
     }
 
     return curkey;
@@ -366,19 +366,19 @@ decode_fractal_info(info,dir)
     int i;
 
     if (dir==1) {
-	buf = (unsigned char *)malloc(FRACTAL_INFO_SIZE);
-	bufPtr = buf;
-	bcopy((char *)info,(char *)buf,FRACTAL_INFO_SIZE);
+    buf = (unsigned char *)malloc(FRACTAL_INFO_SIZE);
+    bufPtr = buf;
+    bcopy((char *)info,(char *)buf,FRACTAL_INFO_SIZE);
     }  else {
-	buf = (unsigned char *)malloc(sizeof(struct fractal_info));
-	bufPtr = buf;
-	bcopy((char *)info,(char *)buf,sizeof(struct fractal_info));
+    buf = (unsigned char *)malloc(sizeof(struct fractal_info));
+    bufPtr = buf;
+    bcopy((char *)info,(char *)buf,sizeof(struct fractal_info));
     }
 
     if (dir==1) {
-	strncpy(info->info_id,(char *)bufPtr,8);
+    strncpy(info->info_id,(char *)bufPtr,8);
     } else {
-	strncpy((char *)bufPtr,info->info_id,8);
+    strncpy((char *)bufPtr,info->info_id,8);
     }
     bufPtr += 8;
     getInt(&info->iterationsold,&bufPtr,dir);
@@ -415,7 +415,7 @@ decode_fractal_info(info,dir)
     getInt(&info->decomp[1],&bufPtr,dir);
     getInt(&info->symmetry,&bufPtr,dir);
     for (i=0;i<16;i++) {
-	getInt(&info->init3d[i],&bufPtr,dir);
+    getInt(&info->init3d[i],&bufPtr,dir);
     }
     getInt(&info->previewfactor,&bufPtr,dir);
     getInt(&info->xtrans,&bufPtr,dir);
@@ -441,7 +441,7 @@ decode_fractal_info(info,dir)
     getInt(&info->bailoutold,&bufPtr,dir);
     getLong(&info->calctime,&bufPtr,dir);
     for (i=0;i<4;i++) {
-	getChar(&info->trigndx[i],&bufPtr,dir);
+    getChar(&info->trigndx[i],&bufPtr,dir);
     }
     getInt(&info->finattract,&bufPtr,dir);
     getDouble(&info->initorbit[0],&bufPtr,dir);
@@ -510,12 +510,12 @@ decode_fractal_info(info,dir)
         getInt(&info->future[i],&bufPtr,dir);
     }   
     if (bufPtr-buf != FRACTAL_INFO_SIZE) {
-	printf("Warning: loadfile miscount on fractal_info structure.\n");
-	printf("Components add up to %d bytes, but FRACTAL_INFO_SIZE = %d\n",
-		(int) (bufPtr-buf), (int) FRACTAL_INFO_SIZE);
+    printf("Warning: loadfile miscount on fractal_info structure.\n");
+    printf("Components add up to %d bytes, but FRACTAL_INFO_SIZE = %d\n",
+        (int) (bufPtr-buf), (int) FRACTAL_INFO_SIZE);
     } 
     if (dir==0) {
-	bcopy((char *)buf,(char *)info,FRACTAL_INFO_SIZE);
+    bcopy((char *)buf,(char *)info,FRACTAL_INFO_SIZE);
     }
 
     free(buf);
@@ -531,9 +531,9 @@ static void getChar(dst,src,dir)
     int dir;
 {
     if (dir==1) {
-	*dst = **src;
+    *dst = **src;
     } else {
-	**src = *dst;
+    **src = *dst;
     }
     (*src)++;
 }
@@ -548,10 +548,10 @@ static void getInt(dst,src,dir)
     int dir;
 {
     if (dir==1) {
-	*dst = (*src)[0] + ((((char *)(*src))[1])<<8);
+    *dst = (*src)[0] + ((((char *)(*src))[1])<<8);
     } else {
-	(*src)[0] = (*dst)&0xff;
-	(*src)[1] = ((*dst)&0xff00)>>8;
+    (*src)[0] = (*dst)&0xff;
+    (*src)[1] = ((*dst)&0xff00)>>8;
     }
     (*src) += 2; /* sizeof(int) in MS_DOS */
 }
@@ -566,18 +566,18 @@ static void getLong(dst,src,dir)
     int dir;
 {
     if (dir==1) {
-	*dst = ((unsigned long)((*src)[0])) +
-	    (((unsigned long)((*src)[1]))<<8) +
-	    (((unsigned long)((*src)[2]))<<16) +
-	    (((long)(((char *)(*src))[3]))<<24);
+    *dst = ((unsigned long)((*src)[0])) +
+        (((unsigned long)((*src)[1]))<<8) +
+        (((unsigned long)((*src)[2]))<<16) +
+        (((long)(((char *)(*src))[3]))<<24);
     } else {
-	(*src)[0] = (*dst)&0xff;
-	(*src)[1] = ((*dst)&0xff00)>>8;
-	(*src)[2] = ((*dst)&0xff0000)>>16;
+    (*src)[0] = (*dst)&0xff;
+    (*src)[1] = ((*dst)&0xff00)>>8;
+    (*src)[2] = ((*dst)&0xff0000)>>16;
 #ifdef __SVR4
-	(*src)[3] = (unsigned)((*dst)&0xff000000)>>24;
+    (*src)[3] = (unsigned)((*dst)&0xff000000)>>24;
 #else
-	(*src)[3] = ((*dst)&0xff000000)>>24;
+    (*src)[3] = ((*dst)&0xff000000)>>24;
 #endif
     }
     (*src) += 4; /* sizeof(long) in MS_DOS */
@@ -610,15 +610,15 @@ static void getDouble(dst,src,dir)
     double f;
     int i;
     if (dir==1) {
-	for (i=0;i<8;i++) {
-	    if ((*src)[i] != 0) break;
-	}
-	if (i==8) {
-	    *dst = 0;
-	} else {
+    for (i=0;i<8;i++) {
+        if ((*src)[i] != 0) break;
+    }
+    if (i==8) {
+        *dst = 0;
+    } else {
 #ifdef __SVR4
-	    e = (((*src)[7]&0x7f)<<4) + ((int)((*src)[6]&0xf0)>>4) - 1023;
-	    f = 1 + (int)((*src)[6]&0x0f)/P4 + (int)((*src)[5])/P12 +
+        e = (((*src)[7]&0x7f)<<4) + ((int)((*src)[6]&0xf0)>>4) - 1023;
+        f = 1 + (int)((*src)[6]&0x0f)/P4 + (int)((*src)[5])/P12 +
         (int)((*src)[4])/P20 + (int)((*src)[3])/P28 + (int)((*src)[2])/P36 +
         (int)((*src)[1])/P44 + (int)((*src)[0])/P52;
 #else
@@ -626,48 +626,48 @@ static void getDouble(dst,src,dir)
       f = 1 + ((*src)[6]&0x0f)/P4 + (*src)[5]/P12 + (*src)[4]/P20 +
     (*src)[3]/P28 + (*src)[2]/P36 + (*src)[1]/P44 + (*src)[0]/P52;
 #endif
-	    f *= pow(2.,(double)e);
-	    if ((*src)[7]&0x80) {
-		f = -f;
-	    }
-	    *dst = f;
-	}
+        f *= pow(2.,(double)e);
+        if ((*src)[7]&0x80) {
+        f = -f;
+        }
+        *dst = f;
+    }
     } else {
-	if (*dst==0) {
-	    bzero((char *)(*src),8);
-	} else {
-	    int s=0;
-	    f = *dst;
-	    if (f<0) {
-		s = 0x80;
-		f = -f;
-	    }
-	    e = log(f)/log(2.);
-	    f = f/pow(2.,(double)e) - 1;
-	    if (f<0) {
-		e--;
-		f = (f+1)*2-1;
-	    } else if (f>=1) {
-		e++;
-		f = (f+1)/2-1;
-	    }
-	    e += 1023;
-	    (*src)[7] = s | ((e&0x7f0)>>4);
-	    f *= P4;
-	    (*src)[6] = ((e&0x0f)<<4) | (((int)f)&0x0f);
-	    f = (f-(int)f)*P8;
-	    (*src)[5] = (((int)f)&0xff);
-	    f = (f-(int)f)*P8;
-	    (*src)[4] = (((int)f)&0xff);
-	    f = (f-(int)f)*P8;
-	    (*src)[3] = (((int)f)&0xff);
-	    f = (f-(int)f)*P8;
-	    (*src)[2] = (((int)f)&0xff);
-	    f = (f-(int)f)*P8;
-	    (*src)[1] = (((int)f)&0xff);
-	    f = (f-(int)f)*P8;
-	    (*src)[0] = (((int)f)&0xff);
-	}
+    if (*dst==0) {
+        bzero((char *)(*src),8);
+    } else {
+        int s=0;
+        f = *dst;
+        if (f<0) {
+        s = 0x80;
+        f = -f;
+        }
+        e = log(f)/log(2.);
+        f = f/pow(2.,(double)e) - 1;
+        if (f<0) {
+        e--;
+        f = (f+1)*2-1;
+        } else if (f>=1) {
+        e++;
+        f = (f+1)/2-1;
+        }
+        e += 1023;
+        (*src)[7] = s | ((e&0x7f0)>>4);
+        f *= P4;
+        (*src)[6] = ((e&0x0f)<<4) | (((int)f)&0x0f);
+        f = (f-(int)f)*P8;
+        (*src)[5] = (((int)f)&0xff);
+        f = (f-(int)f)*P8;
+        (*src)[4] = (((int)f)&0xff);
+        f = (f-(int)f)*P8;
+        (*src)[3] = (((int)f)&0xff);
+        f = (f-(int)f)*P8;
+        (*src)[2] = (((int)f)&0xff);
+        f = (f-(int)f)*P8;
+        (*src)[1] = (((int)f)&0xff);
+        f = (f-(int)f)*P8;
+        (*src)[0] = (((int)f)&0xff);
+    }
     }
     *src += 8; /* sizeof(double) in MSDOS */
 }
@@ -685,53 +685,53 @@ static void getFloat(dst,src,dir)
     double f;
     int i;
     if (dir==1) {
-	for (i=0;i<4;i++) {
-	    if ((*src)[i] != 0) break;
-	}
-	if (i==4) {
-	    *dst = 0;
-	} else {
+    for (i=0;i<4;i++) {
+        if ((*src)[i] != 0) break;
+    }
+    if (i==4) {
+        *dst = 0;
+    } else {
 #ifdef __SVR4
-	    e = ((((*src)[3]&0x7f)<<1) | ((int)((*src)[2]&0x80)>>7)) - 127;
-	    f = 1 + (int)((*src)[2]&0x7f)/P7 + (int)((*src)[1])/P15 + (int)((*src)[0])/P23;
+        e = ((((*src)[3]&0x7f)<<1) | ((int)((*src)[2]&0x80)>>7)) - 127;
+        f = 1 + (int)((*src)[2]&0x7f)/P7 + (int)((*src)[1])/P15 + (int)((*src)[0])/P23;
 #else
       e = ((((*src)[3]&0x7f)<<1) | (((*src)[2]&0x80)>>7)) - 127;
       f = 1 + ((*src)[2]&0x7f)/P7 + (*src)[1]/P15 + (*src)[0]/P23;
 #endif
-	    f *= pow(2.,(double)e);
-	    if ((*src)[3]&0x80) {
-		f = -f;
-	    }
-	    *dst = f;
-	}
+        f *= pow(2.,(double)e);
+        if ((*src)[3]&0x80) {
+        f = -f;
+        }
+        *dst = f;
+    }
     } else {
-	if (*dst==0) {
-	    bzero((char *)(*src),4);
-	} else {
-	    int s=0;
-	    f = *dst;
-	    if (f<0) {
-		s = 0x80;
-		f = -f;
-	    }
-	    e = log(f)/log(2.);
-	    f = f/pow(2.,(double)e) - 1;
-	    if (f<0) {
-		e--;
-		f = (f+1)*2-1;
-	    } else if (f>=1) {
-		e++;
-		f = (f+1)/2-1;
-	    }
-	    e += 127;
-	    (*src)[3] = s | ((e&0xf7)>>1);
-	    f *= P7;
-	    (*src)[2] = ((e&0x01)<<7) | (((int)f)&0x7f);
-	    f = (f-(int)f)*P8;
-	    (*src)[1] = (((int)f)&0xff);
-	    f = (f-(int)f)*P8;
-	    (*src)[0] = (((int)f)&0xff);
-	}
+    if (*dst==0) {
+        bzero((char *)(*src),4);
+    } else {
+        int s=0;
+        f = *dst;
+        if (f<0) {
+        s = 0x80;
+        f = -f;
+        }
+        e = log(f)/log(2.);
+        f = f/pow(2.,(double)e) - 1;
+        if (f<0) {
+        e--;
+        f = (f+1)*2-1;
+        } else if (f>=1) {
+        e++;
+        f = (f+1)/2-1;
+        }
+        e += 127;
+        (*src)[3] = s | ((e&0xf7)>>1);
+        f *= P7;
+        (*src)[2] = ((e&0x01)<<7) | (((int)f)&0x7f);
+        f = (f-(int)f)*P8;
+        (*src)[1] = (((int)f)&0xff);
+        f = (f-(int)f)*P8;
+        (*src)[0] = (((int)f)&0xff);
+    }
     }
     *src += 4; /* sizeof(float) in MSDOS */
 }
@@ -749,18 +749,18 @@ fix_ranges(ranges,num,dir)
     int i;
 
     if (dir==1) {
-	buf = (unsigned char *)malloc(num*2);
-	bufPtr = buf;
-	bcopy((char *)ranges, (char *)buf, num*2);
+    buf = (unsigned char *)malloc(num*2);
+    bufPtr = buf;
+    bcopy((char *)ranges, (char *)buf, num*2);
     } else {
-	buf = (unsigned char *)malloc(num*sizeof(int));
-	bufPtr = buf;
-	bcopy((char *)ranges, (char *)buf, num*sizeof(int));
+    buf = (unsigned char *)malloc(num*sizeof(int));
+    bufPtr = buf;
+    bcopy((char *)ranges, (char *)buf, num*sizeof(int));
     }
     for (i=0;i<num;i++) {
-	short dest = 0;
-	getInt(&dest,&bufPtr,dir);
-	ranges[i] = dest;
+    short dest = 0;
+    getInt(&dest,&bufPtr,dir);
+    ranges[i] = dest;
     }
     free((char *)buf);
 }
@@ -775,13 +775,13 @@ decode_evolver_info(info,dir)
     int i;
 
     if (dir==1) {
-	buf = (unsigned char *)malloc(EVOLVER_INFO_SIZE);
-	bufPtr = buf;
-	bcopy((char *)info,(char *)buf,EVOLVER_INFO_SIZE);
+    buf = (unsigned char *)malloc(EVOLVER_INFO_SIZE);
+    bufPtr = buf;
+    bcopy((char *)info,(char *)buf,EVOLVER_INFO_SIZE);
     }  else {
-	buf = (unsigned char *)malloc(sizeof(struct evolution_info));
-	bufPtr = buf;
-	bcopy((char *)info,(char *)buf,sizeof(struct evolution_info));
+    buf = (unsigned char *)malloc(sizeof(struct evolution_info));
+    bufPtr = buf;
+    bcopy((char *)info,(char *)buf,sizeof(struct evolution_info));
     }
 
     getInt((short *) &info->evolving,&bufPtr,dir);
@@ -809,12 +809,12 @@ decode_evolver_info(info,dir)
         getInt(&info->future[i],&bufPtr,dir);
     }   
     if (bufPtr-buf != EVOLVER_INFO_SIZE) {
-	printf("Warning: loadfile miscount on evolution_info structure.\n");
-	printf("Components add up to %d bytes, but EVOLVER_INFO_SIZE = %d\n",
-		(int) (bufPtr-buf), (int) EVOLVER_INFO_SIZE);
+    printf("Warning: loadfile miscount on evolution_info structure.\n");
+    printf("Components add up to %d bytes, but EVOLVER_INFO_SIZE = %d\n",
+        (int) (bufPtr-buf), (int) EVOLVER_INFO_SIZE);
     } 
     if (dir==0) {
-	bcopy((char *)buf,(char *)info,EVOLVER_INFO_SIZE);
+    bcopy((char *)buf,(char *)info,EVOLVER_INFO_SIZE);
     }
 
     free(buf);
@@ -830,13 +830,13 @@ decode_orbits_info(info,dir)
     int i;
 
     if (dir==1) {
-	buf = (unsigned char *)malloc(ORBITS_INFO_SIZE);
-	bufPtr = buf;
-	bcopy((char *)info,(char *)buf,ORBITS_INFO_SIZE);
+    buf = (unsigned char *)malloc(ORBITS_INFO_SIZE);
+    bufPtr = buf;
+    bcopy((char *)info,(char *)buf,ORBITS_INFO_SIZE);
     }  else {
-	buf = (unsigned char *)malloc(sizeof(struct orbits_info));
-	bufPtr = buf;
-	bcopy((char *)info,(char *)buf,sizeof(struct orbits_info));
+    buf = (unsigned char *)malloc(sizeof(struct orbits_info));
+    bufPtr = buf;
+    bcopy((char *)info,(char *)buf,sizeof(struct orbits_info));
     }
 
     getDouble(&info->oxmin,&bufPtr,dir);
@@ -853,12 +853,12 @@ decode_orbits_info(info,dir)
         getInt(&info->future[i],&bufPtr,dir);
     }   
     if (bufPtr-buf != ORBITS_INFO_SIZE) {
-	printf("Warning: loadfile miscount on orbits_info structure.\n");
-	printf("Components add up to %d bytes, but ORBITS_INFO_SIZE = %d\n",
-		(int) (bufPtr-buf), (int) ORBITS_INFO_SIZE);
+    printf("Warning: loadfile miscount on orbits_info structure.\n");
+    printf("Components add up to %d bytes, but ORBITS_INFO_SIZE = %d\n",
+        (int) (bufPtr-buf), (int) ORBITS_INFO_SIZE);
     } 
     if (dir==0) {
-	bcopy((char *)buf,(char *)info,ORBITS_INFO_SIZE);
+    bcopy((char *)buf,(char *)info,ORBITS_INFO_SIZE);
     }
 
     free(buf);

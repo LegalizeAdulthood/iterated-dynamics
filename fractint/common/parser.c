@@ -2030,23 +2030,23 @@ struct FNCT_LIST FnctList[] = {   /* TIW 03-31-91 added far */
 };
 
 char *OPList[] = {
-    ",",	/*  0 */
-    "!=",	/*  1 */
-    "=",	/*  2 */
-    "==",	/*  3 */
-    "<",	/*  4 */
-    "<=",	/*  5 */
-    ">",	/*  6 */
-    ">=",	/*  7 */
-    "|",	/*  8 */
-    "||",	/*  9 */
-    "&&",	/* 10 */
-    ":",	/* 11 */
-    "+",	/* 12 */
-    "-",	/* 13 */
-    "*",	/* 14 */
-    "/",	/* 15 */
-    "^"		/* 16 */
+    ",",    /*  0 */
+    "!=",   /*  1 */
+    "=",    /*  2 */
+    "==",   /*  3 */
+    "<",    /*  4 */
+    "<=",   /*  5 */
+    ">",    /*  6 */
+    ">=",   /*  7 */
+    "|",    /*  8 */
+    "||",   /*  9 */
+    "&&",   /* 10 */
+    ":",    /* 11 */
+    "+",    /* 12 */
+    "-",    /* 13 */
+    "*",    /* 14 */
+    "/",    /* 15 */
+    "^"     /* 16 */
 };
 
 
@@ -3037,7 +3037,7 @@ int frmgetconstant(FILE * openfile, struct token_st * tok)
                got_decimal_already = 0;
                filepos=ftell(openfile);
                c = frmgetchar(openfile);
-			   if (c == '-' || c == '+') {
+               if (c == '-' || c == '+') {
                   tok->token_str[i++] = (char) c;
                   filepos = ftell(openfile);
                }
@@ -3110,7 +3110,7 @@ void is_complex_constant(FILE * openfile, struct token_st * tok)
             }
             sign_value = -1;
             c = frmgetchar(openfile);
-			if (c == '.' || isdigit(c)) {
+            if (c == '.' || isdigit(c)) {
                if (debug_token != NULL) {
                   fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
                }
@@ -3311,7 +3311,7 @@ int frmgettoken(FILE * openfile, struct token_st * this_token)
          filepos = ftell(openfile);
          if (c=='<' || c=='>' || c=='=') {
             c=frmgetchar(openfile);
-			if (c == '=')
+            if (c == '=')
                this_token->token_str[i++] = (char) c;
             else {
                fseek(openfile, filepos, SEEK_SET);
@@ -3319,7 +3319,7 @@ int frmgettoken(FILE * openfile, struct token_st * this_token)
          }
          else if (c=='!') {
             c=frmgetchar(openfile);
-			if (c == '=')
+            if (c == '=')
                this_token->token_str[i++] = (char) c;
             else {
                fseek(openfile, filepos, SEEK_SET);
@@ -3331,14 +3331,14 @@ int frmgettoken(FILE * openfile, struct token_st * this_token)
          }
          else if (c=='|') {
             c=frmgetchar(openfile);
-			if (c == '|')
+            if (c == '|')
                this_token->token_str[i++] = (char) c;
             else
                fseek(openfile, filepos, SEEK_SET);
          }
          else if (c=='&') {
             c=frmgetchar(openfile);
-			if (c == '&')
+            if (c == '&')
                this_token->token_str[i++] = (char) c;
             else {
                fseek(openfile, filepos, SEEK_SET);
@@ -3762,14 +3762,14 @@ int fpFormulaSetup(void) {
 
 int intFormulaSetup(void) {
 #if defined(XFRACT) || defined(_WIN32)
-	static int been_here = 0;
-	if (!been_here)
-	{
-		stopmsg(0, "This integer fractal type is unimplemented;\n"
-			"Use float=yes to get a real image.");
-		been_here = 1;
-	}
-	return 0;
+    static int been_here = 0;
+    if (!been_here)
+    {
+        stopmsg(0, "This integer fractal type is unimplemented;\n"
+            "Use float=yes to get a real image.");
+        been_here = 1;
+    }
+    return 0;
 #else
       MathType = L_MATH;
       fg = (double)(1L << bitshift);
@@ -3808,66 +3808,66 @@ void init_misc()
 long total_formula_mem;
 static void parser_allocate(void)
 {
-	/* CAE fp changed below for v18 */
-	/* Note that XFRACT will waste about 6k here for pfls */
-	/* Somewhat more memory is now allocated than in v17 here */
-	/* however Store and Load were reduced in size to help make up for it */
-	long f_size,Store_size,Load_size,v_size, p_size;
-	int pass, is_bad_form=0;
-	long end_dx_array;
-	/* TW Jan 1 1996 Made two passes to determine actual values of
-		Max_Ops and Max_Args. */
-	for (pass = 0; pass < 2; pass++)
-	{
-		free_workarea();
-		if (pass == 0)
-		{
-			Max_Ops = 2300; /* this value uses up about 64K memory */
-			Max_Args = (unsigned) (Max_Ops/2.5);
-		}
-		f_size = sizeof(void (**)(void))*Max_Ops;
-		Store_size = sizeof(union Arg *)*MAX_STORES;
-		Load_size = sizeof(union Arg *)*MAX_LOADS;
-		v_size = sizeof(struct ConstArg)*Max_Args;
-		p_size = sizeof(struct fls *)*Max_Ops;
-		total_formula_mem = f_size + Load_size + Store_size + v_size + p_size /*+ jump_size*/
-			+ sizeof(struct PEND_OP)*Max_Ops;
-		end_dx_array = use_grid ? 2*(xdots + ydots)*sizeof(double) : 0;
+    /* CAE fp changed below for v18 */
+    /* Note that XFRACT will waste about 6k here for pfls */
+    /* Somewhat more memory is now allocated than in v17 here */
+    /* however Store and Load were reduced in size to help make up for it */
+    long f_size,Store_size,Load_size,v_size, p_size;
+    int pass, is_bad_form=0;
+    long end_dx_array;
+    /* TW Jan 1 1996 Made two passes to determine actual values of
+        Max_Ops and Max_Args. */
+    for (pass = 0; pass < 2; pass++)
+    {
+        free_workarea();
+        if (pass == 0)
+        {
+            Max_Ops = 2300; /* this value uses up about 64K memory */
+            Max_Args = (unsigned) (Max_Ops/2.5);
+        }
+        f_size = sizeof(void (**)(void))*Max_Ops;
+        Store_size = sizeof(union Arg *)*MAX_STORES;
+        Load_size = sizeof(union Arg *)*MAX_LOADS;
+        v_size = sizeof(struct ConstArg)*Max_Args;
+        p_size = sizeof(struct fls *)*Max_Ops;
+        total_formula_mem = f_size + Load_size + Store_size + v_size + p_size /*+ jump_size*/
+            + sizeof(struct PEND_OP)*Max_Ops;
+        end_dx_array = use_grid ? 2*(xdots + ydots)*sizeof(double) : 0;
 
-		typespecific_workarea = malloc(f_size + Load_size + Store_size + v_size + p_size);
-		f = (void (**)(void)) typespecific_workarea;
-		Store = (union Arg **) (f + Max_Ops);
-		Load = (union Arg **) (Store + MAX_STORES);
-		v = (struct ConstArg *) (Load + MAX_LOADS);
-		pfls = (struct fls *) (v + Max_Args);
+        typespecific_workarea = malloc(f_size + Load_size + Store_size + v_size + p_size);
+        f = (void (**)(void)) typespecific_workarea;
+        Store = (union Arg **) (f + Max_Ops);
+        Load = (union Arg **) (Store + MAX_STORES);
+        v = (struct ConstArg *) (Load + MAX_LOADS);
+        pfls = (struct fls *) (v + Max_Args);
 
-		if (pass == 0)
-		{
-			is_bad_form = ParseStr(FormStr, pass);
-			if (is_bad_form == 0)
-			{
-				/* per Chuck Ebbert, fudge these up a little */
-				Max_Ops = posp + 4;
-				Max_Args = vsp + 4;
-			}
-		}
-	}
-	uses_p1 = uses_p2 = uses_p3 = uses_p4 = uses_p5 = 0;
+        if (pass == 0)
+        {
+            is_bad_form = ParseStr(FormStr, pass);
+            if (is_bad_form == 0)
+            {
+                /* per Chuck Ebbert, fudge these up a little */
+                Max_Ops = posp + 4;
+                Max_Args = vsp + 4;
+            }
+        }
+    }
+    uses_p1 = uses_p2 = uses_p3 = uses_p4 = uses_p5 = 0;
 }
 
 void free_workarea()
 {
-	if (typespecific_workarea)
-	{
-		free(typespecific_workarea);
-	}
-	typespecific_workarea = NULL;
-	Store = (union Arg **) NULL;
-	Load = (union Arg **) NULL;
-	v = (struct ConstArg *) NULL;
-	f = (void (**)(void)) NULL;      /* CAE fp */
-	pfls = (struct fls * ) NULL;   /* CAE fp */
-	total_formula_mem = 0;
+    if (typespecific_workarea)
+    {
+        free(typespecific_workarea);
+    }
+    typespecific_workarea = NULL;
+    Store = (union Arg **) NULL;
+    Load = (union Arg **) NULL;
+    v = (struct ConstArg *) NULL;
+    f = (void (**)(void)) NULL;      /* CAE fp */
+    pfls = (struct fls * ) NULL;   /* CAE fp */
+    total_formula_mem = 0;
 }
 
 
@@ -3897,7 +3897,7 @@ void frm_error(FILE * open_file, long begin_frm)
       line_number = 1;
       while (ftell(open_file) != errors[j].error_pos) {
          i = fgetc(open_file);
-		 if (i == '\n') {
+         if (i == '\n') {
             line_number++;
          }
          else if (i == EOF || i == '}') {
@@ -4050,7 +4050,7 @@ void init_const_lists()
 struct var_list_st * add_var_to_list (struct var_list_st * p, struct token_st tok) {
    if (p == NULL) {
       p = var_list_alloc();
-	  if (p == NULL)
+      if (p == NULL)
          return NULL;
       strcpy(p->name, tok.token_str);
       p->next_item = NULL;
@@ -4059,7 +4059,7 @@ struct var_list_st * add_var_to_list (struct var_list_st * p, struct token_st to
    }
    else {
       p->next_item = add_var_to_list(p->next_item, tok);
-	  if (p->next_item == NULL)
+      if (p->next_item == NULL)
          return NULL;
    }
    return p;
@@ -4068,7 +4068,7 @@ struct var_list_st * add_var_to_list (struct var_list_st * p, struct token_st to
 struct const_list_st *  add_const_to_list (struct const_list_st * p, struct token_st tok) {
    if (p == NULL) {
       p = const_list_alloc();
-	  if (p == NULL)
+      if (p == NULL)
          return NULL;
       p->complex_const.x = tok.token_const.x;
       p->complex_const.y = tok.token_const.y;
@@ -4078,8 +4078,8 @@ struct const_list_st *  add_const_to_list (struct const_list_st * p, struct toke
    }
    else
    {
-	   p->next_item = add_const_to_list(p->next_item, tok);
-	   if (p->next_item == NULL)
+       p->next_item = add_const_to_list(p->next_item, tok);
+       if (p->next_item == NULL)
          return NULL;
    }
    return p;
@@ -4346,7 +4346,7 @@ int frm_prescan (FILE * open_file)
             }
             ExpectingArg = 0;
 /*            var_list = add_var_to_list (var_list, this_token);
-			  if (var_list == NULL) {
+              if (var_list == NULL) {
                stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
                fseek(open_file, orig_pos, SEEK_SET);
                init_var_list();
@@ -4407,7 +4407,7 @@ int frm_prescan (FILE * open_file)
             }
             ExpectingArg = 0;
 /*            real_list = add_const_to_list (real_list, this_token);
-			  if (real_list == NULL) {
+              if (real_list == NULL) {
                stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
                fseek(open_file, orig_pos, SEEK_SET);
                init_var_list();

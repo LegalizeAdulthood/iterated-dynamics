@@ -2130,7 +2130,7 @@ atisame_bank:
 ati1024addr     endp
 
 ;
-;	VESA true-color routines
+;   VESA true-color routines
 
 ; ************** Function dac_to_rgb() *******************
 
@@ -2476,42 +2476,42 @@ vesa_low_window         dw      0
 vesa_high_window        dw      1
 vesa_granularity        db      0       ; BDT VESA Granularity value
 
-istruecolor		dw	0	; set to 1 if VESA truecolor mode
+istruecolor     dw  0   ; set to 1 if VESA truecolor mode
 align 2
-; vesabytes		db	0,0,0,0	; our true-color pixel
-; vesabyteoffset		dw	0	; used in true-color routines
+; vesabytes     db  0,0,0,0 ; our true-color pixel
+; vesabyteoffset        dw  0   ; used in true-color routines
 
-;	the first 40 bytes of the 256-byte VESA mode-info block
+;   the first 40 bytes of the 256-byte VESA mode-info block
 
-vesa_mode_info	dw	0		; mode info: attributes
-vesa_winaattrib	db	0		; Win AA attribs 
-vesa_winbattrib	db	0		; Win BB attribs 
-vesa_wingran	dw	0		; window granularity
-vesa_winsize	dw	0		; window size
-vesa_winaseg	dw	0		; window AA segment
-vesa_winbseg	dw	0		; window BB segment
-vesa_funcptr	dd	0		; bank_switcher
-vesa_bytespscan	dw	0		; bytes per scan line
-vesa_xres	dw	0		; X-resolution
-vesa_yres	dw	0		; Y-resolution
-vesa_xcharsize	db	0		; X charsize
-vesa_ycharsize	db	0		; Y charsize
-vesa_numplanes	db	0		; number of planes
-vesa_bitsppixel	db	0		; bits / pixel
-vesa_numbanks	db	0		; number of banks
-vesa_memmodel	db	0		; memory-model type
-vesa_banksize	db	0		; bank size in KB
-vesa_numpages	db	0		; number of complete images
-vesa_rsvd	db	0		; reserved for page function
-vesa_redsize	db	0		; red mask size
-vesa_redpos	db	0		; red mask position
-vesa_greensize	db	0		; green mask size
-vesa_greenpos	db	0		; green mask position
-vesa_bluesize	db	0		; blue mask size
-vesa_bluepos	db	0		; blue mask position
-vesa_rsvdsize	db	0		; reserved mask size
-vesa_rsvdpos	db	0		; reserved mask position
-vesa_directinfo	db	0		; direct-color-mode attributes
+vesa_mode_info  dw  0       ; mode info: attributes
+vesa_winaattrib db  0       ; Win AA attribs 
+vesa_winbattrib db  0       ; Win BB attribs 
+vesa_wingran    dw  0       ; window granularity
+vesa_winsize    dw  0       ; window size
+vesa_winaseg    dw  0       ; window AA segment
+vesa_winbseg    dw  0       ; window BB segment
+vesa_funcptr    dd  0       ; bank_switcher
+vesa_bytespscan dw  0       ; bytes per scan line
+vesa_xres   dw  0       ; X-resolution
+vesa_yres   dw  0       ; Y-resolution
+vesa_xcharsize  db  0       ; X charsize
+vesa_ycharsize  db  0       ; Y charsize
+vesa_numplanes  db  0       ; number of planes
+vesa_bitsppixel db  0       ; bits / pixel
+vesa_numbanks   db  0       ; number of banks
+vesa_memmodel   db  0       ; memory-model type
+vesa_banksize   db  0       ; bank size in KB
+vesa_numpages   db  0       ; number of complete images
+vesa_rsvd   db  0       ; reserved for page function
+vesa_redsize    db  0       ; red mask size
+vesa_redpos db  0       ; red mask position
+vesa_greensize  db  0       ; green mask size
+vesa_greenpos   db  0       ; green mask position
+vesa_bluesize   db  0       ; blue mask size
+vesa_bluepos    db  0       ; blue mask position
+vesa_rsvdsize   db  0       ; reserved mask size
+vesa_rsvdpos    db  0       ; reserved mask position
+vesa_directinfo db  0       ; direct-color-mode attributes
 
         public  curbk
 
@@ -4702,9 +4702,9 @@ its_text:
         mov     setting_text,1          ; don't set virtual stuff
 its_graphics:
 
-        cmp     dotmode, 29		; Targa truecolor mode?
+        cmp     dotmode, 29     ; Targa truecolor mode?
         jne     NotTrueColorMode
-        jmp     TrueColorAuto		; yup.
+        jmp     TrueColorAuto       ; yup.
 NotTrueColorMode:
         cmp     diskflag,1              ; is disk video active?
         jne     nodiskvideo             ;  nope.
@@ -4908,14 +4908,14 @@ VGAautomode:                            ; set VGA auto-detect mode
         jne     xgamode
         cmp     colors,16               ; 16 colors?
         je      vgamode                 ; just like a VGA
-	jmp     dullnormalmode          ; otherwise, use the BIOS
+    jmp     dullnormalmode          ; otherwise, use the BIOS
 
 VESAtruecolormode:
         mov     istruecolor,1
-	mov	ax, offset VESAtruewrite   ; set up VESA true-color write-a-dot routine	
-	mov	bx, offset VESAtrueread    ; set up VESA true-color read-a-dot routine	
-	mov	cx, offset normaline       ; set up dullnormal linewrite routine	
-	mov	dx, offset normalineread   ; set up dullnormal lineread routine	
+    mov ax, offset VESAtruewrite   ; set up VESA true-color write-a-dot routine 
+    mov bx, offset VESAtrueread    ; set up VESA true-color read-a-dot routine  
+    mov cx, offset normaline       ; set up dullnormal linewrite routine    
+    mov dx, offset normalineread   ; set up dullnormal lineread routine 
         mov     si,offset swap256          ; set up the swap routine
         jmp     videomode                  ; return to common code
 
@@ -4926,7 +4926,7 @@ xgamode:
         mov     dx,offset normalineread    ; set up the XGA lineread  routine
         mov     si,offset swap256          ; set up the swap routine
         jmp     videomode                  ; return to common code
-	
+    
 VGAauto256mode:
         jmp     super256mode            ; just like a SuperVGA
 egamode:
@@ -5226,9 +5226,9 @@ noxga:
         mov     word ptr vesa_bankswitch+2,si
         mov     word ptr vesa_mapper,offset $nobank
         mov     word ptr vesa_mapper+2,seg $nobank
-	mov	vesa_bitsppixel,8
-	mov	istruecolor,0
-;	mov	vesabyteoffset,0
+    mov vesa_bitsppixel,8
+    mov istruecolor,0
+;   mov vesabyteoffset,0
         mov     tweakflag,0
 
         cmp     ax,0                    ; TWEAK?:  look for AX==BX==CX==0

@@ -912,7 +912,7 @@ GLYNN(XAXIS) {; Based on an illustration in Science PROBE!  and a
    }
 
 Gopalsamy1 {; Ron Barnett [70153,1233]
-   ; try p1 = (0.29,0.29)	
+   ; try p1 = (0.29,0.29)   
    z = pixel:
    x = real(z), y = imag(z),
    x1 = -2*x*y + p1,

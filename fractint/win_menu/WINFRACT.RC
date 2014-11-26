@@ -8,74 +8,74 @@ FracIcon     ICON winfract.ico
 
 WinFracMenu MENU
 BEGIN
-    POPUP	 "&File"
+    POPUP    "&File"
     BEGIN
-	MENUITEM   "&Open...",                 IDM_OPEN
-	MENUITEM   "&Save As...",              IDM_SAVE
-	MENUITEM   "&Print...",                IDM_PRINT
-	MENUITEM   "&3D Restore...",           IDM_3D
-	MENUITEM   "3D O&verlay...",           IDM_3DOVER
-	MENUITEM   SEPARATOR
+    MENUITEM   "&Open...",                 IDM_OPEN
+    MENUITEM   "&Save As...",              IDM_SAVE
+    MENUITEM   "&Print...",                IDM_PRINT
+    MENUITEM   "&3D Restore...",           IDM_3D
+    MENUITEM   "3D O&verlay...",           IDM_3DOVER
+    MENUITEM   SEPARATOR
         MENUITEM   "Read &@Batchfile...",      IDM_PARFILE
         MENUITEM   "Save @&Batchfile...",      IDM_SAVEPAR
-	MENUITEM   SEPARATOR
-	MENUITEM   "&Copy to ClipBrd",         IDM_COPY
-	MENUITEM   SEPARATOR
-	MENUITEM   "E&xit",                    IDM_EXIT
+    MENUITEM   SEPARATOR
+    MENUITEM   "&Copy to ClipBrd",         IDM_COPY
+    MENUITEM   SEPARATOR
+    MENUITEM   "E&xit",                    IDM_EXIT
     END
 
-    POPUP	 "F&ractals"
+    POPUP    "F&ractals"
     BEGIN
-	MENUITEM   "&Fractal Formula...",      IDM_FORMULA
-	MENUITEM   "Fractal &Params...",       IDM_DOODADZ
-	MENUITEM   "&Basic Options...",        IDM_DOODADX
-	MENUITEM   "&Extended Options...",     IDM_DOODADY
-	MENUITEM   "&3D Params...",            IDM_IFS3D
-	MENUITEM   "&Reset All Options",       IDM_RESTART
+    MENUITEM   "&Fractal Formula...",      IDM_FORMULA
+    MENUITEM   "Fractal &Params...",       IDM_DOODADZ
+    MENUITEM   "&Basic Options...",        IDM_DOODADX
+    MENUITEM   "&Extended Options...",     IDM_DOODADY
+    MENUITEM   "&3D Params...",            IDM_IFS3D
+    MENUITEM   "&Reset All Options",       IDM_RESTART
         MENUITEM   SEPARATOR
         MENUITEM   "&Starfield...",            IDM_STARFIELD
     END
 
 
-    POPUP	 "&View"
+    POPUP    "&View"
     BEGIN
-	MENUITEM   "&Image Settings...",       IDM_IMAGE
-	MENUITEM   SEPARATOR
+    MENUITEM   "&Image Settings...",       IDM_IMAGE
+    MENUITEM   SEPARATOR
 /*
-	MENUITEM   "&Math Tools",              IDM_MATH_TOOLS
+    MENUITEM   "&Math Tools",              IDM_MATH_TOOLS
 */
         MENUITEM   "&Zoom In Box",             IDM_ZOOMIN
         MENUITEM   "Zoom &Out Box",            IDM_ZOOMOUT
-	MENUITEM   "Zoom &Bar",                IDM_ZOOM
-	MENUITEM   SEPARATOR
-	MENUITEM   "Coor&dinate Box",          IDM_COORD
-	MENUITEM   "&Window Sizing",           IDM_SIZING, CHECKED
-	MENUITEM   "&Pixel-by-Pixel Update",   IDM_PIXELS
-	POPUP      "&Hotkey Actions"
-	    BEGIN
+    MENUITEM   "Zoom &Bar",                IDM_ZOOM
+    MENUITEM   SEPARATOR
+    MENUITEM   "Coor&dinate Box",          IDM_COORD
+    MENUITEM   "&Window Sizing",           IDM_SIZING, CHECKED
+    MENUITEM   "&Pixel-by-Pixel Update",   IDM_PIXELS
+    POPUP      "&Hotkey Actions"
+        BEGIN
                 MENUITEM  "&Fractint-style prompts",  IDF_FRACTINTSTYLE
-	        MENUITEM  "&Windows-style menus",     IDF_WINFRACTSTYLE
-	    END
-	MENUITEM   SEPARATOR
-	MENUITEM   "&Status!",          IDS_STATUS
+            MENUITEM  "&Windows-style menus",     IDF_WINFRACTSTYLE
+        END
+    MENUITEM   SEPARATOR
+    MENUITEM   "&Status!",          IDS_STATUS
     END
 
-    POPUP	 "&Colors"
+    POPUP    "&Colors"
     BEGIN
-	MENUITEM   "&Load Color-Map...",       IDM_MAPIN
-	MENUITEM   "&Write Color-Map...",      IDM_MAPOUT
-	MENUITEM   SEPARATOR
-	MENUITEM   "&Color-Cycling...",        IDM_CYCLE
+    MENUITEM   "&Load Color-Map...",       IDM_MAPIN
+    MENUITEM   "&Write Color-Map...",      IDM_MAPOUT
+    MENUITEM   SEPARATOR
+    MENUITEM   "&Color-Cycling...",        IDM_CYCLE
     END
 
-    POPUP	 "\a&Help"
+    POPUP    "\a&Help"
     BEGIN
-	MENUITEM    "&Index",                   IDM_HELP_INDEX
-	MENUITEM    "Using &Help",              IDM_HELP_HELP
-	MENUITEM    SEPARATOR
-	MENUITEM    "&Fractint Help",           IDM_HELP_FRACTINT
-	MENUITEM    SEPARATOR
-	MENUITEM   "&About WinFract...",        IDM_ABOUT
+    MENUITEM    "&Index",                   IDM_HELP_INDEX
+    MENUITEM    "Using &Help",              IDM_HELP_HELP
+    MENUITEM    SEPARATOR
+    MENUITEM    "&Fractint Help",           IDM_HELP_FRACTINT
+    MENUITEM    SEPARATOR
+    MENUITEM   "&About WinFract...",        IDM_ABOUT
     END
 
 END
@@ -139,21 +139,21 @@ VK_INSERT,  IDF_RESTART,       VIRTKEY
 "Z",        IDF_DOODADZ
 END
 
-Open DIALOG							  10, 10, 150, 110
+Open DIALOG                           10, 10, 150, 110
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
-	CONTROL "XX", ID_FILETITLE, "static", SS_CENTER | WS_CHILD,0,  5, 150, 12
-	LTEXT "Open File &Name:", IDC_FILENAME,                    4, 14,  60, 10
-	EDITTEXT		  IDC_EDIT,			   4, 26, 100, 12, ES_AUTOHSCROLL
-	LTEXT "&Files in",        IDC_FILES,                       4, 38,  32, 10
-	LTEXT "",                 IDC_PATH,                       40, 38,  70, 10
-	LISTBOX,		  IDC_LISTBOX,			   4, 50,  70, 56, WS_TABSTOP|WS_VSCROLL|LBS_SORT
-	DEFPUSHBUTTON "&Open" ,   IDOK,                           87, 60,  50, 14
-	PUSHBUTTON "&Cancel",     IDCANCEL,                       87, 80,  50, 14
+    CONTROL "XX", ID_FILETITLE, "static", SS_CENTER | WS_CHILD,0,  5, 150, 12
+    LTEXT "Open File &Name:", IDC_FILENAME,                    4, 14,  60, 10
+    EDITTEXT          IDC_EDIT,            4, 26, 100, 12, ES_AUTOHSCROLL
+    LTEXT "&Files in",        IDC_FILES,                       4, 38,  32, 10
+    LTEXT "",                 IDC_PATH,                       40, 38,  70, 10
+    LISTBOX,          IDC_LISTBOX,             4, 50,  70, 56, WS_TABSTOP|WS_VSCROLL|LBS_SORT
+    DEFPUSHBUTTON "&Open" ,   IDOK,                           87, 60,  50, 14
+    PUSHBUTTON "&Cancel",     IDCANCEL,                       87, 80,  50, 14
 END
 
-SelectFractal DIALOG LOADONCALL MOVEABLE DISCARDABLE				      10, 25, 150,180
+SelectFractal DIALOG LOADONCALL MOVEABLE DISCARDABLE                      10, 25, 150,180
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -163,7 +163,7 @@ BEGIN
     CONTROL "&Cancel" IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,      95, 75, 45, 14
 END
 
-SelectFracParams DIALOG LOADONCALL MOVEABLE DISCARDABLE 			     14,   21, 230, 230
+SelectFracParams DIALOG LOADONCALL MOVEABLE DISCARDABLE                  14,   21, 230, 230
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractal Parameters"
 BEGIN
@@ -207,7 +207,7 @@ BEGIN
     CONTROL "Text", 3, "static", SS_BLACKFRAME | WS_CHILD,                                0,  30, 230, 95
 END
 
-SelectImage DIALOG LOADONCALL MOVEABLE DISCARDABLE				      10,  18, 200, 150
+SelectImage DIALOG LOADONCALL MOVEABLE DISCARDABLE                    10,  18, 200, 150
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -231,7 +231,7 @@ BEGIN
     CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,     140, 135,  24, 14
 END
 
-SelectDoodads DIALOG LOADONCALL MOVEABLE DISCARDABLE					    11, 19, 300, 220
+SelectDoodads DIALOG LOADONCALL MOVEABLE DISCARDABLE                        11, 19, 300, 220
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -319,7 +319,7 @@ BEGIN
     CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,           120,180, 32, 14
 END
 
-SelectSavePar DIALOG LOADONCALL MOVEABLE DISCARDABLE				       10,  18, 200, 200
+SelectSavePar DIALOG LOADONCALL MOVEABLE DISCARDABLE                       10,  18, 200, 200
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -349,7 +349,7 @@ BEGIN
     CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,       140, 180,  24, 14
 END
 
-SelectCycle DIALOG LOADONCALL MOVEABLE DISCARDABLE			       10, 18, 114, 135
+SelectCycle DIALOG LOADONCALL MOVEABLE DISCARDABLE                 10, 18, 114, 135
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -370,7 +370,7 @@ BEGIN
     CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,     65, 115, 35, 14
 END
 
-SelectFullScreen DIALOG LOADONCALL MOVEABLE DISCARDABLE 			    4,	 4, 200, 200
+SelectFullScreen DIALOG LOADONCALL MOVEABLE DISCARDABLE                 4,   4, 200, 200
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -414,7 +414,7 @@ BEGIN
 END
 
 
-ShowStatus DIALOG LOADONCALL MOVEABLE DISCARDABLE			 10, 20, 190,160
+ShowStatus DIALOG LOADONCALL MOVEABLE DISCARDABLE            10, 20, 190,160
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -451,7 +451,7 @@ BEGIN
 END
 
 
-Select3D DIALOG LOADONCALL MOVEABLE DISCARDABLE 						     11, 19,300,200
+Select3D DIALOG LOADONCALL MOVEABLE DISCARDABLE                              11, 19,300,200
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -459,7 +459,7 @@ BEGIN
     CONTROL "&Preview Mode", ID_PREVIEW, "button", BS_CHECKBOX | WS_TABSTOP | WS_CHILD,              10, 10, 70, 12
     CONTROL "Show &Box", ID_SHOWBOX, "button", BS_CHECKBOX | WS_TABSTOP | WS_CHILD,                  80, 10, 70, 12
     CONTROL "&Spherical Project", ID_SPHERICAL, "button", BS_CHECKBOX | WS_TABSTOP | WS_CHILD,      150, 10, 70, 12
-#ifdef	thisisadumbwaytospecifycomments
+#ifdef  thisisadumbwaytospecifycomments
     CONTROL "&Targa Output?", ID_TARGA, "button", BS_CHECKBOX | WS_TABSTOP | WS_CHILD,              220, 10, 70, 12
 #endif
     CONTROL "Preview &Factor", 3, "static", SS_LEFT | WS_CHILD,                                      10, 27, 70, 8
@@ -496,7 +496,7 @@ BEGIN
     CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,                   160, 170, 32, 14
 END
 
-SelectIFS3D DIALOG LOADONCALL MOVEABLE DISCARDABLE						 11, 19, 200, 130
+SelectIFS3D DIALOG LOADONCALL MOVEABLE DISCARDABLE                       11, 19, 200, 130
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -523,7 +523,7 @@ BEGIN
     CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,              110, 110, 32, 14
 END
 
-SelectFunnyGlasses DIALOG LOADONCALL MOVEABLE DISCARDABLE					 11, 19, 200, 145
+SelectFunnyGlasses DIALOG LOADONCALL MOVEABLE DISCARDABLE                    11, 19, 200, 145
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -550,7 +550,7 @@ BEGIN
     CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,                110, 125, 32, 14
 END
 
-Select3DPlanar DIALOG LOADONCALL MOVEABLE DISCARDABLE						 11, 19, 200, 200
+Select3DPlanar DIALOG LOADONCALL MOVEABLE DISCARDABLE                        11, 19, 200, 200
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -590,7 +590,7 @@ BEGIN
 END
 
 
-Select3DSpherical DIALOG LOADONCALL MOVEABLE DISCARDABLE					    11, 19, 200, 200
+Select3DSpherical DIALOG LOADONCALL MOVEABLE DISCARDABLE                        11, 19, 200, 200
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -629,7 +629,7 @@ BEGIN
     CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,               110, 180, 32, 14
 END
 
-SelectLightSource DIALOG LOADONCALL MOVEABLE DISCARDABLE					 11, 19, 200, 100
+SelectLightSource DIALOG LOADONCALL MOVEABLE DISCARDABLE                     11, 19, 200, 100
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -652,15 +652,15 @@ Saveas DIALOG 9, 15, 180, 93
 CAPTION "Fractint for Windows"
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 BEGIN
-	CONTROL "XX", ID_FILETITLE, "static", SS_CENTER | WS_CHILD, 0, 5, 180, 12
-	LTEXT "Save As File &Name:", IDC_FILENAME, 8, 17, 72, 10
-	EDITTEXT IDC_EDIT, 6, 41, 100, 12
-	DEFPUSHBUTTON "&Save", IDOK, 124, 41, 50, 14
-	PUSHBUTTON "&Cancel", IDCANCEL, 124, 65, 50, 14
-	CONTROL ".&GIF (89a)", ID_GIF89A, "BUTTON", BS_RADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 13, 61, 40, 12
-	CONTROL ".GIF (8&7a)", ID_GIF87A, "BUTTON", BS_RADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 13, 73, 40, 12
-	CONTROL ".&BMP", ID_BMP, "BUTTON", BS_RADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 66, 61, 40, 12
-	CONTROL "", IDC_PATH, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 30, 166, 8
+    CONTROL "XX", ID_FILETITLE, "static", SS_CENTER | WS_CHILD, 0, 5, 180, 12
+    LTEXT "Save As File &Name:", IDC_FILENAME, 8, 17, 72, 10
+    EDITTEXT IDC_EDIT, 6, 41, 100, 12
+    DEFPUSHBUTTON "&Save", IDOK, 124, 41, 50, 14
+    PUSHBUTTON "&Cancel", IDCANCEL, 124, 65, 50, 14
+    CONTROL ".&GIF (89a)", ID_GIF89A, "BUTTON", BS_RADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 13, 61, 40, 12
+    CONTROL ".GIF (8&7a)", ID_GIF87A, "BUTTON", BS_RADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 13, 73, 40, 12
+    CONTROL ".&BMP", ID_BMP, "BUTTON", BS_RADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 66, 61, 40, 12
+    CONTROL "", IDC_PATH, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 30, 166, 8
 END
 
 Printabort DIALOG 21, 21, 90, 52
@@ -710,7 +710,7 @@ StatusBox DIALOG 18, 18, 142, 59
 CAPTION "StatusBox"
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_VISIBLE
 BEGIN
-	CONTROL "", ID_PERCENT, "STATIC", SS_BLACKFRAME | WS_CHILD | WS_VISIBLE, 13, 6, 115, 15
-	CONTROL "Cancel", ID_CANCEL, "BUTTON", BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 55, 30, 32, 20
+    CONTROL "", ID_PERCENT, "STATIC", SS_BLACKFRAME | WS_CHILD | WS_VISIBLE, 13, 6, 115, 15
+    CONTROL "Cancel", ID_CANCEL, "BUTTON", BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 55, 30, 32, 20
 END
 

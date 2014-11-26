@@ -268,7 +268,7 @@ static void lsysf_dodrawgt(struct lsys_turtlestatef *cmd)
 {
     cmd->curcolor = (char)(cmd->curcolor - cmd->parm.n);
     cmd->curcolor %= colors;
-	if (cmd->curcolor == 0)
+    if (cmd->curcolor == 0)
         cmd->curcolor = (char)(colors-1);
 }
 
@@ -276,7 +276,7 @@ static void lsysf_dodrawlt(struct lsys_turtlestatef *cmd)
 {
     cmd->curcolor = (char)(cmd->curcolor + cmd->parm.n);
     cmd->curcolor %= colors;
-	if (cmd->curcolor == 0)
+    if (cmd->curcolor == 0)
         cmd->curcolor = 1;
 }
 
@@ -339,7 +339,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
           savey=ts->ypos;
           lsys_prepfpu(ts);
           command = findsize(command+1, ts, rules, depth);
-		  if (command == NULL)
+          if (command == NULL)
              return(NULL);
           lsys_donefpu(ts);
           ts->angle=saveang;
@@ -474,7 +474,7 @@ drawLSysF(struct lsys_cmd *command,struct lsys_turtlestatef *ts, struct lsys_cmd
           savecolor=ts->curcolor;
           lsys_prepfpu(ts);
           command = drawLSysF(command+1, ts, rules, depth);
-		  if (command == NULL)
+          if (command == NULL)
              return(NULL);
           lsys_donefpu(ts);
           ts->angle=saveang;

@@ -361,11 +361,11 @@ exit_ant:
 
 void free_ant_storage(void)
 {
-	if (s_incx[0])
-	{
-		free(s_incx[0]);
-		s_incx[0] = NULL;
-	}
+    if (s_incx[0])
+    {
+        free(s_incx[0]);
+        s_incx[0] = NULL;
+    }
 }
 
 /* N.B. use the common memory in extraseg - suffix not large enough*/
@@ -377,23 +377,23 @@ ant(void)
    long maxpts, wait;
    char rule[MAX_ANTS];
 
-	if (xdots != s_last_xdots || ydots != s_last_ydots)
-	{
-		int *storage = (int *) malloc((xdots + 2)*sizeof(int)*DIRS + (ydots + 2)*sizeof(int)*DIRS);
-		int *y_storage = storage + (xdots + 2)*DIRS;
+    if (xdots != s_last_xdots || ydots != s_last_ydots)
+    {
+        int *storage = (int *) malloc((xdots + 2)*sizeof(int)*DIRS + (ydots + 2)*sizeof(int)*DIRS);
+        int *y_storage = storage + (xdots + 2)*DIRS;
 
-		s_last_xdots = xdots;
-		s_last_ydots = ydots;
+        s_last_xdots = xdots;
+        s_last_ydots = ydots;
 
-		free_ant_storage();	/* free old memory */
-		for (i = 0; i < DIRS; i++)
-		{
-			s_incx[i] = storage;
-			storage += xdots + 2;
-			s_incy[i] = y_storage;
-			y_storage += ydots + 2;
-		}
-	}
+        free_ant_storage(); /* free old memory */
+        for (i = 0; i < DIRS; i++)
+        {
+            s_incx[i] = storage;
+            storage += xdots + 2;
+            s_incy[i] = y_storage;
+            y_storage += ydots + 2;
+        }
+    }
 
 /* In this vectors put all the possible point that the ants can visit.
  * Wrap them from a side to the other insted of simply end calculation

@@ -85,26 +85,26 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle);
 
 static int _fastcall CheckDiskSpace(long howmuch)
 {
-	/* TODO */
-	return TRUE;
+    /* TODO */
+    return TRUE;
 }
 
 static void WhichDiskError(int I_O)
 {
-	/* Set I_O == 1 after a file create, I_O == 2 after a file set value */
-	/* Set I_O == 3 after a file write, I_O == 4 after a file read */
-	char buf[MSGLEN];
-	char *pats[4] =
-	{
-		"Create file error %d:  %s",
-		"Set file error %d:  %s",
-		"Write file error %d:  %s",
-		"Read file error %d:  %s"
-	};
-	sprintf(buf, pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
-	if (debugflag == 10000)
-		if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER,(char *)buf) == -1)
-			goodbye(); /* bailout if ESC */
+    /* Set I_O == 1 after a file create, I_O == 2 after a file set value */
+    /* Set I_O == 3 after a file write, I_O == 4 after a file read */
+    char buf[MSGLEN];
+    char *pats[4] =
+    {
+        "Create file error %d:  %s",
+        "Set file error %d:  %s",
+        "Write file error %d:  %s",
+        "Read file error %d:  %s"
+    };
+    sprintf(buf, pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
+    if (debugflag == 10000)
+        if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER,(char *)buf) == -1)
+            goodbye(); /* bailout if ESC */
 }
 
 int MemoryType(U16 handle)
@@ -120,8 +120,8 @@ static void DisplayError(int stored_at, long howmuch)
 
    char buf[MSGLEN*2];
    sprintf(buf,"Allocating %ld Bytes of %s memory failed.\n"
-	   "Alternate disk space is also insufficient. Goodbye",
-	   howmuch,memstr[stored_at]);
+       "Alternate disk space is also insufficient. Goodbye",
+       howmuch,memstr[stored_at]);
    stopmsg(0,buf);
 }
 
@@ -238,14 +238,14 @@ void DisplayHandle (U16 handle)
 
 void InitMemory (void)
 {
-	int counter;
+    int counter;
 
-	numTOTALhandles = 0;
-	for (counter = 0; counter < MAXHANDLES; counter++)
-	{
-		handletable[counter].Nowhere.stored_at = NOWHERE;
-		handletable[counter].Nowhere.size = 0;
-	}
+    numTOTALhandles = 0;
+    for (counter = 0; counter < MAXHANDLES; counter++)
+    {
+        handletable[counter].Nowhere.stored_at = NOWHERE;
+        handletable[counter].Nowhere.size = 0;
+    }
 }
 
 void ExitCheck (void)
@@ -257,7 +257,7 @@ void ExitCheck (void)
          if (handletable[i].Nowhere.stored_at != NOWHERE) {
             char buf[MSGLEN];
             sprintf(buf,"Memory type %s still allocated.  Handle = %i.",
-				memstr[handletable[i].Nowhere.stored_at],i);
+                memstr[handletable[i].Nowhere.stored_at],i);
             stopmsg(0,(char *)buf);
             MemoryRelease(i);
          }
@@ -351,7 +351,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
    if (stored_at != use_this_type && debugflag == 10000) {
       char buf[MSGLEN];
       sprintf(buf,"Asked for %s, allocated %lu bytes of %s, handle = %u.",
-		  memstr[stored_at],toallocate,memstr[use_this_type],handle);
+          memstr[stored_at],toallocate,memstr[use_this_type],handle);
       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,(char *)buf);
       DisplayMemory();
    }
@@ -419,11 +419,11 @@ int MoveToMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
 
    case MEMORY: /* MoveToMemory */
 #if defined(_WIN32)
-	   _ASSERTE(handletable[handle].Linearmem.size >= size*count + start);
+       _ASSERTE(handletable[handle].Linearmem.size >= size*count + start);
 #endif
-		memcpy(handletable[handle].Linearmem.memory + start, buffer, size*count);
-		success = TRUE; /* No way to gauge success or failure */
-		break;
+        memcpy(handletable[handle].Linearmem.memory + start, buffer, size*count);
+        success = TRUE; /* No way to gauge success or failure */
+        break;
 
    case DISK: /* MoveToMemory */
       rewind(handletable[handle].Disk.file);

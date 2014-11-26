@@ -481,79 +481,79 @@ LPARAM lParam;
 
 void wintext_addkeypress(unsigned int keypress)
 {
-	if (wintext_textmode != 2)  /* not in the right mode */
-	{
-		return;
-	}
-
-	if (wintext_keypress_count >= BUFMAX)
-		/* no room */
-		return;
-
-	if ((keypress & 0xfe00) == 0xfe00)
-	{
-		if (keypress == 0xff10) wintext_keypress_initstate |= 0x01;
-		if (keypress == 0xfe10) wintext_keypress_initstate &= 0xfe;
-		if (keypress == 0xff11) wintext_keypress_initstate |= 0x02;
-		if (keypress == 0xfe11) wintext_keypress_initstate &= 0xfd;
-		return;
+    if (wintext_textmode != 2)  /* not in the right mode */
+    {
+        return;
     }
 
-	if (wintext_keypress_initstate != 0)              /* shift/ctl key down */
-	{
-		if ((wintext_keypress_initstate & 1) != 0)    /* shift key down */
-		{
-			if ((keypress & 0x00ff) == 9)             /* TAB key down */
-			{
-				keypress = (15 << 8);             /* convert to shift-tab */
-			}
-			if ((keypress & 0x00ff) == 0)           /* special character */
-			{
-				int i;
-				i = (keypress >> 8) & 0xff;
-				if (i >= 59 && i <= 68)               /* F1 thru F10 */
-				{
-					keypress = ((i + 25) << 8);       /* convert to Shifted-Fn */
-				}
-			}
-		}
-		else
-		{                                        /* control key down */
-			if ((keypress & 0x00ff) == 0)
-			{           /* special character */
-				int i;
-				i = ((keypress & 0xff00) >> 8);
-				if (i >= 59 && i <= 68)               /* F1 thru F10 */
-				{
-					keypress = ((i + 35) << 8);       /* convert to Ctl-Fn */
-				}
-				if (i == 71)
-				{
-					keypress = (119 << 8);
-				}
-				if (i == 73)
-				{
-					keypress = (unsigned int)(132 << 8);
-				}
-				if (i == 75)
-				{
-					keypress = (115 << 8);
-				}
-				if (i == 77)
-				{
-					keypress = (116 << 8);
-				}
-				if (i == 79)
-				{
-					keypress = (117 << 8);
-				}
-				if (i == 81)
-				{
-					keypress = (118 << 8);
-				}
-			}
-		}
-	}
+    if (wintext_keypress_count >= BUFMAX)
+        /* no room */
+        return;
+
+    if ((keypress & 0xfe00) == 0xfe00)
+    {
+        if (keypress == 0xff10) wintext_keypress_initstate |= 0x01;
+        if (keypress == 0xfe10) wintext_keypress_initstate &= 0xfe;
+        if (keypress == 0xff11) wintext_keypress_initstate |= 0x02;
+        if (keypress == 0xfe11) wintext_keypress_initstate &= 0xfd;
+        return;
+    }
+
+    if (wintext_keypress_initstate != 0)              /* shift/ctl key down */
+    {
+        if ((wintext_keypress_initstate & 1) != 0)    /* shift key down */
+        {
+            if ((keypress & 0x00ff) == 9)             /* TAB key down */
+            {
+                keypress = (15 << 8);             /* convert to shift-tab */
+            }
+            if ((keypress & 0x00ff) == 0)           /* special character */
+            {
+                int i;
+                i = (keypress >> 8) & 0xff;
+                if (i >= 59 && i <= 68)               /* F1 thru F10 */
+                {
+                    keypress = ((i + 25) << 8);       /* convert to Shifted-Fn */
+                }
+            }
+        }
+        else
+        {                                        /* control key down */
+            if ((keypress & 0x00ff) == 0)
+            {           /* special character */
+                int i;
+                i = ((keypress & 0xff00) >> 8);
+                if (i >= 59 && i <= 68)               /* F1 thru F10 */
+                {
+                    keypress = ((i + 35) << 8);       /* convert to Ctl-Fn */
+                }
+                if (i == 71)
+                {
+                    keypress = (119 << 8);
+                }
+                if (i == 73)
+                {
+                    keypress = (unsigned int)(132 << 8);
+                }
+                if (i == 75)
+                {
+                    keypress = (115 << 8);
+                }
+                if (i == 77)
+                {
+                    keypress = (116 << 8);
+                }
+                if (i == 79)
+                {
+                    keypress = (117 << 8);
+                }
+                if (i == 81)
+                {
+                    keypress = (118 << 8);
+                }
+            }
+        }
+    }
 
 wintext_keypress_buffer[wintext_keypress_head] = keypress;
 wintext_keypress_state[wintext_keypress_head] = wintext_keypress_initstate;

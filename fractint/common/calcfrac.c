@@ -139,15 +139,15 @@ static int dem_mandel;
 
 /* variables which must be visible for tab_display */
 int got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
-	      /* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */
+          /* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */
               /* 6 for orbits */
 int curpass,totpasses;
 int currow,curcol;
 
 /* static vars for diffusion scan */
-unsigned bits=0; 		/* number of bits in the counter */
-unsigned long dif_counter; 	/* the diffusion counter */
-unsigned long dif_limit; 	/* the diffusion counter */
+unsigned bits=0;        /* number of bits in the counter */
+unsigned long dif_counter;  /* the diffusion counter */
+unsigned long dif_limit;    /* the diffusion counter */
 
 /* static vars for solidguess & its subroutines */
 char three_pass;
@@ -765,8 +765,8 @@ int calcfract(void)
 
    if (LogTable && !Log_Calc)
    {
-		free(LogTable);   /* free if not using extraseg */
-		LogTable = NULL;
+        free(LogTable);   /* free if not using extraseg */
+        LogTable = NULL;
    }
    if (typespecific_workarea)
    {
@@ -1528,7 +1528,7 @@ static int sticky_orbits(void)
 
       while (angle < Rotation)
       {
-	 theta = (double)angle * factor; 
+     theta = (double)angle * factor; 
          col = (int)(xfactor + (Xctr + Xmagfactor * cos(theta)));
          row = (int)(yfactor + (Yctr + Xmagfactor * sin(theta)));
          if (plotorbits2dfloat() == -1)
@@ -2917,7 +2917,7 @@ int  bound_trace_main(void)
                         && row <= iystop)
                     {
                     /* the order of operations in this next line is critical */
-						color = getcolor(col, row);
+                        color = getcolor(col, row);
                     if (color == bkcolor && (*calctype)()== -1)
                                 /* color, row, col are global for (*calctype)() */
                         {
@@ -2982,13 +2982,13 @@ whenever going_to is South or West
                             { /* fill a row, but only once */
                             right = col;
                             while (--right >= ixstart)
-							{
-								color = getcolor(right,row);
-								if (color == trail_color)
-								{
-									break;
-								}
-							}
+                            {
+                                color = getcolor(right,row);
+                                if (color == trail_color)
+                                {
+                                    break;
+                                }
+                            }
                             if (color == bkcolor) /* check last color */
                                 {
                                 left = right;
@@ -3149,7 +3149,7 @@ static int solidguess(void)
             reset_periodicity = 1;
             for (col=ixstart; col<=ixstop; col+=maxblock)
             {
-				i=(*calctype)();
+                i=(*calctype)();
                if (i == -1)
                   break;
                reset_periodicity = 0;

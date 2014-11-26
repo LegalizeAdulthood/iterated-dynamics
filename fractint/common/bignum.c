@@ -73,7 +73,7 @@ LSB                                                                    MSB
 r <--------------------------- 2*bnlength ----------------------------->
                                                      2*intlength  --->  <---
                                  LSB                                  MSB
-	           r+shiftfactor   <----------  bnlength  ------------>
+               r+shiftfactor   <----------  bnlength  ------------>
                                                        intlength  ---> <---
 
 

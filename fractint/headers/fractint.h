@@ -12,8 +12,8 @@ typedef BYTE BOOLEAN;
 #endif
 
 /* Returns the number of items in an array declared of fixed size, i.e:
-	int stuff[100];
-	NUM_OF(stuff) returns 100.
+    int stuff[100];
+    NUM_OF(stuff) returns 100.
 */
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
 
@@ -32,18 +32,18 @@ typedef BYTE BOOLEAN;
 #define BUZZER_ERROR 2
 
 /* stopmsg() flags */
-#define STOPMSG_NO_STACK	1
-#define STOPMSG_CANCEL		2
-#define STOPMSG_NO_BUZZER	4
-#define STOPMSG_FIXED_FONT	8
-#define STOPMSG_INFO_ONLY	16
+#define STOPMSG_NO_STACK    1
+#define STOPMSG_CANCEL      2
+#define STOPMSG_NO_BUZZER   4
+#define STOPMSG_FIXED_FONT  8
+#define STOPMSG_INFO_ONLY   16
 
 /* g_video_type video types */
-#define VIDEO_TYPE_HGC		1
-#define VIDEO_TYPE_EGA		3
-#define VIDEO_TYPE_CGA		2
-#define VIDEO_TYPE_MCGA		4
-#define VIDEO_TYPE_VGA		5
+#define VIDEO_TYPE_HGC      1
+#define VIDEO_TYPE_EGA      3
+#define VIDEO_TYPE_CGA      2
+#define VIDEO_TYPE_MCGA     4
+#define VIDEO_TYPE_VGA      5
 
 /* for gotos in former FRACTINT.C pieces */
 #define RESTART           1
@@ -51,25 +51,25 @@ typedef BYTE BOOLEAN;
 #define RESTORESTART      3
 #define CONTINUE          4
 
-#define SLIDES_OFF		0
-#define SLIDES_PLAY		1
-#define SLIDES_RECORD	2
+#define SLIDES_OFF      0
+#define SLIDES_PLAY     1
+#define SLIDES_RECORD   2
 
 /* fullscreen_choice options */
-#define CHOICE_RETURN_KEY	1
-#define CHOICE_MENU			2
-#define CHOICE_HELP			4
-#define CHOICE_INSTRUCTIONS	8
-#define CHOICE_CRUNCH		16
-#define CHOICE_NOT_SORTED	32
+#define CHOICE_RETURN_KEY   1
+#define CHOICE_MENU         2
+#define CHOICE_HELP         4
+#define CHOICE_INSTRUCTIONS 8
+#define CHOICE_CRUNCH       16
+#define CHOICE_NOT_SORTED   32
 
 /* calc_status values */
-#define CALCSTAT_NO_FRACTAL		-1
-#define CALCSTAT_PARAMS_CHANGED	0
-#define CALCSTAT_IN_PROGRESS	1
-#define CALCSTAT_RESUMABLE		2
-#define CALCSTAT_NON_RESUMABLE	3
-#define CALCSTAT_COMPLETED		4
+#define CALCSTAT_NO_FRACTAL     -1
+#define CALCSTAT_PARAMS_CHANGED 0
+#define CALCSTAT_IN_PROGRESS    1
+#define CALCSTAT_RESUMABLE      2
+#define CALCSTAT_NON_RESUMABLE  3
+#define CALCSTAT_COMPLETED      4
 
 #define CMDARG_FRACTAL_PARAM 1
 #define CMDARG_3D_PARAM 2
@@ -85,17 +85,17 @@ typedef BYTE BOOLEAN;
 #define INPUTFIELD_INTEGER 2
 #define INPUTFIELD_DOUBLE 4
 
-#define SOUNDFLAG_OFF		0
-#define SOUNDFLAG_BEEP		1
-#define SOUNDFLAG_X			2
-#define SOUNDFLAG_Y			3
-#define SOUNDFLAG_Z			4
+#define SOUNDFLAG_OFF       0
+#define SOUNDFLAG_BEEP      1
+#define SOUNDFLAG_X         2
+#define SOUNDFLAG_Y         3
+#define SOUNDFLAG_Z         4
 #define SOUNDFLAG_ORBITMASK 0x07
-#define SOUNDFLAG_SPEAKER	0x08
-#define SOUNDFLAG_OPL3_FM	0x10
-#define SOUNDFLAG_MIDI		0x20
+#define SOUNDFLAG_SPEAKER   0x08
+#define SOUNDFLAG_OPL3_FM   0x10
+#define SOUNDFLAG_MIDI      0x20
 #define SOUNDFLAG_QUANTIZED 0x40
-#define SOUNDFLAG_MASK		0x7F
+#define SOUNDFLAG_MASK      0x7F
 
 /* these are used to declare arrays for file names */
 #if defined(_WIN32)
@@ -131,7 +131,7 @@ names. So for now humor us and let's keep the names short.
 #define MAXPIXELS   32767       /* Maximum pixel count across/down the screen */
 #define OLDMAXPIXELS 2048       /* Limit of some old fixed arrays */
 #define MINPIXELS 10            /* Minimum pixel count across/down the screen */
-#define DEFAULTASPECT 1.0f		/* Assumed overall screen dimensions, y/x  */
+#define DEFAULTASPECT 1.0f      /* Assumed overall screen dimensions, y/x  */
 #define DEFAULTASPECTDRIFT 0.02f /* drift of < 2% is forced to 0% */
 
 typedef struct tagDriver Driver;
@@ -166,7 +166,7 @@ struct videoinfo {              /* All we need to know about a Video Adapter */
         int     xdots;          /* number of dots across the screen     */
         int     ydots;          /* number of dots down the screen       */
         int     colors;         /* number of colors available           */
-		Driver *driver;
+        Driver *driver;
         };
 
 typedef struct videoinfo VIDEOINFO;
@@ -869,78 +869,78 @@ extern  void   (_fastcall *plot)(int, int, int);
  * Use this prefix to disambiguate key name symbols used in the fractint source
  * from symbols defined by the external environment, i.e. "DELETE" on Win32
  */
-#define FIK_ALT_A			1030
-#define FIK_ALT_S			1031
-#define FIK_ALT_F1			1104
+#define FIK_ALT_A           1030
+#define FIK_ALT_S           1031
+#define FIK_ALT_F1          1104
 
-#define FIK_CTL_A			1
-#define FIK_CTL_B			2
-#define FIK_CTL_E			5
-#define FIK_CTL_F			6
-#define FIK_CTL_G			7
-#define FIK_CTL_O			15
-#define FIK_CTL_P			16
-#define FIK_CTL_S			19
-#define FIK_CTL_U			21
-#define FIK_CTL_X			24
-#define FIK_CTL_Y			25
-#define FIK_CTL_Z			26
-#define FIK_CTL_BACKSLASH	28
-#define FIK_CTL_DEL			1147
-#define FIK_CTL_DOWN_ARROW	1145
-#define FIK_CTL_END			1117
-#define FIK_CTL_ENTER		10
-#define FIK_CTL_ENTER_2		1010
-#define FIK_CTL_F1			1094
-#define FIK_CTL_HOME		1119
-#define FIK_CTL_INSERT		1146
-#define FIK_CTL_LEFT_ARROW	1115
-#define FIK_CTL_MINUS		1142
-#define FIK_CTL_PAGE_DOWN	1118
-#define FIK_CTL_PAGE_UP		1132
-#define FIK_CTL_PLUS		1144
-#define FIK_CTL_RIGHT_ARROW	1116
-#define FIK_CTL_TAB			1148
-#define FIK_CTL_UP_ARROW	1141
+#define FIK_CTL_A           1
+#define FIK_CTL_B           2
+#define FIK_CTL_E           5
+#define FIK_CTL_F           6
+#define FIK_CTL_G           7
+#define FIK_CTL_O           15
+#define FIK_CTL_P           16
+#define FIK_CTL_S           19
+#define FIK_CTL_U           21
+#define FIK_CTL_X           24
+#define FIK_CTL_Y           25
+#define FIK_CTL_Z           26
+#define FIK_CTL_BACKSLASH   28
+#define FIK_CTL_DEL         1147
+#define FIK_CTL_DOWN_ARROW  1145
+#define FIK_CTL_END         1117
+#define FIK_CTL_ENTER       10
+#define FIK_CTL_ENTER_2     1010
+#define FIK_CTL_F1          1094
+#define FIK_CTL_HOME        1119
+#define FIK_CTL_INSERT      1146
+#define FIK_CTL_LEFT_ARROW  1115
+#define FIK_CTL_MINUS       1142
+#define FIK_CTL_PAGE_DOWN   1118
+#define FIK_CTL_PAGE_UP     1132
+#define FIK_CTL_PLUS        1144
+#define FIK_CTL_RIGHT_ARROW 1116
+#define FIK_CTL_TAB         1148
+#define FIK_CTL_UP_ARROW    1141
 
-#define FIK_SHF_TAB			1015  /* shift tab aka BACKTAB */
+#define FIK_SHF_TAB         1015  /* shift tab aka BACKTAB */
 
-#define FIK_BACKSPACE		8
-#define FIK_DELETE			1083
-#define FIK_DOWN_ARROW		1080
-#define FIK_END				1079
-#define FIK_ENTER			13
-#define FIK_ENTER_2			1013
-#define FIK_ESC				27
-#define FIK_F1				1059
-#define FIK_F2				1060
-#define FIK_F3				1061
-#define FIK_F4				1062
-#define FIK_F5				1063
-#define FIK_F6				1064
-#define FIK_F7				1065
-#define FIK_F8				1066
-#define FIK_F9				1067
-#define FIK_F10				1068
-#define FIK_HOME			1071
-#define FIK_INSERT			1082
-#define FIK_LEFT_ARROW		1075
-#define FIK_PAGE_DOWN		1081
-#define FIK_PAGE_UP			1073
-#define FIK_RIGHT_ARROW		1077
-#define FIK_SPACE			32
-#define FIK_SF1				1084
-#define FIK_SF2				1085
-#define FIK_SF3				1086
-#define FIK_SF4				1087
-#define FIK_SF5				1088
-#define FIK_SF6				1089
-#define FIK_SF7				1090
-#define FIK_SF8				1091
-#define FIK_SF9				1092
-#define FIK_SF10			1093
-#define FIK_TAB				9
-#define FIK_UP_ARROW		1072
+#define FIK_BACKSPACE       8
+#define FIK_DELETE          1083
+#define FIK_DOWN_ARROW      1080
+#define FIK_END             1079
+#define FIK_ENTER           13
+#define FIK_ENTER_2         1013
+#define FIK_ESC             27
+#define FIK_F1              1059
+#define FIK_F2              1060
+#define FIK_F3              1061
+#define FIK_F4              1062
+#define FIK_F5              1063
+#define FIK_F6              1064
+#define FIK_F7              1065
+#define FIK_F8              1066
+#define FIK_F9              1067
+#define FIK_F10             1068
+#define FIK_HOME            1071
+#define FIK_INSERT          1082
+#define FIK_LEFT_ARROW      1075
+#define FIK_PAGE_DOWN       1081
+#define FIK_PAGE_UP         1073
+#define FIK_RIGHT_ARROW     1077
+#define FIK_SPACE           32
+#define FIK_SF1             1084
+#define FIK_SF2             1085
+#define FIK_SF3             1086
+#define FIK_SF4             1087
+#define FIK_SF5             1088
+#define FIK_SF6             1089
+#define FIK_SF7             1090
+#define FIK_SF8             1091
+#define FIK_SF9             1092
+#define FIK_SF10            1093
+#define FIK_TAB             9
+#define FIK_UP_ARROW        1072
 
 /* text colors */
 #define BLACK      0
@@ -1040,14 +1040,14 @@ struct fullscreenvalues
 #define   SYSTEM         4
 #define   SUBDIR         16
 
-struct DIR_SEARCH				/* Allocate	DTA	and	define structure */
+struct DIR_SEARCH               /* Allocate DTA and define structure */
 {
-	char path[FILE_MAX_PATH];		/* DOS path	and	filespec */
-	char attribute;				/* File	attributes wanted */
-	int	 ftime;					/* File	creation time */
-	int	 fdate;					/* File	creation date */
-	long size;					/* File	size in bytes */
-	char filename[FILE_MAX_PATH];	/* Filename	and	extension */
+    char path[FILE_MAX_PATH];       /* DOS path and filespec */
+    char attribute;             /* File attributes wanted */
+    int  ftime;                 /* File creation time */
+    int  fdate;                 /* File creation date */
+    long size;                  /* File size in bytes */
+    char filename[FILE_MAX_PATH];   /* Filename and extension */
 };
 
 extern struct DIR_SEARCH DTA;   /* Disk Transfer Area */

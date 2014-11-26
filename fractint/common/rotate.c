@@ -351,7 +351,7 @@ BYTE olddac0,olddac1,olddac2;
       }
       driver_wait_key_pressed(0);                /* wait for any key */
 
-	  if (driver_diskp())
+      if (driver_diskp())
          dvid_status(0,"");
       g_dac_box[0][0] = olddac0;
       g_dac_box[0][1] = olddac1;

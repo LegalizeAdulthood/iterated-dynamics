@@ -128,8 +128,8 @@ FN(StoSqr0)
 
 int fform_per_pixel(void)
 {
-	_ASSERTE(0 && "fform_per_pixel called.");
-	return 0;
+    _ASSERTE(0 && "fform_per_pixel called.");
+    return 0;
 }
 
 /*
@@ -177,8 +177,8 @@ _fFormula          endp
 */
 int fFormula(void)
 {
-	_ASSERTE(0 && "fFormula called.");
-	return 0;
+    _ASSERTE(0 && "fFormula called.");
+    return 0;
 }
 
 /*
@@ -212,5 +212,5 @@ _Img_Setup         endp
 */
 void Img_Setup(void)
 {
-	_ASSERTE(0 && "Img_Setup called.");
+    _ASSERTE(0 && "Img_Setup called.");
 }

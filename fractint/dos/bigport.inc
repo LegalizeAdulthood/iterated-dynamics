@@ -50,16 +50,16 @@ invoke macro prc,a,b,c,d,e,f,g      ; simple to add more args if necessary
   pushsize = 0
   IRP     x, <g,f,e,d,c,b,a> ;; push in reverse order, C style
      IFNB <x>
-	argsize = size x
+    argsize = size x
         REPT argsize/2
-	   argsize  = argsize  - 2
-	   push  word ptr x + argsize
-	   pushsize = pushsize + 2
+       argsize  = argsize  - 2
+       push  word ptr x + argsize
+       pushsize = pushsize + 2
         ENDM
         IF argsize eq 1    ;; byte
-	   mov   al, x  ;; this is exactly what masm 6 invoke does
-	   push  ax
-	   pushsize = pushsize + 2
+       mov   al, x  ;; this is exactly what masm 6 invoke does
+       push  ax
+       pushsize = pushsize + 2
         ENDIF
      ENDIF
   ENDM

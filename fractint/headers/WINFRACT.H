@@ -1,19 +1,19 @@
 /* file menu items */
 
-#define ID_CANCEL	102
+#define ID_CANCEL   102
 
-#define     IDM_NEW	 100
-#define     IDM_OPEN	 101
-#define     IDM_SAVE	 102
-#define     IDM_SAVEAS	 103
-#define     IDM_PRINT	 104
-#define     IDM_MAPIN	 115
-#define     IDM_MAPOUT	 116
-#define     IDM_3D	 113
-#define     IDM_3DOVER	 114
-#define     IDM_EXIT	 105
-#define     IDM_ABOUT	 106
-#define     IDM_COPY	 117
+#define     IDM_NEW  100
+#define     IDM_OPEN     101
+#define     IDM_SAVE     102
+#define     IDM_SAVEAS   103
+#define     IDM_PRINT    104
+#define     IDM_MAPIN    115
+#define     IDM_MAPOUT   116
+#define     IDM_3D   113
+#define     IDM_3DOVER   114
+#define     IDM_EXIT     105
+#define     IDM_ABOUT    106
+#define     IDM_COPY     117
 #define     IDM_PARFILE  118
 #define     IDM_SAVEPAR  119
 
@@ -21,8 +21,8 @@
 #define     IDM_HELP_KEYBOARD  108
 #define     IDM_HELP_HELP      109
 #define     IDM_HELP_FRACTINT  201
-#define     ID_VERSION	       110
-#define     ID_COMMENT	       111
+#define     ID_VERSION         110
+#define     ID_COMMENT         111
 #define     ID_COMMENT2        112
 #define     ID_COMMENT3        113
 #define     ID_COMMENT4        114
@@ -35,7 +35,7 @@
 #define     ID_FILETITLE       112
 #define     ID_LISTTITLE       112
 
-#define     IDS_STATUS	  340
+#define     IDS_STATUS    340
 
 /* fractal formula stuff */
 
@@ -56,16 +56,16 @@
 #define     IDM_EVOLVER  185
 #define     IDM_MAINMENU 186
 
-#define     ID_GIF89A	113
-#define     ID_GIF87A	114
-#define     ID_BMP	115
+#define     ID_GIF89A   113
+#define     ID_GIF87A   114
+#define     ID_BMP  115
 
 /* Control IDs */
 
 #define     IDC_FILENAME  400
-#define     IDC_EDIT	  401
-#define     IDC_FILES	  402
-#define     IDC_PATH	  403
+#define     IDC_EDIT      401
+#define     IDC_FILES     402
+#define     IDC_PATH      403
 #define     IDC_LISTBOX   404
 
 /* hot-keys (Fractint-compatible accelerator keys) */
@@ -82,22 +82,22 @@
 #define     IDF_HOTCYCLERAND   506
 #define     IDF_HOTCYCLEFAST   507
 #define     IDF_HOTCYCLESLOW   508
-#define     IDF_STATUS	       509
-#define     IDF_IMAGE	       510
+#define     IDF_STATUS         509
+#define     IDF_IMAGE          510
 #define     IDF_FORMULA        511
-#define     IDF_OPEN	       512
-#define     IDF_SAVE	       513
-#define     IDF_3D	       514
-#define     IDF_3DOVER	       515
-#define     IDF_PRINT	       516
+#define     IDF_OPEN           512
+#define     IDF_SAVE           513
+#define     IDF_3D         514
+#define     IDF_3DOVER         515
+#define     IDF_PRINT          516
 #define     IDF_DOODADX        517
 #define     IDF_DOODADY        518
 #define     IDF_DOODADZ        519
-#define     IDF_CYCLE	       520
+#define     IDF_CYCLE          520
 #define     IDF_PARFILE        521
 #define     IDF_SAVEPAR        522
-#define     IDF_MAPIN	       523
-#define     IDF_MAPOUT	       524
+#define     IDF_MAPIN          523
+#define     IDF_MAPOUT         524
 #define     IDF_HOTCYCLELSTEP  525
 #define     IDF_HOTCYCLERSTEP  526
 #define     IDF_IFS3D          527
@@ -111,9 +111,9 @@
 
 /* Math Tools */
 #define     IDM_MATH_TOOLS    1001
-#define     IDM_COORD	      1002
-#define     IDM_ZOOM	      1003
-#define     IDM_SIZING	      1004
+#define     IDM_COORD         1002
+#define     IDM_ZOOM          1003
+#define     IDM_SIZING        1004
 #define     IDM_TRACKING      1005
 /* #define     IDM_ZOOMIN        1006 this is odd!! */
 #define     IDM_ZOOMIN        1060
@@ -125,8 +125,8 @@
 #define     ID_PR_ORIENT  451
 #define     ID_PRO_PORTR  452
 #define     ID_PRO_LANDS  453
-#define     ID_PR_SIZE	  454
-#define     ID_PRS_MAX	  455
+#define     ID_PR_SIZE    454
+#define     ID_PRS_MAX    455
 #define     ID_PRS_MAXSIZ 456
 #define     ID_PRS_CUST   457
 #define     ID_PRS_WIDTH  458
@@ -134,7 +134,7 @@
 /* Windows 3.0 vs 3.1 SDK patch */
 
 #ifndef COLOR_ENDCOLORS
-#define COLOR_ENDCOLORS 	18
+#define COLOR_ENDCOLORS     18
 #endif
 
 int PASCAL WinMain(HINSTANCE, HINSTANCE, LPSTR, int);

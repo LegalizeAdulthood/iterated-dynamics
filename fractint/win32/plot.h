@@ -4,28 +4,28 @@
 typedef struct tagPlot Plot;
 struct tagPlot
 {
-	HINSTANCE instance;
-	char title[120];
-	HWND parent;
+    HINSTANCE instance;
+    char title[120];
+    HWND parent;
 
-	HWND window;
-	HDC memory_dc;
-	HBITMAP rendering;
-	HBITMAP backup;
-	HFONT font;
+    HWND window;
+    HDC memory_dc;
+    HBITMAP rendering;
+    HBITMAP backup;
+    HFONT font;
 
-	BOOL dirty;
-	RECT dirty_region;
-	BITMAPINFO bmi;						/* contains first clut entry too */
-	RGBQUAD bmiColors[255];				/* color look up table */
+    BOOL dirty;
+    RECT dirty_region;
+    BITMAPINFO bmi;                     /* contains first clut entry too */
+    RGBQUAD bmiColors[255];             /* color look up table */
 
-	BYTE *pixels;
-	BYTE *saved_pixels;
-	size_t pixels_len;
-	size_t row_len;
-	int width;
-	int height;
-	unsigned char clut[256][3];
+    BYTE *pixels;
+    BYTE *saved_pixels;
+    size_t pixels_len;
+    size_t row_len;
+    int width;
+    int height;
+    unsigned char clut[256][3];
 };
 
 extern int plot_init(Plot *p, HINSTANCE instance, LPCSTR title);

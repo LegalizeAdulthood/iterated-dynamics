@@ -110,7 +110,7 @@ extern long stackavail();
 #endif /* _WIN32 */
 
 #if defined(_WIN32)
-		/*================================== Win32 definitions */
+        /*================================== Win32 definitions */
         typedef unsigned char  U8;
         typedef signed char    S8;
         typedef unsigned short U16;
@@ -122,7 +122,7 @@ extern long stackavail();
         typedef const void    *VOIDCONSTPTR;
 
         #define CONST          const
-		#define PRINTER        "PRT:"
+        #define PRINTER        "PRT:"
         #define LOBYTEFIRST    1
         #define SLASHC         '\\'
         #define SLASH          "\\"
@@ -137,26 +137,26 @@ extern long stackavail();
         #define write2(ptr,len,n,stream) fwrite(ptr,len,n,stream)
         #define rand15() rand()
 
-		#ifndef BYTE_ORDER
-		/* change for little endians that don't have this defined elsewhere (endian.h) */
-		#ifdef LINUX
-		#define BYTE_ORDER LITTLE_ENDIAN
-		#else
-		#define BYTE_ORDER BIG_ENDIAN /* the usual case */
-		#endif
-		#endif
+        #ifndef BYTE_ORDER
+        /* change for little endians that don't have this defined elsewhere (endian.h) */
+        #ifdef LINUX
+        #define BYTE_ORDER LITTLE_ENDIAN
+        #else
+        #define BYTE_ORDER BIG_ENDIAN /* the usual case */
+        #endif
+        #endif
 
-		#ifndef USE_BIGNUM_C_CODE
-		#define USE_BIGNUM_C_CODE
-		#endif
-		#ifndef BIG_ANSI_C
-		#define BIG_ANSI_C
-		#endif
+        #ifndef USE_BIGNUM_C_CODE
+        #define USE_BIGNUM_C_CODE
+        #endif
+        #ifndef BIG_ANSI_C
+        #define BIG_ANSI_C
+        #endif
 
-		/* TODO: we should refactor this into something better instead of using unix.h */
-		#include "unix.h"
+        /* TODO: we should refactor this into something better instead of using unix.h */
+        #include "unix.h"
 
-		/*================================== Win32 definitions */
+        /*================================== Win32 definitions */
 
 #else
 #ifdef MSDOS            /* Microsoft C 5.1 for OS/2 and MSDOS */
@@ -231,9 +231,9 @@ extern long stackavail();
         #define write2(ptr,len,n,stream) (fputc((*(ptr))&255,stream),fputc((*(ptr))>>8,stream),1)
         #define rand15() (rand()&0x7FFF)
 
-		#define BYTE_ORDER BIG_ENDIAN
-		#define USE_BIGNUM_C_CODE
-		#define BIG_ANSI_C
+        #define BYTE_ORDER BIG_ENDIAN
+        #define USE_BIGNUM_C_CODE
+        #define BIG_ANSI_C
 #  else
 #    ifdef unix                     /* Unix machine */
         typedef unsigned char  U8;
@@ -245,45 +245,45 @@ extern long stackavail();
         typedef unsigned char  BYTE;
         typedef char           CHAR;
 
-		#ifndef __cdecl
-		#define __cdecl
-		#endif
+        #ifndef __cdecl
+        #define __cdecl
+        #endif
 
-		#ifdef __SVR4
-		typedef void          *VOIDPTR;
-		typedef const void    *VOIDCONSTPTR;
-		#else
-		# ifdef BADVOID
-		typedef char          *VOIDPTR;
-		typedef char          *VOIDCONSTPTR;
-		# else
-		typedef void          *VOIDPTR;
-		typedef const void    *VOIDCONSTPTR;
-		# endif
-		#endif
+        #ifdef __SVR4
+        typedef void          *VOIDPTR;
+        typedef const void    *VOIDCONSTPTR;
+        #else
+        # ifdef BADVOID
+        typedef char          *VOIDPTR;
+        typedef char          *VOIDCONSTPTR;
+        # else
+        typedef void          *VOIDPTR;
+        typedef const void    *VOIDCONSTPTR;
+        # endif
+        #endif
 
-		#ifdef __SVR4
-		# include <fcntl.h>
-		typedef void sigfunc(int);
-		#else
-		typedef int sigfunc(int);
-		#endif
+        #ifdef __SVR4
+        # include <fcntl.h>
+        typedef void sigfunc(int);
+        #else
+        typedef int sigfunc(int);
+        #endif
   
-		#ifndef BYTE_ORDER
-		/* change for little endians that don't have this defined elsewhere (endian.h) */
-		#ifdef LINUX
-		#define BYTE_ORDER LITTLE_ENDIAN
-		#else
-		#define BYTE_ORDER BIG_ENDIAN /* the usual case */
-		#endif
-		#endif
+        #ifndef BYTE_ORDER
+        /* change for little endians that don't have this defined elsewhere (endian.h) */
+        #ifdef LINUX
+        #define BYTE_ORDER LITTLE_ENDIAN
+        #else
+        #define BYTE_ORDER BIG_ENDIAN /* the usual case */
+        #endif
+        #endif
 
-		#ifndef USE_BIGNUM_C_CODE
-		#define USE_BIGNUM_C_CODE
-		#endif
-		#ifndef BIG_ANSI_C
-		#define BIG_ANSI_C
-		#endif
+        #ifndef USE_BIGNUM_C_CODE
+        #define USE_BIGNUM_C_CODE
+        #endif
+        #ifndef BIG_ANSI_C
+        #define BIG_ANSI_C
+        #endif
 
 #       define CONST          const
 #       define PRINTER        "/dev/lp"

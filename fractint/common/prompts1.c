@@ -124,24 +124,24 @@ int fullscreen_prompt(  /* full-screen prompting routine */
          find_file_item() opens the file and sets the file pointer to the
          beginning of the entry.
       */
-	if (extrainfo && *extrainfo)
-	{
-		if (fractype == FORMULA || fractype == FFORMULA) {
-			find_file_item(FormFileName, FormName, &scroll_file, 1);
-			in_scrolling_mode = 1;
-			scroll_file_start = ftell(scroll_file);
-		}
-		else if (fractype == LSYSTEM) {
-			find_file_item(LFileName, LName, &scroll_file, 2);
-			in_scrolling_mode = 1;
-			scroll_file_start = ftell(scroll_file);
-		}
-		else if (fractype == IFS || fractype == IFS3D) {
-			find_file_item(IFSFileName, IFSName, &scroll_file, 3);
-			in_scrolling_mode = 1;
-			scroll_file_start = ftell(scroll_file);
-		}
-	}
+    if (extrainfo && *extrainfo)
+    {
+        if (fractype == FORMULA || fractype == FFORMULA) {
+            find_file_item(FormFileName, FormName, &scroll_file, 1);
+            in_scrolling_mode = 1;
+            scroll_file_start = ftell(scroll_file);
+        }
+        else if (fractype == LSYSTEM) {
+            find_file_item(LFileName, LName, &scroll_file, 2);
+            in_scrolling_mode = 1;
+            scroll_file_start = ftell(scroll_file);
+        }
+        else if (fractype == IFS || fractype == IFS3D) {
+            find_file_item(IFSFileName, IFSName, &scroll_file, 3);
+            in_scrolling_mode = 1;
+            scroll_file_start = ftell(scroll_file);
+        }
+    }
 
       /* initialize widest_entry_line and lines_in_entry */
    if (in_scrolling_mode && scroll_file != NULL) {
@@ -308,7 +308,7 @@ int fullscreen_prompt(  /* full-screen prompting routine */
       char buffer[256], *hdgline = buffer;
       /* center each line of heading independently */
       int i;
-	  strcpy(hdgline, hdg);
+      strcpy(hdgline, hdg);
       for (i=0; i<titlelines-1; i++)
       {
          char *next = strchr(hdgline,'\n');
@@ -401,7 +401,7 @@ int fullscreen_prompt(  /* full-screen prompting routine */
                driver_put_string(extrarow+i,0,C_PROMPT_TEXT,blanks);
             driver_put_string(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
          }
-		 /* TODO: rework key interaction to blocking wait */
+         /* TODO: rework key interaction to blocking wait */
         while (!driver_key_pressed()) { }
         done = driver_get_key();
         switch (done) {
@@ -482,7 +482,7 @@ int fullscreen_prompt(  /* full-screen prompting routine */
    /* display footing */
    if (numprompts > 1)
       putstringcenter(instrrow++,0,80,C_PROMPT_BKGRD,
-	  "Use " UPARR1 " and " DNARR1 " to select values to change");
+      "Use " UPARR1 " and " DNARR1 " to select values to change");
    putstringcenter(instrrow+1,0,80,C_PROMPT_BKGRD,
          (helpmode > 0) ? "Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help" : "Press ENTER when finished (or ESCAPE to back out)");
 
@@ -867,7 +867,7 @@ int get_fracttype()             /* prompt for and select fractal type */
       if ((t = select_fracttype(fractype)) < 0)
          break;
       i = select_type_params(t, fractype);
-	  if (i == 0) { /* ok, all done */
+      if (i == 0) { /* ok, all done */
          done = 0;
          break;
          }
@@ -931,9 +931,9 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 
    tname[0] = 0;
    done = fullscreen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
-	   julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
-	   NULL, "Press "FK_F2" for a description of the highlighted type", numtypes,
-	   (char **)choices,attributes,0,0,0,j,NULL,tname,NULL,sel_fractype_help);
+       julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
+       NULL, "Press "FK_F2" for a description of the highlighted type", numtypes,
+       (char **)choices,attributes,0,0,0,j,NULL,tname,NULL,sel_fractype_help);
    if (done >= 0) {
       done = choices[done]->num;
       if ((done == FORMULA || done == FFORMULA) && !strcmp(FormFileName, CommandFile))
@@ -1211,7 +1211,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
    char parmprompt[MAXPARAMS][55];
    static char *trg[] =
    {
-	   "First Function", "Second Function", "Third Function", "Fourth Function"
+       "First Function", "Second Function", "Third Function", "Fourth Function"
    };
    char *filename,*entryname;
    FILE *entryfile;
@@ -1737,7 +1737,7 @@ long get_file_entry(int type,char *title,char *fmask,
       setvbuf(gfe_file,tstack,_IOFBF,4096); /* improves speed when file is big */
       newfile = 0;
       entry_pointer = gfe_choose_entry(type,title,filename,entryname);
-	  if (entry_pointer == -2) {
+      if (entry_pointer == -2) {
          newfile = 1; /* go to file list, */
          continue;    /* back to getafilename */
          }
@@ -1820,7 +1820,7 @@ int scan_entries(FILE * infile, struct entryinfo *choices, char *itemname)
       int c, len;
 top:
       c = skip_white_space(infile, &file_offset);
-	  if (c == ';')
+      if (c == ';')
       {
          c = skip_comment(infile, &file_offset);
          if (c == EOF || c == '\032')
@@ -1928,83 +1928,83 @@ top:
 static long gfe_choose_entry(int type, char *title, char *filename, char *entryname)
 {
 #ifdef XFRACT
-	char *o_instr = "Press "FK_F6" to select file, "FK_F2" for details, "FK_F4" to toggle sort ";
-	/* keep the above line length < 80 characters */
+    char *o_instr = "Press "FK_F6" to select file, "FK_F2" for details, "FK_F4" to toggle sort ";
+    /* keep the above line length < 80 characters */
 #else
-	char *o_instr = "Press "FK_F6" to select different file, "FK_F2" for details, "FK_F4" to toggle sort ";
+    char *o_instr = "Press "FK_F6" to select different file, "FK_F2" for details, "FK_F4" to toggle sort ";
 #endif
-	int numentries, i;
-	char buf[101];
-	struct entryinfo storage[MAXENTRIES + 1];
-	struct entryinfo *choices[MAXENTRIES + 1] = { NULL };
-	int attributes[MAXENTRIES + 1] = { 0 };
-	void (*formatitem)(int, char *);
-	int boxwidth, boxdepth, colwidth;
-	char instr[80];
+    int numentries, i;
+    char buf[101];
+    struct entryinfo storage[MAXENTRIES + 1];
+    struct entryinfo *choices[MAXENTRIES + 1] = { NULL };
+    int attributes[MAXENTRIES + 1] = { 0 };
+    void (*formatitem)(int, char *);
+    int boxwidth, boxdepth, colwidth;
+    char instr[80];
 
-	static int dosort = 1;
+    static int dosort = 1;
 
-	gfe_choices = &choices[0];
-	gfe_title = title;
+    gfe_choices = &choices[0];
+    gfe_title = title;
 
 retry:
-	for (i = 0; i < MAXENTRIES+1; i++)
-	{
-		choices[i] = &storage[i];
-		attributes[i] = 1;
-	}
+    for (i = 0; i < MAXENTRIES+1; i++)
+    {
+        choices[i] = &storage[i];
+        attributes[i] = 1;
+    }
 
-	numentries = 0;
-	helptitle(); /* to display a clue when file big and next is slow */
+    numentries = 0;
+    helptitle(); /* to display a clue when file big and next is slow */
 
-	numentries = scan_entries(gfe_file, &storage[0], NULL);
-	if (numentries == 0)
-	{
-		stopmsg(0, "File doesn't contain any valid entries");
-		fclose(gfe_file);
-		return -2; /* back to file list */
-	}
-	strcpy(instr, o_instr);
-	if (dosort)
-	{
-		strcat(instr, "off");
-		shell_sort((char *) &choices, numentries, sizeof(struct entryinfo *), lccompare);
-	}
-	else
-	{
-		strcat(instr, "on");
-	}
+    numentries = scan_entries(gfe_file, &storage[0], NULL);
+    if (numentries == 0)
+    {
+        stopmsg(0, "File doesn't contain any valid entries");
+        fclose(gfe_file);
+        return -2; /* back to file list */
+    }
+    strcpy(instr, o_instr);
+    if (dosort)
+    {
+        strcat(instr, "off");
+        shell_sort((char *) &choices, numentries, sizeof(struct entryinfo *), lccompare);
+    }
+    else
+    {
+        strcat(instr, "on");
+    }
 
-	strcpy(buf, entryname); /* preset to last choice made */
-	sprintf(temp1, "%s Selection\nFile: %s", title, filename);
-	formatitem = NULL;
-	boxwidth = colwidth = boxdepth = 0;
-	if (type == GETPARM)
-	{
-		formatitem = format_parmfile_line;
-		boxwidth = 1;
-		boxdepth = 16;
-		colwidth = 76;
-	}
+    strcpy(buf, entryname); /* preset to last choice made */
+    sprintf(temp1, "%s Selection\nFile: %s", title, filename);
+    formatitem = NULL;
+    boxwidth = colwidth = boxdepth = 0;
+    if (type == GETPARM)
+    {
+        formatitem = format_parmfile_line;
+        boxwidth = 1;
+        boxdepth = 16;
+        colwidth = 76;
+    }
    
-	i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-		temp1, NULL, instr, numentries, (char **) choices,
-		attributes, boxwidth, boxdepth, colwidth, 0,
-		formatitem, buf, NULL, check_gfe_key);
-	if (i == -FIK_F4)
-	{
-		rewind(gfe_file);
-		dosort = 1-dosort;
-		goto retry;
-	}
-	fclose(gfe_file);
-	if (i < 0)
-	{
-		/* go back to file list or cancel */
-		return (i == -FIK_F6) ? -2 : -1;
-	}
-	strcpy(entryname, choices[i]->name);
-	return choices[i]->point;
+    i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
+        temp1, NULL, instr, numentries, (char **) choices,
+        attributes, boxwidth, boxdepth, colwidth, 0,
+        formatitem, buf, NULL, check_gfe_key);
+    if (i == -FIK_F4)
+    {
+        rewind(gfe_file);
+        dosort = 1-dosort;
+        goto retry;
+    }
+    fclose(gfe_file);
+    if (i < 0)
+    {
+        /* go back to file list or cancel */
+        return (i == -FIK_F6) ? -2 : -1;
+    }
+    strcpy(entryname, choices[i]->name);
+    return choices[i]->point;
 }
 
 
@@ -2074,7 +2074,7 @@ static int check_gfe_key(int curkey,int choice)
 
       {
       driver_put_string(-1,0,C_GENERAL_LO,
-		  "\n\n Use "UPARR1", "DNARR1", "RTARR1", "LTARR1", PgUp, PgDown, Home, and End to scroll text\nAny other key to return to selection list");
+          "\n\n Use "UPARR1", "DNARR1", "RTARR1", "LTARR1", PgUp, PgDown, Home, and End to scroll text\nAny other key to return to selection list");
       }
 
       while (!done) {
@@ -2087,14 +2087,14 @@ static int check_gfe_key(int curkey,int choice)
             driver_put_string(4,0,C_GENERAL_MED,infbuf);
          }
          i = getakeynohelp();
-		 if (i == FIK_DOWN_ARROW		|| i == FIK_CTL_DOWN_ARROW
-                             || i == FIK_UP_ARROW		|| i == FIK_CTL_UP_ARROW
-                             || i == FIK_LEFT_ARROW		|| i == FIK_CTL_LEFT_ARROW
-                             || i == FIK_RIGHT_ARROW	|| i == FIK_CTL_RIGHT_ARROW
-                             || i == FIK_HOME			|| i == FIK_CTL_HOME
-                             || i == FIK_END			|| i == FIK_CTL_END
-                             || i == FIK_PAGE_UP		|| i == FIK_CTL_PAGE_UP
-                             || i == FIK_PAGE_DOWN		|| i == FIK_CTL_PAGE_DOWN) {
+         if (i == FIK_DOWN_ARROW        || i == FIK_CTL_DOWN_ARROW
+                             || i == FIK_UP_ARROW       || i == FIK_CTL_UP_ARROW
+                             || i == FIK_LEFT_ARROW     || i == FIK_CTL_LEFT_ARROW
+                             || i == FIK_RIGHT_ARROW    || i == FIK_CTL_RIGHT_ARROW
+                             || i == FIK_HOME           || i == FIK_CTL_HOME
+                             || i == FIK_END            || i == FIK_CTL_END
+                             || i == FIK_PAGE_UP        || i == FIK_CTL_PAGE_UP
+                             || i == FIK_PAGE_DOWN      || i == FIK_CTL_PAGE_DOWN) {
             switch (i) {
                case FIK_DOWN_ARROW: case FIK_CTL_DOWN_ARROW: /* down one line */
                   if (in_scrolling_mode && top_line < lines_in_entry - 17) {
@@ -2287,7 +2287,7 @@ static void format_parmfile_line(int choice,char *buf)
    while (getc(gfe_file) != '{') { }
    do
    {
-		c = getc(gfe_file);
+        c = getc(gfe_file);
    } while (c == ' ' || c == '\t' || c == ';');
    i = 0;
    while (i < 56 && c != '\n' && c != '\r' && c != EOF && c != '\032') {
@@ -2309,15 +2309,15 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
    int i,k,ret,oldhelpmode;
    struct fullscreenvalues uvalues[20];
    char *ifs3d_prompts[7] =
-	{
-		"X-axis rotation in degrees",
-		"Y-axis rotation in degrees",
-		"Z-axis rotation in degrees",
-		"Perspective distance [1 - 999, 0 for no persp]",
-		"X shift with perspective (positive = right)",
-		"Y shift with perspective (positive = up   )",
-		"Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)"
-	};
+    {
+        "X-axis rotation in degrees",
+        "Y-axis rotation in degrees",
+        "Z-axis rotation in degrees",
+        "Perspective distance [1 - 999, 0 for no persp]",
+        "X shift with perspective (positive = right)",
+        "Y shift with perspective (positive = up   )",
+        "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)"
+    };
 
    driver_stack_screen();
    k = 0;
@@ -2464,7 +2464,7 @@ restart_1:
    {
       if (RAY == 1)
          stopmsg(0, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
-			"the online documentation.");
+            "the online documentation.");
    }
    BRIEF = uvalues[k++].uval.ch.val;
 
@@ -2622,12 +2622,12 @@ restart_1:
 
    if (SPHERE)
       s = "Sphere 3D Parameters\n"
-			"Sphere is on its side; North pole to right\n"
-			"Long. 180 is top, 0 is bottom; Lat. -90 is left, 90 is right";
+            "Sphere is on its side; North pole to right\n"
+            "Long. 180 is top, 0 is bottom; Lat. -90 is left, 90 is right";
    else
       s = "Planar 3D Parameters\n"
-			"Pre-rotation X axis is screen top; Y axis is left side\n"
-			"Pre-rotation Z axis is coming at you out of the screen!";
+            "Pre-rotation X axis is screen top; Y axis is left side\n"
+            "Pre-rotation Z axis is coming at you out of the screen!";
 
    helpmode = HELP3DPARMS;
    k = fullscreen_prompt(s,k,prompts3d,uvalues,0,NULL);
@@ -2801,8 +2801,8 @@ static int check_mapfile()
          oldhelpmode = helpmode;
          helpmode = -1;
          i = field_prompt("Enter name of .MAP file to use,\n"
-				"or '*' to use palette from the image to be loaded.",
-				NULL,temp1,60,NULL);
+                "or '*' to use palette from the image to be loaded.",
+                NULL,temp1,60,NULL);
          helpmode = oldhelpmode;
          if (i < 0)
             return -1;

@@ -32,27 +32,27 @@ struct scancodes
 
 static struct scancodes scancodes[] =
 {
-	{ FIK_ENTER,			"ENTER"     },
-	{ FIK_INSERT,			"INSERT"    },
-	{ FIK_DELETE,			"DELETE"    },
-	{ FIK_ESC,				"ESC"       },
-	{ FIK_TAB,				"TAB"       },
-	{ FIK_PAGE_UP,			"PAGEUP"    },
-	{ FIK_PAGE_DOWN,		"PAGEDOWN"  },
-	{ FIK_HOME,				"HOME"      },
-	{ FIK_END,				"END"       },
-	{ FIK_LEFT_ARROW,		"LEFT"      },
-	{ FIK_RIGHT_ARROW,		"RIGHT"     },
-	{ FIK_UP_ARROW,			"UP"        },
-	{ FIK_DOWN_ARROW,		"DOWN"      },
-	{ FIK_F1,				"F1"        },
-	{ FIK_CTL_RIGHT_ARROW,	"CTRL_RIGHT"},
-	{ FIK_CTL_LEFT_ARROW,	"CTRL_LEFT" },
-	{ FIK_CTL_DOWN_ARROW,	"CTRL_DOWN" },
-	{ FIK_CTL_UP_ARROW,		"CTRL_UP"   },
-	{ FIK_CTL_END,			"CTRL_END"  },
-	{ FIK_CTL_HOME,			"CTRL_HOME" },
-	{ -1,					NULL		}
+    { FIK_ENTER,            "ENTER"     },
+    { FIK_INSERT,           "INSERT"    },
+    { FIK_DELETE,           "DELETE"    },
+    { FIK_ESC,              "ESC"       },
+    { FIK_TAB,              "TAB"       },
+    { FIK_PAGE_UP,          "PAGEUP"    },
+    { FIK_PAGE_DOWN,        "PAGEDOWN"  },
+    { FIK_HOME,             "HOME"      },
+    { FIK_END,              "END"       },
+    { FIK_LEFT_ARROW,       "LEFT"      },
+    { FIK_RIGHT_ARROW,      "RIGHT"     },
+    { FIK_UP_ARROW,         "UP"        },
+    { FIK_DOWN_ARROW,       "DOWN"      },
+    { FIK_F1,               "F1"        },
+    { FIK_CTL_RIGHT_ARROW,  "CTRL_RIGHT"},
+    { FIK_CTL_LEFT_ARROW,   "CTRL_LEFT" },
+    { FIK_CTL_DOWN_ARROW,   "CTRL_DOWN" },
+    { FIK_CTL_UP_ARROW,     "CTRL_UP"   },
+    { FIK_CTL_END,          "CTRL_END"  },
+    { FIK_CTL_HOME,         "CTRL_HOME" },
+    { -1,                   NULL        }
 };
 #define stop sizeof(scancodes)/sizeof(struct scancodes)-1
 
@@ -114,13 +114,13 @@ static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
 
 static void message(int secs, char *buf)
 {
-	char nearbuf[41] = { 0 };
-	strncpy(nearbuf, buf, NUM_OF(nearbuf)-1);
-	showtempmsg_txt(0,0,7,secs,nearbuf);
-	if (showtempmsg(nearbuf) == 0)
+    char nearbuf[41] = { 0 };
+    strncpy(nearbuf, buf, NUM_OF(nearbuf)-1);
+    showtempmsg_txt(0,0,7,secs,nearbuf);
+    if (showtempmsg(nearbuf) == 0)
     {
-		sleep_secs(secs);
-		cleartempmsg();
+        sleep_secs(secs);
+        cleartempmsg();
     }
 }
 
@@ -197,7 +197,7 @@ start:
       if (i < 80)
          buffer[i++] = (char)out;
       out=fgetc(fpss);
-	  if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
+      if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
          break;
    }
    buffer[i] = 0;
@@ -256,7 +256,7 @@ start:
       {
          float fticks;
          err = fscanf(fpss,"%f",&fticks); /* how many ticks to wait */
-		 driver_set_keyboard_timeout((int) (fticks*1000.f));
+         driver_set_keyboard_timeout((int) (fticks*1000.f));
          fticks *= CLK_TCK;             /* convert from seconds to ticks */
          if (err==1)
          {
@@ -315,7 +315,7 @@ void recordshw(int key)
    ticks=clock_ticks();  /* current time */
    if (fpss==NULL)
    {
-	   fpss=fopen(autoname,"w");
+       fpss=fopen(autoname,"w");
       if (fpss==NULL)
          return;
    }
@@ -371,7 +371,7 @@ static void sleep_secs(int secs)
 
 static void slideshowerr(char *msg)
 {
-	char msgbuf[300] = { "Slideshow error:\n" };
+    char msgbuf[300] = { "Slideshow error:\n" };
    stopslideshow();
    strcat(msgbuf,msg);
    stopmsg(0,msgbuf);

@@ -17,8 +17,8 @@
 
 #if !defined(XFRACT)
 struct MP {
-	int Exp;
-	unsigned long Mant;
+    int Exp;
+    unsigned long Mant;
 };
 #else
 struct MP {

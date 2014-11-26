@@ -366,19 +366,19 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
     U32 prod, sum;
 
     sign1 = is_bn_neg(n1);
-	if (sign1 != 0) /* =, not == */
-	{
+    if (sign1 != 0) /* =, not == */
+    {
         neg_a_bn(n1);
-	}
+    }
     samevar = (n1 == n2);
     if (!samevar) /* check to see if they're the same pointer */
-	{
-		sign2 = is_bn_neg(n2);
-		if (sign2 != 0) /* =, not == */
-		{
-			neg_a_bn(n2);
-		}
-	}
+    {
+        sign2 = is_bn_neg(n2);
+        if (sign2 != 0) /* =, not == */
+        {
+            neg_a_bn(n2);
+        }
+    }
 
     n1p = n1;
     steps = bnlength>>1; /* two bytes at a time */
@@ -443,15 +443,15 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 
     bnl = bnlength;
     sign1 = is_bn_neg(n1);
-	if (sign1 != 0) /* =, not == */
+    if (sign1 != 0) /* =, not == */
         neg_a_bn(n1);
     samevar = (n1 == n2);
     if (!samevar) /* check to see if they're the same pointer */
-	{
-		sign2 = is_bn_neg(n2);
-		if (sign2 != 0) /* =, not == */
-			neg_a_bn(n2);
-	}
+    {
+        sign2 = is_bn_neg(n2);
+        if (sign2 != 0) /* =, not == */
+            neg_a_bn(n2);
+    }
     n1p = n1;
     n2 += (bnlength<<1) - rlength;  /* shift n2 over to where it is needed */
 

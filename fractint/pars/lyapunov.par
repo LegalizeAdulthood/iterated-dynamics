@@ -1,5 +1,5 @@
 Blob1              { ; 
-  					 ; moderately slow
+                     ; moderately slow
   reset type=lyapunov corners=2.719/3.178/3.26/3.604 params=65/0.05
   maxiter=25 colors=@gamma1.map
   }
@@ -16,7 +16,7 @@ bug                {
   }
 
 Flames             { ;
- 					 ; merely slow
+                     ; merely slow
   reset type=lyapunov passes=1 corners=3.5/3.2/4.0/3.6/3.2/3.6
   params=60/0.5 maxiter=15
   colors=000FFF<29>x11z00z10<29>zx0zz0zz1<29>zzxzzzzzz<61>zV1zU0zU0zT0<28>z10z\
@@ -30,7 +30,7 @@ Hydra              { ; a two headed snail
   }
 
 Snail1             { ; 
-          			 ; merely slow
+                     ; merely slow
   reset type=lyapunov corners=3.008/3.658667/3.409266/3.897266
   params=32/0.5 maxiter=15
   colors=000F3HG5JG7KI8JI9ML9LJBNLBOLCPMDNNDQPDPNFPQERQFRQGQQGUSGTSHSTHTSIVSJT\
@@ -45,14 +45,14 @@ Snail1             { ;
   }
 
 Snail2             { ;
-					 ; merely slow
+                     ; merely slow
   reset type=lyapunov corners=2.393981/3.620648/2.962111/3.882111
   params=20/0.5 float=y maxiter=15
   colors=@gamma1.map
   }
 
 Swallow            { ; The swallow from the Scientific American article
-					 ; pretty slow
+                     ; pretty slow
   reset type=lyapunov corners=3.8066559/3.8798065/3.809082/3.8639221
   params=0/0.5 maxiter=15 colors=@lyapunov.map
   }

@@ -59,18 +59,18 @@ char    temp_fn[FILE_MAX_PATH];
 int SetColorPaletteName(char * fn)
 {
     if (ValidateLuts(fn) != 0)
-	{
-		return 1;
-	}
+    {
+        return 1;
+    }
     if (mapdacbox == NULL)
-	{
-		mapdacbox = (BYTE *) malloc(768L);
-		if (mapdacbox == NULL)
-		{
-			stopmsg(0, "Insufficient memory for color map.");
-			return 1;
-		}
-	}
+    {
+        mapdacbox = (BYTE *) malloc(768L);
+        if (mapdacbox == NULL)
+        {
+            stopmsg(0, "Insufficient memory for color map.");
+            return 1;
+        }
+    }
     memcpy((char *) mapdacbox, (char *) g_dac_box, 768);
     /* PB, 900829, removed atexit(RestoreMap) stuff, goodbye covers it */
     return 0;

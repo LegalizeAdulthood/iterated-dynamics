@@ -333,7 +333,7 @@ skip_UI:
 #endif
       }
       parmfile = fopen(outname, "wt");
-	  if (parmfile == NULL)
+      if (parmfile == NULL)
       {
          sprintf(buf, "Can't create %s", outname);
          stopmsg(0, buf);
@@ -350,9 +350,9 @@ skip_UI:
                 && sscanf(buf, " %40[^ \t({]", buf2)
                 && stricmp(buf2, CommandName) == 0)
             {                   /* entry with same name */
-			   _snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
-				   CommandName, (*s_makepar == 0) ?
-				   "... Replacing ..." : "Continue to replace it, Cancel to back out");
+               _snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
+                   CommandName, (*s_makepar == 0) ?
+                   "... Replacing ..." : "Continue to replace it, Cancel to back out");
                if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
                {                /* cancel */
                   fclose(infile);
@@ -377,7 +377,7 @@ skip_UI:
          else
             have3rd = 0;
          fpbat = dir_fopen(workdir,"makemig.bat", "w");
-		 if (fpbat == NULL)
+         if (fpbat == NULL)
             xm = ym = 0;
          pdelx  = (xxmax - xx3rd) / (xm * pxdots - 1);   /* calculate stepsizes */
          pdely  = (yymax - yy3rd) / (ym * pydots - 1);
@@ -477,10 +477,10 @@ skip_UI:
 
       if (gotinfile)
       {                         /* copy the rest of the file */
-		  do
-		  {
-			i = file_gets(buf, 255, infile);
-		  } while (i == 0); /* skip blanks */
+          do
+          {
+            i = file_gets(buf, 255, infile);
+          } while (i == 0); /* skip blanks */
          while (i >= 0)
          {
             fputs(buf, parmfile);
@@ -545,7 +545,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
         put_parm("=%d",g_release);
 
       sptr = curfractalspecific->name;
-	  if (*sptr == '*') ++sptr;
+      if (*sptr == '*') ++sptr;
       put_parm( " %s=%s", "type",sptr);
 
       if (fractype == JULIBROT || fractype == JULIBROTFP)
@@ -1193,10 +1193,10 @@ static void put_filename(char *keyword,char *fname)
    char *p;
    if (*fname && !endswithslash(fname)) {
       if ((p = strrchr(fname, SLASHC)) != NULL)
-	  {
-		  fname = p+1;
-		  if (*fname == 0) return;
-	  }
+      {
+          fname = p+1;
+          if (*fname == 0) return;
+      }
       put_parm(" %s=%s",keyword,fname);
       }
 }
@@ -1481,7 +1481,7 @@ static void put_bf(int slash,bf_t r, int prec)
 #if 0
 void edit_text_colors()
 {
-	/* TODO: make this work for a driver situation */
+    /* TODO: make this work for a driver situation */
    int save_debugflag,save_lookatmouse;
    int row,col,bkgrd;
    int rowf,colf,rowt,colt;
@@ -1571,109 +1571,109 @@ static int modes_changed;
 
 int select_video_mode(int curmode)
 {
-	int entnums[MAXVIDEOMODES];
-	int attributes[MAXVIDEOMODES];
-	int i,k,ret;
+    int entnums[MAXVIDEOMODES];
+    int attributes[MAXVIDEOMODES];
+    int i,k,ret;
 #ifndef XFRACT
-	int oldtabmode,oldhelpmode;
+    int oldtabmode,oldhelpmode;
 #endif
 
-	for (i = 0; i < g_video_table_len; ++i)  /* init tables */
-	{
-		entnums[i] = i;
-		attributes[i] = 1;
-	}
-	entsptr = entnums;           /* for indirectly called subroutines */
+    for (i = 0; i < g_video_table_len; ++i)  /* init tables */
+    {
+        entnums[i] = i;
+        attributes[i] = 1;
+    }
+    entsptr = entnums;           /* for indirectly called subroutines */
 
-	qsort(entnums,g_video_table_len,sizeof(entnums[0]),entcompare); /* sort modes */
+    qsort(entnums,g_video_table_len,sizeof(entnums[0]),entcompare); /* sort modes */
 
-	/* pick default mode */
-	if (curmode < 0)
-	{
-		g_video_entry.videomodeax = 19;  /* vga */
+    /* pick default mode */
+    if (curmode < 0)
+    {
+        g_video_entry.videomodeax = 19;  /* vga */
         g_video_entry.colors = 256;
     }
-	else
-	{
-		memcpy((char *) &g_video_entry, (char *) &g_video_table[curmode], sizeof(g_video_entry));
-	}
-#ifndef XFRACT
-	for (i = 0; i < g_video_table_len; ++i)  /* find default mode */
-	{
-		if (g_video_entry.videomodeax == g_video_table[entnums[i]].videomodeax &&
-			g_video_entry.colors      == g_video_table[entnums[i]].colors &&
-			(curmode < 0 ||
-			 memcmp((char *) &g_video_entry, (char *) &g_video_table[entnums[i]], sizeof(g_video_entry)) == 0))
-		{
-			break;
-		}
+    else
+    {
+        memcpy((char *) &g_video_entry, (char *) &g_video_table[curmode], sizeof(g_video_entry));
     }
-	if (i >= g_video_table_len) /* no match, default to first entry */
-	{
-		i = 0;
-	}
+#ifndef XFRACT
+    for (i = 0; i < g_video_table_len; ++i)  /* find default mode */
+    {
+        if (g_video_entry.videomodeax == g_video_table[entnums[i]].videomodeax &&
+            g_video_entry.colors      == g_video_table[entnums[i]].colors &&
+            (curmode < 0 ||
+             memcmp((char *) &g_video_entry, (char *) &g_video_table[entnums[i]], sizeof(g_video_entry)) == 0))
+        {
+            break;
+        }
+    }
+    if (i >= g_video_table_len) /* no match, default to first entry */
+    {
+        i = 0;
+    }
 
-	oldtabmode = tabmode;
-	oldhelpmode = helpmode;
-	modes_changed = 0;
-	tabmode = 0;
-	helpmode = HELPVIDSEL;
-	i = fullscreen_choice(CHOICE_HELP,
-		"Select Video Mode",
-		"key...name.......................xdot..ydot.colr.driver......comment......",
-		NULL, g_video_table_len, NULL, attributes,
-		1, 16, 74, i, format_vid_table, NULL, NULL, check_modekey);
-	tabmode = oldtabmode;
-	helpmode = oldhelpmode;
-	if (i == -1)
-	{
-		/* update fractint.cfg for new key assignments */
-		if (modes_changed && g_bad_config == 0 &&
-			stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER | STOPMSG_INFO_ONLY,
-				"Save new function key assignments or cancel changes?") == 0)
-		{
-			update_fractint_cfg();
-		}
-		return -1;
-	}
-	/* picked by function key or ENTER key */
-	i = (i < 0) ? (-1 - i) : entnums[i];
+    oldtabmode = tabmode;
+    oldhelpmode = helpmode;
+    modes_changed = 0;
+    tabmode = 0;
+    helpmode = HELPVIDSEL;
+    i = fullscreen_choice(CHOICE_HELP,
+        "Select Video Mode",
+        "key...name.......................xdot..ydot.colr.driver......comment......",
+        NULL, g_video_table_len, NULL, attributes,
+        1, 16, 74, i, format_vid_table, NULL, NULL, check_modekey);
+    tabmode = oldtabmode;
+    helpmode = oldhelpmode;
+    if (i == -1)
+    {
+        /* update fractint.cfg for new key assignments */
+        if (modes_changed && g_bad_config == 0 &&
+            stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER | STOPMSG_INFO_ONLY,
+                "Save new function key assignments or cancel changes?") == 0)
+        {
+            update_fractint_cfg();
+        }
+        return -1;
+    }
+    /* picked by function key or ENTER key */
+    i = (i < 0) ? (-1 - i) : entnums[i];
 #endif
-	/* the selected entry now in g_video_entry */
-	memcpy((char *) &g_video_entry, (char *) &g_video_table[i], sizeof(g_video_entry));  
+    /* the selected entry now in g_video_entry */
+    memcpy((char *) &g_video_entry, (char *) &g_video_table[i], sizeof(g_video_entry));  
 
 #ifndef XFRACT
-	/* copy fractint.cfg table to resident table, note selected entry */
-	k = 0;
-	for (i = 0; i < g_video_table_len; ++i)
-	{
-		if (g_video_table[i].keynum > 0)
-		{
-			if (memcmp((char *)&g_video_entry,(char *)&g_video_table[i],
-							sizeof(g_video_entry)) == 0)
-			{
-				k = g_video_table[i].keynum;
-			}
+    /* copy fractint.cfg table to resident table, note selected entry */
+    k = 0;
+    for (i = 0; i < g_video_table_len; ++i)
+    {
+        if (g_video_table[i].keynum > 0)
+        {
+            if (memcmp((char *)&g_video_entry,(char *)&g_video_table[i],
+                            sizeof(g_video_entry)) == 0)
+            {
+                k = g_video_table[i].keynum;
+            }
         }
     }
 #else
-	k = g_video_table[0].keynum;
+    k = g_video_table[0].keynum;
 #endif
-	ret = k;
-	if (k == 0)  /* selected entry not a copied (assigned to key) one */
-	{
-		memcpy((char *)&g_video_table[MAXVIDEOMODES-1],
-					(char *)&g_video_entry,sizeof(*g_video_table));
-		ret = 1400; /* special value for check_vidmode_key */
+    ret = k;
+    if (k == 0)  /* selected entry not a copied (assigned to key) one */
+    {
+        memcpy((char *)&g_video_table[MAXVIDEOMODES-1],
+                    (char *)&g_video_entry,sizeof(*g_video_table));
+        ret = 1400; /* special value for check_vidmode_key */
     }
 
-	/* update fractint.cfg for new key assignments */
-	if (modes_changed && g_bad_config == 0)
-	{
-		update_fractint_cfg();
-	}
+    /* update fractint.cfg for new key assignments */
+    if (modes_changed && g_bad_config == 0)
+    {
+        update_fractint_cfg();
+    }
 
-	return ret;
+    return ret;
 }
 
 void format_vid_table(int choice,char *buf)
@@ -1752,7 +1752,7 @@ static int entcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
 
 static void update_fractint_cfg()
 {
-	extern int g_cfg_line_nums[];
+    extern int g_cfg_line_nums[];
 #ifndef XFRACT
    char cfgname[100],outname[100],buf[121],kname[5];
    FILE *cfgfile,*outfile;
@@ -1800,7 +1800,7 @@ static void update_fractint_cfg()
             }
          buf[i] = 0;
          truecolorbits = vident.dotmode/1000;
-		 if (truecolorbits == 0)
+         if (truecolorbits == 0)
             sprintf(colorsbuf,"%3d",vident.colors);
          else 
             sprintf(colorsbuf,"%3s",
@@ -1846,306 +1846,306 @@ static void update_fractint_cfg()
 
 void make_mig(unsigned int xmult, unsigned int ymult)
 {
-	unsigned int xstep, ystep;
-	unsigned int xres, yres;
-	unsigned int allxres, allyres, xtot, ytot;
-	unsigned int xloc, yloc;
-	unsigned char ichar;
-	unsigned int allitbl, itbl;
-	unsigned int i;
-	char gifin[15], gifout[15];
-	int errorflag, inputerrorflag;
-	unsigned char *temp;
-	FILE *out, *in;
+    unsigned int xstep, ystep;
+    unsigned int xres, yres;
+    unsigned int allxres, allyres, xtot, ytot;
+    unsigned int xloc, yloc;
+    unsigned char ichar;
+    unsigned int allitbl, itbl;
+    unsigned int i;
+    char gifin[15], gifout[15];
+    int errorflag, inputerrorflag;
+    unsigned char *temp;
+    FILE *out, *in;
 
-	errorflag = 0;                          /* no errors so */
-	inputerrorflag = 0;
-	allxres = allyres = allitbl = 0;
-	out = in = NULL;
+    errorflag = 0;                          /* no errors so */
+    inputerrorflag = 0;
+    allxres = allyres = allitbl = 0;
+    out = in = NULL;
 
-	strcpy(gifout,"fractmig.gif");
+    strcpy(gifout,"fractmig.gif");
 
-	temp= &olddacbox[0][0];                 /* a safe place for our temp data */
+    temp= &olddacbox[0][0];                 /* a safe place for our temp data */
 
-	gif87a_flag = 1;                        /* for now, force this */
+    gif87a_flag = 1;                        /* for now, force this */
 
-	/* process each input image, one at a time */
-	for (ystep = 0; ystep < ymult; ystep++)
-	{
-		for (xstep = 0; xstep < xmult; xstep++)
-		{
-			if (xstep == 0 && ystep == 0)          /* first time through? */
-			{
-				printf(" \n Generating multi-image GIF file %s using", gifout);
-				printf(" %d X and %d Y components\n\n", xmult, ymult);
-				/* attempt to create the output file */
-				out = fopen(gifout,"wb");
-				if (out == NULL)
-				{
-					printf("Cannot create output file %s!\n", gifout);
-					exit(1);
-				}
-			}
-
-			sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
-
-			in = fopen(gifin,"rb");
-			if (in == NULL)
-			{
-				printf("Can't open file %s!\n", gifin);
-				exit(1);
-            }
-
-			/* (read, but only copy this if it's the first time through) */
-			if (fread(temp,13,1,in) != 1)   /* read the header and LDS */
-			{
-				inputerrorflag = 1;
-			}
-			memcpy(&xres, &temp[6], 2);     /* X-resolution */
-			memcpy(&yres, &temp[8], 2);     /* Y-resolution */
-
-			if (xstep == 0 && ystep == 0)  /* first time through? */
-			{
-				allxres = xres;             /* save the "master" resolution */
-				allyres = yres;
-				xtot = xres * xmult;        /* adjust the image size */
-				ytot = yres * ymult;
-				memcpy(&temp[6], &xtot, 2);
-				memcpy(&temp[8], &ytot, 2);
-				if (gif87a_flag)
-				{
-					temp[3] = '8';
-					temp[4] = '7';
-					temp[5] = 'a';
+    /* process each input image, one at a time */
+    for (ystep = 0; ystep < ymult; ystep++)
+    {
+        for (xstep = 0; xstep < xmult; xstep++)
+        {
+            if (xstep == 0 && ystep == 0)          /* first time through? */
+            {
+                printf(" \n Generating multi-image GIF file %s using", gifout);
+                printf(" %d X and %d Y components\n\n", xmult, ymult);
+                /* attempt to create the output file */
+                out = fopen(gifout,"wb");
+                if (out == NULL)
+                {
+                    printf("Cannot create output file %s!\n", gifout);
+                    exit(1);
                 }
-				temp[12] = 0; /* reserved */
-				if (fwrite(temp,13,1,out) != 1)     /* write out the header */
-				{
-					errorflag = 1;
-				}
-			}                           /* end of first-time-through */
-
-			ichar = (char)(temp[10] & 0x07);        /* find the color table size */
-			itbl = 1 << (++ichar);
-			ichar = (char)(temp[10] & 0x80);        /* is there a global color table? */
-			if (xstep == 0 && ystep == 0)   /* first time through? */
-			{
-				allitbl = itbl;             /* save the color table size */
-			}
-			if (ichar != 0)                /* yup */
-			{
-				/* (read, but only copy this if it's the first time through) */
-				if (fread(temp,3*itbl,1,in) != 1)    /* read the global color table */
-				{
-					inputerrorflag = 2;
-				}
-				if (xstep == 0 && ystep == 0)       /* first time through? */
-				{
-					if (fwrite(temp,3*itbl,1,out) != 1)     /* write out the GCT */
-					{
-						errorflag = 2;
-					}
-				}
-			}
-
-			if (xres != allxres || yres != allyres || itbl != allitbl)
-			{
-				/* Oops - our pieces don't match */
-				printf("File %s doesn't have the same resolution as its predecessors!\n", gifin);
-				exit(1);
             }
 
-			for (;;)                       /* process each information block */
-			{
-				memset(temp,0,10);
-				if (fread(temp,1,1,in) != 1)    /* read the block identifier */
-				{
-					inputerrorflag = 3;
-				}
+            sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
 
-				if (temp[0] == 0x2c)           /* image descriptor block */
-				{
-					if (fread(&temp[1],9,1,in) != 1)    /* read the Image Descriptor */
-					{
-						inputerrorflag = 4;
-					}
-					memcpy(&xloc, &temp[1], 2); /* X-location */
-					memcpy(&yloc, &temp[3], 2); /* Y-location */
-					xloc += (xstep * xres);     /* adjust the locations */
-					yloc += (ystep * yres);
-					memcpy(&temp[1], &xloc, 2);
-					memcpy(&temp[3], &yloc, 2);
-					if (fwrite(temp,10,1,out) != 1)     /* write out the Image Descriptor */
-					{
-						errorflag = 4;
-					}
+            in = fopen(gifin,"rb");
+            if (in == NULL)
+            {
+                printf("Can't open file %s!\n", gifin);
+                exit(1);
+            }
 
-					ichar = (char)(temp[9] & 0x80);     /* is there a local color table? */
-					if (ichar != 0)            /* yup */
-					{
-						if (fread(temp,3*itbl,1,in) != 1)       /* read the local color table */
-						{
-							inputerrorflag = 5;
-						}
-						if (fwrite(temp,3*itbl,1,out) != 1)     /* write out the LCT */
-						{
-							errorflag = 5;
-						}
-					}
+            /* (read, but only copy this if it's the first time through) */
+            if (fread(temp,13,1,in) != 1)   /* read the header and LDS */
+            {
+                inputerrorflag = 1;
+            }
+            memcpy(&xres, &temp[6], 2);     /* X-resolution */
+            memcpy(&yres, &temp[8], 2);     /* Y-resolution */
 
-					if (fread(temp,1,1,in) != 1)        /* LZH table size */
-					{
-						inputerrorflag = 6;
-					}
-					if (fwrite(temp,1,1,out) != 1)
-					{
-						errorflag = 6;
-					}
-					for (;;)
-					{
-						if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
-						{
-							break;
-						}
-						if (fread(temp,1,1,in) != 1)    /* block size */
-						{
-							inputerrorflag = 7;
-						}
-						if (fwrite(temp,1,1,out) != 1)
-						{
-							errorflag = 7;
-						}
-						i = temp[0];
-						if (i == 0)
-						{
-							break;
-						}
-						if (fread(temp,i,1,in) != 1)    /* LZH data block */
-						{
-							inputerrorflag = 8;
-						}
-						if (fwrite(temp,i,1,out) != 1)
-						{
-							errorflag = 8;
-						}
-					}
-				}
+            if (xstep == 0 && ystep == 0)  /* first time through? */
+            {
+                allxres = xres;             /* save the "master" resolution */
+                allyres = yres;
+                xtot = xres * xmult;        /* adjust the image size */
+                ytot = yres * ymult;
+                memcpy(&temp[6], &xtot, 2);
+                memcpy(&temp[8], &ytot, 2);
+                if (gif87a_flag)
+                {
+                    temp[3] = '8';
+                    temp[4] = '7';
+                    temp[5] = 'a';
+                }
+                temp[12] = 0; /* reserved */
+                if (fwrite(temp,13,1,out) != 1)     /* write out the header */
+                {
+                    errorflag = 1;
+                }
+            }                           /* end of first-time-through */
 
-				if (temp[0] == 0x21)           /* extension block */
-				{
-					/* (read, but only copy this if it's the last time through) */
-					if (fread(&temp[2],1,1,in) != 1)    /* read the block type */
-					{
-						inputerrorflag = 9;
-					}
-					if ((!gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
-					{
-						if (fwrite(temp,2,1,out) != 1)
-						{
-							errorflag = 9;
-						}
-					}
-					for (;;)
-					{
-						if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
-						{
-							break;
-						}
-						if (fread(temp,1,1,in) != 1)    /* block size */
-						{
-							inputerrorflag = 10;
-						}
-						if ((!gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
-						{
-							if (fwrite(temp,1,1,out) != 1)
-							{
-								errorflag = 10;
-							}
-						}
-						i = temp[0];
-						if (i == 0)
-						{
-							break;
-						}
-						if (fread(temp,i,1,in) != 1)    /* data block */
-						{
-							inputerrorflag = 11;
-						}
-						if ((!gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
-						{
-							if (fwrite(temp,i,1,out) != 1)
-							{
-								errorflag = 11;
-							}
-						}
-					}
-				}
+            ichar = (char)(temp[10] & 0x07);        /* find the color table size */
+            itbl = 1 << (++ichar);
+            ichar = (char)(temp[10] & 0x80);        /* is there a global color table? */
+            if (xstep == 0 && ystep == 0)   /* first time through? */
+            {
+                allitbl = itbl;             /* save the color table size */
+            }
+            if (ichar != 0)                /* yup */
+            {
+                /* (read, but only copy this if it's the first time through) */
+                if (fread(temp,3*itbl,1,in) != 1)    /* read the global color table */
+                {
+                    inputerrorflag = 2;
+                }
+                if (xstep == 0 && ystep == 0)       /* first time through? */
+                {
+                    if (fwrite(temp,3*itbl,1,out) != 1)     /* write out the GCT */
+                    {
+                        errorflag = 2;
+                    }
+                }
+            }
 
-				if (temp[0] == 0x3b)           /* end-of-stream indicator */
-				{
-					break;                      /* done with this file */
-				}
+            if (xres != allxres || yres != allyres || itbl != allitbl)
+            {
+                /* Oops - our pieces don't match */
+                printf("File %s doesn't have the same resolution as its predecessors!\n", gifin);
+                exit(1);
+            }
 
-				if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
-				{
-					break;
-				}
-			}
-			fclose(in);                     /* done with an input GIF */
+            for (;;)                       /* process each information block */
+            {
+                memset(temp,0,10);
+                if (fread(temp,1,1,in) != 1)    /* read the block identifier */
+                {
+                    inputerrorflag = 3;
+                }
 
-			if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
-			{
-				break;
-			}
-		}
+                if (temp[0] == 0x2c)           /* image descriptor block */
+                {
+                    if (fread(&temp[1],9,1,in) != 1)    /* read the Image Descriptor */
+                    {
+                        inputerrorflag = 4;
+                    }
+                    memcpy(&xloc, &temp[1], 2); /* X-location */
+                    memcpy(&yloc, &temp[3], 2); /* Y-location */
+                    xloc += (xstep * xres);     /* adjust the locations */
+                    yloc += (ystep * yres);
+                    memcpy(&temp[1], &xloc, 2);
+                    memcpy(&temp[3], &yloc, 2);
+                    if (fwrite(temp,10,1,out) != 1)     /* write out the Image Descriptor */
+                    {
+                        errorflag = 4;
+                    }
 
-		if (errorflag != 0 || inputerrorflag != 0)  /* oops - did something go wrong? */
-		{
-			break;
-		}
-	}
+                    ichar = (char)(temp[9] & 0x80);     /* is there a local color table? */
+                    if (ichar != 0)            /* yup */
+                    {
+                        if (fread(temp,3*itbl,1,in) != 1)       /* read the local color table */
+                        {
+                            inputerrorflag = 5;
+                        }
+                        if (fwrite(temp,3*itbl,1,out) != 1)     /* write out the LCT */
+                        {
+                            errorflag = 5;
+                        }
+                    }
 
-	temp[0] = 0x3b;                 /* end-of-stream indicator */
-	if (fwrite(temp,1,1,out) != 1)
-	{
-		errorflag = 12;
-	}
-	fclose(out);                    /* done with the output GIF */
+                    if (fread(temp,1,1,in) != 1)        /* LZH table size */
+                    {
+                        inputerrorflag = 6;
+                    }
+                    if (fwrite(temp,1,1,out) != 1)
+                    {
+                        errorflag = 6;
+                    }
+                    for (;;)
+                    {
+                        if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
+                        {
+                            break;
+                        }
+                        if (fread(temp,1,1,in) != 1)    /* block size */
+                        {
+                            inputerrorflag = 7;
+                        }
+                        if (fwrite(temp,1,1,out) != 1)
+                        {
+                            errorflag = 7;
+                        }
+                        i = temp[0];
+                        if (i == 0)
+                        {
+                            break;
+                        }
+                        if (fread(temp,i,1,in) != 1)    /* LZH data block */
+                        {
+                            inputerrorflag = 8;
+                        }
+                        if (fwrite(temp,i,1,out) != 1)
+                        {
+                            errorflag = 8;
+                        }
+                    }
+                }
 
-	if (inputerrorflag != 0)       /* uh-oh - something failed */
-	{
-		printf("\007 Process failed = early EOF on input file %s\n", gifin);
-		/* following line was for debugging
-			printf("inputerrorflag = %d\n", inputerrorflag);
-		*/
+                if (temp[0] == 0x21)           /* extension block */
+                {
+                    /* (read, but only copy this if it's the last time through) */
+                    if (fread(&temp[2],1,1,in) != 1)    /* read the block type */
+                    {
+                        inputerrorflag = 9;
+                    }
+                    if ((!gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
+                    {
+                        if (fwrite(temp,2,1,out) != 1)
+                        {
+                            errorflag = 9;
+                        }
+                    }
+                    for (;;)
+                    {
+                        if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
+                        {
+                            break;
+                        }
+                        if (fread(temp,1,1,in) != 1)    /* block size */
+                        {
+                            inputerrorflag = 10;
+                        }
+                        if ((!gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
+                        {
+                            if (fwrite(temp,1,1,out) != 1)
+                            {
+                                errorflag = 10;
+                            }
+                        }
+                        i = temp[0];
+                        if (i == 0)
+                        {
+                            break;
+                        }
+                        if (fread(temp,i,1,in) != 1)    /* data block */
+                        {
+                            inputerrorflag = 11;
+                        }
+                        if ((!gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
+                        {
+                            if (fwrite(temp,i,1,out) != 1)
+                            {
+                                errorflag = 11;
+                            }
+                        }
+                    }
+                }
+
+                if (temp[0] == 0x3b)           /* end-of-stream indicator */
+                {
+                    break;                      /* done with this file */
+                }
+
+                if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
+                {
+                    break;
+                }
+            }
+            fclose(in);                     /* done with an input GIF */
+
+            if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
+            {
+                break;
+            }
+        }
+
+        if (errorflag != 0 || inputerrorflag != 0)  /* oops - did something go wrong? */
+        {
+            break;
+        }
     }
 
-	if (errorflag != 0)            /* uh-oh - something failed */
-	{
-		printf("\007 Process failed = out of disk space?\n");
-		/* following line was for debugging
-			printf("errorflag = %d\n", errorflag);
-		*/
-	}
+    temp[0] = 0x3b;                 /* end-of-stream indicator */
+    if (fwrite(temp,1,1,out) != 1)
+    {
+        errorflag = 12;
+    }
+    fclose(out);                    /* done with the output GIF */
 
-	/* now delete each input image, one at a time */
-	if (errorflag == 0 && inputerrorflag == 0)
-	{
-		for (ystep = 0; ystep < ymult; ystep++)
-		{
-			for (xstep = 0; xstep < xmult; xstep++)
-			{
-				sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
-				remove(gifin);
-			}
-		}
-	}
+    if (inputerrorflag != 0)       /* uh-oh - something failed */
+    {
+        printf("\007 Process failed = early EOF on input file %s\n", gifin);
+        /* following line was for debugging
+            printf("inputerrorflag = %d\n", inputerrorflag);
+        */
+    }
 
-	/* tell the world we're done */
-	if (errorflag == 0 && inputerrorflag == 0)
-	{
-		printf("File %s has been created (and its component files deleted)\n", gifout);
-	}
+    if (errorflag != 0)            /* uh-oh - something failed */
+    {
+        printf("\007 Process failed = out of disk space?\n");
+        /* following line was for debugging
+            printf("errorflag = %d\n", errorflag);
+        */
+    }
+
+    /* now delete each input image, one at a time */
+    if (errorflag == 0 && inputerrorflag == 0)
+    {
+        for (ystep = 0; ystep < ymult; ystep++)
+        {
+            for (xstep = 0; xstep < xmult; xstep++)
+            {
+                sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
+                remove(gifin);
+            }
+        }
+    }
+
+    /* tell the world we're done */
+    if (errorflag == 0 && inputerrorflag == 0)
+    {
+        printf("File %s has been created (and its component files deleted)\n", gifout);
+    }
 }
 
 /* This routine copies the current screen to by flipping x-axis, y-axis,
@@ -2350,8 +2350,8 @@ static char *expand_var(char *var, char *buf)
    }
    else
    {
-	   char buff[80];
-	   _snprintf(buff, NUM_OF(buff), "Unknown comment variable %s", var);
+       char buff[80];
+       _snprintf(buff, NUM_OF(buff), "Unknown comment variable %s", var);
       stopmsg(0,buff);
       out = "";
    }

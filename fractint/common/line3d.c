@@ -1739,9 +1739,9 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
    /* EB & DG: open "grid" opject, a speedy way to do aggregates in rayshade */
    if (RAY == 5)
       fprintf(File_Ptr1,
-	    "/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
-		"/* make z grid = 1 always for landscapes. */\n\n"
-		"grid 33 25 1\n");
+        "/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
+        "/* make z grid = 1 always for landscapes. */\n\n"
+        "grid 33 25 1\n");
 
    if (RAY == 6)
       fprintf(File_Ptr1, "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
@@ -1884,8 +1884,8 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
       {
          fprintf(File_Ptr1,
                  "  TEXTURE\n"
-				 "   COLOR  RED% #4.4f GREEN% #4.4f BLUE% #4.4f\n"
-				 "      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n",
+                 "   COLOR  RED% #4.4f GREEN% #4.4f BLUE% #4.4f\n"
+                 "      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n",
                  c[0], c[1], c[2]);
       }
       fprintf(File_Ptr1, "  COLOR  F_Dflt  END_OBJECT");

@@ -258,7 +258,7 @@ REB004N = {; Ron Barnett [70153,1233]
    z = pixel*(x - 1/sqr(x) + p2), |z| <= 100
    }
 
-REB005A	= {; Ron Barnett [70153,1233]
+REB005A = {; Ron Barnett [70153,1233]
               ; floating point required
    ; try p1 = 0.77, fn1 = ident, fn2 = ident
    z = pixel:

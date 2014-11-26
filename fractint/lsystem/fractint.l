@@ -233,14 +233,14 @@ Pentagram { ; created by Adrian Mariano
 
 
 QuadKoch { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	   ; Quadratic Koch island, Figure 1.7a p.9
+       ; Quadratic Koch island, Figure 1.7a p.9
   angle 4
   AXIOM F-F-F-F-
   F=F+FF-FF-F-F+F+FF-F-F+F+FF+FF-F
   }
 
 Fass1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	; FASS curve (3x3 tiles form macrotile), Figure 1.16a p.17
+    ; FASS curve (3x3 tiles form macrotile), Figure 1.16a p.17
   axiom -l
   angle 4
   L=LF+RFR+FL-F-LFLFL-FRFR+
@@ -248,7 +248,7 @@ Fass1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   }
 
 Fass2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	; FASS curve (4x4 tiles form macrotile), Figure 1.16b p.17
+    ; FASS curve (4x4 tiles form macrotile), Figure 1.16b p.17
   angle 4
   axiom -l
   L=LFLF+RFR+FLFL-FRF-LFL-FR+F+RF-LFL-FRFRFR+
@@ -256,7 +256,7 @@ Fass2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   }
 
 QuadGosper { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	     ; Quadratic Gosper curve, Figure 1.11b p.12
+         ; Quadratic Gosper curve, Figure 1.11b p.12
   angle 4
   axiom -Fr
   l=FlFl-Fr-Fr+Fl+Fl-Fr-FrFl+Fr+FlFlFr-Fl+Fr+FlFl+Fr-FlFr-Fr-Fl+Fl+FrFr-
@@ -265,29 +265,29 @@ QuadGosper { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   }
 
 Plant01 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	 ; Plant-like structure, figure 1.24a p.25
-	 ; also p.285a The Science of Fractal Images
+     ; Plant-like structure, figure 1.24a p.25
+     ; also p.285a The Science of Fractal Images
   angle 14
   axiom f
   f=F[+F]F[-F]F
   }
 
 Plant02 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	 ; Plant-like structure, figure 1.24b p.25
+     ; Plant-like structure, figure 1.24b p.25
   angle 18
   axiom f
   f=F[+F]F[-F][F]
   }
 
 Plant03 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	 ; Plant-like structure, figure 1.24c p.25
+     ; Plant-like structure, figure 1.24c p.25
   angle 16
   axiom f
   f=FF-[-F+F+F]+[+F-F-F]
   }
 
 Plant04 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	 ; Plant-like structure, figure 1.24d p.25
+     ; Plant-like structure, figure 1.24d p.25
   angle 18
   axiom x
   X=F[+X]F[-X]+X
@@ -295,7 +295,7 @@ Plant04 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   }
 
 Plant05 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	 ; Plant-like structure, figure 1.24e p.25
+     ; Plant-like structure, figure 1.24e p.25
   angle 14
   axiom x
   X=f[+X][-X]FX
@@ -303,7 +303,7 @@ Plant05 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   }
 
 Plant06 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	 ; Plant-like structure, figure 1.24f p.25
+     ; Plant-like structure, figure 1.24f p.25
   angle 16
   axiom x
   X=F-[[X]+X]+F[+FX]-X
@@ -331,7 +331,7 @@ Plant11 { ; Adrian Mariano
    }
 
 Curve1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	 ; curve from figure 1.9a p.10
+     ; curve from figure 1.9a p.10
   angle 4
   axiom F-F-F-F-
   f=FF-F-F-F-F-F+F
@@ -344,7 +344,7 @@ Curve2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   }
 
 Curve3 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	 ; curve from figure 1.9e p.10
+     ; curve from figure 1.9e p.10
   axiom F-F-F-F-
   angle 4
   F=F-FF--F-F
@@ -358,7 +358,7 @@ Curve4 { ; Adrian Mariano
    }
 
 Leaf1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	; Compound leaf with alternating branches, Figure 5.12b p.130
+    ; Compound leaf with alternating branches, Figure 5.12b p.130
   angle 8
   axiom x
   a=n
@@ -375,7 +375,7 @@ Leaf1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   }
 
 Leaf2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-	; Compound leaf with alternating branches, Figure 5.12a p.130
+    ; Compound leaf with alternating branches, Figure 5.12a p.130
   angle 8
   axiom a
   a=f[+x]fb

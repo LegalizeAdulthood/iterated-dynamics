@@ -117,7 +117,7 @@ int86(0x10,&regs,&regs);
 int readvideo(int x, int y)
 {
 #if defined(_WIN32)
-	return -1;
+    return -1;
 #else
 union REGS regs;
 

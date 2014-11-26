@@ -39,13 +39,13 @@ void showcornersdbl(char *s)
 {
    char msg[400];
    sprintf(msg,"%s\n"
-		"xxmin= %.20f xxmax= %.20f\n"
-		"yymin= %.20f yymax= %.20f\n"
-		"xx3rd= %.20f yy3rd= %.20f\n"
-		"delxx= %.20Lf delyy= %.20Lf\n"
-		"delx2= %.20Lf dely2= %.20Lf",
-		s,xxmin,xxmax,yymin,yymax,xx3rd,yy3rd,
-		delxx, delyy,delxx2, delyy2);
+        "xxmin= %.20f xxmax= %.20f\n"
+        "yymin= %.20f yymax= %.20f\n"
+        "xx3rd= %.20f yy3rd= %.20f\n"
+        "delxx= %.20Lf delyy= %.20Lf\n"
+        "delx2= %.20Lf dely2= %.20Lf",
+        s,xxmin,xxmax,yymin,yymax,xx3rd,yy3rd,
+        delxx, delyy,delxx2, delyy2);
    if (stopmsg(0,msg)==-1)
       goodbye();
 }

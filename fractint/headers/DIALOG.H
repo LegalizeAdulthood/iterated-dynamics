@@ -1,13 +1,13 @@
 
 /* fractal image stuff */
 
-#define     IDM_SIZE1	 151
-#define     IDM_SIZE2	 152
-#define     IDM_SIZE3	 153
-#define     IDM_SIZE4	 154
-#define     IDM_ITER1	 161
-#define     IDM_ITER2	 162
-#define     IDM_ITER3	 163
+#define     IDM_SIZE1    151
+#define     IDM_SIZE2    152
+#define     IDM_SIZE3    153
+#define     IDM_SIZE4    154
+#define     IDM_ITER1    161
+#define     IDM_ITER2    162
+#define     IDM_ITER3    163
 
 /* fractal formula stuff */
 
@@ -40,18 +40,18 @@
 
 /* window sizing stuff */
 
-#define     ID_ISIZE	   250
-#define     ID_ISIZE1	   251
-#define     ID_ISIZE2	   252
-#define     ID_ISIZE3	   253
-#define     ID_ISIZE4	   254
-#define     ID_ISIZE5	   255
-#define     ID_ISIZE6	   256
-#define     ID_ISIZE7	   257
-#define     ID_ISIZE8	   258
-#define     ID_ISIZEX	   259
-#define     ID_ISIZEY	   260
-#define     ID_ICOLORS	   270
+#define     ID_ISIZE       250
+#define     ID_ISIZE1      251
+#define     ID_ISIZE2      252
+#define     ID_ISIZE3      253
+#define     ID_ISIZE4      254
+#define     ID_ISIZE5      255
+#define     ID_ISIZE6      256
+#define     ID_ISIZE7      257
+#define     ID_ISIZE8      258
+#define     ID_ISIZEX      259
+#define     ID_ISIZEY      260
+#define     ID_ICOLORS     270
 #define     ID_ICOLORS1    271
 #define     ID_ICOLORS2    272
 #define     ID_ICOLORS3    273
@@ -60,25 +60,25 @@
 
 #define     ID_DEBUGFLAG   290
 
-#define     ID_PASS	   300
-#define     ID_PASS1	   301
-#define     ID_PASS2	   302
-#define     ID_PASSG	   303
-#define     ID_PASSB	   304
-#define     ID_PASST	   305
-#define     ID_PASSD	   306
-#define     ID_PASSO	   307
+#define     ID_PASS    300
+#define     ID_PASS1       301
+#define     ID_PASS2       302
+#define     ID_PASSG       303
+#define     ID_PASSB       304
+#define     ID_PASST       305
+#define     ID_PASSD       306
+#define     ID_PASSO       307
 
-#define     ID_MATHF	   310
+#define     ID_MATHF       310
 
-#define     ID_MAXIT	   320
+#define     ID_MAXIT       320
 
 #define     ID_BIOMORPH    330
 
-#define     ID_DECOMP	   340
+#define     ID_DECOMP      340
 
-#define     ID_INSIDE	   345
-#define     ID_INSIDE2	   356
+#define     ID_INSIDE      345
+#define     ID_INSIDE2     356
 
 #define     ID_INSIDEC     346
 #define     ID_INSIDEM     347
@@ -91,8 +91,8 @@
 #define     ID_INSIDEAT    354
 #define     ID_INSIDEFM    355
 
-#define     ID_OUTSIDE	   360
-#define     ID_OUTSIDE2	   370
+#define     ID_OUTSIDE     360
+#define     ID_OUTSIDE2    370
 
 #define     ID_OUTSIDEN    361
 #define     ID_OUTSIDEIT   362
@@ -111,7 +111,7 @@
 
 /* extended options and doodads menu */
 
-#define     ID_FINITE	   300
+#define     ID_FINITE      300
 
 #define     ID_POTENTMAX   310
 #define     ID_POTENTSLOPE 311
@@ -149,9 +149,9 @@
 /* Color-Cycling stuff */
 
 #define     ID_CYCLEOFF    330
-#define     ID_CYCLEON	   331
+#define     ID_CYCLEON     331
 #define     ID_CYCLEOUT    332
-#define     ID_CYCLEIN	   333
+#define     ID_CYCLEIN     333
 #define     ID_CYCLESTAT   334
 #define     ID_CYCLECHG    335
 #define     ID_CYCLELOW    336
@@ -159,22 +159,22 @@
 #define     ID_CYCLEHIGH   338
 
 /* 3D stuff */
-#define     ID_PREVIEW	   201
-#define     ID_SHOWBOX	   202
+#define     ID_PREVIEW     201
+#define     ID_SHOWBOX     202
 #define     ID_SPHERICAL   203
 #define     ID_PREVIEWFACTOR 204
-#define     ID_STEREO1	   241
-#define     ID_STEREO2	   242
-#define     ID_STEREO3	   243
-#define     ID_STEREO4	   244
-#define     ID_FILL1	   211
-#define     ID_FILL2	   212
-#define     ID_FILL3	   213
-#define     ID_FILL4	   214
-#define     ID_FILL5	   215
-#define     ID_FILL6	   216
-#define     ID_FILL7	   217
-#define     ID_FILL8	   218
+#define     ID_STEREO1     241
+#define     ID_STEREO2     242
+#define     ID_STEREO3     243
+#define     ID_STEREO4     244
+#define     ID_FILL1       211
+#define     ID_FILL2       212
+#define     ID_FILL3       213
+#define     ID_FILL4       214
+#define     ID_FILL5       215
+#define     ID_FILL6       216
+#define     ID_FILL7       217
+#define     ID_FILL8       218
 #define     ID_RAY0        220
 #define     ID_RAY1        221
 #define     ID_RAY2        222
@@ -186,21 +186,21 @@
 #define     ID_RAYN        228
 #define     ID_TARGA       231
 
-#define     ID_ANS1	   201
-#define     ID_ANS2	   202
-#define     ID_ANS3	   203
-#define     ID_ANS4	   204
-#define     ID_ANS5	   205
-#define     ID_ANS6	   206
-#define     ID_ANS7	   207
-#define     ID_ANS8	   208
-#define     ID_ANS9	   209
-#define     ID_ANS10	   210
-#define     ID_ANS11	   211
-#define     ID_ANS12	   212
-#define     ID_ANS13	   213
-#define     ID_ANS14	   214
-#define     ID_ANS15	   215
+#define     ID_ANS1    201
+#define     ID_ANS2    202
+#define     ID_ANS3    203
+#define     ID_ANS4    204
+#define     ID_ANS5    205
+#define     ID_ANS6    206
+#define     ID_ANS7    207
+#define     ID_ANS8    208
+#define     ID_ANS9    209
+#define     ID_ANS10       210
+#define     ID_ANS11       211
+#define     ID_ANS12       212
+#define     ID_ANS13       213
+#define     ID_ANS14       214
+#define     ID_ANS15       215
 
 /* generic fullscreen stuff */
 
@@ -247,12 +247,12 @@
 
 /* status box */
 
-#define     IDS_LINE1	  341
-#define     IDS_LINE2	  342
-#define     IDS_LINE3	  343
-#define     IDS_LINE4	  344
-#define     IDS_LINE5	  345
-#define     IDS_LINE6	  346
-#define     IDS_LINE7	  347
-#define     IDS_LINE8	  348
-#define     IDS_LINE9	  349
+#define     IDS_LINE1     341
+#define     IDS_LINE2     342
+#define     IDS_LINE3     343
+#define     IDS_LINE4     344
+#define     IDS_LINE5     345
+#define     IDS_LINE6     346
+#define     IDS_LINE7     347
+#define     IDS_LINE8     348
+#define     IDS_LINE9     349

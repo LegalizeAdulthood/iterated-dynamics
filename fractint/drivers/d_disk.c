@@ -52,17 +52,17 @@
 
 /* external variables (set in the FRACTINT.CFG file, but findable here */
 
-extern	int	dotmode;		/* video access method (= 19)	   */
-extern	int	sxdots, sydots; 	/* total # of dots on the screen   */
-extern	int	sxoffs, syoffs; 	/* offset of drawing area          */
-extern	int	colors; 		/* maximum colors available	   */
-extern	int	g_init_mode;
-extern	int	g_adapter;
-extern	int	g_got_real_dac;
-extern	int	inside_help;
-extern  float	finalaspectratio;
-extern  float	screenaspect;
-extern	int	lookatmouse;
+extern  int dotmode;        /* video access method (= 19)      */
+extern  int sxdots, sydots;     /* total # of dots on the screen   */
+extern  int sxoffs, syoffs;     /* offset of drawing area          */
+extern  int colors;         /* maximum colors available    */
+extern  int g_init_mode;
+extern  int g_adapter;
+extern  int g_got_real_dac;
+extern  int inside_help;
+extern  float   finalaspectratio;
+extern  float   screenaspect;
+extern  int lookatmouse;
 
 extern VIDEOINFO g_video_table[];
 
@@ -80,7 +80,7 @@ extern void fpe_handler();
 
 #ifdef FPUERR
 static void continue_hdl(int sig, int code, struct sigcontext *scp,
-	char *addr);
+    char *addr);
 #endif
 
 #define DEFX 640
@@ -99,17 +99,17 @@ extern void Cursor_SetPos();
 
 #define DRAW_INTERVAL 6
 
-  extern void (*dotwrite)(int, int, int);	/* write-a-dot routine */
-  extern int (*dotread)(int, int); 	/* read-a-dot routine */
-extern void (*linewrite)(void);		/* write-a-line routine */
-extern void (*lineread)(void);		/* read-a-line routine */
+  extern void (*dotwrite)(int, int, int);   /* write-a-dot routine */
+  extern int (*dotread)(int, int);  /* read-a-dot routine */
+extern void (*linewrite)(void);     /* write-a-line routine */
+extern void (*lineread)(void);      /* read-a-line routine */
 
 extern void normalineread(void);
 extern void normaline(void);
 
 static VIDEOINFO disk_info = {
   "xfractint mode           ","                         ",
-  999, 0,	 0,   0,   0,	19, 640, 480,  256
+  999, 0,    0,   0,   0,   19, 640, 480,  256
 };
 
 #define MAXSCREENS 3
@@ -135,7 +135,7 @@ struct tagDriverDisk {
   int pixtab[256];
   int ipixtab[256];
 
-  int xbufkey;		/* Buffered X key */
+  int xbufkey;      /* Buffered X key */
 
   unsigned char *fontPtr;
 
@@ -150,13 +150,13 @@ struct tagDriverDisk {
  *
  * check_arg --
  *
- *	See if we want to do something with the argument.
+ *  See if we want to do something with the argument.
  *
  * Results:
- *	Returns 1 if we parsed the argument.
+ *  Returns 1 if we parsed the argument.
  *
  * Side effects:
- *	Increments i if we use more than 1 argument.
+ *  Increments i if we use more than 1 argument.
  *
  *----------------------------------------------------------------------
  */
@@ -181,13 +181,13 @@ check_arg(DriverDisk *di, int argc, char **argv, int *i)
  *
  * disk_terminate --
  *
- *	Cleanup windows and stuff.
+ *  Cleanup windows and stuff.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Cleans up.
+ *  Cleans up.
  *
  *----------------------------------------------------------------------
  */
@@ -212,18 +212,18 @@ disk_terminate(Driver *drv)
  * Put something nice in the dac.
  *
  * The conditions are:
- *	Colors 1 and 2 should be bright so ifs fractals show up.
- *	Color 15 should be bright for lsystem.
- *	Color 1 should be bright for bifurcation.
- *	Colors 1, 2, 3 should be distinct for periodicity.
- *	The color map should look good for mandelbrot.
- *	The color map should be good if only 128 colors are used.
+ *  Colors 1 and 2 should be bright so ifs fractals show up.
+ *  Color 15 should be bright for lsystem.
+ *  Color 1 should be bright for bifurcation.
+ *  Colors 1, 2, 3 should be distinct for periodicity.
+ *  The color map should look good for mandelbrot.
+ *  The color map should be good if only 128 colors are used.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Loads the dac.
+ *  Loads the dac.
  *
  *----------------------------------------------------------------------
  */
@@ -245,13 +245,13 @@ initdacbox()
  *
  * disk_init --
  *
- *	Initialize the windows and stuff.
+ *  Initialize the windows and stuff.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Initializes windows.
+ *  Initializes windows.
  *
  *----------------------------------------------------------------------
  */
@@ -320,7 +320,7 @@ disk_init(Driver *drv, int *argc, char **argv)
     copied = 0;
     for (i = 0; i < count; i++)
       if (! check_arg(di, i, argv, &i))
-	argv[copied++] = argv_copy[i];
+    argv[copied++] = argv_copy[i];
     *argc = copied;
   }
 
@@ -334,15 +334,15 @@ disk_init(Driver *drv, int *argc, char **argv)
  *
  * continue_hdl --
  *
- *	Handle an IEEE fpu error.
- *	This routine courtesy of Ulrich Hermes
- *	<hermes@olymp.informatik.uni-dortmund.de>
+ *  Handle an IEEE fpu error.
+ *  This routine courtesy of Ulrich Hermes
+ *  <hermes@olymp.informatik.uni-dortmund.de>
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Clears flag.
+ *  Clears flag.
  *
  *----------------------------------------------------------------------
  */
@@ -351,9 +351,9 @@ continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 {
   int i;
   char out[20];
-  /*		if you want to get all messages enable this statement.    */
+  /*        if you want to get all messages enable this statement.    */
   /*  printf("ieee exception code %x occurred at pc %X\n", code, scp->sc_pc); */
-  /*	clear all excaption flags					  */
+  /*    clear all excaption flags                     */
   i = ieee_flags("clear", "exception", "all", out);
 }
 #endif
@@ -382,14 +382,14 @@ disk_resize(Driver *drv)
 /*----------------------------------------------------------------------
  * disk_read_palette
  *
- *	Reads the current video palette into g_dac_box.
- *	
+ *  Reads the current video palette into g_dac_box.
+ *  
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Fills in g_dac_box.
+ *  Fills in g_dac_box.
  *
  *----------------------------------------------------------------------
  */
@@ -412,14 +412,14 @@ disk_read_palette(Driver *drv)
  *----------------------------------------------------------------------
  *
  * disk_write_palette --
- *	Writes g_dac_box into the video palette.
- *	
+ *  Writes g_dac_box into the video palette.
+ *  
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Changes the displayed colors.
+ *  Changes the displayed colors.
  *
  *----------------------------------------------------------------------
  */
@@ -447,7 +447,7 @@ disk_start_video(Driver *drv)
 static int
 disk_end_video(Driver *drv)
 {
-  return 0;				/* set flag: video ended */
+  return 0;             /* set flag: video ended */
 }
 
 
@@ -456,13 +456,13 @@ disk_end_video(Driver *drv)
  *
  * setredrawscreen --
  *
- *	Set the screen refresh flag
+ *  Set the screen refresh flag
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Sets the flag.
+ *  Sets the flag.
  *
  *----------------------------------------------------------------------
  */
@@ -477,13 +477,13 @@ setredrawscreen(void)
  *
  * disk_schedule_alarm --
  *
- *	Start the refresh alarm
+ *  Start the refresh alarm
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Starts the alarm.
+ *  Starts the alarm.
  *
  *----------------------------------------------------------------------
  */
@@ -504,13 +504,13 @@ disk_schedule_alarm(Driver *drv, int soon)
  *
  * disk_write_pixel --
  *
- *	Write a point to the screen
+ *  Write a point to the screen
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Draws point.
+ *  Draws point.
  *
  *----------------------------------------------------------------------
  */
@@ -525,13 +525,13 @@ disk_write_pixel(Driver *drv, int x, int y, int color)
  *
  * disk_read_pixel --
  *
- *	Read a point from the screen
+ *  Read a point from the screen
  *
  * Results:
- *	Value of point.
+ *  Value of point.
  *
  * Side effects:
- *	None.
+ *  None.
  *
  *----------------------------------------------------------------------
  */
@@ -546,13 +546,13 @@ disk_read_pixel(Driver *drv, int x, int y)
  *
  * disk_write_span --
  *
- *	Write a line of pixels to the screen.
+ *  Write a line of pixels to the screen.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Draws pixels.
+ *  Draws pixels.
  *
  *----------------------------------------------------------------------
  */
@@ -571,13 +571,13 @@ disk_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
  *
  * disk_read_span --
  *
- *	Reads a line of pixels from the screen.
+ *  Reads a line of pixels from the screen.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Gets pixels
+ *  Gets pixels
  *
  *----------------------------------------------------------------------
  */
@@ -608,13 +608,13 @@ disk_draw_line(Driver *drv, int x1, int y1, int x2, int y2)
  *
  * getachar --
  *
- *	Gets a character.
+ *  Gets a character.
  *
  * Results:
- *	Key.
+ *  Key.
  *
  * Side effects:
- *	Reads key.
+ *  Reads key.
  *
  *----------------------------------------------------------------------
  */
@@ -639,14 +639,14 @@ getachar(DriverDisk *di)
  *
  * translatekey --
  *
- *	Translate an input key into MSDOS format.  The purpose of this
- *	routine is to do the mappings like U -> PAGE_UP.
+ *  Translate an input key into MSDOS format.  The purpose of this
+ *  routine is to do the mappings like U -> PAGE_UP.
  *
  * Results:
- *	New character;
+ *  New character;
  *
  * Side effects:
- *	None.
+ *  None.
  *
  *----------------------------------------------------------------------
  */
@@ -657,44 +657,44 @@ translatekey(int ch)
     return ch;
   else {
     switch (ch) {
-    case 'I':		return FIK_INSERT;
-    case 'D':		return FIK_DELETE;
-    case 'U':		return FIK_PAGE_UP;
-    case 'N':		return FIK_PAGE_DOWN;
-    case CTL('O'):	return FIK_CTL_HOME;
-    case CTL('E'):	return FIK_CTL_END;
-    case 'H':		return FIK_LEFT_ARROW;
-    case 'L':		return FIK_RIGHT_ARROW;
-    case 'K':		return FIK_UP_ARROW;
-    case 'J':		return FIK_DOWN_ARROW;
-    case 1115:		return FIK_LEFT_ARROW_2;
-    case 1116:		return FIK_RIGHT_ARROW_2;
-    case 1141:		return FIK_UP_ARROW_2;
-    case 1145:		return FIK_DOWN_ARROW_2;
-    case 'O':		return FIK_HOME;
-    case 'E':		return FIK_END;
-    case '\n':		return FIK_ENTER;
-    case CTL('T'):	return FIK_CTL_ENTER;
-    case -2:		return FIK_CTL_ENTER_2;
-    case CTL('U'):	return FIK_CTL_PAGE_UP;
-    case CTL('N'):	return FIK_CTL_PAGE_DOWN;
-    case '{':		return FIK_CTL_MINUS;
-    case '}':		return FIK_CTL_PLUS;
+    case 'I':       return FIK_INSERT;
+    case 'D':       return FIK_DELETE;
+    case 'U':       return FIK_PAGE_UP;
+    case 'N':       return FIK_PAGE_DOWN;
+    case CTL('O'):  return FIK_CTL_HOME;
+    case CTL('E'):  return FIK_CTL_END;
+    case 'H':       return FIK_LEFT_ARROW;
+    case 'L':       return FIK_RIGHT_ARROW;
+    case 'K':       return FIK_UP_ARROW;
+    case 'J':       return FIK_DOWN_ARROW;
+    case 1115:      return FIK_LEFT_ARROW_2;
+    case 1116:      return FIK_RIGHT_ARROW_2;
+    case 1141:      return FIK_UP_ARROW_2;
+    case 1145:      return FIK_DOWN_ARROW_2;
+    case 'O':       return FIK_HOME;
+    case 'E':       return FIK_END;
+    case '\n':      return FIK_ENTER;
+    case CTL('T'):  return FIK_CTL_ENTER;
+    case -2:        return FIK_CTL_ENTER_2;
+    case CTL('U'):  return FIK_CTL_PAGE_UP;
+    case CTL('N'):  return FIK_CTL_PAGE_DOWN;
+    case '{':       return FIK_CTL_MINUS;
+    case '}':       return FIK_CTL_PLUS;
 #if 0
       /* we need ^I for tab */
-    case CTL('I'):	return FIK_CTL_INSERT;
+    case CTL('I'):  return FIK_CTL_INSERT;
 #endif
-    case CTL('D'):	return FIK_CTL_DEL;
-    case '!':		return FIK_F1;
-    case '@':		return FIK_F2;
-    case '#':		return FIK_F3;
-    case '$':		return FIK_F4;
-    case '%':		return FIK_F5;
-    case '^':		return FIK_F6;
-    case '&':		return FIK_F7;
-    case '*':		return FIK_F8;
-    case '(':		return FIK_F9;
-    case ')':		return FIK_F10;
+    case CTL('D'):  return FIK_CTL_DEL;
+    case '!':       return FIK_F1;
+    case '@':       return FIK_F2;
+    case '#':       return FIK_F3;
+    case '$':       return FIK_F4;
+    case '%':       return FIK_F5;
+    case '^':       return FIK_F6;
+    case '&':       return FIK_F7;
+    case '*':       return FIK_F8;
+    case '(':       return FIK_F9;
+    case ')':       return FIK_F10;
     default:
       return ch;
     }
@@ -705,14 +705,14 @@ translatekey(int ch)
  *
  * handleesc --
  *
- *	Handle an escape key.  This may be an escape key sequence
- *	indicating a function key was pressed.
+ *  Handle an escape key.  This may be an escape key sequence
+ *  indicating a function key was pressed.
  *
  * Results:
- *	Key.
+ *  Key.
  *
  * Side effects:
- *	Reads keys.
+ *  Reads keys.
  *
  *----------------------------------------------------------------------
  */
@@ -808,7 +808,7 @@ handleesc(DriverDisk *di)
     delay(250); /* Wait 1/4 sec to see if a control sequence follows */
     ch1 = getachar(di);
   }
-  if (ch1 != '[')		/* See if we have esc [ */
+  if (ch1 != '[')       /* See if we have esc [ */
     return FIK_ESC;
   ch1 = getachar(di);
   if (ch1 == -1) {
@@ -818,13 +818,13 @@ handleesc(DriverDisk *di)
   if (ch1 == -1)
     return FIK_ESC;
   switch (ch1) {
-  case 'A':		/* esc [ A */
+  case 'A':     /* esc [ A */
     return FIK_UP_ARROW;
-  case 'B':		/* esc [ B */
+  case 'B':     /* esc [ B */
     return FIK_DOWN_ARROW;
-  case 'C':		/* esc [ C */
+  case 'C':     /* esc [ C */
     return FIK_RIGHT_ARROW;
-  case 'D':		/* esc [ D */
+  case 'D':     /* esc [ D */
     return FIK_LEFT_ARROW;
   default:
     break;
@@ -834,15 +834,15 @@ handleesc(DriverDisk *di)
     delay(250); /* Wait 1/4 sec to see if a control sequence follows */
     ch2 = getachar(di);
   }
-  if (ch2 == '~') {		/* esc [ ch1 ~ */
+  if (ch2 == '~') {     /* esc [ ch1 ~ */
     switch (ch1) {
-    case '2':		/* esc [ 2 ~ */
+    case '2':       /* esc [ 2 ~ */
       return FIK_INSERT;
-    case '3':		/* esc [ 3 ~ */
+    case '3':       /* esc [ 3 ~ */
       return FIK_DELETE;
-    case '5':		/* esc [ 5 ~ */
+    case '5':       /* esc [ 5 ~ */
       return FIK_PAGE_UP;
-    case '6':		/* esc [ 6 ~ */
+    case '6':       /* esc [ 6 ~ */
       return FIK_PAGE_DOWN;
     default:
       return FIK_ESC;
@@ -855,40 +855,40 @@ handleesc(DriverDisk *di)
       delay(250); /* Wait 1/4 sec to see if a control sequence follows */
       ch3 = getachar(di);
     }
-    if (ch3 != '~') {	/* esc [ ch1 ch2 ~ */
+    if (ch3 != '~') {   /* esc [ ch1 ch2 ~ */
       return FIK_ESC;
     }
     if (ch1 == '1') {
       switch (ch2) {
-      case '1':	/* esc [ 1 1 ~ */
-	return FIK_F1;
-      case '2':	/* esc [ 1 2 ~ */
-	return FIK_F2;
-      case '3':	/* esc [ 1 3 ~ */
-	return FIK_F3;
-      case '4':	/* esc [ 1 4 ~ */
-	return FIK_F4;
-      case '5':	/* esc [ 1 5 ~ */
-	return FIK_F5;
-      case '6':	/* esc [ 1 6 ~ */
-	return FIK_F6;
-      case '7':	/* esc [ 1 7 ~ */
-	return FIK_F7;
-      case '8':	/* esc [ 1 8 ~ */
-	return FIK_F8;
-      case '9':	/* esc [ 1 9 ~ */
-	return FIK_F9;
+      case '1': /* esc [ 1 1 ~ */
+    return FIK_F1;
+      case '2': /* esc [ 1 2 ~ */
+    return FIK_F2;
+      case '3': /* esc [ 1 3 ~ */
+    return FIK_F3;
+      case '4': /* esc [ 1 4 ~ */
+    return FIK_F4;
+      case '5': /* esc [ 1 5 ~ */
+    return FIK_F5;
+      case '6': /* esc [ 1 6 ~ */
+    return FIK_F6;
+      case '7': /* esc [ 1 7 ~ */
+    return FIK_F7;
+      case '8': /* esc [ 1 8 ~ */
+    return FIK_F8;
+      case '9': /* esc [ 1 9 ~ */
+    return FIK_F9;
       default:
-	return FIK_ESC;
+    return FIK_ESC;
       }
     } else if (ch1 == '2') {
       switch (ch2) {
-      case '0':	/* esc [ 2 0 ~ */
-	return FIK_F10;
-      case '8':	/* esc [ 2 8 ~ */
-	return FIK_F1;  /* HELP */
+      case '0': /* esc [ 2 0 ~ */
+    return FIK_F10;
+      case '8': /* esc [ 2 8 ~ */
+    return FIK_F1;  /* HELP */
       default:
-	return FIK_ESC;
+    return FIK_ESC;
       }
     } else {
       return FIK_ESC;
@@ -902,13 +902,13 @@ handleesc(DriverDisk *di)
  *
  * disk_redraw --
  *
- *	Refresh the screen.
+ *  Refresh the screen.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Redraws the screen.
+ *  Redraws the screen.
  *
  *----------------------------------------------------------------------
  */
@@ -922,15 +922,15 @@ disk_redraw(Driver *drv)
  *
  * disk_get_key --
  *
- *	Get a key from the keyboard or the X server.
- *	Blocks if block = 1.
+ *  Get a key from the keyboard or the X server.
+ *  Blocks if block = 1.
  *
  * Results:
- *	Key, or 0 if no key and not blocking.
- *	Times out after .5 second.
+ *  Key, or 0 if no key and not blocking.
+ *  Times out after .5 second.
  *
  * Side effects:
- *	Processes X events.
+ *  Processes X events.
  *
  *----------------------------------------------------------------------
  */
@@ -974,7 +974,7 @@ disk_get_key(Driver *drv, int block)
 
       status = select(1, &reads, NULL, NULL, &tout);
       if (status <= 0)
-	return 0;
+    return 0;
     }
   }
 
@@ -1034,13 +1034,13 @@ disk_window(Driver *drv)
  *
  * shell_to_dos --
  *
- *	Exit to a unix shell.
+ *  Exit to a unix shell.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Goes to shell
+ *  Goes to shell
  *
  *----------------------------------------------------------------------
  */
@@ -1187,10 +1187,10 @@ disk_put_string(Driver *drv, int row, int col, int attr, const char *msg)
       char *ptr;
       ptr = strchr(msg,'\n');
       if (ptr == NULL) {
-	waddstr(di->curwin,msg);
-	break;
+    waddstr(di->curwin,msg);
+    break;
       } else
-	waddch(di->curwin,*msg);
+    waddch(di->curwin,*msg);
     }
     msg++;
   }
@@ -1290,14 +1290,14 @@ disk_stack_screen(Driver *drv)
     {
       WINDOW **ptr = (WINDOW **) malloc(sizeof(WINDOW *));
       if (ptr) {
-	*ptr = di->curwin;
-	di->savescreen[i] = (BYTE *) ptr;
-	di->curwin = newwin(0, 0, 0, 0);
-	touchwin(di->curwin);
-	wrefresh(di->curwin);
+    *ptr = di->curwin;
+    di->savescreen[i] = (BYTE *) ptr;
+    di->curwin = newwin(0, 0, 0, 0);
+    touchwin(di->curwin);
+    wrefresh(di->curwin);
       } else {
-	stopmsg(STOPMSG_NO_STACK,msg);
-	exit(1);
+    stopmsg(STOPMSG_NO_STACK,msg);
+    exit(1);
       }
     }
     disk_set_clear(drv);
@@ -1376,24 +1376,24 @@ disk_diskp(Driver *drv)
 
 static DriverDisk disk_driver_info = {
   STD_DRIVER_STRUCT(disk),
-  NULL,					/* term */
-  NULL,					/* curwin */
-  0,					/* simple_input */
-  NULL,					/* Xgeometry */
-  0,					/* old_fcntl */
-  0,					/* alarmon */
-  0,					/* doredraw */
-  DEFX, DEFY,				/* width, height */
-  -1,					/* xlastcolor */
-  NULL,					/* pixbuf */
-  { 0 },				/* cols */
-  { 0 },				/* pixtab */
-  { 0 },				/* ipixtab */
-  0,					/* xbufkey */
-  NULL,					/* fontPtr */
-  0,					/* screenctr */
-  { 0 },				/* savescreen */
-  { 0 }					/* saverc */
+  NULL,                 /* term */
+  NULL,                 /* curwin */
+  0,                    /* simple_input */
+  NULL,                 /* Xgeometry */
+  0,                    /* old_fcntl */
+  0,                    /* alarmon */
+  0,                    /* doredraw */
+  DEFX, DEFY,               /* width, height */
+  -1,                   /* xlastcolor */
+  NULL,                 /* pixbuf */
+  { 0 },                /* cols */
+  { 0 },                /* pixtab */
+  { 0 },                /* ipixtab */
+  0,                    /* xbufkey */
+  NULL,                 /* fontPtr */
+  0,                    /* screenctr */
+  { 0 },                /* savescreen */
+  { 0 }                 /* saverc */
 };
 
 Driver *disk_driver = &disk_driver_info.pub;

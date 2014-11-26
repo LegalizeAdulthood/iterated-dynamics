@@ -14,9 +14,9 @@
  *
  * xxx086 --
  *
- *	Simulate integer math routines using floating point.
- *	This will of course slow things down, so this should all be
- *	changed at some point.
+ *  Simulate integer math routines using floating point.
+ *  This will of course slow things down, so this should all be
+ *  changed at some point.
  *
  *----------------------------------------------------------------------
  */
@@ -43,8 +43,8 @@ void FPUcplxdiv(_CMPLX *x, _CMPLX *y, _CMPLX *z)
     double mod, tx, yxmod, yymod;
     mod = y->x * y->x + y->y * y->y;
     if (mod == 0)
-	{
-		DivideOverflow++;
+    {
+        DivideOverflow++;
     }
     yxmod = y->x / mod;
     yymod = - y->y / mod;
@@ -121,7 +121,7 @@ unsigned long ExpFudged(long x, int Fudge)
 /* This multiplies two e/m numbers and returns an e/m number. */
 long r16Mul(long x, long y)
 {
-	float f = em2float(x)*em2float(y);
+    float f = em2float(x)*em2float(y);
     return float2em(f);
 }
 
@@ -134,7 +134,7 @@ long LogFloat14(unsigned long x)
 /* This divides two e/m numbers and returns an e/m number. */
 long RegDivFloat(long x, long y)
 {
-	float f = em2float(x)/em2float(y);
+    float f = em2float(x)/em2float(y);
     return float2em(f);
 }
 
@@ -146,8 +146,8 @@ long RegDivFloat(long x, long y)
  */
 long RegFg2Float(long x, int FudgeFact)
 {
-	float f = (float) x / (float) (1 << FudgeFact);
-	return float2em(f);
+    float f = (float) x / (float) (1 << FudgeFact);
+    return float2em(f);
 }
 
 /*
@@ -163,12 +163,12 @@ long RegSftFloat(long x, int Shift)
     float f;
     f = em2float(x);
     if (Shift > 0)
-	{
-		f *= (1 << Shift);
+    {
+        f *= (1 << Shift);
     }
-	else
-	{
-		f /= (1 << Shift);
+    else
+    {
+        f /= (1 << Shift);
     }
     return float2em(f);
 }

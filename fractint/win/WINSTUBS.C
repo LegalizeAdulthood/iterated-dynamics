@@ -1,6 +1,6 @@
 /*
-	"Stubbed-Off" Routines and variables
-	which exist only in Fractint for DOS
+    "Stubbed-Off" Routines and variables
+    which exist only in Fractint for DOS
 */
 
 #include "port.h"
@@ -44,7 +44,7 @@ int integerfractal;
 int video_type;
 int adapter;
 int usr_periodicitycheck;
-int active_system = WINFRAC;	/* running under windows */
+int active_system = WINFRAC;    /* running under windows */
 char busy;
 int mode7text;
 int textsafe;
@@ -57,8 +57,8 @@ int vesa_detect;
 long creal, cimag;
 int TranspSymmetry;
 long fudge;
-long l_at_rad;		/* finite attractor radius  */
-double f_at_rad;		/* finite attractor radius  */
+long l_at_rad;      /* finite attractor radius  */
+double f_at_rad;        /* finite attractor radius  */
 int timedsave = 0;
 int made_dsktemp = 0;
 int reallyega = 0;

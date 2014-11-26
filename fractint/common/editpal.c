@@ -2046,19 +2046,19 @@ static void PalTable__DrawStatus(PalTable *me, BOOLEAN stripe_mode)
          color = 0;
       Cursor_Hide();
 
-		{
-			char buff[80];
-			sprintf(buff, "%c%c%c%c",
-				me->auto_select ? 'A' : ' ',
-				(me->exclude == 1)  ? 'X' : (me->exclude == 2) ? 'Y' : ' ',
-				me->freestyle ? 'F' : ' ',
-				stripe_mode ? 'T' : ' ');
-			driver_display_string(x, y, fg_color, bg_color, buff);
+        {
+            char buff[80];
+            sprintf(buff, "%c%c%c%c",
+                me->auto_select ? 'A' : ' ',
+                (me->exclude == 1)  ? 'X' : (me->exclude == 2) ? 'Y' : ' ',
+                me->freestyle ? 'F' : ' ',
+                stripe_mode ? 'T' : ' ');
+            driver_display_string(x, y, fg_color, bg_color, buff);
 
-			y = y - 10;
-			sprintf(buff, "%d", color);
-			driver_display_string(x, y, fg_color, bg_color, buff);
-		}
+            y = y - 10;
+            sprintf(buff, "%d", color);
+            driver_display_string(x, y, fg_color, bg_color, buff);
+        }
       Cursor_Show();
       }
    }

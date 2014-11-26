@@ -47,30 +47,30 @@ static int    resume_offset;            /* offset in resume info gets */
 
 void free_grid_pointers()
 {
-	if (dx0)
-	{
-		free(dx0);
-		dx0 = NULL;
-	}
-	if (lx0)
-	{
-		free(lx0);
-		lx0 = NULL;
-	}
+    if (dx0)
+    {
+        free(dx0);
+        dx0 = NULL;
+    }
+    if (lx0)
+    {
+        free(lx0);
+        lx0 = NULL;
+    }
 }
 
 void set_grid_pointers()
 {
-	free_grid_pointers();
-	dx0 = (double *) malloc(sizeof(double)*(2*xdots + 2*ydots));
-	dy1 = dx0 + xdots;
-	dy0 = dy1 + xdots;
-	dx1 = dy0 + ydots;
-	lx0 = (long *) malloc(sizeof(long)*(2*xdots + 2*ydots));
-	ly1 = lx0 + xdots;
-	ly0 = ly1 + xdots;
-	lx1 = ly0 + ydots;
-	set_pixel_calc_functions();
+    free_grid_pointers();
+    dx0 = (double *) malloc(sizeof(double)*(2*xdots + 2*ydots));
+    dy1 = dx0 + xdots;
+    dy0 = dy1 + xdots;
+    dx1 = dy0 + ydots;
+    lx0 = (long *) malloc(sizeof(long)*(2*xdots + 2*ydots));
+    ly1 = lx0 + xdots;
+    ly0 = ly1 + xdots;
+    lx1 = ly0 + ydots;
+    set_pixel_calc_functions();
 }
 
 void fill_dx_array(void)
@@ -1050,8 +1050,8 @@ static int _fastcall ratio_bad(double actual, double desired)
          Version is an arbitrary number so that subsequent revisions of the
          engine can be made backward compatible.
          Alloc_resume sets calc_status to CALCSTAT_RESUMABLE if it succeeds;
-		 to CALCSTAT_NON_RESUMABLE if it cannot allocate memory
-		 (and issues warning to user).
+         to CALCSTAT_NON_RESUMABLE if it cannot allocate memory
+         (and issues warning to user).
       put_resume({bytes,&argument,} ... 0)
          Can be called as often as required to store the info.
          Arguments must not be far addresses.
@@ -1130,7 +1130,7 @@ int alloc_resume(int alloclen, int version)
    if (resume_info == 0)
    {
       stopmsg(0,"Warning - insufficient free memory to save status.\n"
-			"You will not be able to resume calculating this image.");
+            "You will not be able to resume calculating this image.");
       calc_status = CALCSTAT_NON_RESUMABLE;
       return(-1);
    }
@@ -1341,7 +1341,7 @@ int snd_open(void)
    static char soundname[] = {"sound001.txt"};
    if ((orbitsave&2) != 0 && snd_fp == NULL)
    {
-	   snd_fp = fopen(soundname,"w");
+       snd_fp = fopen(soundname,"w");
       if (snd_fp == NULL)
       {
          stopmsg(0, "Can't open SOUND*.TXT");

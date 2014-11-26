@@ -3,214 +3,214 @@
 
 int FManOWarfpFractal(void)
 {
-	return ManOWarfpFractal();
+    return ManOWarfpFractal();
 }
 
 int FJuliafpFractal(void)
 {
-	return JuliafpFractal();
+    return JuliafpFractal();
 }
 
 int FBarnsley1FPFractal(void)
 {
-	return Barnsley1FPFractal();
+    return Barnsley1FPFractal();
 }
 
 int FBarnsley2FPFractal(void)
 {
-	return Barnsley2FPFractal();
+    return Barnsley2FPFractal();
 }
 
 int FLambdaFPFractal(void)
 {
-	return LambdaFPFractal();
+    return LambdaFPFractal();
 }
 
 
 int asmlMODbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	lmagnitud = ltempsqrx + ltempsqry;
-	if (lmagnitud >= llimit || lmagnitud < 0 || labs(lnew.x) > llimit2
-		|| labs(lnew.y) > llimit2 || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    lmagnitud = ltempsqrx + ltempsqry;
+    if (lmagnitud >= llimit || lmagnitud < 0 || labs(lnew.x) > llimit2
+        || labs(lnew.y) > llimit2 || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 int asmlREALbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	if (ltempsqrx >= llimit || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    if (ltempsqrx >= llimit || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 int asmlIMAGbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	if (ltempsqry >= llimit || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    if (ltempsqry >= llimit || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 int asmlORbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	if (ltempsqrx >= llimit || ltempsqry >= llimit || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    if (ltempsqrx >= llimit || ltempsqry >= llimit || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 int asmlANDbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	if ((ltempsqrx >= llimit && ltempsqry >= llimit) || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    if ((ltempsqrx >= llimit && ltempsqry >= llimit) || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 int asmlMANHbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	magnitude = fabs(g_new.x) + fabs(g_new.y);
-	if (magnitude*magnitude >= rqlim)
-	{
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    magnitude = fabs(g_new.x) + fabs(g_new.y);
+    if (magnitude*magnitude >= rqlim)
+    {
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 int asmlMANRbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	magnitude = fabs(g_new.x + g_new.y);
-	if (magnitude*magnitude >= rqlim)
-	{
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    magnitude = fabs(g_new.x + g_new.y);
+    if (magnitude*magnitude >= rqlim)
+    {
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 int asm386lMODbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	lmagnitud = ltempsqrx + ltempsqry;
-	if (lmagnitud >= llimit || lmagnitud < 0 || labs(lnew.x) > llimit2
-		|| labs(lnew.y) > llimit2 || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    lmagnitud = ltempsqrx + ltempsqry;
+    if (lmagnitud >= llimit || lmagnitud < 0 || labs(lnew.x) > llimit2
+        || labs(lnew.y) > llimit2 || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 int asm386lREALbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	if (ltempsqrx >= llimit || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    if (ltempsqrx >= llimit || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 int asm386lIMAGbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	if (ltempsqry >= llimit || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    if (ltempsqry >= llimit || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 int asm386lORbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	if (ltempsqrx >= llimit || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    if (ltempsqrx >= llimit || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 int asm386lANDbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	if ((ltempsqrx >= llimit && ltempsqry >= llimit) || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    if ((ltempsqrx >= llimit && ltempsqry >= llimit) || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 int asm386lMANHbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	magnitude = fabs(g_new.x) + fabs(g_new.y);
-	if (magnitude*magnitude >= rqlim)
-	{
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    magnitude = fabs(g_new.x) + fabs(g_new.y);
+    if (magnitude*magnitude >= rqlim)
+    {
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 int asm386lMANRbailout(void)
 {
-	ltempsqrx = lsqr(lnew.x);
-	ltempsqry = lsqr(lnew.y);
-	magnitude = fabs(g_new.x + g_new.y);
-	if (magnitude*magnitude >= rqlim)
-	{
-		return 1;
-	}
-	lold = lnew;
-	return 0;
+    ltempsqrx = lsqr(lnew.x);
+    ltempsqry = lsqr(lnew.y);
+    magnitude = fabs(g_new.x + g_new.y);
+    if (magnitude*magnitude >= rqlim)
+    {
+        return 1;
+    }
+    lold = lnew;
+    return 0;
 }
 
 /*
@@ -218,7 +218,7 @@ asmfpMODbailout proc near uses si di
         fld     qword ptr new+8
         fmul    st,st                   ; ny2
         fst     tempsqry
-        fld     qword ptr new			; nx ny2
+        fld     qword ptr new           ; nx ny2
         fmul    st,st                   ; nx2 ny2
         fst     tempsqrx
         fadd
@@ -242,18 +242,18 @@ asmfpMODbailout endp
 */
 int asmfpMODbailout(void)
 {
-	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
-	magnitude = tempsqrx + tempsqry;
-	if (magnitude > rqlim || magnitude < 0.0 || fabs(g_new.x) > rqlim2 ||
-		fabs(g_new.y) > rqlim2 || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	old = g_new;
-	return 0;
+    /* TODO: verify this code is correct */
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
+    magnitude = tempsqrx + tempsqry;
+    if (magnitude > rqlim || magnitude < 0.0 || fabs(g_new.x) > rqlim2 ||
+        fabs(g_new.y) > rqlim2 || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    old = g_new;
+    return 0;
 }
 
 /*
@@ -285,16 +285,16 @@ asmfpREALbailout endp
 */
 int asmfpREALbailout(void)
 {
-	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
-	if (tempsqrx >= rqlim || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	old = g_new;
-	return 0;
+    /* TODO: verify this code is correct */
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
+    if (tempsqrx >= rqlim || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    old = g_new;
+    return 0;
 }
 
 /*
@@ -326,16 +326,16 @@ asmfpIMAGbailout endp
 */
 int asmfpIMAGbailout(void)
 {
-	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
-	if (tempsqry >= rqlim || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	old = g_new;
-	return 0;
+    /* TODO: verify this code is correct */
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
+    if (tempsqry >= rqlim || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    old = g_new;
+    return 0;
 }
 
 /*
@@ -374,16 +374,16 @@ asmfpORbailout endp
 */
 int asmfpORbailout(void)
 {
-	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
-	if (tempsqrx >= rqlim || tempsqry >= rqlim || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	old = g_new;
-	return 0;
+    /* TODO: verify this code is correct */
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
+    if (tempsqrx >= rqlim || tempsqry >= rqlim || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    old = g_new;
+    return 0;
 }
 
 /*
@@ -424,16 +424,16 @@ asmfpANDbailout endp
 */
 int asmfpANDbailout(void)
 {
-	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
-	if ((tempsqrx >= rqlim && tempsqry >= rqlim) || overflow)
-	{
-		overflow = 0;
-		return 1;
-	}
-	old = g_new;
-	return 0;
+    /* TODO: verify this code is correct */
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
+    if ((tempsqrx >= rqlim && tempsqry >= rqlim) || overflow)
+    {
+        overflow = 0;
+        return 1;
+    }
+    old = g_new;
+    return 0;
 }
 
 /*
@@ -477,16 +477,16 @@ asmfpMANHbailout endp
 */
 int asmfpMANHbailout(void)
 {
-	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
-	magnitude = fabs(g_new.x) + fabs(g_new.y);
-	if (magnitude*magnitude >= rqlim)
-	{
-		return 1;
-	}
-	old = g_new;
-	return 0;
+    /* TODO: verify this code is correct */
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
+    magnitude = fabs(g_new.x) + fabs(g_new.y);
+    if (magnitude*magnitude >= rqlim)
+    {
+        return 1;
+    }
+    old = g_new;
+    return 0;
 }
 
 /*
@@ -527,14 +527,14 @@ asmfpMANRbailout endp
 */
 int asmfpMANRbailout(void)
 {
-	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
-	magnitude = fabs(g_new.x + g_new.y);
-	if (magnitude*magnitude >= rqlim)
-	{
-		return 1;
-	}
-	old = g_new;
-	return 0;
+    /* TODO: verify this code is correct */
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
+    magnitude = fabs(g_new.x + g_new.y);
+    if (magnitude*magnitude >= rqlim)
+    {
+        return 1;
+    }
+    old = g_new;
+    return 0;
 }

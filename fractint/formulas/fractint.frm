@@ -32,7 +32,7 @@ Mandelbrot(XAXIS) {; Mark Peterson
   z = Pixel, z = Sqr(z):  ; Start with z**2 to initialize LastSqr
    z = z + Pixel
    z = Sqr(z)
-    LastSqr <= 4	  ; Use LastSqr instead of recalculating
+    LastSqr <= 4      ; Use LastSqr instead of recalculating
   }
 
 Dragon (ORIGIN) {; Mark Peterson
@@ -1540,11 +1540,11 @@ Mandel3 {; Fractal Creations example
 {--- AUTHORS UNKNOWN -----------------------------------------------------}
 
 moc {
-	z=0, c=pixel:
+    z=0, c=pixel:
    z=sqr(z)+c
    c=c+p1/c
     |z| <= 4
-	}
+    }
 
 Bali {;The difference of two squares
   z=x=1/pixel, c= fn1 (z):

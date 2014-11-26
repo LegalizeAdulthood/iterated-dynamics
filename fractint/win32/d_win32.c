@@ -42,78 +42,78 @@ extern HINSTANCE g_instance;
 static int
 handle_special_keys(int ch)
 {
-	static int inside_help = 0;
+    static int inside_help = 0;
 
-	if (SLIDES_PLAY == g_slides)
-	{
-		if (ch == FIK_ESC)
-		{
-			stopslideshow();
-			ch = 0;
-		}
-		else if (!ch)
-		{
-			ch = slideshw();
-		}
-	}
-	else if ((SLIDES_RECORD == g_slides) && ch)
-	{
-		recordshw(ch);
-	}
+    if (SLIDES_PLAY == g_slides)
+    {
+        if (ch == FIK_ESC)
+        {
+            stopslideshow();
+            ch = 0;
+        }
+        else if (!ch)
+        {
+            ch = slideshw();
+        }
+    }
+    else if ((SLIDES_RECORD == g_slides) && ch)
+    {
+        recordshw(ch);
+    }
 
-	if (FIK_F1 == ch && helpmode && !inside_help)
-	{
-		inside_help = 1;
-		help(0);
-		inside_help = 0;
-		ch = 0;
-	}
-	else if (FIK_TAB == ch && tabmode)
-	{
-		int old_tab = tabmode;
-		tabmode = 0;
-		tab_display();
-		tabmode = old_tab;
-		ch = 0;
-	}
+    if (FIK_F1 == ch && helpmode && !inside_help)
+    {
+        inside_help = 1;
+        help(0);
+        inside_help = 0;
+        ch = 0;
+    }
+    else if (FIK_TAB == ch && tabmode)
+    {
+        int old_tab = tabmode;
+        tabmode = 0;
+        tab_display();
+        tabmode = old_tab;
+        ch = 0;
+    }
 
-	return ch;
+    return ch;
 }
 
 static void flush_output(void)
 {
-	static time_t start = 0;
-	static long ticks_per_second = 0;
-	static long last = 0;
-	static long frames_per_second = 10;
+    static time_t start = 0;
+    static long ticks_per_second = 0;
+    static long last = 0;
+    static long frames_per_second = 10;
 
-	if (!ticks_per_second)
-	{
-		if (!start)
-		{
-			time(&start);
-			last = readticker();
-		}
-		else
-		{
-			time_t now = time(NULL);
-			long now_ticks = readticker();
-			if (now > start)
-			{
-				ticks_per_second = (now_ticks - last)/((long) (now - start));
-			}
-		}
-	}
-	else
-	{
-		long now = readticker();
-		if ((now - last)*frames_per_second > ticks_per_second)
-		{
-			driver_flush();
-			frame_pump_messages(FALSE);
-			last = now;
-		}
-	}
+    if (!ticks_per_second)
+    {
+        if (!start)
+        {
+            time(&start);
+            last = readticker();
+        }
+        else
+        {
+            time_t now = time(NULL);
+            long now_ticks = readticker();
+            if (now > start)
+            {
+                ticks_per_second = (now_ticks - last)/((long) (now - start));
+            }
+        }
+    }
+    else
+    {
+        long now = readticker();
+        if ((now - last)*frames_per_second > ticks_per_second)
+        {
+            driver_flush();
+            frame_pump_messages(FALSE);
+            last = now;
+        }
+    }
 }
 
 /***********************************************************************
@@ -125,65 +125,65 @@ static void flush_output(void)
 *
 * win32_terminate --
 *
-*	Cleanup windows and stuff.
+*   Cleanup windows and stuff.
 *
 * Results:
-*	None.
+*   None.
 *
 * Side effects:
-*	Cleans up.
+*   Cleans up.
 *
 *----------------------------------------------------------------------
 */
 void
 win32_terminate(Driver *drv)
 {
-	DI(di);
-	ODS("win32_terminate");
+    DI(di);
+    ODS("win32_terminate");
 
-	/* plot_terminate(&di->plot); */
-	wintext_destroy(&di->wintext);
-	{
-		int i;
-		for (i = 0; i < NUM_OF(di->saved_screens); i++)
-		{
-			if (NULL != di->saved_screens[i])
-			{
-				free(di->saved_screens[i]);
-				di->saved_screens[i] = NULL;
-			}
-		}
-	}
+    /* plot_terminate(&di->plot); */
+    wintext_destroy(&di->wintext);
+    {
+        int i;
+        for (i = 0; i < NUM_OF(di->saved_screens); i++)
+        {
+            if (NULL != di->saved_screens[i])
+            {
+                free(di->saved_screens[i]);
+                di->saved_screens[i] = NULL;
+            }
+        }
+    }
 }
 
 /*----------------------------------------------------------------------
 *
 * win32_init --
 *
-*	Initialize the windows and stuff.
+*   Initialize the windows and stuff.
 *
 * Results:
-*	None.
+*   None.
 *
 * Side effects:
-*	Initializes windows.
+*   Initializes windows.
 *
 *----------------------------------------------------------------------
 */
 int
 win32_init(Driver *drv, int *argc, char **argv)
 {
-	LPCSTR title = "FractInt for Windows";
-	DI(di);
+    LPCSTR title = "FractInt for Windows";
+    DI(di);
 
-	ODS("win32_init");
-	frame_init(g_instance, title);
-	if (!wintext_initialize(&di->wintext, g_instance, NULL, "Text"))
-	{
-		return FALSE;
-	}
+    ODS("win32_init");
+    frame_init(g_instance, title);
+    if (!wintext_initialize(&di->wintext, g_instance, NULL, "Text"))
+    {
+        return FALSE;
+    }
 
-	return TRUE;
+    return TRUE;
 }
 
 /* win32_key_pressed
@@ -199,18 +199,18 @@ win32_init(Driver *drv, int *argc, char **argv)
 int
 win32_key_pressed(Driver *drv)
 {
-	DI(di);
-	int ch = di->key_buffer;
+    DI(di);
+    int ch = di->key_buffer;
 
-	if (ch)
-	{
-		return ch;
-	}
-	flush_output();
-	ch = handle_special_keys(frame_get_key_press(0));
-	di->key_buffer = ch;
+    if (ch)
+    {
+        return ch;
+    }
+    flush_output();
+    ch = handle_special_keys(frame_get_key_press(0));
+    di->key_buffer = ch;
 
-	return ch;
+    return ch;
 }
 
 /* win32_unget_key
@@ -220,9 +220,9 @@ win32_key_pressed(Driver *drv)
  */
 void win32_unget_key(Driver *drv, int key)
 {
-	DI(di);
-	_ASSERTE(0 == di->key_buffer);
-	di->key_buffer = key;
+    DI(di);
+    _ASSERTE(0 == di->key_buffer);
+    di->key_buffer = key;
 }
 
 /* win32_get_key
@@ -235,24 +235,24 @@ void win32_unget_key(Driver *drv, int key)
 int
 win32_get_key(Driver *drv)
 {
-	DI(di);
-	int ch;
-	
-	do
-	{
-		if (di->key_buffer)
-		{
-			ch = di->key_buffer;
-			di->key_buffer = 0;
-		}
-		else
-		{
-			ch = handle_special_keys(frame_get_key_press(1));
-		}
-	}
-	while (ch == 0);
+    DI(di);
+    int ch;
+    
+    do
+    {
+        if (di->key_buffer)
+        {
+            ch = di->key_buffer;
+            di->key_buffer = 0;
+        }
+        else
+        {
+            ch = handle_special_keys(frame_get_key_press(1));
+        }
+    }
+    while (ch == 0);
 
-	return ch;
+    return ch;
 }
 
 /*
@@ -260,53 +260,53 @@ win32_get_key(Driver *drv)
 *
 * shell_to_dos --
 *
-*	Exit to a unix shell.
+*   Exit to a unix shell.
 *
 * Results:
-*	None.
+*   None.
 *
 * Side effects:
-*	Goes to shell
+*   Goes to shell
 *
 *----------------------------------------------------------------------
 */
 void
 win32_shell(Driver *drv)
 {
-	DI(di);
-	STARTUPINFO si =
-	{
-		sizeof(si)
-	};
-	PROCESS_INFORMATION pi = { 0 };
-	char *comspec = getenv("COMSPEC");
+    DI(di);
+    STARTUPINFO si =
+    {
+        sizeof(si)
+    };
+    PROCESS_INFORMATION pi = { 0 };
+    char *comspec = getenv("COMSPEC");
 
-	if (NULL == comspec)
-	{
-		comspec = "cmd.exe";
-	}
-	if (CreateProcess(NULL, comspec, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi))
-	{
-		DWORD status = WaitForSingleObject(pi.hProcess, 1000);
-		while (WAIT_TIMEOUT == status)
-		{
-			frame_pump_messages(0);
-			status = WaitForSingleObject(pi.hProcess, 1000); 
-		}
-		CloseHandle(pi.hProcess);
-	}
+    if (NULL == comspec)
+    {
+        comspec = "cmd.exe";
+    }
+    if (CreateProcess(NULL, comspec, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi))
+    {
+        DWORD status = WaitForSingleObject(pi.hProcess, 1000);
+        while (WAIT_TIMEOUT == status)
+        {
+            frame_pump_messages(0);
+            status = WaitForSingleObject(pi.hProcess, 1000); 
+        }
+        CloseHandle(pi.hProcess);
+    }
 }
 
 void
 win32_hide_text_cursor(Driver *drv)
 {
-	DI(di);
-	if (TRUE == di->cursor_shown)
-	{
-		di->cursor_shown = FALSE;
-		wintext_hide_cursor(&di->wintext);
-	}
-	ODS("win32_hide_text_cursor");
+    DI(di);
+    if (TRUE == di->cursor_shown)
+    {
+        di->cursor_shown = FALSE;
+        wintext_hide_cursor(&di->wintext);
+    }
+    ODS("win32_hide_text_cursor");
 }
 
 /* win32_set_video_mode
@@ -314,61 +314,61 @@ win32_hide_text_cursor(Driver *drv)
 void
 win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
-	extern void set_normal_dot(void);
-	extern void set_normal_line(void);
-	DI(di);
+    extern void set_normal_dot(void);
+    extern void set_normal_line(void);
+    DI(di);
 
-	/* initially, set the virtual line to be the scan line length */
-	g_vxdots = sxdots;
-	g_is_true_color = 0;				/* assume not truecolor */
-	g_vesa_x_res = 0;					/* reset indicators used for */
-	g_vesa_y_res = 0;					/* virtual screen limits estimation */
-	g_ok_to_print = FALSE;
-	g_good_mode = 1;
-	if (dotmode !=0)
-	{
-		g_and_color = colors-1;
-		boxcount = 0;
-		g_dac_learn = 1;
-		g_dac_count = cyclelimit;
-		g_got_real_dac = TRUE;			/* we are "VGA" */
+    /* initially, set the virtual line to be the scan line length */
+    g_vxdots = sxdots;
+    g_is_true_color = 0;                /* assume not truecolor */
+    g_vesa_x_res = 0;                   /* reset indicators used for */
+    g_vesa_y_res = 0;                   /* virtual screen limits estimation */
+    g_ok_to_print = FALSE;
+    g_good_mode = 1;
+    if (dotmode !=0)
+    {
+        g_and_color = colors-1;
+        boxcount = 0;
+        g_dac_learn = 1;
+        g_dac_count = cyclelimit;
+        g_got_real_dac = TRUE;          /* we are "VGA" */
 
-		driver_read_palette();
-	}
+        driver_read_palette();
+    }
 
-	driver_resize();
+    driver_resize();
 
-	if (g_disk_flag)
-	{
-		enddisk();
-	}
+    if (g_disk_flag)
+    {
+        enddisk();
+    }
 
-	set_normal_dot();
-	set_normal_line();
+    set_normal_dot();
+    set_normal_line();
 
-	driver_set_for_graphics();
-	driver_set_clear();
+    driver_set_for_graphics();
+    driver_set_clear();
 }
 
 void
 win32_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 {
-	DI(di);
-	if (-1 != row)
-	{
-		g_text_row = row;
-	}
-	if (-1 != col)
-	{
-		g_text_col = col;
-	}
-	{
-		int abs_row = g_text_rbase + g_text_row;
-		int abs_col = g_text_cbase + g_text_col;
-		_ASSERTE(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
-		_ASSERTE(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
-		wintext_putstring(&di->wintext, abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
-	}
+    DI(di);
+    if (-1 != row)
+    {
+        g_text_row = row;
+    }
+    if (-1 != col)
+    {
+        g_text_col = col;
+    }
+    {
+        int abs_row = g_text_rbase + g_text_row;
+        int abs_col = g_text_cbase + g_text_col;
+        _ASSERTE(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
+        _ASSERTE(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
+        wintext_putstring(&di->wintext, abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
+    }
 }
 
 /************** Function scrollup(toprow, botrow) ******************
@@ -378,46 +378,46 @@ win32_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 void
 win32_scroll_up(Driver *drv, int top, int bot)
 {
-	DI(di);
+    DI(di);
 
-	wintext_scroll_up(&di->wintext, top, bot);
+    wintext_scroll_up(&di->wintext, top, bot);
 }
 
 void
 win32_move_cursor(Driver *drv, int row, int col)
 {
-	DI(di);
+    DI(di);
 
-	if (row != -1)
-	{
-		di->cursor_row = row;
-		g_text_row = row;
-	}
-	if (col != -1)
-	{
-		di->cursor_col = col;
-		g_text_col = col;
-	}
-	row = di->cursor_row;
-	col = di->cursor_col;
-	wintext_cursor(&di->wintext, g_text_cbase + col, g_text_rbase + row, 1);
-	di->cursor_shown = TRUE;
+    if (row != -1)
+    {
+        di->cursor_row = row;
+        g_text_row = row;
+    }
+    if (col != -1)
+    {
+        di->cursor_col = col;
+        g_text_col = col;
+    }
+    row = di->cursor_row;
+    col = di->cursor_col;
+    wintext_cursor(&di->wintext, g_text_cbase + col, g_text_rbase + row, 1);
+    di->cursor_shown = TRUE;
 }
 
 void
 win32_set_attr(Driver *drv, int row, int col, int attr, int count)
 {
-	DI(di);
+    DI(di);
 
-	if (-1 != row)
-	{
-		g_text_row = row;
-	}
-	if (-1 != col)
-	{
-		g_text_col = col;
-	}
-	wintext_set_attr(&di->wintext, g_text_rbase + g_text_row, g_text_cbase + g_text_col, attr, count);
+    if (-1 != row)
+    {
+        g_text_row = row;
+    }
+    if (-1 != col)
+    {
+        g_text_col = col;
+    }
+    wintext_set_attr(&di->wintext, g_text_rbase + g_text_row, g_text_cbase + g_text_col, attr, count);
 }
 
 /*
@@ -427,205 +427,205 @@ win32_set_attr(Driver *drv, int row, int col, int attr, int count)
 void
 win32_stack_screen(Driver *drv)
 {
-	DI(di);
+    DI(di);
 
-	di->saved_cursor[di->screen_count+1] = g_text_row*80 + g_text_col;
-	if (++di->screen_count)
-	{
-		/* already have some stacked */
-		int i = di->screen_count - 1;
+    di->saved_cursor[di->screen_count+1] = g_text_row*80 + g_text_col;
+    if (++di->screen_count)
+    {
+        /* already have some stacked */
+        int i = di->screen_count - 1;
 
-		_ASSERTE(i < WIN32_MAXSCREENS);
-		if (i >= WIN32_MAXSCREENS)
-		{
-			/* bug, missing unstack? */
-			stopmsg(STOPMSG_NO_STACK, "stackscreen overflow");
-			exit(1);
-		}
-		di->saved_screens[i] = wintext_screen_get(&di->wintext);
-		driver_set_clear();
-	}
-	else
-	{
-		driver_set_for_text();
-		driver_set_clear();
-	}
+        _ASSERTE(i < WIN32_MAXSCREENS);
+        if (i >= WIN32_MAXSCREENS)
+        {
+            /* bug, missing unstack? */
+            stopmsg(STOPMSG_NO_STACK, "stackscreen overflow");
+            exit(1);
+        }
+        di->saved_screens[i] = wintext_screen_get(&di->wintext);
+        driver_set_clear();
+    }
+    else
+    {
+        driver_set_for_text();
+        driver_set_clear();
+    }
 }
 
 void
 win32_unstack_screen(Driver *drv)
 {
-	DI(di);
+    DI(di);
 
-	_ASSERTE(di->screen_count >= 0);
-	g_text_row = di->saved_cursor[di->screen_count] / 80;
-	g_text_col = di->saved_cursor[di->screen_count] % 80;
-	if (--di->screen_count >= 0)
-	{
-		/* unstack */
-		wintext_screen_set(&di->wintext, di->saved_screens[di->screen_count]);
-		free(di->saved_screens[di->screen_count]);
-		di->saved_screens[di->screen_count] = NULL;
-		win32_move_cursor(drv, -1, -1);
-	}
-	else
-	{
-		driver_set_for_graphics();
-	}
+    _ASSERTE(di->screen_count >= 0);
+    g_text_row = di->saved_cursor[di->screen_count] / 80;
+    g_text_col = di->saved_cursor[di->screen_count] % 80;
+    if (--di->screen_count >= 0)
+    {
+        /* unstack */
+        wintext_screen_set(&di->wintext, di->saved_screens[di->screen_count]);
+        free(di->saved_screens[di->screen_count]);
+        di->saved_screens[di->screen_count] = NULL;
+        win32_move_cursor(drv, -1, -1);
+    }
+    else
+    {
+        driver_set_for_graphics();
+    }
 }
 
 void
 win32_discard_screen(Driver *drv)
 {
-	DI(di);
+    DI(di);
 
-	if (--di->screen_count >= 0)
-	{
-		/* unstack */
-		if (di->saved_screens[di->screen_count])
-		{
-			free(di->saved_screens[di->screen_count]);
-			di->saved_screens[di->screen_count] = NULL;
-		}
-	}
-	else
-	{
-		driver_set_for_graphics();
-	}
+    if (--di->screen_count >= 0)
+    {
+        /* unstack */
+        if (di->saved_screens[di->screen_count])
+        {
+            free(di->saved_screens[di->screen_count]);
+            di->saved_screens[di->screen_count] = NULL;
+        }
+    }
+    else
+    {
+        driver_set_for_graphics();
+    }
 }
 
 int
 win32_init_fm(Driver *drv)
 {
-	ODS("win32_init_fm");
-	return 0;
+    ODS("win32_init_fm");
+    return 0;
 }
 
 void
 win32_buzzer(Driver *drv, int kind)
 {
-	ODS1("win32_buzzer %d", kind);
-	MessageBeep(MB_OK);
+    ODS1("win32_buzzer %d", kind);
+    MessageBeep(MB_OK);
 }
 
 int
 win32_sound_on(Driver *drv, int freq)
 {
-	ODS1("win32_sound_on %d", freq);
-	return 0;
+    ODS1("win32_sound_on %d", freq);
+    return 0;
 }
 
 void
 win32_sound_off(Driver *drv)
 {
-	ODS("win32_sound_off");
+    ODS("win32_sound_off");
 }
 
 void
 win32_mute(Driver *drv)
 {
-	ODS("win32_mute");
+    ODS("win32_mute");
 }
 
 int
 win32_diskp(Driver *drv)
 {
-	return 0;
+    return 0;
 }
 
 int
 win32_key_cursor(Driver *drv, int row, int col)
 {
-	DI(di);
-	int result;
+    DI(di);
+    int result;
 
-	ODS2("win32_key_cursor %d,%d", row, col);
-	if (-1 != row)
-	{
-		di->cursor_row = row;
-		g_text_row = row;
-	}
-	if (-1 != col)
-	{
-		di->cursor_col = col;
-		g_text_col = col;
-	}
+    ODS2("win32_key_cursor %d,%d", row, col);
+    if (-1 != row)
+    {
+        di->cursor_row = row;
+        g_text_row = row;
+    }
+    if (-1 != col)
+    {
+        di->cursor_col = col;
+        g_text_col = col;
+    }
 
-	col = di->cursor_col;
-	row = di->cursor_row;
+    col = di->cursor_col;
+    row = di->cursor_row;
 
-	if (win32_key_pressed(drv))
-	{
-		result = win32_get_key(drv);
-	}
-	else
-	{
-		di->cursor_shown = TRUE;
-		wintext_cursor(&di->wintext, col, row, 1);
-		result = win32_get_key(drv);
-		win32_hide_text_cursor(drv);
-		di->cursor_shown = FALSE;
-	}
+    if (win32_key_pressed(drv))
+    {
+        result = win32_get_key(drv);
+    }
+    else
+    {
+        di->cursor_shown = TRUE;
+        wintext_cursor(&di->wintext, col, row, 1);
+        result = win32_get_key(drv);
+        win32_hide_text_cursor(drv);
+        di->cursor_shown = FALSE;
+    }
 
-	return result;
+    return result;
 }
 
 int
 win32_wait_key_pressed(Driver *drv, int timeout)
 {
-	int count = 10;
-	while (!driver_key_pressed())
-	{
-		Sleep(25);
-		if (timeout && (--count == 0))
-		{
-			break;
-		}
-	}
+    int count = 10;
+    while (!driver_key_pressed())
+    {
+        Sleep(25);
+        if (timeout && (--count == 0))
+        {
+            break;
+        }
+    }
 
-	return driver_key_pressed();
+    return driver_key_pressed();
 }
 
 int
 win32_get_char_attr(Driver *drv)
 {
-	DI(di);
-	return wintext_get_char_attr(&di->wintext, g_text_row, g_text_col);
+    DI(di);
+    return wintext_get_char_attr(&di->wintext, g_text_row, g_text_col);
 }
 
 void
 win32_put_char_attr(Driver *drv, int char_attr)
 {
-	DI(di);
-	wintext_put_char_attr(&di->wintext, g_text_row, g_text_col, char_attr);
+    DI(di);
+    wintext_put_char_attr(&di->wintext, g_text_row, g_text_col, char_attr);
 }
 
 void
 win32_delay(Driver *drv, int ms)
 {
-	DI(di);
+    DI(di);
 
-	frame_pump_messages(FALSE);
-	if (ms >= 0)
-	{
-		Sleep(ms);
-	}
+    frame_pump_messages(FALSE);
+    if (ms >= 0)
+    {
+        Sleep(ms);
+    }
 }
 
 void
 win32_get_truecolor(Driver *drv, int x, int y, int *r, int *g, int *b, int *a)
 {
-	_ASSERTE(0 && "win32_get_truecolor called.");
+    _ASSERTE(0 && "win32_get_truecolor called.");
 }
 
 void
 win32_put_truecolor(Driver *drv, int x, int y, int r, int g, int b, int a)
 {
-	_ASSERTE(0 && "win32_put_truecolor called.");
+    _ASSERTE(0 && "win32_put_truecolor called.");
 }
 
 void
 win32_set_keyboard_timeout(Driver *drv, int ms)
 {
-	frame_set_keyboard_timeout(ms);
+    frame_set_keyboard_timeout(ms);
 }
