@@ -2484,8 +2484,8 @@ align 2
 ;   the first 40 bytes of the 256-byte VESA mode-info block
 
 vesa_mode_info  dw  0       ; mode info: attributes
-vesa_winaattrib db  0       ; Win AA attribs 
-vesa_winbattrib db  0       ; Win BB attribs 
+vesa_winaattrib db  0       ; Win AA attribs
+vesa_winbattrib db  0       ; Win BB attribs
 vesa_wingran    dw  0       ; window granularity
 vesa_winsize    dw  0       ; window size
 vesa_winaseg    dw  0       ; window AA segment
@@ -4912,10 +4912,10 @@ VGAautomode:                            ; set VGA auto-detect mode
 
 VESAtruecolormode:
         mov     istruecolor,1
-    mov ax, offset VESAtruewrite   ; set up VESA true-color write-a-dot routine 
-    mov bx, offset VESAtrueread    ; set up VESA true-color read-a-dot routine  
-    mov cx, offset normaline       ; set up dullnormal linewrite routine    
-    mov dx, offset normalineread   ; set up dullnormal lineread routine 
+    mov ax, offset VESAtruewrite   ; set up VESA true-color write-a-dot routine
+    mov bx, offset VESAtrueread    ; set up VESA true-color read-a-dot routine
+    mov cx, offset normaline       ; set up dullnormal linewrite routine
+    mov dx, offset normalineread   ; set up dullnormal lineread routine
         mov     si,offset swap256          ; set up the swap routine
         jmp     videomode                  ; return to common code
 
@@ -4926,7 +4926,7 @@ xgamode:
         mov     dx,offset normalineread    ; set up the XGA lineread  routine
         mov     si,offset swap256          ; set up the swap routine
         jmp     videomode                  ; return to common code
-    
+
 VGAauto256mode:
         jmp     super256mode            ; just like a SuperVGA
 egamode:

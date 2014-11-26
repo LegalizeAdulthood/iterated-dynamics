@@ -145,8 +145,8 @@ int polyphony = 0;
 int g_really_ega = 0;
 char rlebuf[258] = { 0 };
 int g_row_count = 0;
-long savebase = 0;              /* base clock ticks */ 
-long saveticks = 0;             /* save after this many ticks */ 
+long savebase = 0;              /* base clock ticks */
+long saveticks = 0;             /* save after this many ticks */
 unsigned int strlocn[10*1024] = { 0 };
 char supervga_list[] =
 {
@@ -672,7 +672,7 @@ uclock_t usec_clock(void)
    /* TODO */
    _ASSERTE(FALSE);
 
-   return result; 
+   return result;
 }
 
 /*

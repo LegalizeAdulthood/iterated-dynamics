@@ -76,7 +76,7 @@ static void get_mnemonic(int code,char *mnemonic)
       {
          strcpy(mnemonic,scancodes[i].mnemonic);
          break;
-      }   
+      }
 }
 #undef stop
 

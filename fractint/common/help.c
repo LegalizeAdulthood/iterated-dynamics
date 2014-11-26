@@ -1141,7 +1141,7 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
          pd->new_page = (t & 1) ? 1 : 0;
 
          fread(&ch, sizeof(char), 1, help_file);       /* read id len */
-         
+
          t = ch;
          if (t >= 80)
          {

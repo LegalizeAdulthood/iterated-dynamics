@@ -479,12 +479,12 @@ static void set_Plasma_palette()
       dac[i+170].blue  = (BYTE)((i*(int)Blue.blue  + (86-i)*(int)Red.blue)/85);
 #else
       dac[i].red       = (BYTE)((i*Green.red   + (86-i)*Blue.red)/85);
-      dac[i].green     = (BYTE)((i*Green.green + (86-i)*Blue.green)/85);  
+      dac[i].green     = (BYTE)((i*Green.green + (86-i)*Blue.green)/85);
       dac[i].blue      = (BYTE)((i*Green.blue  + (86-i)*Blue.blue)/85);
- 
+
       dac[i+85].red    = (BYTE)((i*Red.red   + (86-i)*Green.red)/85);
-      dac[i+85].green  = (BYTE)((i*Red.green + (86-i)*Green.green)/85);   
-      dac[i+85].blue   = (BYTE)((i*Red.blue  + (86-i)*Green.blue)/85); 
+      dac[i+85].green  = (BYTE)((i*Red.green + (86-i)*Green.green)/85);
+      dac[i+85].blue   = (BYTE)((i*Red.blue  + (86-i)*Green.blue)/85);
       dac[i+170].red   = (BYTE)((i*Blue.red   + (86-i)*Red.red)/85);
       dac[i+170].green = (BYTE)((i*Blue.green + (86-i)*Red.green)/85);
       dac[i+170].blue  = (BYTE)((i*Blue.blue  + (86-i)*Red.blue)/85);
@@ -508,7 +508,7 @@ int diffusion()
                    /* the color every colorshift points */
 
    int colorcount,currentcolor;
-  
+
    int i;
    double cosine,sine,angle;
    int x,y;
@@ -516,7 +516,7 @@ int diffusion()
 
    if (driver_diskp())
       notdiskmsg();
-  
+
    x = y = -1;
    bitshift = 16;
    fudge = 1L << 16;
@@ -568,7 +568,7 @@ int diffusion()
 
    switch (mode) {
    case 0: /* Single seed point in the center */
-           putcolor(xdots / 2, ydots / 2,currentcolor);  
+           putcolor(xdots / 2, ydots / 2,currentcolor);
            break;
    case 1: /* Line along the bottom */
            for (i=0;i<=xdots;i++)
@@ -582,7 +582,7 @@ int diffusion()
                  putcolor(xdots/2-ydots/2+i , 0 , currentcolor);
                  putcolor(xdots/2-ydots/2+i , ydots-1 , currentcolor);
               }
-           else 
+           else
               for (i=0;i<xdots;i++){
                  putcolor(0 , ydots/2-xdots/2+i , currentcolor);
                  putcolor(xdots-1 , ydots/2-xdots/2+i , currentcolor);
@@ -679,7 +679,7 @@ int diffusion()
 
       } /* End of loop, now fix the point */
 
-      /* If we're doing colorshifting then use currentcolor, otherwise 
+      /* If we're doing colorshifting then use currentcolor, otherwise
          pick one at random */
       putcolor(x,y,colorshift?currentcolor:RANDOM(colors-1)+1);
 
@@ -696,7 +696,7 @@ int diffusion()
       /* If the new point is close to an edge, we may need to increase
          some limits so that the limits expand to match the growing
          fractal. */
- 
+
       switch (mode) {
       case 0: if (((x+border)>xmax) || ((x-border)<xmin)
                     || ((y-border)<ymin) || ((y+border)>ymax))
@@ -716,10 +716,10 @@ int diffusion()
               if (ymin==0)
                  return 0;
               break;
-      case 2: /* Decrease the radius where points are released to stay away 
+      case 2: /* Decrease the radius where points are released to stay away
                  from the fractal.  It might be decreased by 1 or 2 */
               r = sqr((float)x-xdots/2) + sqr((float)y-ydots/2);
-              if (r<=border*border) 
+              if (r<=border*border)
                 return 0;
               while ((radius-border)*(radius-border) > r)
                  radius--;

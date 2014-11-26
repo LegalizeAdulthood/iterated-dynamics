@@ -30,7 +30,7 @@
    { Palette Maps }                         { Bibliography }
                                           { Other Programs }
    { Startup Parameters\, Parameter Files }  { Revision History }
-   { Batch Mode } 
+   { Batch Mode }
    { "Disk-Video" Modes }                   { Printing Fractint Documentation }
 
 ~Format+
@@ -287,18 +287,18 @@ Version 20.4.5 is an update of Fractint 20.0 based on the developer's
 Patch 5 to Version 20.4.0\
 
 Tim's changes (5/29/2006)\
-  Moved version 20.0 change history to revision history to make room for 
+  Moved version 20.0 change history to revision history to make room for
   in help.src.
-  
+
   Changed help screen to show just two main authors - decided
   better not to show inactive authors.
-  
+
   Removed commented out complex macros in fractals.c.
-  
-  Added commented out bf version of Mandelbrot in fractalp.c. Giving 
-  thought to offerring bfmath as an option to bnmath, but if we fix the 
+
+  Added commented out bf version of Mandelbrot in fractalp.c. Giving
+  thought to offerring bfmath as an option to bnmath, but if we fix the
   current bignum problems, this may be moot.
-  
+
   Added interation to <tab> screen.
 
 Jonathan's changes\
@@ -321,7 +321,7 @@ Added minor changes so that Xfractint would compile under Cygwin.
 
   Fixed Xfractint so that built in calls to a different map file would
   work.
-  
+
   Modified the logic for calculating when to switch from using a grid
   to using the on-the-fly calculation of an image's pixels.  This affects
   how large an image can be made when using integer math.  The switch is
@@ -394,7 +394,7 @@ Xfractint fixes:
 
 Patch 2 to Version 20.3.0\
 Fixed the inability to reload a PAR created from an arbitrary precision
-  fractal with a large magnification. 
+  fractal with a large magnification.
 
   Fixed the problem with a left mouse click not bringing up the zoom box
   after an image is completed.
@@ -410,7 +410,7 @@ Fixed the inability to reload a PAR created from an arbitrary precision
 Patch 1\
 Fixed the float bailout for the lambdafn fractal type when the EXP function
   is used so the float and integer images match.
-  
+
   Jan Andres contributed Xfractint fixes that allow compiling with newer
   versions of gcc because varargs.h is no longer supported.  Enabled the
   use of the long double type on Solaris.  Moved the getwd() macro definition
@@ -425,7 +425,7 @@ Fixed the float bailout for the lambdafn fractal type when the EXP function
 Version 20.3.0\
 Incremented the version number to accommodate backwards compatibility for
   the inside=atan and outside=atan options.
-  
+
   Fixed inside=atan and outside=atan to use the full color palette instead
   of limiting to 180 colors.
 
@@ -758,7 +758,7 @@ Fixed an off by one error in the Xfractint type=julia code.  Fixed the case
 
 Patch 10\
 Fixed some user interface prompts that were wrong in Xfractint. Merged the
-  Xfractint version system with Fractint's. Thanks to Scott Boyd for 
+  Xfractint version system with Fractint's. Thanks to Scott Boyd for
   these changes.
 
 Patch 9\
@@ -777,7 +777,7 @@ Fixed fractint.cfg problems with extra commas or long lines. This allows
   the output of makefcfg from certain video boards to be used without
   editing.
 
-Added center, magxmag, and rotskew constants to parser. See 
+Added center, magxmag, and rotskew constants to parser. See
   {=@PREDEFCENTERMAG Center-Mag Predefined Variables}
 
 Patch 5\
@@ -1475,7 +1475,7 @@ After you press <B>, Fractint prompts for:
      cycling. The only reason that this isn't what Fractint always does
      for the <B> command is that color information can be bulky - up to
      nearly 3K of disk space per map - which adds up to a lot for many
-     images. Smooth-shaded ranges of colors are compressed, so if that's 
+     images. Smooth-shaded ranges of colors are compressed, so if that's
      used a lot in an image the color information won't be as bulky.\
   "only" - Record only the colors in the PAR file, without any other
      parameters. This is useful for converting color maps to PAR entries.
@@ -1500,7 +1500,7 @@ After you press <B>, Fractint prompts for:
   one by one. There are two reasons for doing this. The first is in case the
   fractal is very slow, and you want to generate parts of the image at the
   same time on several computers. The second is that you might want to make
-  an image greater than 2048 x 2048, the old pixel limit for Fractint. The 
+  an image greater than 2048 x 2048, the old pixel limit for Fractint. The
   parameters for this feature are:
      X Multiples - How many divisions of final image in the x direction\
      Y Multiples - How many divisions of final image in the y direction\
@@ -2608,11 +2608,11 @@ the 'h' key can be used to hide the palette box and expose the whole image.
 ~Topic=Parameter Explorer/Evolver, Label=HELPEVOL
 
  Since fractint is such a wonderfully complex program it has more than a few
- parameters to tweak and options to select. To the inexperienced 
+ parameters to tweak and options to select. To the inexperienced
  user the choice is bewildering.  Even for the experts the chaotic nature of
  the mathematical processes involved make it difficult to know what to
  change in order to achieve the desired effect.
- 
+
  In order to help with this situation the Fractint parameter evolver has been
  developed.  It varies those parameters for you and puts the results
  on screen as a grid of small images. You can then choose the one which you
@@ -2620,7 +2620,7 @@ the 'h' key can be used to hide the palette box and expose the whole image.
  variations, you can try again to see if anything better turns up!
 
  Enough explanations for now, lets see how easy it is to use:
- 
+
  With the default Mandlebrot set on the screen simply hold down the 'Alt' key
  and press the '1' key on the top row (DON'T use the numeric keypad to the
  right, it won't work). You'll see a screen full of images generated starting
@@ -2643,7 +2643,7 @@ the 'h' key can be used to hide the palette box and expose the whole image.
  from evolver mode, you just press 'enter', then a whole new set of images
  is generated, all based around the one you selected (which is now the middle
  image of the new set).
- 
+
  From a basic point of view that's it!  Just press alt-number to scramble
  things when you're out of inspiration, it works for any of the fractal
  types in fractint including formulae... easy! (chaotic, but easy :-) )
@@ -2688,15 +2688,15 @@ the 'h' key can be used to hide the palette box and expose the whole image.
 
     Gridsize.            The number of sub images per side of the screen. Use
                          odd numbers only.
-      
+
     Max Mutation         The maximum amount by which a parameter may be varied
-                         
+
     Mutation Reduction   The Max mutation value is multiplied by this between
-                         generations. This can be used to automatically goal 
+                         generations. This can be used to automatically goal
                          seek without having to use the 'F2' key.
 
-    Grouting             Turns on or off the gap between sub images, at large 
-                         values of gridsize this can reclaim valuable screen 
+    Grouting             Turns on or off the gap between sub images, at large
+                         values of gridsize this can reclaim valuable screen
                          area for display use.
 
  Pressing 'F6' brings up a screen from which you can control what parameters
@@ -2716,8 +2716,8 @@ the 'h' key can be used to hide the palette box and expose the whole image.
 
  Set evolve mode to yes and then press 'F6' to bring up the screen that allows
  you to choose what gets varied.
- 
- Now set the first entry (param1) to 'x' and the second (param2) to 'y'. This 
+
+ Now set the first entry (param1) to 'x' and the second (param2) to 'y'. This
  tells Fractint to vary param1 (the real part of c) across the screen and
  param2 (the imaginary part of c) down the screen. Make sure all the other
  parameters are set to 'no' so that nothing else gets changed to confuse

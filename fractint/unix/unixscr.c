@@ -139,14 +139,14 @@ static Window FindRootWindow(void);
 static Window pr_dwmroot(Display *dpy, Window pwin);
 static int errhand(Display *dp, XErrorEvent *xe);
 static int getachar(void);
-static int handleesc(void); 
-static int translatekey(int ch); 
-static int xcmapstuff(void); 
+static int handleesc(void);
+static int translatekey(int ch);
+static int xcmapstuff(void);
 static void xhandleevents(void);
 static void RemoveRootPixmap(void);
 static void doneXwindow(void);
 static void initdacbox(void);
-static void setredrawscreen(void); 
+static void setredrawscreen(void);
 static void clearXwindow(void);
 #ifdef FPUERR
 static void continue_hdl(int sig, int code, struct sigcontext *scp,
@@ -279,7 +279,7 @@ UnixInit()
     signal(SIGABRT,SIG_IGN);
     /*
         setup the IEEE-handler to forget all common ( invalid,
-        divide by zero, overflow ) signals. Here we test, if 
+        divide by zero, overflow ) signals. Here we test, if
         such ieee trapping is supported.
     */
     if (ieee_handler("set","common",continue_hdl) != 0 )
@@ -404,10 +404,10 @@ static int xlastfcn = GXcopy;
 static BYTE *pixbuf = NULL;
 
 static int step = 0;
-static int cyclic[][3] = { 
-{1,3,5}, {1,5,3}, {3,1,5}, {3,5,1}, {5,1,3}, {5,3,1}, 
-{1,3,7}, {1,7,3}, {3,1,7}, {3,7,1}, {7,1,3}, {7,3,1}, 
-{1,5,7}, {1,7,5}, {5,1,7}, {5,7,1}, {7,1,5}, {7,5,1}, 
+static int cyclic[][3] = {
+{1,3,5}, {1,5,3}, {3,1,5}, {3,5,1}, {5,1,3}, {5,3,1},
+{1,3,7}, {1,7,3}, {3,1,7}, {3,7,1}, {7,1,3}, {7,3,1},
+{1,5,7}, {1,7,5}, {5,1,7}, {5,7,1}, {7,1,5}, {7,5,1},
 {3,5,7}, {3,7,5}, {5,3,7}, {5,7,3}, {7,3,5}, {7,5,3}
 };
 
@@ -484,7 +484,7 @@ initUnixWindow()
     old_fcntl = fcntl(0, F_GETFL);
     fcntl(0, F_SETFL, FNDELAY);
   }
-  
+
   g_adapter = 0;
 
   /* We have to do some X stuff even for disk video, to parse the geometry
@@ -531,7 +531,7 @@ initUnixWindow()
     size_hints->base_height = 200;
     size_hints->width_inc = 4;
     size_hints->height_inc = 4;
-  
+
     Xdp = XOpenDisplay(Xdisplay);
     if (Xdp == NULL) {
       fprintf(stderr, "Could not open display %s\n", Xdisplay);
@@ -687,7 +687,7 @@ clearXwindow()
       }
     }
     for (i = 1; i < Ximage->height; i++) {
-      bcopy(Ximage->data, Ximage->data+i*Ximage->bytes_per_line, 
+      bcopy(Ximage->data, Ximage->data+i*Ximage->bytes_per_line,
         Ximage->bytes_per_line);
     }
   } else {
@@ -1118,7 +1118,7 @@ XColor cols[256];
  *
  * readvideopalette --
  *  Reads the current video palette into g_dac_box.
- *  
+ *
  *
  * Results:
  *  None.

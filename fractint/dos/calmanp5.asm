@@ -364,7 +364,7 @@ per_check_p5_ret_fast:
         pop     ax              ;pop AX to continue with the FCOMP test
         jz      short JustAfterFnstsw ;test that got us here, & pairable
         jmp     short JustAfterFnstsw ;since we have done the FNSTSW,
-                                ; Skip over next instruction     
+                                ; Skip over next instruction
 EVEN
 SkipTasks:
 

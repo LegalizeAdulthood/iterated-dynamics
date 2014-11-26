@@ -321,7 +321,7 @@ void frame_window(int width, int height)
 void frame_resize(int width, int height)
 {
     BOOL status;
-    
+
     frame_adjust_size(width, height);
     status = SetWindowPos(g_frame.window, NULL,
         0, 0, g_frame.nc_width, g_frame.nc_height,

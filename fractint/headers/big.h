@@ -16,9 +16,9 @@
 /* #define BIG_NEAR   */
 #if !defined(_WIN32)
 #if defined(_MSC_VER)
-#   define BIG_BASED    
-#elif defined( __BORLANDC__)  
-#   define BIG_FAR    
+#   define BIG_BASED
+#elif defined( __BORLANDC__)
+#   define BIG_FAR
 #endif
 #endif
 /* #define BIG_HUGE   */  /* C code only */

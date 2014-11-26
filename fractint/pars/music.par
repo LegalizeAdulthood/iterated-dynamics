@@ -25,7 +25,7 @@ Pop_Piccolo        { ; (c) Bill Jemison [70400,2537], 1996
   colors=@default.map
   }
 
-Silence!            { ; 
+Silence!            { ;
   reset type=mandel passes=g sound=yes maxiter=150
   orbitdelay=0 viewwindows=4.2/0.75/yes/0/0
   showorbit=no colors=@default.map

@@ -1,6 +1,6 @@
 Sand_Dollar        {
   reset type=icons corners=-1.424/1.424/-1.068/1.068
-  params=-2.34/2/0.2/0.1/0.0/5 float=y inside=0 
+  params=-2.34/2/0.2/0.1/0.0/5 float=y inside=0
   colors=000ypa<29>UPF000<4>888000BBB<23>ppp<31>000PFF<27>vcDwdDxeDzfCyfCxeC<2\
   0>_NE
   }
@@ -35,7 +35,7 @@ Halloween3d        {
 
 Mayan_Bracelet     {
   reset type=icons corners=-1.712/1.712/-1.284/1.284
-  params=-2.08/1/-0.1/0.167/0.0/7  float=y inside=0 
+  params=-2.08/1/-0.1/0.167/0.0/7  float=y inside=0
   colors=000dOD<6>ii0d8P<2>sQNZ4PX6OX9QV8N<10>9SD<6>UHPY9M<7>TIIbCN<2>icE`7O<1\
   2>Xw5`3O<9>W56a5Q<11>naa_4Q<19>BTr`3P<22>ULI`5R<11>gXta5P<5>hJP
   }
@@ -67,7 +67,7 @@ Emperors_Cloak3d   {
   }
 
 Trampoline         {
-  reset type=icons corners=-1.64/1.64/-1.23/1.23 
+  reset type=icons corners=-1.64/1.64/-1.23/1.23
   params=1.56/-1/0.1/-0.82/0.0/3
   float=y inside=0
   colors=0001O4<2>1F0KF1<6>hZ0<6>OI0KF0F0F<6>Z0U<7>F0FKF0<6>hZ0<7>KF000A<6>00k\
@@ -97,21 +97,21 @@ Pentagon_Attract3d {
   }
 
 Kachina_Dolls      {
-  reset type=icons corners=-1.28/1.28/-0.96/0.96 
-  params=2.409/-2.5/0/0.9/0.0/23 float=y inside=0 
+  reset type=icons corners=-1.28/1.28/-0.96/0.96
+  params=2.409/-2.5/0/0.9/0.0/23 float=y inside=0
   colors=000JYA<9>DTC_l7<40>7jkck7<4>weCUb8OT9IIB_l7<72>gK5_l7<12>bhE
   }
 
 Kachina_Dolls3d    {
   reset type=icons3d corners=-2.182691/2.182691/-1.637018/1.637018
-  params=2.409/-2.5/0/0.9/0.0/23  float=y maxiter=32767 inside=0 
+  params=2.409/-2.5/0/0.9/0.0/23  float=y maxiter=32767 inside=0
   rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
   converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
   }
 
 Santa_Chiara_Icon  {
   reset type=icons corners=-1.28/1.28/-0.96/0.96
-  params=2.409/-2.5/-0.2/0.81/0.0/24  float=y inside=0 
+  params=2.409/-2.5/-0.2/0.81/0.0/24  float=y inside=0
   colors=000UFL<26>z00MKS<7>sCMLKP<6>fQ2FNX<3>3_tIKS<36>dLXIKS<27>JHqKKT<11>qW\
   eIKS<18>D_S
   }
@@ -125,7 +125,7 @@ Santa_Chiara3d     {
 
 French_Glass       {
   reset type=icons corners=-0.992/0.992/-0.744/0.744
-  params=-2.05/3/-16.79/1/0.0/9  float=y inside=0 
+  params=-2.05/3/-16.79/1/0.0/9  float=y inside=0
   colors=000VK`<75>w7Fw7Fw8F<70>qbQ
   }
 
@@ -138,14 +138,14 @@ French_Glass3d     {
 
 The_Pentangle      {
   reset type=icons corners=-1.352/1.352/-1.014/1.014
-  params=-2.32/2.32/0/0.75/0.0/5  float=y inside=0 
+  params=-2.32/2.32/0/0.75/0.0/5  float=y inside=0
   colors=000AOf<22>I81AOg<16>4RvBOg<28>djZARc<7>Eu4BOg<27>g4dCOg<5>TMkANf<14>H\
   7HBOg<15>WV`
   }
 
 The_Pentangle3d    {
   reset type=icons3d corners=-2.155172/2.155172/-1.616379/1.616379
-  params=-2.32/2.32/0/0.75/0.0/5  float=y maxiter=32767 inside=0 
+  params=-2.32/2.32/0/0.75/0.0/5  float=y maxiter=32767 inside=0
   rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
   converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
   }
@@ -168,13 +168,13 @@ Fuzzy_Hex_Knot3d   { ; By DMF
 
 Square             { ; By DMF
   reset type=icons corners=-0.948083/0.948083/-0.711062/0.711062
-  params=-2.7/5/1.5/1/0.0/4  float=y inside=0 
+  params=-2.7/5/1.5/1/0.0/4  float=y inside=0
   colors=000JYA<9>DTC_l7<40>7jkck7<4>weCUb8OT9IIB_l7<72>gK5_l7<12>bhE
   }
 
 Square3d           { ; By DMF
   reset type=icons3d corners=-1.801941/1.801941/-1.351455/1.351455
-  params=-2.7/5/1.5/1/0.0/4  float=y maxiter=32767 inside=0 
+  params=-2.7/5/1.5/1/0.0/4  float=y maxiter=32767 inside=0
   rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
   converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
   }
@@ -188,7 +188,7 @@ Square3d           { ; By DMF
 
 12_Spoke_Wheel3d   { ; By DMF
   reset type=icons3d corners=-2.1125/2.1125/-1.584375/1.584375
-  params=-2.6/4/1.5/1/0.0/12  maxiter=32767 inside=0 
+  params=-2.6/4/1.5/1/0.0/12  maxiter=32767 inside=0
   rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
   converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
   }
@@ -196,7 +196,7 @@ Square3d           { ; By DMF
 36_Spoke_Wheel     { ; By DMF
                      ; Takes quite a while to fully "develop"
   reset type=icons corners=-1.352/1.352/-1.014/1.014
-  params=-2.57/3.2/1.2/-1.75/0.0/36  float=y inside=0 
+  params=-2.57/3.2/1.2/-1.75/0.0/36  float=y inside=0
   colors=000mP6<2>rS4NED<2>291UFH<25>Q2vUFG<27>K2MTGH<3>POLVGGOQM<15>5tc<17>xm\
   K<31>cq9<10>0WM0VM0UN
   }
@@ -212,7 +212,7 @@ Square3d           { ; By DMF
 
 Champagne_Glasses  { ; By DMF
   reset type=icons corners=-1.352/1.352/-1.014/1.014
-  params=-2.57/3.2/1.35/1.75/0.0/12 float=y maxiter=256 inside=0 
+  params=-2.57/3.2/1.35/1.75/0.0/12 float=y maxiter=256 inside=0
   colors=000lSJ<47>tYxkRA<15>xJYkR9<85>h4FkR9<37>rS8kR9<50>MmEkR9MmE<8>HqF
   }
 
@@ -232,14 +232,14 @@ Orgami             { ; By DMF
 
 Orgami_3d          { ; By DMF
   reset type=icons3d corners=-2.600703/2.600703/-1.950528/1.950528
-  params=2.409/-2.5/0/0.9/0.0/4 maxiter=32767 inside=0 
+  params=2.409/-2.5/0/0.9/0.0/4 maxiter=32767 inside=0
   rotation=0/0/0 perspective=180 xyshift=0/0 stereo=2 interocular=3
   converge=-3 crop=4/0/0/4 bright=100/100 colors=@glasses2.map
   }
 
 Two_Triangles      { ; By DMF
   reset type=icons corners=-1.342208/1.342208/-1.006656/1.006656
-  params=2.4/-2.5/-0.9/0.9/0.0/3 float=y inside=0 
+  params=2.4/-2.5/-0.9/0.9/0.0/3 float=y inside=0
   colors=000VQ7<59>9Y_VQ8<33>7FyVQ7<38>mVUUP7<12>AA5
   }
 
@@ -253,7 +253,7 @@ Two_Triangles3d    { ; By DMF
 
 Christmas_Bow      { ; By DMF
   reset type=icons corners=-1.352/1.352/-1.014/1.014
-  params=-2.34/2.2/0.4/0.05/0.0/5 float=y maxiter=32767 inside=0 
+  params=-2.34/2.2/0.4/0.05/0.0/5 float=y maxiter=32767 inside=0
   colors=000bcj<4>fkqI6M<4>3KsIBE<2>CZ8K4G<3>J4FJ4EL5G<26>oe6qg5tk4wn3zr2K6G<2\
   5>iu8K4Izzz<16>zzzK4H<26>WSjK5G<23>Y_OK5H<25>glvH4HD4I94KL6G<8>VOFL5G<19>vX9\
   M5I<15>qQuK5H<22>abi
@@ -269,7 +269,7 @@ Christmas_Bow3d    { ; By DMF
 
 Penti_ummm?        {
   reset type=icons corners=-0.742016/0.742016/-0.556512/0.556512
-  params=-2.5/8/-0.7/1/0.0/5 float=y inside=0 
+  params=-2.5/8/-0.7/1/0.0/5 float=y inside=0
   colors=000Aca9_b8VcU5V<16>L9MP3SF3I538_4`<11>lGcZ4`<38>xfQ_5_<15>xgJZ4`<20>Y\
   dOXfNZ4`<23>lXqY4`<6>PIV
   }
@@ -277,7 +277,7 @@ Penti_ummm?        {
 French_Glass3d_II  { ; Awesome! Closeup of French_Glass_3d!!
                      ; Let run "full term" for best effect.
   reset type=icons3d corners=-0.520313/0.520313/-0.390235/0.390235
-  params=-2.05/3/-16.79/1/0.0/9  float=y maxiter=32767 inside=0 
+  params=-2.05/3/-16.79/1/0.0/9  float=y maxiter=32767 inside=0
   rotation=-90/0/0 perspective=180 xyshift=0/0
   stereo=2 interocular=3 converge=-3 crop=4/0/0/4 bright=100/100
   colors=@glasses2.map
@@ -285,14 +285,14 @@ French_Glass3d_II  { ; Awesome! Closeup of French_Glass_3d!!
 
 Warriors_Shield    { ; By DMF
   reset type=icons corners=-1.064/1.064/-0.798/0.798
-  params=-1.806/1.806/0/1.5/0.0/7 float=y inside=0 
+  params=-1.806/1.806/0/1.5/0.0/7 float=y inside=0
   colors=000zX0<42>z10z00z00y01<82>00z00z11y<17>EEk
   }
 
 Pendulum_Swing     { ; By DMF
                      ; Slow.  Have patience.
   reset type=icons corners=-1.242991/1.242991/-0.932243/0.932243
-  params=-1.9/1.806/-0.85/1.8/0.0/7  float=y inside=0 
+  params=-1.9/1.806/-0.85/1.8/0.0/7  float=y inside=0
   colors=000BDQ<17>DBV9FF<27>G289FF<16>HKHBJGIKI<8>MNJ9FF<71>fnZ
   }
 

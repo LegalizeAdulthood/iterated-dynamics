@@ -119,7 +119,7 @@ use Turbo-C++, so the odds of released FRACTINT distributions that do
 not compile with Turbo products are lower than they used to be.
 
 A TCFRACT.PRJ and TCHELP.PRJ file is included for Turbo-C users.  You should
-rename these to FRACTINT.PRJ and HC.PRJ before compiling fractint.  
+rename these to FRACTINT.PRJ and HC.PRJ before compiling fractint.
 
 With TC++ you'll have to do a manual step for the help system each time you
 create a new fractint.exe - see notes in next section.

@@ -328,9 +328,9 @@ skip_grid:
         fld     tbyte ptr delxx  ; delxx col delxx2*row  ycent xcent
         fmulp   st(1),st(0)      ; delxx*col delxx2*row  ycent xcent
         faddp   st(1),st(0)      ; delxx*col+delxx2*row  ycent xcent
-        fadd    qword ptr xxmin  ; xxmin+delxx*col+delxx2*row ycent xcent       
+        fadd    qword ptr xxmin  ; xxmin+delxx*col+delxx2*row ycent xcent
         fsub    st, st(2) ; xxmin+col*delxx+row*delxx2-xcent ycent xcent
-  
+
         fild    word ptr row
         fld     tbyte ptr delyy
         fmulp   st(1),st(0)
@@ -342,12 +342,12 @@ skip_grid:
         fsub    st, st(2)
 after_load:
 
-        mov     ds, ax 
-        fld     st(1)    
-        fmul    st, st   
-        fld     st(1)    
-        fmul    st, st   
-        fadd             
+        mov     ds, ax
+        fld     st(1)
+        fmul    st, st
+        fld     st(1)
+        fmul    st, st
+        fadd
 
         fcom    floatmin
         fstsw   statw

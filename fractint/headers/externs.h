@@ -531,7 +531,7 @@ extern char                  tstack[];
 extern double                twopi;
 extern VOIDPTR               typespecific_workarea;
 extern char                  useinitorbit;
-extern int                   use_grid;  
+extern int                   use_grid;
 extern BYTE                  usemag;
 extern short                 uses_ismand;
 extern short                 uses_p1;

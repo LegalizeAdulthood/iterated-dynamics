@@ -1501,7 +1501,7 @@ int orbit2dlong()
     case SOUNDFLAG_Y: soundvar = &y; break;
     case SOUNDFLAG_Z: soundvar = &z; break;
     }
-        
+
     if (inside > 0)
     {
         color = inside;

@@ -484,12 +484,12 @@ decode_fractal_info(info,dir)
     getDouble(&info->dparm8,&bufPtr,dir);
     getDouble(&info->dparm9,&bufPtr,dir);
     getDouble(&info->dparm10,&bufPtr,dir);
-    getLong(&info->bailout,&bufPtr,dir);  
+    getLong(&info->bailout,&bufPtr,dir);
     getInt(&info->bailoutest,&bufPtr,dir);
     getLong(&info->iterations,&bufPtr,dir);
     getInt(&info->bf_math,&bufPtr,dir);
     getInt(&info->bflength,&bufPtr,dir);
-    getInt(&info->yadjust,&bufPtr,dir); 
+    getInt(&info->yadjust,&bufPtr,dir);
     getInt(&info->old_demm_colors,&bufPtr,dir);
     getLong(&info->logmap,&bufPtr,dir);
     getLong(&info->distest,&bufPtr,dir);
@@ -508,12 +508,12 @@ decode_fractal_info(info,dir)
 
     for (i=0;i<(sizeof(info->future)/sizeof(short));i++) {
         getInt(&info->future[i],&bufPtr,dir);
-    }   
+    }
     if (bufPtr-buf != FRACTAL_INFO_SIZE) {
     printf("Warning: loadfile miscount on fractal_info structure.\n");
     printf("Components add up to %d bytes, but FRACTAL_INFO_SIZE = %d\n",
         (int) (bufPtr-buf), (int) FRACTAL_INFO_SIZE);
-    } 
+    }
     if (dir==0) {
     bcopy((char *)buf,(char *)info,FRACTAL_INFO_SIZE);
     }
@@ -807,12 +807,12 @@ decode_evolver_info(info,dir)
 
     for (i=0;i<(sizeof(info->future)/sizeof(short));i++) {
         getInt(&info->future[i],&bufPtr,dir);
-    }   
+    }
     if (bufPtr-buf != EVOLVER_INFO_SIZE) {
     printf("Warning: loadfile miscount on evolution_info structure.\n");
     printf("Components add up to %d bytes, but EVOLVER_INFO_SIZE = %d\n",
         (int) (bufPtr-buf), (int) EVOLVER_INFO_SIZE);
-    } 
+    }
     if (dir==0) {
     bcopy((char *)buf,(char *)info,EVOLVER_INFO_SIZE);
     }
@@ -851,12 +851,12 @@ decode_orbits_info(info,dir)
 
     for (i=0;i<(sizeof(info->future)/sizeof(short));i++) {
         getInt(&info->future[i],&bufPtr,dir);
-    }   
+    }
     if (bufPtr-buf != ORBITS_INFO_SIZE) {
     printf("Warning: loadfile miscount on orbits_info structure.\n");
     printf("Components add up to %d bytes, but ORBITS_INFO_SIZE = %d\n",
         (int) (bufPtr-buf), (int) ORBITS_INFO_SIZE);
-    } 
+    }
     if (dir==0) {
     bcopy((char *)buf,(char *)info,ORBITS_INFO_SIZE);
     }

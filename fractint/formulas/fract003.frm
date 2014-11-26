@@ -154,19 +154,19 @@ RCL_Quaternion_M (XAXIS) { ; Ron Lewen, 76376,2567
    }
 
 REB004A = {; Ron Barnett [70153,1233]
-   ; try p1 = 0.9, p2 = 2, fn1 = sin, fn2 = cos 
+   ; try p1 = 0.9, p2 = 2, fn1 = sin, fn2 = cos
    z = pixel:
    z =p1*fn1(z) + p1*p1*fn2(p2*z) + pixel, |z| <= 100
    }
 
-REB004B = {; Ron Barnett [70153,1233] 
+REB004B = {; Ron Barnett [70153,1233]
               ; floating point required
    ; try p1 = 3
    z = pixel:
    z = pixel + p1*(z/2 + z*z/6 + z*z*z/12), |z| <= 100
    }
 
-REB004C = {; Ron Barnett [70153,1233] 
+REB004C = {; Ron Barnett [70153,1233]
               ; floating point required
    ; try p1 = 3, p2 = (-0.009,1.225)
    z = pixel:
@@ -174,48 +174,48 @@ REB004C = {; Ron Barnett [70153,1233]
    }
 
 REB004D = {; Ron Barnett [70153,1233]
-   ; try p1 = -1, fn1 = sin 
+   ; try p1 = -1, fn1 = sin
    z = pixel:
    z = pixel + fn1(2*z+1)/(2*z+p1), |z| <= 100
    }
 
-REB004E = {; Ron Barnett [70153,1233] 
+REB004E = {; Ron Barnett [70153,1233]
               ; floating point required
    ; try p1 = -1, p2 = -1, fn1 = sin, fn2 = cos
    z = pixel:
-   z = pixel + fn1(2*z+1)/(2*z+p1); 
+   z = pixel + fn1(2*z+1)/(2*z+p1);
    z = z + fn2(4*z+1)/(4*z+p2), |z| <= 100
    }
 
 REB004F = {; Ron Barnett [70153,1233]
-   ; try p1 = -1, p2 = (-0.92, 0.979), fn1 = sin 
+   ; try p1 = -1, p2 = (-0.92, 0.979), fn1 = sin
    z = pixel:
    z = p2 + fn1(2*z+1)/(2*z+p1), |z| <= 100
    }
 
-REB004G = {; Ron Barnett [70153,1233] 
+REB004G = {; Ron Barnett [70153,1233]
               ; floating point required
    ; try p1 = -1, p2 = (0.849,0.087), fn1 = sin, fn2 = cos
    z = pixel:
-   z = p2 + fn1(2*z+1)/(2*z+p1); 
+   z = p2 + fn1(2*z+1)/(2*z+p1);
    z = z + fn2(4*z+1)/(4*z+p1), |z| <= 100
    }
 
-REB004H = {; Ron Barnett [70153,1233] 
+REB004H = {; Ron Barnett [70153,1233]
               ; floating point required
    ; try fn1 = sqr
    z = pixel:
    z = pixel + fn1(3/z - z/4), |z| <= 100
    }
 
-REB004I = {; Ron Barnett [70153,1233] 
+REB004I = {; Ron Barnett [70153,1233]
               ; floating point required
    ; try p1 = (-1.354, 0.625) fn1 = sqr
    z = pixel:
    z = p1 + fn1(3/z - z/4), |z| <= 100
    }
 
-REB004J = {; Ron Barnett [70153,1233] 
+REB004J = {; Ron Barnett [70153,1233]
               ; floating point required
    ; try fn1 = tan
    z = pixel:
@@ -223,7 +223,7 @@ REB004J = {; Ron Barnett [70153,1233]
    z = x*z + pixel, |z| <= 100
    }
 
-REB004K = {; Ron Barnett [70153,1233] 
+REB004K = {; Ron Barnett [70153,1233]
               ; floating point required
    ; try p1 = (-0.564, 0.045), fn1 = tan
    z = pixel:
@@ -231,7 +231,7 @@ REB004K = {; Ron Barnett [70153,1233]
    z = x*z + p1, |z| <= 100
    }
 
-REB004L = {; Ron Barnett [70153,1233] 
+REB004L = {; Ron Barnett [70153,1233]
               ; floating point required
    ; try p1 = 1, p2 - 2, fn1 = tan
    z = pixel:
@@ -239,7 +239,7 @@ REB004L = {; Ron Barnett [70153,1233]
    z = x*z + pixel, |z| <= 100
    }
 
-REB004M = {; Ron Barnett [70153,1233] 
+REB004M = {; Ron Barnett [70153,1233]
               ; floating point required
    ;try p1 = (0.4605, 0.8), fn1 = tan, fn2 = cos
    z = pixel:
@@ -250,7 +250,7 @@ REB004M = {; Ron Barnett [70153,1233]
    x2 = x1*x1 - y1*y1 + p1;
    y2 = 2*x*y;
    z = x2 + flip(y2), |z| <= 100
-   }   
+   }
 
 REB004N = {; Ron Barnett [70153,1233]
    z = 0.5:
@@ -269,7 +269,7 @@ REB005A = {; Ron Barnett [70153,1233]
    x2 = x1*x1 - y1*y1 + p1;
    y2 = 2*x1*y1;
    z = x2 + flip(y2), |z| <= 100
-   } 
+   }
 
 REB005B = {; Ron Barnett [70153,1233]
               ; floating point required
@@ -295,7 +295,7 @@ REB005C = {; Ron Barnett [70153,1233]
    x2 = x1*x1 - y1*y1 + p2;
    y2 = 2*x1*y1;
    z = x2 + flip(y2), |z| <= 100
-   } 
+   }
 
 REB005D = {; Ron Barnett [70153,1233]
               ; floating point required
@@ -451,7 +451,7 @@ Sam_7(XAXIS) = {; from SAM.FRM
    }
 
 Sam_8 = {; from SAM.FRM
-   ;fix by Ron Barnett [70153,1233]   
+   ;fix by Ron Barnett [70153,1233]
    z = c = Pixel:
    z = z^c
    }

@@ -1,4 +1,4 @@
-Blob1              { ; 
+Blob1              { ;
                      ; moderately slow
   reset type=lyapunov corners=2.719/3.178/3.26/3.604 params=65/0.05
   maxiter=25 colors=@gamma1.map
@@ -29,7 +29,7 @@ Hydra              { ; a two headed snail
   params=5/0.5 float=y colors=@chroma.map
   }
 
-Snail1             { ; 
+Snail1             { ;
                      ; merely slow
   reset type=lyapunov corners=3.008/3.658667/3.409266/3.897266
   params=32/0.5 maxiter=15

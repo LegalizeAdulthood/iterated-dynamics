@@ -525,7 +525,7 @@ SUMMARY OF FRACTAL TYPES
          z(n+1) = fn2(z(n)) + c.
     Five parameters: real, imaginary portions of p1, shift value,
                      fn1 and fn2.
-                     
+
 ;{=HT_MANDELBROTMIX4 mandelbrotmix4}
 ;~Label=HF_MANDELBROTMIX4
 ;    From a Jim Muth favorite FOTD formula
@@ -534,7 +534,7 @@ SUMMARY OF FRACTAL TYPES
 ;      k=real(p3)+1, l=imag(p3)+100, c=fn1(pixel):
 ;      z=k*((a*(z^b))+(d*(z^f)))+c
 ;    Parameters: see above, sixth parameter used for bailout
-;    
+;
 {=HT_MANDELCLOUD mandelcloud}
 ~Label=HF_MANDELCLOUD
     Displays orbits of Mandelbrot set:
@@ -548,14 +548,14 @@ SUMMARY OF FRACTAL TYPES
       z(0) = c = pixel;
       z(n+1) = z(n)^4 + c.
     Parameters: real & imaginary perturbations of z(0)
-    
+
 ~OnlineFF
 {=HT_MANDFN mandelfn}
 ~Label=HF_MANDFN
       z(0) = c = pixel;
       z(n+1) = c*fn(z(n)).
     Parameters: real & imaginary perturbations of z(0), and fn
-    
+
 {=HT_FNORFN manlam(fn||fn)}
 ~Label=HF_MANLAMFNFN
       c = pixel;
@@ -572,7 +572,7 @@ SUMMARY OF FRACTAL TYPES
       x(n+1) = y(n) - sin(x(n))
       y(n+1) = a - x(n)
     Parameter is a (try a value near pi)
-    
+
 ~OnlineFF
 {=HT_MLAMBDA mandellambda}
 ~Label=HF_MLAMBDA
@@ -592,7 +592,7 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = z(n)^|degree| + c.x*z(n)^(|degree|-2) + c.y*y(n)
       y(n+1) = z(n)
     Three parameters: real & imaginary perturbations of z(0), and degree.
-    
+
 ~OnlineFF
 {=HT_PHOENIX mandphoenixclx}
 ~Label=HF_MANDPHOENIXCPLX
@@ -633,7 +633,7 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = z(n)^2 + z1(n) + c;
       z1(n+1) = z(n);
     Parameters: real & imaginary parts of c
-    
+
 ~OnlineFF
 {=HT_PICKMJ manzpower}
 ~Label=HF_MANZPOWER
@@ -1713,9 +1713,9 @@ used this one only because we're lazy, and Z(n)^4 = (Z(n)^2)^2.
 ;(type=mandelbrotmix4)
 ;
 ;Jim Muth has been publishing a "Fractal of the Day" on the fractint mailing
-;list for many years now. As often as not Jim picks the formula 
-;Mandelbrotmix4 as the fractal continent to explore. To honor Jim, the 
-;fractint authors have provided this fractal as a built-in type. 
+;list for many years now. As often as not Jim picks the formula
+;Mandelbrotmix4 as the fractal continent to explore. To honor Jim, the
+;fractint authors have provided this fractal as a built-in type.
 ;
 ;The formula is:
 ;
@@ -2591,7 +2591,7 @@ complex variable being nonzero). Nesting of IF..ENDIF blocks is permitted.\
           Predefined Variables (Continued)
           --------------------------------------------
           ismand     1 (true) by default, changes to 0 when the Mandelbrot/
-                     Julia SPACE toggle is pressed. This allows writing 
+                     Julia SPACE toggle is pressed. This allows writing
                      formulas that have both "Mandelbrot" and "Julia" behavior.
 ~LABEL=@PREDEFCENTERMAG
           center     Zoom box (Xcenter,  Ycenter)    (see {=@CENTERMAG center-mag})
@@ -2603,8 +2603,8 @@ complex variable being nonzero). Nesting of IF..ENDIF blocks is permitted.\
           1          sin(), cos(), sinh(), cosh(), cosxx(), tan(), cotan(),
                      tanh(), cotanh(), sqr(), log(), exp(), abs(), conj(),
                      real(), imag(), flip(), fn1(), fn2(), fn3(), fn4(),
-                     srand(), asin(), asinh(), acos(), acosh(), atan(), 
-                     atanh(), sqrt(), cabs(), floor(), ceil(), trunc(), 
+                     srand(), asin(), asinh(), acos(), acosh(), atan(),
+                     atanh(), sqrt(), cabs(), floor(), ceil(), trunc(),
                      round()
           2          - (negation), ^ (power)
           3          * (multiplication), / (division)
@@ -2858,14 +2858,14 @@ If the second parameter is set to 2, then diffusion begins with a
 square box on the screen.  Points appear on a circle inside the box
 whose distance from the box is equal to the border size.  This
 fractal grows very slowly since the points are not restricted to a
-small box. 
+small box.
 
 The third and last parameter for diffusion controls the color of the
 fractal.  If it is set to zero then points are colored randomly.
 Otherwise, it tells how often to shift the color of the points being
 deposited.  If you set it to 150, for example, then the color of the
 points will shift every 150 points leading to a radial color pattern
-if you are using the standards diffusion type.  
+if you are using the standards diffusion type.
 
 Diffusion was inspired by a Scientific American article a couple of
 years back which includes actual pictures of real physical phenomena
@@ -3078,13 +3078,13 @@ fractals should be iterated. We start with a very basic Julia formula:
 ~Format+
 
 The standard algorithm would test each iterated point to see if it "escapes to
-infinity". If its size or "modulus" (its distance from the origin) exceeds a 
-preselected {Bailout Test} value, it is outside the Julia set, and it is banished 
+infinity". If its size or "modulus" (its distance from the origin) exceeds a
+preselected {Bailout Test} value, it is outside the Julia set, and it is banished
 to the world of multicolored level sets which color-cycle spectacularly. But another
 way of describing an escaped point is to say that it is "attracted" to infinity. We
 make this decision by calculating whether the point falls within the "target set"
 of all points closer to infinity than the boundary created by the bailout value. In
-this way, the "disk around infinity" is conceptually no different from the disks 
+this way, the "disk around infinity" is conceptually no different from the disks
 around {Finite Attractors} such as those used for Newton fractals.
 
 In the above formula, with c = (0, 0i), this standard algorithm yields a rather
@@ -3095,7 +3095,7 @@ set or something designed by hand. This method opens a simple [beware when he us
 words like that] and systematic approach to Escher-like tilings."
 
 So, what we do is iterate the above formula, scale each iteration, and plug it into
-a second Julia formula. This formula has a value of c selected by the user. If the 
+a second Julia formula. This formula has a value of c selected by the user. If the
 point converges to this non-circular target set:
 
 ~Format-
@@ -3103,14 +3103,14 @@ point converges to this non-circular target set:
 ~Format+
 
 we color it in proportion to the overall iteration count. If not, it will be
-attracted to infinity and can be colored with the usual outside coloring 
-options. This formula uses a new Fractint programming feature which allows the use 
-of a customized coloring option for the points which converge to the target Julia 
-set, yet allows the other points to be handled by the standard fractal engine with 
+attracted to infinity and can be colored with the usual outside coloring
+options. This formula uses a new Fractint programming feature which allows the use
+of a customized coloring option for the points which converge to the target Julia
+set, yet allows the other points to be handled by the standard fractal engine with
 all of its options.
 
 With the proper palette and parameters for c, and using the {Inversion} option and
-a solid outside color from the {Color Parameters}, you can create a solar eclipse, 
+a solid outside color from the {Color Parameters}, you can create a solar eclipse,
 with the corona composed of Julia-shaped flames radiating from the sun's surface.
 
 If you question the relevance of these images to Escher, check out his Circle Limit
@@ -3119,16 +3119,16 @@ exist today many ... artists of any kind, to whom the desire has come to penetra
 the depths of infinity.... There is only one possible way of ... obtaining an
 "infinity" entirely enclosed within a logical boundary line.... The largest ... shapes
 are now found in the center and the limit of infinite number and infinite smallness
-is reached at the circumference.... Not one single component ever reaches the edge. 
+is reached at the circumference.... Not one single component ever reaches the edge.
 For beyond that there is "absolute nothingness." And yet this round world cannot exist
 without the emptiness around it, not simply because "within" presupposes "without", but
 also because it is out there in the "nothingness" that the center points of the arcs
-that go to build up the framework are fixed with such geometric exactitude."     
-    
+that go to build up the framework are fixed with such geometric exactitude."
+
 ~Format-
-References: 
+References:
   Ernst, B. The Magic Mirror of M. C. Escher, Barnes & Noble, 1994, pp. 102-11.
-  Peitgen, H.-O. and Saupe, D. The Science of Fractal Images, Springer-Verlag, 
+  Peitgen, H.-O. and Saupe, D. The Science of Fractal Images, Springer-Verlag,
     1988; pp. 185, 187.
 ~Format+
 ;

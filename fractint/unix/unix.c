@@ -494,7 +494,7 @@ unsigned short _rotl(unsigned short num, short bits)
 {
    unsigned long ll;
    ll = (((unsigned long)num << 16) + num) << (bits&15);
-   return((unsigned short)(ll>>16)); 
+   return((unsigned short)(ll>>16));
 }
 
 /* sound.c file prototypes */
@@ -544,6 +544,6 @@ uclock_t usec_clock(void)
       elapsed.tv_sec--;
    }
    result  = (unsigned long)(elapsed.tv_sec*10000 +  elapsed.tv_usec/100);
-   return(result); 
+   return(result);
 }
 

@@ -920,7 +920,7 @@ void Jiim(int which)         /* called by fractint */
          if (which == ORBIT)
          {
            PER_PIXEL();
-         }  
+         }
          /* move window if bumped */
          if (windows==0 && col>xc && col < xc+xd && row>yc && row < yc+yd)
          {

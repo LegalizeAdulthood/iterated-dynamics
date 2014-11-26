@@ -116,10 +116,10 @@ witchcraft" algorithm based on the Almondbread implementation by Michael
 Ganss. This algorithm optimizes deep zooms by calculating parallel orbits
 starting at different points, and subdividing when the orbits break formation.
 Michael's implementation had to be extensively modified to work with
-Fractint's DOS medium memory model environment. 
+Fractint's DOS medium memory model environment.
 
-Synchronous orbits (also known as SOI) has some limitations. SOI is loosely 
-coupled with fractint and most options don't work with it. Only types mandel 
+Synchronous orbits (also known as SOI) has some limitations. SOI is loosely
+coupled with fractint and most options don't work with it. Only types mandel
 and julia are implemented. SOI is only useful for very deep zooms, but only
 up to the limit of double precision. Within this narrow magnification range,
 SOI can result in tremndous speedups. If you invoke fractint with "debug=3444"

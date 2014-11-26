@@ -27,7 +27,7 @@ timer.
 110     cmdfiles.c      turns off first-time initialization of variables
 200 fractint.c  time encoder
 322 parserfp.c  disable optimizer (FPU >= 387 only)
-324     realdos.c       disables help ESC in screen messages    
+324     realdos.c       disables help ESC in screen messages
 420 diskvid.c   don't use extended/expanded mem (force disk)
 420 memory.c    same for screen save (force disk)
 420 editpal.c   same for screen save (force disk)
@@ -55,7 +55,7 @@ timer.
 3002    realdos.c   don't show development in heading
 3200    fracsubr.c      disable auto switch back from arbitrary precision
 3400    fracsubr.c      disable auto switch from integer to float
-3444    calcfrac.c      turns on long double soi algorithm (passes=s) 
+3444    calcfrac.c      turns on long double soi algorithm (passes=s)
 3600    miscfrac.c      pins the plasma corners to 1
 3800    fracsubr.c      turns off grid pixel lookup
 4000    miscres.c   turn on math error message (off otherwise)
@@ -64,7 +64,7 @@ timer.
 4030    fracsubr.c      use old orbit->sound code w/integer overflow.
 4200    diskvid.c       sets disk video cache size to minimum
 6000    frasetup        turns off optimization of using realzzpower types
-                        instead of complexzpower when imaginary part of 
+                        instead of complexzpower when imaginary part of
                         parameter is zero
 8088    general.asm set cpu = 86, ie dont use 32 bit stuff
 8088    fractint.c  set cpu = 86, (case in general.asm is redundant?)

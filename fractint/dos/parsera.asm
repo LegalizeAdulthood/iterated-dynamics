@@ -1527,22 +1527,22 @@ End_Log_ATan:
       push         es
       les          bx, _jump_control
       add          bx,ax
-      mov          ax,WORD PTR es:[bx+8]; jump_index = DestJumpIndex 
+      mov          ax,WORD PTR es:[bx+8]; jump_index = DestJumpIndex
       mov          bx,WORD PTR es:[bx+2]; bx = JumpOpPtr
       pop          es
       mov          _jump_index,ax
-      add          bx, WORD PTR _pfls  ; 
+      add          bx, WORD PTR _pfls  ;
    END_INCL        Jump                ;
 ; --------------------------------------------------------------------------
    BEGN_OPER       JumpOnTrue          ;
       ftst                             ; test Arg1.x
       fstsw        ax
       sahf
-      jz           short NotTrue       ; if(Arg1.x != 0)     
+      jz           short NotTrue       ; if(Arg1.x != 0)
       INCL_OPER    JumpOnTrue, Jump    ; call Jump
       jmp          short EndJumpOnTrue
 NotTrue:
-      add          _jump_index, 1      ; else jump_index++ 
+      add          _jump_index, 1      ; else jump_index++
 EndJumpOnTrue:
    END_OPER        JumpOnTrue          ;
 ; --------------------------------------------------------------------------
@@ -1554,7 +1554,7 @@ EndJumpOnTrue:
       INCL_OPER    JumpOnFalse, Jump
       jmp          short EndJumpOnFalse
 True:
-      add          _jump_index, 1      ; else jump_index++ 
+      add          _jump_index, 1      ; else jump_index++
 EndJumpOnFalse:
    END_OPER        JumpOnFalse         ;
 ; --------------------------------------------------------------------------
@@ -2158,7 +2158,7 @@ checker_is_1:
       jmp          after_load
 skip_invert:
       cmp          _use_grid,0          ; inversion support added
-      je           skip_grid  
+      je           skip_grid
    ;   v[0].a.d.x = dx0[col]+dShiftx;
       mov          ax,_col
       shl          ax,3
@@ -2187,7 +2187,7 @@ skip_invert:
       fstp         QWORD PTR es:[bx+CPFX+8]
       jmp          after_load
 skip_grid:
-   ;  v[0].a.d.x = (double)(xxmin + col*delxx + row*delxx2); 
+   ;  v[0].a.d.x = (double)(xxmin + col*delxx + row*delxx2);
       fild         WORD PTR _row
       fld          TBYTE PTR _delxx2
       fmulp        st(1),st(0)
@@ -2344,7 +2344,7 @@ _fform_per_pixel   proc far
       jmp          after_load
 skip_invert:
       cmp          _use_grid,0          ; inversion support added
-      je           skip_grid  
+      je           skip_grid
    ;   v[0].a.d.x = dx0[col]+dShiftx;
       mov          ax,_col
       shl          ax,3
@@ -2373,7 +2373,7 @@ skip_invert:
       fstp         QWORD PTR es:[bx+CPFX+8]
       jmp          after_load
 skip_grid:
-   ;  v[0].a.d.x = (double)(xxmin + col*delxx + row*delxx2); 
+   ;  v[0].a.d.x = (double)(xxmin + col*delxx + row*delxx2);
       fild         WORD PTR _row
       fld          TBYTE PTR _delxx2
       fmulp        st(1),st(0)
@@ -2384,7 +2384,7 @@ skip_grid:
       fadd         QWORD PTR _xxmin
       les          bx,_v
       fstp         QWORD PTR es:[bx+CPFX]
-      fwait     
+      fwait
    ;  v[0].a.d.y = (double)(yymax - row*delyy - col*delyy2); */
       fild         WORD PTR _row
       fld          TBYTE PTR _delyy
@@ -2395,7 +2395,7 @@ skip_grid:
       fmulp        st(1),st(0)
       fsubp        st(1),st(0)
       les          bx,_v
-      fstp         QWORD PTR es:[bx+CPFX+8] 
+      fstp         QWORD PTR es:[bx+CPFX+8]
 after_load:
       mov          di,offset DGROUP:_s ; di points to stack overflow area
       mov          ax,ds

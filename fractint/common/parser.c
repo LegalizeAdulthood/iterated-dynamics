@@ -4275,7 +4275,7 @@ int frm_prescan (FILE * open_file)
                case CLOSE_PARENS:
                   if (paren) {
                      paren--;
-                  }                           
+                  }
                   else {
                      if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
                         errors[errors_found].start_pos      = statement_pos;

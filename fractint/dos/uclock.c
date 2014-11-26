@@ -52,7 +52,7 @@ uclock_t usec_clock(void)
       {
             c_ptr = (uclock_t *)MK_FP(BIOS_DS, B_TIKP);
             init  = 1;        /* First call, we have to set up timer.   */
-            int_off(); 
+            int_off();
             outp(TMODE, CONTVAL);   /* Write new control byte.          */
             outp(T0DATA, 0);        /* Initial count = 65636.           */
             outp(T0DATA, 0);

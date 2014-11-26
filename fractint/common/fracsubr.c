@@ -148,7 +148,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
    coloriter=oldcoloriter = 0L;
    for (i=0; i<10; i++)
       rhombus_stack[i] = 0;
- 
+
   /* set up grid array compactly leaving space at end */
   /* space req for grid is 2(xdots+ydots)*sizeof(long or double) */
   /* space available in extraseg is 65536 Bytes */
@@ -161,10 +161,10 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
       floatflag = usr_floatflag = 1;
    }
    else
-      use_grid=1;   
+      use_grid=1;
 
    set_grid_pointers();
- 
+
    if (!(curfractalspecific->flags & BF_MATH))
    {
       int tofloat = curfractalspecific->tofloat;
@@ -479,15 +479,15 @@ expand_retry:
             }
             if (fabs(yy3rd-yymax) > fabs(yymin-yy3rd))
             {
-               testy_exact = yy3rd-yymax; 
+               testy_exact = yy3rd-yymax;
                testy_try   = dy0-yymax;
             }
             else
             {
-               testy_exact = yymin-yy3rd; 
+               testy_exact = yymin-yy3rd;
                testy_try   = dy1;
             }
-            if (ratio_bad(testx_try,testx_exact) || 
+            if (ratio_bad(testx_try,testx_exact) ||
                ratio_bad(testy_try,testy_exact))
             {
                if (curfractalspecific->flags & BF_MATH)
@@ -1006,7 +1006,7 @@ static void _fastcall smallest_add_bf(bf_t num)
 }
 
 static int _fastcall ratio_bad(double actual, double desired)
-{  
+{
    double ftemp, tol;
    if (integerfractal)
       tol = math_tol[0];
@@ -1015,7 +1015,7 @@ static int _fastcall ratio_bad(double actual, double desired)
    if (tol <= 0.0)
       return(1);
    else if (tol >= 1.0)
-      return(0);         
+      return(0);
    ftemp = 0;
    if (desired != 0 && debugflag != 3400)
       ftemp = actual / desired;
@@ -1298,7 +1298,7 @@ static void sleepms_new(long ms)
 void sleepms(long ms)
 {
   if (debugflag == 4020)
-     sleepms_old(ms);   
+     sleepms_old(ms);
   else
      sleepms_new(ms);
 }
@@ -1314,7 +1314,7 @@ void wait_until(int index, uclock_t wait_time)
    if (debugflag == 4020)
       sleepms_old(wait_time);
    else
-   {   
+   {
       uclock_t now;
       while ( (now = usec_clock()) < next_time[index])
          if (driver_key_pressed()) break;
@@ -1420,7 +1420,7 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
            w_snd((int)(i*1000/xdots+basehertz));
       else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
            w_snd((int)(j*1000/ydots+basehertz));
-      else if (orbit_delay > 0) 
+      else if (orbit_delay > 0)
       {
          wait_until(0,orbit_delay);
       }
@@ -1432,7 +1432,7 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
            w_snd((int)(j+basehertz));
       else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
            w_snd((int)(i+j+basehertz));
-      else if (orbit_delay > 0) 
+      else if (orbit_delay > 0)
       {
          wait_until(0,orbit_delay);
       }

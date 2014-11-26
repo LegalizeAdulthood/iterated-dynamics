@@ -155,7 +155,7 @@ Ikenaga2(XAXIS)     { ; from Joyce Haslam article, Fractal Report Iss 24 p5.
                     z = pixel:
                     z = z * z * z + (pixel-1) * z - pixel,
                     |z|<=4
- }                  
+ }
 
 IkenagaMap(XAXIS)   {; from REB001.FRM - by Ron Barnett 70153,1233
                      ; The initial starting point allows the function to provide
@@ -208,7 +208,7 @@ IkeGenJ             {; from REB002.FRM - by Ron Barnett 70153,1233
                     z =p1*z*z*z + (p2-1)*z - p2,
                     |z| <= 100
  }
-   
+
 IkeFrRbtGenM        {; from REB002.FRM - by Ron Barnett 70153,1233
                     z = 2*(1-pixel)/(3*p1):
                     z = p1*z*z*z + (pixel-1)*z*z - pixel,

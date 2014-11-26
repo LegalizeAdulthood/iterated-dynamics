@@ -98,6 +98,6 @@ extern int  getcolor(int, int);
 extern void setvideomode(int, int, int, int);
 extern void putstring(int,int,int,char far *);
 extern BYTE *findfont (int);
- 
+
 #endif
 

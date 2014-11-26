@@ -1,8 +1,8 @@
-  0   0   0   This is just one of many EGA-optimized MAP files sent to us 
+  0   0   0   This is just one of many EGA-optimized MAP files sent to us
   0   0  84   by K.A. Eastwood of Townsville, Queensland.  His secret to
   0   0 168   generating good-looking EGA MAP files:
-  0   0 252 
-  0  84 252   1) Fractint treats the EGA adapter as if it is a sort of 
+  0   0 252
+  0  84 252   1) Fractint treats the EGA adapter as if it is a sort of
   0 168 252   "brain damaged" VGA adapter with only two bits of depth in
   0 252 252   its RGB palettes.  So, act accordingly, and pick four
 252 252 168   palette values that will map into the four possible values

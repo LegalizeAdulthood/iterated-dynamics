@@ -276,7 +276,7 @@ void helptitle()
            xrelease/100,xrelease%100, g_release/100,g_release%100);
 #else
    *msg=0;
-#endif   
+#endif
    sprintf(buf,"FRACTINT Version %d.%01d",g_release/100,(g_release%100)/10);
    strcat(msg,buf);
    if (g_release%10) {
@@ -288,7 +288,7 @@ void helptitle()
       strcat(msg,buf);
       }
    putstringcenter(0,0,80,C_TITLE,msg);
-   
+
 /* uncomment next for production executable: */
 #if defined(PRODUCTION) || defined(XFRACT)
     return;
@@ -343,7 +343,7 @@ int putstringcenter(int row, int col, int width, int attr, char *msg)
 
 char speed_prompt[]="Speed key string";
 
-/* For file list purposes only, it's a directory name if first 
+/* For file list purposes only, it's a directory name if first
    char is a dot or last char is a slash */
 static int isadirname(char *name)
 {
@@ -482,7 +482,7 @@ int fullscreen_choice(
     ret = -1;
     /* preset current to passed string */
     if (speedstring && (i = (int) strlen(speedstring)) > 0)
-    { 
+    {
         current = 0;
         if (options & CHOICE_NOT_SORTED)
         {

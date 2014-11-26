@@ -135,7 +135,7 @@ int get_toggles()
                           : (usr_stdcalcmode == 'g' && stoppass == 4) ? 7
                           : (usr_stdcalcmode == 'g' && stoppass == 5) ? 8
                           : (usr_stdcalcmode == 'g' && stoppass == 6) ? 9
-                          : (usr_stdcalcmode == 'b') ? 10 
+                          : (usr_stdcalcmode == 'b') ? 10
               : (usr_stdcalcmode == 's') ? 11
               : (usr_stdcalcmode == 't') ? 12
               : (usr_stdcalcmode == 'd') ? 13
@@ -722,7 +722,7 @@ get_view_restart:
     uvalues[k].uval.ival = sxdots;
 
     choices[++k] = driver_diskp() ?
-        "                     y pixels" : 
+        "                     y pixels" :
         "                     y pixels (0: by aspect ratio)";
     uvalues[k].type = 'i';
     uvalues[k].uval.ival = sydots;

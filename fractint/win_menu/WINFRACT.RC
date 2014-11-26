@@ -471,7 +471,7 @@ BEGIN
     CONTROL "S&uperimpose", ID_STEREO3, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,           190, 45, 70, 12
     CONTROL "P&hoto", ID_STEREO4, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,                 260, 45, 38, 12
     CONTROL "", 3, "button", BS_GROUPBOX | WS_TABSTOP | WS_CHILD,                                     0, 60,300, 55
-    CONTROL "Fill Type", 3, "static", SS_LEFT | WS_CHILD,                                             5, 65, 40, 8 
+    CONTROL "Fill Type", 3, "static", SS_LEFT | WS_CHILD,                                             5, 65, 40, 8
     CONTROL "Surface &Grid", ID_FILL1, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,             50, 65, 90, 12
     CONTROL "&Just the Points", ID_FILL2, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,         140, 65, 90, 12
     CONTROL "&Wire-Frame", ID_FILL3, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,              230, 65, 65, 12
@@ -481,7 +481,7 @@ BEGIN
     CONTROL "Light Source Pr&e-trans", ID_FILL7, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,   50, 95, 90, 12
     CONTROL "Light Source, P&ost-tran", ID_FILL8, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD, 140, 95, 90, 12
     CONTROL "", 3, "button", BS_GROUPBOX | WS_TABSTOP | WS_CHILD,                                     0,110,300, 40
-    CONTROL "Ray trace out?", 3, "static", SS_LEFT | WS_CHILD,                                        5,117, 40, 8 
+    CONTROL "Ray trace out?", 3, "static", SS_LEFT | WS_CHILD,                                        5,117, 40, 8
     CONTROL "&None",       ID_RAY0, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,                50,115, 60, 12
     CONTROL "&DKB/POVray", ID_RAY1, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,               110,115, 60, 12
     CONTROL "&Vivid",      ID_RAY2, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,               170,115, 60, 12

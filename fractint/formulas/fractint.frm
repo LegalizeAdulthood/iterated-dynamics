@@ -1180,7 +1180,7 @@ LeeMandel3(XAXIS) {; Kevin Lee
 
 RCL_Cross1 { ; Ron Lewen
   ; Try p1=(0,1), fn1=sin and fn2=sqr.  Set corners at
-  ; -10/10/-7.5/7.5 to see a cross shape.  The larger 
+  ; -10/10/-7.5/7.5 to see a cross shape.  The larger
   ; lakes at the center of the cross have good detail
   ; to zoom in on.
   ; Use floating point.
@@ -1190,7 +1190,7 @@ RCL_Cross1 { ; Ron Lewen
   }
 
 RCL_Pick13 { ; Ron Lewen
-  ;  Formula from Frontpiece for Appendix C 
+  ;  Formula from Frontpiece for Appendix C
   ;  and Credits in Pickover's book.
   ;  Set p1=(3,0) to generate the Frontpiece
   ;  for Appendix C and to (2,0) for Credits
@@ -1211,7 +1211,7 @@ RCL_1 (XAXIS) { ; Ron Lewen
 
 RCL_Cosh (XAXIS) { ; Ron Lewen, 76376,2567
   ; Try corners=2.008874/-3.811126/-3.980167/3.779833/
-  ; -3.811126/3.779833 to see Figure 9.7 (P. 123) in 
+  ; -3.811126/3.779833 to see Figure 9.7 (P. 123) in
   ; Pickover's Computers, Pattern, Chaos and Beauty.
   ; Figures 9.9 - 9.13 can be found by zooming.
   ; Use floating point

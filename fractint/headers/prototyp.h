@@ -1201,7 +1201,7 @@ extern void soi (void);
 extern void soi_ldbl (void);
 
 /*
- *  uclock -- C file prototypes 
+ *  uclock -- C file prototypes
  *  The  uclock_t typedef placed here because uclock.h
  *  prototype is for DOS version only.
  */

@@ -1173,7 +1173,7 @@ struct baseunit { /* smallest part of a fractint 'gene' */
                               /* takes random number and pointer to var*/
    int mutate ;  /* flag to switch on variation of this variable */
                   /* 0 for no mutation, 1 for x axis, 2 for y axis */
-                  /* in steady field maps, either x or y=yes in random modes*/ 
+                  /* in steady field maps, either x or y=yes in random modes*/
    char name[16]; /* name of variable (for menu ) */
    char level;    /* mutation level at which this should become active */
 };

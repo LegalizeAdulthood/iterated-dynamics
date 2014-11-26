@@ -621,7 +621,7 @@ static int next_command(char *cmdbuf,int maxlen,
                      if (CommandComment[i][0] == 0)
                      {
                         strcpy(CommandComment[i],lineptr);
-                        break;   
+                        break;
                      }
                   }
                }
@@ -1015,7 +1015,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
                 {
                     extract_filename(CommandName, readname);
                 }
-                else if (*MAP_name != 0)   
+                else if (*MAP_name != 0)
                 {
                     extract_filename(CommandName, MAP_name);
                 }
@@ -1023,7 +1023,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
                 {
                     goto badarg;
                 }
-            }   
+            }
             else
             {
                 strncpy(CommandName, next, ITEMNAMELEN);
@@ -1280,7 +1280,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     }
 
     if (strcmp(variable, "dither") == 0) /* dither=? */
-    {       
+    {
         if (yesnoval[0] < 0)
         {
             goto badarg;
@@ -2364,7 +2364,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
           (according to the western, even tempered system anyway) */
 
       if (charval[0] == 'n' || charval[0] == 'o')
-         soundflag &= ~SOUNDFLAG_ORBITMASK; 
+         soundflag &= ~SOUNDFLAG_ORBITMASK;
       else if ((strncmp(value, "ye", 2) == 0) || (charval[0] == 'b'))
          soundflag |= SOUNDFLAG_BEEP;
       else if (charval[0] == 'x')
@@ -2429,7 +2429,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
          goto badarg;
       polyphony = abs(numval-1);
       return 0;
-   } 
+   }
 
    if (strcmp(variable, "wavetype") == 0) { /* wavetype = ? */
       fm_wavetype = numval & 0x0F;
@@ -2450,7 +2450,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       fm_sustain = numval & 0x0F;
       return 0;
    }
-   
+
    if (strcmp(variable, "srelease") == 0) { /* release = ? */
       fm_release = numval & 0x0F;
       return 0;
@@ -2465,7 +2465,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
              scale_map[counter] = intval[counter];
 #endif
       return 0;
-   } 
+   }
 
    if (strcmp(variable, "periodicity") == 0 ) {  /* periodicity=? */
       usr_periodicitycheck=1;
@@ -2551,7 +2551,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             else
                goto badarg;
          }
-         else   
+         else
          {
             showdot=numval;
             if (showdot<0)
@@ -2560,8 +2560,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
          if (totparms > 1 && intparms > 0)
             sizedot = intval[1];
          if (sizedot < 0)
-            sizedot = 0;   
-      }      
+            sizedot = 0;
+      }
       return 0;
       }
 
@@ -3233,7 +3233,7 @@ void dopause(int action)
    }
 }
 
-/* 
+/*
    Crude function to detect a floating point number. Intended for
    use with arbitrary precision.
 */

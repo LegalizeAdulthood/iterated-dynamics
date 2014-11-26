@@ -98,7 +98,7 @@ void drawbox(int drawit)
     int saved=0;
     if (zwidth==0) { /* no box to draw */
         if (boxcount!=0) { /* remove the old box from display */
-            clearbox(); 
+            clearbox();
             boxcount = 0; }
         reset_zoom_corners();
         return; }
@@ -187,7 +187,7 @@ void drawbox(int drawit)
     tr.y   = (int)(ftemp2*(dysize+PIXELROUND));
 
     if (boxcount!=0) { /* remove the old box from display */
-        clearbox(); 
+        clearbox();
         boxcount = 0; }
 
     if (drawit) { /* caller wants box drawn as well as co-ords calc'd */
@@ -276,7 +276,7 @@ void _fastcall addbox(struct coords point)
 #endif
     point.x += sxoffs;
     point.y += syoffs;
-    if (point.x >= 0 && point.x < sxdots && 
+    if (point.x >= 0 && point.x < sxdots &&
         point.y >= 0 && point.y < sydots) {
         boxx[boxcount] = point.x;
         boxy[boxcount] = point.y;

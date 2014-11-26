@@ -243,7 +243,7 @@ pop_stack:
 
     return coloriter;
 }
-    
+
 static long cdecl
 calc_mand_assembly(void)
 {

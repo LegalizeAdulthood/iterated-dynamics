@@ -24,7 +24,7 @@ char odpx,odpy,newodpx,newodpy;
 /* used for things like inside or outside types, bailout tests, trig fn etc */
 /* variation factors, opx,opy, paramrangex/y dpx, dpy.. used in field mapping
    for smooth variation across screen. opx =offset param x, dpx = delta param
-   per image, paramrangex = variation across grid of param ...likewise for py */ 
+   per image, paramrangex = variation across grid of param ...likewise for py */
 /* fiddlefactor is amount of random mutation used in random modes ,
    fiddle_reduction is used to decrease fiddlefactor from one generation to the
    next to eventually produce a stable population */
@@ -189,7 +189,7 @@ int lclpy = gridsz - py - 1;
     case 1:
        *(double *)gene[i].addr = px * dpx + opx; /*paramspace x coord * per view delta px + offset */
        break;
-    case 2: 
+    case 2:
        *(double *)gene[i].addr = lclpy * dpy + opy; /*same for y */
        break;
     case   3:
@@ -286,7 +286,7 @@ void varybotest(GENEBASE gene[], int randval, int i)
 
 void varypwr2(GENEBASE gene[], int randval, int i)
  {
-  int choices[9]={0,2,4,8,16,32,64,128,256}; 
+  int choices[9]={0,2,4,8,16,32,64,128,256};
   if (gene[i].mutate)
     *(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
   return;
@@ -302,7 +302,7 @@ void varytrig(GENEBASE gene[], int randval, int i)
      /* replaced '30' with numtrigfn, set in prompts1.c */
   set_trig_pointers(5); /*set all trig ptrs up*/
   return;
- } 
+ }
 
 void varyinv(GENEBASE gene[], int randval, int i)
   {
@@ -403,7 +403,7 @@ choose_vars_restart:
    for ( num = MAXPARAMS; num < (NUMGENES - 5); num++)
       gene[num].mutate = (char)(uvalues[++k].uval.ch.val);
 
-   for (num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++) 
+   for (num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
       gene[num].mutate = (char)(uvalues[++k].uval.ch.val);
 
    if (curfractalspecific->calctype == StandardFractal &&
@@ -629,7 +629,7 @@ get_evol_restart:
 
    choices[++k]= "Grouting? ";
    uvalues[k].type = 'y';
-   uvalues[k].uval.ch.val = !((evolving & NOGROUT) / NOGROUT); 
+   uvalues[k].uval.ch.val = !((evolving & NOGROUT) / NOGROUT);
 
    choices[++k]= "";
    uvalues[k].type = '*';
@@ -646,7 +646,7 @@ get_evol_restart:
    choices[++k]= "Press F6 to control which parameters are varied";
    uvalues[k].type = '*';
    oldhelpmode = helpmode;     /* this prevents HELP from activating */
-   helpmode = HELPEVOL; 
+   helpmode = HELPEVOL;
    i = fullscreen_prompt("Evolution Mode Options",k+1,choices,uvalues,255,NULL);
    helpmode = oldhelpmode;     /* re-enable HELP */
    if (i < 0) {
@@ -688,7 +688,7 @@ get_evol_restart:
       goto get_evol_restart;
    }
 
-   j = i;   
+   j = i;
 
    /* now check out the results (*hopefully* in the same order <grin>) */
 
@@ -764,7 +764,7 @@ void SetupParamBox(void)
    int vidsize;
    prmboxcount = 0;
    parmzoom=((double)gridsz-1.0)/2.0;
-/* need to allocate 2 int arrays for boxx and boxy plus 1 byte array for values */  
+/* need to allocate 2 int arrays for boxx and boxy plus 1 byte array for values */
    vidsize = (xdots+ydots) * 4 * sizeof(int) ;
    vidsize = vidsize + xdots + ydots + 2 ;
    /* TODO: MemoryAlloc */
@@ -791,7 +791,7 @@ void ReleaseParamBox(void)
    MemoryRelease(prmboxhandle);
    MemoryRelease(imgboxhandle);
    prmboxhandle = 0;
-   imgboxhandle = 0; 
+   imgboxhandle = 0;
 }
 
 void set_current_params(void)
@@ -806,13 +806,13 @@ void set_current_params(void)
 void fiddleparms(GENEBASE gene[], int ecount)
 {
 /* call with px,py ... parameter set co-ords*/
-/* set random seed then call rnd enough times to get to px,py */ 
-/* 5/2/96 adding in indirection */ 
+/* set random seed then call rnd enough times to get to px,py */
+/* 5/2/96 adding in indirection */
 /* 26/2/96 adding in multiple methods and field map */
 /* 29/4/96 going for proper handling of the whole gene array */
 /*         bung in a pile of switches to allow for expansion to any
            future variable types */
-/* 11/6/96 scrapped most of switches above and used function pointers 
+/* 11/6/96 scrapped most of switches above and used function pointers
            instead */
 /* 4/1/97  picking it up again after the last step broke it all horribly! */
 
@@ -898,7 +898,7 @@ int grout;
  boxcount =0;
  /*draw larger box to show parm zooming range */
  tl.x = bl.x = ((px -(int)parmzoom) * (int)(dxsize+1+grout))-sxoffs-1;
- tl.y = tr.y = ((py -(int)parmzoom) * (int)(dysize+1+grout))-syoffs-1; 
+ tl.y = tr.y = ((py -(int)parmzoom) * (int)(dysize+1+grout))-syoffs-1;
  br.x = tr.x = ((px +1+(int)parmzoom) * (int)(dxsize+1+grout))-sxoffs;
  br.y = bl.y = ((py +1+(int)parmzoom) * (int)(dysize+1+grout))-syoffs;
 #ifndef XFRACT

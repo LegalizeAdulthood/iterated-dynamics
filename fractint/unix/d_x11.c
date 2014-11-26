@@ -137,7 +137,7 @@ struct tagDriverX11 {
   XFontStruct *font_info;       /* = NULL; */
 
   int xbufkey; /* = 0; */       /* Buffered X key */
-  
+
   unsigned char *fontPtr;       /* = NULL; */
 
   char text_screen[TEXT_HEIGHT][TEXT_WIDTH];
@@ -484,7 +484,7 @@ clearXwindow(DriverX11 *di)
       }
     }
     for (i = 1; i < di->Ximage->height; i++) {
-      bcopy(di->Ximage->data, di->Ximage->data+i*di->Ximage->bytes_per_line, 
+      bcopy(di->Ximage->data, di->Ximage->data+i*di->Ximage->bytes_per_line,
         di->Ximage->bytes_per_line);
     }
   } else {
@@ -546,7 +546,7 @@ xcmapstuff(DriverX11 *di)
       ncells = 1 << powr;
       if (ncells > colors)
     continue;
-      if (XAllocColorCells(di->Xdp, di->Xcmap, False, NULL, 0, di->pixtab, 
+      if (XAllocColorCells(di->Xdp, di->Xcmap, False, NULL, 0, di->pixtab,
                (unsigned int) ncells)) {
     colors = ncells;
     di->usepixtab = 1;
@@ -1105,8 +1105,8 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
       while (XCheckWindowEvent(di->Xdp, di->Xw, PointerMotionMask, xevent))
     ;
       if (banding)
-    XDrawRectangle(di->Xdp, di->Xw, di->Xgc, MIN(bandx0, bandx1), 
-               MIN(bandy0, bandy1), ABS(bandx1-bandx0), 
+    XDrawRectangle(di->Xdp, di->Xw, di->Xgc, MIN(bandx0, bandx1),
+               MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                ABS(bandy1-bandy0));
       bandx1 = xevent->xmotion.x;
       bandy1 = xevent->xmotion.y;
@@ -1128,8 +1128,8 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
     }
       }
       if (banding) {
-    XDrawRectangle(di->Xdp, di->Xw, di->Xgc, MIN(bandx0, bandx1), 
-               MIN(bandy0, bandy1), ABS(bandx1-bandx0), 
+    XDrawRectangle(di->Xdp, di->Xw, di->Xgc, MIN(bandx0, bandx1),
+               MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                ABS(bandy1-bandy0));
       }
       XFlush(di->Xdp);
@@ -1144,8 +1144,8 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
   if (!banding)
     return;
 
-  XDrawRectangle(di->Xdp, di->Xw, di->Xgc, MIN(bandx0, bandx1), 
-         MIN(bandy0, bandy1), ABS(bandx1-bandx0), 
+  XDrawRectangle(di->Xdp, di->Xw, di->Xgc, MIN(bandx0, bandx1),
+         MIN(bandy0, bandy1), ABS(bandx1-bandx0),
          ABS(bandy1-bandy0));
   if (bandx1 == bandx0)
     bandx1 = bandx0+1;
@@ -1172,7 +1172,7 @@ ev_motion_notify(DriverX11 *di, XEvent *xevent)
   if (editpal_cursor && !inside_help) {
     while (XCheckWindowEvent(di->Xdp, di->Xw, PointerMotionMask, xevent))
       ;
-      
+
     if (xevent->xmotion.state & Button2Mask ||
     (xevent->xmotion.state & (Button1Mask | Button3Mask))) {
       di->button_num = 3;
@@ -1243,7 +1243,7 @@ handle_events(DriverX11 *di)
       break;
     }
   }
-  
+
   if (!di->xbufkey && editpal_cursor && !inside_help && lookatmouse == 3 &&
       (di->dx != 0 || di->dy != 0)) {
     if (ABS(di->dx) > ABS(di->dy)) {
@@ -1468,7 +1468,7 @@ x11_init(Driver *drv, int *argc, char **argv)
   signal(SIGABRT, SIG_IGN);
   /*
     setup the IEEE-handler to forget all common ( invalid,
-    divide by zero, overflow ) signals. Here we test, if 
+    divide by zero, overflow ) signals. Here we test, if
     such ieee trapping is supported.
   */
   if (ieee_handler("set", "common", continue_hdl) != 0 )
@@ -1721,7 +1721,7 @@ x11_resize(Driver *drv)
       free(di->Ximage->data);
       XDestroyImage(di->Ximage);
     }
-    di->Ximage = XCreateImage(di->Xdp, di->Xvi, di->Xdepth, ZPixmap, 0, NULL, sxdots, 
+    di->Ximage = XCreateImage(di->Xdp, di->Xvi, di->Xdepth, ZPixmap, 0, NULL, sxdots,
               sydots, di->Xdepth, 0);
     if (di->Ximage == NULL) {
       printf("XCreateImage failed\n");
@@ -1777,7 +1777,7 @@ x11_redraw(Driver *drv)
  *
  * x11_read_palette --
  *  Reads the current video palette into g_dac_box.
- *  
+ *
  *
  * Results:
  *  None.
@@ -1807,7 +1807,7 @@ x11_read_palette(Driver *drv)
  *
  * x11_write_palette --
  *  Writes g_dac_box into the video palette.
- *  
+ *
  *
  * Results:
  *  None.
@@ -1921,7 +1921,7 @@ x11_read_pixel(Driver *drv, int x, int y)
  *
  *----------------------------------------------------------------------
  */
-static void 
+static void
 x11_write_pixel(Driver *drv, int x, int y, int color)
 {
   DIX11(drv);
@@ -2283,7 +2283,7 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
   default:
     printf("Bad mode %d\n", dotmode);
     exit(-1);
-  } 
+  }
   if (dotmode !=0) {
     x11_read_palette(drv);
     g_and_color = colors-1;

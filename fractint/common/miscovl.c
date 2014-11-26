@@ -158,7 +158,7 @@ void make_batch_file()
       expand_comments(CommandComment[i], par_comment[i]);
       strcpy(inpcomment[i], CommandComment[i]);
    }
-   
+
    if (CommandName[0] == 0)
       strcpy(inpcommandname, "test");
    /* TW added these  - and Bert moved them */
@@ -259,7 +259,7 @@ prompt_user:
          if (maxlinelength != newmaxlinelength &&
               newmaxlinelength >= MINMAXLINELENGTH &&
               newmaxlinelength <= MAXMAXLINELENGTH)
-            maxlinelength = newmaxlinelength;    
+            maxlinelength = newmaxlinelength;
       }
       xm = paramvalues[promptnum++].uval.ival;
 
@@ -309,7 +309,7 @@ skip_UI:
             strcpy(colorspec, "n");
          if (s_makepar[1] == 0)
             maxcolor = 256;
-         else   
+         else
             maxcolor = filecolors;
       }
       strcpy(outname, CommandFile);
@@ -456,7 +456,7 @@ skip_UI:
                   fprintf(parmfile, "%s%s\n", buf, CommandComment[k]);
             if (g_patch_level != 0 && colorsonly == 0)
                fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
-                  Fractint, g_release, g_patch_level); 
+                  Fractint, g_release, g_patch_level);
          }
          write_batch_parms(colorspec, colorsonly, maxcolor, i, j);
          if (xm > 1 || ym > 1)
@@ -1018,10 +1018,10 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
    if (polyphony != 0)
      put_parm(" %s=%d", "polyphony",polyphony+1);
-   
+
    if (fm_wavetype !=0)
      put_parm(" %s=%d", "wavetype",fm_wavetype);
-   
+
    if (fm_attack != 5)
       put_parm(" %s=%d", "attack",fm_attack);
 
@@ -1036,7 +1036,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
    if (soundflag & SOUNDFLAG_QUANTIZED) { /* quantize turned on */
       for (i=0; i<=11; i++) if (scale_map[i] != i+1) i=15;
-      if (i>12) 
+      if (i>12)
          put_parm(" %s=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", "scalemap",scale_map[0],scale_map[1],scale_map[2],scale_map[3]
             ,scale_map[4],scale_map[5],scale_map[6],scale_map[7],scale_map[8]
             ,scale_map[9],scale_map[10],scale_map[11]);
@@ -1142,7 +1142,7 @@ docolors:
                         if (abs(2*g_dac_box[scanc][j] - g_dac_box[scanc-5][j]
                                 - g_dac_box[scanc+5][j]) >= 2)
                            break;
-                     /* end Sylvie's fix */       
+                     /* end Sylvie's fix */
                      delta = (int)g_dac_box[scanc][j] - (int)g_dac_box[scanc-k-1][j];
                      if (k == scanc - curc)
                         diff1[k][j] = diff2[k][j] = delta;
@@ -1640,7 +1640,7 @@ int select_video_mode(int curmode)
     i = (i < 0) ? (-1 - i) : entnums[i];
 #endif
     /* the selected entry now in g_video_entry */
-    memcpy((char *) &g_video_entry, (char *) &g_video_table[i], sizeof(g_video_entry));  
+    memcpy((char *) &g_video_entry, (char *) &g_video_table[i], sizeof(g_video_entry));
 
 #ifndef XFRACT
     /* copy fractint.cfg table to resident table, note selected entry */
@@ -1690,7 +1690,7 @@ void format_vid_table(int choice,char *buf)
    if (truecolorbits == 0)
       sprintf(local_buf,"%s%3d",  /* 47 chars */
            buf, g_video_entry.colors);
-   else 
+   else
       sprintf(local_buf,"%s%3s",  /* 47 chars */
            buf, (truecolorbits == 4)?" 4g":
                 (truecolorbits == 3)?"16m":
@@ -1802,7 +1802,7 @@ static void update_fractint_cfg()
          truecolorbits = vident.dotmode/1000;
          if (truecolorbits == 0)
             sprintf(colorsbuf,"%3d",vident.colors);
-         else 
+         else
             sprintf(colorsbuf,"%3s",
                     (truecolorbits == 4)?" 4g":
                     (truecolorbits == 3)?"16m":
@@ -2265,14 +2265,14 @@ static char *expand_var(char *var, char *buf)
 {
    time_t ltime;
    char *str, *out;
-   
+
    time( &ltime );
    str = ctime(&ltime);
 
    /* ctime format             */
    /* Sat Aug 17 21:34:14 1996 */
    /* 012345678901234567890123 */
-   /*           1         2    */   
+   /*           1         2    */
    if (strcmp(var,"year") == 0)       /* 4 chars */
    {
       str[24] = '\0';
@@ -2402,7 +2402,7 @@ void expand_comments(char *target, char *source)
       else if ((c != esc_char || oldc == '\\') && escape == 0)
          *(target+j++) = c;
       oldc = c;
-   }   
+   }
    if (*source != '\0')
       *(target+min(j,MAXCMT-1)) = '\0';
 }
@@ -2415,10 +2415,10 @@ void parse_comments(char *value)
    for (i=0; i<4; i++)
    {
       save = '\0';
-      if (*value == 0) 
+      if (*value == 0)
          break;
       next = strchr(value,'/');
-      if (*value != '/') 
+      if (*value != '/')
       {
          if (next != NULL)
          {
@@ -2434,7 +2434,7 @@ void parse_comments(char *value)
       value = next+1;
    }
 }
-   
+
 void init_comments()
 {
    int i;

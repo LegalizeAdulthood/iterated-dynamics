@@ -1554,7 +1554,7 @@ tst486:
         pushfd                          ; push eflags to look at
         pop     eax                     ; get current eflags
         popfd                           ; restore original flags
-        xor     eax, ebx                ; check if bit changed 
+        xor     eax, ebx                ; check if bit changed
         jnz     is586                   ; changed, it's a Pentium
 is486:
         mov     ax, 486

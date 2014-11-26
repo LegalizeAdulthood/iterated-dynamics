@@ -11,21 +11,21 @@ common      Files common to all implementations
         Files containing 3D drawing support.  Eventually these should be
         subsumed into the driver interface, with this sofwtare implementation
         as a fallback if the driver doesn't support 3D rendering.
-    
+
     engine
         Files containing the implementation of the fractal rendering engines
         that are shared between multiple fractal types.  Also contains the
         big array that defines the available fractal types.
-    
+
     fractal specific
         Files containing rendering code or user interaction code that is
         specific to a particular fractal, such as the Lorenz fractal or
         L-system type.
-    
+
     i/o
         Anything related to doing external file I/O: saving and loading GIF
         files, dealing with overlay files, saving parameter files, etc.
-        
+
     math
         Files containing math routines for arbitrary precision arithmetic,
         complex arithmetic, etc.
@@ -48,7 +48,7 @@ drivers
     if you have a lot of files in your driver implementation, add a folder
     here called d_XXX and put all your driver files in that folder, both
     on disk and in the project.
-    
+
 headers
     Header files
 

@@ -85,12 +85,12 @@ char *strupr(char *s);
 #ifndef LINUX
 #ifndef __SVR4
 /* bcopy is probably faster than memmove, memcpy */
-# ifdef memcpy   
-#  undef memcpy   
-# endif          
-# ifdef memmove  
-#  undef memmove  
-# endif 
+# ifdef memcpy
+#  undef memcpy
+# endif
+# ifdef memmove
+#  undef memmove
+# endif
 
 # define memcpy(dst,src,n) bcopy(src,dst,n)
 # define memmove(dst,src,n) bcopy(src,dst,n)

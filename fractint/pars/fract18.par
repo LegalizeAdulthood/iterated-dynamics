@@ -1,7 +1,7 @@
 ; This file is the "newparm.par" file that was included with versions
 ; 18.0 thru 19.2.
 
-; The following illustrate a few features new in Fractint 18.0 
+; The following illustrate a few features new in Fractint 18.0
 
 daisy              { ; Jonathan Osuch [73277,1432]
   reset type=lambda(fn||fn) function=recip/sqr

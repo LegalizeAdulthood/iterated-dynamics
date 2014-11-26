@@ -48,17 +48,17 @@ int get_bytes(BYTE *where,int how_many)
 /*
  * DECODERLINEWIDTH is the width of the pixel buffer used by the decoder. A
  * larger buffer gives better performance. However, this buffer does not
- * have to be a whole line width, although historically in Fractint it has 
+ * have to be a whole line width, although historically in Fractint it has
  * been: images were decoded line by line and a whole line written to the
  * screen at once. The requirement to have a whole line buffered at once
- * has now been relaxed in order to support larger images. The one exception 
+ * has now been relaxed in order to support larger images. The one exception
  * to this is in the case where the image is being decoded to a smaller size.
  * The skipxdots and skipydots logic assumes that the buffer holds one line.
  */
 
 #if defined(XFRACT) || defined(_WIN32)
 BYTE decoderline[MAXPIXELS+1]; /* write-line routines use this */
-#define DECODERLINE_WIDTH MAXPIXELS 
+#define DECODERLINE_WIDTH MAXPIXELS
 #else
 #define DECODERLINE_WIDTH 2048 /* width of decoderline, can be smaller */
 #endif
@@ -78,8 +78,8 @@ int gifview()
    int i, j, k, planes;
    BYTE linebuf[DECODERLINE_WIDTH];
    decoderline1 = linebuf;
-   
-#if 0   
+
+#if 0
    {
       char msg[100];
       sprintf(msg,"Stack free in gifview: %d",stackavail());
@@ -94,7 +94,7 @@ int gifview()
 
    /* initialize the col and row count for write-lines */
    colcount = g_row_count = 0;
-   
+
    /* Open the file */
    if (outln == outline_stereo)
       strcpy(temp1,stereomapname);
@@ -281,9 +281,9 @@ int gifview()
          if (calc_status == CALCSTAT_IN_PROGRESS) /* should never be so, but make sure */
             calc_status = CALCSTAT_PARAMS_CHANGED;
          busy = 1;      /* for slideshow CALCWAIT */
-         /* 
-          * Call decoder(width) via timer. 
-          * Width is limited to DECODERLINE_WIDTH. 
+         /*
+          * Call decoder(width) via timer.
+          * Width is limited to DECODERLINE_WIDTH.
           */
          if (skipxdots == 0)
             width = min(width,DECODERLINE_WIDTH);
@@ -388,7 +388,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
    {
       extra = colcount+linelen-twidth;
       if (extra > 0) /* line wraps */
-      {   
+      {
           put_line(g_row_count, colcount, twidth-1, pixels);
           pixels += twidth-colcount;
           linelen -= twidth-colcount;
@@ -405,7 +405,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
          colcount = 0;
          g_row_count++;
       }
-   }   
+   }
    return(0);
 }
 
@@ -437,7 +437,7 @@ int sound_line(BYTE *pixels, int linelen)
    {
       extra = colcount+linelen-twidth;
       if (extra > 0) /* line wraps */
-      {   
+      {
           if (put_sound_line(g_row_count, colcount, twidth-1, pixels))
              break;
           pixels += twidth-colcount;
@@ -456,12 +456,12 @@ int sound_line(BYTE *pixels, int linelen)
          colcount = 0;
          g_row_count++;
       }
-   }   
+   }
    driver_mute();
    if (driver_key_pressed())
       ret = -1;
    return(ret);
-}   
+}
 
 int pot_line(BYTE *pixels, int linelen)
 {

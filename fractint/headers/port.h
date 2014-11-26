@@ -268,7 +268,7 @@ extern long stackavail();
         #else
         typedef int sigfunc(int);
         #endif
-  
+
         #ifndef BYTE_ORDER
         /* change for little endians that don't have this defined elsewhere (endian.h) */
         #ifdef LINUX

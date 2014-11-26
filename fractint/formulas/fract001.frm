@@ -55,7 +55,7 @@ aaa-deals {; from DAN.FRM
    }
 
 aaa-dealsFix1 {; from DAN.FRM
-   ; fix by Ron Barnett [70153,1233] 
+   ; fix by Ron Barnett [70153,1233]
    z = pixel, a=real(z), b=imag(z), i=((0,-1)^0.5):
    x = real(z), y = imag(z), u = x*x + y*y + a,
    v = (0,-2)*x*y + b,
@@ -64,7 +64,7 @@ aaa-dealsFix1 {; from DAN.FRM
    }
 
 aaa-dealsFix2 {; from DAN.FRM
-   ; fix by Ron Barnett [70153,1233] 
+   ; fix by Ron Barnett [70153,1233]
    z = pixel, a=real(z), b=imag(z), i=((0,1)^0.5):
    x = real(z), y = imag(z), u = x*x + y*y + a,
    v = (0,2)*x*y + b,
@@ -184,7 +184,7 @@ dots {; Eli Brandt, (c) 1992
    }
 
 DrChaosbrot {; Michael Theroux [71673,2767]
-   ;fix and generalization by Ron Barnett [70153,1233] 
+   ;fix and generalization by Ron Barnett [70153,1233]
    ;more phi
    ;try p1 = 2.236067977 for the golden mean
    z = c = pixel:
@@ -193,7 +193,7 @@ DrChaosbrot {; Michael Theroux [71673,2767]
    }
 
 Element(xyaxis) {; Michael Theroux [71673,2767]
-   ; fix and generalization by Ron Barnett [70153,1233] 
+   ; fix and generalization by Ron Barnett [70153,1233]
    ;phi lingam
    ;try p1 = 2.236067977 for the golden mean
    z = pixel:
@@ -908,11 +908,11 @@ GLYNN(XAXIS) {; Based on an illustration in Science PROBE!  and a
    ;
    z = pixel :
    z = z ^ p1 + p2 ,
-   |z| <=4 
+   |z| <=4
    }
 
 Gopalsamy1 {; Ron Barnett [70153,1233]
-   ; try p1 = (0.29,0.29)   
+   ; try p1 = (0.29,0.29)
    z = pixel:
    x = real(z), y = imag(z),
    x1 = -2*x*y + p1,

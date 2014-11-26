@@ -866,10 +866,10 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                   blk_6_info->length = data_len;
                   blk_6_info->got_data = 1; /* got data */
 
-                  blk_6_info->paramrangex     = eload_info.paramrangex;    
-                  blk_6_info->paramrangey     = eload_info.paramrangey;    
-                  blk_6_info->opx             = eload_info.opx;            
-                  blk_6_info->opy             = eload_info.opy;            
+                  blk_6_info->paramrangex     = eload_info.paramrangex;
+                  blk_6_info->paramrangey     = eload_info.paramrangey;
+                  blk_6_info->opx             = eload_info.opx;
+                  blk_6_info->opy             = eload_info.opy;
                   blk_6_info->odpx            = (char)eload_info.odpx;
                   blk_6_info->odpy            = (char)eload_info.odpy;
                   blk_6_info->px              = eload_info.px;
@@ -1096,7 +1096,7 @@ void set_if_old_bif(void)
 /* miscellaneous function variable defaults */
 void set_function_parm_defaults(void)
 {
-   switch (fractype) 
+   switch (fractype)
    {
       case FPPOPCORN:
       case LPOPCORN:
@@ -1262,7 +1262,7 @@ U16 boxyhandle;
 U16 boxvalueshandle;
 
 /* here because must be visible inside several routines */
-static struct affine *cvt; 
+static struct affine *cvt;
 static bf_t   bt_a, bt_b, bt_c, bt_d, bt_e, bt_f;
 static bf_t   n_a, n_b, n_c, n_d, n_e, n_f;
 int oldbf_math;

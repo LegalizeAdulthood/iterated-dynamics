@@ -553,7 +553,7 @@ mfnz {; from EXPLOD.FRM
    }
 
 Michaelbrot {; Michael Theroux [71673,2767]
-   ; Fix and generalization by  Ron Barnett [70153,1233]   
+   ; Fix and generalization by  Ron Barnett [70153,1233]
    ; Try p1 = 2.236067977 for the golden mean
    ;based on Golden Mean
    z = pixel:
@@ -803,7 +803,7 @@ M_TchebychevU7 {; Rob den Braasem [rdb@KTIBV.UUCP]
    }
 
 Natura {; Michael Theroux [71673,2767]
-   ; Fix and generalization by  Ron Barnett [70153,1233]   
+   ; Fix and generalization by  Ron Barnett [70153,1233]
    ;phi yoni
    ; try p1 = 2.236067977 for the golden mean
    z = pixel:
@@ -939,9 +939,9 @@ Ramanujan1(ORIGIN) = {
    }
 
 Raphaelbrot {; Michael Theroux [71673,2767]
-   ; Fix and generalization by  Ron Barnett [70153,1233]   
+   ; Fix and generalization by  Ron Barnett [70153,1233]
    ;phi
-   ; try p1 = 2.236067977 for the golden mean 
+   ; try p1 = 2.236067977 for the golden mean
    z = pixel:
    z = sqr(z) + ((p1 - 1)/2)
    |z| <= 4

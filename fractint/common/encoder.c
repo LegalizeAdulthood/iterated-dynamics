@@ -29,7 +29,7 @@ The compression logic in this file has been replaced by the classic
 UNIX compress code. We have extensively modified the sources to fit
 Fractint's needs, but have left the original credits where they
 appear. Thanks to the original authors for making available these
-classic and reliable sources. Of course, they are not responsible for 
+classic and reliable sources. Of course, they are not responsible for
 all the changes we have made to integrate their sources into Fractint.
 
 MEMORY ALLOCATION
@@ -38,7 +38,7 @@ There are two large arrays:
 
    long htab[HSIZE]              (5003*4 = 20012 bytes)
    unsigned short codetab[HSIZE] (5003*2 = 10006 bytes)
-   
+
 At the moment these arrays reuse extraseg and strlocn, respectively.
 
 */
@@ -206,7 +206,7 @@ restart:
             for (i = 0; 250 * i < xdots; i++)
             {  /* clear vert status bars */
                putcolor(i, j, getcolor(i, j) ^ outcolor1);
-               putcolor(xdots - 1 - i, j, 
+               putcolor(xdots - 1 - i, j,
                   getcolor(xdots - 1 - i, j) ^ outcolor2);
             }
          }
@@ -807,7 +807,7 @@ static void _fastcall setup_save_info(struct fractal_info * save_info)
    save_info->math_tol[1] = math_tol[1];
    for (i = 0; i < sizeof(save_info->future) / sizeof(short); i++)
       save_info->future[i] = 0;
-      
+
 }
 
 /***************************************************************************
@@ -815,9 +815,9 @@ static void _fastcall setup_save_info(struct fractal_info * save_info)
  *  GIFENCOD.C       - GIF Image compression routines
  *
  *  Lempel-Ziv compression based on 'compress'.  GIF modifications by
- *  David Rowley (mgardi@watdcsu.waterloo.edu). 
+ *  David Rowley (mgardi@watdcsu.waterloo.edu).
  *  Thoroughly massaged by the Stone Soup team for Fractint's purposes.
- * 
+ *
  ***************************************************************************/
 
 #define BITSF   12
@@ -883,7 +883,7 @@ static int clear_flg = 0;
 /*
  * compress stdin to stdout
  *
- * Algorithm:  use open addressing double hashing (no chaining) on the 
+ * Algorithm:  use open addressing double hashing (no chaining) on the
  * prefix code / next character combination.  We do a variant of Knuth's
  * algorithm D (vol. 3, sec. 6.4) along with G. Knott's relatively-prime
  * secondary probe.  Here, the modular division first probe is gives way
@@ -923,7 +923,7 @@ static int compress(int rowlimit)
    int tempkey;
    char accum_stack[256];
    accum = accum_stack;
-   
+
    outcolor1 = 0;               /* use these colors to show progress */
    outcolor2 = 1;               /* (this has nothing to do with GIF) */
 
@@ -984,8 +984,8 @@ static int compress(int rowlimit)
             }
             fcode = (long) (((long) color << maxbits) + ent);
             i = (((int)color << hshift) ^ ent);    /* xor hashing */
-     
-            if (htab[i] == fcode) 
+
+            if (htab[i] == fcode)
             {
                 ent = codetab[i];
                 continue;
@@ -997,23 +997,23 @@ static int compress(int rowlimit)
 probe:
             if ((i -= disp) < 0)
                i += hsize_reg;
-     
-            if (htab[i] == fcode) 
+
+            if (htab[i] == fcode)
             {
                 ent = codetab[i];
                 continue;
             }
-            if ((long)htab[i] > 0) 
+            if ((long)htab[i] > 0)
                 goto probe;
 nomatch:
             output ((int) ent);
             ent = color;
-            if (free_ent < maxmaxcode) 
+            if (free_ent < maxmaxcode)
             {
                 /* code -> hashtable */
-                codetab[i] = (unsigned short)free_ent++; 
+                codetab[i] = (unsigned short)free_ent++;
                 htab[i] = fcode;
-            } 
+            }
             else
               cl_block();
          } /* end for xdot */
@@ -1031,7 +1031,7 @@ nomatch:
             {  /* display vert status bars */
                /* (this is NOT GIF-related)  */
                putcolor(i, ydot, getcolor(i, ydot) ^ outcolor1);
-               putcolor(xdots - 1 - i, ydot, 
+               putcolor(xdots - 1 - i, ydot,
                   getcolor(xdots - 1 - i, ydot) ^ outcolor2);
             }
             last_colorbar = ydot;
@@ -1047,7 +1047,7 @@ nomatch:
             driver_get_key();   /* eat the keystroke */
       } /* end for ydot */
    } /* end for rownum */
-   
+
    /*
     * Put out the final code.
     */
@@ -1076,22 +1076,22 @@ nomatch:
 
 static void _fastcall output(int code)
 {
-   static unsigned long masks[] = 
+   static unsigned long masks[] =
       { 0x0000, 0x0001, 0x0003, 0x0007, 0x000F,
                 0x001F, 0x003F, 0x007F, 0x00FF,
                 0x01FF, 0x03FF, 0x07FF, 0x0FFF,
                 0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF };
-                
+
    cur_accum &= masks[ cur_bits ];
 
    if (cur_bits > 0)
       cur_accum |= ((long)code << cur_bits);
    else
       cur_accum = code;
-   
+
    cur_bits += n_bits;
 
-   while (cur_bits >= 8) 
+   while (cur_bits >= 8)
    {
       char_out((unsigned int)(cur_accum & 0xff));
       cur_accum >>= 8;
@@ -1102,15 +1102,15 @@ static void _fastcall output(int code)
     * If the next entry is going to be too big for the code size,
     * then increase it, if possible.
     */
-   if (free_ent > maxcode || clear_flg) 
+   if (free_ent > maxcode || clear_flg)
    {
-      if (clear_flg) 
+      if (clear_flg)
       {
          maxcode = MAXCODE (n_bits = startbits);
          clear_flg = 0;
-      
-      } 
-      else 
+
+      }
+      else
       {
          n_bits++;
          if (n_bits == maxbits)
@@ -1119,13 +1119,13 @@ static void _fastcall output(int code)
             maxcode = MAXCODE(n_bits);
       }
    }
-   
-   if (code == EOFCode) 
+
+   if (code == EOFCode)
    {
       /*
        * At EOF, write the rest of the buffer.
        */
-       while (cur_bits > 0) 
+       while (cur_bits > 0)
        {
           char_out((unsigned int)(cur_accum & 0xff));
           cur_accum >>= 8;
@@ -1133,7 +1133,7 @@ static void _fastcall output(int code)
        }
 
        flush_char();
-  
+
        fflush(g_outfile);
    }
 }
@@ -1156,7 +1156,7 @@ static void _fastcall cl_block(void)             /* table clear for block compre
 static void _fastcall char_out(int c)
 {
    accum[ a_count++ ] = (char)c;
-   if (a_count >= 254) 
+   if (a_count >= 254)
       flush_char();
 }
 
@@ -1170,4 +1170,4 @@ static void _fastcall flush_char(void)
       fwrite(accum, 1, a_count, g_outfile);
       a_count = 0;
    }
-}  
+}

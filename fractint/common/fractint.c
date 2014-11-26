@@ -213,7 +213,7 @@ int main(int argc, char **argv)
     load_fractint_config();
     init_help();
 
-    
+
 restart:   /* insert key re-starts here */
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
@@ -228,7 +228,7 @@ restart:   /* insert key re-starts here */
     strcpy(browsemask,"*.gif");
     strcpy(browsename,"            ");
     name_stack_ptr= -1; /* init loaded files stack */
-   
+
     evolving = FALSE;
     paramrangex = 4;
     opx = newopx = -2.0;

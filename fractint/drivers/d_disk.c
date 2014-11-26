@@ -300,7 +300,7 @@ disk_init(Driver *drv, int *argc, char **argv)
   signal(SIGABRT, SIG_IGN);
   /*
     setup the IEEE-handler to forget all common ( invalid,
-    divide by zero, overflow ) signals. Here we test, if 
+    divide by zero, overflow ) signals. Here we test, if
     such ieee trapping is supported.
   */
   if (ieee_handler("set", "common", continue_hdl) != 0 )
@@ -383,7 +383,7 @@ disk_resize(Driver *drv)
  * disk_read_palette
  *
  *  Reads the current video palette into g_dac_box.
- *  
+ *
  *
  * Results:
  *  None.
@@ -413,7 +413,7 @@ disk_read_palette(Driver *drv)
  *
  * disk_write_palette --
  *  Writes g_dac_box into the video palette.
- *  
+ *
  *
  * Results:
  *  None.
@@ -514,7 +514,7 @@ disk_schedule_alarm(Driver *drv, int soon)
  *
  *----------------------------------------------------------------------
  */
-static void 
+static void
 disk_write_pixel(Driver *drv, int x, int y, int color)
 {
   fprintf(stderr, "disk_write_pixel(%d,%d): %d\n", x, y, color);
@@ -1068,7 +1068,7 @@ disk_shell(Driver *drv)
   mvcur(0, COLS-1, LINES-1, 0);
   nocbreak();
   echo();
-  
+
   endwin();
 
   /* Fork the shell */
@@ -1089,7 +1089,7 @@ disk_shell(Driver *drv)
   }
 
   /* Go back to curses mode */
-  
+
   initscr();
   di->curwin = stdscr;
   cbreak();
@@ -1137,7 +1137,7 @@ disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
   } else {
     printf("Bad mode %d\n", dotmode);
     exit(-1);
-  } 
+  }
   if (dotmode !=0) {
     driver_read_palette();
     g_and_color = colors-1;
