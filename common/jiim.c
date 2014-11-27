@@ -169,14 +169,6 @@ QueueEmpty()            /* True if NO points remain in queue */
     return (ListFront == ListBack);
 }
 
-#if 0 /* not used */
-int
-QueueFull()             /* True if room for NO more points in queue */
-{
-    return (((ListFront + 1) % ListSize) == ListBack);
-}
-#endif
-
 int
 QueueFullAlmost()       /* True if room for ONE more point in queue */
 {
@@ -203,12 +195,6 @@ int Init_Queue(unsigned long request)
         ListSize = 0;
         return 0;
     }
-
-#if 0
-    if (xmmquery() && debugflag != 420)  /* use LARGEST extended mem */
-        if ((largest = xmmlongest()) > request / 128)
-            request   = (unsigned long) largest * 128L;
-#endif
 
     for (ListSize = request; ListSize > 1024; ListSize /= 2)
         switch (common_startdisk(ListSize * 8, 1, 256))
@@ -1199,13 +1185,6 @@ finish:
         MemoryRelease(memory_handle);
         memory_handle = 0;
     }
-#if 0
-    if (memory)                  /* done with memory, free it */
-    {
-        free(memory);
-        memory = NULL;
-    }
-#endif
 
     lookatmouse = oldlookatmouse;
     using_jiim = 0;

@@ -147,15 +147,6 @@ int (*longbailout)(void);
 int (*bignumbailout)(void);
 int (*bigfltbailout)(void);
 
-#if 0
-int  fpMODbailout(void)
-{
-    if ((magnitude = (tempsqrx=sqr(g_new.x))
-                     + (tempsqry=sqr(g_new.y))) >= rqlim) return 1;
-    old = g_new;
-    return 0;
-}
-#endif
 int  fpMODbailout(void)
 {
     tempsqrx=sqr(g_new.x);
@@ -263,17 +254,6 @@ int  fpMANRbailout(void)
 #define LONGEXPBAILOUT()  \
    if (labs(lold.y) >= (1000L<<bitshift)) return 1;\
    if (labs(lold.x) >=    (8L<<bitshift)) return 1;
-
-#if 0
-/* this define uses usual trig instead of fast trig */
-#define FPUsincos(px,psinx,pcosx) \
-   *(psinx) = sin(*(px));\
-   *(pcosx) = cos(*(px));
-
-#define FPUsinhcosh(px,psinhx,pcoshx) \
-   *(psinhx) = sinh(*(px));\
-   *(pcoshx) = cosh(*(px));
-#endif
 
 #define LTRIGARG(X)    \
    if (labs((X)) > l16triglim)\
@@ -478,38 +458,6 @@ lcpower(_LCMPLX *base, int exp, _LCMPLX *result, int bitshift)
         overflow = 1;
     return overflow;
 }
-#if 0
-int
-z_to_the_z(_CMPLX *z, _CMPLX *out)
-{
-    static _CMPLX tmp1,tmp2;
-    /* raises complex z to the z power */
-    int errno_xxx;
-    errno_xxx = 0;
-
-    if (fabs(z->x) < DBL_EPSILON) return -1;
-
-    /* log(x + iy) = 1/2(log(x*x + y*y) + i(arc_tan(y/x)) */
-    tmp1.x = .5*log(sqr(z->x)+sqr(z->y));
-
-    /* the fabs in next line added to prevent discontinuity in image */
-    tmp1.y = atan(fabs(z->y/z->x));
-
-    /* log(z)*z */
-    tmp2.x = tmp1.x * z->x - tmp1.y * z->y;
-    tmp2.y = tmp1.x * z->y + tmp1.y * z->x;
-
-    /* z*z = e**(log(z)*z) */
-    /* e**(x + iy) =  e**x * (cos(y) + isin(y)) */
-
-    tmpexp = exp(tmp2.x);
-
-    FPUsincos(&tmp2.y,&siny,&cosy);
-    out->x = tmpexp*cosy;
-    out->y = tmpexp*siny;
-    return errno_xxx;
-}
-#endif
 #endif
 
 #if defined(XFRACT) || defined(_WIN32) /* fractint uses the NewtonFractal2 code in newton.asm */
@@ -1792,16 +1740,6 @@ int MPCHalleyFractal(void)
 
     mpctmp   =  MPCmul(mpctmpparm, mpcHalnumer2);  /* mpctmpparm is */
     /* relaxation coef. */
-#if 0
-    mpctmp.x = *pMPmul(mptmpparmy,mpcHalnumer2.x); /* mptmpparmy is */
-    mpctmp.y = *pMPmul(mptmpparmy,mpcHalnumer2.y); /* relaxation coef. */
-
-    mpcnew.x = *pMPsub(mpcold.x, mpctmp.x);
-    mpcnew.y = *pMPsub(mpcold.y, mpctmp.y);
-
-    g_new.x = *pMP2d(mpcnew.x);
-    g_new.y = *pMP2d(mpcnew.y);
-#endif
     mpcnew = MPCsub(mpcold, mpctmp);
     g_new    = MPC2cmplx(mpcnew);
     return MPCHalleybailout()||MPOverflow;
@@ -3060,13 +2998,8 @@ int otherjuliafp_per_pixel(void)
     return 0;
 }
 
-#if 0
-#define Q0 .113
-#define Q1 .01
-#else
 #define Q0 0
 #define Q1 0
-#endif
 
 int quaternionjulfp_per_pixel(void)
 {

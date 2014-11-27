@@ -112,24 +112,6 @@ static VIDEOINFO modes[] =
 static int
 check_arg(Win32DiskDriver *di, char *arg)
 {
-#if 0
-    if (strcmp(arg, "-disk") == 0)
-    {
-        return 1;
-    }
-    else if (strcmp(arg, "-simple") == 0)
-    {
-        di->base.simple_input = 1;
-        return 1;
-    }
-    else if (strcmp(arg, "-geometry") == 0 && *i+1 < argc)
-    {
-        di->base.Xgeometry = argv[(*i)+1];
-        (*i)++;
-        return 1;
-    }
-#endif
-
     return 0;
 }
 

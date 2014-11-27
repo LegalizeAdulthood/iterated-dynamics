@@ -552,13 +552,6 @@ int check_writefile(char *name,char *ext)
 nextname:
     strcpy(openfile,name);
     strcpy(opentype,ext);
-#if 0
-    for (i = 0; i < (int)strlen(openfile); i++)
-        if (openfile[i] == '.') {
-            strcpy(opentype,&openfile[i]);
-            openfile[i] = 0;
-        }
-#endif
     if ((period = has_ext(openfile)) != NULL)
     {
         strcpy(opentype,period);

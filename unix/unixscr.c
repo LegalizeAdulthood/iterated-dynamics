@@ -1444,10 +1444,6 @@ int ch;
             return FIK_PAGE_DOWN;
         case CTL('O'):
             return FIK_CTL_HOME;
-#if 0
-        case CTL('E'):
-            return FIK_CTL_END;
-#endif
         case 'H':
             return FIK_LEFT_ARROW;
         case 'L':
@@ -1483,20 +1479,12 @@ int ch;
         case '}':
             return FIK_CTL_PLUS;
             /* we need ^I for tab */
-#if 0
-        case CTL('I'):
-            return FIK_CTL_INSERT;
-#endif
         case CTL('D'):
             return FIK_CTL_DEL;
         case '!':
             return FIK_F1;
         case '@':
             return FIK_F2;
-#if 0
-        case '#':
-            return FIK_F3;
-#endif
         case '$':
             return FIK_F4;
         case '%':
@@ -1877,46 +1865,6 @@ xhandleevents()
                 xbufkey = ctl_mode ? FIK_CTL_MINUS : '-';
                 return;
                 break;
-#if 0
-            /* The following need to be somewhere else, otherwise these keys are not available */
-            /* in any other mode.  For example, the '0' and '=' keys won't work with the <g> command */
-            /* or the <b> command. */
-            case XK_0:
-            case XK_KP_0:
-                step = 0;
-                initdacbox();
-                if (drawing_or_drawn) xbufkey = 'D';
-                return;
-            case XK_exclam:
-                step = (step & 126) + 1 - (step & 1);
-                initdacbox();
-                if (drawing_or_drawn) xbufkey = 'D';
-                return;
-            case XK_greater:
-                step = (step+2) % 50;
-                initdacbox();
-                xbufkey = 'D';
-                return;
-            case XK_less:
-                step = (step+48) % 50;
-                initdacbox();
-                if (drawing_or_drawn) xbufkey = 'D';
-                return;
-            case XK_parenright:
-                step = (step+12) % 50;
-                initdacbox();
-                if (drawing_or_drawn) xbufkey = 'D';
-                return;
-            case XK_parenleft:
-                step = (step+38) % 50;
-                initdacbox();
-                if (drawing_or_drawn) xbufkey = 'D';
-                return;
-            case XK_equal:
-            case XK_KP_Equal:
-                xbufkey = 'D';
-                return;
-#endif
             case XK_Return:
             case XK_KP_Enter:
                 xbufkey = ctl_mode ? CTL('T') : '\n';

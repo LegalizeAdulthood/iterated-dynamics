@@ -1967,11 +1967,6 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             return 1; /* skip setting the corners */
         }
-#if 0
-        /* use a debugger and OutputDebugString instead of standard I/O on Windows */
-        printf("totparms %d floatparms %d\n", totparms, floatparms);
-        getch();
-#endif
         if (floatparms != totparms
                 || (totparms != 0 && totparms != 4 && totparms != 6))
         {

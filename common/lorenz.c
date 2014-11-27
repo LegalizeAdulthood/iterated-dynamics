@@ -578,39 +578,8 @@ Minverse_julia_orbit()
         g_new = PopFloat();
         break;
     case random_walk:
-#if 0
-        g_new = ComplexSqrtFloat(g_new.x - Cx, g_new.y - Cy);
-        if (RANDOM(2))
-        {
-            g_new.x = -g_new.x;
-            g_new.y = -g_new.y;
-        }
-#endif
         break;
     case random_run:
-#if 0
-        g_new = ComplexSqrtFloat(g_new.x - Cx, g_new.y - Cy);
-        if (random_len == 0)
-        {
-            random_len = RANDOM(run_length);
-            random_dir = RANDOM(3);
-        }
-        switch (random_dir) {
-        case 0:     /* left */
-            break;
-        case 1:     /* right */
-            g_new.x = -g_new.x;
-            g_new.y = -g_new.y;
-            break;
-        case 2:     /* random direction */
-            if (RANDOM(2))
-            {
-                g_new.x = -g_new.x;
-                g_new.y = -g_new.y;
-            }
-            break;
-        }
-#endif
         break;
     }
 
@@ -866,37 +835,6 @@ Linverse_julia_orbit()
     }
     return 1;
 }
-
-#if 0
-int inverse_julia_orbit(double *x, double *y, double *z)
-{
-    double r, xo, yo;
-    int waste;
-    if (*z >= 1.0) /* this assumes intial value is 1.0!!! */
-    {
-        waste = 20; /* skip these points at first */
-        *z = 0;
-    }
-    else
-        waste = 1;
-    while (waste--)
-    {
-        xo = *x - param[0];
-        yo = *y - param[1];
-        r  = sqrt(xo*xo + yo*yo);
-        *x  = sqrt((r + xo)/2);
-        if (yo < 0)
-            *x = - *x;
-        *y = sqrt((r - xo)/2);
-        if (RANDOM(10) > 4)
-        {
-            *x = -(*x);
-            *y = -(*y);
-        }
-    }
-    return (0);
-}
-#endif
 
 int lorenz3dlongorbit(long *l_x, long *l_y, long *l_z)
 {
@@ -2084,14 +2022,6 @@ int plotorbits2dfloat(void)
         put_resume(sizeof(o_color),&o_color, 0);
         return (-1);
     }
-
-#if 0
-    col = (int)(o_cvt.a*g_new.x + o_cvt.b*g_new.y + o_cvt.e);
-    row = (int)(o_cvt.c*g_new.x + o_cvt.d*g_new.y + o_cvt.f);
-    if (col >= 0 && col < xdots && row >= 0 && row < ydots)
-        (*plot)(col,row,1);
-    return (0);
-#endif
 
     if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_X)
         soundvar = &x;

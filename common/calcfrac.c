@@ -795,24 +795,10 @@ int find_alternate_math(int type, int math)
     if (math==0)
         return ret;
     i= -1;
-#if 0  /* for now at least, the only alternatemath is bignum and bigflt math */
-    umath = math;
-    umath <<= 14;  /* BF_MATH or DL_MATH */
-
-    /* this depends on last two bits of flags */
-    if (fractalspecific[type].flags & umath)
-    {
-        while (((curtype=alternatemath[++i].type) != type
-                || (curmath=alternatemath[i].math) != math) && curtype != -1);
-        if (curtype == type && curmath == math)
-            ret = i;
-    }
-#else
     while ((curtype=alternatemath[++i].type) != type && curtype != -1)
         ;
     if (curtype == type && alternatemath[i].math)
         ret = i;
-#endif
     return ret;
 }
 
@@ -1696,12 +1682,6 @@ int calcmandfp(void)
 #define STARTRAILMAX FLT_MAX   /* just a convenient large number */
 #define green 2
 #define yellow 6
-#if 0
-#define NUMSAVED 40     /* define this to save periodicity analysis to file */
-#endif
-#if 0
-#define MINSAVEDAND 3   /* if not defined, old method used */
-#endif
 int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set */
 {
 #ifdef NUMSAVED
@@ -2971,20 +2951,6 @@ int  bound_trace_main(void)
                                     sym_fill_line(row, left, right, dstack);
                                 }
                             } /* end of fill line */
-
-#if 0 /* don't interupt with a check_key() during fill */
-                            if (--kbdcount<=0)
-                            {
-                                if (check_key())
-                                {
-                                    if (iystop != yystop)
-                                        iystop = yystop - (currow - yystart); /* allow for sym */
-                                    add_worklist(xxstart,xxstop,curcol,currow,iystop,currow,0,worksym);
-                                    return -1;
-                                }
-                                kbdcount=max_kbdcount;
-                            }
-#endif
                         }
                         trail_row = row;
                         trail_col = col;

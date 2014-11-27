@@ -79,14 +79,6 @@ int gifview()
     BYTE linebuf[DECODERLINE_WIDTH];
     decoderline1 = linebuf;
 
-#if 0
-    {
-        char msg[100];
-        sprintf(msg,"Stack free in gifview: %d",stackavail());
-        stopmsg(0,msg);
-    }
-#endif
-
     /* using stack for decoder byte buf rather than static mem */
     set_byte_buff(byte_buf);
 

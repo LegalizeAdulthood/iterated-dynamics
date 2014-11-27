@@ -453,31 +453,6 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
     static long savecolor, color, helpcolor;
     static int x,y,z,savex;
 
-#if 0
-    static DBLS re,im,restep,imstep,interstep,helpre;
-    static DBLS zre,zim;
-    /* interpolation coefficients */
-    static DBLS br10,br11,br12,br20,br21,br22,br30,br31,br32;
-    static DBLS bi10,bi11,bi12,bi20,bi21,bi22,bi30,bi31,bi32;
-    /* ratio of interpolated test point to iterated one */
-    static DBLS l1,l2;
-    /* squares of key values */
-    static DBLS rq1,iq1;
-    static DBLS rq2,iq2;
-    static DBLS rq3,iq3;
-    static DBLS rq4,iq4;
-    static DBLS rq5,iq5;
-    static DBLS rq6,iq6;
-    static DBLS rq7,iq7;
-    static DBLS rq8,iq8;
-    static DBLS rq9,iq9;
-
-    /* test points */
-    static DBLS cr1,cr2;
-    static DBLS ci1,ci2;
-    static DBLS tzr1,tzi1,tzr2,tzi2,tzr3,tzi3,tzr4,tzi4;
-    static DBLS trq1,tiq1,trq2,tiq2,trq3,tiq3,trq4,tiq4;
-#else
 #define re        mem_static[ 0]
 #define im        mem_static[ 1]
 #define restep    mem_static[ 2]
@@ -545,7 +520,6 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 #define trq4      mem_static[64]
 #define tiq4      mem_static[65]
 
-#endif
     /* number of iterations before SOI iteration cycle */
     static long before;
     static int avail;
@@ -556,15 +530,6 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
     /* center of rectangle */
     DBLS midr=(cre1+cre2)/2,midi=(cim1+cim2)/2;
 
-#if 0
-    /* saved values of key values */
-    DBLS sr1,si1,sr2,si2,sr3,si3,sr4,si4;
-    DBLS sr5,si5,sr6,si6,sr7,si7,sr8,si8,sr9,si9;
-    /* key values for subsequent rectangles */
-    DBLS re10,re11,re12,re13,re14,re15,re16,re17,re18,re19,re20,re21;
-    DBLS im10,im11,im12,im13,im14,im15,im16,im17,im18,im19,im20,im21;
-    DBLS re91,re92,re93,re94,im91,im92,im93,im94;
-#else
 #define sr1  mem[ 0]
 #define si1  mem[ 1]
 #define sr2  mem[ 2]
@@ -615,7 +580,6 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 #define im92 mem[47]
 #define im93 mem[48]
 #define im94 mem[49]
-#endif
 
     int status = 0;
     rhombus_depth++;

@@ -611,16 +611,6 @@ int fullscreen_choice(
             }
         }
     }
-#if 0
-    if ((i = 77 / boxwidth - colwidth) > 3) /* spaces to add @ left each choice */
-    {
-        i = 3;
-    }
-    if (i == 0)
-    {
-        i = 1;
-    }
-#else
     i = (80 / boxwidth - colwidth) / 2 - 1;
     if (i == 0) /* to allow wider prompts */
     {
@@ -634,7 +624,6 @@ int fullscreen_choice(
     {
         i = 3;
     }
-#endif
     j = boxwidth * (colwidth += i) + i;     /* overall width of box */
     if (j < titlewidth+2)
     {

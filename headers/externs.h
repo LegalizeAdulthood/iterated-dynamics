@@ -1,12 +1,6 @@
 #ifndef EXTERNS_H
 #define EXTERNS_H
 
-#if 0
-/* #ifndef DEBUG */
-#define DEBUG 1
-#endif
-
-
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
 extern int                   g_adapter;                         /* index into g_video_table[] */
 extern AlternateMath         alternatemath[];                   /* alternate math function pointers */

@@ -156,11 +156,6 @@ struct token_st {
 
 static struct PEND_OP o[2300];
 
-#if 0
-static void ops_allocate(void);
-static void vars_allocate(void);
-#endif
-
 struct var_list_st {
     char name[34];
     struct var_list_st * next_item;
@@ -3748,11 +3743,6 @@ int fpFormulaSetup(void) {
 #else
     MathType = D_MATH;
     RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
-#if 0
-    if (RunFormRes && fpu == -1 && debugflag != 90 && (orbitsave&2) == 0
-            && !Randomized)
-        return CvtStk(); /* run fast assembler code in parsera.asm */
-#endif
     return RunFormRes;
 #endif
 }

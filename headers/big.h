@@ -107,16 +107,7 @@ typedef unsigned char BIGDIST * big_t;
 #define bf_t   big_t
 #define bf10_t big_t
 
-#if 0 /* remove for Fractint */
-struct Complex
-{
-    LDBL x;
-    LDBL y;
-};
-typedef struct Complex    _CMPLX;
-#else
 #include "cmplx.h"
-#endif
 
 struct BFComplex
 {

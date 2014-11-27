@@ -143,43 +143,6 @@ void cdecl draw_line(int X1, int Y1, int X2, int Y2, int color)
     }
 }   /* draw_line */
 
-#if 0
-/* use this for continuous colors later */
-void _fastcall plot3dsuperimpose16b(int x,int y,int color)
-{
-    int tmp;
-    if (color != 0)         /* Keeps index 0 still 0 */
-    {
-        color = colors - color; /*  Reverses color order */
-        color = color / 4;
-        if (color == 0)
-            color = 1;
-    }
-    color = 3;
-    tmp = getcolor(x,y);
-
-    /* map to 4 colors */
-    if (g_which_image == 1) /* RED */
-    {
-        if (red_local_left < x && x < red_local_right)
-        {
-            putcolor(x,y,color|tmp);
-            if (Targa_Out)
-                targa_color(x, y, color|tmp);
-        }
-    }
-    else if (g_which_image == 2) /* BLUE */
-        if (blue_local_left < x && x < blue_local_right)
-        {
-            color = color <<2;
-            putcolor(x,y,color|tmp);
-            if (Targa_Out)
-                targa_color(x, y, color|tmp);
-        }
-}
-
-#endif
-
 void _fastcall plot3dsuperimpose16(int x,int y,int color)
 {
     int tmp;

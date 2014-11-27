@@ -60,17 +60,6 @@ in assembler.
 /* external variables (set in the FRACTINT.CFG file, but findable here */
 /* these are declared in PROTOTYPE.H */
 
-#if 0
-int  dotmode;                /* video access method (= 19)      */
-int  sxdots, sydots;         /* total # of dots on the screen   */
-int  colors;                 /* maximum colors available        */
-
-/* the video-palette array (named after the VGA adapter's video-DAC) */
-
-BYTE dacbox[256][3];
-
-#endif
-
 /* for demo purposes, these routines use VGA mode 13h - 320x200x256 */
 
 int startvideo()

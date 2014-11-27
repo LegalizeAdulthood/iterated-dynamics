@@ -62,23 +62,6 @@ int editpal_cursor = 0;
 /*
  * Stuff from fractint
  */
-
-#if 0
-/* declarations moved to PRORTOTYPE.H - this left for docs */
-BYTE dacbox[256][3];            /* DAC spindac() will use           */
-int         sxdots;             /* width of physical screen         */
-int         sydots;             /* depth of physical screen         */
-int         sxoffs;             /* start of logical screen          */
-int         syoffs;             /* start of logical screen          */
-int         lookatmouse;        /* mouse mode for driver_get_key(), etc    */
-int         strlocn[];          /* 10K buffer to store classes in   */
-int         colors;             /* # colors avail.                  */
-int         g_color_bright;       /* brightest color in palette       */
-int         g_color_dark;         /* darkest color in palette         */
-int         g_color_medium;       /* nearest to medbright gray color  */
-int         rotate_lo, rotate_hi;
-int         debugflag;
-#endif
 int using_jiim = 0;
 
 /*
@@ -560,12 +543,6 @@ struct _Cursor
     int     hidden;       /* >0 if mouse hidden */
     long    last_blink;
     BOOLEAN blink;
-#if 0
-    char    t[CURSOR_SIZE],        /* save line segments here */
-            b[CURSOR_SIZE],
-            l[CURSOR_SIZE],
-            r[CURSOR_SIZE];
-#endif
     char    t[CURSOR_SIZE];        /* save line segments here */
     char    b[CURSOR_SIZE];
     char    l[CURSOR_SIZE];

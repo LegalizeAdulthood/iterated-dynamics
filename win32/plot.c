@@ -267,22 +267,10 @@ static void plot_OnPaint(HWND window)
     if (width > 0 && height > 0)
     {
         DWORD status;
-#if 0
-        status = StretchDIBits(dc,
-                               r->left, r->top, width, height,
-                               r->left, r->top, width, height,
-                               s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
-#else
-#if 0
-        status = StretchBlt(dc, 0, 0, s_plot->width, s_plot->height,
-                            s_plot->memory_dc, 0, 0, s_plot->width, s_plot->height, SRCCOPY);
-#else
         status = StretchDIBits(dc,
                                0, 0, s_plot->width, s_plot->height,
                                0, 0, s_plot->width, s_plot->height,
                                s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
-#endif
-#endif
         _ASSERTE(status != GDI_ERROR);
     }
     EndPaint(window, &ps);
@@ -467,19 +455,7 @@ void plot_flush(Plot *me)
     if (me->dirty)
     {
         RECT r = { -1, -1, -1, -1 };
-#if 0
-        InvalidateRect(me->window, &me->dirty_region, FALSE);
-#else
-#if 0
-        DWORD status;
-        status = StretchDIBits(me->memory_dc,
-                               0, 0, me->width, me->width,
-                               0, 0, me->width, me->height,
-                               me->pixels, &me->bmi, DIB_RGB_COLORS, SRCCOPY);
-#else
         InvalidateRect(me->window, NULL, FALSE);
-#endif
-#endif
         me->dirty = FALSE;
         me->dirty_region = r;
     }

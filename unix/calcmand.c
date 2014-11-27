@@ -15,8 +15,3 @@ calcmandasm(void) {
     printf("Warning: called calcmandasm\n");
     return (0);
 }
-#if 0    /* not used */
-code16bit() {}
-checkperiod() {}
-code32bit() {}
-#endif

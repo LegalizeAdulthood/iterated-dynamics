@@ -1308,50 +1308,6 @@ int  fr_findnext()              /* Find next file (or subdir) meeting above path
 }
 #endif /* !_WIN32 */
 
-#if 0
-void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, VOIDPTR arg2))
-{
-    int ll,j,ir,i;
-    void *rra;
-    char *ra;
-    ra = (char *)ra1;
-    ra -= sz;
-    ll=(n>>1)+1;
-    ir=n;
-
-    while (1)
-    {
-        if (ll>1)
-            rra = *((char **)(ra+(--ll)*sz));
-        else
-        {
-            rra = *((char * *)(ra+ir*sz));
-            *((char * *)(ra+ir*sz))=*((char * *)(ra+sz));
-            if (--ir == 1)
-            {
-                *((char * *)(ra+sz))=rra;
-                return;
-            }
-        }
-        i = ll;
-        j = ll <<1;
-        while (j <= ir)
-        {
-            if (j<ir && (fct(ra+j*sz,ra+(j+1)*sz) < 0))
-                ++j;
-            if (fct(&rra,ra+j*sz) < 0)
-            {
-                *((char * *)(ra+i*sz)) = *((char * *)(ra+j*sz));
-                j += (i=j);
-            }
-            else
-                j=ir+1;
-        }
-        *((char * *)(ra+i*sz))=rra;
-    }
-}
-#endif
-
 struct tagCHOICE
 {
     char name[13];
@@ -2565,11 +2521,6 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
         isafile=1;
     if ((isadir = isadirectory(newfilename)) != 0)
         fix_dirname(newfilename);
-#if 0
-    /* if slash by itself, it's a directory */
-    if (strcmp(newfilename,SLASH)==0)
-        isadir = 1;
-#endif
 #ifndef XFRACT
     /* if drive, colon, slash, is a directory */
     if ((int) strlen(newfilename) == 3 &&

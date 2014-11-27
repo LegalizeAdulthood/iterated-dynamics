@@ -19,24 +19,6 @@
 #include "helpdefs.h"
 #include "drivers.h"
 
-#if 0
-/* makes a handly list of jul-man pairs, not for release */
-static void julman()
-{
-    FILE *fp;
-    int i;
-    fp = dir_fopen(workdir,"toggle.txt","w");
-    i = -1;
-    while (fractalspecific[++i].name)
-    {
-        if (fractalspecific[i].tojulia != NOFRACTAL && fractalspecific[i].name[0] != '*')
-            fprintf(fp,"%s  %s\n",fractalspecific[i].name,
-                    fractalspecific[fractalspecific[i].tojulia].name);
-    }
-    fclose(fp);
-}
-#endif
-
 /* routines in this module      */
 
 int main_menu_switch(int*,int*,int*,char*,int);
@@ -960,12 +942,6 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             *kbdmore = 0;    /* time to redraw */
         }
         break;
-#if 0
-    case 'w':
-        /*chk_keys();*/
-        /*julman();*/
-        break;
-#endif
     case FIK_CTL_A:                     /* ^a Ant */
         clear_zoombox();
         {
@@ -1172,13 +1148,6 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             calc_status = CALCSTAT_PARAMS_CHANGED;
             *kbdmore = 0;
         }
-#if 0
-        else if (fractype == MANDEL || fractype == MANDELFP)
-        {
-            clear_zoombox();
-            Jiim(JIIM);
-        }
-#endif
         else
             driver_buzzer(BUZZER_ERROR);
         break;

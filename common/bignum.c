@@ -1379,14 +1379,6 @@ bn_t div_bn(bn_t r, bn_t n1, bn_t n2)
 /**********************************************************************/
 bn_t ln_bn(bn_t r, bn_t n)
 {
-#if 0
-    int sign;
-
-    sign = is_bn_neg(n);
-    unsafe_ln_bn(r, n);
-    if (sign)
-        neg_a_bn(n);
-#endif
     copy_bn(bntmpcpy1, n); /* allows r and n to overlap memory */
     unsafe_ln_bn(r, bntmpcpy1);
     return r;
