@@ -1,6 +1,6 @@
 build
-fractint/hc
-fractint/dos_help/fractint.hlp
-fractint/dos_help/helpdefs.h
-fractint/fractint.hlp
-fractint/headers/helpdefs.h
+hc
+hc/fractint.hlp
+hc/helpdefs.h
+fractint.hlp
+headers/helpdefs.h
