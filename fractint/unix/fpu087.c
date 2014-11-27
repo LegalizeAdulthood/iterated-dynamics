@@ -43,7 +43,7 @@ void FPUcplxdiv(_CMPLX *x, _CMPLX *y, _CMPLX *z)
     double mod,tx,yxmod,yymod;
     mod = y->x * y->x + y->y * y->y;
     if (mod==0) {
-    DivideOverflow++;
+        DivideOverflow++;
     }
     yxmod = y->x/mod;
     yymod = - y->y/mod;
@@ -89,22 +89,22 @@ void SinCos086(long x, long *sinx, long *cosx)
 {
     double a;
     a = x/(double)(1<<16);
-    *sinx = (long) (sin(a)*(double)(1<<16));
-    *cosx = (long) (cos(a)*(double)(1<<16));
+    *sinx = (long)(sin(a)*(double)(1<<16));
+    *cosx = (long)(cos(a)*(double)(1<<16));
 }
 
 void SinhCosh086(long x, long *sinx, long *cosx)
 {
     double a;
     a = x/(double)(1<<16);
-    *sinx = (long) (sinh(a)*(double)(1<<16));
-    *cosx = (long) (cosh(a)*(double)(1<<16));
+    *sinx = (long)(sinh(a)*(double)(1<<16));
+    *cosx = (long)(cosh(a)*(double)(1<<16));
 }
 
 long Exp086(x)
 long x;
 {
-    return (long) (exp((double)x/(double)(1<<16))*(double)(1<<16));
+    return (long)(exp((double)x/(double)(1<<16))*(double)(1<<16));
 }
 
 #define em2float(l) (*(float *)&(l))
@@ -117,7 +117,7 @@ unsigned long ExpFudged(x, Fudge)
 long x;
 int Fudge;
 {
-    return (long) (exp((double)x/(double)(1<<16))*(double)(1<<Fudge));
+    return (long)(exp((double)x/(double)(1<<16))*(double)(1<<Fudge));
 }
 
 /* This multiplies two e/m numbers and returns an e/m number. */
@@ -179,9 +179,9 @@ int Shift;
     float f;
     f = em2float(x);
     if (Shift>0) {
-    f *= (1<<Shift);
+        f *= (1<<Shift);
     } else {
-    f /= (1<<Shift);
+        f /= (1<<Shift);
     }
     return float2em(f);
 }

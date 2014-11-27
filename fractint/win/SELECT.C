@@ -82,93 +82,93 @@ int fFlags;
 
     switch (fFlags & SL_TYPE) {
 
-        case SL_BOX:
-             OldROP = SetROP2(hDC, R2_NOTXORPEN);
+    case SL_BOX:
+        OldROP = SetROP2(hDC, R2_NOTXORPEN);
+        MoveTo(hDC, lpSelectRect->left, lpSelectRect->top);
+        LineTo(hDC, lpSelectRect->right, lpSelectRect->top);
+        LineTo(hDC, lpSelectRect->right, lpSelectRect->bottom);
+        LineTo(hDC, lpSelectRect->left, lpSelectRect->bottom);
+        LineTo(hDC, lpSelectRect->left, lpSelectRect->top);
+
+        LineTo(hDC, ptCurrent.x, lpSelectRect->top);
+        LineTo(hDC, ptCurrent.x, ptCurrent.y);
+        LineTo(hDC, lpSelectRect->left, ptCurrent.y);
+        LineTo(hDC, lpSelectRect->left, lpSelectRect->top);
+        SetROP2(hDC, OldROP);
+        break;
+
+    case SL_BLOCK:
+        PatBlt(hDC,
+               lpSelectRect->left,
+               lpSelectRect->bottom,
+               lpSelectRect->right - lpSelectRect->left,
+               ptCurrent.y - lpSelectRect->bottom,
+               DSTINVERT);
+        PatBlt(hDC,
+               lpSelectRect->right,
+               lpSelectRect->top,
+               ptCurrent.x - lpSelectRect->right,
+               ptCurrent.y - lpSelectRect->top,
+               DSTINVERT);
+        break;
+
+
+    case (SL_ZOOM):
+        OldROP = SetROP2(hDC, R2_NOTXORPEN);
+        MoveTo(hDC, lpSelectRect->left, lpSelectRect->top);
+        LineTo(hDC, lpSelectRect->right, lpSelectRect->top);
+        LineTo(hDC, lpSelectRect->right, lpSelectRect->bottom);
+        LineTo(hDC, lpSelectRect->left, lpSelectRect->bottom);
+        LineTo(hDC, lpSelectRect->left, lpSelectRect->top);
+
+        if (bTrack)
+        {
+            NewPoint = ptCurrent;
+
+            NewDim.x = Center.x - NewPoint.x;
+            if (NewDim.x < 0)
+                NewDim.x = -NewDim.x;
+
+            NewDim.y = Center.y - NewPoint.y;
+            if (NewDim.y < 0)
+                NewDim.y = -NewDim.y;
+
+            ScaledY = (unsigned)(((long)NewDim.y) * xdots / ydots);
+            if (NewDim.x < (long)ScaledY)
+                NewDim.x = ScaledY;
+            else
+                NewDim.y = (unsigned)(((long)NewDim.x) * ydots / xdots);
+
+            if (NewDim.x < 2)
+                NewDim.x = 2;
+            if (NewDim.y < 2)
+                NewDim.y = 2;
+
+            ZoomDim = NewDim;
+        }
+        else if (bMoving)
+        {
+            Center.x += ptCurrent.x - DragPoint.x;
+            Center.y += ptCurrent.y - DragPoint.y;
+            DragPoint = ptCurrent;
+        }
+
+        if (bTrack || bMoving) {
+            lpSelectRect->left   = Center.x - ZoomDim.x;
+            lpSelectRect->right  = Center.x + ZoomDim.x;
+            lpSelectRect->bottom = Center.y + ZoomDim.y;
+            lpSelectRect->top    = Center.y - ZoomDim.y;
+
             MoveTo(hDC, lpSelectRect->left, lpSelectRect->top);
             LineTo(hDC, lpSelectRect->right, lpSelectRect->top);
             LineTo(hDC, lpSelectRect->right, lpSelectRect->bottom);
             LineTo(hDC, lpSelectRect->left, lpSelectRect->bottom);
             LineTo(hDC, lpSelectRect->left, lpSelectRect->top);
+        }
 
-            LineTo(hDC, ptCurrent.x, lpSelectRect->top);
-            LineTo(hDC, ptCurrent.x, ptCurrent.y);
-            LineTo(hDC, lpSelectRect->left, ptCurrent.y);
-            LineTo(hDC, lpSelectRect->left, lpSelectRect->top);
-            SetROP2(hDC, OldROP);
-            break;
-
-        case SL_BLOCK:
-            PatBlt(hDC,
-                lpSelectRect->left,
-                lpSelectRect->bottom,
-                lpSelectRect->right - lpSelectRect->left,
-                ptCurrent.y - lpSelectRect->bottom,
-                DSTINVERT);
-            PatBlt(hDC,
-                lpSelectRect->right,
-                lpSelectRect->top,
-                ptCurrent.x - lpSelectRect->right,
-                ptCurrent.y - lpSelectRect->top,
-                DSTINVERT);
-            break;
-
-
-        case (SL_ZOOM):
-           OldROP = SetROP2(hDC, R2_NOTXORPEN);
-           MoveTo(hDC, lpSelectRect->left, lpSelectRect->top);
-           LineTo(hDC, lpSelectRect->right, lpSelectRect->top);
-           LineTo(hDC, lpSelectRect->right, lpSelectRect->bottom);
-           LineTo(hDC, lpSelectRect->left, lpSelectRect->bottom);
-           LineTo(hDC, lpSelectRect->left, lpSelectRect->top);
-
-           if(bTrack)
-           {
-              NewPoint = ptCurrent;
-
-              NewDim.x = Center.x - NewPoint.x;
-              if(NewDim.x < 0)
-                 NewDim.x = -NewDim.x;
-
-              NewDim.y = Center.y - NewPoint.y;
-              if(NewDim.y < 0)
-                 NewDim.y = -NewDim.y;
-
-              ScaledY = (unsigned)(((long)NewDim.y) * xdots / ydots);
-              if(NewDim.x < (long)ScaledY)
-                 NewDim.x = ScaledY;
-              else
-                 NewDim.y = (unsigned)(((long)NewDim.x) * ydots / xdots);
-
-              if(NewDim.x < 2)
-                 NewDim.x = 2;
-              if(NewDim.y < 2)
-                 NewDim.y = 2;
-
-              ZoomDim = NewDim;
-           }
-           else if(bMoving)
-           {
-              Center.x += ptCurrent.x - DragPoint.x;
-              Center.y += ptCurrent.y - DragPoint.y;
-              DragPoint = ptCurrent;
-           }
-
-           if (bTrack || bMoving) {
-              lpSelectRect->left   = Center.x - ZoomDim.x;
-              lpSelectRect->right  = Center.x + ZoomDim.x;
-              lpSelectRect->bottom = Center.y + ZoomDim.y;
-              lpSelectRect->top    = Center.y - ZoomDim.y;
-
-                   MoveTo(hDC, lpSelectRect->left, lpSelectRect->top);
-              LineTo(hDC, lpSelectRect->right, lpSelectRect->top);
-              LineTo(hDC, lpSelectRect->right, lpSelectRect->bottom);
-              LineTo(hDC, lpSelectRect->left, lpSelectRect->bottom);
-              LineTo(hDC, lpSelectRect->left, lpSelectRect->top);
-              }
-
-           SetROP2(hDC, OldROP);
-           ReleaseDC(hWnd, hDC);
-           return;
+        SetROP2(hDC, OldROP);
+        ReleaseDC(hWnd, hDC);
+        return;
     }
     lpSelectRect->right = ptCurrent.x;
     lpSelectRect->bottom = ptCurrent.y;
@@ -187,10 +187,10 @@ void FAR PASCAL EndSelection(ptCurrent, lpSelectRect)
 POINT ptCurrent;
 LPRECT lpSelectRect;
 {
-    if(!bMove)
+    if (!bMove)
     {
-       lpSelectRect->right = ptCurrent.x;
-       lpSelectRect->bottom = ptCurrent.y;
+        lpSelectRect->right = ptCurrent.x;
+        lpSelectRect->bottom = ptCurrent.y;
     }
     ReleaseCapture();
 }
@@ -215,25 +215,25 @@ int fFlags;
     switch (fFlags & SL_TYPE) {
 
 
-        case (SL_ZOOM):
-        case SL_BOX:
-            OldROP = SetROP2(hDC, R2_NOTXORPEN);
-            MoveTo(hDC, lpSelectRect->left, lpSelectRect->top);
-            LineTo(hDC, lpSelectRect->right, lpSelectRect->top);
-            LineTo(hDC, lpSelectRect->right, lpSelectRect->bottom);
-            LineTo(hDC, lpSelectRect->left, lpSelectRect->bottom);
-            LineTo(hDC, lpSelectRect->left, lpSelectRect->top);
-            SetROP2(hDC, OldROP);
-            break;
+    case (SL_ZOOM):
+    case SL_BOX:
+        OldROP = SetROP2(hDC, R2_NOTXORPEN);
+        MoveTo(hDC, lpSelectRect->left, lpSelectRect->top);
+        LineTo(hDC, lpSelectRect->right, lpSelectRect->top);
+        LineTo(hDC, lpSelectRect->right, lpSelectRect->bottom);
+        LineTo(hDC, lpSelectRect->left, lpSelectRect->bottom);
+        LineTo(hDC, lpSelectRect->left, lpSelectRect->top);
+        SetROP2(hDC, OldROP);
+        break;
 
-        case SL_BLOCK:
-            PatBlt(hDC,
-                lpSelectRect->left,
-                lpSelectRect->top,
-                lpSelectRect->right - lpSelectRect->left,
-                lpSelectRect->bottom - lpSelectRect->top,
-                DSTINVERT);
-            break;
+    case SL_BLOCK:
+        PatBlt(hDC,
+               lpSelectRect->left,
+               lpSelectRect->top,
+               lpSelectRect->right - lpSelectRect->left,
+               lpSelectRect->bottom - lpSelectRect->top,
+               DSTINVERT);
+        break;
 
     }
     ReleaseDC(hWnd, hDC);

@@ -111,21 +111,49 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
         switch (vk)
         {
         /* sorted in FIK_xxx order */
-        case VK_DELETE:     i = CTL_KEY(FIK_CTL_DEL);           break;
-        case VK_DOWN:       i = CTL_KEY(FIK_CTL_DOWN_ARROW);    break;
-        case VK_END:        i = CTL_KEY(FIK_CTL_END);           break;
-        case VK_RETURN:     i = CTL_KEY(FIK_CTL_ENTER);         break;
-        case VK_HOME:       i = CTL_KEY(FIK_CTL_HOME);          break;
-        case VK_INSERT:     i = CTL_KEY(FIK_CTL_INSERT);        break;
-        case VK_LEFT:       i = CTL_KEY(FIK_CTL_LEFT_ARROW);    break;
-        case VK_PRIOR:      i = CTL_KEY(FIK_CTL_PAGE_UP);       break;
-        case VK_NEXT:       i = CTL_KEY(FIK_CTL_PAGE_DOWN);     break;
-        case VK_RIGHT:      i = CTL_KEY(FIK_CTL_RIGHT_ARROW);   break;
-        case VK_UP:         i = CTL_KEY(FIK_CTL_UP_ARROW);      break;
+        case VK_DELETE:
+            i = CTL_KEY(FIK_CTL_DEL);
+            break;
+        case VK_DOWN:
+            i = CTL_KEY(FIK_CTL_DOWN_ARROW);
+            break;
+        case VK_END:
+            i = CTL_KEY(FIK_CTL_END);
+            break;
+        case VK_RETURN:
+            i = CTL_KEY(FIK_CTL_ENTER);
+            break;
+        case VK_HOME:
+            i = CTL_KEY(FIK_CTL_HOME);
+            break;
+        case VK_INSERT:
+            i = CTL_KEY(FIK_CTL_INSERT);
+            break;
+        case VK_LEFT:
+            i = CTL_KEY(FIK_CTL_LEFT_ARROW);
+            break;
+        case VK_PRIOR:
+            i = CTL_KEY(FIK_CTL_PAGE_UP);
+            break;
+        case VK_NEXT:
+            i = CTL_KEY(FIK_CTL_PAGE_DOWN);
+            break;
+        case VK_RIGHT:
+            i = CTL_KEY(FIK_CTL_RIGHT_ARROW);
+            break;
+        case VK_UP:
+            i = CTL_KEY(FIK_CTL_UP_ARROW);
+            break;
 
-        case VK_TAB:        i = CTL_KEY2(FIK_CTL_TAB, &j);      break;
-        case VK_ADD:        i = CTL_KEY2(FIK_CTL_PLUS, &j);     break;
-        case VK_SUBTRACT:   i = CTL_KEY2(FIK_CTL_MINUS, &j);    break;
+        case VK_TAB:
+            i = CTL_KEY2(FIK_CTL_TAB, &j);
+            break;
+        case VK_ADD:
+            i = CTL_KEY2(FIK_CTL_PLUS, &j);
+            break;
+        case VK_SUBTRACT:
+            i = CTL_KEY2(FIK_CTL_MINUS, &j);
+            break;
 
         default:
             if (0 == j)
@@ -173,16 +201,36 @@ static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM 
 {
     switch (message)
     {
-    case WM_CLOSE:          HANDLE_WM_CLOSE(window, wp, lp, frame_OnClose);                 break;
-    case WM_GETMINMAXINFO:  HANDLE_WM_GETMINMAXINFO(window, wp, lp, frame_OnGetMinMaxInfo); break;
-    case WM_SETFOCUS:       HANDLE_WM_SETFOCUS(window, wp, lp, frame_OnSetFocus);           break;
-    case WM_KILLFOCUS:      HANDLE_WM_KILLFOCUS(window, wp, lp, frame_OnKillFocus);         break;
-    case WM_PAINT:          HANDLE_WM_PAINT(window, wp, lp, frame_OnPaint);                 break;
-    case WM_KEYDOWN:        HANDLE_WM_KEYDOWN(window, wp, lp, frame_OnKeyDown);             break;
-    case WM_SYSKEYDOWN:     HANDLE_WM_SYSKEYDOWN(window, wp, lp, frame_OnKeyDown);          break;
-    case WM_CHAR:           HANDLE_WM_CHAR(window, wp, lp, frame_OnChar);                   break;
-    case WM_TIMER:          HANDLE_WM_TIMER(window, wp, lp, frame_OnTimer);                 break;
-    default:                return DefWindowProc(window, message, wp, lp);                  break;
+    case WM_CLOSE:
+        HANDLE_WM_CLOSE(window, wp, lp, frame_OnClose);
+        break;
+    case WM_GETMINMAXINFO:
+        HANDLE_WM_GETMINMAXINFO(window, wp, lp, frame_OnGetMinMaxInfo);
+        break;
+    case WM_SETFOCUS:
+        HANDLE_WM_SETFOCUS(window, wp, lp, frame_OnSetFocus);
+        break;
+    case WM_KILLFOCUS:
+        HANDLE_WM_KILLFOCUS(window, wp, lp, frame_OnKillFocus);
+        break;
+    case WM_PAINT:
+        HANDLE_WM_PAINT(window, wp, lp, frame_OnPaint);
+        break;
+    case WM_KEYDOWN:
+        HANDLE_WM_KEYDOWN(window, wp, lp, frame_OnKeyDown);
+        break;
+    case WM_SYSKEYDOWN:
+        HANDLE_WM_SYSKEYDOWN(window, wp, lp, frame_OnKeyDown);
+        break;
+    case WM_CHAR:
+        HANDLE_WM_CHAR(window, wp, lp, frame_OnChar);
+        break;
+    case WM_TIMER:
+        HANDLE_WM_TIMER(window, wp, lp, frame_OnTimer);
+        break;
+    default:
+        return DefWindowProc(window, message, wp, lp);
+        break;
     }
     return 0;
 }
@@ -206,7 +254,7 @@ void frame_init(HINSTANCE instance, LPCSTR title)
         wc.hInstance = g_frame.instance;
         wc.hIcon = NULL;
         wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-        wc.hbrBackground = (HBRUSH) (COLOR_BACKGROUND+1);
+        wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND+1);
         wc.lpszMenuName = g_frame.title;
         wc.lpszClassName = windowClass;
 
@@ -230,8 +278,8 @@ int frame_pump_messages(int waitflag)
         {
             /* no messages waiting */
             if (!waitflag
-                || (g_frame.keypress_count != 0)
-                || (waitflag && g_frame.timed_out))
+                    || (g_frame.keypress_count != 0)
+                    || (waitflag && g_frame.timed_out))
             {
                 return (g_frame.keypress_count > 0) ? 1 : 0;
             }
@@ -293,7 +341,7 @@ static void frame_adjust_size(int width, int height)
     g_frame.nc_width = width + GetSystemMetrics(SM_CXFRAME)*2;
     g_frame.height = height;
     g_frame.nc_height = height +
-        GetSystemMetrics(SM_CYFRAME)*2 + GetSystemMetrics(SM_CYCAPTION) - 1;
+                        GetSystemMetrics(SM_CYFRAME)*2 + GetSystemMetrics(SM_CYCAPTION) - 1;
 }
 
 void frame_window(int width, int height)
@@ -302,14 +350,14 @@ void frame_window(int width, int height)
     {
         frame_adjust_size(width, height);
         g_frame.window = CreateWindow("FractintFrame",
-            g_frame.title,
-            WS_OVERLAPPEDWINDOW,
-            CW_USEDEFAULT,               /* default horizontal position */
-            CW_USEDEFAULT,               /* default vertical position */
-            g_frame.nc_width,
-            g_frame.nc_height,
-            NULL, NULL, g_frame.instance,
-            NULL);
+                                      g_frame.title,
+                                      WS_OVERLAPPEDWINDOW,
+                                      CW_USEDEFAULT,               /* default horizontal position */
+                                      CW_USEDEFAULT,               /* default vertical position */
+                                      g_frame.nc_width,
+                                      g_frame.nc_height,
+                                      NULL, NULL, g_frame.instance,
+                                      NULL);
         ShowWindow(g_frame.window, SW_SHOWNORMAL);
     }
     else
@@ -324,8 +372,8 @@ void frame_resize(int width, int height)
 
     frame_adjust_size(width, height);
     status = SetWindowPos(g_frame.window, NULL,
-        0, 0, g_frame.nc_width, g_frame.nc_height,
-        SWP_NOZORDER | SWP_NOMOVE);
+                          0, 0, g_frame.nc_width, g_frame.nc_height,
+                          SWP_NOZORDER | SWP_NOMOVE);
     _ASSERTE(status);
 
 }

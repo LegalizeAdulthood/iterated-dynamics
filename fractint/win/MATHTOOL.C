@@ -57,21 +57,21 @@ extern int win_xoffset, win_yoffset;
 /* Global Maintenance */
 
 void CheckMathTools(void) {
-   if(KillCoordBox) {
-      KillCoordBox = 0;
-      SaveParamSwitch(CoordBoxStr, FALSE);
-      CheckMenuItem(GetMenu(hFractalWnd), IDM_COORD, MF_UNCHECKED);
-      DestroyWindow(hCoordBox);
-   }
-   if(KillZoomBar) {
-      XorZoomBox();
-      Zooming = 0;
-      KillZoomBar = 0;
-      SaveParamSwitch(ZoomBoxStr, FALSE);
-      CheckMenuItem(GetMenu(hFractalWnd), IDM_ZOOM, MF_UNCHECKED);
-      DestroyWindow(hZoomDlg);
-      CheckMenuItem(GetMenu(hFractalWnd), ZoomMode, MF_CHECKED);
-   }
+    if (KillCoordBox) {
+        KillCoordBox = 0;
+        SaveParamSwitch(CoordBoxStr, FALSE);
+        CheckMenuItem(GetMenu(hFractalWnd), IDM_COORD, MF_UNCHECKED);
+        DestroyWindow(hCoordBox);
+    }
+    if (KillZoomBar) {
+        XorZoomBox();
+        Zooming = 0;
+        KillZoomBar = 0;
+        SaveParamSwitch(ZoomBoxStr, FALSE);
+        CheckMenuItem(GetMenu(hFractalWnd), IDM_ZOOM, MF_UNCHECKED);
+        DestroyWindow(hZoomDlg);
+        CheckMenuItem(GetMenu(hFractalWnd), ZoomMode, MF_CHECKED);
+    }
 }
 
 BOOL RegisterMathWindows(HANDLE hInstance) {
@@ -98,41 +98,41 @@ BOOL RegisterMathWindows(HANDLE hInstance) {
 /* Window Sizing */
 
 void SizeWindow(HWND hWnd) {
-   if(Sizing) {
-      POINT w;
+    if (Sizing) {
+        POINT w;
 
-      w.x = xdots + (GetSystemMetrics(SM_CXFRAME) * 2);
-      w.y = ydots + (GetSystemMetrics(SM_CYFRAME) * 2) +
-                     GetSystemMetrics(SM_CYCAPTION) +
-                     GetSystemMetrics(SM_CYMENU);
-      ReSizing = 1;
-      ShowScrollBar(hWnd, SB_BOTH, FALSE);
-      SetWindowPos(hWnd, GetNextWindow(hWnd, GW_HWNDPREV), 0, 0,
-                   w.x, w.y, SWP_NOMOVE);
-      ReSizing = 0;
-   }
+        w.x = xdots + (GetSystemMetrics(SM_CXFRAME) * 2);
+        w.y = ydots + (GetSystemMetrics(SM_CYFRAME) * 2) +
+              GetSystemMetrics(SM_CYCAPTION) +
+              GetSystemMetrics(SM_CYMENU);
+        ReSizing = 1;
+        ShowScrollBar(hWnd, SB_BOTH, FALSE);
+        SetWindowPos(hWnd, GetNextWindow(hWnd, GW_HWNDPREV), 0, 0,
+                     w.x, w.y, SWP_NOMOVE);
+        ReSizing = 0;
+    }
 }
 
 void ReSizeWindow(HWND hWnd) {
-   if(Sizing) {
-      SizeWindow(hWnd);
-      ShowWindow(hWnd, SW_SHOWNA);
-   }
+    if (Sizing) {
+        SizeWindow(hWnd);
+        ShowWindow(hWnd, SW_SHOWNA);
+    }
 }
 
 void WindowSizing(HWND hWnd) {
-   if(Sizing) {
-      CheckMenuItem(GetMenu(hWnd), IDM_SIZING, MF_UNCHECKED);
-      Sizing = 0;
-      ShowScrollBar(hWnd, SB_BOTH, TRUE);
-   }
-   else {
-      CheckMenuItem(GetMenu(hWnd), IDM_SIZING, MF_CHECKED);
-      Sizing = 1;
-      ReSizeWindow(hWnd);
-   }
-   ProgStr = Winfract;
-   SaveParamSwitch(WindowSizingStr, Sizing);
+    if (Sizing) {
+        CheckMenuItem(GetMenu(hWnd), IDM_SIZING, MF_UNCHECKED);
+        Sizing = 0;
+        ShowScrollBar(hWnd, SB_BOTH, TRUE);
+    }
+    else {
+        CheckMenuItem(GetMenu(hWnd), IDM_SIZING, MF_CHECKED);
+        Sizing = 1;
+        ReSizeWindow(hWnd);
+    }
+    ProgStr = Winfract;
+    SaveParamSwitch(WindowSizingStr, Sizing);
 }
 
 
@@ -140,396 +140,396 @@ void WindowSizing(HWND hWnd) {
 /* Zoom Box */
 
 void XorZoomBox(void) {
-   HDC hDC;
-   HANDLE hOldBrush, hOldPen;
-   int OldMode;
+    HDC hDC;
+    HANDLE hOldBrush, hOldPen;
+    int OldMode;
 
-   if(Zooming) {
-      hDC = GetDC(hFractalWnd);
+    if (Zooming) {
+        hDC = GetDC(hFractalWnd);
 
-      hOldBrush = SelectObject(hDC, hZoomBrush);
-      hOldPen = SelectObject(hDC, hZoomPen);
-      OldMode = SetROP2(hDC, R2_XORPEN);
+        hOldBrush = SelectObject(hDC, hZoomBrush);
+        hOldPen = SelectObject(hDC, hZoomPen);
+        OldMode = SetROP2(hDC, R2_XORPEN);
 
-      Rectangle(hDC, ZoomRect.left, ZoomRect.top, ZoomRect.right,
-                ZoomRect.bottom);
+        Rectangle(hDC, ZoomRect.left, ZoomRect.top, ZoomRect.right,
+                  ZoomRect.bottom);
 
-      SelectObject(hDC, hOldBrush);
-      SelectObject(hDC, hOldPen);
-      SetROP2(hDC, OldMode);
+        SelectObject(hDC, hOldBrush);
+        SelectObject(hDC, hOldPen);
+        SetROP2(hDC, OldMode);
 
-      ReleaseDC(hFractalWnd, hDC);
-  }
+        ReleaseDC(hFractalWnd, hDC);
+    }
 }
 
 void PositionZoomBar(void) {
-   char Temp[15];
+    char Temp[15];
 
-   SetScrollPos(hZoomBar, SB_CTL, Zooming, TRUE);
-   sprintf(Temp, "%d%%", Zooming);
-   SetDlgItemText(hZoomDlg, ID_PERCENT, Temp);
+    SetScrollPos(hZoomBar, SB_CTL, Zooming, TRUE);
+    sprintf(Temp, "%d%%", Zooming);
+    SetDlgItemText(hZoomDlg, ID_PERCENT, Temp);
 }
 
 void CalcZoomRect(void) {
-   unsigned Midx, Midy;
-   double z;
+    unsigned Midx, Midy;
+    double z;
 
-   if(Zooming) {
-      Midx = xdots >> 1;
-      Midy = ydots >> 1;
-      z = 1.0 - (fabs((double)Zooming / 100) * .99);
-      ZoomRect.left = ZoomCenter.x - (unsigned)(z * Midx) - 1;
-      ZoomRect.right = ZoomCenter.x + (unsigned)(z * Midx) + 1;
-      ZoomRect.top = ZoomCenter.y - (unsigned)(z * Midy) - 1;
-      ZoomRect.bottom = ZoomCenter.y + (unsigned)(z * Midy) + 1;
-   }
+    if (Zooming) {
+        Midx = xdots >> 1;
+        Midy = ydots >> 1;
+        z = 1.0 - (fabs((double)Zooming / 100) * .99);
+        ZoomRect.left = ZoomCenter.x - (unsigned)(z * Midx) - 1;
+        ZoomRect.right = ZoomCenter.x + (unsigned)(z * Midx) + 1;
+        ZoomRect.top = ZoomCenter.y - (unsigned)(z * Midy) - 1;
+        ZoomRect.bottom = ZoomCenter.y + (unsigned)(z * Midy) + 1;
+    }
 }
 
 void CenterZoom(void) {
-   ZoomCenter.x = xdots >> 1;
-   ZoomCenter.y = ydots >> 1;
+    ZoomCenter.x = xdots >> 1;
+    ZoomCenter.y = ydots >> 1;
 }
 
 void StartZoomTracking(DWORD lp) {
-   HRGN hRgn;
+    HRGN hRgn;
 
-   ZoomClick = MAKEPOINT(lp);
-   if(hRgn = CreateRectRgn(ZoomClick.x-1, ZoomClick.y-1, ZoomClick.x+1,
-               ZoomClick.y+1)) {
-      if(RectInRegion(hRgn, &ZoomRect))
-         TrackingZoom = TRUE;
-      DeleteObject(hRgn);
-   }
+    ZoomClick = MAKEPOINT(lp);
+    if (hRgn = CreateRectRgn(ZoomClick.x-1, ZoomClick.y-1, ZoomClick.x+1,
+                             ZoomClick.y+1)) {
+        if (RectInRegion(hRgn, &ZoomRect))
+            TrackingZoom = TRUE;
+        DeleteObject(hRgn);
+    }
 }
 
 void TrackZoom(DWORD lp) {
-   POINT NewPoint;
+    POINT NewPoint;
 
-   XorZoomBox();
+    XorZoomBox();
 
-   NewPoint = MAKEPOINT(lp);
-   ZoomCenter.x += NewPoint.x - ZoomClick.x;
-   ZoomCenter.y += NewPoint.y - ZoomClick.y;
-   ZoomClick = NewPoint;
+    NewPoint = MAKEPOINT(lp);
+    ZoomCenter.x += NewPoint.x - ZoomClick.x;
+    ZoomCenter.y += NewPoint.y - ZoomClick.y;
+    ZoomClick = NewPoint;
 
-   CalcZoomRect();
-   XorZoomBox();
+    CalcZoomRect();
+    XorZoomBox();
 }
 
 void EndZoom(DWORD lp) {
-   TrackZoom(lp);
-   TrackingZoom = FALSE;
+    TrackZoom(lp);
+    TrackingZoom = FALSE;
 }
 
 void PaintMathTools(void) {
-   XorZoomBox();
+    XorZoomBox();
 }
 
 void CancelZoom(void) {
-   clear_zoombox();
-   XorZoomBox();
-   CenterZoom();
-   TrackingZoom = Zooming = FALSE;
-   PositionZoomBar();
+    clear_zoombox();
+    XorZoomBox();
+    CenterZoom();
+    TrackingZoom = Zooming = FALSE;
+    PositionZoomBar();
 }
 
 void ExecuteZoom(void) {
-   double xd, yd, z;
-   double tmpx, tmpy;
-   bf_t bfxd, bfyd;
-   bf_t bftmpx, bftmpy;
-   bf_t bftmpzoomx, bftmpzoomy;
-   int saved=0;
+    double xd, yd, z;
+    double tmpx, tmpy;
+    bf_t bfxd, bfyd;
+    bf_t bftmpx, bftmpy;
+    bf_t bftmpzoomx, bftmpzoomy;
+    int saved=0;
 
-   if(bf_math)
-   {
-      saved = save_stack();
-      bfxd = alloc_stack(rbflength+2);
-      bfyd  = alloc_stack(rbflength+2);
-      bftmpzoomx = alloc_stack(rbflength+2);
-      bftmpzoomy = alloc_stack(rbflength+2);
-      bftmpx = alloc_stack(rbflength+2);
-      bftmpy = alloc_stack(rbflength+2);
+    if (bf_math)
+    {
+        saved = save_stack();
+        bfxd = alloc_stack(rbflength+2);
+        bfyd  = alloc_stack(rbflength+2);
+        bftmpzoomx = alloc_stack(rbflength+2);
+        bftmpzoomy = alloc_stack(rbflength+2);
+        bftmpx = alloc_stack(rbflength+2);
+        bftmpy = alloc_stack(rbflength+2);
     }
 
-   xd = xxmin + ((double)delxx * (ZoomCenter.x + win_xoffset));
-   yd = yymax - ((double)delyy * (ZoomCenter.y + win_yoffset));
+    xd = xxmin + ((double)delxx * (ZoomCenter.x + win_xoffset));
+    yd = yymax - ((double)delyy * (ZoomCenter.y + win_yoffset));
 
-   z = 1.0 - fabs((double)Zooming / 100 * .99);
-   if(Zooming > 0)
-      z = 1.0 / z;
+    z = 1.0 - fabs((double)Zooming / 100 * .99);
+    if (Zooming > 0)
+        z = 1.0 / z;
 
-   if(bf_math)
-   {
-      tmpx = ZoomCenter.x + win_xoffset;
-      tmpy = ZoomCenter.y + win_yoffset;
-      floattobf(bftmpx, tmpx);
-      floattobf(bftmpy, tmpy);
-      mult_bf(bftmpzoomx, bfxdel, bftmpx);
-      mult_bf(bftmpzoomy, bfydel, bftmpy);
-      add_bf(bfxd, bfxmin, bftmpzoomx);
-      sub_bf(bfyd, bfymax, bftmpzoomy);
-   }
+    if (bf_math)
+    {
+        tmpx = ZoomCenter.x + win_xoffset;
+        tmpy = ZoomCenter.y + win_yoffset;
+        floattobf(bftmpx, tmpx);
+        floattobf(bftmpy, tmpy);
+        mult_bf(bftmpzoomx, bfxdel, bftmpx);
+        mult_bf(bftmpzoomy, bfydel, bftmpy);
+        add_bf(bfxd, bfxmin, bftmpzoomx);
+        sub_bf(bfyd, bfymax, bftmpzoomy);
+    }
 
-   xxmin = xd - ((double)delxx * z * (xdots / 2));
-   xxmax = xd + ((double)delxx * z * (xdots / 2));
-   yymin = yd - ((double)delyy * z * (ydots / 2));
-   yymax = yd + ((double)delyy * z * (ydots / 2));
+    xxmin = xd - ((double)delxx * z * (xdots / 2));
+    xxmax = xd + ((double)delxx * z * (xdots / 2));
+    yymin = yd - ((double)delyy * z * (ydots / 2));
+    yymax = yd + ((double)delyy * z * (ydots / 2));
 
-   if(bf_math)
-   {
-      tmpx = z * (xdots / 2);
-      tmpy = z * (ydots / 2);
-      floattobf(bftmpx, tmpx);
-      floattobf(bftmpy, tmpy);
-      mult_bf(bftmpzoomx, bfxdel, bftmpx);
-      mult_bf(bftmpzoomy, bfydel, bftmpy);
-      sub_bf(bfxmin, bfxd, bftmpzoomx);
-      add_bf(bfxmax, bfxd, bftmpzoomx);
-      sub_bf(bfymin, bfyd, bftmpzoomy);
-      add_bf(bfymax, bfyd, bftmpzoomy);
-      restore_stack(saved);
-   }
+    if (bf_math)
+    {
+        tmpx = z * (xdots / 2);
+        tmpy = z * (ydots / 2);
+        floattobf(bftmpx, tmpx);
+        floattobf(bftmpy, tmpy);
+        mult_bf(bftmpzoomx, bfxdel, bftmpx);
+        mult_bf(bftmpzoomy, bfydel, bftmpy);
+        sub_bf(bfxmin, bfxd, bftmpzoomx);
+        add_bf(bfxmax, bfxd, bftmpzoomx);
+        sub_bf(bfymin, bfyd, bftmpzoomy);
+        add_bf(bfymax, bfyd, bftmpzoomy);
+        restore_stack(saved);
+    }
 
-   time_to_reinit = 1;
-   time_to_cycle = 0;
-   calc_status = 0;
+    time_to_reinit = 1;
+    time_to_cycle = 0;
+    calc_status = 0;
 }
 
 BOOL FAR PASCAL ZoomBarProc(HWND hWnd, UINT Message, WPARAM wp, LPARAM dp) {
-   switch(Message) {
-      case WM_KEYDOWN:
-         switch(wp) {
-            case VK_RETURN:
-               if(TrackingZoom)
-                  ExecuteZoom();
-               break;
-            case VK_ESCAPE:
-               CancelZoom();
-               break;
-            default:
-               break;
-         }
-         break;
-   }
-   return((BOOL)CallWindowProc(DefZoomProc, hWnd, Message, wp, dp));
+    switch (Message) {
+    case WM_KEYDOWN:
+        switch (wp) {
+        case VK_RETURN:
+            if (TrackingZoom)
+                ExecuteZoom();
+            break;
+        case VK_ESCAPE:
+            CancelZoom();
+            break;
+        default:
+            break;
+        }
+        break;
+    }
+    return ((BOOL)CallWindowProc(DefZoomProc, hWnd, Message, wp, dp));
 }
 
 BOOL FAR PASCAL ZoomBarDlg(HWND hDlg, WORD Message, WORD wp, DWORD dp) {
-   FARPROC lpFnct;
+    FARPROC lpFnct;
 
-   switch(Message) {
-      case WM_INITDIALOG:
-         ZoomBarOpen = TRUE;
-         ProgStr = Winfract;
-         SaveParamSwitch(ZoomBoxStr, TRUE);
-         CenterZoom();
-         CheckMenuItem(GetMenu(hFractalWnd), IDM_ZOOM, MF_CHECKED);
-         PositionWindow(hDlg, ZoomBoxPosStr);
-         hZoomDlg = hDlg;
-         hZoomBrush = GetStockObject(BLACK_BRUSH);
-         hZoomPen = GetStockObject(WHITE_PEN);
-         if(!(lpFnct = MakeProcInstance(ZoomBarProc, hThisInst)))
-            return(FALSE);
-         if(!(hZoomBar = CreateWindow("scrollbar", 0, WS_CHILD |
-                           WS_TABSTOP | SBS_VERT,
-                           38, 28, 18, 248, hDlg, 0, hThisInst, 0)))
-            return(FALSE);
+    switch (Message) {
+    case WM_INITDIALOG:
+        ZoomBarOpen = TRUE;
+        ProgStr = Winfract;
+        SaveParamSwitch(ZoomBoxStr, TRUE);
+        CenterZoom();
+        CheckMenuItem(GetMenu(hFractalWnd), IDM_ZOOM, MF_CHECKED);
+        PositionWindow(hDlg, ZoomBoxPosStr);
+        hZoomDlg = hDlg;
+        hZoomBrush = GetStockObject(BLACK_BRUSH);
+        hZoomPen = GetStockObject(WHITE_PEN);
+        if (!(lpFnct = MakeProcInstance(ZoomBarProc, hThisInst)))
+            return (FALSE);
+        if (!(hZoomBar = CreateWindow("scrollbar", 0, WS_CHILD |
+                                      WS_TABSTOP | SBS_VERT,
+                                      38, 28, 18, 248, hDlg, 0, hThisInst, 0)))
+            return (FALSE);
 
-         SetScrollRange(hZoomBar, SB_CTL, ZoomBarMin, ZoomBarMax, FALSE);
-         SetScrollPos(hZoomBar, SB_CTL, 0, FALSE);
-         ShowScrollBar(hZoomBar, SB_CTL, TRUE);
-         Zooming = 0;
+        SetScrollRange(hZoomBar, SB_CTL, ZoomBarMin, ZoomBarMax, FALSE);
+        SetScrollPos(hZoomBar, SB_CTL, 0, FALSE);
+        ShowScrollBar(hZoomBar, SB_CTL, TRUE);
+        Zooming = 0;
 
-         /* Create a Window Subclass */
-         DefZoomProc = (FARPROC)GetWindowLong(hZoomBar, GWL_WNDPROC);
-         SetWindowLong(hZoomBar, GWL_WNDPROC, (LONG)lpFnct);
-         return(TRUE);
-      case WM_MOVE:
-         SaveWindowPosition(hDlg, ZoomBoxPosStr);
-         break;
-      case WM_CLOSE:
-         KillZoomBar = 1;
-         ProgStr = Winfract;
-         break;
-      case WM_DESTROY:
-         ZoomBarOpen = 0;
-         break;
-      case WM_VSCROLL:
-         if(Zooming)
+        /* Create a Window Subclass */
+        DefZoomProc = (FARPROC)GetWindowLong(hZoomBar, GWL_WNDPROC);
+        SetWindowLong(hZoomBar, GWL_WNDPROC, (LONG)lpFnct);
+        return (TRUE);
+    case WM_MOVE:
+        SaveWindowPosition(hDlg, ZoomBoxPosStr);
+        break;
+    case WM_CLOSE:
+        KillZoomBar = 1;
+        ProgStr = Winfract;
+        break;
+    case WM_DESTROY:
+        ZoomBarOpen = 0;
+        break;
+    case WM_VSCROLL:
+        if (Zooming)
             XorZoomBox();
-         switch(wp) {
-            case SB_PAGEDOWN:
-               Zooming += 20;
-            case SB_LINEDOWN:
-               Zooming = min(ZoomBarMax, Zooming + 1);
-               break;
-            case SB_PAGEUP:
-               Zooming -= 20;
-            case SB_LINEUP:
-               Zooming = max(ZoomBarMin, Zooming - 1);
-               break;
-            case SB_TOP:
-               Zooming = ZoomBarMin;
-               break;
-            case SB_BOTTOM:
-               Zooming = ZoomBarMax;
-               break;
-            case SB_THUMBPOSITION:
-            case SB_THUMBTRACK:
-               Zooming = LOWORD(dp);
-               break;
-         }
-         PositionZoomBar();
-         CalcZoomRect();
-         XorZoomBox();
-         break;
-      default:
-         break;
-   }
-   return(FALSE);
+        switch (wp) {
+        case SB_PAGEDOWN:
+            Zooming += 20;
+        case SB_LINEDOWN:
+            Zooming = min(ZoomBarMax, Zooming + 1);
+            break;
+        case SB_PAGEUP:
+            Zooming -= 20;
+        case SB_LINEUP:
+            Zooming = max(ZoomBarMin, Zooming - 1);
+            break;
+        case SB_TOP:
+            Zooming = ZoomBarMin;
+            break;
+        case SB_BOTTOM:
+            Zooming = ZoomBarMax;
+            break;
+        case SB_THUMBPOSITION:
+        case SB_THUMBTRACK:
+            Zooming = LOWORD(dp);
+            break;
+        }
+        PositionZoomBar();
+        CalcZoomRect();
+        XorZoomBox();
+        break;
+    default:
+        break;
+    }
+    return (FALSE);
 }
 
 void ZoomBar(HWND hWnd) {
-   FARPROC lpFnct;
+    FARPROC lpFnct;
 
-   hFractalWnd = hWnd;
-   if(ZoomBarOpen)
-      KillZoomBar = TRUE;
-   else {
-      if(lpFnct = MakeProcInstance(ZoomBarDlg, hThisInst)) {
-         if(CreateDialog(hThisInst, "ZoomBar", hWnd, lpFnct))
-         {
-            SetFocus(hWnd);
-            return;
-         }
-      }
-      MessageBox(hWnd, "Error Opening Zoom Bar",
-                 NULL, MB_ICONEXCLAMATION | MB_OK);
-   }
+    hFractalWnd = hWnd;
+    if (ZoomBarOpen)
+        KillZoomBar = TRUE;
+    else {
+        if (lpFnct = MakeProcInstance(ZoomBarDlg, hThisInst)) {
+            if (CreateDialog(hThisInst, "ZoomBar", hWnd, lpFnct))
+            {
+                SetFocus(hWnd);
+                return;
+            }
+        }
+        MessageBox(hWnd, "Error Opening Zoom Bar",
+                   NULL, MB_ICONEXCLAMATION | MB_OK);
+    }
 }
 
 
 /* Coordinate Box */
 
 BOOL FAR PASCAL CoordBoxDlg(HWND hDlg, WORD Message, WORD wp, DWORD dp) {
-   HMENU hDlgMenu;
+    HMENU hDlgMenu;
 
-   hDlgMenu = GetMenu(hDlg);
-   switch(Message) {
-      case WM_INITDIALOG:
-         CoordBoxOpen = 1;
-         ProgStr = Winfract;
-         SaveParamSwitch(CoordBoxStr, TRUE);
-         CheckMenuItem(GetMenu(hFractalWnd), IDM_COORD, MF_CHECKED);
-         hCoordBox = hDlg;
-         PositionWindow(hDlg, CoordBoxPosStr);
-         return(TRUE);
-      case WM_MOVE:
-         SaveWindowPosition(hDlg, CoordBoxPosStr);
-         break;
-      case WM_CLOSE:
-         KillCoordBox = 1;
-         ProgStr = Winfract;
-         break;
-      case WM_DESTROY:
-         CoordBoxOpen = 0;
-         break;
-      case WM_COMMAND:
-         CheckMenuItem(hDlgMenu, AngleFormat, MF_UNCHECKED);
-         CheckMenuItem(hDlgMenu, CoordFormat, MF_UNCHECKED);
-         switch(wp) {
-            case IDM_RADIANS:
-            case IDM_GRAD:
-            case IDM_DEGREES:
-               AngleFormat = wp;
-               break;
-            case IDM_POLAR:
-            case IDM_RECT:
-            case IDM_PIXEL:
-               CoordFormat = wp;
-               break;
-         }
-         CheckMenuItem(hDlgMenu, AngleFormat, MF_CHECKED);
-         CheckMenuItem(hDlgMenu, CoordFormat, MF_CHECKED);
-         if(CoordFormat == IDM_POLAR) {
+    hDlgMenu = GetMenu(hDlg);
+    switch (Message) {
+    case WM_INITDIALOG:
+        CoordBoxOpen = 1;
+        ProgStr = Winfract;
+        SaveParamSwitch(CoordBoxStr, TRUE);
+        CheckMenuItem(GetMenu(hFractalWnd), IDM_COORD, MF_CHECKED);
+        hCoordBox = hDlg;
+        PositionWindow(hDlg, CoordBoxPosStr);
+        return (TRUE);
+    case WM_MOVE:
+        SaveWindowPosition(hDlg, CoordBoxPosStr);
+        break;
+    case WM_CLOSE:
+        KillCoordBox = 1;
+        ProgStr = Winfract;
+        break;
+    case WM_DESTROY:
+        CoordBoxOpen = 0;
+        break;
+    case WM_COMMAND:
+        CheckMenuItem(hDlgMenu, AngleFormat, MF_UNCHECKED);
+        CheckMenuItem(hDlgMenu, CoordFormat, MF_UNCHECKED);
+        switch (wp) {
+        case IDM_RADIANS:
+        case IDM_GRAD:
+        case IDM_DEGREES:
+            AngleFormat = wp;
+            break;
+        case IDM_POLAR:
+        case IDM_RECT:
+        case IDM_PIXEL:
+            CoordFormat = wp;
+            break;
+        }
+        CheckMenuItem(hDlgMenu, AngleFormat, MF_CHECKED);
+        CheckMenuItem(hDlgMenu, CoordFormat, MF_CHECKED);
+        if (CoordFormat == IDM_POLAR) {
             SetDlgItemText(hDlg, ID_X_NAME, "|z|");
             SetDlgItemText(hDlg, ID_Y_NAME, "\xD8");
             EnableMenuItem(hDlgMenu, IDM_DEGREES, MF_ENABLED);
             EnableMenuItem(hDlgMenu, IDM_RADIANS, MF_ENABLED);
             EnableMenuItem(hDlgMenu, IDM_GRAD, MF_ENABLED);
-         }
-         else {
+        }
+        else {
             SetDlgItemText(hDlg, ID_X_NAME, "x");
             SetDlgItemText(hDlg, ID_Y_NAME, "y");
             EnableMenuItem(hDlgMenu, IDM_DEGREES, MF_DISABLED | MF_GRAYED);
             EnableMenuItem(hDlgMenu, IDM_RADIANS, MF_DISABLED | MF_GRAYED);
             EnableMenuItem(hDlgMenu, IDM_GRAD, MF_DISABLED | MF_GRAYED);
-         }
-   }
-   return(FALSE);
+        }
+    }
+    return (FALSE);
 }
 
 void UpdateCoordBox(DWORD dw) {
-   unsigned xPixel, yPixel;
-   double xd, yd, Angle, Modulus;
-   char xStr[40], yStr[40];
+    unsigned xPixel, yPixel;
+    double xd, yd, Angle, Modulus;
+    char xStr[40], yStr[40];
 
-   xPixel = (unsigned)(dw & 0xFFFF) + win_xoffset;
-   yPixel = (unsigned)(dw >> 16) + win_yoffset;
-   xd = xxmin + ((double)delxx * xPixel);
-   yd = yymax - ((double)delyy * yPixel);
-   switch(CoordFormat) {
-      case IDM_PIXEL:
-         sprintf(xStr, "%d", xPixel);
-         sprintf(yStr, "%d", yPixel);
-         break;
-      case IDM_RECT:
-         sprintf(xStr, "%+.8g", xd);
-         sprintf(yStr, "%+.8g", yd);
-         break;
-      case IDM_POLAR:
-         Modulus = (xd*xd) + (yd*yd);
-         if(Modulus > 1E-20) {
+    xPixel = (unsigned)(dw & 0xFFFF) + win_xoffset;
+    yPixel = (unsigned)(dw >> 16) + win_yoffset;
+    xd = xxmin + ((double)delxx * xPixel);
+    yd = yymax - ((double)delyy * yPixel);
+    switch (CoordFormat) {
+    case IDM_PIXEL:
+        sprintf(xStr, "%d", xPixel);
+        sprintf(yStr, "%d", yPixel);
+        break;
+    case IDM_RECT:
+        sprintf(xStr, "%+.8g", xd);
+        sprintf(yStr, "%+.8g", yd);
+        break;
+    case IDM_POLAR:
+        Modulus = (xd*xd) + (yd*yd);
+        if (Modulus > 1E-20) {
             Modulus = sqrt(Modulus);
             Angle = atan2(yd, xd);
-            switch(AngleFormat) {
-               case IDM_DEGREES:
-                  Angle = (Angle / Pi) * 180;
-                  break;
-               case IDM_GRAD:
-                  Angle = (Angle / Pi) * 200;
-               case IDM_RADIANS:
-                  break;
+            switch (AngleFormat) {
+            case IDM_DEGREES:
+                Angle = (Angle / Pi) * 180;
+                break;
+            case IDM_GRAD:
+                Angle = (Angle / Pi) * 200;
+            case IDM_RADIANS:
+                break;
             }
-         }
-         else {
+        }
+        else {
             Modulus = 0.0;
             Angle = 0.0;
-         }
-         sprintf(xStr, "%+.8g", Modulus);
-         sprintf(yStr, "%+.8g", Angle);
-         break;
-   }
-   SetDlgItemText(hCoordBox, ID_X_COORD, xStr);
-   SetDlgItemText(hCoordBox, ID_Y_COORD, yStr);
+        }
+        sprintf(xStr, "%+.8g", Modulus);
+        sprintf(yStr, "%+.8g", Angle);
+        break;
+    }
+    SetDlgItemText(hCoordBox, ID_X_COORD, xStr);
+    SetDlgItemText(hCoordBox, ID_Y_COORD, yStr);
 }
 
 void CoordinateBox(HWND hWnd) {
-   FARPROC lpCoordBox;
+    FARPROC lpCoordBox;
 
-   hFractalWnd = hWnd;
-   if(CoordBoxOpen)
-      KillCoordBox = TRUE;
-   else {
-      if(lpCoordBox = MakeProcInstance(CoordBoxDlg, hThisInst)) {
-         if(CreateDialog(hThisInst, "CoordBox", hWnd, lpCoordBox))
-            return;
-      }
-      MessageBox(hWnd, "Error Opening Coordinate Box",
-                 NULL, MB_ICONEXCLAMATION | MB_OK);
-   }
-   ProgStr = Winfract;
+    hFractalWnd = hWnd;
+    if (CoordBoxOpen)
+        KillCoordBox = TRUE;
+    else {
+        if (lpCoordBox = MakeProcInstance(CoordBoxDlg, hThisInst)) {
+            if (CreateDialog(hThisInst, "CoordBox", hWnd, lpCoordBox))
+                return;
+        }
+        MessageBox(hWnd, "Error Opening Coordinate Box",
+                   NULL, MB_ICONEXCLAMATION | MB_OK);
+    }
+    ProgStr = Winfract;
 }
 
 
@@ -538,56 +538,56 @@ void CoordinateBox(HWND hWnd) {
 
 BOOL OpenMTWnd(void) {
     hMathToolsWnd = CreateWindow(
-        MTClassName,
-        MTWindowTitle,
-        WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL,
-        CW_USEDEFAULT, CW_USEDEFAULT,
-        xdots, ydots,
-        hFractalWnd,
-        0,
-        hThisInst,
-        0
-    );
-    if(!hMathToolsWnd)
-        return(FALSE);
+                        MTClassName,
+                        MTWindowTitle,
+                        WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL,
+                        CW_USEDEFAULT, CW_USEDEFAULT,
+                        xdots, ydots,
+                        hFractalWnd,
+                        0,
+                        hThisInst,
+                        0
+                    );
+    if (!hMathToolsWnd)
+        return (FALSE);
 
     ShowWindow(hMathToolsWnd, SW_SHOWNORMAL);
     UpdateWindow(hMathToolsWnd);
 
-    return(TRUE);
+    return (TRUE);
 }
 
 void MathToolBox(HWND hWnd) {
     hFractalWnd = hWnd;
-    if(MTWindowOpen)
-       DestroyWindow(hMathToolsWnd);
+    if (MTWindowOpen)
+        DestroyWindow(hMathToolsWnd);
     else {
-      if(!OpenMTWnd())
-         MessageBox(hWnd, "Error Opening Math Tools Window", NULL,
-                    MB_ICONEXCLAMATION | MB_OK);
+        if (!OpenMTWnd())
+            MessageBox(hWnd, "Error Opening Math Tools Window", NULL,
+                       MB_ICONEXCLAMATION | MB_OK);
     }
 }
 
 
 long FAR PASCAL MTWndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam) {
-   switch (Message) {
-      case WM_CREATE:
-         CheckMenuItem(GetMenu(hFractalWnd), IDM_MATH_TOOLS, MF_CHECKED);
-         MTWindowOpen = 1;
-         break;
-      case WM_COMMAND:
-         switch(wParam) {
-            case IDM_EXIT:
-               DestroyWindow(hWnd);
-               break;
-         }
-         break;
-      case WM_DESTROY:
-         CheckMenuItem(GetMenu(hFractalWnd), IDM_MATH_TOOLS, MF_UNCHECKED);
-         MTWindowOpen = 0;
-         break;
-      default:
-         return(DefWindowProc(hWnd, Message, wParam, lParam));
+    switch (Message) {
+    case WM_CREATE:
+        CheckMenuItem(GetMenu(hFractalWnd), IDM_MATH_TOOLS, MF_CHECKED);
+        MTWindowOpen = 1;
+        break;
+    case WM_COMMAND:
+        switch (wParam) {
+        case IDM_EXIT:
+            DestroyWindow(hWnd);
+            break;
+        }
+        break;
+    case WM_DESTROY:
+        CheckMenuItem(GetMenu(hFractalWnd), IDM_MATH_TOOLS, MF_UNCHECKED);
+        MTWindowOpen = 0;
+        break;
+    default:
+        return (DefWindowProc(hWnd, Message, wParam, lParam));
     }
-    return(0L);
+    return (0L);
 }

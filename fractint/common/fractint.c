@@ -19,30 +19,30 @@
 
 #include <ctype.h>
 
-  /* #include hierarchy for fractint is a follows:
-        Each module should include port.h as the first fractint specific
-            include. port.h includes <stdlib.h>, <stdio.h>, <math.h>,
-            <float.h>; and, ifndef XFRACT, <dos.h>.
-        Most modules should include prototyp.h, which incorporates by
-            direct or indirect reference the following header files:
-                mpmath.h
-                cmplx.h
-                fractint.h
-                big.h
-                biginit.h
-                helpcom.h
-                externs.h
-        Other modules may need the following, which must be included
-            separately:
-                fractype.h
-                helpdefs.h
-                lsys.y
-                targa.h
-                targa_lc.h
-                tplus.h
-        If included separately from prototyp.h, big.h includes cmplx.h
-           and biginit.h; and mpmath.h includes cmplx.h
-   */
+/* #include hierarchy for fractint is a follows:
+      Each module should include port.h as the first fractint specific
+          include. port.h includes <stdlib.h>, <stdio.h>, <math.h>,
+          <float.h>; and, ifndef XFRACT, <dos.h>.
+      Most modules should include prototyp.h, which incorporates by
+          direct or indirect reference the following header files:
+              mpmath.h
+              cmplx.h
+              fractint.h
+              big.h
+              biginit.h
+              helpcom.h
+              externs.h
+      Other modules may need the following, which must be included
+          separately:
+              fractype.h
+              helpdefs.h
+              lsys.y
+              targa.h
+              targa_lc.h
+              tplus.h
+      If included separately from prototyp.h, big.h includes cmplx.h
+         and biginit.h; and mpmath.h includes cmplx.h
+ */
 
 #include "port.h"
 #include "prototyp.h"
@@ -61,65 +61,65 @@ char *fract_dir1="", *fract_dir2="";
    the following variables are out here only so
    that the calcfract() and assembler routines can get at them easily
 */
-        int     dotmode;                /* video access method      */
-        int     textsafe2;              /* textsafe override from g_video_table */
-        int     g_ok_to_print;              /* 0 if printf() won't work */
-        int     sxdots,sydots;          /* # of dots on the physical screen    */
-        int     sxoffs,syoffs;          /* physical top left of logical screen */
-        int     xdots, ydots;           /* # of dots on the logical screen     */
-        double  dxsize, dysize;         /* xdots-1, ydots-1         */
-        int     colors = 256;           /* maximum colors available */
-        long    maxit;                  /* try this many iterations */
-        int     boxcount;               /* 0 if no zoom-box yet     */
-        int     zrotate;                /* zoombox rotation         */
-        double  zbx,zby;                /* topleft of zoombox       */
-        double  zwidth,zdepth,zskew;    /* zoombox size & shape     */
+int     dotmode;                /* video access method      */
+int     textsafe2;              /* textsafe override from g_video_table */
+int     g_ok_to_print;              /* 0 if printf() won't work */
+int     sxdots,sydots;          /* # of dots on the physical screen    */
+int     sxoffs,syoffs;          /* physical top left of logical screen */
+int     xdots, ydots;           /* # of dots on the logical screen     */
+double  dxsize, dysize;         /* xdots-1, ydots-1         */
+int     colors = 256;           /* maximum colors available */
+long    maxit;                  /* try this many iterations */
+int     boxcount;               /* 0 if no zoom-box yet     */
+int     zrotate;                /* zoombox rotation         */
+double  zbx,zby;                /* topleft of zoombox       */
+double  zwidth,zdepth,zskew;    /* zoombox size & shape     */
 
-        int     fractype;               /* if == 0, use Mandelbrot  */
-        char    stdcalcmode;            /* '1', '2', 'g', 'b'       */
-        long    c_real, c_imag;           /* real, imag'ry parts of C */
-        long    delx, dely;             /* screen pixel increments  */
-        long    delx2, dely2;           /* screen pixel increments  */
-        LDBL    delxx, delyy;           /* screen pixel increments  */
-        LDBL    delxx2, delyy2;         /* screen pixel increments  */
-        long    delmin;                 /* for calcfrac/calcmand    */
-        double  ddelmin;                /* same as a double         */
-        double  param[MAXPARAMS];       /* parameters               */
-        double  potparam[3];            /* three potential parameters*/
-        long    fudge;                  /* 2**fudgefactor           */
-        long    l_at_rad;               /* finite attractor radius  */
-        double  f_at_rad;               /* finite attractor radius  */
-        int     bitshift;               /* fudgefactor              */
+int     fractype;               /* if == 0, use Mandelbrot  */
+char    stdcalcmode;            /* '1', '2', 'g', 'b'       */
+long    c_real, c_imag;           /* real, imag'ry parts of C */
+long    delx, dely;             /* screen pixel increments  */
+long    delx2, dely2;           /* screen pixel increments  */
+LDBL    delxx, delyy;           /* screen pixel increments  */
+LDBL    delxx2, delyy2;         /* screen pixel increments  */
+long    delmin;                 /* for calcfrac/calcmand    */
+double  ddelmin;                /* same as a double         */
+double  param[MAXPARAMS];       /* parameters               */
+double  potparam[3];            /* three potential parameters*/
+long    fudge;                  /* 2**fudgefactor           */
+long    l_at_rad;               /* finite attractor radius  */
+double  f_at_rad;               /* finite attractor radius  */
+int     bitshift;               /* fudgefactor              */
 
-        int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
-        int hasinverse = 0;
-        /* note that integer grid is set when integerfractal && !invert;    */
-        /* otherwise the floating point grid is set; never both at once     */
-        long    *lx0, *ly0;     /* x, y grid                */
-        long    *lx1, *ly1;     /* adjustment for rotate    */
-        /* note that lx1 & ly1 values can overflow into sign bit; since     */
-        /* they're used only to add to lx0/ly0, 2s comp straightens it out  */
-        double *dx0, *dy0;      /* floating pt equivs */
-        double *dx1, *dy1;
-        int     integerfractal;         /* TRUE if fractal uses integer math */
+int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
+int hasinverse = 0;
+/* note that integer grid is set when integerfractal && !invert;    */
+/* otherwise the floating point grid is set; never both at once     */
+long    *lx0, *ly0;     /* x, y grid                */
+long    *lx1, *ly1;     /* adjustment for rotate    */
+/* note that lx1 & ly1 values can overflow into sign bit; since     */
+/* they're used only to add to lx0/ly0, 2s comp straightens it out  */
+double *dx0, *dy0;      /* floating pt equivs */
+double *dx1, *dy1;
+int     integerfractal;         /* TRUE if fractal uses integer math */
 
-        /* usr_xxx is what the user wants, vs what we may be forced to do */
-        char    usr_stdcalcmode;
-        int     usr_periodicitycheck;
-        long    usr_distest;
-        char    usr_floatflag;
+/* usr_xxx is what the user wants, vs what we may be forced to do */
+char    usr_stdcalcmode;
+int     usr_periodicitycheck;
+long    usr_distest;
+char    usr_floatflag;
 
-        int     viewwindow;             /* 0 for full screen, 1 for window */
-        float   viewreduction;          /* window auto-sizing */
-        int     viewcrop;               /* nonzero to crop default coords */
-        float   finalaspectratio;       /* for view shape and rotation */
-        int     viewxdots,viewydots;    /* explicit view sizing */
-        int     video_cutboth;          /* nonzero to keep virtual aspect */
-        int     zscroll;                /* screen/zoombox 0 fixed, 1 relaxed */
+int     viewwindow;             /* 0 for full screen, 1 for window */
+float   viewreduction;          /* window auto-sizing */
+int     viewcrop;               /* nonzero to crop default coords */
+float   finalaspectratio;       /* for view shape and rotation */
+int     viewxdots,viewydots;    /* explicit view sizing */
+int     video_cutboth;          /* nonzero to keep virtual aspect */
+int     zscroll;                /* screen/zoombox 0 fixed, 1 relaxed */
 
 /*      HISTORY  *history = NULL; */
-        U16 history = 0;
-        int maxhistory = 10;
+U16 history = 0;
+int maxhistory = 10;
 
 /* variables defined by the command line/files processor */
 int     comparegif=0;                   /* compare two gif files flag */
@@ -139,12 +139,12 @@ double  sxmin,sxmax,symin,symax,sx3rd,sy3rd; /* displayed screen corners */
 double  plotmx1,plotmx2,plotmy1,plotmy2;     /* real->screen multipliers */
 
 int calc_status = CALCSTAT_NO_FRACTAL;
-                      /* -1 no fractal                   */
-                      /*  0 parms changed, recalc reqd   */
-                      /*  1 actively calculating         */
-                      /*  2 interrupted, resumable       */
-                      /*  3 interrupted, not resumable   */
-                      /*  4 completed                    */
+/* -1 no fractal                   */
+/*  0 parms changed, recalc reqd   */
+/*  1 actively calculating         */
+/*  2 interrupted, resumable       */
+/*  3 interrupted, not resumable   */
+/*  4 completed                    */
 long calctime;
 
 int max_colors;                         /* maximum palette size */
@@ -168,26 +168,26 @@ int scale_map[12] = {1,2,3,4,5,6,7,8,9,10,11,12}; /*RB, array for mapping notes 
 #define CONTINUE          4
 
 void check_samename(void)
-   {
-      char drive[FILE_MAX_DRIVE];
-      char dir[FILE_MAX_DIR];
-      char fname[FILE_MAX_FNAME];
-      char ext[FILE_MAX_EXT];
-      char path[FILE_MAX_PATH];
-      splitpath(savename,drive,dir,fname,ext);
-      if (strcmp(fname,"fract001"))
-      {
-         makepath(path,drive,dir,fname,"gif");
-         if (access(path,0)==0)
-         exit(0);
-      }
-   }
+{
+    char drive[FILE_MAX_DRIVE];
+    char dir[FILE_MAX_DIR];
+    char fname[FILE_MAX_FNAME];
+    char ext[FILE_MAX_EXT];
+    char path[FILE_MAX_PATH];
+    splitpath(savename,drive,dir,fname,ext);
+    if (strcmp(fname,"fract001"))
+    {
+        makepath(path,drive,dir,fname,"gif");
+        if (access(path,0)==0)
+            exit(0);
+    }
+}
 
 /* Do nothing if math error */
 static void my_floating_point_err(int sig)
 {
-   if (sig != 0)
-      overflow = 1;
+    if (sig != 0)
+        overflow = 1;
 }
 
 int main(int argc, char **argv)
@@ -198,7 +198,7 @@ int main(int argc, char **argv)
     char stacked=0;                     /* flag to indicate screen stacked */
 
     /* this traps non-math library floating point errors */
-    signal( SIGFPE, my_floating_point_err );
+    signal(SIGFPE, my_floating_point_err);
 
     initasmvars();                       /* initialize ASM stuff */
     InitMemory();
@@ -281,12 +281,12 @@ restart:   /* insert key re-starts here */
     {
         cpu =  86; /* for testing purposes */
     }
-    if (debugflag == 2870 && fpu >= 287 )
+    if (debugflag == 2870 && fpu >= 287)
     {
         fpu = 287; /* for testing purposes */
         cpu = 286;
     }
-    if (debugflag ==  870 && fpu >=  87 )
+    if (debugflag ==  870 && fpu >=  87)
     {
         fpu =  87; /* for testing purposes */
         cpu =  86;
@@ -353,7 +353,7 @@ restorestart:
     {
         char *hdg;
         tabmode = 0;
-        if (!browsing )     /*RB*/
+        if (!browsing)      /*RB*/
         {
             if (overlay3d)
             {
@@ -483,72 +483,72 @@ imagestart:                             /* calc/display a new image */
 #ifndef XFRACT
         if (kbdchar == '@' || kbdchar == '2') {    /* execute commands */
 #else
-            if (kbdchar == FIK_F2 || kbdchar == '@') {     /* We mapped @ to F2 */
+        if (kbdchar == FIK_F2 || kbdchar == '@') {     /* We mapped @ to F2 */
 #endif
-                if ((get_commands() & CMDARG_3D_YES) == 0)
-                    goto imagestart;
-                kbdchar = '3';                         /* 3d=y so fall thru '3' code */
-            }
+            if ((get_commands() & CMDARG_3D_YES) == 0)
+                goto imagestart;
+            kbdchar = '3';                         /* 3d=y so fall thru '3' code */
+        }
 #ifndef XFRACT
-            if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#') {
+        if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#') {
 #else
-                if (kbdchar == 'r' || kbdchar == '3' || kbdchar == FIK_F3) {
+        if (kbdchar == 'r' || kbdchar == '3' || kbdchar == FIK_F3) {
 #endif
-                    display3d = 0;
-                    if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
-                        display3d = 1;
-                    if (colorpreloaded)
-                        memcpy(olddacbox,g_dac_box,256*3);     /* save in case colors= present */
-                    driver_set_for_text(); /* switch to text mode */
-                    showfile = -1;
-                    goto restorestart;
-                }
-                if (kbdchar == 't') {                     /* set fractal type */
-                    julibrot = 0;
-                    get_fracttype();
-                    goto imagestart;
-                }
-                if (kbdchar == 'x') {                     /* generic toggle switch */
-                    get_toggles();
-                    goto imagestart;
-                }
-                if (kbdchar == 'y') {                     /* generic toggle switch */
-                    get_toggles2();
-                    goto imagestart;
-                }
-                if (kbdchar == 'z') {                     /* type specific parms */
-                    get_fract_params(1);
-                    goto imagestart;
-                }
-                if (kbdchar == 'v') {                     /* view parameters */
-                    get_view_params();
-                    goto imagestart;
-                }
-                if (kbdchar == 2) {                       /* ctrl B = browse parms*/
-                    get_browse_params();
-                    goto imagestart;
-                }
-                if (kbdchar == 6) {                       /* ctrl f = sound parms*/
-                    get_sound_params();
-                    goto imagestart;
-                }
-                if (kbdchar == 'f') {                     /* floating pt toggle */
-                    if (usr_floatflag == 0)
-                        usr_floatflag = 1;
-                    else
-                        usr_floatflag = 0;
-                    goto imagestart;
-                }
-                if (kbdchar == 'i') {                     /* set 3d fractal parms */
-                    get_fract3d_params(); /* get the parameters */
-                    goto imagestart;
-                }
-                if (kbdchar == 'g') {
-                    get_cmd_string(); /* get command string */
-                    goto imagestart;
-                }
-      /* buzzer(2); */                          /* unrecognized key */
-            }
+            display3d = 0;
+            if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
+                display3d = 1;
+            if (colorpreloaded)
+                memcpy(olddacbox,g_dac_box,256*3);     /* save in case colors= present */
+            driver_set_for_text(); /* switch to text mode */
+            showfile = -1;
+            goto restorestart;
+        }
+        if (kbdchar == 't') {                     /* set fractal type */
+            julibrot = 0;
+            get_fracttype();
+            goto imagestart;
+        }
+        if (kbdchar == 'x') {                     /* generic toggle switch */
+            get_toggles();
+            goto imagestart;
+        }
+        if (kbdchar == 'y') {                     /* generic toggle switch */
+            get_toggles2();
+            goto imagestart;
+        }
+        if (kbdchar == 'z') {                     /* type specific parms */
+            get_fract_params(1);
+            goto imagestart;
+        }
+        if (kbdchar == 'v') {                     /* view parameters */
+            get_view_params();
+            goto imagestart;
+        }
+        if (kbdchar == 2) {                       /* ctrl B = browse parms*/
+            get_browse_params();
+            goto imagestart;
+        }
+        if (kbdchar == 6) {                       /* ctrl f = sound parms*/
+            get_sound_params();
+            goto imagestart;
+        }
+        if (kbdchar == 'f') {                     /* floating pt toggle */
+            if (usr_floatflag == 0)
+                usr_floatflag = 1;
+            else
+                usr_floatflag = 0;
+            goto imagestart;
+        }
+        if (kbdchar == 'i') {                     /* set 3d fractal parms */
+            get_fract3d_params(); /* get the parameters */
+            goto imagestart;
+        }
+        if (kbdchar == 'g') {
+            get_cmd_string(); /* get command string */
+            goto imagestart;
+        }
+        /* buzzer(2); */                          /* unrecognized key */
+    }
 
     zoomoff = 1;                 /* zooming is enabled */
     helpmode = HELPMAIN;         /* now use this help mode */
@@ -610,66 +610,66 @@ int timer(va_alist)
 va_dcl
 #endif
 {
-   va_list arg_marker;  /* variable arg list */
-   char *timestring;
-   time_t ltime;
-   FILE *fp = NULL;
-   int out=0;
-   int i;
-   int do_bench;
+    va_list arg_marker;  /* variable arg list */
+    char *timestring;
+    time_t ltime;
+    FILE *fp = NULL;
+    int out=0;
+    int i;
+    int do_bench;
 
 #ifndef USE_VARARGS
-   va_start(arg_marker,subrtn);
+    va_start(arg_marker,subrtn);
 #else
-   int timertype;
-   int (*subrtn)();
-   va_start(arg_marker);
-   timertype = va_arg(arg_marker, int);
-   subrtn = (int (*)())va_arg(arg_marker, int *);
+    int timertype;
+    int (*subrtn)();
+    va_start(arg_marker);
+    timertype = va_arg(arg_marker, int);
+    subrtn = (int (*)())va_arg(arg_marker, int *);
 #endif
 
-   do_bench = timerflag; /* record time? */
-   if (timertype == 2)   /* encoder, record time only if debug=200 */
-      do_bench = (debugflag == 200);
-   if (do_bench)
-      fp=dir_fopen(workdir,"bench","a");
-   timer_start = clock_ticks();
-   switch (timertype) {
-      case 0:
-         out = (*(int(*)(void))subrtn)();
-         break;
-      case 1:
-         i = va_arg(arg_marker,int);
-         out = (int)decoder((short)i); /* not indirect, safer with overlays */
-         break;
-      case 2:
-         out = encoder();            /* not indirect, safer with overlays */
-         break;
-      }
-   /* next assumes CLK_TCK is 10^n, n>=2 */
-   timer_interval = (clock_ticks() - timer_start) / (CLK_TCK/100);
+    do_bench = timerflag; /* record time? */
+    if (timertype == 2)   /* encoder, record time only if debug=200 */
+        do_bench = (debugflag == 200);
+    if (do_bench)
+        fp=dir_fopen(workdir,"bench","a");
+    timer_start = clock_ticks();
+    switch (timertype) {
+    case 0:
+        out = (*(int(*)(void))subrtn)();
+        break;
+    case 1:
+        i = va_arg(arg_marker,int);
+        out = (int)decoder((short)i); /* not indirect, safer with overlays */
+        break;
+    case 2:
+        out = encoder();            /* not indirect, safer with overlays */
+        break;
+    }
+    /* next assumes CLK_TCK is 10^n, n>=2 */
+    timer_interval = (clock_ticks() - timer_start) / (CLK_TCK/100);
 
-   if (do_bench) {
-      time(&ltime);
-      timestring = ctime(&ltime);
-      timestring[24] = 0; /*clobber newline in time string */
-      switch (timertype) {
-         case 1:
+    if (do_bench) {
+        time(&ltime);
+        timestring = ctime(&ltime);
+        timestring[24] = 0; /*clobber newline in time string */
+        switch (timertype) {
+        case 1:
             fprintf(fp,"decode ");
             break;
-         case 2:
+        case 2:
             fprintf(fp,"encode ");
             break;
-         }
-      fprintf(fp,"%s type=%s resolution = %dx%d maxiter=%ld",
-          timestring,
-          curfractalspecific->name,
-          xdots,
-          ydots,
-          maxit);
-      fprintf(fp," time= %ld.%02ld secs\n",timer_interval/100,timer_interval%100);
-      if (fp != NULL)
-         fclose(fp);
-      }
-   return out;
+        }
+        fprintf(fp,"%s type=%s resolution = %dx%d maxiter=%ld",
+                timestring,
+                curfractalspecific->name,
+                xdots,
+                ydots,
+                maxit);
+        fprintf(fp," time= %ld.%02ld secs\n",timer_interval/100,timer_interval%100);
+        if (fp != NULL)
+            fclose(fp);
+    }
+    return out;
 }

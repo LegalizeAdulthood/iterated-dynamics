@@ -100,7 +100,7 @@ static void flush_output(void)
             long now_ticks = readticker();
             if (now > start)
             {
-                ticks_per_second = (now_ticks - last)/((long) (now - start));
+                ticks_per_second = (now_ticks - last)/((long)(now - start));
             }
         }
     }

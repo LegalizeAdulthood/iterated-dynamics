@@ -32,17 +32,17 @@
 #endif
 
 struct TPWrite {
-   unsigned
-      COLOR0,  COLOR1,  COLOR2,  COLOR3,  VIDCON,  INDIRECT,   HUESAT,
-      OVSTRT,  MASKL,   MASKH,   LBNK,    HBNK,    MODE1,      MODE2,
-      WBL,     WBH;
+    unsigned
+    COLOR0,  COLOR1,  COLOR2,  COLOR3,  VIDCON,  INDIRECT,   HUESAT,
+             OVSTRT,  MASKL,   MASKH,   LBNK,    HBNK,    MODE1,      MODE2,
+             WBL,     WBH;
 };
 
 struct TPRead {
-   unsigned
-      VIDSTAT,          CTL,     MASKL,   LBNK,    READAD,     MODE1,
-      OVSTRT,  USCAN,   MASKH,   OSCAN,   HBNK,    ROWCNT,     MODE2,
-      RBL,     RBH;
+    unsigned
+    VIDSTAT,          CTL,     MASKL,   LBNK,    READAD,     MODE1,
+                      OVSTRT,  USCAN,   MASKH,   OSCAN,   HBNK,    ROWCNT,     MODE2,
+                      RBL,     RBH;
 };
 
 /* TPlus Register Data Offsets */
@@ -82,21 +82,21 @@ struct TPRead {
 #define     VGASRC      123
 
 struct _BOARD {
-   int ThisBoard, ClearScreen;
-   BYTE far *Screen;
-   unsigned VerPan, HorPan, Top, Bottom;
-   unsigned xdots, ydots, Bank64k, RowBytes, RowsPerBank;
-   unsigned Reg[128];
+    int ThisBoard, ClearScreen;
+    BYTE far *Screen;
+    unsigned VerPan, HorPan, Top, Bottom;
+    unsigned xdots, ydots, Bank64k, RowBytes, RowsPerBank;
+    unsigned Reg[128];
 #ifndef XFRACT
-   void (*Plot)(int x, int y, unsigned long Color);
-   unsigned long (*GetColor)(int x, int y);
+    void (*Plot)(int x, int y, unsigned long Color);
+    unsigned long (*GetColor)(int x, int y);
 #else
-   void (*Plot)();
-   unsigned long (*GetColor)();
+    void (*Plot)();
+    unsigned long (*GetColor)();
 #endif
 
-   struct TPRead Read;
-   struct TPWrite Write;
+    struct TPRead Read;
+    struct TPWrite Write;
 };
 
 extern struct _BOARD far TPlus;

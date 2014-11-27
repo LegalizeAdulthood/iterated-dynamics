@@ -9,7 +9,7 @@
 
 #include <time.h>
 
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
@@ -62,7 +62,7 @@ void intro(void)
 #else
     botrow = 20;
     putstringcenter(21,0,80,C_TITLE,
-    "Unix/X port of fractint by Ken Shirriff");
+                    "Unix/X port of fractint by Ken Shirriff");
 #endif
     putstringcenter(1,0,80,C_TITLE, PRESS_ENTER);
     driver_put_string(2,0,C_CONTRIB,screen_text);
@@ -93,7 +93,7 @@ void intro(void)
         for (j = 0; j < delaymax && !(driver_key_pressed()); j++)
             driver_delay(100);
         if (driver_key_pressed() == FIK_SPACE)
-        {      /* spacebar pauses */
+        {   /* spacebar pauses */
             driver_get_key();
             driver_wait_key_pressed(0);
             if (driver_key_pressed() == FIK_SPACE)

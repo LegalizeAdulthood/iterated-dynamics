@@ -152,7 +152,7 @@ static COLORREF wintext_color[] =
     RGB(128, 0, 128),
     RGB(128, 128, 0),
     RGB(192, 192, 192),
-/*  RGB(128, 128, 128),  This looks lousy - make it black */
+    /*  RGB(128, 128, 128),  This looks lousy - make it black */
     RGB(0, 0, 0),
     RGB(0, 0, 255),
     RGB(0, 255, 0),
@@ -304,16 +304,16 @@ int wintext_texton(WinText *me)
      */
     g_me = me;
     hWnd = CreateWindow(s_window_class,
-        me->title_text,
-        (NULL == me->hWndParent) ? WS_OVERLAPPEDWINDOW : WS_CHILD,
-        CW_USEDEFAULT,               /* default horizontal position */
-        CW_USEDEFAULT,               /* default vertical position */
-        me->max_width,
-        me->max_height,
-        me->hWndParent,
-        NULL,
-        me->hInstance,
-        NULL);
+                        me->title_text,
+                        (NULL == me->hWndParent) ? WS_OVERLAPPEDWINDOW : WS_CHILD,
+                        CW_USEDEFAULT,               /* default horizontal position */
+                        CW_USEDEFAULT,               /* default vertical position */
+                        me->max_width,
+                        me->max_height,
+                        me->hWndParent,
+                        NULL,
+                        me->hInstance,
+                        NULL);
     _ASSERTE(hWnd);
 
     /* squirrel away a global copy of 'hWnd' for later */
@@ -413,11 +413,11 @@ static void wintext_OnSize(HWND window, UINT state, int cx, int cy)
 {
     ODS("wintext_OnSize");
     if (cx > (WORD)g_me->max_width ||
-        cy > (WORD)g_me->max_height)
+            cy > (WORD)g_me->max_height)
     {
         SetWindowPos(window,
-            GetNextWindow(window, GW_HWNDPREV),
-            0, 0, g_me->max_width, g_me->max_height, SWP_NOMOVE);
+                     GetNextWindow(window, GW_HWNDPREV),
+                     0, 0, g_me->max_width, g_me->max_height, SWP_NOMOVE);
     }
 }
 
@@ -439,18 +439,32 @@ LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
     }
     else if (hWnd != g_me->hWndCopy)  /* ??? not the text-mode window! */
     {
-         return DefWindowProc(hWnd, message, wParam, lParam);
+        return DefWindowProc(hWnd, message, wParam, lParam);
     }
 
     switch (message)
     {
-    case WM_GETMINMAXINFO:  HANDLE_WM_GETMINMAXINFO(hWnd, wParam, lParam, wintext_OnGetMinMaxInfo); break;
-    case WM_CLOSE:          HANDLE_WM_CLOSE(hWnd, wParam, lParam, wintext_OnClose);         break;
-    case WM_SIZE:           HANDLE_WM_SIZE(hWnd, wParam, lParam, wintext_OnSize);           break;
-    case WM_SETFOCUS:       HANDLE_WM_SETFOCUS(hWnd, wParam, lParam, wintext_OnSetFocus);   break;
-    case WM_KILLFOCUS:      HANDLE_WM_KILLFOCUS(hWnd, wParam, lParam, wintext_OnKillFocus); break;
-    case WM_PAINT:          HANDLE_WM_PAINT(hWnd, wParam, lParam, wintext_OnPaint);         break;
-    default:                return DefWindowProc(hWnd, message, wParam, lParam);            break;
+    case WM_GETMINMAXINFO:
+        HANDLE_WM_GETMINMAXINFO(hWnd, wParam, lParam, wintext_OnGetMinMaxInfo);
+        break;
+    case WM_CLOSE:
+        HANDLE_WM_CLOSE(hWnd, wParam, lParam, wintext_OnClose);
+        break;
+    case WM_SIZE:
+        HANDLE_WM_SIZE(hWnd, wParam, lParam, wintext_OnSize);
+        break;
+    case WM_SETFOCUS:
+        HANDLE_WM_SETFOCUS(hWnd, wParam, lParam, wintext_OnSetFocus);
+        break;
+    case WM_KILLFOCUS:
+        HANDLE_WM_KILLFOCUS(hWnd, wParam, lParam, wintext_OnKillFocus);
+        break;
+    case WM_PAINT:
+        HANDLE_WM_PAINT(hWnd, wParam, lParam, wintext_OnPaint);
+        break;
+    default:
+        return DefWindowProc(hWnd, message, wParam, lParam);
+        break;
     }
     return 0;
 }
@@ -515,7 +529,7 @@ void wintext_scroll_up(WinText *me, int top, int bot)
             *attrs++ = *next_attrs++;
         }
     }
-    memset(&me->chars[bot][0], 0,  (size_t) WINTEXT_MAX_COL);
+    memset(&me->chars[bot][0], 0, (size_t) WINTEXT_MAX_COL);
     memset(&me->attrs[bot][0], 0, (size_t) WINTEXT_MAX_COL);
     invalidate(me, 0, bot, WINTEXT_MAX_COL, top);
 }
@@ -525,10 +539,10 @@ void wintext_scroll_up(WinText *me, int top, int bot)
 */
 
 void wintext_paintscreen(WinText *me,
-    int xmin,       /* update this rectangular section */
-    int xmax,       /* of the 'screen'                 */
-    int ymin,
-    int ymax)
+                         int xmin,       /* update this rectangular section */
+                         int xmax,       /* of the 'screen'                 */
+                         int ymin,
+                         int ymax)
 {
     int i, j, k;
     int istart, jstart, length, foreground, background;
@@ -570,10 +584,10 @@ void wintext_paintscreen(WinText *me,
     SetTextAlign(hDC, TA_LEFT | TA_TOP);
 
     if (TRUE == me->showing_cursor)
-    //if (me->cursor_owned != 0)
+        //if (me->cursor_owned != 0)
     {
         ODS1("======================== Hide Caret %d", --carrot_count);
-        HideCaret( me->hWndCopy );
+        HideCaret(me->hWndCopy);
     }
 
     /*
@@ -603,10 +617,10 @@ void wintext_paintscreen(WinText *me,
                     SetBkColor(hDC, wintext_color[oldbk]);
                     SetTextColor(hDC, wintext_color[oldfg]);
                     TextOut(hDC,
-                        istart*me->char_width,
-                        jstart*me->char_height,
-                        &me->chars[jstart][istart],
-                        length);
+                            istart*me->char_width,
+                            jstart*me->char_height,
+                            &me->chars[jstart][istart],
+                            length);
                 }
                 oldbk = background;
                 oldfg = foreground;
@@ -619,10 +633,10 @@ void wintext_paintscreen(WinText *me,
     }
 
     if (TRUE == me->showing_cursor)
-    //if (me->cursor_owned != 0)
+        //if (me->cursor_owned != 0)
     {
         ODS1("======================== Show Caret %d", ++carrot_count);
-        ShowCaret( me->hWndCopy );
+        ShowCaret(me->hWndCopy);
     }
 
     ReleaseDC(me->hWndCopy, hDC);
@@ -648,14 +662,14 @@ void wintext_cursor(WinText *me, int xpos, int ypos, int cursor_type)
         x = me->cursor_x*me->char_width;
         y = me->cursor_y*me->char_height;
         CreateCaret(me->hWndCopy, me->bitmap[me->cursor_type],
-            me->char_width, me->char_height);
+                    me->char_width, me->char_height);
         SetCaretPos(x, y);
         ODS3("======================== Show Caret %d #2 (%d,%d)", ++carrot_count, x, y);
         ShowCaret(me->hWndCopy);
         me->showing_cursor = TRUE;
     }
     else
-    //if (me->cursor_owned != 0)
+        //if (me->cursor_owned != 0)
     {
         /* CreateCaret(me->hWndCopy, me->bitmap[me->cursor_type],
             me->char_width, me->char_height); */
@@ -676,7 +690,7 @@ void wintext_set_attr(WinText *me, int row, int col, int attr, int count)
     ymin = ymax = row;
     for (i = 0; i < count; i++)
     {
-        me->attrs[row][col+i] = (unsigned char) (attr & 0xFF);
+        me->attrs[row][col+i] = (unsigned char)(attr & 0xFF);
     }
     if (xmin + count >= WINTEXT_MAX_COL)
     {

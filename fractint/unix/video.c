@@ -8,9 +8,9 @@
  * Copyright 1992 Ken Shirriff
  */
 
-extern unsigned char *xgetfont (void);
-extern int startdisk (void);
-extern int waitkeypressed (int);
+extern unsigned char *xgetfont(void);
+extern int startdisk(void);
+extern int waitkeypressed(int);
 
 WINDOW *curwin;
 
@@ -21,17 +21,17 @@ int dacnorm = 0;
 int g_dac_count = 0;
 int ShadowColors;
 int g_good_mode = 0;        /* if non-zero, OK to read/write pixels */
-void (*dotwrite) (int, int, int);
-                /* write-a-dot routine */
-int (*dotread) (int, int);  /* read-a-dot routine */
-void (*linewrite) ();       /* write-a-line routine */
-void (*lineread) ();        /* read-a-line routine */
+void (*dotwrite)(int, int, int);
+/* write-a-dot routine */
+int (*dotread)(int, int);   /* read-a-dot routine */
+void (*linewrite)();        /* write-a-line routine */
+void (*lineread)();         /* read-a-line routine */
 int g_and_color = 0;        /* "and" value used for color selection */
 int g_disk_flag = 0;        /* disk video active flag */
 
 int videoflag = 0;      /* special "your-own-video" flag */
 
-void (*swapsetup) (void) = NULL;    /* setfortext/graphics setup routine */
+void (*swapsetup)(void) = NULL;     /* setfortext/graphics setup routine */
 int g_color_dark = 0;       /* darkest color in palette */
 int g_color_bright = 0;     /* brightest color in palette */
 int g_color_medium = 0;     /* nearest to medbright grey in palette
@@ -103,42 +103,43 @@ int video_vram = 0;
 */
 
 VIDEOINFO x11_video_table[] = {
-  {"xfractint mode           ", "                         ",
-   999, 0, 0, 0, 0, 19, 640, 480, 256},
+    {   "xfractint mode           ", "                         ",
+        999, 0, 0, 0, 0, 19, 640, 480, 256
+    },
 };
 
-void setforgraphics ();
+void setforgraphics();
 
 void
-nullwrite (a, b, c)
-     int a, b, c;
+nullwrite(a, b, c)
+int a, b, c;
 {
 }
 
 int
-nullread (a, b)
-     int a, b;
+nullread(a, b)
+int a, b;
 {
-  return 0;
+    return 0;
 }
 
 void
-setnullvideo (void)
+setnullvideo(void)
 {
-  dotwrite = nullwrite;
-  dotread = nullread;
+    dotwrite = nullwrite;
+    dotread = nullread;
 }
 
-void normalineread ();
-void normaline ();
+void normalineread();
+void normaline();
 
 void
-putprompt (void)
+putprompt(void)
 {
-  wclear (curwin);      /* ???? */
-  putstring (0, 0, 0, "Press operation key, or <Esc> to return to Main Menu");
-  wrefresh (curwin);
-  return;
+    wclear(curwin);       /* ???? */
+    putstring(0, 0, 0, "Press operation key, or <Esc> to return to Main Menu");
+    wrefresh(curwin);
+    return;
 }
 
 /*
@@ -147,16 +148,16 @@ putprompt (void)
 ;       Sets video to text mode, using setvideomode to do the work.
 */
 void
-setvideotext (void)
+setvideotext(void)
 {
-  dotmode = 0;
-  setvideomode (3, 0, 0, 0);
+    dotmode = 0;
+    setvideomode(3, 0, 0, 0);
 }
 
 void
-loaddac (void)
+loaddac(void)
 {
-  readvideopalette ();
+    readvideopalette();
 }
 
 /*
@@ -174,57 +175,57 @@ loaddac (void)
 ; table.  We use mode 19 for the X window.
 */
 void
-setvideomode (ax, bx, cx, dx)
-     int ax, bx, cx, dx;
+setvideomode(ax, bx, cx, dx)
+int ax, bx, cx, dx;
 {
-  if (g_disk_flag)
+    if (g_disk_flag)
     {
-      enddisk ();
+        enddisk();
     }
-  if (videoflag)
+    if (videoflag)
     {
-      endvideo ();
-      videoflag = 0;
+        endvideo();
+        videoflag = 0;
     }
-  g_good_mode = 1;
-  switch (dotmode)
+    g_good_mode = 1;
+    switch (dotmode)
     {
     case 0:         /* text */
-      clear ();
-      /*
-         touchwin(curwin);
-       */
-      wrefresh (curwin);
-      break;
+        clear();
+        /*
+           touchwin(curwin);
+         */
+        wrefresh(curwin);
+        break;
     case 11:
-      startdisk ();
-      dotwrite = writedisk;
-      dotread = readdisk;
-      lineread = normalineread;
-      linewrite = normaline;
-      break;
+        startdisk();
+        dotwrite = writedisk;
+        dotread = readdisk;
+        lineread = normalineread;
+        linewrite = normaline;
+        break;
     case 19:            /* X window */
-      putprompt ();
-      dotwrite = writevideo;
-      dotread = readvideo;
-      lineread = readvideoline;
-      linewrite = writevideoline;
-      videoflag = 1;
-      startvideo ();
-      setforgraphics ();
-      break;
+        putprompt();
+        dotwrite = writevideo;
+        dotread = readvideo;
+        lineread = readvideoline;
+        linewrite = writevideoline;
+        videoflag = 1;
+        startvideo();
+        setforgraphics();
+        break;
     default:
-      printf ("Bad mode %d\n", dotmode);
-      exit (-1);
+        printf("Bad mode %d\n", dotmode);
+        exit(-1);
     }
-  if (dotmode != 0)
+    if (dotmode != 0)
     {
-      loaddac ();
-      g_and_color = colors - 1;
-      boxcount = 0;
+        loaddac();
+        g_and_color = colors - 1;
+        boxcount = 0;
     }
-  g_vesa_x_res = sxdots;
-  g_vesa_y_res = sydots;
+    g_vesa_x_res = sxdots;
+    g_vesa_y_res = sydots;
 }
 
 
@@ -234,15 +235,15 @@ setvideomode (ax, bx, cx, dx)
 ;       Return the color on the screen at the (xdot,ydot) point
 */
 int
-getcolor (xdot, ydot)
-     int xdot, ydot;
+getcolor(xdot, ydot)
+int xdot, ydot;
 {
-  int x1, y1;
-  x1 = xdot + sxoffs;
-  y1 = ydot + syoffs;
-  if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
-    return 0;
-  return dotread (x1, y1);
+    int x1, y1;
+    x1 = xdot + sxoffs;
+    y1 = ydot + syoffs;
+    if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
+        return 0;
+    return dotread(x1, y1);
 }
 
 /*
@@ -251,10 +252,10 @@ getcolor (xdot, ydot)
 ;       write the color on the screen at the (xdot,ydot) point
 */
 void
-putcolor_a (xdot, ydot, color)
-     int xdot, ydot, color;
+putcolor_a(xdot, ydot, color)
+int xdot, ydot, color;
 {
-  dotwrite (xdot + sxoffs, ydot + syoffs, color & g_and_color);
+    dotwrite(xdot + sxoffs, ydot + syoffs, color & g_and_color);
 }
 
 /*
@@ -263,26 +264,26 @@ putcolor_a (xdot, ydot, color)
 ;       Move the cursor (called before printfs)
 */
 void
-movecursor (row, col)
-     int row, col;
+movecursor(row, col)
+int row, col;
 {
-  if (row == -1)
+    if (row == -1)
     {
-      row = g_text_row;
+        row = g_text_row;
     }
-  else
+    else
     {
-      g_text_row = row;
+        g_text_row = row;
     }
-  if (col == -1)
+    if (col == -1)
     {
-      col = g_text_col;
+        col = g_text_col;
     }
-  else
+    else
     {
-      g_text_col = col;
+        g_text_col = col;
     }
-  wmove (curwin, row, col);
+    wmove(curwin, row, col);
 }
 
 /*
@@ -291,13 +292,13 @@ movecursor (row, col)
 ;       Subroutine to wait cx ticks, or till keystroke pending
 */
 int
-keycursor (row, col)
-     int row, col;
+keycursor(row, col)
+int row, col;
 {
-  movecursor (row, col);
-  wrefresh (curwin);
-  waitkeypressed (0);
-  return getakey ();
+    movecursor(row, col);
+    wrefresh(curwin);
+    waitkeypressed(0);
+    return getakey();
 }
 
 /*
@@ -308,59 +309,59 @@ keycursor (row, col)
 ;         string = far pointer to the null terminated string to print.
 */
 void
-putstring (row, col, attr, msg)
-     int row, col, attr;
-     CHAR *msg;
+putstring(row, col, attr, msg)
+int row, col, attr;
+CHAR *msg;
 {
-  int so = 0;
+    int so = 0;
 
-  if (row != -1)
-    g_text_row = row;
-  if (col != -1)
-    g_text_col = col;
+    if (row != -1)
+        g_text_row = row;
+    if (col != -1)
+        g_text_col = col;
 
-  if (attr & INVERSE || attr & BRIGHT)
+    if (attr & INVERSE || attr & BRIGHT)
     {
-      wstandout (curwin);
-      so = 1;
+        wstandout(curwin);
+        so = 1;
     }
-  wmove (curwin, g_text_row + g_text_rbase, g_text_col + g_text_cbase);
-  while (1)
+    wmove(curwin, g_text_row + g_text_rbase, g_text_col + g_text_cbase);
+    while (1)
     {
-      if (*msg == '\0')
-    break;
-      if (*msg == '\n')
-    {
-      g_text_col = 0;
-      g_text_row++;
-      wmove (curwin, g_text_row + g_text_rbase, g_text_col + g_text_cbase);
-    }
-      else
-    {
-      char *ptr;
-      ptr = strchr (msg, '\n');
-      if (ptr == NULL)
+        if (*msg == '\0')
+            break;
+        if (*msg == '\n')
         {
-          waddstr (curwin, msg);
-          break;
+            g_text_col = 0;
+            g_text_row++;
+            wmove(curwin, g_text_row + g_text_rbase, g_text_col + g_text_cbase);
         }
-      else
+        else
         {
-          waddch (curwin, *msg);
+            char *ptr;
+            ptr = strchr(msg, '\n');
+            if (ptr == NULL)
+            {
+                waddstr(curwin, msg);
+                break;
+            }
+            else
+            {
+                waddch(curwin, *msg);
+            }
         }
+        msg++;
     }
-      msg++;
-    }
-  if (so)
+    if (so)
     {
-      wstandend (curwin);
+        wstandend(curwin);
     }
 
-  wrefresh (curwin);
-  fflush (stdout);
-  getyx (curwin, g_text_row, g_text_col);
-  g_text_row -= g_text_rbase;
-  g_text_col -= g_text_cbase;
+    wrefresh(curwin);
+    fflush(stdout);
+    getyx(curwin, g_text_row, g_text_col);
+    g_text_row -= g_text_rbase;
+    g_text_col -= g_text_cbase;
 }
 
 /*
@@ -371,10 +372,10 @@ putstring (row, col, attr, msg)
 ;         This routine works only in real color text mode.
 */
 void
-setattr (row, col, attr, count)
-     int row, col, attr, count;
+setattr(row, col, attr, count)
+int row, col, attr, count;
 {
-  movecursor (row, col);
+    movecursor(row, col);
 }
 
 /*
@@ -383,11 +384,11 @@ setattr (row, col, attr, count)
 ;       Home the cursor (called before printfs)
 */
 void
-home (void)
+home(void)
 {
-  wmove (curwin, 0, 0);
-  g_text_row = 0;
-  g_text_col = 0;
+    wmove(curwin, 0, 0);
+    g_text_row = 0;
+    g_text_col = 0;
 }
 
 
@@ -397,14 +398,14 @@ home (void)
 ;       Scroll the screen up (from toprow to botrow)
 */
 void
-scrollup (top, bot)
-     int top, bot;
+scrollup(top, bot)
+int top, bot;
 {
-  wmove (curwin, top, 0);
-  wdeleteln (curwin);
-  wmove (curwin, bot, 0);
-  winsertln (curwin);
-  wrefresh (curwin);
+    wmove(curwin, top, 0);
+    wdeleteln(curwin);
+    wmove(curwin, bot, 0);
+    winsertln(curwin);
+    wrefresh(curwin);
 }
 
 /*
@@ -414,43 +415,43 @@ scrollup (top, bot)
 ;       in "rstep" increments - or, if "direction" is 0, just replace it.
 */
 void
-spindac (dir, inc)
-     int dir, inc;
+spindac(dir, inc)
+int dir, inc;
 {
-  int i, top;
-  unsigned char tmp[3];
-  unsigned char *dacbot;
-  int len;
-  if (colors < 16)
-    return;
-  if (g_is_true_color && truemode)
-    return;
-  if (dir != 0 && rotate_lo < colors && rotate_lo < rotate_hi)
+    int i, top;
+    unsigned char tmp[3];
+    unsigned char *dacbot;
+    int len;
+    if (colors < 16)
+        return;
+    if (g_is_true_color && truemode)
+        return;
+    if (dir != 0 && rotate_lo < colors && rotate_lo < rotate_hi)
     {
-      top = rotate_hi > colors ? colors - 1 : rotate_hi;
-      dacbot = (unsigned char *) g_dac_box + 3 * rotate_lo;
-      len = (top - rotate_lo) * 3 * sizeof (unsigned char);
-      if (dir > 0)
-    {
-      for (i = 0; i < inc; i++)
+        top = rotate_hi > colors ? colors - 1 : rotate_hi;
+        dacbot = (unsigned char *) g_dac_box + 3 * rotate_lo;
+        len = (top - rotate_lo) * 3 * sizeof(unsigned char);
+        if (dir > 0)
         {
-          bcopy (dacbot, tmp, 3 * sizeof (unsigned char));
-          bcopy (dacbot + 3 * sizeof (unsigned char), dacbot, len);
-          bcopy (tmp, dacbot + len, 3 * sizeof (unsigned char));
+            for (i = 0; i < inc; i++)
+            {
+                bcopy(dacbot, tmp, 3 * sizeof(unsigned char));
+                bcopy(dacbot + 3 * sizeof(unsigned char), dacbot, len);
+                bcopy(tmp, dacbot + len, 3 * sizeof(unsigned char));
+            }
+        }
+        else
+        {
+            for (i = 0; i < inc; i++)
+            {
+                bcopy(dacbot + len, tmp, 3 * sizeof(unsigned char));
+                bcopy(dacbot, dacbot + 3 * sizeof(unsigned char), len);
+                bcopy(tmp, dacbot, 3 * sizeof(unsigned char));
+            }
         }
     }
-      else
-    {
-      for (i = 0; i < inc; i++)
-        {
-          bcopy (dacbot + len, tmp, 3 * sizeof (unsigned char));
-          bcopy (dacbot, dacbot + 3 * sizeof (unsigned char), len);
-          bcopy (tmp, dacbot, 3 * sizeof (unsigned char));
-        }
-    }
-    }
-  writevideopalette ();
-  driver_delay(colors - g_dac_count - 1);
+    writevideopalette();
+    driver_delay(colors - g_dac_count - 1);
 }
 
 /*
@@ -462,22 +463,22 @@ spindac (dir, inc)
 ;       setclear() clears the screen after setfortext()
 */
 void
-setfortext (void)
+setfortext(void)
 {
 }
 
 void
-setclear (void)
+setclear(void)
 {
-  wclear (curwin);
-  wrefresh (curwin);
+    wclear(curwin);
+    wrefresh(curwin);
 }
 
 void
-setforgraphics ()
+setforgraphics()
 {
-  startvideo ();
-  spindac (0, 1);
+    startvideo();
+    spindac(0, 1);
 }
 
 unsigned char *fontTab = NULL;
@@ -490,14 +491,14 @@ unsigned char *fontTab = NULL;
 ;                   nonzero parameter reserved for future use
 */
 BYTE *
-findfont (fontparm)
-     int fontparm;
+findfont(fontparm)
+int fontparm;
 {
-  if (fontTab == NULL)
+    if (fontTab == NULL)
     {
-      fontTab = xgetfont ();
+        fontTab = xgetfont();
     }
-  return (BYTE *) fontTab;
+    return (BYTE *) fontTab;
 }
 
 /*
@@ -512,46 +513,46 @@ findfont (fontparm)
  */
 
 void
-dispbox (void)
+dispbox(void)
 {
-  if (boxcount)
+    if (boxcount)
     {
-      setlinemode (1);
-      drawline (boxx[0], boxy[0], boxx[1], boxy[1]);
-      drawline (boxx[1], boxy[1], boxx[2], boxy[2]);
-      drawline (boxx[2], boxy[2], boxx[3], boxy[3]);
-      drawline (boxx[3], boxy[3], boxx[0], boxy[0]);
-      setlinemode (0);
-      xsync ();
+        setlinemode(1);
+        drawline(boxx[0], boxy[0], boxx[1], boxy[1]);
+        drawline(boxx[1], boxy[1], boxx[2], boxy[2]);
+        drawline(boxx[2], boxy[2], boxx[3], boxy[3]);
+        drawline(boxx[3], boxy[3], boxx[0], boxy[0]);
+        setlinemode(0);
+        xsync();
     }
 }
 
 void
-clearbox (void)
+clearbox(void)
 {
-  dispbox ();
+    dispbox();
 }
 
 int
-CheckForTPlus (void)
+CheckForTPlus(void)
 {
-  return 0;
+    return 0;
 }
 
 /*
 ; Passing this routine 0 turns off shadow, nonzero turns it on.
 */
 int
-ShadowVideo (on)
-     int on;
+ShadowVideo(on)
+int on;
 {
-  return 0;
+    return 0;
 }
 
 int
-SetupShadowVideo (void)
+SetupShadowVideo(void)
 {
-  return 0;
+    return 0;
 }
 
 /*
@@ -564,19 +565,19 @@ SetupShadowVideo (void)
 int done_detect = 0;
 
 void
-adapter_detect (void)
+adapter_detect(void)
 {
-  if (done_detect)
-    return;
-  done_detect = 1;
-  textsafe = 2;
-  if (colors == 2)
+    if (done_detect)
+        return;
+    done_detect = 1;
+    textsafe = 2;
+    if (colors == 2)
     {
-      video_type = 100;
+        video_type = 100;
     }
-  else
+    else
     {
-      video_type = 101;
+        video_type = 101;
     }
 }
 
@@ -587,28 +588,28 @@ adapter_detect (void)
 */
 
 void
-normaline (y, x, lastx, pixels)
-     int x, y, lastx;
-     BYTE *pixels;
+normaline(y, x, lastx, pixels)
+int x, y, lastx;
+BYTE *pixels;
 {
-  int i, width;
-  width = lastx - x + 1;
-  for (i = 0; i < width; i++)
+    int i, width;
+    width = lastx - x + 1;
+    for (i = 0; i < width; i++)
     {
-      dotwrite (x + i, y, pixels[i]);
+        dotwrite(x + i, y, pixels[i]);
     }
 }
 
 void
-normalineread (y, x, lastx, pixels)
-     int x, y, lastx;
-     BYTE *pixels;
+normalineread(y, x, lastx, pixels)
+int x, y, lastx;
+BYTE *pixels;
 {
-  int i, width;
-  width = lastx - x + 1;
-  for (i = 0; i < width; i++)
+    int i, width;
+    width = lastx - x + 1;
+    for (i = 0; i < width; i++)
     {
-      pixels[i] = dotread (x + i, y);
+        pixels[i] = dotread(x + i, y);
     }
 }
 
@@ -619,67 +620,67 @@ normalineread (y, x, lastx, pixels)
 ;       color which is reasonably bright and reasonably grey.
 */
 void
-find_special_colors (void)
+find_special_colors(void)
 {
-  int maxb = 0;
-  int minb = 9999;
-  int med = 0;
-  int maxgun, mingun;
-  int brt;
-  int i;
+    int maxb = 0;
+    int minb = 9999;
+    int med = 0;
+    int maxgun, mingun;
+    int brt;
+    int i;
 
-  g_color_dark = 0;
-  g_color_medium = 7;
-  g_color_bright = 15;
+    g_color_dark = 0;
+    g_color_medium = 7;
+    g_color_bright = 15;
 
-  if (colors == 2)
+    if (colors == 2)
     {
-      g_color_medium = 1;
-      g_color_bright = 1;
-      return;
+        g_color_medium = 1;
+        g_color_bright = 1;
+        return;
     }
 
-  if (!(g_got_real_dac || fake_lut))
-    return;
+    if (!(g_got_real_dac || fake_lut))
+        return;
 
-  for (i = 0; i < colors; i++)
+    for (i = 0; i < colors; i++)
     {
-      brt = (int) g_dac_box[i][0] + (int) g_dac_box[i][1] + (int) g_dac_box[i][2];
-      if (brt > maxb)
-    {
-      maxb = brt;
-      g_color_bright = i;
-    }
-      if (brt < minb)
-    {
-      minb = brt;
-      g_color_dark = i;
-    }
-      if (brt < 150 && brt > 80)
-    {
-      maxgun = mingun = (int) g_dac_box[i][0];
-      if ((int) g_dac_box[i][1] > (int) g_dac_box[i][0])
+        brt = (int) g_dac_box[i][0] + (int) g_dac_box[i][1] + (int) g_dac_box[i][2];
+        if (brt > maxb)
         {
-          maxgun = (int) g_dac_box[i][1];
+            maxb = brt;
+            g_color_bright = i;
         }
-      else
+        if (brt < minb)
         {
-          mingun = (int) g_dac_box[i][1];
+            minb = brt;
+            g_color_dark = i;
         }
-      if ((int) g_dac_box[i][2] > maxgun)
+        if (brt < 150 && brt > 80)
         {
-          maxgun = (int) g_dac_box[i][2];
+            maxgun = mingun = (int) g_dac_box[i][0];
+            if ((int) g_dac_box[i][1] > (int) g_dac_box[i][0])
+            {
+                maxgun = (int) g_dac_box[i][1];
+            }
+            else
+            {
+                mingun = (int) g_dac_box[i][1];
+            }
+            if ((int) g_dac_box[i][2] > maxgun)
+            {
+                maxgun = (int) g_dac_box[i][2];
+            }
+            if ((int) g_dac_box[i][2] < mingun)
+            {
+                mingun = (int) g_dac_box[i][2];
+            }
+            if (brt - (maxgun - mingun) / 2 > med)
+            {
+                g_color_medium = i;
+                med = brt - (maxgun - mingun) / 2;
+            }
         }
-      if ((int) g_dac_box[i][2] < mingun)
-        {
-          mingun = (int) g_dac_box[i][2];
-        }
-      if (brt - (maxgun - mingun) / 2 > med)
-        {
-          g_color_medium = i;
-          med = brt - (maxgun - mingun) / 2;
-        }
-    }
     }
 }
 
@@ -690,14 +691,14 @@ find_special_colors (void)
 ;       Hi nybble=character, low nybble attribute. Text mode only
 */
 char
-get_a_char (void)
+get_a_char(void)
 {
-  return (char) getakey ();
+    return (char) getakey();
 }
 
 void
-put_a_char (ch)
-     int ch;
+put_a_char(ch)
+int ch;
 {
 }
 
@@ -712,9 +713,9 @@ put_a_char (ch)
 
 void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
-  if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
-    return;
-  lineread (row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+    if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
+        return;
+    lineread(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
 }
 
 /*
@@ -727,13 +728,13 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 */
 
 void
-put_line (row, startcol, stopcol, pixels)
-     int row, startcol, stopcol;
-     BYTE *pixels;
+put_line(row, startcol, stopcol, pixels)
+int row, startcol, stopcol;
+BYTE *pixels;
 {
-  if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
-    return;
-  linewrite (row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+    if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
+        return;
+    linewrite(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
 }
 
 /*
@@ -744,34 +745,34 @@ put_line (row, startcol, stopcol, pixels)
 ;       Called by the GIF decoder
 */
 int
-out_line (pixels, linelen)
-     BYTE *pixels;
-     int linelen;
+out_line(pixels, linelen)
+BYTE *pixels;
+int linelen;
 {
-  if (g_row_count + syoffs >= sydots)
+    if (g_row_count + syoffs >= sydots)
+        return 0;
+    linewrite(g_row_count + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
+    g_row_count++;
     return 0;
-  linewrite (g_row_count + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
-  g_row_count++;
-  return 0;
 }
 
 /*
 ; move routine for savegraphics/restoregraphics
 */
 void
-movewords (len, fromptr, toptr)
-     int len;
-     BYTE *fromptr, *toptr;
+movewords(len, fromptr, toptr)
+int len;
+BYTE *fromptr, *toptr;
 {
-  bcopy (fromptr, toptr, len);
+    bcopy(fromptr, toptr, len);
 }
 
 void
-swapnormread (void)
+swapnormread(void)
 {
 }
 void
-swapnormwrite (void)
+swapnormwrite(void)
 {
 }
 
@@ -780,23 +781,23 @@ swapnormwrite (void)
  * windows.
  */
 void
-savecurses (ptr)
-     WINDOW **ptr;
+savecurses(ptr)
+WINDOW **ptr;
 {
-  ptr[0] = curwin;
-  curwin = newwin (0, 0, 0, 0);
-  touchwin (curwin);
-  wrefresh (curwin);
+    ptr[0] = curwin;
+    curwin = newwin(0, 0, 0, 0);
+    touchwin(curwin);
+    wrefresh(curwin);
 }
 
 void
-restorecurses (ptr)
-     WINDOW **ptr;
+restorecurses(ptr)
+WINDOW **ptr;
 {
-  delwin (curwin);
-  curwin = ptr[0];
-  touchwin (curwin);
-  wrefresh (curwin);
+    delwin(curwin);
+    curwin = ptr[0];
+    touchwin(curwin);
+    wrefresh(curwin);
 }
 
 /* Moved the following from realdos.c to more cleanly separate the XFRACT
@@ -827,54 +828,54 @@ static int saverc[MAXSCREENS+1];
 void stackscreen()
 {
 #ifdef USE_XFRACT_STACK_FUNCTIONS
-   int i;
-   BYTE *ptr;
-   saverc[screenctr+1] = g_text_row*80 + g_text_col;
-   if (++screenctr) { /* already have some stacked */
-         static char msg[]={"stackscreen overflow"};
-      if ((i = screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
-         stopmsg(1,msg);
-         exit(1);
-         }
-      if ((ptr = (savescreen[i] = (BYTE *)malloc(sizeof(int *)))))
-         savecurses((WINDOW **)ptr);
-      else {
-         stopmsg(1,msg);
-         exit(1);
+    int i;
+    BYTE *ptr;
+    saverc[screenctr+1] = g_text_row*80 + g_text_col;
+    if (++screenctr) { /* already have some stacked */
+        static char msg[]= {"stackscreen overflow"};
+        if ((i = screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
+            stopmsg(1,msg);
+            exit(1);
         }
-      setclear();
-      }
-   else
-      setfortext();
+        if ((ptr = (savescreen[i] = (BYTE *)malloc(sizeof(int *)))))
+            savecurses((WINDOW **)ptr);
+        else {
+            stopmsg(1,msg);
+            exit(1);
+        }
+        setclear();
+    }
+    else
+        setfortext();
 #endif
 }
 
 void unstackscreen()
 {
 #ifdef USE_XFRACT_STACK_FUNCTIONS
-   BYTE *ptr;
-   g_text_row = saverc[screenctr] / 80;
-   g_text_col = saverc[screenctr] % 80;
-   if (--screenctr >= 0) { /* unstack */
-      ptr = savescreen[screenctr];
-      restorecurses((WINDOW **)ptr);
-      free(ptr);
-      }
-   else
-      setforgraphics();
-   movecursor(-1,-1);
+    BYTE *ptr;
+    g_text_row = saverc[screenctr] / 80;
+    g_text_col = saverc[screenctr] % 80;
+    if (--screenctr >= 0) { /* unstack */
+        ptr = savescreen[screenctr];
+        restorecurses((WINDOW **)ptr);
+        free(ptr);
+    }
+    else
+        setforgraphics();
+    movecursor(-1,-1);
 #endif
 }
 
 void discardscreen()
 {
-   if (--screenctr >= 0) { /* unstack */
-      if (savescreen[screenctr]) {
+    if (--screenctr >= 0) { /* unstack */
+        if (savescreen[screenctr]) {
 #ifdef USE_XFRACT_STACK_FUNCTIONS
-         free(savescreen[screenctr]);
+            free(savescreen[screenctr]);
 #endif
-      }
-   }
-   else
-      discardgraphics();
+        }
+    }
+    else
+        discardgraphics();
 }

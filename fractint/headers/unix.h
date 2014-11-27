@@ -118,10 +118,10 @@ struct SREGS {
 #include <sys/types.h>
 typedef struct  timebx
 {
-        time_t  time;
-        unsigned short millitm;
-        int   timezone;
-        int   dstflag;
+    time_t  time;
+    unsigned short millitm;
+    int   timezone;
+    int   dstflag;
 } timebx;
 
 

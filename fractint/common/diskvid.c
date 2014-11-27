@@ -179,7 +179,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
     for (cache_size = CACHEMAX; cache_size >= CACHEMIN; --cache_size)
     {
         longtmp = ((int)cache_size < freemem) ?
-            (long)cache_size << 11 : (long)(cache_size+freemem) << 10;
+                  (long)cache_size << 11 : (long)(cache_size+freemem) << 10;
         if ((tempfar = malloc(longtmp)) != NULL)
         {
             free(tempfar);
@@ -223,7 +223,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
         fwd_link = &hash_ptr[(((unsigned short)longtmp >> BLOCKSHIFT) & (HASHSIZE-1))];
         ptr1->offset = longtmp;
         ptr1->hashlink = *fwd_link;
-        *fwd_link = (int) ((char *)ptr1 - (char *)cache_start);
+        *fwd_link = (int)((char *)ptr1 - (char *)cache_start);
     }
 
     memorysize = (long)(newcolsize) * newrowsize + headerlength;
@@ -265,7 +265,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
     if (driver_diskp())
     {
         driver_put_string(BOXROW+2, BOXCOL+23, C_DVID_LO,
-            (MemoryType(dv_handle) == DISK) ? "Using your Disk Drive" : "Using your memory");
+                          (MemoryType(dv_handle) == DISK) ? "Using your Disk Drive" : "Using your memory");
     }
 
     membufptr = membuf;
@@ -382,7 +382,7 @@ int readdisk(int col, int row)
 
 int FromMemDisk(long offset, int size, void *dest)
 {
-    int col_subscr = (int) (offset & (BLOCKLEN - 1));
+    int col_subscr = (int)(offset & (BLOCKLEN - 1));
     if (col_subscr + size > BLOCKLEN)            /* access violates  a */
     {
         return 0;                                 /*   cache boundary   */
@@ -427,7 +427,7 @@ void writedisk(int col, int row, int color)
         {
             return;
         }
-        cur_row_base = (long) (cur_row = row) * rowsize;
+        cur_row_base = (long)(cur_row = row) * rowsize;
     }
     if (col >= rowsize)
     {
@@ -448,7 +448,7 @@ void writedisk(int col, int row, int color)
 
 int ToMemDisk(long offset, int size, void *src)
 {
-    int col_subscr =  (int)(offset & (BLOCKLEN - 1));
+    int col_subscr = (int)(offset & (BLOCKLEN - 1));
 
     if (col_subscr + size > BLOCKLEN)            /* access violates  a */
     {
@@ -457,7 +457,7 @@ int ToMemDisk(long offset, int size, void *src)
 
     if (cur_offset != (offset & (0L-BLOCKLEN))) /* same entry as last ref? */
     {
-        findload_cache (offset & (0L-BLOCKLEN));
+        findload_cache(offset & (0L-BLOCKLEN));
     }
 
     memcpy((void *) &cur_cache->pixel[col_subscr], src, size);
@@ -466,7 +466,7 @@ int ToMemDisk(long offset, int size, void *src)
 }
 
 void targa_writedisk(unsigned int col, unsigned int row,
-                    BYTE red, BYTE green, BYTE blue)
+                     BYTE red, BYTE green, BYTE blue)
 {
     writedisk(col *= 3, row, blue);
     writedisk(++col, row, green);
@@ -482,7 +482,7 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
     BYTE tmpchar;
     cur_offset = offset; /* note this for next reference */
     /* check if required entry is in cache - lookup by hash */
-    tbloffset = hash_ptr[ ((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1) ];
+    tbloffset = hash_ptr[((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1) ];
     while (tbloffset != 0xffff)  /* follow the hash chain */
     {
         cur_cache = (struct cache *)((char *)cache_start + tbloffset);
@@ -512,7 +512,7 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
     }
     /* remove block at cache_lru from its hash chain */
     fwd_link = &hash_ptr[(((unsigned short)cache_lru->offset >> BLOCKSHIFT) & (HASHSIZE-1))];
-    tbloffset = (int) ((char *)cache_lru - (char *)cache_start);
+    tbloffset = (int)((char *)cache_lru - (char *)cache_start);
     while (*fwd_link != tbloffset)
     {
         fwd_link = &((struct cache *)((char *)cache_start+*fwd_link))->hashlink;
@@ -550,28 +550,28 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
                 tmpchar = mem_getc();
                 *(pixelptr++) = (BYTE)(tmpchar >> 4);
                 *(pixelptr++) = (BYTE)(tmpchar & 15);
-                }
+            }
             break;
         case 2:
             for (i = 0; i < BLOCKLEN/4; ++i) {
                 tmpchar = mem_getc();
                 for (j = 6; j >= 0; j -= 2)
                     *(pixelptr++) = (BYTE)((tmpchar >> j) & 3);
-                }
+            }
             break;
         case 3:
             for (i = 0; i < BLOCKLEN/8; ++i) {
                 tmpchar = mem_getc();
                 for (j = 7; j >= 0; --j)
                     *(pixelptr++) = (BYTE)((tmpchar >> j) & 1);
-                }
+            }
             break;
         }
     }
     /* add new block to its hash chain */
     fwd_link = &hash_ptr[(((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1))];
     cache_lru->hashlink = *fwd_link;
-    *fwd_link = (int) ((char *)cache_lru - (char *)cache_start);
+    *fwd_link = (int)((char *)cache_lru - (char *)cache_start);
     cur_cache = cache_lru;
 }
 
@@ -639,7 +639,7 @@ write_stuff:
         for (i = 0; i < BLOCKLEN/4; ++i)
         {
             for (j = 6; j >= 0; j -= 2)
-            tmpchar = (BYTE)((tmpchar << 2) + *(pixelptr++));
+                tmpchar = (BYTE)((tmpchar << 2) + *(pixelptr++));
             mem_putc(tmpchar);
         }
         break;
@@ -647,21 +647,21 @@ write_stuff:
         for (i = 0; i < BLOCKLEN/8; ++i)
         {
             mem_putc((BYTE)
-                        ((((((((((((((*pixelptr
-                        << 1)
-                        | *(pixelptr+1) )
-                        << 1)
-                        | *(pixelptr+2) )
-                        << 1)
-                        | *(pixelptr+3) )
-                        << 1)
-                        | *(pixelptr+4) )
-                        << 1)
-                        | *(pixelptr+5) )
-                        << 1)
-                        | *(pixelptr+6) )
-                        << 1)
-                        | *(pixelptr+7)));
+                     ((((((((((((((*pixelptr
+                                   << 1)
+                                  | *(pixelptr+1))
+                                 << 1)
+                                | *(pixelptr+2))
+                               << 1)
+                              | *(pixelptr+3))
+                             << 1)
+                            | *(pixelptr+4))
+                           << 1)
+                          | *(pixelptr+5))
+                         << 1)
+                        | *(pixelptr+6))
+                       << 1)
+                      | *(pixelptr+7)));
             pixelptr += 8;
         }
         break;

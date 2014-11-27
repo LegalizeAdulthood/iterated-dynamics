@@ -269,18 +269,18 @@ static void plot_OnPaint(HWND window)
         DWORD status;
 #if 0
         status = StretchDIBits(dc,
-            r->left, r->top, width, height,
-            r->left, r->top, width, height,
-            s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
+                               r->left, r->top, width, height,
+                               r->left, r->top, width, height,
+                               s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
 #else
 #if 0
         status = StretchBlt(dc, 0, 0, s_plot->width, s_plot->height,
-            s_plot->memory_dc, 0, 0, s_plot->width, s_plot->height, SRCCOPY);
+                            s_plot->memory_dc, 0, 0, s_plot->width, s_plot->height, SRCCOPY);
 #else
         status = StretchDIBits(dc,
-            0, 0, s_plot->width, s_plot->height,
-            0, 0, s_plot->width, s_plot->height,
-            s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
+                               0, 0, s_plot->width, s_plot->height,
+                               0, 0, s_plot->width, s_plot->height,
+                               s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
 #endif
 #endif
         _ASSERTE(status != GDI_ERROR);
@@ -293,9 +293,12 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
     _ASSERTE(s_plot != NULL);
     switch (message)
     {
-    case WM_PAINT: HANDLE_WM_PAINT(window, wp, lp, plot_OnPaint); break;
+    case WM_PAINT:
+        HANDLE_WM_PAINT(window, wp, lp, plot_OnPaint);
+        break;
 
-    default: return DefWindowProc(window, message, wp, lp);
+    default:
+        return DefWindowProc(window, message, wp, lp);
     }
 
     return 0;
@@ -327,7 +330,7 @@ static void
 init_clut(BYTE clut[256][3])
 {
     int i;
-    for (i=0;i < 256;i++)
+    for (i=0; i < 256; i++)
     {
         clut[i][0] = (i >> 5)*8+7;
         clut[i][1] = (((i+16) & 28) >> 2)*8+7;
@@ -335,7 +338,8 @@ init_clut(BYTE clut[256][3])
     }
     clut[0][0] = clut[0][1] = clut[0][2] = 0;
     clut[1][0] = clut[1][1] = clut[1][2] = 63;
-    clut[2][0] = 47; clut[2][1] = clut[2][2] = 63;
+    clut[2][0] = 47;
+    clut[2][1] = clut[2][2] = 63;
 }
 
 int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)
@@ -402,8 +406,8 @@ static void plot_create_backing_store(Plot *me)
     me->backup = (HBITMAP) SelectObject(me->memory_dc, (HGDIOBJ) me->rendering);
 
     me->font = CreateFont(8, 8, 0, 0, 0, FALSE, FALSE, FALSE, ANSI_CHARSET,
-        OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-        DEFAULT_PITCH | FF_MODERN, "Courier");
+                          OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
+                          DEFAULT_PITCH | FF_MODERN, "Courier");
     _ASSERTE(me->font);
     SelectObject(me->memory_dc, (HGDIOBJ) me->font);
     SetBkMode(me->memory_dc, OPAQUE);
@@ -416,14 +420,14 @@ void plot_window(Plot *me, HWND parent)
         s_plot = me;
         me->parent = parent;
         me->window = CreateWindow(s_window_class,
-            me->title,
-            parent ? WS_CHILD : WS_OVERLAPPEDWINDOW,
-            CW_USEDEFAULT,               /* default horizontal position */
-            CW_USEDEFAULT,               /* default vertical position */
-            me->width,
-            me->height,
-            parent, NULL, me->instance,
-            NULL);
+                                  me->title,
+                                  parent ? WS_CHILD : WS_OVERLAPPEDWINDOW,
+                                  CW_USEDEFAULT,               /* default horizontal position */
+                                  CW_USEDEFAULT,               /* default vertical position */
+                                  me->width,
+                                  me->height,
+                                  parent, NULL, me->instance,
+                                  NULL);
 
         plot_create_backing_store(me);
     }
@@ -434,7 +438,7 @@ void plot_write_pixel(Plot *me, int x, int y, int color)
     _ASSERTE(me->pixels);
     _ASSERTE(x >= 0 && x < me->width);
     _ASSERTE(y >= 0 && y < me->height);
-    me->pixels[(me->height - y - 1)*me->row_len + x] = (BYTE) (color & 0xFF);
+    me->pixels[(me->height - y - 1)*me->row_len + x] = (BYTE)(color & 0xFF);
     plot_set_dirty_region(me, x, y, x+1, y+1);
 }
 
@@ -469,9 +473,9 @@ void plot_flush(Plot *me)
 #if 0
         DWORD status;
         status = StretchDIBits(me->memory_dc,
-            0, 0, me->width, me->width,
-            0, 0, me->width, me->height,
-            me->pixels, &me->bmi, DIB_RGB_COLORS, SRCCOPY);
+                               0, 0, me->width, me->width,
+                               0, 0, me->width, me->height,
+                               me->pixels, &me->bmi, DIB_RGB_COLORS, SRCCOPY);
 #else
         InvalidateRect(me->window, NULL, FALSE);
 #endif

@@ -110,8 +110,8 @@ typedef unsigned char BIGDIST * big_t;
 #if 0 /* remove for Fractint */
 struct Complex
 {
-   LDBL x;
-   LDBL y;
+    LDBL x;
+    LDBL y;
 };
 typedef struct Complex    _CMPLX;
 #else
@@ -120,15 +120,15 @@ typedef struct Complex    _CMPLX;
 
 struct BFComplex
 {
-   bn_t x;
-   bn_t y;
+    bn_t x;
+    bn_t y;
 };
 typedef struct BFComplex  _BFCMPLX;
 
 struct BNComplex
 {
-   bn_t x;
-   bn_t y;
+    bn_t x;
+    bn_t y;
 };
 typedef struct BNComplex  _BNCMPLX;
 
@@ -202,7 +202,7 @@ extern bf_t floattobf(bf_t r, LDBL f);
 extern LDBL bftofloat(bf_t n);
 extern LDBL bntofloat(bn_t n);
 extern LDBL extract_256(LDBL f, int *exp_ptr);
-extern LDBL scale_256( LDBL f, int n );
+extern LDBL scale_256(LDBL f, int n);
 
 /* functions defined in bignum.c */
 #ifdef ACCESS_BY_BYTE
@@ -242,7 +242,7 @@ extern bn_t unsafe_atan_bn(bn_t r, bn_t n);
 extern bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx);
 extern int convert_bn(bn_t new,bn_t old,int newbnlength,int newintlength,int oldbnlength,int oldintlength);
 
-    /* "safe" versions */
+/* "safe" versions */
 extern bn_t full_mult_bn(bn_t r, bn_t n1, bn_t n2);
 extern bn_t mult_bn(bn_t r, bn_t n1, bn_t n2);
 extern bn_t full_square_bn(bn_t r, bn_t n);
@@ -256,7 +256,7 @@ extern bn_t sincos_bn(bn_t s, bn_t c, bn_t n);
 extern bn_t atan_bn(bn_t r, bn_t n);
 extern bn_t atan2_bn(bn_t r, bn_t ny, bn_t nx);
 
-    /* misc */
+/* misc */
 extern int is_bn_zero(bn_t n);
 extern bn_t floattobn(bn_t r, LDBL f);
 
@@ -310,13 +310,13 @@ extern int is_bf_zero(bf_t n);
 extern int convert_bf(bf_t new, bf_t old, int newbflength, int oldbflength);
 
 extern LDBL extract_value(LDBL f, LDBL b, int *exp_ptr);
-extern LDBL scale_value( LDBL f, LDBL b , int n );
+extern LDBL scale_value(LDBL f, LDBL b , int n);
 extern LDBL extract_10(LDBL f, int *exp_ptr);
-extern LDBL scale_10( LDBL f, int n );
+extern LDBL scale_10(LDBL f, int n);
 
 extern bf10_t unsafe_bftobf10(bf10_t s, int dec, bf_t n);
 extern bf10_t mult_a_bf10_int(bf10_t s, int dec, U16 n);
-extern bf10_t div_a_bf10_int (bf10_t s, int dec, U16 n);
+extern bf10_t div_a_bf10_int(bf10_t s, int dec, U16 n);
 extern char  *bf10tostr_e(char *s, int dec, bf10_t n);
 extern char  *bf10tostr_f(char *s, int dec, bf10_t n);
 
@@ -352,11 +352,11 @@ extern bf_t div_a_bf_int(bf_t r, U16 u);
 extern _CMPLX cmplxbntofloat(_BNCMPLX *s);
 extern _CMPLX cmplxbftofloat(_BFCMPLX *s);
 extern _BFCMPLX *cmplxlog_bf(_BFCMPLX *t, _BFCMPLX *s);
-extern _BFCMPLX *cplxmul_bf( _BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y);
+extern _BFCMPLX *cplxmul_bf(_BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y);
 extern _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy);
 extern _BNCMPLX *ComplexPower_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy);
 extern _BNCMPLX *cmplxlog_bn(_BNCMPLX *t, _BNCMPLX *s);
-extern _BNCMPLX *cplxmul_bn( _BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y);
+extern _BNCMPLX *cplxmul_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y);
 
 #include "biginit.h" /* fractint only */
 

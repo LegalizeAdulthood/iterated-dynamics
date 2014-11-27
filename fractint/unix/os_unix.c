@@ -89,7 +89,7 @@ int g_virtual_screens = 0;
 /* converts relative path to absolute path */
 int expand_dirname(char *dirname, char *drive)
 {
-  return -1;
+    return -1;
 }
 
 long fr_farfree(void)

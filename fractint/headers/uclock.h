@@ -16,26 +16,26 @@
 #include <time.h>
 
 #if defined(__ZTC__)
- #include <int.h>
- #undef int_on
- #undef int_off
+#include <int.h>
+#undef int_on
+#undef int_off
 #elif defined(__TURBOC__)
- #define int_on         enable
- #define int_off        disable
- #ifndef inp
-  #define inp           inportb
- #endif
- #ifndef outp
-  #define outp          outportb
- #endif
+#define int_on         enable
+#define int_off        disable
+#ifndef inp
+#define inp           inportb
+#endif
+#ifndef outp
+#define outp          outportb
+#endif
 #else /* assume MSC/QC */
- #include <conio.h>
- #define int_on         _enable
- #define int_off        _disable
- #ifndef MK_FP
-  #define MK_FP(seg,offset) \
+#include <conio.h>
+#define int_on         _enable
+#define int_off        _disable
+#ifndef MK_FP
+#define MK_FP(seg,offset) \
         ((void far *)(((unsigned long)(seg)<<16) | (unsigned)(offset)))
- #endif
+#endif
 #endif
 
 /* ANSI-equivalent declarations and prototypes */
@@ -45,13 +45,13 @@ typedef unsigned long uclock_t;
 #define UCLK_TCK 1000000L /* Usec per second - replaces CLK_TCK         */
 
 #if __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
-uclock_t usec_clock(void);
-void     restart_uclock(void);
+    uclock_t usec_clock(void);
+    void     restart_uclock(void);
 
 #if __cplusplus
- }
+}
 #endif
 #endif

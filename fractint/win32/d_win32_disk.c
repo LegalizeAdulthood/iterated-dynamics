@@ -158,7 +158,7 @@ static void
 initdacbox()
 {
     int i;
-    for (i=0;i < 256;i++)
+    for (i=0; i < 256; i++)
     {
         g_dac_box[i][0] = (i >> 5)*8+7;
         g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
@@ -166,7 +166,8 @@ initdacbox()
     }
     g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
     g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 255;
-    g_dac_box[2][0] = 190; g_dac_box[2][1] = g_dac_box[2][2] = 255;
+    g_dac_box[2][0] = 190;
+    g_dac_box[2][1] = g_dac_box[2][2] = 255;
 }
 
 /* handle_help_tab
@@ -309,7 +310,7 @@ disk_resize(Driver *drv)
 
     frame_resize(di->base.wintext.max_width, di->base.wintext.max_height);
     if ((g_video_table[g_adapter].xdots == di->width)
-        && (g_video_table[g_adapter].ydots == di->height))
+            && (g_video_table[g_adapter].ydots == di->height))
     {
         return 0;
     }
@@ -820,7 +821,7 @@ disk_unstack_screen(Driver *drv)
     g_text_row = di->base.saved_cursor[di->base.screen_count] / 80;
     g_text_col = di->base.saved_cursor[di->base.screen_count] % 80;
     if (--di->base.screen_count >= 0)
-    { /* unstack */
+    {   /* unstack */
         wintext_screen_set(&di->base.wintext, di->base.saved_screens[di->base.screen_count]);
         free(di->base.saved_screens[di->base.screen_count]);
         di->base.saved_screens[di->base.screen_count] = NULL;
@@ -839,7 +840,7 @@ disk_discard_screen(Driver *drv)
 
     _ASSERTE(di->base.screen_count > 0);
     if (--di->base.screen_count >= 0)
-    { /* unstack */
+    {   /* unstack */
         if (di->base.saved_screens[di->base.screen_count])
         {
             free(di->base.saved_screens[di->base.screen_count]);
@@ -960,11 +961,11 @@ disk_validate_mode(Driver *drv, VIDEOINFO *mode)
     /* allow modes of any size with 256 colors and dotmode=19
        ax/bx/cx/dx must be zero. */
     return (mode->colors == 256) &&
-        (mode->videomodeax == 0) &&
-        (mode->videomodebx == 0) &&
-        (mode->videomodecx == 0) &&
-        (mode->videomodedx == 0) &&
-        (mode->dotmode == 19);
+           (mode->videomodeax == 0) &&
+           (mode->videomodebx == 0) &&
+           (mode->videomodecx == 0) &&
+           (mode->videomodedx == 0) &&
+           (mode->dotmode == 19);
 }
 
 static void

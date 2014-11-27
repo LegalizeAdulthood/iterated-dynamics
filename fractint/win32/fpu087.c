@@ -90,21 +90,21 @@ void SinCos086(long x, long *sinx, long *cosx)
 {
     double a;
     a = x/(double)(1 << 16);
-    *sinx = (long) (sin(a)*(double) (1 << 16));
-    *cosx = (long) (cos(a)*(double) (1 << 16));
+    *sinx = (long)(sin(a)*(double)(1 << 16));
+    *cosx = (long)(cos(a)*(double)(1 << 16));
 }
 
 void SinhCosh086(long x, long *sinx, long *cosx)
 {
     double a;
-    a = x / (double) (1 << 16);
-    *sinx = (long) (sinh(a)*(double) (1 << 16));
-    *cosx = (long) (cosh(a)*(double) (1 << 16));
+    a = x / (double)(1 << 16);
+    *sinx = (long)(sinh(a)*(double)(1 << 16));
+    *cosx = (long)(cosh(a)*(double)(1 << 16));
 }
 
 long Exp086(long x)
 {
-    return (long) (exp((double) x / (double) (1 << 16))*(double) (1 << 16));
+    return (long)(exp((double) x / (double)(1 << 16))*(double)(1 << 16));
 }
 
 #define em2float(l) (*(float *) &(l))
@@ -115,7 +115,7 @@ long Exp086(long x)
  */
 unsigned long ExpFudged(long x, int Fudge)
 {
-    return (long) (exp((double) x / (double) (1 << 16))*(double) (1 << Fudge));
+    return (long)(exp((double) x / (double)(1 << 16))*(double)(1 << Fudge));
 }
 
 /* This multiplies two e/m numbers and returns an e/m number. */
@@ -146,7 +146,7 @@ long RegDivFloat(long x, long y)
  */
 long RegFg2Float(long x, int FudgeFact)
 {
-    float f = (float) x / (float) (1 << FudgeFact);
+    float f = (float) x / (float)(1 << FudgeFact);
     return float2em(f);
 }
 
@@ -155,7 +155,7 @@ long RegFg2Float(long x, int FudgeFact)
  */
 long RegFloat2Fg(long x, int Fudge)
 {
-    return (long) (em2float(x)*(float) (1 << Fudge));
+    return (long)(em2float(x)*(float)(1 << Fudge));
 }
 
 long RegSftFloat(long x, int Shift)

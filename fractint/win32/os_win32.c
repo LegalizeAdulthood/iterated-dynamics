@@ -291,7 +291,7 @@ static char *g_tos = NULL;
 long stackavail()
 {
     char junk;
-    return WIN32_STACK_SIZE - (long) (((char *) g_tos) - &junk);
+    return WIN32_STACK_SIZE - (long)(((char *) g_tos) - &junk);
 }
 
 /*
@@ -303,7 +303,7 @@ long stackavail()
 */
 long divide(long x, long y, int n)
 {
-    return (long) (((float) x) / ((float) y)*(float) (1 << n));
+    return (long)(((float) x) / ((float) y)*(float)(1 << n));
 }
 
 /*
@@ -326,7 +326,7 @@ long divide(long x, long y, int n)
 long multiply(long x, long y, int n)
 {
     register long l;
-    l = (long) (((float) x) * ((float) y)/(float) (1 << n));
+    l = (long)(((float) x) * ((float) y)/(float)(1 << n));
     if (l == 0x7fffffff)
     {
         overflow = 1;
@@ -341,7 +341,7 @@ long multiply(long x, long y, int n)
 ;       color which is reasonably bright and reasonably grey.
 */
 void
-find_special_colors (void)
+find_special_colors(void)
 {
     int maxb = 0;
     int minb = 9999;
@@ -420,8 +420,8 @@ static void fill_dta()
 {
     _snprintf(DTA.path, NUM_OF(DTA.path), "%s%s", s_find_base, s_find_data.cFileName);
     DTA.attribute = DTA_FLAG(FILE_ATTRIBUTE_DIRECTORY, SUBDIR) |
-        DTA_FLAG(FILE_ATTRIBUTE_SYSTEM, SYSTEM) |
-        DTA_FLAG(FILE_ATTRIBUTE_HIDDEN, HIDDEN);
+                    DTA_FLAG(FILE_ATTRIBUTE_SYSTEM, SYSTEM) |
+                    DTA_FLAG(FILE_ATTRIBUTE_HIDDEN, HIDDEN);
     strcpy(DTA.filename, s_find_data.cFileName);
 }
 #undef DTA_FLAG
@@ -518,7 +518,7 @@ void spindac(int dir, int inc)
     {
         top = rotate_hi > colors ? colors - 1 : rotate_hi;
         dacbot = (unsigned char *) g_dac_box + 3 * rotate_lo;
-        len = (top - rotate_lo) * 3 * sizeof (unsigned char);
+        len = (top - rotate_lo) * 3 * sizeof(unsigned char);
         if (dir > 0)
         {
             for (i = 0; i < inc; i++)
@@ -668,11 +668,11 @@ void restart_uclock(void)
 typedef unsigned long uclock_t;
 uclock_t usec_clock(void)
 {
-   uclock_t result = 0;
-   /* TODO */
-   _ASSERTE(FALSE);
+    uclock_t result = 0;
+    /* TODO */
+    _ASSERTE(FALSE);
 
-   return result;
+    return result;
 }
 
 /*
@@ -717,9 +717,9 @@ unsigned long get_disk_space(void)
 }
 
 typedef BOOL MiniDumpWriteDumpProc(HANDLE process, DWORD pid, HANDLE file, MINIDUMP_TYPE dumpType,
-                           PMINIDUMP_EXCEPTION_INFORMATION exceptions,
-                           PMINIDUMP_USER_STREAM_INFORMATION user,
-                           PMINIDUMP_CALLBACK_INFORMATION callback);
+                                   PMINIDUMP_EXCEPTION_INFORMATION exceptions,
+                                   PMINIDUMP_USER_STREAM_INFORMATION user,
+                                   PMINIDUMP_CALLBACK_INFORMATION callback);
 
 static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 {
@@ -739,7 +739,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
     if (debughlp == NULL)
     {
         MessageBox(NULL, "An unexpected error occurred.  FractInt will now exit.",
-            "FractInt: Unexpected Error", MB_OK);
+                   "FractInt: Unexpected Error", MB_OK);
         return;
     }
     dumper = (MiniDumpWriteDumpProc *) GetProcAddress(debughlp, "MiniDumpWriteDump");
@@ -749,11 +749,11 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
         sprintf(minidump, "fractint-%d.dmp", i++);
     }
     dump_file = CreateFile(minidump, GENERIC_READ | GENERIC_WRITE,
-        0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+                           0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     _ASSERTE(dump_file != INVALID_HANDLE_VALUE);
 
     status = (*dumper)(GetCurrentProcess(), GetCurrentProcessId(),
-        dump_file, MiniDumpNormal, &mdei, NULL, NULL);
+                       dump_file, MiniDumpNormal, &mdei, NULL, NULL);
     _ASSERTE(status);
     if (!status)
     {
@@ -773,7 +773,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
     {
         char msg[MAX_PATH*2];
         sprintf(msg, "Unexpected error, crash dump saved to %s.\n"
-            "Please include this file with your bug report.", minidump);
+                "Please include this file with your bug report.", minidump);
         MessageBox(NULL, msg, "FractInt: Unexpected Error", MB_OK);
     }
 }

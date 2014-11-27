@@ -17,12 +17,12 @@ struct MP {
 };
 #else
 struct MP {
-   double val;
+    double val;
 };
 #endif
 
 struct MPC {
-        struct MP x, y;
+    struct MP x, y;
 };
 
 extern int MPOverflow;
@@ -33,13 +33,13 @@ extern int DivideOverflow;
    the operation results in an overflow (result < 2**(2**14), or division
    by zero) the global 'MPoverflow' is set to one. */
 
-extern int         (*pMPcmp)(struct MP , struct MP );
-extern struct MP  *(*pMPmul)(struct MP , struct MP );
-extern struct MP  *(*pMPdiv)(struct MP , struct MP );
-extern struct MP  *(*pMPadd)(struct MP , struct MP );
-extern struct MP  *(*pMPsub)(struct MP , struct MP );
-extern struct MP  *(*pd2MP)(double )                ;
-extern double     *(*pMP2d)(struct MP )             ;
+extern int (*pMPcmp)(struct MP , struct MP);
+extern struct MP  *(*pMPmul)(struct MP , struct MP);
+extern struct MP  *(*pMPdiv)(struct MP , struct MP);
+extern struct MP  *(*pMPadd)(struct MP , struct MP);
+extern struct MP  *(*pMPsub)(struct MP , struct MP);
+extern struct MP  *(*pd2MP)(double)                ;
+extern double     *(*pMP2d)(struct MP)             ;
 
 
 /*** Formula Declarations ***/
@@ -65,18 +65,18 @@ extern enum MATH_TYPE MathType;
 /* changeing declarations to _CMPLX and _LCMPLX restores the code */
 /* to 2D */
 union Arg {
-   _CMPLX     d;
-   struct MPC m;
-   _LCMPLX    l;
-/*
-   _DHCMPLX   dh;
-   _LHCMPLX   lh; */
+    _CMPLX     d;
+    struct MPC m;
+    _LCMPLX    l;
+    /*
+       _DHCMPLX   dh;
+       _LHCMPLX   lh; */
 };
 
 struct ConstArg {
-   char *s;
-   int len;
-   union Arg a;
+    char *s;
+    int len;
+    union Arg a;
 };
 
 extern union Arg *Arg1,*Arg2;

@@ -117,62 +117,108 @@ int scale_map[12] = {1,2,3,4,5,6,7,8,9,10,11,12}; /*RB, array for mapping notes 
 
 void rotate(int x) {}
 void find_special_colors(void) {}
-int spawnl(int dummy1, char *dummy2, char *dummy3) {return 0;}
-int showtempmsg(char *foo) {return 1;}
+int spawnl(int dummy1, char *dummy2, char *dummy3) {
+    return 0;
+}
+int showtempmsg(char *foo) {
+    return 1;
+}
 void cleartempmsg(void) {}
 void freetempmsg(void) {}
-int FromMemDisk(long offset, int size, void *src) {return 0;}
-int ToMemDisk(long offset, int size, void *src) {return 0;}
-int  common_startdisk(long newrowsize, long newcolsize, int colors) {return 0;}
-long cdecl normalize(char *foo) {return 0;}
+int FromMemDisk(long offset, int size, void *src) {
+    return 0;
+}
+int ToMemDisk(long offset, int size, void *src) {
+    return 0;
+}
+int  common_startdisk(long newrowsize, long newcolsize, int colors) {
+    return 0;
+}
+long cdecl normalize(char *foo) {
+    return 0;
+}
 void drawbox(int foo) {}
 
 void farmessage(unsigned char *foo) {}
 void setvideomode(int foo1, int foo2, int foo3, int foo4) {}
-int fromvideotable(void) {return 0;}
+int fromvideotable(void) {
+    return 0;
+}
 void home(void) {}
 
-int intro_overlay(void) {return 0;}
-int rotate_overlay(void) {return 0;}
-int printer_overlay(void) {return 0;}
-int pot_startdisk(void) {return 0;}
+int intro_overlay(void) {
+    return 0;
+}
+int rotate_overlay(void) {
+    return 0;
+}
+int printer_overlay(void) {
+    return 0;
+}
+int pot_startdisk(void) {
+    return 0;
+}
 //void SetTgaColors(void) {}
-int startdisk(void) {return 0;}
+int startdisk(void) {
+    return 0;
+}
 void enddisk(void) {}
-int readdisk(unsigned int foo1,unsigned int foo2) {return 0;}
+int readdisk(unsigned int foo1,unsigned int foo2) {
+    return 0;
+}
 void writedisk(unsigned int foo1,unsigned int foo2,unsigned int foo3) {}
-int targa_startdisk(FILE *foo1,int foo2){return 0;}
-void targa_writedisk(unsigned int foo1,unsigned int foo2,BYTE foo3,BYTE foo4,BYTE foo5){}
-void targa_readdisk(unsigned int foo1,unsigned int foo2,BYTE *foo3,BYTE *foo4,BYTE *foo5){}
-BYTE *findfont(int foo1) {return(0);}
-long cdecl readticker(void){return(0);}
-void EndTGA(void){}
+int targa_startdisk(FILE *foo1,int foo2) {
+    return 0;
+}
+void targa_writedisk(unsigned int foo1,unsigned int foo2,BYTE foo3,BYTE foo4,BYTE foo5) {}
+void targa_readdisk(unsigned int foo1,unsigned int foo2,BYTE *foo3,BYTE *foo4,BYTE *foo5) {}
+BYTE *findfont(int foo1) {
+    return (0);
+}
+long cdecl readticker(void) {
+    return (0);
+}
+void EndTGA(void) {}
 
-int key_count(int keynum) {return 0;}
+int key_count(int keynum) {
+    return 0;
+}
 
 void dispbox(void) {}
 void clearbox(void) {}
 void _fastcall addbox(struct coords point) {}
 void _fastcall drawlines(struct coords fr, struct coords to, int dx, int dy) {}
-int showvidlength(void) {return 0;}
+int showvidlength(void) {
+    return 0;
+}
 
 /* sound.c file prototypes */
-int get_sound_params(void) {return(0);}
+int get_sound_params(void) {
+    return (0);
+}
 
-int soundon(int i) {return(0);}
+int soundon(int i) {
+    return (0);
+}
 
 void soundoff(void) {}
 
-int initfm(void) {return(0);}
+int initfm(void) {
+    return (0);
+}
 
 void mute(void) {}
 
-void dvid_status(int foo1, char *foo2){}
-int tovideotable(void){return 0;}
+void dvid_status(int foo1, char *foo2) {}
+int tovideotable(void) {
+    return 0;
+}
 
-void TranspPerPixel(void){}
+void TranspPerPixel(void) {}
 
 void stopslideshow(void) {}
 void aspectratio_crop(float foo1, float foo2) {}
 void setvideotext(void) {}
-int load_fractint_cfg(int foo1) {return 0;}
+int load_fractint_cfg(int foo1) {
+    return 0;
+}

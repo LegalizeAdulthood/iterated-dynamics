@@ -97,7 +97,7 @@ extern int  out_line(BYTE *, int);
 extern int  getcolor(int, int);
 extern void setvideomode(int, int, int, int);
 extern void putstring(int,int,int,char far *);
-extern BYTE *findfont (int);
+extern BYTE *findfont(int);
 
 #endif
 

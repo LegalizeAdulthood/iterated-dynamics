@@ -4,7 +4,7 @@
     By Tim Wegner and Marc Reinig.
 */
 
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -37,9 +37,9 @@ int blue_bright     = 100;
 BYTE T_RED;
 
 /* Bresenham's algorithm for drawing line */
-void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
+void cdecl draw_line(int X1, int Y1, int X2, int Y2, int color)
 
-{               /* uses Bresenham algorithm to draw a line */
+{   /* uses Bresenham algorithm to draw a line */
     int dX, dY;                     /* vector components */
     int row, col,
         final,                      /* final row or column number */
@@ -52,8 +52,8 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
     dY = Y2 - Y1;
     pos_slope = (char)(dX > 0);                   /* is slope positive? */
     if (dY < 0)
-    pos_slope = (char)!pos_slope;
-    if (abs (dX) > abs (dY))                /* shallow line case */
+        pos_slope = (char)!pos_slope;
+    if (abs(dX) > abs(dY))                  /* shallow line case */
     {
         if (dX > 0)         /* determine start point and last column */
         {
@@ -67,13 +67,13 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
             row = Y2;
             final = X1;
         }
-        inc1 = 2 * abs (dY);            /* determine increments and initial G */
-        G = inc1 - abs (dX);
-        inc2 = 2 * (abs (dY) - abs (dX));
+        inc1 = 2 * abs(dY);             /* determine increments and initial G */
+        G = inc1 - abs(dX);
+        inc2 = 2 * (abs(dY) - abs(dX));
         if (pos_slope)
             while (col <= final)    /* step through columns checking for new row */
             {
-                (*plot) (col, row, color);
+                (*plot)(col, row, color);
                 col++;
                 if (G >= 0)             /* it's time to change rows */
                 {
@@ -86,7 +86,7 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
         else
             while (col <= final)    /* step through columns checking for new row */
             {
-                (*plot) (col, row, color);
+                (*plot)(col, row, color);
                 col++;
                 if (G > 0)              /* it's time to change rows */
                 {
@@ -111,13 +111,13 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
             row = Y2;
             final = Y1;
         }
-        inc1 = 2 * abs (dX);            /* determine increments and initial G */
-        G = inc1 - abs (dY);
-        inc2 = 2 * (abs (dX) - abs (dY));
+        inc1 = 2 * abs(dX);             /* determine increments and initial G */
+        G = inc1 - abs(dY);
+        inc2 = 2 * (abs(dX) - abs(dY));
         if (pos_slope)
             while (row <= final)    /* step through rows checking for new column */
             {
-                (*plot) (col, row, color);
+                (*plot)(col, row, color);
                 row++;
                 if (G >= 0)                 /* it's time to change columns */
                 {
@@ -130,7 +130,7 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
         else
             while (row <= final)    /* step through rows checking for new column */
             {
-                (*plot) (col, row, color);
+                (*plot)(col, row, color);
                 row++;
                 if (G > 0)                  /* it's time to change columns */
                 {
@@ -222,9 +222,9 @@ void _fastcall plot3dsuperimpose256(int x,int y,int color)
     {
         color = colors - color; /*  Reverses color order */
         if (max_colors == 236)
-        color = 1 + color / 21; /*  Maps colors 1-255 to 13 even ranges */
+            color = 1 + color / 21; /*  Maps colors 1-255 to 13 even ranges */
         else
-        color = 1 + color / 18; /*  Maps colors 1-255 to 15 even ranges */
+            color = 1 + color / 18; /*  Maps colors 1-255 to 15 even ranges */
     }
 
     tmp = getcolor(x,y);
@@ -239,7 +239,7 @@ void _fastcall plot3dsuperimpose256(int x,int y,int color)
                 if (!ILLUMINE)
                     targa_color(x, y, color|(tmp&240));
                 else
-                    targa_writedisk (x+sxoffs, y+syoffs, t_c, 0, 0);
+                    targa_writedisk(x+sxoffs, y+syoffs, t_c, 0, 0);
             }
         }
     }
@@ -254,8 +254,8 @@ void _fastcall plot3dsuperimpose256(int x,int y,int color)
                     targa_color(x, y, color|(tmp&15));
                 else
                 {
-                    targa_readdisk (x+sxoffs, y+syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
-                    targa_writedisk (x+sxoffs, y+syoffs, T_RED, 0, t_c);
+                    targa_readdisk(x+sxoffs, y+syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
+                    targa_writedisk(x+sxoffs, y+syoffs, T_RED, 0, t_c);
                 }
             }
         }
@@ -273,9 +273,9 @@ void _fastcall plotIFS3dsuperimpose256(int x,int y,int color)
         /* my mind is fried - lower indices = darker colors is EASIER! */
         color = colors - color; /*  Reverses color order */
         if (max_colors == 236)
-        color = 1 + color / 21; /*  Maps colors 1-255 to 13 even ranges */
+            color = 1 + color / 21; /*  Maps colors 1-255 to 13 even ranges */
         else
-        color = 1 + color / 18; /*  Looks weird but maps colors 1-255 to 15
+            color = 1 + color / 18; /*  Looks weird but maps colors 1-255 to 15
                     relatively even ranges */
     }
 
@@ -290,8 +290,8 @@ void _fastcall plotIFS3dsuperimpose256(int x,int y,int color)
                 if (!ILLUMINE)
                     targa_color(x, y, color|tmp);
                 else
-                    targa_writedisk (x+sxoffs, y+syoffs, t_c, 0, 0);
-             }
+                    targa_writedisk(x+sxoffs, y+syoffs, t_c, 0, 0);
+            }
         }
     }
     else if (g_which_image == 2) /* BLUE */
@@ -304,8 +304,8 @@ void _fastcall plotIFS3dsuperimpose256(int x,int y,int color)
                     targa_color(x, y, color|tmp);
                 else
                 {
-                    targa_readdisk (x+sxoffs, y+syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
-                    targa_writedisk (x+sxoffs, y+syoffs, T_RED, 0, t_c);
+                    targa_readdisk(x+sxoffs, y+syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
+                    targa_writedisk(x+sxoffs, y+syoffs, T_RED, 0, t_c);
                 }
             }
         }
@@ -330,11 +330,11 @@ void _fastcall plot3dalternate(int x,int y,int color)
                 if (!ILLUMINE)
                     targa_color(x, y, color>>1);
                 else
-                    targa_writedisk (x+sxoffs, y+syoffs, t_c, 0, 0);
+                    targa_writedisk(x+sxoffs, y+syoffs, t_c, 0, 0);
             }
         }
     }
-    else if ((g_which_image == 2) && ((x+y)&1) ) /* - upper half palette */
+    else if ((g_which_image == 2) && ((x+y)&1))  /* - upper half palette */
     {
         if (blue_local_left < x && x < blue_local_right)
         {
@@ -343,7 +343,7 @@ void _fastcall plot3dalternate(int x,int y,int color)
                 if (!ILLUMINE)
                     targa_color(x, y, (color>>1)+(colors>>1));
                 else
-                    targa_writedisk (x+sxoffs, y+syoffs, T_RED, 0, t_c);
+                    targa_writedisk(x+sxoffs, y+syoffs, T_RED, 0, t_c);
             }
         }
     }
@@ -351,33 +351,33 @@ void _fastcall plot3dalternate(int x,int y,int color)
 
 void _fastcall plot3dcrosseyedA(int x,int y,int color)
 {
-   x /= 2;
-   y /= 2;
-   if (g_which_image == 2)
-      x += xdots/2;
-   if (g_row_count >= ydots/2)
-      /* hidden surface kludge */
-      if (getcolor(x,y) != 0)
-         return;
-   putcolor(x,y,color);
+    x /= 2;
+    y /= 2;
+    if (g_which_image == 2)
+        x += xdots/2;
+    if (g_row_count >= ydots/2)
+        /* hidden surface kludge */
+        if (getcolor(x,y) != 0)
+            return;
+    putcolor(x,y,color);
 }
 
 void _fastcall plot3dcrosseyedB(int x,int y,int color)
 {
-   x /= 2;
-   y /= 2;
-   if (g_which_image == 2)
-      x += xdots/2;
-   putcolor(x,y,color);
+    x /= 2;
+    y /= 2;
+    if (g_which_image == 2)
+        x += xdots/2;
+    putcolor(x,y,color);
 }
 
 void _fastcall plot3dcrosseyedC(int x,int y,int color)
 {
-   if (g_row_count >= ydots/2)
-      /* hidden surface kludge */
-      if (getcolor(x,y) != 0)
-         return;
-   putcolor(x,y,color);
+    if (g_row_count >= ydots/2)
+        /* hidden surface kludge */
+        if (getcolor(x,y) != 0)
+            return;
+    putcolor(x,y,color);
 }
 
 void plot_setup()
@@ -406,15 +406,15 @@ void plot_setup()
     case 4: /* crosseyed mode */
         if (sxdots < 2*xdots)
         {
-           if (XROT == 0 && YROT == 0)
-              standardplot = plot3dcrosseyedA; /* use hidden surface kludge */
-           else
-              standardplot = plot3dcrosseyedB;
+            if (XROT == 0 && YROT == 0)
+                standardplot = plot3dcrosseyedA; /* use hidden surface kludge */
+            else
+                standardplot = plot3dcrosseyedB;
         }
         else if (XROT == 0 && YROT == 0)
-           standardplot = plot3dcrosseyedC; /* use hidden surface kludge */
+            standardplot = plot3dcrosseyedC; /* use hidden surface kludge */
         else
-           standardplot = putcolor;
+            standardplot = putcolor;
         break;
 
     default:
@@ -427,12 +427,12 @@ void plot_setup()
 
     if (g_glasses_type)
     {
-        red_local_left  =   (int)((red_crop_left      * (double)xdots)/100.0);
-        red_local_right =   (int)(((100 - red_crop_right) * (double)xdots)/100.0);
-        blue_local_left =   (int)((blue_crop_left     * (double)xdots)/100.0);
-        blue_local_right =  (int)(((100 - blue_crop_right) * (double)xdots)/100.0);
-        d_red_bright    =   (double)red_bright/100.0;
-        d_blue_bright   =   (double)blue_bright/100.0;
+        red_local_left  = (int)((red_crop_left      * (double)xdots)/100.0);
+        red_local_right = (int)(((100 - red_crop_right) * (double)xdots)/100.0);
+        blue_local_left = (int)((blue_crop_left     * (double)xdots)/100.0);
+        blue_local_right = (int)(((100 - blue_crop_right) * (double)xdots)/100.0);
+        d_red_bright    = (double)red_bright/100.0;
+        d_blue_bright   = (double)blue_bright/100.0;
 
         switch (g_which_image)
         {
@@ -442,14 +442,14 @@ void plot_setup()
             xshift1 -= (int)((g_eye_separation* (double)xdots)/200);
             xxadjust1 = (int)(((xtrans-xadjust)* (double)xdots)/100);
             if (g_glasses_type == 4 && sxdots >= 2*xdots)
-               sxoffs = sxdots / 2 - xdots;
+                sxoffs = sxdots / 2 - xdots;
             break;
 
         case 2:
             xshift  -= (int)((g_eye_separation* (double)xdots)/200);
             xxadjust = (int)(((xtrans-xadjust)* (double)xdots)/100);
             if (g_glasses_type == 4 && sxdots >= 2*xdots)
-               sxoffs = sxdots / 2;
+                sxoffs = sxdots / 2;
             break;
         }
     }
@@ -476,7 +476,7 @@ void plot_setup()
                 g_dac_box[PAL_MAGENTA][1] =    0;
                 g_dac_box[PAL_MAGENTA][2] = 63;
             }
-            for (i=0;i<256;i++)
+            for (i=0; i<256; i++)
             {
                 g_dac_box[i][0] = (BYTE)(g_dac_box[i][0] * d_red_bright);
                 g_dac_box[i][2] = (BYTE)(g_dac_box[i][2] * d_blue_bright);

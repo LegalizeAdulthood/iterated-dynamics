@@ -86,8 +86,8 @@ extern unsigned int _dataseg_xx;
 
 /*      Default register values         */
 #define DEF_MODE 1                      /* Default mode register value */
-                                                                                                                        /*      Memory selected, 512x512, 1x */
-                                                                                                                        /*      Display mode */
+/*      Memory selected, 512x512, 1x */
+/*      Display mode */
 #define DEF_MASK        0               /* default memory mask */
 #define DEF_SATURATION  0x4             /* default saturation value */
 #define DEF_HUE         0x10            /* default hue value */
@@ -247,43 +247,43 @@ extern unsigned int _dataseg_xx;
 
 
 typedef struct {
-                        /*      Board Configuration */
-        int             memloc;         /* memory segment */
-        int             iobase;         /*  IOBASE segment */
-        int             BytesPerPixel;  /* number of words per pixel */
-        int             RowsPerBank;    /* number of row per 64K bank */
-        int             MaxBanks;       /*   maximum bank id */
-        int             AddressShift;   /*   number of bits to shift address */
+    /*      Board Configuration */
+    int             memloc;         /* memory segment */
+    int             iobase;         /*  IOBASE segment */
+    int             BytesPerPixel;  /* number of words per pixel */
+    int             RowsPerBank;    /* number of row per 64K bank */
+    int             MaxBanks;       /*   maximum bank id */
+    int             AddressShift;   /*   number of bits to shift address */
 
-                /*      Control registers */
-        int             mode;           /*  mode register */
-        int             Mask;           /*  mask register */
-        int             PageMode;       /*  current page mode (screen res. and page) */
-        unsigned        PageLower;      /*  Lower Page Select register */
-        unsigned        PageUpper;      /*  upper Page select register */
-        int             VCRCon;         /*  VCRContract register */
-        int             SatHue;         /* Hue and Saturation register */
-        long            BorderColor;    /*  Border color register */
-        int             VertShift;      /*  Vertical Pan Register */
-        int             PanXOrig, PanYOrig;     /* x,y pan origin */
+    /*      Control registers */
+    int             mode;           /*  mode register */
+    int             Mask;           /*  mask register */
+    int             PageMode;       /*  current page mode (screen res. and page) */
+    unsigned        PageLower;      /*  Lower Page Select register */
+    unsigned        PageUpper;      /*  upper Page select register */
+    int             VCRCon;         /*  VCRContract register */
+    int             SatHue;         /* Hue and Saturation register */
+    long            BorderColor;    /*  Border color register */
+    int             VertShift;      /*  Vertical Pan Register */
+    int             PanXOrig, PanYOrig;     /* x,y pan origin */
 
-                /* TARGA-SET PARAMETERS */
-        int     boardType;              /*  See TYPE_XX  IN THIS FILE */
-                /*  FOR DEFINITION OF Board Types */
-        int     xOffset;                /*  X-offset */
-        int     yOffset;                /*  Y-Offset */
-        int     LinesPerField;          /*  maximum visible row count */
-        int     InterlaceMode;          /*  desired interlace mode */
-        int     AlwaysGenLock;          /*  Genlock always on or not  */
-        int     Contrast;               /*  Desired Contrast */
-        int     Hue;                    /*  Desired Hue */
-        int     Saturation;             /*  Desired Satuation */
-        int     RGBorCV;                /*  CV or RGB Input */
-        int     VCRorCamera;            /*  VCR or Camera */
-        int     ovrscnAvail, ovrscnOn;  /*  ovrscnAvail  1  if Overscan installed */
-                                                                                                                        /*  ovrscnOn  1 if overscan is stretching */
-                /*      Display Registers */
-        int     DisplayRegister[22];
+    /* TARGA-SET PARAMETERS */
+    int     boardType;              /*  See TYPE_XX  IN THIS FILE */
+    /*  FOR DEFINITION OF Board Types */
+    int     xOffset;                /*  X-offset */
+    int     yOffset;                /*  Y-Offset */
+    int     LinesPerField;          /*  maximum visible row count */
+    int     InterlaceMode;          /*  desired interlace mode */
+    int     AlwaysGenLock;          /*  Genlock always on or not  */
+    int     Contrast;               /*  Desired Contrast */
+    int     Hue;                    /*  Desired Hue */
+    int     Saturation;             /*  Desired Satuation */
+    int     RGBorCV;                /*  CV or RGB Input */
+    int     VCRorCamera;            /*  VCR or Camera */
+    int     ovrscnAvail, ovrscnOn;  /*  ovrscnAvail  1  if Overscan installed */
+    /*  ovrscnOn  1 if overscan is stretching */
+    /*      Display Registers */
+    int     DisplayRegister[22];
 
 } TARStruct;
 
@@ -299,8 +299,8 @@ typedef struct {
 #               define  eq( val )
 #endif
 
-_x_ int tseg            eq(     TSEG );
-_x_ int tiobase eq(     TIOBASE );
+_x_ int tseg            eq(TSEG);
+_x_ int tiobase eq(TIOBASE);
 
 _x_ TARStruct           targa;
 

@@ -224,10 +224,10 @@ static void center_windows(GDIDriver *di, BOOL center_x, BOOL center_y)
     }
 
     status = SetWindowPos(di->plot.window, NULL,
-        plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+                          plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
     _ASSERTE(status);
     status = SetWindowPos(di->base.wintext.hWndCopy, NULL,
-        text_pos.x, text_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+                          text_pos.x, text_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
     _ASSERTE(status);
 }
 
@@ -267,7 +267,7 @@ gdi_get_max_screen(Driver *drv, int *xmax, int *ymax)
     GetClientRect(GetDesktopWindow(), &desktop);
     desktop.right -= GetSystemMetrics(SM_CXFRAME)*2;
     desktop.bottom -= GetSystemMetrics(SM_CYFRAME)*2
-        + GetSystemMetrics(SM_CYCAPTION) - 1;
+                      + GetSystemMetrics(SM_CYCAPTION) - 1;
 
     if (xmax != NULL)
     {
@@ -336,7 +336,7 @@ gdi_init(Driver *drv, int *argc, char **argv)
         for (m = 0; m < NUM_OF(modes); m++)
         {
             if ((modes[m].xdots <= width) &&
-                (modes[m].ydots <= height))
+                    (modes[m].ydots <= height))
             {
                 add_video_mode(drv, &modes[m]);
             }
@@ -360,9 +360,9 @@ gdi_resize(Driver *drv)
 
     max_size(di, &width, &height, &center_graphics_x, &center_graphics_y);
     if ((g_video_table[g_adapter].xdots == di->plot.width)
-        && (g_video_table[g_adapter].ydots == di->plot.height)
-        && (width == g_frame.width)
-        && (height == g_frame.height))
+            && (g_video_table[g_adapter].ydots == di->plot.height)
+            && (width == g_frame.width)
+            && (height == g_frame.height))
     {
         return 0;
     }
@@ -790,7 +790,7 @@ gdi_unstack_screen(Driver *drv)
     g_text_row = di->base.saved_cursor[di->base.screen_count] / 80;
     g_text_col = di->base.saved_cursor[di->base.screen_count] % 80;
     if (--di->base.screen_count >= 0)
-    { /* unstack */
+    {   /* unstack */
         _ASSERTE(di->text_not_graphics);
         wintext_screen_set(&di->base.wintext, di->base.saved_screens[di->base.screen_count]);
         free(di->base.saved_screens[di->base.screen_count]);
@@ -809,7 +809,7 @@ gdi_discard_screen(Driver *drv)
     DI(di);
 
     if (--di->base.screen_count >= 0)
-    { /* unstack */
+    {   /* unstack */
         _ASSERTE(di->text_not_graphics);
         if (di->base.saved_screens[di->base.screen_count])
         {
@@ -866,13 +866,13 @@ gdi_validate_mode(Driver *drv, VIDEOINFO *mode)
     /* allow modes <= size of screen with 256 colors and dotmode=19
        ax/bx/cx/dx must be zero. */
     return (mode->xdots <= width) &&
-        (mode->ydots <= height) &&
-        (mode->colors == 256) &&
-        (mode->videomodeax == 0) &&
-        (mode->videomodebx == 0) &&
-        (mode->videomodecx == 0) &&
-        (mode->videomodedx == 0) &&
-        (mode->dotmode == 19);
+           (mode->ydots <= height) &&
+           (mode->colors == 256) &&
+           (mode->videomodeax == 0) &&
+           (mode->videomodebx == 0) &&
+           (mode->videomodecx == 0) &&
+           (mode->videomodedx == 0) &&
+           (mode->dotmode == 19);
 }
 
 static void

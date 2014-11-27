@@ -13,8 +13,8 @@
 /* Constants */
 
 #define CONTVAL   0x34    /* == 00110100 Control byte for 8253 timer.   */
-                          /* Sets timer 0 to 2-byte read/write,         */
-                          /* mode 2, binary.                            */
+/* Sets timer 0 to 2-byte read/write,         */
+/* mode 2, binary.                            */
 #define T0DATA    0x40    /* Timer 0 data port address.                 */
 #define TMODE     0x43    /* Timer mode port address.                   */
 #define BIOS_DS   0x40    /* BIOS data segment.                         */
@@ -42,52 +42,52 @@ static int init = 0;
 
 uclock_t usec_clock(void)
 {
-      unsigned char msb, lsb;
-      unsigned int tim_ticks;
-      static uclock_t last, init_count;
-      static uclock_t *c_ptr;
-      uclock_t count, us_tmp;
+    unsigned char msb, lsb;
+    unsigned int tim_ticks;
+    static uclock_t last, init_count;
+    static uclock_t *c_ptr;
+    uclock_t count, us_tmp;
 
-      if (!init)
-      {
-            c_ptr = (uclock_t *)MK_FP(BIOS_DS, B_TIKP);
-            init  = 1;        /* First call, we have to set up timer.   */
-            int_off();
-            outp(TMODE, CONTVAL);   /* Write new control byte.          */
-            outp(T0DATA, 0);        /* Initial count = 65636.           */
-            outp(T0DATA, 0);
-            init_count = *c_ptr;
-            int_on();
-            return 0;               /* First call returns zero.         */
-      }
+    if (!init)
+    {
+        c_ptr = (uclock_t *)MK_FP(BIOS_DS, B_TIKP);
+        init  = 1;        /* First call, we have to set up timer.   */
+        int_off();
+        outp(TMODE, CONTVAL);   /* Write new control byte.          */
+        outp(T0DATA, 0);        /* Initial count = 65636.           */
+        outp(T0DATA, 0);
+        init_count = *c_ptr;
+        int_on();
+        return 0;               /* First call returns zero.         */
+    }
 
-      /* Read PIT channel 0 count - see text                            */
+    /* Read PIT channel 0 count - see text                            */
 
-      int_off();        /* Don't want an interrupt while getting time.  */
-      outp(TMODE, 0);                           /* Latch count.         */
-      lsb = (unsigned char)inp(T0DATA);         /* Read count.          */
-      msb = (unsigned char)inp(T0DATA);
+    int_off();        /* Don't want an interrupt while getting time.  */
+    outp(TMODE, 0);                           /* Latch count.         */
+    lsb = (unsigned char)inp(T0DATA);         /* Read count.          */
+    msb = (unsigned char)inp(T0DATA);
 
-      /* Get BIOS tick count (read BIOS ram directly for speed and
-         to avoid turning on interrupts).                               */
+    /* Get BIOS tick count (read BIOS ram directly for speed and
+       to avoid turning on interrupts).                               */
 
-      count =  *c_ptr;
-      int_on();                     /* Interrupts back on.              */
-      if ((-1) == init)             /* Restart count                    */
-      {
-            init_count = count;
-            init = 1;
-      }
+    count =  *c_ptr;
+    int_on();                     /* Interrupts back on.              */
+    if ((-1) == init)             /* Restart count                    */
+    {
+        init_count = count;
+        init = 1;
+    }
 
-      /* Merge PIT channel 0 count with BIOS tick count                 */
+    /* Merge PIT channel 0 count with BIOS tick count                 */
 
-      if (count < init_count)
-            count += last;
-      else  last = count;
-      count -= init_count;
-      tim_ticks = (unsigned)(-1) - ((msb << 8) | lsb);
-      us_tmp    = count * us_BTIK;
-      return (us_tmp + ((long)tim_ticks * us_TTIK + us_tmp % SCALE) / SCALE);
+    if (count < init_count)
+        count += last;
+    else  last = count;
+    count -= init_count;
+    tim_ticks = (unsigned)(-1) - ((msb << 8) | lsb);
+    us_tmp    = count * us_BTIK;
+    return (us_tmp + ((long)tim_ticks * us_TTIK + us_tmp % SCALE) / SCALE);
 }
 
 /*
@@ -101,6 +101,6 @@ uclock_t usec_clock(void)
 
 void restart_uclock(void)
 {
-      if (init)
-            init = -1;
+    if (init)
+        init = -1;
 }

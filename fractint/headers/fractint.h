@@ -137,37 +137,37 @@ names. So for now humor us and let's keep the names short.
 typedef struct tagDriver Driver;
 
 struct videoinfo {              /* All we need to know about a Video Adapter */
-        char    name[26];       /* Adapter name (IBM EGA, etc)          */
-        char    comment[26];    /* Comments (UNTESTED, etc)             */
-        int     keynum;         /* key number used to invoked this mode */
-                                /* 2-10 = F2-10, 11-40 = S,C,A{F1-F10}  */
-        int     videomodeax;    /* begin with INT 10H, AX=(this)        */
-        int     videomodebx;    /*              ...and BX=(this)        */
-        int     videomodecx;    /*              ...and CX=(this)        */
-        int     videomodedx;    /*              ...and DX=(this)        */
-                                /* NOTE:  IF AX==BX==CX==0, SEE BELOW   */
-        int     dotmode;        /* video access method used by asm code */
-                                /*      1 == BIOS 10H, AH=12,13 (SLOW)  */
-                                /*      2 == access like EGA/VGA        */
-                                /*      3 == access like MCGA           */
-                                /*      4 == Tseng-like  SuperVGA*256   */
-                                /*      5 == P'dise-like SuperVGA*256   */
-                                /*      6 == Vega-like   SuperVGA*256   */
-                                /*      7 == "Tweaked" IBM-VGA ...*256  */
-                                /*      8 == "Tweaked" SuperVGA ...*256 */
-                                /*      9 == Targa Format               */
-                                /*      10 = Hercules                   */
-                                /*      11 = "disk video" (no screen)   */
-                                /*      12 = 8514/A                     */
-                                /*      13 = CGA 320x200x4, 640x200x2   */
-                                /*      14 = Tandy 1000                 */
-                                /*      15 = TRIDENT  SuperVGA*256      */
-                                /*      16 = Chips&Tech SuperVGA*256    */
-        int     xdots;          /* number of dots across the screen     */
-        int     ydots;          /* number of dots down the screen       */
-        int     colors;         /* number of colors available           */
-        Driver *driver;
-        };
+    char    name[26];       /* Adapter name (IBM EGA, etc)          */
+    char    comment[26];    /* Comments (UNTESTED, etc)             */
+    int     keynum;         /* key number used to invoked this mode */
+    /* 2-10 = F2-10, 11-40 = S,C,A{F1-F10}  */
+    int     videomodeax;    /* begin with INT 10H, AX=(this)        */
+    int     videomodebx;    /*              ...and BX=(this)        */
+    int     videomodecx;    /*              ...and CX=(this)        */
+    int     videomodedx;    /*              ...and DX=(this)        */
+    /* NOTE:  IF AX==BX==CX==0, SEE BELOW   */
+    int     dotmode;        /* video access method used by asm code */
+    /*      1 == BIOS 10H, AH=12,13 (SLOW)  */
+    /*      2 == access like EGA/VGA        */
+    /*      3 == access like MCGA           */
+    /*      4 == Tseng-like  SuperVGA*256   */
+    /*      5 == P'dise-like SuperVGA*256   */
+    /*      6 == Vega-like   SuperVGA*256   */
+    /*      7 == "Tweaked" IBM-VGA ...*256  */
+    /*      8 == "Tweaked" SuperVGA ...*256 */
+    /*      9 == Targa Format               */
+    /*      10 = Hercules                   */
+    /*      11 = "disk video" (no screen)   */
+    /*      12 = 8514/A                     */
+    /*      13 = CGA 320x200x4, 640x200x2   */
+    /*      14 = Tandy 1000                 */
+    /*      15 = TRIDENT  SuperVGA*256      */
+    /*      16 = Chips&Tech SuperVGA*256    */
+    int     xdots;          /* number of dots across the screen     */
+    int     ydots;          /* number of dots down the screen       */
+    int     colors;         /* number of colors available           */
+    Driver *driver;
+};
 
 typedef struct videoinfo VIDEOINFO;
 #define INFO_ID         "Fractal"
@@ -186,7 +186,7 @@ typedef    struct fractal_info FRACTAL_INFO;
 #endif
 
 #define FRACTAL_INFO_VERSION 17  /* file version, independent of system */
-   /* increment this EVERY time the fractal_info structure changes */
+/* increment this EVERY time the fractal_info structure changes */
 
 /* TODO: instead of hacking the padding here, adjust the code that reads
    this structure */
@@ -224,7 +224,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     float invert[3];
     short decomp[2];
     short symmetry;
-                        /* version 2 stuff */
+    /* version 2 stuff */
     short init3d[16];
     short previewfactor;
     short xtrans;
@@ -238,9 +238,9 @@ struct fractal_info         /*  for saving data in GIF file     */
     short xadjust;
     short eyeseparation;
     short glassestype;
-                        /* version 3 stuff, release 13 */
+    /* version 3 stuff, release 13 */
     short outside;
-                        /* version 4 stuff, release 14 */
+    /* version 4 stuff, release 14 */
     double x3rd;          /* 3rd corner */
     double y3rd;
     char stdcalcmode;     /* 1/2/g/b */
@@ -255,7 +255,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     short finattract;
     double initorbit[2];  /* init Mandelbrot orbit values */
     short periodicity;    /* periodicity checking */
-                        /* version 5 stuff, release 15 */
+    /* version 5 stuff, release 15 */
     short pot16bit;       /* save 16 bit continuous potential info */
     float faspectratio;   /* finalaspectratio, y/x */
     short system;         /* 0 for dos, 1 for windows */
@@ -265,16 +265,16 @@ struct fractal_info         /*  for saving data in GIF file     */
     short ambient;
     short haze;
     short randomize;
-                        /* version 6 stuff, release 15.x */
+    /* version 6 stuff, release 15.x */
     short rotate_lo;
     short rotate_hi;
     short distestwidth;
-                        /* version 7 stuff, release 16 */
+    /* version 7 stuff, release 16 */
     double dparm3;
     double dparm4;
-                        /* version 8 stuff, release 17 */
+    /* version 8 stuff, release 17 */
     short fillcolor;
-                        /* version 9 stuff, release 18 */
+    /* version 9 stuff, release 18 */
     double mxmaxfp;
     double mxminfp;
     double mymaxfp;
@@ -296,7 +296,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     double dparm8;
     double dparm9;
     double dparm10;
-                        /* version 10 stuff, release 19 */
+    /* version 10 stuff, release 19 */
     long bailout;
     short bailoutest;
     long iterations;
@@ -446,9 +446,9 @@ struct formula_info         /*  for saving formula data in GIF file     */
 
 enum stored_at_values
 {
-   NOWHERE,
-   MEMORY,
-   DISK
+    NOWHERE,
+    MEMORY,
+    DISK
 };
 
 #define NUMGENES 21
@@ -469,25 +469,25 @@ typedef    struct evolution_info EVOLUTION_INFO;
 
 struct evolution_info      /* for saving evolution data in a GIF file */
 {
-   short evolving;
-   short gridsz;
-   unsigned short this_gen_rseed;
-   double fiddlefactor;
-   double paramrangex;
-   double paramrangey;
-   double opx;
-   double opy;
-   short odpx;
-   short odpy;
-   short px;
-   short py;
-   short sxoffs;
-   short syoffs;
-   short xdots;
-   short ydots;
-   short mutate[NUMGENES];
-   short ecount; /* count of how many images have been calc'ed so far */
-   short future[68 - NUMGENES];      /* total of 200 bytes */
+    short evolving;
+    short gridsz;
+    unsigned short this_gen_rseed;
+    double fiddlefactor;
+    double paramrangex;
+    double paramrangey;
+    double opx;
+    double opy;
+    short odpx;
+    short odpy;
+    short px;
+    short py;
+    short sxoffs;
+    short syoffs;
+    short xdots;
+    short ydots;
+    short mutate[NUMGENES];
+    short ecount; /* count of how many images have been calc'ed so far */
+    short future[68 - NUMGENES];      /* total of 200 bytes */
 };
 
 
@@ -507,16 +507,16 @@ typedef    struct orbits_info ORBITS_INFO;
 
 struct orbits_info      /* for saving orbits data in a GIF file */
 {
-   double oxmin;
-   double oxmax;
-   double oymin;
-   double oymax;
-   double ox3rd;
-   double oy3rd;
-   short keep_scrn_coords;
-   char drawmode;
-   char dummy; /* need an even number of bytes */
-   short future[74];      /* total of 200 bytes */
+    double oxmin;
+    double oxmax;
+    double oymin;
+    double oymax;
+    double ox3rd;
+    double oy3rd;
+    short keep_scrn_coords;
+    char drawmode;
+    char dummy; /* need an even number of bytes */
+    short future[74];      /* total of 200 bytes */
 };
 
 #define MAXVIDEOMODES 300       /* maximum entries in fractint.cfg        */
@@ -535,31 +535,31 @@ extern  double   f_at_rad;      /* finite attractor radius  */
 
 struct moreparams
 {
-   int      type;                       /* index in fractalname of the fractal */
-   char     *param[MAXPARAMS-4];    /* name of the parameters */
-   double   paramvalue[MAXPARAMS-4];    /* default parameter values */
+    int      type;                       /* index in fractalname of the fractal */
+    char     *param[MAXPARAMS-4];    /* name of the parameters */
+    double   paramvalue[MAXPARAMS-4];    /* default parameter values */
 };
 
 typedef struct moreparams MOREPARAMS;
 
 struct fractalspecificstuff
 {
-   char  *name;                         /* name of the fractal */
-                                        /* (leading "*" supresses name display) */
-   char  *param[4];                 /* name of the parameters */
-   double paramvalue[4];                /* default parameter values */
-   int   helptext;                      /* helpdefs.h HT_xxxx, -1 for none */
-   int   helpformula;                   /* helpdefs.h HF_xxxx, -1 for none */
-   unsigned flags;                      /* constraints, bits defined below */
-   float xmin;                          /* default XMIN corner */
-   float xmax;                          /* default XMAX corner */
-   float ymin;                          /* default YMIN corner */
-   float ymax;                          /* default YMAX corner */
-   int   isinteger;                     /* 1 if integerfractal, 0 otherwise */
-   int   tojulia;                       /* mandel-to-julia switch */
-   int   tomandel;                      /* julia-to-mandel switch */
-   int   tofloat;                       /* integer-to-floating switch */
-   int   symmetry;                      /* applicable symmetry logic
+    char  *name;                         /* name of the fractal */
+    /* (leading "*" supresses name display) */
+    char  *param[4];                 /* name of the parameters */
+    double paramvalue[4];                /* default parameter values */
+    int   helptext;                      /* helpdefs.h HT_xxxx, -1 for none */
+    int   helpformula;                   /* helpdefs.h HF_xxxx, -1 for none */
+    unsigned flags;                      /* constraints, bits defined below */
+    float xmin;                          /* default XMIN corner */
+    float xmax;                          /* default XMAX corner */
+    float ymin;                          /* default YMIN corner */
+    float ymax;                          /* default YMAX corner */
+    int   isinteger;                     /* 1 if integerfractal, 0 otherwise */
+    int   tojulia;                       /* mandel-to-julia switch */
+    int   tomandel;                      /* julia-to-mandel switch */
+    int   tofloat;                       /* integer-to-floating switch */
+    int   symmetry;                      /* applicable symmetry logic
                                            0 = no symmetry
                                           -1 = y-axis symmetry (If No Params)
                                            1 = y-axis symmetry
@@ -573,27 +573,27 @@ struct fractalspecificstuff
                                            6 = NEWTON (power) symmetry
                                                                 */
 #ifdef XFRACT
-   int (*orbitcalc)();  /* function that calculates one orbit */
+    int (*orbitcalc)();  /* function that calculates one orbit */
 #else
-   int (*orbitcalc)(void);      /* function that calculates one orbit */
+    int (*orbitcalc)(void);      /* function that calculates one orbit */
 #endif
-   int (*per_pixel)(void);      /* once-per-pixel init */
-   int (*per_image)(void);      /* once-per-image setup */
-   int (*calctype)(void);       /* name of main fractal function */
-   int orbit_bailout;           /* usual bailout value for orbit calc */
+    int (*per_pixel)(void);      /* once-per-pixel init */
+    int (*per_image)(void);      /* once-per-image setup */
+    int (*calctype)(void);       /* name of main fractal function */
+    int orbit_bailout;           /* usual bailout value for orbit calc */
 };
 
 struct alternatemathstuff
 {
-   int type;                    /* index in fractalname of the fractal */
-   int math;                    /* kind of math used */
+    int type;                    /* index in fractalname of the fractal */
+    int math;                    /* kind of math used */
 #ifdef XFRACT
-   int (*orbitcalc)();  /* function that calculates one orbit */
+    int (*orbitcalc)();  /* function that calculates one orbit */
 #else
-   int (*orbitcalc)(void);      /* function that calculates one orbit */
+    int (*orbitcalc)(void);      /* function that calculates one orbit */
 #endif
-   int (*per_pixel)(void);      /* once-per-pixel init */
-   int (*per_image)(void);      /* once-per-image setup */
+    int (*per_pixel)(void);      /* once-per-pixel init */
+    int (*per_image)(void);      /* once-per-image setup */
 };
 
 typedef struct alternatemathstuff AlternateMath;
@@ -816,14 +816,14 @@ is not in the data structure */
 
 struct workliststuff    /* work list entry for std escape time engines */
 {
-        int xxstart;    /* screen window for this entry */
-        int xxstop;
-        int yystart;
-        int yystop;
-        int yybegin;    /* start row within window, for 2pass/ssg resume */
-        int sym;        /* if symmetry in window, prevents bad combines */
-        int pass;       /* for 2pass and solid guessing */
-        int xxbegin;    /* start col within window, =0 except on resume */
+    int xxstart;    /* screen window for this entry */
+    int xxstop;
+    int yystart;
+    int yystop;
+    int yybegin;    /* start row within window, for 2pass/ssg resume */
+    int sym;        /* if symmetry in window, prevents bad combines */
+    int pass;       /* for 2pass and solid guessing */
+    int xxbegin;    /* start col within window, =0 except on resume */
 };
 
 typedef struct workliststuff        WORKLIST;
@@ -833,11 +833,11 @@ typedef struct workliststuff        WORKLIST;
 
 struct coords {
     int x,y;
-    };
+};
 
 struct dblcoords {
     double x,y;
-    };
+};
 
 extern BYTE trigndx[];
 extern void (*ltrig0)(void), (*ltrig1)(void), (*ltrig2)(void), (*ltrig3)(void);
@@ -854,7 +854,7 @@ extern struct trig_funct_lst trigfn[];
 
 /* function prototypes */
 
-extern  void   (_fastcall *plot)(int, int, int);
+extern  void (_fastcall *plot)(int, int, int);
 
 /* for overlay return stack */
 
@@ -1002,37 +1002,37 @@ extern BYTE txtcolor[];
 
 /* structure for xmmmoveextended parameter */
 struct XMM_Move
-  {
+{
     unsigned long   Length;
     unsigned int    SourceHandle;
     unsigned long   SourceOffset;
     unsigned int    DestHandle;
     unsigned long   DestOffset;
-  };
+};
 
 /* structure passed to fullscreen_prompts */
 struct fullscreenvalues
 {
-   int type;   /* 'd' for double, 'f' for float, 's' for string,   */
-               /* 'D' for integer in double, '*' for comment */
-               /* 'i' for integer, 'y' for yes=1 no=0              */
-               /* 0x100+n for string of length n                   */
-               /* 'l' for one of a list of strings                 */
-               /* 'L' for long */
-   union
-   {
-      double dval;      /* when type 'd' or 'f'  */
-      int    ival;      /* when type is 'i'      */
-      long   Lval;      /* when type is 'L'      */
-      char   sval[16];  /* when type is 's'      */
-      char  *sbuf;  /* when type is 0x100+n  */
-      struct {          /* when type is 'l'      */
-         int  val;      /*   selected choice     */
-         int  vlen;     /*   char len per choice */
-         char **list;   /*   list of values      */
-         int  llen;     /*   number of values    */
-      } ch;
-   } uval;
+    int type;   /* 'd' for double, 'f' for float, 's' for string,   */
+    /* 'D' for integer in double, '*' for comment */
+    /* 'i' for integer, 'y' for yes=1 no=0              */
+    /* 0x100+n for string of length n                   */
+    /* 'l' for one of a list of strings                 */
+    /* 'L' for long */
+    union
+    {
+        double dval;      /* when type 'd' or 'f'  */
+        int    ival;      /* when type is 'i'      */
+        long   Lval;      /* when type is 'L'      */
+        char   sval[16];  /* when type is 's'      */
+        char  *sbuf;  /* when type is 0x100+n  */
+        struct {          /* when type is 'l'      */
+            int  val;      /*   selected choice     */
+            int  vlen;     /*   char len per choice */
+            char **list;   /*   list of values      */
+            int  llen;     /*   number of values    */
+        } ch;
+    } uval;
 };
 
 #define   FILEATTR       0x37      /* File attributes; select all but volume labels */
@@ -1054,128 +1054,128 @@ extern struct DIR_SEARCH DTA;   /* Disk Transfer Area */
 
 typedef struct palett
 {
-   BYTE red;
-   BYTE green;
-   BYTE blue;
+    BYTE red;
+    BYTE green;
+    BYTE blue;
 }
 Palettetype;
 
 #define MAX_JUMPS 200  /* size of JUMP_CONTROL array */
 
 typedef struct frm_jmpptrs_st {
-   int      JumpOpPtr;
-   int      JumpLodPtr;
-   int      JumpStoPtr;
+    int      JumpOpPtr;
+    int      JumpLodPtr;
+    int      JumpStoPtr;
 } JUMP_PTRS_ST;
 
 
 typedef struct frm_jump_st {
-   int      type;
-   JUMP_PTRS_ST ptrs;
-   int      DestJumpIndex;
+    int      type;
+    JUMP_PTRS_ST ptrs;
+    int      DestJumpIndex;
 } JUMP_CONTROL_ST;
 
 #if defined(_WIN32)
 #pragma pack(push, 1)
 #endif
 struct ext_blk_2 {
-   char got_data;
-   int length;
-   int resume_data;
-   };
+    char got_data;
+    int length;
+    int resume_data;
+};
 
 struct ext_blk_3 {
-   char got_data;
-   int length;
-   char form_name[40];
-   short uses_p1;
-   short uses_p2;
-   short uses_p3;
-   short uses_ismand;
-   short ismand;
-   short uses_p4;
-   short uses_p5;
-   };
+    char got_data;
+    int length;
+    char form_name[40];
+    short uses_p1;
+    short uses_p2;
+    short uses_p3;
+    short uses_ismand;
+    short ismand;
+    short uses_p4;
+    short uses_p5;
+};
 
 struct ext_blk_4 {
-   char got_data;
-   int length;
-   int *range_data;
-   };
+    char got_data;
+    int length;
+    int *range_data;
+};
 
 struct ext_blk_5 {
-   char got_data;
-   int length;
-   char *apm_data;
-   };
+    char got_data;
+    int length;
+    char *apm_data;
+};
 
 /* parameter evolution stuff */
 struct ext_blk_6 {
-   char got_data;
-   int length;
-   short evolving;
-   short gridsz;
-   unsigned short this_gen_rseed;
-   double fiddlefactor;
-   double paramrangex;
-   double paramrangey;
-   double opx;
-   double opy;
-   short  odpx;
-   short  odpy;
-   short  px;
-   short  py;
-   short  sxoffs;
-   short  syoffs;
-   short  xdots;
-   short  ydots;
-   short  ecount;
-   short  mutate[NUMGENES];
-   };
+    char got_data;
+    int length;
+    short evolving;
+    short gridsz;
+    unsigned short this_gen_rseed;
+    double fiddlefactor;
+    double paramrangex;
+    double paramrangey;
+    double opx;
+    double opy;
+    short  odpx;
+    short  odpy;
+    short  px;
+    short  py;
+    short  sxoffs;
+    short  syoffs;
+    short  xdots;
+    short  ydots;
+    short  ecount;
+    short  mutate[NUMGENES];
+};
 
 struct ext_blk_7 {
-   char got_data;
-   int length;
-   double oxmin;
-   double oxmax;
-   double oymin;
-   double oymax;
-   double ox3rd;
-   double oy3rd;
-   short keep_scrn_coords;
-   char drawmode;
-   };
+    char got_data;
+    int length;
+    double oxmin;
+    double oxmax;
+    double oymin;
+    double oymax;
+    double ox3rd;
+    double oy3rd;
+    short keep_scrn_coords;
+    char drawmode;
+};
 #if defined(_WIN32)
 #pragma pack(pop)
 #endif
 
 struct SearchPath {
-   char par[FILE_MAX_PATH];
-   char frm[FILE_MAX_PATH];
-   char ifs[FILE_MAX_PATH];
-   char lsys[FILE_MAX_PATH];
+    char par[FILE_MAX_PATH];
+    char frm[FILE_MAX_PATH];
+    char ifs[FILE_MAX_PATH];
+    char lsys[FILE_MAX_PATH];
 } ;
 
 struct affine
 {
-   /* weird order so a,b,e and c,d,f are vectors */
-   double a;
-   double b;
-   double e;
-   double c;
-   double d;
-   double f;
+    /* weird order so a,b,e and c,d,f are vectors */
+    double a;
+    double b;
+    double e;
+    double c;
+    double d;
+    double f;
 };
 
 struct baseunit { /* smallest part of a fractint 'gene' */
-   void *addr               ; /* address of variable to be referenced */
-   void (*varyfunc)(struct baseunit*,int,int); /* pointer to func used to vary it */
-                              /* takes random number and pointer to var*/
-   int mutate ;  /* flag to switch on variation of this variable */
-                  /* 0 for no mutation, 1 for x axis, 2 for y axis */
-                  /* in steady field maps, either x or y=yes in random modes*/
-   char name[16]; /* name of variable (for menu ) */
-   char level;    /* mutation level at which this should become active */
+    void *addr               ; /* address of variable to be referenced */
+    void (*varyfunc)(struct baseunit*,int,int); /* pointer to func used to vary it */
+    /* takes random number and pointer to var*/
+    int mutate ;  /* flag to switch on variation of this variable */
+    /* 0 for no mutation, 1 for x axis, 2 for y axis */
+    /* in steady field maps, either x or y=yes in random modes*/
+    char name[16]; /* name of variable (for menu ) */
+    char level;    /* mutation level at which this should become active */
 };
 
 typedef struct baseunit    GENEBASE;
@@ -1190,7 +1190,7 @@ typedef struct baseunit    GENEBASE;
 /* !!!!! stupid MSVC tan(x) bug fix !!!!!!!!            */
 /* tan(x) can return -tan(x) if -pi/2 < x < pi/2       */
 /* if tan(x) has been called before outside this range. */
-double fixtan( double x );
+double fixtan(double x);
 #define tan fixtan
 #define FIXTAN_DEFINED
 #endif

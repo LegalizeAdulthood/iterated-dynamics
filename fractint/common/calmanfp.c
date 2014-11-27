@@ -155,7 +155,7 @@ long calcmandfpasm_c(void)
                 if (ABS(savedx-x)<closenuff && ABS(savedy-y)<closenuff)
                 {
 #endif
-/*          oldcoloriter = 65535;  */
+                    /*          oldcoloriter = 65535;  */
                     oldcoloriter = maxit;
                     realcoloriter = maxit;
                     kbdcount = kbdcount-(maxit-cx);
@@ -226,11 +226,11 @@ over_bailout_87:
         }
         else if (outside == MULT && g_new.y != 0.0)
         {
-        coloriter = (long) ((double) coloriter * (g_new.x/g_new.y));
+            coloriter = (long)((double) coloriter * (g_new.x/g_new.y));
         }
         else if (outside == SUM)
         {
-            coloriter +=  (long) (g_new.x + g_new.y);
+            coloriter += (long)(g_new.x + g_new.y);
         }
         else if (outside == ATAN)
         {

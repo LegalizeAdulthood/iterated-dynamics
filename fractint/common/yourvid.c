@@ -53,7 +53,7 @@ in assembler.
 
 */
 
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 
@@ -61,13 +61,13 @@ in assembler.
 /* these are declared in PROTOTYPE.H */
 
 #if 0
-   int  dotmode;                /* video access method (= 19)      */
-   int  sxdots, sydots;         /* total # of dots on the screen   */
-   int  colors;                 /* maximum colors available        */
+int  dotmode;                /* video access method (= 19)      */
+int  sxdots, sydots;         /* total # of dots on the screen   */
+int  colors;                 /* maximum colors available        */
 
 /* the video-palette array (named after the VGA adapter's video-DAC) */
 
-   BYTE dacbox[256][3];
+BYTE dacbox[256][3];
 
 #endif
 
@@ -76,41 +76,41 @@ in assembler.
 int startvideo()
 {
 
-/* assume that the encoded values in FRACTINT.CFG or FARVIDEO.ASM
-   have been set to accomplish this (AX = 0x13, BX = CX = DX = 0)  */
+    /* assume that the encoded values in FRACTINT.CFG or FARVIDEO.ASM
+       have been set to accomplish this (AX = 0x13, BX = CX = DX = 0)  */
 
-return(0);                              /* set flag: video started */
+    return (0);                             /* set flag: video started */
 
-/*   or, we could have done this instead and encoded AX = 0xFF
-     in FRACTINT.CFG/FARVIDEO.ASM:
+    /*   or, we could have done this instead and encoded AX = 0xFF
+         in FRACTINT.CFG/FARVIDEO.ASM:
 
-union REGS regs;
+    union REGS regs;
 
-regs.x.ax = 0x13;
-int86(0x10,&regs,&regs);
+    regs.x.ax = 0x13;
+    int86(0x10,&regs,&regs);
 
-*/
+    */
 
 }
 
 int endvideo()
 {
 
-return(0);                              /* set flag: video ended */
+    return (0);                             /* set flag: video ended */
 
 }
 
 void writevideo(int x, int y, int color)
 {
 #if !defined(_WIN32)
-union REGS regs;
+    union REGS regs;
 
-regs.h.ah = 0x0c;                       /* invoke INT 10H with AH = 0CH */
-regs.h.al = (char)color;
-regs.x.bx = 0;
-regs.x.cx = x;
-regs.x.dx = y;
-int86(0x10,&regs,&regs);
+    regs.h.ah = 0x0c;                       /* invoke INT 10H with AH = 0CH */
+    regs.h.al = (char)color;
+    regs.x.bx = 0;
+    regs.x.cx = x;
+    regs.x.dx = y;
+    int86(0x10,&regs,&regs);
 #endif
 }
 
@@ -119,28 +119,28 @@ int readvideo(int x, int y)
 #if defined(_WIN32)
     return -1;
 #else
-union REGS regs;
+    union REGS regs;
 
-regs.x.ax = 0x0d00;                     /* invoke INT 10H with AH = 0DH */
-regs.x.bx = 0;
-regs.x.cx = x;
-regs.x.dx = y;
-int86(0x10,&regs,&regs);
+    regs.x.ax = 0x0d00;                     /* invoke INT 10H with AH = 0DH */
+    regs.x.bx = 0;
+    regs.x.cx = x;
+    regs.x.dx = y;
+    int86(0x10,&regs,&regs);
 
-return((unsigned int)regs.h.al);        /* return pixel color */
+    return ((unsigned int)regs.h.al);       /* return pixel color */
 #endif
 }
 
 int readvideopalette(void)
 {
 
-return (-1);                            /* let the internal routines do it */
+    return (-1);                            /* let the internal routines do it */
 
 }
 
 int writevideopalette(void)
 {
 
-return (-1);                            /* let the internal routines do it */
+    return (-1);                            /* let the internal routines do it */
 
 }

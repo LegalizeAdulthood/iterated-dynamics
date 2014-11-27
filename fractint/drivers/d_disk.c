@@ -80,7 +80,7 @@ extern void fpe_handler();
 
 #ifdef FPUERR
 static void continue_hdl(int sig, int code, struct sigcontext *scp,
-    char *addr);
+                         char *addr);
 #endif
 
 #define DEFX 640
@@ -99,8 +99,8 @@ extern void Cursor_SetPos();
 
 #define DRAW_INTERVAL 6
 
-  extern void (*dotwrite)(int, int, int);   /* write-a-dot routine */
-  extern int (*dotread)(int, int);  /* read-a-dot routine */
+extern void (*dotwrite)(int, int, int);   /* write-a-dot routine */
+extern int (*dotread)(int, int);  /* read-a-dot routine */
 extern void (*linewrite)(void);     /* write-a-line routine */
 extern void (*lineread)(void);      /* read-a-line routine */
 
@@ -108,41 +108,41 @@ extern void normalineread(void);
 extern void normaline(void);
 
 static VIDEOINFO disk_info = {
-  "xfractint mode           ","                         ",
-  999, 0,    0,   0,   0,   19, 640, 480,  256
+    "xfractint mode           ","                         ",
+    999, 0,    0,   0,   0,   19, 640, 480,  256
 };
 
 #define MAXSCREENS 3
 
 typedef struct tagDriverDisk DriverDisk;
 struct tagDriverDisk {
-  Driver pub;
-  SCREEN *term;
-  WINDOW *curwin;
+    Driver pub;
+    SCREEN *term;
+    WINDOW *curwin;
 
-  int simple_input; /* Use simple input (debugging) */
-  char *Xgeometry;
+    int simple_input; /* Use simple input (debugging) */
+    char *Xgeometry;
 
-  int old_fcntl;
+    int old_fcntl;
 
-  int alarmon; /* 1 if the refresh alarm is on */
-  int doredraw; /* 1 if we have a redraw waiting */
+    int alarmon; /* 1 if the refresh alarm is on */
+    int doredraw; /* 1 if we have a redraw waiting */
 
-  int width, height;
-  int xlastcolor;
-  BYTE *pixbuf;
-  unsigned char cols[256][3];
-  int pixtab[256];
-  int ipixtab[256];
+    int width, height;
+    int xlastcolor;
+    BYTE *pixbuf;
+    unsigned char cols[256][3];
+    int pixtab[256];
+    int ipixtab[256];
 
-  int xbufkey;      /* Buffered X key */
+    int xbufkey;      /* Buffered X key */
 
-  unsigned char *fontPtr;
+    unsigned char *fontPtr;
 
-  int screenctr;
+    int screenctr;
 
-  BYTE *savescreen[MAXSCREENS];
-  int saverc[MAXSCREENS+1];
+    BYTE *savescreen[MAXSCREENS];
+    int saverc[MAXSCREENS+1];
 };
 
 /*
@@ -163,18 +163,18 @@ struct tagDriverDisk {
 static int
 check_arg(DriverDisk *di, int argc, char **argv, int *i)
 {
-  if (strcmp(argv[*i], "-disk") == 0) {
-    return 1;
-  } else if (strcmp(argv[*i], "-simple") == 0) {
-    di->simple_input = 1;
-    return 1;
-  } else if (strcmp(argv[*i], "-geometry") == 0 && *i+1 < argc) {
-    di->Xgeometry = argv[(*i)+1];
-    (*i)++;
-    return 1;
-  } else {
-    return 0;
-  }
+    if (strcmp(argv[*i], "-disk") == 0) {
+        return 1;
+    } else if (strcmp(argv[*i], "-simple") == 0) {
+        di->simple_input = 1;
+        return 1;
+    } else if (strcmp(argv[*i], "-geometry") == 0 && *i+1 < argc) {
+        di->Xgeometry = argv[(*i)+1];
+        (*i)++;
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 /*----------------------------------------------------------------------
@@ -194,15 +194,15 @@ check_arg(DriverDisk *di, int argc, char **argv, int *i)
 static void
 disk_terminate(Driver *drv)
 {
-  DriverDisk *di = (DriverDisk *) drv;
-  if (!di->simple_input) {
-    fcntl(0, F_SETFL, di->old_fcntl);
-  }
-  mvcur(0, COLS-1, LINES-1, 0);
-  nocbreak();
-  echo();
-  endwin();
-  delscreen(di->term);
+    DriverDisk *di = (DriverDisk *) drv;
+    if (!di->simple_input) {
+        fcntl(0, F_SETFL, di->old_fcntl);
+    }
+    mvcur(0, COLS-1, LINES-1, 0);
+    nocbreak();
+    echo();
+    endwin();
+    delscreen(di->term);
 }
 
 /*----------------------------------------------------------------------
@@ -230,15 +230,16 @@ disk_terminate(Driver *drv)
 static void
 initdacbox()
 {
-  int i;
-  for (i=0;i < 256;i++) {
-    g_dac_box[i][0] = (i >> 5)*8+7;
-    g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
-    g_dac_box[i][2] = (((i+2) & 3))*16+15;
-  }
-  g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-  g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 63;
-  g_dac_box[2][0] = 47; g_dac_box[2][1] = g_dac_box[2][2] = 63;
+    int i;
+    for (i=0; i < 256; i++) {
+        g_dac_box[i][0] = (i >> 5)*8+7;
+        g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
+        g_dac_box[i][2] = (((i+2) & 3))*16+15;
+    }
+    g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
+    g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 63;
+    g_dac_box[2][0] = 47;
+    g_dac_box[2][1] = g_dac_box[2][2] = 63;
 }
 
 /*----------------------------------------------------------------------
@@ -258,74 +259,74 @@ initdacbox()
 static int
 disk_init(Driver *drv, int *argc, char **argv)
 {
-  DriverDisk *di = (DriverDisk *) drv;
+    DriverDisk *di = (DriverDisk *) drv;
 
-  /*
-   * Check a bunch of important conditions
-   */
-  if (sizeof(short) != 2) {
-    fprintf(stderr, "Error: need short to be 2 bytes\n");
-    exit(-1);
-  }
-  if (sizeof(long) < sizeof(FLOAT4)) {
-    fprintf(stderr, "Error: need sizeof(long) >= sizeof(FLOAT4)\n");
-    exit(-1);
-  }
+    /*
+     * Check a bunch of important conditions
+     */
+    if (sizeof(short) != 2) {
+        fprintf(stderr, "Error: need short to be 2 bytes\n");
+        exit(-1);
+    }
+    if (sizeof(long) < sizeof(FLOAT4)) {
+        fprintf(stderr, "Error: need sizeof(long) >= sizeof(FLOAT4)\n");
+        exit(-1);
+    }
 
-  di->term = newterm(NULL, stdout, stdin);
-  if (!di->term)
-    return 0;
+    di->term = newterm(NULL, stdout, stdin);
+    if (!di->term)
+        return 0;
 
-  di->curwin = stdscr;
-  cbreak();
-  noecho();
+    di->curwin = stdscr;
+    cbreak();
+    noecho();
 
-  if (standout()) {
-    g_text_type = 1;
-    standend();
-  } else {
-    g_text_type = 1;
-  }
+    if (standout()) {
+        g_text_type = 1;
+        standend();
+    } else {
+        g_text_type = 1;
+    }
 
-  initdacbox();
+    initdacbox();
 
-  if (!di->simple_input) {
-    signal(SIGINT, (SignalHandler) goodbye);
-  }
-  signal(SIGFPE, fpe_handler);
-  /*
-    signal(SIGTSTP, goodbye);
-  */
+    if (!di->simple_input) {
+        signal(SIGINT, (SignalHandler) goodbye);
+    }
+    signal(SIGFPE, fpe_handler);
+    /*
+      signal(SIGTSTP, goodbye);
+    */
 #ifdef FPUERR
-  signal(SIGABRT, SIG_IGN);
-  /*
-    setup the IEEE-handler to forget all common ( invalid,
-    divide by zero, overflow ) signals. Here we test, if
-    such ieee trapping is supported.
-  */
-  if (ieee_handler("set", "common", continue_hdl) != 0 )
-    printf("ieee trapping not supported here \n");
+    signal(SIGABRT, SIG_IGN);
+    /*
+      setup the IEEE-handler to forget all common ( invalid,
+      divide by zero, overflow ) signals. Here we test, if
+      such ieee trapping is supported.
+    */
+    if (ieee_handler("set", "common", continue_hdl) != 0)
+        printf("ieee trapping not supported here \n");
 #endif
 
-  /* filter out driver arguments */
-  {
-    int count = *argc;
-    char **argv_copy = (char **) malloc(sizeof(char *)*count);
-    int i;
-    int copied;
+    /* filter out driver arguments */
+    {
+        int count = *argc;
+        char **argv_copy = (char **) malloc(sizeof(char *)*count);
+        int i;
+        int copied;
 
-    for (i = 0; i < count; i++)
-      argv_copy[i] = argv[i];
+        for (i = 0; i < count; i++)
+            argv_copy[i] = argv[i];
 
-    copied = 0;
-    for (i = 0; i < count; i++)
-      if (! check_arg(di, i, argv, &i))
-    argv[copied++] = argv_copy[i];
-    *argc = copied;
-  }
+        copied = 0;
+        for (i = 0; i < count; i++)
+            if (! check_arg(di, i, argv, &i))
+                argv[copied++] = argv_copy[i];
+        *argc = copied;
+    }
 
-  /* add_video_mode(&disk_info); */
-  return 1;
+    /* add_video_mode(&disk_info); */
+    return 1;
 }
 
 #ifdef FPUERR
@@ -349,12 +350,12 @@ disk_init(Driver *drv, int *argc, char **argv)
 static void
 continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 {
-  int i;
-  char out[20];
-  /*        if you want to get all messages enable this statement.    */
-  /*  printf("ieee exception code %x occurred at pc %X\n", code, scp->sc_pc); */
-  /*    clear all excaption flags                     */
-  i = ieee_flags("clear", "exception", "all", out);
+    int i;
+    char out[20];
+    /*        if you want to get all messages enable this statement.    */
+    /*  printf("ieee exception code %x occurred at pc %X\n", code, scp->sc_pc); */
+    /*    clear all excaption flags                     */
+    i = ieee_flags("clear", "exception", "all", out);
 }
 #endif
 
@@ -365,8 +366,8 @@ continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 static void
 disk_flush(Driver *drv)
 {
-  DriverDisk *di = (DriverDisk *) drv;
-  wrefresh(di->curwin);
+    DriverDisk *di = (DriverDisk *) drv;
+    wrefresh(di->curwin);
 }
 
 /*----------------------------------------------------------------------
@@ -375,7 +376,7 @@ disk_flush(Driver *drv)
 static int
 disk_resize(Driver *drv)
 {
-  return 0;
+    return 0;
 }
 
 
@@ -396,16 +397,16 @@ disk_resize(Driver *drv)
 static int
 disk_read_palette(Driver *drv)
 {
-  DriverDisk *di = (DriverDisk *) drv;
-  int i;
-  if (g_got_real_dac == 0)
-    return -1;
-  for (i = 0; i < 256; i++) {
-    g_dac_box[i][0] = di->cols[i][0];
-    g_dac_box[i][1] = di->cols[i][1];
-    g_dac_box[i][2] = di->cols[i][2];
-  }
-  return 0;
+    DriverDisk *di = (DriverDisk *) drv;
+    int i;
+    if (g_got_real_dac == 0)
+        return -1;
+    for (i = 0; i < 256; i++) {
+        g_dac_box[i][0] = di->cols[i][0];
+        g_dac_box[i][1] = di->cols[i][1];
+        g_dac_box[i][2] = di->cols[i][2];
+    }
+    return 0;
 }
 
 /*
@@ -426,28 +427,28 @@ disk_read_palette(Driver *drv)
 static int
 disk_write_palette(Driver *drv)
 {
-  DriverDisk *di = (DriverDisk *) drv;
-  int i;
+    DriverDisk *di = (DriverDisk *) drv;
+    int i;
 
-  for (i = 0; i < 256; i++) {
-    di->cols[i][0] = g_dac_box[i][0];
-    di->cols[i][1] = g_dac_box[i][1];
-    di->cols[i][2] = g_dac_box[i][2];
-  }
+    for (i = 0; i < 256; i++) {
+        di->cols[i][0] = g_dac_box[i][0];
+        di->cols[i][1] = g_dac_box[i][1];
+        di->cols[i][2] = g_dac_box[i][2];
+    }
 
-  return 0;
+    return 0;
 }
 
 static int
 disk_start_video(Driver *drv)
 {
-  return 0;
+    return 0;
 }
 
 static int
 disk_end_video(Driver *drv)
 {
-  return 0;             /* set flag: video ended */
+    return 0;             /* set flag: video ended */
 }
 
 
@@ -469,7 +470,7 @@ disk_end_video(Driver *drv)
 static void
 setredrawscreen(void)
 {
-  ((DriverDisk *) display)->doredraw = 1;
+    ((DriverDisk *) display)->doredraw = 1;
 }
 
 /*
@@ -490,13 +491,13 @@ setredrawscreen(void)
 static void
 disk_schedule_alarm(Driver *drv, int soon)
 {
-  DriverDisk *di = (DriverDisk *) drv;
-  signal(SIGALRM, (SignalHandler) setredrawscreen);
-  if (soon)
-    alarm(1);
-  else
-    alarm(DRAW_INTERVAL);
-  di->alarmon = 1;
+    DriverDisk *di = (DriverDisk *) drv;
+    signal(SIGALRM, (SignalHandler) setredrawscreen);
+    if (soon)
+        alarm(1);
+    else
+        alarm(DRAW_INTERVAL);
+    di->alarmon = 1;
 }
 
 /*
@@ -517,7 +518,7 @@ disk_schedule_alarm(Driver *drv, int soon)
 static void
 disk_write_pixel(Driver *drv, int x, int y, int color)
 {
-  fprintf(stderr, "disk_write_pixel(%d,%d): %d\n", x, y, color);
+    fprintf(stderr, "disk_write_pixel(%d,%d): %d\n", x, y, color);
 }
 
 /*
@@ -538,7 +539,7 @@ disk_write_pixel(Driver *drv, int x, int y, int color)
 static int
 disk_read_pixel(Driver *drv, int x, int y)
 {
-  fprintf(stderr, "disk_read_pixel(%d,%d)\n", x, y);
+    fprintf(stderr, "disk_read_pixel(%d,%d)\n", x, y);
 }
 
 /*
@@ -559,11 +560,11 @@ disk_read_pixel(Driver *drv, int x, int y)
 static void
 disk_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
-  int i;
-  int width = lastx-x+1;
+    int i;
+    int width = lastx-x+1;
 
-  for (i = 0; i < width; i++)
-    disk_write_pixel(drv, x+i, y, pixels[i]);
+    for (i = 0; i < width; i++)
+        disk_write_pixel(drv, x+i, y, pixels[i]);
 }
 
 /*
@@ -584,23 +585,23 @@ disk_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 static void
 disk_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
-  int i, width;
-  width = lastx-x+1;
-  for (i = 0; i < width; i++) {
-    pixels[i] = disk_read_pixel(drv, x+i, y);
-  }
+    int i, width;
+    width = lastx-x+1;
+    for (i = 0; i < width; i++) {
+        pixels[i] = disk_read_pixel(drv, x+i, y);
+    }
 }
 
 static void
 disk_set_line_mode(Driver *drv, int mode)
 {
-  fprintf(stderr, "disk_set_line_mode(%d)\n", mode);
+    fprintf(stderr, "disk_set_line_mode(%d)\n", mode);
 }
 
 static void
 disk_draw_line(Driver *drv, int x1, int y1, int x2, int y2)
 {
-  fprintf(stderr, "disk_draw_line(%d,%d, %d,%d)\n", x1, y1, x2, y2);
+    fprintf(stderr, "disk_draw_line(%d,%d, %d,%d)\n", x1, y1, x2, y2);
 }
 
 /*
@@ -621,18 +622,18 @@ disk_draw_line(Driver *drv, int x1, int y1, int x2, int y2)
 static int
 getachar(DriverDisk *di)
 {
-  if (di->simple_input) {
-    return getchar();
-  } else {
-    char ch;
-    int status;
-    status = read(0, &ch, 1);
-    if (status < 0) {
-      return -1;
+    if (di->simple_input) {
+        return getchar();
     } else {
-      return ch;
+        char ch;
+        int status;
+        status = read(0, &ch, 1);
+        if (status < 0) {
+            return -1;
+        } else {
+            return ch;
+        }
     }
-  }
 }
 
 /*----------------------------------------------------------------------
@@ -653,52 +654,87 @@ getachar(DriverDisk *di)
 static int
 translatekey(int ch)
 {
-  if (ch >= 'a' && ch <= 'z')
-    return ch;
-  else {
-    switch (ch) {
-    case 'I':       return FIK_INSERT;
-    case 'D':       return FIK_DELETE;
-    case 'U':       return FIK_PAGE_UP;
-    case 'N':       return FIK_PAGE_DOWN;
-    case CTL('O'):  return FIK_CTL_HOME;
-    case CTL('E'):  return FIK_CTL_END;
-    case 'H':       return FIK_LEFT_ARROW;
-    case 'L':       return FIK_RIGHT_ARROW;
-    case 'K':       return FIK_UP_ARROW;
-    case 'J':       return FIK_DOWN_ARROW;
-    case 1115:      return FIK_LEFT_ARROW_2;
-    case 1116:      return FIK_RIGHT_ARROW_2;
-    case 1141:      return FIK_UP_ARROW_2;
-    case 1145:      return FIK_DOWN_ARROW_2;
-    case 'O':       return FIK_HOME;
-    case 'E':       return FIK_END;
-    case '\n':      return FIK_ENTER;
-    case CTL('T'):  return FIK_CTL_ENTER;
-    case -2:        return FIK_CTL_ENTER_2;
-    case CTL('U'):  return FIK_CTL_PAGE_UP;
-    case CTL('N'):  return FIK_CTL_PAGE_DOWN;
-    case '{':       return FIK_CTL_MINUS;
-    case '}':       return FIK_CTL_PLUS;
+    if (ch >= 'a' && ch <= 'z')
+        return ch;
+    else {
+        switch (ch) {
+        case 'I':
+            return FIK_INSERT;
+        case 'D':
+            return FIK_DELETE;
+        case 'U':
+            return FIK_PAGE_UP;
+        case 'N':
+            return FIK_PAGE_DOWN;
+        case CTL('O'):
+            return FIK_CTL_HOME;
+        case CTL('E'):
+            return FIK_CTL_END;
+        case 'H':
+            return FIK_LEFT_ARROW;
+        case 'L':
+            return FIK_RIGHT_ARROW;
+        case 'K':
+            return FIK_UP_ARROW;
+        case 'J':
+            return FIK_DOWN_ARROW;
+        case 1115:
+            return FIK_LEFT_ARROW_2;
+        case 1116:
+            return FIK_RIGHT_ARROW_2;
+        case 1141:
+            return FIK_UP_ARROW_2;
+        case 1145:
+            return FIK_DOWN_ARROW_2;
+        case 'O':
+            return FIK_HOME;
+        case 'E':
+            return FIK_END;
+        case '\n':
+            return FIK_ENTER;
+        case CTL('T'):
+            return FIK_CTL_ENTER;
+        case -2:
+            return FIK_CTL_ENTER_2;
+        case CTL('U'):
+            return FIK_CTL_PAGE_UP;
+        case CTL('N'):
+            return FIK_CTL_PAGE_DOWN;
+        case '{':
+            return FIK_CTL_MINUS;
+        case '}':
+            return FIK_CTL_PLUS;
 #if 0
-      /* we need ^I for tab */
-    case CTL('I'):  return FIK_CTL_INSERT;
+        /* we need ^I for tab */
+        case CTL('I'):
+            return FIK_CTL_INSERT;
 #endif
-    case CTL('D'):  return FIK_CTL_DEL;
-    case '!':       return FIK_F1;
-    case '@':       return FIK_F2;
-    case '#':       return FIK_F3;
-    case '$':       return FIK_F4;
-    case '%':       return FIK_F5;
-    case '^':       return FIK_F6;
-    case '&':       return FIK_F7;
-    case '*':       return FIK_F8;
-    case '(':       return FIK_F9;
-    case ')':       return FIK_F10;
-    default:
-      return ch;
+        case CTL('D'):
+            return FIK_CTL_DEL;
+        case '!':
+            return FIK_F1;
+        case '@':
+            return FIK_F2;
+        case '#':
+            return FIK_F3;
+        case '$':
+            return FIK_F4;
+        case '%':
+            return FIK_F5;
+        case '^':
+            return FIK_F6;
+        case '&':
+            return FIK_F7;
+        case '*':
+            return FIK_F8;
+        case '(':
+            return FIK_F9;
+        case ')':
+            return FIK_F10;
+        default:
+            return ch;
+        }
     }
-  }
 }
 
 /*----------------------------------------------------------------------
@@ -719,181 +755,181 @@ translatekey(int ch)
 static int
 handleesc(DriverDisk *di)
 {
-  int ch1, ch2, ch3;
-  if (di->simple_input)
-    return FIK_ESC;
+    int ch1, ch2, ch3;
+    if (di->simple_input)
+        return FIK_ESC;
 
 #ifdef __hpux
-  /* HP escape key sequences. */
-  ch1 = getachar(di);
-  if (ch1 == -1) {
-    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+    /* HP escape key sequences. */
     ch1 = getachar(di);
-  }
-  if (ch1 == -1)
-    return FIK_ESC;
+    if (ch1 == -1) {
+        delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        ch1 = getachar(di);
+    }
+    if (ch1 == -1)
+        return FIK_ESC;
 
-  switch (ch1) {
-  case 'A':
-    return FIK_UP_ARROW;
-  case 'B':
-    return FIK_DOWN_ARROW;
-  case 'D':
-    return FIK_LEFT_ARROW;
-  case 'C':
-    return FIK_RIGHT_ARROW;
-  case 'd':
-    return FIK_HOME;
-  }
-  if (ch1 != '[')
-    return FIK_ESC;
-  ch1 = getachar(di);
-  if (ch1 == -1) {
-    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
-    ch1 = getachar(di);
-  }
-  if (ch1 == -1 || !isdigit(ch1))
-    return FIK_ESC;
-  ch2 = getachar(di);
-  if (ch2 == -1) {
-    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
-    ch2 = getachar(di);
-  }
-  if (ch2 == -1)
-    return FIK_ESC;
-  if (isdigit(ch2)) {
-    ch3 = getachar(di);
-    if (ch3 == -1) {
-      delay(250); /* Wait 1/4 sec to see if a control sequence follows */
-      ch3 = getachar(di);
-    }
-    if (ch3 != '~')
-      return FIK_ESC;
-    ch2 = (ch2-'0')*10+ch3-'0';
-  } else if (ch3 != '~') {
-    return FIK_ESC;
-  } else {
-    ch2 = ch2-'0';
-  }
-  switch (ch2) {
-  case 5:
-    return FIK_PAGE_UP;
-  case 6:
-    return FIK_PAGE_DOWN;
-  case 29:
-    return FIK_F1; /* help */
-  case 11:
-    return FIK_F1;
-  case 12:
-    return FIK_F2;
-  case 13:
-    return FIK_F3;
-  case 14:
-    return FIK_F4;
-  case 15:
-    return FIK_F5;
-  case 17:
-    return FIK_F6;
-  case 18:
-    return FIK_F7;
-  case 19:
-    return FIK_F8;
-  default:
-    return FIK_ESC;
-  }
-#else
-  /* SUN escape key sequences */
-  ch1 = getachar(di);
-  if (ch1 == -1) {
-    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
-    ch1 = getachar(di);
-  }
-  if (ch1 != '[')       /* See if we have esc [ */
-    return FIK_ESC;
-  ch1 = getachar(di);
-  if (ch1 == -1) {
-    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
-    ch1 = getachar(di);
-  }
-  if (ch1 == -1)
-    return FIK_ESC;
-  switch (ch1) {
-  case 'A':     /* esc [ A */
-    return FIK_UP_ARROW;
-  case 'B':     /* esc [ B */
-    return FIK_DOWN_ARROW;
-  case 'C':     /* esc [ C */
-    return FIK_RIGHT_ARROW;
-  case 'D':     /* esc [ D */
-    return FIK_LEFT_ARROW;
-  default:
-    break;
-  }
-  ch2 = getachar(di);
-  if (ch2 == -1) {
-    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
-    ch2 = getachar(di);
-  }
-  if (ch2 == '~') {     /* esc [ ch1 ~ */
     switch (ch1) {
-    case '2':       /* esc [ 2 ~ */
-      return FIK_INSERT;
-    case '3':       /* esc [ 3 ~ */
-      return FIK_DELETE;
-    case '5':       /* esc [ 5 ~ */
-      return FIK_PAGE_UP;
-    case '6':       /* esc [ 6 ~ */
-      return FIK_PAGE_DOWN;
-    default:
-      return FIK_ESC;
+    case 'A':
+        return FIK_UP_ARROW;
+    case 'B':
+        return FIK_DOWN_ARROW;
+    case 'D':
+        return FIK_LEFT_ARROW;
+    case 'C':
+        return FIK_RIGHT_ARROW;
+    case 'd':
+        return FIK_HOME;
     }
-  } else if (ch2 == -1) {
-    return FIK_ESC;
-  } else {
-    ch3 = getachar(di);
-    if (ch3 == -1) {
-      delay(250); /* Wait 1/4 sec to see if a control sequence follows */
-      ch3 = getachar(di);
+    if (ch1 != '[')
+        return FIK_ESC;
+    ch1 = getachar(di);
+    if (ch1 == -1) {
+        delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        ch1 = getachar(di);
     }
-    if (ch3 != '~') {   /* esc [ ch1 ch2 ~ */
-      return FIK_ESC;
+    if (ch1 == -1 || !isdigit(ch1))
+        return FIK_ESC;
+    ch2 = getachar(di);
+    if (ch2 == -1) {
+        delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        ch2 = getachar(di);
     }
-    if (ch1 == '1') {
-      switch (ch2) {
-      case '1': /* esc [ 1 1 ~ */
-    return FIK_F1;
-      case '2': /* esc [ 1 2 ~ */
-    return FIK_F2;
-      case '3': /* esc [ 1 3 ~ */
-    return FIK_F3;
-      case '4': /* esc [ 1 4 ~ */
-    return FIK_F4;
-      case '5': /* esc [ 1 5 ~ */
-    return FIK_F5;
-      case '6': /* esc [ 1 6 ~ */
-    return FIK_F6;
-      case '7': /* esc [ 1 7 ~ */
-    return FIK_F7;
-      case '8': /* esc [ 1 8 ~ */
-    return FIK_F8;
-      case '9': /* esc [ 1 9 ~ */
-    return FIK_F9;
-      default:
-    return FIK_ESC;
-      }
-    } else if (ch1 == '2') {
-      switch (ch2) {
-      case '0': /* esc [ 2 0 ~ */
-    return FIK_F10;
-      case '8': /* esc [ 2 8 ~ */
-    return FIK_F1;  /* HELP */
-      default:
-    return FIK_ESC;
-      }
+    if (ch2 == -1)
+        return FIK_ESC;
+    if (isdigit(ch2)) {
+        ch3 = getachar(di);
+        if (ch3 == -1) {
+            delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+            ch3 = getachar(di);
+        }
+        if (ch3 != '~')
+            return FIK_ESC;
+        ch2 = (ch2-'0')*10+ch3-'0';
+    } else if (ch3 != '~') {
+        return FIK_ESC;
     } else {
-      return FIK_ESC;
+        ch2 = ch2-'0';
     }
-  }
+    switch (ch2) {
+    case 5:
+        return FIK_PAGE_UP;
+    case 6:
+        return FIK_PAGE_DOWN;
+    case 29:
+        return FIK_F1; /* help */
+    case 11:
+        return FIK_F1;
+    case 12:
+        return FIK_F2;
+    case 13:
+        return FIK_F3;
+    case 14:
+        return FIK_F4;
+    case 15:
+        return FIK_F5;
+    case 17:
+        return FIK_F6;
+    case 18:
+        return FIK_F7;
+    case 19:
+        return FIK_F8;
+    default:
+        return FIK_ESC;
+    }
+#else
+    /* SUN escape key sequences */
+    ch1 = getachar(di);
+    if (ch1 == -1) {
+        delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        ch1 = getachar(di);
+    }
+    if (ch1 != '[')       /* See if we have esc [ */
+        return FIK_ESC;
+    ch1 = getachar(di);
+    if (ch1 == -1) {
+        delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        ch1 = getachar(di);
+    }
+    if (ch1 == -1)
+        return FIK_ESC;
+    switch (ch1) {
+    case 'A':     /* esc [ A */
+        return FIK_UP_ARROW;
+    case 'B':     /* esc [ B */
+        return FIK_DOWN_ARROW;
+    case 'C':     /* esc [ C */
+        return FIK_RIGHT_ARROW;
+    case 'D':     /* esc [ D */
+        return FIK_LEFT_ARROW;
+    default:
+        break;
+    }
+    ch2 = getachar(di);
+    if (ch2 == -1) {
+        delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        ch2 = getachar(di);
+    }
+    if (ch2 == '~') {     /* esc [ ch1 ~ */
+        switch (ch1) {
+        case '2':       /* esc [ 2 ~ */
+            return FIK_INSERT;
+        case '3':       /* esc [ 3 ~ */
+            return FIK_DELETE;
+        case '5':       /* esc [ 5 ~ */
+            return FIK_PAGE_UP;
+        case '6':       /* esc [ 6 ~ */
+            return FIK_PAGE_DOWN;
+        default:
+            return FIK_ESC;
+        }
+    } else if (ch2 == -1) {
+        return FIK_ESC;
+    } else {
+        ch3 = getachar(di);
+        if (ch3 == -1) {
+            delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+            ch3 = getachar(di);
+        }
+        if (ch3 != '~') {   /* esc [ ch1 ch2 ~ */
+            return FIK_ESC;
+        }
+        if (ch1 == '1') {
+            switch (ch2) {
+            case '1': /* esc [ 1 1 ~ */
+                return FIK_F1;
+            case '2': /* esc [ 1 2 ~ */
+                return FIK_F2;
+            case '3': /* esc [ 1 3 ~ */
+                return FIK_F3;
+            case '4': /* esc [ 1 4 ~ */
+                return FIK_F4;
+            case '5': /* esc [ 1 5 ~ */
+                return FIK_F5;
+            case '6': /* esc [ 1 6 ~ */
+                return FIK_F6;
+            case '7': /* esc [ 1 7 ~ */
+                return FIK_F7;
+            case '8': /* esc [ 1 8 ~ */
+                return FIK_F8;
+            case '9': /* esc [ 1 9 ~ */
+                return FIK_F9;
+            default:
+                return FIK_ESC;
+            }
+        } else if (ch1 == '2') {
+            switch (ch2) {
+            case '0': /* esc [ 2 0 ~ */
+                return FIK_F10;
+            case '8': /* esc [ 2 8 ~ */
+                return FIK_F1;  /* HELP */
+            default:
+                return FIK_ESC;
+            }
+        } else {
+            return FIK_ESC;
+        }
+    }
 #endif
 }
 
@@ -915,7 +951,7 @@ handleesc(DriverDisk *di)
 static void
 disk_redraw(Driver *drv)
 {
-  fprintf(stderr, "disk_redraw\n");
+    fprintf(stderr, "disk_redraw\n");
 }
 
 /*----------------------------------------------------------------------
@@ -937,96 +973,96 @@ disk_redraw(Driver *drv)
 static int
 disk_get_key(Driver *drv, int block)
 {
-  static int skipcount = 0;
-  DriverDisk *di = (DriverDisk *) drv;
+    static int skipcount = 0;
+    DriverDisk *di = (DriverDisk *) drv;
 
-  while (1) {
-    if (input_pending()) {
-      int ch = getachar(di);
-      return (ch == FIK_ESC) ? handleesc(di) : translatekey(ch);
+    while (1) {
+        if (input_pending()) {
+            int ch = getachar(di);
+            return (ch == FIK_ESC) ? handleesc(di) : translatekey(ch);
+        }
+
+        /* Don't check X events every time, since that is expensive */
+        skipcount++;
+        if (block == 0 && skipcount < 25)
+            break;
+        skipcount = 0;
+
+        if (di->xbufkey) {
+            int ch = di->xbufkey;
+            di->xbufkey = 0;
+            skipcount = 9999; /* If we got a key, check right away next time */
+            return translatekey(ch);
+        }
+
+        if (!block)
+            break;
+
+        {
+            fd_set reads;
+            struct timeval tout;
+            int status;
+
+            FD_ZERO(&reads);
+            FD_SET(0, &reads);
+            tout.tv_sec = 0;
+            tout.tv_usec = 500000;
+
+            status = select(1, &reads, NULL, NULL, &tout);
+            if (status <= 0)
+                return 0;
+        }
     }
 
-    /* Don't check X events every time, since that is expensive */
-    skipcount++;
-    if (block == 0 && skipcount < 25)
-      break;
-    skipcount = 0;
-
-    if (di->xbufkey) {
-      int ch = di->xbufkey;
-      di->xbufkey = 0;
-      skipcount = 9999; /* If we got a key, check right away next time */
-      return translatekey(ch);
-    }
-
-    if (!block)
-      break;
-
-    {
-      fd_set reads;
-      struct timeval tout;
-      int status;
-
-      FD_ZERO(&reads);
-      FD_SET(0, &reads);
-      tout.tv_sec = 0;
-      tout.tv_usec = 500000;
-
-      status = select(1, &reads, NULL, NULL, &tout);
-      if (status <= 0)
     return 0;
-    }
-  }
-
-  return 0;
 }
 
 static void
 parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
 {
-  char *plus, *minus;
+    char *plus, *minus;
 
-  /* do something like XParseGeometry() */
-  if (2 == sscanf(spec, "%dx%d", width, height)) {
-    /* all we care about is width and height for disk output */
-    *x = 0;
-    *y = 0;
-  }
+    /* do something like XParseGeometry() */
+    if (2 == sscanf(spec, "%dx%d", width, height)) {
+        /* all we care about is width and height for disk output */
+        *x = 0;
+        *y = 0;
+    }
 }
 
 static void
 disk_window(Driver *drv)
 {
-  int offx, offy;
-  int i;
-  DriverDisk *di = (DriverDisk *) drv;
+    int offx, offy;
+    int i;
+    DriverDisk *di = (DriverDisk *) drv;
 
-  if (!di->simple_input) {
-    di->old_fcntl = fcntl(0, F_GETFL);
-    fcntl(0, F_SETFL, FNDELAY);
-  }
+    if (!di->simple_input) {
+        di->old_fcntl = fcntl(0, F_GETFL);
+        fcntl(0, F_SETFL, FNDELAY);
+    }
 
-  g_adapter = 0;
+    g_adapter = 0;
 
-  /* We have to do some X stuff even for disk video, to parse the geometry
-   * string */
-  g_got_real_dac = 1;
-  colors = 256;
-  for (i = 0; i < colors; i++) {
-    di->pixtab[i] = i;
-    di->ipixtab[i] = i;
-  }
-  if (di->Xgeometry)
-    parse_geometry(di->Xgeometry, &offx, &offy, &di->width, &di->height);
-  sxdots = di->width;
-  sydots = di->height;
-  disk_flush(drv);
-  disk_write_palette(drv);
+    /* We have to do some X stuff even for disk video, to parse the geometry
+     * string */
+    g_got_real_dac = 1;
+    colors = 256;
+    for (i = 0; i < colors; i++) {
+        di->pixtab[i] = i;
+        di->ipixtab[i] = i;
+    }
+    if (di->Xgeometry)
+        parse_geometry(di->Xgeometry, &offx, &offy, &di->width, &di->height);
+    sxdots = di->width;
+    sydots = di->height;
+    disk_flush(drv);
+    disk_write_palette(drv);
 
-  g_video_table[0].xdots = sxdots;
-  g_video_table[0].ydots = sydots;
-  g_video_table[0].colors = colors;
-  g_video_table[0].dotmode = DOTMODE_ROLL_YOUR_OWN;
+    g_video_table[0].xdots = sxdots;
+    g_video_table[0].ydots = sydots;
+    g_video_table[0].colors = colors;
+    g_video_table[0].dotmode = DOTMODE_ROLL_YOUR_OWN;
 }
 
 /*
@@ -1047,60 +1083,60 @@ disk_window(Driver *drv)
 static void
 disk_shell(Driver *drv)
 {
-  SignalHandler sigint;
-  char *shell;
-  char *argv[2];
-  int pid, donepid;
-  DriverDisk *di = (DriverDisk *) drv;
+    SignalHandler sigint;
+    char *shell;
+    char *argv[2];
+    int pid, donepid;
+    DriverDisk *di = (DriverDisk *) drv;
 
-  sigint = (SignalHandler) signal(SIGINT, SIG_IGN);
-  shell = getenv("SHELL");
-  if (shell == NULL)
-    shell = SHELL;
+    sigint = (SignalHandler) signal(SIGINT, SIG_IGN);
+    shell = getenv("SHELL");
+    if (shell == NULL)
+        shell = SHELL;
 
-  argv[0] = shell;
-  argv[1] = NULL;
+    argv[0] = shell;
+    argv[1] = NULL;
 
-  /* Clean up the window */
-  if (!di->simple_input)
-    fcntl(0, F_SETFL, di->old_fcntl);
+    /* Clean up the window */
+    if (!di->simple_input)
+        fcntl(0, F_SETFL, di->old_fcntl);
 
-  mvcur(0, COLS-1, LINES-1, 0);
-  nocbreak();
-  echo();
+    mvcur(0, COLS-1, LINES-1, 0);
+    nocbreak();
+    echo();
 
-  endwin();
+    endwin();
 
-  /* Fork the shell */
-  pid = fork();
-  if (pid < 0)
-    perror("fork to shell");
-  if (pid == 0) {
-    execvp(shell, argv);
-    perror("fork to shell");
-    exit(1);
-  }
+    /* Fork the shell */
+    pid = fork();
+    if (pid < 0)
+        perror("fork to shell");
+    if (pid == 0) {
+        execvp(shell, argv);
+        perror("fork to shell");
+        exit(1);
+    }
 
-  /* Wait for the shell to finish */
-  while (1) {
-    donepid = wait(0);
-    if (donepid < 0 || donepid == pid)
-      break;
-  }
+    /* Wait for the shell to finish */
+    while (1) {
+        donepid = wait(0);
+        if (donepid < 0 || donepid == pid)
+            break;
+    }
 
-  /* Go back to curses mode */
+    /* Go back to curses mode */
 
-  initscr();
-  di->curwin = stdscr;
-  cbreak();
-  noecho();
-  if (!di->simple_input) {
-    di->old_fcntl = fcntl(0, F_GETFL);
-    fcntl(0, F_SETFL, FNDELAY);
-  }
+    initscr();
+    di->curwin = stdscr;
+    cbreak();
+    noecho();
+    if (!di->simple_input) {
+        di->old_fcntl = fcntl(0, F_GETFL);
+        fcntl(0, F_SETFL, FNDELAY);
+    }
 
-  signal(SIGINT, (SignalHandler) sigint);
-  putchar('\n');
+    signal(SIGINT, (SignalHandler) sigint);
+    putchar('\n');
 }
 
 /*
@@ -1120,29 +1156,29 @@ disk_shell(Driver *drv)
 static void
 disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 {
-  DriverDisk *di = (DriverDisk *) drv;
-  if (g_disk_flag) {
-    enddisk();
-  }
-  g_good_mode = 1;
-  if (driver_diskp()) {
-    startdisk();
-    dotwrite = writedisk;
-    dotread = readdisk;
-    lineread = normalineread;
-    linewrite = normaline;
-  } else if (dotmode == 0) {
-    clear();
-    wrefresh(di->curwin);
-  } else {
-    printf("Bad mode %d\n", dotmode);
-    exit(-1);
-  }
-  if (dotmode !=0) {
-    driver_read_palette();
-    g_and_color = colors-1;
-    boxcount = 0;
-  }
+    DriverDisk *di = (DriverDisk *) drv;
+    if (g_disk_flag) {
+        enddisk();
+    }
+    g_good_mode = 1;
+    if (driver_diskp()) {
+        startdisk();
+        dotwrite = writedisk;
+        dotread = readdisk;
+        lineread = normalineread;
+        linewrite = normaline;
+    } else if (dotmode == 0) {
+        clear();
+        wrefresh(di->curwin);
+    } else {
+        printf("Bad mode %d\n", dotmode);
+        exit(-1);
+    }
+    if (dotmode !=0) {
+        driver_read_palette();
+        g_and_color = colors-1;
+        boxcount = 0;
+    }
 }
 
 /*
@@ -1156,44 +1192,44 @@ disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 static void
 disk_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 {
-  DriverDisk *di = (DriverDisk *) drv;
-  int so = 0;
+    DriverDisk *di = (DriverDisk *) drv;
+    int so = 0;
 
-  if (row != -1)
-    textrow = row;
-  if (col != -1)
-    textcol = col;
+    if (row != -1)
+        textrow = row;
+    if (col != -1)
+        textcol = col;
 
-  if (attr & INVERSE || attr & BRIGHT) {
-    wstandout(di->curwin);
-    so = 1;
-  }
-  wmove(di->curwin,textrow+textrbase, textcol+textcbase);
-  while (1) {
-    if (*msg == '\0') break;
-    if (*msg == '\n') {
-      textcol = 0;
-      textrow++;
-      wmove(di->curwin,textrow+textrbase, textcol+textcbase);
-    } else {
-      char *ptr;
-      ptr = strchr(msg,'\n');
-      if (ptr == NULL) {
-    waddstr(di->curwin,msg);
-    break;
-      } else
-    waddch(di->curwin,*msg);
+    if (attr & INVERSE || attr & BRIGHT) {
+        wstandout(di->curwin);
+        so = 1;
     }
-    msg++;
-  }
-  if (so)
-    wstandend(di->curwin);
+    wmove(di->curwin,textrow+textrbase, textcol+textcbase);
+    while (1) {
+        if (*msg == '\0') break;
+        if (*msg == '\n') {
+            textcol = 0;
+            textrow++;
+            wmove(di->curwin,textrow+textrbase, textcol+textcbase);
+        } else {
+            char *ptr;
+            ptr = strchr(msg,'\n');
+            if (ptr == NULL) {
+                waddstr(di->curwin,msg);
+                break;
+            } else
+                waddch(di->curwin,*msg);
+        }
+        msg++;
+    }
+    if (so)
+        wstandend(di->curwin);
 
-  wrefresh(di->curwin);
-  fflush(stdout);
-  getyx(di->curwin,textrow,textcol);
-  textrow -= textrbase;
-  textcol -= textcbase;
+    wrefresh(di->curwin);
+    fflush(stdout);
+    getyx(di->curwin,textrow,textcol);
+    textrow -= textrbase;
+    textcol -= textcbase;
 }
 
 static void
@@ -1209,9 +1245,9 @@ disk_set_for_graphics(Driver *drv)
 static void
 disk_set_clear(Driver *drv)
 {
-  DriverDisk *di = (DriverDisk *) drv;
-  wclear(di->curwin);
-  wrefresh(di->curwin);
+    DriverDisk *di = (DriverDisk *) drv;
+    wclear(di->curwin);
+    wrefresh(di->curwin);
 }
 
 /************** Function scrollup(toprow, botrow) ******************
@@ -1221,35 +1257,35 @@ disk_set_clear(Driver *drv)
 static void
 disk_scroll_up(Driver *drv, int top, int bot)
 {
-  DriverDisk *di = (DriverDisk *) drv;
-  wmove(di->curwin, top, 0);
-  wdeleteln(di->curwin);
-  wmove(di->curwin, bot, 0);
-  winsertln(di->curwin);
-  wrefresh(di->curwin);
+    DriverDisk *di = (DriverDisk *) drv;
+    wmove(di->curwin, top, 0);
+    wdeleteln(di->curwin);
+    wmove(di->curwin, bot, 0);
+    winsertln(di->curwin);
+    wrefresh(di->curwin);
 }
 
 static BYTE *
 disk_find_font(Driver *drv, int parm)
 {
-  return NULL;
+    return NULL;
 }
 
 static void
 disk_move_cursor(Driver *drv, int row, int col)
 {
-  DriverDisk *di = (DriverDisk *) drv;
-  if (row == -1) {
-    row = textrow;
-  } else {
-    textrow = row;
-  }
-  if (col == -1) {
-    col = textcol;
-  } else {
-    textcol = col;
-  }
-  wmove(di->curwin,row,col);
+    DriverDisk *di = (DriverDisk *) drv;
+    if (row == -1) {
+        row = textrow;
+    } else {
+        textrow = row;
+    }
+    if (col == -1) {
+        col = textcol;
+    } else {
+        textcol = col;
+    }
+    wmove(di->curwin,row,col);
 }
 
 static void
@@ -1269,66 +1305,66 @@ disk_hide_text_cursor(Driver *drv)
 static void
 disk_stack_screen(Driver *drv)
 {
-  DriverDisk *di = (DriverDisk *) drv;
-  int i;
+    DriverDisk *di = (DriverDisk *) drv;
+    int i;
 
-  di->saverc[di->screenctr+1] = textrow*80 + textcol;
-  if (++di->screenctr) { /* already have some stacked */
-    static char msg[] = { "stackscreen overflow" };
-    if ((i = di->screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
-      stopmsg(STOPMSG_NO_STACK,msg);
-      exit(1);
+    di->saverc[di->screenctr+1] = textrow*80 + textcol;
+    if (++di->screenctr) { /* already have some stacked */
+        static char msg[] = { "stackscreen overflow" };
+        if ((i = di->screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
+            stopmsg(STOPMSG_NO_STACK,msg);
+            exit(1);
+        }
+        {
+            WINDOW **ptr = (WINDOW **) malloc(sizeof(WINDOW *));
+            if (ptr) {
+                *ptr = di->curwin;
+                di->savescreen[i] = (BYTE *) ptr;
+                di->curwin = newwin(0, 0, 0, 0);
+                touchwin(di->curwin);
+                wrefresh(di->curwin);
+            } else {
+                stopmsg(STOPMSG_NO_STACK,msg);
+                exit(1);
+            }
+        }
+        disk_set_clear(drv);
     }
-    {
-      WINDOW **ptr = (WINDOW **) malloc(sizeof(WINDOW *));
-      if (ptr) {
-    *ptr = di->curwin;
-    di->savescreen[i] = (BYTE *) ptr;
-    di->curwin = newwin(0, 0, 0, 0);
-    touchwin(di->curwin);
-    wrefresh(di->curwin);
-      } else {
-    stopmsg(STOPMSG_NO_STACK,msg);
-    exit(1);
-      }
-    }
-    disk_set_clear(drv);
-  }
-  else
-    disk_set_for_text(drv);
+    else
+        disk_set_for_text(drv);
 }
 
 static void
 disk_unstack_screen(Driver *drv)
 {
-  DriverDisk *di = (DriverDisk *) drv;
+    DriverDisk *di = (DriverDisk *) drv;
 
-  textrow = di->saverc[di->screenctr] / 80;
-  textcol = di->saverc[di->screenctr] % 80;
-  if (--di->screenctr >= 0) { /* unstack */
-    WINDOW **ptr = (WINDOW **) di->savescreen[di->screenctr];
+    textrow = di->saverc[di->screenctr] / 80;
+    textcol = di->saverc[di->screenctr] % 80;
+    if (--di->screenctr >= 0) { /* unstack */
+        WINDOW **ptr = (WINDOW **) di->savescreen[di->screenctr];
 
-    delwin(di->curwin);
-    di->curwin = *ptr;
-    touchwin(di->curwin);
-    wrefresh(di->curwin);
+        delwin(di->curwin);
+        di->curwin = *ptr;
+        touchwin(di->curwin);
+        wrefresh(di->curwin);
 
-    free(ptr);
-  }
-  else
-    disk_set_for_graphics(drv);
-  disk_move_cursor(drv, -1, -1);
+        free(ptr);
+    }
+    else
+        disk_set_for_graphics(drv);
+    disk_move_cursor(drv, -1, -1);
 }
 
 static void
 disk_discard_screen(Driver *drv)
 {
-  DriverDisk *di = (DriverDisk *) drv;
-  if (--di->screenctr >= 0) { /* unstack */
-    if (di->savescreen[di->screenctr]) {
-      free(di->savescreen[di->screenctr]);
+    DriverDisk *di = (DriverDisk *) drv;
+    if (--di->screenctr >= 0) { /* unstack */
+        if (di->savescreen[di->screenctr]) {
+            free(di->savescreen[di->screenctr]);
+        }
     }
-  }
 }
 
 static int
@@ -1339,20 +1375,20 @@ disk_init_fm(Driver *drv)
 static void
 disk_buzzer(Driver *drv, int kind)
 {
-  fprintf(stderr, "disk_buzzer(%d)\n", kind);
+    fprintf(stderr, "disk_buzzer(%d)\n", kind);
 }
 
 static int
 disk_sound_on(Driver *drv, int freq)
 {
-  fprintf(stderr, "disk_sound_on(%d)\n", freq);
-  return;
+    fprintf(stderr, "disk_sound_on(%d)\n", freq);
+    return;
 }
 
 static void
 disk_sound_off(Driver *drv)
 {
-  fprintf(stderr, "disk_sound_off\n");
+    fprintf(stderr, "disk_sound_off\n");
 }
 
 static void
@@ -1363,29 +1399,29 @@ disk_mute(Driver *drv)
 static int
 disk_diskp(Driver *drv)
 {
-  return 1;
+    return 1;
 }
 
 static DriverDisk disk_driver_info = {
-  STD_DRIVER_STRUCT(disk),
-  NULL,                 /* term */
-  NULL,                 /* curwin */
-  0,                    /* simple_input */
-  NULL,                 /* Xgeometry */
-  0,                    /* old_fcntl */
-  0,                    /* alarmon */
-  0,                    /* doredraw */
-  DEFX, DEFY,               /* width, height */
-  -1,                   /* xlastcolor */
-  NULL,                 /* pixbuf */
-  { 0 },                /* cols */
-  { 0 },                /* pixtab */
-  { 0 },                /* ipixtab */
-  0,                    /* xbufkey */
-  NULL,                 /* fontPtr */
-  0,                    /* screenctr */
-  { 0 },                /* savescreen */
-  { 0 }                 /* saverc */
+    STD_DRIVER_STRUCT(disk),
+    NULL,                 /* term */
+    NULL,                 /* curwin */
+    0,                    /* simple_input */
+    NULL,                 /* Xgeometry */
+    0,                    /* old_fcntl */
+    0,                    /* alarmon */
+    0,                    /* doredraw */
+    DEFX, DEFY,               /* width, height */
+    -1,                   /* xlastcolor */
+    NULL,                 /* pixbuf */
+    { 0 },                /* cols */
+    { 0 },                /* pixtab */
+    { 0 },                /* ipixtab */
+    0,                    /* xbufkey */
+    NULL,                 /* fontPtr */
+    0,                    /* screenctr */
+    { 0 },                /* savescreen */
+    { 0 }                 /* saverc */
 };
 
 Driver *disk_driver = &disk_driver_info.pub;

@@ -84,31 +84,31 @@ Just be sure to declare x, y, and z as type floats instead of type double.
 
 long
 #ifndef XFRACT
-   RegFg2Float(long x, char FudgeFact),
-   RegSftFloat(long x, char Shift),
+RegFg2Float(long x, char FudgeFact),
+            RegSftFloat(long x, char Shift),
 #else
-   RegFg2Float(long x, int FudgeFact),
-   RegSftFloat(long x, int Shift),
+RegFg2Float(long x, int FudgeFact),
+            RegSftFloat(long x, int Shift),
 #endif
-   RegFloat2Fg(long x, int Fudge),
-   RegAddFloat(long x, long y),
-   RegDivFloat(long x, long y),
-   RegMulFloat(long x, long y),
-   RegSqrFloat(long x),
-   RegSubFloat(long x, long y);
+            RegFloat2Fg(long x, int Fudge),
+            RegAddFloat(long x, long y),
+            RegDivFloat(long x, long y),
+            RegMulFloat(long x, long y),
+            RegSqrFloat(long x),
+            RegSubFloat(long x, long y);
 long
-   r16Mul(long x, long y),
-   r16Sqr(long x);
+r16Mul(long x, long y),
+       r16Sqr(long x);
 int
-        sin13(long x),
-        cos13(long x),
-        FastCosine(int x),
-        FastSine(int x);
+sin13(long x),
+      cos13(long x),
+      FastCosine(int x),
+      FastSine(int x);
 long
-        FastHypCosine(int x),
-        FastHypSine(int x),
-   sinh13(long x),
-   cosh13(long x);
+FastHypCosine(int x),
+              FastHypSine(int x),
+              sinh13(long x),
+              cosh13(long x);
 long LogFudged(unsigned long x, int Fudge);
 long LogFloat14(unsigned long x);
 unsigned long ExpFudged(long x, int Fudge);
@@ -140,20 +140,20 @@ long ExpFloat14(long x);
 #define fSqrt14(x, z) fLog14(x, z); fShift(z, -1, z); fExp14(z, z)
 
 struct fComplex {
-   float x, y, mod;
+    float x, y, mod;
 };
 
 void
-   fSqrZ(struct fComplex *x, struct fComplex *z),
-   fMod(struct fComplex *x),
-   fInvZ(struct fComplex *x, struct fComplex *z),
-   fMulZ(struct fComplex *x, struct fComplex *y, struct fComplex *z),
-   fDivZ(struct fComplex *x, struct fComplex *y, struct fComplex *z),
-   fSinZ(struct fComplex *x, struct fComplex *z),
-   fCosZ(struct fComplex *x, struct fComplex *z),
-   fTanZ(struct fComplex *x, struct fComplex *z),
-   fSinhZ(struct fComplex *x, struct fComplex *z),
-   fCoshZ(struct fComplex *x, struct fComplex *z),
-   fTanhZ(struct fComplex *x, struct fComplex *z);
+fSqrZ(struct fComplex *x, struct fComplex *z),
+      fMod(struct fComplex *x),
+      fInvZ(struct fComplex *x, struct fComplex *z),
+      fMulZ(struct fComplex *x, struct fComplex *y, struct fComplex *z),
+      fDivZ(struct fComplex *x, struct fComplex *y, struct fComplex *z),
+      fSinZ(struct fComplex *x, struct fComplex *z),
+      fCosZ(struct fComplex *x, struct fComplex *z),
+      fTanZ(struct fComplex *x, struct fComplex *z),
+      fSinhZ(struct fComplex *x, struct fComplex *z),
+      fCoshZ(struct fComplex *x, struct fComplex *z),
+      fTanhZ(struct fComplex *x, struct fComplex *z);
 
 #endif
