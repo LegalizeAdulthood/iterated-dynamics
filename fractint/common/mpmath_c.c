@@ -834,10 +834,7 @@ struct MP *d2MP086(double x)
             rcr   si, 1
             add   si, (1 SHL 14) - (1 SHL 10)
 
-            mov   di, ax                           ;
-            shl dx:
-            ax:
-            bx 12 bits
+            mov   di, ax                           ; shl dx:ax:bx 12 bits
             mov   cl, 12
             shl   dx, cl
             shl   ax, cl
@@ -1304,7 +1301,7 @@ struct MP *MPmul086(struct MP x, struct MP y)
         add   ax, bx
         jno   NoOverflow
 
-        Overflow:
+    Overflow:
         or    word ptr [x.Mant+2], 0
         jz    ZeroAns
         or    word ptr [y.Mant+2], 0
@@ -1312,13 +1309,13 @@ struct MP *MPmul086(struct MP x, struct MP y)
 
         mov   MPOverflow, 1
 
-        ZeroAns:
+    ZeroAns:
         xor   ax, ax
         xor   dx, dx
         mov   Ans.Exp, eax
         jmp   StoreMant
 
-        NoOverflow:
+    NoOverflow:
         mov   Ans.Exp, eax
 
         mov   si, word ptr [x.Mant+2]
@@ -1374,7 +1371,7 @@ struct MP *MPmul086(struct MP x, struct MP y)
         sub   Ans.Exp, 1
         jo    Overflow
 
-        StoreMant:
+    StoreMant:
         mov   word ptr Ans.Mant+2, dx
         mov   word ptr Ans.Mant, ax
     }
