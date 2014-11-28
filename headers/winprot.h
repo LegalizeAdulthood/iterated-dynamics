@@ -12,7 +12,7 @@ extern void cdecl calcmandfpasmstart_p5(void);
 
 extern void PrintFile(void);
 extern int Win_OpenFile(unsigned char *);
-extern Win_SaveFile(unsigned char *);
+extern void Win_SaveFile(unsigned char *);
 
 /*  prompts1 -- C file prototypes */
 
@@ -21,7 +21,6 @@ extern void set_default_parms(void);
 /*  windos -- C file prototypes */
 
 extern void debugmessage(char *, char *);
-extern int stopmsg(int , char far *);
 extern int  farread(int, VOIDPTR, unsigned);
 extern int  farwrite(int, VOIDPTR, unsigned);
 extern void far_memcpy(void far *, void far *, int);
@@ -30,7 +29,6 @@ extern int getcolor(int, int);
 extern int out_line(BYTE *, int);
 extern void putcolor_a(int, int, int);
 extern void buzzer(int);
-extern int thinking(int, char far *);
 extern void CalibrateDelay(void);
 extern void start_wait(void);
 extern void end_wait(void);
@@ -51,9 +49,7 @@ extern void winfract_help(void);
 
 /*  windos2 -- C file prototypes */
 
-extern int  putstringcenter(int, int, int, int, char far *);
 extern void putstring(int, int, int, unsigned char far *);
-extern int  strncasecmp(char far *,char far *,int);
 extern int  input_field(int, int, char *, int, int, int, int (*)(int));
 extern void helptitle(void);
 extern void stackscreen(void);
@@ -78,7 +74,6 @@ extern void win_savedac(void);
 /*  winstubs -- C file prototypes */
 
 extern void rotate(int);
-extern int showtempmsg(char far *);
 extern void cleartempmsg(void);
 extern void freetempmsg(void);
 extern int FromMemDisk(long, int, void far *);
@@ -119,7 +114,6 @@ extern void soundoff(void);
 extern int initfm(void);
 extern void mute(void);
 
-extern void dvid_status(int, char far *);
 extern int tovideotable(void);
 extern void TranspPerPixel(void);
 extern void stopslideshow(void);

@@ -535,31 +535,31 @@ extern  double   f_at_rad;      /* finite attractor radius  */
 
 struct moreparams
 {
-    int      type;                       /* index in fractalname of the fractal */
-    char     *param[MAXPARAMS-4];    /* name of the parameters */
-    double   paramvalue[MAXPARAMS-4];    /* default parameter values */
+    int      type;                      /* index in fractalname of the fractal */
+    const char *param[MAXPARAMS-4];     /* name of the parameters */
+    double   paramvalue[MAXPARAMS-4];   /* default parameter values */
 };
 
 typedef struct moreparams MOREPARAMS;
 
 struct fractalspecificstuff
 {
-    char  *name;                         /* name of the fractal */
+    const char  *name;                  /* name of the fractal */
     /* (leading "*" supresses name display) */
-    char  *param[4];                 /* name of the parameters */
-    double paramvalue[4];                /* default parameter values */
-    int   helptext;                      /* helpdefs.h HT_xxxx, -1 for none */
-    int   helpformula;                   /* helpdefs.h HF_xxxx, -1 for none */
-    unsigned flags;                      /* constraints, bits defined below */
-    float xmin;                          /* default XMIN corner */
-    float xmax;                          /* default XMAX corner */
-    float ymin;                          /* default YMIN corner */
-    float ymax;                          /* default YMAX corner */
-    int   isinteger;                     /* 1 if integerfractal, 0 otherwise */
-    int   tojulia;                       /* mandel-to-julia switch */
-    int   tomandel;                      /* julia-to-mandel switch */
-    int   tofloat;                       /* integer-to-floating switch */
-    int   symmetry;                      /* applicable symmetry logic
+    const char  *param[4];              /* name of the parameters */
+    double paramvalue[4];               /* default parameter values */
+    int   helptext;                     /* helpdefs.h HT_xxxx, -1 for none */
+    int   helpformula;                  /* helpdefs.h HF_xxxx, -1 for none */
+    unsigned flags;                     /* constraints, bits defined below */
+    float xmin;                         /* default XMIN corner */
+    float xmax;                         /* default XMAX corner */
+    float ymin;                         /* default YMIN corner */
+    float ymax;                         /* default YMAX corner */
+    int   isinteger;                    /* 1 if integerfractal, 0 otherwise */
+    int   tojulia;                      /* mandel-to-julia switch */
+    int   tomandel;                     /* julia-to-mandel switch */
+    int   tofloat;                      /* integer-to-floating switch */
+    int   symmetry;                     /* applicable symmetry logic
                                            0 = no symmetry
                                           -1 = y-axis symmetry (If No Params)
                                            1 = y-axis symmetry
@@ -571,16 +571,16 @@ struct fractalspecificstuff
                                            4 = polar symmetry
                                            5 = PI (sin/cos) symmetry
                                            6 = NEWTON (power) symmetry
-                                                                */
+                                        */
 #ifdef XFRACT
-    int (*orbitcalc)();  /* function that calculates one orbit */
+    int (*orbitcalc)();                 /* function that calculates one orbit */
 #else
-    int (*orbitcalc)(void);      /* function that calculates one orbit */
+    int (*orbitcalc)(void);             /* function that calculates one orbit */
 #endif
-    int (*per_pixel)(void);      /* once-per-pixel init */
-    int (*per_image)(void);      /* once-per-image setup */
-    int (*calctype)(void);       /* name of main fractal function */
-    int orbit_bailout;           /* usual bailout value for orbit calc */
+    int (*per_pixel)(void);             /* once-per-pixel init */
+    int (*per_image)(void);             /* once-per-image setup */
+    int (*calctype)(void);              /* name of main fractal function */
+    int orbit_bailout;                  /* usual bailout value for orbit calc */
 };
 
 struct alternatemathstuff
@@ -845,7 +845,7 @@ extern void (*dtrig0)(void), (*dtrig1)(void), (*dtrig2)(void), (*dtrig3)(void);
 
 struct trig_funct_lst
 {
-    char *name;
+    const char *name;
     void (*lfunct)(void);
     void (*dfunct)(void);
     void (*mfunct)(void);
@@ -1029,7 +1029,7 @@ struct fullscreenvalues
         struct {          /* when type is 'l'      */
             int  val;      /*   selected choice     */
             int  vlen;     /*   char len per choice */
-            char **list;   /*   list of values      */
+            const char **list;   /*   list of values      */
             int  llen;     /*   number of values    */
         } ch;
     } uval;
@@ -1182,9 +1182,6 @@ typedef struct baseunit    GENEBASE;
 
 #define sign(x) (((x) < 0) ? -1 : ((x) != 0)  ? 1 : 0)
 
-#endif
-
-
 #if _MSC_VER == 800
 #ifndef FIXTAN_DEFINED
 /* !!!!! stupid MSVC tan(x) bug fix !!!!!!!!            */
@@ -1194,4 +1191,6 @@ double fixtan(double x);
 #define tan fixtan
 #define FIXTAN_DEFINED
 #endif
+#endif
+
 #endif

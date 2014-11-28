@@ -26,7 +26,6 @@ struct MPC {
 };
 
 extern int MPOverflow;
-extern int DivideOverflow;
 
 /* Mark Peterson's expanded floating point operators.  Automatically uses
    either the 8086 or 80386 processor type specified in global 'cpu'. If
@@ -74,7 +73,7 @@ union Arg {
 };
 
 struct ConstArg {
-    char *s;
+    const char *s;
     int len;
     union Arg a;
 };

@@ -28,8 +28,8 @@ extern void decode_orbits_info(struct orbits_info *, int);
  */
 extern long clock_ticks(void);
 #ifndef HAVESTRI
-extern int stricmp(char *, char *);
-extern int strnicmp(char *, char *, int);
+extern int stricmp(const char *, const char *);
+extern int strnicmp(const char *, const char *, int);
 #endif
 #if !defined(_WIN32)
 extern int memicmp(char *, char *, int);
@@ -38,7 +38,6 @@ extern int ltoa(long, char *, int);
 #endif
 extern void ftimex(struct timebx *);
 extern long stackavail(void);
-extern int kbhit(void);
 
 /*   unixscr.c -- C file prototypes */
 
@@ -96,8 +95,7 @@ extern void putcolor_a(int, int, int);
 extern int  out_line(BYTE *, int);
 extern int  getcolor(int, int);
 extern void setvideomode(int, int, int, int);
-extern void putstring(int,int,int,char far *);
+extern void putstring(int row, int col, int attr, const char *msg);
 extern BYTE *findfont(int);
 
 #endif
-

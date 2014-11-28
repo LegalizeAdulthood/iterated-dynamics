@@ -44,14 +44,7 @@ typedef unsigned long uclock_t;
 
 #define UCLK_TCK 1000000L /* Usec per second - replaces CLK_TCK         */
 
-#if __cplusplus
-extern "C" {
-#endif
+uclock_t usec_clock(void);
+void     restart_uclock(void);
 
-    uclock_t usec_clock(void);
-    void     restart_uclock(void);
-
-#if __cplusplus
-}
-#endif
 #endif

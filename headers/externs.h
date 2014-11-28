@@ -170,8 +170,8 @@ extern char                  FormFileName[];
 extern char                  FormName[];
 extern int                   fpu;
 extern int                   fractype;
-extern char *                fract_dir1;
-extern char *                fract_dir2;
+extern const char *          fract_dir1;
+extern const char *          fract_dir2;
 extern char                  fromtext_flag;
 extern long                  fudge;
 extern int                   functionpreloaded;
@@ -222,14 +222,13 @@ extern int                   ixstart;
 extern int                   ixstop;
 extern int                   iystart;
 extern int                   iystop;
-extern char *                JIIMleftright[];
-extern char *                JIIMmethod[];
+extern const char *          JIIMleftright[];
+extern const char *          JIIMmethod[];
 extern int                   juli3Dmode;
-extern char *                juli3Doptions[];
+extern const char *          juli3Doptions[];
 extern int                   julibrot;
 extern int                   kbdcount;
 extern int                   keep_scrn_coords;
-extern int                   keybuffer;
 extern long                  l16triglim;
 extern int                   LastInitOp;
 extern unsigned              LastOp;
@@ -473,11 +472,6 @@ extern int                   StoPtr;
 extern int                   stoppass;
 extern unsigned int          strlocn[];
 extern BYTE                  suffix[];
-#if defined(_WIN32)
-extern char                  supervga_list[];
-#else
-extern char                  supervga_list;
-#endif
 extern int                   g_svga_type;                       /* SuperVGA video adapter type */
 extern double                sx3rd;
 extern int                   sxdots;
@@ -521,7 +515,6 @@ extern int                   transparent[];
 extern BYTE                  trigndx[];
 extern int                   truecolor;
 extern int                   truemode;
-extern char                  tstack[];
 extern double                twopi;
 extern VOIDPTR               typespecific_workarea;
 extern char                  useinitorbit;

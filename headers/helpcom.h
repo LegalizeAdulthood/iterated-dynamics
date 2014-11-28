@@ -10,7 +10,6 @@
 #ifndef HELPCOM_H
 #define HELPCOM_H
 
-
 /*
  * help file signature
  * If you get a syntax error, remove the LU from the end of the number.
@@ -168,7 +167,6 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info);
  */
 
 
-#endif
 #ifdef INCLUDE_COMMON
 
 
@@ -181,8 +179,7 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info);
  * pointers all over the place.
  */
 int
-getint(ptr)
-char *ptr;
+getint(char *ptr)
 {
     int s;
     bcopy(ptr,&s,sizeof(int));
@@ -190,9 +187,7 @@ char *ptr;
 }
 
 /* Set an int to an unaligned pointer */
-void setint(ptr, n)
-int n;
-char *ptr;
+void setint(char *ptr, int n)
 {
     bcopy(&n,ptr,sizeof(int));
 }
@@ -210,10 +205,10 @@ static int is_hyphen(char *ptr)   /* true if ptr points to a real hyphen */
 }
 
 
-int _find_token_length(register char *curr, unsigned len, int *size, int *width)
+int _find_token_length(char *curr, unsigned len, int *size, int *width)
 {
-    register int _size  = 0;
-    register int _width = 0;
+    int _size  = 0;
+    int _width = 0;
     int tok;
 
     if (len == 0)
@@ -810,3 +805,5 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 
 #undef INCLUDE_COMMON
 #endif   /* #ifdef INCLUDE_COMMON */
+
+#endif

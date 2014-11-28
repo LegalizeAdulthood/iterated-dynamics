@@ -10,7 +10,6 @@
 #include "externs.h"
 
 /* maintain the common prototypes in this file
- * split the dos/win/unix prototypes into separate files.
  */
 
 #ifdef XFRACT
@@ -21,10 +20,6 @@
 #include "winprot.h"
 #endif
 
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-#include "dosprot.h"
-#endif
-
 extern long multiply(long x, long y, int n);
 extern long divide(long x, long y, int n);
 extern void spindac(int dir, int inc);
@@ -33,7 +28,6 @@ extern void get_line(int row, int startcol, int stopcol, BYTE *pixels);
 extern void find_special_colors(void);
 extern int getakeynohelp(void);
 extern long readticker(void);
-extern void initasmvars(void);
 extern void adapter_detect(void);
 extern int get_sound_params(void);
 extern void setnullvideo(void);
@@ -212,9 +206,9 @@ extern int find_alternate_math(int, int);
 extern int cmdfiles(int ,char **);
 extern int load_commands(FILE *);
 extern void set_3d_defaults(void);
-extern int get_curarg_len(char *curarg);
-extern int get_max_curarg_len(char *floatvalstr[], int totparm);
-extern int init_msg(char *,char *,int);
+extern int get_curarg_len(const char *curarg);
+extern int get_max_curarg_len(const char *floatvalstr[], int totparm);
+extern int init_msg(const char *cmdstr, char *badfilename, int mode);
 extern int cmdarg(char *curarg,int mode);
 extern int getpower10(LDBL x);
 extern void dopause(int);
@@ -233,7 +227,7 @@ extern int readdisk(int, int);
 extern void writedisk(int, int, int);
 extern void targa_readdisk(unsigned int ,unsigned int ,BYTE *,BYTE *,BYTE *);
 extern void targa_writedisk(unsigned int ,unsigned int ,BYTE ,BYTE ,BYTE);
-extern void dvid_status(int ,char *);
+extern void dvid_status(int line, const char *msg);
 extern int  _fastcall common_startdisk(long, long, int);
 extern int FromMemDisk(long,int,void *);
 extern int ToMemDisk(long,int,void *);
@@ -241,10 +235,10 @@ extern int ToMemDisk(long,int,void *);
 /*  editpal -- C file prototypes */
 
 extern void EditPalette(void);
-extern VOIDPTR mem_alloc(unsigned size);
+extern void *mem_alloc(unsigned size);
 void putrow(int x, int y, int width, char *buff);
 void getrow(int x, int y, int width, char *buff);
-void mem_init(VOIDPTR block, unsigned size);
+void mem_init(void *block, unsigned size);
 /* void hline(int x, int y, int width, int color); */
 int Cursor_WaitKey(void);
 void Cursor_CheckBlink(void);
@@ -611,7 +605,7 @@ extern int process_document(PD_FUNC ,PD_FUNC ,VOIDPTR);
 extern int help(int);
 extern int read_help_topic(int ,int ,int ,VOIDPTR);
 extern int makedoc_msg_func(int ,int);
-extern void print_document(char *,int (*)(int ,int),int);
+extern void print_document(const char *,int (*)(int ,int),int);
 extern int init_help(void);
 extern void end_help(void);
 
@@ -675,7 +669,7 @@ extern int check_back(void);
 /*  loadmap -- C file prototypes */
 
 //extern void SetTgaColors(void);
-extern int ValidateLuts(char *);
+extern int ValidateLuts(const char *mapname);
 extern int SetColorPaletteName(char *);
 
 /*  lorenz -- C file prototypes */
@@ -745,20 +739,20 @@ extern void expand_comments(char *, char *);
 /*  miscres -- C file prototypes */
 
 extern void restore_active_ovly(void);
-extern void findpath(char *,char *);
+extern void findpath(const char *filename, char *fullpathname);
 extern void notdiskmsg(void);
 extern void cvtcentermag(double *,double *,LDBL *, double *,double *,double *);
 extern void cvtcorners(double,double,LDBL,double,double,double);
 extern void cvtcentermagbf(bf_t, bf_t, LDBL *, double *, double *, double *);
 extern void cvtcornersbf(bf_t, bf_t, LDBL,double,double,double);
 extern void updatesavename(char *);
-extern int check_writefile(char *,char *);
+extern int check_writefile(char *name, const char *ext);
 extern int check_key(void);
 extern void showtrig(char *);
-extern int set_trig_array(int ,char *);
+extern int set_trig_array(int k, const char *name);
 extern void set_trig_pointers(int);
 extern int tab_display(void);
-extern int endswithslash(char *);
+extern int endswithslash(const char *fl);
 extern int ifsload(void);
 extern int find_file_item(char *,char *,FILE **, int);
 extern int file_gets(char *,int ,FILE *);
@@ -1009,8 +1003,15 @@ extern void Print_Screen(void);
 
 /*  prompts1 -- C file prototypes */
 
-extern int fullscreen_prompt(char far*,int ,char **,struct fullscreenvalues *,int ,char *);
-extern long get_file_entry(int,char *,char *,char *,char *);
+extern int fullscreen_prompt(
+    const char *hdg,
+    int numprompts,
+    const char **prompts,
+    struct fullscreenvalues *values,
+    int fkeymask,
+    char *extrainfo);
+extern long get_file_entry(int type, const char *title,char *fmask,
+                    char *filename,char *entryname);
 extern int get_fracttype(void);
 extern int get_fract_params(int);
 extern int get_fract3d_params(void);
@@ -1033,9 +1034,9 @@ extern int get_starfield_params(void);
 extern int get_commands(void);
 extern void goodbye(void);
 extern int isadirectory(char *s);
-extern int getafilename(char *,char *,char *);
-extern int splitpath(char *file_template,char *drive,char *dir,char *fname,char *ext);
-extern int makepath(char *file_template,char *drive,char *dir,char *fname,char *ext);
+extern int getafilename(const char *hdg, const char *file_template, char *flname);
+extern int splitpath(const char *file_template, char *drive, char *dir, char *fname, char *ext);
+extern int makepath(char *template_str, const char *drive, const char *dir, const char *fname, const char *ext);
 extern int fr_findfirst(char *path);
 extern int fr_findnext(void);
 extern void shell_sort(void *,int n,unsigned,int (__cdecl *fct)(VOIDPTR,VOIDPTR));
@@ -1048,34 +1049,45 @@ extern int starfield(void);
 extern int get_a_number(double *, double *);
 extern int lccompare(VOIDPTR, VOIDPTR);
 extern int dir_remove(char *,char *);
-extern FILE *dir_fopen(char *, char *, char *);
+extern FILE *dir_fopen(const char *dir, const char *filename, const char *mode);
 extern void extract_filename(char *, char *);
 extern char *has_ext(char *source);
 
 /*  realdos -- C file prototypes */
 
 extern int showvidlength(void);
-extern int stopmsg(int ,char *);
+extern int stopmsg(int flags, const char *msg);
 extern void blankrows(int ,int ,int);
-extern int texttempmsg(char *);
-extern int fullscreen_choice(int options, char *hdg, char *hdg2,
-                             char *instr, int numchoices, char **choices, int *attributes,
-                             int boxwidth, int boxdepth, int colwidth, int current,
-                             void (*formatitem)(int, char *), char *speedstring,
-                             int (*speedprompt)(int, int, int, char *, int),
-                             int (*checkkey)(int, int));
+extern int texttempmsg(const char *);
+extern int fullscreen_choice(
+    int options,
+    const char *hdg,
+    const char *hdg2,
+    const char *instr,
+    int numchoices,
+    const char **choices,
+    int *attributes,
+    int boxwidth,
+    int boxdepth,
+    int colwidth,
+    int current,
+    void (*formatitem)(int,char*),
+    char *speedstring,
+    int (*speedprompt)(int,int,int,char *,int),
+    int (*checkkey)(int,int)
+);
 #if !defined(WINFRACT)
-extern int showtempmsg(char *);
+extern int showtempmsg(const char *);
 extern void cleartempmsg(void);
 extern void helptitle(void);
-extern int putstringcenter(int ,int ,int ,int ,char *);
+extern int putstringcenter(int row, int col, int width, int attr, const char *msg);
 #ifndef XFRACT /* Unix should have this in string.h */
-extern int strncasecmp(char *,char *,int);
+extern int strncasecmp(const char *, const char *, int);
 #endif
 extern int main_menu(int);
 extern int input_field(int ,int ,char *,int ,int ,int ,int (*)(int));
-extern int field_prompt(char *,char *,char *,int ,int (*)(int));
-extern int thinking(int ,char *);
+extern int field_prompt(const char *hdg, const char *instr, char *fld, int len, int (*checkkey)(int));
+extern int thinking(int options, const char *msg);
 extern int savegraphics(void);
 extern int restoregraphics(void);
 extern void discardgraphics(void);

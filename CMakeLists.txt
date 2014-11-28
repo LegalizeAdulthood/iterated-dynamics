@@ -4,109 +4,112 @@ project(iterated-dynamics CXX C)
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     set(OS_DRIVER_SOURCES
-        win32/calcmand.c
-        win32/calmanp5.c
-        win32/d_win32.c
+        win32/calmanp5.cpp
+        win32/d_win32.cpp
+        win32/d_win32_disk.cpp
+        win32/d_win32_gdi.cpp
+        win32/frame.cpp
+        win32/os_win32.cpp
+        win32/parsera.cpp
+        win32/plot.cpp
+        win32/WinText.cpp)
+    set(OS_DRIVER_HEADERS
         win32/d_win32.h
-        win32/d_win32_disk.c
-        win32/d_win32_gdi.c
-        win32/fpu087.c
-        win32/fracsuba.c
-        win32/frame.c
         win32/frame.h
         win32/ods.h
-        win32/os_win32.c
-        win32/parsera.c
-        win32/plot.c
         win32/plot.h
         win32/resource.h
-        win32/WinText.c)
+        win32/WinText.h)
     set(OS_DRIVER_LIBRARIES
         gdi32.lib user32.lib shlwapi.lib)
     set(HAVE_OS_DEFINITIONS false)
     set(OS_HC_FILES "")
 else()
     set(OS_DRIVER_SOURCES
-        unix/calcmand.c
-        unix/d_x11.c
-        unix/fpu087.c
-        unix/fracsuba.c
-        unix/general.c
-        unix/os_unix.c
-        unix/unix.c
-        unix/unixscr.c
-        unix/video.c)
+        unix/d_x11.cpp
+        unix/general.cpp
+        unix/os_unix.cpp
+        unix/unix.cpp
+        unix/unixscr.cpp
+        unix/video.cpp)
     set(OS_DRIVER_LIBRARIES ncurses X11 m)
     set(OS_DEFINITIONS "XFRACT" "NOBSTRING" "BIG_ANSI_C" "LINUX")
     set(HAVE_OS_DEFINITIONS true)
-    set_source_files_properties(unix/unix.c
+    set_source_files_properties(unix/unix.cpp
         PROPERTIES COMPILE_DEFINITIONS SRCDIR=".")
     set(DISK_VID "")
-    set(OS_HC_FILES "unix/unix.c")
+    set(OS_HC_FILES "unix/unix.cpp")
+endif()
+
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)")
+    set(CMAKE_CXX_FLAGS "-std=c++11")
 endif()
 
 add_executable(id
-    common/3d.c
-    common/line3d.c
-    common/plot3d.c
+    common/3d.cpp
+    common/line3d.cpp
+    common/plot3d.cpp
 
-    common/calcfrac.c
-    common/calmanfp.c
-    common/fracsubr.c
-    common/fractalb.c
-    common/fractalp.c
-    common/fractals.c
-    common/frasetup.c
-    common/soi.c
-    common/soi1.c
-    common/testpt.c
+    common/calcfrac.cpp
+    common/calcmand.cpp
+    common/calmanfp.cpp
+    common/fracsuba.cpp
+    common/fracsubr.cpp
+    common/fractalb.cpp
+    common/fractalp.cpp
+    common/fractals.cpp
+    common/frasetup.cpp
+    common/soi.cpp
+    common/soi1.cpp
+    common/testpt.cpp
 
-    common/ant.c
-    common/jb.c
-    common/lorenz.c
-    common/lsys.c
-    common/lsysf.c
-    common/miscfrac.c
+    common/ant.cpp
+    common/jb.cpp
+    common/lorenz.cpp
+    common/lsys.cpp
+    common/lsysf.cpp
+    common/miscfrac.cpp
 
-    common/cmdfiles.c
-    common/decoder.c
-    common/diskvid.c
-    common/editpal.c
-    common/encoder.c
-    common/evolve.c
-    common/f16.c
-    common/gifview.c
-    common/loadfdos.c
-    common/loadfile.c
-    common/loadmap.c
-    common/parser.c
-    common/parserfp.c
-    common/rotate.c
-    common/slideshw.c
-    common/stereo.c
-    common/tgaview.c
+    common/cmdfiles.cpp
+    common/decoder.cpp
+    common/diskvid.cpp
+    common/editpal.cpp
+    common/encoder.cpp
+    common/evolve.cpp
+    common/f16.cpp
+    common/gifview.cpp
+    common/loadfdos.cpp
+    common/loadfile.cpp
+    common/loadmap.cpp
+    common/parser.cpp
+    common/parserfp.cpp
+    common/rotate.cpp
+    common/slideshw.cpp
+    common/stereo.cpp
+    common/tgaview.cpp
 
-    common/bigflt.c
-    common/biginit.c
-    common/bignum.c
-    common/bignumc.c
-    common/hcmplx.c
-    common/mpmath_c.c
+    common/bigflt.cpp
+    common/biginit.cpp
+    common/bignum.cpp
+    common/bignumc.cpp
+    common/fpu087.cpp
+    common/hcmplx.cpp
+    common/mpmath_c.cpp
 
-    common/drivers.c
-    common/memory.c
+    common/drivers.cpp
+    common/memory.cpp
 
-    common/fractint.c
-    common/framain2.c
-    common/help.c
-    common/intro.c
-    common/jiim.c
-    common/miscovl.c
-    common/miscres.c
-    common/prompts1.c
-    common/prompts2.c
-    common/realdos.c
-    common/zoom.c
+    common/fractint.cpp
+    common/framain2.cpp
+    common/help.cpp
+    common/intro.cpp
+    common/jiim.cpp
+    common/miscovl.cpp
+    common/miscres.cpp
+    common/prompts1.cpp
+    common/prompts2.cpp
+    common/realdos.cpp
+    common/zoom.cpp
 
     headers/big.h
     headers/biginit.h
@@ -126,82 +129,88 @@ add_executable(id
     headers/helpdefs.h
 
     ${OS_DRIVER_SOURCES}
+    ${OS_DRIVER_HEADERS}
 )
 
 source_group("Source Files\\common\\3d" FILES
-    common/3d.c
-    common/line3d.c
-    common/plot3d.c
+    common/3d.cpp
+    common/line3d.cpp
+    common/plot3d.cpp
 )
 source_group("Source Files\\common\\engine" FILES
-    common/calcfrac.c
-    common/fracsubr.c
-    common/fractalb.c
-    common/fractalp.c
-    common/fractals.c
-    common/frasetup.c
-    common/soi.c
-    common/soi1.c
-    common/testpt.c
+    common/calcfrac.cpp
+    common/calcmand.cpp
+    common/calmanfp.cpp
+    common/fracsuba.cpp
+    common/fracsubr.cpp
+    common/fractalb.cpp
+    common/fractalp.cpp
+    common/fractals.cpp
+    common/frasetup.cpp
+    common/soi.cpp
+    common/soi1.cpp
+    common/testpt.cpp
 )
 source_group("Source Files\\common\\fractal specific" FILES
-    common/ant.c
-    common/jb.c
-    common/lorenz.c
-    common/lsys.c
-    common/lsysf.c
-    common/miscfrac.c
+    common/ant.cpp
+    common/jb.cpp
+    common/lorenz.cpp
+    common/lsys.cpp
+    common/lsysf.cpp
+    common/miscfrac.cpp
 )
 source_group("Source Files\\common\\i/o" FILES
-    common/cmdfiles.c
-    common/decoder.c
-    common/diskvid.c
-    common/editpal.c
-    common/encoder.c
-    common/evolve.c
-    common/f16.c
-    common/gifview.c
-    common/loadfdos.c
-    common/loadfile.c
-    common/loadmap.c
-    common/parser.c
-    common/parserfp.c
-    common/rotate.c
-    common/slideshw.c
-    common/stereo.c
-    common/tgaview.c
+    common/cmdfiles.cpp
+    common/decoder.cpp
+    common/diskvid.cpp
+    common/editpal.cpp
+    common/encoder.cpp
+    common/evolve.cpp
+    common/f16.cpp
+    common/gifview.cpp
+    common/loadfdos.cpp
+    common/loadfile.cpp
+    common/loadmap.cpp
+    common/parser.cpp
+    common/parserfp.cpp
+    common/rotate.cpp
+    common/slideshw.cpp
+    common/stereo.cpp
+    common/tgaview.cpp
 )
 source_group("Source Files\\common\\math" FILES
-    common/bigflt.c
-    common/biginit.c
-    common/bignum.c
-    common/bignumc.c
-    common/hcmplx.c
-    common/mpmath_c.c
+    common/bigflt.cpp
+    common/biginit.cpp
+    common/bignum.cpp
+    common/bignumc.cpp
+    common/fpu087.cpp
+    common/hcmplx.cpp
+    common/mpmath_c.cpp
 )
 source_group("Source Files\\common\\plumbing" FILES
-    common/drivers.c
-    common/memory.c
+    common/drivers.cpp
+    common/memory.cpp
 )
 source_group("Source Files\\common\\ui" FILES
-    common/fractint.c
-    common/framain2.c
-    common/help.c
-    common/intro.c
-    common/jiim.c
-    common/miscovl.c
-    common/miscres.c
-    common/prompts1.c
-    common/prompts2.c
-    common/realdos.c
-    common/zoom.c
+    common/fractint.cpp
+    common/framain2.cpp
+    common/help.cpp
+    common/intro.cpp
+    common/jiim.cpp
+    common/miscovl.cpp
+    common/miscres.cpp
+    common/prompts1.cpp
+    common/prompts2.cpp
+    common/realdos.cpp
+    common/zoom.cpp
 )
+source_group("Header Files\\Win32" FILES ${OS_DRIVER_HEADERS})
 source_group("Source Files\\Win32" FILES ${OS_DRIVER_SOURCES})
 
-set_source_files_properties(common/help.c
+set_source_files_properties(common/help.cpp
     PROPERTIES COMPILE_DEFINITIONS SRCDIR=".")
 
-add_executable(hc hc/hc.c ${OS_HC_FILES})
+add_executable(hc hc/hc.cpp ${OS_HC_FILES})
 target_include_directories(hc PRIVATE headers)
 if(${HAVE_OS_DEFINITIONS})
     target_compile_definitions(hc PRIVATE ${OS_DEFINITIONS})
