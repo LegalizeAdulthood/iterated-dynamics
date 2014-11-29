@@ -83,9 +83,9 @@ static int curr_hist = 0;               /* current pos in history */
 
 /* these items alloc'ed in init_help... */
 
-static long      *topic_offset;        /* 4*num_topic */
-static LABEL     *label;               /* 4*num_label */
-static HIST      *hist;                /* 6*MAX_HIST (96 bytes) */
+static std::vector<long> topic_offset;  /* 4*num_topic */
+static std::vector<LABEL> label;        /* 4*num_label */
+static std::vector<HIST> hist;          /* 6*MAX_HIST (96 bytes) */
 
 /* these items alloc'ed only while help is active... */
 
@@ -1525,11 +1525,19 @@ int init_help(void)
     assert(num_label > 0);
 
     /* allocate all three arrays */
-    topic_offset = (long *) malloc(sizeof(long)*num_topic);
-    label = (LABEL *) malloc(sizeof(LABEL)*num_label);
-    hist = (HIST *) malloc(sizeof(HIST)*MAX_HIST);
+    bool resized = false;
+    try
+    {
+        topic_offset.resize(num_topic);
+        label.resize(num_label);
+        hist.resize(MAX_HIST);
+        resized = true;
+    }
+    catch (std::bad_alloc const&)
+    {
+    }
 
-    if ((topic_offset == nullptr) || (nullptr == label) || (nullptr == hist))
+    if (!resized)
     {
         fclose(help_file);
         help_file = nullptr;
@@ -1539,8 +1547,8 @@ int init_help(void)
     }
 
     /* read in the tables... */
-    fread(topic_offset, sizeof(long), num_topic, help_file);
-    fread(label, sizeof(LABEL), num_label, help_file);
+    fread(&topic_offset[0], sizeof(long), num_topic, help_file);
+    fread(&label[0], sizeof(LABEL), num_label, help_file);
 
     /* finished! */
 
@@ -1552,9 +1560,6 @@ void end_help(void)
     if (help_file != nullptr)
     {
         fclose(help_file);
-        free(topic_offset);
-        free(label);
-        free(hist);
         help_file = nullptr;
     }
 }
