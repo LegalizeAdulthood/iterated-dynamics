@@ -4,6 +4,7 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 
 */
 #include <algorithm>
+#include <vector>
 
 #include <string.h>
 #include <limits.h>
@@ -769,7 +770,7 @@ int diffusion()
 
 #define SEED 0.66               /* starting value for population */
 
-static int *verhulst_array;
+static std::vector<int> verhulst_array;
 unsigned long filter_cycles;
 static unsigned int half_time_check;
 static long   lPopulation, lRate;
@@ -789,7 +790,16 @@ int Bifurcation(void)
         end_resume();
     }
     array_size = (iystop + 1) * sizeof(int);  /* should be iystop + 1 */
-    if ((verhulst_array = (int *) malloc(array_size)) == nullptr)
+    bool resized = false;
+    try
+    {
+        verhulst_array.resize(iystop + 1);
+        resized = true;
+    }
+    catch (std::bad_alloc const&)
+    {
+    }
+    if (!resized)
     {
         stopmsg(0, "Insufficient free memory for calculation.");
         return (-1);
@@ -831,7 +841,7 @@ int Bifurcation(void)
     {
         if (driver_key_pressed())
         {
-            free((char *)verhulst_array);
+            verhulst_array.clear();
             alloc_resume(10,1);
             put_resume(sizeof(column),&column,0);
             return (-1);
@@ -858,7 +868,7 @@ int Bifurcation(void)
         }
         column++;
     }
-    free((char *)verhulst_array);
+    verhulst_array.clear();
     return (0);
 }
 
