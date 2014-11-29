@@ -3,6 +3,7 @@
 Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 
 */
+#include <algorithm>
 
 #include <string.h>
 #include <limits.h>
@@ -214,7 +215,7 @@ static int _fastcall new_subD(int x1,int y1,int x2,int y2, int recur)
             ny   = suby.v[suby.t-2];
             suby.r[suby.t] = suby.r[suby.t-1];
             y    = suby.v[suby.t-1]   = (ny1 + ny) >> 1;
-            suby.r[suby.t-1]   = (BYTE)(max(suby.r[suby.t], suby.r[suby.t-2])+1);
+            suby.r[suby.t-1]   = (BYTE)(std::max(suby.r[suby.t], suby.r[suby.t-2])+1);
         }
         subx.t = 2;
         nx  = subx.v[0] = x2;
@@ -232,7 +233,7 @@ static int _fastcall new_subD(int x1,int y1,int x2,int y2, int recur)
                 nx   = subx.v[subx.t-2];
                 subx.r[subx.t] = subx.r[subx.t-1];
                 x    = subx.v[subx.t-1]   = (nx1 + nx) >> 1;
-                subx.r[subx.t-1]   = (BYTE)(max(subx.r[subx.t],
+                subx.r[subx.t-1]   = (BYTE)(std::max(subx.r[subx.t],
                                                 subx.r[subx.t-2])+1);
             }
 
@@ -400,7 +401,7 @@ int plasma()
 
     if (max_plasma == 0)
     {
-        pcolors = min(colors, max_colors);
+        pcolors = std::min(colors, max_colors);
         for (n = 0; n < 4; n++)
             rnd[n] = (U16)(1+(((rand15()/pcolors)*(pcolors-1))>>(shiftvalue-11)));
     }
@@ -425,7 +426,7 @@ int plasma()
         while (new_subD(0,0,xdots-1,ydots-1,i)==0)
         {
             k = k * 2;
-            if (k  >(int)max(xdots-1,ydots-1))
+            if (k  >(int)std::max(xdots-1,ydots-1))
                 break;
             if (driver_key_pressed())
             {
@@ -1952,7 +1953,7 @@ int froth_setup(void)
     }
 
     /* if 2 attractors, use same shades as 3 attractors */
-    fsp->shades = (colors-1) / max(3,fsp->attractors);
+    fsp->shades = (colors-1) / std::max(3,fsp->attractors);
 
     /* rqlim needs to be at least sq(1+sqrt(1+sq(a))), */
     /* which is never bigger than 6.93..., so we'll call it 7.0 */

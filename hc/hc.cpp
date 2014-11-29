@@ -1,4 +1,3 @@
-
 /*
  * hc.c
  *
@@ -7,12 +6,9 @@
  * See help-compiler.txt for source file syntax.
  *
  */
-
-
-#define HC_C
+#include <algorithm>
 
 #define INCLUDE_COMMON  /* tell helpcom.h to include common code */
-
 
 #ifdef XFRACT
 #define strupr strlwr
@@ -3562,7 +3558,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 
     for (count=0; count<len;)
     {
-        size = (int) min((long)BUFFER_SIZE, len-count);
+        size = (int) std::min((long)BUFFER_SIZE, len-count);
         read(hlp, buffer, size);
         write(exe, buffer, size);
         count += size;

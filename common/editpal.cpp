@@ -4,6 +4,7 @@
  * Edits VGA 256-color palettes.
  *
  */
+#include <algorithm>
 
 #ifdef DEBUG_UNDO
 #include "mdisp.h"
@@ -1020,7 +1021,7 @@ static BOOLEAN MoveBox_Process(MoveBox *me)
 
         case FIK_PAGE_DOWN:   /* grow */
         {
-            int max_width = min(sxdots, MAX_WIDTH);
+            int max_width = std::min(sxdots, MAX_WIDTH);
 
             if (me->base_depth+(me->csize+CSIZE_INC)*16+1 < sydots  &&
                     me->base_width+(me->csize+CSIZE_INC)*16+1 < max_width)
@@ -3314,7 +3315,7 @@ void EditPalette(void)       /* called by fractint */
 
     plot = putcolor;
 
-    line_buff = static_cast<BYTE *>(newx(max(sxdots,sydots)));
+    line_buff = static_cast<BYTE *>(newx(std::max(sxdots,sydots)));
 
     lookatmouse = 3;
     sxoffs = syoffs = 0;

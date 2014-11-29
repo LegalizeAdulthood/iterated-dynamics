@@ -11,6 +11,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
   PARSER.C      formula fractals
   and more
  -------------------------------------------------------------------- */
+#include <algorithm>
 
 #include <string.h>
 #include <limits.h>
@@ -348,8 +349,8 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
     else if (plot == symplot2J)  /* Origin symmetry */
     {
         i = yystop-(row-yystart);
-        j = min(xxstop-(right-xxstart),xdots-1);
-        k = min(xxstop-(left -xxstart),xdots-1);
+        j = std::min(xxstop-(right-xxstart),xdots-1);
+        k = std::min(xxstop-(left -xxstart),xdots-1);
         if (i > iystop && i < ydots && j <= k)
             put_line(i,j,k,str);
         kbdcount -= length >> 3;
@@ -357,8 +358,8 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
     else if (plot == symplot4) /* X-axis and Y-axis symmetry */
     {
         i = yystop-(row-yystart);
-        j = min(xxstop-(right-xxstart),xdots-1);
-        k = min(xxstop-(left -xxstart),xdots-1);
+        j = std::min(xxstop-(right-xxstart),xdots-1);
+        k = std::min(xxstop-(left -xxstart),xdots-1);
         if (i > iystop && i < ydots)
         {
             put_line(i,left,right,str);
@@ -679,7 +680,7 @@ int calcfract(void)
 
         if (inversion[0] == AUTOINVERT)  /*  auto calc radius 1/6 screen */
         {
-            inversion[0] = min(fabs(xxmax - xxmin),
+            inversion[0] = std::min(fabs(xxmax - xxmin),
                                fabs(yymax - yymin)) / 6.0;
             fix_inversion(&inversion[0]);
             f_radius = inversion[0];
@@ -1119,7 +1120,7 @@ static int diffusion_scan(void)
     /* fit any 32 bit architecture, the maxinum limit for this case would  */
     /* be 65536x65536 */
 
-    bits = (unsigned)(min(log(static_cast<double>(iystop-iystart+1)), log(static_cast<double>(ixstop-ixstart+1)))/log2);
+    bits = (unsigned)(std::min(log(static_cast<double>(iystop-iystart+1)), log(static_cast<double>(ixstop-ixstart+1)))/log2);
     bits <<= 1; /* double for two axes */
     dif_limit = 1l << bits;
 
@@ -1145,8 +1146,8 @@ static int diffusion_scan(void)
 /* macro that does the same as above, but checks the limits in x and y */
 #define plot_block_lim(x,y,s,c) \
     memset(dstack,(c),(s)); \
-    for (ty=(y); ty<min((y)+(s),iystop+1); ty++) \
-       sym_fill_line(ty, (x), min((x)+(s)-1,ixstop), dstack)
+    for (ty=(y); ty<std::min((y)+(s),iystop+1); ty++) \
+       sym_fill_line(ty, (x), std::min((x)+(s)-1,ixstop), dstack)
 
 /* macro: count_to_int(dif_counter, colo, rowo) */
 #define count_to_int(C,x,y)\
@@ -1895,7 +1896,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                     break;
             }
             else if (save_release > 1950)
-                if (max(fabs(deriv.x),fabs(deriv.y)) > dem_toobig)
+                if (std::max(fabs(deriv.x),fabs(deriv.y)) > dem_toobig)
                     break;
             /* if above exit taken, the later test vs dem_delta will place this
                        point on the boundary, because mag(old)<bailout just now */
@@ -4079,7 +4080,7 @@ static long autologmap(void)
         if (color == -1) goto ack; /* key pressed, bailout */
         if (realcoloriter < mincolour) {
             mincolour=realcoloriter ;
-            maxit = max(2,mincolour); /*speedup for when edges overlap lakes */
+            maxit = std::max(2L,mincolour); /*speedup for when edges overlap lakes */
         }
         if (col >=32)(*plot)(col-32,row,0);
     }                                    /* these lines tidy up for BTM etc */
@@ -4092,7 +4093,7 @@ static long autologmap(void)
         if (color == -1) goto ack; /* key pressed, bailout */
         if (realcoloriter < mincolour) {
             mincolour=realcoloriter ;
-            maxit = max(2,mincolour); /*speedup for when edges overlap lakes */
+            maxit = std::max(2L,mincolour); /*speedup for when edges overlap lakes */
         }
         if (row >=32)(*plot)(col,row-32,0);
     }
@@ -4105,7 +4106,7 @@ static long autologmap(void)
         if (color == -1) goto ack; /* key pressed, bailout */
         if (realcoloriter < mincolour) {
             mincolour=realcoloriter ;
-            maxit = max(2,mincolour); /*speedup for when edges overlap lakes */
+            maxit = std::max(2L,mincolour); /*speedup for when edges overlap lakes */
         }
         if (row >=32)(*plot)(col,row-32,0);
     }
@@ -4118,7 +4119,7 @@ static long autologmap(void)
         if (color == -1) goto ack; /* key pressed, bailout */
         if (realcoloriter < mincolour) {
             mincolour=realcoloriter ;
-            maxit = max(2,mincolour); /*speedup for when edges overlap lakes */
+            maxit = std::max(2L,mincolour); /*speedup for when edges overlap lakes */
         }
         if (col >=32)(*plot)(col-32,row,0);
     }

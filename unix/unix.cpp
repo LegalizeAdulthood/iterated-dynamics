@@ -4,6 +4,7 @@
  * This file Copyright 1991 Ken Shirriff.  It may be used according to the
  * fractint license conditions, blah blah blah.
  */
+#include <algorithm>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -385,7 +386,7 @@ int splitpath(const char *file_template,char *drive,char *dir,char *fname,char *
             tmp++;  /* first character after slash */
             len = tmp - &file_template[offset];
             if (len >=0 && len < FILE_MAX_DIR && dir)
-                        strncpy(dir,&file_template[offset],min(len,FILE_MAX_DIR));
+                        strncpy(dir,&file_template[offset],std::min(len,FILE_MAX_DIR));
             if (len < FILE_MAX_DIR && dir)
                         dir[len] = 0;
             offset += len;
@@ -406,7 +407,7 @@ int splitpath(const char *file_template,char *drive,char *dir,char *fname,char *
             len = tmp - &file_template[offset];
             if ((len > 0) && (offset+len < length) && fname)
             {
-                strncpy(fname,&file_template[offset],min(len,FILE_MAX_FNAME));
+                strncpy(fname,&file_template[offset],std::min(len,FILE_MAX_FNAME));
                 if (len < FILE_MAX_FNAME)
                             fname[len] = 0;
                 else

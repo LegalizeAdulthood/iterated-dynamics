@@ -130,6 +130,7 @@ double wide number can then be ignored.
 /* 3) bignumc.c - portable C versions of routines in bignuma.asm        */
 /*                                                                      */
 /************************************************************************/
+#include <algorithm>
 
 #include <string.h>
 /* see Fractint.c for a description of the "include"  hierarchy */
@@ -206,14 +207,14 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
     {
 
         /* This will keep the integer part from overflowing past the array. */
-        bnlength = oldbnlength - oldintlength + min(oldintlength, newintlength);
+        bnlength = oldbnlength - oldintlength + std::min(oldintlength, newintlength);
 
         memcpy(newnum+newbnlength-newintlength-oldbnlength+oldintlength,
                old,bnlength);
     }
     else
     {
-        bnlength = newbnlength - newintlength + min(oldintlength, newintlength);
+        bnlength = newbnlength - newintlength + std::min(oldintlength, newintlength);
         memcpy(newnum,old+oldbnlength-oldintlength-newbnlength+newintlength,
                bnlength);
     }

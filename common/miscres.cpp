@@ -1,6 +1,7 @@
 /*
         Resident odds and ends that don't fit anywhere else.
 */
+#include <algorithm>
 
 #include <string.h>
 #include <ctype.h>
@@ -1068,7 +1069,7 @@ top:
         if (bf_math)
         {
             int truncate, truncaterow;
-            dec = min(320, decimals);
+            dec = std::min(320, decimals);
             adjust_cornerbf(); /* make bottom left exact if very near exact */
             cvtcentermagbf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
             /* find alignment information */

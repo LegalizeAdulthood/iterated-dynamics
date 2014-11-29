@@ -6,6 +6,7 @@
  *
  *  The J-set is generated in a fixed-size window, a third of the screen.
  */
+#include <algorithm>
 
 #include <string.h>
 
@@ -471,7 +472,7 @@ void Jiim(int which)         /* called by fractint */
     show_numbers = 0;
     using_jiim = 1;
     mem_init(strlocn, 10*1024);
-    line_buff = static_cast<BYTE *>(newx(max(sxdots,sydots)));
+    line_buff = static_cast<BYTE *>(newx(std::max(sxdots,sydots)));
     aspect = ((double)xdots*3)/((double)ydots*4);  /* assumes 4:3 */
     actively_computing = 1;
     SetAspect(aspect);

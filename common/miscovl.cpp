@@ -1,6 +1,7 @@
 /*
         Overlayed odds and ends that don't fit anywhere else.
 */
+#include <algorithm>
 
 #include <string.h>
 #include <ctype.h>
@@ -534,7 +535,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
         /****** fractal only parameters in this section *******/
         put_parm(" reset");
         if (check_back())
-            put_parm("=%d",min(save_release,g_release));
+            put_parm("=%d",std::min(save_release,g_release));
         else
             put_parm("=%d",g_release);
 
@@ -1337,10 +1338,10 @@ int getprecbf(int rezflag)
         digits++;
         mult_a_bf_int(del1,10);
     }
-    digits = max(digits,3);
+    digits = std::max(digits,3);
     restore_stack(saved);
     dec = getprecbf_mag();
-    return (max(digits,dec));
+    return (std::max(digits,dec));
 }
 
 #ifdef _MSC_VER
@@ -1386,7 +1387,7 @@ int getprecdbl(int rezflag)
         digits++;
         del1 *= 10;
     }
-    digits = max(digits,3);
+    digits = std::max(digits,3);
     return (digits);
 }
 
@@ -2293,7 +2294,7 @@ void expand_comments(char *target, char *source)
         oldc = c;
     }
     if (*source != '\0')
-        *(target+min(j,MAXCMT-1)) = '\0';
+        *(target+std::min(j,MAXCMT-1)) = '\0';
 }
 
 /* extract comments from the comments= command */

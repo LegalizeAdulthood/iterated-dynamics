@@ -1,6 +1,7 @@
 /*
         encoder.c - GIF Encoder and associated routines
 */
+#include <algorithm>
 
 #include <string.h>
 #include <limits.h>
@@ -611,7 +612,7 @@ static int _fastcall put_extend_blk(int block_id, int block_len, char * block_da
     i = (block_len + 254) / 255;
     while (--i >= 0)
     {
-        block_len -= (j = min(block_len, 255));
+        block_len -= (j = std::min(block_len, 255));
         if (fputc(j, g_outfile) != j)
             return (0);
         while (--j >= 0)
@@ -757,7 +758,7 @@ static void _fastcall setup_save_info(struct fractal_info * save_info)
     save_info->system = (short) save_system;
 
     if (check_back())
-        save_info->release = (short) min(save_release, g_release);
+        save_info->release = (short) std::min(save_release, g_release);
     else
         save_info->release = (short) g_release;
 

@@ -25,12 +25,6 @@ typedef short INT2;
 typedef unsigned short UINT2;
 typedef int INT4;
 typedef unsigned int UINT4;
-#if !defined(max)
-#define max(a,b) ((a)>(b)?(a):(b))
-#endif
-#if !defined(min)
-#define min(a,b) ((a)<(b)?(a):(b))
-#endif
 #define remove(x) unlink(x)
 #if !defined(_MAX_FNAME)
 #define _MAX_FNAME 20

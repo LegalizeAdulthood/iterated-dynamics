@@ -10,6 +10,7 @@
  *
  *                                                                                      Tim Wegner
  */
+#include <algorithm>
 
 #include <string.h>
 /* see Fractint.c for a description of the "include"  hierarchy */
@@ -278,7 +279,7 @@ int gifview()
              * Width is limited to DECODERLINE_WIDTH.
              */
             if (skipxdots == 0)
-                width = min(width,DECODERLINE_WIDTH);
+                width = std::min(width,static_cast<unsigned>(DECODERLINE_WIDTH));
             status = timer(1,nullptr,width);
             busy = 0;      /* for slideshow CALCWAIT */
             if (calc_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */

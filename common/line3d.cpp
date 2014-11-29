@@ -3,7 +3,7 @@
 /* by the decoder. The purpose is to apply various 3D transformations   */
 /* before displaying points. Called once per line of the input file.    */
 /************************************************************************/
-
+#include <algorithm>
 #include <limits.h>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
@@ -238,7 +238,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     /* the effects of 3D transformations. Thanks to Marc Reinig for this idea*/
     /* and code.                                                             */
     /*************************************************************************/
-    lastdot = min(xdots - 1, (int) linelen - 1);
+    lastdot = std::min(xdots - 1, (int) linelen - 1);
     if (FILLTYPE >= 5)
         if (haze && Targa_Out)
         {
@@ -250,7 +250,7 @@ int line3d(BYTE * pixels, unsigned linelen)
         }
 
     if (previewfactor >= ydots || previewfactor > lastdot)
-        previewfactor = min(ydots - 1, lastdot);
+        previewfactor = std::min(ydots - 1, lastdot);
 
     localpreviewfactor = ydots / previewfactor;
 
@@ -1815,7 +1815,7 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
     }
 
     if (RAY == 7)
-        fprintf(File_Ptr1, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", min(255, max(1, c1)));
+        fprintf(File_Ptr1, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", std::min(255, std::max(1, c1)));
 
     for (i = 0; i <= 2; i++)     /* Describe each  Vertex  */
     {
@@ -2375,7 +2375,7 @@ static int first_time(int linelen, VECTOR v)
 
         origin[2] = 0.0;
 
-        v_length = min(xdots, ydots) / 2;
+        v_length = std::min(xdots, ydots) / 2;
         if (persp && ZVIEWER <= P)
             v_length *= (long)(P + 600) / ((long)(ZVIEWER + 600) * 2);
 

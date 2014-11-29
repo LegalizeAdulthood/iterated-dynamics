@@ -16,7 +16,7 @@
      Southington, CT 06489
      (203) 276-9721
 */
-
+#include <algorithm>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
@@ -537,7 +537,7 @@ long logtablecalc(long citer) {
     if (LogFlag == 0 && !rangeslen) /* Oops, how did we get here? */
         return (citer);
     if (!LogTable.empty() && !Log_Calc)
-        return (LogTable[(long)min(citer, MaxLTSize)]);
+        return (LogTable[(long)std::min(citer, MaxLTSize)]);
 
     if (LogFlag > 0) { /* new log function */
         if ((unsigned long)citer <= lf + 1)
