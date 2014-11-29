@@ -218,11 +218,7 @@ plot_set_dirty_region(Plot *me, int xmin, int ymin, int xmax, int ymax)
 static void
 init_pixels(Plot *me)
 {
-    if (me->pixels != nullptr)
-    {
-        free(me->pixels);
-        me->pixels = nullptr;
-    }
+    me->pixels.clear();
     if (me->saved_pixels != nullptr)
     {
         free(me->saved_pixels);
@@ -230,12 +226,12 @@ init_pixels(Plot *me)
     }
     me->width = sxdots;
     me->height = sydots;
-    me->row_len = me->width * sizeof(me->pixels[0]);
+    me->row_len = me->width * sizeof(BYTE);
     me->row_len = ((me->row_len + 3)/4)*4;
     me->pixels_len = me->row_len * me->height;
     _ASSERTE(me->pixels_len > 0);
-    me->pixels = (BYTE *) malloc(me->pixels_len);
-    memset(me->pixels, 0, me->pixels_len);
+    me->pixels.resize(me->pixels_len);
+    memset(&me->pixels[0], 0, me->pixels_len);
     me->dirty = FALSE;
     {
         RECT dirty_rect = { -1, -1, -1, -1 };
@@ -270,7 +266,7 @@ static void plot_OnPaint(HWND window)
         status = StretchDIBits(dc,
                                0, 0, s_plot->width, s_plot->height,
                                0, 0, s_plot->width, s_plot->height,
-                               s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
+                               &s_plot->pixels[0], &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
         _ASSERTE(status != GDI_ERROR);
     }
     EndPaint(window, &ps);
@@ -360,11 +356,6 @@ int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)
 
 void plot_terminate(Plot *me)
 {
-    if (me->pixels)
-    {
-        free(me->pixels);
-        me->pixels = nullptr;
-    }
     if (me->saved_pixels)
     {
         free(me->saved_pixels);
@@ -423,7 +414,7 @@ void plot_window(Plot *me, HWND parent)
 
 void plot_write_pixel(Plot *me, int x, int y, int color)
 {
-    _ASSERTE(me->pixels);
+    _ASSERTE(me->pixels.size() == me->width*me->height);
     _ASSERTE(x >= 0 && x < me->width);
     _ASSERTE(y >= 0 && y < me->height);
     me->pixels[(me->height - y - 1)*me->row_len + x] = (BYTE)(color & 0xFF);
@@ -432,7 +423,7 @@ void plot_write_pixel(Plot *me, int x, int y, int color)
 
 int plot_read_pixel(Plot *me, int x, int y)
 {
-    _ASSERTE(me->pixels);
+    _ASSERTE(me->pixels.size() == me->width*me->height);
     _ASSERTE(x >= 0 && x < me->width);
     _ASSERTE(y >= 0 && y < me->height);
     return (int) me->pixels[(me->height - 1 - y)*me->row_len + x];
@@ -556,7 +547,7 @@ void plot_clear(Plot *me)
     RECT r = { 0, 0, me->width, me->height };
     me->dirty_region = r;
     me->dirty = TRUE;
-    memset(me->pixels, 0, me->pixels_len);
+    memset(&me->pixels[0], 0, me->pixels_len);
 }
 
 void plot_redraw(Plot *me)
@@ -592,12 +583,12 @@ void plot_save_graphics(Plot *me)
         me->saved_pixels = static_cast<BYTE *>(malloc(me->pixels_len));
         memset(me->saved_pixels, 0, me->pixels_len);
     }
-    memcpy(me->saved_pixels, me->pixels, me->pixels_len);
+    memcpy(me->saved_pixels, &me->pixels[0], me->pixels_len);
 }
 
 void plot_restore_graphics(Plot *me)
 {
     _ASSERTE(me->saved_pixels);
-    memcpy(me->pixels, me->saved_pixels, me->pixels_len);
+    memcpy(&me->pixels[0], me->saved_pixels, me->pixels_len);
     plot_redraw(me);
 }

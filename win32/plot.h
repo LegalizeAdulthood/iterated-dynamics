@@ -1,6 +1,8 @@
 #if !defined(PLOT_H)
 #define PLOT_H
 
+#include <vector>
+
 typedef struct tagPlot Plot;
 struct tagPlot
 {
@@ -19,7 +21,7 @@ struct tagPlot
     BITMAPINFO bmi;                     /* contains first clut entry too */
     RGBQUAD bmiColors[255];             /* color look up table */
 
-    BYTE *pixels;
+    std::vector<BYTE> pixels;
     BYTE *saved_pixels;
     size_t pixels_len;
     size_t row_len;
