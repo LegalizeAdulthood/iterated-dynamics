@@ -440,7 +440,7 @@ _CMPLX ComplexSqrtFloat(double x, double y)
 
 #ifndef TESTING_MATH
 
-BYTE *LogTable = (BYTE *)0;
+std::vector<BYTE> LogTable;
 long MaxLTSize;
 int  Log_Calc = 0;
 static double mlf;
@@ -536,7 +536,7 @@ long logtablecalc(long citer) {
 
     if (LogFlag == 0 && !rangeslen) /* Oops, how did we get here? */
         return (citer);
-    if (LogTable && !Log_Calc)
+    if (!LogTable.empty() && !Log_Calc)
         return (LogTable[(long)min(citer, MaxLTSize)]);
 
     if (LogFlag > 0) { /* new log function */

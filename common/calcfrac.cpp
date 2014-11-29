@@ -587,7 +587,7 @@ int calcfract(void)
         firstsavedand = (long)((nextsavedincr*2) + 1);
     }
 
-    LogTable = nullptr;
+    LogTable.clear();
     MaxLTSize = maxit;
     Log_Calc = 0;
     /* below, INT_MAX=32767 only when an integer is two bytes.  Which is not true for Xfractint. */
@@ -608,9 +608,17 @@ int calcfract(void)
 
     if ((LogFlag || rangeslen) && !Log_Calc)
     {
-        LogTable = (BYTE *)malloc((long)MaxLTSize + 1);
+        bool resized = false;
+        try
+        {
+            LogTable.resize(MaxLTSize + 1);
+            resized = true;
+        }
+        catch (std::bad_alloc const&)
+        {
+        }
 
-        if (LogTable == nullptr)
+        if (!resized)
         {
             if (rangeslen || Log_Fly_Calc == 2) {
                 stopmsg(0, "Insufficient memory for logmap/ranges with this maxiter");
@@ -797,10 +805,9 @@ int calcfract(void)
     }
     calctime += timer_interval;
 
-    if (LogTable && !Log_Calc)
+    if (!LogTable.empty() && !Log_Calc)
     {
-        free(LogTable);   /* free if not using extraseg */
-        LogTable = nullptr;
+        LogTable.clear();
     }
     if (typespecific_workarea)
     {
@@ -1623,7 +1630,7 @@ int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col
     linity = lypixel();
     if (calcmandasm() >= 0)
     {
-        if ((LogTable || Log_Calc) /* map color, but not if maxit & adjusted for inside,etc */
+        if ((!LogTable.empty() || Log_Calc) /* map color, but not if maxit & adjusted for inside,etc */
                 && (realcoloriter < maxit || (inside < 0 && coloriter == maxit)))
             coloriter = logtablecalc(coloriter);
         color = abs((int)coloriter);
@@ -1671,7 +1678,7 @@ int calcmandfp(void)
     {
         if (potflag)
             coloriter = potential(magnitude, realcoloriter);
-        if ((LogTable || Log_Calc) /* map color, but not if maxit & adjusted for inside,etc */
+        if ((!LogTable.empty() || Log_Calc) /* map color, but not if maxit & adjusted for inside,etc */
                 && (realcoloriter < maxit || (inside < 0 && coloriter == maxit)))
             coloriter = logtablecalc(coloriter);
         color = abs((int)coloriter);
@@ -2240,7 +2247,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
         }
         magnitude = sqr(g_new.x) + sqr(g_new.y);
         coloriter = potential(magnitude, coloriter);
-        if (LogTable || Log_Calc)
+        if (!LogTable.empty() || Log_Calc)
             coloriter = logtablecalc(coloriter);
         goto plot_pixel;          /* skip any other adjustments */
     }
@@ -2343,7 +2350,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 
     if (outside >= 0 && attracted == FALSE) /* merge escape-time stripes */
         coloriter = outside;
-    else if (LogTable || Log_Calc)
+    else if (!LogTable.empty() || Log_Calc)
         coloriter = logtablecalc(coloriter);
     goto plot_pixel;
 
@@ -2419,7 +2426,7 @@ plot_inside: /* we're "inside" */
         }
         else /* inside == -1 */
             coloriter = maxit;
-        if (LogTable || Log_Calc)
+        if (!LogTable.empty() || Log_Calc)
             coloriter = logtablecalc(coloriter);
     }
 

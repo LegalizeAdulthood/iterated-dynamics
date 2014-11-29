@@ -1,6 +1,8 @@
 #ifndef EXTERNS_H
 #define EXTERNS_H
 
+#include <vector>
+
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
 extern int                   g_adapter;                         /* index into g_video_table[] */
 extern AlternateMath         alternatemath[];                   /* alternate math function pointers */
@@ -255,7 +257,7 @@ extern int                   Log_Auto_Calc;
 extern int                   Log_Calc;
 extern int                   Log_Fly_Calc;
 extern long                  LogFlag;
-extern BYTE *            LogTable;
+extern std::vector<BYTE>     LogTable;
 extern _LCMPLX               lold;
 extern _LCMPLX *             longparm;
 extern int                   lookatmouse;
