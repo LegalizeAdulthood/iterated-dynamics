@@ -219,11 +219,7 @@ static void
 init_pixels(Plot *me)
 {
     me->pixels.clear();
-    if (me->saved_pixels != nullptr)
-    {
-        free(me->saved_pixels);
-        me->saved_pixels = nullptr;
-    }
+    me->saved_pixels.clear();
     me->width = sxdots;
     me->height = sydots;
     me->row_len = me->width * sizeof(BYTE);
@@ -356,12 +352,6 @@ int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)
 
 void plot_terminate(Plot *me)
 {
-    if (me->saved_pixels)
-    {
-        free(me->saved_pixels);
-        me->saved_pixels = nullptr;
-    }
-
     {
         HBITMAP rendering = (HBITMAP) SelectObject(me->memory_dc, (HGDIOBJ) me->backup);
         _ASSERTE(rendering == me->rendering);
@@ -578,17 +568,11 @@ void plot_display_string(Plot *me, int x, int y, int fg, int bg, const char *tex
 
 void plot_save_graphics(Plot *me)
 {
-    if (nullptr == me->saved_pixels)
-    {
-        me->saved_pixels = static_cast<BYTE *>(malloc(me->pixels_len));
-        memset(me->saved_pixels, 0, me->pixels_len);
-    }
-    memcpy(me->saved_pixels, &me->pixels[0], me->pixels_len);
+    me->saved_pixels = me->pixels;
 }
 
 void plot_restore_graphics(Plot *me)
 {
-    _ASSERTE(me->saved_pixels);
-    memcpy(&me->pixels[0], me->saved_pixels, me->pixels_len);
+    me->pixels = me->saved_pixels;
     plot_redraw(me);
 }

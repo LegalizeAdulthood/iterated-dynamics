@@ -22,7 +22,7 @@ struct tagPlot
     RGBQUAD bmiColors[255];             /* color look up table */
 
     std::vector<BYTE> pixels;
-    BYTE *saved_pixels;
+    std::vector<BYTE> saved_pixels;
     size_t pixels_len;
     size_t row_len;
     int width;
