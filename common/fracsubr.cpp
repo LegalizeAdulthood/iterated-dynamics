@@ -1072,7 +1072,6 @@ static int _fastcall ratio_bad(double actual, double desired)
          (and issues warning to user).
       put_resume({bytes,&argument,} ... 0)
          Can be called as often as required to store the info.
-         Arguments must not be far addresses.
          Is not protected against calls which use more space than allocated.
    To reload info when resuming, use:
       start_resume()

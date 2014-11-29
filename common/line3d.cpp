@@ -2433,7 +2433,6 @@ static int line3dmem(void)
 
     /* lastrow stores the previous row of the original GIF image for
        the purpose of filling in gaps with triangle procedure */
-    /* TODO: allocate real memory, not reuse shared segment */
     lastrow = (struct point *) malloc(sizeof(struct point)*xdots);
 
     check_extra = sizeof(*lastrow) * xdots;

@@ -5,11 +5,6 @@
 #include "cmplx.h"
 #endif
 
-#ifdef XFRACT
-#define far
-#endif
-
-
 #if !defined(XFRACT)
 struct MP {
     int Exp;

@@ -19,7 +19,6 @@
 
 /* Memory allocation routines. */
 
-/* For far memory: */
 #define FAR_RESERVE   8192L    /* amount of far mem we will leave avail. */
 /* For disk memory: */
 #define DISKWRITELEN 2048L /* max # bytes transferred to/from disk mem at once */

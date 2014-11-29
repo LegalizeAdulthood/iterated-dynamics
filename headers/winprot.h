@@ -23,8 +23,8 @@ extern void set_default_parms(void);
 extern void debugmessage(char *, char *);
 extern int  farread(int, VOIDPTR, unsigned);
 extern int  farwrite(int, VOIDPTR, unsigned);
-extern void far_memcpy(void far *, void far *, int);
-extern void far_memset(void far *, int , int);
+extern void far_memcpy(void *, void *, int);
+extern void far_memset(void *, int , int);
 extern int getcolor(int, int);
 extern int out_line(BYTE *, int);
 extern void putcolor_a(int, int, int);
@@ -49,7 +49,7 @@ extern void winfract_help(void);
 
 /*  windos2 -- C file prototypes */
 
-extern void putstring(int, int, int, unsigned char far *);
+extern void putstring(int, int, int, unsigned char *);
 extern int  input_field(int, int, char *, int, int, int, int (*)(int));
 extern void helptitle(void);
 extern void stackscreen(void);
@@ -76,13 +76,13 @@ extern void win_savedac(void);
 extern void rotate(int);
 extern void cleartempmsg(void);
 extern void freetempmsg(void);
-extern int FromMemDisk(long, int, void far *);
-extern int ToMemDisk(long, int, void far *);
+extern int FromMemDisk(long, int, void *);
+extern int ToMemDisk(long, int, void *);
 extern int _fastcall common_startdisk(long, long, int);
-extern long cdecl normalize(char far *);
+extern long cdecl normalize(char *);
 extern void drawbox(int);
 
-extern void farmessage(unsigned char far *);
+extern void farmessage(unsigned char *);
 extern void setvideomode(int, int, int, int);
 extern int fromvideotable(void);
 extern void home(void);
@@ -98,7 +98,7 @@ extern int targa_startdisk(FILE *,int);
 extern void targa_writedisk(unsigned int,unsigned int,BYTE,BYTE,BYTE);
 extern void targa_readdisk(unsigned int,unsigned int,BYTE *,BYTE *,BYTE *);
 extern int SetColorPaletteName(char *);
-extern BYTE far *findfont(int);
+extern BYTE *findfont(int);
 extern void EndTGA(void);
 
 extern int key_count(int);

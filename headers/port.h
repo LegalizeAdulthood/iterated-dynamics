@@ -67,18 +67,6 @@ extern long stackavail();
 #if defined(_WIN32)
 /* _WIN32 uses a flat model */
 #  define BIG_ANSI_C
-#      ifdef far
-#        undef far
-#      endif
-#      define far
-#      ifdef _far
-#        undef _far
-#      endif
-#      define _far
-#      ifdef __far
-#        undef __far
-#      endif
-#      define __far
 #      ifndef USE_BIGNUM_C_CODE
 #        define USE_BIGNUM_C_CODE
 #      endif
