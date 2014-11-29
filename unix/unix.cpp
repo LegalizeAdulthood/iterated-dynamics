@@ -472,7 +472,7 @@ int initfm(void)
     return (0);
 }
 
-/* tenths of millisecond timewr routine */
+/* tenths of millisecond timer routine */
 static struct timeval tv_start;
 
 void restart_uclock(void)
