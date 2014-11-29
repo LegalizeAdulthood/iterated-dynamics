@@ -1632,7 +1632,7 @@ struct  _PalTable
     FILE         *file;
     char         *memory;
 
-    PALENTRY     *save_pal[8];
+    PALENTRY     save_pal[8][256];
 
 
     PALENTRY      fs_color;
@@ -2091,25 +2091,13 @@ static BOOLEAN PalTable__SetCurr(PalTable *me, int which, int curr)
 
 static BOOLEAN PalTable__MemoryAlloc(PalTable *me, long size)
 {
-    char *temp;
-
     if (debugflag == 420)
-    {
-        me->stored_at = NOWHERE;
-        return FALSE;   /* can't do it */
-    }
-    temp = (char *)malloc(FAR_RESERVE);   /* minimum free space */
-
-    if (temp == nullptr)
     {
         me->stored_at = NOWHERE;
         return FALSE;   /* can't do it */
     }
 
     me->memory = (char *)malloc(size);
-
-    free(temp);
-
     if (me->memory == nullptr)
     {
         me->stored_at = NOWHERE;
@@ -2871,20 +2859,15 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     {
         int which = key - FIK_F2;
 
-        if (me->save_pal[which] != nullptr)
-        {
-            Cursor_Hide();
+        Cursor_Hide();
 
-            PalTable__SaveUndoData(me, 0, 255);
-            memcpy(me->pal,me->save_pal[which],256*3);
-            PalTable__UpdateDAC(me);
+        PalTable__SaveUndoData(me, 0, 255);
+        memcpy(me->pal, me->save_pal[which], 256*sizeof(PALENTRY));
+        PalTable__UpdateDAC(me);
 
-            PalTable__SetCurr(me, -1, 0);
-            Cursor_Show();
-            RGBEditor_SetDone(me->rgb[me->active], TRUE);
-        }
-        else
-            driver_buzzer(BUZZER_ERROR);   /* error buzz */
+        PalTable__SetCurr(me, -1, 0);
+        Cursor_Show();
+        RGBEditor_SetDone(me->rgb[me->active], TRUE);
         break;
     }
 
@@ -2898,13 +2881,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case FIK_SF9:
     {
         int which = key - FIK_SF2;
-
-        if (me->save_pal[which] != nullptr)
-        {
-            memcpy(me->save_pal[which],me->pal,256*3);
-        }
-        else
-            driver_buzzer(BUZZER_ERROR); /* oops! short on memory! */
+        memcpy(me->save_pal[which], me->pal, 256*sizeof(PALENTRY));
         break;
     }
 
@@ -3092,10 +3069,7 @@ static void PalTable__MkDefaultPalettes(PalTable *me)  /* creates default Fkey p
     int i;
     for (i=0; i<8; i++) /* copy original palette to save areas */
     {
-        if (me->save_pal[i] != nullptr)
-        {
-            memcpy(me->save_pal[i], me->pal, 256*3);
-        }
+        memcpy(me->save_pal[i], me->pal, 256*sizeof(PALENTRY));
     }
 }
 
@@ -3105,28 +3079,6 @@ static PalTable *PalTable_Construct(void)
 {
     PalTable     *me = new(PalTable);
     int           csize;
-    int           ctr;
-    PALENTRY *mem_block;
-    void     *temp;
-
-    temp = (void *)malloc(FAR_RESERVE);
-
-    if (temp != nullptr)
-    {
-        mem_block = (PALENTRY *)malloc(256L*3 * 8);
-
-        if (mem_block == nullptr)
-        {
-            for (ctr=0; ctr<8; ctr++)
-                me->save_pal[ctr] = nullptr;
-        }
-        else
-        {
-            for (ctr=0; ctr<8; ctr++)
-                me->save_pal[ctr] = mem_block + (256*ctr);
-        }
-        free(temp);
-    }
 
     me->rgb[0] = RGBEditor_Construct(0, 0, PalTable__other_key,
                                      PalTable__change, me);
@@ -3227,9 +3179,6 @@ static void PalTable_Destroy(PalTable *me)
 
     if (me->memory != nullptr)
         free(me->memory);
-
-    if (me->save_pal[0] != nullptr)
-        free((BYTE *)me->save_pal[0]);
 
     RGBEditor_Destroy(me->rgb[0]);
     RGBEditor_Destroy(me->rgb[1]);
