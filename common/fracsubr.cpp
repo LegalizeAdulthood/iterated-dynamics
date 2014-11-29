@@ -2,6 +2,8 @@
 FRACSUBR.C contains subroutines which belong primarily to CALCFRAC.C and
 FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 */
+#include <vector>
+
 #include <memory.h>
 
 #ifndef USE_VARARGS
@@ -47,29 +49,30 @@ int    taborhelp;    /* kludge for sound and tab or help key press */
 
 void free_grid_pointers()
 {
-    if (dx0)
-    {
-        free(dx0);
-        dx0 = nullptr;
-    }
-    if (lx0)
-    {
-        free(lx0);
-        lx0 = nullptr;
-    }
+    dx0.clear();
+    dy0.clear();
+    dx1.clear();
+    dy1.clear();
+    lx0.clear();
+    ly0.clear();
+    lx1.clear();
+    ly1.clear();
 }
 
 void set_grid_pointers()
 {
     free_grid_pointers();
-    dx0 = (double *) malloc(sizeof(double)*(2*xdots + 2*ydots));
-    dy1 = dx0 + xdots;
-    dy0 = dy1 + xdots;
-    dx1 = dy0 + ydots;
-    lx0 = (long *) malloc(sizeof(long)*(2*xdots + 2*ydots));
-    ly1 = lx0 + xdots;
-    ly0 = ly1 + xdots;
-    lx1 = ly0 + ydots;
+    dx0.resize(xdots);
+    dy1.resize(xdots);
+
+    dy0.resize(ydots);
+    dx1.resize(ydots);
+
+    lx0.resize(xdots);
+    ly1.resize(xdots);
+
+    ly0.resize(ydots);
+    lx1.resize(ydots);
     set_pixel_calc_functions();
 }
 

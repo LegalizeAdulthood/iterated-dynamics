@@ -1630,9 +1630,9 @@ struct  _PalTable
     int           hidden;
     int           stored_at;
     FILE         *file;
-    char     *memory;
+    char         *memory;
 
-    PALENTRY *save_pal[8];
+    PALENTRY     *save_pal[8];
 
 
     PALENTRY      fs_color;

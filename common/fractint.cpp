@@ -2,6 +2,7 @@
         FRACTINT - The Ultimate Fractal Generator
                         Main Routine
 */
+#include <vector>
 
 #include <string.h>
 #include <time.h>
@@ -101,12 +102,16 @@ int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
 int hasinverse = 0;
 /* note that integer grid is set when integerfractal && !invert;    */
 /* otherwise the floating point grid is set; never both at once     */
-long    *lx0, *ly0;     /* x, y grid                */
-long    *lx1, *ly1;     /* adjustment for rotate    */
+std::vector<long> lx0;              /* x, y grid                */
+std::vector<long> ly0;
+std::vector<long> lx1;              /* adjustment for rotate    */
+std::vector<long> ly1;
 /* note that lx1 & ly1 values can overflow into sign bit; since     */
 /* they're used only to add to lx0/ly0, 2s comp straightens it out  */
-double *dx0, *dy0;      /* floating pt equivs */
-double *dx1, *dy1;
+std::vector<double> dx0;            /* floating pt equivs */
+std::vector<double> dy0;
+std::vector<double> dx1;
+std::vector<double> dy1;
 int     integerfractal;         /* TRUE if fractal uses integer math */
 
 /* usr_xxx is what the user wants, vs what we may be forced to do */
