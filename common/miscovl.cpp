@@ -2,6 +2,7 @@
         Overlayed odds and ends that don't fit anywhere else.
 */
 #include <algorithm>
+#include <vector>
 
 #include <string.h>
 #include <ctype.h>
@@ -1441,16 +1442,14 @@ static void put_float(int slash,double fnum,int prec)
 
 static void put_bf(int slash,bf_t r, int prec)
 {
-    char *buf; /* "/-1.xxxxxxE-1234" */
-    char *bptr;
-    /* buf = malloc(decimals+11); */
-    buf = s_wbdata.buf+5000;  /* end of use suffix buffer, 5000 bytes safe */
-    bptr = buf;
+    std::vector<char> buf;              /* "/-1.xxxxxxE-1234" */
+    buf.resize(5000);
+    char *bptr = &buf[0];
     if (slash)
         *(bptr++) = '/';
     bftostr(bptr, prec, r);
     strip_zeros(bptr);
-    put_parm(buf);
+    put_parm(&buf[0]);
 }
 
 static int *entsptr;
