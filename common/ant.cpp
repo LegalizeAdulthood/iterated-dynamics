@@ -225,6 +225,18 @@ exit_ant:
     return;
 }
 
+namespace
+{
+
+unsigned rotate_left_one(unsigned value)
+{
+    unsigned const high_bit{~0U & (~0U >> 1)};
+    unsigned const result{value << 1};
+    return (value & high_bit) ? (value | 1U) : value;
+}
+
+}
+
 /* this one ignore the color of the current cell is more like a white ant */
 void
 TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
@@ -232,7 +244,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
     int color, ix, iy, idir, pixel, dir[MAX_ANTS + 1], i;
     int kbdchar, step, antwrap;
     int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
-    int rule[MAX_ANTS + 1], rule_mask;
+    int rule[MAX_ANTS + 1];
     long count;
 
     antwrap = ((param[4] == 0) ? 0 : 1);
@@ -270,7 +282,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
     }
     /* use this rule when a black pixel is found */
     rule[0] = 0;
-    rule_mask = 1;
+    unsigned rule_mask = 1U;
     maxpts = maxpts / (long) INNER_LOOP;
     for (count = 0; count < maxpts; count++)
     {
@@ -342,7 +354,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
                 y[color] = s_incy[idir][iy];
                 dir[color] = idir;
             }
-            rule_mask = _rotl(rule_mask, 1);
+            rule_mask = rotate_left_one(rule_mask);
         }
     }
 exit_ant:

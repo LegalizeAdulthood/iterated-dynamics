@@ -451,13 +451,6 @@ void ftimex(struct timebx *tp)
     tp->dstflag = timezp.tz_dsttime;
 }
 
-unsigned short _rotl(unsigned short num, short bits)
-{
-    unsigned long ll;
-    ll = (((unsigned long)num << 16) + num) << (bits&15);
-          return ((unsigned short)(ll>>16));
-}
-
 /* sound.c file prototypes */
 int get_sound_params(void)
 {
