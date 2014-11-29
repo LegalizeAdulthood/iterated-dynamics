@@ -302,8 +302,8 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
         helpmode = HELPLOADFILE;
         i = fullscreen_choice(0, (char *) dstack,
                               "key...name......................err...xdot..ydot.clr.comment..................",
-                              temp1, g_video_table_len, NULL, attributes,
-                              1, 13, 78, 0, format_item, NULL, NULL, check_modekey);
+                              temp1, g_video_table_len, nullptr, attributes,
+                              1, 13, 78, 0, format_item, nullptr, nullptr, check_modekey);
         helpmode = oldhelpmode;
         if (i == -1)
         {

@@ -1,9 +1,6 @@
 /*
 CALCFRAC.C contains the high level ("engine") code for calculating the
 fractal images (well, SOMEBODY had to do it!).
-Original author Tim Wegner, but just about ALL the authors have contributed
-SOME code to this routine at one time or another, or contributed to one of
-the many massive restructurings.
 The following modules work very closely with CALCFRAC.C:
   FRACTALS.C    the fractal-specific code for escape-time fractals.
   FRACSUBR.C    assorted subroutines belonging mainly to calcfrac.
@@ -128,7 +125,7 @@ int xxstart,xxstop,xxbegin;             /* these are same as worklist, */
 int yystart,yystop,yybegin;             /* declared as separate items  */
 int workpass,worksym;                   /* for the sake of calcmand    */
 
-VOIDPTR typespecific_workarea = NULL;
+VOIDPTR typespecific_workarea = nullptr;
 
 static double dem_delta, dem_width;     /* distance estimator variables */
 static double dem_toobig;
@@ -205,7 +202,7 @@ int periodicitycheck;
 int nextsavedincr;
 long firstsavedand = 0;
 
-static BYTE *savedots = NULL;
+static BYTE *savedots = nullptr;
 static BYTE *fillbuff;
 static int savedotslen;
 static int showdotcolor;
@@ -413,12 +410,12 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
     ct = 0;
     if (direction != JUST_A_POINT)
     {
-        if (savedots == NULL)
+        if (savedots == nullptr)
         {
             stopmsg(0,"savedots NULL");
             exit(0);
         }
-        if (fillbuff == NULL)
+        if (fillbuff == nullptr)
         {
             stopmsg(0,"fillbuff NULL");
             exit(0);
@@ -548,7 +545,7 @@ int calcfract(void)
     if (truecolor)
     {
         check_writefile(light_name, ".tga");
-        if (startdisk1(light_name,NULL,0)==0)
+        if (startdisk1(light_name,nullptr,0)==0)
         {
             /* Have to force passes=1 */
             usr_stdcalcmode = stdcalcmode = '1';
@@ -590,7 +587,7 @@ int calcfract(void)
         firstsavedand = (long)((nextsavedincr*2) + 1);
     }
 
-    LogTable = NULL;
+    LogTable = nullptr;
     MaxLTSize = maxit;
     Log_Calc = 0;
     /* below, INT_MAX=32767 only when an integer is two bytes.  Which is not true for Xfractint. */
@@ -613,7 +610,7 @@ int calcfract(void)
     {
         LogTable = (BYTE *)malloc((long)MaxLTSize + 1);
 
-        if (LogTable == NULL)
+        if (LogTable == nullptr)
         {
             if (rangeslen || Log_Fly_Calc == 2) {
                 stopmsg(0, "Insufficient memory for logmap/ranges with this maxiter");
@@ -803,7 +800,7 @@ int calcfract(void)
     if (LogTable && !Log_Calc)
     {
         free(LogTable);   /* free if not using extraseg */
-        LogTable = NULL;
+        LogTable = nullptr;
     }
     if (typespecific_workarea)
     {
@@ -840,9 +837,9 @@ int find_alternate_math(int type, int math)
 
 static void perform_worklist()
 {
-    int (*sv_orbitcalc)(void) = NULL;  /* function that calculates one orbit */
-    int (*sv_per_pixel)(void) = NULL;  /* once-per-pixel init */
-    int (*sv_per_image)(void) = NULL;  /* once-per-image setup */
+    int (*sv_orbitcalc)(void) = nullptr;  /* function that calculates one orbit */
+    int (*sv_per_pixel)(void) = nullptr;  /* once-per-pixel init */
+    int (*sv_per_image)(void) = nullptr;  /* once-per-image setup */
     int i, alt;
 
     if ((alt=find_alternate_math(fractype,bf_math)) > -1)
@@ -1008,7 +1005,6 @@ static void perform_worklist()
                 else
                     showdot_width = -1;
             }
-#ifdef SAVEDOTS_USES_MALLOC
             while (showdot_width >= 0)
             {
                 /*
@@ -1020,7 +1016,7 @@ static void perform_worklist()
                 */
                 while ((savedotslen=sqr(showdot_width)+5*showdot_width+4) > 1000)
                     showdot_width--;
-                if ((savedots = (BYTE *)malloc(savedotslen)) != NULL)
+                if ((savedots = (BYTE *)malloc(savedotslen)) != nullptr)
                 {
                     savedotslen /= 2;
                     fillbuff = savedots + savedotslen;
@@ -1033,16 +1029,8 @@ static void perform_worklist()
                 */
                 showdot_width--;
             }
-            if (savedots == NULL)
+            if (savedots == nullptr)
                 showdot_width = -1;
-#else
-            while ((savedotslen=sqr(showdot_width)+5*showdot_width+4) > 2048)
-                showdot_width--;
-            savedots = (BYTE *)decoderline;
-            savedotslen /= 2;
-            fillbuff = savedots + savedotslen;
-            memset(fillbuff,showdotcolor,savedotslen);
-#endif
             calctypetmp = calctype;
             calctype    = calctypeshowdot;
         }
@@ -1087,14 +1075,12 @@ static void perform_worklist()
         default:
             OneOrTwoPass();
         }
-#ifdef SAVEDOTS_USES_MALLOC
-        if (savedots != NULL)
+        if (savedots != nullptr)
         {
             free(savedots);
-            savedots = NULL;
-            fillbuff = NULL;
+            savedots = nullptr;
+            fillbuff = nullptr;
         }
-#endif
         if (check_key()) /* interrupted? */
             break;
     }
@@ -1106,7 +1092,7 @@ static void perform_worklist()
     }
     else
         calc_status = CALCSTAT_COMPLETED; /* completed */
-    if (sv_orbitcalc != NULL)
+    if (sv_orbitcalc != nullptr)
     {
         curfractalspecific->orbitcalc = sv_orbitcalc;
         curfractalspecific->per_pixel = sv_per_pixel;
@@ -2198,9 +2184,9 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                 {
 #ifdef NUMSAVED
                     char msg[MSGLEN];
-                    static FILE *fp = NULL;
+                    static FILE *fp = nullptr;
                     static char c;
-                    if (fp==NULL)
+                    if (fp==nullptr)
                         fp = dir_fopen(workdir,"cycles.txt","w");
 #endif
                     cyclelen = coloriter-savedcoloriter;

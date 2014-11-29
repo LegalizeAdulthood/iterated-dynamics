@@ -170,8 +170,8 @@ union Arg s[20];
 union Arg **Store;
 union Arg **Load;
 int OpPtr;
-void (**f)(void) = 0;
-struct ConstArg *v = 0;
+void (**f)(void) = nullptr;
+struct ConstArg *v = nullptr;
 int StoPtr, LodPtr;
 int var_count;
 int complx_count;
@@ -2435,7 +2435,7 @@ static int ParseStr(char *Str, int pass) {
         case ';':
             if (!ExpectingArg) {
                 ExpectingArg = 1;
-                o[posp].f = (void(*)(void))0;
+                o[posp].f = (void(*)(void))nullptr;
                 o[posp++].p = 15;
                 o[posp].f = StkClr;
                 o[posp++].p = -30000;
@@ -2444,7 +2444,7 @@ static int ParseStr(char *Str, int pass) {
             break;
         case ':':
             ExpectingArg = 1;
-            o[posp].f = (void(*)(void))0;
+            o[posp].f = (void(*)(void))nullptr;
             o[posp++].p = 15;
             o[posp].f = EndInit;
             o[posp++].p = -30000;
@@ -2548,7 +2548,7 @@ static int ParseStr(char *Str, int pass) {
                     jump_control[jump_index++].type = 2;
                     o[posp].f = StkJump;
                     o[posp++].p = 1;
-                    o[posp].f = (void(*)(void))0;
+                    o[posp].f = (void(*)(void))nullptr;
                     o[posp++].p = 15;
                     o[posp].f = StkClr;
                     o[posp++].p = -30000;
@@ -2586,7 +2586,7 @@ static int ParseStr(char *Str, int pass) {
             break;
         }
     }
-    o[posp].f = (void(*)(void))0;
+    o[posp].f = (void(*)(void))nullptr;
     o[posp++].p = 16;
     NextOp = 0;
     LastOp = posp;
@@ -2819,7 +2819,7 @@ int fill_jump_struct(void)
     int loadcount = 0;
     int storecount = 0;
     int checkforelse = 0;
-    void (*JumpFunc)(void) = NULL;
+    void (*JumpFunc)(void) = nullptr;
     int find_new_func = 1;
 
     JUMP_PTRS_ST jump_data[MAX_JUMPS];
@@ -3066,7 +3066,7 @@ void is_complex_constant(FILE * openfile, struct token_st * tok)
     int sign_value = 1;
     int done = 0;
     int getting_real = 1;
-    FILE * debug_token = NULL;
+    FILE * debug_token = nullptr;
     tok->token_str[1] = (char) 0;  /* so we can concatenate later */
 
     filepos = ftell(openfile);
@@ -3078,43 +3078,43 @@ void is_complex_constant(FILE * openfile, struct token_st * tok)
         switch (c = frmgetchar(openfile)) {
 CASE_NUM :
         case '.':
-            if (debug_token != NULL) {
+            if (debug_token != nullptr) {
                 fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
             }
             temp_tok.token_str[0] = (char) c;
             break;
         case '-' :
-            if (debug_token != NULL) {
+            if (debug_token != nullptr) {
                 fprintf(debug_token,  "First char is a minus\n");
             }
             sign_value = -1;
             c = frmgetchar(openfile);
             if (c == '.' || isdigit(c)) {
-                if (debug_token != NULL) {
+                if (debug_token != nullptr) {
                     fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
                 }
                 temp_tok.token_str[0] = (char) c;
             }
             else {
-                if (debug_token != NULL) {
+                if (debug_token != nullptr) {
                     fprintf(debug_token,  "First char not a . or NUM\n");
                 }
                 done = 1;
             }
             break;
         default:
-            if (debug_token != NULL) {
+            if (debug_token != nullptr) {
                 fprintf(debug_token,  "First char not a . or NUM\n");
             }
             done = 1;
             break;
         }
-        if (debug_token != NULL) {
+        if (debug_token != nullptr) {
             fprintf(debug_token,  "Calling frmgetconstant unless done is 1; done is %d\n", done);
         }
         if (!done && frmgetconstant(openfile, &temp_tok)) {
             c = frmgetchar(openfile);
-            if (debug_token != NULL) {
+            if (debug_token != nullptr) {
                 fprintf(debug_token, "frmgetconstant returned 1; next token is %c\n", c);
             }
             if (getting_real && c == ',') {   /*we have the real part now*/
@@ -3136,7 +3136,7 @@ CASE_NUM :
                 tok->token_const.y = temp_tok.token_const.x * sign_value;
                 tok->token_type = tok->token_const.y ? COMPLEX_CONSTANT : REAL_CONSTANT;
                 tok->token_id   = 0;
-                if (debug_token != NULL) {
+                if (debug_token != nullptr) {
                     fprintf(debug_token,  "Exiting with type set to %d\n", tok->token_const.y ? COMPLEX_CONSTANT : REAL_CONSTANT);
                     fclose(debug_token);
                 }
@@ -3153,7 +3153,7 @@ CASE_NUM :
     tok->token_const.y = tok->token_const.x = 0.0;
     tok->token_type = PARENS;
     tok->token_id = OPEN_PARENS;
-    if (debug_token != NULL) {
+    if (debug_token != nullptr) {
         fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
         fclose(debug_token);
     }
@@ -3377,10 +3377,10 @@ CASE_TERMINATOR:
 
 int frm_get_param_stuff(char * Name)
 {
-    FILE *debug_token = NULL;
+    FILE *debug_token = nullptr;
     int c;
     struct token_st current_token;
-    FILE * entry_file = NULL;
+    FILE * entry_file = nullptr;
     uses_p1 = uses_p2 = uses_p3 = uses_ismand = maxfn = 0;
     uses_p4 = uses_p5 = 0;
 
@@ -3400,11 +3400,11 @@ int frm_get_param_stuff(char * Name)
     }
 
     if (debugflag == 96) {
-        if ((debug_token = fopen("frmtokens.txt","at")) != NULL)
+        if ((debug_token = fopen("frmtokens.txt","at")) != nullptr)
             fprintf(debug_token,"%s\n", Name);
     }
     while (frmgettoken(entry_file, &current_token)) {
-        if (debug_token != NULL) {
+        if (debug_token != nullptr) {
             fprintf(debug_token,"%s\n", current_token.token_str);
             fprintf(debug_token,"token_type is %d\n", current_token.token_type);
             fprintf(debug_token,"token_id is %d\n", current_token.token_id);
@@ -3579,7 +3579,7 @@ static char *PrepareFormula(FILE * File, int from_prompts1c) {
        is called from RunForm() below.
     */
 
-    FILE *debug_fp = NULL;
+    FILE *debug_fp = nullptr;
     char *FormulaStr;
     struct token_st temp_tok;
     int Done;
@@ -3592,21 +3592,21 @@ static char *PrepareFormula(FILE * File, int from_prompts1c) {
 
     if (frm_check_name_and_sym(File, from_prompts1c) == 0) {
         fseek(File, filepos, SEEK_SET);
-        return NULL;
+        return nullptr;
     }
     if (!frm_prescan(File)) {
         fseek(File, filepos, SEEK_SET);
-        return NULL;
+        return nullptr;
     }
 
     if (chars_in_formula > 8190) {
         fseek(File, filepos, SEEK_SET);
-        return NULL;
+        return nullptr;
     }
 
     if (debugflag == 96)
     {
-        if ((debug_fp = fopen("debugfrm.txt","at")) != NULL) {
+        if ((debug_fp = fopen("debugfrm.txt","at")) != nullptr) {
             fprintf(debug_fp,"%s\n",FormName);
             if (symmetry != 0)
                 fprintf(debug_fp,"%s\n", SymStr[symmetry].s);
@@ -3624,12 +3624,12 @@ static char *PrepareFormula(FILE * File, int from_prompts1c) {
         if (temp_tok.token_type == NOT_A_TOKEN) {
             stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
             fseek(File, filepos, SEEK_SET);
-            return NULL;
+            return nullptr;
         }
         else if (temp_tok.token_type == END_OF_FORMULA) {
             stopmsg(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
             fseek(File, filepos, SEEK_SET);
-            return NULL;
+            return nullptr;
         }
         if (temp_tok.token_str[0] == ',')
             ;
@@ -3646,7 +3646,7 @@ static char *PrepareFormula(FILE * File, int from_prompts1c) {
         case NOT_A_TOKEN:
             stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
             fseek(File, filepos, SEEK_SET);
-            return NULL;
+            return nullptr;
         case END_OF_FORMULA:
             Done = 1;
             fseek(File, filepos, SEEK_SET);
@@ -3657,9 +3657,9 @@ static char *PrepareFormula(FILE * File, int from_prompts1c) {
         }
     }
 
-    if (debug_fp != NULL && FormulaStr != NULL)
+    if (debug_fp != nullptr && FormulaStr != nullptr)
         fprintf(debug_fp,"   %s\n",FormulaStr);
-    if (debug_fp != NULL)
+    if (debug_fp != nullptr)
         fclose(debug_fp);
 
 
@@ -3677,7 +3677,7 @@ int BadFormula(void) {
 
 int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurred  */
 
-    FILE * entry_file = NULL;
+    FILE * entry_file = nullptr;
 
     /*  first set the pointers so they point to a fn which always returns 1  */
     curfractalspecific->per_pixel = BadFormula;
@@ -3834,12 +3834,12 @@ void free_workarea()
     {
         free(typespecific_workarea);
     }
-    typespecific_workarea = NULL;
-    Store = (union Arg **) NULL;
-    Load = (union Arg **) NULL;
-    v = (struct ConstArg *) NULL;
-    f = (void (**)(void)) NULL;
-    pfls = (struct fls *) NULL;
+    typespecific_workarea = nullptr;
+    Store = (union Arg **) nullptr;
+    Load = (union Arg **) nullptr;
+    v = (struct ConstArg *) nullptr;
+    f = (void (**)(void)) nullptr;
+    pfls = (struct fls *) nullptr;
     total_formula_mem = 0;
 }
 
@@ -4003,7 +4003,7 @@ void init_var_list()
         temp = p->next_item;
         free(p);
     }
-    var_list = NULL;
+    var_list = nullptr;
 }
 
 
@@ -4014,48 +4014,48 @@ void init_const_lists()
         temp = p->next_item;
         free(p);
     }
-    complx_list = NULL;
+    complx_list = nullptr;
     for (p = real_list; p; p=temp) {
         temp = p->next_item;
         free(p);
     }
-    real_list = NULL;
+    real_list = nullptr;
 }
 
 struct var_list_st * add_var_to_list(struct var_list_st * p, struct token_st tok) {
-    if (p == NULL) {
+    if (p == nullptr) {
         p = var_list_alloc();
-        if (p == NULL)
-            return NULL;
+        if (p == nullptr)
+            return nullptr;
         strcpy(p->name, tok.token_str);
-        p->next_item = NULL;
+        p->next_item = nullptr;
     }
     else if (strcmp(p->name, tok.token_str) == 0) {
     }
     else {
         p->next_item = add_var_to_list(p->next_item, tok);
-        if (p->next_item == NULL)
-            return NULL;
+        if (p->next_item == nullptr)
+            return nullptr;
     }
     return p;
 }
 
 struct const_list_st *  add_const_to_list(struct const_list_st * p, struct token_st tok) {
-    if (p == NULL) {
+    if (p == nullptr) {
         p = const_list_alloc();
-        if (p == NULL)
-            return NULL;
+        if (p == nullptr)
+            return nullptr;
         p->complex_const.x = tok.token_const.x;
         p->complex_const.y = tok.token_const.y;
-        p->next_item = NULL;
+        p->next_item = nullptr;
     }
     else if (p->complex_const.x == tok.token_const.x && p->complex_const.y == tok.token_const.y) {
     }
     else
     {
         p->next_item = add_const_to_list(p->next_item, tok);
-        if (p->next_item == NULL)
-            return NULL;
+        if (p->next_item == nullptr)
+            return nullptr;
     }
     return p;
 }
@@ -4320,15 +4320,7 @@ int frm_prescan(FILE * open_file)
                 }
             }
             ExpectingArg = 0;
-            /*            var_list = add_var_to_list (var_list, this_token);
-                          if (var_list == NULL) {
-                           stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-                           fseek(open_file, orig_pos, SEEK_SET);
-                           init_var_list();
-                           init_const_lists();
-                           return 0;
-                        }
-            */          break;
+            break;
         case PREDEFINED_VARIABLE: /* i.e. z, pixel, whitesq, etc. */
             number_of_ops++;
             number_of_loads++;
@@ -4381,15 +4373,7 @@ int frm_prescan(FILE * open_file)
                 }
             }
             ExpectingArg = 0;
-            /*            real_list = add_const_to_list (real_list, this_token);
-                          if (real_list == NULL) {
-                           stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-                           fseek(open_file, orig_pos, SEEK_SET);
-                           init_var_list();
-                           init_const_lists();
-                           return 0;
-                        }
-            */          break;
+            break;
         case COMPLEX_CONSTANT: /* i.e. (1,2) etc. */
             assignment_ok = 0;
             number_of_ops++;
@@ -4403,15 +4387,7 @@ int frm_prescan(FILE * open_file)
                 }
             }
             ExpectingArg = 0;
-            /*          complx_list = add_const_to_list (complx_list, this_token);
-                        if (complx_list == NULL) {
-                           stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-                           fseek(open_file, orig_pos, SEEK_SET);
-                           init_var_list();
-                           init_const_lists();
-                           return 0;
-                         }
-            */           break;
+            break;
         case FUNCTION:
             assignment_ok = 0;
             NewStatement = 0;

@@ -44,7 +44,7 @@
 #include "prototyp.h"
 
 /* global data  */
-struct fls *pfls = (struct fls *)0;
+struct fls *pfls = (struct fls *)nullptr;
 
 #if !defined(XFRACT)
 
@@ -187,8 +187,8 @@ NEW_FN  fStkOne;   /* to support new parser fn.  */
 #ifdef TESTFP
 int pstopmsg(int x,char *msg)
 {
-    static FILE *fp = NULL;
-    if (fp == NULL)
+    static FILE *fp = nullptr;
+    if (fp == nullptr)
         fp = fopen("fpdebug.txt","w");
     if (fp)
     {
@@ -852,7 +852,7 @@ awful_error:
             else {
                 DBUGMSG("*lodrealc (div) -> (*lodrealmul)");
             }
-            v[vsp].s = 0;  /* this constant has no name  */
+            v[vsp].s = nullptr;  /* this constant has no name  */
             v[vsp].len = 0;
             v[vsp].a.d.x = _1_ / Load[LodPtr-1]->d.x;
             v[vsp].a.d.y = 0.0;
@@ -1127,7 +1127,7 @@ int fpfill_jump_struct(void)
     /* On entry, jump_index is the number of jump functions in the formula*/
     int i = 0;
     int checkforelse = 0;
-    NEW_FN  * JumpFunc = NULL;
+    NEW_FN  * JumpFunc = nullptr;
     int find_new_func = 1;
     JUMP_PTRS_ST jump_data[MAX_JUMPS];
 
@@ -1251,7 +1251,7 @@ int CvtStk() {  /* convert the array of ptrs  */
         f[LastOp++] = StkClr;
     }
 
-    prevfptr = (void (*)(void))0;
+    prevfptr = (void (*)(void))nullptr;
     cvtptrx = realstkcnt = stkcnt = 0;
 
     for (OpPtr = LodPtr = StoPtr = 0; OpPtr < (int)LastOp; OpPtr++) {

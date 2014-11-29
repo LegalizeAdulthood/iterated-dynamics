@@ -262,7 +262,7 @@ bn_t strtobn(bn_t r, char *s)
         s++;
     }
 
-    if (strchr(s, '.') != NULL) /* is there a decimal point? */
+    if (strchr(s, '.') != nullptr) /* is there a decimal point? */
     {
         l = (int) strlen(s) - 1;      /* start with the last digit */
         while (s[l] >= '0' && s[l] <= '9') /* while a digit */

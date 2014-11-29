@@ -21,7 +21,7 @@ static void close_file(void);
 
 #define MAXCOLORS       256
 
-static FILE *fpin = NULL;       /* FILE pointer           */
+static FILE *fpin = nullptr;       /* FILE pointer           */
 unsigned int height;
 unsigned numcolors;
 int bad_code_count = 0;         /* needed by decoder module */
@@ -64,7 +64,7 @@ BYTE decoderline[MAXPIXELS+1]; /* write-line routines use this */
 #endif
 
 extern BYTE *decoderline1;
-static char *ditherbuf = NULL;
+static char *ditherbuf = nullptr;
 
 /* Main entry decoder */
 
@@ -92,9 +92,9 @@ int gifview()
         strcpy(temp1,stereomapname);
     else
         strcpy(temp1,readname);
-    if (has_ext(temp1) == NULL) {
+    if (has_ext(temp1) == nullptr) {
         strcat(temp1,DEFAULTFRACTALTYPE);
-        if ((fpin = fopen(temp1,"rb")) != NULL) {
+        if ((fpin = fopen(temp1,"rb")) != nullptr) {
             fclose(fpin);
         }
         else {
@@ -106,7 +106,7 @@ int gifview()
         }
     }
     fpin = fopen(temp1, "rb");
-    if (fpin == NULL) {
+    if (fpin == nullptr) {
         return (-1);
     }
 
@@ -176,8 +176,8 @@ int gifview()
         char ext[FILE_MAX_EXT];
         char tmpname[15];
         char msg[40];
-        splitpath(temp1,NULL,NULL,fname,ext);
-        makepath(tmpname,NULL,NULL,fname,ext);
+        splitpath(temp1,nullptr,nullptr,fname,ext);
+        makepath(tmpname,nullptr,nullptr,fname,ext);
         sprintf(msg,"restoring %s",tmpname);
         dvid_status(1,msg);
     }
@@ -279,7 +279,7 @@ int gifview()
              */
             if (skipxdots == 0)
                 width = min(width,DECODERLINE_WIDTH);
-            status = timer(1,NULL,width);
+            status = timer(1,nullptr,width);
             busy = 0;      /* for slideshow CALCWAIT */
             if (calc_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */
             {
@@ -309,9 +309,9 @@ int gifview()
         dvid_status(1,"");
     }
 
-    if (ditherbuf != NULL) { /* we're done, free dither memory */
+    if (ditherbuf != nullptr) { /* we're done, free dither memory */
         free(ditherbuf);
-        ditherbuf = NULL;
+        ditherbuf = nullptr;
     }
 
     return (status);
@@ -320,7 +320,7 @@ int gifview()
 static void close_file()
 {
     fclose(fpin);
-    fpin = NULL;
+    fpin = nullptr;
 }
 
 /* routine for MIGS that generates partial output lines */
@@ -341,7 +341,7 @@ static int out_line_migs(BYTE *pixels, int linelen)
 static int out_line_dither(BYTE *pixels, int linelen)
 {
     int i,nexterr,brt,err;
-    if (ditherbuf == NULL)
+    if (ditherbuf == nullptr)
         ditherbuf = (char *)malloc(linelen+1);
     memset(ditherbuf, 0, linelen+1);
 

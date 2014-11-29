@@ -63,7 +63,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
     changecolor = -1;                    /* no color (rgb) to change     */
     changedirection = 0;                 /* no color direction to change */
     incr = 999;                          /* ready to randomize           */
-    srand((unsigned)time(NULL));         /* randomize things             */
+    srand((unsigned)time(nullptr));         /* randomize things             */
 
     if (direction == 0) {                /* firing up in paused mode?    */
         pauserotate();                    /* then force a pause           */
@@ -433,14 +433,14 @@ void save_palette()
     driver_stack_screen();
     temp1[0] = 0;
     helpmode = HELPCOLORMAP;
-    i = field_prompt("Name of map file to write",NULL,temp1,60,NULL);
+    i = field_prompt("Name of map file to write",nullptr,temp1,60,nullptr);
     driver_unstack_screen();
     if (i != -1 && temp1[0]) {
-        if (strchr(temp1,'.') == NULL)
+        if (strchr(temp1,'.') == nullptr)
             strcat(temp1,".map");
         merge_pathnames(palname,temp1,2);
         dacfile = fopen(palname,"w");
-        if (dacfile == NULL)
+        if (dacfile == nullptr)
             driver_buzzer(BUZZER_ERROR);
         else {
 #ifndef XFRACT

@@ -14,7 +14,7 @@
 #include "targa_lc.h"
 #include "drivers.h"
 
-static FILE *fptarga = NULL;            /* FILE pointer           */
+static FILE *fptarga = nullptr;            /* FILE pointer           */
 
 /* Main entry decoder */
 int
@@ -26,7 +26,7 @@ tgaview()
     struct fractal_info info;
 
     fptarga = t16_open(readname, (int *)&width, (int *)&height, &cs, (U8 *)&info);
-    if (fptarga==NULL)
+    if (fptarga==nullptr)
         return (-1);
 
     g_row_count = 0;
@@ -36,18 +36,18 @@ tgaview()
         if ((*outln)(reinterpret_cast<BYTE *>(boxx),width))
         {
             fclose(fptarga);
-            fptarga = NULL;
+            fptarga = nullptr;
             return (-1);
         }
         if (driver_key_pressed())
         {
             fclose(fptarga);
-            fptarga = NULL;
+            fptarga = nullptr;
             return (-1);
         }
     }
     fclose(fptarga);
-    fptarga = NULL;
+    fptarga = nullptr;
     return (0);
 }
 

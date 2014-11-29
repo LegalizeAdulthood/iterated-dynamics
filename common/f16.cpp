@@ -47,14 +47,14 @@ FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
     FILE *fp;
 
     strcpy(filename, fname);
-    if (has_ext(filename) == NULL) strcat(filename, ".TGA");
+    if (has_ext(filename) == nullptr) strcat(filename, ".TGA");
     fp = fopen(filename, READMODE);
-    if (fp == NULL) return NULL;
+    if (fp == nullptr) return nullptr;
 
     fread(header, HEADERSIZE, 1, fp);
     if ((header[O_FILETYPE] != T_RLERGB) || (header[O_ESIZE] != 16)) {
         fclose(fp);
-        return NULL;
+        return nullptr;
     }
     GET16(header[O_HSIZE], *hs);
     GET16(header[O_VSIZE], *vs);

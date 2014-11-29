@@ -121,7 +121,7 @@ MOREPARAMS moreparams[] =
     {FFORMULA ,{ p3real,p3imag,p4real,p4imag,p5real,p5imag},{0,0,0,0,0,0}},
     {ANT              ,{ "+Wrap?",s_randomseed,"","","",""},{1,0,0,0,0,0}},
     {MANDELBROTMIX4   ,{ p3real,p3imag,        "","","",""},{0,0,0,0,0,0}},
-    {-1               ,{ NULL,NULL,NULL,NULL,NULL,NULL    },{0,0,0,0,0,0}}
+    {-1               ,{ nullptr,nullptr,nullptr,nullptr,nullptr,nullptr    },{0,0,0,0,0,0}}
 };
 
 /*
@@ -145,7 +145,7 @@ struct alternatemathstuff alternatemath[] =
     */
     {FPJULIAZPOWER,2,JuliaZpowerbfFractal,juliabf_per_pixel, MandelbfSetup  },
     {FPMANDELZPOWER,2,JuliaZpowerbfFractal,mandelbf_per_pixel, MandelbfSetup},
-    {-1,            0,NULL,                NULL,               NULL         }
+    {-1,            0,nullptr,                nullptr,               nullptr         }
 };
 
 /* These are only needed for types with both integer and float variations */
@@ -322,7 +322,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_PLASMA, HF_PLASMA, NOZOOM+NOGUESS+NOTRACE+NORESUME+WINFRAC,
         (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
         1, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        NULL, NULL, StandaloneSetup, plasma,
+        nullptr, nullptr, StandaloneSetup, plasma,
         NOBAILOUT
     },
 
@@ -371,7 +371,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_TEST, HF_TEST, 0,
         (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        NULL, NULL, StandaloneSetup, test,
+        nullptr, nullptr, StandaloneSetup, test,
         STDBAILOUT
     },
 
@@ -541,7 +541,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_IFS, -4, NOGUESS+NOTRACE+NORESUME+WINFRAC+INFCALC,
         (float)-8.0, (float)8.0, (float)-1.0, (float)11.0,
         16, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        NULL, NULL, StandaloneSetup, ifs,
+        nullptr, nullptr, StandaloneSetup, ifs,
         NOBAILOUT
     },
 
@@ -552,7 +552,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_IFS, -4, NOGUESS+NOTRACE+NORESUME+WINFRAC+PARMS3D+INFCALC,
         (float)-11.0, (float)11.0, (float)-11.0, (float)11.0,
         16, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        NULL, NULL, StandaloneSetup, ifs,
+        nullptr, nullptr, StandaloneSetup, ifs,
         NOBAILOUT
     },
 
@@ -608,7 +608,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_BIF, HF_BIFURCATION, TRIG1+NOGUESS+NOTRACE+NOROTATE+WINFRAC,
         (float)1.9, (float)3.0, (float)0.0, (float)1.34,
         0, NOFRACTAL, NOFRACTAL, LBIFURCATION, NOSYM,
-        BifurcVerhulstTrig, NULL, StandaloneSetup, Bifurcation,
+        BifurcVerhulstTrig, nullptr, StandaloneSetup, Bifurcation,
         NOBAILOUT
     },
 
@@ -700,7 +700,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_KAM, HF_KAM, NOGUESS+NOTRACE+WINFRAC,
         (float)-1.0, (float)1.0, (float)-.75, (float).75,
         0, NOFRACTAL, NOFRACTAL, KAM, NOSYM,
-        (VF)kamtorusfloatorbit, NULL, orbit3dfloatsetup, orbit2dfloat,
+        (VF)kamtorusfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
         NOBAILOUT
     },
 
@@ -711,7 +711,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_KAM, HF_KAM, NOGUESS+NOTRACE+WINFRAC,
         (float)-1.0, (float)1.0, (float)-.75, (float).75,
         16, NOFRACTAL, NOFRACTAL, KAMFP, NOSYM,
-        (VF)kamtoruslongorbit, NULL, orbit3dlongsetup, orbit2dlong,
+        (VF)kamtoruslongorbit, nullptr, orbit3dlongsetup, orbit2dlong,
         NOBAILOUT
     },
 
@@ -722,7 +722,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_KAM, HF_KAM, NOGUESS+NOTRACE+NORESUME+WINFRAC+PARMS3D,
         (float)-3.0, (float)3.0, (float)-1.0, (float)3.5,
         0, NOFRACTAL, NOFRACTAL, KAM3D, NOSYM,
-        (VF)kamtorusfloatorbit, NULL, orbit3dfloatsetup, orbit3dfloat,
+        (VF)kamtorusfloatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
         NOBAILOUT
     },
 
@@ -733,7 +733,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_KAM, HF_KAM, NOGUESS+NOTRACE+NORESUME+WINFRAC+PARMS3D,
         (float)-3.0, (float)3.0, (float)-1.0, (float)3.5,
         16, NOFRACTAL, NOFRACTAL, KAM3DFP, NOSYM,
-        (VF)kamtoruslongorbit, NULL, orbit3dlongsetup, orbit3dlong,
+        (VF)kamtoruslongorbit, nullptr, orbit3dlongsetup, orbit3dlong,
         NOBAILOUT
     },
 
@@ -970,7 +970,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_LORENZ, HF_LORENZ, NOGUESS+NOTRACE+INFCALC+WINFRAC,
         (float)-15.0, (float)15.0, (float)0.0, (float)30.0,
         0, NOFRACTAL, NOFRACTAL, LLORENZ, NOSYM,
-        (VF)lorenz3dfloatorbit, NULL, orbit3dfloatsetup, orbit2dfloat,
+        (VF)lorenz3dfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
         NOBAILOUT
     },
 
@@ -981,7 +981,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_LORENZ, HF_LORENZ, NOGUESS+NOTRACE+INFCALC+WINFRAC,
         (float)-15.0, (float)15.0, (float)0.0, (float)30.0,
         16, NOFRACTAL, NOFRACTAL, FPLORENZ, NOSYM,
-        (VF)lorenz3dlongorbit, NULL, orbit3dlongsetup, orbit2dlong,
+        (VF)lorenz3dlongorbit, nullptr, orbit3dlongsetup, orbit2dlong,
         NOBAILOUT
     },
 
@@ -992,7 +992,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_LORENZ, HF_LORENZ, NOGUESS+NOTRACE+NORESUME+WINFRAC+PARMS3D+INFCALC,
         (float)-30.0, (float)30.0, (float)-30.0, (float)30.0,
         16, NOFRACTAL, NOFRACTAL, FPLORENZ3D, NOSYM,
-        (VF)lorenz3dlongorbit, NULL, orbit3dlongsetup, orbit3dlong,
+        (VF)lorenz3dlongorbit, nullptr, orbit3dlongsetup, orbit3dlong,
         NOBAILOUT
     },
 
@@ -1210,7 +1210,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_LORENZ, HF_LORENZ, NOGUESS+NOTRACE+NORESUME+WINFRAC+PARMS3D+INFCALC,
         (float)-30.0, (float)30.0, (float)-30.0, (float)30.0,
         0, NOFRACTAL, NOFRACTAL, LLORENZ3D, NOSYM,
-        (VF)lorenz3dfloatorbit, NULL, orbit3dfloatsetup, orbit3dfloat,
+        (VF)lorenz3dfloatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
         NOBAILOUT
     },
 
@@ -1221,7 +1221,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_ROSS, HF_ROSS, NOGUESS+NOTRACE+NORESUME+WINFRAC+PARMS3D+INFCALC,
         (float)-30.0, (float)30.0, (float)-20.0, (float)40.0,
         16, NOFRACTAL, NOFRACTAL, FPROSSLER, NOSYM,
-        (VF)rosslerlongorbit, NULL, orbit3dlongsetup, orbit3dlong,
+        (VF)rosslerlongorbit, nullptr, orbit3dlongsetup, orbit3dlong,
         NOBAILOUT
     },
 
@@ -1232,7 +1232,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_ROSS, HF_ROSS, NOGUESS+NOTRACE+NORESUME+WINFRAC+PARMS3D+INFCALC,
         (float)-30.0, (float)30.0, (float)-20.0, (float)40.0,
         0, NOFRACTAL, NOFRACTAL, LROSSLER, NOSYM,
-        (VF)rosslerfloatorbit, NULL, orbit3dfloatsetup, orbit3dfloat,
+        (VF)rosslerfloatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
         NOBAILOUT
     },
 
@@ -1243,7 +1243,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_HENON, HF_HENON, NOGUESS+NOTRACE+INFCALC+WINFRAC,
         (float)-1.4, (float)1.4, (float)-.5, (float).5,
         16, NOFRACTAL, NOFRACTAL, FPHENON, NOSYM,
-        (VF)henonlongorbit, NULL, orbit3dlongsetup, orbit2dlong,
+        (VF)henonlongorbit, nullptr, orbit3dlongsetup, orbit2dlong,
         NOBAILOUT
     },
 
@@ -1254,7 +1254,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_HENON, HF_HENON, NOGUESS+NOTRACE+INFCALC+WINFRAC,
         (float)-1.4, (float)1.4, (float)-.5, (float).5,
         0, NOFRACTAL, NOFRACTAL, LHENON, NOSYM,
-        (VF)henonfloatorbit, NULL, orbit3dfloatsetup, orbit2dfloat,
+        (VF)henonfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
         NOBAILOUT
     },
 
@@ -1265,7 +1265,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_PICK, HF_PICKOVER, NOGUESS+NOTRACE+NORESUME+WINFRAC+PARMS3D,
         (float)-8/3, (float)8/3, (float)-2, (float)2,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)pickoverfloatorbit, NULL, orbit3dfloatsetup, orbit3dfloat,
+        (VF)pickoverfloatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
         NOBAILOUT
     },
 
@@ -1276,7 +1276,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_GINGER, HF_GINGER, NOGUESS+NOTRACE+INFCALC+WINFRAC,
         (float)-4.5, (float)8.5, (float)-4.5, (float)8.5,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)gingerbreadfloatorbit, NULL, orbit3dfloatsetup, orbit2dfloat,
+        (VF)gingerbreadfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
         NOBAILOUT
     },
 
@@ -1291,7 +1291,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_DIFFUS, HF_DIFFUS, NOZOOM+NOGUESS+NOTRACE+WINFRAC,
         (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        NULL, NULL, StandaloneSetup, diffusion,
+        nullptr, nullptr, StandaloneSetup, diffusion,
         NOBAILOUT
     },
 
@@ -1391,7 +1391,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_BIF, HF_BIFURCATION, TRIG1+NOGUESS+NOTRACE+NOROTATE+WINFRAC,
         (float)1.9, (float)3.0, (float)0.0, (float)1.34,
         1, NOFRACTAL, NOFRACTAL, BIFURCATION, NOSYM,
-        LongBifurcVerhulstTrig, NULL, StandaloneSetup, Bifurcation,
+        LongBifurcVerhulstTrig, nullptr, StandaloneSetup, Bifurcation,
         NOBAILOUT
     },
 
@@ -1402,7 +1402,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_BIF, HF_BIFLAMBDA, TRIG1+NOGUESS+NOTRACE+NOROTATE+WINFRAC,
         (float)-2.0, (float)4.0, (float)-1.0, (float)2.0,
         1, NOFRACTAL, NOFRACTAL, BIFLAMBDA, NOSYM,
-        LongBifurcLambdaTrig, NULL, StandaloneSetup, Bifurcation,
+        LongBifurcLambdaTrig, nullptr, StandaloneSetup, Bifurcation,
         NOBAILOUT
     },
 
@@ -1413,7 +1413,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_BIF, HF_BIFLAMBDA, TRIG1+NOGUESS+NOTRACE+NOROTATE+WINFRAC,
         (float)-2.0, (float)4.0, (float)-1.0, (float)2.0,
         0, NOFRACTAL, NOFRACTAL, LBIFLAMBDA, NOSYM,
-        BifurcLambdaTrig, NULL, StandaloneSetup, Bifurcation,
+        BifurcLambdaTrig, nullptr, StandaloneSetup, Bifurcation,
         NOBAILOUT
     },
 
@@ -1424,7 +1424,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_BIF, HF_BIFPLUSSINPI, TRIG1+NOGUESS+NOTRACE+NOROTATE+WINFRAC,
         (float)0.275, (float)1.45, (float)0.0, (float)2.0,
         0, NOFRACTAL, NOFRACTAL, LBIFADSINPI, NOSYM,
-        BifurcAddTrigPi, NULL, StandaloneSetup, Bifurcation,
+        BifurcAddTrigPi, nullptr, StandaloneSetup, Bifurcation,
         NOBAILOUT
     },
 
@@ -1435,7 +1435,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_BIF, HF_BIFEQSINPI, TRIG1+NOGUESS+NOTRACE+NOROTATE+WINFRAC,
         (float)-2.5, (float)2.5, (float)-3.5, (float)3.5,
         0, NOFRACTAL, NOFRACTAL, LBIFEQSINPI, NOSYM,
-        BifurcSetTrigPi, NULL, StandaloneSetup, Bifurcation,
+        BifurcSetTrigPi, nullptr, StandaloneSetup, Bifurcation,
         NOBAILOUT
     },
 
@@ -1468,7 +1468,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_LSYS, -3, NOZOOM+NORESUME+NOGUESS+NOTRACE+WINFRAC,
         (float)-1.0, (float)1.0, (float)-1.0, (float)1.0,
         1, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        NULL, NULL, StandaloneSetup, Lsystem,
+        nullptr, nullptr, StandaloneSetup, Lsystem,
         NOBAILOUT
     },
 
@@ -1573,7 +1573,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_BIF, HF_BIFEQSINPI, TRIG1+NOGUESS+NOTRACE+NOROTATE+WINFRAC,
         (float)-2.5, (float)2.5, (float)-3.5, (float)3.5,
         1, NOFRACTAL, NOFRACTAL, BIFEQSINPI, NOSYM,
-        LongBifurcSetTrigPi, NULL, StandaloneSetup, Bifurcation,
+        LongBifurcSetTrigPi, nullptr, StandaloneSetup, Bifurcation,
         NOBAILOUT
     },
 
@@ -1584,7 +1584,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_BIF, HF_BIFPLUSSINPI, TRIG1+NOGUESS+NOTRACE+NOROTATE+WINFRAC,
         (float)0.275, (float)1.45, (float)0.0, (float)2.0,
         1, NOFRACTAL, NOFRACTAL, BIFADSINPI, NOSYM,
-        LongBifurcAddTrigPi, NULL, StandaloneSetup, Bifurcation,
+        LongBifurcAddTrigPi, nullptr, StandaloneSetup, Bifurcation,
         NOBAILOUT
     },
 
@@ -1595,7 +1595,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_BIF, HF_BIFSTEWART, TRIG1+NOGUESS+NOTRACE+NOROTATE+WINFRAC,
         (float)0.7, (float)2.0, (float)-1.1, (float)1.1,
         0, NOFRACTAL, NOFRACTAL, LBIFSTEWART, NOSYM,
-        BifurcStewartTrig, NULL, StandaloneSetup, Bifurcation,
+        BifurcStewartTrig, nullptr, StandaloneSetup, Bifurcation,
         NOBAILOUT
     },
 
@@ -1606,7 +1606,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_BIF, HF_BIFSTEWART, TRIG1+NOGUESS+NOTRACE+NOROTATE+WINFRAC,
         (float)0.7, (float)2.0, (float)-1.1, (float)1.1,
         1, NOFRACTAL, NOFRACTAL, BIFSTEWART, NOSYM,
-        LongBifurcStewartTrig, NULL, StandaloneSetup, Bifurcation,
+        LongBifurcStewartTrig, nullptr, StandaloneSetup, Bifurcation,
         NOBAILOUT
     },
 
@@ -1617,7 +1617,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_MARTIN, HF_HOPALONG, NOGUESS+NOTRACE+INFCALC+WINFRAC,
         (float)-2.0, (float)3.0, (float)-1.625, (float)2.625,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)hopalong2dfloatorbit, NULL, orbit3dfloatsetup, orbit2dfloat,
+        (VF)hopalong2dfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
         NOBAILOUT
     },
 
@@ -1639,7 +1639,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_MARTIN, HF_MARTIN, NOGUESS+NOTRACE+INFCALC+WINFRAC,
         (float)-32, (float)32, (float)-24, (float)24,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)martin2dfloatorbit, NULL, orbit3dfloatsetup, orbit2dfloat,
+        (VF)martin2dfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
         NOBAILOUT
     },
 
@@ -1650,7 +1650,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_LYAPUNOV, HT_LYAPUNOV, WINFRAC,
         (float)-8.0, (float)8.0, (float)-6.0, (float)6.0,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        BifurcLambda, NULL, lya_setup, lyapunov,
+        BifurcLambda, nullptr, lya_setup, lyapunov,
         NOBAILOUT
     },
 
@@ -1662,7 +1662,7 @@ struct fractalspecificstuff fractalspecific[]=
         NOGUESS+NOTRACE+NORESUME+WINFRAC+PARMS3D+INFCALC,
         (float)-30.0, (float)30.0, (float)-30.0, (float)30.0,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)lorenz3d1floatorbit, NULL, orbit3dfloatsetup, orbit3dfloat,
+        (VF)lorenz3d1floatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
         NOBAILOUT
     },
 
@@ -1674,7 +1674,7 @@ struct fractalspecificstuff fractalspecific[]=
         NOGUESS+NOTRACE+NORESUME+WINFRAC+PARMS3D+INFCALC,
         (float)-30.0, (float)30.0, (float)-30.0, (float)30.0,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)lorenz3d3floatorbit, NULL, orbit3dfloatsetup, orbit3dfloat,
+        (VF)lorenz3d3floatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
         NOBAILOUT
     },
 
@@ -1686,7 +1686,7 @@ struct fractalspecificstuff fractalspecific[]=
         NOGUESS+NOTRACE+NORESUME+WINFRAC+PARMS3D+INFCALC,
         (float)-30.0, (float)30.0, (float)-30.0, (float)30.0,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)lorenz3d4floatorbit, NULL, orbit3dfloatsetup, orbit3dfloat,
+        (VF)lorenz3d4floatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
         NOBAILOUT
     },
 
@@ -1793,7 +1793,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_BIF, HF_BIFMAY, NOGUESS+NOTRACE+NOROTATE+WINFRAC,
         (float)-3.5, (float)-0.9, (float)-0.5, (float)3.2,
         16, NOFRACTAL, NOFRACTAL, BIFMAY, NOSYM,
-        LongBifurcMay, NULL, BifurcMaySetup, Bifurcation,
+        LongBifurcMay, nullptr, BifurcMaySetup, Bifurcation,
         NOBAILOUT
     },
 
@@ -1804,7 +1804,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_BIF, HF_BIFMAY, NOGUESS+NOTRACE+NOROTATE+WINFRAC,
         (float)-3.5, (float)-0.9, (float)-0.5, (float)3.2,
         0, NOFRACTAL, NOFRACTAL, LBIFMAY, NOSYM,
-        BifurcMay, NULL, BifurcMaySetup, Bifurcation,
+        BifurcMay, nullptr, BifurcMaySetup, Bifurcation,
         NOBAILOUT
     },
 
@@ -1837,7 +1837,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_DYNAM, HF_DYNAM, NOGUESS+NOTRACE+WINFRAC+TRIG1,
         (float)-20.0, (float)20.0, (float)-20.0, (float)20.0,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)dynamfloat, NULL, dynam2dfloatsetup, dynam2dfloat,
+        (VF)dynamfloat, nullptr, dynam2dfloatsetup, dynam2dfloat,
         NOBAILOUT
     },
 
@@ -1872,7 +1872,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_CELLULAR, HF_CELLULAR, NOGUESS+NOTRACE+NOZOOM+WINFRAC,
         (float)-1.0, (float)1.0, (float)-1.0, (float)1.0,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        NULL, NULL, CellularSetup, cellular,
+        nullptr, nullptr, CellularSetup, cellular,
         NOBAILOUT
     },
 
@@ -1895,7 +1895,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_INVERSE, HF_INVERSE, NOGUESS+NOTRACE+INFCALC+NORESUME,
         (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
         24, NOFRACTAL, MANDEL, INVERSEJULIAFP, NOSYM,
-        Linverse_julia_orbit, NULL, orbit3dlongsetup, inverse_julia_per_image,
+        Linverse_julia_orbit, nullptr, orbit3dlongsetup, inverse_julia_per_image,
         NOBAILOUT
     },
 
@@ -1906,7 +1906,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_INVERSE, HF_INVERSE, NOGUESS+NOTRACE+INFCALC+NORESUME,
         (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
         0, NOFRACTAL, MANDEL, INVERSEJULIA, NOSYM,
-        Minverse_julia_orbit, NULL, orbit3dfloatsetup, inverse_julia_per_image,
+        Minverse_julia_orbit, nullptr, orbit3dfloatsetup, inverse_julia_per_image,
         NOBAILOUT
     },
 #else
@@ -1917,7 +1917,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_INVERSE, HF_INVERSE, NOGUESS+NOTRACE+INFCALC+NORESUME,
         (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
         24, NOFRACTAL, MANDEL, INVERSEJULIAFP, NOSYM,
-        Linverse_julia_orbit, NULL, orbit3dlongsetup, inverse_julia_per_image,
+        Linverse_julia_orbit, nullptr, orbit3dlongsetup, inverse_julia_per_image,
         NOBAILOUT
     },
 
@@ -1928,7 +1928,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_INVERSE, HF_INVERSE, NOGUESS+NOTRACE+INFCALC+NORESUME,
         (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
         0, NOFRACTAL, MANDEL, INVERSEJULIA, NOSYM,
-        Minverse_julia_orbit, NULL, orbit3dfloatsetup, inverse_julia_per_image,
+        Minverse_julia_orbit, nullptr, orbit3dfloatsetup, inverse_julia_per_image,
         NOBAILOUT
     },
 
@@ -1941,7 +1941,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_MANDELCLOUD, HF_MANDELCLOUD, NOGUESS+NOTRACE+WINFRAC,
         (float)-2.5, (float)1.5, (float)-1.5, (float)1.5,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)mandelcloudfloat, NULL, dynam2dfloatsetup, dynam2dfloat,
+        (VF)mandelcloudfloat, nullptr, dynam2dfloatsetup, dynam2dfloat,
         NOBAILOUT
     },
 
@@ -2091,7 +2091,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_ICON, HF_ICON, NOGUESS+NOTRACE+WINFRAC+INFCALC+MORE,
         (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)iconfloatorbit, NULL, orbit3dfloatsetup, orbit2dfloat,
+        (VF)iconfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
         NOBAILOUT
     },
 
@@ -2102,7 +2102,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_ICON, HF_ICON, NOGUESS+NOTRACE+WINFRAC+INFCALC+PARMS3D+MORE,
         (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)iconfloatorbit, NULL, orbit3dfloatsetup, orbit3dfloat,
+        (VF)iconfloatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
         NOBAILOUT
     },
 
@@ -2165,7 +2165,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_ANT, HF_ANT, WINFRAC+NOZOOM+NOGUESS+NOTRACE+NORESUME+MORE,
         (float)-1.0, (float)1.0, (float)-1.0, (float)1.0,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        NULL, NULL, StandaloneSetup, ant,
+        nullptr, nullptr, StandaloneSetup, ant,
         NOBAILOUT
     },
 
@@ -2176,7 +2176,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_MARTIN, HF_CHIP, NOGUESS+NOTRACE+INFCALC+WINFRAC,
         (float)-760.0, (float)760.0, (float)-570.0, (float)570.0,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)chip2dfloatorbit, NULL, orbit3dfloatsetup, orbit2dfloat,
+        (VF)chip2dfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
         NOBAILOUT
     },
 
@@ -2187,7 +2187,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_MARTIN, HF_QUADRUPTWO, NOGUESS+NOTRACE+INFCALC+WINFRAC,
         (float)-82.93367, (float)112.2749, (float)-55.76383, (float)90.64257,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)quadruptwo2dfloatorbit, NULL, orbit3dfloatsetup, orbit2dfloat,
+        (VF)quadruptwo2dfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
         NOBAILOUT
     },
 
@@ -2198,7 +2198,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_MARTIN, HF_THREEPLY, NOGUESS+NOTRACE+INFCALC+WINFRAC,
         (float)-8000.0, (float)8000.0, (float)-6000.0, (float)6000.0,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)threeply2dfloatorbit, NULL, orbit3dfloatsetup, orbit2dfloat,
+        (VF)threeply2dfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
         NOBAILOUT
     },
 
@@ -2236,7 +2236,7 @@ struct fractalspecificstuff fractalspecific[]=
         HT_LATOO, HF_LATOO, NOGUESS+NOTRACE+WINFRAC+INFCALC+MORE+TRIG4,
         (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        (VF)latoofloatorbit, NULL, orbit3dfloatsetup, orbit2dfloat,
+        (VF)latoofloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
         NOBAILOUT
     },
 #if 0
@@ -2252,13 +2252,13 @@ struct fractalspecificstuff fractalspecific[]=
     },
 #endif
     {
-        NULL,            /* marks the END of the list */
-        {NULL, NULL, NULL, NULL},
+        nullptr,            /* marks the END of the list */
+        {nullptr, nullptr, nullptr, nullptr},
         {0, 0, 0, 0},
         -1, -1, 0,
         (float)0.0, (float)0.0, (float)0.0, (float)0.0,
         0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-        NULL, NULL, NULL, NULL,
+        nullptr, nullptr, nullptr, nullptr,
         0
     }
 };
@@ -2310,13 +2310,13 @@ int paramnotused(int parm)
 /*
  *  Returns 1 if parameter number parm exists for type. If the
  *  parameter exists, the parameter prompt string is copied to buf.
- *  Pass in NULL for buf if only the existence of the parameter is
+ *  Pass in nullptr for buf if only the existence of the parameter is
  *  needed, and not the prompt string.
  */
 int typehasparm(int type,int parm,char *buf)
 {
     int extra;
-    const char *ret = NULL;
+    const char *ret = nullptr;
     if (0 <= parm && parm < 4)
         ret=fractalspecific[type].param[parm];
     else if (parm >= 4 && parm < MAXPARAMS)
@@ -2324,13 +2324,13 @@ int typehasparm(int type,int parm,char *buf)
             ret=moreparams[extra].param[parm-4];
     if (ret)
         if (*ret == 0)
-            ret = NULL;
+            ret = nullptr;
 
     if (type == FORMULA || type == FFORMULA)
         if (paramnotused(parm))
-            ret = NULL;
+            ret = nullptr;
 
-    if (ret && buf != NULL)
+    if (ret && buf != nullptr)
         strcpy(buf,ret);
     return (ret?1:0);
 }

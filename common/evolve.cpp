@@ -377,7 +377,7 @@ choose_vars_restart:
     choices[++k]= "Press F4 to randomize all";
     uvalues[k].type = '*';
 
-    i = fullscreen_prompt("Variable tweak central 2 of 2",k+1,choices,uvalues,28,NULL);
+    i = fullscreen_prompt("Variable tweak central 2 of 2",k+1,choices,uvalues,28,nullptr);
 
     switch (i) {
     case FIK_F2: /* set all off */
@@ -457,7 +457,7 @@ int get_variations(void)
     numparams = 0;
     for (i = firstparm; i < lastparm; i++)
     {
-        if (typehasparm(julibrot?neworbittype:fractype,i,NULL)==0) {
+        if (typehasparm(julibrot?neworbittype:fractype,i,nullptr)==0) {
             if (fractype == FORMULA || fractype == FFORMULA)
                 if (paramnotused(i))
                     continue;
@@ -495,7 +495,7 @@ choose_vars_restart:
     choices[++k]= "Press F6 for second page"; /* F5 gets eaten */
     uvalues[k].type = '*';
 
-    i = fullscreen_prompt("Variable tweak central 1 of 2",k+1,choices,uvalues,92,NULL);
+    i = fullscreen_prompt("Variable tweak central 1 of 2",k+1,choices,uvalues,92,nullptr);
 
     switch (i) {
     case FIK_F2: /* set all off */
@@ -647,7 +647,7 @@ get_evol_restart:
     uvalues[k].type = '*';
     oldhelpmode = helpmode;     /* this prevents HELP from activating */
     helpmode = HELPEVOL;
-    i = fullscreen_prompt("Evolution Mode Options",k+1,choices,uvalues,255,NULL);
+    i = fullscreen_prompt("Evolution Mode Options",k+1,choices,uvalues,255,nullptr);
     helpmode = oldhelpmode;     /* re-enable HELP */
     if (i < 0) {
         /* in case this point has been reached after calling sub menu with F6 */

@@ -80,7 +80,7 @@ static BYTE *fraction;      /* float version of pixels array */
 static float min_xyz[3], max_xyz[3];        /* For Raytrace output */
 static int line_length1;
 static int T_header_24 = 18;/* Size of current Targa-24 header */
-static FILE *File_Ptr1 = NULL;
+static FILE *File_Ptr1 = nullptr;
 static unsigned int IAmbient;
 static int rand_factor;
 static int HAZE_MULT;
@@ -106,7 +106,7 @@ static struct point bad;    /* out of range value */
 static long num_tris; /* number of triangles output to ray trace file */
 
 /* global variables defined here */
-struct f_point *f_lastrow = NULL;
+struct f_point *f_lastrow = nullptr;
 void (_fastcall * standardplot)(int, int, int);
 MATRIX m; /* transformation matrix */
 int Ambient;
@@ -130,7 +130,7 @@ int xshift;
 int yshift;
 int bad_value = -10000; /* set bad values to this */
 int bad_check = -3000;  /* check values against this to determine if good */
-struct point *lastrow = NULL; /* this array remembers the previous line */
+struct point *lastrow = nullptr; /* this array remembers the previous line */
 int RAY = 0;        /* Flag to generate Ray trace compatible files in 3d */
 int BRIEF = 0;      /* 1 = short ray trace files */
 
@@ -1375,7 +1375,7 @@ int startdisk1(char *File_Name2, FILE * Source, int overlay)
 
     /* Open File for both reading and writing */
     fps = dir_fopen(workdir,File_Name2, "w+b");
-    if (fps == NULL)
+    if (fps == nullptr)
     {
         File_Error(File_Name2, 1);
         return -1;              /* Oops, somethings wrong! */
@@ -1460,7 +1460,7 @@ int targa_validate(char *File_Name)
 
     /* Attempt to open source file for reading */
     fp = dir_fopen(workdir,File_Name, "rb");
-    if (fp == NULL)
+    if (fp == nullptr)
     {
         File_Error(File_Name, 1);
         return -1;              /* Oops, file does not exist */
@@ -1666,7 +1666,7 @@ static int _fastcall RAY_Header(void)
     /* Open the ray tracing output file */
     check_writefile(ray_name, ".ray");
     File_Ptr1 = fopen(ray_name, "w");
-    if (File_Ptr1 == NULL)
+    if (File_Ptr1 == nullptr)
         return -1;              /* Oops, somethings wrong! */
 
     if (RAY == 2)
@@ -2008,7 +2008,7 @@ static void line3d_cleanup(void)
         if (RAY == 7)
             fprintf(File_Ptr1, "  0\nENDSEC\n  0\nEOF\n");
         fclose(File_Ptr1);
-        File_Ptr1 = NULL;
+        File_Ptr1 = nullptr;
     }
     if (Targa_Out)
     {   /* Finish up targa files */
@@ -2089,7 +2089,7 @@ static int first_time(int linelen, VECTOR v)
         else
         {
             check_writefile(light_name, ".tga");
-            if (startdisk1(light_name, NULL, 0))   /* Open new file */
+            if (startdisk1(light_name, nullptr, 0))   /* Open new file */
                 return -1;
         }
     }
@@ -2455,7 +2455,7 @@ static int line3dmem(void)
         fraction = (BYTE *)(f_lastrow + xdots);
         check_extra += sizeof(*fraction) * xdots;
     }
-    minmax_x = (struct minmax *) NULL;
+    minmax_x = (struct minmax *) nullptr;
 
     /* these fill types call putatriangle which uses minmax_x */
     if (FILLTYPE == 2 || FILLTYPE == 3 || FILLTYPE == 5 || FILLTYPE == 6)
@@ -2464,12 +2464,12 @@ static int line3dmem(void)
         check_extra += sizeof(struct minmax) * ydots;
         if (check_extra > (1L << 16))     /* run out of extra segment? */
         {
-            static struct minmax *got_mem = NULL;
+            static struct minmax *got_mem = nullptr;
             if (debugflag == 2222)
                 stopmsg(0,"malloc minmax");
             /* not using extra segment so decrement check_extra */
             check_extra -= sizeof(struct minmax) * ydots;
-            if (got_mem == NULL)
+            if (got_mem == nullptr)
                 got_mem = (struct minmax *)(malloc(OLDMAXPIXELS *
                                                    sizeof(struct minmax)));
             if (got_mem)

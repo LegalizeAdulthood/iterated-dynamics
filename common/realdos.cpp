@@ -52,12 +52,12 @@ int stopmsg(int flags, const char *msg)
     static unsigned char batchmode = 0;
     if (debugflag != 0 || initbatch >= 1)
     {
-        static FILE *fp = NULL;
-        if (fp==NULL && initbatch == 0)
+        static FILE *fp = nullptr;
+        if (fp==nullptr && initbatch == 0)
             fp=dir_fopen(workdir,"stopmsg.txt","w");
         else
             fp=dir_fopen(workdir,"stopmsg.txt","a");
-        if (fp != NULL)
+        if (fp != nullptr)
             fprintf(fp,"%s\n",msg);
         fclose(fp);
     }
@@ -154,7 +154,7 @@ int showtempmsg(const char *msgparm)
     static long size = 0;
     char msg[41];
     BYTE buffer[640];
-    BYTE *fontptr = NULL;
+    BYTE *fontptr = nullptr;
     int i;
     int xrepeat = 0;
     int yrepeat = 0;
@@ -439,8 +439,8 @@ void process_speedstring(char    *speedstring,
                     &8 add caller's instr after normal set
                     &16 menu items up one line
     hdg:            heading info, \n delimited
-    hdg2:           column heading or NULL
-    instr:          instructions, \n delimited, or NULL
+    hdg2:           column heading or nullptr
+    instr:          instructions, \n delimited, or nullptr
     numchoices:     How many choices in list
     choices:        array of choice strings
     attributes:     &3: 0 normal color, 1,3 highlight
@@ -449,10 +449,10 @@ void process_speedstring(char    *speedstring,
     boxdepth:       box depth, 0 for calc, 99 for max
     colwidth:       data width of a column, 0 for calc
     current:        start with this item
-    formatitem:     routine to display an item or NULL
-    speedstring:    returned speed key value, or NULL
-    speedprompt:    routine to display prompt or NULL
-    checkkey:       routine to check keystroke or NULL
+    formatitem:     routine to display an item or nullptr
+    speedstring:    returned speed key value, or nullptr
+    speedprompt:    routine to display prompt or nullptr
+    checkkey:       routine to check keystroke or nullptr
 
     return is: n>=0 for choice n selected,
               -1 for escape
@@ -681,7 +681,7 @@ int fullscreen_choice(
         driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_MED, hdg2);
     }
     i = topleftrow + boxdepth + 1;
-    if (instr == NULL || (options & CHOICE_INSTRUCTIONS))   /* display default instructions */
+    if (instr == nullptr || (options & CHOICE_INSTRUCTIONS))   /* display default instructions */
     {
         if (i < 20)
         {
@@ -768,7 +768,7 @@ int fullscreen_choice(
             ...  be 72 when detail toggle available?  (2 grey margin each
             ...  side, 1 blue margin each side)
             ***/
-            if (topleftchoice > 0 && hdg2 == NULL)
+            if (topleftchoice > 0 && hdg2 == nullptr)
             {
                 driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_LO, "(more)");
             }
@@ -1373,8 +1373,8 @@ top:
         }
         i = fullscreen_choice(CHOICE_MENU | CHOICE_CRUNCH,
                               "MAIN MENU",
-                              NULL, NULL, nextleft, (const char **) choices, attributes,
-                              2, nextleft/2, 29, 0, NULL, NULL, NULL, menu_checkkey);
+                              nullptr, nullptr, nextleft, (const char **) choices, attributes,
+                              2, nextleft/2, 29, 0, nullptr, nullptr, nullptr, menu_checkkey);
         if (i == -1)     /* escape */
         {
             i = FIK_ESC;
@@ -1480,7 +1480,7 @@ int input_field(
     int len,              /* field length (declare as 1 larger for \0) */
     int row,              /* display row */
     int col,              /* display column */
-    int (*checkkey)(int)  /* routine to check non data keys, or NULL */
+    int (*checkkey)(int)  /* routine to check non data keys, or nullptr */
 )
 {
     char savefld[81];
@@ -1619,10 +1619,10 @@ inpfld_end:
 
 int field_prompt(
     const char *hdg,        /* heading, \n delimited lines */
-    const char *instr,      /* additional instructions or NULL */
+    const char *instr,      /* additional instructions or nullptr */
     char *fld,              /* the field itself */
     int len,                /* field length (declare as 1 larger for \0) */
-    int (*checkkey)(int)    /* routine to check non data keys, or NULL */
+    int (*checkkey)(int)    /* routine to check non data keys, or nullptr */
 )
 {
     const char *charptr;
@@ -1684,7 +1684,7 @@ int field_prompt(
       if thinking message not yet on display, it is displayed;
       otherwise the wheel is updated
       returns 0 to keep going, -1 if keystroke pending
-   thinking(0,NULL):
+   thinking(0,nullptr):
       call this when thinking phase is done
    */
 
@@ -1779,7 +1779,7 @@ void load_fractint_config(void)
 
     findpath("fractint.cfg",tempstring);
     if (tempstring[0] == 0                            /* can't find the file */
-            || (cfgfile = fopen(tempstring,"r")) == NULL)   /* can't open it */
+            || (cfgfile = fopen(tempstring,"r")) == nullptr)   /* can't open it */
     {
         goto bad_fractint_cfg;
     }
@@ -1788,7 +1788,7 @@ void load_fractint_config(void)
     while (g_video_table_len < MAXVIDEOMODES
             && fgets(tempstring, 120, cfgfile))
     {
-        if (strchr(tempstring,'\n') == NULL)
+        if (strchr(tempstring,'\n') == nullptr)
         {
             /* finish reading the line */
             while (fgetc(cfgfile) != '\n' && !feof(cfgfile));
@@ -1887,7 +1887,7 @@ void load_fractint_config(void)
 
         /* if valid, add to supported modes */
         vident.driver = driver_find_by_name(fields[10]);
-        if (vident.driver != NULL)
+        if (vident.driver != nullptr)
         {
             if (vident.driver->validate_mode(vident.driver, &vident))
             {

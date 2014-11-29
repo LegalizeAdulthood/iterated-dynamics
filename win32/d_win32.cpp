@@ -96,7 +96,7 @@ static void flush_output(void)
         }
         else
         {
-            time_t now = time(NULL);
+            time_t now = time(nullptr);
             long now_ticks = readticker();
             if (now > start)
             {
@@ -147,10 +147,10 @@ win32_terminate(Driver *drv)
         int i;
         for (i = 0; i < NUM_OF(di->saved_screens); i++)
         {
-            if (NULL != di->saved_screens[i])
+            if (nullptr != di->saved_screens[i])
             {
                 free(di->saved_screens[i]);
-                di->saved_screens[i] = NULL;
+                di->saved_screens[i] = nullptr;
             }
         }
     }
@@ -178,7 +178,7 @@ win32_init(Driver *drv, int *argc, char **argv)
 
     ODS("win32_init");
     frame_init(g_instance, title);
-    if (!wintext_initialize(&di->wintext, g_instance, NULL, "Text"))
+    if (!wintext_initialize(&di->wintext, g_instance, nullptr, "Text"))
     {
         return FALSE;
     }
@@ -281,11 +281,11 @@ win32_shell(Driver *drv)
     PROCESS_INFORMATION pi = { 0 };
     char *comspec = getenv("COMSPEC");
 
-    if (NULL == comspec)
+    if (nullptr == comspec)
     {
         comspec = "cmd.exe";
     }
-    if (CreateProcess(NULL, comspec, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi))
+    if (CreateProcess(nullptr, comspec, nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr, &si, &pi))
     {
         DWORD status = WaitForSingleObject(pi.hProcess, 1000);
         while (WAIT_TIMEOUT == status)
@@ -466,7 +466,7 @@ win32_unstack_screen(Driver *drv)
         /* unstack */
         wintext_screen_set(&di->wintext, di->saved_screens[di->screen_count]);
         free(di->saved_screens[di->screen_count]);
-        di->saved_screens[di->screen_count] = NULL;
+        di->saved_screens[di->screen_count] = nullptr;
         win32_move_cursor(drv, -1, -1);
     }
     else
@@ -486,7 +486,7 @@ win32_discard_screen(Driver *drv)
         if (di->saved_screens[di->screen_count])
         {
             free(di->saved_screens[di->screen_count]);
-            di->saved_screens[di->screen_count] = NULL;
+            di->saved_screens[di->screen_count] = nullptr;
         }
     }
     else

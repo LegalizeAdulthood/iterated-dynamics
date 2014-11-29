@@ -67,10 +67,10 @@ static int mod_key(int modifier, int code, int fik, int *j)
     return 1000 + code;
 }
 
-#define ALT_KEY(fik_)       mod_key(VK_MENU, i, fik_, NULL)
-#define CTL_KEY(fik_)       mod_key(VK_CONTROL, i, fik_, NULL)
+#define ALT_KEY(fik_)       mod_key(VK_MENU, i, fik_, nullptr)
+#define CTL_KEY(fik_)       mod_key(VK_CONTROL, i, fik_, nullptr)
 #define CTL_KEY2(fik_, j_)  mod_key(VK_CONTROL, i, fik_, j_)
-#define SHF_KEY(fik_)       mod_key(VK_SHIFT, i, fik_, NULL)
+#define SHF_KEY(fik_)       mod_key(VK_SHIFT, i, fik_, nullptr)
 
 static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
@@ -254,8 +254,8 @@ void frame_init(HINSTANCE instance, LPCSTR title)
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
         wc.hInstance = g_frame.instance;
-        wc.hIcon = NULL;
-        wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+        wc.hIcon = nullptr;
+        wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND+1);
         wc.lpszMenuName = g_frame.title;
         wc.lpszClassName = windowClass;
@@ -276,7 +276,7 @@ int frame_pump_messages(int waitflag)
 
     while (!quitting)
     {
-        if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) == 0)
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE) == 0)
         {
             /* no messages waiting */
             if (!waitflag
@@ -288,7 +288,7 @@ int frame_pump_messages(int waitflag)
         }
 
         {
-            int result = GetMessage(&msg, NULL, 0, 0);
+            int result = GetMessage(&msg, nullptr, 0, 0);
             if (result > 0)
             {
                 // translate accelerator here?
@@ -348,7 +348,7 @@ static void frame_adjust_size(int width, int height)
 
 void frame_window(int width, int height)
 {
-    if (NULL == g_frame.window)
+    if (nullptr == g_frame.window)
     {
         frame_adjust_size(width, height);
         g_frame.window = CreateWindow("FractintFrame",
@@ -358,8 +358,8 @@ void frame_window(int width, int height)
                                       CW_USEDEFAULT,               /* default vertical position */
                                       g_frame.nc_width,
                                       g_frame.nc_height,
-                                      NULL, NULL, g_frame.instance,
-                                      NULL);
+                                      nullptr, nullptr, g_frame.instance,
+                                      nullptr);
         ShowWindow(g_frame.window, SW_SHOWNORMAL);
     }
     else
@@ -373,7 +373,7 @@ void frame_resize(int width, int height)
     BOOL status;
 
     frame_adjust_size(width, height);
-    status = SetWindowPos(g_frame.window, NULL,
+    status = SetWindowPos(g_frame.window, nullptr,
                           0, 0, g_frame.nc_width, g_frame.nc_height,
                           SWP_NOZORDER | SWP_NOMOVE);
     _ASSERTE(status);
@@ -382,7 +382,7 @@ void frame_resize(int width, int height)
 
 void frame_set_keyboard_timeout(int ms)
 {
-    UINT_PTR result = SetTimer(g_frame.window, FRAME_TIMER_ID, ms, NULL);
+    UINT_PTR result = SetTimer(g_frame.window, FRAME_TIMER_ID, ms, nullptr);
     if (!result)
     {
         DWORD error = GetLastError();

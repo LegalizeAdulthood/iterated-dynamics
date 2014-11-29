@@ -57,7 +57,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     {
         viewwindow = 0;
     }
-    if (has_ext(readname) == NULL)
+    if (has_ext(readname) == nullptr)
     {
         strcat(readname, ".gif");
     }
@@ -491,7 +491,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     if (rangeslen) /* free prior ranges */
     {
         free(ranges);
-        ranges = NULL;
+        ranges = nullptr;
         rangeslen = 0;
     }
 
@@ -665,7 +665,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
     blk_7_info->got_data = 0; /* initialize to no data */
 
     fp = fopen(gif_file,"rb");
-    if (fp==NULL)
+    if (fp==nullptr)
         return (-1);
     fread(gifstart,13,1,fp);
     if (strncmp((char *)gifstart,"GIF",3) != 0) { /* not GIF, maybe old .tga? */
@@ -838,7 +838,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                     break;
                 case 4: /* ranges info */
                     skip_ext_blk(&block_len,&data_len); /* once to get lengths */
-                    if ((blk_4_info->range_data = (int *)malloc((long)data_len)) != NULL) {
+                    if ((blk_4_info->range_data = (int *)malloc((long)data_len)) != nullptr) {
                         fseek(fp,(long)(0-block_len),SEEK_CUR);
                         load_ext_blk((char *)blk_4_info->range_data,data_len);
                         blk_4_info->length = data_len/2;
@@ -847,7 +847,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                     break;
                 case 5: /* extended precision parameters  */
                     skip_ext_blk(&block_len,&data_len); /* once to get lengths */
-                    if ((blk_5_info->apm_data = (char *)malloc((long)data_len)) != NULL) {
+                    if ((blk_5_info->apm_data = (char *)malloc((long)data_len)) != nullptr) {
                         fseek(fp,(long)(0-block_len),SEEK_CUR);
                         load_ext_blk(blk_5_info->apm_data,data_len);
                         blk_5_info->length = data_len;
@@ -1347,8 +1347,8 @@ rescan:  /* entry for changed browse parms */
     toggle = 0;
     wincount = 0;
     no_sub_images = FALSE;
-    splitpath(readname,drive,dir,NULL,NULL);
-    splitpath(browsemask,NULL,NULL,fname,ext);
+    splitpath(readname,drive,dir,nullptr,nullptr);
+    splitpath(browsemask,nullptr,nullptr,fname,ext);
     makepath(tmpmask,drive,dir,fname,ext);
     done=(vid_too_big==2) || no_memory || fr_findfirst(tmpmask);
     /* draw all visible windows */
@@ -1359,7 +1359,7 @@ rescan:  /* entry for changed browse parms */
             driver_get_key();
             break;
         }
-        splitpath(DTA.filename,NULL,NULL,fname,ext);
+        splitpath(DTA.filename,nullptr,nullptr,fname,ext);
         makepath(tmpmask,drive,dir,fname,ext);
         if (!find_fractal_info(tmpmask,&read_info,&blk_2_info,&blk_3_info,
                                &blk_4_info,&blk_5_info,&blk_6_info,
@@ -1515,8 +1515,8 @@ rescan:  /* entry for changed browse parms */
                     if (driver_get_key() != 'Y') c = 'N';
                 }
                 if (c == 'Y') {
-                    splitpath(readname,drive,dir,NULL,NULL);
-                    splitpath(winlist.name,NULL,NULL,fname,ext);
+                    splitpath(readname,drive,dir,nullptr,nullptr);
+                    splitpath(winlist.name,nullptr,nullptr,fname,ext);
                     makepath(tmpmask,drive,dir,fname,ext);
                     if (!unlink(tmpmask)) {
                         /* do a rescan */
@@ -1543,12 +1543,12 @@ rescan:  /* entry for changed browse parms */
                 driver_stack_screen();
                 newname[0] = 0;
                 strcpy(mesg, "Enter the new filename for ");
-                splitpath(readname,drive,dir,NULL,NULL);
-                splitpath(winlist.name,NULL,NULL,fname,ext);
+                splitpath(readname,drive,dir,nullptr,nullptr);
+                splitpath(winlist.name,nullptr,nullptr,fname,ext);
                 makepath(tmpmask,drive,dir,fname,ext);
                 strcpy(newname,tmpmask);
                 strcat(mesg,tmpmask);
-                i = field_prompt(mesg,NULL,newname,60,NULL);
+                i = field_prompt(mesg,nullptr,newname,60,nullptr);
                 driver_unstack_screen();
                 if (i != -1)
                     if (!rename(tmpmask,newname)) {
@@ -1557,8 +1557,8 @@ rescan:  /* entry for changed browse parms */
                             texttempmsg("Sorry....can't rename");
                         }
                         else {
-                            splitpath(newname,NULL,NULL,fname,ext);
-                            makepath(tmpmask,NULL,NULL,fname,ext);
+                            splitpath(newname,nullptr,nullptr,fname,ext);
+                            makepath(tmpmask,nullptr,nullptr,fname,ext);
                             strcpy(oldname,winlist.name);
                             check_history(oldname,tmpmask);
                             strcpy(winlist.name,tmpmask);

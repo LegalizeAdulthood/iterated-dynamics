@@ -123,7 +123,7 @@ int     viewxdots,viewydots;    /* explicit view sizing */
 int     video_cutboth;          /* nonzero to keep virtual aspect */
 int     zscroll;                /* screen/zoombox 0 fixed, 1 relaxed */
 
-/*      HISTORY  *history = NULL; */
+/*      HISTORY  *history = nullptr; */
 U16 history = 0;
 int maxhistory = 10;
 
@@ -270,7 +270,7 @@ restart:   /* insert key re-starts here */
     calc_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
 
     fract_dir1 = getenv("FRACTDIR");
-    if (fract_dir1==NULL)
+    if (fract_dir1==nullptr)
     {
         fract_dir1 = ".";
     }
@@ -282,7 +282,7 @@ restart:   /* insert key re-starts here */
 
     cmdfiles(argc,argv);         /* process the command-line */
     dopause(0);                  /* pause for error msg if not batch */
-    init_msg("",NULL,0);  /* this causes driver_get_key if init_msg called on runup */
+    init_msg("",nullptr,0);  /* this causes driver_get_key if init_msg called on runup */
 
     while (maxhistory > 0) /* decrease history if necessary */
     {
@@ -624,7 +624,7 @@ int check_key()
 
 /* timer function:
      timer(0,(*fractal)())              fractal engine
-     timer(1,NULL,int width)            decoder
+     timer(1,nullptr,int width)         decoder
      timer(2)                           encoder
   */
 #ifndef USE_VARARGS
@@ -637,7 +637,7 @@ va_dcl
     va_list arg_marker;  /* variable arg list */
     char *timestring;
     time_t ltime;
-    FILE *fp = NULL;
+    FILE *fp = nullptr;
     int out=0;
     int i;
     int do_bench;
@@ -692,7 +692,7 @@ va_dcl
                 ydots,
                 maxit);
         fprintf(fp," time= %ld.%02ld secs\n",timer_interval/100,timer_interval%100);
-        if (fp != NULL)
+        if (fp != nullptr)
             fclose(fp);
     }
     return out;

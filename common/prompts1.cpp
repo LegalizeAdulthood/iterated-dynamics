@@ -107,7 +107,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     char buf[81];
 
     /* scrolling related variables */
-    FILE * scroll_file = NULL;     /* file with extrainfo entry to scroll   */
+    FILE * scroll_file = nullptr;     /* file with extrainfo entry to scroll   */
     long scroll_file_start = 0;    /* where entry starts in scroll_file     */
     int in_scrolling_mode = 0;     /* will be 1 if need to scroll extrainfo */
     int lines_in_entry = 0;        /* total lines in entry to be scrolled   */
@@ -146,7 +146,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     }
 
     /* initialize widest_entry_line and lines_in_entry */
-    if (in_scrolling_mode && scroll_file != NULL) {
+    if (in_scrolling_mode && scroll_file != nullptr) {
         int comment = 0;
         int c = 0;
         int widthct = 0;
@@ -193,9 +193,9 @@ int fullscreen_prompt(      /* full-screen prompting routine */
             titlewidth = i;
     }
     extralines = extrawidth = i = 0;
-    if ((hdgscan = extrainfo) != 0) {
+    if ((hdgscan = extrainfo) != nullptr) {
         if (*hdgscan == 0)
-            extrainfo = NULL;
+            extrainfo = nullptr;
         else { /* count extra lines, find widest */
             extralines = 3;
             while (*hdgscan) {
@@ -217,10 +217,10 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     if (in_scrolling_mode && scroll_row_status == 0
             && lines_in_entry == extralines - 2
             && scroll_column_status == 0
-            && strchr(extrainfo, '\021') == NULL) {
+            && strchr(extrainfo, '\021') == nullptr) {
         in_scrolling_mode = 0;
         fclose(scroll_file);
-        scroll_file = NULL;
+        scroll_file = nullptr;
     }
 
     /*initialize vertical scroll limit. When the top line of the text
@@ -314,7 +314,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         for (i=0; i<titlelines-1; i++)
         {
             char *next = strchr(hdgline,'\n');
-            if (next == NULL)
+            if (next == nullptr)
                 break; /* shouldn't happen */
             *next = '\0';
             titlewidth = (int) strlen(hdgline);
@@ -432,7 +432,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                 }
                 break;
             case FIK_CTL_RIGHT_ARROW:   /* scrolling key - right one column */
-                if (in_scrolling_mode && strchr(extrainfo, '\021') != NULL) {
+                if (in_scrolling_mode && strchr(extrainfo, '\021') != nullptr) {
                     scroll_column_status++;
                     rewrite_extrainfo = 1;
                 }
@@ -610,7 +610,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
             }
             break;
         case FIK_CTL_RIGHT_ARROW:    /* scrolling key - right one column */
-            if (in_scrolling_mode && strchr(extrainfo, '\021') != NULL) {
+            if (in_scrolling_mode && strchr(extrainfo, '\021') != nullptr) {
                 scroll_column_status++;
                 rewrite_extrainfo = 1;
             }
@@ -652,7 +652,7 @@ fullscreen_exit:
     lookatmouse = savelookatmouse;
     if (scroll_file) {
         fclose(scroll_file);
-        scroll_file = NULL;
+        scroll_file = nullptr;
     }
     return done;
 }
@@ -772,7 +772,7 @@ static int input_field_list(
     int llen,             /* number of entries in list */
     int row,              /* display row */
     int col,              /* display column */
-    int (*checkkey)(int)  /* routine to check non data keys, or NULL */
+    int (*checkkey)(int)  /* routine to check non data keys, or nullptr */
 )
 {
     int initval,curval;
@@ -935,8 +935,8 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
     tname[0] = 0;
     done = fullscreen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
                              julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
-                             NULL, "Press " FK_F2 " for a description of the highlighted type", numtypes,
-                             (const char **)choices,attributes,0,0,0,j,NULL,tname,NULL,sel_fractype_help);
+                             nullptr, "Press " FK_F2 " for a description of the highlighted type", numtypes,
+                             (const char **)choices,attributes,0,0,0,j,nullptr,tname,nullptr,sel_fractype_help);
     if (done >= 0) {
         done = choices[done]->num;
         if ((done == FORMULA || done == FFORMULA) && !strcmp(FormFileName, CommandFile))
@@ -1166,7 +1166,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
     const char *v1 = "From cy (imaginary part)";
     const char *v2 = "To   cx (real part)";
     const char *v3 = "To   cy (imaginary part)";
-    const char *juliorbitname = NULL;
+    const char *juliorbitname = nullptr;
     int i,j,k;
     int curtype,numparams,numtrig;
     struct fullscreenvalues paramvalues[30];
@@ -1191,7 +1191,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
     static /* Can't initialize aggregates on the stack */
 #endif
     const char *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
-    struct fractalspecificstuff *jborbit = NULL;
+    struct fractalspecificstuff *jborbit = nullptr;
     struct fractalspecificstuff *savespecific;
     int firstparm = 0;
     int lastparm  = MAXPARAMS;
@@ -1223,8 +1223,8 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
             entryname = IFSName;
         }
         else { /* this shouldn't happen */
-            filename = NULL;
-            entryname = NULL;
+            filename = nullptr;
+            entryname = nullptr;
         }
         if (find_file_item(filename,entryname,&entryfile, -1-i) == 0) {
             load_entry_text(entryfile,tstack,17, 0, 0);
@@ -1702,7 +1702,7 @@ long get_file_entry(int type, const char *title,char *fmask,
         firsttry = 0;
         /* binary mode used here - it is more work, but much faster, */
         /*     especially when ftell or fgetpos is used                  */
-        while (newfile || (gfe_file = fopen(filename, "rb")) == NULL) {
+        while (newfile || (gfe_file = fopen(filename, "rb")) == nullptr) {
             char buf[60];
             newfile = 0;
             if (firsttry) {
@@ -1873,7 +1873,7 @@ top:
                 exclude_entry = 0;
 
             buf[ITEMNAMELEN + exclude_entry] = 0;
-            if (itemname != NULL)  /* looking for one entry */
+            if (itemname != nullptr)  /* looking for one entry */
             {
                 if (stricmp(buf, itemname) == 0)
                 {
@@ -1914,7 +1914,7 @@ static long gfe_choose_entry(int type, const char *title, char *filename, char *
     int numentries, i;
     char buf[101];
     struct entryinfo storage[MAXENTRIES + 1];
-    struct entryinfo *choices[MAXENTRIES + 1] = { NULL };
+    struct entryinfo *choices[MAXENTRIES + 1] = { nullptr };
     int attributes[MAXENTRIES + 1] = { 0 };
     void (*formatitem)(int, char *);
     int boxwidth, boxdepth, colwidth;
@@ -1935,7 +1935,7 @@ retry:
     numentries = 0;
     helptitle(); /* to display a clue when file big and next is slow */
 
-    numentries = scan_entries(gfe_file, &storage[0], NULL);
+    numentries = scan_entries(gfe_file, &storage[0], nullptr);
     if (numentries == 0)
     {
         stopmsg(0, "File doesn't contain any valid entries");
@@ -1955,7 +1955,7 @@ retry:
 
     strcpy(buf, entryname); /* preset to last choice made */
     sprintf(temp1, "%s Selection\nFile: %s", title, filename);
-    formatitem = NULL;
+    formatitem = nullptr;
     boxwidth = colwidth = boxdepth = 0;
     if (type == GETPARM)
     {
@@ -1966,9 +1966,9 @@ retry:
     }
 
     i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-                          temp1, NULL, instr, numentries, (const char **) choices,
+                          temp1, nullptr, instr, numentries, (const char **) choices,
                           attributes, boxwidth, boxdepth, colwidth, 0,
-                          formatitem, buf, NULL, check_gfe_key);
+                          formatitem, buf, nullptr, check_gfe_key);
     if (i == -FIK_F4)
     {
         rewind(gfe_file);
@@ -2097,7 +2097,7 @@ static int check_gfe_key(int curkey,int choice)
                     break;
                 case FIK_RIGHT_ARROW:
                 case FIK_CTL_RIGHT_ARROW: /* right one column */
-                    if (in_scrolling_mode && strchr(infbuf, '\021') != NULL) {
+                    if (in_scrolling_mode && strchr(infbuf, '\021') != nullptr) {
                         left_column++;
                         rewrite_infbuf = 1;
                     }
@@ -2318,7 +2318,7 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
 
     oldhelpmode = helpmode;
     helpmode = HELP3DFRACT;
-    i = fullscreen_prompt("3D Parameters",k,ifs3d_prompts,uvalues,0,NULL);
+    i = fullscreen_prompt("3D Parameters",k,ifs3d_prompts,uvalues,0,nullptr);
     helpmode = oldhelpmode;
     if (i < 0) {
         ret = -1;
@@ -2420,7 +2420,7 @@ restart_1:
     oldhelpmode = helpmode;
     helpmode = HELP3DMODE;
 
-    k = fullscreen_prompt("3D Mode Selection",k+1,prompts3d,uvalues,0,NULL);
+    k = fullscreen_prompt("3D Mode Selection",k+1,prompts3d,uvalues,0,nullptr);
     helpmode = oldhelpmode;
     if (k < 0) {
         return -1;
@@ -2503,8 +2503,8 @@ restart_1:
         for (i = 0; i < k; ++i)
             attributes[i] = 1;
         helpmode = HELP3DFILL;
-        i = fullscreen_choice(CHOICE_HELP,"Select 3D Fill Type",NULL,NULL,k,(const char **)choices,attributes,
-                              0,0,0,FILLTYPE+1,NULL,NULL,NULL,NULL);
+        i = fullscreen_choice(CHOICE_HELP,"Select 3D Fill Type",nullptr,nullptr,k,(const char **)choices,attributes,
+                              0,0,0,FILLTYPE+1,nullptr,nullptr,nullptr,nullptr);
         helpmode = oldhelpmode;
         if (i < 0)
             goto restart_1;
@@ -2610,7 +2610,7 @@ restart_3:
             "Pre-rotation Z axis is coming at you out of the screen!";
 
     helpmode = HELP3DPARMS;
-    k = fullscreen_prompt(s,k,prompts3d,uvalues,0,NULL);
+    k = fullscreen_prompt(s,k,prompts3d,uvalues,0,nullptr);
     helpmode = oldhelpmode;
     if (k < 0)
         goto restart_1;
@@ -2722,7 +2722,7 @@ static int get_light_params()
 
     oldhelpmode = helpmode;
     helpmode = HELP3DLIGHT;
-    k = fullscreen_prompt("Light Source Parameters",k,prompts3d,uvalues,0,NULL);
+    k = fullscreen_prompt("Light Source Parameters",k,prompts3d,uvalues,0,nullptr);
     helpmode = oldhelpmode;
     if (k < 0)
         return -1;
@@ -2782,7 +2782,7 @@ static int check_mapfile()
             helpmode = -1;
             i = field_prompt("Enter name of .MAP file to use,\n"
                              "or '*' to use palette from the image to be loaded.",
-                             NULL,temp1,60,NULL);
+                             nullptr,temp1,60,nullptr);
             helpmode = oldhelpmode;
             if (i < 0)
                 return -1;
@@ -2886,7 +2886,7 @@ static int get_funny_glasses_params()
 
     oldhelpmode = helpmode;
     helpmode = HELP3DGLASSES;
-    k = fullscreen_prompt("Funny Glasses Parameters",k+1,prompts3d,uvalues,0,NULL);
+    k = fullscreen_prompt("Funny Glasses Parameters",k+1,prompts3d,uvalues,0,nullptr);
     helpmode = oldhelpmode;
     if (k < 0)
         return -1;

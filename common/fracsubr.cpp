@@ -50,12 +50,12 @@ void free_grid_pointers()
     if (dx0)
     {
         free(dx0);
-        dx0 = NULL;
+        dx0 = nullptr;
     }
     if (lx0)
     {
         free(lx0);
-        lx0 = NULL;
+        lx0 = nullptr;
     }
 }
 
@@ -124,7 +124,7 @@ void fractal_floattobf(void)
     floattobf(bfy3rd,yy3rd);
 
     for (i = 0; i < MAXPARAMS; i++)
-        if (typehasparm(fractype,i,NULL))
+        if (typehasparm(fractype,i,nullptr))
             floattobf(bfparms[i],param[i]);
     calc_status = CALCSTAT_PARAMS_CHANGED;
 }
@@ -1347,16 +1347,16 @@ void reset_clock(void)
 #define LOG2  (float)0.693147180
 #define LOG32 (float)3.465735902
 
-static FILE *snd_fp = NULL;
+static FILE *snd_fp = nullptr;
 
 /* open sound file */
 int snd_open(void)
 {
     static char soundname[] = {"sound001.txt"};
-    if ((orbitsave&2) != 0 && snd_fp == NULL)
+    if ((orbitsave&2) != 0 && snd_fp == nullptr)
     {
         snd_fp = fopen(soundname,"w");
-        if (snd_fp == NULL)
+        if (snd_fp == nullptr)
         {
             stopmsg(0, "Can't open SOUND*.TXT");
         }
@@ -1365,7 +1365,7 @@ int snd_open(void)
             updatesavename(soundname);
         }
     }
-    return (snd_fp != NULL);
+    return (snd_fp != nullptr);
 }
 
 /* This routine plays a tone in the speaker and optionally writes a file
@@ -1402,7 +1402,7 @@ void close_snd(void)
 {
     if (snd_fp)
         fclose(snd_fp);
-    snd_fp = NULL;
+    snd_fp = nullptr;
 }
 
 static void _fastcall plotdorbit(double dx, double dy, int color)

@@ -24,7 +24,7 @@
 int disk16bit = 0;         /* storing 16 bit values for continuous potential */
 
 static int timetodisplay;
-static FILE *fp = NULL;
+static FILE *fp = nullptr;
 int disktarga;
 
 #define BLOCKLEN 2048   /* must be a power of 2, must match next */
@@ -43,7 +43,7 @@ static struct cache     /* structure of each cache entry */
     unsigned int lru : 1;           /* recently used? */
 } *cache_end, *cache_lru, *cur_cache;
 
-static struct cache *cache_start = NULL;
+static struct cache *cache_start = nullptr;
 static long high_offset;           /* highwater mark of writes */
 static long seek_offset;           /* what we'll get next if we don't seek */
 static long cur_offset;            /* offset of last block referenced */
@@ -117,11 +117,11 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 {
     int i, freemem;
     long memorysize, offset;
-    unsigned int *fwd_link = NULL;
-    struct cache *ptr1 = NULL;
+    unsigned int *fwd_link = nullptr;
+    struct cache *ptr1 = nullptr;
     long longtmp;
     unsigned int cache_size;
-    BYTE *tempfar = NULL;
+    BYTE *tempfar = nullptr;
     if (g_disk_flag)
     {
         enddisk();
@@ -180,7 +180,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
     {
         longtmp = ((int)cache_size < freemem) ?
                   (long)cache_size << 11 : (long)(cache_size+freemem) << 10;
-        if ((tempfar = static_cast<BYTE *>(malloc(longtmp))) != NULL)
+        if ((tempfar = static_cast<BYTE *>(malloc(longtmp))) != nullptr)
         {
             free(tempfar);
             break;
@@ -198,7 +198,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
     }
     cache_end = (cache_lru = cache_start) + longtmp / sizeof(*cache_start);
     membuf = (BYTE *)malloc((long)BLOCKLEN);
-    if (cache_start == NULL || membuf == NULL)
+    if (cache_start == nullptr || membuf == nullptr)
     {
         stopmsg(0, "*** insufficient free memory for cache buffers ***");
         return -1;
@@ -302,7 +302,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 
 void enddisk()
 {
-    if (fp != NULL)
+    if (fp != nullptr)
     {
         if (disktarga) /* flush the cache */
         {
@@ -315,7 +315,7 @@ void enddisk()
             }
         }
         fclose(fp);
-        fp = NULL;
+        fp = nullptr;
     }
 
     if (dv_handle != 0)
@@ -323,15 +323,15 @@ void enddisk()
         MemoryRelease(dv_handle);
         dv_handle = 0;
     }
-    if (cache_start != NULL)
+    if (cache_start != nullptr)
     {
         free((void *)cache_start);
-        cache_start = NULL;
+        cache_start = nullptr;
     }
-    if (membuf != NULL)
+    if (membuf != nullptr)
     {
         free((void *)membuf);
-        membuf = NULL;
+        membuf = nullptr;
     }
     g_disk_flag = rowsize = disk16bit = 0;
 }
@@ -590,7 +590,7 @@ static struct cache * _fastcall  find_cache(long offset)
         }
         tbloffset = ptr1->hashlink;
     }
-    return NULL;
+    return nullptr;
 }
 
 static void  write_cache_lru()
@@ -607,7 +607,7 @@ static void  write_cache_lru()
     i = 0;
     while (++i <= WRITEGAP)
     {
-        if ((ptr2 = find_cache(offset -= BLOCKLEN)) != NULL && ptr2->dirty)
+        if ((ptr2 = find_cache(offset -= BLOCKLEN)) != nullptr && ptr2->dirty)
         {
             ptr1 = ptr2;
             i = 0;
@@ -668,14 +668,14 @@ write_stuff:
     }
     ptr1->dirty = 0;
     offset = ptr1->offset + BLOCKLEN;
-    if ((ptr1 = find_cache(offset)) != NULL && ptr1->dirty != 0)
+    if ((ptr1 = find_cache(offset)) != nullptr && ptr1->dirty != 0)
     {
         goto write_stuff;
     }
     i = 1;
     while (++i <= WRITEGAP)
     {
-        if ((ptr1 = find_cache(offset += BLOCKLEN)) != NULL && ptr1->dirty != 0)
+        if ((ptr1 = find_cache(offset += BLOCKLEN)) != nullptr && ptr1->dirty != 0)
         {
             goto write_seek;
         }

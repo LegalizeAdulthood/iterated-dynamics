@@ -352,7 +352,7 @@ void free_ant_storage(void)
     if (s_incx[0])
     {
         free(s_incx[0]);
-        s_incx[0] = NULL;
+        s_incx[0] = nullptr;
     }
 }
 

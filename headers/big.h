@@ -62,7 +62,7 @@
 #ifdef BIG_NEAR
 extern _segment bignum_seg;
 #define BIGDIST             __near
-#define BIG_NULL            NULL
+#define BIG_NULL            nullptr
 #define BIG_SIZE_T          size_t
 #define big_malloc(size)    _nmalloc(size)
 #define big_free(ptr)       _nfree(ptr)
@@ -79,7 +79,7 @@ extern _segment bignum_seg;
 
 #ifdef BIG_FAR
 #define BIGDIST             __far
-#define BIG_NULL            NULL
+#define BIG_NULL            nullptr
 #define BIG_SIZE_T          size_t
 #define big_malloc(size)    _fmalloc( size )
 #define big_free(ptr)       _ffree(ptr)
@@ -87,7 +87,7 @@ extern _segment bignum_seg;
 
 #ifdef BIG_HUGE
 #define BIGDIST             __huge
-#define BIG_NULL            NULL
+#define BIG_NULL            nullptr
 #define BIG_SIZE_T          long
 #define big_malloc(size)    _halloc( (size), 1 )
 #define big_free(ptr)       _hfree(ptr)
@@ -96,7 +96,7 @@ extern _segment bignum_seg;
 #ifdef BIG_ANSI_C
 #define USE_BIGNUM_C_CODE
 #define BIGDIST
-#define BIG_NULL            NULL
+#define BIG_NULL            nullptr
 #define BIG_SIZE_T          size_t
 #define big_malloc(size)    malloc(size)
 #define big_free(ptr)       free(ptr)

@@ -90,7 +90,7 @@ restart:
     if (save16bit)
         strcpy(openfiletype, ".pot");
 
-    if ((period = has_ext(openfile)) != NULL)
+    if ((period = has_ext(openfile)) != nullptr)
     {
         strcpy(openfiletype, period);
         *period = 0;
@@ -133,7 +133,7 @@ restart:
         resave_flag = 0;
 
     g_outfile = fopen(tmpfile, "wb");
-    if (g_outfile == NULL)
+    if (g_outfile == nullptr)
     {
         sprintf(tmpmsg, "Can't create %s", tmpfile);
         stopmsg(0, tmpmsg);
@@ -162,7 +162,7 @@ restart:
     if (debugflag != 200)
         interrupted = encoder();
     else
-        interrupted = timer(2, NULL);     /* invoke encoder() via timer */
+        interrupted = timer(2, nullptr);     /* invoke encoder() via timer */
 
     busy = 0;
 

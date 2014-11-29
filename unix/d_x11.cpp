@@ -93,7 +93,7 @@ struct tagDriverX11 {
     /* Run X events synchronously (debugging) */
     int sync;                   /* = 0; */
     const char *Xdisplay;       /* = ""; */
-    const char *Xgeometry;      /* = NULL; */
+    const char *Xgeometry;      /* = nullptr; */
     int doesBacking;
 
     /*
@@ -111,9 +111,9 @@ struct tagDriverX11 {
     int alarmon;                /* = 0; 1 if the refresh alarm is on */
     int doredraw;               /* = 0; 1 if we have a redraw waiting */
 
-    Display *Xdp;               /* = NULL; */
+    Display *Xdp;               /* = nullptr; */
     Window Xw;
-    GC Xgc;                     /* = NULL; */
+    GC Xgc;                     /* = nullptr; */
     Visual *Xvi;
     Screen *Xsc;
     Colormap Xcmap;
@@ -126,22 +126,22 @@ struct tagDriverX11 {
     Window Xroot;
     int xlastcolor;             /* = -1; */
     int xlastfcn;               /* = GXcopy; */
-    BYTE *pixbuf;               /* = NULL; */
+    BYTE *pixbuf;               /* = nullptr; */
     XColor cols[256];
 
     int XZoomWaiting;           /* = 0; */
 
     const char *x_font_name;    /* = FONT; */
-    XFontStruct *font_info;     /* = NULL; */
+    XFontStruct *font_info;     /* = nullptr; */
 
     int xbufkey; /* = 0; */     /* Buffered X key */
 
-    unsigned char *fontPtr;     /* = NULL; */
+    unsigned char *fontPtr;     /* = nullptr; */
 
     char text_screen[TEXT_HEIGHT][TEXT_WIDTH];
     int text_attr[TEXT_HEIGHT][TEXT_WIDTH];
 
-    BYTE *font_table;           /* = NULL; */
+    BYTE *font_table;           /* = nullptr; */
 
     Bool text_modep;            /* True when displaying text */
 
@@ -288,7 +288,7 @@ check_arg(DriverX11 *di, int argc, char **argv, int *i)
 static void
 doneXwindow(DriverX11 *di)
 {
-    if (di->Xdp == NULL)
+    if (di->Xdp == nullptr)
         return;
 
     if (di->Xgc)
@@ -299,7 +299,7 @@ doneXwindow(DriverX11 *di)
         di->Xpixmap = None;
     }
     XFlush(di->Xdp);
-    di->Xdp = NULL;
+    di->Xdp = nullptr;
 }
 
 /*----------------------------------------------------------------------
@@ -543,7 +543,7 @@ xcmapstuff(DriverX11 *di)
             ncells = 1 << powr;
             if (ncells > colors)
                 continue;
-            if (XAllocColorCells(di->Xdp, di->Xcmap, False, NULL, 0, di->pixtab,
+            if (XAllocColorCells(di->Xdp, di->Xcmap, False, nullptr, 0, di->pixtab,
                                  (unsigned int) ncells)) {
                 colors = ncells;
                 di->usepixtab = 1;
@@ -954,7 +954,7 @@ ev_key_press(DriverX11 *di, XKeyEvent *xevent)
     char buffer[1];
     KeySym keysym;
     int compose;
-    charcount = XLookupString(xevent, buffer, 1, &keysym, NULL);
+    charcount = XLookupString(xevent, buffer, 1, &keysym, nullptr);
     switch (keysym) {
     case XK_Control_L:
     case XK_Control_R:
@@ -1076,7 +1076,7 @@ ev_key_release(DriverX11 *di, XKeyEvent *xevent)
 {
     char buffer[1];
     KeySym keysym;
-    (void) XLookupString(xevent, buffer, 1, &keysym, NULL);
+    (void) XLookupString(xevent, buffer, 1, &keysym, nullptr);
     switch (keysym) {
     case XK_Control_L:
     case XK_Control_R:
@@ -1380,7 +1380,7 @@ FindRootWindow(DriverX11 *di)
             Atom actual_type;
             int actual_format;
             unsigned long nitems, bytesafter;
-            Window *newRoot = NULL;
+            Window *newRoot = nullptr;
 
             if (XGetWindowProperty(di->Xdp, children[i], __SWM_VROOT,
                                    (long) 0, (long) 1,
@@ -1435,7 +1435,7 @@ static void
 load_font(DriverX11 *di)
 {
     di->font_info = XLoadQueryFont(di->Xdp, di->x_font_name);
-    if (di->font_info == NULL)
+    if (di->font_info == nullptr)
         di->font_info = XLoadQueryFont(di->Xdp, "6x12");
 }
 
@@ -1530,7 +1530,7 @@ x11_init(Driver *drv, int *argc, char **argv)
     }
 
     di->Xdp = XOpenDisplay(di->Xdisplay);
-    if (di->Xdp == NULL) {
+    if (di->Xdp == nullptr) {
         x11_terminate(drv);
         return 0;
     }
@@ -1751,22 +1751,22 @@ x11_resize(Driver *drv)
         screenaspect = sydots/(float) sxdots;
         finalaspectratio = screenaspect;
         Xmwidth = (di->Xdepth > 1) ? sxdots: (1 + sxdots/8);
-        if (di->pixbuf != NULL)
+        if (di->pixbuf != nullptr)
             free(di->pixbuf);
         di->pixbuf = (BYTE *) malloc(di->Xwinwidth *sizeof(BYTE));
-        if (di->Ximage != NULL) {
+        if (di->Ximage != nullptr) {
             free(di->Ximage->data);
             XDestroyImage(di->Ximage);
         }
-        di->Ximage = XCreateImage(di->Xdp, di->Xvi, di->Xdepth, ZPixmap, 0, NULL, sxdots,
+        di->Ximage = XCreateImage(di->Xdp, di->Xvi, di->Xdepth, ZPixmap, 0, nullptr, sxdots,
                                   sydots, di->Xdepth, 0);
-        if (di->Ximage == NULL) {
+        if (di->Ximage == nullptr) {
             printf("XCreateImage failed\n");
             x11_terminate(drv);
             exit(-1);
         }
         di->Ximage->data = (char *) malloc(di->Ximage->bytes_per_line * di->Ximage->height);
-        if (di->Ximage->data == NULL) {
+        if (di->Ximage->data == nullptr) {
             fprintf(stderr, "Malloc failed: %d\n", di->Ximage->bytes_per_line *
                     di->Ximage->height);
             exit(-1);
@@ -2199,7 +2199,7 @@ x11_get_key(Driver *drv)
             tout.tv_usec = 500000;
 
             FD_SET(ConnectionNumber(di->Xdp), &reads);
-            status = select(ConnectionNumber(di->Xdp) + 1, &reads, NULL, NULL, &tout);
+            status = select(ConnectionNumber(di->Xdp) + 1, &reads, nullptr, nullptr, &tout);
 
             if (status <= 0)
                 return 0;
@@ -2552,7 +2552,7 @@ static DriverX11 x11_driver_info = {
     0,                    /* fixcolors */
     0,                    /* sync */
     "",                   /* Xdisplay */
-    NULL,                 /* Xgeometry */
+    nullptr,              /* Xgeometry */
     0,                    /* doesBacking */
     0,                    /* usepixtab */
     { 0L },               /* pixtab */
@@ -2563,31 +2563,31 @@ static DriverX11 x11_driver_info = {
     0,                    /* fastmode */
     0,                    /* alarmon */
     0,                    /* doredraw */
-    NULL,                 /* Xdp */
+    nullptr,              /* Xdp */
     None,                 /* Xw */
     None,                 /* Xgc */
-    NULL,                 /* Xvi */
-    NULL,                 /* Xsc */
+    nullptr,              /* Xvi */
+    nullptr,              /* Xsc */
     None,                 /* Xcmap */
     0,                    /* Xdepth */
-    NULL,                 /* Ximage */
-    NULL,                 /* Xdata */
+    nullptr,              /* Ximage */
+    nullptr,              /* Xdata */
     0,                    /* Xdscreen */
     None,                 /* Xpixmap */
-    DEFX, DEFY,               /* Xwinwidth, Xwinheight */
+    DEFX, DEFY,           /* Xwinwidth, Xwinheight */
     None,                 /* Xroot */
     -1,                   /* xlastcolor */
     GXcopy,               /* xlastfcn */
-    NULL,                 /* pixbuf */
+    nullptr,              /* pixbuf */
     { 0 },                /* cols */
     0,                    /* XZoomWaiting */
     FONT,                 /* x_font_name */
-    NULL,                 /* font_info */
+    nullptr,              /* font_info */
     0,                    /* xbufkey */
-    NULL,                 /* fontPtr */
+    nullptr,              /* fontPtr */
     { 0 },                /* text_screen */
     { 0 },                /* text_attr */
-    NULL,                 /* font_table */
+    nullptr,              /* font_table */
     False,                /* text_modep */
     0,                    /* ctl_mode */
     0,                    /* shift_mode */

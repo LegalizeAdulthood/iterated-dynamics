@@ -83,12 +83,12 @@ void make_batch_file()
     const char *choices[MAXPROMPTS];
     int gotinfile;
     char outname[FILE_MAX_PATH+1], buf[256], buf2[128];
-    FILE *infile = NULL;
-    FILE *fpbat = NULL;
+    FILE *infile = nullptr;
+    FILE *fpbat = nullptr;
     char colorspec[14];
     int maxcolor;
     int maxcolorindex = 0;
-    char *sptr = NULL, *sptr2;
+    char *sptr = nullptr, *sptr2;
     int oldhelpmode;
 
     if (s_makepar[1] == 0) /* makepar map case */
@@ -139,9 +139,9 @@ void make_batch_file()
 
         if (colorspec[0] == '@')
         {
-            if ((sptr2 = strrchr(sptr, SLASHC)) != NULL)
+            if ((sptr2 = strrchr(sptr, SLASHC)) != nullptr)
                 sptr = sptr2 + 1;
-            if ((sptr2 = strrchr(sptr, ':')) != NULL)
+            if ((sptr2 = strrchr(sptr, ':')) != nullptr)
                 sptr = sptr2 + 1;
             strncpy(&colorspec[1], sptr, 12);
             colorspec[13] = 0;
@@ -224,7 +224,7 @@ prompt_user:
         paramvalues[promptnum++].uval.sbuf = vidmde;
 #endif
 
-        if (fullscreen_prompt("Save Current Parameters",promptnum, choices, paramvalues, 0, NULL) < 0)
+        if (fullscreen_prompt("Save Current Parameters",promptnum, choices, paramvalues, 0, nullptr) < 0)
             break;
 
         if (*colorspec == 'o' || s_makepar[1] == 0)
@@ -234,7 +234,7 @@ prompt_user:
         }
 
         strcpy(CommandFile, inpcommandfile);
-        if (has_ext(CommandFile) == NULL)
+        if (has_ext(CommandFile) == nullptr)
             strcat(CommandFile, ".par");   /* default extension .par */
         strcpy(CommandName, inpcommandname);
         for (i=0; i<4; i++)
@@ -327,7 +327,7 @@ skip_UI:
             infile = fopen(CommandFile, "rt");
         }
         parmfile = fopen(outname, "wt");
-        if (parmfile == NULL)
+        if (parmfile == nullptr)
         {
             sprintf(buf, "Can't create %s", outname);
             stopmsg(0, buf);
@@ -354,7 +354,7 @@ skip_UI:
                         unlink(outname);
                         goto prompt_user;
                     }
-                    while (strchr(buf, '}') == NULL
+                    while (strchr(buf, '}') == nullptr
                             && file_gets(buf, 255, infile) > 0)
                         ; /* skip to end of set */
                     break;
@@ -371,7 +371,7 @@ skip_UI:
             else
                 have3rd = 0;
             fpbat = dir_fopen(workdir,"makemig.bat", "w");
-            if (fpbat == NULL)
+            if (fpbat == nullptr)
                 xm = ym = 0;
             pdelx  = (xxmax - xx3rd) / (xm * pxdots - 1);   /* calculate stepsizes */
             pdely  = (yymax - yy3rd) / (ym * pydots - 1);
@@ -514,7 +514,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
     double Xmagfactor, Rotation, Skew;
     const char *sptr;
     char buf[81];
-    bf_t bfXctr=NULL, bfYctr=NULL;
+    bf_t bfXctr=nullptr, bfYctr=nullptr;
     int saved;
     saved = save_stack();
     if (bf_math)
@@ -682,7 +682,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
         for (i = (MAXPARAMS-1); i >= 0; --i)
             if (typehasparm((fractype==JULIBROT || fractype==JULIBROTFP)
-                            ?neworbittype:fractype,i,NULL)) break;
+                            ?neworbittype:fractype,i,nullptr)) break;
 
         if (i >= 0) {
             if (fractype == CELLULAR || fractype == ANT)
@@ -1178,7 +1178,7 @@ static void put_filename(const char *keyword, const char *fname)
 {
     const char *p;
     if (*fname && !endswithslash(fname)) {
-        if ((p = strrchr(fname, SLASHC)) != NULL)
+        if ((p = strrchr(fname, SLASHC)) != nullptr)
         {
             fname = p+1;
             if (*fname == 0) return;
@@ -1405,9 +1405,9 @@ static void strip_zeros(char *buf)
 {
     char *dptr, *bptr, *exptr;
     strlwr(buf);
-    if ((dptr = strchr(buf,'.')) != 0) {
+    if ((dptr = strchr(buf,'.')) != nullptr) {
         ++dptr;
-        if ((exptr = strchr(buf,'e')) !=0)  /* scientific notation with 'e'? */
+        if ((exptr = strchr(buf,'e')) !=nullptr)  /* scientific notation with 'e'? */
             bptr = exptr;
         else
             bptr = buf + strlen(buf);
@@ -1507,8 +1507,8 @@ int select_video_mode(int curmode)
     i = fullscreen_choice(CHOICE_HELP,
                           "Select Video Mode",
                           "key...name.......................xdot..ydot.colr.driver......comment......",
-                          NULL, g_video_table_len, NULL, attributes,
-                          1, 16, 74, i, format_vid_table, NULL, NULL, check_modekey);
+                          nullptr, g_video_table_len, nullptr, attributes,
+                          1, 16, 74, i, format_vid_table, nullptr, nullptr, check_modekey);
     tabmode = oldtabmode;
     helpmode = oldhelpmode;
     if (i == -1)
@@ -1659,7 +1659,7 @@ static void update_fractint_cfg()
         outname[i] = 0;
     strcat(outname,"fractint.tmp");
     outfile = fopen(outname,"w");
-    if (outfile == NULL) {
+    if (outfile == nullptr) {
         sprintf(buf,"Can't create %s",outname);
         stopmsg(0,buf);
         return;
@@ -1748,7 +1748,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     errorflag = 0;                          /* no errors so */
     inputerrorflag = 0;
     allxres = allyres = allitbl = 0;
-    out = in = NULL;
+    out = in = nullptr;
 
     strcpy(gifout,"fractmig.gif");
 
@@ -1767,7 +1767,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                 printf(" %d X and %d Y components\n\n", xmult, ymult);
                 /* attempt to create the output file */
                 out = fopen(gifout,"wb");
-                if (out == NULL)
+                if (out == nullptr)
                 {
                     printf("Cannot create output file %s!\n", gifout);
                     exit(1);
@@ -1777,7 +1777,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
             sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
 
             in = fopen(gifin,"rb");
-            if (in == NULL)
+            if (in == nullptr)
             {
                 printf("Can't open file %s!\n", gifin);
                 exit(1);
@@ -2309,14 +2309,14 @@ void parse_comments(char *value)
         next = strchr(value,'/');
         if (*value != '/')
         {
-            if (next != NULL)
+            if (next != nullptr)
             {
                 save = *next;
                 *next = '\0';
             }
             strncpy(par_comment[i],value, MAXCMT);
         }
-        if (next == NULL)
+        if (next == nullptr)
             break;
         if (save != '\0')
             *next = save;

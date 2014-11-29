@@ -121,14 +121,14 @@ static int _fastcall readLSystemFile(char *str)
     while ((c = fgetc(infile)) != '{')
         if (c == EOF) return -1;
     maxangle=0;
-    for (linenum=0; linenum<MAXRULES; ++linenum) ruleptrs[linenum]=NULL;
+    for (linenum=0; linenum<MAXRULES; ++linenum) ruleptrs[linenum]=nullptr;
     rulind= &ruleptrs[1];
     msgbuf[0]=(char)(linenum=0);
 
     while (file_gets(inline1,MAX_LSYS_LINE_LEN,infile) > -1)  /* Max line length chars */
     {
         linenum++;
-        if ((word = strchr(inline1,';')) != NULL) /* strip comment */
+        if ((word = strchr(inline1,';')) != nullptr) /* strip comment */
             *word = 0;
         strlwr(inline1);
 
@@ -137,7 +137,7 @@ static int _fastcall readLSystemFile(char *str)
             word=strtok(inline1," =\t\n");
             if (!strcmp(word,"axiom"))
             {
-                if (save_rule(strtok(NULL," \t\n"),&ruleptrs[0])) {
+                if (save_rule(strtok(nullptr," \t\n"),&ruleptrs[0])) {
                     strcat(msgbuf,"Error:  out of memory\n");
                     ++err;
                     break;
@@ -146,7 +146,7 @@ static int _fastcall readLSystemFile(char *str)
             }
             else if (!strcmp(word,"angle"))
             {
-                maxangle=(char)atoi(strtok(NULL," \t\n"));
+                maxangle=(char)atoi(strtok(nullptr," \t\n"));
                 check=1;
             }
             else if (!strcmp(word,"}"))
@@ -163,7 +163,7 @@ static int _fastcall readLSystemFile(char *str)
                     ++err;
                     break;
                 }
-                temp = strtok(NULL," =\t\n");
+                temp = strtok(nullptr," =\t\n");
                 index = rule_present(*word);
 
                 if (!index)
@@ -194,7 +194,7 @@ static int _fastcall readLSystemFile(char *str)
             if (check)
             {
                 check=0;
-                if ((word=strtok(NULL," \t\n"))!=NULL)
+                if ((word=strtok(nullptr," \t\n"))!=nullptr)
                     if (err<6)
                     {
                         sprintf(&msgbuf[strlen(msgbuf)],
@@ -221,7 +221,7 @@ static int _fastcall readLSystemFile(char *str)
         stopmsg(0,msgbuf);
         return -1;
     }
-    *rulind=NULL;
+    *rulind=nullptr;
     return 0;
 }
 
@@ -252,7 +252,7 @@ int Lsystem(void)
         sc = rules2;
         for (rulesc = ruleptrs; *rulesc; rulesc++)
             *sc++ = LSysISizeTransform(*rulesc, &ts);
-        *sc = NULL;
+        *sc = nullptr;
 
         lsysi_dosincos();
         if (lsysi_findscale(rules2[0], &ts, &rules2[1], order)) {
@@ -262,7 +262,7 @@ int Lsystem(void)
             sc = rules2;
             for (rulesc = ruleptrs; *rulesc; rulesc++)
                 *sc++ = LSysIDrawTransform(*rulesc, &ts);
-            *sc = NULL;
+            *sc = nullptr;
 
             /* !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR */
             if ((ts.curcolor=15) > colors)
@@ -287,7 +287,7 @@ int Lsystem(void)
         sc = rules2;
         for (rulesc = ruleptrs; *rulesc; rulesc++)
             *sc++ = LSysFSizeTransform(*rulesc, &ts);
-        *sc = NULL;
+        *sc = nullptr;
 
         lsysf_dosincos();
         if (lsysf_findscale(rules2[0], &ts, &rules2[1], order)) {
@@ -297,7 +297,7 @@ int Lsystem(void)
             sc = rules2;
             for (rulesc = ruleptrs; *rulesc; rulesc++)
                 *sc++ = LSysFDrawTransform(*rulesc, &ts);
-            *sc = NULL;
+            *sc = nullptr;
 
             /* !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR */
             if ((ts.curcolor=15) > colors)
@@ -347,7 +347,7 @@ static int _fastcall save_rule(char *rule,char **saveptr)
     char *tmpfar;
     i=(int) strlen(rule)+1;
     tmpfar = (char *) malloc(i);
-    if (tmpfar == NULL) {
+    if (tmpfar == nullptr) {
         return -1;
     }
     *saveptr=tmpfar;
@@ -365,7 +365,7 @@ static int _fastcall append_rule(char *rule, int index)
         ;
     j = (int) strlen(rule) + 1;
     dst = (char *)malloc((long)(i + j));
-    if (dst == NULL)
+    if (dst == nullptr)
         return -1;
 
     old = sav;
@@ -634,11 +634,11 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd
     int tran;
 
     if (overflow)     /* integer math routines overflowed */
-        return NULL;
+        return nullptr;
 
     if (stackavail() < 400) { /* leave some margin for calling subrtns */
         ts->stackoflow = 1;
-        return NULL;
+        return nullptr;
     }
 
     while (command->ch && command->ch !=']') {
@@ -646,7 +646,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd
             /* let user know we're not dead */
             if (thinking(1, "L-System thinking (higher orders take longer)")) {
                 ts->counter--;
-                return NULL;
+                return nullptr;
             }
         }
         tran=0;
@@ -654,8 +654,8 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd
             for (rulind=rules; *rulind; rulind++)
                 if ((*rulind)->ch==command->ch) {
                     tran=1;
-                    if (findsize((*rulind)+1,ts,rules,depth-1) == NULL)
-                        return (NULL);
+                    if (findsize((*rulind)+1,ts,rules,depth-1) == nullptr)
+                        return (nullptr);
                 }
         }
         if (!depth || !tran) {
@@ -675,8 +675,8 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd
                 savex=ts->xpos;
                 savey=ts->ypos;
                 command = findsize(command+1, ts, rules, depth);
-                if (command == NULL)
-                    return (NULL);
+                if (command == nullptr)
+                    return (nullptr);
                 ts->angle=saveang;
                 ts->reverse=saverev;
                 ts->size=savesize;
@@ -713,12 +713,12 @@ lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct l
                                         ts->counter = 0;
     ts->size=FIXEDPT(1L);
     fsret = findsize(command,ts,rules,depth);
-    thinking(0, NULL); /* erase thinking message if any */
+    thinking(0, nullptr); /* erase thinking message if any */
     xmin = (double) ts->xmin / FIXEDMUL;
     xmax = (double) ts->xmax / FIXEDMUL;
     ymin = (double) ts->ymin / FIXEDMUL;
     ymax = (double) ts->ymax / FIXEDMUL;
-    if (fsret == NULL)
+    if (fsret == nullptr)
         return 0;
     if (xmax == xmin)
         horiz = (float)1E37;
@@ -752,11 +752,11 @@ drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd
     int tran;
 
     if (overflow)     /* integer math routines overflowed */
-        return NULL;
+        return nullptr;
 
     if (stackavail() < 400) { /* leave some margin for calling subrtns */
         ts->stackoflow = 1;
-        return NULL;
+        return nullptr;
     }
 
 
@@ -764,7 +764,7 @@ drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd
         if (!(ts->counter++)) {
             if (driver_key_pressed()) {
                 ts->counter--;
-                return NULL;
+                return nullptr;
             }
         }
         tran=0;
@@ -772,8 +772,8 @@ drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd
             for (rulind=rules; *rulind; rulind++)
                 if ((*rulind)->ch == command->ch) {
                     tran=1;
-                    if (drawLSysI((*rulind)+1,ts,rules,depth-1) == NULL)
-                        return NULL;
+                    if (drawLSysI((*rulind)+1,ts,rules,depth-1) == nullptr)
+                        return nullptr;
                 }
         }
         if (!depth||!tran) {
@@ -794,8 +794,8 @@ drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd
                 savey=ts->ypos;
                 savecolor=ts->curcolor;
                 command = drawLSysI(command+1, ts, rules, depth);
-                if (command == NULL)
-                    return (NULL);
+                if (command == nullptr)
+                    return (nullptr);
                 ts->angle=saveang;
                 ts->reverse=saverev;
                 ts->size=savesize;
@@ -830,12 +830,12 @@ LSysISizeTransform(char *s, struct lsys_turtlestatei *ts)
     void (*dogf)(lsys_turtlestatei *) = (cpu >= 386) ? lsysi_dosizegf_386 : lsysi_dosizegf;
 
     ret = (struct lsys_cmd *) malloc((long) maxval * sizeof(struct lsys_cmd));
-    if (ret == NULL) {
+    if (ret == nullptr) {
         ts->stackoflow = 1;
-        return NULL;
+        return nullptr;
     }
     while (*s) {
-        f = NULL;
+        f = nullptr;
         num = 0;
         ret[n].ch = *s;
         switch (*s) {
@@ -885,10 +885,10 @@ LSysISizeTransform(char *s, struct lsys_turtlestatei *ts)
         ret[n].n = num;
         if (++n == maxval) {
             doub = (struct lsys_cmd *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
-            if (doub == NULL) {
+            if (doub == nullptr) {
                 free(ret);
                 ts->stackoflow = 1;
-                return NULL;
+                return nullptr;
             }
             memcpy(doub, ret, maxval*sizeof(struct lsys_cmd));
             free(ret);
@@ -898,15 +898,15 @@ LSysISizeTransform(char *s, struct lsys_turtlestatei *ts)
         s++;
     }
     ret[n].ch = 0;
-    ret[n].f = NULL;
+    ret[n].f = nullptr;
     ret[n].n = 0;
     n++;
 
     doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
-    if (doub == NULL) {
+    if (doub == nullptr) {
         free(ret);
         ts->stackoflow = 1;
-        return NULL;
+        return nullptr;
     }
     memcpy(doub, ret, n*sizeof(struct lsys_cmd));
     free(ret);
@@ -933,12 +933,12 @@ LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts)
     void (*drawg)(lsys_turtlestatei *) = (cpu >= 386) ? lsysi_dodrawg_386 : lsysi_dodrawg;
 
     ret = (struct lsys_cmd *) malloc((long) maxval * sizeof(struct lsys_cmd));
-    if (ret == NULL) {
+    if (ret == nullptr) {
         ts->stackoflow = 1;
-        return NULL;
+        return nullptr;
     }
     while (*s) {
-        f = NULL;
+        f = nullptr;
         num = 0;
         ret[n].ch = *s;
         switch (*s) {
@@ -1004,10 +1004,10 @@ LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts)
         ret[n].n = num;
         if (++n == maxval) {
             doub = (struct lsys_cmd *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
-            if (doub == NULL) {
+            if (doub == nullptr) {
                 free(ret);
                 ts->stackoflow = 1;
-                return NULL;
+                return nullptr;
             }
             memcpy(doub, ret, maxval*sizeof(struct lsys_cmd));
             free(ret);
@@ -1017,15 +1017,15 @@ LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts)
         s++;
     }
     ret[n].ch = 0;
-    ret[n].f = NULL;
+    ret[n].f = nullptr;
     ret[n].n = 0;
     n++;
 
     doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
-    if (doub == NULL) {
+    if (doub == nullptr) {
         free(ret);
         ts->stackoflow = 1;
-        return NULL;
+        return nullptr;
     }
     memcpy(doub, ret, n*sizeof(struct lsys_cmd));
     free(ret);

@@ -41,7 +41,7 @@ int iocount;
 long clock_ticks()
 {
     struct timeval tim;
-    gettimeofday(&tim,NULL);
+    gettimeofday(&tim,nullptr);
     return tim.tv_sec*CLK_TCK + tim.tv_usec*CLK_TCK/1000000;
 }
 
@@ -253,7 +253,7 @@ void findpath(const char *filename, char *fullpathname)
         }
     }
     fractdir = getenv("FRACTDIR");
-    if (fractdir != NULL) {
+    if (fractdir != nullptr) {
         strcpy(fullpathname,fractdir);
         strcat(fullpathname,"/");
         strcat(fullpathname,filename);
@@ -278,7 +278,7 @@ void findpath(const char *filename, char *fullpathname)
         close(fd);
         return;
     }
-    fullpathname=NULL;
+    fullpathname=nullptr;
 }
 
 /*
@@ -483,7 +483,7 @@ static struct timeval tv_start;
 
 void restart_uclock(void)
 {
-    gettimeofday(&tv_start, NULL);
+    gettimeofday(&tv_start, nullptr);
 }
 
 typedef unsigned long uclock_t;
@@ -492,7 +492,7 @@ uclock_t usec_clock(void)
     uclock_t result;
 
     struct timeval tv, elapsed;
-    gettimeofday(&tv, NULL);
+    gettimeofday(&tv, nullptr);
 
     elapsed.tv_usec  = tv.tv_usec -  tv_start.tv_sec;
     elapsed.tv_sec   = tv.tv_sec -   tv_start.tv_sec;

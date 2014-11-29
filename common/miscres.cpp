@@ -507,7 +507,7 @@ int check_writefile(char *name, const char *ext)
 nextname:
     strcpy(openfile,name);
     strcpy(opentype,ext);
-    if ((period = has_ext(openfile)) != NULL)
+    if ((period = has_ext(openfile)) != nullptr)
     {
         strcpy(opentype,period);
         *period = 0;
@@ -587,7 +587,7 @@ int set_trig_array(int k, const char *name)
     strncpy(trigname,name,6);
     trigname[6] = 0; /* safety first */
 
-    if ((slash = strchr(trigname,'/')) != NULL)
+    if ((slash = strchr(trigname,'/')) != nullptr)
         *slash = 0;
 
     strlwr(trigname);
@@ -663,7 +663,7 @@ void get_calculation_time(char *msg, long ctime)
 
 static void show_str_var(const char *name, const char *var, int *row, char *msg)
 {
-    if (var == NULL)
+    if (var == nullptr)
         return;
     if (*var != 0)
     {
@@ -779,7 +779,7 @@ int tab_display()       /* display the status of the current image */
     double Xctr, Yctr;
     LDBL Magnification;
     double Xmagfactor, Rotation, Skew;
-    bf_t bfXctr = NULL, bfYctr = NULL;
+    bf_t bfXctr = nullptr, bfYctr = nullptr;
     char msg[350];
     const char *msgptr;
     int key;
@@ -1288,12 +1288,12 @@ char *get_ifs_token(char *buf,FILE *ifsfile)
     while (1)
     {
         if (file_gets(buf,200,ifsfile) < 0)
-            return (NULL);
+            return (nullptr);
         else
         {
-            if ((bufptr = strchr(buf,';')) != NULL) /* use ';' as comment to eol */
+            if ((bufptr = strchr(buf,';')) != nullptr) /* use ';' as comment to eol */
                 *bufptr = 0;
-            if ((bufptr = strtok(buf, seps)) != NULL)
+            if ((bufptr = strtok(buf, seps)) != nullptr)
                 return (bufptr);
         }
     }
@@ -1311,7 +1311,7 @@ int ifsload()                   /* read in IFS parameters */
 
     if (ifs_defn) { /* release prior parms */
         free((char *)ifs_defn);
-        ifs_defn = NULL;
+        ifs_defn = nullptr;
     }
 
     ifs_type = 0;
@@ -1320,7 +1320,7 @@ int ifsload()                   /* read in IFS parameters */
         return (-1);
 
     file_gets(buf,200,ifsfile);
-    if ((bufptr = strchr(buf,';')) != NULL) /* use ';' as comment to eol */
+    if ((bufptr = strchr(buf,';')) != nullptr) /* use ';' as comment to eol */
         *bufptr = 0;
 
     strlwr(buf);
@@ -1336,7 +1336,7 @@ int ifsload()                   /* read in IFS parameters */
     float ifs_param_tmp[(NUMIFS+1)*IFS3DPARM] = { 0.f };
     i = ret = 0;
     bufptr = get_ifs_token(buf,ifsfile);
-    while (bufptr != NULL)
+    while (bufptr != nullptr)
     {
         if (sscanf(bufptr," %f ",&ifs_param_tmp[i]) != 1)
             break ;
@@ -1346,11 +1346,11 @@ int ifsload()                   /* read in IFS parameters */
             ret = -1;
             break;
         }
-        bufptr = strtok(NULL, seps);
-        if (bufptr==NULL)
+        bufptr = strtok(nullptr, seps);
+        if (bufptr==nullptr)
         {
             bufptr = get_ifs_token(buf,ifsfile);
-            if (bufptr == NULL)
+            if (bufptr == nullptr)
             {
                 ret = -1;
                 break;
@@ -1375,7 +1375,7 @@ int ifsload()                   /* read in IFS parameters */
     if (ret == 0) {
         numaffine = i/rowsize;
         if ((ifs_defn = (float *)malloc(
-                            (long)((NUMIFS+1)*IFS3DPARM*sizeof(float)))) == NULL) {
+                            (long)((NUMIFS+1)*IFS3DPARM*sizeof(float)))) == nullptr) {
             stopmsg(0,insufficient_ifs_mem);
             ret = -1;
         }
@@ -1388,7 +1388,7 @@ int ifsload()                   /* read in IFS parameters */
 
 int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
 {
-    FILE *infile=NULL;
+    FILE *infile=nullptr;
     int found = 0;
     char parsearchname[ITEMNAMELEN + 6];
     char drive[FILE_MAX_DRIVE];
@@ -1402,26 +1402,26 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
     splitpath(filename,drive,dir,fname,ext);
     makepath(fullpath,"","",fname,ext);
     if (stricmp(filename, CommandFile)) {
-        if ((infile=fopen(filename, "rb")) != NULL) {
-            if (scan_entries(infile, NULL, itemname) == -1) {
+        if ((infile=fopen(filename, "rb")) != nullptr) {
+            if (scan_entries(infile, nullptr, itemname) == -1) {
                 found = 1;
             }
             else {
                 fclose(infile);
-                infile = NULL;
+                infile = nullptr;
             }
         }
 
         if (!found && checkcurdir) {
             makepath(fullpath,"",DOTSLASH,fname,ext);
-            if ((infile=fopen(fullpath, "rb")) != NULL) {
-                if (scan_entries(infile, NULL, itemname) == -1) {
+            if ((infile=fopen(fullpath, "rb")) != nullptr) {
+                if (scan_entries(infile, nullptr, itemname) == -1) {
                     strcpy(filename, fullpath);
                     found = 1;
                 }
                 else {
                     fclose(infile);
-                    infile = NULL;
+                    infile = nullptr;
                 }
             }
         }
@@ -1433,53 +1433,53 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
         strcat(parsearchname, itemname);
         parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
         strcpy(defaultextension, ".frm");
-        splitpath(searchfor.frm,drive,dir,NULL,NULL);
+        splitpath(searchfor.frm,drive,dir,nullptr,nullptr);
         break;
     case 2:
         strcpy(parsearchname, "lsys:");
         strcat(parsearchname, itemname);
         parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
         strcpy(defaultextension, ".l");
-        splitpath(searchfor.lsys,drive,dir,NULL,NULL);
+        splitpath(searchfor.lsys,drive,dir,nullptr,nullptr);
         break;
     case 3:
         strcpy(parsearchname, "ifs:");
         strcat(parsearchname, itemname);
         parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
         strcpy(defaultextension, ".ifs");
-        splitpath(searchfor.ifs,drive,dir,NULL,NULL);
+        splitpath(searchfor.ifs,drive,dir,nullptr,nullptr);
         break;
     default:
         strcpy(parsearchname, itemname);
         parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
         strcpy(defaultextension, ".par");
-        splitpath(searchfor.par,drive,dir,NULL,NULL);
+        splitpath(searchfor.par,drive,dir,nullptr,nullptr);
         break;
     }
 
     if (!found) {
-        if ((infile=fopen(CommandFile, "rb")) != NULL) {
-            if (scan_entries(infile, NULL, parsearchname) == -1) {
+        if ((infile=fopen(CommandFile, "rb")) != nullptr) {
+            if (scan_entries(infile, nullptr, parsearchname) == -1) {
                 strcpy(filename, CommandFile);
                 found = 1;
             }
             else {
                 fclose(infile);
-                infile = NULL;
+                infile = nullptr;
             }
         }
     }
 
     if (!found) {
         makepath(fullpath,drive,dir,fname,ext);
-        if ((infile=fopen(fullpath, "rb")) != NULL) {
-            if (scan_entries(infile, NULL, itemname) == -1) {
+        if ((infile=fopen(fullpath, "rb")) != nullptr) {
+            if (scan_entries(infile, nullptr, itemname) == -1) {
                 strcpy(filename, fullpath);
                 found = 1;
             }
             else {
                 fclose(infile);
-                infile = NULL;
+                infile = nullptr;
             }
         }
     }
@@ -1496,17 +1496,17 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
             if (!(DTA.attribute & SUBDIR) &&
                     strcmp(DTA.filename,".")&&
                     strcmp(DTA.filename,"..")) {
-                splitpath(DTA.filename,NULL,NULL,fname,ext);
+                splitpath(DTA.filename,nullptr,nullptr,fname,ext);
                 makepath(fullpath,drive,dir,fname,ext);
-                if ((infile=fopen(fullpath, "rb")) != NULL) {
-                    if (scan_entries(infile, NULL, itemname) == -1) {
+                if ((infile=fopen(fullpath, "rb")) != nullptr) {
+                    if (scan_entries(infile, nullptr, itemname) == -1) {
                         strcpy(filename, fullpath);
                         found = 1;
                         break;
                     }
                     else {
                         fclose(infile);
-                        infile = NULL;
+                        infile = nullptr;
                     }
                 }
             }
@@ -1516,7 +1516,7 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
     }
 
     if (!found && orgfrmsearch && itemtype == 1) {
-        splitpath(orgfrmdir,drive,dir,NULL,NULL);
+        splitpath(orgfrmdir,drive,dir,nullptr,nullptr);
         fname[0] = '_';
         fname[1] = (char) 0;
         if (isalpha(itemname[0])) {
@@ -1540,14 +1540,14 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
             strcat(fname, "chr");
         }
         makepath(fullpath,drive,dir,fname,defaultextension);
-        if ((infile=fopen(fullpath, "rb")) != NULL) {
-            if (scan_entries(infile, NULL, itemname) == -1) {
+        if ((infile=fopen(fullpath, "rb")) != nullptr) {
+            if (scan_entries(infile, nullptr, itemname) == -1) {
                 strcpy(filename, fullpath);
                 found = 1;
             }
             else {
                 fclose(infile);
-                infile = NULL;
+                infile = nullptr;
             }
         }
     }
@@ -1558,9 +1558,9 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
         return (-1);
     }
     /* found file */
-    if (fileptr != NULL)
+    if (fileptr != nullptr)
         *fileptr = infile;
-    else if (infile != NULL)
+    else if (infile != nullptr)
         fclose(infile);
     return (0);
 }
@@ -1599,11 +1599,11 @@ int _cdecl _matherr(struct exception *except)
 {
     if (debugflag != 0)
     {
-        static FILE *fp=NULL;
+        static FILE *fp=nullptr;
         if (matherr_ct++ == 0)
             if (debugflag == 4000 || debugflag == 3200)
                 stopmsg(0, "Math error, but we'll try to keep going");
-        if (fp==NULL)
+        if (fp==nullptr)
             fp = fopen("matherr","w");
         if (matherr_ct < 100)
         {

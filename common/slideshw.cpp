@@ -49,7 +49,7 @@ static struct scancodes scancodes[] =
     { FIK_CTL_UP_ARROW,     "CTRL_UP"   },
     { FIK_CTL_END,          "CTRL_END"  },
     { FIK_CTL_HOME,         "CTRL_HOME" },
-    { -1,                   NULL        }
+    { -1,                   nullptr        }
 };
 #define stop sizeof(scancodes)/sizeof(struct scancodes)-1
 
@@ -78,7 +78,7 @@ static void get_mnemonic(int code,char *mnemonic)
 #undef stop
 
 char busy = 0;
-static FILE *fpss = NULL;
+static FILE *fpss = nullptr;
 static long starttick;
 static long ticks;
 static int slowcount;
@@ -132,7 +132,7 @@ int slideshw()
             return (0); /* wait for calc to finish before reading more keystrokes */
         calcwait = 0;
     }
-    if (fpss==NULL)   /* open files first time through */
+    if (fpss==nullptr)   /* open files first time through */
         if (startslideshow()==0)
         {
             stopslideshow();
@@ -287,7 +287,7 @@ int
 startslideshow()
 {
     fpss=fopen(autoname,"r");
-    if (fpss==NULL)
+    if (fpss==nullptr)
         g_slides = SLIDES_OFF;
     ticks = 0;
     quotes = 0;
@@ -300,7 +300,7 @@ void stopslideshow()
 {
     if (fpss)
         fclose(fpss);
-    fpss = NULL;
+    fpss = nullptr;
     g_slides = SLIDES_OFF;
 }
 
@@ -310,10 +310,10 @@ void recordshw(int key)
     float dt;
     dt = (float)ticks;      /* save time of last call */
     ticks=clock_ticks();  /* current time */
-    if (fpss==NULL)
+    if (fpss==nullptr)
     {
         fpss=fopen(autoname,"w");
-        if (fpss==NULL)
+        if (fpss==nullptr)
             return;
     }
     dt = ticks-dt;

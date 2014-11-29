@@ -209,7 +209,7 @@ int get_toggles()
     uvalues[k].type = 's';
     strcpy(prevsavename,savename);
     savenameptr = strrchr(savename, SLASHC);
-    if (savenameptr == NULL)
+    if (savenameptr == nullptr)
         savenameptr = savename;
     else
         savenameptr++; /* point past slash */
@@ -258,7 +258,7 @@ int get_toggles()
 
     oldhelpmode = helpmode;
     helpmode = HELPXOPTS;
-    i = fullscreen_prompt("Basic Options\n(not all combinations make sense)",k+1,choices,uvalues,0,NULL);
+    i = fullscreen_prompt("Basic Options\n(not all combinations make sense)",k+1,choices,uvalues,0,nullptr);
     helpmode = oldhelpmode;
     if (i < 0) {
         return (-1);
@@ -456,7 +456,7 @@ int get_toggles2()
     helpmode = HELPYOPTS;
     i = fullscreen_prompt("Extended Options\n"
                           "(not all combinations make sense)",
-                          k+1,choices,uvalues,0,NULL);
+                          k+1,choices,uvalues,0,nullptr);
     helpmode = oldhelpmode;
     if (i < 0) {
         return (-1);
@@ -579,7 +579,7 @@ pass_option_restart:
     i = fullscreen_prompt("Passes Options\n"
                           "(not all combinations make sense)\n"
                           "(Press " FK_F2 " for corner parameters)\n"
-                          "(Press " FK_F6 " for calculation parameters)",k+1,choices,uvalues,0x44,NULL);
+                          "(Press " FK_F6 " for calculation parameters)",k+1,choices,uvalues,0x44,nullptr);
     helpmode = oldhelpmode;
     if (i < 0) {
         return (-1);
@@ -763,7 +763,7 @@ get_view_restart:
 
     oldhelpmode = helpmode;     /* this prevents HELP from activating */
     helpmode = HELPVIEW;
-    i = fullscreen_prompt("View Window Options",k+1,choices,uvalues,16,NULL);
+    i = fullscreen_prompt("View Window Options",k+1,choices,uvalues,16,nullptr);
     helpmode = oldhelpmode;     /* re-enable HELP */
     if (i < 0)
     {
@@ -879,7 +879,7 @@ int get_cmd_string()
 
     oldhelpmode = helpmode;
     helpmode = HELPCOMMANDS;
-    i = field_prompt("Enter command string to use.",NULL,cmdbuf,60,NULL);
+    i = field_prompt("Enter command string to use.",nullptr,cmdbuf,60,nullptr);
     helpmode = oldhelpmode;
     if (i >= 0 && cmdbuf[0] != 0) {
         i = cmdarg(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
@@ -969,7 +969,7 @@ int get_starfield_params(void)
     driver_stack_screen();
     oldhelpmode = helpmode;
     helpmode = HELPSTARFLD;
-    i = fullscreen_prompt("Starfield Parameters",3,starfield_prompts,uvalues,0,NULL);
+    i = fullscreen_prompt("Starfield Parameters",3,starfield_prompts,uvalues,0,nullptr);
     helpmode = oldhelpmode;
     driver_unstack_screen();
     if (i < 0) {
@@ -1036,7 +1036,7 @@ int get_rds_params(void) {
             for (i=0; i<sizeof(rds6); i++)
                 rds6[i] = ' ';
             p = strrchr(stereomapname,SLASHC);
-            if (p==NULL ||
+            if (p==nullptr ||
                     (int) strlen(stereomapname) < sizeof(rds6)-2)
                 p = strlwr(stereomapname);
             else
@@ -1051,7 +1051,7 @@ int get_rds_params(void) {
             *stereomapname = 0;
         oldhelpmode = helpmode;
         helpmode = HELPRDS;
-        i = fullscreen_prompt("Random Dot Stereogram Parameters",k,rds_prompts,uvalues,0,NULL);
+        i = fullscreen_prompt("Random Dot Stereogram Parameters",k,rds_prompts,uvalues,0,nullptr);
         helpmode = oldhelpmode;
         if (i < 0) {
             ret = -1;
@@ -1101,7 +1101,7 @@ int get_a_number(double *x, double *y)
     uvalues[k].type = 'd';
     uvalues[k].uval.dval = *y;
 
-    i = fullscreen_prompt("Set Cursor Coordinates",k+1,choices,uvalues,25,NULL);
+    i = fullscreen_prompt("Set Cursor Coordinates",k+1,choices,uvalues,25,nullptr);
     if (i < 0) {
         driver_unstack_screen();
         return (-1);
@@ -1130,7 +1130,7 @@ int get_commands()              /* execute commands from file */
     helpmode = HELPPARMFILE;
     if ((point = get_file_entry(GETPARM,"Parameter Set",
                                 commandmask,CommandFile,CommandName)) >= 0
-            && (parmfile = fopen(CommandFile,"rb")) != NULL) {
+            && (parmfile = fopen(CommandFile,"rb")) != nullptr) {
         fseek(parmfile,point,SEEK_SET);
         ret = load_commands(parmfile);
     }
@@ -1148,7 +1148,7 @@ void goodbye(void)                  /* we done.  Bail out */
     if (mapdacbox)
     {
         free(mapdacbox);
-        mapdacbox = NULL;
+        mapdacbox = nullptr;
     }
     if (resume_info != 0)
     {
@@ -1174,10 +1174,10 @@ void goodbye(void)                  /* we done.  Bail out */
     {
         MemoryRelease(oldhistory_handle);
     }
-    if (ifs_defn != NULL)
+    if (ifs_defn != nullptr)
     {
         free(ifs_defn);
-        ifs_defn = NULL;
+        ifs_defn = nullptr;
     }
     free_grid_pointers();
     free_ant_storage();
@@ -1226,7 +1226,7 @@ void goodbye(void)                  /* we done.  Bail out */
 static char searchdir[FILE_MAX_DIR];
 static char searchname[FILE_MAX_PATH];
 static char searchext[FILE_MAX_EXT];
-static DIR *currdir = NULL;
+static DIR *currdir = nullptr;
 #endif
 int  fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/filespec */
 {
@@ -1241,17 +1241,17 @@ int  fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/fi
     intdos(&regs, &regs);
     return (regs.x.ax);           /* Return error code */
 #else
-    if (currdir != NULL) {
+    if (currdir != nullptr) {
         closedir(currdir);
-        currdir = NULL;
+        currdir = nullptr;
     }
-    splitpath(path,NULL,searchdir,searchname,searchext);
+    splitpath(path,nullptr,searchdir,searchname,searchext);
     if (searchdir[0]=='\0') {
         currdir = opendir(".");
     } else {
         currdir = opendir(searchdir);
     }
-    if (currdir==NULL) {
+    if (currdir==nullptr) {
         return -1;
     } else {
         return fr_findnext();
@@ -1279,12 +1279,12 @@ int  fr_findnext()              /* Find next file (or subdir) meeting above path
     char thisext[FILE_MAX_EXT];
     while (1) {
         dirEntry = readdir(currdir);
-        if (dirEntry == NULL) {
+        if (dirEntry == nullptr) {
             closedir(currdir);
-            currdir = NULL;
+            currdir = nullptr;
             return -1;
         } else if (dirEntry->d_ino != 0) {
-            splitpath(dirEntry->d_name,NULL,NULL,thisname,thisext);
+            splitpath(dirEntry->d_name,nullptr,nullptr,thisname,thisext);
             strncpy(DTA.filename,dirEntry->d_name,13);
             DTA.filename[12]='\0';
             strcpy(tmpname,searchdir);
@@ -1399,7 +1399,7 @@ retry_dir:
     if (file_template[0])
     {
         numtemplates = 1;
-        splitpath(file_template, NULL, NULL, fname, ext);
+        splitpath(file_template, nullptr, nullptr, fname, ext);
     }
     else
     {
@@ -1452,7 +1452,7 @@ retry_dir:
                 {
                     putstringcenter(2, 0, 80, C_GENERAL_INPUT, DTA.filename);
 
-                    splitpath(DTA.filename, NULL, NULL, fname, ext);
+                    splitpath(DTA.filename, nullptr, nullptr, fname, ext);
                     /* just using speedstr as a handy buffer */
                     makepath(speedstr, drive, dir, fname, ext);
                     strncpy(choices[++filecount]->name, DTA.filename, 13);
@@ -1515,8 +1515,8 @@ retry_dir:
 
 
     i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-                          temp1, NULL, instr, filecount, (const char **) choices,
-                          attributes, 5, 99, 12, i, NULL, speedstr, filename_speedstr, check_f6_key);
+                          temp1, nullptr, instr, filecount, (const char **) choices,
+                          attributes, 5, 99, 12, i, nullptr, speedstr, filename_speedstr, check_f6_key);
     if (i == -FIK_F4)
     {
         dosort = 1 - dosort;
@@ -1557,11 +1557,11 @@ retry_dir:
                 else
                 {
                     char *s = strrchr(dir, SLASHC);
-                    if (s != NULL) /* trailing slash */
+                    if (s != nullptr) /* trailing slash */
                     {
                         *s = 0;
                         s = strrchr(dir, SLASHC);
-                        if (s != NULL)
+                        if (s != nullptr)
                         {
                             *(s + 1) = 0;
                         }
@@ -1576,13 +1576,13 @@ retry_dir:
             makepath(flname, drive, dir, "", "");
             goto restart;
         }
-        splitpath(choices[i]->full_name, NULL, NULL, fname, ext);
+        splitpath(choices[i]->full_name, nullptr, nullptr, fname, ext);
         makepath(flname, drive, dir, fname, ext);
     }
     else
     {
         if (speedstate == SEARCHPATH
-                && strchr(speedstr, '*') == 0 && strchr(speedstr, '?') == 0
+                && strchr(speedstr, '*') == nullptr && strchr(speedstr, '?') == nullptr
                 && ((fr_findfirst(speedstr) == 0
                      && (DTA.attribute & SUBDIR))|| strcmp(speedstr, SLASH) == 0)) /* it is a directory */
         {
@@ -1631,9 +1631,9 @@ retry_dir:
             else
             {   /* failed, make diagnostic useful: */
                 strcpy(flname, speedstr);
-                if (strchr(speedstr, SLASHC) == NULL)
+                if (strchr(speedstr, SLASHC) == nullptr)
                 {
-                    splitpath(speedstr, NULL, NULL, fname, ext);
+                    splitpath(speedstr, nullptr, nullptr, fname, ext);
                     makepath(flname, drive, dir, fname, ext);
                 }
             }
@@ -1822,7 +1822,7 @@ int splitpath(const char *file_template, char *drive, char *dir, char *fname, ch
         tmp = strrchr(file_template,'.');
         if (tmp < strrchr(file_template,SLASHC) || tmp < strrchr(file_template,':'))
         {
-            tmp = 0; /* in this case the '.' must be a directory */
+            tmp = nullptr; /* in this case the '.' must be a directory */
         }
         if (tmp)
         {
@@ -2031,7 +2031,7 @@ gc_loop:
 
     oldhelpmode = helpmode;
     helpmode = HELPCOORDS;
-    prompt_ret = fullscreen_prompt("Image Coordinates",nump+1, prompts, values, 0x90, NULL);
+    prompt_ret = fullscreen_prompt("Image Coordinates",nump+1, prompts, values, 0x90, nullptr);
     helpmode = oldhelpmode;
 
     if (prompt_ret < 0) {
@@ -2233,7 +2233,7 @@ gsc_loop:
 
     oldhelpmode = helpmode;
     helpmode = HELPSCRNCOORDS;
-    prompt_ret = fullscreen_prompt("Screen Coordinates",nump+1, prompts, values, 0x90, NULL);
+    prompt_ret = fullscreen_prompt("Screen Coordinates",nump+1, prompts, values, 0x90, nullptr);
     helpmode = oldhelpmode;
 
     if (prompt_ret < 0) {
@@ -2428,7 +2428,7 @@ get_brws_restart:
 
     oldhelpmode = helpmode;     /* this prevents HELP from activating */
     helpmode = HELPBRWSPARMS;
-    i = fullscreen_prompt("Browse ('L'ook) Mode Options",k+1,choices,uvalues,16,NULL);
+    i = fullscreen_prompt("Browse ('L'ook) Mode Options",k+1,choices,uvalues,16,nullptr);
     helpmode = oldhelpmode;     /* re-enable HELP */
     if (i < 0) {
         return (0);
@@ -2520,7 +2520,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
     char ext1[FILE_MAX_EXT];
 
     /* no dot or slash so assume a file */
-    if (strchr(newfilename,'.')==NULL && strchr(newfilename,SLASHC) == NULL)
+    if (strchr(newfilename,'.')==nullptr && strchr(newfilename,SLASHC) == nullptr)
         isafile=1;
     if ((isadir = isadirectory(newfilename)) != 0)
         fix_dirname(newfilename);
@@ -2596,7 +2596,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
         strcpy(ext1,ext);
     if (isadir == 0 && isafile == 0 && GETPATH)
     {
-        makepath(oldfullpath,drive1,dir1,NULL,NULL);
+        makepath(oldfullpath,drive1,dir1,nullptr,nullptr);
         len = (int) strlen(oldfullpath);
         if (len > 0)
         {
@@ -2619,19 +2619,19 @@ void extract_filename(char *target, char *source)
 {
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
-    splitpath(source,NULL,NULL,fname,ext);
+    splitpath(source,nullptr,nullptr,fname,ext);
     makepath(target,"","",fname,ext);
 }
 
 /* tells if filename has extension */
-/* returns pointer to period or NULL */
+/* returns pointer to period or nullptr */
 char *has_ext(char *source)
 {
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
-    char *ret = NULL;
-    splitpath(source,NULL,NULL,fname,ext);
-    if (ext != NULL)
+    char *ret = nullptr;
+    splitpath(source,nullptr,nullptr,fname,ext);
+    if (ext != nullptr)
         if (*ext != 0)
             ret = strrchr(source,'.');
     return (ret);

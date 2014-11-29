@@ -106,7 +106,7 @@ static int resize_flag = 0; /* Main window being resized ? */
 static int drawing_or_drawn = 0; /* Is image (being) drawn ? */
 
 static const char *Xdisplay = "";
-static char *Xgeometry = NULL;
+static char *Xgeometry = nullptr;
 
 static int unixDisk = 0; /* Flag if we use the disk video mode */
 
@@ -375,23 +375,23 @@ continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 #define DEFY 480
 #define DEFXY "640x480+0+0"
 
-static Display *Xdp = NULL;
+static Display *Xdp = nullptr;
 static Window Xw;
-static GC Xgc = NULL;
+static GC Xgc = nullptr;
 static Visual *Xvi;
 static Screen *Xsc;
 static Colormap Xcmap;
 static int Xdepth;
-static XImage *Ximage =NULL;
+static XImage *Ximage =nullptr;
 static int Xdscreen;
 static Pixmap   Xpixmap = 0;
 static int Xwinwidth=DEFX,Xwinheight=DEFY;
-static XSizeHints *size_hints = NULL;
+static XSizeHints *size_hints = nullptr;
 static int gravity;
 static Window Xroot;
 static int xlastcolor = -1;
 static int xlastfcn = GXcopy;
-static BYTE *pixbuf = NULL;
+static BYTE *pixbuf = nullptr;
 
 static int step = 0;
 static int cyclic[][3] = {
@@ -465,7 +465,7 @@ initUnixWindow()
     int Xwinx = 0, Xwiny = 0;
     int i;
 
-    if (Xdp != NULL) {
+    if (Xdp != nullptr) {
         /* We are already initialized */
         return;
     }
@@ -504,7 +504,7 @@ initUnixWindow()
         sydots = Xwinheight;
     } else {  /* Use X window */
         size_hints = XAllocSizeHints();
-        if (size_hints == NULL) {
+        if (size_hints == nullptr) {
             fprintf(stderr, "Could not allocate memory for X size hints \n");
             fprintf(stderr, "Note: xfractint can run without X in -disk mode\n");
             UnixDone();
@@ -523,7 +523,7 @@ initUnixWindow()
         size_hints->height_inc = 4;
 
         Xdp = XOpenDisplay(Xdisplay);
-        if (Xdp == NULL) {
+        if (Xdp == nullptr) {
             fprintf(stderr, "Could not open display %s\n", Xdisplay);
             fprintf(stderr, "Note: xfractint can run without X in -disk mode\n");
             UnixDone();
@@ -619,7 +619,7 @@ initUnixWindow()
 static void
 doneXwindow()
 {
-    if (Xdp==NULL) {
+    if (Xdp==nullptr) {
         return;
     }
     if (Xgc) {
@@ -627,7 +627,7 @@ doneXwindow()
     }
     if (Xpixmap) {
         XFreePixmap(Xdp,Xpixmap);
-        Xpixmap = (Pixmap)NULL;
+        Xpixmap = (Pixmap)nullptr;
     }
     XFlush(Xdp);
     if (size_hints) {
@@ -636,7 +636,7 @@ doneXwindow()
     /*
     XCloseDisplay(Xdp);
     */
-    Xdp = NULL;
+    Xdp = nullptr;
 }
 
 /*
@@ -831,21 +831,21 @@ resizeWindow()
             Xmwidth = 4*sxdots;
             Xpad = 32;
         }
-        if (pixbuf != NULL) {
+        if (pixbuf != nullptr) {
             free(pixbuf);
         }
         pixbuf = (BYTE *) malloc(Xwinwidth *sizeof(BYTE));
-        if (Ximage != NULL)
+        if (Ximage != nullptr)
             XDestroyImage(Ximage);
-        Ximage = XCreateImage(Xdp, Xvi, Xdepth, ZPixmap, 0, NULL, sxdots,
+        Ximage = XCreateImage(Xdp, Xvi, Xdepth, ZPixmap, 0, nullptr, sxdots,
                               sydots, Xpad, Xmwidth);
-        if (Ximage == NULL) {
+        if (Ximage == nullptr) {
             fprintf(stderr,"XCreateImage failed\n");
             UnixDone();
             exit(-1);
         }
         Ximage->data = static_cast<char *>(malloc(Ximage->bytes_per_line * Ximage->height));
-        if (Ximage->data==NULL) {
+        if (Ximage->data==nullptr) {
             fprintf(stderr,"Malloc failed: %d\n", Ximage->bytes_per_line *
                     Ximage->height);
             exit(-1);
@@ -899,7 +899,7 @@ xcmapstuff()
             ncells = 1 << powr;
             if (ncells > colors)
                 continue;
-            if (XAllocColorCells(Xdp, Xcmap, False, NULL, 0, pixtab,
+            if (XAllocColorCells(Xdp, Xcmap, False, nullptr, 0, pixtab,
                                  (unsigned int) ncells)) {
                 colors = ncells;
                 fprintf(stderr,"%d colors\n", colors);
@@ -1381,10 +1381,10 @@ xgetkey(int block)
         FD_ZERO(&reads);
         FD_SET(0,&reads);
         if (unixDisk) {
-            status = select(1,&reads,NULL,NULL,&tout);
+            status = select(1,&reads,nullptr,nullptr,&tout);
         } else {
             FD_SET(ConnectionNumber(Xdp),&reads);
-            status = select(ConnectionNumber(Xdp)+1,&reads,NULL,NULL,&tout);
+            status = select(ConnectionNumber(Xdp)+1,&reads,nullptr,nullptr,&tout);
         }
         if (status<=0) {
             return 0;
@@ -1730,7 +1730,7 @@ xhandleevents()
         {
             char buffer[1];
             KeySym keysym;
-            (void) XLookupString(&xevent.xkey,buffer,1,&keysym,NULL);
+            (void) XLookupString(&xevent.xkey,buffer,1,&keysym,nullptr);
             switch (keysym) {
             case XK_Control_L:
             case XK_Control_R:
@@ -1748,7 +1748,7 @@ xhandleevents()
             int charcount;
             char buffer[1];
             KeySym keysym;
-            charcount = XLookupString(&xevent.xkey,buffer,1,&keysym,NULL);
+            charcount = XLookupString(&xevent.xkey,buffer,1,&keysym,nullptr);
             switch (keysym) {
             case XK_Control_L:
             case XK_Control_R:
@@ -2124,7 +2124,7 @@ FindRootWindow()
             Atom actual_type;
             int actual_format;
             unsigned long nitems, bytesafter;
-            Window *newRoot = NULL;
+            Window *newRoot = nullptr;
 
             if (XGetWindowProperty(dpy, children[i], __SWM_VROOT,(long)0,(long)1,
                                    False, XA_WINDOW, &actual_type, &actual_format, &nitems, &bytesafter,
@@ -2170,7 +2170,7 @@ RemoveRootPixmap()
         }
     }
 }
-static unsigned char *fontPtr = NULL;
+static unsigned char *fontPtr = nullptr;
 /*
  *----------------------------------------------------------------------
  *
@@ -2204,21 +2204,21 @@ xgetfont()
     xlastcolor = -1;
 #define FONT "-*-*-medium-r-*-*-9-*-*-*-*-*-iso8859-*"
     font_info = XLoadQueryFont(Xdp, FONT);
-    if (font_info == NULL) {
+    if (font_info == nullptr) {
         printf("No %s\n", FONT);
     }
-    if (font_info == NULL || font_info->max_bounds.width > 8 ||
+    if (font_info == nullptr || font_info->max_bounds.width > 8 ||
             font_info->max_bounds.width != font_info->min_bounds.width) {
         printf("Bad font: %s\n", FONT);
         sleep(2);
         font_info = XLoadQueryFont(Xdp, "6x12");
     }
-    if (font_info == NULL) return NULL;
+    if (font_info == nullptr) return nullptr;
     width = font_info->max_bounds.width;
     if (font_info->max_bounds.width > 8 ||
             font_info->max_bounds.width != font_info->min_bounds.width) {
         printf("Bad font\n");
-        return NULL;
+        return nullptr;
     }
 
     font_pixmap = XCreatePixmap(Xdp, Xw, 64, 8, Xdepth);
@@ -2285,11 +2285,11 @@ shell_to_dos()
 
     sigint = (SignalHandler)signal(SIGINT, SIG_IGN);
     shell = getenv("SHELL");
-    if (shell==NULL) {
+    if (shell==nullptr) {
         shell = const_cast<char *>(SHELL);
     }
     argv[0] = shell;
-    argv[1] = NULL;
+    argv[1] = nullptr;
 
     /* Clean up the window */
 

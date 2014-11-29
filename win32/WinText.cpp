@@ -115,7 +115,7 @@ long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
 
 static LPCSTR s_window_class = "FractIntText";
-static WinText *g_me = NULL;
+static WinText *g_me = nullptr;
 
 
 /* EGA/VGA 16-color palette (which doesn't match Windows palette exactly) */
@@ -200,8 +200,8 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
         wc.hInstance = hInstance;
-        wc.hIcon = NULL;
-        wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+        wc.hIcon = nullptr;
+        wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
         wc.lpszMenuName =  me->title_text;
         wc.lpszClassName = s_window_class;
@@ -305,15 +305,15 @@ int wintext_texton(WinText *me)
     g_me = me;
     hWnd = CreateWindow(s_window_class,
                         me->title_text,
-                        (NULL == me->hWndParent) ? WS_OVERLAPPEDWINDOW : WS_CHILD,
+                        (nullptr == me->hWndParent) ? WS_OVERLAPPEDWINDOW : WS_CHILD,
                         CW_USEDEFAULT,               /* default horizontal position */
                         CW_USEDEFAULT,               /* default vertical position */
                         me->max_width,
                         me->max_height,
                         me->hWndParent,
-                        NULL,
+                        nullptr,
                         me->hInstance,
-                        NULL);
+                        nullptr);
     _ASSERTE(hWnd);
 
     /* squirrel away a global copy of 'hWnd' for later */
@@ -324,7 +324,7 @@ int wintext_texton(WinText *me)
 
     ShowWindow(me->hWndCopy, SW_SHOWNORMAL);
     UpdateWindow(me->hWndCopy);
-    InvalidateRect(me->hWndCopy, NULL, FALSE);
+    InvalidateRect(me->hWndCopy, nullptr, FALSE);
 
     return 0;
 }
@@ -384,12 +384,12 @@ static void wintext_OnKillFocus(HWND window, HWND old_focus)
 
 void wintext_set_focus(void)
 {
-    wintext_OnSetFocus(NULL, NULL);
+    wintext_OnSetFocus(nullptr, nullptr);
 }
 
 void wintext_kill_focus(void)
 {
-    wintext_OnKillFocus(NULL, NULL);
+    wintext_OnKillFocus(nullptr, nullptr);
 }
 
 static void wintext_OnPaint(HWND window)
@@ -433,7 +433,7 @@ static void wintext_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
 */
 LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (g_me->hWndCopy == NULL)
+    if (g_me->hWndCopy == nullptr)
     {
         g_me->hWndCopy = hWnd;
     }
@@ -713,7 +713,7 @@ void wintext_clear(WinText *me)
         memset(&me->chars[y][0], ' ', (size_t) WINTEXT_MAX_COL);
         memset(&me->attrs[y][0], 0xf0, (size_t) WINTEXT_MAX_COL);
     }
-    InvalidateRect(me->hWndCopy, NULL, FALSE);
+    InvalidateRect(me->hWndCopy, nullptr, FALSE);
 }
 
 BYTE *wintext_screen_get(WinText *me)
@@ -731,7 +731,7 @@ void wintext_screen_set(WinText *me, const BYTE *copy)
     size_t count = sizeof(BYTE)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
     memcpy(me->chars, copy, count);
     memcpy(me->attrs, copy + count, count);
-    InvalidateRect(me->hWndCopy, NULL, FALSE);
+    InvalidateRect(me->hWndCopy, nullptr, FALSE);
 }
 
 void wintext_hide_cursor(WinText *me)
@@ -745,7 +745,7 @@ void wintext_hide_cursor(WinText *me)
 
 static VOID CALLBACK wintext_timer_redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
 {
-    InvalidateRect(window, NULL, FALSE);
+    InvalidateRect(window, nullptr, FALSE);
     KillTimer(window, TIMER_ID);
 }
 

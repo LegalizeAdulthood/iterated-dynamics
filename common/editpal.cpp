@@ -52,7 +52,7 @@ char undofile[] = "FRACTINT.$$2";  /* file where undo list is stored */
 
 #define newx(size)     mem_alloc(size)
 #define new(class)     (class *)(mem_alloc(sizeof(class)))
-#define delete(block)  block=NULL  /* just for warning */
+#define delete(block)  block=nullptr  /* just for warning */
 
 #ifdef XFRACT
 int editpal_cursor = 0;
@@ -564,12 +564,12 @@ static  BOOLEAN Cursor_IsHidden(void);
 
 
 
-static Cursor *the_cursor = NULL;
+static Cursor *the_cursor = nullptr;
 
 
 BOOLEAN Cursor_Construct(void)
 {
-    if (the_cursor != NULL)
+    if (the_cursor != nullptr)
         return FALSE;
 
     the_cursor = new(Cursor);
@@ -586,10 +586,10 @@ BOOLEAN Cursor_Construct(void)
 
 void Cursor_Destroy(void)
 {
-    if (the_cursor != NULL)
+    if (the_cursor != nullptr)
         delete(the_cursor);
 
-    the_cursor = NULL;
+    the_cursor = nullptr;
 }
 
 
@@ -1451,7 +1451,7 @@ static void RGBEditor__change(CEditor *ceditor, void *info) /* private */
 {
     RGBEditor *me = (RGBEditor *)info;
 
-    ceditor = NULL; /* just for warning */
+    ceditor = nullptr; /* just for warning */
     if (me->pal < colors && !is_reserved(me->pal))
         setpal(me->pal, CEditor_GetVal(me->color[0]),
                CEditor_GetVal(me->color[1]), CEditor_GetVal(me->color[2]));
@@ -1728,7 +1728,7 @@ static void PalTable__SaveUndoData(PalTable *me, int first, int last)
 {
     int num;
 
-    if (me->undo_file == NULL)
+    if (me->undo_file == nullptr)
         return ;
 
     num = (last - first) + 1;
@@ -1760,7 +1760,7 @@ static void PalTable__SaveUndoData(PalTable *me, int first, int last)
 
 static void PalTable__SaveUndoRotate(PalTable *me, int dir, int first, int last)
 {
-    if (me->undo_file == NULL)
+    if (me->undo_file == nullptr)
         return ;
 
 #ifdef DEBUG_UNDO
@@ -2099,7 +2099,7 @@ static BOOLEAN PalTable__MemoryAlloc(PalTable *me, long size)
     }
     temp = (char *)malloc(FAR_RESERVE);   /* minimum free space */
 
-    if (temp == NULL)
+    if (temp == nullptr)
     {
         me->stored_at = NOWHERE;
         return FALSE;   /* can't do it */
@@ -2109,7 +2109,7 @@ static BOOLEAN PalTable__MemoryAlloc(PalTable *me, long size)
 
     free(temp);
 
-    if (me->memory == NULL)
+    if (me->memory == nullptr)
     {
         me->stored_at = NOWHERE;
         return FALSE;
@@ -2141,9 +2141,9 @@ static void PalTable__SaveRect(PalTable *me)
         break;
 
     case MEMORY:
-        if (me->memory != NULL)
+        if (me->memory != nullptr)
             free(me->memory);
-        me->memory = NULL;
+        me->memory = nullptr;
         break;
     } ;
 
@@ -2169,10 +2169,10 @@ static void PalTable__SaveRect(PalTable *me)
     {
         me->stored_at = DISK;
 
-        if (me->file == NULL)
+        if (me->file == nullptr)
         {
             me->file = dir_fopen(tempdir,scrnfile, "w+b");
-            if (me->file == NULL)
+            if (me->file == nullptr)
             {
                 me->stored_at = NOWHERE;
                 driver_buzzer(BUZZER_ERROR);
@@ -2729,7 +2729,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         char buf[20];
         sprintf(buf,"%.3f",1./gamma_val);
         driver_stack_screen();
-        i = field_prompt("Enter gamma value",NULL,buf,20,NULL);
+        i = field_prompt("Enter gamma value",nullptr,buf,20,nullptr);
         driver_unstack_screen();
         if (i != -1) {
             sscanf(buf,"%f",&gamma_val);
@@ -2870,7 +2870,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     {
         int which = key - FIK_F2;
 
-        if (me->save_pal[which] != NULL)
+        if (me->save_pal[which] != nullptr)
         {
             Cursor_Hide();
 
@@ -2898,7 +2898,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     {
         int which = key - FIK_SF2;
 
-        if (me->save_pal[which] != NULL)
+        if (me->save_pal[which] != nullptr)
         {
             memcpy(me->save_pal[which],me->pal,256*3);
         }
@@ -3091,7 +3091,7 @@ static void PalTable__MkDefaultPalettes(PalTable *me)  /* creates default Fkey p
     int i;
     for (i=0; i<8; i++) /* copy original palette to save areas */
     {
-        if (me->save_pal[i] != NULL)
+        if (me->save_pal[i] != nullptr)
         {
             memcpy(me->save_pal[i], me->pal, 256*3);
         }
@@ -3110,14 +3110,14 @@ static PalTable *PalTable_Construct(void)
 
     temp = (void *)malloc(FAR_RESERVE);
 
-    if (temp != NULL)
+    if (temp != nullptr)
     {
         mem_block = (PALENTRY *)malloc(256L*3 * 8);
 
-        if (mem_block == NULL)
+        if (mem_block == nullptr)
         {
             for (ctr=0; ctr<8; ctr++)
-                me->save_pal[ctr] = NULL;
+                me->save_pal[ctr] = nullptr;
         }
         else
         {
@@ -3141,8 +3141,8 @@ static PalTable *PalTable_Construct(void)
     me->exclude     = FALSE;
     me->hidden      = FALSE;
     me->stored_at   = NOWHERE;
-    me->file        = NULL;
-    me->memory      = NULL;
+    me->file        = nullptr;
+    me->memory      = nullptr;
 
     me->fs_color.red   = 42;
     me->fs_color.green = 42;
@@ -3212,22 +3212,22 @@ static void PalTable_Hide(PalTable *me, RGBEditor *rgb, BOOLEAN hidden)
 static void PalTable_Destroy(PalTable *me)
 {
 
-    if (me->file != NULL)
+    if (me->file != nullptr)
     {
         fclose(me->file);
         dir_remove(tempdir,scrnfile);
     }
 
-    if (me->undo_file != NULL)
+    if (me->undo_file != nullptr)
     {
         fclose(me->undo_file);
         dir_remove(tempdir,undofile);
     }
 
-    if (me->memory != NULL)
+    if (me->memory != nullptr)
         free(me->memory);
 
-    if (me->save_pal[0] != NULL)
+    if (me->save_pal[0] != nullptr)
         free((BYTE *)me->save_pal[0]);
 
     RGBEditor_Destroy(me->rgb[0]);

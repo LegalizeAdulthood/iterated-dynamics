@@ -18,7 +18,7 @@
 
 #define PLOT_TIMER_ID 1
 
-static Plot *s_plot = NULL;
+static Plot *s_plot = nullptr;
 static LPCSTR s_window_class = "FractIntPlot";
 
 static const BYTE font_8x8[8][1024/8] =
@@ -218,15 +218,15 @@ plot_set_dirty_region(Plot *me, int xmin, int ymin, int xmax, int ymax)
 static void
 init_pixels(Plot *me)
 {
-    if (me->pixels != NULL)
+    if (me->pixels != nullptr)
     {
         free(me->pixels);
-        me->pixels = NULL;
+        me->pixels = nullptr;
     }
-    if (me->saved_pixels != NULL)
+    if (me->saved_pixels != nullptr)
     {
         free(me->saved_pixels);
-        me->saved_pixels = NULL;
+        me->saved_pixels = nullptr;
     }
     me->width = sxdots;
     me->height = sydots;
@@ -278,7 +278,7 @@ static void plot_OnPaint(HWND window)
 
 static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
-    _ASSERTE(s_plot != NULL);
+    _ASSERTE(s_plot != nullptr);
     switch (message)
     {
     case WM_PAINT:
@@ -346,8 +346,8 @@ int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
         wc.hInstance = me->instance;
-        wc.hIcon = NULL;
-        wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+        wc.hIcon = nullptr;
+        wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
         wc.lpszMenuName =  me->title;
         wc.lpszClassName = s_window_class;
@@ -363,12 +363,12 @@ void plot_terminate(Plot *me)
     if (me->pixels)
     {
         free(me->pixels);
-        me->pixels = NULL;
+        me->pixels = nullptr;
     }
     if (me->saved_pixels)
     {
         free(me->saved_pixels);
-        me->saved_pixels = NULL;
+        me->saved_pixels = nullptr;
     }
 
     {
@@ -402,7 +402,7 @@ static void plot_create_backing_store(Plot *me)
 }
 void plot_window(Plot *me, HWND parent)
 {
-    if (NULL == me->window)
+    if (nullptr == me->window)
     {
         init_pixels(me);
         s_plot = me;
@@ -414,8 +414,8 @@ void plot_window(Plot *me, HWND parent)
                                   CW_USEDEFAULT,               /* default vertical position */
                                   me->width,
                                   me->height,
-                                  parent, NULL, me->instance,
-                                  NULL);
+                                  parent, nullptr, me->instance,
+                                  nullptr);
 
         plot_create_backing_store(me);
     }
@@ -455,7 +455,7 @@ void plot_flush(Plot *me)
     if (me->dirty)
     {
         RECT r = { -1, -1, -1, -1 };
-        InvalidateRect(me->window, NULL, FALSE);
+        InvalidateRect(me->window, nullptr, FALSE);
         me->dirty = FALSE;
         me->dirty_region = r;
     }
@@ -492,7 +492,7 @@ int plot_resize(Plot *me)
     }
 
     init_pixels(me);
-    status = SetWindowPos(me->window, NULL, 0, 0, me->width, me->height, SWP_NOZORDER | SWP_NOMOVE);
+    status = SetWindowPos(me->window, nullptr, 0, 0, me->width, me->height, SWP_NOZORDER | SWP_NOMOVE);
     _ASSERTE(status);
 
     return !0;
@@ -537,7 +537,7 @@ int plot_write_palette(Plot *me)
 
 static VOID CALLBACK redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
 {
-    InvalidateRect(window, NULL, FALSE);
+    InvalidateRect(window, nullptr, FALSE);
     KillTimer(window, PLOT_TIMER_ID);
 }
 
@@ -561,7 +561,7 @@ void plot_clear(Plot *me)
 
 void plot_redraw(Plot *me)
 {
-    InvalidateRect(me->window, NULL, FALSE);
+    InvalidateRect(me->window, nullptr, FALSE);
 }
 
 void plot_display_string(Plot *me, int x, int y, int fg, int bg, const char *text)
@@ -587,7 +587,7 @@ void plot_display_string(Plot *me, int x, int y, int fg, int bg, const char *tex
 
 void plot_save_graphics(Plot *me)
 {
-    if (NULL == me->saved_pixels)
+    if (nullptr == me->saved_pixels)
     {
         me->saved_pixels = static_cast<BYTE *>(malloc(me->pixels_len));
         memset(me->saved_pixels, 0, me->pixels_len);

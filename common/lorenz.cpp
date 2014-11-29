@@ -1267,7 +1267,7 @@ int orbit2dfloat()
     struct affine cvt;
     int ret;
 
-    soundvar = p0 = p1 = p2 = NULL;
+    soundvar = p0 = p1 = p2 = nullptr;
 
     fp = open_orbitsave();
     /* setup affine screen coord conversion */
@@ -1433,7 +1433,7 @@ int orbit2dlong()
     int ret, start;
 
     start = 1;
-    soundvar = p0 = p1 = p2 = NULL;
+    soundvar = p0 = p1 = p2 = nullptr;
     fp = open_orbitsave();
 
     /* setup affine screen coord conversion */
@@ -1818,7 +1818,7 @@ int dynam2dfloatsetup()
 int dynam2dfloat()
 {
     FILE *fp;
-    double *soundvar = NULL;
+    double *soundvar = nullptr;
     double x,y,z;
     int color,col,row;
     long count;
@@ -1929,7 +1929,7 @@ int dynam2dfloat()
             else
                 oldrow = oldcol = -1;
 
-            if (FORBIT(p0, p1, NULL))
+            if (FORBIT(p0, p1, nullptr))
                 break;
             if (fp)
                 fprintf(fp,"%g %g %g 15\n",*p0,*p1,0.0);
@@ -2010,7 +2010,7 @@ int plotorbits2dsetup(void)
 
 int plotorbits2dfloat(void)
 {
-    double *soundvar = NULL;
+    double *soundvar = nullptr;
     double x,y,z;
     int col,row;
     long count;
@@ -2244,7 +2244,7 @@ static int ifs3dfloat(void)
 
 int ifs()                       /* front-end for ifs2d and ifs3d */
 {
-    if (ifs_defn == NULL && ifsload() < 0)
+    if (ifs_defn == nullptr && ifsload() < 0)
         return (-1);
     if (driver_diskp())                /* this would KILL a disk drive! */
         notdiskmsg();
@@ -2273,7 +2273,7 @@ static int ifs2d(void)
     srand(1);
     color_method = (int)param[0];
     localifs = (long *) malloc(numaffine*IFSPARM*sizeof(long));
-    if (localifs == NULL)
+    if (localifs == nullptr)
     {
         stopmsg(0,insufficient_ifs_mem);
         return (-1);
@@ -2359,7 +2359,7 @@ static int ifs3dlong(void)
     srand(1);
     color_method = (int)param[0];
     localifs = (long *) malloc(numaffine*IFS3DPARM*sizeof(long));
-    if (localifs == NULL)
+    if (localifs == nullptr)
     {
         stopmsg(0,insufficient_ifs_mem);
         return (-1);
@@ -2765,12 +2765,12 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 static FILE *open_orbitsave(void)
 {
     FILE *fp;
-    if ((orbitsave&1) && (fp = fopen("orbits.raw", "w")) != NULL)
+    if ((orbitsave&1) && (fp = fopen("orbits.raw", "w")) != nullptr)
     {
         fprintf(fp,"pointlist x y z color\n");
         return fp;
     }
-    return NULL;
+    return nullptr;
 }
 
 /* Plot a histogram by incrementing the pixel each time it it touched */

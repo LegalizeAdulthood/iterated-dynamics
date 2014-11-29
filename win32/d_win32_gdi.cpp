@@ -223,10 +223,10 @@ static void center_windows(GDIDriver *di, BOOL center_x, BOOL center_y)
         text_pos.y = (g_frame.height - di->base.wintext.max_height)/2;
     }
 
-    status = SetWindowPos(di->plot.window, NULL,
+    status = SetWindowPos(di->plot.window, nullptr,
                           plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
     _ASSERTE(status);
-    status = SetWindowPos(di->base.wintext.hWndCopy, NULL,
+    status = SetWindowPos(di->base.wintext.hWndCopy, nullptr,
                           text_pos.x, text_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
     _ASSERTE(status);
 }
@@ -269,11 +269,11 @@ gdi_get_max_screen(Driver *drv, int *xmax, int *ymax)
     desktop.bottom -= GetSystemMetrics(SM_CYFRAME)*2
                       + GetSystemMetrics(SM_CYCAPTION) - 1;
 
-    if (xmax != NULL)
+    if (xmax != nullptr)
     {
         *xmax = desktop.right;
     }
-    if (ymax != NULL)
+    if (ymax != nullptr)
     {
         *ymax = desktop.bottom;
     }
@@ -301,7 +301,7 @@ gdi_init(Driver *drv, int *argc, char **argv)
 
     ODS("gdi_init");
     frame_init(g_instance, title);
-    if (!wintext_initialize(&di->base.wintext, g_instance, NULL, "Text"))
+    if (!wintext_initialize(&di->base.wintext, g_instance, nullptr, "Text"))
     {
         return FALSE;
     }
@@ -320,7 +320,7 @@ gdi_init(Driver *drv, int *argc, char **argv)
                 {
                     argv[j] = argv[j+1];
                 }
-                argv[j] = NULL;
+                argv[j] = nullptr;
                 --*argc;
             }
         }
@@ -794,7 +794,7 @@ gdi_unstack_screen(Driver *drv)
         _ASSERTE(di->text_not_graphics);
         wintext_screen_set(&di->base.wintext, di->base.saved_screens[di->base.screen_count]);
         free(di->base.saved_screens[di->base.screen_count]);
-        di->base.saved_screens[di->base.screen_count] = NULL;
+        di->base.saved_screens[di->base.screen_count] = nullptr;
         gdi_move_cursor(drv, -1, -1);
     }
     else
@@ -814,7 +814,7 @@ gdi_discard_screen(Driver *drv)
         if (di->base.saved_screens[di->base.screen_count])
         {
             free(di->base.saved_screens[di->base.screen_count]);
-            di->base.saved_screens[di->base.screen_count] = NULL;
+            di->base.saved_screens[di->base.screen_count] = nullptr;
         }
     }
     else
@@ -971,7 +971,7 @@ static GDIDriver gdi_driver_info =
         { 0 },              /* WinText */
         0,                  /* key_buffer */
         -1,                 /* screen_count */
-        { NULL },           /* saved_screens */
+        { nullptr },           /* saved_screens */
         { 0 },              /* saved_cursor */
         FALSE,              /* cursor_shown */
         0,                  /* cursor_row */

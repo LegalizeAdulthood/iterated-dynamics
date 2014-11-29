@@ -16,7 +16,7 @@ extern Driver *disk_driver;
 static int num_drivers = 0;
 static Driver *s_available[MAX_DRIVERS];
 
-Driver *g_driver = NULL;
+Driver *g_driver = nullptr;
 
 static int
 load_driver(Driver *drv, int *argc, char **argv)
@@ -88,11 +88,11 @@ close_drivers(void)
         if (s_available[i])
         {
             (*s_available[i]->terminate)(s_available[i]);
-            s_available[i] = NULL;
+            s_available[i] = nullptr;
         }
     }
 
-    g_driver = NULL;
+    g_driver = nullptr;
 }
 
 Driver *
@@ -107,7 +107,7 @@ driver_find_by_name(const char *name)
             return s_available[i];
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void

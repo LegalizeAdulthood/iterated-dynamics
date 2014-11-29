@@ -94,15 +94,15 @@ extern int _splitpath(const char *file_template, char *drive, char *dir, char *f
 
 typedef struct
 {
-    int      type;            /* 0 = name is topic title, 1 = name is label, */
-    /*   2 = "special topic"; name is NULL and */
-    /*   topic_num/topic_off is valid */
-    int      topic_num;       /* topic number to link to */
-    unsigned topic_off;       /* offset into topic to link to */
-    int      doc_page;        /* document page # to link to */
-    char    *name;            /* name of label or title of topic to link to */
-    char    *srcfile;         /* .SRC file link appears in */
-    int      srcline;         /* .SRC file line # link appears in */
+    int      type;          /* 0 = name is topic title, 1 = name is label, */
+                            /*   2 = "special topic"; name is nullptr and */
+                            /*   topic_num/topic_off is valid */
+    int      topic_num;     /* topic number to link to */
+    unsigned topic_off;     /* offset into topic to link to */
+    int      doc_page;      /* document page # to link to */
+    char    *name;          /* name of label or title of topic to link to */
+    char    *srcfile;       /* .SRC file link appears in */
+    int      srcline;       /* .SRC file line # link appears in */
 } LINK;
 
 
@@ -209,7 +209,7 @@ int      errors           = 0,    /* number of errors reported */
 char     src_fname[81]    = "";   /* command-line .SRC filename */
 char     hdr_fname[81]    = "";   /* .H filename */
 char     hlp_fname[81]    = "";   /* .HLP filename */
-char    *src_cfname       = NULL; /* current .SRC filename */
+char    *src_cfname       = nullptr; /* current .SRC filename */
 
 int      format_exclude   = 0;    /* disable formatting at this col, 0 to */
 /*    never disable formatting */
@@ -262,7 +262,7 @@ void report_errors(void)
 
 void print_msg(const char *type, int lnum, const char *format, va_list arg)
 {
-    if (type != NULL)
+    if (type != nullptr)
     {
         printf("   %s", type);
         if (lnum>0)
@@ -330,7 +330,7 @@ void msg(const char *format, ...)
     if (quiet_mode)
         return;
     va_start(arg, format);
-    print_msg(NULL, 0, format, arg);
+    print_msg(nullptr, 0, format, arg);
     va_end(arg);
 }
 
@@ -392,7 +392,7 @@ VOIDPTR newx(unsigned size)
 
     ptr = malloc(size);
 
-    if (ptr == NULL)
+    if (ptr == nullptr)
         fatal(0,"Out of memory!");
 
     return (ptr);
@@ -403,7 +403,7 @@ VOIDPTR renewx(VOIDPTR ptr, unsigned size)
 {
     ptr = realloc(ptr, size);
 
-    if (ptr == NULL)
+    if (ptr == nullptr)
         fatal(0,"Out of memory!");
 
     return (ptr);
@@ -724,7 +724,7 @@ LABEL *find_label(char *name)
                 return (lp);
     }
 
-    return (NULL);
+    return (nullptr);
 }
 
 
@@ -794,7 +794,7 @@ char *read_until(char *buff, int len, const char *stop_chars)
 
         *buff++ = ch;
 
-        if ((ch&0x100)==0 && strchr(stop_chars, ch) != NULL)
+        if ((ch&0x100)==0 && strchr(stop_chars, ch) != nullptr)
             break;
     }
 
@@ -813,7 +813,7 @@ void skip_over(const char *skip)
         if (ch == -1)
             break;
 
-        else if ((ch&0x100) == 0 && strchr(skip, ch) == NULL)
+        else if ((ch&0x100) == 0 && strchr(skip, ch) == nullptr)
         {
             unread_char(ch);
             break;
@@ -1047,7 +1047,7 @@ int parse_link(void)   /* returns length of link or 0 on error */
     {
         ptr = strchr(cmd, ' ');
 
-        if (ptr == NULL)
+        if (ptr == nullptr)
             ptr = end;
         else
             *ptr++ = '\0';
@@ -1059,7 +1059,7 @@ int parse_link(void)   /* returns length of link or 0 on error */
             l.type      = 2;          /* type 2 = "special" */
             l.topic_num = atoi(cmd+1);
             l.topic_off = 0;
-            l.name      = NULL;
+            l.name      = nullptr;
         }
         else
         {
@@ -1130,7 +1130,7 @@ int create_table(void)
 
     ptr = strchr(cmd, '=');
 
-    if (ptr == NULL)
+    if (ptr == nullptr)
         return (0);   /* should never happen! */
 
     ptr++;
@@ -1433,7 +1433,7 @@ void read_src(char *fname)
     char  *ptr;
     TOPIC  t;
     LABEL  lbl;
-    char  *margin_pos = NULL;
+    char  *margin_pos = nullptr;
     int    in_topic   = 0,
            formatting = 1,
            state      = S_Start,
@@ -1448,7 +1448,7 @@ void read_src(char *fname)
 
     src_cfname = fname;
 
-    if ((srcfile = fopen(fname, "rt")) == NULL)
+    if ((srcfile = fopen(fname, "rt")) == nullptr)
         fatal(0,"Unable to open \"%s\"", fname);
 
     msg("Compiling: %s", fname);
@@ -1591,7 +1591,7 @@ void read_src(char *fname)
                         continue;
                     }
 
-                    if (find_label(cmd+5) != NULL)
+                    if (find_label(cmd+5) != nullptr)
                     {
                         error(eoff,"Label \"%s\" already exists", cmd+5);
                         continue;
@@ -1733,7 +1733,7 @@ void read_src(char *fname)
                         include_stack[include_stack_top].line = srcline;
                         include_stack[include_stack_top].col  = srccol;
                         strupr(cmd+8);
-                        if ((srcfile = fopen(cmd+8, "rt")) == NULL)
+                        if ((srcfile = fopen(cmd+8, "rt")) == nullptr)
                         {
                             error(eoff, "Unable to open \"%s\"", cmd+8);
                             srcfile = include_stack[include_stack_top--].file;
@@ -1834,7 +1834,7 @@ void read_src(char *fname)
                         else if (!validate_label_name(cmd+6))
                             error(eoff,"Label \"%s\" contains illegal characters.", cmd+6);
 
-                        else if (find_label(cmd+6) != NULL)
+                        else if (find_label(cmd+6) != nullptr)
                             error(eoff,"Label \"%s\" already exists", cmd+6);
 
                         else
@@ -2378,7 +2378,7 @@ void make_hot_links(void)
             if (c->is_label[ctr])
             {
                 lbl = find_label(c->topic_name[ctr]);
-                if (lbl == NULL)
+                if (lbl == nullptr)
                 {
                     src_cfname = c->srcfile;
                     srcline = c->srcline;
@@ -2458,7 +2458,7 @@ void make_hot_links(void)
 
         case 1:  /* name is the name of a label */
             lbl = find_label(l->name);
-            if (lbl == NULL)
+            if (lbl == nullptr)
             {
                 src_cfname = l->srcfile;
                 srcline = l->srcline; /* pretend again */
@@ -2708,7 +2708,7 @@ LABEL *find_next_label_by_topic(int t)
     LABEL *temp, *g, *p;
     int    ctr;
 
-    g = p = NULL;
+    g = p = nullptr;
 
     for (temp=label, ctr=0; ctr<num_label; ctr++, temp++)
         if (temp->topic_num == t && temp->doc_page == -1)
@@ -2728,10 +2728,10 @@ LABEL *find_next_label_by_topic(int t)
         else if (temp->topic_num > t)
             break;
 
-    if (p == NULL)
+    if (p == nullptr)
         return (g);
 
-    else if (g == NULL)
+    else if (g == nullptr)
         return (p);
 
     else
@@ -2768,7 +2768,7 @@ void set_hot_link_doc_page(void)
 
         case 1:  /* name is the name of a label */
             lbl = find_label(l->name);
-            if (lbl == NULL)
+            if (lbl == nullptr)
             {
                 src_cfname = l->srcfile;
                 srcline = l->srcline; /* pretend again */
@@ -2900,7 +2900,7 @@ int paginate_doc_output(int cmd, PD_INFO *pd, PAGINATE_DOC_INFO *info)
         return (1);
 
     case PD_PERIODIC:
-        while (info->lbl != NULL && (unsigned)(pd->curr - info->start) >= info->lbl->topic_off)
+        while (info->lbl != nullptr && (unsigned)(pd->curr - info->start) >= info->lbl->topic_off)
         {
             info->lbl->doc_page = pd->pnum;
             info->lbl = find_next_label_by_topic(info->c->topic_num[info->tnum]);
@@ -2988,9 +2988,9 @@ void _write_hdr(char *fname, FILE *file)
     char nfile[MAXFILE],
          next[MAXEXT];
 
-    FNSPLIT(fname, NULL, NULL, nfile, next);
+    FNSPLIT(fname, nullptr, nullptr, nfile, next);
     fprintf(file, "\n/*\n * %s%s\n", nfile, next);
-    FNSPLIT(src_fname, NULL, NULL, nfile, next);
+    FNSPLIT(src_fname, nullptr, nullptr, nfile, next);
     fprintf(file, " *\n * Contains #defines for help.\n *\n");
     fprintf(file, " * Generated by HC from: %s%s\n *\n */\n\n\n", nfile, next);
 
@@ -3021,10 +3021,10 @@ void write_hdr(char *fname)
 
     hdr = fopen(fname, "rt");
 
-    if (hdr == NULL)
+    if (hdr == nullptr)
     {   /* if no prev. hdr file generate a new one */
         hdr = fopen(fname, "wt");
-        if (hdr == NULL)
+        if (hdr == nullptr)
             fatal(0,"Cannot create \"%s\".", fname);
         msg("Writing: %s", fname);
         _write_hdr(fname, hdr);
@@ -3037,7 +3037,7 @@ void write_hdr(char *fname)
 
     temp = fopen(TEMP_FNAME, "wt");
 
-    if (temp == NULL)
+    if (temp == nullptr)
         fatal(0,"Cannot create temporary file: \"%s\".", TEMP_FNAME);
 
     _write_hdr(fname, temp);
@@ -3045,7 +3045,7 @@ void write_hdr(char *fname)
     fclose(temp);
     temp = fopen(TEMP_FNAME, "rt");
 
-    if (temp == NULL)
+    if (temp == nullptr)
         fatal(0,"Cannot open temporary file: \"%s\".", TEMP_FNAME);
 
     if (compare_files(temp, hdr))     /* if they are different... */
@@ -3121,7 +3121,7 @@ void insert_real_link_info(char *curr, unsigned len)
 
     while (len > 0)
     {
-        tok = find_token_length(0, curr, len, &size, NULL);
+        tok = find_token_length(0, curr, len, &size, nullptr);
 
         if (tok == TOK_LINK)
         {
@@ -3246,7 +3246,7 @@ void write_help(char *fname)
 
     hlp = fopen(fname, "wb");
 
-    if (hlp == NULL)
+    if (hlp == nullptr)
         fatal(0,"Cannot create .HLP file: \"%s\".", fname);
 
     msg("Writing: %s", fname);
@@ -3397,7 +3397,7 @@ void print_document(const char *fname)
     info.cnum = info.tnum = -1;
     info.link_dest_warn = 0;
 
-    if ((info.file = fopen(fname, "wt")) == NULL)
+    if ((info.file = fopen(fname, "wt")) == nullptr)
         fatal(0,"Couldn't create \"%s\"", fname);
 
     info.margin = PAGE_INDENT;
@@ -3640,7 +3640,7 @@ int main(int argc, char *argv[])
 
     buffer = static_cast<char *>(malloc(BUFFER_SIZE));
 
-    if (buffer == NULL)
+    if (buffer == nullptr)
         fatal(0,"Not enough memory to allocate buffer.");
 
     for (arg= &argv[1]; argc>1; argc--, arg++)
@@ -3759,7 +3759,7 @@ int main(int argc, char *argv[])
 
         strcat(swappath, SWAP_FNAME);
 
-        if ((swapfile=fopen(swappath, "w+b")) == NULL)
+        if ((swapfile=fopen(swappath, "w+b")) == nullptr)
             fatal(0,"Cannot create swap file \"%s\"", swappath);
         swappos = 0;
 
@@ -3803,7 +3803,7 @@ int main(int argc, char *argv[])
 
         strcat(swappath, SWAP_FNAME);
 
-        if ((swapfile=fopen(swappath, "w+b")) == NULL)
+        if ((swapfile=fopen(swappath, "w+b")) == nullptr)
             fatal(0,"Cannot create swap file \"%s\"", swappath);
         swappos = 0;
 

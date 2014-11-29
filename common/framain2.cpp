@@ -227,7 +227,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
         if (showfile == 0)
         {   /* loading an image */
-            outln_cleanup = NULL;          /* outln routine can set this */
+            outln_cleanup = nullptr;          /* outln routine can set this */
             if (display3d)                 /* set up 3D decoding */
             {
                 outln = call_line3d;
@@ -713,11 +713,6 @@ static int look(char *stacked)
         }
         name_stack_ptr++;
         strcpy(file_name_stack[name_stack_ptr], browsename);
-        /*
-        splitpath(browsename, NULL, NULL, fname, ext);
-        splitpath(readname, drive, dir, NULL, NULL);
-        makepath(readname, drive, dir, fname, ext);
-        */
         merge_pathnames(readname, browsename, 2);
         if (askvideo)
         {
@@ -1166,11 +1161,6 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             if (name_stack_ptr < 0) /* oops, must have deleted first one */
                 break;
             strcpy(browsename, file_name_stack[name_stack_ptr]);
-            /*
-            splitpath(browsename, NULL, NULL, fname, ext);
-            splitpath(readname, drive, dir, NULL, NULL);
-            makepath(readname, drive, dir, fname, ext);
-            */
             merge_pathnames(readname,browsename,2);
             browsing = TRUE;
             no_sub_images = FALSE;
@@ -1974,7 +1964,7 @@ static void note_zoom()
 {
     if (boxcount) { /* save zoombox stuff in mem before encode (mem reused) */
         savezoom = (char *)malloc((long)(5*boxcount));
-        if (savezoom == NULL)
+        if (savezoom == nullptr)
             clear_zoombox(); /* not enuf mem so clear the box */
         else {
             reset_zoom_corners(); /* reset these to overall image, not box */

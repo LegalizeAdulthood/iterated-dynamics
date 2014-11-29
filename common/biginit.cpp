@@ -411,7 +411,7 @@ bn_t alloc_stack(size_t size)
     if (bf_math == 0)
     {
         stopmsg(0,"alloc_stack called with bf_math==0");
-        return (0);
+        return (nullptr);
     }
     stack_addr = (long)((stack_ptr-bnroot)+size); /* +ENDVID, part of bnroot */
 

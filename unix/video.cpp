@@ -30,7 +30,7 @@ int g_disk_flag = 0;        /* disk video active flag */
 
 int videoflag = 0;      /* special "your-own-video" flag */
 
-void (*swapsetup)(void) = NULL;     /* setfortext/graphics setup routine */
+void (*swapsetup)(void) = nullptr;     /* setfortext/graphics setup routine */
 int g_color_dark = 0;       /* darkest color in palette */
 int g_color_bright = 0;     /* brightest color in palette */
 int g_color_medium = 0;     /* nearest to medbright grey in palette
@@ -329,7 +329,7 @@ putstring(int row, int col, int attr, const char *msg)
         {
             const char *ptr;
             ptr = strchr(msg, '\n');
-            if (ptr == NULL)
+            if (ptr == nullptr)
             {
                 waddstr(curwin, msg);
                 break;
@@ -467,19 +467,19 @@ setforgraphics()
     spindac(0, 1);
 }
 
-unsigned char *fontTab = NULL;
+unsigned char *fontTab = nullptr;
 
 /*
 ; ************** Function findfont(n) ******************************
 
 ;       findfont(0) returns pointer to 8x8 font table if it can
-;                   find it, NULL otherwise;
+;                   find it, nullptr otherwise;
 ;                   nonzero parameter reserved for future use
 */
 BYTE *
 findfont(int fontparm)
 {
-    if (fontTab == NULL)
+    if (fontTab == nullptr)
     {
         fontTab = xgetfont();
     }

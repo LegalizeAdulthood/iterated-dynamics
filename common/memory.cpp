@@ -24,7 +24,7 @@
 /* For disk memory: */
 #define DISKWRITELEN 2048L /* max # bytes transferred to/from disk mem at once */
 
-BYTE *charbuf = NULL;
+BYTE *charbuf = nullptr;
 //int numEXThandles;
 //long ext_xfer_size;
 //U16 start_avail_extra = 0;
@@ -146,7 +146,7 @@ static int check_for_mem(int stored_at, long howmuch)
     case MEMORY: /* check_for_mem */
         if (maxmem > howmuch) {
             temp = (BYTE *)malloc(howmuch + FAR_RESERVE);
-            if (temp != NULL) { /* minimum free space + requested amount */
+            if (temp != nullptr) { /* minimum free space + requested amount */
                 free(temp);
                 use_this_type = MEMORY;
                 break;
@@ -269,7 +269,7 @@ void ExitCheck(void)
 
 U16 MemoryAlloc(U16 size, long count, int stored_at)
 {
-    /* Returns handle number if successful, 0 or NULL if failure */
+    /* Returns handle number if successful, 0 or nullptr if failure */
     U16 handle = 0;
     int success, use_this_type;
     long toallocate;
@@ -325,8 +325,8 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
             handletable[handle].Disk.file = dir_fopen(tempdir,memfile, "w+b");
         rewind(handletable[handle].Disk.file);
         if (fseek(handletable[handle].Disk.file,toallocate,SEEK_SET) != 0)
-            handletable[handle].Disk.file = NULL;
-        if (handletable[handle].Disk.file == NULL) {
+            handletable[handle].Disk.file = nullptr;
+        if (handletable[handle].Disk.file == nullptr) {
             handletable[handle].Disk.stored_at = NOWHERE;
             use_this_type = NOWHERE;
             WhichDiskError(1);
@@ -371,7 +371,7 @@ void MemoryRelease(U16 handle)
 
     case MEMORY: /* MemoryRelease */
         free(handletable[handle].Linearmem.memory);
-        handletable[handle].Linearmem.memory = NULL;
+        handletable[handle].Linearmem.memory = nullptr;
         handletable[handle].Linearmem.size = 0;
         handletable[handle].Linearmem.stored_at = NOWHERE;
         numTOTALhandles--;
@@ -383,7 +383,7 @@ void MemoryRelease(U16 handle)
         memfile[7] = (char)((handle % 1000) / 100 + (int)'0');
         fclose(handletable[handle].Disk.file);
         dir_remove(tempdir,memfile);
-        handletable[handle].Disk.file = NULL;
+        handletable[handle].Disk.file = nullptr;
         handletable[handle].Disk.size = 0;
         handletable[handle].Disk.stored_at = NOWHERE;
         numTOTALhandles--;

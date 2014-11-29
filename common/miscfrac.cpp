@@ -788,7 +788,7 @@ int Bifurcation(void)
         end_resume();
     }
     array_size = (iystop + 1) * sizeof(int);  /* should be iystop + 1 */
-    if ((verhulst_array = (int *) malloc(array_size)) == NULL)
+    if ((verhulst_array = (int *) malloc(array_size)) == nullptr)
     {
         stopmsg(0, "Insufficient free memory for calculation.");
         return (-1);
@@ -1438,15 +1438,15 @@ void abort_cellular(int err, int t)
     case CELLULAR_DONE:
         break;
     }
-    if (cell_array[0] != NULL)
+    if (cell_array[0] != nullptr)
 #if !defined(XFRACT) && !defined(_WIN32)
-        cell_array[0] = NULL;
+        cell_array[0] = nullptr;
 #else
         free((char *)cell_array[0]);
 #endif
-    if (cell_array[1] != NULL)
+    if (cell_array[1] != nullptr)
 #if !defined(XFRACT) && !defined(_WIN32)
-        cell_array[1] = NULL;
+        cell_array[1] = nullptr;
 #else
         free((char *)cell_array[1]);
 #endif
@@ -1569,7 +1569,7 @@ int cellular() {
     cell_array[0] = (BYTE *)malloc(ixstop+1);
     cell_array[1] = (BYTE *)malloc(ixstop+1);
 #endif
-    if (cell_array[0]==NULL || cell_array[1]==NULL) {
+    if (cell_array[0]==nullptr || cell_array[1]==nullptr) {
         abort_cellular(BAD_MEM, 0);
         return (-1);
     }
@@ -1642,7 +1642,7 @@ int cellular() {
             for (twor=(U16)(r+r),i=0; i<=twor; i++)
                 t = (S16)(t + (S16)cell_array[filled][i]);
             if (t>rule_digits || t<0) {
-                thinking(0, NULL);
+                thinking(0, nullptr);
                 abort_cellular(BAD_T, t);
                 return (-1);
             }
@@ -1652,7 +1652,7 @@ int cellular() {
             for (col=r+1; col<ixstop-r; col++) { /* now do the rest */
                 t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
                 if (t>rule_digits || t<0) {
-                    thinking(0, NULL);
+                    thinking(0, nullptr);
                     abort_cellular(BAD_T, t);
                     return (-1);
                 }
@@ -1662,13 +1662,13 @@ int cellular() {
             filled = notfilled;
             notfilled = (S16)(1-filled);
             if (driver_key_pressed()) {
-                thinking(0, NULL);
+                thinking(0, nullptr);
                 abort_cellular(INTERUPT, 0);
                 return -1;
             }
         }
         start_row = 0;
-        thinking(0, NULL);
+        thinking(0, nullptr);
         lstscreenflag = 0;
     }
 
@@ -1695,7 +1695,7 @@ contloop:
         for (twor=(U16)(r+r),i=0; i<=twor; i++)
             t = (S16)(t + (S16)cell_array[filled][i]);
         if (t>rule_digits || t<0) {
-            thinking(0, NULL);
+            thinking(0, nullptr);
             abort_cellular(BAD_T, t);
             return (-1);
         }
@@ -1705,7 +1705,7 @@ contloop:
         for (col=r+1; col<ixstop-r; col++) { /* now do the rest */
             t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
             if (t>rule_digits || t<0) {
-                thinking(0, NULL);
+                thinking(0, nullptr);
                 abort_cellular(BAD_T, t);
                 return (-1);
             }
@@ -1835,7 +1835,7 @@ struct froth_struct {
     } fl;
 };
 
-struct froth_struct *fsp=NULL; /* froth_struct pointer */
+struct froth_struct *fsp=nullptr; /* froth_struct pointer */
 
 /* color maps which attempt to replicate the images of James Alexander. */
 static void set_Froth_palette(void)
@@ -1874,10 +1874,10 @@ int froth_setup(void)
     sin_theta = SQRT3/2; /* sin(2*PI/3) */
     cos_theta = -0.5;    /* cos(2*PI/3) */
 
-    /* check for NULL as safety net */
-    if (fsp == NULL)
+    /* check for nullptr as safety net */
+    if (fsp == nullptr)
         fsp = (struct froth_struct *)malloc(sizeof(struct froth_struct));
-    if (fsp == NULL)
+    if (fsp == nullptr)
     {
         stopmsg(0, "Sorry, not enough memory to run the frothybasin fractal type");
         return 0;
@@ -1991,10 +1991,10 @@ int froth_setup(void)
 
 void froth_cleanup(void)
 {
-    if (fsp != NULL)
+    if (fsp != nullptr)
         free(fsp);
-    /* set to NULL as a flag that froth_cleanup() has been called */
-    fsp = NULL;
+    /* set to nullptr as a flag that froth_cleanup() has been called */
+    fsp = nullptr;
 }
 
 
@@ -2007,7 +2007,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
         return -1;
     }
 
-    if (fsp == NULL)
+    if (fsp == nullptr)
     {   /* error occured allocating memory for fsp */
         return 0;
     }

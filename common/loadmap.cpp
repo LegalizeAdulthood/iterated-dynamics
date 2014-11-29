@@ -25,17 +25,17 @@ int ValidateLuts(const char *fn)
 #else
     merge_pathnames(temp,temp_fn,0);
 #endif
-    if (has_ext(temp) == NULL) /* Did name have an extension? */
+    if (has_ext(temp) == nullptr) /* Did name have an extension? */
         strcat(temp,".map");  /* No? Then add .map */
     findpath(temp, line);         /* search the dos path */
     f = fopen(line, "r");
-    if (f == NULL) {
+    if (f == nullptr) {
         sprintf(line,"Could not load color map %s",fn);
         stopmsg(0,line);
         return 1;
     }
     for (index = 0; index < 256; index++) {
-        if (fgets(line,100,f) == NULL)
+        if (fgets(line,100,f) == nullptr)
             break;
         sscanf(line, "%u %u %u", &r, &g, &b);
         /** load global dac values **/
@@ -62,10 +62,10 @@ int SetColorPaletteName(char * fn)
     {
         return 1;
     }
-    if (mapdacbox == NULL)
+    if (mapdacbox == nullptr)
     {
         mapdacbox = (BYTE *) malloc(768L);
-        if (mapdacbox == NULL)
+        if (mapdacbox == nullptr)
         {
             stopmsg(0, "Insufficient memory for color map.");
             return 1;

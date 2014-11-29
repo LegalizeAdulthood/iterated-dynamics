@@ -244,7 +244,7 @@ void bfcornerstofloat(void)
         yy3rd = (double)bftofloat(bfy3rd);
     }
     for (i=0; i<MAXPARAMS; i++)
-        if (typehasparm(fractype,i,NULL))
+        if (typehasparm(fractype,i,nullptr))
             param[i] = (double)bftofloat(bfparms[i]);
 }
 

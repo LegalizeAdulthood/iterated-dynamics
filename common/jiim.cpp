@@ -25,7 +25,7 @@
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */
 
 #define newx(size)     mem_alloc(size)
-#define delete(block)  block=NULL
+#define delete(block)  block=nullptr
 
 int show_numbers =0;              /* toggle for display of coords */
 U16 memory_handle = 0;
@@ -1205,10 +1205,10 @@ finish:
     }
     else
         cleartempmsg();
-    if (file != NULL)
+    if (file != nullptr)
     {
         fclose(file);
-        file = NULL;
+        file = nullptr;
         dir_remove(tempdir,scrnfile);
     }
     show_numbers = 0;

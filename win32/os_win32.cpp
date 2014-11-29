@@ -25,12 +25,12 @@
 /* External declarations */
 extern void check_samename(void);
 
-HINSTANCE g_instance = NULL;
+HINSTANCE g_instance = nullptr;
 
-static void (*dotwrite)(int, int, int) = NULL;
-static int (*dotread)(int, int) = NULL;
-static void (*linewrite)(int, int, int, BYTE *) = NULL;
-static void (*lineread)(int, int, int, BYTE *) = NULL;
+static void (*dotwrite)(int, int, int) = nullptr;
+static int (*dotread)(int, int) = nullptr;
+static void (*linewrite)(int, int, int, BYTE *) = nullptr;
+static void (*lineread)(int, int, int, BYTE *) = nullptr;
 
 typedef enum
 {
@@ -233,7 +233,7 @@ static fractint_event keyboard_event(int key)
     return FE_UNKNOWN;
 }
 
-static char *g_tos = NULL;
+static char *g_tos = nullptr;
 #define WIN32_STACK_SIZE 1024*1024
 /* Return available stack space ... shouldn't be needed in Win32, should it? */
 long stackavail()
@@ -358,7 +358,7 @@ int fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/fil
     strcpy(s_find_base, path);
     {
         char *whack = strrchr(s_find_base, '\\');
-        if (whack != NULL)
+        if (whack != nullptr)
         {
             whack[1] = 0;
         }
@@ -592,7 +592,7 @@ unsigned long get_disk_space(void)
 {
     ULARGE_INTEGER space;
     unsigned long result = 0;
-    if (GetDiskFreeSpaceEx(NULL, &space, NULL, NULL))
+    if (GetDiskFreeSpaceEx(nullptr, &space, nullptr, nullptr))
     {
         if (space.HighPart)
         {
@@ -613,7 +613,7 @@ typedef BOOL MiniDumpWriteDumpProc(HANDLE process, DWORD pid, HANDLE file, MINID
 
 static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 {
-    MiniDumpWriteDumpProc *dumper = NULL;
+    MiniDumpWriteDumpProc *dumper = nullptr;
     HMODULE debughlp = LoadLibrary("dbghelp.dll");
     char minidump[MAX_PATH] = "fractint.dmp";
     MINIDUMP_EXCEPTION_INFORMATION mdei =
@@ -626,9 +626,9 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
     BOOL status = 0;
     int i = 1;
 
-    if (debughlp == NULL)
+    if (debughlp == nullptr)
     {
-        MessageBox(NULL, "An unexpected error occurred.  FractInt will now exit.",
+        MessageBox(nullptr, "An unexpected error occurred.  FractInt will now exit.",
                    "FractInt: Unexpected Error", MB_OK);
         return;
     }
@@ -639,24 +639,24 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
         sprintf(minidump, "fractint-%d.dmp", i++);
     }
     dump_file = CreateFile(minidump, GENERIC_READ | GENERIC_WRITE,
-                           0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+                           0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
     _ASSERTE(dump_file != INVALID_HANDLE_VALUE);
 
     status = (*dumper)(GetCurrentProcess(), GetCurrentProcessId(),
-                       dump_file, MiniDumpNormal, &mdei, NULL, NULL);
+                       dump_file, MiniDumpNormal, &mdei, nullptr, nullptr);
     _ASSERTE(status);
     if (!status)
     {
         char msg[100];
         sprintf(msg, "MiniDumpWriteDump failed with %08x", GetLastError());
-        MessageBox(NULL, msg, "Ugh", MB_OK);
+        MessageBox(nullptr, msg, "Ugh", MB_OK);
     }
     else
     {
         status = CloseHandle(dump_file);
         _ASSERTE(status);
     }
-    dumper = NULL;
+    dumper = nullptr;
     status = FreeLibrary(debughlp);
     _ASSERTE(status);
 
@@ -664,7 +664,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
         char msg[MAX_PATH*2];
         sprintf(msg, "Unexpected error, crash dump saved to %s.\n"
                 "Please include this file with your bug report.", minidump);
-        MessageBox(NULL, msg, "FractInt: Unexpected Error", MB_OK);
+        MessageBox(nullptr, msg, "FractInt: Unexpected Error", MB_OK);
     }
 }
 
@@ -934,7 +934,7 @@ int out_line(BYTE *pixels, int linelen)
 
 void init_failure(const char *message)
 {
-    MessageBox(NULL, message, "FractInt: Fatal Error", MB_OK);
+    MessageBox(nullptr, message, "FractInt: Fatal Error", MB_OK);
 }
 
 void findpath(const char *filename, char *fullpathname) /* return full pathnames */
@@ -943,7 +943,7 @@ void findpath(const char *filename, char *fullpathname) /* return full pathnames
     char ext[FILE_MAX_EXT];
     char temp_path[FILE_MAX_PATH];
 
-    splitpath(filename ,NULL,NULL,fname,ext);
+    splitpath(filename ,nullptr,nullptr,fname,ext);
     makepath(temp_path,""   ,"" ,fname,ext);
 
     if (checkcurdir != 0 && access(temp_path,0) == 0)   /* file exists */
@@ -963,7 +963,7 @@ void findpath(const char *filename, char *fullpathname) /* return full pathnames
         }
         else
         {
-            splitpath(temp_path ,NULL,NULL,fname,ext);
+            splitpath(temp_path ,nullptr,nullptr,fname,ext);
             makepath(temp_path,""   ,"" ,fname,ext);
         }
     }

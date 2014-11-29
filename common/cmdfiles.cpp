@@ -101,7 +101,7 @@ double  inversion[3];           /* radius, xcenter, ycenter */
 int     rotate_lo,rotate_hi;    /* cycling color range      */
 int *ranges;                    /* iter->color ranges mapping */
 int     rangeslen = 0;          /* size of ranges array     */
-BYTE *mapdacbox = NULL;         /* map= (default colors)    */
+BYTE *mapdacbox = nullptr;         /* map= (default colors)    */
 int     colorstate;             /* 0, g_dac_box matches default (bios or map=) */
                                 /* 1, g_dac_box matches no known defined map   */
                                 /* 2, g_dac_box matches the colorfile map      */
@@ -139,7 +139,7 @@ int        escape_exit;         /* set to 1 to avoid the "are you sure?" screen 
 int first_init=1;               /* first time into cmdfiles? */
 static int init_rseed;
 static char initcorners,initparams;
-struct fractalspecificstuff *curfractalspecific = NULL;
+struct fractalspecificstuff *curfractalspecific = nullptr;
 
 char FormFileName[FILE_MAX_PATH];/* file to find (type=)formulas in */
 char FormName[ITEMNAMELEN+1];    /* Name of the Formula (if not null) */
@@ -151,7 +151,7 @@ char CommandComment[4][MAXCMT];    /* comments for command set */
 char IFSFileName[FILE_MAX_PATH];/* file to find (type=)IFS in */
 char IFSName[ITEMNAMELEN+1];    /* Name of the IFS def'n (if not null) */
 struct SearchPath searchfor;
-float *ifs_defn = NULL;         /* ifs parameters */
+float *ifs_defn = nullptr;         /* ifs parameters */
 int  ifs_type;                  /* 0=2d, 1=3d */
 int  g_slides = SLIDES_OFF;     /* 1 autokey=play, 2 autokey=record */
 
@@ -234,7 +234,7 @@ int cmdfiles(int argc,char **argv)
     strcpy(curarg, "sstools.ini");
     findpath(curarg, tempstring); /* look for SSTOOLS.INI */
     if (tempstring[0] != 0)              /* found it! */
-        if ((initfile = fopen(tempstring,"r")) != NULL)
+        if ((initfile = fopen(tempstring,"r")) != nullptr)
             cmdfile(initfile, CMDFILE_SSTOOLS_INI);           /* process it */
 
     for (i = 1; i < argc; i++) {         /* cycle through args */
@@ -246,11 +246,11 @@ int cmdfiles(int argc,char **argv)
         if (curarg[0] == ';')             /* start of comments? */
             break;
         if (curarg[0] != '@') {           /* simple command? */
-            if (strchr(curarg,'=') == NULL) { /* not xxx=yyy, so check for gif */
+            if (strchr(curarg,'=') == nullptr) { /* not xxx=yyy, so check for gif */
                 strcpy(tempstring,curarg);
-                if (has_ext(curarg) == NULL)
+                if (has_ext(curarg) == nullptr)
                     strcat(tempstring,".gif");
-                if ((initfile = fopen(tempstring,"rb")) != NULL) {
+                if ((initfile = fopen(tempstring,"rb")) != nullptr) {
                     fread(tempstring,6,1,initfile);
                     if (tempstring[0] == 'G'
                             && tempstring[1] == 'I'
@@ -267,18 +267,18 @@ int cmdfiles(int argc,char **argv)
             if (curarg[0])
                 cmdarg(curarg, CMDFILE_AT_CMDLINE);           /* process simple command */
         }
-        else if ((sptr = strchr(curarg,'/')) != NULL) { /* @filename/setname? */
+        else if ((sptr = strchr(curarg,'/')) != nullptr) { /* @filename/setname? */
             *sptr = 0;
             if (merge_pathnames(CommandFile, &curarg[1], 0) < 0)
                 init_msg("",CommandFile,0);
             strcpy(CommandName,sptr+1);
-            if (find_file_item(CommandFile,CommandName,&initfile, 0)<0 || initfile==NULL)
+            if (find_file_item(CommandFile,CommandName,&initfile, 0)<0 || initfile==nullptr)
                 argerror(curarg);
             cmdfile(initfile, CMDFILE_AT_CMDLINE_SETNAME);
         }
         else {                            /* @filename */
             initfile = fopen(&curarg[1],"r");
-            if (initfile == NULL)
+            if (initfile == nullptr)
                 argerror(curarg);
             cmdfile(initfile, CMDFILE_AT_CMDLINE);
         }
@@ -289,7 +289,7 @@ int cmdfiles(int argc,char **argv)
         showfile = 1;  /* nor startup image file              */
     }
 
-    init_msg("",NULL,0);  /* this causes driver_get_key if init_msg called on runup */
+    init_msg("",nullptr,0);  /* this causes driver_get_key if init_msg called on runup */
 
     if (debugflag != 110)
         first_init = 0;
@@ -341,12 +341,12 @@ int load_commands(FILE *infile)
 static void initvars_run()              /* once per run init */
 {
     char *p;
-    init_rseed = (int)time(NULL);
+    init_rseed = (int)time(nullptr);
     init_comments();
     p = getenv("TMP");
-    if (p == NULL)
+    if (p == nullptr)
         p = getenv("TEMP");
-    if (p != NULL)
+    if (p != nullptr)
     {
         if (isadirectory(p) != 0)
         {
@@ -404,7 +404,7 @@ static void initvars_restart()          /* <ins> key init */
     mapset = 0;                          /* no map= name active */
     if (mapdacbox) {
         free(mapdacbox);
-        mapdacbox = NULL;
+        mapdacbox = nullptr;
     }
 
     major_method = breadth_first;        /* default inverse julia methods */
@@ -550,7 +550,7 @@ static void reset_ifs_defn()
 {
     if (ifs_defn) {
         free((char *)ifs_defn);
-        ifs_defn = NULL;
+        ifs_defn = nullptr;
     }
 }
 
@@ -733,7 +733,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     }
 
     value = strchr(&curarg[1], '=');
-    if (value != NULL)
+    if (value != nullptr)
     {
         j = (int)((value++) - curarg);
         if (j > 1 && curarg[j-1] == ':')
@@ -771,7 +771,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         long ll;
         lastarg = 0;
         argptr2 = strchr(argptr,'/');
-        if (argptr2 == NULL)     /* find next '/' */
+        if (argptr2 == nullptr)     /* find next '/' */
         {
             argptr2 = argptr + strlen(argptr);
             *argptr2 = '/';
@@ -991,20 +991,20 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
         if (strcmp(variable,s_makepar) == 0)
         {
-            char *slash, *next = NULL;
+            char *slash, *next = nullptr;
             if (totparms < 1 || totparms > 2)
             {
                 goto badarg;
             }
             slash = strchr(value, '/');
-            if (slash != NULL)
+            if (slash != nullptr)
             {
                 *slash = 0;
                 next = slash+1;
             }
 
             strcpy(CommandFile, value);
-            if (strchr(CommandFile, '.') == NULL)
+            if (strchr(CommandFile, '.') == nullptr)
             {
                 strcat(CommandFile, ".par");
             }
@@ -1012,7 +1012,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             {
                 *readname = 0;
             }
-            if (next == NULL)
+            if (next == nullptr)
             {
                 if (*readname != 0)
                 {
@@ -1335,14 +1335,14 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             value[3] = 0;
         }
-        for (k = 0; fractalspecific[k].name != NULL; k++)
+        for (k = 0; fractalspecific[k].name != nullptr; k++)
         {
             if (strcmp(value, fractalspecific[k].name) == 0)
             {
                 break;
             }
         }
-        if (fractalspecific[k].name == NULL)
+        if (fractalspecific[k].name == nullptr)
         {
             goto badarg;
         }
@@ -1453,7 +1453,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
                 goto badarg;
             }
             value = strchr(value, '/');
-            if (value == NULL)
+            if (value == nullptr)
             {
                 break;
             }
@@ -1633,7 +1633,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             goto badarg;
         }
         ranges = (int *)malloc(sizeof(int)*entries);
-        if (ranges == NULL)
+        if (ranges == nullptr)
         {
             stopmsg(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
             return -1;
@@ -1760,7 +1760,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             }
             k++;
             value = strchr(value, '/');
-            if (value == NULL)
+            if (value == nullptr)
             {
                 k = 99;
             }
@@ -2544,7 +2544,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             autoshowdot = (char)0;
             if (isalpha(charval[0]))
             {
-                if (strchr("abdm", (int)charval[0]) != NULL)
+                if (strchr("abdm", (int)charval[0]) != nullptr)
                     autoshowdot = charval[0];
                 else
                     goto badarg;
@@ -2969,7 +2969,7 @@ static void parse_textcolors(char *value)
                     j = 15;
                 txtcolor[k] = (BYTE)(i * 16 + j);
                 value = strchr(value,'/');
-                if (value == NULL) break;
+                if (value == nullptr) break;
             }
             ++value;
             ++k;
@@ -3002,7 +3002,7 @@ static int parse_colors(char *value)
             if (*value == '<') {
                 if (i == 0 || smooth
                         || (smooth = atoi(value+1)) < 2
-                        || (value = strchr(value,'>')) == NULL)
+                        || (value = strchr(value,'>')) == nullptr)
                     goto badcolor;
                 i += smooth;
                 ++value;

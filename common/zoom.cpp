@@ -55,7 +55,7 @@ void dispbox(void)
     {
         if (g_is_true_color && truemode)
         {
-            driver_get_truecolor(boxx[i]-sxoffs,boxy[i]-syoffs,&rgb[0],&rgb[1],&rgb[2],NULL);
+            driver_get_truecolor(boxx[i]-sxoffs,boxy[i]-syoffs,&rgb[0],&rgb[1],&rgb[2],nullptr);
             driver_put_truecolor(boxx[i]-sxoffs,boxy[i]-syoffs,
                                  rgb[0]^255,rgb[1]^255,rgb[2]^255,255);
         }

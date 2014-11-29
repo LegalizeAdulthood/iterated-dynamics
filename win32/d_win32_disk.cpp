@@ -242,7 +242,7 @@ disk_init(Driver *drv, int *argc, char **argv)
     DI(di);
 
     frame_init(g_instance, title);
-    if (!wintext_initialize(&di->base.wintext, g_instance, NULL, title))
+    if (!wintext_initialize(&di->base.wintext, g_instance, nullptr, title))
     {
         return FALSE;
     }
@@ -262,7 +262,7 @@ disk_init(Driver *drv, int *argc, char **argv)
                 {
                     argv[j] = argv[j+1];
                 }
-                argv[j] = NULL;
+                argv[j] = nullptr;
                 --*argc;
             }
         }
@@ -806,7 +806,7 @@ disk_unstack_screen(Driver *drv)
     {   /* unstack */
         wintext_screen_set(&di->base.wintext, di->base.saved_screens[di->base.screen_count]);
         free(di->base.saved_screens[di->base.screen_count]);
-        di->base.saved_screens[di->base.screen_count] = NULL;
+        di->base.saved_screens[di->base.screen_count] = nullptr;
     }
     else
     {
@@ -826,7 +826,7 @@ disk_discard_screen(Driver *drv)
         if (di->base.saved_screens[di->base.screen_count])
         {
             free(di->base.saved_screens[di->base.screen_count]);
-            di->base.saved_screens[di->base.screen_count] = NULL;
+            di->base.saved_screens[di->base.screen_count] = nullptr;
         }
     }
 }
@@ -996,11 +996,11 @@ static void disk_restore_graphics(Driver *drv)
 
 static void disk_get_max_screen(Driver *drv, int *xmax, int *ymax)
 {
-    if (xmax != NULL)
+    if (xmax != nullptr)
     {
         *xmax = -1;
     }
-    if (ymax != NULL)
+    if (ymax != nullptr)
     {
         *ymax = -1;
     }
