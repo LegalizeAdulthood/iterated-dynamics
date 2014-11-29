@@ -11,6 +11,7 @@
  *                                                                                      Tim Wegner
  */
 #include <algorithm>
+#include <vector>
 
 #include <string.h>
 /* see Fractint.c for a description of the "include"  hierarchy */
@@ -65,7 +66,7 @@ BYTE decoderline[MAXPIXELS+1]; /* write-line routines use this */
 #endif
 
 extern BYTE *decoderline1;
-static char *ditherbuf = nullptr;
+static std::vector<char> ditherbuf;
 
 /* Main entry decoder */
 
@@ -310,11 +311,6 @@ int gifview()
         dvid_status(1,"");
     }
 
-    if (ditherbuf != nullptr) { /* we're done, free dither memory */
-        free(ditherbuf);
-        ditherbuf = nullptr;
-    }
-
     return (status);
 }
 
@@ -342,9 +338,8 @@ static int out_line_migs(BYTE *pixels, int linelen)
 static int out_line_dither(BYTE *pixels, int linelen)
 {
     int i,nexterr,brt,err;
-    if (ditherbuf == nullptr)
-        ditherbuf = (char *)malloc(linelen+1);
-    memset(ditherbuf, 0, linelen+1);
+    ditherbuf.resize(linelen + 1);
+    std::fill(ditherbuf.begin(), ditherbuf.end(), 0);
 
     nexterr = (rand()&0x1f)-16;
     for (i=0; i<linelen; i++) {
