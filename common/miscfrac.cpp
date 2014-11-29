@@ -1788,7 +1788,7 @@ static void set_Cellular_palette()
 #define FROTH_SLOPE         SQRT3
 #define FROTH_LSLOPE        FROTH_D_TO_L(FROTH_SLOPE)
 #define FROTH_CRITICAL_A    1.028713768218725  /* 1.0287137682187249127 */
-#define froth_top_x_mapping(x)  ((x)*(x)-(x)-3*fsp->fl.f.a*fsp->fl.f.a/4)
+#define froth_top_x_mapping(x)  ((x)*(x)-(x)-3*fsp.fl.f.a*fsp.fl.f.a/4)
 
 
 struct froth_double_struct {
@@ -1825,18 +1825,23 @@ struct froth_long_struct {
     long right_x4;
 };
 
-struct froth_struct {
+struct froth_struct
+{
     int repeat_mapping;
     int altcolor;
     int attractors;
     int shades;
-    union { /* This was made into a union to save 56 malloc()'ed bytes. */
+    union
+    {
         struct froth_double_struct f;
         struct froth_long_struct l;
     } fl;
 };
 
-struct froth_struct *fsp=nullptr; /* froth_struct pointer */
+namespace
+{
+froth_struct fsp;
+}
 
 /* color maps which attempt to replicate the images of James Alexander. */
 static void set_Froth_palette(void)
@@ -1849,14 +1854,14 @@ static void set_Froth_palette(void)
     {
         if (colors >= 256)
         {
-            if (fsp->attractors == 6)
+            if (fsp.attractors == 6)
                 mapname = "froth6.map";
             else
                 mapname = "froth3.map";
         }
         else /* colors >= 16 */
         {
-            if (fsp->attractors == 6)
+            if (fsp.attractors == 6)
                 mapname = "froth616.map";
             else
                 mapname = "froth316.map";
@@ -1875,85 +1880,76 @@ int froth_setup(void)
     sin_theta = SQRT3/2; /* sin(2*PI/3) */
     cos_theta = -0.5;    /* cos(2*PI/3) */
 
-    /* check for nullptr as safety net */
-    if (fsp == nullptr)
-        fsp = (struct froth_struct *)malloc(sizeof(struct froth_struct));
-    if (fsp == nullptr)
-    {
-        stopmsg(0, "Sorry, not enough memory to run the frothybasin fractal type");
-        return 0;
-    }
-
     /* for the all important backwards compatibility */
     if (save_release <= 1821)   /* book version is 18.21 */
     {
         /* use old release parameters */
 
-        fsp->repeat_mapping = ((int)param[0] == 6 || (int)param[0] == 2); /* map 1 or 2 times (3 or 6 basins)  */
-        fsp->altcolor = (int)param[1];
+        fsp.repeat_mapping = ((int)param[0] == 6 || (int)param[0] == 2); /* map 1 or 2 times (3 or 6 basins)  */
+        fsp.altcolor = (int)param[1];
         param[2] = 0; /* throw away any value used prior to 18.20 */
 
-        fsp->attractors = !fsp->repeat_mapping ? 3 : 6;
+        fsp.attractors = !fsp.repeat_mapping ? 3 : 6;
 
         /* use old values */                /* old names */
-        fsp->fl.f.a = 1.02871376822;          /* A     */
-        fsp->fl.f.halfa = fsp->fl.f.a/2;      /* A/2   */
+        fsp.fl.f.a = 1.02871376822;          /* A     */
+        fsp.fl.f.halfa = fsp.fl.f.a/2;      /* A/2   */
 
-        fsp->fl.f.top_x1 = -1.04368901270;    /* X1MIN */
-        fsp->fl.f.top_x2 =  1.33928675524;    /* X1MAX */
-        fsp->fl.f.top_x3 = -0.339286755220;   /* XMIDT */
-        fsp->fl.f.top_x4 = -0.339286755220;   /* XMIDT */
+        fsp.fl.f.top_x1 = -1.04368901270;    /* X1MIN */
+        fsp.fl.f.top_x2 =  1.33928675524;    /* X1MAX */
+        fsp.fl.f.top_x3 = -0.339286755220;   /* XMIDT */
+        fsp.fl.f.top_x4 = -0.339286755220;   /* XMIDT */
 
-        fsp->fl.f.left_x1 =  0.07639837810;   /* X3MAX2 */
-        fsp->fl.f.left_x2 = -1.11508950586;   /* X2MIN2 */
-        fsp->fl.f.left_x3 = -0.27580275066;   /* XMIDL  */
-        fsp->fl.f.left_x4 = -0.27580275066;   /* XMIDL  */
+        fsp.fl.f.left_x1 =  0.07639837810;   /* X3MAX2 */
+        fsp.fl.f.left_x2 = -1.11508950586;   /* X2MIN2 */
+        fsp.fl.f.left_x3 = -0.27580275066;   /* XMIDL  */
+        fsp.fl.f.left_x4 = -0.27580275066;   /* XMIDL  */
 
-        fsp->fl.f.right_x1 =  0.96729063460;  /* X2MAX1 */
-        fsp->fl.f.right_x2 = -0.22419724936;  /* X3MIN1 */
-        fsp->fl.f.right_x3 =  0.61508950585;  /* XMIDR  */
-        fsp->fl.f.right_x4 =  0.61508950585;  /* XMIDR  */
+        fsp.fl.f.right_x1 =  0.96729063460;  /* X2MAX1 */
+        fsp.fl.f.right_x2 = -0.22419724936;  /* X3MIN1 */
+        fsp.fl.f.right_x3 =  0.61508950585;  /* XMIDR  */
+        fsp.fl.f.right_x4 =  0.61508950585;  /* XMIDR  */
 
     }
     else /* use new code */
     {
         if (param[0] != 2)
             param[0] = 1;
-        fsp->repeat_mapping = (int)param[0] == 2;
+        fsp.repeat_mapping = (int)param[0] == 2;
         if (param[1] != 0)
             param[1] = 1;
-        fsp->altcolor = (int)param[1];
-        fsp->fl.f.a = param[2];
+        fsp.altcolor = (int)param[1];
+        fsp.fl.f.a = param[2];
 
-        fsp->attractors = fabs(fsp->fl.f.a) <= FROTH_CRITICAL_A ? (!fsp->repeat_mapping ? 3 : 6)
-                          : (!fsp->repeat_mapping ? 2 : 3);
+        fsp.attractors = fabs(fsp.fl.f.a) <= FROTH_CRITICAL_A ? (!fsp.repeat_mapping ? 3 : 6)
+                          : (!fsp.repeat_mapping ? 2 : 3);
 
         /* new improved values */
         /* 0.5 is the value that causes the mapping to reach a minimum */
         x0 = 0.5;
         /* a/2 is the value that causes the y value to be invariant over the mappings */
-        y0 = fsp->fl.f.halfa = fsp->fl.f.a/2;
-        fsp->fl.f.top_x1 = froth_top_x_mapping(x0);
-        fsp->fl.f.top_x2 = froth_top_x_mapping(fsp->fl.f.top_x1);
-        fsp->fl.f.top_x3 = froth_top_x_mapping(fsp->fl.f.top_x2);
-        fsp->fl.f.top_x4 = froth_top_x_mapping(fsp->fl.f.top_x3);
+        y0 = fsp.fl.f.halfa = fsp.fl.f.a/2;
+        fsp.fl.f.top_x1 = froth_top_x_mapping(x0);
+        fsp.fl.f.top_x2 = froth_top_x_mapping(fsp.fl.f.top_x1);
+        fsp.fl.f.top_x3 = froth_top_x_mapping(fsp.fl.f.top_x2);
+        fsp.fl.f.top_x4 = froth_top_x_mapping(fsp.fl.f.top_x3);
 
         /* rotate 120 degrees counter-clock-wise */
-        fsp->fl.f.left_x1 = fsp->fl.f.top_x1 * cos_theta - y0 * sin_theta;
-        fsp->fl.f.left_x2 = fsp->fl.f.top_x2 * cos_theta - y0 * sin_theta;
-        fsp->fl.f.left_x3 = fsp->fl.f.top_x3 * cos_theta - y0 * sin_theta;
-        fsp->fl.f.left_x4 = fsp->fl.f.top_x4 * cos_theta - y0 * sin_theta;
+        fsp.fl.f.left_x1 = fsp.fl.f.top_x1 * cos_theta - y0 * sin_theta;
+        fsp.fl.f.left_x2 = fsp.fl.f.top_x2 * cos_theta - y0 * sin_theta;
+        fsp.fl.f.left_x3 = fsp.fl.f.top_x3 * cos_theta - y0 * sin_theta;
+        fsp.fl.f.left_x4 = fsp.fl.f.top_x4 * cos_theta - y0 * sin_theta;
 
         /* rotate 120 degrees clock-wise */
-        fsp->fl.f.right_x1 = fsp->fl.f.top_x1 * cos_theta + y0 * sin_theta;
-        fsp->fl.f.right_x2 = fsp->fl.f.top_x2 * cos_theta + y0 * sin_theta;
-        fsp->fl.f.right_x3 = fsp->fl.f.top_x3 * cos_theta + y0 * sin_theta;
-        fsp->fl.f.right_x4 = fsp->fl.f.top_x4 * cos_theta + y0 * sin_theta;
+        fsp.fl.f.right_x1 = fsp.fl.f.top_x1 * cos_theta + y0 * sin_theta;
+        fsp.fl.f.right_x2 = fsp.fl.f.top_x2 * cos_theta + y0 * sin_theta;
+        fsp.fl.f.right_x3 = fsp.fl.f.top_x3 * cos_theta + y0 * sin_theta;
+        fsp.fl.f.right_x4 = fsp.fl.f.top_x4 * cos_theta + y0 * sin_theta;
 
     }
 
     /* if 2 attractors, use same shades as 3 attractors */
-    fsp->shades = (colors-1) / std::max(3,fsp->attractors);
+    fsp.shades = (colors-1) / std::max(3,fsp.attractors);
 
     /* rqlim needs to be at least sq(1+sqrt(1+sq(a))), */
     /* which is never bigger than 6.93..., so we'll call it 7.0 */
@@ -1961,41 +1957,37 @@ int froth_setup(void)
         rqlim=7.0;
     set_Froth_palette();
     /* make the best of the .map situation */
-    orbit_color = fsp->attractors != 6 && colors >= 16 ? (fsp->shades<<1)+1 : colors-1;
+    orbit_color = fsp.attractors != 6 && colors >= 16 ? (fsp.shades<<1)+1 : colors-1;
 
     if (integerfractal)
     {
         struct froth_long_struct tmp_l;
 
-        tmp_l.a        = FROTH_D_TO_L(fsp->fl.f.a);
-        tmp_l.halfa    = FROTH_D_TO_L(fsp->fl.f.halfa);
+        tmp_l.a        = FROTH_D_TO_L(fsp.fl.f.a);
+        tmp_l.halfa    = FROTH_D_TO_L(fsp.fl.f.halfa);
 
-        tmp_l.top_x1   = FROTH_D_TO_L(fsp->fl.f.top_x1);
-        tmp_l.top_x2   = FROTH_D_TO_L(fsp->fl.f.top_x2);
-        tmp_l.top_x3   = FROTH_D_TO_L(fsp->fl.f.top_x3);
-        tmp_l.top_x4   = FROTH_D_TO_L(fsp->fl.f.top_x4);
+        tmp_l.top_x1   = FROTH_D_TO_L(fsp.fl.f.top_x1);
+        tmp_l.top_x2   = FROTH_D_TO_L(fsp.fl.f.top_x2);
+        tmp_l.top_x3   = FROTH_D_TO_L(fsp.fl.f.top_x3);
+        tmp_l.top_x4   = FROTH_D_TO_L(fsp.fl.f.top_x4);
 
-        tmp_l.left_x1  = FROTH_D_TO_L(fsp->fl.f.left_x1);
-        tmp_l.left_x2  = FROTH_D_TO_L(fsp->fl.f.left_x2);
-        tmp_l.left_x3  = FROTH_D_TO_L(fsp->fl.f.left_x3);
-        tmp_l.left_x4  = FROTH_D_TO_L(fsp->fl.f.left_x4);
+        tmp_l.left_x1  = FROTH_D_TO_L(fsp.fl.f.left_x1);
+        tmp_l.left_x2  = FROTH_D_TO_L(fsp.fl.f.left_x2);
+        tmp_l.left_x3  = FROTH_D_TO_L(fsp.fl.f.left_x3);
+        tmp_l.left_x4  = FROTH_D_TO_L(fsp.fl.f.left_x4);
 
-        tmp_l.right_x1 = FROTH_D_TO_L(fsp->fl.f.right_x1);
-        tmp_l.right_x2 = FROTH_D_TO_L(fsp->fl.f.right_x2);
-        tmp_l.right_x3 = FROTH_D_TO_L(fsp->fl.f.right_x3);
-        tmp_l.right_x4 = FROTH_D_TO_L(fsp->fl.f.right_x4);
+        tmp_l.right_x1 = FROTH_D_TO_L(fsp.fl.f.right_x1);
+        tmp_l.right_x2 = FROTH_D_TO_L(fsp.fl.f.right_x2);
+        tmp_l.right_x3 = FROTH_D_TO_L(fsp.fl.f.right_x3);
+        tmp_l.right_x4 = FROTH_D_TO_L(fsp.fl.f.right_x4);
 
-        fsp->fl.l = tmp_l;
+        fsp.fl.l = tmp_l;
     }
     return 1;
 }
 
 void froth_cleanup(void)
 {
-    if (fsp != nullptr)
-        free(fsp);
-    /* set to nullptr as a flag that froth_cleanup() has been called */
-    fsp = nullptr;
 }
 
 
@@ -2006,11 +1998,6 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 
     if (check_key()) {
         return -1;
-    }
-
-    if (fsp == nullptr)
-    {   /* error occured allocating memory for fsp */
-        return 0;
     }
 
     orbit_ptr = 0;
@@ -2036,13 +2023,13 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
         {
             /* simple formula: z = z^2 + conj(z*(-1+ai)) */
             /* but it's the attractor that makes this so interesting */
-            g_new.x = tempsqrx - tempsqry - old.x - fsp->fl.f.a*old.y;
-            old.y += (old.x+old.x)*old.y - fsp->fl.f.a*old.x;
+            g_new.x = tempsqrx - tempsqry - old.x - fsp.fl.f.a*old.y;
+            old.y += (old.x+old.x)*old.y - fsp.fl.f.a*old.x;
             old.x = g_new.x;
-            if (fsp->repeat_mapping)
+            if (fsp.repeat_mapping)
             {
-                g_new.x = sqr(old.x) - sqr(old.y) - old.x - fsp->fl.f.a*old.y;
-                old.y += (old.x+old.x)*old.y - fsp->fl.f.a*old.x;
+                g_new.x = sqr(old.x) - sqr(old.y) - old.x - fsp.fl.f.a*old.y;
+                old.y += (old.x+old.x)*old.y - fsp.fl.f.a*old.x;
                 old.x = g_new.x;
             }
 
@@ -2054,56 +2041,56 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
                 plot_orbit(old.x, old.y, -1);
             }
 
-            if (fabs(fsp->fl.f.halfa-old.y) < FROTH_CLOSE
-                    && old.x >= fsp->fl.f.top_x1 && old.x <= fsp->fl.f.top_x2)
+            if (fabs(fsp.fl.f.halfa-old.y) < FROTH_CLOSE
+                    && old.x >= fsp.fl.f.top_x1 && old.x <= fsp.fl.f.top_x2)
             {
-                if ((!fsp->repeat_mapping && fsp->attractors == 2)
-                        || (fsp->repeat_mapping && fsp->attractors == 3))
+                if ((!fsp.repeat_mapping && fsp.attractors == 2)
+                        || (fsp.repeat_mapping && fsp.attractors == 3))
                     found_attractor = 1;
-                else if (old.x <= fsp->fl.f.top_x3)
+                else if (old.x <= fsp.fl.f.top_x3)
                     found_attractor = 1;
-                else if (old.x >= fsp->fl.f.top_x4) {
-                    if (!fsp->repeat_mapping)
+                else if (old.x >= fsp.fl.f.top_x4) {
+                    if (!fsp.repeat_mapping)
                         found_attractor = 1;
                     else
                         found_attractor = 2;
                 }
             }
-            else if (fabs(FROTH_SLOPE*old.x - fsp->fl.f.a - old.y) < FROTH_CLOSE
-                     && old.x <= fsp->fl.f.right_x1 && old.x >= fsp->fl.f.right_x2)
+            else if (fabs(FROTH_SLOPE*old.x - fsp.fl.f.a - old.y) < FROTH_CLOSE
+                     && old.x <= fsp.fl.f.right_x1 && old.x >= fsp.fl.f.right_x2)
             {
-                if (!fsp->repeat_mapping && fsp->attractors == 2)
+                if (!fsp.repeat_mapping && fsp.attractors == 2)
                     found_attractor = 2;
-                else if (fsp->repeat_mapping && fsp->attractors == 3)
+                else if (fsp.repeat_mapping && fsp.attractors == 3)
                     found_attractor = 3;
-                else if (old.x >= fsp->fl.f.right_x3) {
-                    if (!fsp->repeat_mapping)
+                else if (old.x >= fsp.fl.f.right_x3) {
+                    if (!fsp.repeat_mapping)
                         found_attractor = 2;
                     else
                         found_attractor = 4;
                 }
-                else if (old.x <= fsp->fl.f.right_x4) {
-                    if (!fsp->repeat_mapping)
+                else if (old.x <= fsp.fl.f.right_x4) {
+                    if (!fsp.repeat_mapping)
                         found_attractor = 3;
                     else
                         found_attractor = 6;
                 }
             }
-            else if (fabs(-FROTH_SLOPE*old.x - fsp->fl.f.a - old.y) < FROTH_CLOSE
-                     && old.x <= fsp->fl.f.left_x1 && old.x >= fsp->fl.f.left_x2)
+            else if (fabs(-FROTH_SLOPE*old.x - fsp.fl.f.a - old.y) < FROTH_CLOSE
+                     && old.x <= fsp.fl.f.left_x1 && old.x >= fsp.fl.f.left_x2)
             {
-                if (!fsp->repeat_mapping && fsp->attractors == 2)
+                if (!fsp.repeat_mapping && fsp.attractors == 2)
                     found_attractor = 2;
-                else if (fsp->repeat_mapping && fsp->attractors == 3)
+                else if (fsp.repeat_mapping && fsp.attractors == 3)
                     found_attractor = 2;
-                else if (old.x >= fsp->fl.f.left_x3) {
-                    if (!fsp->repeat_mapping)
+                else if (old.x >= fsp.fl.f.left_x3) {
+                    if (!fsp.repeat_mapping)
                         found_attractor = 3;
                     else
                         found_attractor = 5;
                 }
-                else if (old.x <= fsp->fl.f.left_x4) {
-                    if (!fsp->repeat_mapping)
+                else if (old.x <= fsp.fl.f.left_x4) {
+                    if (!fsp.repeat_mapping)
                         found_attractor = 2;
                     else
                         found_attractor = 3;
@@ -2130,16 +2117,16 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
         {
             /* simple formula: z = z^2 + conj(z*(-1+ai)) */
             /* but it's the attractor that makes this so interesting */
-            lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a,lold.y,bitshift);
-            lold.y += (multiply(lold.x,lold.y,bitshift)<<1) - multiply(fsp->fl.l.a,lold.x,bitshift);
+            lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a,lold.y,bitshift);
+            lold.y += (multiply(lold.x,lold.y,bitshift)<<1) - multiply(fsp.fl.l.a,lold.x,bitshift);
             lold.x = lnew.x;
-            if (fsp->repeat_mapping)
+            if (fsp.repeat_mapping)
             {
                 lmagnitud = (ltempsqrx=lsqr(lold.x)) + (ltempsqry=lsqr(lold.y));
                 if ((lmagnitud > llimit) || (lmagnitud < 0))
                     break;
-                lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a,lold.y,bitshift);
-                lold.y += (multiply(lold.x,lold.y,bitshift)<<1) - multiply(fsp->fl.l.a,lold.x,bitshift);
+                lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a,lold.y,bitshift);
+                lold.y += (multiply(lold.x,lold.y,bitshift)<<1) - multiply(fsp.fl.l.a,lold.x,bitshift);
                 lold.x = lnew.x;
             }
             coloriter++;
@@ -2150,55 +2137,55 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
                 iplot_orbit(lold.x, lold.y, -1);
             }
 
-            if (labs(fsp->fl.l.halfa-lold.y) < FROTH_LCLOSE
-                    && lold.x > fsp->fl.l.top_x1 && lold.x < fsp->fl.l.top_x2)
+            if (labs(fsp.fl.l.halfa-lold.y) < FROTH_LCLOSE
+                    && lold.x > fsp.fl.l.top_x1 && lold.x < fsp.fl.l.top_x2)
             {
-                if ((!fsp->repeat_mapping && fsp->attractors == 2)
-                        || (fsp->repeat_mapping && fsp->attractors == 3))
+                if ((!fsp.repeat_mapping && fsp.attractors == 2)
+                        || (fsp.repeat_mapping && fsp.attractors == 3))
                     found_attractor = 1;
-                else if (lold.x <= fsp->fl.l.top_x3)
+                else if (lold.x <= fsp.fl.l.top_x3)
                     found_attractor = 1;
-                else if (lold.x >= fsp->fl.l.top_x4) {
-                    if (!fsp->repeat_mapping)
+                else if (lold.x >= fsp.fl.l.top_x4) {
+                    if (!fsp.repeat_mapping)
                         found_attractor = 1;
                     else
                         found_attractor = 2;
                 }
             }
-            else if (labs(multiply(FROTH_LSLOPE,lold.x,bitshift)-fsp->fl.l.a-lold.y) < FROTH_LCLOSE
-                     && lold.x <= fsp->fl.l.right_x1 && lold.x >= fsp->fl.l.right_x2)
+            else if (labs(multiply(FROTH_LSLOPE,lold.x,bitshift)-fsp.fl.l.a-lold.y) < FROTH_LCLOSE
+                     && lold.x <= fsp.fl.l.right_x1 && lold.x >= fsp.fl.l.right_x2)
             {
-                if (!fsp->repeat_mapping && fsp->attractors == 2)
+                if (!fsp.repeat_mapping && fsp.attractors == 2)
                     found_attractor = 2;
-                else if (fsp->repeat_mapping && fsp->attractors == 3)
+                else if (fsp.repeat_mapping && fsp.attractors == 3)
                     found_attractor = 3;
-                else if (lold.x >= fsp->fl.l.right_x3) {
-                    if (!fsp->repeat_mapping)
+                else if (lold.x >= fsp.fl.l.right_x3) {
+                    if (!fsp.repeat_mapping)
                         found_attractor = 2;
                     else
                         found_attractor = 4;
                 }
-                else if (lold.x <= fsp->fl.l.right_x4) {
-                    if (!fsp->repeat_mapping)
+                else if (lold.x <= fsp.fl.l.right_x4) {
+                    if (!fsp.repeat_mapping)
                         found_attractor = 3;
                     else
                         found_attractor = 6;
                 }
             }
-            else if (labs(multiply(-FROTH_LSLOPE,lold.x,bitshift)-fsp->fl.l.a-lold.y) < FROTH_LCLOSE)
+            else if (labs(multiply(-FROTH_LSLOPE,lold.x,bitshift)-fsp.fl.l.a-lold.y) < FROTH_LCLOSE)
             {
-                if (!fsp->repeat_mapping && fsp->attractors == 2)
+                if (!fsp.repeat_mapping && fsp.attractors == 2)
                     found_attractor = 2;
-                else if (fsp->repeat_mapping && fsp->attractors == 3)
+                else if (fsp.repeat_mapping && fsp.attractors == 3)
                     found_attractor = 2;
-                else if (lold.x >= fsp->fl.l.left_x3) {
-                    if (!fsp->repeat_mapping)
+                else if (lold.x >= fsp.fl.l.left_x3) {
+                    if (!fsp.repeat_mapping)
                         found_attractor = 3;
                     else
                         found_attractor = 5;
                 }
-                else if (lold.x <= fsp->fl.l.left_x4) {
-                    if (!fsp->repeat_mapping)
+                else if (lold.x <= fsp.fl.l.left_x4) {
+                    if (!fsp.repeat_mapping)
                         found_attractor = 2;
                     else
                         found_attractor = 3;
@@ -2224,16 +2211,16 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
     {
         if (colors >= 256)
         {
-            if (!fsp->altcolor)
+            if (!fsp.altcolor)
             {
-                if (coloriter > fsp->shades)
-                    coloriter = fsp->shades;
+                if (coloriter > fsp.shades)
+                    coloriter = fsp.shades;
             }
             else
-                coloriter = fsp->shades * coloriter / maxit;
+                coloriter = fsp.shades * coloriter / maxit;
             if (coloriter == 0)
                 coloriter = 1;
-            coloriter += fsp->shades * (found_attractor-1);
+            coloriter += fsp.shades * (found_attractor-1);
         }
         else if (colors >= 16)
         {   /* only alternate coloring scheme available for 16 colors */
@@ -2243,7 +2230,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
             /* Since their are only a few possiblities, just handle each case. */
             /* This is a mostly guess work here. */
             lshade = (coloriter<<16)/maxit;
-            if (fsp->attractors != 6) /* either 2 or 3 attractors */
+            if (fsp.attractors != 6) /* either 2 or 3 attractors */
             {
                 if (lshade < 2622)       /* 0.04 */
                     coloriter = 1;
@@ -2310,13 +2297,13 @@ int froth_per_orbit(void)
 {
     if (!integerfractal) /* fp mode */
     {
-        g_new.x = tempsqrx - tempsqry - old.x - fsp->fl.f.a*old.y;
-        g_new.y = 2.0*old.x*old.y - fsp->fl.f.a*old.x + old.y;
-        if (fsp->repeat_mapping)
+        g_new.x = tempsqrx - tempsqry - old.x - fsp.fl.f.a*old.y;
+        g_new.y = 2.0*old.x*old.y - fsp.fl.f.a*old.x + old.y;
+        if (fsp.repeat_mapping)
         {
             old = g_new;
-            g_new.x = sqr(old.x) - sqr(old.y) - old.x - fsp->fl.f.a*old.y;
-            g_new.y = 2.0*old.x*old.y - fsp->fl.f.a*old.x + old.y;
+            g_new.x = sqr(old.x) - sqr(old.y) - old.x - fsp.fl.f.a*old.y;
+            g_new.y = 2.0*old.x*old.y - fsp.fl.f.a*old.x + old.y;
         }
 
         if ((tempsqrx=sqr(g_new.x)) + (tempsqry=sqr(g_new.y)) >= rqlim)
@@ -2325,15 +2312,15 @@ int froth_per_orbit(void)
     }
     else  /* integer mode */
     {
-        lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a,lold.y,bitshift);
-        lnew.y = lold.y + (multiply(lold.x,lold.y,bitshift)<<1) - multiply(fsp->fl.l.a,lold.x,bitshift);
-        if (fsp->repeat_mapping)
+        lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a,lold.y,bitshift);
+        lnew.y = lold.y + (multiply(lold.x,lold.y,bitshift)<<1) - multiply(fsp.fl.l.a,lold.x,bitshift);
+        if (fsp.repeat_mapping)
         {
             if ((ltempsqrx=lsqr(lnew.x)) + (ltempsqry=lsqr(lnew.y)) >= llimit)
                 return 1;
             lold = lnew;
-            lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a,lold.y,bitshift);
-            lnew.y = lold.y + (multiply(lold.x,lold.y,bitshift)<<1) - multiply(fsp->fl.l.a,lold.x,bitshift);
+            lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a,lold.y,bitshift);
+            lnew.y = lold.y + (multiply(lold.x,lold.y,bitshift)<<1) - multiply(fsp.fl.l.a,lold.x,bitshift);
         }
         if ((ltempsqrx=lsqr(lnew.x)) + (ltempsqry=lsqr(lnew.y)) >= llimit)
             return 1;
