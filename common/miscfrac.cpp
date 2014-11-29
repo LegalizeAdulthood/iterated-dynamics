@@ -1382,7 +1382,7 @@ jumpout:
 
 #define CELLULAR_DONE 10
 
-static BYTE *cell_array[2];
+static std::vector<BYTE> cell_array[2];
 
 S16 r, k_1, rule_digits;
 int lstscreenflag;
@@ -1449,18 +1449,6 @@ void abort_cellular(int err, int t)
     case CELLULAR_DONE:
         break;
     }
-    if (cell_array[0] != nullptr)
-#if !defined(XFRACT) && !defined(_WIN32)
-        cell_array[0] = nullptr;
-#else
-        free((char *)cell_array[0]);
-#endif
-    if (cell_array[1] != nullptr)
-#if !defined(XFRACT) && !defined(_WIN32)
-        cell_array[1] = nullptr;
-#else
-        free((char *)cell_array[1]);
-#endif
 }
 
 int cellular() {
@@ -1571,16 +1559,18 @@ int cellular() {
 
 
     start_row = 0;
-#if !defined(XFRACT) && !defined(_WIN32)
-    /* two 4096 byte arrays, at present at most 2024 + 1 bytes should be */
-    /* needed in each array (max screen width + 1) */
-    cell_array[0] = (BYTE *)&dstack[0]; /* dstack is in general.asm */
-    cell_array[1] = (BYTE *)&boxy[0]; /* boxy is in general.asm */
-#else
-    cell_array[0] = (BYTE *)malloc(ixstop+1);
-    cell_array[1] = (BYTE *)malloc(ixstop+1);
-#endif
-    if (cell_array[0]==nullptr || cell_array[1]==nullptr) {
+    bool resized = false;
+    try
+    {
+        cell_array[0].resize(ixstop+1);
+        cell_array[1].resize(ixstop+1);
+        resized = true;
+    }
+    catch (std::bad_alloc const&)
+    {
+    }
+    if (!resized)
+    {
         abort_cellular(BAD_MEM, 0);
         return (-1);
     }
@@ -1594,12 +1584,12 @@ int cellular() {
         start_resume();
         get_resume(sizeof(start_row),&start_row,0);
         end_resume();
-        get_line(start_row,0,ixstop,cell_array[filled]);
+        get_line(start_row, 0, ixstop, &cell_array[filled][0]);
     }
     else if (nxtscreenflag && !lstscreenflag) {
         start_resume();
         end_resume();
-        get_line(iystop,0,ixstop,cell_array[filled]);
+        get_line(iystop, 0, ixstop, &cell_array[filled][0]);
         param[3] += iystop + 1;
         start_row = -1; /* after 1st iteration its = 0 */
     }
@@ -1623,7 +1613,7 @@ int cellular() {
             lstscreenflag = 1;
         else
             lstscreenflag = 0;
-        put_line(start_row,0,ixstop,cell_array[filled]);
+        put_line(start_row, 0, ixstop, &cell_array[filled][0]);
     }
     start_row++;
 
@@ -1725,7 +1715,7 @@ contloop:
 
         filled = notfilled;
         notfilled = (S16)(1-filled);
-        put_line(row,0,ixstop,cell_array[filled]);
+        put_line(row, 0, ixstop, &cell_array[filled][0]);
         if (driver_key_pressed()) {
             abort_cellular(CELLULAR_DONE, 0);
             alloc_resume(10,1);
