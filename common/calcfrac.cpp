@@ -12,6 +12,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
   and more
  -------------------------------------------------------------------- */
 #include <algorithm>
+#include <vector>
 
 #include <string.h>
 #include <limits.h>
@@ -203,7 +204,7 @@ int periodicitycheck;
 int nextsavedincr;
 long firstsavedand = 0;
 
-static BYTE *savedots = nullptr;
+static std::vector<BYTE> savedots;
 static BYTE *fillbuff;
 static int savedotslen;
 static int showdotcolor;
@@ -411,9 +412,9 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
     ct = 0;
     if (direction != JUST_A_POINT)
     {
-        if (savedots == nullptr)
+        if (savedots.empty())
         {
-            stopmsg(0,"savedots NULL");
+            stopmsg(0,"savedots empty");
             exit(0);
         }
         if (fillbuff == nullptr)
@@ -429,11 +430,11 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
         {
             if (action==SAVE)
             {
-                get_line(j,startx,stopx,savedots+ct);
+                get_line(j, startx, stopx, &savedots[0] + ct);
                 sym_fill_line(j,startx,stopx,fillbuff);
             }
             else
-                sym_put_line(j,startx,stopx,savedots+ct);
+                sym_put_line(j, startx, stopx, &savedots[0] + ct);
             ct += stopx-startx+1;
         }
         break;
@@ -442,11 +443,11 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
         {
             if (action==SAVE)
             {
-                get_line(j,startx,stopx,savedots+ct);
+                get_line(j, startx, stopx, &savedots[0] + ct);
                 sym_fill_line(j,startx,stopx,fillbuff);
             }
             else
-                sym_put_line(j,startx,stopx,savedots+ct);
+                sym_put_line(j, startx, stopx, &savedots[0] + ct);
             ct += stopx-startx+1;
         }
         break;
@@ -455,11 +456,11 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
         {
             if (action==SAVE)
             {
-                get_line(j,startx,stopx,savedots+ct);
+                get_line(j, startx, stopx, &savedots[0] + ct);
                 sym_fill_line(j,startx,stopx,fillbuff);
             }
             else
-                sym_put_line(j,startx,stopx,savedots+ct);
+                sym_put_line(j, startx, stopx, &savedots[0] + ct);
             ct += stopx-startx+1;
         }
         break;
@@ -468,11 +469,11 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
         {
             if (action==SAVE)
             {
-                get_line(j,startx,stopx,savedots+ct);
+                get_line(j, startx, stopx, &savedots[0] + ct);
                 sym_fill_line(j,startx,stopx,fillbuff);
             }
             else
-                sym_put_line(j,startx,stopx,savedots+ct);
+                sym_put_line(j, startx, stopx, &savedots[0] + ct);
             ct += stopx-startx+1;
         }
         break;
@@ -1024,10 +1025,20 @@ static void perform_worklist()
                 */
                 while ((savedotslen=sqr(showdot_width)+5*showdot_width+4) > 1000)
                     showdot_width--;
-                if ((savedots = (BYTE *)malloc(savedotslen)) != nullptr)
+                bool resized = false;
+                try
+                {
+                    savedots.resize(savedotslen);
+                    resized = true;
+                }
+                catch (std::bad_alloc const&)
+                {
+                }
+
+                if (resized)
                 {
                     savedotslen /= 2;
-                    fillbuff = savedots + savedotslen;
+                    fillbuff = &savedots[0] + savedotslen;
                     memset(fillbuff,showdotcolor,savedotslen);
                     break;
                 }
@@ -1037,7 +1048,7 @@ static void perform_worklist()
                 */
                 showdot_width--;
             }
-            if (savedots == nullptr)
+            if (savedots.empty())
                 showdot_width = -1;
             calctypetmp = calctype;
             calctype    = calctypeshowdot;
@@ -1083,10 +1094,9 @@ static void perform_worklist()
         default:
             OneOrTwoPass();
         }
-        if (savedots != nullptr)
+        if (!savedots.empty())
         {
-            free(savedots);
-            savedots = nullptr;
+            savedots.clear();
             fillbuff = nullptr;
         }
         if (check_key()) /* interrupted? */
