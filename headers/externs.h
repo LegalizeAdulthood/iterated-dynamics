@@ -428,7 +428,7 @@ extern int                   rflag;
 extern char                  rlebuf[];
 extern int                   rhombus_stack[];
 extern int                   root;
-extern _CMPLX *              roots;
+extern std::vector<_CMPLX>   roots;
 extern int                   rotate_hi;
 extern int                   rotate_lo;
 extern double                roverd;

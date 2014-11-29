@@ -117,28 +117,14 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
     floatmax = FLT_MAX;
 
     basin = 0;
-    if (roots != staticroots) {
-        free(roots);
-        roots = staticroots;
-    }
-
+    roots.resize(16);
     if (fractype==NEWTBASIN)
     {
         if (parm.y)
             basin = 2; /*stripes */
         else
             basin = 1;
-        if (degree > 16)
-        {
-            roots = (_CMPLX *) malloc(degree*sizeof(_CMPLX));
-            if (roots == nullptr)
-            {
-                roots = staticroots;
-                degree = 16;
-            }
-        }
-        else
-            roots = staticroots;
+        roots.resize(degree);
 
         /* list of roots to discover where we converged for newtbasin */
         for (i=0; i<degree; i++)

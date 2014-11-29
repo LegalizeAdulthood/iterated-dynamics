@@ -63,7 +63,7 @@ double roverd, d1overd, threshold;
 _CMPLX tmp2;
 _CMPLX coefficient;
 _CMPLX  staticroots[16]; /* roots array for degree 16 or less */
-_CMPLX  *roots = staticroots;
+std::vector<_CMPLX> roots;
 struct MPC      *MPCroots;
 long FgHalf;
 _CMPLX pwr;
