@@ -1,7 +1,4 @@
-/*
- * help.c
- *
- */
+#include <vector>
 
 #ifndef TEST /* kills all those assert macros in production version */
 #define NDEBUG
@@ -92,9 +89,9 @@ static HIST      *hist;                /* 6*MAX_HIST (96 bytes) */
 
 /* these items alloc'ed only while help is active... */
 
-static char       *buffer;           /* MAX_PAGE_SIZE (2048 bytes) */
-static LINK       *link_table;       /* 10*max_links */
-static PAGE       *page_table;       /* 4*max_pages  */
+static std::vector<char> buffer;           /* MAX_PAGE_SIZE (2048 bytes) */
+static std::vector<LINK> link_table;       /* 10*max_links */
+static std::vector<PAGE> page_table;       /* 4*max_pages  */
 
 static void help_seek(long pos)
 {
@@ -600,7 +597,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
     fread(&num_pages, sizeof(int), 1, help_file);
     assert(num_pages>0 && num_pages<=max_pages);
 
-    fread(page_table, 3*sizeof(int), num_pages, help_file);
+    fread(&page_table[0], 3*sizeof(int), num_pages, help_file);
 
     fread(&ch, sizeof(char), 1, help_file);
     len = ch;
@@ -625,11 +622,11 @@ static int help_topic(HIST *curr, HIST *next, int flags)
         if (draw_page)
         {
             help_seek(where+page_table[page].offset);
-            fread(buffer, sizeof(char), page_table[page].len, help_file);
+            fread(&buffer[0], sizeof(char), page_table[page].len, help_file);
 
             num_link = 0;
-            display_page(title, buffer, page_table[page].len, page, num_pages,
-                         page_table[page].margin, &num_link, link_table);
+            display_page(title, &buffer[0], page_table[page].len, page, num_pages,
+                         page_table[page].margin, &num_link, &link_table[0]);
 
             if (draw_page==2)
             {
@@ -673,7 +670,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
                 draw_page = 1;
             }
             else
-                do_move_link(link_table, num_link, &curr_link, nullptr, 0);
+                do_move_link(&link_table[0], num_link, &curr_link, nullptr, 0);
             break;
 
         case FIK_END:
@@ -683,11 +680,11 @@ static int help_topic(HIST *curr, HIST *next, int flags)
                 draw_page = 3;
             }
             else
-                do_move_link(link_table, num_link, &curr_link, nullptr, num_link-1);
+                do_move_link(&link_table[0], num_link, &curr_link, nullptr, num_link-1);
             break;
 
         case FIK_TAB:
-            if (!do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
+            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_key, key) &&
                     page<num_pages-1)
             {
                 ++page;
@@ -696,7 +693,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
         case FIK_SHF_TAB:
-            if (!do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
+            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_key, key) &&
                     page>0)
             {
                 --page;
@@ -705,7 +702,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
         case FIK_DOWN_ARROW:
-            if (!do_move_link(link_table, num_link, &curr_link, find_link_updown, 0) &&
+            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_updown, 0) &&
                     page<num_pages-1)
             {
                 ++page;
@@ -714,7 +711,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
         case FIK_UP_ARROW:
-            if (!do_move_link(link_table, num_link, &curr_link, find_link_updown, 1) &&
+            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_updown, 1) &&
                     page>0)
             {
                 --page;
@@ -723,11 +720,11 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
         case FIK_LEFT_ARROW:
-            do_move_link(link_table, num_link, &curr_link, find_link_leftright, 1);
+            do_move_link(&link_table[0], num_link, &curr_link, find_link_leftright, 1);
             break;
 
         case FIK_RIGHT_ARROW:
-            do_move_link(link_table, num_link, &curr_link, find_link_leftright, 0);
+            do_move_link(&link_table[0], num_link, &curr_link, find_link_leftright, 0);
             break;
 
         case FIK_ESC:         /* exit help */
@@ -783,11 +780,18 @@ int help(int action)
         return 0;
     }
 
-    buffer = (char *) malloc((long) MAX_PAGE_SIZE);
-    link_table = (LINK *) malloc(sizeof(LINK)*max_links);
-    page_table = (PAGE *) malloc(sizeof(PAGE)*max_pages);
-
-    if ((buffer == nullptr) || (nullptr == link_table) || (nullptr == page_table))
+    bool resized = false;
+    try
+    {
+        buffer.resize(MAX_PAGE_SIZE);
+        link_table.resize(max_links);
+        page_table.resize(max_pages);
+        resized = true;
+    }
+    catch (std::bad_alloc const&)
+    {
+    }
+    if (!resized)
     {
         driver_buzzer(BUZZER_ERROR);
         return 0;
@@ -898,10 +902,6 @@ int help(int action)
         }
     }
     while (action != ACTION_QUIT);
-
-    free(buffer);
-    free(link_table);
-    free(page_table);
 
     driver_unstack_screen();
     lookatmouse = oldlookatmouse;
