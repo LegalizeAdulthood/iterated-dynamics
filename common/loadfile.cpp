@@ -1,6 +1,7 @@
 /*
         loadfile.c - load an existing fractal image, control level
 */
+#include <algorithm>
 
 #include <string.h>
 #include <time.h>
@@ -490,17 +491,18 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
     if (rangeslen) /* free prior ranges */
     {
-        free(ranges);
-        ranges = nullptr;
+        ranges.clear();
         rangeslen = 0;
     }
 
     if (blk_4_info.got_data == 1)
     {
-        ranges = (int *) blk_4_info.range_data;
         rangeslen = blk_4_info.length;
+        ranges.resize(rangeslen);
+        int const *range_data = blk_4_info.range_data;
+        std::copy(range_data, range_data + rangeslen, &ranges[0]);
 #ifdef XFRACT
-        fix_ranges(ranges,rangeslen,1);
+        fix_ranges(&ranges[0], rangeslen, 1);
 #endif
     }
 

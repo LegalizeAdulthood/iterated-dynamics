@@ -236,3 +236,9 @@ add_custom_command(
         ${HELP_SRC_DIR}/help.src ${HELP_SRC_DIR}/help2.src
         ${HELP_SRC_DIR}/help3.src ${HELP_SRC_DIR}/help4.src
         ${HELP_SRC_DIR}/help5.src)
+
+# Tell MSVC not to warn us about unchecked iterators in debug builds
+if(${MSVC})
+    set_target_properties(id PROPERTIES
+        COMPILE_DEFINITIONS_DEBUG _SCL_SECURE_NO_WARNINGS)
+endif()

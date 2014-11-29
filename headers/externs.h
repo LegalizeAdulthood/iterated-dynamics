@@ -407,7 +407,7 @@ extern double                qcj;
 extern double                qck;
 extern int                   quick_calc;
 extern int                   RANDOMIZE;
-extern int *             ranges;
+extern std::vector<int>      ranges;
 extern int                   rangeslen;
 extern int                   RAY;
 extern char                  ray_name[];

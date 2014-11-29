@@ -448,9 +448,9 @@ int encoder()
             /* ranges block, 004 */
             save_info.tot_extend_len += extend_blk_len(rangeslen * 2);
 #ifdef XFRACT
-            fix_ranges(ranges, rangeslen, 0);
+            fix_ranges(&ranges[0], rangeslen, 0);
 #endif
-            if (!put_extend_blk(4, rangeslen * 2, (char *) ranges))
+            if (!put_extend_blk(4, rangeslen * 2, (char *) &ranges[0]))
                 goto oops;
 
         }

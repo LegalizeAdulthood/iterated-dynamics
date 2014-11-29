@@ -1,6 +1,8 @@
 /*
         Command-line / Command-File Parser Routines
 */
+#include <vector>
+
 #include <string>
 #include <string.h>
 #include <ctype.h>
@@ -99,7 +101,7 @@ long    bailout;                /* user input bailout value */
 enum bailouts bailoutest;       /* test used for determining bailout */
 double  inversion[3];           /* radius, xcenter, ycenter */
 int     rotate_lo,rotate_hi;    /* cycling color range      */
-int *ranges;                    /* iter->color ranges mapping */
+std::vector<int> ranges;        /* iter->color ranges mapping */
 int     rangeslen = 0;          /* size of ranges array     */
 BYTE *mapdacbox = nullptr;         /* map= (default colors)    */
 int     colorstate;             /* 0, g_dac_box matches default (bios or map=) */
@@ -462,8 +464,9 @@ static void initvars_fractal()          /* init vars affecting calculation */
     set_trig_array(1, "sqr");
     set_trig_array(2, "sinh");
     set_trig_array(3, "cosh");
-    if (rangeslen) {
-        free((char *)ranges);
+    if (rangeslen)
+    {
+        ranges.clear();
         rangeslen = 0;
     }
     usemag = 1;                          /* use center-mag, not corners */
@@ -1632,8 +1635,16 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        ranges = (int *)malloc(sizeof(int)*entries);
-        if (ranges == nullptr)
+        bool resized = false;
+        try
+        {
+            ranges.resize(entries);
+            resized = true;
+        }
+        catch (std::bad_alloc const&)
+        {
+        }
+        if (!resized)
         {
             stopmsg(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
             return -1;

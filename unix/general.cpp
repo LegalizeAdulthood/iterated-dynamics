@@ -648,7 +648,7 @@ static void getFloat(float *dst, unsigned char **src, int dir)
 }
 
 /*
- * Fix up the ranges data.
+ * Fix up the ranges data for byte ordering.
  */
 void
 fix_ranges(int *ranges, int num, int dir)
