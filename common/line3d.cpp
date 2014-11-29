@@ -135,7 +135,7 @@ int RAY = 0;        /* Flag to generate Ray trace compatible files in 3d */
 int BRIEF = 0;      /* 1 = short ray trace files */
 
 /* array of min and max x values used in triangle fill */
-static struct minmax *minmax_x;
+static std::vector<minmax> minmax_x;
 VECTOR view;                /* position of observer for perspective */
 VECTOR cross;
 static VECTOR tmpcross;
@@ -2455,7 +2455,7 @@ static int line3dmem(void)
         fraction = (BYTE *)(f_lastrow + xdots);
         check_extra += sizeof(*fraction) * xdots;
     }
-    minmax_x = (struct minmax *) nullptr;
+    minmax_x.clear();
 
     /* these fill types call putatriangle which uses minmax_x */
     if (FILLTYPE == 2 || FILLTYPE == 3 || FILLTYPE == 5 || FILLTYPE == 6)
@@ -2469,20 +2469,19 @@ static int line3dmem(void)
                 stopmsg(0,"malloc minmax");
             /* not using extra segment so decrement check_extra */
             check_extra -= sizeof(struct minmax) * ydots;
-            if (got_mem == nullptr)
-                got_mem = (struct minmax *)(malloc(OLDMAXPIXELS *
-                                                   sizeof(struct minmax)));
-            if (got_mem)
-                minmax_x = got_mem;
-            else
-                return -1;
         }
-        else /* ok to use extra segment */
+        bool resized = false;
+        try
         {
-            if (pot16bit)
-                minmax_x = (struct minmax *)(fraction + xdots);
-            else
-                minmax_x = (struct minmax *)(f_lastrow + xdots);
+            minmax_x.resize(OLDMAXPIXELS);
+            resized = true;
+        }
+        catch (std::bad_alloc const&)
+        {
+        }
+        if (!resized)
+        {
+            return -1;
         }
     }
     if (debugflag == 2222 || check_extra > (1L << 16))
