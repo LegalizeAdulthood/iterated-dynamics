@@ -16,6 +16,7 @@
     Southington, CT 06489
     (203) 276-9721
 */
+#include <string>
 
 #include <string.h>
 #include <ctype.h>
@@ -3535,13 +3536,10 @@ int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
             }
         }
         if (SymStr[i].s[0] == (char) 0 && report_bad_sym) {
-            char * msgbuf = (char *) malloc((int) strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
-                                            + (int) strlen(sym_buf) + 6);
-            strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
-            strcat(msgbuf, ":\n   ");
-            strcat(msgbuf, sym_buf);
-            stopmsg(STOPMSG_FIXED_FONT, msgbuf);
-            free(msgbuf);
+            std::string msgbuf{ParseErrs(PE_INVALID_SYM_USING_NOSYM)};
+            msgbuf += ":\n   ";
+            msgbuf += sym_buf;
+            stopmsg(STOPMSG_FIXED_FONT, msgbuf.c_str());
         }
     }
     if (c != '{') {
