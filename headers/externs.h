@@ -305,7 +305,7 @@ extern MOREPARAMS            moreparams[];
 extern struct MP             mpAp1deg;
 extern struct MP             mpAplusOne;
 extern struct MPC            MPCone;
-extern struct MPC *          MPCroots;
+extern std::vector<MPC>      MPCroots;
 extern struct MPC            mpctmpparm;
 extern struct MP             mpd1overd;
 extern struct MP             mpone;

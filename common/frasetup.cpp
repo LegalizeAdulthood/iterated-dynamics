@@ -141,17 +141,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
         else
             basin = 1;
 
-        if (degree > 16)
-        {
-            MPCroots = (struct MPC *) malloc(degree*sizeof(struct MPC));
-            if (MPCroots == nullptr)
-            {
-                MPCroots = (struct MPC *)staticroots;
-                degree = 16;
-            }
-        }
-        else
-            MPCroots = (struct MPC *)staticroots;
+        MPCroots.resize(degree);
 
         /* list of roots to discover where we converged for newtbasin */
         for (i=0; i<degree; i++)

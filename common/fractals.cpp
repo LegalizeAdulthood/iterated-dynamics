@@ -64,7 +64,7 @@ _CMPLX tmp2;
 _CMPLX coefficient;
 _CMPLX  staticroots[16]; /* roots array for degree 16 or less */
 std::vector<_CMPLX> roots;
-struct MPC      *MPCroots;
+std::vector<MPC> MPCroots;
 long FgHalf;
 _CMPLX pwr;
 int     bitshiftless1;                  /* bit shift less 1 */
