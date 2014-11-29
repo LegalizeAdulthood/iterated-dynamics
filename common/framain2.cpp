@@ -1,3 +1,5 @@
+#include <vector>
+
 #include <string.h>
 #include <time.h>
 
@@ -37,7 +39,9 @@ static void _fastcall save_history_info(void);
 int finishrow=0;    /* save when this row is finished */
 U16 evolve_handle = 0;
 char old_stdcalcmode;
-static char *savezoom;
+static std::vector<int> save_boxx;
+static std::vector<int> save_boxy;
+static std::vector<int> save_boxvalues;
 static  int        historyptr = -1;     /* user pointer into history tbl  */
 static  int        saveptr = 0;         /* save ptr into history tbl      */
 static  int        historyflag;         /* are we backing off in history? */
@@ -1962,26 +1966,25 @@ static int call_line3d(BYTE *pixels, int linelen)
 
 static void note_zoom()
 {
-    if (boxcount) { /* save zoombox stuff in mem before encode (mem reused) */
-        savezoom = (char *)malloc((long)(5*boxcount));
-        if (savezoom == nullptr)
-            clear_zoombox(); /* not enuf mem so clear the box */
-        else {
-            reset_zoom_corners(); /* reset these to overall image, not box */
-            memcpy(savezoom,boxx,boxcount*2);
-            memcpy(savezoom+boxcount*2,boxy,boxcount*2);
-            memcpy(savezoom+boxcount*4,boxvalues,boxcount);
-        }
+    if (boxcount)  /* save zoombox stuff in mem before encode (mem reused) */
+    {
+        save_boxx.resize(boxcount);
+        save_boxy.resize(boxcount);
+        save_boxvalues.resize(boxcount);
+        reset_zoom_corners();   /* reset these to overall image, not box */
+        std::copy(&boxx[0], &boxx[boxcount], save_boxx.begin());
+        std::copy(&boxy[0], &boxy[boxcount], save_boxy.begin());
+        std::copy(&boxvalues[0], &boxvalues[boxcount], save_boxvalues.begin());
     }
 }
 
 static void restore_zoom()
 {
-    if (boxcount) { /* restore zoombox arrays */
-        memcpy(boxx,savezoom,boxcount*2);
-        memcpy(boxy,savezoom+boxcount*2,boxcount*2);
-        memcpy(boxvalues,savezoom+boxcount*4,boxcount);
-        free(savezoom);
+    if (boxcount) /* restore zoombox arrays */
+    {
+        std::copy(save_boxx.begin(), save_boxx.end(), &boxx[0]);
+        std::copy(save_boxy.begin(), save_boxy.end(), &boxy[0]);
+        std::copy(save_boxvalues.begin(), save_boxvalues.end(), &boxvalues[0]);
         drawbox(1); /* get the xxmin etc variables recalc'd by redisplaying */
     }
 }
