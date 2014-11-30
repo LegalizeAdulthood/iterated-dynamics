@@ -228,7 +228,7 @@ extern void writedisk(int, int, int);
 extern void targa_readdisk(unsigned int ,unsigned int ,BYTE *,BYTE *,BYTE *);
 extern void targa_writedisk(unsigned int ,unsigned int ,BYTE ,BYTE ,BYTE);
 extern void dvid_status(int line, const char *msg);
-extern int  _fastcall common_startdisk(long, long, int);
+extern int  common_startdisk(long, long, int);
 extern int FromMemDisk(long,int,void *);
 extern int ToMemDisk(long,int,void *);
 
@@ -262,7 +262,7 @@ extern void displayc(int, int, int, int, int);
 
 extern int savetodisk(char *);
 extern int encoder(void);
-extern int _fastcall new_to_old(int new_fractype);
+extern int new_to_old(int new_fractype);
 
 /*  evolve -- C file prototypes */
 
@@ -310,16 +310,16 @@ extern int add_worklist(int ,int, int ,int ,int ,int ,int ,int);
 extern void tidy_worklist(void);
 extern void get_julia_attractor(double ,double);
 extern int ssg_blocksize(void);
-extern void _fastcall symPIplot(int ,int ,int);
-extern void _fastcall symPIplot2J(int ,int ,int);
-extern void _fastcall symPIplot4J(int ,int ,int);
-extern void _fastcall symplot2(int ,int ,int);
-extern void _fastcall symplot2Y(int ,int ,int);
-extern void _fastcall symplot2J(int ,int ,int);
-extern void _fastcall symplot4(int ,int ,int);
-extern void _fastcall symplot2basin(int ,int ,int);
-extern void _fastcall symplot4basin(int ,int ,int);
-extern void _fastcall noplot(int ,int ,int);
+extern void symPIplot(int ,int ,int);
+extern void symPIplot2J(int ,int ,int);
+extern void symPIplot4J(int ,int ,int);
+extern void symplot2(int ,int ,int);
+extern void symplot2Y(int ,int ,int);
+extern void symplot2J(int ,int ,int);
+extern void symplot4(int ,int ,int);
+extern void symplot2basin(int ,int ,int);
+extern void symplot4basin(int ,int ,int);
+extern void noplot(int ,int ,int);
 extern void fractal_floattobf(void);
 extern void adjust_cornerbf(void);
 extern void set_grid_pointers(void);
@@ -647,7 +647,7 @@ extern int    EnQueueFloat(float,  float);
 /*  line3d -- C file prototypes */
 
 extern int line3d(BYTE *,unsigned int);
-extern int _fastcall targa_color(int ,int ,int);
+extern int targa_color(int ,int ,int);
 extern int targa_validate(char *);
 extern int startdisk1(char *, FILE *, int);
 
@@ -712,8 +712,8 @@ extern int plotorbits2dfloat(void);
 
 /*  lsys -- C file prototypes */
 
-extern LDBL  _fastcall getnumber(char **);
-extern int _fastcall ispow2(int);
+extern LDBL  getnumber(char **);
+extern int ispow2(int);
 extern int Lsystem(void);
 extern int LLoad(void);
 
@@ -991,10 +991,10 @@ extern int fill_if_group(int endif_index, JUMP_PTRS_ST *jump_data);
 /*  plot3d -- C file prototypes */
 
 extern void cdecl draw_line(int ,int ,int ,int ,int);
-extern void _fastcall plot3dsuperimpose16(int ,int ,int);
-extern void _fastcall plot3dsuperimpose256(int ,int ,int);
-extern void _fastcall plotIFS3dsuperimpose256(int ,int ,int);
-extern void _fastcall plot3dalternate(int ,int ,int);
+extern void plot3dsuperimpose16(int ,int ,int);
+extern void plot3dsuperimpose256(int ,int ,int);
+extern void plotIFS3dsuperimpose256(int ,int ,int);
+extern void plot3dalternate(int ,int ,int);
 extern void plot_setup(void);
 
 /*  printer -- C file prototypes */
@@ -1159,8 +1159,8 @@ extern void chgboxi(int ,int);
 extern void zoomout(void);
 extern void aspectratio_crop(float ,float);
 extern int init_pan_or_recalc(int);
-extern void _fastcall drawlines(struct coords, struct coords, int, int);
-extern void _fastcall addbox(struct coords);
+extern void drawlines(struct coords, struct coords, int, int);
+extern void addbox(struct coords);
 extern void clearbox(void);
 extern void dispbox(void);
 

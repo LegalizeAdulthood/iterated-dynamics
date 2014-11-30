@@ -18,17 +18,17 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 /* routines in this module      */
 
 static void set_Plasma_palette(void);
-static U16 _fastcall adjust(int xa,int ya,int x,int y,int xb,int yb);
-static void _fastcall subDivide(int x1,int y1,int x2,int y2);
-static int _fastcall new_subD(int x1,int y1,int x2,int y2, int recur);
+static U16 adjust(int xa,int ya,int x,int y,int xb,int yb);
+static void subDivide(int x1,int y1,int x2,int y2);
+static int new_subD(int x1,int y1,int x2,int y2, int recur);
 static void verhulst(void);
 static void Bif_Period_Init(void);
-static int  _fastcall Bif_Periodic(long);
+static int  Bif_Periodic(long);
 static void set_Cellular_palette(void);
 
-U16(_fastcall *getpix)(int,int)  = (U16(_fastcall *)(int,int))getcolor;
+U16(*getpix)(int,int)  = (U16(*)(int,int))getcolor;
 
-typedef void (_fastcall *PLOT)(int,int,int);
+typedef void (*PLOT)(int,int,int);
 
 /***************** standalone engine for "test" ********************/
 
@@ -100,7 +100,7 @@ U16 rand16(void)
     return (value);
 }
 
-void _fastcall putpot(int x, int y, U16 color)
+void putpot(int x, int y, U16 color)
 {
     if (color < 1)
         color = 1;
@@ -113,7 +113,7 @@ void _fastcall putpot(int x, int y, U16 color)
 }
 
 /* fixes border */
-void _fastcall putpotborder(int x, int y, U16 color)
+void putpotborder(int x, int y, U16 color)
 {
     if ((x==0) || (y==0) || (x==xdots-1) || (y==ydots-1))
         color = (U16)outside;
@@ -121,7 +121,7 @@ void _fastcall putpotborder(int x, int y, U16 color)
 }
 
 /* fixes border */
-void _fastcall putcolorborder(int x, int y, int color)
+void putcolorborder(int x, int y, int color)
 {
     if ((x==0) || (y==0) || (x==xdots-1) || (y==ydots-1))
         color = outside;
@@ -130,7 +130,7 @@ void _fastcall putcolorborder(int x, int y, int color)
     putcolor(x,y,color);
 }
 
-U16 _fastcall getpot(int x, int y)
+U16 getpot(int x, int y)
 {
     U16 color;
 
@@ -141,7 +141,7 @@ U16 _fastcall getpot(int x, int y)
 
 static int plasma_check;                        /* to limit kbd checking */
 
-static U16 _fastcall adjust(int xa,int ya,int x,int y,int xb,int yb)
+static U16 adjust(int xa,int ya,int x,int y,int xb,int yb)
 {
     S32 pseudorandom;
     pseudorandom = ((S32)iparmx)*((rand15()-16383));
@@ -163,7 +163,7 @@ static U16 _fastcall adjust(int xa,int ya,int x,int y,int xb,int yb)
 }
 
 
-static int _fastcall new_subD(int x1,int y1,int x2,int y2, int recur)
+static int new_subD(int x1,int y1,int x2,int y2, int recur)
 {
     int x,y;
     int nx1;
@@ -267,7 +267,7 @@ static int _fastcall new_subD(int x1,int y1,int x2,int y2, int recur)
     return (0);
 }
 
-static void _fastcall subDivide(int x1,int y1,int x2,int y2)
+static void subDivide(int x1,int y1,int x2,int y2)
 {
     int x,y;
     S32 v,i;
@@ -366,7 +366,7 @@ int plasma()
                 plot    = putcolorborder;
             else
                 plot    = putcolor;
-            getpix  = (U16(_fastcall *)(int,int))getcolor;
+            getpix  = (U16(*)(int,int))getcolor;
         }
     }
     else
@@ -375,7 +375,7 @@ int plasma()
             plot    = putcolorborder;
         else
             plot    = putcolor;
-        getpix  = (U16(_fastcall *)(int,int))getcolor;
+        getpix  = (U16(*)(int,int))getcolor;
     }
     srand(rseed);
     if (!rflag) ++rseed;
@@ -448,7 +448,7 @@ done:
         pot16bit = OldPot16bit;
     }
     plot    = putcolor;
-    getpix  = (U16(_fastcall *)(int,int))getcolor;
+    getpix  = (U16(*)(int,int))getcolor;
     return (n);
 }
 
@@ -953,7 +953,7 @@ static void Bif_Period_Init()
     }
 }
 
-static int _fastcall Bif_Periodic(long time)   /* Bifurcation Population Periodicity Check */
+static int Bif_Periodic(long time)   /* Bifurcation Population Periodicity Check */
 /* Returns : 1 if periodicity found, else 0 */
 {
     if ((time & Bif_savedand) == 0)      /* time to save a new value */

@@ -55,7 +55,7 @@ void SetAspect(double aspect)
     }
 }
 
-void _fastcall c_putcolor(int x, int y, int color)
+void c_putcolor(int x, int y, int color)
 {
     /* avoid writing outside window */
     if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)

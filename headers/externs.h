@@ -125,11 +125,11 @@ extern char                  drawmode;
 extern BYTE                  dstack[];
 extern std::vector<double>   dx0;
 extern std::vector<double>   dx1;
-extern double (_fastcall *   dxpixel)(void); /* set in FRACTALS.C */
+extern double (*   dxpixel)(void); /* set in FRACTALS.C */
 extern double                dxsize;
 extern std::vector<double>   dy0;
 extern std::vector<double>   dy1;
-extern double (_fastcall *   dypixel)(void); /* set in FRACTALS.C */
+extern double (*   dypixel)(void); /* set in FRACTALS.C */
 extern double                dysize;
 //extern int                   EPSFileType;
 extern int                   escape_exit;
@@ -269,10 +269,10 @@ extern long                  ltempsqry;
 extern _LCMPLX               ltmp;
 extern std::vector<long>     lx0;
 extern std::vector<long>     lx1;
-extern long (_fastcall *     lxpixel)(void); /* set in FRACTALS.C */
+extern long (*     lxpixel)(void); /* set in FRACTALS.C */
 extern std::vector<long>     ly0;
 extern std::vector<long>     ly1;
-extern long (_fastcall *     lypixel)(void); /* set in FRACTALS.C */
+extern long (*     lypixel)(void); /* set in FRACTALS.C */
 extern int                   lzw[2];
 extern long                  l_at_rad;
 extern MATRIX                m;
@@ -378,7 +378,7 @@ extern int                   g_patch_level;
 extern int                   periodicitycheck;
 extern struct fls *      pfls;
 extern int                   pixelpi;
-extern void (_fastcall *     plot)(int,int,int);
+extern void (*     plot)(int,int,int);
 extern double                plotmx1;
 extern double                plotmx2;
 extern double                plotmy1;
@@ -399,7 +399,7 @@ extern U16                   prmboxhandle;
 extern int                   prmboxcount;
 extern int                   pseudox;
 extern int                   pseudoy;
-extern void (_fastcall *     putcolor)(int,int,int);
+extern void (*     putcolor)(int,int,int);
 extern _CMPLX                pwr;
 extern double                qc;
 extern double                qci;
@@ -464,7 +464,7 @@ extern int                   Slope;
 extern int                   soundflag;
 extern int                   sound_rollover;
 extern char                  speed_prompt[];
-extern void (_fastcall*      standardplot)(int,int,int);
+extern void (*      standardplot)(int,int,int);
 extern char                  start_showorbit;
 extern int                   started_resaves;
 extern _CMPLX                staticroots[];

@@ -61,12 +61,12 @@ static long memoffset = 0;
 static long oldmemoffset = 0;
 static BYTE *membufptr;
 
-static void _fastcall  findload_cache(long);
-static struct cache * _fastcall  find_cache(long);
+static void findload_cache(long);
+static struct cache * find_cache(long);
 static void  write_cache_lru(void);
-static void _fastcall  mem_putc(BYTE);
+static void mem_putc(BYTE);
 static BYTE  mem_getc(void);
-static void _fastcall  mem_seek(long);
+static void mem_seek(long);
 
 int startdisk()
 {
@@ -113,7 +113,7 @@ int targa_startdisk(FILE *targafp, int overhead)
     return i;
 }
 
-int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
+int common_startdisk(long newrowsize, long newcolsize, int colors)
 {
     int i, freemem;
     long memorysize, offset;
@@ -473,7 +473,7 @@ void targa_writedisk(unsigned int col, unsigned int row,
     writedisk(col+1, row, red);
 }
 
-static void _fastcall  findload_cache(long offset) /* used by read/write */
+static void findload_cache(long offset) /* used by read/write */
 {
     unsigned int tbloffset;
     int i, j;
@@ -576,7 +576,7 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
 }
 
 /* lookup for write_cache_lru */
-static struct cache * _fastcall  find_cache(long offset)
+static struct cache * find_cache(long offset)
 {
     unsigned int tbloffset;
     struct cache *ptr1;
@@ -688,7 +688,7 @@ write_stuff:
    sequences with a seek between them.  A mem_getc is never followed by
    a mem_putc nor v.v. without a seek between them.
    */
-static void _fastcall  mem_seek(long offset)        /* mem seek */
+static void mem_seek(long offset)        /* mem seek */
 {
     offset += headerlength;
     memoffset = offset >> BLOCKSHIFT;
@@ -714,7 +714,7 @@ static BYTE  mem_getc()                     /* memory get_char */
     return (*(membufptr++));
 }
 
-static void _fastcall mem_putc(BYTE c)     /* memory get_char */
+static void mem_putc(BYTE c)     /* memory get_char */
 {
     if (membufptr - membuf >= BLOCKLEN)
     {

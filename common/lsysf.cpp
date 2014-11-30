@@ -26,7 +26,7 @@ struct lsys_cmd {
 #define sins_f ((LDBL *)(boxy))
 #define coss_f (((LDBL *)(boxy)+50))
 
-static struct lsys_cmd * _fastcall findsize(struct lsys_cmd *,struct lsys_turtlestatef *, struct lsys_cmd **,int);
+static struct lsys_cmd * findsize(struct lsys_cmd *,struct lsys_turtlestatef *, struct lsys_cmd **,int);
 
 /* Define blanks for portability */
 #if defined(XFRACT) || defined(_WIN32)
@@ -280,7 +280,7 @@ static void lsysf_dodrawlt(struct lsys_turtlestatef *cmd)
         cmd->curcolor = 1;
 }
 
-static struct lsys_cmd * _fastcall
+static struct lsys_cmd *
 findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd **rules, int depth)
 {
     struct lsys_cmd **rulind;
@@ -356,7 +356,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
     return command;
 }
 
-int _fastcall
+int
 lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd **rules, int depth)
 {
     float horiz,vert;
@@ -414,7 +414,7 @@ lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct l
     return 1;
 }
 
-struct lsys_cmd * _fastcall
+struct lsys_cmd *
 drawLSysF(struct lsys_cmd *command,struct lsys_turtlestatef *ts, struct lsys_cmd **rules,int depth)
 {
     struct lsys_cmd **rulind;
@@ -738,7 +738,7 @@ LSysFDrawTransform(char *s, struct lsys_turtlestatef *ts)
     return doub;
 }
 
-void _fastcall lsysf_dosincos(void)
+void lsysf_dosincos(void)
 {
     LDBL locaspect;
     LDBL TWOPI = 2.0 * PI;

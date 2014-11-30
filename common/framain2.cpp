@@ -33,8 +33,8 @@ static  void note_zoom(void);
 static  void restore_zoom(void);
 static  void move_zoombox(int keynum);
 static  void cmp_line_cleanup(void);
-static void _fastcall restore_history_info(int);
-static void _fastcall save_history_info(void);
+static void restore_history_info(int);
+static void save_history_info(void);
 
 int finishrow=0;    /* save when this row is finished */
 U16 evolve_handle = 0;
@@ -2144,7 +2144,7 @@ int key_count(int keynum)
     return ctr;
 }
 
-static void _fastcall save_history_info()
+static void save_history_info()
 {
     HISTORY current,last;
     if (maxhistory <= 0 || bf_math || history == 0)
@@ -2313,7 +2313,7 @@ static void _fastcall save_history_info()
     }
 }
 
-static void _fastcall restore_history_info(int i)
+static void restore_history_info(int i)
 {
     HISTORY last;
     if (maxhistory <= 0 || bf_math || history == 0)

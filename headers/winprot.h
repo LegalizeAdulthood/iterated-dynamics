@@ -78,7 +78,7 @@ extern void cleartempmsg(void);
 extern void freetempmsg(void);
 extern int FromMemDisk(long, int, void *);
 extern int ToMemDisk(long, int, void *);
-extern int _fastcall common_startdisk(long, long, int);
+extern int common_startdisk(long, long, int);
 extern long cdecl normalize(char *);
 extern void drawbox(int);
 
@@ -105,8 +105,8 @@ extern int key_count(int);
 
 extern void dispbox(void);
 extern void clearbox(void);
-extern void _fastcall addbox(struct coords);
-extern void _fastcall drawlines(struct coords, struct coords, int, int);
+extern void addbox(struct coords);
+extern void drawlines(struct coords, struct coords, int, int);
 extern int showvidlength(void);
 
 extern int soundon(int);

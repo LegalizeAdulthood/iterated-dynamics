@@ -3328,7 +3328,7 @@ MandelbrotMix4fpFractal(void) /* from formula by Jim Muth */
  * cost of two additions and two multiplications for each component,
  * but works at any resolution.
  *
- * With Microsoft C's _fastcall keyword, the function call overhead
+ * The function call overhead
  * appears to be negligible. It also appears that the speed advantage
  * of the lookup vs the calculation is negligible on machines with
  * coprocessors. Bert Tyler's original implementation was designed for
@@ -3338,57 +3338,57 @@ MandelbrotMix4fpFractal(void) /* from formula by Jim Muth */
  */
 
 /* Real component, grid lookup version - requires dx0/dx1 arrays */
-static double _fastcall dxpixel_grid(void)
+static double dxpixel_grid(void)
 {
     return dx0[col]+dx1[row];
 }
 
 /* Real component, calculation version - does not require arrays */
-static double _fastcall dxpixel_calc(void)
+static double dxpixel_calc(void)
 {
     return (double)(xxmin + col*delxx + row*delxx2);
 }
 
 /* Imaginary component, grid lookup version - requires dy0/dy1 arrays */
-static double _fastcall dypixel_grid(void)
+static double dypixel_grid(void)
 {
     return dy0[row]+dy1[col];
 }
 
 /* Imaginary component, calculation version - does not require arrays */
-static double _fastcall dypixel_calc(void)
+static double dypixel_calc(void)
 {
     return (double)(yymax - row*delyy - col*delyy2);
 }
 
 /* Real component, grid lookup version - requires lx0/lx1 arrays */
-static long _fastcall lxpixel_grid(void)
+static long lxpixel_grid(void)
 {
     return lx0[col]+lx1[row];
 }
 
 /* Real component, calculation version - does not require arrays */
-static long _fastcall lxpixel_calc(void)
+static long lxpixel_calc(void)
 {
     return xmin + col*delx + row*delx2;
 }
 
 /* Imaginary component, grid lookup version - requires ly0/ly1 arrays */
-static long _fastcall lypixel_grid(void)
+static long lypixel_grid(void)
 {
     return ly0[row]+ly1[col];
 }
 
 /* Imaginary component, calculation version - does not require arrays */
-static long _fastcall lypixel_calc(void)
+static long lypixel_calc(void)
 {
     return ymax - row*dely - col*dely2;
 }
 
-double (_fastcall *dxpixel)(void) = dxpixel_calc;
-double (_fastcall *dypixel)(void) = dypixel_calc;
-long (_fastcall *lxpixel)(void) = lxpixel_calc;
-long (_fastcall *lypixel)(void) = lypixel_calc;
+double (*dxpixel)(void) = dxpixel_calc;
+double (*dypixel)(void) = dypixel_calc;
+long (*lxpixel)(void) = lxpixel_calc;
+long (*lypixel)(void) = lypixel_calc;
 
 void set_pixel_calc_functions(void)
 {

@@ -60,7 +60,7 @@ union mem {
 union mem handletable[MAXHANDLES];
 
 /* Routines in this module */
-static int _fastcall  CheckDiskSpace(long howmuch);
+static int CheckDiskSpace(long howmuch);
 static int check_for_mem(int stored_at, long howmuch);
 static U16 next_handle(void);
 static int CheckBounds(long start, long length, U16 handle);
@@ -81,7 +81,7 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle);
 
 /* Memory handling support routines */
 
-static int _fastcall CheckDiskSpace(long howmuch)
+static int CheckDiskSpace(long howmuch)
 {
     /* TODO */
     return TRUE;

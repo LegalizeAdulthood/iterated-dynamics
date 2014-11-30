@@ -16,18 +16,18 @@ struct lsys_cmd {
     char ch;
 };
 
-static int _fastcall readLSystemFile(char *);
-static void _fastcall free_rules_mem(void);
-static int _fastcall rule_present(char symbol);
-static int _fastcall save_rule(char *,char **);
-static int _fastcall append_rule(char *rule, int index);
+static int readLSystemFile(char *);
+static void free_rules_mem(void);
+static int rule_present(char symbol);
+static int save_rule(char *,char **);
+static int append_rule(char *rule, int index);
 static void free_lcmds(void);
-static struct lsys_cmd * _fastcall findsize(struct lsys_cmd *,struct lsys_turtlestatei *, struct lsys_cmd **,int);
+static struct lsys_cmd * findsize(struct lsys_cmd *,struct lsys_turtlestatei *, struct lsys_cmd **,int);
 static struct lsys_cmd * drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd **rules,int depth);
 static int lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth);
 static struct lsys_cmd *LSysISizeTransform(char *s, struct lsys_turtlestatei *ts);
 static struct lsys_cmd *LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts);
-static void _fastcall lsysi_dosincos(void);
+static void lsysi_dosincos(void);
 
 static void lsysi_doslash(struct lsys_turtlestatei *cmd);
 static void lsysi_dobslash(struct lsys_turtlestatei *cmd);
@@ -51,12 +51,12 @@ char maxangle;
 static char loaded=0;
 
 
-int _fastcall ispow2(int n)
+int ispow2(int n)
 {
     return (n == (n & -n));
 }
 
-LDBL _fastcall getnumber(char **str)
+LDBL getnumber(char **str)
 {
     char numstr[30];
     LDBL ret;
@@ -106,7 +106,7 @@ LDBL _fastcall getnumber(char **str)
     return ret;
 }
 
-static int _fastcall readLSystemFile(char *str)
+static int readLSystemFile(char *str)
 {
     int c;
     char **rulind;
@@ -325,14 +325,14 @@ int LLoad(void)
     return 0;
 }
 
-static void _fastcall free_rules_mem(void)
+static void free_rules_mem(void)
 {
     int i;
     for (i=0; i<MAXRULES; ++i)
         if (ruleptrs[i]) free(ruleptrs[i]);
 }
 
-static int _fastcall rule_present(char symbol)
+static int rule_present(char symbol)
 {
     int i;
 
@@ -341,7 +341,7 @@ static int _fastcall rule_present(char symbol)
     return (i < MAXRULES && ruleptrs[i]) ? i : 0;
 }
 
-static int _fastcall save_rule(char *rule,char **saveptr)
+static int save_rule(char *rule,char **saveptr)
 {
     int i;
     char *tmpfar;
@@ -355,7 +355,7 @@ static int _fastcall save_rule(char *rule,char **saveptr)
     return 0;
 }
 
-static int _fastcall append_rule(char *rule, int index)
+static int append_rule(char *rule, int index)
 {
     char *dst, *old, *sav;
     int i, j;
@@ -627,7 +627,7 @@ static void lsysi_dodrawlt(struct lsys_turtlestatei *cmd)
         cmd->curcolor = 1;
 }
 
-static struct lsys_cmd * _fastcall
+static struct lsys_cmd *
 findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
 {
     struct lsys_cmd **rulind;
@@ -1032,7 +1032,7 @@ LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts)
     return doub;
 }
 
-static void _fastcall lsysi_dosincos(void)
+static void lsysi_dosincos(void)
 {
     double locaspect;
     double TWOPI = 2.0 * PI;

@@ -79,7 +79,7 @@ static void setupmatrix(MATRIX);
 static int  long3dviewtransf(struct long3dvtinf *inf);
 static int  float3dviewtransf(struct float3dvtinf *inf);
 static FILE *open_orbitsave(void);
-static void _fastcall plothist(int x, int y, int color);
+static void plothist(int x, int y, int color);
 static int realtime;
 
 S32 maxct;
@@ -2774,7 +2774,7 @@ static FILE *open_orbitsave(void)
 }
 
 /* Plot a histogram by incrementing the pixel each time it it touched */
-static void _fastcall plothist(int x, int y, int color)
+static void plothist(int x, int y, int color)
 {
     color = getcolor(x,y)+1;
     if (color >= colors)
