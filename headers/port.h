@@ -32,20 +32,6 @@
 extern long stackavail();
 #endif
 
-#if (defined(__STDC__) || defined(__cplusplus) || defined(_MSC_VER)) && !defined(STDC)
-#  define STDC
-#endif
-
-#if (defined(LINUX)) && !defined(STDC)
-#  define STDC
-#endif
-
-#ifndef STDC
-#  ifndef const /* cannot use !defined(STDC) && !defined(const) on Mac */
-#    define const
-#  endif
-#endif
-
 /* If endian.h is not present, it can be handled in the code below, */
 /* but if you have this file, it can make it more fool proof. */
 #if (defined(XFRACT) && !defined(__sun))
@@ -62,32 +48,11 @@ extern long stackavail();
 #  define LITTLE_ENDIAN 1234
 #endif
 
-#define MSDOS 1
-
-#if defined(_WIN32)
-/* _WIN32 uses a flat model */
-#  ifdef MSDOS
-#    undef MSDOS
-#  endif
-#  ifdef __MSDOS__
-#    undef __MSDOS__
-#  endif
-#else
-#  ifdef XFRACT
-
-#    ifdef MSDOS
-#      undef MSDOS
-#    endif
-
-#    ifdef __MSDOS__
-#      undef __MSDOS__
-#    endif
-
-#    ifndef unix
-#      define unix
-#    endif
-#  endif  /* XFRACT  */
-#endif /* _WIN32 */
+#if defined(XFRACT)
+#ifndef unix
+#define unix
+#endif
+#endif  /* XFRACT  */
 
 #if defined(_WIN32)
 /*================================== Win32 definitions */
@@ -132,80 +97,6 @@ typedef const void    *VOIDCONSTPTR;
 /*================================== Win32 definitions */
 
 #else
-#ifdef MSDOS            /* Microsoft C 5.1 for OS/2 and MSDOS */
-/* NOTE: this is always true on DOS!  */
-/*       (MSDOS is defined above)  */
-#  define timebx timeb
-
-#  ifndef BYTE_ORDER
-#    define BYTE_ORDER LITTLE_ENDIAN
-#  endif
-
-#  ifdef _MSC_VER         /* MSC assert does nothing under MSDOS */
-#    ifdef assert
-#      undef assert
-#      define assert(X)
-#    endif
-#  endif
-
-typedef unsigned char  U8;
-typedef signed char    S8;
-typedef unsigned short U16;
-typedef signed short   S16;
-typedef unsigned long  U32;
-typedef signed long    S32;
-typedef unsigned char  BYTE;
-typedef unsigned char  CHAR;
-typedef void          *VOIDPTR;
-typedef const void    *VOIDCONSTPTR;
-
-#define CONST          const
-#define PRINTER        "/dev/prn"
-#define LOBYTEFIRST    1
-#define SLASHC         '\\'
-#define SLASH          "\\"
-#define SLASHSLASH     "\\\\"
-#define SLASHDOT       "\\."
-#define DOTSLASH       ".\\"
-#define DOTDOTSLASH    "..\\"
-#define READMODE        "rb"    /* Correct DOS text-mode        */
-#define WRITEMODE       "wb"    /* file open "feature".         */
-
-#define write1(ptr,len,n,stream) fwrite(ptr,len,n,stream)
-#define write2(ptr,len,n,stream) fwrite(ptr,len,n,stream)
-#define rand15() rand()
-
-#else                   /* Have to nest because #elif is not portable */
-#  ifdef AMIGA            /* Lattice C 3.02 for Amiga */
-typedef UBYTE          U8;
-typedef BYTE           S8;
-typedef UWORD          U16;
-typedef WORD           S16;
-typedef unsigned int   U32;
-typedef int            S32;
-typedef UBYTE          BYTE;
-typedef UBYTE          CHAR;
-
-typedef void          *VOIDPTR;
-typedef const void    *VOIDCONSTPTR;
-
-#define PRINTER        "PRT:"
-#define LOBYTEFIRST    0
-#define SLASHC         '/'
-#define SLASH          "/"
-#define SLASHSLASH     "//"
-#define SLASHDOT       "/."
-#define DOTSLASH       "./"
-#define DOTDOTSLASH    "../"
-#define READMODE        "rb"
-#define WRITEMODE       "wb"
-
-#define write1(ptr,len,n,stream) (fputc(*(ptr),stream),1)
-#define write2(ptr,len,n,stream) (fputc((*(ptr))&255,stream),fputc((*(ptr))>>8,stream),1)
-#define rand15() (rand()&0x7FFF)
-
-#define BYTE_ORDER BIG_ENDIAN
-#  else
 #    ifdef unix                     /* Unix machine */
 typedef unsigned char  U8;
 typedef signed char    S8;
@@ -268,8 +159,6 @@ typedef int sigfunc(int);
 
 
 #    endif /* unix */
-#  endif /* AMIGA */
-#endif /* MSDOS */
 #endif /* _WIN32 */
 
 /* Uses big_access32(), big_set32(),... functions instead of macros. */

@@ -498,10 +498,6 @@ skip_UI:
     driver_unstack_screen();
 }
 
-#ifdef C6
-#pragma optimize("e",on)  /* back to normal */
-#endif
-
 static struct write_batch_data /* buffer for parms to break lines nicely */
 {
     int len;

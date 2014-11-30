@@ -168,11 +168,6 @@ struct tagDriver
 #define HAVE_GDI_DRIVER         0
 #define HAVE_WIN32_DISK_DRIVER  0
 #endif
-#if defined(MSDOS)
-#define HAVE_X11_DRIVER         0
-#define HAVE_GDI_DRIVER         0
-#define HAVE_WIN32_DISK_DRIVER  0
-#endif
 #if defined(_WIN32)
 #define HAVE_X11_DRIVER         0
 #define HAVE_GDI_DRIVER         1

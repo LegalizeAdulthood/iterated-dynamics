@@ -378,9 +378,6 @@ void chgboxi(int dw, int dd)
 {   /* change size by pixels */
     chgboxf((double)dw/dxsize, (double)dd/dysize);
 }
-#ifdef C6
-#pragma optimize("e",off)  /* MSC 6.00A messes up next rtn with "e" on */
-#endif
 
 extern void show_three_bf();
 
@@ -550,10 +547,6 @@ void zoomout(void) /* for ctl-enter, calc corners for zooming out */
     else
         zoomoutdbl();
 }
-
-#ifdef C6
-#pragma optimize("e",on)  /* back to normal */
-#endif
 
 void aspectratio_crop(float oldaspect,float newaspect)
 {
