@@ -9,7 +9,17 @@ if [ $ANALYZE = "true" ]; then
     if [ "$CC" = "clang" ]; then
         scan-build -h
         scan-build cmake -G "Unix Makefiles" ..
-        scan-build -v -enable-checker security.insecureAPI.strcpy make
+        scan-build -enable-checker security.FloatLoopCounter \
+          -enable-checker security.insecureAPI.UncheckedReturn \
+          --status-bugs -v make
+    else
+        cd ..
+        cppcheck --help
+        cppcheck --template "{file}({line}): {severity} ({id}): {message}" \
+            --error-exitcode=1 --enable=all --force --std=c++11 \
+            --suppress=incorrectStringBooleanError \
+            --suppress=invalidscanf --inline-suppr \
+            -I headers hc common headers unix win32
     fi
 else
     cmake -G "Unix Makefiles" ..
