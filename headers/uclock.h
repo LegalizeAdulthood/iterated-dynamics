@@ -34,7 +34,7 @@
 #define int_off        _disable
 #ifndef MK_FP
 #define MK_FP(seg,offset) \
-        ((void far *)(((unsigned long)(seg)<<16) | (unsigned)(offset)))
+        ((void *)(((unsigned long)(seg)<<16) | (unsigned)(offset)))
 #endif
 #endif
 

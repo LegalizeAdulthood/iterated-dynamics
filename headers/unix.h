@@ -4,10 +4,7 @@
 #ifndef _UNIX_H
 #define _UNIX_H
 
-#define far
 #define cdecl
-#define huge
-#define near
 #ifndef RAND_MAX
 #define RAND_MAX 0x7fffffff
 #endif
