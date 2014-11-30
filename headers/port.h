@@ -66,10 +66,6 @@ extern long stackavail();
 
 #if defined(_WIN32)
 /* _WIN32 uses a flat model */
-#  define BIG_ANSI_C
-#      ifndef USE_BIGNUM_C_CODE
-#        define USE_BIGNUM_C_CODE
-#      endif
 #  ifdef MSDOS
 #    undef MSDOS
 #  endif
@@ -128,13 +124,6 @@ typedef const void    *VOIDCONSTPTR;
 #else
 #define BYTE_ORDER BIG_ENDIAN /* the usual case */
 #endif
-#endif
-
-#ifndef USE_BIGNUM_C_CODE
-#define USE_BIGNUM_C_CODE
-#endif
-#ifndef BIG_ANSI_C
-#define BIG_ANSI_C
 #endif
 
 /* TODO: we should refactor this into something better instead of using unix.h */
@@ -216,8 +205,6 @@ typedef const void    *VOIDCONSTPTR;
 #define rand15() (rand()&0x7FFF)
 
 #define BYTE_ORDER BIG_ENDIAN
-#define USE_BIGNUM_C_CODE
-#define BIG_ANSI_C
 #  else
 #    ifdef unix                     /* Unix machine */
 typedef unsigned char  U8;
@@ -262,13 +249,6 @@ typedef int sigfunc(int);
 #endif
 #endif
 
-#ifndef USE_BIGNUM_C_CODE
-#define USE_BIGNUM_C_CODE
-#endif
-#ifndef BIG_ANSI_C
-#define BIG_ANSI_C
-#endif
-
 #       define CONST          const
 #       define PRINTER        "/dev/lp"
 #       define SLASHC         '/'
@@ -311,7 +291,6 @@ typedef int sigfunc(int);
 /*   scanf("%Lf", &longdoublevar);                            */
 /* to read in a long double, then uncomment this next line    */
 /* #define DO_NOT_USE_LONG_DOUBLE */
-/* #define USE_BIGNUM_C_CODE */  /* ASM code requires using long double */
 
 /* HP-UX support long doubles and allows them to be read in with  */
 /*   scanf(), but does not support the functions sinl, cosl, fabsl, etc.  */

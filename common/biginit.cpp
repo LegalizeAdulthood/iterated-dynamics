@@ -23,9 +23,6 @@ is in the allocations of memory for the big numbers.
 #define ENDVID 0
 
 /* globals */
-#ifdef BIG_BASED
-_segment bignum_seg;
-#endif
 int bnstep = 0, bnlength = 0, intlength = 0, rlength = 0, padding = 0, shiftfactor = 0, decimals = 0;
 int bflength = 0, rbflength = 0, bfdecimals = 0;
 

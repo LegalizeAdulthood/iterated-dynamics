@@ -32,15 +32,7 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 /* r = 0 */
 bn_t clear_bn(bn_t r)
 {
-#ifdef BIG_BASED
-    _fmemset(r, 0, bnlength);  /* set array to zero */
-#else
-#ifdef BIG_FAR
-    _fmemset(r, 0, bnlength);  /* set array to zero */
-#else
     memset(r, 0, bnlength);  /* set array to zero */
-#endif
-#endif
     return r;
 }
 
@@ -48,15 +40,7 @@ bn_t clear_bn(bn_t r)
 /* r = max positive value */
 bn_t max_bn(bn_t r)
 {
-#ifdef BIG_BASED
-    _fmemset(r, 0xFF, bnlength-1);  /* set to max values */
-#else
-#ifdef BIG_FAR
-    _fmemset(r, 0xFF, bnlength-1);  /* set to max values */
-#else
     memset(r, 0xFF, bnlength-1);  /* set to max values */
-#endif
-#endif
     r[bnlength-1] = 0x7F;  /* turn off the sign bit */
     return r;
 }
@@ -65,15 +49,7 @@ bn_t max_bn(bn_t r)
 /* r = n */
 bn_t copy_bn(bn_t r, bn_t n)
 {
-#ifdef BIG_BASED
-    _fmemcpy(r, n, bnlength);
-#else
-#ifdef BIG_FAR
-    _fmemcpy(r, n, bnlength);
-#else
     memcpy(r, n, bnlength);
-#endif
-#endif
     return r;
 }
 
