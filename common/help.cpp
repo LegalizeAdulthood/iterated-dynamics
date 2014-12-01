@@ -533,13 +533,8 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
     return (best == nullptr) ? -1 : (int)(best-link);
 }
 
-#ifdef __CLINT__
-#   pragma argsused
-#endif
-
-static int find_link_key(LINK *link, int num_link, int curr_link, int key)
+static int find_link_key(LINK * /*link*/, int num_link, int curr_link, int key)
 {
-    link = nullptr;   /* just for warning */
     switch (key)
     {
     case FIK_TAB:

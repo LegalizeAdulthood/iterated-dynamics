@@ -1633,13 +1633,9 @@ retry_dir:
     return 0;
 }
 
-#ifdef __CLINT__
-#pragma argsused
-#endif
-
-static int check_f6_key(int curkey,int choice)
-{   /* choice is dummy used by other routines called by fullscreen_choice() */
-    choice = 0; /* to suppress warning only */
+/* choice is used by other routines called by fullscreen_choice() */
+static int check_f6_key(int curkey, int /*choice*/)
+{
     if (curkey == FIK_F6)
         return 0-FIK_F6;
     else if (curkey == FIK_F4)

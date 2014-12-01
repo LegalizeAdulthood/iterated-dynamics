@@ -1099,10 +1099,6 @@ static CEditor *CEditor_Construct(int x, int y, char letter,
     return me;
 }
 
-#ifdef __CLINT__
-#   pragma argsused   /* kills "arg not used" warning */
-#endif
-
 static void CEditor_Destroy(CEditor *me)
 {
     deallocate(me);
@@ -1423,15 +1419,10 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) /* priva
     }
 }
 
-#ifdef __CLINT__
-#   pragma argsused   /* kills "arg not used" warning */
-#endif
-
-static void RGBEditor__change(CEditor *ceditor, void *info) /* private */
+static void RGBEditor__change(CEditor * /*ceditor*/, void *info) /* private */
 {
     RGBEditor *me = (RGBEditor *)info;
 
-    ceditor = nullptr; /* just for warning */
     if (me->pal < colors && !is_reserved(me->pal))
         setpal(me->pal, CEditor_GetVal(me->color[0]),
                CEditor_GetVal(me->color[1]), CEditor_GetVal(me->color[2]));
@@ -2327,10 +2318,6 @@ static void PalTable__DoCurs(PalTable *me, int key)
 }
 
 
-#ifdef __CLINT__
-#   pragma argsused
-#endif
-
 static void PalTable__change(RGBEditor *rgb, void *info)
 {
     PalTable *me = (PalTable *)info;
@@ -2340,7 +2327,7 @@ static void PalTable__change(RGBEditor *rgb, void *info)
     {
         me->fs_color = RGBEditor_GetRGB(rgb);
         PalTable__UpdateDAC(me);
-        return ;
+        return;
     }
 
     if (!me->curr_changed)
