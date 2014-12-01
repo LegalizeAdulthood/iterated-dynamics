@@ -39,10 +39,8 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 
 #include <limits.h>
 #include <string.h>
-#if !defined(__386BSD__)
 #if !defined(_WIN32)
 #include <malloc.h>
-#endif
 #endif
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
@@ -387,15 +385,12 @@ lcpower(_LCMPLX *base, int exp, _LCMPLX *result, int bitshift)
 }
 #endif
 
-#if defined(XFRACT) || defined(_WIN32) /* fractint uses the NewtonFractal2 code in newton.asm */
-
 int complex_div(_CMPLX arg1,_CMPLX arg2,_CMPLX *pz);
 int complex_mult(_CMPLX arg1,_CMPLX arg2,_CMPLX *pz);
 
 /* Distance of complex z from unit circle */
 #define DIST1(z) (((z).x-1.0)*((z).x-1.0)+((z).y)*((z).y))
 #define LDIST1(z) (lsqr((((z).x)-fudge)) + lsqr(((z).y)))
-
 
 int NewtonFractal2(void)
 {
@@ -471,7 +466,6 @@ complex_div(_CMPLX numerator,_CMPLX denominator,_CMPLX *pout)
     pout->y = pout->y/mod;
     return 0;
 }
-#endif /* newton code only used by xfractint */
 
 #if !defined(XFRACT)
 struct MP mproverd, mpd1overd, mpthreshold;
@@ -2426,7 +2420,6 @@ CirclelongFractal()
 /*              Initialization (once per pixel) routines                                                */
 /* -------------------------------------------------------------------- */
 
-#if defined(XFRACT) || defined(_WIN32)
 /* this code translated to asm - lives in newton.asm */
 /* transform points with reciprocal function */
 void invertz2(_CMPLX *z)
@@ -2446,7 +2439,6 @@ void invertz2(_CMPLX *z)
     z->x += f_xcenter;
     z->y += f_ycenter; /* Renormalize */
 }
-#endif
 
 int long_julia_per_pixel(void)
 {

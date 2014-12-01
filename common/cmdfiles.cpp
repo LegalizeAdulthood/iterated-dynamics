@@ -8,9 +8,6 @@
 #include <ctype.h>
 #include <time.h>
 #include <math.h>
-#if !defined(XFRACT) && !defined(_WIN32)
-#include <bios.h>
-#endif
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -1049,21 +1046,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             calcfracinit();
             make_batch_file();
 #if !defined(XFRACT)
-#if defined(_WIN32)
             ABORT(0, "Don't call standard I/O without a console on Windows");
             _ASSERTE(0 && "Don't call standard I/O without a console on Windows");
-#else
-            if (*readname != 0)
-            {
-                printf("copying fractal info in GIF %s to PAR %s/%s\n",
-                       readname, CommandFile, CommandName);
-            }
-            else if (*MAP_name != 0)
-            {
-                printf("copying color info in map %s to PAR %s/%s\n",
-                       MAP_name, CommandFile, CommandName);
-            }
-#endif
 #endif
             goodbye();
         }
