@@ -111,13 +111,8 @@ typedef char           CHAR;
 typedef void          *VOIDPTR;
 typedef const void    *VOIDCONSTPTR;
 #else
-# ifdef BADVOID
-typedef char          *VOIDPTR;
-typedef char          *VOIDCONSTPTR;
-# else
 typedef void          *VOIDPTR;
 typedef const void    *VOIDCONSTPTR;
-# endif
 #endif
 
 #ifdef __SVR4
