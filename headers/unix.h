@@ -35,9 +35,10 @@ typedef unsigned int UINT4;
 #define inp(x) 0
 #define outp(x,y)
 
-#ifndef labs
-#define labs(x) ((x)>0?(x):-(x))
-#endif
+inline long labs(long x)
+{
+    return x >0 ? x : -x;
+}
 
 /* We get a problem with connect, since it is used by X */
 #define connect connect1
