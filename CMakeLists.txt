@@ -237,8 +237,13 @@ add_custom_command(
         ${HELP_SRC_DIR}/help3.src ${HELP_SRC_DIR}/help4.src
         ${HELP_SRC_DIR}/help5.src)
 
-# Tell MSVC not to warn us about unchecked iterators in debug builds
+# In debug builds, tell MSVC to:
+#   - not warn us about unchecked iterators
+#   - not warn us about deprecated CRT functions
+#   - store source code location information for memory allocations
 if(${MSVC})
-    set_target_properties(id PROPERTIES
-        COMPILE_DEFINITIONS_DEBUG _SCL_SECURE_NO_WARNINGS)
+    set_target_properties(id PROPERTIES COMPILE_DEFINITIONS_DEBUG
+        _SCL_SECURE_NO_WARNINGS
+        _CRT_SECURE_NO_DEPRECATE
+        _CRTDBG_MAP_ALLOC)
 endif()
