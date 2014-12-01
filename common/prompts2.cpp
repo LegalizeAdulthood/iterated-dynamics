@@ -2640,7 +2640,7 @@ char *has_ext(char *source)
 
 
 /* I tried heap sort also - this is faster! */
-void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1,VOIDPTR arg2))
+void shell_sort(void *v1, int n, unsigned sz, int (*fct)(VOIDPTR arg1,VOIDPTR arg2))
 {
     int gap,i,j;
     void *temp;

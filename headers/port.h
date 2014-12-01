@@ -107,10 +107,6 @@ typedef long           S32;
 typedef unsigned char  BYTE;
 typedef char           CHAR;
 
-#ifndef __cdecl
-#define __cdecl
-#endif
-
 #ifdef __SVR4
 typedef void          *VOIDPTR;
 typedef const void    *VOIDCONSTPTR;

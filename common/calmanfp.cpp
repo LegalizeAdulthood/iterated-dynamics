@@ -253,12 +253,12 @@ over_bailout_87:
     goto pop_stack;
 }
 
-long cdecl calcmandfpasm_287(void)
+long calcmandfpasm_287(void)
 {
     return calcmandfpasm_c();
 }
 
-long cdecl calcmandfpasm_87(void)
+long calcmandfpasm_87(void)
 {
     return calcmandfpasm_c();
 }

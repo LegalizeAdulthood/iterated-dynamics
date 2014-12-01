@@ -8,9 +8,9 @@
 
 /*  calmanp5 -- assembler file prototypes */
 
-extern long  cdecl calcmandfpasm_c(void);
-extern long  cdecl calcmandfpasm_p5(void);
-extern void cdecl calcmandfpasmstart_p5(void);
+extern long  calcmandfpasm_c(void);
+extern long  calcmandfpasm_p5(void);
+extern void calcmandfpasmstart_p5(void);
 
 
 /*

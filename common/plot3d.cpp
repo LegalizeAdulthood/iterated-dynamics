@@ -37,7 +37,7 @@ int blue_bright     = 100;
 BYTE T_RED;
 
 /* Bresenham's algorithm for drawing line */
-void cdecl draw_line(int X1, int Y1, int X2, int Y2, int color)
+void draw_line(int X1, int Y1, int X2, int Y2, int color)
 
 {   /* uses Bresenham algorithm to draw a line */
     int dX, dY;                     /* vector components */

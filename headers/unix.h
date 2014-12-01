@@ -4,7 +4,6 @@
 #ifndef _UNIX_H
 #define _UNIX_H
 
-#define cdecl
 #ifndef RAND_MAX
 #define RAND_MAX 0x7fffffff
 #endif

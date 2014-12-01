@@ -5,8 +5,8 @@
 
 /*  calmanp5 -- assembler file prototypes */
 
-extern long cdecl calcmandfpasm_p5(void);
-extern void cdecl calcmandfpasmstart_p5(void);
+extern long calcmandfpasm_p5(void);
+extern void calcmandfpasmstart_p5(void);
 
 /*  dialog -- C file prototypes */
 
@@ -79,7 +79,7 @@ extern void freetempmsg(void);
 extern int FromMemDisk(long, int, void *);
 extern int ToMemDisk(long, int, void *);
 extern int common_startdisk(long, long, int);
-extern long cdecl normalize(char *);
+extern long normalize(char *);
 extern void drawbox(int);
 
 extern void farmessage(unsigned char *);

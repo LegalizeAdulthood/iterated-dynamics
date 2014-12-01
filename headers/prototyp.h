@@ -34,44 +34,44 @@ extern void setnullvideo(void);
 
 /*  calcmand -- assembler file prototypes */
 
-extern long cdecl calcmandasm(void);
+extern long calcmandasm(void);
 
 /*  calmanfp -- assembler file prototypes */
 
-extern void cdecl calcmandfpasmstart(void);
-/* extern long  cdecl calcmandfpasm(void); */
-extern long  cdecl calcmandfpasm_287(void);
-extern long  cdecl calcmandfpasm_87(void);
+extern void calcmandfpasmstart(void);
+/* extern long  calcmandfpasm(void); */
+extern long  calcmandfpasm_287(void);
+extern long  calcmandfpasm_87(void);
 extern long (*calcmandfpasm)(void);
 
 /*  fpu087 -- assembler file prototypes */
 
-extern void cdecl FPUcplxmul(_CMPLX *, _CMPLX *, _CMPLX *);
-extern void cdecl FPUcplxdiv(_CMPLX *, _CMPLX *, _CMPLX *);
-extern void cdecl FPUsincos(double *, double *, double *);
-extern void cdecl FPUsinhcosh(double *, double *, double *);
-extern void cdecl FPUcplxlog(_CMPLX *, _CMPLX *);
-extern void cdecl SinCos086(long , long *, long *);
-extern void cdecl SinhCosh086(long , long *, long *);
-extern long cdecl r16Mul(long , long);
-extern long cdecl RegFloat2Fg(long , int);
-extern long cdecl Exp086(long);
-extern unsigned long cdecl ExpFudged(long , int);
-extern long cdecl RegDivFloat(long , long);
-extern long cdecl LogFudged(unsigned long , int);
-extern long cdecl LogFloat14(unsigned long);
+extern void FPUcplxmul(_CMPLX *, _CMPLX *, _CMPLX *);
+extern void FPUcplxdiv(_CMPLX *, _CMPLX *, _CMPLX *);
+extern void FPUsincos(double *, double *, double *);
+extern void FPUsinhcosh(double *, double *, double *);
+extern void FPUcplxlog(_CMPLX *, _CMPLX *);
+extern void SinCos086(long , long *, long *);
+extern void SinhCosh086(long , long *, long *);
+extern long r16Mul(long , long);
+extern long RegFloat2Fg(long , int);
+extern long Exp086(long);
+extern unsigned long ExpFudged(long , int);
+extern long RegDivFloat(long , long);
+extern long LogFudged(unsigned long , int);
+extern long LogFloat14(unsigned long);
 #if !defined(XFRACT) && !defined(_WIN32)
-extern long cdecl RegFg2Float(long, char);
-extern long cdecl RegSftFloat(long, char);
+extern long RegFg2Float(long, char);
+extern long RegSftFloat(long, char);
 #else
-extern long cdecl RegFg2Float(long , int);
-extern long cdecl RegSftFloat(long , int);
+extern long RegFg2Float(long , int);
+extern long RegSftFloat(long , int);
 #endif
 
 /*  fpu387 -- assembler file prototypes */
 
-extern void cdecl FPUaptan387(double *, double *, double *);
-extern void cdecl FPUcplxexp387(_CMPLX *, _CMPLX *);
+extern void FPUaptan387(double *, double *, double *);
+extern void FPUcplxexp387(_CMPLX *, _CMPLX *);
 
 /*  fracsuba -- assembler file prototypes */
 
@@ -128,8 +128,8 @@ extern struct MP * fg2MP(long , int);  /* Convert fudged to type MP */
 
 /*  newton -- assembler file prototypes */
 
-extern int cdecl    NewtonFractal2(void);
-extern void cdecl   invertz2(_CMPLX *);
+extern int NewtonFractal2(void);
+extern void invertz2(_CMPLX *);
 
 /*  tplus_a -- assembler file prototypes */
 
@@ -529,7 +529,7 @@ extern int pot_line(BYTE *,int);
 extern int sound_line(BYTE *,int);
 #if !defined(XFRACT)
 #if !defined(_WIN32)
-extern int _cdecl _matherr(struct exception *);
+extern int __matherr(struct exception *);
 #endif
 #else
 extern int XZoomWaiting;
@@ -990,7 +990,7 @@ extern int fill_if_group(int endif_index, JUMP_PTRS_ST *jump_data);
 
 /*  plot3d -- C file prototypes */
 
-extern void cdecl draw_line(int ,int ,int ,int ,int);
+extern void draw_line(int ,int ,int ,int ,int);
 extern void plot3dsuperimpose16(int ,int ,int);
 extern void plot3dsuperimpose256(int ,int ,int);
 extern void plotIFS3dsuperimpose256(int ,int ,int);
@@ -1039,7 +1039,7 @@ extern int splitpath(const char *file_template, char *drive, char *dir, char *fn
 extern int makepath(char *template_str, const char *drive, const char *dir, const char *fname, const char *ext);
 extern int fr_findfirst(char *path);
 extern int fr_findnext(void);
-extern void shell_sort(void *,int n,unsigned,int (__cdecl *fct)(VOIDPTR,VOIDPTR));
+extern void shell_sort(void *,int n,unsigned,int (*fct)(VOIDPTR,VOIDPTR));
 extern void fix_dirname(char *dirname);
 extern int merge_pathnames(char *, char *, int);
 extern int get_browse_params(void);
