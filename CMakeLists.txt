@@ -33,7 +33,7 @@ else()
         unix/unixscr.cpp
         unix/video.cpp)
     set(OS_DRIVER_LIBRARIES ncurses X11 m)
-    set(OS_DEFINITIONS "XFRACT" "NOBSTRING" "BIG_ANSI_C" "LINUX")
+    set(OS_DEFINITIONS "XFRACT" "NOBSTRING" "LINUX")
     set(HAVE_OS_DEFINITIONS true)
     set_source_files_properties(unix/unix.cpp
         PROPERTIES COMPILE_DEFINITIONS SRCDIR=".")
