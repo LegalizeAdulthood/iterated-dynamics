@@ -29,14 +29,9 @@
 #include <string.h>
 #include <ctype.h>
 
-#ifdef __TURBOC__
-#   include <dir.h>
-#   define FNSPLIT fnsplit
-#else
-#   define MAXFILE _MAX_FNAME
-#   define MAXEXT  _MAX_EXT
-#   define FNSPLIT _splitpath
-#endif
+#define MAXFILE _MAX_FNAME
+#define MAXEXT  _MAX_EXT
+#define FNSPLIT _splitpath
 
 
 #include <assert.h>
@@ -233,10 +228,6 @@ int include_stack_top = -1;
 void check_buffer(char *current, unsigned off, char *buffer);
 
 #define CHK_BUFFER(off) check_buffer(curr, off, buffer)
-
-#ifdef __WATCOMC__
-#define putw( x1, x2 )  fprintf( x2, "%c%c", x1&0xFF, x1>>8 );
-#endif
 
 #ifdef XFRACT
 #define putw( x1, x2 )  fwrite( &(x1), 1, sizeof(int), x2);
