@@ -51,10 +51,6 @@
 #define FNDELAY O_NDELAY
 #endif
 #endif
-#ifdef __SVR4
-# include <sys/filio.h>
-# define FNDELAY O_NONBLOCK
-#endif
 
 #include <assert.h>
 

@@ -43,10 +43,6 @@
 #ifdef LINUX
 #define FNDELAY O_NDELAY
 #endif
-#ifdef __SVR4
-# include <sys/filio.h>
-# define FNDELAY O_NONBLOCK
-#endif
 #include <assert.h>
 
 /* external variables (set in the FRACTINT.CFG file, but findable here */

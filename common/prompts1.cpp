@@ -29,10 +29,6 @@
 #define getwd(a) getcwd(a,MAXPATHLEN)
 #endif
 
-#ifdef __SVR4
-#include <sys/param.h>
-#define getwd(a) getcwd(a,MAXPATHLEN)
-#endif
 #include "drivers.h"
 
 /* Routines used in prompts2.c */

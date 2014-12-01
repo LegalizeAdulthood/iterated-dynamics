@@ -201,11 +201,7 @@ delay(int delaytime)
     static struct timeval delay;
     delay.tv_sec = delaytime/1000;
     delay.tv_usec = (delaytime%1000)*1000;
-#if defined( __SVR4) || defined(LINUX)
     (void) select(0, (fd_set *) 0, (fd_set *) 0, (fd_set *) 0, &delay);
-#else
-    (void) select(0, (int *) 0, (int *) 0, (int *) 0, &delay);
-#endif
 }
 
 /*
@@ -491,11 +487,7 @@ static void getLong(long *dst, unsigned char **src, int dir)
         (*src)[0] = (*dst)&0xff;
         (*src)[1] = ((*dst)&0xff00)>>8;
         (*src)[2] = ((*dst)&0xff0000)>>16;
-#ifdef __SVR4
-        (*src)[3] = (unsigned)((*dst)&0xff000000)>>24;
-#else
         (*src)[3] = ((*dst)&0xff000000)>>24;
-#endif
     }
     (*src) += 4; /* sizeof(long) in MS_DOS */
 }
@@ -530,16 +522,9 @@ static void getDouble(double *dst, unsigned char **src, int dir)
         if (i==8) {
             *dst = 0;
         } else {
-#ifdef __SVR4
-            e = (((*src)[7]&0x7f)<<4) + ((int)((*src)[6]&0xf0)>>4) - 1023;
-            f = 1 + (int)((*src)[6]&0x0f)/P4 + (int)((*src)[5])/P12 +
-                (int)((*src)[4])/P20 + (int)((*src)[3])/P28 + (int)((*src)[2])/P36 +
-                (int)((*src)[1])/P44 + (int)((*src)[0])/P52;
-#else
             e = (((*src)[7]&0x7f)<<4) + (((*src)[6]&0xf0)>>4) - 1023;
             f = 1 + ((*src)[6]&0x0f)/P4 + (*src)[5]/P12 + (*src)[4]/P20 +
                 (*src)[3]/P28 + (*src)[2]/P36 + (*src)[1]/P44 + (*src)[0]/P52;
-#endif
             f *= pow(2.,(double)e);
             if ((*src)[7]&0x80) {
                 f = -f;
@@ -602,13 +587,8 @@ static void getFloat(float *dst, unsigned char **src, int dir)
         if (i==4) {
             *dst = 0;
         } else {
-#ifdef __SVR4
-            e = ((((*src)[3]&0x7f)<<1) | ((int)((*src)[2]&0x80)>>7)) - 127;
-            f = 1 + (int)((*src)[2]&0x7f)/P7 + (int)((*src)[1])/P15 + (int)((*src)[0])/P23;
-#else
             e = ((((*src)[3]&0x7f)<<1) | (((*src)[2]&0x80)>>7)) - 127;
             f = 1 + ((*src)[2]&0x7f)/P7 + (*src)[1]/P15 + (*src)[0]/P23;
-#endif
             f *= pow(2.,(double)e);
             if ((*src)[3]&0x80) {
                 f = -f;

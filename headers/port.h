@@ -107,20 +107,10 @@ typedef long           S32;
 typedef unsigned char  BYTE;
 typedef char           CHAR;
 
-#ifdef __SVR4
 typedef void          *VOIDPTR;
 typedef const void    *VOIDCONSTPTR;
-#else
-typedef void          *VOIDPTR;
-typedef const void    *VOIDCONSTPTR;
-#endif
 
-#ifdef __SVR4
-# include <fcntl.h>
-typedef void sigfunc(int);
-#else
 typedef int sigfunc(int);
-#endif
 
 #ifndef BYTE_ORDER
 /* change for little endians that don't have this defined elsewhere (endian.h) */

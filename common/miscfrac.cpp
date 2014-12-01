@@ -467,19 +467,6 @@ static void set_Plasma_palette()
     dac[0].blue = 0 ;
     for (i=1; i<=85; i++)
     {
-#ifdef __SVR4
-        dac[i].red       = (BYTE)((i*(int)Green.red   + (86-i)*(int)Blue.red)/85);
-        dac[i].green     = (BYTE)((i*(int)Green.green + (86-i)*(int)Blue.green)/85);
-        dac[i].blue      = (BYTE)((i*(int)Green.blue  + (86-i)*(int)Blue.blue)/85);
-
-        dac[i+85].red    = (BYTE)((i*(int)Red.red   + (86-i)*(int)Green.red)/85);
-        dac[i+85].green  = (BYTE)((i*(int)Red.green + (86-i)*(int)Green.green)/85);
-        dac[i+85].blue   = (BYTE)((i*(int)Red.blue  + (86-i)*(int)Green.blue)/85);
-
-        dac[i+170].red   = (BYTE)((i*(int)Blue.red   + (86-i)*(int)Red.red)/85);
-        dac[i+170].green = (BYTE)((i*(int)Blue.green + (86-i)*(int)Red.green)/85);
-        dac[i+170].blue  = (BYTE)((i*(int)Blue.blue  + (86-i)*(int)Red.blue)/85);
-#else
         dac[i].red       = (BYTE)((i*Green.red   + (86-i)*Blue.red)/85);
         dac[i].green     = (BYTE)((i*Green.green + (86-i)*Blue.green)/85);
         dac[i].blue      = (BYTE)((i*Green.blue  + (86-i)*Blue.blue)/85);
@@ -490,7 +477,6 @@ static void set_Plasma_palette()
         dac[i+170].red   = (BYTE)((i*Blue.red   + (86-i)*Red.red)/85);
         dac[i+170].green = (BYTE)((i*Blue.green + (86-i)*Red.green)/85);
         dac[i+170].blue  = (BYTE)((i*Blue.blue  + (86-i)*Red.blue)/85);
-#endif
     }
     spindac(0,1);
 }

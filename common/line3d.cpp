@@ -1759,13 +1759,8 @@ static int out_triangle(struct f_point pt1, struct f_point pt2, struct f_point p
     /* Color of triangle is average of colors of its verticies */
     if (!BRIEF)
         for (i = 0; i <= 2; i++)
-#ifdef __SVR4
-            c[i] = (float)((int)(g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
-                           / (3 * 63));
-#else
             c[i] = (float)(g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
                    / (3 * 63);
-#endif
 
     /* get rid of degenerate triangles: any two points equal */
     if ((pt_t[0][0] == pt_t[1][0] &&

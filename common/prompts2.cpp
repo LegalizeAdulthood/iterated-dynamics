@@ -14,13 +14,8 @@
 
 #ifdef DIRENT
 #include <dirent.h>
-#elif !defined(__SVR4)
-#include <sys/dir.h>
 #else
-#include <dirent.h>
-#ifndef DIRENT
-#define DIRENT
-#endif
+#include <sys/dir.h>
 #endif
 
 #endif
@@ -36,10 +31,6 @@
 #endif
 
 #ifdef __hpux
-#include <sys/param.h>
-#endif
-
-#ifdef __SVR4
 #include <sys/param.h>
 #endif
 
