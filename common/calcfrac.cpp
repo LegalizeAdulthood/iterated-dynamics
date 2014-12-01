@@ -2175,8 +2175,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                         if (fabs(saved.y - g_new.y) < closenuff)
                             caught_a_cycle = 1;
 #ifdef NUMSAVED
-                    int i;
-                    for (i=0; i<=zctr; i++)
+                    for (int i=0; i<=zctr; i++)
                     {
                         if (caught[i] == 0)
                         {
@@ -2190,11 +2189,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                 if (caught_a_cycle)
                 {
 #ifdef NUMSAVED
-                    char msg[MSGLEN];
-                    static FILE *fp = nullptr;
-                    static char c;
-                    if (fp==nullptr)
-                        fp = dir_fopen(workdir,"cycles.txt","w");
+                    static FILE *fp = dir_fopen(workdir,"cycles.txt","w");
 #endif
                     cyclelen = coloriter-savedcoloriter;
 #ifdef NUMSAVED
@@ -2202,8 +2197,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                             row,col,cyclelen,coloriter,savedand);
                     if (zctr > 1 && zctr < NUMSAVED)
                     {
-                        int i;
-                        for (i=0; i<zctr; i++)
+                        for (int i=0; i<zctr; i++)
                             fprintf(fp,"   caught %2d saved %6ld iter %6ld\n",i,changed[i],caught[i]);
                     }
                     fflush(fp);
@@ -2297,11 +2291,12 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 
     if (distest)
     {
-        double dist,temp;
+        double dist;
         dist = sqr(g_new.x) + sqr(g_new.y);
         if (dist == 0 || overflow)
             dist = 0;
         else {
+            double temp;
             temp = log(dist);
             dist = dist * sqr(temp) / (sqr(deriv.x) + sqr(deriv.y));
         }
@@ -2739,7 +2734,6 @@ static void decomposition(void)
 static int potential(double mag, long iterations)
 {
     float f_mag,f_tmp,pot;
-    double d_tmp;
     int i_pot;
     long l_pot;
 
@@ -2758,7 +2752,7 @@ static int potential(double mag, long iterations)
             }
             else
             {
-                d_tmp = log(mag)/(double)pow(2.0,(double)pot);
+                double d_tmp = log(mag)/(double)pow(2.0,(double)pot);
                 if (d_tmp > FLT_MIN) /* prevent float type underflow */
                     pot = (float)d_tmp;
                 else
@@ -3469,7 +3463,6 @@ static void plotblock(int buildrow,int x,int y,int color)
 
 static int xsym_split(int xaxis_row,int xaxis_between)
 {
-    int i;
     if ((worksym&0x11) == 0x10) /* already decided not sym */
         return 1;
     if ((worksym&1) != 0) /* already decided on sym */
@@ -3479,7 +3472,7 @@ static int xsym_split(int xaxis_row,int xaxis_between)
         worksym |= 0x10;
         if (xaxis_row <= yystart || xaxis_row >= yystop)
             return 1; /* axis not in window */
-        i = xaxis_row + (xaxis_row - yystart);
+        int i = xaxis_row + (xaxis_row - yystart);
         if (xaxis_between)
             ++i;
         if (i > yystop) /* split into 2 pieces, bottom has the symmetry */
@@ -3509,7 +3502,6 @@ static int xsym_split(int xaxis_row,int xaxis_between)
 
 static int ysym_split(int yaxis_col,int yaxis_between)
 {
-    int i;
     if ((worksym&0x22) == 0x20) /* already decided not sym */
         return 1;
     if ((worksym&2) != 0) /* already decided on sym */
@@ -3519,7 +3511,7 @@ static int ysym_split(int yaxis_col,int yaxis_between)
         worksym |= 0x20;
         if (yaxis_col <= xxstart || yaxis_col >= xxstop)
             return 1; /* axis not in window */
-        i = yaxis_col + (yaxis_col - xxstart);
+        int i = yaxis_col + (yaxis_col - xxstart);
         if (yaxis_between)
             ++i;
         if (i > xxstop) /* split into 2 pieces, right has the symmetry */

@@ -2918,7 +2918,8 @@ badarg:
 
 static void parse_textcolors(char *value)
 {
-    int i,j,k,hexval;
+    int k;
+    int hexval;
     if (strcmp(value, "mono") == 0) {
         for (k = 0; k < sizeof(txtcolor); ++k)
             txtcolor[k] = BLACK*16+WHITE;
@@ -2939,8 +2940,8 @@ static void parse_textcolors(char *value)
             if (*value == 0) break;
             if (*value != '/') {
                 sscanf(value,"%x",&hexval);
-                i = (hexval / 16) & 7;
-                j = hexval & 15;
+                int i = (hexval / 16) & 7;
+                int j = hexval & 15;
                 if (i == j || (i == 0 && j == 8)) /* force contrast */
                     j = 15;
                 txtcolor[k] = (BYTE)(i * 16 + j);
@@ -2955,7 +2956,7 @@ static void parse_textcolors(char *value)
 
 static int parse_colors(char *value)
 {
-    int i,j,k;
+    int k;
     if (*value == '@') {
         if (merge_pathnames(MAP_name,&value[1],3)<0)
             init_msg("",&value[1],3);
@@ -2971,8 +2972,8 @@ static int parse_colors(char *value)
         }
     }
     else {
-        int smooth;
-        i = smooth = 0;
+        int smooth = 0;
+        int i = 0;
         while (*value) {
             if (i >= 256) goto badcolor;
             if (*value == '<') {
@@ -2984,7 +2985,7 @@ static int parse_colors(char *value)
                 ++value;
             }
             else {
-                for (j = 0; j < 3; ++j) {
+                for (int j = 0; j < 3; ++j) {
                     if ((k = *(value++)) < '0')  goto badcolor;
                     else if (k <= '9')       k -= '0';
                     else if (k < 'A')            goto badcolor;

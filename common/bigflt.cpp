@@ -722,8 +722,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 {
     U16 fact=2;
-    int k=0, i, halves;
-    int signcos=0, signsin=0, switch_sincos=0;
+    int k=0;
     int sin_done=0, cos_done=0;
     S16 BIGDIST * testexp, BIGDIST * cexp, BIGDIST * sexp;
 
@@ -741,6 +740,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
         return s;
     }
 
+    int signsin=0;
     if (is_bf_neg(n))
     {
         signsin = !signsin; /* sin(-x) = -sin(x), odd; cos(-x) = cos(x), even */
@@ -757,6 +757,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     }
     /* 0 <= n < 2*pi */
 
+    int signcos=0;
     copy_bf(bftmp1, bf_pi); /* pi */
     if (cmp_bf(n, bftmp1) >= 0) /* if n >= pi */
     {
@@ -775,6 +776,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     }
     /* 0 <= n < pi/2 */
 
+    int switch_sincos=0;
     half_bf(bftmp1, bf_pi); /* pi/2 */
     half_a_bf(bftmp1);      /* pi/4 */
     if (cmp_bf(n, bftmp1) > 0) /* if n > pi/4 */
@@ -801,8 +803,8 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     /* by "quite a bit."  It's just a matter of testing to see what gives the */
     /* optimal results.                                                       */
     /* halves = bflength / 10; */ /* this is experimental */
-    halves = 1;
-    for (i = 0; i < halves; i++)
+    int halves = 1;
+    for (int i = 0; i < halves; i++)
         half_a_bf(n);
 #endif
 
@@ -851,7 +853,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 
 #ifndef CALCULATING_BIG_PI
     /* now need to undo what was done by cutting angles in half */
-    for (i = 0; i < halves; i++)
+    for (int i = 0; i < halves; i++)
     {
         unsafe_mult_bf(bftmp2, s, c); /* no need for safe mult */
         double_bf(s, bftmp2); /* sin(2x) = 2*sin(x)*cos(x) */
@@ -1263,7 +1265,6 @@ int convert_bf(bf_t newnum, bf_t old, int newbflength, int oldbflength)
 /* normalize big float */
 bf_t norm_bf(bf_t r)
 {
-    int scale;
     BYTE hi_byte;
     S16 BIGDIST *rexp;
 
@@ -1281,6 +1282,7 @@ bf_t norm_bf(bf_t r)
     /* check for underflow */
     else
     {
+        int scale;
         for (scale = 2; scale < bflength && r[bflength-scale] == hi_byte; scale++)
             ; /* do nothing */
         if (scale == bflength && hi_byte == 0) /* zero */
@@ -1451,7 +1453,6 @@ int is_bf_not_zero(bf_t n)
 bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2)
 {
     int bnl;
-    S16 BIGDIST *rexp;
 
     if (is_bf_zero(n1))
     {
@@ -1464,8 +1465,8 @@ bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2)
         return r;
     }
 
-    rexp = (S16 BIGDIST *)(r+bflength);
-    big_setS16(rexp,adjust_bf_add(n1, n2));
+    S16 BIGDIST *rexp = (S16 BIGDIST *)(r+bflength);
+    big_setS16(rexp, adjust_bf_add(n1, n2));
 
     bnl = bnlength;
     bnlength = bflength;

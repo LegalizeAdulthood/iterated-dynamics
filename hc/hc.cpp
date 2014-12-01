@@ -1005,7 +1005,6 @@ int parse_link(void)   /* returns length of link or 0 on error */
     int   bad = 0;
     int   len;
     LINK  l;
-    int   lnum;
     int   err_off;
 
     l.srcfile  = src_cfname;
@@ -1081,7 +1080,7 @@ int parse_link(void)   /* returns length of link or 0 on error */
     if (!bad)
     {
         CHK_BUFFER(1+3*sizeof(int)+len+1);
-        lnum = add_link(&l);
+        int const lnum = add_link(&l);
         *curr++ = CMD_LINK;
         setint(curr,lnum);
         curr += 3*sizeof(int);

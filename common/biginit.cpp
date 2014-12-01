@@ -327,10 +327,9 @@ static void init_bf_2(void)
 static int save_bf_vars(void)
 {
     int ret;
-    unsigned int mem;
     if (bnroot != BIG_NULL)
     {
-        mem = (bflength+2)*22;  /* 6 corners + 6 save corners + 10 params */
+        unsigned int mem = (bflength+2)*22;  /* 6 corners + 6 save corners + 10 params */
         bf_save_len = bflength;
         memcpy(bnroot,bfxmin,mem);
         /* scrub old high area */

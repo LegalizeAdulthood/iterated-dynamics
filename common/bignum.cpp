@@ -245,7 +245,6 @@ void bn_hexdump(bn_t r)
 
 bn_t strtobn(bn_t r, char *s)
 {
-    unsigned l;
     bn_t onesbyte;
     int signflag=0;
     long longval;
@@ -265,7 +264,7 @@ bn_t strtobn(bn_t r, char *s)
 
     if (strchr(s, '.') != nullptr) /* is there a decimal point? */
     {
-        l = (int) strlen(s) - 1;      /* start with the last digit */
+        int l = (int) strlen(s) - 1;      /* start with the last digit */
         while (s[l] >= '0' && s[l] <= '9') /* while a digit */
         {
             *onesbyte = (BYTE)(s[l--] - '0');
@@ -624,7 +623,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 /*      Make copies first if necessary.                             */
 bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 {
-    int scale1, scale2, scale, sign=0, i;
+    int scale1, scale2, sign=0, i;
     long maxval;
     LDBL a, b, f;
 
@@ -698,13 +697,13 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
         /* Rescale r back to what it should be.  Overflow has already been checked */
         if (scale1 > scale2) /* answer is too big, adjust it */
         {
-            scale = scale1-scale2;
+            int scale = scale1-scale2;
             memmove(r, r+scale, bnlength-scale); /* shift bytes over */
             memset(r+bnlength-scale, 0, scale);  /* zero out the rest */
         }
         else if (scale1 < scale2) /* answer is too small, adjust it */
         {
-            scale = scale2-scale1;
+            int scale = scale2-scale1;
             memmove(r+scale, r, bnlength-scale); /* shift bytes over */
             memset(r, 0, scale);                 /* zero out the rest */
         }
@@ -959,8 +958,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 {
     U16 fact=2;
-    int k=0, i, halves;
-    int signcos=0, signsin=0, switch_sincos=0;
+    int k=0;
 
 #ifndef CALCULATING_BIG_PI
     /* assure range 0 <= x < pi/4 */
@@ -972,6 +970,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
         return s;
     }
 
+    int signcos=0, signsin=0, switch_sincos=0;
     if (is_bn_neg(n))
     {
         signsin = !signsin; /* sin(-x) = -sin(x), odd; cos(-x) = cos(x), even */
@@ -1027,8 +1026,8 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
     /* by "quite a bit."  It's just a matter of testing to see what gives the */
     /* optimal results.                                                       */
     /* halves = bnlength / 10; */ /* this is experimental */
-    halves = 1;
-    for (i = 0; i < halves; i++)
+    int halves = 1;
+    for (int i = 0; i < halves; i++)
         half_a_bn(n);
 #endif
 
@@ -1069,7 +1068,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 #ifndef CALCULATING_BIG_PI
     /* now need to undo what was done by cutting angles in half */
     inttobn(bntmp1, 1);
-    for (i = 0; i < halves; i++)
+    for (int i = 0; i < halves; i++)
     {
         unsafe_mult_bn(bntmp2, s, c); /* no need for safe mult */
         double_bn(s, bntmp2+shiftfactor); /* sin(2x) = 2*sin(x)*cos(x) */
