@@ -291,13 +291,8 @@ extern int t16_getline(FILE *,int ,U16 *);
 extern void free_grid_pointers(void);
 extern void calcfracinit(void);
 extern void adjust_corner(void);
-#ifndef USE_VARARGS
 extern int put_resume(int ,...);
 extern int get_resume(int ,...);
-#else
-extern int put_resume();
-extern int get_resume();
-#endif
 extern int alloc_resume(int ,int);
 extern int start_resume(void);
 extern void end_resume(void);
@@ -534,11 +529,7 @@ extern int __matherr(struct exception *);
 #else
 extern int XZoomWaiting;
 #endif
-#ifndef USE_VARARGS
 extern int timer(int,int (*subrtn)(),...);
-#else
-extern int timer();
-#endif
 
 extern void clear_zoombox(void);
 extern void flip_image(int kbdchar);

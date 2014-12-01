@@ -7,11 +7,7 @@
 #include <io.h>
 #endif
 
-#ifndef USE_VARARGS
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 #include <ctype.h>
 /* see Fractint.c for a description of the "include"  hierarchy */

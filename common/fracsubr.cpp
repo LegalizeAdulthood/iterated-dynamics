@@ -6,11 +6,7 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 
 #include <memory.h>
 
-#ifndef USE_VARARGS
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 #ifndef XFRACT
 #include <sys/timeb.h>
@@ -1105,27 +1101,14 @@ static int ratio_bad(double actual, double desired)
 
    */
 
-#ifndef USE_VARARGS
 int put_resume(int len, ...)
-#else
-int put_resume(va_alist)
-va_dcl
-#endif
 {
     va_list arg_marker;  /* variable arg list */
     BYTE *source_ptr;
-#ifdef USE_VARARGS
-    int len;
-#endif
 
     if (resume_info == 0)
         return (-1);
-#ifndef USE_VARARGS
     va_start(arg_marker,len);
-#else
-    va_start(arg_marker);
-    len = va_arg(arg_marker,int);
-#endif
     while (len)
     {
         source_ptr = (BYTE *)va_arg(arg_marker,char *);
@@ -1157,27 +1140,14 @@ int alloc_resume(int alloclen, int version)
     return (0);
 }
 
-#ifndef USE_VARARGS
 int get_resume(int len, ...)
-#else
-int get_resume(va_alist)
-va_dcl
-#endif
 {
     va_list arg_marker;  /* variable arg list */
     BYTE *dest_ptr;
-#ifdef USE_VARARGS
-    int len;
-#endif
 
     if (resume_info == 0)
         return (-1);
-#ifndef USE_VARARGS
     va_start(arg_marker,len);
-#else
-    va_start(arg_marker);
-    len = va_arg(arg_marker,int);
-#endif
     while (len)
     {
         dest_ptr = (BYTE *)va_arg(arg_marker,char *);

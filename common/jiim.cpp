@@ -10,11 +10,7 @@
 
 #include <string.h>
 
-#ifndef USE_VARARGS
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
