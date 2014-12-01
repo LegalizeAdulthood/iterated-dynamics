@@ -58,10 +58,6 @@
 
 #include <assert.h>
 
-#ifdef CYGWIN
-#include <asm/socket.h>
-#endif
-
 /* Check if there is a character waiting for us.  */
 #define input_pending() (ioctl(0,FIONREAD,&iocount),(int)iocount)
 
