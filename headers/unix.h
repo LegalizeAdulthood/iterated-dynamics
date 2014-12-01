@@ -48,10 +48,6 @@ typedef unsigned int UINT4;
 
 typedef void (*SignalHandler)(int);
 
-#ifdef NOSIGHAND
-typedef void (*SignalHandler)(int);
-#endif
-
 /* Some stdio.h's don't have this */
 #ifndef SEEK_SET
 #define SEEK_SET 0
