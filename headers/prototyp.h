@@ -1195,8 +1195,4 @@ extern int expand_dirname(char *dirname,char *drive);
 extern int abortmsg(char *file, unsigned int line, int flags, char *msg);
 #define ABORT(flags_,msg_) abortmsg(__FILE__, __LINE__, flags_, msg_)
 
-#ifndef DEBUG
-/*#define DEBUG */
-#endif
-
 #endif
