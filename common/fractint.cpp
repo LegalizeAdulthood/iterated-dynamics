@@ -651,8 +651,8 @@ int timer(int timertype,int(*subrtn)(),...)
         out = encoder();            /* not indirect, safer with overlays */
         break;
     }
-    /* next assumes CLK_TCK is 10^n, n>=2 */
-    timer_interval = (clock_ticks() - timer_start) / (CLK_TCK/100);
+    /* next assumes CLOCKS_PER_SEC is 10^n, n>=2 */
+    timer_interval = (clock_ticks() - timer_start) / (CLOCKS_PER_SEC/100);
 
     if (do_bench) {
         time(&ltime);

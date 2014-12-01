@@ -14,9 +14,11 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 #include <algorithm>
 #include <vector>
 
-#include <string.h>
 #include <limits.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
+
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"

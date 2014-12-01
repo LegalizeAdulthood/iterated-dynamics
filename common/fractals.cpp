@@ -36,12 +36,13 @@ to the 'fractalspecific' structure, writing (or re-using one of the existing)
 an appropriate setup, per_image, per_pixel, and orbit routines.
 
 --------------------------------------------------------------------   */
-
 #include <limits.h>
-#include <string.h>
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
+#include <stdlib.h>
+#include <string.h>
+
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"

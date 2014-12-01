@@ -29,7 +29,7 @@ int iocount;
  *
  * clock_ticks --
  *
- *      Return time in CLK_TCK ticks.
+ *      Return time in CLOCKS_PER_SEC ticks.
  *
  * Results:
  *      Time.
@@ -43,7 +43,7 @@ long clock_ticks()
 {
     struct timeval tim;
     gettimeofday(&tim,nullptr);
-    return tim.tv_sec*CLK_TCK + tim.tv_usec*CLK_TCK/1000000;
+    return tim.tv_sec*CLOCKS_PER_SEC + tim.tv_usec*CLOCKS_PER_SEC/1000000;
 }
 
 /* stub */

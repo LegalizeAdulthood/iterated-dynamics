@@ -1,12 +1,6 @@
-/* UNIX.H - unix port declarations */
-
-
-#ifndef _UNIX_H
-#define _UNIX_H
-
-#if !defined(O_BINARY)
-#define O_BINARY 0
-#endif
+/* win32.h - Win32 port declarations */
+#ifndef WIN32_H
+#define WIN32_H
 
 typedef float FLOAT4;
 #define remove(x) unlink(x)
@@ -16,19 +10,13 @@ typedef float FLOAT4;
 #if !defined(_MAX_EXT)
 #define _MAX_EXT 4
 #endif
-#define chsize(fd,len) ftruncate(fd,len)
 
-/* We get a problem with connect, since it is used by X */
-#define connect connect1
 /* dysize may conflict with time.h */
 #define dysize dysize1
 
-typedef void (*SignalHandler)(int);
-
-extern int iocount;
-
-char *strlwr(char *s);
-char *strupr(char *s);
+#define bcopy(src,dst,n) memcpy(dst,src,n)
+#define bzero(buf,siz) memset(buf,0,siz)
+#define bcmp(buf1,buf2,len) memcmp(buf1,buf2,len)
 
 /* ftime replacement */
 #include <sys/types.h>

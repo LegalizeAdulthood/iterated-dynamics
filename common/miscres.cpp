@@ -781,9 +781,9 @@ int tab_display()       /* display the status of the current image */
     {
         return 0;                /* (no TAB on the credits screen) */
     }
-    if (calc_status == CALCSTAT_IN_PROGRESS)        /* next assumes CLK_TCK is 10^n, n>=2 */
+    if (calc_status == CALCSTAT_IN_PROGRESS)        /* next assumes CLOCKS_PER_SEC is 10^n, n>=2 */
     {
-        calctime += (clock_ticks() - timer_start) / (CLK_TCK/100);
+        calctime += (clock_ticks() - timer_start) / (CLOCKS_PER_SEC/100);
     }
     driver_stack_screen();
     if (bf_math)

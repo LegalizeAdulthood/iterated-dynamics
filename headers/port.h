@@ -84,7 +84,7 @@ typedef const void    *VOIDCONSTPTR;
 #endif
 
 /* TODO: we should refactor this into something better instead of using unix.h */
-#include "unix.h"
+#include "win32.h"
 
 /*================================== Win32 definitions */
 

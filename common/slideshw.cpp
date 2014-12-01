@@ -148,7 +148,7 @@ int slideshw()
     if (++slowcount <= 18)
     {
         starttick = clock_ticks();
-        ticks = CLK_TCK/5; /* a slight delay so keystrokes are visible */
+        ticks = CLOCKS_PER_SEC/5; /* a slight delay so keystrokes are visible */
         if (slowcount > 10)
             ticks /= 2;
     }
@@ -254,7 +254,7 @@ start:
         float fticks;
         err = fscanf(fpss,"%f",&fticks); /* how many ticks to wait */
         driver_set_keyboard_timeout((int)(fticks*1000.f));
-        fticks *= CLK_TCK;             /* convert from seconds to ticks */
+        fticks *= CLOCKS_PER_SEC;             /* convert from seconds to ticks */
         if (err==1)
         {
             ticks = (long)fticks;
@@ -317,7 +317,7 @@ void recordshw(int key)
             return;
     }
     dt = ticks-dt;
-    dt /= CLK_TCK;  /* dt now in seconds */
+    dt /= CLOCKS_PER_SEC;  /* dt now in seconds */
     if (dt > .5) /* don't bother with less than half a second */
     {
         if (quotes) /* close quotes first */
@@ -362,7 +362,7 @@ void recordshw(int key)
 static void sleep_secs(int secs)
 {
     long stop;
-    stop = clock_ticks() + (long)secs*CLK_TCK;
+    stop = clock_ticks() + (long)secs*CLOCKS_PER_SEC;
     while (clock_ticks() < stop && driver_key_pressed() == 0) { } /* bailout if key hit */
 }
 

@@ -5,14 +5,14 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include <vector>
 
 #include <memory.h>
-
 #include <stdarg.h>
-
+#include <stdlib.h>
 #ifndef XFRACT
 #include <sys/timeb.h>
 #endif
 #include <sys/types.h>
 #include <time.h>
+
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -1353,7 +1353,7 @@ void snd_time_write(void)
 {
     if (snd_open())
     {
-        fprintf(snd_fp,"time=%-ld\n",(long)clock()*1000/CLK_TCK);
+        fprintf(snd_fp,"time=%-ld\n",(long)clock()*1000/CLOCKS_PER_SEC);
     }
 }
 

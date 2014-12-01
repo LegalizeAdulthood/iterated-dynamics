@@ -551,7 +551,7 @@ void restart_uclock(void)
 **
 **  An analog of the clock() function, usec_clock() returns a number of
 **  type uclock_t (defined in UCLOCK.H) which represents the number of
-**  microseconds past midnight. Analogous to CLK_TCK is UCLK_TCK, the
+**  microseconds past midnight. Analogous to CLOCKS_PER_SEC is UCLK_TCK, the
 **  number which a usec_clock() reading must be divided by to yield
 **  a number of seconds.
 */

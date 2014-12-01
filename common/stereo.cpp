@@ -4,6 +4,8 @@
     From an idea in "New Scientist" 9 October 1993 pages 26 - 29.
 */
 #include <memory>
+
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
