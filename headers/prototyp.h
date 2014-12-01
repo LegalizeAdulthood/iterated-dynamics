@@ -522,11 +522,7 @@ extern int key_count(int);
 extern int main_menu_switch(int *,int *,int *,char *,int);
 extern int pot_line(BYTE *,int);
 extern int sound_line(BYTE *,int);
-#if !defined(XFRACT)
-#if !defined(_WIN32)
-extern int __matherr(struct exception *);
-#endif
-#else
+#if defined(XFRACT)
 extern int XZoomWaiting;
 #endif
 extern int timer(int,int (*subrtn)(),...);
