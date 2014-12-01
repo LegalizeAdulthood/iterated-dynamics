@@ -1094,11 +1094,7 @@ top:
                 driver_put_string(truncaterow, 2, C_GENERAL_MED, "(Center values shown truncated to 320 decimals)");
             }
             driver_put_string(++s_row, 2, C_GENERAL_MED, "Mag");
-#ifdef USE_LONG_DOUBLE
             sprintf(msg, "%10.8Le", Magnification);
-#else
-            sprintf(msg, "%10.8le", Magnification);
-#endif
             driver_put_string(-1, 11, C_GENERAL_HI, msg);
             driver_put_string(++s_row, 2, C_GENERAL_MED, "X-Mag-Factor");
             sprintf(msg, "%11.4f   ", Xmagfactor);
@@ -1131,11 +1127,7 @@ top:
             sprintf(msg, "%20.16f %20.16f  ", Xctr, Yctr);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Mag");
-#ifdef USE_LONG_DOUBLE
             sprintf(msg, " %10.8Le", Magnification);
-#else
-            sprintf(msg, " %10.8le", Magnification);
-#endif
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(++s_row, 2, C_GENERAL_MED, "X-Mag-Factor");
             sprintf(msg, "%11.4f   ", Xmagfactor);

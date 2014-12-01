@@ -210,11 +210,7 @@ int getpower10(LDBL x)
     char string[11]; /* space for "+x.xe-xxxx" */
     int p;
 
-#ifdef USE_LONG_DOUBLE
     sprintf(string,"%+.1Le", x);
-#else
-    sprintf(string,"%+.1le", x);
-#endif
     p = atoi(string+5);
     return p;
 }
@@ -2167,11 +2163,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         if (totparms == 0) return 0; /* turns center-mag mode on */
         initcorners = 1;
         /* dec = get_max_curarg_len(floatvalstr, totparms); */
-#ifdef USE_LONG_DOUBLE
         sscanf(floatvalstr[2], "%Lf", &Magnification);
-#else
-        sscanf(floatvalstr[2], "%lf", &Magnification);
-#endif
 
         /* I don't know if this is portable, but something needs to */
         /* be used in case compiler's LDBL_MAX is not big enough    */
