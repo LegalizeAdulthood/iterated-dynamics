@@ -6,7 +6,6 @@
 #include "mpmath.h"
 #include "big.h"
 #include "fractint.h"
-#include "helpcom.h"
 #include "externs.h"
 
 /* maintain the common prototypes in this file
@@ -582,19 +581,6 @@ extern int gifview(void);
 /*  hcmplx -- C file prototypes */
 
 extern void HComplexTrig0(_HCMPLX *,_HCMPLX *);
-
-/*  help -- C file prototypes */
-
-extern int _find_token_length(char *,unsigned int ,int *,int *);
-extern int find_token_length(int ,char *,unsigned int ,int *,int *);
-extern int find_line_width(int ,char *,unsigned int);
-extern int process_document(PD_FUNC ,PD_FUNC ,VOIDPTR);
-extern int help(int);
-extern int read_help_topic(int ,int ,int ,VOIDPTR);
-extern int makedoc_msg_func(int ,int);
-extern void print_document(const char *,int (*)(int ,int),int);
-extern int init_help(void);
-extern void end_help(void);
 
 /*  intro -- C file prototypes */
 

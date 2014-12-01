@@ -16,6 +16,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "drivers.h"
+#include "helpcom.h"
 
 #ifdef XFRACT
 #define DEFAULT_PRINTER 5       /* Assume a Postscript printer */

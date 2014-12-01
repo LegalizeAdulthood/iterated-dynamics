@@ -20,7 +20,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "externs.h"
-
+#include "helpcom.h"
 
 /* ********************** Mouse Support Variables ************************** */
 

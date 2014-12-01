@@ -22,6 +22,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "helpcom.h"
 
 #ifdef __hpux
 #include <sys/param.h>

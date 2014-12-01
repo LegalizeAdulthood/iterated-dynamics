@@ -46,6 +46,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "helpcom.h"
 
 struct videoinfo g_video_entry;
 int helpmode;

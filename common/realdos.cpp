@@ -18,6 +18,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "helpcom.h"
 
 static int menu_checkkey(int curkey,int choice);
 

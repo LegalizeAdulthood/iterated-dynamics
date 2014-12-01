@@ -14,6 +14,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "helpcom.h"
 
 #include "WinText.h"
 #include "frame.h"

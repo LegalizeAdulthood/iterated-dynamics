@@ -8,7 +8,6 @@
  */
 #include <algorithm>
 
-#define INCLUDE_COMMON  /* tell helpcom.h to include common code */
 
 #ifdef XFRACT
 #define strupr strlwr
@@ -37,6 +36,7 @@
 #include <assert.h>
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
+#define INCLUDE_COMMON  /* tell helpcom.h to include common code */
 #include "helpcom.h"
 
 #ifdef XFRACT

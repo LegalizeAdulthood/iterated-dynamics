@@ -53,6 +53,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "helpcom.h"
 
 /* Routines in this module      */
 

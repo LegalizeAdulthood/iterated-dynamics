@@ -14,6 +14,7 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "helpcom.h"
 
 /* stuff from fractint */
 
