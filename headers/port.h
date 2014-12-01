@@ -16,12 +16,8 @@
 #pragma warning(disable: 4996)
 #endif
 
-#if !defined(XFRACT) && !defined(_WIN32)
-#  include <dos.h>
-#else
-#  if !defined(_WIN32)
-#    include <unistd.h>
-#  endif
+#if !defined(_WIN32)
+#include <unistd.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
