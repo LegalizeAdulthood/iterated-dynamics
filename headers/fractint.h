@@ -692,7 +692,6 @@ typedef  _LCMPLX LCMPLX;
 
 #define    CMAX    4   /* maximum column (4 x 4 matrix) */
 #define    RMAX    4   /* maximum row    (4 x 4 matrix) */
-#define    DIM     3   /* number of dimensions */
 
 typedef double MATRIX [RMAX] [CMAX];  /* matrix of doubles */
 typedef int   IMATRIX [RMAX] [CMAX];  /* matrix of ints    */
@@ -702,9 +701,9 @@ typedef long  LMATRIX [RMAX] [CMAX];  /* matrix of longs   */
 system to another.  Multiple transformations may be concatenated by
 multiplying their transformation matrices. */
 
-typedef double VECTOR [DIM];  /* vector of doubles */
-typedef int   IVECTOR [DIM];  /* vector of ints    */
-typedef long  LVECTOR [DIM];  /* vector of longs   */
+typedef double VECTOR [3];  /* vector of doubles */
+typedef int   IVECTOR [3];  /* vector of ints    */
+typedef long  LVECTOR [3];  /* vector of longs   */
 
 /* A VECTOR is an array of three coordinates [x,y,z] representing magnitude
 and direction. A fourth dimension is assumed to always have the value 1, but
