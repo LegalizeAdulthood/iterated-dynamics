@@ -53,10 +53,6 @@ FILE *parmfile;
 
 #define PAR_KEY(x)  ( x < 10 ? '0' + x : 'a' - 10 + x)
 
-#ifdef _MSC_VER
-#pragma optimize("e",off)  /* MSC 6.00A messes up next rtn with "e" on */
-#endif
-
 void make_batch_file()
 {
 #define MAXPROMPTS 18
@@ -1329,10 +1325,6 @@ int getprecbf(int rezflag)
     return (std::max(digits,dec));
 }
 
-#ifdef _MSC_VER
-#pragma optimize("e",off)  /* MSC 7.00 messes up next with "e" on */
-#endif
-
 /* This function calculates the precision needed to distiguish adjacent
    pixels at Fractint's maximum resolution of MAXPIXELS by MAXPIXELS
    (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
@@ -1375,10 +1367,6 @@ int getprecdbl(int rezflag)
     digits = std::max(digits,3);
     return (digits);
 }
-
-#ifdef _MSC_VER
-#pragma optimize("e",on)
-#endif
 
 /*
    Strips zeros from the non-exponent part of a number. This logic

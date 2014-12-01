@@ -129,13 +129,6 @@ void fractal_floattobf(void)
 }
 
 
-#ifdef _MSC_VER
-#if _MSC_VER == 800
-/* MSC8 doesn't correctly calculate the address of certain arrays here */
-#pragma optimize( "", off )
-#endif
-#endif
-
 int use_grid;
 
 void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation */
@@ -548,12 +541,6 @@ expand_retry:
     if (bf_math == 0)
         free_bf_vars();
 }
-
-#ifdef _MSC_VER
-#if _MSC_VER == 800
-#pragma optimize( "", on ) /* restore optimization options */
-#endif
-#endif
 
 static long fudgetolong(double d)
 {

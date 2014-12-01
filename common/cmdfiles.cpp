@@ -2930,12 +2930,6 @@ badarg:
     return -1;
 }
 
-#ifdef _MSC_VER
-#if (_MSC_VER >= 600)
-#pragma optimize( "el", on )
-#endif
-#endif
-
 /* Some routines broken out of above so compiler doesn't run out of heap: */
 
 static void parse_textcolors(char *value)

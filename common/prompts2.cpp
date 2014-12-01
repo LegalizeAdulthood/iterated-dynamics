@@ -1674,9 +1674,6 @@ int isadirectory(char *s)
 {
     int len;
     char sv;
-#ifdef _MSC_VER
-    unsigned attrib = 0;
-#endif
     if (strchr(s,'*') || strchr(s,'?'))
         return (0); /* for my purposes, not a directory */
 
@@ -1686,24 +1683,6 @@ int isadirectory(char *s)
     else
         sv = 0;
 
-#ifdef _MSC_VER
-    if (_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
-    {
-        return (1); /* not a directory or doesn't exist */
-    }
-    else if (sv == SLASHC)
-    {
-        /* strip trailing slash and try again */
-        s[len-1] = 0;
-        if (_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
-        {
-            s[len-1] = sv;
-            return (1);
-        }
-        s[len-1] = sv;
-    }
-    return (0);
-#else
     if (fr_findfirst(s) != 0) /* couldn't find it */
     {
         /* any better ideas?? */
@@ -1726,12 +1705,10 @@ int isadirectory(char *s)
             return (1);  /* we're SURE it's a directory */
     }
     return (0);
-#endif
 }
 #endif
 
 #ifndef XFRACT  /* This routine moved to unix.c so we can use it in hc.c */
-
 int splitpath(const char *file_template, char *drive, char *dir, char *fname, char *ext)
 {
     int length;

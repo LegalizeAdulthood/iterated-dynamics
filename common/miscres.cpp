@@ -101,10 +101,6 @@ Rotation angles indicate how much the IMAGE has been rotated, not the
 zoom box.  Same goes for the Skew angles
 */
 
-#ifdef _MSC_VER
-#pragma optimize( "", off )
-#endif
-
 void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
 {
     double Width, Height;
@@ -458,10 +454,6 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
     restore_stack(saved);
     return;
 }
-
-#ifdef _MSC_VER
-#pragma optimize( "", on )
-#endif
 
 void updatesavename(char *filename) /* go to the next file name */
 {
@@ -1588,24 +1580,3 @@ void fix_inversion(double *x) /* make double converted from string look ok */
     sprintf(buf,"%-1.15lg",*x);
     *x = atof(buf);
 }
-
-#if _MSC_VER == 800
-#ifdef FIXTAN_DEFINED
-#undef tan
-/* !!!!! stupid MSVC tan(x) bug fix !!!!!!!!            */
-/* tan(x) can return -tan(x) if -pi/2 < x < pi/2       */
-/* if tan(x) has been called before outside this range. */
-double fixtan(double x)
-{
-    double y;
-
-    y = tan(x);
-    if ((x > -PI/2 && x < 0 && y > 0) || (x > 0 && x < PI/2 && y < 0))
-        y = -y;
-    return y;
-}
-#define tan fixtan
-#endif
-#endif
-
-

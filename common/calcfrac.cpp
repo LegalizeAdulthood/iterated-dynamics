@@ -3549,10 +3549,6 @@ static int ysym_split(int yaxis_col,int yaxis_between)
     return 0; /* tell set_symmetry its a go */
 }
 
-#ifdef _MSC_VER
-#pragma optimize ("ea", off)
-#endif
-
 static void setsymmetry(int sym, int uselist) /* set up proper symmetrical plot functions */
 {
     int i;
@@ -3798,10 +3794,6 @@ originsym:
     if (bf_math)
         restore_stack(saved);
 }
-
-#ifdef _MSC_VER
-#pragma optimize ("ea", on)
-#endif
 
 /**************** tesseral method by CJLT begins here*********************/
 
