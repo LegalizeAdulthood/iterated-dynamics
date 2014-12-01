@@ -44,12 +44,6 @@ extern long stackavail();
 #  define LITTLE_ENDIAN 1234
 #endif
 
-#if defined(XFRACT)
-#ifndef unix
-#define unix
-#endif
-#endif  /* XFRACT  */
-
 #if defined(_WIN32)
 /*================================== Win32 definitions */
 typedef unsigned char  U8;
@@ -89,6 +83,13 @@ typedef const void    *VOIDCONSTPTR;
 /*================================== Win32 definitions */
 
 #else
+
+#if defined(XFRACT)
+#ifndef unix
+#define unix
+#endif
+#endif
+
 #    ifdef unix                     /* Unix machine */
 typedef unsigned char  U8;
 typedef signed char    S8;
