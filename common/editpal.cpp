@@ -48,8 +48,8 @@ char undofile[] = "FRACTINT.$$2";  /* file where undo list is stored */
 
 
 #define newx(size)     mem_alloc(size)
-#define new(class)     (class *)(mem_alloc(sizeof(class)))
-#define delete(block)  block=nullptr  /* just for warning */
+#define allocate(class)     (class *)(mem_alloc(sizeof(class)))
+#define deallocate(block)  block=nullptr  /* just for warning */
 
 #ifdef XFRACT
 int editpal_cursor = 0;
@@ -552,7 +552,7 @@ BOOLEAN Cursor_Construct(void)
     if (the_cursor != nullptr)
         return FALSE;
 
-    the_cursor = new(Cursor);
+    the_cursor = allocate(Cursor);
 
     the_cursor->x          = sxdots/2;
     the_cursor->y          = sydots/2;
@@ -567,7 +567,7 @@ BOOLEAN Cursor_Construct(void)
 void Cursor_Destroy(void)
 {
     if (the_cursor != nullptr)
-        delete(the_cursor);
+        deallocate(the_cursor);
 
     the_cursor = nullptr;
 }
@@ -768,7 +768,7 @@ static void     MoveBox_SetCSize(MoveBox *me, int csize);
 
 static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int base_depth)
 {
-    MoveBox *me = new(MoveBox);
+    MoveBox *me = allocate(MoveBox);
 
     me->x           = x;
     me->y           = y;
@@ -788,11 +788,11 @@ static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int b
 
 static void MoveBox_Destroy(MoveBox *me)
 {
-    delete(me->t);
-    delete(me->b);
-    delete(me->l);
-    delete(me->r);
-    delete(me);
+    deallocate(me->t);
+    deallocate(me->b);
+    deallocate(me->l);
+    deallocate(me->r);
+    deallocate(me);
 }
 
 
@@ -1085,7 +1085,7 @@ static CEditor *CEditor_Construct(int x, int y, char letter,
                                   void (*other_key)(int,CEditor*,VOIDPTR),
                                   void (*change)(CEditor*, VOIDPTR), void *info)
 {
-    CEditor *me = new(CEditor);
+    CEditor *me = allocate(CEditor);
 
     me->x         = x;
     me->y         = y;
@@ -1105,7 +1105,7 @@ static CEditor *CEditor_Construct(int x, int y, char letter,
 
 static void CEditor_Destroy(CEditor *me)
 {
-    delete(me);
+    deallocate(me);
 }
 
 
@@ -1325,7 +1325,7 @@ static PALENTRY RGBEditor_GetRGB(RGBEditor *me);
 static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int,RGBEditor*,void*),
                                       void (*change)(RGBEditor*,void*), void *info)
 {
-    RGBEditor      *me     = new(RGBEditor);
+    RGBEditor      *me     = allocate(RGBEditor);
     static char letter[] = "RGB";
     int             ctr;
 
@@ -1350,7 +1350,7 @@ static void RGBEditor_Destroy(RGBEditor *me)
     CEditor_Destroy(me->color[0]);
     CEditor_Destroy(me->color[1]);
     CEditor_Destroy(me->color[2]);
-    delete(me);
+    deallocate(me);
 }
 
 
@@ -3056,7 +3056,7 @@ static void PalTable__MkDefaultPalettes(PalTable *me)  /* creates default Fkey p
 
 static PalTable *PalTable_Construct(void)
 {
-    PalTable     *me = new(PalTable);
+    PalTable     *me = allocate(PalTable);
     int           csize;
 
     me->rgb[0] = RGBEditor_Construct(0, 0, PalTable__other_key,
@@ -3162,7 +3162,7 @@ static void PalTable_Destroy(PalTable *me)
     RGBEditor_Destroy(me->rgb[0]);
     RGBEditor_Destroy(me->rgb[1]);
     MoveBox_Destroy(me->movebox);
-    delete(me);
+    deallocate(me);
 }
 
 
@@ -3262,5 +3262,5 @@ void EditPalette(void)       /* called by fractint */
     lookatmouse = oldlookatmouse;
     sxoffs = oldsxoffs;
     syoffs = oldsyoffs;
-    delete(line_buff);
+    deallocate(line_buff);
 }
