@@ -180,10 +180,6 @@ void setMPfunctions(void) {
 }
 #endif /* XFRACT */
 
-#ifndef sqr
-#define sqr(x) ((x)*(x))
-#endif
-
 _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
     _CMPLX z, cLog, t;
     double e2x, siny, cosy;

@@ -665,14 +665,21 @@ extern struct fractalspecificstuff *curfractalspecific;
 #define DEFAULTFRACTALTYPE      ".gif"
 #define ALTERNATEFRACTALTYPE    ".fra"
 
+inline int sqr(int x)
+{
+    return x*x;
+}
+inline double sqr(double x)
+{
+    return x*x;
+}
 
-#ifndef sqr
-#define sqr(x) ((x)*(x))
-#endif
-
-#ifndef lsqr
-#define lsqr(x) (multiply((x),(x),bitshift))
-#endif
+inline long lsqr(long x)
+{
+    extern int bitshift;
+    extern long multiply(long x, long y, int n);
+    return multiply(x, x, bitshift);
+}
 
 #define CMPLXmod(z)     (sqr((z).x)+sqr((z).y))
 #define CMPLXconj(z)    ((z).y =  -((z).y))

@@ -186,14 +186,6 @@ enum direction
 enum direction going_to;
 int trail_row, trail_col;
 
-#ifndef sqr
-#define sqr(x) ((x)*(x))
-#endif
-
-#ifndef lsqr
-#define lsqr(x) (multiply((x),(x),bitshift))
-#endif
-
 /* -------------------------------------------------------------------- */
 /*              These variables are external for speed's sake only      */
 /* -------------------------------------------------------------------- */

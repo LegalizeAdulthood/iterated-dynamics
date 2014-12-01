@@ -70,14 +70,6 @@ _CMPLX pwr;
 int     bitshiftless1;                  /* bit shift less 1 */
 int overflow = 0;
 
-#ifndef sqr
-#define sqr(x) ((x)*(x))
-#endif
-
-#ifndef lsqr
-#define lsqr(x) (multiply((x),(x),bitshift))
-#endif
-
 #define modulus(z)       (sqr((z).x)+sqr((z).y))
 #define conjugate(pz)   ((pz)->y = 0.0 - (pz)->y)
 #define distance(z1,z2)  (sqr((z1).x-(z2).x)+sqr((z1).y-(z2).y))
