@@ -84,11 +84,7 @@ typedef const void    *VOIDCONSTPTR;
 
 #ifndef BYTE_ORDER
 /* change for little endians that don't have this defined elsewhere (endian.h) */
-#ifdef LINUX
-#define BYTE_ORDER LITTLE_ENDIAN
-#else
 #define BYTE_ORDER BIG_ENDIAN /* the usual case */
-#endif
 #endif
 
 /* TODO: we should refactor this into something better instead of using unix.h */
