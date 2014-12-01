@@ -686,10 +686,6 @@ extern struct fractalspecificstuff *curfractalspecific;
 typedef  _LCMPLX LCMPLX;
 
 /* 3D stuff - formerly in 3d.h */
-#ifndef dot_product
-#define dot_product(v1,v2)  ((v1)[0]*(v2)[0]+(v1)[1]*(v2)[1]+(v1)[2]*(v2)[2])
-#endif
-
 #define    CMAX    4   /* maximum column (4 x 4 matrix) */
 #define    RMAX    4   /* maximum row    (4 x 4 matrix) */
 
@@ -708,6 +704,11 @@ typedef long  LVECTOR [3];  /* vector of longs   */
 /* A VECTOR is an array of three coordinates [x,y,z] representing magnitude
 and direction. A fourth dimension is assumed to always have the value 1, but
 is not in the data structure */
+
+inline double dot_product(VECTOR v1, VECTOR v2)
+{
+    return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
+}
 
 #ifdef PI
 #undef PI
