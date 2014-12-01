@@ -984,9 +984,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         if (strcmp(variable, "makedoc") == 0)
         {
             print_document(*value ? value : "fractint.doc", makedoc_msg_func, 0);
-#ifndef WINFRACT
             goodbye();
-#endif
         }
 
         if (strcmp(variable,s_makepar) == 0)
@@ -1050,7 +1048,6 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             dysize = ydots - 1;
             calcfracinit();
             make_batch_file();
-#ifndef WINFRACT
 #if !defined(XFRACT)
 #if defined(_WIN32)
             ABORT(0, "Don't call standard I/O without a console on Windows");
@@ -1069,7 +1066,6 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 #endif
 #endif
             goodbye();
-#endif
         }
     } /* end of commands allowed only at startup */
 
@@ -1574,9 +1570,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         xmult = intval[0];
         ymult = intval[1];
         make_mig(xmult, ymult);
-#ifndef WINFRACT
         exit(0);
-#endif
     }
 
     if (strcmp(variable, "cyclerange") == 0)

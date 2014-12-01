@@ -528,9 +528,7 @@ extern int timer(int,int (*subrtn)(),...);
 
 extern void clear_zoombox(void);
 extern void flip_image(int kbdchar);
-#ifndef WINFRACT
 extern void reset_zoom_corners(void);
-#endif
 extern void setup287code(void);
 
 /*  frasetup -- C file prototypes */
@@ -625,9 +623,8 @@ extern int targa_validate(char *);
 extern int startdisk1(char *, FILE *, int);
 
 /*  loadfdos -- C file prototypes */
-#ifndef WINFRACT
 extern int get_video_mode(struct fractal_info *,struct ext_blk_3 *);
-#endif
+
 /*  loadfile -- C file prototypes */
 
 extern int read_overlay(void);
@@ -1049,7 +1046,7 @@ extern int fullscreen_choice(
     int (*speedprompt)(int,int,int,char *,int),
     int (*checkkey)(int,int)
 );
-#if !defined(WINFRACT)
+
 extern int showtempmsg(const char *);
 extern void cleartempmsg(void);
 extern void helptitle(void);
@@ -1069,7 +1066,6 @@ extern int check_vidmode_key(int ,int);
 extern int check_vidmode_keyname(char *);
 extern void vidmode_keyname(int ,char *);
 extern void freetempmsg(void);
-#endif
 extern void load_videotable(int);
 extern void bad_fractint_cfg_msg(void);
 

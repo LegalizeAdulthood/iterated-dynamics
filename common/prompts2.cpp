@@ -1177,9 +1177,6 @@ void goodbye(void)                  /* we done.  Bail out */
     enddisk();
     discardgraphics();
     ExitCheck();
-#ifdef WINFRACT
-    return;
-#endif
     if (*s_makepar != 0)
     {
         driver_set_for_text();

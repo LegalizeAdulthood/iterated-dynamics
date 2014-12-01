@@ -1417,84 +1417,25 @@ int init_help(void)
 
     help_file = nullptr;
 
-#ifndef WINFRACT
-#if !defined(XFRACT) && !defined(_WIN32)
-    if (help_file == -1)         /* now look for help files in FRACTINT.EXE */
+    if (find_file("fractint.hlp", path))
     {
-        /*
-              static char err_not_in_exe[] = "Help not found in FRACTINT.EXE!\n";
-        */
-
-        if (find_file("FRACTINT.EXE", path))
+        if ((help_file = fopen(path, "rb")) != nullptr)
         {
-            if ((help_file = open(path, O_RDONLY|O_BINARY)) != -1)
+            fread(&hs, sizeof(long)+sizeof(int), 1, help_file);
+
+            if (hs.sig != HELP_SIG)
             {
-                long help_offset;
-
-                for (help_offset = -((long)sizeof(hs)); help_offset >= -128L; help_offset--)
-                {
-                    fseek(help_file, help_offset, SEEK_END);
-                    fread((char *)&hs, sizeof(hs));
-                    if (hs.sig == HELP_SIG)
-                    {
-                        break;
-                    }
-                }
-
-                if (hs.sig != HELP_SIG)
-                {
-                    close(help_file);
-                    help_file = -1;
-                }
-                else
-                {
-                    if (hs.version != FIHELP_VERSION)
-                    {
-                        close(help_file);
-                        help_file = -1;
-                        stopmsg(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.EXE!\n");
-                    }
-                    else
-                    {
-                        base_off = hs.base;
-                    }
-                }
+                fclose(help_file);
+                stopmsg(STOPMSG_NO_STACK, "Invalid help signature in FRACTINT.HLP!\n");
+            }
+            else if (hs.version != FIHELP_VERSION)
+            {
+                fclose(help_file);
+                stopmsg(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.HLP!\n");
             }
             else
             {
-                stopmsg(STOPMSG_NO_STACK, "Help system was unable to open FRACTINT.EXE!\n");
-            }
-        }
-        else
-        {
-            stopmsg(STOPMSG_NO_STACK, "Help system couldn't find FRACTINT.EXE!\n");
-        }
-    }
-#endif
-#endif
-
-    if (help_file == nullptr)            /* look for FRACTINT.HLP */
-    {
-        if (find_file("fractint.hlp", path))
-        {
-            if ((help_file = fopen(path, "rb")) != nullptr)
-            {
-                fread(&hs, sizeof(long)+sizeof(int), 1, help_file);
-
-                if (hs.sig != HELP_SIG)
-                {
-                    fclose(help_file);
-                    stopmsg(STOPMSG_NO_STACK, "Invalid help signature in FRACTINT.HLP!\n");
-                }
-                else if (hs.version != FIHELP_VERSION)
-                {
-                    fclose(help_file);
-                    stopmsg(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.HLP!\n");
-                }
-                else
-                {
-                    base_off = sizeof(long)+sizeof(int);
-                }
+                base_off = sizeof(long)+sizeof(int);
             }
         }
     }

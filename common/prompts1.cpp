@@ -2354,13 +2354,6 @@ int get_3d_params()     /* prompt for 3D parameters */
     int i, k;
     int oldhelpmode;
 
-#ifdef WINFRACT
-    {
-        extern int wintext_textmode;
-        if (wintext_textmode != 2)  /* are we in textmode? */
-            return 0;              /* no - prompts are already handled */
-    }
-#endif
 restart_1:
     if (Targa_Out && overlay3d)
         Targa_Overlay = 1;
