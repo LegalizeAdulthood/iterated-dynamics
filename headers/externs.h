@@ -281,7 +281,6 @@ extern enum Major            major_method;
 extern BYTE *            mapdacbox;
 extern int                   mapset;
 extern char                  MAP_name[];
-extern int                   matherr_ct;
 extern double                math_tol[2];
 extern int                   maxcolor;
 extern long                  maxct;

@@ -536,7 +536,6 @@ int calctypeshowdot(void)
 
 int calcfract(void)
 {
-    matherr_ct = 0;
     attractors = 0;          /* default to no known finite attractors  */
     display3d = 0;
     basin = 0;
