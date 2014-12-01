@@ -192,35 +192,6 @@ strupr(char *s)
     }
     return s;
 }
-/*
- *----------------------------------------------------------------------
- *
- * memicmp --
- *
- *      Compare memory (like memcmp), but ignoring case.
- *
- * Results:
- *      -1,0,1.
- *
- * Side effects:
- *      None.
- *
- *----------------------------------------------------------------------
- */
-int
-memicmp(char *s1, char *s2, int n)
-{
-    char c1,c2;
-    while (--n >= 0) {
-        c1 = *s1++;
-        if (isupper(c1)) c1 = tolower(c1);
-        c2 = *s2++;
-        if (isupper(c2)) c2 = tolower(c2);
-        if (c1 != c2)
-            return (c1 - c2);
-    }
-    return (0);
-}
 
 /*
  *----------------------------------------------------------------------
