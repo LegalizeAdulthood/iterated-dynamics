@@ -116,7 +116,6 @@ add_executable(id
     headers/cmplx.h
     headers/drivers.h
     headers/externs.h
-    headers/fmath.h
     headers/fractint.h
     headers/fractype.h
     headers/helpcom.h
