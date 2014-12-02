@@ -4,7 +4,7 @@
  * This file Copyright 1991 Ken Shirriff.  It may be used according to the
  * fractint license conditions, blah blah blah.
  */
-
+#include <float.h>
 
 #include "port.h"
 #include "prototyp.h"
@@ -24,11 +24,6 @@
 double _2_ = 2.0;
 double _1_ = 1.0;
 double PointFive = 0.5;
-
-void FPUaptan387(double *y, double *x, double *atan)
-{
-    *atan = atan2(*y, *x);
-}
 
 void FPUcplxmul(_CMPLX *x, _CMPLX *y, _CMPLX *z)
 {

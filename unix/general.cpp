@@ -252,12 +252,6 @@ void erasesegment(int segaddress, int segvalue)
 }
 
 
-long
-normalize(char *ptr)
-{
-    return (long) ptr;
-}
-
 /* --------------------------------------------------------------------
  * The following routines are used for encoding/decoding gif images.
  * If we aren't on a PC, things are rough for decoding the fractal info

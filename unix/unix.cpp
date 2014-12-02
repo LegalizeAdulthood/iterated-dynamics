@@ -427,21 +427,6 @@ int get_sound_params(void)
 {
     return (0);
 }
-void soundon(int i)
-{
-}
-void soundoff(void)
-{
-}
-
-void mute(void)
-{
-}
-
-int initfm(void)
-{
-    return (0);
-}
 
 /* tenths of millisecond timer routine */
 static struct timeval tv_start;

@@ -138,18 +138,6 @@ putprompt(void)
     return;
 }
 
-/*
-; ********************** Function setvideotext() ************************
-
-;       Sets video to text mode, using setvideomode to do the work.
-*/
-void
-setvideotext(void)
-{
-    dotmode = 0;
-    setvideomode(3, 0, 0, 0);
-}
-
 void
 loaddac(void)
 {

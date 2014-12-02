@@ -713,15 +713,13 @@ void Cursor_CheckBlink(void)
 
 int Cursor_WaitKey(void)   /* blink cursor while waiting for a key */
 {
-
-    while (!driver_wait_key_pressed(1)) {
+    while (!driver_wait_key_pressed(1))
+    {
         Cursor_CheckBlink();
     }
 
     return driver_key_pressed();
 }
-
-
 
 /*
  * Class:     MoveBox

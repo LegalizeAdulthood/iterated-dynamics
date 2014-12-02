@@ -13,10 +13,10 @@
 
 #ifdef XFRACT
 #include "unixprot.h"
-#endif
-
+#else
 #ifdef _WIN32
 #include "winprot.h"
+#endif
 #endif
 
 extern long multiply(long x, long y, int n);
@@ -38,7 +38,6 @@ extern long calcmandasm(void);
 /*  calmanfp -- assembler file prototypes */
 
 extern void calcmandfpasmstart(void);
-/* extern long  calcmandfpasm(void); */
 extern long  calcmandfpasm_287(void);
 extern long  calcmandfpasm_87(void);
 extern long (*calcmandfpasm)(void);
@@ -59,17 +58,11 @@ extern unsigned long ExpFudged(long , int);
 extern long RegDivFloat(long , long);
 extern long LogFudged(unsigned long , int);
 extern long LogFloat14(unsigned long);
-#if !defined(XFRACT) && !defined(_WIN32)
-extern long RegFg2Float(long, char);
-extern long RegSftFloat(long, char);
-#else
 extern long RegFg2Float(long , int);
 extern long RegSftFloat(long , int);
-#endif
 
 /*  fpu387 -- assembler file prototypes */
 
-extern void FPUaptan387(double *, double *, double *);
 extern void FPUcplxexp387(_CMPLX *, _CMPLX *);
 
 /*  fracsuba -- assembler file prototypes */
@@ -238,13 +231,8 @@ extern void *mem_alloc(unsigned size);
 void putrow(int x, int y, int width, char *buff);
 void getrow(int x, int y, int width, char *buff);
 void mem_init(void *block, unsigned size);
-/* void hline(int x, int y, int width, int color); */
 int Cursor_WaitKey(void);
 void Cursor_CheckBlink(void);
-#ifdef XFRACT
-void Cursor_StartMouseTracking(void);
-void Cursor_EndMouseTracking(void);
-#endif
 void clip_putcolor(int x, int y, int color);
 int clip_getcolor(int x, int y);
 BOOLEAN Cursor_Construct(void);
@@ -521,9 +509,6 @@ extern int key_count(int);
 extern int main_menu_switch(int *,int *,int *,char *,int);
 extern int pot_line(BYTE *,int);
 extern int sound_line(BYTE *,int);
-#if defined(XFRACT)
-extern int XZoomWaiting;
-#endif
 extern int timer(int,int (*subrtn)(),...);
 
 extern void clear_zoombox(void);
@@ -941,11 +926,7 @@ extern void FnctNotFound(void);
 extern int whichfn(char *,int);
 extern int CvtStk(void);
 extern int fFormula(void);
-#ifndef XFRACT
 extern void (*isfunct(char *,int))(void);
-#else
-extern void (*isfunct(char *,int))();
-#endif
 extern void RecSortPrec(void);
 extern int Formula(void);
 extern int BadFormula(void);
@@ -1051,15 +1032,10 @@ extern int showtempmsg(const char *);
 extern void cleartempmsg(void);
 extern void helptitle(void);
 extern int putstringcenter(int row, int col, int width, int attr, const char *msg);
-#ifndef XFRACT /* Unix should have this in string.h */
-extern int strncasecmp(const char *, const char *, int);
-#endif
 extern int main_menu(int);
 extern int input_field(int ,int ,char *,int ,int ,int ,int (*)(int));
 extern int field_prompt(const char *hdg, const char *instr, char *fld, int len, int (*checkkey)(int));
 extern int thinking(int options, const char *msg);
-extern int savegraphics(void);
-extern int restoregraphics(void);
 extern void discardgraphics(void);
 extern void load_fractint_config(void);
 extern int check_vidmode_key(int ,int);
@@ -1087,14 +1063,6 @@ extern void recordshw(int);
 extern int do_AutoStereo(void);
 extern int outline_stereo(BYTE *, int);
 
-/*  targa -- C file prototypes */
-
-extern void WriteTGA(int ,int ,int);
-extern int ReadTGA(int ,int);
-extern void EndTGA(void);
-extern void StartTGA(void);
-extern void ReopenTGA(void);
-
 /*  testpt -- C file prototypes */
 
 extern int teststart(void);
@@ -1105,19 +1073,6 @@ extern int testpt(double ,double ,double ,double ,long ,int);
 
 extern int tgaview(void);
 extern int outlin16(BYTE*,int);
-
-/*  yourvid -- C file prototypes */
-
-//extern int startvideo(void);
-//extern int endvideo(void);
-//extern void writevideo(int ,int ,int );
-//extern int readvideo(int ,int );
-//extern int readvideopalette(void);
-//extern int writevideopalette(void);
-#ifdef XFRACT
-//extern void readvideoline(int ,int, int, BYTE * );
-//extern void writevideoline(int ,int, int, BYTE * );
-#endif
 
 /*  zoom -- C file prototypes */
 
@@ -1194,5 +1149,14 @@ extern void init_failure(const char *message);
 extern int expand_dirname(char *dirname,char *drive);
 extern int abortmsg(char *file, unsigned int line, int flags, char *msg);
 #define ABORT(flags_,msg_) abortmsg(__FILE__, __LINE__, flags_, msg_)
+
+extern long stackavail();
+
+extern int getcolor(int, int);
+extern int out_line(BYTE *, int);
+extern void setvideomode(int, int, int, int);
+extern int pot_startdisk(void);
+extern void putcolor_a(int, int, int);
+extern int startdisk(void);
 
 #endif

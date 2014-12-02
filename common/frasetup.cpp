@@ -1,11 +1,10 @@
+#include <float.h>
 #include <limits.h>
 #include <string.h>
-#if !defined(__386BSD__)
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
-#endif
-/* see Fractint.c for a description of the "include"  hierarchy */
+
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
@@ -15,9 +14,7 @@
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
 #endif
 
-#if defined(XFRACT) || defined(_WIN32)
 long calcmandfpasm_c(void);
-#endif
 
 /* -------------------------------------------------------------------- */
 /*              Setup (once per fractal image) routines                 */

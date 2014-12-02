@@ -1338,7 +1338,7 @@ void w_snd(int tone)
     }
     taborhelp = 0;
     if (!driver_key_pressed()) { /* driver_key_pressed calls driver_sound_off() if TAB or F1 pressed */
-        /* must not then call soundoff(), else indexes out of synch */
+        /* must not then call driver_sound_off(), else indexes out of synch */
         /*   if (20 < tone && tone < 15000)  better limits? */
         /*   if (10 < tone && tone < 5000)  better limits? */
         if (driver_sound_on(tone)) {

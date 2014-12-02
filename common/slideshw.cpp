@@ -2,12 +2,11 @@
 /* These routines are called by driver_get_key to allow keystrokes to control */
 /* Fractint to be read from a file.                                    */
 /***********************************************************************/
-
 #include <ctype.h>
-#include <time.h>
+#include <float.h>
 #include <string.h>
+#include <time.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"

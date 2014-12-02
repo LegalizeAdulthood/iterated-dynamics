@@ -3,10 +3,10 @@
    generators - IFS and LORENZ3D, along with code to generate
    red/blue 3D images.
 */
+#include <float.h>
 #include <stdlib.h>
 #include <string.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"

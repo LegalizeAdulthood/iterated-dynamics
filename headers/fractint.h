@@ -566,11 +566,7 @@ struct fractalspecificstuff
                                            5 = PI (sin/cos) symmetry
                                            6 = NEWTON (power) symmetry
                                         */
-#ifdef XFRACT
     int (*orbitcalc)();                 /* function that calculates one orbit */
-#else
-    int (*orbitcalc)(void);             /* function that calculates one orbit */
-#endif
     int (*per_pixel)(void);             /* once-per-pixel init */
     int (*per_image)(void);             /* once-per-image setup */
     int (*calctype)(void);              /* name of main fractal function */
@@ -579,15 +575,11 @@ struct fractalspecificstuff
 
 struct alternatemathstuff
 {
-    int type;                    /* index in fractalname of the fractal */
-    int math;                    /* kind of math used */
-#ifdef XFRACT
-    int (*orbitcalc)();  /* function that calculates one orbit */
-#else
-    int (*orbitcalc)(void);      /* function that calculates one orbit */
-#endif
-    int (*per_pixel)(void);      /* once-per-pixel init */
-    int (*per_image)(void);      /* once-per-image setup */
+    int type;                           /* index in fractalname of the fractal */
+    int math;                           /* kind of math used */
+    int (*orbitcalc)();                 /* function that calculates one orbit */
+    int (*per_pixel)(void);             /* once-per-pixel init */
+    int (*per_image)(void);             /* once-per-image setup */
 };
 
 typedef struct alternatemathstuff AlternateMath;

@@ -3,8 +3,8 @@
 
 /* This file contains prototypes for unix/linux specific functions. */
 
-
-
+void Cursor_StartMouseTracking(void);
+void Cursor_EndMouseTracking(void);
 
 /*  calmanp5 -- assembler file prototypes */
 
@@ -31,11 +31,8 @@ extern long clock_ticks(void);
 extern int stricmp(const char *, const char *);
 extern int strnicmp(const char *, const char *, int);
 #endif
-#if !defined(_WIN32)
 extern int ltoa(long, char *, int);
-#endif
 extern void ftimex(struct timebx *);
-extern long stackavail(void);
 
 /*   unixscr.c -- C file prototypes */
 
@@ -89,11 +86,5 @@ void schedulealarm(int soon);
  */
 extern void putprompt(void);
 extern void loaddac(void);
-extern void putcolor_a(int, int, int);
-extern int  out_line(BYTE *, int);
-extern int  getcolor(int, int);
-extern void setvideomode(int, int, int, int);
-extern void putstring(int row, int col, int attr, const char *msg);
-extern BYTE *findfont(int);
 
 #endif

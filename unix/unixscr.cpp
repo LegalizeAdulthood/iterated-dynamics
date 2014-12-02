@@ -76,8 +76,6 @@ extern VIDEOINFO x11_video_table[];
 
 extern unsigned char dacbox[256][3];
 
-extern void drawbox();
-
 extern int g_text_type;
 extern int helpmode;
 extern int rotate_hi;

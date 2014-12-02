@@ -240,10 +240,14 @@ add_custom_command(
 # In debug builds, tell MSVC to:
 #   - not warn us about unchecked iterators
 #   - not warn us about deprecated CRT functions
+#   - not warn us about possibly unsafe CRT functions
 #   - store source code location information for memory allocations
 if(${MSVC})
-    set_target_properties(id PROPERTIES COMPILE_DEFINITIONS_DEBUG
-        _SCL_SECURE_NO_WARNINGS
-        _CRT_SECURE_NO_DEPRECATE
-        _CRTDBG_MAP_ALLOC)
+    set(MSVC_DEFINITIONS
+        "_SCL_SECURE_NO_WARNINGS"
+        "_CRT_SECURE_NO_DEPRECATE"
+        "_CRT_SECURE_NO_WARNINGS"
+        "_CRTDBG_MAP_ALLOC")
+    set_target_properties(id PROPERTIES
+        COMPILE_DEFINITIONS_DEBUG "${MSVC_DEFINITIONS}")
 endif()

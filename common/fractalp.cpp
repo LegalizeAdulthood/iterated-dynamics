@@ -2,17 +2,14 @@
         This module consists only of the fractalspecific structure
         and a *slew* of defines needed to get it to compile
 */
+#include <float.h>
 #include <string.h>
-
-/* includes needed for fractalspecific */
-
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
 
-/* functions defined elswhere needed for fractalspecific */
+/* functions defined elsewhere needed for fractalspecific */
 /* moved to prototyp.h */
 
 /* parameter descriptions */

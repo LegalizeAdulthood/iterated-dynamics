@@ -1,14 +1,11 @@
-
-/* Routine to decode Targa 16 bit RGB file
-   */
+/* Routine to decode Targa 16 bit RGB file */
 
 /* 16 bit .tga files were generated for continuous potential "potfile"s
    from version 9.? thru version 14.  Replaced by double row gif type
    file (.pot) in version 15.  Delete this code after a few more revs.
 */
+#include <float.h>
 
-
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "targa_lc.h"

@@ -292,10 +292,6 @@ static void color_link(LINK *link, int color)
     g_text_rbase = 0;
 }
 
-/* #define PUT_KEY(name, descrip)
-        putstring(-1,-1,C_HELP_INSTR_KEYS,name),
-        putstring(-1,-1,C_HELP_INSTR," "descrip"  ")
-*/
 #if defined(_WIN32)
 #define PUT_KEY(name_,desc_) put_key(name_,desc_)
 #else

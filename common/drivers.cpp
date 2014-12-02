@@ -1,10 +1,11 @@
+#include <float.h>
+#include <string.h>
+
 #include "port.h"
 #include "prototyp.h"
 #include "externs.h"
 #include "cmplx.h"
 #include "drivers.h"
-
-#include <string.h>
 
 extern Driver *x11_driver;
 extern Driver *gdi_driver;

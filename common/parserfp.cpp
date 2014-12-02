@@ -34,12 +34,11 @@
 
 /* Use startup parameter "debugflag=324" to show debug messages after  */
 /*    compiling with above #define uncommented.  */
-
-#include <string.h>
 #include <ctype.h>
+#include <float.h>
+#include <string.h>
 #include <time.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 

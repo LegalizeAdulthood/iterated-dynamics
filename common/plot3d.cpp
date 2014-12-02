@@ -3,8 +3,7 @@
     for 3D, used by lorenz.c and line3d.c
     By Tim Wegner and Marc Reinig.
 */
-
-/* see Fractint.c for a description of the "include"  hierarchy */
+#include <float.h>
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"

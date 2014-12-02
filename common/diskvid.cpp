@@ -8,10 +8,9 @@
    Do timing tests for a variety of situations after any change.
 
 */
-
+#include <float.h>
 #include <string.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"

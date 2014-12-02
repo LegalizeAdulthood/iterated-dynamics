@@ -7,22 +7,15 @@
 #ifndef PORT_H
 #define PORT_H
 
-#if defined(_WIN32)
 #include <stdlib.h>
+#if defined(_WIN32)
 #include <crtdbg.h>
+/* disable deprecated CRT warnings */
+#pragma warning(disable: 4996)
 #endif
 
-#if !defined(_WIN32)
-#include <unistd.h>
-#endif
 #include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
-#include <float.h>
-
-#if defined(_WIN32)
-extern long stackavail();
-#endif
 
 /* If endian.h is not present, it can be handled in the code below, */
 /* but if you have this file, it can make it more fool proof. */
@@ -73,12 +66,15 @@ typedef const void    *VOIDCONSTPTR;
 #define BYTE_ORDER BIG_ENDIAN /* the usual case */
 #endif
 
-/* TODO: we should refactor this into something better instead of using unix.h */
 #include "win32.h"
 
 /*================================== Win32 definitions */
 
 #else
+
+#define _snprintf snprintf
+#define _vsnprintf vsnprintf
+#define _alloca alloca
 
 #if defined(XFRACT)
 #ifndef unix
@@ -145,11 +141,5 @@ typedef int sigfunc(int);
 #endif
 
 typedef long double LDBL;
-
-#if !defined(_WIN32)
-#define _snprintf snprintf
-#define _vsnprintf vsnprintf
-#define _alloca alloca
-#endif
 
 #endif  /* PORT_H */

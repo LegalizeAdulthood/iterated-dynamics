@@ -21,10 +21,10 @@
    file (.pot) in version 15.  Delete this code after a few more revs.
    The part which wrote 16 bit .tga files has already been deleted.
 */
-
-#include <string.h>
 #include <ctype.h>
-/* see Fractint.c for a description of the "include"  hierarchy */
+#include <float.h>
+#include <string.h>
+
 #include "port.h"
 #include "prototyp.h"
 #include "targa_lc.h"

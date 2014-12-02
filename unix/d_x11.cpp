@@ -64,8 +64,6 @@ extern  float   screenaspect;
 extern unsigned char g_dac_box[256][3];
 extern VIDEOINFO x11_video_table[];
 
-extern void drawbox();
-
 extern int g_text_type;
 extern int helpmode;
 extern int rotate_hi;

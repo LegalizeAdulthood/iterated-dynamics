@@ -1,18 +1,17 @@
 /*
         Miscellaneous C routines used only in DOS Fractint.
 */
-
+#include <ctype.h>
+#include <fcntl.h>
+#include <float.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #ifndef XFRACT
 #include <io.h>
 #include <process.h>
 #endif
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <ctype.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -1068,17 +1067,6 @@ fs_choice_end:
     lookatmouse = savelookatmouse;
     return ret;
 }
-
-#ifndef XFRACT
-/* case independent version of strncmp */
-int strncasecmp(const char *s, const char *t,int ct)
-{
-    for (; (tolower(*s) == tolower(*t)) && --ct ; s++,t++)
-        if (*s == '\0')
-            return (0);
-    return (tolower(*s) - tolower(*t));
-}
-#endif
 
 static int menutype;
 #define MENU_HDG 3

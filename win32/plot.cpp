@@ -1,8 +1,8 @@
-#define _CRTDBG_MAP_ALLOC
 #include <assert.h>
-#include <string.h>
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <float.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define STRICT
 #define WIN32_LEAN_AND_MEAN

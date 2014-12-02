@@ -3,6 +3,7 @@
  * Routines for a Win32 GDI driver for fractint.
  */
 #include <assert.h>
+#include <float.h>
 #include <stdio.h>
 #include <time.h>
 

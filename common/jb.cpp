@@ -1,4 +1,5 @@
-/* see Fractint.c for a description of the "include"  hierarchy */
+#include <float.h>
+
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"

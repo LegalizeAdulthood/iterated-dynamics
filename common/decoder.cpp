@@ -32,14 +32,12 @@
  ==    to check for the presenc of a key-press as a bail-out signal
  ==
  */
+#include <float.h>
 
-/***** Application Includes *********************************************/
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
 
-/***** Application Function Prototypes **********************************/
 static short get_next_code(void);
 
 /* extern short out_line(pixels, linelen)
@@ -57,7 +55,6 @@ static short get_next_code(void);
  */
 int (*outln)(BYTE *, int) = out_line;
 
-/***** Local Static Variables *******************************************/
 /* Various error codes used by decoder
  * and my own routines...   It's okay
  * for you to define whatever you want,

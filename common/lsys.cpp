@@ -1,10 +1,9 @@
-
+#include <float.h>
 #include <string.h>
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
 
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "lsys.h"

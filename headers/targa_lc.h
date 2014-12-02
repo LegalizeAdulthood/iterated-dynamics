@@ -3,7 +3,7 @@
 
 #define HEADERSIZE 18           /* Size, offsets, and masks for the */
 #define O_COMMENTLEN 0          /* TGA file header.  This is not a      */
-#define O_MAPTYPE 1                     /* structure to avoid problems with     */
+#define O_MAPTYPE 1             /* structure to avoid problems with     */
 #define O_FILETYPE 2            /* byte-packing and such.                       */
 #define O_MAPORG 3
 #define O_MAPLEN 5

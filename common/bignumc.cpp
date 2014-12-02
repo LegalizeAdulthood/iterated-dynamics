@@ -3,9 +3,9 @@
 /*
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 */
-
+#include <float.h>
 #include <memory.h>
-/* see Fractint.c for a description of the "include"  hierarchy */
+
 #include "port.h"
 #include "big.h"
 

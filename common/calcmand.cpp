@@ -1,3 +1,4 @@
+#include <float.h>
 #include "port.h"
 #include "prototyp.h"
 

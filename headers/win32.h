@@ -28,5 +28,4 @@ typedef struct  timebx
     int   dstflag;
 } timebx;
 
-
 #endif

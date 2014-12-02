@@ -52,9 +52,9 @@ ROTZ(i) =           cosi  sini    0     0
                       0     0     1     0
                       0     0     0     1
 */
-
-
+#include <float.h>
 #include <string.h>
+
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"

@@ -4,16 +4,12 @@ This file contains the "big number" high precision versions of the
 fractal routines.
 
 --------------------------------------------------------------------   */
-
-
+#include <float.h>
 #include <limits.h>
 #include <string.h>
-#if !defined(__386BSD__)
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
-#endif
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
@@ -23,7 +19,6 @@ fractal routines.
 int bf_math = 0;
 
 #ifdef DEBUG
-
 /**********************************************************************/
 void show_var_bn(char *s, bn_t n)
 {

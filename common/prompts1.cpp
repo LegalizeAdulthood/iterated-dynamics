@@ -1,23 +1,18 @@
 /*
         Various routines that prompt for things.
 */
-
 #include <assert.h>
-#include <string.h>
 #include <ctype.h>
+#include <float.h>
+#include <string.h>
 #ifdef   XFRACT
-#ifndef  __386BSD__
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #endif
-#endif
-#if !defined(__386BSD__)
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
-#endif
 
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"

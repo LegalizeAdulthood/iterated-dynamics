@@ -28,9 +28,9 @@
       return 0
 
 */
-
+#include <float.h>
 #include <string.h>
-/* see Fractint.c for a description of the "include"  hierarchy */
+
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"

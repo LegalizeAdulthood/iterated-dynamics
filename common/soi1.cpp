@@ -11,6 +11,7 @@
  * <URL:http://www.cs.tu-berlin.de/~rms/AlmondBread>.
  *
  */
+#include <float.h>
 #include <time.h>
 #include <string.h>
 #if !defined(_WIN32)

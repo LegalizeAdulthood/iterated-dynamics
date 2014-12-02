@@ -1,10 +1,11 @@
 #include <assert.h>
 #include <direct.h>
-#include <string.h>
+#include <float.h>
+#include <io.h>
 #include <signal.h>
+#include <string.h>
 #include <sys/timeb.h>
 #include <time.h>
-#include <io.h>
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
@@ -498,19 +499,6 @@ adapter_detect(void)
 }
 
 /*
-; ********* Function gettruecolor(xdot, ydot, &red, &green, &blue) **************
-;       Return the color on the screen at the (xdot, ydot) point
-*/
-void gettruecolor(int xdot, int ydot, int *red, int *green, int *blue)
-{
-    /* TODO */
-    _ASSERTE(FALSE);
-    *red = 0;
-    *green = 0;
-    *blue = 0;
-}
-
-/*
 ; **************** Function home()  ********************************
 
 ;       Home the cursor (called before printfs)
@@ -525,16 +513,6 @@ void home(void)
 int isadirectory(char *s)
 {
     return PathIsDirectory(s);
-}
-
-/*
-; ******* Function puttruecolor(xdot, ydot, red, green, blue) *************
-;       write the color on the screen at the (xdot, ydot) point
-*/
-void puttruecolor(int xdot, int ydot, int red, int green, int blue)
-{
-    /* TODO */
-    _ASSERTE(FALSE);
 }
 
 /* tenths of millisecond timewr routine */
@@ -976,4 +954,13 @@ void findpath(const char *filename, char *fullpathname) /* return full pathnames
             strcpy(&fullpathname[3],temp_path);
         }
     }
+}
+
+/* case independent version of strncmp */
+int strncasecmp(const char *s, const char *t,int ct)
+{
+    for (; (tolower(*s) == tolower(*t)) && --ct ; s++,t++)
+        if (*s == '\0')
+            return (0);
+    return (tolower(*s) - tolower(*t));
 }

@@ -387,9 +387,6 @@ extern unsigned              posp;
 extern int                   pot16bit;
 extern int                   potflag;
 extern double                potparam[];
-#ifndef XFRACT
-extern U16                   prefix[];
-#endif
 extern char                  preview;
 extern int                   previewfactor;
 extern int                   px;
@@ -604,8 +601,11 @@ extern int                   zscroll;
 extern double                zskew;
 extern double                zwidth;
 
-#ifdef XFRACT
-extern  int                  fake_lut;
+#if defined(XFRACT)
+extern int                   fake_lut;
+extern int                   XZoomWaiting;
+#else
+extern U16                   prefix[];
 #endif
 
 #endif
