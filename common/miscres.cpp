@@ -3,20 +3,17 @@
 */
 #include <algorithm>
 
-#include <string.h>
 #include <ctype.h>
+#include <stdarg.h>
+#include <string.h>
 #include <time.h>
-#if !defined(_WIN32)
+#if defined(XFRACT)
 #include <malloc.h>
-#endif
-
-#ifndef XFRACT
+#include <unistd.h>
+#else
 #include <io.h>
 #endif
 
-#include <stdarg.h>
-
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"

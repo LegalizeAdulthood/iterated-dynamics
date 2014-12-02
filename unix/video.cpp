@@ -1,5 +1,6 @@
 #include <curses.h>
 #include <string.h>
+
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
@@ -91,6 +92,8 @@ int g_vesa_x_res;
 int g_vesa_y_res;
 int chkd_vvs = 0;
 int video_vram = 0;
+
+void putstring(int row, int col, int attr, const char *msg);
 
 /*
 

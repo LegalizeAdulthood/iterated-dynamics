@@ -1,13 +1,12 @@
-/*
-        Miscellaneous C routines used only in DOS Fractint.
-*/
 #include <ctype.h>
 #include <fcntl.h>
 #include <float.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#ifndef XFRACT
+#if defined(XFRACT)
+#include <unistd.h>
+#else
 #include <io.h>
 #include <process.h>
 #endif

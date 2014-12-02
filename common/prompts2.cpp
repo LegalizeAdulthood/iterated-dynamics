@@ -3,42 +3,27 @@
 */
 #include <algorithm>
 
-#include <string.h>
 #include <ctype.h>
-
-#ifndef XFRACT
-#include <io.h>
-#elif !defined(__386BSD__) && !defined(_WIN32)
-#include <sys/types.h>
+#include <string.h>
+#if defined(XFRACT)
+#include <fcntl.h>
+#include <malloc.h>
 #include <sys/stat.h>
-
+#include <sys/types.h>
+#include <unistd.h>
 #ifdef DIRENT
 #include <dirent.h>
 #else
 #include <sys/dir.h>
 #endif
-
+#else
+#include <direct.h>
+#include <io.h>
 #endif
-
-#if !defined(__386BSD__)
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
-#endif
-
-#ifdef XFRACT
-#include <fcntl.h>
-#endif
-
 #ifdef __hpux
 #include <sys/param.h>
 #endif
 
-#if defined(_WIN32)
-#include <direct.h>
-#endif
-
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"

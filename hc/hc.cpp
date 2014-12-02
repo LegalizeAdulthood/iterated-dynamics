@@ -7,46 +7,36 @@
  *
  */
 #include <algorithm>
-
-
-#ifdef XFRACT
-#define strupr strlwr
-#else
-#include <io.h>
-#endif
-
-#if defined(_WIN32)
-#include <io.h>
-#define _CRT_SECURE_NO_DEPRECATE
-/* disable unsafe CRT warnings */
-#pragma warning(disable: 4996)
-#endif
-
 #include <cstdarg>
 
-#include <fcntl.h>
-#include <string.h>
+#include <assert.h>
 #include <ctype.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+#include "port.h"
+#define INCLUDE_COMMON  /* tell helpcom.h to include common code */
+#include "helpcom.h"
 
 #define MAXFILE _MAX_FNAME
 #define MAXEXT  _MAX_EXT
 #define FNSPLIT _splitpath
 
-
-#include <assert.h>
-/* see Fractint.c for a description of the "include"  hierarchy */
-#include "port.h"
-#define INCLUDE_COMMON  /* tell helpcom.h to include common code */
-#include "helpcom.h"
-
 #ifdef XFRACT
+#include <unistd.h>
+
 #ifndef HAVESTRI
 extern int stricmp(const char *, const char *);
 extern int strnicmp(const char *, const char *, int);
 #endif
 extern int filelength(int);
 extern int _splitpath(const char *file_template, char *drive, char *dir, char *fname, char *ext);
-#endif
+#define strupr strlwr
+
+#else
 
 /*
  * When defined, SHOW_ERROR_LINE will cause the line number in HC.C where
@@ -56,11 +46,15 @@ extern int _splitpath(const char *file_template, char *drive, char *dir, char *f
  * Used when debugging HC.  Also useful for finding the line (in HC.C) that
  * generated a error or warning.
  */
-
-#ifndef XFRACT
 #define SHOW_ERROR_LINE
+
+#if defined(_WIN32)
+#include <io.h>
+/* disable unsafe CRT warnings */
+#pragma warning(disable: 4996)
 #endif
 
+#endif
 
 #define DEFAULT_SRC_FNAME "help.src"
 #define DEFAULT_HLP_FNAME "fractint.hlp"
@@ -72,14 +66,11 @@ extern int _splitpath(const char *file_template, char *drive, char *dir, char *f
 
 #define MAX_ERRORS        (25)   /* stop after this many errors */
 #define MAX_WARNINGS      (25)   /* stop after this many warnings */
-/* 0 = never stop */
+                                 /* 0 = never stop */
 
 #define INDEX_LABEL       "FIHELP_INDEX"
 #define DOCCONTENTS_TITLE "DocContent"
 
-
-
-/* #define BUFFER_SIZE   (24*1024) */
 #define BUFFER_SIZE   (30*1024)
 
 

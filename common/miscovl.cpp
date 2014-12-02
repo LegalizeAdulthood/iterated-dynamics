@@ -4,21 +4,18 @@
 #include <algorithm>
 #include <vector>
 
-#include <string.h>
 #include <ctype.h>
-#include <time.h>
-
-#ifndef XFRACT
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
-#include <process.h>
-#include <io.h>
-#endif
-
+#include <float.h>
 #include <stdarg.h>
+#include <string.h>
+#include <time.h>
+#if defined(XFRACT)
+#include <unistd.h>
+#else
+#include <io.h>
+#include <process.h>
+#endif
 
-/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"

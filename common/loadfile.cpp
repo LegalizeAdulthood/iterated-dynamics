@@ -3,10 +3,13 @@
 */
 #include <algorithm>
 
+#include <errno.h>
 #include <string.h>
 #include <time.h>
-#include <errno.h>
-/* see Fractint.c for a description of the "include"  hierarchy */
+#if defined(XFRACT)
+#include <unistd.h>
+#endif
+
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"

@@ -4,16 +4,18 @@
 #define NDEBUG
 #endif
 
-#if !defined(XFRACT)
-#include <io.h>
-#endif
+#include <assert.h>
 #include <fcntl.h>
 #include <string.h>
-#include <time.h>
-#include <assert.h>
-#include <sys/types.h>
 #include <sys/stat.h>
-/* see Fractint.c for a description of the "include"  hierarchy */
+#include <sys/types.h>
+#include <time.h>
+#if defined(XFRACT)
+#include <unistd.h>
+#else
+#include <io.h>
+#endif
+
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"

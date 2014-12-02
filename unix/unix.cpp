@@ -6,14 +6,16 @@
  */
 #include <algorithm>
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
-#include <sys/types.h>
+#include <string.h>
 #include <sys/file.h>
 #include <sys/stat.h>
-#include <string.h>
-#include <ctype.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include "port.h"
 
 #define FILE_MAX_PATH  256       /* max length of path+filename  */

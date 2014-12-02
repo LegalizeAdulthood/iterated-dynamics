@@ -3,12 +3,14 @@
 */
 #include <algorithm>
 
-#include <string.h>
 #include <limits.h>
-#ifndef XFRACT
+#include <string.h>
+#if defined(XFRACT)
+#include <unistd.h>
+#else
 #include <io.h>
 #endif
-/* see Fractint.c for a description of the "include"  hierarchy */
+
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"

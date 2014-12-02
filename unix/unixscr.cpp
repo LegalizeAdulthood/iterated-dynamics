@@ -12,34 +12,32 @@
  * Some of the zoombox code is from Bill Broadley.
  * David Sanderson straightened out a bunch of include file problems.
  */
-
+#include <assert.h>
+#include <curses.h>
+#include <fcntl.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <curses.h>
-#include <X11/Xlib.h>
-#include <X11/keysym.h>
-#include <X11/Xatom.h>
-#include <X11/Xutil.h>
-#include <signal.h>
+#include <sys/ioctl.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-
+#include <unistd.h>
+#include <X11/Xatom.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/keysym.h>
 #ifdef _AIX
 #include <sys/select.h>
 #endif
-
 #ifdef FPUERR
 #include <floatingpoint.h>
 #endif
-
 #ifdef __hpux
 #include <sys/file.h>
 #endif
 
-#include <fcntl.h>
 #include "helpdefs.h"
 #include "port.h"
 #include "prototyp.h"
@@ -51,8 +49,6 @@
 #define FNDELAY O_NDELAY
 #endif
 #endif
-
-#include <assert.h>
 
 /* Check if there is a character waiting for us.  */
 #define input_pending() (ioctl(0,FIONREAD,&iocount),(int)iocount)

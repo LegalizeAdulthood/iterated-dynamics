@@ -1,14 +1,15 @@
 /*
         Command-line / Command-File Parser Routines
 */
+#include <string>
 #include <vector>
 
-#include <string>
-#include <string.h>
 #include <ctype.h>
-#include <time.h>
+#include <float.h>
 #include <math.h>
-/* see Fractint.c for a description of the "include"  hierarchy */
+#include <string.h>
+#include <time.h>
+
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"

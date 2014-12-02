@@ -4,9 +4,12 @@
 /* before displaying points. Called once per line of the input file.    */
 /************************************************************************/
 #include <algorithm>
-#include <limits.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
+#include <limits.h>
+#if defined(XFRACT)
+#include <unistd.h>
+#endif
+
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
