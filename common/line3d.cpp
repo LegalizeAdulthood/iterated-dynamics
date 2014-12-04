@@ -1972,7 +1972,6 @@ static int end_object(int triout)
 
 static void line3d_cleanup(void)
 {
-    int i, j;
     if (RAY && File_Ptr1)
     {   /* Finish up the ray tracing files */
         if (RAY != 5 && RAY != 7)
@@ -1989,8 +1988,8 @@ static void line3d_cleanup(void)
         if (RAY == 6)
         {
             fprintf(File_Ptr1, "LineList From To\n");
-            for (i = 0; i < RO; i++)
-                for (j = 0; j <= CO_MAX; j++)
+            for (int i = 0; i < RO; i++)
+                for (int j = 0; j <= CO_MAX; j++)
                 {
                     if (j < CO_MAX)
                         fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i, j + 1);
@@ -2461,7 +2460,6 @@ static int line3dmem(void)
         check_extra += sizeof(struct minmax) * ydots;
         if (check_extra > (1L << 16))     /* run out of extra segment? */
         {
-            static struct minmax *got_mem = nullptr;
             if (debugflag == 2222)
                 stopmsg(0,"malloc minmax");
             /* not using extra segment so decrement check_extra */
