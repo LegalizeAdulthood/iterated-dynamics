@@ -1112,7 +1112,6 @@ static void printers(PRINT_DOC_INFO *info, char *s, int n)
 
 static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 {
-    int tmp;
     int t;
     BYTE ch;
 
@@ -1131,10 +1130,6 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
         fread(&ch, sizeof(char), 1, help_file);       /* read id len */
 
         t = ch;
-        if (t >= 80)
-        {
-            tmp = ftell(help_file);
-        }
         assert(t<80);
         fread(info->id, sizeof(char), t, help_file);  /* read the id */
         info->content_pos += 1 + t;
