@@ -1866,14 +1866,13 @@ static void PalTable__Redo(PalTable *me)
 
 static void PalTable__DrawStatus(PalTable *me, BOOLEAN stripe_mode)
 {
-    int color;
     int width = 1+(me->csize*16)+1+1;
 
     if (!me->hidden && (width - (RGBEditor_WIDTH*2+4) >= STATUS_LEN*8))
     {
         int x = me->x + 2 + RGBEditor_WIDTH,
             y = me->y + PalTable_PALY - 10;
-        color = PalTable__GetCursorColor(me);
+        int color = PalTable__GetCursorColor(me);
         if (color < 0 || color >= colors) /* hmm, the border returns -1 */
             color = 0;
         Cursor_Hide();
@@ -2225,9 +2224,8 @@ static void PalTable__SetCSize(PalTable *me, int csize)
 
 static int PalTable__GetCursorColor(PalTable *me)
 {
-    int x     = Cursor_GetX(),
-        y     = Cursor_GetY(),
-        size;
+    int x = Cursor_GetX();
+    int y = Cursor_GetY();
     int color = getcolor(x, y);
 
     if (is_reserved(color))
@@ -2236,7 +2234,7 @@ static int PalTable__GetCursorColor(PalTable *me)
         {   /* is the cursor over the editor? */
             x -= me->x + PalTable_PALX;
             y -= me->y + PalTable_PALY;
-            size = me->csize;
+            int size = me->csize;
 
             if (x < 0 || y < 0 || x > size*16 || y > size*16)
                 return -1;
