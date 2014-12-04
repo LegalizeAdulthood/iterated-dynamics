@@ -86,7 +86,6 @@ void initgene(void) /* set up pointers and mutation params for all usable image
                    new vars come along... dont forget to increment NUMGENES
                    (in fractint.h ) as well */
 {
-    int i = 0;
     /* 0 = dont vary, 1= with x axis, 2 = with y */
     /* 3 = with x+y, 4 = with x-y, 5 = random, 6 = weighted random */
     /*     Use only 15 letters below: 123456789012345 */
