@@ -654,13 +654,13 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 {
     BYTE gifstart[18];
     char temp1[81];
-    int scan_extend, block_type, block_len, data_len;
+    int block_len;
+    int data_len;
     int fractinf_len;
     int hdr_offset;
     struct formula_info fload_info;
     struct evolution_info eload_info;
     struct orbits_info oload_info;
-    int i, j, k = 0;
 
     blk_2_info->got_data = 0; /* initialize to no data */
     blk_3_info->got_data = 0; /* initialize to no data */
@@ -695,9 +695,10 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 
     if (*s_makepar == 0 && (gifstart[10] & 0x80)!=0)
     {
-        for (i = 0; i < filecolors; i++)
+        for (int i = 0; i < filecolors; i++)
         {
-            for (j = 0; j < 3; j++) {
+            int k = 0;
+            for (int j = 0; j < 3; j++) {
                 if ((k = getc(fp)) < 0)
                     break;
                 g_dac_box[i][j] = (BYTE)(k >> 2);
@@ -778,15 +779,15 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                  find exact endpoint, so scan back to start of ext blks works
                */
             fseek(fp,(long)(hdr_offset-15),SEEK_END);
-            scan_extend = 1;
+            int scan_extend = 1;
             while (scan_extend) {
                 if (fgetc(fp) != '!' /* if not what we expect just give up */
                         || fread(temp1,1,13,fp) != 13
                         || strncmp(&temp1[2],"fractint",8))
                     break;
                 temp1[13] = 0;
-                block_type = atoi(&temp1[10]); /* e.g. "fractint002" */
-                switch (block_type) {
+                switch (atoi(&temp1[10]))   /* e.g. "fractint002" */
+                {
                 case 1: /* "fractint001", the main extension block */
                     if (scan_extend == 2) { /* we've been here before, done now */
                         scan_extend = 0;
@@ -887,7 +888,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                     blk_6_info->this_gen_rseed  = eload_info.this_gen_rseed;
                     blk_6_info->fiddlefactor    = eload_info.fiddlefactor;
                     blk_6_info->ecount          = eload_info.ecount;
-                    for (i = 0; i < NUMGENES; i++)
+                    for (int i = 0; i < NUMGENES; i++)
                         blk_6_info->mutate[i]    = eload_info.mutate[i];
                     break;
                 case 7: /* orbits parameters  */
@@ -1283,8 +1284,14 @@ int fgetwindow(void)
     struct ext_blk_6 blk_6_info;
     struct ext_blk_7 blk_7_info;
     time_t thistime,lastime;
-    char mesg[40],newname[60],oldname[60];
-    int c,i,index,done,wincount,toggle,color_of_box;
+    char mesg[40];
+    char newname[60];
+    char oldname[60];
+    int c;
+    int done;
+    int wincount;
+    int toggle;
+    int color_of_box;
     struct window winlist;
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
@@ -1296,9 +1303,6 @@ int fgetwindow(void)
     U16 vidlength;
     BYTE *winlistptr = (BYTE *)&winlist;
     int saved;
-#ifdef XFRACT
-    U32 blinks;
-#endif
 
     oldbf_math = bf_math;
     bf_math = BIGFLT;
@@ -1413,7 +1417,7 @@ rescan:  /* entry for changed browse parms */
     if (wincount)
     {
         driver_buzzer(BUZZER_COMPLETE); /*let user know we've finished */
-        index=0;
+        int index = 0;
         done = 0;
         MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
         MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
@@ -1426,7 +1430,7 @@ rescan:  /* entry for changed browse parms */
                                  done = 4 for set boxes and exit to save image */
         {
 #ifdef XFRACT
-            blinks = 1;
+            U32 blinks = 1;
 #endif
             while (!driver_key_pressed())
             {
@@ -1473,7 +1477,7 @@ rescan:  /* entry for changed browse parms */
 #ifndef XFRACT
             case FIK_CTL_INSERT:
                 color_of_box += key_count(FIK_CTL_INSERT);
-                for (i=0 ; i < wincount ; i++) {
+                for (int i=0 ; i < wincount ; i++) {
                     MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)i,browsehandle);
                     drawindow(color_of_box,&winlist);
                 }
@@ -1483,7 +1487,7 @@ rescan:  /* entry for changed browse parms */
 
             case FIK_CTL_DEL:
                 color_of_box -= key_count(FIK_CTL_DEL);
-                for (i=0 ; i < wincount ; i++) {
+                for (int i=0 ; i < wincount ; i++) {
                     MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)i,browsehandle);
                     drawindow(color_of_box,&winlist);
                 }
@@ -1553,24 +1557,26 @@ rescan:  /* entry for changed browse parms */
                 makepath(tmpmask,drive,dir,fname,ext);
                 strcpy(newname,tmpmask);
                 strcat(mesg,tmpmask);
-                i = field_prompt(mesg,nullptr,newname,60,nullptr);
-                driver_unstack_screen();
-                if (i != -1)
-                    if (!rename(tmpmask,newname)) {
-                        if (errno == EACCES)
-                        {
-                            texttempmsg("Sorry....can't rename");
+                {
+                    int i = field_prompt(mesg,nullptr,newname,60,nullptr);
+                    driver_unstack_screen();
+                    if (i != -1)
+                        if (!rename(tmpmask,newname)) {
+                            if (errno == EACCES)
+                            {
+                                texttempmsg("Sorry....can't rename");
+                            }
+                            else {
+                                splitpath(newname,nullptr,nullptr,fname,ext);
+                                makepath(tmpmask,nullptr,nullptr,fname,ext);
+                                strcpy(oldname,winlist.name);
+                                check_history(oldname,tmpmask);
+                                strcpy(winlist.name,tmpmask);
+                            }
                         }
-                        else {
-                            splitpath(newname,nullptr,nullptr,fname,ext);
-                            makepath(tmpmask,nullptr,nullptr,fname,ext);
-                            strcpy(oldname,winlist.name);
-                            check_history(oldname,tmpmask);
-                            strcpy(winlist.name,tmpmask);
-                        }
-                    }
-                MoveToMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
-                showtempmsg(winlist.name);
+                    MoveToMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
+                    showtempmsg(winlist.name);
+                }
                 break;
 
             case 2: /* ctrl B */
@@ -1599,12 +1605,13 @@ rescan:  /* entry for changed browse parms */
         /* now clean up memory (and the screen if necessary) */
         cleartempmsg();
         if (done >= 1 && done < 4) {
-            for (index=wincount-1; index>=0; index--) { /* don't need index, reuse it */
-                MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
+            for (int i=wincount-1; i>=0; i--)
+            {
+                MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)i,browsehandle);
                 boxcount = winlist.boxcount;
-                MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
-                MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)index,boxyhandle);
-                MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)index,boxvalueshandle);
+                MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)i,boxxhandle);
+                MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)i,boxyhandle);
+                MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)i,boxvalueshandle);
                 boxcount >>= 1;
                 if (boxcount > 0)
 #ifdef XFRACT
@@ -1642,7 +1649,6 @@ rescan:  /* entry for changed browse parms */
 static void drawindow(int colour,struct window *info)
 {
 #ifndef XFRACT
-    int cross_size;
     struct coords ibl,itr;
 #endif
 
@@ -1673,7 +1679,7 @@ static void drawindow(int colour,struct window *info)
     }
     else { /* draw crosshairs */
 #ifndef XFRACT
-        cross_size = ydots / 45;
+        int cross_size = ydots / 45;
         if (cross_size < 2) cross_size = 2;
         itr.x = info->itl.x - cross_size;
         itr.y = info->itl.y;
