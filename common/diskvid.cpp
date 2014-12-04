@@ -475,7 +475,6 @@ void targa_writedisk(unsigned int col, unsigned int row,
 static void findload_cache(long offset) /* used by read/write */
 {
     unsigned int tbloffset;
-    int i, j;
     unsigned int *fwd_link;
     BYTE *pixelptr;
     BYTE tmpchar;
@@ -538,30 +537,30 @@ static void findload_cache(long offset) /* used by read/write */
         switch (pixelshift)
         {
         case 0:
-            for (i = 0; i < BLOCKLEN; ++i)
+            for (int i = 0; i < BLOCKLEN; ++i)
             {
                 *(pixelptr++) = mem_getc();
             }
             break;
 
         case 1:
-            for (i = 0; i < BLOCKLEN/2; ++i) {
+            for (int i = 0; i < BLOCKLEN/2; ++i) {
                 tmpchar = mem_getc();
                 *(pixelptr++) = (BYTE)(tmpchar >> 4);
                 *(pixelptr++) = (BYTE)(tmpchar & 15);
             }
             break;
         case 2:
-            for (i = 0; i < BLOCKLEN/4; ++i) {
+            for (int i = 0; i < BLOCKLEN/4; ++i) {
                 tmpchar = mem_getc();
-                for (j = 6; j >= 0; j -= 2)
+                for (int j = 6; j >= 0; j -= 2)
                     *(pixelptr++) = (BYTE)((tmpchar >> j) & 3);
             }
             break;
         case 3:
-            for (i = 0; i < BLOCKLEN/8; ++i) {
+            for (int i = 0; i < BLOCKLEN/8; ++i) {
                 tmpchar = mem_getc();
-                for (j = 7; j >= 0; --j)
+                for (int j = 7; j >= 0; --j)
                     *(pixelptr++) = (BYTE)((tmpchar >> j) & 1);
             }
             break;
