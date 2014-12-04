@@ -62,9 +62,6 @@ int neworbittype = JULIA;
 int
 JulibrotSetup(void)
 {
-#ifndef XFRACT
-    long origin;
-#endif
     int r = 0;
     char *mapname;
 
@@ -118,7 +115,7 @@ JulibrotSetup(void)
         mxmax = (long)(mxmaxfp * fg);
         mymin = (long)(myminfp * fg);
         mymax = (long)(mymaxfp * fg);
-        origin = (long)(originfp * fg16);
+        long origin = (long)(originfp * fg16);
         depth = (long)(depthfp * fg16);
         width = (long)(widthfp * fg16);
         dist = (long)(distfp * fg16);
