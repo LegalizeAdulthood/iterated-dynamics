@@ -372,7 +372,6 @@ DeQueueLong()
 static void SaveRect(int x, int y, int width, int depth)
 {
     char buff[MAXRECT];
-    int  yoff;
     if (hasinverse == 0)
         return;
     /* first, do any de-allocationg */
@@ -387,7 +386,7 @@ static void SaveRect(int x, int y, int width, int depth)
     if ((memory_handle = MemoryAlloc((U16)width, (long)depth, MEMORY)) != 0)
     {
         Cursor_Hide();
-        for (yoff=0; yoff<depth; yoff++)
+        for (int yoff=0; yoff<depth; yoff++)
         {
             getrow(x, y+yoff, width, buff);
             putrow(x, y+yoff, width, (char *)dstack);
@@ -607,7 +606,6 @@ void Jiim(int which)         /* called by fractint */
 
     while (still)
     {
-        int dcol, drow;
         if (actively_computing) {
             Cursor_CheckBlink();
         } else {
@@ -621,7 +619,8 @@ void Jiim(int which)         /* called by fractint */
                 Cursor_WaitKey();
                 kbdchar = driver_get_key();
 
-                dcol = drow = 0;
+                int dcol = 0;
+                int drow = 0;
                 xcjul = BIG;
                 ycjul = BIG;
                 switch (kbdchar)
