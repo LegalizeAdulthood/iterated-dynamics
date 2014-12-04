@@ -105,8 +105,7 @@ static short code_mask[13] =
  */
 
 
-/* for the time being, use a pointer to a buffer in the gifview stack */
-BYTE *decoderline1;
+BYTE decoderline1[MAXPIXELS];
 #define decoderline decoderline1
 
 /* The reason we have these separated like this instead of using

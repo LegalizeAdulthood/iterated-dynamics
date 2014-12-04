@@ -58,12 +58,8 @@ int get_bytes(BYTE *where,int how_many)
  * The skipxdots and skipydots logic assumes that the buffer holds one line.
  */
 
-#if defined(XFRACT) || defined(_WIN32)
 BYTE decoderline[MAXPIXELS+1]; /* write-line routines use this */
 #define DECODERLINE_WIDTH MAXPIXELS
-#else
-#define DECODERLINE_WIDTH 2048 /* width of decoderline, can be smaller */
-#endif
 
 extern BYTE *decoderline1;
 static std::vector<char> ditherbuf;
@@ -78,8 +74,6 @@ int gifview()
     BYTE byte_buf[257]; /* for decoder */
     int status;
     int i, j, k, planes;
-    BYTE linebuf[DECODERLINE_WIDTH];
-    decoderline1 = linebuf;
 
     /* using stack for decoder byte buf rather than static mem */
     set_byte_buff(byte_buf);
