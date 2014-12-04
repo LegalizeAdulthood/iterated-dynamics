@@ -477,7 +477,6 @@ static void findload_cache(long offset) /* used by read/write */
     unsigned int tbloffset;
     unsigned int *fwd_link;
     BYTE *pixelptr;
-    BYTE tmpchar;
     cur_offset = offset; /* note this for next reference */
     /* check if required entry is in cache - lookup by hash */
     tbloffset = hash_ptr[((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1) ];
@@ -545,21 +544,21 @@ static void findload_cache(long offset) /* used by read/write */
 
         case 1:
             for (int i = 0; i < BLOCKLEN/2; ++i) {
-                tmpchar = mem_getc();
+                BYTE const tmpchar = mem_getc();
                 *(pixelptr++) = (BYTE)(tmpchar >> 4);
                 *(pixelptr++) = (BYTE)(tmpchar & 15);
             }
             break;
         case 2:
             for (int i = 0; i < BLOCKLEN/4; ++i) {
-                tmpchar = mem_getc();
+                BYTE const tmpchar = mem_getc();
                 for (int j = 6; j >= 0; j -= 2)
                     *(pixelptr++) = (BYTE)((tmpchar >> j) & 3);
             }
             break;
         case 3:
             for (int i = 0; i < BLOCKLEN/8; ++i) {
-                tmpchar = mem_getc();
+                BYTE const tmpchar = mem_getc();
                 for (int j = 7; j >= 0; --j)
                     *(pixelptr++) = (BYTE)((tmpchar >> j) & 1);
             }
