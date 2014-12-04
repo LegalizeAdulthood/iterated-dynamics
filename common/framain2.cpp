@@ -1702,7 +1702,6 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
         /* borrow ctrl cursor keys for moving selection box */
         /* in evolver mode */
         if (boxcount) {
-            int grout;
             GENEBASE gene[NUMGENES];
             /* get the gene array from memory */
             MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -1723,7 +1722,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
                 if (px >(gridsz-1)) px = 0;
                 if (py <0) py = gridsz-1;
                 if (py > (gridsz-1)) py = 0;
-                grout = !((evolving & NOGROUT)/NOGROUT) ;
+                int grout = !((evolving & NOGROUT)/NOGROUT) ;
                 sxoffs = px * (int)(dxsize+1+grout);
                 syoffs = py * (int)(dysize+1+grout);
 
