@@ -62,7 +62,6 @@ JuliaSetup(void)            /* Julia Routine */
 int
 NewtonSetup(void)           /* Newton/NewtBasin Routines */
 {
-    int i;
 #if !defined(XFRACT)
     if (debugflag != 1010)
     {
@@ -124,7 +123,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
         roots.resize(degree);
 
         /* list of roots to discover where we converged for newtbasin */
-        for (i=0; i<degree; i++)
+        for (int i=0; i<degree; i++)
         {
             roots[i].x = cos(i*twopi/(double)degree);
             roots[i].y = sin(i*twopi/(double)degree);
@@ -141,7 +140,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
         MPCroots.resize(degree);
 
         /* list of roots to discover where we converged for newtbasin */
-        for (i=0; i<degree; i++)
+        for (int i=0; i<degree; i++)
         {
             MPCroots[i].x = *pd2MP(cos(i*twopi/(double)degree));
             MPCroots[i].y = *pd2MP(sin(i*twopi/(double)degree));
