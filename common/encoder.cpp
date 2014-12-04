@@ -80,9 +80,10 @@ static int gif_savetodisk(char *filename)      /* save-to-disk routine */
     char tmpfile[FILE_MAX_PATH];
     char *period;
     int newfile;
-    int i, j, interrupted, outcolor1, outcolor2;
-restart:
+    int i;
+    int interrupted;
 
+restart:
     save16bit = disk16bit;
     if (gif87a_flag)             /* not storing non-standard fractal info */
         save16bit = 0;
@@ -195,9 +196,9 @@ restart:
 
     if (!driver_diskp())
     {   /* supress this on disk-video */
-        outcolor1 = outcolor1s;
-        outcolor2 = outcolor2s;
-        for (j = 0; j <= last_colorbar; j++)
+        int outcolor1 = outcolor1s;
+        int outcolor2 = outcolor2s;
+        for (int j = 0; j <= last_colorbar; j++)
         {
             if ((j & 4) == 0)
             {
@@ -584,9 +585,8 @@ oops:
 static int shftwrite(BYTE * color, int numcolors)
 {
     BYTE thiscolor;
-    int i, j;
-    for (i = 0; i < numcolors; i++)
-        for (j = 0; j < 3; j++)
+    for (int i = 0; i < numcolors; i++)
+        for (int j = 0; j < 3; j++)
         {
             thiscolor = color[3 * i + j];
             thiscolor = (BYTE)(thiscolor << 2);
@@ -906,7 +906,7 @@ static int  cur_bits = 0;
 /*
  * Define the storage for the packet accumulator
  */
-static char *accum; /* 256 bytes */
+static char accum[256];
 
 static int compress(int rowlimit)
 {
@@ -922,8 +922,6 @@ static int compress(int rowlimit)
     int in_count = 0;
     int interrupted = 0;
     int tempkey;
-    char accum_stack[256];
-    accum = accum_stack;
 
     outcolor1 = 0;               /* use these colors to show progress */
     outcolor2 = 1;               /* (this has nothing to do with GIF) */
