@@ -76,17 +76,16 @@ void set_grid_pointers()
 
 void fill_dx_array(void)
 {
-    int i;
     if (use_grid)
     {
         dx0[0] = xxmin;              /* fill up the x, y grids */
         dy0[0] = yymax;
         dx1[0] = dy1[0] = 0;
-        for (i = 1; i < xdots; i++) {
+        for (int i = 1; i < xdots; i++) {
             dx0[i] = (double)(dx0[0] + i*delxx);
             dy1[i] = (double)(dy1[0] - i*delyy2);
         }
-        for (i = 1; i < ydots; i++) {
+        for (int i = 1; i < ydots; i++) {
             dy0[i] = (double)(dy0[0] - i*delyy);
             dx1[i] = (double)(dx1[0] + i*delxx2);
         }
@@ -135,8 +134,7 @@ int use_grid;
 
 void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation */
 {
-    int tries = 0;
-    int i, gotprec;
+    int i;
     long xytemp;
     double ftemp;
     coloriter=oldcoloriter = 0L;
@@ -176,7 +174,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
     /* switch back to double when zooming out if using arbitrary precision */
     if (bf_math)
     {
-        gotprec=getprecbf(CURRENTREZ);
+        int gotprec = getprecbf(CURRENTREZ);
         if ((gotprec <= DBL_DIG+1 && debugflag != 3200) || math_tol[1] >= 1.0)
         {
             bfcornerstofloat();
@@ -235,6 +233,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
             usr_stdcalcmode = '1';
     }
 
+    int tries = 0;
 init_restart:
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
@@ -452,8 +451,6 @@ expand_retry:
             }
             if (bf_math == 0) /* redundant test, leave for now */
             {
-                double testx_try, testx_exact;
-                double testy_try, testy_exact;
                 /* Following is the old logic for detecting failure of double
                    precision. It has two advantages: it is independent of the
                    representation of numbers, and it is sensitive to resolution
@@ -470,6 +467,8 @@ expand_retry:
                        now only tests the larger of the two deltas in an attempt
                        to repair this bug. This should never make the transition
                        to arbitrary precision sooner, but always later.*/
+                    double testx_try;
+                    double testx_exact;
                     if (fabs(xxmax-xx3rd) > fabs(xx3rd-xxmin))
                     {
                         testx_exact  = xxmax-xx3rd;
@@ -480,6 +479,8 @@ expand_retry:
                         testx_exact  = xx3rd-xxmin;
                         testx_try    = dx1;
                     }
+                    double testy_try;
+                    double testy_exact;
                     if (fabs(yy3rd-yymax) > fabs(yymin-yy3rd))
                     {
                         testy_exact = yy3rd-yymax;
@@ -1368,7 +1369,8 @@ void close_snd(void)
 
 static void plotdorbit(double dx, double dy, int color)
 {
-    int i, j, c;
+    int i;
+    int j;
     int save_sxoffs,save_syoffs;
     if (orbit_ptr >= 1500-3) return;
     i = (int)(dy * plotmx1 - dx * plotmx2);
@@ -1385,7 +1387,8 @@ static void plotdorbit(double dx, double dy, int color)
     {
         *(save_orbit + orbit_ptr++) = i;
         *(save_orbit + orbit_ptr++) = j;
-        *(save_orbit + orbit_ptr++) = c = getcolor(i,j);
+        int const c = getcolor(i,j);
+        *(save_orbit + orbit_ptr++) = c;
         putcolor(i,j,c^orbit_color);
     }
     else
