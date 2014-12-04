@@ -335,9 +335,6 @@ static long lxt, lyt, lt2;
 int
 lcpower(_LCMPLX *base, int exp, _LCMPLX *result, int bitshift)
 {
-    static long maxarg;
-    maxarg = 64L<<bitshift;
-
     if (exp<0) {
         overflow = lcpower(base,-exp,result,bitshift);
         LCMPLXrecip(*result,*result);
@@ -362,10 +359,6 @@ lcpower(_LCMPLX *base, int exp, _LCMPLX *result, int bitshift)
     exp >>= 1;
     while (exp)
     {
-        /*
-        if (labs(lxt) >= maxarg || labs(lyt) >= maxarg)
-           return -1;
-        */
         lt2 = multiply(lxt, lxt, bitshift) - multiply(lyt,lyt,bitshift);
         lyt = multiply(lxt,lyt,bitshiftless1);
         if (overflow)
