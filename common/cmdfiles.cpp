@@ -2957,7 +2957,6 @@ static void parse_textcolors(char *value)
 
 static int parse_colors(char *value)
 {
-    int k;
     if (*value == '@') {
         if (merge_pathnames(MAP_name,&value[1],3)<0)
             init_msg("",&value[1],3);
@@ -2987,12 +2986,31 @@ static int parse_colors(char *value)
             }
             else {
                 for (int j = 0; j < 3; ++j) {
-                    if ((k = *(value++)) < '0')  goto badcolor;
-                    else if (k <= '9')       k -= '0';
-                    else if (k < 'A')            goto badcolor;
-                    else if (k <= 'Z')       k -= ('A'-10);
-                    else if (k < '_' || k > 'z') goto badcolor;
-                    else                     k -= ('_'-36);
+                    int k = *(value++);
+                    if (k < '0')
+                    {
+                        goto badcolor;
+                    }
+                    else if (k <= '9')
+                    {
+                        k -= '0';
+                    }
+                    else if (k < 'A')
+                    {
+                        goto badcolor;
+                    }
+                    else if (k <= 'Z')
+                    {
+                        k -= ('A'-10);
+                    }
+                    else if (k < '_' || k > 'z')
+                    {
+                        goto badcolor;
+                    }
+                    else
+                    {
+                        k -= ('_'-36);
+                    }
                     g_dac_box[i][j] = (BYTE)k;
                     if (smooth) {
                         int start,spread,cnum;
