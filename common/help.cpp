@@ -547,10 +547,9 @@ static int find_link_key(LINK * /*link*/, int num_link, int curr_link, int key)
 
 static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *,int,int,int), int val)
 {
-    int t;
-
     if (num_link > 1)
     {
+        int t;
         if (f == nullptr)
             t = val;
         else
