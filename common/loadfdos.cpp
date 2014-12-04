@@ -105,24 +105,20 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
     struct vidinf vid[MAXVIDEOMODES];
     int i, j;
     int gotrealmode;
-    double ftemp,ftemp2;
+    double ftemp;
     unsigned tmpflags;
 
-    int tmpxdots,tmpydots;
-    float tmpreduce;
 #ifndef XFRACT
     const char *nameptr;
     int  *attributes;
-    int oldhelpmode;
 #endif
-    VIDEOINFO *vident;
 
     g_init_mode = -1;
 
     /* try to find exact match for vid mode */
     for (i = 0; i < g_video_table_len; ++i)
     {
-        vident = &g_video_table[i];
+        VIDEOINFO *vident = &g_video_table[i];
         if (info->xdots == vident->xdots && info->ydots == vident->ydots
                 && filecolors == vident->colors)
         {
@@ -139,7 +135,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
     {
         for (i = 0; i < g_video_table_len; ++i)
         {
-            vident = &g_video_table[i];
+            VIDEOINFO *vident = &g_video_table[i];
             if (info->xdots == vident->xdots && info->ydots == vident->ydots
                     && filecolors == vident->colors)
             {
@@ -298,7 +294,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
         }
         strcat(temp1, "ESCAPE to back out.");
 
-        oldhelpmode = helpmode;
+        int oldhelpmode = helpmode;
         helpmode = HELPLOADFILE;
         i = fullscreen_choice(0, (char *) dstack,
                               "key...name......................err...xdot..ydot.clr.comment..................",
@@ -388,6 +384,8 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
             ++skipydots;
         }
         i = j = 0;
+        int tmpxdots;
+        int tmpydots;
         for (;;)
         {
             tmpxdots = (filexdots + skipxdots - 1) / skipxdots;
@@ -399,7 +397,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
                 {
                     break; /* already reduced x, don't reduce y */
                 }
-                ftemp2 = vid_aspect(tmpxdots, (fileydots+skipydots)/(skipydots+1));
+                double const ftemp2 = vid_aspect(tmpxdots, (fileydots+skipydots)/(skipydots+1));
                 if (ftemp2 < fileaspectratio &&
                         ftemp/fileaspectratio *0.9 <= fileaspectratio/ftemp2)
                 {
@@ -414,7 +412,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
                 {
                     break; /* already reduced y, don't reduce x */
                 }
-                ftemp2 = vid_aspect((filexdots+skipxdots)/(skipxdots+1), tmpydots);
+                double const ftemp2 = vid_aspect((filexdots+skipxdots)/(skipxdots+1), tmpydots);
                 if (ftemp2 > fileaspectratio &&
                         fileaspectratio/ftemp *0.9 <= ftemp2/fileaspectratio)
                 {
@@ -451,6 +449,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
         ftemp = finalaspectratio
                 * (double)g_video_entry.ydots / (double)g_video_entry.xdots
                 / screenaspect;
+        float tmpreduce;
         if (finalaspectratio <= screenaspect)
         {
             i = (int)((double)g_video_entry.xdots / (double)filexdots * 20.0 + 0.5);
