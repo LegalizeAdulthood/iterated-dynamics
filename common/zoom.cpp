@@ -74,7 +74,6 @@ void dispbox(void)
 
 void clearbox(void)
 {
-    int i;
     if (g_is_true_color && truemode)
     {
         dispbox();
@@ -82,7 +81,7 @@ void clearbox(void)
     else
     {
         unsigned char *values = (unsigned char *)boxvalues;
-        for (i=0; i<boxcount; i++)
+        for (int i=0; i<boxcount; i++)
         {
             putcolor(boxx[i]-sxoffs,boxy[i]-syoffs,values[i]);
         }
@@ -297,13 +296,15 @@ void addbox(struct coords point)
 }
 
 void moveboxf(double dx, double dy)
-{   int align,row,col;
+{
+    int align;
     align = check_pan();
     if (dx!=0.0) {
         if ((zbx += dx) + zwidth/2 < 0)  /* center must stay onscreen */
             zbx = zwidth/-2;
         if (zbx + zwidth/2 > 1)
             zbx = 1.0 - zwidth/2;
+        int col;
         if (align != 0
                 && ((col = (int)(zbx*(dxsize+PIXELROUND))) & (align-1)) != 0) {
             if (dx > 0) col += align;
@@ -316,6 +317,7 @@ void moveboxf(double dx, double dy)
             zby = zdepth/-2;
         if (zby + zdepth/2 > 1)
             zby = 1.0 - zdepth/2;
+        int row;
         if (align != 0
                 && ((row = (int)(zby*(dysize+PIXELROUND))) & (align-1)) != 0) {
             if (dy > 0) row += align;
@@ -325,8 +327,8 @@ void moveboxf(double dx, double dy)
     }
 #ifndef XFRACT
     if (g_video_scroll != 0) {  /* scroll screen center to the box center */
-        col = (int)((zbx + zwidth/2)*(dxsize + PIXELROUND)) + sxoffs;
-        row = (int)((zby + zdepth/2)*(dysize + PIXELROUND)) + syoffs;
+        int col = (int)((zbx + zwidth/2)*(dxsize + PIXELROUND)) + sxoffs;
+        int row = (int)((zby + zdepth/2)*(dysize + PIXELROUND)) + syoffs;
         switch (zscroll) {
         case 0:  /* fixed - screen center fixed to the zoombox center */
             scroll_center(col,row);
@@ -618,11 +620,12 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 
 static void move_row(int fromrow,int torow,int col)
 /* move a row on the screen */
-{   int startcol,endcol,tocol;
+{
     memset(dstack,0,xdots); /* use dstack as a temp for the row; clear it */
     if (fromrow >= 0 && fromrow < ydots) {
-        tocol = startcol = 0;
-        endcol = xdots-1;
+        int startcol = 0;
+        int tocol = 0;
+        int endcol = xdots-1;
         if (col < 0) {
             tocol -= col;
             endcol += col;
