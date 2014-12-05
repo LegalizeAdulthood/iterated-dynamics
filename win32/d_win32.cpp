@@ -275,7 +275,6 @@ win32_get_key(Driver *drv)
 void
 win32_shell(Driver *drv)
 {
-    DI(di);
     STARTUPINFO si =
     {
         sizeof(si)
@@ -319,8 +318,6 @@ extern void set_normal_line(void);
 void
 win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
-    DI(di);
-
     /* initially, set the virtual line to be the scan line length */
     g_vxdots = sxdots;
     g_is_true_color = 0;                /* assume not truecolor */
@@ -606,8 +603,6 @@ win32_put_char_attr(Driver *drv, int char_attr)
 void
 win32_delay(Driver *drv, int ms)
 {
-    DI(di);
-
     frame_pump_messages(FALSE);
     if (ms >= 0)
     {
