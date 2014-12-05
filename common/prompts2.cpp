@@ -1120,7 +1120,6 @@ int get_commands()              /* execute commands from file */
 
 void goodbye(void)                  /* we done.  Bail out */
 {
-    char goodbyemessage[40] = "   Thank You for using " FRACTINT;
     int ret;
 
     if (mapdacbox)
@@ -1168,7 +1167,7 @@ void goodbye(void)                  /* we done.  Bail out */
     }
 #ifdef XFRACT
     UnixDone();
-    printf("\n\n\n%s\n",goodbyemessage); /* printf takes pointer */
+    printf("\n\n\n%s\n","   Thank You for using " FRACTINT); /* printf takes pointer */
 #endif
     if (*s_makepar != 0)
     {
@@ -1887,7 +1886,6 @@ int get_corners()
     const char *prompts[15];
     char xprompt[] = "          X";
     char yprompt[] = "          Y";
-    char zprompt[] = "          Z";
     int i,nump,prompt_ret;
     int cmag;
     double Xctr,Yctr;
@@ -2083,7 +2081,6 @@ static int get_screen_corners(void)
     const char *prompts[15];
     char xprompt[] = "          X";
     char yprompt[] = "          Y";
-    char zprompt[] = "          Z";
     int i,nump,prompt_ret;
     int cmag;
     double Xctr,Yctr;
@@ -2499,7 +2496,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
     /* if dot, slash, its relative to the current directory, set up full path */
     if (newfilename[0] == '.' &&
             newfilename[1] == SLASHC) {
-        int len, test_dir=0;
+        int test_dir=0;
         temp_path[0] = (char)('a' + _getdrive() - 1);
         temp_path[1] = ':';
         temp_path[2] = 0;
@@ -2509,7 +2506,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
         strcat(temp_path,newfilename);
         strcpy(newfilename,temp_path);
         if (!test_dir) {
-            len = (int) strlen(newfilename);
+            int len = (int) strlen(newfilename);
             newfilename[len-1] = 0; /* get rid of slash added by expand_dirname */
         }
     }
