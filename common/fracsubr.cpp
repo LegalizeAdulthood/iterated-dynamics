@@ -93,7 +93,6 @@ void fill_dx_array(void)
 }
 void fill_lx_array(void)
 {
-    int i;
     /* note that lx1 & ly1 values can overflow into sign bit; since     */
     /* they're used only to add to lx0/ly0, 2s comp straightens it out  */
     if (use_grid)
@@ -101,11 +100,11 @@ void fill_lx_array(void)
         lx0[0] = xmin;               /* fill up the x, y grids */
         ly0[0] = ymax;
         lx1[0] = ly1[0] = 0;
-        for (i = 1; i < xdots; i++) {
+        for (int i = 1; i < xdots; i++) {
             lx0[i] = lx0[i-1] + delx;
             ly1[i] = ly1[i-1] - dely2;
         }
-        for (i = 1; i < ydots; i++) {
+        for (int i = 1; i < ydots; i++) {
             ly0[i] = ly0[i-1] - dely;
             lx1[i] = lx1[i-1] + delx2;
         }

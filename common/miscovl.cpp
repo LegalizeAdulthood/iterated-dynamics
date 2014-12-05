@@ -1556,7 +1556,7 @@ void format_vid_table(int choice,char *buf)
 #ifndef XFRACT
 static int check_modekey(int curkey,int choice)
 {
-    int i,j,k,ret;
+    int i, ret;
     if ((i = check_vidmode_key(1,curkey)) >= 0)
         return (-1-i);
     i = entsptr[choice];
@@ -1573,9 +1573,9 @@ static int check_modekey(int curkey,int choice)
                 }
             }
             else {                                 /* assign key? */
-                j = getakeynohelp();
+                int j = getakeynohelp();
                 if (j >= 1084 && j <= 1113) {
-                    for (k = 0; k < g_video_table_len; ++k) {
+                    for (int k = 0; k < g_video_table_len; ++k) {
                         if (g_video_table[k].keynum == j) {
                             g_video_table[k].keynum = 0;
                             ret = -1; /* force redisplay */
