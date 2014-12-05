@@ -244,10 +244,11 @@ void InitMemory(void)
 
 void ExitCheck(void)
 {
-    U16 i;
-    if (numTOTALhandles != 0) {
+    if (numTOTALhandles != 0)
+    {
         stopmsg(0, "Error - not all memory released, I'll get it.");
-        for (i = 1; i < MAXHANDLES; i++)
+        for (U16 i = 1; i < MAXHANDLES; i++)
+        {
             if (handletable[i].Nowhere.stored_at != NOWHERE) {
                 char buf[MSGLEN];
                 sprintf(buf,"Memory type %s still allocated.  Handle = %i.",
@@ -255,6 +256,7 @@ void ExitCheck(void)
                 stopmsg(0,(char *)buf);
                 MemoryRelease(i);
             }
+        }
     }
 }
 
