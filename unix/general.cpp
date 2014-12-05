@@ -132,14 +132,12 @@ getkeynowait(void) {
 int
 getkeyint(int block)
 {
-    int ch;
-    int curkey;
     if (keybuffer) {
-        ch = keybuffer;
+        int ch = keybuffer;
         keybuffer = 0;
         return ch;
     }
-    curkey = xgetkey(0);
+    int curkey = xgetkey(0);
     if (g_slides==SLIDES_PLAY && curkey == FIK_ESC) {
         stopslideshow();
         return 0;
@@ -508,8 +506,8 @@ static void getDouble(double *dst, unsigned char **src, int dir)
 {
     int e;
     double f;
-    int i;
     if (dir==1) {
+        int i;
         for (i=0; i<8; i++) {
             if ((*src)[i] != 0) break;
         }
@@ -573,8 +571,8 @@ static void getFloat(float *dst, unsigned char **src, int dir)
 {
     int e;
     double f;
-    int i;
     if (dir==1) {
+        int i;
         for (i=0; i<4; i++) {
             if ((*src)[i] != 0) break;
         }
