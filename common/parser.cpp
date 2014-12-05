@@ -1649,13 +1649,15 @@ void lStkLog(void) {
 
 void (*StkLog)(void) = dStkLog;
 
-void FPUcplxexp(_CMPLX *x, _CMPLX *z) {
-    double e2x, siny, cosy;
-
+void FPUcplxexp(_CMPLX *x, _CMPLX *z)
+{
     if (fpu >= 387)
         FPUcplxexp387(x, z);
-    else {
-        e2x = exp(x->x);
+    else
+    {
+        double e2x = exp(x->x);
+        double siny;
+        double cosy;
         FPUsincos(&x->y, &siny, &cosy);
         z->x = e2x * cosy;
         z->y = e2x * siny;
@@ -1830,7 +1832,7 @@ static int isconst_pair(char *Str) {
 
 struct ConstArg *isconst(char *Str, int Len) {
     _CMPLX z;
-    unsigned n, j;
+    unsigned n;
     /* next line enforces variable vs constant naming convention */
     for (n = 0; n < vsp; n++) {
         if (v[n].len == Len) {
@@ -1888,7 +1890,7 @@ struct ConstArg *isconst(char *Str, int Len) {
         }
         for (n = 1; isdigit(Str[n]) || Str[n] == '.'; n++);
         if (Str[n] == ',') {
-            j = n + SkipWhiteSpace(&Str[n+1]) + 1;
+            unsigned j = n + SkipWhiteSpace(&Str[n+1]) + 1;
             if (isdigit(Str[j])
                     || (Str[j] == '-' && (isdigit(Str[j+1]) || Str[j+1] == '.'))
                     || Str[j] == '.') {
@@ -2044,7 +2046,6 @@ int whichfn(char *s, int len)
 void (*isfunct(char *Str, int Len))(void)
 {
     unsigned n;
-    int functnum;
 
     n = SkipWhiteSpace(&Str[Len]);
     if (Str[Len+n] == '(') {
@@ -2052,7 +2053,8 @@ void (*isfunct(char *Str, int Len))(void)
             if ((int) strlen(FnctList[n].s) == Len) {
                 if (!strnicmp(FnctList[n].s, Str, Len)) {
                     /* count function variables */
-                    if ((functnum = whichfn(Str, Len)) != 0)
+                    int functnum = whichfn(Str, Len);
+                    if (functnum != 0)
                         if (functnum > maxfn)
                             maxfn = (char)functnum;
                     return *FnctList[n].ptr;
@@ -3567,8 +3569,8 @@ int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
 }
 
 
-static char *PrepareFormula(FILE * File, int from_prompts1c) {
-
+static char *PrepareFormula(FILE * File, int from_prompts1c)
+{
     /* This function sets the
        symmetry and converts a formula into a string  with no spaces,
        and one comma after each expression except where the ':' is placed
@@ -3583,9 +3585,6 @@ static char *PrepareFormula(FILE * File, int from_prompts1c) {
     struct token_st temp_tok;
     int Done;
     long filepos = ftell(File);
-
-    /* char debugmsg[500];
-    */
 
     /*Test for a repeat*/
 
@@ -3717,14 +3716,13 @@ int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurre
 }
 
 
-int fpFormulaSetup(void) {
-
-    int RunFormRes;
+int fpFormulaSetup(void)
+{
     /* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
 #if !defined(XFRACT) && !defined(_WIN32)
     if (fpu > 0) {
         MathType = D_MATH;
-        RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
+        int RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
         if (RunFormRes && fpu >=387 && debugflag != 90 && (orbitsave&2) == 0
                 && !Randomized)
             return CvtStk(); /* run fast assembler code in parsera.asm */
@@ -3736,8 +3734,7 @@ int fpFormulaSetup(void) {
     }
 #else
     MathType = D_MATH;
-    RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
-    return RunFormRes;
+    return !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
 #endif
 }
 
@@ -3756,8 +3753,8 @@ int intFormulaSetup(void) {
     fg = (double)(1L << bitshift);
     fgLimit = (double)0x7fffffffL / fg;
     ShiftBack = 32 - bitshift;
-#endif
     return !RunForm(FormName, 0);
+#endif
 }
 
 
@@ -3788,7 +3785,6 @@ static void parser_allocate(void)
     /* however Store and Load were reduced in size to help make up for it */
     long f_size,Store_size,Load_size,v_size, p_size;
     int pass, is_bad_form=0;
-    long end_dx_array;
     for (pass = 0; pass < 2; pass++)
     {
         free_workarea();
@@ -3804,7 +3800,6 @@ static void parser_allocate(void)
         p_size = sizeof(struct fls *)*Max_Ops;
         total_formula_mem = f_size + Load_size + Store_size + v_size + p_size /*+ jump_size*/
                             + sizeof(struct PEND_OP)*Max_Ops;
-        end_dx_array = use_grid ? 2*(xdots + ydots)*sizeof(double) : 0;
 
         typespecific_workarea = malloc(f_size + Load_size + Store_size + v_size + p_size);
         f = (void (**)(void)) typespecific_workarea;
