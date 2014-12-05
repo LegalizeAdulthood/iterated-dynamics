@@ -1636,7 +1636,6 @@ static void update_fractint_cfg()
     linenum = nextmode = 0;
     nextlinenum = g_cfg_line_nums[0];
     while (fgets(buf,120,cfgfile)) {
-        int truecolorbits;
         char colorsbuf[10];
         ++linenum;
         if (linenum == nextlinenum) { /* replace this line */
@@ -1653,7 +1652,7 @@ static void update_fractint_cfg()
                 j += 8;
             }
             buf[i] = 0;
-            truecolorbits = vident.dotmode/1000;
+            int truecolorbits = vident.dotmode/1000;
             if (truecolorbits == 0)
                 sprintf(colorsbuf,"%3d",vident.colors);
             else
