@@ -946,9 +946,8 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 
 static int sel_fractype_help(int curkey,int choice)
 {
-    int oldhelpmode;
     if (curkey == FIK_F2) {
-        oldhelpmode = helpmode;
+        int oldhelpmode = helpmode;
         helpmode = fractalspecific[(*(ft_choices+choice))->num].helptext;
         help(0);
         helpmode = oldhelpmode;
@@ -1982,12 +1981,6 @@ static int check_gfe_key(int curkey,int choice)
 {
     char infhdg[60];
     char infbuf[25*80];
-    int in_scrolling_mode = 0; /* 1 if entry doesn't fit available space */
-    int top_line = 0;
-    int left_column = 0;
-    int i;
-    int done = 0;
-    int rewrite_infbuf = 0;  /* if 1: rewrite the entry portion of screen */
     char blanks[79];         /* used to clear the entry portion of screen */
     memset(blanks, ' ', 78);
     blanks[78] = (char) 0;
@@ -2022,6 +2015,7 @@ static int check_gfe_key(int curkey,int choice)
                 break;
             }
         }
+        int in_scrolling_mode = 0; /* 1 if entry doesn't fit available space */
         if (c == EOF || c == '\032') { /* should never happen */
             fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
             in_scrolling_mode = 0;
@@ -2047,16 +2041,20 @@ static int check_gfe_key(int curkey,int choice)
                               "\n\n Use " UPARR1 ", " DNARR1 ", " RTARR1 ", " LTARR1 ", PgUp, PgDown, Home, and End to scroll text\nAny other key to return to selection list");
         }
 
+        int top_line = 0;
+        int left_column = 0;
+        int done = 0;
+        int rewrite_infbuf = 0;  /* if 1: rewrite the entry portion of screen */
         while (!done) {
             if (rewrite_infbuf) {
                 rewrite_infbuf = 0;
                 fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
                 load_entry_text(gfe_file, infbuf, 17, top_line, left_column);
-                for (i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
+                for (int i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
                     driver_put_string(i,0,C_GENERAL_MED,blanks);
                 driver_put_string(4,0,C_GENERAL_MED,infbuf);
             }
-            i = getakeynohelp();
+            int i = getakeynohelp();
             if (i == FIK_DOWN_ARROW        || i == FIK_CTL_DOWN_ARROW
                     || i == FIK_UP_ARROW       || i == FIK_CTL_UP_ARROW
                     || i == FIK_LEFT_ARROW     || i == FIK_CTL_LEFT_ARROW
@@ -2346,7 +2344,7 @@ int get_3d_params()     /* prompt for 3D parameters */
     const char *s;
     const char *prompts3d[21];
     struct fullscreenvalues uvalues[21];
-    int i, k;
+    int k;
     int oldhelpmode;
 
 restart_1:
@@ -2485,10 +2483,10 @@ restart_1:
             choices[k++] = "light source before transformation";
             choices[k++] = "light source after transformation";
         }
-        for (i = 0; i < k; ++i)
+        for (int i = 0; i < k; ++i)
             attributes[i] = 1;
         helpmode = HELP3DFILL;
-        i = fullscreen_choice(CHOICE_HELP,"Select 3D Fill Type",nullptr,nullptr,k,(const char **)choices,attributes,
+        int i = fullscreen_choice(CHOICE_HELP,"Select 3D Fill Type",nullptr,nullptr,k,(const char **)choices,attributes,
                               0,0,0,FILLTYPE+1,nullptr,nullptr,nullptr,nullptr);
         helpmode = oldhelpmode;
         if (i < 0)
