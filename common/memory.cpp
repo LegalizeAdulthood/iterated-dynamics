@@ -286,7 +286,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 
     handle = next_handle();
 
-    if (handle >= MAXHANDLES || handle <= 0) {
+    if (handle >= MAXHANDLES || handle == 0) {
         DisplayHandle(handle);
         return ((U16)success);
         /* Oops, do something about this! ????? */
