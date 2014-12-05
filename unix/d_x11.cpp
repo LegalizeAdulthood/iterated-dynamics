@@ -842,7 +842,7 @@ handle_esc(DriverX11 *di)
     }
 #else
     /* SUN escape key sequences */
-    ch1 = getachar(di);
+    int ch1 = = getachar(di);
     if (ch1 == -1) {
         driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
         ch1 = getachar(di);
@@ -868,7 +868,7 @@ handle_esc(DriverX11 *di)
     default:
         break;
     }
-    ch2 = getachar(di);
+    int ch2 = getachar(di);
     if (ch2 == -1) {
         driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
         ch2 = getachar(di);
@@ -889,7 +889,7 @@ handle_esc(DriverX11 *di)
     } else if (ch2 == -1) {
         return FIK_ESC;
     } else {
-        ch3 = getachar(di);
+        int ch3 = getachar(di);
         if (ch3 == -1) {
             driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
             ch3 = getachar(di);
