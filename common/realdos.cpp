@@ -153,8 +153,6 @@ int showtempmsg(const char *msgparm)
     static long size = 0;
     char msg[41];
     BYTE buffer[640];
-    BYTE *fontptr = nullptr;
-    int i;
     int xrepeat = 0;
     int yrepeat = 0;
     int save_sxoffs, save_syoffs;
@@ -205,7 +203,7 @@ int showtempmsg(const char *msgparm)
         {
             return -1; /* sorry, message not displayed */
         }
-        for (i = 0; i < textydots; ++i)
+        for (int i = 0; i < textydots; ++i)
         {
             get_line(i, 0, textxdots-1, buffer);
             MoveToMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
@@ -223,16 +221,14 @@ int showtempmsg(const char *msgparm)
 void cleartempmsg()
 {
     BYTE buffer[640];
-    int i;
-    int save_sxoffs, save_syoffs;
     if (driver_diskp()) /* disk video, easy */
     {
         dvid_status(0, "");
     }
     else if (temptextsave != 0)
     {
-        save_sxoffs = sxoffs;
-        save_syoffs = syoffs;
+        int save_sxoffs = sxoffs;
+        int save_syoffs = syoffs;
         if (g_video_scroll)
         {
             sxoffs = g_video_start_x;
@@ -242,7 +238,7 @@ void cleartempmsg()
         {
             sxoffs = syoffs = 0;
         }
-        for (i = 0; i < textydots; ++i)
+        for (int i = 0; i < textydots; ++i)
         {
             MoveFromMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
             put_line(i, 0, textxdots-1, buffer);
@@ -356,22 +352,24 @@ void show_speedstring(int speedrow,
                       char *speedstring,
                       int (*speedprompt)(int,int,int,char *,int))
 {
-    int speed_match = 0;
-    int i,j;
     char buf[81];
     memset(buf,' ',80);
     buf[80] = 0;
     driver_put_string(speedrow,0,C_PROMPT_BKGRD,buf);
     if (*speedstring) {                 /* got a speedstring on the go */
         driver_put_string(speedrow,15,C_CHOICE_SP_INSTR," ");
+        int j;
         if (speedprompt)
+        {
+            int speed_match = 0;
             j = speedprompt(speedrow,16,C_CHOICE_SP_INSTR,speedstring,speed_match);
+        }
         else {
             driver_put_string(speedrow,16,C_CHOICE_SP_INSTR,speed_prompt);
             j = sizeof(speed_prompt)-1;
         }
         strcpy(buf,speedstring);
-        i = (int) strlen(buf);
+        int i = (int) strlen(buf);
         while (i < 30)
             buf[i++] = ' ';
         buf[i] = 0;
@@ -390,9 +388,7 @@ void process_speedstring(char    *speedstring,
                          int       numchoices,
                          int       is_unsorted)
 {
-    int i, comp_result;
-
-    i = (int) strlen(speedstring);
+    int i = (int) strlen(speedstring);
     if (curkey == 8 && i > 0) /* backspace */
         speedstring[--i] = 0;
     if (33 <= curkey && curkey <= 126 && i < 30)
@@ -405,6 +401,7 @@ void process_speedstring(char    *speedstring,
     }
     if (i > 0)  {    /* locate matching type */
         *pcurrent = 0;
+        int comp_result;
         while (*pcurrent < numchoices
                 && (comp_result = strncasecmp(speedstring,choices[*pcurrent],i))!=0) {
             if (comp_result < 0 && !is_unsorted) {
@@ -1617,7 +1614,7 @@ int field_prompt(
     int boxwidth,titlelines,titlecol,titlerow;
     int promptcol;
     int i,j;
-    char buf[81];
+    char buf[81] = { 0 };
     helptitle();                           /* clear screen, display title */
     driver_set_attr(1,0,C_PROMPT_BKGRD,24*80);     /* init rest to background */
     charptr = hdg;                         /* count title lines, find widest */
@@ -1923,20 +1920,19 @@ void bad_fractint_cfg_msg()
 
 int check_vidmode_key(int option,int k)
 {
-    int i;
     /* returns g_video_table entry number if the passed keystroke is a  */
     /* function key currently assigned to a video mode, -1 otherwise */
     if (k == 1400)              /* special value from select_vid_mode  */
         return (MAXVIDEOMODES-1); /* for last entry with no key assigned */
     if (k != 0) {
         if (option == 0) { /* check resident video mode table */
-            for (i = 0; i < MAXVIDEOMODES; ++i) {
+            for (int i = 0; i < MAXVIDEOMODES; ++i) {
                 if (g_video_table[i].keynum == k)
                     return (i);
             }
         }
         else { /* check full g_video_table */
-            for (i = 0; i < g_video_table_len; ++i) {
+            for (int i = 0; i < g_video_table_len; ++i) {
                 if (g_video_table[i].keynum == k)
                     return (i);
             }
