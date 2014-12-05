@@ -106,7 +106,7 @@ void putpot(int x, int y, U16 color)
 {
     if (color < 1)
         color = 1;
-    putcolor(x, y, color >> 8 ? color >> 8 : 1);  /* don't write 0 */
+    putcolor(x, y, (color >> 8) ? (color >> 8) : 1);  /* don't write 0 */
     /* we don't write this if driver_diskp() because the above putcolor
           was already a "writedisk" in that case */
     if (!driver_diskp())
@@ -316,7 +316,7 @@ static void subDivide(int x1,int y1,int x2,int y2)
 
 int plasma()
 {
-    int i,k, n;
+    int n;
     U16 rnd[4];
     int OldPotFlag, OldPot16bit;
 
@@ -425,7 +425,9 @@ int plasma()
         subDivide(0,0,xdots-1,ydots-1);
     else
     {
-        recur1 = i = k = 1;
+        int i = 1;
+        int k = 1;
+        recur1 = 1;
         while (new_subD(0,0,xdots-1,ydots-1,i)==0)
         {
             k = k * 2;
@@ -768,7 +770,6 @@ static long   LPI;
 
 int Bifurcation(void)
 {
-    unsigned long array_size;
     int row, column;
     column = 0;
     if (resuming)
@@ -777,7 +778,6 @@ int Bifurcation(void)
         get_resume(sizeof(column),&column,0);
         end_resume();
     }
-    array_size = (iystop + 1) * sizeof(int);  /* should be iystop + 1 */
     bool resized = false;
     try
     {
@@ -1302,10 +1302,12 @@ int lya_setup() {
     return 1;
 }
 
-int lyapunov_cycles_in_c(long filter_cycles, double a, double b) {
+int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
+{
     int color, count, lnadjust;
     long i;
-    double lyap, total, temp;
+    double total;
+    double temp;
     /* e10=22026.4657948  e-10=0.0000453999297625 */
 
     total = 1.0;
@@ -1346,7 +1348,9 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b) {
 jumpout:
     if (overflow || total <= 0 || (temp = log(total) + lnadjust) > 0)
         color = 0;
-    else {
+    else
+    {
+        double lyap;
         if (LogFlag)
             lyap = -temp/((double) lyaLength*i);
         else
@@ -1863,7 +1867,8 @@ static void set_Froth_palette(void)
 
 int froth_setup(void)
 {
-    double sin_theta, cos_theta, x0, y0;
+    double sin_theta;
+    double cos_theta;
 
     sin_theta = SQRT3/2; /* sin(2*PI/3) */
     cos_theta = -0.5;    /* cos(2*PI/3) */
@@ -1914,9 +1919,9 @@ int froth_setup(void)
 
         /* new improved values */
         /* 0.5 is the value that causes the mapping to reach a minimum */
-        x0 = 0.5;
+        double x0 = 0.5;
         /* a/2 is the value that causes the y value to be invariant over the mappings */
-        y0 = fsp.fl.f.halfa = fsp.fl.f.a/2;
+        double y0 = fsp.fl.f.halfa = fsp.fl.f.a/2;
         fsp.fl.f.top_x1 = froth_top_x_mapping(x0);
         fsp.fl.f.top_x2 = froth_top_x_mapping(fsp.fl.f.top_x1);
         fsp.fl.f.top_x3 = froth_top_x_mapping(fsp.fl.f.top_x2);
