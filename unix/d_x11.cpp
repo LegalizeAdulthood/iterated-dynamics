@@ -842,7 +842,7 @@ handle_esc(DriverX11 *di)
     }
 #else
     /* SUN escape key sequences */
-    int ch1 = = getachar(di);
+    int ch1 = getachar(di);
     if (ch1 == -1) {
         driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
         ch1 = getachar(di);
