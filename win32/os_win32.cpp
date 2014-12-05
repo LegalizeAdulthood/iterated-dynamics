@@ -239,7 +239,7 @@ static char *g_tos = nullptr;
 /* Return available stack space ... shouldn't be needed in Win32, should it? */
 long stackavail()
 {
-    char junk;
+    char junk = 0;
     return WIN32_STACK_SIZE - (long)(((char *) g_tos) - &junk);
 }
 
@@ -415,22 +415,20 @@ long readticker(void)
 */
 void spindac(int dir, int inc)
 {
-    int i, top;
     unsigned char tmp[3];
     unsigned char *dacbot;
-    int len;
     if (colors < 16)
         return;
     if (g_is_true_color && truemode)
         return;
     if (dir != 0 && rotate_lo < colors && rotate_lo < rotate_hi)
     {
-        top = rotate_hi > colors ? colors - 1 : rotate_hi;
+        int top = rotate_hi > colors ? colors - 1 : rotate_hi;
         dacbot = (unsigned char *) g_dac_box + 3 * rotate_lo;
-        len = (top - rotate_lo) * 3 * sizeof(unsigned char);
+        int len = (top - rotate_lo) * 3 * sizeof(unsigned char);
         if (dir > 0)
         {
-            for (i = 0; i < inc; i++)
+            for (int i = 0; i < inc; i++)
             {
                 memcpy(tmp, dacbot, 3 * sizeof(unsigned char));
                 memcpy(dacbot, dacbot + 3 * sizeof(unsigned char), len);
@@ -439,7 +437,7 @@ void spindac(int dir, int inc)
         }
         else
         {
-            for (i = 0; i < inc; i++)
+            for (int i = 0; i < inc; i++)
             {
                 memcpy(tmp, dacbot + len, 3 * sizeof(unsigned char));
                 memcpy(dacbot + 3 * sizeof(unsigned char), dacbot, len);
