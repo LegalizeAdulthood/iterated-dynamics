@@ -180,9 +180,13 @@ void setMPfunctions(void) {
 }
 #endif /* XFRACT */
 
-_CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
-    _CMPLX z, cLog, t;
-    double e2x, siny, cosy;
+_CMPLX ComplexPower(_CMPLX xx, _CMPLX yy)
+{
+    _CMPLX z;
+    _CMPLX cLog;
+    _CMPLX t;
+    double siny;
+    double cosy;
 
     if (ldcheck == 0)
         if (xx.x == 0 && xx.y == 0) {
@@ -195,7 +199,9 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
 
     if (fpu >= 387)
         FPUcplxexp387(&t, &z);
-    else {
+    else
+    {
+        double e2x;
         if (t.x < -690)
             e2x = 0;
         else
@@ -393,12 +399,12 @@ long lsqrt(long f)
 #endif
 LCMPLX ComplexSqrtLong(long x, long y)
 {
-    double    mag, theta;
+    double theta;
     long      maglong, thetalong;
     LCMPLX    result;
 
 #ifndef LONGSQRT
-    mag       = sqrt(sqrt(((double) multiply(x,x,bitshift))/fudge +
+    double mag = sqrt(sqrt(((double) multiply(x,x,bitshift))/fudge +
                           ((double) multiply(y,y,bitshift))/ fudge));
     maglong   = (long)(mag * fudge);
 #else
@@ -414,16 +420,17 @@ LCMPLX ComplexSqrtLong(long x, long y)
 
 _CMPLX ComplexSqrtFloat(double x, double y)
 {
-    double mag;
-    double theta;
     _CMPLX  result;
 
     if (x == 0.0 && y == 0.0)
-        result.x = result.y = 0.0;
+    {
+        result.x = 0.0;
+        result.y = 0.0;
+    }
     else
     {
-        mag   = sqrt(sqrt(x*x + y*y));
-        theta = atan2(y, x) / 2;
+        double mag = sqrt(sqrt(x*x + y*y));
+        double theta = atan2(y, x) / 2;
         FPUsincos(&theta, &result.y, &result.x);
         result.x *= mag;
         result.y *= mag;
@@ -451,7 +458,8 @@ static unsigned long lf;
 
 void SetupLogTable(void) {
     float l, f, c, m;
-    unsigned long prev, limit, sptop;
+    unsigned long prev;
+    unsigned long limit;
     unsigned n;
 
     if (save_release > 1920 || Log_Fly_Calc == 1) { /* set up on-the-fly variables */
@@ -522,7 +530,7 @@ void SetupLogTable(void) {
     }
     LogTable[0] = 0;
     if (LogFlag != -1)
-        for (sptop = 1; sptop < (unsigned long)MaxLTSize; sptop++) /* spread top to incl unused colors */
+        for (unsigned long sptop = 1; sptop < (unsigned long)MaxLTSize; sptop++) /* spread top to incl unused colors */
             if (LogTable[sptop] > LogTable[sptop-1])
                 LogTable[sptop] = (BYTE)(LogTable[sptop-1]+1);
 }
@@ -623,9 +631,9 @@ int ComplexNewton(void) {
     return (0);
 }
 
-int ComplexBasin(void) {
+int ComplexBasin(void)
+{
     _CMPLX cd1;
-    double mod;
 
     /* new = ((cdegree-1) * old**cdegree) + croot
              ----------------------------------
@@ -644,7 +652,7 @@ int ComplexBasin(void) {
             old.y = 0.0;
         FPUcplxlog(&old, &temp);
         FPUcplxmul(&temp, &cdegree, &tmp);
-        mod = tmp.y/TwoPi;
+        double mod = tmp.y/TwoPi;
         coloriter = (long)mod;
         if (fabs(mod - coloriter) > 0.5) {
             if (mod < 0.0)
@@ -683,18 +691,19 @@ int ComplexBasin(void) {
  * 1 in Distribution*(1-Probability/Range*con)+1 chance of getting a
  * Gaussian; otherwise you just get offset.
  */
-int GausianNumber(int Probability, int Range) {
-    int n, r;
-    long Accum = 0, p;
+int GausianNumber(int Probability, int Range)
+{
+    long p;
 
     p = divide((long)Probability << 16, (long)Range << 16, 16);
     p = multiply(p, con, 16);
     p = multiply((long)Distribution << 16, p, 16);
     if (!(rand15() % (Distribution - (int)(p >> 16) + 1))) {
-        for (n = 0; n < Slope; n++)
+        long Accum = 0;
+        for (int n = 0; n < Slope; n++)
             Accum += rand15();
         Accum /= Slope;
-        r = (int)(multiply((long)Range << 15, Accum, 15) >> 14);
+        int r = (int)(multiply((long)Range << 15, Accum, 15) >> 14);
         r = r - Range;
         if (r < 0)
             r = -r;
