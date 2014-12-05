@@ -507,12 +507,6 @@ clearbox(void)
     dispbox();
 }
 
-int
-CheckForTPlus(void)
-{
-    return 0;
-}
-
 /*
 ; Passing this routine 0 turns off shadow, nonzero turns it on.
 */
@@ -808,34 +802,4 @@ void stackscreen()
     else
         setfortext();
 #endif
-}
-
-void unstackscreen()
-{
-#ifdef USE_XFRACT_STACK_FUNCTIONS
-    BYTE *ptr;
-    g_text_row = saverc[screenctr] / 80;
-    g_text_col = saverc[screenctr] % 80;
-    if (--screenctr >= 0) { /* unstack */
-        ptr = savescreen[screenctr];
-        restorecurses((WINDOW **)ptr);
-        free(ptr);
-    }
-    else
-        setforgraphics();
-    movecursor(-1,-1);
-#endif
-}
-
-void discardscreen()
-{
-    if (--screenctr >= 0) { /* unstack */
-        if (savescreen[screenctr]) {
-#ifdef USE_XFRACT_STACK_FUNCTIONS
-            free(savescreen[screenctr]);
-#endif
-        }
-    }
-    else
-        discardgraphics();
 }
