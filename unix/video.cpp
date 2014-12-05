@@ -395,22 +395,20 @@ scrollup(int top, int bot)
 void
 spindac(int dir, int inc)
 {
-    int i, top;
     unsigned char tmp[3];
     unsigned char *dacbot;
-    int len;
     if (colors < 16)
         return;
     if (g_is_true_color && truemode)
         return;
     if (dir != 0 && rotate_lo < colors && rotate_lo < rotate_hi)
     {
-        top = rotate_hi > colors ? colors - 1 : rotate_hi;
+        int top = rotate_hi > colors ? colors - 1 : rotate_hi;
         dacbot = (unsigned char *) g_dac_box + 3 * rotate_lo;
-        len = (top - rotate_lo) * 3 * sizeof(unsigned char);
+        int len = (top - rotate_lo) * 3 * sizeof(unsigned char);
         if (dir > 0)
         {
-            for (i = 0; i < inc; i++)
+            for (int i = 0; i < inc; i++)
             {
                 bcopy(dacbot, tmp, 3 * sizeof(unsigned char));
                 bcopy(dacbot + 3 * sizeof(unsigned char), dacbot, len);
@@ -419,7 +417,7 @@ spindac(int dir, int inc)
         }
         else
         {
-            for (i = 0; i < inc; i++)
+            for (int i = 0; i < inc; i++)
             {
                 bcopy(dacbot + len, tmp, 3 * sizeof(unsigned char));
                 bcopy(dacbot, dacbot + 3 * sizeof(unsigned char), len);
@@ -790,12 +788,12 @@ static int saverc[MAXSCREENS+1];
 void stackscreen()
 {
 #ifdef USE_XFRACT_STACK_FUNCTIONS
-    int i;
     BYTE *ptr;
     saverc[screenctr+1] = g_text_row*80 + g_text_col;
     if (++screenctr) { /* already have some stacked */
         static char msg[]= {"stackscreen overflow"};
-        if ((i = screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
+        int i = screenctr - 1;
+        if (i >= MAXSCREENS) { /* bug, missing unstack? */
             stopmsg(1,msg);
             exit(1);
         }
