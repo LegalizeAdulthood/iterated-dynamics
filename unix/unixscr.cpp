@@ -348,12 +348,11 @@ static int errhand(Display *dp, XErrorEvent *xe)
 static void
 continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 {
-    int i;
-    char out[20];
     /*      if you want to get all messages enable this statement.    */
     /*  printf("ieee exception code %x occurred at pc %X\n",code,scp->sc_pc); */
     /*  clear all excaption flags                     */
-    i = ieee_flags("clear","exception","all",out);
+    char out[20];
+    ieee_flags("clear","exception","all",out);
 }
 #endif
 
@@ -448,8 +447,6 @@ initUnixWindow()
 {
     XSetWindowAttributes Xwatt;
     XGCValues Xgcvals;
-    int Xwinx = 0, Xwiny = 0;
-    int i;
 
     if (Xdp != nullptr) {
         /* We are already initialized */
@@ -473,7 +470,7 @@ initUnixWindow()
         g_is_true_color = 0;
         g_got_real_dac = 1;
         colors = 256;
-        for (i = 0; i < colors; i++) {
+        for (int i = 0; i < colors; i++) {
             pixtab[i] = i;
             ipixtab[i] = i;
         }
@@ -520,10 +517,6 @@ initUnixWindow()
             int offx, offy;
             XParseGeometry(Xgeometry, &offx, &offy, (unsigned int *) &Xwinwidth,
                            (unsigned int *) &Xwinheight);
-            /* next line breaks -geometry
-                  XWMGeometry(Xdp, Xdscreen, Xgeometry, DEFXY, 0, size_hints,
-                    &Xwinx, &Xwiny, &Xwinwidth, &Xwinheight, &gravity);
-            */
         }
         if (synch) {
             XSynchronize(Xdp, True);
@@ -560,6 +553,8 @@ initUnixWindow()
             XSetWindowBackgroundPixmap(Xdp, Xroot, Xpixmap);
         } else {
             Xroot = DefaultRootWindow(Xdp);
+            int Xwinx = 0;
+            int Xwiny = 0;
             Xw = XCreateWindow(Xdp, Xroot, Xwinx, Xwiny, Xwinwidth,
                                Xwinheight, 0, Xdepth, InputOutput, CopyFromParent,
                                CWBackPixel | CWBitGravity | CWBackingStore, &Xwatt);
@@ -708,23 +703,21 @@ clearXwindow()
 static void
 initdacbox()
 {
-    int i, j, k, s0, sp;
-
-    s0 = step & 1;
-    sp = step/2;
+    int s0 = step & 1;
+    int sp = step/2;
 
     if (sp) {
         --sp;
         s0 = 1-s0;
-        for (i=0; i<256; i++) {
-            for (j=0; j<3; j++) {
-                k = (i*(cyclic[sp][j])) & 127;
+        for (int i=0; i<256; i++) {
+            for (int j=0; j<3; j++) {
+                int k = (i*(cyclic[sp][j])) & 127;
                 if (k < 64) g_dac_box[i][j] = k;
                 else g_dac_box[i][j] = (127 - k);
             }
         }
     } else {
-        for (i=0; i<256; i++) {
+        for (int i=0; i<256; i++) {
             g_dac_box[i][0] = (i>>5)*8+7;
             g_dac_box[i][1] = (((i+16)&28)>>2)*8+7;
             g_dac_box[i][2] = (((i+2)&3))*16+15;
@@ -735,8 +728,8 @@ initdacbox()
         g_dac_box[2][1] = g_dac_box[2][2] = 63;
     }
     if (s0)
-        for (i=0; i<256; i++)
-            for (j=0; j<3; j++)
+        for (int i=0; i<256; i++)
+            for (int j=0; j<3; j++)
                 g_dac_box[i][j] = 63 - g_dac_box[i][j];
 
 }
@@ -777,7 +770,6 @@ resizeWindow()
     unsigned int junkui;
     Window junkw;
     unsigned int width, height;
-    int Xmwidth, Xpad;
 
     if (unixDisk) return 0;
     if (resize_flag) {
@@ -805,7 +797,8 @@ resizeWindow()
         Xwinheight = sydots;
         screenaspect = sydots/(float)sxdots;
         finalaspectratio = screenaspect;
-        Xpad = 8;  /* default, unless changed below */
+        int Xpad = 8;  /* default, unless changed below */
+        int Xmwidth;
         if (Xdepth==1)
             Xmwidth = 1 + sxdots/8;
         else if (Xdepth<=8)
@@ -1491,7 +1484,9 @@ translatekey(int ch)
 static int
 handleesc()
 {
-    int ch1,ch2,ch3;
+    int ch1;
+    int ch2;
+    int ch3;
     if (simple_input) {
         return FIK_ESC;
     }
@@ -2054,14 +2049,14 @@ pr_dwmroot(Display *dpy, Window pwin)
     /* search for DEC Window Manager root */
     XWindowAttributes pxwa,cxwa;
     Window  root,parent,*child;
-    unsigned int     i,nchild;
 
     if (!XGetWindowAttributes(dpy,pwin,&pxwa)) {
         printf("Search for root: XGetWindowAttributes failed\n");
         return RootWindow(dpy, scr);
     }
+    unsigned int nchild;
     if (XQueryTree(dpy,pwin,&root,&parent,&child,&nchild)) {
-        for (i = 0; i < nchild; i++) {
+        for (unsigned int i = 0; i < nchild; i++) {
             if (!XGetWindowAttributes(dpy,child[i],&cxwa)) {
                 printf("Search for root: XGetWindowAttributes failed\n");
                 return RootWindow(dpy, scr);
@@ -2095,7 +2090,6 @@ pr_dwmroot(Display *dpy, Window pwin)
 static Window
 FindRootWindow()
 {
-    int i;
     w_root = RootWindow(dpy,scr);
     w_root = pr_dwmroot(dpy, w_root); /* search for DEC wm root */
 
@@ -2106,7 +2100,7 @@ FindRootWindow()
 
         __SWM_VROOT = XInternAtom(dpy, "__SWM_VROOT", False);
         XQueryTree(dpy, w_root, &rootReturn, &parentReturn, &children, &numChildren);
-        for (i = 0; i < numChildren; i++) {
+        for (int i = 0; i < numChildren; i++) {
             Atom actual_type;
             int actual_format;
             unsigned long nitems, bytesafter;
