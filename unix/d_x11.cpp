@@ -394,12 +394,11 @@ static int errhand(Display *dp, XErrorEvent *xe)
 static void
 continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 {
-    int i;
     char out[20];
     /*        if you want to get all messages enable this statement.    */
     /*  printf("ieee exception code %x occurred at pc %X\n", code, scp->sc_pc); */
     /*    clear all excaption flags                     */
-    i = ieee_flags("clear", "exception", "all", out);
+    ieee_flags("clear", "exception", "all", out);
 }
 #endif
 
@@ -457,27 +456,24 @@ select_visual(DriverX11 *di)
 static void
 clearXwindow(DriverX11 *di)
 {
-    char *ptr;
-    int i, len;
     if (di->fake_lut) {
-        int j;
-        for (j = 0; j < di->Ximage->height; j++)
-            for (i = 0; i < di->Ximage->width; i++)
+        for (int j = 0; j < di->Ximage->height; j++)
+            for (int i = 0; i < di->Ximage->width; i++)
                 XPutPixel(di->Ximage, i, j, di->cmap_pixtab[di->pixtab[0]]);
     } else if (di->pixtab[0] != 0) {
         /*
          * Initialize image to di->pixtab[0].
          */
         if (colors == 2) {
-            for (i = 0; i < di->Ximage->bytes_per_line; i++) {
+            for (int i = 0; i < di->Ximage->bytes_per_line; i++) {
                 di->Ximage->data[i] = 0xff;
             }
         } else {
-            for (i = 0; i < di->Ximage->bytes_per_line; i++) {
+            for (int i = 0; i < di->Ximage->bytes_per_line; i++) {
                 di->Ximage->data[i] = di->pixtab[0];
             }
         }
-        for (i = 1; i < di->Ximage->height; i++) {
+        for (int i = 1; i < di->Ximage->height; i++) {
             bcopy(di->Ximage->data, di->Ximage->data+i*di->Ximage->bytes_per_line,
                   di->Ximage->bytes_per_line);
         }
@@ -763,11 +759,9 @@ translate_key(int ch)
 static int
 handle_esc(DriverX11 *di)
 {
-    int ch1, ch2, ch3;
-
 #ifdef __hpux
     /* HP escape key sequences. */
-    ch1 = getachar();
+    int ch1 = getachar();
     if (ch1 == -1) {
         driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
         ch1 = getachar();
@@ -796,16 +790,19 @@ handle_esc(DriverX11 *di)
     }
     if (ch1 == -1 || !isdigit(ch1))
         return FIK_ESC;
-    ch2 = getachar();
+    int ch2 = getachar();
     if (ch2 == -1) {
         driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
         ch2 = getachar();
     }
     if (ch2 == -1)
         return FIK_ESC;
-    if (isdigit(ch2)) {
+    int ch3;
+    if (isdigit(ch2))
+    {
         ch3 = getachar();
-        if (ch3 == -1) {
+        if (ch3 == -1)
+        {
             driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
             ch3 = getachar();
         }
@@ -950,7 +947,6 @@ ev_key_press(DriverX11 *di, XKeyEvent *xevent)
     int charcount;
     char buffer[1];
     KeySym keysym;
-    int compose;
     charcount = XLookupString(xevent, buffer, 1, &keysym, nullptr);
     switch (keysym) {
     case XK_Control_L:
@@ -1321,14 +1317,14 @@ pr_dwmroot(DriverX11 *di, Display *dpy, Window pwin)
     /* search for DEC Window Manager root */
     XWindowAttributes pxwa, cxwa;
     Window  root, parent, *child;
-    unsigned int     i, nchild;
+    unsigned int nchild;
 
     if (!XGetWindowAttributes(dpy, pwin, &pxwa)) {
         printf("Search for root: XGetWindowAttributes failed\n");
         return RootWindow(dpy, di->Xdscreen);
     }
     if (XQueryTree(dpy, pwin, &root, &parent, &child, &nchild)) {
-        for (i = 0; i < nchild; i++) {
+        for (unsigned int i = 0; i < nchild; i++) {
             if (!XGetWindowAttributes(dpy, child[i], &cxwa)) {
                 printf("Search for root: XGetWindowAttributes failed\n");
                 return RootWindow(dpy, di->Xdscreen);
@@ -1361,7 +1357,6 @@ pr_dwmroot(DriverX11 *di, Display *dpy, Window pwin)
 static Window
 FindRootWindow(DriverX11 *di)
 {
-    int i;
     di->Xroot = RootWindow(di->Xdp, di->Xdscreen);
     di->Xroot = pr_dwmroot(di, di->Xdp, di->Xroot); /* search for DEC wm root */
 
@@ -1373,7 +1368,7 @@ FindRootWindow(DriverX11 *di)
         __SWM_VROOT = XInternAtom(di->Xdp, "__SWM_VROOT", False);
         XQueryTree(di->Xdp, di->Xroot, &rootReturn, &parentReturn,
                    &children, &numChildren);
-        for (i = 0; i < numChildren; i++) {
+        for (int i = 0; i < numChildren; i++) {
             Atom actual_type;
             int actual_format;
             unsigned long nitems, bytesafter;
@@ -1627,7 +1622,6 @@ x11_window(Driver *drv)
     XSetWindowAttributes Xwatt;
     XGCValues Xgcvals;
     int Xwinx = 0, Xwiny = 0;
-    int i;
     DIX11(drv);
 
     g_adapter = 0;
@@ -1730,7 +1724,6 @@ x11_resize(Driver *drv)
     unsigned int junkui;
     Window junkw;
     unsigned int width, height;
-    int Xmwidth;
     Status status;
 
     XGetGeometry(di->Xdp, di->Xw, &junkw, &junki, &junki, &width, &height,
@@ -1747,7 +1740,6 @@ x11_resize(Driver *drv)
         di->Xwinheight = sydots;
         screenaspect = sydots/(float) sxdots;
         finalaspectratio = screenaspect;
-        Xmwidth = (di->Xdepth > 1) ? sxdots: (1 + sxdots/8);
         if (di->pixbuf != nullptr)
             free(di->pixbuf);
         di->pixbuf = (BYTE *) malloc(di->Xwinwidth *sizeof(BYTE));
