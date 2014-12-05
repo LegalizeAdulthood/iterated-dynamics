@@ -1484,89 +1484,11 @@ translatekey(int ch)
 static int
 handleesc()
 {
-    int ch1;
-    int ch2;
-    int ch3;
     if (simple_input) {
         return FIK_ESC;
     }
-#ifdef __hpux
-    /* HP escape key sequences. */
-    ch1 = getachar();
-    if (ch1==-1) {
-        driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
-        ch1 = getachar();
-    }
-    if (ch1==-1) {
-        return FIK_ESC;
-    }
-    switch (ch1) {
-    case 'A':
-        return FIK_UP_ARROW;
-    case 'B':
-        return FIK_DOWN_ARROW;
-    case 'D':
-        return FIK_LEFT_ARROW;
-    case 'C':
-        return FIK_RIGHT_ARROW;
-    case 'd':
-        return FIK_HOME;
-    }
-    if (ch1 != '[') return FIK_ESC;
-    ch1 = getachar();
-    if (ch1==-1) {
-        driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
-        ch1 = getachar();
-    }
-    if (ch1==-1 || !isdigit(ch1)) return FIK_ESC;
-    ch2 = getachar();
-    if (ch2==-1) {
-        driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
-        ch2 = getachar();
-    }
-    if (ch2==-1) return FIK_ESC;
-    if (isdigit(ch2)) {
-        ch3 = getachar();
-        if (ch3==-1) {
-            driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
-            ch3 = getachar();
-        }
-        if (ch3 != '~') return FIK_ESC;
-        ch2 = (ch2-'0')*10+ch3-'0';
-    } else if (ch3 != '~') {
-        return FIK_ESC;
-    } else {
-        ch2 = ch2-'0';
-    }
-    switch (ch2) {
-    case 5:
-        return FIK_PAGE_UP;
-    case 6:
-        return FIK_PAGE_DOWN;
-    case 29:
-        return FIK_F1; /* help */
-    case 11:
-        return FIK_F1;
-    case 12:
-        return FIK_F2;
-    case 13:
-        return FIK_F3;
-    case 14:
-        return FIK_F4;
-    case 15:
-        return FIK_F5;
-    case 17:
-        return FIK_F6;
-    case 18:
-        return FIK_F7;
-    case 19:
-        return FIK_F8;
-    default:
-        return FIK_ESC;
-    }
-#else
     /* SUN escape key sequences */
-    ch1 = getachar();
+    int ch1 = getachar();
     if (ch1==-1) {
         driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
         ch1 = getachar();
@@ -1594,7 +1516,7 @@ handleesc()
     default:
         break;
     }
-    ch2 = getachar();
+    int ch2 = getachar();
     if (ch2==-1) {
         driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
         ch2 = getachar();
@@ -1615,7 +1537,7 @@ handleesc()
     } else if (ch2==-1) {
         return FIK_ESC;
     } else {
-        ch3 = getachar();
+        int ch3 = getachar();
         if (ch3==-1) {
             driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
             ch3 = getachar();
@@ -1659,7 +1581,6 @@ handleesc()
             return FIK_ESC;
         }
     }
-#endif
 }
 
 extern int editpal_cursor;
