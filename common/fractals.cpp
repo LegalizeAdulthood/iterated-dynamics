@@ -636,7 +636,7 @@ JuliaFractal(void)
     lnew.x  = ltempsqrx - ltempsqry + longparm->x;
     lnew.y = multiply(lold.x, lold.y, bitshiftless1) + longparm->y;
     return longbailout();
-#elif !defined(__386BSD__)
+#else
     {
         static int been_here = 0;
         if (!been_here)
