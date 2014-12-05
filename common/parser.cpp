@@ -2116,7 +2116,7 @@ struct SYMETRY {
 
 static int ParseStr(char *Str, int pass) {
     struct ConstArg *c;
-    int ModFlag = 999, Len, Equals = 0, Mod[20], mdstk = 0;
+    int ModFlag = 999, Len, Equals = 0, Mods[20], mdstk = 0;
     int jumptype;
     double const_pi, const_e;
     double Xctr, Yctr, Xmagfactor, Rotation, Skew;
@@ -2424,10 +2424,10 @@ static int ParseStr(char *Str, int pass) {
             }
             else if (ModFlag == paren-1) {
                 paren--;
-                ModFlag = Mod[--mdstk];
+                ModFlag = Mods[--mdstk];
             }
             else {
-                Mod[mdstk++] = ModFlag;
+                Mods[mdstk++] = ModFlag;
                 o[posp].f = StkMod;
                 o[posp++].p = 2 - (paren + Equals)*15;
                 ModFlag = paren++;
