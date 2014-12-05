@@ -317,10 +317,8 @@ static const char *ParseErrs(int which)
    get MP math and Integer math */
 
 #if !defined(XFRACT)
-#define FUNCT
-#ifdef FUNCT /* use function form save space - isn't really slower */
 
-static void mStkFunct(void (*fct)(void))   /* call lStk via dStk */
+static void mStkFunct(void (*fct)(void))   /* call mStk via dStk */
 {
     Arg1->d = MPC2cmplx(Arg1->m);
     (*fct)();
@@ -345,31 +343,6 @@ static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
     else
         overflow = 1;
 }
-#else  /* use Macro form for (?) greater speed */
-/* call lStk via dStk */
-#define mStkFunct(fct)  \
-   Arg1->d = MPC2cmplx(Arg1->m);\
-   (*fct)();\
-   Arg1->m = cmplx2MPC(Arg1->d);
-
-
-/* call lStk via dStk */
-#define lStkFunct(fct) {\
-   double y;\
-   y = (double)Arg1->l.y / fg;\
-   Arg1->d.x = (double)Arg1->l.x / fg;\
-   Arg1->d.y = y;\
-   (*fct)();\
-   if (fabs(Arg1->d.x) < fgLimit && fabs(Arg1->d.y) < fgLimit) {\
-      Arg1->l.x = (long)(Arg1->d.x * fg);\
-      Arg1->l.y = (long)(Arg1->d.y * fg);\
-   }\
-   else\
-      overflow = 1;\
-}
-
-
-#endif
 
 #endif
 
@@ -504,10 +477,6 @@ void dStkLodSqr2()
     LodPtr++;
 }
 
-void dStkStoDup() {}
-void dStkStoSqr() {}
-void dStkStoSqr0() {}
-
 void dStkLodDbl()
 {
     Arg1++;
@@ -516,9 +485,6 @@ void dStkLodDbl()
     Arg1->d.y = Load[LodPtr]->d.y * 2.0;
     LodPtr++;
 }
-
-void dStkStoDbl() {}
-void dStkReal2() {}
 
 void dStkSqr0()
 {
