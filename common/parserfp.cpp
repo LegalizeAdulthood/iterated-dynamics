@@ -410,10 +410,8 @@ static int CvtFptr(void (* ffptr)(void), int MinStk, int FreeStk,
 #ifdef TESTFP
     int prevstkcnt;
 #endif
-    double dTemp;
 
     int Max_On_Stack = MAX_STACK - FreeStk;  /* max regs allowed on stack  */
-    int Num_To_Push; /* number of regs to push  */
 
     /* first do some sanity checks  */
     if ((Delta != -2 && Delta != 0 && Delta != 2 && Delta != CLEAR_STK)
@@ -432,9 +430,9 @@ awful_error:
         FNPTR(cvtptrx++) = fStkPull2;  /* so adjust the stack, pull operand  */
         stkcnt += 2;
     }
-    else if ((int)stkcnt > Max_On_Stack) {  /* too many operands  */
-
-        Num_To_Push = stkcnt - Max_On_Stack;
+    else if ((int)stkcnt > Max_On_Stack)  /* too many operands  */
+    {
+        int Num_To_Push = stkcnt - Max_On_Stack; /* number of regs to push  */
         if (Num_To_Push == 2) {
             if (stkcnt == MAX_STACK) {
                 /* push stack down from max to max-2  */
@@ -987,7 +985,7 @@ awful_error:
     else if (ffptr == fStkPwr) {
 
         if (prevfptr == fStkLodRealC) {
-            dTemp = Load[LodPtr-1]->d.x;
+            double dTemp = Load[LodPtr-1]->d.x;
             if (dTemp == _2_ || dTemp == _1_ || dTemp == -1.0 || dTemp == 0.0) {
                 /* change ^[-1,0,1,or 2] to recip,one,ident,sqr */
                 if (FNPTR(cvtptrx-1) == fStkPush2) {
