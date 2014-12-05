@@ -81,10 +81,8 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
     /* if it's an ASCII key, 'WM_CHAR' will handle it  */
     unsigned int i;
     int j;
-    unsigned int k;
     i = MapVirtualKey(vk, 0);
     j = MapVirtualKey(vk, 2);
-    k = (i << 8) + j;
 
     /* handle modifier keys on the non-WM_CHAR keys */
     if (VK_F1 <= vk && vk <= VK_F10)

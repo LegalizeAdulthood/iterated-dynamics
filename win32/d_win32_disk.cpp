@@ -625,8 +625,6 @@ extern void set_normal_line(void);
 static void
 disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
-    DI(di);
-
     /* initially, set the virtual line to be the scan line length */
     g_vxdots = sxdots;
     g_is_true_color = 0;                /* assume not truecolor */
