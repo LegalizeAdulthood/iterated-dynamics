@@ -558,12 +558,6 @@ void scroll_center(int tocol, int torow)
     _ASSERTE(FALSE);
 }
 
-void showfreemem(void)
-{
-    /* TODO */
-    _ASSERTE(FALSE);
-}
-
 unsigned long get_disk_space(void)
 {
     ULARGE_INTEGER space;
