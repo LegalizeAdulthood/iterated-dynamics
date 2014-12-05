@@ -28,13 +28,6 @@ struct lsys_cmd {
 
 static struct lsys_cmd * findsize(struct lsys_cmd *,struct lsys_turtlestatef *, struct lsys_cmd **,int);
 
-/* Define blanks for portability */
-#if defined(XFRACT) || defined(_WIN32)
-void lsysf_prepfpu(struct lsys_turtlestatef *x) { }
-void lsysf_donefpu(struct lsys_turtlestatef *x) { }
-#endif
-
-
 #if defined(XFRACT) || defined(_WIN32)
 static void lsysf_doplus(struct lsys_turtlestatef *cmd)
 {
