@@ -342,16 +342,14 @@ void rotate(int direction)      /* rotate-the-palette routine */
 
 static void pauserotate()               /* pause-the-rotate routine */
 {
-    int olddaccount;                        /* saved dac-count value goes here */
-    BYTE olddac0,olddac1,olddac2;
-
     if (paused)                          /* if already paused , just clear */
         paused = 0;
-    else {                               /* else set border, wait for a key */
-        olddaccount = g_dac_count;
-        olddac0 = g_dac_box[0][0];
-        olddac1 = g_dac_box[0][1];
-        olddac2 = g_dac_box[0][2];
+    else
+    {                               /* else set border, wait for a key */
+        int olddaccount = g_dac_count;  /* saved dac-count value goes here */
+        BYTE olddac0 = g_dac_box[0][0];
+        BYTE olddac1 = g_dac_box[0][1];
+        BYTE olddac2 = g_dac_box[0][2];
         g_dac_count = 256;
         g_dac_box[0][0] = 48;
         g_dac_box[0][1] = 48;
