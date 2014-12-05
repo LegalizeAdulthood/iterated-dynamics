@@ -2452,7 +2452,6 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 {
     int isadir = 0;
     int isafile = 0;
-    int len;
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
     char fname[FILE_MAX_FNAME];
@@ -2542,7 +2541,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
     if (isadir == 0 && isafile == 0 && GETPATH)
     {
         makepath(oldfullpath,drive1,dir1,nullptr,nullptr);
-        len = (int) strlen(oldfullpath);
+        int len = (int) strlen(oldfullpath);
         if (len > 0)
         {
             char save;
