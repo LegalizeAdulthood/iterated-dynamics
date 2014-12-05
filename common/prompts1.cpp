@@ -828,31 +828,6 @@ inpfldl_end:
     return ret;
 }
 
-
-/* --------------------------------------------------------------------- */
-
-#ifdef DELETE_UNUSED_CODE
-
-/* compare for sort of type table */
-static int compare(const VOIDPTR i, const VOIDPTR j)
-{
-    return (strcmp(fractalspecific[(int)*((BYTE*)i)].name,
-                   fractalspecific[(int)*((BYTE*)j)].name));
-}
-
-/* --------------------------------------------------------------------- */
-
-static void clear_line(int row, int start, int stop, int color) /* clear part of a line */
-{
-    int col;
-    for (col=start; col<= stop; col++)
-        driver_put_string(row,col,color," ");
-}
-
-#endif
-
-/* --------------------------------------------------------------------- */
-
 int get_fracttype()             /* prompt for and select fractal type */
 {
     int done,i,oldfractype,t;
