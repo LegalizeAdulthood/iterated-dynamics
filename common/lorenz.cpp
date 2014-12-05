@@ -1818,17 +1818,25 @@ int dynam2dfloatsetup()
  */
 int dynam2dfloat()
 {
-    FILE *fp;
+    FILE *fp = nullptr;
     double *soundvar = nullptr;
-    double x,y,z;
-    int color,col,row;
-    long count;
-    int oldrow, oldcol;
-    double *p0,*p1;
+    double x = 0.0;
+    double y = 0.0;
+    double z = 0.0;
+    int color = 0;
+    int col = 0;
+    int row = 0;
+    long count = 0;
+    int oldrow = 0;
+    int oldcol = 0;
+    double *p0 = nullptr;
+    double *p1 = nullptr;
     struct affine cvt;
-    int ret;
-    int xstep, ystep; /* The starting position step number */
-    double xpixel, ypixel; /* Our pixel position on the screen */
+    int ret = 0;
+    int xstep = 0;
+    int ystep = 0; /* The starting position step number */
+    double xpixel = 0.0;
+    double ypixel = 0.0; /* Our pixel position on the screen */
 
     fp = open_orbitsave();
     /* setup affine screen coord conversion */
@@ -1836,7 +1844,6 @@ int dynam2dfloat()
 
     p0 = &x;
     p1 = &y;
-
 
     if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_X)
         soundvar = &x;
@@ -2012,9 +2019,12 @@ int plotorbits2dsetup(void)
 int plotorbits2dfloat(void)
 {
     double *soundvar = nullptr;
-    double x,y,z;
-    int col,row;
-    long count;
+    double x = 0.0;
+    double y = 0.0;
+    double z = 0.0;
+    int col = 0;
+    int row = 0;
+    long count = 0;
 
     if (driver_key_pressed())
     {
@@ -2513,13 +2523,9 @@ static int ifs3d(void)
         return (funny_glasses_call(ifs3dlong)); /* long version of ifs3d   */
 }
 
-
-
 static int long3dviewtransf(struct long3dvtinf *inf)
 {
     int i,j;
-    double tmpx, tmpy, tmpz;
-    long tmp;
 
     if (coloriter == 1)  /* initialize on first call */
     {
@@ -2550,10 +2556,13 @@ static int long3dviewtransf(struct long3dvtinf *inf)
     {
         /* find minz and maxz */
         for (i=0; i<3; i++)
-            if ((tmp = inf->viewvect[i]) < inf->minvals[i])
+        {
+            long const tmp = inf->viewvect[i];
+            if (tmp < inf->minvals[i])
                 inf->minvals[i] = tmp;
             else if (tmp > inf->maxvals[i])
                 inf->maxvals[i] = tmp;
+        }
 
         if (coloriter == waste) /* time to work it out */
         {
@@ -2564,13 +2573,13 @@ static int long3dviewtransf(struct long3dvtinf *inf)
             inf->iview[2] = (long)((inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0);
 
             /* center image on origin */
-            tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*fudge); /* center x */
-            tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*fudge); /* center y */
+            double tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*fudge); /* center x */
+            double tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*fudge); /* center y */
 
             /* apply perspective shift */
             tmpx += ((double)xshift*(xxmax-xxmin))/(xdots);
             tmpy += ((double)yshift*(yymax-yymin))/(ydots);
-            tmpz = -((double)inf->maxvals[2]) / fudge;
+            double tmpz = -((double)inf->maxvals[2]) / fudge;
             trans(tmpx,tmpy,tmpz,inf->doublemat);
 
             if (realtime)
@@ -2668,8 +2677,6 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 static int float3dviewtransf(struct float3dvtinf *inf)
 {
     int i;
-    double tmpx, tmpy, tmpz;
-    double tmp;
 
     if (coloriter == 1)  /* initialize on first call */
     {
@@ -2692,10 +2699,13 @@ static int float3dviewtransf(struct float3dvtinf *inf)
     {
         /* find minz and maxz */
         for (i=0; i<3; i++)
-            if ((tmp = inf->viewvect[i]) < inf->minvals[i])
+        {
+            double const tmp = inf->viewvect[i];
+            if (tmp < inf->minvals[i])
                 inf->minvals[i] = tmp;
             else if (tmp > inf->maxvals[i])
                 inf->maxvals[i] = tmp;
+        }
         if (coloriter == waste) /* time to work it out */
         {
             view[0] = view[1] = 0; /* center on origin */
@@ -2704,13 +2714,13 @@ static int float3dviewtransf(struct float3dvtinf *inf)
             view[2] = (inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0;
 
             /* center image on origin */
-            tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); /* center x */
-            tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); /* center y */
+            double tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); /* center x */
+            double tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); /* center y */
 
             /* apply perspective shift */
             tmpx += ((double)xshift*(xxmax-xxmin))/(xdots);
             tmpy += ((double)yshift*(yymax-yymin))/(ydots);
-            tmpz = -(inf->maxvals[2]);
+            double tmpz = -(inf->maxvals[2]);
             trans(tmpx,tmpy,tmpz,inf->doublemat);
 
             if (realtime)
