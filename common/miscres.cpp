@@ -100,15 +100,12 @@ zoom box.  Same goes for the Skew angles
 
 void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
 {
-    double Width, Height;
-    double a, b; /* bottom, left, diagonal */
-    double a2, b2, c2; /* squares of above */
-    double tmpx1, tmpx2, tmpy1, tmpy2, tmpa; /* temporary x, y, angle */
+    double Height;
 
     /* simple normal case first */
     if (xx3rd == xxmin && yy3rd == yymin)
     {   /* no rotation or skewing, but stretching is allowed */
-        Width  = xxmax - xxmin;
+        double Width = xxmax - xxmin;
         Height = yymax - yymin;
         *Xctr = (xxmin + xxmax)/2.0;
         *Yctr = (yymin + yymax)/2.0;
@@ -121,22 +118,22 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
     {
         /* set up triangle ABC, having sides abc */
         /* side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd) */
-        tmpx1 = xxmax - xxmin;
-        tmpy1 = yymax - yymin;
-        c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
+        double tmpx1 = xxmax - xxmin;
+        double tmpy1 = yymax - yymin;
+        double c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
         tmpx1 = xxmax - xx3rd;
         tmpy1 = yymin - yy3rd;
-        a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
-        a = sqrt(a2);
+        double a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
+        double a = sqrt(a2);
         *Rotation = -rad_to_deg(atan2(tmpy1, tmpx1));   /* negative for image rotation */
 
-        tmpx2 = xxmin - xx3rd;
-        tmpy2 = yymax - yy3rd;
-        b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
-        b = sqrt(b2);
+        double tmpx2 = xxmin - xx3rd;
+        double tmpy2 = yymax - yy3rd;
+        double b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
+        double b = sqrt(b2);
 
-        tmpa = acos((a2+b2-c2)/(2*a*b)); /* save tmpa for later use */
+        double tmpa = acos((a2+b2-c2)/(2*a*b)); /* save tmpa for later use */
         *Skew = 90.0 - rad_to_deg(tmpa);
 
         *Xctr = (xxmin + xxmax)*0.5;
@@ -253,15 +250,10 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
 void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
 {
     /* needs to be LDBL or won't work past 307 (-DBL_MIN_10_EXP) or so digits */
-    LDBL Width, Height;
-    LDBL a, b; /* bottom, left, diagonal */
-    LDBL a2, b2, c2; /* squares of above */
-    LDBL tmpx1, tmpx2, tmpy=0.0, tmpy1, tmpy2 ;
-    double tmpa; /* temporary x, y, angle */
-    bf_t bfWidth, bfHeight;
-    bf_t bftmpx, bftmpy;
+    LDBL Height;
+    bf_t bfWidth;
+    bf_t bftmpx;
     int saved;
-    int signx;
 
     saved = save_stack();
 
@@ -270,10 +262,10 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
     if (!cmp_bf(bfx3rd, bfxmin) && !cmp_bf(bfy3rd, bfymin))
     {   /* no rotation or skewing, but stretching is allowed */
         bfWidth  = alloc_stack(bflength+2);
-        bfHeight = alloc_stack(bflength+2);
+        bf_t bfHeight = alloc_stack(bflength+2);
         /* Width  = xxmax - xxmin; */
         sub_bf(bfWidth, bfxmax, bfxmin);
-        Width  = bftofloat(bfWidth);
+        LDBL Width = bftofloat(bfWidth);
         /* Height = yymax - yymin; */
         sub_bf(bfHeight, bfymax, bfymin);
         Height = bftofloat(bfHeight);
@@ -291,7 +283,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
     else
     {
         bftmpx = alloc_stack(bflength+2);
-        bftmpy = alloc_stack(bflength+2);
+        bf_t bftmpy = alloc_stack(bflength+2);
 
         /* set up triangle ABC, having sides abc */
         /* side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd) */
@@ -299,11 +291,11 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 
         /* tmpx = xxmax - xxmin; */
         sub_bf(bftmpx, bfxmax, bfxmin);
-        tmpx1 = bftofloat(bftmpx);
+        LDBL tmpx1 = bftofloat(bftmpx);
         /* tmpy = yymax - yymin; */
         sub_bf(bftmpy, bfymax, bfymin);
-        tmpy1 = bftofloat(bftmpy);
-        c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
+        LDBL tmpy1 = bftofloat(bftmpy);
+        LDBL c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
         /* tmpx = xxmax - xx3rd; */
         sub_bf(bftmpx, bfxmax, bfx3rd);
@@ -312,26 +304,27 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         /* tmpy = yymin - yy3rd; */
         sub_bf(bftmpy, bfymin, bfy3rd);
         tmpy1 = bftofloat(bftmpy);
-        a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
-        a = sqrtl(a2);
+        LDBL a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
+        LDBL a = sqrtl(a2);
 
         /* divide tmpx and tmpy by |tmpx| so that double version of atan2() can be used */
         /* atan2() only depends on the ratio, this puts it in double's range */
-        signx = sign(tmpx1);
+        int signx = sign(tmpx1);
+        LDBL tmpy=0.0;
         if (signx)
             tmpy = tmpy1/tmpx1 * signx;    /* tmpy = tmpy / |tmpx| */
         *Rotation = (double)(-rad_to_deg(atan2((double)tmpy, signx)));   /* negative for image rotation */
 
         /* tmpx = xxmin - xx3rd; */
         sub_bf(bftmpx, bfxmin, bfx3rd);
-        tmpx2 = bftofloat(bftmpx);
+        LDBL tmpx2 = bftofloat(bftmpx);
         /* tmpy = yymax - yy3rd; */
         sub_bf(bftmpy, bfymax, bfy3rd);
-        tmpy2 = bftofloat(bftmpy);
-        b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
-        b = sqrtl(b2);
+        LDBL tmpy2 = bftofloat(bftmpy);
+        LDBL b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
+        LDBL b = sqrtl(b2);
 
-        tmpa = acos((double)((a2+b2-c2)/(2*a*b))); /* save tmpa for later use */
+        double tmpa = acos((double)((a2+b2-c2)/(2*a*b))); /* save tmpa for later use */
         *Skew = 90 - rad_to_deg(tmpa);
 
         /* these are the only two variables that must use big precision */
@@ -544,7 +537,7 @@ void showtrig(char *buf) /* return display form of active trig functions */
 
 static void trigdetails(char *buf)
 {
-    int i, numfn;
+    int numfn;
     char tmpbuf[20];
     if (fractype==JULIBROT || fractype==JULIBROTFP)
         numfn = (fractalspecific[neworbittype].flags >> 6) & 7;
@@ -556,7 +549,7 @@ static void trigdetails(char *buf)
     *buf = 0; /* null string if none */
     if (numfn>0) {
         strcpy(buf,trigfn[trigndx[0]].name);
-        i = 0;
+        int i = 0;
         while (++i < numfn) {
             sprintf(tmpbuf,"/%s",trigfn[trigndx[i]].name);
             strcat(buf,tmpbuf);
@@ -770,7 +763,6 @@ int tab_display()       /* display the status of the current image */
     const char *msgptr;
     int key;
     int saved=0;
-    int dec;
     int k;
     int hasformparam = 0;
 
@@ -1054,7 +1046,7 @@ top:
         if (bf_math)
         {
             int truncate, truncaterow;
-            dec = std::min(320, decimals);
+            int dec = std::min(320, decimals);
             adjust_cornerbf(); /* make bottom left exact if very near exact */
             cvtcentermagbf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
             /* find alignment information */
@@ -1130,10 +1122,10 @@ top:
     {
         for (i = 0; i < MAXPARAMS; i++)
         {
-            int col;
             char p[50];
             if (typehasparm(fractype, i, p))
             {
+                int col;
                 if (k%4 == 0)
                 {
                     s_row++;
