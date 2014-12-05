@@ -52,9 +52,10 @@ long iteration(DBLS cr, DBLS ci,
                DBLS re, DBLS im,
                long start)
 {
-    long iter,offset=0;
-    int k,n;
-    DBLS ren,imn,sre,sim;
+    long iter;
+    long offset=0;
+    DBLS ren;
+    DBLS imn;
 #ifdef INTEL
     float mag;
     unsigned long bail=0x41800000,magi; /* bail=16.0 */
@@ -62,13 +63,12 @@ long iteration(DBLS cr, DBLS ci,
 #else
     DBLS mag;
 #endif
-    DBLS d;
     int exponent;
 
     if (baxinxx)
     {
-        sre=re;
-        sim=im;
+        DBLS sre = re;
+        DBLS sim = im;
         ren=re*re;
         imn=im*im;
         if (start!=0)
@@ -80,8 +80,9 @@ long iteration(DBLS cr, DBLS ci,
         }
         else
             iter=maxit>>3;
-        k=n=8;
 
+        int k = 8;
+        int n = 8;
         do
         {
             im=im*re;
@@ -303,9 +304,9 @@ long iteration(DBLS cr, DBLS ci,
 
         baxinxx=FALSE;
 #ifdef INTEL
-        d=ren+imn;
+        DBLS d = ren+imn;
 #else
-        d=mag;
+        DBLS d = mag;
 #endif
         FREXP(d,&exponent);
         return (maxit+offset-(((iter-1)<<3)+(long)adjust[exponent>>3]));
