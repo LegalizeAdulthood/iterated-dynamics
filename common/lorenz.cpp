@@ -3,6 +3,8 @@
    generators - IFS and LORENZ3D, along with code to generate
    red/blue 3D images.
 */
+#include <vector>
+
 #include <float.h>
 #include <stdlib.h>
 #include <string.h>
@@ -2267,7 +2269,7 @@ static int ifs2d(void)
     int row;
     int color;
     int ret;
-    long *localifs;
+    std::vector<long> localifs;
     long *lfptr;
     long x,y,newx,newy,r,sum, tempr;
 
@@ -2278,8 +2280,16 @@ static int ifs2d(void)
 
     srand(1);
     color_method = (int)param[0];
-    localifs = (long *) malloc(numaffine*IFSPARM*sizeof(long));
-    if (localifs == nullptr)
+    bool resized = false;
+    try
+    {
+        localifs.resize(numaffine*IFSPARM);
+        resized = true;
+    }
+    catch (std::bad_alloc const&)
+    {
+    }
+    if (!resized)
     {
         stopmsg(0,insufficient_ifs_mem);
         return (-1);
@@ -2316,7 +2326,7 @@ static int ifs2d(void)
         while (sum < r && k < numaffine-1)  /* fixed bug of error if sum < 1 */
             sum += localifs[++k*IFSPARM+6];
         /* calculate image of last point under selected iterated function */
-        lfptr = localifs + k*IFSPARM; /* point to first parm in row */
+        lfptr = &localifs[0] + k*IFSPARM; /* point to first parm in row */
         newx = multiply(lfptr[0],x,bitshift) +
                multiply(lfptr[1],y,bitshift) + lfptr[4];
         newy = multiply(lfptr[2],x,bitshift) +
@@ -2344,7 +2354,6 @@ static int ifs2d(void)
     }
     if (fp)
         fclose(fp);
-    free(localifs);
     return (ret);
 }
 
