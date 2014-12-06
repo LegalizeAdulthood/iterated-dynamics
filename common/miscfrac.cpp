@@ -751,7 +751,7 @@ int diffusion()
 /* lPopulation if they use integer math), placing the result   */
 /* back in Population (or lPopulation).  They should return 0  */
 /* if all is ok, or any non-zero value if calculation bailout  */
-/* is desirable (eg in case of errors, or the series tending   */
+/* is desirable (e.g. in case of errors, or the series tending */
 /* to infinity).                Have fun !                     */
 /***************************************************************/
 
@@ -863,7 +863,7 @@ int Bifurcation(void)
 
 static void verhulst()          /* P. F. Verhulst (1845) */
 {
-    unsigned int pixel_row, errors;
+    unsigned int pixel_row;
     unsigned long counter;
 
     if (integerfractal)
@@ -871,29 +871,34 @@ static void verhulst()          /* P. F. Verhulst (1845) */
     else
         Population = (parm.y == 0) ? SEED : parm.y;
 
-    errors = overflow = FALSE;
+    overflow = FALSE;
 
     for (counter=0 ; counter < filter_cycles ; counter++)
     {
-        errors = curfractalspecific->orbitcalc();
-        if (errors)
+        if (curfractalspecific->orbitcalc())
+        {
             return;
+        }
     }
     if (half_time_check) /* check for periodicity at half-time */
     {
         Bif_Period_Init();
         for (counter=0 ; counter < (unsigned long)maxit ; counter++)
         {
-            errors = curfractalspecific->orbitcalc();
-            if (errors) return;
+            if (curfractalspecific->orbitcalc())
+            {
+                return;
+            }
             if (periodicitycheck && Bif_Periodic(counter)) break;
         }
         if (counter >= (unsigned long)maxit)   /* if not periodic, go the distance */
         {
             for (counter=0 ; counter < filter_cycles ; counter++)
             {
-                errors = curfractalspecific->orbitcalc();
-                if (errors) return;
+                if (curfractalspecific->orbitcalc())
+                {
+                    return;
+                }
             }
         }
     }
@@ -901,8 +906,10 @@ static void verhulst()          /* P. F. Verhulst (1845) */
     if (periodicitycheck) Bif_Period_Init();
     for (counter=0 ; counter < (unsigned long)maxit ; counter++)
     {
-        errors = curfractalspecific->orbitcalc();
-        if (errors) return;
+        if (curfractalspecific->orbitcalc())
+        {
+            return;
+        }
 
         /* assign population value to Y coordinate in pixels */
         if (integerfractal)
