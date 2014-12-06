@@ -1541,7 +1541,7 @@ int orbit2dlong()
         }
         if (col >= 0 && col < xdots && row >= 0 && row < ydots)
         {
-            if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+            if (soundvar && (soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
             {
                 double yy;
                 yy = *soundvar;
@@ -1919,7 +1919,7 @@ int dynam2dfloat()
             row = (int)(cvt.c*x + cvt.d*y + cvt.f);
             if (col >= 0 && col < xdots && row >= 0 && row < ydots)
             {
-                if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+                if (soundvar && (soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                     w_snd((int)(*soundvar*100+basehertz));
 
                 if (count>=orbit_delay) {
@@ -2074,7 +2074,7 @@ int plotorbits2dfloat(void)
         if (col > 0 && col < xdots && row > 0 && row < ydots)
 #endif
         {   /* plot if on the screen */
-            if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+            if (soundvar && (soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                 w_snd((int)(*soundvar*100+basehertz));
 
             (*plot)(col,row,o_color%colors);
