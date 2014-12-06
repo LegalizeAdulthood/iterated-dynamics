@@ -198,7 +198,6 @@ int line3d(BYTE * pixels, unsigned linelen)
             return err;
         if (xdots > OLDMAXPIXELS)
             return -1;
-        tout = 0;
         crossavg[0] = 0;
         crossavg[1] = 0;
         crossavg[2] = 0;
