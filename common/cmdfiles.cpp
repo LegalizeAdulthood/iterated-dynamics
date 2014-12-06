@@ -702,8 +702,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     int     totparms;                   /* # of / delimited parms    */
     int     intparms;                   /* # of / delimited ints     */
     int     floatparms;                 /* # of / delimited floats   */
-    int     intval[64];                 /* pre-parsed integer parms  */
-    double  floatval[16];               /* pre-parsed floating parms */
+    int     intval[64] = { 0 };         /* pre-parsed integer parms  */
+    double  floatval[16] = { 0.0 };     /* pre-parsed floating parms */
     const char *floatvalstr[16];        /* pointers to float vals */
     char    tmpc;
     int     lastarg;
