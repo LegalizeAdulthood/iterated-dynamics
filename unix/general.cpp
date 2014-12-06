@@ -4,6 +4,7 @@
  * This file Copyright 1991 Ken Shirriff.  It may be used according to the
  * fractint license conditions, blah blah blah.
  */
+#include <vector>
 
 #include <string.h>
 #ifndef NOBSTRING
@@ -267,16 +268,19 @@ static void getDouble(double *dst, unsigned char **src, int dir);
 void
 decode_fractal_info(struct fractal_info *info, int dir)
 {
+    std::vector<unsigned char> info_buff;
     unsigned char *buf;
     unsigned char *bufPtr;
     int i;
 
     if (dir==1) {
-        buf = (unsigned char *)malloc(FRACTAL_INFO_SIZE);
+        info_buff.resize(FRACTAL_INFO_SIZE);
+        buf = &info_buff[0];
         bufPtr = buf;
         bcopy((char *)info,(char *)buf,FRACTAL_INFO_SIZE);
     }  else {
-        buf = (unsigned char *)malloc(sizeof(struct fractal_info));
+        info_buff.resize(sizeof(fractal_info));
+        buf = &info_buff[0];
         bufPtr = buf;
         bcopy((char *)info,(char *)buf,sizeof(struct fractal_info));
     }
@@ -431,8 +435,6 @@ decode_fractal_info(struct fractal_info *info, int dir)
     if (dir==0) {
         bcopy((char *)buf,(char *)info,FRACTAL_INFO_SIZE);
     }
-
-    free(buf);
 }
 
 /*
