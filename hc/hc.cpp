@@ -18,7 +18,6 @@
 #include <sys/types.h>
 
 #include "port.h"
-#define INCLUDE_COMMON  /* tell helpcom.h to include common code */
 #include "helpcom.h"
 
 #define MAXFILE _MAX_FNAME

@@ -20,7 +20,6 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "drivers.h"
-#define INCLUDE_COMMON  /* include common code in helpcom.h */
 #include "helpcom.h"
 
 #define MAX_HIST           16        /* number of pages we'll remember */
