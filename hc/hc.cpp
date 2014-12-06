@@ -1490,7 +1490,6 @@ void read_src(char *fname)
 
                 if (*ptr == '\0')
                 {
-                    done = 1;
                     error(0,"Unexpected EOF in command.");
                     break;
                 }

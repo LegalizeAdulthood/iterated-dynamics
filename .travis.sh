@@ -16,7 +16,7 @@ if [ $ANALYZE = "true" ]; then
         cd ..
         cppcheck --help
         cppcheck --template "{file}({line}): {severity} ({id}): {message}" \
-            --error-exitcode=1 --enable=all --force --std=c++11 \
+            --error-exitcode=1 --enable=all --force --std=c++11 -j 4 \
             --suppress=incorrectStringBooleanError \
             --suppress=invalidscanf --inline-suppr \
             -I headers hc common headers unix win32
