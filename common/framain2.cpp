@@ -876,7 +876,6 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             usr_stdcalcmode = '1';
             *kbdmore = 0;
             calc_status = CALCSTAT_RESUMABLE;
-            i = 0;
         }
         else if (i > 0) {              /* time to redraw? */
             quick_calc = 0;
@@ -941,10 +940,10 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
     case FIK_CTL_A:                     /* ^a Ant */
         clear_zoombox();
         {
-            int oldtype, err, i;
+            int oldtype, err;
             double oldparm[MAXPARAMS];
             oldtype = fractype;
-            for (i=0; i<MAXPARAMS; i++)
+            for (int i = 0; i < MAXPARAMS; ++i)
                 oldparm[i] = param[i];
             if (fractype != ANT)
             {
@@ -964,7 +963,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             else
                 driver_unstack_screen();
             fractype = oldtype;
-            for (i=0; i<MAXPARAMS; i++)
+            for (int i = 0; i < MAXPARAMS; ++i)
                 param[i] = oldparm[i];
             if (err >= 0)
                 return CONTINUE;
