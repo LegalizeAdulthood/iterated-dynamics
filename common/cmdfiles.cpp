@@ -697,7 +697,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     char    charval[16];                /* first character of arg    */
     int     yesnoval[16];               /* 0 if 'n', 1 if 'y', -1 if not */
     double  ftemp;
-    int     i, j, k;
+    int     j, k;
     char    *argptr,*argptr2;
     int     totparms;                   /* # of / delimited parms    */
     int     intparms;                   /* # of / delimited ints     */
@@ -779,7 +779,6 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             numval = NONNUMERIC;
         }
-        i = -1;
         if (totparms < 16)
         {
             charval[totparms] = *argptr;                      /* first letter of value  */
@@ -1121,7 +1120,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             goto badarg;
         }
         g_init_mode = -1;
-        for (i = 0; i < MAXVIDEOMODES; ++i)
+        for (int i = 0; i < MAXVIDEOMODES; ++i)
         {
             if (g_video_table[i].keynum == k)
             {
@@ -2859,7 +2858,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "background") == 0) {     /* background=?/? */
         if (totparms != 3 || intparms != 3) goto badarg;
-        for (i=0; i<3; i++)
+        for (int i = 0; i < 3; i++)
             if (intval[i] & ~0xff)
                 goto badarg;
         back_color[0] = (BYTE)intval[0];
