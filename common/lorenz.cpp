@@ -2364,7 +2364,7 @@ static int ifs3dlong(void)
     int color;
     int ret;
 
-    long *localifs;
+    std::vector<long> localifs;
     long *lfptr;
     long newx,newy,newz,r,sum, tempr;
 
@@ -2373,8 +2373,11 @@ static int ifs3dlong(void)
     struct long3dvtinf inf;
     srand(1);
     color_method = (int)param[0];
-    localifs = (long *) malloc(numaffine*IFS3DPARM*sizeof(long));
-    if (localifs == nullptr)
+    try
+    {
+        localifs.resize(numaffine*IFS3DPARM);
+    }
+    catch (std::bad_alloc const &)
     {
         stopmsg(0,insufficient_ifs_mem);
         return (-1);
@@ -2421,7 +2424,7 @@ static int ifs3dlong(void)
         }
 
         /* calculate image of last point under selected iterated function */
-        lfptr = localifs + k*IFS3DPARM; /* point to first parm in row */
+        lfptr = &localifs[0] + k*IFS3DPARM; /* point to first parm in row */
 
         /* calculate image of last point under selected iterated function */
         newx = multiply(lfptr[0], inf.orbit[0], bitshift) +
@@ -2474,7 +2477,6 @@ static int ifs3dlong(void)
     }
     if (fp)
         fclose(fp);
-    free(localifs);
     return (ret);
 }
 
