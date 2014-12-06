@@ -127,7 +127,6 @@ static int check_for_mem(int stored_at, long howmuch)
     BYTE *temp;
     int use_this_type;
 
-    use_this_type = NOWHERE;
     maxmem = (long)USHRT_MAX;
 
     if (debugflag == 420)
