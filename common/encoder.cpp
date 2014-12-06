@@ -917,8 +917,7 @@ static int compress(int rowlimit)
     int disp;
     int hsize_reg;
     int hshift;
-    int ydot, xdot, color;
-    int rownum;
+    int color;
     int in_count = 0;
     int interrupted = 0;
     int tempkey;
@@ -946,7 +945,6 @@ static int compress(int rowlimit)
     cur_accum = 0;
     cur_bits = 0;
     clear_flg = 0;
-    ydot = 0;
     ent = 0;
     maxcode = MAXCODE(n_bits = startbits);
 
@@ -965,11 +963,11 @@ static int compress(int rowlimit)
 
     output((int)ClearCode);
 
-    for (rownum = 0; rownum < ydots; rownum++)
+    for (int rownum = 0; rownum < ydots; rownum++)
     {   /* scan through the dots */
-        for (ydot = rownum; ydot < rowlimit; ydot += ydots)
+        for (int ydot = rownum; ydot < rowlimit; ydot += ydots)
         {
-            for (xdot = 0; xdot < xdots; xdot++)
+            for (int xdot = 0; xdot < xdots; xdot++)
             {
                 if (save16bit == 0 || ydot < ydots)
                     color = getcolor(xdot, ydot);
