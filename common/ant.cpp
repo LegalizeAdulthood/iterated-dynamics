@@ -232,9 +232,9 @@ namespace
 
 unsigned rotate_left_one(unsigned value)
 {
-    unsigned const high_bit{~0U & (~0U >> 1)};
+    unsigned const high_bit{~(~0U >> 1)};
     unsigned const result{value << 1};
-    return (value & high_bit) ? (value | 1U) : value;
+    return (value & high_bit) ? (result | 1U) : result;
 }
 
 }
