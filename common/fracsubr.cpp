@@ -1011,7 +1011,7 @@ static void smallest_add_bf(bf_t num)
 
 static int ratio_bad(double actual, double desired)
 {
-    double ftemp, tol;
+    double tol;
     if (integerfractal)
         tol = math_tol[0];
     else
@@ -1020,12 +1020,12 @@ static int ratio_bad(double actual, double desired)
         return (1);
     else if (tol >= 1.0)
         return (0);
-    ftemp = 0;
     if (desired != 0 && debugflag != 3400)
-        ftemp = actual / desired;
-    if (desired != 0 && debugflag != 3400)
+    {
+        double ftemp = actual / desired;
         if ((ftemp = actual / desired) < (1.0-tol) || ftemp > (1.0+tol))
             return (1);
+    }
     return (0);
 }
 

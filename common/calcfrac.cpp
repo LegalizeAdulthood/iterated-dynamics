@@ -4233,7 +4233,6 @@ void symplot4basin(int x, int y, int color)
     else
         stripe = 0;
     color -= stripe;               /* reconstruct unstriped color */
-    color1 = degree/2+degree+2 - color;
     if (color < degree/2+2)
         color1 = degree/2+2 - color;
     else
