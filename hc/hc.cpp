@@ -1488,10 +1488,9 @@ void read_src(char *fname)
                 else
                     ptr = read_until(cmd, 128, "\n,");
 
-                done = 1;
-
                 if (*ptr == '\0')
                 {
+                    done = 1;
                     error(0,"Unexpected EOF in command.");
                     break;
                 }
