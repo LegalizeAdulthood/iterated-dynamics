@@ -690,29 +690,32 @@ static int next_line(FILE *handle,char *linebuf,int mode)
 
 int cmdarg(char *curarg, int mode) /* process a single argument */
 {
-    char    variable[21];               /* variable name goes here   */
-    char    *value;                     /* pointer to variable value */
-    int     valuelen;                   /* length of value           */
-    int     numval;                     /* numeric value of arg      */
-    char    charval[16];                /* first character of arg    */
-    int     yesnoval[16];               /* 0 if 'n', 1 if 'y', -1 if not */
-    double  ftemp;
-    int     j, k;
-    char    *argptr,*argptr2;
-    int     totparms;                   /* # of / delimited parms    */
-    int     intparms;                   /* # of / delimited ints     */
-    int     floatparms;                 /* # of / delimited floats   */
+    char    variable[21] = { 0 };       /* variable name goes here   */
+    int     valuelen = 0;               /* length of value           */
+    int     numval = 0;                 /* numeric value of arg      */
+    char    charval[16] = { 0 };        /* first character of arg    */
+    int     yesnoval[16] = { 0 };       /* 0 if 'n', 1 if 'y', -1 if not */
+    double  ftemp = 0.0;
+    int     k = 0;
+    char    *argptr2 = nullptr;
+    int     totparms = 0;               /* # of / delimited parms    */
+    int     intparms = 0;               /* # of / delimited ints     */
+    int     floatparms = 0;             /* # of / delimited floats   */
     int     intval[64] = { 0 };         /* pre-parsed integer parms  */
     double  floatval[16] = { 0.0 };     /* pre-parsed floating parms */
     const char *floatvalstr[16];        /* pointers to float vals */
-    char    tmpc;
-    int     lastarg;
-    double Xctr, Yctr, Xmagfactor, Rotation, Skew;
-    LDBL Magnification;
-    bf_t bXctr, bYctr;
+    char    tmpc = 0;
+    int     lastarg = 0;
+    double Xctr = 0.0;
+    double Yctr = 0.0;
+    double Xmagfactor = 0.0;
+    double Rotation = 0.0;
+    double Skew = 0.0;
+    LDBL Magnification = 0.0;
+    bf_t bXctr;
+    bf_t bYctr;
 
-
-    argptr = curarg;
+    char *argptr = curarg;
     while (*argptr)
     {   /* convert to lower case */
         if (*argptr >= 'A' && *argptr <= 'Z')
@@ -730,7 +733,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         ++argptr;
     }
 
-    value = strchr(&curarg[1], '=');
+    int j;
+    char *value = strchr(&curarg[1], '=');
     if (value != nullptr)
     {
         j = (int)((value++) - curarg);
