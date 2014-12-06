@@ -1193,12 +1193,9 @@ int iconfloatorbit(double *x, double *y, double *z)
 #define PAR_C   param[2]
 #define PAR_D   param[3]
 
-int latoofloatorbit(double *x, double *y, double *z)
+int latoofloatorbit(double *x, double *y, double * /*z*/)
 {
-
     double xold, yold, tmp;
-
-    xold = *z; /* for warning only */
 
     xold = *x;
     yold = *y;
@@ -1368,7 +1365,7 @@ int orbit2dfloat()
         row = (int)(cvt.c*x + cvt.d*y + cvt.f);
         if (col >= 0 && col < xdots && row >= 0 && row < ydots)
         {
-            if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+            if (soundvar && (soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
             {
                 w_snd((int)(*soundvar*100 + basehertz));
             }
@@ -2093,15 +2090,13 @@ int plotorbits2dfloat(void)
 /* stuff so the code is not duplicated for ifs3d() and lorenz3d() */
 int funny_glasses_call(int (*calc)(void))
 {
-    int status;
-    status = 0;
     if (g_glasses_type)
         g_which_image = 1;
     else
         g_which_image = 0;
     plot_setup();
     plot = standardplot;
-    status = calc();
+    int status = calc();
     if (realtime && g_glasses_type < 3)
     {
         realtime = 0;
