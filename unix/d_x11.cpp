@@ -2233,9 +2233,8 @@ static void x11_unget_key(Driver *drv, int key)
  *----------------------------------------------------------------------
  */
 static void
-x11_shell(Driver *drv)
+x11_shell(Driver * /*drv*/)
 {
-    DIX11(drv);
     SignalHandler sigint;
     std::string shell{getenv("SHELL")};
     int pid, donepid;
