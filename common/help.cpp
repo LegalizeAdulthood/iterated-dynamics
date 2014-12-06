@@ -67,6 +67,7 @@ struct help_sig_info
 {
     unsigned long sig;
     int           version;
+    // cppcheck-suppress unusedStructMember
     unsigned long base;     /* only if added to fractint.exe */
 };
 

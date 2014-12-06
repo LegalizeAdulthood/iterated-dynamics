@@ -232,6 +232,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
             usr_stdcalcmode = '1';
     }
 
+    // cppcheck-suppress variableScope
     int tries = 0;
 init_restart:
 #if defined(_WIN32)
