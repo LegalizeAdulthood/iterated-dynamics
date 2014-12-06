@@ -142,7 +142,7 @@ short sizeofstring[MAX_CODES + 1];  /* size of string list */
 
 short decoder(short linewidth)
 {
-    U16 prefix[MAX_CODES+1];     /* Prefix linked list */
+    U16 prefix[MAX_CODES+1] = { 0 };     /* Prefix linked list */
     BYTE *sp;
     short code;
     short old_code;
