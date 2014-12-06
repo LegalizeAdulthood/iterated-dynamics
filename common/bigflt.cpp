@@ -1465,6 +1465,7 @@ bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2)
         return r;
     }
 
+    // cppcheck-suppress unreadVariable
     S16 BIGDIST *rexp = (S16 BIGDIST *)(r+bflength);
     big_setS16(rexp, adjust_bf_add(n1, n2));
 
@@ -1511,6 +1512,7 @@ bf_t unsafe_add_a_bf(bf_t r, bf_t n)
 bf_t unsafe_sub_bf(bf_t r, bf_t n1, bf_t n2)
 {
     int bnl;
+    // cppcheck-suppress unreadVariable
     S16 BIGDIST *rexp;
 
     if (is_bf_zero(n1))
@@ -1568,7 +1570,9 @@ bf_t unsafe_sub_a_bf(bf_t r, bf_t n)
 bf_t neg_bf(bf_t r, bf_t n)
 {
     int bnl;
-    S16 BIGDIST *rexp, BIGDIST *nexp;
+    // cppcheck-suppress unreadVariable
+    S16 BIGDIST *rexp;
+    S16 BIGDIST *nexp;
 
     rexp = (S16 BIGDIST *)(r+bflength);
     nexp = (S16 BIGDIST *)(n+bflength);
@@ -1603,7 +1607,9 @@ bf_t neg_a_bf(bf_t r)
 bf_t double_bf(bf_t r, bf_t n)
 {
     int bnl;
-    S16 BIGDIST *rexp, BIGDIST *nexp;
+    // cppcheck-suppress unreadVariable
+    S16 BIGDIST *rexp;
+    S16 BIGDIST *nexp;
 
     rexp = (S16 BIGDIST *)(r+bflength);
     nexp = (S16 BIGDIST *)(n+bflength);
@@ -1638,7 +1644,9 @@ bf_t double_a_bf(bf_t r)
 bf_t half_bf(bf_t r, bf_t n)
 {
     int bnl;
-    S16 BIGDIST *rexp, BIGDIST *nexp;
+    // cppcheck-suppress unreadVariable
+    S16 BIGDIST *rexp;
+    S16 BIGDIST *nexp;
 
     rexp = (S16 BIGDIST *)(r+bflength);
     nexp = (S16 BIGDIST *)(n+bflength);
@@ -1676,7 +1684,9 @@ bf_t half_a_bf(bf_t r)
 bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 {
     int bnl, dbfl;
-    S16 BIGDIST *rexp, BIGDIST *n1exp, BIGDIST *n2exp;
+    // cppcheck-suppress unreadVariable
+    S16 BIGDIST *rexp;
+    S16 BIGDIST *n1exp, BIGDIST *n2exp;
 
     if (is_bf_zero(n1) || is_bf_zero(n2))
     {
@@ -1760,7 +1770,9 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 bf_t unsafe_full_square_bf(bf_t r, bf_t n)
 {
     int bnl, dbfl;
-    S16 BIGDIST *rexp, BIGDIST *nexp;
+    // cppcheck-suppress unreadVariable
+    S16 BIGDIST *rexp;
+    S16 BIGDIST *nexp;
 
     if (is_bf_zero(n))
     {
@@ -1903,7 +1915,9 @@ bf_t mult_a_bf_int(bf_t r, U16 u)
 bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u)
 {
     int bnl;
-    S16 BIGDIST *rexp, BIGDIST *nexp;
+    // cppcheck-suppress unreadVariable
+    S16 BIGDIST *rexp;
+    S16 BIGDIST *nexp;
 
     if (u == 0) /* division by zero */
     {
