@@ -817,8 +817,7 @@ int help(int action)
         case ACTION_PREV2:
             if (curr_hist > 0)
                 curr = hist[--curr_hist];
-
-        /* fall-through */
+            /* fall-through */
 
         case ACTION_PREV:
             if (curr_hist > 0)
@@ -831,8 +830,7 @@ int help(int action)
         case ACTION_INDEX:
             next.topic_num = label[FIHELP_INDEX].topic_num;
             next.topic_off = label[FIHELP_INDEX].topic_off;
-
-        /* fall-through */
+            /* fall-through */
 
         case ACTION_CALL:
             curr = next;
