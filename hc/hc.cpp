@@ -359,10 +359,6 @@ void release_topic_text(TOPIC *t, int save)
  */
 
 
-#define new(item)    (item *)newx(sizeof(item))
-#define delete(item) free(item)
-
-
 VOIDPTR newx(unsigned size)
 {
     VOIDPTR ptr;
@@ -1101,7 +1097,7 @@ int create_table(void)
     int    len;
     int    lnum;
     int    count;
-    char  *title[MAX_TABLE_SIZE];
+    char  *title[MAX_TABLE_SIZE] = { nullptr };
     char  *table_start;
 
     ptr = strchr(cmd, '=');
@@ -1135,7 +1131,6 @@ int create_table(void)
 
     do
     {
-
         do
             ch = read_char();
         while (ch=='\n' || ch == ' ');
@@ -1229,7 +1224,7 @@ int create_table(void)
             curr += len;
             *curr++ = CMD_LINK;
 
-            delete(title[lnum]);
+            free(title[lnum]);
 
             if (c < cols-1)
                 put_spaces(width-len);
@@ -1505,7 +1500,7 @@ void read_src(char *fname)
                     ++eoff;
 
                 if (imbedded && *ptr == '\n')
-                    error(eoff,"Imbedded command has no closing parend (\')\')");
+                    error(eoff,"Embedded command has no closing paren (\')\')");
 
                 done = (*ptr != ',');   /* we done if it's not a comma */
 

@@ -280,8 +280,6 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
     pd.pnum = 1;
     pd.lnum = 0;
 
-    col = 0;
-
     output(PD_HEADING, &pd, info);
 
     first_section = 1;
@@ -329,8 +327,6 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
                 return (0);
             ++pd.lnum;
         }
-
-        col = 0;
 
         first_topic = 1;
 
