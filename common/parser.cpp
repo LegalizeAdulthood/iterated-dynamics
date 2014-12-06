@@ -3578,7 +3578,7 @@ static char *PrepareFormula(FILE * File, int from_prompts1c)
     }
 
     FormulaStr = (char *)boxx;
-    FormulaStr[0] = (char) 0; /* To permit concantenation later */
+    FormulaStr[0] = (char) 0; /* To permit concatenation later */
 
     Done = 0;
 
@@ -3588,11 +3588,15 @@ static char *PrepareFormula(FILE * File, int from_prompts1c)
         if (temp_tok.token_type == NOT_A_TOKEN) {
             stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
             fseek(File, filepos, SEEK_SET);
+            if (debug_fp != nullptr)
+                fclose(debug_fp);
             return nullptr;
         }
         else if (temp_tok.token_type == END_OF_FORMULA) {
             stopmsg(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
             fseek(File, filepos, SEEK_SET);
+            if (debug_fp != nullptr)
+                fclose(debug_fp);
             return nullptr;
         }
         if (temp_tok.token_str[0] == ',')
@@ -3610,6 +3614,8 @@ static char *PrepareFormula(FILE * File, int from_prompts1c)
         case NOT_A_TOKEN:
             stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
             fseek(File, filepos, SEEK_SET);
+            if (debug_fp != nullptr)
+                fclose(debug_fp);
             return nullptr;
         case END_OF_FORMULA:
             Done = 1;
@@ -4657,7 +4663,7 @@ int frm_prescan(FILE * open_file)
                 break;
             case 8:     /* | */ /* (half of the modulus operator */
                 assignment_ok = 0;
-                if (!waiting_for_mod & 1L) {
+                if (!(waiting_for_mod & 1L)) {
                     number_of_ops--;
                 }
                 if (!(waiting_for_mod & 1L) && !ExpectingArg) {

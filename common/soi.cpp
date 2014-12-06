@@ -1061,6 +1061,7 @@ rhombus_done:
 
 void soi_ldbl(void)
 {
+    // cppcheck-suppress unreadVariable
     int status;
     DBLS tolerance=0.1;
     DBLS stepx, stepy;

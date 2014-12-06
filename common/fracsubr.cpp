@@ -1319,7 +1319,7 @@ int snd_open(void)
         snd_fp = fopen(soundname,"w");
         if (snd_fp == nullptr)
         {
-            stopmsg(0, "Can't open SOUND*.TXT");
+            stopmsg(0, "Can't open sound*.txt");
         }
         else
         {
@@ -1335,6 +1335,7 @@ void w_snd(int tone)
 {
     if ((orbitsave&2) != 0)
     {
+        // cppcheck-suppress leakNoVarFunctionCall
         if (snd_open())
             fprintf(snd_fp,"%-d\n",tone);
     }
@@ -1353,6 +1354,7 @@ void w_snd(int tone)
 
 void snd_time_write(void)
 {
+    // cppcheck-suppress leakNoVarFunctionCall
     if (snd_open())
     {
         fprintf(snd_fp,"time=%-ld\n",(long)clock()*1000/CLOCKS_PER_SEC);

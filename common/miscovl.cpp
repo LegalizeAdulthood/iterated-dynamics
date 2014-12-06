@@ -1425,6 +1425,7 @@ static int modes_changed;
 int select_video_mode(int curmode)
 {
     int entnums[MAXVIDEOMODES];
+    // cppcheck-suppress unreadVariable
     int attributes[MAXVIDEOMODES];
     int i,k,ret;
 #ifndef XFRACT
