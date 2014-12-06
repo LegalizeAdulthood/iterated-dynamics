@@ -1029,9 +1029,8 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, int
 
 /* replacement for plot - builds a table of min and max x's instead of plot */
 /* called by draw_line as part of triangle fill routine */
-static void putminmax(int x, int y, int color)
+static void putminmax(int x, int y, int /*color*/)
 {
-    color = 0; /* to supress warning only */
     if (y >= 0 && y < ydots)
     {
         if (x < minmax_x[y].minx)
