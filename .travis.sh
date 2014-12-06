@@ -11,15 +11,19 @@ if [ $ANALYZE = "true" ]; then
         scan-build cmake -G "Unix Makefiles" ..
         scan-build -enable-checker security.FloatLoopCounter \
           -enable-checker security.insecureAPI.UncheckedReturn \
-          --status-bugs -v make
+          --status-bugs -v make -j 8
     else
         cd ..
         cppcheck --help
         cppcheck --template "{file}({line}): {severity} ({id}): {message}" \
-            --error-exitcode=1 --enable=all --force --std=c++11 -j 8 \
+            --enable=style --force --std=c++11 -j 8 \
             --suppress=incorrectStringBooleanError \
             --suppress=invalidscanf --inline-suppr \
-            -I headers hc common headers unix win32
+            -I headers hc common headers unix win32 2> cppcheck.txt
+        if [ -s cppcheck.txt ]; then
+            cat cppcheck.txt
+            exit 1
+        fi
     fi
 else
     cmake -G "Unix Makefiles" ..
