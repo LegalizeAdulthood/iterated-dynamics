@@ -1023,7 +1023,7 @@ static int ratio_bad(double actual, double desired)
     if (desired != 0 && debugflag != 3400)
     {
         double ftemp = actual / desired;
-        if ((ftemp = actual / desired) < (1.0-tol) || ftemp > (1.0+tol))
+        if (ftemp < (1.0-tol) || ftemp > (1.0+tol))
             return (1);
     }
     return (0);
