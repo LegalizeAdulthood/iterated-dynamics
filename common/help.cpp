@@ -755,7 +755,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
 int help(int action)
 {
-    HIST      curr;
+    HIST      curr = { -1 };
     int       oldlookatmouse;
     int       oldhelpmode;
     int       flags;
