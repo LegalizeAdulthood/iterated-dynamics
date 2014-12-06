@@ -781,7 +781,7 @@ disk_stack_screen(Driver *drv)
         if (i >= WIN32_MAXSCREENS)
         {
             /* bug, missing unstack? */
-            stopmsg(STOPMSG_NO_STACK, "stackscreen overflow");
+            stopmsg(STOPMSG_NO_STACK, "disk_stack_screen overflow");
             exit(1);
         }
         di->base.saved_screens[i] = wintext_screen_get(&di->base.wintext);
