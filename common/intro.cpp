@@ -1,9 +1,5 @@
 /*
- * intro.c
- *
- * FRACTINT intro screen (authors & credits)
- *
- *
+ * intro screen (authors & credits)
  */
 #include <float.h>
 #include <time.h>
@@ -73,7 +69,6 @@ void intro(void)
     for (i = 3; i < END_MAIN_AUTHOR; ++i)
         driver_set_attr(i,21,C_CONTRIB,58);
     driver_set_attr(toprow,0,C_CONTRIB,(21-END_MAIN_AUTHOR)*80);
-    i = botrow - toprow;
     srand((unsigned int)clock_ticks());
     j = rand()%(j-(botrow-toprow)); /* first to use */
     i = j+botrow-toprow; /* last to use */
