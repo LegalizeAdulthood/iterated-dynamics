@@ -243,6 +243,7 @@ static int new_subD(int x1,int y1,int x2,int y2, int recur)
             i = getpix(nx, y);
             if (i == 0)
                 i = adjust(nx,ny1,nx,y ,nx,ny);
+            // cppcheck-suppress AssignmentIntegerToAddress
             v = i;
             i = getpix(x, ny);
             if (i == 0)
