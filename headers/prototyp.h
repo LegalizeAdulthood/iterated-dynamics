@@ -79,11 +79,6 @@ extern int asm386lORbailout(void);
 extern int asm386lANDbailout(void);
 extern int asm386lMANHbailout(void);
 extern int asm386lMANRbailout(void);
-extern int FManOWarfpFractal(void);
-extern int FJuliafpFractal(void);
-extern int FBarnsley1FPFractal(void);
-extern int FBarnsley2FPFractal(void);
-extern int FLambdaFPFractal(void);
 extern int asmfpMODbailout(void);
 extern int asmfpREALbailout(void);
 extern int asmfpIMAGbailout(void);
@@ -512,7 +507,6 @@ extern int timer(int,int (*subrtn)(),...);
 extern void clear_zoombox(void);
 extern void flip_image(int kbdchar);
 extern void reset_zoom_corners(void);
-extern void setup287code(void);
 
 /*  frasetup -- C file prototypes */
 

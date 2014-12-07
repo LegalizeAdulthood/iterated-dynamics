@@ -265,10 +265,6 @@ restart:   /* insert key re-starts here */
     driver_window();
     memcpy(olddacbox,g_dac_box,256*3);      /* save in case colors= present */
 
-    if (debugflag != 72)   /* Fast 287 math */
-    {
-        setup287code();
-    }
     adapter_detect();                    /* check what video is really present */
 
     driver_set_for_text();                      /* switch to text mode */
