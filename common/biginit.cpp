@@ -45,8 +45,8 @@ bf_t bftmp1 = BIG_NULL, bftmp2 = BIG_NULL, bftmp3 = BIG_NULL, bftmp4 = BIG_NULL,
 bf_t bftmpcpy1 = BIG_NULL, bftmpcpy2 = BIG_NULL;                               /* rbflength+2 */
 bf_t bfxdel = BIG_NULL, bfydel = BIG_NULL, bfxdel2 = BIG_NULL, bfydel2 = BIG_NULL, bfclosenuff = BIG_NULL;      /* rbflength+2 */
 bf_t bftmpsqrx = BIG_NULL, bftmpsqry = BIG_NULL;                               /* rbflength+2 */
-_BFCMPLX /* bfold,  bfnew, */ bfparm = { BIG_NULL, BIG_NULL }, bfsaved = { BIG_NULL, BIG_NULL };            /* bflength+2 */
-_BFCMPLX bfold = { BIG_NULL, BIG_NULL },  bfnew = { BIG_NULL, BIG_NULL };                                  /* rbflength+2 */
+BFComplex /* bfold,  bfnew, */ bfparm = { BIG_NULL, BIG_NULL }, bfsaved = { BIG_NULL, BIG_NULL };            /* bflength+2 */
+BFComplex bfold = { BIG_NULL, BIG_NULL },  bfnew = { BIG_NULL, BIG_NULL };                                  /* rbflength+2 */
 bf_t bf_pi = BIG_NULL;                                           /* TAKES NO SPACE */
 bf_t big_pi = BIG_NULL;                                              /* bflength+2 */
 

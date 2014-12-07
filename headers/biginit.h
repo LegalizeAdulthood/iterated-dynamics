@@ -33,8 +33,8 @@ extern bf_t bftmp1, bftmp2, bftmp3, bftmp4, bftmp5, bftmp6;  /* rbflength+2 */
 extern bf_t bftmpcpy1, bftmpcpy2;                            /* rbflength+2 */
 extern bf_t bfxdel, bfydel, bfxdel2, bfydel2, bfclosenuff;   /* rbflength+2 */
 extern bf_t bftmpsqrx, bftmpsqry;                            /* rbflength+2 */
-extern _BFCMPLX /* bfold,  bfnew, */ bfparm, bfsaved;         /* bflength+2 */
-extern _BFCMPLX bfold,  bfnew;                               /* rbflength+2 */
+extern BFComplex /* bfold,  bfnew, */ bfparm, bfsaved;         /* bflength+2 */
+extern BFComplex bfold,  bfnew;                               /* rbflength+2 */
 extern bf_t bf_pi;                                        /* TAKES NO SPACE */
 extern bf_t big_pi;                                           /* bflength+2 */
 

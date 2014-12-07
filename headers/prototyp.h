@@ -1091,7 +1091,7 @@ extern void dispbox(void);
 /*  fractalb.c -- C file prototypes */
 
 extern DComplex cmplxbntofloat(_BNCMPLX *);
-extern DComplex cmplxbftofloat(_BFCMPLX *);
+extern DComplex cmplxbftofloat(BFComplex *);
 extern void comparevalues(char *,LDBL,bn_t);
 extern void comparevaluesbf(char *,LDBL,bf_t);
 extern void show_var_bf(char *s, bf_t n);
@@ -1111,9 +1111,9 @@ extern int mandelbf_per_pixel(void);
 extern int juliabf_per_pixel(void);
 extern int JuliabfFractal(void);
 extern int JuliaZpowerbfFractal(void);
-extern _BFCMPLX *cmplxlog_bf(_BFCMPLX *t, _BFCMPLX *s);
-extern _BFCMPLX *cplxmul_bf(_BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y);
-extern _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy);
+extern BFComplex *cmplxlog_bf(BFComplex *t, BFComplex *s);
+extern BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y);
+extern BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy);
 
 /*  memory -- C file prototypes */
 /* TODO: Get rid of this and use regular memory routines;

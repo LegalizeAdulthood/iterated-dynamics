@@ -837,7 +837,7 @@ JuliaZpowerbnFractal()
 int
 JuliaZpowerbfFractal()
 {
-    _BFCMPLX parm2;
+    BFComplex parm2;
     int saved;
     saved = save_stack();
 
@@ -861,7 +861,7 @@ DComplex cmplxbntofloat(_BNCMPLX *s)
     return (t);
 }
 
-DComplex cmplxbftofloat(_BFCMPLX *s)
+DComplex cmplxbftofloat(BFComplex *s)
 {
     DComplex t;
     t.x = (double)bftofloat(s->x);
@@ -869,7 +869,7 @@ DComplex cmplxbftofloat(_BFCMPLX *s)
     return (t);
 }
 
-_BFCMPLX *cmplxlog_bf(_BFCMPLX *t, _BFCMPLX *s)
+BFComplex *cmplxlog_bf(BFComplex *t, BFComplex *s)
 {
     square_bf(t->x,s->x);
     square_bf(t->y,s->y);
@@ -880,7 +880,7 @@ _BFCMPLX *cmplxlog_bf(_BFCMPLX *t, _BFCMPLX *s)
     return (t);
 }
 
-_BFCMPLX *cplxmul_bf(_BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y)
+BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 {
     bf_t tmp1;
     int saved;
@@ -897,9 +897,9 @@ _BFCMPLX *cplxmul_bf(_BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y)
     return (t);
 }
 
-_BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy)
+BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
 {
-    _BFCMPLX tmp;
+    BFComplex tmp;
     bf_t e2x, siny, cosy;
     int saved;
     saved = save_stack();
