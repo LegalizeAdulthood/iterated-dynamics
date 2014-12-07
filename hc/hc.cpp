@@ -1216,6 +1216,7 @@ int create_table(void)
             if (first_link+lnum >= num_link)
                 break;
 
+            assert(title[lnum]);
             len = (int) strlen(title[lnum]);
             *curr++ = CMD_LINK;
             setint(curr,first_link+lnum);
