@@ -1575,8 +1575,8 @@ int cellular() {
         return (-1);
     }
 
-    /* nxtscreenflag toggled by space bar in fractint.c, 1 for continuous */
-    /* 0 to stop on next screen */
+    /* nxtscreenflag toggled by space bar in fractint.c, true for continuous */
+    /* false to stop on next screen */
 
     filled = 0;
     notfilled = (S16)(1-filled);
@@ -1735,7 +1735,7 @@ contloop:
 int CellularSetup(void)
 {
     if (!resuming) {
-        nxtscreenflag = 0; /* initialize flag */
+        nxtscreenflag = false; /* initialize flag */
     }
     timer(0,curfractalspecific->calctype);
     return (0);

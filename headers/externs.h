@@ -330,7 +330,7 @@ extern unsigned              numcolors;
 extern const int             numtrigfn;
 extern int                   num_fractal_types;
 extern int                   num_worklist;
-extern int                   nxtscreenflag;
+extern bool                  nxtscreenflag;
 extern int                   Offset;
 extern int                   g_ok_to_print;
 extern DComplex                old;

@@ -198,7 +198,7 @@ typedef int (*TPREFIX)[2][maxyblk][maxxblk];
 BYTE dstack[4096] = { 0 };              /* common temp, two put_line calls */
 unsigned int tprefix[2][maxyblk][maxxblk] = { 0 }; /* common temp */
 
-int nxtscreenflag = 0;                  /* for cellular next screen generation */
+bool nxtscreenflag = false;             /* for cellular next screen generation */
 int attractors = 0;                     /* number of finite attractors  */
 DComplex attr[N_ATTR] = { 0.0 };        /* finite attractor vals (f.p)  */
 LComplex lattr[N_ATTR] = { 0 };         /* finite attractor vals (int)  */
