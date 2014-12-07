@@ -1419,12 +1419,11 @@ static void put_bf(int slash,bf_t r, int prec)
     put_parm(&buf[0]);
 }
 
-static int *entsptr;
+static int entnums[MAXVIDEOMODES];
 static int modes_changed;
 
 int select_video_mode(int curmode)
 {
-    int entnums[MAXVIDEOMODES];
     // cppcheck-suppress unreadVariable
     int attributes[MAXVIDEOMODES];
     int i,k,ret;
@@ -1437,7 +1436,6 @@ int select_video_mode(int curmode)
         entnums[i] = i;
         attributes[i] = 1;
     }
-    entsptr = entnums;           /* for indirectly called subroutines */
 
     qsort(entnums,g_video_table_len,sizeof(entnums[0]),entcompare); /* sort modes */
 
@@ -1535,7 +1533,7 @@ void format_vid_table(int choice,char *buf)
     char local_buf[81];
     char kname[5];
     int truecolorbits;
-    memcpy((char *)&g_video_entry,(char *)&g_video_table[entsptr[choice]],
+    memcpy((char *)&g_video_entry,(char *)&g_video_table[entnums[choice]],
            sizeof(g_video_entry));
     vidmode_keyname(g_video_entry.keynum,kname);
     sprintf(buf,"%-5s %-25s %5d %5d ",  /* 44 chars */
@@ -1560,7 +1558,7 @@ static int check_modekey(int curkey,int choice)
     int i, ret;
     if ((i = check_vidmode_key(1,curkey)) >= 0)
         return (-1-i);
-    i = entsptr[choice];
+    i = entnums[choice];
     ret = 0;
     if ((curkey == '-' || curkey == '+')
             && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084)) {
@@ -2224,7 +2222,7 @@ void expand_comments(char *target, char *source)
     int i,j, k, escape = 0;
     char c, oldc, varname[MAXVNAME];
     i=j=k=0;
-    c = oldc = 0;
+    oldc = 0;
     while (i < MAXCMT && j < MAXCMT && (c = *(source+i++)) != '\0')
     {
         if (c == '\\' && oldc != '\\')
