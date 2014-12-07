@@ -1813,7 +1813,7 @@ top:
                 {
                     if (temp_offset == name_offset) /*if on same line, skip line*/
                     {
-                        c = skip_comment(infile, &file_offset);
+                        skip_comment(infile, &file_offset);
                         goto top;
                     }
                     else
