@@ -1896,7 +1896,6 @@ retry:
         attributes[i] = 1;
     }
 
-    numentries = 0;
     helptitle(); /* to display a clue when file big and next is slow */
 
     numentries = scan_entries(gfe_file, &storage[0], nullptr);
