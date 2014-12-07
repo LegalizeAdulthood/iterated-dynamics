@@ -222,31 +222,31 @@ MandelfpSetup(void)
 #if !defined(XFRACT)
             if (fpu >= 387)
             {
-                calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
+                calcmandfpasm = calcmandfpasm_p5;
             }
             else if (fpu >= 287)
             {
                 calcmandfpasmstart();
-                calcmandfpasm = (long (*)(void))calcmandfpasm_287;
+                calcmandfpasm = calcmandfpasm_c;
             }
             else
 
             {
                 calcmandfpasmstart();
-                calcmandfpasm = (long (*)(void))calcmandfpasm_87;
+                calcmandfpasm = calcmandfpasm_87;
             }
 #else
             {
 #ifdef NASM
                 if (fpu == -1)
                 {
-                    calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
+                    calcmandfpasm = calcmandfpasm_p5;
                 }
                 else
 #endif
                 {
                     calcmandfpasmstart();
-                    calcmandfpasm = (long (*)(void))calcmandfpasm_c;
+                    calcmandfpasm = calcmandfpasm_c;
                 }
             }
 #endif
@@ -355,30 +355,30 @@ JuliafpSetup(void)
 #if !defined(XFRACT)
             if (fpu >= 387)
             {
-                calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
+                calcmandfpasm = calcmandfpasm_p5;
             }
             else if (fpu >= 287)
             {
                 calcmandfpasmstart();
-                calcmandfpasm = (long (*)(void))calcmandfpasm_287;
+                calcmandfpasm = calcmandfpasm_c;
             }
             else
             {
                 calcmandfpasmstart();
-                calcmandfpasm = (long (*)(void))calcmandfpasm_87;
+                calcmandfpasm = calcmandfpasm_87;
             }
 #else
             {
 #ifdef NASM
                 if (fpu == -1)
                 {
-                    calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
+                    calcmandfpasm = calcmandfpasm_p5;
                 }
                 else
 #endif
                 {
                     calcmandfpasmstart();
-                    calcmandfpasm = (long (*)(void))calcmandfpasm_c;
+                    calcmandfpasm = calcmandfpasm_c;
                 }
             }
 #endif
