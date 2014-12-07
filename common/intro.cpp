@@ -27,7 +27,7 @@ void intro(void)
     int       toprow, botrow, i, j, delaymax;
     char      oldchar;
     int       authors[100];              /* this should be enough for awhile */
-    char credits[32768];
+    char credits[32768] = { 0 };
     char screen_text[32768];
     int       oldlookatmouse;
     int       oldhelpmode;
