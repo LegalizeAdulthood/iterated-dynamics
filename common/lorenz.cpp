@@ -936,7 +936,7 @@ int lorenz3d4floatorbit(double *x, double *y, double *z)
     return (0);
 }
 
-int henonfloatorbit(double *x, double *y, double */*z*/)
+int henonfloatorbit(double *x, double *y, double * /*z*/)
 {
     double newx,newy;
     newx  = 1 + *y - a*(*x)*(*x);
@@ -946,7 +946,7 @@ int henonfloatorbit(double *x, double *y, double */*z*/)
     return (0);
 }
 
-int henonlongorbit(long *l_x, long *l_y, long */*l_z*/)
+int henonlongorbit(long *l_x, long *l_y, long * /*l_z*/)
 {
     long newx,newy;
     newx = multiply(*l_x,*l_x,bitshift);
@@ -985,7 +985,7 @@ int pickoverfloatorbit(double *x, double *y, double *z)
     return (0);
 }
 /* page 149 "Science of Fractal Images" */
-int gingerbreadfloatorbit(double *x, double *y, double */*z*/)
+int gingerbreadfloatorbit(double *x, double *y, double * /*z*/)
 {
     double newx;
     newx = 1 - (*y) + fabs(*x);
@@ -1053,7 +1053,7 @@ int kamtoruslongorbit(long *r, long *s, long *z)
     return (0);
 }
 
-int hopalong2dfloatorbit(double *x, double *y, double */*z*/)
+int hopalong2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
     tmp = *y - sign(*x)*sqrt(fabs(b*(*x)-c));
@@ -1062,7 +1062,7 @@ int hopalong2dfloatorbit(double *x, double *y, double */*z*/)
     return (0);
 }
 
-int chip2dfloatorbit(double *x, double *y, double */*z*/)
+int chip2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
     tmp = *y - sign(*x) * cos(sqr(log(fabs(b*(*x)-c))))
@@ -1072,7 +1072,7 @@ int chip2dfloatorbit(double *x, double *y, double */*z*/)
     return (0);
 }
 
-int quadruptwo2dfloatorbit(double *x, double *y, double */*z*/)
+int quadruptwo2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
     tmp = *y - sign(*x) * sin(log(fabs(b*(*x)-c)))
@@ -1082,7 +1082,7 @@ int quadruptwo2dfloatorbit(double *x, double *y, double */*z*/)
     return (0);
 }
 
-int threeply2dfloatorbit(double *x, double *y, double */*z*/)
+int threeply2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
     tmp = *y - sign(*x)*(fabs(sin(*x)*COSB+c-(*x)*SINABC));
@@ -1091,7 +1091,7 @@ int threeply2dfloatorbit(double *x, double *y, double */*z*/)
     return (0);
 }
 
-int martin2dfloatorbit(double *x, double *y, double */*z*/)
+int martin2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
     tmp = *y - sin(*x);
@@ -1100,7 +1100,7 @@ int martin2dfloatorbit(double *x, double *y, double */*z*/)
     return (0);
 }
 
-int mandelcloudfloat(double *x, double *y, double */*z*/)
+int mandelcloudfloat(double *x, double *y, double * /*z*/)
 {
     double newx,newy,x2,y2;
     x2 = (*x)*(*x);
@@ -1113,7 +1113,7 @@ int mandelcloudfloat(double *x, double *y, double */*z*/)
     return (0);
 }
 
-int dynamfloat(double *x, double *y, double */*z*/)
+int dynamfloat(double *x, double *y, double * /*z*/)
 {
     _CMPLX cp,tmp;
     double newx,newy;
