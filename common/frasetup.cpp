@@ -233,7 +233,7 @@ MandelfpSetup(void)
 
             {
                 calcmandfpasmstart();
-                calcmandfpasm = calcmandfpasm_87;
+                calcmandfpasm = calcmandfpasm_c;
             }
 #else
             {
@@ -365,7 +365,7 @@ JuliafpSetup(void)
             else
             {
                 calcmandfpasmstart();
-                calcmandfpasm = calcmandfpasm_87;
+                calcmandfpasm = calcmandfpasm_c;
             }
 #else
             {
