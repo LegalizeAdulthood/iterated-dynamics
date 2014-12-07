@@ -475,8 +475,6 @@ void Jiim(int which)         /* called by fractint */
 
     if (which == ORBIT)
         (*PER_IMAGE)();
-    else
-        color = g_color_bright;
 
     Cursor_Construct();
 
