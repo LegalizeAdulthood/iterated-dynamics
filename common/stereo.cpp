@@ -18,8 +18,7 @@
 char stereomapname[FILE_MAX_DIR+1] = {""};
 int AutoStereo_depth = 100;
 double AutoStereo_width = 10;
-char grayflag = 0;              /* flag to use gray value rather than color
-                                 * number */
+bool grayflag = false;          /* flag to use gray value rather than color number */
 char calibrate = 1;             /* add calibration bars to image */
 char image_map = 0;
 

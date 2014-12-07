@@ -2840,7 +2840,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "usegrayscale") == 0) {     /* usegrayscale? */
         if (yesnoval[0] < 0) goto badarg;
-        grayflag = (char)yesnoval[0];
+        grayflag = yesnoval[0] != 0;
         return 2;
     }
 
