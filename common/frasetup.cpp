@@ -222,7 +222,7 @@ MandelfpSetup(void)
 #if !defined(XFRACT)
             if (fpu >= 387)
             {
-                calcmandfpasm = calcmandfpasm_p5;
+                calcmandfpasm = calcmandfpasm_c;
             }
             else if (fpu >= 287)
             {
@@ -240,7 +240,7 @@ MandelfpSetup(void)
 #ifdef NASM
                 if (fpu == -1)
                 {
-                    calcmandfpasm = calcmandfpasm_p5;
+                    calcmandfpasm = calcmandfpasm_c;
                 }
                 else
 #endif
@@ -355,7 +355,7 @@ JuliafpSetup(void)
 #if !defined(XFRACT)
             if (fpu >= 387)
             {
-                calcmandfpasm = calcmandfpasm_p5;
+                calcmandfpasm = calcmandfpasm_c;
             }
             else if (fpu >= 287)
             {
@@ -372,7 +372,7 @@ JuliafpSetup(void)
 #ifdef NASM
                 if (fpu == -1)
                 {
-                    calcmandfpasm = calcmandfpasm_p5;
+                    calcmandfpasm = calcmandfpasm_c;
                 }
                 else
 #endif

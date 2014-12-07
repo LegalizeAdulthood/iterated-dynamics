@@ -4,7 +4,6 @@ project(iterated-dynamics CXX C)
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     set(OS_DRIVER_SOURCES
-        win32/calmanp5.cpp
         win32/d_win32.cpp
         win32/d_win32_disk.cpp
         win32/d_win32_gdi.cpp
