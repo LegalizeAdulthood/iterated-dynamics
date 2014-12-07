@@ -573,7 +573,6 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 
     /* adjust pointers */
     r = orig_r + orig_bnlength - bnlength;
-    n = orig_n + orig_bnlength - bnlength;
     /* bntmp1 = orig_bntmp1 + orig_bnlength - bnlength; */
 
     floattobn(r, f); /* start with approximate inverse */
@@ -606,8 +605,6 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     rlength       = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     r             = orig_r;
-    n             = orig_n;
-    /* bntmp1        = orig_bntmp1; */
 
     if (signflag)
     {
@@ -769,7 +766,6 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 
     /* adjust pointers */
     r = orig_r + orig_bnlength - bnlength;
-    n = orig_n + orig_bnlength - bnlength;
 
     floattobn(r, f); /* start with approximate sqrt */
     copy_bn(bntmp4, r);
@@ -805,7 +801,6 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     rlength       = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     r             = orig_r;
-    n             = orig_n;
 
     return r;
 }
@@ -903,7 +898,6 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 
     /* adjust pointers */
     r = orig_r + orig_bnlength - bnlength;
-    n = orig_n + orig_bnlength - bnlength;
     bntmp5 = orig_bntmp5 + orig_bnlength - bnlength;
     bntmp4 = orig_bntmp4 + orig_bnlength - bnlength;
 
@@ -944,7 +938,6 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     rlength       = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     r             = orig_r;
-    n             = orig_n;
     bntmp5        = orig_bntmp5;
     bntmp4        = orig_bntmp4;
 
@@ -1153,7 +1146,6 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 
     /* adjust pointers */
     r = orig_r + orig_bnlength - bnlength;
-    n = orig_n + orig_bnlength - bnlength;
     bn_pi = orig_bn_pi + orig_bnlength - bnlength;
     bntmp3 = orig_bntmp3 + orig_bnlength - bnlength;
 
@@ -1217,7 +1209,6 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     shiftfactor   = orig_shiftfactor;
     bn_pi         = orig_bn_pi;
     r             = orig_r;
-    n             = orig_n;
     bntmp3        = orig_bntmp3;
 
     if (large_arg)
