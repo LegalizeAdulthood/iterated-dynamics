@@ -754,11 +754,15 @@ int tab_display_2(char *msg)
 
 int tab_display()       /* display the status of the current image */
 {
-    int s_row, i, j, addrow = 0;
-    double Xctr, Yctr;
+    int addrow = 0;
+    double Xctr;
+    double Yctr;
     LDBL Magnification;
-    double Xmagfactor, Rotation, Skew;
-    bf_t bfXctr = nullptr, bfYctr = nullptr;
+    double Xmagfactor;
+    double Rotation;
+    double Skew;
+    bf_t bfXctr = nullptr;
+    bf_t bfYctr = nullptr;
     char msg[350];
     const char *msgptr;
     int key;
@@ -783,7 +787,7 @@ int tab_display()       /* display the status of the current image */
     }
     if (fractype == FORMULA || fractype == FFORMULA)
     {
-        for (i = 0; i < MAXPARAMS; i += 2)
+        for (int i = 0; i < MAXPARAMS; i += 2)
         {
             if (!paramnotused(i))
             {
@@ -797,7 +801,7 @@ top:
                 from control-tab */
     helptitle();
     driver_set_attr(1, 0, C_GENERAL_MED, 24*80); /* init rest to background */
-    s_row = 2;
+    int s_row = 2;
     driver_put_string(s_row, 2, C_GENERAL_MED, "Fractal type:");
     if (display3d > 0)
     {
@@ -808,7 +812,7 @@ top:
         driver_put_string(s_row, 16, C_GENERAL_HI,
                           curfractalspecific->name[0] == '*' ?
                           &curfractalspecific->name[1] : curfractalspecific->name);
-        i = 0;
+        int i = 0;
         if (fractype == FORMULA || fractype == FFORMULA)
         {
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
@@ -881,7 +885,7 @@ top:
     /* if (bf_math == 0) */
     ++s_row;
 
-    i = j = 0;
+    int j = 0;
     if (display3d > 0)
     {
         if (usr_floatflag)
@@ -913,7 +917,7 @@ top:
         driver_put_string(s_row, 45, C_GENERAL_HI, "Arbitrary precision ");
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
-    i = 1;
+    int i = 1;
 
     s_row += i;
 
