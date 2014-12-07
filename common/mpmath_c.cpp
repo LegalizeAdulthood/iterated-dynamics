@@ -157,26 +157,13 @@ struct MP  *(*pd2MP)(double x)                 = d2MP086 ;
 double *(*pMP2d)(struct MP m)                  = MP2d086 ;
 
 void setMPfunctions(void) {
-    if (cpu >= 386)
-    {
-        pMPmul = MPmul386;
-        pMPdiv = MPdiv386;
-        pMPadd = MPadd386;
-        pMPsub = MPsub386;
-        pMPcmp = MPcmp386;
-        pd2MP  = d2MP386 ;
-        pMP2d  = MP2d386 ;
-    }
-    else
-    {
-        pMPmul = MPmul086;
-        pMPdiv = MPdiv086;
-        pMPadd = MPadd086;
-        pMPsub = MPsub086;
-        pMPcmp = MPcmp086;
-        pd2MP  = d2MP086 ;
-        pMP2d  = MP2d086 ;
-    }
+    pMPmul = MPmul386;
+    pMPdiv = MPdiv386;
+    pMPadd = MPadd386;
+    pMPsub = MPsub386;
+    pMPcmp = MPcmp386;
+    pd2MP  = d2MP386 ;
+    pMP2d  = MP2d386 ;
 }
 #endif /* XFRACT */
 
@@ -1923,22 +1910,22 @@ struct MP *MPmul386(struct MP x, struct MP y)
 */
 struct MP *d2MP(double x)
 {
-    return ((cpu >= 386)? d2MP386 : d2MP086)(x);
+    return d2MP386(x);
 }
 
 struct MP *MPmul(struct MP x, struct MP y)
 {
-    return ((cpu >= 386) ? MPmul386 : MPmul086)(x, y);
+    return MPmul386(x, y);
 }
 
 struct MP *MPdiv(struct MP x, struct MP y)
 {
-    return ((cpu >= 386) ? MPdiv386 : MPdiv086)(x, y);
+    return MPdiv386(x, y);
 }
 
 int MPcmp(struct MP x, struct MP y)
 {
-    return ((cpu >= 386) ? MPcmp386 : MPcmp086)(x, y);
+    return MPcmp386(x, y);
 }
 
 /*
@@ -2026,6 +2013,6 @@ struct MP *fg2MP386(long x, int fg)
 
 struct MP *fg2MP(long x, int fg)
 {
-    return ((cpu >= 386) ? fg2MP386 : fg2MP086)(x, fg);
+    return fg2MP386(x, fg);
 }
 #endif

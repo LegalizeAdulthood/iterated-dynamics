@@ -78,7 +78,6 @@ extern char                  CommandName[ITEMNAMELEN + 1];
 extern int                   comparegif;
 extern long                  con;
 extern double                cosx;
-extern int                   cpu;
 extern long                  c_real;
 extern int                   curcol;
 extern int                   curpass;

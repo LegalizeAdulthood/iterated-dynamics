@@ -500,7 +500,7 @@ done:
         }
 #endif
 
-        if (fractype == PLASMA && cpu > 88)
+        if (fractype == PLASMA)
         {
             cyclelimit = 256;              /* plasma clouds need quick spins */
             g_dac_count = 256;

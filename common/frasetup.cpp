@@ -220,12 +220,11 @@ MandelfpSetup(void)
         {
             calctype = calcmandfp; /* the normal case - use calcmandfp */
 #if !defined(XFRACT)
-            if (cpu >= 386 && fpu >= 387)
+            if (fpu >= 387)
             {
-                calcmandfpasmstart_p5();
                 calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
             }
-            else if (cpu == 286 && fpu >= 287)
+            else if (fpu >= 287)
             {
                 calcmandfpasmstart();
                 calcmandfpasm = (long (*)(void))calcmandfpasm_287;
@@ -241,7 +240,6 @@ MandelfpSetup(void)
 #ifdef NASM
                 if (fpu == -1)
                 {
-                    calcmandfpasmstart_p5();
                     calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
                 }
                 else
@@ -355,12 +353,11 @@ JuliafpSetup(void)
         {
             calctype = calcmandfp; /* the normal case - use calcmandfp */
 #if !defined(XFRACT)
-            if (cpu >= 386 && fpu >= 387)
+            if (fpu >= 387)
             {
-                calcmandfpasmstart_p5();
                 calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
             }
-            else if (cpu == 286 && fpu >= 287)
+            else if (fpu >= 287)
             {
                 calcmandfpasmstart();
                 calcmandfpasm = (long (*)(void))calcmandfpasm_287;
@@ -375,7 +372,6 @@ JuliafpSetup(void)
 #ifdef NASM
                 if (fpu == -1)
                 {
-                    calcmandfpasmstart_p5();
                     calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
                 }
                 else

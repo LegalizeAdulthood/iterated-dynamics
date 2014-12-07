@@ -6,7 +6,6 @@
 /*  calmanp5 -- assembler file prototypes */
 
 extern long calcmandfpasm_p5(void);
-extern void calcmandfpasmstart_p5(void);
 
 /* added for Win32 port */
 extern void scroll_center(int, int);

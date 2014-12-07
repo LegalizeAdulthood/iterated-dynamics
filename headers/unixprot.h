@@ -10,7 +10,6 @@ void Cursor_EndMouseTracking(void);
 
 extern long  calcmandfpasm_c(void);
 extern long  calcmandfpasm_p5(void);
-extern void calcmandfpasmstart_p5(void);
 
 
 /*

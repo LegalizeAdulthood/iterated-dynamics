@@ -10,9 +10,3 @@ long calcmandfpasm_p5(void)
     /* TODO: optimize for pentium? */
     return calcmandfpasm_c();
 }
-
-void calcmandfpasmstart_p5(void)
-{
-    /* TODO: optimize for pentium? */
-}
-

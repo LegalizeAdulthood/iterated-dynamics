@@ -62,7 +62,6 @@ struct BNComplex
 
 /* globals */
 extern int fpu;
-extern int cpu;
 
 extern int bf_math;
 

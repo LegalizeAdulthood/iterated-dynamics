@@ -26,7 +26,6 @@
 struct videoinfo g_video_entry;
 int helpmode;
 
-int cpu=0;      /* cpu type: 86, 186, 286, or 386 */
 int fpu=0;      /* fpu type: 0, 87, 287, 387 */
 
 int lookatmouse=0;  /* see notes at mouseread routine */
@@ -178,14 +177,11 @@ static void my_floating_point_err(int sig)
 */
 void initasmvars(void)
 {
-    if (cpu != 0)
+    if (fpu != 0)
     {
         return;
     }
     overflow = 0;
-
-    /* set cpu type */
-    cpu = 486;
 
     /* set fpu type */
     fpu = 487;
@@ -278,19 +274,13 @@ restart:   /* insert key re-starts here */
     driver_window();
     memcpy(olddacbox,g_dac_box,256*3);      /* save in case colors= present */
 
-    if (debugflag == 8088)
-    {
-        cpu =  86; /* for testing purposes */
-    }
     if (debugflag == 2870 && fpu >= 287)
     {
         fpu = 287; /* for testing purposes */
-        cpu = 286;
     }
     if (debugflag ==  870 && fpu >=  87)
     {
         fpu =  87; /* for testing purposes */
-        cpu =  86;
     }
     if (debugflag == 70)
     {
@@ -317,8 +307,8 @@ restart:   /* insert key re-starts here */
     }
 #endif
 
-    max_colors = 256;                    /* the Windows version is lower */
-    max_kbdcount = (cpu >= 386) ? 80 : 30;   /* check the keyboard this often */
+    max_colors = 256;                   /* the Windows version is lower */
+    max_kbdcount = 80;                  /* check the keyboard this often */
 
     if (showfile && g_init_mode < 0)
     {
