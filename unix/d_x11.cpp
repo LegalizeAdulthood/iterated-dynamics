@@ -2183,11 +2183,17 @@ x11_get_key(Driver *drv)
             int status;
 
             FD_ZERO(&reads);
+            // See http://llvm.org/bugs/show_bug.cgi?id=8920
+#if !defined(__clang_analyzer__)
             FD_SET(0, &reads);
+#endif
             tout.tv_sec = 0;
             tout.tv_usec = 500000;
 
+            // See http://llvm.org/bugs/show_bug.cgi?id=8920
+#if !defined(__clang_analyzer__)
             FD_SET(ConnectionNumber(di->Xdp), &reads);
+#endif
             status = select(ConnectionNumber(di->Xdp) + 1, &reads, nullptr, nullptr, &tout);
 
             if (status <= 0)

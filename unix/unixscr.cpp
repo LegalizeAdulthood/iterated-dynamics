@@ -1358,11 +1358,17 @@ xgetkey(int block)
         }
         if (!block) break;
         FD_ZERO(&reads);
+        // See http://llvm.org/bugs/show_bug.cgi?id=8920
+#if !defined(__clang_analyzer__)
         FD_SET(0,&reads);
+#endif
         if (unixDisk) {
             status = select(1,&reads,nullptr,nullptr,&tout);
         } else {
+            // See http://llvm.org/bugs/show_bug.cgi?id=8920
+#if !defined(__clang_analyzer__)
             FD_SET(ConnectionNumber(Xdp),&reads);
+#endif
             status = select(ConnectionNumber(Xdp)+1,&reads,nullptr,nullptr,&tout);
         }
         if (status<=0) {
