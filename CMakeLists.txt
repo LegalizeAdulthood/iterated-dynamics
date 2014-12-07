@@ -24,6 +24,7 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
         gdi32.lib user32.lib shlwapi.lib)
     set(HAVE_OS_DEFINITIONS false)
     set(OS_HC_FILES "")
+    set(OS_ID_OPTIONS "WIN32")
 else()
     set(OS_DRIVER_SOURCES
         unix/d_x11.cpp
@@ -39,13 +40,14 @@ else()
         PROPERTIES COMPILE_DEFINITIONS SRCDIR=".")
     set(DISK_VID "")
     set(OS_HC_FILES "unix/unix.cpp")
+    set(OS_ID_OPTIONS "")
 endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)")
     set(CMAKE_CXX_FLAGS "-std=c++11")
 endif()
 
-add_executable(id
+add_executable(id ${OS_ID_OPTIONS}
     common/3d.cpp
     common/line3d.cpp
     common/plot3d.cpp
