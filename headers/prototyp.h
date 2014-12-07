@@ -38,7 +38,7 @@ extern long calcmandasm(void);
 /*  calmanfp -- assembler file prototypes */
 
 extern void calcmandfpasmstart(void);
-extern long (*calcmandfpasm)(void);
+extern long calcmandfpasm(void);
 
 /*  fpu087 -- assembler file prototypes */
 

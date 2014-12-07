@@ -29,7 +29,7 @@ void calcmandfpasmstart(void)
    of the x and y values.  This is experimental. */
 #define USE_NEW 0
 
-long calcmandfpasm_c(void)
+long calcmandfpasm(void)
 {
     long cx;
     long savedand;

@@ -14,8 +14,6 @@
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
 #endif
 
-long calcmandfpasm_c(void);
-
 /* -------------------------------------------------------------------- */
 /*              Setup (once per fractal image) routines                 */
 /* -------------------------------------------------------------------- */
@@ -323,7 +321,6 @@ JuliafpSetup(void)
         {
             calctype = calcmandfp; /* the normal case - use calcmandfp */
             calcmandfpasmstart();
-            calcmandfpasm = calcmandfpasm_c;
         }
         else
         {

@@ -6,12 +6,6 @@
 void Cursor_StartMouseTracking(void);
 void Cursor_EndMouseTracking(void);
 
-/*  calmanp5 -- assembler file prototypes */
-
-extern long  calcmandfpasm_c(void);
-extern long  calcmandfpasm_p5(void);
-
-
 /*
  *   general.c -- C file prototypes
  */

@@ -1690,8 +1690,6 @@ int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col
     return color;
 }
 
-long (*calcmandfpasm)(void);
-
 /************************************************************************/
 /* sort of a floating point version of calcmand()                       */
 /* can also handle invert, any rqlim, potflag, zmag, epsilon cross,     */
