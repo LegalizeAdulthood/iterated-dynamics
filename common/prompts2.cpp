@@ -77,7 +77,6 @@ char commandmask[13] = {"*.par"};
 int get_toggles()
 {
     const char *choices[20];
-    int oldhelpmode;
     char prevsavename[FILE_MAX_DIR+1];
     char *savenameptr;
     struct fullscreenvalues uvalues[25];
@@ -234,7 +233,7 @@ int get_toggles()
     uvalues[k].type = 'f'; /* should be 'd', but prompts get messed up */
     uvalues[k].uval.dval = old_closeprox = closeprox;
 
-    oldhelpmode = helpmode;
+    int const oldhelpmode = helpmode;
     helpmode = HELPXOPTS;
     i = fullscreen_prompt("Basic Options\n(not all combinations make sense)",k+1,choices,uvalues,0,nullptr);
     helpmode = oldhelpmode;
@@ -366,11 +365,8 @@ int get_toggles()
 int get_toggles2()
 {
     const char *choices[18];
-    int oldhelpmode;
-
     struct fullscreenvalues uvalues[23];
     int i, j, k;
-
     int old_rotate_lo,old_rotate_hi;
     int old_distestwidth;
     double old_potparam[3],old_inversion[3];
@@ -430,7 +426,7 @@ int get_toggles2()
     uvalues[k].type = 'i';
     uvalues[k].uval.ival = old_rotate_hi = rotate_hi;
 
-    oldhelpmode = helpmode;
+    int const oldhelpmode = helpmode;
     helpmode = HELPYOPTS;
     i = fullscreen_prompt("Extended Options\n"
                           "(not all combinations make sense)",
@@ -508,7 +504,6 @@ int get_toggles2()
 int passes_options(void)
 {
     const char *choices[20];
-    int oldhelpmode;
     const char *passcalcmodes[] = {"rect","line"};
 
     struct fullscreenvalues uvalues[25];
@@ -552,7 +547,7 @@ pass_option_restart:
                              :   /* function */    2;
     old_drawmode = drawmode;
 
-    oldhelpmode = helpmode;
+    int const oldhelpmode = helpmode;
     helpmode = HELPPOPTS;
     i = fullscreen_prompt("Passes Options\n"
                           "(not all combinations make sense)\n"
@@ -642,7 +637,6 @@ pass_option_restart:
 int get_view_params()
 {
     const char *choices[16];
-    int oldhelpmode;
     struct fullscreenvalues uvalues[25];
     int i, k;
     float old_viewreduction, old_aspectratio;
@@ -739,7 +733,7 @@ get_view_restart:
         uvalues[k].type = '*';
     }
 
-    oldhelpmode = helpmode;     /* this prevents HELP from activating */
+    int const oldhelpmode = helpmode;     /* this prevents HELP from activating */
     helpmode = HELPVIEW;
     i = fullscreen_prompt("View Window Options",k+1,choices,uvalues,16,nullptr);
     helpmode = oldhelpmode;     /* re-enable HELP */
@@ -851,11 +845,10 @@ get_view_restart:
 
 int get_cmd_string()
 {
-    int oldhelpmode;
     int i;
     static char cmdbuf[61];
 
-    oldhelpmode = helpmode;
+    int const oldhelpmode = helpmode;
     helpmode = HELPCOMMANDS;
     i = field_prompt("Enter command string to use.",nullptr,cmdbuf,60,nullptr);
     helpmode = oldhelpmode;
@@ -927,7 +920,6 @@ int starfield(void)
 int get_starfield_params(void)
 {
     struct fullscreenvalues uvalues[3];
-    int oldhelpmode;
     int i;
     const char *starfield_prompts[3] =
     {
@@ -945,7 +937,7 @@ int get_starfield_params(void)
         uvalues[i].type = 'f';
     }
     driver_stack_screen();
-    oldhelpmode = helpmode;
+    int const oldhelpmode = helpmode;
     helpmode = HELPSTARFLD;
     i = fullscreen_prompt("Starfield Parameters",3,starfield_prompts,uvalues,0,nullptr);
     helpmode = oldhelpmode;
@@ -975,7 +967,6 @@ int get_rds_params(void) {
         "  If yes, use current image map name? (see below)",
         rds6
     };
-    int oldhelpmode;
     int i,k;
     int ret;
     static char reuse = 0;
@@ -1027,7 +1018,7 @@ int get_rds_params(void) {
         }
         else
             *stereomapname = 0;
-        oldhelpmode = helpmode;
+        int const oldhelpmode = helpmode;
         helpmode = HELPRDS;
         i = fullscreen_prompt("Random Dot Stereogram Parameters",k,rds_prompts,uvalues,0,nullptr);
         helpmode = oldhelpmode;
@@ -1102,9 +1093,8 @@ int get_commands()              /* execute commands from file */
     int ret;
     FILE *parmfile;
     long point;
-    int oldhelpmode;
     ret = 0;
-    oldhelpmode = helpmode;
+    int const oldhelpmode = helpmode;
     helpmode = HELPPARMFILE;
     if ((point = get_file_entry(GETPARM,"Parameter Set",
                                 commandmask,CommandFile,CommandName)) >= 0
@@ -1893,9 +1883,7 @@ int get_corners()
     double Xmagfactor,Rotation,Skew;
     BYTE ousemag;
     double oxxmin,oxxmax,oyymin,oyymax,oxx3rd,oyy3rd;
-    int oldhelpmode;
 
-    oldhelpmode = helpmode;
     ousemag = usemag;
     oxxmin = xxmin;
     oxxmax = xxmax;
@@ -1975,7 +1963,7 @@ gc_loop:
     prompts[++nump]= "Press " FK_F4 " to reset to type default values";
     values[nump].type = '*';
 
-    oldhelpmode = helpmode;
+    int const oldhelpmode = helpmode;
     helpmode = HELPCOORDS;
     prompt_ret = fullscreen_prompt("Image Coordinates",nump+1, prompts, values, 0x90, nullptr);
     helpmode = oldhelpmode;
@@ -2089,9 +2077,7 @@ static int get_screen_corners(void)
     BYTE ousemag;
     double oxxmin,oxxmax,oyymin,oyymax,oxx3rd,oyy3rd;
     double svxxmin,svxxmax,svyymin,svyymax,svxx3rd,svyy3rd;
-    int oldhelpmode;
 
-    oldhelpmode = helpmode;
     ousemag = usemag;
 
     svxxmin = xxmin;  /* save these for later since cvtcorners modifies them */
@@ -2176,7 +2162,7 @@ gsc_loop:
     prompts[++nump]= "Press " FK_F4 " to reset to type default values";
     values[nump].type = '*';
 
-    oldhelpmode = helpmode;
+    int const oldhelpmode = helpmode;
     helpmode = HELPSCRNCOORDS;
     prompt_ret = fullscreen_prompt("Screen Coordinates",nump+1, prompts, values, 0x90, nullptr);
     helpmode = oldhelpmode;
@@ -2314,7 +2300,6 @@ gsc_loop:
 int get_browse_params()
 {
     const char *choices[10];
-    int oldhelpmode;
     struct fullscreenvalues uvalues[25];
     int i, k;
     int old_autobrowse,old_brwschecktype,old_brwscheckparms,old_doublecaution;
@@ -2371,7 +2356,7 @@ get_brws_restart:
     choices[++k] = "Press " FK_F4 " to reset browse parameters to defaults.";
     uvalues[k].type = '*';
 
-    oldhelpmode = helpmode;     /* this prevents HELP from activating */
+    int const oldhelpmode = helpmode;     /* this prevents HELP from activating */
     helpmode = HELPBRWSPARMS;
     i = fullscreen_prompt("Browse ('L'ook) Mode Options",k+1,choices,uvalues,16,nullptr);
     helpmode = oldhelpmode;     /* re-enable HELP */
