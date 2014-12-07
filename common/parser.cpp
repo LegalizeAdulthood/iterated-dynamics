@@ -4434,7 +4434,6 @@ int frm_prescan(FILE * open_file)
             break;
         case PARAM_FUNCTION:
             assignment_ok = 0;
-            NewStatement = 0;
             number_of_ops++;
             if (!ExpectingArg) {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
