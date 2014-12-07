@@ -3098,7 +3098,7 @@ QuaternionFPFractal(void)
 int
 HyperComplexFPFractal(void)
 {
-    _HCMPLX hold, hnew;
+    DHyperComplex hold, hnew;
     hold.x = old.x;
     hold.y = old.y;
     hold.z = floatparm->x;

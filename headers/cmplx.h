@@ -24,7 +24,6 @@ struct LComplex {
     long x,y;
 };
 
-typedef struct  DHyperComplex    _HCMPLX;
 typedef struct  LHyperComplex    _LHCMPLX;
 
 #endif
