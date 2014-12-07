@@ -37,8 +37,8 @@ bn_t bntmpcpy1 = BIG_NULL, bntmpcpy2 = BIG_NULL;                           /* bn
 bn_t bnxmin = BIG_NULL, bnxmax = BIG_NULL, bnymin = BIG_NULL, bnymax = BIG_NULL, bnx3rd = BIG_NULL, bny3rd = BIG_NULL;        /* bnlength */
 bn_t bnxdel = BIG_NULL, bnydel = BIG_NULL, bnxdel2 = BIG_NULL, bnydel2 = BIG_NULL, bnclosenuff = BIG_NULL;         /* bnlength */
 bn_t bntmpsqrx = BIG_NULL, bntmpsqry = BIG_NULL, bntmp = BIG_NULL;                           /* rlength  */
-_BNCMPLX bnold = { BIG_NULL, BIG_NULL }, /* bnnew, */ bnparm = { BIG_NULL, BIG_NULL }, bnsaved = { BIG_NULL, BIG_NULL };               /* bnlength */
-_BNCMPLX bnnew = { BIG_NULL, BIG_NULL };                                              /* rlength */
+BNComplex bnold = { BIG_NULL, BIG_NULL }, /* bnnew, */ bnparm = { BIG_NULL, BIG_NULL }, bnsaved = { BIG_NULL, BIG_NULL };               /* bnlength */
+BNComplex bnnew = { BIG_NULL, BIG_NULL };                                              /* rlength */
 bn_t bn_pi = BIG_NULL;                                           /* TAKES NO SPACE */
 
 bf_t bftmp1 = BIG_NULL, bftmp2 = BIG_NULL, bftmp3 = BIG_NULL, bftmp4 = BIG_NULL, bftmp5 = BIG_NULL, bftmp6 = BIG_NULL;     /* rbflength+2 */

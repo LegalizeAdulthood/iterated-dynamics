@@ -59,7 +59,6 @@ struct BNComplex
     bn_t x;
     bn_t y;
 };
-typedef struct BNComplex  _BNCMPLX;
 
 /* globals */
 extern int fpu;
@@ -278,14 +277,14 @@ extern bf_t div_a_bf_int(bf_t r, U16 u);
 
 /****************************/
 /* bigcmplx.c */
-extern DComplex cmplxbntofloat(_BNCMPLX *s);
+extern DComplex cmplxbntofloat(BNComplex *s);
 extern DComplex cmplxbftofloat(BFComplex *s);
 extern BFComplex *cmplxlog_bf(BFComplex *t, BFComplex *s);
 extern BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y);
 extern BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy);
-extern _BNCMPLX *ComplexPower_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy);
-extern _BNCMPLX *cmplxlog_bn(_BNCMPLX *t, _BNCMPLX *s);
-extern _BNCMPLX *cplxmul_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y);
+extern BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy);
+extern BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s);
+extern BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y);
 
 #include "biginit.h" /* fractint only */
 

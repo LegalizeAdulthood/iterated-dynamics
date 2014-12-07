@@ -818,7 +818,7 @@ JuliabfFractal()
 int
 JuliaZpowerbnFractal()
 {
-    _BNCMPLX parm2;
+    BNComplex parm2;
     int saved;
     saved = save_stack();
 
@@ -853,7 +853,7 @@ JuliaZpowerbfFractal()
     return bigfltbailout();
 }
 
-DComplex cmplxbntofloat(_BNCMPLX *s)
+DComplex cmplxbntofloat(BNComplex *s)
 {
     DComplex t;
     t.x = (double)bntofloat(s->x);
@@ -927,7 +927,7 @@ BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
     return (t);
 }
 
-_BNCMPLX *cmplxlog_bn(_BNCMPLX *t, _BNCMPLX *s)
+BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s)
 {
     square_bn(t->x,s->x);
     square_bn(t->y,s->y);
@@ -938,7 +938,7 @@ _BNCMPLX *cmplxlog_bn(_BNCMPLX *t, _BNCMPLX *s)
     return (t);
 }
 
-_BNCMPLX *cplxmul_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y)
+BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 {
     bn_t tmp1;
     int saved;
@@ -956,9 +956,9 @@ _BNCMPLX *cplxmul_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y)
 }
 
 /* note: ComplexPower_bn() returns need to be +shiftfactor'ed */
-_BNCMPLX *ComplexPower_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy)
+BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
 {
-    _BNCMPLX tmp;
+    BNComplex tmp;
     bn_t e2x, siny, cosy;
     int saved;
     saved = save_stack();

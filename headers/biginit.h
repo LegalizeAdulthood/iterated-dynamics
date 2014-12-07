@@ -25,8 +25,8 @@ extern bn_t bntmpcpy1, bntmpcpy2;                               /* bnlength */
 extern bn_t bnxmin, bnxmax, bnymin, bnymax, bnx3rd, bny3rd;     /* bnlength */
 extern bn_t bnxdel, bnydel, bnxdel2, bnydel2, bnclosenuff;      /* bnlength */
 extern bn_t bntmpsqrx, bntmpsqry, bntmp;                        /* rlength  */
-extern _BNCMPLX bnold, /* bnnew, */ bnparm, bnsaved;            /* bnlength */
-extern _BNCMPLX bnnew;                                           /* rlength */
+extern BNComplex bnold, /* bnnew, */ bnparm, bnsaved;            /* bnlength */
+extern BNComplex bnnew;                                           /* rlength */
 extern bn_t bn_pi;                                        /* TAKES NO SPACE */
 
 extern bf_t bftmp1, bftmp2, bftmp3, bftmp4, bftmp5, bftmp6;  /* rbflength+2 */

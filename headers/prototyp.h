@@ -1090,7 +1090,7 @@ extern void dispbox(void);
 
 /*  fractalb.c -- C file prototypes */
 
-extern DComplex cmplxbntofloat(_BNCMPLX *);
+extern DComplex cmplxbntofloat(BNComplex *);
 extern DComplex cmplxbftofloat(BFComplex *);
 extern void comparevalues(char *,LDBL,bn_t);
 extern void comparevaluesbf(char *,LDBL,bf_t);
@@ -1103,9 +1103,9 @@ extern int mandelbn_per_pixel(void);
 extern int juliabn_per_pixel(void);
 extern int JuliabnFractal(void);
 extern int JuliaZpowerbnFractal(void);
-extern _BNCMPLX *cmplxlog_bn(_BNCMPLX *t, _BNCMPLX *s);
-extern _BNCMPLX *cplxmul_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y);
-extern _BNCMPLX *ComplexPower_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy);
+extern BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s);
+extern BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y);
+extern BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy);
 extern int MandelbfSetup(void);
 extern int mandelbf_per_pixel(void);
 extern int juliabf_per_pixel(void);
