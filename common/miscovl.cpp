@@ -1720,7 +1720,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 
     temp= &olddacbox[0][0];                 /* a safe place for our temp data */
 
-    gif87a_flag = 1;                        /* for now, force this */
+    gif87a_flag = true;                     /* for now, force this */
 
     /* process each input image, one at a time */
     for (ystep = 0; ystep < ymult; ystep++)
@@ -1891,7 +1891,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                     {
                         inputerrorflag = 9;
                     }
-                    if ((!gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
+                    if (!gif87a_flag && xstep == xmult-1 && ystep == ymult-1)
                     {
                         if (fwrite(temp,2,1,out) != 1)
                         {
@@ -1908,7 +1908,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         {
                             inputerrorflag = 10;
                         }
-                        if ((!gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
+                        if (!gif87a_flag && xstep == xmult-1 && ystep == ymult-1)
                         {
                             if (fwrite(temp,1,1,out) != 1)
                             {
@@ -1924,7 +1924,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         {
                             inputerrorflag = 11;
                         }
-                        if ((!gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
+                        if (!gif87a_flag && xstep == xmult-1 && ystep == ymult-1)
                         {
                             if (fwrite(temp,i,1,out) != 1)
                             {

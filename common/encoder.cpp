@@ -295,7 +295,7 @@ int encoder()
     }
 #endif
 
-    if (gif87a_flag == 1)
+    if (gif87a_flag)
     {
         if (fwrite("GIF87a", 6, 1, g_outfile) != 1)
             goto oops;             /* old GIF Signature */
@@ -421,7 +421,7 @@ int encoder()
     if (fputc(0, g_outfile) != 0)
         goto oops;
 
-    if (gif87a_flag == 0)
+    if (!gif87a_flag)
     {   /* store non-standard fractal info */
         /* loadfile.c has notes about extension block structure */
         if (interrupted)

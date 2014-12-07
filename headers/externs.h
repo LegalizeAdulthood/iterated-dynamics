@@ -180,7 +180,7 @@ extern double                f_xcenter;
 extern double                f_ycenter;
 extern U16                   gene_handle;
 extern int                   get_corners(void);
-extern int                   gif87a_flag;
+extern bool                  gif87a_flag;
 extern char                  gifmask[];
 extern char                  Glasses1Map[];
 extern int                   g_glasses_type;

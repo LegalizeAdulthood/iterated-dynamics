@@ -19,11 +19,9 @@
 #ifdef XFRACT
 #define DEFAULT_PRINTER 5       /* Assume a Postscript printer */
 #define PRT_RESOLUTION  100     /* Assume medium resolution    */
-#define INIT_GIF87      0       /* Turn on GIF 89a processing  */
 #else
 #define DEFAULT_PRINTER 2       /* Assume an IBM/Epson printer */
 #define PRT_RESOLUTION  60      /* Assume low resolution       */
-#define INIT_GIF87      0       /* Turn on GIF 89a processing  */
 #endif
 
 static int  cmdfile(FILE *,int);
@@ -63,7 +61,7 @@ char    savename[FILE_MAX_PATH]= {"fract001"}; /* save files using this name */
 char    autoname[FILE_MAX_PATH]= {"auto.key"}; /* record auto keystrokes here */
 int     potflag = 0;            /* continuous potential enabled? */
 int     pot16bit = 0;           /* store 16 bit continuous potential values */
-int     gif87a_flag = 0;        /* 1 if GIF87a format, 0 otherwise */
+bool    gif87a_flag = false;    /* true if GIF87a format, false otherwise */
 bool    dither_flag = false;    /* true if want to dither GIFs */
 int     askvideo = 0;           /* flag for video prompting */
 char    floatflag = 0;
@@ -363,7 +361,7 @@ static void initvars_restart()          /* <ins> key init */
     int i;
     recordcolors = 'a';                  /* don't use mapfiles in PARs */
     save_release = g_release;            /* this release number */
-    gif87a_flag = INIT_GIF87;            /* turn on GIF89a processing */
+    gif87a_flag = false;                /* turn on GIF89a processing */
     dither_flag = false;                /* no dithering */
     askvideo = 1;                        /* turn on video-prompt flag */
     fract_overwrite = 0;                 /* don't overwrite           */
@@ -1260,7 +1258,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        gif87a_flag = yesnoval[0];
+        gif87a_flag = yesnoval[0] != 0;
         return 0;
     }
 
