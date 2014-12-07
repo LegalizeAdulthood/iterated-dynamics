@@ -13,6 +13,7 @@
  * David Sanderson straightened out a bunch of include file problems.
  */
 #include <string>
+#include <vector>
 
 #include <signal.h>
 #include <stdio.h>
@@ -1490,9 +1491,6 @@ x11_init(Driver *drv, int *argc, char **argv)
     initdacbox();
 
     signal(SIGFPE, fpe_handler);
-    /*
-      signal(SIGTSTP, goodbye);
-    */
 #ifdef FPUERR
     signal(SIGABRT, SIG_IGN);
     /*
@@ -1507,18 +1505,16 @@ x11_init(Driver *drv, int *argc, char **argv)
     /* filter out x11 arguments */
     {
         int count = *argc;
-        char **argv_copy = (char **) malloc(sizeof(char *)*count);
-        int i;
-        int copied;
-
-        for (i = 0; i < count; i++)
-            argv_copy[i] = argv[i];
-
-        copied = 0;
-        for (i = 0; i < count; i++)
+        std::vector<char *> filtered;
+        for (int i = 0; i < count; i++)
+        {
             if (! check_arg(di, i, argv, &i))
-                argv[copied++] = argv_copy[i];
-        *argc = copied;
+            {
+                filtered.push_back(argv[i]);
+            }
+        }
+        std::copy(filtered.begin(), filtered.end(), argv);
+        *argc = filtered.size();
     }
 
     di->Xdp = XOpenDisplay(di->Xdisplay);
