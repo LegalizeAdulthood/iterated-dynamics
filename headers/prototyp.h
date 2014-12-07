@@ -59,10 +59,6 @@ extern long LogFloat14(unsigned long);
 extern long RegFg2Float(long , int);
 extern long RegSftFloat(long , int);
 
-/*  fpu387 -- assembler file prototypes */
-
-extern void FPUcplxexp387(DComplex *, DComplex *);
-
 /*  fracsuba -- assembler file prototypes */
 
 extern int asmlMODbailout(void);

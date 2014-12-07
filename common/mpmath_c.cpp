@@ -181,7 +181,7 @@ DComplex ComplexPower(DComplex xx, DComplex yy)
 
     FPUcplxlog(&xx, &cLog);
     FPUcplxmul(&cLog, &yy, &t);
-    FPUcplxexp387(&t, &z);
+    FPUcplxexp(&t, &z);
     return (z);
 }
 

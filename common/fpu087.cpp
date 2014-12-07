@@ -72,15 +72,6 @@ void FPUcplxlog(DComplex *x, DComplex *z)
     z->y = zy;
 }
 
-void FPUcplxexp387(DComplex *x, DComplex *z)
-{
-    double pow, y;
-    y = x->y;
-    pow = exp(x->x);
-    z->x = pow*cos(y);
-    z->y = pow*sin(y);
-}
-
 /* Integer Routines */
 void SinCos086(long x, long *sinx, long *cosx)
 {

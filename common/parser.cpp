@@ -1617,7 +1617,11 @@ void (*StkLog)(void) = dStkLog;
 
 void FPUcplxexp(DComplex *x, DComplex *z)
 {
-    FPUcplxexp387(x, z);
+    double pow, y;
+    y = x->y;
+    pow = exp(x->x);
+    z->x = pow*cos(y);
+    z->y = pow*sin(y);
 }
 
 void dStkExp(void) {
