@@ -297,7 +297,6 @@ static void init_bf_2(void)
     bfsx3rd    = bnroot+ptr;
     ptr += bflength+2;
     bfsy3rd    = bnroot+ptr;
-    ptr += bflength+2;
     /* end safe vars */
 
     /* good citizens initialize variables */
@@ -381,7 +380,6 @@ static int restore_bf_vars(void)
     convert_bf(bfsx3rd,ptr,bflength,bf_save_len);
     ptr += bf_save_len+2;
     convert_bf(bfsy3rd,ptr,bflength,bf_save_len);
-    ptr += bf_save_len+2;
 
     /* scrub save area */
     memset(bnroot,0,(bf_save_len+2)*22);

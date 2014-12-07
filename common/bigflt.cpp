@@ -390,7 +390,6 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 
     /* adjust pointers */
     r = orig_r + orig_bflength - bflength;
-    n = orig_n + orig_bflength - bflength;
     /* bftmp1 = orig_bftmp1 + orig_bflength - bflength; */
 
     floattobf(r, f); /* start with approximate inverse */
@@ -427,7 +426,6 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     shiftfactor   = orig_shiftfactor;
     rbflength     = orig_rbflength;
     r             = orig_r;
-    n             = orig_n;
     /* bftmp1        = orig_bftmp1; */
 
     if (signflag)
@@ -539,7 +537,6 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 
     /* adjust pointers */
     r = orig_r + orig_bflength - bflength;
-    n = orig_n + orig_bflength - bflength;
 
     floattobf(r, f); /* start with approximate sqrt */
 
@@ -574,7 +571,6 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
     shiftfactor   = orig_shiftfactor;
     rbflength     = orig_rbflength;
     r             = orig_r;
-    n             = orig_n;
 
     return r;
 }
@@ -665,7 +661,6 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 
     /* adjust pointers */
     r = orig_r + orig_bflength - bflength;
-    n = orig_n + orig_bflength - bflength;
     bftmp5 = orig_bftmp5 + orig_bflength - bflength;
 
     floattobf(r, f); /* start with approximate ln */
@@ -707,7 +702,6 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     shiftfactor   = orig_shiftfactor;
     rbflength     = orig_rbflength;
     r             = orig_r;
-    n             = orig_n;
     bftmp5        = orig_bftmp5;
 
     neg_a_bf(r); /* -(-r) */
@@ -942,7 +936,6 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 
     /* adjust pointers */
     r = orig_r + orig_bflength - bflength;
-    n = orig_n + orig_bflength - bflength;
     bf_pi = orig_bf_pi + orig_bflength - bflength;
     bftmp3 = orig_bftmp3 + orig_bflength - bflength;
 
@@ -1008,7 +1001,6 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     rbflength     = orig_rbflength;
     bf_pi         = orig_bf_pi;
     r             = orig_r;
-    n             = orig_n;
     bftmp3        = orig_bftmp3;
 
     if (large_arg)
