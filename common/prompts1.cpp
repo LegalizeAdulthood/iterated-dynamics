@@ -1226,6 +1226,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
         while (--j >= 0 && tstack[j] == '\n') { }
         tstack[j+1] = 0;
     }
+    fractalspecificstuff *savespecific = curfractalspecific;
 gfp_top:
     promptnum = 0;
     if (julibrot)
@@ -1268,7 +1269,6 @@ gfp_top:
             lastparm = 2; /* uses_p1 or no parameter */
     }
 
-    fractalspecificstuff *savespecific = curfractalspecific;
     if (julibrot)
     {
         curfractalspecific = jborbit;
