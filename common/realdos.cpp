@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include <ctype.h>
 #include <fcntl.h>
 #include <float.h>
@@ -1797,9 +1799,7 @@ void load_fractint_config(void)
             }
             else if (tempstring[i] == ',' && ++j < 11)
             {
-#if defined(_WIN32)
-                _ASSERTE(j >= 0 && j < 11);
-#endif
+                assert(j >= 0 && j < 11);
                 fields[j] = &tempstring[i+1]; /* remember start of next field */
                 tempstring[i] = 0;   /* make field a separate string */
             }
@@ -1809,9 +1809,13 @@ void load_fractint_config(void)
         sscanf(fields[2],"%x",&bx);
         sscanf(fields[3],"%x",&cx);
         sscanf(fields[4],"%x",&dx);
+        assert(fields[5]);
         dotmode     = atoi(fields[5]);
+        assert(fields[6]);
         xdots       = atol(fields[6]);
+        assert(fields[7]);
         ydots       = atol(fields[7]);
+        assert(fields[8]);
         colors      = atoi(fields[8]);
         if (colors == 4 && strchr(strlwr(fields[8]),'g'))
         {
