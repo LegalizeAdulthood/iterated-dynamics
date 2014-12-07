@@ -112,6 +112,7 @@ void make_batch_file()
             maxcolor = (int)potparam[0];
         if (++maxcolor > 256)
             maxcolor = 256;
+
         if (colorstate == 0)
         {   /* default colors */
             if (mapdacbox)
@@ -128,7 +129,7 @@ void make_batch_file()
         else                      /* colors match no .map that we know of */
             strcpy(colorspec,"y");
 
-        if (colorspec[0] == '@')
+        if (sptr && colorspec[0] == '@')
         {
             if ((sptr2 = strrchr(sptr, SLASHC)) != nullptr)
                 sptr = sptr2 + 1;
