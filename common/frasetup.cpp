@@ -219,37 +219,7 @@ MandelfpSetup(void)
                 && (orbitsave&2) == 0)
         {
             calctype = calcmandfp; /* the normal case - use calcmandfp */
-#if !defined(XFRACT)
-            if (fpu >= 387)
-            {
-                calcmandfpasm = calcmandfpasm_c;
-            }
-            else if (fpu >= 287)
-            {
-                calcmandfpasmstart();
-                calcmandfpasm = calcmandfpasm_c;
-            }
-            else
-
-            {
-                calcmandfpasmstart();
-                calcmandfpasm = calcmandfpasm_c;
-            }
-#else
-            {
-#ifdef NASM
-                if (fpu == -1)
-                {
-                    calcmandfpasm = calcmandfpasm_c;
-                }
-                else
-#endif
-                {
-                    calcmandfpasmstart();
-                    calcmandfpasm = calcmandfpasm_c;
-                }
-            }
-#endif
+            calcmandfpasmstart();
         }
         else
         {
@@ -352,36 +322,8 @@ JuliafpSetup(void)
                 && (orbitsave&2) == 0)
         {
             calctype = calcmandfp; /* the normal case - use calcmandfp */
-#if !defined(XFRACT)
-            if (fpu >= 387)
-            {
-                calcmandfpasm = calcmandfpasm_c;
-            }
-            else if (fpu >= 287)
-            {
-                calcmandfpasmstart();
-                calcmandfpasm = calcmandfpasm_c;
-            }
-            else
-            {
-                calcmandfpasmstart();
-                calcmandfpasm = calcmandfpasm_c;
-            }
-#else
-            {
-#ifdef NASM
-                if (fpu == -1)
-                {
-                    calcmandfpasm = calcmandfpasm_c;
-                }
-                else
-#endif
-                {
-                    calcmandfpasmstart();
-                    calcmandfpasm = calcmandfpasm_c;
-                }
-            }
-#endif
+            calcmandfpasmstart();
+            calcmandfpasm = calcmandfpasm_c;
         }
         else
         {
