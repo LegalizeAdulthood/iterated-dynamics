@@ -358,7 +358,7 @@ int plasma()
             else
                 plot    = (PLOT)putpot;
             getpix =  getpot;
-            OldPotFlag = potflag;
+            OldPotFlag = potflag ? 1 : 0;
             OldPot16bit = pot16bit;
         }
         else
@@ -449,7 +449,7 @@ int plasma()
 done:
     if (max_plasma != 0)
     {
-        potflag = OldPotFlag;
+        potflag = OldPotFlag != 0;
         pot16bit = OldPot16bit;
     }
     plot    = putcolor;

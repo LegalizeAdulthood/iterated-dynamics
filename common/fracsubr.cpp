@@ -247,13 +247,13 @@ init_restart:
     distest          = usr_distest;
     biomorph         = usr_biomorph;
 
-    potflag = 0;
+    potflag = false;
     if (potparam[0] != 0.0
             && colors >= 64
             && (curfractalspecific->calctype == StandardFractal
                 || curfractalspecific->calctype == calcmand
                 || curfractalspecific->calctype == calcmandfp)) {
-        potflag = 1;
+        potflag = true;
         distest = usr_distest = 0;    /* can't do distest too */
     }
 
@@ -294,7 +294,8 @@ init_restart:
 
     /*   if (fractype == JULIBROT)
           rqlim = 4;
-       else */ if (potflag && potparam[2] != 0.0)
+       else */
+    if (potflag && potparam[2] != 0.0)
         rqlim = potparam[2];
     /* else if (decomp[0] > 0 && decomp[1] > 0)
           rqlim = (double)decomp[1]; */
@@ -338,7 +339,7 @@ init_restart:
     }
     /* We want this code if we're using the assembler calcmand */
     if (fractype == MANDEL || fractype == JULIA) { /* adust shift bits if.. */
-        if (potflag == 0                            /* not using potential */
+        if (!potflag                                    /* not using potential */
                 && (param[0] > -2.0 && param[0] < 2.0)  /* parameters not too large */
                 && (param[1] > -2.0 && param[1] < 2.0)
                 && !invert                                /* and not inverting */

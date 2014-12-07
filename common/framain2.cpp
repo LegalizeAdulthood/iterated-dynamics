@@ -245,7 +245,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                 if (pot_startdisk() < 0)
                 {   /* pot file failed?  */
                     showfile = 1;
-                    potflag  = 0;
+                    potflag  = false;
                     pot16bit = 0;
                     g_init_mode = -1;
                     calc_status = CALCSTAT_RESUMABLE;         /* "resume" without 16-bit */

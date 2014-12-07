@@ -382,7 +382,7 @@ extern double                plotmy2;
 extern int                   polyphony;
 extern unsigned              posp;
 extern int                   pot16bit;
-extern int                   potflag;
+extern bool                  potflag;
 extern double                potparam[];
 extern char                  preview;
 extern int                   previewfactor;

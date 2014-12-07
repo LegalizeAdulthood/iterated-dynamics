@@ -701,7 +701,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
         if (maxit != 150)
             put_parm(" %s=%ld", "maxiter",maxit);
 
-        if (bailout && (potflag == 0 || potparam[2] == 0.0))
+        if (bailout && (!potflag || potparam[2] == 0.0))
             put_parm(" %s=%ld", "bailout",bailout);
 
         if (bailoutest != Mod) {
