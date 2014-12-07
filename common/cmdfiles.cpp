@@ -64,7 +64,7 @@ char    autoname[FILE_MAX_PATH]= {"auto.key"}; /* record auto keystrokes here */
 int     potflag = 0;            /* continuous potential enabled? */
 int     pot16bit = 0;           /* store 16 bit continuous potential values */
 int     gif87a_flag = 0;        /* 1 if GIF87a format, 0 otherwise */
-int     dither_flag = 0;        /* 1 if want to dither GIFs */
+bool    dither_flag = false;    /* true if want to dither GIFs */
 int     askvideo = 0;           /* flag for video prompting */
 char    floatflag = 0;
 int     biomorph = 0;           /* flag for biomorph */
@@ -364,7 +364,7 @@ static void initvars_restart()          /* <ins> key init */
     recordcolors = 'a';                  /* don't use mapfiles in PARs */
     save_release = g_release;            /* this release number */
     gif87a_flag = INIT_GIF87;            /* turn on GIF89a processing */
-    dither_flag = 0;                     /* no dithering */
+    dither_flag = false;                /* no dithering */
     askvideo = 1;                        /* turn on video-prompt flag */
     fract_overwrite = 0;                 /* don't overwrite           */
     soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
@@ -1270,7 +1270,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        dither_flag = yesnoval[0];
+        dither_flag = yesnoval[0] != 0;
         return 0;
     }
 
