@@ -1158,7 +1158,6 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 #endif
     const char *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
     struct fractalspecificstuff *jborbit = nullptr;
-    struct fractalspecificstuff *savespecific;
     int firstparm = 0;
     int lastparm  = MAXPARAMS;
     double oldparam[MAXPARAMS];
@@ -1269,7 +1268,7 @@ gfp_top:
             lastparm = 2; /* uses_p1 or no parameter */
     }
 
-    savespecific = curfractalspecific;
+    fractalspecificstuff *savespecific = curfractalspecific;
     if (julibrot)
     {
         curfractalspecific = jborbit;
@@ -1533,7 +1532,6 @@ gfp_top:
 
     if (julibrot)
     {
-        savespecific = curfractalspecific;
         curfractalspecific = jborbit;
     }
 
