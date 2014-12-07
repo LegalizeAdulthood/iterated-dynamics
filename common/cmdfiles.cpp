@@ -43,17 +43,17 @@ static int  get_bf(bf_t, const char *);
 static int isabigfloat(char *str);
 
 /* variables defined by the command line/files processor */
-int     stoppass=0;             /* stop at this guessing pass early */
-int     pseudox=0;              /* xdots to use for video independence */
-int     pseudoy=0;              /* ydots to use for video independence */
-int     bfdigits=0;             /* digits to use (force) for bf_math */
-int     showdot=-1;             /* color to show crawling graphics cursor */
-int     sizedot;                /* size of dot crawling cursor */
-char    recordcolors;           /* default PAR color-writing method */
-char    autoshowdot=0;          /* dark, medium, bright */
+int     stoppass = 0;           /* stop at this guessing pass early */
+int     pseudox = 0;            /* xdots to use for video independence */
+int     pseudoy = 0;            /* ydots to use for video independence */
+int     bfdigits = 0;           /* digits to use (force) for bf_math */
+int     showdot = -1;           /* color to show crawling graphics cursor */
+int     sizedot = 0;            /* size of dot crawling cursor */
+char    recordcolors = 0;       /* default PAR color-writing method */
+char    autoshowdot = 0;        /* dark, medium, bright */
 char    start_showorbit=0;      /* show orbits on at start of fractal */
-char    temp1[256];             /* temporary strings        */
-char    readname[FILE_MAX_PATH];/* name of fractal input file */
+char    temp1[256] = { 0 };     /* temporary strings        */
+char    readname[FILE_MAX_PATH] = { 0 };/* name of fractal input file */
 char    tempdir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
 char    workdir[FILE_MAX_DIR] = {""}; /* name of directory for misc files */
 char    orgfrmdir[FILE_MAX_DIR] = {""};/*name of directory for orgfrm files*/
@@ -61,60 +61,62 @@ char    gifmask[13] = {""};
 char    PrintName[FILE_MAX_PATH]= {"fract001.prn"}; /* Name for print-to-file */
 char    savename[FILE_MAX_PATH]= {"fract001"}; /* save files using this name */
 char    autoname[FILE_MAX_PATH]= {"auto.key"}; /* record auto keystrokes here */
-int     potflag=0;              /* continuous potential enabled? */
-int     pot16bit;               /* store 16 bit continuous potential values */
-int     gif87a_flag;            /* 1 if GIF87a format, 0 otherwise */
-int     dither_flag;            /* 1 if want to dither GIFs */
-int     askvideo;               /* flag for video prompting */
-char    floatflag;
-int     biomorph;               /* flag for biomorph */
-int     usr_biomorph;
-int     forcesymmetry;          /* force symmetry */
-int     showfile;               /* zero if file display pending */
-int     rflag, rseed;           /* Random number seeding flag and value */
-int     decomp[2];              /* Decomposition coloring */
-long    distest;
-int     distestwidth;
+int     potflag = 0;            /* continuous potential enabled? */
+int     pot16bit = 0;           /* store 16 bit continuous potential values */
+int     gif87a_flag = 0;        /* 1 if GIF87a format, 0 otherwise */
+int     dither_flag = 0;        /* 1 if want to dither GIFs */
+int     askvideo = 0;           /* flag for video prompting */
+char    floatflag = 0;
+int     biomorph = 0;           /* flag for biomorph */
+int     usr_biomorph = 0;
+int     forcesymmetry = 0;      /* force symmetry */
+int     showfile = 0;           /* zero if file display pending */
+int     rflag = 0;
+int     rseed = 0;              /* Random number seeding flag and value */
+int     decomp[2] = { 0 };      /* Decomposition coloring */
+long    distest = 0;
+int     distestwidth = 0;
 char    fract_overwrite = 0;    /* 0 if file overwrite not allowed */
-int     soundflag;              /* sound control bitfield... see sound.c for useage*/
-int     basehertz;              /* sound=x/y/x hertz value */
-int     debugflag;              /* internal use only - you didn't see this */
-int     timerflag;              /* you didn't see this, either */
-int     cyclelimit;             /* color-rotator upper limit */
-int     inside;                 /* inside color: 1=blue     */
-int     fillcolor;              /* fillcolor: -1=normal     */
-int     outside;                /* outside color    */
-int     finattract;             /* finite attractor logic */
-int     display3d;              /* 3D display flag: 0 = OFF */
-int     overlay3d;              /* 3D overlay flag: 0 = OFF */
-int     init3d[20];             /* '3d=nn/nn/nn/...' values */
-int     checkcurdir;            /* flag to check current dir for files */
-int     initbatch;              /* 1 if batch run (no kbd)  */
-int     initsavetime;           /* autosave minutes         */
-DComplex  initorbit;              /* initial orbitvalue */
-char    useinitorbit;           /* flag for initorbit */
-int     g_init_mode;               /* initial video mode       */
-int     initcyclelimit;         /* initial cycle limit      */
-BYTE    usemag;                 /* use center-mag corners   */
-long    bailout;                /* user input bailout value */
+int     soundflag = 0;          /* sound control bitfield... see sound.c for useage*/
+int     basehertz = 0;          /* sound=x/y/x hertz value */
+int     debugflag = 0;          /* internal use only - you didn't see this */
+int     timerflag = 0;          /* you didn't see this, either */
+int     cyclelimit = 0;         /* color-rotator upper limit */
+int     inside = 0;             /* inside color: 1=blue     */
+int     fillcolor = 0;          /* fillcolor: -1=normal     */
+int     outside = 0;            /* outside color    */
+int     finattract = 0;         /* finite attractor logic */
+int     display3d = 0;          /* 3D display flag: 0 = OFF */
+int     overlay3d = 0;          /* 3D overlay flag: 0 = OFF */
+int     init3d[20] = { 0 };     /* '3d=nn/nn/nn/...' values */
+int     checkcurdir = 0;        /* flag to check current dir for files */
+int     initbatch = 0;          /* 1 if batch run (no kbd)  */
+int     initsavetime = 0;       /* autosave minutes         */
+DComplex  initorbit = { 0.0 };  /* initial orbitvalue */
+char    useinitorbit = 0;       /* flag for initorbit */
+int     g_init_mode = 0;        /* initial video mode       */
+int     initcyclelimit = 0;     /* initial cycle limit      */
+BYTE    usemag = 0;             /* use center-mag corners   */
+long    bailout = 0;            /* user input bailout value */
 enum bailouts bailoutest;       /* test used for determining bailout */
-double  inversion[3];           /* radius, xcenter, ycenter */
-int     rotate_lo,rotate_hi;    /* cycling color range      */
+double  inversion[3] = { 0.0 }; /* radius, xcenter, ycenter */
+int     rotate_lo = 0;
+int     rotate_hi = 0;          /* cycling color range      */
 std::vector<int> ranges;        /* iter->color ranges mapping */
 int     rangeslen = 0;          /* size of ranges array     */
-BYTE *mapdacbox = nullptr;         /* map= (default colors)    */
-int     colorstate;             /* 0, g_dac_box matches default (bios or map=) */
+BYTE *mapdacbox = nullptr;      /* map= (default colors)    */
+int     colorstate = 0;         /* 0, g_dac_box matches default (bios or map=) */
                                 /* 1, g_dac_box matches no known defined map   */
                                 /* 2, g_dac_box matches the colorfile map      */
-int     colorpreloaded;         /* if g_dac_box preloaded for next mode select */
-int     save_release;           /* release creating PAR file*/
-char    dontreadcolor=0;        /* flag for reading color from GIF */
+int     colorpreloaded = 0;     /* if g_dac_box preloaded for next mode select */
+int     save_release = 0;       /* release creating PAR file*/
+char    dontreadcolor = 0;      /* flag for reading color from GIF */
 double  math_tol[2]= {.05,.05}; /* For math transition */
 int Targa_Out = 0;              /* 3D fullcolor flag */
 int truecolor = 0;              /* escape time truecolor flag */
 int truemode = 0;               /* truecolor coloring scheme */
-char    colorfile[FILE_MAX_PATH];/* from last <l> <s> or colors=@filename */
-int functionpreloaded;          /* if function loaded for new bifs */
+char    colorfile[FILE_MAX_PATH] = { 0 };/* from last <l> <s> or colors=@filename */
+int functionpreloaded = 0;      /* if function loaded for new bifs */
 float   screenaspect = DEFAULTASPECT;   /* aspect ratio of the screen */
 float   aspectdrift = DEFAULTASPECTDRIFT;  /* how much drift is allowed and */
                                 /* still forced to screenaspect  */
@@ -126,9 +128,9 @@ int orgfrmsearch = 0;           /* 1 - user has specified a directory for
                                      Orgform formula compilation files */
 
 int     orbitsave = 0;          /* for IFS and LORENZ to output acrospin file */
-int orbit_delay;                /* clock ticks delating orbit release */
-int     transparent[2];         /* transparency min/max values */
-long    LogFlag;                /* Logarithmic palette flag: 0 = no */
+int orbit_delay = 0;            /* clock ticks delating orbit release */
+int     transparent[2] = { 0 }; /* transparency min/max values */
+long    LogFlag = 0;            /* Logarithmic palette flag: 0 = no */
 
 BYTE exitmode = 3;              /* video mode on exit */
 
@@ -136,25 +138,26 @@ int     Log_Fly_Calc = 0;       /* calculate logmap on-the-fly */
 int     Log_Auto_Calc = 0;      /* auto calculate logmap */
 int     nobof = 0;              /* Flag to make inside=bof options not duplicate bof images */
 
-int        escape_exit;         /* set to 1 to avoid the "are you sure?" screen */
-int first_init=1;               /* first time into cmdfiles? */
-static int init_rseed;
-static char initcorners,initparams;
+int        escape_exit = 0;     /* set to 1 to avoid the "are you sure?" screen */
+int first_init = 1;             /* first time into cmdfiles? */
+static int init_rseed = 0;
+static char initcorners = 0;
+static char initparams = 0;
 struct fractalspecificstuff *curfractalspecific = nullptr;
 
-char FormFileName[FILE_MAX_PATH];/* file to find (type=)formulas in */
-char FormName[ITEMNAMELEN+1];    /* Name of the Formula (if not null) */
-char LFileName[FILE_MAX_PATH];   /* file to find (type=)L-System's in */
-char LName[ITEMNAMELEN+1];       /* Name of L-System */
-char CommandFile[FILE_MAX_PATH]; /* file to find command sets in */
-char CommandName[ITEMNAMELEN+1]; /* Name of Command set */
-char CommandComment[4][MAXCMT];    /* comments for command set */
-char IFSFileName[FILE_MAX_PATH];/* file to find (type=)IFS in */
-char IFSName[ITEMNAMELEN+1];    /* Name of the IFS def'n (if not null) */
-struct SearchPath searchfor;
-float *ifs_defn = nullptr;         /* ifs parameters */
-int  ifs_type;                  /* 0=2d, 1=3d */
-int  g_slides = SLIDES_OFF;     /* 1 autokey=play, 2 autokey=record */
+char FormFileName[FILE_MAX_PATH] = { 0 };/* file to find (type=)formulas in */
+char FormName[ITEMNAMELEN+1] = { 0 };    /* Name of the Formula (if not null) */
+char LFileName[FILE_MAX_PATH] = { 0 };   /* file to find (type=)L-System's in */
+char LName[ITEMNAMELEN+1] = { 0 };       /* Name of L-System */
+char CommandFile[FILE_MAX_PATH] = { 0 }; /* file to find command sets in */
+char CommandName[ITEMNAMELEN+1] = { 0 }; /* Name of Command set */
+char CommandComment[4][MAXCMT] = { 0 };    /* comments for command set */
+char IFSFileName[FILE_MAX_PATH] = { 0 };/* file to find (type=)IFS in */
+char IFSName[ITEMNAMELEN+1] = { 0 };    /* Name of the IFS def'n (if not null) */
+struct SearchPath searchfor = { 0 };
+float *ifs_defn = nullptr;              /* ifs parameters */
+int  ifs_type = 0;                      /* 0=2d, 1=3d */
+int  g_slides = SLIDES_OFF;             /* 1 autokey=play, 2 autokey=record */
 
 BYTE txtcolor[]= {
     BLUE*16+L_WHITE,    /* C_TITLE           title background */
@@ -192,7 +195,7 @@ BYTE txtcolor[]= {
 
 char s_makepar[] =          "makepar";
 
-int lzw[2];
+int lzw[2] = { 0 };
 
 /*
         cmdfiles(argc,argv) process the command-line arguments

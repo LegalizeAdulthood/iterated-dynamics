@@ -160,7 +160,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     int col;                     /* current column (original GIF) */
     struct point cur;            /* current pixels */
     struct point old;            /* old pixels */
-    struct f_point f_cur;
+    struct f_point f_cur = { 0.0 };
     struct f_point f_old;
     VECTOR v;                    /* double vector */
     VECTOR v1, v2;
@@ -929,7 +929,7 @@ static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pz
 
 static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 {
-    VECTOR S[2][4];
+    VECTOR S[2][4] = { 0 };
     int i, j;
     double temp;
 

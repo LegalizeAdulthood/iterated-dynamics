@@ -85,74 +85,105 @@ static char dif_lb[] = {
 static long autologmap(void);
 
 /* variables exported from this file */
-LComplex linitorbit;
-long lmagnitud, llimit, llimit2, lclosenuff, l16triglim;
-DComplex init, tmp, old, g_new, saved;
-int color;
-long coloriter, oldcoloriter, realcoloriter;
-int row, col, passes;
-int invert;
-double f_radius,f_xcenter, f_ycenter; /* for inversion */
+LComplex linitorbit = { 0 };
+long lmagnitud = 0;
+long llimit = 0;
+long llimit2 = 0;
+long lclosenuff = 0;
+long l16triglim = 0;
+DComplex init = { 0.0 };
+DComplex tmp = { 0.0 };
+DComplex old = { 0.0 };
+DComplex g_new = { 0.0 };
+DComplex saved = { 0.0 };
+int color = 0;
+long coloriter = 0;
+long oldcoloriter = 0;
+long realcoloriter = 0;
+int row = 0;
+int col = 0;
+int passes = 0;
+int invert = 0;
+double f_radius = 0.0;
+double f_xcenter = 0.0;
+double f_ycenter = 0.0;                 /* for inversion */
 void (*putcolor)(int,int,int) = putcolor_a;
 void (*plot)(int,int,int) = putcolor_a;
 
-double magnitude, rqlim, rqlim2, rqlim_save;
+double magnitude = 0.0;
+double rqlim = 0.0;
+double rqlim2 = 0.0;
+double rqlim_save = 0.0;
 int no_mag_calc = 0;
 int use_old_period = 0;
 int use_old_distest = 0;
 int old_demm_colors = 0;
-int (*calctype)(void);
-int (*calctypetmp)(void);
+int (*calctype)(void) = nullptr;
+int (*calctypetmp)(void) = nullptr;
 int quick_calc = 0;
 double closeprox = 0.01;
 
-double closenuff;
-int pixelpi; /* value of pi in pixels */
-unsigned long lm;               /* magnitude limit (CALCMAND) */
+double closenuff = 0.0;
+int pixelpi = 0;                        /* value of pi in pixels */
+unsigned long lm = 0;                   /* magnitude limit (CALCMAND) */
 
 /* ORBIT variables */
-int     show_orbit;                     /* flag to turn on and off */
-int     orbit_ptr;                      /* pointer into save_orbit array */
-int save_orbit[1500];                    /* array to save orbit values */
+int     show_orbit = 0;                 /* flag to turn on and off */
+int     orbit_ptr = 0;                  /* pointer into save_orbit array */
+int save_orbit[1500] = { 0 };           /* array to save orbit values */
 int     orbit_color=15;                 /* XOR color */
 
-int     ixstart, ixstop, iystart, iystop;       /* start, stop here */
-int     symmetry;          /* symmetry flag */
-int     reset_periodicity; /* nonzero if escape time pixel rtn to reset */
-int     kbdcount, max_kbdcount;    /* avoids checking keyboard too often */
+int ixstart = 0;
+int ixstop = 0;
+int iystart = 0;
+int iystop = 0;                         /* start, stop here */
+int symmetry = 0;                       /* symmetry flag */
+int reset_periodicity = 0;              /* nonzero if escape time pixel rtn to reset */
+int kbdcount = 0;
+int max_kbdcount = 0;                   /* avoids checking keyboard too often */
 
 U16 resume_info = 0;                    /* handle to resume info if allocated */
-int resuming;                           /* nonzero if resuming after interrupt */
-int num_worklist;                       /* resume worklist for standard engine */
-WORKLIST worklist[MAXCALCWORK];
-int xxstart,xxstop,xxbegin;             /* these are same as worklist, */
-int yystart,yystop,yybegin;             /* declared as separate items  */
-int workpass,worksym;                   /* for the sake of calcmand    */
+int resuming = 0;                       /* nonzero if resuming after interrupt */
+int num_worklist = 0;                   /* resume worklist for standard engine */
+WORKLIST worklist[MAXCALCWORK] = { 0 };
+int xxstart = 0;
+int xxstop = 0;
+int xxbegin = 0;                        /* these are same as worklist, */
+int yystart = 0;
+int yystop = 0;
+int yybegin = 0;                        /* declared as separate items  */
+int workpass = 0;
+int worksym = 0;                        /* for the sake of calcmand    */
 
 VOIDPTR typespecific_workarea = nullptr;
 
-static double dem_delta, dem_width;     /* distance estimator variables */
-static double dem_toobig;
-static int dem_mandel;
+static double dem_delta = 0.0;
+static double dem_width = 0.0;          /* distance estimator variables */
+static double dem_toobig = 0.0;
+static int dem_mandel = 0;
 #define DEM_BAILOUT 535.5
 
 /* variables which must be visible for tab_display */
-int got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
-/* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */
-/* 6 for orbits */
-int curpass,totpasses;
-int currow,curcol;
+int got_status = -1;                    /* -1 if not, 0 for 1or2pass, 1 for ssg, */
+                                        /* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */
+                                        /* 6 for orbits */
+int curpass = 0;
+int totpasses = 0;
+int currow = 0;
+int curcol = 0;
 
 /* static vars for diffusion scan */
 unsigned bits=0;        /* number of bits in the counter */
-unsigned long dif_counter;  /* the diffusion counter */
-unsigned long dif_limit;    /* the diffusion counter */
+unsigned long dif_counter = 0;  /* the diffusion counter */
+unsigned long dif_limit = 0;    /* the diffusion counter */
 
 /* static vars for solidguess & its subroutines */
-char three_pass;
-static int maxblock,halfblock;
-static int guessplot;                   /* paint 1st pass row at a time?   */
-static int right_guess,bottom_guess;
+char three_pass = 0;
+static int maxblock = 0;
+static int halfblock = 0;
+static int guessplot = 0;               /* paint 1st pass row at a time?   */
+static int right_guess = 0;
+static int bottom_guess = 0;
 #define maxyblk 7    /* maxxblk*maxyblk*2 <= 4096, the size of "prefix" */
 #define maxxblk 202  /* each maxnblk is oversize by 2 for a "border" */
 /* maxxblk defn must match fracsubr.c */
@@ -164,14 +195,14 @@ static int right_guess,bottom_guess;
 typedef int (*TPREFIX)[2][maxyblk][maxxblk];
 
 /* size of next puts a limit of MAXPIXELS pixels across on solid guessing logic */
-BYTE dstack[4096];              /* common temp, two put_line calls */
-unsigned int tprefix[2][maxyblk][maxxblk]; /* common temp */
+BYTE dstack[4096] = { 0 };              /* common temp, two put_line calls */
+unsigned int tprefix[2][maxyblk][maxxblk] = { 0 }; /* common temp */
 
-int nxtscreenflag; /* for cellular next screen generation */
-int     attractors;                 /* number of finite attractors  */
-DComplex  attr[N_ATTR];       /* finite attractor vals (f.p)  */
-LComplex lattr[N_ATTR];      /* finite attractor vals (int)  */
-int    attrperiod[N_ATTR];          /* period of the finite attractor */
+int nxtscreenflag = 0;                  /* for cellular next screen generation */
+int attractors = 0;                     /* number of finite attractors  */
+DComplex attr[N_ATTR] = { 0.0 };        /* finite attractor vals (f.p)  */
+LComplex lattr[N_ATTR] = { 0 };         /* finite attractor vals (int)  */
+int attrperiod[N_ATTR] = { 0 };         /* period of the finite attractor */
 
 /***** vars for new btm *****/
 enum direction
@@ -182,22 +213,23 @@ enum direction
     West
 };
 enum direction going_to;
-int trail_row, trail_col;
+int trail_row = 0;
+int trail_col = 0;
 
 /* -------------------------------------------------------------------- */
 /*              These variables are external for speed's sake only      */
 /* -------------------------------------------------------------------- */
 
-int periodicitycheck;
+int periodicitycheck = 0;
 
 /* For periodicity testing, only in StandardFractal() */
-int nextsavedincr;
+int nextsavedincr = 0;
 long firstsavedand = 0;
 
 static std::vector<BYTE> savedots;
-static BYTE *fillbuff;
-static int savedotslen;
-static int showdotcolor;
+static BYTE *fillbuff = nullptr;
+static int savedotslen = 0;
+static int showdotcolor = 0;
 int atan_colors = 180;
 
 static int showdot_width = 0;
@@ -1711,33 +1743,34 @@ int calcmandfp(void)
 int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set */
 {
 #ifdef NUMSAVED
-    DComplex savedz[NUMSAVED];
-    long caught[NUMSAVED];
-    long changed[NUMSAVED];
+    DComplex savedz[NUMSAVED] = { 0.0 };
+    long caught[NUMSAVED] = { 0 };
+    long changed[NUMSAVED] = { 0 };
     int zctr = 0;
 #endif
-    long savemaxit;
+    long savemaxit = 0;
     double tantable[16] = { 0.0 };
     int hooper = 0;
-    long lcloseprox;
+    long lcloseprox = 0;
     double memvalue = 0.0;
-    double min_orbit = 100000.0; /* orbit value closest to origin */
-    long   min_index = 0;        /* iteration of min_orbit */
+    double min_orbit = 100000.0;        /* orbit value closest to origin */
+    long   min_index = 0;               /* iteration of min_orbit */
     long cyclelen = -1;
     long savedcoloriter = 0;
-    int caught_a_cycle;
-    long savedand;
-    int savedincr;       /* for periodicity checking */
-    LComplex lsaved;
-    int i, attracted;
-    LComplex lat;
-    DComplex  at;
-    DComplex deriv;
+    int caught_a_cycle = 0;
+    long savedand = 0;
+    int savedincr = 0;                  /* for periodicity checking */
+    LComplex lsaved = { 0 };
+    int i = 0;
+    int attracted = 0;
+    LComplex lat = { 0 };
+    DComplex  at = { 0.0 };
+    DComplex deriv = { 0.0 };
     long dem_color = -1;
-    DComplex dem_new;
-    int check_freq;
+    DComplex dem_new = { 0 };
+    int check_freq = 0;
     double totaldist = 0.0;
-    DComplex lastz;
+    DComplex lastz = { 0.0 };
 
     lcloseprox = (long)(closeprox*fudge);
     savemaxit = maxit;
@@ -1750,10 +1783,10 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 #endif
     if (inside == STARTRAIL)
     {
-        int i;
-        for (i=0; i<16; i++)
+        for (int i = 0; i < 16; i++)
             tantable[i] = 0.0;
-        if (save_release > 1824) maxit = 16;
+        if (save_release > 1824)
+            maxit = 16;
     }
     if (periodicitycheck == 0 || inside == ZMAG || inside == STARTRAIL)
         oldcoloriter = 2147483647L;       /* don't check periodicity at all */
