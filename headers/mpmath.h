@@ -1,7 +1,7 @@
 #ifndef MPMATH_H
 #define MPMATH_H
 
-#ifndef _CMPLX_DEFINED
+#ifndef CMPLX_H_DEFINED
 #include "cmplx.h"
 #endif
 

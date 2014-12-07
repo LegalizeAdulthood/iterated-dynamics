@@ -1,6 +1,6 @@
 /* various complex number defs */
-#ifndef _CMPLX_DEFINED
-#define _CMPLX_DEFINED
+#ifndef CMPLX_H_DEFINED
+#define CMPLX_H_DEFINED
 
 struct DHyperComplex {
     double x,y;
