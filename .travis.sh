@@ -11,7 +11,8 @@ if [ $ANALYZE = "true" ]; then
         scan-build cmake -G "Unix Makefiles" ..
         scan-build -enable-checker security.FloatLoopCounter \
           -enable-checker security.insecureAPI.UncheckedReturn \
-          --status-bugs -v make -j 8
+          --status-bugs -v \
+          make -j 8
     else
         cd ..
         cppcheck --help

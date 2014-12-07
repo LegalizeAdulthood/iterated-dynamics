@@ -1717,7 +1717,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
     int zctr = 0;
 #endif
     long savemaxit;
-    double tantable[16];
+    double tantable[16] = { 0.0 };
     int hooper = 0;
     long lcloseprox;
     double memvalue = 0.0;
