@@ -26,8 +26,6 @@
 struct videoinfo g_video_entry;
 int helpmode;
 
-int fpu=0;      /* fpu type: 0, 87, 287, 387 */
-
 int lookatmouse=0;  /* see notes at mouseread routine */
 
 long timer_start,timer_interval;        /* timer(...) start & total */
@@ -177,14 +175,7 @@ static void my_floating_point_err(int sig)
 */
 void initasmvars(void)
 {
-    if (fpu != 0)
-    {
-        return;
-    }
     overflow = 0;
-
-    /* set fpu type */
-    fpu = 487;
 }
 
 int main(int argc, char **argv)
@@ -274,24 +265,7 @@ restart:   /* insert key re-starts here */
     driver_window();
     memcpy(olddacbox,g_dac_box,256*3);      /* save in case colors= present */
 
-    if (debugflag == 2870 && fpu >= 287)
-    {
-        fpu = 287; /* for testing purposes */
-    }
-    if (debugflag ==  870 && fpu >=  87)
-    {
-        fpu =  87; /* for testing purposes */
-    }
-    if (debugflag == 70)
-    {
-        fpu =   0; /* for testing purposes */
-    }
-    if (getenv("NO87"))
-    {
-        fpu = 0;
-    }
-
-    if (fpu >= 287 && debugflag != 72)   /* Fast 287 math */
+    if (debugflag != 72)   /* Fast 287 math */
     {
         setup287code();
     }

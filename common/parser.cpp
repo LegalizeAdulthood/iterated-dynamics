@@ -1617,17 +1617,7 @@ void (*StkLog)(void) = dStkLog;
 
 void FPUcplxexp(DComplex *x, DComplex *z)
 {
-    if (fpu >= 387)
-        FPUcplxexp387(x, z);
-    else
-    {
-        double e2x = exp(x->x);
-        double siny;
-        double cosy;
-        FPUsincos(&x->y, &siny, &cosy);
-        z->x = e2x * cosy;
-        z->y = e2x * siny;
-    }
+    FPUcplxexp387(x, z);
 }
 
 void dStkExp(void) {
@@ -3692,18 +3682,12 @@ int fpFormulaSetup(void)
 {
     /* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
 #if !defined(XFRACT) && !defined(_WIN32)
-    if (fpu > 0) {
-        MathType = D_MATH;
-        int RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
-        if (RunFormRes && fpu >=387 && debugflag != 90 && (orbitsave&2) == 0
-                && !Randomized)
-            return CvtStk(); /* run fast assembler code in parsera.asm */
-        return RunFormRes;
-    }
-    else {
-        MathType = M_MATH;
-        return !RunForm(FormName, 0);
-    }
+    MathType = D_MATH;
+    int RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
+    if (RunFormRes && fpu >=387 && debugflag != 90 && (orbitsave&2) == 0
+            && !Randomized)
+        return CvtStk(); /* run fast assembler code in parsera.asm */
+    return RunFormRes;
 #else
     MathType = D_MATH;
     return !RunForm(FormName, 0); /* RunForm() returns 1 for failure */

@@ -172,8 +172,6 @@ DComplex ComplexPower(DComplex xx, DComplex yy)
     DComplex z;
     DComplex cLog;
     DComplex t;
-    double siny;
-    double cosy;
 
     if (ldcheck == 0)
         if (xx.x == 0 && xx.y == 0) {
@@ -183,20 +181,7 @@ DComplex ComplexPower(DComplex xx, DComplex yy)
 
     FPUcplxlog(&xx, &cLog);
     FPUcplxmul(&cLog, &yy, &t);
-
-    if (fpu >= 387)
-        FPUcplxexp387(&t, &z);
-    else
-    {
-        double e2x;
-        if (t.x < -690)
-            e2x = 0;
-        else
-            e2x = exp(t.x);
-        FPUsincos(&t.y, &siny, &cosy);
-        z.x = e2x * cosy;
-        z.y = e2x * siny;
-    }
+    FPUcplxexp387(&t, &z);
     return (z);
 }
 

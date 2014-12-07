@@ -61,8 +61,6 @@ struct BNComplex
 };
 
 /* globals */
-extern int fpu;
-
 extern int bf_math;
 
 extern int bnstep, intlength;

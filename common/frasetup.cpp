@@ -63,20 +63,10 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 #if !defined(XFRACT)
     if (debugflag != 1010)
     {
-        if (fpu != 0)
-        {
-            if (fractype == MPNEWTON)
-                fractype = NEWTON;
-            else if (fractype == MPNEWTBASIN)
-                fractype = NEWTBASIN;
-        }
-        else
-        {
-            if (fractype == NEWTON)
-                fractype = MPNEWTON;
-            else if (fractype == NEWTBASIN)
-                fractype = MPNEWTBASIN;
-        }
+        if (fractype == MPNEWTON)
+            fractype = NEWTON;
+        else if (fractype == MPNEWTBASIN)
+            fractype = NEWTBASIN;
         curfractalspecific = &fractalspecific[fractype];
     }
 #else

@@ -169,7 +169,6 @@ extern int                   fm_vol; /*volume of OPL-3 soundcard output*/
 extern int                   forcesymmetry;
 extern char                  FormFileName[];
 extern char                  FormName[];
-extern int                   fpu;
 extern int                   fractype;
 extern const char *          fract_dir1;
 extern const char *          fract_dir2;
