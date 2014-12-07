@@ -627,16 +627,19 @@ static void getFloat(float *dst, unsigned char **src, int dir)
 void
 fix_ranges(int *ranges, int num, int dir)
 {
+    std::vector<unsigned char> ranges_buff;
     unsigned char *buf;
     unsigned char *bufPtr;
     int i;
 
     if (dir==1) {
-        buf = (unsigned char *)malloc(num*2);
+        ranges_buff.resize(num*2);
+        buf = &ranges_buff[0];
         bufPtr = buf;
         bcopy((char *)ranges, (char *)buf, num*2);
     } else {
-        buf = (unsigned char *)malloc(num*sizeof(int));
+        ranges_buff.resize(num*sizeof(int));
+        buf = &ranges_buff[0];
         bufPtr = buf;
         bcopy((char *)ranges, (char *)buf, num*sizeof(int));
     }
@@ -645,22 +648,24 @@ fix_ranges(int *ranges, int num, int dir)
         getInt(&dest,&bufPtr,dir);
         ranges[i] = dest;
     }
-    free((char *)buf);
 }
 
 void
 decode_evolver_info(struct evolution_info *info, int dir)
 {
+    std::vector<unsigned char> evolution_info_buff;
     unsigned char *buf;
     unsigned char *bufPtr;
     int i;
 
     if (dir==1) {
-        buf = (unsigned char *)malloc(EVOLVER_INFO_SIZE);
+        evolution_info_buff.resize(EVOLVER_INFO_SIZE);
+        buf = &evolution_info_buff[0];
         bufPtr = buf;
         bcopy((char *)info,(char *)buf,EVOLVER_INFO_SIZE);
     }  else {
-        buf = (unsigned char *)malloc(sizeof(struct evolution_info));
+        evolution_info_buff.resize(sizeof(evolution_info));
+        buf = &evolution_info_buff[0];
         bufPtr = buf;
         bcopy((char *)info,(char *)buf,sizeof(struct evolution_info));
     }
@@ -697,23 +702,24 @@ decode_evolver_info(struct evolution_info *info, int dir)
     if (dir==0) {
         bcopy((char *)buf,(char *)info,EVOLVER_INFO_SIZE);
     }
-
-    free(buf);
 }
 
 void
 decode_orbits_info(struct orbits_info *info, int dir)
 {
+    std::vector<unsigned char> orbits_info_buff;
     unsigned char *buf;
     unsigned char *bufPtr;
     int i;
 
     if (dir==1) {
-        buf = (unsigned char *)malloc(ORBITS_INFO_SIZE);
+        orbits_info_buff.resize(ORBITS_INFO_SIZE);
+        buf = &orbits_info_buff[0];
         bufPtr = buf;
         bcopy((char *)info,(char *)buf,ORBITS_INFO_SIZE);
     }  else {
-        buf = (unsigned char *)malloc(sizeof(struct orbits_info));
+        orbits_info_buff.resize(sizeof(struct orbits_info));
+        buf = &orbits_info_buff[0];
         bufPtr = buf;
         bcopy((char *)info,(char *)buf,sizeof(struct orbits_info));
     }
@@ -739,7 +745,4 @@ decode_orbits_info(struct orbits_info *info, int dir)
     if (dir==0) {
         bcopy((char *)buf,(char *)info,ORBITS_INFO_SIZE);
     }
-
-    free(buf);
 }
-
