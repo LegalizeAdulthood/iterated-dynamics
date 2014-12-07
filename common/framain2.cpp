@@ -1007,10 +1007,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             break;
         if (fractype == CELLULAR)
         {
-            if (nxtscreenflag)
-                nxtscreenflag = false;  /* toggle flag to stop generation */
-            else
-                nxtscreenflag = true;  /* toggle flag to generate next screen */
+            nxtscreenflag = !nxtscreenflag;
             calc_status = CALCSTAT_RESUMABLE;
             *kbdmore = 0;
         }
