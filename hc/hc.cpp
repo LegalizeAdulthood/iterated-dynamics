@@ -8,6 +8,8 @@
  */
 #include <algorithm>
 #include <cstdarg>
+#include <string>
+#include <vector>
 
 #include <assert.h>
 #include <ctype.h>
@@ -1097,7 +1099,7 @@ int create_table(void)
     int    len;
     int    lnum;
     int    count;
-    char  *title[MAX_TABLE_SIZE] = { nullptr };
+    std::vector<std::string> title;
     char  *table_start;
 
     ptr = strchr(cmd, '=');
@@ -1149,7 +1151,7 @@ int create_table(void)
                 fatal(0,"Table is too large.");
             len = parse_link();
             curr = table_start;   /* reset to the start... */
-            title[count] = dupstr(curr+3*sizeof(int)+1, len+1);
+            title.push_back(std::string(curr+3*sizeof(int)+1, len+1));
             if (len >= width)
             {
                 warn(1,"Link is too long; truncating.");
@@ -1216,16 +1218,13 @@ int create_table(void)
             if (first_link+lnum >= num_link)
                 break;
 
-            assert(title[lnum]);
-            len = (int) strlen(title[lnum]);
+            len = title[lnum].length();
             *curr++ = CMD_LINK;
             setint(curr,first_link+lnum);
             curr += 3*sizeof(int);
-            memcpy(curr, title[lnum], len);
+            memcpy(curr, title[lnum].c_str(), len);
             curr += len;
             *curr++ = CMD_LINK;
-
-            free(title[lnum]);
 
             if (c < cols-1)
                 put_spaces(width-len);
