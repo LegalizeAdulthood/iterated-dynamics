@@ -25,6 +25,7 @@ int disk16bit = 0;         /* storing 16 bit values for continuous potential */
 static int timetodisplay;
 static FILE *fp = nullptr;
 int disktarga;
+bool g_disk_flag = false;
 
 #define BLOCKLEN 2048   /* must be a power of 2, must match next */
 #define BLOCKSHIFT 11   /* must match above */
@@ -232,7 +233,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     }
     memorysize >>= pixelshift;
     memorysize >>= BLOCKSHIFT;
-    g_disk_flag = 1;
+    g_disk_flag = true;
     rowsize = (unsigned int) newrowsize;
     colsize = (unsigned int) newcolsize;
 
@@ -332,7 +333,8 @@ void enddisk()
         free((void *)membuf);
         membuf = nullptr;
     }
-    g_disk_flag = rowsize = disk16bit = 0;
+    g_disk_flag = false;
+    rowsize = disk16bit = 0;
 }
 
 int readdisk(int col, int row)

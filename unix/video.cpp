@@ -27,7 +27,6 @@ void (*dotwrite)(int, int, int);
 int (*dotread)(int, int);   /* read-a-dot routine */
 void (*linewrite)(int y, int x, int lastx, BYTE *pixels);        /* write-a-line routine */
 void (*lineread)(int y, int x, int lastx, BYTE *pixels);         /* read-a-line routine */
-int g_disk_flag = 0;        /* disk video active flag */
 
 int videoflag = 0;      /* special "your-own-video" flag */
 

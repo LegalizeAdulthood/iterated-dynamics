@@ -120,7 +120,6 @@ int g_color_medium = 0;     /* nearest to medbright grey in palette
 int g_dac_learn = 0;
 int dacnorm = 0;
 int g_dac_count = 0;
-int g_disk_flag = 0;
 int fake_lut = 0;
 int fm_attack = 0;
 int fm_decay = 0;
