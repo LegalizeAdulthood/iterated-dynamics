@@ -62,9 +62,6 @@ union Arg {
     DComplex     d;
     struct MPC m;
     LComplex    l;
-    /*
-       _DHCMPLX   dh;
-       _LHCMPLX   lh; */
 };
 
 struct ConstArg {
