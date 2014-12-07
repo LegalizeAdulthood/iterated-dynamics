@@ -23,7 +23,7 @@ int main_menu_switch(int*,int*,int*,char*,int);
 int evolver_menu_switch(int*,int*,int*,char*);
 int big_while_loop(int *kbdmore, char *stacked, int resumeflag);
 static void move_zoombox(int);
-bool fromtext_flag = false;             /* = true if we're in graphics mode */
+static bool fromtext_flag = false;      /* = true if we're in graphics mode */
 static int call_line3d(BYTE *pixels, int linelen);
 static  void note_zoom(void);
 static  void restore_zoom(void);
