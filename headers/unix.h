@@ -1,8 +1,8 @@
 /* UNIX.H - unix port declarations */
 
 
-#ifndef _UNIX_H
-#define _UNIX_H
+#ifndef UNIX_H
+#define UNIX_H
 
 #if !defined(O_BINARY)
 #define O_BINARY 0

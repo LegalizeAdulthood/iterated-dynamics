@@ -2,8 +2,8 @@
 
 /* Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer */
 
-#ifndef _BIG_H
-#define _BIG_H
+#ifndef BIG_H
+#define BIG_H
 
 /*************************************************************
  The following allows the programmer to customize routines.
@@ -290,4 +290,4 @@ extern _BNCMPLX *cplxmul_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y);
 
 #include "biginit.h" /* fractint only */
 
-#endif /* _BIG_H */
+#endif /* BIG_H */
