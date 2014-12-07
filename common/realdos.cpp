@@ -1417,11 +1417,9 @@ top:
     return i;
 }
 
-static int menu_checkkey(int curkey, int choice)
-{   /* choice is dummy used by other routines called by fullscreen_choice() */
-    int testkey;
-    testkey = choice; /* for warning only */
-    testkey = (curkey>='A' && curkey<='Z') ? curkey+('a'-'A') : curkey;
+static int menu_checkkey(int curkey, int /*choice*/)
+{
+    int testkey = (curkey>='A' && curkey<='Z') ? curkey+('a'-'A') : curkey;
 #ifdef XFRACT
     /* We use F2 for shift-@, annoyingly enough */
     if (testkey == FIK_F2) return (0-testkey);
@@ -1757,7 +1755,7 @@ void load_fractint_config(void)
     int linenum;
     long xdots, ydots;
     int i, j, keynum, ax, bx, cx, dx, dotmode, colors;
-    char *fields[11];
+    char *fields[11] = { nullptr };
     int textsafe2;
     char tempstring[150];
     int truecolorbits;
