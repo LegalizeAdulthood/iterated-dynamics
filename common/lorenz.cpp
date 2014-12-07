@@ -936,10 +936,9 @@ int lorenz3d4floatorbit(double *x, double *y, double *z)
     return (0);
 }
 
-int henonfloatorbit(double *x, double *y, double *z)
+int henonfloatorbit(double *x, double *y, double */*z*/)
 {
     double newx,newy;
-    *z = *x; /* for warning only */
     newx  = 1 + *y - a*(*x)*(*x);
     newy  = b*(*x);
     *x = newx;
@@ -947,10 +946,9 @@ int henonfloatorbit(double *x, double *y, double *z)
     return (0);
 }
 
-int henonlongorbit(long *l_x, long *l_y, long *l_z)
+int henonlongorbit(long *l_x, long *l_y, long */*l_z*/)
 {
     long newx,newy;
-    *l_z = *l_x; /* for warning only */
     newx = multiply(*l_x,*l_x,bitshift);
     newx = multiply(newx,l_a,bitshift);
     newx  = fudge + *l_y - newx;
@@ -987,10 +985,9 @@ int pickoverfloatorbit(double *x, double *y, double *z)
     return (0);
 }
 /* page 149 "Science of Fractal Images" */
-int gingerbreadfloatorbit(double *x, double *y, double *z)
+int gingerbreadfloatorbit(double *x, double *y, double */*z*/)
 {
     double newx;
-    *z = *x; /* for warning only */
     newx = 1 - (*y) + fabs(*x);
     *y = *x;
     *x = newx;
@@ -1056,20 +1053,18 @@ int kamtoruslongorbit(long *r, long *s, long *z)
     return (0);
 }
 
-int hopalong2dfloatorbit(double *x, double *y, double *z)
+int hopalong2dfloatorbit(double *x, double *y, double */*z*/)
 {
     double tmp;
-    *z = *x; /* for warning only */
     tmp = *y - sign(*x)*sqrt(fabs(b*(*x)-c));
     *y = a - *x;
     *x = tmp;
     return (0);
 }
 
-int chip2dfloatorbit(double *x, double *y, double *z)
+int chip2dfloatorbit(double *x, double *y, double */*z*/)
 {
     double tmp;
-    *z = *x; /* for warning only */
     tmp = *y - sign(*x) * cos(sqr(log(fabs(b*(*x)-c))))
           * atan(sqr(log(fabs(c*(*x)-b))));
     *y = a - *x;
@@ -1077,10 +1072,9 @@ int chip2dfloatorbit(double *x, double *y, double *z)
     return (0);
 }
 
-int quadruptwo2dfloatorbit(double *x, double *y, double *z)
+int quadruptwo2dfloatorbit(double *x, double *y, double */*z*/)
 {
     double tmp;
-    *z = *x; /* for warning only */
     tmp = *y - sign(*x) * sin(log(fabs(b*(*x)-c)))
           * atan(sqr(log(fabs(c*(*x)-b))));
     *y = a - *x;
@@ -1088,32 +1082,27 @@ int quadruptwo2dfloatorbit(double *x, double *y, double *z)
     return (0);
 }
 
-int threeply2dfloatorbit(double *x, double *y, double *z)
+int threeply2dfloatorbit(double *x, double *y, double */*z*/)
 {
     double tmp;
-    *z = *x; /* for warning only */
     tmp = *y - sign(*x)*(fabs(sin(*x)*COSB+c-(*x)*SINABC));
     *y = a - *x;
     *x = tmp;
     return (0);
 }
 
-int martin2dfloatorbit(double *x, double *y, double *z)
+int martin2dfloatorbit(double *x, double *y, double */*z*/)
 {
     double tmp;
-    *z = *x;  /* for warning only */
     tmp = *y - sin(*x);
     *y = a - *x;
     *x = tmp;
     return (0);
 }
 
-int mandelcloudfloat(double *x, double *y, double *z)
+int mandelcloudfloat(double *x, double *y, double */*z*/)
 {
     double newx,newy,x2,y2;
-#ifndef XFRACT
-    newx = *z; /* for warning only */
-#endif
     x2 = (*x)*(*x);
     y2 = (*y)*(*y);
     if (x2+y2>2) return 1;
@@ -1124,13 +1113,10 @@ int mandelcloudfloat(double *x, double *y, double *z)
     return (0);
 }
 
-int dynamfloat(double *x, double *y, double *z)
+int dynamfloat(double *x, double *y, double */*z*/)
 {
     _CMPLX cp,tmp;
     double newx,newy;
-#ifndef XFRACT
-    newx = *z; /* for warning only */
-#endif
     cp.x = b* *x;
     cp.y = 0;
     CMPLXtrig0(cp, tmp);
