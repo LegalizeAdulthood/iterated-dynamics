@@ -686,7 +686,7 @@ inline long lsqr(long x)
 #define PER_PIXEL   (fractalspecific[fractype].per_pixel)
 #define ORBITCALC   (fractalspecific[fractype].orbitcalc)
 
-typedef  _LCMPLX LCMPLX;
+typedef  LComplex LCMPLX;
 
 /* 3D stuff - formerly in 3d.h */
 #define    CMAX    4   /* maximum column (4 x 4 matrix) */

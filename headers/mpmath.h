@@ -56,12 +56,12 @@ extern enum MATH_TYPE MathType;
 #define fSqrt14(x, z) fLog14(x, z); fShift(z, -1, z); fExp14(z, z)
 
 /* the following are declared 4 dimensional as an experiment */
-/* changeing declarations to DComplex and _LCMPLX restores the code */
+/* changeing declarations to DComplex and LComplex restores the code */
 /* to 2D */
 union Arg {
     DComplex     d;
     struct MPC m;
-    _LCMPLX    l;
+    LComplex    l;
     /*
        _DHCMPLX   dh;
        _LHCMPLX   lh; */

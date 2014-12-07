@@ -321,8 +321,8 @@ extern int paramnotused(int);
 
 extern void FloatPreCalcMagnet2(void);
 extern void cpower(DComplex *,int ,DComplex *);
-extern int lcpower(_LCMPLX *,int ,_LCMPLX *,int);
-extern int lcomplex_mult(_LCMPLX ,_LCMPLX ,_LCMPLX *,int);
+extern int lcpower(LComplex *,int ,LComplex *,int);
+extern int lcomplex_mult(LComplex ,LComplex ,LComplex *,int);
 extern int MPCNewtonFractal(void);
 extern int Barnsley1Fractal(void);
 extern int Barnsley1FPFractal(void);

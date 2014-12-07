@@ -36,7 +36,7 @@ struct Perspectivefp
 struct Perspective LeftEye, RightEye, *Per;
 struct Perspectivefp LeftEyefp, RightEyefp, *Perfp;
 
-_LCMPLX jbc;
+LComplex jbc;
 DComplex jbcfp;
 
 #ifndef XFRACT

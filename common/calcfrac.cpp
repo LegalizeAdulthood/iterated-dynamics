@@ -85,7 +85,7 @@ static char dif_lb[] = {
 static long autologmap(void);
 
 /* variables exported from this file */
-_LCMPLX linitorbit;
+LComplex linitorbit;
 long lmagnitud, llimit, llimit2, lclosenuff, l16triglim;
 DComplex init, tmp, old, g_new, saved;
 int color;
@@ -170,7 +170,7 @@ unsigned int tprefix[2][maxyblk][maxxblk]; /* common temp */
 int nxtscreenflag; /* for cellular next screen generation */
 int     attractors;                 /* number of finite attractors  */
 DComplex  attr[N_ATTR];       /* finite attractor vals (f.p)  */
-_LCMPLX lattr[N_ATTR];      /* finite attractor vals (int)  */
+LComplex lattr[N_ATTR];      /* finite attractor vals (int)  */
 int    attrperiod[N_ATTR];          /* period of the finite attractor */
 
 /***** vars for new btm *****/
@@ -1728,9 +1728,9 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
     int caught_a_cycle;
     long savedand;
     int savedincr;       /* for periodicity checking */
-    _LCMPLX lsaved;
+    LComplex lsaved;
     int i, attracted;
-    _LCMPLX lat;
+    LComplex lat;
     DComplex  at;
     DComplex deriv;
     long dem_color = -1;
@@ -2495,7 +2495,7 @@ static void decomposition(void)
     int temp = 0;
     int save_temp = 0;
     int i;
-    _LCMPLX lalt;
+    LComplex lalt;
     DComplex alt;
     coloriter = 0;
     if (integerfractal) /* the only case */

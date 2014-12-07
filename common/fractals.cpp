@@ -53,7 +53,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 
 #define NEWTONDEGREELIMIT  100
 
-_LCMPLX lcoefficient,lold,lnew,lparm, linit,ltmp,ltmp2,lparm2;
+LComplex lcoefficient,lold,lnew,lparm, linit,ltmp,ltmp2,lparm2;
 long ltempsqrx,ltempsqry;
 int maxcolor;
 int root, degree,basin;
@@ -82,7 +82,7 @@ int c_exp;
 /* These are local but I don't want to pass them as parameters */
 DComplex parm,parm2;
 DComplex *floatparm;
-_LCMPLX *longparm; /* used here and in jb.c */
+LComplex *longparm; /* used here and in jb.c */
 
 /* -------------------------------------------------------------------- */
 /*              These variables are external for speed's sake only      */
@@ -333,7 +333,7 @@ void cpower(DComplex *base, int exp, DComplex *result)
 /* long version */
 static long lxt, lyt, lt2;
 int
-lcpower(_LCMPLX *base, int exp, _LCMPLX *result, int bitshift)
+lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
 {
     if (exp<0) {
         overflow = lcpower(base,-exp,result,bitshift);
@@ -1311,7 +1311,7 @@ int
 LPopcornFractalFn(void)
 {
 #if !defined(XFRACT)
-    _LCMPLX ltmpx, ltmpy;
+    LComplex ltmpx, ltmpy;
 
     overflow = 0;
 
@@ -1764,7 +1764,7 @@ LongPhoenixPlusFractal(void)
 #if !defined(XFRACT)
     /* z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n) */
     int i;
-    _LCMPLX loldplus, lnewminus;
+    LComplex loldplus, lnewminus;
     loldplus = lold;
     ltmp = lold;
     for (i=1; i<degree; i++) { /* degree >= 2, degree=degree-1 in setup */
@@ -1806,7 +1806,7 @@ LongPhoenixMinusFractal(void)
 #if !defined(XFRACT)
     /* z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n) */
     int i;
-    _LCMPLX loldsqr, lnewminus;
+    LComplex loldsqr, lnewminus;
     LCMPLXmult(lold,lold,loldsqr);
     ltmp = lold;
     for (i=1; i<degree; i++) { /* degree >= 3, degree=degree-2 in setup */
@@ -1848,7 +1848,7 @@ LongPhoenixCplxPlusFractal(void)
 #if !defined(XFRACT)
     /* z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n) */
     int i;
-    _LCMPLX loldplus, lnewminus;
+    LComplex loldplus, lnewminus;
     loldplus = lold;
     ltmp = lold;
     for (i=1; i<degree; i++) { /* degree >= 2, degree=degree-1 in setup */
@@ -1894,7 +1894,7 @@ LongPhoenixCplxMinusFractal(void)
 #if !defined(XFRACT)
     /* z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n) */
     int i;
-    _LCMPLX loldsqr, lnewminus;
+    LComplex loldsqr, lnewminus;
     LCMPLXmult(lold,lold,loldsqr);
     ltmp = lold;
     for (i=1; i<degree; i++) { /* degree >= 3, degree=degree-2 in setup */
@@ -2020,7 +2020,7 @@ int
 TrigXTrigFractal(void)
 {
 #if !defined(XFRACT)
-    _LCMPLX ltmp2;
+    LComplex ltmp2;
     /* z = trig0(z)*trig1(z) */
     LCMPLXtrig0(lold,ltmp);
     LCMPLXtrig1(lold,ltmp2);
