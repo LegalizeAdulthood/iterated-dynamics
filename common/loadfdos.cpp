@@ -317,7 +317,6 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
     }
 #else
     g_init_mode = 0;
-    j = g_video_table[0].keynum;
     gotrealmode = 0;
 #endif
 
