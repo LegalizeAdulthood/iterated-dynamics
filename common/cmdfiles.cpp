@@ -91,7 +91,7 @@ int     init3d[20];             /* '3d=nn/nn/nn/...' values */
 int     checkcurdir;            /* flag to check current dir for files */
 int     initbatch;              /* 1 if batch run (no kbd)  */
 int     initsavetime;           /* autosave minutes         */
-_CMPLX  initorbit;              /* initial orbitvalue */
+DComplex  initorbit;              /* initial orbitvalue */
 char    useinitorbit;           /* flag for initorbit */
 int     g_init_mode;               /* initial video mode       */
 int     initcyclelimit;         /* initial cycle limit      */

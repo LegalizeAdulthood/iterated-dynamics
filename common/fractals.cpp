@@ -59,13 +59,13 @@ int maxcolor;
 int root, degree,basin;
 double floatmin,floatmax;
 double roverd, d1overd, threshold;
-_CMPLX tmp2;
-_CMPLX coefficient;
-_CMPLX  staticroots[16]; /* roots array for degree 16 or less */
-std::vector<_CMPLX> roots;
+DComplex tmp2;
+DComplex coefficient;
+DComplex  staticroots[16]; /* roots array for degree 16 or less */
+std::vector<DComplex> roots;
 std::vector<MPC> MPCroots;
 long FgHalf;
-_CMPLX pwr;
+DComplex pwr;
 int     bitshiftless1;                  /* bit shift less 1 */
 int overflow = 0;
 
@@ -80,8 +80,8 @@ int c_exp;
 
 
 /* These are local but I don't want to pass them as parameters */
-_CMPLX parm,parm2;
-_CMPLX *floatparm;
+DComplex parm,parm2;
+DComplex *floatparm;
 _LCMPLX *longparm; /* used here and in jb.c */
 
 /* -------------------------------------------------------------------- */
@@ -112,9 +112,9 @@ long lcosy, lsiny;
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
 */
-_CMPLX  T_Cm1;        /* 3 * (floatparm - 1)                */
-_CMPLX  T_Cm2;        /* 3 * (floatparm - 2)                */
-_CMPLX  T_Cm1Cm2;     /* (floatparm - 1) * (floatparm - 2) */
+DComplex  T_Cm1;        /* 3 * (floatparm - 1)                */
+DComplex  T_Cm2;        /* 3 * (floatparm - 2)                */
+DComplex  T_Cm1Cm2;     /* (floatparm - 1) * (floatparm - 2) */
 
 void FloatPreCalcMagnet2(void) /* precalculation for Magnet2 (M & J) for speed */
 {
@@ -290,7 +290,7 @@ static double xt, yt, t2;
 /* Raise complex number (base) to the (exp) power, storing the result
 ** in complex (result).
 */
-void cpower(_CMPLX *base, int exp, _CMPLX *result)
+void cpower(DComplex *base, int exp, DComplex *result)
 {
     if (exp<0) {
         cpower(base,-exp,result);
@@ -379,8 +379,8 @@ lcpower(_LCMPLX *base, int exp, _LCMPLX *result, int bitshift)
 }
 #endif
 
-int complex_div(_CMPLX arg1,_CMPLX arg2,_CMPLX *pz);
-int complex_mult(_CMPLX arg1,_CMPLX arg2,_CMPLX *pz);
+int complex_div(DComplex arg1,DComplex arg2,DComplex *pz);
+int complex_mult(DComplex arg1,DComplex arg2,DComplex *pz);
 
 /* Distance of complex z from unit circle */
 #define DIST1(z) (((z).x-1.0)*((z).x-1.0)+((z).y)*((z).y))
@@ -441,7 +441,7 @@ int NewtonFractal2(void)
 }
 
 int
-complex_mult(_CMPLX arg1,_CMPLX arg2,_CMPLX *pz)
+complex_mult(DComplex arg1,DComplex arg2,DComplex *pz)
 {
     pz->x = arg1.x*arg2.x - arg1.y*arg2.y;
     pz->y = arg1.x*arg2.y+arg1.y*arg2.x;
@@ -449,7 +449,7 @@ complex_mult(_CMPLX arg1,_CMPLX arg2,_CMPLX *pz)
 }
 
 int
-complex_div(_CMPLX numerator,_CMPLX denominator,_CMPLX *pout)
+complex_div(DComplex numerator,DComplex denominator,DComplex *pout)
 {
     double mod;
     if ((mod = modulus(denominator)) < FLT_MIN)
@@ -953,7 +953,7 @@ int
 longCmplxZpowerFractal(void)
 {
 #if !defined(XFRACT)
-    _CMPLX x, y;
+    DComplex x, y;
 
     x.x = (double)lold.x / fudge;
     x.y = (double)lold.y / fudge;
@@ -1264,8 +1264,8 @@ LPopcornFractal(void)
 int
 PopcornFractalFn(void)
 {
-    _CMPLX tmpx;
-    _CMPLX tmpy;
+    DComplex tmpx;
+    DComplex tmpy;
 
     /* tmpx contains the generalized value of the old real "x" equation */
     CMPLXtimesreal(parm2,old.y,tmp);  /* tmp = (C * old.y)         */
@@ -1670,9 +1670,9 @@ HalleyFractal(void)
     /*  a = parm.x = degree, relaxation coeff. = parm.y, epsilon = parm2.x  */
 
     int ihal;
-    _CMPLX XtoAlessOne, XtoA, XtoAplusOne; /* a-1, a, a+1 */
-    _CMPLX FX, F1prime, F2prime, Halnumer1, Halnumer2, Haldenom;
-    _CMPLX relax;
+    DComplex XtoAlessOne, XtoA, XtoAplusOne; /* a-1, a, a+1 */
+    DComplex FX, F1prime, F2prime, Halnumer1, Halnumer2, Haldenom;
+    DComplex relax;
 
     XtoAlessOne = old;
     for (ihal=2; ihal<degree; ihal++) {
@@ -1786,7 +1786,7 @@ PhoenixPlusFractal(void)
 {
     /* z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n) */
     int i;
-    _CMPLX oldplus, newminus;
+    DComplex oldplus, newminus;
     oldplus = old;
     tmp = old;
     for (i=1; i<degree; i++) { /* degree >= 2, degree=degree-1 in setup */
@@ -1828,7 +1828,7 @@ PhoenixMinusFractal(void)
 {
     /* z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n) */
     int i;
-    _CMPLX oldsqr, newminus;
+    DComplex oldsqr, newminus;
     FPUcplxmul(&old, &old, &oldsqr);
     tmp = old;
     for (i=1; i<degree; i++) { /* degree >= 3, degree=degree-2 in setup */
@@ -1872,7 +1872,7 @@ PhoenixCplxPlusFractal(void)
 {
     /* z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n) */
     int i;
-    _CMPLX oldplus, newminus;
+    DComplex oldplus, newminus;
     oldplus = old;
     tmp = old;
     for (i=1; i<degree; i++) { /* degree >= 2, degree=degree-1 in setup */
@@ -1918,7 +1918,7 @@ PhoenixCplxMinusFractal(void)
 {
     /* z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n) */
     int i;
-    _CMPLX oldsqr, newminus;
+    DComplex oldsqr, newminus;
     FPUcplxmul(&old, &old, &oldsqr);
     tmp = old;
     for (i=1; i<degree; i++) { /* degree >= 3, degree=degree-2 in setup */
@@ -2170,7 +2170,7 @@ SqrTrigfpFractal(void)
 int
 Magnet1Fractal(void)    /*    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2    */
 {   /*  In "Beauty of Fractals", code by Kev Allen. */
-    _CMPLX top, bot, tmp;
+    DComplex top, bot, tmp;
     double div;
 
     top.x = tempsqrx - tempsqry + floatparm->x - 1; /* top = Z**2+C-1 */
@@ -2196,7 +2196,7 @@ int
 Magnet2Fractal(void)  /* Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)  ) /      */
 /*       (3Z**2 + 3(C-2)Z + (C-1)(C-2)+1) )**2  */
 {   /*   In "Beauty of Fractals", code by Kev Allen.  */
-    _CMPLX top, bot, tmp;
+    DComplex top, bot, tmp;
     double div;
 
     top.x = old.x * (tempsqrx-tempsqry-tempsqry-tempsqry + T_Cm1.x)
@@ -2416,7 +2416,7 @@ CirclelongFractal()
 
 /* this code translated to asm - lives in newton.asm */
 /* transform points with reciprocal function */
-void invertz2(_CMPLX *z)
+void invertz2(DComplex *z)
 {
     z->x = dxpixel();
     z->y = dypixel();
@@ -3145,7 +3145,7 @@ VLfpFractal(void) /* Beauty of Fractals pp. 125 - 127 */
 int
 EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
 {
-    _CMPLX oldtest, newtest, testsqr;
+    DComplex oldtest, newtest, testsqr;
     double testsize = 0.0;
     long testiter = 0;
 
@@ -3277,7 +3277,7 @@ int
 MandelbrotMix4fpFractal(void) /* from formula by Jim Muth */
 {
     /* z=k*((a*(z^b))+(d*(z^f)))+c, */
-    _CMPLX z_b, z_f;
+    DComplex z_b, z_f;
     CMPLXpwr(old,B,z_b);     /* (z^b)     */
     CMPLXpwr(old,F,z_f);     /* (z^f)     */
     g_new.x = K.x*A.x*z_b.x + K.x*D.x*z_f.x + C.x;

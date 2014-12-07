@@ -56,10 +56,10 @@ extern enum MATH_TYPE MathType;
 #define fSqrt14(x, z) fLog14(x, z); fShift(z, -1, z); fExp14(z, z)
 
 /* the following are declared 4 dimensional as an experiment */
-/* changeing declarations to _CMPLX and _LCMPLX restores the code */
+/* changeing declarations to DComplex and _LCMPLX restores the code */
 /* to 2D */
 union Arg {
-    _CMPLX     d;
+    DComplex     d;
     struct MPC m;
     _LCMPLX    l;
     /*
@@ -169,7 +169,7 @@ if(denom==0L) overflow=1; else {(out).x = divide((arg).x,denom,bitshift);\
          dStkMul(); Arg1++; Arg2++; (out) = Arg2->d
 #define CMPLXmult(arg1,arg2,out)  \
         {\
-           _CMPLX TmP;\
+           DComplex TmP;\
            TmP.x = (arg1).x*(arg2).x - (arg1).y*(arg2).y;\
            TmP.y = (arg1).x*(arg2).y + (arg1).y*(arg2).x;\
            (out) = TmP;\

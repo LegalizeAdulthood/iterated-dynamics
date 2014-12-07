@@ -24,7 +24,6 @@ struct LComplex {
     long x,y;
 };
 
-typedef struct  DComplex         _CMPLX;
 typedef struct  LDComplex        _LDCMPLX;
 typedef struct  LComplex         _LCMPLX;
 typedef struct  DHyperComplex    _HCMPLX;

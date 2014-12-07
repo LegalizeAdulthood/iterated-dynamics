@@ -78,7 +78,7 @@ void HComplexTrig0(_HCMPLX *h, _HCMPLX *out)
        complex valued function of a complex variable can easily
        be generalized to hypercomplex numbers */
 
-    _CMPLX a,b, resulta,resultb;
+    DComplex a,b, resulta,resultb;
 
     /* convert to duplex form */
     a.x = h->x - h->t;

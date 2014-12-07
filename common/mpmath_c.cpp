@@ -132,15 +132,15 @@ int MPCcmp(struct MPC x, struct MPC y) {
         return (0);
 }
 
-_CMPLX MPC2cmplx(struct MPC x) {
-    _CMPLX z;
+DComplex MPC2cmplx(struct MPC x) {
+    DComplex z;
 
     z.x = *pMP2d(x.x);
     z.y = *pMP2d(x.y);
     return (z);
 }
 
-struct MPC cmplx2MPC(_CMPLX z) {
+struct MPC cmplx2MPC(DComplex z) {
     struct MPC x;
 
     x.x = *pd2MP(z.x);
@@ -180,11 +180,11 @@ void setMPfunctions(void) {
 }
 #endif /* XFRACT */
 
-_CMPLX ComplexPower(_CMPLX xx, _CMPLX yy)
+DComplex ComplexPower(DComplex xx, DComplex yy)
 {
-    _CMPLX z;
-    _CMPLX cLog;
-    _CMPLX t;
+    DComplex z;
+    DComplex cLog;
+    DComplex t;
     double siny;
     double cosy;
 
@@ -222,9 +222,9 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy)
 #define Sqrtz(z,rz) (*(rz) = ComplexSqrtFloat((z).x, (z).y))
 
 /* rz=Arcsin(z)=-i*Log{i*z+sqrt(1-z*z)} */
-void Arcsinz(_CMPLX z,_CMPLX *rz)
+void Arcsinz(DComplex z,DComplex *rz)
 {
-    _CMPLX tempz1,tempz2;
+    DComplex tempz1,tempz2;
 
     FPUcplxmul(&z, &z, &tempz1);
     tempz1.x = 1 - tempz1.x;
@@ -242,9 +242,9 @@ void Arcsinz(_CMPLX z,_CMPLX *rz)
 
 
 /* rz=Arccos(z)=-i*Log{z+sqrt(z*z-1)} */
-void Arccosz(_CMPLX z,_CMPLX *rz)
+void Arccosz(DComplex z,DComplex *rz)
 {
-    _CMPLX temp;
+    DComplex temp;
 
     FPUcplxmul(&z, &z, &temp);
     temp.x -= 1;                                 /* temp = temp - 1 */
@@ -258,9 +258,9 @@ void Arccosz(_CMPLX z,_CMPLX *rz)
     rz->y = -temp.x;              /* rz = (-i)*tempz1 */
 }   /* end. Arccosz */
 
-void Arcsinhz(_CMPLX z,_CMPLX *rz)
+void Arcsinhz(DComplex z,DComplex *rz)
 {
-    _CMPLX temp;
+    DComplex temp;
 
     FPUcplxmul(&z, &z, &temp);
     temp.x += 1;                                 /* temp = temp + 1 */
@@ -271,9 +271,9 @@ void Arcsinhz(_CMPLX z,_CMPLX *rz)
 }  /* end. Arcsinhz */
 
 /* rz=Arccosh(z)=Log(z+sqrt(z*z-1)} */
-void Arccoshz(_CMPLX z,_CMPLX *rz)
+void Arccoshz(DComplex z,DComplex *rz)
 {
-    _CMPLX tempz;
+    DComplex tempz;
     FPUcplxmul(&z, &z, &tempz);
     tempz.x -= 1;                              /* tempz = tempz - 1 */
     Sqrtz(tempz, &tempz);
@@ -283,9 +283,9 @@ void Arccoshz(_CMPLX z,_CMPLX *rz)
 }   /* end. Arccoshz */
 
 /* rz=Arctanh(z)=1/2*Log{(1+z)/(1-z)} */
-void Arctanhz(_CMPLX z,_CMPLX *rz)
+void Arctanhz(DComplex z,DComplex *rz)
 {
-    _CMPLX temp0,temp1,temp2;
+    DComplex temp0,temp1,temp2;
 
     if (z.x == 0.0) {
         rz->x = 0;
@@ -316,9 +316,9 @@ void Arctanhz(_CMPLX z,_CMPLX *rz)
 }   /* end. Arctanhz */
 
 /* rz=Arctan(z)=i/2*Log{(1-i*z)/(1+i*z)} */
-void Arctanz(_CMPLX z,_CMPLX *rz)
+void Arctanz(DComplex z,DComplex *rz)
 {
-    _CMPLX temp0,temp1,temp2,temp3;
+    DComplex temp0,temp1,temp2,temp3;
     if (z.x == 0.0 && z.y == 0.0)
         rz->x = rz->y = 0;
     else if (z.x != 0.0 && z.y == 0.0) {
@@ -418,9 +418,9 @@ LCMPLX ComplexSqrtLong(long x, long y)
     return result;
 }
 
-_CMPLX ComplexSqrtFloat(double x, double y)
+DComplex ComplexSqrtFloat(double x, double y)
 {
-    _CMPLX  result;
+    DComplex  result;
 
     if (x == 0.0 && y == 0.0)
     {
@@ -581,8 +581,8 @@ long ExpFloat14(long xx) {
 }
 
 double TwoPi;
-_CMPLX temp, BaseLog;
-_CMPLX cdegree = { 3.0, 0.0 }, croot   = { 1.0, 0.0 };
+DComplex temp, BaseLog;
+DComplex cdegree = { 3.0, 0.0 }, croot   = { 1.0, 0.0 };
 
 int ComplexNewtonSetup(void) {
     threshold = .001;
@@ -600,7 +600,7 @@ int ComplexNewtonSetup(void) {
 }
 
 int ComplexNewton(void) {
-    _CMPLX cd1;
+    DComplex cd1;
 
     /* new = ((cdegree-1) * old**cdegree) + croot
              ----------------------------------
@@ -633,7 +633,7 @@ int ComplexNewton(void) {
 
 int ComplexBasin(void)
 {
-    _CMPLX cd1;
+    DComplex cd1;
 
     /* new = ((cdegree-1) * old**cdegree) + croot
              ----------------------------------

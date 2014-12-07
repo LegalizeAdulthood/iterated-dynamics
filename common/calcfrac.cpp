@@ -87,7 +87,7 @@ static long autologmap(void);
 /* variables exported from this file */
 _LCMPLX linitorbit;
 long lmagnitud, llimit, llimit2, lclosenuff, l16triglim;
-_CMPLX init, tmp, old, g_new, saved;
+DComplex init, tmp, old, g_new, saved;
 int color;
 long coloriter, oldcoloriter, realcoloriter;
 int row, col, passes;
@@ -169,7 +169,7 @@ unsigned int tprefix[2][maxyblk][maxxblk]; /* common temp */
 
 int nxtscreenflag; /* for cellular next screen generation */
 int     attractors;                 /* number of finite attractors  */
-_CMPLX  attr[N_ATTR];       /* finite attractor vals (f.p)  */
+DComplex  attr[N_ATTR];       /* finite attractor vals (f.p)  */
 _LCMPLX lattr[N_ATTR];      /* finite attractor vals (int)  */
 int    attrperiod[N_ATTR];          /* period of the finite attractor */
 
@@ -1711,7 +1711,7 @@ int calcmandfp(void)
 int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set */
 {
 #ifdef NUMSAVED
-    _CMPLX savedz[NUMSAVED];
+    DComplex savedz[NUMSAVED];
     long caught[NUMSAVED];
     long changed[NUMSAVED];
     int zctr = 0;
@@ -1731,13 +1731,13 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
     _LCMPLX lsaved;
     int i, attracted;
     _LCMPLX lat;
-    _CMPLX  at;
-    _CMPLX deriv;
+    DComplex  at;
+    DComplex deriv;
     long dem_color = -1;
-    _CMPLX dem_new;
+    DComplex dem_new;
     int check_freq;
     double totaldist = 0.0;
-    _CMPLX lastz;
+    DComplex lastz;
 
     lcloseprox = (long)(closeprox*fudge);
     savemaxit = maxit;
@@ -2496,7 +2496,7 @@ static void decomposition(void)
     int save_temp = 0;
     int i;
     _LCMPLX lalt;
-    _CMPLX alt;
+    DComplex alt;
     coloriter = 0;
     if (integerfractal) /* the only case */
     {

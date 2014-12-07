@@ -44,11 +44,11 @@ extern long (*calcmandfpasm)(void);
 
 /*  fpu087 -- assembler file prototypes */
 
-extern void FPUcplxmul(_CMPLX *, _CMPLX *, _CMPLX *);
-extern void FPUcplxdiv(_CMPLX *, _CMPLX *, _CMPLX *);
+extern void FPUcplxmul(DComplex *, DComplex *, DComplex *);
+extern void FPUcplxdiv(DComplex *, DComplex *, DComplex *);
 extern void FPUsincos(double *, double *, double *);
 extern void FPUsinhcosh(double *, double *, double *);
-extern void FPUcplxlog(_CMPLX *, _CMPLX *);
+extern void FPUcplxlog(DComplex *, DComplex *);
 extern void SinCos086(long , long *, long *);
 extern void SinhCosh086(long , long *, long *);
 extern long r16Mul(long , long);
@@ -63,7 +63,7 @@ extern long RegSftFloat(long , int);
 
 /*  fpu387 -- assembler file prototypes */
 
-extern void FPUcplxexp387(_CMPLX *, _CMPLX *);
+extern void FPUcplxexp387(DComplex *, DComplex *);
 
 /*  fracsuba -- assembler file prototypes */
 
@@ -121,7 +121,7 @@ extern struct MP * fg2MP(long , int);  /* Convert fudged to type MP */
 /*  newton -- assembler file prototypes */
 
 extern int NewtonFractal2(void);
-extern void invertz2(_CMPLX *);
+extern void invertz2(DComplex *);
 
 /*  tplus_a -- assembler file prototypes */
 
@@ -320,7 +320,7 @@ extern int paramnotused(int);
 /*  fractals -- C file prototypes */
 
 extern void FloatPreCalcMagnet2(void);
-extern void cpower(_CMPLX *,int ,_CMPLX *);
+extern void cpower(DComplex *,int ,DComplex *);
 extern int lcpower(_LCMPLX *,int ,_LCMPLX *,int);
 extern int lcomplex_mult(_LCMPLX ,_LCMPLX ,_LCMPLX *,int);
 extern int MPCNewtonFractal(void);
@@ -584,11 +584,11 @@ extern int Std4dfpFractal(void);
 
 extern void Jiim(int);
 extern LCMPLX PopLong(void);
-extern _CMPLX PopFloat(void);
+extern DComplex PopFloat(void);
 extern LCMPLX DeQueueLong(void);
-extern _CMPLX DeQueueFloat(void);
+extern DComplex DeQueueFloat(void);
 extern LCMPLX ComplexSqrtLong(long ,  long);
-extern _CMPLX ComplexSqrtFloat(double, double);
+extern DComplex ComplexSqrtFloat(double, double);
 extern int    Init_Queue(unsigned long);
 extern void   Free_Queue(void);
 extern void   ClearQueue(void);
@@ -730,10 +730,10 @@ extern struct MPC MPCadd(struct MPC ,struct MPC);
 extern struct MPC MPCsub(struct MPC ,struct MPC);
 extern struct MPC MPCpow(struct MPC ,int);
 extern int MPCcmp(struct MPC ,struct MPC);
-extern _CMPLX MPC2cmplx(struct MPC);
-extern struct MPC cmplx2MPC(_CMPLX);
+extern DComplex MPC2cmplx(struct MPC);
+extern struct MPC cmplx2MPC(DComplex);
 extern void setMPfunctions(void);
-extern _CMPLX ComplexPower(_CMPLX ,_CMPLX);
+extern DComplex ComplexPower(DComplex ,DComplex);
 extern void SetupLogTable(void);
 extern long logtablecalc(long);
 extern long ExpFloat14(long);
@@ -741,12 +741,12 @@ extern int ComplexNewtonSetup(void);
 extern int ComplexNewton(void);
 extern int ComplexBasin(void);
 extern int GausianNumber(int ,int);
-extern void Arcsinz(_CMPLX z, _CMPLX *rz);
-extern void Arccosz(_CMPLX z, _CMPLX *rz);
-extern void Arcsinhz(_CMPLX z, _CMPLX *rz);
-extern void Arccoshz(_CMPLX z, _CMPLX *rz);
-extern void Arctanhz(_CMPLX z, _CMPLX *rz);
-extern void Arctanz(_CMPLX z, _CMPLX *rz);
+extern void Arcsinz(DComplex z, DComplex *rz);
+extern void Arccosz(DComplex z, DComplex *rz);
+extern void Arcsinhz(DComplex z, DComplex *rz);
+extern void Arccoshz(DComplex z, DComplex *rz);
+extern void Arctanhz(DComplex z, DComplex *rz);
+extern void Arctanz(DComplex z, DComplex *rz);
 
 /*  msccos -- C file prototypes */
 
@@ -872,7 +872,7 @@ extern void lStkAND(void);
 extern void dStkLog(void);
 extern void mStkLog(void);
 extern void lStkLog(void);
-extern void FPUcplxexp(_CMPLX *,_CMPLX *);
+extern void FPUcplxexp(DComplex *,DComplex *);
 extern void dStkExp(void);
 extern void mStkExp(void);
 extern void lStkExp(void);
@@ -1090,8 +1090,8 @@ extern void dispbox(void);
 
 /*  fractalb.c -- C file prototypes */
 
-extern _CMPLX cmplxbntofloat(_BNCMPLX *);
-extern _CMPLX cmplxbftofloat(_BFCMPLX *);
+extern DComplex cmplxbntofloat(_BNCMPLX *);
+extern DComplex cmplxbftofloat(_BFCMPLX *);
 extern void comparevalues(char *,LDBL,bn_t);
 extern void comparevaluesbf(char *,LDBL,bf_t);
 extern void show_var_bf(char *s, bf_t n);

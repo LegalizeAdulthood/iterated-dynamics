@@ -142,7 +142,7 @@ struct token_st {
     char token_str[80];
     int token_type;
     int token_id;
-    _CMPLX token_const;
+    DComplex token_const;
 };
 
 
@@ -159,7 +159,7 @@ struct var_list_st {
 } * var_list;
 
 struct const_list_st {
-    _CMPLX complex_const;
+    DComplex complex_const;
     struct const_list_st * next_item;
 } * complx_list, * real_list;
 
@@ -1615,7 +1615,7 @@ void lStkLog(void) {
 
 void (*StkLog)(void) = dStkLog;
 
-void FPUcplxexp(_CMPLX *x, _CMPLX *z)
+void FPUcplxexp(DComplex *x, DComplex *z)
 {
     if (fpu >= 387)
         FPUcplxexp387(x, z);
@@ -1654,7 +1654,7 @@ void dStkPwr(void) {
 
 #if !defined(XFRACT)
 void mStkPwr(void) {
-    _CMPLX x, y;
+    DComplex x, y;
 
     x = MPC2cmplx(Arg2->m);
     y = MPC2cmplx(Arg1->m);
@@ -1665,7 +1665,7 @@ void mStkPwr(void) {
 }
 
 void lStkPwr(void) {
-    _CMPLX x, y;
+    DComplex x, y;
 
     x.x = (double)Arg2->l.x / fg;
     x.y = (double)Arg2->l.y / fg;
@@ -1797,7 +1797,7 @@ static int isconst_pair(char *Str) {
 }
 
 struct ConstArg *isconst(char *Str, int Len) {
-    _CMPLX z;
+    DComplex z;
     unsigned n;
     /* next line enforces variable vs constant naming convention */
     for (n = 0; n < vsp; n++) {

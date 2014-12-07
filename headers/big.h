@@ -279,8 +279,8 @@ extern bf_t div_a_bf_int(bf_t r, U16 u);
 
 /****************************/
 /* bigcmplx.c */
-extern _CMPLX cmplxbntofloat(_BNCMPLX *s);
-extern _CMPLX cmplxbftofloat(_BFCMPLX *s);
+extern DComplex cmplxbntofloat(_BNCMPLX *s);
+extern DComplex cmplxbftofloat(_BFCMPLX *s);
 extern _BFCMPLX *cmplxlog_bf(_BFCMPLX *t, _BFCMPLX *s);
 extern _BFCMPLX *cplxmul_bf(_BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y);
 extern _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy);

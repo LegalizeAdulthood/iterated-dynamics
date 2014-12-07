@@ -853,17 +853,17 @@ JuliaZpowerbfFractal()
     return bigfltbailout();
 }
 
-_CMPLX cmplxbntofloat(_BNCMPLX *s)
+DComplex cmplxbntofloat(_BNCMPLX *s)
 {
-    _CMPLX t;
+    DComplex t;
     t.x = (double)bntofloat(s->x);
     t.y = (double)bntofloat(s->y);
     return (t);
 }
 
-_CMPLX cmplxbftofloat(_BFCMPLX *s)
+DComplex cmplxbftofloat(_BFCMPLX *s)
 {
-    _CMPLX t;
+    DComplex t;
     t.x = (double)bftofloat(s->x);
     t.y = (double)bftofloat(s->y);
     return (t);

@@ -480,7 +480,7 @@ int orbit3dfloatsetup()
     }
     else if (fractype == INVERSEJULIAFP)
     {
-        _CMPLX Sqrt;
+        DComplex Sqrt;
 
         Cx = param[0];
         Cy = param[1];
@@ -1115,7 +1115,7 @@ int mandelcloudfloat(double *x, double *y, double * /*z*/)
 
 int dynamfloat(double *x, double *y, double * /*z*/)
 {
-    _CMPLX cp,tmp;
+    DComplex cp,tmp;
     double newx,newy;
     cp.x = b* *x;
     cp.y = 0;
