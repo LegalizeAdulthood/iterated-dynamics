@@ -1887,7 +1887,6 @@ void read_src(char *fname)
                             {
                                 if (in_para)
                                     *curr++ = '\n';  /* finish off current paragraph */
-                                state = S_Start;
                                 in_para = 0;
                                 formatting = 0;
                                 num_spaces = 0;
