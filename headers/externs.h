@@ -172,7 +172,7 @@ extern char                  FormName[];
 extern int                   fractype;
 extern const char *          fract_dir1;
 extern const char *          fract_dir2;
-extern char                  fromtext_flag;
+extern bool                  fromtext_flag;
 extern long                  fudge;
 extern int                   functionpreloaded;
 extern double                f_at_rad;

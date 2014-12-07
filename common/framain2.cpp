@@ -23,7 +23,7 @@ int main_menu_switch(int*,int*,int*,char*,int);
 int evolver_menu_switch(int*,int*,int*,char*);
 int big_while_loop(int *kbdmore, char *stacked, int resumeflag);
 static void move_zoombox(int);
-char fromtext_flag = 0;         /* = 1 if we're in graphics mode */
+bool fromtext_flag = false;             /* = true if we're in graphics mode */
 static int call_line3d(BYTE *pixels, int linelen);
 static  void note_zoom(void);
 static  void restore_zoom(void);
@@ -588,7 +588,7 @@ resumeloop:                             /* return here on failed overlays */
                                  kbdchar == 'v' || kbdchar == 2 ||
                                  kbdchar == 5 || kbdchar == 6)
                         {
-                            fromtext_flag = 1;
+                            fromtext_flag = true;
                         }
                         else
                         {
@@ -832,8 +832,8 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
     case FIK_CTL_F:
         old_maxit = maxit;
         clear_zoombox();
-        if (fromtext_flag == 1)
-            fromtext_flag = 0;
+        if (fromtext_flag)
+            fromtext_flag = false;
         else
             driver_stack_screen();
         if (*kbdchar == 'x')
@@ -953,7 +953,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             }
             if (!fromtext_flag)
                 driver_stack_screen();
-            fromtext_flag = 0;
+            fromtext_flag = false;
             if ((err = get_fract_params(2)) >= 0)
             {
                 driver_unstack_screen();
@@ -1495,8 +1495,8 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
     case FIK_CTL_E:
     case FIK_SPACE:
         clear_zoombox();
-        if (fromtext_flag == 1)
-            fromtext_flag = 0;
+        if (fromtext_flag)
+            fromtext_flag = false;
         else
             driver_stack_screen();
         if (*kbdchar == 'x')
