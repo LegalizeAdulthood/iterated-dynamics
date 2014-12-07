@@ -1,6 +1,8 @@
 /*
  * intro screen (authors & credits)
  */
+#include <vector>
+
 #include <float.h>
 #include <time.h>
 
@@ -9,8 +11,6 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "helpcom.h"
-
-/* stuff from fractint */
 
 #ifdef XFRACT
 extern int slowdisplay;
@@ -26,16 +26,16 @@ void intro(void)
 #endif
     int       toprow, botrow, i, j, delaymax;
     char      oldchar;
-    int       authors[100];              /* this should be enough for awhile */
+    std::vector<int> authors;
     char credits[32768] = { 0 };
     char screen_text[32768];
     int       oldlookatmouse;
     int       oldhelpmode;
 
-    timer_start -= clock_ticks();                /* "time out" during help */
+    timer_start -= clock_ticks();       /* "time out" during help */
     oldlookatmouse = lookatmouse;
     oldhelpmode = helpmode;
-    lookatmouse = 0;                     /* de-activate full mouse checking */
+    lookatmouse = 0;                    /* de-activate full mouse checking */
 
     i = 32767 + read_help_topic(INTRO_AUTHORS, 0, 32767, screen_text);
     screen_text[i++] = '\0';
@@ -43,11 +43,11 @@ void intro(void)
     credits[i++] = '\0';
 
     j = 0;
-    authors[j] = 0;              /* find the start of each credit-line */
+    authors.push_back(0);               /* find the start of each credit-line */
     for (i = 0; credits[i] != 0; i++)
         if (credits[i] == 10)
-            authors[++j] = i+1;
-    authors[j+1] = i;
+            authors.push_back(i+1);
+    authors.push_back(i);
 
     helptitle();
 #define END_MAIN_AUTHOR 5
@@ -72,10 +72,10 @@ void intro(void)
     srand((unsigned int)clock_ticks());
     j = rand()%(j-(botrow-toprow)); /* first to use */
     i = j+botrow-toprow; /* last to use */
-    oldchar = credits[authors[i+1]];
-    credits[authors[i+1]] = 0;
-    driver_put_string(toprow,0,C_CONTRIB,credits+authors[j]);
-    credits[authors[i+1]] = oldchar;
+    oldchar = credits[authors.at(i+1)];
+    credits[authors.at(i+1)] = 0;
+    driver_put_string(toprow,0,C_CONTRIB,credits+authors.at(j));
+    credits[authors.at(i+1)] = oldchar;
     delaymax = 10;
     driver_hide_text_cursor();
     helpmode = HELPMENU;
@@ -96,13 +96,13 @@ void intro(void)
         delaymax = 15;
         driver_scroll_up(toprow, botrow);
         i++;
-        if (credits[authors[i]] == 0)
+        if (credits[authors.at(i)] == 0)
             i = 0;
-        oldchar = credits[authors[i+1]];
-        credits[authors[i+1]] = 0;
-        driver_put_string(botrow,0,C_CONTRIB,&credits[authors[i]]);
+        oldchar = credits[authors.at(i+1)];
+        credits[authors.at(i+1)] = 0;
+        driver_put_string(botrow,0,C_CONTRIB,&credits[authors.at(i)]);
         driver_set_attr(botrow,0,C_CONTRIB,80);
-        credits[authors[i+1]] = oldchar;
+        credits[authors.at(i+1)] = oldchar;
         driver_hide_text_cursor(); /* turn it off */
     }
 
