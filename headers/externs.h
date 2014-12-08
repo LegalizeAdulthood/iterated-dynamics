@@ -480,7 +480,7 @@ extern int                   symmetry;
 extern int                   syoffs;
 extern char                  s_makepar[];
 extern int                   tabmode;
-extern int                   taborhelp;
+extern bool                  taborhelp;
 extern int                   Targa_Out;
 extern int                   Targa_Overlay;
 extern char                  temp1[];

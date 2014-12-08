@@ -40,7 +40,7 @@ static void   adjust_to_limitsbf(double);
 static void   smallest_add_bf(bf_t);
 int    resume_len;               /* length of resume info */
 static int    resume_offset;            /* offset in resume info gets */
-int    taborhelp;    /* kludge for sound and tab or help key press */
+bool    taborhelp = false;    /* kludge for sound and tab or help key press */
 
 #define FUDGEFACTOR     29      /* fudge all values up by 2**this */
 #define FUDGEFACTOR2    24      /* (or maybe this)                */
@@ -1341,7 +1341,7 @@ void w_snd(int tone)
         if (snd_open())
             fprintf(snd_fp,"%-d\n",tone);
     }
-    taborhelp = 0;
+    taborhelp = false;
     if (!driver_key_pressed()) { /* driver_key_pressed calls driver_sound_off() if TAB or F1 pressed */
         /* must not then call driver_sound_off(), else indexes out of synch */
         /*   if (20 < tone && tone < 15000)  better limits? */
