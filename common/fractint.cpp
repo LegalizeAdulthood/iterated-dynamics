@@ -104,7 +104,7 @@ int maxhistory = 10;
 bool    comparegif = false;             /* compare two gif files flag */
 int     timedsave=0;                    /* when doing a timed save */
 int     resave_flag=0;                  /* tells encoder not to incr filename */
-int     started_resaves=0;              /* but incr on first resave */
+bool    started_resaves = false;        /* but incr on first resave */
 int     save_system;                    /* from and for save files */
 int     tabmode = 1;                    /* tab display enabled */
 

@@ -750,9 +750,11 @@ int calcfract(void)
     if (!resuming) /* free resume_info memory if any is hanging around */
     {
         end_resume();
-        if (resave_flag) {
+        if (resave_flag)
+        {
             updatesavename(savename); /* do the pending increment */
-            resave_flag = started_resaves = 0;
+            resave_flag = 0;
+            started_resaves = false;
         }
         calctime = 0;
     }

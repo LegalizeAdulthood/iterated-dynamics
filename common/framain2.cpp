@@ -1286,7 +1286,8 @@ do_3d_transform:
         if (resave_flag)
         {
             updatesavename(savename);      /* do the pending increment */
-            resave_flag = started_resaves = 0;
+            resave_flag = 0;
+            started_resaves = false;
         }
         showfile = -1;
         return RESTORESTART;
@@ -1661,7 +1662,8 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
         if (resave_flag)
         {
             updatesavename(savename);      /* do the pending increment */
-            resave_flag = started_resaves = 0;
+            resave_flag = 0;
+            started_resaves = false;
         }
         showfile = -1;
         return RESTORESTART;

@@ -113,7 +113,7 @@ restart:
         {
             if (resave_flag == 0)
                 goto restart;
-            if (started_resaves == 0)
+            if (!started_resaves)
             {   /* first save of a savetime set */
                 updatesavename(filename);
                 goto restart;
@@ -132,7 +132,7 @@ restart:
         strcat(tmpfile, "fractint.tmp");
     }
 
-    started_resaves = (resave_flag == 1) ? 1 : 0;
+    started_resaves = (resave_flag == 1);
     if (resave_flag == 2)        /* final save of savetime set? */
         resave_flag = 0;
 

@@ -323,7 +323,10 @@ int get_toggles()
 
     strcpy(savenameptr,uvalues[++k].uval.sval);
     if (strcmp(savename,prevsavename))
-        resave_flag = started_resaves = 0; /* forget pending increment */
+    {
+        resave_flag = 0;
+        started_resaves = false; /* forget pending increment */
+    }
     fract_overwrite = uvalues[++k].uval.ch.val != 0;
 
     soundflag = ((soundflag >> 3) << 3) | (uvalues[++k].uval.ch.val);
