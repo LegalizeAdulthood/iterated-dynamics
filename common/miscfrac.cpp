@@ -341,7 +341,7 @@ int plasma()
     if (param[3] < 0) param[3] = 0;  /* limit parameter values */
     if (param[3] > 1) param[3] = 1;
 
-    if ((!rflag) && param[2] == 1)
+    if (!rflag && param[2] == 1)
         --rseed;
     if (param[2] != 0 && param[2] != 1)
         rseed = (int)param[2];
@@ -381,7 +381,8 @@ int plasma()
         getpix  = (U16(*)(int,int))getcolor;
     }
     srand(rseed);
-    if (!rflag) ++rseed;
+    if (!rflag)
+        ++rseed;
 
     if (colors == 256)                   /* set the (256-color) palette */
         set_Plasma_palette();             /* skip this if < 256 colors */
@@ -528,7 +529,8 @@ int diffusion()
         border = 10;
 
     srand(rseed);
-    if (!rflag) ++rseed;
+    if (!rflag)
+        ++rseed;
 
     if (mode == 0) {
         xmax = xdots / 2 + border;  /* Initial box */
@@ -1496,7 +1498,7 @@ int cellular() {
     k_1 = (S16)(k - 1); /* Highest state value, k=3 has highest state value of 2 */
     rule_digits = (S16)((r * 2 + 1) * k_1 + 1); /* Number of digits in the rule */
 
-    if ((!rflag) && randparam == -1)
+    if (!rflag && randparam == -1)
         --rseed;
     if (randparam != 0 && randparam != -1) {
         n = param[0];
@@ -1519,7 +1521,8 @@ int cellular() {
     }
 
     srand(rseed);
-    if (!rflag) ++rseed;
+    if (!rflag)
+        ++rseed;
 
     /* generate rule table from parameter 1 */
 #if !defined(XFRACT)

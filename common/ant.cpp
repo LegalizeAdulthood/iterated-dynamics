@@ -450,13 +450,14 @@ ant(void)
         rule_len = 0;
 
     /* set random seed for reproducibility */
-    if ((!rflag) && param[5] == 1)
+    if (!rflag && param[5] == 1)
         --rseed;
     if (param[5] != 0 && param[5] != 1)
         rseed = (int)param[5];
 
     srand(rseed);
-    if (!rflag) ++rseed;
+    if (!rflag)
+        ++rseed;
 
     maxants = (int) param[2];
     if (maxants < 1)             /* if maxants == 0 maxants random */
