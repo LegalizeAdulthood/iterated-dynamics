@@ -862,7 +862,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             i = get_cmd_string();
         driver_unstack_screen();
         if (evolving && truecolor)
-            truecolor = 0; /* truecolor doesn't play well with the evolver */
+            truecolor = false;          /* truecolor doesn't play well with the evolver */
         if (maxit > old_maxit && inside >= 0 && calc_status == CALCSTAT_COMPLETED &&
                 curfractalspecific->calctype == StandardFractal && !LogFlag &&
                 !truecolor &&    /* recalc not yet implemented with truecolor */
@@ -1513,7 +1513,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             i = get_cmd_string();
         driver_unstack_screen();
         if (evolving && truecolor)
-            truecolor = 0; /* truecolor doesn't play well with the evolver */
+            truecolor = false;          /* truecolor doesn't play well with the evolver */
         if (i > 0) {              /* time to redraw? */
             param_history(0); /* save history */
             *kbdmore = 0;

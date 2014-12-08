@@ -111,7 +111,7 @@ int     save_release = 0;       /* release creating PAR file*/
 bool    dontreadcolor = false;  /* flag for reading color from GIF */
 double  math_tol[2]= {.05,.05}; /* For math transition */
 bool Targa_Out = false;                 /* 3D fullcolor flag */
-int truecolor = 0;              /* escape time truecolor flag */
+bool truecolor = false;                 /* escape time truecolor flag */
 int truemode = 0;               /* truecolor coloring scheme */
 char    colorfile[FILE_MAX_PATH] = { 0 };/* from last <l> <s> or colors=@filename */
 bool functionpreloaded = false; /* if function loaded for new bifs */
@@ -395,7 +395,7 @@ static void initvars_restart()          /* <ins> key init */
 
     major_method = breadth_first;        /* default inverse julia methods */
     minor_method = left_first;   /* default inverse julia methods */
-    truecolor = 0;              /* truecolor output flag */
+    truecolor = false;                  /* truecolor output flag */
     truemode = 0;               /* set to default color scheme */
 }
 
@@ -2814,7 +2814,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "truecolor") == 0) {     /* truecolor=? */
         if (yesnoval[0] < 0) goto badarg;
-        truecolor = yesnoval[0];
+        truecolor = yesnoval[0] != 0;
         return 3;
     }
 

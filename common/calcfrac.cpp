@@ -575,7 +575,7 @@ int calcfract(void)
             putcolor = puttruecolor_disk;
         }
         else
-            truecolor = 0;
+            truecolor = false;
     }
     if (!use_grid)
     {

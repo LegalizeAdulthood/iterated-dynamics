@@ -1391,7 +1391,7 @@ int startdisk1(char *File_Name2, FILE * Source, int overlay)
         /* ID field size = 0, No color map, Targa type 2 file */
         for (i = 0; i < 12; i++)
         {
-            if (i == 0 && truecolor != 0)
+            if (i == 0 && truecolor)
             {
                 set_upr_lwr();
                 fputc(4, fps); /* make room to write an extra number */
