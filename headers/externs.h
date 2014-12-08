@@ -591,7 +591,7 @@ extern double                zskew;
 extern double                zwidth;
 
 #if defined(XFRACT)
-extern int                   fake_lut;
+extern bool                  fake_lut;
 extern int                   XZoomWaiting;
 #else
 extern U16                   prefix[];

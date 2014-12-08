@@ -103,7 +103,7 @@ struct tagDriverX11 {
     int ipixtab[256];
     XPixel cmap_pixtab[256];    /* for faking a LUTs on non-LUT visuals */
     int cmap_pixtab_alloced;
-    int fake_lut;
+    bool fake_lut;
 
     int fastmode;               /* = 0; Don't draw pixels 1 at a time */
     int alarmon;                /* = 0; 1 if the refresh alarm is on */
@@ -414,21 +414,21 @@ select_visual(DriverX11 *di)
     case StaticColor:
         colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
         g_got_real_dac = false;
-        di->fake_lut = 0;
+        di->fake_lut = false;
         break;
 
     case GrayScale:
     case PseudoColor:
         colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
         g_got_real_dac = true;
-        di->fake_lut = 0;
+        di->fake_lut = false;
         break;
 
     case TrueColor:
     case DirectColor:
         colors = 256;
         g_got_real_dac = false;
-        di->fake_lut = 1;
+        di->fake_lut = true;
         break;
 
     default:
@@ -457,11 +457,14 @@ select_visual(DriverX11 *di)
 static void
 clearXwindow(DriverX11 *di)
 {
-    if (di->fake_lut) {
+    if (di->fake_lut)
+    {
         for (int j = 0; j < di->Ximage->height; j++)
             for (int i = 0; i < di->Ximage->width; i++)
                 XPutPixel(di->Ximage, i, j, di->cmap_pixtab[di->pixtab[0]]);
-    } else if (di->pixtab[0] != 0) {
+    }
+    else if (di->pixtab[0] != 0)
+    {
         /*
          * Initialize image to di->pixtab[0].
          */
@@ -1850,8 +1853,10 @@ x11_write_palette(Driver *drv)
     DIX11(drv);
     int i;
 
-    if (!g_got_real_dac) {
-        if (di->fake_lut) {
+    if (!g_got_real_dac)
+    {
+        if (di->fake_lut)
+        {
             /* !g_got_real_dac, fake_lut => truecolor, directcolor displays */
             static unsigned char last_dac[256][3];
             static int last_dac_inited = False;
@@ -1922,14 +1927,16 @@ static int
 x11_read_pixel(Driver *drv, int x, int y)
 {
     DIX11(drv);
-    if (di->fake_lut) {
+    if (di->fake_lut)
+    {
         int i;
         XPixel pixel = XGetPixel(di->Ximage, x, y);
         for (i = 0; i < 256; i++)
             if (di->cmap_pixtab[i] == pixel)
                 return i;
         return 0;
-    } else
+    }
+    else
         return di->ipixtab[XGetPixel(di->Ximage, x, y)];
 }
 

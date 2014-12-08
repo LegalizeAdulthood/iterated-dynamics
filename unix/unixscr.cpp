@@ -111,7 +111,8 @@ typedef unsigned long XPixel;
 
 static XPixel cmap_pixtab[256]; /* for faking a LUTs on non-LUT visuals */
 static int cmap_pixtab_alloced;
-static unsigned long do_fake_lut(int idx) {
+static unsigned long do_fake_lut(int idx)
+{
     return fake_lut ? cmap_pixtab[idx] : idx;
 }
 #define FAKE_LUT(idx_) do_fake_lut(idx_)
@@ -397,7 +398,7 @@ select_visual(void)
     case StaticColor:
         colors = 1 << Xdepth;
         g_got_real_dac = false;
-        fake_lut = 0;
+        fake_lut = false;
         g_is_true_color = false;
         break;
 
@@ -405,7 +406,7 @@ select_visual(void)
     case PseudoColor:
         colors = 1 << Xdepth;
         g_got_real_dac = true;
-        fake_lut = 0;
+        fake_lut = false;
         g_is_true_color = false;
         break;
 
@@ -413,7 +414,7 @@ select_visual(void)
     case DirectColor:
         colors = 256;
         g_got_real_dac = false;
-        fake_lut = 1;
+        fake_lut = true;
         g_is_true_color = false;
         break;
 
@@ -466,7 +467,7 @@ initUnixWindow()
     if (unixDisk) {
         int offx, offy;
         fastmode = 0;
-        fake_lut = 0;
+        fake_lut = false;
         g_is_true_color = false;
         g_got_real_dac = true;
         colors = 256;
@@ -639,12 +640,15 @@ static void
 clearXwindow()
 {
     int i;
-    if (fake_lut) {
+    if (fake_lut)
+    {
         int j;
         for (j = 0; j < Ximage->height; j++)
             for (i = 0; i < Ximage->width; i++)
                 XPutPixel(Ximage, i, j, cmap_pixtab[pixtab[0]]);
-    } else if (pixtab[0] != 0) {
+    }
+    else if (pixtab[0] != 0)
+    {
         /*
          * Initialize image to pixtab[0].
          */
@@ -1070,7 +1074,8 @@ int readvideo(int x, int y)
         fprintf(stderr,"Bad coord %d %d\n", x,y);
     }
 #endif
-    if (fake_lut) {
+    if (fake_lut)
+    {
         int i;
         XPixel pixel = XGetPixel(Ximage, x, y);
         for (i = 0; i < colors; i++)
@@ -1132,8 +1137,10 @@ int writevideopalette()
 {
     int i;
 
-    if (!g_got_real_dac) {
-        if (fake_lut) {
+    if (!g_got_real_dac)
+    {
+        if (fake_lut)
+        {
             /* !g_got_real_dac, fake_lut => truecolor, directcolor displays */
             static unsigned char last_dac[256][3];
             static int last_dac_inited = False;
@@ -1166,7 +1173,9 @@ int writevideopalette()
             }
             cmap_pixtab_alloced = True;
             last_dac_inited = True;
-        } else {
+        }
+        else
+        {
             /* !g_got_real_dac, !fake_lut => static color, static gray displays */
             assert(1);
         }
