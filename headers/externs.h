@@ -4,10 +4,10 @@
 #include <vector>
 
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
-extern int                   g_adapter;                         /* index into g_video_table[] */
-extern AlternateMath         alternatemath[];                   /* alternate math function pointers */
-extern int                   Ambient;                           /* Ambient= parameter value */
-extern int                   g_and_color;                       /* AND mask for iteration to get color index */
+extern int                   g_adapter;         /* index into g_video_table[] */
+extern AlternateMath         alternatemath[];   /* alternate math function pointers */
+extern int                   Ambient;           /* Ambient= parameter value */
+extern int                   g_and_color;       /* AND mask for iteration to get color index */
 extern struct MP             Ans;
 extern int                   Ap1deg;
 extern int                   AplusOne;
@@ -15,7 +15,7 @@ extern bool                  askvideo;
 extern float                 aspectdrift;
 extern int                   attractors;
 extern int                   attrperiod[];
-extern DComplex                attr[];
+extern DComplex              attr[];
 extern bool                  autobrowse;
 extern char                  autoname[];
 extern char                  autoshowdot;
@@ -68,9 +68,9 @@ extern long                  coloriter;
 extern bool                  colorpreloaded;
 extern int                   colors;
 extern int                   colorstate;
-extern int                   g_color_bright;                    /* brightest color in palette */
-extern int                   g_color_dark;                      /* darkest color in palette */
-extern int                   g_color_medium;                    /* nearest to medbright grey in palette */
+extern int                   g_color_bright;    /* brightest color in palette */
+extern int                   g_color_dark;      /* darkest color in palette */
+extern int                   g_color_medium;    /* nearest to medbright grey in palette */
 extern char                  CommandComment[4][MAXCMT];
 extern char                  CommandFile[FILE_MAX_PATH];
 extern char                  CommandName[ITEMNAMELEN + 1];
@@ -106,7 +106,7 @@ extern float                 depthfp;
 extern unsigned long         dif_counter;
 extern unsigned long         dif_limit;
 extern bool                  disk16bit;
-extern bool                  g_disk_flag;                       /* disk video active flag */
+extern bool                  g_disk_flag;       /* disk video active flag */
 extern bool                  disktarga;
 extern int                   display3d;
 extern long                  distest;
@@ -123,11 +123,11 @@ extern char                  drawmode;
 extern BYTE                  dstack[];
 extern std::vector<double>   dx0;
 extern std::vector<double>   dx1;
-extern double (*   dxpixel)(void); /* set in FRACTALS.C */
+extern double              (*dxpixel)(void);
 extern double                dxsize;
 extern std::vector<double>   dy0;
 extern std::vector<double>   dy1;
-extern double (*   dypixel)(void); /* set in FRACTALS.C */
+extern double              (*dypixel)(void);
 extern double                dysize;
 extern bool                  escape_exit;
 extern BYTE                  exitmode;
@@ -157,13 +157,13 @@ extern bool                  first_init;
 extern char                  floatflag;
 extern double                floatmax;
 extern double                floatmin;
-extern DComplex *              floatparm;
+extern DComplex *            floatparm;
 extern int                   fm_attack;
 extern int                   fm_decay;
 extern int                   fm_release;
 extern int                   fm_sustain;
 extern int                   fm_wavetype;
-extern int                   fm_vol; /*volume of OPL-3 soundcard output*/
+extern int                   fm_vol;            /*volume of OPL-3 soundcard output*/
 extern int                   forcesymmetry;
 extern char                  FormFileName[];
 extern char                  FormName[];
@@ -182,8 +182,8 @@ extern bool                  gif87a_flag;
 extern char                  gifmask[];
 extern char                  Glasses1Map[];
 extern int                   g_glasses_type;
-extern bool                  g_good_mode;           /* video mode ok? */
-extern bool                  g_got_real_dac;        /* loaddac worked, really got a dac */
+extern bool                  g_good_mode;       /* video mode ok? */
+extern bool                  g_got_real_dac;    /* loaddac worked, really got a dac */
 extern int                   got_status;
 extern bool                  grayflag;
 extern char                  GreyFile[];
@@ -196,13 +196,13 @@ extern int                   hi_atten;
 extern U16                   history;
 extern char                  IFSFileName[];
 extern char                  IFSName[];
-extern float *           ifs_defn;
+extern float *               ifs_defn;
 extern int                   ifs_type;
 extern int                   imgboxcount;
 extern U16                   imgboxhandle;
 extern char                  image_map;
 extern int                   init3d[20];
-extern DComplex                init;
+extern DComplex              init;
 extern int                   initbatch;
 extern int                   initcyclelimit;
 extern int                   g_init_mode;
@@ -260,13 +260,13 @@ extern LComplex              lparm2;
 extern LComplex              lparm;
 extern long                  ltempsqrx;
 extern long                  ltempsqry;
-extern LComplex               ltmp;
+extern LComplex              ltmp;
 extern std::vector<long>     lx0;
 extern std::vector<long>     lx1;
-extern long (*     lxpixel)(void); /* set in FRACTALS.C */
+extern long                (*lxpixel)(void);
 extern std::vector<long>     ly0;
 extern std::vector<long>     ly1;
-extern long (*     lypixel)(void); /* set in FRACTALS.C */
+extern long                (*lypixel)(void);
 extern int                   lzw[2];
 extern long                  l_at_rad;
 extern MATRIX                m;
@@ -387,7 +387,7 @@ extern U16                   prmboxhandle;
 extern int                   prmboxcount;
 extern int                   pseudox;
 extern int                   pseudoy;
-extern void (*     putcolor)(int,int,int);
+extern void                (*putcolor)(int,int,int);
 extern DComplex              pwr;
 extern double                qc;
 extern double                qci;
@@ -415,12 +415,12 @@ extern bool                  rflag;
 extern char                  rlebuf[];
 extern int                   rhombus_stack[];
 extern int                   root;
-extern std::vector<DComplex>   roots;
+extern std::vector<DComplex> roots;
 extern int                   rotate_hi;
 extern int                   rotate_lo;
 extern double                roverd;
 extern int                   row;
-extern int                   g_row_count;                       /* row-counter for decoder and out_line */
+extern int                   g_row_count;       /* row-counter for decoder and out_line */
 extern double                rqlim2;
 extern double                rqlim;
 extern int                   rseed;
@@ -450,10 +450,10 @@ extern int                   g_slides;
 extern int                   Slope;
 extern int                   soundflag;
 extern char                  speed_prompt[];
-extern void (*      standardplot)(int,int,int);
+extern void                (*standardplot)(int,int,int);
 extern bool                  start_showorbit;
 extern bool                  started_resaves;
-extern DComplex                staticroots[];
+extern DComplex              staticroots[];
 extern char                  stdcalcmode;
 extern char                  stereomapname[];
 extern int                   StoPtr;
@@ -480,10 +480,10 @@ extern char                  temp1[];
 extern double                tempsqrx;
 extern double                tempsqry;
 extern BYTE                  teststring[];
-extern int                   g_text_cbase;                      /* g_text_col is relative to this */
-extern int                   g_text_col;                        /* current column in text mode */
-extern int                   g_text_rbase;                      /* g_text_row is relative to this */
-extern int                   g_text_row;                        /* current row in text mode */
+extern int                   g_text_cbase;      /* g_text_col is relative to this */
+extern int                   g_text_col;        /* current column in text mode */
+extern int                   g_text_rbase;      /* g_text_row is relative to this */
+extern int                   g_text_row;        /* current row in text mode */
 extern unsigned int          this_gen_rseed;
 extern unsigned *            tga16;
 extern long *                tga32;
@@ -530,7 +530,7 @@ extern bool                  video_cutboth;
 extern bool                  g_video_scroll;
 extern int                   g_video_start_x;
 extern int                   g_video_start_y;
-extern int                   g_video_type;                      /* video adapter type */
+extern int                   g_video_type;      /* video adapter type */
 extern VECTOR                view;
 extern bool                  viewcrop;
 extern float                 viewreduction;
