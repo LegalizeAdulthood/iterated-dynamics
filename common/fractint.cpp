@@ -546,7 +546,7 @@ int check_key()
         driver_get_key();
         if (!driver_diskp())
         {
-            show_orbit = 1 - show_orbit;
+            show_orbit = !show_orbit;
         }
     }
     return 0;

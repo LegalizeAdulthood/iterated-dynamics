@@ -440,7 +440,7 @@ extern bool                  set_orbit_corners;
 extern bool                  showbox;
 extern int                   showdot;
 extern int                   showfile;
-extern int                   show_orbit;
+extern bool                  show_orbit;
 extern double                sinx;
 extern int                   sizedot;
 extern short                 sizeofstring[];

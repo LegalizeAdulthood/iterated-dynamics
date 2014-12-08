@@ -2043,7 +2043,8 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 
             coloriter++;
 
-            if (show_orbit) {
+            if (show_orbit)
+            {
                 if (driver_key_pressed())
                     break;
                 plot_orbit(old.x, old.y, -1);

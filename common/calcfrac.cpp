@@ -128,7 +128,7 @@ int pixelpi = 0;                        /* value of pi in pixels */
 unsigned long lm = 0;                   /* magnitude limit (CALCMAND) */
 
 /* ORBIT variables */
-int     show_orbit = 0;                 /* flag to turn on and off */
+bool show_orbit = false;                /* flag to turn on and off */
 int     orbit_ptr = 0;                  /* pointer into save_orbit array */
 int save_orbit[1500] = { 0 };           /* array to save orbit values */
 int     orbit_color=15;                 /* XOR color */
@@ -688,7 +688,7 @@ int calcfract(void)
         atan_colors = 180;
 
     /* ORBIT stuff */
-    show_orbit = start_showorbit;
+    show_orbit = start_showorbit != 0;
     orbit_ptr = 0;
     orbit_color = 15;
     if (colors < 16)
@@ -1953,7 +1953,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
         else if ((curfractalspecific->orbitcalc() && inside != STARTRAIL)
                  || overflow)
             break;
-        if (show_orbit) {
+        if (show_orbit)
+        {
             if (!integerfractal)
             {
                 if (bf_math == BIGNUM)

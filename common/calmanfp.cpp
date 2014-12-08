@@ -77,7 +77,7 @@ long calcmandfpasm(void)
             if (key=='o' || key=='O')
             {
                 driver_get_key();
-                show_orbit = 1-show_orbit;
+                show_orbit = !show_orbit;
             }
             else
             {
@@ -165,7 +165,7 @@ long calcmandfpasm(void)
             }
         }
         /* no_periodicity_check_87 */
-        if (show_orbit != 0)
+        if (show_orbit)
         {
             plot_orbit(x,y,-1);
         }
