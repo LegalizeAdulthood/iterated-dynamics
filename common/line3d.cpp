@@ -123,7 +123,7 @@ int P = 250; /* Perspective dist used when viewing light vector */
 BYTE back_color[3];
 char ray_name[FILE_MAX_PATH] = "fract001";
 char preview = 0;
-char showbox = 0;
+bool showbox = false;
 int previewfactor = 20;
 int xadjust = 0;
 int yadjust = 0;

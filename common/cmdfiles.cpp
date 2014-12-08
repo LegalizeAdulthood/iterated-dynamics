@@ -519,7 +519,7 @@ static void initvars_3d()               /* init vars affecting 3d */
     BRIEF   = 0;
     SPHERE = FALSE;
     preview = 0;
-    showbox = 0;
+    showbox = false;
     xadjust = 0;
     yadjust = 0;
     g_eye_separation = 0;
@@ -2774,8 +2774,9 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     }
 
     if (strcmp(variable, "showbox") == 0) {       /* showbox? */
-        if (yesnoval[0] < 0) goto badarg;
-        showbox = (char)yesnoval[0];
+        if (yesnoval[0] < 0)
+            goto badarg;
+        showbox = yesnoval[0] != 0;
         return 2;
     }
 

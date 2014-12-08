@@ -437,7 +437,7 @@ extern float                 screenaspect;
 extern char                  scrnfile[];
 extern struct SearchPath     searchfor;
 extern bool                  set_orbit_corners;
-extern char                  showbox;
+extern bool                  showbox;
 extern int                   showdot;
 extern int                   showfile;
 extern int                   show_orbit;
