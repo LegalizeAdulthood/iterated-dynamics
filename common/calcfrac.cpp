@@ -116,7 +116,7 @@ double rqlim2 = 0.0;
 double rqlim_save = 0.0;
 bool no_mag_calc = false;
 int use_old_period = 0;
-int use_old_distest = 0;
+bool use_old_distest = false;
 bool old_demm_colors = false;
 int (*calctype)(void) = nullptr;
 int (*calctypetmp)(void) = nullptr;
@@ -945,9 +945,9 @@ static void perform_worklist()
         delyy2 = (yy3rd - yymin) / dxsize;
 
         if (save_release < 1827) /* in case it's changed with <G> */
-            use_old_distest = 1;
+            use_old_distest = true;
         else
-            use_old_distest = 0;
+            use_old_distest = false;
         rqlim = rqlim_save; /* just in case changed to DEM_BAILOUT earlier */
         if (distest != 1 || colors == 2) /* not doing regular outside colors */
             if (rqlim < DEM_BAILOUT)         /* so go straight for dem bailout */
@@ -1833,7 +1833,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
         init.y = dypixel();
         if (distest)
         {
-            if (use_old_distest) {
+            if (use_old_distest)
+            {
                 rqlim = rqlim_save;
                 if (distest != 1 || colors == 2) /* not doing regular outside colors */
                     if (rqlim < DEM_BAILOUT)   /* so go straight for dem bailout */
@@ -1923,7 +1924,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                 ftemp = 2 * (old.x * deriv.x - old.y * deriv.y);
             deriv.y = 2 * (old.y * deriv.x + old.x * deriv.y);
             deriv.x = ftemp;
-            if (use_old_distest) {
+            if (use_old_distest)
+            {
                 if (sqr(deriv.x)+sqr(deriv.y) > dem_toobig)
                     break;
             }
@@ -1935,7 +1937,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 
             if (curfractalspecific->orbitcalc() || (overflow && save_release > 1826))
             {
-                if (use_old_distest) {
+                if (use_old_distest)
+                {
                     if (dem_color < 0) {
                         dem_color = coloriter;
                         dem_new = g_new;
@@ -2357,7 +2360,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             coloriter &= LONG_MAX;  /* oops - color can be negative */
             goto plot_pixel;       /* no further adjustments apply */
         }
-        if (use_old_distest) {
+        if (use_old_distest)
+        {
             coloriter = dem_color;
             g_new = dem_new;
         }

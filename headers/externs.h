@@ -513,7 +513,7 @@ extern bool                  uses_p2;
 extern bool                  uses_p3;
 extern bool                  uses_p4;
 extern bool                  uses_p5;
-extern int                   use_old_distest;
+extern bool                  use_old_distest;
 extern int                   use_old_period;
 extern int                   using_jiim;
 extern int                   usr_biomorph;

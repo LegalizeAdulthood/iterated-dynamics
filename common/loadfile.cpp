@@ -1158,9 +1158,9 @@ void backwards_v19(void)
     else
         use_old_period = 0;
     if (save_release < 1827 && distest)
-        use_old_distest = 1; /* use old distest code */
+        use_old_distest = true;         /* use old distest code */
     else
-        use_old_distest = 0; /* use new distest code */
+        use_old_distest = false;        /* use new distest code */
 }
 
 void backwards_v20(void)
