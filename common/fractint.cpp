@@ -137,7 +137,7 @@ double toosmall;
 int  minbox;
 int no_sub_images;
 bool autobrowse = false;
-int doublecaution;
+bool doublecaution = false;
 bool brwscheckparms = false;
 bool brwschecktype = false;
 char browsemask[13];
@@ -211,7 +211,7 @@ restart:   /* insert key re-starts here */
     autobrowse     = false;
     brwschecktype  = false;
     brwscheckparms = true;
-    doublecaution  = TRUE;
+    doublecaution  = true;
     no_sub_images = FALSE;
     toosmall = 6;
     minbox   = 3;

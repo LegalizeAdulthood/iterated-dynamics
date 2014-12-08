@@ -116,7 +116,7 @@ extern int                   Distribution;
 extern bool                  dither_flag;
 extern bool                  dontreadcolor;
 extern int                   dotmode;
-extern int                   doublecaution;
+extern bool                  doublecaution;
 extern double                dpx;
 extern double                dpy;
 extern char                  drawmode;

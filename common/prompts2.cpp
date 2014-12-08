@@ -2302,7 +2302,6 @@ int get_browse_params()
     const char *choices[10];
     struct fullscreenvalues uvalues[25];
     int i, k;
-    int old_doublecaution;
     int old_minbox;
     double old_toosmall;
     char old_browsemask[13];
@@ -2310,7 +2309,7 @@ int get_browse_params()
     bool old_autobrowse     = autobrowse;
     bool old_brwschecktype  = brwschecktype;
     bool old_brwscheckparms = brwscheckparms;
-    old_doublecaution  = doublecaution;
+    bool old_doublecaution  = doublecaution;
     old_minbox         = minbox;
     old_toosmall       = toosmall;
     strcpy(old_browsemask,browsemask);
@@ -2337,7 +2336,7 @@ get_brws_restart:
 
     choices[++k] = "Confirm file deletes (y/n)";
     uvalues[k].type='y';
-    uvalues[k].uval.ch.val = doublecaution;
+    uvalues[k].uval.ch.val = doublecaution ? 1 : 0;
 
     choices[++k] = "Smallest window to display (size in pixels)";
     uvalues[k].type = 'f';
@@ -2370,7 +2369,7 @@ get_brws_restart:
         askvideo = true;
         brwscheckparms = true;
         brwschecktype  = true;
-        doublecaution  = TRUE;
+        doublecaution  = true;
         minbox = 3;
         strcpy(browsemask,"*.gif");
         goto get_brws_restart;
@@ -2383,7 +2382,7 @@ get_brws_restart:
     askvideo = uvalues[++k].uval.ch.val != 0;
     brwschecktype = uvalues[++k].uval.ch.val != 0;
     brwscheckparms = uvalues[++k].uval.ch.val != 0;
-    doublecaution = uvalues[++k].uval.ch.val;
+    doublecaution = uvalues[++k].uval.ch.val != 0;
     toosmall  = uvalues[++k].uval.dval;
     if (toosmall < 0)
         toosmall = 0 ;
