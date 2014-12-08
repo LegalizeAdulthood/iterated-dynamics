@@ -138,7 +138,6 @@ int g_text_row = 0;
 int g_vesa_detect = 0;
 int g_vesa_x_res = 0;
 int g_vesa_y_res = 0;
-int g_video_scroll = 0;
 int g_video_start_x = 0;
 int g_video_start_y = 0;
 /* g_video_table

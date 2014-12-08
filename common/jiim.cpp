@@ -493,7 +493,8 @@ void Jiim(int which)         /* called by fractint */
      * end MIIM code.
      */
 
-    if (!g_video_scroll) {
+    if (!g_video_scroll)
+    {
         g_vesa_x_res = sxdots;
         g_vesa_y_res = sydots;
     }

@@ -14,6 +14,7 @@
 int boxx[NUM_BOXES] = { 0 };
 int boxy[NUM_BOXES] = { 0 };
 int boxvalues[NUM_BOXES] = { 0 };
+bool g_video_scroll = false;
 
 static void zmo_calc(double, double, double *, double *, double);
 static void zmo_calcbf(bf_t,bf_t,bf_t,bf_t,bf_t,bf_t,bf_t,bf_t,bf_t);
@@ -326,7 +327,8 @@ void moveboxf(double dx, double dy)
         }
     }
 #ifndef XFRACT
-    if (g_video_scroll != 0) {  /* scroll screen center to the box center */
+    if (g_video_scroll)                 /* scroll screen center to the box center */
+    {
         int col = (int)((zbx + zwidth/2)*(dxsize + PIXELROUND)) + sxoffs;
         int row = (int)((zby + zdepth/2)*(dysize + PIXELROUND)) + syoffs;
         switch (zscroll) {

@@ -79,7 +79,6 @@ int g_text_rbase = 0;       /* g_text_row is relative to this */
 int g_text_cbase = 0;       /* g_text_col is relative to this */
 
 int g_vesa_detect = 1;      /* set to 0 to disable VESA-detection */
-int g_video_scroll = 0;
 int g_video_start_x = 0;
 int g_video_start_y = 0;
 int g_vesa_x_res;

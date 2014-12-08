@@ -93,7 +93,7 @@ float   viewreduction;          /* window auto-sizing */
 int     viewcrop;               /* nonzero to crop default coords */
 float   finalaspectratio;       /* for view shape and rotation */
 int     viewxdots,viewydots;    /* explicit view sizing */
-int     video_cutboth;          /* nonzero to keep virtual aspect */
+bool    video_cutboth = false;  /* true to keep virtual aspect */
 int     zscroll;                /* screen/zoombox 0 fixed, 1 relaxed */
 
 /*      HISTORY  *history = nullptr; */
