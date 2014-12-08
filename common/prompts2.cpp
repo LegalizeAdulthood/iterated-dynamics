@@ -682,7 +682,7 @@ get_view_restart:
 
         choices[++k] = "Crop starting coordinates to new aspect ratio?";
         uvalues[k].type = 'y';
-        uvalues[k].uval.ch.val = viewcrop;
+        uvalues[k].uval.ch.val = viewcrop ? 1 : 0;
 
         choices[++k] = "Explicit size x pixels (0 for auto size)";
         uvalues[k].type = 'i';
@@ -753,7 +753,7 @@ get_view_restart:
     {
         viewwindow = viewxdots = viewydots = 0;
         viewreduction = (float) 4.2;
-        viewcrop = 1;
+        viewcrop = true;
         finalaspectratio = screenaspect;
         sxdots = old_sxdots;
         sydots = old_sydots;
@@ -770,7 +770,7 @@ get_view_restart:
         viewwindow = uvalues[++k].uval.ch.val;
         viewreduction = (float) uvalues[++k].uval.dval;
         finalaspectratio = (float) uvalues[++k].uval.dval;
-        viewcrop = uvalues[++k].uval.ch.val;
+        viewcrop = uvalues[++k].uval.ch.val != 0;
         viewxdots = uvalues[++k].uval.ival;
         viewydots = uvalues[++k].uval.ival;
     }

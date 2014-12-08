@@ -360,7 +360,7 @@ static void initvars_restart()          /* <ins> key init */
     g_init_mode = -1;                       /* no initial video mode     */
     viewwindow = 0;                      /* no view window            */
     viewreduction = (float)4.2;
-    viewcrop = 1;
+    viewcrop = true;
     g_virtual_screens = 1;                 /* virtual screen modes on   */
     finalaspectratio = screenaspect;
     viewxdots = viewydots = 0;
@@ -2103,7 +2103,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         viewwindow = 1;
         viewreduction = 4.2f;  /* reset default values */
         finalaspectratio = screenaspect;
-        viewcrop = 1; /* yes */
+        viewcrop = true;
         viewxdots = viewydots = 0;
 
         if ((totparms > 0) && (floatval[0] > 0.001))
@@ -2111,7 +2111,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         if ((totparms > 1) && (floatval[1] > 0.001))
             finalaspectratio = (float)floatval[1];
         if ((totparms > 2) && (yesnoval[2] == 0))
-            viewcrop = yesnoval[2];
+            viewcrop = yesnoval[2] != 0;
         if ((totparms > 3) && (intval[3] > 0))
             viewxdots = intval[3];
         if ((totparms == 5) && (intval[4] > 0))

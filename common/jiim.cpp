@@ -1187,7 +1187,7 @@ finish:
     {
         viewwindow = viewxdots = viewydots = 0;
         viewreduction = (float)4.2;
-        viewcrop = 1;
+        viewcrop = true;
         finalaspectratio = screenaspect;
         xdots = sxdots;
         ydots = sydots;

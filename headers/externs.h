@@ -532,7 +532,7 @@ extern int                   g_video_start_x;
 extern int                   g_video_start_y;
 extern int                   g_video_type;                      /* video adapter type */
 extern VECTOR                view;
-extern int                   viewcrop;
+extern bool                  viewcrop;
 extern float                 viewreduction;
 extern int                   viewwindow;
 extern int                   viewxdots;

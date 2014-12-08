@@ -90,7 +90,7 @@ char    usr_floatflag;
 
 int     viewwindow;             /* 0 for full screen, 1 for window */
 float   viewreduction;          /* window auto-sizing */
-int     viewcrop;               /* nonzero to crop default coords */
+bool    viewcrop = false;       /* true to crop default coords */
 float   finalaspectratio;       /* for view shape and rotation */
 int     viewxdots,viewydots;    /* explicit view sizing */
 bool    video_cutboth = false;  /* true to keep virtual aspect */
