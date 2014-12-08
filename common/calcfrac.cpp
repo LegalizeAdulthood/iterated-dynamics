@@ -1763,7 +1763,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
     int savedincr = 0;                  /* for periodicity checking */
     LComplex lsaved = { 0 };
     int i = 0;
-    int attracted = 0;
+    bool attracted = false;
     LComplex lat = { 0 };
     DComplex  at = { 0.0 };
     DComplex deriv = { 0.0 };
@@ -1882,7 +1882,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 
     curfractalspecific->per_pixel(); /* initialize the calculations */
 
-    attracted = FALSE;
+    attracted = false;
 
     if (outside == TDIS) {
         if (integerfractal)
@@ -2119,7 +2119,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                         {
                             if ((lat.x + lat.y) < l_at_rad)
                             {
-                                attracted = TRUE;
+                                attracted = true;
                                 if (finattract<0) coloriter = (coloriter%attrperiod[i])+1;
                                 break;
                             }
@@ -2141,7 +2141,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                         {
                             if ((at.x + at.y) < f_at_rad)
                             {
-                                attracted = TRUE;
+                                attracted = true;
                                 if (finattract<0) coloriter = (coloriter%attrperiod[i])+1;
                                 break;
                             }
@@ -2382,7 +2382,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             coloriter = biomorph;
     }
 
-    if (outside >= 0 && attracted == FALSE) /* merge escape-time stripes */
+    if (outside >= 0 && !attracted)     /* merge escape-time stripes */
         coloriter = outside;
     else if (!LogTable.empty() || Log_Calc)
         coloriter = logtablecalc(coloriter);
