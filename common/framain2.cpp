@@ -1251,14 +1251,15 @@ do_3d_transform:
         else
             display3d = 1;
     case 'r':                    /* restore-from                 */
-        comparegif = 0;
+        comparegif = false;
         *frommandel = 0;
         browsing = false;
         if (*kbdchar == 'r')
         {
             if (debugflag == 50)
             {
-                comparegif = overlay3d = 1;
+                comparegif = true;
+                overlay3d = 1;
                 if (initbatch == 2)
                 {
                     driver_stack_screen();   /* save graphics image */
@@ -1268,7 +1269,10 @@ do_3d_transform:
                 }
             }
             else
-                comparegif = overlay3d = 0;
+            {
+                comparegif = false;
+                overlay3d = 0;
+            }
             display3d = 0;
         }
         driver_stack_screen();            /* save graphics image */
@@ -1622,14 +1626,15 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
     }
     return CONTINUE;
     case 'r':                    /* restore-from                 */
-        comparegif = 0;
+        comparegif = false;
         *frommandel = 0;
         browsing = FALSE;
         if (*kbdchar == 'r')
         {
             if (debugflag == 50)
             {
-                comparegif = overlay3d = 1;
+                comparegif = true;
+                overlay3d = 1;
                 if (initbatch == 2)
                 {
                     driver_stack_screen();   /* save graphics image */
@@ -1639,7 +1644,10 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
                 }
             }
             else
-                comparegif = overlay3d = 0;
+            {
+                comparegif = false;
+                overlay3d = 0;
+            }
             display3d = 0;
         }
         driver_stack_screen();            /* save graphics image */

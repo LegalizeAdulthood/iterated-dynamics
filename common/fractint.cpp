@@ -102,7 +102,7 @@ U16 history = 0;
 int maxhistory = 10;
 
 /* variables defined by the command line/files processor */
-int     comparegif=0;                   /* compare two gif files flag */
+bool    comparegif = false;             /* compare two gif files flag */
 int     timedsave=0;                    /* when doing a timed save */
 int     resave_flag=0;                  /* tells encoder not to incr filename */
 int     started_resaves=0;              /* but incr on first resave */

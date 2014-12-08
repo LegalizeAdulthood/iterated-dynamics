@@ -74,7 +74,7 @@ extern int                   g_color_medium;                    /* nearest to me
 extern char                  CommandComment[4][MAXCMT];
 extern char                  CommandFile[FILE_MAX_PATH];
 extern char                  CommandName[ITEMNAMELEN + 1];
-extern int                   comparegif;
+extern bool                  comparegif;
 extern long                  con;
 extern double                cosx;
 extern long                  c_real;
