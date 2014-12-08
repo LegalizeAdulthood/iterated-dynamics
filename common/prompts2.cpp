@@ -463,7 +463,7 @@ int get_toggles2()
             if (!driver_diskp()) /* ditch the disk video */
                 enddisk();
             else /* keep disk video, but ditch the fraction part at end */
-                disk16bit = 0;
+                disk16bit = false;
     }
 
     ++k;

@@ -2202,7 +2202,7 @@ static void save_history_info()
     current.initorbit[1]         = initorbit.y               ;
     current.useinitorbit         = useinitorbit              ;
     current.periodicity          = (short)periodicitycheck          ;
-    current.pot16bit             = (short)disk16bit                 ;
+    current.pot16bit             = (short) (disk16bit ? 1 : 0);
     current.release              = (short)g_release                   ;
     current.save_release         = (short)save_release              ;
     current.flag3d               = (short)display3d                 ;
@@ -2376,7 +2376,7 @@ static void restore_history_info(int i)
     useinitorbit          = last.useinitorbit   ;
     periodicitycheck      = last.periodicity    ;
     usr_periodicitycheck  = last.periodicity    ;
-    disk16bit             = last.pot16bit       ;
+    disk16bit             = last.pot16bit != 0;
     g_release             = last.release        ;
     save_release          = last.save_release   ;
     display3d             = last.flag3d         ;

@@ -105,7 +105,7 @@ extern LDBL                  delyy;
 extern float                 depthfp;
 extern unsigned long         dif_counter;
 extern unsigned long         dif_limit;
-extern int                   disk16bit;
+extern bool                  disk16bit;
 extern bool                  g_disk_flag;                       /* disk video active flag */
 extern int                   disktarga;
 extern int                   display3d;

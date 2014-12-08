@@ -49,7 +49,7 @@ At the moment these arrays reuse extraseg and strlocn, respectively.
 static int numsaves = 0;        /* For adjusting 'save-to-disk' filenames */
 static FILE *g_outfile;
 static int last_colorbar;
-static int save16bit;
+static bool save16bit;
 static int outcolor1s, outcolor2s;
 static int startbits;
 
@@ -755,7 +755,7 @@ static void setup_save_info(struct fractal_info * save_info)
     save_info->initorbit[1] = initorbit.y;
     save_info->useinitorbit = useinitorbit;
     save_info->periodicity = (short) periodicitycheck;
-    save_info->pot16bit = (short) disk16bit;
+    save_info->pot16bit = (short) (disk16bit ? 1 : 0);
     save_info->faspectratio = finalaspectratio;
     save_info->system = (short) save_system;
 
