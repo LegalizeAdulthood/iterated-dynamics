@@ -1324,13 +1324,10 @@ top:
 
         if (colors > 16)
         {
-            if (!g_really_ega)
-            {
-                nextright += 2;
-                choicekey[nextright] = 'e';
-                attributes[nextright] = MENU_ITEM;
-                choices[nextright] = "palette editing mode     <e>  ";
-            }
+            nextright += 2;
+            choicekey[nextright] = 'e';
+            attributes[nextright] = MENU_ITEM;
+            choices[nextright] = "palette editing mode     <e>  ";
 
             nextright += 2;
             choicekey[nextright] = 'a';
@@ -1445,8 +1442,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
         if (g_got_real_dac && colors >= 16) {
             if (strchr("c+-",testkey))
                 return (0-testkey);
-            if (colors > 16
-                    && (testkey == 'a' || (!g_really_ega && testkey == 'e')))
+            if (colors > 16 && (testkey == 'a' || (testkey == 'e')))
                 return (0-testkey);
         }
         /* Alt-A and Alt-S */
