@@ -95,12 +95,12 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                 {
                     if (driver_diskp())
                     {
-                        askvideo = TRUE;
+                        askvideo = true;
                     }
                     else
                     {
                         stopmsg(0, "That video mode is not available with your adapter.");
-                        askvideo = TRUE;
+                        askvideo = true;
                     }
                     g_init_mode = -1;
                     driver_set_for_text(); /* switch to text mode */

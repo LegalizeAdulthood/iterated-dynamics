@@ -63,7 +63,7 @@ bool    potflag = false;        /* continuous potential enabled? */
 int     pot16bit = 0;           /* store 16 bit continuous potential values */
 bool    gif87a_flag = false;    /* true if GIF87a format, false otherwise */
 bool    dither_flag = false;    /* true if want to dither GIFs */
-int     askvideo = 0;           /* flag for video prompting */
+bool    askvideo = false;       /* flag for video prompting */
 char    floatflag = 0;
 int     biomorph = 0;           /* flag for biomorph */
 int     usr_biomorph = 0;
@@ -363,7 +363,7 @@ static void initvars_restart()          /* <ins> key init */
     save_release = g_release;            /* this release number */
     gif87a_flag = false;                /* turn on GIF89a processing */
     dither_flag = false;                /* no dithering */
-    askvideo = 1;                        /* turn on video-prompt flag */
+    askvideo = true;                    /* turn on video-prompt flag */
     fract_overwrite = 0;                 /* don't overwrite           */
     soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
     initbatch = 0;                       /* not in batch mode         */
@@ -2237,7 +2237,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "askvideo") == 0) {      /* askvideo=?   */
         if (yesnoval[0] < 0) goto badarg;
-        askvideo = yesnoval[0];
+        askvideo = yesnoval[0] != 0;
         return 0;
     }
 

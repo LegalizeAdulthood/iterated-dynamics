@@ -11,7 +11,7 @@ extern int                   g_and_color;                       /* AND mask for 
 extern struct MP             Ans;
 extern int                   Ap1deg;
 extern int                   AplusOne;
-extern int                   askvideo;
+extern bool                  askvideo;
 extern float                 aspectdrift;
 extern int                   attractors;
 extern int                   attrperiod[];

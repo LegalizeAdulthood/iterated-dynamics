@@ -2325,7 +2325,7 @@ get_brws_restart:
 
     choices[++k] = "Ask about GIF video mode? (y/n)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = askvideo;
+    uvalues[k].uval.ch.val = askvideo ? 1 : 0;
 
     choices[++k] = "Check fractal type? (y/n)";
     uvalues[k].type = 'y';
@@ -2367,7 +2367,7 @@ get_brws_restart:
     if (i == FIK_F4) {
         toosmall = 6;
         autobrowse = FALSE;
-        askvideo = TRUE;
+        askvideo = true;
         brwscheckparms = TRUE;
         brwschecktype  = TRUE;
         doublecaution  = TRUE;
@@ -2381,7 +2381,7 @@ get_brws_restart:
 
     autobrowse = uvalues[++k].uval.ch.val;
 
-    askvideo = uvalues[++k].uval.ch.val;
+    askvideo = uvalues[++k].uval.ch.val != 0;
 
     brwschecktype = (char)uvalues[++k].uval.ch.val;
 
