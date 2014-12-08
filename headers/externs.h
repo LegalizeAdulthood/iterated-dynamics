@@ -24,7 +24,7 @@ extern double                AutoStereo_width;
 extern BYTE                  back_color[];
 extern int                   g_bad_config;
 extern int                   bad_code_count;
-extern int                   bad_outside;
+extern bool                  bad_outside;
 extern int                   bad_value;
 extern long                  bailout;
 extern enum bailouts         bailoutest;

@@ -798,7 +798,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             save_release = g_release;
             no_mag_calc = 0;
             use_old_period = 0;
-            bad_outside = 0;
+            bad_outside = false;
             ldcheck = 0;
             set_current_params();
             odpx=odpy=newodpx=newodpy=0;
@@ -1465,7 +1465,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             save_release = g_release;
             no_mag_calc = 0;
             use_old_period = 0;
-            bad_outside = 0;
+            bad_outside = false;
             ldcheck = 0;
             set_current_params();
             odpx=odpy=newodpx=newodpy=0;

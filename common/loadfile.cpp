@@ -38,7 +38,7 @@ static FILE *fp;
 int fileydots, filexdots, filecolors;
 float fileaspectratio;
 short skipxdots,skipydots;      /* for decoder, when reducing image */
-int bad_outside = 0;
+bool bad_outside = false;
 int ldcheck = 0;
 
 int read_overlay()      /* read overlay/3D files, if reqr'd */
@@ -1168,9 +1168,9 @@ void backwards_v20(void)
     if ((fractype == MANDELFP || fractype == JULIAFP ||
             fractype == MANDEL || fractype == JULIA) &&
             (outside <= REAL && outside >= SUM) && save_release <= 1960)
-        bad_outside = 1;
+        bad_outside = true;
     else
-        bad_outside = 0;
+        bad_outside = false;
     if ((fractype == FORMULA || fractype == FFORMULA) &&
             (save_release < 1900 || debugflag == 94))
         ldcheck = 1;
