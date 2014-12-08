@@ -142,7 +142,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
         kbdchar = driver_key_pressed();
         if (kbdchar || step)
         {
-            int done = 0;
+            bool done = false;
             if (kbdchar == 0)
                 kbdchar = driver_get_key();
             switch (kbdchar)
@@ -151,7 +151,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
                 step = 1 - step;
                 break;
             case FIK_ESC:
-                done = 1;
+                done = true;
                 break;
             case FIK_RIGHT_ARROW:
             case FIK_UP_ARROW:
@@ -164,7 +164,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
                 setwait(&wait);
                 break;
             default:
-                done = 1;
+                done = true;
                 break;
             }
             if (done)
@@ -292,7 +292,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
         kbdchar = driver_key_pressed();
         if (kbdchar || step)
         {
-            int done = 0;
+            int done = false;
             if (kbdchar == 0)
                 kbdchar = driver_get_key();
             switch (kbdchar)
@@ -301,7 +301,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
                 step = 1 - step;
                 break;
             case FIK_ESC:
-                done = 1;
+                done = true;
                 break;
             case FIK_RIGHT_ARROW:
             case FIK_UP_ARROW:
@@ -314,7 +314,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
                 setwait(&wait);
                 break;
             default:
-                done = 1;
+                done = true;
                 break;
             }
             if (done)
