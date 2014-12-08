@@ -2852,7 +2852,7 @@ static
 int  bound_trace_main(void)
 {
     enum direction coming_from;
-    unsigned int match_found, continue_loop;
+    unsigned int match_found;
     int trail_color, fillcolor_used, last_fillcolor_used = -1;
     int max_putline_length;
     int right, left, length;
@@ -2907,7 +2907,7 @@ int  bound_trace_main(void)
             coming_from = West;
             going_to = East;
             match_found = 0;
-            continue_loop = TRUE;
+            bool continue_loop = true;
             do
             {
                 step_col_row();
