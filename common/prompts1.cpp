@@ -61,7 +61,7 @@ char formmask[13]    = {"*.frm"};
 char lsysmask[13]    = {"*.l"};
 char Glasses1Map[] = "glasses1.map";
 char MAP_name[FILE_MAX_DIR] = "";
-int  mapset = 0;
+bool mapset = false;
 bool julibrot = false;                  /* flag for julibrot */
 
 /* --------------------------------------------------------------------- */
@@ -2741,8 +2741,9 @@ static int check_mapfile()
             helpmode = oldhelpmode;
             if (i < 0)
                 return -1;
-            if (temp1[0] == '*') {
-                mapset = 0;
+            if (temp1[0] == '*')
+            {
+                mapset = false;
                 break;
             }
         }
@@ -2753,7 +2754,7 @@ static int check_mapfile()
             askflag = 1;
             continue;
         }
-        mapset = 1;
+        mapset = true;
         merge_pathnames(MAP_name,temp1,0);
         break;
     }

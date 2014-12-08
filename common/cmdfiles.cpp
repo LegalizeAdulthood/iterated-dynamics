@@ -387,7 +387,7 @@ static void initvars_restart()          /* <ins> key init */
     showfile = 1;
     /* next should perhaps be fractal re-init, not just <ins> ? */
     initcyclelimit=55;                   /* spin-DAC default speed limit */
-    mapset = 0;                          /* no map= name active */
+    mapset = false;                     /* no map= name active */
     if (mapdacbox) {
         free(mapdacbox);
         mapdacbox = nullptr;
@@ -2951,8 +2951,9 @@ static int parse_colors(char *value)
             init_msg("",&value[1],3);
         if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(MAP_name) != 0)
             goto badcolor;
-        if (display3d) {
-            mapset = 1;
+        if (display3d)
+        {
+            mapset = true;
         }
         else {
             if (merge_pathnames(colorfile,&value[1],3)<0)
