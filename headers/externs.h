@@ -248,7 +248,7 @@ extern char                  LName[];
 extern LComplex              lnew;
 extern bool                  loaded3d;
 extern int                   LodPtr;
-extern int                   Log_Auto_Calc;
+extern bool                  Log_Auto_Calc;
 extern int                   Log_Calc;
 extern int                   Log_Fly_Calc;
 extern long                  LogFlag;

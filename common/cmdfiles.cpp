@@ -133,7 +133,7 @@ long    LogFlag = 0;            /* Logarithmic palette flag: 0 = no */
 BYTE exitmode = 3;              /* video mode on exit */
 
 int     Log_Fly_Calc = 0;       /* calculate logmap on-the-fly */
-int     Log_Auto_Calc = 0;      /* auto calculate logmap */
+bool    Log_Auto_Calc = false;          /* auto calculate logmap */
 int     nobof = 0;              /* Flag to make inside=bof options not duplicate bof images */
 
 bool    escape_exit = false;    /* set to true to avoid the "are you sure?" screen */
@@ -2455,7 +2455,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     }
 
     if (strcmp(variable, "logmap") == 0) {        /* logmap=? */
-        Log_Auto_Calc = 0;   /* turn this off if loading a PAR */
+        Log_Auto_Calc = false;          /* turn this off if loading a PAR */
         if (charval[0] == 'y')
             LogFlag = 1;                           /* palette is logarithmic */
         else if (charval[0] == 'n')
@@ -2469,13 +2469,13 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "logmode") == 0) {        /* logmode=? */
         Log_Fly_Calc = 0;                         /* turn off if error */
-        Log_Auto_Calc = 0;
+        Log_Auto_Calc = false;
         if (charval[0] == 'f')
             Log_Fly_Calc = 1;                      /* calculate on the fly */
         else if (charval[0] == 't')
             Log_Fly_Calc = 2;                      /* force use of LogTable */
         else if (charval[0] == 'a') {
-            Log_Auto_Calc = 1;                     /* force auto calc of logmap */
+            Log_Auto_Calc = true;       /* force auto calc of logmap */
         }
         else goto badarg;
         return 1;

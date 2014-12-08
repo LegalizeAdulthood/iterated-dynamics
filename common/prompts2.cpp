@@ -333,7 +333,7 @@ int get_toggles()
     LogFlag = uvalues[++k].uval.Lval;
     if (LogFlag != old_logflag) {
         j++;
-        Log_Auto_Calc = 0;  /* turn it off, use the supplied value */
+        Log_Auto_Calc = false;          /* turn it off, use the supplied value */
     }
 
     usr_biomorph = uvalues[++k].uval.ival;

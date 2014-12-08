@@ -852,7 +852,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             if (i > 0) {
                 start_showorbit = 0;
                 soundflag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); /* turn off only x,y,z */
-                Log_Auto_Calc = 0; /* turn it off */
+                Log_Auto_Calc = false; /* turn it off */
             }
         }
         else if (*kbdchar == FIK_CTL_F)

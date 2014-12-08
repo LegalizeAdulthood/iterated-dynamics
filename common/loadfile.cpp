@@ -371,7 +371,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     }
 
     /* if (read_info.version > 14)  post-version 20.1.12 */
-    Log_Auto_Calc = 0;  /* make sure it's turned off */
+    Log_Auto_Calc = false;              /* make sure it's turned off */
 
     orbit_interval = 1;
     if (read_info.version > 15) /* post-version 20.3.2 */
