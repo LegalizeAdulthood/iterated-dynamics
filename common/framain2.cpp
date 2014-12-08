@@ -137,7 +137,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             {
                 memcpy(g_dac_box, olddacbox, 256*3); /* restore the DAC */
                 spindac(0, 1);
-                colorpreloaded = 0;
+                colorpreloaded = false;
             }
             else
             {   /* reset DAC to defaults, which setvideomode has done for us */
@@ -901,7 +901,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
         else if (colorpreloaded)
         {   /* colors= was specified */
             spindac(0, 1);
-            colorpreloaded = 0;
+            colorpreloaded = false;
         }
         else if (i & CMDARG_RESET)         /* reset was specified */
             savedac = 0;

@@ -466,7 +466,8 @@ static void set_Plasma_palette()
     static Palettetype Blue   = { 0,  0,63 };
     int i;
 
-    if (mapdacbox || colorpreloaded) return;    /* map= specified */
+    if (mapdacbox || colorpreloaded)
+        return;    /* map= specified */
 
     dac[0].red  = 0 ;
     dac[0].green= 0 ;

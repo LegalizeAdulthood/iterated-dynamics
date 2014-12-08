@@ -60,12 +60,12 @@ extern bool                  checkcurdir;
 extern long                  c_imag;
 extern double                closenuff;
 extern double                closeprox;
-extern DComplex                coefficient;
+extern DComplex              coefficient;
 extern int                   col;
 extern int                   color;
 extern char                  colorfile[];
 extern long                  coloriter;
-extern int                   colorpreloaded;
+extern bool                  colorpreloaded;
 extern int                   colors;
 extern int                   colorstate;
 extern int                   g_color_bright;                    /* brightest color in palette */

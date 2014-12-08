@@ -106,7 +106,7 @@ BYTE *mapdacbox = nullptr;      /* map= (default colors)    */
 int     colorstate = 0;         /* 0, g_dac_box matches default (bios or map=) */
                                 /* 1, g_dac_box matches no known defined map   */
                                 /* 2, g_dac_box matches the colorfile map      */
-int     colorpreloaded = 0;     /* if g_dac_box preloaded for next mode select */
+bool    colorpreloaded = false; /* if g_dac_box preloaded for next mode select */
 int     save_release = 0;       /* release creating PAR file*/
 char    dontreadcolor = 0;      /* flag for reading color from GIF */
 double  math_tol[2]= {.05,.05}; /* For math transition */
@@ -291,13 +291,7 @@ int cmdfiles(int argc,char **argv)
 
     if (debugflag != 110)
         first_init = 0;
-    /*       {
-                char msg[MSGLEN];
-                sprintf(msg,"cmdfiles colorpreloaded %d showfile %d savedac %d",
-                    colorpreloaded, showfile, savedac);
-                stopmsg(0,msg);
-             }
-    */
+
     if (colorpreloaded && showfile==0) /* PAR reads a file and sets color */
         dontreadcolor = 1;   /* don't read colors from GIF */
     else
@@ -319,14 +313,6 @@ int load_commands(FILE *infile)
     int ret;
     initcorners = initparams = 0; /* reset flags for type= */
     ret = cmdfile(infile, CMDFILE_AT_AFTER_STARTUP);
-    /*
-             {
-                char msg[MSGLEN];
-                sprintf(msg,"load commands colorpreloaded %d showfile %d savedac %d",
-                    colorpreloaded, showfile, savedac);
-                stopmsg(0,msg);
-             }
-    */
 
     if (colorpreloaded && showfile==0) /* PAR reads a file and sets color */
         dontreadcolor = 1;   /* don't read colors from GIF */
@@ -468,7 +454,8 @@ static void initvars_fractal()          /* init vars affecting calculation */
     }
     usemag = 1;                          /* use center-mag, not corners */
 
-    colorstate = colorpreloaded = 0;
+    colorstate = 0;
+    colorpreloaded = false;
     rotate_lo = 1;
     rotate_hi = 255;      /* color cycling default range */
     orbit_delay = 0;                     /* full speed orbits */
@@ -3041,7 +3028,7 @@ static int parse_colors(char *value)
         }
         colorstate = 1;
     }
-    colorpreloaded = 1;
+    colorpreloaded = true;
     memcpy(olddacbox,g_dac_box,256*3);
     return 0;
 badcolor:
