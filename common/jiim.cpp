@@ -143,7 +143,7 @@ float  luckyx = 0, luckyy = 0;
 static void fillrect(int x, int y, int width, int depth, int color)
 {
     /* fast version of fillrect */
-    if (hasinverse == 0)
+    if (!hasinverse)
         return;
     memset(dstack, color % colors, width);
     while (depth-- > 0)
@@ -372,7 +372,7 @@ DeQueueLong()
 static void SaveRect(int x, int y, int width, int depth)
 {
     char buff[MAXRECT];
-    if (hasinverse == 0)
+    if (!hasinverse)
         return;
     /* first, do any de-allocationg */
 
@@ -401,7 +401,7 @@ static void RestoreRect(int x, int y, int width, int depth)
 {
     char buff[MAXRECT];
     int  yoff;
-    if (hasinverse == 0)
+    if (!hasinverse)
         return;
 
     Cursor_Hide();
@@ -438,7 +438,6 @@ void Jiim(int which)         /* called by fractint */
     int color;
     float zoom;
     int oldsxoffs, oldsyoffs;
-    int savehasinverse;
     int (*oldcalctype)(void);
     int old_x, old_y;
     double aspect;
@@ -459,7 +458,7 @@ void Jiim(int which)         /* called by fractint */
     else
     {
         helpmode = HELP_ORBITS;
-        hasinverse = 1;
+        hasinverse = true;
     }
     oldsxoffs = sxoffs;
     oldsyoffs = syoffs;
@@ -501,8 +500,8 @@ void Jiim(int which)         /* called by fractint */
 
     if (sxoffs != 0 || syoffs != 0) /* we're in view windows */
     {
-        savehasinverse = hasinverse;
-        hasinverse = 1;
+        bool const savehasinverse = hasinverse;
+        hasinverse = true;
         SaveRect(0,0,xdots,ydots);
         sxoffs = g_video_start_x;
         syoffs = g_video_start_y;
@@ -886,7 +885,7 @@ void Jiim(int which)         /* called by fractint */
 
         if (which == JIIM)
         {
-            if (hasinverse == 0)
+            if (!hasinverse)
                 continue;
             /*
              * MIIM code:
@@ -1158,8 +1157,8 @@ finish:
                 windows = 2;
             }
             Cursor_Hide();
-            savehasinverse = hasinverse;
-            hasinverse = 1;
+            bool const savehasinverse = hasinverse;
+            hasinverse = true;
             SaveRect(0,0,xdots,ydots);
             sxoffs = oldsxoffs;
             syoffs = oldsyoffs;

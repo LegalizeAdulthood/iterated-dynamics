@@ -187,7 +187,7 @@ extern bool                  g_got_real_dac;        /* loaddac worked, really go
 extern int                   got_status;
 extern bool                  grayflag;
 extern char                  GreyFile[];
-extern int                   hasinverse;
+extern bool                  hasinverse;
 extern int                   haze;
 extern unsigned int          height;
 extern float                 heightfp;

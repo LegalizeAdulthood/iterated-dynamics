@@ -1033,9 +1033,9 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
                 /* switch to corresponding Julia set */
                 int key;
                 if ((fractype == MANDEL || fractype == MANDELFP) && bf_math == 0)
-                    hasinverse = 1;
+                    hasinverse = true;
                 else
-                    hasinverse = 0;
+                    hasinverse = false;
                 clear_zoombox();
                 Jiim(JIIM);
                 key = driver_get_key();    /* flush keyboard buffer */
