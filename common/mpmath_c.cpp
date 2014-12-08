@@ -22,6 +22,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+int MPOverflow = 0;
+
 #if !defined(XFRACT)
 
 struct MP *MPsub(struct MP x, struct MP y) {

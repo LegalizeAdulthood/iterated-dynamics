@@ -5,7 +5,6 @@
 #include <sys/statvfs.h>
 
 /* Global variables (yuck!) */
-int MPOverflow = 0;
 struct MP Ans = { 0 };
 static char extrasegment[0x18000] = { 0 };
 void *extraseg = &extrasegment[0];
