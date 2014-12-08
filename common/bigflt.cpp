@@ -44,7 +44,7 @@ bf_t strtobf(bf_t r, const char *s)
     const char *l;
     const char *d;
     const char *e; /* pointer to s, ".", "[eE]" */
-    int powerten=0, keeplooping;
+    int powerten=0;
 
     clear_bf(r);
 
@@ -82,13 +82,13 @@ bf_t strtobf(bf_t r, const char *s)
 
         if (*(l--) == '.') /* the digit was found */
         {
-            keeplooping = *l >= '0' && *l <= '9' && l>=s;
+            bool keeplooping = *l >= '0' && *l <= '9' && l >=s ;
             while (keeplooping) /* while a digit */
             {
                 onesbyte = (BYTE)(*(l--) - '0');
                 inttobf(bftmp1,onesbyte);
                 unsafe_add_a_bf(r, bftmp1);
-                keeplooping = *l >= '0' && *l <= '9' && l>=s;
+                keeplooping = *l >= '0' && *l <= '9' && l >= s;
                 if (keeplooping)
                 {
                     div_a_bf_int(r, 10);
@@ -99,13 +99,13 @@ bf_t strtobf(bf_t r, const char *s)
     }
     else
     {
-        keeplooping = *l >= '0' && *l <= '9' && l>=s;
+        bool keeplooping = *l >= '0' && *l <= '9' && l >= s;
         while (keeplooping) /* while a digit */
         {
             onesbyte = (BYTE)(*(l--) - '0');
             inttobf(bftmp1,onesbyte);
             unsafe_add_a_bf(r, bftmp1);
-            keeplooping = *l >= '0' && *l <= '9' && l>=s;
+            keeplooping = *l >= '0' && *l <= '9' && l >= s;
             if (keeplooping)
             {
                 div_a_bf_int(r, 10);
