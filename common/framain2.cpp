@@ -851,7 +851,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
         else if (*kbdchar == FIK_CTL_E) {
             i = get_evolve_Parms();
             if (i > 0) {
-                start_showorbit = 0;
+                start_showorbit = false;
                 soundflag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); /* turn off only x,y,z */
                 Log_Auto_Calc = false; /* turn it off */
             }

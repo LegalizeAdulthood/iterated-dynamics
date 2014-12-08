@@ -688,7 +688,7 @@ int calcfract(void)
         atan_colors = 180;
 
     /* ORBIT stuff */
-    show_orbit = start_showorbit != 0;
+    show_orbit = start_showorbit;
     orbit_ptr = 0;
     orbit_color = 15;
     if (colors < 16)

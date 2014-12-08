@@ -451,7 +451,7 @@ extern int                   Slope;
 extern int                   soundflag;
 extern char                  speed_prompt[];
 extern void (*      standardplot)(int,int,int);
-extern char                  start_showorbit;
+extern bool                  start_showorbit;
 extern int                   started_resaves;
 extern DComplex                staticroots[];
 extern char                  stdcalcmode;

@@ -1022,7 +1022,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
         if (orbit_interval != 1)
             put_parm(" %s=%d", "orbitinterval",orbit_interval);
 
-        if (start_showorbit > 0)
+        if (start_showorbit)
             put_parm(" %s=%s", "showorbit", "yes");
 
         if (keep_scrn_coords)

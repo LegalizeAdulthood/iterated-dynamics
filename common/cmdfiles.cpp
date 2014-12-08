@@ -49,7 +49,7 @@ int     showdot = -1;           /* color to show crawling graphics cursor */
 int     sizedot = 0;            /* size of dot crawling cursor */
 char    recordcolors = 0;       /* default PAR color-writing method */
 char    autoshowdot = 0;        /* dark, medium, bright */
-char    start_showorbit=0;      /* show orbits on at start of fractal */
+bool    start_showorbit = false;        /* show orbits on at start of fractal */
 char    temp1[256] = { 0 };     /* temporary strings        */
 char    readname[FILE_MAX_PATH] = { 0 };/* name of fractal input file */
 char    tempdir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
@@ -2535,8 +2535,9 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         return 0;
     }
 
-    if (strcmp(variable, "showorbit") == 0) {  /* showorbit=yes|no */
-        start_showorbit=(char)yesnoval[0];
+    if (strcmp(variable, "showorbit") == 0) /* showorbit=yes|no */
+    {
+        start_showorbit = yesnoval[0] != 0;
         return 0;
     }
 

@@ -230,7 +230,7 @@ restart:   /* insert key re-starts here */
     this_gen_rseed = (unsigned int)clock_ticks();
     srand(this_gen_rseed);
     initgene(); /*initialise pointers to lots of fractint variables for the evolution engine*/
-    start_showorbit = 0;
+    start_showorbit = false;
     showdot = -1; /* turn off showdot if entered with <g> command */
     calc_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
 
