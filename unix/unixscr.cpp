@@ -398,7 +398,7 @@ select_visual(void)
         colors = 1 << Xdepth;
         g_got_real_dac = 0;
         fake_lut = 0;
-        g_is_true_color = 0;
+        g_is_true_color = false;
         break;
 
     case GrayScale:
@@ -406,7 +406,7 @@ select_visual(void)
         colors = 1 << Xdepth;
         g_got_real_dac = 1;
         fake_lut = 0;
-        g_is_true_color = 0;
+        g_is_true_color = false;
         break;
 
     case TrueColor:
@@ -414,7 +414,7 @@ select_visual(void)
         colors = 256;
         g_got_real_dac = 0;
         fake_lut = 1;
-        g_is_true_color = 0;
+        g_is_true_color = false;
         break;
 
     default:
@@ -467,7 +467,7 @@ initUnixWindow()
         int offx, offy;
         fastmode = 0;
         fake_lut = 0;
-        g_is_true_color = 0;
+        g_is_true_color = false;
         g_got_real_dac = 1;
         colors = 256;
         for (int i = 0; i < colors; i++) {

@@ -215,7 +215,7 @@ extern char                 insufficient_ifs_mem[];
 extern int                   integerfractal;
 extern double                inversion[];
 extern int                   invert;
-extern int                   g_is_true_color;
+extern bool                  g_is_true_color;
 extern short                 ismand;
 extern int                   ixstart;
 extern int                   ixstop;

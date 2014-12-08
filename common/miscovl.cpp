@@ -42,6 +42,8 @@ static int entcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2);
 static void update_fractint_cfg(void);
 static void strip_zeros(char *buf);
 
+bool g_is_true_color = false;
+
 char par_comment[4][MAXCMT];
 
 /* JIIM */

@@ -16,7 +16,6 @@ extern int waitkeypressed(int);
 WINDOW *curwin;
 
 int fake_lut = 0;
-int g_is_true_color = 0;
 int g_dac_learn = 0;
 int dacnorm = 0;
 int g_dac_count = 0;

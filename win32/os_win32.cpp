@@ -130,7 +130,6 @@ int fm_wavetype = 0;
 int g_good_mode = 0;
 int g_got_real_dac = 0;
 int hi_atten = 0;
-int g_is_true_color = 0;
 long linitx = 0;
 long linity = 0;
 int polyphony = 0;
