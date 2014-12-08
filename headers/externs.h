@@ -497,7 +497,7 @@ extern long *            tga32;
 extern char                  three_pass;
 extern double                threshold;
 extern int                   timedsave;
-extern int                   timerflag;
+extern bool                  timerflag;
 extern long                  timer_interval;
 extern long                  timer_start;
 extern DComplex                tmp;

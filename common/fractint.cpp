@@ -568,7 +568,7 @@ int timer(int timertype,int(*subrtn)(),...)
 
     va_start(arg_marker,subrtn);
 
-    do_bench = timerflag; /* record time? */
+    do_bench = timerflag ? 1 : 0; /* record time? */
     if (timertype == 2)   /* encoder, record time only if debug=200 */
         do_bench = (debugflag == 200);
     if (do_bench)

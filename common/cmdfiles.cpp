@@ -78,7 +78,7 @@ char    fract_overwrite = 0;    /* 0 if file overwrite not allowed */
 int     soundflag = 0;          /* sound control bitfield... see sound.c for useage*/
 int     basehertz = 0;          /* sound=x/y/x hertz value */
 int     debugflag = 0;          /* internal use only - you didn't see this */
-int     timerflag = 0;          /* you didn't see this, either */
+bool    timerflag = false;      /* you didn't see this, either */
 int     cyclelimit = 0;         /* color-rotator upper limit */
 int     inside = 0;             /* inside color: 1=blue     */
 int     fillcolor = 0;          /* fillcolor: -1=normal     */
@@ -381,7 +381,7 @@ static void initvars_restart()          /* <ins> key init */
     orbit_delay = 0;                     /* full speed orbits */
     orbit_interval = 1;                  /* plot all orbits */
     debugflag = 0;                       /* debugging flag(s) are off */
-    timerflag = 0;                       /* timer flags are off       */
+    timerflag = false;                  /* timer flags are off       */
     strcpy(FormFileName, "fractint.frm"); /* default formula file      */
     FormName[0] = 0;
     strcpy(LFileName, "fractint.l");
@@ -2495,8 +2495,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     if (strcmp(variable, "debugflag") == 0
             || strcmp(variable, "debug") == 0) {        /* internal use only */
         debugflag = numval;
-        timerflag = debugflag & 1;                /* separate timer flag */
-        debugflag -= timerflag;
+        timerflag = (debugflag & 1) != 0;       /* separate timer flag */
+        debugflag &= ~1;
         return 0;
     }
 
