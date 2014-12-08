@@ -178,7 +178,7 @@ unsigned long dif_counter = 0;  /* the diffusion counter */
 unsigned long dif_limit = 0;    /* the diffusion counter */
 
 /* static vars for solidguess & its subroutines */
-char three_pass = 0;
+bool three_pass = false;
 static int maxblock = 0;
 static int halfblock = 0;
 static int guessplot = 0;               /* paint 1st pass row at a time?   */
@@ -799,7 +799,7 @@ int calcfract(void)
             if (!resuming || three_pass)
             {
                 stdcalcmode = 'g';
-                three_pass = 1;
+                three_pass = true;
                 timer(0,(int(*)())perform_worklist);
                 if (calc_status == CALCSTAT_COMPLETED)
                 {
@@ -809,7 +809,7 @@ int calcfract(void)
                         stdcalcmode = '1';
 
                     timer(0,(int(*)())perform_worklist);
-                    three_pass = 0;
+                    three_pass = false;
                 }
             }
             else /* resuming '2' pass */
@@ -824,7 +824,7 @@ int calcfract(void)
         }
         else /* main case, much nicer! */
         {
-            three_pass = 0;
+            three_pass = false;
             timer(0,(int(*)())perform_worklist);
         }
     }

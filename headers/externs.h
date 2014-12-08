@@ -485,9 +485,9 @@ extern int                   g_text_col;                        /* current colum
 extern int                   g_text_rbase;                      /* g_text_row is relative to this */
 extern int                   g_text_row;                        /* current row in text mode */
 extern unsigned int          this_gen_rseed;
-extern unsigned *        tga16;
-extern long *            tga32;
-extern char                  three_pass;
+extern unsigned *            tga16;
+extern long *                tga32;
+extern bool                  three_pass;
 extern double                threshold;
 extern int                   timedsave;
 extern bool                  timerflag;

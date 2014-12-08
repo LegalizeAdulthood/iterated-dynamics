@@ -2196,7 +2196,7 @@ static void save_history_info()
     current.x3rd                 = xx3rd                     ;
     current.y3rd                 = yy3rd                     ;
     current.stdcalcmode          = usr_stdcalcmode               ;
-    current.three_pass           = three_pass                ;
+    current.three_pass           = three_pass ? 1 : 0;
     current.stoppass             = (short)stoppass;
     current.distest              = distest                   ;
     current.trigndx[0]           = trigndx[0]                ;
@@ -2368,7 +2368,7 @@ static void restore_history_info(int i)
     yy3rd                 = last.y3rd           ;
     usr_stdcalcmode       = last.stdcalcmode    ;
     stdcalcmode           = last.stdcalcmode    ;
-    three_pass            = last.three_pass     ;
+    three_pass            = last.three_pass != 0;
     stoppass              = last.stoppass       ;
     distest               = last.distest        ;
     usr_distest           = last.distest        ;
