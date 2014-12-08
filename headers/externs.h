@@ -586,7 +586,7 @@ extern double                zdepth;
 extern int                   zdots;
 extern bool                  zoomoff;
 extern int                   zrotate;
-extern int                   zscroll;
+extern bool                  zscroll;
 extern double                zskew;
 extern double                zwidth;
 

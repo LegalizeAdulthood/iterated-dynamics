@@ -717,7 +717,7 @@ get_view_restart:
         uvalues[k].uval.ch.vlen = 7;
         uvalues[k].uval.ch.llen = sizeof(scrolltypes)/sizeof(*scrolltypes);
         uvalues[k].uval.ch.list = scrolltypes;
-        uvalues[k].uval.ch.val = zscroll;
+        uvalues[k].uval.ch.val = zscroll ? 1 : 0;
     }
 
     choices[++k] = "";
@@ -760,7 +760,7 @@ get_view_restart:
         sxdots = old_sxdots;
         sydots = old_sydots;
         video_cutboth = true;
-        zscroll = 1;
+        zscroll = true;
         goto get_view_restart;
     }
 
@@ -782,7 +782,7 @@ get_view_restart:
     sxdots = uvalues[++k].uval.ival;
     sydots = uvalues[++k].uval.ival;
     video_cutboth = uvalues[++k].uval.ch.val != 0;
-    zscroll = uvalues[++k].uval.ch.val;
+    zscroll = uvalues[++k].uval.ch.val != 0;
 
     if ((xmax != -1) && (sxdots > xmax))
     {

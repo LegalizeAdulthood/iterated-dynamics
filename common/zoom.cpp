@@ -331,18 +331,20 @@ void moveboxf(double dx, double dy)
     {
         int col = (int)((zbx + zwidth/2)*(dxsize + PIXELROUND)) + sxoffs;
         int row = (int)((zby + zdepth/2)*(dysize + PIXELROUND)) + syoffs;
-        switch (zscroll) {
-        case 0:  /* fixed - screen center fixed to the zoombox center */
+        if (!zscroll)
+        {
+            /* fixed - screen center fixed to the zoombox center */
             scroll_center(col,row);
-            break;
-        case 1:  /* relaxed - as the zoombox center leaves the screen */
+        }
+        else
+        {
+            /* relaxed - as the zoombox center leaves the screen */
             if ((col -= g_video_start_x) > 0 && (col -= g_vesa_x_res - 1) < 0)
                 col = 0;
             if ((row -= g_video_start_y) > 0 && (row -= g_vesa_y_res - 1) < 0)
                 row = 0;
             if (col != 0 || row != 0)
                 scroll_relative(col, row);
-            break;
         }
     }
 #endif
