@@ -2246,7 +2246,7 @@ static void save_history_info()
     current.oymax                = oymax;
     current.ox3rd                = ox3rd;
     current.oy3rd                = oy3rd;
-    current.keep_scrn_coords     = (short)keep_scrn_coords;
+    current.keep_scrn_coords     = (short) (keep_scrn_coords ? 1 : 0);
     current.drawmode             = drawmode;
     memcpy(current.dac,g_dac_box,256*3);
     switch (fractype)
@@ -2424,8 +2424,9 @@ static void restore_history_info(int i)
     oymax = last.oymax;
     ox3rd = last.ox3rd;
     oy3rd = last.oy3rd;
-    keep_scrn_coords = last.keep_scrn_coords;
-    if (keep_scrn_coords) set_orbit_corners = 1;
+    keep_scrn_coords = last.keep_scrn_coords != 0;
+    if (keep_scrn_coords)
+        set_orbit_corners = 1;
     drawmode = last.drawmode;
     usr_floatflag = (char)((curfractalspecific->isinteger) ? 0 : 1);
     memcpy(g_dac_box,last.dac,256*3);

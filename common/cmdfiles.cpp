@@ -462,7 +462,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
     rotate_hi = 255;      /* color cycling default range */
     orbit_delay = 0;                     /* full speed orbits */
     orbit_interval = 1;                  /* plot all orbits */
-    keep_scrn_coords = 0;
+    keep_scrn_coords = false;
     drawmode = 'r';                      /* passes=orbits draw mode */
     set_orbit_corners = 0;
     oxmin = curfractalspecific->xmin;
@@ -2073,7 +2073,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             oy3rd =      floatval[5];
         }
         set_orbit_corners = 1;
-        keep_scrn_coords = 1;
+        keep_scrn_coords = true;
         return 1;
     }
 
@@ -2083,7 +2083,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        keep_scrn_coords = yesnoval[0];
+        keep_scrn_coords = yesnoval[0] != 0;
         return 1;
     }
 

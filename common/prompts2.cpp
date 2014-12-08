@@ -511,7 +511,7 @@ int passes_options(void)
     int ret;
 
     int old_periodicity, old_orbit_delay, old_orbit_interval;
-    int old_keep_scrn_coords;
+    bool const old_keep_scrn_coords = keep_scrn_coords;
     char old_drawmode;
 
     ret = 0;
@@ -534,7 +534,7 @@ pass_option_restart:
 
     choices[++k] = "Maintain screen coordinates";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = old_keep_scrn_coords = keep_scrn_coords;
+    uvalues[k].uval.ch.val = keep_scrn_coords ? 1 : 0;
 
     choices[++k] = "Orbit pass shape (rect,line)";
     /*   choices[++k] = "Orbit pass shape (rect,line,func)"; */
@@ -577,12 +577,14 @@ pass_option_restart:
     if (orbit_interval < 1) orbit_interval = 1;
     if (orbit_interval != old_orbit_interval) j = 1;
 
-    keep_scrn_coords = uvalues[++k].uval.ch.val;
-    if (keep_scrn_coords != old_keep_scrn_coords) j = 1;
-    if (keep_scrn_coords == 0) set_orbit_corners = 0;
+    keep_scrn_coords = uvalues[++k].uval.ch.val != 0;
+    if (keep_scrn_coords != old_keep_scrn_coords)
+        j = 1;
+    if (!keep_scrn_coords)
+        set_orbit_corners = 0;
 
-    {   int tmp;
-        tmp = uvalues[++k].uval.ch.val;
+    {
+        int tmp = uvalues[++k].uval.ch.val;
         switch (tmp)
         {
         default:
@@ -2087,7 +2089,8 @@ static int get_screen_corners(void)
     svyymax = yymax;
     svyy3rd = yy3rd;
 
-    if (!set_orbit_corners && !keep_scrn_coords) {
+    if (!set_orbit_corners && !keep_scrn_coords)
+    {
         oxmin = xxmin;
         oxmax = xxmax;
         ox3rd = xx3rd;
@@ -2280,9 +2283,10 @@ gsc_loop:
         yy3rd = svyy3rd;
         return 0;
     }
-    else {
+    else
+    {
         set_orbit_corners = 1;
-        keep_scrn_coords = 1;
+        keep_scrn_coords = true;
         /* restore corners */
         xxmin = svxxmin;
         xxmax = svxxmax;

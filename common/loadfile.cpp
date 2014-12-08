@@ -632,7 +632,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         oymax       = blk_7_info.oymax;
         ox3rd       = blk_7_info.ox3rd;
         oy3rd       = blk_7_info.oy3rd;
-        keep_scrn_coords = blk_7_info.keep_scrn_coords;
+        keep_scrn_coords = blk_7_info.keep_scrn_coords != 0;
         drawmode    = blk_7_info.drawmode;
         if (keep_scrn_coords)
         {

@@ -1933,7 +1933,7 @@ int dynam2dfloat()
     return (ret);
 }
 
-int keep_scrn_coords = 0;
+bool keep_scrn_coords = false;
 int set_orbit_corners = 0;
 long orbit_interval;
 double oxmin, oymin, oxmax, oymax, ox3rd, oy3rd;
@@ -1979,7 +1979,8 @@ int plotorbits2dsetup(void)
     PER_IMAGE();
 
     /* setup affine screen coord conversion */
-    if (keep_scrn_coords) {
+    if (keep_scrn_coords)
+    {
         if (setup_orbits_to_screen(&o_cvt))
             return (-1);
     } else {

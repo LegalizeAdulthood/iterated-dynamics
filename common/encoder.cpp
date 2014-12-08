@@ -541,7 +541,7 @@ int encoder()
             osave_info.oymax     = oymax;
             osave_info.ox3rd     = ox3rd;
             osave_info.oy3rd     = oy3rd;
-            osave_info.keep_scrn_coords= (short)keep_scrn_coords;
+            osave_info.keep_scrn_coords= (short) (keep_scrn_coords ? 1 : 0);
             osave_info.drawmode  = drawmode;
             for (i = 0; i < sizeof(osave_info.future) / sizeof(short); i++)
                 osave_info.future[i] = 0;

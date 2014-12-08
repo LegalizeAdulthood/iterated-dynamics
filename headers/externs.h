@@ -225,7 +225,7 @@ extern int                   juli3Dmode;
 extern const char *          juli3Doptions[];
 extern bool                  julibrot;
 extern int                   kbdcount;
-extern int                   keep_scrn_coords;
+extern bool                  keep_scrn_coords;
 extern long                  l16triglim;
 extern int                   LastInitOp;
 extern unsigned              LastOp;
