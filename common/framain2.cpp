@@ -1313,7 +1313,7 @@ do_3d_transform:
     case FIK_ENTER:                  /* Enter                        */
     case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
 #ifdef XFRACT
-        XZoomWaiting = 0;
+        XZoomWaiting = false;
 #endif
         if (zwidth != 0.0)
         {   /* do a zoom */
@@ -1673,7 +1673,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
     case FIK_ENTER:                  /* Enter                        */
     case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
 #ifdef XFRACT
-        XZoomWaiting = 0;
+        XZoomWaiting = false;
 #endif
         if (zwidth != 0.0)
         {   /* do a zoom */

@@ -1606,7 +1606,7 @@ handleesc()
 extern int editpal_cursor;
 extern void Cursor_SetPos();
 
-int XZoomWaiting = 0;
+bool XZoomWaiting = false;
 
 #define SENS 1
 #define ABS(x) ((x) > 0?(x):-(x))
@@ -1895,7 +1895,7 @@ xhandleevents()
                 XSetForeground(Xdp, Xgc, xlastcolor);
             }
             XSetFunction(Xdp, Xgc, xlastfcn);
-            XZoomWaiting = 1;
+            XZoomWaiting = true;
             drawbox(0);
         }
         break;

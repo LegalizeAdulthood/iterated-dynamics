@@ -127,7 +127,7 @@ struct tagDriverX11 {
     BYTE *pixbuf;               /* = nullptr; */
     XColor cols[256];
 
-    int XZoomWaiting;           /* = 0; */
+    bool XZoomWaiting;          /* = false; */
 
     const char *x_font_name;    /* = FONT; */
     XFontStruct *font_info;     /* = nullptr; */
@@ -1195,7 +1195,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
     if (di->xlastcolor != -1)
         XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, di->xlastcolor));
     XSetFunction(di->Xdp, di->Xgc, di->xlastfcn);
-    di->XZoomWaiting = 1;
+    di->XZoomWaiting = true;
     drawbox(0);
 }
 
@@ -2582,7 +2582,7 @@ static DriverX11 x11_driver_info = {
     GXcopy,               /* xlastfcn */
     nullptr,              /* pixbuf */
     { 0 },                /* cols */
-    0,                    /* XZoomWaiting */
+    false,                /* XZoomWaiting */
     FONT,                 /* x_font_name */
     nullptr,              /* font_info */
     0,                    /* xbufkey */
