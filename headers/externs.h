@@ -129,8 +129,7 @@ extern std::vector<double>   dy0;
 extern std::vector<double>   dy1;
 extern double (*   dypixel)(void); /* set in FRACTALS.C */
 extern double                dysize;
-//extern int                   EPSFileType;
-extern int                   escape_exit;
+extern bool                  escape_exit;
 extern BYTE                  exitmode;
 extern int                   evolving;
 extern U16                   evolve_handle;

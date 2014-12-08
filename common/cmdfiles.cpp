@@ -136,7 +136,7 @@ int     Log_Fly_Calc = 0;       /* calculate logmap on-the-fly */
 int     Log_Auto_Calc = 0;      /* auto calculate logmap */
 int     nobof = 0;              /* Flag to make inside=bof options not duplicate bof images */
 
-int        escape_exit = 0;     /* set to 1 to avoid the "are you sure?" screen */
+bool    escape_exit = false;    /* set to 1 to avoid the "are you sure?" screen */
 int first_init = 1;             /* first time into cmdfiles? */
 static int init_rseed = 0;
 static char initcorners = 0;
@@ -400,7 +400,7 @@ static void initvars_restart()          /* <ins> key init */
 static void initvars_fractal()          /* init vars affecting calculation */
 {
     int i;
-    escape_exit = 0;                     /* don't disable the "are you sure?" screen */
+    escape_exit = false;                /* don't disable the "are you sure?" screen */
     usr_periodicitycheck = 1;            /* turn on periodicity    */
     inside = 1;                          /* inside color = blue    */
     fillcolor = -1;                      /* no special fill color */
@@ -962,7 +962,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             {
                 goto badarg;
             }
-            escape_exit = yesnoval[0];
+            escape_exit = yesnoval[0] != 0;
             return 3;
         }
 
