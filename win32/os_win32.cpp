@@ -112,7 +112,6 @@ typedef enum
 /* Global variables (yuck!) */
 int MPOverflow = 0;
 struct MP Ans = { 0 };
-int g_checked_vvs = 0;
 int g_color_dark = 0;       /* darkest color in palette */
 int g_color_bright = 0;     /* brightest color in palette */
 int g_color_medium = 0;     /* nearest to medbright grey in palette

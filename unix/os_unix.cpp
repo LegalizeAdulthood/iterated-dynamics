@@ -7,7 +7,6 @@
 /* Global variables (yuck!) */
 int MPOverflow = 0;
 struct MP Ans = { 0 };
-int g_checked_vvs = 0;
 static char extrasegment[0x18000] = { 0 };
 void *extraseg = &extrasegment[0];
 int fm_attack = 0;

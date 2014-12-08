@@ -57,7 +57,6 @@ extern int                 (*calctype)(void);
 extern int                   calc_status;
 extern char                  calibrate;
 extern bool                  checkcurdir;
-extern int                   g_checked_vvs;
 extern long                  c_imag;
 extern double                closenuff;
 extern double                closeprox;
