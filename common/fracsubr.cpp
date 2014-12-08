@@ -129,7 +129,7 @@ void fractal_floattobf(void)
 }
 
 
-int use_grid;
+bool use_grid = false;
 
 void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation */
 {
@@ -148,11 +148,11 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
             ((usr_floatflag == 1) && (xytemp * sizeof(double) > 32768)) ||
             debugflag == 3800)
     {
-        use_grid=0;
+        use_grid = false;
         floatflag = usr_floatflag = 1;
     }
     else
-        use_grid=1;
+        use_grid = true;
 
     set_grid_pointers();
 
