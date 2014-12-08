@@ -293,7 +293,6 @@ extern int                   minbox;
 extern enum Minor            minor_method;
 extern int                   minstack;
 extern int                   minstackavail;
-extern int                   g_mode_7_text;                     /* for egamono and hgc */
 extern MOREPARAMS            moreparams[];
 extern struct MP             mpAp1deg;
 extern struct MP             mpAplusOne;
