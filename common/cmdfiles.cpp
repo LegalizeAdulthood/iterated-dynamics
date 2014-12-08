@@ -122,7 +122,7 @@ bool fastrestore = false;       /* true - reset viewwindows prior to a restore
                                      and do not display warnings when video
                                      mode changes during restore */
 
-int orgfrmsearch = 0;           /* 1 - user has specified a directory for
+bool orgfrmsearch = false;      /* 1 - user has specified a directory for
                                      Orgform formula compilation files */
 
 int     orbitsave = 0;          /* for IFS and LORENZ to output acrospin file */
@@ -139,8 +139,8 @@ bool    nobof = false;                  /* Flag to make inside=bof options not d
 bool    escape_exit = false;    /* set to true to avoid the "are you sure?" screen */
 bool first_init = true;                 /* first time into cmdfiles? */
 static int init_rseed = 0;
-static char initcorners = 0;
-static char initparams = 0;
+static bool initcorners = false;
+static bool initparams = false;
 struct fractalspecificstuff *curfractalspecific = nullptr;
 
 char FormFileName[FILE_MAX_PATH] = { 0 };/* file to find (type=)formulas in */
@@ -313,7 +313,8 @@ int load_commands(FILE *infile)
     /* when called, file is open in binary mode, positioned at the */
     /* '(' or '{' following the desired parameter set's name       */
     int ret;
-    initcorners = initparams = 0; /* reset flags for type= */
+    initcorners = false;
+    initparams = false; /* reset flags for type= */
     ret = cmdfile(infile, CMDFILE_AT_AFTER_STARTUP);
 
     if (colorpreloaded && showfile==0) /* PAR reads a file and sets color */
@@ -422,7 +423,8 @@ static void initvars_fractal()          /* init vars affecting calculation */
     finattract = 0;                      /* disable finite attractor logic */
     fractype = 0;                        /* initial type Set flag  */
     curfractalspecific = &fractalspecific[0];
-    initcorners = initparams = 0;
+    initcorners = false;
+    initparams = false;
     bailout = 0;                        /* no user-entered bailout */
     nobof = false;                      /* use normal bof initialization to make bof images */
     useinitorbit = 0;
@@ -1318,14 +1320,14 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         }
         fractype = k;
         curfractalspecific = &fractalspecific[fractype];
-        if (initcorners == 0)
+        if (!initcorners)
         {
             xx3rd = xxmin = curfractalspecific->xmin;
             xxmax         = curfractalspecific->xmax;
             yy3rd = yymin = curfractalspecific->ymin;
             yymax         = curfractalspecific->ymax;
         }
-        if (initparams == 0)
+        if (!initparams)
         {
             load_params(fractype);
         }
@@ -1760,7 +1762,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        initparams = 1;
+        initparams = true;
         for (k = 0; k < MAXPARAMS; ++k)
         {
             param[k] = (k < totparms) ? floatval[k] : 0.0;
@@ -1953,7 +1955,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             return 0; /* turns corners mode on */
         }
-        initcorners = 1;
+        initcorners = true;
         /* good first approx, but dec could be too big */
         dec = get_max_curarg_len(floatvalstr, totparms) + 1;
         if ((dec > DBL_DIG+1 || debugflag == 3200) && debugflag != 3400)
@@ -2129,8 +2131,9 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         if (fractype == CELLULAR)
             return 1; /* skip setting the corners */
         usemag = true;
-        if (totparms == 0) return 0; /* turns center-mag mode on */
-        initcorners = 1;
+        if (totparms == 0)
+            return 0; /* turns center-mag mode on */
+        initcorners = true;
         /* dec = get_max_curarg_len(floatvalstr, totparms); */
         sscanf(floatvalstr[2], "%Lf", &Magnification);
 
@@ -2163,7 +2166,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         else { /* use arbitrary precision */
             int old_bf_math;
             int saved;
-            initcorners = 1;
+            initcorners = true;
             old_bf_math = bf_math;
             if (!bf_math || dec > decimals)
                 init_bf_dec(dec);
@@ -2250,9 +2253,11 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     }
 
     if (strcmp(variable, "orgfrmdir") == 0) {    /* orgfrmdir=? */
-        if (valuelen > (FILE_MAX_DIR-1)) goto badarg;
-        if (isadirectory(value) == 0) goto badarg;
-        orgfrmsearch = 1;
+        if (valuelen > (FILE_MAX_DIR-1))
+            goto badarg;
+        if (isadirectory(value) == 0)
+            goto badarg;
+        orgfrmsearch = true;
         strcpy(orgfrmdir, value);
         fix_dirname(orgfrmdir);
         return 0;

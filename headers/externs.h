@@ -344,7 +344,7 @@ extern int                   orbit_delay;
 extern long                  orbit_interval;
 extern int                   orbit_ptr;
 extern char                  orgfrmdir[];
-extern int                   orgfrmsearch;
+extern bool                  orgfrmsearch;
 extern float                 originfp;
 extern int (*                outln)(BYTE *, int);
 extern void (*               outln_cleanup)(void);
