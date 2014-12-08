@@ -74,7 +74,7 @@ int     rseed = 0;              /* Random number seeding flag and value */
 int     decomp[2] = { 0 };      /* Decomposition coloring */
 long    distest = 0;
 int     distestwidth = 0;
-char    fract_overwrite = 0;    /* 0 if file overwrite not allowed */
+bool    fract_overwrite = false;/* true if file overwrite allowed */
 int     soundflag = 0;          /* sound control bitfield... see sound.c for useage*/
 int     basehertz = 0;          /* sound=x/y/x hertz value */
 int     debugflag = 0;          /* internal use only - you didn't see this */
@@ -352,7 +352,7 @@ static void initvars_restart()          /* <ins> key init */
     gif87a_flag = false;                /* turn on GIF89a processing */
     dither_flag = false;                /* no dithering */
     askvideo = true;                    /* turn on video-prompt flag */
-    fract_overwrite = 0;                 /* don't overwrite           */
+    fract_overwrite = false;            /* don't overwrite           */
     soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
     initbatch = 0;                       /* not in batch mode         */
     checkcurdir = false;                /* flag to check current dire for files */
@@ -1229,7 +1229,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        fract_overwrite = (char)(yesnoval[0] ^ 1);
+        fract_overwrite = (yesnoval[0] ^ 1) != 0;
         return 0;
     }
     if (strcmp(variable, "overwrite") == 0)    /* overwrite=? */
@@ -1238,7 +1238,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        fract_overwrite = (char) yesnoval[0];
+        fract_overwrite = yesnoval[0] != 0;
         return 0;
     }
 

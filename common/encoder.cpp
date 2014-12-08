@@ -109,7 +109,7 @@ restart:
         newfile = 1;
     else
     {   /* file already exists */
-        if (fract_overwrite == 0)
+        if (!fract_overwrite)
         {
             if (resave_flag == 0)
                 goto restart;

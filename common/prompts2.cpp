@@ -194,7 +194,7 @@ int get_toggles()
 
     choices[++k] = "File Overwrite ('overwrite=')";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = fract_overwrite;
+    uvalues[k].uval.ch.val = fract_overwrite ? 1 : 0;
 
     choices[++k] = "Sound (off, beep, x, y, z)";
     uvalues[k].type = 'l';
@@ -324,7 +324,7 @@ int get_toggles()
     strcpy(savenameptr,uvalues[++k].uval.sval);
     if (strcmp(savename,prevsavename))
         resave_flag = started_resaves = 0; /* forget pending increment */
-    fract_overwrite = (char)uvalues[++k].uval.ch.val;
+    fract_overwrite = uvalues[++k].uval.ch.val != 0;
 
     soundflag = ((soundflag >> 3) << 3) | (uvalues[++k].uval.ch.val);
     if (soundflag != old_soundflag && ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP || (old_soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP))

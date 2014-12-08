@@ -351,7 +351,7 @@ extern void (*               outln_cleanup)(void);
 extern int                   outside;
 extern int                   overflow;
 extern bool                  overlay3d;
-extern char                  fract_overwrite;
+extern bool                  fract_overwrite;
 extern double                ox3rd;
 extern double                oxmax;
 extern double                oxmin;
