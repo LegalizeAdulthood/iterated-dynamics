@@ -40,7 +40,7 @@ void bf_hexdump(bf_t r)
 bf_t strtobf(bf_t r, const char *s)
 {
     BYTE onesbyte;
-    int signflag=0;
+    bool signflag = false;
     const char *l;
     const char *d;
     const char *e; /* pointer to s, ".", "[eE]" */
@@ -54,7 +54,7 @@ bf_t strtobf(bf_t r, const char *s)
     }
     else if (s[0] == '-')    /* for neg sign */
     {
-        signflag = 1;
+        signflag = true;
         s++;
     }
 
@@ -339,7 +339,8 @@ bf_t abs_a_bf(bf_t r)
 /*      n ends up as |n|/256^exp    Make copy first if necessary.   */
 bf_t unsafe_inv_bf(bf_t r, bf_t n)
 {
-    int signflag=0, i;
+    int i;
+    bool signflag = false; 
     int fexp, rexp;
     LDBL f;
     bf_t orig_r, orig_n; /* orig_bftmp1 not needed here */
@@ -354,7 +355,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 
     if (is_bf_neg(n))
     {   /* will be a lot easier to deal with just positives */
-        signflag = 1;
+        signflag = true;
         neg_a_bf(n);
     }
 
@@ -716,7 +717,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 {
     U16 fact=2;
-    int k=0;
+    bool k = false;
     int sin_done=0, cos_done=0;
     S16 BIGDIST * testexp, BIGDIST * cexp, BIGDIST * sexp;
 
@@ -734,7 +735,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
         return s;
     }
 
-    int signsin=0;
+    bool signsin = false;
     if (is_bf_neg(n))
     {
         signsin = !signsin; /* sin(-x) = -sin(x), odd; cos(-x) = cos(x), even */
@@ -751,7 +752,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     }
     /* 0 <= n < 2*pi */
 
-    int signcos=0;
+    bool signcos = false;
     copy_bf(bftmp1, bf_pi); /* pi */
     if (cmp_bf(n, bftmp1) >= 0) /* if n >= pi */
     {
@@ -770,7 +771,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     }
     /* 0 <= n < pi/2 */
 
-    int switch_sincos=0;
+    bool switch_sincos = 0;
     half_bf(bftmp1, bf_pi); /* pi/2 */
     half_a_bf(bftmp1);      /* pi/4 */
     if (cmp_bf(n, bftmp1) > 0) /* if n > pi/4 */
@@ -879,7 +880,8 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 /*      n ends up as |n| or 1/|n|                                   */
 bf_t unsafe_atan_bf(bf_t r, bf_t n)
 {
-    int i, comp, almost_match=0, signflag=0;
+    int i, comp, almost_match=0;
+    bool signflag = false;
     LDBL f;
     bf_t orig_r, orig_n, orig_bf_pi, orig_bftmp3;
     int  orig_bflength,
@@ -888,14 +890,13 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
          orig_rlength,
          orig_shiftfactor,
          orig_rbflength;
-    int large_arg;
 
 
     /* use Newton's recursive method for zeroing in on atan(n): r=r-cos(r)(sin(r)-n*cos(r)) */
 
     if (is_bf_neg(n))
     {
-        signflag = 1;
+        signflag = true;
         neg_a_bf(n);
     }
 
@@ -904,7 +905,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     /* say, 1, atan(n) = pi/2 - acot(n) = pi/2 - atan(1/n).                 */
 
     f = bftofloat(n);
-    large_arg = f > 1.0;
+    bool large_arg = f > 1.0;
     if (large_arg)
     {
         unsafe_inv_bf(bftmp3, n);
