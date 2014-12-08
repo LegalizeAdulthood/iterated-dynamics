@@ -1036,12 +1036,12 @@ static int ratio_bad(double actual, double desired)
    Engines which aren't resumable can simply ignore all this.
 
    Before calling the (per_image,calctype) routines (engine), calcfract sets:
-      "resuming" to 0 if new image, nonzero if resuming a partially done image
+      "resuming" to false if new image, true if resuming a partially done image
       "calc_status" to CALCSTAT_IN_PROGRESS
    If an engine is interrupted and wants to be able to resume it must:
       store whatever status info it needs to be able to resume later
       set calc_status to CALCSTAT_RESUMABLE and return
-   If subsequently called with resuming!=0, the engine must restore status
+   If subsequently called with resuming true, the engine must restore status
    info and continue from where it left off.
 
    Since the info required for resume can get rather large for some types,

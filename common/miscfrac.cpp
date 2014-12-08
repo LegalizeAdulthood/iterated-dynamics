@@ -1584,7 +1584,8 @@ int cellular() {
 
     filled = 0;
     notfilled = (S16)(1-filled);
-    if (resuming && !nxtscreenflag && !lstscreenflag) {
+    if (resuming && !nxtscreenflag && !lstscreenflag)
+    {
         start_resume();
         get_resume(sizeof(start_row),&start_row,0);
         end_resume();
@@ -1624,7 +1625,8 @@ int cellular() {
     /* This section calculates the starting line when it is not zero */
     /* This section can't be resumed since no screen output is generated */
     /* calculates the (lnnmbr - 1) generation */
-    if (lstscreenflag) { /* line number != 0 & not resuming & not continuing */
+    if (lstscreenflag)   /* line number != 0 & not resuming & not continuing */
+    {
         U32 big_row;
         for (big_row = (U32)start_row; big_row < lnnmbr; big_row++) {
             thinking(1, "Cellular thinking (higher start row takes longer)");
@@ -1738,7 +1740,8 @@ contloop:
 
 int CellularSetup(void)
 {
-    if (!resuming) {
+    if (!resuming)
+    {
         nxtscreenflag = false; /* initialize flag */
     }
     timer(0,curfractalspecific->calctype);

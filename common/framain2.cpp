@@ -2301,7 +2301,7 @@ static void restore_history_info(int i)
     MoveFromMemory((BYTE *)&last,(U16)sizeof(HISTORY),1L,(long)i,history);
     invert = 0;
     calc_status = CALCSTAT_PARAMS_CHANGED;
-    resuming = 0;
+    resuming = false;
     fractype              = last.fractal_type   ;
     xxmin                 = last.xmin           ;
     xxmax                 = last.xmax           ;

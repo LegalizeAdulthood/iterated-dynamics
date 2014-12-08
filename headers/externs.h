@@ -410,7 +410,7 @@ extern int                   resave_flag;
 extern bool                  reset_periodicity;
 extern U16                   resume_info;
 extern int                   resume_len;
-extern int                   resuming;
+extern bool                  resuming;
 extern bool                  rflag;
 extern char                  rlebuf[];
 extern int                   rhombus_stack[];

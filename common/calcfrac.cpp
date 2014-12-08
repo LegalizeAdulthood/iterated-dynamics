@@ -143,7 +143,7 @@ int kbdcount = 0;
 int max_kbdcount = 0;                   /* avoids checking keyboard too often */
 
 U16 resume_info = 0;                    /* handle to resume info if allocated */
-int resuming = 0;                       /* nonzero if resuming after interrupt */
+bool resuming = false;                  /* true if resuming after interrupt */
 int num_worklist = 0;                   /* resume worklist for standard engine */
 WORKLIST worklist[MAXCALCWORK] = { 0 };
 int xxstart = 0;
@@ -889,7 +889,7 @@ static void perform_worklist()
         int tmpcalcmode = stdcalcmode;
 
         stdcalcmode = '1'; /* force 1 pass */
-        if (resuming == 0)
+        if (!resuming)
             if (pot_startdisk() < 0)
             {
                 pot16bit = false;       /* startdisk failed or cancelled */
@@ -1082,7 +1082,7 @@ static void perform_worklist()
 
         setsymmetry(symmetry,1);
 
-        if (!(resuming)&&(labs(LogFlag) ==2 || (LogFlag && Log_Auto_Calc)))
+        if (!resuming && (labs(LogFlag) ==2 || (LogFlag && Log_Auto_Calc)))
         {   /* calculate round screen edges to work out best start for logmap */
             LogFlag = (autologmap() * (LogFlag / labs(LogFlag)));
             SetupLogTable();
@@ -1630,7 +1630,7 @@ static int StandardCalc(int passnum)
             {
                 if ((*calctype)() == -1) /* StandardFractal(), calcmand() or calcmandfp() */
                     return -1;          /* interrupted */
-                resuming = 0;           /* reset so quick_calc works */
+                resuming = false;       /* reset so quick_calc works */
                 reset_periodicity = false;
                 if (passnum == 1)       /* first pass, copy pixel and bump col */
                 {
@@ -3834,7 +3834,8 @@ static int tesseral(void)
     tp->y1 = iystart;
     tp->y2 = iystop;
 
-    if (workpass == 0) { /* not resuming */
+    if (workpass == 0) /* not resuming */
+    {
         tp->top = tessrow(ixstart,ixstop,iystart);     /* Do top row */
         tp->bot = tessrow(ixstart,ixstop,iystop);      /* Do bottom row */
         tp->lft = tesscol(ixstart,iystart+1,iystop-1); /* Do left column */
@@ -3844,8 +3845,8 @@ static int tesseral(void)
             return -1;
         }
     }
-
-    else { /* resuming, rebuild work stack */
+    else /* resuming, rebuild work stack */
+    {
         int i,mid,curx,cury,xsize,ysize;
         struct tess *tp2;
         tp->top = tp->bot = tp->lft = tp->rgt = -2;
@@ -4140,7 +4141,8 @@ static long autologmap(void)
     for (lag=32; lag>0; lag--)(*plot)(col-lag,row,0);
 
 ack: /* bailout here if key is pressed */
-    if (mincolour==2) resuming=1; /* insure autologmap not called again */
+    if (mincolour==2)    /* insure autologmap not called again */
+        resuming = true;
     maxit = old_maxit;
 
     return mincolour ;

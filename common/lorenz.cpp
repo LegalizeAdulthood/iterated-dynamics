@@ -1847,7 +1847,8 @@ int dynam2dfloat()
     xstep = -1;
     ystep = 0;
 
-    if (resuming) {
+    if (resuming)
+    {
         start_resume();
         get_resume(sizeof(count),&count, sizeof(color),&color,
                    sizeof(oldrow),&oldrow, sizeof(oldcol),&oldcol,
@@ -2027,7 +2028,8 @@ int plotorbits2dfloat(void)
     else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Z)
         soundvar = &z;
 
-    if (resuming) {
+    if (resuming)
+    {
         start_resume();
         get_resume(sizeof(o_color),&o_color, 0);
         end_resume();

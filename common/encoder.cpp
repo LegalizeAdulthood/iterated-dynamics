@@ -494,7 +494,9 @@ int encoder()
                 esave_info.fiddlefactor    = fiddlefactor;
                 esave_info.ecount          = (short)(gridsz * gridsz);  /* flag for done */
             }
-            else { /* we will need the resuming information */
+            else
+            {
+                /* we will need the resuming information */
                 MoveFromMemory((BYTE *)&resume_e_info,(U16)sizeof(resume_e_info),1L,0L,evolve_handle);
                 esave_info.paramrangex     = resume_e_info.paramrangex;
                 esave_info.paramrangey     = resume_e_info.paramrangey;
