@@ -793,7 +793,7 @@ static void setup_save_info(struct fractal_info * save_info)
     save_info->iterations = maxit;
     save_info->bflength = (short) bnlength;
     save_info->bf_math = (short) bf_math;
-    save_info->old_demm_colors = (short) old_demm_colors;
+    save_info->old_demm_colors = (short) (old_demm_colors ? 1 : 0);
     save_info->logmap = LogFlag;
     save_info->distest = distest;
     save_info->dinvert[0] = inversion[0];

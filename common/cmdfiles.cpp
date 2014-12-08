@@ -478,7 +478,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
     display3d = 0;                       /* 3D display is off        */
     overlay3d = 0;                       /* 3D overlay is off        */
 
-    old_demm_colors = 0;
+    old_demm_colors = false;
     bailoutest    = Mod;
     floatbailout  = (int (*)(void))fpMODbailout;
     longbailout   = (int (*)(void))asmlMODbailout;
@@ -2220,7 +2220,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "olddemmcolors") == 0) {      /* olddemmcolors=?   */
         if (yesnoval[0] < 0) goto badarg;
-        old_demm_colors = yesnoval[0];
+        old_demm_colors = yesnoval[0] != 0;
         return 0;
     }
 

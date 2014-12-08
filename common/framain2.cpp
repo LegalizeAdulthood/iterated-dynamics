@@ -2233,7 +2233,7 @@ static void save_history_info()
     current.bailout              = bailout                   ;
     current.bailoutest           = (short)bailoutest                ;
     current.iterations           = maxit                     ;
-    current.old_demm_colors      = (short)old_demm_colors;
+    current.old_demm_colors      = (short) (old_demm_colors ? 1 : 0);
     current.logcalc              = (short)Log_Fly_Calc;
     current.ismand               = (short)ismand;
     current.closeprox            = closeprox;
@@ -2407,7 +2407,7 @@ static void restore_history_info(int i)
     bailout               = last.bailout        ;
     bailoutest            = (enum bailouts)last.bailoutest     ;
     maxit                 = last.iterations     ;
-    old_demm_colors       = last.old_demm_colors;
+    old_demm_colors       = last.old_demm_colors != 0;
     curfractalspecific    = &fractalspecific[fractype];
     potflag               = (potparam[0] != 0.0);
     if (inversion[0] != 0.0)

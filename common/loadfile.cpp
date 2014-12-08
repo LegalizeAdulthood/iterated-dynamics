@@ -334,7 +334,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         /* post-version 18.23 */
         maxit = read_info.iterations; /* use long maxit */
         /* post-version 18.27 */
-        old_demm_colors = read_info.old_demm_colors;
+        old_demm_colors = read_info.old_demm_colors != 0;
     }
 
     if (read_info.version > 10) /* post-version 19.20 */
