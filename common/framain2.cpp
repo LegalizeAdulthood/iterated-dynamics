@@ -246,7 +246,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                 {   /* pot file failed?  */
                     showfile = 1;
                     potflag  = false;
-                    pot16bit = 0;
+                    pot16bit = false;
                     g_init_mode = -1;
                     calc_status = CALCSTAT_RESUMABLE;         /* "resume" without 16-bit */
                     driver_set_for_text();
@@ -2048,7 +2048,8 @@ int cmp_line(BYTE *pixels, int linelen)
         cmp_fp = dir_fopen(workdir,"cmperr",(initbatch)?"a":"w");
         outln_cleanup = cmp_line_cleanup;
     }
-    if (pot16bit) { /* 16 bit info, ignore odd numbered rows */
+    if (pot16bit)
+    {                                   /* 16 bit info, ignore odd numbered rows */
         if ((row & 1) != 0) return 0;
         row >>= 1;
     }

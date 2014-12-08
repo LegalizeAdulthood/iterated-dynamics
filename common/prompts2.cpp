@@ -393,7 +393,7 @@ int get_toggles2()
 
     choices[++k] = "          16 bit values";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = pot16bit;
+    uvalues[k].uval.ch.val = pot16bit ? 1 : 0;
 
     choices[++k] = "Distance Estimator (0=off, <0=edge, >0=on):";
     uvalues[k].type = 'L';
@@ -454,10 +454,12 @@ int get_toggles2()
     potparam[2] = uvalues[++k].uval.ival;
     if (potparam[0] != 0.0 && potparam[2] != old_potparam[2]) j = 1;
 
-    if (uvalues[++k].uval.ch.val != pot16bit) {
-        pot16bit = uvalues[k].uval.ch.val;
-        if (pot16bit) { /* turned it on */
-            if (potparam[0] != 0.0) j = 1;
+    if ((uvalues[++k].uval.ch.val != 0) != pot16bit) {
+        pot16bit = uvalues[k].uval.ch.val != 0;
+        if (pot16bit)                   /* turned it on */
+        {
+            if (potparam[0] != 0.0)
+                j = 1;
         }
         else /* turned it off */
             if (!driver_diskp()) /* ditch the disk video */

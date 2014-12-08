@@ -60,7 +60,7 @@ char    PrintName[FILE_MAX_PATH]= {"fract001.prn"}; /* Name for print-to-file */
 char    savename[FILE_MAX_PATH]= {"fract001"}; /* save files using this name */
 char    autoname[FILE_MAX_PATH]= {"auto.key"}; /* record auto keystrokes here */
 bool    potflag = false;        /* continuous potential enabled? */
-int     pot16bit = 0;           /* store 16 bit continuous potential values */
+bool    pot16bit = false;               /* store 16 bit continuous potential values */
 bool    gif87a_flag = false;    /* true if GIF87a format, false otherwise */
 bool    dither_flag = false;    /* true if want to dither GIFs */
 bool    askvideo = false;       /* flag for video prompting */
@@ -442,7 +442,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
     yy3rd = yymin = -1.5;
     yymax = 1.5;   /* initial corner values  */
     bf_math = 0;
-    pot16bit = 0;
+    pot16bit = false;
     potflag = false;
     LogFlag = 0;                         /* no logarithmic palette */
     set_trig_array(0, "sin");             /* trigfn defaults */
@@ -1742,14 +1742,14 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             }
             ++value;
         }
-        pot16bit = 0;
+        pot16bit = false;
         if (k < 99)
         {
             if (strcmp(value, "16bit"))
             {
                 goto badarg;
             }
-            pot16bit = 1;
+            pot16bit = true;
         }
         return 1;
     }

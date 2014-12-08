@@ -189,11 +189,11 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         usr_periodicitycheck = read_info.periodicity;
     }
 
-    pot16bit = 0;
+    pot16bit = false;
     save_system = 0;
     if (read_info.version > 4)
     {
-        pot16bit     = read_info.pot16bit;
+        pot16bit = read_info.pot16bit != 0;
         if (pot16bit)
         {
             filexdots >>= 1;

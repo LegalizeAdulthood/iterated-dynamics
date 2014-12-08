@@ -892,7 +892,7 @@ static void perform_worklist()
         if (resuming == 0)
             if (pot_startdisk() < 0)
             {
-                pot16bit = 0;       /* startdisk failed or cancelled */
+                pot16bit = false;       /* startdisk failed or cancelled */
                 stdcalcmode = (char)tmpcalcmode;    /* maybe we can carry on??? */
             }
     }
