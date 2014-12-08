@@ -353,7 +353,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                 }
                 finishrow = -1;
             }
-            browsing = FALSE;      /* regenerate image, turn off browsing */
+            browsing = false;      /* regenerate image, turn off browsing */
             /*rb*/
             name_stack_ptr = -1;   /* reset pointer */
             browsename[0] = '\0';  /* null */
@@ -698,7 +698,7 @@ static int look(char *stacked)
     case FIK_ENTER:
     case FIK_ENTER_2:
         showfile = 0;       /* trigger load */
-        browsing = TRUE;    /* but don't ask for the file name as it's
+        browsing = true;    /* but don't ask for the file name as it's
                                 * just been selected */
         if (name_stack_ptr == 15)
         {   /* about to run off the end of the file
@@ -737,7 +737,7 @@ static int look(char *stacked)
             }
             strcpy(browsename, file_name_stack[name_stack_ptr]);
             merge_pathnames(readname,browsename,2);
-            browsing = TRUE;
+            browsing = true;
             showfile = 0;
             if (askvideo)
             {
@@ -745,17 +745,16 @@ static int look(char *stacked)
                 *stacked = 1;
             }
             return 1;
-        }                   /* otherwise fall through and turn off
-                             * browsing */
+        }                   /* otherwise fall through and turn off browsing */
     case FIK_ESC:
     case 'l':              /* turn it off */
     case 'L':
-        browsing = FALSE;
+        browsing = false;
         helpmode = oldhelpmode;
         break;
 
     case 's':
-        browsing = FALSE;
+        browsing = false;
         helpmode = oldhelpmode;
         savetodisk(savename);
         break;
@@ -1158,7 +1157,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
                 break;
             strcpy(browsename, file_name_stack[name_stack_ptr]);
             merge_pathnames(readname,browsename,2);
-            browsing = TRUE;
+            browsing = true;
             no_sub_images = FALSE;
             showfile = 0;
             if (askvideo)
@@ -1254,10 +1253,7 @@ do_3d_transform:
     case 'r':                    /* restore-from                 */
         comparegif = 0;
         *frommandel = 0;
-        if (browsing)
-        {
-            browsing = FALSE;
-        }
+        browsing = false;
         if (*kbdchar == 'r')
         {
             if (debugflag == 50)
@@ -1291,7 +1287,7 @@ do_3d_transform:
     case 'L':                    /* Look for other files within this view */
         if ((zwidth != 0) || driver_diskp())
         {
-            browsing = FALSE;
+            browsing = false;
             driver_buzzer(BUZZER_ERROR);             /* can't browse if zooming or disk video */
         }
         else if (look(stacked))
@@ -1628,10 +1624,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
     case 'r':                    /* restore-from                 */
         comparegif = 0;
         *frommandel = 0;
-        if (browsing)
-        {
-            browsing = FALSE;
-        }
+        browsing = FALSE;
         if (*kbdchar == 'r')
         {
             if (debugflag == 50)

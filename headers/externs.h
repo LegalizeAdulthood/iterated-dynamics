@@ -48,7 +48,7 @@ extern int                   boxy[];
 extern int                   BRIEF;
 extern char                  browsemask[13];
 extern char                  browsename[];
-extern int                   browsing;
+extern bool                  browsing;
 extern char                  brwscheckparms;
 extern char                  brwschecktype;
 extern char                  busy;
