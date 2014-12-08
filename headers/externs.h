@@ -107,7 +107,7 @@ extern unsigned long         dif_counter;
 extern unsigned long         dif_limit;
 extern bool                  disk16bit;
 extern bool                  g_disk_flag;                       /* disk video active flag */
-extern int                   disktarga;
+extern bool                  disktarga;
 extern int                   display3d;
 extern long                  distest;
 extern int                   distestwidth;

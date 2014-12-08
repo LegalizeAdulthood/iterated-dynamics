@@ -24,7 +24,7 @@ bool disk16bit = false;                 /* storing 16 bit values for continuous 
 
 static int timetodisplay;
 static FILE *fp = nullptr;
-int disktarga;
+bool disktarga = false;
 bool g_disk_flag = false;
 
 #define BLOCKLEN 2048   /* must be a power of 2, must match next */
@@ -70,7 +70,8 @@ static void mem_seek(long);
 
 int startdisk()
 {
-    headerlength = disktarga = 0;
+    headerlength = 0;
+    disktarga = false;
     return common_startdisk(sxdots, sydots, colors);
 }
 
@@ -85,7 +86,8 @@ int pot_startdisk()
     {
         showtempmsg("clearing 16bit pot work area");
     }
-    headerlength = disktarga = 0;
+    headerlength = 0;
+    disktarga = false;
     i = common_startdisk(sxdots, sydots << 1, colors);
     cleartempmsg();
     if (i == 0)
@@ -106,7 +108,7 @@ int targa_startdisk(FILE *targafp, int overhead)
     }
     headerlength = overhead;
     fp = targafp;
-    disktarga = 1;
+    disktarga = true;
     i = common_startdisk(xdots*3, ydots, colors);
     high_offset = 100000000L; /* targa not necessarily init'd to zeros */
 

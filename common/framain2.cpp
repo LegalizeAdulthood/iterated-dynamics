@@ -1232,7 +1232,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
         }
         return CONTINUE;
     case 's':                    /* save-to-disk                 */
-        if (driver_diskp() && disktarga == 1)
+        if (driver_diskp() && disktarga)
             return CONTINUE;  /* disk video and targa, nothing to save */
         note_zoom();
         savetodisk(savename);
@@ -1596,7 +1596,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
     {   int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
         GENEBASE gene[NUMGENES];
 
-        if (driver_diskp() && disktarga == 1)
+        if (driver_diskp() && disktarga)
             return CONTINUE;  /* disk video and targa, nothing to save */
         /* get the gene array from memory */
         MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
