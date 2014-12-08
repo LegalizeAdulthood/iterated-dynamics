@@ -319,7 +319,7 @@ extern double                newopy;
 extern int                   neworbittype;
 extern int                   nextsavedincr;
 extern bool                  no_sub_images;
-extern int                   no_mag_calc;
+extern bool                  no_mag_calc;
 extern int                   nobof;
 extern int                   numaffine;
 extern unsigned              numcolors;

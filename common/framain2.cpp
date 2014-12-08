@@ -795,7 +795,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             driver_discard_screen();
             savedac = 0;
             save_release = g_release;
-            no_mag_calc = 0;
+            no_mag_calc = false;
             use_old_period = 0;
             bad_outside = false;
             ldcheck = false;
@@ -1463,7 +1463,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             driver_discard_screen();
             savedac = 0;
             save_release = g_release;
-            no_mag_calc = 0;
+            no_mag_calc = false;
             use_old_period = 0;
             bad_outside = false;
             ldcheck = false;

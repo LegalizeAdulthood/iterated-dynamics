@@ -114,7 +114,7 @@ double magnitude = 0.0;
 double rqlim = 0.0;
 double rqlim2 = 0.0;
 double rqlim_save = 0.0;
-int no_mag_calc = 0;
+bool no_mag_calc = false;
 int use_old_period = 0;
 int use_old_distest = 0;
 int old_demm_colors = 0;
@@ -283,7 +283,7 @@ double fmodtest(void)
     double result;
     if (inside==FMODI && save_release <= 2000) /* for backwards compatibility */
     {
-        if (magnitude == 0.0 || no_mag_calc == 0 || integerfractal)
+        if (magnitude == 0.0 || !no_mag_calc || integerfractal)
             result=sqr(g_new.x)+sqr(g_new.y);
         else
             result=magnitude; /* don't recalculate */
@@ -294,7 +294,7 @@ double fmodtest(void)
     {
     case Mod:
     {
-        if (magnitude == 0.0 || no_mag_calc == 0 || integerfractal)
+        if (magnitude == 0.0 || !no_mag_calc || integerfractal)
             result=sqr(g_new.x)+sqr(g_new.y);
         else
             result=magnitude; /* don't recalculate */
@@ -2050,12 +2050,12 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             {
                 if (integerfractal)
                 {
-                    if (lmagnitud == 0 || no_mag_calc == 0)
+                    if (lmagnitud == 0 || !no_mag_calc)
                         lmagnitud = lsqr(lnew.x) + lsqr(lnew.y);
                     magnitude = lmagnitud;
                     magnitude = magnitude / fudge;
                 }
-                else if (magnitude == 0.0 || no_mag_calc == 0)
+                else if (magnitude == 0.0 || !no_mag_calc)
                     magnitude = sqr(g_new.x) + sqr(g_new.y);
                 if (magnitude < min_orbit)
                 {

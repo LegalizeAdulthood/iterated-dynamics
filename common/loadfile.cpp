@@ -1150,9 +1150,9 @@ void backwards_v19(void)
     if ((fractype==FORMULA || fractype==FFORMULA) && save_release < 1824)
         inversion[0] = inversion[1] = inversion[2] = invert = 0;
     if (fix_bof())
-        no_mag_calc = 1; /* fractal has old bof60/61 problem with magnitude */
+        no_mag_calc = true; /* fractal has old bof60/61 problem with magnitude */
     else
-        no_mag_calc = 0;
+        no_mag_calc = false;
     if (fix_period_bof())
         use_old_period = 1; /* fractal uses old periodicity method */
     else
