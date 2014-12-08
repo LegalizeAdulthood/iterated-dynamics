@@ -1888,10 +1888,9 @@ int get_corners()
     double Xctr,Yctr;
     LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
     double Xmagfactor,Rotation,Skew;
-    BYTE ousemag;
     double oxxmin,oxxmax,oyymin,oyymax,oxx3rd,oyy3rd;
 
-    ousemag = usemag;
+    bool const ousemag = usemag;
     oxxmin = xxmin;
     oxxmax = xxmax;
     oyymin = yymin;
@@ -1902,7 +1901,7 @@ int get_corners()
 gc_loop:
     for (i = 0; i < 15; ++i)
         values[i].type = 'd'; /* most values on this screen are type d */
-    cmag = usemag;
+    cmag = usemag ? 1 : 0;
     if (drawmode == 'l')
         cmag = 0;
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -2044,13 +2043,13 @@ gc_loop:
     }
 
     if (prompt_ret == FIK_F7 && drawmode != 'l') { /* toggle corners/center-mag mode */
-        if (usemag == 0)
+        if (!usemag)
         {
             cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-            usemag = 1;
+            usemag = true;
         }
         else
-            usemag = 0;
+            usemag = false;
         goto gc_loop;
     }
 
@@ -2081,11 +2080,10 @@ static int get_screen_corners(void)
     double Xctr,Yctr;
     LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
     double Xmagfactor,Rotation,Skew;
-    BYTE ousemag;
     double oxxmin,oxxmax,oyymin,oyymax,oxx3rd,oyy3rd;
     double svxxmin,svxxmax,svyymin,svyymax,svxx3rd,svyy3rd;
 
-    ousemag = usemag;
+    bool const ousemag = usemag;
 
     svxxmin = xxmin;  /* save these for later since cvtcorners modifies them */
     svxxmax = xxmax;  /* and we need to set them for cvtcentermag to work */
@@ -2121,7 +2119,7 @@ static int get_screen_corners(void)
 gsc_loop:
     for (i = 0; i < 15; ++i)
         values[i].type = 'd'; /* most values on this screen are type d */
-    cmag = usemag;
+    cmag = usemag ? 1 : 0;
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
     nump = -1;
@@ -2259,13 +2257,13 @@ gsc_loop:
     }
 
     if (prompt_ret == FIK_F7) { /* toggle corners/center-mag mode */
-        if (usemag == 0)
+        if (!usemag)
         {
             cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-            usemag = 1;
+            usemag = true;
         }
         else
-            usemag = 0;
+            usemag = false;
         goto gsc_loop;
     }
 

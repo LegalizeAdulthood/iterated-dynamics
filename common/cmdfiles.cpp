@@ -94,7 +94,7 @@ DComplex  initorbit = { 0.0 };  /* initial orbitvalue */
 char    useinitorbit = 0;       /* flag for initorbit */
 int     g_init_mode = 0;        /* initial video mode       */
 int     initcyclelimit = 0;     /* initial cycle limit      */
-BYTE    usemag = 0;             /* use center-mag corners   */
+bool    usemag = false;         /* use center-mag corners   */
 long    bailout = 0;            /* user input bailout value */
 enum bailouts bailoutest;       /* test used for determining bailout */
 double  inversion[3] = { 0.0 }; /* radius, xcenter, ycenter */
@@ -454,7 +454,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
         ranges.clear();
         rangeslen = 0;
     }
-    usemag = 1;                          /* use center-mag, not corners */
+    usemag = true;                      /* use center-mag, not corners */
 
     colorstate = 0;
     colorpreloaded = false;
@@ -1948,7 +1948,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        usemag = 0;
+        usemag = false;
         if (totparms == 0)
         {
             return 0; /* turns corners mode on */
@@ -2128,7 +2128,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             goto badarg;
         if (fractype == CELLULAR)
             return 1; /* skip setting the corners */
-        usemag = 1;
+        usemag = true;
         if (totparms == 0) return 0; /* turns center-mag mode on */
         initcorners = 1;
         /* dec = get_max_curarg_len(floatvalstr, totparms); */
@@ -2172,7 +2172,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
                 for (k = 0; k < MAXPARAMS; k++)
                     floattobf(bfparms[k], param[k]);
             }
-            usemag = 1;
+            usemag = true;
             saved = save_stack();
             bXctr            = alloc_stack(bflength+2);
             bYctr            = alloc_stack(bflength+2);

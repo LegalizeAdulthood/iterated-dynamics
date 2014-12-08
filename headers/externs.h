@@ -506,7 +506,7 @@ extern double                twopi;
 extern VOIDPTR               typespecific_workarea;
 extern char                  useinitorbit;
 extern bool                  use_grid;
-extern BYTE                  usemag;
+extern bool                  usemag;
 extern short                 uses_ismand;
 extern short                 uses_p1;
 extern short                 uses_p2;
