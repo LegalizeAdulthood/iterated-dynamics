@@ -31,6 +31,7 @@ char mapmask[13] = {"*.map"};
 BYTE g_dac_box[256][3];
 BYTE olddacbox[256][3];
 bool g_dac_learn = false;
+bool g_got_real_dac = false;            /* true if loaddac has a dacbox */
 
 void rotate(int direction)      /* rotate-the-palette routine */
 {
@@ -44,11 +45,12 @@ void rotate(int direction)      /* rotate-the-palette routine */
     static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
 
 #ifndef XFRACT
-    if (g_got_real_dac == 0                  /* ??? no DAC to rotate! */
+    if (!g_got_real_dac                 /* ??? no DAC to rotate! */
 #else
-    if (!(g_got_real_dac || fake_lut)        /* ??? no DAC to rotate! */
+    if (!(g_got_real_dac || fake_lut)   /* ??? no DAC to rotate! */
 #endif
-            || colors < 16) {                  /* strange things happen in 2x modes */
+            || colors < 16)
+    {                                   /* strange things happen in 2x modes */
         driver_buzzer(BUZZER_ERROR);
         return;
     }

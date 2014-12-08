@@ -483,7 +483,7 @@ int plot_read_palette(Plot *me)
 {
     int i;
 
-    if (g_got_real_dac == 0)
+    if (!g_got_real_dac)
     {
         return -1;
     }

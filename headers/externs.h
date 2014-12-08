@@ -182,8 +182,8 @@ extern bool                  gif87a_flag;
 extern char                  gifmask[];
 extern char                  Glasses1Map[];
 extern int                   g_glasses_type;
-extern bool                  g_good_mode;                       /* video mode ok? */
-extern int                   g_got_real_dac;                    /* loaddac worked, really got a dac */
+extern bool                  g_good_mode;           /* video mode ok? */
+extern bool                  g_got_real_dac;        /* loaddac worked, really got a dac */
 extern int                   got_status;
 extern bool                  grayflag;
 extern char                  GreyFile[];

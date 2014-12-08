@@ -330,7 +330,7 @@ disk_read_palette(Driver *drv)
     int i;
 
     ODS("disk_read_palette");
-    if (g_got_real_dac == 0)
+    if (!g_got_real_dac)
     {
         return -1;
     }
@@ -638,7 +638,7 @@ disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
         boxcount = 0;
         g_dac_learn = true;
         g_dac_count = cyclelimit;
-        g_got_real_dac = TRUE;
+        g_got_real_dac = true;
 
         driver_read_palette();
     }

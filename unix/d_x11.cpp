@@ -58,7 +58,7 @@ extern  int sxoffs, syoffs;     /* offset of drawing area          */
 extern  int colors;         /* maximum colors available    */
 extern  int g_init_mode;
 extern  int g_adapter;
-extern  int g_got_real_dac;
+extern bool g_got_real_dac;
 extern  int inside_help;
 extern  float   finalaspectratio;
 extern  float   screenaspect;
@@ -413,21 +413,21 @@ select_visual(DriverX11 *di)
     case StaticGray:
     case StaticColor:
         colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
-        g_got_real_dac = 0;
+        g_got_real_dac = false;
         di->fake_lut = 0;
         break;
 
     case GrayScale:
     case PseudoColor:
         colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
-        g_got_real_dac = 1;
+        g_got_real_dac = true;
         di->fake_lut = 0;
         break;
 
     case TrueColor:
     case DirectColor:
         colors = 256;
-        g_got_real_dac = 0;
+        g_got_real_dac = false;
         di->fake_lut = 1;
         break;
 
@@ -520,13 +520,17 @@ xcmapstuff(DriverX11 *di)
         di->pixtab[i] = i;
         di->ipixtab[i] = 999;
     }
-    if (!g_got_real_dac) {
+    if (!g_got_real_dac)
+    {
         di->Xcmap = DefaultColormapOfScreen(di->Xsc);
         if (di->fake_lut)
             x11_write_palette(&di->pub);
-    } else if (di->sharecolor) {
-        g_got_real_dac = 0;
-    } else if (di->privatecolor) {
+    }
+    else if (di->sharecolor)
+    {
+        g_got_real_dac = false;
+    }
+    else if (di->privatecolor) {
         di->Xcmap = XCreateColormap(di->Xdp, di->Xw, di->Xvi, AllocAll);
         XSetWindowColormap(di->Xdp, di->Xw, di->Xcmap);
     } else {
@@ -546,7 +550,7 @@ xcmapstuff(DriverX11 *di)
         }
         if (!di->usepixtab) {
             printf("Couldn't allocate any colors\n");
-            g_got_real_dac = 0;
+            g_got_real_dac = false;
         }
     }
     for (i = 0; i < colors; i++) {
@@ -1814,7 +1818,7 @@ x11_read_palette(Driver *drv)
 {
     DIX11(drv);
     int i;
-    if (g_got_real_dac == 0)
+    if (!g_got_real_dac)
         return -1;
     for (i = 0; i < 256; i++) {
         g_dac_box[i][0] = di->cols[i].red/1024;

@@ -653,7 +653,7 @@ gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
         boxcount = 0;
         g_dac_learn = true;
         g_dac_count = cyclelimit;
-        g_got_real_dac = TRUE;          /* we are "VGA" */
+        g_got_real_dac = true;          /* we are "VGA" */
 
         driver_read_palette();
     }

@@ -61,7 +61,7 @@ extern  int sxoffs, syoffs;     /* offset of drawing area          */
 extern  int colors;         /* maximum colors available    */
 extern  int initmode;
 extern  int g_adapter;
-extern  int g_got_real_dac;
+extern bool g_got_real_dac;
 extern  int inside_help;
 extern  float   finalaspectratio;
 extern  float   screenaspect;
@@ -396,7 +396,7 @@ select_visual(void)
     case StaticGray:
     case StaticColor:
         colors = 1 << Xdepth;
-        g_got_real_dac = 0;
+        g_got_real_dac = false;
         fake_lut = 0;
         g_is_true_color = false;
         break;
@@ -404,7 +404,7 @@ select_visual(void)
     case GrayScale:
     case PseudoColor:
         colors = 1 << Xdepth;
-        g_got_real_dac = 1;
+        g_got_real_dac = true;
         fake_lut = 0;
         g_is_true_color = false;
         break;
@@ -412,7 +412,7 @@ select_visual(void)
     case TrueColor:
     case DirectColor:
         colors = 256;
-        g_got_real_dac = 0;
+        g_got_real_dac = false;
         fake_lut = 1;
         g_is_true_color = false;
         break;
@@ -468,7 +468,7 @@ initUnixWindow()
         fastmode = 0;
         fake_lut = 0;
         g_is_true_color = false;
-        g_got_real_dac = 1;
+        g_got_real_dac = true;
         colors = 256;
         for (int i = 0; i < colors; i++) {
             pixtab[i] = i;
@@ -863,13 +863,17 @@ xcmapstuff()
         pixtab[i] = i;
         ipixtab[i] = 999;
     }
-    if (!g_got_real_dac) {
+    if (!g_got_real_dac)
+    {
         Xcmap = DefaultColormapOfScreen(Xsc);
         if (fake_lut)
             writevideopalette();
-    } else if (sharecolor) {
-        g_got_real_dac = 0;
-    } else if (privatecolor) {
+    }
+    else if (sharecolor)
+    {
+        g_got_real_dac = false;
+    }
+    else if (privatecolor) {
         Xcmap = XCreateColormap(Xdp, Xw, Xvi, AllocAll);
         XSetWindowColormap(Xdp, Xw, Xcmap);
     } else {
@@ -888,7 +892,7 @@ xcmapstuff()
         }
         if (!usepixtab) {
             fprintf(stderr,"Couldn't allocate any colors\n");
-            g_got_real_dac = 0;
+            g_got_real_dac = false;
         }
     }
     for (i = 0; i < colors; i++) {
@@ -1098,7 +1102,8 @@ int readvideopalette()
 {
 
     int i;
-    if (g_got_real_dac==0 && g_is_true_color && truemode) return -1;
+    if (!g_got_real_dac && g_is_true_color && truemode)
+        return -1;
     for (i=0; i<colors; i++) {
         g_dac_box[i][0] = cols[i].red/1024;
         g_dac_box[i][1] = cols[i].green/1024;
