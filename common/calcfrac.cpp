@@ -1758,7 +1758,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
     long   min_index = 0;               /* iteration of min_orbit */
     long cyclelen = -1;
     long savedcoloriter = 0;
-    int caught_a_cycle = 0;
+    bool caught_a_cycle = false;
     long savedand = 0;
     int savedincr = 0;                  /* for periodicity checking */
     LComplex lsaved = { 0 };
@@ -1861,7 +1861,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
     coloriter = 0;
     if (fractype==JULIAFP || fractype==JULIA)
         coloriter = -1;
-    caught_a_cycle = 0;
+    caught_a_cycle = false;
     if (inside == PERIOD) {
         savedand = 16;           /* begin checking every 16th cycle */
     } else {
@@ -2193,25 +2193,25 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                 {
                     if (labs(lsaved.x - lnew.x) < lclosenuff)
                         if (labs(lsaved.y - lnew.y) < lclosenuff)
-                            caught_a_cycle = 1;
+                            caught_a_cycle = true;
                 }
                 else if (bf_math == BIGNUM)
                 {
                     if (cmp_bn(abs_a_bn(sub_bn(bntmp,bnsaved.x,bnnew.x)), bnclosenuff) < 0)
                         if (cmp_bn(abs_a_bn(sub_bn(bntmp,bnsaved.y,bnnew.y)), bnclosenuff) < 0)
-                            caught_a_cycle = 1;
+                            caught_a_cycle = true;
                 }
                 else if (bf_math == BIGFLT)
                 {
                     if (cmp_bf(abs_a_bf(sub_bf(bftmp,bfsaved.x,bfnew.x)), bfclosenuff) < 0)
                         if (cmp_bf(abs_a_bf(sub_bf(bftmp,bfsaved.y,bfnew.y)), bfclosenuff) < 0)
-                            caught_a_cycle = 1;
+                            caught_a_cycle = true;
                 }
                 else
                 {
                     if (fabs(saved.x - g_new.x) < closenuff)
                         if (fabs(saved.y - g_new.y) < closenuff)
-                            caught_a_cycle = 1;
+                            caught_a_cycle = true;
 #ifdef NUMSAVED
                     for (int i=0; i<=zctr; i++)
                     {
