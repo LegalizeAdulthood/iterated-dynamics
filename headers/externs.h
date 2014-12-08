@@ -171,7 +171,7 @@ extern int                   fractype;
 extern const char *          fract_dir1;
 extern const char *          fract_dir2;
 extern long                  fudge;
-extern int                   functionpreloaded;
+extern bool                  functionpreloaded;
 extern double                f_at_rad;
 extern double                f_radius;
 extern double                f_xcenter;

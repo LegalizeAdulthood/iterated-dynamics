@@ -315,7 +315,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     if (save_release < 1725 && read_info.version != 0) /* pre-version 17.25 */
     {
         set_if_old_bif(); /* translate bifurcation types */
-        functionpreloaded = 1;
+        functionpreloaded = true;
     }
 
     if (read_info.version > 9)
@@ -360,7 +360,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
                 fractype == FPPOPCORNJUL || fractype == LPOPCORNJUL ||
                 fractype == LATOO)
         {
-            functionpreloaded = 1;
+            functionpreloaded = true;
         }
     }
 
