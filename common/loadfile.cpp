@@ -39,7 +39,7 @@ int fileydots, filexdots, filecolors;
 float fileaspectratio;
 short skipxdots,skipydots;      /* for decoder, when reducing image */
 bool bad_outside = false;
-int ldcheck = 0;
+bool ldcheck = false;
 
 int read_overlay()      /* read overlay/3D files, if reqr'd */
 {
@@ -1173,9 +1173,9 @@ void backwards_v20(void)
         bad_outside = false;
     if ((fractype == FORMULA || fractype == FFORMULA) &&
             (save_release < 1900 || debugflag == 94))
-        ldcheck = 1;
+        ldcheck = true;
     else
-        ldcheck = 0;
+        ldcheck = false;
     if (inside == EPSCROSS && save_release < 1961)
         closeprox = 0.01;
     if (!functionpreloaded)
