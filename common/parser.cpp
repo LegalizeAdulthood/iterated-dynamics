@@ -196,7 +196,7 @@ static int Randomized;
 static unsigned long RandNum;
 short uses_p1, uses_p2, uses_p3, uses_p4, uses_p5;
 int uses_jump = 0;
-short uses_ismand;
+bool uses_ismand = false;
 unsigned int chars_in_formula;
 
 #if !defined(XFRACT)
@@ -1807,7 +1807,7 @@ struct ConstArg *isconst(char *Str, int Len) {
                 if (n == 8)        /* The formula uses 'p3'. */
                     uses_p3 = 1;
                 if (n == 13)        /* The formula uses 'ismand'. */
-                    uses_ismand = 1;
+                    uses_ismand = true;
                 if (n == 17)        /* The formula uses 'p4'. */
                     uses_p4 = 1;
                 if (n == 18)        /* The formula uses 'p5'. */
@@ -3345,7 +3345,9 @@ int frm_get_param_stuff(char * Name)
     int c;
     struct token_st current_token;
     FILE * entry_file = nullptr;
-    uses_p1 = uses_p2 = uses_p3 = uses_ismand = maxfn = 0;
+    uses_p1 = uses_p2 = uses_p3 = 0;
+    uses_ismand = false;
+    maxfn = 0;
     uses_p4 = uses_p5 = 0;
 
     if (FormName[0] == 0) {
@@ -3387,7 +3389,7 @@ int frm_get_param_stuff(char * Name)
             else if (current_token.token_id == 8)
                 uses_p3 = 1;
             else if (current_token.token_id == 13)
-                uses_ismand = 1;
+                uses_ismand = true;
             else if (current_token.token_id == 17)
                 uses_p4 = 1;
             else if (current_token.token_id == 18)
@@ -3402,8 +3404,11 @@ int frm_get_param_stuff(char * Name)
     fclose(entry_file);
     if (debug_token)
         fclose(debug_token);
-    if (current_token.token_type != END_OF_FORMULA) {
-        uses_p1 = uses_p2 = uses_p3 = uses_ismand = maxfn = 0;
+    if (current_token.token_type != END_OF_FORMULA)
+    {
+        uses_p1 = uses_p2 = uses_p3 = 0;
+        uses_ismand = false;
+        maxfn = 0;
         uses_p4 = uses_p5 = 0;
         return 0;
     }
@@ -3732,7 +3737,8 @@ void init_misc()
     ShiftBack = 32 - bitshift;
     Delta16 = bitshift - 16;
     bitshiftless1 = bitshift-1;
-    uses_p1 = uses_p2 = uses_p3 = uses_jump = uses_ismand = 0;
+    uses_p1 = uses_p2 = uses_p3 = uses_jump = 0;
+    uses_ismand = false;
     uses_p4 = uses_p5 = 0;
 }
 
