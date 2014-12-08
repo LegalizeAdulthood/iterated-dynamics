@@ -138,7 +138,8 @@ int  minbox;
 int no_sub_images;
 bool autobrowse = false;
 int doublecaution;
-char brwscheckparms,brwschecktype;
+bool brwscheckparms = false;
+bool brwschecktype = false;
 char browsemask[13];
 int scale_map[12] = {1,2,3,4,5,6,7,8,9,10,11,12}; /*RB, array for mapping notes to a (user defined) scale */
 
@@ -208,8 +209,8 @@ restart:   /* insert key re-starts here */
     _ASSERTE(_CrtCheckMemory());
 #endif
     autobrowse     = false;
-    brwschecktype  = TRUE;
-    brwscheckparms = TRUE;
+    brwschecktype  = false;
+    brwscheckparms = true;
     doublecaution  = TRUE;
     no_sub_images = FALSE;
     toosmall = 6;

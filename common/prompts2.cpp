@@ -2302,14 +2302,14 @@ int get_browse_params()
     const char *choices[10];
     struct fullscreenvalues uvalues[25];
     int i, k;
-    int old_brwschecktype,old_brwscheckparms,old_doublecaution;
+    int old_doublecaution;
     int old_minbox;
     double old_toosmall;
     char old_browsemask[13];
 
     bool old_autobrowse     = autobrowse;
-    old_brwschecktype  = brwschecktype;
-    old_brwscheckparms = brwscheckparms;
+    bool old_brwschecktype  = brwschecktype;
+    bool old_brwscheckparms = brwscheckparms;
     old_doublecaution  = doublecaution;
     old_minbox         = minbox;
     old_toosmall       = toosmall;
@@ -2329,11 +2329,11 @@ get_brws_restart:
 
     choices[++k] = "Check fractal type? (y/n)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = brwschecktype;
+    uvalues[k].uval.ch.val = brwschecktype ? 1 : 0;
 
     choices[++k] = "Check fractal parameters (y/n)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = brwscheckparms;
+    uvalues[k].uval.ch.val = brwscheckparms ? 1 : 0;
 
     choices[++k] = "Confirm file deletes (y/n)";
     uvalues[k].type='y';
@@ -2368,8 +2368,8 @@ get_brws_restart:
         toosmall = 6;
         autobrowse = false;
         askvideo = true;
-        brwscheckparms = TRUE;
-        brwschecktype  = TRUE;
+        brwscheckparms = true;
+        brwschecktype  = true;
         doublecaution  = TRUE;
         minbox = 3;
         strcpy(browsemask,"*.gif");
@@ -2381,8 +2381,8 @@ get_brws_restart:
 
     autobrowse = uvalues[++k].uval.ch.val != 0;
     askvideo = uvalues[++k].uval.ch.val != 0;
-    brwschecktype = (char)uvalues[++k].uval.ch.val;
-    brwscheckparms = (char)uvalues[++k].uval.ch.val;
+    brwschecktype = uvalues[++k].uval.ch.val != 0;
+    brwscheckparms = uvalues[++k].uval.ch.val != 0;
     doublecaution = uvalues[++k].uval.ch.val;
     toosmall  = uvalues[++k].uval.dval;
     if (toosmall < 0)
