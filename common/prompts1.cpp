@@ -2366,7 +2366,7 @@ restart_1:
 
     prompts3d[++k] = "Targa output?";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = Targa_Out;
+    uvalues[k].uval.ch.val = Targa_Out ? 1 : 0;
 
     prompts3d[++k] = "Use grayscale value for depth? (if \"no\" uses color number)";
     uvalues[k].type = 'y';
@@ -2399,7 +2399,7 @@ restart_1:
 
     strcpy(ray_name,uvalues[k++].uval.sval);
 
-    Targa_Out = uvalues[k++].uval.ch.val;
+    Targa_Out = uvalues[k++].uval.ch.val != 0;
     grayflag  = uvalues[k++].uval.ch.val != 0;
 
     /* check ranges */
@@ -2589,7 +2589,7 @@ restart_3:
     if (RANDOMIZE >= 7) RANDOMIZE = 7;
     if (RANDOMIZE <= 0) RANDOMIZE = 0;
 
-    if ((Targa_Out || ILLUMINE || RAY))
+    if (Targa_Out || ILLUMINE || RAY)
         if (get_light_params())
             goto restart_3;
     return 0;

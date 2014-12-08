@@ -474,7 +474,7 @@ extern int                   syoffs;
 extern char                  s_makepar[];
 extern bool                  tabmode;
 extern bool                  taborhelp;
-extern int                   Targa_Out;
+extern bool                  Targa_Out;
 extern int                   Targa_Overlay;
 extern char                  temp1[];
 extern double                tempsqrx;

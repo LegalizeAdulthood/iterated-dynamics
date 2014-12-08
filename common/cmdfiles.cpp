@@ -110,7 +110,7 @@ bool    colorpreloaded = false; /* if g_dac_box preloaded for next mode select *
 int     save_release = 0;       /* release creating PAR file*/
 bool    dontreadcolor = false;  /* flag for reading color from GIF */
 double  math_tol[2]= {.05,.05}; /* For math transition */
-int Targa_Out = 0;              /* 3D fullcolor flag */
+bool Targa_Out = false;                 /* 3D fullcolor flag */
 int truecolor = 0;              /* escape time truecolor flag */
 int truemode = 0;               /* truecolor coloring scheme */
 char    colorfile[FILE_MAX_PATH] = { 0 };/* from last <l> <s> or colors=@filename */
@@ -2806,8 +2806,9 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     }
 
     if (strcmp(variable, "fullcolor") == 0) {     /* fullcolor=? */
-        if (yesnoval[0] < 0) goto badarg;
-        Targa_Out = yesnoval[0];
+        if (yesnoval[0] < 0)
+            goto badarg;
+        Targa_Out = yesnoval[0] != 0;
         return 2;
     }
 
