@@ -248,7 +248,7 @@ void bn_hexdump(bn_t r)
 bn_t strtobn(bn_t r, char *s)
 {
     bn_t onesbyte;
-    int signflag=0;
+    bool signflag = false;
     long longval;
 
     clear_bn(r);
@@ -260,7 +260,7 @@ bn_t strtobn(bn_t r, char *s)
     }
     else if (s[0] == '-')    /* for neg sign */
     {
-        signflag = 1;
+        signflag = true;
         s++;
     }
 
@@ -306,7 +306,6 @@ bn_t strtobn(bn_t r, char *s)
             break;
         }
     }
-
 
     if (signflag)
         neg_a_bn(r);
@@ -446,14 +445,14 @@ bn_t floattobn(bn_t r, LDBL f)
 {
     bn_t onesbyte;
     int i;
-    int signflag=0;
+    bool signflag = false;
 
     clear_bn(r);
     onesbyte = r + bnlength - intlength;
 
     if (f < 0)
     {
-        signflag = 1;
+        signflag = true;
         f = -f;
     }
 
@@ -517,7 +516,7 @@ bn_t abs_a_bn(bn_t r)
 /*      n ends up as |n|    Make copy first if necessary.           */
 bn_t unsafe_inv_bn(bn_t r, bn_t n)
 {
-    int signflag=0, i;
+    int i;
     long maxval;
     LDBL f;
     bn_t orig_r, orig_n; /* orig_bntmp1 not needed here */
@@ -528,9 +527,10 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 
     /* use Newton's recursive method for zeroing in on 1/n : r=r(2-rn) */
 
+    bool signflag = false;
     if (is_bn_neg(n))
     {   /* will be a lot easier to deal with just positives */
-        signflag = 1;
+        signflag = true;
         neg_a_bn(n);
     }
 
@@ -622,7 +622,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 /*      Make copies first if necessary.                             */
 bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 {
-    int scale1, scale2, sign=0, i;
+    int scale1, scale2, i;
     long maxval;
     LDBL a, b, f;
 
@@ -654,6 +654,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
     }
     /* appears to be ok, do division */
 
+    bool sign = false;
     if (is_bn_neg(n1))
     {
         neg_a_bn(n1);
@@ -953,7 +954,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 {
     U16 fact=2;
-    int k=0;
+    bool k = false;
 
 #ifndef CALCULATING_BIG_PI
     /* assure range 0 <= x < pi/4 */
@@ -965,7 +966,9 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
         return s;
     }
 
-    int signcos=0, signsin=0, switch_sincos=0;
+    bool signcos = false;
+    bool signsin = false;
+    bool switch_sincos = false;
     if (is_bn_neg(n))
     {
         signsin = !signsin; /* sin(-x) = -sin(x), odd; cos(-x) = cos(x), even */
@@ -1013,7 +1016,6 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
         inttobn(c, 1);  /* cos(0) = 1 */
         return s;
     }
-
 
     /* at this point, the double angle trig identities could be used as many  */
     /* times as desired to reduce the range to pi/8, pi/16, etc...  Each time */
@@ -1094,20 +1096,19 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 /*      n ends up as |n| or 1/|n|                                   */
 bn_t unsafe_atan_bn(bn_t r, bn_t n)
 {
-    int i, comp, almost_match=0, signflag=0;
+    int i, comp, almost_match=0;
     LDBL f;
     bn_t orig_r, orig_n, orig_bn_pi, orig_bntmp3;
     int  orig_bnlength,
          orig_padding,
          orig_rlength,
          orig_shiftfactor;
-    int large_arg;
 
     /* use Newton's recursive method for zeroing in on atan(n): r=r-cos(r)(sin(r)-n*cos(r)) */
-
+    bool signflag = false;
     if (is_bn_neg(n))
     {
-        signflag = 1;
+        signflag = true;
         neg_a_bn(n);
     }
 
@@ -1116,7 +1117,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     /* say, 1, atan(n) = pi/2 - acot(n) = pi/2 - atan(1/n).                 */
 
     f = bntofloat(n);
-    large_arg = f > 1.0;
+    bool large_arg = f > 1.0;
     if (large_arg)
     {
         unsafe_inv_bn(bntmp3, n);
@@ -1302,9 +1303,7 @@ bn_t mult_bn(bn_t r, bn_t n1, bn_t n2)
 /**********************************************************************/
 bn_t full_square_bn(bn_t r, bn_t n)
 {
-    int sign;
-
-    sign = is_bn_neg(n);
+    bool sign = is_bn_neg(n) != 0;
     unsafe_full_square_bn(r, n);
     if (sign)
         neg_a_bn(n);
@@ -1314,9 +1313,7 @@ bn_t full_square_bn(bn_t r, bn_t n)
 /**********************************************************************/
 bn_t square_bn(bn_t r, bn_t n)
 {
-    int sign;
-
-    sign = is_bn_neg(n);
+    bool sign = is_bn_neg(n) != 0;
     unsafe_square_bn(r, n);
     if (sign)
         neg_a_bn(n);
@@ -1326,9 +1323,7 @@ bn_t square_bn(bn_t r, bn_t n)
 /**********************************************************************/
 bn_t div_bn_int(bn_t r, bn_t n, U16 u)
 {
-    int sign;
-
-    sign = is_bn_neg(n);
+    bool sign = is_bn_neg(n) != 0;
     unsafe_div_bn_int(r, n, u);
     if (sign)
         neg_a_bn(n);
@@ -1344,9 +1339,7 @@ char *bntostr(char *s, int dec, bn_t r)
 /**********************************************************************/
 bn_t inv_bn(bn_t r, bn_t n)
 {
-    int sign;
-
-    sign = is_bn_neg(n);
+    bool sign = is_bn_neg(n) != 0;
     unsafe_inv_bn(r, n);
     if (sign)
         neg_a_bn(n);
@@ -1378,9 +1371,7 @@ bn_t sincos_bn(bn_t s, bn_t c, bn_t n)
 /**********************************************************************/
 bn_t atan_bn(bn_t r, bn_t n)
 {
-    int sign;
-
-    sign = is_bn_neg(n);
+    bool sign = is_bn_neg(n) != 0;
     unsafe_atan_bn(r, n);
     if (sign)
         neg_a_bn(n);

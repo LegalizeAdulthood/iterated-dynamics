@@ -300,7 +300,7 @@ static void init_bf_2(void)
     /* end safe vars */
 
     /* good citizens initialize variables */
-    if (bf_save_len)  /* leave save area */
+    if (bf_save_len > 0)  /* leave save area */
         memset(bnroot+(bf_save_len+2)*22,0,(unsigned)(startstack-(bf_save_len+2)*22));
     else /* first time through - nothing saved */
     {
@@ -447,7 +447,7 @@ void restore_stack(int old_offset)
 
 void init_bf_dec(int dec)
 {
-    if (bfdigits)
+    if (bfdigits > 0)
         decimals=bfdigits;   /* blindly force */
     else
         decimals = dec;

@@ -763,11 +763,11 @@ bn_t mult_a_bn_int(bn_t r, U16 u)
 /* r = n / u  where u is an unsigned integer */
 bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 {
-    int i, sign;
+    int i;
     U32 full_number;
     U16 quot, rem=0;
 
-    sign = is_bn_neg(n);
+    bool sign = is_bn_neg(n) != 0;
     if (sign)
         neg_a_bn(n);
 
@@ -797,11 +797,11 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 /* r /= u  where u is an unsigned integer */
 bn_t div_a_bn_int(bn_t r, U16 u)
 {
-    int i, sign;
+    int i;
     U32 full_number;
     U16 quot, rem=0;
 
-    sign = is_bn_neg(r);
+    bool sign = is_bn_neg(r) != 0;
     if (sign)
         neg_a_bn(r);
 
@@ -833,14 +833,14 @@ bn_t div_a_bn_int(bn_t r, U16 u)
 LDBL bntofloat(bn_t n)
 {
     int i;
-    int signflag=0;
     int expon;
     bn_t getbyte;
     LDBL f=0;
 
+    bool signflag = false;
     if (is_bn_neg(n))
     {
-        signflag = 1;
+        signflag = true;
         neg_a_bn(n);
     }
 
