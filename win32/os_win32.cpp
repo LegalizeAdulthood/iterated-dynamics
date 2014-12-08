@@ -131,7 +131,6 @@ int polyphony = 0;
 int g_row_count = 0;
 long savebase = 0;              /* base clock ticks */
 long saveticks = 0;             /* save after this many ticks */
-int g_svga_type = 0;
 int g_text_cbase = 0;
 int g_text_col = 0;
 int g_text_rbase = 0;

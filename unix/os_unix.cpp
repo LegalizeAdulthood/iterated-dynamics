@@ -20,7 +20,6 @@ long linity = 0;
 int polyphony = 0;
 long savebase = 0;              /* base clock ticks */
 long saveticks = 0;             /* save after this many ticks */
-int g_svga_type = 0;
 
 /* g_video_table
  *

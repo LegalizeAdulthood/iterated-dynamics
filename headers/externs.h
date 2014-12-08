@@ -460,7 +460,6 @@ extern int                   StoPtr;
 extern int                   stoppass;
 extern unsigned int          strlocn[];
 extern BYTE                  suffix[];
-extern int                   g_svga_type;                       /* SuperVGA video adapter type */
 extern double                sx3rd;
 extern int                   sxdots;
 extern double                sxmax;
