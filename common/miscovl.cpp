@@ -860,7 +860,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
             put_parm(" %s=%s", "3d", "overlay");
         else
             put_parm(" %s=%s", "3d", "yes");
-        if (loaded3d == 0)
+        if (!loaded3d)
             put_filename("filename", readname);
         if (SPHERE) {
             put_parm(" %s=y", "sphere");

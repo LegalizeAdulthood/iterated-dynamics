@@ -246,7 +246,7 @@ extern long                  llimit;
 extern long                  lmagnitud;
 extern char                  LName[];
 extern LComplex              lnew;
-extern int                   loaded3d;
+extern bool                  loaded3d;
 extern int                   LodPtr;
 extern int                   Log_Auto_Calc;
 extern int                   Log_Calc;

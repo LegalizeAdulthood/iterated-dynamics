@@ -33,7 +33,7 @@ static int fix_bof(void);
 static int fix_period_bof(void);
 
 int filetype;
-int loaded3d;
+bool loaded3d = false;
 static FILE *fp;
 int fileydots, filexdots, filecolors;
 float fileaspectratio;
@@ -56,7 +56,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     showfile = 1;                /* for any abort exit, pretend done */
     g_init_mode = -1;               /* no viewing mode set yet */
     oldfloatflag = usr_floatflag;
-    loaded3d = 0;
+    loaded3d = false;
     if (fastrestore)
     {
         viewwindow = 0;
@@ -213,7 +213,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         }
         if (!display3d && read_info.flag3d > 0)
         {
-            loaded3d       = 1;
+            loaded3d       = true;
             Ambient        = read_info.ambient;
             RANDOMIZE      = read_info.randomize;
             haze           = read_info.haze;
@@ -414,7 +414,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         char oldfloatflag;
         olddisplay3d = display3d;
         oldfloatflag = floatflag;
-        display3d = loaded3d;      /* for <tab> display during next */
+        display3d = loaded3d ? 1 : 0;   /* for <tab> display during next */
         floatflag = usr_floatflag; /* ditto */
         i = get_video_mode(&read_info, &blk_3_info);
 #if defined(_WIN32)
