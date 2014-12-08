@@ -2302,12 +2302,12 @@ int get_browse_params()
     const char *choices[10];
     struct fullscreenvalues uvalues[25];
     int i, k;
-    int old_autobrowse,old_brwschecktype,old_brwscheckparms,old_doublecaution;
+    int old_brwschecktype,old_brwscheckparms,old_doublecaution;
     int old_minbox;
     double old_toosmall;
     char old_browsemask[13];
 
-    old_autobrowse     = autobrowse;
+    bool old_autobrowse     = autobrowse;
     old_brwschecktype  = brwschecktype;
     old_brwscheckparms = brwscheckparms;
     old_doublecaution  = doublecaution;
@@ -2321,7 +2321,7 @@ get_brws_restart:
 
     choices[++k] = "Autobrowsing? (y/n)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = autobrowse;
+    uvalues[k].uval.ch.val = autobrowse ? 1 : 0;
 
     choices[++k] = "Ask about GIF video mode? (y/n)";
     uvalues[k].type = 'y';
@@ -2366,7 +2366,7 @@ get_brws_restart:
 
     if (i == FIK_F4) {
         toosmall = 6;
-        autobrowse = FALSE;
+        autobrowse = false;
         askvideo = true;
         brwscheckparms = TRUE;
         brwschecktype  = TRUE;
@@ -2379,22 +2379,19 @@ get_brws_restart:
     /* now check out the results (*hopefully* in the same order <grin>) */
     k = -1;
 
-    autobrowse = uvalues[++k].uval.ch.val;
-
+    autobrowse = uvalues[++k].uval.ch.val != 0;
     askvideo = uvalues[++k].uval.ch.val != 0;
-
     brwschecktype = (char)uvalues[++k].uval.ch.val;
-
     brwscheckparms = (char)uvalues[++k].uval.ch.val;
-
     doublecaution = uvalues[++k].uval.ch.val;
-
     toosmall  = uvalues[++k].uval.dval;
-    if (toosmall < 0) toosmall = 0 ;
-
+    if (toosmall < 0)
+        toosmall = 0 ;
     minbox = uvalues[++k].uval.ival;
-    if (minbox < 1) minbox = 1;
-    if (minbox > 10) minbox = 10;
+    if (minbox < 1)
+        minbox = 1;
+    if (minbox > 10)
+        minbox = 10;
 
     strcpy(browsemask,uvalues[++k].uval.sval);
 
@@ -2409,7 +2406,7 @@ get_brws_restart:
         i = -3;
 
     if (evolving) { /* can't browse */
-        autobrowse = 0;
+        autobrowse = false;
         i = 0;
     }
 

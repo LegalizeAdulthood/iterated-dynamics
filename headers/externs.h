@@ -16,7 +16,7 @@ extern float                 aspectdrift;
 extern int                   attractors;
 extern int                   attrperiod[];
 extern DComplex                attr[];
-extern int                   autobrowse;
+extern bool                  autobrowse;
 extern char                  autoname[];
 extern char                  autoshowdot;
 extern int                   AutoStereo_depth;

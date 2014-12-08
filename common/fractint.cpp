@@ -136,7 +136,8 @@ int name_stack_ptr ;
 double toosmall;
 int  minbox;
 int no_sub_images;
-int autobrowse,doublecaution;
+bool autobrowse = false;
+int doublecaution;
 char brwscheckparms,brwschecktype;
 char browsemask[13];
 int scale_map[12] = {1,2,3,4,5,6,7,8,9,10,11,12}; /*RB, array for mapping notes to a (user defined) scale */
@@ -206,7 +207,7 @@ restart:   /* insert key re-starts here */
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
 #endif
-    autobrowse     = FALSE;
+    autobrowse     = false;
     brwschecktype  = TRUE;
     brwscheckparms = TRUE;
     doublecaution  = TRUE;
