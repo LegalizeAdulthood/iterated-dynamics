@@ -136,8 +136,8 @@ int     Log_Fly_Calc = 0;       /* calculate logmap on-the-fly */
 int     Log_Auto_Calc = 0;      /* auto calculate logmap */
 int     nobof = 0;              /* Flag to make inside=bof options not duplicate bof images */
 
-bool    escape_exit = false;    /* set to 1 to avoid the "are you sure?" screen */
-int first_init = 1;             /* first time into cmdfiles? */
+bool    escape_exit = false;    /* set to true to avoid the "are you sure?" screen */
+bool first_init = true;                 /* first time into cmdfiles? */
 static int init_rseed = 0;
 static char initcorners = 0;
 static char initparams = 0;
@@ -225,7 +225,8 @@ int cmdfiles(int argc,char **argv)
     char    *sptr;
     FILE    *initfile;
 
-    if (first_init) initvars_run();      /* once per run initialization */
+    if (first_init)
+        initvars_run();                 /* once per run initialization */
     initvars_restart();                  /* <ins> key initialization */
     initvars_fractal();                  /* image initialization */
 
@@ -282,7 +283,8 @@ int cmdfiles(int argc,char **argv)
         }
     }
 
-    if (first_init == 0) {
+    if (!first_init)
+    {
         g_init_mode = -1; /* don't set video when <ins> key used */
         showfile = 1;  /* nor startup image file              */
     }
@@ -290,7 +292,7 @@ int cmdfiles(int argc,char **argv)
     init_msg("",nullptr,0);  /* this causes driver_get_key if init_msg called on runup */
 
     if (debugflag != 110)
-        first_init = 0;
+        first_init = false;
 
     if (colorpreloaded && showfile==0) /* PAR reads a file and sets color */
         dontreadcolor = true;   /* don't read colors from GIF */
@@ -3167,7 +3169,8 @@ int init_msg(const char *cmdstr, char *badfilename, int mode)
         strcat(cmd,"=");
     if (badfilename)
         sprintf(msg,"Can't find %s%s, please check %s",cmd,badfilename,modestr[mode]);
-    if (first_init) {     /* & cmdfiles hasn't finished 1st try */
+    if (first_init)
+    {     /* & cmdfiles hasn't finished 1st try */
         if (row == 1 && badfilename) {
             driver_set_for_text();
             driver_put_string(0,0,15, "Fractint found the following problems when parsing commands: ");

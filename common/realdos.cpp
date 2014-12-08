@@ -62,7 +62,8 @@ int stopmsg(int flags, const char *msg)
             fprintf(fp,"%s\n",msg);
         fclose(fp);
     }
-    if (first_init) {     /* & cmdfiles hasn't finished 1st try */
+    if (first_init)
+    {     /* & cmdfiles hasn't finished 1st try */
 #ifdef XFRACT
         driver_set_for_text();
         driver_buzzer(BUZZER_ERROR);

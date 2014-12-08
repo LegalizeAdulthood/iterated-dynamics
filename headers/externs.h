@@ -153,7 +153,7 @@ extern int                   fillcolor;
 extern float                 finalaspectratio;
 extern int                   finattract;
 extern int                   finishrow;
-extern int                   first_init;
+extern bool                  first_init;
 extern char                  floatflag;
 extern double                floatmax;
 extern double                floatmin;
