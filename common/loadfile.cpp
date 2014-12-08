@@ -354,7 +354,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
     if (read_info.version > 12) /* post-version 19.60 */
     {
-        quick_calc   = read_info.quick_calc;
+        quick_calc   = read_info.quick_calc != 0;
         closeprox    = read_info.closeprox;
         if (fractype == FPPOPCORN || fractype == LPOPCORN ||
                 fractype == FPPOPCORNJUL || fractype == LPOPCORNJUL ||

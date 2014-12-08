@@ -656,7 +656,7 @@ resumeloop:                             /* return here on failed overlays */
                                mms_value == RESTORESTART ||
                                mms_value == RESTART))
             {
-                quick_calc = 0;
+                quick_calc = false;
                 usr_stdcalcmode = old_stdcalcmode;
             }
             if (quick_calc && calc_status != CALCSTAT_COMPLETED)
@@ -778,8 +778,9 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
     */
-    if (quick_calc && calc_status == CALCSTAT_COMPLETED) {
-        quick_calc = 0;
+    if (quick_calc && calc_status == CALCSTAT_COMPLETED)
+    {
+        quick_calc = false;
         usr_stdcalcmode = old_stdcalcmode;
     }
     if (quick_calc && calc_status != CALCSTAT_COMPLETED)
@@ -869,16 +870,18 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
                 /* tesseral with fill doesn't work */
                 !(usr_stdcalcmode == 'o') &&
                 i == 1 && /* nothing else changed */
-                outside != ATAN) {
-            quick_calc = 1;
+                outside != ATAN)
+        {
+            quick_calc = true;
             old_stdcalcmode = usr_stdcalcmode;
             usr_stdcalcmode = '1';
             *kbdmore = 0;
             calc_status = CALCSTAT_RESUMABLE;
         }
-        else if (i > 0) {              /* time to redraw? */
-            quick_calc = 0;
-            param_history(0); /* save history */
+        else if (i > 0)
+        {                               /* time to redraw? */
+            quick_calc = false;
+            param_history(0);           /* save history */
             *kbdmore = 0;
             calc_status = CALCSTAT_PARAMS_CHANGED;
         }

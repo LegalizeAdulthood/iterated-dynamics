@@ -411,7 +411,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
     maxit = 150;                         /* initial maxiter        */
     usr_stdcalcmode = 'g';               /* initial solid-guessing */
     stoppass = 0;                        /* initial guessing stoppass */
-    quick_calc = 0;
+    quick_calc = false;
     closeprox = 0.01;
     ismand = 1;                          /* default formula mand/jul toggle */
 #ifndef XFRACT

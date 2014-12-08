@@ -801,7 +801,7 @@ static void setup_save_info(struct fractal_info * save_info)
     save_info->dinvert[2] = inversion[2];
     save_info->logcalc = (short) Log_Fly_Calc;
     save_info->stoppass = (short) stoppass;
-    save_info->quick_calc = (short) quick_calc;
+    save_info->quick_calc = (short) (quick_calc ? 1 : 0);
     save_info->closeprox = closeprox;
     save_info->nobof = (short) (nobof ? 1 : 0);
     save_info->orbit_interval = orbit_interval;

@@ -120,7 +120,7 @@ int use_old_distest = 0;
 bool old_demm_colors = false;
 int (*calctype)(void) = nullptr;
 int (*calctypetmp)(void) = nullptr;
-int quick_calc = 0;
+bool quick_calc = false;
 double closeprox = 0.01;
 
 double closenuff = 0.0;
@@ -1629,10 +1629,10 @@ static int StandardCalc(int passnum)
             if (passnum == 1 || stdcalcmode == '1' || (row&1) != 0 || (col&1) != 0)
             {
                 if ((*calctype)() == -1) /* StandardFractal(), calcmand() or calcmandfp() */
-                    return -1; /* interrupted */
-                resuming = 0; /* reset so quick_calc works */
+                    return -1;          /* interrupted */
+                resuming = 0;           /* reset so quick_calc works */
                 reset_periodicity = 0;
-                if (passnum == 1) /* first pass, copy pixel and bump col */
+                if (passnum == 1)       /* first pass, copy pixel and bump col */
                 {
                     if ((row&1) == 0 && row < iystop)
                     {
