@@ -583,7 +583,7 @@ pass_option_restart:
     if (keep_scrn_coords != old_keep_scrn_coords)
         j = 1;
     if (!keep_scrn_coords)
-        set_orbit_corners = 0;
+        set_orbit_corners = false;
 
     {
         int tmp = uvalues[++k].uval.ch.val;
@@ -2287,7 +2287,7 @@ gsc_loop:
     }
     else
     {
-        set_orbit_corners = 1;
+        set_orbit_corners = true;
         keep_scrn_coords = true;
         /* restore corners */
         xxmin = svxxmin;

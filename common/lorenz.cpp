@@ -1935,7 +1935,7 @@ int dynam2dfloat()
 }
 
 bool keep_scrn_coords = false;
-int set_orbit_corners = 0;
+bool set_orbit_corners = false;
 long orbit_interval;
 double oxmin, oymin, oxmax, oymax, ox3rd, oy3rd;
 struct affine o_cvt;
