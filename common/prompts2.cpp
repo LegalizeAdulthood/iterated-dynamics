@@ -708,7 +708,7 @@ get_view_restart:
 
     choices[++k] = "Keep aspect? (cuts both x & y when either too big)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = video_cutboth;
+    uvalues[k].uval.ch.val = video_cutboth ? 1 : 0;
 
     {
         const char *scrolltypes[] = {"fixed","relaxed"};
@@ -757,7 +757,7 @@ get_view_restart:
         finalaspectratio = screenaspect;
         sxdots = old_sxdots;
         sydots = old_sydots;
-        video_cutboth = 1;
+        video_cutboth = true;
         zscroll = 1;
         goto get_view_restart;
     }
@@ -779,7 +779,7 @@ get_view_restart:
 
     sxdots = uvalues[++k].uval.ival;
     sydots = uvalues[++k].uval.ival;
-    video_cutboth = uvalues[++k].uval.ch.val;
+    video_cutboth = uvalues[++k].uval.ch.val != 0;
     zscroll = uvalues[++k].uval.ch.val;
 
     if ((xmax != -1) && (sxdots > xmax))

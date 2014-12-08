@@ -364,7 +364,7 @@ static void initvars_restart()          /* <ins> key init */
     g_virtual_screens = 1;                 /* virtual screen modes on   */
     finalaspectratio = screenaspect;
     viewxdots = viewydots = 0;
-    video_cutboth = 1;                   /* keep virtual aspect */
+    video_cutboth = true;               /* keep virtual aspect */
     zscroll = 1;                         /* relaxed screen scrolling */
     orbit_delay = 0;                     /* full speed orbits */
     orbit_interval = 1;                  /* plot all orbits */
