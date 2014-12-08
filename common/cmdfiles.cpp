@@ -2845,7 +2845,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "targa_overlay") == 0) {         /* Targa Overlay? */
         if (yesnoval[0] < 0) goto badarg;
-        Targa_Overlay = yesnoval[0];
+        Targa_Overlay = yesnoval[0] != 0;
         return 2;
     }
 
