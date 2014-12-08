@@ -913,7 +913,7 @@ void findpath(const char *filename, char *fullpathname) /* return full pathnames
     splitpath(filename ,nullptr,nullptr,fname,ext);
     makepath(temp_path,""   ,"" ,fname,ext);
 
-    if (checkcurdir != 0 && access(temp_path,0) == 0)   /* file exists */
+    if (checkcurdir && access(temp_path,0) == 0)   /* file exists */
     {
         strcpy(fullpathname,temp_path);
         return;

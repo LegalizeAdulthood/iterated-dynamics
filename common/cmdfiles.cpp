@@ -87,7 +87,7 @@ int     finattract = 0;         /* finite attractor logic */
 int     display3d = 0;          /* 3D display flag: 0 = OFF */
 int     overlay3d = 0;          /* 3D overlay flag: 0 = OFF */
 int     init3d[20] = { 0 };     /* '3d=nn/nn/nn/...' values */
-int     checkcurdir = 0;        /* flag to check current dir for files */
+bool    checkcurdir = false;    /* flag to check current dir for files */
 int     initbatch = 0;          /* 1 if batch run (no kbd)  */
 int     initsavetime = 0;       /* autosave minutes         */
 DComplex  initorbit = { 0.0 };  /* initial orbitvalue */
@@ -367,7 +367,7 @@ static void initvars_restart()          /* <ins> key init */
     fract_overwrite = 0;                 /* don't overwrite           */
     soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
     initbatch = 0;                       /* not in batch mode         */
-    checkcurdir = 0;                     /* flag to check current dire for files */
+    checkcurdir = false;                /* flag to check current dire for files */
     initsavetime = 0;                    /* no auto-save              */
     g_init_mode = -1;                       /* no initial video mode     */
     viewwindow = 0;                      /* no view window            */
@@ -2896,7 +2896,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "curdir") == 0) {         /* curdir= */
         if (yesnoval[0] < 0) goto badarg;
-        checkcurdir = yesnoval[0];
+        checkcurdir = yesnoval[0] != 0;
         return 0;
     }
 
