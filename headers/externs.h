@@ -472,7 +472,7 @@ extern double                symin;
 extern int                   symmetry;
 extern int                   syoffs;
 extern char                  s_makepar[];
-extern int                   tabmode;
+extern bool                  tabmode;
 extern bool                  taborhelp;
 extern int                   Targa_Out;
 extern int                   Targa_Overlay;

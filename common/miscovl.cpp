@@ -1431,7 +1431,7 @@ int select_video_mode(int curmode)
     int attributes[MAXVIDEOMODES];
     int i,k,ret;
 #ifndef XFRACT
-    int oldtabmode,oldhelpmode;
+    int oldhelpmode;
 #endif
 
     for (i = 0; i < g_video_table_len; ++i)  /* init tables */
@@ -1468,10 +1468,10 @@ int select_video_mode(int curmode)
         i = 0;
     }
 
-    oldtabmode = tabmode;
+    bool const oldtabmode = tabmode;
     oldhelpmode = helpmode;
     modes_changed = 0;
-    tabmode = 0;
+    tabmode = false;
     helpmode = HELPVIDSEL;
     i = fullscreen_choice(CHOICE_HELP,
                           "Select Video Mode",

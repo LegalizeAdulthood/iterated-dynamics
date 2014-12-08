@@ -1078,13 +1078,12 @@ int main_menu(int fullmenu)
     int choicekey[44];
     int i;
     int nextleft, nextright;
-    int oldtabmode;
     int showjuliatoggle;
-    oldtabmode = tabmode;
+    bool const oldtabmode = tabmode;
 
 top:
     menutype = fullmenu;
-    tabmode = 0;
+    tabmode = false;
     showjuliatoggle = 0;
     for (i = 0; i < 44; ++i)
     {

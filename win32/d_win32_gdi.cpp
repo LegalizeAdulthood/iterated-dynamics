@@ -156,8 +156,8 @@ handle_special_keys(int ch)
     }
     else if (FIK_TAB == ch && tabmode)
     {
-        int old_tab = tabmode;
-        tabmode = 0;
+        bool const old_tab = tabmode;
+        tabmode = false;
         tab_display();
         tabmode = old_tab;
         ch = 0;

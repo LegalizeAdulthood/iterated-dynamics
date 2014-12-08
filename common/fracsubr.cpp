@@ -1198,12 +1198,12 @@ void end_resume(void)
 void sleepms_old(long ms)
 {
     static long scalems = 0L;
-    int savehelpmode,savetabmode;
+    int savehelpmode;
     struct timebx t1,t2;
 #define SLEEPINIT 250 /* milliseconds for calibration */
-    savetabmode  = tabmode;
+    bool const savetabmode  = tabmode;
     savehelpmode = helpmode;
-    tabmode  = 0;
+    tabmode  = false;
     helpmode = -1;
     if (scalems==0L) /* calibrate */
     {
