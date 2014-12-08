@@ -449,7 +449,6 @@ extern short                 skipydots;
 extern int                   g_slides;
 extern int                   Slope;
 extern int                   soundflag;
-extern int                   sound_rollover;
 extern char                  speed_prompt[];
 extern void (*      standardplot)(int,int,int);
 extern char                  start_showorbit;
