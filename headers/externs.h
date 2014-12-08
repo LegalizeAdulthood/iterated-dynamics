@@ -135,7 +135,7 @@ extern int                   evolving;
 extern U16                   evolve_handle;
 extern int                   g_eye_separation;
 extern float                 eyesfp;
-extern int                   fastrestore;
+extern bool                  fastrestore;
 extern long                  FgHalf;
 extern double                fgLimit;
 extern long                  FgOne;

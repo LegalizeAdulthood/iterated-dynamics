@@ -118,7 +118,7 @@ int functionpreloaded = 0;      /* if function loaded for new bifs */
 float   screenaspect = DEFAULTASPECT;   /* aspect ratio of the screen */
 float   aspectdrift = DEFAULTASPECTDRIFT;  /* how much drift is allowed and */
                                 /* still forced to screenaspect  */
-int fastrestore = 0;            /* 1 - reset viewwindows prior to a restore
+bool fastrestore = false;       /* true - reset viewwindows prior to a restore
                                      and do not display warnings when video
                                      mode changes during restore */
 
@@ -2243,7 +2243,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "fastrestore") == 0) {    /* fastrestore=? */
         if (yesnoval[0] < 0) goto badarg;
-        fastrestore = (char)yesnoval[0];
+        fastrestore = yesnoval[0] != 0;
         return 0;
     }
 
