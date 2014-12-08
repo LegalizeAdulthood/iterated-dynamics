@@ -115,7 +115,7 @@ double rqlim = 0.0;
 double rqlim2 = 0.0;
 double rqlim_save = 0.0;
 bool no_mag_calc = false;
-int use_old_period = 0;
+bool use_old_period = false;
 bool use_old_distest = false;
 bool old_demm_colors = false;
 int (*calctype)(void) = nullptr;
@@ -600,7 +600,8 @@ int calcfract(void)
         LogFlag = 0;
     }
 
-    if (use_old_period == 1) {
+    if (use_old_period)
+    {
         nextsavedincr = 1;
         firstsavedand = 1;
     }

@@ -1154,9 +1154,9 @@ void backwards_v19(void)
     else
         no_mag_calc = false;
     if (fix_period_bof())
-        use_old_period = 1; /* fractal uses old periodicity method */
+        use_old_period = true; /* fractal uses old periodicity method */
     else
-        use_old_period = 0;
+        use_old_period = false;
     if (save_release < 1827 && distest)
         use_old_distest = true;         /* use old distest code */
     else
