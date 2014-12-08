@@ -1809,7 +1809,8 @@ xhandleevents()
         {
             int done = 0;
             int banding = 0;
-            if (lookatmouse==3 || zoomoff == 0) {
+            if (lookatmouse==3 || !zoomoff)
+            {
                 lastx = xevent.xbutton.x;
                 lasty = xevent.xbutton.y;
                 break;

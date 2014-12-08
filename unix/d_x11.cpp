@@ -1119,7 +1119,8 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
     int banding = 0;
     int bandx0, bandy0, bandx1, bandy1;
 
-    if (lookatmouse == 3 || zoomoff == 0) {
+    if (lookatmouse == 3 || !zoomoff)
+    {
         di->last_x = xevent->xbutton.x;
         di->last_y = xevent->xbutton.y;
         return;

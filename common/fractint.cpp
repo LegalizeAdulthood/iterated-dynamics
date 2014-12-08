@@ -127,7 +127,7 @@ int calc_status = CALCSTAT_NO_FRACTAL;
 long calctime;
 
 int max_colors;                         /* maximum palette size */
-int        zoomoff;                     /* = 0 when zoom is disabled    */
+bool zoomoff = false;                   /* false when zoom is disabled */
 int        savedac;                     /* save-the-Video DAC flag      */
 bool browsing = false;                  /* browse mode flag */
 char file_name_stack[16][13]; /* array of file names used while browsing */
@@ -505,7 +505,7 @@ imagestart:                             /* calc/display a new image */
         /* buzzer(2); */                          /* unrecognized key */
     }
 
-    zoomoff = 1;                 /* zooming is enabled */
+    zoomoff = true;                     /* zooming is enabled */
     helpmode = HELPMAIN;         /* now use this help mode */
     resumeflag = 0;  /* allows taking goto inside big_while_loop() */
 

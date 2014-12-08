@@ -298,10 +298,10 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             }
         }
 
-        zoomoff = 1;                      /* zooming is enabled */
+        zoomoff = true;                 /* zooming is enabled */
         if (driver_diskp() || (curfractalspecific->flags&NOZOOM) != 0)
         {
-            zoomoff = 0;                   /* for these cases disable zooming */
+            zoomoff = false;            /* for these cases disable zooming */
         }
         if (!evolving)
         {
@@ -677,7 +677,7 @@ resumeloop:                             /* return here on failed overlays */
             default:
                 break;
             }
-            if (zoomoff == 1 && *kbdmore == 1) /* draw/clear a zoom box? */
+            if (zoomoff && *kbdmore == 1) /* draw/clear a zoom box? */
             {
                 drawbox(1);
             }
@@ -1083,7 +1083,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
                     xx3rd *= 3.0;
                     yy3rd *= 3.0;
                 }
-                zoomoff = 1;
+                zoomoff = true;
                 calc_status = CALCSTAT_PARAMS_CHANGED;
                 *kbdmore = 0;
             }
@@ -1112,7 +1112,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
                 SaveC.y = param[1];
                 param[0] = 0;
                 param[1] = 0;
-                zoomoff = 1;
+                zoomoff = true;
                 calc_status = CALCSTAT_PARAMS_CHANGED;
                 *kbdmore = 0;
             }
@@ -1139,7 +1139,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
                     fractype = JULIA;
             }
             curfractalspecific = &fractalspecific[fractype];
-            zoomoff = 1;
+            zoomoff = true;
             calc_status = CALCSTAT_PARAMS_CHANGED;
             *kbdmore = 0;
         }
@@ -1180,7 +1180,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
                 if (++historyptr >= maxhistory)
                     historyptr = 0;
             restore_history_info(historyptr);
-            zoomoff = 1;
+            zoomoff = true;
             g_init_mode = g_adapter;
             if (curfractalspecific->isinteger != 0 &&
                     curfractalspecific->tofloat != NOFRACTAL)
@@ -1370,7 +1370,7 @@ do_3d_transform:
         break;
 
     case FIK_PAGE_UP:                /* page up                      */
-        if (zoomoff == 1)
+        if (zoomoff)
         {
             if (zwidth == 0)
             {   /* start zoombox */
@@ -1550,7 +1550,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
                 if (++historyptr >= maxhistory)
                     historyptr = 0;
             restore_history_info(historyptr);
-            zoomoff = 1;
+            zoomoff = true;
             g_init_mode = g_adapter;
             if (curfractalspecific->isinteger != 0 &&
                     curfractalspecific->tofloat != NOFRACTAL)
@@ -1776,7 +1776,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
         break;
 
     case FIK_PAGE_UP:                /* page up                      */
-        if (zoomoff == 1)
+        if (zoomoff)
         {
             if (zwidth == 0)
             {   /* start zoombox */
