@@ -85,7 +85,7 @@ int     fillcolor = 0;          /* fillcolor: -1=normal     */
 int     outside = 0;            /* outside color    */
 int     finattract = 0;         /* finite attractor logic */
 int     display3d = 0;          /* 3D display flag: 0 = OFF */
-int     overlay3d = 0;          /* 3D overlay flag: 0 = OFF */
+bool    overlay3d = false;      /* 3D overlay flag */
 int     init3d[20] = { 0 };     /* '3d=nn/nn/nn/...' values */
 bool    checkcurdir = false;    /* flag to check current dir for files */
 int     initbatch = 0;          /* 1 if batch run (no kbd)  */
@@ -476,7 +476,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
     math_tol[1] = 0.05;
 
     display3d = 0;                       /* 3D display is off        */
-    overlay3d = 0;                       /* 3D overlay is off        */
+    overlay3d = false;                  /* 3D overlay is off        */
 
     old_demm_colors = false;
     bailoutest    = Mod;
@@ -2686,7 +2686,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         if (strcmp(value, "overlay")==0) {
             yesnoval[0]=1;
             if (calc_status > CALCSTAT_NO_FRACTAL) /* if no image, treat same as 3D=yes */
-                overlay3d=1;
+                overlay3d = true;
         }
         else if (yesnoval[0] < 0) goto badarg;
         display3d = yesnoval[0];

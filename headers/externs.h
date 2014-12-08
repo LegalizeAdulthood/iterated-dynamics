@@ -350,7 +350,7 @@ extern int (*                outln)(BYTE *, int);
 extern void (*               outln_cleanup)(void);
 extern int                   outside;
 extern int                   overflow;
-extern int                   overlay3d;
+extern bool                  overlay3d;
 extern char                  fract_overwrite;
 extern double                ox3rd;
 extern double                oxmax;

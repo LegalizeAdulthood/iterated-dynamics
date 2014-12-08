@@ -85,7 +85,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             if (overlay3d && !initbatch)
             {
                 driver_unstack_screen();            /* restore old graphics image */
-                overlay3d = 0;
+                overlay3d = false;
             }
             else
             {
@@ -1243,7 +1243,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
     case FIK_F3:                     /* 3D overlay                   */
 #endif
         clear_zoombox();
-        overlay3d = 1;
+        overlay3d = true;
     case '3':                    /* restore-from (3d)            */
 do_3d_transform:
         if (overlay3d)
@@ -1259,7 +1259,7 @@ do_3d_transform:
             if (debugflag == 50)
             {
                 comparegif = true;
-                overlay3d = 1;
+                overlay3d = true;
                 if (initbatch == 2)
                 {
                     driver_stack_screen();   /* save graphics image */
@@ -1271,7 +1271,7 @@ do_3d_transform:
             else
             {
                 comparegif = false;
-                overlay3d = 0;
+                overlay3d = false;
             }
             display3d = 0;
         }
@@ -1634,7 +1634,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             if (debugflag == 50)
             {
                 comparegif = true;
-                overlay3d = 1;
+                overlay3d = true;
                 if (initbatch == 2)
                 {
                     driver_stack_screen();   /* save graphics image */
@@ -1646,7 +1646,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             else
             {
                 comparegif = false;
-                overlay3d = 0;
+                overlay3d = false;
             }
             display3d = 0;
         }

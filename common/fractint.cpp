@@ -375,7 +375,7 @@ restorestart:
     {
         driver_unstack_screen();                  /* restore the graphics screen */
         stacked = 0;
-        overlay3d = 0;                    /* forget overlays */
+        overlay3d = false;              /* forget overlays */
         display3d = 0;                    /* forget 3D */
         if (calc_status ==CALCSTAT_NON_RESUMABLE)
             calc_status = CALCSTAT_PARAMS_CHANGED;
