@@ -413,7 +413,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
     stoppass = 0;                        /* initial guessing stoppass */
     quick_calc = false;
     closeprox = 0.01;
-    ismand = 1;                          /* default formula mand/jul toggle */
+    ismand = true;                      /* default formula mand/jul toggle */
 #ifndef XFRACT
     usr_floatflag = 0;                   /* turn off the float flag */
 #else
@@ -1520,7 +1520,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        ismand = (short int)yesnoval[0];
+        ismand = yesnoval[0] != 0;
         return 1;
     }
 

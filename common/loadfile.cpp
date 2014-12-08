@@ -482,7 +482,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
             uses_p2 = blk_3_info.uses_p2 != 0;
             uses_p3 = blk_3_info.uses_p3 != 0;
             uses_ismand = blk_3_info.uses_ismand != 0;
-            ismand = blk_3_info.ismand;
+            ismand = blk_3_info.ismand != 0;
             uses_p4 = blk_3_info.uses_p4 != 0;
             uses_p5 = blk_3_info.uses_p5 != 0;
             break;

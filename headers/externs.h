@@ -214,7 +214,7 @@ extern int                   integerfractal;
 extern double                inversion[];
 extern int                   invert;
 extern bool                  g_is_true_color;
-extern short                 ismand;
+extern bool                  ismand;
 extern int                   ixstart;
 extern int                   ixstop;
 extern int                   iystart;

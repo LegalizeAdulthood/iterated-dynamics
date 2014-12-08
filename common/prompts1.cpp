@@ -1464,7 +1464,7 @@ gfp_top:
     if ((curtype==FORMULA || curtype==FFORMULA) && uses_ismand) {
         choices[promptnum] = "ismand";
         paramvalues[promptnum].type = 'y';
-        paramvalues[promptnum++].uval.ch.val = ismand?1:0;
+        paramvalues[promptnum++].uval.ch.val = ismand ? 1 : 0;
     }
 
     if (caller                           /* <z> command ? */
@@ -1588,9 +1588,9 @@ gfp_top:
     }
     if ((curtype==FORMULA || curtype==FFORMULA) && uses_ismand)
     {
-        if (ismand != (short int)paramvalues[promptnum].uval.ch.val)
+        if (ismand != (paramvalues[promptnum].uval.ch.val != 0))
         {
-            ismand = (short int)paramvalues[promptnum].uval.ch.val;
+            ismand = (paramvalues[promptnum].uval.ch.val != 0);
             ret = 1;
         }
         ++promptnum;

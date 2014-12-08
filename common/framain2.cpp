@@ -1023,13 +1023,13 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
                 {
                     fractalspecific[fractype].tojulia = fractype;
                     fractalspecific[fractype].tomandel = NOFRACTAL;
-                    ismand = 0;
+                    ismand = false;
                 }
                 else
                 {
                     fractalspecific[fractype].tojulia = NOFRACTAL;
                     fractalspecific[fractype].tomandel = fractype;
-                    ismand = 1;
+                    ismand = true;
                 }
             }
             if (curfractalspecific->tojulia != NOFRACTAL
@@ -2246,7 +2246,7 @@ static void save_history_info()
     current.iterations           = maxit                     ;
     current.old_demm_colors      = (short) (old_demm_colors ? 1 : 0);
     current.logcalc              = (short)Log_Fly_Calc;
-    current.ismand               = (short)ismand;
+    current.ismand               = (short) (ismand ? 1 : 0);
     current.closeprox            = closeprox;
     current.nobof                = (short)nobof;
     current.orbit_delay          = (short)orbit_delay;
@@ -2424,7 +2424,7 @@ static void restore_history_info(int i)
     if (inversion[0] != 0.0)
         invert = 3;
     Log_Fly_Calc = last.logcalc;
-    ismand = last.ismand;
+    ismand = last.ismand != 0;
     closeprox = last.closeprox;
     nobof = last.nobof != 0;
     orbit_delay = last.orbit_delay;

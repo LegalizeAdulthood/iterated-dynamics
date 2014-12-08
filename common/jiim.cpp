@@ -756,7 +756,6 @@ void Jiim(int which)         /* called by fractint */
                     }
                 default:
                     still = 0;
-                    /*             ismand = (short)(1 - ismand); */
                 }  /* switch */
                 if (kbdchar == 's' || kbdchar == 'S')
                     goto finish;

@@ -559,7 +559,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
             put_filename("formulafile",FormFileName);
             put_parm(" %s=%s", "formulaname",FormName);
             if (uses_ismand)
-                put_parm(" %s=%c", "ismand",ismand?'y':'n');
+                put_parm(" %s=%c", "ismand", ismand ? 'y' : 'n');
         }
         if (fractype == LSYSTEM)
         {
