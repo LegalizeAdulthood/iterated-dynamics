@@ -702,7 +702,7 @@ static void setup_save_info(struct fractal_info * save_info)
     save_info->potential[0] = (float) potparam[0];
     save_info->potential[1] = (float) potparam[1];
     save_info->potential[2] = (float) potparam[2];
-    save_info->rflag = (short) rflag;
+    save_info->rflag = (short) (rflag ? 1 : 0);
     save_info->rseed = (short) rseed;
     save_info->inside = (short) inside;
     if (LogFlag <= SHRT_MAX)

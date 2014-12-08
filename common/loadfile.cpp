@@ -106,7 +106,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
             colors = read_info.colors;
         }
         potflag       = (potparam[0] != 0.0);
-        rflag         = read_info.rflag;
+        rflag         = read_info.rflag != 0;
         rseed         = read_info.rseed;
         inside        = read_info.inside;
         LogFlag       = read_info.logmapold;

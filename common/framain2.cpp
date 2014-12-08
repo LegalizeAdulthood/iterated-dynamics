@@ -2146,7 +2146,7 @@ static void save_history_info()
     current.potential[0]         = potparam[0]               ;
     current.potential[1]         = potparam[1]               ;
     current.potential[2]         = potparam[2]               ;
-    current.rflag                = (short)rflag                     ;
+    current.rflag                = (short) (rflag ? 1 : 0);
     current.rseed                = (short)rseed                     ;
     current.inside               = (short)inside                    ;
     current.logmap               = LogFlag                   ;
@@ -2316,7 +2316,7 @@ static void restore_history_info(int i)
     potparam[0]           = last.potential[0]   ;
     potparam[1]           = last.potential[1]   ;
     potparam[2]           = last.potential[2]   ;
-    rflag                 = last.rflag          ;
+    rflag                 = last.rflag != 0;
     rseed                 = last.rseed          ;
     inside                = last.inside         ;
     LogFlag               = last.logmap         ;

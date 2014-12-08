@@ -69,7 +69,7 @@ int     biomorph = 0;           /* flag for biomorph */
 int     usr_biomorph = 0;
 int     forcesymmetry = 0;      /* force symmetry */
 int     showfile = 0;           /* zero if file display pending */
-int     rflag = 0;
+bool    rflag = false;
 int     rseed = 0;              /* Random number seeding flag and value */
 int     decomp[2] = { 0 };      /* Decomposition coloring */
 long    distest = 0;
@@ -393,7 +393,7 @@ static void initvars_restart()          /* <ins> key init */
     strcpy(IFSFileName, "fractint.ifs");
     IFSName[0] = 0;
     reset_ifs_defn();
-    rflag = 0;                           /* not a fixed srand() seed */
+    rflag = false;                      /* not a fixed srand() seed */
     rseed = init_rseed;
     strcpy(readname,DOTSLASH);           /* initially current directory */
     showfile = 1;
@@ -2502,7 +2502,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "rseed") == 0) {
         rseed = numval;
-        rflag = 1;
+        rflag = true;
         return 1;
     }
 
