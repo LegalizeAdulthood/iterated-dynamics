@@ -417,7 +417,7 @@ DComplex ComplexSqrtFloat(double x, double y)
 
 std::vector<BYTE> LogTable;
 long MaxLTSize;
-int  Log_Calc = 0;
+bool Log_Calc = false;
 static double mlf;
 static unsigned long lf;
 
@@ -453,10 +453,10 @@ void SetupLogTable(void) {
         return; /* LogTable not defined, bail out now */
 
     if (save_release > 1920 && !Log_Calc) {
-        Log_Calc = 1;   /* turn it on */
+        Log_Calc = true;   /* turn it on */
         for (prev = 0; prev <= (unsigned long)MaxLTSize; prev++)
             LogTable[prev] = (BYTE)logtablecalc((long)prev);
-        Log_Calc = 0;   /* turn it off, again */
+        Log_Calc = false;   /* turn it off, again */
         return;
     }
 

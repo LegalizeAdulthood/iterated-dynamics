@@ -612,18 +612,18 @@ int calcfract(void)
 
     LogTable.clear();
     MaxLTSize = maxit;
-    Log_Calc = 0;
+    Log_Calc = false;
     /* below, INT_MAX=32767 only when an integer is two bytes.  Which is not true for Xfractint. */
     /* Since 32767 is what was meant, replaced the instances of INT_MAX with 32767. */
     if (LogFlag && (((maxit > 32767) && (save_release > 1920))
                     || Log_Fly_Calc == 1)) {
-        Log_Calc = 1; /* calculate on the fly */
+        Log_Calc = true; /* calculate on the fly */
         SetupLogTable();
     }
     else if (LogFlag && (((maxit > 32767) && (save_release <= 1920))
                          || Log_Fly_Calc == 2)) {
         MaxLTSize = 32767;
-        Log_Calc = 0; /* use logtable */
+        Log_Calc = false; /* use logtable */
     }
     else if (rangeslen && (maxit >= 32767)) {
         MaxLTSize = 32766;
@@ -649,7 +649,7 @@ int calcfract(void)
             else {
                 stopmsg(0, "Insufficient memory for logTable, using on-the-fly routine");
                 Log_Fly_Calc = 1;
-                Log_Calc = 1; /* calculate on the fly */
+                Log_Calc = true; /* calculate on the fly */
                 SetupLogTable();
             }
         }
