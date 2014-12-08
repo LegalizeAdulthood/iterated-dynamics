@@ -26,6 +26,7 @@ static int timetodisplay;
 static FILE *fp = nullptr;
 bool disktarga = false;
 bool g_disk_flag = false;
+bool g_good_mode = false;        /* if non-zero, OK to read/write pixels */
 
 #define BLOCKLEN 2048   /* must be a power of 2, must match next */
 #define BLOCKSHIFT 11   /* must match above */
@@ -259,7 +260,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     if (dv_handle == 0)
     {
         stopmsg(0, "*** insufficient free memory/disk space ***");
-        g_good_mode = 0;
+        g_good_mode = false;
         rowsize = 0;
         return -1;
     }
@@ -288,7 +289,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
                 if (stopmsg(STOPMSG_CANCEL, "Disk Video initialization interrupted:\n"))
                 {
                     enddisk();
-                    g_good_mode = 0;
+                    g_good_mode = false;
                     return -2;            /* -1 == failed, -2 == cancel   */
                 }
             }

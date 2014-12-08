@@ -19,7 +19,6 @@ int fake_lut = 0;
 int dacnorm = 0;
 int g_dac_count = 0;
 int ShadowColors;
-int g_good_mode = 0;        /* if non-zero, OK to read/write pixels */
 void (*dotwrite)(int, int, int);
 /* write-a-dot routine */
 int (*dotread)(int, int);   /* read-a-dot routine */
@@ -169,7 +168,7 @@ setvideomode(int ax, int bx, int cx, int dx)
         endvideo();
         videoflag = 0;
     }
-    g_good_mode = 1;
+    g_good_mode = true;
     switch (dotmode)
     {
     case 0:         /* text */

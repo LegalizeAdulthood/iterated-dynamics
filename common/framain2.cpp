@@ -91,7 +91,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             {
                 driver_set_video_mode(&g_video_entry); /* switch video modes */
                 /* switching video modes may have changed drivers or disk flag... */
-                if (g_good_mode == 0)
+                if (!g_good_mode)
                 {
                     if (driver_diskp())
                     {

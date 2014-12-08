@@ -2292,7 +2292,7 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
     if (g_disk_flag)
         enddisk();
     x11_end_video(drv);
-    g_good_mode = 1;
+    g_good_mode = true;
     switch (dotmode) {
     case 0:               /* text */
         break;
