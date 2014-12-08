@@ -9,7 +9,7 @@
       video parameters setup for the mainline, in the dos case this means
         setting g_init_mode to video mode, based on this fractint.c will set up
         for and call setvideomode
-      set viewwindow on if file going to be loaded into a view smaller than
+      set viewwindow true if file going to be loaded into a view smaller than
         physical screen, in this case also set viewreduction, viewxdots,
         viewydots, and finalaspectratio
       set skipxdots and skipydots, to 0 if all pixels are to be loaded,
@@ -22,7 +22,7 @@
         gif, not sure if that is of any use...)
       if current window smaller than new sxdots and sydots, use scroll bars,
         if larger perhaps reduce the window size? whatever
-      set viewwindow to 0 (no need? it always is for now in windows vsn?)
+      set viewwindow to false (no need? it always is for now in windows vsn?)
       set finalaspectratio to .75 (ditto?)
       set skipxdots and skipydots to 0
       return 0
@@ -440,11 +440,13 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
     finalaspectratio = (float)(i/1000.0); /* chop precision to 3 decimals */
 
     /* setup view window stuff */
-    viewwindow = viewxdots = viewydots = 0;
+    viewwindow = false;
+    viewxdots = 0;
+    viewydots = 0;
     if (filexdots != g_video_entry.xdots || fileydots != g_video_entry.ydots)
     {
         /* image not exactly same size as screen */
-        viewwindow = 1;
+        viewwindow = true;
         ftemp = finalaspectratio
                 * (double)g_video_entry.ydots / (double)g_video_entry.xdots
                 / screenaspect;

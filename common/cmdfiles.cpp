@@ -347,28 +347,28 @@ static void initvars_run()              /* once per run init */
 static void initvars_restart()          /* <ins> key init */
 {
     int i;
-    recordcolors = 'a';                  /* don't use mapfiles in PARs */
-    save_release = g_release;            /* this release number */
+    recordcolors = 'a';                 /* don't use mapfiles in PARs */
+    save_release = g_release;           /* this release number */
     gif87a_flag = false;                /* turn on GIF89a processing */
     dither_flag = false;                /* no dithering */
     askvideo = true;                    /* turn on video-prompt flag */
     fract_overwrite = false;            /* don't overwrite           */
     soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
-    initbatch = 0;                       /* not in batch mode         */
+    initbatch = 0;                      /* not in batch mode         */
     checkcurdir = false;                /* flag to check current dire for files */
-    initsavetime = 0;                    /* no auto-save              */
-    g_init_mode = -1;                       /* no initial video mode     */
-    viewwindow = 0;                      /* no view window            */
+    initsavetime = 0;                   /* no auto-save              */
+    g_init_mode = -1;                   /* no initial video mode     */
+    viewwindow = false;                 /* no view window            */
     viewreduction = (float)4.2;
     viewcrop = true;
-    g_virtual_screens = 1;                 /* virtual screen modes on   */
+    g_virtual_screens = 1;              /* virtual screen modes on   */
     finalaspectratio = screenaspect;
     viewxdots = viewydots = 0;
     video_cutboth = true;               /* keep virtual aspect */
-    zscroll = 1;                         /* relaxed screen scrolling */
-    orbit_delay = 0;                     /* full speed orbits */
-    orbit_interval = 1;                  /* plot all orbits */
-    debugflag = 0;                       /* debugging flag(s) are off */
+    zscroll = 1;                        /* relaxed screen scrolling */
+    orbit_delay = 0;                    /* full speed orbits */
+    orbit_interval = 1;                 /* plot all orbits */
+    debugflag = 0;                      /* debugging flag(s) are off */
     timerflag = false;                  /* timer flags are off       */
     strcpy(FormFileName, "fractint.frm"); /* default formula file      */
     FormName[0] = 0;
@@ -2100,7 +2100,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     if (strcmp(variable, "viewwindows") == 0) {  /* viewwindows=?,?,?,?,? */
         if (totparms > 5 || floatparms-intparms > 2 || intparms > 4)
             goto badarg;
-        viewwindow = 1;
+        viewwindow = true;
         viewreduction = 4.2f;  /* reset default values */
         finalaspectratio = screenaspect;
         viewcrop = true;

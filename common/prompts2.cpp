@@ -647,14 +647,14 @@ int get_view_params()
     struct fullscreenvalues uvalues[25];
     int i, k;
     float old_viewreduction, old_aspectratio;
-    int old_viewwindow, old_viewxdots, old_viewydots, old_sxdots, old_sydots;
+    int old_viewxdots, old_viewydots, old_sxdots, old_sydots;
     int xmax, ymax;
     char dim1[50];
     char dim2[50];
 
     driver_get_max_screen(&xmax, &ymax);
 
-    old_viewwindow    = viewwindow;
+    bool const old_viewwindow    = viewwindow;
     old_viewreduction = viewreduction;
     old_aspectratio   = finalaspectratio;
     old_viewxdots     = viewxdots;
@@ -670,7 +670,7 @@ get_view_restart:
     {
         choices[++k] = "Preview display? (no for full screen)";
         uvalues[k].type = 'y';
-        uvalues[k].uval.ch.val = viewwindow;
+        uvalues[k].uval.ch.val = viewwindow ? 1 : 0;
 
         choices[++k] = "Auto window size reduction factor";
         uvalues[k].type = 'f';
@@ -751,7 +751,9 @@ get_view_restart:
 
     if (i == FIK_F4 && !driver_diskp())
     {
-        viewwindow = viewxdots = viewydots = 0;
+        viewwindow = false;
+        viewxdots = 0;
+        viewydots = 0;
         viewreduction = (float) 4.2;
         viewcrop = true;
         finalaspectratio = screenaspect;
@@ -767,7 +769,7 @@ get_view_restart:
 
     if (!driver_diskp())
     {
-        viewwindow = uvalues[++k].uval.ch.val;
+        viewwindow = uvalues[++k].uval.ch.val != 0;
         viewreduction = (float) uvalues[++k].uval.dval;
         finalaspectratio = (float) uvalues[++k].uval.dval;
         viewcrop = uvalues[++k].uval.ch.val != 0;

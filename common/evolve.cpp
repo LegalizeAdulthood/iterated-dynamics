@@ -696,7 +696,8 @@ get_evol_restart:
 
     k = -1;
 
-    viewwindow = evolving = uvalues[++k].uval.ch.val;
+    evolving = uvalues[++k].uval.ch.val;
+    viewwindow = evolving != 0;
 
     if (!evolving && i != FIK_F6)  /* don't need any of the other parameters */
         return (1);             /* the following code can set evolving even if it's off */
@@ -730,7 +731,8 @@ get_evol_restart:
 
     viewxdots = (sxdots / gridsz)-2;
     viewydots = (sydots / gridsz)-2;
-    if (!viewwindow) viewxdots=viewydots=0;
+    if (!viewwindow)
+        viewxdots = viewydots = 0;
 
     i = 0;
 
@@ -751,7 +753,7 @@ get_evol_restart:
         set_current_params();
         if (old_variations > 0)
         {
-            viewwindow = 1;
+            viewwindow = true;
             evolving |= 1;   /* leave other settings alone */
         }
         fiddlefactor = 1;

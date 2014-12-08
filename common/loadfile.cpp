@@ -59,7 +59,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     loaded3d = false;
     if (fastrestore)
     {
-        viewwindow = 0;
+        viewwindow = false;
     }
     if (has_ext(readname) == nullptr)
     {
@@ -591,7 +591,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         gridsz       = blk_6_info.gridsz;
         this_gen_rseed = blk_6_info.this_gen_rseed;
         fiddlefactor   = blk_6_info.fiddlefactor;
-        evolving = viewwindow = (int) blk_6_info.evolving;
+        evolving = (int) blk_6_info.evolving;
+        viewwindow = evolving != 0;
         dpx = paramrangex/(gridsz - 1);
         dpy = paramrangey/(gridsz - 1);
         if (read_info.version > 14)

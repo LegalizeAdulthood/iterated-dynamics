@@ -1185,7 +1185,9 @@ finish:
     helpmode = oldhelpmode;
     if (kbdchar == 's' || kbdchar == 'S')
     {
-        viewwindow = viewxdots = viewydots = 0;
+        viewwindow = false;
+        viewxdots = 0;
+        viewydots = 0;
         viewreduction = (float)4.2;
         viewcrop = true;
         finalaspectratio = screenaspect;

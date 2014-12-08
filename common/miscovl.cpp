@@ -927,7 +927,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
     /***** universal parameters in this section *****/
 
-    if (viewwindow == 1)
+    if (viewwindow)
     {
         put_parm(" %s=%g/%g", "viewwindows",viewreduction,finalaspectratio);
         if (viewcrop)

@@ -2121,10 +2121,11 @@ done:
     if (g_glasses_type == 4 && sxdots >= 2*xdots)
     {
         /* turn off view windows so will save properly */
-        sxoffs = syoffs = 0;
+        sxoffs = 0;
+        syoffs = 0;
         xdots = sxdots;
         ydots = sydots;
-        viewwindow = 0;
+        viewwindow = false;
     }
     return (status);
 }

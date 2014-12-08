@@ -88,7 +88,7 @@ int     usr_periodicitycheck;
 long    usr_distest;
 char    usr_floatflag;
 
-int     viewwindow;             /* 0 for full screen, 1 for window */
+bool    viewwindow = false;     /* false for full screen, true for window */
 float   viewreduction;          /* window auto-sizing */
 bool    viewcrop = false;       /* true to crop default coords */
 float   finalaspectratio;       /* for view shape and rotation */
@@ -343,7 +343,8 @@ restorestart:
             strcpy(file_name_stack[name_stack_ptr],browsename);
         }
 
-        evolving = viewwindow = 0;
+        evolving = 0;
+        viewwindow = false;
         showfile = 0;
         helpmode = -1;
         tabmode = true;

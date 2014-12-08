@@ -180,7 +180,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                 if (xdots > sxdots || ydots > sydots)
                 {
                     stopmsg(0, "View window too large; using full screen.");
-                    viewwindow = 0;
+                    viewwindow = false;
                     xdots = viewxdots = sxdots;
                     ydots = viewydots = sydots;
                 }
@@ -190,7 +190,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                 {   /* so ssg works */
                     /* but no check if in evolve mode to allow lots of small views*/
                     stopmsg(0, "View window too small; using full screen.");
-                    viewwindow = 0;
+                    viewwindow = false;
                     xdots = sxdots;
                     ydots = sydots;
                 }
@@ -198,7 +198,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                 {
                     stopmsg(0, "Fractal doesn't terminate! switching off evolution.");
                     evolving = evolving -1;
-                    viewwindow = FALSE;
+                    viewwindow = false;
                     xdots = sxdots;
                     ydots = sydots;
                 }
@@ -383,7 +383,8 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                     gridsz       = resume_e_info.gridsz;
                     this_gen_rseed = resume_e_info.this_gen_rseed;
                     fiddlefactor   = resume_e_info.fiddlefactor;
-                    evolving     = viewwindow = resume_e_info.evolving;
+                    evolving     = resume_e_info.evolving;
+                    viewwindow = evolving != 0;
                     ecount       = resume_e_info.ecount;
                     MemoryRelease(evolve_handle);  /* We're done with it, release it. */
                     evolve_handle = 0;
@@ -1420,7 +1421,8 @@ do_3d_transform:
            case 1127:
            case 1128:
         */
-        viewwindow = evolving = 1;
+        evolving = 1;
+        viewwindow = true;
         set_mutation_level(*kbdchar-1119);
         param_history(0); /* save parameter history */
         *kbdmore = 0;
@@ -1521,7 +1523,8 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
         }
         break;
     case 'b': /* quick exit from evolve mode */
-        evolving = viewwindow = 0;
+        evolving = 0;
+        viewwindow = false;
         param_history(0); /* save history */
         *kbdmore = 0;
         calc_status = CALCSTAT_PARAMS_CHANGED;
@@ -1925,7 +1928,8 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
         calc_status = CALCSTAT_PARAMS_CHANGED;
         break;
     case '0': /* mutation level 0 == turn off evolving */
-        evolving = viewwindow = 0;
+        evolving = 0;
+        viewwindow = false;
         *kbdmore = 0;
         calc_status = CALCSTAT_PARAMS_CHANGED;
         break;
