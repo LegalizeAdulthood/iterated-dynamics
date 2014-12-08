@@ -803,7 +803,7 @@ static void setup_save_info(struct fractal_info * save_info)
     save_info->stoppass = (short) stoppass;
     save_info->quick_calc = (short) quick_calc;
     save_info->closeprox = closeprox;
-    save_info->nobof = (short) nobof;
+    save_info->nobof = (short) (nobof ? 1 : 0);
     save_info->orbit_interval = orbit_interval;
     save_info->orbit_delay = (short) orbit_delay;
     save_info->math_tol[0] = math_tol[0];

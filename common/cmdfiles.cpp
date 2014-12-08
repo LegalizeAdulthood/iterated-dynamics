@@ -134,7 +134,7 @@ BYTE exitmode = 3;              /* video mode on exit */
 
 int     Log_Fly_Calc = 0;       /* calculate logmap on-the-fly */
 bool    Log_Auto_Calc = false;          /* auto calculate logmap */
-int     nobof = 0;              /* Flag to make inside=bof options not duplicate bof images */
+bool    nobof = false;                  /* Flag to make inside=bof options not duplicate bof images */
 
 bool    escape_exit = false;    /* set to true to avoid the "are you sure?" screen */
 bool first_init = true;                 /* first time into cmdfiles? */
@@ -423,8 +423,8 @@ static void initvars_fractal()          /* init vars affecting calculation */
     fractype = 0;                        /* initial type Set flag  */
     curfractalspecific = &fractalspecific[0];
     initcorners = initparams = 0;
-    bailout = 0;                         /* no user-entered bailout */
-    nobof = 0;  /* use normal bof initialization to make bof images */
+    bailout = 0;                        /* no user-entered bailout */
+    nobof = false;                      /* use normal bof initialization to make bof images */
     useinitorbit = 0;
     for (i = 0; i < MAXPARAMS; i++) param[i] = 0.0;     /* initial parameter values */
     for (i = 0; i < 3; i++) potparam[i]  = 0.0; /* initial potential values */
@@ -1409,7 +1409,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        nobof = yesnoval[0];
+        nobof = yesnoval[0] != 0;
         return 1;
     }
 

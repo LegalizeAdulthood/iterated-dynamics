@@ -320,7 +320,7 @@ extern int                   neworbittype;
 extern int                   nextsavedincr;
 extern bool                  no_sub_images;
 extern bool                  no_mag_calc;
-extern int                   nobof;
+extern bool                  nobof;
 extern int                   numaffine;
 extern unsigned              numcolors;
 extern const int             numtrigfn;

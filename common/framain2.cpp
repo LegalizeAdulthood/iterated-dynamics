@@ -2415,7 +2415,7 @@ static void restore_history_info(int i)
     Log_Fly_Calc = last.logcalc;
     ismand = last.ismand;
     closeprox = last.closeprox;
-    nobof = last.nobof;
+    nobof = last.nobof != 0;
     orbit_delay = last.orbit_delay;
     orbit_interval = last.orbit_interval;
     oxmin = last.oxmin;

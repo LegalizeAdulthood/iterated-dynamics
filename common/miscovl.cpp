@@ -1013,7 +1013,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
 #endif
 
-        if (nobof > 0)
+        if (nobof)
             put_parm(" %s=%s", "nobof", "yes");
 
         if (orbit_delay > 0)
