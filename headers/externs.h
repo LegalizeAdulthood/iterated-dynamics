@@ -515,7 +515,7 @@ extern bool                  uses_p4;
 extern bool                  uses_p5;
 extern bool                  use_old_distest;
 extern bool                  use_old_period;
-extern int                   using_jiim;
+extern bool                  using_jiim;
 extern int                   usr_biomorph;
 extern long                  usr_distest;
 extern char                  usr_floatflag;

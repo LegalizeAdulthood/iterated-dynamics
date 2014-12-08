@@ -246,7 +246,7 @@ void cleartempmsg()
             MoveFromMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
             put_line(i, 0, textxdots-1, buffer);
         }
-        if (using_jiim == 0)  /* jiim frees memory with freetempmsg() */
+        if (!using_jiim)                /* jiim frees memory with freetempmsg() */
         {
             MemoryRelease(temptextsave);
             temptextsave = 0;

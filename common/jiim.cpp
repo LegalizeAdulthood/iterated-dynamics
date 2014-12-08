@@ -464,7 +464,7 @@ void Jiim(int which)         /* called by fractint */
     oldsyoffs = syoffs;
     oldcalctype = calctype;
     show_numbers = 0;
-    using_jiim = 1;
+    using_jiim = true;
     mem_init(strlocn, 10*1024);
     line_buff = static_cast<BYTE *>(newx(std::max(sxdots,sydots)));
     aspect = ((double)xdots*3)/((double)ydots*4);  /* assumes 4:3 */
@@ -1178,7 +1178,7 @@ finish:
     }
 
     lookatmouse = oldlookatmouse;
-    using_jiim = 0;
+    using_jiim = false;
     calctype = oldcalctype;
     debugflag = old_debugflag; /* yo Chuck! */
     helpmode = oldhelpmode;

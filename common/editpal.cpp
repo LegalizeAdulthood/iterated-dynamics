@@ -59,7 +59,7 @@ int editpal_cursor = 0;
 /*
  * Stuff from fractint
  */
-int using_jiim = 0;
+bool using_jiim = false;
 
 /*
  * basic data types
