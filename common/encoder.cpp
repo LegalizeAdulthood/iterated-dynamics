@@ -636,13 +636,13 @@ static int store_item_name(char *nameptr)
     strcpy(fsave_info.form_name, nameptr);
     if (fractype == FORMULA || fractype == FFORMULA)
     {
-        fsave_info.uses_p1 = (short) uses_p1;
-        fsave_info.uses_p2 = (short) uses_p2;
-        fsave_info.uses_p3 = (short) uses_p3;
+        fsave_info.uses_p1 = (short) (uses_p1 ? 1 : 0);
+        fsave_info.uses_p2 = (short) (uses_p2 ? 1 : 0);
+        fsave_info.uses_p3 = (short) (uses_p3 ? 1 : 0);
         fsave_info.uses_ismand = (short) (uses_ismand ? 1 : 0);
         fsave_info.ismand = (short) ismand;
-        fsave_info.uses_p4 = (short) uses_p4;
-        fsave_info.uses_p5 = (short) uses_p5;
+        fsave_info.uses_p4 = (short) (uses_p4 ? 1 : 0);
+        fsave_info.uses_p5 = (short) (uses_p5 ? 1 : 0);
     }
     else
     {

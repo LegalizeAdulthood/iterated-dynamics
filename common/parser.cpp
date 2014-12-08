@@ -194,7 +194,11 @@ static int ShiftBack;
 static int SetRandom;
 static int Randomized;
 static unsigned long RandNum;
-short uses_p1, uses_p2, uses_p3, uses_p4, uses_p5;
+bool uses_p1 = false;
+bool uses_p2 = false;
+bool uses_p3 = false;
+bool uses_p4 = false;
+bool uses_p5 = false;
 int uses_jump = 0;
 bool uses_ismand = false;
 unsigned int chars_in_formula;
@@ -1799,19 +1803,19 @@ struct ConstArg *isconst(char *Str, int Len) {
             if (!strnicmp(v[n].s, Str, Len))
             {
                 if (n == 1)        /* The formula uses 'p1'. */
-                    uses_p1 = 1;
+                    uses_p1 = true;
                 if (n == 2)        /* The formula uses 'p2'. */
-                    uses_p2 = 1;
+                    uses_p2 = true;
                 if (n == 7)        /* The formula uses 'rand'. */
                     RandomSeed();
                 if (n == 8)        /* The formula uses 'p3'. */
-                    uses_p3 = 1;
+                    uses_p3 = true;
                 if (n == 13)        /* The formula uses 'ismand'. */
                     uses_ismand = true;
                 if (n == 17)        /* The formula uses 'p4'. */
-                    uses_p4 = 1;
+                    uses_p4 = true;
                 if (n == 18)        /* The formula uses 'p5'. */
-                    uses_p5 = 1;
+                    uses_p5 = true;
 #if !defined(XFRACT)
                 if (n == 10 || n == 11 || n == 12)
                     if (MathType == L_MATH)
@@ -3345,10 +3349,13 @@ int frm_get_param_stuff(char * Name)
     int c;
     struct token_st current_token;
     FILE * entry_file = nullptr;
-    uses_p1 = uses_p2 = uses_p3 = 0;
+    uses_p1 = false;
+    uses_p2 = false;
+    uses_p3 = false;
     uses_ismand = false;
     maxfn = 0;
-    uses_p4 = uses_p5 = 0;
+    uses_p4 = false;
+    uses_p5 = false;
 
     if (FormName[0] == 0) {
         return 0;  /*  and don't reset the pointers  */
@@ -3383,17 +3390,17 @@ int frm_get_param_stuff(char * Name)
         switch (current_token.token_type) {
         case PARAM_VARIABLE:
             if (current_token.token_id == 1)
-                uses_p1 = 1;
+                uses_p1 = true;
             else if (current_token.token_id == 2)
-                uses_p2 = 1;
+                uses_p2 = true;
             else if (current_token.token_id == 8)
-                uses_p3 = 1;
+                uses_p3 = true;
             else if (current_token.token_id == 13)
                 uses_ismand = true;
             else if (current_token.token_id == 17)
-                uses_p4 = 1;
+                uses_p4 = true;
             else if (current_token.token_id == 18)
-                uses_p5 = 1;
+                uses_p5 = true;
             break;
         case PARAM_FUNCTION:
             if ((current_token.token_id - 10) > maxfn)
@@ -3406,10 +3413,13 @@ int frm_get_param_stuff(char * Name)
         fclose(debug_token);
     if (current_token.token_type != END_OF_FORMULA)
     {
-        uses_p1 = uses_p2 = uses_p3 = 0;
+        uses_p1 = false;
+        uses_p2 = false;
+        uses_p3 = false;
         uses_ismand = false;
         maxfn = 0;
-        uses_p4 = uses_p5 = 0;
+        uses_p4 = false;
+        uses_p5 = false;
         return 0;
     }
     return 1;
@@ -3737,9 +3747,13 @@ void init_misc()
     ShiftBack = 32 - bitshift;
     Delta16 = bitshift - 16;
     bitshiftless1 = bitshift-1;
-    uses_p1 = uses_p2 = uses_p3 = uses_jump = 0;
+    uses_p1 = false;
+    uses_p2 = false;
+    uses_p3 = false;
+    uses_jump = 0;
     uses_ismand = false;
-    uses_p4 = uses_p5 = 0;
+    uses_p4 = false;
+    uses_p5 = false;
 }
 
 
@@ -3785,7 +3799,11 @@ static void parser_allocate(void)
             }
         }
     }
-    uses_p1 = uses_p2 = uses_p3 = uses_p4 = uses_p5 = 0;
+    uses_p1 = false;
+    uses_p2 = false;
+    uses_p3 = false;
+    uses_p4 = false;
+    uses_p5 = false;
 }
 
 void free_workarea()

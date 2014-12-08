@@ -478,13 +478,13 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
         default:
             nameptr = FormName;
-            uses_p1 = blk_3_info.uses_p1;
-            uses_p2 = blk_3_info.uses_p2;
-            uses_p3 = blk_3_info.uses_p3;
+            uses_p1 = blk_3_info.uses_p1 != 0;
+            uses_p2 = blk_3_info.uses_p2 != 0;
+            uses_p3 = blk_3_info.uses_p3 != 0;
             uses_ismand = blk_3_info.uses_ismand != 0;
             ismand = blk_3_info.ismand;
-            uses_p4 = blk_3_info.uses_p4;
-            uses_p5 = blk_3_info.uses_p5;
+            uses_p4 = blk_3_info.uses_p4 != 0;
+            uses_p5 = blk_3_info.uses_p5 != 0;
             break;
         }
         blk_3_info.form_name[ITEMNAMELEN] = 0;
