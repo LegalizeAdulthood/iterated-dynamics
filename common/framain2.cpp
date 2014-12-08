@@ -787,7 +787,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
     switch (*kbdchar)
     {
     case 't':                    /* new fractal type             */
-        julibrot = 0;
+        julibrot = false;
         clear_zoombox();
         driver_stack_screen();
         if ((i = get_fracttype()) >= 0)
@@ -1455,7 +1455,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
     switch (*kbdchar)
     {
     case 't':                    /* new fractal type             */
-        julibrot = 0;
+        julibrot = false;
         clear_zoombox();
         driver_stack_screen();
         if ((i = get_fracttype()) >= 0)

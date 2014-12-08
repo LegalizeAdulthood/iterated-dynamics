@@ -62,7 +62,7 @@ char lsysmask[13]    = {"*.l"};
 char Glasses1Map[] = "glasses1.map";
 char MAP_name[FILE_MAX_DIR] = "";
 int  mapset = 0;
-int julibrot;   /* flag for julibrot */
+bool julibrot = false;                  /* flag for julibrot */
 
 /* --------------------------------------------------------------------- */
 
@@ -1164,9 +1164,9 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
     int fkeymask = 0x40;
     oldbailout = bailout;
     if (fractype==JULIBROT || fractype==JULIBROTFP)
-        julibrot = 1;
+        julibrot = true;
     else
-        julibrot = 0;
+        julibrot = false;
     curtype = fractype;
     if (curfractalspecific->name[0] == '*'
             && (i = curfractalspecific->tofloat) != NOFRACTAL  /* FIXED BUG HERE!! */
@@ -1236,7 +1236,7 @@ gfp_top:
         {
             if (ret == 0)
                 ret = -1;
-            julibrot = 0;
+            julibrot = false;
             goto gfp_exit;
         }
         else
@@ -1288,7 +1288,7 @@ gfp_top:
     for (i = firstparm; i < lastparm; i++)
     {
         char tmpbuf[30];
-        if (!typehasparm(julibrot?neworbittype:fractype,i,parmprompt[j])) {
+        if (!typehasparm(julibrot ? neworbittype : fractype, i, parmprompt[j])) {
             if (curtype == FORMULA || curtype == FFORMULA)
                 if (paramnotused(i))
                     continue;

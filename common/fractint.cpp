@@ -459,7 +459,7 @@ imagestart:                             /* calc/display a new image */
             goto restorestart;
         }
         if (kbdchar == 't') {                     /* set fractal type */
-            julibrot = 0;
+            julibrot = false;
             get_fracttype();
             goto imagestart;
         }
