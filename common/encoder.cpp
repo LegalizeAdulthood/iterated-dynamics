@@ -881,7 +881,7 @@ static int free_ent;                  /* first unused entry */
  * block compression parameters -- after all codes are used up,
  * and compression rate changes, start over.
  */
-static int clear_flg = 0;
+static bool clear_flg = false;
 
 /*
  * compress stdin to stdout
@@ -946,7 +946,7 @@ static int compress(int rowlimit)
      */
     cur_accum = 0;
     cur_bits = 0;
-    clear_flg = 0;
+    clear_flg = false;
     ent = 0;
     maxcode = MAXCODE(n_bits = startbits);
 
@@ -1107,8 +1107,7 @@ static void output(int code)
         if (clear_flg)
         {
             maxcode = MAXCODE(n_bits = startbits);
-            clear_flg = 0;
-
+            clear_flg = false;
         }
         else
         {
@@ -1145,7 +1144,7 @@ static void cl_block(void)             /* table clear for block compress */
 {
     memset(htab,0xff,(unsigned)HSIZE*sizeof(long));
     free_ent = ClearCode + 2;
-    clear_flg = 1;
+    clear_flg = true;
     output((int)ClearCode);
 }
 
