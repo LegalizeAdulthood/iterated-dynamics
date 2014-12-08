@@ -407,7 +407,7 @@ extern int                   red_crop_left;
 extern int                   red_crop_right;
 extern int                   g_release;
 extern int                   resave_flag;
-extern int                   reset_periodicity;
+extern bool                  reset_periodicity;
 extern U16                   resume_info;
 extern int                   resume_len;
 extern int                   resuming;

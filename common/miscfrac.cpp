@@ -1165,7 +1165,7 @@ int popcorn()   /* subset of std engine */
     tempsqrx = ltempsqrx = 0;
     for (row = start_row; row <= iystop; row++)
     {
-        reset_periodicity = 1;
+        reset_periodicity = true;
         for (col = 0; col <= ixstop; col++)
         {
             if (StandardFractal() == -1) /* interrupted */
@@ -1174,7 +1174,7 @@ int popcorn()   /* subset of std engine */
                 put_resume(sizeof(row),&row,0);
                 return (-1);
             }
-            reset_periodicity = 0;
+            reset_periodicity = false;
         }
     }
     calc_status = CALCSTAT_COMPLETED;
