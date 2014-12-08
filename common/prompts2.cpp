@@ -881,7 +881,7 @@ char GreyFile[] = "altern.map";
 int starfield(void)
 {
     int c;
-    busy = 1;
+    busy = true;
     if (starfield_values[0] <   1.0) starfield_values[0] =   1.0;
     if (starfield_values[0] > 100.0) starfield_values[0] = 100.0;
     if (starfield_values[1] <   1.0) starfield_values[1] =   1.0;
@@ -895,7 +895,7 @@ int starfield(void)
 
     if (ValidateLuts(GreyFile) != 0) {
         stopmsg(0,"Unable to load ALTERN.MAP");
-        busy = 0;
+        busy = false;
         return (-1);
     }
     spindac(0,1);                 /* load it, but don't spin */
@@ -903,7 +903,7 @@ int starfield(void)
         for (col = 0; col < xdots; col++) {
             if (driver_key_pressed()) {
                 driver_buzzer(BUZZER_INTERRUPT);
-                busy = 0;
+                busy = false;
                 return (1);
             }
             c = getcolor(col, row);
@@ -913,7 +913,7 @@ int starfield(void)
         }
     }
     driver_buzzer(BUZZER_COMPLETE);
-    busy = 0;
+    busy = false;
     return (0);
 }
 

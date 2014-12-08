@@ -51,7 +51,7 @@ extern char                  browsename[];
 extern bool                  browsing;
 extern bool                  brwscheckparms;
 extern bool                  brwschecktype;
-extern char                  busy;
+extern bool                  busy;
 extern long                  calctime;
 extern int (*                calctype)(void);
 extern int                   calc_status;

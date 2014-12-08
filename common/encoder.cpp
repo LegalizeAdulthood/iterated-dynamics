@@ -161,14 +161,14 @@ restart:
     }
 #endif
 
-    busy = 1;
+    busy = true;
 
     if (debugflag != 200)
         interrupted = encoder();
     else
         interrupted = timer(2, nullptr);     /* invoke encoder() via timer */
 
-    busy = 0;
+    busy = false;
 
     fclose(g_outfile);
 
