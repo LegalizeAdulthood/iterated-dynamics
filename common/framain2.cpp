@@ -42,6 +42,7 @@ static  int        historyptr = -1;     /* user pointer into history tbl  */
 static  int        saveptr = 0;         /* save ptr into history tbl      */
 static  int        historyflag;         /* are we backing off in history? */
 void (*outln_cleanup)(void);
+bool g_virtual_screens = false;
 
 int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 {

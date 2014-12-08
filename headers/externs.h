@@ -537,7 +537,7 @@ extern float                 viewreduction;
 extern bool                  viewwindow;
 extern int                   viewxdots;
 extern int                   viewydots;
-extern int                   g_virtual_screens;
+extern bool                  g_virtual_screens;
 extern unsigned              vsp;
 extern int                   g_vxdots;
 extern int                   g_which_image;

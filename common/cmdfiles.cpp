@@ -361,7 +361,7 @@ static void initvars_restart()          /* <ins> key init */
     viewwindow = false;                 /* no view window            */
     viewreduction = (float)4.2;
     viewcrop = true;
-    g_virtual_screens = 1;              /* virtual screen modes on   */
+    g_virtual_screens = true;           /* virtual screen modes on   */
     finalaspectratio = screenaspect;
     viewxdots = viewydots = 0;
     video_cutboth = true;               /* keep virtual aspect */
@@ -2898,7 +2898,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        g_virtual_screens = yesnoval[0];
+        g_virtual_screens = yesnoval[0] != 0;
         return 1;
     }
 
