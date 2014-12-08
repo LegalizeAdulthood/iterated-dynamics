@@ -636,7 +636,7 @@ disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
     {
         g_and_color = colors-1;
         boxcount = 0;
-        g_dac_learn = 1;
+        g_dac_learn = true;
         g_dac_count = cyclelimit;
         g_got_real_dac = TRUE;
 

@@ -116,7 +116,6 @@ int g_color_dark = 0;       /* darkest color in palette */
 int g_color_bright = 0;     /* brightest color in palette */
 int g_color_medium = 0;     /* nearest to medbright grey in palette
                    Zoom-Box values (2K x 2K screens max) */
-int g_dac_learn = 0;
 int dacnorm = 0;
 int g_dac_count = 0;
 int fake_lut = 0;

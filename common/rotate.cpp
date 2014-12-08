@@ -30,6 +30,7 @@ char mapmask[13] = {"*.map"};
 
 BYTE g_dac_box[256][3];
 BYTE olddacbox[256][3];
+bool g_dac_learn = false;
 
 void rotate(int direction)      /* rotate-the-palette routine */
 {
@@ -133,12 +134,14 @@ void rotate(int direction)      /* rotate-the-palette routine */
             incr = 999;
             break;
         case FIK_UP_ARROW:                 /* UpArrow means speed up       */
-            g_dac_learn = 1;
-            if (++g_dac_count >= colors) --g_dac_count;
+            g_dac_learn = true;
+            if (++g_dac_count >= colors)
+                --g_dac_count;
             break;
         case FIK_DOWN_ARROW:               /* DownArrow means slow down    */
-            g_dac_learn = 1;
-            if (g_dac_count > 1) g_dac_count--;
+            g_dac_learn = true;
+            if (g_dac_count > 1)
+                g_dac_count--;
             break;
         case '1':
         case '2':

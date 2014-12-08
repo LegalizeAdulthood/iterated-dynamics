@@ -86,7 +86,7 @@ extern int                   c_exp;
 extern double                d1overd;
 extern BYTE                  g_dac_box[256][3];
 extern int                   g_dac_count;
-extern int                   g_dac_learn;
+extern bool                  g_dac_learn;
 extern double                ddelmin;
 extern int                   debugflag;
 extern int                   decimals;

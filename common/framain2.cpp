@@ -504,7 +504,7 @@ done:
         {
             cyclelimit = 256;              /* plasma clouds need quick spins */
             g_dac_count = 256;
-            g_dac_learn = 1;
+            g_dac_learn = true;
         }
 
 resumeloop:                             /* return here on failed overlays */
