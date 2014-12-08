@@ -177,7 +177,7 @@ int gifview()
         sprintf(msg,"restoring %s",tmpname);
         dvid_status(1,msg);
     }
-    dontreadcolor = 0;
+    dontreadcolor = false;
 
     /* Now display one or more GIF objects */
     finished = 0;

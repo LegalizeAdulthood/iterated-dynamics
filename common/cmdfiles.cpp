@@ -108,7 +108,7 @@ int     colorstate = 0;         /* 0, g_dac_box matches default (bios or map=) *
                                 /* 2, g_dac_box matches the colorfile map      */
 bool    colorpreloaded = false; /* if g_dac_box preloaded for next mode select */
 int     save_release = 0;       /* release creating PAR file*/
-char    dontreadcolor = 0;      /* flag for reading color from GIF */
+bool    dontreadcolor = false;  /* flag for reading color from GIF */
 double  math_tol[2]= {.05,.05}; /* For math transition */
 int Targa_Out = 0;              /* 3D fullcolor flag */
 int truecolor = 0;              /* escape time truecolor flag */
@@ -293,9 +293,9 @@ int cmdfiles(int argc,char **argv)
         first_init = 0;
 
     if (colorpreloaded && showfile==0) /* PAR reads a file and sets color */
-        dontreadcolor = 1;   /* don't read colors from GIF */
+        dontreadcolor = true;   /* don't read colors from GIF */
     else
-        dontreadcolor = 0;   /* read colors from GIF */
+        dontreadcolor = false;   /* read colors from GIF */
 
     /*set structure of search directories*/
     strcpy(searchfor.par, CommandFile);
@@ -315,9 +315,9 @@ int load_commands(FILE *infile)
     ret = cmdfile(infile, CMDFILE_AT_AFTER_STARTUP);
 
     if (colorpreloaded && showfile==0) /* PAR reads a file and sets color */
-        dontreadcolor = 1;   /* don't read colors from GIF */
+        dontreadcolor = true;   /* don't read colors from GIF */
     else
-        dontreadcolor = 0;   /* read colors from GIF */
+        dontreadcolor = false;   /* read colors from GIF */
     return ret;
 }
 

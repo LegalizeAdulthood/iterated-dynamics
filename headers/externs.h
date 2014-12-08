@@ -114,7 +114,7 @@ extern int                   distestwidth;
 extern float                 distfp;
 extern int                   Distribution;
 extern bool                  dither_flag;
-extern char                  dontreadcolor;
+extern bool                  dontreadcolor;
 extern int                   dotmode;
 extern int                   doublecaution;
 extern double                dpx;
