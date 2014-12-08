@@ -79,7 +79,7 @@ static int gif_savetodisk(char *filename)      /* save-to-disk routine */
     char openfile[FILE_MAX_PATH], openfiletype[10];
     char tmpfile[FILE_MAX_PATH];
     char *period;
-    int newfile;
+    bool newfile = false;
     int i;
     int interrupted;
 
@@ -106,7 +106,7 @@ restart:
 
     strcpy(tmpfile, openfile);
     if (access(openfile, 0) != 0)/* file doesn't exist */
-        newfile = 1;
+        newfile = true;
     else
     {   /* file already exists */
         if (!fract_overwrite)
@@ -125,7 +125,7 @@ restart:
             stopmsg(0, tmpmsg);
             return -1;
         }
-        newfile = 0;
+        newfile = false;
         i = (int) strlen(tmpfile);
         while (--i >= 0 && tmpfile[i] != SLASHC)
             tmpfile[i] = 0;
@@ -188,7 +188,7 @@ restart:
         }
     }
 
-    if (newfile == 0 && interrupted >= 0)
+    if (!newfile && interrupted >= 0)
     {   /* replace the real file */
         unlink(openfile);         /* success assumed since we checked */
         rename(tmpfile, openfile);/* earlier with access              */
