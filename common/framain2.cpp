@@ -1158,7 +1158,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             strcpy(browsename, file_name_stack[name_stack_ptr]);
             merge_pathnames(readname,browsename,2);
             browsing = true;
-            no_sub_images = FALSE;
+            no_sub_images = false;
             showfile = 0;
             if (askvideo)
             {

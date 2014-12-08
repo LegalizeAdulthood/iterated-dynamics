@@ -135,7 +135,7 @@ char file_name_stack[16][13]; /* array of file names used while browsing */
 int name_stack_ptr ;
 double toosmall;
 int  minbox;
-int no_sub_images;
+bool no_sub_images = false;
 bool autobrowse = false;
 bool doublecaution = false;
 bool brwscheckparms = false;
@@ -212,7 +212,7 @@ restart:   /* insert key re-starts here */
     brwschecktype  = false;
     brwscheckparms = true;
     doublecaution  = true;
-    no_sub_images = FALSE;
+    no_sub_images = false;
     toosmall = 6;
     minbox   = 3;
     strcpy(browsemask,"*.gif");

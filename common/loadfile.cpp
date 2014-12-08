@@ -1355,7 +1355,7 @@ rescan:  /* entry for changed browse parms */
     time(&lastime);
     toggle = 0;
     wincount = 0;
-    no_sub_images = FALSE;
+    no_sub_images = false;
     splitpath(readname,drive,dir,nullptr,nullptr);
     splitpath(browsemask,nullptr,nullptr,fname,ext);
     makepath(tmpmask,drive,dir,fname,ext);
@@ -1629,7 +1629,7 @@ rescan:  /* entry for changed browse parms */
     else {
         driver_buzzer(BUZZER_INTERRUPT); /*no suitable files in directory! */
         texttempmsg("Sorry.. I can't find anything");
-        no_sub_images = TRUE;
+        no_sub_images = true;
     }
 
     MemoryRelease(browsehandle);
