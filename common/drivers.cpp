@@ -19,7 +19,7 @@ static Driver *s_available[MAX_DRIVERS];
 
 Driver *g_driver = nullptr;
 
-static int
+static void
 load_driver(Driver *drv, int *argc, char **argv)
 {
     if (drv && drv->init)
@@ -32,11 +32,8 @@ load_driver(Driver *drv, int *argc, char **argv)
                 g_driver = drv;
             }
             s_available[num_drivers++] = drv;
-            return 1;
         }
     }
-
-    return 0;
 }
 
 /*------------------------------------------------------------
