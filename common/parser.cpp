@@ -3697,7 +3697,7 @@ int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurre
 }
 
 
-int fpFormulaSetup(void)
+bool fpFormulaSetup(void)
 {
     /* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -3705,7 +3705,7 @@ int fpFormulaSetup(void)
     int RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
     if (RunFormRes && fpu >=387 && debugflag != 90 && (orbitsave&2) == 0
             && !Randomized)
-        return CvtStk(); /* run fast assembler code in parsera.asm */
+        return CvtStk() != 0; /* run fast assembler code in parsera.asm */
     return RunFormRes;
 #else
     MathType = D_MATH;
@@ -3713,7 +3713,7 @@ int fpFormulaSetup(void)
 #endif
 }
 
-int intFormulaSetup(void) {
+bool intFormulaSetup(void) {
 #if defined(XFRACT) || defined(_WIN32)
     static int been_here = 0;
     if (!been_here)
@@ -3722,7 +3722,7 @@ int intFormulaSetup(void) {
                 "Use float=yes to get a real image.");
         been_here = 1;
     }
-    return 0;
+    return false;
 #else
     MathType = L_MATH;
     fg = (double)(1L << bitshift);

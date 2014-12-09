@@ -2248,6 +2248,7 @@ struct fractalspecificstuff fractalspecific[]=
         STDBAILOUT
     },
 #endif
+
     {
         nullptr,            /* marks the END of the list */
         {nullptr, nullptr, nullptr, nullptr},

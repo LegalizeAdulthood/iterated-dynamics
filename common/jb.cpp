@@ -59,7 +59,7 @@ int juli3Dmode = 0;
 
 int neworbittype = JULIA;
 
-int
+bool
 JulibrotSetup(void)
 {
     int r = 0;
@@ -69,7 +69,7 @@ JulibrotSetup(void)
     if (colors < 255)
     {
         stopmsg(0, "Sorry, but Julibrots require a 256-color video mode");
-        return (0);
+        return false;
     }
 #endif
 
@@ -152,12 +152,12 @@ JulibrotSetup(void)
     if (savedac != 1)
     {
         if (ValidateLuts(mapname) != 0)
-            return (0);
+            return false;
         spindac(0, 1);               /* load it, but don't spin */
         if (savedac == 2)
             savedac = 1;
     }
-    return (r >= 0);
+    return r >= 0;
 }
 
 

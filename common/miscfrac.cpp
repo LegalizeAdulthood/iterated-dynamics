@@ -1131,7 +1131,7 @@ int LongBifurcMay()
     return (overflow);
 }
 
-int BifurcMaySetup()
+bool BifurcMaySetup()
 {
 
     beta = (long)param[2];
@@ -1140,7 +1140,7 @@ int BifurcMaySetup()
     param[2] = (double)beta;
 
     timer(0,curfractalspecific->calctype);
-    return (0);
+    return false;
 }
 
 /* Here Endeth the Generalised Bifurcation Fractal Engine   */
@@ -1248,7 +1248,8 @@ int lyapunov() {
 }
 
 
-int lya_setup() {
+bool lya_setup()
+{
     /* This routine sets up the sequence for forcing the Rate parameter
         to vary between the two values.  It fills the array lyaRxy[] and
         sets lyaLength to the length of the sequence.
@@ -1310,7 +1311,7 @@ int lya_setup() {
         usr_stdcalcmode = '1';  /* doesn't use new & breaks orbits */
         stdcalcmode = '1';
     }
-    return 1;
+    return true;
 }
 
 int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
@@ -1738,14 +1739,14 @@ contloop:
     return 1;
 }
 
-int CellularSetup(void)
+bool CellularSetup(void)
 {
     if (!resuming)
     {
         nxtscreenflag = false; /* initialize flag */
     }
     timer(0,curfractalspecific->calctype);
-    return (0);
+    return false;
 }
 
 static void set_Cellular_palette()
@@ -1880,7 +1881,7 @@ static void set_Froth_palette(void)
     }
 }
 
-int froth_setup(void)
+bool froth_setup(void)
 {
     double sin_theta;
     double cos_theta;
@@ -1991,7 +1992,7 @@ int froth_setup(void)
 
         fsp.fl.l = tmp_l;
     }
-    return 1;
+    return true;
 }
 
 void froth_cleanup(void)

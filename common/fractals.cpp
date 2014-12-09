@@ -3186,7 +3186,7 @@ EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
 #define L staticroots[ 9]
 #define Z staticroots[10]
 
-int MandelbrotMix4Setup(void)
+bool MandelbrotMix4Setup(void)
 {
     int sign_array = 0;
     A.x=param[0];
@@ -3257,7 +3257,7 @@ int MandelbrotMix4Setup(void)
         rqlim = L.x;
         rqlim2 = rqlim*rqlim;
     }
-    return 1;
+    return true;
 }
 
 int MandelbrotMix4fp_per_pixel(void)

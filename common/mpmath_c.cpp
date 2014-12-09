@@ -558,7 +558,8 @@ double TwoPi;
 DComplex temp, BaseLog;
 DComplex cdegree = { 3.0, 0.0 }, croot   = { 1.0, 0.0 };
 
-int ComplexNewtonSetup(void) {
+bool ComplexNewtonSetup(void)
+{
     threshold = .001;
     periodicitycheck = 0;
     if (param[0] != 0.0 || param[1] != 0.0 || param[2] != 0.0 ||
@@ -570,7 +571,7 @@ int ComplexNewtonSetup(void) {
         FPUcplxlog(&croot, &BaseLog);
         TwoPi = asin(1.0) * 4;
     }
-    return (1);
+    return true;
 }
 
 int ComplexNewton(void) {

@@ -18,7 +18,7 @@
 /*              Setup (once per fractal image) routines                 */
 /* -------------------------------------------------------------------- */
 
-int
+bool
 MandelSetup(void)           /* Mandelbrot Routine */
 {
     if (debugflag != 90
@@ -34,10 +34,10 @@ MandelSetup(void)           /* Mandelbrot Routine */
         calctype = StandardFractal;
         longparm = &linit;
     }
-    return (1);
+    return true;
 }
 
-int
+bool
 JuliaSetup(void)            /* Julia Routine */
 {
     if (debugflag != 90
@@ -54,10 +54,10 @@ JuliaSetup(void)            /* Julia Routine */
         longparm = &lparm;
         get_julia_attractor(0.0, 0.0);    /* another attractor? */
     }
-    return (1);
+    return true;
 }
 
-int
+bool
 NewtonSetup(void)           /* Newton/NewtBasin Routines */
 {
 #if !defined(XFRACT)
@@ -147,27 +147,27 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
     if (fractype == MPNEWTON || fractype == MPNEWTBASIN)
         setMPfunctions();
 #endif
-    return (1);
+    return true;
 }
 
 
-int
+bool
 StandaloneSetup(void)
 {
     timer(0,curfractalspecific->calctype);
-    return (0);          /* effectively disable solid-guessing */
+    return false;               /* effectively disable solid-guessing */
 }
 
-int
+bool
 UnitySetup(void)
 {
     periodicitycheck = 0;
     FgOne = (1L << bitshift);
     FgTwo = FgOne + FgOne;
-    return (1);
+    return true;
 }
 
-int
+bool
 MandelfpSetup(void)
 {
     bf_math = 0;
@@ -273,10 +273,10 @@ MandelfpSetup(void)
     default:
         break;
     }
-    return (1);
+    return true;
 }
 
-int
+bool
 JuliafpSetup(void)
 {
     c_exp = (int)param[2];
@@ -401,10 +401,10 @@ JuliafpSetup(void)
         get_julia_attractor(0.0, 0.0);    /* another attractor? */
         break;
     }
-    return (1);
+    return true;
 }
 
-int
+bool
 MandellongSetup(void)
 {
     FgHalf = fudge >> 1;
@@ -449,10 +449,10 @@ MandellongSetup(void)
         if (trigndx[0] == 14) /* FLIP */
             symmetry = NOSYM;
     }
-    return (1);
+    return true;
 }
 
-int
+bool
 JulialongSetup(void)
 {
     c_exp = (int)param[2];
@@ -514,10 +514,10 @@ JulialongSetup(void)
         get_julia_attractor(0.0, 0.0);    /* another attractor? */
         break;
     }
-    return (1);
+    return true;
 }
 
-int
+bool
 TrigPlusSqrlongSetup(void)
 {
     curfractalspecific->per_pixel =  julia_per_pixel;
@@ -529,10 +529,10 @@ TrigPlusSqrlongSetup(void)
         else if (lparm2.x == -fudge)  /* Skinner variant */
             curfractalspecific->orbitcalc =  SkinnerTrigSubSqrFractal;
     }
-    return (JulialongSetup());
+    return JulialongSetup();
 }
 
-int
+bool
 TrigPlusSqrfpSetup(void)
 {
     curfractalspecific->per_pixel =  juliafp_per_pixel;
@@ -544,15 +544,15 @@ TrigPlusSqrfpSetup(void)
         else if (parm2.x == -1.0)  /* Skinner variant */
             curfractalspecific->orbitcalc =  SkinnerTrigSubSqrfpFractal;
     }
-    return (JuliafpSetup());
+    return JuliafpSetup();
 }
 
-int
+bool
 TrigPlusTriglongSetup(void)
 {
     FnPlusFnSym();
     if (trigndx[1] == SQR)
-        return (TrigPlusSqrlongSetup());
+        return TrigPlusSqrlongSetup();
     curfractalspecific->per_pixel =  long_julia_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusTrigFractal;
     if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != 90)
@@ -562,15 +562,15 @@ TrigPlusTriglongSetup(void)
         else if (lparm2.x == -fudge)  /* Skinner variant */
             curfractalspecific->orbitcalc =  SkinnerTrigSubTrigFractal;
     }
-    return (JulialongSetup());
+    return JulialongSetup();
 }
 
-int
+bool
 TrigPlusTrigfpSetup(void)
 {
     FnPlusFnSym();
     if (trigndx[1] == SQR)
-        return (TrigPlusSqrfpSetup());
+        return TrigPlusSqrfpSetup();
     curfractalspecific->per_pixel =  otherjuliafp_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusTrigfpFractal;
     if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != 90)
@@ -580,10 +580,10 @@ TrigPlusTrigfpSetup(void)
         else if (parm2.x == -1.0)  /* Skinner variant */
             curfractalspecific->orbitcalc =  SkinnerTrigSubTrigfpFractal;
     }
-    return (JuliafpSetup());
+    return JuliafpSetup();
 }
 
-int
+bool
 FnPlusFnSym(void) /* set symmetry matrix for fn+fn type */
 {
     static char fnplusfn[7][7] =
@@ -608,7 +608,7 @@ FnPlusFnSym(void) /* set symmetry matrix for fn+fn type */
     return (0);
 }
 
-int
+bool
 LambdaTrigOrTrigSetup(void)
 {
     /* default symmetry is ORIGIN  */
@@ -619,10 +619,10 @@ LambdaTrigOrTrigSetup(void)
     if ((trigndx[0] == LOG) || (trigndx[1] == LOG))
         symmetry = XAXIS;
     get_julia_attractor(0.0, 0.0);       /* an attractor? */
-    return (1);
+    return true;
 }
 
-int
+bool
 JuliaTrigOrTrigSetup(void)
 {
     /* default symmetry is XAXIS */
@@ -636,7 +636,7 @@ JuliaTrigOrTrigSetup(void)
     return (1);
 }
 
-int
+bool
 ManlamTrigOrTrigSetup(void)
 {   /* psuedo */
     /* default symmetry is XAXIS */
@@ -646,10 +646,10 @@ ManlamTrigOrTrigSetup(void)
         symmetry = NOSYM;
     if ((trigndx[0] == LOG) || (trigndx[1] == LOG))
         symmetry = NOSYM;
-    return (1);
+    return true;
 }
 
-int
+bool
 MandelTrigOrTrigSetup(void)
 {
     /* default symmetry is XAXIS_NOPARM */
@@ -657,11 +657,11 @@ MandelTrigOrTrigSetup(void)
     floatparm = &init;
     if ((trigndx[0] == 14) || (trigndx[1] == 14)) /* FLIP */
         symmetry = NOSYM;
-    return (1);
+    return true;
 }
 
 
-int
+bool
 ZXTrigPlusZSetup(void)
 {
     /*   static char ZXTrigPlusZSym1[] = */
@@ -718,7 +718,7 @@ ZXTrigPlusZSetup(void)
             else if (lparm2.x == -fudge)  /* Skinner variant */
                 curfractalspecific->orbitcalc =  SkinnerZXTrigSubZFractal;
         }
-        return (JulialongSetup());
+        return JulialongSetup();
     }
     else
     {
@@ -731,10 +731,10 @@ ZXTrigPlusZSetup(void)
                 curfractalspecific->orbitcalc =  SkinnerZXTrigSubZfpFractal;
         }
     }
-    return (JuliafpSetup());
+    return JuliafpSetup();
 }
 
-int
+bool
 LambdaTrigSetup(void)
 {
     int isinteger;
@@ -780,12 +780,12 @@ LambdaTrigSetup(void)
     }
     get_julia_attractor(0.0, 0.0);       /* an attractor? */
     if (isinteger)
-        return (JulialongSetup());
+        return JulialongSetup();
     else
-        return (JuliafpSetup());
+        return JuliafpSetup();
 }
 
-int
+bool
 JuliafnPlusZsqrdSetup(void)
 {
     /*   static char fnpluszsqrd[] = */
@@ -804,12 +804,12 @@ JuliafnPlusZsqrdSetup(void)
         /* default is for NOSYM symmetry */
     }
     if (curfractalspecific->isinteger)
-        return (JulialongSetup());
+        return JulialongSetup();
     else
-        return (JuliafpSetup());
+        return JuliafpSetup();
 }
 
-int
+bool
 SqrTrigSetup(void)
 {
     /*   static char SqrTrigSym[] = */
@@ -824,12 +824,12 @@ SqrTrigSetup(void)
         /* default is for XAXIS symmetry */
     }
     if (curfractalspecific->isinteger)
-        return (JulialongSetup());
+        return JulialongSetup();
     else
-        return (JuliafpSetup());
+        return JuliafpSetup();
 }
 
-int
+bool
 FnXFnSetup(void)
 {
     static char fnxfn[7][7] =
@@ -865,12 +865,12 @@ FnXFnSetup(void)
         if (trigndx[0]==9 && trigndx[1] ==9) symmetry = PI_SYM;
     }
     if (curfractalspecific->isinteger)
-        return (JulialongSetup());
+        return JulialongSetup();
     else
-        return (JuliafpSetup());
+        return JuliafpSetup();
 }
 
-int
+bool
 MandelTrigSetup(void)
 {
     int isinteger;
@@ -910,12 +910,12 @@ MandelTrigSetup(void)
         break;
     }
     if (isinteger)
-        return (MandellongSetup());
+        return MandellongSetup();
     else
-        return (MandelfpSetup());
+        return MandelfpSetup();
 }
 
-int
+bool
 MarksJuliaSetup(void)
 {
 #if !defined(XFRACT)
@@ -939,10 +939,10 @@ MarksJuliaSetup(void)
     }
     get_julia_attractor(0.0, 0.0);       /* an attractor? */
 #endif
-    return (1);
+    return true;
 }
 
-int
+bool
 MarksJuliafpSetup(void)
 {
     if (param[2] < 1)
@@ -964,10 +964,10 @@ MarksJuliafpSetup(void)
         coefficient.y = 0.0;
     }
     get_julia_attractor(0.0, 0.0);       /* an attractor? */
-    return (1);
+    return true;
 }
 
-int
+bool
 SierpinskiSetup(void)
 {
     /* sierpinski */
@@ -975,20 +975,20 @@ SierpinskiSetup(void)
     ltmp.x = 1;
     ltmp.x = ltmp.x << bitshift; /* ltmp.x = 1 */
     ltmp.y = ltmp.x >> 1;                        /* ltmp.y = .5 */
-    return (1);
+    return true;
 }
 
-int
+bool
 SierpinskiFPSetup(void)
 {
     /* sierpinski */
     periodicitycheck = 0;                /* disable periodicity checks */
     tmp.x = 1;
     tmp.y = 0.5;
-    return (1);
+    return true;
 }
 
-int
+bool
 HalleySetup(void)
 {
     /* Halley */
@@ -1026,10 +1026,10 @@ HalleySetup(void)
         symmetry = XAXIS;   /* odd */
     else
         symmetry = XYAXIS; /* even */
-    return (1);
+    return true;
 }
 
-int
+bool
 PhoenixSetup(void)
 {
     longparm = &lparm;
@@ -1058,10 +1058,10 @@ PhoenixSetup(void)
             curfractalspecific->orbitcalc =  LongPhoenixMinusFractal;
     }
 
-    return (1);
+    return true;
 }
 
-int
+bool
 PhoenixCplxSetup(void)
 {
     longparm = &lparm;
@@ -1104,10 +1104,10 @@ PhoenixCplxSetup(void)
             curfractalspecific->orbitcalc =  LongPhoenixCplxMinusFractal;
     }
 
-    return (1);
+    return true;
 }
 
-int
+bool
 MandPhoenixSetup(void)
 {
     longparm = &linit;
@@ -1136,10 +1136,10 @@ MandPhoenixSetup(void)
             curfractalspecific->orbitcalc =  LongPhoenixMinusFractal;
     }
 
-    return (1);
+    return true;
 }
 
-int
+bool
 MandPhoenixCplxSetup(void)
 {
     longparm = &linit;
@@ -1170,18 +1170,18 @@ MandPhoenixCplxSetup(void)
             curfractalspecific->orbitcalc =  LongPhoenixCplxMinusFractal;
     }
 
-    return (1);
+    return true;
 }
 
-int
+bool
 StandardSetup(void)
 {
     if (fractype==UNITYFP)
         periodicitycheck=0;
-    return (1);
+    return true;
 }
 
-int
+bool
 VLSetup(void)
 {
     if (param[0] < 0.0) param[0] = 0.0;
@@ -1189,5 +1189,5 @@ VLSetup(void)
     if (param[0] > 1.0) param[0] = 1.0;
     if (param[1] > 1.0) param[1] = 1.0;
     floatparm = &parm;
-    return 1;
+    return true;
 }

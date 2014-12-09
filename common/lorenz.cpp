@@ -262,7 +262,7 @@ static double orbit;
 static long   l_orbit;
 static long l_sinx,l_cosx;
 
-int orbit3dlongsetup()
+bool orbit3dlongsetup()
 {
     maxct = 0L;
     connect = 1;
@@ -381,13 +381,13 @@ lrwalk:
     l_adt = multiply(l_a,l_dt,bitshift);
     l_bdt = multiply(l_b,l_dt,bitshift);
     l_cdt = multiply(l_c,l_dt,bitshift);
-    return (1);
+    return true;
 }
 
 #define COSB   dx
 #define SINABC dy
 
-int orbit3dfloatsetup()
+bool orbit3dfloatsetup()
 {
     maxct = 0L;
     connect = 1;
@@ -552,7 +552,7 @@ rwalk:
     bdt = b*dt;
     cdt = c*dt;
 
-    return (1);
+    return true;
 }
 
 /******************************************************************/
@@ -1766,7 +1766,7 @@ static int orbit3dfloatcalc(void)
     return (ret);
 }
 
-int dynam2dfloatsetup()
+bool dynam2dfloatsetup()
 {
     connect = 0;
     euler = 0;
@@ -1791,7 +1791,7 @@ int dynam2dfloatsetup()
     if (outside == SUM) {
         plot = plothist;
     }
-    return (1);
+    return true;
 }
 
 /*

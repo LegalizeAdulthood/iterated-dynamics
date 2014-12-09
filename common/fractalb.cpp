@@ -476,7 +476,7 @@ int  bfMANRbailout()
     return (0);
 }
 
-int MandelbnSetup()
+bool MandelbnSetup()
 {
     /* this should be set up dynamically based on corners */
     bn_t bntemp1, bntemp2;
@@ -558,10 +558,10 @@ int MandelbnSetup()
     floattobn(bnparm.y,param[1]);
     */
     restore_stack(saved);
-    return (1);
+    return true;
 }
 
-int MandelbfSetup()
+bool MandelbfSetup()
 {
     /* this should be set up dynamically based on corners */
     bf_t bftemp1, bftemp2;
@@ -629,7 +629,7 @@ int MandelbfSetup()
     }
 
     restore_stack(saved);
-    return (1);
+    return true;
 }
 
 int mandelbn_per_pixel()

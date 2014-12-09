@@ -872,7 +872,7 @@ static void perform_worklist()
 {
     int (*sv_orbitcalc)(void) = nullptr;  /* function that calculates one orbit */
     int (*sv_per_pixel)(void) = nullptr;  /* once-per-pixel init */
-    int (*sv_per_image)(void) = nullptr;  /* once-per-image setup */
+    bool (*sv_per_image)(void) = nullptr;  /* once-per-image setup */
     int i, alt;
 
     if ((alt=find_alternate_math(fractype,bf_math)) > -1)
