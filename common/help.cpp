@@ -958,17 +958,17 @@ static bool exe_path(const char *filename, char *path)
 #endif
 }
 
-static int find_file(const char *filename, char *path)
+static bool find_file(const char *filename, char *path)
 {
     if (exe_path(filename, path))
     {
         if (can_read_file(path))
         {
-            return 1;
+            return true;
         }
     }
     findpath(filename, path);
-    return path[0] ? 1 : 0;
+    return path[0] != 0;
 }
 
 static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
