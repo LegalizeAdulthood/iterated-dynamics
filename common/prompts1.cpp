@@ -47,7 +47,7 @@ static  int check_gfe_key(int curkey,int choice);
 static  void load_entry_text(FILE *entfile,char *buf,int maxlines, int startrow, int startcol);
 static  void format_parmfile_line(int,char *);
 static  int get_light_params(void);
-static  int check_mapfile(void);
+static  bool check_mapfile(void);
 static  int get_funny_glasses_params(void);
 
 #define GETFORMULA 0
@@ -2711,22 +2711,23 @@ static int get_light_params()
 /* --------------------------------------------------------------------- */
 
 
-static int check_mapfile()
+static bool check_mapfile()
 {
-    int askflag = 0;
+    bool askflag = false;
     int i,oldhelpmode;
     if (dontreadcolor)
-        return 0;
+        return false;
     strcpy(temp1,"*");
     if (mapset)
         strcpy(temp1,MAP_name);
     if (!(g_glasses_type == 1 || g_glasses_type == 2))
-        askflag = 1;
+        askflag = true;
     else
         merge_pathnames(temp1,funnyglasses_map_name,0);
 
     while (1) {
-        if (askflag) {
+        if (askflag)
+        {
             oldhelpmode = helpmode;
             helpmode = -1;
             i = field_prompt("Enter name of .MAP file to use,\n"
@@ -2734,7 +2735,7 @@ static int check_mapfile()
                              nullptr,temp1,60,nullptr);
             helpmode = oldhelpmode;
             if (i < 0)
-                return -1;
+                return true;
             if (temp1[0] == '*')
             {
                 mapset = false;
@@ -2744,15 +2745,16 @@ static int check_mapfile()
         memcpy(olddacbox,g_dac_box,256*3); /* save the DAC */
         bool valid = ValidateLuts(temp1);
         memcpy(g_dac_box,olddacbox,256*3); /* restore the DAC */
-        if (valid) { /* Oops, somethings wrong */
-            askflag = 1;
+        if (valid) /* Oops, somethings wrong */
+        {
+            askflag = true;
             continue;
         }
         mapset = true;
-        merge_pathnames(MAP_name,temp1,0);
+        merge_pathnames(MAP_name, temp1, 0);
         break;
     }
-    return 0;
+    return false;
 }
 
 static int get_funny_glasses_params()
