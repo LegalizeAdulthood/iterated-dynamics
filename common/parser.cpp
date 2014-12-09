@@ -3749,10 +3749,11 @@ int frm_get_param_stuff(char * Name)
 int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
 {
     long filepos = ftell(open_file);
-    int c, i, done, at_end_of_name;
+    int c, i, at_end_of_name;
 
     /* first, test name */
-    done = at_end_of_name = i = 0;
+    at_end_of_name = i = 0;
+    bool done = false;
     while (!done)
     {
         switch (c = getc(open_file))
@@ -3771,7 +3772,7 @@ int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
             break;
         case '(':
         case '{':
-            done = 1;
+            done = true;
             break;
         default :
             if (!at_end_of_name)
@@ -3799,7 +3800,8 @@ int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
     if (c == '(')
     {
         char sym_buf[20];
-        done = i = 0;
+        done = false;
+        i = 0;
         while (!done)
         {
             switch (c = getc(open_file))
@@ -3819,7 +3821,7 @@ int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
             case '\t':
                 break;
             case ')':
-                done = 1;
+                done = true;
                 break;
             default :
                 if (i < 19)
@@ -3846,7 +3848,7 @@ int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
     }
     if (c != '{')
     {
-        done = 0;
+        done = false;
         while (!done)
         {
             switch (c = getc(open_file))
@@ -3860,7 +3862,7 @@ int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
                 stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
                 return 0;
             case '{':
-                done = 1;
+                done = true;
                 break;
             default :
                 break;
