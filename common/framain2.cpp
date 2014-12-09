@@ -21,7 +21,7 @@
 
 int main_menu_switch(int*,int*,int*,char*,int);
 int evolver_menu_switch(int*,int*,int*,char*);
-int big_while_loop(int *kbdmore, char *stacked, int resumeflag);
+int big_while_loop(int *kbdmore, char *stacked, bool resumeflag);
 static void move_zoombox(int);
 static bool fromtext_flag = false;      /* = true if we're in graphics mode */
 static int call_line3d(BYTE *pixels, int linelen);
@@ -44,7 +44,7 @@ static  int        historyflag;         /* are we backing off in history? */
 void (*outln_cleanup)(void);
 bool g_virtual_screens = false;
 
-int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
+int big_while_loop(int *kbdmore, char *stacked, bool resumeflag)
 {
     int     frommandel;                  /* if julia entered from mandel */
     int     axmode = 0; /* video mode (BIOS ##)    */
@@ -513,7 +513,6 @@ resumeloop:                             /* return here on failed overlays */
 #if defined(_WIN32)
         _ASSERTE(_CrtCheckMemory());
 #endif
-
         *kbdmore = 1;
         while (*kbdmore == 1)
         {   /* loop through command keys */

@@ -491,7 +491,7 @@ extern int elapsed_time(int);
 
 /*  framain2 -- C file prototypes */
 
-extern int big_while_loop(int *,char *,int);
+extern int big_while_loop(int *kbdmore, char *stacked, bool resume_flag);
 extern int check_key(void);
 extern int cmp_line(BYTE *,int);
 extern int key_count(int);

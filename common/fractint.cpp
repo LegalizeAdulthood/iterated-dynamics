@@ -181,7 +181,7 @@ void initasmvars(void)
 
 int main(int argc, char **argv)
 {
-    int resumeflag;
+    bool resumeflag = false;
     int kbdchar;                        /* keyboard key-hit value       */
     int kbdmore;                        /* continuation variable        */
     char stacked=0;                     /* flag to indicate screen stacked */
@@ -380,7 +380,7 @@ restorestart:
         display3d = 0;                    /* forget 3D */
         if (calc_status ==CALCSTAT_NON_RESUMABLE)
             calc_status = CALCSTAT_PARAMS_CHANGED;
-        resumeflag = 1;
+        resumeflag = true;
         goto resumeloop;                  /* ooh, this is ugly */
     }
 
@@ -506,8 +506,8 @@ imagestart:                             /* calc/display a new image */
     }
 
     zoomoff = true;                     /* zooming is enabled */
-    helpmode = HELPMAIN;         /* now use this help mode */
-    resumeflag = 0;  /* allows taking goto inside big_while_loop() */
+    helpmode = HELPMAIN;                /* now use this help mode */
+    resumeflag = false;                 /* allows taking goto inside big_while_loop() */
 
 resumeloop:
 #if defined(_WIN32)
@@ -516,7 +516,7 @@ resumeloop:
 
     param_history(0); /* save old history */
     /* this switch processes gotos that are now inside function */
-    switch (big_while_loop(&kbdmore,&stacked,resumeflag))
+    switch (big_while_loop(&kbdmore, &stacked, resumeflag))
     {
     case RESTART:
         goto restart;
