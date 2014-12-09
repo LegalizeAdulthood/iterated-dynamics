@@ -23,7 +23,7 @@ static int append_rule(char *rule, int index);
 static void free_lcmds(void);
 static struct lsys_cmd * findsize(struct lsys_cmd *,struct lsys_turtlestatei *, struct lsys_cmd **,int);
 static struct lsys_cmd * drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd **rules,int depth);
-static int lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth);
+static bool lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth);
 static struct lsys_cmd *LSysISizeTransform(char *s, struct lsys_turtlestatei *ts);
 static struct lsys_cmd *LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts);
 static void lsysi_dosincos(void);
@@ -254,7 +254,8 @@ int Lsystem(void)
         *sc = nullptr;
 
         lsysi_dosincos();
-        if (lsysi_findscale(rules2[0], &ts, &rules2[1], order)) {
+        if (lsysi_findscale(rules2[0], &ts, &rules2[1], order))
+        {
             ts.realangle = ts.angle = ts.reverse = 0;
 
             free_lcmds();
@@ -689,7 +690,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd
     return command;
 }
 
-static int
+static bool
 lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
 {
     float horiz,vert;
@@ -718,7 +719,7 @@ lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct l
     ymin = (double) ts->ymin / FIXEDMUL;
     ymax = (double) ts->ymax / FIXEDMUL;
     if (fsret == nullptr)
-        return 0;
+        return false;
     if (xmax == xmin)
         horiz = (float)1E37;
     else
@@ -741,7 +742,7 @@ lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct l
         ts->ypos = FIXEDPT((ydots-locsize*(ymax+ymin))/2);
     ts->size = FIXEDPT(locsize);
 
-    return 1;
+    return true;
 }
 
 static struct lsys_cmd *
