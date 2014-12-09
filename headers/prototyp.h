@@ -237,7 +237,7 @@ extern void displayc(int, int, int, int, int);
 /*  encoder -- C file prototypes */
 
 extern int savetodisk(char *);
-extern int encoder(void);
+extern bool encoder(void);
 extern int new_to_old(int new_fractype);
 
 /*  evolve -- C file prototypes */

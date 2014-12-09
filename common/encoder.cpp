@@ -16,7 +16,7 @@
 #include "fractype.h"
 #include "drivers.h"
 
-static int compress(int rowlimit);
+static bool compress(int rowlimit);
 static int shftwrite(BYTE * color, int numcolors);
 static int extend_blk_len(int datalen);
 static int put_extend_blk(int block_id, int block_len, char * block_data);
@@ -164,7 +164,7 @@ restart:
     busy = true;
 
     if (debugflag != 200)
-        interrupted = encoder();
+        interrupted = encoder() ? 1 : 0;
     else
         interrupted = timer(2, nullptr);     /* invoke encoder() via timer */
 
@@ -262,9 +262,10 @@ int savetodisk(char *filename)
     }
 }
 
-int encoder()
+bool encoder()
 {
-    int i, width, rowlimit, interrupted;
+    bool interrupted;
+    int i, width, rowlimit;
     BYTE bitsperpixel, x;
     struct fractal_info save_info;
 
@@ -572,13 +573,13 @@ int encoder()
     if (fwrite(";", 1, 1, g_outfile) != 1)
         goto oops;                /* GIF Terminator */
 
-    return (interrupted);
+    return interrupted;
 
 oops:
     {
         fflush(g_outfile);
         stopmsg(0,"Error Writing to disk (Disk full?)");
-        return 1;
+        return true;
     }
 }
 
@@ -910,7 +911,7 @@ static int  cur_bits = 0;
  */
 static char accum[256];
 
-static int compress(int rowlimit)
+static bool compress(int rowlimit)
 {
     int outcolor1, outcolor2;
     long fcode;
@@ -1052,7 +1053,7 @@ nomatch:
      */
     output((int)ent);
     output((int) EOFCode);
-    return interrupted ? 1 : 0;
+    return interrupted;
 }
 
 /*****************************************************************
