@@ -3654,21 +3654,24 @@ int BadFormula(void) {
     return 1;
 }
 
-int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurred  */
-
+/*  returns true if an error occurred  */
+bool RunForm(char *Name, int from_prompts1c)
+{
     FILE * entry_file = nullptr;
 
     /*  first set the pointers so they point to a fn which always returns 1  */
     curfractalspecific->per_pixel = BadFormula;
     curfractalspecific->orbitcalc = BadFormula;
 
-    if (FormName[0] == 0) {
-        return 1;  /*  and don't reset the pointers  */
+    if (FormName[0] == 0)
+    {
+        return true;  /*  and don't reset the pointers  */
     }
 
-    if (find_file_item(FormFileName,Name,&entry_file, 1)) {
+    if (find_file_item(FormFileName,Name,&entry_file, 1))
+    {
         stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
-        return 1;
+        return true;
     }
 
     FormStr = PrepareFormula(entry_file, from_prompts1c);
@@ -3678,22 +3681,23 @@ int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurre
     {
         parser_allocate();  /*  ParseStr() will test if this alloc worked  */
         if (ParseStr(FormStr,1))
-            return 1;   /*  parse failed, don't change fn pointers  */
+            return true;   /*  parse failed, don't change fn pointers  */
         else
         {
-            if (uses_jump == 1 && fill_jump_struct() == 1) {
+            if (uses_jump == 1 && fill_jump_struct() == 1)
+            {
                 stopmsg(0, ParseErrs(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
-                return 1;
+                return true;
             }
 
             /* all parses succeeded so set the pointers back to good functions*/
             curfractalspecific->per_pixel = form_per_pixel;
             curfractalspecific->orbitcalc = Formula;
-            return 0;
+            return false;
         }
     }
     else
-        return 1;   /* error in making string*/
+        return true;   /* error in making string*/
 }
 
 
@@ -3702,18 +3706,19 @@ bool fpFormulaSetup(void)
     /* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
 #if !defined(XFRACT) && !defined(_WIN32)
     MathType = D_MATH;
-    int RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
+    bool RunFormRes = !RunForm(FormName, 0); /* RunForm() returns true for failure */
     if (RunFormRes && fpu >=387 && debugflag != 90 && (orbitsave&2) == 0
             && !Randomized)
         return CvtStk() != 0; /* run fast assembler code in parsera.asm */
     return RunFormRes;
 #else
     MathType = D_MATH;
-    return !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
+    return !RunForm(FormName, 0); /* RunForm() returns true for failure */
 #endif
 }
 
-bool intFormulaSetup(void) {
+bool intFormulaSetup(void)
+{
 #if defined(XFRACT) || defined(_WIN32)
     static int been_here = 0;
     if (!been_here)

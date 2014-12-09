@@ -920,7 +920,7 @@ extern int Formula(void);
 extern int BadFormula(void);
 extern int form_per_pixel(void);
 extern int frm_get_param_stuff(char *);
-extern int RunForm(char *, int);
+extern bool RunForm(char *, int);
 extern bool fpFormulaSetup(void);
 extern bool intFormulaSetup(void);
 extern void init_misc(void);

@@ -1682,21 +1682,26 @@ long get_file_entry(int type, const char *title,char *fmask,
         setvbuf(gfe_file,tstack,_IOFBF,4096); /* improves speed when file is big */
         newfile = 0;
         entry_pointer = gfe_choose_entry(type,title,filename,entryname);
-        if (entry_pointer == -2) {
+        if (entry_pointer == -2)
+        {
             newfile = 1; /* go to file list, */
             continue;    /* back to getafilename */
         }
         if (entry_pointer == -1)
             return -1;
-        switch (type) {
+        switch (type)
+        {
         case GETFORMULA:
-            if (RunForm(entryname, 1) == 0) return 0;
+            if (!RunForm(entryname, 1))
+                return 0;
             break;
         case GETLSYS:
-            if (LLoad() == 0) return 0;
+            if (LLoad() == 0)
+                return 0;
             break;
         case GETIFS:
-            if (ifsload() == 0) {
+            if (ifsload() == 0)
+            {
                 fractype = (ifs_type == 0) ? IFS : IFS3D;
                 curfractalspecific = &fractalspecific[fractype];
                 set_default_parms(); /* to correct them if 3d */
