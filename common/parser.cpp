@@ -3745,8 +3745,7 @@ int frm_get_param_stuff(char * Name)
      on success, 2 if an invalid symmetry is found, and 0 if errors
      are found which should cause the formula not to be executed
 */
-
-int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
+static int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
 {
     long filepos = ftell(open_file);
     int c, i, at_end_of_name;
