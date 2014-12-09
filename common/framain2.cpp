@@ -38,7 +38,7 @@ static std::vector<int> save_boxy;
 static std::vector<int> save_boxvalues;
 static  int        historyptr = -1;     /* user pointer into history tbl  */
 static  int        saveptr = 0;         /* save ptr into history tbl      */
-static  int        historyflag;         /* are we backing off in history? */
+static bool historyflag = false;        /* are we backing off in history? */
 void (*outln_cleanup)(void);
 bool g_virtual_screens = false;
 
@@ -1185,7 +1185,7 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
             if (curfractalspecific->isinteger == 0 &&
                     curfractalspecific->tofloat != NOFRACTAL)
                 usr_floatflag = 1;
-            historyflag = 1;       /* avoid re-store parms due to rounding errs */
+            historyflag = true;         /* avoid re-store parms due to rounding errs */
             return IMAGESTART;
         }
         break;
@@ -1555,7 +1555,7 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             if (curfractalspecific->isinteger == 0 &&
                     curfractalspecific->tofloat != NOFRACTAL)
                 usr_floatflag = 1;
-            historyflag = 1;       /* avoid re-store parms due to rounding errs */
+            historyflag = true;         /* avoid re-store parms due to rounding errs */
             return IMAGESTART;
         }
         break;
@@ -2282,10 +2282,11 @@ static void save_history_info()
         int i;
         for (i = 0; i < maxhistory; i++)
             MoveToMemory((BYTE *)&current,(U16)sizeof(HISTORY),1L,(long)i,history);
-        historyflag = saveptr = historyptr = 0;   /* initialize history ptr */
+        historyflag = false;
+        saveptr = historyptr = 0;   /* initialize history ptr */
     }
-    else if (historyflag == 1)
-        historyflag = 0;   /* coming from user history command, don't save */
+    else if (historyflag)
+        historyflag = false;            /* coming from user history command, don't save */
     else if (memcmp(&current,&last,sizeof(HISTORY)))
     {
         if (++saveptr >= maxhistory)  /* back to beginning of circular buffer */
