@@ -3182,8 +3182,7 @@ void getvarinfo(struct token_st * tok)
         of a complex constant. See is_complex_constant() below. */
 
 /* returns 1 on success, 0 on NOT_A_TOKEN */
-
-int frmgetconstant(FILE * openfile, struct token_st * tok)
+static bool  frmgetconstant(FILE * openfile, struct token_st * tok)
 {
     int c;
     int i = 1;
@@ -3204,7 +3203,7 @@ int frmgetconstant(FILE * openfile, struct token_st * tok)
             tok->token_str[i] = (char) 0;
             tok->token_type = NOT_A_TOKEN;
             tok->token_id   = END_OF_FILE;
-            return 0;
+            return false;
 CASE_NUM:
             tok->token_str[i++] = (char) c;
             filepos=ftell(openfile);
@@ -3216,7 +3215,7 @@ CASE_NUM:
                 tok->token_str[i++] = (char) 0;
                 tok->token_type = NOT_A_TOKEN;
                 tok->token_id = ILL_FORMED_CONSTANT;
-                return 0;
+                return false;
             }
             else
             {
@@ -3249,7 +3248,7 @@ CASE_NUM:
                 tok->token_str[i++] = (char) 0;
                 tok->token_type = NOT_A_TOKEN;
                 tok->token_id = ILL_FORMED_CONSTANT;
-                return 0;
+                return false;
             }
             else if (tok->token_str[i-1] == 'e' || (tok->token_str[i-1] == '.' && i == 1))
             {
@@ -3257,7 +3256,7 @@ CASE_NUM:
                 tok->token_str[i++] = (char) 0;
                 tok->token_type = NOT_A_TOKEN;
                 tok->token_id = ILL_FORMED_CONSTANT;
-                return 0;
+                return false;
             }
             else
             {
@@ -3272,13 +3271,13 @@ CASE_NUM:
             tok->token_str[33] = (char) 0;
             tok->token_type = NOT_A_TOKEN;
             tok->token_id = TOKEN_TOO_LONG;
-            return 0;
+            return false;
         }
     }    /* end of while loop. Now fill in the value */
     tok->token_const.x = atof(tok->token_str);
     tok->token_type = REAL_CONSTANT;
     tok->token_id   = 0;
-    return 1;
+    return true;
 }
 
 void is_complex_constant(FILE * openfile, struct token_st * tok)
@@ -3288,7 +3287,7 @@ void is_complex_constant(FILE * openfile, struct token_st * tok)
     long filepos;
     int c;
     int sign_value = 1;
-    int done = 0;
+    bool done = false;
     int getting_real = 1;
     FILE * debug_token = nullptr;
     tok->token_str[1] = (char) 0;  /* so we can concatenate later */
@@ -3332,7 +3331,7 @@ CASE_NUM :
                 {
                     fprintf(debug_token,  "First char not a . or NUM\n");
                 }
-                done = 1;
+                done = true;
             }
             break;
         default:
@@ -3340,12 +3339,12 @@ CASE_NUM :
             {
                 fprintf(debug_token,  "First char not a . or NUM\n");
             }
-            done = 1;
+            done = true;
             break;
         }
         if (debug_token != nullptr)
         {
-            fprintf(debug_token,  "Calling frmgetconstant unless done is 1; done is %d\n", done);
+            fprintf(debug_token,  "Calling frmgetconstant unless done is true; done is %s\n", done ? "true" : "false");
         }
         if (!done && frmgetconstant(openfile, &temp_tok))
         {
@@ -3385,10 +3384,10 @@ CASE_NUM :
                 return;
             }
             else
-                done = 1;
+                done = true;
         }
         else
-            done = 1;
+            done = true;
     }
     fseek(openfile, filepos, SEEK_SET);
     tok->token_str[1] = (char) 0;
