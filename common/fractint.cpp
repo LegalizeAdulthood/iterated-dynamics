@@ -184,7 +184,7 @@ int main(int argc, char **argv)
     bool resumeflag = false;
     int kbdchar;                        /* keyboard key-hit value       */
     bool kbdmore = false;               /* continuation variable        */
-    char stacked=0;                     /* flag to indicate screen stacked */
+    bool stacked = false;               /* flag to indicate screen stacked */
 
     /* this traps non-math library floating point errors */
     signal(SIGFPE, my_floating_point_err);

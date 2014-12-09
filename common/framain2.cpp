@@ -19,7 +19,7 @@
 
 /* routines in this module      */
 
-static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, char *stacked);
+static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked);
 static void move_zoombox(int);
 static bool fromtext_flag = false;      /* = true if we're in graphics mode */
 static int call_line3d(BYTE *pixels, int linelen);
@@ -42,7 +42,7 @@ static  int        historyflag;         /* are we backing off in history? */
 void (*outln_cleanup)(void);
 bool g_virtual_screens = false;
 
-int big_while_loop(bool *kbdmore, char *stacked, bool resumeflag)
+int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
 {
     int     axmode = 0; /* video mode (BIOS ##)    */
     double  ftemp;                       /* fp temp                      */
@@ -686,7 +686,7 @@ resumeloop:                             /* return here on failed overlays */
     }
 }
 
-static int look(char *stacked)
+static int look(bool *stacked)
 {
     int oldhelpmode;
     oldhelpmode = helpmode;
@@ -715,7 +715,7 @@ static int look(char *stacked)
         if (askvideo)
         {
             driver_stack_screen();   /* save graphics image */
-            *stacked = 1;
+            *stacked = true;
         }
         return 1;       /* hop off and do it!! */
 
@@ -740,7 +740,7 @@ static int look(char *stacked)
             if (askvideo)
             {
                 driver_stack_screen();/* save graphics image */
-                *stacked = 1;
+                *stacked = true;
             }
             return 1;
         }                   /* otherwise fall through and turn off browsing */
@@ -764,7 +764,7 @@ static int look(char *stacked)
     return 0;
 }
 
-int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, char *stacked, int axmode)
+int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked, int axmode)
 {
     int i,k;
     static double  jxxmin, jxxmax, jyymin, jyymax; /* "Julia mode" entry point */
@@ -1164,7 +1164,7 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, char *stacke
             if (askvideo)
             {
                 driver_stack_screen();      /* save graphics image */
-                *stacked = 1;
+                *stacked = true;
             }
             return RESTORESTART;
         }
@@ -1278,9 +1278,9 @@ do_3d_transform:
         }
         driver_stack_screen();            /* save graphics image */
         if (overlay3d)
-            *stacked = 0;
+            *stacked = false;
         else
-            *stacked = 1;
+            *stacked = true;
         if (resave_flag)
         {
             updatesavename(savename);      /* do the pending increment */
@@ -1451,7 +1451,7 @@ do_3d_transform:
     return 0;
 }
 
-static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, char *stacked)
+static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i,k;
 
@@ -1656,9 +1656,9 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, ch
         }
         driver_stack_screen();            /* save graphics image */
         if (overlay3d)
-            *stacked = 0;
+            *stacked = false;
         else
-            *stacked = 1;
+            *stacked = true;
         if (resave_flag)
         {
             updatesavename(savename);      /* do the pending increment */
