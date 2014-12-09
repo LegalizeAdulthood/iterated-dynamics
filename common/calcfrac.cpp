@@ -38,8 +38,8 @@ static int  solidguess(void);
 static int  guessrow(int,int,int);
 static void plotblock(int,int,int,int);
 static void setsymmetry(int,int);
-static int  xsym_split(int,int);
-static int  ysym_split(int,int);
+static bool xsym_split(int xaxis_row, int xaxis_between);
+static bool ysym_split(int yaxis_col, int yaxis_between);
 static void puttruecolor_disk(int,int,int);
 static int diffusion_engine(void);
 static int sticky_orbits(void);
@@ -3502,35 +3502,35 @@ static void plotblock(int buildrow,int x,int y,int color)
 
 /************************* symmetry plot setup ************************/
 
-static int xsym_split(int xaxis_row,int xaxis_between)
+static bool xsym_split(int xaxis_row, int xaxis_between)
 {
     if ((worksym&0x11) == 0x10) /* already decided not sym */
-        return 1;
+        return true;
     if ((worksym&1) != 0) /* already decided on sym */
         iystop = (yystart+yystop)/2;
     else /* new window, decide */
     {
         worksym |= 0x10;
         if (xaxis_row <= yystart || xaxis_row >= yystop)
-            return 1; /* axis not in window */
+            return true; /* axis not in window */
         int i = xaxis_row + (xaxis_row - yystart);
         if (xaxis_between)
             ++i;
         if (i > yystop) /* split into 2 pieces, bottom has the symmetry */
         {
             if (num_worklist >= MAXCALCWORK-1) /* no room to split */
-                return 1;
+                return true;
             iystop = xaxis_row - (yystop - xaxis_row);
             if (!xaxis_between)
                 --iystop;
             add_worklist(xxstart,xxstop,xxstart,iystop+1,yystop,iystop+1,workpass,0);
             yystop = iystop;
-            return 1; /* tell set_symmetry no sym for current window */
+            return true; /* tell set_symmetry no sym for current window */
         }
         if (i < yystop) /* split into 2 pieces, top has the symmetry */
         {
             if (num_worklist >= MAXCALCWORK-1) /* no room to split */
-                return 1;
+                return true;
             add_worklist(xxstart,xxstop,xxstart,i+1,yystop,i+1,workpass,0);
             yystop = i;
         }
@@ -3538,38 +3538,38 @@ static int xsym_split(int xaxis_row,int xaxis_between)
         worksym |= 1;
     }
     symmetry = 0;
-    return 0; /* tell set_symmetry its a go */
+    return false; /* tell set_symmetry its a go */
 }
 
-static int ysym_split(int yaxis_col,int yaxis_between)
+static bool ysym_split(int yaxis_col, int yaxis_between)
 {
     if ((worksym&0x22) == 0x20) /* already decided not sym */
-        return 1;
+        return true;
     if ((worksym&2) != 0) /* already decided on sym */
         ixstop = (xxstart+xxstop)/2;
     else /* new window, decide */
     {
         worksym |= 0x20;
         if (yaxis_col <= xxstart || yaxis_col >= xxstop)
-            return 1; /* axis not in window */
+            return true; /* axis not in window */
         int i = yaxis_col + (yaxis_col - xxstart);
         if (yaxis_between)
             ++i;
         if (i > xxstop) /* split into 2 pieces, right has the symmetry */
         {
             if (num_worklist >= MAXCALCWORK-1) /* no room to split */
-                return 1;
+                return true;
             ixstop = yaxis_col - (xxstop - yaxis_col);
             if (!yaxis_between)
                 --ixstop;
             add_worklist(ixstop+1,xxstop,ixstop+1,yystart,yystop,yystart,workpass,0);
             xxstop = ixstop;
-            return 1; /* tell set_symmetry no sym for current window */
+            return true; /* tell set_symmetry no sym for current window */
         }
         if (i < xxstop) /* split into 2 pieces, left has the symmetry */
         {
             if (num_worklist >= MAXCALCWORK-1) /* no room to split */
-                return 1;
+                return true;
             add_worklist(i+1,xxstop,i+1,yystart,yystop,yystart,workpass,0);
             xxstop = i;
         }
@@ -3577,7 +3577,7 @@ static int ysym_split(int yaxis_col,int yaxis_between)
         worksym |= 2;
     }
     symmetry = 0;
-    return 0; /* tell set_symmetry its a go */
+    return false; /* tell set_symmetry its a go */
 }
 
 static void setsymmetry(int sym, int uselist) /* set up proper symmetrical plot functions */
@@ -3714,7 +3714,8 @@ static void setsymmetry(int sym, int uselist) /* set up proper symmetrical plot 
             break;
 xsym:
     case XAXIS:                       /* X-axis Symmetry */
-        if (xsym_split(xaxis_row,xaxis_between) == 0) {
+        if (!xsym_split(xaxis_row,xaxis_between))
+        {
             if (basin)
                 plot = symplot2basin;
             else
@@ -3725,7 +3726,7 @@ xsym:
         if (!parmszero)
             break;
     case YAXIS:                       /* Y-axis Symmetry */
-        if (ysym_split(yaxis_col,yaxis_between) == 0)
+        if (!ysym_split(yaxis_col,yaxis_between))
             plot = symplot2Y;
         break;
     case XYAXIS_NOPARM:                       /* X-axis AND Y-axis Symmetry (no parms)*/
@@ -3763,8 +3764,8 @@ xsym:
             break;
     case ORIGIN:                      /* Origin Symmetry */
 originsym:
-        if (xsym_split(xaxis_row,xaxis_between) == 0
-                && ysym_split(yaxis_col,yaxis_between) == 0)
+        if (!xsym_split(xaxis_row,xaxis_between)
+                && !ysym_split(yaxis_col,yaxis_between))
         {
             plot = symplot2J;
             ixstop = xxstop; /* didn't want this changed */
@@ -3794,8 +3795,8 @@ originsym:
             goto originsym;
         plot = symPIplot ;
         symmetry = 0;
-        if (xsym_split(xaxis_row,xaxis_between) == 0
-                && ysym_split(yaxis_col,yaxis_between) == 0)
+        if (!xsym_split(xaxis_row,xaxis_between)
+                && !ysym_split(yaxis_col,yaxis_between))
             if (parm.y == 0.0)
                 plot = symPIplot4J; /* both axes */
             else
