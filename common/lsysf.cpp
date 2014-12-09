@@ -349,7 +349,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
     return command;
 }
 
-int
+bool
 lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd **rules, int depth)
 {
     float horiz,vert;
@@ -381,7 +381,7 @@ lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct l
     ymax = ts->ymax;
     /*   locsize = ts->size; */
     if (fsret == nullptr)
-        return 0;
+        return false;
     if (xmax == xmin)
         horiz = (float)1E37;
     else
@@ -404,7 +404,7 @@ lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct l
         ts->ypos = (ydots-locsize*(ymax+ymin))/2;
     ts->size = locsize;
 
-    return 1;
+    return true;
 }
 
 struct lsys_cmd *
