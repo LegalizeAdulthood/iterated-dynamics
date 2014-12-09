@@ -3402,7 +3402,7 @@ CASE_NUM :
     return;
 }
 
-int frmgetalpha(FILE * openfile, struct token_st * tok)
+bool frmgetalpha(FILE * openfile, struct token_st * tok)
 {
     int c;
     int i = 1;
@@ -3436,7 +3436,7 @@ CASE_NUM:
                 tok->token_id   = ILLEGAL_VARIABLE_NAME;
                 tok->token_str[i++] = '.';
                 tok->token_str[i] = (char) 0;
-                return 0;
+                return false;
             }
             else if (var_name_too_long)
             {
@@ -3444,7 +3444,7 @@ CASE_NUM:
                 tok->token_id   = TOKEN_TOO_LONG;
                 tok->token_str[i] = (char) 0;
                 fseek(openfile, last_filepos, SEEK_SET);
-                return 0;
+                return false;
             }
             tok->token_str[i] = (char) 0;
             fseek(openfile, last_filepos, SEEK_SET);
@@ -3452,51 +3452,51 @@ CASE_NUM:
             if (c=='(') /*getfuncinfo() correctly filled structure*/
             {
                 if (tok->token_type == NOT_A_TOKEN)
-                    return 0;
+                    return false;
                 else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
                 {
                     tok->token_type = NOT_A_TOKEN;
                     tok->token_id   = JUMP_WITH_ILLEGAL_CHAR;
-                    return 0;
+                    return false;
                 }
                 else
-                    return 1;
+                    return true;
             }
             /*can't use function names as variables*/
             else if (tok->token_type == FUNCTION || tok->token_type == PARAM_FUNCTION)
             {
                 tok->token_type = NOT_A_TOKEN;
                 tok->token_id   = FUNC_USED_AS_VAR;
-                return 0;
+                return false;
             }
             else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 1 || tok->token_id == 2))
             {
                 tok->token_type = NOT_A_TOKEN;
                 tok->token_id   = JUMP_MISSING_BOOLEAN;
-                return 0;
+                return false;
             }
             else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
             {
                 if (c == ',' || c == '\n' || c == ':')
-                    return 1;
+                    return true;
                 else
                 {
                     tok->token_type = NOT_A_TOKEN;
                     tok->token_id   = JUMP_WITH_ILLEGAL_CHAR;
-                    return 0;
+                    return false;
                 }
             }
             else
             {
                 getvarinfo(tok);
-                return 1;
+                return true;
             }
         }
     }
     tok->token_str[0] = (char) 0;
     tok->token_type = NOT_A_TOKEN;
     tok->token_id   = END_OF_FILE;
-    return 0;
+    return false;
 }
 
 void frm_get_eos(FILE * openfile, struct token_st * this_token)
@@ -3531,8 +3531,7 @@ void frm_get_eos(FILE * openfile, struct token_st * this_token)
 /*frmgettoken fills token structure; returns 1 on success and 0 on
   NOT_A_TOKEN and END_OF_FORMULA
 */
-
-int frmgettoken(FILE * openfile, struct token_st * this_token)
+static bool frmgettoken(FILE * openfile, struct token_st * this_token)
 {
     int c;
     int i=1;
@@ -3573,7 +3572,7 @@ CASE_TERMINATOR:
                 this_token->token_str[1] = (char) 0;
                 this_token->token_type = NOT_A_TOKEN;
                 this_token->token_id = ILLEGAL_OPERATOR;
-                return 0;
+                return false;
             }
         }
         else if (c=='|')
@@ -3595,7 +3594,7 @@ CASE_TERMINATOR:
                 this_token->token_str[1] = (char) 0;
                 this_token->token_type = NOT_A_TOKEN;
                 this_token->token_id = ILLEGAL_OPERATOR;
-                return 0;
+                return false;
             }
         }
         else if (this_token->token_str[0] == '}')
@@ -3620,7 +3619,7 @@ CASE_TERMINATOR:
                token_id to OPEN_PARENS if this is not the start of a
                complex constant */
             is_complex_constant(openfile, this_token);
-            return 1;
+            return true;
         }
         this_token->token_str[i] = (char) 0;
         if (this_token->token_type == OPERATOR)
@@ -3633,19 +3632,19 @@ CASE_TERMINATOR:
                 }
             }
         }
-        return this_token->token_str[0] == '}' ? 0 : 1;
+        return this_token->token_str[0] != '}';
     case EOF:
     case '\032':
         this_token->token_str[0] = (char) 0;
         this_token->token_type = NOT_A_TOKEN;
         this_token->token_id = END_OF_FILE;
-        return 0;
+        return false;
     default:
         this_token->token_str[0] = (char) c;
         this_token->token_str[1] = (char) 0;
         this_token->token_type = NOT_A_TOKEN;
         this_token->token_id = ILLEGAL_CHARACTER;
-        return 0;
+        return false;
     }
 }
 
