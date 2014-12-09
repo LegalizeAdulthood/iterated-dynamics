@@ -2268,37 +2268,38 @@ int num_fractal_types = (sizeof(fractalspecific)/
  *  formula.  If the parameter is used, or not a formula fractal,
  *  a 0 is returned.  Note: this routine only works for formula types.
  */
-int paramnotused(int parm)
+bool paramnotused(int parm)
 {
-    int ret = 0;
+    bool ret = false;
 
     /* sanity check */
     if (fractype != FORMULA && fractype != FFORMULA)
-        return (0);
+        return false;
 
-    switch (parm/2) {
+    switch (parm/2)
+    {
     case 0:
         if (!uses_p1)
-            ret = 1;
+            ret = true;
         break;
     case 1:
         if (!uses_p2)
-            ret = 1;
+            ret = true;
         break;
     case 2:
         if (!uses_p3)
-            ret = 1;
+            ret = true;
         break;
     case 3:
         if (!uses_p4)
-            ret = 1;
+            ret = true;
         break;
     case 4:
         if (!uses_p5)
-            ret = 1;
+            ret = true;
         break;
     default:
-        ret = 0;
+        ret = false;
         break;
     }
     return (ret);

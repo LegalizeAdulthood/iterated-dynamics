@@ -638,12 +638,12 @@ JuliaFractal(void)
     return longbailout();
 #else
     {
-        static int been_here = 0;
+        static bool been_here = false;
         if (!been_here)
         {
             stopmsg(0, "This integer fractal type is unimplemented;\n"
                     "Use float=yes to get a real image.");
-            been_here = 1;
+            been_here = true;
         }
         return 0;
     }
