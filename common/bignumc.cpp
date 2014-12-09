@@ -107,24 +107,23 @@ int cmp_bn(bn_t n1, bn_t n2)
 /********************************************************************/
 /* r < 0 ?                                      */
 /* returns 1 if negative, 0 if positive or zero */
-int is_bn_neg(bn_t n)
+bool is_bn_neg(bn_t n)
 {
     return (S8)n[bnlength-1] < 0;
 }
 
 /********************************************************************/
 /* n != 0 ?                      */
-/* RETURNS: if n != 0 returns 1  */
-/*          else returns 0       */
-int is_bn_not_zero(bn_t n)
+/* RETURNS: true if n != 0 */
+bool is_bn_not_zero(bn_t n)
 {
     int i;
 
     /* two bytes at a time */
     for (i=0; i<bnlength; i+=2)
         if (big_access16(n+i) != 0)
-            return 1;
-    return 0;
+            return true;
+    return false;
 }
 
 /********************************************************************/
@@ -335,14 +334,15 @@ bn_t half_a_bn(bn_t r)
 /* SIDE-EFFECTS: n1 and n2 are changed to their absolute values         */
 bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
-    int sign1, sign2 = 0, samevar;
+    bool sign2 = false;
+    int samevar;
     int i, j, k, steps, doublesteps, carry_steps;
     bn_t n1p, n2p;      /* pointers for n1, n2 */
     bn_t rp1, rp2, rp3; /* pointers for r */
     U32 prod, sum;
 
-    sign1 = is_bn_neg(n1);
-    if (sign1 != 0) /* =, not == */
+    bool sign1 = is_bn_neg(n1);
+    if (sign1) /* =, not == */
     {
         neg_a_bn(n1);
     }
@@ -350,7 +350,7 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
     if (!samevar) /* check to see if they're the same pointer */
     {
         sign2 = is_bn_neg(n2);
-        if (sign2 != 0) /* =, not == */
+        if (sign2) /* =, not == */
         {
             neg_a_bn(n2);
         }
@@ -410,7 +410,8 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 /* SIDE-EFFECTS: n1 and n2 are changed to their absolute values         */
 bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
-    int sign1, sign2 = 0, samevar;
+    bool sign2 = false;
+    int samevar;
     int i, j, k, steps, doublesteps, carry_steps, skips;
     bn_t n1p, n2p;      /* pointers for n1, n2 */
     bn_t rp1, rp2, rp3; /* pointers for r */
@@ -418,14 +419,14 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
     int bnl; /* temp bnlength holder */
 
     bnl = bnlength;
-    sign1 = is_bn_neg(n1);
+    bool sign1 = is_bn_neg(n1);
     if (sign1 != 0) /* =, not == */
         neg_a_bn(n1);
     samevar = (n1 == n2);
     if (!samevar) /* check to see if they're the same pointer */
     {
         sign2 = is_bn_neg(n2);
-        if (sign2 != 0) /* =, not == */
+        if (sign2) /* =, not == */
             neg_a_bn(n2);
     }
     n1p = n1;
@@ -767,7 +768,7 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
     U32 full_number;
     U16 quot, rem=0;
 
-    bool sign = is_bn_neg(n) != 0;
+    bool sign = is_bn_neg(n);
     if (sign)
         neg_a_bn(n);
 
@@ -801,7 +802,7 @@ bn_t div_a_bn_int(bn_t r, U16 u)
     U32 full_number;
     U16 quot, rem=0;
 
-    bool sign = is_bn_neg(r) != 0;
+    bool sign = is_bn_neg(r);
     if (sign)
         neg_a_bn(r);
 

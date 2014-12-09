@@ -717,7 +717,7 @@ inline double dot_product(VECTOR v1, VECTOR v2)
 #undef PI
 #endif
 #define PI 3.14159265358979323846
-#define SPHERE    init3d[0]             /* sphere? 1 = yes, 0 = no  */
+#define SPHERE    init3d[0]     /* sphere? 1 = yes, 0 = no  */
 #define ILLUMINE  (FILLTYPE>4)  /* illumination model       */
 
 /* regular 3D */
@@ -730,8 +730,8 @@ inline double dot_product(VECTOR v1, VECTOR v2)
 /* sphere 3D */
 #define PHI1      init3d[1]     /* longitude start, 180     */
 #define PHI2      init3d[2]     /* longitude end ,   0      */
-#define THETA1    init3d[3]         /* latitude start,-90 degrees */
-#define THETA2    init3d[4]         /* latitude stop,  90 degrees */
+#define THETA1    init3d[3]     /* latitude start,-90 degrees */
+#define THETA2    init3d[4]     /* latitude stop,  90 degrees */
 #define RADIUS    init3d[5]     /* should be user input */
 
 /* common parameters */
