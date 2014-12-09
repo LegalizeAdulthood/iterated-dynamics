@@ -151,7 +151,7 @@ extern int                   fileydots;
 extern char                  file_name_stack[16][13];
 extern int                   fillcolor;
 extern float                 finalaspectratio;
-extern int                   finattract;
+extern bool                  finattract;
 extern int                   finishrow;
 extern bool                  first_init;
 extern char                  floatflag;

@@ -2204,7 +2204,7 @@ static void save_history_info()
     current.trigndx[1]           = trigndx[1]                ;
     current.trigndx[2]           = trigndx[2]                ;
     current.trigndx[3]           = trigndx[3]                ;
-    current.finattract           = (short)finattract                ;
+    current.finattract           = (short) (finattract ? 1 : 0);
     current.initorbit[0]         = initorbit.x               ;
     current.initorbit[1]         = initorbit.y               ;
     current.useinitorbit         = useinitorbit              ;
@@ -2378,7 +2378,7 @@ static void restore_history_info(int i)
     trigndx[1]            = last.trigndx[1]     ;
     trigndx[2]            = last.trigndx[2]     ;
     trigndx[3]            = last.trigndx[3]     ;
-    finattract            = last.finattract     ;
+    finattract            = last.finattract != 0;
     initorbit.x           = last.initorbit[0]   ;
     initorbit.y           = last.initorbit[1]   ;
     useinitorbit          = last.useinitorbit   ;

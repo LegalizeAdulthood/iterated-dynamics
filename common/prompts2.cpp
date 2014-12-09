@@ -380,7 +380,7 @@ int get_toggles2()
 
     choices[++k] = "Look for finite attractor (0=no,>0=yes,<0=phase)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ch.val = finattract;
+    uvalues[k].uval.ch.val = finattract ? 1 : 0;
 
     choices[++k] = "Potential Max Color (0 means off)";
     uvalues[k].type = 'i';
@@ -443,8 +443,8 @@ int get_toggles2()
     k = -1;
     j = 0;   /* return code */
 
-    if (uvalues[++k].uval.ch.val != finattract) {
-        finattract = uvalues[k].uval.ch.val;
+    if ((uvalues[++k].uval.ch.val != 0) != finattract) {
+        finattract = uvalues[k].uval.ch.val != 0;
         j = 1;
     }
 

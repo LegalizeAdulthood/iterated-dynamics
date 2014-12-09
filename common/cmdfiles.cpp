@@ -83,7 +83,7 @@ int     cyclelimit = 0;         /* color-rotator upper limit */
 int     inside = 0;             /* inside color: 1=blue     */
 int     fillcolor = 0;          /* fillcolor: -1=normal     */
 int     outside = 0;            /* outside color    */
-int     finattract = 0;         /* finite attractor logic */
+bool finattract = false;        /* finite attractor logic */
 int     display3d = 0;          /* 3D display flag: 0 = OFF */
 bool    overlay3d = false;      /* 3D overlay flag */
 int     init3d[20] = { 0 };     /* '3d=nn/nn/nn/...' values */
@@ -420,7 +420,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 #else
     usr_floatflag = 1;                   /* turn on the float flag */
 #endif
-    finattract = 0;                      /* disable finite attractor logic */
+    finattract = false;                 /* disable finite attractor logic */
     fractype = 0;                        /* initial type Set flag  */
     curfractalspecific = &fractalspecific[0];
     initcorners = false;
@@ -1401,7 +1401,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        finattract = yesnoval[0];
+        finattract = yesnoval[0] != 0;
         return 1;
     }
 

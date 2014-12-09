@@ -2120,7 +2120,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                             if ((lat.x + lat.y) < l_at_rad)
                             {
                                 attracted = true;
-                                if (finattract<0) coloriter = (coloriter%attrperiod[i])+1;
+                                if (finattract)
+                                    coloriter = (coloriter % attrperiod[i]) + 1;
                                 break;
                             }
                         }
@@ -2142,7 +2143,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                             if ((at.x + at.y) < f_at_rad)
                             {
                                 attracted = true;
-                                if (finattract<0) coloriter = (coloriter%attrperiod[i])+1;
+                                if (finattract)
+                                    coloriter = (coloriter % attrperiod[i]) + 1;
                                 break;
                             }
                         }
