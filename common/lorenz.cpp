@@ -331,7 +331,7 @@ bool orbit3dlongsetup()
 
         switch (major_method) {
         case breadth_first:
-            if (Init_Queue((long)32*1024) == 0)
+            if (!Init_Queue(32*1024UL))
             {   /* can't get queue memory: fall back to random walk */
                 stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
                 major_method = random_walk;
@@ -341,7 +341,7 @@ bool orbit3dlongsetup()
             EnQueueLong((fudge - Sqrt.x) / 2, -Sqrt.y / 2);
             break;
         case depth_first:
-            if (Init_Queue((long)32*1024) == 0)
+            if (!Init_Queue(32*1024UL))
             {   /* can't get queue memory: fall back to random walk */
                 stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
                 major_method = random_walk;
@@ -499,7 +499,7 @@ bool orbit3dfloatsetup()
         Sqrt = ComplexSqrtFloat(1 - 4 * Cx, -4 * Cy);
         switch ((int) major_method) {
         case breadth_first:
-            if (Init_Queue((long)32*1024) == 0)
+            if (!Init_Queue(32*1024UL))
             {   /* can't get queue memory: fall back to random walk */
                 stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
                 major_method = random_walk;
@@ -509,7 +509,7 @@ bool orbit3dfloatsetup()
             EnQueueFloat((float)((1 - Sqrt.x) / 2), (float)(-Sqrt.y / 2));
             break;
         case depth_first:                      /* depth first (choose direction) */
-            if (Init_Queue((long)32*1024) == 0)
+            if (!Init_Queue(32*1024UL))
             {   /* can't get queue memory: fall back to random walk */
                 stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
                 major_method = random_walk;

@@ -577,7 +577,7 @@ extern LCMPLX DeQueueLong(void);
 extern DComplex DeQueueFloat(void);
 extern LCMPLX ComplexSqrtLong(long ,  long);
 extern DComplex ComplexSqrtFloat(double, double);
-extern int    Init_Queue(unsigned long);
+extern bool Init_Queue(unsigned long);
 extern void   Free_Queue(void);
 extern void   ClearQueue(void);
 extern int    QueueEmpty(void);

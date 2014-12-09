@@ -136,7 +136,7 @@ void circle(int radius, int color)
 long   ListFront, ListBack, ListSize;  /* head, tail, size of MIIM Queue */
 long   lsize, lmax;                    /* how many in queue (now, ever) */
 int    maxhits = 1;
-int    OKtoMIIM;
+bool   OKtoMIIM = false;
 int    SecretExperimentalMode;
 float  luckyx = 0, luckyy = 0;
 
@@ -184,13 +184,13 @@ ClearQueue()
  * move to JIIM.C when done
  */
 
-int Init_Queue(unsigned long request)
+bool Init_Queue(unsigned long request)
 {
     if (driver_diskp())
     {
         stopmsg(0, "Don't try this in disk video mode, kids...\n");
         ListSize = 0;
-        return 0;
+        return false;
     }
 
     for (ListSize = request; ListSize > 1024; ListSize /= 2)
@@ -199,17 +199,17 @@ int Init_Queue(unsigned long request)
         case 0:                        /* success */
             ListFront = ListBack = 0;
             lsize = lmax = 0;
-            return 1;
+            return true;
         case -1:
             continue;                   /* try smaller queue size */
         case -2:
             ListSize = 0;               /* cancelled by user      */
-            return 0;
+            return false;
         }
 
     /* failed to get memory for MIIM Queue */
     ListSize = 0;
-    return 0;
+    return false;
 }
 
 void
@@ -481,9 +481,9 @@ void Jiim(int which)         /* called by fractint */
      * MIIM code:
      * Grab memory for Queue/Stack before SaveRect gets it.
      */
-    OKtoMIIM  = 0;
+    OKtoMIIM  = false;
     if (which == JIIM && debugflag != 300)
-        OKtoMIIM = Init_Queue((long)8*1024); /* Queue Set-up Successful? */
+        OKtoMIIM = Init_Queue(8*1024UL); /* Queue Set-up Successful? */
 
     maxhits = 1;
     if (which == ORBIT)
