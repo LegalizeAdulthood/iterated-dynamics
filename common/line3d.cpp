@@ -42,7 +42,7 @@ static int first_time(int, VECTOR);
 static int H_R(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned long);
 static int line3dmem(void);
 static int R_H(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
-static int set_pixel_buff(BYTE *, BYTE *, unsigned);
+static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
 int startdisk1(char *, FILE *, int);
 static void set_upr_lwr(void);
 static int end_object(int);
@@ -1295,18 +1295,16 @@ int targa_color(int x, int y, int color)
     return (int)(255 - V);
 }
 
-static int set_pixel_buff(BYTE * pixels, BYTE * fraction, unsigned linelen)
+static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
 {
     int i;
     if ((evenoddrow++ & 1) == 0) /* even rows are color value */
     {
-        for (i = 0; i < (int) linelen; i++)       /* add the fractional part in
-                                                 * odd row */
+        for (i = 0; i < (int) linelen; i++)       /* add the fractional part in odd row */
             fraction[i] = pixels[i];
-        return 1;
+        return true;
     }
-    else
-        /* swap */
+    else /* swap */
     {
         BYTE tmp;
         for (i = 0; i < (int) linelen; i++)       /* swap so pixel has color */
@@ -1316,7 +1314,7 @@ static int set_pixel_buff(BYTE * pixels, BYTE * fraction, unsigned linelen)
             fraction[i] = tmp;
         }
     }
-    return 0;
+    return false;
 }
 
 /**************************************************************************
