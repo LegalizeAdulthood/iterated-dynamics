@@ -3009,7 +3009,7 @@ int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
     return -1; /* should never get here */
 }
 
-int fill_jump_struct(void)
+static bool fill_jump_struct(void)
 {   /* Completes all entries in jump structure. Returns 1 on error) */
     /* On entry, jump_index is the number of jump functions in the formula*/
     int i = 0;
@@ -3066,7 +3066,7 @@ int fill_jump_struct(void)
     if (i != jump_index || jump_control[i - 1].type != 4
             || jump_control[0].type != 1)
     {
-        return 1;
+        return true;
     }
 
     while (i > 0)
@@ -3074,7 +3074,7 @@ int fill_jump_struct(void)
         i--;
         i = fill_if_group(i, jump_data);
     }
-    return i < 0 ? 1 : 0;
+    return i < 0;
 }
 
 static char *FormStr;
@@ -4023,7 +4023,7 @@ bool RunForm(char *Name, int from_prompts1c)
             return true;   /*  parse failed, don't change fn pointers  */
         else
         {
-            if (uses_jump == 1 && fill_jump_struct() == 1)
+            if (uses_jump == 1 && fill_jump_struct())
             {
                 stopmsg(0, ParseErrs(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
                 return true;
