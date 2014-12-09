@@ -921,7 +921,7 @@ static int compress(int rowlimit)
     int hshift;
     int color;
     int in_count = 0;
-    int interrupted = 0;
+    bool interrupted = false;
     int tempkey;
 
     outcolor1 = 0;               /* use these colors to show progress */
@@ -1038,7 +1038,7 @@ nomatch:
             tempkey = driver_key_pressed();
             if (tempkey && (tempkey != (int)'s'))  /* keyboard hit - bail out */
             {
-                interrupted = 1;
+                interrupted = true;
                 rownum = ydots;
                 break;
             }
@@ -1052,7 +1052,7 @@ nomatch:
      */
     output((int)ent);
     output((int) EOFCode);
-    return (interrupted);
+    return interrupted ? 1 : 0;
 }
 
 /*****************************************************************
