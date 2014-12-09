@@ -2080,7 +2080,7 @@ struct SYMETRY {
     {"",              0}
 };
 
-static int ParseStr(char *Str, int pass) {
+static bool ParseStr(char *Str, int pass) {
     struct ConstArg *c;
     int ModFlag = 999, Len, Equals = 0, Mods[20], mdstk = 0;
     int jumptype;
@@ -2092,7 +2092,7 @@ static int ParseStr(char *Str, int pass) {
     jump_index = 0;
     if (!typespecific_workarea) {
         stopmsg(0,ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-        return 1;
+        return true;
     }
     switch (MathType) {
     case D_MATH:
@@ -2566,7 +2566,7 @@ static int ParseStr(char *Str, int pass) {
             LastOp--;
         }
     }
-    return 0;
+    return false;
 }
 
 
@@ -3764,7 +3764,7 @@ static void parser_allocate(void)
     /* Somewhat more memory is now allocated than in v17 here */
     /* however Store and Load were reduced in size to help make up for it */
     long f_size,Store_size,Load_size,v_size, p_size;
-    int pass, is_bad_form=0;
+    int pass;
     for (pass = 0; pass < 2; pass++)
     {
         free_workarea();
@@ -3790,8 +3790,7 @@ static void parser_allocate(void)
 
         if (pass == 0)
         {
-            is_bad_form = ParseStr(FormStr, pass);
-            if (is_bad_form == 0)
+            if (!ParseStr(FormStr, pass))
             {
                 /* per Chuck Ebbert, fudge these up a little */
                 Max_Ops = posp + 4;
