@@ -2957,7 +2957,7 @@ static int parse_colors(char *value)
     if (*value == '@') {
         if (merge_pathnames(MAP_name,&value[1],3)<0)
             init_msg("",&value[1],3);
-        if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(MAP_name) != 0)
+        if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(MAP_name))
             goto badcolor;
         if (display3d)
         {

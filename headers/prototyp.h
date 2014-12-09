@@ -612,7 +612,7 @@ extern int check_back(void);
 /*  loadmap -- C file prototypes */
 
 //extern void SetTgaColors(void);
-extern int ValidateLuts(const char *mapname);
+extern bool ValidateLuts(const char *mapname);
 extern int SetColorPaletteName(char *);
 
 /*  lorenz -- C file prototypes */

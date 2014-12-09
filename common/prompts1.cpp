@@ -2742,9 +2742,9 @@ static int check_mapfile()
             }
         }
         memcpy(olddacbox,g_dac_box,256*3); /* save the DAC */
-        i = ValidateLuts(temp1);
+        bool valid = ValidateLuts(temp1);
         memcpy(g_dac_box,olddacbox,256*3); /* restore the DAC */
-        if (i != 0) { /* Oops, somethings wrong */
+        if (valid) { /* Oops, somethings wrong */
             askflag = 1;
             continue;
         }

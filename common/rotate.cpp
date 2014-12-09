@@ -267,14 +267,14 @@ void rotate(int direction)      /* rotate-the-palette routine */
             break;
         case 'd':                      /* load colors from "default.map" */
         case 'D':
-            if (ValidateLuts("default") != 0)
+            if (ValidateLuts("default"))
                 break;
             fkey = 0;                   /* disable random generation */
             pauserotate();              /* update palette and pause */
             break;
         case 'a':                      /* load colors from "altern.map" */
         case 'A':
-            if (ValidateLuts("altern") != 0)
+            if (ValidateLuts("altern"))
                 break;
             fkey = 0;                   /* disable random generation */
             pauserotate();              /* update palette and pause */
@@ -456,7 +456,7 @@ int load_palette(void)
     driver_unstack_screen();
     if (i >= 0)
     {
-        if (ValidateLuts(filename) == 0)
+        if (!ValidateLuts(filename))
             memcpy(olddacbox,g_dac_box,256*3);
         merge_pathnames(MAP_name,filename,0);
     }

@@ -151,7 +151,7 @@ JulibrotSetup(void)
         mapname = GreyFile;
     if (savedac != 1)
     {
-        if (ValidateLuts(mapname) != 0)
+        if (ValidateLuts(mapname))
             return false;
         spindac(0, 1);               /* load it, but don't spin */
         if (savedac == 2)

@@ -1874,7 +1874,7 @@ static void set_Froth_palette(void)
             else
                 mapname = "froth316.map";
         }
-        if (ValidateLuts(mapname) != 0)
+        if (ValidateLuts(mapname))
             return;
         colorstate = 0; /* treat map as default */
         spindac(0,1);

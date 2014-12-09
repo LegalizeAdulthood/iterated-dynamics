@@ -902,7 +902,8 @@ int starfield(void)
     con  = (long)(((starfield_values[1]) / 100.0) * (1L << 16));
     Slope = (int)(starfield_values[2]);
 
-    if (ValidateLuts(GreyFile) != 0) {
+    if (ValidateLuts(GreyFile))
+    {
         stopmsg(0,"Unable to load ALTERN.MAP");
         busy = false;
         return (-1);

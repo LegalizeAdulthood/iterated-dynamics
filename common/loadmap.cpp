@@ -8,7 +8,7 @@
 
 #define dac ((Palettetype *)g_dac_box)
 
-int ValidateLuts(const char *fn)
+bool ValidateLuts(const char *fn)
 {
     FILE * f;
     unsigned        r, g, b, index;
@@ -29,7 +29,7 @@ int ValidateLuts(const char *fn)
     if (f == nullptr) {
         sprintf(line,"Could not load color map %s",fn);
         stopmsg(0,line);
-        return 1;
+        return true;
     }
     for (index = 0; index < 256; index++) {
         if (fgets(line,100,f) == nullptr)
@@ -47,7 +47,7 @@ int ValidateLuts(const char *fn)
     }
     colorstate = 2;
     strcpy(colorfile,fn);
-    return 0;
+    return false;
 }
 
 
@@ -55,7 +55,7 @@ int ValidateLuts(const char *fn)
 
 int SetColorPaletteName(char * fn)
 {
-    if (ValidateLuts(fn) != 0)
+    if (ValidateLuts(fn))
     {
         return 1;
     }
