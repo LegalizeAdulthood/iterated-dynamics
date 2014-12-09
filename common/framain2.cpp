@@ -686,7 +686,7 @@ resumeloop:                             /* return here on failed overlays */
     }
 }
 
-static int look(bool *stacked)
+static bool look(bool *stacked)
 {
     int oldhelpmode;
     oldhelpmode = helpmode;
@@ -717,7 +717,7 @@ static int look(bool *stacked)
             driver_stack_screen();   /* save graphics image */
             *stacked = true;
         }
-        return 1;       /* hop off and do it!! */
+        return true;       /* hop off and do it!! */
 
     case '\\':
         if (name_stack_ptr >= 1)
@@ -742,7 +742,7 @@ static int look(bool *stacked)
                 driver_stack_screen();/* save graphics image */
                 *stacked = true;
             }
-            return 1;
+            return true;
         }                   /* otherwise fall through and turn off browsing */
     case FIK_ESC:
     case 'l':              /* turn it off */
@@ -761,7 +761,7 @@ static int look(bool *stacked)
         break;
     }
 
-    return 0;
+    return false;
 }
 
 int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked, int axmode)
