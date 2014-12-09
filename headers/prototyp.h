@@ -495,7 +495,7 @@ extern int big_while_loop(bool *kbdmore, char *stacked, bool resume_flag);
 extern int check_key(void);
 extern int cmp_line(BYTE *,int);
 extern int key_count(int);
-extern int main_menu_switch(int *kbdchar, int *frommandel, bool *kbdmore, char *stacked, int axmode);
+extern int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, char *stacked, int axmode);
 extern int pot_line(BYTE *,int);
 extern int sound_line(BYTE *,int);
 extern int timer(int,int (*subrtn)(),...);

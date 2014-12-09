@@ -19,7 +19,7 @@
 
 /* routines in this module      */
 
-static int evolver_menu_switch(int *kbdchar, int *frommandel, bool *kbdmore, char *stacked);
+static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, char *stacked);
 static void move_zoombox(int);
 static bool fromtext_flag = false;      /* = true if we're in graphics mode */
 static int call_line3d(BYTE *pixels, int linelen);
@@ -44,7 +44,6 @@ bool g_virtual_screens = false;
 
 int big_while_loop(bool *kbdmore, char *stacked, bool resumeflag)
 {
-    int     frommandel;                  /* if julia entered from mandel */
     int     axmode = 0; /* video mode (BIOS ##)    */
     double  ftemp;                       /* fp temp                      */
     int     i = 0;                           /* temporary loop counters      */
@@ -54,7 +53,7 @@ int big_while_loop(bool *kbdmore, char *stacked, bool resumeflag)
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
 #endif
-    frommandel = 0;
+    bool frommandel = false;            /* if julia entered from mandel */
     if (resumeflag)
         goto resumeloop;
 
@@ -765,7 +764,7 @@ static int look(char *stacked)
     return 0;
 }
 
-int main_menu_switch(int *kbdchar, int *frommandel, bool *kbdmore, char *stacked, int axmode)
+int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, char *stacked, int axmode)
 {
     int i,k;
     static double  jxxmin, jxxmax, jyymin, jyymax; /* "Julia mode" entry point */
@@ -807,7 +806,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, bool *kbdmore, char *stacked
             if (i == 0)
             {
                 g_init_mode = g_adapter;
-                *frommandel = 0;
+                *frommandel = false;
             }
             else if (g_init_mode < 0) /* it is supposed to be... */
                 driver_set_for_text();     /* reset to text mode      */
@@ -1065,7 +1064,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, bool *kbdmore, char *stacked
                 jyymin = symin;
                 jxx3rd = sx3rd;
                 jyy3rd = sy3rd;
-                *frommandel = 1;
+                *frommandel = true;
                 xxmin = curfractalspecific->xmin;
                 xxmax = curfractalspecific->xmax;
                 yymin = curfractalspecific->ymin;
@@ -1254,7 +1253,7 @@ do_3d_transform:
             display3d = 1;
     case 'r':                    /* restore-from                 */
         comparegif = false;
-        *frommandel = 0;
+        *frommandel = false;
         browsing = false;
         if (*kbdchar == 'r')
         {
@@ -1452,7 +1451,7 @@ do_3d_transform:
     return 0;
 }
 
-static int evolver_menu_switch(int *kbdchar, int *frommandel, bool *kbdmore, char *stacked)
+static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, char *stacked)
 {
     int i,k;
 
@@ -1479,7 +1478,7 @@ static int evolver_menu_switch(int *kbdchar, int *frommandel, bool *kbdmore, cha
             if (i == 0)
             {
                 g_init_mode = g_adapter;
-                *frommandel = 0;
+                *frommandel = false;
             }
             else if (g_init_mode < 0) /* it is supposed to be... */
                 driver_set_for_text();     /* reset to text mode      */
@@ -1632,7 +1631,7 @@ static int evolver_menu_switch(int *kbdchar, int *frommandel, bool *kbdmore, cha
     return CONTINUE;
     case 'r':                    /* restore-from                 */
         comparegif = false;
-        *frommandel = 0;
+        *frommandel = false;
         browsing = FALSE;
         if (*kbdchar == 'r')
         {
