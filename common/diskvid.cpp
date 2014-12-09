@@ -452,13 +452,13 @@ void writedisk(int col, int row, int color)
     }
 }
 
-int ToMemDisk(long offset, int size, void *src)
+bool ToMemDisk(long offset, int size, void *src)
 {
     int col_subscr = (int)(offset & (BLOCKLEN - 1));
 
-    if (col_subscr + size > BLOCKLEN)            /* access violates  a */
+    if (col_subscr + size > BLOCKLEN)           /* access violates  a */
     {
-        return 0;                                 /*   cache boundary   */
+        return false;                           /*   cache boundary   */
     }
 
     if (cur_offset != (offset & (0L-BLOCKLEN))) /* same entry as last ref? */
@@ -468,7 +468,7 @@ int ToMemDisk(long offset, int size, void *src)
 
     memcpy((void *) &cur_cache->pixel[col_subscr], src, size);
     cur_cache->dirty = true;
-    return 1;
+    return true;
 }
 
 void targa_writedisk(unsigned int col, unsigned int row,

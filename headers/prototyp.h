@@ -211,7 +211,7 @@ extern void targa_writedisk(unsigned int ,unsigned int ,BYTE ,BYTE ,BYTE);
 extern void dvid_status(int line, const char *msg);
 extern int  common_startdisk(long, long, int);
 extern int FromMemDisk(long,int,void *);
-extern int ToMemDisk(long,int,void *);
+extern bool ToMemDisk(long,int,void *);
 
 /*  editpal -- C file prototypes */
 
