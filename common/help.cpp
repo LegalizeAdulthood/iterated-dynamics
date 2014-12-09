@@ -914,21 +914,21 @@ static int dos_version(void)
 
 #endif
 
-static int can_read_file(const char *path)
+static bool can_read_file(const char *path)
 {
     int handle;
 
     if ((handle=open(path, O_RDONLY)) != -1)
     {
         close(handle);
-        return (1);
+        return true;
     }
     else
-        return (0);
+        return false;
 }
 
 
-static int exe_path(const char *filename, char *path)
+static bool exe_path(const char *filename, char *path)
 {
 #if !defined(XFRACT) && !defined(_WIN32)
     char *ptr;
@@ -946,15 +946,15 @@ static int exe_path(const char *filename, char *path)
         else
             ++ptr;
         strcpy(ptr, filename);
-        return (1);
+        return true;
     }
 
-    return (0);
+    return false;
 #else
     strcpy(path,SRCDIR);
     strcat(path,"/");
     strcat(path,filename);
-    return 1;
+    return true;
 #endif
 }
 
