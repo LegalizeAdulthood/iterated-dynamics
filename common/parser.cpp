@@ -3086,8 +3086,8 @@ static char *FormStr;
 int frmgetchar(FILE * openfile)
 {
     int c;
-    int done = 0;
-    int linewrap = 0;
+    bool done = false;
+    bool linewrap = false;
     while (!done)
     {
         c = getc(openfile);
@@ -3098,21 +3098,21 @@ int frmgetchar(FILE * openfile)
         case '\t' :
             break;
         case '\\':
-            linewrap = 1;
+            linewrap = true;
             break;
         case ';' :
             while ((c = getc(openfile)) != '\n' && c != EOF && c != '\032')
             {
             }
             if (c == EOF || c == '\032')
-                done = 1;
+                done = true;
         case '\n' :
             if (!linewrap)
-                done = 1;
-            linewrap = 0;
+                done = true;
+            linewrap = false;
             break;
         default:
-            done = 1;
+            done = true;
             break;
         }
     }
