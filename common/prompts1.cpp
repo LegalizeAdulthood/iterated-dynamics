@@ -2362,7 +2362,7 @@ restart_1:
 
     prompts3d[++k] = "    Brief output?";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = BRIEF;
+    uvalues[k].uval.ch.val = BRIEF ? 1 : 0;
 
     check_writefile(ray_name,".ray");
     prompts3d[++k] = "    Output File Name";
@@ -2400,7 +2400,7 @@ restart_1:
             stopmsg(0, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
                     "the online documentation.");
     }
-    BRIEF = uvalues[k++].uval.ch.val;
+    BRIEF = uvalues[k++].uval.ch.val != 0;
 
     strcpy(ray_name,uvalues[k++].uval.sval);
 

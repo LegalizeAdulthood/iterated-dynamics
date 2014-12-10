@@ -131,11 +131,11 @@ int xxadjust;
 int yyadjust;
 int xshift;
 int yshift;
-int bad_value = -10000; /* set bad values to this */
-int bad_check = -3000;  /* check values against this to determine if good */
+int bad_value = -10000;         /* set bad values to this */
+int bad_check = -3000;          /* check values against this to determine if good */
 struct point *lastrow = nullptr; /* this array remembers the previous line */
-int RAY = 0;        /* Flag to generate Ray trace compatible files in 3d */
-int BRIEF = 0;      /* 1 = short ray trace files */
+int RAY = 0;                    /* Flag to generate Ray trace compatible files in 3d */
+bool BRIEF = false;             /* 1 = short ray trace files */
 
 /* array of min and max x values used in triangle fill */
 static std::vector<minmax> minmax_x;

@@ -45,7 +45,7 @@ extern int                   boxcount;
 extern int                   boxvalues[];
 extern int                   boxx[];
 extern int                   boxy[];
-extern int                   BRIEF;
+extern bool                  BRIEF;
 extern char                  browsemask[13];
 extern char                  browsename[];
 extern bool                  browsing;
