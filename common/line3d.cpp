@@ -37,7 +37,7 @@ struct minmax
 /* routines in this module */
 int line3d(BYTE *, unsigned);
 int targa_color(int, int, int);
-int targa_validate(char *);
+bool targa_validate(char *file_name);
 static int first_time(int, VECTOR);
 static int H_R(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned long);
 static int line3dmem(void);
@@ -1450,7 +1450,7 @@ int startdisk1(char *File_Name2, FILE * Source, int overlay)
     return 0;
 }
 
-int targa_validate(char *File_Name)
+bool targa_validate(char *File_Name)
 {
     FILE *fp;
     int i;
@@ -1460,7 +1460,7 @@ int targa_validate(char *File_Name)
     if (fp == nullptr)
     {
         File_Error(File_Name, 1);
-        return -1;              /* Oops, file does not exist */
+        return true;              /* Oops, file does not exist */
     }
 
     T_header_24 += fgetc(fp);    /* Check ID field and adjust header size */
@@ -1468,13 +1468,13 @@ int targa_validate(char *File_Name)
     if (fgetc(fp))               /* Make sure this is an unmapped file */
     {
         File_Error(File_Name, 4);
-        return -1;
+        return true;
     }
 
     if (fgetc(fp) != 2)          /* Make sure it is a type 2 file */
     {
         File_Error(File_Name, 4);
-        return -1;
+        return true;
     }
 
     /* Skip color map specification */
@@ -1491,7 +1491,7 @@ int targa_validate(char *File_Name)
         if (fgetc(fp) != (int) upr_lwr[i])
         {
             File_Error(File_Name, 3);
-            return -1;
+            return true;
         }
 
     if (fgetc(fp) != (int) T24)
@@ -1501,19 +1501,18 @@ int targa_validate(char *File_Name)
     if (error == 4)
     {
         File_Error(File_Name, 4);
-        return -1;
+        return true;
     }
     rewind(fp);
 
     /* Now that we know its a good file, create a working copy */
     if (startdisk1(targa_temp, fp, 1))
-        return -1;
+        return true;
 
     fclose(fp);                  /* Close the source */
 
-    T_Safe = 1;                  /* Original file successfully copied to
-                                 * targa_temp */
-    return 0;
+    T_Safe = 1;                  /* Original file successfully copied to targa_temp */
+    return false;
 }
 
 static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsigned long *V)

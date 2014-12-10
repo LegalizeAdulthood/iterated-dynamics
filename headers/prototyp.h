@@ -592,7 +592,7 @@ extern int    EnQueueFloat(float,  float);
 
 extern int line3d(BYTE *,unsigned int);
 extern int targa_color(int ,int ,int);
-extern int targa_validate(char *);
+extern bool targa_validate(char *File_Name);
 extern int startdisk1(char *, FILE *, int);
 
 /*  loadfdos -- C file prototypes */
