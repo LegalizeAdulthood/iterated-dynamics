@@ -245,12 +245,12 @@ void
 TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 {
     int color, ix, iy, idir, pixel, dir[MAX_ANTS + 1], i;
-    int kbdchar, step, antwrap;
+    int kbdchar, step;
     int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
     int rule[MAX_ANTS + 1];
     long count;
 
-    antwrap = ((param[4] == 0) ? 0 : 1);
+    bool antwrap = ((param[4] == 0) ? false : true);
 
     step = (int) wait;
     if (step == 1)
@@ -293,7 +293,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
         kbdchar = driver_key_pressed();
         if (kbdchar || step)
         {
-            int done = false;
+            bool done = false;
             if (kbdchar == 0)
                 kbdchar = driver_get_key();
             switch (kbdchar)
@@ -347,7 +347,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
                     putcolor(ix, iy, color);
                 }
                 idir &= 3;
-                if (antwrap == 0)
+                if (!antwrap)
                     if ((idir == 0 && iy == ydots - 1) ||
                             (idir == 1 && ix == xdots - 1) ||
                             (idir == 2 && iy == 0) ||
