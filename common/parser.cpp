@@ -4178,8 +4178,7 @@ struct error_data_st {
 void frm_error(FILE * open_file, long begin_frm)
 {
     struct token_st tok;
-    /* char debugmsg[500];
-    */ int i, chars_to_error=0, chars_in_error=0, token_count;
+    int i, chars_to_error=0, chars_in_error=0, token_count;
     int statement_len, line_number;
     int done;
     char msgbuf[900];
@@ -4210,9 +4209,7 @@ void frm_error(FILE * open_file, long begin_frm)
         }
         sprintf(&msgbuf[(int) strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
         i = (int) strlen(msgbuf);
-        /*    sprintf(debugmsg, "msgbuf is: %s\n and i is %d\n", msgbuf, i);
-              stopmsg (0, debugmsg);
-        */    fseek(open_file, errors[j].start_pos, SEEK_SET);
+        fseek(open_file, errors[j].start_pos, SEEK_SET);
         statement_len = token_count = 0;
         done = 0;
         while (!done)
@@ -4220,22 +4217,16 @@ void frm_error(FILE * open_file, long begin_frm)
             filepos = ftell(open_file);
             if (filepos == errors[j].error_pos) 
             {
-                /*          stopmsg(0, "About to get error token\n");
-                */          chars_to_error = statement_len;
+                chars_to_error = statement_len;
                 frmgettoken(open_file, &tok);
                 chars_in_error = (int) strlen(tok.token_str);
                 statement_len += chars_in_error;
                 token_count++;
-                /*          sprintf(debugmsg, "Error is %s\nChars in error is %d\nChars to error is %d\n", tok.token_str, chars_in_error, chars_to_error);
-                            stopmsg (0, debugmsg);
-                */
             }
             else
             {
                 frmgettoken(open_file, &tok);
-                /*          sprintf(debugmsg, "Just got %s\n", tok.token_str);
-                            stopmsg (0, debugmsg);
-                */          statement_len += (int) strlen(tok.token_str);
+                statement_len += (int) strlen(tok.token_str);
                 token_count++;
             }
             if ((tok.token_type == END_OF_FORMULA)
@@ -4255,8 +4246,7 @@ void frm_error(FILE * open_file, long begin_frm)
         {
             while (chars_to_error + chars_in_error > 74)
             {
-                /*          stopmsg(0, "chars in error less than 74, but late in line");
-                */          frmgettoken(open_file, &tok);
+                frmgettoken(open_file, &tok);
                 chars_to_error -= (int) strlen(tok.token_str);
                 token_count--;
             }
@@ -4267,13 +4257,10 @@ void frm_error(FILE * open_file, long begin_frm)
             chars_to_error = 0;
             token_count = 1;
         }
-        /*    stopmsg(0, "Back to beginning of statement to build msgbuf");
-        */    while ((int) strlen(&msgbuf[i]) <=74 && token_count--)
+        while ((int) strlen(&msgbuf[i]) <=74 && token_count--)
         {
             frmgettoken(open_file, &tok);
             strcat(msgbuf, tok.token_str);
-            /*         stopmsg(0, &msgbuf[i]);
-            */
         }
         fseek(open_file, errors[j].error_pos, SEEK_SET);
         frmgettoken(open_file, &tok);
@@ -4283,9 +4270,6 @@ void frm_error(FILE * open_file, long begin_frm)
         i = (int) strlen(msgbuf);
         while (chars_to_error-- > -2)
             strcat(msgbuf, " ");
-        /*    sprintf(debugmsg, "Going into final line, chars in error is %d", chars_in_error);
-              stopmsg(0, debugmsg);
-        */
         if (errors[j].error_number == PE_TOKEN_TOO_LONG)
         {
             chars_in_error = 33;
