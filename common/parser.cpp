@@ -3019,7 +3019,7 @@ static bool fill_jump_struct(void)
     int i = 0;
     int loadcount = 0;
     int storecount = 0;
-    int checkforelse = 0;
+    bool checkforelse = false;
     void (*JumpFunc)(void) = nullptr;
     bool find_new_func = true;
 
