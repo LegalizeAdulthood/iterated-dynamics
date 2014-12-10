@@ -36,7 +36,6 @@ static void initvars_3d(void);
 static void reset_ifs_defn(void);
 static void parse_textcolors(char *value);
 static int  parse_colors(char *value);
-//static int  parse_printer(char *value);
 static int  get_bf(bf_t, const char *);
 static int isabigfloat(char *str);
 
