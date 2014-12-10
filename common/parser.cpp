@@ -3292,7 +3292,7 @@ void is_complex_constant(FILE * openfile, struct token_st * tok)
     int c;
     int sign_value = 1;
     bool done = false;
-    int getting_real = 1;
+    bool getting_real = true;
     FILE * debug_token = nullptr;
     tok->token_str[1] = (char) 0;  /* so we can concatenate later */
 
@@ -3366,7 +3366,7 @@ CASE_NUM :
                 strcat(tok->token_str, temp_tok.token_str);
                 strcat(tok->token_str, ",");
                 tok->token_const.x = temp_tok.token_const.x * sign_value;
-                getting_real = 0;
+                getting_real = false;
                 sign_value = 1;
             }
             else if (!getting_real && c == ')') /* we have the complex part */
@@ -3410,7 +3410,7 @@ bool frmgetalpha(FILE * openfile, struct token_st * tok)
 {
     int c;
     int i = 1;
-    int var_name_too_long = 0;
+    bool var_name_too_long = false;
     long filepos;
     long last_filepos = ftell(openfile);
     while ((c=frmgetchar(openfile)) != EOF && c != '\032')
@@ -3429,7 +3429,7 @@ CASE_NUM:
             }
             if (i == 33)
             {
-                var_name_too_long=1;
+                var_name_too_long = true;
             }
             last_filepos = filepos;
             break;
