@@ -656,7 +656,7 @@ extern int plotorbits2dfloat(void);
 /*  lsys -- C file prototypes */
 
 extern LDBL  getnumber(char **);
-extern int ispow2(int);
+extern bool ispow2(int);
 extern int Lsystem(void);
 extern int LLoad(void);
 

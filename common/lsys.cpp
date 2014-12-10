@@ -50,7 +50,7 @@ char maxangle;
 static char loaded=0;
 
 
-int ispow2(int n)
+bool ispow2(int n)
 {
     return (n == (n & -n));
 }
