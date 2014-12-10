@@ -197,7 +197,7 @@ double fgLimit;
 static double fg;
 static int ShiftBack;
 static bool SetRandom = false;
-static int Randomized;
+static bool Randomized = false;
 static unsigned long RandNum;
 bool uses_p1 = false;
 bool uses_p2 = false;
@@ -427,7 +427,7 @@ void RandomSeed(void)
     NewRandNum();
     NewRandNum();
     NewRandNum();
-    Randomized = 1;
+    Randomized = true;
 }
 
 #if !defined(XFRACT)
@@ -2284,7 +2284,7 @@ static bool ParseStr(char *Str, int pass)
     double Xctr, Yctr, Xmagfactor, Rotation, Skew;
     LDBL Magnification;
     SetRandom = false;
-    Randomized = 0;
+    Randomized = false;
     uses_jump = 0;
     jump_index = 0;
     if (!typespecific_workarea)
