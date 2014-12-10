@@ -4431,11 +4431,6 @@ void count_lists()
 
   The function returns 1 if success, and 0 if errors are found.
 */
-
-int disable_fastparser;
-int must_use_float;
-
-
 bool frm_prescan(FILE * open_file)
 {
     long filepos;
@@ -4452,9 +4447,6 @@ bool frm_prescan(FILE * open_file)
     unsigned long waiting_for_mod = 0;
     int waiting_for_endif = 0;
     int max_parens = sizeof(long) * 8;
-
-    disable_fastparser = 0;
-    must_use_float     = 0;
 
     number_of_ops = number_of_loads = number_of_stores = number_of_jumps = (unsigned) 0L;
     chars_in_formula = (unsigned) 0;
