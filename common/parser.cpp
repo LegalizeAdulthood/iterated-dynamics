@@ -4436,7 +4436,7 @@ bool frm_prescan(FILE * open_file)
     long filepos;
     int i;
     long statement_pos, orig_pos;
-    int done = 0;
+    bool done = false;
     struct token_st this_token;
     int errors_found = 0;
     int ExpectingArg = 1;
@@ -5284,16 +5284,13 @@ bool frm_prescan(FILE * open_file)
                     errors[errors_found++].error_number = PE_TOO_MANY_JUMPS;
                 }
             }
-
-
-
-            done = 1;
+            done = true;
             break;
         default:
             break;
         }
         if (errors_found == 3)
-            done = 1;
+            done = true;
     }
     if (errors[0].start_pos)
     {
@@ -5307,4 +5304,3 @@ bool frm_prescan(FILE * open_file)
 
     return true;
 }
-
