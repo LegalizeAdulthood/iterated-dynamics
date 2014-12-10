@@ -2787,7 +2787,7 @@ void set_content_doc_page(void)
 
 
 /* this funtion also used by print_document() */
-int pd_get_info(int cmd, PD_INFO *pd, void *context)
+bool pd_get_info(int cmd, PD_INFO *pd, void *context)
 {
     int *info = static_cast<int *>(context);
     CONTENT *c;
@@ -2796,21 +2796,21 @@ int pd_get_info(int cmd, PD_INFO *pd, void *context)
     {
     case PD_GET_CONTENT:
         if (++info[CNUM] >= num_contents)
-            return (0);
+            return false;
         c = &contents[info[CNUM]];
         info[TNUM] = -1;
         pd->id       = c->id;
         pd->title    = c->name;
         pd->new_page = (c->flags & CF_NEW_PAGE) ? 1 : 0;
-        return (1);
+        return true;
 
     case PD_GET_TOPIC:
         c = &contents[info[CNUM]];
         if (++info[TNUM] >= c->num_topic)
-            return (0);
+            return false;
         pd->curr = get_topic_text(&topic[c->topic_num[info[TNUM]]]);
         pd->len = topic[c->topic_num[info[TNUM]]].text_len;
-        return (1);
+        return true;
 
     case PD_GET_LINK_PAGE:
         if (a_link[getint(pd->s)].doc_page == -1)
@@ -2822,23 +2822,23 @@ int pd_get_info(int cmd, PD_INFO *pd, void *context)
                 warn(0,"Hot-link destination is not in the document.");
                 srcline = -1;
             }
-            return (0);
+            return false;
         }
         pd->i = a_link[getint(pd->s)].doc_page;
-        return (1);
+        return true;
 
     case PD_RELEASE_TOPIC:
         c = &contents[info[CNUM]];
         release_topic_text(&topic[c->topic_num[info[TNUM]]], 0);
-        return (1);
+        return true;
 
     default:
-        return (0);
+        return false;
     }
 }
 
 
-int paginate_doc_output(int cmd, PD_INFO *pd, void *context)
+bool paginate_doc_output(int cmd, PD_INFO *pd, void *context)
 {
     PAGINATE_DOC_INFO *info = static_cast<PAGINATE_DOC_INFO *>(context);
     switch (cmd)
@@ -2847,28 +2847,28 @@ int paginate_doc_output(int cmd, PD_INFO *pd, void *context)
     case PD_PRINT:
     case PD_PRINTN:
     case PD_PRINT_SEC:
-        return (1);
+        return true;
 
     case PD_HEADING:
         ++num_doc_pages;
-        return (1);
+        return true;
 
     case PD_START_SECTION:
         info->c = &contents[info->cnum];
-        return (1);
+        return true;
 
     case PD_START_TOPIC:
         info->start = pd->curr;
         info->lbl = find_next_label_by_topic(info->c->topic_num[info->tnum]);
-        return (1);
+        return true;
 
     case PD_SET_SECTION_PAGE:
         info->c->doc_page = pd->pnum;
-        return (1);
+        return true;
 
     case PD_SET_TOPIC_PAGE:
         topic[info->c->topic_num[info->tnum]].doc_page = pd->pnum;
-        return (1);
+        return true;
 
     case PD_PERIODIC:
         while (info->lbl != nullptr && (unsigned)(pd->curr - info->start) >= info->lbl->topic_off)
@@ -2876,10 +2876,10 @@ int paginate_doc_output(int cmd, PD_INFO *pd, void *context)
             info->lbl->doc_page = pd->pnum;
             info->lbl = find_next_label_by_topic(info->c->topic_num[info->tnum]);
         }
-        return (1);
+        return true;
 
     default:
-        return (0);
+        return false;
     }
 }
 
@@ -3301,7 +3301,7 @@ void printers(PRINT_DOC_INFO *info, const char *s, int n)
 }
 
 
-int print_doc_output(int cmd, PD_INFO *pd, void *context)
+bool print_doc_output(int cmd, PD_INFO *pd, void *context)
 {
     PRINT_DOC_INFO *info = static_cast<PRINT_DOC_INFO *>(context);
     switch (cmd)
@@ -3315,22 +3315,22 @@ int print_doc_output(int cmd, PD_INFO *pd, void *context)
         sprintf(buff, "%d\n\n", pd->pnum);
         printers(info, buff, 0);
         info->margin = PAGE_INDENT;
-        return (1);
+        return true;
     }
 
     case PD_FOOTING:
         info->margin = 0;
         printerc(info, '\f', 1);
         info->margin = PAGE_INDENT;
-        return (1);
+        return true;
 
     case PD_PRINT:
         printers(info, pd->s, pd->i);
-        return (1);
+        return true;
 
     case PD_PRINTN:
         printerc(info, *pd->s, pd->i);
-        return (1);
+        return true;
 
     case PD_PRINT_SEC:
         info->margin = TITLE_INDENT;
@@ -3342,17 +3342,17 @@ int print_doc_output(int cmd, PD_INFO *pd, void *context)
         printers(info, pd->title, 0);
         printerc(info, '\n', 1);
         info->margin = PAGE_INDENT;
-        return (1);
+        return true;
 
     case PD_START_SECTION:
     case PD_START_TOPIC:
     case PD_SET_SECTION_PAGE:
     case PD_SET_TOPIC_PAGE:
     case PD_PERIODIC:
-        return (1);
+        return true;
 
     default:
-        return (0);
+        return false;
     }
 }
 

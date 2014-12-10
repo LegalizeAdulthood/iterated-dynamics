@@ -1108,7 +1108,7 @@ static void printers(PRINT_DOC_INFO *info, char *s, int n)
     }
 }
 
-static int print_doc_get_info(int cmd, PD_INFO *pd, void *context)
+static bool print_doc_get_info(int cmd, PD_INFO *pd, void *context)
 {
     PRINT_DOC_INFO *info = static_cast<PRINT_DOC_INFO *>(context);
     int t;
@@ -1118,7 +1118,7 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, void *context)
     {
     case PD_GET_CONTENT:
         if (++info->cnum >= info->num_contents)
-            return (0);
+            return false;
 
         help_seek(info->content_pos);
 
@@ -1152,11 +1152,11 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, void *context)
 
         pd->id = info->id;
         pd->title = info->title;
-        return (1);
+        return true;
 
     case PD_GET_TOPIC:
         if (++info->tnum >= info->num_topic)
-            return (0);
+            return false;
 
         t = _read_help_topic(info->topic_num[info->tnum], 0, PRINT_BUFFER_SIZE, info->buffer);
 
@@ -1164,21 +1164,21 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, void *context)
 
         pd->curr = info->buffer;
         pd->len  = PRINT_BUFFER_SIZE + t;   /* same as ...SIZE - abs(t) */
-        return (1);
+        return true;
 
     case PD_GET_LINK_PAGE:
         pd->i = getint(pd->s+sizeof(long));
-        return ((pd->i == -1) ? 0 : 1);
+        return ((pd->i == -1) ? false : true);
 
     case PD_RELEASE_TOPIC:
-        return (1);
+        return true;
 
     default:
-        return (0);
+        return false;
     }
 }
 
-static int print_doc_output(int cmd, PD_INFO *pd, void *context)
+static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
 {
     PRINT_DOC_INFO *info = static_cast<PRINT_DOC_INFO *>(context);
     switch (cmd)
@@ -1188,12 +1188,12 @@ static int print_doc_output(int cmd, PD_INFO *pd, void *context)
         char line[81];
         char buff[40];
         int  width = PAGE_WIDTH + PAGE_INDENT;
-        int  keep_going;
+        bool keep_going;
 
         if (info->msg_func != nullptr)
-            keep_going = (*info->msg_func)(pd->pnum, info->num_page);
+            keep_going = (*info->msg_func)(pd->pnum, info->num_page) != 0;
         else
-            keep_going = 1;
+            keep_going = true;
 
         info->margin = 0;
 
@@ -1211,7 +1211,7 @@ static int print_doc_output(int cmd, PD_INFO *pd, void *context)
 
         info->margin = PAGE_INDENT;
 
-        return (keep_going);
+        return keep_going;
     }
 
     case PD_FOOTING:

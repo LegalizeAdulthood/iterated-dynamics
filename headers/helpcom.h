@@ -128,7 +128,7 @@ enum  PD_COMMANDS
     PD_GET_LINK_PAGE
 } ;
 
-typedef int (*PD_FUNC)(int cmd, PD_INFO *pd, VOIDPTR info);
+typedef bool (*PD_FUNC)(int cmd, PD_INFO *pd, VOIDPTR info);
 
 extern int _find_token_length(char *curr, unsigned len, int *size, int *width);
 extern int find_token_length(int mode, char *curr, unsigned len, int *size, int *width);
