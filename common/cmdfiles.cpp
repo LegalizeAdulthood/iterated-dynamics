@@ -26,7 +26,7 @@
 
 static int  cmdfile(FILE *,int);
 static int  next_command(char *,int,FILE *,char *,int *,int);
-static int  next_line(FILE *,char *,int);
+static bool next_line(FILE *handle, char *linebuf, int mode);
 int  cmdarg(char *,int);
 static void argerror(const char *);
 static void initvars_run(void);
@@ -546,11 +546,11 @@ static void reset_ifs_defn()
 }
 
 
-static int cmdfile(FILE *handle,int mode)
 /* mode = 0 command line @filename         */
 /*        1 sstools.ini                    */
 /*        2 <@> command after startup      */
 /*        3 command line @filename/setname */
+static int cmdfile(FILE *handle,int mode)
 {
     /* note that cmdfile could be open as text OR as binary */
     /* binary is used in @ command processing for reasonable speed note/point */
@@ -591,24 +591,30 @@ static int next_command(char *cmdbuf,int maxlen,
     int cmdlen = 0;
     char *lineptr;
     lineptr = linebuf + *lineoffset;
-    while (1) {
-        while (*lineptr <= ' ' || *lineptr == ';') {
-            if (cmdlen) {                  /* space or ; marks end of command */
+    while (1)
+    {
+        while (*lineptr <= ' ' || *lineptr == ';')
+        {
+            if (cmdlen)                 /* space or ; marks end of command */
+            {
                 cmdbuf[cmdlen] = 0;
                 *lineoffset = (int)(lineptr - linebuf);
                 return cmdlen;
             }
             while (*lineptr && *lineptr <= ' ')
                 ++lineptr;                  /* skip spaces and tabs */
-            if (*lineptr == ';' || *lineptr == 0) {
+            if (*lineptr == ';' || *lineptr == 0)
+            {
                 if (*lineptr == ';'
                         && (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME)
                         && (CommandComment[0][0] == 0 || CommandComment[1][0] == 0 ||
-                            CommandComment[2][0] == 0 || CommandComment[3][0] == 0)) {
+                            CommandComment[2][0] == 0 || CommandComment[3][0] == 0))
+                {
                     /* save comment */
                     while (*(++lineptr)
                             && (*lineptr == ' ' || *lineptr == '\t')) { }
-                    if (*lineptr) {
+                    if (*lineptr)
+                    {
                         if ((int)strlen(lineptr) >= MAXCMT)
                             *(lineptr+MAXCMT-1) = 0;
                         for (i=0; i<4; i++)
@@ -619,14 +625,16 @@ static int next_command(char *cmdbuf,int maxlen,
                             }
                     }
                 }
-                if (next_line(handle,linebuf,mode) != 0)
+                if (next_line(handle, linebuf, mode))
                     return -1; /* eof */
                 lineptr = linebuf; /* start new line */
             }
         }
         if (*lineptr == '\\'              /* continuation onto next line? */
-                && *(lineptr+1) == 0) {
-            if (next_line(handle,linebuf,mode) != 0) {
+                && *(lineptr+1) == 0)
+        {
+            if (next_line(handle, linebuf, mode))
+            {
                 argerror(cmdbuf);           /* missing continuation */
                 return -1;
             }
@@ -636,20 +644,23 @@ static int next_command(char *cmdbuf,int maxlen,
             continue;                      /* loop to check end of line again */
         }
         cmdbuf[cmdlen] = *(lineptr++);    /* copy character to command buffer */
-        if (++cmdlen >= maxlen) {         /* command too long? */
+        if (++cmdlen >= maxlen)         /* command too long? */
+        {
             argerror(cmdbuf);
             return -1;
         }
     }
 }
 
-static int next_line(FILE *handle,char *linebuf,int mode)
+static bool next_line(FILE *handle, char *linebuf, int mode)
 {
     int toolssection;
     char tmpbuf[11];
     toolssection = 0;
-    while (file_gets(linebuf,512,handle) >= 0) {
-        if (mode == CMDFILE_SSTOOLS_INI && linebuf[0] == '[') {     /* check for [fractint] */
+    while (file_gets(linebuf,512,handle) >= 0)
+    {
+        if (mode == CMDFILE_SSTOOLS_INI && linebuf[0] == '[')   /* check for [fractint] */
+        {
 #ifndef XFRACT
             strncpy(tmpbuf,&linebuf[1],9);
             tmpbuf[9] = 0;
@@ -663,9 +674,10 @@ static int next_line(FILE *handle,char *linebuf,int mode)
 #endif
             continue;                              /* skip tools section heading */
         }
-        if (toolssection == 0) return 0;
+        if (toolssection == 0)
+            return false;
     }
-    return -1;
+    return true;
 }
 
 /*
