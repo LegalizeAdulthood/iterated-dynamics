@@ -35,7 +35,7 @@ static void decomposition(void);
 static int  bound_trace_main(void);
 static void step_col_row(void);
 static int  solidguess(void);
-static int  guessrow(int,int,int);
+static bool guessrow(bool firstpass, int y, int blocksize);
 static void plotblock(int,int,int,int);
 static void setsymmetry(int,int);
 static bool xsym_split(int xaxis_row, int xaxis_between);
@@ -3144,7 +3144,7 @@ static int solidguess(void)
                 }
             }
             reset_periodicity = false;
-            if (i == -1 || guessrow(1,y,blocksize) != 0) /* interrupted? */
+            if (i == -1 || guessrow(true, y, blocksize)) /* interrupted? */
             {
                 if (y < yystart)
                     y = yystart;
@@ -3209,7 +3209,7 @@ static int solidguess(void)
         for (y=iystart; y<=iystop; y+=blocksize)
         {
             currow = y;
-            if (guessrow(0,y,blocksize) != 0)
+            if (guessrow(false, y, blocksize))
             {
                 if (y < yystart)
                     y = yystart;
@@ -3231,9 +3231,16 @@ exit_solidguess:
     return 0;
 }
 
-#define calcadot(c,x,y) { col=x; row=y; c=(*calctype)(); if (c == -1) return -1; }
+#define calcadot(c,x,y)     \
+{                           \
+    col=x;                  \
+    row=y;                  \
+    c=(*calctype)();        \
+    if (c == -1)            \
+        return true;        \
+}
 
-static int guessrow(int firstpass,int y,int blocksize)
+static bool guessrow(bool firstpass, int y, int blocksize)
 {
     int x,i,j,color;
     int xplushalf,xplusblock;
@@ -3250,7 +3257,7 @@ static int guessrow(int firstpass,int y,int blocksize)
 
     halfblock=blocksize>>1;
     i=y/maxblock;
-    pfxptr= (unsigned int *)&tprefix[firstpass][(i>>4)+1][ixstart/maxblock];
+    pfxptr= (unsigned int *)&tprefix[firstpass ? 1 : 0][(i>>4)+1][ixstart/maxblock];
     pfxmask=1<<(i&15);
     ylesshalf=y-halfblock;
     ylessblock=y-blocksize; /* constants, for speed */
@@ -3270,15 +3277,8 @@ static int guessrow(int firstpass,int y,int blocksize)
         if ((x&(maxblock-1))==0)  /* time for skip flag stuff */
         {
             ++pfxptr;
-            if (firstpass==0 && (*pfxptr&pfxmask)==0)  /* check for fast skip */
+            if (!firstpass && (*pfxptr&pfxmask)==0)  /* check for fast skip */
             {
-                /* next useful in testing to make skips visible */
-                /*
-                if (halfblock==1)
-                {
-                   (*plot)(x+1,y,0); (*plot)(x,y+1,0); (*plot)(x+1,y+1,0);
-                }
-                */
                 x+=maxblock;
                 prev11=c31=c21=c24=c12=c13=c22;
                 guessed12=guessed13=0;
@@ -3433,7 +3433,8 @@ static int guessrow(int firstpass,int y,int blocksize)
         x+=blocksize;
     } /* end x loop */
 
-    if (firstpass==0 || guessplot) return 0;
+    if (!firstpass || guessplot)
+        return false;
 
     /* paint rows the fast way */
     for (i=0; i<halfblock; ++i)
@@ -3442,7 +3443,8 @@ static int guessrow(int firstpass,int y,int blocksize)
             put_line(j,xxstart,ixstop,&dstack[xxstart]);
         if ((j=y+i+halfblock)<=iystop)
             put_line(j,xxstart,ixstop,&dstack[xxstart+OLDMAXPIXELS]);
-        if (driver_key_pressed()) return -1;
+        if (driver_key_pressed())
+            return true;
     }
     if (plot!=putcolor)  /* symmetry, just vertical & origin the fast way */
     {
@@ -3463,11 +3465,13 @@ static int guessrow(int firstpass,int y,int blocksize)
                 put_line(j,xxstart,ixstop,&dstack[xxstart]);
             if ((j=yystop-(y+i+halfblock-yystart))>iystop && j<ydots)
                 put_line(j,xxstart,ixstop,&dstack[xxstart+OLDMAXPIXELS]);
-            if (driver_key_pressed()) return -1;
+            if (driver_key_pressed())
+                return true;
         }
     }
-    return 0;
+    return false;
 }
+#undef calcadot
 
 static void plotblock(int buildrow,int x,int y,int color)
 {
