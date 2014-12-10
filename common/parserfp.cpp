@@ -59,7 +59,8 @@ extern struct ConstArg *v;
 extern int InitLodPtr, InitStoPtr, InitOpPtr, LastInitOp;
 extern void (**f)(void);
 extern JUMP_CONTROL_ST *jump_control;
-extern int uses_jump, jump_index;
+extern bool uses_jump;
+extern int jump_index;
 
 typedef void OLD_FN(void);  /* old C functions  */
 
@@ -1351,7 +1352,7 @@ skipfinalopt:  /* -------------- end of final optimizations ------------ */
 
     /* now change the pointers  */
     if (FormName[0] != 0 &&
-            (uses_jump == 0 || fpfill_jump_struct() == 0)) { /* but only if parse succeeded  */
+            (!uses_jump || fpfill_jump_struct() == 0)) { /* but only if parse succeeded  */
         curfractalspecific->per_pixel = fform_per_pixel;
         curfractalspecific->orbitcalc = fFormula;
     }

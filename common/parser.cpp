@@ -204,7 +204,7 @@ bool uses_p2 = false;
 bool uses_p3 = false;
 bool uses_p4 = false;
 bool uses_p5 = false;
-int uses_jump = 0;
+bool uses_jump = false;
 bool uses_ismand = false;
 unsigned int chars_in_formula;
 
@@ -2285,7 +2285,7 @@ static bool ParseStr(char *Str, int pass)
     LDBL Magnification;
     SetRandom = false;
     Randomized = false;
-    uses_jump = 0;
+    uses_jump = false;
     jump_index = 0;
     if (!typespecific_workarea)
     {
@@ -2715,7 +2715,7 @@ static bool ParseStr(char *Str, int pass)
             ExpectingArg = false;
             if ((jumptype = isjump(&Str[InitN], Len)) != 0)
             {
-                uses_jump = 1;
+                uses_jump = true;
                 switch (jumptype)
                 {
                 case 1:                      /* if */
@@ -4024,7 +4024,7 @@ bool RunForm(char *Name, int from_prompts1c)
             return true;   /*  parse failed, don't change fn pointers  */
         else
         {
-            if (uses_jump == 1 && fill_jump_struct())
+            if (uses_jump && fill_jump_struct())
             {
                 stopmsg(0, ParseErrs(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
                 return true;
@@ -4095,7 +4095,7 @@ void init_misc()
     uses_p1 = false;
     uses_p2 = false;
     uses_p3 = false;
-    uses_jump = 0;
+    uses_jump = false;
     uses_ismand = false;
     uses_p4 = false;
     uses_p5 = false;
@@ -4474,7 +4474,7 @@ bool frm_prescan(FILE * open_file)
 
     number_of_ops = number_of_loads = number_of_stores = number_of_jumps = (unsigned) 0L;
     chars_in_formula = (unsigned) 0;
-    uses_jump = (short) 0;
+    uses_jump = false;
     paren = 0;
 
     init_var_list();
@@ -4900,7 +4900,7 @@ bool frm_prescan(FILE * open_file)
             }
             else
             {
-                uses_jump = 1;
+                uses_jump = true;
                 switch (this_token.token_id)
                 {
                 case 1:  /* if */
