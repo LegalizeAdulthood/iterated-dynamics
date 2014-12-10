@@ -38,8 +38,8 @@ static int  solidguess(void);
 static bool guessrow(bool firstpass, int y, int blocksize);
 static void plotblock(int,int,int,int);
 static void setsymmetry(int,int);
-static bool xsym_split(int xaxis_row, int xaxis_between);
-static bool ysym_split(int yaxis_col, int yaxis_between);
+static bool xsym_split(int xaxis_row, bool xaxis_between);
+static bool ysym_split(int yaxis_col, bool yaxis_between);
 static void puttruecolor_disk(int,int,int);
 static int diffusion_engine(void);
 static int sticky_orbits(void);
@@ -3509,7 +3509,7 @@ static void plotblock(int buildrow,int x,int y,int color)
 
 /************************* symmetry plot setup ************************/
 
-static bool xsym_split(int xaxis_row, int xaxis_between)
+static bool xsym_split(int xaxis_row, bool xaxis_between)
 {
     if ((worksym&0x11) == 0x10) /* already decided not sym */
         return true;
@@ -3548,7 +3548,7 @@ static bool xsym_split(int xaxis_row, int xaxis_between)
     return false; /* tell set_symmetry its a go */
 }
 
-static bool ysym_split(int yaxis_col, int yaxis_between)
+static bool ysym_split(int yaxis_col, bool yaxis_between)
 {
     if ((worksym&0x22) == 0x20) /* already decided not sym */
         return true;
@@ -3591,8 +3591,9 @@ static void setsymmetry(int sym, int uselist) /* set up proper symmetrical plot 
 {
     int i;
     int parmszero, parmsnoreal, parmsnoimag;
-    int xaxis_row, yaxis_col;         /* pixel number for origin */
-    int xaxis_between=0, yaxis_between=0; /* if axis between 2 pixels, not on one */
+    int xaxis_row, yaxis_col;           /* pixel number for origin */
+    bool xaxis_between = false;
+    bool yaxis_between = false;         /* if axis between 2 pixels, not on one */
     int xaxis_on_screen=0, yaxis_on_screen=0;
     double ftemp;
     bf_t bft1;
@@ -3721,7 +3722,7 @@ static void setsymmetry(int sym, int uselist) /* set up proper symmetrical plot 
             break;
 xsym:
     case XAXIS:                       /* X-axis Symmetry */
-        if (!xsym_split(xaxis_row,xaxis_between))
+        if (!xsym_split(xaxis_row, xaxis_between))
         {
             if (basin)
                 plot = symplot2basin;
@@ -3733,15 +3734,15 @@ xsym:
         if (!parmszero)
             break;
     case YAXIS:                       /* Y-axis Symmetry */
-        if (!ysym_split(yaxis_col,yaxis_between))
+        if (!ysym_split(yaxis_col, yaxis_between))
             plot = symplot2Y;
         break;
     case XYAXIS_NOPARM:                       /* X-axis AND Y-axis Symmetry (no parms)*/
         if (!parmszero)
             break;
     case XYAXIS:                      /* X-axis AND Y-axis Symmetry */
-        xsym_split(xaxis_row,xaxis_between);
-        ysym_split(yaxis_col,yaxis_between);
+        xsym_split(xaxis_row, xaxis_between);
+        ysym_split(yaxis_col, yaxis_between);
         switch (worksym & 3)
         {
         case 1: /* just xaxis symmetry */
@@ -3771,8 +3772,8 @@ xsym:
             break;
     case ORIGIN:                      /* Origin Symmetry */
 originsym:
-        if (!xsym_split(xaxis_row,xaxis_between)
-                && !ysym_split(yaxis_col,yaxis_between))
+        if (!xsym_split(xaxis_row, xaxis_between)
+                && !ysym_split(yaxis_col, yaxis_between))
         {
             plot = symplot2J;
             ixstop = xxstop; /* didn't want this changed */
@@ -3802,8 +3803,8 @@ originsym:
             goto originsym;
         plot = symPIplot ;
         symmetry = 0;
-        if (!xsym_split(xaxis_row,xaxis_between)
-                && !ysym_split(yaxis_col,yaxis_between))
+        if (!xsym_split(xaxis_row, xaxis_between)
+                && !ysym_split(yaxis_col, yaxis_between))
             if (parm.y == 0.0)
                 plot = symPIplot4J; /* both axes */
             else
