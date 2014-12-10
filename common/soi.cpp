@@ -435,18 +435,18 @@ static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
    under DOS is extremely limited.
 */
 
-#define RHOMBUS(CRE1,CRE2,CIM1,CIM2,X1,X2,Y1,Y2,ZRE1,ZIM1,ZRE2,ZIM2,ZRE3,ZIM3,\
- ZRE4, ZIM4, ZRE5, ZIM5,ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9,ITER) \
- zre1=(ZRE1);zim1=(ZIM1);\
- zre2=(ZRE2);zim2=(ZIM2);\
- zre3=(ZRE3);zim3=(ZIM3);\
- zre4=(ZRE4);zim4=(ZIM4);\
- zre5=(ZRE5);zim5=(ZIM5);\
- zre6=(ZRE6);zim6=(ZIM6);\
- zre7=(ZRE7);zim7=(ZIM7);\
- zre8=(ZRE8);zim8=(ZIM8);\
- zre9=(ZRE9);zim9=(ZIM9);\
- status=rhombus((CRE1),(CRE2),(CIM1),(CIM2),(X1),(X2),(Y1),(Y2),(ITER))
+#define RHOMBUS(CRE1,CRE2,CIM1,CIM2,X1,X2,Y1,Y2,ZRE1,ZIM1,ZRE2,ZIM2,ZRE3,ZIM3,  \
+ ZRE4, ZIM4, ZRE5, ZIM5,ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9,ITER)    \
+ zre1=(ZRE1);zim1=(ZIM1);                                                       \
+ zre2=(ZRE2);zim2=(ZIM2);                                                       \
+ zre3=(ZRE3);zim3=(ZIM3);                                                       \
+ zre4=(ZRE4);zim4=(ZIM4);                                                       \
+ zre5=(ZRE5);zim5=(ZIM5);                                                       \
+ zre6=(ZRE6);zim6=(ZIM6);                                                       \
+ zre7=(ZRE7);zim7=(ZIM7);                                                       \
+ zre8=(ZRE8);zim8=(ZIM8);                                                       \
+ zre9=(ZRE9);zim9=(ZIM9);                                                       \
+ status = rhombus((CRE1),(CRE2),(CIM1),(CIM2),(X1),(X2),(Y1),(Y2),(ITER)) != 0
 
 static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
                    int x1, int x2, int y1, int y2, long iter)
@@ -584,7 +584,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 #define im93 mem[48]
 #define im94 mem[49]
 
-    int status = 0;
+    bool status = false;
     rhombus_depth++;
 
 #if 1
@@ -605,13 +605,13 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 
     if (driver_key_pressed())
     {
-        status = 1;
+        status = true;
         goto rhombus_done;
     }
     if (iter>maxit)
     {
         putbox(x1,y1,x2,y2,0);
-        status = 0;
+        status = false;
         goto rhombus_done;
     }
 
@@ -635,7 +635,7 @@ scan:
         {
             if (driver_key_pressed())
             {
-                status = 1;
+                status = true;
                 goto rhombus_done;
             }
             // cppcheck-suppress duplicateExpression
@@ -644,7 +644,7 @@ scan:
             savecolor=iteration(cre1,im,zre,zim,iter);
             if (savecolor < 0)
             {
-                status = 1;
+                status = true;
                 goto rhombus_done;
             }
             savex=x1;
@@ -657,7 +657,7 @@ scan:
                 color=iteration(re,im,zre,zim,iter);
                 if (color < 0)
                 {
-                    status = 1;
+                    status = true;
                     goto rhombus_done;
                 }
                 else if (color==savecolor)
@@ -670,7 +670,7 @@ scan:
                     helpcolor=iteration(helpre,im,zre,zim,iter);
                     if (helpcolor < 0)
                     {
-                        status = 1;
+                        status = true;
                         goto rhombus_done;
                     }
                     else if (helpcolor==savecolor)
@@ -694,7 +694,7 @@ scan:
                 helpcolor=iteration(helpre,im,zre,zim,iter);
                 if (helpcolor < 0)
                 {
-                    status = 1;
+                    status = true;
                     goto rhombus_done;
                 }
                 else if (helpcolor==savecolor)
@@ -708,7 +708,7 @@ scan:
             else
                 (*plot)(savex, y, (int)(savecolor&255));
         }
-        status = 0;
+        status = false;
         goto rhombus_done;
     }
 
@@ -874,7 +874,7 @@ scan:
         if (iter>maxit)
         {
             putbox(x1,y1,x2,y2,0);
-            status = 0;
+            status = false;
             goto rhombus_done;
         }
 
@@ -1057,7 +1057,7 @@ scan:
             iter);
 rhombus_done:
     rhombus_depth--;
-    return (status);
+    return status ? 1 : 0;
 }
 
 void soi_ldbl(void)

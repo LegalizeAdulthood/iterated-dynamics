@@ -873,8 +873,8 @@ FnXFnSetup(void)
 bool
 MandelTrigSetup(void)
 {
-    int isinteger;
-    if ((isinteger = curfractalspecific->isinteger) != 0)
+    bool const isinteger = curfractalspecific->isinteger != 0;
+    if (isinteger)
         curfractalspecific->orbitcalc =  LambdaTrigFractal;
     else
         curfractalspecific->orbitcalc =  LambdaTrigfpFractal;
