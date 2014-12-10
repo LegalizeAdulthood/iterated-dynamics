@@ -121,7 +121,7 @@ long   CxLong, CyLong;
  */
 
 /* these are potential user parameters */
-int connect = 1;    /* flag to connect points with a line */
+static bool connect = true;     /* flag to connect points with a line */
 int euler = 0;      /* use implicit euler approximation for dynamic system */
 int waste = 100;    /* waste this many points before plotting */
 int projection = 2; /* projection plane - default is to plot x-y */
@@ -265,12 +265,12 @@ static long l_sinx,l_cosx;
 bool orbit3dlongsetup()
 {
     maxct = 0L;
-    connect = 1;
+    connect = true;
     waste = 100;
     projection = 2;
     if (fractype==LHENON || fractype==KAM || fractype==KAM3D ||
             fractype==INVERSEJULIA)
-        connect=0;
+        connect = false;
     if (fractype==LROSSLER)
         waste = 500;
     if (fractype==LLORENZ)
@@ -390,14 +390,14 @@ lrwalk:
 bool orbit3dfloatsetup()
 {
     maxct = 0L;
-    connect = 1;
+    connect = true;
     waste = 100;
     projection = 2;
 
     if (fractype==FPHENON || fractype==FPPICKOVER || fractype==FPGINGERBREAD
             || fractype == KAMFP || fractype == KAM3DFP
             || fractype == FPHOPALONG || fractype == INVERSEJULIAFP)
-        connect=0;
+        connect = false;
     if (fractype==FPLORENZ3D1 || fractype==FPLORENZ3D3 ||
             fractype==FPLORENZ3D4)
         waste = 750;
@@ -419,13 +419,13 @@ bool orbit3dfloatsetup()
     {
         initorbitfp[0] = 0.01;  /* initial conditions */
         initorbitfp[1] = 0.003;
-        connect = 0;
+        connect = false;
         waste = 2000;
     }
 
     if (fractype==LATOO)
     {
-        connect = 0;
+        connect = false;
     }
 
     if (fractype==FPHENON || fractype==FPPICKOVER)
@@ -439,7 +439,7 @@ bool orbit3dfloatsetup()
     {
         initorbitfp[0] = 0.01;  /* initial conditions */
         initorbitfp[1] = 0.003;
-        connect = 0;
+        connect = false;
         waste = 2000;
         /* Initialize parameters */
         a  =   param[0];
@@ -467,7 +467,7 @@ bool orbit3dfloatsetup()
         initorbitfp[0] = 0;  /* initial conditions */
         initorbitfp[1] = 0;
         initorbitfp[2] = 0;
-        connect = 0;
+        connect = false;
         a =  param[0];
         b =  param[1];
         c =  param[2];
@@ -1768,12 +1768,12 @@ static int orbit3dfloatcalc(void)
 
 bool dynam2dfloatsetup()
 {
-    connect = 0;
+    connect = false;
     euler = 0;
     d = param[0]; /* number of intervals */
     if (d<0) {
         d = -d;
-        connect = 1;
+        connect = true;
     }
     else if (d==0) {
         d = 1;
