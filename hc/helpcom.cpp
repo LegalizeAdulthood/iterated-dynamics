@@ -35,10 +35,10 @@ void setint(char *ptr, int n)
 #endif
 
 
-int is_hyphen(const char *ptr)   /* true if ptr points to a real hyphen */
+bool is_hyphen(const char *ptr)   /* true if ptr points to a real hyphen */
 {   /* checkes for "--" and " -" */
     if (*ptr != '-')
-        return (0);    /* that was easy! */
+        return false;    /* that was easy! */
 
     --ptr;
 

@@ -140,7 +140,7 @@ extern int makedoc_msg_func(int ,int);
 extern void print_document(const char *,int (*)(int ,int),int);
 extern int init_help(void);
 extern void end_help(void);
-extern int is_hyphen(const char *ptr);
+extern bool is_hyphen(const char *ptr);
 
 #ifndef XFRACT
 #define getint(ptr) (*(int *)(ptr))
