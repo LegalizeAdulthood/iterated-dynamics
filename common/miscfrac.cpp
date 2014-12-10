@@ -1388,7 +1388,7 @@ jumpout:
 static std::vector<BYTE> cell_array[2];
 
 S16 r, k_1, rule_digits;
-int lstscreenflag;
+bool lstscreenflag = false;
 
 void abort_cellular(int err, int t)
 {
@@ -1615,9 +1615,9 @@ int cellular() {
             }
         } /* end of if not random */
         if (lnnmbr != 0)
-            lstscreenflag = 1;
+            lstscreenflag = true;
         else
-            lstscreenflag = 0;
+            lstscreenflag = false;
         put_line(start_row, 0, ixstop, &cell_array[filled][0]);
     }
     start_row++;
@@ -1676,7 +1676,7 @@ int cellular() {
         }
         start_row = 0;
         thinking(0, nullptr);
-        lstscreenflag = 0;
+        lstscreenflag = false;
     }
 
     /* This section does all the work */
