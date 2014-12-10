@@ -43,7 +43,7 @@ static int H_R(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned lo
 static int line3dmem(void);
 static int R_H(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
 static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
-int startdisk1(char *, FILE *, int);
+bool startdisk1(char *File_Name2, FILE *Source, int overlay);
 static void set_upr_lwr(void);
 static int end_object(int);
 static int offscreen(struct point);
@@ -1365,7 +1365,7 @@ static void File_Error(char *File_Name1, int ERROR)
 /*                                                                      */
 /* **********************************************************************/
 
-int startdisk1(char *File_Name2, FILE * Source, int overlay)
+bool startdisk1(char *File_Name2, FILE *Source, int overlay)
 {
     int i, j, k, inc;
     FILE *fps;

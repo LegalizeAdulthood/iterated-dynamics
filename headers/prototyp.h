@@ -593,7 +593,7 @@ extern int    EnQueueFloat(float,  float);
 extern int line3d(BYTE *,unsigned int);
 extern int targa_color(int ,int ,int);
 extern bool targa_validate(char *File_Name);
-extern int startdisk1(char *, FILE *, int);
+extern bool startdisk1(char *File_Name2, FILE *Source, int overlay);
 
 /*  loadfdos -- C file prototypes */
 extern int get_video_mode(struct fractal_info *,struct ext_blk_3 *);
