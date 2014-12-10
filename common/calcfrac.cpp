@@ -3590,7 +3590,6 @@ static bool ysym_split(int yaxis_col, bool yaxis_between)
 static void setsymmetry(int sym, bool uselist) /* set up proper symmetrical plot functions */
 {
     int i;
-    int parmszero, parmsnoreal, parmsnoimag;
     int xaxis_row, yaxis_col;           /* pixel number for origin */
     bool xaxis_between = false;
     bool yaxis_between = false;         /* if axis between 2 pixels, not on one */
@@ -3627,9 +3626,9 @@ static void setsymmetry(int sym, bool uselist) /* set up proper symmetrical plot
         return;
     else if (inside==FMODI || outside==TDIS)
         return;
-    parmszero = (parm.x == 0.0 && parm.y == 0.0 && useinitorbit != 1);
-    parmsnoreal = (parm.x == 0.0 && useinitorbit != 1);
-    parmsnoimag = (parm.y == 0.0 && useinitorbit != 1);
+    bool parmszero = (parm.x == 0.0 && parm.y == 0.0 && useinitorbit != 1);
+    bool parmsnoreal = (parm.x == 0.0 && useinitorbit != 1);
+    bool parmsnoimag = (parm.y == 0.0 && useinitorbit != 1);
     switch (fractype)
     {
     case LMANLAMFNFN:      /* These need only P1 checked. */
@@ -3712,10 +3711,12 @@ static void setsymmetry(int sym, bool uselist) /* set up proper symmetrical plot
     switch (sym)       /* symmetry switch */
     {
     case XAXIS_NOREAL:    /* X-axis Symmetry (no real param) */
-        if (!parmsnoreal) break;
+        if (!parmsnoreal)
+            break;
         goto xsym;
     case XAXIS_NOIMAG:    /* X-axis Symmetry (no imag param) */
-        if (!parmsnoimag) break;
+        if (!parmsnoimag)
+            break;
         goto xsym;
     case XAXIS_NOPARM:                        /* X-axis Symmetry  (no params)*/
         if (!parmszero)
