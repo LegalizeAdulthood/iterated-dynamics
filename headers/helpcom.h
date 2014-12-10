@@ -133,7 +133,7 @@ typedef int (*PD_FUNC)(int cmd, PD_INFO *pd, VOIDPTR info);
 extern int _find_token_length(char *curr, unsigned len, int *size, int *width);
 extern int find_token_length(int mode, char *curr, unsigned len, int *size, int *width);
 extern int find_line_width(int mode, char *curr, unsigned len);
-extern int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info);
+extern bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info);
 extern int help(int);
 extern int read_help_topic(int ,int ,int ,VOIDPTR);
 extern int makedoc_msg_func(int ,int);
