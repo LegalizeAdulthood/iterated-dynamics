@@ -763,7 +763,8 @@ unsigned long filter_cycles;
 static unsigned int half_time_check;
 static long   lPopulation, lRate;
 double Population,  Rate;
-static int    mono, outside_x;
+static bool mono = false;
+static int outside_x = 0;
 static long   LPI;
 
 int Bifurcation(void)
@@ -796,9 +797,9 @@ int Bifurcation(void)
     for (row = 0; row <= iystop; row++) /* should be iystop */
         verhulst_array[row] = 0;
 
-    mono = 0;
+    mono = false;
     if (colors == 2)
-        mono = 1;
+        mono = true;
     if (mono)
     {
         if (inside)
