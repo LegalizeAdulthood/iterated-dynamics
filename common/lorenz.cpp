@@ -83,7 +83,7 @@ static int  long3dviewtransf(struct long3dvtinf *inf);
 static int  float3dviewtransf(struct float3dvtinf *inf);
 static FILE *open_orbitsave(void);
 static void plothist(int x, int y, int color);
-static int realtime;
+static bool realtime = false;
 
 S32 maxct;
 static int t;
@@ -2090,7 +2090,7 @@ int funny_glasses_call(int (*calc)(void))
     int status = calc();
     if (realtime && g_glasses_type < 3)
     {
-        realtime = 0;
+        realtime = false;
         goto done;
     }
     if (g_glasses_type && status == 0 && display3d)
@@ -2489,9 +2489,9 @@ int orbit3dfloat()
 {
     display3d = -1;
     if (0 < g_glasses_type && g_glasses_type < 3)
-        realtime = 1;
+        realtime = true;
     else
-        realtime = 0;
+        realtime = false;
     return (funny_glasses_call(orbit3dfloatcalc));
 }
 
@@ -2499,9 +2499,9 @@ int orbit3dlong()
 {
     display3d = -1;
     if (0 < g_glasses_type && g_glasses_type < 3)
-        realtime = 1;
+        realtime = true;
     else
-        realtime = 0;
+        realtime = false;
     return (funny_glasses_call(orbit3dlongcalc));
 }
 
@@ -2510,9 +2510,9 @@ static int ifs3d(void)
     display3d = -1;
 
     if (0 < g_glasses_type && g_glasses_type < 3)
-        realtime = 1;
+        realtime = true;
     else
-        realtime = 0;
+        realtime = false;
     if (floatflag)
         return (funny_glasses_call(ifs3dfloat)); /* double version of ifs3d */
     else
