@@ -50,7 +50,6 @@ static int offscreen(struct point);
 static int out_triangle(struct f_point, struct f_point, struct f_point, int, int, int);
 static int RAY_Header(void);
 static int start_object(void);
-static void corners(MATRIX, int, double *, double *, double *, double *, double *, double *);
 static void draw_light_box(double *, double *, MATRIX);
 static void draw_rect(VECTOR, VECTOR, VECTOR, VECTOR, int, int);
 static void File_Error(char *, int);
@@ -837,7 +836,7 @@ static void vdraw_line(double *v1, double *v2, int color)
     driver_draw_line(x1, y1, x2, y2, color);
 }
 
-static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pzmin, double *pxmax, double *pymax, double *pzmax)
+static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *pzmin, double *pxmax, double *pymax, double *pzmax)
 {
     int i, j;
     VECTOR S[2][4];              /* Holds the top an bottom points,
@@ -2153,7 +2152,7 @@ static int first_time(int linelen, VECTOR v)
         /* m current matrix */
         /* 0 means don't show box */
         /* returns minimum and maximum values of x,y,z in fractal */
-        corners(m, 0, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
+        corners(m, false, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
     }
 
     /* perspective 3D vector - lview[2] == 0 means no perspective */
@@ -2388,7 +2387,7 @@ static int first_time(int linelen, VECTOR v)
         /* draw box around original field of view to help visualize effect of
          * rotations 1 means show box - xmin etc. do nothing here */
         if (!SPHERE)
-            corners(m, 1, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
+            corners(m, true, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
     }
 
     /* bad has values caught by clipping */
