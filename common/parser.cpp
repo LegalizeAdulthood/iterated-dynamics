@@ -3190,14 +3190,14 @@ static bool  frmgetconstant(FILE * openfile, struct token_st * tok)
 {
     int c;
     int i = 1;
-    int getting_base = 1;
+    bool getting_base = true;
     long filepos = ftell(openfile);
-    int got_decimal_already = 0;
-    int done = 0;
+    bool got_decimal_already = false;
+    bool done = false;
     tok->token_const.x = 0.0;          /*initialize values to 0*/
     tok->token_const.y = 0.0;
     if (tok->token_str[0] == '.')
-        got_decimal_already = 1;
+        got_decimal_already = true;
     while (!done)
     {
         switch (c=frmgetchar(openfile))
@@ -3224,7 +3224,7 @@ CASE_NUM:
             else
             {
                 tok->token_str[i++] = (char) c;
-                got_decimal_already = 1;
+                got_decimal_already = true;
                 filepos=ftell(openfile);
             }
             break;
@@ -3232,8 +3232,8 @@ CASE_NUM:
             if (c == 'e' && getting_base && (isdigit(tok->token_str[i-1]) || (tok->token_str[i-1] == '.' && i > 1)))
             {
                 tok->token_str[i++] = (char) c;
-                getting_base = 0;
-                got_decimal_already = 0;
+                getting_base = false;
+                got_decimal_already = false;
                 filepos=ftell(openfile);
                 c = frmgetchar(openfile);
                 if (c == '-' || c == '+')
@@ -3266,7 +3266,7 @@ CASE_NUM:
             {
                 fseek(openfile, filepos, SEEK_SET);
                 tok->token_str[i++] = (char) 0;
-                done = 1;
+                done = true;
             }
             break;
         }
