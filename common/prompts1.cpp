@@ -1692,7 +1692,7 @@ long get_file_entry(int type, const char *title,char *fmask,
         switch (type)
         {
         case GETFORMULA:
-            if (!RunForm(entryname, 1))
+            if (!RunForm(entryname, true))
                 return 0;
             break;
         case GETLSYS:

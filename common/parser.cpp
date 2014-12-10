@@ -3748,7 +3748,7 @@ int frm_get_param_stuff(char * Name)
      on success, and false if errors are found which should cause the
      formula not to be executed
 */
-static bool frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
+static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
 {
     long filepos = ftell(open_file);
     int c, i, at_end_of_name;
@@ -3875,7 +3875,7 @@ static bool frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
 }
 
 
-static char *PrepareFormula(FILE * File, int from_prompts1c)
+static char *PrepareFormula(FILE * File, bool from_prompts1c)
 {
     /* This function sets the
        symmetry and converts a formula into a string  with no spaces,
@@ -3894,7 +3894,7 @@ static char *PrepareFormula(FILE * File, int from_prompts1c)
 
     /*Test for a repeat*/
 
-    if (frm_check_name_and_sym(File, from_prompts1c) == 0)
+    if (!frm_check_name_and_sym(File, from_prompts1c))
     {
         fseek(File, filepos, SEEK_SET);
         return nullptr;
@@ -3997,7 +3997,7 @@ int BadFormula(void)
 }
 
 /*  returns true if an error occurred  */
-bool RunForm(char *Name, int from_prompts1c)
+bool RunForm(char *Name, bool from_prompts1c)
 {
     FILE * entry_file = nullptr;
 
@@ -4048,14 +4048,14 @@ bool fpFormulaSetup(void)
     /* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
 #if !defined(XFRACT) && !defined(_WIN32)
     MathType = D_MATH;
-    bool RunFormRes = !RunForm(FormName, 0); /* RunForm() returns true for failure */
+    bool RunFormRes = !RunForm(FormName, false); /* RunForm() returns true for failure */
     if (RunFormRes && fpu >=387 && debugflag != 90 && (orbitsave&2) == 0
             && !Randomized)
         return CvtStk() != 0; /* run fast assembler code in parsera.asm */
     return RunFormRes;
 #else
     MathType = D_MATH;
-    return !RunForm(FormName, 0); /* RunForm() returns true for failure */
+    return !RunForm(FormName, false); /* RunForm() returns true for failure */
 #endif
 }
 
@@ -4075,7 +4075,7 @@ bool intFormulaSetup(void)
     fg = (double)(1L << bitshift);
     fgLimit = (double)0x7fffffffL / fg;
     ShiftBack = 32 - bitshift;
-    return !RunForm(FormName, 0);
+    return !RunForm(FormName, false);
 #endif
 }
 
