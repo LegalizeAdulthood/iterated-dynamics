@@ -370,7 +370,7 @@ JuliafpSetup(void)
     case FPPOPCORN:
     case FPPOPCORNJUL:
     {
-        int default_functions = 0;
+        bool default_functions = false;
         if (trigndx[0] == SIN &&
                 trigndx[1] == TAN &&
                 trigndx[2] == SIN &&
@@ -379,7 +379,7 @@ JuliafpSetup(void)
                 parm2.y == 0 &&
                 parm.y == 0)
         {
-            default_functions = 1;
+            default_functions = true;
             if (fractype == FPPOPCORNJUL)
                 symmetry = ORIGIN;
         }
@@ -737,8 +737,8 @@ ZXTrigPlusZSetup(void)
 bool
 LambdaTrigSetup(void)
 {
-    int isinteger;
-    if ((isinteger = curfractalspecific->isinteger) != 0)
+    bool const isinteger = curfractalspecific->isinteger != 0;
+    if (isinteger)
         curfractalspecific->orbitcalc =  LambdaTrigFractal;
     else
         curfractalspecific->orbitcalc =  LambdaTrigfpFractal;
