@@ -181,7 +181,7 @@ unsigned long dif_limit = 0;    /* the diffusion counter */
 bool three_pass = false;
 static int maxblock = 0;
 static int halfblock = 0;
-static int guessplot = 0;               /* paint 1st pass row at a time?   */
+static bool guessplot = false;          /* paint 1st pass row at a time?   */
 static int right_guess = 0;
 static int bottom_guess = 0;
 #define maxyblk 7    /* maxxblk*maxyblk*2 <= 4096, the size of "prefix" */
@@ -3082,7 +3082,7 @@ static int solidguess(void)
     unsigned int *pfxp0,*pfxp1;
     unsigned int u;
 
-    guessplot=(plot!=putcolor && plot!=symplot2 && plot!=symplot2J);
+    guessplot = (plot != putcolor && plot != symplot2 && plot != symplot2J);
     /* check if guessing at bottom & right edges is ok */
     bottom_guess = (plot == symplot2 || (plot == putcolor && iystop+1 == ydots));
     right_guess  = (plot == symplot2J
@@ -3478,7 +3478,7 @@ static void plotblock(int buildrow,int x,int y,int color)
     int i,xlim,ylim;
     if ((xlim=x+halfblock)>ixstop)
         xlim=ixstop+1;
-    if (buildrow>=0 && guessplot==0) /* save it for later put_line */
+    if (buildrow>=0 && !guessplot) /* save it for later put_line */
     {
         if (buildrow==0)
             for (i=x; i<xlim; ++i)
