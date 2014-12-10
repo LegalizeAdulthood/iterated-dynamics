@@ -863,10 +863,10 @@ disk_mute(Driver *drv)
     ODS("disk_mute");
 }
 
-static int
+static bool
 disk_diskp(Driver *drv)
 {
-    return 1;
+    return true;
 }
 
 static int

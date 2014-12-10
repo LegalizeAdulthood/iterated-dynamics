@@ -2508,11 +2508,11 @@ x11_mute(Driver *drv)
     // TODO
 }
 
-static int
+static bool
 x11_diskp(Driver *drv)
 {
     // TODO
-    return 0;
+    return false;
 }
 
 static int x11_get_char_attr(Driver *drv)

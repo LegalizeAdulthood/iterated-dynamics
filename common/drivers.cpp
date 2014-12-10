@@ -131,7 +131,7 @@ driver_terminate(void)
 void driver_##name_(void) { (*g_driver->name_)(g_driver); }
 #define METHOD(type_,name_) \
 type_ driver_##name_(void) { return (*g_driver->name_)(g_driver); }
-#define METHOD_INT(name_) METHOD(int,name_)
+#define METHOD_INT(name_) METHOD(int, name_)
 
 void
 driver_schedule_alarm(int soon)
@@ -257,7 +257,7 @@ driver_sound_on(int freq)
 
 METHOD_VOID(sound_off)
 METHOD_VOID(mute)
-METHOD_INT(diskp)
+METHOD(bool, diskp)
 
 int
 driver_get_char_attr(void)

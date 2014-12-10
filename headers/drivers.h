@@ -91,7 +91,7 @@ struct tagDriver
     void (*sound_off)(Driver *drv);
     void (*mute)(Driver *drv);
 
-    int (*diskp)(Driver *drv);
+    bool (*diskp)(Driver *drv);
     int (*get_char_attr)(Driver *drv);
     void (*put_char_attr)(Driver *drv, int char_attr);
     void (*delay)(Driver *drv, int ms);
@@ -231,7 +231,7 @@ extern void driver_buzzer(int kind);
 extern int driver_sound_on(int frequency);
 extern void driver_sound_off(void);
 extern void driver_mute(void);
-extern int driver_diskp(void);
+extern bool driver_diskp(void);
 extern int driver_get_char_attr(void);
 extern void driver_put_char_attr(int char_attr);
 extern void driver_delay(int ms);

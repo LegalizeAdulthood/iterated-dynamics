@@ -47,7 +47,7 @@ extern void win32_buzzer(Driver *drv, int kind);
 extern int win32_sound_on(Driver *drv, int freq);
 extern void win32_sound_off(Driver *drv);
 extern void win32_mute(Driver *drv);
-extern int win32_diskp(Driver *drv);
+extern bool win32_diskp(Driver *drv);
 extern int win32_key_cursor(Driver *drv, int row, int col);
 extern int win32_wait_key_pressed(Driver *drv, int timeout);
 extern int win32_get_char_attr(Driver *drv);

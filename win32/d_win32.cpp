@@ -526,10 +526,10 @@ win32_mute(Driver *drv)
     ODS("win32_mute");
 }
 
-int
+bool
 win32_diskp(Driver *drv)
 {
-    return 0;
+    return false;
 }
 
 int
