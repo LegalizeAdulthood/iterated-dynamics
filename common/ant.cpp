@@ -80,11 +80,12 @@ void
 TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 {
     int color, ix, iy, idir, pixel, i;
-    int kbdchar, step, antwrap;
+    int kbdchar, step;
+    bool antwrap;
     int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
     int next_col[MAX_ANTS + 1], rule[MAX_ANTS + 1], dir[MAX_ANTS + 1];
     long count;
-    antwrap = ((param[4] == 0) ? 0 : 1);
+    antwrap = (param[4] == 0) ? false : true;
     step = (int) wait;
     if (step == 1)
         wait = 0;
@@ -188,7 +189,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
                     putcolor(ix, iy, next_col[pixel]);
                     idir += rule[pixel];
                     idir &= 3;
-                    if (antwrap == 0)
+                    if (!antwrap)
                         if ((idir == 0 && iy == ydots - 1) ||
                                 (idir == 1 && ix == xdots - 1) ||
                                 (idir == 2 && iy == 0) ||
@@ -210,7 +211,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
                     putcolor(ix, iy, next_col[pixel]);
                     idir += rule[pixel];
                     idir &= 3;
-                    if (antwrap == 0)
+                    if (!antwrap)
                         if ((idir == 0 && iy == ydots - 1) ||
                                 (idir == 1 && ix == xdots - 1) ||
                                 (idir == 2 && iy == 0) ||
