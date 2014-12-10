@@ -3021,7 +3021,7 @@ static bool fill_jump_struct(void)
     int storecount = 0;
     int checkforelse = 0;
     void (*JumpFunc)(void) = nullptr;
-    int find_new_func = 1;
+    bool find_new_func = true;
 
     JUMP_PTRS_ST jump_data[MAX_JUMPS];
 
@@ -3050,7 +3050,7 @@ static bool fill_jump_struct(void)
             default:
                 break;
             }
-            find_new_func = 0;
+            find_new_func = false;
         }
         if (*(f[OpPtr]) == StkLod)
             loadcount++;
@@ -3062,7 +3062,7 @@ static bool fill_jump_struct(void)
             jump_data[i].JumpLodPtr = loadcount;
             jump_data[i].JumpStoPtr = storecount;
             i++;
-            find_new_func = 1;
+            find_new_func = true;
         }
     }
 
