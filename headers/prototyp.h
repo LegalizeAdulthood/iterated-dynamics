@@ -658,7 +658,7 @@ extern int plotorbits2dfloat(void);
 extern LDBL  getnumber(char **);
 extern bool ispow2(int);
 extern int Lsystem(void);
-extern int LLoad(void);
+extern bool LLoad(void);
 
 /*  miscfrac -- C file prototypes */
 

@@ -18,8 +18,8 @@ struct lsys_cmd {
 static bool readLSystemFile(char *str);
 static void free_rules_mem(void);
 static int rule_present(char symbol);
-static int save_rule(char *,char **);
-static int append_rule(char *rule, int index);
+static bool save_rule(char *rule, char **saveptr);
+static bool append_rule(char *rule, int index);
 static void free_lcmds(void);
 static struct lsys_cmd * findsize(struct lsys_cmd *,struct lsys_turtlestatei *, struct lsys_cmd **,int);
 static struct lsys_cmd * drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd **rules,int depth);
@@ -47,7 +47,7 @@ static void lsysi_dodrawlt(struct lsys_turtlestatei *cmd);
 static char *ruleptrs[MAXRULES];
 static struct lsys_cmd *rules2[MAXRULES];
 char maxangle;
-static char loaded=0;
+static bool loaded = false;
 
 
 bool ispow2(int n)
@@ -155,7 +155,8 @@ static bool readLSystemFile(char *str)
             else if (!word[1])
             {
                 char *temp;
-                int index, memerr = 0;
+                int index;
+                bool memerr = false;
 
                 if (strchr("+-/\\@|!c<>][", *word))
                 {
@@ -177,7 +178,7 @@ static bool readLSystemFile(char *str)
                 else if (temp)
                 {
                     strcpy(fixed,temp);
-                    memerr = append_rule(fixed,index);
+                    memerr = append_rule(fixed, index);
                 }
                 if (memerr) {
                     strcat(msgbuf, "Error:  out of memory\n");
@@ -233,7 +234,7 @@ int Lsystem(void)
     struct lsys_cmd **sc;
     bool stackoflow = false;
 
-    if ((!loaded) && LLoad())
+    if (!loaded && LLoad())
         return -1;
 
     overflow = false;           /* reset integer math overflow flag */
@@ -312,19 +313,19 @@ int Lsystem(void)
     }
     free_rules_mem();
     free_lcmds();
-    loaded=0;
+    loaded = false;
     return 0;
 }
 
-int LLoad(void)
+bool LLoad(void)
 {
     if (readLSystemFile(LName)) { /* error occurred */
         free_rules_mem();
-        loaded=0;
-        return -1;
+        loaded = false;
+        return true;
     }
-    loaded=1;
-    return 0;
+    loaded = true;
+    return false;
 }
 
 static void free_rules_mem(void)
@@ -343,21 +344,21 @@ static int rule_present(char symbol)
     return (i < MAXRULES && ruleptrs[i]) ? i : 0;
 }
 
-static int save_rule(char *rule,char **saveptr)
+static bool save_rule(char *rule, char **saveptr)
 {
     int i;
     char *tmpfar;
     i=(int) strlen(rule)+1;
     tmpfar = (char *) malloc(i);
     if (tmpfar == nullptr) {
-        return -1;
+        return true;
     }
     *saveptr=tmpfar;
     while (--i>=0) *(tmpfar++)= *(rule++);
-    return 0;
+    return false;
 }
 
-static int append_rule(char *rule, int index)
+static bool append_rule(char *rule, int index)
 {
     char *dst, *old, *sav;
     int i, j;
@@ -368,14 +369,14 @@ static int append_rule(char *rule, int index)
     j = (int) strlen(rule) + 1;
     dst = (char *)malloc((long)(i + j));
     if (dst == nullptr)
-        return -1;
+        return true;
 
     old = sav;
     ruleptrs[index] = dst;
     while (i-- > 0) *(dst++) = *(old++);
     while (j-- > 0) *(dst++) = *(rule++);
     free(sav);
-    return 0;
+    return false;
 }
 
 static void free_lcmds(void)
