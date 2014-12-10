@@ -122,7 +122,7 @@ long   CxLong, CyLong;
 
 /* these are potential user parameters */
 static bool connect = true;     /* flag to connect points with a line */
-int euler = 0;      /* use implicit euler approximation for dynamic system */
+static bool euler = false;      /* use implicit euler approximation for dynamic system */
 int waste = 100;    /* waste this many points before plotting */
 int projection = 2; /* projection plane - default is to plot x-y */
 
@@ -1769,7 +1769,7 @@ static int orbit3dfloatcalc(void)
 bool dynam2dfloatsetup()
 {
     connect = false;
-    euler = 0;
+    euler = false;
     d = param[0]; /* number of intervals */
     if (d<0) {
         d = -d;
@@ -1784,7 +1784,7 @@ bool dynam2dfloatsetup()
         dt = param[1]; /* step size */
         if (dt<0) {
             dt = -dt;
-            euler = 1;
+            euler = true;
         }
         if (dt==0) dt = 0.01;
     }
