@@ -313,9 +313,9 @@ int plasma()
 {
     int n;
     U16 rnd[4];
-    int OldPotFlag, OldPot16bit;
-
-    OldPotFlag=OldPot16bit=plasma_check = 0;
+    bool OldPotFlag = false;
+    bool OldPot16bit = false;
+    plasma_check = 0;
 
     if (colors < 4) {
         stopmsg(0,
@@ -352,8 +352,8 @@ int plasma()
             else
                 plot    = (PLOT)putpot;
             getpix =  getpot;
-            OldPotFlag = potflag ? 1 : 0;
-            OldPot16bit = pot16bit ? 1 : 0;
+            OldPotFlag = potflag;
+            OldPot16bit = pot16bit;
         }
         else
         {
@@ -444,8 +444,8 @@ int plasma()
 done:
     if (max_plasma != 0)
     {
-        potflag = OldPotFlag != 0;
-        pot16bit = OldPot16bit != 0;
+        potflag = OldPotFlag;
+        pot16bit = OldPot16bit;
     }
     plot    = putcolor;
     getpix  = (U16(*)(int,int))getcolor;
