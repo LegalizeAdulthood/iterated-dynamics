@@ -70,8 +70,8 @@ struct help_sig_info
     unsigned long base;     /* only if added to fractint.exe */
 };
 
-void print_document(const char *outfname, int (*msg_func)(int,int), int save_extraseg);
-static int print_doc_msg_func(int pnum, int num_pages);
+void print_document(const char *outfname, bool (*msg_func)(int,int), int save_extraseg);
+static bool print_doc_msg_func(int pnum, int num_pages);
 
 /* stuff from fractint */
 
@@ -1053,7 +1053,7 @@ typedef struct PRINT_DOC_INFO
     char      id[81];        /* buffer to store id in */
     char      title[81];     /* buffer to store title in */
 
-    int (*msg_func)(int pnum, int num_page);
+    bool (*msg_func)(int pnum, int num_page);
 
     FILE     *file;          /* file to sent output to */
     int       margin;        /* indent text by this much */
@@ -1252,7 +1252,7 @@ static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
     }
 }
 
-static int print_doc_msg_func(int pnum, int num_pages)
+static bool print_doc_msg_func(int pnum, int num_pages)
 {
     char temp[10];
     int  key;
@@ -1262,7 +1262,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
         driver_buzzer(BUZZER_COMPLETE);
         putstringcenter(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
         driver_get_key();
-        return (0);
+        return false;
     }
 
     if (pnum == -2)     /* aborted */
@@ -1270,7 +1270,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
         driver_buzzer(BUZZER_INTERRUPT);
         putstringcenter(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
         driver_get_key();
-        return (0);
+        return false;
     }
 
     if (pnum == 0)   /* initialization */
@@ -1292,21 +1292,21 @@ static int print_doc_msg_func(int pnum, int num_pages)
     {
         key = driver_get_key();
         if (key == FIK_ESC)
-            return (0);    /* user abort */
+            return false;    /* user abort */
     }
 
-    return (1);   /* AOK -- continue */
+    return true;   /* AOK -- continue */
 }
 
-int makedoc_msg_func(int pnum, int num_pages)
+bool makedoc_msg_func(int pnum, int num_pages)
 {
     char buffer[80] = "";
-    int result = 0;
+    bool result = false;
 
     if (pnum >= 0)
     {
         sprintf(buffer, "\rcompleted %d%%", (int)((100.0 / num_pages) * pnum));
-        result = 1;
+        result = true;
     }
     else if (pnum == -2)
     {
@@ -1316,10 +1316,10 @@ int makedoc_msg_func(int pnum, int num_pages)
     return result;
 }
 
-void print_document(const char *outfname, int (*msg_func)(int,int), int save_extraseg)
+void print_document(const char *outfname, bool (*msg_func)(int,int), int save_extraseg)
 {
     PRINT_DOC_INFO info;
-    int            success   = 0;
+    bool success = false;
     FILE *temp_file = nullptr;
     const char *msg = nullptr;
 
@@ -1394,7 +1394,7 @@ ErrorAbort:
     }
 
     else if (msg_func != nullptr)
-        msg_func((success) ? -1 : -2, info.num_page);
+        msg_func(success ? -1 : -2, info.num_page);
 }
 
 int init_help(void)
