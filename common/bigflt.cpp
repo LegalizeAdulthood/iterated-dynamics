@@ -1229,7 +1229,7 @@ bf_t atan2_bf(bf_t r, bf_t ny, bf_t nx)
 }
 
 /**********************************************************************/
-int is_bf_zero(bf_t n)
+bool is_bf_zero(bf_t n)
 {
     return !is_bf_not_zero(n);
 }
@@ -1427,10 +1427,10 @@ int is_bf_neg(bf_t n)
 /* n != 0 ?                      */
 /* RETURNS: if n != 0 returns 1  */
 /*          else returns 0       */
-int is_bf_not_zero(bf_t n)
+bool is_bf_not_zero(bf_t n)
 {
     int bnl;
-    int retval;
+    bool retval;
 
     bnl = bnlength;
     bnlength = bflength;

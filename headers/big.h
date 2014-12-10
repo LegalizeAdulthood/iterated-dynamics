@@ -231,7 +231,7 @@ extern bf_t ln_bf(bf_t r, bf_t n);
 extern bf_t sincos_bf(bf_t s, bf_t c, bf_t n);
 extern bf_t atan_bf(bf_t r, bf_t n);
 extern bf_t atan2_bf(bf_t r, bf_t ny, bf_t nx);
-extern int is_bf_zero(bf_t n);
+extern bool is_bf_zero(bf_t n);
 extern int convert_bf(bf_t new_n, bf_t old, int newbflength, int oldbflength);
 
 extern LDBL extract_value(LDBL f, LDBL b, int *exp_ptr);
@@ -252,7 +252,7 @@ extern S16 adjust_bf_add(bf_t n1, bf_t n2);
 extern bf_t max_bf(bf_t r);
 extern int cmp_bf(bf_t n1, bf_t n2);
 extern int is_bf_neg(bf_t n);
-extern int is_bf_not_zero(bf_t n);
+extern bool is_bf_not_zero(bf_t n);
 extern bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2);
 extern bf_t unsafe_add_a_bf(bf_t r, bf_t n);
 extern bf_t unsafe_sub_bf(bf_t r, bf_t n1, bf_t n2);
