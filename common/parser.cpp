@@ -4183,12 +4183,11 @@ void frm_error(FILE * open_file, long begin_frm)
     char msgbuf[900];
     long filepos;
     int j;
-    int initialization_error;
     strcpy(msgbuf, "\n");
 
     for (j=0; j < 3 && errors[j].start_pos; j++)
     {
-        initialization_error = errors[j].error_number == PE_SECOND_COLON ? 1 : 0;
+        bool const initialization_error = errors[j].error_number == PE_SECOND_COLON;
         fseek(open_file, begin_frm, SEEK_SET);
         line_number = 1;
         while (ftell(open_file) != errors[j].error_pos)
