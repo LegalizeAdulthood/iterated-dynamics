@@ -1944,12 +1944,14 @@ unsigned SkipWhiteSpace(char *Str)
 }
 
 /* detect if constant is part of a (a,b) construct */
-static int isconst_pair(char *Str)
+static bool isconst_pair(char *Str)
 {
     int n,j;
-    int answer = 0;
+    bool answer = false;
     /* skip past first number */
-    for (n = 0; isdigit(Str[n]) || Str[n] == '.'; n++);
+    for (n = 0; isdigit(Str[n]) || Str[n] == '.'; n++)
+    {
+    }
     if (Str[n] == ',')
     {
         j = n + SkipWhiteSpace(&Str[n+1]) + 1;
@@ -1957,7 +1959,7 @@ static int isconst_pair(char *Str)
                 || (Str[j] == '-' && (isdigit(Str[j+1]) || Str[j+1] == '.'))
                 || Str[j] == '.')
         {
-            answer = 1;
+            answer = true;
         }
     }
     return answer;
