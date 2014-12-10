@@ -53,7 +53,7 @@ int jump_index;
 
 int InitJumpIndex;
 
-static int frm_prescan(FILE * open_file);
+static bool frm_prescan(FILE * open_file);
 
 #define CASE_TERMINATOR case',':\
                         case '\n':\
@@ -189,7 +189,8 @@ bool ismand = true;
 
 unsigned int posp, vsp, LastOp;
 static unsigned int n, NextOp, InitN;
-static int paren, ExpectingArg;
+static int paren;
+static bool ExpectingArg = false;
 int InitLodPtr, InitStoPtr, InitOpPtr, LastInitOp;
 static int Delta16;
 double fgLimit;
@@ -2563,7 +2564,7 @@ static bool ParseStr(char *Str, int pass)
     }
 
     LastInitOp = paren = OpPtr = LodPtr = StoPtr = posp = 0;
-    ExpectingArg = 1;
+    ExpectingArg = true;
     for (n = 0; Str[n]; n++)
     {
         if (!Str[n])
@@ -2585,7 +2586,7 @@ static bool ParseStr(char *Str, int pass)
         case '|':
             if (Str[n+1] == '|')
             {
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 n++;
                 o[posp].f = StkOR;
                 o[posp++].p = 7 - (paren + Equals)*15;
@@ -2607,7 +2608,7 @@ static bool ParseStr(char *Str, int pass)
         case ';':
             if (!ExpectingArg)
             {
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 o[posp].f = (void(*)(void))nullptr;
                 o[posp++].p = 15;
                 o[posp].f = StkClr;
@@ -2616,7 +2617,7 @@ static bool ParseStr(char *Str, int pass)
             }
             break;
         case ':':
-            ExpectingArg = 1;
+            ExpectingArg = true;
             o[posp].f = (void(*)(void))nullptr;
             o[posp++].p = 15;
             o[posp].f = EndInit;
@@ -2625,7 +2626,7 @@ static bool ParseStr(char *Str, int pass)
             LastInitOp = 10000;
             break;
         case '+':
-            ExpectingArg = 1;
+            ExpectingArg = true;
             o[posp].f = StkAdd;
             o[posp++].p = 4 - (paren + Equals)*15;
             break;
@@ -2639,23 +2640,23 @@ static bool ParseStr(char *Str, int pass)
             {
                 o[posp].f = StkSub;
                 o[posp++].p = 4 - (paren + Equals)*15;
-                ExpectingArg = 1;
+                ExpectingArg = true;
             }
             break;
         case '&':
-            ExpectingArg = 1;
+            ExpectingArg = true;
             n++;
             o[posp].f = StkAND;
             o[posp++].p = 7 - (paren + Equals)*15;
             break;
         case '!':
-            ExpectingArg = 1;
+            ExpectingArg = true;
             n++;
             o[posp].f = StkNE;
             o[posp++].p = 6 - (paren + Equals)*15;
             break;
         case '<':
-            ExpectingArg = 1;
+            ExpectingArg = true;
             if (Str[n+1] == '=')
             {
                 n++;
@@ -2666,7 +2667,7 @@ static bool ParseStr(char *Str, int pass)
             o[posp++].p = 6 - (paren + Equals)*15;
             break;
         case '>':
-            ExpectingArg = 1;
+            ExpectingArg = true;
             if (Str[n+1] == '=')
             {
                 n++;
@@ -2677,22 +2678,22 @@ static bool ParseStr(char *Str, int pass)
             o[posp++].p = 6 - (paren + Equals)*15;
             break;
         case '*':
-            ExpectingArg = 1;
+            ExpectingArg = true;
             o[posp].f = StkMul;
             o[posp++].p = 3 - (paren + Equals)*15;
             break;
         case '/':
-            ExpectingArg = 1;
+            ExpectingArg = true;
             o[posp].f = StkDiv;
             o[posp++].p = 3 - (paren + Equals)*15;
             break;
         case '^':
-            ExpectingArg = 1;
+            ExpectingArg = true;
             o[posp].f = StkPwr;
             o[posp++].p = 2 - (paren + Equals)*15;
             break;
         case '=':
-            ExpectingArg = 1;
+            ExpectingArg = true;
             if (Str[n+1] == '=')
             {
                 n++;
@@ -2710,20 +2711,20 @@ static bool ParseStr(char *Str, int pass)
             while (isalnum(Str[n+1]) || Str[n+1] == '.' || Str[n+1] == '_')
                 n++;
             Len = (n+1)-InitN;
-            ExpectingArg = 0;
+            ExpectingArg = false;
             if ((jumptype = isjump(&Str[InitN], Len)) != 0)
             {
                 uses_jump = 1;
                 switch (jumptype)
                 {
                 case 1:                      /* if */
-                    ExpectingArg = 1;
+                    ExpectingArg = true;
                     jump_control[jump_index++].type = 1;
                     o[posp].f = StkJumpOnFalse;
                     o[posp++].p = 1;
                     break;
                 case 2:                     /* elseif */
-                    ExpectingArg = 1;
+                    ExpectingArg = true;
                     jump_control[jump_index++].type = 2;
                     jump_control[jump_index++].type = 2;
                     o[posp].f = StkJump;
@@ -2755,7 +2756,7 @@ static bool ParseStr(char *Str, int pass)
                 if (o[posp].f != NotAFnct)
                 {
                     o[posp++].p = 1 - (paren + Equals)*15;
-                    ExpectingArg = 1;
+                    ExpectingArg = true;
                 }
                 else
                 {
@@ -4450,7 +4451,7 @@ int disable_fastparser;
 int must_use_float;
 
 
-int frm_prescan(FILE * open_file)
+bool frm_prescan(FILE * open_file)
 {
     long filepos;
     int i;
@@ -4509,7 +4510,7 @@ int frm_prescan(FILE * open_file)
             case END_OF_FILE:
                 stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
                 fseek(open_file, orig_pos, SEEK_SET);
-                return 0;
+                return false;
             case ILLEGAL_CHARACTER:
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
                 {
@@ -4585,7 +4586,7 @@ int frm_prescan(FILE * open_file)
             default:
                 stopmsg(0, "Unexpected arrival at default case in prescan()");
                 fseek(open_file, orig_pos, SEEK_SET);
-                return 0;
+                return false;
             }
             break;
         case PARENS:
@@ -5031,7 +5032,9 @@ int frm_prescan(FILE * open_file)
                 }
                 if (this_token.token_id == 11)
                     already_got_colon = 1;
-                NewStatement = ExpectingArg = assignment_ok = 1;
+                NewStatement = 1;
+                ExpectingArg = 1;
+                assignment_ok = 1;
                 statement_pos = ftell(open_file);
                 break;
             case 1:     /* != */
@@ -5319,12 +5322,12 @@ int frm_prescan(FILE * open_file)
     {
         frm_error(open_file, orig_pos);
         fseek(open_file, orig_pos, SEEK_SET);
-        return 0;
+        return false;
     }
     fseek(open_file, orig_pos, SEEK_SET);
 
     count_lists();
 
-    return 1;
+    return true;
 }
 
