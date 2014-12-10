@@ -90,7 +90,7 @@ static void File_Error(char *File_Name1, int ERROR);
 static BYTE T24 = 24;
 static BYTE T32 = 32;
 static BYTE upr_lwr[4];
-static int T_Safe; /* Original Targa Image successfully copied to targa_temp */
+static bool T_Safe = false;     /* Original Targa Image successfully copied to targa_temp */
 static VECTOR light_direction;
 static BYTE Real_Color;  /* Actual color of cur pixel */
 static int RO, CO, CO_MAX;  /* For use in Acrospin support */
@@ -1510,7 +1510,7 @@ bool targa_validate(char *File_Name)
 
     fclose(fp);                  /* Close the source */
 
-    T_Safe = 1;                  /* Original file successfully copied to targa_temp */
+    T_Safe = true;              /* Original file successfully copied to targa_temp */
     return false;
 }
 
@@ -2012,7 +2012,8 @@ static void line3d_cleanup(void)
             dir_remove(workdir, targa_temp);
     }
     usr_floatflag &= 1;          /* strip second bit */
-    error = T_Safe = 0;
+    error = 0;
+    T_Safe = false;
 }
 
 static void set_upr_lwr(void)
@@ -2064,7 +2065,7 @@ static int first_time(int linelen, VECTOR v)
     error = 0;
 
     if (g_which_image < 2)
-        T_Safe = 0; /* Not safe yet to mess with the source image */
+        T_Safe = false; /* Not safe yet to mess with the source image */
 
     if (Targa_Out && !((g_glasses_type == 1 || g_glasses_type == 2)
                        && g_which_image == 2))
