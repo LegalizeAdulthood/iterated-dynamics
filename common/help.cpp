@@ -1108,8 +1108,9 @@ static void printers(PRINT_DOC_INFO *info, char *s, int n)
     }
 }
 
-static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
+static int print_doc_get_info(int cmd, PD_INFO *pd, void *context)
 {
+    PRINT_DOC_INFO *info = static_cast<PRINT_DOC_INFO *>(context);
     int t;
     BYTE ch;
 
@@ -1177,8 +1178,9 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
     }
 }
 
-static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
+static int print_doc_output(int cmd, PD_INFO *pd, void *context)
 {
+    PRINT_DOC_INFO *info = static_cast<PRINT_DOC_INFO *>(context);
     switch (cmd)
     {
     case PD_HEADING:
@@ -1358,8 +1360,8 @@ void print_document(const char *outfname, int (*msg_func)(int,int), int save_ext
     info.start_of_line = 1;
     info.spaces = 0;
 
-    success = process_document((PD_FUNC)print_doc_get_info,
-                               (PD_FUNC)print_doc_output,   &info);
+    success = process_document(print_doc_get_info,
+                               print_doc_output,   &info);
     fclose(info.file);
 
     if (save_extraseg)
