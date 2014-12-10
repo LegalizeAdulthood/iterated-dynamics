@@ -3890,7 +3890,6 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
     FILE *debug_fp = nullptr;
     char *FormulaStr;
     struct token_st temp_tok;
-    int Done;
     long filepos = ftell(File);
 
     /*Test for a repeat*/
@@ -3925,7 +3924,7 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
     FormulaStr = (char *)boxx;
     FormulaStr[0] = (char) 0; /* To permit concatenation later */
 
-    Done = 0;
+    bool Done = false;
 
     /*skip opening end-of-lines */
     while (!Done)
@@ -3952,11 +3951,11 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
         else
         {
             strcat(FormulaStr, temp_tok.token_str);
-            Done = 1;
+            Done = true;
         }
     }
 
-    Done = 0;
+    Done = false;
     while (!Done)
     {
         frmgettoken(File, &temp_tok);
@@ -3969,7 +3968,7 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
                 fclose(debug_fp);
             return nullptr;
         case END_OF_FORMULA:
-            Done = 1;
+            Done = true;
             fseek(File, filepos, SEEK_SET);
             break;
         default:
