@@ -4180,7 +4180,6 @@ void frm_error(FILE * open_file, long begin_frm)
     struct token_st tok;
     int i, chars_to_error=0, chars_in_error=0, token_count;
     int statement_len, line_number;
-    int done;
     char msgbuf[900];
     long filepos;
     int j;
@@ -4211,7 +4210,7 @@ void frm_error(FILE * open_file, long begin_frm)
         i = (int) strlen(msgbuf);
         fseek(open_file, errors[j].start_pos, SEEK_SET);
         statement_len = token_count = 0;
-        done = 0;
+        bool done = false;
         while (!done)
         {
             filepos = ftell(open_file);
@@ -4234,7 +4233,7 @@ void frm_error(FILE * open_file, long begin_frm)
                         && (tok.token_id == 0 || tok.token_id == 11))
                     || (tok.token_type == NOT_A_TOKEN && tok.token_id == END_OF_FILE))
             {
-                done = 1;
+                done = true;
                 if (token_count > 1 && !initialization_error)
                 {
                     token_count--;
