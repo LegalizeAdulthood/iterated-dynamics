@@ -507,11 +507,10 @@ win32_buzzer(Driver *drv, int kind)
     MessageBeep(MB_OK);
 }
 
-int
-win32_sound_on(Driver *drv, int freq)
+bool win32_sound_on(Driver *drv, int freq)
 {
     ODS1("win32_sound_on %d", freq);
-    return 0;
+    return false;
 }
 
 void

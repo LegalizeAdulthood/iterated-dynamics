@@ -87,7 +87,7 @@ struct tagDriver
     /* sound routines */
     int (*init_fm)(Driver *drv);
     void (*buzzer)(Driver *drv, int kind);
-    int (*sound_on)(Driver *drv, int frequency);
+    bool (*sound_on)(Driver *drv, int frequency);
     void (*sound_off)(Driver *drv);
     void (*mute)(Driver *drv);
 
@@ -228,7 +228,7 @@ extern void driver_unstack_screen(void);
 extern void driver_discard_screen(void);
 extern int driver_init_fm(void);
 extern void driver_buzzer(int kind);
-extern int driver_sound_on(int frequency);
+extern bool driver_sound_on(int frequency);
 extern void driver_sound_off(void);
 extern void driver_mute(void);
 extern bool driver_diskp(void);

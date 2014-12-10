@@ -2487,12 +2487,11 @@ x11_buzzer(Driver *drv, int kind)
     fprintf(stderr, "x11_buzzer(%d)\n", kind);
 }
 
-static int
-x11_sound_on(Driver *drv, int freq)
+static bool x11_sound_on(Driver *drv, int freq)
 {
     // TODO
     fprintf(stderr, "x11_sound_on(%d)\n", freq);
-    return 0;
+    return false;
 }
 
 static void

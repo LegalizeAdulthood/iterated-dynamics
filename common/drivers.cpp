@@ -249,8 +249,7 @@ driver_buzzer(int kind)
     (*g_driver->buzzer)(g_driver, kind);
 }
 
-int
-driver_sound_on(int freq)
+bool driver_sound_on(int freq)
 {
     return (*g_driver->sound_on)(g_driver, freq);
 }

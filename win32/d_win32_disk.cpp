@@ -844,11 +844,10 @@ disk_buzzer(Driver *drv, int kind)
     MessageBeep(MB_OK);
 }
 
-static int
-disk_sound_on(Driver *drv, int freq)
+static bool disk_sound_on(Driver *drv, int freq)
 {
     ODS1("disk_sound_on %d", freq);
-    return 0;
+    return false;
 }
 
 static void

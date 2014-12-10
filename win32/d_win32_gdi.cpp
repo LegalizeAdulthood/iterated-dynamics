@@ -839,11 +839,10 @@ gdi_buzzer(Driver *drv, int kind)
     MessageBeep(MB_OK);
 }
 
-static int
-gdi_sound_on(Driver *drv, int freq)
+static bool gdi_sound_on(Driver *drv, int freq)
 {
     ODS1("gdi_sound_on %d", freq);
-    return 0;
+    return false;
 }
 
 static void

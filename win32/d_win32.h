@@ -44,7 +44,7 @@ extern void win32_unstack_screen(Driver *drv);
 extern void win32_discard_screen(Driver *drv);
 extern int win32_init_fm(Driver *drv);
 extern void win32_buzzer(Driver *drv, int kind);
-extern int win32_sound_on(Driver *drv, int freq);
+extern bool win32_sound_on(Driver *drv, int freq);
 extern void win32_sound_off(Driver *drv);
 extern void win32_mute(Driver *drv);
 extern bool win32_diskp(Driver *drv);
