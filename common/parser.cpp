@@ -196,7 +196,7 @@ static int Delta16;
 double fgLimit;
 static double fg;
 static int ShiftBack;
-static int SetRandom;
+static bool SetRandom = false;
 static int Randomized;
 static unsigned long RandNum;
 bool uses_p1 = false;
@@ -408,7 +408,7 @@ void SetRandFnct(void)
 
     Seed = (unsigned)RandNum ^ (unsigned)(RandNum >> 16);
     srand(Seed);
-    SetRandom = 1;
+    SetRandom = true;
 
     /* Clear out the seed */
     NewRandNum();
@@ -2283,7 +2283,8 @@ static bool ParseStr(char *Str, int pass)
     double const_pi, const_e;
     double Xctr, Yctr, Xmagfactor, Rotation, Skew;
     LDBL Magnification;
-    SetRandom = Randomized = 0;
+    SetRandom = false;
+    Randomized = 0;
     uses_jump = 0;
     jump_index = 0;
     if (!typespecific_workarea)
