@@ -2246,7 +2246,7 @@ int ifs()                       /* front-end for ifs2d and ifs3d */
         return (-1);
     if (driver_diskp())                /* this would KILL a disk drive! */
         notdiskmsg();
-    return ((ifs_type == 0) ? ifs2d() : ifs3d());
+    return !ifs_type ? ifs2d() : ifs3d();
 }
 
 

@@ -197,7 +197,7 @@ extern U16                   history;
 extern char                  IFSFileName[];
 extern char                  IFSName[];
 extern float *               ifs_defn;
-extern int                   ifs_type;
+extern bool                  ifs_type;
 extern int                   imgboxcount;
 extern U16                   imgboxhandle;
 extern char                  image_map;

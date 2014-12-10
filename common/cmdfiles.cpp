@@ -153,7 +153,7 @@ char IFSFileName[FILE_MAX_PATH] = { 0 };/* file to find (type=)IFS in */
 char IFSName[ITEMNAMELEN+1] = { 0 };    /* Name of the IFS def'n (if not null) */
 struct SearchPath searchfor = { 0 };
 float *ifs_defn = nullptr;              /* ifs parameters */
-int  ifs_type = 0;                      /* 0=2d, 1=3d */
+bool ifs_type = false;                  /* false=2d, true=3d */
 int  g_slides = SLIDES_OFF;             /* 1 autokey=play, 2 autokey=record */
 
 BYTE txtcolor[]= {

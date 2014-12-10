@@ -1289,7 +1289,7 @@ int ifsload()                   /* read in IFS parameters */
         ifs_defn = nullptr;
     }
 
-    ifs_type = 0;
+    ifs_type = false;
     rowsize = IFSPARM;
     if (find_file_item(IFSFileName,IFSName,&ifsfile, 3) < 0)
         return (-1);
@@ -1302,7 +1302,7 @@ int ifsload()                   /* read in IFS parameters */
     bufptr = &buf[0];
     while (*bufptr) {
         if (strncmp(bufptr,"(3d)",4) == 0) {
-            ifs_type = 1;
+            ifs_type = true;
             rowsize = IFS3DPARM;
         }
         ++bufptr;
