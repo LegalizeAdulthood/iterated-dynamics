@@ -3751,10 +3751,11 @@ int frm_get_param_stuff(char * Name)
 static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
 {
     long filepos = ftell(open_file);
-    int c, i, at_end_of_name;
+    int c, i;
+    bool at_end_of_name = false;
 
     /* first, test name */
-    at_end_of_name = i = 0;
+    i = 0;
     bool done = false;
     while (!done)
     {
@@ -3770,7 +3771,7 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
             return false;
         case ' ':
         case '\t':
-            at_end_of_name = 1;
+            at_end_of_name = true;
             break;
         case '(':
         case '{':
