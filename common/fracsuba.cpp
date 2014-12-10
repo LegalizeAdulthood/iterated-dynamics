@@ -12,7 +12,7 @@ int asmlMODbailout(void)
     if (lmagnitud >= llimit || lmagnitud < 0 || labs(lnew.x) > llimit2
             || labs(lnew.y) > llimit2 || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     lold = lnew;
@@ -25,7 +25,7 @@ int asmlREALbailout(void)
     ltempsqry = lsqr(lnew.y);
     if (ltempsqrx >= llimit || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     lold = lnew;
@@ -38,7 +38,7 @@ int asmlIMAGbailout(void)
     ltempsqry = lsqr(lnew.y);
     if (ltempsqry >= llimit || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     lold = lnew;
@@ -51,7 +51,7 @@ int asmlORbailout(void)
     ltempsqry = lsqr(lnew.y);
     if (ltempsqrx >= llimit || ltempsqry >= llimit || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     lold = lnew;
@@ -64,7 +64,7 @@ int asmlANDbailout(void)
     ltempsqry = lsqr(lnew.y);
     if ((ltempsqrx >= llimit && ltempsqry >= llimit) || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     lold = lnew;
@@ -105,7 +105,7 @@ int asm386lMODbailout(void)
     if (lmagnitud >= llimit || lmagnitud < 0 || labs(lnew.x) > llimit2
             || labs(lnew.y) > llimit2 || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     lold = lnew;
@@ -118,7 +118,7 @@ int asm386lREALbailout(void)
     ltempsqry = lsqr(lnew.y);
     if (ltempsqrx >= llimit || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     lold = lnew;
@@ -131,7 +131,7 @@ int asm386lIMAGbailout(void)
     ltempsqry = lsqr(lnew.y);
     if (ltempsqry >= llimit || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     lold = lnew;
@@ -144,7 +144,7 @@ int asm386lORbailout(void)
     ltempsqry = lsqr(lnew.y);
     if (ltempsqrx >= llimit || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     lold = lnew;
@@ -157,7 +157,7 @@ int asm386lANDbailout(void)
     ltempsqry = lsqr(lnew.y);
     if ((ltempsqrx >= llimit && ltempsqry >= llimit) || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     lold = lnew;
@@ -226,7 +226,7 @@ int asmfpMODbailout(void)
     if (magnitude > rqlim || magnitude < 0.0 || fabs(g_new.x) > rqlim2 ||
             fabs(g_new.y) > rqlim2 || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     old = g_new;
@@ -267,7 +267,7 @@ int asmfpREALbailout(void)
     tempsqry = sqr(g_new.y);
     if (tempsqrx >= rqlim || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     old = g_new;
@@ -308,7 +308,7 @@ int asmfpIMAGbailout(void)
     tempsqry = sqr(g_new.y);
     if (tempsqry >= rqlim || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     old = g_new;
@@ -356,7 +356,7 @@ int asmfpORbailout(void)
     tempsqry = sqr(g_new.y);
     if (tempsqrx >= rqlim || tempsqry >= rqlim || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     old = g_new;
@@ -406,7 +406,7 @@ int asmfpANDbailout(void)
     tempsqry = sqr(g_new.y);
     if ((tempsqrx >= rqlim && tempsqry >= rqlim) || overflow)
     {
-        overflow = 0;
+        overflow = false;
         return 1;
     }
     old = g_new;

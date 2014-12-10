@@ -349,7 +349,7 @@ extern float                 originfp;
 extern int                 (*outln)(BYTE *, int);
 extern void                (*outln_cleanup)(void);
 extern int                   outside;
-extern int                   overflow;
+extern bool                  overflow;
 extern bool                  overlay3d;
 extern bool                  fract_overwrite;
 extern double                ox3rd;

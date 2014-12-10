@@ -168,7 +168,7 @@ void check_samename(void)
 static void my_floating_point_err(int sig)
 {
     if (sig != 0)
-        overflow = 1;
+        overflow = true;
 }
 
 /*
@@ -176,7 +176,7 @@ static void my_floating_point_err(int sig)
 */
 void initasmvars(void)
 {
-    overflow = 0;
+    overflow = false;
 }
 
 int main(int argc, char **argv)

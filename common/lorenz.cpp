@@ -1522,7 +1522,7 @@ int orbit2dlong()
         row = (int)((multiply(cvt.c, x, bitshift) + multiply(cvt.d, y, bitshift) + cvt.f) >> bitshift);
         if (overflow)
         {
-            overflow = 0;
+            overflow = false;
             return ret;
         }
         if (col >= 0 && col < xdots && row >= 0 && row < ydots)

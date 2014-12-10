@@ -234,13 +234,13 @@ int Lsystem(void)
     if ((!loaded) && LLoad())
         return -1;
 
-    overflow = 0;                /* reset integer math overflow flag */
+    overflow = false;           /* reset integer math overflow flag */
 
     order=(int)param[0];
     if (order<=0)
         order=0;
     if (usr_floatflag)
-        overflow = 1;
+        overflow = true;
     else {
         struct lsys_turtlestatei ts;
 
@@ -278,7 +278,7 @@ int Lsystem(void)
     else if (overflow) {
         struct lsys_turtlestatef ts;
 
-        overflow = 0;
+        overflow = false;
 
         ts.stackoflow = 0;
         ts.maxangle = maxangle;
@@ -306,7 +306,7 @@ int Lsystem(void)
             drawLSysF(rules2[0], &ts, &rules2[1], order);
             lsys_donefpu(&ts);
         }
-        overflow = 0;
+        overflow = false;
     }
     free_rules_mem();
     free_lcmds();

@@ -267,7 +267,7 @@ long multiply(long x, long y, int n)
     long l = (long)(((float) x) * ((float) y)/(float)(1 << n));
     if (l == 0x7fffffff)
     {
-        overflow = 1;
+        overflow = true;
     }
     return l;
 }
@@ -1878,7 +1878,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
         magnitude = lmagnitud = 0;
         min_orbit = 100000.0;
     }
-    overflow = 0;                /* reset integer math overflow flag */
+    overflow = false;           /* reset integer math overflow flag */
 
     curfractalspecific->per_pixel(); /* initialize the calculations */
 

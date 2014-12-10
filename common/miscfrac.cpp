@@ -874,7 +874,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
     else
         Population = (parm.y == 0) ? SEED : parm.y;
 
-    overflow = FALSE;
+    overflow = false;
 
     for (counter=0 ; counter < filter_cycles ; counter++)
     {
@@ -1206,7 +1206,7 @@ int lyapunov() {
     if (driver_key_pressed()) {
         return -1;
     }
-    overflow=FALSE;
+    overflow = false;
     if (param[1]==1) Population = (1.0+rand())/(2.0+RAND_MAX);
     else if (param[1]==0) {
         if (fabs(Population)>BIG || Population==0 || Population==1)
@@ -1328,7 +1328,7 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
         for (count=0; count<lyaLength; count++) {
             Rate = lyaRxy[count] ? a : b;
             if (curfractalspecific->orbitcalc()) {
-                overflow = TRUE;
+                overflow = true;
                 goto jumpout;
             }
         }
@@ -1337,13 +1337,13 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
         for (count = 0; count < lyaLength; count++) {
             Rate = lyaRxy[count] ? a : b;
             if (curfractalspecific->orbitcalc()) {
-                overflow = TRUE;
+                overflow = true;
                 goto jumpout;
             }
             temp = fabs(Rate-2.0*Rate*Population);
             total *= temp;
             if (total==0) {
-                overflow = TRUE;
+                overflow = true;
                 goto jumpout;
             }
         }

@@ -212,7 +212,7 @@ unsigned int chars_in_formula;
 #define ChkLongDenom(denom)                                 \
     if ((denom == 0 || overflow) && save_release > 1920)    \
     {                                                       \
-        overflow = 1;                                       \
+        overflow = true;                                    \
         return;                                             \
     }                                                       \
     else if (denom == 0)                                    \
@@ -223,7 +223,7 @@ unsigned int chars_in_formula;
     if (fabs(denom) <= DBL_MIN)                             \
     {                                                       \
         if (save_release > 1920)                            \
-            overflow = 1;                                   \
+            overflow = true;                                \
         return;                                             \
     }
 
@@ -356,7 +356,7 @@ static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
         Arg1->l.y = (long)(Arg1->d.y * fg);
     }
     else
-        overflow = 1;
+        overflow = true;
 }
 
 #endif
@@ -947,7 +947,7 @@ void lStkMod(void)
     Arg1->l.x = multiply(Arg1->l.x, Arg1->l.x, bitshift) +
                 multiply(Arg1->l.y, Arg1->l.y, bitshift);
     if (Arg1->l.x < 0)
-        overflow = 1;
+        overflow = true;
     Arg1->l.y = 0L;
 }
 
@@ -956,7 +956,7 @@ void lStkModOld(void)
     Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) +
                 multiply(Arg2->l.y, Arg1->l.y, bitshift);
     if (Arg1->l.x < 0)
-        overflow = 1;
+        overflow = true;
     Arg1->l.y = 0L;
 }
 #endif
@@ -1222,7 +1222,7 @@ void mStkRecip(void)
     mod = *MPadd(*MPmul(Arg1->m.x, Arg1->m.x),*MPmul(Arg1->m.y, Arg1->m.y));
     if (mod.Mant == 0L)
     {
-        overflow = 1;
+        overflow = true;
         return;
     }
     Arg1->m.x = *MPdiv(Arg1->m.x,mod);
@@ -1837,7 +1837,7 @@ void lStkPwr(void)
         Arg2->l.y = (long)(x.y * fg);
     }
     else
-        overflow = 1;
+        overflow = true;
     Arg1--;
     Arg2--;
 }
@@ -2855,7 +2855,8 @@ int form_per_pixel(void)
 {
     if (FormName[0] == 0)
         return 1;
-    overflow = LodPtr = StoPtr = OpPtr = jump_index = 0;
+    overflow = false;
+    LodPtr = StoPtr = OpPtr = jump_index = 0;
     Arg1 = &s[0];
     Arg2 = Arg1;
     Arg2--;

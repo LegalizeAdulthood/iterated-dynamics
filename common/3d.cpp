@@ -262,7 +262,7 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
     /* bitshift: fixed point conversion bitshift */
     LVECTOR tmp;
     int i,j, k;
-    overflow = 0;
+    overflow = false;
     k = CMAX-1;                  /* shorten the math if non-perspective and non-illum */
     if (lview[2] == 0 && t0[0] == 0) k--;
 
@@ -317,7 +317,7 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
     t[0] = tmp[0];
     t[1] = tmp[1];
     t[2] = tmp[2];
-    return overflow;
+    return overflow ? 1 : 0;
 }
 
 /* Long version of perspective. Because of use of fixed point math, there
@@ -351,14 +351,14 @@ longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
 
     /* z coordinate if needed           */
     /* lv[2] = divide(lview[2],denom);  */
-    return overflow;
+    return overflow ? 1 : 0;
 }
 
 int longvmult(LVECTOR s,LMATRIX m,LVECTOR t,int bitshift)
 {
     LVECTOR tmp;
     int i,j, k;
-    overflow = 0;
+    overflow = false;
     k = CMAX-1;
 
     for (j=0; j<k; j++)
@@ -375,5 +375,5 @@ int longvmult(LVECTOR s,LMATRIX m,LVECTOR t,int bitshift)
     t[0] = tmp[0];
     t[1] = tmp[1];
     t[2] = tmp[2];
-    return overflow;
+    return overflow ? 1 : 0;
 }

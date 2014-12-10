@@ -67,7 +67,7 @@ std::vector<MPC> MPCroots;
 long FgHalf;
 DComplex pwr;
 int     bitshiftless1;                  /* bit shift less 1 */
-int overflow = 0;
+bool overflow = false;
 
 #define modulus(z)       (sqr((z).x)+sqr((z).y))
 #define conjugate(pz)   ((pz)->y = 0.0 - (pz)->y)
@@ -336,12 +336,12 @@ int
 lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
 {
     if (exp<0) {
-        overflow = lcpower(base,-exp,result,bitshift);
+        overflow = lcpower(base,-exp,result,bitshift) != 0;
         LCMPLXrecip(*result,*result);
-        return overflow;
+        return overflow ? 1 : 0;
     }
 
-    overflow = 0;
+    overflow = false;
     lxt = base->x;
     lyt = base->y;
 
@@ -374,7 +374,7 @@ lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
         exp >>= 1;
     }
     if (result->x == 0 && result->y == 0)
-        overflow = 1;
+        overflow = true;
     return overflow;
 }
 #endif
@@ -965,7 +965,7 @@ longCmplxZpowerFractal(void)
         lnew.y = (long)(x.y * fudge);
     }
     else
-        overflow = 1;
+        overflow = true;
     lnew.x += longparm->x;
     lnew.y += longparm->y;
     return longbailout();
@@ -1300,11 +1300,12 @@ PopcornFractalFn(void)
     return 0;
 }
 
-#define FIX_OVERFLOW(arg) if (overflow)  \
-   { \
-      (arg).x = fudge;\
-      (arg).y = 0;\
-      overflow = 0;\
+#define FIX_OVERFLOW(arg)   \
+    if (overflow)           \
+    {                       \
+        (arg).x = fudge;    \
+        (arg).y = 0;        \
+        overflow = false;   \
    }
 
 int
@@ -1313,7 +1314,7 @@ LPopcornFractalFn(void)
 #if !defined(XFRACT)
     LComplex ltmpx, ltmpy;
 
-    overflow = 0;
+    overflow = false;
 
     /* ltmpx contains the generalized value of the old real "x" equation */
     LCMPLXtimesreal(lparm2,lold.y,ltmp); /* tmp = (C * old.y)         */
@@ -1996,7 +1997,7 @@ TrigXTrigfpFractal(void)
 /* call float version of fractal if integer math overflow */
 static int TryFloatFractal(int (*fpFractal)(void))
 {
-    overflow=0;
+    overflow = false;
     /* lold had better not be changed! */
     old.x = lold.x;
     old.x /= fudge;
@@ -2132,7 +2133,7 @@ TrigZsqrdFractal(void) /* this doesn't work very well */
     LCMPLXsqr_old(ltmp);
     if ((labs(ltmp.x) > l16triglim_2 || labs(ltmp.y) > l16triglim_2) &&
             save_release > 1900)
-        overflow = 1;
+        overflow = true;
     else
     {
         LCMPLXtrig0(ltmp,lnew);

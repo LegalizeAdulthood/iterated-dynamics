@@ -138,10 +138,17 @@ extern void (*dtrig3)(void);
     (out).x = multiply((arg).x,(real),bitshift);\
     (out).y = multiply((arg).y,(real),bitshift)
 
-#define LCMPLXrecip(arg,out)    \
-{ long denom; denom = lsqr((arg).x) + lsqr((arg).y);\
-if(denom==0L) overflow=1; else {(out).x = divide((arg).x,denom,bitshift);\
-(out).y = -divide((arg).y,denom,bitshift);}}
+#define LCMPLXrecip(arg,out)                            \
+    {                                                   \
+        long denom = lsqr((arg).x) + lsqr((arg).y);     \
+        if (denom==0L)                                  \
+            overflow = true;                            \
+        else                                            \
+        {                                               \
+            (out).x = divide((arg).x,denom,bitshift);   \
+            (out).y = -divide((arg).y,denom,bitshift);  \
+        }                                               \
+    }
 #endif /* XFRACT */
 
 #define CMPLXsin(arg,out)    Arg1->d = (arg); dStkSin();  (out) = Arg1->d
