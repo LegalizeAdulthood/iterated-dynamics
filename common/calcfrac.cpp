@@ -183,7 +183,7 @@ static int maxblock = 0;
 static int halfblock = 0;
 static bool guessplot = false;          /* paint 1st pass row at a time?   */
 static bool right_guess = false;
-static int bottom_guess = 0;
+static bool bottom_guess = false;
 #define maxyblk 7    /* maxxblk*maxyblk*2 <= 4096, the size of "prefix" */
 #define maxxblk 202  /* each maxnblk is oversize by 2 for a "border" */
 /* maxxblk defn must match fracsubr.c */
@@ -3091,7 +3091,7 @@ static int solidguess(void)
     /* there seems to be a bug in solid guessing at bottom and side */
     if (debugflag != 472)
     {
-        bottom_guess = 0;
+        bottom_guess = false;
         right_guess = false;
     }
 
@@ -3170,7 +3170,7 @@ static int solidguess(void)
         if (!right_guess)       /* no right edge guessing, zap border */
             for (y=0; y<=ylim; ++y)
                 tprefix[1][y][xlim]= 0xffff;
-        if (bottom_guess==0) /* no bottom edge guessing, zap border */
+        if (!bottom_guess)      /* no bottom edge guessing, zap border */
         {
             i=(iystop+maxblock)/maxblock+1;
             y=i/16+1;
@@ -3271,7 +3271,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
     c31=c21=getcolor(ixstart,(y>0)?ylesshalf:0);
     if (yplusblock<=iystop)
         c24=getcolor(ixstart,yplusblock);
-    else if (bottom_guess==0)
+    else if (!bottom_guess)
         c24= -1;
     guessed12=guessed13=0;
 
@@ -3310,14 +3310,14 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         else if (!right_guess)
             c41=c42=c44= -1;
         if (yplusblock>iystop)
-            c44=(bottom_guess)?c42:-1;
+            c44 = bottom_guess ? c42 : -1;
 
         /* guess or calc the remaining 3 quarters of current block */
         guessed23=guessed32=guessed33=1;
         c23=c32=c33=c22;
         if (yplushalf>iystop)
         {
-            if (bottom_guess==0)
+            if (!bottom_guess)
                 c23=c33= -1;
             guessed23=guessed33= -1;
             guessed13=0;
