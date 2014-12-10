@@ -1383,12 +1383,7 @@ bn_t atan2_bn(bn_t r, bn_t ny, bn_t nx)
     return r;
 }
 
-
-/**********************************************************************/
-/* Tim's miscellaneous stuff follows                                  */
-
-/**********************************************************************/
-int is_bn_zero(bn_t n)
+bool is_bn_zero(bn_t n)
 {
     return !is_bn_not_zero(n);
 }

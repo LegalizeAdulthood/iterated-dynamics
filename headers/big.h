@@ -182,7 +182,7 @@ extern bn_t atan_bn(bn_t r, bn_t n);
 extern bn_t atan2_bn(bn_t r, bn_t ny, bn_t nx);
 
 /* misc */
-extern int is_bn_zero(bn_t n);
+extern bool is_bn_zero(bn_t n);
 extern bn_t floattobn(bn_t r, LDBL f);
 
 /************/
