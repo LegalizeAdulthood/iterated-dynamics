@@ -160,7 +160,7 @@ VOIDPTR typespecific_workarea = nullptr;
 static double dem_delta = 0.0;
 static double dem_width = 0.0;          /* distance estimator variables */
 static double dem_toobig = 0.0;
-static int dem_mandel = 0;
+static bool dem_mandel = false;
 #define DEM_BAILOUT 535.5
 
 /* variables which must be visible for tab_display */
@@ -955,9 +955,9 @@ static void perform_worklist()
                 rqlim = DEM_BAILOUT;
         if (curfractalspecific->tojulia != NOFRACTAL || use_old_distest
                 || fractype == FORMULA || fractype == FFORMULA)
-            dem_mandel = 1; /* must be mandel type, formula, or old PAR/GIF */
+            dem_mandel = true;  /* must be mandel type, formula, or old PAR/GIF */
         else
-            dem_mandel = 0;
+            dem_mandel = false;
         dem_delta = sqr(delxx) + sqr(delyy2);
         if ((ftemp = sqr(delyy) + sqr(delxx2)) > dem_delta)
             dem_delta = ftemp;
