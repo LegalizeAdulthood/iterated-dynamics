@@ -44,7 +44,8 @@ struct lsys_turtlestatei {
 };
 
 struct lsys_turtlestatef {
-    char counter, angle, reverse, stackoflow;
+    char counter, angle, reverse;
+    bool stackoflow;
     /* dmaxangle is maxangle - 1 */
     char maxangle, dmaxangle, curcolor, dummy;  /* dummy ensures longword alignment */
     LDBL size;

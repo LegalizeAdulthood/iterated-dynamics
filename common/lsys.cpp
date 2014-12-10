@@ -632,7 +632,7 @@ static struct lsys_cmd *
 findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
 {
     struct lsys_cmd **rulind;
-    int tran;
+    bool tran;
 
     if (overflow)     /* integer math routines overflowed */
         return nullptr;
@@ -650,11 +650,11 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd
                 return nullptr;
             }
         }
-        tran=0;
+        tran = false;
         if (depth) {
             for (rulind=rules; *rulind; rulind++)
                 if ((*rulind)->ch==command->ch) {
-                    tran=1;
+                    tran = true;
                     if (findsize((*rulind)+1,ts,rules,depth-1) == nullptr)
                         return (nullptr);
                 }
@@ -750,7 +750,7 @@ static struct lsys_cmd *
 drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd **rules,int depth)
 {
     struct lsys_cmd **rulind;
-    int tran;
+    bool tran;
 
     if (overflow)     /* integer math routines overflowed */
         return nullptr;
@@ -768,16 +768,16 @@ drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd
                 return nullptr;
             }
         }
-        tran=0;
+        tran = false;
         if (depth) {
             for (rulind=rules; *rulind; rulind++)
                 if ((*rulind)->ch == command->ch) {
-                    tran=1;
+                    tran = true;
                     if (drawLSysI((*rulind)+1,ts,rules,depth-1) == nullptr)
                         return nullptr;
                 }
         }
-        if (!depth||!tran) {
+        if (!depth || !tran) {
             if (command->f) {
                 ts->num = command->n;
                 (*command->f)(ts);
