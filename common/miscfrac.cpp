@@ -22,10 +22,9 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 static void set_Plasma_palette(void);
 static U16 adjust(int xa,int ya,int x,int y,int xb,int yb);
 static void subDivide(int x1,int y1,int x2,int y2);
-static int new_subD(int x1,int y1,int x2,int y2, int recur);
 static void verhulst(void);
 static void Bif_Period_Init(void);
-static int  Bif_Periodic(long);
+static bool Bif_Periodic(long time);
 static void set_Cellular_palette(void);
 
 U16(*getpix)(int,int)  = (U16(*)(int,int))getcolor;
@@ -165,7 +164,7 @@ static U16 adjust(int xa,int ya,int x,int y,int xb,int yb)
 }
 
 
-static int new_subD(int x1,int y1,int x2,int y2, int recur)
+static bool new_subD(int x1, int y1, int x2, int y2, int recur)
 {
     int x,y;
     int nx1;
@@ -173,7 +172,8 @@ static int new_subD(int x1,int y1,int x2,int y2, int recur)
     int ny1, ny;
     S32 i, v;
 
-    struct sub {
+    struct sub
+    {
         BYTE t; /* top of stack */
         int v[16]; /* subdivided value */
         BYTE r[16];  /* recursion level */
@@ -181,12 +181,6 @@ static int new_subD(int x1,int y1,int x2,int y2, int recur)
 
     static struct sub subx, suby;
 
-    /*
-    recur1=1;
-    for (i=1;i<=recur;i++)
-       recur1 = recur1 * 2;
-    recur1=320/recur1;
-    */
     recur1 = (int)(320L >> recur);
     suby.t = 2;
     ny   = suby.v[0] = y2;
@@ -201,7 +195,7 @@ static int new_subD(int x1,int y1,int x2,int y2, int recur)
             if (driver_key_pressed())
             {
                 plasma_check--;
-                return (1);
+                return true;
             }
         while (suby.r[suby.t-1] < (BYTE)recur)
         {
@@ -267,7 +261,7 @@ static int new_subD(int x1,int y1,int x2,int y2, int recur)
 
         if (suby.r[suby.t-1] == (BYTE)recur) suby.t = (BYTE)(suby.t - 2);
     }
-    return (0);
+    return false;
 }
 
 static void subDivide(int x1,int y1,int x2,int y2)
@@ -892,7 +886,8 @@ static void verhulst()          /* P. F. Verhulst (1845) */
             {
                 return;
             }
-            if (periodicitycheck && Bif_Periodic(counter)) break;
+            if (periodicitycheck && Bif_Periodic(counter))
+                break;
         }
         if (counter >= (unsigned long)maxit)   /* if not periodic, go the distance */
         {
@@ -952,13 +947,16 @@ static void Bif_Period_Init()
     }
 }
 
-static int Bif_Periodic(long time)   /* Bifurcation Population Periodicity Check */
-/* Returns : 1 if periodicity found, else 0 */
+/* Bifurcation Population Periodicity Check */
+/* Returns : true if periodicity found, else false */
+static bool Bif_Periodic(long time)
 {
     if ((time & Bif_savedand) == 0)      /* time to save a new value */
     {
-        if (integerfractal) lBif_savedpop = lPopulation;
-        else                   Bif_savedpop =  Population;
+        if (integerfractal)
+            lBif_savedpop = lPopulation;
+        else
+            Bif_savedpop =  Population;
         if (--Bif_savedinc == 0)
         {
             Bif_savedand = (Bif_savedand << 1) + 1;
@@ -970,15 +968,15 @@ static int Bif_Periodic(long time)   /* Bifurcation Population Periodicity Check
         if (integerfractal)
         {
             if (labs(lBif_savedpop-lPopulation) <= lBif_closenuf)
-                return (1);
+                return true;
         }
         else
         {
             if (fabs(Bif_savedpop-Population) <= Bif_closenuf)
-                return (1);
+                return true;
         }
     }
-    return (0);
+    return false;
 }
 
 /**********************************************************************/
