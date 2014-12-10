@@ -43,7 +43,7 @@ static int H_R(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned lo
 static int line3dmem(void);
 static int R_H(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
 static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
-bool startdisk1(char *File_Name2, FILE *Source, int overlay);
+bool startdisk1(char *File_Name2, FILE *Source, bool overlay);
 static void set_upr_lwr(void);
 static int end_object(int);
 static int offscreen(struct point);
@@ -1365,7 +1365,7 @@ static void File_Error(char *File_Name1, int ERROR)
 /*                                                                      */
 /* **********************************************************************/
 
-bool startdisk1(char *File_Name2, FILE *Source, int overlay)
+bool startdisk1(char *File_Name2, FILE *Source, bool overlay)
 {
     int i, j, k, inc;
     FILE *fps;
@@ -1375,7 +1375,7 @@ bool startdisk1(char *File_Name2, FILE *Source, int overlay)
     if (fps == nullptr)
     {
         File_Error(File_Name2, 1);
-        return -1;              /* Oops, somethings wrong! */
+        return true;              /* Oops, somethings wrong! */
     }
 
     inc = 1;                     /* Assume we are overlaying a file */
@@ -1435,19 +1435,19 @@ bool startdisk1(char *File_Name2, FILE *Source, int overlay)
                 fclose(Source);
             dir_remove(workdir,File_Name2);
             File_Error(File_Name2, 2);
-            return -2;
+            return true;
         }
         if (driver_key_pressed())
-            return -3;
+            return true;
     }
 
     if (targa_startdisk(fps, T_header_24) != 0)
     {
         enddisk();
         dir_remove(workdir,File_Name2);
-        return -4;
+        return true;
     }
-    return 0;
+    return false;
 }
 
 bool targa_validate(char *File_Name)
@@ -1506,7 +1506,7 @@ bool targa_validate(char *File_Name)
     rewind(fp);
 
     /* Now that we know its a good file, create a working copy */
-    if (startdisk1(targa_temp, fp, 1))
+    if (startdisk1(targa_temp, fp, true))
         return true;
 
     fclose(fp);                  /* Close the source */
@@ -2079,7 +2079,7 @@ static int first_time(int linelen, VECTOR v)
         else
         {
             check_writefile(light_name, ".tga");
-            if (startdisk1(light_name, nullptr, 0))   /* Open new file */
+            if (startdisk1(light_name, nullptr, false))   /* Open new file */
                 return -1;
         }
     }

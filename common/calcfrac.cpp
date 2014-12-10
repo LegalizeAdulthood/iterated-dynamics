@@ -568,7 +568,7 @@ int calcfract(void)
     if (truecolor)
     {
         check_writefile(light_name, ".tga");
-        if (!startdisk1(light_name,nullptr,0))
+        if (!startdisk1(light_name, nullptr, false))
         {
             /* Have to force passes=1 */
             usr_stdcalcmode = stdcalcmode = '1';
