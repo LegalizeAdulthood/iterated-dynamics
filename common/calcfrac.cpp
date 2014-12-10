@@ -37,7 +37,7 @@ static void step_col_row(void);
 static int  solidguess(void);
 static bool guessrow(bool firstpass, int y, int blocksize);
 static void plotblock(int,int,int,int);
-static void setsymmetry(int,int);
+static void setsymmetry(int sym, bool uselist);
 static bool xsym_split(int xaxis_row, bool xaxis_between);
 static bool ysym_split(int yaxis_col, bool yaxis_between);
 static void puttruecolor_disk(int,int,int);
@@ -780,7 +780,7 @@ int calcfract(void)
             /* next two lines in case periodicity changed */
             closenuff = ddelmin*pow(2.0,-(double)(abs(periodicitycheck)));
             lclosenuff = (long)(closenuff * fudge); /* "close enough" value */
-            setsymmetry(symmetry,0);
+            setsymmetry(symmetry, false);
             timer(0,calctype); /* non-standard fractal engine */
         }
         if (check_key())
@@ -1083,7 +1083,7 @@ static void perform_worklist()
         lclosenuff = (long)(closenuff * fudge); /* "close enough" value */
         kbdcount=max_kbdcount;
 
-        setsymmetry(symmetry,1);
+        setsymmetry(symmetry, true);
 
         if (!resuming && (labs(LogFlag) ==2 || (LogFlag && Log_Auto_Calc)))
         {   /* calculate round screen edges to work out best start for logmap */
@@ -3587,7 +3587,7 @@ static bool ysym_split(int yaxis_col, bool yaxis_between)
     return false; /* tell set_symmetry its a go */
 }
 
-static void setsymmetry(int sym, int uselist) /* set up proper symmetrical plot functions */
+static void setsymmetry(int sym, bool uselist) /* set up proper symmetrical plot functions */
 {
     int i;
     int parmszero, parmsnoreal, parmsnoimag;
@@ -3687,7 +3687,7 @@ static void setsymmetry(int sym, int uselist) /* set up proper symmetrical plot 
         ftemp += 0.25;
         xaxis_row = (int)ftemp;
         xaxis_between = (ftemp - xaxis_row >= 0.5);
-        if (uselist == 0 && (!xaxis_between || (xaxis_row+1)*2 != ydots))
+        if (!uselist && (!xaxis_between || (xaxis_row+1)*2 != ydots))
             xaxis_row = -1; /* can't split screen, so dead center or not at all */
     }
     if (yaxis_on_screen) /* axis is on screen */
@@ -3706,7 +3706,7 @@ static void setsymmetry(int sym, int uselist) /* set up proper symmetrical plot 
         ftemp += 0.25;
         yaxis_col = (int)ftemp;
         yaxis_between = (ftemp - yaxis_col >= 0.5);
-        if (uselist == 0 && (!yaxis_between || (yaxis_col+1)*2 != xdots))
+        if (!uselist && (!yaxis_between || (yaxis_col+1)*2 != xdots))
             yaxis_col = -1; /* can't split screen, so dead center or not at all */
     }
     switch (sym)       /* symmetry switch */
