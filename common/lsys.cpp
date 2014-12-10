@@ -15,7 +15,7 @@ struct lsys_cmd {
     char ch;
 };
 
-static int readLSystemFile(char *);
+static bool readLSystemFile(char *str);
 static void free_rules_mem(void);
 static int rule_present(char symbol);
 static int save_rule(char *,char **);
@@ -105,7 +105,7 @@ LDBL getnumber(char **str)
     return ret;
 }
 
-static int readLSystemFile(char *str)
+static bool readLSystemFile(char *str)
 {
     int c;
     char **rulind;
@@ -117,9 +117,10 @@ static int readLSystemFile(char *str)
     char msgbuf[481]; /* enough for 6 full lines */
 
     if (find_file_item(LFileName,str,&infile, 2) < 0)
-        return -1;
+        return true;
     while ((c = fgetc(infile)) != '{')
-        if (c == EOF) return -1;
+        if (c == EOF)
+            return true;
     maxangle=0;
     for (linenum=0; linenum<MAXRULES; ++linenum) ruleptrs[linenum]=nullptr;
     rulind= &ruleptrs[1];
@@ -219,10 +220,10 @@ static int readLSystemFile(char *str)
     {
         msgbuf[strlen(msgbuf)-1]=0; /* strip trailing \n */
         stopmsg(0,msgbuf);
-        return -1;
+        return true;
     }
     *rulind=nullptr;
-    return 0;
+    return false;
 }
 
 int Lsystem(void)
