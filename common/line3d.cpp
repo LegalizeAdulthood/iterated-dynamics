@@ -101,7 +101,7 @@ static int evenoddrow;
 static float *sinthetaarray;    /* all sine thetas go here  */
 static float *costhetaarray;    /* all cosine thetas go here */
 static double rXrscale;     /* precalculation factor */
-static int persp;  /* flag for indicating perspective transformations */
+static bool persp = false;      /* flag for indicating perspective transformations */
 static struct point p1, p2, p3;
 static struct f_point f_bad;/* out of range value */
 static struct point bad;    /* out of range value */
@@ -2158,10 +2158,10 @@ static int first_time(int linelen, VECTOR v)
     /* perspective 3D vector - lview[2] == 0 means no perspective */
 
     /* set perspective flag */
-    persp = 0;
+    persp = false;
     if (ZVIEWER != 0)
     {
-        persp = 1;
+        persp = true;
         if (ZVIEWER < 80)         /* force float */
             usr_floatflag |= 2;    /* turn on second bit */
     }
