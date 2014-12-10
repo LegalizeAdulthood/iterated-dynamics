@@ -1063,7 +1063,7 @@ rhombus_done:
 void soi_ldbl(void)
 {
     // cppcheck-suppress unreadVariable
-    int status;
+    bool status;
     DBLS tolerance=0.1;
     DBLS stepx, stepy;
     DBLS xxminl, xxmaxl, yyminl, yymaxl;
