@@ -303,7 +303,7 @@ extern void close_snd(void);
 
 /*  fractalp -- C file prototypes */
 
-extern int typehasparm(int,int,char *);
+extern bool typehasparm(int type, int parm, char *buf);
 extern bool paramnotused(int);
 
 /*  fractals -- C file prototypes */

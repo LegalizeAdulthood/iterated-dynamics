@@ -3839,7 +3839,8 @@ originsym:
 
 /**************** tesseral method by CJLT begins here*********************/
 
-struct tess { /* one of these per box to be done gets stacked */
+struct tess             /* one of these per box to be done gets stacked */
+{
     int x1,x2,y1,y2;      /* left/right top/bottom x/y coords  */
     int top,bot,lft,rgt;  /* edge colors, -1 mixed, -2 unknown */
 };

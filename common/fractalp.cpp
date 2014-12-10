@@ -2312,11 +2312,11 @@ bool paramnotused(int parm)
  *  Pass in nullptr for buf if only the existence of the parameter is
  *  needed, and not the prompt string.
  */
-int typehasparm(int type,int parm,char *buf)
+bool typehasparm(int type, int parm, char *buf)
 {
     const char *ret = nullptr;
     if (0 <= parm && parm < 4)
-        ret=fractalspecific[type].param[parm];
+        ret = fractalspecific[type].param[parm];
     else if (parm >= 4 && parm < MAXPARAMS)
     {
         int const extra = find_extra_param(type);
@@ -2335,5 +2335,5 @@ int typehasparm(int type,int parm,char *buf)
 
     if (ret && buf != nullptr)
         strcpy(buf,ret);
-    return (ret?1:0);
+    return ret != nullptr;
 }
