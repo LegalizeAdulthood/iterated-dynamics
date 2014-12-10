@@ -4466,9 +4466,6 @@ int frm_prescan(FILE * open_file)
     unsigned long waiting_for_mod = 0;
     int waiting_for_endif = 0;
     int max_parens = sizeof(long) * 8;
-    /* char debugmsg[800];
-       stopmsg (0, "Entering prescan");
-    */
 
     disable_fastparser = 0;
     must_use_float     = 0;
@@ -5320,23 +5317,14 @@ int frm_prescan(FILE * open_file)
     }
     if (errors[0].start_pos)
     {
-        /*    sprintf (debugmsg, "Errors structure on entering frm_error\n 0: %ld, %ld, %d\n1: %ld, %ld, %d\n2: %ld, %ld, %d\n\n",
-                  errors[0].start_pos, errors[0].error_pos, errors[0].error_number,
-                  errors[1].start_pos, errors[1].error_pos, errors[1].error_number,
-                  errors[2].start_pos, errors[2].error_pos, errors[2].error_number);
-              stopmsg (0, debugmsg);
-        */    frm_error(open_file, orig_pos);
+        frm_error(open_file, orig_pos);
         fseek(open_file, orig_pos, SEEK_SET);
         return 0;
     }
     fseek(open_file, orig_pos, SEEK_SET);
 
-    /*   display_var_list();
-       display_const_lists();
-    */   count_lists();
+    count_lists();
 
-    /* sprintf(debugmsg, "Chars in formula per prescan() is %u.\n", chars_in_formula);
-       stopmsg(0, debugmsg);
-    */ return 1;
+    return 1;
 }
 
