@@ -1313,7 +1313,7 @@ void reset_clock(void)
 static FILE *snd_fp = nullptr;
 
 /* open sound file */
-int snd_open(void)
+bool snd_open(void)
 {
     static char soundname[] = {"sound001.txt"};
     if ((orbitsave&2) != 0 && snd_fp == nullptr)

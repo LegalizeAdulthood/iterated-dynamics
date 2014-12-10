@@ -296,7 +296,7 @@ extern void adjust_cornerbf(void);
 extern void set_grid_pointers(void);
 extern void fill_dx_array(void);
 extern void fill_lx_array(void);
-extern int snd_open(void);
+extern bool snd_open(void);
 extern void w_snd(int);
 extern void snd_time_write(void);
 extern void close_snd(void);
