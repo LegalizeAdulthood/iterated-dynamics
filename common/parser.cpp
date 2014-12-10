@@ -3744,11 +3744,11 @@ int frm_get_param_stuff(char * Name)
 }
 
 /* frm_check_name_and_sym():
-     error checking to the open brace on the first line; return 1
-     on success, 2 if an invalid symmetry is found, and 0 if errors
-     are found which should cause the formula not to be executed
+     error checking to the open brace on the first line; return true
+     on success, and false if errors are found which should cause the
+     formula not to be executed
 */
-static int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
+static bool frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
 {
     long filepos = ftell(open_file);
     int c, i, at_end_of_name;
@@ -3763,11 +3763,11 @@ static int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
         case EOF:
         case '\032':
             stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
-            return 0;
+            return false;
         case '\r':
         case '\n':
             stopmsg(0,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
-            return 0;
+            return false;
         case ' ':
         case '\t':
             at_end_of_name = 1;
@@ -3795,7 +3795,7 @@ static int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
             msgbuf[j+k+2] = (char) getc(open_file);
         msgbuf[j+k+2] = (char) 0;
         stopmsg(STOPMSG_FIXED_FONT, msgbuf);
-        return 0;
+        return false;
     }
     /* get symmetry */
     symmetry = 0;
@@ -3811,14 +3811,14 @@ static int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
             case EOF:
             case '\032':
                 stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
-                return 0;
+                return false;
             case '\r':
             case '\n':
                 stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
-                return 0;
+                return false;
             case '{':
                 stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
-                return 0;
+                return false;
             case ' ':
             case '\t':
                 break;
@@ -3858,11 +3858,11 @@ static int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
             case EOF:
             case '\032':
                 stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_UNEXPECTED_EOF));
-                return 0;
+                return false;
             case '\r':
             case '\n':
                 stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
-                return 0;
+                return false;
             case '{':
                 done = true;
                 break;
@@ -3871,7 +3871,7 @@ static int frm_check_name_and_sym(FILE * open_file, int report_bad_sym)
             }
         }
     }
-    return 1;
+    return true;
 }
 
 
