@@ -3593,7 +3593,8 @@ static void setsymmetry(int sym, bool uselist) /* set up proper symmetrical plot
     int xaxis_row, yaxis_col;           /* pixel number for origin */
     bool xaxis_between = false;
     bool yaxis_between = false;         /* if axis between 2 pixels, not on one */
-    int xaxis_on_screen=0, yaxis_on_screen=0;
+    bool xaxis_on_screen = false;
+    bool yaxis_on_screen = false;
     double ftemp;
     bf_t bft1;
     int saved=0;
