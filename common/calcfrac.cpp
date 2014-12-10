@@ -182,7 +182,7 @@ bool three_pass = false;
 static int maxblock = 0;
 static int halfblock = 0;
 static bool guessplot = false;          /* paint 1st pass row at a time?   */
-static int right_guess = 0;
+static bool right_guess = false;
 static int bottom_guess = 0;
 #define maxyblk 7    /* maxxblk*maxyblk*2 <= 4096, the size of "prefix" */
 #define maxxblk 202  /* each maxnblk is oversize by 2 for a "border" */
@@ -3090,7 +3090,10 @@ static int solidguess(void)
 
     /* there seems to be a bug in solid guessing at bottom and side */
     if (debugflag != 472)
-        bottom_guess = right_guess = 0;
+    {
+        bottom_guess = 0;
+        right_guess = false;
+    }
 
     i = maxblock = blocksize = ssg_blocksize();
     totpasses = 1;
@@ -3164,7 +3167,7 @@ static int solidguess(void)
         /* calculate skip flags for skippable blocks */
         xlim=(ixstop+maxblock)/maxblock+1;
         ylim=((iystop+maxblock)/maxblock+15)/16+1;
-        if (right_guess==0) /* no right edge guessing, zap border */
+        if (!right_guess)       /* no right edge guessing, zap border */
             for (y=0; y<=ylim; ++y)
                 tprefix[1][y][xlim]= 0xffff;
         if (bottom_guess==0) /* no bottom edge guessing, zap border */
@@ -3292,7 +3295,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         xplusblock=(xplushalf=x+halfblock)+halfblock;
         if (xplushalf>ixstop)
         {
-            if (right_guess==0)
+            if (!right_guess)
                 c31= -1;
         }
         else if (y>0)
@@ -3304,7 +3307,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             c41=getcolor(xplusblock,(y>0)?ylesshalf:0);
             c42=getcolor(xplusblock,y);
         }
-        else if (right_guess==0)
+        else if (!right_guess)
             c41=c42=c44= -1;
         if (yplusblock>iystop)
             c44=(bottom_guess)?c42:-1;
@@ -3321,7 +3324,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         }
         if (xplushalf>ixstop)
         {
-            if (right_guess==0)
+            if (!right_guess)
                 c32=c33= -1;
             guessed32=guessed33= -1;
         }
