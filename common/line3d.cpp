@@ -51,7 +51,7 @@ static int out_triangle(struct f_point, struct f_point, struct f_point, int, int
 static int RAY_Header(void);
 static int start_object(void);
 static void draw_light_box(double *, double *, MATRIX);
-static void draw_rect(VECTOR, VECTOR, VECTOR, VECTOR, int, int);
+static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, bool rect);
 static void File_Error(char *, int);
 static void line3d_cleanup(void);
 static void clipcolor(int, int, int);
@@ -910,12 +910,12 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
                 S[j][i][1] += yyadjust;
             }
 
-        draw_rect(S[0][0], S[0][1], S[0][2], S[0][3], 2, 1);      /* Bottom */
+        draw_rect(S[0][0], S[0][1], S[0][2], S[0][3], 2, true);      /* Bottom */
 
-        draw_rect(S[0][0], S[1][0], S[0][1], S[1][1], 5, 0);      /* Sides */
-        draw_rect(S[0][2], S[1][2], S[0][3], S[1][3], 6, 0);
+        draw_rect(S[0][0], S[1][0], S[0][1], S[1][1], 5, false);      /* Sides */
+        draw_rect(S[0][2], S[1][2], S[0][3], S[1][3], 6, false);
 
-        draw_rect(S[1][0], S[1][1], S[1][2], S[1][3], 8, 1);      /* Top */
+        draw_rect(S[1][0], S[1][1], S[1][2], S[1][3], 8, true);      /* Top */
     }
 }
 
@@ -976,15 +976,15 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
     }
 
     /* draw box connecting transformed points. NOTE order and COLORS */
-    draw_rect(S[0][0], S[0][1], S[0][2], S[0][3], 2, 1);
+    draw_rect(S[0][0], S[0][1], S[0][2], S[0][3], 2, true);
 
     vdraw_line(S[0][0], S[1][2], 8);
 
     /* sides */
-    draw_rect(S[0][0], S[1][0], S[0][1], S[1][1], 4, 0);
-    draw_rect(S[0][2], S[1][2], S[0][3], S[1][3], 5, 0);
+    draw_rect(S[0][0], S[1][0], S[0][1], S[1][1], 4, false);
+    draw_rect(S[0][2], S[1][2], S[0][3], S[1][3], 5, false);
 
-    draw_rect(S[1][0], S[1][1], S[1][2], S[1][3], 3, 1);
+    draw_rect(S[1][0], S[1][1], S[1][2], S[1][3], 3, true);
 
     /* Draw the "arrow head" */
     for (i = -3; i < 4; i++)
@@ -993,7 +993,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
                 plot((int)(S[1][2][0] + i), (int)(S[1][2][1] + j), 10);
 }
 
-static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, int rect)
+static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, bool rect)
 {
     VECTOR V[4];
     int i;
