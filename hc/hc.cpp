@@ -2786,8 +2786,10 @@ void set_content_doc_page(void)
 }
 
 
-int pd_get_info(int cmd, PD_INFO *pd, int *info)
-{   /* this funtion also used by print_document() */
+/* this funtion also used by print_document() */
+int pd_get_info(int cmd, PD_INFO *pd, void *context)
+{
+    int *info = static_cast<int *>(context);
     CONTENT *c;
 
     switch (cmd)
@@ -2894,7 +2896,7 @@ void paginate_document(void)
     info.cnum = info.tnum = -1;
     info.link_dest_warn = 1;
 
-    process_document((PD_FUNC)pd_get_info, paginate_doc_output, &info);
+    process_document(pd_get_info, paginate_doc_output, &info);
 
     set_hot_link_doc_page();
     set_content_doc_page();
@@ -3299,8 +3301,9 @@ void printers(PRINT_DOC_INFO *info, const char *s, int n)
 }
 
 
-int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
+int print_doc_output(int cmd, PD_INFO *pd, void *context)
 {
+    PRINT_DOC_INFO *info = static_cast<PRINT_DOC_INFO *>(context);
     switch (cmd)
     {
     case PD_HEADING:
@@ -3373,7 +3376,7 @@ void print_document(const char *fname)
     info.start_of_line = 1;
     info.spaces = 0;
 
-    process_document((PD_FUNC)pd_get_info, (PD_FUNC)print_doc_output, &info);
+    process_document(pd_get_info, print_doc_output, &info);
 
     fclose(info.file);
 }
