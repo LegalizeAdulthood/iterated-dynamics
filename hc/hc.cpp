@@ -2836,8 +2836,9 @@ int pd_get_info(int cmd, PD_INFO *pd, int *info)
 }
 
 
-int paginate_doc_output(int cmd, PD_INFO *pd, PAGINATE_DOC_INFO *info)
+int paginate_doc_output(int cmd, PD_INFO *pd, void *context)
 {
+    PAGINATE_DOC_INFO *info = static_cast<PAGINATE_DOC_INFO *>(context);
     switch (cmd)
     {
     case PD_FOOTING:
@@ -2893,7 +2894,7 @@ void paginate_document(void)
     info.cnum = info.tnum = -1;
     info.link_dest_warn = 1;
 
-    process_document((PD_FUNC)pd_get_info, (PD_FUNC)paginate_doc_output, &info);
+    process_document((PD_FUNC)pd_get_info, paginate_doc_output, &info);
 
     set_hot_link_doc_page();
     set_content_doc_page();
