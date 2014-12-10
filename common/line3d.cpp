@@ -45,7 +45,7 @@ static int R_H(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long
 static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
 bool startdisk1(char *File_Name2, FILE *Source, bool overlay);
 static void set_upr_lwr(void);
-static int end_object(int);
+static int end_object(bool triout);
 static int offscreen(struct point);
 static int out_triangle(struct f_point, struct f_point, struct f_point, int, int, int);
 static int RAY_Header(void);
@@ -148,7 +148,6 @@ static struct point oldlast = { 0, 0, 0 }; /* old pixels */
 
 int line3d(BYTE * pixels, unsigned linelen)
 {
-    int tout;                    /* triangle has been sent to ray trace file */
     int RND;
     float f_water = (float)0.0;        /* transformed WATERLINE for ray trace files */
     double r0;
@@ -176,8 +175,7 @@ int line3d(BYTE * pixels, unsigned linelen)
 
     if (transparent[0] || transparent[1])
         plot = normalplot = T_clipcolor;  /* Use transparent plot function */
-    else                         /* Use the usual FRACTINT plot function with
-                                 * clipping */
+    else                         /* Use the usual FRACTINT plot function with clipping */
         plot = normalplot = clipcolor;
 
     currow = g_row_count;           /* use separate variable to allow for pot16bit files */
@@ -255,7 +253,7 @@ int line3d(BYTE * pixels, unsigned linelen)
 
     localpreviewfactor = ydots / previewfactor;
 
-    tout = 0;
+    bool tout = false;          /* triangle has been sent to ray trace file */
     /* Insure last line is drawn in preview and filltypes <0  */
     if ((RAY || preview || FILLTYPE < 0) && (currow != ydots - 1) &&
             (currow % localpreviewfactor) && /* Draw mod preview lines */
@@ -388,13 +386,11 @@ int line3d(BYTE * pixels, unsigned linelen)
                 v[0] = v[1] = v[2] = 0;  /* Why do we do this? */
             }
         }
-        else
-            /* non-sphere 3D */
+        else                            /* non-sphere 3D */
         {
             if (!usr_floatflag && !RAY)
             {
-                if (FILLTYPE >= 5)       /* flag to save vector before
-                                         * perspective */
+                if (FILLTYPE >= 5)       /* flag to save vector before perspective */
                     lv0[0] = 1;   /* in longvmultpersp calculation */
                 else
                     lv0[0] = 0;
@@ -509,7 +505,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     out_triangle(f_cur, f_old, f_lastrow[col],
                                  cur.color, old.color, lastrow[col].color);
 
-                tout = 1;
+                tout = true;
 
                 driver_draw_line(old.x, old.y, cur.x, cur.y, old.color);
                 driver_draw_line(old.x, old.y, lastrow[col].x,
@@ -529,8 +525,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     lastrow[next].x < (xdots - bad_check) &&
                     lastrow[next].y < (ydots - bad_check))
             {
-                /* Get rid of all the triangles in the plane at the base of
-                 * the object */
+                /* Get rid of all the triangles in the plane at the base of the object */
 
                 if (f_cur.color == f_water &&
                         f_lastrow[col].color == f_water &&
@@ -541,7 +536,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     out_triangle(f_cur, f_lastrow[col], f_lastrow[next],
                                  cur.color, lastrow[col].color, lastrow[next].color);
 
-                tout = 1;
+                tout = true;
 
                 driver_draw_line(lastrow[col].x, lastrow[col].y, cur.x, cur.y,
                                  cur.color);
@@ -586,8 +581,7 @@ int line3d(BYTE * pixels, unsigned linelen)
         case 1:                /* connect-a-dot */
             if ((old.x < xdots) && (col) &&
                     old.x > bad_check &&
-                    old.y > bad_check)      /* Don't draw from old to cur on col
-                                         * 0 */
+                    old.y > bad_check)      /* Don't draw from old to cur on col 0 */
                 driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             break;
 
@@ -763,8 +757,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 if (col == 1 && currow > 1)
                     putatriangle(lastrow[next], lastrow[col], cur, cur.color);
 
-                if (col < 2 || currow < 2)       /* don't have valid colors
-                                                 * yet */
+                if (col < 2 || currow < 2)       /* don't have valid colors yet */
                     break;
 
                 if (col < lastdot)
@@ -788,7 +781,7 @@ loopbottom:
                 /* if we're at the end of a row, close the object */
             {
                 end_object(tout);
-                tout = 0;
+                tout = false;
                 if (ferror(File_Ptr1))
                 {
                     fclose(File_Ptr1);
@@ -1917,7 +1910,7 @@ static int start_object(void)
 /*                                                                  */
 /********************************************************************/
 
-static int end_object(int triout)
+static int end_object(bool triout)
 {
     if (RAY == 7)
         return 0;
