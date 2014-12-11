@@ -727,7 +727,8 @@ get_evol_restart:
 
     fiddle_reduction = uvalues[++k].uval.dval;
 
-    if (!(uvalues[++k].uval.ch.val)) evolving = evolving + NOGROUT;
+    if (!(uvalues[++k].uval.ch.val))
+        evolving = evolving + NOGROUT;
 
     viewxdots = (sxdots / gridsz)-2;
     viewydots = (sydots / gridsz)-2;
@@ -746,7 +747,8 @@ get_evol_restart:
     if (evolving && !old_evolving)
         param_history(0); /* save old history */
 
-    if (!evolving && (evolving == old_evolving)) i = 0;
+    if (!evolving && (evolving == old_evolving))
+        i = 0;
 
     if (j==FIK_F6) {
         old_variations = get_variations();
@@ -857,7 +859,8 @@ int explore_check(void)
     GENEBASE gene[NUMGENES];
     MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
     for (i=0; i<NUMGENES && !(nonrandom); i++)
-        if ((gene[i].mutate > 0) && (gene[i].mutate < 5)) nonrandom = TRUE;
+        if ((gene[i].mutate > 0) && (gene[i].mutate < 5))
+            nonrandom = TRUE;
     return (nonrandom);
 }
 
@@ -867,7 +870,8 @@ void drawparmbox(int mode)
     /* clears boxes off screen if mode=1, otherwise, redraws boxes */
     struct coords tl,tr,bl,br;
     int grout;
-    if (!(evolving & PARMBOX)) return; /* don't draw if not asked to! */
+    if (!(evolving & PARMBOX))
+        return; /* don't draw if not asked to! */
     grout = !((evolving & NOGROUT)/NOGROUT) ;
     imgboxcount = boxcount;
     if (boxcount) {
@@ -966,22 +970,26 @@ void spiralmap(int count)
         py = (mid - offset);
         for (px = (mid - offset)+1; px <mid+offset; px++) {
             i++;
-            if (i==count) return;
+            if (i==count)
+                return;
         }
         /* then do the right hand column */
         for (; py < mid + offset; py++) {
             i++;
-            if (i == count) return;
+            if (i == count)
+                return;
         }
         /* then reverse along the bottom row */
         for (; px > mid - offset; px--) {
             i++;
-            if (i == count) return;
+            if (i == count)
+                return;
         }
         /* then up the left to finish */
         for (; py >= mid - offset; py--) {
             i++;
-            if (i== count) return;
+            if (i== count)
+                return;
         }
     }
 }

@@ -263,7 +263,8 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
     int i,j, k;
     overflow = false;
     k = CMAX-1;                  /* shorten the math if non-perspective and non-illum */
-    if (lview[2] == 0 && t0[0] == 0) k--;
+    if (lview[2] == 0 && t0[0] == 0)
+        k--;
 
     for (j=0; j<k; j++)
     {

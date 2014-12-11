@@ -47,9 +47,11 @@ FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
     FILE *fp;
 
     strcpy(filename, fname);
-    if (has_ext(filename) == nullptr) strcat(filename, ".TGA");
+    if (has_ext(filename) == nullptr)
+        strcat(filename, ".TGA");
     fp = fopen(filename, READMODE);
-    if (fp == nullptr) return nullptr;
+    if (fp == nullptr)
+        return nullptr;
 
     fread(header, HEADERSIZE, 1, fp);
     if ((header[O_FILETYPE] != T_RLERGB) || (header[O_ESIZE] != 16)) {
@@ -58,7 +60,8 @@ FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
     }
     GET16(header[O_HSIZE], *hs);
     GET16(header[O_VSIZE], *vs);
-    if ((*csize = header[O_COMMENTLEN]) != 0) fread(cp, *csize, 1, fp);
+    if ((*csize = header[O_COMMENTLEN]) != 0)
+        fread(cp, *csize, 1, fp);
 
     state = count = bufp = 0;
     return fp;
@@ -82,8 +85,10 @@ int t16_getline(FILE *fp, int hs, U16 *data)
             }
         }
         GET16(rlebuf[bufp], data[i]);
-        if (--count == 0) state = 0;
-        if (state == 2) bufp += 2;
+        if (--count == 0)
+            state = 0;
+        if (state == 2)
+            bufp += 2;
     }
     return 0;
 }

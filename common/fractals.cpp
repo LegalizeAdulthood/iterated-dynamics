@@ -144,7 +144,8 @@ int  fpMODbailout(void)
     tempsqrx=sqr(g_new.x);
     tempsqry=sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
-    if (magnitude >= rqlim) return 1;
+    if (magnitude >= rqlim)
+        return 1;
     old = g_new;
     return 0;
 }
@@ -154,7 +155,8 @@ int  fpREALbailout(void)
     tempsqrx=sqr(g_new.x);
     tempsqry=sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
-    if (tempsqrx >= rqlim) return 1;
+    if (tempsqrx >= rqlim)
+        return 1;
     old = g_new;
     return 0;
 }
@@ -164,7 +166,8 @@ int  fpIMAGbailout(void)
     tempsqrx=sqr(g_new.x);
     tempsqry=sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
-    if (tempsqry >= rqlim) return 1;
+    if (tempsqry >= rqlim)
+        return 1;
     old = g_new;
     return 0;
 }
@@ -174,7 +177,8 @@ int  fpORbailout(void)
     tempsqrx=sqr(g_new.x);
     tempsqry=sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
-    if (tempsqrx >= rqlim || tempsqry >= rqlim) return 1;
+    if (tempsqrx >= rqlim || tempsqry >= rqlim)
+        return 1;
     old = g_new;
     return 0;
 }
@@ -184,7 +188,8 @@ int  fpANDbailout(void)
     tempsqrx=sqr(g_new.x);
     tempsqry=sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
-    if (tempsqrx >= rqlim && tempsqry >= rqlim) return 1;
+    if (tempsqrx >= rqlim && tempsqry >= rqlim)
+        return 1;
     old = g_new;
     return 0;
 }
@@ -196,7 +201,8 @@ int  fpMANHbailout(void)
     tempsqry=sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     manhmag = fabs(g_new.x) + fabs(g_new.y);
-    if ((manhmag * manhmag) >= rqlim) return 1;
+    if ((manhmag * manhmag) >= rqlim)
+        return 1;
     old = g_new;
     return 0;
 }
@@ -208,55 +214,71 @@ int  fpMANRbailout(void)
     tempsqry=sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     manrmag = g_new.x + g_new.y; /* don't need abs() since we square it next */
-    if ((manrmag * manrmag) >= rqlim) return 1;
+    if ((manrmag * manrmag) >= rqlim)
+        return 1;
     old = g_new;
     return 0;
 }
 
 #define FLOATTRIGBAILOUT()  \
-   if (fabs(old.y) >= rqlim2) return 1;
+    if (fabs(old.y) >= rqlim2) \
+        return 1;
 
 #define LONGTRIGBAILOUT()  \
-   if (labs(lold.y) >= llimit2) { return 1;}
+    if (labs(lold.y) >= llimit2) { \
+        return 1; \
+    }
 
 #define LONGXYTRIGBAILOUT()  \
-   if (labs(lold.x) >= llimit2 || labs(lold.y) >= llimit2)\
+    if (labs(lold.x) >= llimit2 || labs(lold.y) >= llimit2)\
         { return 1;}
 
 #define FLOATXYTRIGBAILOUT()  \
-   if (fabs(old.x) >= rqlim2 || fabs(old.y) >= rqlim2) return 1;
+    if (fabs(old.x) >= rqlim2 || fabs(old.y) >= rqlim2) \
+        return 1;
 
 #define FLOATHTRIGBAILOUT()  \
-   if (fabs(old.x) >= rqlim2) return 1;
+    if (fabs(old.x) >= rqlim2) \
+        return 1;
 
 #define LONGHTRIGBAILOUT()  \
-   if (labs(lold.x) >= llimit2) { return 1;}
+    if (labs(lold.x) >= llimit2) { \
+        return 1; \
+    }
 
 #define TRIG16CHECK(X)  \
-      if (labs((X)) > l16triglim) { return 1;}
+    if (labs((X)) > l16triglim) { \
+        return 1; \
+    }
 
 #define OLD_FLOATEXPBAILOUT()  \
-   if (fabs(old.y) >= 1.0e8) return 1;\
-   if (fabs(old.x) >= 6.4e2) return 1;
+    if (fabs(old.y) >= 1.0e8) \
+        return 1;\
+    if (fabs(old.x) >= 6.4e2) \
+        return 1;
 
 #define FLOATEXPBAILOUT()  \
-   if (fabs(old.y) >= 1.0e3) return 1;\
-   if (fabs(old.x) >= 8) return 1;
+    if (fabs(old.y) >= 1.0e3) \
+        return 1;\
+    if (fabs(old.x) >= 8) \
+        return 1;
 
 #define LONGEXPBAILOUT()  \
-   if (labs(lold.y) >= (1000L<<bitshift)) return 1;\
-   if (labs(lold.x) >=    (8L<<bitshift)) return 1;
+    if (labs(lold.y) >= (1000L<<bitshift)) \
+        return 1;\
+    if (labs(lold.x) >=    (8L<<bitshift)) \
+        return 1;
 
 #define LTRIGARG(X)    \
-   if (labs((X)) > l16triglim)\
-   {\
-      double tmp;\
-      tmp = (X);\
-      tmp /= fudge;\
-      tmp = fmod(tmp,twopi);\
-      tmp *= fudge;\
-      (X) = (long)tmp;\
-   }\
+    if (labs((X)) > l16triglim)\
+    {\
+        double tmp;\
+        tmp = (X);\
+        tmp /= fudge;\
+        tmp = fmod(tmp,twopi);\
+        tmp *= fudge;\
+        (X) = (long)tmp;\
+    }\
 
 static int  Halleybailout(void)
 {
@@ -744,7 +766,8 @@ LambdaexponentFractal(void)
     }
     FPUsincos(&old.y,&siny,&cosy);
 
-    if (old.x >= rqlim && cosy >= 0.0) return 1;
+    if (old.x >= rqlim && cosy >= 0.0)
+        return 1;
     tmpexp = exp(old.x);
     tmp.x = tmpexp*cosy;
     tmp.y = tmpexp*siny;
@@ -765,7 +788,8 @@ LongLambdaexponentFractal(void)
 
     SinCos086(lold.y, &lsiny,  &lcosy);
 
-    if (lold.x >= llimit && lcosy >= 0L) return 1;
+    if (lold.x >= llimit && lcosy >= 0L)
+        return 1;
     longtmp = Exp086(lold.x);
 
     ltmp.x = multiply(longtmp,      lcosy,   bitshift);
@@ -788,7 +812,8 @@ FloatTrigPlusExponentFractal(void)
     /* another Scientific American biomorph type */
     /* z(n+1) = e**z(n) + trig(z(n)) + C */
 
-    if (fabs(old.x) >= 6.4e2) return 1; /* DOMAIN errors */
+    if (fabs(old.x) >= 6.4e2)
+        return 1; /* DOMAIN errors */
     tmpexp = exp(old.x);
     FPUsincos(&old.y,&siny,&cosy);
     CMPLXtrig0(old,g_new);
@@ -900,7 +925,8 @@ Mandel4Fractal(void)
 #if !defined(XFRACT)
     lnew.x  = ltempsqrx - ltempsqry;
     lnew.y = multiply(lold.x, lold.y, bitshiftless1);
-    if (longbailout()) return 1;
+    if (longbailout())
+        return 1;
 
     /* then, compute ((x + iy)**2)**2 + lambda */
     lnew.x  = ltempsqrx - ltempsqry + longparm->x;
@@ -917,7 +943,8 @@ Mandel4fpFractal(void)
     /* first, compute (x + iy)**2 */
     g_new.x  = tempsqrx - tempsqry;
     g_new.y = old.x*old.y*2;
-    if (floatbailout()) return 1;
+    if (floatbailout())
+        return 1;
 
     /* then, compute ((x + iy)**2)**2 + lambda */
     g_new.x  = tempsqrx - tempsqry + floatparm->x;
@@ -1140,7 +1167,8 @@ PopcornFractal_Old(void)
         /* FLOATBAILOUT(); */
         tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    if ((magnitude = tempsqrx + tempsqry) >= rqlim) return 1;
+    if ((magnitude = tempsqrx + tempsqry) >= rqlim)
+        return 1;
     old = g_new;
     return 0;
 }
@@ -2182,7 +2210,8 @@ Magnet1Fractal(void)    /*    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2    */
     bot.y = old.y + old.y + floatparm->y;
 
     div = bot.x*bot.x + bot.y*bot.y;                /* tmp = top/bot  */
-    if (div < FLT_MIN) return 1;
+    if (div < FLT_MIN)
+        return 1;
     tmp.x = (top.x*bot.x + top.y*bot.y)/div;
     tmp.y = (top.y*bot.x - top.x*bot.y)/div;
 
@@ -2216,7 +2245,8 @@ Magnet2Fractal(void)  /* Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)  ) /      */
             + T_Cm1Cm2.y;
 
     div = bot.x*bot.x + bot.y*bot.y;                /* tmp = top/bot  */
-    if (div < FLT_MIN) return 1;
+    if (div < FLT_MIN)
+        return 1;
     tmp.x = (top.x*bot.x + top.y*bot.y)/div;
     tmp.y = (top.y*bot.x - top.x*bot.y)/div;
 
@@ -3164,7 +3194,8 @@ EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
         oldtest = newtest;
         testiter++;
     }
-    if (testsize > rqlim) return floatbailout(); /* point not in target set */
+    if (testsize > rqlim)
+        return floatbailout(); /* point not in target set */
     else /* make distinct level sets if point stayed in target set */
     {
         coloriter = ((3L * coloriter) % 255L) + 1L;
@@ -3223,10 +3254,14 @@ bool MandelbrotMix4Setup(void)
        First create a number encoding the signs of a, b, g , h. Our
        kludge assumes that those signs determine the behavior.
      */
-    if (A.x < 0.0) sign_array += 8;
-    if (B.x < 0.0) sign_array += 4;
-    if (G.x < 0.0) sign_array += 2;
-    if (H.x < 0.0) sign_array += 1;
+    if (A.x < 0.0)
+        sign_array += 8;
+    if (B.x < 0.0)
+        sign_array += 4;
+    if (G.x < 0.0)
+        sign_array += 2;
+    if (H.x < 0.0)
+        sign_array += 1;
     if (tmp.y == 0.0) /* we know tmp.y IS zero but ... */
     {
         switch (sign_array)

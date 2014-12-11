@@ -306,7 +306,8 @@ init_restart:
     else
         rqlim = curfractalspecific->orbit_bailout;
     if (integerfractal) /* the bailout limit mustn't be too high here */
-        if (rqlim > 127.0) rqlim = 127.0;
+        if (rqlim > 127.0)
+            rqlim = 127.0;
 
     if ((curfractalspecific->flags&NOROTATE) != 0) {
         /* ensure min<max and unrotated rectangle */
@@ -460,7 +461,8 @@ expand_retry:
                    by using the magnification.  */
                 if (++tries < 2) /* for safety */
                 {
-                    if (tries > 1) stopmsg(0, "precision-detection error");
+                    if (tries > 1)
+                        stopmsg(0, "precision-detection error");
                     /* Previously there were four tests of distortions in the
                        zoom box used to detect precision limitations. In some
                        cases of rotated/skewed zoom boxs, this causes the algorithm
@@ -548,8 +550,10 @@ expand_retry:
 
 static long fudgetolong(double d)
 {
-    if ((d *= fudge) > 0) d += 0.5;
-    else                  d -= 0.5;
+    if ((d *= fudge) > 0)
+        d += 0.5;
+    else
+        d -= 0.5;
     return (long)d;
 }
 
@@ -800,16 +804,20 @@ static void adjust_to_limitsbf(double expand)
 
     for (i=1; i<4; ++i) {
         /* if (cornerx[i] < lowx)               lowx  = cornerx[i]; */
-        if (cmp_bf(bcornerx[i],blowx) < 0)   copy_bf(blowx,bcornerx[i]);
+        if (cmp_bf(bcornerx[i],blowx) < 0)
+            copy_bf(blowx,bcornerx[i]);
 
         /* if (cornerx[i] > highx)              highx = cornerx[i]; */
-        if (cmp_bf(bcornerx[i],bhighx) > 0)  copy_bf(bhighx,bcornerx[i]);
+        if (cmp_bf(bcornerx[i],bhighx) > 0)
+            copy_bf(bhighx,bcornerx[i]);
 
         /* if (cornery[i] < lowy)               lowy  = cornery[i]; */
-        if (cmp_bf(bcornery[i],blowy) < 0)   copy_bf(blowy,bcornery[i]);
+        if (cmp_bf(bcornery[i],blowy) < 0)
+            copy_bf(blowy,bcornery[i]);
 
         /* if (cornery[i] > highy)              highy = cornery[i]; */
-        if (cmp_bf(bcornery[i],bhighy) > 0)  copy_bf(bhighy,bcornery[i]);
+        if (cmp_bf(bcornery[i],bhighy) > 0)
+            copy_bf(bhighy,bcornery[i]);
     }
 
     /* if image is too large, downsize it maintaining center */
@@ -817,7 +825,8 @@ static void adjust_to_limitsbf(double expand)
     sub_bf(bftemp,bhighx,blowx);
 
     /* if (highy-lowy > ftemp) ftemp = highy-lowy; */
-    if (cmp_bf(sub_bf(btmp1,bhighy,blowy),bftemp) > 0) copy_bf(bftemp,btmp1);
+    if (cmp_bf(sub_bf(btmp1,bhighy,blowy),bftemp) > 0)
+        copy_bf(bftemp,btmp1);
 
     /* if image is too large, downsize it maintaining center */
 
@@ -903,8 +912,10 @@ static void adjust_to_limits(double expand)
     if (integerfractal) {
         if (save_release > 1940) /* let user reproduce old GIF's and PAR's */
             limit = 1023.99;
-        if (bitshift >= 24) limit = 31.99;
-        if (bitshift >= 29) limit = 3.99;
+        if (bitshift >= 24)
+            limit = 31.99;
+        if (bitshift >= 29)
+            limit = 3.99;
     }
 
     centerx = (xxmin+xxmax)/2;
@@ -950,16 +961,21 @@ static void adjust_to_limits(double expand)
     lowy = highy = cornery[0];
 
     for (i=1; i<4; ++i) {
-        if (cornerx[i] < lowx)               lowx  = cornerx[i];
-        if (cornerx[i] > highx)              highx = cornerx[i];
-        if (cornery[i] < lowy)               lowy  = cornery[i];
-        if (cornery[i] > highy)              highy = cornery[i];
+        if (cornerx[i] < lowx)
+            lowx  = cornerx[i];
+        if (cornerx[i] > highx)
+            highx = cornerx[i];
+        if (cornery[i] < lowy)
+            lowy  = cornery[i];
+        if (cornery[i] > highy)
+            highy = cornery[i];
     }
 
     /* if image is too large, downsize it maintaining center */
     ftemp = highx-lowx;
 
-    if (highy-lowy > ftemp) ftemp = highy-lowy;
+    if (highy-lowy > ftemp)
+        ftemp = highy-lowy;
 
     /* if image is too large, downsize it maintaining center */
     if ((ftemp = limit*2/ftemp) < 1.0) {
@@ -1249,9 +1265,11 @@ void sleepms_old(long ms)
         ms /= 10;
         ftimex(&t1);
         while (1) {
-            if (driver_key_pressed()) break;
+            if (driver_key_pressed())
+                break;
             ftimex(&t2);
-            if ((long)((t2.time-t1.time)*1000 + t2.millitm-t1.millitm) >= ms) break;
+            if ((long)((t2.time-t1.time)*1000 + t2.millitm-t1.millitm) >= ms)
+                break;
         }
     }
     else if (!driver_key_pressed()) {
@@ -1269,7 +1287,8 @@ static void sleepms_new(long ms)
     uclock_t now = usec_clock();
     next_time = now + ms*100;
     while ((now = usec_clock()) < next_time)
-        if (driver_key_pressed()) break;
+        if (driver_key_pressed())
+            break;
 }
 
 void sleepms(long ms)
@@ -1294,7 +1313,8 @@ void wait_until(int index, uclock_t wait_time)
     {
         uclock_t now;
         while ((now = usec_clock()) < next_time[index])
-            if (driver_key_pressed()) break;
+            if (driver_key_pressed())
+                break;
         next_time[index] = now + wait_time*100; /* wait until this time next call */
     }
 }
@@ -1375,13 +1395,16 @@ static void plotdorbit(double dx, double dy, int color)
     int i;
     int j;
     int save_sxoffs,save_syoffs;
-    if (orbit_ptr >= 1500-3) return;
+    if (orbit_ptr >= 1500-3)
+        return;
     i = (int)(dy * plotmx1 - dx * plotmx2);
     i += sxoffs;
-    if (i < 0 || i >= sxdots) return;
+    if (i < 0 || i >= sxdots)
+        return;
     j = (int)(dx * plotmy1 - dy * plotmy2);
     j += syoffs;
-    if (j < 0 || j >= sydots) return;
+    if (j < 0 || j >= sydots)
+        return;
     save_sxoffs = sxoffs;
     save_syoffs = syoffs;
     sxoffs = syoffs = 0;

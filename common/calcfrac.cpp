@@ -548,7 +548,8 @@ int calctypeshowdot(void)
         }
     }
     showdotsaverestore(startx, stopx, starty, stopy, direction, SAVE);
-    if (orbit_delay > 0) sleepms(orbit_delay);
+    if (orbit_delay > 0)
+        sleepms(orbit_delay);
     out = (*calctypetmp)();
     showdotsaverestore(startx, stopx, starty, stopy, direction, RESTORE);
     return out;
@@ -607,7 +608,8 @@ int calcfract(void)
     }
     else {
         nextsavedincr = (int)log10(static_cast<double>(maxit)); /* works better than log() */
-        if (nextsavedincr < 4) nextsavedincr = 4; /* maintains image with low iterations */
+        if (nextsavedincr < 4)
+            nextsavedincr = 4; /* maintains image with low iterations */
         firstsavedand = (long)((nextsavedincr*2) + 1);
     }
 
@@ -675,7 +677,8 @@ int calcfract(void)
                     }
                 }
                 ++k;
-                if (altern != 32767) ++k;
+                if (altern != 32767)
+                    ++k;
             }
         }
         else
@@ -740,7 +743,8 @@ int calcfract(void)
         lparm2.x = (long)(parm2.x * fudge);  /* real portion of Lambda2 */
         lparm2.y = (long)(parm2.y * fudge);  /* imaginary portion of Lambda2 */
         llimit = (long)(rqlim * fudge);      /* stop if magnitude exceeds this */
-        if (llimit <= 0) llimit = 0x7fffffffL; /* klooge for integer math */
+        if (llimit <= 0)
+            llimit = 0x7fffffffL; /* klooge for integer math */
         llimit2 = (long)(rqlim2 * fudge);    /* stop if magnitude exceeds this */
         lclosenuff = (long)(closenuff * fudge); /* "close enough" value */
         l16triglim = 8L<<16;         /* domain limit of fast trig functions */
@@ -1580,7 +1584,8 @@ static int OneOrTwoPass(void)
     int i;
 
     totpasses = 1;
-    if (stdcalcmode == '2') totpasses = 2;
+    if (stdcalcmode == '2')
+        totpasses = 2;
     if (stdcalcmode == '2' && workpass == 0) /* do 1st pass of two */
     {
         if (StandardCalc(1) == -1)
@@ -2572,8 +2577,10 @@ static void decomposition(void)
         if (decomp[0] == 2 && save_release >= 1827)
         {
             save_temp = temp;
-            if (temp==2) save_temp = 3;
-            if (temp==3) save_temp = 2;
+            if (temp==2)
+                save_temp = 3;
+            else if (temp==3)
+                save_temp = 2;
         }
 
         if (decomp[0] >= 8)
@@ -2667,8 +2674,10 @@ static void decomposition(void)
         if (decomp[0] == 2 && save_release >= 1827)
         {
             save_temp = temp;
-            if (temp==2) save_temp = 3;
-            if (temp==3) save_temp = 2;
+            if (temp==2)
+                save_temp = 3;
+            else if (temp==3)
+                save_temp = 2;
         }
         if (decomp[0] >= 8)
         {
@@ -2743,8 +2752,10 @@ static void decomposition(void)
         temp >>= 1;
     }
     if (decomp[0] == 2 && save_release >= 1827) {
-        if (save_temp & 2) coloriter = 1;
-        else coloriter = 0;
+        if (save_temp & 2)
+            coloriter = 1;
+        else
+            coloriter = 0;
         if (colors == 2)
             coloriter++;
     }
@@ -3893,7 +3904,8 @@ static int tesseral(void)
                 tp2->x1 = mid;
             }
             else {                                   /* next divide across */
-                if (tp->y1 == cury && (tp->y2 - tp->y1 - 2) < ysize) break;
+                if (tp->y1 == cury && (tp->y2 - tp->y1 - 2) < ysize)
+                    break;
                 mid = (tp->y1 + tp->y2) >> 1;                /* Find mid point */
                 if (mid > cury) { /* stack bottom part */
                     memcpy(++tp,tp2,sizeof(*tp));
@@ -3935,12 +3947,14 @@ static int tesseral(void)
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1) { /* divide down the middle */
                 mid = (tp->x1 + tp->x2) >> 1;           /* Find mid point */
                 midcolor = tesscol(mid, tp->y1+1, tp->y2-1); /* Do mid column */
-                if (midcolor != tp->top) goto tess_split;
+                if (midcolor != tp->top)
+                    goto tess_split;
             }
             else {                              /* divide across the middle */
                 mid = (tp->y1 + tp->y2) >> 1;           /* Find mid point */
                 midcolor = tessrow(tp->x1+1, tp->x2-1, mid); /* Do mid row */
-                if (midcolor != tp->top) goto tess_split;
+                if (midcolor != tp->top)
+                    goto tess_split;
             }
         }
 
@@ -3988,10 +4002,13 @@ tess_split:
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1) { /* divide down the middle */
                 mid = (tp->x1 + tp->x2) >> 1;                /* Find mid point */
                 midcolor = tesscol(mid, tp->y1+1, tp->y2-1); /* Do mid column */
-                if (midcolor == -3) goto tess_end;
+                if (midcolor == -3)
+                    goto tess_end;
                 if (tp->x2 - mid > 1) {    /* right part >= 1 column */
-                    if (tp->top == -1) tp->top = -2;
-                    if (tp->bot == -1) tp->bot = -2;
+                    if (tp->top == -1)
+                        tp->top = -2;
+                    if (tp->bot == -1)
+                        tp->bot = -2;
                     tp2 = tp;
                     if (mid - tp->x1 > 1) { /* left part >= 1 col, stack right */
                         memcpy(++tp,tp2,sizeof(*tp));
@@ -4007,10 +4024,13 @@ tess_split:
             else {                                   /* divide across the middle */
                 mid = (tp->y1 + tp->y2) >> 1;                /* Find mid point */
                 midcolor = tessrow(tp->x1+1, tp->x2-1, mid); /* Do mid row */
-                if (midcolor == -3) goto tess_end;
+                if (midcolor == -3)
+                    goto tess_end;
                 if (tp->y2 - mid > 1) {    /* bottom part >= 1 column */
-                    if (tp->lft == -1) tp->lft = -2;
-                    if (tp->rgt == -1) tp->rgt = -2;
+                    if (tp->lft == -1)
+                        tp->lft = -2;
+                    if (tp->rgt == -1)
+                        tp->rgt = -2;
                     tp2 = tp;
                     if (mid - tp->y1 > 1) { /* top also >= 1 col, stack bottom */
                         memcpy(++tp,tp2,sizeof(*tp));
@@ -4054,7 +4074,8 @@ static int tesschkcol(int x,int y1,int y2)
     int i;
     i = getcolor(x,++y1);
     while (--y2 > y1)
-        if (getcolor(x,y2) != i) return -1;
+        if (getcolor(x,y2) != i)
+            return -1;
     return i;
 }
 
@@ -4063,7 +4084,8 @@ static int tesschkrow(int x1,int x2,int y)
     int i;
     i = getcolor(x1,y);
     while (x2 > x1) {
-        if (getcolor(x2,y) != i) return -1;
+        if (getcolor(x2,y) != i)
+            return -1;
         --x2;
     }
     return i;
@@ -4078,8 +4100,10 @@ static int tesscol(int x,int y1,int y2)
     colcolor = (*calctype)();
     reset_periodicity = false;
     while (++row <= y2) { /* generate the column */
-        if ((i = (*calctype)()) < 0) return -3;
-        if (i != colcolor) colcolor = -1;
+        if ((i = (*calctype)()) < 0)
+            return -3;
+        if (i != colcolor)
+            colcolor = -1;
     }
     return colcolor;
 }
@@ -4093,8 +4117,10 @@ static int tessrow(int x1,int x2,int y)
     rowcolor = (*calctype)();
     reset_periodicity = false;
     while (++col <= x2) { /* generate the row */
-        if ((i = (*calctype)()) < 0) return -3;
-        if (i != rowcolor) rowcolor = -1;
+        if ((i = (*calctype)()) < 0)
+            return -3;
+        if (i != rowcolor)
+            rowcolor = -1;
     }
     return rowcolor;
 }
@@ -4116,12 +4142,14 @@ static long autologmap(void)
     for (col=0; col<xstop; col++) /* top row */
     {
         color=(*calctype)();
-        if (color == -1) goto ack; /* key pressed, bailout */
+        if (color == -1)
+            goto ack; /* key pressed, bailout */
         if (realcoloriter < mincolour) {
             mincolour=realcoloriter ;
             maxit = std::max(2L,mincolour); /*speedup for when edges overlap lakes */
         }
-        if (col >=32)(*plot)(col-32,row,0);
+        if (col >=32)
+            (*plot)(col-32,row,0);
     }                                    /* these lines tidy up for BTM etc */
     for (lag=32; lag>0; lag--)(*plot)(col-lag,row,0);
 
@@ -4129,12 +4157,14 @@ static long autologmap(void)
     for (row=0; row<ystop; row++) /* right  side */
     {
         color=(*calctype)();
-        if (color == -1) goto ack; /* key pressed, bailout */
+        if (color == -1)
+            goto ack; /* key pressed, bailout */
         if (realcoloriter < mincolour) {
             mincolour=realcoloriter ;
             maxit = std::max(2L,mincolour); /*speedup for when edges overlap lakes */
         }
-        if (row >=32)(*plot)(col,row-32,0);
+        if (row >=32)
+            (*plot)(col,row-32,0);
     }
     for (lag=32; lag>0; lag--)(*plot)(col,row-lag,0);
 
@@ -4142,12 +4172,14 @@ static long autologmap(void)
     for (row=0; row<ystop; row++) /* left  side */
     {
         color=(*calctype)();
-        if (color == -1) goto ack; /* key pressed, bailout */
+        if (color == -1)
+            goto ack; /* key pressed, bailout */
         if (realcoloriter < mincolour) {
             mincolour=realcoloriter ;
             maxit = std::max(2L,mincolour); /*speedup for when edges overlap lakes */
         }
-        if (row >=32)(*plot)(col,row-32,0);
+        if (row >=32)
+            (*plot)(col,row-32,0);
     }
     for (lag=32; lag>0; lag--)(*plot)(col,row-lag,0);
 
@@ -4155,12 +4187,14 @@ static long autologmap(void)
     for (col=0; col<xstop; col++) /* bottom row */
     {
         color=(*calctype)();
-        if (color == -1) goto ack; /* key pressed, bailout */
+        if (color == -1)
+            goto ack; /* key pressed, bailout */
         if (realcoloriter < mincolour) {
             mincolour=realcoloriter ;
             maxit = std::max(2L,mincolour); /*speedup for when edges overlap lakes */
         }
-        if (col >=32)(*plot)(col-32,row,0);
+        if (col >=32)
+            (*plot)(col-32,row,0);
     }
     for (lag=32; lag>0; lag--)(*plot)(col-lag,row,0);
 
