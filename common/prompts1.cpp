@@ -48,7 +48,7 @@ static  void load_entry_text(FILE *entfile,char *buf,int maxlines, int startrow,
 static  void format_parmfile_line(int,char *);
 static  int get_light_params(void);
 static  bool check_mapfile(void);
-static  int get_funny_glasses_params(void);
+static  bool get_funny_glasses_params(void);
 
 #define GETFORMULA 0
 #define GETLSYS    1
@@ -2762,7 +2762,7 @@ static bool check_mapfile()
     return false;
 }
 
-static int get_funny_glasses_params()
+static bool get_funny_glasses_params()
 {
     const char *prompts3d[10];
 
@@ -2846,7 +2846,7 @@ static int get_funny_glasses_params()
     k = fullscreen_prompt("Funny Glasses Parameters",k+1,prompts3d,uvalues,0,nullptr);
     helpmode = oldhelpmode;
     if (k < 0)
-        return -1;
+        return true;
 
     k = 0;
     g_eye_separation   =  uvalues[k++].uval.ival;
@@ -2860,7 +2860,7 @@ static int get_funny_glasses_params()
 
     if (g_glasses_type == 1 || g_glasses_type == 2)
         strcpy(funnyglasses_map_name,uvalues[k].uval.sval);
-    return 0;
+    return false;
 }
 
 void setbailoutformula(enum bailouts test)
