@@ -332,7 +332,7 @@ restorestart:
                 hdg = "Select File to Restore";
                 helpmode = HELPSAVEREST;
             }
-            if (showfile < 0 && getafilename(hdg,gifmask,readname) < 0)
+            if (showfile < 0 && getafilename(hdg,gifmask,readname))
             {
                 showfile = 1;               /* cancelled */
                 g_init_mode = -1;

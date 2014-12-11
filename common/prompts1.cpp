@@ -1674,7 +1674,7 @@ long get_file_entry(int type, const char *title,char *fmask,
                 stopmsg(0,temp1);
             }
             sprintf(buf,"Select %s File",title);
-            if (getafilename(buf,fmask,filename) < 0)
+            if (getafilename(buf,fmask,filename))
                 return -1;
 
             firsttry = 1; /* if around open loop again it is an error */

@@ -452,7 +452,7 @@ int load_palette(void)
     strcpy(filename,MAP_name);
     driver_stack_screen();
     helpmode = HELPCOLORMAP;
-    i = getafilename("Select a MAP File",mapmask,filename);
+    i = getafilename("Select a MAP File",mapmask,filename) ? -1 : 0;
     driver_unstack_screen();
     if (i >= 0)
     {

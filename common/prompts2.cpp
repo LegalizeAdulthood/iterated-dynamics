@@ -1301,7 +1301,7 @@ int lccompare(VOIDPTR arg1, VOIDPTR arg2) /* for sort */
 
 
 static int speedstate;
-int getafilename(const char *hdg, const char *file_template, char *flname)
+bool getafilename(const char *hdg, const char *file_template, char *flname)
 {
     char user_file_template[FILE_MAX_PATH] = { 0 };
     int rds;  /* if getting an RDS image map */
@@ -1516,7 +1516,7 @@ retry_dir:
     {
         /* restore filename */
         strcpy(flname, old_flname);
-        return -1;
+        return true;
     }
     if (speedstr[0] == 0 || speedstate == MATCHING)
     {
@@ -1614,7 +1614,7 @@ retry_dir:
         }
     }
     makepath(browsename, "", "", fname, ext);
-    return 0;
+    return false;
 }
 
 /* choice is used by other routines called by fullscreen_choice() */
