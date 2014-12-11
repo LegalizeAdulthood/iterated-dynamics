@@ -140,7 +140,7 @@ driver_schedule_alarm(int soon)
 }
 
 METHOD_VOID(window)
-METHOD_INT(resize)
+METHOD(bool, resize)
 METHOD_VOID(redraw)
 METHOD_INT(read_palette)
 METHOD_INT(write_palette)

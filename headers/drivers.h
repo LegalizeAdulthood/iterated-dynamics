@@ -50,7 +50,7 @@ struct tagDriver
     /* resume this driver */            void (*resume)(Driver *drv);
     /* refresh alarm */                 void (*schedule_alarm)(Driver *drv, int secs);
     /* creates a window */              void (*window)(Driver *drv);
-    /* handles window resize.  */       int (*resize)(Driver *drv);
+    /* handles window resize.  */       bool (*resize)(Driver *drv);
     /* redraws the screen */            void (*redraw)(Driver *drv);
     /* read palette into g_dac_box */   int (*read_palette)(Driver *drv);
     /* write g_dac_box into palette */  int (*write_palette)(Driver *drv);
@@ -194,7 +194,7 @@ extern void driver_terminate(void);
 // pause and resume are only used internally in drivers.c
 extern void driver_schedule_alarm(int secs);
 extern void driver_window(void);
-extern int driver_resize(void);
+extern bool driver_resize(void);
 extern void driver_redraw(void);
 extern int driver_read_palette(void);
 extern int driver_write_palette(void);

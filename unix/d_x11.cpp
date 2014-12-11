@@ -194,7 +194,7 @@ static void x11_terminate(Driver *drv);
 static void x11_flush(Driver *drv);
 static int x11_write_palette(Driver *drv);
 static void x11_redraw(Driver *drv);
-static int x11_resize(Driver *drv);
+static bool x11_resize(Driver *drv);
 static void x11_set_for_graphics(Driver *drv);
 
 static const VIDEOINFO x11_info = {
@@ -1719,8 +1719,7 @@ x11_window(Driver *drv)
  *
  *----------------------------------------------------------------------
  */
-static int
-x11_resize(Driver *drv)
+static bool x11_resize(Driver *drv)
 {
     DIX11(drv);
     static int oldx = -1, oldy = -1;
@@ -1765,9 +1764,11 @@ x11_resize(Driver *drv)
             exit(-1);
         }
         clearXwindow(di);
-        return 1;
-    } else {
-        return 0;
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 

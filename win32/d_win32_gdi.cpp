@@ -353,7 +353,7 @@ gdi_init(Driver *drv, int *argc, char **argv)
  * Check if we need resizing.  If no, return 0.
  * If yes, resize internal buffers and return 1.
  */
-static int
+static bool
 gdi_resize(Driver *drv)
 {
     DI(di);
@@ -366,13 +366,13 @@ gdi_resize(Driver *drv)
             && (width == g_frame.width)
             && (height == g_frame.height))
     {
-        return 0;
+        return false;
     }
 
     frame_resize(width, height);
     plot_resize(&di->plot);
     center_windows(di, center_graphics_x, center_graphics_y);
-    return 1;
+    return true;
 }
 
 

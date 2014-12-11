@@ -287,7 +287,7 @@ disk_init(Driver *drv, int *argc, char **argv)
  * Check if we need resizing.  If no, return 0.
  * If yes, resize internal buffers and return 1.
  */
-static int
+static bool
 disk_resize(Driver *drv)
 {
     DI(di);
@@ -296,7 +296,7 @@ disk_resize(Driver *drv)
     if ((g_video_table[g_adapter].xdots == di->width)
             && (g_video_table[g_adapter].ydots == di->height))
     {
-        return 0;
+        return false;
     }
 
     if (g_disk_flag)
@@ -305,7 +305,7 @@ disk_resize(Driver *drv)
     }
     startdisk();
 
-    return !0;
+    return true;
 }
 
 
