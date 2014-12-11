@@ -531,7 +531,7 @@ resumeloop:
     return 0;
 }
 
-int check_key()
+bool check_key()
 {
     int key = driver_key_pressed();
     if (key != 0)
@@ -542,7 +542,7 @@ int check_key()
         }
         if (key != 'o' && key != 'O')
         {
-            return -1;
+            return true;
         }
         driver_get_key();
         if (!driver_diskp())
@@ -550,7 +550,7 @@ int check_key()
             show_orbit = !show_orbit;
         }
     }
-    return 0;
+    return false;
 }
 
 /* timer function:

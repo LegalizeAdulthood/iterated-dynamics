@@ -506,9 +506,6 @@ nextname:
     return 1;
 }
 
-/* ('check_key()' was moved to FRACTINT.C for MSC7-overlay speed purposes) */
-/* ('timer()'     was moved to FRACTINT.C for MSC7-overlay speed purposes) */
-
 BYTE trigndx[] = {SIN,SQR,SINH,COSH};
 #if !defined(XFRACT)
 void (*ltrig0)(void) = lStkSin;

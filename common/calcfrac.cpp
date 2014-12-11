@@ -3956,7 +3956,8 @@ static int tesseral(void)
                         for (row = tp->y1 + 1; row < tp->y2; row++) {
                             (*plot)(col,row,tp->top);
                             if (++i > 500) {
-                                if (check_key()) goto tess_end;
+                                if (check_key())
+                                    goto tess_end;
                                 i = 0;
                             }
                         }
@@ -3969,7 +3970,8 @@ static int tesseral(void)
                             if ((j = yystop-(row-yystart)) > iystop && j < ydots)
                                 put_line(j,tp->x1+1,tp->x2-1,&dstack[OLDMAXPIXELS]);
                         if (++i > 25) {
-                            if (check_key()) goto tess_end;
+                            if (check_key())
+                                goto tess_end;
                             i = 0;
                         }
                     }

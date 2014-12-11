@@ -492,7 +492,7 @@ extern int elapsed_time(int);
 /*  framain2 -- C file prototypes */
 
 extern int big_while_loop(bool *kbdmore, bool *stacked, bool resume_flag);
-extern int check_key(void);
+extern bool check_key(void);
 extern int cmp_line(BYTE *,int);
 extern int key_count(int);
 extern int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked, int axmode);
@@ -690,7 +690,6 @@ extern void cvtcentermagbf(bf_t, bf_t, LDBL *, double *, double *, double *);
 extern void cvtcornersbf(bf_t, bf_t, LDBL,double,double,double);
 extern void updatesavename(char *);
 extern int check_writefile(char *name, const char *ext);
-extern int check_key(void);
 extern void showtrig(char *);
 extern int set_trig_array(int k, const char *name);
 extern void set_trig_pointers(int);

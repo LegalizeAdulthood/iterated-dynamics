@@ -2004,7 +2004,8 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 {
     int found_attractor=0;
 
-    if (check_key()) {
+    if (check_key())
+    {
         return -1;
     }
 
