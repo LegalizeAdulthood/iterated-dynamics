@@ -665,7 +665,7 @@ write_row(int row, const char *format, ...)
 extern long maxstack;
 extern long startstack;
 
-int tab_display_2(char *msg)
+bool tab_display_2(char *msg)
 {
     extern long maxptr;
     int row, key = 0;
@@ -1288,7 +1288,7 @@ int ifsload()                   /* read in IFS parameters */
 
     ifs_type = false;
     rowsize = IFSPARM;
-    if (find_file_item(IFSFileName,IFSName,&ifsfile, 3) < 0)
+    if (find_file_item(IFSFileName,IFSName,&ifsfile, 3))
         return (-1);
 
     file_gets(buf,200,ifsfile);
@@ -1358,7 +1358,7 @@ int ifsload()                   /* read in IFS parameters */
     return (ret);
 }
 
-int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
+bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
 {
     FILE *infile=nullptr;
     int found = 0;
@@ -1527,14 +1527,14 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
     if (!found) {
         sprintf(fullpath,"'%s' file entry item not found",itemname);
         stopmsg(0,fullpath);
-        return (-1);
+        return true;
     }
     /* found file */
     if (fileptr != nullptr)
         *fileptr = infile;
     else if (infile != nullptr)
         fclose(infile);
-    return (0);
+    return false;
 }
 
 

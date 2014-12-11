@@ -696,7 +696,7 @@ extern void set_trig_pointers(int);
 extern int tab_display(void);
 extern int endswithslash(const char *fl);
 extern int ifsload(void);
-extern int find_file_item(char *,char *,FILE **, int);
+extern bool find_file_item(char *,char *,FILE **, int);
 extern int file_gets(char *,int ,FILE *);
 extern void roundfloatd(double *);
 extern void fix_inversion(double *);

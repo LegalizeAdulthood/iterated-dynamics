@@ -116,7 +116,7 @@ static bool readLSystemFile(char *str)
     FILE *infile;
     char msgbuf[481]; /* enough for 6 full lines */
 
-    if (find_file_item(LFileName,str,&infile, 2) < 0)
+    if (find_file_item(LFileName,str,&infile, 2))
         return true;
     while ((c = fgetc(infile)) != '{')
         if (c == EOF)
