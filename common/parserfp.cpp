@@ -200,26 +200,32 @@ int pstopmsg(int x,char *msg)
 
 #define stopmsg pstopmsg
 
-#define DBUGMSG(y) if (debugflag==324 || debugflag==322 ) stopmsg(0, (y))
-#define DBUGMSG1(y,p) \
-      if (debugflag==324 || debugflag==322 ){ \
-         sprintf(cDbgMsg, (y), (p) ); \
-         stopmsg(0, cDbgMsg ); \
+#define DBUGMSG(y)                          \
+    if (debugflag==324 || debugflag==322 )  \
+        stopmsg(0, (y))
+#define DBUGMSG1(y,p)                           \
+      if (debugflag==324 || debugflag==322 )    \
+      {                                         \
+         sprintf(cDbgMsg, (y), (p) );           \
+         stopmsg(0, cDbgMsg );                  \
       }
-#define DBUGMSG2(y,p,q) \
-      if (debugflag==324 || debugflag==322 ){ \
-         sprintf(cDbgMsg, (y), (p), (q) ); \
-         stopmsg(0, cDbgMsg ); \
+#define DBUGMSG2(y,p,q)                         \
+      if (debugflag==324 || debugflag==322 )    \
+      {                                         \
+         sprintf(cDbgMsg, (y), (p), (q) );      \
+         stopmsg(0, cDbgMsg );                  \
       }
-#define DBUGMSG3(y,p,q,r) \
-      if (debugflag==324 || debugflag==322 ){ \
+#define DBUGMSG3(y,p,q,r)                       \
+      if (debugflag==324 || debugflag==322 )    \
+      {                                         \
          sprintf(cDbgMsg, (y), (p), (q), (r) ); \
-         stopmsg(0, cDbgMsg ); \
+         stopmsg(0, cDbgMsg );                  \
       }
-#define DBUGMSG4(y,p,q,r,s) \
-      if (debugflag==324 || debugflag==322 ){ \
-         sprintf(cDbgMsg, (y), (p), (q), (r), (s) ); \
-         stopmsg(0, cDbgMsg ); \
+#define DBUGMSG4(y,p,q,r,s)                             \
+      if (debugflag==324 || debugflag==322 )            \
+      {                                                 \
+         sprintf(cDbgMsg, (y), (p), (q), (r), (s) );    \
+         stopmsg(0, cDbgMsg );                          \
       }
 #define FNAME(a,b,c,d,e,f) a,b,c,d,e,f    /* use the function name string */
 #else
