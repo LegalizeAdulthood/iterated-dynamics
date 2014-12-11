@@ -939,7 +939,7 @@ static bool exe_path(const char *filename, char *path)
         strcpy(path, __argv[0]);   /* note: __argv may be undocumented in MSC */
         if (strcmp(filename,"FRACTINT.EXE")==0)
             if (can_read_file(path))
-                return (1);
+                return true;
         ptr = strrchr(path, SLASHC);
         if (ptr == nullptr)
             ptr = path;
