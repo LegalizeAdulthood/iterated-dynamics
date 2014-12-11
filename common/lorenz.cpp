@@ -77,10 +77,10 @@ static int  ifs2d(void);
 static int  ifs3d(void);
 static int  ifs3dlong(void);
 static int  ifs3dfloat(void);
-static int  l_setup_convert_to_screen(struct l_affine *);
+static bool l_setup_convert_to_screen(struct l_affine *);
 static void setupmatrix(MATRIX);
-static int  long3dviewtransf(struct long3dvtinf *inf);
-static int  float3dviewtransf(struct float3dvtinf *inf);
+static bool long3dviewtransf(struct long3dvtinf *inf);
+static bool float3dviewtransf(struct float3dvtinf *inf);
 static FILE *open_orbitsave(void);
 static void plothist(int x, int y, int color);
 static bool realtime = false;
@@ -214,13 +214,13 @@ The same technique can be applied to the second set of equations:
         -  Sylvie
 */
 
-int setup_convert_to_screen(struct affine *scrn_cnvt)
+bool setup_convert_to_screen(struct affine *scrn_cnvt)
 {
     double det, xd, yd;
 
     det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-yy3rd)*(xxmax-xxmin);
     if (det == 0)
-        return (-1);
+        return true;
     xd = dxsize/det;
     scrn_cnvt->a =  xd*(yymax-yy3rd);
     scrn_cnvt->b =  xd*(xx3rd-xxmin);
@@ -228,21 +228,21 @@ int setup_convert_to_screen(struct affine *scrn_cnvt)
 
     det = (xx3rd-xxmax)*(yymin-yymax) + (yymin-yy3rd)*(xxmax-xxmin);
     if (det == 0)
-        return (-1);
+        return true;
     yd = dysize/det;
     scrn_cnvt->c =  yd*(yymin-yy3rd);
     scrn_cnvt->d =  yd*(xx3rd-xxmax);
     scrn_cnvt->f = -scrn_cnvt->c*xxmin - scrn_cnvt->d*yymax;
-    return (0);
+    return false;
 }
 
-static int l_setup_convert_to_screen(struct l_affine *l_cvt)
+static bool l_setup_convert_to_screen(struct l_affine *l_cvt)
 {
     struct affine cvt;
 
     /* This function should return a something! */
     if (setup_convert_to_screen(&cvt))
-        return (-1);
+        return true;
     l_cvt->a = (long)(cvt.a*fudge);
     l_cvt->b = (long)(cvt.b*fudge);
     l_cvt->c = (long)(cvt.c*fudge);
@@ -250,8 +250,7 @@ static int l_setup_convert_to_screen(struct l_affine *l_cvt)
     l_cvt->e = (long)(cvt.e*fudge);
     l_cvt->f = (long)(cvt.f*fudge);
 
-
-    return (0);
+    return false;
 }
 
 /******************************************************************/
@@ -2519,7 +2518,7 @@ static int ifs3d(void)
         return (funny_glasses_call(ifs3dlong)); /* long version of ifs3d   */
 }
 
-static int long3dviewtransf(struct long3dvtinf *inf)
+static bool long3dviewtransf(struct long3dvtinf *inf)
 {
     int i,j;
 
@@ -2601,7 +2600,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
                         inf->longmat1[i][j] = (long)(inf->doublemat1[i][j] * fudge);
                 }
         }
-        return (0);
+        return false;
     }
 
     /* apply perspective if requested */
@@ -2667,10 +2666,10 @@ static int long3dviewtransf(struct long3dvtinf *inf)
                 inf->col1= inf->row1 = -1;
         }
     }
-    return (1);
+    return true;
 }
 
-static int float3dviewtransf(struct float3dvtinf *inf)
+static bool float3dviewtransf(struct float3dvtinf *inf)
 {
     int i;
 
@@ -2731,7 +2730,7 @@ static int float3dviewtransf(struct float3dvtinf *inf)
                 trans(tmpx,tmpy,tmpz,inf->doublemat1);
             }
         }
-        return (0);
+        return false;
     }
 
     /* apply perspective if requested */
@@ -2766,7 +2765,7 @@ static int float3dviewtransf(struct float3dvtinf *inf)
                 inf->col1= inf->row1 = -1;
         }
     }
-    return (1);
+    return true;
 }
 
 static FILE *open_orbitsave(void)

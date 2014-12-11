@@ -29,8 +29,8 @@ static int  find_fractal_info(char *,struct fractal_info *,
 static void load_ext_blk(char *loadptr,int loadlen);
 static void skip_ext_blk(int *,int *);
 static void backwardscompat(struct fractal_info *info);
-static int fix_bof(void);
-static int fix_period_bof(void);
+static bool fix_bof(void);
+static bool fix_period_bof(void);
 
 int filetype;
 bool loaded3d = false;
@@ -1216,23 +1216,23 @@ int check_back(void) {
     return (ret);
 }
 
-static int fix_bof(void)
+static bool fix_bof(void)
 {
-    int ret = 0;
+    bool ret = false;
     if (inside <= BOF60 && inside >= BOF61 && save_release < 1826)
         if ((curfractalspecific->calctype == StandardFractal &&
                 (curfractalspecific->flags & BAILTEST) == 0) ||
                 (fractype==FORMULA || fractype==FFORMULA))
-            ret = 1;
-    return (ret);
+            ret = true;
+    return ret;
 }
 
-static int fix_period_bof(void)
+static bool fix_period_bof(void)
 {
-    int ret = 0;
+    bool ret = false;
     if (inside <= BOF60 && inside >= BOF61 && save_release < 1826)
-        ret = 1;
-    return (ret);
+        ret = true;
+    return ret;
 }
 
 /* browse code RB*/

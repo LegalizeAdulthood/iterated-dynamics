@@ -649,7 +649,7 @@ extern int orbit3dfloat(void);
 extern int orbit3dlong(void);
 extern int iconfloatorbit(double *, double *, double *);
 extern int latoofloatorbit(double *, double *, double *);
-extern int  setup_convert_to_screen(struct affine *);
+extern bool setup_convert_to_screen(struct affine *);
 extern int plotorbits2dsetup(void);
 extern int plotorbits2dfloat(void);
 
