@@ -387,7 +387,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
     return (0);
 }
 
-static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
+static bool put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 {
     int col;
     for (col=colstart; col<=colstop; col++)
@@ -399,10 +399,10 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
         if (driver_key_pressed())
         {
             driver_mute();
-            return (-1);
+            return true;
         }
     }
-    return (0);
+    return false;
 }
 
 int sound_line(BYTE *pixels, int linelen)
