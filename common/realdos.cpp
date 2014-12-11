@@ -1669,7 +1669,7 @@ int field_prompt(
       call this when thinking phase is done
    */
 
-int thinking(int options, const char *msg)
+bool thinking(int options, const char *msg)
 {
     static int thinkstate = -1;
     const char *wheel[] = {"-","\\","|","/"};
@@ -1681,7 +1681,7 @@ int thinking(int options, const char *msg)
             thinkstate = -1;
             driver_unstack_screen();
         }
-        return (0);
+        return false;
     }
     if (thinkstate < 0) {
         driver_stack_screen();
@@ -1695,13 +1695,13 @@ int thinking(int options, const char *msg)
         count = 0;
     }
     if ((count++)<100) {
-        return 0;
+        return false;
     }
     count = 0;
     driver_put_string(4,thinkcol,C_GENERAL_HI,wheel[thinkstate]);
     driver_hide_text_cursor(); /* turn off cursor */
     thinkstate = (thinkstate + 1) & 3;
-    return (driver_key_pressed());
+    return driver_key_pressed() != 0;
 }
 
 

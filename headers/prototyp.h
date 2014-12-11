@@ -1023,7 +1023,7 @@ extern int putstringcenter(int row, int col, int width, int attr, const char *ms
 extern int main_menu(int);
 extern int input_field(int ,int ,char *,int ,int ,int ,int (*)(int));
 extern int field_prompt(const char *hdg, const char *instr, char *fld, int len, int (*checkkey)(int));
-extern int thinking(int options, const char *msg);
+extern bool thinking(int options, const char *msg);
 extern void discardgraphics(void);
 extern void load_fractint_config(void);
 extern int check_vidmode_key(int ,int);
