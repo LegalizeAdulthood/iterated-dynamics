@@ -860,7 +860,10 @@ extern  void (*plot)(int, int, int);
 #define CTL(x) ((x)&0x1f)
 
 /* nonalpha tests if we have a control character */
-#define nonalpha(c) ((c)<32 || (c)>127)
+inline bool nonalpha(int c)
+{
+    return c < 32 || c > 127;
+}
 
 /* keys; FIK = "FractInt Key"
  * Use this prefix to disambiguate key name symbols used in the fractint source
