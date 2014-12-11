@@ -46,7 +46,7 @@ static  long gfe_choose_entry(int, const char *,char *,char *);
 static  int check_gfe_key(int curkey,int choice);
 static  void load_entry_text(FILE *entfile,char *buf,int maxlines, int startrow, int startcol);
 static  void format_parmfile_line(int,char *);
-static  int get_light_params(void);
+static  bool get_light_params(void);
 static  bool check_mapfile(void);
 static  bool get_funny_glasses_params(void);
 
@@ -2601,7 +2601,7 @@ restart_3:
 }
 
 /* --------------------------------------------------------------------- */
-static int get_light_params()
+static bool get_light_params()
 {
     const char *prompts3d[13];
     struct fullscreenvalues uvalues[13];
@@ -2679,7 +2679,7 @@ static int get_light_params()
     k = fullscreen_prompt("Light Source Parameters",k,prompts3d,uvalues,0,nullptr);
     helpmode = oldhelpmode;
     if (k < 0)
-        return -1;
+        return true;
 
     k = 0;
     if (ILLUMINE)
@@ -2710,7 +2710,7 @@ static int get_light_params()
         back_color[2] = (char)(uvalues[k++].uval.ival % 255);
         Targa_Overlay = uvalues[k].uval.ch.val != 0;
     }
-    return 0;
+    return false;
 }
 
 /* --------------------------------------------------------------------- */
