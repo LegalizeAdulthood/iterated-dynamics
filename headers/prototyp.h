@@ -127,7 +127,7 @@ extern void yrot(double ,MATRIX);
 extern void zrot(double ,MATRIX);
 extern void trans(double ,double ,double ,MATRIX);
 extern int cross_product(VECTOR,VECTOR,VECTOR);
-extern int normalize_vector(VECTOR);
+extern bool normalize_vector(VECTOR);
 extern int vmult(VECTOR,MATRIX,VECTOR);
 extern void mult_vec(VECTOR);
 extern int perspective(VECTOR);

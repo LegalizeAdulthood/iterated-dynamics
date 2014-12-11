@@ -169,23 +169,22 @@ int cross_product(VECTOR v, VECTOR w, VECTOR cross)
 }
 
 /* normalize a vector to length 1 */
-int
-normalize_vector(VECTOR v)
+bool normalize_vector(VECTOR v)
 {
     double vlength;
     vlength = dot_product(v,v);
 
     /* bailout if zero vlength */
     if (vlength < FLT_MIN || vlength > FLT_MAX)
-        return -1;
+        return true;
     vlength = sqrt(vlength);
     if (vlength < FLT_MIN)
-        return -1;
+        return true;
 
     v[0] /= vlength;
     v[1] /= vlength;
     v[2] /= vlength;
-    return 0;
+    return false;
 }
 
 /* multiply source vector s by matrix m, result in target t */
