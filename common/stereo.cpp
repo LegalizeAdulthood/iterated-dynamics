@@ -97,7 +97,7 @@ static int getdepth(int xd, int yd)
    Get min and max DEPTH value in picture
 */
 
-static int get_min_max(void)
+static bool get_min_max(void)
 {
     int xd, yd, ldepth;
     MINC = colors;
@@ -105,7 +105,7 @@ static int get_min_max(void)
     for (yd = 0; yd < ydots; yd++)
     {
         if (driver_key_pressed())
-            return (1);
+            return true;
         if (yd == 20)
             showtempmsg("Getting min and max");
         for (xd = 0; xd < xdots; xd++)
@@ -118,7 +118,7 @@ static int get_min_max(void)
         }
     }
     cleartempmsg();
-    return (0);
+    return false;
 }
 
 void toggle_bars(int *bars, int barwidth, int *colour)
