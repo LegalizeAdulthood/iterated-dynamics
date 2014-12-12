@@ -111,10 +111,10 @@ static VIDEOINFO modes[] =
  * Side effects:
  *  Increments i if we use more than 1 argument.
  */
-static int
+static bool
 check_arg(Win32DiskDriver *di, char *arg)
 {
-    return 0;
+    return false;
 }
 
 /*----------------------------------------------------------------------
