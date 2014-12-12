@@ -335,7 +335,7 @@ static void initvars_run()              /* once per run init */
         p = getenv("TEMP");
     if (p != nullptr)
     {
-        if (isadirectory(p) != 0)
+        if (isadirectory(p))
         {
             strcpy(tempdir,p);
             fix_dirname(tempdir);
@@ -1700,7 +1700,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        if (isadirectory(value) == 0)
+        if (!isadirectory(value))
         {
             goto badarg;
         }
@@ -1715,7 +1715,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        if (isadirectory(value) == 0)
+        if (!isadirectory(value))
         {
             goto badarg;
         }
@@ -2273,7 +2273,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     if (strcmp(variable, "orgfrmdir") == 0) {    /* orgfrmdir=? */
         if (valuelen > (FILE_MAX_DIR-1))
             goto badarg;
-        if (isadirectory(value) == 0)
+        if (!isadirectory(value))
             goto badarg;
         orgfrmsearch = true;
         strcpy(orgfrmdir, value);

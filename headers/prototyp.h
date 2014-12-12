@@ -971,7 +971,7 @@ extern int get_view_params(void);
 extern int get_starfield_params(void);
 extern int get_commands(void);
 extern void goodbye(void);
-extern int isadirectory(char *s);
+extern bool isadirectory(char *s);
 extern bool getafilename(const char *hdg, const char *file_template, char *flname);
 extern int splitpath(const char *file_template, char *drive, char *dir, char *fname, char *ext);
 extern int makepath(char *template_str, const char *drive, const char *dir, const char *fname, const char *ext);

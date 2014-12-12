@@ -1650,12 +1650,12 @@ static int filename_speedstr(int row, int col, int vid,
 }
 
 #if !defined(_WIN32)
-int isadirectory(char *s)
+bool isadirectory(char *s)
 {
     int len;
     char sv;
     if (strchr(s,'*') || strchr(s,'?'))
-        return (0); /* for my purposes, not a directory */
+        return false; /* for my purposes, not a directory */
 
     len = (int) strlen(s);
     if (len > 0)
@@ -1667,24 +1667,24 @@ int isadirectory(char *s)
     {
         /* any better ideas?? */
         if (sv == SLASHC) /* we'll guess it is a directory */
-            return (1);
+            return true;
         else
-            return (0); /* no slashes - we'll guess it's a file */
+            return false; /* no slashes - we'll guess it's a file */
     }
     else if ((DTA.attribute & SUBDIR) != 0) {
         if (sv == SLASHC) {
             /* strip trailing slash and try again */
             s[len-1] = 0;
             if (fr_findfirst(s) != 0) /* couldn't find it */
-                return (0);
+                return false;
             else if ((DTA.attribute & SUBDIR) != 0)
-                return (1);  /* we're SURE it's a directory */
+                return true;  /* we're SURE it's a directory */
             else
-                return (0);
+                return false;
         } else
-            return (1);  /* we're SURE it's a directory */
+            return true;  /* we're SURE it's a directory */
     }
-    return (0);
+    return false;
 }
 #endif
 
@@ -2441,7 +2441,8 @@ get_brws_restart:
 /* attempts to extract directory and test for existence (modes 0 and 1) */
 int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 {
-    int isadir = 0;
+    bool isadir_error = false;
+    bool isadir = false;
     int isafile = 0;
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
@@ -2457,20 +2458,20 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
     /* no dot or slash so assume a file */
     if (strchr(newfilename,'.')==nullptr && strchr(newfilename,SLASHC) == nullptr)
         isafile=1;
-    if ((isadir = isadirectory(newfilename)) != 0)
+    if (isadir = isadirectory(newfilename))
         fix_dirname(newfilename);
 #ifndef XFRACT
     /* if drive, colon, slash, is a directory */
     if ((int) strlen(newfilename) == 3 &&
             newfilename[1] == ':' &&
             newfilename[2] == SLASHC)
-        isadir = 1;
+        isadir = true;
     /* if drive, colon, with no slash, is a directory */
     if ((int) strlen(newfilename) == 2 &&
             newfilename[1] == ':') {
         newfilename[2] = SLASHC;
         newfilename[3] = 0;
-        isadir = 1;
+        isadir = true;
     }
     /* if dot, slash, '0', its the current directory, set up full path */
     if (newfilename[0] == '.' &&
@@ -2481,7 +2482,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
         expand_dirname(newfilename,temp_path);
         strcat(temp_path,newfilename);
         strcpy(newfilename,temp_path);
-        isadir = 1;
+        isadir = true;
     }
     /* if dot, slash, its relative to the current directory, set up full path */
     if (newfilename[0] == '.' &&
@@ -2505,13 +2506,13 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
     strcpy(newfilename,temp_path);
 #endif
     /* check existence */
-    if (isadir==0 || isafile==1)
+    if (!isadir || isafile==1)
     {
         if (fr_findfirst(newfilename) == 0) {
             if (DTA.attribute & SUBDIR) /* exists and is dir */
             {
                 fix_dirname(newfilename);  /* add trailing slash */
-                isadir = 1;
+                isadir = true;
                 isafile = 0;
             }
             else
@@ -2529,7 +2530,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
         strcpy(fname1,fname);
     if ((int) strlen(ext) != 0)
         strcpy(ext1,ext);
-    if (isadir == 0 && isafile == 0 && GETPATH)
+    if (!isadir && isafile == 0 && GETPATH)
     {
         makepath(oldfullpath,drive1,dir1,nullptr,nullptr);
         int len = (int) strlen(oldfullpath);
@@ -2541,12 +2542,12 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
             if (save == SLASHC)
                 oldfullpath[len-1] = 0;
             if (access(oldfullpath,0))
-                isadir = -1;
+                isadir_error = true;
             oldfullpath[len-1] = save;
         }
     }
     makepath(oldfullpath,drive1,dir1,fname1,ext1);
-    return (isadir);
+    return isadir_error ? -1 : (isadir ? 1 : 0);
 }
 
 /* extract just the filename/extension portion of a path */

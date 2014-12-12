@@ -494,9 +494,9 @@ void home(void)
     g_text_col = 0;
 }
 
-int isadirectory(char *s)
+bool isadirectory(char *s)
 {
-    return PathIsDirectory(s);
+    return PathIsDirectory(s) != 0;
 }
 
 /* tenths of millisecond timewr routine */
