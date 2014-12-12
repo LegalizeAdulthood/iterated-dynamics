@@ -79,12 +79,11 @@ setwait(long *wait)
 void
 TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 {
-    int color, ix, iy, idir, pixel, i;
+    int ix, iy, idir, pixel;
     int kbdchar, step;
     bool antwrap;
     int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
     int next_col[MAX_ANTS + 1], rule[MAX_ANTS + 1], dir[MAX_ANTS + 1];
-    long count;
     antwrap = (param[4] == 0) ? false : true;
     step = (int) wait;
     if (step == 1)
@@ -137,7 +136,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
         }
     }
     maxpts = maxpts / (long) INNER_LOOP;
-    for (count = 0; count < maxpts; count++)
+    for (long count = 0; count < maxpts; count++)
     {
         /* check for a key only every inner_loop times */
         kbdchar = driver_key_pressed();
@@ -173,11 +172,11 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
             if (driver_key_pressed())
                 driver_get_key();
         }
-        for (i = INNER_LOOP; i; i--)
+        for (int i = INNER_LOOP; i; i--)
         {
             if (wait > 0 && step == 0)
             {
-                for (color = maxtur; color; color--)
+                for (int color = maxtur; color; color--)
                 {   /* move the various turmites */
                     ix = x[color];   /* temp vars */
                     iy = y[color];
@@ -202,7 +201,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
             }
             else
             {
-                for (color = maxtur; color; color--)
+                for (int color = maxtur; color; color--)
                 {   /* move the various turmites without delay */
                     ix = x[color];   /* temp vars */
                     iy = y[color];
@@ -244,12 +243,10 @@ unsigned rotate_left_one(unsigned value)
 void
 TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 {
-    int color, ix, iy, idir, pixel, dir[MAX_ANTS + 1], i;
+    int ix, iy, idir, pixel, dir[MAX_ANTS + 1];
     int kbdchar, step;
     int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
     int rule[MAX_ANTS + 1];
-    long count;
-
     bool antwrap = ((param[4] == 0) ? false : true);
 
     step = (int) wait;
@@ -259,7 +256,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
         step = 0;
     if (rule_len == 0)
     {   /* random rule */
-        for (color = MAX_ANTS - 1; color; color--)
+        for (int color = MAX_ANTS-1; color; color--)
         {   /* init the various turmites N.B. don't use
              * x[0], y[0], dir[0] */
             dir[color] = RANDOM(DIRS);
@@ -272,9 +269,10 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
     {   /* the same rule the user wants for every
          * turkmite (max rule_len = 16 bit) */
         rule_len = std::min(static_cast<size_t>(rule_len), 8*sizeof(int));
-        for (i = 0, rule[0] = 0; i < rule_len; i++)
+        rule[0] = 0;
+        for (int i = 0; i < rule_len; i++)
             rule[0] = (rule[0] << 1) | ru[i];
-        for (color = MAX_ANTS - 1; color; color--)
+        for (int color = MAX_ANTS-1; color; color--)
         {   /* init the various turmites N.B. non usa
              * x[0], y[0], dir[0] */
             dir[color] = 0;
@@ -287,7 +285,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
     rule[0] = 0;
     unsigned rule_mask = 1U;
     maxpts = maxpts / (long) INNER_LOOP;
-    for (count = 0; count < maxpts; count++)
+    for (long count = 0; count < maxpts; count++)
     {
         /* check for a key only every inner_loop times */
         kbdchar = driver_key_pressed();
@@ -323,9 +321,9 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
             if (driver_key_pressed())
                 driver_get_key();
         }
-        for (i = INNER_LOOP; i; i--)
+        for (int i = INNER_LOOP; i; i--)
         {
-            for (color = maxtur; color; color--)
+            for (int color = maxtur; color; color--)
             {   /* move the various turmites */
                 ix = x[color];      /* temp vars */
                 iy = y[color];
@@ -377,7 +375,7 @@ void free_ant_storage(void)
 int
 ant(void)
 {
-    int maxants, type, i;
+    int maxants, type;
     int oldhelpmode, rule_len;
     long maxpts, wait;
     char rule[MAX_ANTS];
@@ -391,7 +389,7 @@ ant(void)
         s_last_ydots = ydots;
 
         free_ant_storage(); /* free old memory */
-        for (i = 0; i < DIRS; i++)
+        for (int i = 0; i < DIRS; i++)
         {
             s_incx[i] = storage;
             storage += xdots + 2;
@@ -403,30 +401,30 @@ ant(void)
     /* In this vectors put all the possible point that the ants can visit.
      * Wrap them from a side to the other insted of simply end calculation
      */
-    for (i = 0; i < xdots; i++)
+    for (int i = 0; i < xdots; i++)
     {
         s_incx[0][i] = i;
         s_incx[2][i] = i;
     }
 
-    for (i = 0; i < xdots; i++)
+    for (int i = 0; i < xdots; i++)
         s_incx[3][i] = i + 1;
     s_incx[3][xdots-1] = 0; /* wrap from right of the screen to left */
 
-    for (i = 1; i < xdots; i++)
+    for (int i = 1; i < xdots; i++)
         s_incx[1][i] = i - 1;
     s_incx[1][0] = xdots-1; /* wrap from left of the screen to right */
 
-    for (i = 0; i < ydots; i++)
+    for (int i = 0; i < ydots; i++)
     {
         s_incy[1][i] = i;
         s_incy[3][i] = i;
     }
-    for (i = 0; i < ydots; i++)
+    for (int i = 0; i < ydots; i++)
         s_incy[0][i] = i + 1;
     s_incy[0][ydots - 1] = 0;      /* wrap from the top of the screen to the
                                  * bottom */
-    for (i = 1; i < ydots; i++)
+    for (int i = 1; i < ydots; i++)
         s_incy[2][i] = i - 1;
     s_incy[2][0] = ydots - 1;      /* wrap from the bottom of the screen to the
                                  * top */
@@ -439,7 +437,7 @@ ant(void)
     rule_len = (int) strlen(rule);
     if (rule_len > 1)
     {   /* if rule_len == 0 random rule */
-        for (i = 0; i < rule_len; i++)
+        for (int i = 0; i < rule_len; i++)
         {
             if (rule[i] != '1')
                 rule[i] = (char) 0;
