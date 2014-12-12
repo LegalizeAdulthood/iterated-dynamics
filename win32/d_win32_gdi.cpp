@@ -857,7 +857,7 @@ gdi_mute(Driver *drv)
     ODS("gdi_mute");
 }
 
-static int
+static bool
 gdi_validate_mode(Driver *drv, VIDEOINFO *mode)
 {
     int width, height;

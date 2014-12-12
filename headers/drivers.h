@@ -43,7 +43,7 @@ struct tagDriver
     /* name of driver */                const char *name;
     /* driver description */            const char *description;
     /* init the driver */               int (*init)(Driver *drv, int *argc, char **argv);
-    /* validate a fractint.cfg mode */  int (*validate_mode)(Driver *drv, VIDEOINFO *mode);
+    /* validate a fractint.cfg mode */  bool (*validate_mode)(Driver *drv, VIDEOINFO *mode);
     /* find max screen extents */       void (*get_max_screen)(Driver *drv, int *xmax, int *ymax);
     /* shutdown the driver */           void (*terminate)(Driver *drv);
     /* pause this driver */             void (*pause)(Driver *drv);
@@ -188,7 +188,7 @@ extern void driver_set_video_mode(VIDEOINFO *mode);
 
 #if defined(USE_DRIVER_FUNCTIONS)
 
-extern int driver_validate_mode(VIDEOINFO *mode);
+extern bool driver_validate_mode(VIDEOINFO *mode);
 extern void driver_get_max_screen(int *xmax, int *ymax);
 extern void driver_terminate(void);
 // pause and resume are only used internally in drivers.c

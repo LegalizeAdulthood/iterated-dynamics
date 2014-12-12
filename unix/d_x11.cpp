@@ -1540,9 +1540,9 @@ x11_init(Driver *drv, int *argc, char **argv)
     return 1;
 }
 
-static int x11_validate_mode(Driver *drv, VIDEOINFO *mode)
+static bool x11_validate_mode(Driver *drv, VIDEOINFO *mode)
 {
-    return 0;
+    return false;
 }
 
 /*----------------------------------------------------------------------

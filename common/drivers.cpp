@@ -270,7 +270,7 @@ driver_put_char_attr(int char_attr)
     (*g_driver->put_char_attr)(g_driver, char_attr);
 }
 
-int
+bool
 driver_validate_mode(VIDEOINFO *mode)
 {
     return (*g_driver->validate_mode)(g_driver, mode);

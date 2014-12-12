@@ -935,7 +935,7 @@ disk_put_char_attr(Driver *drv, int char_attr)
     wintext_put_char_attr(&di->base.wintext, g_text_row, g_text_col, char_attr);
 }
 
-static int
+static bool
 disk_validate_mode(Driver *drv, VIDEOINFO *mode)
 {
     /* allow modes of any size with 256 colors and dotmode=19
