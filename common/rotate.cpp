@@ -446,21 +446,21 @@ void save_palette()
 
 int load_palette(void)
 {
-    int i,oldhelpmode;
+    int oldhelpmode;
     char filename[FILE_MAX_PATH];
     oldhelpmode = helpmode;
     strcpy(filename,MAP_name);
     driver_stack_screen();
     helpmode = HELPCOLORMAP;
-    i = getafilename("Select a MAP File",mapmask,filename) ? -1 : 0;
+    bool i = getafilename("Select a MAP File",mapmask,filename);
     driver_unstack_screen();
-    if (i >= 0)
+    if (!i)
     {
         if (!ValidateLuts(filename))
             memcpy(olddacbox,g_dac_box,256*3);
         merge_pathnames(MAP_name,filename,0);
     }
     helpmode = oldhelpmode;
-    return (i);
+    return i ? -1 : 0;
 }
 
