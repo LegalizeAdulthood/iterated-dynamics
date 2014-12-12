@@ -63,9 +63,8 @@ ROTZ(i) =           cosi  sini    0     0
    (all 0's, 1's on diagonal) */
 void identity(MATRIX m)
 {
-    int i,j;
-    for (i=0; i<CMAX; i++)
-        for (j=0; j<RMAX; j++)
+    for (int i = 0 ; i < CMAX; i++)
+        for (int j = 0; j < RMAX; j++)
             if (i==j)
                 m[j][i] = 1.0;
             else
@@ -78,9 +77,8 @@ void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
     /* result stored in MATRIX new to avoid problems
        in case parameter mat3 == mat2 or mat 1 */
     MATRIX newmat;
-    int i,j;
-    for (i=0; i<4; i++)
-        for (j=0; j<4; j++)
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
             newmat[j][i] =  mat1[j][0]*mat2[0][i]+
                             mat1[j][1]*mat2[1][i]+
                             mat1[j][2]*mat2[2][i]+
@@ -192,11 +190,10 @@ bool normalize_vector(VECTOR v)
 int vmult(VECTOR s, MATRIX m, VECTOR t)
 {
     VECTOR tmp;
-    int i,j;
-    for (j=0; j<CMAX-1; j++)
+    for (int j = 0; j < CMAX-1; j++)
     {
         tmp[j] = 0.0;
-        for (i=0; i<RMAX-1; i++)
+        for (int i = 0; i < RMAX-1; i++)
             tmp[j] += s[i]*m[i][j];
         /* vector is really four dimensional with last component always 1 */
         tmp[j] += m[3][j];
@@ -213,11 +210,10 @@ int vmult(VECTOR s, MATRIX m, VECTOR t)
 void mult_vec(VECTOR s)
 {
     VECTOR tmp;
-    int i,j;
-    for (j=0; j<CMAX-1; j++)
+    for (int j = 0; j < CMAX-1; j++)
     {
         tmp[j] = 0.0;
-        for (i=0; i<RMAX-1; i++)
+        for (int i = 0; i < RMAX-1; i++)
             tmp[j] += s[i]*m[i][j];
         /* vector is really four dimensional with last component always 1 */
         tmp[j] += m[3][j];
@@ -260,16 +256,16 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
     /* lview: perspective viewer coordinates */
     /* bitshift: fixed point conversion bitshift */
     LVECTOR tmp;
-    int i,j, k;
+    int k;
     overflow = false;
     k = CMAX-1;                  /* shorten the math if non-perspective and non-illum */
     if (lview[2] == 0 && t0[0] == 0)
         k--;
 
-    for (j=0; j<k; j++)
+    for (int j = 0; j < k; j++)
     {
         tmp[j] = 0;
-        for (i=0; i<RMAX-1; i++)
+        for (int i = 0; i < RMAX-1; i++)
             tmp[j] += multiply(s[i],m[i][j],bitshift);
         /* vector is really four dimensional with last component always 1 */
         tmp[j] += m[3][j];
@@ -357,14 +353,14 @@ longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
 int longvmult(LVECTOR s,LMATRIX m,LVECTOR t,int bitshift)
 {
     LVECTOR tmp;
-    int i,j, k;
+    int k;
     overflow = false;
     k = CMAX-1;
 
-    for (j=0; j<k; j++)
+    for (int j = 0; j < k; j++)
     {
         tmp[j] = 0;
-        for (i=0; i<RMAX-1; i++)
+        for (int i = 0; i < RMAX-1; i++)
             tmp[j] += multiply(s[i],m[i][j],bitshift);
         /* vector is really four dimensional with last component always 1 */
         tmp[j] += m[3][j];
