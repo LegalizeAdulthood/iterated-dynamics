@@ -218,7 +218,6 @@ int getpower10(LDBL x)
 
 int cmdfiles(int argc,char **argv)
 {
-    int     i;
     char    curarg[141];
     char    tempstring[101];
     char    *sptr;
@@ -235,7 +234,9 @@ int cmdfiles(int argc,char **argv)
         if ((initfile = fopen(tempstring,"r")) != nullptr)
             cmdfile(initfile, CMDFILE_SSTOOLS_INI);           /* process it */
 
-    for (i = 1; i < argc; i++) {         /* cycle through args */
+    /* cycle through args */
+    for (int i = 1; i < argc; i++)
+    {
 #ifdef XFRACT
         /* Let the xfract code take a look at the argument */
         if (unixarg(argc,argv,&i))
@@ -347,7 +348,6 @@ static void initvars_run()              /* once per run init */
 
 static void initvars_restart()          /* <ins> key init */
 {
-    int i;
     recordcolors = 'a';                 /* don't use mapfiles in PARs */
     save_release = g_release;           /* this release number */
     gif87a_flag = false;                /* turn on GIF89a processing */
@@ -377,7 +377,7 @@ static void initvars_restart()          /* <ins> key init */
     LName[0] = 0;
     strcpy(CommandFile, "fractint.par");
     CommandName[0] = 0;
-    for (i=0; i<4; i++)
+    for (int i = 0; i < 4; i++)
         CommandComment[i][0] = 0;
     strcpy(IFSFileName, "fractint.ifs");
     IFSName[0] = 0;
@@ -402,7 +402,6 @@ static void initvars_restart()          /* <ins> key init */
 
 static void initvars_fractal()          /* init vars affecting calculation */
 {
-    int i;
     escape_exit = false;                /* don't disable the "are you sure?" screen */
     usr_periodicitycheck = 1;            /* turn on periodicity    */
     inside = 1;                          /* inside color = blue    */
@@ -428,9 +427,12 @@ static void initvars_fractal()          /* init vars affecting calculation */
     bailout = 0;                        /* no user-entered bailout */
     nobof = false;                      /* use normal bof initialization to make bof images */
     useinitorbit = 0;
-    for (i = 0; i < MAXPARAMS; i++) param[i] = 0.0;     /* initial parameter values */
-    for (i = 0; i < 3; i++) potparam[i]  = 0.0; /* initial potential values */
-    for (i = 0; i < 3; i++) inversion[i] = 0.0;  /* initial invert values */
+    for (int i = 0; i < MAXPARAMS; i++)
+        param[i] = 0.0;     /* initial parameter values */
+    for (int i = 0; i < 3; i++)
+        potparam[i]  = 0.0; /* initial potential values */
+    for (int i = 0; i < 3; i++)
+        inversion[i] = 0.0;  /* initial invert values */
     initorbit.x = initorbit.y = 0.0;     /* initial orbit values */
     invert = 0;
     decomp[0] = decomp[1] = 0;
@@ -511,7 +513,8 @@ static void initvars_fractal()          /* init vars affecting calculation */
     fm_release = 5;                      /* short release   */
     fm_wavetype = 0;                     /* sin wave */
     polyphony = 0;                       /* no polyphony    */
-    for (i=0; i<=11; i++) scale_map[i]=i+1;    /* straight mapping of notes in octave */
+    for (int i = 0; i <= 11; i++)
+        scale_map[i]=i+1;    /* straight mapping of notes in octave */
 #endif
 }
 
@@ -562,7 +565,7 @@ static int cmdfile(FILE *handle,int mode)
 
     if (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME) {
         while ((i = getc(handle)) != '{' && i != EOF) { }
-        for (i=0; i<4; i++)
+        for (int i = 0; i < 4; i++)
             CommandComment[i][0] = 0;
     }
     linebuf[0] = 0;
@@ -589,7 +592,6 @@ static int cmdfile(FILE *handle,int mode)
 static int next_command(char *cmdbuf,int maxlen,
                         FILE *handle,char *linebuf,int *lineoffset,int mode)
 {
-    int i;
     int cmdlen = 0;
     char *lineptr;
     lineptr = linebuf + *lineoffset;
@@ -619,7 +621,7 @@ static int next_command(char *cmdbuf,int maxlen,
                     {
                         if ((int)strlen(lineptr) >= MAXCMT)
                             *(lineptr+MAXCMT-1) = 0;
-                        for (i=0; i<4; i++)
+                        for (int i = 0; i < 4; i++)
                             if (CommandComment[i][0] == 0)
                             {
                                 strcpy(CommandComment[i],lineptr);
@@ -703,7 +705,6 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     char    charval[16] = { 0 };        /* first character of arg    */
     int     yesnoval[16] = { 0 };       /* 0 if 'n', 1 if 'y', -1 if not */
     double  ftemp = 0.0;
-    int     k = 0;
     char    *argptr2 = nullptr;
     int     totparms = 0;               /* # of / delimited parms    */
     int     intparms = 0;               /* # of / delimited ints     */
@@ -1120,7 +1121,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "video") == 0)         /* video=? */
     {
-        k = check_vidmode_keyname(value);
+        int k = check_vidmode_keyname(value);
         if (k == 0)
         {
             goto badarg;
@@ -1321,6 +1322,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             value[3] = 0;
         }
+        int k;
         for (k = 0; fractalspecific[k].name != nullptr; k++)
         {
             if (strcmp(value, fractalspecific[k].name) == 0)
@@ -1431,7 +1433,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "function") == 0)      /* function=?,? */
     {
-        k = 0;
+        int k = 0;
         while (*value && k < 4)
         {
             if (set_trig_array(k++, value))
@@ -1739,7 +1741,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "potential") == 0)     /* potential=? */
     {
-        k = 0;
+        int k = 0;
         while (k < 3 && *value)
         {
             if (k==1)
@@ -1777,6 +1779,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             goto badarg;
         }
         initparams = true;
+        int k;
         for (k = 0; k < MAXPARAMS; ++k)
         {
             param[k] = (k < totparms) ? floatval[k] : 0.0;
@@ -1837,7 +1840,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
         if (totparms > 2)
         {
-            for (k = 2; k < 6; ++k)
+            for (int k = 2; k < 6; ++k)
             {
                 param[k-2] = (k < totparms) ? floatval[k] : 0.0;
             }
@@ -2028,7 +2031,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
                 /* now get parameters and corners all over again at new
                 decimal setting */
-                for (k = 0; k < MAXPARAMS; k++)
+                for (int k = 0; k < MAXPARAMS; k++)
                 {
                     floattobf(bfparms[k], param[k]);
                 }
