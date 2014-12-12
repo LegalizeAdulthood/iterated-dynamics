@@ -151,7 +151,7 @@ void freetempmsg()
     temptextsave = 0;
 }
 
-int showtempmsg(const char *msgparm)
+bool showtempmsg(const char *msgparm)
 {
     static long size = 0;
     char msg[41];
@@ -165,12 +165,12 @@ int showtempmsg(const char *msgparm)
     if (driver_diskp())  /* disk video, screen in text mode, easy */
     {
         dvid_status(0, msg);
-        return 0;
+        return false;
     }
     if (first_init)      /* & cmdfiles hasn't finished 1st try */
     {
         printf("%s\n", msg);
-        return 0;
+        return false;
     }
 
     xrepeat = (sxdots >= 640) ? 2 : 1;
@@ -204,7 +204,7 @@ int showtempmsg(const char *msgparm)
         temptextsave = MemoryAlloc((U16)textxdots, (long)textydots, MEMORY);
         if (temptextsave == 0)
         {
-            return -1; /* sorry, message not displayed */
+            return true; /* sorry, message not displayed */
         }
         for (int i = 0; i < textydots; ++i)
         {
@@ -218,7 +218,7 @@ int showtempmsg(const char *msgparm)
     sxoffs = save_sxoffs;
     syoffs = save_syoffs;
 
-    return 0;
+    return false;
 }
 
 void cleartempmsg()

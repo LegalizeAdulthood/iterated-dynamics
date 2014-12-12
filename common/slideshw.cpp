@@ -110,7 +110,7 @@ static void message(int secs, char *buf)
     char nearbuf[41] = { 0 };
     strncpy(nearbuf, buf, NUM_OF(nearbuf)-1);
     showtempmsg_txt(0,0,7,secs,nearbuf);
-    if (showtempmsg(nearbuf) == 0)
+    if (!showtempmsg(nearbuf))
     {
         sleep_secs(secs);
         cleartempmsg();

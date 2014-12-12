@@ -1015,7 +1015,7 @@ extern int fullscreen_choice(
     int (*checkkey)(int,int)
 );
 
-extern int showtempmsg(const char *);
+extern bool showtempmsg(const char *);
 extern void cleartempmsg(void);
 extern void helptitle(void);
 extern int putstringcenter(int row, int col, int width, int attr, const char *msg);

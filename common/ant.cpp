@@ -44,7 +44,7 @@ setwait(long *wait)
         while ((int)strlen(msg) < 15)
             strcat(msg, " ");
         msg[15] = '\0';
-        showtempmsg((char *) msg);
+        showtempmsg(msg);
         kbdchar = driver_get_key();
         switch (kbdchar)
         {
