@@ -281,7 +281,7 @@ static void init_bf_2(void)
     ptr += bflength+2;
     bfy3rd     = bnroot+ptr;
     ptr += bflength+2;
-    for (i=0; i<10; i++)
+    for (int i = 0; i < 10; i++)
     {
         bfparms[i]  = bnroot+ptr;
         ptr += bflength+2;
@@ -348,7 +348,6 @@ static int save_bf_vars(void)
 static int restore_bf_vars(void)
 {
     bf_t ptr;
-    int i;
     if (bf_save_len == 0)
         return (-1);
     ptr  = bnroot;
@@ -364,7 +363,7 @@ static int restore_bf_vars(void)
     ptr += bf_save_len+2;
     convert_bf(bfy3rd,ptr,bflength,bf_save_len);
     ptr += bf_save_len+2;
-    for (i=0; i<10; i++)
+    for (int i = 0; i < 10; i++)
     {
         convert_bf(bfparms[i],ptr,bflength,bf_save_len);
         ptr += bf_save_len+2;

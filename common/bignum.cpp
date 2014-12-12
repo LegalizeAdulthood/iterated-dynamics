@@ -230,9 +230,7 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
 
 void bn_hexdump(bn_t r)
 {
-    int i;
-
-    for (i=0; i<bnlength; i++)
+    for (int i = 0; i < bnlength; i++)
         printf("%02X ", r[i]);
     printf("\n");
     return;
@@ -349,7 +347,7 @@ int strlen_needed()
 
 char *unsafe_bntostr(char *s, int dec, bn_t r)
 {
-    int l=0, d;
+    int l = 0;
     bn_t onesbyte;
     long longval = 0;
 
@@ -377,7 +375,7 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
     ltoa(longval, s, 10);
     l = (int) strlen(s);
     s[l++] = '.';
-    for (d=0; d < dec; d++)
+    for (int d = 0; d < dec; d++)
     {
         *onesbyte = 0;  /* clear out highest byte */
         mult_a_bn_int(r, 10);
@@ -444,7 +442,6 @@ long bntoint(bn_t n)
 bn_t floattobn(bn_t r, LDBL f)
 {
     bn_t onesbyte;
-    int i;
     bool signflag = false;
 
     clear_bn(r);
@@ -470,7 +467,7 @@ bn_t floattobn(bn_t r, LDBL f)
     }
 
     f -= (long)f; /* keep only the decimal part */
-    for (i = bnlength - intlength - 1; i >= 0 && f != 0.0; i--)
+    for (int i = bnlength-intlength-1; i >= 0 && f != 0.0; i--)
     {
         f *= 256;
         r[i] = (BYTE)f;  /* keep use the integer part */
@@ -516,7 +513,6 @@ bn_t abs_a_bn(bn_t r)
 /*      n ends up as |n|    Make copy first if necessary.           */
 bn_t unsafe_inv_bn(bn_t r, bn_t n)
 {
-    int i;
     long maxval;
     LDBL f;
     bn_t orig_r, orig_n; /* orig_bntmp1 not needed here */
@@ -578,7 +574,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     floattobn(r, f); /* start with approximate inverse */
     clear_bn(bntmp2); /* will be used as 1.0 and 2.0 */
 
-    for (i=0; i<25; i++) /* safety net, this shouldn't ever be needed */
+    for (int i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
     {
         /* adjust lengths */
         bnlength <<= 1; /* double precision */
@@ -724,7 +720,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 /*      n ends up as |n|                                            */
 bn_t sqrt_bn(bn_t r, bn_t n)
 {
-    int i, comp, almost_match=0;
+    int comp, almost_match=0;
     LDBL f;
     bn_t orig_r, orig_n;
     int  orig_bnlength,
@@ -771,7 +767,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     floattobn(r, f); /* start with approximate sqrt */
     copy_bn(bntmp4, r);
 
-    for (i=0; i<25; i++) /* safety net, this shouldn't ever be needed */
+    for (int i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
     {
         /* adjust lengths */
         bnlength <<= 1; /* double precision */
@@ -843,7 +839,7 @@ bn_t exp_bn(bn_t r, bn_t n)
 /*      n ends up as |n|                                            */
 bn_t unsafe_ln_bn(bn_t r, bn_t n)
 {
-    int i, comp, almost_match=0;
+    int comp, almost_match=0;
     long maxval;
     LDBL f;
     bn_t orig_r, orig_n, orig_bntmp5, orig_bntmp4;
@@ -906,7 +902,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     neg_a_bn(r); /* -r */
     copy_bn(bntmp5, r); /* -r */
 
-    for (i=0; i<25; i++) /* safety net, this shouldn't ever be needed */
+    for (int i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
     {
         /* adjust lengths */
         bnlength <<= 1; /* double precision */
@@ -1096,7 +1092,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 /*      n ends up as |n| or 1/|n|                                   */
 bn_t unsafe_atan_bn(bn_t r, bn_t n)
 {
-    int i, comp, almost_match=0;
+    int comp, almost_match=0;
     LDBL f;
     bn_t orig_r, orig_n, orig_bn_pi, orig_bntmp3;
     int  orig_bnlength,
@@ -1156,7 +1152,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     floattobn(r, f); /* start with approximate atan */
     copy_bn(bntmp3, r);
 
-    for (i=0; i<25; i++) /* safety net, this shouldn't ever be needed */
+    for (int i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
     {
         /* adjust lengths */
         bnlength <<= 1; /* double precision */

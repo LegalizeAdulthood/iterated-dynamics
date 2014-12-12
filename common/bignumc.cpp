@@ -61,7 +61,6 @@ bn_t copy_bn(bn_t r, bn_t n)
 /*  if n1 < n2 returns a negative (bytes left to go when mismatch occured) */
 int cmp_bn(bn_t n1, bn_t n2)
 {
-    int i;
     S16 Svalue1, Svalue2;
     U16 value1, value2;
 
@@ -84,7 +83,7 @@ int cmp_bn(bn_t n1, bn_t n2)
     }
 
     /* unsigned comparison for the rest */
-    for (i=bnlength-4; i>=0; i-=2)
+    for (int i = bnlength-4; i >= 0; i -= 2)
     {
         if ((value1=big_access16(n1+i)) > (value2=big_access16(n2+i)))
         {   /* now determine which of the two bytes was different */
@@ -117,10 +116,8 @@ bool is_bn_neg(bn_t n)
 /* RETURNS: true if n != 0 */
 bool is_bn_not_zero(bn_t n)
 {
-    int i;
-
     /* two bytes at a time */
-    for (i=0; i<bnlength; i+=2)
+    for (int i = 0; i < bnlength; i += 2)
         if (big_access16(n+i) != 0)
             return true;
     return false;
@@ -130,11 +127,10 @@ bool is_bn_not_zero(bn_t n)
 /* r = n1 + n2 */
 bn_t add_bn(bn_t r, bn_t n1, bn_t n2)
 {
-    int i;
     U32 sum=0;
 
     /* two bytes at a time */
-    for (i=0; i<bnlength; i+=2)
+    for (int i = 0; i < bnlength; i += 2)
     {
         sum += (U32)big_access16(n1+i) + (U32)big_access16(n2+i); /* add 'em up */
         big_set16(r+i, (U16)sum);   /* store the lower 2 bytes */
@@ -147,11 +143,10 @@ bn_t add_bn(bn_t r, bn_t n1, bn_t n2)
 /* r += n */
 bn_t add_a_bn(bn_t r, bn_t n)
 {
-    int i;
     U32 sum=0;
 
     /* two bytes at a time */
-    for (i=0; i<bnlength; i+=2)
+    for (int i = 0; i < bnlength; i += 2)
     {
         sum += (U32)big_access16(r+i) + (U32)big_access16(n+i); /* add 'em up */
         big_set16(r+i, (U16)sum);   /* store the lower 2 bytes */
@@ -164,11 +159,10 @@ bn_t add_a_bn(bn_t r, bn_t n)
 /* r = n1 - n2 */
 bn_t sub_bn(bn_t r, bn_t n1, bn_t n2)
 {
-    int i;
     U32 diff=0;
 
     /* two bytes at a time */
-    for (i=0; i<bnlength; i+=2)
+    for (int i = 0; i < bnlength; i += 2)
     {
         diff = (U32)big_access16(n1+i) - ((U32)big_access16(n2+i)-(S32)(S16)diff); /* subtract with borrow */
         big_set16(r+i, (U16)diff);   /* store the lower 2 bytes */
@@ -181,11 +175,10 @@ bn_t sub_bn(bn_t r, bn_t n1, bn_t n2)
 /* r -= n */
 bn_t sub_a_bn(bn_t r, bn_t n)
 {
-    int i;
     U32 diff=0;
 
     /* two bytes at a time */
-    for (i=0; i<bnlength; i+=2)
+    for (int i = 0; i < bnlength; i += 2)
     {
         diff = (U32)big_access16(r+i) - ((U32)big_access16(n+i)-(S32)(S16)diff); /* subtract with borrow */
         big_set16(r+i, (U16)diff);   /* store the lower 2 bytes */
@@ -203,7 +196,7 @@ bn_t neg_bn(bn_t r, bn_t n)
     U32 neg=1; /* to get the 2's complement started */
 
     /* two bytes at a time */
-    for (i=0; neg != 0 && i<bnlength; i+=2)
+    for (i = 0; neg != 0 && i < bnlength; i += 2)
     {
         t_short = ~big_access16(n+i);
         neg += ((U32)t_short); /* two's complement */
@@ -211,7 +204,7 @@ bn_t neg_bn(bn_t r, bn_t n)
         neg >>= 16; /* shift the sign bit for next time */
     }
     /* if neg was 0, then just "not" the rest */
-    for (; i<bnlength; i+=2)
+    for (; i < bnlength; i += 2)
     {   /* notice that big_access16() and big_set16() are not needed here */
         *(U16 BIGDIST *)(r+i) = ~*(U16 BIGDIST *)(n+i); /* toggle all the bits */
     }
@@ -227,7 +220,7 @@ bn_t neg_a_bn(bn_t r)
     U32 neg=1; /* to get the 2's complement started */
 
     /* two bytes at a time */
-    for (i=0; neg != 0 && i<bnlength; i+=2)
+    for (i = 0; neg != 0 && i < bnlength; i += 2)
     {
         t_short = ~big_access16(r+i);
         neg += ((U32)t_short); /* two's complement */
@@ -235,7 +228,7 @@ bn_t neg_a_bn(bn_t r)
         neg >>= 16; /* shift the sign bit for next time */
     }
     /* if neg was 0, then just "not" the rest */
-    for (; i<bnlength; i+=2)
+    for (; i < bnlength; i += 2)
     {   /* notice that big_access16() and big_set16() are not needed here */
         *(U16 BIGDIST *)(r+i) = ~*(U16 BIGDIST *)(r+i); /* toggle all the bits */
     }
@@ -246,11 +239,10 @@ bn_t neg_a_bn(bn_t r)
 /* r = 2*n */
 bn_t double_bn(bn_t r, bn_t n)
 {
-    int i;
     U32 prod=0;
 
     /* two bytes at a time */
-    for (i=0; i<bnlength; i+=2)
+    for (int i = 0; i < bnlength; i += 2)
     {
         prod += (U32)big_access16(n+i)<<1 ; /* double it */
         big_set16(r+i, (U16)prod);   /* store the lower 2 bytes */
@@ -263,11 +255,10 @@ bn_t double_bn(bn_t r, bn_t n)
 /* r *= 2 */
 bn_t double_a_bn(bn_t r)
 {
-    int i;
     U32 prod=0;
 
     /* two bytes at a time */
-    for (i=0; i<bnlength; i+=2)
+    for (int i = 0; i < bnlength; i += 2)
     {
         prod += (U32)big_access16(r+i)<<1 ; /* double it */
         big_set16(r+i, (U16)prod);   /* store the lower 2 bytes */
@@ -291,7 +282,7 @@ bn_t half_bn(bn_t r, bn_t n)
     big_set16(r+i, (U16)(quot>>16));   /* store the upper 2 bytes */
     quot <<= 16; /* shift the underflow for next time */
 
-    for (i=bnlength-4; i>=0; i-=2)
+    for (int i = bnlength-4; i >= 0; i -= 2)
     {
         /* looks wierd, but properly sign extends argument */
         quot += (U32)(((U32)big_access16(n+i)<<16)>>1) ; /* shift to upper 2 bytes and half it */
@@ -317,7 +308,7 @@ bn_t half_a_bn(bn_t r)
     big_set16(r+i, (U16)(quot>>16));   /* store the upper 2 bytes */
     quot <<= 16; /* shift the underflow for next time */
 
-    for (i=bnlength-4; i>=0; i-=2)
+    for (int i = bnlength-4; i >= 0; i -= 2)
     {
         /* looks wierd, but properly sign extends argument */
         quot += (U32)(((U32)(U16)big_access16(r+i)<<16)>>1) ; /* shift to upper 2 bytes and half it */
@@ -336,7 +327,7 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
     bool sign2 = false;
     int samevar;
-    int i, j, k, steps, doublesteps, carry_steps;
+    int steps, doublesteps, carry_steps;
     bn_t n1p, n2p;      /* pointers for n1, n2 */
     bn_t rp1, rp2, rp3; /* pointers for r */
     U32 prod, sum;
@@ -363,10 +354,10 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
     clear_bn(r);        /* double width */
     bnlength >>= 1;
     rp1 = rp2 = r;
-    for (i = 0; i < steps; i++)
+    for (int i = 0; i < steps; i++)
     {
         n2p = n2;
-        for (j = 0; j < steps; j++)
+        for (int j = 0; j < steps; j++)
         {
             prod = (U32)big_access16(n1p) * (U32)big_access16(n2p); /* U16*U16=U32 */
             sum = (U32)big_access16(rp2) + prod; /* add to previous, including overflow */
@@ -376,7 +367,7 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
             sum += big_access16(rp3);     /* add what was the upper two bytes */
             big_set16(rp3 ,(U16)sum); /* save what was the upper two bytes */
             sum >>= 16;             /* keep just the overflow */
-            for (k=0; sum != 0 && k<carry_steps; k++)
+            for (int k = 0; sum != 0 && k < carry_steps; k++)
             {
                 rp3 += 2;               /* move over 2 bytes */
                 sum += big_access16(rp3);     /* add to what was the overflow */
@@ -412,7 +403,7 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
     bool sign2 = false;
     int samevar;
-    int i, j, k, steps, doublesteps, carry_steps, skips;
+    int steps, doublesteps, carry_steps, skips;
     bn_t n1p, n2p;      /* pointers for n1, n2 */
     bn_t rp1, rp2, rp3; /* pointers for r */
     U32 prod, sum;
@@ -440,10 +431,10 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
     skips = (bnlength>>1) - steps;
     carry_steps = doublesteps = (rlength>>1)-2;
     rp2 = rp1 = r;
-    for (i=bnlength>>1; i>0; i--)
+    for (int i = bnlength >> 1; i > 0; i--)
     {
         n2p = n2;
-        for (j=0; j<steps; j++)
+        for (int j = 0; j < steps; j++)
         {
             prod = (U32)big_access16(n1p) * (U32)big_access16(n2p); /* U16*U16=U32 */
             sum = (U32)big_access16(rp2) + prod; /* add to previous, including overflow */
@@ -453,7 +444,7 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
             sum += big_access16(rp3);     /* add what was the upper two bytes */
             big_set16(rp3, (U16)sum); /* save what was the upper two bytes */
             sum >>= 16;             /* keep just the overflow */
-            for (k=0; sum != 0 && k<carry_steps; k++)
+            for (int k = 0; sum != 0 && k < carry_steps; k++)
             {
                 rp3 += 2;               /* move over 2 bytes */
                 sum += big_access16(rp3);     /* add to what was the overflow */
@@ -503,7 +494,7 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 /* SIDE-EFFECTS: n is changed to its absolute value                     */
 bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 {
-    int i, j, k, steps, doublesteps, carry_steps;
+    int steps, doublesteps, carry_steps;
     bn_t n1p, n2p;
     bn_t rp1, rp2, rp3;
     U32 prod, sum;
@@ -521,10 +512,10 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
     n1p = n;
     if (steps != 0) /* if zero, then skip all the middle term calculations */
     {
-        for (i=steps; i>0; i--) /* steps gets altered, count backwards */
+        for (int i = steps; i > 0; i--) /* steps gets altered, count backwards */
         {
             n2p = n1p + 2;  /* set n2p pointer to 1 step beyond n1p */
-            for (j=0; j<steps; j++)
+            for (int j = 0; j < steps; j++)
             {
                 prod = (U32)big_access16(n1p) * (U32)big_access16(n2p); /* U16*U16=U32 */
                 sum = (U32)big_access16(rp2) + prod; /* add to previous, including overflow */
@@ -534,7 +525,7 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
                 sum += big_access16(rp3);     /* add what was the upper two bytes */
                 big_set16(rp3, (U16)sum); /* save what was the upper two bytes */
                 sum >>= 16;             /* keep just the overflow */
-                for (k=0; sum != 0 && k<carry_steps; k++)
+                for (int k = 0; sum != 0 && k < carry_steps; k++)
                 {
                     rp3 += 2;               /* move over 2 bytes */
                     sum += big_access16(rp3);     /* add to what was the overflow */
@@ -562,7 +553,7 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
     steps = (bnlength>>1);
     carry_steps = doublesteps = (steps<<1) - 2;
     rp1 = r;
-    for (i=0; i<steps; i++)
+    for (int i = 0; i < steps; i++)
     {
         /* square it */
         prod = (U32)big_access16(n1p) * (U32)big_access16(n1p); /* U16*U16=U32 */
@@ -573,7 +564,7 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
         sum += big_access16(rp3);     /* add what was the upper two bytes */
         big_set16(rp3, (U16)sum); /* save what was the upper two bytes */
         sum >>= 16;             /* keep just the overflow */
-        for (k=0; sum != 0 && k<carry_steps; k++)
+        for (int k = 0; sum != 0 && k < carry_steps; k++)
         {
             rp3 += 2;               /* move over 2 bytes */
             sum += big_access16(rp3);     /* add to what was the overflow */
@@ -602,7 +593,7 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 /* SIDE-EFFECTS: n is changed to its absolute value                     */
 bn_t unsafe_square_bn(bn_t r, bn_t n)
 {
-    int i, j, k, steps, doublesteps, carry_steps;
+    int steps, doublesteps, carry_steps;
     int skips, rodd;
     bn_t n1p, n2p, n3p;
     bn_t rp1, rp2, rp3;
@@ -625,7 +616,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 
     /* determine whether r is on an odd or even two-byte word in the number */
     rodd = (U16)(((bnlength<<1)-rlength)>>1) & 0x0001;
-    i = (bnlength>>1)-1;
+    int i = (bnlength>>1)-1;
     steps = (rlength-bnlength)>>1;
     carry_steps = doublesteps = (bnlength>>1)+steps-2;
     skips = (i - steps)>>1;     /* how long to skip over pointer shifts */
@@ -637,7 +628,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
         /* i is already set */
         for (; i>0; i--)
         {
-            for (j=0; j<steps; j++)
+            for (int j = 0; j < steps; j++)
             {
                 prod = (U32)big_access16(n1p) * (U32)big_access16(n2p); /* U16*U16=U32 */
                 sum = (U32)big_access16(rp2) + prod; /* add to previous, including overflow */
@@ -647,7 +638,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
                 sum += big_access16(rp3);     /* add what was the upper two bytes */
                 big_set16(rp3, (U16)sum); /* save what was the upper two bytes */
                 sum >>= 16;             /* keep just the overflow */
-                for (k=0; sum != 0 && k<carry_steps; k++)
+                for (int k = 0; sum != 0 && k < carry_steps; k++)
                 {
                     rp3 += 2;               /* move over 2 bytes */
                     sum += big_access16(rp3);     /* add to what was the overflow */
@@ -712,7 +703,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
         sum += big_access16(rp3);     /* add what was the upper two bytes */
         big_set16(rp3, (U16)sum); /* save what was the upper two bytes */
         sum >>= 16;             /* keep just the overflow */
-        for (k=0; sum != 0 && k<carry_steps; k++)
+        for (int k = 0; sum != 0 && k < carry_steps; k++)
         {
             rp3 += 2;               /* move over 2 bytes */
             sum += big_access16(rp3);     /* add to what was the overflow */
@@ -730,11 +721,10 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 /* r = n * u  where u is an unsigned integer */
 bn_t mult_bn_int(bn_t r, bn_t n, U16 u)
 {
-    int i;
     U32 prod=0;
 
     /* two bytes at a time */
-    for (i=0; i<bnlength; i+=2)
+    for (int i = 0; i < bnlength; i += 2)
     {
         prod += (U32)big_access16(n+i) * u ; /* n*u */
         big_set16(r+i, (U16)prod);   /* store the lower 2 bytes */
@@ -747,11 +737,10 @@ bn_t mult_bn_int(bn_t r, bn_t n, U16 u)
 /* r *= u  where u is an unsigned integer */
 bn_t mult_a_bn_int(bn_t r, U16 u)
 {
-    int i;
     U32 prod=0;
 
     /* two bytes at a time */
-    for (i=0; i<bnlength; i+=2)
+    for (int i = 0; i < bnlength; i += 2)
     {
         prod += (U32)big_access16(r+i) * u ; /* r*u */
         big_set16(r+i, (U16)prod);   /* store the lower 2 bytes */
@@ -764,7 +753,6 @@ bn_t mult_a_bn_int(bn_t r, U16 u)
 /* r = n / u  where u is an unsigned integer */
 bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 {
-    int i;
     U32 full_number;
     U16 quot, rem=0;
 
@@ -781,7 +769,7 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
     }
 
     /* two bytes at a time */
-    for (i=bnlength-2; i>=0; i-=2)
+    for (int i = bnlength-2; i >= 0; i -= 2)
     {
         full_number = ((U32)rem<<16) + (U32)big_access16(n+i);
         quot = (U16)(full_number / u);
@@ -798,7 +786,6 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 /* r /= u  where u is an unsigned integer */
 bn_t div_a_bn_int(bn_t r, U16 u)
 {
-    int i;
     U32 full_number;
     U16 quot, rem=0;
 
@@ -815,7 +802,7 @@ bn_t div_a_bn_int(bn_t r, U16 u)
     }
 
     /* two bytes at a time */
-    for (i=bnlength-2; i>=0; i-=2)
+    for (int i = bnlength-2; i >= 0; i -= 2)
     {
         full_number = ((U32)rem<<16) + (U32)big_access16(r+i);
         quot = (U16)(full_number / u);
@@ -833,7 +820,6 @@ bn_t div_a_bn_int(bn_t r, U16 u)
 /*  Converts a bignumber to a double                                 */
 LDBL bntofloat(bn_t n)
 {
-    int i;
     int expon;
     bn_t getbyte;
     LDBL f=0;
@@ -855,7 +841,7 @@ LDBL bntofloat(bn_t n)
 
     /* There is no need to use all bnlength bytes.  To get the full */
     /* precision of LDBL, all you need is LDBL_MANT_DIG/8+1.        */
-    for (i = 0; i < (LDBL_MANT_DIG/8+1) && getbyte >= n; i++, getbyte--)
+    for (int i = 0; i < (LDBL_MANT_DIG/8+1) && getbyte >= n; i++, getbyte--)
     {
         f += scale_256(*getbyte,-i);
     }
