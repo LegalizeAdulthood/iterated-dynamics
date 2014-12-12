@@ -2938,16 +2938,17 @@ void sort_labels(void)
  */
 
 
-int compare_files(FILE *f1, FILE *f2) /* returns TRUE if different */
+/* returns TRUE if different */
+bool compare_files(FILE *f1, FILE *f2)
 {
     if (filelength(fileno(f1)) != filelength(fileno(f2)))
-        return (1);   /* different if sizes are not the same */
+        return true;   /* different if sizes are not the same */
 
     while (!feof(f1) && !feof(f2))
         if (getc(f1) != getc(f2))
-            return (1);
+            return true;
 
-    return ((feof(f1) && feof(f2)) ? 0 : 1);
+    return (feof(f1) && feof(f2)) ? false : true;
 }
 
 
