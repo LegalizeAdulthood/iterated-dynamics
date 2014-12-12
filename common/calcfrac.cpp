@@ -1764,7 +1764,6 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
     long savedand = 0;
     int savedincr = 0;                  /* for periodicity checking */
     LComplex lsaved = { 0 };
-    int i = 0;
     bool attracted = false;
     LComplex lat = { 0 };
     DComplex  at = { 0.0 };

@@ -1368,8 +1368,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             { "atan", ATANI },
             { "maxiter", -1 }
         };
-        int ii;
-        for (ii = 0; ii < NUM_OF(args); ii++)
+        for (int ii = 0; ii < NUM_OF(args); ii++)
         {
             if (strcmp(value, args[ii].arg) == 0)
             {
@@ -1453,7 +1452,6 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "outside") == 0)      /* outside=? */
     {
-        int ii;
         struct
         {
             const char *arg;
@@ -1470,7 +1468,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             { "fmod", FMOD },
             { "tdis", TDIS }
         };
-        for (ii = 0; ii < NUM_OF(args); ii++)
+        for (int ii = 0; ii < NUM_OF(args); ii++)
         {
             if (strcmp(value, args[ii].arg) == 0)
             {
@@ -1633,7 +1631,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             return -1;
         }
         rangeslen = entries;
-        for (i = 0; i < rangeslen; ++i)
+        for (int i = 0; i < rangeslen; ++i)
         {
             ranges[i] = tmpranges[i];
         }
@@ -1779,14 +1777,13 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             goto badarg;
         }
         initparams = true;
-        int k;
-        for (k = 0; k < MAXPARAMS; ++k)
+        for (int k = 0; k < MAXPARAMS; ++k)
         {
             param[k] = (k < totparms) ? floatval[k] : 0.0;
         }
         if (bf_math)
         {
-            for (k = 0; k < MAXPARAMS; k++)
+            for (int k = 0; k < MAXPARAMS; k++)
             {
                 floattobf(bfparms[k], param[k]);
             }
@@ -1879,9 +1876,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
     if (strcmp(variable, "3dmode") == 0)         /* orbitname=? */
     {
-        int i, j;
-        j = -1;
-        for (i = 0; i < 4; i++)
+        int j = -1;
+        for (int i = 0; i < 4; i++)
         {
             if (strcmp(value, juli3Doptions[i]) == 0)
             {
@@ -1986,8 +1982,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             }
             if (old_bf_math == 0)
             {
-                int k;
-                for (k = 0; k < MAXPARAMS; k++)
+                for (int k = 0; k < MAXPARAMS; k++)
                 {
                     floattobf(bfparms[k], param[k]);
                 }
@@ -2187,9 +2182,9 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             old_bf_math = bf_math;
             if (!bf_math || dec > decimals)
                 init_bf_dec(dec);
-            if (old_bf_math == 0) {
-                int k;
-                for (k = 0; k < MAXPARAMS; k++)
+            if (old_bf_math == 0)
+            {
+                for (int k = 0; k < MAXPARAMS; k++)
                     floattobf(bfparms[k], param[k]);
             }
             usemag = true;
