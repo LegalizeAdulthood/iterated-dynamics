@@ -831,20 +831,20 @@ void put_spaces(int how_many)
 }
 
 
-int get_next_item(void)   /* used by parse_contents() */
+/* used by parse_contents() */
+bool get_next_item(void)
 {
-    int   last;
     char *ptr;
 
     skip_over(" \t\n");
     ptr = read_until(cmd, 128, ",}");
-    last = (*ptr == '}');
+    bool last = (*ptr == '}');
     --ptr;
     while (ptr >= cmd && strchr(" \t\n",*ptr))     /* strip trailing spaces */
         --ptr;
     *(++ptr) = '\0';
 
-    return (last);
+    return last;
 }
 
 
@@ -881,8 +881,6 @@ void process_contents(void)
 
         if (ch == '{')   /* process a CONTENT entry */
         {
-            int last;
-
             c.flags = 0;
             c.num_topic = 0;
             c.doc_page = -1;
@@ -903,7 +901,7 @@ void process_contents(void)
             }
             indent = atoi(cmd);
 
-            last = get_next_item();
+            bool last = get_next_item();
 
             if (cmd[0] == '\"')
             {
