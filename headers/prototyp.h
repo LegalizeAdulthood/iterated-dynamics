@@ -1036,7 +1036,7 @@ extern void bad_fractint_cfg_msg(void);
 
 extern void rotate(int);
 extern void save_palette(void);
-extern int load_palette(void);
+extern bool load_palette(void);
 
 /*  slideshw -- C file prototypes */
 

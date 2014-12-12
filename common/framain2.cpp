@@ -1209,7 +1209,7 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
         return CONTINUE;
     case 'e':                    /* switch to color editing      */
         if (g_is_true_color && !initbatch) { /* don't enter palette editor */
-            if (load_palette() >= 0) {
+            if (!load_palette()) {
                 *kbdmore = false;
                 calc_status = CALCSTAT_PARAMS_CHANGED;
                 break;
@@ -1573,7 +1573,7 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         return CONTINUE;
     case 'e':                    /* switch to color editing      */
         if (g_is_true_color && !initbatch) { /* don't enter palette editor */
-            if (load_palette() >= 0) {
+            if (!load_palette()) {
                 *kbdmore = false;
                 calc_status = CALCSTAT_PARAMS_CHANGED;
                 break;

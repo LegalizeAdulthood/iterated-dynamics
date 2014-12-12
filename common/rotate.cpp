@@ -444,7 +444,7 @@ void save_palette()
 }
 
 
-int load_palette(void)
+bool load_palette(void)
 {
     int oldhelpmode;
     char filename[FILE_MAX_PATH];
@@ -461,6 +461,6 @@ int load_palette(void)
         merge_pathnames(MAP_name,filename,0);
     }
     helpmode = oldhelpmode;
-    return i ? -1 : 0;
+    return i;
 }
 
