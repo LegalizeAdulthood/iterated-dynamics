@@ -20,9 +20,7 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 
 void bf_hexdump(bf_t r)
 {
-    int i;
-
-    for (i=0; i<bflength; i++)
+    for (int i = 0; i < bflength; i++)
         printf("%02X ", *(r+i));
     printf(" e %04hX ", (S16)big_access16(r+bflength));
     printf("\n");
@@ -339,7 +337,6 @@ bf_t abs_a_bf(bf_t r)
 /*      n ends up as |n|/256^exp    Make copy first if necessary.   */
 bf_t unsafe_inv_bf(bf_t r, bf_t n)
 {
-    int i;
     bool signflag = false; 
     int fexp, rexp;
     LDBL f;
@@ -395,7 +392,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 
     floattobf(r, f); /* start with approximate inverse */
 
-    for (i=0; i<25; i++) /* safety net, this shouldn't ever be needed */
+    for (int i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
     {
         /* adjust lengths */
         bnlength <<= 1; /* double precision */
@@ -491,7 +488,7 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
 /*      n ends up as |n|                                            */
 bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 {
-    int i, comp, almost_match=0;
+    int comp, almost_match=0;
     LDBL f;
     bf_t orig_r, orig_n;
     int  orig_bflength,
@@ -541,7 +538,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 
     floattobf(r, f); /* start with approximate sqrt */
 
-    for (i=0; i<25; i++) /* safety net, this shouldn't ever be needed */
+    for (int i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
     {
         /* adjust lengths */
         bnlength <<= 1; /* double precision */
@@ -617,7 +614,7 @@ bf_t exp_bf(bf_t r, bf_t n)
 /*      n ends up as |n|                                            */
 bf_t unsafe_ln_bf(bf_t r, bf_t n)
 {
-    int i, comp, almost_match=0;
+    int comp, almost_match=0;
     LDBL f;
     bf_t orig_r, orig_n, orig_bftmp5;
     int  orig_bflength,
@@ -668,7 +665,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     neg_a_bf(r); /* -r */
     copy_bf(bftmp5, r); /* -r */
 
-    for (i=0; i<25; i++) /* safety net, this shouldn't ever be needed */
+    for (int i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
     {
         /* adjust lengths */
         bnlength <<= 1; /* double precision */
@@ -880,7 +877,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 /*      n ends up as |n| or 1/|n|                                   */
 bf_t unsafe_atan_bf(bf_t r, bf_t n)
 {
-    int i, comp, almost_match=0;
+    int comp, almost_match=0;
     bool signflag = false;
     LDBL f;
     bf_t orig_r, orig_n, orig_bf_pi, orig_bftmp3;
@@ -946,7 +943,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     floattobf(r, f); /* start with approximate atan */
     copy_bf(bftmp3, r);
 
-    for (i=0; i<25; i++) /* safety net, this shouldn't ever be needed */
+    for (int i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
     {
         /* adjust lengths */
         bnlength <<= 1; /* double precision */
@@ -1369,7 +1366,6 @@ bf_t max_bf(bf_t r)
 
 int cmp_bf(bf_t n1, bf_t n2)
 {
-    int i;
     int sign1, sign2;
     S16 BIGDIST *n1exp, BIGDIST *n2exp;
     U16 value1, value2;
@@ -1395,7 +1391,7 @@ int cmp_bf(bf_t n1, bf_t n2)
     /* To get to this point, the signs must match */
     /* so unsigned comparison is ok. */
     /* two bytes at a time */
-    for (i=bflength-2; i>=0; i-=2)
+    for (int i = bflength-2; i >= 0; i -= 2)
     {
         if ((value1=big_access16(n1+i)) > (value2=big_access16(n2+i)))
         {   /* now determine which of the two bytes was different */
@@ -2129,7 +2125,7 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
     p = -1;  /* multiply by 10 right away */
     bnl = bnlength;
     bnlength = bflength;
-    for (d=1; d<=dec; d++)
+    for (int d = 1; d <= dec; d++)
     {
         /* pretend it's a bn_t instead of a bf_t */
         /* this leaves n un-normalized, which is what we want here  */
@@ -2148,11 +2144,11 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
 
     /* the digits are all read in, now scale it by 256^power256 */
     if (power256 > 0)
-        for (d=0; d<power256; d++)
+        for (int d = 0; d < power256; d++)
             mult_a_bf10_int(r, dec, 256);
 
     else if (power256 < 0)
-        for (d=0; d>power256; d--)
+        for (int d = 0; d > power256; d--)
             div_a_bf10_int(r, dec, 256);
 
     /* else power256 is zero, don't do anything */
@@ -2195,7 +2191,7 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
 bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
 {
     int signflag;
-    int d, p;
+    int p;
     unsigned value, overflow;
     bf10_t power10;
 
@@ -2210,7 +2206,7 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
 
     signflag = r[0];  /* r[0] to be used as a padding */
     overflow = 0;
-    for (d = dec; d>0; d--)
+    for (int d = dec; d > 0; d--)
     {
         value = r[d] * n + overflow;
         r[d] = (BYTE)(value % 10);
@@ -2235,7 +2231,7 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
 
 bf10_t div_a_bf10_int(bf10_t r, int dec, U16 n)
 {
-    int src, dest, p;
+    int dest, p;
     unsigned value, remainder;
     bf10_t power10;
 
@@ -2249,7 +2245,8 @@ bf10_t div_a_bf10_int(bf10_t r, int dec, U16 n)
     p = (S16)big_access16(power10);
 
     remainder = 0;
-    for (src=dest=1; src<=dec; dest++, src++)
+    dest = 1;
+    for (int src = 1; src <= dec; dest++, src++)
     {
         value = 10*remainder + r[src];
         r[dest] = (BYTE)(value / n);
@@ -2284,7 +2281,7 @@ bf10_t div_a_bf10_int(bf10_t r, int dec, U16 n)
 
 char *bf10tostr_e(char *s, int dec, bf10_t n)
 {
-    int d, p;
+    int p;
     bf10_t power10;
 
     if (n[1] == 0)
@@ -2311,7 +2308,7 @@ char *bf10tostr_e(char *s, int dec, bf10_t n)
         *(s++) = '-';
     *(s++) = (char)(n[1] + '0');
     *(s++) = '.';
-    for (d=2; d<=dec; d++)
+    for (int d = 2; d <= dec; d++)
     {
         *(s++) = (char)(n[d] + '0');
     }
@@ -2330,7 +2327,7 @@ char *bf10tostr_e(char *s, int dec, bf10_t n)
 
 char *bf10tostr_f(char *s, int dec, bf10_t n)
 {
-    int d, p;
+    int p;
     bf10_t power10;
 
     if (n[1] == 0)
@@ -2357,19 +2354,20 @@ char *bf10tostr_f(char *s, int dec, bf10_t n)
         *(s++) = '-';
     if (p >= 0)
     {
-        for (d=1; d<=p+1; d++)
+        int d;
+        for (d = 1; d <= p+1; d++)
             *(s++) = (char)(n[d] + '0');
         *(s++) = '.';
-        for (; d<=dec; d++)
+        for (; d <= dec; d++)
             *(s++) = (char)(n[d] + '0');
     }
     else
     {
         *(s++) = '0';
         *(s++) = '.';
-        for (d=0; d>p+1; d--)
+        for (int d = 0; d > p+1; d--)
             *(s++) = '0';
-        for (d=1; d<=dec; d++)
+        for (int d = 1; d <= dec; d++)
             *(s++) = (char)(n[d] + '0');
     }
 
