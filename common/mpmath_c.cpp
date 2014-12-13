@@ -432,9 +432,7 @@ static unsigned long lf;
 
 void SetupLogTable(void) {
     float l, f, c, m;
-    unsigned long prev;
     unsigned long limit;
-    unsigned n;
 
     if (save_release > 1920 || Log_Fly_Calc == 1) { /* set up on-the-fly variables */
         if (LogFlag > 0) { /* new log function */
@@ -456,7 +454,7 @@ void SetupLogTable(void) {
 
     if (save_release > 1920 && !Log_Calc) {
         Log_Calc = true;   /* turn it on */
-        for (prev = 0; prev <= (unsigned long)MaxLTSize; prev++)
+        for (unsigned long prev = 0; prev <= (unsigned long)MaxLTSize; prev++)
             LogTable[prev] = (BYTE)logtablecalc((long)prev);
         Log_Calc = false;   /* turn it off, again */
         return;
@@ -470,9 +468,10 @@ void SetupLogTable(void) {
         fLog14(m, m);
         Fg2Float((long)(colors-(lf?2:1)), 0, c);
         fDiv(m, c, m);
+        unsigned long prev;
         for (prev = 1; prev <= lf; prev++)
             LogTable[prev] = 1;
-        for (n = (lf?2:1); n < (unsigned int)colors; n++) {
+        for (unsigned n = (lf?2:1); n < (unsigned int)colors; n++) {
             Fg2Float((long)n, 0, f);
             fMul16(f, m, f);
             fExp14(f, l);
@@ -489,9 +488,10 @@ void SetupLogTable(void) {
         fSqrt14(m, m);
         Fg2Float((long)(colors-2), 0, c);
         fDiv(m, c, m);
+        unsigned long prev;
         for (prev = 1; prev <= lf; prev++)
             LogTable[prev] = 1;
-        for (n = 2; n < (unsigned int)colors; n++) {
+        for (unsigned n = 2; n < (unsigned int)colors; n++) {
             Fg2Float((long)n, 0, f);
             fMul16(f, m, f);
             fMul16(f, f, l);

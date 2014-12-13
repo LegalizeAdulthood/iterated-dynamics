@@ -49,7 +49,7 @@ int putstringwrap(int *row,int col1,int col2,int color,char *str,int maxrow)
     length = (int) strlen(str);
     padding = 3; /* space between col1 and decimal. */
     /* find decimal point */
-    for (decpt=0; decpt < length; decpt++)
+    for (decpt = 0; decpt < length; decpt++)
         if (str[decpt] == '.')
             break;
     if (decpt >= length)
@@ -559,7 +559,6 @@ static void trigdetails(char *buf)
 int set_trig_array(int k, const char *name)
 {
     char trigname[10];
-    int i;
     char *slash;
     strncpy(trigname,name,6);
     trigname[6] = 0; /* safety first */
@@ -569,7 +568,7 @@ int set_trig_array(int k, const char *name)
 
     strlwr(trigname);
 
-    for (i=0; i<numtrigfn; i++)
+    for (int i = 0; i < numtrigfn; i++)
     {
         if (strcmp(trigname,trigfn[i].name)==0)
         {
@@ -583,7 +582,6 @@ int set_trig_array(int k, const char *name)
 void set_trig_pointers(int which)
 {
     /* set trig variable functions to avoid array lookup time */
-    int i;
     switch (which)
     {
     case 0:
@@ -615,7 +613,7 @@ void set_trig_pointers(int which)
         dtrig3 = trigfn[trigndx[3]].dfunct;
         break;
     default: /* do 'em all */
-        for (i=0; i<4; i++)
+        for (int i = 0; i < 4; i++)
             set_trig_pointers(i);
         break;
     }
@@ -915,9 +913,7 @@ top:
         driver_put_string(s_row, 45, C_GENERAL_HI, "Arbitrary precision ");
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
-    int i = 1;
-
-    s_row += i;
+    s_row += 1;
 
     if (calc_status == CALCSTAT_IN_PROGRESS || calc_status == CALCSTAT_RESUMABLE)
     {
@@ -1122,7 +1118,7 @@ top:
 
     if (typehasparm(fractype, 0, msg) || hasformparam)
     {
-        for (i = 0; i < MAXPARAMS; i++)
+        for (int i = 0; i < MAXPARAMS; i++)
         {
             char p[50];
             if (typehasparm(fractype, i, p))
@@ -1217,15 +1213,14 @@ top:
 static void area(void)
 {
     const char *msg;
-    int x,y;
     char buf[160];
     long cnt=0;
     if (inside<0) {
         stopmsg(0, "Need solid inside to compute area");
         return;
     }
-    for (y=0; y<ydots; y++) {
-        for (x=0; x<xdots; x++) {
+    for (int y = 0; y < ydots; y++) {
+        for (int x = 0; x < xdots; x++) {
             if (getcolor(x,y)==inside) {
                 cnt++;
             }
@@ -1275,7 +1270,6 @@ char insufficient_ifs_mem[]= {"Insufficient memory for IFS"};
 int numaffine;
 int ifsload()                   /* read in IFS parameters */
 {
-    int i;
     FILE *ifsfile;
     char buf[201];
     char *bufptr;
@@ -1306,7 +1300,7 @@ int ifsload()                   /* read in IFS parameters */
     }
 
     float ifs_param_tmp[(NUMIFS+1)*IFS3DPARM] = { 0.f };
-    i = ret = 0;
+    int i = ret = 0;
     bufptr = get_ifs_token(buf,ifsfile);
     while (bufptr != nullptr)
     {
@@ -1352,7 +1346,7 @@ int ifsload()                   /* read in IFS parameters */
             ret = -1;
         }
         else
-            for (i = 0; i < (NUMIFS+1)*IFS3DPARM; ++i)
+            for (int i = 0; i < (NUMIFS+1)*IFS3DPARM; ++i)
                 ifs_defn[i] = ifs_param_tmp[i];
     }
     return (ret);

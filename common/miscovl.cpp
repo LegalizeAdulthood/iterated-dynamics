@@ -1712,7 +1712,6 @@ static void update_fractint_cfg()
 
 void make_mig(unsigned int xmult, unsigned int ymult)
 {
-    unsigned int xstep, ystep;
     unsigned int xres, yres;
     unsigned int allxres, allyres, xtot, ytot;
     unsigned int xloc, yloc;
@@ -1736,9 +1735,9 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     gif87a_flag = true;                     /* for now, force this */
 
     /* process each input image, one at a time */
-    for (ystep = 0; ystep < ymult; ystep++)
+    for (unsigned ystep = 0; ystep < ymult; ystep++)
     {
-        for (xstep = 0; xstep < xmult; xstep++)
+        for (unsigned xstep = 0; xstep < xmult; xstep++)
         {
             if (xstep == 0 && ystep == 0)          /* first time through? */
             {
@@ -1821,7 +1820,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                 exit(1);
             }
 
-            for (;;)                       /* process each information block */
+            while (true)                       /* process each information block */
             {
                 memset(temp,0,10);
                 if (fread(temp,1,1,in) != 1)    /* read the block identifier */
@@ -1867,7 +1866,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                     {
                         errorflag = 6;
                     }
-                    for (;;)
+                    while (true)
                     {
                         if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
                         {
@@ -1911,7 +1910,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                             errorflag = 9;
                         }
                     }
-                    for (;;)
+                    while (true)
                     {
                         if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
                         {
@@ -1997,9 +1996,9 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     /* now delete each input image, one at a time */
     if (errorflag == 0 && inputerrorflag == 0)
     {
-        for (ystep = 0; ystep < ymult; ystep++)
+        for (unsigned ystep = 0; ystep < ymult; ystep++)
         {
-            for (xstep = 0; xstep < xmult; xstep++)
+            for (unsigned xstep = 0; xstep < xmult; xstep++)
             {
                 sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
                 remove(gifin);
@@ -2020,7 +2019,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
    is still valid. */
 void flip_image(int key)
 {
-    int i, j, ixhalf, iyhalf, tempdot;
+    int ixhalf, iyhalf, tempdot;
 
     /* fractal must be rotate-able and be finished */
     if ((curfractalspecific->flags&NOROTATE) != 0
@@ -2034,11 +2033,11 @@ void flip_image(int key)
     switch (key)
     {
     case 24:            /* control-X - reverse X-axis */
-        for (i = 0; i < ixhalf; i++)
+        for (int i = 0; i < ixhalf; i++)
         {
             if (driver_key_pressed())
                 break;
-            for (j = 0; j < ydots; j++)
+            for (int j = 0; j < ydots; j++)
             {
                 tempdot=getcolor(i,j);
                 putcolor(i, j, getcolor(xdots-1-i,j));
@@ -2064,11 +2063,11 @@ void flip_image(int key)
         }
         break;
     case 25:            /* control-Y - reverse Y-aXis */
-        for (j = 0; j < iyhalf; j++)
+        for (int j = 0; j < iyhalf; j++)
         {
             if (driver_key_pressed())
                 break;
-            for (i = 0; i < xdots; i++)
+            for (int i = 0; i < xdots; i++)
             {
                 tempdot=getcolor(i,j);
                 putcolor(i, j, getcolor(i,ydots-1-j));
@@ -2094,11 +2093,11 @@ void flip_image(int key)
         }
         break;
     case 26:            /* control-Z - reverse X and Y aXis */
-        for (i = 0; i < ixhalf; i++)
+        for (int i = 0; i < ixhalf; i++)
         {
             if (driver_key_pressed())
                 break;
-            for (j = 0; j < ydots; j++)
+            for (int j = 0; j < ydots; j++)
             {
                 tempdot=getcolor(i,j);
                 putcolor(i, j, getcolor(xdots-1-i,ydots-1-j));
@@ -2278,9 +2277,8 @@ void expand_comments(char *target, char *source)
 /* extract comments from the comments= command */
 void parse_comments(char *value)
 {
-    int i;
     char *next,save;
-    for (i=0; i<4; i++)
+    for (int i = 0; i < 4; i++)
     {
         save = '\0';
         if (*value == 0)
@@ -2305,7 +2303,6 @@ void parse_comments(char *value)
 
 void init_comments()
 {
-    int i;
-    for (i=0; i<4; i++)
+    for (int i = 0; i < 4; i++)
         par_comment[i][0] = '\0';
 }
