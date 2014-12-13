@@ -2542,13 +2542,12 @@ char *has_ext(char *source)
 /* I tried heap sort also - this is faster! */
 void shell_sort(void *v1, int n, unsigned sz, int (*fct)(VOIDPTR arg1,VOIDPTR arg2))
 {
-    int gap,i,j;
     void *temp;
     char *v;
     v = (char *)v1;
-    for (gap = n/2; gap > 0; gap /= 2)
-        for (i = gap; i<n; i++)
-            for (j=i-gap; j>=0; j -= gap)
+    for (int gap = n/2; gap > 0; gap /= 2)
+        for (int i = gap; i < n; i++)
+            for (int j = i-gap; j >= 0; j -= gap)
             {
                 if (fct((char **)(v+j*sz),(char **)(v+(j+gap)*sz)) <= 0)
                     break;
