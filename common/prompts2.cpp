@@ -936,7 +936,6 @@ int starfield(void)
 int get_starfield_params(void)
 {
     struct fullscreenvalues uvalues[3];
-    int i;
     const char *starfield_prompts[3] =
     {
         "Star Density in Pixels per Star",
@@ -948,20 +947,20 @@ int get_starfield_params(void)
         stopmsg(0,"starfield requires 256 color mode");
         return (-1);
     }
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         uvalues[i].uval.dval = starfield_values[i];
         uvalues[i].type = 'f';
     }
     driver_stack_screen();
     int const oldhelpmode = helpmode;
     helpmode = HELPSTARFLD;
-    i = fullscreen_prompt("Starfield Parameters",3,starfield_prompts,uvalues,0,nullptr);
+    int const choice = fullscreen_prompt("Starfield Parameters",3,starfield_prompts,uvalues,0,nullptr);
     helpmode = oldhelpmode;
     driver_unstack_screen();
-    if (i < 0) {
+    if (choice < 0) {
         return (-1);
     }
-    for (i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
         starfield_values[i] = uvalues[i].uval.dval;
 
     return (0);
