@@ -442,28 +442,31 @@ int get_toggles2()
 
     /* now check out the results (*hopefully* in the same order <grin>) */
     k = -1;
-    int j = 0;   /* return code */
+    bool changed = false;
 
     if ((uvalues[++k].uval.ch.val != 0) != finattract) {
         finattract = uvalues[k].uval.ch.val != 0;
-        j = 1;
+        changed = true;
     }
 
     potparam[0] = uvalues[++k].uval.ival;
-    if (potparam[0] != old_potparam[0]) j = 1;
+    if (potparam[0] != old_potparam[0])
+        changed = true;
 
     potparam[1] = uvalues[++k].uval.dval;
-    if (potparam[0] != 0.0 && potparam[1] != old_potparam[1]) j = 1;
+    if (potparam[0] != 0.0 && potparam[1] != old_potparam[1])
+        changed = true;
 
     potparam[2] = uvalues[++k].uval.ival;
-    if (potparam[0] != 0.0 && potparam[2] != old_potparam[2]) j = 1;
+    if (potparam[0] != 0.0 && potparam[2] != old_potparam[2])
+        changed = true;
 
     if ((uvalues[++k].uval.ch.val != 0) != pot16bit) {
         pot16bit = uvalues[k].uval.ch.val != 0;
         if (pot16bit)                   /* turned it on */
         {
             if (potparam[0] != 0.0)
-                j = 1;
+                changed = true;
         }
         else /* turned it off */
             if (!driver_diskp()) /* ditch the disk video */
@@ -475,10 +478,12 @@ int get_toggles2()
     ++k;
     /* usr_distest = (uvalues[k].uval.ival > 32000) ? 32000 : uvalues[k].uval.ival; */
     usr_distest = uvalues[k].uval.Lval;
-    if (usr_distest != old_usr_distest) j = 1;
+    if (usr_distest != old_usr_distest)
+        changed = true;
     ++k;
     distestwidth = uvalues[k].uval.ival;
-    if (usr_distest && distestwidth != old_distestwidth) j = 1;
+    if (usr_distest && distestwidth != old_distestwidth)
+        changed = true;
 
     for (int i = 0; i < 3; i++) {
         if (uvalues[++k].uval.sval[0] == 'a' || uvalues[k].uval.sval[0] == 'A')
@@ -487,7 +492,7 @@ int get_toggles2()
             inversion[i] = atof(uvalues[k].uval.sval);
         if (old_inversion[i] != inversion[i]
                 && (i == 0 || inversion[0] != 0.0))
-            j = 1;
+            changed = true;
     }
     invert = (inversion[0] == 0.0) ? 0 : 3;
     ++k;
@@ -499,7 +504,7 @@ int get_toggles2()
         rotate_hi = old_rotate_hi;
     }
 
-    return (j);
+    return changed ? 1 : 0;
 }
 
 
