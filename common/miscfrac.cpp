@@ -458,7 +458,6 @@ static void set_Plasma_palette()
     static Palettetype Red    = { 63, 0, 0 };
     static Palettetype Green  = { 0, 63, 0 };
     static Palettetype Blue   = { 0,  0,63 };
-    int i;
 
     if (mapdacbox || colorpreloaded)
         return;    /* map= specified */
@@ -466,7 +465,7 @@ static void set_Plasma_palette()
     dac[0].red  = 0 ;
     dac[0].green= 0 ;
     dac[0].blue = 0 ;
-    for (i=1; i<=85; i++)
+    for (int i = 1; i <= 85; i++)
     {
         dac[i].red       = (BYTE)((i*Green.red   + (86-i)*Blue.red)/85);
         dac[i].green     = (BYTE)((i*Green.green + (86-i)*Blue.green)/85);
@@ -493,12 +492,8 @@ int diffusion()
     int mode;     /* Determines diffusion type:  0 = central (classic) */
     /*                             1 = falling particles */
     /*                             2 = square cavity     */
-    int colorshift; /* If zero, select colors at random, otherwise shift */
-    /* the color every colorshift points */
-
+    int colorshift; /* If zero, select colors at random, otherwise shift the color every colorshift points */
     int colorcount,currentcolor;
-
-    int i;
     double cosine,sine,angle;
     int x,y;
     float r, radius;
@@ -561,19 +556,19 @@ int diffusion()
         putcolor(xdots / 2, ydots / 2,currentcolor);
         break;
     case 1: /* Line along the bottom */
-        for (i=0; i<=xdots; i++)
+        for (int i = 0; i <= xdots; i++)
             putcolor(i,ydots-1,currentcolor);
         break;
     case 2: /* Large square that fills the screen */
         if (xdots > ydots)
-            for (i=0; i<ydots; i++) {
+            for (int i = 0; i < ydots; i++) {
                 putcolor(xdots/2-ydots/2 , i , currentcolor);
                 putcolor(xdots/2+ydots/2 , i , currentcolor);
                 putcolor(xdots/2-ydots/2+i , 0 , currentcolor);
                 putcolor(xdots/2-ydots/2+i , ydots-1 , currentcolor);
             }
         else
-            for (i=0; i<xdots; i++) {
+            for (int i = 0; i < xdots; i++) {
                 putcolor(0 , ydots/2-xdots/2+i , currentcolor);
                 putcolor(xdots-1 , ydots/2-xdots/2+i , currentcolor);
                 putcolor(i , ydots/2-xdots/2 , currentcolor);
@@ -769,12 +764,11 @@ static long   LPI;
 
 int Bifurcation(void)
 {
-    int row, column;
-    column = 0;
+    int x = 0;
     if (resuming)
     {
         start_resume();
-        get_resume(sizeof(column),&column,0);
+        get_resume(sizeof(x),&x,0);
         end_resume();
     }
     bool resized = false;
@@ -794,8 +788,8 @@ int Bifurcation(void)
 
     LPI = (long)(PI * fudge);
 
-    for (row = 0; row <= iystop; row++) /* should be iystop */
-        verhulst_array[row] = 0;
+    for (int y = 0; y <= iystop; y++) /* should be iystop */
+        verhulst_array[y] = 0;
 
     mono = false;
     if (colors == 2)
@@ -824,36 +818,36 @@ int Bifurcation(void)
     else
         init.y = (double)(yymax - iystop*delyy); /* bottom pixels */
 
-    while (column <= ixstop)
+    while (x <= ixstop)
     {
         if (driver_key_pressed())
         {
             verhulst_array.clear();
             alloc_resume(10,1);
-            put_resume(sizeof(column),&column,0);
+            put_resume(sizeof(x),&x,0);
             return (-1);
         }
 
         if (integerfractal)
-            lRate = xmin + column*delx;
+            lRate = xmin + x*delx;
         else
-            Rate = (double)(xxmin + column*delxx);
+            Rate = (double)(xxmin + x*delxx);
         verhulst();        /* calculate array once per column */
 
-        for (row = iystop; row >= 0; row--) /* should be iystop & >=0 */
+        for (int y = iystop; y >= 0; y--) /* should be iystop & >=0 */
         {
             int color;
-            color = verhulst_array[row];
+            color = verhulst_array[y];
             if (color && mono)
                 color = inside;
             else if ((!color) && mono)
                 color = outside_x;
             else if (color>=colors)
                 color = colors-1;
-            verhulst_array[row] = 0;
-            (*plot)(column,row,color); /* was row-1, but that's not right? */
+            verhulst_array[y] = 0;
+            (*plot)(x,y,color); /* was row-1, but that's not right? */
         }
-        column++;
+        x++;
     }
     verhulst_array.clear();
     return (0);
@@ -862,7 +856,6 @@ int Bifurcation(void)
 static void verhulst()          /* P. F. Verhulst (1845) */
 {
     unsigned int pixel_row;
-    unsigned long counter;
 
     if (integerfractal)
         lPopulation = (parm.y == 0) ? (long)(SEED*fudge) : (long)(parm.y*fudge);
@@ -871,7 +864,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 
     overflow = false;
 
-    for (counter=0 ; counter < filter_cycles ; counter++)
+    for (unsigned long counter = 0; counter < filter_cycles ; counter++)
     {
         if (curfractalspecific->orbitcalc())
         {
@@ -881,7 +874,8 @@ static void verhulst()          /* P. F. Verhulst (1845) */
     if (half_time_check) /* check for periodicity at half-time */
     {
         Bif_Period_Init();
-        for (counter=0 ; counter < (unsigned long)maxit ; counter++)
+        unsigned long counter;
+        for (counter = 0; counter < (unsigned long)maxit ; counter++)
         {
             if (curfractalspecific->orbitcalc())
             {
@@ -892,7 +886,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
         }
         if (counter >= (unsigned long)maxit)   /* if not periodic, go the distance */
         {
-            for (counter=0 ; counter < filter_cycles ; counter++)
+            for (counter = 0; counter < filter_cycles ; counter++)
             {
                 if (curfractalspecific->orbitcalc())
                 {
@@ -903,7 +897,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
     }
 
     if (periodicitycheck) Bif_Period_Init();
-    for (counter=0 ; counter < (unsigned long)maxit ; counter++)
+    for (unsigned long counter = 0; counter < (unsigned long)maxit ; counter++)
     {
         if (curfractalspecific->orbitcalc())
         {
@@ -1279,7 +1273,6 @@ bool lya_setup()
          */
 
     long i;
-    int t;
 
     if ((filter_cycles=(long)param[2])==0)
         filter_cycles=maxit/2;
@@ -1291,14 +1284,15 @@ bool lya_setup()
     if (save_release<1732) i &= 0x0FFFFL; /* make it a short to reproduce prior stuff*/
 #endif
     lyaRxy[0] = 1;
-    for (t=31; t>=0; t--)
+    int t;
+    for (t = 31; t >= 0; t--)
         if (i & (1<<t))
             break;
-    for (; t>=0; t--)
+    for (; t >= 0; t--)
         lyaRxy[lyaLength++] = (i & (1<<t)) != 0;
     lyaRxy[lyaLength++] = 0;
     if (save_release<1732)              /* swap axes prior to 1732 */
-        for (t=lyaLength; t>=0; t--)
+        for (t = lyaLength; t >= 0; t--)
             lyaRxy[t] = !lyaRxy[t];
     if (save_release<1731) {            /* ignore inside=, stdcalcmode */
         stdcalcmode='1';
@@ -1317,16 +1311,16 @@ bool lya_setup()
 
 int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
 {
-    int color, count, lnadjust;
-    long i;
+    int color, lnadjust;
     double total;
     double temp;
     /* e10=22026.4657948  e-10=0.0000453999297625 */
 
     total = 1.0;
     lnadjust = 0;
-    for (i=0; i<filter_cycles; i++) {
-        for (count=0; count<lyaLength; count++) {
+    long i;
+    for (i = 0; i < filter_cycles; i++) {
+        for (int count = 0; count < lyaLength; count++) {
             Rate = lyaRxy[count] ? a : b;
             if (curfractalspecific->orbitcalc()) {
                 overflow = true;
@@ -1334,8 +1328,8 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
             }
         }
     }
-    for (i=0; i < maxit/2; i++) {
-        for (count = 0; count < lyaLength; count++) {
+    for (i = 0; i < maxit/2; i++) {
+        for (int count = 0; count < lyaLength; count++) {
             Rate = lyaRxy[count] ? a : b;
             if (curfractalspecific->orbitcalc()) {
                 overflow = true;
@@ -1456,14 +1450,15 @@ void abort_cellular(int err, int t)
     }
 }
 
-int cellular() {
+int cellular()
+{
     S16 start_row;
     S16 filled, notfilled;
     U16 cell_table[32];
     U16 init_string[16];
     U16 kr, k;
     U32 lnnmbr;
-    U16 i, twor;
+    U16 twor;
     S16 t, t2;
     S32 randparam;
     double n;
@@ -1511,10 +1506,10 @@ int cellular() {
             abort_cellular(STRING1, 0);
             return -1;
         }
-        for (i=0; i<16; i++)
+        for (int i = 0; i < 16; i++)
             init_string[i] = 0; /* zero the array */
         t2 = (S16)((16 - t)/2);
-        for (i=0; i<(U16)t; i++) { /* center initial string in array */
+        for (int i = 0; i < t; i++) { /* center initial string in array */
             init_string[i+t2] = (U16)(buf[i] - 48); /* change character to number */
             if (init_string[i+t2]>(U16)k_1) {
                 abort_cellular(STRING2, 0);
@@ -1541,7 +1536,7 @@ int cellular() {
 #endif
     if (n == 0) { /* calculate a random rule */
         n = rand()%(int)k;
-        for (i=1; i<(U16)rule_digits; i++) {
+        for (int i = 1; i < rule_digits; i++) {
             n *= 10;
             n += rand()%(int)k;
         }
@@ -1553,9 +1548,9 @@ int cellular() {
         abort_cellular(RULELENGTH, 0);
         return -1;
     }
-    for (i=0; i<(U16)rule_digits; i++) /* zero the table */
+    for (int i = 0; i < rule_digits; i++) /* zero the table */
         cell_table[i] = 0;
-    for (i=0; i<(U16)t; i++) { /* reverse order */
+    for (int i = 0; i < t; i++) { /* reverse order */
         cell_table[i] = (U16)(buf[t-i-1] - 48); /* change character to number */
         if (cell_table[i]>(U16)k_1) {
             abort_cellular(TABLEK, 0);
@@ -1611,7 +1606,7 @@ int cellular() {
             for (col=0; col<=ixstop; col++) { /* Clear from end to end */
                 cell_array[filled][col] = 0;
             }
-            i = 0;
+            int i = 0;
             for (col=(ixstop-16)/2; col<(ixstop+16)/2; col++) { /* insert initial */
                 cell_array[filled][col] = (BYTE)init_string[i++];    /* string */
             }
@@ -1634,21 +1629,22 @@ int cellular() {
             thinking(1, "Cellular thinking (higher start row takes longer)");
             if (rflag || randparam==0 || randparam==-1) {
                 /* Use a random border */
-                for (i=0; i<=(U16)r; i++) {
+                for (int i = 0; i <= r; i++) {
                     cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
                     cell_array[notfilled][ixstop-i]=(BYTE)(rand()%(int)k);
                 }
             }
             else {
                 /* Use a zero border */
-                for (i=0; i<=(U16)r; i++) {
+                for (int i = 0; i <= r; i++) {
                     cell_array[notfilled][i]=0;
                     cell_array[notfilled][ixstop-i]=0;
                 }
             }
 
             t = 0; /* do first cell */
-            for (twor=(U16)(r+r),i=0; i<=twor; i++)
+            twor=(U16)(r+r);
+            for (int i = 0; i <= twor; i++)
                 t = (S16)(t + (S16)cell_array[filled][i]);
             if (t>rule_digits || t<0) {
                 thinking(0, nullptr);
@@ -1687,21 +1683,22 @@ contloop:
 
         if (rflag || randparam==0 || randparam==-1) {
             /* Use a random border */
-            for (i=0; i<=(U16)r; i++) {
+            for (int i = 0; i <= r; i++) {
                 cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
                 cell_array[notfilled][ixstop-i]=(BYTE)(rand()%(int)k);
             }
         }
         else {
             /* Use a zero border */
-            for (i=0; i<=(U16)r; i++) {
+            for (int i = 0; i <= r; i++) {
                 cell_array[notfilled][i]=0;
                 cell_array[notfilled][ixstop-i]=0;
             }
         }
 
         t = 0; /* do first cell */
-        for (twor=(U16)(r+r),i=0; i<=twor; i++)
+        twor=(U16)(r+r);
+        for (int i = 0; i <= twor; i++)
             t = (S16)(t + (S16)cell_array[filled][i]);
         if (t>rule_digits || t<0) {
             thinking(0, nullptr);
