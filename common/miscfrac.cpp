@@ -46,9 +46,9 @@ int test(void)
     if (teststart()) /* assume it was stand-alone, doesn't want passes logic */
         return (0);
     numpasses = (stdcalcmode == '1') ? 0 : 1;
-    for (passes=startpass; passes <= numpasses ; passes++)
+    for (passes = startpass; passes <= numpasses ; passes++)
     {
-        for (row = startrow; row <= iystop; row=row+1+numpasses)
+        for (row = startrow; row <= iystop; row = row+1+numpasses)
         {
             for (col = 0; col <= ixstop; col++)       /* look at each point on screen */
             {
@@ -311,7 +311,6 @@ static void subDivide(int x1,int y1,int x2,int y2)
 
 int plasma()
 {
-    int n;
     U16 rnd[4];
     bool OldPotFlag = false;
     bool OldPot16bit = false;
@@ -401,14 +400,14 @@ int plasma()
     if (max_plasma == 0)
     {
         pcolors = std::min(colors, max_colors);
-        for (n = 0; n < 4; n++)
+        for (int n = 0; n < 4; n++)
             rnd[n] = (U16)(1+(((rand15()/pcolors)*(pcolors-1))>>(shiftvalue-11)));
     }
     else
-        for (n = 0; n < 4; n++)
+        for (int n = 0; n < 4; n++)
             rnd[n] = rand16();
     if (debugflag==3600)
-        for (n = 0; n < 4; n++)
+        for (int n = 0; n < 4; n++)
             rnd[n] = 1;
 
     plot(0,      0,  rnd[0]);
@@ -416,6 +415,7 @@ int plasma()
     plot(xdots-1,ydots-1,  rnd[2]);
     plot(0,ydots-1,  rnd[3]);
 
+    int n;
     recur_level = 0;
     if (param[1] == 0)
         subDivide(0,0,xdots-1,ydots-1);

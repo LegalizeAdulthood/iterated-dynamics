@@ -295,6 +295,7 @@ bool encoder()
     }
 #endif
 
+    int i = 0;
     if (gif87a_flag)
     {
         if (fwrite("GIF87a", 6, 1, g_outfile) != 1)
@@ -327,7 +328,6 @@ bool encoder()
         goto oops;
     if (fputc(0, g_outfile) != 0)
         goto oops;                /* background color */
-    int i = 0;
 
     /* TODO: pixel aspect ratio should be 1:1? */
     if (viewwindow                               /* less than full screen?  */

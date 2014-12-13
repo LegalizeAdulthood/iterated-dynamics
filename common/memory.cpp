@@ -231,10 +231,8 @@ void DisplayHandle(U16 handle)
 
 void InitMemory(void)
 {
-    int counter;
-
     numTOTALhandles = 0;
-    for (counter = 0; counter < MAXHANDLES; counter++)
+    for (int counter = 0; counter < MAXHANDLES; counter++)
     {
         handletable[counter].Nowhere.stored_at = NOWHERE;
         handletable[counter].Nowhere.size = 0;
@@ -457,7 +455,7 @@ int MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
     BYTE diskbuf[DISKWRITELEN];
     long start; /* first location to move */
     long tomove; /* number of bytes to move */
-    U16 numread, i;
+    U16 numread;
     int success;
 
     success = FALSE;
@@ -474,7 +472,7 @@ int MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
         break;
 
     case MEMORY: /* MoveFromMemory */
-        for (i=0; i<size; i++) {
+        for (int i = 0; i < size; i++) {
             memcpy(buffer, handletable[handle].Linearmem.memory+start, (U16)count);
             start += count;
             buffer += count;
@@ -519,7 +517,7 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
     BYTE diskbuf[DISKWRITELEN];
     long start; /* first location to set */
     long tomove; /* number of bytes to set */
-    U16 numwritten, i;
+    U16 numwritten;
     int success;
 
     success = FALSE;
@@ -536,7 +534,7 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
         break;
 
     case MEMORY: /* SetMemory */
-        for (i=0; i<size; i++) {
+        for (int i = 0; i < size; i++) {
             memset(handletable[handle].Linearmem.memory+start, value, (U16)count);
             start += count;
         }

@@ -276,7 +276,6 @@ static void lsysf_dodrawlt(struct lsys_turtlestatef *cmd)
 static struct lsys_cmd *
 findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd **rules, int depth)
 {
-    struct lsys_cmd **rulind;
     bool tran;
 
     if (overflow)     /* integer math routines overflowed */
@@ -298,7 +297,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
         }
         tran = false;
         if (depth) {
-            for (rulind=rules; *rulind; rulind++)
+            for (lsys_cmd **rulind = rules; *rulind; rulind++)
                 if ((*rulind)->ch==command->ch) {
                     tran = true;
                     if (findsize((*rulind)+1,ts,rules,depth-1) == nullptr)
@@ -410,7 +409,6 @@ lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct l
 struct lsys_cmd *
 drawLSysF(struct lsys_cmd *command,struct lsys_turtlestatef *ts, struct lsys_cmd **rules,int depth)
 {
-    struct lsys_cmd **rulind;
     bool tran;
 
     if (overflow)     /* integer math routines overflowed */
@@ -432,7 +430,7 @@ drawLSysF(struct lsys_cmd *command,struct lsys_turtlestatef *ts, struct lsys_cmd
         }
         tran = false;
         if (depth) {
-            for (rulind=rules; *rulind; rulind++)
+            for (lsys_cmd **rulind = rules; *rulind; rulind++)
                 if ((*rulind)->ch == command->ch) {
                     tran = true;
                     if (drawLSysF((*rulind)+1,ts,rules,depth-1) == nullptr)
@@ -737,11 +735,10 @@ void lsysf_dosincos(void)
     LDBL TWOPI = 2.0 * PI;
     LDBL twopimax;
     LDBL twopimaxi;
-    int i;
 
     locaspect=screenaspect*xdots/ydots;
     twopimax = TWOPI / maxangle;
-    for (i=0; i<maxangle; i++) {
+    for (int i = 0; i < maxangle; i++) {
         twopimaxi = i * twopimax;
         sins_f[i]= sinl(twopimaxi);
         coss_f[i]= locaspect * cosl(twopimaxi);
