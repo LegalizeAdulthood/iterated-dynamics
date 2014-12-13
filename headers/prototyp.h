@@ -253,7 +253,6 @@ extern  void set_mutation_level(int);
 extern  void drawparmbox(int);
 extern  void spiralmap(int);
 extern  int unspiralmap(void);
-extern  int explore_check(void);
 extern  void SetupParamBox(void);
 extern  void ReleaseParamBox(void);
 

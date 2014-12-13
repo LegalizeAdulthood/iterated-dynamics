@@ -74,7 +74,7 @@ void varypwr2(GENEBASE gene[], int randval, int i);
 void varytrig(GENEBASE gene[], int randval, int i);
 void varybotest(GENEBASE gene[], int randval, int i);
 void varyinv(GENEBASE gene[], int randval, int i);
-int explore_check(void);
+static bool explore_check(void);
 void spiralmap(int);
 static void set_random(int);
 void set_mutation_level(int);
@@ -846,17 +846,17 @@ static void set_random(int ecount)
             rand();
 }
 
-int explore_check(void)
+static bool explore_check(void)
 {
     /* checks through gene array to see if any of the parameters are set to */
     /* one of the non random variation modes. Used to see if parmzoom box is */
     /* needed */
-    int nonrandom = FALSE;
+    bool nonrandom = false;
     GENEBASE gene[NUMGENES];
     MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
     for (int i = 0; i < NUMGENES && !nonrandom; i++)
         if ((gene[i].mutate > 0) && (gene[i].mutate < 5))
-            nonrandom = TRUE;
+            nonrandom = true;
     return nonrandom;
 }
 
