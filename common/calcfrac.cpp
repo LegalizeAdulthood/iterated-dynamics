@@ -3965,7 +3965,7 @@ static int tesseral(void)
                     tp->top = fillcolor %colors;
                 if (guessplot || (j = tp->x2 - tp->x1 - 1) < 2) { /* paint dots */
                     for (col = tp->x1 + 1; col < tp->x2; col++)
-                        for (int row = tp->y1 + 1; row < tp->y2; row++) {
+                        for (row = tp->y1 + 1; row < tp->y2; row++) {
                             (*plot)(col,row,tp->top);
                             if (++i > 500) {
                                 if (check_key())
@@ -3976,7 +3976,7 @@ static int tesseral(void)
                 }
                 else { /* use put_line for speed */
                     memset(&dstack[OLDMAXPIXELS],tp->top,j);
-                    for (int row = tp->y1 + 1; row < tp->y2; row++) {
+                    for (row = tp->y1 + 1; row < tp->y2; row++) {
                         put_line(row,tp->x1+1,tp->x2-1,&dstack[OLDMAXPIXELS]);
                         if (plot != putcolor) /* symmetry */
                             if ((j = yystop-(row-yystart)) > iystop && j < ydots)
