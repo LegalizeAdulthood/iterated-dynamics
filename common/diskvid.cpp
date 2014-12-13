@@ -598,7 +598,7 @@ static struct cache * find_cache(long offset)
 
 static void  write_cache_lru()
 {
-    int i, j;
+    int i;
     BYTE *pixelptr;
     long offset;
     BYTE tmpchar = 0;
