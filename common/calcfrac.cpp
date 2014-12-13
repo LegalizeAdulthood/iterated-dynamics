@@ -3126,7 +3126,7 @@ static int solidguess(void)
             memset(&tprefix[1][0][0],0,maxxblk*maxyblk*2); /* noskip flags off */
             reset_periodicity = true;
             row=iystart;
-            for (int col = ixstart; col <= ixstop; col += maxblock)
+            for (col = ixstart; col <= ixstop; col += maxblock)
             {   /* calc top row */
                 if ((*calctype)()== -1)
                 {
@@ -3146,7 +3146,7 @@ static int solidguess(void)
             {   /* calc the row below */
                 row=y+blocksize;
                 reset_periodicity = true;
-                for (int col = ixstart; col <= ixstop; col += maxblock)
+                for (col = ixstart; col <= ixstop; col += maxblock)
                 {
                     i=(*calctype)();
                     if (i == -1)
@@ -3964,7 +3964,7 @@ static int tesseral(void)
                 if (fillcolor > 0)
                     tp->top = fillcolor %colors;
                 if (guessplot || (j = tp->x2 - tp->x1 - 1) < 2) { /* paint dots */
-                    for (int col = tp->x1 + 1; col < tp->x2; col++)
+                    for (col = tp->x1 + 1; col < tp->x2; col++)
                         for (int row = tp->y1 + 1; row < tp->y2; row++) {
                             (*plot)(col,row,tp->top);
                             if (++i > 500) {
