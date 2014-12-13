@@ -1796,7 +1796,7 @@ int scan_entries(FILE * infile, struct entryinfo *choices, char *itemname)
     long file_offset = -1;
     int numentries = 0;
 
-    for (;;)
+    while (true)
     {   /* scan the file for entry names */
         int c, len;
 top:
@@ -1914,7 +1914,7 @@ static long gfe_choose_entry(int type, const char *title, char *filename, char *
 #else
     const char *o_instr = "Press " FK_F6 " to select different file, " FK_F2 " for details, " FK_F4 " to toggle sort ";
 #endif
-    int numentries, i;
+    int numentries;
     char buf[101];
     struct entryinfo storage[MAXENTRIES + 1];
     struct entryinfo *choices[MAXENTRIES + 1] = { nullptr };
@@ -1929,7 +1929,7 @@ static long gfe_choose_entry(int type, const char *title, char *filename, char *
     gfe_title = title;
 
 retry:
-    for (i = 0; i < MAXENTRIES+1; i++)
+    for (int i = 0; i < MAXENTRIES+1; i++)
     {
         choices[i] = &storage[i];
         attributes[i] = 1;
@@ -1967,7 +1967,7 @@ retry:
         colwidth = 76;
     }
 
-    i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
+    int i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
                           temp1, nullptr, instr, numentries, (const char **) choices,
                           attributes, boxwidth, boxdepth, colwidth, 0,
                           formatitem, buf, nullptr, check_gfe_key);
