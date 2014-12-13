@@ -1315,7 +1315,6 @@ bool getafilename(const char *hdg, const char *file_template, char *flname)
     char speedstr[81];
     char tmpmask[FILE_MAX_PATH];   /* used to locate next file in list */
     char old_flname[FILE_MAX_PATH];
-    int i,j;
     int out;
     int retried;
     /* Only the first 13 characters of file names are displayed... */
@@ -1334,7 +1333,7 @@ bool getafilename(const char *hdg, const char *file_template, char *flname)
     static int dosort = 1;
 
     rds = (stereomapname == flname) ? 1 : 0;
-    for (i = 0; i < MAXNUMFILES; i++)
+    for (int i = 0; i < MAXNUMFILES; i++)
     {
         attributes[i] = 1;
         choices[i] = &storage[i];
@@ -1362,7 +1361,7 @@ retry_dir:
     fix_dirname(tmpmask);
     if (retried == 0 && strcmp(dir, SLASH) && strcmp(dir, DOTSLASH))
     {
-        j = (int) strlen(tmpmask) - 1;
+        int j = (int) strlen(tmpmask) - 1;
         tmpmask[j] = 0; /* strip trailing \ */
         if (strchr(tmpmask, '*') || strchr(tmpmask, '?')
                 || fr_findfirst(tmpmask) != 0
@@ -1386,7 +1385,6 @@ retry_dir:
     filecount = -1;
     dircount  = 0;
     notroot   = 0;
-    j = 0;
     masklen = (int) strlen(tmpmask);
     strcat(tmpmask, "*.*");
     out = fr_findfirst(tmpmask);
@@ -1415,6 +1413,7 @@ retry_dir:
     {
         makepath(tmpmask, drive, dir, fname, ext);
     }
+    int j = 0;
     do
     {
         if (numtemplates > 1)
@@ -1476,6 +1475,7 @@ retry_dir:
     }
     sprintf(temp1, "%s\nTemplate: %s", hdg, tmpmask);
     strcpy(speedstr, filename);
+    int i;
     if (speedstr[0] == 0)
     {
         for (i = 0; i < filecount; i++) /* find first file */
