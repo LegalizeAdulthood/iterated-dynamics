@@ -336,12 +336,12 @@ static int out_line_migs(BYTE *pixels, int linelen)
 
 static int out_line_dither(BYTE *pixels, int linelen)
 {
-    int i,nexterr,brt,err;
+    int nexterr,brt,err;
     ditherbuf.resize(linelen + 1);
     std::fill(ditherbuf.begin(), ditherbuf.end(), 0);
 
     nexterr = (rand()&0x1f)-16;
-    for (i=0; i<linelen; i++) {
+    for (int i = 0; i < linelen; i++) {
         brt = (g_dac_box[pixels[i]][0]*5+g_dac_box[pixels[i]][1]*9 +
                g_dac_box[pixels[i]][2]*2)>>4; /* brightness from 0 to 63 */
         brt += nexterr;
@@ -393,8 +393,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
 
 static bool put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 {
-    int col;
-    for (col=colstart; col<=colstop; col++)
+    for (int col = colstart; col <= colstop; col++)
     {
         putcolor(col,row,*pixels);
         if (orbit_delay > 0)
@@ -447,7 +446,7 @@ int sound_line(BYTE *pixels, int linelen)
 
 int pot_line(BYTE *pixels, int linelen)
 {
-    int row,col,saverowcount;
+    int row, saverowcount;
     if (g_row_count == 0)
         if (pot_startdisk() < 0)
             return -1;
@@ -457,7 +456,7 @@ int pot_line(BYTE *pixels, int linelen)
         row += ydots;
     else if (!driver_diskp()) /* even line - display the line too */
         out_line(pixels,linelen);
-    for (col = 0; col < xdots; ++col)
+    for (int col = 0; col < xdots; ++col)
         writedisk(col+sxoffs,row+syoffs,*(pixels+col));
     g_row_count = saverowcount + 1;
     return (0);

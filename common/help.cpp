@@ -320,9 +320,7 @@ static void put_key(char *name, char *descrip)
 
 static void helpinstr(void)
 {
-    int ctr;
-
-    for (ctr = 0; ctr < 80; ctr++)
+    for (int ctr = 0; ctr < 80; ctr++)
     {
         driver_put_string(24, ctr, C_HELP_INSTR, " ");
     }
@@ -341,9 +339,7 @@ static void helpinstr(void)
 
 static void printinstr(void)
 {
-    int ctr;
-
-    for (ctr = 0; ctr < 80; ctr++)
+    for (int ctr = 0; ctr < 80; ctr++)
     {
         driver_put_string(24, ctr, C_HELP_INSTR, " ");
     }
@@ -437,15 +433,16 @@ static int dist1(int a, int b)
 
 static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
 {
-    int ctr, curr_c2, best_overlap = 0, temp_overlap;
-    LINK *curr, *temp, *best;
+    int curr_c2, best_overlap = 0, temp_overlap;
+    LINK *curr, *best;
     int temp_dist;
 
     curr    = &link[curr_link];
     best    = nullptr;
     curr_c2 = curr->c + curr->width - 1;
 
-    for (ctr=0, temp=link; ctr<num_link; ctr++, temp++)
+    LINK *temp = link;
+    for (int ctr = 0; ctr < num_link; ctr++, temp++)
     {
         if (ctr != curr_link &&
                 ((up && temp->r < curr->r) || (!up && temp->r > curr->r)))
