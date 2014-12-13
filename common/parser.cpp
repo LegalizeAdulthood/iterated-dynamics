@@ -1925,9 +1925,9 @@ void StkJumpLabel(void)
 
 unsigned SkipWhiteSpace(char *Str)
 {
-    unsigned n, Done;
-
-    for (Done = n = 0; !Done; n++)
+    unsigned n;
+    bool Done = false;
+    for (n = 0; !Done; n++)
     {
         switch (Str[n])
         {
@@ -1937,7 +1937,7 @@ unsigned SkipWhiteSpace(char *Str)
         case '\r':
             break;
         default:
-            Done = 1;
+            Done = true;
         }
     }
     return n - 1;
@@ -1968,9 +1968,8 @@ static bool isconst_pair(char *Str)
 struct ConstArg *isconst(char *Str, int Len)
 {
     DComplex z;
-    unsigned n;
     /* next line enforces variable vs constant naming convention */
-    for (n = 0; n < vsp; n++)
+    for (unsigned n = 0; n < vsp; n++)
     {
         if (v[n].len == Len)
         {
@@ -2029,7 +2028,10 @@ struct ConstArg *isconst(char *Str, int Len)
             InitN--;
             v[vsp].len++;
         }
-        for (n = 1; isdigit(Str[n]) || Str[n] == '.'; n++);
+        unsigned n;
+        for (n = 1; isdigit(Str[n]) || Str[n] == '.'; n++)
+        {
+        }
         if (Str[n] == ',')
         {
             unsigned j = n + SkipWhiteSpace(&Str[n+1]) + 1;
@@ -2038,7 +2040,9 @@ struct ConstArg *isconst(char *Str, int Len)
                     || Str[j] == '.')
             {
                 z.y = atof(&Str[j]);
-                for (; isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++);
+                for (; isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++)
+                {
+                }
                 v[vsp].len = j;
             }
             else
@@ -2099,10 +2103,7 @@ int isjump(char *Str, int Len)
         3 - else
         4 - endif
     */
-
-    int i;
-
-    for (i = 0; *JumpList[i]; i++)
+    for (int i = 0; *JumpList[i]; i++)
         if ((int) strlen(JumpList[i]) == Len)
             if (!strnicmp(JumpList[i], Str, Len))
                 return i + 1;
@@ -2197,12 +2198,10 @@ int whichfn(char *s, int len)
 
 void (*isfunct(char *Str, int Len))(void)
 {
-    unsigned n;
-
-    n = SkipWhiteSpace(&Str[Len]);
+    unsigned n = SkipWhiteSpace(&Str[Len]);
     if (Str[Len+n] == '(')
     {
-        for (n = 0; n < sizeof(FnctList) / sizeof(struct FNCT_LIST); n++)
+        for (n = 0; n < sizeof(FnctList)/sizeof(struct FNCT_LIST); n++)
         {
             if ((int) strlen(FnctList[n].s) == Len)
             {
@@ -3124,8 +3123,7 @@ int frmgetchar(FILE * openfile)
 
 void getfuncinfo(struct token_st * tok)
 {
-    int i;
-    for (i=0; i < sizeof(FnctList)/ sizeof(struct FNCT_LIST); i++)
+    for (int i = 0; i < sizeof(FnctList)/sizeof(struct FNCT_LIST); i++)
     {
         if (!strcmp(FnctList[i].s, tok->token_str))
         {
@@ -3138,7 +3136,7 @@ void getfuncinfo(struct token_st * tok)
         }
     }
 
-    for (i=0; i < 4; i++)        /*pick up flow control*/
+    for (int i = 0; i < 4; i++)        /*pick up flow control*/
     {
         if (!strcmp(JumpList[i], tok->token_str))
         {
@@ -3154,9 +3152,7 @@ void getfuncinfo(struct token_st * tok)
 
 void getvarinfo(struct token_st * tok)
 {
-    int i;
-
-    for (i=0; i < sizeof(Constants) / sizeof(char*); i++)
+    for (int i = 0; i < sizeof(Constants)/sizeof(char*); i++)
     {
         if (!strcmp(Constants[i], tok->token_str))
         {
@@ -3629,7 +3625,7 @@ CASE_TERMINATOR:
         this_token->token_str[i] = (char) 0;
         if (this_token->token_type == OPERATOR)
         {
-            for (i=0; i < sizeof(OPList)/sizeof(OPList[0]); i++)
+            for (int i = 0; i < sizeof(OPList)/sizeof(OPList[0]); i++)
             {
                 if (!strcmp(OPList[i], this_token->token_str))
                 {
@@ -4112,8 +4108,7 @@ static void parser_allocate(void)
     /* Somewhat more memory is now allocated than in v17 here */
     /* however Store and Load were reduced in size to help make up for it */
     long f_size,Store_size,Load_size,v_size, p_size;
-    int pass;
-    for (pass = 0; pass < 2; pass++)
+    for (int pass = 0; pass < 2; pass++)
     {
         free_workarea();
         if (pass == 0)
