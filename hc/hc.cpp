@@ -3370,7 +3370,7 @@ void print_document(const char *fname)
 
 void report_memory(void)
 {
-    long string = 0,   /* bytes in strings */
+    long bytes_in_strings = 0,  /* bytes in strings */
          text   = 0,   /* bytes in topic text (stored on disk) */
          data   = 0,   /* bytes in active data structure */
          dead   = 0;   /* bytes in unused data structure */
@@ -3378,7 +3378,7 @@ void report_memory(void)
     for (int ctr = 0; ctr < num_topic; ctr++)
     {
         data   += sizeof(TOPIC);
-        string += topic[ctr].title_len;
+        bytes_in_strings += topic[ctr].title_len;
         text   += topic[ctr].text_len;
         data   += topic[ctr].num_page * sizeof(PAGE);
 
@@ -3388,7 +3388,7 @@ void report_memory(void)
     for (int ctr = 0; ctr < num_link; ctr++)
     {
         data += sizeof(LINK);
-        string += (long) strlen(a_link[ctr].name);
+        bytes_in_strings += (long) strlen(a_link[ctr].name);
     }
 
     if (num_link > 0)
@@ -3397,7 +3397,7 @@ void report_memory(void)
     for (int ctr = 0; ctr < num_label; ctr++)
     {
         data   += sizeof(LABEL);
-        string += (long) strlen(label[ctr].name) + 1;
+        bytes_in_strings += (long) strlen(label[ctr].name) + 1;
     }
 
     if (num_label > 0)
@@ -3406,7 +3406,7 @@ void report_memory(void)
     for (int ctr = 0; ctr < num_plabel; ctr++)
     {
         data   += sizeof(LABEL);
-        string += (long) strlen(plabel[ctr].name) + 1;
+        bytes_in_strings += (long) strlen(plabel[ctr].name) + 1;
     }
 
     if (num_plabel > 0)
@@ -3422,10 +3422,10 @@ void report_memory(void)
              sizeof(contents[0].topic_num[0]));
         data += sizeof(CONTENT) - t;
         dead += t;
-        string += (long) strlen(contents[ctr].id) + 1;
-        string += (long) strlen(contents[ctr].name) + 1;
+        bytes_in_strings += (long) strlen(contents[ctr].id) + 1;
+        bytes_in_strings += (long) strlen(contents[ctr].name) + 1;
         for (int ctr2 = 0; ctr2 < contents[ctr].num_topic; ctr2++)
-            string += (long) strlen(contents[ctr].topic_name[ctr2]) + 1;
+            bytes_in_strings += (long) strlen(contents[ctr].topic_name[ctr2]) + 1;
     }
 
     dead += (CONTENTS_ALLOC_SIZE-(num_contents%CONTENTS_ALLOC_SIZE)) * sizeof(CONTENT);
@@ -3433,11 +3433,11 @@ void report_memory(void)
     printf("\n");
     printf("Memory Usage:\n");
     printf("%8ld Bytes in buffers.\n", (long)BUFFER_SIZE);
-    printf("%8ld Bytes in strings.\n", string);
+    printf("%8ld Bytes in strings.\n", bytes_in_strings);
     printf("%8ld Bytes in data.\n", data);
     printf("%8ld Bytes in dead space.\n", dead);
     printf("--------\n");
-    printf("%8ld Bytes total.\n", (long)BUFFER_SIZE+string+data+dead);
+    printf("%8ld Bytes total.\n", (long)BUFFER_SIZE+bytes_in_strings+data+dead);
     printf("\n");
     printf("Disk Usage:\n");
     printf("%8ld Bytes in topic text.\n", text);
