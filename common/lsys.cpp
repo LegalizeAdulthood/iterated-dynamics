@@ -110,7 +110,6 @@ static bool readLSystemFile(char *str)
     int c;
     char **rulind;
     int err=0;
-    int linenum;
     bool check = false;
     char inline1[MAX_LSYS_LINE_LEN+1],fixed[MAX_LSYS_LINE_LEN+1],*word;
     FILE *infile;
@@ -122,10 +121,12 @@ static bool readLSystemFile(char *str)
         if (c == EOF)
             return true;
     maxangle=0;
-    for (linenum=0; linenum<MAXRULES; ++linenum) ruleptrs[linenum]=nullptr;
+    for (int linenum = 0; linenum < MAXRULES; ++linenum)
+        ruleptrs[linenum]=nullptr;
     rulind= &ruleptrs[1];
-    msgbuf[0]=(char)(linenum=0);
+    msgbuf[0]= 0;;
 
+    int linenum = 0;
     while (file_gets(inline1,MAX_LSYS_LINE_LEN,infile) > -1)  /* Max line length chars */
     {
         linenum++;
@@ -230,7 +231,6 @@ static bool readLSystemFile(char *str)
 int Lsystem(void)
 {
     int order;
-    char **rulesc;
     struct lsys_cmd **sc;
     bool stackoflow = false;
 
@@ -252,7 +252,7 @@ int Lsystem(void)
         ts.dmaxangle = (char)(maxangle - 1);
 
         sc = rules2;
-        for (rulesc = ruleptrs; *rulesc; rulesc++)
+        for (char **rulesc = ruleptrs; *rulesc; rulesc++)
             *sc++ = LSysISizeTransform(*rulesc, &ts);
         *sc = nullptr;
 
@@ -263,7 +263,7 @@ int Lsystem(void)
 
             free_lcmds();
             sc = rules2;
-            for (rulesc = ruleptrs; *rulesc; rulesc++)
+            for (char **rulesc = ruleptrs; *rulesc; rulesc++)
                 *sc++ = LSysIDrawTransform(*rulesc, &ts);
             *sc = nullptr;
 
@@ -288,7 +288,7 @@ int Lsystem(void)
         ts.dmaxangle = (char)(maxangle - 1);
 
         sc = rules2;
-        for (rulesc = ruleptrs; *rulesc; rulesc++)
+        for (char **rulesc = ruleptrs; *rulesc; rulesc++)
             *sc++ = LSysFSizeTransform(*rulesc, &ts);
         *sc = nullptr;
 
@@ -298,7 +298,7 @@ int Lsystem(void)
 
             free_lcmds();
             sc = rules2;
-            for (rulesc = ruleptrs; *rulesc; rulesc++)
+            for (char **rulesc = ruleptrs; *rulesc; rulesc++)
                 *sc++ = LSysFDrawTransform(*rulesc, &ts);
             *sc = nullptr;
 

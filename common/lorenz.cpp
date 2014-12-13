@@ -1143,9 +1143,7 @@ int dynamfloat(double *x, double *y, double * /*z*/)
 
 int iconfloatorbit(double *x, double *y, double *z)
 {
-
     double oldx, oldy, zzbar, zreal, zimag, za, zb, zn, p;
-    int i;
 
     oldx = *x;
     oldy = *y;
@@ -1154,7 +1152,7 @@ int iconfloatorbit(double *x, double *y, double *z)
     zreal = oldx;
     zimag = oldy;
 
-    for (i=1; i <= DEGREE-2; i++) {
+    for (int i = 1; i <= DEGREE-2; i++) {
         za = zreal * oldx - zimag * oldy;
         zb = zimag * oldx + zreal * oldy;
         zreal = za;
@@ -1810,7 +1808,6 @@ int dynam2dfloat()
     int color = 0;
     int col = 0;
     int row = 0;
-    long count = 0;
     int oldrow = 0;
     int oldcol = 0;
     double *p0 = nullptr;
@@ -1836,7 +1833,7 @@ int dynam2dfloat()
     else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Z)
         soundvar = &z;
 
-    count = 0;
+    long count = 0;
     if (inside > 0)
         color = inside;
     if (color >= colors)
@@ -1895,8 +1892,7 @@ int dynam2dfloat()
         if (++color >= colors)   /* another color to switch to? */
             color = 1;    /* (don't use the background color) */
 
-        for (count=0; count<maxit; count++) {
-
+        for (count = 0; count < maxit; count++) {
             if (count % 2048L == 0)
                 if (driver_key_pressed())
                     break;
@@ -2045,7 +2041,6 @@ int plotorbits2dfloat(void)
     PER_PIXEL(); /* initialize the calculations */
 
     for (count = 0; count < maxit; count++) {
-
         if (ORBITCALC() == 1 && periodicitycheck)
             continue;  /* bailed out, don't plot */
 
@@ -2095,11 +2090,10 @@ int funny_glasses_call(int (*calc)(void))
     if (g_glasses_type && status == 0 && display3d)
     {
         if (g_glasses_type==3)  { /* photographer's mode */
-            int i;
             stopmsg(STOPMSG_INFO_ONLY,
                     "First image (left eye) is ready.  Hit any key to see it,\n"
                     "then hit <s> to save, hit any other key to create second image.");
-            for (i = driver_get_key(); i == 's' || i == 'S'; i = driver_get_key()) {
+            for (int i = driver_get_key(); i == 's' || i == 'S'; i = driver_get_key()) {
                 savetodisk(savename);
             }
             /* is there a better way to clear the screen in graphics mode? */
@@ -2261,8 +2255,6 @@ static int ifs2d(void)
     std::vector<long> localifs;
     long *lfptr;
     long x,y,newx,newy,r,sum, tempr;
-
-    int i,j,k;
     struct l_affine cvt;
     /* setup affine screen coord conversion */
     l_setup_convert_to_screen(&cvt);
@@ -2284,8 +2276,8 @@ static int ifs2d(void)
         return (-1);
     }
 
-    for (i = 0; i < numaffine; i++)    /* fill in the local IFS array */
-        for (j = 0; j < IFSPARM; j++)
+    for (int i = 0; i < numaffine; i++)    /* fill in the local IFS array */
+        for (int j = 0; j < IFSPARM; j++)
             localifs[i*IFSPARM+j] = (long)(ifs_defn[i*IFSPARM+j] * fudge);
 
     tempr = fudge / 32767;        /* find the proper rand() fudge */
@@ -2311,7 +2303,7 @@ static int ifs2d(void)
 
         /* pick which iterated function to execute, weighted by probability */
         sum = localifs[6];  /* [0][6] */
-        k = 0;
+        int k = 0;
         while (sum < r && k < numaffine-1)  /* fixed bug of error if sum < 1 */
             sum += localifs[++k*IFSPARM+6];
         /* calculate image of last point under selected iterated function */
@@ -2352,14 +2344,11 @@ static int ifs3dlong(void)
     FILE *fp;
     int color;
     int ret;
-
     std::vector<long> localifs;
     long *lfptr;
     long newx,newy,newz,r,sum, tempr;
-
-    int i,j,k;
-
     struct long3dvtinf inf;
+
     srand(1);
     color_method = (int)param[0];
     try
@@ -2375,8 +2364,8 @@ static int ifs3dlong(void)
     /* setup affine screen coord conversion */
     l_setup_convert_to_screen(&inf.cvt);
 
-    for (i = 0; i < numaffine; i++)    /* fill in the local IFS array */
-        for (j = 0; j < IFS3DPARM; j++)
+    for (int i = 0; i < numaffine; i++)    /* fill in the local IFS array */
+        for (int j = 0; j < IFS3DPARM; j++)
             localifs[i*IFS3DPARM+j] = (long)(ifs_defn[i*IFS3DPARM+j] * fudge);
 
     tempr = fudge / 32767;        /* find the proper rand() fudge */
@@ -2405,7 +2394,7 @@ static int ifs3dlong(void)
 
         /* pick which iterated function to execute, weighted by probability */
         sum = localifs[12];  /* [0][12] */
-        k = 0;
+        int k = 0;
         while (sum < r && ++k < numaffine*IFS3DPARM)
         {
             sum += localifs[k*IFS3DPARM+12];
@@ -2520,11 +2509,9 @@ static int ifs3d(void)
 
 static bool long3dviewtransf(struct long3dvtinf *inf)
 {
-    int i,j;
-
     if (coloriter == 1)  /* initialize on first call */
     {
-        for (i=0; i<3; i++)
+        for (int i = 0; i < 3; i++)
         {
             inf->minvals[i] =  1L << 30;
             inf->maxvals[i] = -inf->minvals[i];
@@ -2533,8 +2520,8 @@ static bool long3dviewtransf(struct long3dvtinf *inf)
         if (realtime)
             setupmatrix(inf->doublemat1);
         /* copy xform matrix to long for for fixed point math */
-        for (i = 0; i < 4; i++)
-            for (j = 0; j < 4; j++)
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
             {
                 inf->longmat[i][j] = (long)(inf->doublemat[i][j] * fudge);
                 if (realtime)
@@ -2550,7 +2537,7 @@ static bool long3dviewtransf(struct long3dvtinf *inf)
     if (coloriter <= waste) /* waste this many points to find minz and maxz */
     {
         /* find minz and maxz */
-        for (i=0; i<3; i++)
+        for (int i = 0; i < 3; i++)
         {
             long const tmp = inf->viewvect[i];
             if (tmp < inf->minvals[i])
@@ -2588,12 +2575,12 @@ static bool long3dviewtransf(struct long3dvtinf *inf)
                 tmpz = -((double)inf->maxvals[2]) / fudge;
                 trans(tmpx,tmpy,tmpz,inf->doublemat1);
             }
-            for (i=0; i<3; i++)
+            for (int i = 0; i < 3; i++)
                 view[i] = (double)inf->iview[i] / fudge;
 
             /* copy xform matrix to long for for fixed point math */
-            for (i = 0; i < 4; i++)
-                for (j = 0; j < 4; j++)
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
                 {
                     inf->longmat[i][j] = (long)(inf->doublemat[i][j] * fudge);
                     if (realtime)
@@ -2610,17 +2597,17 @@ static bool long3dviewtransf(struct long3dvtinf *inf)
         {
             /* use float perspective calc */
             VECTOR tmpv;
-            for (i=0; i<3; i++)
+            for (int i = 0; i < 3; i++)
                 tmpv[i] = (double)inf->viewvect[i] / fudge;
             perspective(tmpv);
-            for (i=0; i<3; i++)
+            for (int i = 0; i < 3; i++)
                 inf->viewvect[i] = (long)(tmpv[i]*fudge);
             if (realtime)
             {
-                for (i=0; i<3; i++)
+                for (int i = 0; i < 3; i++)
                     tmpv[i] = (double)inf->viewvect1[i] / fudge;
                 perspective(tmpv);
-                for (i=0; i<3; i++)
+                for (int i = 0; i < 3; i++)
                     inf->viewvect1[i] = (long)(tmpv[i]*fudge);
             }
         }
@@ -2671,11 +2658,9 @@ static bool long3dviewtransf(struct long3dvtinf *inf)
 
 static bool float3dviewtransf(struct float3dvtinf *inf)
 {
-    int i;
-
     if (coloriter == 1)  /* initialize on first call */
     {
-        for (i=0; i<3; i++)
+        for (int i = 0; i < 3; i++)
         {
             inf->minvals[i] =  100000.0; /* impossible value */
             inf->maxvals[i] = -100000.0;
@@ -2693,7 +2678,7 @@ static bool float3dviewtransf(struct float3dvtinf *inf)
     if (coloriter <= waste) /* waste this many points to find minz and maxz */
     {
         /* find minz and maxz */
-        for (i=0; i<3; i++)
+        for (int i = 0; i < 3; i++)
         {
             double const tmp = inf->viewvect[i];
             if (tmp < inf->minvals[i])
