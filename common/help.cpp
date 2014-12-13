@@ -485,14 +485,15 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
 
 static int find_link_leftright(LINK *link, int num_link, int curr_link, int left)
 {
-    int ctr, curr_c2, best_c2 = 0, temp_c2, best_dist = 0, temp_dist;
-    LINK *curr, *temp, *best;
+    int curr_c2, best_c2 = 0, temp_c2, best_dist = 0, temp_dist;
+    LINK *curr, *best;
 
     curr    = &link[curr_link];
     best    = nullptr;
     curr_c2 = curr->c + curr->width - 1;
 
-    for (ctr = 0, temp = link; ctr < num_link; ctr++, temp++)
+    LINK *temp = link;
+    for (int ctr = 0; ctr < num_link; ctr++, temp++)
     {
         temp_c2 = temp->c + temp->width - 1;
 
@@ -570,7 +571,6 @@ static int help_topic(HIST *curr, HIST *next, int flags)
     int       key;
     int       num_pages;
     int       num_link;
-    int       page;
     int       curr_link;
     char      title[81];
     long      where;
@@ -596,7 +596,8 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
     where += sizeof(int) + num_pages*3*sizeof(int) + 1 + len + sizeof(int);
 
-    for (page=0; page<num_pages; page++)
+    int page;
+    for (page = 0; page < num_pages; page++)
         if (curr->topic_off >= page_table[page].offset &&
                 curr->topic_off <  page_table[page].offset+page_table[page].len)
             break;
@@ -878,9 +879,7 @@ int help(int action)
         {
             if (curr_hist >= MAX_HIST)
             {
-                int ctr;
-
-                for (ctr=0; ctr<MAX_HIST-1; ctr++)
+                for (int ctr = 0; ctr < MAX_HIST-1; ctr++)
                     hist[ctr] = hist[ctr+1];
 
                 curr_hist = MAX_HIST-1;
