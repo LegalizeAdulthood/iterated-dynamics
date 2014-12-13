@@ -315,8 +315,7 @@ long iteration(DBLS cr, DBLS ci,
 
 static void puthline(int x1,int y1,int x2,int color)
 {
-    int x;
-    for (x=x1; x<=x2; x++)
+    for (int x = x1; x <= x2; x++)
         (*plot)(x,y1,color);
 }
 

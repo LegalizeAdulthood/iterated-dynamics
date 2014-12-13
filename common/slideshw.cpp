@@ -55,7 +55,7 @@ static struct scancodes scancodes[] =
 static int get_scancode(char *mn)
 {
     int i;
-    for (i=0; i< stop; i++)
+    for (i = 0; i < stop; i++)
         if (strcmp((char *)mn,scancodes[i].mnemonic)==0)
             break;
     return (scancodes[i].code);
@@ -64,7 +64,7 @@ static int get_scancode(char *mn)
 static void get_mnemonic(int code,char *mnemonic)
 {
     *mnemonic = 0;
-    for (int i=0; i< stop; i++)
+    for (int i = 0; i < stop; i++)
         if (code == scancodes[i].code)
         {
             strcpy(mnemonic,scancodes[i].mnemonic);
@@ -87,9 +87,8 @@ static int last1 = 0;
 static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
 {
     int savescrn[80];
-    int i;
 
-    for (i=0; i<80; i++)
+    for (int i = 0; i < 80; i++)
     {
         driver_move_cursor(row,i);
         savescrn[i] = driver_get_char_attr();
@@ -97,7 +96,7 @@ static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
     driver_put_string(row,col,attr,txt);
     driver_hide_text_cursor();
     sleep_secs(secs);
-    for (i=0; i<80; i++)
+    for (int i = 0; i < 80; i++)
     {
         driver_move_cursor(row,i);
         driver_put_char_attr(savescrn[i]);

@@ -36,9 +36,9 @@ bool g_got_real_dac = false;            /* true if loaddac has a dacbox */
 void rotate(int direction)      /* rotate-the-palette routine */
 {
     int  kbdchar, more, last, next;
-    int fkey, step, fstep, istep, jstep, oldstep;
+    int fkey, step, fstep, jstep, oldstep;
     int incr, fromred=0, fromblue=0, fromgreen=0, tored=0, toblue=0, togreen=0;
-    int i, changecolor, changedirection;
+    int changecolor, changedirection;
     int oldhelpmode;
     int rotate_max,rotate_size;
 
@@ -89,7 +89,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
         }
         else while (!driver_key_pressed()) { /* rotate until key hit, at least once so step=oldstep ok */
                 if (fkey > 0) {                /* randomizing is on */
-                    for (istep = 0; istep < step; istep++) {
+                    for (int istep = 0; istep < step; istep++) {
                         jstep = next + (istep * direction);
                         while (jstep < rotate_lo)  jstep += rotate_size;
                         while (jstep > rotate_max) jstep -= rotate_size;
@@ -229,7 +229,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
             if (driver_diskp()) break;
             if (changecolor    == -1) changecolor = 2;
             if (changedirection == 0) changedirection = 1;
-            for (i = 1; i < 256; i++) {
+            for (int i = 1; i < 256; i++) {
                 g_dac_box[i][changecolor] = (BYTE)(g_dac_box[i][changecolor] + changedirection);
                 if (g_dac_box[i][changecolor] == 64)
                     g_dac_box[i][changecolor] = 63;
@@ -374,19 +374,17 @@ static void pauserotate()               /* pause-the-rotate routine */
 
 static void set_palette(BYTE start[3], BYTE finish[3])
 {
-    int i, j;
     g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-    for (i=1; i<=255; i++)                  /* fill the palette     */
-        for (j = 0; j < 3; j++)
+    for (int i = 1; i <= 255; i++)                  /* fill the palette     */
+        for (int j = 0; j < 3; j++)
             g_dac_box[i][j] = (BYTE)((i*start[j] + (256-i)*finish[j])/255);
 }
 
 static void set_palette2(BYTE start[3], BYTE finish[3])
 {
-    int i, j;
     g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-    for (i=1; i<=128; i++)
-        for (j = 0; j < 3; j++) {
+    for (int i = 1; i <= 128; i++)
+        for (int j = 0; j < 3; j++) {
             g_dac_box[i][j]     = (BYTE)((i*finish[j] + (128-i)*start[j])/128);
             g_dac_box[i+127][j] = (BYTE)((i*start[j]  + (128-i)*finish[j])/128);
         }
@@ -394,10 +392,9 @@ static void set_palette2(BYTE start[3], BYTE finish[3])
 
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 {
-    int i, j;
     g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-    for (i=1; i<=85; i++)
-        for (j = 0; j < 3; j++) {
+    for (int i = 1; i <= 85; i++)
+        for (int j = 0; j < 3; j++) {
             g_dac_box[i][j]     = (BYTE)((i*middle[j] + (86-i)*start[j])/85);
             g_dac_box[i+85][j]  = (BYTE)((i*finish[j] + (86-i)*middle[j])/85);
             g_dac_box[i+170][j] = (BYTE)((i*start[j]  + (86-i)*finish[j])/85);

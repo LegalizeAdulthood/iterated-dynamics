@@ -99,18 +99,17 @@ static int getdepth(int xd, int yd)
 
 static bool get_min_max(void)
 {
-    int xd, yd, ldepth;
     MINC = colors;
     MAXC = 0;
-    for (yd = 0; yd < ydots; yd++)
+    for (int yd = 0; yd < ydots; yd++)
     {
         if (driver_key_pressed())
             return true;
         if (yd == 20)
             showtempmsg("Getting min and max");
-        for (xd = 0; xd < xdots; xd++)
+        for (int xd = 0; xd < xdots; xd++)
         {
-            ldepth = getdepth(xd,yd);
+            int ldepth = getdepth(xd,yd);
             if (ldepth < MINC)
                 MINC = ldepth;
             if (ldepth > MAXC)
@@ -123,11 +122,10 @@ static bool get_min_max(void)
 
 void toggle_bars(int *bars, int barwidth, int *colour)
 {
-    int i, j, ct;
     find_special_colors();
-    ct = 0;
-    for (i = XCEN; i < (XCEN) + barwidth; i++)
-        for (j = YCEN; j < (YCEN) + BARHEIGHT; j++)
+    int ct = 0;
+    for (int i = XCEN; i < (XCEN) + barwidth; i++)
+        for (int j = YCEN; j < (YCEN) + BARHEIGHT; j++)
         {
             if (*bars)
             {
@@ -145,15 +143,14 @@ void toggle_bars(int *bars, int barwidth, int *colour)
 
 int outline_stereo(BYTE * pixels, int linelen)
 {
-    int i, j, x, s;
     std::unique_ptr<int[]> same(new int[xdots]);
     std::unique_ptr<int[]> colour(new int[xdots]);
     if ((Y) >= ydots)
         return (1);
 
-    for (x = 0; x < xdots; ++x)
+    for (int x = 0; x < xdots; ++x)
         same[x] = x;
-    for (x = 0; x < xdots; ++x)
+    for (int x = 0; x < xdots; ++x)
     {
         if (REVERSE)
             SEP = GROUND - (int)(DEPTH * (getdepth(x, Y) - MINC) / MAXCC);
@@ -167,13 +164,13 @@ int outline_stereo(BYTE * pixels, int linelen)
             AVG += SEP;
             (AVGCT)++;
         }
-        i = x - (SEP + (SEP & Y & 1)) / 2;
-        j = i + SEP;
+        int i = x - (SEP + (SEP & Y & 1)) / 2;
+        int j = i + SEP;
         if (0 <= i && j < xdots)
         {
             /* there are cases where next never terminates so we timeout */
             int ct = 0;
-            for (s = same[i]; s != i && s != j && ct++ < xdots; s = same[i])
+            for (int s = same[i]; s != i && s != j && ct++ < xdots; s = same[i])
             {
                 if (s > j)
                 {
@@ -187,7 +184,7 @@ int outline_stereo(BYTE * pixels, int linelen)
             same[i] = j;
         }
     }
-    for (x = xdots - 1; x >= 0; x--)
+    for (int x = xdots - 1; x >= 0; x--)
     {
         if (same[x] == x)
             /* colour[x] = rand()%colors; */
@@ -210,7 +207,7 @@ int do_AutoStereo(void)
     struct static_vars v;
     BYTE savedacbox[256*3];
     int oldhelpmode, ret=0;
-    int i, j, done;
+    int done;
     int bars, ct, kbdchar, barwidth;
     time_t ltime;
     unsigned char *buf = (unsigned char *)decoderline;
@@ -291,7 +288,7 @@ int do_AutoStereo(void)
                 ret = 1;
                 goto exit_stereo;
             }
-            for (i=0; i<xdots; i++)
+            for (int i = 0; i < xdots; i++)
                 buf[i] = (unsigned char)(rand()%colors);
             outline_stereo(buf,xdots);
         }
@@ -301,8 +298,8 @@ int do_AutoStereo(void)
     AVG /= AVGCT;
     AVG /= 2;
     ct = 0;
-    for (i = XCEN; i < XCEN + barwidth; i++)
-        for (j = YCEN; j < YCEN + BARHEIGHT; j++)
+    for (int i = XCEN; i < XCEN + barwidth; i++)
+        for (int j = YCEN; j < YCEN + BARHEIGHT; j++)
         {
             colour[ct++] = getcolor(i + (int)(AVG), j);
             colour[ct++] = getcolor(i - (int)(AVG), j);
