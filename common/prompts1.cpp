@@ -1651,28 +1651,28 @@ int find_extra_param(int type)
 
 void load_params(int fractype)
 {
-    int i, extra;
-    for (i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         param[i] = fractalspecific[fractype].paramvalue[i];
         if (fractype != CELLULAR && fractype != ANT)
             roundfloatd(&param[i]); /* don't round cellular or ant */
     }
-    if ((extra=find_extra_param(fractype)) > -1)
-        for (i=0; i<MAXPARAMS-4; i++)
+    int extra = find_extra_param(fractype);
+    if (extra > -1)
+        for (int i = 0; i < MAXPARAMS-4; i++)
             param[i+4] = moreparams[extra].paramvalue[i];
 }
 
 int check_orbit_name(char *orbitname)
 {
-    int i, numtypes, bad;
+    int numtypes, bad;
     const char *nameptr[MAXFRACTALS];
     int fractals[MAXFRACTALS];
     int last_val;
 
     numtypes = build_fractal_list(fractals, &last_val, nameptr);
     bad = 1;
-    for (i=0; i<numtypes; i++)
+    for (int i = 0; i < numtypes; i++)
     {
         if (strcmp(orbitname,nameptr[i]) == 0)
         {
