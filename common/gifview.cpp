@@ -73,7 +73,7 @@ int gifview()
     char temp1[FILE_MAX_DIR];
     BYTE byte_buf[257]; /* for decoder */
     int status;
-    int i, j, k, planes;
+    int k, planes;
 
     /* using stack for decoder byte buf rather than static mem */
     set_byte_buff(byte_buf);
@@ -107,7 +107,7 @@ int gifview()
     }
 
     /* Get the screen description */
-    for (i = 0; i < 13; i++)
+    for (int i = 0; i < 13; i++)
     {
         int tmp;
 
@@ -144,9 +144,9 @@ int gifview()
         outln = out_line_dither;
     }
 
-    for (i = 0; i < (int)numcolors; i++)
+    for (int i = 0; i < (int)numcolors; i++)
     {
-        for (j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++) {
             if ((k = get_byte()) < 0)
             {
                 close_file();
@@ -194,16 +194,19 @@ int gifview()
 
         case '!':                               /* GIF Extension Block */
             get_byte();                     /* read (and ignore) the ID */
-            while ((i = get_byte()) > 0)    /* get the data length */
-                for (j = 0; j < i; j++)
-                    get_byte();     /* flush the data */
+            {
+                int i;
+                while ((i = get_byte()) > 0)    /* get the data length */
+                    for (int j = 0; j < i; j++)
+                        get_byte();     /* flush the data */
+            }
             break;
         case ',':
             /*
              * Start of an image object. Read the image description.
              */
 
-            for (i = 0; i < 9; i++)
+            for (int i = 0; i < 9; i++)
             {
                 int tmp;
 
@@ -254,8 +257,8 @@ int gifview()
                 planes = (buffer[8] & 0x0F) + 1;
                 numcolors = 1 << planes;
                 /* skip local map */
-                for (i = 0; i < numcolors; i++) {
-                    for (j = 0; j < 3; j++) {
+                for (int i = 0; i < numcolors; i++) {
+                    for (int j = 0; j < 3; j++) {
                         if ((k = get_byte()) < 0) {
                             close_file();
                             return (-1);

@@ -229,7 +229,6 @@ void show_var_bf(char *s, bf_t n)
 
 void bfcornerstofloat(void)
 {
-    int i;
     if (bf_math)
     {
         xxmin = (double)bftofloat(bfxmin);
@@ -239,7 +238,7 @@ void bfcornerstofloat(void)
         xx3rd = (double)bftofloat(bfx3rd);
         yy3rd = (double)bftofloat(bfy3rd);
     }
-    for (i=0; i<MAXPARAMS; i++)
+    for (int i = 0; i < MAXPARAMS; i++)
         if (typehasparm(fractype,i,nullptr))
             param[i] = (double)bftofloat(bfparms[i]);
 }

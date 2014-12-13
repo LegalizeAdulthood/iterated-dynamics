@@ -690,7 +690,6 @@ static void adjust_to_limitsbf(double expand)
     bf_t blowx,bhighx,blowy,bhighy,blimit,bftemp;
     bf_t bcenterx,bcentery,badjx,badjy,btmp1,btmp2;
     bf_t bexpand;
-    int i;
     int saved;
     saved = save_stack();
     bcornerx[0] = alloc_stack(rbflength+2);
@@ -781,7 +780,7 @@ static void adjust_to_limitsbf(double expand)
     /* if caller wants image size adjusted, do that first */
     if (expand != 1.0)
     {
-        for (i=0; i<4; ++i) {
+        for (int i = 0; i < 4; ++i) {
             /* cornerx[i] = centerx + (cornerx[i]-centerx)*expand; */
             sub_bf(btmp1,bcornerx[i],bcenterx);
             mult_bf(bcornerx[i],btmp1,bexpand);
@@ -803,7 +802,7 @@ static void adjust_to_limitsbf(double expand)
     copy_bf(blowy,bcornery[0]);
     copy_bf(bhighy,bcornery[0]);
 
-    for (i=1; i<4; ++i) {
+    for (int i = 1; i < 4; ++i) {
         /* if (cornerx[i] < lowx)               lowx  = cornerx[i]; */
         if (cmp_bf(bcornerx[i],blowx) < 0)
             copy_bf(blowx,bcornerx[i]);
@@ -836,7 +835,7 @@ static void adjust_to_limitsbf(double expand)
     div_bf(bftemp,btmp1,btmp2);
     floattobf(btmp1,1.0);
     if (cmp_bf(bftemp,btmp1) < 0)
-        for (i=0; i<4; ++i) {
+        for (int i = 0; i < 4; ++i) {
             /* cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp; */
             sub_bf(btmp1,bcornerx[i],bcenterx);
             mult_bf(bcornerx[i],btmp1,bftemp);
@@ -853,7 +852,7 @@ static void adjust_to_limitsbf(double expand)
     clear_bf(badjx);
     clear_bf(badjy);
 
-    for (i=0; i<4; ++i) {
+    for (int i = 0; i < 4; ++i) {
         /* if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
            adjx = ftemp; */
         if (cmp_bf(bcornerx[i],blimit) > 0 &&
@@ -906,7 +905,6 @@ static void adjust_to_limits(double expand)
     double cornerx[4],cornery[4];
     double lowx,highx,lowy,highy,limit,ftemp;
     double centerx,centery,adjx,adjy;
-    int i;
 
     limit = 32767.99;
 
@@ -952,7 +950,7 @@ static void adjust_to_limits(double expand)
     /* if caller wants image size adjusted, do that first */
     if (expand != 1.0)
     {
-        for (i=0; i<4; ++i) {
+        for (int i = 0; i < 4; ++i) {
             cornerx[i] = centerx + (cornerx[i]-centerx)*expand;
             cornery[i] = centery + (cornery[i]-centery)*expand;
         }
@@ -961,7 +959,7 @@ static void adjust_to_limits(double expand)
     lowx = highx = cornerx[0];
     lowy = highy = cornery[0];
 
-    for (i=1; i<4; ++i) {
+    for (int i = 1; i < 4; ++i) {
         if (cornerx[i] < lowx)
             lowx  = cornerx[i];
         if (cornerx[i] > highx)
@@ -980,7 +978,7 @@ static void adjust_to_limits(double expand)
 
     /* if image is too large, downsize it maintaining center */
     if ((ftemp = limit*2/ftemp) < 1.0) {
-        for (i=0; i<4; ++i) {
+        for (int i = 0; i < 4; ++i) {
             cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp;
             cornery[i] = centery + (cornery[i]-centery)*ftemp;
         }
@@ -989,7 +987,7 @@ static void adjust_to_limits(double expand)
     /* if any corner has x or y past limit, move the image */
     adjx = adjy = 0;
 
-    for (i=0; i<4; ++i) {
+    for (int i = 0; i < 4; ++i) {
         if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
             adjx = ftemp;
         if (cornerx[i] < 0.0-limit && (ftemp = cornerx[i] + limit) < adjx)
@@ -1322,9 +1320,8 @@ void wait_until(int index, uclock_t wait_time)
 
 void reset_clock(void)
 {
-    int i;
     restart_uclock();
-    for (i=0; i<MAX_INDEX; i++)
+    for (int i = 0; i < MAX_INDEX; i++)
         next_time[i] = 0;
 }
 
@@ -1499,10 +1496,9 @@ int add_worklist(int xfrom, int xto, int xbegin,
 
 static int combine_worklist(void) /* look for 2 entries which can freely merge */
 {
-    int i,j;
-    for (i=0; i<num_worklist; ++i)
+    for (int i = 0; i < num_worklist; ++i)
         if (worklist[i].yystart == worklist[i].yybegin)
-            for (j=i+1; j<num_worklist; ++j)
+            for (int j = i+1; j < num_worklist; ++j)
                 if (worklist[j].sym == worklist[i].sym
                         && worklist[j].yystart == worklist[j].yybegin
                         && worklist[j].xxstart == worklist[j].xxbegin
@@ -1544,25 +1540,27 @@ static int combine_worklist(void) /* look for 2 entries which can freely merge *
     return (0); /* nothing combined */
 }
 
-void tidy_worklist(void) /* combine mergeable entries, resort */
+/* combine mergeable entries, resort */
+void tidy_worklist(void)
 {
-    int i,j;
-    WORKLIST tempwork;
-    while ((i=combine_worklist()) != 0)
-    {   /* merged two, delete the gone one */
-        while (++i < num_worklist)
-            worklist[i-1] = worklist[i];
-        --num_worklist;
+    {
+        int i;
+        while ((i=combine_worklist()) != 0)
+        {   /* merged two, delete the gone one */
+            while (++i < num_worklist)
+                worklist[i-1] = worklist[i];
+            --num_worklist;
+        }
     }
-    for (i=0; i<num_worklist; ++i)
-        for (j=i+1; j<num_worklist; ++j)
+    for (int i = 0; i < num_worklist; ++i)
+        for (int j = i+1; j < num_worklist; ++j)
             if (worklist[j].pass < worklist[i].pass
                     || (worklist[j].pass == worklist[i].pass
                         && (worklist[j].yystart < worklist[i].yystart
                             || (worklist[j].yystart == worklist[i].yystart
                                 && worklist[j].xxstart <  worklist[i].xxstart))))
             {   /* dumb sort, swap 2 entries to correct order */
-                tempwork = worklist[i];
+                WORKLIST tempwork = worklist[i];
                 worklist[i] = worklist[j];
                 worklist[j] = tempwork;
             }
@@ -1575,7 +1573,6 @@ void get_julia_attractor(double real, double imag)
     DComplex result = { 0.0 };
     int savper;
     long savmaxit;
-    int i;
 
     if (attractors == 0 && !finattract) /* not magnet & not requested */
         return;
@@ -1614,7 +1611,7 @@ void get_julia_attractor(double real, double imag)
             lresult = lnew;
         else
             result =  g_new;
-        for (i=0; i<10; i++) {
+        for (int i = 0; i < 10; i++) {
             overflow = false;
             if (!curfractalspecific->orbitcalc() && !overflow) /* if it stays in the lake */
             {   /* and doesn't move far, probably */

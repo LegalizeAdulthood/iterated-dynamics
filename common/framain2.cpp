@@ -702,8 +702,7 @@ static bool look(bool *stacked)
         {   /* about to run off the end of the file
                 * history stack so shift it all back one to
                 * make room, lose the 1st one */
-            int tmp;
-            for (tmp = 1; tmp < 16; tmp++)
+            for (int tmp = 1; tmp < 16; tmp++)
             {
                 strcpy(file_name_stack[tmp - 1], file_name_stack[tmp]);
             }
@@ -1873,11 +1872,10 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case FIK_F6: /* toggle all variables selected for random variation to
                center weighted variation and vice versa */
     {
-        int i;
         GENEBASE gene[NUMGENES];
         /* get the gene array from memory */
         MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-        for (i =0; i < NUMGENES; i++) {
+        for (int i = 0; i < NUMGENES; i++) {
             if (gene[i].mutate == 5) {
                 gene[i].mutate = 6;
                 continue;
@@ -2046,7 +2044,7 @@ static FILE *cmp_fp;
 static int errcount;
 int cmp_line(BYTE *pixels, int linelen)
 {
-    int row,col;
+    int row;
     int oldcolor;
     row = g_row_count++;
     if (row == 0) {
@@ -2059,7 +2057,7 @@ int cmp_line(BYTE *pixels, int linelen)
         if ((row & 1) != 0) return 0;
         row >>= 1;
     }
-    for (col=0; col<linelen; col++) {
+    for (int col = 0; col < linelen; col++) {
         oldcolor=getcolor(col,row);
         if (oldcolor==(int)pixels[col])
             putcolor(col,row,0);
@@ -2279,8 +2277,7 @@ static void save_history_info()
     }
     if (historyptr == -1)        /* initialize the history file */
     {
-        int i;
-        for (i = 0; i < maxhistory; i++)
+        for (int i = 0; i < maxhistory; i++)
             MoveToMemory((BYTE *)&current,(U16)sizeof(HISTORY),1L,(long)i,history);
         historyflag = false;
         saveptr = historyptr = 0;   /* initialize history ptr */
