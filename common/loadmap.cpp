@@ -11,7 +11,7 @@
 bool ValidateLuts(const char *fn)
 {
     FILE * f;
-    unsigned        r, g, b, index;
+    unsigned        r, g, b;
     char    line[160];
     char    temp[FILE_MAX_PATH+1];
     char    temp_fn[FILE_MAX_PATH];
@@ -31,6 +31,7 @@ bool ValidateLuts(const char *fn)
         stopmsg(0,line);
         return true;
     }
+    unsigned index;
     for (index = 0; index < 256; index++) {
         if (fgets(line,100,f) == nullptr)
             break;

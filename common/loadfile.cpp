@@ -130,8 +130,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
                 && (read_info.version <= 4 || read_info.flag3d > 0
                     || (curfractalspecific->flags & PARMS3D)))
         {
-            int i;
-            for (i = 0; i < 16; i++)
+            for (int i = 0; i < 16; i++)
             {
                 init3d[i] = read_info.init3d[i];
             }
@@ -525,7 +524,6 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     {
         struct evolution_info resume_e_info;
         GENEBASE gene[NUMGENES];
-        int i;
 
         /* TODO: MemoryAlloc */
         if (gene_handle == 0)
@@ -597,22 +595,22 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         dpy = paramrangey/(gridsz - 1);
         if (read_info.version > 14)
         {
-            for (i = 0; i < NUMGENES; i++)
+            for (int i = 0; i < NUMGENES; i++)
             {
                 gene[i].mutate = (int) blk_6_info.mutate[i];
             }
         }
         else
         {
-            for (i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++)
             {
                 gene[i].mutate = (int) blk_6_info.mutate[i];
             }
-            for (i = 6; i < 10; i++)
+            for (int i = 6; i < 10; i++)
             {
                 gene[i].mutate = 0;
             }
-            for (i = 10; i < NUMGENES; i++)
+            for (int i = 10; i < NUMGENES; i++)
             {
                 gene[i].mutate = (int) blk_6_info.mutate[i-4];
             }
@@ -748,7 +746,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
         hdr_offset = -1-fractinf_len;
     } else {
         /* didn't work 1st try, maybe an older vsn, maybe junk at eof, scan: */
-        int offset,i;
+        int offset;
         char tmpbuf[110];
         hdr_offset = 0;
         offset = 80; /* don't even check last 80 bytes of file for id */
@@ -756,7 +754,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
             offset += 100; /* go back 100 bytes at a time */
             fseek(fp,(long)(0-offset),SEEK_END);
             fread(tmpbuf,1,110,fp); /* read 10 extra for string compare */
-            for (i = 0; i < 100; ++i)
+            for (int i = 0; i < 100; ++i)
                 if (!strcmp(INFO_ID,&tmpbuf[i])) { /* found header? */
                     strcpy(info->info_id,INFO_ID);
                     fseek(fp,(long)(hdr_offset=i-offset),SEEK_END);
@@ -1478,7 +1476,7 @@ rescan:  /* entry for changed browse parms */
 #ifndef XFRACT
             case FIK_CTL_INSERT:
                 color_of_box += key_count(FIK_CTL_INSERT);
-                for (int i=0 ; i < wincount ; i++) {
+                for (int i = 0; i < wincount ; i++) {
                     MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)i,browsehandle);
                     drawindow(color_of_box,&winlist);
                 }
@@ -1488,7 +1486,7 @@ rescan:  /* entry for changed browse parms */
 
             case FIK_CTL_DEL:
                 color_of_box -= key_count(FIK_CTL_DEL);
-                for (int i=0 ; i < wincount ; i++) {
+                for (int i = 0; i < wincount ; i++) {
                     MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)i,browsehandle);
                     drawindow(color_of_box,&winlist);
                 }
@@ -1606,7 +1604,7 @@ rescan:  /* entry for changed browse parms */
         /* now clean up memory (and the screen if necessary) */
         cleartempmsg();
         if (done >= 1 && done < 4) {
-            for (int i=wincount-1; i>=0; i--)
+            for (int i = wincount-1; i >= 0; i--)
             {
                 MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)i,browsehandle);
                 boxcount = winlist.boxcount;
@@ -1950,9 +1948,8 @@ static char paramsOK(struct fractal_info *info)
 
 static char functionOK(struct fractal_info *info, int numfn)
 {
-    int i, mzmatch;
-    mzmatch = 0;
-    for (i=0; i<numfn; i++) {
+    int mzmatch = 0;
+    for (int i = 0; i < numfn; i++) {
         if (info->trigndx[i] != trigndx[i])
             mzmatch++;
     }
@@ -1994,16 +1991,13 @@ static char typeOK(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
 
 static void check_history(char *oldname, char *newname)
 {
-    int i;
-
     /* file_name_stack[] is maintained in framain2.c.  It is the history */
     /*  file for the browser and holds a maximum of 16 images.  The history */
     /*  file needs to be adjusted if the rename or delete functions of the */
     /*  browser are used. */
     /* name_stack_ptr is also maintained in framain2.c.  It is the index into */
     /*  file_name_stack[]. */
-
-    for (i=0; i<name_stack_ptr; i++) {
+    for (int i = 0; i < name_stack_ptr; i++) {
         if (stricmp(file_name_stack[i],oldname) == 0) /* we have a match */
             strcpy(file_name_stack[i],newname);    /* insert the new name */
     }

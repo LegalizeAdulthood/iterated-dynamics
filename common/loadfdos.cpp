@@ -103,7 +103,6 @@ static struct vidinf *vidptr;
 int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 {
     struct vidinf vid[MAXVIDEOMODES];
-    int i, j;
     int gotrealmode;
     double ftemp;
     unsigned tmpflags;
@@ -116,7 +115,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
     g_init_mode = -1;
 
     /* try to find exact match for vid mode */
-    for (i = 0; i < g_video_table_len; ++i)
+    for (int i = 0; i < g_video_table_len; ++i)
     {
         VIDEOINFO *vident = &g_video_table[i];
         if (info->xdots == vident->xdots && info->ydots == vident->ydots
@@ -133,7 +132,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 
     if (g_init_mode == -1) /* try to find very good match for vid mode */
     {
-        for (i = 0; i < g_video_table_len; ++i)
+        for (int i = 0; i < g_video_table_len; ++i)
         {
             VIDEOINFO *vident = &g_video_table[i];
             if (info->xdots == vident->xdots && info->ydots == vident->ydots
@@ -146,7 +145,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
     }
 
     /* setup table entry for each vid mode, flagged for how well it matches */
-    for (i = 0; i < g_video_table_len; ++i)
+    for (int i = 0; i < g_video_table_len; ++i)
     {
         memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
                sizeof(g_video_entry));
@@ -211,7 +210,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
         qsort(vid, g_video_table_len, sizeof(vid[0]), vidcompare); /* sort modes */
 
         attributes = (int *)&dstack[1000];
-        for (i = 0; i < g_video_table_len; ++i)
+        for (int i = 0; i < g_video_table_len; ++i)
         {
             attributes[i] = 1;
         }
@@ -255,7 +254,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
             sprintf(temp1, "v%d.%01d", save_release/100, (save_release%100)/10);
             if (save_release%100)
             {
-                i = (int) strlen(temp1);
+                int i = (int) strlen(temp1);
                 temp1[i] = (char)((save_release%10) + '0');
                 temp1[i+1] = 0;
             }
@@ -296,7 +295,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 
         int oldhelpmode = helpmode;
         helpmode = HELPLOADFILE;
-        i = fullscreen_choice(0, (char *) dstack,
+        int i = fullscreen_choice(0, (char *) dstack,
                               "key...name......................err...xdot..ydot.clr.comment..................",
                               temp1, g_video_table_len, nullptr, attributes,
                               1, 13, 78, 0, format_item, nullptr, nullptr, check_modekey);
@@ -322,7 +321,9 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 
     if (gotrealmode == 0)  /* translate from temp table to permanent */
     {
-        if ((j = g_video_table[i=g_init_mode].keynum) != 0)
+        int i = g_init_mode;
+        int j = g_video_table[i].keynum;
+        if (j != 0)
         {
             for (g_init_mode = 0; g_init_mode < MAXVIDEOMODES-1; ++g_init_mode)
             {
@@ -382,7 +383,8 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
         {
             ++skipydots;
         }
-        i = j = 0;
+        int i = 0;
+        int j = 0;
         int tmpxdots;
         int tmpydots;
         for (;;)
@@ -436,8 +438,10 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
     {
         finalaspectratio = screenaspect;
     }
-    i = (int)(finalaspectratio * 1000.0 + 0.5);
-    finalaspectratio = (float)(i/1000.0); /* chop precision to 3 decimals */
+    {
+        int i = (int)(finalaspectratio * 1000.0 + 0.5);
+        finalaspectratio = (float)(i/1000.0); /* chop precision to 3 decimals */
+    }
 
     /* setup view window stuff */
     viewwindow = false;
@@ -451,6 +455,8 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
                 * (double)g_video_entry.ydots / (double)g_video_entry.xdots
                 / screenaspect;
         float tmpreduce;
+        int i;
+        int j;
         if (finalaspectratio <= screenaspect)
         {
             i = (int)((double)g_video_entry.xdots / (double)filexdots * 20.0 + 0.5);
