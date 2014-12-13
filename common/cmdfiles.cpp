@@ -2385,9 +2385,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             goto badarg;
 #if !defined(XFRACT)
         if (totparms > 1) {
-            int i;
             soundflag &= SOUNDFLAG_ORBITMASK; /* reset options */
-            for (i = 1; i < totparms; i++) {
+            for (int i = 1; i < totparms; i++) {
                 /* this is for 2 or more options at the same time */
                 if (charval[i] == 'f') { /* (try to)switch on opl3 fm synth */
                     if (driver_init_fm())
@@ -2465,10 +2464,9 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     }
 
     if (strcmp(variable, "scalemap") == 0) {      /* Scalemap=?,?,?,?,?,?,?,?,?,?,? */
-        int counter;
         if (totparms != intparms)
             goto badarg;
-        for (counter=0; counter <=11; counter++)
+        for (int counter = 0; counter <= 11; counter++)
             if ((totparms > counter) && (intval[counter] > 0)
                     && (intval[counter] < 13))
                 scale_map[counter] = intval[counter];
@@ -2995,10 +2993,9 @@ badarg:
 
 static void parse_textcolors(char *value)
 {
-    int k;
     int hexval;
     if (strcmp(value, "mono") == 0) {
-        for (k = 0; k < sizeof(txtcolor); ++k)
+        for (int k = 0; k < sizeof(txtcolor); ++k)
             txtcolor[k] = BLACK*16+WHITE;
         /* C_HELP_CURLINK = C_PROMPT_INPUT = C_CHOICE_CURRENT = C_GENERAL_INPUT
                           = C_AUTHDIV1 = C_AUTHDIV2 = WHITE*16+BLACK; */
@@ -3011,8 +3008,9 @@ static void parse_textcolors(char *value)
                                     = txtcolor[17] = txtcolor[22] = txtcolor[24]
                                             = txtcolor[25] = BLACK*16+L_WHITE;
     }
-    else {
-        k = 0;
+    else
+    {
+        int k = 0;
         while (k < sizeof(txtcolor)) {
             if (*value == 0)
                 break;
@@ -3064,7 +3062,8 @@ static int parse_colors(char *value)
                 i += smooth;
                 ++value;
             }
-            else {
+            else
+            {
                 for (int j = 0; j < 3; ++j) {
                     int k = *(value++);
                     if (k < '0')
@@ -3225,9 +3224,9 @@ int get_curarg_len(const char *curarg)
 /* Get max length of current args */
 int get_max_curarg_len(const char *floatvalstr[], int totparms)
 {
-    int i,tmp,max_str;
+    int tmp,max_str;
     max_str = 0;
-    for (i=0; i<totparms; i++)
+    for (int i = 0; i < totparms; i++)
         if ((tmp=get_curarg_len(floatvalstr[i])) > max_str)
             max_str = tmp;
     return max_str;

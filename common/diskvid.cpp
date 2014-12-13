@@ -118,10 +118,9 @@ int targa_startdisk(FILE *targafp, int overhead)
 
 int common_startdisk(long newrowsize, long newcolsize, int colors)
 {
-    int i, freemem;
-    long memorysize, offset;
+    int freemem;
+    long memorysize;
     unsigned int *fwd_link = nullptr;
-    struct cache *ptr1 = nullptr;
     long longtmp;
     unsigned int cache_size;
     BYTE *tempfar = nullptr;
@@ -134,7 +133,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         char buf[128];
         helptitle();
         driver_set_attr(1, 0, C_DVID_BKGRD, 24*80);  /* init rest to background */
-        for (i = 0; i < BOXDEPTH; ++i)
+        for (int i = 0; i < BOXDEPTH; ++i)
         {
             driver_set_attr(BOXROW+i, BOXCOL, C_DVID_LO, BOXWIDTH);  /* init box */
         }
@@ -165,7 +164,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     else
     {
         pixelshift = 3;
-        i = 2;
+        int i = 2;
         while (i < colors)
         {
             i *= i;
@@ -214,12 +213,12 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     }
 
     /* preset cache to all invalid entries so we don't need free list logic */
-    for (i = 0; i < HASHSIZE; ++i)
+    for (int i = 0; i < HASHSIZE; ++i)
     {
         hash_ptr[i] = 0xffff; /* 0xffff marks the end of a hash chain */
     }
     longtmp = 100000000L;
-    for (ptr1 = cache_start; ptr1 < cache_end; ++ptr1)
+    for (struct cache *ptr1 = cache_start; ptr1 < cache_end; ++ptr1)
     {
         ptr1->dirty = false;
         ptr1->lru = false;
@@ -231,7 +230,8 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     }
 
     memorysize = (long)(newcolsize) * newrowsize + headerlength;
-    if ((i = (short)memorysize & (BLOCKLEN-1)) != 0)
+    int i = (short)memorysize & (BLOCKLEN-1);
+    if (i != 0)
     {
         memorysize += BLOCKLEN - i;
     }
@@ -247,7 +247,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         BYTE *tmpptr;
         tmpptr = membuf;
         fseek(fp, 0L, SEEK_SET);
-        for (i = 0; i < headerlength; i++)
+        for (int i = 0; i < headerlength; i++)
         {
             *tmpptr++ = (BYTE)fgetc(fp);
         }
@@ -281,7 +281,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     }
     else
     {
-        for (offset = 0; offset < memorysize; offset++)
+        for (long offset = 0; offset < memorysize; offset++)
         {
             SetMemory(0, (U16)BLOCKLEN, 1L, offset, dv_handle);
             if (driver_key_pressed())           /* user interrupt */
@@ -498,7 +498,7 @@ static void findload_cache(long offset) /* used by read/write */
         tbloffset = cur_cache->hashlink;
     }
     /* must load the cache entry from backing store */
-    for (;;)  /* look around for something not recently used */
+    while (true)  /* look around for something not recently used */
     {
         if (++cache_lru >= cache_end)
         {
@@ -627,11 +627,11 @@ write_stuff:
     switch (pixelshift)
     {
     case 0:
-        for (i = 0; i < BLOCKLEN; ++i)
+        for (int i = 0; i < BLOCKLEN; ++i)
             mem_putc(*(pixelptr++));
         break;
     case 1:
-        for (i = 0; i < BLOCKLEN/2; ++i)
+        for (int i = 0; i < BLOCKLEN/2; ++i)
         {
             tmpchar = (BYTE)(*(pixelptr++) << 4);
             tmpchar = (BYTE)(tmpchar + *(pixelptr++));
@@ -639,15 +639,15 @@ write_stuff:
         }
         break;
     case 2:
-        for (i = 0; i < BLOCKLEN/4; ++i)
+        for (int i = 0; i < BLOCKLEN/4; ++i)
         {
-            for (j = 6; j >= 0; j -= 2)
+            for (int j = 6; j >= 0; j -= 2)
                 tmpchar = (BYTE)((tmpchar << 2) + *(pixelptr++));
             mem_putc(tmpchar);
         }
         break;
     case 3:
-        for (i = 0; i < BLOCKLEN/8; ++i)
+        for (int i = 0; i < BLOCKLEN/8; ++i)
         {
             mem_putc((BYTE)
                      ((((((((((((((*pixelptr

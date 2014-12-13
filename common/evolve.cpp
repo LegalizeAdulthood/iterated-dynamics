@@ -324,7 +324,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
 int get_the_rest(void)
 {
     const char *evolvmodes[]= {"no","x","y","x+y","x-y","random","spread"};
-    int i,k,num, numtrig;
+    int i,k, numtrig;
     const char *choices[20];
     struct fullscreenvalues uvalues[20];
     GENEBASE gene[NUMGENES];
@@ -342,7 +342,7 @@ int get_the_rest(void)
 choose_vars_restart:
 
     k = -1;
-    for (num = MAXPARAMS; num < (NUMGENES - 5); num++) {
+    for (int num = MAXPARAMS; num < (NUMGENES - 5); num++) {
         choices[++k]=gene[num].name;
         uvalues[k].type = 'l';
         uvalues[k].uval.ch.vlen = 7;
@@ -351,7 +351,7 @@ choose_vars_restart:
         uvalues[k].uval.ch.val =  gene[num].mutate;
     }
 
-    for (num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++) {
+    for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++) {
         choices[++k]=gene[num].name;
         uvalues[k].type = 'l';
         uvalues[k].uval.ch.vlen = 7;
@@ -383,15 +383,15 @@ choose_vars_restart:
 
     switch (i) {
     case FIK_F2: /* set all off */
-        for (num = MAXPARAMS; num < NUMGENES; num++)
+        for (int num = MAXPARAMS; num < NUMGENES; num++)
             gene[num].mutate = 0;
         goto choose_vars_restart;
     case FIK_F3: /* set all on..alternate x and y for field map */
-        for (num = MAXPARAMS; num < NUMGENES; num ++)
+        for (int num = MAXPARAMS; num < NUMGENES; num ++)
             gene[num].mutate = (char)((num % 2) + 1);
         goto choose_vars_restart;
     case FIK_F4: /* Randomize all */
-        for (num =MAXPARAMS; num < NUMGENES; num ++)
+        for (int num = MAXPARAMS; num < NUMGENES; num ++)
             gene[num].mutate = (char)(rand() % 6);
         goto choose_vars_restart;
     case -1:
@@ -402,10 +402,10 @@ choose_vars_restart:
 
     /* read out values */
     k = -1;
-    for (num = MAXPARAMS; num < (NUMGENES - 5); num++)
+    for (int num = MAXPARAMS; num < (NUMGENES - 5); num++)
         gene[num].mutate = (char)(uvalues[++k].uval.ch.val);
 
-    for (num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
+    for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
         gene[num].mutate = (char)(uvalues[++k].uval.ch.val);
 
     if (curfractalspecific->calctype == StandardFractal &&
@@ -419,7 +419,7 @@ choose_vars_restart:
 int get_variations(void)
 {
     const char *evolvmodes[]= {"no","x","y","x+y","x-y","random","spread"};
-    int i,k,num, numparams;
+    int k, numparams;
     const char *choices[20];
     struct fullscreenvalues uvalues[20];
     GENEBASE gene[NUMGENES];
@@ -457,7 +457,7 @@ int get_variations(void)
     }
 
     numparams = 0;
-    for (i = firstparm; i < lastparm; i++)
+    for (int i = firstparm; i < lastparm; i++)
     {
         if (typehasparm(julibrot ? neworbittype : fractype, i, nullptr)==0) {
             if (fractype == FORMULA || fractype == FFORMULA)
@@ -474,7 +474,7 @@ int get_variations(void)
 choose_vars_restart:
 
     k = -1;
-    for (num = firstparm; num < lastparm; num++) {
+    for (int num = firstparm; num < lastparm; num++) {
         if (fractype == FORMULA || fractype == FFORMULA)
             if (paramnotused(num))
                 continue;
@@ -497,19 +497,19 @@ choose_vars_restart:
     choices[++k]= "Press F6 for second page"; /* F5 gets eaten */
     uvalues[k].type = '*';
 
-    i = fullscreen_prompt("Variable tweak central 1 of 2",k+1,choices,uvalues,92,nullptr);
+    int i = fullscreen_prompt("Variable tweak central 1 of 2",k+1,choices,uvalues,92,nullptr);
 
     switch (i) {
     case FIK_F2: /* set all off */
-        for (num = 0; num < MAXPARAMS; num++)
+        for (int num = 0; num < MAXPARAMS; num++)
             gene[num].mutate = 0;
         goto choose_vars_restart;
     case FIK_F3: /* set all on..alternate x and y for field map */
-        for (num = 0; num < MAXPARAMS; num ++)
+        for (int num = 0; num < MAXPARAMS; num ++)
             gene[num].mutate = (char)((num % 2) + 1);
         goto choose_vars_restart;
     case FIK_F4: /* Randomize all */
-        for (num =0; num < MAXPARAMS; num ++)
+        for (int num =0; num < MAXPARAMS; num ++)
             gene[num].mutate = (char)(rand() % 6);
         goto choose_vars_restart;
     case FIK_F6: /* go to second screen, put array away first */
@@ -525,7 +525,8 @@ choose_vars_restart:
 
     /* read out values */
     k = -1;
-    for (num = firstparm; num < lastparm; num++) {
+    for (int num = firstparm; num < lastparm; num++)
+    {
         if (fractype == FORMULA || fractype == FFORMULA)
             if (paramnotused(num))
                 continue;
@@ -540,12 +541,11 @@ void set_mutation_level(int strength)
 {
     /* scan through the gene array turning on random variation for all parms that */
     /* are suitable for this level of mutation */
-    int i;
     GENEBASE gene[NUMGENES];
     /* get the gene array from memory */
     MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
-    for (i=0; i<NUMGENES; i++) {
+    for (int i=0; i<NUMGENES; i++) {
         if (gene[i].level <= strength)
             gene[i].mutate = 5; /* 5 = random mutation mode */
         else
@@ -814,8 +814,6 @@ void fiddleparms(GENEBASE gene[], int ecount)
     /* call with px,py ... parameter set co-ords*/
     /* set random seed then call rnd enough times to get to px,py */
 
-    int i;
-
     /* when writing routines to vary param types make sure that rand() gets called
     the same number of times whether gene[].mutate is set or not to allow
     user to change it between generations without screwing up the duplicability
@@ -831,7 +829,7 @@ void fiddleparms(GENEBASE gene[], int ecount)
 
     set_random(ecount);   /* generate the right number of pseudo randoms */
 
-    for (i=0; i<NUMGENES; i++)
+    for (int i=0; i<NUMGENES; i++)
         (*(gene[i].varyfunc))(gene,rand(),i);
 
 }

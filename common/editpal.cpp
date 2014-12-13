@@ -283,12 +283,11 @@ static void displayf(int x, int y, int fg, int bg, const char *format, ...)
 
 static void mkpalrange(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int skip)
 {
-    int    curr;
     double rm = (double)((int) p2->red   - (int) p1->red) / num,
            gm = (double)((int) p2->green - (int) p1->green) / num,
            bm = (double)((int) p2->blue  - (int) p1->blue) / num;
 
-    for (curr=0; curr<num; curr+=skip)
+    for (int curr = 0; curr < num; curr += skip)
     {
         if (gamma_val == 1)
         {
@@ -317,12 +316,9 @@ static void mkpalrange(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int 
 
 static void rotcolrg(PALENTRY pal[], int num)
 {
-    int    curr;
-    int    dummy;
-
-    for (curr=0; curr<=num; curr++)
+    for (int curr = 0; curr <= num; curr++)
     {
-        dummy = pal[curr].red;
+        int dummy = pal[curr].red;
         pal[curr].red = pal[curr].green;
         pal[curr].green = (BYTE)dummy;
     }
@@ -331,12 +327,9 @@ static void rotcolrg(PALENTRY pal[], int num)
 
 static void rotcolgb(PALENTRY pal[], int num)
 {
-    int    curr;
-    int    dummy;
-
-    for (curr=0; curr<=num; curr++)
+    for (int curr = 0; curr <= num; curr++)
     {
-        dummy = pal[curr].green;
+        int const dummy = pal[curr].green;
         pal[curr].green = pal[curr].blue;
         pal[curr].blue = (BYTE)dummy;
     }
@@ -344,12 +337,9 @@ static void rotcolgb(PALENTRY pal[], int num)
 
 static void rotcolbr(PALENTRY pal[], int num)
 {
-    int    curr;
-    int    dummy;
-
-    for (curr=0; curr<=num; curr++)
+    for (int curr = 0; curr <= num; curr++)
     {
-        dummy = pal[curr].red;
+        int const dummy = pal[curr].red;
         pal[curr].red = pal[curr].blue;
         pal[curr].blue = (BYTE)dummy;
     }
@@ -363,13 +353,9 @@ static void rotcolbr(PALENTRY pal[], int num)
 
 static void palrangetogrey(PALENTRY pal[], int first, int how_many)
 {
-    PALENTRY      *curr;
-    BYTE  val;
-
-
-    for (curr = &pal[first]; how_many>0; how_many--, curr++)
+    for (PALENTRY *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
-        val = (BYTE)(((int)curr->red*30 + (int)curr->green*59 + (int)curr->blue*11) / 100);
+        BYTE val = (BYTE)(((int)curr->red*30 + (int)curr->green*59 + (int)curr->blue*11) / 100);
         curr->red = curr->green = curr->blue = (BYTE)val;
     }
 }
@@ -381,9 +367,7 @@ static void palrangetogrey(PALENTRY pal[], int first, int how_many)
 
 static void palrangetonegative(PALENTRY pal[], int first, int how_many)
 {
-    PALENTRY      *curr;
-
-    for (curr = &pal[first]; how_many>0; how_many--, curr++)
+    for (PALENTRY *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
         curr->red   = (BYTE)(63 - curr->red);
         curr->green = (BYTE)(63 - curr->green);
@@ -399,10 +383,8 @@ static void palrangetonegative(PALENTRY pal[], int first, int how_many)
 
 static void hdline(int x, int y, int width)
 {
-    int ctr;
-    BYTE *ptr;
-
-    for (ctr=0, ptr=line_buff; ctr<width; ctr++, ptr++)
+    BYTE *ptr = line_buff;
+    for (int ctr = 0; ctr < width; ctr++, ptr++)
         *ptr = (BYTE)((ctr&2) ? bg_color : fg_color);
 
     putrow(x, y, width, (char *)line_buff);
@@ -411,9 +393,7 @@ static void hdline(int x, int y, int width)
 
 static void vdline(int x, int y, int depth)
 {
-    int ctr;
-
-    for (ctr=0; ctr<depth; ctr++, y++)
+    for (int ctr = 0; ctr < depth; ctr++, y++)
         clip_putcolor(x, y, (ctr&2) ? bg_color : fg_color);
 }
 
@@ -1327,9 +1307,8 @@ static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int,RGBEdi
 {
     RGBEditor      *me     = allocate(RGBEditor);
     static char letter[] = "RGB";
-    int             ctr;
 
-    for (ctr=0; ctr<3; ctr++)
+    for (int ctr = 0; ctr < 3; ctr++)
         me->color[ctr] = CEditor_Construct(0, 0, letter[ctr], RGBEditor__other_key,
                                            RGBEditor__change, me);
 
@@ -1923,16 +1902,12 @@ static void PalTable__HlPal(PalTable *me, int pnum, int color)
 
 static void PalTable__Draw(PalTable *me)
 {
-    int pal;
-    int xoff, yoff;
-    int width;
-
     if (me->hidden)
-        return ;
+        return;
 
     Cursor_Hide();
 
-    width = 1+(me->csize*16)+1+1;
+    int width = 1+(me->csize*16)+1+1;
 
     rect(me->x, me->y, width, 2+RGBEditor_DEPTH+2+(me->csize*16)+1+1, fg_color);
 
@@ -1950,10 +1925,10 @@ static void PalTable__Draw(PalTable *me)
     RGBEditor_Draw(me->rgb[0]);
     RGBEditor_Draw(me->rgb[1]);
 
-    for (pal=0; pal<256; pal++)
+    for (int pal = 0; pal < 256; pal++)
     {
-        xoff = PalTable_PALX + (pal%16) * me->csize;
-        yoff = PalTable_PALY + (pal/16) * me->csize;
+        int xoff = PalTable_PALX + (pal%16) * me->csize;
+        int yoff = PalTable_PALY + (pal/16) * me->csize;
 
         if (pal >= colors)
         {
@@ -2089,8 +2064,6 @@ static void PalTable__SaveRect(PalTable *me)
     char buff[MAX_WIDTH];
     int  width = PalTable_PALX + me->csize*16 + 1 + 1,
          depth = PalTable_PALY + me->csize*16 + 1 + 1;
-    int  yoff;
-
 
     /* first, do any de-allocationg */
 
@@ -2117,7 +2090,7 @@ static void PalTable__SaveRect(PalTable *me)
         char  *bufptr = buff; /* MSC needs me indirection to get it right */
 
         Cursor_Hide();
-        for (yoff=0; yoff<depth; yoff++)
+        for (int yoff = 0; yoff < depth; yoff++)
         {
             getrow(me->x, me->y+yoff, width, buff);
             hline(me->x, me->y+yoff, width, bg_color);
@@ -2144,7 +2117,7 @@ static void PalTable__SaveRect(PalTable *me)
 
         rewind(me->file);
         Cursor_Hide();
-        for (yoff=0; yoff<depth; yoff++)
+        for (int yoff = 0; yoff < depth; yoff++)
         {
             getrow(me->x, me->y+yoff, width, buff);
             hline(me->x, me->y+yoff, width, bg_color);
@@ -2165,7 +2138,6 @@ static void PalTable__RestoreRect(PalTable *me)
     char buff[MAX_WIDTH];
     int  width = PalTable_PALX + me->csize*16 + 1 + 1,
          depth = PalTable_PALY + me->csize*16 + 1 + 1;
-    int  yoff;
 
     if (me->hidden)
         return;
@@ -2175,7 +2147,7 @@ static void PalTable__RestoreRect(PalTable *me)
     case DISK:
         rewind(me->file);
         Cursor_Hide();
-        for (yoff=0; yoff<depth; yoff++)
+        for (int yoff = 0; yoff < depth; yoff++)
         {
             if (fread(buff, width, 1, me->file) != 1)
             {
@@ -2193,7 +2165,7 @@ static void PalTable__RestoreRect(PalTable *me)
         char  *bufptr = buff; /* MSC needs me indirection to get it right */
 
         Cursor_Hide();
-        for (yoff=0; yoff<depth; yoff++)
+        for (int yoff = 0; yoff < depth; yoff++)
         {
             memcpy(bufptr, ptr, width);
             putrow(me->x, me->y+yoff, width, buff);
@@ -3034,8 +3006,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
 static void PalTable__MkDefaultPalettes(PalTable *me)  /* creates default Fkey palettes */
 {
-    int i;
-    for (i=0; i<8; i++) /* copy original palette to save areas */
+    for (int i = 0; i < 8; i++) /* copy original palette to save areas */
     {
         memcpy(me->save_pal[i], me->pal, 256*sizeof(PALENTRY));
     }
@@ -3160,13 +3131,11 @@ static void PalTable_Destroy(PalTable *me)
 
 static void PalTable_Process(PalTable *me)
 {
-    int ctr;
-
     getpalrange(0, colors, me->pal);
 
     /* Make sure all palette entries are 0-63 */
 
-    for (ctr=0; ctr<768; ctr++)
+    for (int ctr = 0; ctr < 768; ctr++)
         ((char *)me->pal)[ctr] &= 63;
 
     PalTable__UpdateDAC(me);

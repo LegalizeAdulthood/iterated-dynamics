@@ -80,7 +80,6 @@ static int gif_savetodisk(char *filename)      /* save-to-disk routine */
     char tmpfile[FILE_MAX_PATH];
     char *period;
     bool newfile = false;
-    int i;
     int interrupted;
 
 restart:
@@ -126,7 +125,7 @@ restart:
             return -1;
         }
         newfile = false;
-        i = (int) strlen(tmpfile);
+        int i = (int) strlen(tmpfile);
         while (--i >= 0 && tmpfile[i] != SLASHC)
             tmpfile[i] = 0;
         strcat(tmpfile, "fractint.tmp");
@@ -207,7 +206,7 @@ restart:
                 if (++outcolor2 >= colors)
                     outcolor2 = 0;
             }
-            for (i = 0; 250 * i < xdots; i++)
+            for (int i = 0; 250*i < xdots; i++)
             {   /* clear vert status bars */
                 putcolor(i, j, getcolor(i, j) ^ outcolor1);
                 putcolor(xdots - 1 - i, j,
@@ -265,7 +264,7 @@ int savetodisk(char *filename)
 bool encoder()
 {
     bool interrupted;
-    int i, width, rowlimit;
+    int width, rowlimit;
     BYTE bitsperpixel, x;
     struct fractal_info save_info;
 
@@ -277,7 +276,7 @@ bool encoder()
 
 #ifndef XFRACT
     bitsperpixel = 0;            /* calculate bits / pixel */
-    for (i = colors; i >= 2; i /= 2)
+    for (int i = colors; i >= 2; i /= 2)
         bitsperpixel++;
 
     startbits = bitsperpixel + 1;/* start coding with this many bits */
@@ -328,7 +327,7 @@ bool encoder()
         goto oops;
     if (fputc(0, g_outfile) != 0)
         goto oops;                /* background color */
-    i = 0;
+    int i = 0;
 
     /* TODO: pixel aspect ratio should be 1:1? */
     if (viewwindow                               /* less than full screen?  */
@@ -364,7 +363,7 @@ bool encoder()
         }
         else
         {   /* uh oh - better fake it */
-            for (i = 0; i < 256; i += 16)
+            for (int i = 0; i < 256; i += 16)
                 if (!shftwrite((BYTE *)paletteEGA, 16))
                     goto oops;
         }
@@ -472,7 +471,6 @@ bool encoder()
         if (evolving&1)
         {
             struct evolution_info esave_info;
-            int i;
             struct evolution_info resume_e_info;
             GENEBASE gene[NUMGENES];
             MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -517,10 +515,10 @@ bool encoder()
                 esave_info.fiddlefactor    = resume_e_info.fiddlefactor;
                 esave_info.ecount          = resume_e_info.ecount;
             }
-            for (i = 0; i < NUMGENES; i++)
+            for (int i = 0; i < NUMGENES; i++)
                 esave_info.mutate[i] = (short)gene[i].mutate;
 
-            for (i = 0; i < sizeof(esave_info.future) / sizeof(short); i++)
+            for (int i = 0; i < sizeof(esave_info.future) / sizeof(short); i++)
                 esave_info.future[i] = 0;
 
             /* some XFRACT logic for the doubles needed here */
@@ -537,7 +535,6 @@ bool encoder()
         if (stdcalcmode == 'o')
         {
             struct orbits_info osave_info;
-            int i;
             osave_info.oxmin     = oxmin;
             osave_info.oxmax     = oxmax;
             osave_info.oymin     = oymin;
@@ -546,7 +543,7 @@ bool encoder()
             osave_info.oy3rd     = oy3rd;
             osave_info.keep_scrn_coords= (short) (keep_scrn_coords ? 1 : 0);
             osave_info.drawmode  = drawmode;
-            for (i = 0; i < sizeof(osave_info.future) / sizeof(short); i++)
+            for (int i = 0; i < sizeof(osave_info.future) / sizeof(short); i++)
                 osave_info.future[i] = 0;
 
             /* some XFRACT logic for the doubles needed here */
@@ -587,11 +584,10 @@ oops:
 /* shift IBM colors to GIF */
 static int shftwrite(BYTE * color, int numcolors)
 {
-    BYTE thiscolor;
     for (int i = 0; i < numcolors; i++)
         for (int j = 0; j < 3; j++)
         {
-            thiscolor = color[3 * i + j];
+            BYTE thiscolor = color[3 * i + j];
             thiscolor = (BYTE)(thiscolor << 2);
             thiscolor = (BYTE)(thiscolor + (BYTE)(thiscolor >> 6));
             if (fputc(thiscolor, g_outfile) != (int) thiscolor)
@@ -631,8 +627,7 @@ static int put_extend_blk(int block_id, int block_len, char * block_data)
 static int store_item_name(char *nameptr)
 {
     struct formula_info fsave_info;
-    int i;
-    for (i = 0; i < 40; i++)
+    for (int i = 0; i < 40; i++)
         fsave_info.form_name[i] = 0;      /* initialize string */
     strcpy(fsave_info.form_name, nameptr);
     if (fractype == FORMULA || fractype == FFORMULA)
@@ -655,7 +650,7 @@ static int store_item_name(char *nameptr)
         fsave_info.uses_p4 = 0;
         fsave_info.uses_p5 = 0;
     }
-    for (i = 0; i < sizeof(fsave_info.future) / sizeof(short); i++)
+    for (int i = 0; i < sizeof(fsave_info.future) / sizeof(short); i++)
         fsave_info.future[i] = 0;
     /* formula/lsys/ifs info block, 003 */
     put_extend_blk(3, sizeof(fsave_info), (char *) &fsave_info);
@@ -664,7 +659,6 @@ static int store_item_name(char *nameptr)
 
 static void setup_save_info(struct fractal_info * save_info)
 {
-    int i;
     if (fractype != FORMULA && fractype != FFORMULA)
         maxfn = 0;
     /* set save parameters in save structure */
@@ -718,7 +712,7 @@ static void setup_save_info(struct fractal_info * save_info)
     save_info->decomp[0] = (short) decomp[0];
     save_info->biomorph = (short) usr_biomorph;
     save_info->symmetry = (short) forcesymmetry;
-    for (i = 0; i < 16; i++)
+    for (int i = 0; i < 16; i++)
         save_info->init3d[i] = (short) init3d[i];
     save_info->previewfactor = (short) previewfactor;
     save_info->xtrans = (short) xtrans;
@@ -811,7 +805,7 @@ static void setup_save_info(struct fractal_info * save_info)
     save_info->orbit_delay = (short) orbit_delay;
     save_info->math_tol[0] = math_tol[0];
     save_info->math_tol[1] = math_tol[1];
-    for (i = 0; i < sizeof(save_info->future) / sizeof(short); i++)
+    for (int i = 0; i < sizeof(save_info->future)/sizeof(short); i++)
         save_info->future[i] = 0;
 
 }
@@ -914,8 +908,6 @@ static char accum[256];
 static bool compress(int rowlimit)
 {
     int outcolor1, outcolor2;
-    long fcode;
-    int i = 0;
     int ent;
     int disp;
     int hsize_reg;
@@ -935,7 +927,7 @@ static bool compress(int rowlimit)
     }
     if (((++numsaves) & 1) == 0)
     {   /* reverse the colors on alt saves */
-        i = outcolor1;
+        int i = outcolor1;
         outcolor1 = outcolor2;
         outcolor2 = i;
     }
@@ -957,7 +949,7 @@ static bool compress(int rowlimit)
 
     a_count = 0;
     hshift = 0;
-    for (fcode = (long) HSIZE;  fcode < 65536L; fcode *= 2L)
+    for (long fcode = (long) HSIZE;  fcode < 65536L; fcode *= 2L)
         hshift++;
     hshift = 8 - hshift;                /* set hash code range bound */
 
@@ -982,8 +974,8 @@ static bool compress(int rowlimit)
                     ent = color;
                     continue;
                 }
-                fcode = (long)(((long) color << maxbits) + ent);
-                i = (((int)color << hshift) ^ ent);    /* xor hashing */
+                long fcode = (long)(((long) color << maxbits) + ent);
+                int i = (((int)color << hshift) ^ ent);    /* xor hashing */
 
                 if (htab[i] == fcode)
                 {
@@ -1027,7 +1019,7 @@ nomatch:
                     if (++outcolor2 >= colors)
                         outcolor2 = 0;
                 }
-                for (i = 0; 250 * i < xdots; i++)
+                for (int i = 0; 250*i < xdots; i++)
                 {   /* display vert status bars */
                     /* (this is NOT GIF-related)  */
                     putcolor(i, ydot, getcolor(i, ydot) ^ outcolor1);

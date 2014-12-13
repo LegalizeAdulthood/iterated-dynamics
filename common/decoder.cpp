@@ -149,7 +149,6 @@ short decoder(short linewidth)
     short ret;
     short c;
     short size;
-    short i;
     short j;
     short fastloop;
     short bufcnt;                /* how many empty spaces left in buffer */
@@ -178,7 +177,7 @@ short decoder(short linewidth)
     navail_bytes = nbits_left = sizeofstring[slot] = xskip = yskip
                                 = old_code = 0;
     out_value = 0;
-    for (i = 0; i < slot; i++)
+    for (short i = 0; i < slot; i++)
     {
         sizeofstring[i] = 0;
     }
@@ -267,7 +266,8 @@ short decoder(short linewidth)
             fastloop = NOPE;
             while (code >= newcodes)
             {
-                j = i = sizeofstring[code];
+                int i = sizeofstring[code];
+                j = i;
                 if (i > 0 && bufcnt - i > 0 && skipxdots == 0)
                 {
                     fastloop = YUP;

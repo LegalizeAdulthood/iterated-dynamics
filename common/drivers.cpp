@@ -79,9 +79,7 @@ add_video_mode(Driver *drv, VIDEOINFO *mode)
 void
 close_drivers(void)
 {
-    int i;
-
-    for (i = 0; i < num_drivers; i++)
+    for (int i = 0; i < num_drivers; i++)
     {
         if (s_available[i])
         {
@@ -96,9 +94,7 @@ close_drivers(void)
 Driver *
 driver_find_by_name(const char *name)
 {
-    int i;
-
-    for (i = 0; i < num_drivers; i++)
+    for (int i = 0; i < num_drivers; i++)
     {
         if (strcmp(name, s_available[i]->name) == 0)
         {
