@@ -73,7 +73,7 @@ int gifview()
     char temp1[FILE_MAX_DIR];
     BYTE byte_buf[257]; /* for decoder */
     int status;
-    int k, planes;
+    int planes;
 
     /* using stack for decoder byte buf rather than static mem */
     set_byte_buff(byte_buf);
@@ -147,7 +147,8 @@ int gifview()
     for (int i = 0; i < (int)numcolors; i++)
     {
         for (int j = 0; j < 3; j++) {
-            if ((k = get_byte()) < 0)
+            int k = get_byte();
+            if (k < 0)
             {
                 close_file();
                 return (-1);
@@ -259,7 +260,8 @@ int gifview()
                 /* skip local map */
                 for (int i = 0; i < numcolors; i++) {
                     for (int j = 0; j < 3; j++) {
-                        if ((k = get_byte()) < 0) {
+                        int k = get_byte();
+                        if (k < 0) {
                             close_file();
                             return (-1);
                         }
