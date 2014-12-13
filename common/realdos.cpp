@@ -1028,7 +1028,7 @@ int fullscreen_choice(
                 speedstring[0] = 0;
             }
         }
-        for (;;)
+        while (true)
         {   /* adjust to a non-comment choice */
             if (current < 0 || current >= numchoices)
             {
@@ -1083,7 +1083,7 @@ top:
     menutype = fullmenu;
     tabmode = false;
     showjuliatoggle = 0;
-    for (i = 0; i < 44; ++i)
+    for (int i = 0; i < 44; ++i)
     {
         attributes[i] = 256;
         choices[i] = "";
