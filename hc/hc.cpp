@@ -692,7 +692,7 @@ LABEL *find_label(char *name)
     }
     else
     {
-        LABEL *lp = plabel;
+        LABEL *lp = label;
         for (int l = 0; l < num_label; l++, lp++)
             if (strcmp(name, lp->name) == 0)
                 return (lp);
@@ -3447,9 +3447,8 @@ void report_memory(void)
 void report_stats(void)
 {
     int  pages = 0;
-    int      t;
 
-    for (t=0; t<num_topic; t++)
+    for (int t = 0; t < num_topic; t++)
         pages += topic[t].num_page;
 
     printf("\n");
@@ -3473,8 +3472,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 {
     int                  exe,   /* handles */
                          hlp;
-    long                 len,
-                         count;
+    long                 len;
     int                  size;
     struct help_sig_info hs;
 
@@ -3512,7 +3510,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 
     len = filelength(hlp) - sizeof(long) - sizeof(int); /* adjust for the file signature & version */
 
-    for (count=0; count<len;)
+    for (int count = 0; count < len;)
     {
         size = (int) std::min((long)BUFFER_SIZE, len-count);
         read(hlp, buffer, size);
