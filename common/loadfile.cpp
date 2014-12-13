@@ -620,7 +620,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     }
     else
     {
-        evolving = FALSE;
+        evolving = 0;
     }
 
     if (blk_7_info.got_data == 1)
@@ -1249,12 +1249,12 @@ struct window {       /* for fgetwindow on screen browser */
 
 /* prototypes */
 static void drawindow(int, struct window *);
-static char is_visible_window
+static bool is_visible_window
 (struct window *, struct fractal_info *, struct ext_blk_5 *);
 static void transform(struct dblcoords *);
-static char paramsOK(struct fractal_info *);
-static char typeOK(struct fractal_info *, struct ext_blk_3 *);
-static char functionOK(struct fractal_info *, int);
+static bool paramsOK(struct fractal_info *);
+static bool typeOK(struct fractal_info *, struct ext_blk_3 *);
+static bool functionOK(struct fractal_info *, int);
 static void check_history(char *, char *);
 static void bfsetup_convert_to_screen(void);
 static void bftransform(bf_t, bf_t, struct dblcoords *);
@@ -1700,9 +1700,10 @@ static void transform(struct dblcoords *point)
     point->x = tmp_pt_x;
 }
 
-static char is_visible_window
-(struct window *list, struct fractal_info *info,
- struct ext_blk_5 *blk_5_info)
+static bool is_visible_window(
+    struct window *list,
+    struct fractal_info *info,
+    struct ext_blk_5 *blk_5_info)
 {
     struct dblcoords tl,tr,bl,br;
     bf_t bt_x, bt_y;
@@ -1884,19 +1885,25 @@ static char is_visible_window
 
     restore_stack(saved);
     if (cant_see) /* do it this way so bignum stack is released */
-        return (FALSE);
+        return false;
 
     /* now see how many corners are on the screen, accept if one or more */
-    if (tl.x >=(0-sxoffs) && tl.x <= (sxdots-sxoffs) && tl.y >=(0-syoffs) && tl.y<= (sydots-syoffs)) cornercount ++;
-    if (bl.x >=(0-sxoffs) && bl.x <= (sxdots-sxoffs) && bl.y >=(0-syoffs) && bl.y<= (sydots-syoffs)) cornercount ++;
-    if (tr.x >=(0-sxoffs) && tr.x <= (sxdots-sxoffs) && tr.y >=(0-syoffs) && tr.y<= (sydots-syoffs)) cornercount ++;
-    if (br.x >=(0-sxoffs) && br.x <= (sxdots-sxoffs) && br.y >=(0-syoffs) && br.y<= (sydots-syoffs)) cornercount ++;
+    if (tl.x >=(0-sxoffs) && tl.x <= (sxdots-sxoffs) && tl.y >=(0-syoffs) && tl.y<= (sydots-syoffs))
+        cornercount++;
+    if (bl.x >=(0-sxoffs) && bl.x <= (sxdots-sxoffs) && bl.y >=(0-syoffs) && bl.y<= (sydots-syoffs))
+        cornercount++;
+    if (tr.x >=(0-sxoffs) && tr.x <= (sxdots-sxoffs) && tr.y >=(0-syoffs) && tr.y<= (sydots-syoffs))
+        cornercount++;
+    if (br.x >=(0-sxoffs) && br.x <= (sxdots-sxoffs) && br.y >=(0-syoffs) && br.y<= (sydots-syoffs))
+        cornercount++;
 
-    if (cornercount >=1) return (TRUE);
-    else return (FALSE);
+    if (cornercount >=1)
+        return true;
+    else
+        return false;
 }
 
-static char paramsOK(struct fractal_info *info)
+static bool paramsOK(struct fractal_info *info)
 {
     double tmpparm3, tmpparm4;
     double tmpparm5, tmpparm6;
@@ -1941,12 +1948,12 @@ static char paramsOK(struct fractal_info *info)
             fabs(tmpparm9 - param[8]) < MINDIF &&
             fabs(tmpparm10 - param[9]) < MINDIF &&
             info->invert[0] - inversion[0] < MINDIF)
-        return (1); /* parameters are in range */
+        return true; /* parameters are in range */
     else
-        return (0);
+        return false;
 }
 
-static char functionOK(struct fractal_info *info, int numfn)
+static bool functionOK(struct fractal_info *info, int numfn)
 {
     int mzmatch = 0;
     for (int i = 0; i < numfn; i++) {
@@ -1954,12 +1961,12 @@ static char functionOK(struct fractal_info *info, int numfn)
             mzmatch++;
     }
     if (mzmatch > 0)
-        return (0);
+        return false;
     else
-        return (1); /* they all match */
+        return true; /* they all match */
 }
 
-static char typeOK(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
+static bool typeOK(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
 {
     int numfn;
     if ((fractype == FORMULA || fractype == FFORMULA) &&
@@ -1969,24 +1976,24 @@ static char typeOK(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
         {
             numfn = maxfn;
             if (numfn>0)
-                return (functionOK(info, numfn));
+                return functionOK(info, numfn);
             else
-                return (1); /* match up formula names with no functions */
+                return true; /* match up formula names with no functions */
         }
         else
-            return (0); /* two formulas but names don't match */
+            return false; /* two formulas but names don't match */
     }
     else if (info->fractal_type == fractype ||
              info->fractal_type == curfractalspecific->tofloat)
     {
         numfn = (curfractalspecific->flags >> 6) & 7;
         if (numfn>0)
-            return (functionOK(info, numfn));
+            return functionOK(info, numfn);
         else
-            return (1); /* match types with no functions */
+            return true; /* match types with no functions */
     }
     else
-        return (0); /* no match */
+        return false; /* no match */
 }
 
 static void check_history(char *oldname, char *newname)
