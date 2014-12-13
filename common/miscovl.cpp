@@ -67,9 +67,6 @@ void make_batch_file()
     int promptnum;
     int piecespromts;
     int have3rd = 0;
-    /****/
-
-    int i,j;
     char inpcommandfile[80], inpcommandname[ITEMNAMELEN+1];
     char inpcomment[4][MAXCMT];
     struct fullscreenvalues paramvalues[18];
@@ -143,7 +140,7 @@ void make_batch_file()
     }
     strcpy(inpcommandfile, CommandFile);
     strcpy(inpcommandname, CommandName);
-    for (i=0; i<4; i++)
+    for (int i = 0; i < 4; i++)
     {
         expand_comments(CommandComment[i], par_comment[i]);
         strcpy(inpcomment[i], CommandComment[i]);
@@ -231,7 +228,7 @@ prompt_user:
         if (has_ext(CommandFile) == nullptr)
             strcat(CommandFile, ".par");   /* default extension .par */
         strcpy(CommandName, inpcommandname);
-        for (i=0; i<4; i++)
+        for (int i = 0; i < 4; i++)
             strncpy(CommandComment[i], inpcomment[i], MAXCMT);
 #ifndef XFRACT
         if (g_got_real_dac || (g_is_true_color && !truemode))
@@ -314,7 +311,7 @@ skip_UI:
                 stopmsg(0, buf);
                 continue;
             }
-            i = (int) strlen(outname);
+            int i = (int) strlen(outname);
             while (--i >= 0 && outname[i] != SLASHC)
                 outname[i] = 0;
             strcat(outname, "fractint.tmp");
@@ -376,8 +373,8 @@ skip_UI:
             pxxmin = xxmin;
             pyymax = yymax;
         }
-        for (i = 0; i < (int)xm; i++)  /* columns */
-            for (j = 0; j < (int)ym; j++)  /* rows    */
+        for (int i = 0; i < (int)xm; i++)  /* columns */
+            for (int j = 0; j < (int)ym; j++)  /* rows    */
             {
                 if (xm > 1 || ym > 1)
                 {
@@ -422,11 +419,11 @@ skip_UI:
                 {
                     /* guarantee that there are no blank comments above the last
                        non-blank par_comment */
-                    int i, last;
-                    for (last=-1,i=0; i<4; i++)
+                    int last = -1;
+                    for (int i = 0; i < 4; i++)
                         if (*par_comment[i])
                             last=i;
-                    for (i=0; i<last; i++)
+                    for (int i = 0; i < last; i++)
                         if (*CommandComment[i]=='\0')
                             strcpy(CommandComment[i],";");
                 }
@@ -434,12 +431,11 @@ skip_UI:
                     fprintf(parmfile, " ; %s", CommandComment[0]);
                 fputc('\n', parmfile);
                 {
-                    int k;
                     char buf[25];
                     memset(buf, ' ', 23);
                     buf[23] = 0;
                     buf[21] = ';';
-                    for (k=1; k<4; k++)
+                    for (int k = 1; k < 4; k++)
                         if (CommandComment[k][0])
                             fprintf(parmfile, "%s%s\n", buf, CommandComment[k]);
                     if (g_patch_level != 0 && colorsonly == 0)
@@ -465,10 +461,12 @@ skip_UI:
 
         if (gotinfile)
         {   /* copy the rest of the file */
+            int i;
             do
             {
                 i = file_gets(buf, 255, infile);
-            } while (i == 0); /* skip blanks */
+            }
+            while (i == 0); /* skip blanks */
             while (i >= 0)
             {
                 fputs(buf, parmfile);
@@ -498,7 +496,6 @@ static struct write_batch_data /* buffer for parms to break lines nicely */
 
 void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int jj)
 {
-    int i,j,k;
     double Xctr, Yctr;
     LDBL Magnification;
     double Xmagfactor, Rotation, Skew;
@@ -666,6 +663,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
             }
         }
 
+        int i;
         for (i = (MAXPARAMS-1); i >= 0; --i)
             if (typehasparm((fractype==JULIBROT || fractype==JULIBROTFP)
                             ?neworbittype:fractype,i,nullptr)) break;
@@ -680,7 +678,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
                 else
                     put_parm(" %s=%.17g", "params",param[0]);
             }
-            for (j = 1; j <= i; ++j)
+            for (int j = 1; j <= i; ++j)
                 if (fractype == CELLULAR || fractype == ANT)
                     put_parm("/%.1f",param[j]);
                 else
@@ -1004,7 +1002,10 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
             put_parm(" %s=%d", "srelease",fm_release);
 
         if (soundflag & SOUNDFLAG_QUANTIZED) { /* quantize turned on */
-            for (i=0; i<=11; i++) if (scale_map[i] != i+1) i=15;
+            int i;
+            for (i = 0; i <= 11; i++)
+                if (scale_map[i] != i+1)
+                    i=15;
             if (i>12)
                 put_parm(" %s=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", "scalemap",scale_map[0],scale_map[1],scale_map[2],scale_map[3]
                          ,scale_map[4],scale_map[5],scale_map[6],scale_map[7],scale_map[8]
@@ -1075,10 +1076,14 @@ docolors:
 #endif
             while (1) {
                 /* emit color in rgb 3 char encoded form */
-                for (j = 0; j < 3; ++j) {
-                    if ((k = g_dac_box[curc][j]) < 10) k += '0';
-                    else if (k < 36)                k += ('A' - 10);
-                    else                            k += ('_' - 36);
+                for (int j = 0; j < 3; ++j) {
+                    int k = g_dac_box[curc][j];
+                    if (k < 10)
+                        k += '0';
+                    else if (k < 36)
+                        k += ('A' - 10);
+                    else
+                        k += ('_' - 36);
                     buf[j] = (char)k;
                 }
                 buf[3] = 0;
@@ -1101,10 +1106,13 @@ docolors:
                     continue;
                 }
                 scanc = curc;
+                int k;
                 while (scanc < maxcolor) {   /* scan while same diff to next */
-                    if ((i = scanc - curc) > 3) /* check spans up to 4 steps */
+                    int i = scanc - curc;
+                    if (i > 3) /* check spans up to 4 steps */
                         i = 3;
                     for (k = 0; k <= i; ++k) {
+                        int j;
                         for (j = 0; j < 3; ++j) { /* check pattern of chg per color */
                             /* Sylvie Gallet's fix */
                             if (debugflag != 910 && scanc > (curc+4) && scanc < maxcolor-5)
@@ -1122,9 +1130,11 @@ docolors:
                                 diff2[k][j] = delta;
                             }
                         }
-                        if (j < 3) break; /* must've exited from inner loop above */
+                        if (j < 3)
+                            break; /* must've exited from inner loop above */
                     }
-                    if (k <= i) break;   /* must've exited from inner loop above */
+                    if (k <= i)
+                        break;   /* must've exited from inner loop above */
                     ++scanc;
                 }
                 /* now scanc-1 is next color which must be written explicitly */
@@ -1429,12 +1439,12 @@ int select_video_mode(int curmode)
 {
     // cppcheck-suppress unreadVariable
     int attributes[MAXVIDEOMODES];
-    int i,k,ret;
+    int ret;
 #ifndef XFRACT
     int oldhelpmode;
 #endif
 
-    for (i = 0; i < g_video_table_len; ++i)  /* init tables */
+    for (int i = 0; i < g_video_table_len; ++i)  /* init tables */
     {
         entnums[i] = i;
         attributes[i] = 1;
@@ -1453,6 +1463,7 @@ int select_video_mode(int curmode)
         memcpy((char *) &g_video_entry, (char *) &g_video_table[curmode], sizeof(g_video_entry));
     }
 #ifndef XFRACT
+    int i;
     for (i = 0; i < g_video_table_len; ++i)  /* find default mode */
     {
         if (g_video_entry.videomodeax == g_video_table[entnums[i]].videomodeax &&
@@ -1499,7 +1510,7 @@ int select_video_mode(int curmode)
 
 #ifndef XFRACT
     /* copy fractint.cfg table to resident table, note selected entry */
-    k = 0;
+    int k = 0;
     for (i = 0; i < g_video_table_len; ++i)
     {
         if (g_video_table[i].keynum > 0)

@@ -1597,17 +1597,17 @@ int cellular()
     }
     else {
         if (rflag || randparam==0 || randparam==-1) {
-            for (col=0; col<=ixstop; col++) {
+            for (col = 0; col <= ixstop; col++) {
                 cell_array[filled][col] = (BYTE)(rand()%(int)k);
             }
         } /* end of if random */
 
         else {
-            for (col=0; col<=ixstop; col++) { /* Clear from end to end */
+            for (col = 0; col <= ixstop; col++) { /* Clear from end to end */
                 cell_array[filled][col] = 0;
             }
             int i = 0;
-            for (col=(ixstop-16)/2; col<(ixstop+16)/2; col++) { /* insert initial */
+            for (col = (ixstop-16)/2; col < (ixstop+16)/2; col++) { /* insert initial */
                 cell_array[filled][col] = (BYTE)init_string[i++];    /* string */
             }
         } /* end of if not random */
@@ -1624,8 +1624,7 @@ int cellular()
     /* calculates the (lnnmbr - 1) generation */
     if (lstscreenflag)   /* line number != 0 & not resuming & not continuing */
     {
-        U32 big_row;
-        for (big_row = (U32)start_row; big_row < lnnmbr; big_row++) {
+        for (U32 big_row = (U32)start_row; big_row < lnnmbr; big_row++) {
             thinking(1, "Cellular thinking (higher start row takes longer)");
             if (rflag || randparam==0 || randparam==-1) {
                 /* Use a random border */
@@ -1654,7 +1653,7 @@ int cellular()
             cell_array[notfilled][r] = (BYTE)cell_table[t];
 
             /* use a rolling sum in t */
-            for (col=r+1; col<ixstop-r; col++) { /* now do the rest */
+            for (col = r+1; col < ixstop-r; col++) { /* now do the rest */
                 t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
                 if (t>rule_digits || t<0) {
                     thinking(0, nullptr);
@@ -1680,7 +1679,6 @@ int cellular()
     /* This section does all the work */
 contloop:
     for (row = start_row; row <= iystop; row++) {
-
         if (rflag || randparam==0 || randparam==-1) {
             /* Use a random border */
             for (int i = 0; i <= r; i++) {
@@ -1708,7 +1706,7 @@ contloop:
         cell_array[notfilled][r] = (BYTE)cell_table[t];
 
         /* use a rolling sum in t */
-        for (col=r+1; col<ixstop-r; col++) { /* now do the rest */
+        for (col = r+1; col < ixstop-r; col++) { /* now do the rest */
             t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
             if (t>rule_digits || t<0) {
                 thinking(0, nullptr);
