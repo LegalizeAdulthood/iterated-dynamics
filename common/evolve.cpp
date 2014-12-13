@@ -954,14 +954,14 @@ void spiralmap(int count)
     /* more intuitively useful order of drawing the sub images.  */
     /* All the malarky with count is to allow resuming */
 
-    int i,mid,offset;
+    int i,mid;
     i = 0;
     mid = gridsz / 2;
     if (count == 0) { /* start in the middle */
         px = py = mid;
         return;
     }
-    for (offset = 1; offset <= mid; offset ++) {
+    for (int offset = 1; offset <= mid; offset ++) {
         /* first do the top row */
         py = (mid - offset);
         for (px = (mid - offset)+1; px <mid+offset; px++) {
