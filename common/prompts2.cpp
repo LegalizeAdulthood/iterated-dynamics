@@ -369,14 +369,13 @@ int get_toggles2()
 {
     const char *choices[18];
     struct fullscreenvalues uvalues[23];
-    int i, j, k;
     int old_rotate_lo,old_rotate_hi;
     int old_distestwidth;
     double old_potparam[3],old_inversion[3];
     long old_usr_distest;
 
     /* fill up the choices (and previous values) arrays */
-    k = -1;
+    int k = -1;
 
     choices[++k] = "Look for finite attractor (0=no,>0=yes,<0=phase)";
     uvalues[k].type = 'i';
@@ -410,7 +409,7 @@ int get_toggles2()
     choices[++k] = "          center X coordinate or \"auto\"";
     choices[++k] = "          center Y coordinate or \"auto\"";
     k = k - 3;
-    for (i= 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         uvalues[++k].type = 's';
         old_inversion[i] = inversion[i];
         if (inversion[i] == AUTOINVERT)
@@ -431,17 +430,19 @@ int get_toggles2()
 
     int const oldhelpmode = helpmode;
     helpmode = HELPYOPTS;
-    i = fullscreen_prompt("Extended Options\n"
-                          "(not all combinations make sense)",
-                          k+1,choices,uvalues,0,nullptr);
-    helpmode = oldhelpmode;
-    if (i < 0) {
-        return (-1);
+    {
+        int i = fullscreen_prompt("Extended Options\n"
+                              "(not all combinations make sense)",
+                              k+1,choices,uvalues,0,nullptr);
+        helpmode = oldhelpmode;
+        if (i < 0) {
+            return (-1);
+        }
     }
 
     /* now check out the results (*hopefully* in the same order <grin>) */
     k = -1;
-    j = 0;   /* return code */
+    int j = 0;   /* return code */
 
     if ((uvalues[++k].uval.ch.val != 0) != finattract) {
         finattract = uvalues[k].uval.ch.val != 0;
@@ -479,7 +480,7 @@ int get_toggles2()
     distestwidth = uvalues[k].uval.ival;
     if (usr_distest && distestwidth != old_distestwidth) j = 1;
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         if (uvalues[++k].uval.sval[0] == 'a' || uvalues[k].uval.sval[0] == 'A')
             inversion[i] = AUTOINVERT;
         else
