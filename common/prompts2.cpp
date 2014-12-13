@@ -2043,7 +2043,7 @@ static int get_screen_corners(void)
     const char *prompts[15];
     char xprompt[] = "          X";
     char yprompt[] = "          Y";
-    int i,nump,prompt_ret;
+    int nump,prompt_ret;
     int cmag;
     double Xctr,Yctr;
     LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
@@ -2085,7 +2085,7 @@ static int get_screen_corners(void)
     yy3rd = oy3rd;
 
 gsc_loop:
-    for (i = 0; i < 15; ++i)
+    for (int i = 0; i < 15; ++i)
         values[i].type = 'd'; /* most values on this screen are type d */
     cmag = usemag ? 1 : 0;
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
