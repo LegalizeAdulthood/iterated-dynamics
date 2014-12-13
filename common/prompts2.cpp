@@ -982,7 +982,6 @@ int get_rds_params(void) {
         "  If yes, use current image map name? (see below)",
         rds6
     };
-    int i,k;
     int ret;
     static char reuse = 0;
     driver_stack_screen();
@@ -990,7 +989,7 @@ int get_rds_params(void) {
     {
         ret = 0;
 
-        k=0;
+        int k = 0;
         uvalues[k].uval.ival = AutoStereo_depth;
         uvalues[k++].type = 'i';
 
@@ -1017,7 +1016,7 @@ int get_rds_params(void) {
             uvalues[k++].type = 'y';
 
             uvalues[k++].type = '*';
-            for (i=0; i<sizeof(rds6); i++)
+            for (int i = 0; i < sizeof(rds6); i++)
                 rds6[i] = ' ';
             p = strrchr(stereomapname,SLASHC);
             if (p==nullptr ||
@@ -1035,9 +1034,9 @@ int get_rds_params(void) {
             *stereomapname = 0;
         int const oldhelpmode = helpmode;
         helpmode = HELPRDS;
-        i = fullscreen_prompt("Random Dot Stereogram Parameters",k,rds_prompts,uvalues,0,nullptr);
+        int const choice = fullscreen_prompt("Random Dot Stereogram Parameters",k,rds_prompts,uvalues,0,nullptr);
         helpmode = oldhelpmode;
-        if (i < 0) {
+        if (choice < 0) {
             ret = -1;
             break;
         }
