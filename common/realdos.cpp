@@ -484,7 +484,6 @@ int fullscreen_choice(
     int boxitems;      /* boxwidth*boxdepth */
     int curkey, increment, rev_increment = 0;
     int redisplay;
-    int i, j, k = 0;
     const char *charptr;
     char buf[81];
     char curitem[81];
@@ -497,12 +496,14 @@ int fullscreen_choice(
     lookatmouse = 0;
     ret = -1;
     /* preset current to passed string */
-    if (speedstring && (i = (int) strlen(speedstring)) > 0)
+    int len = (int) strlen(speedstring);
+    if (speedstring && len > 0)
     {
         current = 0;
         if (options & CHOICE_NOT_SORTED)
         {
-            while (current < numchoices && (k = strncasecmp(speedstring, choices[current], i)) != 0)
+            int k;
+            while (current < numchoices && (k = strncasecmp(speedstring, choices[current], len)) != 0)
             {
                 ++current;
             }
@@ -513,7 +514,8 @@ int fullscreen_choice(
         }
         else
         {
-            while (current < numchoices && (k = strncasecmp(speedstring,choices[current],i)) > 0)
+            int k;
+            while (current < numchoices && (k = strncasecmp(speedstring,choices[current],len)) > 0)
             {
                 ++current;
             }
@@ -528,7 +530,7 @@ int fullscreen_choice(
         }
     }
 
-    for (;;)
+    while (true)
     {
         if (current >= numchoices)  /* no real choice in the list? */
         {
@@ -545,7 +547,7 @@ int fullscreen_choice(
     if (hdg)
     {
         charptr = hdg;              /* count title lines, find widest */
-        i = 0;
+        int i = 0;
         titlelines = 1;
         while (*charptr)
         {
@@ -563,7 +565,7 @@ int fullscreen_choice(
 
     if (colwidth == 0)             /* find widest column */
     {
-        for (i = 0; i < numchoices; ++i)
+        for (int i = 0; i < numchoices; ++i)
         {
             int len;
             if ((len = (int) strlen(choices[i])) > colwidth)
@@ -602,13 +604,14 @@ int fullscreen_choice(
     {
         ++reqdrows;   /* a row for speedkey prompt */
     }
-    if (boxdepth > (i = 25 - reqdrows)) /* limit the depth to max */
+    int const max_depth = 25 - reqdrows;
+    if (boxdepth > max_depth) /* limit the depth to max */
     {
-        boxdepth = i;
+        boxdepth = max_depth;
     }
     if (boxwidth == 0)           /* pick box width and depth */
     {
-        if (numchoices <= i - 2)  /* single column is 1st choice if we can */
+        if (numchoices <= max_depth - 2)  /* single column is 1st choice if we can */
         {
             boxdepth = numchoices;
             boxwidth = 1;
@@ -617,17 +620,17 @@ int fullscreen_choice(
         {   /* sort-of-wide is 2nd choice */
             boxwidth = 60 / (colwidth + 1);
             if (boxwidth == 0
-                    || (boxdepth = (numchoices + boxwidth - 1)/boxwidth) > i - 2)
+                    || (boxdepth = (numchoices + boxwidth - 1)/boxwidth) > max_depth - 2)
             {
                 boxwidth = 80 / (colwidth + 1); /* last gasp, full width */
-                if ((boxdepth = (numchoices + boxwidth - 1)/boxwidth) > i)
+                if ((boxdepth = (numchoices + boxwidth - 1)/boxwidth) > max_depth)
                 {
-                    boxdepth = i;
+                    boxdepth = max_depth;
                 }
             }
         }
     }
-    i = (80 / boxwidth - colwidth) / 2 - 1;
+    int i = (80 / boxwidth - colwidth) / 2 - 1;
     if (i == 0) /* to allow wider prompts */
     {
         i = 1;
@@ -640,7 +643,8 @@ int fullscreen_choice(
     {
         i = 3;
     }
-    j = boxwidth * (colwidth += i) + i;     /* overall width of box */
+    colwidth += i;
+    int j = boxwidth*colwidth + i;     /* overall width of box */
     if (j < titlewidth+2)
     {
         j = titlewidth + 2;
@@ -654,7 +658,7 @@ int fullscreen_choice(
         ++j;
         ++colwidth;
     }
-    k = (80 - j) / 2;                       /* center the box */
+    int k = (80 - j) / 2;                       /* center the box */
     k -= (90 - j) / 20;
     topleftcol = k + i;                     /* column of topleft choice */
     i = (25 - reqdrows - boxdepth) / 2;
