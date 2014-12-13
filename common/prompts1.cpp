@@ -1052,7 +1052,6 @@ sel_type_exit:
 
 void set_default_parms()
 {
-    int i,extra;
     xxmin = curfractalspecific->xmin;
     xxmax = curfractalspecific->xmax;
     yymin = curfractalspecific->ymin;
@@ -1062,14 +1061,15 @@ void set_default_parms()
 
     if (viewcrop && finalaspectratio != screenaspect)
         aspectratio_crop(screenaspect,finalaspectratio);
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         param[i] = curfractalspecific->paramvalue[i];
         if (fractype != CELLULAR && fractype != FROTH && fractype != FROTHFP &&
                 fractype != ANT)
             roundfloatd(&param[i]); /* don't round cellular, frothybasin or ant */
     }
-    if ((extra=find_extra_param(fractype)) > -1)
-        for (i=0; i<MAXPARAMS-4; i++)
+    int extra = find_extra_param(fractype);
+    if (extra > -1)
+        for (int i = 0; i < MAXPARAMS-4; i++)
             param[i+4] = moreparams[extra].paramvalue[i];
     if (debugflag != 3200)
         bf_math = 0;
@@ -1081,10 +1081,8 @@ void set_default_parms()
 
 int build_fractal_list(int fractals[], int *last_val, const char *nameptr[])
 {
-    int numfractals,i;
-
-    numfractals = 0;
-    for (i = 0; i < num_fractal_types; i++)
+    int numfractals = 0;
+    for (int i = 0; i < num_fractal_types; i++)
     {
         if ((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*')
         {
@@ -1165,7 +1163,6 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
     const char *v2 = "To   cx (real part)";
     const char *v3 = "To   cy (imaginary part)";
     const char *juliorbitname = nullptr;
-    int i,j,k;
     int curtype,numparams,numtrig;
     struct fullscreenvalues paramvalues[30];
     const char *choices[30];
@@ -1200,13 +1197,17 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
     else
         julibrot = false;
     curtype = fractype;
-    if (curfractalspecific->name[0] == '*'
-            && (i = curfractalspecific->tofloat) != NOFRACTAL  /* FIXED BUG HERE!! */
-            && fractalspecific[i].name[0] != '*')
-        curtype = i;
+    {
+        int i;
+        if (curfractalspecific->name[0] == '*'
+                && (i = curfractalspecific->tofloat) != NOFRACTAL  /* FIXED BUG HERE!! */
+                && fractalspecific[i].name[0] != '*')
+            curtype = i;
+    }
     curfractalspecific = &fractalspecific[curtype];
     tstack[0] = 0;
-    if ((i = curfractalspecific->helpformula) < -1) {
+    int i = curfractalspecific->helpformula;
+    if (i < -1) {
         if (i == -2) { /* special for formula */
             filename = FormFileName;
             entryname = FormName;
@@ -1234,8 +1235,9 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
         int c,lines;
         read_help_topic(i,0,2000,tstack); /* need error handling here ?? */
         tstack[2000-i] = 0;
-        i = j = lines = 0;
-        k = 1;
+        i = lines = 0;
+        int j = 0;
+        int k = 1;
         while ((c = tstack[i++]) != 0) {
             /* stop at ctl, blank, or line with col 1 nonblank, max 16 lines */
             if (k && c == ' ' && ++k <= 5) { } /* skip 4 blanks at start of line */
@@ -1316,7 +1318,7 @@ gfp_top:
             firstparm = 4;
     }
     numparams = 0;
-    j = 0;
+    int j = 0;
     for (i = firstparm; i < lastparm; i++)
     {
         char tmpbuf[30];
