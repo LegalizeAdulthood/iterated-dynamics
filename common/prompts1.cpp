@@ -2157,7 +2157,7 @@ static void load_entry_text(
     int startrow,
     int startcol)
 {
-    int linelen, i;
+    int linelen;
     int comment=0;
     int c = 0;
     int tabpos = 7 - (startcol % 8);
@@ -2168,7 +2168,7 @@ static void load_entry_text(
     }
 
     /*move down to starting row*/
-    for (i = 0; i < startrow; i++) {
+    for (int i = 0; i < startrow; i++) {
         while ((c=fgetc(entfile)) != '\n' && c != EOF && c != '\032') {
             if (c == ';')
                 comment = 1;
@@ -2185,9 +2185,10 @@ static void load_entry_text(
 
     /* write maxlines of entry */
     while (maxlines-- > 0) {
-        comment = linelen = i = c = 0;
+        comment = linelen = c = 0;
 
         /* skip line up to startcol */
+        int i = 0;
         while (i++ < startcol && (c = fgetc(entfile)) != EOF && c != '\032') {
             if (c == ';')
                 comment = 1;
