@@ -260,8 +260,7 @@ int gifview()
                 /* skip local map */
                 for (int i = 0; i < numcolors; i++) {
                     for (int j = 0; j < 3; j++) {
-                        int k = get_byte();
-                        if (k < 0) {
+                        if (get_byte() < 0) {
                             close_file();
                             return (-1);
                         }
