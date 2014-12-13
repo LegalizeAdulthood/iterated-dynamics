@@ -545,7 +545,7 @@ void set_mutation_level(int strength)
     /* get the gene array from memory */
     MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
-    for (int i=0; i<NUMGENES; i++) {
+    for (int i = 0; i < NUMGENES; i++) {
         if (gene[i].level <= strength)
             gene[i].mutate = 5; /* 5 = random mutation mode */
         else
@@ -829,21 +829,20 @@ void fiddleparms(GENEBASE gene[], int ecount)
 
     set_random(ecount);   /* generate the right number of pseudo randoms */
 
-    for (int i=0; i<NUMGENES; i++)
+    for (int i = 0; i < NUMGENES; i++)
         (*(gene[i].varyfunc))(gene,rand(),i);
 
 }
 
 static void set_random(int ecount)
-{   /* This must be called with ecount set correctly for the spiral map. */
+{
+    /* This must be called with ecount set correctly for the spiral map. */
     /* Call this routine to set the random # to the proper value */
     /* if it may have changed, before fiddleparms() is called. */
     /* Now called by fiddleparms(). */
-    int index,i;
-
     srand(this_gen_rseed);
-    for (index=0; index < ecount; index++)
-        for (i=0; i<NUMGENES; i++)
+    for (int index = 0; index < ecount; index++)
+        for (int i = 0; i < NUMGENES; i++)
             rand();
 }
 
@@ -853,13 +852,12 @@ int explore_check(void)
     /* one of the non random variation modes. Used to see if parmzoom box is */
     /* needed */
     int nonrandom = FALSE;
-    int i;
     GENEBASE gene[NUMGENES];
     MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-    for (i=0; i<NUMGENES && !(nonrandom); i++)
+    for (int i = 0; i < NUMGENES && !nonrandom; i++)
         if ((gene[i].mutate > 0) && (gene[i].mutate < 5))
             nonrandom = TRUE;
-    return (nonrandom);
+    return nonrandom;
 }
 
 void drawparmbox(int mode)
