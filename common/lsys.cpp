@@ -330,15 +330,13 @@ bool LLoad(void)
 
 static void free_rules_mem(void)
 {
-    int i;
-    for (i=0; i<MAXRULES; ++i)
+    for (int i = 0; i < MAXRULES; ++i)
         if (ruleptrs[i]) free(ruleptrs[i]);
 }
 
 static int rule_present(char symbol)
 {
     int i;
-
     for (i = 1; i < MAXRULES && ruleptrs[i] && *ruleptrs[i] != symbol ; i++)
         ;
     return (i < MAXRULES && ruleptrs[i]) ? i : 0;
@@ -361,12 +359,12 @@ static bool save_rule(char *rule, char **saveptr)
 static bool append_rule(char *rule, int index)
 {
     char *dst, *old, *sav;
-    int i, j;
 
     old = sav = ruleptrs[index];
+    int i;
     for (i = 0; *(old++); i++)
         ;
-    j = (int) strlen(rule) + 1;
+    int j = (int) strlen(rule) + 1;
     dst = (char *)malloc((long)(i + j));
     if (dst == nullptr)
         return true;
@@ -633,7 +631,6 @@ static void lsysi_dodrawlt(struct lsys_turtlestatei *cmd)
 static struct lsys_cmd *
 findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
 {
-    struct lsys_cmd **rulind;
     bool tran;
 
     if (overflow)     /* integer math routines overflowed */
@@ -654,7 +651,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd
         }
         tran = false;
         if (depth) {
-            for (rulind=rules; *rulind; rulind++)
+            for (lsys_cmd **rulind = rules; *rulind; rulind++)
                 if ((*rulind)->ch==command->ch) {
                     tran = true;
                     if (findsize((*rulind)+1,ts,rules,depth-1) == nullptr)
@@ -751,7 +748,6 @@ lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct l
 static struct lsys_cmd *
 drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd **rules,int depth)
 {
-    struct lsys_cmd **rulind;
     bool tran;
 
     if (overflow)     /* integer math routines overflowed */
@@ -772,7 +768,7 @@ drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd
         }
         tran = false;
         if (depth) {
-            for (rulind=rules; *rulind; rulind++)
+            for (lsys_cmd **rulind = rules; *rulind; rulind++)
                 if ((*rulind)->ch == command->ch) {
                     tran = true;
                     if (drawLSysI((*rulind)+1,ts,rules,depth-1) == nullptr)
@@ -1042,11 +1038,10 @@ static void lsysi_dosincos(void)
     double twopimax;
     double twopimaxi;
     double s, c;
-    int i;
 
     locaspect=screenaspect*xdots/ydots;
     twopimax = TWOPI / maxangle;
-    for (i=0; i<maxangle; i++) {
+    for (int i = 0; i < maxangle; i++) {
         twopimaxi = i * twopimax;
         FPUsincos(&twopimaxi, &s, &c);
         sins[i] = (long)(s * FIXEDLT1);
