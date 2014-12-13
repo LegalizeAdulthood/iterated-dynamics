@@ -207,7 +207,6 @@ int do_AutoStereo(void)
     struct static_vars v;
     BYTE savedacbox[256*3];
     int oldhelpmode, ret=0;
-    int done;
     int bars, ct, kbdchar, barwidth;
     time_t ltime;
     unsigned char *buf = (unsigned char *)decoderline;
@@ -309,8 +308,8 @@ int do_AutoStereo(void)
     else
         bars = 0;
     toggle_bars(&bars, barwidth, colour.get());
-    done = 0;
-    while (done==0)
+    bool done = false;
+    while (!done)
     {
         driver_wait_key_pressed(0);
         kbdchar = driver_get_key();
@@ -334,7 +333,7 @@ int do_AutoStereo(void)
                 kbdchar = 255;
             driver_unget_key(kbdchar);
             driver_buzzer(BUZZER_COMPLETE);
-            done = 1;
+            done = true;
             break;
         }
     }
