@@ -92,7 +92,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     int instrrow;
     int promptrow,promptcol,valuecol;
     int curchoice = 0;
-    int done, i, j;
+    int done;
     int anyinput;
     int savelookatmouse;
     int curtype, curlen;
@@ -174,33 +174,39 @@ int fullscreen_prompt(      /* full-screen prompting routine */
 
 
     hdgscan = hdg;                      /* count title lines, find widest */
-    i = titlewidth = 0;
+    titlewidth = 0;
     titlelines = 1;
-    while (*hdgscan) {
-        if (*(hdgscan++) == '\n') {
-            ++titlelines;
-            i = -1;
+    {
+        int i = 0;
+        while (*hdgscan) {
+            if (*(hdgscan++) == '\n') {
+                ++titlelines;
+                i = -1;
+            }
+            if (++i > titlewidth)
+                titlewidth = i;
         }
-        if (++i > titlewidth)
-            titlewidth = i;
     }
-    extralines = extrawidth = i = 0;
-    if ((hdgscan = extrainfo) != nullptr) {
-        if (*hdgscan == 0)
-            extrainfo = nullptr;
-        else { /* count extra lines, find widest */
-            extralines = 3;
-            while (*hdgscan) {
-                if (*(hdgscan++) == '\n') {
-                    if (extralines + numprompts + titlelines >= 20) {
-                        assert(!"heading overflow");
-                        break;
+    extralines = extrawidth = 0;
+    {
+        int i = 0;
+        if ((hdgscan = extrainfo) != nullptr) {
+            if (*hdgscan == 0)
+                extrainfo = nullptr;
+            else { /* count extra lines, find widest */
+                extralines = 3;
+                while (*hdgscan) {
+                    if (*(hdgscan++) == '\n') {
+                        if (extralines + numprompts + titlelines >= 20) {
+                            assert(!"heading overflow");
+                            break;
+                        }
+                        ++extralines;
+                        i = -1;
                     }
-                    ++extralines;
-                    i = -1;
+                    if (++i > extrawidth)
+                        extrawidth = i;
                 }
-                if (++i > extrawidth)
-                    extrawidth = i;
             }
         }
     }
@@ -223,11 +229,13 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         vertical_scroll_limit = lines_in_entry - (extralines - 2);
 
     /* work out vertical positioning */
-    i = numprompts + titlelines + extralines + 3; /* total rows required */
-    j = (25 - i) / 2;                   /* top row of it all when centered */
-    j -= j / 4;                         /* higher is better if lots extra */
-    boxlines = numprompts;
-    titlerow = 1 + j;
+    {
+        int i = numprompts + titlelines + extralines + 3; /* total rows required */
+        int j = (25 - i) / 2;                   /* top row of it all when centered */
+        j -= j / 4;                         /* higher is better if lots extra */
+        boxlines = numprompts;
+        titlerow = 1 + j;
+    }
     promptrow = boxrow = titlerow + titlelines;
     if (titlerow > 2) {                 /* room for blank between title & box? */
         --titlerow;
@@ -252,7 +260,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
 
     /* work out horizontal positioning */
     maxfldwidth = maxpromptwidth = maxcomment = anyinput = 0;
-    for (i = 0; i < numprompts; i++) {
+    for (int i = 0; i < numprompts; i++) {
         if (values[i].type == 'y') {
             static const char *noyes[2] = {"no", "yes"};
             values[i].type = 'l';
@@ -260,15 +268,18 @@ int fullscreen_prompt(      /* full-screen prompting routine */
             values[i].uval.ch.list = noyes;
             values[i].uval.ch.llen = 2;
         }
-        j = (int) strlen(prompts[i]);
+        int j = (int) strlen(prompts[i]);
         if (values[i].type == '*') {
             if (j > maxcomment)     maxcomment = j;
         }
-        else {
+        else
+        {
             anyinput = 1;
-            if (j > maxpromptwidth) maxpromptwidth = j;
+            if (j > maxpromptwidth)
+                maxpromptwidth = j;
             j = prompt_valuestring(buf,&values[i]);
-            if (j > maxfldwidth)    maxfldwidth = j;
+            if (j > maxfldwidth)
+                maxfldwidth = j;
         }
     }
     boxwidth = maxpromptwidth + maxfldwidth + 2;
@@ -281,21 +292,27 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         boxwidth += 2;
         --boxcol;
     }
-    if ((j = titlewidth) < extrawidth)
-        j = extrawidth;
-    if ((i = j + 4 - boxwidth) > 0) {   /* expand box for title/extra */
-        if (boxwidth + i > 80)
-            i = 80 - boxwidth;
-        boxwidth += i;
-        boxcol -= i / 2;
+    {
+        int j = titlewidth;
+        if (j < extrawidth)
+            j = extrawidth;
+        int i = j + 4 - boxwidth;
+        if (i > 0) {   /* expand box for title/extra */
+            if (boxwidth + i > 80)
+                i = 80 - boxwidth;
+            boxwidth += i;
+            boxcol -= i / 2;
+        }
     }
-    i = (90 - boxwidth) / 20;
-    boxcol    -= i;
-    promptcol -= i;
-    valuecol  -= i;
+    {
+        int i = (90 - boxwidth) / 20;
+        boxcol    -= i;
+        promptcol -= i;
+        valuecol  -= i;
+    }
 
     /* display box heading */
-    for (i = titlerow; i < boxrow; ++i)
+    for (int i = titlerow; i < boxrow; ++i)
         driver_set_attr(i,boxcol,C_PROMPT_HI,boxwidth);
 
     {
@@ -357,7 +374,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
 
         g_text_cbase = boxcol;
 
-        for (i = 1; i < extralines-1; ++i) {
+        for (int i = 1; i < extralines-1; ++i) {
             driver_put_string(extrarow+i,0,C_PROMPT_BKGRD,S4);
             driver_put_string(extrarow+i,boxwidth-1,C_PROMPT_BKGRD,S4);
         }
@@ -368,11 +385,11 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     g_text_cbase = 0;
 
     /* display empty box */
-    for (i = 0; i < boxlines; ++i)
+    for (int i = 0; i < boxlines; ++i)
         driver_set_attr(boxrow+i,boxcol,C_PROMPT_LO,boxwidth);
 
     /* display initial values */
-    for (i = 0; i < numprompts; i++) {
+    for (int i = 0; i < numprompts; i++) {
         driver_put_string(promptrow+i, promptcol, C_PROMPT_LO, prompts[i]);
         prompt_valuestring(buf,&values[i]);
         driver_put_string(promptrow+i, valuecol, C_PROMPT_LO, buf);
@@ -392,7 +409,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                 fseek(scroll_file, scroll_file_start, SEEK_SET);
                 load_entry_text(scroll_file, extrainfo, extralines - 2,
                                 scroll_row_status, scroll_column_status);
-                for (i=1; i <= extralines - 2; i++)
+                for (int i = 1; i <= extralines-2; i++)
                     driver_put_string(extrarow+i,0,C_PROMPT_TEXT,blanks);
                 driver_put_string(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
             }
@@ -486,12 +503,12 @@ int fullscreen_prompt(      /* full-screen prompting routine */
 
     while (!done) {
         if (rewrite_extrainfo) {
-            j = g_text_cbase;
+            int j = g_text_cbase;
             g_text_cbase = 2;
             fseek(scroll_file, scroll_file_start, SEEK_SET);
             load_entry_text(scroll_file, extrainfo, extralines - 2,
                             scroll_row_status, scroll_column_status);
-            for (i=1; i <= extralines - 2; i++)
+            for (int i = 1; i <= extralines-2; i++)
                 driver_put_string(extrarow+i,0,C_PROMPT_TEXT,blanks);
             driver_put_string(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
             g_text_cbase = j;
@@ -506,22 +523,30 @@ int fullscreen_prompt(      /* full-screen prompting routine */
             rewrite_extrainfo = 0;
         driver_put_string(promptrow+curchoice,promptcol,C_PROMPT_HI,prompts[curchoice]);
 
+        int i;
         if (curtype == 'l') {
             i = input_field_list(
                     C_PROMPT_CHOOSE, buf, curlen,
                     values[curchoice].uval.ch.list, values[curchoice].uval.ch.llen,
                     promptrow+curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
+            int j;
             for (j = 0; j < values[curchoice].uval.ch.llen; ++j)
-                if (strcmp(buf,values[curchoice].uval.ch.list[j]) == 0) break;
+                if (strcmp(buf,values[curchoice].uval.ch.list[j]) == 0)
+                    break;
             values[curchoice].uval.ch.val = j;
         }
         else {
-            j = 0;
-            if (curtype == 'i') j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
-            if (curtype == 'L') j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
-            if (curtype == 'd') j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE;
-            if (curtype == 'D') j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE | INPUTFIELD_INTEGER;
-            if (curtype == 'f') j = INPUTFIELD_NUMERIC;
+            int j = 0;
+            if (curtype == 'i')
+                j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
+            if (curtype == 'L')
+                j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
+            if (curtype == 'd')
+                j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE;
+            if (curtype == 'D')
+                j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE | INPUTFIELD_INTEGER;
+            if (curtype == 'f')
+                j = INPUTFIELD_NUMERIC;
             i = input_field(j, C_PROMPT_INPUT, buf, curlen,
                             promptrow+curchoice,valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
             switch (values[curchoice].type) {
@@ -548,8 +573,10 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         }
 
         driver_put_string(promptrow+curchoice,promptcol,C_PROMPT_LO,prompts[curchoice]);
-        j = (int) strlen(buf);
-        memset(&buf[j],' ',80-j);
+        {
+            int j = (int) strlen(buf);
+            memset(&buf[j],' ',80-j);
+        }
         buf[curlen] = 0;
         driver_put_string(promptrow+curchoice, valuecol, C_PROMPT_LO,  buf);
 
