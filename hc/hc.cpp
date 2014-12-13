@@ -640,9 +640,9 @@ int read_char(void)
         if (ch >= '0' && ch <= '9')
         {
             char buff[4];
-            int  ctr;
+            int  ctr = 0;
 
-            for (ctr=0; ; ctr++)
+            for (ctr = 0; true; ctr++)
             {
                 if (ch<'0' || ch>'9' || ch==-1 || ctr>=3)
                 {
@@ -683,18 +683,17 @@ int read_char(void)
 
 LABEL *find_label(char *name)
 {
-    int    l;
-    LABEL *lp;
-
     if (*name == '@')
     {
-        for (l=0, lp=plabel; l<num_plabel; l++, lp++)
+        LABEL *lp = plabel;
+        for (int l = 0; l < num_plabel; l++, lp++)
             if (strcmp(name, lp->name) == 0)
                 return (lp);
     }
     else
     {
-        for (l=0, lp=label; l<num_label; l++, lp++)
+        LABEL *lp = plabel;
+        for (int l = 0; l < num_label; l++, lp++)
             if (strcmp(name, lp->name) == 0)
                 return (lp);
     }
@@ -705,13 +704,10 @@ LABEL *find_label(char *name)
 
 int find_topic_title(const char *title)
 {
-    int t;
-    int len;
-
     while (*title == ' ')
         ++title;
 
-    len = (int) strlen(title) - 1;
+    int len = (int) strlen(title) - 1;
     while (title[len] == ' ' && len > 0)
         --len;
 
@@ -723,7 +719,7 @@ int find_topic_title(const char *title)
         len -= 2;
     }
 
-    for (t=0; t<num_topic; t++)
+    for (int t = 0; t < num_topic; t++)
         if ((int) strlen(topic[t].title) == len &&
                 strnicmp(title, topic[t].title, len) == 0)
             return (t);
@@ -1091,7 +1087,6 @@ int create_table(void)
     int    start_off;
     int    first_link;
     int    rows;
-    int    r, c;
     int    ch;
     int    done;
     int    len;
@@ -1206,10 +1201,10 @@ int create_table(void)
 
     rows = 1 + (count / cols);
 
-    for (r=0; r<rows; r++)
+    for (int r = 0; r < rows; r++)
     {
         put_spaces(start_off);
-        for (c=0; c<cols; c++)
+        for (int c = 0; c < cols; c++)
         {
             lnum = c*rows + r;
 
@@ -2325,10 +2320,7 @@ void make_hot_links(void)
 {
     LINK    *l;
     LABEL   *lbl;
-    int      lctr;
     int      t;
-    CONTENT *c;
-    int      ctr;
 
     msg("Making hot-links.");
 
@@ -2336,10 +2328,10 @@ void make_hot_links(void)
      * Calculate topic_num for all entries in DocContents.  Also set
      * "TF_IN_DOC" flag for all topics included in the document.
      */
-
-    for (lctr=0, c=contents; lctr<num_contents; lctr++, c++)
+    CONTENT *c = contents;
+    for (int lctr = 0; lctr < num_contents; lctr++, c++)
     {
-        for (ctr=0; ctr<c->num_topic; ctr++)
+        for (int ctr = 0; ctr < c->num_topic; ctr++)
         {
             if (c->is_label[ctr])
             {
@@ -2400,8 +2392,8 @@ void make_hot_links(void)
      * Find topic_num and topic_off for all hot-links.  Also flag all hot-
      * links which will (probably) appear in the document.
      */
-
-    for (lctr=0, l=a_link; lctr<num_link; l++, lctr++)
+    l=a_link;
+    for (int lctr = 0; lctr < num_link; l++, lctr++)
     {
         switch (l->type)
         {
@@ -2482,8 +2474,6 @@ void paginate_online(void)    /* paginate the text for on-line help */
     char     *start;
     char     *curr;
     char     *text;
-    TOPIC    *t;
-    int       tctr;
     unsigned  len;
     int       skip_blanks;
     int       num_links;
@@ -2495,7 +2485,8 @@ void paginate_online(void)    /* paginate the text for on-line help */
 
     msg("Paginating online help.");
 
-    for (t=topic, tctr=0; tctr<num_topic; t++, tctr++)
+    TOPIC *t = topic;
+    for (int tctr = 0; tctr < num_topic; t++, tctr++)
     {
         if (t->flags & TF_DATA)
             continue;    /* don't paginate data topics */
@@ -2672,11 +2663,9 @@ typedef struct
 LABEL *find_next_label_by_topic(int t)
 {
     LABEL *temp, *g, *p;
-    int    ctr;
-
     g = p = nullptr;
-
-    for (temp=label, ctr=0; ctr<num_label; ctr++, temp++)
+    temp = label;
+    for (int ctr = 0; ctr < num_label; ctr++, temp++)
         if (temp->topic_num == t && temp->doc_page == -1)
         {
             g = temp;
@@ -2685,7 +2674,8 @@ LABEL *find_next_label_by_topic(int t)
         else if (temp->topic_num > t)
             break;
 
-    for (temp=plabel, ctr=0; ctr<num_plabel; ctr++, temp++)
+    temp=plabel;
+    for (int ctr = 0; ctr < num_plabel; ctr++, temp++)
         if (temp->topic_num == t && temp->doc_page == -1)
         {
             p = temp;
@@ -2712,10 +2702,10 @@ void set_hot_link_doc_page(void)
 {
     LINK  *l;
     LABEL *lbl;
-    int    lctr;
     int    t;
 
-    for (lctr=0, l=a_link; lctr<num_link; l++, lctr++)
+    l=a_link;
+    for (int lctr = 0; lctr < num_link; l++, lctr++)
     {
         switch (l->type)
         {
@@ -2757,11 +2747,9 @@ void set_content_doc_page(void)
  * insert page #'s in the DocContents
  */
 {
-    CONTENT *c;
     TOPIC   *t;
     char    *base;
     int      tnum;
-    int      ctr;
     char     buf[4];
     int      len;
 
@@ -2771,7 +2759,8 @@ void set_content_doc_page(void)
 
     base = get_topic_text(t);
 
-    for (ctr=1, c=contents+1; ctr<num_contents; ctr++, c++)
+    CONTENT *c = contents+1;
+    for (int ctr = 1; ctr < num_contents; ctr++, c++)
     {
         assert(c->doc_page>=1);
         sprintf(buf, "%d", c->doc_page);
@@ -2954,7 +2943,6 @@ bool compare_files(FILE *f1, FILE *f2)
 
 void _write_hdr(char *fname, FILE *file)
 {
-    int ctr;
     char nfile[MAXFILE],
          next[MAXEXT];
 
@@ -2971,7 +2959,7 @@ void _write_hdr(char *fname, FILE *file)
 
     fprintf(file, "/* labels */\n\n");
 
-    for (ctr=0; ctr<num_label; ctr++)
+    for (int ctr = 0; ctr < num_label; ctr++)
         if (label[ctr].name[0] != '@')  /* if it's not a local label... */
         {
             fprintf(file, "#define %-32s %3d", label[ctr].name, ctr);
@@ -3038,15 +3026,8 @@ void write_hdr(char *fname)
 
 void calc_offsets(void)    /* calc file offset to each topic */
 {
-    int      t;
-    TOPIC   *tp;
-    long     offset;
-    CONTENT *cp;
-    int      c;
-
     /* NOTE: offsets do NOT include 6 bytes for signature & version! */
-
-    offset = sizeof(int) +           /* max_pages */
+    long offset = sizeof(int) +      /* max_pages */
              sizeof(int) +           /* max_links */
              sizeof(int) +           /* num_topic */
              sizeof(int) +           /* num_label */
@@ -3055,7 +3036,8 @@ void calc_offsets(void)    /* calc file offset to each topic */
              num_topic*sizeof(long) +/* offsets to each topic */
              num_label*2*sizeof(int);/* topic_num/topic_off for all public labels */
 
-    for (c=0, cp=contents; c<num_contents; c++, cp++)
+    CONTENT *cp = contents;
+    for (int c = 0; c < num_contents; c++, cp++)
         offset += sizeof(int) +       /* flags */
                   1 +                 /* id length */
                   (int) strlen(cp->id) +    /* id text */
@@ -3064,7 +3046,8 @@ void calc_offsets(void)    /* calc file offset to each topic */
                   1 +                 /* number of topics */
                   cp->num_topic*sizeof(int);    /* topic numbers */
 
-    for (t=0, tp=topic; t<num_topic; t++, tp++)
+    TOPIC *tp = topic;
+    for (int t = 0; t<num_topic; t++, tp++)
     {
         tp->offset = offset;
         offset += (long)sizeof(int) + /* topic flags */
@@ -3109,7 +3092,6 @@ void insert_real_link_info(char *curr, unsigned len)
 
 void _write_help(FILE *file)
 {
-    int                   t, p, l, c;
     char                 *text;
     TOPIC                *tp;
     CONTENT              *cp;
@@ -3139,24 +3121,24 @@ void _write_help(FILE *file)
 
     /* write the offsets to each topic */
 
-    for (t=0; t<num_topic; t++)
+    for (int t = 0; t < num_topic; t++)
         fwrite(&topic[t].offset, sizeof(long), 1, file);
 
     /* write all public labels */
 
-    for (l=0; l<num_label; l++)
+    for (int l = 0; l < num_label; l++)
     {
         putw(label[l].topic_num, file);
         putw(label[l].topic_off, file);
     }
 
     /* write contents */
-
-    for (c=0, cp=contents; c<num_contents; c++, cp++)
+    cp = contents;
+    for (int c = 0; c < num_contents; c++, cp++)
     {
         putw(cp->flags, file);
 
-        t = (int) strlen(cp->id);
+        int t = (int) strlen(cp->id);
         putc((BYTE)t, file);
         fwrite(cp->id, 1, t, file);
 
@@ -3169,8 +3151,8 @@ void _write_help(FILE *file)
     }
 
     /* write topics */
-
-    for (t=0, tp=topic; t<num_topic; t++, tp++)
+    tp = topic;
+    for (int t = 0; t < num_topic; t++, tp++)
     {
         /* write the topics flags */
 
@@ -3179,7 +3161,7 @@ void _write_help(FILE *file)
         /* write offset, length and starting margin for each page */
 
         putw(tp->num_page, file);
-        for (p=0; p<tp->num_page; p++)
+        for (int p = 0; p < tp->num_page; p++)
         {
             putw(tp->page[p].offset, file);
             putw(tp->page[p].length, file);
@@ -3392,9 +3374,8 @@ void report_memory(void)
          text   = 0,   /* bytes in topic text (stored on disk) */
          data   = 0,   /* bytes in active data structure */
          dead   = 0;   /* bytes in unused data structure */
-    int  ctr, ctr2;
 
-    for (ctr=0; ctr<num_topic; ctr++)
+    for (int ctr = 0; ctr < num_topic; ctr++)
     {
         data   += sizeof(TOPIC);
         string += topic[ctr].title_len;
@@ -3404,7 +3385,7 @@ void report_memory(void)
         dead   += (PAGE_ALLOC_SIZE-(topic[ctr].num_page%PAGE_ALLOC_SIZE)) * sizeof(PAGE);
     }
 
-    for (ctr=0; ctr<num_link; ctr++)
+    for (int ctr = 0; ctr < num_link; ctr++)
     {
         data += sizeof(LINK);
         string += (long) strlen(a_link[ctr].name);
@@ -3413,7 +3394,7 @@ void report_memory(void)
     if (num_link > 0)
         dead += (LINK_ALLOC_SIZE-(num_link%LINK_ALLOC_SIZE)) * sizeof(LINK);
 
-    for (ctr=0; ctr<num_label; ctr++)
+    for (int ctr = 0; ctr < num_label; ctr++)
     {
         data   += sizeof(LABEL);
         string += (long) strlen(label[ctr].name) + 1;
@@ -3422,7 +3403,7 @@ void report_memory(void)
     if (num_label > 0)
         dead += (LABEL_ALLOC_SIZE-(num_label%LABEL_ALLOC_SIZE)) * sizeof(LABEL);
 
-    for (ctr=0; ctr<num_plabel; ctr++)
+    for (int ctr = 0; ctr < num_plabel; ctr++)
     {
         data   += sizeof(LABEL);
         string += (long) strlen(plabel[ctr].name) + 1;
@@ -3431,7 +3412,7 @@ void report_memory(void)
     if (num_plabel > 0)
         dead += (LABEL_ALLOC_SIZE-(num_plabel%LABEL_ALLOC_SIZE)) * sizeof(LABEL);
 
-    for (ctr=0; ctr<num_contents; ctr++)
+    for (int ctr = 0; ctr < num_contents; ctr++)
     {
         int t;
 
@@ -3443,7 +3424,7 @@ void report_memory(void)
         dead += t;
         string += (long) strlen(contents[ctr].id) + 1;
         string += (long) strlen(contents[ctr].name) + 1;
-        for (ctr2=0; ctr2<contents[ctr].num_topic; ctr2++)
+        for (int ctr2 = 0; ctr2 < contents[ctr].num_topic; ctr2++)
             string += (long) strlen(contents[ctr].topic_name[ctr2]) + 1;
     }
 

@@ -641,7 +641,11 @@ static void move_row(int fromrow,int torow,int col)
 }
 
 int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist & pan */
-{   int i,j,row,col,y,alignmask,listfull;
+{
+    int row;
+    int col;
+    int alignmask;
+    int listfull;
     if (zwidth == 0.0)
         return (0); /* no zoombox, leave calc_status as is */
     /* got a zoombox */
@@ -670,7 +674,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
         get_resume(sizeof(num_worklist),&num_worklist,sizeof(worklist),worklist,0);
     } /* don't do end_resume! we might still change our mind */
     /* adjust existing worklist entries */
-    for (i=0; i<num_worklist; ++i) {
+    for (int i = 0; i < num_worklist; ++i) {
         worklist[i].yystart -= row;
         worklist[i].yystop  -= row;
         worklist[i].yybegin -= row;
@@ -679,8 +683,9 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
         worklist[i].xxbegin -= col;
     }
     /* add worklist entries for the new edges */
-    listfull = i = 0;
-    j = ydots-1;
+    listfull = 0;
+    int i = 0;
+    int j = ydots-1;
     if (row < 0) {
         listfull |= add_worklist(0,xdots-1,0,0,0-row-1,0,0,0);
         i = 0 - row;
@@ -708,9 +713,11 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
     calc_status = CALCSTAT_RESUMABLE;
     clearbox();
     if (row > 0) /* move image up */
-        for (y=0; y<ydots; ++y) move_row(y+row,y,col);
+        for (int y=0; y < ydots; ++y)
+            move_row(y+row,y,col);
     else         /* move image down */
-        for (y=ydots; --y>=0;)  move_row(y+row,y,col);
+        for (int y = ydots; --y >=0;)
+            move_row(y+row,y,col);
     fix_worklist(); /* fixup any out of bounds worklist entries */
     alloc_resume(sizeof(worklist)+20,2); /* post the new worklist */
     put_resume(sizeof(num_worklist),&num_worklist,sizeof(worklist),worklist,0);
@@ -733,13 +740,12 @@ static void restart_window(int wknum)
 }
 
 static void fix_worklist(void) /* fix out of bounds and symmetry related stuff */
-{   int i,j,k;
-    WORKLIST *wk;
-    for (i=0; i<num_worklist; ++i) {
-        wk = &worklist[i];
+{
+    for (int i = 0; i < num_worklist; ++i) {
+        WORKLIST *wk = &worklist[i];
         if (wk->yystart >= ydots || wk->yystop < 0
                 || wk->xxstart >= xdots || wk->xxstop < 0) { /* offscreen, delete */
-            for (j=i+1; j<num_worklist; ++j)
+            for (int j = i+1; j < num_worklist; ++j)
                 worklist[j-1] = worklist[j];
             --num_worklist;
             --i;
@@ -751,7 +757,8 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
                 wk->xxbegin = 0;
             }
             else { /* xaxis symmetry */
-                if ((j = wk->yystop + wk->yystart) > 0
+                int j = wk->yystop + wk->yystart;
+                if (j > 0
                         && num_worklist < MAXCALCWORK) { /* split the sym part */
                     worklist[num_worklist] = worklist[i];
                     worklist[num_worklist].yystart = 0;
@@ -764,9 +771,10 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
             }
         }
         if (wk->yystop >= ydots) { /* partly off bottom edge */
-            j = ydots-1;
+            int j = ydots-1;
             if ((wk->sym&1) != 0) { /* uses xaxis symmetry */
-                if ((k = wk->yystart + (wk->yystop - j)) < j) {
+                int k = wk->yystart + (wk->yystop - j);
+                if (k < j) {
                     if (num_worklist >= MAXCALCWORK) /* no room to split */
                         restart_window(i);
                     else { /* split it */
@@ -784,7 +792,8 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
             if ((wk->sym&2) == 0) /* no sym, easy */
                 wk->xxstart = 0;
             else { /* yaxis symmetry */
-                if ((j = wk->xxstop + wk->xxstart) > 0
+                int j = wk->xxstop + wk->xxstart;
+                if (j > 0
                         && num_worklist < MAXCALCWORK) { /* split the sym part */
                     worklist[num_worklist] = worklist[i];
                     worklist[num_worklist].xxstart = 0;
@@ -797,9 +806,10 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
             }
         }
         if (wk->xxstop >= xdots) { /* partly off right edge */
-            j = xdots-1;
+            int j = xdots-1;
             if ((wk->sym&2) != 0) { /* uses xaxis symmetry */
-                if ((k = wk->xxstart + (wk->xxstop - j)) < j) {
+                int k = wk->xxstart + (wk->xxstop - j);
+                if (k < j) {
                     if (num_worklist >= MAXCALCWORK) /* no room to split */
                         restart_window(i);
                     else { /* split it */
