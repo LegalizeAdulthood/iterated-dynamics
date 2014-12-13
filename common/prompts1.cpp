@@ -320,7 +320,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         /* center each line of heading independently */
         int i;
         strcpy(hdgline, hdg);
-        for (i=0; i<titlelines-1; i++)
+        for (i = 0; i < titlelines-1; i++)
         {
             char *next = strchr(hdgline,'\n');
             if (next == nullptr)
@@ -797,20 +797,23 @@ static int input_field_list(
     int initval,curval;
     char buf[81];
     int curkey;
-    int i, j;
     int ret,savelookatmouse;
     savelookatmouse = lookatmouse;
     lookatmouse = 0;
     for (initval = 0; initval < llen; ++initval)
-        if (strcmp(fld,list[initval]) == 0) break;
-    if (initval >= llen) initval = 0;
+        if (strcmp(fld,list[initval]) == 0)
+            break;
+    if (initval >= llen)
+        initval = 0;
     curval = initval;
     ret = -1;
     while (1) {
         strcpy(buf,list[curval]);
-        i = (int) strlen(buf);
-        while (i < vlen)
-            buf[i++] = ' ';
+        {
+            int i = (int) strlen(buf);
+            while (i < vlen)
+                buf[i++] = ' ';
+        }
         buf[vlen] = 0;
         driver_put_string(row,col,attr,buf);
         curkey = driver_key_cursor(row,col); /* get a keystroke */
@@ -838,8 +841,8 @@ static int input_field_list(
                     goto inpfldl_end;
                 break;                                /* non alphanum char */
             }
-            j = curval;
-            for (i = 0; i < llen; ++i) {
+            int j = curval;
+            for (int i = 0; i < llen; ++i) {
                 if (++j >= llen)
                     j = 0;
                 if ((*list[j] & 0xdf) == (curkey & 0xdf)) {
@@ -888,7 +891,6 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 {
     int oldhelpmode;
     int numtypes, done;
-    int i, j;
 #define MAXFTYPES 200
     char tname[40];
     struct FT_CHOICE storage[MAXFTYPES] = { 0 };
@@ -898,7 +900,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
     /* steal existing array for "choices" */
     choices[0] = &storage[0];
     attributes[0] = 1;
-    for (i = 1; i < MAXFTYPES; ++i) {
+    for (int i = 1; i < MAXFTYPES; ++i) {
         choices[i] = &storage[i];
         attributes[i] = 1;
     }
@@ -908,21 +910,24 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
     oldhelpmode = helpmode;
     helpmode = HELPFRACTALS;
     if (t == IFS3D) t = IFS;
-    i = j = -1;
-    while (fractalspecific[++i].name) {
-        if (julibrot)
-            if (!((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*'))
+    {
+        int i = -1;
+        int j = -1;
+        while (fractalspecific[++i].name) {
+            if (julibrot)
+                if (!((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*'))
+                    continue;
+            if (fractalspecific[i].name[0] == '*')
                 continue;
-        if (fractalspecific[i].name[0] == '*')
-            continue;
-        strcpy(choices[++j]->name,fractalspecific[i].name);
-        choices[j]->name[14] = 0; /* safety */
-        choices[j]->num = i;      /* remember where the real item is */
+            strcpy(choices[++j]->name,fractalspecific[i].name);
+            choices[j]->name[14] = 0; /* safety */
+            choices[j]->num = i;      /* remember where the real item is */
+        }
+        numtypes = j + 1;
     }
-    numtypes = j + 1;
     shell_sort(&choices, numtypes, sizeof(struct FT_CHOICE *), lccompare); /* sort list */
-    j = 0;
-    for (i = 0; i < numtypes; ++i) /* find starting choice in sorted list */
+    int j = 0;
+    for (int i = 0; i < numtypes; ++i) /* find starting choice in sorted list */
         if (choices[i]->num == t || choices[i]->num == fractalspecific[t].tofloat)
             j = i;
 
