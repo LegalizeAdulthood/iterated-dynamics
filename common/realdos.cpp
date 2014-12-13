@@ -975,15 +975,12 @@ int fullscreen_choice(
         case FIK_CTL_HOME:
             current = -1;
             increment = rev_increment = 1;
+            for (int newcurrent = 0; newcurrent < numchoices; ++newcurrent)
             {
-                int newcurrent;
-                for (newcurrent = 0; newcurrent < numchoices; ++newcurrent)
+                if (!isadirname(choices[newcurrent]))
                 {
-                    if (!isadirname(choices[newcurrent]))
-                    {
-                        current = newcurrent - 1;
-                        break;  /* breaks the for loop */
-                    }
+                    current = newcurrent - 1;
+                    break;  /* breaks the for loop */
                 }
             }
             break;
