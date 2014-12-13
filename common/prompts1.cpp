@@ -1663,21 +1663,21 @@ void load_params(int fractype)
             param[i+4] = moreparams[extra].paramvalue[i];
 }
 
-int check_orbit_name(char *orbitname)
+bool check_orbit_name(char *orbitname)
 {
-    int numtypes, bad;
+    int numtypes;
     const char *nameptr[MAXFRACTALS];
     int fractals[MAXFRACTALS];
     int last_val;
 
     numtypes = build_fractal_list(fractals, &last_val, nameptr);
-    bad = 1;
+    bool bad = true;
     for (int i = 0; i < numtypes; i++)
     {
         if (strcmp(orbitname,nameptr[i]) == 0)
         {
             neworbittype = fractals[i];
-            bad = 0;
+            bad = false;
             break;
         }
     }

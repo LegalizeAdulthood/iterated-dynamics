@@ -957,7 +957,7 @@ extern int prompt_valuestring(char *buf,struct fullscreenvalues *val);
 extern void setbailoutformula(enum bailouts);
 extern int find_extra_param(int);
 extern void load_params(int fractype);
-extern int check_orbit_name(char *);
+extern bool check_orbit_name(char *);
 struct entryinfo;
 extern int scan_entries(FILE *infile, struct entryinfo *ch, char *itemname);
 
