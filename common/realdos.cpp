@@ -1512,7 +1512,7 @@ int input_field(
         case 127:                              /* backspace */
             if (offset > 0) {
                 j = (int) strlen(fld);
-                for (i = offset-1; i < j; ++i)
+                for (int i = offset-1; i < j; ++i)
                     fld[i] = fld[i+1];
                 --offset;
             }
@@ -1520,7 +1520,7 @@ int input_field(
             break;
         case FIK_DELETE:                           /* delete */
             j = (int) strlen(fld);
-            for (i = offset; i < j; ++i)
+            for (int i = offset; i < j; ++i)
                 fld[i] = fld[i+1];
             started = display = 1;
             break;
@@ -1635,7 +1635,7 @@ int field_prompt(
         i = 3;
     j -= i;
     boxwidth += i * 2;
-    for (i = -1; i < titlelines+3; ++i)    /* draw empty box */
+    for (int i = -1; i < titlelines+3; ++i)    /* draw empty box */
         driver_set_attr(titlerow+i,j,C_PROMPT_LO,boxwidth);
     g_text_cbase = titlecol;                  /* set left margin for putstring */
     driver_put_string(titlerow,0,C_PROMPT_HI,hdg); /* display heading */
@@ -1781,7 +1781,7 @@ void load_fractint_config(void)
         tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
         i = j = -1;
         /* key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver */
-        for (;;)
+        while (true)
         {
             if (tempstring[++i] < ' ')
             {
@@ -1873,9 +1873,8 @@ void load_fractint_config(void)
             if (vident.driver->validate_mode(vident.driver, &vident))
             {
                 /* look for a synonym mode and if found, overwite its key */
-                int m;
                 int synonym_found = FALSE;
-                for (m = 0; m < g_video_table_len; m++)
+                for (int m = 0; m < g_video_table_len; m++)
                 {
                     VIDEOINFO *mode = &g_video_table[m];
                     if ((mode->driver == vident.driver) && (mode->colors == vident.colors) &&
