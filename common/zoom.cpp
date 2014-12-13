@@ -47,11 +47,10 @@ int boxcolor = 0;
 #ifndef XFRACT
 void dispbox(void)
 {
-    int i;
     int boxc = (colors-1)&boxcolor;
     unsigned char *values = (unsigned char *)boxvalues;
     int rgb[3];
-    for (i=0; i<boxcount; i++)
+    for (int i = 0; i < boxcount; i++)
     {
         if (g_is_true_color && truemode)
         {
@@ -64,7 +63,7 @@ void dispbox(void)
     }
     /* There is an interaction between getcolor and putcolor, so separate them */
     if (!(g_is_true_color && truemode)) /* don't need this for truecolor with truemode set */
-        for (i=0; i<boxcount; i++)
+        for (int i = 0; i < boxcount; i++)
         {
             if (colors == 2)
                 putcolor(boxx[i]-sxoffs,boxy[i]-syoffs,(1 - values[i]));
@@ -82,7 +81,7 @@ void clearbox(void)
     else
     {
         unsigned char *values = (unsigned char *)boxvalues;
-        for (int i=0; i<boxcount; i++)
+        for (int i = 0; i < boxcount; i++)
         {
             putcolor(boxx[i]-sxoffs,boxy[i]-syoffs,values[i]);
         }
@@ -577,7 +576,7 @@ void aspectratio_crop(float oldaspect,float newaspect)
 }
 
 static int check_pan(void) /* return 0 if can't, alignment requirement if can */
-{   int i,j;
+{
     if ((calc_status != CALCSTAT_RESUMABLE && calc_status != CALCSTAT_COMPLETED) || evolving)
         return (0); /* not resumable, not complete */
     if (curfractalspecific->calctype != StandardFractal
@@ -612,13 +611,13 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
     start_resume();
     get_resume(sizeof(num_worklist),&num_worklist,sizeof(worklist),worklist,0);
     /* don't do end_resume! we're just looking */
-    i = 9;
-    for (j=0; j<num_worklist; ++j) /* find lowest pass in any pending window */
+    int i = 9;
+    for (int j = 0; j < num_worklist; ++j) /* find lowest pass in any pending window */
         if (worklist[j].pass < i)
             i = worklist[j].pass;
-    j = ssg_blocksize(); /* worst-case alignment requirement */
+    int j = ssg_blocksize(); /* worst-case alignment requirement */
     while (--i >= 0)
-        j = j>>1; /* reduce requirement */
+        j = j >> 1; /* reduce requirement */
     return (j);
 }
 

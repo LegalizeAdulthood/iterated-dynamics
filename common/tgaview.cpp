@@ -14,10 +14,8 @@
 static FILE *fptarga = nullptr;            /* FILE pointer           */
 
 /* Main entry decoder */
-int
-tgaview()
+int tgaview()
 {
-    int i;
     int cs;
     unsigned int width;
     struct fractal_info info;
@@ -27,7 +25,7 @@ tgaview()
         return (-1);
 
     g_row_count = 0;
-    for (i=0; i<(int)height; ++i)
+    for (int i = 0; i < (int)height; ++i)
     {
         t16_getline(fptarga, width, (U16 *)boxx);
         if ((*outln)(reinterpret_cast<BYTE *>(boxx),width))
@@ -49,13 +47,10 @@ tgaview()
 }
 
 /* Outline function for 16 bit data with 8 bit fudge */
-int
-outlin16(BYTE *buffer,int linelen)
+int outlin16(BYTE *buffer,int linelen)
 {
-    int i;
-    U16 *buf;
-    buf = (U16 *)buffer;
-    for (i=0; i<linelen; i++)
+    U16 *buf = (U16 *)buffer;
+    for (int i = 0; i < linelen; i++)
         putcolor(i,g_row_count,buf[i]>>8);
     g_row_count++;
     return (0);
