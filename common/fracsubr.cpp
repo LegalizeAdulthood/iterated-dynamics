@@ -113,7 +113,6 @@ void fill_lx_array(void)
 
 void fractal_floattobf(void)
 {
-    int i;
     init_bf_dec(getprecdbl(CURRENTREZ));
     floattobf(bfxmin,xxmin);
     floattobf(bfxmax,xxmax);
@@ -122,7 +121,7 @@ void fractal_floattobf(void)
     floattobf(bfx3rd,xx3rd);
     floattobf(bfy3rd,yy3rd);
 
-    for (i = 0; i < MAXPARAMS; i++)
+    for (int i = 0; i < MAXPARAMS; i++)
         if (typehasparm(fractype,i,nullptr))
             floattobf(bfparms[i],param[i]);
     calc_status = CALCSTAT_PARAMS_CHANGED;
@@ -133,11 +132,10 @@ bool use_grid = false;
 
 void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation */
 {
-    int i;
     long xytemp;
     double ftemp;
     coloriter=oldcoloriter = 0L;
-    for (i=0; i<10; i++)
+    for (int i = 0; i < 10; i++)
         rhombus_stack[i] = 0;
 
     /* set up grid array compactly leaving space at end */
@@ -330,7 +328,8 @@ init_restart:
     if (integerfractal > 1)  /* use specific override from table */
         bitshift = integerfractal;
     if (integerfractal == 0) { /* float? */
-        if ((i = curfractalspecific->tofloat) != NOFRACTAL) /* -> int? */
+        int i = curfractalspecific->tofloat;
+        if (i != NOFRACTAL) /* -> int? */
         {
             if (fractalspecific[i].isinteger > 1) /* specific shift? */
                 bitshift = fractalspecific[i].isinteger;
@@ -443,11 +442,13 @@ expand_retry:
             /* this way of defining the dx and dy arrays is not the most
                accurate, but it is kept because it is used to determine
                the limit of resolution */
-            for (i = 1; i < xdots; i++) {
+            for (int i = 1; i < xdots; i++)
+            {
                 dx0 = (double)(dx0 + (double)delxx);
                 dy1 = (double)(dy1 - (double)delyy2);
             }
-            for (i = 1; i < ydots; i++) {
+            for (int i = 1; i < ydots; i++)
+            {
                 dy0 = (double)(dy0 - (double)delyy);
                 dx1 = (double)(dx1 + (double)delxx2);
             }

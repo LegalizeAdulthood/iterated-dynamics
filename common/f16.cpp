@@ -69,9 +69,7 @@ FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
 
 int t16_getline(FILE *fp, int hs, U16 *data)
 {
-    int i;
-
-    for (i=0; i<hs; ++i) {
+    for (int i = 0; i < hs; ++i) {
         if (state == 0) {
             bufp = 0;
             if ((count = getc(fp)) > 127) {

@@ -964,7 +964,7 @@ void spiralmap(int count)
     for (int offset = 1; offset <= mid; offset ++) {
         /* first do the top row */
         py = (mid - offset);
-        for (px = (mid - offset)+1; px <mid+offset; px++) {
+        for (px = (mid - offset)+1; px < mid+offset; px++) {
             i++;
             if (i==count)
                 return;
@@ -984,7 +984,7 @@ void spiralmap(int count)
         /* then up the left to finish */
         for (; py >= mid - offset; py--) {
             i++;
-            if (i== count)
+            if (i == count)
                 return;
         }
     }
@@ -1000,11 +1000,10 @@ int unspiralmap(void)
 
     mid = gridsz / 2;
     if ((px == mid && py == mid) || (oldgridsz != gridsz)) {
-        int i, gridsqr;
         /* set up array and return */
-        gridsqr = gridsz * gridsz;
+        int gridsqr = gridsz * gridsz;
         ecountbox[px][py] = 0;  /* we know the first one, do the rest */
-        for (i = 1; i < gridsqr; i++) {
+        for (int i = 1; i < gridsqr; i++) {
             spiralmap(i);
             ecountbox[px][py] = i;
         }
