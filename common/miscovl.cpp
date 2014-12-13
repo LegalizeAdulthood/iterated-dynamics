@@ -35,9 +35,7 @@ int getprecbf(int);
 static void put_float(int,double,int);
 static void put_bf(int slash,bf_t r, int prec);
 static void put_filename(const char *keyword, const char *fname);
-#ifndef XFRACT
 static int check_modekey(int curkey,int choice);
-#endif
 static int entcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2);
 static void update_fractint_cfg(void);
 static void strip_zeros(char *buf);
@@ -1437,12 +1435,9 @@ static int modes_changed;
 
 int select_video_mode(int curmode)
 {
-    // cppcheck-suppress unreadVariable
     int attributes[MAXVIDEOMODES];
     int ret;
-#ifndef XFRACT
     int oldhelpmode;
-#endif
 
     for (int i = 0; i < g_video_table_len; ++i)  /* init tables */
     {
@@ -1462,7 +1457,6 @@ int select_video_mode(int curmode)
     {
         memcpy((char *) &g_video_entry, (char *) &g_video_table[curmode], sizeof(g_video_entry));
     }
-#ifndef XFRACT
     int i;
     for (i = 0; i < g_video_table_len; ++i)  /* find default mode */
     {
@@ -1504,11 +1498,9 @@ int select_video_mode(int curmode)
     }
     /* picked by function key or ENTER key */
     i = (i < 0) ? (-1 - i) : entnums[i];
-#endif
     /* the selected entry now in g_video_entry */
     memcpy((char *) &g_video_entry, (char *) &g_video_table[i], sizeof(g_video_entry));
 
-#ifndef XFRACT
     /* copy fractint.cfg table to resident table, note selected entry */
     int k = 0;
     for (i = 0; i < g_video_table_len; ++i)
@@ -1522,9 +1514,6 @@ int select_video_mode(int curmode)
             }
         }
     }
-#else
-    k = g_video_table[0].keynum;
-#endif
     ret = k;
     if (k == 0)  /* selected entry not a copied (assigned to key) one */
     {
@@ -1566,7 +1555,6 @@ void format_vid_table(int choice,char *buf)
             local_buf, g_video_entry.driver->name, g_video_entry.comment);
 }
 
-#ifndef XFRACT
 static int check_modekey(int curkey,int choice)
 {
     int i, ret;
@@ -1602,7 +1590,6 @@ static int check_modekey(int curkey,int choice)
     }
     return (ret);
 }
-#endif
 
 static int entcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
 {

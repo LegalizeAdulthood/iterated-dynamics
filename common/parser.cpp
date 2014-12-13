@@ -4174,21 +4174,20 @@ struct error_data_st {
 void frm_error(FILE * open_file, long begin_frm)
 {
     struct token_st tok;
-    int i, chars_to_error=0, chars_in_error=0, token_count;
+    int chars_to_error=0, chars_in_error=0, token_count;
     int statement_len, line_number;
     char msgbuf[900];
     long filepos;
-    int j;
     strcpy(msgbuf, "\n");
 
-    for (j=0; j < 3 && errors[j].start_pos; j++)
+    for (int j = 0; j < 3 && errors[j].start_pos; j++)
     {
         bool const initialization_error = errors[j].error_number == PE_SECOND_COLON;
         fseek(open_file, begin_frm, SEEK_SET);
         line_number = 1;
         while (ftell(open_file) != errors[j].error_pos)
         {
-            i = fgetc(open_file);
+            int i = fgetc(open_file);
             if (i == '\n')
             {
                 line_number++;
@@ -4202,7 +4201,7 @@ void frm_error(FILE * open_file, long begin_frm)
             }
         }
         sprintf(&msgbuf[(int) strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
-        i = (int) strlen(msgbuf);
+        int i = (int) strlen(msgbuf);
         fseek(open_file, errors[j].start_pos, SEEK_SET);
         statement_len = token_count = 0;
         bool done = false;
@@ -4278,9 +4277,8 @@ void frm_error(FILE * open_file, long begin_frm)
 
 void display_var_list()
 {
-    struct var_list_st * p;
     stopmsg(0, "List of user defined variables:\n");
-    for (p = var_list; p; p=p->next_item)
+    for (var_list_st *p = var_list; p; p=p->next_item)
     {
         stopmsg(0, p->name);
     }
@@ -4289,16 +4287,15 @@ void display_var_list()
 
 void display_const_lists()
 {
-    struct const_list_st * p;
     char msgbuf[800];
     stopmsg(0, "Complex constants are:");
-    for (p = complx_list; p; p=p->next_item)
+    for (const_list_st *p = complx_list; p; p=p->next_item)
     {
         sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
         stopmsg(0, msgbuf);
     }
     stopmsg(0, "Real constants are:");
-    for (p = real_list; p; p=p->next_item)
+    for (const_list_st *p = real_list; p; p=p->next_item)
     {
         sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
         stopmsg(0, msgbuf);
@@ -4319,8 +4316,8 @@ struct const_list_st  *const_list_alloc()
 
 void init_var_list()
 {
-    struct var_list_st * temp, * p;
-    for (p = var_list; p; p=temp)
+    var_list_st *temp;
+    for (var_list_st *p = var_list; p; p = temp)
     {
         temp = p->next_item;
         free(p);
@@ -4331,14 +4328,14 @@ void init_var_list()
 
 void init_const_lists()
 {
-    struct const_list_st * temp, * p;
-    for (p = complx_list; p; p=temp)
+    const_list_st *temp;
+    for (const_list_st *p = complx_list; p; p = temp)
     {
         temp = p->next_item;
         free(p);
     }
     complx_list = nullptr;
-    for (p = real_list; p; p=temp)
+    for (const_list_st *p = real_list; p; p = temp)
     {
         temp = p->next_item;
         free(p);
@@ -4393,29 +4390,22 @@ struct const_list_st *  add_const_to_list(struct const_list_st * p, struct token
 
 void count_lists()
 {
-    /* char msgbuf[800];
-    */ struct var_list_st * p;
-    struct const_list_st * q;
-
     var_count = 0;
     complx_count = 0;
     real_count = 0;
 
-    for (p = var_list; p; p=p->next_item)
+    for (var_list_st *p = var_list; p; p = p->next_item)
     {
         var_count++;
     }
-    for (q = complx_list; q; q=q->next_item)
+    for (const_list_st *q = complx_list; q; q = q->next_item)
     {
         complx_count++;
     }
-    for (q = real_list; q; q=q->next_item)
+    for (const_list_st *q = real_list; q; q = q->next_item)
     {
         real_count++;
     }
-    /*   sprintf(msgbuf, "Number of vars is %d\nNumber of complx is %d\nNumber of real is %d\n", var_count, complx_count, real_count);
-       stopmsg(0, msgbuf);
-    */
 }
 
 
@@ -4430,7 +4420,6 @@ void count_lists()
 bool frm_prescan(FILE * open_file)
 {
     long filepos;
-    int i;
     long statement_pos, orig_pos;
     bool done = false;
     struct token_st this_token;
@@ -4453,7 +4442,7 @@ bool frm_prescan(FILE * open_file)
     init_const_lists();
 
     orig_pos = statement_pos = ftell(open_file);
-    for (i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
         errors[i].start_pos    = 0L;
         errors[i].error_pos    = 0L;
@@ -4462,17 +4451,8 @@ bool frm_prescan(FILE * open_file)
 
     while (!done)
     {
-        /*    char msgbuf[80] = "Just got ";
-        */    filepos = ftell(open_file);
+        filepos = ftell(open_file);
         frmgettoken(open_file, &this_token);
-        /*    strcat(msgbuf, this_token.token_str);
-              stopmsg (0, msgbuf);
-              sprintf (debugmsg, "Errors structure\n0: %ld, %ld, %d\n1: %ld, %ld, %d\n2: %ld, %ld, %d\n\n",
-                  errors[0].start_pos, errors[0].error_pos, errors[0].error_number,
-                  errors[1].start_pos, errors[1].error_pos, errors[1].error_number,
-                  errors[2].start_pos, errors[2].error_pos, errors[2].error_number);
-              stopmsg (0, debugmsg);
-        */
         chars_in_formula += (int) strlen(this_token.token_str);
         switch (this_token.token_type)
         {

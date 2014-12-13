@@ -1188,7 +1188,6 @@ int CvtStk() {  /* convert the array of ptrs  */
     void (*ftst)(void);
     void (*ntst)(void);
     union Arg *testoperand;
-    struct fn_entry *pfe;
     int fnfound;
 
     lastsqrreal = 1;  /* assume lastsqr is real (not stored explicitly)  */
@@ -1261,7 +1260,7 @@ int CvtStk() {  /* convert the array of ptrs  */
     for (OpPtr = LodPtr = StoPtr = 0; OpPtr < (int)LastOp; OpPtr++) {
         ftst = f[OpPtr];
         fnfound = 0;
-        for (pfe = &afe[0]; pfe <= &afe[LAST_OLD_FN]; pfe++) {
+        for (fn_entry *pfe = &afe[0]; pfe <= &afe[LAST_OLD_FN]; pfe++) {
             if (ftst == pfe->infn) {
                 fnfound = 1;
                 ntst = pfe->outfn;
