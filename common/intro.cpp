@@ -24,7 +24,7 @@ void intro(void)
 #else
     static char PRESS_ENTER[] = {"Press ENTER for main menu, F1 for help."};
 #endif
-    int       toprow, botrow, i, j, delaymax;
+    int       toprow, botrow, delaymax;
     char      oldchar;
     std::vector<int> authors;
     char credits[32768] = { 0 };
@@ -37,12 +37,12 @@ void intro(void)
     oldhelpmode = helpmode;
     lookatmouse = 0;                    /* de-activate full mouse checking */
 
-    i = 32767 + read_help_topic(INTRO_AUTHORS, 0, 32767, screen_text);
+    int i = 32767 + read_help_topic(INTRO_AUTHORS, 0, 32767, screen_text);
     screen_text[i++] = '\0';
     i = 32767 + read_help_topic(INTRO_CREDITS, 0, 32767, credits);
     credits[i++] = '\0';
 
-    j = 0;
+    int j = 0;
     authors.push_back(0);               /* find the start of each credit-line */
     for (i = 0; credits[i] != 0; i++)
         if (credits[i] == 10)
@@ -66,7 +66,7 @@ void intro(void)
     driver_set_attr(22,0,C_AUTHDIV2,80);
     driver_set_attr(3,0,C_PRIMARY,80*(END_MAIN_AUTHOR-3));
     driver_set_attr(23,0,C_TITLE_LOW,160);
-    for (i = 3; i < END_MAIN_AUTHOR; ++i)
+    for (int i = 3; i < END_MAIN_AUTHOR; ++i)
         driver_set_attr(i,21,C_CONTRIB,58);
     driver_set_attr(toprow,0,C_CONTRIB,(21-END_MAIN_AUTHOR)*80);
     srand((unsigned int)clock_ticks());

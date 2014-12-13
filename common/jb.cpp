@@ -379,8 +379,7 @@ zlinefp(double x, double y)
 int
 Std4dFractal(void)
 {
-    long x, y;
-    int xdot, ydot;
+    long x;
     c_exp = (int)param[2];
     if (neworbittype == LJULIAZPOWER)
     {
@@ -392,11 +391,12 @@ Std4dFractal(void)
             fractalspecific[neworbittype].orbitcalc = longCmplxZpowerFractal;
     }
 
-    for (y = 0, ydot = (ydots >> 1) - 1; ydot >= 0; ydot--, y -= inch_per_ydot)
+    long y = 0;
+    for (int ydot = (ydots >> 1) - 1; ydot >= 0; ydot--, y -= inch_per_ydot)
     {
         plotted = 0;
         x = -(width >> 1);
-        for (xdot = 0; xdot < xdots; xdot++, x += inch_per_xdot)
+        for (int xdot = 0; xdot < xdots; xdot++, x += inch_per_xdot)
         {
             col = xdot;
             row = ydot;
@@ -420,8 +420,7 @@ Std4dFractal(void)
 int
 Std4dfpFractal(void)
 {
-    double x, y;
-    int xdot, ydot;
+    double x;
     c_exp = (int)param[2];
 
     if (neworbittype == FPJULIAZPOWER)
@@ -433,11 +432,12 @@ Std4dfpFractal(void)
         get_julia_attractor(param[0], param[1]);  /* another attractor? */
     }
 
-    for (y = 0, ydot = (ydots >> 1) - 1; ydot >= 0; ydot--, y -= inch_per_ydotfp)
+    double y = 0.0;
+    for (int ydot = (ydots >> 1) - 1; ydot >= 0; ydot--, y -= inch_per_ydotfp)
     {
         plotted = 0;
         x = -widthfp / 2;
-        for (xdot = 0; xdot < xdots; xdot++, x += inch_per_xdotfp)
+        for (int xdot = 0; xdot < xdots; xdot++, x += inch_per_xdotfp)
         {
             col = xdot;
             row = ydot;

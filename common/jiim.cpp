@@ -386,7 +386,7 @@ static void SaveRect(int x, int y, int width, int depth)
     if ((memory_handle = MemoryAlloc((U16)width, (long)depth, MEMORY)) != 0)
     {
         Cursor_Hide();
-        for (int yoff=0; yoff<depth; yoff++)
+        for (int yoff = 0; yoff < depth; yoff++)
         {
             getrow(x, y+yoff, width, buff);
             putrow(x, y+yoff, width, (char *)dstack);
@@ -400,12 +400,11 @@ static void SaveRect(int x, int y, int width, int depth)
 static void RestoreRect(int x, int y, int width, int depth)
 {
     char buff[MAXRECT];
-    int  yoff;
     if (!hasinverse)
         return;
 
     Cursor_Hide();
-    for (yoff=0; yoff<depth; yoff++)
+    for (int yoff = 0; yoff < depth; yoff++)
     {
         MoveFromMemory((BYTE *)buff, (U16)width, 1L, (long)(yoff), memory_handle);
         putrow(x, y+yoff, width, buff);
@@ -898,13 +897,11 @@ void Jiim(int which)         /* called by fractint */
                     if (maxhits < colors - 1 && maxhits < 5 &&
                             (luckyx != 0.0 || luckyy != 0.0))
                     {
-                        int i;
-
                         lsize  = lmax   = 0;
                         old.x  = g_new.x  = luckyx;
                         old.y  = g_new.y  = luckyy;
                         luckyx = luckyy = (float)0.0;
-                        for (i=0; i<199; i++)
+                        for (int i = 0; i < 199; i++)
                         {
                             old = ComplexSqrtFloat(old.x - cr, old.y - ci);
                             g_new = ComplexSqrtFloat(g_new.x - cr, g_new.y - ci);
