@@ -1206,17 +1206,17 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
     }
     curfractalspecific = &fractalspecific[curtype];
     tstack[0] = 0;
-    int i = curfractalspecific->helpformula;
-    if (i < -1) {
-        if (i == -2) { /* special for formula */
+    int help_formula = curfractalspecific->helpformula;
+    if (help_formula < -1) {
+        if (help_formula == -2) { /* special for formula */
             filename = FormFileName;
             entryname = FormName;
         }
-        else if (i == -3)  {       /* special for lsystem */
+        else if (help_formula == -3)  {       /* special for lsystem */
             filename = LFileName;
             entryname = LName;
         }
-        else if (i == -4)  {       /* special for ifs */
+        else if (help_formula == -4)  {       /* special for ifs */
             filename = IFSFileName;
             entryname = IFSName;
         }
@@ -1224,18 +1224,19 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
             filename = nullptr;
             entryname = nullptr;
         }
-        if (find_file_item(filename,entryname,&entryfile, -1-i) == 0) {
+        if (find_file_item(filename,entryname,&entryfile, -1-help_formula) == 0) {
             load_entry_text(entryfile,tstack,17, 0, 0);
             fclose(entryfile);
             if (fractype == FORMULA || fractype == FFORMULA)
                 frm_get_param_stuff(entryname); /* no error check, should be okay, from above */
         }
     }
-    else if (i >= 0) {
+    else if (help_formula >= 0) {
         int c,lines;
-        read_help_topic(i,0,2000,tstack); /* need error handling here ?? */
-        tstack[2000-i] = 0;
-        i = lines = 0;
+        read_help_topic(help_formula,0,2000,tstack); /* need error handling here ?? */
+        tstack[2000-help_formula] = 0;
+        int i = 0;
+        lines = 0;
         int j = 0;
         int k = 1;
         while ((c = tstack[i++]) != 0) {
@@ -1261,11 +1262,12 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
         tstack[j+1] = 0;
     }
     fractalspecificstuff *savespecific = curfractalspecific;
+
 gfp_top:
     promptnum = 0;
     if (julibrot)
     {
-        i = select_fracttype(neworbittype);
+        int i = select_fracttype(neworbittype);
         if (i < 0)
         {
             if (ret == 0)
@@ -1319,7 +1321,7 @@ gfp_top:
     }
     numparams = 0;
     int j = 0;
-    for (i = firstparm; i < lastparm; i++)
+    for (int i = firstparm; i < lastparm; i++)
     {
         char tmpbuf[30];
         if (!typehasparm(julibrot ? neworbittype : fractype, i, parmprompt[j])) {
@@ -1355,10 +1357,9 @@ gfp_top:
         numtrig = maxfn;
     }
 
-    i = NUMTRIGFN;
-    while (--i >= 0)
+    for (int i = NUMTRIGFN-1; i >= 0; --i)
         trignameptr[i] = trigfn[i].name;
-    for (i = 0; i < numtrig; i++) {
+    for (int i = 0; i < numtrig; i++) {
         paramvalues[promptnum].type = 'l';
         paramvalues[promptnum].uval.ch.val  = trigndx[i];
         paramvalues[promptnum].uval.ch.llen = NUMTRIGFN;
@@ -1370,9 +1371,8 @@ gfp_top:
     if (*type_name == '*')
         ++type_name;
 
-    i = curfractalspecific->orbit_bailout;
-
-    if (i != 0 && curfractalspecific->calctype == StandardFractal &&
+    int orbit_bailout = curfractalspecific->orbit_bailout;
+    if (orbit_bailout != 0 && curfractalspecific->calctype == StandardFractal &&
             (curfractalspecific->flags & BAILTEST)) {
         paramvalues[promptnum].type = 'l';
         paramvalues[promptnum].uval.ch.val  = (int)bailoutest;
@@ -1382,7 +1382,7 @@ gfp_top:
         choices[promptnum++] = "Bailout Test (mod, real, imag, or, and, manh, manr)";
     }
 
-    if (i) {
+    if (orbit_bailout) {
         if (potparam[0] != 0.0 && potparam[2] != 0.0)
         {
             paramvalues[promptnum].type = '*';
@@ -1397,10 +1397,10 @@ gfp_top:
             tmpptr = type_name;
             if (usr_biomorph != -1)
             {
-                i = 100;
+                orbit_bailout = 100;
                 tmpptr = "biomorph";
             }
-            sprintf(bailoutmsg,"    (%s default is %d)",tmpptr,i);
+            sprintf(bailoutmsg,"    (%s default is %d)",tmpptr,orbit_bailout);
             choices[promptnum++] = bailoutmsg;
         }
     }
@@ -1524,7 +1524,7 @@ gfp_top:
     {
         oldhelpmode = helpmode;
         helpmode = curfractalspecific->helptext;
-        i = fullscreen_prompt(msg,promptnum,choices,paramvalues,fkeymask,tstack);
+        int i = fullscreen_prompt(msg,promptnum,choices,paramvalues,fkeymask,tstack);
         helpmode = oldhelpmode;
         if (i < 0)
         {
@@ -1541,7 +1541,7 @@ gfp_top:
                 ret = 1;
     }
     promptnum = 0;
-    for (i = firstparm; i < numparams+firstparm; i++)
+    for (int i = firstparm; i < numparams+firstparm; i++)
     {
         if (curtype == FORMULA || curtype == FFORMULA)
             if (paramnotused(i))
@@ -1554,7 +1554,7 @@ gfp_top:
         ++promptnum;
     }
 
-    for (i = 0; i < numtrig; i++)
+    for (int i = 0; i < numtrig; i++)
     {
         if (paramvalues[promptnum].uval.ch.val != (int)trigndx[i])
         {
@@ -1569,9 +1569,8 @@ gfp_top:
         curfractalspecific = jborbit;
     }
 
-    i = curfractalspecific->orbit_bailout;
-
-    if (i != 0 && curfractalspecific->calctype == StandardFractal &&
+    orbit_bailout = curfractalspecific->orbit_bailout;
+    if (orbit_bailout != 0 && curfractalspecific->calctype == StandardFractal &&
             (curfractalspecific->flags & BAILTEST)) {
         if (paramvalues[promptnum].uval.ch.val != (int)bailoutest) {
             bailoutest = (enum bailouts)paramvalues[promptnum].uval.ch.val;
@@ -1583,7 +1582,7 @@ gfp_top:
         bailoutest = Mod;
     setbailoutformula(bailoutest);
 
-    if (i) {
+    if (orbit_bailout) {
         if (potparam[0] != 0.0 && potparam[2] != 0.0)
             promptnum++;
         else
@@ -1596,6 +1595,7 @@ gfp_top:
             promptnum++;
         }
     }
+
     if (julibrot)
     {
         mxmaxfp    = paramvalues[promptnum++].uval.dval;
