@@ -259,7 +259,9 @@ int Lsystem()
         lsysi_dosincos();
         if (lsysi_findscale(rules2[0], &ts, &rules2[1], order))
         {
-            ts.realangle = ts.angle = ts.reverse = 0;
+            ts.reverse = 0;
+            ts.angle = ts.reverse;
+            ts.realangle = ts.angle;
 
             free_lcmds();
             sc = rules2;
@@ -294,7 +296,9 @@ int Lsystem()
 
         lsysf_dosincos();
         if (lsysf_findscale(rules2[0], &ts, &rules2[1], order)) {
-            ts.realangle = ts.angle = ts.reverse = 0;
+            ts.reverse = 0;
+            ts.angle = ts.reverse;
+            ts.realangle = ts.angle;
 
             free_lcmds();
             sc = rules2;
@@ -360,7 +364,8 @@ static bool append_rule(char *rule, int index)
 {
     char *dst, *old, *sav;
 
-    old = sav = ruleptrs[index];
+    sav = ruleptrs[index];
+    old = sav;
     int i;
     for (i = 0; *(old++); i++)
         ;
@@ -701,16 +706,16 @@ lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct l
 
     locaspect=screenaspect*xdots/ydots;
     ts->aspect = FIXEDPT(locaspect);
-    ts->xpos =
-        ts->ypos =
-            ts->xmin =
-                ts->xmax =
-                    ts->ymax =
-                        ts->ymin =
-                            ts->realangle =
-                                ts->angle =
-                                    ts->reverse =
-                                        ts->counter = 0;
+    ts->counter = 0;
+    ts->reverse = ts->counter;
+    ts->angle = ts->reverse;
+    ts->realangle = ts->angle;
+    ts->ymin = ts->realangle;
+    ts->ymax = ts->ymin;
+    ts->xmax = ts->ymax;
+    ts->xmin = ts->xmax;
+    ts->ypos = ts->xmin;
+    ts->xpos = ts->ypos;
     ts->size=FIXEDPT(1L);
     fsret = findsize(command,ts,rules,depth);
     thinking(0, nullptr); /* erase thinking message if any */
