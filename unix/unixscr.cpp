@@ -1593,7 +1593,7 @@ handleesc()
     }
 }
 
-extern int editpal_cursor;
+extern bool editpal_cursor;
 extern void Cursor_SetPos();
 
 bool XZoomWaiting = false;

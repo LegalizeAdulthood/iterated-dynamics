@@ -172,7 +172,7 @@ static const int mousefkey[4][4] /* [button][dir] */ = {
 #define DEFY 480
 #define DEFXY "640x480+0+0"
 
-extern int editpal_cursor;
+extern bool editpal_cursor;
 extern void Cursor_SetPos();
 
 #define SENS 1

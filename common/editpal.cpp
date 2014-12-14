@@ -52,7 +52,7 @@ char undofile[] = "FRACTINT.$$2";  /* file where undo list is stored */
 #define deallocate(block)  block=nullptr  /* just for warning */
 
 #ifdef XFRACT
-int editpal_cursor = 0;
+bool editpal_cursor = false;
 #endif
 
 
@@ -648,12 +648,12 @@ void Cursor_Show()
 #ifdef XFRACT
 void Cursor_StartMouseTracking()
 {
-    editpal_cursor = 1;
+    editpal_cursor = true;
 }
 
 void Cursor_EndMouseTracking()
 {
-    editpal_cursor = 0;
+    editpal_cursor = false;
 }
 #endif
 
