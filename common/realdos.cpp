@@ -1555,7 +1555,8 @@ int input_field(
             break;
         case FIK_F5:
             strcpy(fld,savefld);
-            insert = offset = 0;
+            offset = 0;
+            insert = offset;
             started = false;
             display = true;
             break;
