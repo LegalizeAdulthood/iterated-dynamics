@@ -1355,7 +1355,7 @@ int ifsload()                   /* read in IFS parameters */
 bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
 {
     FILE *infile=nullptr;
-    int found = 0;
+    bool found = false;
     char parsearchname[ITEMNAMELEN + 6];
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
@@ -1370,7 +1370,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
     if (stricmp(filename, CommandFile)) {
         if ((infile=fopen(filename, "rb")) != nullptr) {
             if (scan_entries(infile, nullptr, itemname) == -1) {
-                found = 1;
+                found = true;
             }
             else {
                 fclose(infile);
@@ -1383,7 +1383,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
             if ((infile=fopen(fullpath, "rb")) != nullptr) {
                 if (scan_entries(infile, nullptr, itemname) == -1) {
                     strcpy(filename, fullpath);
-                    found = 1;
+                    found = true;
                 }
                 else {
                     fclose(infile);
@@ -1427,7 +1427,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
         if ((infile=fopen(CommandFile, "rb")) != nullptr) {
             if (scan_entries(infile, nullptr, parsearchname) == -1) {
                 strcpy(filename, CommandFile);
-                found = 1;
+                found = true;
             }
             else {
                 fclose(infile);
@@ -1441,7 +1441,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
         if ((infile=fopen(fullpath, "rb")) != nullptr) {
             if (scan_entries(infile, nullptr, itemname) == -1) {
                 strcpy(filename, fullpath);
-                found = 1;
+                found = true;
             }
             else {
                 fclose(infile);
@@ -1467,7 +1467,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
                 if ((infile=fopen(fullpath, "rb")) != nullptr) {
                     if (scan_entries(infile, nullptr, itemname) == -1) {
                         strcpy(filename, fullpath);
-                        found = 1;
+                        found = true;
                         break;
                     }
                     else {
@@ -1509,7 +1509,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
         if ((infile=fopen(fullpath, "rb")) != nullptr) {
             if (scan_entries(infile, nullptr, itemname) == -1) {
                 strcpy(filename, fullpath);
-                found = 1;
+                found = true;
             }
             else {
                 fclose(infile);
