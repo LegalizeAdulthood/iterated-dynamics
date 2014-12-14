@@ -2338,7 +2338,9 @@ int froth_per_orbit()
             g_new.y = 2.0*old.x*old.y - fsp.fl.f.a*old.x + old.y;
         }
 
-        if ((tempsqrx=sqr(g_new.x)) + (tempsqry=sqr(g_new.y)) >= rqlim)
+        tempsqrx = sqr(g_new.x);
+        tempsqry = sqr(g_new.y);
+        if (tempsqrx + tempsqry >= rqlim)
             return 1;
         old = g_new;
     }
