@@ -1266,7 +1266,10 @@ int orbit2dfloat()
     struct affine cvt;
     int ret;
 
-    soundvar = p0 = p1 = p2 = nullptr;
+    p2 = nullptr;
+    p1 = p2;
+    p0 = p1;
+    soundvar = p0;
 
     fp = open_orbitsave();
     /* setup affine screen coord conversion */
@@ -1313,12 +1316,14 @@ int orbit2dfloat()
         color = 2;
     }
 
-    oldcol = oldrow = -1;
+    oldrow = -1;
+    oldcol = oldrow;
     x = initorbitfp[0];
     y = initorbitfp[1];
     z = initorbitfp[2];
     coloriter = 0L;
-    count = ret = 0;
+    ret = 0;
+    count = ret;
     if (maxit > 0x1fffffL || maxct)
     {
         maxct = 0x7fffffffL;
@@ -1400,7 +1405,8 @@ int orbit2dfloat()
         }
         else
         {
-            oldrow = oldcol = -1;
+            oldcol = -1;
+            oldrow = oldcol;
         }
 
         if (FORBIT(p0, p1, p2))
@@ -1432,7 +1438,10 @@ int orbit2dlong()
     int ret;
 
     bool start = true;
-    soundvar = p0 = p1 = p2 = nullptr;
+    p2 = nullptr;
+    p1 = p2;
+    p0 = p1;
+    soundvar = p0;
     fp = open_orbitsave();
 
     /* setup affine screen coord conversion */
@@ -1482,11 +1491,13 @@ int orbit2dlong()
     {
         color = 1;
     }
-    oldcol = oldrow = -1;
+    oldrow = -1;
+    oldcol = oldrow;
     x = initorbitlong[0];
     y = initorbitlong[1];
     z = initorbitlong[2];
-    count = ret = 0;
+    ret = 0;
+    count = ret;
     if (maxit > 0x1fffffL || maxct)
     {
         maxct = 0x7fffffffL;
@@ -1565,7 +1576,8 @@ int orbit2dlong()
         }
         else
         {
-            oldrow = oldcol = -1;
+            oldcol = -1;
+            oldrow = oldcol;
         }
 
         /* Calculate the next point */
@@ -1598,7 +1610,10 @@ static int orbit3dlongcalc()
     /* setup affine screen coord conversion */
     l_setup_convert_to_screen(&inf.cvt);
 
-    oldcol1 = oldrow1 = oldcol = oldrow = -1;
+    oldrow = -1;
+    oldcol = oldrow;
+    oldrow1 = oldcol;
+    oldcol1 = oldrow1;
     color = 2;
     if (color >= colors)
         color = 1;
@@ -1612,7 +1627,8 @@ static int orbit3dlongcalc()
 
     fp = open_orbitsave();
 
-    count = ret = 0;
+    ret = 0;
+    count = ret;
     if (maxit > 0x1fffffL || maxct)
         maxct = 0x7fffffffL;
     else
@@ -1697,8 +1713,10 @@ static int orbit3dfloatcalc()
     /* setup affine screen coord conversion */
     setup_convert_to_screen(&inf.cvt);
 
-    oldcol = oldrow = -1;
-    oldcol1 = oldrow1 = -1;
+    oldrow = -1;
+    oldcol = oldrow;
+    oldrow1 = -1;
+    oldcol1 = oldrow1;
     color = 2;
     if (color >= colors)
         color = 1;
@@ -1716,7 +1734,8 @@ static int orbit3dfloatcalc()
         maxct = 0x7fffffffL;
     else
         maxct = maxit*1024L;
-    count = coloriter = 0L;
+    coloriter = 0L;
+    count = coloriter;
     while (coloriter++ <= maxct) /* loop until keypress or maxit */
     {
         /* calc goes here */
@@ -1854,7 +1873,8 @@ int dynam2dfloat()
         color = inside;
     if (color >= colors)
         color = 1;
-    oldcol = oldrow = -1;
+    oldrow = -1;
+    oldcol = oldrow;
 
     xstep = -1;
     ystep = 0;
@@ -1932,7 +1952,10 @@ int dynam2dfloat()
             else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL) /* sanity check */
                 return (ret);
             else
-                oldrow = oldcol = -1;
+            {
+                oldcol = -1;
+                oldrow = oldcol;
+            }
 
             if (FORBIT(p0, p1, nullptr))
                 break;
@@ -2301,7 +2324,8 @@ static int ifs2d()
 
     fp = open_orbitsave();
 
-    x = y = 0;
+    y = 0;
+    x = y;
     ret = 0;
     if (maxit > 0x1fffffL)
         maxct = 0x7fffffffL;
@@ -2565,7 +2589,8 @@ static bool long3dviewtransf(struct long3dvtinf *inf)
 
         if (coloriter == waste) /* time to work it out */
         {
-            inf->iview[0] = inf->iview[1] = 0L; /* center viewer on origin */
+            inf->iview[1] = 0L;
+            inf->iview[0] = inf->iview[1]; /* center viewer on origin */
 
             /* z value of user's eye - should be more negative than extreme
                            negative part of image */
@@ -2648,9 +2673,15 @@ static bool long3dviewtransf(struct long3dvtinf *inf)
     if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
     {
         if ((long)abs(inf->col)+(long)abs(inf->row) > BAD_PIXEL)
-            inf->col= inf->row = -2;
+        {
+            inf->row = -2;
+            inf->col = inf->row;
+        }
         else
-            inf->col= inf->row = -1;
+        {
+            inf->row = -1;
+            inf->col = inf->row;
+        }
     }
     if (realtime)
     {
@@ -2665,9 +2696,15 @@ static bool long3dviewtransf(struct long3dvtinf *inf)
         if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
         {
             if ((long)abs(inf->col1)+(long)abs(inf->row1) > BAD_PIXEL)
-                inf->col1= inf->row1 = -2;
+            {
+                inf->row1 = -2;
+                inf->col1 = inf->row1;
+            }
             else
-                inf->col1= inf->row1 = -1;
+            {
+                inf->row1 = -1;
+                inf->col1 = inf->row1;
+            }
         }
     }
     return true;
@@ -2705,7 +2742,8 @@ static bool float3dviewtransf(struct float3dvtinf *inf)
         }
         if (coloriter == waste) /* time to work it out */
         {
-            view[0] = view[1] = 0; /* center on origin */
+            view[1] = 0;
+            view[0] = view[1]; /* center on origin */
             /* z value of user's eye - should be more negative than extreme
                               negative part of image */
             view[2] = (inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0;
@@ -2749,9 +2787,15 @@ static bool float3dviewtransf(struct float3dvtinf *inf)
     if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
     {
         if ((long)abs(inf->col)+(long)abs(inf->row) > BAD_PIXEL)
-            inf->col= inf->row = -2;
+        {
+            inf->row = -2;
+            inf->col = inf->row;
+        }
         else
-            inf->col= inf->row = -1;
+        {
+            inf->row = -1;
+            inf->col = inf->row;
+        }
     }
     if (realtime)
     {
@@ -2762,9 +2806,15 @@ static bool float3dviewtransf(struct float3dvtinf *inf)
         if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
         {
             if ((long)abs(inf->col1)+(long)abs(inf->row1) > BAD_PIXEL)
-                inf->col1= inf->row1 = -2;
+            {
+                inf->row1 = -2;
+                inf->col1 = inf->row1;
+            }
             else
-                inf->col1= inf->row1 = -1;
+            {
+                inf->row1 = -1;
+                inf->col1 = inf->row1;
+            }
         }
     }
     return true;
