@@ -388,7 +388,8 @@ int get_toggles2()
 
     choices[++k] = "Potential Max Color (0 means off)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = (int)(old_potparam[0] = potparam[0]);
+    old_potparam[0] = potparam[0];
+    uvalues[k].uval.ival = (int) old_potparam[0];
 
     choices[++k] = "          Slope";
     uvalues[k].type = 'd';
