@@ -63,7 +63,9 @@ FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
     if ((*csize = header[O_COMMENTLEN]) != 0)
         fread(cp, *csize, 1, fp);
 
-    state = count = bufp = 0;
+    bufp = 0;
+    count = bufp;
+    state = count;
     return fp;
 }
 
