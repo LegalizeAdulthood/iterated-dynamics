@@ -75,7 +75,7 @@ extern int _splitpath(const char *file_template, char *drive, char *dir, char *f
 #define BUFFER_SIZE   (30*1024)
 
 
-typedef struct
+struct LINK
 {
     int      type;          /* 0 = name is topic title, 1 = name is label, */
                             /*   2 = "special topic"; name is nullptr and */
@@ -86,16 +86,16 @@ typedef struct
     char    *name;          /* name of label or title of topic to link to */
     char    *srcfile;       /* .SRC file link appears in */
     int      srcline;       /* .SRC file line # link appears in */
-} LINK;
+};
 
 
-typedef struct
+struct PAGE
 {
     unsigned offset;     /* offset from start of topic text */
     unsigned length;     /* length of page (in chars) */
     int      margin;     /* if > 0 then page starts in_para and text */
     /* should be indented by this much */
-} PAGE;
+};
 
 
 /* values for TOPIC.flags */
@@ -104,7 +104,7 @@ typedef struct
 #define TF_DATA    (2)       /* 1 if it is a "data" topic */
 
 
-typedef struct
+struct TOPIC
 {
     unsigned  flags;          /* see #defines for TF_??? */
     int       doc_page;       /* page number in document where topic starts */
@@ -115,16 +115,16 @@ typedef struct
     unsigned  text_len;       /* lenth of topic text */
     long      text;           /* topic text (all pages) */
     long      offset;         /* offset to topic from start of file */
-} TOPIC;
+};
 
 
-typedef struct
+struct LABEL
 {
     char    *name;            /* its name */
     int      topic_num;       /* topic number */
     unsigned topic_off;       /* offset of label in the topic's text */
     int      doc_page;
-} LABEL;
+};
 
 
 /* values for CONTENT.flags */
@@ -135,7 +135,7 @@ typedef struct
 #define MAX_CONTENT_TOPIC (10)
 
 
-typedef struct
+struct CONTENT
 {
     unsigned  flags;
     char     *id;
@@ -148,7 +148,7 @@ typedef struct
     int       topic_num[MAX_CONTENT_TOPIC];
     char     *srcfile;
     int       srcline;
-} CONTENT;
+};
 
 
 struct help_sig_info
@@ -156,7 +156,7 @@ struct help_sig_info
     unsigned long sig;
     int           version;
     unsigned long base;
-} ;
+};
 
 
 int      num_topic        = 0;    /* topics */
@@ -208,13 +208,14 @@ bool xdoc = false;
 
 #define  MAX_INCLUDE_STACK (5)    /* allow 5 nested includes */
 
-struct
+struct include_stack_entry
 {
     char *fname;
     FILE *file;
     int   line;
     int   col;
-} include_stack[MAX_INCLUDE_STACK];
+};
+include_stack_entry include_stack[MAX_INCLUDE_STACK];
 int include_stack_top = -1;
 
 void check_buffer(char *current, unsigned off, char *buffer);
@@ -2647,7 +2648,7 @@ void paginate_online()    /* paginate the text for on-line help */
 #define LINK_DEST_WARN 2
 
 
-typedef struct
+struct PAGINATE_DOC_INFO
 {
     int      cnum,  /* must match above #defines so pd_get_info() will work */
              tnum,
@@ -2657,7 +2658,7 @@ typedef struct
     CONTENT  *c;
     LABEL    *lbl;
 
-} PAGINATE_DOC_INFO;
+};
 
 
 LABEL *find_next_label_by_topic(int t)
@@ -3214,7 +3215,7 @@ void write_help(char *fname)
  */
 
 
-typedef struct
+struct PRINT_DOC_INFO
 {
 
     /*
@@ -3230,7 +3231,7 @@ typedef struct
     int      margin;
     int      start_of_line;
     int      spaces;
-} PRINT_DOC_INFO;
+};
 
 
 void printerc(PRINT_DOC_INFO *info, int c, int n)
