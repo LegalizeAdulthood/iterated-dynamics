@@ -235,7 +235,8 @@ int get_toggles()
 
     choices[++k] = "Proximity value for inside=epscross and fmod";
     uvalues[k].type = 'f'; /* should be 'd', but prompts get messed up */
-    uvalues[k].uval.dval = old_closeprox = closeprox;
+    old_closeprox = closeprox;
+    uvalues[k].uval.dval = old_closeprox;
 
     int const oldhelpmode = helpmode;
     helpmode = HELPXOPTS;
