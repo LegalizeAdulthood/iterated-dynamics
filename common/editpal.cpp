@@ -467,9 +467,9 @@ static bool is_reserved(int color)
 
 
 
-static BOOLEAN is_in_box(int x, int y, int bx, int by, int bw, int bd)
+static bool is_in_box(int x, int y, int bx, int by, int bw, int bd)
 {
-    return (BOOLEAN)((x >= bx) && (y >= by) && (x < bx+bw) && (y < by+bd));
+    return (x >= bx) && (y >= by) && (x < bx+bw) && (y < by+bd);
 }
 
 
