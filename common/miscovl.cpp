@@ -1430,7 +1430,7 @@ static void put_bf(int slash,bf_t r, int prec)
 }
 
 static int entnums[MAXVIDEOMODES];
-static int modes_changed;
+static bool modes_changed = false;
 
 int select_video_mode(int curmode)
 {
@@ -1474,7 +1474,7 @@ int select_video_mode(int curmode)
 
     bool const oldtabmode = tabmode;
     oldhelpmode = helpmode;
-    modes_changed = 0;
+    modes_changed = false;
     tabmode = false;
     helpmode = HELPVIDSEL;
     i = fullscreen_choice(CHOICE_HELP,
@@ -1569,7 +1569,7 @@ static int check_modekey(int curkey,int choice)
             if (curkey == '-') {                   /* deassign key? */
                 if (g_video_table[i].keynum >= 1084) {
                     g_video_table[i].keynum = 0;
-                    modes_changed = 1;
+                    modes_changed = true;
                 }
             }
             else {                                 /* assign key? */
@@ -1582,7 +1582,7 @@ static int check_modekey(int curkey,int choice)
                         }
                     }
                     g_video_table[i].keynum = j;
-                    modes_changed = 1;
+                    modes_changed = true;
                 }
             }
         }
