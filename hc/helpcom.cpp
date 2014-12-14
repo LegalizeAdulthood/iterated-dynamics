@@ -274,15 +274,14 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
     PD_INFO   pd;
     char      nl = '\n',
               sp = ' ';
-    int       first_section,
-              first_topic;
+    int       first_topic;
 
     pd.pnum = 1;
     pd.lnum = 0;
 
     output(PD_HEADING, &pd, info);
 
-    first_section = 1;
+    bool first_section = true;
 
     while (get_info(PD_GET_CONTENT, &pd, info))
     {
@@ -627,7 +626,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
             first_topic = 0;
         } /* while */
 
-        first_section = 0;
+        first_section = false;
     } /* while */
 
     if (!output(PD_FOOTING, &pd, info))
