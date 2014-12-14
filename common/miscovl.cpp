@@ -1125,7 +1125,10 @@ docolors:
                             /* end Sylvie's fix */
                             delta = (int)g_dac_box[scanc][j] - (int)g_dac_box[scanc-k-1][j];
                             if (k == scanc - curc)
-                                diff1[k][j] = diff2[k][j] = delta;
+                            {
+                                diff2[k][j] = delta;
+                                diff1[k][j] = diff2[k][j];
+                            }
                             else if (delta != diff1[k][j] && delta != diff2[k][j]) {
                                 diffmag = abs(delta - diff1[k][j]);
                                 if (diff1[k][j] != diff2[k][j] || diffmag != 1)
