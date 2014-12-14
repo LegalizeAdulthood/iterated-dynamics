@@ -71,7 +71,7 @@ void ExitCheck();
 U16 MemoryAlloc(U16 size, long count, int stored_at);
 void MemoryRelease(U16 handle);
 bool MoveToMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle);
-int MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle);
+bool MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle);
 int SetMemory(int value,U16 size,long count,long offset,U16 handle);
 
 /* Memory handling support routines */
@@ -446,24 +446,23 @@ diskerror:
     return success;
 }
 
-int MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
+bool MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
 {   /* buffer points is the location to move the data to */
     /* offset is the number of units from the beginning of buffer to start moving */
     /* size is the size of the unit, count is the number of units to move */
-    /* Returns TRUE if successful, FALSE if failure */
+    /* Returns true if successful, false if failure */
     BYTE diskbuf[DISKWRITELEN];
     long start; /* first location to move */
     long tomove; /* number of bytes to move */
     U16 numread;
-    int success;
 
-    success = FALSE;
     start = (long)offset * size;
     tomove = (long)count * size;
     if (debugflag == 10000)
         if (CheckBounds(start, tomove, handle))
-            return (success); /* out of bounds, don't do it */
+            return false; /* out of bounds, don't do it */
 
+    bool success = false;
     switch (handletable[handle].Nowhere.stored_at)
     {
     case NOWHERE: /* MoveFromMemory */
@@ -476,7 +475,7 @@ int MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
             start += count;
             buffer += count;
         }
-        success = TRUE; /* No way to gauge success or failure */
+        success = true; /* No way to gauge success or failure */
         break;
 
     case DISK: /* MoveFromMemory */
@@ -499,13 +498,13 @@ int MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
             break;
         }
         memcpy(buffer,diskbuf,(U16)tomove);
-        success = TRUE;
+        success = true;
 diskerror:
         break;
     } /* end of switch */
     if (!success && debugflag == 10000)
         DisplayHandle(handle);
-    return (success);
+    return success;
 }
 
 int SetMemory(int value,U16 size,long count,long offset,U16 handle)
