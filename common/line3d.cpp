@@ -174,9 +174,15 @@ int line3d(BYTE * pixels, unsigned linelen)
 
 
     if (transparent[0] || transparent[1])
-        plot = normalplot = T_clipcolor;  /* Use transparent plot function */
-    else                         /* Use the usual FRACTINT plot function with clipping */
-        plot = normalplot = clipcolor;
+    {
+        normalplot = T_clipcolor;
+        plot = normalplot;          /* Use transparent plot function */
+    }
+    else                            /* Use the usual FRACTINT plot function with clipping */
+    {
+        normalplot = clipcolor;
+        plot = normalplot;
+    }
 
     currow = g_row_count;           /* use separate variable to allow for pot16bit files */
     if (pot16bit)
@@ -198,8 +204,10 @@ int line3d(BYTE * pixels, unsigned linelen)
         crossavg[0] = 0;
         crossavg[1] = 0;
         crossavg[2] = 0;
-        xcenter0 = (int)(xcenter = xdots / 2 + xshift);
-        ycenter0 = (int)(ycenter = ydots / 2 - yshift);
+        xcenter = xdots / 2 + xshift;
+        xcenter0 = (int) xcenter;
+        ycenter = ydots / 2 - yshift;
+        ycenter0 = (int) ycenter;
     }
     /* make sure these pixel coordinates are out of range */
     old = bad;
@@ -279,7 +287,9 @@ int line3d(BYTE * pixels, unsigned linelen)
                 (!(!RAY && FILLTYPE > 4 && col == 1)))
             goto loopbottom;
 
-        f_cur.color = (float)(cur.color = Real_Color = pixels[col]);
+        Real_Color = pixels[col];
+        cur.color = Real_Color;
+        f_cur.color = (float) cur.color;
 
         if (RAY || preview || FILLTYPE < 0)
         {
@@ -293,7 +303,11 @@ int line3d(BYTE * pixels, unsigned linelen)
             next = lastdot;
 
         if (cur.color > 0 && cur.color < WATERLINE)
-            f_cur.color = (float)(cur.color = Real_Color = (BYTE)WATERLINE);  /* "lake" */
+        {
+            Real_Color = (BYTE) WATERLINE;
+            cur.color = Real_Color;
+            f_cur.color = (float) cur.color;  /* "lake" */
+        }
         else if (pot16bit)
             f_cur.color += ((float) fraction[col]) / (float)(1 << 8);
 
@@ -377,13 +391,15 @@ int line3d(BYTE * pixels, unsigned linelen)
             else if (!(persp && RAY))
             {
                 /* Why the xx- and yyadjust here and not above? */
-                cur.x = (int)(f_cur.x = (float)(xcenter
-                                                + sintheta * sclx * r + xxadjust));
-                cur.y = (int)(f_cur.y = (float)(ycenter
-                                                + costheta * cosphi * scly * r + yyadjust));
+                f_cur.x = (float) (xcenter + sintheta*sclx*r + xxadjust);
+                cur.x = (int) f_cur.x;
+                f_cur.y = (float)(ycenter + costheta*cosphi*scly*r + yyadjust);
+                cur.y = (int) f_cur.y;
                 if (FILLTYPE >= 5 || RAY)        /* why do we do this for filltype>5? */
                     f_cur.color = (float)(-r * costheta * sinphi * sclz);
-                v[0] = v[1] = v[2] = 0;  /* Why do we do this? */
+                v[2] = 0;               /* Why do we do this? */
+                v[1] = v[2];
+                v[0] = v[1];
             }
         }
         else                            /* non-sphere 3D */
@@ -686,7 +702,8 @@ int line3d(BYTE * pixels, unsigned linelen)
                     {
                         stopmsg(0, "debug, cur.color=bad");
                     }
-                    cur.color = (int)(f_cur.color = (float) bad.color);
+                    f_cur.color = (float) bad.color;
+                    cur.color = (int) f_cur.color;
                 }
                 else
                 {
@@ -728,7 +745,8 @@ int line3d(BYTE * pixels, unsigned linelen)
                                  * f_lastrow[col-1].y,f_lastrow[col-1].color);
                                  * stopmsg(0,msg); */
                             }
-                            cur.color = (int)(f_cur.color = (float) colors);
+                            f_cur.color = (float) colors;
+                            cur.color = (int) f_cur.color;
                         }
                     }
                     crossavg[0] = tmpcross[0];
@@ -773,10 +791,12 @@ loopbottom:
         {
             /* for triangle and grid fill purposes */
             oldlast = lastrow[col];
-            old = lastrow[col] = cur;
+            lastrow[col] = cur;
+            old = lastrow[col];
 
             /* for illumination model purposes */
-            f_old = f_lastrow[col] = f_cur;
+            f_lastrow[col] = f_cur;
+            f_old = f_lastrow[col];
             if (currow && RAY && col >= lastdot)
                 /* if we're at the end of a row, close the object */
             {
@@ -838,17 +858,32 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
      * "bottom" - these points are the corners of the screen in the x-y plane.
      * The "t"'s stand for Top - they are the top of the cube where 255 color
      * points hit. */
-
-    *pxmin = *pymin = *pzmin = (int) INT_MAX;
-    *pxmax = *pymax = *pzmax = (int) INT_MIN;
+    *pzmin = (int) INT_MAX;
+    *pymin = *pzmin;
+    *pxmin = *pymin;
+    *pzmax = (int) INT_MIN;
+    *pymax = *pzmax;
+    *pxmax = *pymax;
 
     for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 3; i++)
-            S[0][j][i] = S[1][j][i] = 0;
+        {
+            S[1][j][i] = 0;
+            S[0][j][i] = S[1][j][i];
+        }
 
-    S[0][1][0] = S[0][2][0] = S[1][1][0] = S[1][2][0] = xdots - 1;
-    S[0][2][1] = S[0][3][1] = S[1][2][1] = S[1][3][1] = ydots - 1;
-    S[1][0][2] = S[1][1][2] = S[1][2][2] = S[1][3][2] = zcoord - 1;
+    S[1][2][0] = xdots - 1;
+    S[1][1][0] = S[1][2][0];
+    S[0][2][0] = S[1][1][0];
+    S[0][1][0] = S[0][2][0];
+    S[1][3][1] = ydots - 1;
+    S[1][2][1] = S[1][3][1];
+    S[0][3][1] = S[1][2][1];
+    S[0][2][1] = S[0][3][1];
+    S[1][3][2] = zcoord - 1;
+    S[1][2][2] = S[1][3][2];
+    S[1][1][2] = S[1][2][2];
+    S[1][0][2] = S[1][1][2];
 
     for (int i = 0; i < 4; ++i)
     {
@@ -921,8 +956,10 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
     VECTOR S[2][4] = { 0 };
     double temp;
 
-    S[1][0][0] = S[0][0][0] = origin[0];
-    S[1][0][1] = S[0][0][1] = origin[1];
+    S[0][0][0] = origin[0];
+    S[1][0][0] = S[0][0][0];
+    S[0][0][1] = origin[1];
+    S[1][0][1] = S[0][0][1];
 
     S[1][0][2] = direct[2];
 
@@ -1067,7 +1104,8 @@ static void putatriangle(struct point pt1, struct point pt2, struct point pt3, i
     }
 
     /* find min max y */
-    miny = maxy = p1.y;
+    maxy = p1.y;
+    miny = maxy;
     if (p2.y < miny)
         miny = p2.y;
     else
