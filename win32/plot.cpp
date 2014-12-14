@@ -461,15 +461,13 @@ void plot_draw_line(Plot *me, int x1, int y1, int x2, int y2, int color)
 
 int plot_resize(Plot *me)
 {
-    BOOL status;
-
     if ((sxdots == me->width) && (sydots == me->height))
     {
         return 0;
     }
 
     init_pixels(me);
-    status = SetWindowPos(me->window, nullptr, 0, 0, me->width, me->height, SWP_NOZORDER | SWP_NOMOVE);
+    BOOL status = SetWindowPos(me->window, nullptr, 0, 0, me->width, me->height, SWP_NOZORDER | SWP_NOMOVE);
     _ASSERTE(status);
 
     return !0;

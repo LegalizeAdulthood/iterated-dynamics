@@ -36,7 +36,7 @@ static int carrot_count = 0;
 
         the subroutines and their functions are:
 
-BOOL wintext_initialize(HANDLE hInstance, LPSTR title);
+bool wintext_initialize(HANDLE hInstance, LPSTR title);
     Registers and initializes the text window - must be called
     once (and only once).  Its parameters are the handle of the application
     instance and a pointer to a string containing the title of the window.

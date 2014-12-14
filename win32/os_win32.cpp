@@ -359,10 +359,8 @@ int fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/fil
  */
 int fr_findnext()
 {
-    BOOL result = FALSE;
     _ASSERTE(INVALID_HANDLE_VALUE != s_find_context);
-    result = FindNextFile(s_find_context, &s_find_data);
-    if (result == FALSE)
+    if (!FindNextFile(s_find_context, &s_find_data))
     {
         DWORD code = GetLastError();
         _ASSERTE(ERROR_NO_MORE_FILES == code);
@@ -575,7 +573,6 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
         FALSE
     };
     HANDLE dump_file;
-    BOOL status = FALSE;
     int i = 1;
 
     if (debughlp == nullptr)
@@ -594,7 +591,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
                            0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
     _ASSERTE(dump_file != INVALID_HANDLE_VALUE);
 
-    status = (*dumper)(GetCurrentProcess(), GetCurrentProcessId(),
+    BOOL status = (*dumper)(GetCurrentProcess(), GetCurrentProcessId(),
                        dump_file, MiniDumpNormal, &mdei, nullptr, nullptr);
     _ASSERTE(status);
     if (!status)
