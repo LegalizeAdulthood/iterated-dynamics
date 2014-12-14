@@ -359,15 +359,15 @@ lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct l
 
     locaspect=screenaspect*xdots/ydots;
     ts->aspect = locaspect;
-    ts->xpos =
-        ts->ypos =
-            ts->xmin =
-                ts->xmax =
-                    ts->ymax =
-                        ts->ymin = 0;
-    ts->angle =
-        ts->reverse =
-            ts->counter = 0;
+    ts->ymin = 0;
+    ts->ymax = ts->ymin;
+    ts->xmax = ts->ymax;
+    ts->xmin = ts->xmax;
+    ts->ypos = ts->xmin;
+    ts->xpos = ts->ypos;
+    ts->counter = 0;
+    ts->reverse = ts->counter;
+    ts->angle = ts->reverse;
     ts->realangle = 0;
     ts->size = 1;
     lsys_prepfpu(ts);
