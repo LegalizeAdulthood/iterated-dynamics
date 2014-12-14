@@ -513,13 +513,13 @@ struct _Cursor
 
 /* private: */
 
-static  void    Cursor__Draw(void);
-static  void    Cursor__Save(void);
-static  void    Cursor__Restore(void);
+static  void    Cursor__Draw();
+static  void    Cursor__Save();
+static  void    Cursor__Restore();
 
 /* public: */
 #ifdef NOT_USED
-static  BOOLEAN Cursor_IsHidden(void);
+static  BOOLEAN Cursor_IsHidden();
 #endif
 
 
@@ -527,7 +527,7 @@ static  BOOLEAN Cursor_IsHidden(void);
 static Cursor *the_cursor = nullptr;
 
 
-BOOLEAN Cursor_Construct(void)
+BOOLEAN Cursor_Construct()
 {
     if (the_cursor != nullptr)
         return FALSE;
@@ -544,7 +544,7 @@ BOOLEAN Cursor_Construct(void)
 }
 
 
-void Cursor_Destroy(void)
+void Cursor_Destroy()
 {
     if (the_cursor != nullptr)
         deallocate(the_cursor);
@@ -554,7 +554,7 @@ void Cursor_Destroy(void)
 
 
 
-static void Cursor__Draw(void)
+static void Cursor__Draw()
 {
     int color;
 
@@ -569,7 +569,7 @@ static void Cursor__Draw(void)
 }
 
 
-static void Cursor__Save(void)
+static void Cursor__Save()
 {
     vgetrow(the_cursor->x, the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, the_cursor->t);
     vgetrow(the_cursor->x, the_cursor->y+2,             CURSOR_SIZE, the_cursor->b);
@@ -579,7 +579,7 @@ static void Cursor__Save(void)
 }
 
 
-static void Cursor__Restore(void)
+static void Cursor__Restore()
 {
     vputrow(the_cursor->x, the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, the_cursor->t);
     vputrow(the_cursor->x, the_cursor->y+2,             CURSOR_SIZE, the_cursor->b);
@@ -607,7 +607,7 @@ void Cursor_SetPos(int x, int y)
 
 #ifdef NOT_USED
 
-static int Cursor_IsHidden(void)
+static int Cursor_IsHidden()
 {
     return the_cursor->hidden;
 }
@@ -641,23 +641,23 @@ void Cursor_Move(int xoff, int yoff)
 }
 
 
-int Cursor_GetX(void)   {
+int Cursor_GetX()   {
     return the_cursor->x;
 }
 
-int Cursor_GetY(void)   {
+int Cursor_GetY()   {
     return the_cursor->y;
 }
 
 
-void Cursor_Hide(void)
+void Cursor_Hide()
 {
     if (the_cursor->hidden++ == 0)
         Cursor__Restore();
 }
 
 
-void Cursor_Show(void)
+void Cursor_Show()
 {
     if (--the_cursor->hidden == 0)
     {
@@ -679,7 +679,7 @@ void Cursor_EndMouseTracking()
 #endif
 
 /* See if the cursor should blink yet, and blink it if so */
-void Cursor_CheckBlink(void)
+void Cursor_CheckBlink()
 {
     long tick;
     tick = readticker();
@@ -695,7 +695,7 @@ void Cursor_CheckBlink(void)
         the_cursor->last_blink = tick;
 }
 
-int Cursor_WaitKey(void)   /* blink cursor while waiting for a key */
+int Cursor_WaitKey()   /* blink cursor while waiting for a key */
 {
     while (!driver_wait_key_pressed(1))
     {
@@ -1621,7 +1621,7 @@ static void    PalTable__change(RGBEditor *rgb, void *info);
 
 /* public: */
 
-static PalTable *PalTable_Construct(void);
+static PalTable *PalTable_Construct();
 static void      PalTable_Destroy(PalTable *me);
 static void      PalTable_Process(PalTable *me);
 static void      PalTable_SetHidden(PalTable *me, BOOLEAN hidden);
@@ -3014,7 +3014,7 @@ static void PalTable__MkDefaultPalettes(PalTable *me)  /* creates default Fkey p
 
 
 
-static PalTable *PalTable_Construct(void)
+static PalTable *PalTable_Construct()
 {
     PalTable     *me = allocate(PalTable);
     int           csize;
@@ -3190,7 +3190,7 @@ static void PalTable_Process(PalTable *me)
 
 
 
-void EditPalette(void)       /* called by fractint */
+void EditPalette()       /* called by fractint */
 {
     int       oldlookatmouse = lookatmouse;
     int       oldsxoffs      = sxoffs;
