@@ -16,17 +16,17 @@ struct lsys_cmd {
 };
 
 static bool readLSystemFile(char *str);
-static void free_rules_mem(void);
+static void free_rules_mem();
 static int rule_present(char symbol);
 static bool save_rule(char *rule, char **saveptr);
 static bool append_rule(char *rule, int index);
-static void free_lcmds(void);
+static void free_lcmds();
 static struct lsys_cmd * findsize(struct lsys_cmd *,struct lsys_turtlestatei *, struct lsys_cmd **,int);
 static struct lsys_cmd * drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd **rules,int depth);
 static bool lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth);
 static struct lsys_cmd *LSysISizeTransform(char *s, struct lsys_turtlestatei *ts);
 static struct lsys_cmd *LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts);
-static void lsysi_dosincos(void);
+static void lsysi_dosincos();
 
 static void lsysi_doslash(struct lsys_turtlestatei *cmd);
 static void lsysi_dobslash(struct lsys_turtlestatei *cmd);
@@ -228,7 +228,7 @@ static bool readLSystemFile(char *str)
     return false;
 }
 
-int Lsystem(void)
+int Lsystem()
 {
     int order;
     struct lsys_cmd **sc;
@@ -317,7 +317,7 @@ int Lsystem(void)
     return 0;
 }
 
-bool LLoad(void)
+bool LLoad()
 {
     if (readLSystemFile(LName)) { /* error occurred */
         free_rules_mem();
@@ -328,7 +328,7 @@ bool LLoad(void)
     return false;
 }
 
-static void free_rules_mem(void)
+static void free_rules_mem()
 {
     for (int i = 0; i < MAXRULES; ++i)
         if (ruleptrs[i]) free(ruleptrs[i]);
@@ -377,7 +377,7 @@ static bool append_rule(char *rule, int index)
     return false;
 }
 
-static void free_lcmds(void)
+static void free_lcmds()
 {
     struct lsys_cmd **sc = rules2;
 
@@ -1031,7 +1031,7 @@ LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts)
     return doub;
 }
 
-static void lsysi_dosincos(void)
+static void lsysi_dosincos()
 {
     double locaspect;
     double TWOPI = 2.0 * PI;
