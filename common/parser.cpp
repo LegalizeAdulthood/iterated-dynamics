@@ -1570,7 +1570,8 @@ void dStkGT()
 void mStkGT()
 {
     Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == 1), 0);
-    Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
+    Arg2->m.y.Exp = 0;
+    Arg2->m.y.Mant = (long) Arg2->m.y.Exp;
     Arg1--;
     Arg2--;
 }
