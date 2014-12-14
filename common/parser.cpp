@@ -4425,7 +4425,7 @@ bool frm_prescan(FILE * open_file)
     struct token_st this_token;
     int errors_found = 0;
     bool ExpectingArg = true;
-    int NewStatement = 1;
+    bool NewStatement = true;
     int assignment_ok = 1;
     int already_got_colon = 0;
     unsigned long else_has_been_used = 0;
@@ -4544,7 +4544,7 @@ bool frm_prescan(FILE * open_file)
             break;
         case PARENS:
             assignment_ok = 0;
-            NewStatement = 0;
+            NewStatement = false;
             switch (this_token.token_id)
             {
             case OPEN_PARENS:
@@ -4613,7 +4613,7 @@ bool frm_prescan(FILE * open_file)
         case PARAM_VARIABLE: /*i.e. p1, p2, p3, p4 or p5*/
             number_of_ops++;
             number_of_loads++;
-            NewStatement = 0;
+            NewStatement = false;
             if (!ExpectingArg)
             {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -4643,7 +4643,7 @@ bool frm_prescan(FILE * open_file)
         case USER_NAMED_VARIABLE: /* i.e. c, iter, etc. */
             number_of_ops++;
             number_of_loads++;
-            NewStatement = 0;
+            NewStatement = false;
             if (!ExpectingArg)
             {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -4658,7 +4658,7 @@ bool frm_prescan(FILE * open_file)
         case PREDEFINED_VARIABLE: /* i.e. z, pixel, whitesq, etc. */
             number_of_ops++;
             number_of_loads++;
-            NewStatement = 0;
+            NewStatement = false;
             if (!ExpectingArg)
             {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -4701,7 +4701,7 @@ bool frm_prescan(FILE * open_file)
             assignment_ok = 0;
             number_of_ops++;
             number_of_loads++;
-            NewStatement = 0;
+            NewStatement = false;
             if (!ExpectingArg)
             {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -4717,7 +4717,7 @@ bool frm_prescan(FILE * open_file)
             assignment_ok = 0;
             number_of_ops++;
             number_of_loads++;
-            NewStatement = 0;
+            NewStatement = false;
             if (!ExpectingArg)
             {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -4731,7 +4731,7 @@ bool frm_prescan(FILE * open_file)
             break;
         case FUNCTION:
             assignment_ok = 0;
-            NewStatement = 0;
+            NewStatement = false;
             number_of_ops++;
             if (!ExpectingArg)
             {
@@ -4835,7 +4835,7 @@ bool frm_prescan(FILE * open_file)
             default:
                 break;
             }
-            NewStatement = 0;
+            NewStatement = false;
             break;
         case FLOW_CONTROL:
             assignment_ok = 0;
@@ -4985,7 +4985,7 @@ bool frm_prescan(FILE * open_file)
                 }
                 if (this_token.token_id == 11)
                     already_got_colon = 1;
-                NewStatement = 1;
+                NewStatement = true;
                 ExpectingArg = true;
                 assignment_ok = 1;
                 statement_pos = ftell(open_file);
