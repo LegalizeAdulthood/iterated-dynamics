@@ -294,12 +294,15 @@ bool orbit3dlongsetup()
             param[1] = .01;
         l_b = (long)(param[1]*fudge);     /* stepsize */
         l_c = (long)(param[2]*fudge);     /* stop */
-        t = (int)(l_d = (long)(param[3]));      /* points per orbit */
+        l_d = (long) param[3];
+        t = (int) l_d;      /* points per orbit */
 
         l_sinx = (long)(sin(a)*fudge);
         l_cosx = (long)(cos(a)*fudge);
         l_orbit = 0;
-        initorbitlong[0] = initorbitlong[1] = initorbitlong[2] = 0;
+        initorbitlong[2] = 0;
+        initorbitlong[1] = initorbitlong[2];
+        initorbitlong[0] = initorbitlong[1];
     }
     else if (fractype == INVERSEJULIA)
     {
@@ -359,12 +362,16 @@ bool orbit3dlongsetup()
             break;
         case random_walk:
 lrwalk:
-            lnew.x = initorbitlong[0] = fudge + Sqrt.x / 2;
-            lnew.y = initorbitlong[1] =         Sqrt.y / 2;
+            initorbitlong[0] = fudge + Sqrt.x / 2;
+            lnew.x = initorbitlong[0];
+            initorbitlong[1] =         Sqrt.y / 2;
+            lnew.y = initorbitlong[1];
             break;
         case random_run:
-            lnew.x = initorbitlong[0] = fudge + Sqrt.x / 2;
-            lnew.y = initorbitlong[1] =         Sqrt.y / 2;
+            initorbitlong[0] = fudge + Sqrt.x / 2;
+            lnew.x = initorbitlong[0];
+            initorbitlong[1] =         Sqrt.y / 2;
+            lnew.y = initorbitlong[1];
             break;
         }
     }
@@ -454,11 +461,14 @@ bool orbit3dfloatsetup()
             param[1] = .01;
         b =  param[1];    /* stepsize */
         c =  param[2];    /* stop */
-        t = (int)(l_d = (long)(param[3]));      /* points per orbit */
+        l_d = (long) param[3];
+        t = (int) l_d;      /* points per orbit */
         sinx = sin(a);
         cosx = cos(a);
         orbit = 0;
-        initorbitfp[0] = initorbitfp[1] = initorbitfp[2] = 0;
+        initorbitfp[2] = 0;
+        initorbitfp[1] = initorbitfp[2];
+        initorbitfp[0] = initorbitfp[1];
     }
     else if (fractype==FPHOPALONG || fractype==FPMARTIN || fractype==CHIP
              || fractype==QUADRUPTWO || fractype==THREEPLY)
@@ -527,13 +537,17 @@ bool orbit3dfloatsetup()
             break;
         case random_walk:
 rwalk:
-            g_new.x = initorbitfp[0] = 1 + Sqrt.x / 2;
-            g_new.y = initorbitfp[1] = Sqrt.y / 2;
+            initorbitfp[0] = 1 + Sqrt.x / 2;
+            g_new.x = initorbitfp[0];
+            initorbitfp[1] = Sqrt.y / 2;
+            g_new.y = initorbitfp[1];
             break;
         case random_run:       /* random run, choose intervals */
             major_method = random_run;
-            g_new.x = initorbitfp[0] = 1 + Sqrt.x / 2;
-            g_new.y = initorbitfp[1] = Sqrt.y / 2;
+            initorbitfp[0] = 1 + Sqrt.x / 2;
+            g_new.x = initorbitfp[0];
+            initorbitfp[1] = Sqrt.y / 2;
+            g_new.y = initorbitfp[1];
             break;
         }
     }
@@ -1022,7 +1036,8 @@ int kamtorusfloatorbit(double *r, double *s, double *z)
     if (t++ >= l_d)
     {
         orbit += b;
-        (*r) = (*s) = orbit/3;
+        (*s) = orbit/3;
+        (*r) = (*s);
         t = 0;
         *z = orbit;
         if (orbit > c)
@@ -1040,7 +1055,8 @@ int kamtoruslongorbit(long *r, long *s, long *z)
     if (t++ >= l_d)
     {
         l_orbit += l_b;
-        (*r) = (*s) = l_orbit/3;
+        (*s) = l_orbit/3;
+        (*r) = (*s);
         t = 0;
         *z = l_orbit;
         if (l_orbit > l_c)
