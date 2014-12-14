@@ -235,7 +235,8 @@ short decoder(short linewidth)
             if (c >= slot)
                 c = 0;
 
-            out_value = (BYTE)(old_code = c);
+            old_code = c;
+            out_value = (BYTE) old_code;
 
             /* And let us not forget to put the char into the buffer... */
             *sp++ = (BYTE) c;
@@ -319,7 +320,8 @@ short decoder(short linewidth)
             if (slot < top_slot)
             {
                 sizeofstring[slot] = (short)(sizeofstring[old_code] + 1);
-                suffix[slot] = out_value = (BYTE) code;
+                out_value = (BYTE) code;
+                suffix[slot] = out_value;
                 prefix[slot++] = old_code;
                 old_code = c;
             }
