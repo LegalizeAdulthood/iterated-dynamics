@@ -1884,7 +1884,7 @@ void load_fractint_config()
             if (vident.driver->validate_mode(vident.driver, &vident))
             {
                 /* look for a synonym mode and if found, overwite its key */
-                int synonym_found = FALSE;
+                bool synonym_found = false;
                 for (int m = 0; m < g_video_table_len; m++)
                 {
                     VIDEOINFO *mode = &g_video_table[m];
@@ -1896,12 +1896,12 @@ void load_fractint_config()
                         {
                             mode->keynum = vident.keynum;
                         }
-                        synonym_found = TRUE;
+                        synonym_found = true;
                         break;
                     }
                 }
                 /* no synonym found, append it to current list of video modes */
-                if (FALSE == synonym_found)
+                if (!synonym_found)
                 {
                     add_video_mode(vident.driver, &vident);
                 }
