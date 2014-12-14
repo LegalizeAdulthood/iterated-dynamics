@@ -905,10 +905,14 @@ void drawparmbox(int mode)
 
     boxcount =0;
     /*draw larger box to show parm zooming range */
-    tl.x = bl.x = ((px -(int)parmzoom) * (int)(dxsize+1+grout))-sxoffs-1;
-    tl.y = tr.y = ((py -(int)parmzoom) * (int)(dysize+1+grout))-syoffs-1;
-    br.x = tr.x = ((px +1+(int)parmzoom) * (int)(dxsize+1+grout))-sxoffs;
-    br.y = bl.y = ((py +1+(int)parmzoom) * (int)(dysize+1+grout))-syoffs;
+    bl.x = ((px -(int)parmzoom) * (int)(dxsize+1+grout))-sxoffs-1;
+    tl.x = bl.x;
+    tr.y = ((py -(int)parmzoom) * (int)(dysize+1+grout))-syoffs-1;
+    tl.y = tr.y;
+    tr.x = ((px +1+(int)parmzoom) * (int)(dxsize+1+grout))-sxoffs;
+    br.x = tr.x;
+    bl.y = ((py +1+(int)parmzoom) * (int)(dysize+1+grout))-syoffs;
+    br.y = bl.y;
 #ifndef XFRACT
     addbox(br);
     addbox(tr);
@@ -970,7 +974,8 @@ void spiralmap(int count)
     i = 0;
     mid = gridsz / 2;
     if (count == 0) { /* start in the middle */
-        px = py = mid;
+        py = mid;
+        px = py;
         return;
     }
     for (int offset = 1; offset <= mid; offset ++) {
@@ -1020,7 +1025,8 @@ int unspiralmap()
             ecountbox[px][py] = i;
         }
         oldgridsz = gridsz;
-        px = py = mid;
+        py = mid;
+        px = py;
         return (0);
     }
     return (ecountbox[px][py]);
