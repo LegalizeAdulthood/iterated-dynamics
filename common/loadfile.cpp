@@ -29,8 +29,8 @@ static int  find_fractal_info(char *,struct fractal_info *,
 static void load_ext_blk(char *loadptr,int loadlen);
 static void skip_ext_blk(int *,int *);
 static void backwardscompat(struct fractal_info *info);
-static bool fix_bof(void);
-static bool fix_period_bof(void);
+static bool fix_bof();
+static bool fix_period_bof();
 
 int filetype;
 bool loaded3d = false;
@@ -1073,7 +1073,7 @@ static void backwardscompat(struct fractal_info *info)
 }
 
 /* switch old bifurcation fractal types to new generalizations */
-void set_if_old_bif(void)
+void set_if_old_bif()
 {
     /* set functions if not set already, may need to check 'functionpreloaded'
        before calling this routine. */
@@ -1098,7 +1098,7 @@ void set_if_old_bif(void)
 }
 
 /* miscellaneous function variable defaults */
-void set_function_parm_defaults(void)
+void set_function_parm_defaults()
 {
     switch (fractype)
     {
@@ -1120,7 +1120,7 @@ void set_function_parm_defaults(void)
     }
 }
 
-void backwards_v18(void)
+void backwards_v18()
 {
     if (!functionpreloaded)
         set_if_old_bif(); /* old bifs need function set */
@@ -1132,7 +1132,7 @@ void backwards_v18(void)
         bailout = 2500;
 }
 
-void backwards_v19(void)
+void backwards_v19()
 {
     if (fractype==MARKSJULIA && save_release < 1825) {
         if (param[2] == 0)
@@ -1162,7 +1162,7 @@ void backwards_v19(void)
         use_old_distest = false;        /* use new distest code */
 }
 
-void backwards_v20(void)
+void backwards_v20()
 {   /* Fractype == FP type is not seen from PAR file ????? */
     if ((fractype == MANDELFP || fractype == JULIAFP ||
             fractype == MANDEL || fractype == JULIA) &&
@@ -1181,7 +1181,7 @@ void backwards_v20(void)
         set_function_parm_defaults();
 }
 
-int check_back(void) {
+int check_back() {
     /*
        put the features that need to save the value in save_release for backwards
        compatibility in this routine
@@ -1214,7 +1214,7 @@ int check_back(void) {
     return (ret);
 }
 
-static bool fix_bof(void)
+static bool fix_bof()
 {
     bool ret = false;
     if (inside <= BOF60 && inside >= BOF61 && save_release < 1826)
@@ -1225,7 +1225,7 @@ static bool fix_bof(void)
     return ret;
 }
 
-static bool fix_period_bof(void)
+static bool fix_period_bof()
 {
     bool ret = false;
     if (inside <= BOF60 && inside >= BOF61 && save_release < 1826)
@@ -1256,7 +1256,7 @@ static bool paramsOK(struct fractal_info *);
 static bool typeOK(struct fractal_info *, struct ext_blk_3 *);
 static bool functionOK(struct fractal_info *, int);
 static void check_history(char *, char *);
-static void bfsetup_convert_to_screen(void);
+static void bfsetup_convert_to_screen();
 static void bftransform(bf_t, bf_t, struct dblcoords *);
 
 char browsename[13]; /* name for browse file */
@@ -1272,7 +1272,7 @@ static bf_t   n_a, n_b, n_c, n_d, n_e, n_f;
 int oldbf_math;
 
 /* fgetwindow reads all .GIF files and draws window outlines on the screen */
-int fgetwindow(void)
+int fgetwindow()
 {
     struct affine stack_cvt;
     struct fractal_info read_info;
@@ -2010,7 +2010,7 @@ static void check_history(char *oldname, char *newname)
     }
 }
 
-static void bfsetup_convert_to_screen(void)
+static void bfsetup_convert_to_screen()
 {
     /* setup_convert_to_screen() in LORENZ.C, converted to bf_math */
     /* Call only from within fgetwindow() */
