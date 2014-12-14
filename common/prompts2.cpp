@@ -393,11 +393,13 @@ int get_toggles2()
 
     choices[++k] = "          Slope";
     uvalues[k].type = 'd';
-    uvalues[k].uval.dval = old_potparam[1] = potparam[1];
+    old_potparam[1] = potparam[1];
+    uvalues[k].uval.dval = old_potparam[1];
 
     choices[++k] = "          Bailout";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = (int)(old_potparam[2] = potparam[2]);
+    old_potparam[2] = potparam[2];
+    uvalues[k].uval.ival = (int) old_potparam[2];
 
     choices[++k] = "          16 bit values";
     uvalues[k].type = 'y';
