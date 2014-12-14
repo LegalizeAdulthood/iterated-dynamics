@@ -1475,14 +1475,15 @@ int input_field(
 {
     char savefld[81];
     char buf[81];
-    int insert, started, offset, curkey;
+    int curkey;
     int i, j;
-    int ret,savelookatmouse;
-    savelookatmouse = lookatmouse;
+    int savelookatmouse = lookatmouse;
     lookatmouse = 0;
-    ret = -1;
+    int ret = -1;
     strcpy(savefld,fld);
-    insert = started = offset = 0;
+    int insert = 0;
+    bool started = false;
+    int offset = 0;
     bool display = true;
     while (1) {
         strcpy(buf,fld);
@@ -1505,19 +1506,19 @@ int input_field(
             goto inpfld_end;
         case FIK_RIGHT_ARROW:
             if (offset < len-1) ++offset;
-            started = 1;
+            started = true;
             break;
         case FIK_LEFT_ARROW:
             if (offset > 0) --offset;
-            started = 1;
+            started = true;
             break;
         case FIK_HOME:
             offset = 0;
-            started = 1;
+            started = true;
             break;
         case FIK_END:
             offset = (int) strlen(fld);
-            started = 1;
+            started = true;
             break;
         case FIK_BACKSPACE:
         case 127:                              /* backspace */
@@ -1527,23 +1528,24 @@ int input_field(
                     fld[i] = fld[i+1];
                 --offset;
             }
-            started = 1;
+            started = true;
             display = true;
             break;
         case FIK_DELETE:                           /* delete */
             j = (int) strlen(fld);
             for (int i = offset; i < j; ++i)
                 fld[i] = fld[i+1];
-            started = 1;
+            started = true;
             display = true;
             break;
         case FIK_INSERT:                           /* insert */
             insert ^= 0x8000;
-            started = 1;
+            started = true;
             break;
         case FIK_F5:
             strcpy(fld,savefld);
-            insert = started = offset = 0;
+            insert = offset = 0;
+            started = false;
             display = true;
             break;
         default:
@@ -1566,7 +1568,7 @@ int input_field(
                         && curkey != '.')
                     break;
             }
-            if (started == 0) /* first char is data, zap field */
+            if (!started) /* first char is data, zap field */
                 fld[0] = 0;
             if (insert) {
                 j = (int) strlen(fld);
@@ -1601,7 +1603,7 @@ int input_field(
                     offset = 0;
                 }
             }
-            started = 1;
+            started = true;
             display = true;
         }
     }
