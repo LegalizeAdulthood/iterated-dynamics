@@ -1072,7 +1072,8 @@ docolors:
         else {
             int curc,scanc,force,diffmag = -1;
             int delta,diff1[4][3],diff2[4][3];
-            curc = force = 0;
+            force = 0;
+            curc = force;
 #ifdef XFRACT
             if (fake_lut && !truemode) loaddac(); /* stupid kludge */
 #endif
