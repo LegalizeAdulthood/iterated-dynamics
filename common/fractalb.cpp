@@ -227,7 +227,7 @@ void show_var_bf(char *s, bf_t n)
 
 #endif
 
-void bfcornerstofloat(void)
+void bfcornerstofloat()
 {
     if (bf_math)
     {
