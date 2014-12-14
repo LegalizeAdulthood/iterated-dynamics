@@ -85,7 +85,7 @@ struct DriverX11
     Driver pub;
     bool onroot;                /* = false; */
     bool fullscreen;            /* = false; */
-    int sharecolor;             /* = 0; */
+    bool sharecolor;            /* = false; */
     int privatecolor;           /* = 0; */
     int fixcolors;              /* = 0; */
     /* Run X events synchronously (debugging) */
@@ -238,7 +238,7 @@ check_arg(DriverX11 *di, int argc, char **argv, int *i)
         di->onroot = true;
         return 1;
     } else if (strcmp(argv[*i], "-share") == 0) {
-        di->sharecolor = 1;
+        di->sharecolor = true;
         return 1;
     } else if (strcmp(argv[*i], "-fast") == 0) {
         di->fastmode = 1;
@@ -2540,7 +2540,7 @@ static DriverX11 x11_driver_info = {
     STD_DRIVER_STRUCT(x11, "An X Window System driver"),
     false,                /* onroot */
     false,                /* fullscreen */
-    0,                    /* sharecolor */
+    false,                /* sharecolor */
     0,                    /* privatecolor */
     0,                    /* fixcolors */
     0,                    /* sync */
