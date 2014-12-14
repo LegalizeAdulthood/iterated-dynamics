@@ -265,7 +265,6 @@ int find_line_width(int mode, char *curr, unsigned len)
 
 bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 {
-    int       skip_blanks;
     int       tok;
     int       size,
               width;
@@ -329,12 +328,13 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 
         first_topic = true;
 
+        bool skip_blanks;
         while (get_info(PD_GET_TOPIC, &pd, info))
         {
             if (!output(PD_START_TOPIC, &pd, info))
                 return false;
 
-            skip_blanks = 0;
+            skip_blanks = false;
             col = 0;
 
             if (!first_section)     /* do not skip blanks for DocContents */
@@ -528,7 +528,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
                         pd.len -= size;
                     }
 
-                    skip_blanks = 0;
+                    skip_blanks = false;
                     width = size = 0;
                     break;
                 }
@@ -550,7 +550,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
                             return false;
                         ++pd.pnum;
                         pd.lnum = 0;
-                        skip_blanks = 1;
+                        skip_blanks = true;
                         if (!output(PD_HEADING, &pd, info))
                             return false;
                     }
@@ -582,7 +582,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
                     break;
 
                 case TOK_LINK:
-                    skip_blanks = 0;
+                    skip_blanks = false;
                     if (!DO_PRINT(pd.curr+1+3*sizeof(int),
                                   size-3*sizeof(int)-2))
                         return false;
@@ -597,13 +597,13 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
                     break;
 
                 case TOK_WORD:
-                    skip_blanks = 0;
+                    skip_blanks = false;
                     if (!DO_PRINT(pd.curr, size))
                         return false;
                     break;
 
                 case TOK_SPACE:
-                    skip_blanks = 0;
+                    skip_blanks = false;
                     if (!DO_PRINTN(sp, width))
                         return false;
                     break;
