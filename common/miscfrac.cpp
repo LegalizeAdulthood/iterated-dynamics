@@ -19,13 +19,13 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 
 /* routines in this module      */
 
-static void set_Plasma_palette(void);
+static void set_Plasma_palette();
 static U16 adjust(int xa,int ya,int x,int y,int xb,int yb);
 static void subDivide(int x1,int y1,int x2,int y2);
-static void verhulst(void);
-static void Bif_Period_Init(void);
+static void verhulst();
+static void Bif_Period_Init();
 static bool Bif_Periodic(long time);
-static void set_Cellular_palette(void);
+static void set_Cellular_palette();
 
 U16(*getpix)(int,int)  = (U16(*)(int,int))getcolor;
 
@@ -33,7 +33,7 @@ typedef void (*PLOT)(int,int,int);
 
 /***************** standalone engine for "test" ********************/
 
-int test(void)
+int test()
 {
     int startrow,startpass,numpasses;
     startrow = startpass = 0;
@@ -90,7 +90,7 @@ static int recur_level = 0;
 U16 max_plasma;
 
 /* returns a random 16 bit value that is never 0 */
-U16 rand16(void)
+U16 rand16()
 {
     U16 value;
     value = (U16)rand15();
@@ -762,7 +762,7 @@ static bool mono = false;
 static int outside_x = 0;
 static long   LPI;
 
-int Bifurcation(void)
+int Bifurcation()
 {
     int x = 0;
     if (resuming)
@@ -1735,7 +1735,7 @@ contloop:
     return 1;
 }
 
-bool CellularSetup(void)
+bool CellularSetup()
 {
     if (!resuming)
     {
@@ -1848,7 +1848,7 @@ froth_struct fsp;
 }
 
 /* color maps which attempt to replicate the images of James Alexander. */
-static void set_Froth_palette(void)
+static void set_Froth_palette()
 {
     const char *mapname;
 
@@ -1877,7 +1877,7 @@ static void set_Froth_palette(void)
     }
 }
 
-bool froth_setup(void)
+bool froth_setup()
 {
     double sin_theta;
     double cos_theta;
@@ -1991,13 +1991,13 @@ bool froth_setup(void)
     return true;
 }
 
-void froth_cleanup(void)
+void froth_cleanup()
 {
 }
 
 
 /* Froth Fractal type */
-int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
+int calcfroth()   /* per pixel 1/2/g, called with row & col set */
 {
     int found_attractor=0;
 
@@ -2281,7 +2281,7 @@ attractor that makes the frothybasin type so unique, it is worth
 putting in as a stand-alone.
 */
 
-int froth_per_pixel(void)
+int froth_per_pixel()
 {
     if (!integerfractal) /* fp mode */
     {
@@ -2300,7 +2300,7 @@ int froth_per_pixel(void)
     return 0;
 }
 
-int froth_per_orbit(void)
+int froth_per_orbit()
 {
     if (!integerfractal) /* fp mode */
     {
