@@ -97,7 +97,7 @@ static int getdepth(int xd, int yd)
    Get min and max DEPTH value in picture
 */
 
-static bool get_min_max(void)
+static bool get_min_max()
 {
     MINC = colors;
     MAXC = 0;
@@ -202,7 +202,7 @@ int outline_stereo(BYTE * pixels, int linelen)
         Convert current image into Auto Stereo Picture
 **************************************************************************/
 
-int do_AutoStereo(void)
+int do_AutoStereo()
 {
     struct static_vars v;
     BYTE savedacbox[256*3];
