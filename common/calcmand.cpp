@@ -3,7 +3,7 @@
 #include "prototyp.h"
 
 long
-calcmandasm(void)
+calcmandasm()
 {
     static bool been_here = false;
     if (!been_here)
