@@ -4,7 +4,7 @@
 #include "port.h"
 #include "prototyp.h"
 
-int asmlMODbailout(void)
+int asmlMODbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -19,7 +19,7 @@ int asmlMODbailout(void)
     return 0;
 }
 
-int asmlREALbailout(void)
+int asmlREALbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -32,7 +32,7 @@ int asmlREALbailout(void)
     return 0;
 }
 
-int asmlIMAGbailout(void)
+int asmlIMAGbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -45,7 +45,7 @@ int asmlIMAGbailout(void)
     return 0;
 }
 
-int asmlORbailout(void)
+int asmlORbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -58,7 +58,7 @@ int asmlORbailout(void)
     return 0;
 }
 
-int asmlANDbailout(void)
+int asmlANDbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -71,7 +71,7 @@ int asmlANDbailout(void)
     return 0;
 }
 
-int asmlMANHbailout(void)
+int asmlMANHbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -84,7 +84,7 @@ int asmlMANHbailout(void)
     return 0;
 }
 
-int asmlMANRbailout(void)
+int asmlMANRbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -97,7 +97,7 @@ int asmlMANRbailout(void)
     return 0;
 }
 
-int asm386lMODbailout(void)
+int asm386lMODbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -112,7 +112,7 @@ int asm386lMODbailout(void)
     return 0;
 }
 
-int asm386lREALbailout(void)
+int asm386lREALbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -125,7 +125,7 @@ int asm386lREALbailout(void)
     return 0;
 }
 
-int asm386lIMAGbailout(void)
+int asm386lIMAGbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -138,7 +138,7 @@ int asm386lIMAGbailout(void)
     return 0;
 }
 
-int asm386lORbailout(void)
+int asm386lORbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -151,7 +151,7 @@ int asm386lORbailout(void)
     return 0;
 }
 
-int asm386lANDbailout(void)
+int asm386lANDbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -164,7 +164,7 @@ int asm386lANDbailout(void)
     return 0;
 }
 
-int asm386lMANHbailout(void)
+int asm386lMANHbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -177,7 +177,7 @@ int asm386lMANHbailout(void)
     return 0;
 }
 
-int asm386lMANRbailout(void)
+int asm386lMANRbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
@@ -217,7 +217,7 @@ bailout:
         ret
 asmfpMODbailout endp
 */
-int asmfpMODbailout(void)
+int asmfpMODbailout()
 {
     /* TODO: verify this code is correct */
     tempsqrx = sqr(g_new.x);
@@ -260,7 +260,7 @@ bailout:
         ret
 asmfpREALbailout endp
 */
-int asmfpREALbailout(void)
+int asmfpREALbailout()
 {
     /* TODO: verify this code is correct */
     tempsqrx = sqr(g_new.x);
@@ -301,7 +301,7 @@ bailout:
         ret
 asmfpIMAGbailout endp
 */
-int asmfpIMAGbailout(void)
+int asmfpIMAGbailout()
 {
     /* TODO: verify this code is correct */
     tempsqrx = sqr(g_new.x);
@@ -349,7 +349,7 @@ bailout:
         ret
 asmfpORbailout endp
 */
-int asmfpORbailout(void)
+int asmfpORbailout()
 {
     /* TODO: verify this code is correct */
     tempsqrx = sqr(g_new.x);
@@ -399,7 +399,7 @@ bailout:
         ret
 asmfpANDbailout endp
 */
-int asmfpANDbailout(void)
+int asmfpANDbailout()
 {
     /* TODO: verify this code is correct */
     tempsqrx = sqr(g_new.x);
@@ -452,7 +452,7 @@ bailout:
         ret
 asmfpMANHbailout endp
 */
-int asmfpMANHbailout(void)
+int asmfpMANHbailout()
 {
     /* TODO: verify this code is correct */
     tempsqrx = sqr(g_new.x);
@@ -502,7 +502,7 @@ bailout:
         ret
 asmfpMANRbailout endp
 */
-int asmfpMANRbailout(void)
+int asmfpMANRbailout()
 {
     /* TODO: verify this code is correct */
     tempsqrx = sqr(g_new.x);
