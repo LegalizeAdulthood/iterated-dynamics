@@ -108,10 +108,12 @@ void rotate(int direction)      /* rotate-the-palette routine */
                         g_dac_box[jstep][2] = (BYTE)(fromblue  + (((toblue  - fromblue)*incr)/fstep));
                     }
                 }
-                if (step >= rotate_size) step = oldstep;
+                if (step >= rotate_size)
+                    step = oldstep;
                 spindac(direction, step);
             }
-        if (step >= rotate_size) step = oldstep;
+        if (step >= rotate_size)
+            step = oldstep;
         kbdchar = driver_get_key();
         if (paused && (kbdchar != ' '
                        && kbdchar != 'c'
@@ -155,7 +157,8 @@ void rotate(int direction)      /* rotate-the-palette routine */
         case '8':
         case '9':
             step = kbdchar - '0';   /* change step-size */
-            if (step > rotate_size) step = rotate_size;
+            if (step > rotate_size)
+                step = rotate_size;
             break;
         case FIK_F1:                       /* FIK_F1 - FIK_F10:                    */
         case FIK_F2:                       /* select a shading factor      */
@@ -215,20 +218,29 @@ void rotate(int direction)      /* rotate-the-palette routine */
             step = rotate_size;
             break;
         case 'r':                      /* color changes */
-            if (changecolor    == -1) changecolor = 0;
+            if (changecolor    == -1)
+                changecolor = 0;
         case 'g':                      /* color changes */
-            if (changecolor    == -1) changecolor = 1;
+            if (changecolor    == -1)
+                changecolor = 1;
         case 'b':                      /* color changes */
-            if (changecolor    == -1) changecolor = 2;
-            if (changedirection == 0) changedirection = -1;
+            if (changecolor    == -1)
+                changecolor = 2;
+            if (changedirection == 0)
+                changedirection = -1;
         case 'R':                      /* color changes */
-            if (changecolor    == -1) changecolor = 0;
+            if (changecolor    == -1)
+                changecolor = 0;
         case 'G':                      /* color changes */
-            if (changecolor    == -1) changecolor = 1;
+            if (changecolor    == -1)
+                changecolor = 1;
         case 'B':                      /* color changes */
-            if (driver_diskp()) break;
-            if (changecolor    == -1) changecolor = 2;
-            if (changedirection == 0) changedirection = 1;
+            if (driver_diskp())
+                break;
+            if (changecolor    == -1)
+                changecolor = 2;
+            if (changedirection == 0)
+                changedirection = 1;
             for (int i = 1; i < 256; i++) {
                 g_dac_box[i][changecolor] = (BYTE)(g_dac_box[i][changecolor] + changedirection);
                 if (g_dac_box[i][changecolor] == 64)
@@ -302,36 +314,66 @@ void rotate(int direction)      /* rotate-the-palette routine */
             break;
         default:                       /* maybe a new palette */
             fkey = 0;                   /* disable random generation */
-            if (kbdchar == FIK_SF1) set_palette(Black, White);
-            if (kbdchar == FIK_SF2) set_palette(Red, Yellow);
-            if (kbdchar == FIK_SF3) set_palette(Blue, Green);
-            if (kbdchar == FIK_SF4) set_palette(Black, Yellow);
-            if (kbdchar == FIK_SF5) set_palette(Black, Red);
-            if (kbdchar == FIK_SF6) set_palette(Black, Blue);
-            if (kbdchar == FIK_SF7) set_palette(Black, Green);
-            if (kbdchar == FIK_SF8) set_palette(Blue, Yellow);
-            if (kbdchar == FIK_SF9) set_palette(Red, Green);
-            if (kbdchar == FIK_SF10) set_palette(Green, White);
-            if (kbdchar == 1094) set_palette2(Black, White);
-            if (kbdchar == 1095) set_palette2(Red, Yellow);
-            if (kbdchar == 1096) set_palette2(Blue, Green);
-            if (kbdchar == 1097) set_palette2(Black, Yellow);
-            if (kbdchar == 1098) set_palette2(Black, Red);
-            if (kbdchar == 1099) set_palette2(Black, Blue);
-            if (kbdchar == 1100) set_palette2(Black, Green);
-            if (kbdchar == 1101) set_palette2(Blue, Yellow);
-            if (kbdchar == 1102) set_palette2(Red, Green);
-            if (kbdchar == 1103) set_palette2(Green, White);
-            if (kbdchar == FIK_ALT_F1) set_palette3(Blue, Green, Red);
-            if (kbdchar == 1105) set_palette3(Blue, Yellow, Red);
-            if (kbdchar == 1106) set_palette3(Red, White, Blue);
-            if (kbdchar == 1107) set_palette3(Red, Yellow, White);
-            if (kbdchar == 1108) set_palette3(Black, Brown, Yellow);
-            if (kbdchar == 1109) set_palette3(Blue, Brown, Green);
-            if (kbdchar == 1110) set_palette3(Blue, Green, Green);
-            if (kbdchar == 1111) set_palette3(Blue, Green, White);
-            if (kbdchar == 1112) set_palette3(Green, Green, White);
-            if (kbdchar == 1113) set_palette3(Red, Blue, White);
+            if (kbdchar == FIK_SF1)
+                set_palette(Black, White);
+            if (kbdchar == FIK_SF2)
+                set_palette(Red, Yellow);
+            if (kbdchar == FIK_SF3)
+                set_palette(Blue, Green);
+            if (kbdchar == FIK_SF4)
+                set_palette(Black, Yellow);
+            if (kbdchar == FIK_SF5)
+                set_palette(Black, Red);
+            if (kbdchar == FIK_SF6)
+                set_palette(Black, Blue);
+            if (kbdchar == FIK_SF7)
+                set_palette(Black, Green);
+            if (kbdchar == FIK_SF8)
+                set_palette(Blue, Yellow);
+            if (kbdchar == FIK_SF9)
+                set_palette(Red, Green);
+            if (kbdchar == FIK_SF10)
+                set_palette(Green, White);
+            if (kbdchar == 1094)
+                set_palette2(Black, White);
+            if (kbdchar == 1095)
+                set_palette2(Red, Yellow);
+            if (kbdchar == 1096)
+                set_palette2(Blue, Green);
+            if (kbdchar == 1097)
+                set_palette2(Black, Yellow);
+            if (kbdchar == 1098)
+                set_palette2(Black, Red);
+            if (kbdchar == 1099)
+                set_palette2(Black, Blue);
+            if (kbdchar == 1100)
+                set_palette2(Black, Green);
+            if (kbdchar == 1101)
+                set_palette2(Blue, Yellow);
+            if (kbdchar == 1102)
+                set_palette2(Red, Green);
+            if (kbdchar == 1103)
+                set_palette2(Green, White);
+            if (kbdchar == FIK_ALT_F1)
+                set_palette3(Blue, Green, Red);
+            if (kbdchar == 1105)
+                set_palette3(Blue, Yellow, Red);
+            if (kbdchar == 1106)
+                set_palette3(Red, White, Blue);
+            if (kbdchar == 1107)
+                set_palette3(Red, Yellow, White);
+            if (kbdchar == 1108)
+                set_palette3(Black, Brown, Yellow);
+            if (kbdchar == 1109)
+                set_palette3(Blue, Brown, Green);
+            if (kbdchar == 1110)
+                set_palette3(Blue, Green, Green);
+            if (kbdchar == 1111)
+                set_palette3(Blue, Green, White);
+            if (kbdchar == 1112)
+                set_palette3(Green, Green, White);
+            if (kbdchar == 1113)
+                set_palette3(Red, Blue, White);
             pauserotate();  /* update palette and pause */
             break;
         }
