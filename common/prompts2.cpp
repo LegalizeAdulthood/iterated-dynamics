@@ -2152,7 +2152,10 @@ gsc_loop:
         prompts[++nump] = yprompt;
         values[nump].uval.dval = oymin;
         if (oxmin == ox3rd && oymin == oy3rd)
-            ox3rd = oy3rd = 0;
+        {
+            oy3rd = 0;
+            ox3rd = oy3rd;
+        }
         prompts[++nump]= "Bottom-left (zeros for top-left X, bottom-right Y)";
         values[nump].type = '*';
         prompts[++nump] = xprompt;
@@ -2190,10 +2193,12 @@ gsc_loop:
     }
 
     if (prompt_ret == FIK_F4) { /* reset to type defaults */
-        ox3rd = oxmin = curfractalspecific->xmin;
-        oxmax         = curfractalspecific->xmax;
-        oy3rd = oymin = curfractalspecific->ymin;
-        oymax         = curfractalspecific->ymax;
+        oxmin = curfractalspecific->xmin;
+        ox3rd = oxmin;
+        oxmax = curfractalspecific->xmax;
+        oymin = curfractalspecific->ymin;
+        oy3rd = oymin;
+        oymax = curfractalspecific->ymax;
         xxmin = oxmin;
         xxmax = oxmax;
         yymin = oymin;
