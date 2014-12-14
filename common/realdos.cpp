@@ -734,7 +734,7 @@ int fullscreen_choice(
     }
     redisplay = 1;
     topleftrow -= scrunch;
-    for (;;) /* main loop */
+    while (true) /* main loop */
     {
         if (redisplay)                       /* display the current choices */
         {

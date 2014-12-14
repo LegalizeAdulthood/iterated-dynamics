@@ -387,7 +387,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
         int j = 0;
         int tmpxdots;
         int tmpydots;
-        for (;;)
+        while (true)
         {
             tmpxdots = (filexdots + skipxdots - 1) / skipxdots;
             tmpydots = (fileydots + skipydots - 1) / skipydots;
