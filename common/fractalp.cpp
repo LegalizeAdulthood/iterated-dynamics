@@ -214,7 +214,7 @@ char t_frothybasin[]= "*frothybasin";
 char t_halley[]= "*halley";
 
 /* use next to cast orbitcalcs() that have arguments */
-#define VF int(*)(void)
+#define VF int(*)()
 
 struct fractalspecificstuff fractalspecific[]=
 {
