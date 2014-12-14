@@ -75,7 +75,8 @@ int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
             dotmode  %= 100;
             sxdots  = xdots;
             sydots  = ydots;
-            sxoffs = syoffs = 0;
+            syoffs = 0;
+            sxoffs = syoffs;
             rotate_hi = (rotate_hi < colors) ? rotate_hi : colors - 1;
 
             memcpy(olddacbox, g_dac_box, 256*3); /* save the DAC */
@@ -179,8 +180,10 @@ int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
                 {
                     stopmsg(0, "View window too large; using full screen.");
                     viewwindow = false;
-                    xdots = viewxdots = sxdots;
-                    ydots = viewydots = sydots;
+                    viewxdots = sxdots;
+                    xdots = viewxdots;
+                    viewydots = sydots;
+                    ydots = viewydots;
                 }
                 else if (((xdots <= 1) /* changed test to 1, so a 2x2 window will */
                           || (ydots <= 1)) /* work with the sound feature */
@@ -368,10 +371,14 @@ int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
                     MoveFromMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
                     paramrangex  = resume_e_info.paramrangex;
                     paramrangey  = resume_e_info.paramrangey;
-                    opx = newopx = resume_e_info.opx;
-                    opy = newopy = resume_e_info.opy;
-                    odpx = newodpx = (char)resume_e_info.odpx;
-                    odpy = newodpy = (char)resume_e_info.odpy;
+                    newopx = resume_e_info.opx;
+                    opx = newopx;
+                    newopy = resume_e_info.opy;
+                    opy = newopy;
+                    newodpx = (char)resume_e_info.odpx;
+                    odpx = newodpx;
+                    newodpy = (char)resume_e_info.odpy;
+                    odpy = newodpy;
                     px           = resume_e_info.px;
                     py           = resume_e_info.py;
                     sxoffs       = resume_e_info.sxoffs;
@@ -460,12 +467,14 @@ done:
                     resume_e_info.ecount          = (short) ecount;
                     MoveToMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
                 }
-                sxoffs = syoffs = 0;
+                syoffs = 0;
+                sxoffs = syoffs;
                 xdots = sxdots;
                 ydots = sydots; /* otherwise save only saves a sub image and boxes get clipped */
 
                 /* set up for 1st selected image, this reuses px and py */
-                px = py = gridsz/2;
+                py = gridsz/2;
+                px = py;
                 unspiralmap(); /* first time called, w/above line sets up array */
                 param_history(1); /* restore old history */
                 fiddleparms(gene, 0);
@@ -798,7 +807,10 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
             bad_outside = false;
             ldcheck = false;
             set_current_params();
-            odpx=odpy=newodpx=newodpy=0;
+            newodpy = 0;
+            newodpx = newodpy;
+            odpy = newodpx;
+            odpx = odpy;
             fiddlefactor = 1;           /* reset param evolution stuff */
             set_orbit_corners = false;
             param_history(0); /* save history */
@@ -1055,7 +1067,8 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
                 {
                     param[0] = xcjul;
                     param[1] = ycjul;
-                    xcjul = ycjul = BIG;
+                    ycjul = BIG;
+                    xcjul = ycjul;
                 }
                 jxxmin = sxmin;
                 jxxmax = sxmax;
@@ -1099,9 +1112,11 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
                 }
                 else
                 {
-                    xxmin = xx3rd = curfractalspecific->xmin;
+                    xx3rd = curfractalspecific->xmin;
+                    xxmin = xx3rd;
                     xxmax = curfractalspecific->xmax;
-                    yymin = yy3rd = curfractalspecific->ymin;
+                    yy3rd = curfractalspecific->ymin;
+                    yymin = yy3rd;
                     yymax = curfractalspecific->ymax;
                 }
                 SaveC.x = param[0];
@@ -1370,12 +1385,16 @@ do_3d_transform:
         {
             if (zwidth == 0)
             {   /* start zoombox */
-                zwidth = zdepth = 1;
-                zskew = zrotate = 0;
-                zbx = zby = 0;
+                zdepth = 1;
+                zwidth = zdepth;
+                zrotate = 0;
+                zskew = zrotate;
+                zby = 0;
+                zbx = zby;
                 find_special_colors();
                 boxcolor = g_color_bright;
-                px = py = gridsz/2;
+                py = gridsz/2;
+                px = py;
                 moveboxf(0.0,0.0); /* force scrolling */
             }
             else
@@ -1470,7 +1489,10 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             bad_outside = false;
             ldcheck = false;
             set_current_params();
-            odpx=odpy=newodpx=newodpy=0;
+            newodpy = 0;
+            newodpx = newodpy;
+            odpy = newodpx;
+            odpx = odpy;
             fiddlefactor = 1;           /* reset param evolution stuff */
             set_orbit_corners = false;
             param_history(0); /* save history */
