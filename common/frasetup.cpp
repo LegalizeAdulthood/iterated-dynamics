@@ -488,7 +488,7 @@ JulialongSetup()
     case LPOPCORN:
     case LPOPCORNJUL:
     {
-        int default_functions = 0;
+        bool default_functions = false;
         if (trigndx[0] == SIN &&
                 trigndx[1] == TAN &&
                 trigndx[2] == SIN &&
@@ -497,11 +497,11 @@ JulialongSetup()
                 parm2.y == 0 &&
                 parm.y == 0)
         {
-            default_functions = 1;
+            default_functions = true;
             if (fractype == LPOPCORNJUL)
                 symmetry = ORIGIN;
         }
-        if (save_release <=1960)
+        if (save_release <= 1960)
             curfractalspecific->orbitcalc = LPopcornFractal_Old;
         else if (default_functions && debugflag == 96)
             curfractalspecific->orbitcalc = LPopcornFractal;
