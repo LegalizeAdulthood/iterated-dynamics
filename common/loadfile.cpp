@@ -1708,7 +1708,8 @@ static bool is_visible_window(
     bf_t bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd;
     int saved;
     int two_len;
-    int cornercount, cant_see;
+    int cornercount;
+    bool cant_see;
     int  orig_bflength,
          orig_bnlength,
          orig_padding,
@@ -1719,7 +1720,7 @@ static bool is_visible_window(
     toobig = sqrt(sqr((double)sxdots)+sqr((double)sydots)) * 1.5;
     /* arbitrary value... stops browser zooming out too far */
     cornercount=0;
-    cant_see = 0;
+    cant_see = false;
 
     saved = save_stack();
     /* Save original values. */
@@ -1868,10 +1869,9 @@ static bool is_visible_window(
 
     tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
     list->win_size = tmp_sqrt; /* used for box vs crosshair in drawindow() */
-    if (tmp_sqrt < toosmall) cant_see = 1;
-    /* reject anything too small onscreen */
-    if (tmp_sqrt > toobig) cant_see = 1;
-    /* or too big... */
+    /* reject anything too small or too big on screen */
+    if ((tmp_sqrt < toosmall) || (tmp_sqrt > toobig))
+        cant_see = true;
 
     /* restore original values */
     bflength      = orig_bflength;
