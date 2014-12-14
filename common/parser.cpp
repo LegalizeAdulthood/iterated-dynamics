@@ -2026,8 +2026,10 @@ struct ConstArg *isconst(char *Str, int Len)
     switch (MathType)
     {
     case M_MATH:
-        v[vsp].a.m.x.Mant = v[vsp].a.m.x.Exp = 0;
-        v[vsp].a.m.y.Mant = v[vsp].a.m.y.Exp = 0;
+        v[vsp].a.m.x.Exp = 0;
+        v[vsp].a.m.x.Mant = v[vsp].a.m.x.Exp;
+        v[vsp].a.m.y.Exp = 0;
+        v[vsp].a.m.y.Mant = v[vsp].a.m.y.Exp;
         break;
     case L_MATH:
         v[vsp].a.l.x = v[vsp].a.l.y = 0;
