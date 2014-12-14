@@ -35,7 +35,7 @@ bool g_got_real_dac = false;            /* true if loaddac has a dacbox */
 
 void rotate(int direction)      /* rotate-the-palette routine */
 {
-    int  kbdchar, more, last, next;
+    int  kbdchar, last, next;
     int fkey, step, fstep, jstep, oldstep;
     int incr, fromred=0, fromblue=0, fromgreen=0, tored=0, toblue=0, togreen=0;
     int changecolor, changedirection;
@@ -81,7 +81,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
         next = rotate_max;
     }
 
-    more = 1;
+    bool more = true;
     while (more) {
         if (driver_diskp()) {
             if (!paused)
@@ -294,7 +294,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
             pauserotate();              /* update palette and pause */
             break;
         case FIK_ESC:                      /* escape */
-            more = 0;                   /* time to bail out */
+            more = false;                   /* time to bail out */
             break;
         case FIK_HOME:                     /* restore palette */
             memcpy(g_dac_box,olddacbox,256*3);
