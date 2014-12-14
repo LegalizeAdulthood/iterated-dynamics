@@ -834,7 +834,7 @@ static void MoveBox__Erase(MoveBox *me)   /* private */
 static void MoveBox__Move(MoveBox *me, int key)
 {
     bool done  = false;
-    BOOLEAN first = TRUE;
+    bool first = true;
     int     xoff  = 0,
             yoff  = 0;
 
@@ -876,7 +876,7 @@ static void MoveBox__Move(MoveBox *me, int key)
             if (!first)
                 driver_get_key();       /* delete key from buffer */
             else
-                first = FALSE;
+                first = false;
             key = driver_key_pressed();   /* peek at the next one... */
         }
     }
