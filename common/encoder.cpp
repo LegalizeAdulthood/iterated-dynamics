@@ -941,7 +941,8 @@ static bool compress(int rowlimit)
     cur_bits = 0;
     clear_flg = false;
     ent = 0;
-    maxcode = MAXCODE(n_bits = startbits);
+    n_bits = startbits;
+    maxcode = MAXCODE(n_bits);
 
     ClearCode = (1 << (startbits - 1));
     EOFCode = ClearCode + 1;
@@ -1099,7 +1100,8 @@ static void output(int code)
     {
         if (clear_flg)
         {
-            maxcode = MAXCODE(n_bits = startbits);
+            n_bits = startbits;
+            maxcode = MAXCODE(n_bits);
             clear_flg = false;
         }
         else
