@@ -2407,7 +2407,6 @@ get_brws_restart:
 int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 {
     bool isadir_error = false;
-    bool isadir = false;
     int isafile = 0;
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
@@ -2423,7 +2422,8 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
     /* no dot or slash so assume a file */
     if (strchr(newfilename,'.')==nullptr && strchr(newfilename,SLASHC) == nullptr)
         isafile=1;
-    if (isadir = isadirectory(newfilename))
+    bool isadir = isadirectory(newfilename);
+    if (isadir)
         fix_dirname(newfilename);
 #ifndef XFRACT
     /* if drive, colon, slash, is a directory */
