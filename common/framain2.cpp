@@ -1631,7 +1631,7 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case 'r':                    /* restore-from                 */
         comparegif = false;
         *frommandel = false;
-        browsing = FALSE;
+        browsing = false;
         if (*kbdchar == 'r')
         {
             if (debugflag == 50)
