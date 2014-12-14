@@ -550,11 +550,13 @@ pass_option_restart:
 
     choices[++k] = "Orbit delay (0 = none)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = old_orbit_delay = orbit_delay;
+    old_orbit_delay = orbit_delay;
+    uvalues[k].uval.ival = old_orbit_delay;
 
     choices[++k] = "Orbit interval (1 ... 255)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = old_orbit_interval = (int)orbit_interval;
+    old_orbit_interval = (int)orbit_interval;
+    uvalues[k].uval.ival = old_orbit_interval;
 
     choices[++k] = "Maintain screen coordinates";
     uvalues[k].type = 'y';
