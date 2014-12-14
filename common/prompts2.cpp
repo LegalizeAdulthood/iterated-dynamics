@@ -35,7 +35,7 @@
 
 static  int check_f6_key(int curkey,int choice);
 static  int filename_speedstr(int, int, int, char *, int);
-static  int get_screen_corners(void);
+static  int get_screen_corners();
 
 /* speed key state values */
 #define MATCHING         0      /* string matches list - speed key mode */
@@ -512,7 +512,7 @@ int get_toggles2()
      passes_options invoked by <p> key
 */
 
-int passes_options(void)
+int passes_options()
 {
     const char *choices[20];
     const char *passcalcmodes[] = {"rect","line"};
@@ -893,7 +893,7 @@ double starfield_values[4] = {
 
 char GreyFile[] = "altern.map";
 
-int starfield(void)
+int starfield()
 {
     int c;
     busy = true;
@@ -933,7 +933,7 @@ int starfield(void)
     return (0);
 }
 
-int get_starfield_params(void)
+int get_starfield_params()
 {
     struct fullscreenvalues uvalues[3];
     const char *starfield_prompts[3] =
@@ -968,7 +968,7 @@ int get_starfield_params(void)
 
 static const char *masks[] = {"*.pot","*.gif"};
 
-int get_rds_params(void) {
+int get_rds_params() {
     char rds6[60];
     const char *stereobars[] = {"none", "middle", "top"};
     struct fullscreenvalues uvalues[7];
@@ -1122,7 +1122,7 @@ int get_commands()              /* execute commands from file */
 
 /* --------------------------------------------------------------------- */
 
-void goodbye(void)                  /* we done.  Bail out */
+void goodbye()                  /* we done.  Bail out */
 {
     int ret;
 
@@ -2037,7 +2037,7 @@ gc_loop:
         return (1);
 }
 
-static int get_screen_corners(void)
+static int get_screen_corners()
 {
     struct fullscreenvalues values[15];
     const char *prompts[15];
