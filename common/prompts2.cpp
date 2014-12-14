@@ -128,7 +128,8 @@ int get_toggles()
 #endif
     choices[++k] = "Maximum Iterations (2 to 2,147,483,647)";
     uvalues[k].type = 'L';
-    uvalues[k].uval.Lval = old_maxit = maxit;
+    old_maxit = maxit;
+    uvalues[k].uval.Lval = old_maxit;
 
     choices[++k] = "Inside Color (0-# of colors, if Inside=numb)";
     uvalues[k].type = 'i';
@@ -211,11 +212,13 @@ int get_toggles()
         choices[++k] = "Log Palette (n/a, ranges= parameter is in effect)";
         uvalues[k].type = '*';
     }
-    uvalues[k].uval.Lval = old_logflag = LogFlag;
+    old_logflag = LogFlag;
+    uvalues[k].uval.Lval = old_logflag;
 
     choices[++k] = "Biomorph Color (-1 means OFF)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = old_biomorph = usr_biomorph;
+    old_biomorph = usr_biomorph;
+    uvalues[k].uval.ival = old_biomorph;
 
     choices[++k] = "Decomp Option (2,4,8,..,256, 0=OFF)";
     uvalues[k].type = 'i';
