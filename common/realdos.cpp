@@ -196,7 +196,8 @@ bool showtempmsg(const char *msgparm)
     }
     else
     {
-        sxoffs = syoffs = 0;
+        syoffs = 0;
+        sxoffs = syoffs;
     }
     if (temptextsave == 0) /* only save screen first time called */
     {
@@ -239,7 +240,8 @@ void cleartempmsg()
         }
         else
         {
-            sxoffs = syoffs = 0;
+            syoffs = 0;
+            sxoffs = syoffs;
         }
         for (int i = 0; i < textydots; ++i)
         {
@@ -543,7 +545,8 @@ int fullscreen_choice(
         ++current;                  /* scan for a real choice */
     }
 
-    titlelines = titlewidth = 0;
+    titlewidth = 0;
+    titlelines = titlewidth;
     if (hdg)
     {
         charptr = hdg;              /* count title lines, find widest */
