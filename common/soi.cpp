@@ -1059,7 +1059,7 @@ rhombus_done:
     return status ? 1 : 0;
 }
 
-void soi_ldbl(void)
+void soi_ldbl()
 {
     // cppcheck-suppress unreadVariable
     bool status;
