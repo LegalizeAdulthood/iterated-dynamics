@@ -86,7 +86,7 @@ struct DriverX11
     bool onroot;                /* = false; */
     bool fullscreen;            /* = false; */
     bool sharecolor;            /* = false; */
-    int privatecolor;           /* = 0; */
+    bool privatecolor;          /* = false; */
     int fixcolors;              /* = 0; */
     /* Run X events synchronously (debugging) */
     bool sync;                  /* = false; */
@@ -250,7 +250,7 @@ check_arg(DriverX11 *di, int argc, char **argv, int *i)
         di->sync = true;
         return 1;
     } else if (strcmp(argv[*i], "-private") == 0) {
-        di->privatecolor = 1;
+        di->privatecolor = true;
         return 1;
     } else if (strcmp(argv[*i], "-fixcolors") == 0 && *i+1 < argc) {
         di->fixcolors = atoi(argv[(*i)+1]);
@@ -515,7 +515,7 @@ xcmapstuff(DriverX11 *di)
     int ncells;
 
     if (di->onroot) {
-        di->privatecolor = 0;
+        di->privatecolor = false;
     }
     for (int i = 0; i < colors; i++) {
         di->pixtab[i] = i;
@@ -2541,7 +2541,7 @@ static DriverX11 x11_driver_info = {
     false,                /* onroot */
     false,                /* fullscreen */
     false,                /* sharecolor */
-    0,                    /* privatecolor */
+    false,                /* privatecolor */
     0,                    /* fixcolors */
     false,                /* sync */
     "",                   /* Xdisplay */
