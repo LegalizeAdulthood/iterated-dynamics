@@ -60,7 +60,8 @@ void rotate(int direction)      /* rotate-the-palette routine */
 
     paused = false;                      /* not paused                   */
     fkey = 0;                            /* no random coloring           */
-    oldstep = step = 1;                  /* single-step                  */
+    step = 1;
+    oldstep = step;                      /* single-step                  */
     fstep = 1;
     changecolor = -1;                    /* no color (rgb) to change     */
     changedirection = 0;                 /* no color direction to change */
@@ -416,7 +417,9 @@ static void pauserotate()               /* pause-the-rotate routine */
 
 static void set_palette(BYTE start[3], BYTE finish[3])
 {
-    g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
+    g_dac_box[0][2] = 0;
+    g_dac_box[0][1] = g_dac_box[0][2];
+    g_dac_box[0][0] = g_dac_box[0][1];
     for (int i = 1; i <= 255; i++)                  /* fill the palette     */
         for (int j = 0; j < 3; j++)
             g_dac_box[i][j] = (BYTE)((i*start[j] + (256-i)*finish[j])/255);
