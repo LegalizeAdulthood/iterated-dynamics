@@ -466,7 +466,8 @@ void dStkLodDup()
 {
     Arg1+=2;
     Arg2+=2;
-    *Arg2 = *Arg1 = *Load[LodPtr];
+    *Arg1 = *Load[LodPtr];
+    *Arg2 = *Arg1;
     LodPtr+=2;
 }
 
