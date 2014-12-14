@@ -3429,7 +3429,8 @@ CASE_NUM :
     }
     fseek(openfile, filepos, SEEK_SET);
     tok->token_str[1] = (char) 0;
-    tok->token_const.y = tok->token_const.x = 0.0;
+    tok->token_const.x = 0.0;
+    tok->token_const.y = tok->token_const.x;
     tok->token_type = PARENS;
     tok->token_id = OPEN_PARENS;
     if (debug_token != nullptr)
@@ -4240,7 +4241,8 @@ void frm_error(FILE * open_file, long begin_frm)
         sprintf(&msgbuf[(int) strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
         int i = (int) strlen(msgbuf);
         fseek(open_file, errors[j].start_pos, SEEK_SET);
-        statement_len = token_count = 0;
+        token_count = 0;
+        statement_len = token_count;
         bool done = false;
         while (!done)
         {
@@ -4470,8 +4472,11 @@ bool frm_prescan(FILE * open_file)
     int waiting_for_endif = 0;
     int max_parens = sizeof(long) * 8;
 
-    number_of_ops = number_of_loads = number_of_stores = number_of_jumps = (unsigned) 0L;
-    chars_in_formula = (unsigned) 0;
+    number_of_jumps = 0UL;
+    number_of_stores = number_of_jumps;
+    number_of_loads = number_of_stores;
+    number_of_ops = number_of_loads;
+    chars_in_formula = 0U;
     uses_jump = false;
     paren = 0;
 
