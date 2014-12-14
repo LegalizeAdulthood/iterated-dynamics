@@ -988,7 +988,8 @@ int fullscreen_choice(
             break;
         case FIK_HOME:
             current = -1;
-            increment = rev_increment = 1;
+            rev_increment = 1;
+            increment = rev_increment;
             break;
         case FIK_CTL_HOME:
             current = -1;
