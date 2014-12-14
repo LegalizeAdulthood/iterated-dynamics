@@ -1755,7 +1755,7 @@ int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
  * (first time the problem occurs only, and only if options is
  * zero) and uses the hard-coded table.
  */
-void load_fractint_config(void)
+void load_fractint_config()
 {
     FILE *cfgfile;
     VIDEOINFO vident;
