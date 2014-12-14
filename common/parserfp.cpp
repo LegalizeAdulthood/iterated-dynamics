@@ -1132,7 +1132,7 @@ int fpfill_jump_struct()
     int i = 0;
     int checkforelse = 0;
     NEW_FN  * JumpFunc = nullptr;
-    int find_new_func = 1;
+    bool find_new_func = true;
     JUMP_PTRS_ST jump_data[MAX_JUMPS];
 
     for (OpPtr = 0; OpPtr < (int) LastOp; OpPtr++) {
@@ -1157,12 +1157,12 @@ int fpfill_jump_struct()
             default:
                 break;
             }
-            find_new_func = 0;
+            find_new_func = false;
         }
         if (pfls[OpPtr].function == JumpFunc) {
             jump_data[i].JumpOpPtr = OpPtr*4;
             i++;
-            find_new_func = 1;
+            find_new_func = true;
         }
     }
 
