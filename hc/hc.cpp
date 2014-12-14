@@ -1088,7 +1088,6 @@ int create_table()
     int    first_link;
     int    rows;
     int    ch;
-    int    done;
     int    len;
     int    lnum;
     int    count;
@@ -1116,7 +1115,7 @@ int create_table()
         return (0);
     }
 
-    done = 0;
+    bool done = false;
 
     first_link = num_link;
     table_start = curr;
@@ -1174,7 +1173,7 @@ int create_table()
             *ptr = '\0';
 
             if (stricmp(cmd, "EndTable") == 0)
-                done = 1;
+                done = true;
             else
             {
                 error(1,"Unexpected command in table \"%s\"", cmd);
