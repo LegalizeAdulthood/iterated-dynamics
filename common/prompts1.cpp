@@ -2029,15 +2029,15 @@ static int check_gfe_key(int curkey,int choice)
                 break;
             }
         }
-        int in_scrolling_mode = 0; /* 1 if entry doesn't fit available space */
+        bool in_scrolling_mode = false; /* true if entry doesn't fit available space */
         if (c == EOF || c == '\032') { /* should never happen */
             fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
-            in_scrolling_mode = 0;
+            in_scrolling_mode = false;
         }
         fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
         load_entry_text(gfe_file,infbuf, 17, 0, 0);
         if (lines_in_entry > 17 || widest_entry_line > 74)
-            in_scrolling_mode = 1;
+            in_scrolling_mode = true;
         strcpy(infhdg,gfe_title);
         strcat(infhdg," file entry:\n\n");
         /* ... instead, call help with buffer?  heading added */
