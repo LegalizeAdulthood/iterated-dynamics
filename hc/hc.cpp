@@ -230,7 +230,7 @@ void check_buffer(char *current, unsigned off, char *buffer);
  */
 
 
-void report_errors(void)
+void report_errors()
 {
     printf("\n");
     printf("Compiler Status:\n");
@@ -536,13 +536,13 @@ void unread_string(char *s)
 }
 
 
-int eos(void)    /* end-of-source ? */
+int eos()    /* end-of-source ? */
 {
     return (!((read_char_sp==0) && (read_char_buff_pos==0) && feof(srcfile)));
 }
 
 
-int _read_char(void)
+int _read_char()
 {
     int ch;
 
@@ -617,7 +617,7 @@ int _read_char(void)
 }
 
 
-int read_char(void)
+int read_char()
 {
     int ch;
 
@@ -828,7 +828,7 @@ void put_spaces(int how_many)
 
 
 /* used by parse_contents() */
-bool get_next_item(void)
+bool get_next_item()
 {
     char *ptr;
 
@@ -844,7 +844,7 @@ bool get_next_item(void)
 }
 
 
-void process_contents(void)
+void process_contents()
 {
     CONTENT c;
     char   *ptr;
@@ -980,7 +980,7 @@ void process_contents(void)
 }
 
 
-int parse_link(void)   /* returns length of link or 0 on error */
+int parse_link()   /* returns length of link or 0 on error */
 {
     char *ptr;
     char *end;
@@ -1079,7 +1079,7 @@ int parse_link(void)   /* returns length of link or 0 on error */
 #define MAX_TABLE_SIZE (100)
 
 
-int create_table(void)
+int create_table()
 {
     char  *ptr;
     int    width;
@@ -1229,7 +1229,7 @@ int create_table(void)
 }
 
 
-void process_comment(void)
+void process_comment()
 {
     int ch;
 
@@ -1278,7 +1278,7 @@ void process_comment(void)
 }
 
 
-void process_bininc(void)
+void process_bininc()
 {
     int  handle;
     long len;
@@ -1344,7 +1344,7 @@ bool end_of_sentence(char *ptr)  /* true if ptr is at the end of a sentence */
 }
 
 
-void add_blank_for_split(void)   /* add space at curr for merging two lines */
+void add_blank_for_split()   /* add space at curr for merging two lines */
 {
     if (!is_hyphen(curr-1))     /* no spaces if it's a hyphen */
     {
@@ -2313,7 +2313,7 @@ void read_src(char *fname)
  */
 
 
-void make_hot_links(void)
+void make_hot_links()
 /*
  * calculate topic_num/topic_off for each link.
  */
@@ -2468,7 +2468,7 @@ void add_page_break(TOPIC *t, int margin, char *text, char *start, char *curr, i
 }
 
 
-void paginate_online(void)    /* paginate the text for on-line help */
+void paginate_online()    /* paginate the text for on-line help */
 {   /* also calculates max_pages and max_links */
     int       lnum;
     char     *start;
@@ -2695,7 +2695,7 @@ LABEL *find_next_label_by_topic(int t)
 }
 
 
-void set_hot_link_doc_page(void)
+void set_hot_link_doc_page()
 /*
  * Find doc_page for all hot-links.
  */
@@ -2742,7 +2742,7 @@ void set_hot_link_doc_page(void)
 }
 
 
-void set_content_doc_page(void)
+void set_content_doc_page()
 /*
  * insert page #'s in the DocContents
  */
@@ -2871,7 +2871,7 @@ bool paginate_doc_output(int cmd, PD_INFO *pd, void *context)
 }
 
 
-void paginate_document(void)
+void paginate_document()
 {
     PAGINATE_DOC_INFO info;
 
@@ -2915,7 +2915,7 @@ int fcmp_LABEL(VOIDCONSTPTR a, VOIDCONSTPTR b)
 }
 
 
-void sort_labels(void)
+void sort_labels()
 {
     qsort(label,  num_label,  sizeof(LABEL), fcmp_LABEL);
     qsort(plabel, num_plabel, sizeof(LABEL), fcmp_LABEL);
@@ -3024,7 +3024,7 @@ void write_hdr(char *fname)
 }
 
 
-void calc_offsets(void)    /* calc file offset to each topic */
+void calc_offsets()    /* calc file offset to each topic */
 {
     /* NOTE: offsets do NOT include 6 bytes for signature & version! */
     long offset = sizeof(int) +      /* max_pages */
@@ -3368,7 +3368,7 @@ void print_document(const char *fname)
  */
 
 
-void report_memory(void)
+void report_memory()
 {
     long bytes_in_strings = 0,  /* bytes in strings */
          text   = 0,   /* bytes in topic text (stored on disk) */
@@ -3444,7 +3444,7 @@ void report_memory(void)
 }
 
 
-void report_stats(void)
+void report_stats()
 {
     int  pages = 0;
 
