@@ -178,9 +178,8 @@ void invalidate(WinText *me, int left, int bot, int right, int top)
      all of the neccessary registration and initialization
 */
 
-BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCSTR titletext)
+bool wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCSTR titletext)
 {
-    BOOL return_value;
     HDC hDC;
     HFONT hOldFont;
     TEXTMETRIC TextMetric;
@@ -191,7 +190,7 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
     strcpy(me->title_text, titletext);
     me->hWndParent = hWndParent;
 
-    return_value = GetClassInfo(hInstance, s_window_class, &wc);
+    bool return_value = GetClassInfo(hInstance, s_window_class, &wc) == TRUE;
     if (!return_value)
     {
         wc.style = 0;
@@ -205,7 +204,7 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
         wc.lpszMenuName =  me->title_text;
         wc.lpszClassName = s_window_class;
 
-        return_value = RegisterClass(&wc);
+        return_value = RegisterClass(&wc) != 0;
     }
 
     /* set up the font characteristics */

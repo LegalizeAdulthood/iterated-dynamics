@@ -48,7 +48,7 @@ typedef struct tagWinText WinText;
 extern void         wintext_clear(WinText *);
 extern void         wintext_cursor(WinText *, int, int, int);
 extern void         wintext_destroy(WinText *);
-extern BOOL         wintext_initialize(WinText *, HINSTANCE, HWND, LPCSTR);
+extern bool         wintext_initialize(WinText *, HINSTANCE, HWND, LPCSTR);
 extern void         wintext_paintscreen(WinText *, int, int, int, int);
 extern void         wintext_putstring(WinText *, int, int, int, const char *, int *, int *);
 extern void         wintext_scroll_up(WinText *, int top, int bot);
