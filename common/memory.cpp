@@ -389,7 +389,7 @@ bool MoveToMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
     /* offset is the number of units from the start of the allocated "Memory" */
     /* to start moving the contents of buffer to */
     /* size is the size of the unit, count is the number of units to move */
-    /* Returns TRUE if successful, FALSE if failure */
+    /* Returns true if successful, false if failure */
     BYTE diskbuf[DISKWRITELEN];
     long start; /* offset to first location to move to */
     long tomove; /* number of bytes to move */

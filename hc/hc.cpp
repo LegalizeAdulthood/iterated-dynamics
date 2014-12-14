@@ -2927,7 +2927,7 @@ void sort_labels()
  */
 
 
-/* returns TRUE if different */
+/* returns true if different */
 bool compare_files(FILE *f1, FILE *f2)
 {
     if (filelength(fileno(f1)) != filelength(fileno(f2)))
