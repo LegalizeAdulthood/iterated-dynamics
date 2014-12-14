@@ -79,7 +79,7 @@ static long starttick;
 static long ticks;
 static int slowcount;
 static bool quotes = false;
-static char calcwait = 0;
+static bool calcwait = false;
 static int repeats = 0;
 static int last1 = 0;
 
@@ -125,7 +125,7 @@ int slideshw()
     {
         if (calc_status == CALCSTAT_IN_PROGRESS || busy) /* restart timer - process not done */
             return (0); /* wait for calc to finish before reading more keystrokes */
-        calcwait = 0;
+        calcwait = false;
     }
     if (fpss==nullptr)   /* open files first time through */
         if (startslideshow()==0)
@@ -262,7 +262,7 @@ start:
     }
     else if (strcmp("CALCWAIT",(char *)buffer)==0) /* wait for calc to finish */
     {
-        calcwait = 1;
+        calcwait = true;
         slowcount = out = 0;
     }
     else if ((i=check_vidmode_keyname(buffer)) != 0)
@@ -285,7 +285,7 @@ startslideshow()
         g_slides = SLIDES_OFF;
     ticks = 0;
     quotes = false;
-    calcwait = 0;
+    calcwait = false;
     slowcount = 0;
     return (g_slides);
 }
