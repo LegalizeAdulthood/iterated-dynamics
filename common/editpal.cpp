@@ -1554,7 +1554,7 @@ struct  _PalTable
     int           curr[2];
     RGBEditor    *rgb[2];
     MoveBox      *movebox;
-    BOOLEAN       done;
+    bool done;
     BOOLEAN       exclude;
     BOOLEAN       auto_select;
     PALENTRY      pal[256];
@@ -2447,7 +2447,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         break;
 
     case FIK_ESC:
-        me->done = TRUE;
+        me->done = true;
         RGBEditor_SetDone(rgb, true);
         break;
 
@@ -3154,7 +3154,7 @@ static void PalTable_Process(PalTable *me)
     PalTable__SetCurr(me, (me->active==1)?0:1, PalTable__GetCursorColor(me));
     Cursor_Show();
     PalTable__MkDefaultPalettes(me);
-    me->done = FALSE;
+    me->done = false;
 
     while (!me->done)
         RGBEditor_Edit(me->rgb[me->active]);
