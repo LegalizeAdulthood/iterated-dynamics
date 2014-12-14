@@ -39,12 +39,12 @@ void notdiskmsg()
 /* col2    -- last column                                                 */
 /* color   -- attribute (same as for putstring)                           */
 /* maxrow -- max number of rows to write                                 */
-/* returns 0 if success, 1 if hit maxrow before done                      */
-int putstringwrap(int *row,int col1,int col2,int color,char *str,int maxrow)
+/* returns false if success, true if hit maxrow before done             */
+static bool putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow)
 {
     char save1, save2;
-    int length, decpt, padding, startrow, done;
-    done = 0;
+    int length, decpt, padding, startrow;
+    bool done = false;
     startrow = *row;
     length = (int) strlen(str);
     padding = 3; /* space between col1 and decimal. */
@@ -65,9 +65,9 @@ int putstringwrap(int *row,int col1,int col2,int color,char *str,int maxrow)
         if (col2-col1 < length)
         {
             if ((*row - startrow + 1) >= maxrow)
-                done = 1;
+                done = true;
             else
-                done = 0;
+                done = false;
             save1 = str[col2-col1+1];
             save2 = str[col2-col1+2];
             if (done)
@@ -76,7 +76,7 @@ int putstringwrap(int *row,int col1,int col2,int color,char *str,int maxrow)
                 str[col2-col1+1]   = '\\';
             str[col2-col1+2] = 0;
             driver_put_string(*row,col1,color,str);
-            if (done == 1)
+            if (done)
                 break;
             str[col2-col1+1] = save1;
             str[col2-col1+2] = save2;
@@ -87,7 +87,7 @@ int putstringwrap(int *row,int col1,int col2,int color,char *str,int maxrow)
         length -= col2-col1;
         col1 = decpt; /* align with decimal */
     }
-    return (done);
+    return done;
 }
 
 #define rad_to_deg(x) ((x)*(180.0/PI)) /* most people "think" in degrees */
@@ -1043,28 +1043,28 @@ top:
         adjust_corner(); /* make bottom left exact if very near exact */
         if (bf_math)
         {
-            int truncate, truncaterow;
+            int truncaterow;
             int dec = std::min(320, decimals);
             adjust_cornerbf(); /* make bottom left exact if very near exact */
             cvtcentermagbf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
             /* find alignment information */
             msg[0] = 0;
-            truncate = 0;
+            bool truncate = false;
             if (dec < decimals)
             {
-                truncate = 1;
+                truncate = true;
             }
             truncaterow = row;
             driver_put_string(++s_row, 2, C_GENERAL_MED, "Ctr");
             driver_put_string(s_row, 8, C_GENERAL_MED, "x");
             bftostr(msg, dec, bfXctr);
-            if (putstringwrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5) == 1)
+            if (putstringwrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5))
             {
-                truncate = 1;
+                truncate = true;
             }
             driver_put_string(++s_row, 8, C_GENERAL_MED, "y");
             bftostr(msg, dec, bfYctr);
-            if (putstringwrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5) == 1 || truncate)
+            if (putstringwrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5) || truncate)
             {
                 driver_put_string(truncaterow, 2, C_GENERAL_MED, "(Center values shown truncated to 320 decimals)");
             }
