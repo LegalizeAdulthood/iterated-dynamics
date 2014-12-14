@@ -1398,7 +1398,7 @@ void read_src(char *fname)
     LABEL  lbl;
     char  *margin_pos = nullptr;
     bool in_topic = false;
-    int    formatting = 1;
+    bool formatting = true;
     int    state      = S_Start;
     int    num_spaces = 0;
     int    margin     = 0;
@@ -1525,7 +1525,7 @@ void read_src(char *fname)
                         error(eoff,"Topic title already exists.");
 
                     start_topic(&t, cmd+6, (unsigned)(ptr-(cmd+6)));
-                    formatting = 1;
+                    formatting = true;
                     centering = 0;
                     state = S_Start;
                     in_para = 0;
@@ -1573,7 +1573,7 @@ void read_src(char *fname)
                     lbl.doc_page  = -1;
                     add_label(&lbl);
 
-                    formatting = 0;
+                    formatting = false;
                     centering = 0;
                     state = S_Start;
                     in_para = 0;
@@ -1864,7 +1864,7 @@ void read_src(char *fname)
                             check_command_length(eoff,7);
                             if (!formatting)
                             {
-                                formatting = 1;
+                                formatting = true;
                                 in_para = 0;
                                 num_spaces = 0;
                                 state = S_Start;
@@ -1880,7 +1880,7 @@ void read_src(char *fname)
                                 if (in_para)
                                     *curr++ = '\n';  /* finish off current paragraph */
                                 in_para = 0;
-                                formatting = 0;
+                                formatting = false;
                                 num_spaces = 0;
                                 state = S_Start;
                             }
