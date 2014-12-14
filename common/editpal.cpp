@@ -1606,7 +1606,7 @@ static PalTable *PalTable_Construct();
 static void      PalTable_Destroy(PalTable *me);
 static void      PalTable_Process(PalTable *me);
 static void      PalTable_SetHidden(PalTable *me, bool hidden);
-static void      PalTable_Hide(PalTable *me, RGBEditor *rgb, BOOLEAN hidden);
+static void      PalTable_Hide(PalTable *me, RGBEditor *rgb, bool hidden);
 
 
 #define PalTable_PALX (1)
@@ -2662,7 +2662,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case 'H':
     case 'h': /* toggle hide/display of palette editor */
         Cursor_Hide();
-        PalTable_Hide(me, rgb, (BOOLEAN)((me->hidden) ? FALSE : TRUE));
+        PalTable_Hide(me, rgb, me->hidden ? false : true);
         Cursor_Show();
         break;
 
@@ -2845,7 +2845,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         Cursor_Hide();
         if (!oldhidden)
-            PalTable_Hide(me, rgb, TRUE);
+            PalTable_Hide(me, rgb, true);
         setpalrange(0, colors, me->pal);
         rotate(0);
         getpalrange(0, colors, me->pal);
@@ -2854,7 +2854,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         {
             RGBEditor_SetRGB(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
             RGBEditor_SetRGB(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-            PalTable_Hide(me, rgb, FALSE);
+            PalTable_Hide(me, rgb, false);
         }
         Cursor_Show();
         break;
@@ -3059,7 +3059,7 @@ static void PalTable_SetHidden(PalTable *me, bool hidden)
 
 
 
-static void PalTable_Hide(PalTable *me, RGBEditor *rgb, BOOLEAN hidden)
+static void PalTable_Hide(PalTable *me, RGBEditor *rgb, bool hidden)
 {
     if (hidden)
     {
