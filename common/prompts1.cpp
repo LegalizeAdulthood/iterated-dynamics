@@ -41,14 +41,14 @@ static  int input_field_list(int attr,char *fld,int vlen, const char **list,int 
 static  int select_fracttype(int t);
 static  int sel_fractype_help(int curkey, int choice);
 int select_type_params(int newfractype,int oldfractype);
-void set_default_parms(void);
+void set_default_parms();
 static  long gfe_choose_entry(int, const char *,char *,char *);
 static  int check_gfe_key(int curkey,int choice);
 static  void load_entry_text(FILE *entfile,char *buf,int maxlines, int startrow, int startcol);
 static  void format_parmfile_line(int,char *);
-static  bool get_light_params(void);
-static  bool check_mapfile(void);
-static  bool get_funny_glasses_params(void);
+static  bool get_light_params();
+static  bool check_mapfile();
+static  bool get_funny_glasses_params();
 
 #define GETFORMULA 0
 #define GETLSYS    1
