@@ -1238,16 +1238,16 @@ void process_comment()
 
         if (ch == '~')
         {
-            int   imbedded;
+            bool imbedded;
             char *ptr;
 
             ch = read_char();
 
             if (ch=='(')
-                imbedded = 1;
+                imbedded = true;
             else
             {
-                imbedded = 0;
+                imbedded = false;
                 unread_char(ch);
             }
 
