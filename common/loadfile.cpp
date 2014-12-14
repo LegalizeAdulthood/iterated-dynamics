@@ -573,10 +573,14 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         }
         paramrangex  = blk_6_info.paramrangex;
         paramrangey  = blk_6_info.paramrangey;
-        opx = newopx = blk_6_info.opx;
-        opy = newopy = blk_6_info.opy;
-        odpx = newodpx = (char) blk_6_info.odpx;
-        odpy = newodpy = (char) blk_6_info.odpy;
+        newopx = blk_6_info.opx;
+        opx = newopx;
+        newopy = blk_6_info.opy;
+        opy = newopy;
+        newodpx = (char) blk_6_info.odpx;
+        odpx = newodpx;
+        newodpy = (char) blk_6_info.odpy;
+        odpy = newodpy;
         px           = blk_6_info.px;
         py           = blk_6_info.py;
         sxoffs       = blk_6_info.sxoffs;
@@ -1144,7 +1148,12 @@ void backwards_v19()
             param[2] += 1;
     }
     if ((fractype==FORMULA || fractype==FFORMULA) && save_release < 1824)
-        inversion[0] = inversion[1] = inversion[2] = invert = 0;
+    {
+        invert = 0;
+        inversion[2] = invert;
+        inversion[1] = inversion[2];
+        inversion[0] = inversion[1];
+    }
     if (fix_bof())
         no_mag_calc = true; /* fractal has old bof60/61 problem with magnitude */
     else
