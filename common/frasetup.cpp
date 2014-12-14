@@ -19,7 +19,7 @@
 /* -------------------------------------------------------------------- */
 
 bool
-MandelSetup(void)           /* Mandelbrot Routine */
+MandelSetup()           /* Mandelbrot Routine */
 {
     if (debugflag != 90
             && !invert && decomp[0] == 0 && rqlim == 4.0
@@ -38,7 +38,7 @@ MandelSetup(void)           /* Mandelbrot Routine */
 }
 
 bool
-JuliaSetup(void)            /* Julia Routine */
+JuliaSetup()            /* Julia Routine */
 {
     if (debugflag != 90
             && !invert && decomp[0] == 0 && rqlim == 4.0
@@ -58,7 +58,7 @@ JuliaSetup(void)            /* Julia Routine */
 }
 
 bool
-NewtonSetup(void)           /* Newton/NewtBasin Routines */
+NewtonSetup()           /* Newton/NewtBasin Routines */
 {
 #if !defined(XFRACT)
     if (debugflag != 1010)
@@ -152,14 +152,14 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 
 
 bool
-StandaloneSetup(void)
+StandaloneSetup()
 {
     timer(0,curfractalspecific->calctype);
     return false;               /* effectively disable solid-guessing */
 }
 
 bool
-UnitySetup(void)
+UnitySetup()
 {
     periodicitycheck = 0;
     FgOne = (1L << bitshift);
@@ -168,7 +168,7 @@ UnitySetup(void)
 }
 
 bool
-MandelfpSetup(void)
+MandelfpSetup()
 {
     bf_math = 0;
     c_exp = (int)param[2];
@@ -277,7 +277,7 @@ MandelfpSetup(void)
 }
 
 bool
-JuliafpSetup(void)
+JuliafpSetup()
 {
     c_exp = (int)param[2];
     floatparm = &parm;
@@ -405,7 +405,7 @@ JuliafpSetup(void)
 }
 
 bool
-MandellongSetup(void)
+MandellongSetup()
 {
     FgHalf = fudge >> 1;
     c_exp = (int)param[2];
@@ -453,7 +453,7 @@ MandellongSetup(void)
 }
 
 bool
-JulialongSetup(void)
+JulialongSetup()
 {
     c_exp = (int)param[2];
     longparm = &lparm;
@@ -518,7 +518,7 @@ JulialongSetup(void)
 }
 
 bool
-TrigPlusSqrlongSetup(void)
+TrigPlusSqrlongSetup()
 {
     curfractalspecific->per_pixel =  julia_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusSqrFractal;
@@ -533,7 +533,7 @@ TrigPlusSqrlongSetup(void)
 }
 
 bool
-TrigPlusSqrfpSetup(void)
+TrigPlusSqrfpSetup()
 {
     curfractalspecific->per_pixel =  juliafp_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusSqrfpFractal;
@@ -548,7 +548,7 @@ TrigPlusSqrfpSetup(void)
 }
 
 bool
-TrigPlusTriglongSetup(void)
+TrigPlusTriglongSetup()
 {
     FnPlusFnSym();
     if (trigndx[1] == SQR)
@@ -566,7 +566,7 @@ TrigPlusTriglongSetup(void)
 }
 
 bool
-TrigPlusTrigfpSetup(void)
+TrigPlusTrigfpSetup()
 {
     FnPlusFnSym();
     if (trigndx[1] == SQR)
@@ -584,7 +584,7 @@ TrigPlusTrigfpSetup(void)
 }
 
 bool
-FnPlusFnSym(void) /* set symmetry matrix for fn+fn type */
+FnPlusFnSym() /* set symmetry matrix for fn+fn type */
 {
     static char fnplusfn[7][7] =
     {   /* fn2 ->sin     cos    sinh    cosh   exp    log    sqr  */
@@ -609,7 +609,7 @@ FnPlusFnSym(void) /* set symmetry matrix for fn+fn type */
 }
 
 bool
-LambdaTrigOrTrigSetup(void)
+LambdaTrigOrTrigSetup()
 {
     /* default symmetry is ORIGIN  */
     longparm = &lparm;
@@ -623,7 +623,7 @@ LambdaTrigOrTrigSetup(void)
 }
 
 bool
-JuliaTrigOrTrigSetup(void)
+JuliaTrigOrTrigSetup()
 {
     /* default symmetry is XAXIS */
     longparm = &lparm;
@@ -637,7 +637,7 @@ JuliaTrigOrTrigSetup(void)
 }
 
 bool
-ManlamTrigOrTrigSetup(void)
+ManlamTrigOrTrigSetup()
 {   /* psuedo */
     /* default symmetry is XAXIS */
     longparm = &linit;
@@ -650,7 +650,7 @@ ManlamTrigOrTrigSetup(void)
 }
 
 bool
-MandelTrigOrTrigSetup(void)
+MandelTrigOrTrigSetup()
 {
     /* default symmetry is XAXIS_NOPARM */
     longparm = &linit;
@@ -662,7 +662,7 @@ MandelTrigOrTrigSetup(void)
 
 
 bool
-ZXTrigPlusZSetup(void)
+ZXTrigPlusZSetup()
 {
     /*   static char ZXTrigPlusZSym1[] = */
     /* fn1 ->  sin   cos    sinh  cosh exp   log   sqr */
@@ -735,7 +735,7 @@ ZXTrigPlusZSetup(void)
 }
 
 bool
-LambdaTrigSetup(void)
+LambdaTrigSetup()
 {
     bool const isinteger = curfractalspecific->isinteger != 0;
     if (isinteger)
@@ -786,7 +786,7 @@ LambdaTrigSetup(void)
 }
 
 bool
-JuliafnPlusZsqrdSetup(void)
+JuliafnPlusZsqrdSetup()
 {
     /*   static char fnpluszsqrd[] = */
     /* fn1 ->  sin   cos    sinh  cosh   sqr    exp   log  */
@@ -810,7 +810,7 @@ JuliafnPlusZsqrdSetup(void)
 }
 
 bool
-SqrTrigSetup(void)
+SqrTrigSetup()
 {
     /*   static char SqrTrigSym[] = */
     /* fn1 ->  sin    cos    sinh   cosh   sqr    exp   log  */
@@ -830,7 +830,7 @@ SqrTrigSetup(void)
 }
 
 bool
-FnXFnSetup(void)
+FnXFnSetup()
 {
     static char fnxfn[7][7] =
     {   /* fn2 ->sin     cos    sinh    cosh  exp    log    sqr */
@@ -871,7 +871,7 @@ FnXFnSetup(void)
 }
 
 bool
-MandelTrigSetup(void)
+MandelTrigSetup()
 {
     bool const isinteger = curfractalspecific->isinteger != 0;
     if (isinteger)
@@ -916,7 +916,7 @@ MandelTrigSetup(void)
 }
 
 bool
-MarksJuliaSetup(void)
+MarksJuliaSetup()
 {
 #if !defined(XFRACT)
     if (param[2] < 1)
@@ -943,7 +943,7 @@ MarksJuliaSetup(void)
 }
 
 bool
-MarksJuliafpSetup(void)
+MarksJuliafpSetup()
 {
     if (param[2] < 1)
         param[2] = 1;
@@ -968,7 +968,7 @@ MarksJuliafpSetup(void)
 }
 
 bool
-SierpinskiSetup(void)
+SierpinskiSetup()
 {
     /* sierpinski */
     periodicitycheck = 0;                /* disable periodicity checks */
@@ -979,7 +979,7 @@ SierpinskiSetup(void)
 }
 
 bool
-SierpinskiFPSetup(void)
+SierpinskiFPSetup()
 {
     /* sierpinski */
     periodicitycheck = 0;                /* disable periodicity checks */
@@ -989,7 +989,7 @@ SierpinskiFPSetup(void)
 }
 
 bool
-HalleySetup(void)
+HalleySetup()
 {
     /* Halley */
     periodicitycheck=0;
@@ -1030,7 +1030,7 @@ HalleySetup(void)
 }
 
 bool
-PhoenixSetup(void)
+PhoenixSetup()
 {
     longparm = &lparm;
     floatparm = &parm;
@@ -1062,7 +1062,7 @@ PhoenixSetup(void)
 }
 
 bool
-PhoenixCplxSetup(void)
+PhoenixCplxSetup()
 {
     longparm = &lparm;
     floatparm = &parm;
@@ -1108,7 +1108,7 @@ PhoenixCplxSetup(void)
 }
 
 bool
-MandPhoenixSetup(void)
+MandPhoenixSetup()
 {
     longparm = &linit;
     floatparm = &init;
@@ -1140,7 +1140,7 @@ MandPhoenixSetup(void)
 }
 
 bool
-MandPhoenixCplxSetup(void)
+MandPhoenixCplxSetup()
 {
     longparm = &linit;
     floatparm = &init;
@@ -1174,7 +1174,7 @@ MandPhoenixCplxSetup(void)
 }
 
 bool
-StandardSetup(void)
+StandardSetup()
 {
     if (fractype==UNITYFP)
         periodicitycheck=0;
@@ -1182,7 +1182,7 @@ StandardSetup(void)
 }
 
 bool
-VLSetup(void)
+VLSetup()
 {
     if (param[0] < 0.0) param[0] = 0.0;
     if (param[1] < 0.0) param[1] = 0.0;
