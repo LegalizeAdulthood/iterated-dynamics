@@ -31,7 +31,7 @@ struct tagWinText
     int cursor_x;
     int cursor_y;
     int cursor_type;
-    int cursor_owned;
+    bool cursor_owned;
     HBITMAP bitmap[3];
     short cursor_pattern[3][40];
 

@@ -292,7 +292,7 @@ int wintext_texton(WinText *me)
     me->cursor_x    = 0;
     me->cursor_y    = 0;
     me->cursor_type = 0;
-    me->cursor_owned = 0;
+    me->cursor_owned = false;
     me->showing_cursor = FALSE;
 
     /* make sure g_me points to me because CreateWindow
@@ -356,7 +356,7 @@ static void wintext_OnSetFocus(HWND window, HWND old_focus)
     /* create caret & display */
     if (TRUE == g_me->showing_cursor)
     {
-        g_me->cursor_owned = 1;
+        g_me->cursor_owned = true;
         CreateCaret(g_me->hWndCopy, g_me->bitmap[g_me->cursor_type], g_me->char_width, g_me->char_height);
         SetCaretPos(g_me->cursor_x*g_me->char_width, g_me->cursor_y*g_me->char_height);
         //SetCaretBlinkTime(500);
@@ -371,7 +371,7 @@ static void wintext_OnKillFocus(HWND window, HWND old_focus)
     ODS("wintext_OnKillFocus");
     if (TRUE == g_me->showing_cursor)
     {
-        g_me->cursor_owned = 0;
+        g_me->cursor_owned = false;
         ODS1("======================== Hide Caret %d", --carrot_count);
         HideCaret(window);
         DestroyCaret();
