@@ -443,7 +443,7 @@ void Jiim(int which)         /* called by fractint */
     static int randir = 0;
     static int rancnt = 0;
     bool actively_computing = true;
-    int first_time = 1;
+    bool first_time = true;
     int old_debugflag;
 
     old_debugflag = debugflag;
@@ -610,7 +610,7 @@ void Jiim(int which)         /* called by fractint */
         }
         if (driver_key_pressed() || first_time) /* prevent burning up UNIX CPU */
         {
-            first_time = 0;
+            first_time = false;
             while (driver_key_pressed())
             {
                 Cursor_WaitKey();
