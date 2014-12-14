@@ -237,11 +237,6 @@ int cmdfiles(int argc,char **argv)
     /* cycle through args */
     for (int i = 1; i < argc; i++)
     {
-#ifdef XFRACT
-        /* Let the xfract code take a look at the argument */
-        if (unixarg(argc,argv,&i))
-            continue;
-#endif
         strcpy(curarg,argv[i]);
         if (curarg[0] == ';')             /* start of comments? */
             break;

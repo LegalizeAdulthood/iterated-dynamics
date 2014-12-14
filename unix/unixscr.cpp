@@ -150,67 +150,6 @@ static int mousefkey[4][4] /* [button][dir] */ = {
 /*
  *----------------------------------------------------------------------
  *
- * unixarg --
- *
- *  See if we want to do something with the argument.
- *
- * Results:
- *  Returns 1 if we parsed the argument.
- *
- * Side effects:
- *  Increments i if we use more than 1 argument.
- *
- *----------------------------------------------------------------------
- */
-int
-unixarg(int argc, char **argv, int *i)
-{
-    if (strcmp(argv[*i],"-display")==0 && (*i)+1<argc) {
-        Xdisplay = argv[(*i)+1];
-        (*i)++;
-        return 1;
-    } else if (strcmp(argv[*i],"-fullscreen")==0) {
-        fullscreen = 1;
-        return 1;
-    } else if (strcmp(argv[*i],"-disk")==0) {
-        unixDisk = 1;
-        return 1;
-    } else if (strcmp(argv[*i],"-onroot")==0) {
-        onroot = 1;
-        return 1;
-    } else if (strcmp(argv[*i],"-share")==0) {
-        sharecolor = 1;
-        return 1;
-    } else if (strcmp(argv[*i],"-fast")==0) {
-        fastmode = 1;
-        return 1;
-    } else if (strcmp(argv[*i],"-simple")==0) {
-        simple_input = 1;
-        return 1;
-    } else if (strcmp(argv[*i],"-slowdisplay")==0) {
-        slowdisplay = true;
-        return 1;
-    } else if (strcmp(argv[*i],"-sync")==0) {
-        synch = 1;
-        return 1;
-    } else if (strcmp(argv[*i],"-private")==0) {
-        privatecolor = 1;
-        return 1;
-    } else if (strcmp(argv[*i],"-fixcolors")==0 && *i+1<argc) {
-        fixcolors = atoi(argv[(*i)+1]);
-        (*i)++;
-        return 1;
-    } else if (strcmp(argv[*i],"-geometry")==0 && *i+1<argc) {
-        Xgeometry = argv[(*i)+1];
-        (*i)++;
-        return 1;
-    } else {
-        return 0;
-    }
-}
-/*
- *----------------------------------------------------------------------
- *
  * UnixInit --
  *
  *  Initialize the windows and stuff.

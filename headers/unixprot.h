@@ -29,8 +29,6 @@ extern void ftimex(struct timebx *);
 
 /*   unixscr.c -- C file prototypes */
 
-int unixarg(int argc, char **argv, int *i);
-/* Parses xfractint-specific command line arguments */
 void UnixInit();
 /* initializes curses text window and the signal handlers. */
 void initUnixWindow();
