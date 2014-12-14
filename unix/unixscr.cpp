@@ -62,7 +62,7 @@ extern  int colors;         /* maximum colors available    */
 extern  int initmode;
 extern  int g_adapter;
 extern bool g_got_real_dac;
-extern  int inside_help;
+extern bool inside_help;
 extern  float   finalaspectratio;
 extern  float   screenaspect;
 

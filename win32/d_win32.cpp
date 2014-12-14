@@ -44,7 +44,7 @@ extern HINSTANCE g_instance;
 static int
 handle_special_keys(int ch)
 {
-    static int inside_help = 0;
+    static bool inside_help = false;
 
     if (SLIDES_PLAY == g_slides)
     {
@@ -65,9 +65,9 @@ handle_special_keys(int ch)
 
     if (FIK_F1 == ch && helpmode && !inside_help)
     {
-        inside_help = 1;
+        inside_help = true;
         help(0);
-        inside_help = 0;
+        inside_help = false;
         ch = 0;
     }
     else if (FIK_TAB == ch && tabmode)
