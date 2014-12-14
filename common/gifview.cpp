@@ -69,7 +69,7 @@ static std::vector<char> ditherbuf;
 int gifview()
 {
     BYTE buffer[16];
-    unsigned top, left, width, finished;
+    unsigned top, left, width;
     char temp1[FILE_MAX_DIR];
     BYTE byte_buf[257]; /* for decoder */
     int status;
@@ -181,15 +181,14 @@ int gifview()
     dontreadcolor = false;
 
     /* Now display one or more GIF objects */
-    finished = 0;
+    bool finished = false;
     while (!finished)
     {
         switch (get_byte())
         {
         case ';':
             /* End of the GIF dataset */
-
-            finished = 1;
+            finished = true;
             status = 0;
             break;
 
@@ -220,7 +219,7 @@ int gifview()
             }
             if (status < 0)
             {
-                finished = 1;
+                finished = true;
                 break;
             }
 
@@ -287,7 +286,7 @@ int gifview()
                 calctime = timer_interval; /* note how long it took */
                 if (driver_key_pressed() != 0) {
                     calc_status = CALCSTAT_NON_RESUMABLE; /* interrupted, not resumable */
-                    finished = 1;
+                    finished = true;
                 }
                 else
                     calc_status = CALCSTAT_COMPLETED; /* complete */
@@ -295,12 +294,12 @@ int gifview()
             /* Hey! the decoder doesn't read the last (0-length) block!! */
             if (get_byte() != 0) {
                 status = -1;
-                finished = 1;
+                finished = true;
             }
             break;
         default:
             status = -1;
-            finished = 1;
+            finished = true;
             break;
         }
     }
