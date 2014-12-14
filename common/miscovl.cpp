@@ -24,7 +24,7 @@
 
 /* routines in this module      */
 
-void write_batch_parms(char *colorinf,int colorsonly, int maxcolor,int i, int j);
+void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor,int i, int j);
 void expand_comments(char *target, char *source);
 
 static void put_parm(const char *parm,...);
@@ -53,7 +53,7 @@ FILE *parmfile;
 void make_batch_file()
 {
 #define MAXPROMPTS 18
-    int colorsonly = 0;
+    bool colorsonly = false;
     /** added for pieces feature **/
     double pdelx = 0.0;
     double pdely = 0.0;
@@ -80,7 +80,7 @@ void make_batch_file()
     int oldhelpmode;
 
     if (s_makepar[1] == 0) /* makepar map case */
-        colorsonly = 1;
+        colorsonly = true;
 
     driver_stack_screen();
     oldhelpmode = helpmode;
@@ -219,7 +219,7 @@ prompt_user:
         if (*colorspec == 'o' || s_makepar[1] == 0)
         {
             strcpy(colorspec,"y");
-            colorsonly = 1;
+            colorsonly = true;
         }
 
         strcpy(CommandFile, inpcommandfile);
@@ -436,7 +436,7 @@ skip_UI:
                     for (int k = 1; k < 4; k++)
                         if (CommandComment[k][0])
                             fprintf(parmfile, "%s%s\n", buf, CommandComment[k]);
-                    if (g_patch_level != 0 && colorsonly == 0)
+                    if (g_patch_level != 0 && !colorsonly)
                         fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
                                 Fractint, g_release, g_patch_level);
                 }
@@ -492,7 +492,7 @@ static struct write_batch_data /* buffer for parms to break lines nicely */
     char buf[10000];
 } s_wbdata;
 
-void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int jj)
+void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, int jj)
 {
     double Xctr, Yctr;
     LDBL Magnification;
@@ -933,7 +933,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
         put_parm("/%d/%d",viewxdots,viewydots);
     }
 
-    if (colorsonly == 0)
+    if (!colorsonly)
     {
         if (rotate_lo != 1 || rotate_hi != 255)
             put_parm(" %s=%d/%d", "cyclerange",rotate_lo,rotate_hi);

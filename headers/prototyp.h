@@ -675,7 +675,7 @@ extern int getprecbf(int);
 extern int getprecbf_mag();
 extern void parse_comments(char *value);
 extern void init_comments();
-extern void write_batch_parms(char *, int, int, int, int);
+extern void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor,int i, int j);
 extern void expand_comments(char *, char *);
 
 /*  miscres -- C file prototypes */
