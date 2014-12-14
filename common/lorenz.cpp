@@ -1413,9 +1413,9 @@ int orbit2dlong()
     int oldrow, oldcol;
     long *p0, *p1, *p2;
     struct l_affine cvt;
-    int ret, start;
+    int ret;
 
-    start = 1;
+    bool start = true;
     soundvar = p0 = p1 = p2 = nullptr;
     fp = open_orbitsave();
 
@@ -1541,7 +1541,7 @@ int orbit2dlong()
             }
             oldcol = col;
             oldrow = row;
-            start = 0;
+            start = false;
         }
         else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL) /* sanity check */
         {
