@@ -133,7 +133,8 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
     row = 0;
     col = 0;
 
-    size = width = 0;
+    width = 0;
+    size = width;
 
     if (start_margin >= 0)
         tok = TOK_PARA;
@@ -223,7 +224,8 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
                 len -= size;
             }
 
-            width = size = 0;
+            size = 0;
+            width = size;
             break;
         }
 
@@ -1323,7 +1325,8 @@ void print_document(const char *outfname, bool (*msg_func)(int,int), int save_ex
     fread(&info.num_contents, sizeof(int), 1, help_file);
     fread(&info.num_page, sizeof(int), 1, help_file);
 
-    info.cnum = info.tnum = -1;
+    info.tnum = -1;
+    info.cnum = info.tnum;
     info.content_pos = 6*sizeof(int) + num_topic*sizeof(long) + num_label*2*sizeof(int);
     info.msg_func = msg_func;
 

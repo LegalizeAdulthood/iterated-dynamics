@@ -81,7 +81,8 @@ int gifview()
     status = 0;
 
     /* initialize the col and row count for write-lines */
-    colcount = g_row_count = 0;
+    g_row_count = 0;
+    colcount = g_row_count;
 
     /* Open the file */
     if (outln == outline_stereo)
@@ -109,9 +110,8 @@ int gifview()
     /* Get the screen description */
     for (int i = 0; i < 13; i++)
     {
-        int tmp;
-
-        buffer[i] = (BYTE)(tmp = get_byte());
+        int tmp = get_byte();
+        buffer[i] = (BYTE) tmp;
         if (tmp < 0)
         {
             close_file();
@@ -208,9 +208,8 @@ int gifview()
 
             for (int i = 0; i < 9; i++)
             {
-                int tmp;
-
-                buffer[i] = (BYTE)(tmp = get_byte());
+                int tmp = get_byte();
+                buffer[i] = (BYTE) tmp;
                 if (tmp < 0)
                 {
                     status = -1;
