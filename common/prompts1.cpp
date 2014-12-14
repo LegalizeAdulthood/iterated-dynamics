@@ -2058,10 +2058,10 @@ static int check_gfe_key(int curkey,int choice)
         int top_line = 0;
         int left_column = 0;
         int done = 0;
-        int rewrite_infbuf = 0;  /* if 1: rewrite the entry portion of screen */
+        bool rewrite_infbuf = false;  /* if true: rewrite the entry portion of screen */
         while (!done) {
             if (rewrite_infbuf) {
-                rewrite_infbuf = 0;
+                rewrite_infbuf = false;
                 fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
                 load_entry_text(gfe_file, infbuf, 17, top_line, left_column);
                 for (int i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
@@ -2082,28 +2082,28 @@ static int check_gfe_key(int curkey,int choice)
                 case FIK_CTL_DOWN_ARROW: /* down one line */
                     if (in_scrolling_mode && top_line < lines_in_entry - 17) {
                         top_line++;
-                        rewrite_infbuf = 1;
+                        rewrite_infbuf = true;
                     }
                     break;
                 case FIK_UP_ARROW:
                 case FIK_CTL_UP_ARROW:  /* up one line */
                     if (in_scrolling_mode && top_line > 0) {
                         top_line--;
-                        rewrite_infbuf = 1;
+                        rewrite_infbuf = true;
                     }
                     break;
                 case FIK_LEFT_ARROW:
                 case FIK_CTL_LEFT_ARROW:  /* left one column */
                     if (in_scrolling_mode && left_column > 0) {
                         left_column--;
-                        rewrite_infbuf = 1;
+                        rewrite_infbuf = true;
                     }
                     break;
                 case FIK_RIGHT_ARROW:
                 case FIK_CTL_RIGHT_ARROW: /* right one column */
                     if (in_scrolling_mode && strchr(infbuf, '\021') != nullptr) {
                         left_column++;
-                        rewrite_infbuf = 1;
+                        rewrite_infbuf = true;
                     }
                     break;
                 case FIK_PAGE_DOWN:
@@ -2112,7 +2112,7 @@ static int check_gfe_key(int curkey,int choice)
                         top_line += 17;
                         if (top_line > lines_in_entry - 17)
                             top_line = lines_in_entry - 17;
-                        rewrite_infbuf = 1;
+                        rewrite_infbuf = true;
                     }
                     break;
                 case FIK_PAGE_UP:
@@ -2121,7 +2121,7 @@ static int check_gfe_key(int curkey,int choice)
                         top_line -= 17;
                         if (top_line < 0)
                             top_line = 0;
-                        rewrite_infbuf = 1;
+                        rewrite_infbuf = true;
                     }
                     break;
                 case FIK_END:
@@ -2129,14 +2129,14 @@ static int check_gfe_key(int curkey,int choice)
                     if (in_scrolling_mode) {
                         top_line = lines_in_entry - 17;
                         left_column = 0;
-                        rewrite_infbuf = 1;
+                        rewrite_infbuf = true;
                     }
                     break;
                 case FIK_HOME:
                 case FIK_CTL_HOME:     /* to beginning of entry */
                     if (in_scrolling_mode) {
                         top_line = left_column = 0;
-                        rewrite_infbuf = 1;
+                        rewrite_infbuf = true;
                     }
                     break;
                 default:
