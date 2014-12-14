@@ -356,7 +356,9 @@ static void palrangetogrey(PALENTRY pal[], int first, int how_many)
     for (PALENTRY *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
         BYTE val = (BYTE)(((int)curr->red*30 + (int)curr->green*59 + (int)curr->blue*11) / 100);
-        curr->red = curr->green = curr->blue = (BYTE)val;
+        curr->blue = (BYTE)val;
+        curr->green = curr->blue;
+        curr->red = curr->green;
     }
 }
 
@@ -1731,7 +1733,10 @@ static void PalTable__UndoProcess(PalTable *me, int delta)   /* undo/redo common
             last  = (unsigned char)getc(me->undo_file);
         }
         else  /* UNDO_DATA_SINGLE */
-            first = last = (unsigned char)getc(me->undo_file);
+        {
+            last = (unsigned char)getc(me->undo_file);
+            first = last;
+        }
 
         num = (last - first) + 1;
 
@@ -3186,7 +3191,8 @@ void EditPalette()       /* called by fractint */
     line_buff = static_cast<BYTE *>(newx(std::max(sxdots,sydots)));
 
     lookatmouse = 3;
-    sxoffs = syoffs = 0;
+    syoffs = 0;
+    sxoffs = syoffs;
 
     reserve_colors = true;
     inverse = false;
