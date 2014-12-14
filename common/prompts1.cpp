@@ -1696,17 +1696,16 @@ long get_file_entry(int type, const char *title,char *fmask,
 {
     /* Formula, LSystem, etc type structure, select from file */
     /* containing definitions in the form    name { ... }     */
-    int newfile;
     bool firsttry;
     long entry_pointer;
-    newfile = 0;
+    bool newfile = false;
     while (1) {
         firsttry = false;
         /* binary mode used here - it is more work, but much faster, */
         /*     especially when ftell or fgetpos is used                  */
         while (newfile || (gfe_file = fopen(filename, "rb")) == nullptr) {
             char buf[60];
-            newfile = 0;
+            newfile = false;
             if (firsttry) {
                 sprintf(temp1,"Can't find %s", filename);
                 stopmsg(0,temp1);
@@ -1718,11 +1717,11 @@ long get_file_entry(int type, const char *title,char *fmask,
             firsttry = true; /* if around open loop again it is an error */
         }
         setvbuf(gfe_file,tstack,_IOFBF,4096); /* improves speed when file is big */
-        newfile = 0;
+        newfile = false;
         entry_pointer = gfe_choose_entry(type,title,filename,entryname);
         if (entry_pointer == -2)
         {
-            newfile = 1; /* go to file list, */
+            newfile = true; /* go to file list, */
             continue;    /* back to getafilename */
         }
         if (entry_pointer == -1)
