@@ -102,7 +102,7 @@ struct DriverX11
     unsigned long pixtab[256];
     int ipixtab[256];
     XPixel cmap_pixtab[256];    /* for faking a LUTs on non-LUT visuals */
-    int cmap_pixtab_alloced;
+    bool cmap_pixtab_alloced;
     bool fake_lut;
 
     bool fastmode;              /* = false; Don't draw pixels 1 at a time */
@@ -1882,7 +1882,7 @@ x11_write_palette(Driver *drv)
                     last_dac[i][2] = g_dac_box[i][2];
                 }
             }
-            di->cmap_pixtab_alloced = True;
+            di->cmap_pixtab_alloced = true;
             last_dac_inited = True;
         } else {
             /* !g_got_real_dac, !fake_lut => static color, static gray displays */
@@ -2551,9 +2551,9 @@ static DriverX11 x11_driver_info = {
     { 0L },               /* pixtab */
     { 0 },                /* ipixtab */
     { 0L },               /* cmap_pixtab */
-    0,                    /* cmap_pixtab_alloced */
-    0,                    /* fake_lut */
-    0,                    /* fastmode */
+    false,                /* cmap_pixtab_alloced */
+    false,                /* fake_lut */
+    false,                /* fastmode */
     false,                /* alarmon */
     false,                /* doredraw */
     nullptr,              /* Xdp */
