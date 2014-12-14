@@ -729,7 +729,7 @@ LSysFDrawTransform(char *s, struct lsys_turtlestatef *ts)
     return doub;
 }
 
-void lsysf_dosincos(void)
+void lsysf_dosincos()
 {
     LDBL locaspect;
     LDBL TWOPI = 2.0 * PI;
