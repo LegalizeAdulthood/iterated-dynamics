@@ -437,7 +437,8 @@ int get_toggles2()
 
     choices[++k] = "              to   color (1 ... 255)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = old_rotate_hi = rotate_hi;
+    old_rotate_hi = rotate_hi;
+    uvalues[k].uval.ival = old_rotate_hi;
 
     int const oldhelpmode = helpmode;
     helpmode = HELPYOPTS;
@@ -544,7 +545,8 @@ pass_option_restart:
 
     choices[++k] = "Periodicity (0=off, <0=show, >0=on, -255..+255)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = old_periodicity = usr_periodicitycheck;
+    old_periodicity = usr_periodicitycheck;
+    uvalues[k].uval.ival = old_periodicity;
 
     choices[++k] = "Orbit delay (0 = none)";
     uvalues[k].type = 'i';
