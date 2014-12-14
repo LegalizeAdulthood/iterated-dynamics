@@ -483,7 +483,7 @@ int fullscreen_choice(
     int speedrow = 0;  /* speed key prompt */
     int boxitems;      /* boxwidth*boxdepth */
     int curkey, increment, rev_increment = 0;
-    int redisplay;
+    bool redisplay;
     const char *charptr;
     char buf[81];
     char curitem[81];
@@ -732,7 +732,7 @@ int fullscreen_choice(
     {
         topleftchoice += boxwidth;
     }
-    redisplay = 1;
+    redisplay = true;
     topleftrow -= scrunch;
     while (true) /* main loop */
     {
@@ -786,7 +786,7 @@ int fullscreen_choice(
             {
                 driver_put_string(topleftrow + boxdepth, topleftcol, C_PROMPT_LO, "(more)");
             }
-            redisplay = 0;
+            redisplay = false;
         }
 
         {
@@ -967,7 +967,7 @@ int fullscreen_choice(
                 topleftchoice -= boxitems;
                 increment = -boxitems;
                 rev_increment = boxwidth;
-                redisplay = 1;
+                redisplay = true;
             }
             break;
         case FIK_PAGE_DOWN:
@@ -976,7 +976,7 @@ int fullscreen_choice(
                 topleftchoice += boxitems;
                 increment = boxitems;
                 rev_increment = -boxwidth;
-                redisplay = 1;
+                redisplay = true;
             }
             break;
         case FIK_HOME:
@@ -1020,7 +1020,7 @@ int fullscreen_choice(
                 }
                 if (ret == -1)
                 {
-                    redisplay = -1;
+                    redisplay = true;
                 }
             }
             ret = -1;
@@ -1062,12 +1062,12 @@ int fullscreen_choice(
         while (current < topleftchoice)
         {
             topleftchoice -= boxwidth;
-            redisplay = 1;
+            redisplay = true;
         }
         while (current >= topleftchoice + boxitems)
         {
             topleftchoice += boxwidth;
-            redisplay = 1;
+            redisplay = true;
         }
     }
 
