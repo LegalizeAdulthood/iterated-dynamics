@@ -760,7 +760,8 @@ void (*StkRound)() = dStkRound;
 
 void dStkZero()
 {
-    Arg1->d.y = Arg1->d.x = 0.0;
+    Arg1->d.x = 0.0;
+    Arg1->d.y = Arg1->d.x;
 }
 
 #if !defined(XFRACT)
