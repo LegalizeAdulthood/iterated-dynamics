@@ -186,7 +186,8 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                 titlewidth = i;
         }
     }
-    extralines = extrawidth = 0;
+    extrawidth = 0;
+    extralines = extrawidth;
     {
         if ((hdgscan = extrainfo) != nullptr) {
             if (*hdgscan == 0)
@@ -235,7 +236,8 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         boxlines = numprompts;
         titlerow = 1 + j;
     }
-    promptrow = boxrow = titlerow + titlelines;
+    boxrow = titlerow + titlelines;
+    promptrow = boxrow;
     if (titlerow > 2) {                 /* room for blank between title & box? */
         --titlerow;
         --boxrow;
@@ -258,7 +260,9 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         extrawidth = 76;
 
     /* work out horizontal positioning */
-    maxfldwidth = maxpromptwidth = maxcomment = 0;
+    maxcomment = 0;
+    maxpromptwidth = maxcomment;
+    maxfldwidth = maxpromptwidth;
     bool anyinput = false;
     for (int i = 0; i < numprompts; i++) {
         if (values[i].type == 'y') {
@@ -471,7 +475,8 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                 break;
             case FIK_CTL_HOME:        /* scrolling key - to beginning of entry */
                 if (in_scrolling_mode) {
-                    scroll_row_status = scroll_column_status = 0;
+                    scroll_column_status = 0;
+                    scroll_row_status = scroll_column_status;
                     rewrite_extrainfo = true;
                 }
                 break;
@@ -659,7 +664,8 @@ int fullscreen_prompt(      /* full-screen prompting routine */
             break;
         case FIK_CTL_HOME:         /* scrolling key - go to beginning of entry */
             if (in_scrolling_mode) {
-                scroll_row_status = scroll_column_status = 0;
+                scroll_column_status = 0;
+                scroll_row_status = scroll_column_status;
                 rewrite_extrainfo = true;
             }
             break;
@@ -711,7 +717,8 @@ int prompt_valuestring(char *buf,struct fullscreenvalues *val)
         ret = 10;
         break;
     case '*':
-        *buf = (char)(ret = 0);
+        ret = 0;
+        *buf = (char) ret;
         break;
     case 's':
         strncpy(buf,val->uval.sval,16);
@@ -1041,7 +1048,9 @@ sel_type_restart:
     else {
         if (newfractype != oldfractype) {
             invert = 0;
-            inversion[0] = inversion[1] = inversion[2] = 0;
+            inversion[2] = 0;
+            inversion[1] = inversion[2];
+            inversion[0] = inversion[1];
         }
     }
 
@@ -1395,7 +1404,8 @@ gfp_top:
         {
             choices[promptnum] = "Bailout value (0 means use default)";
             paramvalues[promptnum].type = 'L';
-            paramvalues[promptnum++].uval.Lval = (oldbailout = bailout);
+            oldbailout = bailout;
+            paramvalues[promptnum++].uval.Lval = oldbailout;
             paramvalues[promptnum].type = '*';
             tmpptr = type_name;
             if (usr_biomorph != -1)
@@ -1811,7 +1821,8 @@ top:
                 break;
             continue;
         }
-        name_offset = temp_offset = file_offset;
+        temp_offset = file_offset;
+        name_offset = temp_offset;
         /* next equiv roughly to fscanf(..,"%40[^* \n\r\t({\032]",buf) */
         len = 0;
         /* allow spaces in entry names in next */
@@ -1961,7 +1972,9 @@ retry:
     strcpy(buf, entryname); /* preset to last choice made */
     sprintf(temp1, "%s Selection\nFile: %s", title, filename);
     formatitem = nullptr;
-    boxwidth = colwidth = boxdepth = 0;
+    boxdepth = 0;
+    colwidth = boxdepth;
+    boxwidth = colwidth;
     if (type == GETPARM)
     {
         formatitem = format_parmfile_line;
@@ -2135,7 +2148,8 @@ static int check_gfe_key(int curkey,int choice)
                 case FIK_HOME:
                 case FIK_CTL_HOME:     /* to beginning of entry */
                     if (in_scrolling_mode) {
-                        top_line = left_column = 0;
+                        left_column = 0;
+                        top_line = left_column;
                         rewrite_infbuf = true;
                     }
                     break;
@@ -2189,7 +2203,8 @@ static void load_entry_text(
     /* write maxlines of entry */
     while (maxlines-- > 0) {
         comment = false;
-        linelen = c = 0;
+        c = 0;
+        linelen = c;
 
         /* skip line up to startcol */
         int i = 0;
@@ -2331,7 +2346,8 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
         goto get_f3d_exit;
     }
 
-    ret = k = 0;
+    k = 0;
+    ret = k;
     XROT    =  uvalues[k++].uval.ival;
     YROT    =  uvalues[k++].uval.ival;
     ZROT    =  uvalues[k++].uval.ival;
@@ -2383,7 +2399,8 @@ restart_1:
 
     prompts3d[++k] = "Spherical Projection?";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = sphere = SPHERE;
+    sphere = SPHERE;
+    uvalues[k].uval.ch.val = sphere;
 
     prompts3d[++k] = "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,";
     uvalues[k].type = 'i';
