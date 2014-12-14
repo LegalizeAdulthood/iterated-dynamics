@@ -842,8 +842,8 @@ static void setup_save_info(struct fractal_info * save_info)
 
 static void output(int code);
 static void char_out(int c);
-static void flush_char(void);
-static void cl_block(void);
+static void flush_char();
+static void cl_block();
 
 static int n_bits;                        /* number of bits/code */
 static int maxbits = BITSF;                /* user settable max # bits/code */
@@ -1133,7 +1133,7 @@ static void output(int code)
 /*
  * Clear out the hash table
  */
-static void cl_block(void)             /* table clear for block compress */
+static void cl_block()             /* table clear for block compress */
 {
     memset(htab,0xff,(unsigned)HSIZE*sizeof(long));
     free_ent = ClearCode + 2;
@@ -1155,7 +1155,7 @@ static void char_out(int c)
 /*
  * Flush the packet to disk, and reset the accumulator
  */
-static void flush_char(void)
+static void flush_char()
 {
     if (a_count > 0) {
         fputc(a_count, g_outfile);
