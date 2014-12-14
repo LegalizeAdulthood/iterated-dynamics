@@ -80,7 +80,8 @@ void fill_dx_array()
     {
         dx0[0] = xxmin;              /* fill up the x, y grids */
         dy0[0] = yymax;
-        dx1[0] = dy1[0] = 0;
+        dy1[0] = 0;
+        dx1[0] = dy1[0];
         for (int i = 1; i < xdots; i++) {
             dx0[i] = (double)(dx0[0] + i*delxx);
             dy1[i] = (double)(dy1[0] - i*delyy2);
@@ -99,7 +100,8 @@ void fill_lx_array()
     {
         lx0[0] = xmin;               /* fill up the x, y grids */
         ly0[0] = ymax;
-        lx1[0] = ly1[0] = 0;
+        ly1[0] = 0;
+        lx1[0] = ly1[0];
         for (int i = 1; i < xdots; i++) {
             lx0[i] = lx0[i-1] + delx;
             ly1[i] = ly1[i-1] - dely2;
@@ -132,7 +134,8 @@ bool use_grid = false;
 
 void calcfracinit() /* initialize a *pile* of stuff for fractal calculation */
 {
-    coloriter = oldcoloriter = 0L;
+    oldcoloriter = 0L;
+    coloriter = oldcoloriter;
     for (int i = 0; i < 10; i++)
         rhombus_stack[i] = 0;
 
@@ -251,7 +254,8 @@ init_restart:
                 || curfractalspecific->calctype == calcmand
                 || curfractalspecific->calctype == calcmandfp)) {
         potflag = true;
-        distest = usr_distest = 0;    /* can't do distest too */
+        usr_distest = 0;
+        distest = usr_distest;    /* can't do distest too */
     }
 
     if (distest)
@@ -432,7 +436,8 @@ expand_retry:
             /* put fractal parameters in doubles */
             dx0 = xxmin;                /* fill up the x, y grids */
             dy0 = yymax;
-            dx1 = dy1 = 0;
+            dy1 = 0;
+            dx1 = dy1;
             /* this way of defining the dx and dy arrays is not the most
                accurate, but it is kept because it is used to determine
                the limit of resolution */
@@ -659,7 +664,9 @@ void adjust_corner()
         }
     }
 
-    if ((ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd))) {
+    ftemp = fabs(xx3rd-xxmin);
+    ftemp2 = fabs(xxmax-xx3rd);
+    if (ftemp < ftemp2) {
         if (ftemp*10000 < ftemp2 && yy3rd != yymax)
             xx3rd = xxmin;
     }
@@ -667,7 +674,10 @@ void adjust_corner()
     if (ftemp2*10000 < ftemp && yy3rd != yymin)
         xx3rd = xxmax;
 
-    if ((ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd))) {
+    ftemp = fabs(yy3rd-yymin);
+    ftemp2 = fabs(yymax-yy3rd);
+    if (ftemp < ftemp2)
+    {
         if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
             yy3rd = yymin;
     }
@@ -950,8 +960,10 @@ static void adjust_to_limits(double expand)
         }
     }
     /* get min/max x/y values */
-    lowx = highx = cornerx[0];
-    lowy = highy = cornery[0];
+    highx = cornerx[0];
+    lowx = highx;
+    highy = cornery[0];
+    lowy = highy;
 
     for (int i = 1; i < 4; ++i) {
         if (cornerx[i] < lowx)
@@ -979,7 +991,8 @@ static void adjust_to_limits(double expand)
     }
 
     /* if any corner has x or y past limit, move the image */
-    adjx = adjy = 0;
+    adjy = 0;
+    adjx = adjy;
 
     for (int i = 0; i < 4; ++i) {
         if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
