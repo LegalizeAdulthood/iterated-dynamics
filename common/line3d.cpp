@@ -1924,8 +1924,12 @@ static int start_object()
         return 0;
 
     /* Reset the min/max values, for bounding box  */
-    min_xyz[0] = min_xyz[1] = min_xyz[2] = (float)999999.0;
-    max_xyz[0] = max_xyz[1] = max_xyz[2] = (float)-999999.0;
+    min_xyz[2] = (float) 999999.0;
+    min_xyz[1] = min_xyz[2];
+    min_xyz[0] = min_xyz[1];
+    max_xyz[2] = (float) -999999.0;
+    max_xyz[1] = max_xyz[2];
+    max_xyz[0] = max_xyz[1];
 
     fprintf(File_Ptr1, "COMPOSITE\n");
     return 0;
@@ -2061,7 +2065,8 @@ static int first_time(int linelen, VECTOR v)
     float deltatheta;            /* increment of latitude */
     outln_cleanup = line3d_cleanup;
 
-    calctime = evenoddrow = 0;
+    evenoddrow = 0;
+    calctime = evenoddrow;
     /* mark as in-progress, and enable <tab> timer display */
     calc_status = CALCSTAT_IN_PROGRESS;
 
@@ -2075,11 +2080,15 @@ static int first_time(int linelen, VECTOR v)
     if (RAY)
     {
         RAY_Header();
-        xxadjust = yyadjust = 0;  /* Disable shifting in ray tracing */
-        xshift = yshift = 0;
+        yyadjust = 0;
+        xxadjust = yyadjust;  /* Disable shifting in ray tracing */
+        yshift = 0;
+        xshift = yshift;
     }
 
-    CO_MAX = CO = RO = 0;
+    RO = 0;
+    CO = RO;
+    CO_MAX = CO;
 
     set_upr_lwr();
     error = 0;
@@ -2118,8 +2127,10 @@ static int first_time(int linelen, VECTOR v)
     if (ROUGH)
         sclz = -ROUGH / 100.0;
     else
-        rscale = sclz = -0.0001;  /* if rough=0 make it very flat but plot
-                                 * something */
+    {
+        sclz = -0.0001;
+        rscale = sclz;  /* if rough=0 make it very flat but plot something */
+    }
 
     /* aspect ratio calculation - assume screen is 4 x 3 */
     aspect = (double) xdots *.75 / (double) ydots;
@@ -2159,7 +2170,9 @@ static int first_time(int linelen, VECTOR v)
 
         if (RAY)
         {
-            xval = yval = zval = 0;
+            zval = 0;
+            yval = zval;
+            xval = yval;
         }
 
         xrot(xval, m);
@@ -2284,8 +2297,10 @@ static int first_time(int linelen, VECTOR v)
 
         /* initial sin,cos phi */
 
-        sinphi = oldsinphi1 = (float) sin((double) phi1);
-        cosphi = oldcosphi1 = (float) cos((double) phi1);
+        oldsinphi1 = (float) sin((double) phi1);
+        sinphi = oldsinphi1;
+        oldcosphi1 = (float) cos((double) phi1);
+        cosphi = oldcosphi1;
         oldsinphi2 = (float) sin((double)(phi1 + deltaphi));
         oldcosphi2 = (float) cos((double)(phi1 + deltaphi));
 
@@ -2303,7 +2318,9 @@ static int first_time(int linelen, VECTOR v)
         /* precalculate factor */
         rXrscale = R * rscale;
 
-        sclz = sclx = scly = RADIUS / 100.0;      /* Need x,y,z for RAY */
+        scly = RADIUS/100.0;
+        sclx = scly;
+        sclz = sclx;      /* Need x,y,z for RAY */
 
         /* adjust x scale factor for aspect */
         sclx *= aspect;
@@ -2347,14 +2364,20 @@ static int first_time(int linelen, VECTOR v)
     }
 
     /* Both Sphere and Normal 3D */
-    direct[0] = light_direction[0] = XLIGHT;
-    direct[1] = light_direction[1] = -YLIGHT;
-    direct[2] = light_direction[2] = ZLIGHT;
+    light_direction[0] = XLIGHT;
+    direct[0] = light_direction[0];
+    light_direction[1] = -YLIGHT;
+    direct[1] = light_direction[1];
+    light_direction[2] = ZLIGHT;
+    direct[2] = light_direction[2];
 
     /* Needed because sclz = -ROUGH/100 and light_direction is transformed in
      * FILLTYPE 6 but not in 5. */
     if (FILLTYPE == 5)
-        direct[2] = light_direction[2] = -ZLIGHT;
+    {
+        light_direction[2] = -ZLIGHT;
+        direct[2] = light_direction[2];
+    }
 
     if (FILLTYPE == 6)           /* transform light direction */
     {
@@ -2412,9 +2435,12 @@ static int first_time(int linelen, VECTOR v)
     }
 
     /* bad has values caught by clipping */
-    f_bad.x = (float)(bad.x = bad_value);
-    f_bad.y = (float)(bad.y = bad_value);
-    f_bad.color = (float)(bad.color = bad_value);
+    bad.x = bad_value;
+    f_bad.x = (float) bad.x;
+    bad.y = bad_value;
+    f_bad.y = (float) bad.y;
+    bad.color = bad_value;
+    f_bad.color = (float) bad.color;
     for (int i = 0; i < (int) linelen; i++)
     {
         lastrow[i] = bad;
