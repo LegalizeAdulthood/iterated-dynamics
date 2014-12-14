@@ -2587,7 +2587,12 @@ static bool ParseStr(char *Str, int pass)
 #endif
     }
 
-    LastInitOp = paren = OpPtr = LodPtr = StoPtr = posp = 0;
+    posp = 0;
+    StoPtr = posp;
+    LodPtr = StoPtr;
+    OpPtr = LodPtr;
+    paren = OpPtr;
+    LastInitOp = paren;
     ExpectingArg = true;
     for (n = 0; Str[n]; n++)
     {
