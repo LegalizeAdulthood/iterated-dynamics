@@ -4427,7 +4427,7 @@ bool frm_prescan(FILE * open_file)
     bool ExpectingArg = true;
     bool NewStatement = true;
     bool assignment_ok = true;
-    int already_got_colon = 0;
+    bool already_got_colon = false;
     unsigned long else_has_been_used = 0;
     unsigned long waiting_for_mod = 0;
     int waiting_for_endif = 0;
@@ -4984,7 +4984,7 @@ bool frm_prescan(FILE * open_file)
                     }
                 }
                 if (this_token.token_id == 11)
-                    already_got_colon = 1;
+                    already_got_colon = true;
                 NewStatement = true;
                 ExpectingArg = true;
                 assignment_ok = true;
