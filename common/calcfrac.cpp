@@ -2859,7 +2859,7 @@ static
 int  bound_trace_main()
 {
     enum direction coming_from;
-    unsigned int match_found;
+    unsigned int matches_found;
     int trail_color, fillcolor_used, last_fillcolor_used = -1;
     int max_putline_length;
     int right, left, length;
@@ -2913,7 +2913,7 @@ int  bound_trace_main()
             fillcolor_used = fillcolor > 0 ? fillcolor : trail_color;
             coming_from = West;
             going_to = East;
-            match_found = 0;
+            matches_found = 0;
             bool continue_loop = true;
             do
             {
@@ -2937,8 +2937,8 @@ int  bound_trace_main()
                     }
                     else if (color == trail_color)
                     {
-                        if (match_found < 4) /* to keep it from overflowing */
-                            match_found++;
+                        if (matches_found < 4) /* to keep it from overflowing */
+                            matches_found++;
                         trail_row = row;
                         trail_col = col;
                         advance_match();
@@ -2946,17 +2946,17 @@ int  bound_trace_main()
                     else
                     {
                         advance_no_match();
-                        continue_loop = going_to != coming_from || match_found;
+                        continue_loop = (going_to != coming_from) || (matches_found > 0);
                     }
                 }
                 else
                 {
                     advance_no_match();
-                    continue_loop = going_to != coming_from || match_found;
+                    continue_loop = (going_to != coming_from) || (matches_found > 0);
                 }
             } while (continue_loop && (col != curcol || row != currow));
 
-            if (match_found <= 3)
+            if (matches_found <= 3)
             {   /* no hole */
                 color = bkcolor;
                 reset_periodicity = true;
@@ -2973,7 +2973,7 @@ int  bound_trace_main()
             going_to = East;
             do
             {
-                match_found = FALSE;
+                bool match_found = false;
                 do
                 {
                     step_col_row();
@@ -3021,7 +3021,7 @@ int  bound_trace_main()
                         trail_row = row;
                         trail_col = col;
                         advance_match();
-                        match_found = TRUE;
+                        match_found = true;
                     }
                     else
                         advance_no_match();
