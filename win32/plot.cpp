@@ -183,29 +183,29 @@ plot_set_dirty_region(Plot *me, int xmin, int ymin, int xmax, int ymax)
         r->right = xmax;
         r->top = ymin;
         r->bottom = ymax;
-        me->dirty = TRUE;
+        me->dirty = true;
     }
     else
     {
         if (xmin < r->left)
         {
             r->left = xmin;
-            me->dirty = TRUE;
+            me->dirty = true;
         }
         if (xmax > r->right)
         {
             r->right = xmax;
-            me->dirty = TRUE;
+            me->dirty = true;
         }
         if (ymin < r->top)
         {
             r->top = ymin;
-            me->dirty = TRUE;
+            me->dirty = true;
         }
         if (ymax > r->bottom)
         {
             r->bottom = ymax;
-            me->dirty = TRUE;
+            me->dirty = true;
         }
     }
 }
@@ -228,7 +228,7 @@ init_pixels(Plot *me)
     _ASSERTE(me->pixels_len > 0);
     me->pixels.resize(me->pixels_len);
     memset(&me->pixels[0], 0, me->pixels_len);
-    me->dirty = FALSE;
+    me->dirty = false;
     {
         RECT dirty_rect = { -1, -1, -1, -1 };
         me->dirty_region = dirty_rect;
@@ -435,7 +435,7 @@ void plot_flush(Plot *me)
     {
         RECT r = { -1, -1, -1, -1 };
         InvalidateRect(me->window, nullptr, FALSE);
-        me->dirty = FALSE;
+        me->dirty = false;
         me->dirty_region = r;
     }
 }
@@ -528,7 +528,7 @@ void plot_clear(Plot *me)
 {
     RECT r = { 0, 0, me->width, me->height };
     me->dirty_region = r;
-    me->dirty = TRUE;
+    me->dirty = true;
     memset(&me->pixels[0], 0, me->pixels_len);
 }
 

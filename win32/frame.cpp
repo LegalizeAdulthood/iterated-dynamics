@@ -23,12 +23,12 @@ static void frame_OnClose(HWND window)
 
 static void frame_OnSetFocus(HWND window, HWND old_focus)
 {
-    g_frame.has_focus = TRUE;
+    g_frame.has_focus = true;
 }
 
 static void frame_OnKillFocus(HWND window, HWND old_focus)
 {
-    g_frame.has_focus = FALSE;
+    g_frame.has_focus = false;
 }
 
 static void frame_OnPaint(HWND window)
@@ -87,9 +87,9 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
     /* handle modifier keys on the non-WM_CHAR keys */
     if (VK_F1 <= vk && vk <= VK_F10)
     {
-        BOOL ctl = GetKeyState(VK_CONTROL) & 0x8000;
-        BOOL alt = GetKeyState(VK_MENU) & 0x8000;
-        BOOL  shift = GetKeyState(VK_SHIFT) & 0x8000;
+        bool ctl = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
+        bool alt = (GetKeyState(VK_MENU) & 0x8000) != 0;
+        bool shift = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
 
         if (shift)
         {
@@ -196,7 +196,7 @@ static void frame_OnTimer(HWND window, UINT id)
 {
     _ASSERTE(g_frame.window == window);
     _ASSERTE(FRAME_TIMER_ID == id);
-    g_frame.timed_out = TRUE;
+    g_frame.timed_out = true;
 }
 
 static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
@@ -239,11 +239,10 @@ static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM 
 
 void frame_init(HINSTANCE instance, LPCSTR title)
 {
-    BOOL status;
     LPCSTR windowClass = "FractintFrame";
     WNDCLASS  wc;
 
-    status = GetClassInfo(instance, windowClass, &wc);
+    bool status = GetClassInfo(instance, windowClass, &wc) == TRUE;
     if (!status)
     {
         g_frame.instance = instance;
@@ -260,7 +259,7 @@ void frame_init(HINSTANCE instance, LPCSTR title)
         wc.lpszMenuName = g_frame.title;
         wc.lpszClassName = windowClass;
 
-        status = RegisterClass(&wc);
+        status = RegisterClass(&wc) != 0;
     }
 
     g_frame.keypress_count = 0;
@@ -271,8 +270,8 @@ void frame_init(HINSTANCE instance, LPCSTR title)
 int frame_pump_messages(bool waitflag)
 {
     MSG msg;
-    BOOL quitting = FALSE;
-    g_frame.timed_out = FALSE;
+    bool quitting = false;
+    g_frame.timed_out = false;
 
     while (!quitting)
     {
@@ -297,7 +296,7 @@ int frame_pump_messages(bool waitflag)
             }
             else if (0 == result)
             {
-                quitting = TRUE;
+                quitting = true;
             }
         }
     }
@@ -370,14 +369,11 @@ void frame_window(int width, int height)
 
 void frame_resize(int width, int height)
 {
-    BOOL status;
-
     frame_adjust_size(width, height);
-    status = SetWindowPos(g_frame.window, nullptr,
+    BOOL status = SetWindowPos(g_frame.window, nullptr,
                           0, 0, g_frame.nc_width, g_frame.nc_height,
                           SWP_NOZORDER | SWP_NOMOVE);
     _ASSERTE(status);
-
 }
 
 void frame_set_keyboard_timeout(int ms)

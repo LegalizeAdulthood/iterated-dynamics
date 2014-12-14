@@ -14,8 +14,8 @@ struct tagFrame
     int nc_width;
     int nc_height;
     HWND child;
-    BOOL has_focus;
-    BOOL timed_out;
+    bool has_focus;
+    bool timed_out;
 
     /* the keypress buffer */
     unsigned int  keypress_count;

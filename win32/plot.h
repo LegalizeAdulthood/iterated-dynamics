@@ -16,7 +16,7 @@ struct tagPlot
     HBITMAP backup;
     HFONT font;
 
-    BOOL dirty;
+    bool dirty;
     RECT dirty_region;
     BITMAPINFO bmi;                     /* contains first clut entry too */
     RGBQUAD bmiColors[255];             /* color look up table */

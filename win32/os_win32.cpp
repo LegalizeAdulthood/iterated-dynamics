@@ -362,7 +362,7 @@ int fr_findnext()
     BOOL result = FALSE;
     _ASSERTE(INVALID_HANDLE_VALUE != s_find_context);
     result = FindNextFile(s_find_context, &s_find_data);
-    if (result == 0)
+    if (result == FALSE)
     {
         DWORD code = GetLastError();
         _ASSERTE(ERROR_NO_MORE_FILES == code);
@@ -575,7 +575,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
         FALSE
     };
     HANDLE dump_file;
-    BOOL status = 0;
+    BOOL status = FALSE;
     int i = 1;
 
     if (debughlp == nullptr)
