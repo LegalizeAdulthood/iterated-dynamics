@@ -1304,7 +1304,8 @@ int ifsload()                   /* read in IFS parameters */
     }
 
     float ifs_param_tmp[(NUMIFS+1)*IFS3DPARM] = { 0.f };
-    int i = ret = 0;
+    ret = 0;
+    int i = ret;
     bufptr = get_ifs_token(buf,ifsfile);
     while (bufptr != nullptr)
     {
