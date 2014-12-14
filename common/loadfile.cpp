@@ -409,13 +409,11 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     }
     else
     {
-        int olddisplay3d, i;
-        char oldfloatflag;
-        olddisplay3d = display3d;
-        oldfloatflag = floatflag;
+        int const olddisplay3d = display3d;
+        bool const oldfloatflag = floatflag;
         display3d = loaded3d ? 1 : 0;   /* for <tab> display during next */
-        floatflag = usr_floatflag; /* ditto */
-        i = get_video_mode(&read_info, &blk_3_info);
+        floatflag = usr_floatflag != 0; /* ditto */
+        int i = get_video_mode(&read_info, &blk_3_info);
 #if defined(_WIN32)
         _ASSERTE(_CrtCheckMemory());
 #endif
@@ -1639,7 +1637,7 @@ rescan:  /* entry for changed browse parms */
     if (!oldbf_math)
         free_bf_vars();
     bf_math = oldbf_math;
-    floatflag = usr_floatflag;
+    floatflag = usr_floatflag != 0;
 
     return (c);
 }

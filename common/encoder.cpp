@@ -736,7 +736,7 @@ static void setup_save_info(struct fractal_info * save_info)
         save_info->distestold = (short) distest;
     else
         save_info->distestold = 32000;
-    save_info->floatflag = floatflag;
+    save_info->floatflag = floatflag ? 1 : 0;
     if (bailout >= 4 && bailout <= 32000)
         save_info->bailoutold = (short) bailout;
     else

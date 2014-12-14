@@ -1966,7 +1966,8 @@ int plotorbits2dsetup()
         int tofloat = curfractalspecific->tofloat;
         if (tofloat == NOFRACTAL)
             return (-1);
-        floatflag = usr_floatflag = 1; /* force floating point */
+        floatflag = true;
+        usr_floatflag = 1; /* force floating point */
         curfractalspecific = &fractalspecific[tofloat];
         fractype = tofloat;
     }

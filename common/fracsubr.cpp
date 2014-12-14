@@ -145,7 +145,8 @@ void calcfracinit() /* initialize a *pile* of stuff for fractal calculation */
             debugflag == 3800)
     {
         use_grid = false;
-        floatflag = usr_floatflag = 1;
+        floatflag = true;
+        usr_floatflag = 1;
     }
     else
         use_grid = true;
@@ -209,21 +210,21 @@ void calcfracinit() /* initialize a *pile* of stuff for fractal calculation */
     else
         free_bf_vars();
     if (bf_math)
-        floatflag=1;
+        floatflag = true;
     else
-        floatflag = usr_floatflag;
+        floatflag = usr_floatflag != 0;
     if (calc_status == CALCSTAT_RESUMABLE) { /* on resume, ensure floatflag correct */
         if (curfractalspecific->isinteger)
-            floatflag = 0;
+            floatflag = false;
         else
-            floatflag = 1;
+            floatflag = true;
     }
     /* if floating pt only, set floatflag for TAB screen */
     if (!curfractalspecific->isinteger && curfractalspecific->tofloat == NOFRACTAL)
-        floatflag = 1;
+        floatflag = true;
     if (usr_stdcalcmode == 's') {
         if (fractype == MANDEL || fractype == MANDELFP)
-            floatflag = 1;
+            floatflag = true;
         else
             usr_stdcalcmode = '1';
     }
@@ -254,7 +255,7 @@ init_restart:
     }
 
     if (distest)
-        floatflag = 1;  /* force floating point for dist est */
+        floatflag = true;  /* force floating point for dist est */
 
     if (floatflag) { /* ensure type matches floatflag */
         if (curfractalspecific->isinteger != 0
@@ -404,7 +405,7 @@ init_restart:
 expand_retry:
                 if (integerfractal          /* integer fractal type? */
                         && curfractalspecific->tofloat != NOFRACTAL)
-                    floatflag = 1;           /* switch to floating pt */
+                    floatflag = true;       /* switch to floating pt */
                 else
                     adjust_to_limits(2.0);   /* double the size */
                 if (calc_status == CALCSTAT_RESUMABLE)       /* due to restore of an old file? */

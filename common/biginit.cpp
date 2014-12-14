@@ -117,7 +117,7 @@ static void init_bf_2()
     else
         bf_math = 1; /* maybe called from cmdfiles.c and fractype not set */
 
-    floatflag=1;
+    floatflag = true;
 
     /* Now split up the memory among the pointers */
     /* internal pointers */

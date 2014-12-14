@@ -154,7 +154,7 @@ extern float                 finalaspectratio;
 extern bool                  finattract;
 extern int                   finishrow;
 extern bool                  first_init;
-extern char                  floatflag;
+extern bool                  floatflag;
 extern double                floatmax;
 extern double                floatmin;
 extern DComplex *            floatparm;
