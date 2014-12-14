@@ -1926,7 +1926,7 @@ static long gfe_choose_entry(int type, const char *title, char *filename, char *
     int boxwidth, boxdepth, colwidth;
     char instr[80];
 
-    static int dosort = 1;
+    static bool dosort = true;
 
     gfe_choices = &choices[0];
     gfe_title = title;
@@ -1977,7 +1977,7 @@ retry:
     if (i == -FIK_F4)
     {
         rewind(gfe_file);
-        dosort = 1-dosort;
+        dosort = !dosort;
         goto retry;
     }
     fclose(gfe_file);
