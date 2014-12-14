@@ -2358,7 +2358,9 @@ int froth_per_orbit()
             lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a,lold.y,bitshift);
             lnew.y = lold.y + (multiply(lold.x,lold.y,bitshift)<<1) - multiply(fsp.fl.l.a,lold.x,bitshift);
         }
-        if ((ltempsqrx=lsqr(lnew.x)) + (ltempsqry=lsqr(lnew.y)) >= llimit)
+        ltempsqrx = lsqr(lnew.x);
+        ltempsqry = lsqr(lnew.y);
+        if (ltempsqrx + ltempsqry >= llimit)
             return 1;
         lold = lnew;
     }
