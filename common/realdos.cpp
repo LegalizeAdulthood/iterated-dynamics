@@ -630,47 +630,49 @@ int fullscreen_choice(
             }
         }
     }
-    int i = (80 / boxwidth - colwidth) / 2 - 1;
-    if (i == 0) /* to allow wider prompts */
     {
-        i = 1;
-    }
-    if (i < 0)
-    {
-        i = 0;
-    }
-    if (i > 3)
-    {
-        i = 3;
-    }
-    colwidth += i;
-    int j = boxwidth*colwidth + i;     /* overall width of box */
-    if (j < titlewidth+2)
-    {
-        j = titlewidth + 2;
-    }
-    if (j > 80)
-    {
-        j = 80;
-    }
-    if (j <= 70 && boxwidth == 2)         /* special case makes menus nicer */
-    {
-        ++j;
-        ++colwidth;
-    }
-    int k = (80 - j) / 2;                       /* center the box */
-    k -= (90 - j) / 20;
-    topleftcol = k + i;                     /* column of topleft choice */
-    i = (25 - reqdrows - boxdepth) / 2;
-    i -= i / 4;                             /* higher is better if lots extra */
-    topleftrow = 3 + titlelines + i;        /* row of topleft choice */
+        int i = (80 / boxwidth - colwidth) / 2 - 1;
+        if (i == 0) /* to allow wider prompts */
+        {
+            i = 1;
+        }
+        if (i < 0)
+        {
+            i = 0;
+        }
+        if (i > 3)
+        {
+            i = 3;
+        }
+        colwidth += i;
+        int j = boxwidth*colwidth + i;     /* overall width of box */
+        if (j < titlewidth+2)
+        {
+            j = titlewidth + 2;
+        }
+        if (j > 80)
+        {
+            j = 80;
+        }
+        if (j <= 70 && boxwidth == 2)         /* special case makes menus nicer */
+        {
+            ++j;
+            ++colwidth;
+        }
+        int k = (80 - j) / 2;                       /* center the box */
+        k -= (90 - j) / 20;
+        topleftcol = k + i;                     /* column of topleft choice */
+        i = (25 - reqdrows - boxdepth) / 2;
+        i -= i / 4;                             /* higher is better if lots extra */
+        topleftrow = 3 + titlelines + i;        /* row of topleft choice */
 
-    /* now set up the overall display */
-    helptitle();                            /* clear, display title line */
-    driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);      /* init rest to background */
-    for (i = topleftrow - 1 - titlelines; i < topleftrow + boxdepth + 1; ++i)
-    {
-        driver_set_attr(i, k, C_PROMPT_LO, j);          /* draw empty box */
+        /* now set up the overall display */
+        helptitle();                            /* clear, display title line */
+        driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);      /* init rest to background */
+        for (i = topleftrow - 1 - titlelines; i < topleftrow + boxdepth + 1; ++i)
+        {
+            driver_set_attr(i, k, C_PROMPT_LO, j);          /* draw empty box */
+        }
     }
     if (hdg)
     {
@@ -683,39 +685,41 @@ int fullscreen_choice(
     {
         driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_MED, hdg2);
     }
-    i = topleftrow + boxdepth + 1;
-    if (instr == nullptr || (options & CHOICE_INSTRUCTIONS))   /* display default instructions */
     {
-        if (i < 20)
+        int i = topleftrow + boxdepth + 1;
+        if (instr == nullptr || (options & CHOICE_INSTRUCTIONS))   /* display default instructions */
         {
-            ++i;
-        }
-        if (speedstring)
-        {
-            speedrow = i;
-            *speedstring = 0;
-            if (++i < 22)
+            if (i < 20)
             {
                 ++i;
             }
-        }
-        i -= scrunch;
-        footer_msg(&i, options, speedstring);
-    }
-    if (instr)                            /* display caller's instructions */
-    {
-        charptr = instr;
-        j = -1;
-        while ((buf[++j] = *(charptr++)) != 0)
-        {
-            if (buf[j] == '\n')
+            if (speedstring)
             {
-                buf[j] = 0;
-                putstringcenter(i++, 0, 80, C_PROMPT_BKGRD, buf);
-                j = -1;
+                speedrow = i;
+                *speedstring = 0;
+                if (++i < 22)
+                {
+                    ++i;
+                }
             }
+            i -= scrunch;
+            footer_msg(&i, options, speedstring);
         }
-        putstringcenter(i, 0, 80, C_PROMPT_BKGRD, buf);
+        if (instr)                            /* display caller's instructions */
+        {
+            charptr = instr;
+            int j = -1;
+            while ((buf[++j] = *(charptr++)) != 0)
+            {
+                if (buf[j] == '\n')
+                {
+                    buf[j] = 0;
+                    putstringcenter(i++, 0, 80, C_PROMPT_BKGRD, buf);
+                    j = -1;
+                }
+            }
+            putstringcenter(i, 0, 80, C_PROMPT_BKGRD, buf);
+        }
     }
 
     boxitems = boxwidth * boxdepth;
@@ -734,14 +738,15 @@ int fullscreen_choice(
         {
             memset(buf, ' ', 80);
             buf[boxwidth*colwidth] = 0;
-            for (i = (hdg2) ? 0 : -1; i <= boxdepth; ++i)  /* blank the box */
+            for (int i = (hdg2) ? 0 : -1; i <= boxdepth; ++i)  /* blank the box */
             {
                 driver_put_string(topleftrow + i, topleftcol, C_PROMPT_LO, buf);
             }
-            for (i = 0; i + topleftchoice < numchoices && i < boxitems; ++i)
+            for (int i = 0; i + topleftchoice < numchoices && i < boxitems; ++i)
             {
                 /* display the choices */
-                k = attributes[j = i + topleftchoice] & 3;
+                int j = i + topleftchoice;
+                int k = attributes[j] & 3;
                 if (k == 1)
                 {
                     k = C_PROMPT_LO;
@@ -782,18 +787,20 @@ int fullscreen_choice(
             redisplay = 0;
         }
 
-        i = current - topleftchoice;           /* highlight the current choice */
-        if (formatitem)
         {
-            (*formatitem)(current, curitem);
-            itemptr = curitem;
+            int i = current - topleftchoice;           /* highlight the current choice */
+            if (formatitem)
+            {
+                (*formatitem)(current, curitem);
+                itemptr = curitem;
+            }
+            else
+            {
+                itemptr = choices[current];
+            }
+            driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
+                              C_CHOICE_CURRENT, itemptr);
         }
-        else
-        {
-            itemptr = choices[current];
-        }
-        driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
-                          C_CHOICE_CURRENT, itemptr);
 
         if (speedstring)                     /* show speedstring if any */
         {
@@ -821,22 +828,24 @@ int fullscreen_choice(
         }
 #endif
 
-        i = current - topleftchoice;           /* unhighlight current choice */
-        k = attributes[current] & 3;
-        if (k == 1)
         {
-            k = C_PROMPT_LO;
+            int i = current - topleftchoice;           /* unhighlight current choice */
+            int k = attributes[current] & 3;
+            if (k == 1)
+            {
+                k = C_PROMPT_LO;
+            }
+            else if (k == 3)
+            {
+                k = C_PROMPT_HI;
+            }
+            else
+            {
+                k = C_PROMPT_MED;
+            }
+            driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
+                              k, itemptr);
         }
-        else if (k == 3)
-        {
-            k = C_PROMPT_HI;
-        }
-        else
-        {
-            k = C_PROMPT_MED;
-        }
-        driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
-                          k, itemptr);
 
         increment = 0;
         switch (curkey)

@@ -213,6 +213,7 @@ int do_AutoStereo(void)
     /* following two lines re-use existing arrays in Fractint */
     std::unique_ptr<int[]> same(new int[xdots]);
     std::unique_ptr<int[]> colour(new int[xdots]);
+    bool done = false;
 
     pv = &v;   /* set static vars to stack structure */
     pv->savedac = savedacbox;
@@ -308,7 +309,6 @@ int do_AutoStereo(void)
     else
         bars = 0;
     toggle_bars(&bars, barwidth, colour.get());
-    bool done = false;
     while (!done)
     {
         driver_wait_key_pressed(0);

@@ -1262,6 +1262,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
         tstack[j+1] = 0;
     }
     fractalspecificstuff *savespecific = curfractalspecific;
+    int orbit_bailout;
 
 gfp_top:
     promptnum = 0;
@@ -1320,30 +1321,32 @@ gfp_top:
             firstparm = 4;
     }
     numparams = 0;
-    int j = 0;
-    for (int i = firstparm; i < lastparm; i++)
     {
-        char tmpbuf[30];
-        if (!typehasparm(julibrot ? neworbittype : fractype, i, parmprompt[j])) {
-            if (curtype == FORMULA || curtype == FFORMULA)
-                if (paramnotused(i))
-                    continue;
-            break;
-        }
-        numparams++;
-        choices[promptnum] = parmprompt[j++];
-        paramvalues[promptnum].type = 'd';
-
-        if (choices[promptnum][0] == '+')
+        int j = 0;
+        for (int i = firstparm; i < lastparm; i++)
         {
-            choices[promptnum]++;
-            paramvalues[promptnum].type = 'D';
+            char tmpbuf[30];
+            if (!typehasparm(julibrot ? neworbittype : fractype, i, parmprompt[j])) {
+                if (curtype == FORMULA || curtype == FFORMULA)
+                    if (paramnotused(i))
+                        continue;
+                break;
+            }
+            numparams++;
+            choices[promptnum] = parmprompt[j++];
+            paramvalues[promptnum].type = 'd';
+
+            if (choices[promptnum][0] == '+')
+            {
+                choices[promptnum]++;
+                paramvalues[promptnum].type = 'D';
+            }
+            else if (choices[promptnum][0] == '#')
+                choices[promptnum]++;
+            sprintf(tmpbuf,"%.17g",param[i]);
+            paramvalues[promptnum].uval.dval = atof(tmpbuf);
+            oldparam[i] = paramvalues[promptnum++].uval.dval;
         }
-        else if (choices[promptnum][0] == '#')
-            choices[promptnum]++;
-        sprintf(tmpbuf,"%.17g",param[i]);
-        paramvalues[promptnum].uval.dval = atof(tmpbuf);
-        oldparam[i] = paramvalues[promptnum++].uval.dval;
     }
 
     /* The following is a goofy kludge to make reading in the formula
@@ -1371,7 +1374,7 @@ gfp_top:
     if (*type_name == '*')
         ++type_name;
 
-    int orbit_bailout = curfractalspecific->orbit_bailout;
+    orbit_bailout = curfractalspecific->orbit_bailout;
     if (orbit_bailout != 0 && curfractalspecific->calctype == StandardFractal &&
             (curfractalspecific->flags & BAILTEST)) {
         paramvalues[promptnum].type = 'l';
