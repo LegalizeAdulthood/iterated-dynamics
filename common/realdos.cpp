@@ -50,7 +50,7 @@ int xrelease=304;
 int stopmsg(int flags, const char *msg)
 {
     int ret,toprow,color,savelookatmouse;
-    static unsigned char batchmode = 0;
+    static bool batchmode = false;
     if (debugflag != 0 || initbatch >= 1)
     {
         static FILE *fp = nullptr;
@@ -83,7 +83,7 @@ int stopmsg(int flags, const char *msg)
     }
     if (initbatch >= 1 || batchmode) { /* in batch mode */
         initbatch = 4; /* used to set errorlevel */
-        batchmode = 1; /* fixes *second* stopmsg in batch mode bug */
+        batchmode = true; /* fixes *second* stopmsg in batch mode bug */
         return (-1);
     }
     ret = 0;
