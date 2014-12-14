@@ -51,7 +51,7 @@
 
 /* external variables (set in the FRACTINT.CFG file, but findable here */
 
-extern int slowdisplay;
+extern bool slowdisplay;
 extern  int dotmode;        /* video access method (= 19)      */
 extern  int sxdots, sydots;     /* total # of dots on the screen   */
 extern  int sxoffs, syoffs;     /* offset of drawing area          */
@@ -244,7 +244,7 @@ check_arg(DriverX11 *di, int argc, char **argv, int *i)
         di->fastmode = true;
         return 1;
     } else if (strcmp(argv[*i], "-slowdisplay") == 0) {
-        slowdisplay = 1;
+        slowdisplay = true;
         return 1;
     } else if (strcmp(argv[*i], "-sync") == 0) {
         di->sync = 1;

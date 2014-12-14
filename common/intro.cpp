@@ -13,7 +13,7 @@
 #include "helpcom.h"
 
 #ifdef XFRACT
-extern int slowdisplay;
+extern bool slowdisplay;
 #endif
 
 void intro()
@@ -82,7 +82,8 @@ void intro()
     while (! driver_key_pressed())
     {
 #ifdef XFRACT
-        if (slowdisplay) delaymax *= 15;
+        if (slowdisplay)
+            delaymax *= 15;
 #endif
         for (j = 0; j < delaymax && !(driver_key_pressed()); j++)
             driver_delay(100);
