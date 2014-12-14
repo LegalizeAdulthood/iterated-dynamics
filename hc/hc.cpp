@@ -1403,7 +1403,7 @@ void read_src(char *fname)
     int    num_spaces = 0;
     int    margin     = 0;
     int    in_para    = 0;
-    int    centering  = 0;
+    bool centering = false;
     int    lformat_exclude = format_exclude;
     int    again;
 
@@ -1526,7 +1526,7 @@ void read_src(char *fname)
 
                     start_topic(&t, cmd+6, (unsigned)(ptr-(cmd+6)));
                     formatting = true;
-                    centering = 0;
+                    centering = false;
                     state = S_Start;
                     in_para = 0;
                     num_spaces = 0;
@@ -1575,7 +1575,7 @@ void read_src(char *fname)
                     add_label(&lbl);
 
                     formatting = false;
-                    centering = 0;
+                    centering = false;
                     state = S_Start;
                     in_para = 0;
                     num_spaces = 0;
@@ -1957,7 +1957,7 @@ void read_src(char *fname)
                             check_command_length(eoff,7);
                             if (!centering)
                             {
-                                centering = 1;
+                                centering = true;
                                 if (in_para)
                                 {
                                     *curr++ = '\n';
@@ -1973,7 +1973,7 @@ void read_src(char *fname)
                             check_command_length(eoff,7);
                             if (centering)
                             {
-                                centering = 0;
+                                centering = false;
                                 state = S_Start;  /* for centering FSM */
                             }
                             else
