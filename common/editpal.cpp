@@ -2216,8 +2216,8 @@ static int PalTable__GetCursorColor(PalTable *me)
 
 static void PalTable__DoCurs(PalTable *me, int key)
 {
-    BOOLEAN done  = FALSE;
-    BOOLEAN first = TRUE;
+    bool done  = false;
+    bool first = true;
     int     xoff  = 0,
             yoff  = 0;
 
@@ -2251,7 +2251,7 @@ static void PalTable__DoCurs(PalTable *me, int key)
             break;
 
         default:
-            done = TRUE;
+            done = true;
         }
 
         if (!done)
@@ -2259,7 +2259,7 @@ static void PalTable__DoCurs(PalTable *me, int key)
             if (!first)
                 driver_get_key();       /* delete key from buffer */
             else
-                first = FALSE;
+                first = false;
             key = driver_key_pressed();   /* peek at the next one... */
         }
     }
