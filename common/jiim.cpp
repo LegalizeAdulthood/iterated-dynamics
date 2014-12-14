@@ -421,7 +421,7 @@ DComplex SaveC = {-3000.0, -3000.0};
 void Jiim(int which)         /* called by fractint */
 {
     struct affine cvt;
-    int exact = 0;
+    bool exact = false;
     int oldhelpmode;
     int count = 0;            /* coloring julia */
     static int mode = 0;      /* point, circle, ... */
@@ -719,7 +719,7 @@ void Jiim(int which)         /* called by fractint */
                 case 'p':
                 case 'P':
                     get_a_number(&cr,&ci);
-                    exact = 1;
+                    exact = true;
                     col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
                     row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
                     dcol = drow = 0;
@@ -759,13 +759,13 @@ void Jiim(int which)         /* called by fractint */
                 if (kbdchar == 's' || kbdchar == 'S')
                     goto finish;
                 if (dcol > 0 || drow > 0)
-                    exact = 0;
+                    exact = false;
                 col += dcol;
                 row += drow;
 #ifdef XFRACT
                 if (kbdchar == FIK_ENTER) {
                     /* We want to use the position of the cursor */
-                    exact=0;
+                    exact = false;
                     col = Cursor_GetX();
                     row = Cursor_GetY();
                 }
@@ -774,25 +774,25 @@ void Jiim(int which)         /* called by fractint */
                 /* keep cursor in logical screen */
                 if (col >= xdots) {
                     col = xdots -1;
-                    exact = 0;
+                    exact = false;
                 }
                 if (row >= ydots) {
                     row = ydots -1;
-                    exact = 0;
+                    exact = false;
                 }
                 if (col < 0) {
                     col = 0;
-                    exact = 0;
+                    exact = false;
                 }
                 if (row < 0) {
                     row = 0;
-                    exact = 0;
+                    exact = false;
                 }
 
                 Cursor_SetPos(col,row);
             }  /* end while (driver_key_pressed) */
 
-            if (exact == 0)
+            if (!exact)
             {
                 if (integerfractal)
                 {
