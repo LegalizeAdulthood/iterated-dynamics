@@ -362,7 +362,10 @@ skip_UI:
                 have3rd = false;
             fpbat = dir_fopen(workdir,"makemig.bat", "w");
             if (fpbat == nullptr)
-                xm = ym = 0;
+            {
+                ym = 0;
+                xm = ym;
+            }
             pdelx  = (xxmax - xx3rd) / (xm * pxdots - 1);   /* calculate stepsizes */
             pdely  = (yymax - yy3rd) / (ym * pydots - 1);
             pdelx2 = (xx3rd - xxmin) / (ym * pydots - 1);
