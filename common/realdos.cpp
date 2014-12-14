@@ -866,7 +866,8 @@ int fullscreen_choice(
             rev_increment = 0 - increment;
             break;
         case FIK_CTL_DOWN_ARROW:
-            rev_increment = 0 - (increment = boxwidth);
+            increment = boxwidth;
+            rev_increment = 0 - increment;
             {
                 int newcurrent = current;
                 while ((newcurrent += boxwidth) != current)
