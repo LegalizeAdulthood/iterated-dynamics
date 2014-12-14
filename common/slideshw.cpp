@@ -177,7 +177,8 @@ start:
                 || repeats <= 1 || repeats >= 256 || feof(fpss))
         {
             slideshowerr("error in * argument");
-            last1 = repeats = 0;
+            repeats = 0;
+            last1 = repeats;
         }
         repeats -= 2;
         return (out = last1);
@@ -258,12 +259,14 @@ start:
         {
             slideshowerr("WAIT needs argument");
         }
-        slowcount = out = 0;
+        out = 0;
+        slowcount = out;
     }
     else if (strcmp("CALCWAIT",(char *)buffer)==0) /* wait for calc to finish */
     {
         calcwait = true;
-        slowcount = out = 0;
+        out = 0;
+        slowcount = out;
     }
     else if ((i=check_vidmode_keyname(buffer)) != 0)
         out = i;
