@@ -560,7 +560,8 @@ void mStkSqr()
     Arg1->m.y.Exp++;
     Arg1->m.x = *MPsub(LastSqr.m.x, LastSqr.m.y);
     LastSqr.m.x = *MPadd(LastSqr.m.x, LastSqr.m.y);
-    LastSqr.m.y.Mant = (long)(LastSqr.m.y.Exp = 0);
+    LastSqr.m.y.Exp = 0;
+    LastSqr.m.y.Mant = (long) LastSqr.m.y.Exp;
 }
 
 void lStkSqr()
