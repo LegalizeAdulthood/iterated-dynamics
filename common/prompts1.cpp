@@ -2006,15 +2006,15 @@ static int check_gfe_key(int curkey,int choice)
     if (curkey == FIK_F2) {
         int widest_entry_line = 0;
         int lines_in_entry = 0;
-        int comment = 0;
+        bool comment = false;
         int c = 0;
         int widthct = 0;
         fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
         while ((c = fgetc(gfe_file)) != EOF && c != '\032') {
             if (c == ';')
-                comment = 1;
+                comment = true;
             else if (c == '\n') {
-                comment = 0;
+                comment = false;
                 lines_in_entry++;
                 widthct =  -1;
             }
