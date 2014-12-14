@@ -45,7 +45,7 @@ int minstackavail;
 int minstack=2200; /* and this much stack to not crash when <tab> is pressed */
 static DBLS twidth;
 static DBLS equal;
-static char baxinxx = FALSE;
+static bool baxinxx = false;
 
 
 long iteration(DBLS cr, DBLS ci,
@@ -278,7 +278,7 @@ long iteration(DBLS cr, DBLS ci,
 
     if (iter==0)
     {
-        baxinxx=TRUE;
+        baxinxx = true;
         return BASIN_COLOR;
     }
     else
@@ -302,7 +302,7 @@ long iteration(DBLS cr, DBLS ci,
             8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
         };
 
-        baxinxx=FALSE;
+        baxinxx = false;
 #ifdef INTEL
         DBLS d = ren+imn;
 #else
