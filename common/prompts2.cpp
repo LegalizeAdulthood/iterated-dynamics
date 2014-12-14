@@ -1333,7 +1333,7 @@ bool getafilename(const char *hdg, const char *file_template, char *flname)
     int attributes[MAXNUMFILES];
     int filecount;   /* how many files */
     int dircount;    /* how many directories */
-    int notroot;     /* not the root directory */
+    bool notroot;     /* not the root directory */
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
     char fname[FILE_MAX_FNAME];
@@ -1394,7 +1394,7 @@ retry_dir:
     }
     filecount = -1;
     dircount  = 0;
-    notroot   = 0;
+    notroot   = false;
     masklen = (int) strlen(tmpmask);
     strcat(tmpmask, "*.*");
     out = fr_findfirst(tmpmask);
@@ -1413,7 +1413,7 @@ retry_dir:
             dircount++;
             if (strcmp(DTA.filename, "..") == 0)
             {
-                notroot = 1;
+                notroot = true;
             }
         }
         out = fr_findnext();
@@ -1472,7 +1472,7 @@ retry_dir:
     {
         strcat(instr, "on");
     }
-    if (notroot == 0 && dir[0] && dir[0] != SLASHC) /* must be in root directory */
+    if (!notroot && dir[0] && dir[0] != SLASHC) /* must be in root directory */
     {
         splitpath(tmpmask, drive, dir, fname, ext);
         strcpy(dir, SLASH);
@@ -2462,12 +2462,12 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
     /* if dot, slash, its relative to the current directory, set up full path */
     if (newfilename[0] == '.' &&
             newfilename[1] == SLASHC) {
-        int test_dir=0;
+        bool test_dir = false;
         temp_path[0] = (char)('a' + _getdrive() - 1);
         temp_path[1] = ':';
         temp_path[2] = 0;
         if (strrchr(newfilename,'.') == newfilename)
-            test_dir = 1;  /* only one '.' assume its a directory */
+            test_dir = true;  /* only one '.' assume its a directory */
         expand_dirname(newfilename,temp_path);
         strcat(temp_path,newfilename);
         strcpy(newfilename,temp_path);
