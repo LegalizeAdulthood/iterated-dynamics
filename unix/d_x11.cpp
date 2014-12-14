@@ -1114,7 +1114,7 @@ ev_expose(DriverX11 *di, XExposeEvent *xevent)
 static void
 ev_button_press(DriverX11 *di, XEvent *xevent)
 {
-    int done = 0;
+    bool done = false;
     bool banding = false;
     int bandx0, bandy0, bandx1, bandy1;
 
@@ -1165,7 +1165,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
             break;
 
         case ButtonRelease:
-            done = 1;
+            done = true;
             break;
         }
     }
