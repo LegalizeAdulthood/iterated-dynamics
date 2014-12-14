@@ -606,7 +606,7 @@ extern int fgetwindow();
 extern void backwards_v18();
 extern void backwards_v19();
 extern void backwards_v20();
-extern int check_back();
+extern bool check_back();
 
 /*  loadmap -- C file prototypes */
 

@@ -1178,12 +1178,13 @@ void backwards_v20()
         set_function_parm_defaults();
 }
 
-int check_back() {
+bool check_back()
+{
     /*
        put the features that need to save the value in save_release for backwards
        compatibility in this routine
     */
-    int ret = 0;
+    bool ret = false;
     if (fractype == LYAPUNOV ||
             fractype == FROTH || fractype == FROTHFP ||
             fix_bof() || fix_period_bof() || use_old_distest || decomp[0] == 2 ||
@@ -1207,8 +1208,8 @@ int check_back() {
              (neworbittype == QUATFP || neworbittype == HYPERCMPLXFP) &&
              save_release <= 2002)
        )
-        ret = 1;
-    return (ret);
+        ret = true;
+    return ret;
 }
 
 static bool fix_bof()
@@ -1295,7 +1296,7 @@ int fgetwindow()
     char ext[FILE_MAX_EXT];
     char tmpmask[FILE_MAX_PATH];
     int vid_too_big = 0;
-    int no_memory = 0;
+    bool no_memory = false;
     U16 vidlength;
     BYTE *winlistptr = (BYTE *)&winlist;
     int saved;
@@ -1328,7 +1329,7 @@ int fgetwindow()
     boxyhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
     boxvalueshandle = MemoryAlloc((U16)(vidlength>>1),(long)MAX_WINDOWS_OPEN,MEMORY);
     if (!browsehandle || !boxxhandle || !boxyhandle || !boxvalueshandle)
-        no_memory = 1;
+        no_memory = true;
 
     /* set up complex-plane-to-screen transformation */
     if (oldbf_math) {
