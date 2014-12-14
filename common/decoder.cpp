@@ -38,7 +38,7 @@
 #include "prototyp.h"
 #include "drivers.h"
 
-static short get_next_code(void);
+static short get_next_code();
 
 /* extern short out_line(pixels, linelen)
  *     UBYTE pixels[];
