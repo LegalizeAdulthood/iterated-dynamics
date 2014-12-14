@@ -1017,7 +1017,7 @@ struct _CEditor
     int       x, y;
     char      letter;
     int       val;
-    BOOLEAN   done;
+    bool done;
     BOOLEAN   hidden;
     void (*other_key)(int key, struct _CEditor *ce, void *info);
     void (*change)(struct _CEditor *ce, void *info);
@@ -1037,7 +1037,7 @@ static void CEditor_Draw(CEditor *me);
 static void CEditor_SetPos(CEditor *me, int x, int y);
 static void CEditor_SetVal(CEditor *me, int val);
 static int  CEditor_GetVal(CEditor *me);
-static void CEditor_SetDone(CEditor *me, BOOLEAN done);
+static void CEditor_SetDone(CEditor *me, bool done);
 static void CEditor_SetHidden(CEditor *me, BOOLEAN hidden);
 static int  CEditor_Edit(CEditor *me);
 
@@ -1100,7 +1100,7 @@ static int CEditor_GetVal(CEditor *me)
 }
 
 
-static void CEditor_SetDone(CEditor *me, BOOLEAN done)
+static void CEditor_SetDone(CEditor *me, bool done)
 {
     me->done = done;
 }
@@ -1117,7 +1117,7 @@ static int CEditor_Edit(CEditor *me)
     int key = 0;
     int diff;
 
-    me->done = FALSE;
+    me->done = false;
 
     if (!me->hidden)
     {
@@ -1340,7 +1340,7 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) /* priva
         if (me->curr != 0)
         {
             me->curr = 0;
-            CEditor_SetDone(ceditor, TRUE);
+            CEditor_SetDone(ceditor, true);
         }
         break;
 
@@ -1349,7 +1349,7 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) /* priva
         if (me->curr != 1)
         {
             me->curr = 1;
-            CEditor_SetDone(ceditor, TRUE);
+            CEditor_SetDone(ceditor, true);
         }
         break;
 
@@ -1358,7 +1358,7 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) /* priva
         if (me->curr != 2)
         {
             me->curr = 2;
-            CEditor_SetDone(ceditor, TRUE);
+            CEditor_SetDone(ceditor, true);
         }
         break;
 
@@ -1366,19 +1366,19 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) /* priva
     case FIK_CTL_ENTER_2:    /*double click rt mouse also! */
         if (++me->curr > 2)
             me->curr = 0;
-        CEditor_SetDone(ceditor, TRUE);
+        CEditor_SetDone(ceditor, true);
         break;
 
     case FIK_INSERT:   /* move to prev CEditor */
         if (--me->curr < 0)
             me->curr = 2;
-        CEditor_SetDone(ceditor, TRUE);
+        CEditor_SetDone(ceditor, true);
         break;
 
     default:
         me->other_key(key, me, me->info);
         if (me->done)
-            CEditor_SetDone(ceditor, TRUE);
+            CEditor_SetDone(ceditor, true);
         break;
     }
 }
