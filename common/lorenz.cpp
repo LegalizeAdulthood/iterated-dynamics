@@ -73,15 +73,15 @@ struct float3dvtinf /* data used by 3d view transform subroutine */
 
 /* Routines in this module      */
 
-static int  ifs2d(void);
-static int  ifs3d(void);
-static int  ifs3dlong(void);
-static int  ifs3dfloat(void);
+static int  ifs2d();
+static int  ifs3d();
+static int  ifs3dlong();
+static int  ifs3dfloat();
 static bool l_setup_convert_to_screen(struct l_affine *);
 static void setupmatrix(MATRIX);
 static bool long3dviewtransf(struct long3dvtinf *inf);
 static bool float3dviewtransf(struct float3dvtinf *inf);
-static FILE *open_orbitsave(void);
+static FILE *open_orbitsave();
 static void plothist(int x, int y, int color);
 static bool realtime = false;
 
@@ -1569,7 +1569,7 @@ int orbit2dlong()
     return ret;
 }
 
-static int orbit3dlongcalc(void)
+static int orbit3dlongcalc()
 {
     FILE *fp;
     unsigned long count;
@@ -1668,7 +1668,7 @@ static int orbit3dlongcalc(void)
 }
 
 
-static int orbit3dfloatcalc(void)
+static int orbit3dfloatcalc()
 {
     FILE *fp;
     unsigned long count;
@@ -1958,7 +1958,7 @@ int setup_orbits_to_screen(struct affine *scrn_cnvt)
     return (0);
 }
 
-int plotorbits2dsetup(void)
+int plotorbits2dsetup()
 {
 
 #ifndef XFRACT
@@ -1998,7 +1998,7 @@ int plotorbits2dsetup(void)
     return (1);
 }
 
-int plotorbits2dfloat(void)
+int plotorbits2dfloat()
 {
     double *soundvar = nullptr;
     double x = 0.0;
@@ -2073,7 +2073,7 @@ int plotorbits2dfloat(void)
 
 /* this function's only purpose is to manage funnyglasses related */
 /* stuff so the code is not duplicated for ifs3d() and lorenz3d() */
-int funny_glasses_call(int (*calc)(void))
+int funny_glasses_call(int (*calc)())
 {
     if (g_glasses_type)
         g_which_image = 1;
@@ -2124,7 +2124,7 @@ done:
 }
 
 /* double version - mainly for testing */
-static int ifs3dfloat(void)
+static int ifs3dfloat()
 {
     int color_method;
     FILE *fp;
@@ -2244,7 +2244,7 @@ int ifs()                       /* front-end for ifs2d and ifs3d */
 
 
 /* IFS logic shamelessly converted to integer math */
-static int ifs2d(void)
+static int ifs2d()
 {
     int color_method;
     FILE *fp;
@@ -2338,7 +2338,7 @@ static int ifs2d(void)
     return (ret);
 }
 
-static int ifs3dlong(void)
+static int ifs3dlong()
 {
     int color_method;
     FILE *fp;
@@ -2493,7 +2493,7 @@ int orbit3dlong()
     return (funny_glasses_call(orbit3dlongcalc));
 }
 
-static int ifs3d(void)
+static int ifs3d()
 {
     display3d = -1;
 
@@ -2753,7 +2753,7 @@ static bool float3dviewtransf(struct float3dvtinf *inf)
     return true;
 }
 
-static FILE *open_orbitsave(void)
+static FILE *open_orbitsave()
 {
     FILE *fp;
     if ((orbitsave&1) && (fp = fopen("orbits.raw", "w")) != nullptr)
