@@ -582,7 +582,8 @@ get_evol_restart:
     if ((evolving & RANDWALK)||(evolving & RANDPARAM)) {
         /* adjust field param to make some sense when changing from random modes*/
         /* maybe should adjust for aspect ratio here? */
-        paramrangex = paramrangey = fiddlefactor * 2;
+        paramrangey = fiddlefactor * 2;
+        paramrangex = paramrangey;
         opx = param[0] - fiddlefactor;
         opy = param[1] - fiddlefactor;
         /* set middle image to last selected and edges to +- fiddlefactor */
@@ -672,9 +673,11 @@ get_evol_restart:
     }
     if (i==FIK_F2) {
         paramrangex = paramrangex / 2;
-        opx = newopx = opx + paramrangex / 2;
+        newopx = opx + paramrangex/2;
+        opx = newopx;
         paramrangey = paramrangey / 2;
-        opy = newopy = opy + paramrangey / 2;
+        newopy = opy + paramrangey / 2;
+        opy = newopy;
         fiddlefactor = fiddlefactor / 2;
         goto get_evol_restart;
     }
@@ -682,10 +685,12 @@ get_evol_restart:
         double centerx, centery;
         centerx = opx + paramrangex / 2;
         paramrangex = paramrangex * 2;
-        opx = newopx = centerx - paramrangex / 2;
+        newopx = centerx - paramrangex / 2;
+        opx = newopx;
         centery = opy + paramrangey / 2;
         paramrangey = paramrangey * 2;
-        opy = newopy = centery - paramrangey / 2;
+        newopy = centery - paramrangey / 2;
+        opy = newopy;
         fiddlefactor = fiddlefactor * 2;
         goto get_evol_restart;
     }
@@ -718,9 +723,11 @@ get_evol_restart:
         if (evolving)
             evolving += tmp;
         paramrangex = uvalues[++k].uval.dval;
-        newopx = opx = uvalues[++k].uval.dval;
+        opx = uvalues[++k].uval.dval;
+        newopx = opx;
         paramrangey = uvalues[++k].uval.dval;
-        newopy = opy = uvalues[++k].uval.dval;
+        opy = uvalues[++k].uval.dval;
+        newopy = opy;
     }
 
     fiddlefactor = uvalues[++k].uval.dval;
@@ -733,7 +740,10 @@ get_evol_restart:
     viewxdots = (sxdots / gridsz)-2;
     viewydots = (sydots / gridsz)-2;
     if (!viewwindow)
-        viewxdots = viewydots = 0;
+    {
+        viewydots = 0;
+        viewxdots = viewydots;
+    }
 
     i = 0;
 
@@ -803,9 +813,11 @@ void ReleaseParamBox()
 void set_current_params()
 {
     paramrangex = curfractalspecific->xmax - curfractalspecific->xmin;
-    opx = newopx = - (paramrangex / 2);
+    newopx = - (paramrangex / 2);
+    opx = newopx;
     paramrangey = curfractalspecific->ymax - curfractalspecific->ymin;
-    opy = newopy = - (paramrangey / 2);
+    newopy = - (paramrangey / 2);
+    opy = newopy;
     return;
 }
 
