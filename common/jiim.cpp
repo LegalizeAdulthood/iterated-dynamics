@@ -431,7 +431,7 @@ void Jiim(int which)         /* called by fractint */
 
     int xoff, yoff;                   /* center of the window  */
     int x, y;
-    int still, kbdchar= -1;
+    int kbdchar= -1;
 
     long iter;
     int color;
@@ -594,7 +594,7 @@ void Jiim(int which)         /* called by fractint */
     color = g_color_bright;
 
     iter = 1;
-    still = 1;
+    bool still = true;
     zoom = 1;
 
 #ifdef XFRACT
@@ -754,7 +754,7 @@ void Jiim(int which)         /* called by fractint */
                         break;
                     }
                 default:
-                    still = 0;
+                    still = false;
                 }  /* switch */
                 if (kbdchar == 's' || kbdchar == 'S')
                     goto finish;
