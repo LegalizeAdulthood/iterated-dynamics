@@ -310,7 +310,7 @@ int pstopmsg(int x,char *msg)
 static unsigned char realstkcnt;    /* how many scalars are really on stack  */
 static unsigned char stkcnt;        /* # scalars on FPU stack  */
 static bool lastsqrused = false;    /* was lastsqr loaded in the formula?  */
-static unsigned char lastsqrreal;   /* was lastsqr stored explicitly in the formula?  */
+static bool lastsqrreal = false;    /* was lastsqr stored explicitly in the formula?  */
 static unsigned char p1const;       /* is p1 a constant?  */
 static unsigned char p2const;       /* ...and p2?  */
 static unsigned char p3const;       /* ...and p3?  */
@@ -1191,7 +1191,7 @@ int CvtStk()
     union Arg *testoperand;
     int fnfound;
 
-    lastsqrreal = 1;  /* assume lastsqr is real (not stored explicitly)  */
+    lastsqrreal = true;  /* assume lastsqr is real (not stored explicitly)  */
     p1const = p2const = p3const = (unsigned char)1;  /* . . . p1, p2, p3 const  */
     p4const = p5const = (unsigned char)1;  /* . . . p4, p5 const  */
     lastsqrused = false;  /* ... and LastSqr is not used  */
@@ -1222,7 +1222,7 @@ int CvtStk()
                 p5const = 0;
             }
             else if (testoperand == &LASTSQR) {
-                lastsqrreal = 0;
+                lastsqrreal = false;
             }
         }
     }
