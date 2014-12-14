@@ -55,7 +55,7 @@ union mem {
 union mem handletable[MAXHANDLES];
 
 /* Routines in this module */
-static int CheckDiskSpace(long howmuch);
+static bool CheckDiskSpace(long howmuch);
 static int check_for_mem(int stored_at, long howmuch);
 static U16 next_handle();
 static int CheckBounds(long start, long length, U16 handle);
@@ -76,10 +76,9 @@ bool SetMemory(int value,U16 size,long count,long offset,U16 handle);
 
 /* Memory handling support routines */
 
-static int CheckDiskSpace(long howmuch)
+static bool CheckDiskSpace(long)
 {
-    /* TODO */
-    return TRUE;
+    return true;
 }
 
 static void WhichDiskError(int I_O)
