@@ -891,7 +891,7 @@ top:
     }
     else if (floatflag)
     {
-        j = (usr_floatflag) ? 1 : 2;
+        j = usr_floatflag ? 1 : 2;
     }
 
     if (bf_math == 0)

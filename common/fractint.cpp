@@ -86,7 +86,7 @@ int     integerfractal;         /* TRUE if fractal uses integer math */
 char    usr_stdcalcmode;
 int     usr_periodicitycheck;
 long    usr_distest;
-char    usr_floatflag;
+bool    usr_floatflag;
 
 bool    viewwindow = false;     /* false for full screen, true for window */
 float   viewreduction;          /* window auto-sizing */
@@ -397,7 +397,7 @@ imagestart:                             /* calc/display a new image */
         stacked = 0;
     }
 #ifdef XFRACT
-    usr_floatflag = 1;
+    usr_floatflag = true;
 #endif
     got_status = -1;                     /* for tab_display */
 
@@ -488,10 +488,10 @@ imagestart:                             /* calc/display a new image */
             goto imagestart;
         }
         if (kbdchar == 'f') {                     /* floating pt toggle */
-            if (usr_floatflag == 0)
-                usr_floatflag = 1;
+            if (!usr_floatflag)
+                usr_floatflag = true;
             else
-                usr_floatflag = 0;
+                usr_floatflag = false;
             goto imagestart;
         }
         if (kbdchar == 'i') {                     /* set 3d fractal parms */

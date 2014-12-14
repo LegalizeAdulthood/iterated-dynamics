@@ -1995,7 +1995,6 @@ static void line3d_cleanup()
         if (!debugflag && Targa_Overlay)
             dir_remove(workdir, targa_temp);
     }
-    usr_floatflag &= 1;          /* strip second bit */
     error = 0;
     T_Safe = false;
 }
@@ -2087,7 +2086,7 @@ static int first_time(int linelen, VECTOR v)
     /* aspect ratio calculation - assume screen is 4 x 3 */
     aspect = (double) xdots *.75 / (double) ydots;
 
-    if (SPHERE == FALSE)         /* skip this slow stuff in sphere case */
+    if (!SPHERE)         /* skip this slow stuff in sphere case */
     {
         /*********************************************************************/
         /* What is done here is to create a single matrix, m, which has      */
@@ -2147,7 +2146,7 @@ static int first_time(int linelen, VECTOR v)
     {
         persp = true;
         if (ZVIEWER < 80)         /* force float */
-            usr_floatflag |= 2;    /* turn on second bit */
+            usr_floatflag = true;
     }
 
     /* set up view vector, and put viewer in center of screen */
@@ -2168,7 +2167,7 @@ static int first_time(int linelen, VECTOR v)
     lview[1] = lview[1] << 16;
     lview[2] = lview[2] << 16;
 
-    if (SPHERE == FALSE)         /* sphere skips this */
+    if (!SPHERE)         /* sphere skips this */
     {
         /* translate back exactly amount we translated earlier plus enough to
          * center image so maximum values are non-positive */

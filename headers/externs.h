@@ -518,7 +518,7 @@ extern bool                  use_old_period;
 extern bool                  using_jiim;
 extern int                   usr_biomorph;
 extern long                  usr_distest;
-extern char                  usr_floatflag;
+extern bool                  usr_floatflag;
 extern int                   usr_periodicitycheck;
 extern char                  usr_stdcalcmode;
 extern int                   g_vesa_x_res;

@@ -415,9 +415,9 @@ static void initvars_fractal()          /* init vars affecting calculation */
     closeprox = 0.01;
     ismand = true;                      /* default formula mand/jul toggle */
 #ifndef XFRACT
-    usr_floatflag = 0;                   /* turn off the float flag */
+    usr_floatflag = false;              /* turn off the float flag */
 #else
-    usr_floatflag = 1;                   /* turn on the float flag */
+    usr_floatflag = true;               /* turn on the float flag */
 #endif
     finattract = false;                 /* disable finite attractor logic */
     fractype = 0;                        /* initial type Set flag  */
@@ -2254,9 +2254,9 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         if (yesnoval[0] < 0)
             goto badarg;
 #ifndef XFRACT
-        usr_floatflag = (char)yesnoval[0];
+        usr_floatflag = yesnoval[0] != 0;
 #else
-        usr_floatflag = 1; /* must use floating point */
+        usr_floatflag = true; /* must use floating point */
 #endif
         return 3;
     }

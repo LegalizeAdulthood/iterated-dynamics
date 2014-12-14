@@ -267,7 +267,7 @@ int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
                 if (debugflag == 2224)
                 {
                     char msg[MSGLEN];
-                    sprintf(msg, "floatflag=%d", usr_floatflag);
+                    sprintf(msg, "floatflag=%d", usr_floatflag ? 1 : 0);
                     stopmsg(STOPMSG_NO_BUZZER, (char *)msg);
                 }
                 i = funny_glasses_call(gifview);
@@ -923,10 +923,10 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
             driver_unstack_screen();
         break;
     case 'f':                    /* floating pt toggle           */
-        if (usr_floatflag == 0)
-            usr_floatflag = 1;
+        if (!usr_floatflag)
+            usr_floatflag = true;
         else if (stdcalcmode != 'o') /* don't go there */
-            usr_floatflag = 0;
+            usr_floatflag = false;
         g_init_mode = g_adapter;
         return IMAGESTART;
     case 'i':                    /* 3d fractal parms */
@@ -1180,10 +1180,10 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
             g_init_mode = g_adapter;
             if (curfractalspecific->isinteger != 0 &&
                     curfractalspecific->tofloat != NOFRACTAL)
-                usr_floatflag = 0;
+                usr_floatflag = false;
             if (curfractalspecific->isinteger == 0 &&
                     curfractalspecific->tofloat != NOFRACTAL)
-                usr_floatflag = 1;
+                usr_floatflag = true;
             historyflag = true;         /* avoid re-store parms due to rounding errs */
             return IMAGESTART;
         }
@@ -1527,10 +1527,10 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         break;
 
     case 'f':                    /* floating pt toggle           */
-        if (usr_floatflag == 0)
-            usr_floatflag = 1;
+        if (!usr_floatflag)
+            usr_floatflag = true;
         else if (stdcalcmode != 'o') /* don't go there */
-            usr_floatflag = 0;
+            usr_floatflag = false;
         g_init_mode = g_adapter;
         return IMAGESTART;
     case '\\':                   /* return to prev image    */
@@ -1550,10 +1550,10 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             g_init_mode = g_adapter;
             if (curfractalspecific->isinteger != 0 &&
                     curfractalspecific->tofloat != NOFRACTAL)
-                usr_floatflag = 0;
+                usr_floatflag = false;
             if (curfractalspecific->isinteger == 0 &&
                     curfractalspecific->tofloat != NOFRACTAL)
-                usr_floatflag = 1;
+                usr_floatflag = true;
             historyflag = true;         /* avoid re-store parms due to rounding errs */
             return IMAGESTART;
         }
@@ -2433,7 +2433,7 @@ static void restore_history_info(int i)
     if (keep_scrn_coords)
         set_orbit_corners = true;
     drawmode = last.drawmode;
-    usr_floatflag = (char)((curfractalspecific->isinteger) ? 0 : 1);
+    usr_floatflag = curfractalspecific->isinteger ? false : true;
     memcpy(g_dac_box,last.dac,256*3);
     memcpy(olddacbox,last.dac,256*3);
     if (mapdacbox)

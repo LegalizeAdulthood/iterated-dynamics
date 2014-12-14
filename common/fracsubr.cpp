@@ -140,13 +140,13 @@ void calcfracinit() /* initialize a *pile* of stuff for fractal calculation */
     /* space req for grid is 2(xdots+ydots)*sizeof(long or double) */
     /* space available in extraseg is 65536 Bytes */
     long xytemp = xdots + ydots;
-    if (((usr_floatflag == 0) && (xytemp*sizeof(long) > 32768)) ||
-            ((usr_floatflag == 1) && (xytemp*sizeof(double) > 32768)) ||
+    if ((!usr_floatflag && (xytemp*sizeof(long) > 32768)) ||
+            (usr_floatflag && (xytemp*sizeof(double) > 32768)) ||
             debugflag == 3800)
     {
         use_grid = false;
         floatflag = true;
-        usr_floatflag = 1;
+        usr_floatflag = true;
     }
     else
         use_grid = true;
@@ -184,35 +184,35 @@ void calcfracinit() /* initialize a *pile* of stuff for fractal calculation */
         fractype=MANDELFP;
         curfractalspecific = &fractalspecific[MANDELFP];
         fractal_floattobf();
-        usr_floatflag = 1;
+        usr_floatflag = true;
     }
     else if ((fractype==JULIA || fractype==JULIAFP) && debugflag==3200)
     {
         fractype=JULIAFP;
         curfractalspecific = &fractalspecific[JULIAFP];
         fractal_floattobf();
-        usr_floatflag = 1;
+        usr_floatflag = true;
     }
     else if ((fractype==LMANDELZPOWER || fractype==FPMANDELZPOWER) && debugflag==3200)
     {
         fractype=FPMANDELZPOWER;
         curfractalspecific = &fractalspecific[FPMANDELZPOWER];
         fractal_floattobf();
-        usr_floatflag = 1;
+        usr_floatflag = true;
     }
     else if ((fractype==LJULIAZPOWER || fractype==FPJULIAZPOWER) && debugflag==3200)
     {
         fractype=FPJULIAZPOWER;
         curfractalspecific = &fractalspecific[FPJULIAZPOWER];
         fractal_floattobf();
-        usr_floatflag = 1;
+        usr_floatflag = true;
     }
     else
         free_bf_vars();
     if (bf_math)
         floatflag = true;
     else
-        floatflag = usr_floatflag != 0;
+        floatflag = usr_floatflag;
     if (calc_status == CALCSTAT_RESUMABLE) { /* on resume, ensure floatflag correct */
         if (curfractalspecific->isinteger)
             floatflag = false;

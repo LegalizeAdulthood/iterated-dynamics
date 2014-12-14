@@ -44,7 +44,6 @@ bool ldcheck = false;
 int read_overlay()      /* read overlay/3D files, if reqr'd */
 {
     struct fractal_info read_info;
-    char oldfloatflag;
     char msg[110];
     struct ext_blk_2 blk_2_info;
     struct ext_blk_3 blk_3_info;
@@ -55,7 +54,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
     showfile = 1;                /* for any abort exit, pretend done */
     g_init_mode = -1;               /* no viewing mode set yet */
-    oldfloatflag = usr_floatflag;
+    bool oldfloatflag = usr_floatflag;
     loaded3d = false;
     if (fastrestore)
     {
@@ -174,7 +173,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
             usr_stdcalcmode = '3';
         }
         usr_distest     = read_info.distestold;
-        usr_floatflag   = (char)read_info.floatflag;
+        usr_floatflag   = read_info.floatflag != 0;
         bailout     = read_info.bailoutold;
         calctime    = read_info.calctime;
         trigndx[0]  = read_info.trigndx[0];
@@ -275,7 +274,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         {
             LogFlag = 2;
         }
-        usr_floatflag = (char)(curfractalspecific->isinteger ? 0 : 1);
+        usr_floatflag = curfractalspecific->isinteger ? false : true;
     }
 
     if (read_info.version < 5 && read_info.version != 0) /* pre-version 15.0? */
@@ -412,7 +411,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         int const olddisplay3d = display3d;
         bool const oldfloatflag = floatflag;
         display3d = loaded3d ? 1 : 0;   /* for <tab> display during next */
-        floatflag = usr_floatflag != 0; /* ditto */
+        floatflag = usr_floatflag; /* ditto */
         int i = get_video_mode(&read_info, &blk_3_info);
 #if defined(_WIN32)
         _ASSERTE(_CrtCheckMemory());
@@ -1122,10 +1121,10 @@ void backwards_v18()
 {
     if (!functionpreloaded)
         set_if_old_bif(); /* old bifs need function set */
-    if (fractype==MANDELTRIG && usr_floatflag==1
+    if (fractype==MANDELTRIG && usr_floatflag
             && save_release < 1800 && bailout == 0)
         bailout = 2500;
-    if (fractype==LAMBDATRIG && usr_floatflag==1
+    if (fractype==LAMBDATRIG && usr_floatflag
             && save_release < 1800 && bailout == 0)
         bailout = 2500;
 }
@@ -1637,7 +1636,7 @@ rescan:  /* entry for changed browse parms */
     if (!oldbf_math)
         free_bf_vars();
     bf_math = oldbf_math;
-    floatflag = usr_floatflag != 0;
+    floatflag = usr_floatflag;
 
     return (c);
 }
