@@ -4483,7 +4483,8 @@ bool frm_prescan(FILE * open_file)
     init_var_list();
     init_const_lists();
 
-    orig_pos = statement_pos = ftell(open_file);
+    statement_pos = ftell(open_file);
+    orig_pos = statement_pos;
     for (int i = 0; i < 3; i++)
     {
         errors[i].start_pos    = 0L;
