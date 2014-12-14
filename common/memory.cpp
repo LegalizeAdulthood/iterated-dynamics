@@ -57,7 +57,7 @@ union mem handletable[MAXHANDLES];
 /* Routines in this module */
 static int CheckDiskSpace(long howmuch);
 static int check_for_mem(int stored_at, long howmuch);
-static U16 next_handle(void);
+static U16 next_handle();
 static int CheckBounds(long start, long length, U16 handle);
 static void WhichDiskError(int);
 static void DisplayError(int stored_at, long howmuch);
@@ -66,8 +66,8 @@ static void DisplayError(int stored_at, long howmuch);
 
 void DisplayHandle(U16 handle);
 int MemoryType(U16 handle);
-void InitMemory(void);
-void ExitCheck(void);
+void InitMemory();
+void ExitCheck();
 U16 MemoryAlloc(U16 size, long count, int stored_at);
 void MemoryRelease(U16 handle);
 int MoveToMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle);
@@ -209,9 +209,9 @@ static int CheckBounds(long start, long length, U16 handle)
     return (0);
 }
 
-unsigned long get_disk_space(void);
+unsigned long get_disk_space();
 
-void DisplayMemory(void)
+void DisplayMemory()
 {
     char buf[MSGLEN];
 
@@ -229,7 +229,7 @@ void DisplayHandle(U16 handle)
         goodbye(); /* bailout if ESC, it's messy, but should work */
 }
 
-void InitMemory(void)
+void InitMemory()
 {
     numTOTALhandles = 0;
     for (int counter = 0; counter < MAXHANDLES; counter++)
@@ -239,7 +239,7 @@ void InitMemory(void)
     }
 }
 
-void ExitCheck(void)
+void ExitCheck()
 {
     if (numTOTALhandles != 0)
     {
