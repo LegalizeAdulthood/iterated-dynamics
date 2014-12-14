@@ -44,7 +44,7 @@ unsigned long number_of_ops, number_of_loads, number_of_stores, number_of_jumps;
 
 struct PEND_OP
 {
-    void (*f)(void);
+    void (*f)();
     int p;
 };
 
@@ -167,7 +167,7 @@ struct const_list_st
     struct const_list_st * next_item;
 } * complx_list, * real_list;
 
-static void parser_allocate(void);
+static void parser_allocate();
 
 union Arg *Arg1, *Arg2;
 
@@ -176,7 +176,7 @@ union Arg s[20];
 union Arg **Store;
 union Arg **Load;
 int OpPtr;
-void (**f)(void) = nullptr;
+void (**f)() = nullptr;
 struct ConstArg *v = nullptr;
 int StoPtr, LodPtr;
 int var_count;
@@ -332,14 +332,14 @@ static const char *ParseErrs(int which)
 
 #if !defined(XFRACT)
 
-static void mStkFunct(void (*fct)(void))   /* call mStk via dStk */
+static void mStkFunct(void (*fct)())   /* call mStk via dStk */
 {
     Arg1->d = MPC2cmplx(Arg1->m);
     (*fct)();
     Arg1->m = cmplx2MPC(Arg1->d);
 }
 
-static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
+static void lStkFunct(void (*fct)())   /* call lStk via dStk */
 {
     double y;
     /*
@@ -361,18 +361,18 @@ static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
 
 #endif
 
-unsigned long NewRandNum(void)
+unsigned long NewRandNum()
 {
     return RandNum = ((RandNum << 15) + rand15()) ^ RandNum;
 }
 
-void lRandom(void)
+void lRandom()
 {
     v[7].a.l.x = NewRandNum() >> (32 - bitshift);
     v[7].a.l.y = NewRandNum() >> (32 - bitshift);
 }
 
-void dRandom(void)
+void dRandom()
 {
     long x, y;
 
@@ -386,7 +386,7 @@ void dRandom(void)
 }
 
 #if !defined(XFRACT)
-void mRandom(void)
+void mRandom()
 {
     long x, y;
 
@@ -399,7 +399,7 @@ void mRandom(void)
 }
 #endif
 
-void SetRandFnct(void)
+void SetRandFnct()
 {
     unsigned Seed;
 
@@ -416,7 +416,7 @@ void SetRandFnct(void)
     NewRandNum();
 }
 
-void RandomSeed(void)
+void RandomSeed()
 {
     time_t ltime;
 
@@ -431,7 +431,7 @@ void RandomSeed(void)
 }
 
 #if !defined(XFRACT)
-void lStkSRand(void)
+void lStkSRand()
 {
     SetRandFnct();
     lRandom();
@@ -440,7 +440,7 @@ void lStkSRand(void)
 #endif
 
 #if !defined(XFRACT)
-void mStkSRand(void)
+void mStkSRand()
 {
     Arg1->l.x = Arg1->m.x.Mant ^ (long)Arg1->m.x.Exp;
     Arg1->l.y = Arg1->m.y.Mant ^ (long)Arg1->m.y.Exp;
@@ -450,7 +450,7 @@ void mStkSRand(void)
 }
 #endif
 
-void dStkSRand(void)
+void dStkSRand()
 {
     Arg1->l.x = (long)(Arg1->d.x * (1L << bitshift));
     Arg1->l.y = (long)(Arg1->d.y * (1L << bitshift));
@@ -459,7 +459,7 @@ void dStkSRand(void)
     Arg1->d = v[7].a.d;
 }
 
-void (*StkSRand)(void) = dStkSRand;
+void (*StkSRand)() = dStkSRand;
 
 
 void dStkLodDup()
@@ -516,14 +516,14 @@ void dStkSqr3()
 
 
 
-void dStkAbs(void)
+void dStkAbs()
 {
     Arg1->d.x = fabs(Arg1->d.x);
     Arg1->d.y = fabs(Arg1->d.y);
 }
 
 #if !defined(XFRACT)
-void mStkAbs(void)
+void mStkAbs()
 {
     if (Arg1->m.x.Exp < 0)
         Arg1->m.x.Exp = -Arg1->m.x.Exp;
@@ -531,16 +531,16 @@ void mStkAbs(void)
         Arg1->m.y.Exp = -Arg1->m.y.Exp;
 }
 
-void lStkAbs(void)
+void lStkAbs()
 {
     Arg1->l.x = labs(Arg1->l.x);
     Arg1->l.y = labs(Arg1->l.y);
 }
 #endif
 
-void (*StkAbs)(void) = dStkAbs;
+void (*StkAbs)() = dStkAbs;
 
-void dStkSqr(void)
+void dStkSqr()
 {
     LastSqr.d.x = Arg1->d.x * Arg1->d.x;
     LastSqr.d.y = Arg1->d.y * Arg1->d.y;
@@ -551,7 +551,7 @@ void dStkSqr(void)
 }
 
 #if !defined(XFRACT)
-void mStkSqr(void)
+void mStkSqr()
 {
     LastSqr.m.x = *MPmul(Arg1->m.x, Arg1->m.x);
     LastSqr.m.y = *MPmul(Arg1->m.y, Arg1->m.y);
@@ -562,7 +562,7 @@ void mStkSqr(void)
     LastSqr.m.y.Mant = (long)(LastSqr.m.y.Exp = 0);
 }
 
-void lStkSqr(void)
+void lStkSqr()
 {
     LastSqr.l.x = multiply(Arg1->l.x, Arg1->l.x, bitshift);
     LastSqr.l.y = multiply(Arg1->l.y, Arg1->l.y, bitshift);
@@ -573,9 +573,9 @@ void lStkSqr(void)
 }
 #endif
 
-void (*StkSqr)(void) = dStkSqr;
+void (*StkSqr)() = dStkSqr;
 
-void dStkAdd(void)
+void dStkAdd()
 {
     Arg2->d.x += Arg1->d.x;
     Arg2->d.y += Arg1->d.y;
@@ -585,14 +585,14 @@ void dStkAdd(void)
 
 #if !defined(XFRACT)
 
-void mStkAdd(void)
+void mStkAdd()
 {
     Arg2->m = MPCadd(Arg2->m, Arg1->m);
     Arg1--;
     Arg2--;
 }
 
-void lStkAdd(void)
+void lStkAdd()
 {
     Arg2->l.x += Arg1->l.x;
     Arg2->l.y += Arg1->l.y;
@@ -601,9 +601,9 @@ void lStkAdd(void)
 }
 #endif
 
-void (*StkAdd)(void) = dStkAdd;
+void (*StkAdd)() = dStkAdd;
 
-void dStkSub(void)
+void dStkSub()
 {
     Arg2->d.x -= Arg1->d.x;
     Arg2->d.y -= Arg1->d.y;
@@ -612,14 +612,14 @@ void dStkSub(void)
 }
 
 #if !defined(XFRACT)
-void mStkSub(void)
+void mStkSub()
 {
     Arg2->m = MPCsub(Arg2->m, Arg1->m);
     Arg1--;
     Arg2--;
 }
 
-void lStkSub(void)
+void lStkSub()
 {
     Arg2->l.x -= Arg1->l.x;
     Arg2->l.y -= Arg1->l.y;
@@ -628,40 +628,40 @@ void lStkSub(void)
 }
 #endif
 
-void (*StkSub)(void) = dStkSub;
+void (*StkSub)() = dStkSub;
 
-void dStkConj(void)
+void dStkConj()
 {
     Arg1->d.y = -Arg1->d.y;
 }
 
 #if !defined(XFRACT)
-void mStkConj(void)
+void mStkConj()
 {
     Arg1->m.y.Exp ^= 0x8000;
 }
 
-void lStkConj(void)
+void lStkConj()
 {
     Arg1->l.y = -Arg1->l.y;
 }
 #endif
 
-void (*StkConj)(void) = dStkConj;
+void (*StkConj)() = dStkConj;
 
-void dStkFloor(void)
+void dStkFloor()
 {
     Arg1->d.x = floor(Arg1->d.x);
     Arg1->d.y = floor(Arg1->d.y);
 }
 
 #if !defined(XFRACT)
-void mStkFloor(void)
+void mStkFloor()
 {
     mStkFunct(dStkFloor);   /* call lStk via dStk */
 }
 
-void lStkFloor(void)
+void lStkFloor()
 {
     /*
      * Kill fractional part. This operation truncates negative numbers
@@ -674,21 +674,21 @@ void lStkFloor(void)
 }
 #endif
 
-void (*StkFloor)(void) = dStkFloor;
+void (*StkFloor)() = dStkFloor;
 
-void dStkCeil(void)
+void dStkCeil()
 {
     Arg1->d.x = ceil(Arg1->d.x);
     Arg1->d.y = ceil(Arg1->d.y);
 }
 
 #if !defined(XFRACT)
-void mStkCeil(void)
+void mStkCeil()
 {
     mStkFunct(dStkCeil);   /* call lStk via dStk */
 }
 
-void lStkCeil(void)
+void lStkCeil()
 {
     /* the shift operation does the "floor" operation, so we
        negate everything before the operation */
@@ -699,21 +699,21 @@ void lStkCeil(void)
 }
 #endif
 
-void (*StkCeil)(void) = dStkCeil;
+void (*StkCeil)() = dStkCeil;
 
-void dStkTrunc(void)
+void dStkTrunc()
 {
     Arg1->d.x = (int)(Arg1->d.x);
     Arg1->d.y = (int)(Arg1->d.y);
 }
 
 #if !defined(XFRACT)
-void mStkTrunc(void)
+void mStkTrunc()
 {
     mStkFunct(dStkTrunc);   /* call lStk via dStk */
 }
 
-void lStkTrunc(void)
+void lStkTrunc()
 {
     /* shifting and shifting back truncates positive numbers,
        so we make the numbers positive */
@@ -731,21 +731,21 @@ void lStkTrunc(void)
 }
 #endif
 
-void (*StkTrunc)(void) = dStkTrunc;
+void (*StkTrunc)() = dStkTrunc;
 
-void dStkRound(void)
+void dStkRound()
 {
     Arg1->d.x = floor(Arg1->d.x+.5);
     Arg1->d.y = floor(Arg1->d.y+.5);
 }
 
 #if !defined(XFRACT)
-void mStkRound(void)
+void mStkRound()
 {
     mStkFunct(dStkRound);   /* call lStk via dStk */
 }
 
-void lStkRound(void)
+void lStkRound()
 {
     /* Add .5 then truncate */
     Arg1->l.x += (1L<<bitshiftless1);
@@ -754,114 +754,114 @@ void lStkRound(void)
 }
 #endif
 
-void (*StkRound)(void) = dStkRound;
+void (*StkRound)() = dStkRound;
 
-void dStkZero(void)
+void dStkZero()
 {
     Arg1->d.y = Arg1->d.x = 0.0;
 }
 
 #if !defined(XFRACT)
-void mStkZero(void)
+void mStkZero()
 {
     Arg1->m.x.Mant = Arg1->m.x.Exp = 0;
     Arg1->m.y.Mant = Arg1->m.y.Exp = 0;
 }
 
-void lStkZero(void)
+void lStkZero()
 {
     Arg1->l.y = Arg1->l.x = 0;
 }
 #endif
 
-void (*StkZero)(void) = dStkZero;
+void (*StkZero)() = dStkZero;
 
-void dStkOne(void)
+void dStkOne()
 {
     Arg1->d.x = 1.0;
     Arg1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
-void mStkOne(void)
+void mStkOne()
 {
     Arg1->m = MPCone;
 }
 
-void lStkOne(void)
+void lStkOne()
 {
     Arg1->l.x = (long) fg;
     Arg1->l.y = 0L;
 }
 #endif
 
-void (*StkOne)(void) = dStkOne;
+void (*StkOne)() = dStkOne;
 
 
-void dStkReal(void)
+void dStkReal()
 {
     Arg1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
-void mStkReal(void)
+void mStkReal()
 {
     Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
 }
 
-void lStkReal(void)
+void lStkReal()
 {
     Arg1->l.y = 0l;
 }
 #endif
 
-void (*StkReal)(void) = dStkReal;
+void (*StkReal)() = dStkReal;
 
-void dStkImag(void)
+void dStkImag()
 {
     Arg1->d.x = Arg1->d.y;
     Arg1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
-void mStkImag(void)
+void mStkImag()
 {
     Arg1->m.x = Arg1->m.y;
     Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
 }
 
-void lStkImag(void)
+void lStkImag()
 {
     Arg1->l.x = Arg1->l.y;
     Arg1->l.y = 0l;
 }
 #endif
 
-void (*StkImag)(void) = dStkImag;
+void (*StkImag)() = dStkImag;
 
-void dStkNeg(void)
+void dStkNeg()
 {
     Arg1->d.x = -Arg1->d.x;
     Arg1->d.y = -Arg1->d.y;
 }
 
 #if !defined(XFRACT)
-void mStkNeg(void)
+void mStkNeg()
 {
     Arg1->m.x.Exp ^= 0x8000;
     Arg1->m.y.Exp ^= 0x8000;
 }
 
-void lStkNeg(void)
+void lStkNeg()
 {
     Arg1->l.x = -Arg1->l.x;
     Arg1->l.y = -Arg1->l.y;
 }
 #endif
 
-void (*StkNeg)(void) = dStkNeg;
+void (*StkNeg)() = dStkNeg;
 
-void dStkMul(void)
+void dStkMul()
 {
     FPUcplxmul(&Arg2->d, &Arg1->d, &Arg2->d);
     Arg1--;
@@ -869,14 +869,14 @@ void dStkMul(void)
 }
 
 #if !defined(XFRACT)
-void mStkMul(void)
+void mStkMul()
 {
     Arg2->m = MPCmul(Arg2->m, Arg1->m);
     Arg1--;
     Arg2--;
 }
 
-void lStkMul(void)
+void lStkMul()
 {
     long x, y;
 
@@ -891,9 +891,9 @@ void lStkMul(void)
 }
 #endif
 
-void (*StkMul)(void) = dStkMul;
+void (*StkMul)() = dStkMul;
 
-void dStkDiv(void)
+void dStkDiv()
 {
     FPUcplxdiv(&Arg2->d, &Arg1->d, &Arg2->d);
     Arg1--;
@@ -901,14 +901,14 @@ void dStkDiv(void)
 }
 
 #if !defined(XFRACT)
-void mStkDiv(void)
+void mStkDiv()
 {
     Arg2->m = MPCdiv(Arg2->m, Arg1->m);
     Arg1--;
     Arg2--;
 }
 
-void lStkDiv(void)
+void lStkDiv()
 {
     long x, y, mod, x2, y2;
 
@@ -925,22 +925,22 @@ void lStkDiv(void)
 }
 #endif
 
-void (*StkDiv)(void) = dStkDiv;
+void (*StkDiv)() = dStkDiv;
 
-void dStkMod(void)
+void dStkMod()
 {
     Arg1->d.x = (Arg1->d.x * Arg1->d.x) + (Arg1->d.y * Arg1->d.y);
     Arg1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
-void mStkMod(void)
+void mStkMod()
 {
     Arg1->m.x = MPCmod(Arg1->m);
     Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
 }
 
-void lStkMod(void)
+void lStkMod()
 {
     /*   Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) + */
     /*   multiply(Arg2->l.y, Arg1->l.y, bitshift); */
@@ -951,7 +951,7 @@ void lStkMod(void)
     Arg1->l.y = 0L;
 }
 
-void lStkModOld(void)
+void lStkModOld()
 {
     Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) +
                 multiply(Arg2->l.y, Arg1->l.y, bitshift);
@@ -961,23 +961,23 @@ void lStkModOld(void)
 }
 #endif
 
-void (*StkMod)(void) = dStkMod;
+void (*StkMod)() = dStkMod;
 
-void StkSto(void)
+void StkSto()
 {
     *Store[StoPtr++] = *Arg1;
 }
 
-void (*PtrStkSto)(void) = StkSto;
+void (*PtrStkSto)() = StkSto;
 
-void StkLod(void)
+void StkLod()
 {
     Arg1++;
     Arg2++;
     *Arg1 = *Load[LodPtr++];
 }
 
-void StkClr(void)
+void StkClr()
 {
     s[0] = *Arg1;
     Arg1 = &s[0];
@@ -985,9 +985,9 @@ void StkClr(void)
     Arg2--;
 }
 
-void (*PtrStkClr)(void) = StkClr;
+void (*PtrStkClr)() = StkClr;
 
-void dStkFlip(void)
+void dStkFlip()
 {
     double t;
 
@@ -997,7 +997,7 @@ void dStkFlip(void)
 }
 
 #if !defined(XFRACT)
-void mStkFlip(void)
+void mStkFlip()
 {
     struct MP t;
 
@@ -1006,7 +1006,7 @@ void mStkFlip(void)
     Arg1->m.y = t;
 }
 
-void lStkFlip(void)
+void lStkFlip()
 {
     long t;
 
@@ -1016,9 +1016,9 @@ void lStkFlip(void)
 }
 #endif
 
-void (*StkFlip)(void) = dStkFlip;
+void (*StkFlip)() = dStkFlip;
 
-void dStkSin(void)
+void dStkSin()
 {
     double sinx, cosx, sinhy, coshy;
 
@@ -1029,12 +1029,12 @@ void dStkSin(void)
 }
 
 #if !defined(XFRACT)
-void mStkSin(void)
+void mStkSin()
 {
     mStkFunct(dStkSin);   /* call lStk via dStk */
 }
 
-void lStkSin(void)
+void lStkSin()
 {
     long x, y, sinx, cosx, sinhy, coshy;
     x = Arg1->l.x >> Delta16;
@@ -1046,12 +1046,12 @@ void lStkSin(void)
 }
 #endif
 
-void (*StkSin)(void) = dStkSin;
+void (*StkSin)() = dStkSin;
 
 /* The following functions are supported by both the parser and for fn
    variable replacement.
 */
-void dStkTan(void)
+void dStkTan()
 {
     double sinx, cosx, sinhy, coshy, denom;
     Arg1->d.x *= 2;
@@ -1065,12 +1065,12 @@ void dStkTan(void)
 }
 
 #if !defined(XFRACT)
-void mStkTan(void)
+void mStkTan()
 {
     mStkFunct(dStkTan);   /* call lStk via dStk */
 }
 
-void lStkTan(void)
+void lStkTan()
 {
     long x, y, sinx, cosx, sinhy, coshy, denom;
     x = Arg1->l.x >> Delta16;
@@ -1086,9 +1086,9 @@ void lStkTan(void)
 }
 #endif
 
-void (*StkTan)(void) = dStkTan;
+void (*StkTan)() = dStkTan;
 
-void dStkTanh(void)
+void dStkTanh()
 {
     double siny, cosy, sinhx, coshx, denom;
     Arg1->d.x *= 2;
@@ -1102,12 +1102,12 @@ void dStkTanh(void)
 }
 
 #if !defined(XFRACT)
-void mStkTanh(void)
+void mStkTanh()
 {
     mStkFunct(dStkTanh);   /* call lStk via dStk */
 }
 
-void lStkTanh(void)
+void lStkTanh()
 {
     long x, y, siny, cosy, sinhx, coshx, denom;
     x = Arg1->l.x >> Delta16;
@@ -1123,9 +1123,9 @@ void lStkTanh(void)
 }
 #endif
 
-void (*StkTanh)(void) = dStkTanh;
+void (*StkTanh)() = dStkTanh;
 
-void dStkCoTan(void)
+void dStkCoTan()
 {
     double sinx, cosx, sinhy, coshy, denom;
     Arg1->d.x *= 2;
@@ -1139,12 +1139,12 @@ void dStkCoTan(void)
 }
 
 #if !defined(XFRACT)
-void mStkCoTan(void)
+void mStkCoTan()
 {
     mStkFunct(dStkCoTan);   /* call lStk via dStk */
 }
 
-void lStkCoTan(void)
+void lStkCoTan()
 {
     long x, y, sinx, cosx, sinhy, coshy, denom;
     x = Arg1->l.x >> Delta16;
@@ -1160,9 +1160,9 @@ void lStkCoTan(void)
 }
 #endif
 
-void (*StkCoTan)(void) = dStkCoTan;
+void (*StkCoTan)() = dStkCoTan;
 
-void dStkCoTanh(void)
+void dStkCoTanh()
 {
     double siny, cosy, sinhx, coshx, denom;
     Arg1->d.x *= 2;
@@ -1176,12 +1176,12 @@ void dStkCoTanh(void)
 }
 
 #if !defined(XFRACT)
-void mStkCoTanh(void)
+void mStkCoTanh()
 {
     mStkFunct(dStkCoTanh);   /* call lStk via dStk */
 }
 
-void lStkCoTanh(void)
+void lStkCoTanh()
 {
     long x, y, siny, cosy, sinhx, coshx, denom;
     x = Arg1->l.x >> Delta16;
@@ -1197,7 +1197,7 @@ void lStkCoTanh(void)
 }
 #endif
 
-void (*StkCoTanh)(void) = dStkCoTanh;
+void (*StkCoTanh)() = dStkCoTanh;
 
 /* The following functions are not directly used by the parser - support
    for the parser was not provided because the existing parser language
@@ -1206,7 +1206,7 @@ void (*StkCoTanh)(void) = dStkCoTanh;
    the other parser functions.
 */
 
-void dStkRecip(void)
+void dStkRecip()
 {
     double mod;
     mod =Arg1->d.x * Arg1->d.x + Arg1->d.y * Arg1->d.y;
@@ -1216,7 +1216,7 @@ void dStkRecip(void)
 }
 
 #if !defined(XFRACT)
-void mStkRecip(void)
+void mStkRecip()
 {
     struct MP mod;
     mod = *MPadd(*MPmul(Arg1->m.x, Arg1->m.x),*MPmul(Arg1->m.y, Arg1->m.y));
@@ -1230,7 +1230,7 @@ void mStkRecip(void)
     Arg1->m.y.Exp ^= 0x8000;
 }
 
-void lStkRecip(void)
+void lStkRecip()
 {
     long mod;
     mod = multiply(Arg1->l.x,Arg1->l.x,bitshift)
@@ -1246,11 +1246,11 @@ void lStkRecip(void)
 }
 #endif
 
-void StkIdent(void)
+void StkIdent()
 { /* do nothing - the function Z */
 }
 
-void dStkSinh(void)
+void dStkSinh()
 {
     double siny, cosy, sinhx, coshx;
 
@@ -1261,12 +1261,12 @@ void dStkSinh(void)
 }
 
 #if !defined(XFRACT)
-void mStkSinh(void)
+void mStkSinh()
 {
     mStkFunct(dStkSinh);   /* call lStk via dStk */
 }
 
-void lStkSinh(void)
+void lStkSinh()
 {
     long x, y, sinhx, coshx, siny, cosy;
 
@@ -1279,9 +1279,9 @@ void lStkSinh(void)
 }
 #endif
 
-void (*StkSinh)(void) = dStkSinh;
+void (*StkSinh)() = dStkSinh;
 
-void dStkCos(void)
+void dStkCos()
 {
     double sinx, cosx, sinhy, coshy;
 
@@ -1292,12 +1292,12 @@ void dStkCos(void)
 }
 
 #if !defined(XFRACT)
-void mStkCos(void)
+void mStkCos()
 {
     mStkFunct(dStkCos);   /* call lStk via dStk */
 }
 
-void lStkCos(void)
+void lStkCos()
 {
     long x, y, sinx, cosx, sinhy, coshy;
 
@@ -1310,32 +1310,32 @@ void lStkCos(void)
 }
 #endif
 
-void (*StkCos)(void) = dStkCos;
+void (*StkCos)() = dStkCos;
 
 /* Bogus version of cos, to replicate bug which was in regular cos till v16: */
 
-void dStkCosXX(void)
+void dStkCosXX()
 {
     dStkCos();
     Arg1->d.y = -Arg1->d.y;
 }
 
 #if !defined(XFRACT)
-void mStkCosXX(void)
+void mStkCosXX()
 {
     mStkFunct(dStkCosXX);   /* call lStk via dStk */
 }
 
-void lStkCosXX(void)
+void lStkCosXX()
 {
     lStkCos();
     Arg1->l.y = -Arg1->l.y;
 }
 #endif
 
-void (*StkCosXX)(void) = dStkCosXX;
+void (*StkCosXX)() = dStkCosXX;
 
-void dStkCosh(void)
+void dStkCosh()
 {
     double siny, cosy, sinhx, coshx;
 
@@ -1346,12 +1346,12 @@ void dStkCosh(void)
 }
 
 #if !defined(XFRACT)
-void mStkCosh(void)
+void mStkCosh()
 {
     mStkFunct(dStkCosh);   /* call lStk via dStk */
 }
 
-void lStkCosh(void)
+void lStkCosh()
 {
     long x, y, sinhx, coshx, siny, cosy;
 
@@ -1364,163 +1364,163 @@ void lStkCosh(void)
 }
 #endif
 
-void (*StkCosh)(void) = dStkCosh;
+void (*StkCosh)() = dStkCosh;
 
-void dStkASin(void)
+void dStkASin()
 {
     Arcsinz(Arg1->d, &(Arg1->d));
 }
 
 #if !defined(XFRACT)
-void mStkASin(void)
+void mStkASin()
 {
     mStkFunct(dStkASin);
 }
 
-void lStkASin(void)
+void lStkASin()
 {
     lStkFunct(dStkASin);
 }
 #endif
 
-void (*StkASin)(void) = dStkASin;
+void (*StkASin)() = dStkASin;
 
-void dStkASinh(void)
+void dStkASinh()
 {
     Arcsinhz(Arg1->d, &(Arg1->d));
 }
 
 #if !defined(XFRACT)
-void mStkASinh(void)
+void mStkASinh()
 {
     mStkFunct(dStkASinh);
 }
 
-void lStkASinh(void)
+void lStkASinh()
 {
     lStkFunct(dStkASinh);
 }
 #endif
 
-void (*StkASinh)(void) = dStkASinh;
+void (*StkASinh)() = dStkASinh;
 
-void dStkACos(void)
+void dStkACos()
 {
     Arccosz(Arg1->d, &(Arg1->d));
 }
 
 #if !defined(XFRACT)
-void mStkACos(void)
+void mStkACos()
 {
     mStkFunct(dStkACos);
 }
 
-void lStkACos(void)
+void lStkACos()
 {
     lStkFunct(dStkACos);
 }
 #endif
 
-void (*StkACos)(void) = dStkACos;
+void (*StkACos)() = dStkACos;
 
-void dStkACosh(void)
+void dStkACosh()
 {
     Arccoshz(Arg1->d, &(Arg1->d));
 }
 
 #if !defined(XFRACT)
-void mStkACosh(void)
+void mStkACosh()
 {
     mStkFunct(dStkACosh);
 }
 
-void lStkACosh(void)
+void lStkACosh()
 {
     lStkFunct(dStkACosh);
 }
 #endif
 
-void (*StkACosh)(void) = dStkACosh;
+void (*StkACosh)() = dStkACosh;
 
-void dStkATan(void)
+void dStkATan()
 {
     Arctanz(Arg1->d, &(Arg1->d));
 }
 
 #if !defined(XFRACT)
-void mStkATan(void)
+void mStkATan()
 {
     mStkFunct(dStkATan);
 }
 
-void lStkATan(void)
+void lStkATan()
 {
     lStkFunct(dStkATan);
 }
 #endif
 
-void (*StkATan)(void) = dStkATan;
+void (*StkATan)() = dStkATan;
 
-void dStkATanh(void)
+void dStkATanh()
 {
     Arctanhz(Arg1->d, &(Arg1->d));
 }
 
 #if !defined(XFRACT)
-void mStkATanh(void)
+void mStkATanh()
 {
     mStkFunct(dStkATanh);
 }
 
-void lStkATanh(void)
+void lStkATanh()
 {
     lStkFunct(dStkATanh);
 }
 #endif
 
-void (*StkATanh)(void) = dStkATanh;
+void (*StkATanh)() = dStkATanh;
 
-void dStkSqrt(void)
+void dStkSqrt()
 {
     Arg1->d = ComplexSqrtFloat(Arg1->d.x, Arg1->d.y);
 }
 
 #if !defined(XFRACT)
-void mStkSqrt(void)
+void mStkSqrt()
 {
     mStkFunct(dStkSqrt);
 }
 
-void lStkSqrt(void)
+void lStkSqrt()
 {
     /* lStkFunct(dStkSqrt); */
     Arg1->l = ComplexSqrtLong(Arg1->l.x, Arg1->l.y);
 }
 #endif
 
-void (*StkSqrt)(void) = dStkSqrt;
+void (*StkSqrt)() = dStkSqrt;
 
-void dStkCAbs(void)
+void dStkCAbs()
 {
     Arg1->d.x = sqrt(sqr(Arg1->d.x)+sqr(Arg1->d.y));
     Arg1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
-void mStkCAbs(void)
+void mStkCAbs()
 {
     mStkFunct(dStkCAbs);
 }
 
-void lStkCAbs(void)
+void lStkCAbs()
 {
     lStkFunct(dStkCAbs);
 }
 #endif
 
-void (*StkCAbs)(void) = dStkCAbs;
+void (*StkCAbs)() = dStkCAbs;
 
-void dStkLT(void)
+void dStkLT()
 {
     Arg2->d.x = (double)(Arg2->d.x < Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1529,7 +1529,7 @@ void dStkLT(void)
 }
 
 #if !defined(XFRACT)
-void mStkLT(void)
+void mStkLT()
 {
     Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == -1), 0);
     Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
@@ -1537,7 +1537,7 @@ void mStkLT(void)
     Arg2--;
 }
 
-void lStkLT(void)
+void lStkLT()
 {
     Arg2->l.x = (long)(Arg2->l.x < Arg1->l.x) << bitshift;
     Arg2->l.y = 0l;
@@ -1546,9 +1546,9 @@ void lStkLT(void)
 }
 #endif
 
-void (*StkLT)(void) = dStkLT;
+void (*StkLT)() = dStkLT;
 
-void dStkGT(void)
+void dStkGT()
 {
     Arg2->d.x = (double)(Arg2->d.x > Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1557,7 +1557,7 @@ void dStkGT(void)
 }
 
 #if !defined(XFRACT)
-void mStkGT(void)
+void mStkGT()
 {
     Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == 1), 0);
     Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
@@ -1565,7 +1565,7 @@ void mStkGT(void)
     Arg2--;
 }
 
-void lStkGT(void)
+void lStkGT()
 {
     Arg2->l.x = (long)(Arg2->l.x > Arg1->l.x) << bitshift;
     Arg2->l.y = 0l;
@@ -1574,9 +1574,9 @@ void lStkGT(void)
 }
 #endif
 
-void (*StkGT)(void) = dStkGT;
+void (*StkGT)() = dStkGT;
 
-void dStkLTE(void)
+void dStkLTE()
 {
     Arg2->d.x = (double)(Arg2->d.x <= Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1585,7 +1585,7 @@ void dStkLTE(void)
 }
 
 #if !defined(XFRACT)
-void mStkLTE(void)
+void mStkLTE()
 {
     int comp;
 
@@ -1596,7 +1596,7 @@ void mStkLTE(void)
     Arg2--;
 }
 
-void lStkLTE(void)
+void lStkLTE()
 {
     Arg2->l.x = (long)(Arg2->l.x <= Arg1->l.x) << bitshift;
     Arg2->l.y = 0l;
@@ -1605,9 +1605,9 @@ void lStkLTE(void)
 }
 #endif
 
-void (*StkLTE)(void) = dStkLTE;
+void (*StkLTE)() = dStkLTE;
 
-void dStkGTE(void)
+void dStkGTE()
 {
     Arg2->d.x = (double)(Arg2->d.x >= Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1616,7 +1616,7 @@ void dStkGTE(void)
 }
 
 #if !defined(XFRACT)
-void mStkGTE(void)
+void mStkGTE()
 {
     int comp;
 
@@ -1627,7 +1627,7 @@ void mStkGTE(void)
     Arg2--;
 }
 
-void lStkGTE(void)
+void lStkGTE()
 {
     Arg2->l.x = (long)(Arg2->l.x >= Arg1->l.x) << bitshift;
     Arg2->l.y = 0l;
@@ -1636,9 +1636,9 @@ void lStkGTE(void)
 }
 #endif
 
-void (*StkGTE)(void) = dStkGTE;
+void (*StkGTE)() = dStkGTE;
 
-void dStkEQ(void)
+void dStkEQ()
 {
     Arg2->d.x = (double)(Arg2->d.x == Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1647,7 +1647,7 @@ void dStkEQ(void)
 }
 
 #if !defined(XFRACT)
-void mStkEQ(void)
+void mStkEQ()
 {
     int comp;
 
@@ -1658,7 +1658,7 @@ void mStkEQ(void)
     Arg2--;
 }
 
-void lStkEQ(void)
+void lStkEQ()
 {
     Arg2->l.x = (long)(Arg2->l.x == Arg1->l.x) << bitshift;
     Arg2->l.y = 0l;
@@ -1667,9 +1667,9 @@ void lStkEQ(void)
 }
 #endif
 
-void (*StkEQ)(void) = dStkEQ;
+void (*StkEQ)() = dStkEQ;
 
-void dStkNE(void)
+void dStkNE()
 {
     Arg2->d.x = (double)(Arg2->d.x != Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1678,7 +1678,7 @@ void dStkNE(void)
 }
 
 #if !defined(XFRACT)
-void mStkNE(void)
+void mStkNE()
 {
     int comp;
 
@@ -1689,7 +1689,7 @@ void mStkNE(void)
     Arg2--;
 }
 
-void lStkNE(void)
+void lStkNE()
 {
     Arg2->l.x = (long)(Arg2->l.x != Arg1->l.x) << bitshift;
     Arg2->l.y = 0l;
@@ -1698,9 +1698,9 @@ void lStkNE(void)
 }
 #endif
 
-void (*StkNE)(void) = dStkNE;
+void (*StkNE)() = dStkNE;
 
-void dStkOR(void)
+void dStkOR()
 {
     Arg2->d.x = (double)(Arg2->d.x || Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1709,7 +1709,7 @@ void dStkOR(void)
 }
 
 #if !defined(XFRACT)
-void mStkOR(void)
+void mStkOR()
 {
     Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant || Arg1->m.x.Mant), 0);
     Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
@@ -1717,7 +1717,7 @@ void mStkOR(void)
     Arg2--;
 }
 
-void lStkOR(void)
+void lStkOR()
 {
     Arg2->l.x = (long)(Arg2->l.x || Arg1->l.x) << bitshift;
     Arg2->l.y = 0l;
@@ -1726,9 +1726,9 @@ void lStkOR(void)
 }
 #endif
 
-void (*StkOR)(void) = dStkOR;
+void (*StkOR)() = dStkOR;
 
-void dStkAND(void)
+void dStkAND()
 {
     Arg2->d.x = (double)(Arg2->d.x && Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1737,7 +1737,7 @@ void dStkAND(void)
 }
 
 #if !defined(XFRACT)
-void mStkAND(void)
+void mStkAND()
 {
     Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant && Arg1->m.x.Mant), 0);
     Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
@@ -1745,7 +1745,7 @@ void mStkAND(void)
     Arg2--;
 }
 
-void lStkAND(void)
+void lStkAND()
 {
     Arg2->l.x = (long)(Arg2->l.x && Arg1->l.x) << bitshift;
     Arg2->l.y = 0l;
@@ -1754,25 +1754,25 @@ void lStkAND(void)
 }
 #endif
 
-void (*StkAND)(void) = dStkAND;
-void dStkLog(void)
+void (*StkAND)() = dStkAND;
+void dStkLog()
 {
     FPUcplxlog(&Arg1->d, &Arg1->d);
 }
 
 #if !defined(XFRACT)
-void mStkLog(void)
+void mStkLog()
 {
     mStkFunct(dStkLog);   /* call lStk via dStk */
 }
 
-void lStkLog(void)
+void lStkLog()
 {
     lStkFunct(dStkLog);
 }
 #endif
 
-void (*StkLog)(void) = dStkLog;
+void (*StkLog)() = dStkLog;
 
 void FPUcplxexp(DComplex *x, DComplex *z)
 {
@@ -1783,26 +1783,26 @@ void FPUcplxexp(DComplex *x, DComplex *z)
     z->y = pow*sin(y);
 }
 
-void dStkExp(void)
+void dStkExp()
 {
     FPUcplxexp(&Arg1->d, &Arg1->d);
 }
 
 #if !defined(XFRACT)
-void mStkExp(void)
+void mStkExp()
 {
     mStkFunct(dStkExp);   /* call lStk via dStk */
 }
 
-void lStkExp(void)
+void lStkExp()
 {
     lStkFunct(dStkExp);
 }
 #endif
 
-void (*StkExp)(void) = dStkExp;
+void (*StkExp)() = dStkExp;
 
-void dStkPwr(void)
+void dStkPwr()
 {
     Arg2->d = ComplexPower(Arg2->d, Arg1->d);
     Arg1--;
@@ -1810,7 +1810,7 @@ void dStkPwr(void)
 }
 
 #if !defined(XFRACT)
-void mStkPwr(void)
+void mStkPwr()
 {
     DComplex x, y;
 
@@ -1822,7 +1822,7 @@ void mStkPwr(void)
     Arg2--;
 }
 
-void lStkPwr(void)
+void lStkPwr()
 {
     DComplex x, y;
 
@@ -1843,17 +1843,17 @@ void lStkPwr(void)
 }
 #endif
 
-void (*StkPwr)(void) = dStkPwr;
+void (*StkPwr)() = dStkPwr;
 
-void EndInit(void)
+void EndInit()
 {
     LastInitOp = OpPtr;
     InitJumpIndex = jump_index;
 }
 
-void (*PtrEndInit)(void) = EndInit;
+void (*PtrEndInit)() = EndInit;
 
-void StkJump(void)
+void StkJump()
 {
     OpPtr =  jump_control[jump_index].ptrs.JumpOpPtr;
     LodPtr = jump_control[jump_index].ptrs.JumpLodPtr;
@@ -1861,7 +1861,7 @@ void StkJump(void)
     jump_index = jump_control[jump_index].DestJumpIndex;
 }
 
-void dStkJumpOnFalse(void)
+void dStkJumpOnFalse()
 {
     if (Arg1->d.x == 0)
         StkJump();
@@ -1869,7 +1869,7 @@ void dStkJumpOnFalse(void)
         jump_index++;
 }
 
-void mStkJumpOnFalse(void)
+void mStkJumpOnFalse()
 {
 #if !defined(XFRACT)
     if (Arg1->m.x.Mant == 0)
@@ -1879,7 +1879,7 @@ void mStkJumpOnFalse(void)
 #endif
 }
 
-void lStkJumpOnFalse(void)
+void lStkJumpOnFalse()
 {
     if (Arg1->l.x == 0)
         StkJump();
@@ -1887,9 +1887,9 @@ void lStkJumpOnFalse(void)
         jump_index++;
 }
 
-void (*StkJumpOnFalse)(void) = dStkJumpOnFalse;
+void (*StkJumpOnFalse)() = dStkJumpOnFalse;
 
-void dStkJumpOnTrue(void)
+void dStkJumpOnTrue()
 {
     if (Arg1->d.x)
         StkJump();
@@ -1897,7 +1897,7 @@ void dStkJumpOnTrue(void)
         jump_index++;
 }
 
-void mStkJumpOnTrue(void)
+void mStkJumpOnTrue()
 {
 #if !defined(XFRACT)
     if (Arg1->m.x.Mant)
@@ -1907,7 +1907,7 @@ void mStkJumpOnTrue(void)
 #endif
 }
 
-void lStkJumpOnTrue(void)
+void lStkJumpOnTrue()
 {
     if (Arg1->l.x)
         StkJump();
@@ -1915,9 +1915,9 @@ void lStkJumpOnTrue(void)
         jump_index++;
 }
 
-void (*StkJumpOnTrue)(void) = dStkJumpOnTrue;
+void (*StkJumpOnTrue)() = dStkJumpOnTrue;
 
-void StkJumpLabel(void)
+void StkJumpLabel()
 {
     jump_index++;
 }
@@ -2075,13 +2075,13 @@ struct ConstArg *isconst(char *Str, int Len)
 struct FNCT_LIST
 {
     const char *s;
-    void (**ptr)(void);
+    void (**ptr)();
 };
 
-void (*StkTrig0)(void) = dStkSin;
-void (*StkTrig1)(void) = dStkSqr;
-void (*StkTrig2)(void) = dStkSinh;
-void (*StkTrig3)(void) = dStkCosh;
+void (*StkTrig0)() = dStkSin;
+void (*StkTrig1)() = dStkSqr;
+void (*StkTrig2)() = dStkSinh;
+void (*StkTrig3)() = dStkCosh;
 
 const char * JumpList[] =
 {
@@ -2173,10 +2173,10 @@ const char *OPList[] =
 };
 
 
-void NotAFnct(void)
+void NotAFnct()
 {
 }
-void FnctNotFound(void)
+void FnctNotFound()
 {
 }
 
@@ -2196,7 +2196,7 @@ int whichfn(char *s, int len)
     return out;
 }
 
-void (*isfunct(char *Str, int Len))(void)
+void (*isfunct(char *Str, int Len))()
 {
     unsigned n = SkipWhiteSpace(&Str[Len]);
     if (Str[Len+n] == '(')
@@ -2221,7 +2221,7 @@ void (*isfunct(char *Str, int Len))(void)
     return NotAFnct;
 }
 
-void RecSortPrec(void)
+void RecSortPrec()
 {
     int ThisOp = NextOp++;
     while (o[ThisOp].p > o[NextOp].p && NextOp < posp)
@@ -2611,7 +2611,7 @@ static bool ParseStr(char *Str, int pass)
             if (!ExpectingArg)
             {
                 ExpectingArg = true;
-                o[posp].f = (void(*)(void))nullptr;
+                o[posp].f = (void(*)())nullptr;
                 o[posp++].p = 15;
                 o[posp].f = StkClr;
                 o[posp++].p = -30000;
@@ -2620,7 +2620,7 @@ static bool ParseStr(char *Str, int pass)
             break;
         case ':':
             ExpectingArg = true;
-            o[posp].f = (void(*)(void))nullptr;
+            o[posp].f = (void(*)())nullptr;
             o[posp++].p = 15;
             o[posp].f = EndInit;
             o[posp++].p = -30000;
@@ -2731,7 +2731,7 @@ static bool ParseStr(char *Str, int pass)
                     jump_control[jump_index++].type = 2;
                     o[posp].f = StkJump;
                     o[posp++].p = 1;
-                    o[posp].f = (void(*)(void))nullptr;
+                    o[posp].f = (void(*)())nullptr;
                     o[posp++].p = 15;
                     o[posp].f = StkClr;
                     o[posp++].p = -30000;
@@ -2772,7 +2772,7 @@ static bool ParseStr(char *Str, int pass)
             break;
         }
     }
-    o[posp].f = (void(*)(void))nullptr;
+    o[posp].f = (void(*)())nullptr;
     o[posp++].p = 16;
     NextOp = 0;
     LastOp = posp;
@@ -2790,7 +2790,7 @@ static bool ParseStr(char *Str, int pass)
 }
 
 
-int Formula(void)
+int Formula()
 {
     if (FormName[0] == 0 || overflow)
         return 1;
@@ -2850,7 +2850,7 @@ int Formula(void)
     return 1;
 }
 
-int form_per_pixel(void)
+int form_per_pixel()
 {
     if (FormName[0] == 0)
         return 1;
@@ -3013,14 +3013,14 @@ int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
     return -1; /* should never get here */
 }
 
-static bool fill_jump_struct(void)
+static bool fill_jump_struct()
 {   /* Completes all entries in jump structure. Returns 1 on error) */
     /* On entry, jump_index is the number of jump functions in the formula*/
     int i = 0;
     int loadcount = 0;
     int storecount = 0;
     bool checkforelse = false;
-    void (*JumpFunc)(void) = nullptr;
+    void (*JumpFunc)() = nullptr;
     bool find_new_func = true;
 
     JUMP_PTRS_ST jump_data[MAX_JUMPS];
@@ -3986,7 +3986,7 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
     return FormulaStr;
 }
 
-int BadFormula(void)
+int BadFormula()
 {
     /*  this is called when a formula is bad, instead of calling  */
     /*     the normal functions which will produce undefined results  */
@@ -4040,7 +4040,7 @@ bool RunForm(char *Name, bool from_prompts1c)
 }
 
 
-bool fpFormulaSetup(void)
+bool fpFormulaSetup()
 {
     /* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -4056,7 +4056,7 @@ bool fpFormulaSetup(void)
 #endif
 }
 
-bool intFormulaSetup(void)
+bool intFormulaSetup()
 {
 #if defined(XFRACT) || defined(_WIN32)
     static bool been_here = false;
@@ -4102,7 +4102,7 @@ void init_misc()
 
 
 long total_formula_mem;
-static void parser_allocate(void)
+static void parser_allocate()
 {
     /* Note that XFRACT will waste about 6k here for pfls */
     /* Somewhat more memory is now allocated than in v17 here */
@@ -4116,7 +4116,7 @@ static void parser_allocate(void)
             Max_Ops = 2300; /* this value uses up about 64K memory */
             Max_Args = (unsigned)(Max_Ops/2.5);
         }
-        f_size = sizeof(void (**)(void))*Max_Ops;
+        f_size = sizeof(void (**)())*Max_Ops;
         Store_size = sizeof(union Arg *)*MAX_STORES;
         Load_size = sizeof(union Arg *)*MAX_LOADS;
         v_size = sizeof(struct ConstArg)*Max_Args;
@@ -4125,7 +4125,7 @@ static void parser_allocate(void)
                             + sizeof(struct PEND_OP)*Max_Ops;
 
         typespecific_workarea = malloc(f_size + Load_size + Store_size + v_size + p_size);
-        f = (void (**)(void)) typespecific_workarea;
+        f = (void (**)()) typespecific_workarea;
         Store = (union Arg **)(f + Max_Ops);
         Load = (union Arg **)(Store + MAX_STORES);
         v = (struct ConstArg *)(Load + MAX_LOADS);
@@ -4158,7 +4158,7 @@ void free_workarea()
     Store = (union Arg **) nullptr;
     Load = (union Arg **) nullptr;
     v = (struct ConstArg *) nullptr;
-    f = (void (**)(void)) nullptr;
+    f = (void (**)()) nullptr;
     pfls = (struct fls *) nullptr;
     total_formula_mem = 0;
 }
