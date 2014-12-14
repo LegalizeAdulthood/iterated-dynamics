@@ -264,13 +264,12 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 {
     /* Returns handle number if successful, 0 or nullptr if failure */
     U16 handle = 0;
-    int success, use_this_type;
+    int use_this_type;
     long toallocate;
 
-    success = FALSE;
     toallocate = count * size;
-    if (toallocate <= 0)     /* we failed, can't allocate > 2,147,483,647 */
-        return ((U16)success); /* or it wraps around to negative */
+    if (toallocate <= 0)    /* we failed, can't allocate > 2,147,483,647 */
+        return 0U;          /* or it wraps around to negative */
 
     /* check structure for requested memory type (add em up) to see if
        sufficient amount is available to grant request */
@@ -287,11 +286,12 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 
     if (handle >= MAXHANDLES || handle == 0) {
         DisplayHandle(handle);
-        return ((U16)success);
+        return 0U;
         /* Oops, do something about this! ????? */
     }
 
     /* attempt to allocate requested memory type */
+    bool success = false;
     switch (use_this_type)
     {
     default:
@@ -305,7 +305,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         handletable[handle].Linearmem.size = toallocate;
         handletable[handle].Linearmem.stored_at = MEMORY;
         numTOTALhandles++;
-        success = TRUE;
+        success = true;
         break;
 
     case DISK: /* MemoryAlloc */
@@ -328,7 +328,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
             break;
         }
         numTOTALhandles++;
-        success = TRUE;
+        success = true;
         fclose(handletable[handle].Disk.file); /* so clusters aren't lost if we crash while running */
         if (disktarga)
             handletable[handle].Disk.file = dir_fopen(workdir,light_name, "r+b");
@@ -352,7 +352,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
     if (success)
         return (handle);
     else      /* return 0 if failure */
-        return 0;
+        return 0U;
 }
 
 void MemoryRelease(U16 handle)
