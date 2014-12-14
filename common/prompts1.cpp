@@ -1696,11 +1696,12 @@ long get_file_entry(int type, const char *title,char *fmask,
 {
     /* Formula, LSystem, etc type structure, select from file */
     /* containing definitions in the form    name { ... }     */
-    int newfile,firsttry;
+    int newfile;
+    bool firsttry;
     long entry_pointer;
     newfile = 0;
     while (1) {
-        firsttry = 0;
+        firsttry = false;
         /* binary mode used here - it is more work, but much faster, */
         /*     especially when ftell or fgetpos is used                  */
         while (newfile || (gfe_file = fopen(filename, "rb")) == nullptr) {
@@ -1714,7 +1715,7 @@ long get_file_entry(int type, const char *title,char *fmask,
             if (getafilename(buf,fmask,filename))
                 return -1;
 
-            firsttry = 1; /* if around open loop again it is an error */
+            firsttry = true; /* if around open loop again it is an error */
         }
         setvbuf(gfe_file,tstack,_IOFBF,4096); /* improves speed when file is big */
         newfile = 0;
