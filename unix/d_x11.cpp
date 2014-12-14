@@ -1855,7 +1855,7 @@ x11_write_palette(Driver *drv)
         {
             /* !g_got_real_dac, fake_lut => truecolor, directcolor displays */
             static unsigned char last_dac[256][3];
-            static int last_dac_inited = False;
+            static bool last_dac_inited = false;
 
             for (int i = 0; i < 256; i++) {
                 if (!last_dac_inited ||
@@ -1883,7 +1883,7 @@ x11_write_palette(Driver *drv)
                 }
             }
             di->cmap_pixtab_alloced = true;
-            last_dac_inited = True;
+            last_dac_inited = true;
         } else {
             /* !g_got_real_dac, !fake_lut => static color, static gray displays */
             assert(1);

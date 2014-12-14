@@ -110,7 +110,7 @@ static unsigned long pixtab[256];
 typedef unsigned long XPixel;
 
 static XPixel cmap_pixtab[256]; /* for faking a LUTs on non-LUT visuals */
-static int cmap_pixtab_alloced;
+static bool cmap_pixtab_alloced = false;
 static unsigned long do_fake_lut(int idx)
 {
     return fake_lut ? cmap_pixtab[idx] : idx;
@@ -1072,7 +1072,7 @@ int writevideopalette()
         {
             /* !g_got_real_dac, fake_lut => truecolor, directcolor displays */
             static unsigned char last_dac[256][3];
-            static int last_dac_inited = False;
+            static bool last_dac_inited = false;
 
             for (int i = 0; i < colors; i++) {
                 if (!last_dac_inited ||
@@ -1100,8 +1100,8 @@ int writevideopalette()
                     last_dac[i][2] = g_dac_box[i][2];
                 }
             }
-            cmap_pixtab_alloced = True;
-            last_dac_inited = True;
+            cmap_pixtab_alloced = true;
+            last_dac_inited = true;
         }
         else
         {
