@@ -1006,11 +1006,13 @@ int fullscreen_choice(
             break;
         case FIK_END:
             current = numchoices;
-            increment = rev_increment = -1;
+            rev_increment = -1;
+            increment = rev_increment;
             break;
         case FIK_CTL_END:
             current = numchoices;
-            increment = rev_increment = -1;
+            rev_increment = -1;
+            increment = rev_increment;
             for (int newcurrent = numchoices - 1; newcurrent >= 0; --newcurrent)
             {
                 if (!isadirname(choices[newcurrent]))
