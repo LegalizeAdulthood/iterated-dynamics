@@ -18,8 +18,8 @@ bool g_video_scroll = false;
 
 static void zmo_calc(double, double, double *, double *, double);
 static void zmo_calcbf(bf_t,bf_t,bf_t,bf_t,bf_t,bf_t,bf_t,bf_t,bf_t);
-static int  check_pan(void);
-static void fix_worklist(void);
+static int  check_pan();
+static void fix_worklist();
 static void move_row(int fromrow,int torow,int col);
 
 /* big number declarations */
@@ -45,7 +45,7 @@ void calc_corner(bf_t target,bf_t p1,double p2,bf_t p3,double p4,bf_t p5)
 int boxcolor = 0;
 
 #ifndef XFRACT
-void dispbox(void)
+void dispbox()
 {
     int boxc = (colors-1)&boxcolor;
     unsigned char *values = (unsigned char *)boxvalues;
@@ -72,7 +72,7 @@ void dispbox(void)
         }
 }
 
-void clearbox(void)
+void clearbox()
 {
     if (g_is_true_color && truemode)
     {
@@ -454,7 +454,7 @@ static void zmo_calc(double dx, double dy, double *newx, double *newy, double ft
     *newy = symax + tempy*(sy3rd-symax)/ftemp + tempx*(symin-sy3rd)/ftemp;
 }
 
-void zoomoutbf(void) /* for ctl-enter, calc corners for zooming out */
+void zoomoutbf() /* for ctl-enter, calc corners for zooming out */
 {
     /* (xxmin,yymax), etc, are already set to zoombox corners;
        (sxmin,symax), etc, are still the screen's corners;
@@ -518,7 +518,7 @@ void zoomoutbf(void) /* for ctl-enter, calc corners for zooming out */
     restore_stack(saved);
 }
 
-void zoomoutdbl(void) /* for ctl-enter, calc corners for zooming out */
+void zoomoutdbl() /* for ctl-enter, calc corners for zooming out */
 {
     /* (xxmin,yymax), etc, are already set to zoombox corners;
        (sxmin,symax), etc, are still the screen's corners;
@@ -542,7 +542,7 @@ void zoomoutdbl(void) /* for ctl-enter, calc corners for zooming out */
     zmo_calc(sx3rd-savxxmin,sy3rd-savyymax,&xx3rd,&yy3rd,ftemp);
 }
 
-void zoomout(void) /* for ctl-enter, calc corners for zooming out */
+void zoomout() /* for ctl-enter, calc corners for zooming out */
 {
     if (bf_math)
     {
@@ -575,7 +575,7 @@ void aspectratio_crop(float oldaspect,float newaspect)
     yymin -= ymargin;
 }
 
-static int check_pan(void) /* return 0 if can't, alignment requirement if can */
+static int check_pan() /* return 0 if can't, alignment requirement if can */
 {
     if ((calc_status != CALCSTAT_RESUMABLE && calc_status != CALCSTAT_COMPLETED) || evolving)
         return (0); /* not resumable, not complete */
@@ -739,7 +739,7 @@ static void restart_window(int wknum)
     worklist[wknum].xxbegin = worklist[wknum].xxstart;
 }
 
-static void fix_worklist(void) /* fix out of bounds and symmetry related stuff */
+static void fix_worklist() /* fix out of bounds and symmetry related stuff */
 {
     for (int i = 0; i < num_worklist; ++i) {
         WORKLIST *wk = &worklist[i];
