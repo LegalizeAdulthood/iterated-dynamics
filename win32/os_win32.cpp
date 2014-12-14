@@ -24,7 +24,7 @@
 #include "mpmath.h"
 
 /* External declarations */
-extern void check_samename(void);
+extern void check_samename();
 
 HINSTANCE g_instance = nullptr;
 
@@ -233,7 +233,7 @@ long stackavail()
 ;       color which is reasonably bright and reasonably grey.
 */
 void
-find_special_colors(void)
+find_special_colors()
 {
     int maxb = 0;
     int minb = 9999;
@@ -374,7 +374,7 @@ int fr_findnext()
     return 0;
 }
 
-int get_sound_params(void)
+int get_sound_params()
 {
     /* TODO */
     _ASSERTE(FALSE);
@@ -384,7 +384,7 @@ int get_sound_params(void)
 /*
 ; long readticker() returns current bios ticker value
 */
-long readticker(void)
+long readticker()
 {
     return (long) GetTickCount();
 }
@@ -469,7 +469,7 @@ void scroll_relative(int bycol, int byrow)
 ;       and fills in a few bank-switching routines.
 */
 void
-adapter_detect(void)
+adapter_detect()
 {
     static int done_detect = 0;
 
@@ -483,7 +483,7 @@ adapter_detect(void)
 
 ;       Home the cursor (called before printfs)
 */
-void home(void)
+void home()
 {
     driver_move_cursor(0, 0);
     g_text_row = 0;
@@ -498,7 +498,7 @@ bool isadirectory(char *s)
 /* tenths of millisecond timewr routine */
 /* static struct timeval tv_start; */
 
-void restart_uclock(void)
+void restart_uclock()
 {
     /* TODO */
 }
@@ -514,7 +514,7 @@ void restart_uclock(void)
 **  a number of seconds.
 */
 typedef unsigned long uclock_t;
-uclock_t usec_clock(void)
+uclock_t usec_clock()
 {
     uclock_t result = 0;
     /* TODO */
@@ -540,7 +540,7 @@ void scroll_center(int tocol, int torow)
     _ASSERTE(FALSE);
 }
 
-unsigned long get_disk_space(void)
+unsigned long get_disk_space()
 {
     ULARGE_INTEGER space;
     unsigned long result = 0;
@@ -646,7 +646,7 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 /*
  * This routine returns a key, ignoring F1
  */
-int getakeynohelp(void)
+int getakeynohelp()
 {
     int ch;
     do
@@ -775,7 +775,7 @@ void normalineread(int y, int x, int lastx, BYTE *pixels)
 }
 
 #if defined(USE_DRIVER_FUNCTIONS)
-void set_normal_dot(void)
+void set_normal_dot()
 {
     dotwrite = driver_write_pixel;
     dotread = driver_read_pixel;
@@ -791,20 +791,20 @@ static int driver_dot_read(int x, int y)
     return driver_read_pixel(x, y);
 }
 
-void set_normal_dot(void)
+void set_normal_dot()
 {
     dotwrite = driver_dot_write;
     dotread = driver_dot_read;
 }
 #endif
 
-void set_disk_dot(void)
+void set_disk_dot()
 {
     dotwrite = writedisk;
     dotread = readdisk;
 }
 
-void set_normal_line(void)
+void set_normal_line()
 {
     lineread = normalineread;
     linewrite = normaline;
@@ -822,7 +822,7 @@ static int nullread(int a, int b)
 }
 
 /* from video.asm */
-void setnullvideo(void)
+void setnullvideo()
 {
     _ASSERTE(0 && "setnullvideo called");
     dotwrite = nullwrite;

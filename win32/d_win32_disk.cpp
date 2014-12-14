@@ -608,8 +608,8 @@ disk_window(Driver *drv)
 ; Unix: We ignore ax,bx,cx,dx.  dotmode is the "mode" field in the video
 ; table.  We use mode 19 for the X window.
 */
-extern void set_disk_dot(void);
-extern void set_normal_line(void);
+extern void set_disk_dot();
+extern void set_normal_line();
 static void
 disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {

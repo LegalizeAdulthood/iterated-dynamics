@@ -627,8 +627,8 @@ gdi_set_clear(Driver *drv)
 
 /* gdi_set_video_mode
 */
-extern void set_normal_dot(void);
-extern void set_normal_line(void);
+extern void set_normal_dot();
+extern void set_normal_line();
 static void
 gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {

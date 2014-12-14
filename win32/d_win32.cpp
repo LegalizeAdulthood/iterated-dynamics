@@ -82,7 +82,7 @@ handle_special_keys(int ch)
     return ch;
 }
 
-static void flush_output(void)
+static void flush_output()
 {
     static time_t start = 0;
     static long ticks_per_second = 0;
@@ -309,8 +309,8 @@ win32_hide_text_cursor(Driver *drv)
 
 /* win32_set_video_mode
 */
-extern void set_normal_dot(void);
-extern void set_normal_line(void);
+extern void set_normal_dot();
+extern void set_normal_line();
 
 void
 win32_set_video_mode(Driver *drv, VIDEOINFO *mode)

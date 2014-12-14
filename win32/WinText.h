@@ -61,8 +61,8 @@ extern void         wintext_hide_cursor(WinText *);
 extern void         wintext_schedule_alarm(WinText *, int delay);
 extern int          wintext_get_char_attr(WinText *, int row, int col);
 extern void         wintext_put_char_attr(WinText *, int row, int col, int char_attr);
-extern void         wintext_set_focus(void);
-extern void         wintext_kill_focus(void);
+extern void         wintext_set_focus();
+extern void         wintext_kill_focus();
 extern void         wintext_resume(WinText *me);
 
 #endif

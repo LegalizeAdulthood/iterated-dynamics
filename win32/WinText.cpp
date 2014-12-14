@@ -379,12 +379,12 @@ static void wintext_OnKillFocus(HWND window, HWND old_focus)
     }
 }
 
-void wintext_set_focus(void)
+void wintext_set_focus()
 {
     wintext_OnSetFocus(nullptr, nullptr);
 }
 
-void wintext_kill_focus(void)
+void wintext_kill_focus()
 {
     wintext_OnKillFocus(nullptr, nullptr);
 }
