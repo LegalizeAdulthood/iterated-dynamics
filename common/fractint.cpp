@@ -220,10 +220,13 @@ restart:   /* insert key re-starts here */
 
     evolving = 0;
     paramrangex = 4;
-    opx = newopx = -2.0;
+    newopx = -2.0;
+    opx = newopx;
     paramrangey = 3;
-    opy = newopy = -1.5;
-    odpx = odpy = 0;
+    newopy = -1.5;
+    opy = newopy;
+    odpy = 0;
+    odpx = odpy;
     gridsz = 9;
     fiddlefactor = 1;
     fiddle_reduction = 1.0;
