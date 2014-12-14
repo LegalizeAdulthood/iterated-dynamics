@@ -1947,7 +1947,10 @@ gc_loop:
             prompts[++nump] = yprompt;
             values[nump].uval.dval = yymin;
             if (xxmin == xx3rd && yymin == yy3rd)
-                xx3rd = yy3rd = 0;
+            {
+                yy3rd = 0;
+                xx3rd = yy3rd;
+            }
             prompts[++nump]= "Bottom-left (zeros for top-left X, bottom-right Y)";
             values[nump].type = '*';
             prompts[++nump] = xprompt;
@@ -1979,10 +1982,12 @@ gc_loop:
     }
 
     if (prompt_ret == FIK_F4) { /* reset to type defaults */
-        xx3rd = xxmin = curfractalspecific->xmin;
-        xxmax         = curfractalspecific->xmax;
-        yy3rd = yymin = curfractalspecific->ymin;
-        yymax         = curfractalspecific->ymax;
+        xxmin = curfractalspecific->xmin;
+        xx3rd = xxmin;
+        xxmax = curfractalspecific->xmax;
+        yymin = curfractalspecific->ymin;
+        yy3rd = yymin;
+        yymax = curfractalspecific->ymax;
         if (viewcrop && finalaspectratio != screenaspect)
             aspectratio_crop(screenaspect,finalaspectratio);
         if (bf_math != 0)
