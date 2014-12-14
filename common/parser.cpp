@@ -775,7 +775,8 @@ void mStkZero()
 
 void lStkZero()
 {
-    Arg1->l.y = Arg1->l.x = 0;
+    Arg1->l.x = 0;
+    Arg1->l.y = Arg1->l.x;
 }
 #endif
 
