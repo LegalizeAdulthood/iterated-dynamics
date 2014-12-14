@@ -2476,7 +2476,6 @@ void paginate_online()    /* paginate the text for on-line help */
     char     *curr;
     char     *text;
     unsigned  len;
-    int       skip_blanks;
     int       num_links;
     int       col;
     int       tok;
@@ -2497,7 +2496,7 @@ void paginate_online()    /* paginate the text for on-line help */
         len  = t->text_len;
 
         start = curr;
-        skip_blanks = 0;
+        bool skip_blanks = false;
         lnum = 0;
         num_links = 0;
         col = 0;
@@ -2567,7 +2566,7 @@ void paginate_online()    /* paginate the text for on-line help */
                     len -= size;
                 }
 
-                skip_blanks = 0;
+                skip_blanks = false;
                 width = size = 0;
                 break;
             }
@@ -2586,7 +2585,7 @@ void paginate_online()    /* paginate the text for on-line help */
                     start_margin = -1;
                     lnum = 0;
                     num_links = 0;
-                    skip_blanks = 1;
+                    skip_blanks = true;
                 }
                 col = 0;
                 break;
@@ -2617,7 +2616,7 @@ void paginate_online()    /* paginate the text for on-line help */
             /* fall-through */
 
             default:    /* TOK_SPACE, TOK_LINK, TOK_WORD */
-                skip_blanks = 0;
+                skip_blanks = false;
                 break;
 
             } /* switch */
