@@ -139,14 +139,14 @@ int fullscreen_prompt(      /* full-screen prompting routine */
 
     /* initialize widest_entry_line and lines_in_entry */
     if (in_scrolling_mode && scroll_file != nullptr) {
-        int comment = 0;
+        bool comment = false;
         int c = 0;
         int widthct = 0;
         while ((c = fgetc(scroll_file)) != EOF && c != '\032') {
             if (c == ';')
-                comment = 1;
+                comment = true;
             else if (c == '\n') {
-                comment = 0;
+                comment = false;
                 lines_in_entry++;
                 widthct =  -1;
             }
