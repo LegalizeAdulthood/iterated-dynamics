@@ -288,13 +288,8 @@ init_restart:
 
     integerfractal = curfractalspecific->isinteger;
 
-    /*   if (fractype == JULIBROT)
-          rqlim = 4;
-       else */
     if (potflag && potparam[2] != 0.0)
         rqlim = potparam[2];
-    /* else if (decomp[0] > 0 && decomp[1] > 0)
-          rqlim = (double)decomp[1]; */
     else if (bailout) /* user input bailout */
         rqlim = bailout;
     else if (biomorph != -1) /* biomorph benefits from larger bailout */
@@ -455,7 +450,7 @@ expand_retry:
                 /* Following is the old logic for detecting failure of double
                    precision. It has two advantages: it is independent of the
                    representation of numbers, and it is sensitive to resolution
-                   (allows depper zooms at lower resolution. However it fails
+                   (allows deeper zooms at lower resolution. However it fails
                    for rotations of exactly 90 degrees, so we added a safety net
                    by using the magnification.  */
                 if (++tries < 2) /* for safety */
@@ -464,7 +459,7 @@ expand_retry:
                         stopmsg(0, "precision-detection error");
                     /* Previously there were four tests of distortions in the
                        zoom box used to detect precision limitations. In some
-                       cases of rotated/skewed zoom boxs, this causes the algorithm
+                       cases of rotated/skewed zoom boxes, this causes the algorithm
                        to bail out to arbitrary precision too soon. The logic
                        now only tests the larger of the two deltas in an attempt
                        to repair this bug. This should never make the transition
@@ -519,7 +514,7 @@ expand_retry:
     } /* end if not plasma */
 
     /* for periodicity close-enough, and for unity: */
-    /*     min(max(delx,delx2),max(dely,dely2)      */
+    /*     min(max(delx,delx2),max(dely,dely2))     */
     ddelmin = fabs((double)delxx);
     if (fabs((double)delxx2) > ddelmin)
         ddelmin = fabs((double)delxx2);
