@@ -43,7 +43,9 @@ bool ValidateLuts(const char *fn)
     }
     fclose(f);
     while (index < 256)  { /* zap unset entries */
-        dac[index].red = dac[index].blue = dac[index].green = 40;
+        dac[index].green = 40;
+        dac[index].blue = dac[index].green;
+        dac[index].red = dac[index].blue;
         ++index;
     }
     colorstate = 2;
