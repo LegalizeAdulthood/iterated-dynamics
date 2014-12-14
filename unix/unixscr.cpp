@@ -122,19 +122,19 @@ static int alarmon = 0; /* 1 if the refresh alarm is on */
 static int doredraw = 0; /* 1 if we have a redraw waiting */
 
 /* Static routines */
-static Window FindRootWindow(void);
+static Window FindRootWindow();
 static Window pr_dwmroot(Display *dpy, Window pwin);
 static int errhand(Display *dp, XErrorEvent *xe);
-static int getachar(void);
-static int handleesc(void);
+static int getachar();
+static int handleesc();
 static int translatekey(int ch);
-static int xcmapstuff(void);
-static void xhandleevents(void);
-static void RemoveRootPixmap(void);
-static void doneXwindow(void);
-static void initdacbox(void);
-static void setredrawscreen(void);
-static void clearXwindow(void);
+static int xcmapstuff();
+static void xhandleevents();
+static void RemoveRootPixmap();
+static void doneXwindow();
+static void initdacbox();
+static void setredrawscreen();
+static void clearXwindow();
 #ifdef FPUERR
 static void continue_hdl(int sig, int code, struct sigcontext *scp,
                          char *addr);
@@ -388,7 +388,7 @@ static int cyclic[][3] = {
 };
 
 static void
-select_visual(void)
+select_visual()
 {
     Xvi = XDefaultVisualOfScreen(Xsc);
     Xdepth = DefaultDepth(Xdp, Xdscreen);
@@ -1642,7 +1642,7 @@ xhandleevents()
         {
             char buffer[1];
             KeySym keysym;
-            (void) XLookupString(&xevent.xkey,buffer,1,&keysym,nullptr);
+            XLookupString(&xevent.xkey,buffer,1,&keysym,nullptr);
             switch (keysym) {
             case XK_Control_L:
             case XK_Control_R:

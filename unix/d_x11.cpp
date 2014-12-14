@@ -612,7 +612,7 @@ x11_end_video(Driver *drv)
  *----------------------------------------------------------------------
  */
 static void
-setredrawscreen(void)
+setredrawscreen()
 {
     ((DriverX11 *) g_driver)->doredraw = 1;
 }
@@ -1073,7 +1073,7 @@ ev_key_release(DriverX11 *di, XKeyEvent *xevent)
 {
     char buffer[1];
     KeySym keysym;
-    (void) XLookupString(xevent, buffer, 1, &keysym, nullptr);
+    XLookupString(xevent, buffer, 1, &keysym, nullptr);
     switch (keysym) {
     case XK_Control_L:
     case XK_Control_R:

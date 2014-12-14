@@ -79,7 +79,7 @@ int expand_dirname(char *dirname, char *drive)
     return -1;
 }
 
-unsigned long get_disk_space(void)
+unsigned long get_disk_space()
 {
     /* TODO */
     return 0x7FFFFFFF;

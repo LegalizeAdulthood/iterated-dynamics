@@ -425,7 +425,7 @@ void ftimex(struct timebx *tp)
 }
 
 /* sound.c file prototypes */
-int get_sound_params(void)
+int get_sound_params()
 {
     return (0);
 }
@@ -433,13 +433,13 @@ int get_sound_params(void)
 /* tenths of millisecond timer routine */
 static struct timeval tv_start;
 
-void restart_uclock(void)
+void restart_uclock()
 {
     gettimeofday(&tv_start, nullptr);
 }
 
 typedef unsigned long uclock_t;
-uclock_t usec_clock(void)
+uclock_t usec_clock()
 {
     uclock_t result;
 

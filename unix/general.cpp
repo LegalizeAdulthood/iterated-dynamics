@@ -51,11 +51,11 @@ int inside_help = 0;
 */
 static int keybuffer = 0;
 
-int getkeynowait(void);
+int getkeynowait();
 int getkeyint(int);
 
 int
-keypressed(void) {
+keypressed() {
     int ch;
     ch = getkeynowait();
     if (!ch) return 0;
@@ -93,7 +93,7 @@ waitkeypressed(int timeout)
  * This routine returns a key, ignoring F1
  */
 int
-getakeynohelp(void) {
+getakeynohelp() {
     int ch;
     while (1) {
         ch = getakey();
@@ -105,7 +105,7 @@ getakeynohelp(void) {
  * This routine returns a keypress
  */
 int
-getakey(void)
+getakey()
 {
     int ch;
 
@@ -119,7 +119,7 @@ getakey(void)
  * This routine returns the current key, or 0.
  */
 int
-getkeynowait(void) {
+getkeynowait() {
     return getkeyint(0);
 }
 
@@ -200,7 +200,7 @@ delay(int delaytime)
     static struct timeval delay;
     delay.tv_sec = delaytime/1000;
     delay.tv_usec = (delaytime%1000)*1000;
-    (void) select(0, (fd_set *) 0, (fd_set *) 0, (fd_set *) 0, &delay);
+    select(0, (fd_set *) 0, (fd_set *) 0, (fd_set *) 0, &delay);
 }
 
 /*
@@ -226,14 +226,14 @@ snd(int hertz)
 }
 
 void
-nosnd(void)
+nosnd()
 {}
 
 /*
 ; long readticker() returns current bios ticker value
 */
 long
-readticker(void)
+readticker()
 {
     return clock_ticks();
 }
@@ -243,7 +243,7 @@ readticker(void)
 ;
 ;
 ;       farptr = (char *)malloc(long bytestoalloc);
-;       (void)free(farptr);
+;       ()free(farptr);
 */
 
 void erasesegment(int segaddress, int segvalue)

@@ -9,8 +9,8 @@
  * Copyright 1992 Ken Shirriff
  */
 
-extern unsigned char *xgetfont(void);
-extern int startdisk(void);
+extern unsigned char *xgetfont();
+extern int startdisk();
 extern int waitkeypressed(int);
 
 WINDOW *curwin;
@@ -27,7 +27,7 @@ void (*lineread)(int y, int x, int lastx, BYTE *pixels);         /* read-a-line 
 
 int videoflag = 0;      /* special "your-own-video" flag */
 
-void (*swapsetup)(void) = nullptr;     /* setfortext/graphics setup routine */
+void (*swapsetup)() = nullptr;     /* setfortext/graphics setup routine */
 int g_color_dark = 0;       /* darkest color in palette */
 int g_color_bright = 0;     /* brightest color in palette */
 int g_color_medium = 0;     /* nearest to medbright grey in palette
@@ -116,7 +116,7 @@ nullread(int a, int b)
 }
 
 void
-setnullvideo(void)
+setnullvideo()
 {
     dotwrite = nullwrite;
     dotread = nullread;
@@ -126,7 +126,7 @@ void normalineread(int y, int x, int lastx, BYTE *pixels);
 void normaline(int y, int x, int lastx, BYTE *pixels);
 
 void
-putprompt(void)
+putprompt()
 {
     wclear(curwin);       /* ???? */
     putstring(0, 0, 0, "Press operation key, or <Esc> to return to Main Menu");
@@ -135,7 +135,7 @@ putprompt(void)
 }
 
 void
-loaddac(void)
+loaddac()
 {
     readvideopalette();
 }
@@ -356,7 +356,7 @@ setattr(int row, int col, int attr, int count)
 ;       Home the cursor (called before printfs)
 */
 void
-home(void)
+home()
 {
     wmove(curwin, 0, 0);
     g_text_row = 0;
@@ -431,12 +431,12 @@ spindac(int dir, int inc)
 ;       setclear() clears the screen after setfortext()
 */
 void
-setfortext(void)
+setfortext()
 {
 }
 
 void
-setclear(void)
+setclear()
 {
     wclear(curwin);
     wrefresh(curwin);
@@ -480,7 +480,7 @@ findfont(int fontparm)
  */
 
 void
-dispbox(void)
+dispbox()
 {
     if (boxcount)
     {
@@ -495,7 +495,7 @@ dispbox(void)
 }
 
 void
-clearbox(void)
+clearbox()
 {
     dispbox();
 }
@@ -510,7 +510,7 @@ ShadowVideo(int on)
 }
 
 int
-SetupShadowVideo(void)
+SetupShadowVideo()
 {
     return 0;
 }
@@ -525,7 +525,7 @@ SetupShadowVideo(void)
 int done_detect = 0;
 
 void
-adapter_detect(void)
+adapter_detect()
 {
     if (done_detect)
         return;
@@ -574,7 +574,7 @@ normalineread(int y, int x, int lastx, BYTE *pixels)
 ;       color which is reasonably bright and reasonably grey.
 */
 void
-find_special_colors(void)
+find_special_colors()
 {
     int maxb = 0;
     int minb = 9999;
@@ -644,7 +644,7 @@ find_special_colors(void)
 ;       Hi nybble=character, low nybble attribute. Text mode only
 */
 char
-get_a_char(void)
+get_a_char()
 {
     return (char) getakey();
 }
