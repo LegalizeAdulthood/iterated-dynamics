@@ -4424,7 +4424,7 @@ bool frm_prescan(FILE * open_file)
     bool done = false;
     struct token_st this_token;
     int errors_found = 0;
-    int ExpectingArg = 1;
+    bool ExpectingArg = true;
     int NewStatement = 1;
     int assignment_ok = 1;
     int already_got_colon = 0;
@@ -4638,7 +4638,7 @@ bool frm_prescan(FILE * open_file)
             default:
                 break;
             }
-            ExpectingArg = 0;
+            ExpectingArg = false;
             break;
         case USER_NAMED_VARIABLE: /* i.e. c, iter, etc. */
             number_of_ops++;
@@ -4653,7 +4653,7 @@ bool frm_prescan(FILE * open_file)
                     errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
                 }
             }
-            ExpectingArg = 0;
+            ExpectingArg = false;
             break;
         case PREDEFINED_VARIABLE: /* i.e. z, pixel, whitesq, etc. */
             number_of_ops++;
@@ -4695,7 +4695,7 @@ bool frm_prescan(FILE * open_file)
             default:
                 break;
             }
-            ExpectingArg = 0;
+            ExpectingArg = false;
             break;
         case REAL_CONSTANT: /* i.e. 4, (4,0), etc.) */
             assignment_ok = 0;
@@ -4711,7 +4711,7 @@ bool frm_prescan(FILE * open_file)
                     errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
                 }
             }
-            ExpectingArg = 0;
+            ExpectingArg = false;
             break;
         case COMPLEX_CONSTANT: /* i.e. (1,2) etc. */
             assignment_ok = 0;
@@ -4727,7 +4727,7 @@ bool frm_prescan(FILE * open_file)
                     errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
                 }
             }
-            ExpectingArg = 0;
+            ExpectingArg = false;
             break;
         case FUNCTION:
             assignment_ok = 0;
@@ -4986,7 +4986,7 @@ bool frm_prescan(FILE * open_file)
                 if (this_token.token_id == 11)
                     already_got_colon = 1;
                 NewStatement = 1;
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 assignment_ok = 1;
                 statement_pos = ftell(open_file);
                 break;
@@ -5001,7 +5001,7 @@ bool frm_prescan(FILE * open_file)
                         errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
                     }
                 }
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             case 2:     /* = */
                 number_of_ops--; /*this just converts a load to a store*/
@@ -5016,7 +5016,7 @@ bool frm_prescan(FILE * open_file)
                         errors[errors_found++].error_number = PE_ILLEGAL_ASSIGNMENT;
                     }
                 }
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             case 3:     /* == */
                 assignment_ok = 0;
@@ -5029,7 +5029,7 @@ bool frm_prescan(FILE * open_file)
                         errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
                     }
                 }
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             case 4:     /* < */
                 assignment_ok = 0;
@@ -5042,7 +5042,7 @@ bool frm_prescan(FILE * open_file)
                         errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
                     }
                 }
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             case 5:     /* <= */
                 assignment_ok = 0;
@@ -5055,7 +5055,7 @@ bool frm_prescan(FILE * open_file)
                         errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
                     }
                 }
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             case 6:     /* > */
                 assignment_ok = 0;
@@ -5068,7 +5068,7 @@ bool frm_prescan(FILE * open_file)
                         errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
                     }
                 }
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             case 7:     /* >= */
                 assignment_ok = 0;
@@ -5081,7 +5081,7 @@ bool frm_prescan(FILE * open_file)
                         errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
                     }
                 }
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             case 8:     /* | */ /* (half of the modulus operator */
                 assignment_ok = 0;
@@ -5120,7 +5120,7 @@ bool frm_prescan(FILE * open_file)
                         errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
                     }
                 }
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             case 10:    /* && */
                 assignment_ok = 0;
@@ -5133,7 +5133,7 @@ bool frm_prescan(FILE * open_file)
                         errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
                     }
                 }
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             case 12:    /* + */ /* case 11 (":") is up with case 0 */
                 assignment_ok = 0;
@@ -5146,11 +5146,11 @@ bool frm_prescan(FILE * open_file)
                         errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
                     }
                 }
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             case 13:    /* - */
                 assignment_ok = 0;
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             case 14:    /* * */
                 assignment_ok = 0;
@@ -5163,7 +5163,7 @@ bool frm_prescan(FILE * open_file)
                         errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
                     }
                 }
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             case 15:    /* / */
                 assignment_ok = 0;
@@ -5176,7 +5176,7 @@ bool frm_prescan(FILE * open_file)
                         errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
                     }
                 }
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             case 16:    /* ^ */
                 assignment_ok = 0;
@@ -5202,7 +5202,7 @@ bool frm_prescan(FILE * open_file)
                 }
                 else
                     fseek(open_file, filepos, SEEK_SET);
-                ExpectingArg = 1;
+                ExpectingArg = true;
                 break;
             default:
                 break;
