@@ -145,7 +145,7 @@ struct DriverX11
 
     /* rubber banding and event processing data */
     bool ctl_mode;
-    int shift_mode;
+    bool shift_mode;
     int button_num;
     int last_x, last_y;
     int dx, dy;
@@ -960,7 +960,7 @@ ev_key_press(DriverX11 *di, XKeyEvent *xevent)
 
     case XK_Shift_L:
     case XK_Shift_R:
-        di->shift_mode = 1;
+        di->shift_mode = true;
         break;
     case XK_Home:
     case XK_R7:
@@ -1081,7 +1081,7 @@ ev_key_release(DriverX11 *di, XKeyEvent *xevent)
         break;
     case XK_Shift_L:
     case XK_Shift_R:
-        di->shift_mode = 0;
+        di->shift_mode = false;
         break;
     }
 }
@@ -2583,7 +2583,7 @@ static DriverX11 x11_driver_info = {
     nullptr,              /* font_table */
     false,                /* text_modep */
     false,                /* ctl_mode */
-    0,                    /* shift_mode */
+    false,                /* shift_mode */
     0,                    /* button_num */
     0, 0,                 /* last_x, last_y */
     0, 0                  /* dx, dy */
