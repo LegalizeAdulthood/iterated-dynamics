@@ -1046,7 +1046,7 @@ extern void recordshw(int);
 
 /*  stereo -- C file prototypes */
 
-extern int do_AutoStereo();
+extern bool do_AutoStereo();
 extern int outline_stereo(BYTE *, int);
 
 /*  testpt -- C file prototypes */

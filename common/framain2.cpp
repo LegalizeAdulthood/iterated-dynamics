@@ -973,7 +973,7 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
         clear_zoombox();
         if (get_rds_params() >= 0)
         {
-            if (do_AutoStereo() >= 0)
+            if (do_AutoStereo())
                 calc_status = CALCSTAT_PARAMS_CHANGED;
             return CONTINUE;
         }

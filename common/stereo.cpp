@@ -202,11 +202,12 @@ int outline_stereo(BYTE * pixels, int linelen)
         Convert current image into Auto Stereo Picture
 **************************************************************************/
 
-int do_AutoStereo()
+bool do_AutoStereo()
 {
     struct static_vars v;
     BYTE savedacbox[256*3];
-    int oldhelpmode, ret=0;
+    int oldhelpmode;
+    bool ret = false;
     int bars, ct, kbdchar, barwidth;
     time_t ltime;
     unsigned char *buf = (unsigned char *)decoderline;
@@ -231,7 +232,7 @@ int do_AutoStereo()
     {
         stopmsg(0, "Stereo not allowed with resolution > 2048 pixels wide");
         driver_buzzer(BUZZER_INTERRUPT);
-        ret = 1;
+        ret = true;
         goto exit_stereo;
     }
 
@@ -249,7 +250,7 @@ int do_AutoStereo()
     if (get_min_max())
     {
         driver_buzzer(BUZZER_INTERRUPT);
-        ret = 1;
+        ret = true;
         goto exit_stereo;
     }
     MAXCC = MAXC - MINC + 1;
@@ -275,7 +276,7 @@ int do_AutoStereo()
         while ((Y) < ydots)
             if (gifview())
             {
-                ret = 1;
+                ret = true;
                 goto exit_stereo;
             }
     }
@@ -285,7 +286,7 @@ int do_AutoStereo()
         {
             if (driver_key_pressed())
             {
-                ret = 1;
+                ret = true;
                 goto exit_stereo;
             }
             for (int i = 0; i < xdots; i++)
@@ -343,5 +344,5 @@ exit_stereo:
     driver_restore_graphics();
     memcpy(g_dac_box, savedacbox, 256 * 3);
     spindac(0,1);
-    return (ret);
+    return ret;
 }
