@@ -442,7 +442,7 @@ void Jiim(int which)         /* called by fractint */
     double aspect;
     static int randir = 0;
     static int rancnt = 0;
-    int actively_computing = 1;
+    bool actively_computing = true;
     int first_time = 1;
     int old_debugflag;
 
@@ -467,7 +467,7 @@ void Jiim(int which)         /* called by fractint */
     mem_init(strlocn, 10*1024);
     line_buff = static_cast<BYTE *>(newx(std::max(sxdots,sydots)));
     aspect = ((double)xdots*3)/((double)ydots*4);  /* assumes 4:3 */
-    actively_computing = 1;
+    actively_computing = true;
     SetAspect(aspect);
     lookatmouse = 3;
 
@@ -807,7 +807,7 @@ void Jiim(int which)         /* called by fractint */
                     ci = dypixel();
                 }
             }
-            actively_computing = 1;
+            actively_computing = true;
             if (show_numbers) /* write coordinates on screen */
             {
                 char str[41];
@@ -820,7 +820,7 @@ void Jiim(int which)         /* called by fractint */
                         strcat(str," ");
                     str[40] = 0;
                     Cursor_Hide();
-                    actively_computing = 1;
+                    actively_computing = true;
                     showtempmsg(str);
                     Cursor_Show();
                 }
@@ -1099,7 +1099,7 @@ void Jiim(int which)         /* called by fractint */
             else
             {
                 x = y = -1;
-                actively_computing = 0;
+                actively_computing = false;
             }
         }
         if (which == ORBIT || iter > 10)
