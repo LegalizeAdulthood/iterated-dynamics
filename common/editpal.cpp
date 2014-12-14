@@ -697,7 +697,7 @@ struct _MoveBox
              base_depth;
     int      csize;
     bool moved;
-    BOOLEAN  should_hide;
+    bool should_hide;
     char    *t;
     char    *b;
     char    *l;
@@ -719,7 +719,7 @@ static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width,
 static void     MoveBox_Destroy(MoveBox *me);
 static BOOLEAN  MoveBox_Process(MoveBox *me);     /* returns FALSE if ESCAPED */
 static bool MoveBox_Moved(MoveBox *me);
-static BOOLEAN  MoveBox_ShouldHide(MoveBox *me);
+static bool MoveBox_ShouldHide(MoveBox *me);
 static int      MoveBox_X(MoveBox *me);
 static int      MoveBox_Y(MoveBox *me);
 static int      MoveBox_CSize(MoveBox *me);
@@ -739,7 +739,7 @@ static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int b
     me->base_width  = base_width;
     me->base_depth  = base_depth;
     me->moved       = false;
-    me->should_hide = FALSE;
+    me->should_hide = false;
     me->t           = static_cast<char *>(newx(sxdots));
     me->b           = static_cast<char *>(newx(sxdots));
     me->l           = static_cast<char *>(newx(sydots));
@@ -763,7 +763,7 @@ static bool MoveBox_Moved(MoveBox *me) {
     return me->moved;
 }
 
-static BOOLEAN MoveBox_ShouldHide(MoveBox *me) {
+static bool MoveBox_ShouldHide(MoveBox *me) {
     return me->should_hide;
 }
 
@@ -995,7 +995,7 @@ static BOOLEAN MoveBox_Process(MoveBox *me)
 
     MoveBox__Erase(me);
 
-    me->should_hide = (BOOLEAN)((key == 'H' || key == 'h') ? TRUE : FALSE);
+    me->should_hide = key == 'H' || key == 'h';
 
     return (BOOLEAN)((key==FIK_ESC) ? FALSE : TRUE);
 }
