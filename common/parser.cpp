@@ -945,7 +945,8 @@ void dStkMod()
 void mStkMod()
 {
     Arg1->m.x = MPCmod(Arg1->m);
-    Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
+    Arg1->m.y.Exp = 0;
+    Arg1->m.y.Mant = (long) Arg1->m.y.Exp;
 }
 
 void lStkMod()
