@@ -2863,14 +2863,17 @@ int Formula()
     switch (MathType)
     {
     case D_MATH:
-        old = g_new = v[3].a.d;
+        g_new = v[3].a.d;
+        old = g_new;
         return Arg1->d.x == 0.0;
 #if !defined(XFRACT)
     case M_MATH:
-        old = g_new = MPC2cmplx(v[3].a.m);
+        g_new = MPC2cmplx(v[3].a.m);
+        old = g_new;
         return Arg1->m.x.Exp == 0 && Arg1->m.x.Mant == 0;
     case L_MATH:
-        lold = lnew = v[3].a.l;
+        lnew = v[3].a.l;
+        lold = lnew;
         if (overflow)
             return 1;
         return Arg1->l.x == 0L;
