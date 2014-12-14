@@ -203,8 +203,8 @@ char    *buffer;                  /* alloc'ed as BUFFER_SIZE bytes */
 char    *curr;                    /* current position in the buffer */
 char     cmd[128];                /* holds the current command */
 bool compress_spaces = false;
-int      xonline;
-int      xdoc;
+bool xonline = false;
+bool xdoc = false;
 
 #define  MAX_INCLUDE_STACK (5)    /* allow 5 nested includes */
 
@@ -1407,7 +1407,8 @@ void read_src(char *fname)
     int    lformat_exclude = format_exclude;
     int    again;
 
-    xonline = xdoc = 0;
+    xonline = false;
+    xdoc = false;
 
     src_cfname = fname;
 
@@ -1529,7 +1530,8 @@ void read_src(char *fname)
                     state = S_Start;
                     in_para = 0;
                     num_spaces = 0;
-                    xonline = xdoc = 0;
+                    xonline = false;
+                    xdoc = false;
                     lformat_exclude = format_exclude;
                     compress_spaces = true;
                     continue;
@@ -1577,7 +1579,8 @@ void read_src(char *fname)
                     state = S_Start;
                     in_para = 0;
                     num_spaces = 0;
-                    xonline = xdoc = 0;
+                    xonline = false;
+                    xdoc = false;
                     lformat_exclude = format_exclude;
                     compress_spaces = false;
                     continue;
@@ -1899,7 +1902,7 @@ void read_src(char *fname)
                             if (xonline)
                             {
                                 *curr++ = CMD_XONLINE;
-                                xonline = 0;
+                                xonline = false;
                             }
                             else
                                 warn(eoff,"\"Online+\" already in effect.");
@@ -1910,7 +1913,7 @@ void read_src(char *fname)
                             if (!xonline)
                             {
                                 *curr++ = CMD_XONLINE;
-                                xonline = 1;
+                                xonline = true;
                             }
                             else
                                 warn(eoff,"\"Online-\" already in effect.");
@@ -1927,7 +1930,7 @@ void read_src(char *fname)
                             if (xdoc)
                             {
                                 *curr++ = CMD_XDOC;
-                                xdoc = 0;
+                                xdoc = false;
                             }
                             else
                                 warn(eoff,"\"Doc+\" already in effect.");
@@ -1938,7 +1941,7 @@ void read_src(char *fname)
                             if (!xdoc)
                             {
                                 *curr++ = CMD_XDOC;
-                                xdoc = 1;
+                                xdoc = true;
                             }
                             else
                                 warn(eoff,"\"Doc-\" already in effect.");
