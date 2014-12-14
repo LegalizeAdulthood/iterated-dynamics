@@ -204,8 +204,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
     gotrealmode = false;
     if ((g_init_mode < 0 || (askvideo && !initbatch)) && *s_makepar != '\0')
     {
-        /* no exact match or (askvideo=yes and batch=no), and not
-            in makepar mode, talk to user */
+        /* no exact match or (askvideo=yes and batch=no), and not in makepar mode, talk to user */
 
         qsort(vid, g_video_table_len, sizeof(vid[0]), vidcompare); /* sort modes */
 
@@ -359,14 +358,17 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
         if (viewxdots)
         {
             viewreduction = (float)(g_video_entry.xdots / viewxdots);
-            viewxdots = viewydots = 0; /* easier to use auto reduction */
+            viewydots = 0;
+            viewxdots = viewydots; /* easier to use auto reduction */
         }
         viewreduction = (float)((int)(viewreduction + 0.5)); /* need integer value */
-        skipxdots = skipydots = (short)(viewreduction - 1);
+        skipydots = (short)(viewreduction - 1);
+        skipxdots = skipydots;
         return 0;
     }
 
-    skipxdots = skipydots = 0; /* set for no reduction */
+    skipydots = 0;
+    skipxdots = skipydots; /* set for no reduction */
     if (g_video_entry.xdots < filexdots || g_video_entry.ydots < fileydots)
     {
         /* set up to load only every nth pixel to make image fit */
@@ -374,7 +376,8 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
         {
             calc_status = CALCSTAT_PARAMS_CHANGED;  /* can't resume anyway */
         }
-        skipxdots = skipydots = 1;
+        skipydots = 1;
+        skipxdots = skipydots;
         while (skipxdots * g_video_entry.xdots < filexdots)
         {
             ++skipxdots;
