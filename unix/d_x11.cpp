@@ -107,7 +107,7 @@ struct DriverX11
 
     bool fastmode;              /* = false; Don't draw pixels 1 at a time */
     int alarmon;                /* = 0; 1 if the refresh alarm is on */
-    int doredraw;               /* = 0; 1 if we have a redraw waiting */
+    bool doredraw;              /* = false; true if we have a redraw waiting */
 
     Display *Xdp;               /* = nullptr; */
     Window Xw;
@@ -1797,7 +1797,7 @@ x11_redraw(Driver *drv)
                       sxdots, sydots);
         di->alarmon = 0;
     }
-    di->doredraw = 0;
+    di->doredraw = false;
 }
 
 /*
@@ -2555,7 +2555,7 @@ static DriverX11 x11_driver_info = {
     0,                    /* fake_lut */
     0,                    /* fastmode */
     0,                    /* alarmon */
-    0,                    /* doredraw */
+    false,                /* doredraw */
     nullptr,              /* Xdp */
     None,                 /* Xw */
     None,                 /* Xgc */
