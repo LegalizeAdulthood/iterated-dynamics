@@ -64,7 +64,7 @@ void make_batch_file()
     char vidmde[5];
     int promptnum;
     int piecespromts;
-    int have3rd = 0;
+    bool have3rd = false;
     char inpcommandfile[80], inpcommandname[ITEMNAMELEN+1];
     char inpcomment[4][MAXCMT];
     struct fullscreenvalues paramvalues[18];
@@ -355,9 +355,9 @@ skip_UI:
         if (xm > 1 || ym > 1)
         {
             if (xxmin != xx3rd || yymin != yy3rd)
-                have3rd = 1;
+                have3rd = true;
             else
-                have3rd = 0;
+                have3rd = false;
             fpbat = dir_fopen(workdir,"makemig.bat", "w");
             if (fpbat == nullptr)
                 xm = ym = 0;
