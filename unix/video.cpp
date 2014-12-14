@@ -581,7 +581,6 @@ find_special_colors(void)
     int med = 0;
     int maxgun, mingun;
     int brt;
-    int i;
 
     g_color_dark = 0;
     g_color_medium = 7;
