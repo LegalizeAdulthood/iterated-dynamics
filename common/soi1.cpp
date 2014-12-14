@@ -872,7 +872,7 @@ rhombus_done:
     return status ? 1 : 0;
 }
 
-void soi(void)
+void soi()
 {
     // cppcheck-suppress unreadVariable
     bool status;
