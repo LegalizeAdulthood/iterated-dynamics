@@ -72,7 +72,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at);
 void MemoryRelease(U16 handle);
 bool MoveToMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle);
 bool MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle);
-int SetMemory(int value,U16 size,long count,long offset,U16 handle);
+bool SetMemory(int value,U16 size,long count,long offset,U16 handle);
 
 /* Memory handling support routines */
 
@@ -507,24 +507,23 @@ diskerror:
     return success;
 }
 
-int SetMemory(int value,U16 size,long count,long offset,U16 handle)
+bool SetMemory(int value,U16 size,long count,long offset,U16 handle)
 {   /* value is the value to set memory to */
     /* offset is the number of units from the start of allocated memory */
     /* size is the size of the unit, count is the number of units to set */
-    /* Returns TRUE if successful, FALSE if failure */
+    /* Returns true if successful, false if failure */
     BYTE diskbuf[DISKWRITELEN];
     long start; /* first location to set */
     long tomove; /* number of bytes to set */
     U16 numwritten;
-    int success;
 
-    success = FALSE;
     start = (long)offset * size;
     tomove = (long)count * size;
     if (debugflag == 10000)
         if (CheckBounds(start, tomove, handle))
-            return (success); /* out of bounds, don't do it */
+            return false; /* out of bounds, don't do it */
 
+    bool success = false;
     switch (handletable[handle].Nowhere.stored_at)
     {
     case NOWHERE: /* SetMemory */
@@ -536,7 +535,7 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
             memset(handletable[handle].Linearmem.memory+start, value, (U16)count);
             start += count;
         }
-        success = TRUE; /* No way to gauge success or failure */
+        success = true; /* No way to gauge success or failure */
         break;
 
     case DISK: /* SetMemory */
@@ -557,12 +556,12 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
             WhichDiskError(2);
             break;
         }
-        success = TRUE;
+        success = true;
 diskerror:
         break;
     } /* end of switch */
     if (!success && debugflag == 10000)
         DisplayHandle(handle);
-    return (success);
+    return success;
 }
 
