@@ -224,7 +224,7 @@ int Cursor_WaitKey();
 void Cursor_CheckBlink();
 void clip_putcolor(int x, int y, int color);
 int clip_getcolor(int x, int y);
-BOOLEAN Cursor_Construct();
+void Cursor_Construct();
 void Cursor_Destroy();
 void Cursor_SetPos(int x, int y);
 void Cursor_Move(int xoff, int yoff);

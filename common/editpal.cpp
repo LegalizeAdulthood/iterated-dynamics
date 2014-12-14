@@ -516,20 +516,13 @@ static  void    Cursor__Draw();
 static  void    Cursor__Save();
 static  void    Cursor__Restore();
 
-/* public: */
-#ifdef NOT_USED
-static  BOOLEAN Cursor_IsHidden();
-#endif
-
-
-
 static Cursor *the_cursor = nullptr;
 
 
-BOOLEAN Cursor_Construct()
+void Cursor_Construct()
 {
     if (the_cursor != nullptr)
-        return FALSE;
+        return;
 
     the_cursor = allocate(Cursor);
 
@@ -538,8 +531,6 @@ BOOLEAN Cursor_Construct()
     the_cursor->hidden     = 1;
     the_cursor->blink      = false;
     the_cursor->last_blink = 0;
-
-    return TRUE;
 }
 
 
@@ -603,17 +594,6 @@ void Cursor_SetPos(int x, int y)
         Cursor__Draw();
     }
 }
-
-#ifdef NOT_USED
-
-static int Cursor_IsHidden()
-{
-    return the_cursor->hidden;
-}
-
-
-#endif
-
 
 void Cursor_Move(int xoff, int yoff)
 {
