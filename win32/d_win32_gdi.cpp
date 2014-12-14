@@ -186,26 +186,25 @@ show_hide_windows(HWND show, HWND hide)
 }
 
 static void
-max_size(GDIDriver *di, int *width, int *height, BOOL *center_x, BOOL *center_y)
+max_size(GDIDriver *di, int *width, int *height, bool *center_x, bool *center_y)
 {
     *width = di->base.wintext.max_width;
     *height = di->base.wintext.max_height;
     if (g_video_table[g_adapter].xdots > *width)
     {
         *width = g_video_table[g_adapter].xdots;
-        *center_x = FALSE;
+        *center_x = false;
     }
     if (g_video_table[g_adapter].ydots > *height)
     {
         *height = g_video_table[g_adapter].ydots;
-        *center_y = FALSE;
+        *center_y = false;
     }
 }
 
-static void center_windows(GDIDriver *di, BOOL center_x, BOOL center_y)
+static void center_windows(GDIDriver *di, bool center_x, bool center_y)
 {
     POINT text_pos = { 0 }, plot_pos = { 0 };
-    BOOL status;
 
     if (center_x)
     {
@@ -225,11 +224,11 @@ static void center_windows(GDIDriver *di, BOOL center_x, BOOL center_y)
         text_pos.y = (g_frame.height - di->base.wintext.max_height)/2;
     }
 
-    status = SetWindowPos(di->plot.window, nullptr,
-                          plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+    bool status = SetWindowPos(di->plot.window, nullptr,
+        plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE) == TRUE;
     _ASSERTE(status);
     status = SetWindowPos(di->base.wintext.hWndCopy, nullptr,
-                          text_pos.x, text_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+        text_pos.x, text_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE) == TRUE;
     _ASSERTE(status);
 }
 
@@ -351,7 +350,7 @@ gdi_resize(Driver *drv)
 {
     DI(di);
     int width, height;
-    BOOL center_graphics_x, center_graphics_y;
+    bool center_graphics_x = true, center_graphics_y = true;
 
     max_size(di, &width, &height, &center_graphics_x, &center_graphics_y);
     if ((g_video_table[g_adapter].xdots == di->plot.width)
@@ -581,7 +580,7 @@ gdi_window(Driver *drv)
     DI(di);
     int width;
     int height;
-    BOOL center_x, center_y;
+    bool center_x = true, center_y = true;
 
     max_size(di, &width, &height, &center_x, &center_y);
     frame_window(width, height);
