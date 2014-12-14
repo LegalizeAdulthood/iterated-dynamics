@@ -83,7 +83,7 @@ typedef struct
 BYTE     *line_buff;   /* must be alloced!!! */
 static BYTE       fg_color,
        bg_color;
-static BOOLEAN            reserve_colors;
+static bool reserve_colors = false;
 static BOOLEAN            inverse;
 
 static float    gamma_val = 1;
@@ -3086,14 +3086,14 @@ static void PalTable_Hide(PalTable *me, RGBEditor *rgb, BOOLEAN hidden)
     {
         PalTable__RestoreRect(me);
         PalTable_SetHidden(me, TRUE);
-        reserve_colors = FALSE;
+        reserve_colors = false;
         if (me->auto_select)
             PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
     }
     else
     {
         PalTable_SetHidden(me, FALSE);
-        reserve_colors = TRUE;
+        reserve_colors = true;
         if (me->stored_at == NOWHERE)  /* do we need to save screen? */
             PalTable__SaveRect(me);
         PalTable__Draw(me);
@@ -3159,11 +3159,11 @@ static void PalTable_Process(PalTable *me)
         if (MoveBox_ShouldHide(me->movebox))
         {
             PalTable_SetHidden(me, TRUE);
-            reserve_colors = FALSE;
+            reserve_colors = false;
         }
         else
         {
-            reserve_colors = TRUE;
+            reserve_colors = true;
             PalTable__SaveRect(me);
             PalTable__Draw(me);
         }
@@ -3209,7 +3209,7 @@ void EditPalette()       /* called by fractint */
     lookatmouse = 3;
     sxoffs = syoffs = 0;
 
-    reserve_colors = TRUE;
+    reserve_colors = true;
     inverse = FALSE;
     fg_color = (BYTE)(255%colors);
     bg_color = (BYTE)(fg_color-1);
