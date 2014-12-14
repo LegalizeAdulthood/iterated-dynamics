@@ -106,7 +106,7 @@ struct DriverX11
     bool fake_lut;
 
     bool fastmode;              /* = false; Don't draw pixels 1 at a time */
-    int alarmon;                /* = 0; 1 if the refresh alarm is on */
+    bool alarmon;               /* = false; true if the refresh alarm is on */
     bool doredraw;              /* = false; true if we have a redraw waiting */
 
     Display *Xdp;               /* = nullptr; */
@@ -1459,7 +1459,7 @@ x11_flush(Driver *drv)
 
 void fpe_handler(int signum)
 {
-    overflow = 1;
+    overflow = true;
 }
 
 /*----------------------------------------------------------------------
@@ -1600,7 +1600,7 @@ x11_schedule_alarm(Driver *drv, int soon)
     else
         alarm(DRAW_INTERVAL);
 
-    di->alarmon = 1;
+    di->alarmon = true;
 }
 
 /*----------------------------------------------------------------------
@@ -1795,7 +1795,7 @@ x11_redraw(Driver *drv)
         if (di->onroot)
             XPutImage(di->Xdp, di->Xpixmap, di->Xgc, di->Ximage, 0, 0, 0, 0,
                       sxdots, sydots);
-        di->alarmon = 0;
+        di->alarmon = false;
     }
     di->doredraw = false;
 }
@@ -2554,7 +2554,7 @@ static DriverX11 x11_driver_info = {
     0,                    /* cmap_pixtab_alloced */
     0,                    /* fake_lut */
     0,                    /* fastmode */
-    0,                    /* alarmon */
+    false,                /* alarmon */
     false,                /* doredraw */
     nullptr,              /* Xdp */
     None,                 /* Xw */
