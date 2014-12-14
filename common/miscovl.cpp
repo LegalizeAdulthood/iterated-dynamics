@@ -69,7 +69,6 @@ void make_batch_file()
     char inpcomment[4][MAXCMT];
     struct fullscreenvalues paramvalues[18];
     const char *choices[MAXPROMPTS];
-    int gotinfile;
     char outname[FILE_MAX_PATH+1], buf[256], buf2[128];
     FILE *infile = nullptr;
     FILE *fpbat = nullptr;
@@ -299,10 +298,10 @@ skip_UI:
                 maxcolor = filecolors;
         }
         strcpy(outname, CommandFile);
-        gotinfile = 0;
+        bool gotinfile = false;
         if (access(CommandFile, 0) == 0)
         {   /* file exists */
-            gotinfile = 1;
+            gotinfile = true;
             if (access(CommandFile, 6))
             {
                 sprintf(buf, "Can't write %s", CommandFile);
