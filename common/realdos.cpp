@@ -888,7 +888,8 @@ int fullscreen_choice(
             }
             break;
         case FIK_UP_ARROW:
-            increment = 0 - (rev_increment = boxwidth);
+            rev_increment = boxwidth;
+            increment = 0 - rev_increment;
             break;
         case FIK_CTL_UP_ARROW:
             increment = 0 - (rev_increment = boxwidth);
