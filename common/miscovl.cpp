@@ -2231,9 +2231,11 @@ static const char esc_char = '$';
 /* extract comments from the comments= command */
 void expand_comments(char *target, char *source)
 {
-    int i,j, k, escape = 0;
+    int escape = 0;
     char c, oldc, varname[MAXVNAME];
-    i=j=k=0;
+    int k = 0;
+    int j = k;
+    int i = j;
     oldc = 0;
     while (i < MAXCMT && j < MAXCMT && (c = *(source+i++)) != '\0')
     {
