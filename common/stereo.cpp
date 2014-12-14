@@ -120,7 +120,7 @@ static bool get_min_max()
     return false;
 }
 
-void toggle_bars(int *bars, int barwidth, int *colour)
+static void toggle_bars(bool *bars, int barwidth, int *colour)
 {
     find_special_colors();
     int ct = 0;
@@ -138,7 +138,7 @@ void toggle_bars(int *bars, int barwidth, int *colour)
                 putcolor(i - (int)(AVG), j, colour[ct++]);
             }
         }
-    *bars = 1 - *bars;
+    *bars = !*bars;
 }
 
 int outline_stereo(BYTE * pixels, int linelen)
@@ -208,7 +208,10 @@ bool do_AutoStereo()
     BYTE savedacbox[256*3];
     int oldhelpmode;
     bool ret = false;
-    int bars, ct, kbdchar, barwidth;
+    bool bars;
+    int ct;
+    int kbdchar;
+    int barwidth;
     time_t ltime;
     unsigned char *buf = (unsigned char *)decoderline;
     /* following two lines re-use existing arrays in Fractint */
@@ -306,9 +309,9 @@ bool do_AutoStereo()
             colour[ct++] = getcolor(i - (int)(AVG), j);
         }
     if (calibrate)
-        bars = 1;
+        bars = true;
     else
-        bars = 0;
+        bars = false;
     toggle_bars(&bars, barwidth, colour.get());
     while (!done)
     {
