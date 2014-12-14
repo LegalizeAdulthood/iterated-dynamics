@@ -164,7 +164,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     VECTOR v;                    /* double vector */
     VECTOR v1, v2;
     VECTOR crossavg;
-    char crossnotinit;           /* flag for crossavg init indication */
+    bool crossnotinit;           /* flag for crossavg init indication */
     LVECTOR lv;                  /* long equivalent of v */
     LVECTOR lv0;                 /* long equivalent of v */
     int lastdot;
@@ -223,7 +223,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             pal >>= 6;
             pixels[col] = (BYTE) pal;
         }
-    crossnotinit = 1;
+    crossnotinit = true;
     col = 0;
 
     CO = 0;
@@ -699,7 +699,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                             crossavg[0] = cross[0];
                             crossavg[1] = cross[1];
                             crossavg[2] = cross[2];
-                            crossnotinit = 0;
+                            crossnotinit = false;
                         }
                         tmpcross[0] = (crossavg[0] * LIGHTAVG + cross[0]) /
                                       (LIGHTAVG + 1);
