@@ -1087,13 +1087,13 @@ int main_menu(int fullmenu)
     int choicekey[44];
     int i;
     int nextleft, nextright;
-    int showjuliatoggle;
+    bool showjuliatoggle;
     bool const oldtabmode = tabmode;
 
 top:
     menutype = fullmenu;
     tabmode = false;
-    showjuliatoggle = 0;
+    showjuliatoggle = false;
     for (int i = 0; i < 44; ++i)
     {
         attributes[i] = 256;
@@ -1159,7 +1159,7 @@ top:
             choicekey[nextleft] = FIK_SPACE;
             attributes[nextleft] = MENU_ITEM;
             choices[nextleft] = "toggle to/from julia <space>";
-            showjuliatoggle = 1;
+            showjuliatoggle = true;
         }
         if (fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA)
         {
@@ -1167,7 +1167,7 @@ top:
             choicekey[nextleft] = 'j';
             attributes[nextleft] = MENU_ITEM;
             choices[nextleft] = "toggle to/from inverse <j>  ";
-            showjuliatoggle = 1;
+            showjuliatoggle = true;
         }
 
         nextleft += 2;
@@ -1214,7 +1214,7 @@ top:
     attributes[nextleft] = MENU_ITEM;
     choices[nextleft] = "view window options... <v>  ";
 
-    if (showjuliatoggle == 0)
+    if (!showjuliatoggle)
     {
         nextleft += 2;
         choicekey[nextleft] = 'i';
