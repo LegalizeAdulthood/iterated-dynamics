@@ -101,7 +101,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     /* scrolling related variables */
     FILE * scroll_file = nullptr;     /* file with extrainfo entry to scroll   */
     long scroll_file_start = 0;    /* where entry starts in scroll_file     */
-    int in_scrolling_mode = 0;     /* will be 1 if need to scroll extrainfo */
+    bool in_scrolling_mode = false; /* will be true if need to scroll extrainfo */
     int lines_in_entry = 0;        /* total lines in entry to be scrolled   */
     int vertical_scroll_limit = 0; /* don't scroll down if this is top line */
     int widest_entry_line = 0;     /* length of longest line in entry       */
@@ -122,17 +122,17 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     {
         if (fractype == FORMULA || fractype == FFORMULA) {
             find_file_item(FormFileName, FormName, &scroll_file, 1);
-            in_scrolling_mode = 1;
+            in_scrolling_mode = true;
             scroll_file_start = ftell(scroll_file);
         }
         else if (fractype == LSYSTEM) {
             find_file_item(LFileName, LName, &scroll_file, 2);
-            in_scrolling_mode = 1;
+            in_scrolling_mode = true;
             scroll_file_start = ftell(scroll_file);
         }
         else if (fractype == IFS || fractype == IFS3D) {
             find_file_item(IFSFileName, IFSName, &scroll_file, 3);
-            in_scrolling_mode = 1;
+            in_scrolling_mode = true;
             scroll_file_start = ftell(scroll_file);
         }
     }
@@ -163,7 +163,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         }
         if (c == EOF || c == '\032') { /* should never happen */
             fclose(scroll_file);
-            in_scrolling_mode = 0;
+            in_scrolling_mode = false;
         }
     }
 
@@ -216,7 +216,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
             && lines_in_entry == extralines - 2
             && scroll_column_status == 0
             && strchr(extrainfo, '\021') == nullptr) {
-        in_scrolling_mode = 0;
+        in_scrolling_mode = false;
         fclose(scroll_file);
         scroll_file = nullptr;
     }
