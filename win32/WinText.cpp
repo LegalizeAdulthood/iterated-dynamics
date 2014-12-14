@@ -244,7 +244,7 @@ bool wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
     me->bitmap[2] = CreateBitmap(8, me->char_height, 1, 1, &me->cursor_pattern[2][0]);
 
     me->textmode = 1;
-    me->AltF4hit = 0;
+    me->AltF4hit = false;
 
     return return_value;
 }
@@ -270,7 +270,7 @@ void wintext_destroy(WinText *me)
         DeleteObject((HANDLE) me->bitmap[i]);
     }
     me->textmode = 0;
-    me->AltF4hit = 0;
+    me->AltF4hit = false;
 }
 
 
@@ -316,7 +316,7 @@ int wintext_texton(WinText *me)
     me->hWndCopy = hWnd;
 
     me->textmode = 2;
-    me->AltF4hit = 0;
+    me->AltF4hit = false;
 
     ShowWindow(me->hWndCopy, SW_SHOWNORMAL);
     UpdateWindow(me->hWndCopy);
@@ -332,7 +332,7 @@ int wintext_texton(WinText *me)
 int wintext_textoff(WinText *me)
 {
     ODS("wintext_textoff");
-    me->AltF4hit = 0;
+    me->AltF4hit = false;
     if (me->textmode != 2)  /* not in the right mode */
     {
         return 0;
@@ -346,7 +346,7 @@ static void wintext_OnClose(HWND window)
 {
     ODS("wintext_OnClose");
     g_me->textmode = 1;
-    g_me->AltF4hit = 1;
+    g_me->AltF4hit = true;
 }
 
 static void wintext_OnSetFocus(HWND window, HWND old_focus)

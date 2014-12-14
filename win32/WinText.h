@@ -8,7 +8,7 @@
 struct tagWinText
 {
     int textmode;
-    int AltF4hit;
+    bool AltF4hit;
     int showing_cursor;
 
     /* Local copy of the "screen" characters and attributes */
