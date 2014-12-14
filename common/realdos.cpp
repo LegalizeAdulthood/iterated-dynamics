@@ -1583,16 +1583,15 @@ int input_field(
             /* if "e" or "p" in first col make number e or pi */
             if ((options & (INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER)) == INPUTFIELD_NUMERIC) { /* floating point */
                 double tmpd;
-                int specialv;
                 char tmpfld[30];
-                specialv = 0;
+                bool specialv = false;
                 if (*fld == 'e' || *fld == 'E') {
                     tmpd = exp(1.0);
-                    specialv = 1;
+                    specialv = true;
                 }
                 if (*fld == 'p' || *fld == 'P') {
                     tmpd = atan(1.0) * 4;
-                    specialv = 1;
+                    specialv = true;
                 }
                 if (specialv) {
                     if ((options & INPUTFIELD_DOUBLE) == 0)
