@@ -1555,7 +1555,7 @@ struct  _PalTable
     RGBEditor    *rgb[2];
     MoveBox      *movebox;
     bool done;
-    BOOLEAN       exclude;
+    int exclude;
     BOOLEAN       auto_select;
     PALENTRY      pal[256];
     FILE         *undo_file;
@@ -3011,7 +3011,7 @@ static PalTable *PalTable_Construct()
     me->curr[0]     = 1;
     me->curr[1]     = 1;
     me->auto_select = TRUE;
-    me->exclude     = FALSE;
+    me->exclude     = 0;
     me->hidden      = FALSE;
     me->stored_at   = NOWHERE;
     me->file        = nullptr;
