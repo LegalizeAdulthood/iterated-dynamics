@@ -359,7 +359,8 @@ static void initvars_restart()          /* <ins> key init */
     viewcrop = true;
     g_virtual_screens = true;           /* virtual screen modes on   */
     finalaspectratio = screenaspect;
-    viewxdots = viewydots = 0;
+    viewydots = 0;
+    viewxdots = viewydots;
     video_cutboth = true;               /* keep virtual aspect */
     zscroll = true;                     /* relaxed screen scrolling */
     orbit_delay = 0;                    /* full speed orbits */
@@ -428,17 +429,21 @@ static void initvars_fractal()          /* init vars affecting calculation */
         potparam[i]  = 0.0; /* initial potential values */
     for (int i = 0; i < 3; i++)
         inversion[i] = 0.0;  /* initial invert values */
-    initorbit.x = initorbit.y = 0.0;     /* initial orbit values */
+    initorbit.y = 0.0;
+    initorbit.x = initorbit.y;     /* initial orbit values */
     invert = 0;
-    decomp[0] = decomp[1] = 0;
+    decomp[1] = 0;
+    decomp[0] = decomp[1];
     usr_distest = 0;
     pseudox = 0;
     pseudoy = 0;
     distestwidth = 71;
     forcesymmetry = 999;                 /* symmetry not forced */
-    xx3rd = xxmin = -2.5;
+    xxmin = -2.5;
+    xx3rd = xxmin;
     xxmax = 1.5;   /* initial corner values  */
-    yy3rd = yymin = -1.5;
+    yymin = -1.5;
+    yy3rd = yymin;
     yymax = 1.5;   /* initial corner values  */
     bf_math = 0;
     pot16bit = false;
@@ -531,7 +536,8 @@ static void initvars_3d()               /* init vars affecting 3d */
     blue_crop_right = 4;
     red_bright     = 80;
     blue_bright   = 100;
-    transparent[0] = transparent[1] = 0; /* no min/max transparency */
+    transparent[1] = 0;
+    transparent[0] = transparent[1]; /* no min/max transparency */
     set_3d_defaults();
 }
 
@@ -770,7 +776,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     }
 
     argptr = value;
-    numval = totparms = intparms = floatparms = 0;
+    floatparms = 0;
+    intparms = floatparms;
+    totparms = intparms;
+    numval = totparms;
     while (*argptr)                    /* count and pre-parse parms */
     {
         long ll;
@@ -1333,10 +1342,12 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         curfractalspecific = &fractalspecific[fractype];
         if (!initcorners)
         {
-            xx3rd = xxmin = curfractalspecific->xmin;
-            xxmax         = curfractalspecific->xmax;
-            yy3rd = yymin = curfractalspecific->ymin;
-            yymax         = curfractalspecific->ymax;
+            xxmin = curfractalspecific->xmin;
+            xx3rd = xxmin;
+            xxmax = curfractalspecific->xmax;
+            yymin = curfractalspecific->ymin;
+            yy3rd = yymin;
+            yymax = curfractalspecific->ymax;
         }
         if (!initparams)
         {
@@ -1587,7 +1598,9 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        entries = prev = i = 0;
+        i = 0;
+        prev = i;
+        entries = prev;
         LogFlag = 0; /* ranges overrides logmap */
         while (i < totparms)
         {
@@ -1605,7 +1618,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             {
                 goto badarg;
             }
-            tmpranges[entries++] = prev = j;
+            prev = j;
+            tmpranges[entries++] = prev;
         }
         if (prev == 0)
         {
@@ -2050,10 +2064,12 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
                 }
             }
         }
-        xx3rd = xxmin = floatval[0];
-        xxmax =         floatval[1];
-        yy3rd = yymin = floatval[2];
-        yymax =         floatval[3];
+        xxmin = floatval[0];
+        xx3rd = xxmin;
+        xxmax = floatval[1];
+        yymin = floatval[2];
+        yy3rd = yymin;
+        yymax = floatval[3];
 
         if (totparms == 6)
         {
@@ -2071,10 +2087,12 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         {
             goto badarg;
         }
-        ox3rd = oxmin = floatval[0];
-        oxmax =         floatval[1];
-        oy3rd = oymin = floatval[2];
-        oymax =         floatval[3];
+        oxmin = floatval[0];
+        ox3rd = oxmin;
+        oxmax = floatval[1];
+        oymin = floatval[2];
+        oy3rd = oymin;
+        oymax = floatval[3];
 
         if (totparms == 6)
         {
@@ -2113,7 +2131,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         viewreduction = 4.2f;  /* reset default values */
         finalaspectratio = screenaspect;
         viewcrop = true;
-        viewxdots = viewydots = 0;
+        viewydots = 0;
+        viewxdots = viewydots;
 
         if ((totparms > 0) && (floatval[0] > 0.001))
             viewreduction = (float)floatval[0];
@@ -2220,7 +2239,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     if (strcmp(variable, "invert") == 0) {        /* invert=?,?,? */
         if (totparms != floatparms || (totparms != 1 && totparms != 3))
             goto badarg;
-        invert = ((inversion[0] = floatval[0]) != 0.0) ? totparms : 0;
+        inversion[0] = floatval[0];
+        invert = (inversion[0] != 0.0) ? totparms : 0;
         if (totparms == 3) {
             inversion[1] = floatval[1];
             inversion[2] = floatval[2];
@@ -2581,7 +2601,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
         decomp[0] = intval[0];
         decomp[1] = 0;
         if (totparms > 1) /* backward compatibility */
-            bailout = decomp[1] = intval[1];
+        {
+            decomp[1] = intval[1];
+            bailout = decomp[1];
+        }
         return 1;
     }
 
@@ -2597,7 +2620,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
             pseudoy = intval[3];
         }
         else
-            pseudox = pseudoy = 0;
+        {
+            pseudoy = 0;
+            pseudox = pseudoy;
+        }
         return 1;
     }
 
@@ -2824,7 +2850,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     if (strcmp(variable, "transparent") == 0) {   /* transparent? */
         if (totparms != intparms || totparms < 1)
             goto badarg;
-        transparent[1] = transparent[0] = intval[0];
+        transparent[0] = intval[0];
+        transparent[1] = transparent[0];
         if (totparms > 1)
             transparent[1] = intval[1];
         return 2;
@@ -2994,14 +3021,25 @@ static void parse_textcolors(char *value)
             txtcolor[k] = BLACK*16+WHITE;
         /* C_HELP_CURLINK = C_PROMPT_INPUT = C_CHOICE_CURRENT = C_GENERAL_INPUT
                           = C_AUTHDIV1 = C_AUTHDIV2 = WHITE*16+BLACK; */
-        txtcolor[6] = txtcolor[12] = txtcolor[13] = txtcolor[14] = txtcolor[20]
-                                     = txtcolor[27] = txtcolor[28] = WHITE*16+BLACK;
+        txtcolor[28] = WHITE*16+BLACK;
+        txtcolor[27] = txtcolor[28];
+        txtcolor[20] = txtcolor[27];
+        txtcolor[14] = txtcolor[20];
+        txtcolor[13] = txtcolor[14];
+        txtcolor[12] = txtcolor[13];
+        txtcolor[6] = txtcolor[12];
         /* C_TITLE = C_HELP_HDG = C_HELP_LINK = C_PROMPT_HI = C_CHOICE_SP_KEYIN
                    = C_GENERAL_HI = C_DVID_HI = C_STOP_ERR
                    = C_STOP_INFO = BLACK*16+L_WHITE; */
-        txtcolor[0] = txtcolor[2] = txtcolor[5] = txtcolor[11] = txtcolor[16]
-                                    = txtcolor[17] = txtcolor[22] = txtcolor[24]
-                                            = txtcolor[25] = BLACK*16+L_WHITE;
+        txtcolor[25] = BLACK*16+L_WHITE;
+        txtcolor[24] = txtcolor[25];
+        txtcolor[22] = txtcolor[24];
+        txtcolor[17] = txtcolor[22];
+        txtcolor[16] = txtcolor[17];
+        txtcolor[11] = txtcolor[16];
+        txtcolor[5] = txtcolor[11];
+        txtcolor[2] = txtcolor[5];
+        txtcolor[0] = txtcolor[2];
     }
     else
     {
@@ -3087,9 +3125,9 @@ static int parse_colors(char *value)
                     }
                     g_dac_box[i][j] = (BYTE)k;
                     if (smooth) {
-                        int start,spread,cnum;
-                        start = i - (spread = smooth + 1);
-                        cnum = 0;
+                        int spread = smooth + 1;
+                        int start = i - spread;
+                        int cnum = 0;
                         if ((k - (int)g_dac_box[start][j]) == 0) {
                             while (++cnum < spread)
                                 g_dac_box[start+cnum][j] = (BYTE)k;
@@ -3111,7 +3149,9 @@ static int parse_colors(char *value)
         if (smooth)
             goto badcolor;
         while (i < 256)  { /* zap unset entries */
-            g_dac_box[i][0] = g_dac_box[i][1] = g_dac_box[i][2] = 40;
+            g_dac_box[i][2] = 40;
+            g_dac_box[i][1] = g_dac_box[i][2];
+            g_dac_box[i][0] = g_dac_box[i][1];
             ++i;
         }
         colorstate = 1;
