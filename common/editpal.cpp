@@ -1559,7 +1559,7 @@ struct  _PalTable
     bool auto_select;
     PALENTRY      pal[256];
     FILE         *undo_file;
-    BOOLEAN       curr_changed;
+    bool curr_changed;
     int           num_redo;
     int           hidden;
     int           stored_at;
@@ -2012,7 +2012,7 @@ static BOOLEAN PalTable__SetCurr(PalTable *me, int which, int curr)
 
     Cursor_Show();
 
-    me->curr_changed = FALSE;
+    me->curr_changed = false;
 
     return TRUE;
 }
@@ -2288,7 +2288,7 @@ static void PalTable__change(RGBEditor *rgb, void *info)
     if (!me->curr_changed)
     {
         PalTable__SaveUndoData(me, pnum, pnum);
-        me->curr_changed = TRUE;
+        me->curr_changed = true;
     }
 
     me->pal[pnum] = RGBEditor_GetRGB(rgb);
@@ -3026,7 +3026,7 @@ static PalTable *PalTable_Construct()
     me->bottom         = 0 ;
 
     me->undo_file    = dir_fopen(tempdir,undofile, "w+b");
-    me->curr_changed = FALSE;
+    me->curr_changed = false;
     me->num_redo     = 0;
 
     RGBEditor_SetRGB(me->rgb[0], me->curr[0], &me->pal[me->curr[0]]);
