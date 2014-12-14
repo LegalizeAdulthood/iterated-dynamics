@@ -39,7 +39,7 @@ struct tagGDIDriver
     Win32BaseDriver base;
 
     Plot plot;
-    BOOL text_not_graphics;
+    bool text_not_graphics;
 };
 
 /* VIDEOINFO:                                                           */
@@ -594,7 +594,7 @@ static void
 gdi_set_for_text(Driver *drv)
 {
     DI(di);
-    di->text_not_graphics = TRUE;
+    di->text_not_graphics = true;
     show_hide_windows(di->base.wintext.hWndCopy, di->plot.window);
 }
 
@@ -602,7 +602,7 @@ static void
 gdi_set_for_graphics(Driver *drv)
 {
     DI(di);
-    di->text_not_graphics = FALSE;
+    di->text_not_graphics = false;
     show_hide_windows(di->plot.window, di->base.wintext.hWndCopy);
     win32_hide_text_cursor(drv);
 }
