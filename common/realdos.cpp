@@ -604,28 +604,30 @@ int fullscreen_choice(
     {
         ++reqdrows;   /* a row for speedkey prompt */
     }
-    int const max_depth = 25 - reqdrows;
-    if (boxdepth > max_depth) /* limit the depth to max */
     {
-        boxdepth = max_depth;
-    }
-    if (boxwidth == 0)           /* pick box width and depth */
-    {
-        if (numchoices <= max_depth - 2)  /* single column is 1st choice if we can */
+        int const max_depth = 25 - reqdrows;
+        if (boxdepth > max_depth) /* limit the depth to max */
         {
-            boxdepth = numchoices;
-            boxwidth = 1;
+            boxdepth = max_depth;
         }
-        else
-        {   /* sort-of-wide is 2nd choice */
-            boxwidth = 60 / (colwidth + 1);
-            if (boxwidth == 0
-                    || (boxdepth = (numchoices + boxwidth - 1)/boxwidth) > max_depth - 2)
+        if (boxwidth == 0)           /* pick box width and depth */
+        {
+            if (numchoices <= max_depth - 2)  /* single column is 1st choice if we can */
             {
-                boxwidth = 80 / (colwidth + 1); /* last gasp, full width */
-                if ((boxdepth = (numchoices + boxwidth - 1)/boxwidth) > max_depth)
+                boxdepth = numchoices;
+                boxwidth = 1;
+            }
+            else
+            {   /* sort-of-wide is 2nd choice */
+                boxwidth = 60 / (colwidth + 1);
+                if (boxwidth == 0
+                        || (boxdepth = (numchoices + boxwidth - 1)/boxwidth) > max_depth - 2)
                 {
-                    boxdepth = max_depth;
+                    boxwidth = 80 / (colwidth + 1); /* last gasp, full width */
+                    if ((boxdepth = (numchoices + boxwidth - 1)/boxwidth) > max_depth)
+                    {
+                        boxdepth = max_depth;
+                    }
                 }
             }
         }

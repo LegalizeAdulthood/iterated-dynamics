@@ -189,12 +189,12 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     }
     extralines = extrawidth = 0;
     {
-        int i = 0;
         if ((hdgscan = extrainfo) != nullptr) {
             if (*hdgscan == 0)
                 extrainfo = nullptr;
             else { /* count extra lines, find widest */
                 extralines = 3;
+                int i = 0;
                 while (*hdgscan) {
                     if (*(hdgscan++) == '\n') {
                         if (extralines + numprompts + titlelines >= 20) {
