@@ -2161,7 +2161,7 @@ static void load_entry_text(
     int startcol)
 {
     int linelen;
-    int comment=0;
+    bool comment = false;
     int c = 0;
     int tabpos = 7 - (startcol % 8);
 
@@ -2174,12 +2174,12 @@ static void load_entry_text(
     for (int i = 0; i < startrow; i++) {
         while ((c=fgetc(entfile)) != '\n' && c != EOF && c != '\032') {
             if (c == ';')
-                comment = 1;
+                comment = true;
             if (c == '}' && !comment)  /* end of entry before start line */
                 break;                 /* this should never happen       */
         }
         if (c == '\n')
-            comment = 0;
+            comment = false;
         else {                       /* reached end of file or end of entry */
             *buf = (char) 0;
             return;
@@ -2188,13 +2188,14 @@ static void load_entry_text(
 
     /* write maxlines of entry */
     while (maxlines-- > 0) {
-        comment = linelen = c = 0;
+        comment = false;
+        linelen = c = 0;
 
         /* skip line up to startcol */
         int i = 0;
         while (i++ < startcol && (c = fgetc(entfile)) != EOF && c != '\032') {
             if (c == ';')
-                comment = 1;
+                comment = true;
             if (c == '}' && !comment) { /*reached end of entry*/
                 *buf = (char) 0;
                 return;
@@ -2227,9 +2228,9 @@ static void load_entry_text(
         /*process rest of line into buf */
         while ((c = fgetc(entfile)) != EOF && c != '\032') {
             if (c == ';')
-                comment = 1;
+                comment = true;
             else if (c == '\n' || c == '\r')
-                comment = 0;
+                comment = false;
             if (c != '\r') {
                 if (c == '\t') {
                     while ((linelen % 8) != tabpos && linelen < 75) { /* 76 wide max */
