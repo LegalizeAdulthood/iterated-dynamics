@@ -2496,7 +2496,8 @@ static bool ParseStr(char *Str, int pass)
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
     const_pi = atan(1.0) * 4;
     const_e  = exp(1.0);
-    v[7].a.d.x = v[7].a.d.y = 0.0;
+    v[7].a.d.y = 0.0;
+    v[7].a.d.x = v[7].a.d.y;
     v[11].a.d.x = (double)xdots;
     v[11].a.d.y = (double)ydots;
     v[12].a.d.x = (double)maxit;
