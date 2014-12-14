@@ -574,19 +574,26 @@ pass_option_restart:
     j = 0;   /* return code */
 
     usr_periodicitycheck = uvalues[++k].uval.ival;
-    if (usr_periodicitycheck > 255) usr_periodicitycheck = 255;
-    if (usr_periodicitycheck < -255) usr_periodicitycheck = -255;
-    if (usr_periodicitycheck != old_periodicity) j = 1;
+    if (usr_periodicitycheck > 255)
+        usr_periodicitycheck = 255;
+    if (usr_periodicitycheck < -255)
+        usr_periodicitycheck = -255;
+    if (usr_periodicitycheck != old_periodicity)
+        j = 1;
 
 
     orbit_delay = uvalues[++k].uval.ival;
-    if (orbit_delay != old_orbit_delay) j = 1;
+    if (orbit_delay != old_orbit_delay)
+        j = 1;
 
 
     orbit_interval = uvalues[++k].uval.ival;
-    if (orbit_interval > 255) orbit_interval = 255;
-    if (orbit_interval < 1) orbit_interval = 1;
-    if (orbit_interval != old_orbit_interval) j = 1;
+    if (orbit_interval > 255)
+        orbit_interval = 255;
+    if (orbit_interval < 1)
+        orbit_interval = 1;
+    if (orbit_interval != old_orbit_interval)
+        j = 1;
 
     keep_scrn_coords = uvalues[++k].uval.ch.val != 0;
     if (keep_scrn_coords != old_keep_scrn_coords)
@@ -610,13 +617,15 @@ pass_option_restart:
             break;
         }
     }
-    if (drawmode != old_drawmode) j = 1;
+    if (drawmode != old_drawmode)
+        j = 1;
 
     if (i == FIK_F2) {
         if (get_screen_corners() > 0) {
             ret = 1;
         }
-        if (j) ret = 1;
+        if (j)
+            ret = 1;
         goto pass_option_restart;
     }
 
@@ -624,7 +633,8 @@ pass_option_restart:
         if (get_corners() > 0) {
             ret = 1;
         }
-        if (j) ret = 1;
+        if (j)
+            ret = 1;
         goto pass_option_restart;
     }
 
