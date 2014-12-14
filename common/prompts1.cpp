@@ -93,7 +93,6 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     int promptrow,promptcol,valuecol;
     int curchoice = 0;
     int done;
-    int anyinput;
     int savelookatmouse;
     int curtype, curlen;
     char buf[81];
@@ -259,7 +258,8 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         extrawidth = 76;
 
     /* work out horizontal positioning */
-    maxfldwidth = maxpromptwidth = maxcomment = anyinput = 0;
+    maxfldwidth = maxpromptwidth = maxcomment = 0;
+    bool anyinput = false;
     for (int i = 0; i < numprompts; i++) {
         if (values[i].type == 'y') {
             static const char *noyes[2] = {"no", "yes"};
@@ -274,7 +274,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         }
         else
         {
-            anyinput = 1;
+            anyinput = true;
             if (j > maxpromptwidth)
                 maxpromptwidth = j;
             j = prompt_valuestring(buf,&values[i]);
