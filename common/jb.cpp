@@ -60,7 +60,7 @@ int juli3Dmode = 0;
 int neworbittype = JULIA;
 
 bool
-JulibrotSetup(void)
+JulibrotSetup()
 {
     int r = 0;
     char *mapname;
@@ -162,7 +162,7 @@ JulibrotSetup(void)
 
 
 int
-jb_per_pixel(void)
+jb_per_pixel()
 {
     jx = multiply(Per->x - xpixel, initz, 16);
     jx = divide(jx, dist, 16) - xpixel;
@@ -184,7 +184,7 @@ jb_per_pixel(void)
 }
 
 int
-jbfp_per_pixel(void)
+jbfp_per_pixel()
 {
     jxfp = ((Perfp->x - xpixelfp) * initzfp / distfp - xpixelfp) * x_per_inchfp;
     jxfp += xoffsetfp;
@@ -377,7 +377,7 @@ zlinefp(double x, double y)
 }
 
 int
-Std4dFractal(void)
+Std4dFractal()
 {
     long x;
     c_exp = (int)param[2];
@@ -418,7 +418,7 @@ Std4dFractal(void)
     return (0);
 }
 int
-Std4dfpFractal(void)
+Std4dfpFractal()
 {
     double x;
     c_exp = (int)param[2];
