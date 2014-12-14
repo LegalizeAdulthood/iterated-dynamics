@@ -104,7 +104,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     int lines_in_entry = 0;        /* total lines in entry to be scrolled   */
     int vertical_scroll_limit = 0; /* don't scroll down if this is top line */
     int widest_entry_line = 0;     /* length of longest line in entry       */
-    int rewrite_extrainfo = 0;     /* if 1: rewrite extrainfo to text box   */
+    bool rewrite_extrainfo = false; /* if true: rewrite extrainfo to text box   */
     char blanks[78];               /* used to clear text box                */
 
     savelookatmouse = lookatmouse;
@@ -405,7 +405,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         g_text_cbase = 2;
         while (1) {
             if (rewrite_extrainfo) {
-                rewrite_extrainfo = 0;
+                rewrite_extrainfo = false;
                 fseek(scroll_file, scroll_file_start, SEEK_SET);
                 load_entry_text(scroll_file, extrainfo, extralines - 2,
                                 scroll_row_status, scroll_column_status);
@@ -425,25 +425,25 @@ int fullscreen_prompt(      /* full-screen prompting routine */
             case FIK_CTL_DOWN_ARROW:    /* scrolling key - down one row */
                 if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit) {
                     scroll_row_status++;
-                    rewrite_extrainfo = 1;
+                    rewrite_extrainfo = true;
                 }
                 break;
             case FIK_CTL_UP_ARROW:      /* scrolling key - up one row */
                 if (in_scrolling_mode && scroll_row_status > 0) {
                     scroll_row_status--;
-                    rewrite_extrainfo = 1;
+                    rewrite_extrainfo = true;
                 }
                 break;
             case FIK_CTL_LEFT_ARROW:    /* scrolling key - left one column */
                 if (in_scrolling_mode && scroll_column_status > 0) {
                     scroll_column_status--;
-                    rewrite_extrainfo = 1;
+                    rewrite_extrainfo = true;
                 }
                 break;
             case FIK_CTL_RIGHT_ARROW:   /* scrolling key - right one column */
                 if (in_scrolling_mode && strchr(extrainfo, '\021') != nullptr) {
                     scroll_column_status++;
-                    rewrite_extrainfo = 1;
+                    rewrite_extrainfo = true;
                 }
                 break;
             case FIK_CTL_PAGE_DOWN:   /* scrolling key - down one screen */
@@ -451,7 +451,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                     scroll_row_status += extralines - 2;
                     if (scroll_row_status > vertical_scroll_limit)
                         scroll_row_status = vertical_scroll_limit;
-                    rewrite_extrainfo = 1;
+                    rewrite_extrainfo = true;
                 }
                 break;
             case FIK_CTL_PAGE_UP:     /* scrolling key - up one screen */
@@ -459,20 +459,20 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                     scroll_row_status -= extralines - 2;
                     if (scroll_row_status < 0)
                         scroll_row_status = 0;
-                    rewrite_extrainfo = 1;
+                    rewrite_extrainfo = true;
                 }
                 break;
             case FIK_CTL_END:         /* scrolling key - to end of entry */
                 if (in_scrolling_mode) {
                     scroll_row_status = vertical_scroll_limit;
                     scroll_column_status = 0;
-                    rewrite_extrainfo = 1;
+                    rewrite_extrainfo = true;
                 }
                 break;
             case FIK_CTL_HOME:        /* scrolling key - to beginning of entry */
                 if (in_scrolling_mode) {
                     scroll_row_status = scroll_column_status = 0;
-                    rewrite_extrainfo = 1;
+                    rewrite_extrainfo = true;
                 }
                 break;
             case FIK_F2:
@@ -520,7 +520,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
             putstringcenter(instrrow,0,80,C_PROMPT_BKGRD,
                             (curtype == 'l') ? "Use " LTARR1 " or " RTARR1 " to change value of selected field" : "Type in replacement value for selected field");
         else
-            rewrite_extrainfo = 0;
+            rewrite_extrainfo = false;
         driver_put_string(promptrow+curchoice,promptcol,C_PROMPT_HI,prompts[curchoice]);
 
         int i;
@@ -613,25 +613,25 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         case FIK_CTL_DOWN_ARROW:     /* scrolling key - down one row */
             if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit) {
                 scroll_row_status++;
-                rewrite_extrainfo = 1;
+                rewrite_extrainfo = true;
             }
             break;
         case FIK_CTL_UP_ARROW:       /* scrolling key - up one row */
             if (in_scrolling_mode && scroll_row_status > 0) {
                 scroll_row_status--;
-                rewrite_extrainfo = 1;
+                rewrite_extrainfo = true;
             }
             break;
         case FIK_CTL_LEFT_ARROW:     /*scrolling key - left one column */
             if (in_scrolling_mode && scroll_column_status > 0) {
                 scroll_column_status--;
-                rewrite_extrainfo = 1;
+                rewrite_extrainfo = true;
             }
             break;
         case FIK_CTL_RIGHT_ARROW:    /* scrolling key - right one column */
             if (in_scrolling_mode && strchr(extrainfo, '\021') != nullptr) {
                 scroll_column_status++;
-                rewrite_extrainfo = 1;
+                rewrite_extrainfo = true;
             }
             break;
         case FIK_CTL_PAGE_DOWN:    /* scrolling key - down on screen */
@@ -639,7 +639,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                 scroll_row_status += extralines - 2;
                 if (scroll_row_status > vertical_scroll_limit)
                     scroll_row_status = vertical_scroll_limit;
-                rewrite_extrainfo = 1;
+                rewrite_extrainfo = true;
             }
             break;
         case FIK_CTL_PAGE_UP:      /* scrolling key - up one screen */
@@ -647,20 +647,20 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                 scroll_row_status -= extralines - 2;
                 if (scroll_row_status < 0)
                     scroll_row_status = 0;
-                rewrite_extrainfo = 1;
+                rewrite_extrainfo = true;
             }
             break;
         case FIK_CTL_END:          /* scrolling key - go to end of entry */
             if (in_scrolling_mode) {
                 scroll_row_status = vertical_scroll_limit;
                 scroll_column_status = 0;
-                rewrite_extrainfo = 1;
+                rewrite_extrainfo = true;
             }
             break;
         case FIK_CTL_HOME:         /* scrolling key - go to beginning of entry */
             if (in_scrolling_mode) {
                 scroll_row_status = scroll_column_status = 0;
-                rewrite_extrainfo = 1;
+                rewrite_extrainfo = true;
             }
             break;
         }
