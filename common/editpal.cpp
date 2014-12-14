@@ -498,11 +498,10 @@ static void draw_diamond(int x, int y, int color)
 
 struct _Cursor
 {
-
     int     x, y;
     int     hidden;       /* >0 if mouse hidden */
     long    last_blink;
-    BOOLEAN blink;
+    bool blink;
     char    t[CURSOR_SIZE];        /* save line segments here */
     char    b[CURSOR_SIZE];
     char    l[CURSOR_SIZE];
@@ -537,7 +536,7 @@ BOOLEAN Cursor_Construct()
     the_cursor->x          = sxdots/2;
     the_cursor->y          = sydots/2;
     the_cursor->hidden     = 1;
-    the_cursor->blink      = FALSE;
+    the_cursor->blink      = false;
     the_cursor->last_blink = 0;
 
     return TRUE;
@@ -559,7 +558,7 @@ static void Cursor__Draw()
     int color;
 
     find_special_colors();
-    color = (the_cursor->blink) ? g_color_medium : g_color_dark;
+    color = the_cursor->blink ? g_color_medium : g_color_dark;
 
     vline(the_cursor->x, the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, color);
     vline(the_cursor->x, the_cursor->y+2,             CURSOR_SIZE, color);
@@ -686,7 +685,7 @@ void Cursor_CheckBlink()
 
     if ((tick - the_cursor->last_blink) > CURSOR_BLINK_RATE)
     {
-        the_cursor->blink = (BOOLEAN)((the_cursor->blink) ? FALSE : TRUE);
+        the_cursor->blink = !the_cursor->blink;
         the_cursor->last_blink = tick;
         if (!the_cursor->hidden)
             Cursor__Draw();
