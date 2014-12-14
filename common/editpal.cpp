@@ -1244,7 +1244,7 @@ struct _RGBEditor
     int       curr;            /* 0=r, 1=g, 2=b */
     int       pal;             /* palette number */
     bool done;
-    BOOLEAN   hidden;
+    bool hidden;
     CEditor  *color[3];        /* color editors 0=r, 1=g, 2=b */
     void (*other_key)(int key, struct _RGBEditor *e, void *info);
     void (*change)(struct _RGBEditor *e, void *info);
@@ -1296,7 +1296,7 @@ static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int,RGBEdi
     RGBEditor_SetPos(me, x, y);
     me->curr      = 0;
     me->pal       = 1;
-    me->hidden    = FALSE;
+    me->hidden    = false;
     me->other_key = other_key;
     me->change    = change;
     me->info      = info;
