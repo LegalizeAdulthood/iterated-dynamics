@@ -298,9 +298,9 @@ void
 win32_hide_text_cursor(Driver *drv)
 {
     DI(di);
-    if (TRUE == di->cursor_shown)
+    if (di->cursor_shown)
     {
-        di->cursor_shown = FALSE;
+        di->cursor_shown = false;
         wintext_hide_cursor(&di->wintext);
     }
     ODS("win32_hide_text_cursor");
@@ -396,7 +396,7 @@ win32_move_cursor(Driver *drv, int row, int col)
     row = di->cursor_row;
     col = di->cursor_col;
     wintext_cursor(&di->wintext, g_text_cbase + col, g_text_rbase + row, 1);
-    di->cursor_shown = TRUE;
+    di->cursor_shown = true;
 }
 
 void
@@ -554,11 +554,11 @@ win32_key_cursor(Driver *drv, int row, int col)
     }
     else
     {
-        di->cursor_shown = TRUE;
+        di->cursor_shown = true;
         wintext_cursor(&di->wintext, col, row, 1);
         result = win32_get_key(drv);
         win32_hide_text_cursor(drv);
-        di->cursor_shown = FALSE;
+        di->cursor_shown = false;
     }
 
     return result;

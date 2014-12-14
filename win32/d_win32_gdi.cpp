@@ -720,7 +720,7 @@ gdi_move_cursor(Driver *drv, int row, int col)
     row = di->base.cursor_row;
     col = di->base.cursor_col;
     wintext_cursor(&di->base.wintext, g_text_cbase + col, g_text_rbase + row, 1);
-    di->base.cursor_shown = TRUE;
+    di->base.cursor_shown = true;
 }
 
 static void

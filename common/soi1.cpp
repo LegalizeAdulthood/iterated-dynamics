@@ -26,7 +26,6 @@
 #define FREXP(x,y) frexp(x,y)
 
 #define TRUE 1
-#define FALSE 0
 #define EVERY 15
 #define BASIN_COLOR 0
 

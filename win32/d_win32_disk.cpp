@@ -706,7 +706,7 @@ disk_move_cursor(Driver *drv, int row, int col)
     row = di->base.cursor_row;
     col = di->base.cursor_col;
     wintext_cursor(&di->base.wintext, g_text_cbase + col, g_text_rbase + row, 1);
-    di->base.cursor_shown = TRUE;
+    di->base.cursor_shown = true;
 }
 
 static void
@@ -728,9 +728,9 @@ static void
 disk_hide_text_cursor(Driver *drv)
 {
     DI(di);
-    if (TRUE == di->base.cursor_shown)
+    if (di->base.cursor_shown)
     {
-        di->base.cursor_shown = FALSE;
+        di->base.cursor_shown = false;
         wintext_hide_cursor(&di->base.wintext);
     }
     ODS("disk_hide_text_cursor");
@@ -882,11 +882,11 @@ disk_key_cursor(Driver *drv, int row, int col)
     }
     else
     {
-        di->base.cursor_shown = TRUE;
+        di->base.cursor_shown = true;
         wintext_cursor(&di->base.wintext, col, row, 1);
         result = disk_get_key(drv);
         disk_hide_text_cursor(drv);
-        di->base.cursor_shown = FALSE;
+        di->base.cursor_shown = false;
     }
 
     return result;

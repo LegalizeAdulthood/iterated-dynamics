@@ -20,7 +20,7 @@ struct tagWin32BaseDriver
     int screen_count;
     BYTE *saved_screens[WIN32_MAXSCREENS];
     int saved_cursor[WIN32_MAXSCREENS+1];
-    BOOL cursor_shown;
+    bool cursor_shown;
     int cursor_row;
     int cursor_col;
 };
