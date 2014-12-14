@@ -812,7 +812,8 @@ void dStkReal()
 #if !defined(XFRACT)
 void mStkReal()
 {
-    Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
+    Arg1->m.y.Exp = 0;
+    Arg1->m.y.Mant = (long) Arg1->m.y.Exp;
 }
 
 void lStkReal()
