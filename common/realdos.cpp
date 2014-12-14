@@ -1475,7 +1475,7 @@ int input_field(
 {
     char savefld[81];
     char buf[81];
-    int insert, started, offset, curkey, display;
+    int insert, started, offset, curkey;
     int i, j;
     int ret,savelookatmouse;
     savelookatmouse = lookatmouse;
@@ -1483,7 +1483,7 @@ int input_field(
     ret = -1;
     strcpy(savefld,fld);
     insert = started = offset = 0;
-    display = 1;
+    bool display = true;
     while (1) {
         strcpy(buf,fld);
         i = (int) strlen(buf);
@@ -1492,7 +1492,7 @@ int input_field(
         buf[len] = 0;
         if (display) {                                /* display current value */
             driver_put_string(row,col,attr,buf);
-            display = 0;
+            display = false;
         }
         curkey = driver_key_cursor(row+insert,col+offset);  /* get a keystroke */
         if (curkey == 1047) curkey = 47; /* numeric slash */
@@ -1527,13 +1527,15 @@ int input_field(
                     fld[i] = fld[i+1];
                 --offset;
             }
-            started = display = 1;
+            started = 1;
+            display = true;
             break;
         case FIK_DELETE:                           /* delete */
             j = (int) strlen(fld);
             for (int i = offset; i < j; ++i)
                 fld[i] = fld[i+1];
-            started = display = 1;
+            started = 1;
+            display = true;
             break;
         case FIK_INSERT:                           /* insert */
             insert ^= 0x8000;
@@ -1542,7 +1544,7 @@ int input_field(
         case FIK_F5:
             strcpy(fld,savefld);
             insert = started = offset = 0;
-            display = 1;
+            display = true;
             break;
         default:
             if (nonalpha(curkey)) {
@@ -1599,7 +1601,8 @@ int input_field(
                     offset = 0;
                 }
             }
-            started = display = 1;
+            started = 1;
+            display = true;
         }
     }
 inpfld_end:
