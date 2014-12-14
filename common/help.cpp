@@ -1053,7 +1053,7 @@ typedef struct PRINT_DOC_INFO
 
     FILE     *file;          /* file to sent output to */
     int       margin;        /* indent text by this much */
-    int       start_of_line; /* are we at the beginning of a line? */
+    bool      start_of_line; /* are we at the beginning of a line? */
     int       spaces;        /* number of spaces in a row */
 } PRINT_DOC_INFO;
 
@@ -1066,7 +1066,7 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
 
         else if (c=='\n' || c=='\f')
         {
-            info->start_of_line = 1;
+            info->start_of_line = true;
             info->spaces = 0;   /* strip spaces before a new-line */
             fputc(c, info->file);
         }
@@ -1076,7 +1076,7 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
             if (info->start_of_line)
             {
                 info->spaces += info->margin;
-                info->start_of_line = 0;
+                info->start_of_line = false;
             }
 
             while (info->spaces > 0)
@@ -1353,7 +1353,7 @@ void print_document(const char *outfname, bool (*msg_func)(int,int), int save_ex
     }
 
     info.margin = PAGE_INDENT;
-    info.start_of_line = 1;
+    info.start_of_line = true;
     info.spaces = 0;
 
     success = process_document(print_doc_get_info,
