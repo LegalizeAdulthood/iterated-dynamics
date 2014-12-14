@@ -997,7 +997,7 @@ static bool MoveBox_Process(MoveBox *me)
 
     me->should_hide = key == 'H' || key == 'h';
 
-    return (key==FIK_ESC) ? false : true;
+    return key != FIK_ESC;
 }
 
 
