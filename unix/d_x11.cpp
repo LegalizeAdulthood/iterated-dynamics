@@ -141,10 +141,10 @@ struct DriverX11
 
     BYTE *font_table;           /* = nullptr; */
 
-    Bool text_modep;            /* True when displaying text */
+    bool text_modep;            /* true when displaying text */
 
     /* rubber banding and event processing data */
-    int ctl_mode;
+    bool ctl_mode;
     int shift_mode;
     int button_num;
     int last_x, last_y;
@@ -955,7 +955,7 @@ ev_key_press(DriverX11 *di, XKeyEvent *xevent)
     switch (keysym) {
     case XK_Control_L:
     case XK_Control_R:
-        di->ctl_mode = 1;
+        di->ctl_mode = true;
         return 1;
 
     case XK_Shift_L:
@@ -1077,7 +1077,7 @@ ev_key_release(DriverX11 *di, XKeyEvent *xevent)
     switch (keysym) {
     case XK_Control_L:
     case XK_Control_R:
-        di->ctl_mode = 0;
+        di->ctl_mode = false;
         break;
     case XK_Shift_L:
     case XK_Shift_R:
@@ -2368,7 +2368,7 @@ x11_set_for_text(Driver *drv)
     /* map text screen child window */
     /* allocate text colors in window's colormap, save window's colors */
     /* refresh window with last contents of text_screen */
-    di->text_modep = True;
+    di->text_modep = true;
     fprintf(stderr, "x11_set_for_text\n");
 }
 
@@ -2380,7 +2380,7 @@ x11_set_for_graphics(Driver *drv)
     /* unmap text screen child window */
     /* restore colormap from saved copy */
     /* expose will be sent for newly visible area */
-    di->text_modep = False;
+    di->text_modep = false;
     fprintf(stderr, "x11_set_for_graphics\n");
 }
 
@@ -2581,8 +2581,8 @@ static DriverX11 x11_driver_info = {
     { 0 },                /* text_screen */
     { 0 },                /* text_attr */
     nullptr,              /* font_table */
-    False,                /* text_modep */
-    0,                    /* ctl_mode */
+    false,                /* text_modep */
+    false,                /* ctl_mode */
     0,                    /* shift_mode */
     0,                    /* button_num */
     0, 0,                 /* last_x, last_y */
