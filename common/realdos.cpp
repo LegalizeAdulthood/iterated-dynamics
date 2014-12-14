@@ -1639,7 +1639,8 @@ int field_prompt(
     helptitle();                           /* clear screen, display title */
     driver_set_attr(1,0,C_PROMPT_BKGRD,24*80);     /* init rest to background */
     charptr = hdg;                         /* count title lines, find widest */
-    i = boxwidth = 0;
+    boxwidth = 0;
+    i = boxwidth;
     titlelines = 1;
     while (*charptr) {
         if (*(charptr++) == '\n') {
@@ -1806,7 +1807,8 @@ void load_fractint_config()
         }
         tempstring[120] = 0;
         tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
-        i = j = -1;
+        j = -1;
+        i = j;
         /* key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver */
         while (true)
         {
@@ -1882,7 +1884,8 @@ void load_fractint_config()
         memset(&vident, 0, sizeof(vident));
         strncpy(&vident.name[0], fields[0], NUM_OF(vident.name));
         strncpy(&vident.comment[0], fields[9], NUM_OF(vident.comment));
-        vident.name[25] = vident.comment[25] = 0;
+        vident.comment[25] = 0;
+        vident.name[25] = vident.comment[25];
         vident.keynum      = keynum;
         vident.videomodeax = ax;
         vident.videomodebx = bx;
