@@ -219,7 +219,8 @@ void drawbox(int drawit)
 
 void drawlines(struct coords fr, struct coords to,
                          int dx, int dy)
-{   int xincr,yincr,ctr;
+{
+    int xincr,yincr,ctr;
     int altctr,altdec,altinc;
     struct coords tmpp,line1,line2;
 
@@ -383,7 +384,8 @@ void resizebox(int steps)
 }
 
 void chgboxi(int dw, int dd)
-{   /* change size by pixels */
+{
+    /* change size by pixels */
     chgboxf((double)dw/dxsize, (double)dd/dysize);
 }
 
@@ -730,7 +732,8 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
 
 static void restart_window(int wknum)
 /* force a worklist entry to restart */
-{   int yfrom,yto,xfrom,xto;
+{
+    int yfrom,yto,xfrom,xto;
     if ((yfrom = worklist[wknum].yystart) < 0) yfrom = 0;
     if ((xfrom = worklist[wknum].xxstart) < 0) xfrom = 0;
     if ((yto = worklist[wknum].yystop) >= ydots) yto = ydots - 1;
