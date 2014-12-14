@@ -222,7 +222,8 @@ int get_toggles()
 
     choices[++k] = "Decomp Option (2,4,8,..,256, 0=OFF)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = old_decomp = decomp[0];
+    old_decomp = decomp[0];
+    uvalues[k].uval.ival = old_decomp;
 
     choices[++k] = "Fill Color (normal,#) (works with passes=t, b and d)";
     uvalues[k].type = 's';
