@@ -1366,11 +1366,11 @@ FindRootWindow(DriverX11 *di)
     di->Xroot = pr_dwmroot(di, di->Xdp, di->Xroot); /* search for DEC wm root */
 
     {   /* search for swm/tvtwm root (from ssetroot by Tom LaStrange) */
-        Atom __SWM_VROOT = None;
+        Atom SWM_VROOT = None;
         Window rootReturn, parentReturn, *children;
         unsigned int numChildren;
 
-        __SWM_VROOT = XInternAtom(di->Xdp, "__SWM_VROOT", False);
+        SWM_VROOT = XInternAtom(di->Xdp, "__SWM_VROOT", False);
         XQueryTree(di->Xdp, di->Xroot, &rootReturn, &parentReturn,
                    &children, &numChildren);
         for (int i = 0; i < numChildren; i++) {
@@ -1379,7 +1379,7 @@ FindRootWindow(DriverX11 *di)
             unsigned long nitems, bytesafter;
             Window *newRoot = nullptr;
 
-            if (XGetWindowProperty(di->Xdp, children[i], __SWM_VROOT,
+            if (XGetWindowProperty(di->Xdp, children[i], SWM_VROOT,
                                    (long) 0, (long) 1,
                                    False, XA_WINDOW,
                                    &actual_type, &actual_format,
