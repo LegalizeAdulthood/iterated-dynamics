@@ -1641,7 +1641,8 @@ static void update_fractint_cfg()
     }
     cfgfile = fopen(cfgname,"r");
 
-    linenum = nextmode = 0;
+    nextmode = 0;
+    linenum = nextmode;
     nextlinenum = g_cfg_line_nums[0];
     while (fgets(buf,120,cfgfile)) {
         char colorsbuf[10];
