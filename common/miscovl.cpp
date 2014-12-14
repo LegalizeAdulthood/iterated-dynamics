@@ -147,7 +147,8 @@ void make_batch_file()
         strcpy(inpcommandname, "test");
     pxdots = xdots;
     pydots = ydots;
-    xm = ym = 1;
+    ym = 1;
+    xm = ym;
     if (*s_makepar == 0)
         goto skip_UI;
 
