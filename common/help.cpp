@@ -318,7 +318,7 @@ static void put_key(char *name, char *descrip)
     driver_put_string(-1, -1, C_HELP_INSTR, "  ");
 }
 
-static void helpinstr(void)
+static void helpinstr()
 {
     for (int ctr = 0; ctr < 80; ctr++)
     {
@@ -337,7 +337,7 @@ static void helpinstr(void)
     PUT_KEY("Escape",           "Exit help");
 }
 
-static void printinstr(void)
+static void printinstr()
 {
     for (int ctr = 0; ctr < 80; ctr++)
     {
@@ -898,7 +898,7 @@ int help(int action)
 }
 
 #if !defined(XFRACT) && !defined(_WIN32)
-static int dos_version(void)
+static int dos_version()
 {
     union REGS r;
 
@@ -1393,7 +1393,7 @@ ErrorAbort:
         msg_func(success ? -1 : -2, info.num_page);
 }
 
-int init_help(void)
+int init_help()
 {
     struct help_sig_info hs = { 0 };
     char path[FILE_MAX_PATH+1];
@@ -1479,7 +1479,7 @@ int init_help(void)
     return 0;  /* success */
 }
 
-void end_help(void)
+void end_help()
 {
     if (help_file != nullptr)
     {
