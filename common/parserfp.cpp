@@ -1106,13 +1106,14 @@ awful_error:
     }
     /* ******************************************************************** */
 SkipOptimizer:  /* -------------  end of optimizer ----------------------- */
-
-    FNPTR(cvtptrx++) = prevfptr = ffptr;
+    prevfptr = ffptr;
+    FNPTR(cvtptrx++) = prevfptr;
 #ifdef TESTFP
     prevstkcnt = stkcnt;
 #endif
     if (Delta == CLEAR_STK) {
-        realstkcnt = stkcnt = 0;
+        stkcnt = 0;
+        realstkcnt = stkcnt;
     }
     else {
         stkcnt = (unsigned char)(stkcnt + Delta);
@@ -1191,12 +1192,17 @@ int CvtStk()
     union Arg *testoperand;
 
     lastsqrreal = true;  /* assume lastsqr is real (not stored explicitly)  */
-    p1const = p2const = p3const = (unsigned char)1;  /* . . . p1, p2, p3 const  */
-    p4const = p5const = (unsigned char)1;  /* . . . p4, p5 const  */
+    p3const = (unsigned char)1;
+    p2const = p3const;
+    p1const = p2const;  /* . . . p1, p2, p3 const  */
+    p5const = (unsigned char)1;
+    p4const = p5const;  /* . . . p4, p5 const  */
     lastsqrused = false;  /* ... and LastSqr is not used  */
 
     /* now see if the above assumptions are true */
-    for (OpPtr = LodPtr = StoPtr = 0; OpPtr < (int)LastOp; OpPtr++) {
+    StoPtr = 0;
+    LodPtr = StoPtr;
+    for (OpPtr = LodPtr; OpPtr < (int)LastOp; OpPtr++) {
         ftst = f[OpPtr];
         if (ftst == StkLod) {
             if (Load[LodPtr++] == &LASTSQR) {
