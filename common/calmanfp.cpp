@@ -16,7 +16,7 @@ extern int nextsavedincr;
 
 static int inside_color, periodicity_color;
 
-void calcmandfpasmstart(void)
+void calcmandfpasmstart()
 {
     inside_color = (inside < 0) ? maxit : inside;
     periodicity_color = (periodicitycheck < 0) ? 7 : inside_color;
@@ -29,7 +29,7 @@ void calcmandfpasmstart(void)
    of the x and y values.  This is experimental. */
 #define USE_NEW 0
 
-long calcmandfpasm(void)
+long calcmandfpasm()
 {
     long cx;
     long savedand;
