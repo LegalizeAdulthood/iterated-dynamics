@@ -717,7 +717,7 @@ static void     MoveBox__Move(MoveBox *me, int key);
 static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width,
                                   int base_depth);
 static void     MoveBox_Destroy(MoveBox *me);
-static BOOLEAN  MoveBox_Process(MoveBox *me);     /* returns FALSE if ESCAPED */
+static bool MoveBox_Process(MoveBox *me);     /* returns false if ESCAPED */
 static bool MoveBox_Moved(MoveBox *me);
 static bool MoveBox_ShouldHide(MoveBox *me);
 static int      MoveBox_X(MoveBox *me);
@@ -905,7 +905,7 @@ static void MoveBox__Move(MoveBox *me, int key)
 }
 
 
-static BOOLEAN MoveBox_Process(MoveBox *me)
+static bool MoveBox_Process(MoveBox *me)
 {
     int     key;
     int     orig_x     = me->x,
@@ -997,7 +997,7 @@ static BOOLEAN MoveBox_Process(MoveBox *me)
 
     me->should_hide = key == 'H' || key == 'h';
 
-    return (BOOLEAN)((key==FIK_ESC) ? FALSE : TRUE);
+    return (key==FIK_ESC) ? false : true;
 }
 
 
