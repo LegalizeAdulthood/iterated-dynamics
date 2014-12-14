@@ -1405,7 +1405,6 @@ void read_src(char *fname)
     int    in_para    = 0;
     bool centering = false;
     int    lformat_exclude = format_exclude;
-    int    again;
 
     xonline = false;
     xdoc = false;
@@ -2035,9 +2034,10 @@ void read_src(char *fname)
 
         if (centering)
         {
+            bool again;
             do
             {
-                again = 0;   /* default */
+                again = false;   /* default */
 
                 switch (state)
                 {
@@ -2050,7 +2050,7 @@ void read_src(char *fname)
                     {
                         *curr++ = CMD_CENTER;
                         state = S_Line;
-                        again = 1;
+                        again = true;
                     }
                     break;
 
@@ -2066,11 +2066,11 @@ void read_src(char *fname)
 
         else if (formatting)
         {
-            int again;
+            bool again;
 
             do
             {
-                again = 0;   /* default */
+                again = false;   /* default */
 
                 switch (state)
                 {
@@ -2081,7 +2081,7 @@ void read_src(char *fname)
                     {
                         state = S_StartFirstLine;
                         num_spaces = 0;
-                        again = 1;
+                        again = true;
                     }
                     break;
 
@@ -2096,7 +2096,7 @@ void read_src(char *fname)
                             put_spaces(num_spaces);
                             num_spaces = 0;
                             state = S_FormatDisabled;
-                            again = 1;
+                            again = true;
                         }
                         else
                         {
@@ -2105,7 +2105,7 @@ void read_src(char *fname)
                             *curr++ = (char)num_spaces;
                             margin_pos = curr - 1;
                             state = S_FirstLine;
-                            again = 1;
+                            again = true;
                             in_para = 1;
                         }
                     }
@@ -2139,7 +2139,7 @@ void read_src(char *fname)
                     {
                         put_spaces(num_spaces);
                         state = S_FirstLine;
-                        again = 1;
+                        again = true;
                     }
                     break;
 
@@ -2162,7 +2162,7 @@ void read_src(char *fname)
                             put_spaces(num_spaces);
                             num_spaces = 0;
                             state = S_FormatDisabled;
-                            again = 1;
+                            again = true;
                         }
                         else
                         {
@@ -2170,7 +2170,7 @@ void read_src(char *fname)
                             margin = num_spaces;
                             *margin_pos = (char)num_spaces;
                             state = S_Line;
-                            again = 1;
+                            again = true;
                         }
                     }
                     break;
@@ -2203,7 +2203,7 @@ void read_src(char *fname)
                     {
                         put_spaces(num_spaces);
                         state = S_Line;
-                        again = 1;
+                        again = true;
                     }
                     break;
 
@@ -2224,14 +2224,13 @@ void read_src(char *fname)
                             *curr++ = '\n';
                             in_para = 0;
                             state = S_StartFirstLine;  /* with current num_spaces */
-                            again = 1;
                         }
                         else
                         {
                             add_blank_for_split();
                             state = S_Line;
-                            again = 1;
                         }
+                        again = true;
                     }
                     break;
 
@@ -2257,7 +2256,7 @@ void read_src(char *fname)
                         put_spaces(num_spaces);
                         num_spaces = 0;    /* is this needed? */
                         state = S_FormatDisabled;
-                        again = 1;
+                        again = true;
                     }
                     break;
 
@@ -2268,9 +2267,10 @@ void read_src(char *fname)
 
         else
         {
+            bool again;
             do
             {
-                again = 0;   /* default */
+                again = false;   /* default */
 
                 switch (state)
                 {
@@ -2292,7 +2292,7 @@ void read_src(char *fname)
                         put_spaces(num_spaces);
                         num_spaces = 0;     /* is this needed? */
                         state = S_Start;
-                        again = 1;
+                        again = true;
                     }
                     break;
                 } /* switch */
