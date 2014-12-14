@@ -1952,7 +1952,7 @@ static void PalTable__Draw(PalTable *me)
 
 static void PalTable__SetCurr(PalTable *me, int which, int curr)
 {
-    BOOLEAN redraw = (BOOLEAN)((which < 0) ? TRUE : FALSE);
+    bool redraw = which < 0;
 
     if (redraw)
     {
