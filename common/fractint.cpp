@@ -218,7 +218,7 @@ restart:   /* insert key re-starts here */
     strcpy(browsename,"            ");
     name_stack_ptr= -1; /* init loaded files stack */
 
-    evolving = FALSE;
+    evolving = 0;
     paramrangex = 4;
     opx = newopx = -2.0;
     paramrangey = 3;
