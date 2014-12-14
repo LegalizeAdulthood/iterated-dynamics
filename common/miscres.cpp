@@ -208,7 +208,8 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
         xxmin = Xctr - w;
         xx3rd = xxmin;
         xxmax = Xctr + w;
-        yy3rd = yymin = Yctr - h;
+        yymin = Yctr - h;
+        yy3rd = yymin;
         yymax = Yctr + h;
         return;
     }
