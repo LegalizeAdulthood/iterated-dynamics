@@ -1243,7 +1243,7 @@ struct _RGBEditor
     int       x, y;            /* position */
     int       curr;            /* 0=r, 1=g, 2=b */
     int       pal;             /* palette number */
-    BOOLEAN   done;
+    bool done;
     BOOLEAN   hidden;
     CEditor  *color[3];        /* color editors 0=r, 1=g, 2=b */
     void (*other_key)(int key, struct _RGBEditor *e, void *info);
@@ -1266,7 +1266,7 @@ static RGBEditor *RGBEditor_Construct(int x, int y,
 
 static void     RGBEditor_Destroy(RGBEditor *me);
 static void     RGBEditor_SetPos(RGBEditor *me, int x, int y);
-static void     RGBEditor_SetDone(RGBEditor *me, BOOLEAN done);
+static void     RGBEditor_SetDone(RGBEditor *me, bool done);
 static void     RGBEditor_SetHidden(RGBEditor *me, bool hidden);
 static void     RGBEditor_BlankSampleBox(RGBEditor *me);
 static void     RGBEditor_Update(RGBEditor *me);
@@ -1314,7 +1314,7 @@ static void RGBEditor_Destroy(RGBEditor *me)
 }
 
 
-static void RGBEditor_SetDone(RGBEditor *me, BOOLEAN done)
+static void RGBEditor_SetDone(RGBEditor *me, bool done)
 {
     me->done = done;
 }
@@ -1470,7 +1470,7 @@ static int RGBEditor_Edit(RGBEditor *me)
 {
     int key = 0;
 
-    me->done = FALSE;
+    me->done = false;
 
     if (!me->hidden)
     {
@@ -2410,7 +2410,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         PalTable__Draw(me);
         Cursor_Show();
 
-        RGBEditor_SetDone(me->rgb[me->active], TRUE);
+        RGBEditor_SetDone(me->rgb[me->active], true);
 
         if (me->auto_select)
             PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
@@ -2448,7 +2448,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
     case FIK_ESC:
         me->done = TRUE;
-        RGBEditor_SetDone(rgb, TRUE);
+        RGBEditor_SetDone(rgb, true);
         break;
 
     case ' ':     /* select the other palette register */
@@ -2461,7 +2461,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         if (me->exclude || me->freestyle)
             PalTable__UpdateDAC(me);
 
-        RGBEditor_SetDone(rgb, TRUE);
+        RGBEditor_SetDone(rgb, true);
         break;
 
     case FIK_ENTER:    /* set register to color under cursor.  useful when not */
@@ -2478,7 +2478,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         if (me->exclude || me->freestyle)
             PalTable__UpdateDAC(me);
 
-        RGBEditor_SetDone(rgb, TRUE);
+        RGBEditor_SetDone(rgb, true);
         break;
 
     case 'D':    /* copy (Duplicate?) color in inactive to color in active */
@@ -2752,7 +2752,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
             Cursor_Show();
         }
 
-        RGBEditor_SetDone(me->rgb[me->active], TRUE);
+        RGBEditor_SetDone(me->rgb[me->active], true);
         break;
 
     case 'O':    /* set rotate_lo and rotate_hi to editors */
@@ -2788,7 +2788,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         PalTable__SetCurr(me, -1, 0);
         Cursor_Show();
-        RGBEditor_SetDone(me->rgb[me->active], TRUE);
+        RGBEditor_SetDone(me->rgb[me->active], true);
         break;
     }
 
@@ -3080,7 +3080,7 @@ static void PalTable_Hide(PalTable *me, RGBEditor *rgb, BOOLEAN hidden)
         PalTable__Draw(me);
         if (me->auto_select)
             PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
-        RGBEditor_SetDone(rgb, TRUE);
+        RGBEditor_SetDone(rgb, true);
     }
 }
 
