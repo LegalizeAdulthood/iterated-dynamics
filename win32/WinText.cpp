@@ -549,13 +549,13 @@ void wintext_paintscreen(WinText *me,
         return;
 
     /* first time through?  Initialize the 'screen' */
-    if (me->buffer_init == 0)
+    if (!me->buffer_init)
     {
-        me->buffer_init = 1;
+        me->buffer_init = true;
         oldbk = 0x00;
         oldfg = 0x0f;
         int k = (oldbk << 4) + oldfg;
-        me->buffer_init = 1;
+        me->buffer_init = true;
         for (int i = 0; i < me->char_xchars; i++)
         {
             for (int j = 0; j < me->char_ychars; j++)

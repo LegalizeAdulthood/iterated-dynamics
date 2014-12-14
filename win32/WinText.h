@@ -14,7 +14,7 @@ struct tagWinText
     /* Local copy of the "screen" characters and attributes */
     char chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
     unsigned char attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
-    int buffer_init;     /* zero if 'screen' is uninitialized */
+    bool buffer_init;     /* false if 'screen' is uninitialized */
 
     /* font information */
 
