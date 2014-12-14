@@ -122,7 +122,7 @@ char targa_temp[14] = "fractemp.tga";
 int P = 250; /* Perspective dist used when viewing light vector */
 BYTE back_color[3];
 char ray_name[FILE_MAX_PATH] = "fract001";
-char preview = 0;
+bool preview = false;
 bool showbox = false;
 int previewfactor = 20;
 int xadjust = 0;

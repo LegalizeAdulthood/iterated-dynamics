@@ -2370,7 +2370,7 @@ restart_1:
 
     prompts3d[++k] = "Preview Mode?";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = preview;
+    uvalues[k].uval.ch.val = preview ? 1 : 0;
 
     prompts3d[++k] = "    Show Box?";
     uvalues[k].type = 'y';
@@ -2425,7 +2425,7 @@ restart_1:
     }
 
     k=0;
-    preview = (char)uvalues[k++].uval.ch.val;
+    preview = uvalues[k++].uval.ch.val != 0;
     showbox = uvalues[k++].uval.ch.val != 0;
     previewfactor  = uvalues[k++].uval.ival;
     sphere = uvalues[k++].uval.ch.val;

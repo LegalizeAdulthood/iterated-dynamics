@@ -379,7 +379,7 @@ extern unsigned              posp;
 extern bool                  pot16bit;
 extern bool                  potflag;
 extern double                potparam[];
-extern char                  preview;
+extern bool                  preview;
 extern int                   previewfactor;
 extern int                   px;
 extern int                   py;

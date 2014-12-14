@@ -523,7 +523,7 @@ static void initvars_3d()               /* init vars affecting 3d */
     RAY     = 0;
     BRIEF   = false;
     SPHERE = FALSE;
-    preview = 0;
+    preview = false;
     showbox = false;
     xadjust = 0;
     yadjust = 0;
@@ -2838,7 +2838,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
     if (strcmp(variable, "preview") == 0) {       /* preview? */
         if (yesnoval[0] < 0)
             goto badarg;
-        preview = (char)yesnoval[0];
+        preview = yesnoval[0] != 0;
         return 2;
     }
 
