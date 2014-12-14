@@ -1412,7 +1412,8 @@ static void plotdorbit(double dx, double dy, int color)
         return;
     save_sxoffs = sxoffs;
     save_syoffs = syoffs;
-    sxoffs = syoffs = 0;
+    syoffs = 0;
+    sxoffs = syoffs;
     /* save orbit value */
     if (color == -1)
     {
@@ -1469,7 +1470,8 @@ void scrub_orbit()
     driver_mute();
     save_sxoffs = sxoffs;
     save_syoffs = syoffs;
-    sxoffs = syoffs = 0;
+    syoffs = 0;
+    sxoffs = syoffs;
     while (orbit_ptr >= 3)
     {
         c = *(save_orbit + --orbit_ptr);
