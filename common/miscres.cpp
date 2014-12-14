@@ -407,7 +407,8 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
     xmax =  w - h*tanskew;
     x3rd = -w - h*tanskew;
     ymax = h;
-    y3rd = ymin = -h;
+    ymin = -h;
+    y3rd = ymin;
 
     /* rotate coord system and then translate it */
     Rotation = deg_to_rad(Rotation);
