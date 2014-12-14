@@ -200,7 +200,8 @@ over_bailout_87:
     {
         oldcoloriter = 0;
     }
-    coloriter = realcoloriter = maxit-cx;
+    realcoloriter = maxit-cx;
+    coloriter = realcoloriter;
     if (coloriter == 0)
     {
         coloriter = 1;
