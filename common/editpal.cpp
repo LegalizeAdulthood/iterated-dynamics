@@ -1572,7 +1572,7 @@ struct  _PalTable
     PALENTRY      fs_color;
     int           top,bottom; /* top and bottom colours of freestyle band */
     int           bandwidth; /*size of freestyle colour band */
-    BOOLEAN       freestyle;
+    bool freestyle;
 } ;
 
 #define PalTable struct _PalTable
@@ -2864,7 +2864,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
     case 'F':
     case 'f':    /* toggle freestyle palette edit mode */
-        me->freestyle= (BOOLEAN)((me->freestyle) ? FALSE :TRUE);
+        me->freestyle= !me->freestyle;
 
         PalTable__SetCurr(me, -1, 0);
 
@@ -3020,7 +3020,7 @@ static PalTable *PalTable_Construct()
     me->fs_color.red   = 42;
     me->fs_color.green = 42;
     me->fs_color.blue  = 42;
-    me->freestyle      = FALSE;
+    me->freestyle      = false;
     me->bandwidth      = 15;
     me->top            = 255;
     me->bottom         = 0 ;
