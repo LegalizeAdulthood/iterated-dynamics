@@ -40,20 +40,20 @@ int targa_color(int, int, int);
 bool targa_validate(char *file_name);
 static int first_time(int, VECTOR);
 static int H_R(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned long);
-static int line3dmem(void);
+static int line3dmem();
 static int R_H(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
 static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
 bool startdisk1(char *File_Name2, FILE *Source, bool overlay);
-static void set_upr_lwr(void);
+static void set_upr_lwr();
 static int end_object(bool triout);
 static int offscreen(struct point);
 static int out_triangle(struct f_point, struct f_point, struct f_point, int, int, int);
-static int RAY_Header(void);
-static int start_object(void);
+static int RAY_Header();
+static int start_object();
 static void draw_light_box(double *, double *, MATRIX);
 static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, bool rect);
 static void File_Error(char *, int);
-static void line3d_cleanup(void);
+static void line3d_cleanup();
 static void clipcolor(int, int, int);
 static void interpcolor(int, int, int);
 static void putatriangle(struct point, struct point, struct point, int);
@@ -1644,7 +1644,7 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
 /*                                                                  */
 /********************************************************************/
 
-static int RAY_Header(void)
+static int RAY_Header()
 {
     /* Open the ray tracing output file */
     check_writefile(ray_name, ".ray");
@@ -1880,7 +1880,7 @@ static void triangle_bounds(float pt_t[3][3])
 /*                                                                  */
 /********************************************************************/
 
-static int start_object(void)
+static int start_object()
 {
     if (RAY != 1)
         return 0;
@@ -1946,7 +1946,7 @@ static int end_object(bool triout)
     return 0;
 }
 
-static void line3d_cleanup(void)
+static void line3d_cleanup()
 {
     if (RAY && File_Ptr1)
     {   /* Finish up the ray tracing files */
@@ -2000,7 +2000,7 @@ static void line3d_cleanup(void)
     T_Safe = false;
 }
 
-static void set_upr_lwr(void)
+static void set_upr_lwr()
 {
     upr_lwr[0] = (BYTE)(xdots & 0xff);
     upr_lwr[1] = (BYTE)(xdots >> 8);
@@ -2387,7 +2387,7 @@ static int first_time(int linelen, VECTOR v)
     return 0;
 } /* end of once-per-image intializations */
 
-static int line3dmem(void)
+static int line3dmem()
 {
     /*********************************************************************/
     /*  Memory allocation - assumptions - a 64K segment starting at      */
