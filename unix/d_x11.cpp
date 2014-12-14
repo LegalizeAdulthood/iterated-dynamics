@@ -98,7 +98,7 @@ struct DriverX11
      * The pixtab stuff is so we can map from fractint pixel values 0-n to
      * the actual color table entries which may be anything.
      */
-    int usepixtab;              /* = 0; */
+    bool usepixtab;             /* = false; */
     unsigned long pixtab[256];
     int ipixtab[256];
     XPixel cmap_pixtab[256];    /* for faking a LUTs on non-LUT visuals */
@@ -543,7 +543,7 @@ xcmapstuff(DriverX11 *di)
             if (XAllocColorCells(di->Xdp, di->Xcmap, False, nullptr, 0, di->pixtab,
                                  (unsigned int) ncells)) {
                 colors = ncells;
-                di->usepixtab = 1;
+                di->usepixtab = true;
                 break;
             }
         }
@@ -575,7 +575,7 @@ xcmapstuff(DriverX11 *di)
     if (!g_got_real_dac && colors == 2 && BlackPixelOfScreen(di->Xsc) != 0) {
         di->pixtab[0] = di->ipixtab[0] = 1;
         di->pixtab[1] = di->ipixtab[1] = 0;
-        di->usepixtab = 1;
+        di->usepixtab = true;
     }
 
     return colors;
@@ -2547,7 +2547,7 @@ static DriverX11 x11_driver_info = {
     "",                   /* Xdisplay */
     nullptr,              /* Xgeometry */
     0,                    /* doesBacking */
-    0,                    /* usepixtab */
+    false,                /* usepixtab */
     { 0L },               /* pixtab */
     { 0 },                /* ipixtab */
     { 0L },               /* cmap_pixtab */
