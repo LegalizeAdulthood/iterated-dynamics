@@ -78,7 +78,7 @@ static FILE *fpss = nullptr;
 static long starttick;
 static long ticks;
 static int slowcount;
-static unsigned int quotes;
+static bool quotes = false;
 static char calcwait = 0;
 static int repeats = 0;
 static int last1 = 0;
@@ -157,7 +157,7 @@ start:
     {
         if ((out=fgetc(fpss)) != '\"' && out != EOF)
             return (last1 = out);
-        quotes = 0;
+        quotes = false;
     }
     /* skip white space: */
     while ((out=fgetc(fpss)) == ' ' || out == '\t' || out == '\n') { }
@@ -167,7 +167,7 @@ start:
         stopslideshow();
         return (0);
     case '\"':        /* begin quoted string */
-        quotes = 1;
+        quotes = true;
         goto start;
     case ';':         /* comment from here to end of line, skip it */
         while ((out=fgetc(fpss)) != '\n' && out != EOF) { }
@@ -284,7 +284,7 @@ startslideshow()
     if (fpss==nullptr)
         g_slides = SLIDES_OFF;
     ticks = 0;
-    quotes = 0;
+    quotes = false;
     calcwait = 0;
     slowcount = 0;
     return (g_slides);
@@ -316,7 +316,7 @@ void recordshw(int key)
     {
         if (quotes) /* close quotes first */
         {
-            quotes=0;
+            quotes = false;
             fprintf(fpss,"\"\n");
         }
         fprintf(fpss,"WAIT %4.1f\n",dt);
@@ -325,7 +325,7 @@ void recordshw(int key)
     {
         if (!quotes)
         {
-            quotes=1;
+            quotes = true;
             fputc('\"',fpss);
         }
         fputc(key,fpss);
@@ -335,7 +335,7 @@ void recordshw(int key)
         if (quotes) /* not an ASCII character - turn off quotes */
         {
             fprintf(fpss,"\"\n");
-            quotes=0;
+            quotes = false;
         }
         get_mnemonic(key,mn);
         if (*mn)
