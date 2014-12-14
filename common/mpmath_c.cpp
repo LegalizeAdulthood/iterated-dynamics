@@ -158,7 +158,7 @@ struct MP  *(*pMPsub)(struct MP x, struct MP y)= MPsub086;
 struct MP  *(*pd2MP)(double x)                 = d2MP086 ;
 double *(*pMP2d)(struct MP m)                  = MP2d086 ;
 
-void setMPfunctions(void) {
+void setMPfunctions() {
     pMPmul = MPmul386;
     pMPdiv = MPdiv386;
     pMPadd = MPadd386;
@@ -430,7 +430,7 @@ static unsigned long lf;
    LogFlag < -1  -- use quadratic palettes based on square roots && compress
 */
 
-void SetupLogTable(void) {
+void SetupLogTable() {
     float l, f, c, m;
     unsigned long limit;
 
@@ -558,7 +558,7 @@ double TwoPi;
 DComplex temp, BaseLog;
 DComplex cdegree = { 3.0, 0.0 }, croot   = { 1.0, 0.0 };
 
-bool ComplexNewtonSetup(void)
+bool ComplexNewtonSetup()
 {
     threshold = .001;
     periodicitycheck = 0;
@@ -574,7 +574,7 @@ bool ComplexNewtonSetup(void)
     return true;
 }
 
-int ComplexNewton(void) {
+int ComplexNewton() {
     DComplex cd1;
 
     /* new = ((cdegree-1) * old**cdegree) + croot
@@ -606,7 +606,7 @@ int ComplexNewton(void) {
     return (0);
 }
 
-int ComplexBasin(void)
+int ComplexBasin()
 {
     DComplex cd1;
 
