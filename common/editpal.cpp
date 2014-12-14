@@ -84,7 +84,7 @@ BYTE     *line_buff;   /* must be alloced!!! */
 static BYTE       fg_color,
        bg_color;
 static bool reserve_colors = false;
-static BOOLEAN            inverse;
+static bool inverse = false;
 
 static float    gamma_val = 1;
 
@@ -2747,7 +2747,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
     case 'I':     /* invert the fg & bg colors */
     case 'i':
-        inverse = (BOOLEAN)!inverse;
+        inverse = !inverse;
         PalTable__UpdateDAC(me);
         break;
 
@@ -3210,7 +3210,7 @@ void EditPalette()       /* called by fractint */
     sxoffs = syoffs = 0;
 
     reserve_colors = true;
-    inverse = FALSE;
+    inverse = false;
     fg_color = (BYTE)(255%colors);
     bg_color = (BYTE)(fg_color-1);
 
