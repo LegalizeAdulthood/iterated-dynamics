@@ -427,7 +427,9 @@ static void set_palette(BYTE start[3], BYTE finish[3])
 
 static void set_palette2(BYTE start[3], BYTE finish[3])
 {
-    g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
+    g_dac_box[0][2] = 0;
+    g_dac_box[0][1] = g_dac_box[0][2];
+    g_dac_box[0][0] = g_dac_box[0][1];
     for (int i = 1; i <= 128; i++)
         for (int j = 0; j < 3; j++) {
             g_dac_box[i][j]     = (BYTE)((i*finish[j] + (128-i)*start[j])/128);
