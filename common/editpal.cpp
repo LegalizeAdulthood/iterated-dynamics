@@ -696,10 +696,12 @@ struct _MoveBox
     int      base_width,
              base_depth;
     int      csize;
-    BOOLEAN  moved;
+    bool moved;
     BOOLEAN  should_hide;
-    char    *t, *b,
-            *l, *r;
+    char    *t;
+    char    *b;
+    char    *l;
+    char    *r;
 } ;
 
 #define MoveBox struct _MoveBox
@@ -716,7 +718,7 @@ static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width,
                                   int base_depth);
 static void     MoveBox_Destroy(MoveBox *me);
 static BOOLEAN  MoveBox_Process(MoveBox *me);     /* returns FALSE if ESCAPED */
-static BOOLEAN  MoveBox_Moved(MoveBox *me);
+static bool MoveBox_Moved(MoveBox *me);
 static BOOLEAN  MoveBox_ShouldHide(MoveBox *me);
 static int      MoveBox_X(MoveBox *me);
 static int      MoveBox_Y(MoveBox *me);
@@ -736,7 +738,7 @@ static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int b
     me->csize       = csize;
     me->base_width  = base_width;
     me->base_depth  = base_depth;
-    me->moved       = FALSE;
+    me->moved       = false;
     me->should_hide = FALSE;
     me->t           = static_cast<char *>(newx(sxdots));
     me->b           = static_cast<char *>(newx(sxdots));
@@ -757,7 +759,7 @@ static void MoveBox_Destroy(MoveBox *me)
 }
 
 
-static BOOLEAN MoveBox_Moved(MoveBox *me) {
+static bool MoveBox_Moved(MoveBox *me) {
     return me->moved;
 }
 
@@ -923,9 +925,9 @@ static BOOLEAN MoveBox_Process(MoveBox *me)
         if (key==FIK_ENTER || key==FIK_ENTER_2 || key==FIK_ESC || key=='H' || key=='h')
         {
             if (me->x != orig_x || me->y != orig_y || me->csize != orig_csize)
-                me->moved = TRUE;
+                me->moved = true;
             else
-                me->moved = FALSE;
+                me->moved = false;
             break;
         }
 
