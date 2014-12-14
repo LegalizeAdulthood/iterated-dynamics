@@ -1449,19 +1449,19 @@ void read_src(char *fname)
 
         if (ch == '~')   /* is is a command? */
         {
-            int imbedded;
+            bool imbedded;
             int eoff;
             int done;
 
             ch = read_char();
             if (ch == '(')
             {
-                imbedded = 1;
+                imbedded = true;
                 eoff = 0;
             }
             else
             {
-                imbedded = 0;
+                imbedded = false;
                 eoff=0;
                 unread_char(ch);
             }
