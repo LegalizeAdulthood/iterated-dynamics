@@ -1556,7 +1556,7 @@ struct  _PalTable
     MoveBox      *movebox;
     bool done;
     int exclude;
-    BOOLEAN       auto_select;
+    bool auto_select;
     PALENTRY      pal[256];
     FILE         *undo_file;
     BOOLEAN       curr_changed;
@@ -2652,7 +2652,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     break;
     case 'A':   /* toggle auto-select mode */
     case 'a':
-        me->auto_select = (BOOLEAN)((me->auto_select) ? FALSE : TRUE);
+        me->auto_select = !me->auto_select;
         if (me->auto_select)
         {
             PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
@@ -3010,7 +3010,7 @@ static PalTable *PalTable_Construct()
     me->active      = 0;
     me->curr[0]     = 1;
     me->curr[1]     = 1;
-    me->auto_select = TRUE;
+    me->auto_select = true;
     me->exclude     = 0;
     me->hidden      = FALSE;
     me->stored_at   = NOWHERE;
