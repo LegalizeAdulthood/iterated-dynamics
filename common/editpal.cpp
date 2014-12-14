@@ -1018,7 +1018,7 @@ struct _CEditor
     char      letter;
     int       val;
     bool done;
-    BOOLEAN   hidden;
+    bool hidden;
     void (*other_key)(int key, struct _CEditor *ce, void *info);
     void (*change)(struct _CEditor *ce, void *info);
     void     *info;
@@ -1038,7 +1038,7 @@ static void CEditor_SetPos(CEditor *me, int x, int y);
 static void CEditor_SetVal(CEditor *me, int val);
 static int  CEditor_GetVal(CEditor *me);
 static void CEditor_SetDone(CEditor *me, bool done);
-static void CEditor_SetHidden(CEditor *me, BOOLEAN hidden);
+static void CEditor_SetHidden(CEditor *me, bool hidden);
 static int  CEditor_Edit(CEditor *me);
 
 #define CEditor_WIDTH (8*3+4)
@@ -1057,7 +1057,7 @@ static CEditor *CEditor_Construct(int x, int y, char letter,
     me->letter    = letter;
     me->val       = 0;
     me->other_key = other_key;
-    me->hidden    = FALSE;
+    me->hidden    = false;
     me->change    = change;
     me->info      = info;
 
@@ -1106,7 +1106,7 @@ static void CEditor_SetDone(CEditor *me, bool done)
 }
 
 
-static void CEditor_SetHidden(CEditor *me, BOOLEAN hidden)
+static void CEditor_SetHidden(CEditor *me, bool hidden)
 {
     me->hidden = hidden;
 }
@@ -1267,7 +1267,7 @@ static RGBEditor *RGBEditor_Construct(int x, int y,
 static void     RGBEditor_Destroy(RGBEditor *me);
 static void     RGBEditor_SetPos(RGBEditor *me, int x, int y);
 static void     RGBEditor_SetDone(RGBEditor *me, BOOLEAN done);
-static void     RGBEditor_SetHidden(RGBEditor *me, BOOLEAN hidden);
+static void     RGBEditor_SetHidden(RGBEditor *me, bool hidden);
 static void     RGBEditor_BlankSampleBox(RGBEditor *me);
 static void     RGBEditor_Update(RGBEditor *me);
 static void     RGBEditor_Draw(RGBEditor *me);
@@ -1320,7 +1320,7 @@ static void RGBEditor_SetDone(RGBEditor *me, BOOLEAN done)
 }
 
 
-static void RGBEditor_SetHidden(RGBEditor *me, BOOLEAN hidden)
+static void RGBEditor_SetHidden(RGBEditor *me, bool hidden)
 {
     me->hidden = hidden;
     CEditor_SetHidden(me->color[0], hidden);
@@ -1605,7 +1605,7 @@ static void    PalTable__change(RGBEditor *rgb, void *info);
 static PalTable *PalTable_Construct();
 static void      PalTable_Destroy(PalTable *me);
 static void      PalTable_Process(PalTable *me);
-static void      PalTable_SetHidden(PalTable *me, BOOLEAN hidden);
+static void      PalTable_SetHidden(PalTable *me, bool hidden);
 static void      PalTable_Hide(PalTable *me, RGBEditor *rgb, BOOLEAN hidden);
 
 
@@ -2399,7 +2399,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         if (MoveBox_Process(me->movebox))
         {
             if (MoveBox_ShouldHide(me->movebox))
-                PalTable_SetHidden(me, TRUE);
+                PalTable_SetHidden(me, true);
             else if (MoveBox_Moved(me->movebox))
             {
                 PalTable__SetPos(me, MoveBox_X(me->movebox), MoveBox_Y(me->movebox));
@@ -2691,8 +2691,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         {
             RGBEditor_BlankSampleBox(me->rgb[0]);
             RGBEditor_BlankSampleBox(me->rgb[1]);
-            RGBEditor_SetHidden(me->rgb[0], TRUE);
-            RGBEditor_SetHidden(me->rgb[1], TRUE);
+            RGBEditor_SetHidden(me->rgb[0], true);
+            RGBEditor_SetHidden(me->rgb[1], true);
         }
 
         do
@@ -2713,8 +2713,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         if (!me->hidden)
         {
-            RGBEditor_SetHidden(me->rgb[0], FALSE);
-            RGBEditor_SetHidden(me->rgb[1], FALSE);
+            RGBEditor_SetHidden(me->rgb[0], false);
+            RGBEditor_SetHidden(me->rgb[1], false);
             RGBEditor_Update(me->rgb[0]);
             RGBEditor_Update(me->rgb[1]);
         }
@@ -3051,7 +3051,7 @@ static PalTable *PalTable_Construct()
 }
 
 
-static void PalTable_SetHidden(PalTable *me, BOOLEAN hidden)
+static void PalTable_SetHidden(PalTable *me, bool hidden)
 {
     me->hidden = hidden;
     RGBEditor_SetHidden(me->rgb[0], hidden);
@@ -3066,14 +3066,14 @@ static void PalTable_Hide(PalTable *me, RGBEditor *rgb, BOOLEAN hidden)
     if (hidden)
     {
         PalTable__RestoreRect(me);
-        PalTable_SetHidden(me, TRUE);
+        PalTable_SetHidden(me, true);
         reserve_colors = false;
         if (me->auto_select)
             PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
     }
     else
     {
-        PalTable_SetHidden(me, FALSE);
+        PalTable_SetHidden(me, false);
         reserve_colors = true;
         if (me->stored_at == NOWHERE)  /* do we need to save screen? */
             PalTable__SaveRect(me);
@@ -3139,7 +3139,7 @@ static void PalTable_Process(PalTable *me)
 
         if (MoveBox_ShouldHide(me->movebox))
         {
-            PalTable_SetHidden(me, TRUE);
+            PalTable_SetHidden(me, true);
             reserve_colors = false;
         }
         else
