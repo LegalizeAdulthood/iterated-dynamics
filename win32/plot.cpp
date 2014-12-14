@@ -309,8 +309,7 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
 static void
 init_clut(BYTE clut[256][3])
 {
-    int i;
-    for (i=0; i < 256; i++)
+    for (int i = 0; i < 256; i++)
     {
         clut[i][0] = (i >> 5)*8+7;
         clut[i][1] = (((i+16) & 28) >> 2)*8+7;
@@ -421,10 +420,9 @@ int plot_read_pixel(Plot *me, int x, int y)
 
 void plot_write_span(Plot *me, int y, int x, int lastx, const BYTE *pixels)
 {
-    int i;
     int width = lastx-x+1;
 
-    for (i = 0; i < width; i++)
+    for (int i = 0; i < width; i++)
     {
         plot_write_pixel(me, x+i, y, pixels[i]);
     }
@@ -444,11 +442,9 @@ void plot_flush(Plot *me)
 
 void plot_read_span(Plot *me, int y, int x, int lastx, BYTE *pixels)
 {
-    int i, width;
-
     plot_flush(me);
-    width = lastx - x + 1;
-    for (i = 0; i < width; i++)
+    int width = lastx - x + 1;
+    for (int i = 0; i < width; i++)
     {
         pixels[i] = plot_read_pixel(me, x + i, y);
     }
@@ -481,14 +477,12 @@ int plot_resize(Plot *me)
 
 int plot_read_palette(Plot *me)
 {
-    int i;
-
     if (!g_got_real_dac)
     {
         return -1;
     }
 
-    for (i = 0; i < 256; i++)
+    for (int i = 0; i < 256; i++)
     {
         g_dac_box[i][0] = me->clut[i][0];
         g_dac_box[i][1] = me->clut[i][1];
@@ -499,9 +493,7 @@ int plot_read_palette(Plot *me)
 
 int plot_write_palette(Plot *me)
 {
-    int i;
-
-    for (i = 0; i < 256; i++)
+    for (int i = 0; i < 256; i++)
     {
         me->clut[i][0] = g_dac_box[i][0];
         me->clut[i][1] = g_dac_box[i][1];
@@ -549,8 +541,7 @@ void plot_display_string(Plot *me, int x, int y, int fg, int bg, const char *tex
 {
     while (*text)
     {
-        int row;
-        for (row = 0; row < 8; row++)
+        for (int row = 0; row < 8; row++)
         {
             int x1 = x;
             int col = 8;

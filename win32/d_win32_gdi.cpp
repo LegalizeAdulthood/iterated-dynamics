@@ -310,32 +310,26 @@ gdi_init(Driver *drv, int *argc, char **argv)
     plot_init(&di->plot, g_instance, "Plot");
 
     /* filter out driver arguments */
+    for (int i = 0; i < *argc; i++)
     {
-        int i;
-
-        for (i = 0; i < *argc; i++)
+        if (check_arg(di, argv[i]))
         {
-            if (check_arg(di, argv[i]))
+            int j;
+            for (j = i; j < *argc-1; j++)
             {
-                int j;
-                for (j = i; j < *argc-1; j++)
-                {
-                    argv[j] = argv[j+1];
-                }
-                argv[j] = nullptr;
-                --*argc;
+                argv[j] = argv[j+1];
             }
+            argv[j] = nullptr;
+            --*argc;
         }
     }
 
     /* add default list of video modes */
     {
         int width, height;
-        int m;
-
         gdi_get_max_screen(drv, &width, &height);
 
-        for (m = 0; m < NUM_OF(modes); m++)
+        for (int m = 0; m < NUM_OF(modes); m++)
         {
             if ((modes[m].xdots <= width) &&
                     (modes[m].ydots <= height))

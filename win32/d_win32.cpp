@@ -145,15 +145,12 @@ win32_terminate(Driver *drv)
 
     /* plot_terminate(&di->plot); */
     wintext_destroy(&di->wintext);
+    for (int i = 0; i < NUM_OF(di->saved_screens); i++)
     {
-        int i;
-        for (i = 0; i < NUM_OF(di->saved_screens); i++)
+        if (nullptr != di->saved_screens[i])
         {
-            if (nullptr != di->saved_screens[i])
-            {
-                free(di->saved_screens[i]);
-                di->saved_screens[i] = nullptr;
-            }
+            free(di->saved_screens[i]);
+            di->saved_screens[i] = nullptr;
         }
     }
 }

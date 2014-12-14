@@ -206,14 +206,11 @@ static fractint_event keyboard_event(int key)
         '+',        FE_ROTATE_PALETTE_UP
     };
     key = tolower(key);
+    for (int i = 0; i < NUM_OF(mapping); i++)
     {
-        int i;
-        for (i = 0; i < NUM_OF(mapping); i++)
+        if (mapping[i].key == key)
         {
-            if (mapping[i].key == key)
-            {
-                return mapping[i].event;
-            }
+            return mapping[i].event;
         }
     }
 
@@ -259,7 +256,7 @@ find_special_colors(void)
     if (!(g_got_real_dac || fake_lut))
         return;
 
-    for (i = 0; i < colors; i++)
+    for (int i = 0; i < colors; i++)
     {
         brt = (int) g_dac_box[i][0] + (int) g_dac_box[i][1] + (int) g_dac_box[i][2];
         if (brt > maxb)
@@ -760,10 +757,9 @@ void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 */
 void normaline(int y, int x, int lastx, BYTE *pixels)
 {
-    int i, width;
-    width = lastx - x + 1;
+    int width = lastx - x + 1;
     _ASSERTE(dotwrite);
-    for (i = 0; i < width; i++)
+    for (int i = 0; i < width; i++)
     {
         (*dotwrite)(x + i, y, pixels[i]);
     }
@@ -771,10 +767,9 @@ void normaline(int y, int x, int lastx, BYTE *pixels)
 
 void normalineread(int y, int x, int lastx, BYTE *pixels)
 {
-    int i, width;
-    width = lastx - x + 1;
+    int width = lastx - x + 1;
     _ASSERTE(dotread);
-    for (i = 0; i < width; i++)
+    for (int i = 0; i < width; i++)
     {
         pixels[i] = (*dotread)(x + i, y);
     }

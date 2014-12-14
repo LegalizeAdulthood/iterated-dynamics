@@ -184,7 +184,6 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
     HDC hDC;
     HFONT hOldFont;
     TEXTMETRIC TextMetric;
-    int i, j;
     WNDCLASS  wc;
 
     ODS("wintext_initialize");
@@ -228,16 +227,16 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
     me->max_height = me->char_ychars*me->char_height;
 
     /* set up the font and caret information */
-    for (i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
         size_t count = NUM_OF(me->cursor_pattern[0])*sizeof(me->cursor_pattern[0][0]);
         memset(&me->cursor_pattern[i][0], 0, count);
     }
-    for (j = me->char_height-2; j < me->char_height; j++)
+    for (int j = me->char_height-2; j < me->char_height; j++)
     {
         me->cursor_pattern[1][j] = 0x00ff;
     }
-    for (j = 0; j < me->char_height; j++)
+    for (int j = 0; j < me->char_height; j++)
     {
         me->cursor_pattern[2][j] = 0x00ff;
     }
@@ -256,8 +255,6 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
 */
 void wintext_destroy(WinText *me)
 {
-    int i;
-
     ODS("wintext_destroy");
 
     if (me->textmode == 2)  /* text is still active! */
@@ -269,7 +266,7 @@ void wintext_destroy(WinText *me)
         return;
     }
 
-    for (i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
         DeleteObject((HANDLE) me->bitmap[i]);
     }
@@ -475,7 +472,7 @@ LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 void wintext_putstring(WinText *me, int xpos, int ypos, int attrib, const char *string, int *end_row, int *end_col)
 {
-    int i, j, k, maxrow, maxcol;
+    int j, k, maxrow, maxcol;
     char xc, xa;
 
     ODS("wintext_putstring");
@@ -484,6 +481,7 @@ void wintext_putstring(WinText *me, int xpos, int ypos, int attrib, const char *
     j = maxrow = ypos;
     k = maxcol = xpos-1;
 
+    int i;
     for (i = 0; (xc = string[i]) != 0; i++)
     {
         if (xc == 13 || xc == 10)
@@ -514,16 +512,13 @@ void wintext_putstring(WinText *me, int xpos, int ypos, int attrib, const char *
 
 void wintext_scroll_up(WinText *me, int top, int bot)
 {
-    int row;
-    for (row = top; row < bot; row++)
+    for (int row = top; row < bot; row++)
     {
         char *chars = &me->chars[row][0];
         unsigned char *attrs = &me->attrs[row][0];
         char *next_chars = &me->chars[row+1][0];
         unsigned char *next_attrs = &me->attrs[row+1][0];
-        int col;
-
-        for (col = 0; col < WINTEXT_MAX_COL; col++)
+        for (int col = 0; col < WINTEXT_MAX_COL; col++)
         {
             *chars++ = *next_chars++;
             *attrs++ = *next_attrs++;
@@ -544,7 +539,6 @@ void wintext_paintscreen(WinText *me,
                          int ymin,
                          int ymax)
 {
-    int i, j, k;
     int istart, jstart, length, foreground, background;
     unsigned char oldbk;
     unsigned char oldfg;
@@ -561,11 +555,11 @@ void wintext_paintscreen(WinText *me,
         me->buffer_init = 1;
         oldbk = 0x00;
         oldfg = 0x0f;
-        k = (oldbk << 4) + oldfg;
+        int k = (oldbk << 4) + oldfg;
         me->buffer_init = 1;
-        for (i = 0; i < me->char_xchars; i++)
+        for (int i = 0; i < me->char_xchars; i++)
         {
-            for (j = 0; j < me->char_ychars; j++)
+            for (int j = 0; j < me->char_ychars; j++)
             {
                 me->chars[j][i] = ' ';
                 me->attrs[j][i] = k;
@@ -573,10 +567,14 @@ void wintext_paintscreen(WinText *me,
         }
     }
 
-    if (xmin < 0) xmin = 0;
-    if (xmax >= me->char_xchars) xmax = me->char_xchars-1;
-    if (ymin < 0) ymin = 0;
-    if (ymax >= me->char_ychars) ymax = me->char_ychars-1;
+    if (xmin < 0)
+        xmin = 0;
+    if (xmax >= me->char_xchars)
+        xmax = me->char_xchars-1;
+    if (ymin < 0)
+        ymin = 0;
+    if (ymax >= me->char_ychars)
+        ymax = me->char_ychars-1;
 
     hDC=GetDC(me->hWndCopy);
     SelectObject(hDC, me->hFont);
@@ -584,7 +582,6 @@ void wintext_paintscreen(WinText *me,
     SetTextAlign(hDC, TA_LEFT | TA_TOP);
 
     if (TRUE == me->showing_cursor)
-        //if (me->cursor_owned != 0)
     {
         ODS1("======================== Hide Caret %d", --carrot_count);
         HideCaret(me->hWndCopy);
@@ -596,14 +593,14 @@ void wintext_paintscreen(WinText *me,
     'strings' of screen locations with common foreground
     and background colors
     */
-    for (j = ymin; j <= ymax; j++)
+    for (int j = ymin; j <= ymax; j++)
     {
         length = 0;
         oldbk = 99;
         oldfg = 99;
-        for (i = xmin; i <= xmax+1; i++)
+        for (int i = xmin; i <= xmax+1; i++)
         {
-            k = -1;
+            int k = -1;
             if (i <= xmax)
             {
                 k = me->attrs[j][i];
@@ -633,7 +630,6 @@ void wintext_paintscreen(WinText *me,
     }
 
     if (TRUE == me->showing_cursor)
-        //if (me->cursor_owned != 0)
     {
         ODS1("======================== Show Caret %d", ++carrot_count);
         ShowCaret(me->hWndCopy);
@@ -684,11 +680,10 @@ void wintext_cursor(WinText *me, int xpos, int ypos, int cursor_type)
 
 void wintext_set_attr(WinText *me, int row, int col, int attr, int count)
 {
-    int i;
     int xmin, xmax, ymin, ymax;
     xmin = xmax = col;
     ymin = ymax = row;
-    for (i = 0; i < count; i++)
+    for (int i = 0; i < count; i++)
     {
         me->attrs[row][col+i] = (unsigned char)(attr & 0xFF);
     }
@@ -707,8 +702,7 @@ void wintext_set_attr(WinText *me, int row, int col, int attr, int count)
 
 void wintext_clear(WinText *me)
 {
-    int y;
-    for (y = 0; y < WINTEXT_MAX_ROW; y++)
+    for (int y = 0; y < WINTEXT_MAX_ROW; y++)
     {
         memset(&me->chars[y][0], ' ', (size_t) WINTEXT_MAX_COL);
         memset(&me->attrs[y][0], 0xf0, (size_t) WINTEXT_MAX_COL);

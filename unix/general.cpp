@@ -271,7 +271,6 @@ decode_fractal_info(struct fractal_info *info, int dir)
     std::vector<unsigned char> info_buff;
     unsigned char *buf;
     unsigned char *bufPtr;
-    int i;
 
     if (dir==1) {
         info_buff.resize(FRACTAL_INFO_SIZE);
@@ -328,7 +327,7 @@ decode_fractal_info(struct fractal_info *info, int dir)
     getInt(&info->decomp[0],&bufPtr,dir);
     getInt(&info->decomp[1],&bufPtr,dir);
     getInt(&info->symmetry,&bufPtr,dir);
-    for (i=0; i<16; i++) {
+    for (int i = 0; i < 16; i++) {
         getInt(&info->init3d[i],&bufPtr,dir);
     }
     getInt(&info->previewfactor,&bufPtr,dir);
@@ -358,7 +357,7 @@ decode_fractal_info(struct fractal_info *info, int dir)
     getInt(&info->floatflag,&bufPtr,dir);
     getInt(&info->bailoutold,&bufPtr,dir);
     getLong(&info->calctime,&bufPtr,dir);
-    for (i=0; i<4; i++) {
+    for (int i = 0; i < 4; i++) {
         getChar(&info->trigndx[i],&bufPtr,dir);
     }
     getInt(&info->finattract,&bufPtr,dir);
@@ -424,7 +423,7 @@ decode_fractal_info(struct fractal_info *info, int dir)
     getDouble(&info->math_tol[0],&bufPtr,dir);
     getDouble(&info->math_tol[1],&bufPtr,dir);
 
-    for (i=0; i<(sizeof(info->future)/sizeof(short)); i++) {
+    for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++) {
         getInt(&info->future[i],&bufPtr,dir);
     }
     if (bufPtr-buf != FRACTAL_INFO_SIZE) {
@@ -510,8 +509,9 @@ static void getDouble(double *dst, unsigned char **src, int dir)
     double f;
     if (dir==1) {
         int i;
-        for (i=0; i<8; i++) {
-            if ((*src)[i] != 0) break;
+        for (i = 0; i < 8; i++) {
+            if ((*src)[i] != 0)
+                break;
         }
         if (i==8) {
             *dst = 0;
@@ -575,8 +575,9 @@ static void getFloat(float *dst, unsigned char **src, int dir)
     double f;
     if (dir==1) {
         int i;
-        for (i=0; i<4; i++) {
-            if ((*src)[i] != 0) break;
+        for (i = 0; i < 4; i++) {
+            if ((*src)[i] != 0)
+                break;
         }
         if (i==4) {
             *dst = 0;
@@ -630,7 +631,6 @@ fix_ranges(int *ranges, int num, int dir)
     std::vector<unsigned char> ranges_buff;
     unsigned char *buf;
     unsigned char *bufPtr;
-    int i;
 
     if (dir==1) {
         ranges_buff.resize(num*2);
@@ -643,7 +643,7 @@ fix_ranges(int *ranges, int num, int dir)
         bufPtr = buf;
         bcopy((char *)ranges, (char *)buf, num*sizeof(int));
     }
-    for (i=0; i<num; i++) {
+    for (int i = 0; i < num; i++) {
         short dest = 0;
         getInt(&dest,&bufPtr,dir);
         ranges[i] = dest;
@@ -656,7 +656,6 @@ decode_evolver_info(struct evolution_info *info, int dir)
     std::vector<unsigned char> evolution_info_buff;
     unsigned char *buf;
     unsigned char *bufPtr;
-    int i;
 
     if (dir==1) {
         evolution_info_buff.resize(EVOLVER_INFO_SIZE);
@@ -686,12 +685,12 @@ decode_evolver_info(struct evolution_info *info, int dir)
     getInt(&info->syoffs,&bufPtr,dir);
     getInt(&info->xdots,&bufPtr,dir);
     getInt(&info->ydots,&bufPtr,dir);
-    for (i=0; i<NUMGENES; i++) {
+    for (int i = 0; i < NUMGENES; i++) {
         getInt(&info->mutate[i],&bufPtr,dir);
     }
     getInt(&info->ecount,&bufPtr,dir);
 
-    for (i=0; i<(sizeof(info->future)/sizeof(short)); i++) {
+    for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++) {
         getInt(&info->future[i],&bufPtr,dir);
     }
     if (bufPtr-buf != EVOLVER_INFO_SIZE) {
@@ -710,7 +709,6 @@ decode_orbits_info(struct orbits_info *info, int dir)
     std::vector<unsigned char> orbits_info_buff;
     unsigned char *buf;
     unsigned char *bufPtr;
-    int i;
 
     if (dir==1) {
         orbits_info_buff.resize(ORBITS_INFO_SIZE);
@@ -734,7 +732,7 @@ decode_orbits_info(struct orbits_info *info, int dir)
     getChar((unsigned char *) &info->drawmode,&bufPtr,dir);
     getChar((unsigned char *) &info->dummy,&bufPtr,dir);
 
-    for (i=0; i<(sizeof(info->future)/sizeof(short)); i++) {
+    for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++) {
         getInt(&info->future[i],&bufPtr,dir);
     }
     if (bufPtr-buf != ORBITS_INFO_SIZE) {

@@ -131,7 +131,7 @@ int _find_token_length(char *curr, unsigned len, int *size, int *width)
 
         default:   /* it must be a word */
             tok = TOK_WORD;
-            for (;;)
+            while (true)
             {
                 if (_size >= (int)len)
                     break;
@@ -192,7 +192,7 @@ int find_token_length(int mode, char *curr, unsigned len, int *size, int *width)
     {
         _size = 0;
 
-        for (;;)
+        while (true)
         {
             curr  += t;
             len   -= t;
@@ -405,7 +405,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 
                     col = indent;
 
-                    for (;;)
+                    while (true)
                     {
                         if (!output(PD_PERIODIC, &pd, info))
                             return false;

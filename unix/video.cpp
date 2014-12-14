@@ -550,9 +550,8 @@ adapter_detect(void)
 void
 normaline(int y, int x, int lastx, BYTE *pixels)
 {
-    int i, width;
-    width = lastx - x + 1;
-    for (i = 0; i < width; i++)
+    int width = lastx - x + 1;
+    for (int i = 0; i < width; i++)
     {
         dotwrite(x + i, y, pixels[i]);
     }
@@ -561,9 +560,8 @@ normaline(int y, int x, int lastx, BYTE *pixels)
 void
 normalineread(int y, int x, int lastx, BYTE *pixels)
 {
-    int i, width;
-    width = lastx - x + 1;
-    for (i = 0; i < width; i++)
+    int width = lastx - x + 1;
+    for (int i = 0; i < width; i++)
     {
         pixels[i] = dotread(x + i, y);
     }
@@ -599,7 +597,7 @@ find_special_colors(void)
     if (!(g_got_real_dac || fake_lut))
         return;
 
-    for (i = 0; i < colors; i++)
+    for (int i = 0; i < colors; i++)
     {
         brt = (int) g_dac_box[i][0] + (int) g_dac_box[i][1] + (int) g_dac_box[i][2];
         if (brt > maxb)

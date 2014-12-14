@@ -141,8 +141,7 @@ check_arg(Win32DiskDriver *di, char *arg)
 static void
 initdacbox()
 {
-    int i;
-    for (i=0; i < 256; i++)
+    for (int i = 0; i < 256; i++)
     {
         g_dac_box[i][0] = (i >> 5)*8+7;
         g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
@@ -252,31 +251,24 @@ disk_init(Driver *drv, int *argc, char **argv)
     initdacbox();
 
     /* filter out driver arguments */
+    for (int i = 0; i < *argc; i++)
     {
-        int i;
-
-        for (i = 0; i < *argc; i++)
+        if (check_arg(di, argv[i]))
         {
-            if (check_arg(di, argv[i]))
+            int j;
+            for (j = i; j < *argc-1; j++)
             {
-                int j;
-                for (j = i; j < *argc-1; j++)
-                {
-                    argv[j] = argv[j+1];
-                }
-                argv[j] = nullptr;
-                --*argc;
+                argv[j] = argv[j+1];
             }
+            argv[j] = nullptr;
+            --*argc;
         }
     }
 
     /* add default list of video modes */
+    for (int m = 0; m < NUM_OF(modes); m++)
     {
-        int m;
-        for (m = 0; m < NUM_OF(modes); m++)
-        {
-            add_video_mode(drv, &modes[m]);
-        }
+        add_video_mode(drv, &modes[m]);
     }
 
     return TRUE;
@@ -327,14 +319,13 @@ static int
 disk_read_palette(Driver *drv)
 {
     DI(di);
-    int i;
 
     ODS("disk_read_palette");
     if (!g_got_real_dac)
     {
         return -1;
     }
-    for (i = 0; i < 256; i++)
+    for (int i = 0; i < 256; i++)
     {
         g_dac_box[i][0] = di->clut[i][0];
         g_dac_box[i][2] = di->clut[i][2];
@@ -361,10 +352,9 @@ static int
 disk_write_palette(Driver *drv)
 {
     DI(di);
-    int i;
 
     ODS("disk_write_palette");
-    for (i = 0; i < 256; i++)
+    for (int i = 0; i < 256; i++)
     {
         di->clut[i][0] = g_dac_box[i][0];
         di->clut[i][1] = g_dac_box[i][1];
@@ -456,11 +446,10 @@ disk_read_pixel(Driver *drv, int x, int y)
 static void
 disk_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
-    int i;
     int width = lastx-x+1;
     ODS3("disk_write_span (%d,%d,%d)", y, x, lastx);
 
-    for (i = 0; i < width; i++)
+    for (int i = 0; i < width; i++)
     {
         disk_write_pixel(drv, x+i, y, pixels[i]);
     }
@@ -484,10 +473,9 @@ disk_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 static void
 disk_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
-    int i, width;
     ODS3("disk_read_span (%d,%d,%d)", y, x, lastx);
-    width = lastx-x+1;
-    for (i = 0; i < width; i++)
+    int width = lastx-x+1;
+    for (int i = 0; i < width; i++)
     {
         pixels[i] = disk_read_pixel(drv, x+i, y);
     }

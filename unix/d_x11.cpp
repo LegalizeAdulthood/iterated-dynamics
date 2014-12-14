@@ -325,8 +325,7 @@ doneXwindow(DriverX11 *di)
 static void
 initdacbox()
 {
-    int i;
-    for (i=0; i < 256; i++) {
+    for (int i = 0; i < 256; i++) {
         g_dac_box[i][0] = (i >> 5)*8+7;
         g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
         g_dac_box[i][2] = (((i+2) & 3))*16+15;
@@ -340,9 +339,8 @@ initdacbox()
 static void
 erase_text_screen(DriverX11 *di)
 {
-    int r, c;
-    for (r = 0; r < TEXT_HEIGHT; r++)
-        for (c = 0; c < TEXT_WIDTH; c++) {
+    for (int r = 0; r < TEXT_HEIGHT; r++)
+        for (int c = 0; c < TEXT_WIDTH; c++) {
             di->text_attr[r][c] = 0;
             di->text_screen[r][c] = ' ';
         }
@@ -514,12 +512,12 @@ clearXwindow(DriverX11 *di)
 static int
 xcmapstuff(DriverX11 *di)
 {
-    int ncells, i;
+    int ncells;
 
     if (di->onroot) {
         di->privatecolor = 0;
     }
-    for (i = 0; i < colors; i++) {
+    for (int i = 0; i < colors; i++) {
         di->pixtab[i] = i;
         di->ipixtab[i] = 999;
     }
@@ -537,10 +535,8 @@ xcmapstuff(DriverX11 *di)
         di->Xcmap = XCreateColormap(di->Xdp, di->Xw, di->Xvi, AllocAll);
         XSetWindowColormap(di->Xdp, di->Xw, di->Xcmap);
     } else {
-        int powr;
-
         di->Xcmap = DefaultColormap(di->Xdp, di->Xdscreen);
-        for (powr = di->Xdepth; powr >= 1; powr--) {
+        for (int powr = di->Xdepth; powr >= 1; powr--) {
             ncells = 1 << powr;
             if (ncells > colors)
                 continue;
@@ -556,7 +552,7 @@ xcmapstuff(DriverX11 *di)
             g_got_real_dac = false;
         }
     }
-    for (i = 0; i < colors; i++) {
+    for (int i = 0; i < colors; i++) {
         di->ipixtab[di->pixtab[i]] = i;
     }
     /* We must make sure if any color uses position 0, that it is 0.
@@ -1822,10 +1818,9 @@ static int
 x11_read_palette(Driver *drv)
 {
     DIX11(drv);
-    int i;
     if (!g_got_real_dac)
         return -1;
-    for (i = 0; i < 256; i++) {
+    for (int i = 0; i < 256; i++) {
         g_dac_box[i][0] = di->cols[i].red/1024;
         g_dac_box[i][1] = di->cols[i].green/1024;
         g_dac_box[i][2] = di->cols[i].blue/1024;
@@ -1852,7 +1847,6 @@ static int
 x11_write_palette(Driver *drv)
 {
     DIX11(drv);
-    int i;
 
     if (!g_got_real_dac)
     {
@@ -1862,7 +1856,7 @@ x11_write_palette(Driver *drv)
             static unsigned char last_dac[256][3];
             static int last_dac_inited = False;
 
-            for (i = 0; i < 256; i++) {
+            for (int i = 0; i < 256; i++) {
                 if (!last_dac_inited ||
                         last_dac[i][0] != g_dac_box[i][0] ||
                         last_dac[i][1] != g_dac_box[i][1] ||
@@ -1895,7 +1889,7 @@ x11_write_palette(Driver *drv)
         }
     } else {
         /* g_got_real_dac => grayscale or pseudocolor displays */
-        for (i = 0; i < 256; i++) {
+        for (int i = 0; i < 256; i++) {
             di->cols[i].pixel = di->pixtab[i];
             di->cols[i].flags = DoRed | DoGreen | DoBlue;
             di->cols[i].red = g_dac_box[i][0]*1024;
@@ -1930,9 +1924,8 @@ x11_read_pixel(Driver *drv, int x, int y)
     DIX11(drv);
     if (di->fake_lut)
     {
-        int i;
         XPixel pixel = XGetPixel(di->Ximage, x, y);
-        for (i = 0; i < 256; i++)
+        for (int i = 0; i < 256; i++)
             if (di->cmap_pixtab[i] == pixel)
                 return i;
         return 0;
@@ -2003,9 +1996,8 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
 static void
 x11_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
-    int i, width;
-    width = lastx-x+1;
-    for (i = 0; i < width; i++) {
+    int width = lastx-x+1;
+    for (int i = 0; i < width; i++) {
         pixels[i] = x11_read_pixel(drv, x+i, y);
     }
 }
@@ -2029,7 +2021,6 @@ static void
 x11_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
     int width;
-    int i;
     BYTE *pixline;
     DIX11(drv);
 
@@ -2040,14 +2031,14 @@ x11_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
     }
     width = lastx-x+1;
     if (di->usepixtab) {
-        for (i=0; i < width; i++) {
+        for (int i = 0; i < width; i++) {
             di->pixbuf[i] = di->pixtab[pixels[i]];
         }
         pixline = di->pixbuf;
     } else {
         pixline = pixels;
     }
-    for (i = 0; i < width; i++) {
+    for (int i = 0; i < width; i++) {
         XPutPixel(di->Ximage, x+i, y, FAKE_LUT(di, pixline[i]));
     }
     if (di->fastmode == 1 && helpmode != HELPXHAIR) {
@@ -2062,7 +2053,7 @@ x11_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
     }
 #else
     width = lastx-x+1;
-    for (i=0; i < width; i++) {
+    for (int i = 0; i < width; i++) {
         x11_write_pixel(x+i, y, pixels[i]);
     }
 #endif
@@ -2438,14 +2429,13 @@ static void
 x11_scroll_up(Driver *drv, int top, int bot)
 {
     DIX11(drv);
-    int r, c;
     assert(bot <= TEXT_HEIGHT);
-    for (r = top; r < bot; r++)
-        for (c = 0; c < TEXT_WIDTH; c++) {
+    for (int r = top; r < bot; r++)
+        for (int c = 0; c < TEXT_WIDTH; c++) {
             di->text_attr[r][c] = di->text_attr[r+1][c];
             di->text_screen[r][c] = di->text_screen[r+1][c];
         }
-    for (c = 0; c < TEXT_WIDTH; c++) {
+    for (int c = 0; c < TEXT_WIDTH; c++) {
         di->text_attr[bot][c] = 0;
         di->text_screen[bot][c] = ' ';
     }

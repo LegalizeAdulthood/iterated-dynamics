@@ -639,12 +639,10 @@ doneXwindow()
 static void
 clearXwindow()
 {
-    int i;
     if (fake_lut)
     {
-        int j;
-        for (j = 0; j < Ximage->height; j++)
-            for (i = 0; i < Ximage->width; i++)
+        for (int j = 0; j < Ximage->height; j++)
+            for (int i = 0; i < Ximage->width; i++)
                 XPutPixel(Ximage, i, j, cmap_pixtab[pixtab[0]]);
     }
     else if (pixtab[0] != 0)
@@ -653,15 +651,15 @@ clearXwindow()
          * Initialize image to pixtab[0].
          */
         if (colors == 2) {
-            for (i = 0; i < Ximage->bytes_per_line; i++) {
+            for (int i = 0; i < Ximage->bytes_per_line; i++) {
                 Ximage->data[i] = 0xff;
             }
         } else {
-            for (i = 0; i < Ximage->bytes_per_line; i++) {
+            for (int i = 0; i < Ximage->bytes_per_line; i++) {
                 Ximage->data[i] = pixtab[0];
             }
         }
-        for (i = 1; i < Ximage->height; i++) {
+        for (int i = 1; i < Ximage->height; i++) {
             bcopy(Ximage->data, Ximage->data+i*Ximage->bytes_per_line,
                   Ximage->bytes_per_line);
         }
@@ -713,15 +711,15 @@ initdacbox()
     if (sp) {
         --sp;
         s0 = 1-s0;
-        for (int i=0; i<256; i++) {
-            for (int j=0; j<3; j++) {
+        for (int i = 0; i < 256; i++) {
+            for (int j = 0; j < 3; j++) {
                 int k = (i*(cyclic[sp][j])) & 127;
                 if (k < 64) g_dac_box[i][j] = k;
                 else g_dac_box[i][j] = (127 - k);
             }
         }
     } else {
-        for (int i=0; i<256; i++) {
+        for (int i = 0; i < 256; i++) {
             g_dac_box[i][0] = (i>>5)*8+7;
             g_dac_box[i][1] = (((i+16)&28)>>2)*8+7;
             g_dac_box[i][2] = (((i+2)&3))*16+15;
@@ -732,8 +730,8 @@ initdacbox()
         g_dac_box[2][1] = g_dac_box[2][2] = 63;
     }
     if (s0)
-        for (int i=0; i<256; i++)
-            for (int j=0; j<3; j++)
+        for (int i = 0; i < 256; i++)
+            for (int j = 0; j < 3; j++)
                 g_dac_box[i][j] = 63 - g_dac_box[i][j];
 
 }
@@ -858,12 +856,12 @@ resizeWindow()
 static int
 xcmapstuff()
 {
-    int ncells, i, powr;
+    int ncells;
 
     if (onroot) {
         privatecolor = 0;
     }
-    for (i = 0; i < colors; i++) {
+    for (int i = 0; i < colors; i++) {
         pixtab[i] = i;
         ipixtab[i] = 999;
     }
@@ -882,7 +880,7 @@ xcmapstuff()
         XSetWindowColormap(Xdp, Xw, Xcmap);
     } else {
         Xcmap = DefaultColormap(Xdp, Xdscreen);
-        for (powr = Xdepth; powr >= 1; powr--) {
+        for (int powr = Xdepth; powr >= 1; powr--) {
             ncells = 1 << powr;
             if (ncells > colors)
                 continue;
@@ -899,7 +897,7 @@ xcmapstuff()
             g_got_real_dac = false;
         }
     }
-    for (i = 0; i < colors; i++) {
+    for (int i = 0; i < colors; i++) {
         ipixtab[pixtab[i]] = i;
     }
     /* We must make sure if any color uses position 0, that it is 0.
@@ -946,7 +944,6 @@ void
 writevideoline(int y, int x, int lastx, BYTE *pixels)
 {
     int width;
-    int i;
     BYTE *pixline;
 
     drawing_or_drawn = 1;
@@ -958,14 +955,14 @@ writevideoline(int y, int x, int lastx, BYTE *pixels)
     }
     width = lastx-x+1;
     if (usepixtab) {
-        for (i=0; i<width; i++) {
+        for (int i = 0; i < width; i++) {
             pixbuf[i] = pixtab[pixels[i]];
         }
         pixline = pixbuf;
     } else {
         pixline = pixels;
     }
-    for (i = 0; i < width; i++) {
+    for (int i = 0; i < width; i++) {
         XPutPixel(Ximage, x+i, y, FAKE_LUT(pixline[i]));
     }
     if (fastmode==1 && helpmode != HELPXHAIR) {
@@ -980,7 +977,7 @@ writevideoline(int y, int x, int lastx, BYTE *pixels)
     }
 #else
     width = lastx-x+1;
-    for (i=0; i<width; i++) {
+    for (int i = 0; i < width; i++) {
         writevideo(x+i,y,(int)pixels[i]);
     }
 #endif
@@ -1003,9 +1000,8 @@ writevideoline(int y, int x, int lastx, BYTE *pixels)
 void
 readvideoline(int y, int x, int lastx, BYTE *pixels)
 {
-    int i,width;
-    width = lastx-x+1;
-    for (i=0; i<width; i++) {
+    int width = lastx-x+1;
+    for (int i = 0; i < width; i++) {
         pixels[i] = (BYTE)readvideo(x+i,y);
     }
 }
@@ -1076,9 +1072,8 @@ int readvideo(int x, int y)
 #endif
     if (fake_lut)
     {
-        int i;
         XPixel pixel = XGetPixel(Ximage, x, y);
-        for (i = 0; i < colors; i++)
+        for (int i = 0; i < colors; i++)
             if (cmap_pixtab[i] == pixel)
                 return i;
         return 0;
@@ -1105,17 +1100,14 @@ XColor cols[256];
  */
 int readvideopalette()
 {
-
-    int i;
     if (!g_got_real_dac && g_is_true_color && truemode)
         return -1;
-    for (i=0; i<colors; i++) {
+    for (int i = 0; i < colors; i++) {
         g_dac_box[i][0] = cols[i].red/1024;
         g_dac_box[i][1] = cols[i].green/1024;
         g_dac_box[i][2] = cols[i].blue/1024;
     }
     return 0;
-
 }
 
 /*
@@ -1135,8 +1127,6 @@ int readvideopalette()
  */
 int writevideopalette()
 {
-    int i;
-
     if (!g_got_real_dac)
     {
         if (fake_lut)
@@ -1145,7 +1135,7 @@ int writevideopalette()
             static unsigned char last_dac[256][3];
             static int last_dac_inited = False;
 
-            for (i = 0; i < colors; i++) {
+            for (int i = 0; i < colors; i++) {
                 if (!last_dac_inited ||
                         last_dac[i][0] != g_dac_box[i][0] ||
                         last_dac[i][1] != g_dac_box[i][1] ||
@@ -1181,7 +1171,7 @@ int writevideopalette()
         }
     } else {
         /* g_got_real_dac => grayscale or pseudocolor displays */
-        for (i = 0; i < colors; i++) {
+        for (int i = 0; i < colors; i++) {
             cols[i].pixel = pixtab[i];
             cols[i].flags = DoRed | DoGreen | DoBlue;
             cols[i].red = g_dac_box[i][0]*1024;
@@ -2114,7 +2104,6 @@ xgetfont()
     XFontStruct *font_info;
     XImage *font_image;
     char str[8];
-    int i, j, k, l;
     int width;
     Pixmap font_pixmap;
     XGCValues values;
@@ -2152,8 +2141,8 @@ xgetfont()
                         GCForeground | GCBackground | GCFont, &values);
     assert(font_gc);
 
-    for (i = 0; i < 128; i+=8) {
-        for (j = 0; j < 8; j++) {
+    for (int i = 0; i < 128; i+=8) {
+        for (int j = 0; j < 8; j++) {
             str[j] = i+j;
         }
 
@@ -2161,9 +2150,9 @@ xgetfont()
 
         font_image = XGetImage(Xdp, font_pixmap, 0, 0, 64, 8, AllPlanes, XYPixmap);
         assert(font_image);
-        for (j = 0; j < 8; j++) {
-            for (k = 0; k < 8; k++) {
-                for (l = 0; l < width; l++) {
+        for (int j = 0; j < 8; j++) {
+            for (int k = 0; k < 8; k++) {
+                for (int l = 0; l < width; l++) {
                     if (XGetPixel(font_image, j*width+l, k)) {
                         fontPtr[(i+j)*8+k] = (fontPtr[(i+j)*8+k] << 1) | 1;
                     } else {
