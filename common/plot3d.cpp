@@ -389,8 +389,10 @@ void plot_setup()
         break;
     }
 
-    xshift1 = xshift = (int)((XSHIFT * (double)xdots)/100);
-    yshift1 = yshift = (int)((YSHIFT * (double)ydots)/100);
+    xshift = (int)((XSHIFT * (double)xdots)/100);
+    xshift1 = xshift;
+    yshift = (int)((YSHIFT * (double)ydots)/100);
+    yshift1 = yshift;
 
     if (g_glasses_type)
     {
