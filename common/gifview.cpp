@@ -19,7 +19,7 @@
 #include "prototyp.h"
 #include "drivers.h"
 
-static void close_file(void);
+static void close_file();
 
 #define MAXCOLORS       256
 
