@@ -40,7 +40,7 @@ static  int input_field_list(int attr,char *fld,int vlen, const char **list,int 
                              int row,int col,int (*checkkey)(int));
 static  int select_fracttype(int t);
 static  int sel_fractype_help(int curkey, int choice);
-int select_type_params(int newfractype,int oldfractype);
+static bool select_type_params(int newfractype, int oldfractype);
 void set_default_parms();
 static  long gfe_choose_entry(int, const char *,char *,char *);
 static  int check_gfe_key(int curkey,int choice);
@@ -860,18 +860,18 @@ inpfldl_end:
 
 int get_fracttype()             /* prompt for and select fractal type */
 {
-    int done,i,oldfractype,t;
-    done = -1;
-    oldfractype = fractype;
+    int t;
+    int done = -1;
+    int oldfractype = fractype;
     while (1) {
         if ((t = select_fracttype(fractype)) < 0)
             break;
-        i = select_type_params(t, fractype);
-        if (i == 0) { /* ok, all done */
+        bool i = select_type_params(t, fractype);
+        if (!i) { /* ok, all done */
             done = 0;
             break;
         }
-        if (i > 0) /* can't return to prior image anymore */
+        if (i) /* can't return to prior image anymore */
             done = 1;
     }
     if (done < 0)
@@ -962,37 +962,38 @@ static int sel_fractype_help(int curkey,int choice)
     return 0;
 }
 
-int select_type_params( /* prompt for new fractal type parameters */
+bool select_type_params( /* prompt for new fractal type parameters */
     int newfractype,        /* new fractal type */
     int oldfractype         /* previous fractal type */
 )
 {
-    int ret,oldhelpmode;
+    bool ret;
 
-    oldhelpmode = helpmode;
+    int oldhelpmode = helpmode;
+
 sel_type_restart:
-    ret = 0;
+    ret = false;
     fractype = newfractype;
     curfractalspecific = &fractalspecific[fractype];
 
     if (fractype == LSYSTEM) {
         helpmode = HT_LSYS;
         if (get_file_entry(GETLSYS,"L-System",lsysmask,LFileName,LName) < 0) {
-            ret = 1;
+            ret = true;
             goto sel_type_exit;
         }
     }
     if (fractype == FORMULA || fractype == FFORMULA) {
         helpmode = HT_FORMULA;
         if (get_file_entry(GETFORMULA,"Formula",formmask,FormFileName,FormName) < 0) {
-            ret = 1;
+            ret = true;
             goto sel_type_exit;
         }
     }
     if (fractype == IFS || fractype == IFS3D) {
         helpmode = HT_IFS;
         if (get_file_entry(GETIFS,"IFS",ifsmask,IFSFileName,IFSName) < 0) {
-            ret = 1;
+            ret = true;
             goto sel_type_exit;
         }
     }
@@ -1036,7 +1037,7 @@ sel_type_restart:
                 fractype == LSYSTEM)
             goto sel_type_restart;
         else
-            ret = 1;
+            ret = true;
     else {
         if (newfractype != oldfractype) {
             invert = 0;
@@ -1047,7 +1048,6 @@ sel_type_restart:
 sel_type_exit:
     helpmode = oldhelpmode;
     return ret;
-
 }
 
 void set_default_parms()
