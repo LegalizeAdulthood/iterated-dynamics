@@ -256,7 +256,8 @@ prompt_user:
             int i;
 
             /* get resolution from the video name (which must be valid) */
-            pxdots = pydots = 0;
+            pydots = 0;
+            pxdots = pydots;
             if ((i = check_vidmode_keyname(vidmde)) > 0)
                 if ((i = check_vidmode_key(0, i)) >= 0) {
                     /* get the resolution of this video mode */
