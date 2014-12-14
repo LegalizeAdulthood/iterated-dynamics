@@ -1583,7 +1583,7 @@ static void    PalTable__DrawStatus(PalTable *me, bool stripe_mode);
 static void    PalTable__HlPal(PalTable *me, int pnum, int color);
 static void    PalTable__Draw(PalTable *me);
 static void PalTable__SetCurr(PalTable *me, int which, int curr);
-static BOOLEAN PalTable__MemoryAlloc(PalTable *me, long size);
+static bool PalTable__MemoryAlloc(PalTable *me, long size);
 static void    PalTable__SaveRect(PalTable *me);
 static void    PalTable__RestoreRect(PalTable *me);
 static void    PalTable__SetPos(PalTable *me, int x, int y);
@@ -2016,24 +2016,24 @@ static void PalTable__SetCurr(PalTable *me, int which, int curr)
 }
 
 
-static BOOLEAN PalTable__MemoryAlloc(PalTable *me, long size)
+static bool PalTable__MemoryAlloc(PalTable *me, long size)
 {
     if (debugflag == 420)
     {
         me->stored_at = NOWHERE;
-        return FALSE;   /* can't do it */
+        return false;   /* can't do it */
     }
 
     me->memory = (char *)malloc(size);
     if (me->memory == nullptr)
     {
         me->stored_at = NOWHERE;
-        return FALSE;
+        return false;
     }
     else
     {
         me->stored_at = MEMORY;
-        return TRUE;
+        return true;
     }
 }
 
