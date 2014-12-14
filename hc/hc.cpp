@@ -1397,15 +1397,15 @@ void read_src(char *fname)
     TOPIC  t;
     LABEL  lbl;
     char  *margin_pos = nullptr;
-    int    in_topic   = 0,
-           formatting = 1,
-           state      = S_Start,
-           num_spaces = 0,
-           margin     = 0,
-           in_para    = 0,
-           centering  = 0,
-           lformat_exclude = format_exclude,
-           again;
+    bool in_topic = false;
+    int    formatting = 1;
+    int    state      = S_Start;
+    int    num_spaces = 0;
+    int    margin     = 0;
+    int    in_para    = 0;
+    int    centering  = 0;
+    int    lformat_exclude = format_exclude;
+    int    again;
 
     xonline = xdoc = 0;
 
@@ -1416,7 +1416,7 @@ void read_src(char *fname)
 
     msg("Compiling: %s", fname);
 
-    in_topic = 0;
+    in_topic = false;
 
     curr = buffer;
 
@@ -1510,7 +1510,7 @@ void read_src(char *fname)
                     if (in_topic)  /* if we're in a topic, finish it */
                         end_topic(&t);
                     else
-                        in_topic = 1;
+                        in_topic = true;
 
                     if (cmd[6] == '\0')
                         warn(eoff,"Topic has no title.");
@@ -1541,7 +1541,7 @@ void read_src(char *fname)
                     if (in_topic)  /* if we're in a topic, finish it */
                         end_topic(&t);
                     else
-                        in_topic = 1;
+                        in_topic = true;
 
                     if (cmd[5] == '\0')
                         warn(eoff,"Data topic has no label.");
@@ -1598,7 +1598,7 @@ void read_src(char *fname)
                     }
                     compress_spaces = 1;
                     process_contents();
-                    in_topic = 0;
+                    in_topic = false;
                     continue;
                 }
 
@@ -1660,7 +1660,7 @@ void read_src(char *fname)
                             lformat_exclude = format_exclude;
                         else
                         {
-                            int n = (((in_topic) ? lformat_exclude : format_exclude) < 0) ? -1 : 1;
+                            int n = ((in_topic ? lformat_exclude : format_exclude) < 0) ? -1 : 1;
 
                             lformat_exclude = atoi(cmd+14);
 
