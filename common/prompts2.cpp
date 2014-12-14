@@ -407,11 +407,13 @@ int get_toggles2()
 
     choices[++k] = "Distance Estimator (0=off, <0=edge, >0=on):";
     uvalues[k].type = 'L';
-    uvalues[k].uval.Lval = old_usr_distest = usr_distest;
+    old_usr_distest = usr_distest;
+    uvalues[k].uval.Lval = old_usr_distest;
 
     choices[++k] = "          width factor:";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = old_distestwidth = distestwidth;
+    old_distestwidth = distestwidth;
+    uvalues[k].uval.ival = old_distestwidth;
 
     choices[++k] = "Inversion radius or \"auto\" (0 means off)";
     choices[++k] = "          center X coordinate or \"auto\"";
@@ -430,7 +432,8 @@ int get_toggles2()
 
     choices[++k] = "Color cycling from color (0 ... 254)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = old_rotate_lo = rotate_lo;
+    old_rotate_lo = rotate_lo;
+    uvalues[k].uval.ival = old_rotate_lo;
 
     choices[++k] = "              to   color (1 ... 255)";
     uvalues[k].type = 'i';
