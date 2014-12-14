@@ -27,30 +27,30 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 #include "drivers.h"
 
 /* routines in this module      */
-static void perform_worklist(void);
-static int  OneOrTwoPass(void);
+static void perform_worklist();
+static int  OneOrTwoPass();
 static int  StandardCalc(int);
 static int  potential(double,long);
-static void decomposition(void);
-static int  bound_trace_main(void);
-static void step_col_row(void);
-static int  solidguess(void);
+static void decomposition();
+static int  bound_trace_main();
+static void step_col_row();
+static int  solidguess();
 static bool guessrow(bool firstpass, int y, int blocksize);
 static void plotblock(int,int,int,int);
 static void setsymmetry(int sym, bool uselist);
 static bool xsym_split(int xaxis_row, bool xaxis_between);
 static bool ysym_split(int yaxis_col, bool yaxis_between);
 static void puttruecolor_disk(int,int,int);
-static int diffusion_engine(void);
-static int sticky_orbits(void);
+static int diffusion_engine();
+static int sticky_orbits();
 
-static int tesseral(void);
+static int tesseral();
 static int tesschkcol(int,int,int);
 static int tesschkrow(int,int,int);
 static int tesscol(int,int,int);
 static int tessrow(int,int,int);
 
-static int diffusion_scan(void);
+static int diffusion_scan();
 
 /* lookup tables to avoid too much bit fiddling : */
 static char dif_la[] = {
@@ -82,7 +82,7 @@ static char dif_lb[] = {
 };
 
 /* added for testing autologmap() */
-static long autologmap(void);
+static long autologmap();
 
 /* variables exported from this file */
 LComplex linitorbit = { 0 };
@@ -118,8 +118,8 @@ bool no_mag_calc = false;
 bool use_old_period = false;
 bool use_old_distest = false;
 bool old_demm_colors = false;
-int (*calctype)(void) = nullptr;
-int (*calctypetmp)(void) = nullptr;
+int (*calctype)() = nullptr;
+int (*calctypetmp)() = nullptr;
 bool quick_calc = false;
 double closeprox = 0.01;
 
@@ -278,7 +278,7 @@ long multiply(long x, long y, int n)
    methods are not used - in these cases a normal
    modulus test is used                              */
 
-double fmodtest(void)
+double fmodtest()
 {
     double result;
     if (inside==FMODI && save_release <= 2000) /* for backwards compatibility */
@@ -503,7 +503,7 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
         (*plot)(col,row, showdotcolor);
 }
 
-int calctypeshowdot(void)
+int calctypeshowdot()
 {
     int out, startx, starty, stopx, stopy, direction, width;
     direction = JUST_A_POINT;
@@ -556,7 +556,7 @@ int calctypeshowdot(void)
 
 /******* calcfract - the top level routine for generating an image *******/
 
-int calcfract(void)
+int calcfract()
 {
     attractors = 0;          /* default to no known finite attractors  */
     display3d = 0;
@@ -873,9 +873,9 @@ int find_alternate_math(int type, int math)
 
 static void perform_worklist()
 {
-    int (*sv_orbitcalc)(void) = nullptr;  /* function that calculates one orbit */
-    int (*sv_per_pixel)(void) = nullptr;  /* once-per-pixel init */
-    bool (*sv_per_image)(void) = nullptr;  /* once-per-image setup */
+    int (*sv_orbitcalc)() = nullptr;  /* function that calculates one orbit */
+    int (*sv_per_pixel)() = nullptr;  /* once-per-pixel init */
+    bool (*sv_per_image)() = nullptr;  /* once-per-image setup */
     int alt;
 
     if ((alt=find_alternate_math(fractype,bf_math)) > -1)
@@ -1145,7 +1145,7 @@ static void perform_worklist()
     }
 }
 
-static int diffusion_scan(void)
+static int diffusion_scan()
 {
     double log2;
 
@@ -1203,7 +1203,7 @@ static int diffusion_scan(void)
            return -1;           \
         reset_periodicity = false
 
-static int diffusion_engine(void) {
+static int diffusion_engine() {
 
     double log2 = (double) log(2.0);
 
@@ -1384,7 +1384,7 @@ static int diffusion_engine(void) {
 
 char drawmode = 'r';
 
-static int sticky_orbits(void)
+static int sticky_orbits()
 {
     got_status = 6; /* for <tab> screen */
     totpasses = 1;
@@ -1576,7 +1576,7 @@ static int sticky_orbits(void)
     return 0;
 }
 
-static int OneOrTwoPass(void)
+static int OneOrTwoPass()
 {
     int i;
 
@@ -1660,7 +1660,7 @@ static int StandardCalc(int passnum)
 }
 
 
-int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col set */
+int calcmand()              /* fast per pixel 1/2/b/g, called with row & col set */
 {
     /* setup values from array to avoid using es reg in calcmand.asm */
     linitx = lxpixel();
@@ -1700,7 +1700,7 @@ int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col
 /* can also handle invert, any rqlim, potflag, zmag, epsilon cross,     */
 /* and all the current outside options                                  */
 /************************************************************************/
-int calcmandfp(void)
+int calcmandfp()
 {
     if (invert)
         invertz2(&init);
@@ -1743,7 +1743,7 @@ int calcmandfp(void)
 #define STARTRAILMAX FLT_MAX   /* just a convenient large number */
 #define green 2
 #define yellow 6
-int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set */
+int StandardFractal()       /* per pixel 1/2/b/g, called with row & col set */
 {
 #ifdef NUMSAVED
     DComplex savedz[NUMSAVED] = { 0.0 };
@@ -2504,7 +2504,7 @@ plot_pixel:
 #define lcos45 lsin45
 
 /**************** standardfractal doodad subroutines *********************/
-static void decomposition(void)
+static void decomposition()
 {
     /* static double cos45     = 0.70710678118654750; */ /* cos 45  degrees */
     static double sin45     = 0.70710678118654750; /* sin 45     degrees */
@@ -2856,7 +2856,7 @@ static int potential(double mag, long iterations)
 #define advance_no_match()  going_to = static_cast<direction>((going_to + 1) & 0x03)
 
 static
-int  bound_trace_main(void)
+int  bound_trace_main()
 {
     enum direction coming_from;
     unsigned int match_found;
@@ -3081,7 +3081,7 @@ static void step_col_row()
    faster, but is also more accurate. Harrumph!
 */
 
-static int solidguess(void)
+static int solidguess()
 {
     int i;
     int xlim;
@@ -3854,7 +3854,7 @@ struct tess             /* one of these per box to be done gets stacked */
     int top,bot,lft,rgt;  /* edge colors, -1 mixed, -2 unknown */
 };
 
-static int tesseral(void)
+static int tesseral()
 {
     struct tess *tp;
 
@@ -4126,7 +4126,7 @@ static int tessrow(int x1,int x2,int y)
 /* added for testing autologmap() */
 /* insert at end of CALCFRAC.C */
 
-static long autologmap(void)
+static long autologmap()
 {   /* calculate round screen edges to avoid wasted colours in logmap */
     long mincolour;
     int xstop = xdots - 1; /* don't use symetry */
