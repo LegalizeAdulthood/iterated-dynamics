@@ -64,9 +64,9 @@ static BYTE *membufptr;
 
 static void findload_cache(long);
 static struct cache * find_cache(long);
-static void  write_cache_lru(void);
+static void  write_cache_lru();
 static void mem_putc(BYTE);
-static BYTE  mem_getc(void);
+static BYTE  mem_getc();
 static void mem_seek(long);
 
 int startdisk()
