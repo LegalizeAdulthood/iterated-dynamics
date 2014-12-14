@@ -1756,7 +1756,8 @@ void dStkAND()
 void mStkAND()
 {
     Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant && Arg1->m.x.Mant), 0);
-    Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
+    Arg2->m.y.Exp = 0;
+    Arg2->m.y.Mant = (long) Arg2->m.y.Exp;
     Arg1--;
     Arg2--;
 }
