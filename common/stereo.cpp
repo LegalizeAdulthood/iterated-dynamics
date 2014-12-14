@@ -257,7 +257,8 @@ bool do_AutoStereo()
         goto exit_stereo;
     }
     MAXCC = MAXC - MINC + 1;
-    AVG = AVGCT = 0L;
+    AVGCT = 0L;
+    AVG = AVGCT;
     barwidth  = 1 + xdots / 200;
     BARHEIGHT = 1 + ydots / 20;
     XCEN = xdots/2;

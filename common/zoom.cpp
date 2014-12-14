@@ -235,8 +235,10 @@ void drawlines(struct coords fr, struct coords to,
         altinc = to.x-fr.x;
         altctr = altinc/2;
         yincr = (to.y>fr.y)?1:-1;
-        line2.x = (line1.x = fr.x) + dx;
-        line2.y = (line1.y = fr.y) + dy;
+        line1.x = fr.x;
+        line2.x = line1.x + dx;
+        line1.y = fr.y;
+        line2.y = line1.y + dy;
         while (--ctr>=0) {
             line1.x += xincr;
             line2.x += xincr;
