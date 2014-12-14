@@ -3576,8 +3576,8 @@ void delete_hlp_from_exe(const char *exe_fname)
 
 int main(int argc, char *argv[])
 {
-    int    show_stats = 0,
-           show_mem   = 0;
+    int    show_stats = 0;
+    bool show_mem = false;
     int    mode       = 0;
 
     char **arg;
@@ -3632,7 +3632,7 @@ int main(int argc, char *argv[])
 
             case 'm':
                 if (mode == MODE_COMPILE)
-                    show_mem = 1;
+                    show_mem = true;
                 else
                     fatal(0,"/m switch allowed only when compiling (/c)");
                 break;
