@@ -34,7 +34,7 @@ static void   adjust_to_limits(double);
 static void   smallest_add(double *);
 static int    ratio_bad(double,double);
 static void   plotdorbit(double,double,int);
-static int    combine_worklist(void);
+static int    combine_worklist();
 
 static void   adjust_to_limitsbf(double);
 static void   smallest_add_bf(bf_t);
@@ -74,7 +74,7 @@ void set_grid_pointers()
     set_pixel_calc_functions();
 }
 
-void fill_dx_array(void)
+void fill_dx_array()
 {
     if (use_grid)
     {
@@ -91,7 +91,7 @@ void fill_dx_array(void)
         }
     }
 }
-void fill_lx_array(void)
+void fill_lx_array()
 {
     /* note that lx1 & ly1 values can overflow into sign bit; since     */
     /* they're used only to add to lx0/ly0, 2s comp straightens it out  */
@@ -111,7 +111,7 @@ void fill_lx_array(void)
     }
 }
 
-void fractal_floattobf(void)
+void fractal_floattobf()
 {
     init_bf_dec(getprecdbl(CURRENTREZ));
     floattobf(bfxmin,xxmin);
@@ -130,7 +130,7 @@ void fractal_floattobf(void)
 
 bool use_grid = false;
 
-void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation */
+void calcfracinit() /* initialize a *pile* of stuff for fractal calculation */
 {
     long xytemp;
     double ftemp;
@@ -571,7 +571,7 @@ static double fudgetodouble(long l)
     return d;
 }
 
-void adjust_cornerbf(void)
+void adjust_cornerbf()
 {
     /* make edges very near vert/horiz exact, to ditch rounding errs and */
     /* to avoid problems when delta per axis makes too large a ratio     */
@@ -645,7 +645,7 @@ void adjust_cornerbf(void)
     restore_stack(saved);
 }
 
-void adjust_corner(void)
+void adjust_corner()
 {
     /* make edges very near vert/horiz exact, to ditch rounding errs and */
     /* to avoid problems when delta per axis makes too large a ratio     */
@@ -1166,7 +1166,7 @@ int get_resume(int len, ...)
     return (0);
 }
 
-int start_resume(void)
+int start_resume()
 {
     int version;
     if (resume_info == 0)
@@ -1176,7 +1176,7 @@ int start_resume(void)
     return (version);
 }
 
-void end_resume(void)
+void end_resume()
 {
     if (resume_info != 0) /* free the prior area if there is one */
     {
@@ -1318,7 +1318,7 @@ void wait_until(int index, uclock_t wait_time)
     }
 }
 
-void reset_clock(void)
+void reset_clock()
 {
     restart_uclock();
     for (int i = 0; i < MAX_INDEX; i++)
@@ -1331,7 +1331,7 @@ void reset_clock(void)
 static FILE *snd_fp = nullptr;
 
 /* open sound file */
-bool snd_open(void)
+bool snd_open()
 {
     static char soundname[] = {"sound001.txt"};
     if ((orbitsave&2) != 0 && snd_fp == nullptr)
@@ -1372,7 +1372,7 @@ void w_snd(int tone)
     }
 }
 
-void snd_time_write(void)
+void snd_time_write()
 {
     // cppcheck-suppress leakNoVarFunctionCall
     if (snd_open())
@@ -1381,7 +1381,7 @@ void snd_time_write(void)
     }
 }
 
-void close_snd(void)
+void close_snd()
 {
     if (snd_fp)
         fclose(snd_fp);
@@ -1455,7 +1455,7 @@ void plot_orbit(double real,double imag,int color)
     plotdorbit(real-xxmin,imag-yymax,color);
 }
 
-void scrub_orbit(void)
+void scrub_orbit()
 {
     int i,j,c;
     int save_sxoffs,save_syoffs;
@@ -1494,7 +1494,7 @@ int add_worklist(int xfrom, int xto, int xbegin,
     return (0);
 }
 
-static int combine_worklist(void) /* look for 2 entries which can freely merge */
+static int combine_worklist() /* look for 2 entries which can freely merge */
 {
     for (int i = 0; i < num_worklist; ++i)
         if (worklist[i].yystart == worklist[i].yybegin)
@@ -1541,7 +1541,7 @@ static int combine_worklist(void) /* look for 2 entries which can freely merge *
 }
 
 /* combine mergeable entries, resort */
-void tidy_worklist(void)
+void tidy_worklist()
 {
     {
         int i;
@@ -1650,7 +1650,7 @@ void get_julia_attractor(double real, double imag)
 
 #define maxyblk 7    /* must match calcfrac.c */
 #define maxxblk 202  /* must match calcfrac.c */
-int ssg_blocksize(void) /* used by solidguessing and by zoom panning */
+int ssg_blocksize() /* used by solidguessing and by zoom panning */
 {
     int blocksize,i;
     /* blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >=1200 */
