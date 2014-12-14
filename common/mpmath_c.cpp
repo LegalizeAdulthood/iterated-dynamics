@@ -295,7 +295,10 @@ void Arctanz(DComplex z,DComplex *rz)
 {
     DComplex temp0,temp1,temp2,temp3;
     if (z.x == 0.0 && z.y == 0.0)
-        rz->x = rz->y = 0;
+    {
+        rz->y = 0;
+        rz->x = rz->y;
+    }
     else if (z.x != 0.0 && z.y == 0.0) {
         rz->x = atan(z.x);
         rz->y = 0;
