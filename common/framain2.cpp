@@ -1631,10 +1631,12 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         oldydots = ydots;
         oldpx = px;
         oldpy = py;
-        sxoffs = syoffs = 0;
+        syoffs = 0;
+        sxoffs = syoffs;
         xdots = sxdots;
         ydots = sydots; /* for full screen save and pointer move stuff */
-        px = py = gridsz / 2;
+        py = gridsz / 2;
+        px = py;
         param_history(1); /* restore old history */
         fiddleparms(gene, 0);
         drawparmbox(1);
@@ -1798,9 +1800,12 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         {
             if (zwidth == 0)
             {   /* start zoombox */
-                zwidth = zdepth = 1;
-                zskew = zrotate = 0;
-                zbx = zby = 0;
+                zdepth = 1;
+                zwidth = zdepth;
+                zrotate = 0;
+                zskew = zrotate;
+                zby = 0;
+                zbx = zby;
                 find_special_colors();
                 boxcolor = g_color_bright;
                 /*rb*/ if (evolving&1) {
@@ -2007,8 +2012,10 @@ static void restore_zoom()
 
 /* do all pending movement at once for smooth mouse diagonal moves */
 static void move_zoombox(int keynum)
-{   int vertical, horizontal, getmore;
-    vertical = horizontal = 0;
+{
+    int vertical, horizontal, getmore;
+    horizontal = 0;
+    vertical = horizontal;
     getmore = 1;
     while (getmore) {
         switch (keynum) {
@@ -2302,7 +2309,8 @@ static void save_history_info()
         for (int i = 0; i < maxhistory; i++)
             MoveToMemory((BYTE *)&current,(U16)sizeof(HISTORY),1L,(long)i,history);
         historyflag = false;
-        saveptr = historyptr = 0;   /* initialize history ptr */
+        historyptr = 0;
+        saveptr = historyptr;   /* initialize history ptr */
     }
     else if (historyflag)
         historyflag = false;            /* coming from user history command, don't save */
