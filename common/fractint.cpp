@@ -148,7 +148,7 @@ int scale_map[12] = {1,2,3,4,5,6,7,8,9,10,11,12}; /*RB, array for mapping notes 
 #define RESTORESTART      3
 #define CONTINUE          4
 
-void check_samename(void)
+void check_samename()
 {
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
@@ -174,7 +174,7 @@ static void my_floating_point_err(int sig)
 /*
 ; ****************** Function initasmvars() *****************************
 */
-void initasmvars(void)
+void initasmvars()
 {
     overflow = false;
 }
@@ -578,7 +578,7 @@ int timer(int timertype,int(*subrtn)(),...)
     timer_start = clock_ticks();
     switch (timertype) {
     case 0:
-        out = (*(int(*)(void))subrtn)();
+        out = (*(int(*)())subrtn)();
         break;
     case 1:
         i = va_arg(arg_marker,int);
