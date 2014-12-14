@@ -3,8 +3,6 @@
 #ifndef FRACTINT_H
 #define FRACTINT_H
 
-typedef BYTE BOOLEAN;
-
 /* Returns the number of items in an array declared of fixed size, i.e:
     int stuff[100];
     NUM_OF(stuff) returns 100.
