@@ -984,7 +984,7 @@ int parse_link()   /* returns length of link or 0 on error */
 {
     char *ptr;
     char *end;
-    int   bad = 0;
+    bool bad = false;
     int   len;
     LINK  l;
     int   err_off;
@@ -1037,7 +1037,7 @@ int parse_link()   /* returns length of link or 0 on error */
             if (cmd[1] == '\0')
             {
                 error(err_off, "Explicit hot-link has no Label.");
-                bad = 1;
+                bad = true;
             }
             else
                 l.name = dupstr(cmd+1,0);
@@ -1053,7 +1053,7 @@ int parse_link()   /* returns length of link or 0 on error */
         if (len == 0)
         {
             error(err_off, "Implicit hot-link has no title.");
-            bad = 1;
+            bad = true;
         }
         l.name = dupstr(ptr,len+1);
         l.name[len] = '\0';
