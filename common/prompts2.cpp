@@ -1340,7 +1340,7 @@ bool getafilename(const char *hdg, const char *file_template, char *flname)
     char ext[FILE_MAX_EXT];
 
     static int numtemplates = 1;
-    static int dosort = 1;
+    static bool dosort = true;
 
     rds = (stereomapname == flname) ? 1 : 0;
     for (int i = 0; i < MAXNUMFILES; i++)
@@ -1507,7 +1507,7 @@ retry_dir:
                           attributes, 5, 99, 12, i, nullptr, speedstr, filename_speedstr, check_f6_key);
     if (i == -FIK_F4)
     {
-        dosort = 1 - dosort;
+        dosort = !dosort;
         goto restart;
     }
     if (i == -FIK_F6)
