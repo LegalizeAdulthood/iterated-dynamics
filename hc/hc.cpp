@@ -1402,7 +1402,7 @@ void read_src(char *fname)
     int    state      = S_Start;
     int    num_spaces = 0;
     int    margin     = 0;
-    int    in_para    = 0;
+    bool in_para = false;
     bool centering = false;
     int    lformat_exclude = format_exclude;
 
@@ -1527,7 +1527,7 @@ void read_src(char *fname)
                     formatting = true;
                     centering = false;
                     state = S_Start;
-                    in_para = 0;
+                    in_para = false;
                     num_spaces = 0;
                     xonline = false;
                     xdoc = false;
@@ -1576,7 +1576,7 @@ void read_src(char *fname)
                     formatting = false;
                     centering = false;
                     state = S_Start;
-                    in_para = 0;
+                    in_para = false;
                     num_spaces = 0;
                     xonline = false;
                     xdoc = false;
@@ -1754,7 +1754,7 @@ void read_src(char *fname)
                             *curr++ = '\n';  /* finish off current paragraph */
                         *curr++ = CMD_FF;
                         state = S_Start;
-                        in_para = 0;
+                        in_para = false;
                         num_spaces = 0;
                     }
 
@@ -1769,7 +1769,7 @@ void read_src(char *fname)
                         if (!xonline)
                             *curr++ = CMD_XONLINE;
                         state = S_Start;
-                        in_para = 0;
+                        in_para = false;
                         num_spaces = 0;
                     }
 
@@ -1784,7 +1784,7 @@ void read_src(char *fname)
                         if (!xdoc)
                             *curr++ = CMD_XDOC;
                         state = S_Start;
-                        in_para = 0;
+                        in_para = false;
                         num_spaces = 0;
                     }
 
@@ -1820,7 +1820,7 @@ void read_src(char *fname)
                         if (in_para)
                         {
                             *curr++ = '\n';  /* finish off current paragraph */
-                            in_para = 0;
+                            in_para = false;
                             num_spaces = 0;
                             state = S_Start;
                         }
@@ -1866,7 +1866,7 @@ void read_src(char *fname)
                             if (!formatting)
                             {
                                 formatting = true;
-                                in_para = 0;
+                                in_para = false;
                                 num_spaces = 0;
                                 state = S_Start;
                             }
@@ -1880,7 +1880,7 @@ void read_src(char *fname)
                             {
                                 if (in_para)
                                     *curr++ = '\n';  /* finish off current paragraph */
-                                in_para = 0;
+                                in_para = false;
                                 formatting = false;
                                 num_spaces = 0;
                                 state = S_Start;
@@ -1960,7 +1960,7 @@ void read_src(char *fname)
                                 if (in_para)
                                 {
                                     *curr++ = '\n';
-                                    in_para = 0;
+                                    in_para = false;
                                 }
                                 state = S_Start;  /* for centering FSM */
                             }
@@ -2106,7 +2106,7 @@ void read_src(char *fname)
                             margin_pos = curr - 1;
                             state = S_FirstLine;
                             again = true;
-                            in_para = 1;
+                            in_para = true;
                         }
                     }
                     break;
@@ -2120,7 +2120,7 @@ void read_src(char *fname)
                     else if (ch == ('\n'|0x100))    /* force end of para ? */
                     {
                         *curr++ = '\n';
-                        in_para = 0;
+                        in_para = false;
                         state = S_Start;
                     }
                     else if (ch == ' ')
@@ -2150,7 +2150,7 @@ void read_src(char *fname)
                     {
                         *curr++ = '\n';   /* end the para */
                         *curr++ = '\n';   /* for the blank line */
-                        in_para = 0;
+                        in_para = false;
                         state = S_Start;
                     }
                     else
@@ -2158,7 +2158,7 @@ void read_src(char *fname)
                         if (lformat_exclude > 0 && num_spaces >= lformat_exclude)
                         {
                             *curr++ = '\n';
-                            in_para = 0;
+                            in_para = false;
                             put_spaces(num_spaces);
                             num_spaces = 0;
                             state = S_FormatDisabled;
@@ -2184,7 +2184,7 @@ void read_src(char *fname)
                     else if (ch == ('\n' | 0x100))    /* force end of para ? */
                     {
                         *curr++ = '\n';
-                        in_para = 0;
+                        in_para = false;
                         state = S_Start;
                     }
                     else if (ch == ' ')
@@ -2214,7 +2214,7 @@ void read_src(char *fname)
                     {
                         *curr++ = '\n';   /* end the para */
                         *curr++ = '\n';   /* for the blank line */
-                        in_para = 0;
+                        in_para = false;
                         state = S_Start;
                     }
                     else
@@ -2222,7 +2222,7 @@ void read_src(char *fname)
                         if (num_spaces != margin)
                         {
                             *curr++ = '\n';
-                            in_para = 0;
+                            in_para = false;
                             state = S_StartFirstLine;  /* with current num_spaces */
                         }
                         else
