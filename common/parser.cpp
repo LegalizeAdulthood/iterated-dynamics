@@ -834,7 +834,8 @@ void dStkImag()
 void mStkImag()
 {
     Arg1->m.x = Arg1->m.y;
-    Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
+    Arg1->m.y.Exp = 0;
+    Arg1->m.y.Mant = (long) Arg1->m.y.Exp;
 }
 
 void lStkImag()
