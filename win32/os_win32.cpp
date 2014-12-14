@@ -461,22 +461,6 @@ void scroll_relative(int bycol, int byrow)
 }
 
 /*
-; adapter_detect:
-;       This routine performs a few quick checks on the type of
-;       video adapter installed.
-;       and fills in a few bank-switching routines.
-*/
-void
-adapter_detect()
-{
-    static int done_detect = 0;
-
-    if (done_detect)
-        return;
-    done_detect = 1;
-}
-
-/*
 ; **************** Function home()  ********************************
 
 ;       Home the cursor (called before printfs)
