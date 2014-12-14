@@ -2887,7 +2887,10 @@ int form_per_pixel()
     if (FormName[0] == 0)
         return 1;
     overflow = false;
-    LodPtr = StoPtr = OpPtr = jump_index = 0;
+    jump_index = 0;
+    OpPtr = jump_index;
+    StoPtr = OpPtr;
+    LodPtr = StoPtr;
     Arg1 = &s[0];
     Arg2 = Arg1;
     Arg2--;
@@ -2913,8 +2916,10 @@ int form_per_pixel()
             v[9].a.m = MPCone;
         else
         {
-            v[9].a.m.x.Mant = v[9].a.m.x.Exp = 0;
-            v[9].a.m.y.Mant = v[9].a.m.y.Exp = 0;
+            v[9].a.m.x.Exp = 0;
+            v[9].a.m.x.Mant = v[9].a.m.x.Exp;
+            v[9].a.m.y.Exp = 0;
+            v[9].a.m.y.Mant = v[9].a.m.y.Exp;
         }
         v[10].a.m = cmplx2MPC(v[10].a.d);
         break;
