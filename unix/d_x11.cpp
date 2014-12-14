@@ -1115,7 +1115,7 @@ static void
 ev_button_press(DriverX11 *di, XEvent *xevent)
 {
     int done = 0;
-    int banding = 0;
+    bool banding = false;
     int bandx0, bandy0, bandx1, bandy1;
 
     if (lookatmouse == 3 || !zoomoff)
@@ -1151,7 +1151,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
                    gets moved.  Otherwise a click messes up the
                    window */
                 if (ABS(bandx1-bandx0) > 10 || ABS(bandy1-bandy0) > 10) {
-                    banding = 1;
+                    banding = true;
                     XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, colors-1));
                     XSetFunction(di->Xdp, di->Xgc, GXxor);
                 }
