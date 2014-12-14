@@ -205,7 +205,8 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
 
     if (Rotation == 0.0 && Skew == 0.0)
     {   /* simple, faster case */
-        xx3rd = xxmin = Xctr - w;
+        xxmin = Xctr - w;
+        xx3rd = xxmin;
         xxmax = Xctr + w;
         yy3rd = yymin = Yctr - h;
         yymax = Yctr + h;
