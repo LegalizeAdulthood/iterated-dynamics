@@ -2138,7 +2138,10 @@ int calcfroth()   /* per pixel 1/2/g, called with row & col set */
             lold.y = lypixel();
         }
 
-        while (!found_attractor && ((lmagnitud = (ltempsqrx=lsqr(lold.x)) + (ltempsqry=lsqr(lold.y))) < llimit)
+        ltempsqrx = lsqr(lold.x);
+        ltempsqry = lsqr(lold.y);
+        lmagnitud = ltempsqrx + ltempsqry;
+        while (!found_attractor && (lmagnitud < llimit)
                 && (lmagnitud >= 0) && (coloriter < maxit))
         {
             /* simple formula: z = z^2 + conj(z*(-1+ai)) */
@@ -2217,6 +2220,9 @@ int calcfroth()   /* per pixel 1/2/g, called with row & col set */
                         found_attractor = 3;
                 }
             }
+            ltempsqrx = lsqr(lold.x);
+            ltempsqry = lsqr(lold.y);
+            lmagnitud = ltempsqrx + ltempsqry;
         }
     }
     if (show_orbit)
