@@ -77,7 +77,7 @@ add_video_mode(Driver *drv, VIDEOINFO *mode)
 }
 
 void
-close_drivers(void)
+close_drivers()
 {
     for (int i = 0; i < num_drivers; i++)
     {
@@ -118,15 +118,15 @@ driver_set_video_mode(VIDEOINFO *mode)
 
 #if defined(USE_DRIVER_FUNCTIONS)
 void
-driver_terminate(void)
+driver_terminate()
 {
     (*g_driver->terminate)(g_driver);
 }
 
 #define METHOD_VOID(name_) \
-void driver_##name_(void) { (*g_driver->name_)(g_driver); }
+void driver_##name_() { (*g_driver->name_)(g_driver); }
 #define METHOD(type_,name_) \
-type_ driver_##name_(void) { return (*g_driver->name_)(g_driver); }
+type_ driver_##name_() { return (*g_driver->name_)(g_driver); }
 #define METHOD_INT(name_) METHOD(int, name_)
 
 void
@@ -178,7 +178,7 @@ driver_draw_line(int x1, int y1, int x2, int y2, int color)
 }
 
 int
-driver_get_key(void)
+driver_get_key()
 {
     return (*g_driver->get_key)(g_driver);
 }
@@ -190,7 +190,7 @@ driver_key_cursor(int row, int col)
 }
 
 int
-driver_key_pressed(void)
+driver_key_pressed()
 {
     return (*g_driver->key_pressed)(g_driver);
 }
@@ -255,7 +255,7 @@ METHOD_VOID(mute)
 METHOD(bool, diskp)
 
 int
-driver_get_char_attr(void)
+driver_get_char_attr()
 {
     return (*g_driver->get_char_attr)(g_driver);
 }
@@ -303,13 +303,13 @@ driver_display_string(int x, int y, int fg, int bg, const char *text)
 }
 
 void
-driver_save_graphics(void)
+driver_save_graphics()
 {
     (*g_driver->save_graphics)(g_driver);
 }
 
 void
-driver_restore_graphics(void)
+driver_restore_graphics()
 {
     (*g_driver->restore_graphics)(g_driver);
 }
@@ -327,7 +327,7 @@ driver_set_keyboard_timeout(int ms)
 }
 
 void
-driver_flush(void)
+driver_flush()
 {
     (*g_driver->flush)(g_driver);
 }
