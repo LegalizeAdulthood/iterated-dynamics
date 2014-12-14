@@ -295,8 +295,7 @@ gdi_get_max_screen(Driver *drv, int *xmax, int *ymax)
 *
 *----------------------------------------------------------------------
 */
-static int
-gdi_init(Driver *drv, int *argc, char **argv)
+static bool gdi_init(Driver *drv, int *argc, char **argv)
 {
     LPCSTR title = "FractInt for Windows";
     DI(di);
@@ -305,7 +304,7 @@ gdi_init(Driver *drv, int *argc, char **argv)
     frame_init(g_instance, title);
     if (!wintext_initialize(&di->base.wintext, g_instance, nullptr, "Text"))
     {
-        return FALSE;
+        return false;
     }
     plot_init(&di->plot, g_instance, "Plot");
 
@@ -339,7 +338,7 @@ gdi_init(Driver *drv, int *argc, char **argv)
         }
     }
 
-    return TRUE;
+    return true;
 }
 
 /* gdi_resize

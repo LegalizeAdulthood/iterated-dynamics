@@ -28,7 +28,7 @@ struct tagWin32BaseDriver
 extern void win32_shell(Driver *drv);
 extern int win32_key_pressed(Driver *drv);
 extern void win32_terminate(Driver *drv);
-extern int win32_init(Driver *drv, int *argc, char **argv);
+extern bool win32_init(Driver *drv, int *argc, char **argv);
 extern int win32_key_pressed(Driver *drv);
 extern void win32_unget_key(Driver *drv, int key);
 extern int win32_get_key(Driver *drv);

@@ -169,8 +169,7 @@ win32_terminate(Driver *drv)
 *
 *----------------------------------------------------------------------
 */
-int
-win32_init(Driver *drv, int *argc, char **argv)
+bool win32_init(Driver *drv, int *argc, char **argv)
 {
     LPCSTR title = "FractInt for Windows";
     DI(di);
@@ -179,10 +178,10 @@ win32_init(Driver *drv, int *argc, char **argv)
     frame_init(g_instance, title);
     if (!wintext_initialize(&di->wintext, g_instance, nullptr, "Text"))
     {
-        return FALSE;
+        return false;
     }
 
-    return TRUE;
+    return true;
 }
 
 /* win32_key_pressed

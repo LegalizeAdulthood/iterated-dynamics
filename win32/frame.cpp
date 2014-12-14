@@ -314,7 +314,7 @@ int frame_get_key_press(int wait_for_key)
 {
     int i;
 
-    frame_pump_messages(wait_for_key);
+    frame_pump_messages(wait_for_key != 0);
     if (wait_for_key && g_frame.timed_out)
     {
         return 0;

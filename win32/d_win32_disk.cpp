@@ -236,8 +236,7 @@ parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
 *
 *----------------------------------------------------------------------
 */
-static int
-disk_init(Driver *drv, int *argc, char **argv)
+static bool disk_init(Driver *drv, int *argc, char **argv)
 {
     LPCSTR title = "FractInt for Windows";
     DI(di);
@@ -245,7 +244,7 @@ disk_init(Driver *drv, int *argc, char **argv)
     frame_init(g_instance, title);
     if (!wintext_initialize(&di->base.wintext, g_instance, nullptr, title))
     {
-        return FALSE;
+        return false;
     }
 
     initdacbox();
@@ -271,7 +270,7 @@ disk_init(Driver *drv, int *argc, char **argv)
         add_video_mode(drv, &modes[m]);
     }
 
-    return TRUE;
+    return true;
 }
 
 /* disk_resize

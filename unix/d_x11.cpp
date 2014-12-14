@@ -1476,7 +1476,7 @@ void fpe_handler(int signum)
  *
  *----------------------------------------------------------------------
  */
-static int
+static bool
 x11_init(Driver *drv, int *argc, char **argv)
 {
     DIX11(drv);
@@ -1522,9 +1522,10 @@ x11_init(Driver *drv, int *argc, char **argv)
     }
 
     di->Xdp = XOpenDisplay(di->Xdisplay);
-    if (di->Xdp == nullptr) {
+    if (di->Xdp == nullptr)
+    {
         x11_terminate(drv);
-        return 0;
+        return false;
     }
     di->Xdscreen = XDefaultScreen(di->Xdp);
 
@@ -1533,7 +1534,7 @@ x11_init(Driver *drv, int *argc, char **argv)
     /* should enumerate visuals here and build video modes for each */
     add_video_mode(drv, &x11_video_table[0]);
 
-    return 1;
+    return true;
 }
 
 static bool x11_validate_mode(Driver *drv, VIDEOINFO *mode)
