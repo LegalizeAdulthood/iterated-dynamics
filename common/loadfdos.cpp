@@ -103,7 +103,7 @@ static struct vidinf *vidptr;
 int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 {
     struct vidinf vid[MAXVIDEOMODES];
-    int gotrealmode;
+    bool gotrealmode;
     double ftemp;
     unsigned tmpflags;
 
@@ -201,7 +201,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
     }
 
 #ifndef XFRACT
-    gotrealmode = 0;
+    gotrealmode = false;
     if ((g_init_mode < 0 || (askvideo && !initbatch)) && *s_makepar != '\0')
     {
         /* no exact match or (askvideo=yes and batch=no), and not
@@ -307,7 +307,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
         if (i < 0)  /* returned -100 - g_video_table entry number */
         {
             g_init_mode = -100 - i;
-            gotrealmode = 1;
+            gotrealmode = true;
         }
         else
         {
@@ -316,10 +316,10 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
     }
 #else
     g_init_mode = 0;
-    gotrealmode = 0;
+    gotrealmode = false;
 #endif
 
-    if (gotrealmode == 0)  /* translate from temp table to permanent */
+    if (!gotrealmode)  /* translate from temp table to permanent */
     {
         int i = g_init_mode;
         int j = g_video_table[i].keynum;
