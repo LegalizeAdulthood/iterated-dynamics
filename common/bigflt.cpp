@@ -715,7 +715,8 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 {
     U16 fact=2;
     bool k = false;
-    int sin_done=0, cos_done=0;
+    int sin_done = 0;
+    int cos_done = 0;
     S16 BIGDIST * testexp, BIGDIST * cexp, BIGDIST * sexp;
 
     testexp = (S16 BIGDIST *)(bftmp1+bflength);
