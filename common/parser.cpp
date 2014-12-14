@@ -2018,7 +2018,8 @@ struct ConstArg *isconst(char *Str, int Len)
     }
     v[vsp].s = Str;
     v[vsp].len = Len;
-    v[vsp].a.d.x = v[vsp].a.d.y = 0.0;
+    v[vsp].a.d.y = 0.0;
+    v[vsp].a.d.x = v[vsp].a.d.y;
 
 #if !defined(XFRACT)
     /* v[vsp].a should already be zeroed out */
