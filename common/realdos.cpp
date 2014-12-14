@@ -993,7 +993,8 @@ int fullscreen_choice(
             break;
         case FIK_CTL_HOME:
             current = -1;
-            increment = rev_increment = 1;
+            rev_increment = 1;
+            increment = rev_increment;
             for (int newcurrent = 0; newcurrent < numchoices; ++newcurrent)
             {
                 if (!isadirname(choices[newcurrent]))
