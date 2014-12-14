@@ -173,9 +173,14 @@ short decoder(short linewidth)
     top_slot = (short)(1 << curr_size);
     clear = (short)(1 << size);
     ending = (short)(clear + 1);
-    slot = newcodes = (short)(ending + 1);
-    navail_bytes = nbits_left = sizeofstring[slot] = xskip = yskip
-                                = old_code = 0;
+    newcodes = (short)(ending + 1);
+    slot = newcodes;
+    old_code = 0;
+    yskip = old_code;
+    xskip = yskip;
+    sizeofstring[slot] = xskip;
+    nbits_left = sizeofstring[slot];
+    navail_bytes = nbits_left;
     out_value = 0;
     for (short i = 0; i < slot; i++)
     {
