@@ -74,14 +74,14 @@ void varypwr2(GENEBASE gene[], int randval, int i);
 void varytrig(GENEBASE gene[], int randval, int i);
 void varybotest(GENEBASE gene[], int randval, int i);
 void varyinv(GENEBASE gene[], int randval, int i);
-static bool explore_check(void);
+static bool explore_check();
 void spiralmap(int);
 static void set_random(int);
 void set_mutation_level(int);
-void SetupParamBox(void);
-void ReleaseParamBox(void);
+void SetupParamBox();
+void ReleaseParamBox();
 
-void initgene(void) /* set up pointers and mutation params for all usable image
+void initgene() /* set up pointers and mutation params for all usable image
                    control variables in fractint... revise as necessary when
                    new vars come along... dont forget to increment NUMGENES
                    (in fractint.h ) as well */
@@ -321,7 +321,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
      0  minor variable changed.  No need to re-generate the image.
        1  major parms changed.  Re-generate the images.
 */
-int get_the_rest(void)
+int get_the_rest()
 {
     const char *evolvmodes[]= {"no","x","y","x+y","x-y","random","spread"};
     int i,k, numtrig;
@@ -416,7 +416,7 @@ choose_vars_restart:
     return (1); /* if you were here, you want to regenerate */
 }
 
-int get_variations(void)
+int get_variations()
 {
     const char *evolvmodes[]= {"no","x","y","x+y","x-y","random","spread"};
     int k, numparams;
@@ -556,7 +556,7 @@ void set_mutation_level(int strength)
     return;
 }
 
-int get_evolve_Parms(void)
+int get_evolve_Parms()
 {
     const char *choices[20];
     int oldhelpmode;
@@ -765,7 +765,7 @@ get_evol_restart:
     return (i);
 }
 
-void SetupParamBox(void)
+void SetupParamBox()
 {
     int vidsize;
     prmboxcount = 0;
@@ -792,7 +792,7 @@ void SetupParamBox(void)
     }
 }
 
-void ReleaseParamBox(void)
+void ReleaseParamBox()
 {
     MemoryRelease(prmboxhandle);
     MemoryRelease(imgboxhandle);
@@ -800,7 +800,7 @@ void ReleaseParamBox(void)
     imgboxhandle = 0;
 }
 
-void set_current_params(void)
+void set_current_params()
 {
     paramrangex = curfractalspecific->xmax - curfractalspecific->xmin;
     opx = newopx = - (paramrangex / 2);
@@ -846,7 +846,7 @@ static void set_random(int ecount)
             rand();
 }
 
-static bool explore_check(void)
+static bool explore_check()
 {
     /* checks through gene array to see if any of the parameters are set to */
     /* one of the non random variation modes. Used to see if parmzoom box is */
@@ -934,7 +934,7 @@ void drawparmbox(int mode)
     return;
 }
 
-void set_evolve_ranges(void)
+void set_evolve_ranges()
 {
     int lclpy = gridsz - py - 1;
     /* set up ranges and offsets for parameter explorer/evolver */
@@ -990,7 +990,7 @@ void spiralmap(int count)
     }
 }
 
-int unspiralmap(void)
+int unspiralmap()
 {
     /* unmaps the clockwise spiral */
     /* All this malarky is to allow selecting different subimages */
