@@ -1261,9 +1261,13 @@ int CvtStk()
     }
 
     prevfptr = (void (*)())nullptr;
-    cvtptrx = realstkcnt = stkcnt = 0;
+    stkcnt = 0;
+    realstkcnt = stkcnt;
+    cvtptrx = realstkcnt;
 
-    for (OpPtr = LodPtr = StoPtr = 0; OpPtr < (int)LastOp; OpPtr++) {
+    StoPtr = 0;
+    LodPtr = StoPtr;
+    for (OpPtr = LodPtr; OpPtr < (int)LastOp; OpPtr++) {
         ftst = f[OpPtr];
         bool fnfound = false;
         for (fn_entry *pfe = &afe[0]; pfe <= &afe[LAST_OLD_FN]; pfe++) {
