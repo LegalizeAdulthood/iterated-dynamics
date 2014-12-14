@@ -36,7 +36,8 @@ typedef void (*PLOT)(int,int,int);
 int test()
 {
     int startrow,startpass,numpasses;
-    startrow = startpass = 0;
+    startpass = 0;
+    startrow = startpass;
     if (resuming)
     {
         start_resume();
@@ -183,11 +184,15 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
 
     recur1 = (int)(320L >> recur);
     suby.t = 2;
-    ny   = suby.v[0] = y2;
-    ny1 = suby.v[2] = y1;
-    suby.r[0] = suby.r[2] = 0;
+    suby.v[0] = y2;
+    ny   = suby.v[0];
+    suby.v[2] = y1;
+    ny1 = suby.v[2];
+    suby.r[2] = 0;
+    suby.r[0] = suby.r[2];
     suby.r[1] = 1;
-    y = suby.v[1] = (ny1 + ny) >> 1;
+    suby.v[1] = (ny1 + ny) >> 1;
+    y = suby.v[1];
 
     while (suby.t >= 1)
     {
@@ -208,30 +213,37 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
             /*            of largest and smallest            */
 
             suby.t++;
-            ny1  = suby.v[suby.t] = suby.v[suby.t-1];
+            suby.v[suby.t] = suby.v[suby.t-1];
+            ny1  = suby.v[suby.t];
             ny   = suby.v[suby.t-2];
             suby.r[suby.t] = suby.r[suby.t-1];
-            y    = suby.v[suby.t-1]   = (ny1 + ny) >> 1;
+            suby.v[suby.t-1]   = (ny1 + ny) >> 1;
+            y    = suby.v[suby.t-1];
             suby.r[suby.t-1]   = (BYTE)(std::max(suby.r[suby.t], suby.r[suby.t-2])+1);
         }
         subx.t = 2;
-        nx  = subx.v[0] = x2;
-        nx1 = subx.v[2] = x1;
-        subx.r[0] = subx.r[2] = 0;
+        subx.v[0] = x2;
+        nx  = subx.v[0];
+        subx.v[2] = x1;
+        nx1 = subx.v[2];
+        subx.r[2] = 0;
+        subx.r[0] = subx.r[2];
         subx.r[1] = 1;
-        x = subx.v[1] = (nx1 + nx) >> 1;
+        subx.v[1] = (nx1 + nx) >> 1;
+        x = subx.v[1];
 
         while (subx.t >= 1)
         {
             while (subx.r[subx.t-1] < (BYTE)recur)
             {
                 subx.t++; /* move the top ofthe stack up 1 */
-                nx1  = subx.v[subx.t] = subx.v[subx.t-1];
+                subx.v[subx.t] = subx.v[subx.t-1];
+                nx1  = subx.v[subx.t];
                 nx   = subx.v[subx.t-2];
                 subx.r[subx.t] = subx.r[subx.t-1];
-                x    = subx.v[subx.t-1]   = (nx1 + nx) >> 1;
-                subx.r[subx.t-1]   = (BYTE)(std::max(subx.r[subx.t],
-                                                subx.r[subx.t-2])+1);
+                subx.v[subx.t-1]   = (nx1 + nx) >> 1;
+                x    = subx.v[subx.t-1];
+                subx.r[subx.t-1]   = (BYTE)(std::max(subx.r[subx.t], subx.r[subx.t-2])+1);
             }
 
             i = getpix(nx, y);
@@ -501,7 +513,8 @@ int diffusion()
     if (driver_diskp())
         notdiskmsg();
 
-    x = y = -1;
+    y = -1;
+    x = y;
     bitshift = 16;
     fudge = 1L << 16;
 
@@ -1155,7 +1168,8 @@ int popcorn()   /* subset of std engine */
     }
     kbdcount=max_kbdcount;
     plot = noplot;
-    tempsqrx = ltempsqrx = 0;
+    ltempsqrx = 0;
+    tempsqrx = ltempsqrx;
     for (row = start_row; row <= iystop; row++)
     {
         reset_periodicity = true;
@@ -1933,7 +1947,8 @@ bool froth_setup()
         /* 0.5 is the value that causes the mapping to reach a minimum */
         double x0 = 0.5;
         /* a/2 is the value that causes the y value to be invariant over the mappings */
-        double y0 = fsp.fl.f.halfa = fsp.fl.f.a/2;
+        fsp.fl.f.halfa = fsp.fl.f.a/2;
+        double y0 = fsp.fl.f.halfa;
         fsp.fl.f.top_x1 = froth_top_x_mapping(x0);
         fsp.fl.f.top_x2 = froth_top_x_mapping(fsp.fl.f.top_x1);
         fsp.fl.f.top_x3 = froth_top_x_mapping(fsp.fl.f.top_x2);
@@ -2023,8 +2038,10 @@ int calcfroth()   /* per pixel 1/2/g, called with row & col set */
             old.y = dypixel();
         }
 
+        tempsqrx = sqr(old.x);
+        tempsqry = sqr(old.y);
         while (!found_attractor
-                && ((tempsqrx=sqr(old.x)) + (tempsqry=sqr(old.y)) < rqlim)
+                && (tempsqrx + tempsqry < rqlim)
                 && (coloriter < maxit))
         {
             /* simple formula: z = z^2 + conj(z*(-1+ai)) */
@@ -2103,6 +2120,8 @@ int calcfroth()   /* per pixel 1/2/g, called with row & col set */
                         found_attractor = 3;
                 }
             }
+            tempsqrx = sqr(old.x);
+            tempsqry = sqr(old.y);
         }
     }
     else /* integer mode */
