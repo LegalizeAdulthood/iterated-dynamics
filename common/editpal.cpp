@@ -1582,7 +1582,7 @@ struct  _PalTable
 static void    PalTable__DrawStatus(PalTable *me, bool stripe_mode);
 static void    PalTable__HlPal(PalTable *me, int pnum, int color);
 static void    PalTable__Draw(PalTable *me);
-static BOOLEAN PalTable__SetCurr(PalTable *me, int which, int curr);
+static void PalTable__SetCurr(PalTable *me, int which, int curr);
 static BOOLEAN PalTable__MemoryAlloc(PalTable *me, long size);
 static void    PalTable__SaveRect(PalTable *me);
 static void    PalTable__RestoreRect(PalTable *me);
@@ -1950,7 +1950,7 @@ static void PalTable__Draw(PalTable *me)
 
 
 
-static BOOLEAN PalTable__SetCurr(PalTable *me, int which, int curr)
+static void PalTable__SetCurr(PalTable *me, int which, int curr)
 {
     BOOLEAN redraw = (BOOLEAN)((which < 0) ? TRUE : FALSE);
 
@@ -1960,7 +1960,7 @@ static BOOLEAN PalTable__SetCurr(PalTable *me, int which, int curr)
         curr = me->curr[which];
     }
     else if (curr == me->curr[which] || curr < 0)
-        return FALSE;
+        return;
 
     Cursor_Hide();
 
@@ -1986,7 +1986,7 @@ static BOOLEAN PalTable__SetCurr(PalTable *me, int which, int curr)
 
         Cursor_Show();
 
-        return TRUE;
+        return;
     }
 
     me->curr[which] = curr;
@@ -2013,8 +2013,6 @@ static BOOLEAN PalTable__SetCurr(PalTable *me, int which, int curr)
     Cursor_Show();
 
     me->curr_changed = false;
-
-    return TRUE;
 }
 
 
