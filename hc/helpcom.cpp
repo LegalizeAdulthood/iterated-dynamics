@@ -274,7 +274,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
     PD_INFO   pd;
     char      nl = '\n',
               sp = ' ';
-    int       first_topic;
+    bool first_topic;
 
     pd.pnum = 1;
     pd.lnum = 0;
@@ -327,7 +327,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
             ++pd.lnum;
         }
 
-        first_topic = 1;
+        first_topic = true;
 
         while (get_info(PD_GET_TOPIC, &pd, info))
         {
@@ -623,7 +623,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 
             get_info(PD_RELEASE_TOPIC, &pd, info);
 
-            first_topic = 0;
+            first_topic = false;
         } /* while */
 
         first_section = false;
