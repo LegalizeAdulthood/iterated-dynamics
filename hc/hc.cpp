@@ -202,7 +202,7 @@ long     swappos;
 char    *buffer;                  /* alloc'ed as BUFFER_SIZE bytes */
 char    *curr;                    /* current position in the buffer */
 char     cmd[128];                /* holds the current command */
-int      compress_spaces;
+bool compress_spaces = false;
 int      xonline;
 int      xdoc;
 
@@ -1532,7 +1532,7 @@ void read_src(char *fname)
                     num_spaces = 0;
                     xonline = xdoc = 0;
                     lformat_exclude = format_exclude;
-                    compress_spaces = 1;
+                    compress_spaces = true;
                     continue;
                 }
 
@@ -1580,7 +1580,7 @@ void read_src(char *fname)
                     num_spaces = 0;
                     xonline = xdoc = 0;
                     lformat_exclude = format_exclude;
-                    compress_spaces = 0;
+                    compress_spaces = false;
                     continue;
                 }
 
@@ -1596,7 +1596,7 @@ void read_src(char *fname)
                         unread_char('~');
                         done = 1;
                     }
-                    compress_spaces = 1;
+                    compress_spaces = true;
                     process_contents();
                     in_topic = false;
                     continue;
@@ -1990,14 +1990,14 @@ void read_src(char *fname)
                             if (compress_spaces)
                                 warn(eoff,"\"CompressSpaces+\" is already in effect.");
                             else
-                                compress_spaces = 1;
+                                compress_spaces = true;
                         }
                         else if (cmd[14] == '-')
                         {
                             if (!compress_spaces)
                                 warn(eoff,"\"CompressSpaces-\" is already in effect.");
                             else
-                                compress_spaces = 0;
+                                compress_spaces = false;
                         }
                         else
                             error(eoff,"Invalid argument to CompressSpaces.");
