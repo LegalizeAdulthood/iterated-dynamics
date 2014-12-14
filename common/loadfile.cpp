@@ -507,7 +507,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
     if (blk_5_info.got_data == 1)
     {
-        bf_math = 1;
+        bf_math = BIGNUM;
         init_bf_length(read_info.bflength);
         memcpy((char *) bfxmin, blk_5_info.apm_data, blk_5_info.length);
         free(blk_5_info.apm_data);

@@ -115,7 +115,7 @@ static void init_bf_2()
     else if ((i = find_alternate_math(fractype, BIGFLT)) > -1)
         bf_math = alternatemath[i].math;
     else
-        bf_math = 1; /* maybe called from cmdfiles.c and fractype not set */
+        bf_math = BIGNUM; /* maybe called from cmdfiles.c and fractype not set */
 
     floatflag = true;
 

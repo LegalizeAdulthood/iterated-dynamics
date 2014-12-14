@@ -2298,7 +2298,7 @@ int StandardFractal()       /* per pixel 1/2/b/g, called with row & col set */
             g_new.x = ((double)lnew.x) / fudge;
             g_new.y = ((double)lnew.y) / fudge;
         }
-        else if (bf_math==1)
+        else if (bf_math == BIGNUM)
         {
             g_new.x = (double)bntofloat(bnnew.x);
             g_new.y = (double)bntofloat(bnnew.y);
