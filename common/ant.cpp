@@ -462,7 +462,10 @@ ant()
     if (maxants < 1)             /* if maxants == 0 maxants random */
         maxants = 2 + RANDOM(MAX_ANTS - 2);
     else if (maxants > MAX_ANTS)
-        param[2] = maxants = MAX_ANTS;
+    {
+        maxants = MAX_ANTS;
+        param[2] = MAX_ANTS;
+    }
     type = (int) param[3] - 1;
     if (type < 0 || type > 1)
         type = RANDOM(2);         /* if type == 0 choose a random type */
