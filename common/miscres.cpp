@@ -23,7 +23,7 @@
 /* routines in this module      */
 
 static  void trigdetails(char *);
-static void area(void);
+static void area();
 
 void notdiskmsg()
 {
@@ -508,19 +508,19 @@ nextname:
 
 BYTE trigndx[] = {SIN,SQR,SINH,COSH};
 #if !defined(XFRACT)
-void (*ltrig0)(void) = lStkSin;
-void (*ltrig1)(void) = lStkSqr;
-void (*ltrig2)(void) = lStkSinh;
-void (*ltrig3)(void) = lStkCosh;
-void (*mtrig0)(void) = mStkSin;
-void (*mtrig1)(void) = mStkSqr;
-void (*mtrig2)(void) = mStkSinh;
-void (*mtrig3)(void) = mStkCosh;
+void (*ltrig0)() = lStkSin;
+void (*ltrig1)() = lStkSqr;
+void (*ltrig2)() = lStkSinh;
+void (*ltrig3)() = lStkCosh;
+void (*mtrig0)() = mStkSin;
+void (*mtrig1)() = mStkSqr;
+void (*mtrig2)() = mStkSinh;
+void (*mtrig3)() = mStkCosh;
 #endif
-void (*dtrig0)(void) = dStkSin;
-void (*dtrig1)(void) = dStkSqr;
-void (*dtrig2)(void) = dStkSinh;
-void (*dtrig3)(void) = dStkCosh;
+void (*dtrig0)() = dStkSin;
+void (*dtrig1)() = dStkSqr;
+void (*dtrig2)() = dStkSinh;
+void (*dtrig3)() = dStkCosh;
 
 /* struct trig_funct_lst trigfn[]  was moved to prompts1.c */
 
@@ -1210,7 +1210,7 @@ top:
     return 0;
 }
 
-static void area(void)
+static void area()
 {
     const char *msg;
     char buf[160];
