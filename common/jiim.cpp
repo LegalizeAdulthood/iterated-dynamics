@@ -175,7 +175,10 @@ QueueFullAlmost()       /* True if room for ONE more point in queue */
 void
 ClearQueue()
 {
-    ListFront = ListBack = lsize = lmax = 0;
+    lmax = 0;
+    lsize = lmax;
+    ListBack = lsize;
+    ListFront = ListBack;
 }
 
 
@@ -197,8 +200,10 @@ bool Init_Queue(unsigned long request)
         switch (common_startdisk(ListSize * 8, 1, 256))
         {
         case 0:                        /* success */
-            ListFront = ListBack = 0;
-            lsize = lmax = 0;
+            ListBack = 0;
+            ListFront = ListBack;
+            lmax = 0;
+            lsize = lmax;
             return true;
         case -1:
             continue;                   /* try smaller queue size */
@@ -216,7 +221,11 @@ void
 Free_Queue()
 {
     enddisk();
-    ListFront = ListBack = ListSize = lsize = lmax = 0;
+    lmax = 0;
+    lsize = lmax;
+    ListSize = lsize;
+    ListBack = ListSize;
+    ListFront = ListBack;
 }
 
 int
@@ -578,7 +587,8 @@ void Jiim(int which)         /* called by fractint */
         ci = SaveC.y;
     }
 
-    old_x = old_y = -1;
+    old_y = -1;
+    old_x = old_y;
 
     col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
     row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
@@ -722,7 +732,8 @@ void Jiim(int which)         /* called by fractint */
                     exact = true;
                     col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
                     row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
-                    dcol = drow = 0;
+                    drow = 0;
+                    dcol = drow;
                     break;
                 case 'h':   /* hide fractal toggle */
                 case 'H':   /* hide fractal toggle */
@@ -828,13 +839,19 @@ void Jiim(int which)         /* called by fractint */
                     driver_display_string(5, g_vesa_y_res-show_numbers, WHITE, BLACK, str);
             }
             iter = 1;
-            old.x = old.y = lold.x = lold.y = 0;
-            SaveC.x = init.x =  cr;
-            SaveC.y = init.y =  ci;
+            lold.y = 0;
+            lold.x = lold.y;
+            old.y = lold.x;
+            old.x = old.y;
+            init.x = cr;
+            SaveC.x = init.x;
+            init.y = ci;
+            SaveC.y = init.y;
             linit.x = (long)(init.x*fudge);
             linit.y = (long)(init.y*fudge);
 
-            old_x = old_y = -1;
+            old_y = -1;
+            old_x = old_y;
             /*
              * MIIM code:
              * compute fixed points and use them as starting points of JIIM
@@ -897,10 +914,14 @@ void Jiim(int which)         /* called by fractint */
                     if (maxhits < colors - 1 && maxhits < 5 &&
                             (luckyx != 0.0 || luckyy != 0.0))
                     {
-                        lsize  = lmax   = 0;
-                        old.x  = g_new.x  = luckyx;
-                        old.y  = g_new.y  = luckyy;
-                        luckyx = luckyy = (float)0.0;
+                        lmax = 0;
+                        lsize = lmax;
+                        g_new.x = luckyx;
+                        old.x = g_new.x;
+                        g_new.y = luckyy;
+                        old.y = g_new.y;
+                        luckyy = 0.0f;
+                        luckyx = luckyy;
                         for (int i = 0; i < 199; i++)
                         {
                             old = ComplexSqrtFloat(old.x - cr, old.y - ci);
@@ -937,7 +958,8 @@ void Jiim(int which)         /* called by fractint */
                 r = old.x*old.x + old.y*old.y;
                 if (r > 10.0)
                 {
-                    old.x = old.y = 0.0; /* avoids math error */
+                    old.y = 0.0;
+                    old.x = old.y; /* avoids math error */
                     iter = 1;
                     r = 0;
                 }
@@ -1068,7 +1090,10 @@ void Jiim(int which)         /* called by fractint */
                     /* fall through */
                     case -1:            /* now go positive dir for a while */
                         if (++rancnt > 512)
-                            randir = rancnt = 0;
+                        {
+                            rancnt = 0;
+                            randir = rancnt;
+                        }
                         break;
                     }
                     x = (int)(g_new.x * xfactor * zoom + xoff);
@@ -1098,7 +1123,8 @@ void Jiim(int which)         /* called by fractint */
             }
             else
             {
-                x = y = -1;
+                y = -1;
+                x = y;
                 actively_computing = false;
             }
         }

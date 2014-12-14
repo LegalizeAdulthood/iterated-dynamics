@@ -88,9 +88,12 @@ JulibrotSetup()
     else
         RightEyefp.x = eyesfp / 2;
     LeftEyefp.x = -RightEyefp.x;
-    LeftEyefp.y = RightEyefp.y = 0;
-    LeftEyefp.zx = RightEyefp.zx = distfp;
-    LeftEyefp.zy = RightEyefp.zy = distfp;
+    RightEyefp.y = 0;
+    LeftEyefp.y = RightEyefp.y;
+    RightEyefp.zx = distfp;
+    LeftEyefp.zx = RightEyefp.zx;
+    RightEyefp.zy = distfp;
+    LeftEyefp.zy = RightEyefp.zy;
     bbase = 128;
 
 #ifndef XFRACT
@@ -131,13 +134,16 @@ JulibrotSetup()
         inch_per_ydot = (long)((heightfp / ydots) * fg16);
         initz = origin - (depth / 2);
         if (juli3Dmode == 0)
-            RightEye.x = 0l;
+            RightEye.x = 0L;
         else
             RightEye.x = eyes / 2;
         LeftEye.x = -RightEye.x;
-        LeftEye.y = RightEye.y = 0l;
-        LeftEye.zx = RightEye.zx = dist;
-        LeftEye.zy = RightEye.zy = dist;
+        RightEye.y = 0L;
+        LeftEye.y = RightEye.y;
+        RightEye.zx = dist;
+        LeftEye.zx = RightEye.zx;
+        RightEye.zy = dist;
+        LeftEye.zy = RightEye.zy;
         bbase = (int)(128.0 * brratiofp);
     }
 #endif
