@@ -755,7 +755,7 @@ int diffusion()
 
 static std::vector<int> verhulst_array;
 unsigned long filter_cycles;
-static unsigned int half_time_check;
+static bool half_time_check = false;
 static long   lPopulation, lRate;
 double Population,  Rate;
 static bool mono = false;
@@ -806,11 +806,11 @@ int Bifurcation()
     }
 
     filter_cycles = (parm.x <= 0) ? DEFAULTFILTER : (long)parm.x;
-    half_time_check = FALSE;
+    half_time_check = false;
     if (periodicitycheck && (unsigned long)maxit < filter_cycles)
     {
         filter_cycles = (filter_cycles - maxit + 1) / 2;
-        half_time_check = TRUE;
+        half_time_check = true;
     }
 
     if (integerfractal)
