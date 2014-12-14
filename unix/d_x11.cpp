@@ -89,7 +89,7 @@ struct DriverX11
     int privatecolor;           /* = 0; */
     int fixcolors;              /* = 0; */
     /* Run X events synchronously (debugging) */
-    int sync;                   /* = 0; */
+    bool sync;                  /* = false; */
     const char *Xdisplay;       /* = ""; */
     const char *Xgeometry;      /* = nullptr; */
     int doesBacking;
@@ -247,7 +247,7 @@ check_arg(DriverX11 *di, int argc, char **argv, int *i)
         slowdisplay = true;
         return 1;
     } else if (strcmp(argv[*i], "-sync") == 0) {
-        di->sync = 1;
+        di->sync = true;
         return 1;
     } else if (strcmp(argv[*i], "-private") == 0) {
         di->privatecolor = 1;
@@ -2543,7 +2543,7 @@ static DriverX11 x11_driver_info = {
     false,                /* sharecolor */
     0,                    /* privatecolor */
     0,                    /* fixcolors */
-    0,                    /* sync */
+    false,                /* sync */
     "",                   /* Xdisplay */
     nullptr,              /* Xgeometry */
     0,                    /* doesBacking */
