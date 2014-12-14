@@ -1579,7 +1579,7 @@ struct  _PalTable
 
 /* private: */
 
-static void    PalTable__DrawStatus(PalTable *me, BOOLEAN stripe_mode);
+static void    PalTable__DrawStatus(PalTable *me, bool stripe_mode);
 static void    PalTable__HlPal(PalTable *me, int pnum, int color);
 static void    PalTable__Draw(PalTable *me);
 static BOOLEAN PalTable__SetCurr(PalTable *me, int which, int curr);
@@ -1830,7 +1830,7 @@ static void PalTable__Redo(PalTable *me)
 
 #define STATUS_LEN (4)
 
-static void PalTable__DrawStatus(PalTable *me, BOOLEAN stripe_mode)
+static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
 {
     int width = 1+(me->csize*16)+1+1;
 
@@ -1943,7 +1943,7 @@ static void PalTable__Draw(PalTable *me)
         PalTable__HlPal(me, me->curr[1], fg_color);
     }
 
-    PalTable__DrawStatus(me, FALSE);
+    PalTable__DrawStatus(me, false);
 
     Cursor_Show();
 }
@@ -2604,7 +2604,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         int key;
 
         Cursor_Hide();
-        PalTable__DrawStatus(me, TRUE);
+        PalTable__DrawStatus(me, true);
         key = getakeynohelp();
         Cursor_Show();
 
@@ -2982,7 +2982,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         break;
 
     } /* switch */
-    PalTable__DrawStatus(me, FALSE);
+    PalTable__DrawStatus(me, false);
 }
 
 static void PalTable__MkDefaultPalettes(PalTable *me)  /* creates default Fkey palettes */
