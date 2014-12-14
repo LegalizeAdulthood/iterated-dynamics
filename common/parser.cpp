@@ -4426,7 +4426,7 @@ bool frm_prescan(FILE * open_file)
     int errors_found = 0;
     bool ExpectingArg = true;
     bool NewStatement = true;
-    int assignment_ok = 1;
+    bool assignment_ok = true;
     int already_got_colon = 0;
     unsigned long else_has_been_used = 0;
     unsigned long waiting_for_mod = 0;
@@ -4457,7 +4457,7 @@ bool frm_prescan(FILE * open_file)
         switch (this_token.token_type)
         {
         case NOT_A_TOKEN:
-            assignment_ok = 0;
+            assignment_ok = false;
             switch (this_token.token_id)
             {
             case END_OF_FILE:
@@ -4543,7 +4543,7 @@ bool frm_prescan(FILE * open_file)
             }
             break;
         case PARENS:
-            assignment_ok = 0;
+            assignment_ok = false;
             NewStatement = false;
             switch (this_token.token_id)
             {
@@ -4698,7 +4698,7 @@ bool frm_prescan(FILE * open_file)
             ExpectingArg = false;
             break;
         case REAL_CONSTANT: /* i.e. 4, (4,0), etc.) */
-            assignment_ok = 0;
+            assignment_ok = false;
             number_of_ops++;
             number_of_loads++;
             NewStatement = false;
@@ -4714,7 +4714,7 @@ bool frm_prescan(FILE * open_file)
             ExpectingArg = false;
             break;
         case COMPLEX_CONSTANT: /* i.e. (1,2) etc. */
-            assignment_ok = 0;
+            assignment_ok = false;
             number_of_ops++;
             number_of_loads++;
             NewStatement = false;
@@ -4730,7 +4730,7 @@ bool frm_prescan(FILE * open_file)
             ExpectingArg = false;
             break;
         case FUNCTION:
-            assignment_ok = 0;
+            assignment_ok = false;
             NewStatement = false;
             number_of_ops++;
             if (!ExpectingArg)
@@ -4811,7 +4811,7 @@ bool frm_prescan(FILE * open_file)
             }
             break;
         case PARAM_FUNCTION:
-            assignment_ok = 0;
+            assignment_ok = false;
             number_of_ops++;
             if (!ExpectingArg)
             {
@@ -4838,7 +4838,7 @@ bool frm_prescan(FILE * open_file)
             NewStatement = false;
             break;
         case FLOW_CONTROL:
-            assignment_ok = 0;
+            assignment_ok = false;
             number_of_ops++;
             number_of_jumps++;
             if (!NewStatement)
@@ -4987,11 +4987,11 @@ bool frm_prescan(FILE * open_file)
                     already_got_colon = 1;
                 NewStatement = true;
                 ExpectingArg = true;
-                assignment_ok = 1;
+                assignment_ok = true;
                 statement_pos = ftell(open_file);
                 break;
             case 1:     /* != */
-                assignment_ok = 0;
+                assignment_ok = false;
                 if (ExpectingArg)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5019,7 +5019,7 @@ bool frm_prescan(FILE * open_file)
                 ExpectingArg = true;
                 break;
             case 3:     /* == */
-                assignment_ok = 0;
+                assignment_ok = false;
                 if (ExpectingArg)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5032,7 +5032,7 @@ bool frm_prescan(FILE * open_file)
                 ExpectingArg = true;
                 break;
             case 4:     /* < */
-                assignment_ok = 0;
+                assignment_ok = false;
                 if (ExpectingArg)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5045,7 +5045,7 @@ bool frm_prescan(FILE * open_file)
                 ExpectingArg = true;
                 break;
             case 5:     /* <= */
-                assignment_ok = 0;
+                assignment_ok = false;
                 if (ExpectingArg)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5058,7 +5058,7 @@ bool frm_prescan(FILE * open_file)
                 ExpectingArg = true;
                 break;
             case 6:     /* > */
-                assignment_ok = 0;
+                assignment_ok = false;
                 if (ExpectingArg)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5071,7 +5071,7 @@ bool frm_prescan(FILE * open_file)
                 ExpectingArg = true;
                 break;
             case 7:     /* >= */
-                assignment_ok = 0;
+                assignment_ok = false;
                 if (ExpectingArg)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5084,7 +5084,7 @@ bool frm_prescan(FILE * open_file)
                 ExpectingArg = true;
                 break;
             case 8:     /* | */ /* (half of the modulus operator */
-                assignment_ok = 0;
+                assignment_ok = false;
                 if (!(waiting_for_mod & 1L))
                 {
                     number_of_ops--;
@@ -5110,7 +5110,7 @@ bool frm_prescan(FILE * open_file)
                 waiting_for_mod = waiting_for_mod ^ 1L; /*switch right bit*/
                 break;
             case 9:     /* || */
-                assignment_ok = 0;
+                assignment_ok = false;
                 if (ExpectingArg)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5123,7 +5123,7 @@ bool frm_prescan(FILE * open_file)
                 ExpectingArg = true;
                 break;
             case 10:    /* && */
-                assignment_ok = 0;
+                assignment_ok = false;
                 if (ExpectingArg)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5136,7 +5136,7 @@ bool frm_prescan(FILE * open_file)
                 ExpectingArg = true;
                 break;
             case 12:    /* + */ /* case 11 (":") is up with case 0 */
-                assignment_ok = 0;
+                assignment_ok = false;
                 if (ExpectingArg)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5149,11 +5149,11 @@ bool frm_prescan(FILE * open_file)
                 ExpectingArg = true;
                 break;
             case 13:    /* - */
-                assignment_ok = 0;
+                assignment_ok = false;
                 ExpectingArg = true;
                 break;
             case 14:    /* * */
-                assignment_ok = 0;
+                assignment_ok = false;
                 if (ExpectingArg)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5166,7 +5166,7 @@ bool frm_prescan(FILE * open_file)
                 ExpectingArg = true;
                 break;
             case 15:    /* / */
-                assignment_ok = 0;
+                assignment_ok = false;
                 if (ExpectingArg)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5179,7 +5179,7 @@ bool frm_prescan(FILE * open_file)
                 ExpectingArg = true;
                 break;
             case 16:    /* ^ */
-                assignment_ok = 0;
+                assignment_ok = false;
                 if (ExpectingArg)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
