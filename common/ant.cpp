@@ -362,7 +362,7 @@ exit_ant:
     return;
 }
 
-void free_ant_storage(void)
+void free_ant_storage()
 {
     if (s_incx[0])
     {
@@ -373,7 +373,7 @@ void free_ant_storage(void)
 
 /* N.B. use the common memory in extraseg - suffix not large enough*/
 int
-ant(void)
+ant()
 {
     int maxants, type;
     int oldhelpmode, rule_len;
