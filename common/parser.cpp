@@ -2642,7 +2642,8 @@ static bool ParseStr(char *Str, int pass)
                 o[posp++].p = 15;
                 o[posp].f = StkClr;
                 o[posp++].p = -30000;
-                Equals = paren = 0;
+                paren = 0;
+                Equals = paren;
             }
             break;
         case ':':
@@ -2651,7 +2652,8 @@ static bool ParseStr(char *Str, int pass)
             o[posp++].p = 15;
             o[posp].f = EndInit;
             o[posp++].p = -30000;
-            Equals = paren = 0;
+            paren = 0;
+            Equals = paren;
             LastInitOp = 10000;
             break;
         case '+':
