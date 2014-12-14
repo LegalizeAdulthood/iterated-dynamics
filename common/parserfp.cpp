@@ -307,16 +307,15 @@ int pstopmsg(int x,char *msg)
 #define LAST_FN          FN_ONE
 #define NUM_FNS          LAST_FN + 1
 
-static unsigned char
-realstkcnt,   /* how many scalars are really on stack  */
-stkcnt,       /* # scalars on FPU stack  */
-lastsqrused,  /* was lastsqr loaded in the formula?  */
-lastsqrreal,  /* was lastsqr stored explicitly in the formula?  */
-p1const,      /* is p1 a constant?  */
-p2const,      /* ...and p2?  */
-p3const,      /* ...and p3?  */
-p4const,      /* ...and p4?  */
-p5const;      /* ...and p5?  */
+static unsigned char realstkcnt;    /* how many scalars are really on stack  */
+static unsigned char stkcnt;        /* # scalars on FPU stack  */
+static bool lastsqrused = false;    /* was lastsqr loaded in the formula?  */
+static unsigned char lastsqrreal;   /* was lastsqr stored explicitly in the formula?  */
+static unsigned char p1const;       /* is p1 a constant?  */
+static unsigned char p2const;       /* ...and p2?  */
+static unsigned char p3const;       /* ...and p3?  */
+static unsigned char p4const;       /* ...and p4?  */
+static unsigned char p5const;       /* ...and p5?  */
 
 static unsigned int
 cvtptrx;      /* subscript of next free entry in pfls  */
@@ -1183,7 +1182,9 @@ int fform_per_pixel();       /* these fns are in parsera.asm  */
 int BadFormula();
 void (Img_Setup)();
 
-int CvtStk() {  /* convert the array of ptrs  */
+/* convert the array of ptrs  */
+int CvtStk()
+{
     extern char FormName[];
     void (*ftst)();
     void (*ntst)();
@@ -1193,14 +1194,14 @@ int CvtStk() {  /* convert the array of ptrs  */
     lastsqrreal = 1;  /* assume lastsqr is real (not stored explicitly)  */
     p1const = p2const = p3const = (unsigned char)1;  /* . . . p1, p2, p3 const  */
     p4const = p5const = (unsigned char)1;  /* . . . p4, p5 const  */
-    lastsqrused = 0;  /* ... and LastSqr is not used  */
+    lastsqrused = false;  /* ... and LastSqr is not used  */
 
     /* now see if the above assumptions are true */
     for (OpPtr = LodPtr = StoPtr = 0; OpPtr < (int)LastOp; OpPtr++) {
         ftst = f[OpPtr];
         if (ftst == StkLod) {
             if (Load[LodPtr++] == &LASTSQR) {
-                lastsqrused = 1;
+                lastsqrused = true;
             }
         }
         else if (ftst == StkSto) {
