@@ -57,12 +57,12 @@ extern int StoPtr, LodPtr, OpPtr;
 extern unsigned int vsp, LastOp;
 extern struct ConstArg *v;
 extern int InitLodPtr, InitStoPtr, InitOpPtr, LastInitOp;
-extern void (**f)(void);
+extern void (**f)();
 extern JUMP_CONTROL_ST *jump_control;
 extern bool uses_jump;
 extern int jump_index;
 
-typedef void OLD_FN(void);  /* old C functions  */
+typedef void OLD_FN();  /* old C functions  */
 
 OLD_FN  StkLod, StkClr, StkSto, EndInit, StkJumpLabel;
 OLD_FN  dStkAdd, dStkSub, dStkMul, dStkDiv;
@@ -88,7 +88,7 @@ OLD_FN  dStkRound;
 OLD_FN  StkJump, dStkJumpOnTrue, dStkJumpOnFalse;
 OLD_FN  dStkOne;
 
-typedef void (NEW_FN)(void);   /* new 387-only ASM functions  */
+typedef void (NEW_FN)();   /* new 387-only ASM functions  */
 
 NEW_FN  fStkPull2;  /* pull up fpu stack from 2 to 4  */
 NEW_FN  fStkPush2;  /* push down fpu stack from 8 to 6  */
@@ -175,7 +175,7 @@ NEW_FN  fStkOne;   /* to support new parser fn.  */
 #define FNPTR(x) pfls[(x)].function  /* function pointer */
 #define OPPTR(x) pfls[(x)].operand   /* operand pointer */
 #define NO_OPERAND (union Arg  *)0
-#define NO_FUNCTION (void ( *)(void))0
+#define NO_FUNCTION (void ( *)())0
 #define LASTSQR v[4].a
 #define PARM1 v[1].a
 #define PARM2 v[2].a
@@ -321,7 +321,7 @@ p5const;      /* ...and p5?  */
 static unsigned int
 cvtptrx;      /* subscript of next free entry in pfls  */
 
-static void (*prevfptr)(void);    /* previous function pointer  */
+static void (*prevfptr)();    /* previous function pointer  */
 
 /* the entries in this table must be in the same order as  */
 /*    the #defines above  */
@@ -331,10 +331,10 @@ struct fn_entry {
 #ifdef TESTFP
     char *fname;  /* function name  */
 #endif
-    void (*infn)(void);  /* 'old' function pointer  */
+    void (*infn)();  /* 'old' function pointer  */
     /* (infn points to an operator fn in parser.c)  */
 
-    void (*outfn)(void);   /* pointer to equiv. fast fn.  */
+    void (*outfn)();   /* pointer to equiv. fast fn.  */
 
     char min_regs;  /* min regs needed on stack by this fn.  */
     /* (legal values are 0, 2, 4)  */
@@ -409,7 +409,7 @@ struct fn_entry {
 static char cDbgMsg[255];
 #endif  /* TESTFP  */
 
-static int CvtFptr(void (* ffptr)(void), int MinStk, int FreeStk,
+static int CvtFptr(void (* ffptr)(), int MinStk, int FreeStk,
                    int Delta)
 {
     union Arg  *otemp;    /* temp operand ptr  */
@@ -1126,7 +1126,7 @@ SkipOptimizer:  /* -------------  end of optimizer ----------------------- */
     return 1;  /* return 1 for success  */
 }
 
-int fpfill_jump_struct(void)
+int fpfill_jump_struct()
 {   /* Completes all entries in jump structure. Returns 1 on error) */
     /* On entry, jump_index is the number of jump functions in the formula*/
     int i = 0;
@@ -1179,14 +1179,14 @@ int fpfill_jump_struct(void)
     return i < 0 ? 1 : 0;
 }
 
-int fform_per_pixel(void);       /* these fns are in parsera.asm  */
-int BadFormula(void);
-void (Img_Setup)(void);
+int fform_per_pixel();       /* these fns are in parsera.asm  */
+int BadFormula();
+void (Img_Setup)();
 
 int CvtStk() {  /* convert the array of ptrs  */
     extern char FormName[];
-    void (*ftst)(void);
-    void (*ntst)(void);
+    void (*ftst)();
+    void (*ntst)();
     union Arg *testoperand;
     int fnfound;
 
@@ -1254,7 +1254,7 @@ int CvtStk() {  /* convert the array of ptrs  */
         f[LastOp++] = StkClr;
     }
 
-    prevfptr = (void (*)(void))nullptr;
+    prevfptr = (void (*)())nullptr;
     cvtptrx = realstkcnt = stkcnt = 0;
 
     for (OpPtr = LodPtr = StoPtr = 0; OpPtr < (int)LastOp; OpPtr++) {
