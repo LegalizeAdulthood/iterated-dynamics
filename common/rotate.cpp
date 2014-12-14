@@ -17,7 +17,7 @@ static void set_palette(BYTE start[3], BYTE finish[3]);
 static void set_palette2(BYTE start[3], BYTE finish[3]);
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3]);
 
-static int paused;                      /* rotate-is-paused flag */
+static bool paused = false;             /* rotate-is-paused flag */
 static BYTE Red[3]    = {63, 0, 0};     /* for shifted-Fkeys */
 static BYTE Green[3]  = { 0,63, 0};
 static BYTE Blue[3]   = { 0, 0,63};
@@ -58,7 +58,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
     oldhelpmode = helpmode;              /* save the old help mode       */
     helpmode = HELPCYCLING;              /* new help mode                */
 
-    paused = 0;                          /* not paused                   */
+    paused = false;                      /* not paused                   */
     fkey = 0;                            /* no random coloring           */
     oldstep = step = 1;                  /* single-step                  */
     fstep = 1;
@@ -119,7 +119,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
                        && kbdchar != 'c'
                        && kbdchar != FIK_HOME
                        && kbdchar != 'C'))
-            paused = 0;                    /* clear paused condition       */
+            paused = false;                 /* clear paused condition       */
         switch (kbdchar) {
         case '+':                      /* '+' means rotate forward     */
         case FIK_RIGHT_ARROW:              /* RightArrow = rotate fwd      */
@@ -250,7 +250,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
             }
             changecolor    = -1;        /* clear flags for next time */
             changedirection = 0;
-            paused          = 0;        /* clear any pause */
+            paused          = false;    /* clear any pause */
         case ' ':                      /* use the spacebar as a "pause" toggle */
         case 'c':                      /* for completeness' sake, the 'c' too */
         case 'C':
@@ -385,7 +385,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 static void pauserotate()               /* pause-the-rotate routine */
 {
     if (paused)                          /* if already paused , just clear */
-        paused = 0;
+        paused = false;
     else
     {                               /* else set border, wait for a key */
         int olddaccount = g_dac_count;  /* saved dac-count value goes here */
@@ -410,7 +410,7 @@ static void pauserotate()               /* pause-the-rotate routine */
         g_dac_box[0][2] = olddac2;
         spindac(0,1);                     /* show black border */
         g_dac_count = olddaccount;
-        paused = 1;
+        paused = true;
     }
 }
 
