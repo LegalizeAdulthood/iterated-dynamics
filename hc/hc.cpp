@@ -1156,15 +1156,15 @@ int create_table()
 
         case '~':
         {
-            int imbedded;
+            bool imbedded;
 
             ch = read_char();
 
-            if (ch=='(')
-                imbedded = 1;
+            if (ch == '(')
+                imbedded = true;
             else
             {
-                imbedded = 0;
+                imbedded = false;
                 unread_char(ch);
             }
 
