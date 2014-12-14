@@ -1724,7 +1724,8 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     allitbl = 0;
     allyres = allitbl;
     allxres = allyres;
-    out = in = nullptr;
+    in = nullptr;
+    out = in;
 
     strcpy(gifout,"fractmig.gif");
 
