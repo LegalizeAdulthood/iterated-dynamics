@@ -2032,7 +2032,8 @@ struct ConstArg *isconst(char *Str, int Len)
         v[vsp].a.m.y.Mant = v[vsp].a.m.y.Exp;
         break;
     case L_MATH:
-        v[vsp].a.l.x = v[vsp].a.l.y = 0;
+        v[vsp].a.l.y = 0;
+        v[vsp].a.l.x = v[vsp].a.l.y;
         break;
     }
 #endif
