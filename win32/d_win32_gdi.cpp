@@ -573,7 +573,7 @@ gdi_redraw(Driver *drv)
     {
         plot_redraw(&di->plot);
     }
-    frame_pump_messages(FALSE);
+    frame_pump_messages(false);
 }
 
 static void

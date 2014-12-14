@@ -268,7 +268,7 @@ void frame_init(HINSTANCE instance, LPCSTR title)
     g_frame.keypress_tail  = 0;
 }
 
-int frame_pump_messages(int waitflag)
+int frame_pump_messages(bool waitflag)
 {
     MSG msg;
     BOOL quitting = FALSE;
