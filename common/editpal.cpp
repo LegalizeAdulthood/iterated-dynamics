@@ -460,9 +460,9 @@ void *mem_alloc(unsigned size)
  */
 
 
-static BOOLEAN is_reserved(int color)
+static bool is_reserved(int color)
 {
-    return (BOOLEAN)((reserve_colors && (color==(int)fg_color || color==(int)bg_color)) ? TRUE : FALSE);
+    return reserve_colors && (color == fg_color || color == bg_color);
 }
 
 
