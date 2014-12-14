@@ -2417,7 +2417,7 @@ get_brws_restart:
 int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 {
     bool isadir_error = false;
-    int isafile = 0;
+    bool isafile = false;
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
     char fname[FILE_MAX_FNAME];
@@ -2431,7 +2431,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 
     /* no dot or slash so assume a file */
     if (strchr(newfilename,'.')==nullptr && strchr(newfilename,SLASHC) == nullptr)
-        isafile=1;
+        isafile = true;
     bool isadir = isadirectory(newfilename);
     if (isadir)
         fix_dirname(newfilename);
@@ -2481,17 +2481,17 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
     strcpy(newfilename,temp_path);
 #endif
     /* check existence */
-    if (!isadir || isafile==1)
+    if (!isadir || isafile)
     {
         if (fr_findfirst(newfilename) == 0) {
             if (DTA.attribute & SUBDIR) /* exists and is dir */
             {
                 fix_dirname(newfilename);  /* add trailing slash */
                 isadir = true;
-                isafile = 0;
+                isafile = false;
             }
             else
-                isafile = 1;
+                isafile = true;
         }
     }
 
@@ -2505,7 +2505,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
         strcpy(fname1,fname);
     if ((int) strlen(ext) != 0)
         strcpy(ext1,ext);
-    if (!isadir && isafile == 0 && GETPATH)
+    if (!isadir && !isafile && GETPATH)
     {
         makepath(oldfullpath,drive1,dir1,nullptr,nullptr);
         int len = (int) strlen(oldfullpath);
