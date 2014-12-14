@@ -965,7 +965,10 @@ longZpowerFractal()
 {
 #if !defined(XFRACT)
     if (lcpower(&lold,c_exp,&lnew,bitshift))
-        lnew.x = lnew.y = 8L<<bitshift;
+    {
+        lnew.y = 8L << bitshift;
+        lnew.x = lnew.y;
+    }
     lnew.x += longparm->x;
     lnew.y += longparm->y;
     return longbailout();
@@ -2777,8 +2780,9 @@ int mandelfp_per_pixel()
     {
     case MAGNET2M:
         FloatPreCalcMagnet2();
-    case MAGNET1M:           /* Crit Val Zero both, but neither   */
-        old.x = old.y = 0.0; /* is of the form f(Z,C) = Z*g(Z)+C  */
+    case MAGNET1M:
+        old.y = 0.0;        /* Critical Val Zero both, but neither   */
+        old.x = old.y;      /* is of the form f(Z,C) = Z*g(Z)+C  */
         break;
     case MANDELLAMBDAFP:            /* Critical Value 0.5 + 0.0i  */
         old.x = 0.5;
@@ -3106,8 +3110,10 @@ QuaternionFPFractal()
     if (magnitude>rqlim) {
         return 1;
     }
-    old.x = g_new.x = n0;
-    old.y = g_new.y = n1;
+    g_new.x = n0;
+    old.x = g_new.x;
+    g_new.y = n1;
+    old.y = g_new.y;
     floatparm->x = n2;
     floatparm->y = n3;
     return 0;
@@ -3130,8 +3136,10 @@ HyperComplexFPFractal()
     hnew.z += qcj;
     hnew.t += qck;
 
-    old.x = g_new.x = hnew.x;
-    old.y = g_new.y = hnew.y;
+    g_new.x = hnew.x;
+    old.x = g_new.x;
+    g_new.y = hnew.y;
+    old.y = g_new.y;
     floatparm->x = hnew.z;
     floatparm->y = hnew.t;
 
@@ -3177,7 +3185,9 @@ EscherfpFractal() /* Science of Fractal Images pp. 185, 187 */
     {
         newtest.x = testsqr.x - testsqr.y + param[0];
         newtest.y = 2.0 * oldtest.x * oldtest.y + param[1];
-        testsize = (testsqr.x = sqr(newtest.x)) + (testsqr.y = sqr(newtest.y));
+        testsqr.x = sqr(newtest.x);
+        testsqr.y = sqr(newtest.y);
+        testsize = testsqr.x + testsqr.y;
         oldtest = newtest;
         testiter++;
     }
