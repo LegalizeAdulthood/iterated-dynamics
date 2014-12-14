@@ -1561,7 +1561,7 @@ struct  _PalTable
     FILE         *undo_file;
     bool curr_changed;
     int           num_redo;
-    int           hidden;
+    bool hidden;
     int           stored_at;
     FILE         *file;
     char         *memory;
@@ -2662,7 +2662,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case 'H':
     case 'h': /* toggle hide/display of palette editor */
         Cursor_Hide();
-        PalTable_Hide(me, rgb, me->hidden ? false : true);
+        PalTable_Hide(me, rgb, !me->hidden);
         Cursor_Show();
         break;
 
@@ -2839,7 +2839,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case 'C':     /* color cycling sub-mode */
     case 'c':
     {
-        BOOLEAN oldhidden = (BOOLEAN)me->hidden;
+        bool oldhidden = me->hidden;
 
         PalTable__SaveUndoData(me, 0, 255);
 
@@ -3010,7 +3010,7 @@ static PalTable *PalTable_Construct()
     me->curr[1]     = 1;
     me->auto_select = true;
     me->exclude     = 0;
-    me->hidden      = FALSE;
+    me->hidden      = false;
     me->stored_at   = NOWHERE;
     me->file        = nullptr;
     me->memory      = nullptr;
