@@ -2057,7 +2057,7 @@ static int check_gfe_key(int curkey,int choice)
 
         int top_line = 0;
         int left_column = 0;
-        int done = 0;
+        bool done = false;
         bool rewrite_infbuf = false;  /* if true: rewrite the entry portion of screen */
         while (!done) {
             if (rewrite_infbuf) {
@@ -2144,7 +2144,7 @@ static int check_gfe_key(int curkey,int choice)
                 }
             }
             else
-                done = 1;  /* a key other than scrolling key was pressed */
+                done = true;  /* a key other than scrolling key was pressed */
         }
         g_text_cbase = 0;
         driver_hide_text_cursor();
