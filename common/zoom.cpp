@@ -735,19 +735,23 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
 static void restart_window(int wknum)
 /* force a worklist entry to restart */
 {
-    int yfrom,yto,xfrom,xto;
-    if ((yfrom = worklist[wknum].yystart) < 0)
+    int yfrom = worklist[wknum].yystart;
+    if (yfrom < 0)
         yfrom = 0;
-    if ((xfrom = worklist[wknum].xxstart) < 0)
+    int xfrom = worklist[wknum].xxstart;
+    if (xfrom < 0)
         xfrom = 0;
-    if ((yto = worklist[wknum].yystop) >= ydots)
+    int yto = worklist[wknum].yystop;
+    if (yto >= ydots)
         yto = ydots - 1;
-    if ((xto = worklist[wknum].xxstop) >= xdots)
+    int xto = worklist[wknum].xxstop;
+    if (xto >= xdots)
         xto = xdots - 1;
     memset(dstack,0,xdots); /* use dstack as a temp for the row; clear it */
     while (yfrom <= yto)
         put_line(yfrom++,xfrom,xto,(BYTE *)dstack);
-    worklist[wknum].sym = worklist[wknum].pass = 0;
+    worklist[wknum].pass = 0;
+    worklist[wknum].sym = worklist[wknum].pass;
     worklist[wknum].yybegin = worklist[wknum].yystart;
     worklist[wknum].xxbegin = worklist[wknum].xxstart;
 }
