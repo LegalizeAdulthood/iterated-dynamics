@@ -220,7 +220,8 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
     xxmax =  w - h*tanskew;
     xx3rd = -w - h*tanskew;
     yymax = h;
-    yy3rd = yymin = -h;
+    yymin = -h;
+    yy3rd = yymin;
 
     /* rotate coord system and then translate it */
     Rotation = deg_to_rad(Rotation);
