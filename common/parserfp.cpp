@@ -1189,7 +1189,6 @@ int CvtStk()
     void (*ftst)();
     void (*ntst)();
     union Arg *testoperand;
-    int fnfound;
 
     lastsqrreal = true;  /* assume lastsqr is real (not stored explicitly)  */
     p1const = p2const = p3const = (unsigned char)1;  /* . . . p1, p2, p3 const  */
@@ -1260,10 +1259,10 @@ int CvtStk()
 
     for (OpPtr = LodPtr = StoPtr = 0; OpPtr < (int)LastOp; OpPtr++) {
         ftst = f[OpPtr];
-        fnfound = 0;
+        bool fnfound = false;
         for (fn_entry *pfe = &afe[0]; pfe <= &afe[LAST_OLD_FN]; pfe++) {
             if (ftst == pfe->infn) {
-                fnfound = 1;
+                fnfound = true;
                 ntst = pfe->outfn;
                 if (ntst == fStkClr1 && OpPtr == (int)(LastOp-1)) {
                     ntst = fStkClr2;  /* convert the last clear to a clr2  */
