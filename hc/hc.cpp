@@ -174,7 +174,7 @@ LINK    *a_link           = 0;
 int      num_contents     = 0;    /* the table-of-contents */
 CONTENT *contents;
 
-int      quiet_mode       = 0;    /* true if "/Q" option used */
+bool quiet_mode = false;          /* true if "/Q" option used */
 
 int      max_pages        = 0;    /* max. pages in any topic */
 int      max_links        = 0;    /* max. links on any page */
@@ -320,7 +320,7 @@ void msg(const char *format, ...)
 #   define error  (printf("[%04d] ", __LINE__), error)
 #   define warn   (printf("[%04d] ", __LINE__), warn)
 #   define notice (printf("[%04d] ", __LINE__), notice)
-#   define msg    (printf((quiet_mode)?"":"[%04d] ", __LINE__), msg)
+#   define msg    (printf(quiet_mode ? "" : "[%04d] ", __LINE__), msg)
 #endif
 
 
@@ -3652,7 +3652,7 @@ int main(int argc, char *argv[])
                 break;
 
             case 'q':
-                quiet_mode = 1;
+                quiet_mode = true;
                 break;
 
             default:
