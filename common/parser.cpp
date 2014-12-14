@@ -767,8 +767,10 @@ void dStkZero()
 #if !defined(XFRACT)
 void mStkZero()
 {
-    Arg1->m.x.Mant = Arg1->m.x.Exp = 0;
-    Arg1->m.y.Mant = Arg1->m.y.Exp = 0;
+    Arg1->m.x.Exp = 0;
+    Arg1->m.x.Mant = Arg1->m.x.Exp;
+    Arg1->m.y.Exp = 0;
+    Arg1->m.y.Mant = Arg1->m.y.Exp;
 }
 
 void lStkZero()
