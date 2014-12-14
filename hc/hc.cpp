@@ -1451,7 +1451,6 @@ void read_src(char *fname)
         {
             bool imbedded;
             int eoff;
-            int done;
 
             ch = read_char();
             if (ch == '(')
@@ -1466,7 +1465,7 @@ void read_src(char *fname)
                 unread_char(ch);
             }
 
-            done = 0;
+            bool done = false;
 
             while (!done)
             {
@@ -1594,7 +1593,7 @@ void read_src(char *fname)
                         if (imbedded)
                             unread_char('(');
                         unread_char('~');
-                        done = 1;
+                        done = true;
                     }
                     compress_spaces = true;
                     process_contents();
@@ -1829,7 +1828,7 @@ void read_src(char *fname)
                             if (imbedded)
                                 unread_char('(');
                             unread_char('~');
-                            done = 1;
+                            done = true;
                         }
 
                         create_table();
