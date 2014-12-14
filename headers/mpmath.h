@@ -43,15 +43,15 @@ enum MATH_TYPE { D_MATH};
 #endif
 extern enum MATH_TYPE MathType;
 
-#define fDiv(x, y, z) (void)((*(long*)&z) = RegDivFloat(*(long*)&x, *(long*)&y))
-#define fMul16(x, y, z) (void)((*(long*)&z) = r16Mul(*(long*)&x, *(long*)&y))
-#define fShift(x, Shift, z) (void)((*(long*)&z) = \
+#define fDiv(x, y, z) ((*(long*)&z) = RegDivFloat(*(long*)&x, *(long*)&y))
+#define fMul16(x, y, z) ((*(long*)&z) = r16Mul(*(long*)&x, *(long*)&y))
+#define fShift(x, Shift, z) ((*(long*)&z) = \
    RegSftFloat(*(long*)&x, Shift))
-#define Fg2Float(x, f, z) (void)((*(long*)&z) = RegFg2Float(x, f))
+#define Fg2Float(x, f, z) ((*(long*)&z) = RegFg2Float(x, f))
 #define Float2Fg(x, f) RegFloat2Fg(*(long*)&x, f)
-#define fLog14(x, z) (void)((*(long*)&z) = \
+#define fLog14(x, z) ((*(long*)&z) = \
         RegFg2Float(LogFloat14(*(long*)&x), 16))
-#define fExp14(x, z) (void)((*(long*)&z) = ExpFloat14(*(long*)&x));
+#define fExp14(x, z) ((*(long*)&z) = ExpFloat14(*(long*)&x));
 #define fSqrt14(x, z) fLog14(x, z); fShift(z, -1, z); fExp14(z, z)
 
 /* the following are declared 4 dimensional as an experiment */
@@ -71,17 +71,17 @@ struct ConstArg {
 
 extern union Arg *Arg1,*Arg2;
 
-extern void lStkSin(void),lStkCos(void),lStkSinh(void),lStkCosh(void),lStkLog(void),lStkExp(void),lStkSqr(void);
-extern void dStkSin(void),dStkCos(void),dStkSinh(void),dStkCosh(void),dStkLog(void),dStkExp(void),dStkSqr(void);
+extern void lStkSin(),lStkCos(),lStkSinh(),lStkCosh(),lStkLog(),lStkExp(),lStkSqr();
+extern void dStkSin(),dStkCos(),dStkSinh(),dStkCosh(),dStkLog(),dStkExp(),dStkSqr();
 
-extern void (*ltrig0)(void);
-extern void (*ltrig1)(void);
-extern void (*ltrig2)(void);
-extern void (*ltrig3)(void);
-extern void (*dtrig0)(void);
-extern void (*dtrig1)(void);
-extern void (*dtrig2)(void);
-extern void (*dtrig3)(void);
+extern void (*ltrig0)();
+extern void (*ltrig1)();
+extern void (*ltrig2)();
+extern void (*ltrig3)();
+extern void (*dtrig0)();
+extern void (*dtrig1)();
+extern void (*dtrig2)();
+extern void (*dtrig3)();
 
 /* -------------------------------------------------------------------- */
 /*   The following #defines allow the complex transcendental functions  */

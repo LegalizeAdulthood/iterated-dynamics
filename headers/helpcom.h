@@ -138,8 +138,8 @@ extern int help(int);
 extern int read_help_topic(int ,int ,int ,VOIDPTR);
 extern bool makedoc_msg_func(int pnum, int num_pages);
 extern void print_document(const char *outfname, bool (*msg_func)(int,int), int save_extraseg);
-extern int init_help(void);
-extern void end_help(void);
+extern int init_help();
+extern void end_help();
 extern bool is_hyphen(const char *ptr);
 
 #ifndef XFRACT

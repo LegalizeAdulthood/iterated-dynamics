@@ -567,9 +567,9 @@ struct fractalspecificstuff
                                            6 = NEWTON (power) symmetry
                                         */
     int (*orbitcalc)();                 /* function that calculates one orbit */
-    int (*per_pixel)(void);             /* once-per-pixel init */
-    bool (*per_image)(void);            /* once-per-image setup */
-    int (*calctype)(void);              /* name of main fractal function */
+    int (*per_pixel)();             /* once-per-pixel init */
+    bool (*per_image)();            /* once-per-image setup */
+    int (*calctype)();              /* name of main fractal function */
     int orbit_bailout;                  /* usual bailout value for orbit calc */
 };
 
@@ -578,8 +578,8 @@ struct alternatemathstuff
     int type;                           /* index in fractalname of the fractal */
     int math;                           /* kind of math used */
     int (*orbitcalc)();                 /* function that calculates one orbit */
-    int (*per_pixel)(void);             /* once-per-pixel init */
-    bool (*per_image)(void);            /* once-per-image setup */
+    int (*per_pixel)();             /* once-per-pixel init */
+    bool (*per_image)();            /* once-per-image setup */
 };
 
 typedef struct alternatemathstuff AlternateMath;
@@ -837,15 +837,15 @@ struct dblcoords {
 };
 
 extern BYTE trigndx[];
-extern void (*ltrig0)(void), (*ltrig1)(void), (*ltrig2)(void), (*ltrig3)(void);
-extern void (*dtrig0)(void), (*dtrig1)(void), (*dtrig2)(void), (*dtrig3)(void);
+extern void (*ltrig0)(), (*ltrig1)(), (*ltrig2)(), (*ltrig3)();
+extern void (*dtrig0)(), (*dtrig1)(), (*dtrig2)(), (*dtrig3)();
 
 struct trig_funct_lst
 {
     const char *name;
-    void (*lfunct)(void);
-    void (*dfunct)(void);
-    void (*mfunct)(void);
+    void (*lfunct)();
+    void (*dfunct)();
+    void (*mfunct)();
 } ;
 extern struct trig_funct_lst trigfn[];
 

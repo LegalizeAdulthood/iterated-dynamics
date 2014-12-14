@@ -176,7 +176,7 @@ struct tagDriver
 
 extern int init_drivers(int *argc, char **argv);
 extern void add_video_mode(Driver *drv, VIDEOINFO *mode);
-extern void close_drivers(void);
+extern void close_drivers();
 extern Driver *driver_find_by_name(const char *name);
 
 extern Driver *g_driver;            /* current driver in use */
@@ -190,14 +190,14 @@ extern void driver_set_video_mode(VIDEOINFO *mode);
 
 extern bool driver_validate_mode(VIDEOINFO *mode);
 extern void driver_get_max_screen(int *xmax, int *ymax);
-extern void driver_terminate(void);
+extern void driver_terminate();
 // pause and resume are only used internally in drivers.c
 extern void driver_schedule_alarm(int secs);
-extern void driver_window(void);
-extern bool driver_resize(void);
-extern void driver_redraw(void);
-extern int driver_read_palette(void);
-extern int driver_write_palette(void);
+extern void driver_window();
+extern bool driver_resize();
+extern void driver_redraw();
+extern int driver_read_palette();
+extern int driver_write_palette();
 extern int driver_read_pixel(int x, int y);
 extern void driver_write_pixel(int x, int y, int color);
 extern void driver_read_span(int y, int x, int lastx, BYTE *pixels);
@@ -206,37 +206,37 @@ extern void driver_get_truecolor(int x, int y, int *r, int *g, int *b, int *a);
 extern void driver_put_truecolor(int x, int y, int r, int g, int b, int a);
 extern void driver_set_line_mode(int mode);
 extern void driver_draw_line(int x1, int y1, int x2, int y2, int color);
-extern int driver_get_key(void);
+extern int driver_get_key();
 extern void driver_display_string(int x, int y, int fg, int bg, const char *text);
-extern void driver_save_graphics(void);
-extern void driver_restore_graphics(void);
+extern void driver_save_graphics();
+extern void driver_restore_graphics();
 extern int driver_key_cursor(int row, int col);
-extern int driver_key_pressed(void);
+extern int driver_key_pressed();
 extern int driver_wait_key_pressed(int timeout);
 extern void driver_unget_key(int key);
-extern void driver_shell(void);
+extern void driver_shell();
 extern void driver_put_string(int row, int col, int attr, const char *msg);
-extern void driver_set_for_text(void);
-extern void driver_set_for_graphics(void);
-extern void driver_set_clear(void);
+extern void driver_set_for_text();
+extern void driver_set_for_graphics();
+extern void driver_set_clear();
 extern void driver_move_cursor(int row, int col);
-extern void driver_hide_text_cursor(void);
+extern void driver_hide_text_cursor();
 extern void driver_set_attr(int row, int col, int attr, int count);
 extern void driver_scroll_up(int top, int bot);
-extern void driver_stack_screen(void);
-extern void driver_unstack_screen(void);
-extern void driver_discard_screen(void);
-extern int driver_init_fm(void);
+extern void driver_stack_screen();
+extern void driver_unstack_screen();
+extern void driver_discard_screen();
+extern int driver_init_fm();
 extern void driver_buzzer(int kind);
 extern bool driver_sound_on(int frequency);
-extern void driver_sound_off(void);
-extern void driver_mute(void);
-extern bool driver_diskp(void);
-extern int driver_get_char_attr(void);
+extern void driver_sound_off();
+extern void driver_mute();
+extern bool driver_diskp();
+extern int driver_get_char_attr();
 extern void driver_put_char_attr(int char_attr);
 extern void driver_delay(int ms);
 extern void driver_set_keyboard_timeout(int ms);
-extern void driver_flush(void);
+extern void driver_flush();
 
 #else
 

@@ -84,6 +84,6 @@ extern struct lsys_cmd * drawLSysF(struct lsys_cmd *command,struct lsys_turtlest
 extern bool lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd **rules, int depth);
 extern struct lsys_cmd *LSysFSizeTransform(char *s, struct lsys_turtlestatef *ts);
 extern struct lsys_cmd *LSysFDrawTransform(char *s, struct lsys_turtlestatef *ts);
-extern void lsysf_dosincos(void);
+extern void lsysf_dosincos();
 
 #endif
