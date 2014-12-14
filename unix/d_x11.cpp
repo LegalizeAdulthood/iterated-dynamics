@@ -80,11 +80,11 @@ enum {
     MOUSE_SCALE = 1
 };
 
-typedef struct tagDriverX11 DriverX11;
-struct tagDriverX11 {
+struct DriverX11
+{
     Driver pub;
-    int onroot;                 /* = 0; */
-    int fullscreen;             /* = 0; */
+    bool onroot;                /* = false; */
+    bool fullscreen;            /* = false; */
     int sharecolor;             /* = 0; */
     int privatecolor;           /* = 0; */
     int fixcolors;              /* = 0; */
@@ -232,10 +232,10 @@ check_arg(DriverX11 *di, int argc, char **argv, int *i)
         (*i)++;
         return 1;
     } else if (strcmp(argv[*i], "-fullscreen") == 0) {
-        di->fullscreen = 1;
+        di->fullscreen = true;
         return 1;
     } else if (strcmp(argv[*i], "-onroot") == 0) {
-        di->onroot = 1;
+        di->onroot = true;
         return 1;
     } else if (strcmp(argv[*i], "-share") == 0) {
         di->sharecolor = 1;
@@ -2538,8 +2538,8 @@ static void x11_set_keyboard_timeout(Driver *drv, int ms)
  */
 static DriverX11 x11_driver_info = {
     STD_DRIVER_STRUCT(x11, "An X Window System driver"),
-    0,                    /* onroot */
-    0,                    /* fullscreen */
+    false,                /* onroot */
+    false,                /* fullscreen */
     0,                    /* sharecolor */
     0,                    /* privatecolor */
     0,                    /* fixcolors */
