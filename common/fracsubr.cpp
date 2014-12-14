@@ -132,18 +132,16 @@ bool use_grid = false;
 
 void calcfracinit() /* initialize a *pile* of stuff for fractal calculation */
 {
-    long xytemp;
-    double ftemp;
-    coloriter=oldcoloriter = 0L;
+    coloriter = oldcoloriter = 0L;
     for (int i = 0; i < 10; i++)
         rhombus_stack[i] = 0;
 
     /* set up grid array compactly leaving space at end */
     /* space req for grid is 2(xdots+ydots)*sizeof(long or double) */
     /* space available in extraseg is 65536 Bytes */
-    xytemp = xdots + ydots;
-    if (((usr_floatflag == 0) && (xytemp * sizeof(long) > 32768)) ||
-            ((usr_floatflag == 1) && (xytemp * sizeof(double) > 32768)) ||
+    long xytemp = xdots + ydots;
+    if (((usr_floatflag == 0) && (xytemp*sizeof(long) > 32768)) ||
+            ((usr_floatflag == 1) && (xytemp*sizeof(double) > 32768)) ||
             debugflag == 3800)
     {
         use_grid = false;
@@ -310,12 +308,12 @@ init_restart:
     if ((curfractalspecific->flags&NOROTATE) != 0) {
         /* ensure min<max and unrotated rectangle */
         if (xxmin > xxmax) {
-            ftemp = xxmax;
+            double ftemp = xxmax;
             xxmax = xxmin;
             xxmin = ftemp;
         }
         if (yymin > yymax) {
-            ftemp = yymax;
+            double ftemp = yymax;
             yymax = yymin;
             yymin = ftemp;
         }
@@ -536,7 +534,7 @@ expand_retry:
 
     /* calculate factors which plot real values to screen co-ords */
     /* calcfrac.c plot_orbit routines have comments about this    */
-    ftemp = (double)((0.0-delyy2) * delxx2 * dxsize * dysize
+    double ftemp = (double)((0.0-delyy2) * delxx2 * dxsize * dysize
                      - (xxmax-xx3rd) * (yy3rd-yymax));
     if (ftemp != 0)
     {
