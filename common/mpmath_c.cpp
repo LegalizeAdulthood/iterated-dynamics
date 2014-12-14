@@ -177,7 +177,8 @@ DComplex ComplexPower(DComplex xx, DComplex yy)
 
     if (!ldcheck)
         if (xx.x == 0 && xx.y == 0) {
-            z.x = z.y = 0.0;
+            z.y = 0.0;
+            z.x = z.y;
             return (z);
         }
 
