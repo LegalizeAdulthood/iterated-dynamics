@@ -833,7 +833,7 @@ static void MoveBox__Erase(MoveBox *me)   /* private */
 
 static void MoveBox__Move(MoveBox *me, int key)
 {
-    BOOLEAN done  = FALSE;
+    bool done  = false;
     BOOLEAN first = TRUE;
     int     xoff  = 0,
             yoff  = 0;
@@ -868,7 +868,7 @@ static void MoveBox__Move(MoveBox *me, int key)
             break;
 
         default:
-            done = TRUE;
+            done = true;
         }
 
         if (!done)
