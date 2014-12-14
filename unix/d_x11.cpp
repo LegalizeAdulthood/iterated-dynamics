@@ -105,7 +105,7 @@ struct DriverX11
     int cmap_pixtab_alloced;
     bool fake_lut;
 
-    int fastmode;               /* = 0; Don't draw pixels 1 at a time */
+    bool fastmode;              /* = false; Don't draw pixels 1 at a time */
     int alarmon;                /* = 0; 1 if the refresh alarm is on */
     int doredraw;               /* = 0; 1 if we have a redraw waiting */
 
@@ -241,7 +241,7 @@ check_arg(DriverX11 *di, int argc, char **argv, int *i)
         di->sharecolor = true;
         return 1;
     } else if (strcmp(argv[*i], "-fast") == 0) {
-        di->fastmode = 1;
+        di->fastmode = true;
         return 1;
     } else if (strcmp(argv[*i], "-slowdisplay") == 0) {
         slowdisplay = 1;
@@ -1967,7 +1967,7 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
         di->xlastcolor = color;
     }
     XPutPixel(di->Ximage, x, y, FAKE_LUT(di, di->pixtab[color]));
-    if (di->fastmode == 1 && helpmode != HELPXHAIR) {
+    if (di->fastmode && helpmode != HELPXHAIR) {
         if (!di->alarmon) {
             x11_schedule_alarm(drv, 0);
         }
@@ -2042,7 +2042,7 @@ x11_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
     for (int i = 0; i < width; i++) {
         XPutPixel(di->Ximage, x+i, y, FAKE_LUT(di, pixline[i]));
     }
-    if (di->fastmode == 1 && helpmode != HELPXHAIR) {
+    if (di->fastmode && helpmode != HELPXHAIR) {
         if (!di->alarmon) {
             x11_schedule_alarm(drv, 0);
         }
