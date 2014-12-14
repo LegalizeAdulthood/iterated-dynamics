@@ -23,12 +23,12 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
 static void move_zoombox(int);
 static bool fromtext_flag = false;      /* = true if we're in graphics mode */
 static int call_line3d(BYTE *pixels, int linelen);
-static  void note_zoom(void);
-static  void restore_zoom(void);
+static  void note_zoom();
+static  void restore_zoom();
 static  void move_zoombox(int keynum);
-static  void cmp_line_cleanup(void);
+static  void cmp_line_cleanup();
 static void restore_history_info(int);
-static void save_history_info(void);
+static void save_history_info();
 
 int finishrow=0;    /* save when this row is finished */
 U16 evolve_handle = 0;
@@ -39,7 +39,7 @@ static std::vector<int> save_boxvalues;
 static  int        historyptr = -1;     /* user pointer into history tbl  */
 static  int        saveptr = 0;         /* save ptr into history tbl      */
 static bool historyflag = false;        /* are we backing off in history? */
-void (*outln_cleanup)(void);
+void (*outln_cleanup)();
 bool g_virtual_screens = false;
 
 int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
@@ -2073,7 +2073,7 @@ int cmp_line(BYTE *pixels, int linelen)
     return 0;
 }
 
-static void cmp_line_cleanup(void)
+static void cmp_line_cleanup()
 {
     char *timestring;
     time_t ltime;
