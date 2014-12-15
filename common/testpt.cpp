@@ -22,17 +22,17 @@ The sample code below is a straightforward Mandelbrot routine.
 
 extern int  driver_get_key();
 
-int teststart()     /* this routine is called just before the fractal starts */
+int teststart()     // this routine is called just before the fractal starts
 {
     return (0);
 }
 
-void testend()       /* this routine is called just after the fractal ends */
+void testend()       // this routine is called just after the fractal ends
 {
 }
 
-/* this routine is called once for every pixel */
-/* (note: possibly using the dual-pass / solif-guessing options */
+// this routine is called once for every pixel
+// (note: possibly using the dual-pass / solif-guessing options
 
 int testpt(double initreal,double initimag,double parm1,double parm2,
            long maxit,int inside)
