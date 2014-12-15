@@ -3099,7 +3099,7 @@ void _write_help(FILE *file)
     char                 *text;
     TOPIC                *tp;
     CONTENT              *cp;
-    struct help_sig_info  hs;
+    help_sig_info  hs;
 
     /* write the signature and version */
 
@@ -3479,7 +3479,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
                          hlp;
     long                 len;
     int                  size;
-    struct help_sig_info hs;
+    help_sig_info hs;
 
     if ((exe=open(exe_fname, O_RDWR|O_BINARY)) == -1)
         fatal(0,"Unable to open \"%s\"", exe_fname);
@@ -3491,7 +3491,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 
     /* first, check and see if any help is currently installed */
 
-    lseek(exe, filelength(exe) - sizeof(struct help_sig_info), SEEK_SET);
+    lseek(exe, filelength(exe) - sizeof(help_sig_info), SEEK_SET);
 
     read(exe, (char *)&hs, 10);
 
@@ -3537,7 +3537,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 void delete_hlp_from_exe(const char *exe_fname)
 {
     int   exe;   /* file handle */
-    struct help_sig_info hs;
+    help_sig_info hs;
 
     if ((exe=open(exe_fname, O_RDWR|O_BINARY)) == -1)
         fatal(0,"Unable to open \"%s\"", exe_fname);
