@@ -179,7 +179,7 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
         BYTE r[16];  // recursion level
     };
 
-    static struct sub subx, suby;
+    static sub subx, suby;
 
     recur1 = (int)(320L >> recur);
     suby.t = 2;
@@ -1806,7 +1806,8 @@ static void set_Cellular_palette()
 #define froth_top_x_mapping(x)  ((x)*(x)-(x)-3*fsp.fl.f.a*fsp.fl.f.a/4)
 
 
-struct froth_double_struct {
+struct froth_double_struct
+{
     double a;
     double halfa;
     double top_x1;
@@ -1823,7 +1824,8 @@ struct froth_double_struct {
     double right_x4;
 };
 
-struct froth_long_struct {
+struct froth_long_struct
+{
     long a;
     long halfa;
     long top_x1;
@@ -1848,8 +1850,8 @@ struct froth_struct
     int shades;
     union
     {
-        struct froth_double_struct f;
-        struct froth_long_struct l;
+        froth_double_struct f;
+        froth_long_struct l;
     } fl;
 };
 
@@ -1978,7 +1980,7 @@ bool froth_setup()
 
     if (integerfractal)
     {
-        struct froth_long_struct tmp_l;
+        froth_long_struct tmp_l;
 
         tmp_l.a        = FROTH_D_TO_L(fsp.fl.f.a);
         tmp_l.halfa    = FROTH_D_TO_L(fsp.fl.f.halfa);
