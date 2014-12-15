@@ -19,16 +19,16 @@
 
 // routines in this module
 
-static int  find_fractal_info(char *,struct fractal_info *,
-                              struct ext_blk_2 *,
-                              struct ext_blk_3 *,
-                              struct ext_blk_4 *,
-                              struct ext_blk_5 *,
-                              struct ext_blk_6 *,
-                              struct ext_blk_7 *);
+static int  find_fractal_info(char *, fractal_info *,
+                              ext_blk_2 *,
+                              ext_blk_3 *,
+                              ext_blk_4 *,
+                              ext_blk_5 *,
+                              ext_blk_6 *,
+                              ext_blk_7 *);
 static void load_ext_blk(char *loadptr,int loadlen);
 static void skip_ext_blk(int *,int *);
-static void backwardscompat(struct fractal_info *info);
+static void backwardscompat(fractal_info *info);
 static bool fix_bof();
 static bool fix_period_bof();
 
@@ -43,14 +43,14 @@ bool ldcheck = false;
 
 int read_overlay()      // read overlay/3D files, if reqr'd
 {
-    struct fractal_info read_info;
+    fractal_info read_info;
     char msg[110];
-    struct ext_blk_2 blk_2_info;
-    struct ext_blk_3 blk_3_info;
-    struct ext_blk_4 blk_4_info;
-    struct ext_blk_5 blk_5_info;
-    struct ext_blk_6 blk_6_info;
-    struct ext_blk_7 blk_7_info;
+    ext_blk_2 blk_2_info;
+    ext_blk_3 blk_3_info;
+    ext_blk_4 blk_4_info;
+    ext_blk_5 blk_5_info;
+    ext_blk_6 blk_6_info;
+    ext_blk_7 blk_7_info;
 
     showfile = 1;                // for any abort exit, pretend done
     g_init_mode = -1;               // no viewing mode set yet
@@ -519,7 +519,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (blk_6_info.got_data == 1)
     {
-        struct evolution_info resume_e_info;
+        evolution_info resume_e_info;
         GENEBASE gene[NUMGENES];
 
         // TODO: MemoryAlloc
@@ -644,13 +644,13 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     return 0;
 }
 
-static int find_fractal_info(char *gif_file,struct fractal_info *info,
-                             struct ext_blk_2 *blk_2_info,
-                             struct ext_blk_3 *blk_3_info,
-                             struct ext_blk_4 *blk_4_info,
-                             struct ext_blk_5 *blk_5_info,
-                             struct ext_blk_6 *blk_6_info,
-                             struct ext_blk_7 *blk_7_info)
+static int find_fractal_info(char *gif_file, fractal_info *info,
+                             ext_blk_2 *blk_2_info,
+                             ext_blk_3 *blk_3_info,
+                             ext_blk_4 *blk_4_info,
+                             ext_blk_5 *blk_5_info,
+                             ext_blk_6 *blk_6_info,
+                             ext_blk_7 *blk_7_info)
 {
     BYTE gifstart[18];
     char temp1[81];
@@ -658,9 +658,9 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
     int data_len;
     int fractinf_len;
     int hdr_offset;
-    struct formula_info fload_info;
-    struct evolution_info eload_info;
-    struct orbits_info oload_info;
+    formula_info fload_info;
+    evolution_info eload_info;
+    orbits_info oload_info;
 
     blk_2_info->got_data = 0; // initialize to no data
     blk_3_info->got_data = 0; // initialize to no data
@@ -975,7 +975,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
 
 
 // switch obsolete fractal types to new generalizations
-static void backwardscompat(struct fractal_info *info)
+static void backwardscompat(fractal_info *info)
 {
     switch (fractype) {
     case LAMBDASINE:
@@ -1244,27 +1244,27 @@ static bool fix_period_bof()
 
 #define MAX_WINDOWS_OPEN 450
 
-struct window {       // for fgetwindow on screen browser
-    struct coords itl; // screen coordinates
-    struct coords ibl;
-    struct coords itr;
-    struct coords ibr;
+struct window
+{                       // for fgetwindow on screen browser
+    coords itl;  // screen coordinates
+    coords ibl;
+    coords itr;
+    coords ibr;
     double win_size;   // box size for drawindow()
     char name[13];     // for filename
     int boxcount;      // bytes of saved screen info
 };
 
 // prototypes
-static void drawindow(int, struct window *);
-static bool is_visible_window
-(struct window *, struct fractal_info *, struct ext_blk_5 *);
-static void transform(struct dblcoords *);
-static bool paramsOK(struct fractal_info *);
-static bool typeOK(struct fractal_info *, struct ext_blk_3 *);
-static bool functionOK(struct fractal_info *, int);
+static void drawindow(int, window *);
+static bool is_visible_window(window *, fractal_info *, ext_blk_5 *);
+static void transform(dblcoords *);
+static bool paramsOK(fractal_info *);
+static bool typeOK(fractal_info *, ext_blk_3 *);
+static bool functionOK(fractal_info *, int);
 static void check_history(char *, char *);
 static void bfsetup_convert_to_screen();
-static void bftransform(bf_t, bf_t, struct dblcoords *);
+static void bftransform(bf_t, bf_t, dblcoords *);
 
 char browsename[13]; // name for browse file
 U16 browsehandle;
@@ -1273,7 +1273,7 @@ U16 boxyhandle;
 U16 boxvalueshandle;
 
 // here because must be visible inside several routines
-static struct affine *cvt;
+static affine *cvt;
 static bf_t   bt_a, bt_b, bt_c, bt_d, bt_e, bt_f;
 static bf_t   n_a, n_b, n_c, n_d, n_e, n_f;
 int oldbf_math;
@@ -1281,14 +1281,14 @@ int oldbf_math;
 // fgetwindow reads all .GIF files and draws window outlines on the screen
 int fgetwindow()
 {
-    struct affine stack_cvt;
-    struct fractal_info read_info;
-    struct ext_blk_2 blk_2_info;
-    struct ext_blk_3 blk_3_info;
-    struct ext_blk_4 blk_4_info;
-    struct ext_blk_5 blk_5_info;
-    struct ext_blk_6 blk_6_info;
-    struct ext_blk_7 blk_7_info;
+    affine stack_cvt;
+    fractal_info read_info;
+    ext_blk_2 blk_2_info;
+    ext_blk_3 blk_3_info;
+    ext_blk_4 blk_4_info;
+    ext_blk_5 blk_5_info;
+    ext_blk_6 blk_6_info;
+    ext_blk_7 blk_7_info;
     time_t thistime,lastime;
     char mesg[40];
     char newname[60];
@@ -1298,7 +1298,7 @@ int fgetwindow()
     int wincount;
     int toggle;
     int color_of_box;
-    struct window winlist;
+    window winlist;
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
     char fname[FILE_MAX_FNAME];
@@ -1333,7 +1333,7 @@ int fgetwindow()
     vidlength = 4; // Xfractint only needs the 4 corners saved.
 #endif
     // TODO: MemoryAlloc
-    browsehandle = MemoryAlloc((U16)sizeof(struct window),(long)MAX_WINDOWS_OPEN,MEMORY);
+    browsehandle = MemoryAlloc((U16)sizeof(window),(long)MAX_WINDOWS_OPEN,MEMORY);
     boxxhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
     boxyhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
     boxvalueshandle = MemoryAlloc((U16)(vidlength>>1),(long)MAX_WINDOWS_OPEN,MEMORY);
@@ -1390,7 +1390,7 @@ rescan:  // entry for changed browse parms
             drawindow(color_of_box,&winlist);
             boxcount *= 2; // double for byte count
             winlist.boxcount = boxcount;
-            MoveToMemory(winlistptr,(U16)sizeof(struct window),1L,(long)wincount,browsehandle);
+            MoveToMemory(winlistptr,(U16)sizeof(window),1L,(long)wincount,browsehandle);
             MoveToMemory((BYTE *)boxx,vidlength,1L,(long)wincount,boxxhandle);
             MoveToMemory((BYTE *)boxy,vidlength,1L,(long)wincount,boxyhandle);
             MoveToMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)wincount,boxvalueshandle);
@@ -1425,7 +1425,7 @@ rescan:  // entry for changed browse parms
         driver_buzzer(BUZZER_COMPLETE); //let user know we've finished
         int index = 0;
         done = 0;
-        MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
+        MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)index,browsehandle);
         MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
         MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)index,boxyhandle);
         MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)index,boxvalueshandle);
@@ -1474,7 +1474,7 @@ rescan:  // entry for changed browse parms
                     index -- ;
                     if (index < 0)  index = wincount -1 ;
                 }
-                MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
+                MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)index,browsehandle);
                 MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
                 MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)index,boxyhandle);
                 MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)index,boxvalueshandle);
@@ -1484,20 +1484,20 @@ rescan:  // entry for changed browse parms
             case FIK_CTL_INSERT:
                 color_of_box += key_count(FIK_CTL_INSERT);
                 for (int i = 0; i < wincount ; i++) {
-                    MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)i,browsehandle);
+                    MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)i,browsehandle);
                     drawindow(color_of_box,&winlist);
                 }
-                MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
+                MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)index,browsehandle);
                 drawindow(color_of_box,&winlist);
                 break;
 
             case FIK_CTL_DEL:
                 color_of_box -= key_count(FIK_CTL_DEL);
                 for (int i = 0; i < wincount ; i++) {
-                    MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)i,browsehandle);
+                    MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)i,browsehandle);
                     drawindow(color_of_box,&winlist);
                 }
-                MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
+                MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)index,browsehandle);
                 drawindow(color_of_box,&winlist);
                 break;
 #endif
@@ -1580,7 +1580,7 @@ rescan:  // entry for changed browse parms
                                 strcpy(winlist.name,tmpmask);
                             }
                         }
-                    MoveToMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
+                    MoveToMemory(winlistptr,(U16)sizeof(window),1L,(long)index,browsehandle);
                     showtempmsg(winlist.name);
                 }
                 break;
@@ -1613,7 +1613,7 @@ rescan:  // entry for changed browse parms
         if (done >= 1 && done < 4) {
             for (int i = wincount-1; i >= 0; i--)
             {
-                MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)i,browsehandle);
+                MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)i,browsehandle);
                 boxcount = winlist.boxcount;
                 MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)i,boxxhandle);
                 MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)i,boxyhandle);
@@ -1652,10 +1652,10 @@ rescan:  // entry for changed browse parms
 }
 
 
-static void drawindow(int colour,struct window *info)
+static void drawindow(int colour, window *info)
 {
 #ifndef XFRACT
-    struct coords ibl,itr;
+    coords ibl,itr;
 #endif
 
     boxcolor=colour;
@@ -1699,7 +1699,7 @@ static void drawindow(int colour,struct window *info)
 }
 
 // maps points onto view screen
-static void transform(struct dblcoords *point)
+static void transform(dblcoords *point)
 {
     double tmp_pt_x;
     tmp_pt_x = cvt->a * point->x + cvt->b * point->y + cvt->e;
@@ -1708,11 +1708,11 @@ static void transform(struct dblcoords *point)
 }
 
 static bool is_visible_window(
-    struct window *list,
-    struct fractal_info *info,
-    struct ext_blk_5 *blk_5_info)
+    window *list,
+    fractal_info *info,
+    ext_blk_5 *blk_5_info)
 {
-    struct dblcoords tl,tr,bl,br;
+    dblcoords tl,tr,bl,br;
     bf_t bt_x, bt_y;
     bf_t bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd;
     int saved;
@@ -1910,7 +1910,7 @@ static bool is_visible_window(
         return false;
 }
 
-static bool paramsOK(struct fractal_info *info)
+static bool paramsOK(fractal_info *info)
 {
     double tmpparm3, tmpparm4;
     double tmpparm5, tmpparm6;
@@ -1960,7 +1960,7 @@ static bool paramsOK(struct fractal_info *info)
         return false;
 }
 
-static bool functionOK(struct fractal_info *info, int numfn)
+static bool functionOK(fractal_info *info, int numfn)
 {
     int mzmatch = 0;
     for (int i = 0; i < numfn; i++) {
@@ -1973,7 +1973,7 @@ static bool functionOK(struct fractal_info *info, int numfn)
         return true; // they all match
 }
 
-static bool typeOK(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
+static bool typeOK(fractal_info *info, ext_blk_3 *blk_3_info)
 {
     int numfn;
     if ((fractype == FORMULA || fractype == FFORMULA) &&
@@ -2106,7 +2106,7 @@ static void bfsetup_convert_to_screen()
 }
 
 // maps points onto view screen
-static void bftransform(bf_t bt_x, bf_t bt_y, struct dblcoords *point)
+static void bftransform(bf_t bt_x, bf_t bt_y, dblcoords *point)
 {
     bf_t   bt_tmp1, bt_tmp2;
     int saved;
