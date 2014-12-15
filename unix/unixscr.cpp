@@ -50,15 +50,15 @@
 #endif
 #endif
 
-/* Check if there is a character waiting for us.  */
+// Check if there is a character waiting for us.
 #define input_pending() (ioctl(0,FIONREAD,&iocount),(int)iocount)
 
-/* external variables (set in the FRACTINT.CFG file, but findable here */
+// external variables (set in the FRACTINT.CFG file, but findable here
 
-extern  int dotmode;        /* video access method (= 19)      */
-extern  int sxdots, sydots;     /* total # of dots on the screen   */
-extern  int sxoffs, syoffs;     /* offset of drawing area          */
-extern  int colors;         /* maximum colors available    */
+extern  int dotmode;        // video access method (= 19)
+extern  int sxdots, sydots;     // total # of dots on the screen
+extern  int sxoffs, syoffs;     // offset of drawing area
+extern  int colors;         // maximum colors available
 extern  int initmode;
 extern  int g_adapter;
 extern bool g_got_real_dac;
@@ -68,7 +68,7 @@ extern  float   screenaspect;
 
 extern VIDEOINFO x11_video_table[];
 
-/* the video-palette array (named after the VGA adapter's video-DAC) */
+// the video-palette array (named after the VGA adapter's video-DAC)
 
 extern unsigned char dacbox[256][3];
 
@@ -85,16 +85,16 @@ static int fullscreen = 0;
 static int sharecolor = 0;
 static int privatecolor = 0;
 static int fixcolors = 0;
-static int synch = 0; /* Run X events synchronously (debugging) */
-bool slowdisplay = false; /* We have a slow display, so don't print too much */
-static int simple_input = 0; /* Use simple input (debugging) */
-static int resize_flag = 0; /* Main window being resized ? */
-static int drawing_or_drawn = 0; /* Is image (being) drawn ? */
+static int synch = 0; // Run X events synchronously (debugging)
+bool slowdisplay = false; // We have a slow display, so don't print too much
+static int simple_input = 0; // Use simple input (debugging)
+static int resize_flag = 0; // Main window being resized ?
+static int drawing_or_drawn = 0; // Is image (being) drawn ?
 
 static const char *Xdisplay = "";
 static char *Xgeometry = nullptr;
 
-static int unixDisk = 0; /* Flag if we use the disk video mode */
+static int unixDisk = 0; // Flag if we use the disk video mode
 
 static int old_fcntl;
 
@@ -109,7 +109,7 @@ static int ipixtab[256];
 static unsigned long pixtab[256];
 typedef unsigned long XPixel;
 
-static XPixel cmap_pixtab[256]; /* for faking a LUTs on non-LUT visuals */
+static XPixel cmap_pixtab[256]; // for faking a LUTs on non-LUT visuals
 static bool cmap_pixtab_alloced = false;
 static unsigned long do_fake_lut(int idx)
 {
@@ -117,11 +117,11 @@ static unsigned long do_fake_lut(int idx)
 }
 #define FAKE_LUT(idx_) do_fake_lut(idx_)
 
-static int fastmode = 0; /* Don't draw pixels 1 at a time */
-static int alarmon = 0; /* 1 if the refresh alarm is on */
-static int doredraw = 0; /* 1 if we have a redraw waiting */
+static int fastmode = 0; // Don't draw pixels 1 at a time
+static int alarmon = 0; // 1 if the refresh alarm is on
+static int doredraw = 0; // 1 if we have a redraw waiting
 
-/* Static routines */
+// Static routines
 static Window FindRootWindow();
 static Window pr_dwmroot(Display *dpy, Window pwin);
 static int errhand(Display *dp, XErrorEvent *xe);
@@ -288,9 +288,9 @@ static int errhand(Display *dp, XErrorEvent *xe)
 static void
 continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 {
-    /*      if you want to get all messages enable this statement.    */
-    /*  printf("ieee exception code %x occurred at pc %X\n",code,scp->sc_pc); */
-    /*  clear all excaption flags                     */
+    //      if you want to get all messages enable this statement.
+    //  printf("ieee exception code %x occurred at pc %X\n",code,scp->sc_pc);
+    //  clear all excaption flags
     char out[20];
     ieee_flags("clear","exception","all",out);
 }
@@ -358,7 +358,7 @@ select_visual()
         break;
 
     default:
-        /* those should be all the visual classes */
+        // those should be all the visual classes
         assert(1);
         break;
     }
@@ -389,7 +389,7 @@ initUnixWindow()
     XGCValues Xgcvals;
 
     if (Xdp != nullptr) {
-        /* We are already initialized */
+        // We are already initialized
         return;
     }
 
@@ -425,7 +425,7 @@ initUnixWindow()
         Xwinheight &= -4;
         sxdots = Xwinwidth;
         sydots = Xwinheight;
-    } else {  /* Use X window */
+    } else {  // Use X window
         size_hints = XAllocSizeHints();
         if (size_hints == nullptr) {
             fprintf(stderr, "Could not allocate memory for X size hints \n");
@@ -689,7 +689,7 @@ int startvideo()
 
 int endvideo()
 {
-    return (0);             /* set flag: video ended */
+    return (0);             // set flag: video ended
 
 }
 
@@ -743,16 +743,16 @@ resizeWindow()
         Xwinheight = sydots;
         screenaspect = sydots/(float)sxdots;
         finalaspectratio = screenaspect;
-        int Xpad = 8;  /* default, unless changed below */
+        int Xpad = 8;  // default, unless changed below
         int Xmwidth;
         if (Xdepth==1)
             Xmwidth = 1 + sxdots/8;
         else if (Xdepth<=8)
             Xmwidth = sxdots;
-        else if (Xdepth<=16) {  /* 15 or 16 bpp */
+        else if (Xdepth<=16) {  // 15 or 16 bpp
             Xmwidth = 2*sxdots;
             Xpad = 16;
-        } else {  /* 24 or 32 bpp */
+        } else {  // 24 or 32 bpp
             Xmwidth = 4*sxdots;
             Xpad = 32;
         }
@@ -969,7 +969,7 @@ readvideoline(int y, int x, int lastx, BYTE *pixels)
  */
 void writevideo(int x, int y, int color)
 {
-#ifdef DEBUG /* Debugging checks */
+#ifdef DEBUG // Debugging checks
     if (color>=colors || color < 0) {
         fprintf(stderr,"Color %d too big %d\n", color, colors);
     }
@@ -1011,7 +1011,7 @@ void writevideo(int x, int y, int color)
  */
 int readvideo(int x, int y)
 {
-#ifdef DEBUG /* Debugging checks */
+#ifdef DEBUG // Debugging checks
     if (x>=sxdots || x<0 || y>=sydots || y<0) {
         fprintf(stderr,"Bad coord %d %d\n", x,y);
     }
@@ -1077,7 +1077,7 @@ int writevideopalette()
     {
         if (fake_lut)
         {
-            /* !g_got_real_dac, fake_lut => truecolor, directcolor displays */
+            // !g_got_real_dac, fake_lut => truecolor, directcolor displays
             static unsigned char last_dac[256][3];
             static bool last_dac_inited = false;
 
@@ -1112,11 +1112,11 @@ int writevideopalette()
         }
         else
         {
-            /* !g_got_real_dac, !fake_lut => static color, static gray displays */
+            // !g_got_real_dac, !fake_lut => static color, static gray displays
             assert(1);
         }
     } else {
-        /* g_got_real_dac => grayscale or pseudocolor displays */
+        // g_got_real_dac => grayscale or pseudocolor displays
         for (int i = 0; i < colors; i++) {
             cols[i].pixel = pixtab[i];
             cols[i].flags = DoRed | DoGreen | DoBlue;
@@ -1248,7 +1248,7 @@ getachar()
     }
 }
 
-static int xbufkey = 0;     /* Buffered X key */
+static int xbufkey = 0;     // Buffered X key
 /*
  *----------------------------------------------------------------------
  *
@@ -1288,7 +1288,7 @@ xgetkey(int block)
         }
 #endif
 
-        /* Don't check X events every time, since that is expensive */
+        // Don't check X events every time, since that is expensive
         skipcount++;
         if (block==0 && skipcount<25) break;
         skipcount = 0;
@@ -1299,7 +1299,7 @@ xgetkey(int block)
         if (xbufkey) {
             ch = xbufkey;
             xbufkey = 0;
-            skipcount = 9999; /* If we got a key, check right away next time */
+            skipcount = 9999; // If we got a key, check right away next time
             if (ch == FIK_ESC) {
                 return handleesc();
             } else {
@@ -1394,7 +1394,7 @@ translatekey(int ch)
             return FIK_CTL_MINUS;
         case '}':
             return FIK_CTL_PLUS;
-            /* we need ^I for tab */
+            // we need ^I for tab
         case CTL('D'):
             return FIK_CTL_DEL;
         case '!':
@@ -1443,49 +1443,49 @@ handleesc()
     if (simple_input) {
         return FIK_ESC;
     }
-    /* SUN escape key sequences */
+    // SUN escape key sequences
     int ch1 = getachar();
     if (ch1==-1) {
-        driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
         ch1 = getachar();
     }
-    if (ch1 != '[') {       /* See if we have esc [ */
+    if (ch1 != '[') {       // See if we have esc [
         return FIK_ESC;
     }
     ch1 = getachar();
     if (ch1==-1) {
-        driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
         ch1 = getachar();
     }
     if (ch1==-1) {
         return FIK_ESC;
     }
     switch (ch1) {
-    case 'A':       /* esc [ A */
+    case 'A':       // esc [ A
         return FIK_UP_ARROW;
-    case 'B':       /* esc [ B */
+    case 'B':       // esc [ B
         return FIK_DOWN_ARROW;
-    case 'C':       /* esc [ C */
+    case 'C':       // esc [ C
         return FIK_RIGHT_ARROW;
-    case 'D':       /* esc [ D */
+    case 'D':       // esc [ D
         return FIK_LEFT_ARROW;
     default:
         break;
     }
     int ch2 = getachar();
     if (ch2==-1) {
-        driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
         ch2 = getachar();
     }
-    if (ch2 == '~') {       /* esc [ ch1 ~ */
+    if (ch2 == '~') {       // esc [ ch1 ~
         switch (ch1) {
-        case '2':       /* esc [ 2 ~ */
+        case '2':       // esc [ 2 ~
             return FIK_INSERT;
-        case '3':       /* esc [ 3 ~ */
+        case '3':       // esc [ 3 ~
             return FIK_DELETE;
-        case '5':       /* esc [ 5 ~ */
+        case '5':       // esc [ 5 ~
             return FIK_PAGE_UP;
-        case '6':       /* esc [ 6 ~ */
+        case '6':       // esc [ 6 ~
             return FIK_PAGE_DOWN;
         default:
             return FIK_ESC;
@@ -1495,41 +1495,41 @@ handleesc()
     } else {
         int ch3 = getachar();
         if (ch3==-1) {
-            driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+            driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
             ch3 = getachar();
         }
-        if (ch3 != '~') {   /* esc [ ch1 ch2 ~ */
+        if (ch3 != '~') {   // esc [ ch1 ch2 ~
             return FIK_ESC;
         }
         if (ch1=='1') {
             switch (ch2) {
-            case '1':   /* esc [ 1 1 ~ */
+            case '1':   // esc [ 1 1 ~
                 return FIK_F1;
-            case '2':   /* esc [ 1 2 ~ */
+            case '2':   // esc [ 1 2 ~
                 return FIK_F2;
-            case '3':   /* esc [ 1 3 ~ */
+            case '3':   // esc [ 1 3 ~
                 return FIK_F3;
-            case '4':   /* esc [ 1 4 ~ */
+            case '4':   // esc [ 1 4 ~
                 return FIK_F4;
-            case '5':   /* esc [ 1 5 ~ */
+            case '5':   // esc [ 1 5 ~
                 return FIK_F5;
-            case '6':   /* esc [ 1 6 ~ */
+            case '6':   // esc [ 1 6 ~
                 return FIK_F6;
-            case '7':   /* esc [ 1 7 ~ */
+            case '7':   // esc [ 1 7 ~
                 return FIK_F7;
-            case '8':   /* esc [ 1 8 ~ */
+            case '8':   // esc [ 1 8 ~
                 return FIK_F8;
-            case '9':   /* esc [ 1 9 ~ */
+            case '9':   // esc [ 1 9 ~
                 return FIK_F9;
             default:
                 return FIK_ESC;
             }
         } else if (ch1=='2') {
             switch (ch2) {
-            case '0':   /* esc [ 2 0 ~ */
+            case '0':   // esc [ 2 0 ~
                 return FIK_F10;
-            case '8':   /* esc [ 2 8 ~ */
-                return FIK_F1;  /* HELP */
+            case '8':   // esc [ 2 8 ~
+                return FIK_F1;  // HELP
             default:
                 return FIK_ESC;
             }
@@ -1879,25 +1879,25 @@ xhandleevents()
             * except ConfigureNotify are thrown away here,
             * since nothing is done with them */
             break;
-        }  /* End switch */
-    }  /* End while */
+        }  // End switch
+    }  // End while
 
     if (!xbufkey && editpal_cursor && !inside_help && lookatmouse == 3 &&
             (dx != 0 || dy != 0)) {
         if (ABS(dx)>ABS(dy)) {
             if (dx>0) {
-                xbufkey = mousefkey[bnum][0]; /* right */
+                xbufkey = mousefkey[bnum][0]; // right
                 dx--;
             } else if (dx<0) {
-                xbufkey = mousefkey[bnum][1]; /* left */
+                xbufkey = mousefkey[bnum][1]; // left
                 dx++;
             }
         } else {
             if (dy>0) {
-                xbufkey = mousefkey[bnum][2]; /* down */
+                xbufkey = mousefkey[bnum][2]; // down
                 dy--;
             } else if (dy<0) {
-                xbufkey = mousefkey[bnum][3]; /* up */
+                xbufkey = mousefkey[bnum][3]; // up
                 dy++;
             }
         }
@@ -1926,7 +1926,7 @@ xhandleevents()
 static Window
 pr_dwmroot(Display *dpy, Window pwin)
 {
-    /* search for DEC Window Manager root */
+    // search for DEC Window Manager root
     XWindowAttributes pxwa,cxwa;
     Window  root,parent,*child;
 
@@ -1971,9 +1971,9 @@ static Window
 FindRootWindow()
 {
     w_root = RootWindow(dpy,scr);
-    w_root = pr_dwmroot(dpy, w_root); /* search for DEC wm root */
+    w_root = pr_dwmroot(dpy, w_root); // search for DEC wm root
 
-    {   /* search for swm/tvtwm root (from ssetroot by Tom LaStrange) */
+    {   // search for swm/tvtwm root (from ssetroot by Tom LaStrange)
         Atom SWM_VROOT = None;
         Window rootReturn, parentReturn, *children;
         unsigned int numChildren;
@@ -2150,7 +2150,7 @@ shell_to_dos()
     argv[0] = shell;
     argv[1] = nullptr;
 
-    /* Clean up the window */
+    // Clean up the window
 
     if (!simple_input) {
         fcntl(0,F_SETFL,old_fcntl);
@@ -2160,7 +2160,7 @@ shell_to_dos()
     echo();
     endwin();
 
-    /* Fork the shell */
+    // Fork the shell
 
     pid = fork();
     if (pid < 0) {
@@ -2172,14 +2172,14 @@ shell_to_dos()
         exit(1);
     }
 
-    /* Wait for the shell to finish */
+    // Wait for the shell to finish
 
     while (1) {
         donepid = wait(0);
         if (donepid<0 || donepid==pid) break;
     }
 
-    /* Go back to curses mode */
+    // Go back to curses mode
 
     initscr();
     curwin = stdscr;

@@ -9,7 +9,7 @@
 #include <string.h>
 #ifndef NOBSTRING
 #ifndef sun
-/* If this gives you an error, read the README and modify the Makefile. */
+// If this gives you an error, read the README and modify the Makefile.
 #include <bstring.h>
 #endif
 #endif
@@ -23,7 +23,7 @@
 #include "externs.h"
 #include "helpcom.h"
 
-/* ********************** Mouse Support Variables ************************** */
+// ********************** Mouse Support Variables **************************
 
 
 bool inside_help = false;
@@ -462,7 +462,7 @@ static void getInt(short *dst, unsigned char **src, int dir)
         (*src)[0] = (*dst)&0xff;
         (*src)[1] = ((*dst)&0xff00)>>8;
     }
-    (*src) += 2; /* sizeof(int) in MS_DOS */
+    (*src) += 2; // sizeof(int) in MS_DOS
 }
 
 /*
@@ -482,7 +482,7 @@ static void getLong(long *dst, unsigned char **src, int dir)
         (*src)[2] = ((*dst)&0xff0000)>>16;
         (*src)[3] = ((*dst)&0xff000000)>>24;
     }
-    (*src) += 4; /* sizeof(long) in MS_DOS */
+    (*src) += 4; // sizeof(long) in MS_DOS
 }
 
 #define P4 16.
@@ -562,7 +562,7 @@ static void getDouble(double *dst, unsigned char **src, int dir)
             (*src)[0] = (((int)f)&0xff);
         }
     }
-    *src += 8; /* sizeof(double) in MSDOS */
+    *src += 8; // sizeof(double) in MSDOS
 }
 
 /*
@@ -619,7 +619,7 @@ static void getFloat(float *dst, unsigned char **src, int dir)
             (*src)[0] = (((int)f)&0xff);
         }
     }
-    *src += 4; /* sizeof(float) in MSDOS */
+    *src += 4; // sizeof(float) in MSDOS
 }
 
 /*

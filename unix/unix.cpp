@@ -18,11 +18,11 @@
 
 #include "port.h"
 
-#define FILE_MAX_PATH  256       /* max length of path+filename  */
-#define FILE_MAX_DIR   256       /* max length of directory name */
-#define FILE_MAX_DRIVE  3       /* max length of drive letter   */
-#define FILE_MAX_FNAME  9       /* max length of filename       */
-#define FILE_MAX_EXT    5       /* max length of extension      */
+#define FILE_MAX_PATH  256       // max length of path+filename
+#define FILE_MAX_DIR   256       // max length of directory name
+#define FILE_MAX_DRIVE  3       // max length of drive letter
+#define FILE_MAX_FNAME  9       // max length of filename
+#define FILE_MAX_EXT    5       // max length of extension
 
 int iocount;
 
@@ -48,7 +48,7 @@ long clock_ticks()
     return tim.tv_sec*CLOCKS_PER_SEC + tim.tv_usec*CLOCKS_PER_SEC/1000000;
 }
 
-/* stub */
+// stub
 void
 intdos() {}
 
@@ -333,7 +333,7 @@ int splitpath(const char *file_template,char *drive,char *dir,char *fname,char *
         return (0);
     offset = 0;
 
-    /* get drive */
+    // get drive
     if (length >= 2)
         if (file_template[1] == ':')
         {
@@ -350,13 +350,13 @@ int splitpath(const char *file_template,char *drive,char *dir,char *fname,char *
             }
         }
 
-    /* get dir */
+    // get dir
     if (offset < length)
     {
         tmp = strrchr(file_template,SLASHC);
         if (tmp)
         {
-            tmp++;  /* first character after slash */
+            tmp++;  // first character after slash
             len = tmp - &file_template[offset];
             if (len >=0 && len < FILE_MAX_DIR && dir)
                         strncpy(dir,&file_template[offset],std::min(len,FILE_MAX_DIR));
@@ -368,15 +368,15 @@ int splitpath(const char *file_template,char *drive,char *dir,char *fname,char *
     else
         return (0);
 
-    /* get fname */
+    // get fname
     if (offset < length)
     {
         tmp = strrchr(file_template,'.');
         if (tmp < strrchr(file_template,SLASHC) || tmp < strrchr(file_template,':'))
-                      tmp = 0; /* in this case the '.' must be a directory */
+                      tmp = 0; // in this case the '.' must be a directory
                 if (tmp)
         {
-            /* tmp++; */ /* first character past "." */
+            // tmp++; */ /* first character past "."
             len = tmp - &file_template[offset];
             if ((len > 0) && (offset+len < length) && fname)
             {
@@ -408,7 +408,7 @@ _splitpath(const char *file_template, char *drive, char *dir, char *fname, char 
     return splitpath(file_template, drive, dir, fname, ext);
 }
 
-/* This ftime simulation routine is from Frank Chen */
+// This ftime simulation routine is from Frank Chen
 void ftimex(struct timebx *tp)
 {
     struct timeval  timep;
@@ -424,13 +424,13 @@ void ftimex(struct timebx *tp)
     tp->dstflag = timezp.tz_dsttime;
 }
 
-/* sound.c file prototypes */
+// sound.c file prototypes
 int get_sound_params()
 {
     return (0);
 }
 
-/* tenths of millisecond timer routine */
+// tenths of millisecond timer routine
 static struct timeval tv_start;
 
 void restart_uclock()
@@ -451,7 +451,7 @@ uclock_t usec_clock()
 
     if (elapsed.tv_usec < 0)
     {
-        /* "borrow */
+        // "borrow
         elapsed.tv_usec += 1000000;
         elapsed.tv_sec--;
     }

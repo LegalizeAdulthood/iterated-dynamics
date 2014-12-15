@@ -49,13 +49,13 @@
 #endif
 #include <assert.h>
 
-/* external variables (set in the FRACTINT.CFG file, but findable here */
+// external variables (set in the FRACTINT.CFG file, but findable here
 
 extern bool slowdisplay;
-extern  int dotmode;        /* video access method (= 19)      */
-extern  int sxdots, sydots;     /* total # of dots on the screen   */
-extern  int sxoffs, syoffs;     /* offset of drawing area          */
-extern  int colors;         /* maximum colors available    */
+extern  int dotmode;        // video access method (= 19)
+extern  int sxdots, sydots;     // total # of dots on the screen
+extern  int sxoffs, syoffs;     // offset of drawing area
+extern  int colors;         // maximum colors available
 extern  int g_init_mode;
 extern  int g_adapter;
 extern bool g_got_real_dac;
@@ -63,7 +63,7 @@ extern bool inside_help;
 extern  float   finalaspectratio;
 extern  float   screenaspect;
 
-/* the video-palette array (named after the VGA adapter's video-DAC) */
+// the video-palette array (named after the VGA adapter's video-DAC)
 
 extern unsigned char g_dac_box[256][3];
 extern VIDEOINFO x11_video_table[];
@@ -83,35 +83,35 @@ enum {
 struct DriverX11
 {
     Driver pub;
-    bool onroot;                /* = false; */
-    bool fullscreen;            /* = false; */
-    bool sharecolor;            /* = false; */
-    bool privatecolor;          /* = false; */
-    int fixcolors;              /* = 0; */
-    /* Run X events synchronously (debugging) */
-    bool sync;                  /* = false; */
-    const char *Xdisplay;       /* = ""; */
-    const char *Xgeometry;      /* = nullptr; */
+    bool onroot;                // = false;
+    bool fullscreen;            // = false;
+    bool sharecolor;            // = false;
+    bool privatecolor;          // = false;
+    int fixcolors;              // = 0;
+    // Run X events synchronously (debugging)
+    bool sync;                  // = false;
+    const char *Xdisplay;       // = "";
+    const char *Xgeometry;      // = nullptr;
     int doesBacking;
 
     /*
      * The pixtab stuff is so we can map from fractint pixel values 0-n to
      * the actual color table entries which may be anything.
      */
-    bool usepixtab;             /* = false; */
+    bool usepixtab;             // = false;
     unsigned long pixtab[256];
     int ipixtab[256];
-    XPixel cmap_pixtab[256];    /* for faking a LUTs on non-LUT visuals */
+    XPixel cmap_pixtab[256];    // for faking a LUTs on non-LUT visuals
     bool cmap_pixtab_alloced;
     bool fake_lut;
 
-    bool fastmode;              /* = false; Don't draw pixels 1 at a time */
-    bool alarmon;               /* = false; true if the refresh alarm is on */
-    bool doredraw;              /* = false; true if we have a redraw waiting */
+    bool fastmode;              // = false; Don't draw pixels 1 at a time
+    bool alarmon;               // = false; true if the refresh alarm is on
+    bool doredraw;              // = false; true if we have a redraw waiting
 
-    Display *Xdp;               /* = nullptr; */
+    Display *Xdp;               // = nullptr;
     Window Xw;
-    GC Xgc;                     /* = nullptr; */
+    GC Xgc;                     // = nullptr;
     Visual *Xvi;
     Screen *Xsc;
     Colormap Xcmap;
@@ -119,31 +119,31 @@ struct DriverX11
     XImage *Ximage;
     char *Xdata;
     int Xdscreen;
-    Pixmap Xpixmap;             /* = None; */
+    Pixmap Xpixmap;             // = None;
     int Xwinwidth, Xwinheight;
     Window Xroot;
-    int xlastcolor;             /* = -1; */
-    int xlastfcn;               /* = GXcopy; */
-    BYTE *pixbuf;               /* = nullptr; */
+    int xlastcolor;             // = -1;
+    int xlastfcn;               // = GXcopy;
+    BYTE *pixbuf;               // = nullptr;
     XColor cols[256];
 
-    bool XZoomWaiting;          /* = false; */
+    bool XZoomWaiting;          // = false;
 
-    const char *x_font_name;    /* = FONT; */
-    XFontStruct *font_info;     /* = nullptr; */
+    const char *x_font_name;    // = FONT;
+    XFontStruct *font_info;     // = nullptr;
 
-    int xbufkey; /* = 0; */     /* Buffered X key */
+    int xbufkey;                // = 0; Buffered X key
 
-    unsigned char *fontPtr;     /* = nullptr; */
+    unsigned char *fontPtr;     // = nullptr;
 
     char text_screen[TEXT_HEIGHT][TEXT_WIDTH];
     int text_attr[TEXT_HEIGHT][TEXT_WIDTH];
 
-    BYTE *font_table;           /* = nullptr; */
+    BYTE *font_table;           // = nullptr;
 
-    bool text_modep;            /* true when displaying text */
+    bool text_modep;            // true when displaying text
 
-    /* rubber banding and event processing data */
+    // rubber banding and event processing data
     bool ctl_mode;
     bool shift_mode;
     int button_num;
@@ -185,10 +185,10 @@ extern void Cursor_SetPos();
 #define FONT "-*-*-medium-r-*-*-9-*-*-*-*-*-iso8859-*"
 #define DRAW_INTERVAL 6
 
-extern void (*dotwrite)(int, int, int); /* write-a-dot routine */
-extern int (*dotread)(int, int);    /* read-a-dot routine */
-extern void (*linewrite)(int y, int x, int lastx, BYTE *pixels);     /* write-a-line routine */
-extern void (*lineread)(int y, int x, int lastx, BYTE *pixels);      /* read-a-line routine */
+extern void (*dotwrite)(int, int, int); // write-a-dot routine
+extern int (*dotread)(int, int);    // read-a-dot routine
+extern void (*linewrite)(int y, int x, int lastx, BYTE *pixels);     // write-a-line routine
+extern void (*lineread)(int y, int x, int lastx, BYTE *pixels);      // read-a-line routine
 
 static void x11_terminate(Driver *drv);
 static void x11_flush(Driver *drv);
@@ -399,9 +399,9 @@ static void
 continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 {
     char out[20];
-    /*        if you want to get all messages enable this statement.    */
-    /*  printf("ieee exception code %x occurred at pc %X\n", code, scp->sc_pc); */
-    /*    clear all excaption flags                     */
+    //        if you want to get all messages enable this statement.
+    //  printf("ieee exception code %x occurred at pc %X\n", code, scp->sc_pc);
+    //    clear all excaption flags
     ieee_flags("clear", "exception", "all", out);
 }
 #endif
@@ -435,7 +435,7 @@ select_visual(DriverX11 *di)
         break;
 
     default:
-        /* those should be all the visual classes */
+        // those should be all the visual classes
         assert(1);
         break;
     }
@@ -599,7 +599,7 @@ x11_start_video(Driver *drv)
 static int
 x11_end_video(Driver *drv)
 {
-    return 0;             /* set flag: video ended */
+    return 0;             // set flag: video ended
 }
 
 
@@ -771,10 +771,10 @@ static int
 handle_esc(DriverX11 *di)
 {
 #ifdef __hpux
-    /* HP escape key sequences. */
+    // HP escape key sequences.
     int ch1 = getachar();
     if (ch1 == -1) {
-        driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
         ch1 = getachar();
     }
     if (ch1 == -1)
@@ -796,14 +796,14 @@ handle_esc(DriverX11 *di)
         return FIK_ESC;
     ch1 = getachar();
     if (ch1 == -1) {
-        driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
         ch1 = getachar();
     }
     if (ch1 == -1 || !isdigit(ch1))
         return FIK_ESC;
     int ch2 = getachar();
     if (ch2 == -1) {
-        driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
         ch2 = getachar();
     }
     if (ch2 == -1)
@@ -814,7 +814,7 @@ handle_esc(DriverX11 *di)
         ch3 = getachar();
         if (ch3 == -1)
         {
-            driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+            driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
             ch3 = getachar();
         }
         if (ch3 != '~')
@@ -831,7 +831,7 @@ handle_esc(DriverX11 *di)
     case 6:
         return FIK_PAGE_DOWN;
     case 29:
-        return FIK_F1; /* help */
+        return FIK_F1; // help
     case 11:
         return FIK_F1;
     case 12:
@@ -852,47 +852,47 @@ handle_esc(DriverX11 *di)
         return FIK_ESC;
     }
 #else
-    /* SUN escape key sequences */
+    // SUN escape key sequences
     int ch1 = getachar(di);
     if (ch1 == -1) {
-        driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
         ch1 = getachar(di);
     }
-    if (ch1 != '[')       /* See if we have esc [ */
+    if (ch1 != '[')       // See if we have esc [
         return FIK_ESC;
     ch1 = getachar(di);
     if (ch1 == -1) {
-        driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
         ch1 = getachar(di);
     }
     if (ch1 == -1)
         return FIK_ESC;
     switch (ch1) {
-    case 'A':     /* esc [ A */
+    case 'A':     // esc [ A
         return FIK_UP_ARROW;
-    case 'B':     /* esc [ B */
+    case 'B':     // esc [ B
         return FIK_DOWN_ARROW;
-    case 'C':     /* esc [ C */
+    case 'C':     // esc [ C
         return FIK_RIGHT_ARROW;
-    case 'D':     /* esc [ D */
+    case 'D':     // esc [ D
         return FIK_LEFT_ARROW;
     default:
         break;
     }
     int ch2 = getachar(di);
     if (ch2 == -1) {
-        driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+        driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
         ch2 = getachar(di);
     }
-    if (ch2 == '~') {     /* esc [ ch1 ~ */
+    if (ch2 == '~') {     // esc [ ch1 ~
         switch (ch1) {
-        case '2':       /* esc [ 2 ~ */
+        case '2':       // esc [ 2 ~
             return FIK_INSERT;
-        case '3':       /* esc [ 3 ~ */
+        case '3':       // esc [ 3 ~
             return FIK_DELETE;
-        case '5':       /* esc [ 5 ~ */
+        case '5':       // esc [ 5 ~
             return FIK_PAGE_UP;
-        case '6':       /* esc [ 6 ~ */
+        case '6':       // esc [ 6 ~
             return FIK_PAGE_DOWN;
         default:
             return FIK_ESC;
@@ -902,41 +902,41 @@ handle_esc(DriverX11 *di)
     } else {
         int ch3 = getachar(di);
         if (ch3 == -1) {
-            driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+            driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
             ch3 = getachar(di);
         }
-        if (ch3 != '~') {   /* esc [ ch1 ch2 ~ */
+        if (ch3 != '~') {   // esc [ ch1 ch2 ~
             return FIK_ESC;
         }
         if (ch1 == '1') {
             switch (ch2) {
-            case '1': /* esc [ 1 1 ~ */
+            case '1': // esc [ 1 1 ~
                 return FIK_F1;
-            case '2': /* esc [ 1 2 ~ */
+            case '2': // esc [ 1 2 ~
                 return FIK_F2;
-            case '3': /* esc [ 1 3 ~ */
+            case '3': // esc [ 1 3 ~
                 return FIK_F3;
-            case '4': /* esc [ 1 4 ~ */
+            case '4': // esc [ 1 4 ~
                 return FIK_F4;
-            case '5': /* esc [ 1 5 ~ */
+            case '5': // esc [ 1 5 ~
                 return FIK_F5;
-            case '6': /* esc [ 1 6 ~ */
+            case '6': // esc [ 1 6 ~
                 return FIK_F6;
-            case '7': /* esc [ 1 7 ~ */
+            case '7': // esc [ 1 7 ~
                 return FIK_F7;
-            case '8': /* esc [ 1 8 ~ */
+            case '8': // esc [ 1 8 ~
                 return FIK_F8;
-            case '9': /* esc [ 1 9 ~ */
+            case '9': // esc [ 1 9 ~
                 return FIK_F9;
             default:
                 return FIK_ESC;
             }
         } else if (ch1 == '2') {
             switch (ch2) {
-            case '0': /* esc [ 2 0 ~ */
+            case '0': // esc [ 2 0 ~
                 return FIK_F10;
-            case '8': /* esc [ 2 8 ~ */
-                return FIK_F1;  /* HELP */
+            case '8': // esc [ 2 8 ~
+                return FIK_F1;  // HELP
             default:
                 return FIK_ESC;
             }
@@ -1097,9 +1097,9 @@ static void
 ev_expose(DriverX11 *di, XExposeEvent *xevent)
 {
     if (di->text_modep) {
-        /* if text window, refresh text */
+        // if text window, refresh text
     } else {
-        /* refresh graphics */
+        // refresh graphics
         int x, y, w, h;
         x = xevent->x;
         y = xevent->y;
@@ -1286,25 +1286,25 @@ handle_events(DriverX11 *di)
             (di->dx != 0 || di->dy != 0)) {
         if (ABS(di->dx) > ABS(di->dy)) {
             if (di->dx > 0) {
-                di->xbufkey = mousefkey[di->button_num][0]; /* right */
+                di->xbufkey = mousefkey[di->button_num][0]; // right
                 di->dx--;
             } else if (di->dx < 0) {
-                di->xbufkey = mousefkey[di->button_num][1]; /* left */
+                di->xbufkey = mousefkey[di->button_num][1]; // left
                 di->dx++;
             }
         } else {
             if (di->dy > 0) {
-                di->xbufkey = mousefkey[di->button_num][2]; /* down */
+                di->xbufkey = mousefkey[di->button_num][2]; // down
                 di->dy--;
             } else if (di->dy < 0) {
-                di->xbufkey = mousefkey[di->button_num][3]; /* up */
+                di->xbufkey = mousefkey[di->button_num][3]; // up
                 di->dy++;
             }
         }
     }
 }
 
-/* Check if there is a character waiting for us.  */
+// Check if there is a character waiting for us.
 static int
 input_pending(DriverX11 *di)
 {
@@ -1328,7 +1328,7 @@ input_pending(DriverX11 *di)
 static Window
 pr_dwmroot(DriverX11 *di, Display *dpy, Window pwin)
 {
-    /* search for DEC Window Manager root */
+    // search for DEC Window Manager root
     XWindowAttributes pxwa, cxwa;
     Window  root, parent, *child;
     unsigned int nchild;
@@ -1372,9 +1372,9 @@ static Window
 FindRootWindow(DriverX11 *di)
 {
     di->Xroot = RootWindow(di->Xdp, di->Xdscreen);
-    di->Xroot = pr_dwmroot(di, di->Xdp, di->Xroot); /* search for DEC wm root */
+    di->Xroot = pr_dwmroot(di, di->Xdp, di->Xroot); // search for DEC wm root
 
-    {   /* search for swm/tvtwm root (from ssetroot by Tom LaStrange) */
+    {   // search for swm/tvtwm root (from ssetroot by Tom LaStrange)
         Atom SWM_VROOT = None;
         Window rootReturn, parentReturn, *children;
         unsigned int numChildren;
@@ -1515,7 +1515,7 @@ x11_init(Driver *drv, int *argc, char **argv)
         printf("ieee trapping not supported here \n");
 #endif
 
-    /* filter out x11 arguments */
+    // filter out x11 arguments
     {
         int count = *argc;
         std::vector<char *> filtered;
@@ -1540,7 +1540,7 @@ x11_init(Driver *drv, int *argc, char **argv)
 
     erase_text_screen(di);
 
-    /* should enumerate visuals here and build video modes for each */
+    // should enumerate visuals here and build video modes for each
     add_video_mode(drv, &x11_video_table[0]);
 
     return true;
@@ -1862,7 +1862,7 @@ x11_write_palette(Driver *drv)
     {
         if (di->fake_lut)
         {
-            /* !g_got_real_dac, fake_lut => truecolor, directcolor displays */
+            // !g_got_real_dac, fake_lut => truecolor, directcolor displays
             static unsigned char last_dac[256][3];
             static bool last_dac_inited = false;
 
@@ -1894,11 +1894,11 @@ x11_write_palette(Driver *drv)
             di->cmap_pixtab_alloced = true;
             last_dac_inited = true;
         } else {
-            /* !g_got_real_dac, !fake_lut => static color, static gray displays */
+            // !g_got_real_dac, !fake_lut => static color, static gray displays
             assert(1);
         }
     } else {
-        /* g_got_real_dac => grayscale or pseudocolor displays */
+        // g_got_real_dac => grayscale or pseudocolor displays
         for (int i = 0; i < 256; i++) {
             di->cols[i].pixel = di->pixtab[i];
             di->cols[i].flags = DoRed | DoGreen | DoBlue;
@@ -1963,7 +1963,7 @@ static void
 x11_write_pixel(Driver *drv, int x, int y, int color)
 {
     DIX11(drv);
-#ifdef DEBUG /* Debugging checks */
+#ifdef DEBUG // Debugging checks
     if (color >= colors || color < 0) {
         printf("Color %d too big %d\n", color, colors);
     }
@@ -2169,7 +2169,7 @@ x11_get_key(Driver *drv)
     DIX11(drv);
 
     while (1) {
-        /* Don't check X events every time, since that is expensive */
+        // Don't check X events every time, since that is expensive
         skipcount++;
         if (block == 0 && skipcount < 25)
             break;
@@ -2180,7 +2180,7 @@ x11_get_key(Driver *drv)
         if (di->xbufkey) {
             int ch = di->xbufkey;
             di->xbufkey = 0;
-            skipcount = 9999; /* If we got a key, check right away next time */
+            skipcount = 9999; // If we got a key, check right away next time
             return translate_key(ch);
         }
 
@@ -2264,7 +2264,7 @@ x11_shell(Driver * /*drv*/)
     char *argv0 = strdup(shell.c_str());
     char *const argv[2] = { argv0, nullptr };
 
-    /* Fork the shell; it should be something like an xterm */
+    // Fork the shell; it should be something like an xterm
     pid = fork();
     if (pid < 0)
         perror("fork to shell");
@@ -2275,7 +2275,7 @@ x11_shell(Driver * /*drv*/)
     }
     free(argv0);
 
-    /* Wait for the shell to finish */
+    // Wait for the shell to finish
     while (1) {
         donepid = wait(0);
         if (donepid < 0 || donepid == pid)
@@ -2308,10 +2308,10 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
     x11_end_video(drv);
     g_good_mode = true;
     switch (dotmode) {
-    case 0:               /* text */
+    case 0:               // text
         break;
 
-    case 19: /* X window */
+    case 19: // X window
         dotwrite = writevideo;
         dotread = readvideo;
         lineread = readvideoline;
@@ -2374,9 +2374,9 @@ x11_set_for_text(Driver *drv)
     if (! di->font_info)
         load_font(di);
     // TODO:
-    /* map text screen child window */
-    /* allocate text colors in window's colormap, save window's colors */
-    /* refresh window with last contents of text_screen */
+    // map text screen child window
+    // allocate text colors in window's colormap, save window's colors
+    // refresh window with last contents of text_screen
     di->text_modep = true;
     fprintf(stderr, "x11_set_for_text\n");
 }
@@ -2386,9 +2386,9 @@ x11_set_for_graphics(Driver *drv)
 {
     DIX11(drv);
     // TODO:
-    /* unmap text screen child window */
-    /* restore colormap from saved copy */
-    /* expose will be sent for newly visible area */
+    // unmap text screen child window
+    // restore colormap from saved copy
+    // expose will be sent for newly visible area
     di->text_modep = false;
     fprintf(stderr, "x11_set_for_graphics\n");
 }
@@ -2547,55 +2547,55 @@ static void x11_set_keyboard_timeout(Driver *drv, int ms)
  */
 static DriverX11 x11_driver_info = {
     STD_DRIVER_STRUCT(x11, "An X Window System driver"),
-    false,                /* onroot */
-    false,                /* fullscreen */
-    false,                /* sharecolor */
-    false,                /* privatecolor */
-    0,                    /* fixcolors */
-    false,                /* sync */
-    "",                   /* Xdisplay */
-    nullptr,              /* Xgeometry */
-    0,                    /* doesBacking */
-    false,                /* usepixtab */
-    { 0L },               /* pixtab */
-    { 0 },                /* ipixtab */
-    { 0L },               /* cmap_pixtab */
-    false,                /* cmap_pixtab_alloced */
-    false,                /* fake_lut */
-    false,                /* fastmode */
-    false,                /* alarmon */
-    false,                /* doredraw */
-    nullptr,              /* Xdp */
-    None,                 /* Xw */
-    None,                 /* Xgc */
-    nullptr,              /* Xvi */
-    nullptr,              /* Xsc */
-    None,                 /* Xcmap */
-    0,                    /* Xdepth */
-    nullptr,              /* Ximage */
-    nullptr,              /* Xdata */
-    0,                    /* Xdscreen */
-    None,                 /* Xpixmap */
-    DEFX, DEFY,           /* Xwinwidth, Xwinheight */
-    None,                 /* Xroot */
-    -1,                   /* xlastcolor */
-    GXcopy,               /* xlastfcn */
-    nullptr,              /* pixbuf */
-    { 0 },                /* cols */
-    false,                /* XZoomWaiting */
-    FONT,                 /* x_font_name */
-    nullptr,              /* font_info */
-    0,                    /* xbufkey */
-    nullptr,              /* fontPtr */
-    { 0 },                /* text_screen */
-    { 0 },                /* text_attr */
-    nullptr,              /* font_table */
-    false,                /* text_modep */
-    false,                /* ctl_mode */
-    false,                /* shift_mode */
-    0,                    /* button_num */
-    0, 0,                 /* last_x, last_y */
-    0, 0                  /* dx, dy */
+    false,                // onroot
+    false,                // fullscreen
+    false,                // sharecolor
+    false,                // privatecolor
+    0,                    // fixcolors
+    false,                // sync
+    "",                   // Xdisplay
+    nullptr,              // Xgeometry
+    0,                    // doesBacking
+    false,                // usepixtab
+    { 0L },               // pixtab
+    { 0 },                // ipixtab
+    { 0L },               // cmap_pixtab
+    false,                // cmap_pixtab_alloced
+    false,                // fake_lut
+    false,                // fastmode
+    false,                // alarmon
+    false,                // doredraw
+    nullptr,              // Xdp
+    None,                 // Xw
+    None,                 // Xgc
+    nullptr,              // Xvi
+    nullptr,              // Xsc
+    None,                 // Xcmap
+    0,                    // Xdepth
+    nullptr,              // Ximage
+    nullptr,              // Xdata
+    0,                    // Xdscreen
+    None,                 // Xpixmap
+    DEFX, DEFY,           // Xwinwidth, Xwinheight
+    None,                 // Xroot
+    -1,                   // xlastcolor
+    GXcopy,               // xlastfcn
+    nullptr,              // pixbuf
+    { 0 },                // cols
+    false,                // XZoomWaiting
+    FONT,                 // x_font_name
+    nullptr,              // font_info
+    0,                    // xbufkey
+    nullptr,              // fontPtr
+    { 0 },                // text_screen
+    { 0 },                // text_attr
+    nullptr,              // font_table
+    false,                // text_modep
+    false,                // ctl_mode
+    false,                // shift_mode
+    0,                    // button_num
+    0, 0,                 // last_x, last_y
+    0, 0                  // dx, dy
 };
 
 Driver *x11_driver = &x11_driver_info.pub;

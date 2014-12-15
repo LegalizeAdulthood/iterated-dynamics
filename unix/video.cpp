@@ -20,19 +20,19 @@ int dacnorm = 0;
 int g_dac_count = 0;
 int ShadowColors;
 void (*dotwrite)(int, int, int);
-/* write-a-dot routine */
-int (*dotread)(int, int);   /* read-a-dot routine */
-void (*linewrite)(int y, int x, int lastx, BYTE *pixels);        /* write-a-line routine */
-void (*lineread)(int y, int x, int lastx, BYTE *pixels);         /* read-a-line routine */
+// write-a-dot routine
+int (*dotread)(int, int);   // read-a-dot routine
+void (*linewrite)(int y, int x, int lastx, BYTE *pixels);        // write-a-line routine
+void (*lineread)(int y, int x, int lastx, BYTE *pixels);         // read-a-line routine
 
-int videoflag = 0;      /* special "your-own-video" flag */
+int videoflag = 0;      // special "your-own-video" flag
 
-void (*swapsetup)() = nullptr;     /* setfortext/graphics setup routine */
-int g_color_dark = 0;       /* darkest color in palette */
-int g_color_bright = 0;     /* brightest color in palette */
+void (*swapsetup)() = nullptr;     // setfortext/graphics setup routine
+int g_color_dark = 0;       // darkest color in palette
+int g_color_bright = 0;     // brightest color in palette
 int g_color_medium = 0;     /* nearest to medbright grey in palette
                    Zoom-Box values (2K x 2K screens max) */
-int g_row_count = 0;        /* row-counter for decoder and out_line */
+int g_row_count = 0;        // row-counter for decoder and out_line
 int video_type = 0;     /* actual video adapter type:
                    0  = type not yet determined
                    1  = Hercules
@@ -62,8 +62,8 @@ int svga_type = 0;      /*  (forced) SVGA type
                    12 = Video-7
                    13 = ahead "B" type
                    14 = "null" type (for testing only) */
-int mode7text = 0;      /* nonzero for egamono and hgc */
-int textaddr = 0xb800;      /* b800 for mode 3, b000 for mode 7 */
+int mode7text = 0;      // nonzero for egamono and hgc
+int textaddr = 0xb800;      // b800 for mode 3, b000 for mode 7
 int textsafe = 0;       /* 0 = default, runup chgs to 1
                    1 = yes
                    2 = no, use 640x200
@@ -73,12 +73,12 @@ int g_text_type = 1;        /* current mode's type of text:
                    0  = real text, mode 3 (or 7)
                    1  = 640x200x2, mode 6
                    2  = some other mode, graphics */
-int g_text_row = 0;     /* for putstring(-1,...) */
-int g_text_col = 0;     /* for putstring(..,-1,...) */
-int g_text_rbase = 0;       /* g_text_row is relative to this */
-int g_text_cbase = 0;       /* g_text_col is relative to this */
+int g_text_row = 0;     // for putstring(-1,...)
+int g_text_col = 0;     // for putstring(..,-1,...)
+int g_text_rbase = 0;       // g_text_row is relative to this
+int g_text_cbase = 0;       // g_text_col is relative to this
 
-int g_vesa_detect = 1;      /* set to 0 to disable VESA-detection */
+int g_vesa_detect = 1;      // set to 0 to disable VESA-detection
 int g_video_start_x = 0;
 int g_video_start_y = 0;
 int g_vesa_x_res;
@@ -128,7 +128,7 @@ void normaline(int y, int x, int lastx, BYTE *pixels);
 void
 putprompt()
 {
-    wclear(curwin);       /* ???? */
+    wclear(curwin);       // ????
     putstring(0, 0, 0, "Press operation key, or <Esc> to return to Main Menu");
     wrefresh(curwin);
     return;
@@ -169,7 +169,7 @@ setvideomode(int ax, int bx, int cx, int dx)
     g_good_mode = true;
     switch (dotmode)
     {
-    case 0:         /* text */
+    case 0:         // text
         clear();
         /*
            touchwin(curwin);
@@ -183,7 +183,7 @@ setvideomode(int ax, int bx, int cx, int dx)
         lineread = normalineread;
         linewrite = normaline;
         break;
-    case 19:            /* X window */
+    case 19:            // X window
         putprompt();
         dotwrite = writevideo;
         dotread = readvideo;
