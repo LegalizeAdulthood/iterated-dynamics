@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
+// see Fractint.c for a description of the "include"  hierarchy
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
@@ -27,7 +27,7 @@
  * for x 0, 1, 0, -1
  * for y 1, 0, -1, 0
  */
-static int *s_incx[DIRS];         /* tab for 4 directions */
+static int *s_incx[DIRS];         // tab for 4 directions
 static int *s_incy[DIRS];
 static int s_last_xdots = 0;
 static int s_last_ydots = 0;
@@ -91,32 +91,32 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
     else
         step = 0;
     if (rule_len == 0)
-    {   /* random rule */
+    {   // random rule
         for (color = 0; color < MAX_ANTS; color++)
         {   /* init the rules and colors for the
              * turkmites: 1 turn left, -1 turn right */
             rule[color] = 1 - (RANDOM(2) * 2);
             next_col[color] = color + 1;
         }
-        /* close the cycle */
+        // close the cycle
         next_col[color] = 0;
     }
     else
-    {   /* user defined rule */
+    {   // user defined rule
         for (color = 0; color < rule_len; color++)
         {   /* init the rules and colors for the
              * turkmites: 1 turn left, -1 turn right */
             rule[color] = (ru[color] * 2) - 1;
             next_col[color] = color + 1;
         }
-        /* repeats to last color */
+        // repeats to last color
         for (color = rule_len; color < MAX_ANTS; color++)
         {   /* init the rules and colors for the
              * turkmites: 1 turn left, -1 turn right */
             rule[color] = rule[color % rule_len];
             next_col[color] = color + 1;
         }
-        /* close the cycle */
+        // close the cycle
         next_col[color] = 0;
     }
     for (color = maxtur; color; color--)
@@ -138,7 +138,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
     maxpts = maxpts / (long) INNER_LOOP;
     for (long count = 0; count < maxpts; count++)
     {
-        /* check for a key only every inner_loop times */
+        // check for a key only every inner_loop times
         kbdchar = driver_key_pressed();
         if (kbdchar || step)
         {
@@ -177,8 +177,8 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
             if (wait > 0 && step == 0)
             {
                 for (int color = maxtur; color; color--)
-                {   /* move the various turmites */
-                    ix = x[color];   /* temp vars */
+                {   // move the various turmites
+                    ix = x[color];   // temp vars
                     iy = y[color];
                     idir = dir[color];
 
@@ -202,8 +202,8 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
             else
             {
                 for (int color = maxtur; color; color--)
-                {   /* move the various turmites without delay */
-                    ix = x[color];   /* temp vars */
+                {   // move the various turmites without delay
+                    ix = x[color];   // temp vars
                     iy = y[color];
                     idir = dir[color];
                     pixel = getcolor(ix, iy);
@@ -239,7 +239,7 @@ unsigned rotate_left_one(unsigned value)
 
 }
 
-/* this one ignore the color of the current cell is more like a white ant */
+// this one ignore the color of the current cell is more like a white ant
 void
 TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 {
@@ -255,7 +255,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
     else
         step = 0;
     if (rule_len == 0)
-    {   /* random rule */
+    {   // random rule
         for (int color = MAX_ANTS-1; color; color--)
         {   /* init the various turmites N.B. don't use
              * x[0], y[0], dir[0] */
@@ -281,13 +281,13 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
             y[color] = YO;
         }
     }
-    /* use this rule when a black pixel is found */
+    // use this rule when a black pixel is found
     rule[0] = 0;
     unsigned rule_mask = 1U;
     maxpts = maxpts / (long) INNER_LOOP;
     for (long count = 0; count < maxpts; count++)
     {
-        /* check for a key only every inner_loop times */
+        // check for a key only every inner_loop times
         kbdchar = driver_key_pressed();
         if (kbdchar || step)
         {
@@ -324,8 +324,8 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
         for (int i = INNER_LOOP; i; i--)
         {
             for (int color = maxtur; color; color--)
-            {   /* move the various turmites */
-                ix = x[color];      /* temp vars */
+            {   // move the various turmites
+                ix = x[color];      // temp vars
                 iy = y[color];
                 idir = dir[color];
                 pixel = getcolor(ix, iy);
@@ -335,12 +335,12 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
                     sleepms(wait);
 
                 if (rule[pixel] & rule_mask)
-                {   /* turn right */
+                {   // turn right
                     idir--;
                     putcolor(ix, iy, 0);
                 }
                 else
-                {   /* turn left */
+                {   // turn left
                     idir++;
                     putcolor(ix, iy, color);
                 }
@@ -371,7 +371,7 @@ void free_ant_storage()
     }
 }
 
-/* N.B. use the common memory in extraseg - suffix not large enough*/
+// N.B. use the common memory in extraseg - suffix not large enough
 int
 ant()
 {
@@ -388,7 +388,7 @@ ant()
         s_last_xdots = xdots;
         s_last_ydots = ydots;
 
-        free_ant_storage(); /* free old memory */
+        free_ant_storage(); // free old memory
         for (int i = 0; i < DIRS; i++)
         {
             s_incx[i] = storage;
@@ -409,11 +409,11 @@ ant()
 
     for (int i = 0; i < xdots; i++)
         s_incx[3][i] = i + 1;
-    s_incx[3][xdots-1] = 0; /* wrap from right of the screen to left */
+    s_incx[3][xdots-1] = 0; // wrap from right of the screen to left
 
     for (int i = 1; i < xdots; i++)
         s_incx[1][i] = i - 1;
-    s_incx[1][0] = xdots-1; /* wrap from left of the screen to right */
+    s_incx[1][0] = xdots-1; // wrap from left of the screen to right
 
     for (int i = 0; i < ydots; i++)
     {
@@ -436,7 +436,7 @@ ant()
     sprintf(rule, "%.17g", param[0]);
     rule_len = (int) strlen(rule);
     if (rule_len > 1)
-    {   /* if rule_len == 0 random rule */
+    {   // if rule_len == 0 random rule
         for (int i = 0; i < rule_len; i++)
         {
             if (rule[i] != '1')
@@ -448,7 +448,7 @@ ant()
     else
         rule_len = 0;
 
-    /* set random seed for reproducibility */
+    // set random seed for reproducibility
     if (!rflag && param[5] == 1)
         --rseed;
     if (param[5] != 0 && param[5] != 1)
@@ -459,7 +459,7 @@ ant()
         ++rseed;
 
     maxants = (int) param[2];
-    if (maxants < 1)             /* if maxants == 0 maxants random */
+    if (maxants < 1)             // if maxants == 0 maxants random
         maxants = 2 + RANDOM(MAX_ANTS - 2);
     else if (maxants > MAX_ANTS)
     {
@@ -468,7 +468,7 @@ ant()
     }
     type = (int) param[3] - 1;
     if (type < 0 || type > 1)
-        type = RANDOM(2);         /* if type == 0 choose a random type */
+        type = RANDOM(2);         // if type == 0 choose a random type
     switch (type)
     {
     case 0:
