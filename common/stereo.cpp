@@ -9,7 +9,7 @@
 #include <string.h>
 #include <time.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
+// see Fractint.c for a description of the "include"  hierarchy
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
@@ -18,8 +18,8 @@
 char stereomapname[FILE_MAX_DIR+1] = {""};
 int AutoStereo_depth = 100;
 double AutoStereo_width = 10;
-bool grayflag = false;          /* flag to use gray value rather than color number */
-char calibrate = 1;             /* add calibration bars to image */
+bool grayflag = false;          // flag to use gray value rather than color number
+char calibrate = 1;             // add calibration bars to image
 char image_map = 0;
 
 /* this structure permits variables to be temporarily static and visible
@@ -84,7 +84,7 @@ static int getdepth(int xd, int yd)
     pal = getcolor(xd, yd);
     if (grayflag)
     {
-        /* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
+        // effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255
         pal = ((int) dac[pal][0] * 77 +
                (int) dac[pal][1] * 151 +
                (int) dac[pal][2] * 28);
@@ -156,9 +156,9 @@ int outline_stereo(BYTE * pixels, int linelen)
             SEP = GROUND - (int)(DEPTH * (getdepth(x, Y) - MINC) / MAXCC);
         else
             SEP = GROUND - (int)(DEPTH * (MAXCC - (getdepth(x, Y) - MINC)) / MAXCC);
-        SEP = (int)((SEP * 10.0) / WIDTH);         /* adjust for media WIDTH */
+        SEP = (int)((SEP * 10.0) / WIDTH);         // adjust for media WIDTH
 
-        /* get average value under calibration bars */
+        // get average value under calibration bars
         if (X1 <= x && x <= X2 && Y1 <= Y && Y <= Y2)
         {
             AVG += SEP;
@@ -168,7 +168,7 @@ int outline_stereo(BYTE * pixels, int linelen)
         int j = i + SEP;
         if (0 <= i && j < xdots)
         {
-            /* there are cases where next never terminates so we timeout */
+            // there are cases where next never terminates so we timeout
             int ct = 0;
             for (int s = same[i]; s != i && s != j && ct++ < xdots; s = same[i])
             {
@@ -187,7 +187,7 @@ int outline_stereo(BYTE * pixels, int linelen)
     for (int x = xdots - 1; x >= 0; x--)
     {
         if (same[x] == x)
-            /* colour[x] = rand()%colors; */
+            // colour[x] = rand()%colors;
             colour[x] = (int)pixels[x%linelen];
         else
             colour[x] = colour[same[x]];
@@ -214,22 +214,22 @@ bool do_AutoStereo()
     int barwidth;
     time_t ltime;
     unsigned char *buf = (unsigned char *)decoderline;
-    /* following two lines re-use existing arrays in Fractint */
+    // following two lines re-use existing arrays in Fractint
     std::unique_ptr<int[]> same(new int[xdots]);
     std::unique_ptr<int[]> colour(new int[xdots]);
     bool done = false;
 
-    pv = &v;   /* set static vars to stack structure */
+    pv = &v;   // set static vars to stack structure
     pv->savedac = savedacbox;
 
-    /* Use the current time to randomize the random number sequence. */
+    // Use the current time to randomize the random number sequence.
     time(&ltime);
     srand((unsigned int)ltime);
 
     oldhelpmode = helpmode;
     helpmode = RDSKEYS;
-    driver_save_graphics();                      /* save graphics image */
-    memcpy(savedacbox, g_dac_box, 256 * 3);  /* save colors */
+    driver_save_graphics();                      // save graphics image
+    memcpy(savedacbox, g_dac_box, 256 * 3);  // save colors
 
     if (xdots > OLDMAXPIXELS)
     {
@@ -239,7 +239,7 @@ bool do_AutoStereo()
         goto exit_stereo;
     }
 
-    /* empircally determined adjustment to make WIDTH scale correctly */
+    // empircally determined adjustment to make WIDTH scale correctly
     WIDTH = AutoStereo_width*.67;
     if (WIDTH < 1)
         WIDTH = 1;
@@ -267,7 +267,7 @@ bool do_AutoStereo()
     else
         YCEN = ydots/2;
 
-    /* box to average for calibration bars */
+    // box to average for calibration bars
     X1 = XCEN - xdots/16;
     X2 = XCEN + xdots/16;
     Y1 = YCEN - BARHEIGHT/2;
@@ -320,7 +320,7 @@ bool do_AutoStereo()
         kbdchar = driver_get_key();
         switch (kbdchar)
         {
-        case FIK_ENTER:   /* toggle bars */
+        case FIK_ENTER:   // toggle bars
         case FIK_SPACE:
             toggle_bars(&bars, barwidth, colour.get());
             break;
@@ -334,7 +334,7 @@ bool do_AutoStereo()
             savetodisk(savename);
             break;
         default:
-            if (kbdchar == FIK_ESC)   /* if ESC avoid returning to menu */
+            if (kbdchar == FIK_ESC)   // if ESC avoid returning to menu
                 kbdchar = 255;
             driver_unget_key(kbdchar);
             driver_buzzer(BUZZER_COMPLETE);
