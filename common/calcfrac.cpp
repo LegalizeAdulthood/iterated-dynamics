@@ -3942,7 +3942,7 @@ static int tesseral()
     tess *tp;
 
     guessplot = (plot != putcolor && plot != symplot2);
-    tp = (struct tess *)&dstack[0];
+    tp = (tess *)&dstack[0];
     tp->x1 = ixstart;                              // set up initial box
     tp->x2 = ixstop;
     tp->y1 = iystart;
