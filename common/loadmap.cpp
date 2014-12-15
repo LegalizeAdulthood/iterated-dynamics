@@ -4,7 +4,7 @@
 #include "port.h"
 #include "prototyp.h"
 
-/***************************************************************************/
+//*************************************************************************
 
 #define dac ((Palettetype *)g_dac_box)
 
@@ -22,9 +22,9 @@ bool ValidateLuts(const char *fn)
 #else
     merge_pathnames(temp,temp_fn,0);
 #endif
-    if (has_ext(temp) == nullptr) /* Did name have an extension? */
-        strcat(temp,".map");  /* No? Then add .map */
-    findpath(temp, line);         /* search the dos path */
+    if (has_ext(temp) == nullptr) // Did name have an extension?
+        strcat(temp,".map");  // No? Then add .map
+    findpath(temp, line);         // search the dos path
     f = fopen(line, "r");
     if (f == nullptr) {
         sprintf(line,"Could not load color map %s",fn);
@@ -36,13 +36,13 @@ bool ValidateLuts(const char *fn)
         if (fgets(line,100,f) == nullptr)
             break;
         sscanf(line, "%u %u %u", &r, &g, &b);
-        /** load global dac values **/
-        dac[index].red   = (BYTE)((r%256) >> 2);/* maps default to 8 bits */
-        dac[index].green = (BYTE)((g%256) >> 2);/* DAC wants 6 bits */
+        //* load global dac values *
+        dac[index].red   = (BYTE)((r%256) >> 2);// maps default to 8 bits
+        dac[index].green = (BYTE)((g%256) >> 2);// DAC wants 6 bits
         dac[index].blue  = (BYTE)((b%256) >> 2);
     }
     fclose(f);
-    while (index < 256)  { /* zap unset entries */
+    while (index < 256)  { // zap unset entries
         dac[index].green = 40;
         dac[index].blue = dac[index].green;
         dac[index].red = dac[index].blue;
@@ -54,7 +54,7 @@ bool ValidateLuts(const char *fn)
 }
 
 
-/***************************************************************************/
+//*************************************************************************
 
 int SetColorPaletteName(char * fn)
 {
