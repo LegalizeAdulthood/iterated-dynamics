@@ -65,13 +65,12 @@ bool using_jiim = false;
  * basic data types
  */
 
-
-typedef struct
+struct PALENTRY
 {
     BYTE red,
          green,
          blue;
-} PALENTRY;
+};
 
 
 
@@ -498,7 +497,7 @@ static void draw_diamond(int x, int y, int color)
  *            deallocate memory.
  */
 
-struct _Cursor
+struct Cursor
 {
     int     x, y;
     int     hidden;       // >0 if mouse hidden
@@ -508,9 +507,7 @@ struct _Cursor
     char    b[CURSOR_SIZE];
     char    l[CURSOR_SIZE];
     char    r[CURSOR_SIZE];
-} ;
-
-#define Cursor struct _Cursor
+};
 
 // private:
 
@@ -692,7 +689,7 @@ int Cursor_WaitKey()   // blink cursor while waiting for a key
  * Purpose:   Handles the rectangular move/resize box.
  */
 
-struct _MoveBox
+struct MoveBox
 {
     int      x, y;
     int      base_width,
@@ -704,9 +701,7 @@ struct _MoveBox
     char    *b;
     char    *l;
     char    *r;
-} ;
-
-#define MoveBox struct _MoveBox
+};
 
 // private:
 
@@ -1014,20 +1009,17 @@ static bool MoveBox_Process(MoveBox *me)
  *            by the CEditor.
  */
 
-struct _CEditor
+struct CEditor
 {
     int       x, y;
     char      letter;
     int       val;
     bool done;
     bool hidden;
-    void (*other_key)(int key, struct _CEditor *ce, void *info);
-    void (*change)(struct _CEditor *ce, void *info);
+    void (*other_key)(int key, CEditor *ce, void *info);
+    void (*change)(CEditor *ce, void *info);
     void     *info;
-
-} ;
-
-#define CEditor struct _CEditor
+};
 
 // public:
 
@@ -1240,7 +1232,7 @@ static int CEditor_Edit(CEditor *me)
  * Purpose:   Edits a complete color using three CEditors for R, G and B
  */
 
-struct _RGBEditor
+struct RGBEditor
 {
     int       x, y;            // position
     int       curr;            // 0=r, 1=g, 2=b
@@ -1248,12 +1240,10 @@ struct _RGBEditor
     bool done;
     bool hidden;
     CEditor  *color[3];        // color editors 0=r, 1=g, 2=b
-    void (*other_key)(int key, struct _RGBEditor *e, void *info);
-    void (*change)(struct _RGBEditor *e, void *info);
+    void (*other_key)(int key, RGBEditor *e, void *info);
+    void (*change)(RGBEditor *e, void *info);
     void     *info;
-} ;
-
-#define RGBEditor struct _RGBEditor
+};
 
 // private:
 
@@ -1548,7 +1538,7 @@ Modes:
 
 
 
-struct  _PalTable
+struct PalTable
 {
     int           x, y;
     int           csize;
@@ -1575,9 +1565,7 @@ struct  _PalTable
     int           top,bottom; // top and bottom colours of freestyle band
     int           bandwidth; //size of freestyle colour band
     bool freestyle;
-} ;
-
-#define PalTable struct _PalTable
+};
 
 // private:
 
