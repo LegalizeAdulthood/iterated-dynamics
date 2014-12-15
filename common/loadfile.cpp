@@ -17,7 +17,7 @@
 #include "targa_lc.h"
 #include "drivers.h"
 
-/* routines in this module      */
+// routines in this module
 
 static int  find_fractal_info(char *,struct fractal_info *,
                               struct ext_blk_2 *,
@@ -37,11 +37,11 @@ bool loaded3d = false;
 static FILE *fp;
 int fileydots, filexdots, filecolors;
 float fileaspectratio;
-short skipxdots,skipydots;      /* for decoder, when reducing image */
+short skipxdots,skipydots;      // for decoder, when reducing image
 bool bad_outside = false;
 bool ldcheck = false;
 
-int read_overlay()      /* read overlay/3D files, if reqr'd */
+int read_overlay()      // read overlay/3D files, if reqr'd
 {
     struct fractal_info read_info;
     char msg[110];
@@ -52,8 +52,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     struct ext_blk_6 blk_6_info;
     struct ext_blk_7 blk_7_info;
 
-    showfile = 1;                /* for any abort exit, pretend done */
-    g_init_mode = -1;               /* no viewing mode set yet */
+    showfile = 1;                // for any abort exit, pretend done
+    g_init_mode = -1;               // no viewing mode set yet
     bool oldfloatflag = usr_floatflag;
     loaded3d = false;
     if (fastrestore)
@@ -68,7 +68,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     if (find_fractal_info(readname, &read_info, &blk_2_info, &blk_3_info,
                           &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
     {
-        /* didn't find a useable file */
+        // didn't find a useable file
         sprintf(msg, "Sorry, %s isn't a file I can decode.", readname);
         stopmsg(0, msg);
         return -1;
@@ -88,7 +88,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     yymax        = read_info.ymax;
     param[0]     = read_info.creal;
     param[1]     = read_info.cimag;
-    save_release = 1100; /* unless we find out better later on */
+    save_release = 1100; // unless we find out better later on
 
     invert = 0;
     if (read_info.version > 0)
@@ -154,7 +154,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         outside      = read_info.outside;
     }
 
-    calc_status = CALCSTAT_PARAMS_CHANGED;       /* defaults if version < 4 */
+    calc_status = CALCSTAT_PARAMS_CHANGED;       // defaults if version < 4
     xx3rd = xxmin;
     yy3rd = yymin;
     usr_distest = 0;
@@ -197,13 +197,13 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
             filexdots >>= 1;
         }
         fileaspectratio = read_info.faspectratio;
-        if (fileaspectratio < 0.01)       /* fix files produced in early v14.1 */
+        if (fileaspectratio < 0.01)       // fix files produced in early v14.1
         {
             fileaspectratio = screenaspect;
         }
         save_system  = read_info.system;
-        save_release = read_info.release; /* from fmt 5 on we know real number */
-        if (read_info.version == 5        /* except a few early fmt 5 cases: */
+        save_release = read_info.release; // from fmt 5 on we know real number
+        if (read_info.version == 5        // except a few early fmt 5 cases:
                 && (save_release <= 0 || save_release >= 4000))
         {
             save_release = 1410;
@@ -267,9 +267,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         param[9] = read_info.dparm10;
     }
 
-    if (read_info.version < 4 && read_info.version != 0) /* pre-version 14.0? */
+    if (read_info.version < 4 && read_info.version != 0) // pre-version 14.0?
     {
-        backwardscompat(&read_info); /* translate obsolete types */
+        backwardscompat(&read_info); // translate obsolete types
         if (LogFlag)
         {
             LogFlag = 2;
@@ -277,9 +277,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         usr_floatflag = curfractalspecific->isinteger ? false : true;
     }
 
-    if (read_info.version < 5 && read_info.version != 0) /* pre-version 15.0? */
+    if (read_info.version < 5 && read_info.version != 0) // pre-version 15.0?
     {
-        if (LogFlag == 2) /* logmap=old changed again in format 5! */
+        if (LogFlag == 2) // logmap=old changed again in format 5!
         {
             LogFlag = -1;
         }
@@ -288,7 +288,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
             bailout = decomp[1];
         }
     }
-    if (potflag) /* in version 15.x and 16.x logmap didn't work with pot */
+    if (potflag) // in version 15.x and 16.x logmap didn't work with pot
     {
         if (read_info.version == 6 || read_info.version == 7)
         {
@@ -297,7 +297,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     }
     set_trig_pointers(-1);
 
-    if (read_info.version < 9 && read_info.version != 0) /* pre-version 18.0? */
+    if (read_info.version < 9 && read_info.version != 0) // pre-version 18.0?
     {
         /* forcesymmetry==1000 means we want to force symmetry but don't
             know which symmetry yet, will find out in setsymmetry() */
@@ -310,15 +310,15 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
             }
         }
     }
-    if (save_release < 1725 && read_info.version != 0) /* pre-version 17.25 */
+    if (save_release < 1725 && read_info.version != 0) // pre-version 17.25
     {
-        set_if_old_bif(); /* translate bifurcation types */
+        set_if_old_bif(); // translate bifurcation types
         functionpreloaded = true;
     }
 
     if (read_info.version > 9)
-    {   /* post-version 18.22 */
-        bailout     = read_info.bailout; /* use long bailout */
+    {   // post-version 18.22
+        bailout     = read_info.bailout; // use long bailout
         bailoutest = (enum bailouts) read_info.bailoutest;
     }
     else
@@ -329,19 +329,19 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
     if (read_info.version > 9)
     {
-        /* post-version 18.23 */
-        maxit = read_info.iterations; /* use long maxit */
-        /* post-version 18.27 */
+        // post-version 18.23
+        maxit = read_info.iterations; // use long maxit
+        // post-version 18.27
         old_demm_colors = read_info.old_demm_colors != 0;
     }
 
-    if (read_info.version > 10) /* post-version 19.20 */
+    if (read_info.version > 10) // post-version 19.20
     {
         LogFlag = read_info.logmap;
         usr_distest = read_info.distest;
     }
 
-    if (read_info.version > 11) /* post-version 19.20, inversion fix */
+    if (read_info.version > 11) // post-version 19.20, inversion fix
     {
         inversion[0] = read_info.dinvert[0];
         inversion[1] = read_info.dinvert[1];
@@ -350,7 +350,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         stoppass     = read_info.stoppass;
     }
 
-    if (read_info.version > 12) /* post-version 19.60 */
+    if (read_info.version > 12) // post-version 19.60
     {
         quick_calc   = read_info.quick_calc != 0;
         closeprox    = read_info.closeprox;
@@ -363,16 +363,16 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     }
 
     nobof = false;
-    if (read_info.version > 13) /* post-version 20.1.2 */
+    if (read_info.version > 13) // post-version 20.1.2
     {
         nobof = read_info.nobof != 0;
     }
 
-    /* if (read_info.version > 14)  post-version 20.1.12 */
-    Log_Auto_Calc = false;              /* make sure it's turned off */
+    // if (read_info.version > 14)  post-version 20.1.12
+    Log_Auto_Calc = false;              // make sure it's turned off
 
     orbit_interval = 1;
-    if (read_info.version > 15) /* post-version 20.3.2 */
+    if (read_info.version > 15) // post-version 20.3.2
     {
         orbit_interval = read_info.orbit_interval;
     }
@@ -380,7 +380,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     orbit_delay = 0;
     math_tol[0] = 0.05;
     math_tol[1] = 0.05;
-    if (read_info.version > 16) /* post-version 20.4.0 */
+    if (read_info.version > 16) // post-version 20.4.0
     {
         orbit_delay = read_info.orbit_delay;
         math_tol[0] = read_info.math_tol[0];
@@ -398,7 +398,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
     if (overlay3d)
     {
-        g_init_mode = g_adapter;          /* use previous adapter mode for overlays */
+        g_init_mode = g_adapter;          // use previous adapter mode for overlays
         if (filexdots > xdots || fileydots > ydots)
         {
             stopmsg(0, "Can't overlay with a larger image");
@@ -410,8 +410,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
     {
         int const olddisplay3d = display3d;
         bool const oldfloatflag = floatflag;
-        display3d = loaded3d ? 1 : 0;   /* for <tab> display during next */
-        floatflag = usr_floatflag; /* ditto */
+        display3d = loaded3d ? 1 : 0;   // for <tab> display during next
+        floatflag = usr_floatflag; // ditto
         int i = get_video_mode(&read_info, &blk_3_info);
 #if defined(_WIN32)
         _ASSERTE(_CrtCheckMemory());
@@ -446,7 +446,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         }
     }
 
-    if (resume_info != 0) /* free the prior area if there is one */
+    if (resume_info != 0) // free the prior area if there is one
     {
         MemoryRelease(resume_info);
         resume_info = 0;
@@ -485,10 +485,10 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         }
         blk_3_info.form_name[ITEMNAMELEN] = 0;
         strcpy(nameptr, blk_3_info.form_name);
-        /* perhaps in future add more here, check block_len for backward compatibility */
+        // perhaps in future add more here, check block_len for backward compatibility
     }
 
-    if (rangeslen) /* free prior ranges */
+    if (rangeslen) // free prior ranges
     {
         ranges.clear();
         rangeslen = 0;
@@ -522,7 +522,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         struct evolution_info resume_e_info;
         GENEBASE gene[NUMGENES];
 
-        /* TODO: MemoryAlloc */
+        // TODO: MemoryAlloc
         if (gene_handle == 0)
         {
             gene_handle = MemoryAlloc((U16) sizeof(gene), 1L, MEMORY);
@@ -530,15 +530,15 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         MoveFromMemory((BYTE *)&gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
         if (read_info.version < 15)
         {
-            /* Increasing NUMGENES moves ecount in the data structure */
-            /* We added 4 to NUMGENES, so ecount is at NUMGENES-4 */
+            // Increasing NUMGENES moves ecount in the data structure
+            // We added 4 to NUMGENES, so ecount is at NUMGENES-4
             blk_6_info.ecount = blk_6_info.mutate[NUMGENES - 4];
         }
         if (blk_6_info.ecount != blk_6_info.gridsz*blk_6_info.gridsz
                 && calc_status != CALCSTAT_COMPLETED)
         {
             calc_status = CALCSTAT_RESUMABLE;
-            /* TODO: MemoryAlloc */
+            // TODO: MemoryAlloc
             if (evolve_handle == 0)
             {
                 evolve_handle = MemoryAlloc((U16) sizeof(resume_e_info), 1L, MEMORY);
@@ -564,7 +564,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         }
         else
         {
-            if (evolve_handle != 0)  /* Image completed, release it. */
+            if (evolve_handle != 0)  // Image completed, release it.
             {
                 MemoryRelease(evolve_handle);
             }
@@ -617,7 +617,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
             }
         }
         MoveToMemory((BYTE *) &gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
-        param_history(0); /* store history */
+        param_history(0); // store history
     }
     else
     {
@@ -640,7 +640,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
         }
     }
 
-    showfile = 0;                   /* trigger the file load */
+    showfile = 0;                   // trigger the file load
     return 0;
 }
 
@@ -662,35 +662,35 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
     struct evolution_info eload_info;
     struct orbits_info oload_info;
 
-    blk_2_info->got_data = 0; /* initialize to no data */
-    blk_3_info->got_data = 0; /* initialize to no data */
-    blk_4_info->got_data = 0; /* initialize to no data */
-    blk_5_info->got_data = 0; /* initialize to no data */
-    blk_6_info->got_data = 0; /* initialize to no data */
-    blk_7_info->got_data = 0; /* initialize to no data */
+    blk_2_info->got_data = 0; // initialize to no data
+    blk_3_info->got_data = 0; // initialize to no data
+    blk_4_info->got_data = 0; // initialize to no data
+    blk_5_info->got_data = 0; // initialize to no data
+    blk_6_info->got_data = 0; // initialize to no data
+    blk_7_info->got_data = 0; // initialize to no data
 
     fp = fopen(gif_file,"rb");
     if (fp==nullptr)
         return (-1);
     fread(gifstart,13,1,fp);
-    if (strncmp((char *)gifstart,"GIF",3) != 0) { /* not GIF, maybe old .tga? */
+    if (strncmp((char *)gifstart,"GIF",3) != 0) { // not GIF, maybe old .tga?
         fclose(fp);
         return (-1);
     }
 
-    filetype = 0; /* GIF */
+    filetype = 0; // GIF
     GET16(gifstart[6],filexdots);
     GET16(gifstart[8],fileydots);
     filecolors = 2 << (gifstart[10] & 7);
-    fileaspectratio = 0; /* unknown */
-    if (gifstart[12]) { /* calc reasonably close value from gif header */
+    fileaspectratio = 0; // unknown
+    if (gifstart[12]) { // calc reasonably close value from gif header
         fileaspectratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
                                   * (double)fileydots / (double)filexdots);
         if (fileaspectratio > screenaspect-0.03
                 && fileaspectratio < screenaspect+0.03)
             fileaspectratio = screenaspect;
     }
-    else if (fileydots * 4 == filexdots * 3) /* assume the common square pixels */
+    else if (fileydots * 4 == filexdots * 3) // assume the common square pixels
         fileaspectratio = screenaspect;
 
     if (*s_makepar == 0 && (gifstart[10] & 0x80)!=0)
@@ -746,17 +746,17 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 #endif
         hdr_offset = -1-fractinf_len;
     } else {
-        /* didn't work 1st try, maybe an older vsn, maybe junk at eof, scan: */
+        // didn't work 1st try, maybe an older vsn, maybe junk at eof, scan:
         int offset;
         char tmpbuf[110];
         hdr_offset = 0;
-        offset = 80; /* don't even check last 80 bytes of file for id */
-        while (offset < fractinf_len+513) { /* allow 512 garbage at eof */
-            offset += 100; /* go back 100 bytes at a time */
+        offset = 80; // don't even check last 80 bytes of file for id
+        while (offset < fractinf_len+513) { // allow 512 garbage at eof
+            offset += 100; // go back 100 bytes at a time
             fseek(fp,(long)(0-offset),SEEK_END);
-            fread(tmpbuf,1,110,fp); /* read 10 extra for string compare */
+            fread(tmpbuf,1,110,fp); // read 10 extra for string compare
             for (int i = 0; i < 100; ++i)
-                if (!strcmp(INFO_ID,&tmpbuf[i])) { /* found header? */
+                if (!strcmp(INFO_ID,&tmpbuf[i])) { // found header?
                     strcpy(info->info_id,INFO_ID);
                     fseek(fp,(long)(hdr_offset=i-offset),SEEK_END);
                     /* TODO: revise this to read members one at a time so we get natural alignment
@@ -765,13 +765,13 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 #ifdef XFRACT
                     decode_fractal_info(info,1);
 #endif
-                    offset = 10000; /* force exit from outer loop */
+                    offset = 10000; // force exit from outer loop
                     break;
                 }
         }
     }
 
-    if (hdr_offset) { /* we found INFO_ID */
+    if (hdr_offset) { // we found INFO_ID
 
         if (info->version >= 4) {
             /* first reload main extension block, reasons:
@@ -781,15 +781,15 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
             fseek(fp,(long)(hdr_offset-15),SEEK_END);
             int scan_extend = 1;
             while (scan_extend) {
-                if (fgetc(fp) != '!' /* if not what we expect just give up */
+                if (fgetc(fp) != '!' // if not what we expect just give up
                         || fread(temp1,1,13,fp) != 13
                         || strncmp(&temp1[2],"fractint",8))
                     break;
                 temp1[13] = 0;
-                switch (atoi(&temp1[10]))   /* e.g. "fractint002" */
+                switch (atoi(&temp1[10]))   // e.g. "fractint002"
                 {
-                case 1: /* "fractint001", the main extension block */
-                    if (scan_extend == 2) { /* we've been here before, done now */
+                case 1: // "fractint001", the main extension block
+                    if (scan_extend == 2) { // we've been here before, done now
                         scan_extend = 0;
                         break;
                     }
@@ -798,32 +798,32 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                     decode_fractal_info(info,1);
 #endif
                     scan_extend = 2;
-                    /* now we know total extension len, back up to first block */
+                    // now we know total extension len, back up to first block
                     fseek(fp,0L-info->tot_extend_len,SEEK_CUR);
                     break;
-                case 2: /* resume info */
-                    skip_ext_blk(&block_len,&data_len); /* once to get lengths */
-                    /* TODO: MemoryAlloc */
+                case 2: // resume info
+                    skip_ext_blk(&block_len,&data_len); // once to get lengths
+                    // TODO: MemoryAlloc
                     blk_2_info->resume_data = MemoryAlloc((U16)1,(long)data_len,MEMORY);
                     if (blk_2_info->resume_data == 0)
-                        info->calc_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
+                        info->calc_status = CALCSTAT_NON_RESUMABLE; // not resumable after all
                     else {
                         fseek(fp,(long)(0-block_len),SEEK_CUR);
                         load_ext_blk((char *)block,data_len);
                         MoveToMemory((BYTE *)block,(U16)1,(long)data_len,0,(U16)blk_2_info->resume_data);
                         blk_2_info->length = data_len;
-                        blk_2_info->got_data = 1; /* got data */
+                        blk_2_info->got_data = 1; // got data
                     }
                     break;
-                case 3: /* formula info */
-                    skip_ext_blk(&block_len,&data_len); /* once to get lengths */
-                    /* check data_len for backward compatibility */
+                case 3: // formula info
+                    skip_ext_blk(&block_len,&data_len); // once to get lengths
+                    // check data_len for backward compatibility
                     fseek(fp,(long)(0-block_len),SEEK_CUR);
                     load_ext_blk((char *)&fload_info,data_len);
                     strcpy(blk_3_info->form_name,fload_info.form_name);
                     blk_3_info->length = data_len;
-                    blk_3_info->got_data = 1; /* got data */
-                    if (data_len < sizeof(fload_info)) { /* must be old GIF */
+                    blk_3_info->got_data = 1; // got data
+                    if (data_len < sizeof(fload_info)) { // must be old GIF
                         blk_3_info->uses_p1 = 1;
                         blk_3_info->uses_p2 = 1;
                         blk_3_info->uses_p3 = 1;
@@ -842,34 +842,34 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                         blk_3_info->uses_p5 = fload_info.uses_p5;
                     }
                     break;
-                case 4: /* ranges info */
-                    skip_ext_blk(&block_len,&data_len); /* once to get lengths */
+                case 4: // ranges info
+                    skip_ext_blk(&block_len,&data_len); // once to get lengths
                     if ((blk_4_info->range_data = (int *)malloc((long)data_len)) != nullptr) {
                         fseek(fp,(long)(0-block_len),SEEK_CUR);
                         load_ext_blk((char *)blk_4_info->range_data,data_len);
                         blk_4_info->length = data_len/2;
-                        blk_4_info->got_data = 1; /* got data */
+                        blk_4_info->got_data = 1; // got data
                     }
                     break;
-                case 5: /* extended precision parameters  */
-                    skip_ext_blk(&block_len,&data_len); /* once to get lengths */
+                case 5: // extended precision parameters
+                    skip_ext_blk(&block_len,&data_len); // once to get lengths
                     if ((blk_5_info->apm_data = (char *)malloc((long)data_len)) != nullptr) {
                         fseek(fp,(long)(0-block_len),SEEK_CUR);
                         load_ext_blk(blk_5_info->apm_data,data_len);
                         blk_5_info->length = data_len;
-                        blk_5_info->got_data = 1; /* got data */
+                        blk_5_info->got_data = 1; // got data
                     }
                     break;
-                case 6: /* evolver params */
-                    skip_ext_blk(&block_len,&data_len); /* once to get lengths */
+                case 6: // evolver params
+                    skip_ext_blk(&block_len,&data_len); // once to get lengths
                     fseek(fp,(long)(0-block_len),SEEK_CUR);
                     load_ext_blk((char *)&eload_info,data_len);
-                    /* XFRACT processing of doubles here */
+                    // XFRACT processing of doubles here
 #ifdef XFRACT
                     decode_evolver_info(&eload_info,1);
 #endif
                     blk_6_info->length = data_len;
-                    blk_6_info->got_data = 1; /* got data */
+                    blk_6_info->got_data = 1; // got data
 
                     blk_6_info->paramrangex     = eload_info.paramrangex;
                     blk_6_info->paramrangey     = eload_info.paramrangey;
@@ -891,16 +891,16 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                     for (int i = 0; i < NUMGENES; i++)
                         blk_6_info->mutate[i]    = eload_info.mutate[i];
                     break;
-                case 7: /* orbits parameters  */
-                    skip_ext_blk(&block_len,&data_len); /* once to get lengths */
+                case 7: // orbits parameters
+                    skip_ext_blk(&block_len,&data_len); // once to get lengths
                     fseek(fp,(long)(0-block_len),SEEK_CUR);
                     load_ext_blk((char *)&oload_info,data_len);
-                    /* XFRACT processing of doubles here */
+                    // XFRACT processing of doubles here
 #ifdef XFRACT
                     decode_orbits_info(&oload_info,1);
 #endif
                     blk_7_info->length = data_len;
-                    blk_7_info->got_data = 1; /* got data */
+                    blk_7_info->got_data = 1; // got data
                     blk_7_info->oxmin           = oload_info.oxmin;
                     blk_7_info->oxmax           = oload_info.oxmax;
                     blk_7_info->oymin           = oload_info.oymin;
@@ -917,7 +917,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
         }
 
         fclose(fp);
-        fileaspectratio = screenaspect; /* if not >= v15, this is correct */
+        fileaspectratio = screenaspect; // if not >= v15, this is correct
         return (0);
     }
 
@@ -941,9 +941,9 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
     info->xdots = (short)filexdots;
     info->ydots = (short)fileydots;
     info->colors = (short)filecolors;
-    info->version = 0; /* this forces lots more init at calling end too */
+    info->version = 0; // this forces lots more init at calling end too
 
-    /* zero means we won */
+    // zero means we won
     fclose(fp);
     return (0);
 }
@@ -956,7 +956,7 @@ static void load_ext_blk(char *loadptr,int loadlen)
             if (--loadlen >= 0)
                 *(loadptr++) = (char)fgetc(fp);
             else
-                fgetc(fp); /* discard excess characters */
+                fgetc(fp); // discard excess characters
         }
     }
 }
@@ -974,7 +974,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
 }
 
 
-/* switch obsolete fractal types to new generalizations */
+// switch obsolete fractal types to new generalizations
 static void backwardscompat(struct fractal_info *info)
 {
     switch (fractype) {
@@ -1073,7 +1073,7 @@ static void backwardscompat(struct fractal_info *info)
     curfractalspecific = &fractalspecific[fractype];
 }
 
-/* switch old bifurcation fractal types to new generalizations */
+// switch old bifurcation fractal types to new generalizations
 void set_if_old_bif()
 {
     /* set functions if not set already, may need to check 'functionpreloaded'
@@ -1098,7 +1098,7 @@ void set_if_old_bif()
     }
 }
 
-/* miscellaneous function variable defaults */
+// miscellaneous function variable defaults
 void set_function_parm_defaults()
 {
     switch (fractype)
@@ -1124,7 +1124,7 @@ void set_function_parm_defaults()
 void backwards_v18()
 {
     if (!functionpreloaded)
-        set_if_old_bif(); /* old bifs need function set */
+        set_if_old_bif(); // old bifs need function set
     if (fractype==MANDELTRIG && usr_floatflag
             && save_release < 1800 && bailout == 0)
         bailout = 2500;
@@ -1155,21 +1155,21 @@ void backwards_v19()
         inversion[0] = inversion[1];
     }
     if (fix_bof())
-        no_mag_calc = true; /* fractal has old bof60/61 problem with magnitude */
+        no_mag_calc = true; // fractal has old bof60/61 problem with magnitude
     else
         no_mag_calc = false;
     if (fix_period_bof())
-        use_old_period = true; /* fractal uses old periodicity method */
+        use_old_period = true; // fractal uses old periodicity method
     else
         use_old_period = false;
     if (save_release < 1827 && distest)
-        use_old_distest = true;         /* use old distest code */
+        use_old_distest = true;         // use old distest code
     else
-        use_old_distest = false;        /* use new distest code */
+        use_old_distest = false;        // use new distest code
 }
 
 void backwards_v20()
-{   /* Fractype == FP type is not seen from PAR file ????? */
+{   // Fractype == FP type is not seen from PAR file ?????
     if ((fractype == MANDELFP || fractype == JULIAFP ||
             fractype == MANDEL || fractype == JULIA) &&
             (outside <= REAL && outside >= SUM) && save_release <= 1960)
@@ -1240,21 +1240,21 @@ static bool fix_period_bof()
     return ret;
 }
 
-/* browse code RB*/
+// browse code RB
 
 #define MAX_WINDOWS_OPEN 450
 
-struct window {       /* for fgetwindow on screen browser */
-    struct coords itl; /* screen coordinates */
+struct window {       // for fgetwindow on screen browser
+    struct coords itl; // screen coordinates
     struct coords ibl;
     struct coords itr;
     struct coords ibr;
-    double win_size;   /* box size for drawindow() */
-    char name[13];     /* for filename */
-    int boxcount;      /* bytes of saved screen info */
+    double win_size;   // box size for drawindow()
+    char name[13];     // for filename
+    int boxcount;      // bytes of saved screen info
 };
 
-/* prototypes */
+// prototypes
 static void drawindow(int, struct window *);
 static bool is_visible_window
 (struct window *, struct fractal_info *, struct ext_blk_5 *);
@@ -1266,19 +1266,19 @@ static void check_history(char *, char *);
 static void bfsetup_convert_to_screen();
 static void bftransform(bf_t, bf_t, struct dblcoords *);
 
-char browsename[13]; /* name for browse file */
+char browsename[13]; // name for browse file
 U16 browsehandle;
 U16 boxxhandle;
 U16 boxyhandle;
 U16 boxvalueshandle;
 
-/* here because must be visible inside several routines */
+// here because must be visible inside several routines
 static struct affine *cvt;
 static bf_t   bt_a, bt_b, bt_c, bt_d, bt_e, bt_f;
 static bf_t   n_a, n_b, n_c, n_d, n_e, n_f;
 int oldbf_math;
 
-/* fgetwindow reads all .GIF files and draws window outlines on the screen */
+// fgetwindow reads all .GIF files and draws window outlines on the screen
 int fgetwindow()
 {
     struct affine stack_cvt;
@@ -1313,7 +1313,7 @@ int fgetwindow()
     oldbf_math = bf_math;
     bf_math = BIGFLT;
     if (!oldbf_math) {
-        int oldcalc_status = calc_status; /* kludge because next sets it = 0 */
+        int oldcalc_status = calc_status; // kludge because next sets it = 0
         fractal_floattobf();
         calc_status = oldcalc_status;
     }
@@ -1327,12 +1327,12 @@ int fgetwindow()
 
     if ((vidlength = (U16)(sxdots + sydots)) > (U16)4096)
         vid_too_big = 2;
-    /* 4096 based on 4096B in boxx... max 1/4 pixels plotted, and need words */
-    /* 4096 = 10240/2.5 based on size of boxx+boxy+boxvalues */
+    // 4096 based on 4096B in boxx... max 1/4 pixels plotted, and need words
+    // 4096 = 10240/2.5 based on size of boxx+boxy+boxvalues
 #ifdef XFRACT
-    vidlength = 4; /* Xfractint only needs the 4 corners saved. */
+    vidlength = 4; // Xfractint only needs the 4 corners saved.
 #endif
-    /* TODO: MemoryAlloc */
+    // TODO: MemoryAlloc
     browsehandle = MemoryAlloc((U16)sizeof(struct window),(long)MAX_WINDOWS_OPEN,MEMORY);
     boxxhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
     boxyhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
@@ -1340,14 +1340,14 @@ int fgetwindow()
     if (!browsehandle || !boxxhandle || !boxyhandle || !boxvalueshandle)
         no_memory = true;
 
-    /* set up complex-plane-to-screen transformation */
+    // set up complex-plane-to-screen transformation
     if (oldbf_math) {
         bfsetup_convert_to_screen();
     }
     else {
-        cvt = &stack_cvt; /* use stack */
+        cvt = &stack_cvt; // use stack
         setup_convert_to_screen(cvt);
-        /* put in bf variables */
+        // put in bf variables
         floattobf(bt_a, cvt->a);
         floattobf(bt_b, cvt->b);
         floattobf(bt_c, cvt->c);
@@ -1357,7 +1357,7 @@ int fgetwindow()
     }
     find_special_colors();
     color_of_box = g_color_medium;
-rescan:  /* entry for changed browse parms */
+rescan:  // entry for changed browse parms
     time(&lastime);
     toggle = 0;
     wincount = 0;
@@ -1366,7 +1366,7 @@ rescan:  /* entry for changed browse parms */
     splitpath(browsemask,nullptr,nullptr,fname,ext);
     makepath(tmpmask,drive,dir,fname,ext);
     done=(vid_too_big==2) || no_memory || fr_findfirst(tmpmask);
-    /* draw all visible windows */
+    // draw all visible windows
     while (!done)
     {
         if (driver_key_pressed())
@@ -1388,7 +1388,7 @@ rescan:  /* entry for changed browse parms */
         {
             strcpy(winlist.name,DTA.filename);
             drawindow(color_of_box,&winlist);
-            boxcount <<= 1; /*boxcount*2;*/ /* double for byte count */
+            boxcount *= 2; // double for byte count
             winlist.boxcount = boxcount;
             MoveToMemory(winlistptr,(U16)sizeof(struct window),1L,(long)wincount,browsehandle);
             MoveToMemory((BYTE *)boxx,vidlength,1L,(long)wincount,boxxhandle);
@@ -1397,11 +1397,11 @@ rescan:  /* entry for changed browse parms */
             wincount++;
         }
 
-        if (blk_2_info.got_data == 1) /* Clean up any memory allocated */
+        if (blk_2_info.got_data == 1) // Clean up any memory allocated
             MemoryRelease((U16)blk_2_info.resume_data);
-        if (blk_4_info.got_data == 1) /* Clean up any memory allocated */
+        if (blk_4_info.got_data == 1) // Clean up any memory allocated
             free(blk_4_info.range_data);
-        if (blk_5_info.got_data == 1) /* Clean up any memory allocated */
+        if (blk_5_info.got_data == 1) // Clean up any memory allocated
             free(blk_5_info.apm_data);
 
         done=(fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
@@ -1409,10 +1409,10 @@ rescan:  /* entry for changed browse parms */
 
     if (no_memory)
     {
-        texttempmsg("Sorry...not enough memory to browse.");/* doesn't work if NO memory available, go figure */
+        texttempmsg("Sorry...not enough memory to browse.");// doesn't work if NO memory available, go figure
     }
     if (wincount >= MAX_WINDOWS_OPEN)
-    {   /* hard code message at MAX_WINDOWS_OPEN = 450 */
+    {   // hard code message at MAX_WINDOWS_OPEN = 450
         texttempmsg("Sorry...no more space, 450 displayed.");
     }
     if (vid_too_big==2)
@@ -1422,7 +1422,7 @@ rescan:  /* entry for changed browse parms */
     c=0;
     if (wincount)
     {
-        driver_buzzer(BUZZER_COMPLETE); /*let user know we've finished */
+        driver_buzzer(BUZZER_COMPLETE); //let user know we've finished
         int index = 0;
         done = 0;
         MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
@@ -1446,7 +1446,7 @@ rescan:  /* entry for changed browse parms */
                     toggle = 1- toggle;
                 }
                 if (toggle)
-                    drawindow(g_color_bright,&winlist);   /* flash current window */
+                    drawindow(g_color_bright,&winlist);   // flash current window
                 else
                     drawindow(g_color_dark,&winlist);
 #ifdef XFRACT
@@ -1454,7 +1454,7 @@ rescan:  /* entry for changed browse parms */
 #endif
             }
 #ifdef XFRACT
-            if ((blinks & 1) == 1)   /* Need an odd # of blinks, so next one leaves box turned off */
+            if ((blinks & 1) == 1)   // Need an odd # of blinks, so next one leaves box turned off
                 drawindow(g_color_bright,&winlist);
 #endif
 
@@ -1465,9 +1465,9 @@ rescan:  /* entry for changed browse parms */
             case FIK_DOWN_ARROW:
             case FIK_UP_ARROW:
                 cleartempmsg();
-                drawindow(color_of_box,&winlist);/* dim last window */
+                drawindow(color_of_box,&winlist);// dim last window
                 if (c==FIK_RIGHT_ARROW || c== FIK_UP_ARROW) {
-                    index++;                     /* shift attention to next window */
+                    index++;                     // shift attention to next window
                     if (index >= wincount) index=0;
                 }
                 else {
@@ -1502,7 +1502,7 @@ rescan:  /* entry for changed browse parms */
                 break;
 #endif
             case FIK_ENTER:
-            case FIK_ENTER_2:   /* this file please */
+            case FIK_ENTER_2:   // this file please
                 strcpy(browsename,winlist.name);
                 done = 1;
                 break;
@@ -1511,14 +1511,14 @@ rescan:  /* entry for changed browse parms */
             case 'l':
             case 'L':
 #ifdef XFRACT
-                /* Need all boxes turned on, turn last one back on. */
+                // Need all boxes turned on, turn last one back on.
                 drawindow(g_color_bright,&winlist);
 #endif
                 autobrowse = false;
                 done = 2;
                 break;
 
-            case 'D': /* delete file */
+            case 'D': // delete file
                 cleartempmsg();
                 _snprintf(mesg, NUM_OF(mesg), "Delete %s? (Y/N)", winlist.name);
                 showtempmsg(mesg);
@@ -1534,7 +1534,7 @@ rescan:  /* entry for changed browse parms */
                     splitpath(winlist.name,nullptr,nullptr,fname,ext);
                     makepath(tmpmask,drive,dir,fname,ext);
                     if (!unlink(tmpmask)) {
-                        /* do a rescan */
+                        // do a rescan
                         done = 3;
                         strcpy(oldname,winlist.name);
                         tmpmask[0] = '\0';
@@ -1585,7 +1585,7 @@ rescan:  /* entry for changed browse parms */
                 }
                 break;
 
-            case 2: /* ctrl B */
+            case 2: // ctrl B
                 cleartempmsg();
                 driver_stack_screen();
                 done = abs(get_browse_params());
@@ -1593,22 +1593,22 @@ rescan:  /* entry for changed browse parms */
                 showtempmsg(winlist.name);
                 break;
 
-            case 's': /* save image with boxes */
+            case 's': // save image with boxes
                 autobrowse = false;
-                drawindow(color_of_box,&winlist); /* current window white */
+                drawindow(color_of_box,&winlist); // current window white
                 done = 4;
                 break;
 
-            case '\\': /*back out to last image */
+            case '\\': //back out to last image
                 done = 2;
                 break;
 
             default:
                 break;
-            } /*switch */
-        } /*while*/
+            } //switch
+        } //while
 
-        /* now clean up memory (and the screen if necessary) */
+        // now clean up memory (and the screen if necessary)
         cleartempmsg();
         if (done >= 1 && done < 4) {
             for (int i = wincount-1; i >= 0; i--)
@@ -1621,7 +1621,7 @@ rescan:  /* entry for changed browse parms */
                 boxcount >>= 1;
                 if (boxcount > 0)
 #ifdef XFRACT
-                    /* Turn all boxes off */
+                    // Turn all boxes off
                     drawindow(g_color_bright,&winlist);
 #else
                     clearbox();
@@ -1629,11 +1629,11 @@ rescan:  /* entry for changed browse parms */
             }
         }
         if (done == 3) {
-            goto rescan; /* hey everybody I just used the g word! */
+            goto rescan; // hey everybody I just used the g word!
         }
-    }/*if*/
+    }//if
     else {
-        driver_buzzer(BUZZER_INTERRUPT); /*no suitable files in directory! */
+        driver_buzzer(BUZZER_INTERRUPT); //no suitable files in directory!
         texttempmsg("Sorry.. I can't find anything");
         no_sub_images = true;
     }
@@ -1661,15 +1661,15 @@ static void drawindow(int colour,struct window *info)
     boxcolor=colour;
     boxcount = 0;
     if (info->win_size >= minbox) {
-        /* big enough on screen to show up as a box so draw it */
-        /* corner pixels */
+        // big enough on screen to show up as a box so draw it
+        // corner pixels
 #ifndef XFRACT
         addbox(info->itl);
         addbox(info->itr);
         addbox(info->ibl);
         addbox(info->ibr);
-        drawlines(info->itl,info->itr,info->ibl.x-info->itl.x,info->ibl.y-info->itl.y); /* top & bottom lines */
-        drawlines(info->itl,info->ibl,info->itr.x-info->itl.x,info->itr.y-info->itl.y); /* left & right lines */
+        drawlines(info->itl,info->itr,info->ibl.x-info->itl.x,info->ibl.y-info->itl.y); // top & bottom lines
+        drawlines(info->itl,info->ibl,info->itr.x-info->itl.x,info->itr.y-info->itl.y); // left & right lines
 #else
         boxx[0] = info->itl.x + sxoffs;
         boxy[0] = info->itl.y + syoffs;
@@ -1683,7 +1683,7 @@ static void drawindow(int colour,struct window *info)
 #endif
         dispbox();
     }
-    else { /* draw crosshairs */
+    else { // draw crosshairs
 #ifndef XFRACT
         int cross_size = ydots / 45;
         if (cross_size < 2) cross_size = 2;
@@ -1691,14 +1691,14 @@ static void drawindow(int colour,struct window *info)
         itr.y = info->itl.y;
         ibl.y = info->itl.y - cross_size;
         ibl.x = info->itl.x;
-        drawlines(info->itl,itr,ibl.x-itr.x,0); /* top & bottom lines */
-        drawlines(info->itl,ibl,0,itr.y-ibl.y); /* left & right lines */
+        drawlines(info->itl,itr,ibl.x-itr.x,0); // top & bottom lines
+        drawlines(info->itl,ibl,0,itr.y-ibl.y); // left & right lines
         dispbox();
 #endif
     }
 }
 
-/* maps points onto view screen*/
+// maps points onto view screen
 static void transform(struct dblcoords *point)
 {
     double tmp_pt_x;
@@ -1727,12 +1727,12 @@ static bool is_visible_window(
          orig_rbflength;
     double toobig, tmp_sqrt;
     toobig = sqrt(sqr((double)sxdots)+sqr((double)sydots)) * 1.5;
-    /* arbitrary value... stops browser zooming out too far */
+    // arbitrary value... stops browser zooming out too far
     cornercount=0;
     cant_see = false;
 
     saved = save_stack();
-    /* Save original values. */
+    // Save original values.
     orig_bflength      = bflength;
     orig_bnlength      = bnlength;
     orig_padding       = padding;
@@ -1877,12 +1877,12 @@ static bool is_visible_window(
     list->ibr.y=(int)(br.y + 0.5);
 
     tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
-    list->win_size = tmp_sqrt; /* used for box vs crosshair in drawindow() */
-    /* reject anything too small or too big on screen */
+    list->win_size = tmp_sqrt; // used for box vs crosshair in drawindow()
+    // reject anything too small or too big on screen
     if ((tmp_sqrt < toosmall) || (tmp_sqrt > toobig))
         cant_see = true;
 
-    /* restore original values */
+    // restore original values
     bflength      = orig_bflength;
     bnlength      = orig_bnlength;
     padding       = orig_padding;
@@ -1891,10 +1891,10 @@ static bool is_visible_window(
     rbflength     = orig_rbflength;
 
     restore_stack(saved);
-    if (cant_see) /* do it this way so bignum stack is released */
+    if (cant_see) // do it this way so bignum stack is released
         return false;
 
-    /* now see how many corners are on the screen, accept if one or more */
+    // now see how many corners are on the screen, accept if one or more
     if (tl.x >=(0-sxoffs) && tl.x <= (sxdots-sxoffs) && tl.y >=(0-syoffs) && tl.y<= (sydots-syoffs))
         cornercount++;
     if (bl.x >=(0-sxoffs) && bl.x <= (sxdots-sxoffs) && bl.y >=(0-syoffs) && bl.y<= (sydots-syoffs))
@@ -1955,7 +1955,7 @@ static bool paramsOK(struct fractal_info *info)
             fabs(tmpparm9 - param[8]) < MINDIF &&
             fabs(tmpparm10 - param[9]) < MINDIF &&
             info->invert[0] - inversion[0] < MINDIF)
-        return true; /* parameters are in range */
+        return true; // parameters are in range
     else
         return false;
 }
@@ -1970,7 +1970,7 @@ static bool functionOK(struct fractal_info *info, int numfn)
     if (mzmatch > 0)
         return false;
     else
-        return true; /* they all match */
+        return true; // they all match
 }
 
 static bool typeOK(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
@@ -1985,10 +1985,10 @@ static bool typeOK(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
             if (numfn>0)
                 return functionOK(info, numfn);
             else
-                return true; /* match up formula names with no functions */
+                return true; // match up formula names with no functions
         }
         else
-            return false; /* two formulas but names don't match */
+            return false; // two formulas but names don't match
     }
     else if (info->fractal_type == fractype ||
              info->fractal_type == curfractalspecific->tofloat)
@@ -1997,30 +1997,30 @@ static bool typeOK(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
         if (numfn>0)
             return functionOK(info, numfn);
         else
-            return true; /* match types with no functions */
+            return true; // match types with no functions
     }
     else
-        return false; /* no match */
+        return false; // no match
 }
 
 static void check_history(char *oldname, char *newname)
 {
-    /* file_name_stack[] is maintained in framain2.c.  It is the history */
-    /*  file for the browser and holds a maximum of 16 images.  The history */
-    /*  file needs to be adjusted if the rename or delete functions of the */
-    /*  browser are used. */
-    /* name_stack_ptr is also maintained in framain2.c.  It is the index into */
-    /*  file_name_stack[]. */
+    // file_name_stack[] is maintained in framain2.c.  It is the history
+    //  file for the browser and holds a maximum of 16 images.  The history
+    //  file needs to be adjusted if the rename or delete functions of the
+    //  browser are used.
+    // name_stack_ptr is also maintained in framain2.c.  It is the index into
+    //  file_name_stack[].
     for (int i = 0; i < name_stack_ptr; i++) {
-        if (stricmp(file_name_stack[i],oldname) == 0) /* we have a match */
-            strcpy(file_name_stack[i],newname);    /* insert the new name */
+        if (stricmp(file_name_stack[i],oldname) == 0) // we have a match
+            strcpy(file_name_stack[i],newname);    // insert the new name
     }
 }
 
 static void bfsetup_convert_to_screen()
 {
-    /* setup_convert_to_screen() in LORENZ.C, converted to bf_math */
-    /* Call only from within fgetwindow() */
+    // setup_convert_to_screen() in LORENZ.C, converted to bf_math
+    // Call only from within fgetwindow()
     bf_t   bt_det, bt_xd, bt_yd, bt_tmp1, bt_tmp2;
     bf_t   bt_inter1, bt_inter2;
     int saved;
@@ -2034,70 +2034,70 @@ static void bfsetup_convert_to_screen()
     bt_tmp1 = alloc_stack(rbflength+2);
     bt_tmp2 = alloc_stack(rbflength+2);
 
-    /* xx3rd-xxmin */
+    // xx3rd-xxmin
     sub_bf(bt_inter1, bfx3rd, bfxmin);
-    /* yymin-yymax */
+    // yymin-yymax
     sub_bf(bt_inter2, bfymin, bfymax);
-    /* (xx3rd-xxmin)*(yymin-yymax) */
+    // (xx3rd-xxmin)*(yymin-yymax)
     mult_bf(bt_tmp1, bt_inter1, bt_inter2);
 
-    /* yymax-yy3rd */
+    // yymax-yy3rd
     sub_bf(bt_inter1, bfymax, bfy3rd);
-    /* xxmax-xxmin */
+    // xxmax-xxmin
     sub_bf(bt_inter2, bfxmax, bfxmin);
-    /* (yymax-yy3rd)*(xxmax-xxmin) */
+    // (yymax-yy3rd)*(xxmax-xxmin)
     mult_bf(bt_tmp2, bt_inter1, bt_inter2);
 
-    /* det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-yy3rd)*(xxmax-xxmin) */
+    // det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-yy3rd)*(xxmax-xxmin)
     add_bf(bt_det, bt_tmp1, bt_tmp2);
 
-    /* xd = dxsize/det */
+    // xd = dxsize/det
     floattobf(bt_tmp1, dxsize);
     div_bf(bt_xd, bt_tmp1, bt_det);
 
-    /* a =  xd*(yymax-yy3rd) */
+    // a =  xd*(yymax-yy3rd)
     sub_bf(bt_inter1, bfymax, bfy3rd);
     mult_bf(bt_a, bt_xd, bt_inter1);
 
-    /* b =  xd*(xx3rd-xxmin) */
+    // b =  xd*(xx3rd-xxmin)
     sub_bf(bt_inter1, bfx3rd, bfxmin);
     mult_bf(bt_b, bt_xd, bt_inter1);
 
-    /* e = -(a*xxmin + b*yymax) */
+    // e = -(a*xxmin + b*yymax)
     mult_bf(bt_tmp1, bt_a, bfxmin);
     mult_bf(bt_tmp2, bt_b, bfymax);
     neg_a_bf(add_bf(bt_e, bt_tmp1, bt_tmp2));
 
-    /* xx3rd-xxmax */
+    // xx3rd-xxmax
     sub_bf(bt_inter1, bfx3rd, bfxmax);
-    /* yymin-yymax */
+    // yymin-yymax
     sub_bf(bt_inter2, bfymin, bfymax);
-    /* (xx3rd-xxmax)*(yymin-yymax) */
+    // (xx3rd-xxmax)*(yymin-yymax)
     mult_bf(bt_tmp1, bt_inter1, bt_inter2);
 
-    /* yymin-yy3rd */
+    // yymin-yy3rd
     sub_bf(bt_inter1, bfymin, bfy3rd);
-    /* xxmax-xxmin */
+    // xxmax-xxmin
     sub_bf(bt_inter2, bfxmax, bfxmin);
-    /* (yymin-yy3rd)*(xxmax-xxmin) */
+    // (yymin-yy3rd)*(xxmax-xxmin)
     mult_bf(bt_tmp2, bt_inter1, bt_inter2);
 
-    /* det = (xx3rd-xxmax)*(yymin-yymax) + (yymin-yy3rd)*(xxmax-xxmin) */
+    // det = (xx3rd-xxmax)*(yymin-yymax) + (yymin-yy3rd)*(xxmax-xxmin)
     add_bf(bt_det, bt_tmp1, bt_tmp2);
 
-    /* yd = dysize/det */
+    // yd = dysize/det
     floattobf(bt_tmp2, dysize);
     div_bf(bt_yd, bt_tmp2, bt_det);
 
-    /* c =  yd*(yymin-yy3rd) */
+    // c =  yd*(yymin-yy3rd)
     sub_bf(bt_inter1, bfymin, bfy3rd);
     mult_bf(bt_c, bt_yd, bt_inter1);
 
-    /* d =  yd*(xx3rd-xxmax) */
+    // d =  yd*(xx3rd-xxmax)
     sub_bf(bt_inter1, bfx3rd, bfxmax);
     mult_bf(bt_d, bt_yd, bt_inter1);
 
-    /* f = -(c*xxmin + d*yymax) */
+    // f = -(c*xxmin + d*yymax)
     mult_bf(bt_tmp1, bt_c, bfxmin);
     mult_bf(bt_tmp2, bt_d, bfymax);
     neg_a_bf(add_bf(bt_f, bt_tmp1, bt_tmp2));
@@ -2105,7 +2105,7 @@ static void bfsetup_convert_to_screen()
     restore_stack(saved);
 }
 
-/* maps points onto view screen*/
+// maps points onto view screen
 static void bftransform(bf_t bt_x, bf_t bt_y, struct dblcoords *point)
 {
     bf_t   bt_tmp1, bt_tmp2;
@@ -2115,14 +2115,14 @@ static void bftransform(bf_t bt_x, bf_t bt_y, struct dblcoords *point)
     bt_tmp1 = alloc_stack(rbflength+2);
     bt_tmp2 = alloc_stack(rbflength+2);
 
-    /*  point->x = cvt->a * point->x + cvt->b * point->y + cvt->e; */
+    //  point->x = cvt->a * point->x + cvt->b * point->y + cvt->e;
     mult_bf(bt_tmp1, n_a, bt_x);
     mult_bf(bt_tmp2, n_b, bt_y);
     add_a_bf(bt_tmp1, bt_tmp2);
     add_a_bf(bt_tmp1, n_e);
     point->x = (double)bftofloat(bt_tmp1);
 
-    /*  point->y = cvt->c * point->x + cvt->d * point->y + cvt->f; */
+    //  point->y = cvt->c * point->x + cvt->d * point->y + cvt->f;
     mult_bf(bt_tmp1, n_c, bt_x);
     mult_bf(bt_tmp2, n_d, bt_y);
     add_a_bf(bt_tmp1, bt_tmp2);
