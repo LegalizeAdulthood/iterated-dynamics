@@ -1,6 +1,6 @@
 #include <vector>
 
-#ifndef TEST /* kills all those assert macros in production version */
+#ifndef TEST // kills all those assert macros in production version
 #define NDEBUG
 #endif
 
@@ -22,16 +22,16 @@
 #include "drivers.h"
 #include "helpcom.h"
 
-#define MAX_HIST           16        /* number of pages we'll remember */
-#define ACTION_CALL         0        /* values returned by help_topic() */
+#define MAX_HIST           16        // number of pages we'll remember
+#define ACTION_CALL         0        // values returned by help_topic()
 #define ACTION_PREV         1
-#define ACTION_PREV2        2        /* special - go back two topics */
+#define ACTION_PREV2        2        // special - go back two topics
 #define ACTION_INDEX        3
 #define ACTION_QUIT         4
-#define F_HIST              (1<<0)   /* flags for help_topic() */
+#define F_HIST              (1<<0)   // flags for help_topic()
 #define F_INDEX             (1<<1)
-#define MAX_PAGE_SIZE       (80*25)  /* no page of text may be larger */
-#define TEXT_START_ROW      2        /* start print the help text here */
+#define MAX_PAGE_SIZE       (80*25)  // no page of text may be larger
+#define TEXT_START_ROW      2        // start print the help text here
 
 typedef struct
 {
@@ -67,33 +67,33 @@ struct help_sig_info
     unsigned long sig;
     int           version;
     // cppcheck-suppress unusedStructMember
-    unsigned long base;     /* only if added to fractint.exe */
+    unsigned long base;     // only if added to fractint.exe
 };
 
 void print_document(const char *outfname, bool (*msg_func)(int,int), int save_extraseg);
 static bool print_doc_msg_func(int pnum, int num_pages);
 
-/* stuff from fractint */
+// stuff from fractint
 
-static FILE *help_file = nullptr;       /* help file handle */
-static long base_off;                   /* offset to help info in help file */
-static int max_links;                   /* max # of links in any page */
-static int max_pages;                   /* max # of pages in any topic */
-static int num_label;                   /* number of labels */
-static int num_topic;                   /* number of topics */
-static int curr_hist = 0;               /* current pos in history */
+static FILE *help_file = nullptr;       // help file handle
+static long base_off;                   // offset to help info in help file
+static int max_links;                   // max # of links in any page
+static int max_pages;                   // max # of pages in any topic
+static int num_label;                   // number of labels
+static int num_topic;                   // number of topics
+static int curr_hist = 0;               // current pos in history
 
-/* these items alloc'ed in init_help... */
+// these items alloc'ed in init_help...
 
-static std::vector<long> topic_offset;  /* 4*num_topic */
-static std::vector<LABEL> label;        /* 4*num_label */
-static std::vector<HIST> hist;          /* 6*MAX_HIST (96 bytes) */
+static std::vector<long> topic_offset;  // 4*num_topic
+static std::vector<LABEL> label;        // 4*num_label
+static std::vector<HIST> hist;          // 6*MAX_HIST (96 bytes)
 
-/* these items alloc'ed only while help is active... */
+// these items alloc'ed only while help is active...
 
-static std::vector<char> buffer;           /* MAX_PAGE_SIZE (2048 bytes) */
-static std::vector<LINK> link_table;       /* 10*max_links */
-static std::vector<PAGE> page_table;       /* 4*max_pages  */
+static std::vector<char> buffer;           // MAX_PAGE_SIZE (2048 bytes)
+static std::vector<LINK> link_table;       // 10*max_links
+static std::vector<PAGE> page_table;       // 4*max_pages
 
 static void help_seek(long pos)
 {
@@ -175,7 +175,7 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 
                 if (tok == TOK_PARA)
                 {
-                    col = 0;   /* fake a new-line */
+                    col = 0;   // fake a new-line
                     row++;
                     break;
                 }
@@ -187,16 +187,16 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
                     continue;
                 }
 
-                /* now tok is TOK_SPACE or TOK_LINK or TOK_WORD */
+                // now tok is TOK_SPACE or TOK_LINK or TOK_WORD
 
                 if (col+width > SCREEN_WIDTH)
-                {   /* go to next line... */
+                {   // go to next line...
                     col = margin;
                     ++row;
 
                     if (tok == TOK_SPACE)
                     {
-                        width = 0;   /* skip spaces at start of a line */
+                        width = 0;   // skip spaces at start of a line
                     }
                 }
 
@@ -257,9 +257,9 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
             }
             break;
 
-        case TOK_XONLINE:  /* skip */
-        case TOK_FF:       /* ignore */
-        case TOK_XDOC:     /* ignore */
+        case TOK_XONLINE:  // skip
+        case TOK_FF:       // ignore
+        case TOK_XDOC:     // ignore
         case TOK_DONE:
         case TOK_SPACE:
             break;
@@ -267,7 +267,7 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
         case TOK_WORD:
             display_text(row, col, C_HELP_BODY, curr, width);
             break;
-        } /* switch */
+        } // switch
 
         curr += size;
         len  -= size;
@@ -279,7 +279,7 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
         }
 
         tok = find_token_length(ONLINE, curr, len, &size, &width);
-    } /* while (1) */
+    } // while (1)
 
     g_text_cbase = 0;
     g_text_rbase = 0;
@@ -366,7 +366,7 @@ static void display_page(const char *title, char *text, unsigned text_len,
 #if !defined(XFRACT) && !defined(_WIN32)
     driver_put_string(1, 79-(6 + ((num_pages>=10)?2:1)), C_HELP_INSTR, temp);
 #else
-    /* Some systems (Ultrix) mess up if you write to column 80 */
+    // Some systems (Ultrix) mess up if you write to column 80
     driver_put_string(1, 78-(6 + ((num_pages>=10)?2:1)), C_HELP_INSTR, temp);
 #endif
 
@@ -412,18 +412,18 @@ static int overlap(int a, int a2, int b, int b2)
     {
         if (b2 >= a2)
         {
-            return a2 - a;            /* case (5) */
+            return a2 - a;            // case (5)
         }
 
-        return b2 - a;               /* case (1), case (3) */
+        return b2 - a;               // case (1), case (3)
     }
 
     if (b2 <= a2)
     {
-        return b2 - b;               /* case (6) */
+        return b2 - b;               // case (6)
     }
 
-    return a2 - b;                  /* case (2), case (4) */
+    return a2 - b;                  // case (2), case (4)
 }
 
 static int dist1(int a, int b)
@@ -450,7 +450,7 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
                 ((up && temp->r < curr->r) || (!up && temp->r > curr->r)))
         {
             temp_overlap = overlap(curr->c, curr_c2, temp->c, temp->c+temp->width-1);
-            /* if >= 3 lines between, prioritize on vertical distance: */
+            // if >= 3 lines between, prioritize on vertical distance:
             if ((temp_dist = dist1(temp->r, curr->r)) >= 4)
             {
                 temp_overlap -= temp_dist*100;
@@ -459,7 +459,7 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
             if (best != nullptr)
             {
                 if (best_overlap >= 0 && temp_overlap >= 0)
-                {   /* if they're both under curr set to closest in y dir */
+                {   // if they're both under curr set to closest in y dir
                     if (dist1(best->r, curr->r) > temp_dist)
                     {
                         best = nullptr;
@@ -506,7 +506,7 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
 
             if (best != nullptr)
             {
-                if (best_dist == 0 && temp_dist == 0)  /* if both on curr's line... */
+                if (best_dist == 0 && temp_dist == 0)  // if both on curr's line...
                 {
                     if ((left && dist1(curr->c, best_c2) > dist1(curr->c, temp_c2)) ||
                             (!left && dist1(curr_c2, best->c) > dist1(curr_c2, temp->c)))
@@ -514,7 +514,7 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
                         best = nullptr;
                     }
                 }
-                else if (best_dist >= temp_dist)   /* if temp is closer... */
+                else if (best_dist >= temp_dist)   // if temp is closer...
                 {
                     best = nullptr;
                 }
@@ -526,7 +526,7 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
                 best_c2   = temp_c2;
             }
         }
-    } /* for */
+    } // for
 
     return (best == nullptr) ? -1 : (int)(best-link);
 }
@@ -580,7 +580,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
     int       action;
     BYTE ch;
 
-    where     = topic_offset[curr->topic_num]+sizeof(int); /* to skip flags */
+    where     = topic_offset[curr->topic_num]+sizeof(int); // to skip flags
     curr_link = curr->link;
 
     help_seek(where);
@@ -719,17 +719,17 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             do_move_link(&link_table[0], num_link, &curr_link, find_link_leftright, 0);
             break;
 
-        case FIK_ESC:         /* exit help */
+        case FIK_ESC:         // exit help
             action = ACTION_QUIT;
             break;
 
-        case FIK_BACKSPACE:   /* prev topic */
+        case FIK_BACKSPACE:   // prev topic
         case FIK_ALT_F1:
             if (flags & F_HIST)
                 action = ACTION_PREV;
             break;
 
-        case FIK_F1:    /* help index */
+        case FIK_F1:    // help index
             if (!(flags & F_INDEX))
                 action = ACTION_INDEX;
             break;
@@ -743,7 +743,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
                 action = ACTION_CALL;
             }
             break;
-        } /* switch */
+        } // switch
     }
     while (action == -1);
 
@@ -761,7 +761,7 @@ int help(int action)
     int       flags;
     HIST      next;
 
-    if (helpmode == -1)   /* is help disabled? */
+    if (helpmode == -1)   // is help disabled?
     {
         return 0;
     }
@@ -808,7 +808,7 @@ int help(int action)
     oldhelpmode = helpmode;
 
     if (curr_hist <= 0)
-        action = ACTION_CALL;  /* make sure it isn't ACTION_PREV! */
+        action = ACTION_CALL;  // make sure it isn't ACTION_PREV!
 
     do
     {
@@ -817,7 +817,7 @@ int help(int action)
         case ACTION_PREV2:
             if (curr_hist > 0)
                 curr = hist[--curr_hist];
-            /* fall-through */
+            // fall-through
 
         case ACTION_PREV:
             if (curr_hist > 0)
@@ -830,13 +830,13 @@ int help(int action)
         case ACTION_INDEX:
             next.topic_num = label[FIHELP_INDEX].topic_num;
             next.topic_off = label[FIHELP_INDEX].topic_off;
-            /* fall-through */
+            // fall-through
 
         case ACTION_CALL:
             curr = next;
             curr.link = 0;
             break;
-        } /* switch */
+        } // switch
 
         flags = 0;
         if (curr.topic_num == label[FIHELP_INDEX].topic_num)
@@ -872,10 +872,10 @@ int help(int action)
                     case FIK_F1:
                         action = ACTION_INDEX;
                         break;
-                    } /* switch */
-                } /* while */
+                    } // switch
+                } // while
             }
-        } /* else */
+        } // else
 
         if (action != ACTION_PREV && action != ACTION_PREV2)
         {
@@ -931,10 +931,10 @@ static bool exe_path(const char *filename, char *path)
 #if !defined(XFRACT) && !defined(_WIN32)
     char *ptr;
 
-    if (dos_version() >= 300)  /* DOS version 3.00+ ? */
+    if (dos_version() >= 300)  // DOS version 3.00+ ?
     {
         extern char **__argv;
-        strcpy(path, __argv[0]);   /* note: __argv may be undocumented in MSC */
+        strcpy(path, __argv[0]);   // note: __argv may be undocumented in MSC
         if (strcmp(filename,"FRACTINT.EXE")==0)
             if (can_read_file(path))
                 return true;
@@ -985,21 +985,21 @@ static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
 
         curr_base = topic_offset[topic];
 
-        curr_base += sizeof(int);                 /* skip flags */
+        curr_base += sizeof(int);                 // skip flags
 
         help_seek(curr_base);
-        fread(&t, sizeof(int), 1, help_file); /* read num_pages */
-        curr_base += sizeof(int) + t*3*sizeof(int); /* skip page info */
+        fread(&t, sizeof(int), 1, help_file); // read num_pages
+        curr_base += sizeof(int) + t*3*sizeof(int); // skip page info
 
         if (t>0)
             help_seek(curr_base);
-        fread(&ch, sizeof(char), 1, help_file);                  /* read title_len */
+        fread(&ch, sizeof(char), 1, help_file);                  // read title_len
         t = ch;
-        curr_base += 1 + t;                       /* skip title */
+        curr_base += 1 + t;                       // skip title
 
         if (t>0)
             help_seek(curr_base);
-        fread(&curr_len, sizeof(int), 1, help_file); /* read topic len */
+        fread(&curr_len, sizeof(int), 1, help_file); // read topic len
         curr_base += sizeof(int);
     }
 
@@ -1027,36 +1027,36 @@ int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
     return (ret);
 }
 
-#define PRINT_BUFFER_SIZE  (32767)       /* max. size of help topic in doc. */
-#define TEMP_FILE_NAME     "HELP.$$$"    /* temp file for storing extraseg  */
-/*    while printing document      */
-#define MAX_NUM_TOPIC_SEC  (10)          /* max. number of topics under any */
-/*    single section (CONTENT)     */
+#define PRINT_BUFFER_SIZE  (32767)       // max. size of help topic in doc.
+#define TEMP_FILE_NAME     "HELP.$$$"    // temp file for storing extraseg
+//    while printing document
+#define MAX_NUM_TOPIC_SEC  (10)          // max. number of topics under any
+//    single section (CONTENT)
 
 typedef struct PRINT_DOC_INFO
 {
-    int       cnum;          /* current CONTENT num */
-    int       tnum;          /* current topic num */
+    int       cnum;          // current CONTENT num
+    int       tnum;          // current topic num
 
-    long      content_pos;   /* current CONTENT item offset in file */
-    int       num_page;      /* total number of pages in document */
+    long      content_pos;   // current CONTENT item offset in file
+    int       num_page;      // total number of pages in document
 
-    int       num_contents,  /* total number of CONTENT entries */
-              num_topic;     /* number of topics in current CONTENT */
+    int       num_contents,  // total number of CONTENT entries
+              num_topic;     // number of topics in current CONTENT
 
-    int       topic_num[MAX_NUM_TOPIC_SEC]; /* topic_num[] for current CONTENT entry */
+    int       topic_num[MAX_NUM_TOPIC_SEC]; // topic_num[] for current CONTENT entry
 
-    char buffer[PRINT_BUFFER_SIZE];        /* text buffer */
+    char buffer[PRINT_BUFFER_SIZE];        // text buffer
 
-    char      id[81];        /* buffer to store id in */
-    char      title[81];     /* buffer to store title in */
+    char      id[81];        // buffer to store id in
+    char      title[81];     // buffer to store title in
 
     bool (*msg_func)(int pnum, int num_page);
 
-    FILE     *file;          /* file to sent output to */
-    int       margin;        /* indent text by this much */
-    bool      start_of_line; /* are we at the beginning of a line? */
-    int       spaces;        /* number of spaces in a row */
+    FILE     *file;          // file to sent output to
+    int       margin;        // indent text by this much
+    bool      start_of_line; // are we at the beginning of a line?
+    int       spaces;        // number of spaces in a row
 } PRINT_DOC_INFO;
 
 static void printerc(PRINT_DOC_INFO *info, int c, int n)
@@ -1069,7 +1069,7 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
         else if (c=='\n' || c=='\f')
         {
             info->start_of_line = true;
-            info->spaces = 0;   /* strip spaces before a new-line */
+            info->spaces = 0;   // strip spaces before a new-line
             fputc(c, info->file);
         }
 
@@ -1120,29 +1120,29 @@ static bool print_doc_get_info(int cmd, PD_INFO *pd, void *context)
 
         help_seek(info->content_pos);
 
-        fread(&t, sizeof(int), 1, help_file);      /* read flags */
+        fread(&t, sizeof(int), 1, help_file);      // read flags
         info->content_pos += sizeof(int);
         pd->new_page = (t & 1) ? 1 : 0;
 
-        fread(&ch, sizeof(char), 1, help_file);       /* read id len */
+        fread(&ch, sizeof(char), 1, help_file);       // read id len
 
         t = ch;
         assert(t<80);
-        fread(info->id, sizeof(char), t, help_file);  /* read the id */
+        fread(info->id, sizeof(char), t, help_file);  // read the id
         info->content_pos += 1 + t;
         info->id[t] = '\0';
 
-        fread(&ch, sizeof(char), 1, help_file);       /* read title len */
+        fread(&ch, sizeof(char), 1, help_file);       // read title len
         t = ch;
         assert(t<80);
-        fread(info->title, sizeof(char), t, help_file); /* read the title */
+        fread(info->title, sizeof(char), t, help_file); // read the title
         info->content_pos += 1 + t;
         info->title[t] = '\0';
 
-        fread(&ch, sizeof(char), 1, help_file);       /* read num_topic */
+        fread(&ch, sizeof(char), 1, help_file);       // read num_topic
         t = ch;
         assert(t<MAX_NUM_TOPIC_SEC);
-        fread(info->topic_num, sizeof(int), t, help_file);  /* read topic_num[] */
+        fread(info->topic_num, sizeof(int), t, help_file);  // read topic_num[]
         info->num_topic = t;
         info->content_pos += 1 + t*sizeof(int);
 
@@ -1161,7 +1161,7 @@ static bool print_doc_get_info(int cmd, PD_INFO *pd, void *context)
         assert(t <= 0);
 
         pd->curr = info->buffer;
-        pd->len  = PRINT_BUFFER_SIZE + t;   /* same as ...SIZE - abs(t) */
+        pd->len  = PRINT_BUFFER_SIZE + t;   // same as ...SIZE - abs(t)
         return true;
 
     case PD_GET_LINK_PAGE:
@@ -1255,7 +1255,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
     char temp[10];
     int  key;
 
-    if (pnum == -1)      /* successful completion */
+    if (pnum == -1)      // successful completion
     {
         driver_buzzer(BUZZER_COMPLETE);
         putstringcenter(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
@@ -1263,7 +1263,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
         return false;
     }
 
-    if (pnum == -2)     /* aborted */
+    if (pnum == -2)     // aborted
     {
         driver_buzzer(BUZZER_INTERRUPT);
         putstringcenter(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
@@ -1271,7 +1271,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
         return false;
     }
 
-    if (pnum == 0)   /* initialization */
+    if (pnum == 0)   // initialization
     {
         helptitle();
         printinstr();
@@ -1290,10 +1290,10 @@ static bool print_doc_msg_func(int pnum, int num_pages)
     {
         key = driver_get_key();
         if (key == FIK_ESC)
-            return false;    /* user abort */
+            return false;    // user abort
     }
 
-    return true;   /* AOK -- continue */
+    return true;   // AOK -- continue
 }
 
 bool makedoc_msg_func(int pnum, int num_pages)
@@ -1331,7 +1331,7 @@ void print_document(const char *outfname, bool (*msg_func)(int,int), int save_ex
     info.msg_func = msg_func;
 
     if (msg_func != nullptr)
-        msg_func(0, info.num_page);   /* initialize */
+        msg_func(0, info.num_page);   // initialize
 
     if (save_extraseg)
     {
@@ -1426,7 +1426,7 @@ int init_help()
         }
     }
 
-    if (help_file == nullptr)         /* Can't find the help files anywhere! */
+    if (help_file == nullptr)         // Can't find the help files anywhere!
     {
         static char msg[] =
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -1444,14 +1444,14 @@ int init_help()
     fread(&max_links, sizeof(int), 1, help_file);
     fread(&num_topic, sizeof(int), 1, help_file);
     fread(&num_label, sizeof(int), 1, help_file);
-    help_seek((long)6*sizeof(int));  /* skip num_contents and num_doc_pages */
+    help_seek((long)6*sizeof(int));  // skip num_contents and num_doc_pages
 
     assert(max_pages > 0);
     assert(max_links >= 0);
     assert(num_topic > 0);
     assert(num_label > 0);
 
-    /* allocate all three arrays */
+    // allocate all three arrays
     bool resized = false;
     try
     {
@@ -1473,13 +1473,13 @@ int init_help()
         return (-2);
     }
 
-    /* read in the tables... */
+    // read in the tables...
     fread(&topic_offset[0], sizeof(long), num_topic, help_file);
     fread(&label[0], sizeof(LABEL), num_label, help_file);
 
-    /* finished! */
+    // finished!
 
-    return 0;  /* success */
+    return 0;  // success
 }
 
 void end_help()
