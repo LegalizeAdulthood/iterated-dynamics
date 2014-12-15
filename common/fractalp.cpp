@@ -9,32 +9,32 @@
 #include "helpdefs.h"
 #include "fractype.h"
 
-/* functions defined elsewhere needed for fractalspecific */
-/* moved to prototyp.h */
+// functions defined elsewhere needed for fractalspecific
+// moved to prototyp.h
 
-/* parameter descriptions */
-/* Note: parameters preceded by + are integer parameters */
-/*       parameters preceded by # are U32 parameters */
+// parameter descriptions
+// Note: parameters preceded by + are integer parameters
+//       parameters preceded by # are U32 parameters
 
-/* for Mandelbrots */
+// for Mandelbrots
 static char realz0[] = "Real Perturbation of Z(0)";
 static char imagz0[] = "Imaginary Perturbation of Z(0)";
 
-/* for Julias */
+// for Julias
 static char realparm[] = "Real Part of Parameter";
 static char imagparm[] = "Imaginary Part of Parameter";
 
-/* for Newtons */
+// for Newtons
 static char newtdegree[] = "+Polynomial Degree (>= 2)";
 
-/* for MarksMandel/Julia */
+// for MarksMandel/Julia
 static char exponent[]   = "Real part of Exponent";
 static char imexponent[] = "Imag part of Exponent";
 
-/* for Lorenz */
+// for Lorenz
 static char timestep[]     = "Time Step";
 
-/* for formula */
+// for formula
 static char p1real[] = "Real portion of p1";
 static char p2real[] = "Real portion of p2";
 static char p3real[] = "Real portion of p3";
@@ -46,58 +46,58 @@ static char p3imag[] = "Imaginary portion of p3";
 static char p4imag[] = "Imaginary portion of p4";
 static char p5imag[] = "Imaginary portion of p5";
 
-/* trig functions */
+// trig functions
 static char recoeftrg1[] = "Real Coefficient First Function";
 static char imcoeftrg1[] = "Imag Coefficient First Function";
 static char recoeftrg2[] = "Real Coefficient Second Function";
 static char imcoeftrg2[] = "Imag Coefficient Second Function";
 
-/* KAM Torus */
+// KAM Torus
 static char kamangle[] = "Angle (radians)";
 static char kamstep[] =  "Step size";
 static char kamstop[] =  "Stop value";
 static char pointsperorbit[] = "+Points per orbit";
 
-/* popcorn and julia popcorn generalized */
+// popcorn and julia popcorn generalized
 static char step_x[] = "Step size (real)";
 static char step_y[] = "Step size (imaginary)";
 static char constant_x[] = "Constant C (real)";
 static char constant_y[] = "Constant C (imaginary)";
 
-/* bifurcations */
+// bifurcations
 static char filt[] = "+Filter Cycles";
 static char seed[] = "Seed Population";
 
-/* frothy basins */
+// frothy basins
 static char frothmapping[] = "+Apply mapping once (1) or twice (2)";
 static char frothshade[] =  "+Enter non-zero value for alternate color shading";
 static char frothavalue[] =  "A (imaginary part of C)";
 
-/* plasma and ant */
+// plasma and ant
 
 static char s_randomseed[] = "+Random Seed Value (0 = Random, 1 = Reuse Last)";
 
-/* ifs */
+// ifs
 static char color_method[] = "+Coloring method (0,1)";
 
-/* phoenix fractals */
+// phoenix fractals
 static char degreeZ[] = "Degree = 0 | >= 2 | <= -3";
 
-/* julia inverse */
+// julia inverse
 static char s_maxhits[] = "Max Hits per Pixel";
 
-/* halley */
+// halley
 static char order[] = {"+Order (integer > 1)"};
 static char real_relax[] = {"Real Relaxation coefficient"};
 static char epsilon[] = {"Epsilon"};
 static char imag_relax[] = {"Imag Relaxation coefficient"};
-/* cellular */
+// cellular
 static char cell_init[] = {"#Initial String | 0 = Random | -1 = Reuse Last Random"};
 static char cell_rule[] = {"#Rule = # of digits (see below) | 0 = Random"};
 static char cell_type[] = {"+Type (see below)"};
 static char cell_strt[] = {"#Starting Row Number"};
 
-/* bailout defines */
+// bailout defines
 #define FTRIGBAILOUT 2500
 #define LTRIGBAILOUT   64
 #define FROTHBAILOUT    7
@@ -145,7 +145,7 @@ struct alternatemathstuff alternatemath[] =
     {-1,            0,nullptr,                nullptr,               nullptr         }
 };
 
-/* These are only needed for types with both integer and float variations */
+// These are only needed for types with both integer and float variations
 char t_barnsleyj1[]= "*barnsleyj1";
 char t_barnsleyj2[]= "*barnsleyj2";
 char t_barnsleyj3[]= "*barnsleyj3";
@@ -213,7 +213,7 @@ char t_unity[]= "*unity";
 char t_frothybasin[]= "*frothybasin";
 char t_halley[]= "*halley";
 
-/* use next to cast orbitcalcs() that have arguments */
+// use next to cast orbitcalcs() that have arguments
 #define VF int(*)()
 
 struct fractalspecificstuff fractalspecific[]=
@@ -2222,9 +2222,9 @@ struct fractalspecificstuff fractalspecific[]=
         STDBAILOUT
     },
 
-    /* From Pickovers' "Chaos in Wonderland"      */
-    /* included by Humberto R. Baptista           */
-    /* code adapted from king.cpp bt James Rankin */
+    // From Pickovers' "Chaos in Wonderland"
+    // included by Humberto R. Baptista
+    // code adapted from king.cpp bt James Rankin
 
     {
         "latoocarfian",
@@ -2250,7 +2250,7 @@ struct fractalspecificstuff fractalspecific[]=
 #endif
 
     {
-        nullptr,            /* marks the END of the list */
+        nullptr,            // marks the END of the list
         {nullptr, nullptr, nullptr, nullptr},
         {0, 0, 0, 0},
         -1, -1, 0,
@@ -2273,7 +2273,7 @@ bool paramnotused(int parm)
 {
     bool ret = false;
 
-    /* sanity check */
+    // sanity check
     if (fractype != FORMULA && fractype != FFORMULA)
         return false;
 

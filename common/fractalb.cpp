@@ -19,7 +19,7 @@ fractal routines.
 int bf_math = 0;
 
 #ifdef DEBUG
-/**********************************************************************/
+//********************************************************************
 void show_var_bn(char *s, bn_t n)
 {
     char msg[200];
@@ -45,7 +45,7 @@ void showcornersdbl(char *s)
         goodbye();
 }
 
-/* show floating point and bignumber corners */
+// show floating point and bignumber corners
 void showcorners(char *s)
 {
     int dec=20;
@@ -74,7 +74,7 @@ void showcorners(char *s)
         goodbye();
 }
 
-/* show globals */
+// show globals
 void showbfglobals(char *s)
 {
     char msg[300];
@@ -169,7 +169,7 @@ void show_three_bf(char *s1,bf_t t1,char *s2, bf_t t2, char *s3, bf_t t3, int di
         goodbye();
 }
 
-/* for aspect ratio debugging */
+// for aspect ratio debugging
 void showaspect(char *s)
 {
     bf_t bt1,bt2,aspect;
@@ -192,7 +192,7 @@ void showaspect(char *s)
     restore_stack(saved);
 }
 
-/* compare a double and bignumber */
+// compare a double and bignumber
 void comparevalues(char *s, LDBL x, bn_t bnx)
 {
     int dec=40;
@@ -202,7 +202,7 @@ void comparevalues(char *s, LDBL x, bn_t bnx)
     if (stopmsg(0,msg1)==-1)
         goodbye();
 }
-/* compare a double and bignumber */
+// compare a double and bignumber
 void comparevaluesbf(char *s, LDBL x, bf_t bfx)
 {
     int dec=40;
@@ -213,7 +213,7 @@ void comparevaluesbf(char *s, LDBL x, bf_t bfx)
         goodbye();
 }
 
-/**********************************************************************/
+//********************************************************************
 void show_var_bf(char *s, bf_t n)
 {
     char msg[200];
@@ -243,16 +243,16 @@ void bfcornerstofloat()
             param[i] = (double)bftofloat(bfparms[i]);
 }
 
-/* -------------------------------------------------------------------- */
-/*    Bignumber Bailout Routines                                        */
-/* -------------------------------------------------------------------- */
+// --------------------------------------------------------------------
+//    Bignumber Bailout Routines
+// --------------------------------------------------------------------
 
-/* mandel_bntoint() can only be used for intlength of 1 */
-#define mandel_bntoint(n) (*(n + bnlength - 1)) /* assumes intlength of 1 */
+// mandel_bntoint() can only be used for intlength of 1
+#define mandel_bntoint(n) (*(n + bnlength - 1)) // assumes intlength of 1
 
-/* Note:                                             */
-/* No need to set magnitude                          */
-/* as color schemes that need it calculate it later. */
+// Note:
+// No need to set magnitude
+// as color schemes that need it calculate it later.
 
 int  bnMODbailout()
 {
@@ -262,7 +262,7 @@ int  bnMODbailout()
     square_bn(bntmpsqry, bnnew.y);
     add_bn(bntmp, bntmpsqrx+shiftfactor, bntmpsqry+shiftfactor);
 
-    longmagnitude = bntoint(bntmp);  /* works with any fractal type */
+    longmagnitude = bntoint(bntmp);  // works with any fractal type
     if (longmagnitude >= (long)rqlim)
         return 1;
     copy_bn(bnold.x, bnnew.x);
@@ -335,7 +335,7 @@ int  bnMANHbailout()
 
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
-    /* note: in next five lines, bnold is just used as a temporary variable */
+    // note: in next five lines, bnold is just used as a temporary variable
     abs_bn(bnold.x,bnnew.x);
     abs_bn(bnold.y,bnnew.y);
     add_bn(bntmp, bnold.x, bnold.y);
@@ -354,8 +354,8 @@ int  bnMANRbailout()
 
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
-    add_bn(bntmp, bnnew.x, bnnew.y); /* don't need abs since we square it next */
-    /* note: in next two lines, bnold is just used as a temporary variable */
+    add_bn(bntmp, bnnew.x, bnnew.y); // don't need abs since we square it next
+    // note: in next two lines, bnold is just used as a temporary variable
     square_bn(bnold.x, bntmp);
     longtempmag = bntoint(bnold.x+shiftfactor);
     if (longtempmag >= (long)rqlim)
@@ -446,7 +446,7 @@ int  bfMANHbailout()
 
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
-    /* note: in next five lines, bfold is just used as a temporary variable */
+    // note: in next five lines, bfold is just used as a temporary variable
     abs_bf(bfold.x,bfnew.x);
     abs_bf(bfold.y,bfnew.y);
     add_bf(bftmp, bfold.x, bfold.y);
@@ -465,8 +465,8 @@ int  bfMANRbailout()
 
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
-    add_bf(bftmp, bfnew.x, bfnew.y); /* don't need abs since we square it next */
-    /* note: in next two lines, bfold is just used as a temporary variable */
+    add_bf(bftmp, bfnew.x, bfnew.y); // don't need abs since we square it next
+    // note: in next two lines, bfold is just used as a temporary variable
     square_bf(bfold.x, bftmp);
     longtempmag = bftoint(bfold.x);
     if (longtempmag >= (long)rqlim)
@@ -478,7 +478,7 @@ int  bfMANRbailout()
 
 bool MandelbnSetup()
 {
-    /* this should be set up dynamically based on corners */
+    // this should be set up dynamically based on corners
     bn_t bntemp1, bntemp2;
     int saved;
     saved = save_stack();
@@ -494,19 +494,19 @@ bool MandelbnSetup()
 
     bf_math = BIGNUM;
 
-    /* bnxdel = (bnxmax - bnx3rd)/(xdots-1) */
+    // bnxdel = (bnxmax - bnx3rd)/(xdots-1)
     sub_bn(bnxdel, bnxmax, bnx3rd);
     div_a_bn_int(bnxdel, (U16)(xdots - 1));
 
-    /* bnydel = (bnymax - bny3rd)/(ydots-1) */
+    // bnydel = (bnymax - bny3rd)/(ydots-1)
     sub_bn(bnydel, bnymax, bny3rd);
     div_a_bn_int(bnydel, (U16)(ydots - 1));
 
-    /* bnxdel2 = (bnx3rd - bnxmin)/(ydots-1) */
+    // bnxdel2 = (bnx3rd - bnxmin)/(ydots-1)
     sub_bn(bnxdel2, bnx3rd, bnxmin);
     div_a_bn_int(bnxdel2, (U16)(ydots - 1));
 
-    /* bnydel2 = (bny3rd - bnymin)/(xdots-1) */
+    // bnydel2 = (bny3rd - bnymin)/(xdots-1)
     sub_bn(bnydel2, bny3rd, bnymin);
     div_a_bn_int(bnydel2, (U16)(xdots - 1));
 
@@ -536,7 +536,7 @@ bool MandelbnSetup()
         break;
     case FPMANDELZPOWER:
         init_big_pi();
-        if ((double)c_exp == param[2] && (c_exp & 1)) /* odd exponents */
+        if ((double)c_exp == param[2] && (c_exp & 1)) // odd exponents
             symmetry = XYAXIS_NOPARM;
         if (param[3] != 0)
             symmetry = NOSYM;
@@ -550,20 +550,13 @@ bool MandelbnSetup()
         break;
     }
 
-    /* at the present time, parameters are kept in float, but want to keep
-          the arbitrary precision logic intact. The next two lines, if used,
-          would disguise and breaking of the arbitrary precision logic */
-    /*
-    floattobn(bnparm.x,param[0]);
-    floattobn(bnparm.y,param[1]);
-    */
     restore_stack(saved);
     return true;
 }
 
 bool MandelbfSetup()
 {
-    /* this should be set up dynamically based on corners */
+    // this should be set up dynamically based on corners
     bf_t bftemp1, bftemp2;
     int saved;
     saved = save_stack();
@@ -572,19 +565,19 @@ bool MandelbfSetup()
 
     bf_math = BIGFLT;
 
-    /* bfxdel = (bfxmax - bfx3rd)/(xdots-1) */
+    // bfxdel = (bfxmax - bfx3rd)/(xdots-1)
     sub_bf(bfxdel, bfxmax, bfx3rd);
     div_a_bf_int(bfxdel, (U16)(xdots - 1));
 
-    /* bfydel = (bfymax - bfy3rd)/(ydots-1) */
+    // bfydel = (bfymax - bfy3rd)/(ydots-1)
     sub_bf(bfydel, bfymax, bfy3rd);
     div_a_bf_int(bfydel, (U16)(ydots - 1));
 
-    /* bfxdel2 = (bfx3rd - bfxmin)/(ydots-1) */
+    // bfxdel2 = (bfx3rd - bfxmin)/(ydots-1)
     sub_bf(bfxdel2, bfx3rd, bfxmin);
     div_a_bf_int(bfxdel2, (U16)(ydots - 1));
 
-    /* bfydel2 = (bfy3rd - bfymin)/(xdots-1) */
+    // bfydel2 = (bfy3rd - bfymin)/(xdots-1)
     sub_bf(bfydel2, bfy3rd, bfymin);
     div_a_bf_int(bfydel2, (U16)(xdots - 1));
 
@@ -614,7 +607,7 @@ bool MandelbfSetup()
         break;
     case FPMANDELZPOWER:
         init_big_pi();
-        if ((double)c_exp == param[2] && (c_exp & 1)) /* odd exponents */
+        if ((double)c_exp == param[2] && (c_exp & 1)) // odd exponents
             symmetry = XYAXIS_NOPARM;
         if (param[3] != 0)
             symmetry = NOSYM;
@@ -634,15 +627,15 @@ bool MandelbfSetup()
 
 int mandelbn_per_pixel()
 {
-    /* parm.x = xxmin + col*delx + row*delx2 */
+    // parm.x = xxmin + col*delx + row*delx2
     mult_bn_int(bnparm.x, bnxdel, (U16)col);
     mult_bn_int(bntmp, bnxdel2, (U16)row);
 
     add_a_bn(bnparm.x, bntmp);
     add_a_bn(bnparm.x, bnxmin);
 
-    /* parm.y = yymax - row*dely - col*dely2; */
-    /* note: in next four lines, bnold is just used as a temporary variable */
+    // parm.y = yymax - row*dely - col*dely2;
+    // note: in next four lines, bnold is just used as a temporary variable
     mult_bn_int(bnold.x, bnydel, (U16)row);
     mult_bn_int(bnold.y, bnydel2, (U16)col);
     add_a_bn(bnold.x, bnold.y);
@@ -655,7 +648,7 @@ int mandelbn_per_pixel()
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
-        floattobn(bnold.x,param[0]); /* initial pertubation of parameters set */
+        floattobn(bnold.x,param[0]); // initial pertubation of parameters set
         floattobn(bnold.y,param[1]);
         coloriter = -1;
     }
@@ -667,28 +660,28 @@ int mandelbn_per_pixel()
         add_a_bn(bnold.y,bnnew.y);
     }
 
-    /* square has side effect - must copy first */
+    // square has side effect - must copy first
     copy_bn(bnnew.x, bnold.x);
     copy_bn(bnnew.y, bnold.y);
 
-    /* Square these to rlength bytes of precision */
+    // Square these to rlength bytes of precision
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
 
-    return (1);                  /* 1st iteration has been done */
+    return (1);                  // 1st iteration has been done
 }
 
 int mandelbf_per_pixel()
 {
-    /* parm.x = xxmin + col*delx + row*delx2 */
+    // parm.x = xxmin + col*delx + row*delx2
     mult_bf_int(bfparm.x, bfxdel, (U16)col);
     mult_bf_int(bftmp, bfxdel2, (U16)row);
 
     add_a_bf(bfparm.x, bftmp);
     add_a_bf(bfparm.x, bfxmin);
 
-    /* parm.y = yymax - row*dely - col*dely2; */
-    /* note: in next four lines, bfold is just used as a temporary variable */
+    // parm.y = yymax - row*dely - col*dely2;
+    // note: in next four lines, bfold is just used as a temporary variable
     mult_bf_int(bfold.x, bfydel, (U16)row);
     mult_bf_int(bfold.y, bfydel2, (U16)col);
     add_a_bf(bfold.x, bfold.y);
@@ -701,7 +694,7 @@ int mandelbf_per_pixel()
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
-        floattobf(bfold.x,param[0]); /* initial pertubation of parameters set */
+        floattobf(bfold.x,param[0]); // initial pertubation of parameters set
         floattobf(bfold.y,param[1]);
         coloriter = -1;
     }
@@ -713,88 +706,88 @@ int mandelbf_per_pixel()
         add_a_bf(bfold.y,bfnew.y);
     }
 
-    /* square has side effect - must copy first */
+    // square has side effect - must copy first
     copy_bf(bfnew.x, bfold.x);
     copy_bf(bfnew.y, bfold.y);
 
-    /* Square these to rbflength bytes of precision */
+    // Square these to rbflength bytes of precision
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
 
-    return (1);                  /* 1st iteration has been done */
+    return (1);                  // 1st iteration has been done
 }
 
 int
 juliabn_per_pixel()
 {
-    /* old.x = xxmin + col*delx + row*delx2 */
+    // old.x = xxmin + col*delx + row*delx2
     mult_bn_int(bnold.x, bnxdel, (U16)col);
     mult_bn_int(bntmp, bnxdel2, (U16)row);
 
     add_a_bn(bnold.x, bntmp);
     add_a_bn(bnold.x, bnxmin);
 
-    /* old.y = yymax - row*dely - col*dely2; */
-    /* note: in next four lines, bnnew is just used as a temporary variable */
+    // old.y = yymax - row*dely - col*dely2;
+    // note: in next four lines, bnnew is just used as a temporary variable
     mult_bn_int(bnnew.x, bnydel, (U16)row);
     mult_bn_int(bnnew.y, bnydel2, (U16)col);
     add_a_bn(bnnew.x, bnnew.y);
     sub_bn(bnold.y, bnymax, bnnew.x);
 
-    /* square has side effect - must copy first */
+    // square has side effect - must copy first
     copy_bn(bnnew.x, bnold.x);
     copy_bn(bnnew.y, bnold.y);
 
-    /* Square these to rlength bytes of precision */
+    // Square these to rlength bytes of precision
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
 
-    return (1);                  /* 1st iteration has been done */
+    return (1);                  // 1st iteration has been done
 }
 
 int
 juliabf_per_pixel()
 {
-    /* old.x = xxmin + col*delx + row*delx2 */
+    // old.x = xxmin + col*delx + row*delx2
     mult_bf_int(bfold.x, bfxdel, (U16)col);
     mult_bf_int(bftmp, bfxdel2, (U16)row);
 
     add_a_bf(bfold.x, bftmp);
     add_a_bf(bfold.x, bfxmin);
 
-    /* old.y = yymax - row*dely - col*dely2; */
-    /* note: in next four lines, bfnew is just used as a temporary variable */
+    // old.y = yymax - row*dely - col*dely2;
+    // note: in next four lines, bfnew is just used as a temporary variable
     mult_bf_int(bfnew.x, bfydel, (U16)row);
     mult_bf_int(bfnew.y, bfydel2, (U16)col);
     add_a_bf(bfnew.x, bfnew.y);
     sub_bf(bfold.y, bfymax, bfnew.x);
 
-    /* square has side effect - must copy first */
+    // square has side effect - must copy first
     copy_bf(bfnew.x, bfold.x);
     copy_bf(bfnew.y, bfold.y);
 
-    /* Square these to rbflength bytes of precision */
+    // Square these to rbflength bytes of precision
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
 
-    return (1);                  /* 1st iteration has been done */
+    return (1);                  // 1st iteration has been done
 }
 
 int
 JuliabnFractal()
 {
-    /* Don't forget, with bn_t numbers, after multiplying or squaring */
-    /* you must shift over by shiftfactor to get the bn number.          */
+    // Don't forget, with bn_t numbers, after multiplying or squaring
+    // you must shift over by shiftfactor to get the bn number.
 
-    /* bntmpsqrx and bntmpsqry were previously squared before getting to */
-    /* this function, so they must be shifted.                           */
+    // bntmpsqrx and bntmpsqry were previously squared before getting to
+    // this function, so they must be shifted.
 
-    /* new.x = tmpsqrx - tmpsqry + parm.x;   */
+    // new.x = tmpsqrx - tmpsqry + parm.x;
     sub_a_bn(bntmpsqrx+shiftfactor, bntmpsqry+shiftfactor);
     add_bn(bnnew.x, bntmpsqrx+shiftfactor, bnparm.x);
 
-    /* new.y = 2 * bnold.x * bnold.y + parm.y; */
-    mult_bn(bntmp, bnold.x, bnold.y); /* ok to use unsafe here */
+    // new.y = 2 * bnold.x * bnold.y + parm.y;
+    mult_bn(bntmp, bnold.x, bnold.y); // ok to use unsafe here
     double_a_bn(bntmp+shiftfactor);
     add_bn(bnnew.y, bntmp+shiftfactor, bnparm.y);
 
@@ -804,12 +797,12 @@ JuliabnFractal()
 int
 JuliabfFractal()
 {
-    /* new.x = tmpsqrx - tmpsqry + parm.x;   */
+    // new.x = tmpsqrx - tmpsqry + parm.x;
     sub_a_bf(bftmpsqrx, bftmpsqry);
     add_bf(bfnew.x, bftmpsqrx, bfparm.x);
 
-    /* new.y = 2 * bfold.x * bfold.y + parm.y; */
-    mult_bf(bftmp, bfold.x, bfold.y); /* ok to use unsafe here */
+    // new.y = 2 * bfold.x * bfold.y + parm.y;
+    mult_bf(bftmp, bfold.x, bfold.y); // ok to use unsafe here
     double_a_bf(bftmp);
     add_bf(bfnew.y, bftmp, bfparm.y);
     return bigfltbailout();
@@ -909,7 +902,7 @@ BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
     tmp.x = alloc_stack(rbflength+2);
     tmp.y = alloc_stack(rbflength+2);
 
-    /* 0 raised to anything is 0 */
+    // 0 raised to anything is 0
     if (is_bf_zero(xx->x) && is_bf_zero(xx->y))
     {
         clear_bf(t->x);
@@ -955,7 +948,7 @@ BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
     return (t);
 }
 
-/* note: ComplexPower_bn() returns need to be +shiftfactor'ed */
+// note: ComplexPower_bn() returns need to be +shiftfactor'ed
 BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
 {
     BNComplex tmp;
@@ -968,7 +961,7 @@ BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
     tmp.x = alloc_stack(rlength);
     tmp.y = alloc_stack(rlength);
 
-    /* 0 raised to anything is 0 */
+    // 0 raised to anything is 0
     if (is_bn_zero(xx->x) && is_bn_zero(xx->y))
     {
         clear_bn(t->x);
