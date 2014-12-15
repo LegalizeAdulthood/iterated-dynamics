@@ -43,7 +43,7 @@ long calcmandfpasm()
 
     if (periodicitycheck == 0)
     {
-        oldcoloriter = 0;      /* don't check periodicity */
+        oldcoloriter = 0;      // don't check periodicity
     }
     else if (reset_periodicity)
     {
@@ -51,12 +51,12 @@ long calcmandfpasm()
     }
 
     tmpfsd = maxit - firstsavedand;
-    if (oldcoloriter > tmpfsd) /* this defeats checking periodicity immediately */
+    if (oldcoloriter > tmpfsd) // this defeats checking periodicity immediately
     {
-        oldcoloriter = tmpfsd; /* but matches the code in StandardFractal() */
+        oldcoloriter = tmpfsd; // but matches the code in StandardFractal()
     }
 
-    /* initparms */
+    // initparms
 #if USE_NEW
     savedmag = 0;
 #else
@@ -65,8 +65,8 @@ long calcmandfpasm()
 #endif
     orbit_ptr = 0;
     savedand = firstsavedand;
-    savedincr = 1;             /* start checking the very first time */
-    kbdcount--;                /* Only check the keyboard sometimes */
+    savedincr = 1;             // start checking the very first time
+    kbdcount--;                // Only check the keyboard sometimes
     if (kbdcount < 0)
     {
         int key;
@@ -90,7 +90,7 @@ long calcmandfpasm()
     cx = maxit;
     if (fractype != JULIAFP && fractype != JULIA)
     {
-        /* Mandelbrot_87 */
+        // Mandelbrot_87
         Cx = init.x;
         Cy = init.y;
         x = parm.x+Cx;
@@ -98,7 +98,7 @@ long calcmandfpasm()
     }
     else
     {
-        /* dojulia_87 */
+        // dojulia_87
         Cx = parm.x;
         Cy = parm.y;
         x = init.x;
@@ -113,7 +113,7 @@ long calcmandfpasm()
     y2 = y*y;
     xy = x*y;
 
-    /* top_of_cs_loop_87 */
+    // top_of_cs_loop_87
     while (--cx > 0)
     {
         x = x2-y2+Cx;
@@ -128,8 +128,8 @@ long calcmandfpasm()
             goto over_bailout_87;
         }
 
-        /* no_save_new_xy_87 */
-        if (cx < oldcoloriter)  /* check periodicity */
+        // no_save_new_xy_87
+        if (cx < oldcoloriter)  // check periodicity
         {
             if (((maxit - cx) & savedand) == 0)
             {
@@ -155,7 +155,7 @@ long calcmandfpasm()
                 if (ABS(savedx-x)<closenuff && ABS(savedy-y)<closenuff)
                 {
 #endif
-                    /*          oldcoloriter = 65535;  */
+                    //          oldcoloriter = 65535;
                     oldcoloriter = maxit;
                     realcoloriter = maxit;
                     kbdcount = kbdcount-(maxit-cx);
@@ -164,16 +164,16 @@ long calcmandfpasm()
                 }
             }
         }
-        /* no_periodicity_check_87 */
+        // no_periodicity_check_87
         if (show_orbit)
         {
             plot_orbit(x,y,-1);
         }
-        /* no_show_orbit_87 */
-    } /* while (--cx > 0) */
+        // no_show_orbit_87
+    } // while (--cx > 0)
 
-    /* reached maxit */
-    /* check periodicity immediately next time, remember we count down from maxit */
+    // reached maxit
+    // check periodicity immediately next time, remember we count down from maxit
     oldcoloriter = maxit;
     kbdcount -= maxit;
     realcoloriter = maxit;
@@ -216,7 +216,7 @@ over_bailout_87:
     }
     else
     {
-        /* special_outside */
+        // special_outside
         if (outside == REAL)
         {
             coloriter += (long) g_new.x + 7;
@@ -237,7 +237,7 @@ over_bailout_87:
         {
             coloriter = (long) fabs(atan2(g_new.y,g_new.x)*atan_colors/PI);
         }
-        /* check_color */
+        // check_color
         if ((coloriter <= 0 || coloriter > maxit) && outside != FMOD)
         {
             if (save_release < 1961)
