@@ -20,41 +20,41 @@
 #define BOXWIDTH 57
 #define BOXDEPTH 12
 
-bool disk16bit = false;                 /* storing 16 bit values for continuous potential */
+bool disk16bit = false;                 // storing 16 bit values for continuous potential
 
 static int timetodisplay;
 static FILE *fp = nullptr;
 bool disktarga = false;
 bool g_disk_flag = false;
-bool g_good_mode = false;        /* if non-zero, OK to read/write pixels */
+bool g_good_mode = false;        // if non-zero, OK to read/write pixels
 
-#define BLOCKLEN 2048   /* must be a power of 2, must match next */
-#define BLOCKSHIFT 11   /* must match above */
-#define CACHEMIN 4      /* minimum cache size in Kbytes */
-#define CACHEMAX 64     /* maximum cache size in Kbytes */
-#define FREEMEM  33     /* try to leave this much memory unallocated */
-#define HASHSIZE 1024   /* power of 2, near CACHEMAX/(BLOCKLEN+8) */
+#define BLOCKLEN 2048   // must be a power of 2, must match next
+#define BLOCKSHIFT 11   // must match above
+#define CACHEMIN 4      // minimum cache size in Kbytes
+#define CACHEMAX 64     // maximum cache size in Kbytes
+#define FREEMEM  33     // try to leave this much memory unallocated
+#define HASHSIZE 1024   // power of 2, near CACHEMAX/(BLOCKLEN+8)
 
-static struct cache     /* structure of each cache entry */
+static struct cache     // structure of each cache entry
 {
-    long offset;           /* pixel offset in image */
-    BYTE pixel[BLOCKLEN];  /* one pixel per byte (this *is* faster) */
-    unsigned int hashlink; /* ptr to next cache entry with same hash */
-    bool dirty;            /* changed since read? */
-    bool lru;               /* recently used? */
+    long offset;           // pixel offset in image
+    BYTE pixel[BLOCKLEN];  // one pixel per byte (this *is* faster)
+    unsigned int hashlink; // ptr to next cache entry with same hash
+    bool dirty;            // changed since read?
+    bool lru;               // recently used?
 } *cache_end, *cache_lru, *cur_cache;
 
 static struct cache *cache_start = nullptr;
-static long high_offset;           /* highwater mark of writes */
-static long seek_offset;           /* what we'll get next if we don't seek */
-static long cur_offset;            /* offset of last block referenced */
+static long high_offset;           // highwater mark of writes
+static long seek_offset;           // what we'll get next if we don't seek
+static long cur_offset;            // offset of last block referenced
 static int cur_row;
 static long cur_row_base;
 static unsigned int hash_ptr[HASHSIZE] = { 0 };
 static int pixelshift;
 static int headerlength;
-static int rowsize = 0;   /* doubles as a disk video not ok flag */
-static int colsize;       /* sydots, *2 when pot16bit */
+static int rowsize = 0;   // doubles as a disk video not ok flag
+static int colsize;       // sydots, *2 when pot16bit
 
 static BYTE *membuf;
 static U16 dv_handle = 0;
@@ -79,7 +79,7 @@ int startdisk()
 int pot_startdisk()
 {
     int i;
-    if (driver_diskp())         /* ditch the original disk file */
+    if (driver_diskp())         // ditch the original disk file
     {
         enddisk();
     }
@@ -102,16 +102,16 @@ int pot_startdisk()
 int targa_startdisk(FILE *targafp, int overhead)
 {
     int i;
-    if (driver_diskp()) /* ditch the original file, make just the targa */
+    if (driver_diskp()) // ditch the original file, make just the targa
     {
-        enddisk();      /* close the 'screen' */
-        setnullvideo(); /* set readdot and writedot routines to do nothing */
+        enddisk();      // close the 'screen'
+        setnullvideo(); // set readdot and writedot routines to do nothing
     }
     headerlength = overhead;
     fp = targafp;
     disktarga = true;
     i = common_startdisk(xdots*3, ydots, colors);
-    high_offset = 100000000L; /* targa not necessarily init'd to zeros */
+    high_offset = 100000000L; // targa not necessarily init'd to zeros
 
     return i;
 }
@@ -128,14 +128,14 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     {
         enddisk();
     }
-    if (driver_diskp()) /* otherwise, real screen also in use, don't hit it */
+    if (driver_diskp()) // otherwise, real screen also in use, don't hit it
     {
         char buf[128];
         helptitle();
-        driver_set_attr(1, 0, C_DVID_BKGRD, 24*80);  /* init rest to background */
+        driver_set_attr(1, 0, C_DVID_BKGRD, 24*80);  // init rest to background
         for (int i = 0; i < BOXDEPTH; ++i)
         {
-            driver_set_attr(BOXROW+i, BOXCOL, C_DVID_LO, BOXWIDTH);  /* init box */
+            driver_set_attr(BOXROW+i, BOXCOL, C_DVID_LO, BOXWIDTH);  // init box
         }
         driver_put_string(BOXROW+2, BOXCOL+4, C_DVID_HI, "'Disk-Video' mode");
         sprintf(buf, "Screen resolution: %d x %d", sxdots, sydots);
@@ -173,7 +173,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
             --pixelshift;
         }
     }
-    timetodisplay = bf_math ? 10 : 1000;  /* time-to-g_driver-status counter */
+    timetodisplay = bf_math ? 10 : 1000;  // time-to-g_driver-status counter
 
     /* allocate cache: try for the max; leave FREEMEMk free if we can get
         that much or more; if we can't get that much leave 1/2 of whatever
@@ -198,7 +198,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     cache_start = (struct cache *)malloc(longtmp);
     if (cache_size == 64)
     {
-        --longtmp; /* safety for next line */
+        --longtmp; // safety for next line
     }
     cache_lru = cache_start;
     cache_end = cache_lru + longtmp/sizeof(*cache_start);
@@ -215,10 +215,10 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         driver_put_string(BOXROW+6, BOXCOL+4, C_DVID_LO, buf);
     }
 
-    /* preset cache to all invalid entries so we don't need free list logic */
+    // preset cache to all invalid entries so we don't need free list logic
     for (int i = 0; i < HASHSIZE; ++i)
     {
-        hash_ptr[i] = 0xffff; /* 0xffff marks the end of a hash chain */
+        hash_ptr[i] = 0xffff; // 0xffff marks the end of a hash chain
     }
     longtmp = 100000000L;
     for (struct cache *ptr1 = cache_start; ptr1 < cache_end; ++ptr1)
@@ -246,7 +246,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
 
     if (disktarga)
     {
-        /* Retrieve the header information first */
+        // Retrieve the header information first
         BYTE *tmpptr;
         tmpptr = membuf;
         fseek(fp, 0L, SEEK_SET);
@@ -279,7 +279,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
 
     if (disktarga)
     {
-        /* Put header information in the file */
+        // Put header information in the file
         MoveToMemory(membuf, (U16)headerlength, 1L, 0, dv_handle);
     }
     else
@@ -287,14 +287,14 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         for (long offset = 0; offset < memorysize; offset++)
         {
             SetMemory(0, (U16)BLOCKLEN, 1L, offset, dv_handle);
-            if (driver_key_pressed())           /* user interrupt */
+            if (driver_key_pressed())           // user interrupt
             {
-                /* esc to cancel, else continue */
+                // esc to cancel, else continue
                 if (stopmsg(STOPMSG_CANCEL, "Disk Video initialization interrupted:\n"))
                 {
                     enddisk();
                     g_good_mode = false;
-                    return -2;            /* -1 == failed, -2 == cancel   */
+                    return -2;            // -1 == failed, -2 == cancel
                 }
             }
         }
@@ -311,7 +311,7 @@ void enddisk()
 {
     if (fp != nullptr)
     {
-        if (disktarga) /* flush the cache */
+        if (disktarga) // flush the cache
         {
             for (cache_lru = cache_start; cache_lru < cache_end; ++cache_lru)
             {
@@ -350,26 +350,26 @@ int readdisk(int col, int row)
     int col_subscr;
     long offset;
     char buf[41];
-    if (--timetodisplay < 0)  /* time to g_driver status? */
+    if (--timetodisplay < 0)  // time to g_driver status?
     {
         if (driver_diskp())
         {
             sprintf(buf, " reading line %4d",
-                    (row >= sydots) ? row-sydots : row); /* adjust when potfile */
+                    (row >= sydots) ? row-sydots : row); // adjust when potfile
             dvid_status(0, buf);
         }
         if (bf_math)
         {
-            timetodisplay = 10;  /* time-to-g_driver-status counter */
+            timetodisplay = 10;  // time-to-g_driver-status counter
         }
         else
         {
-            timetodisplay = 1000;  /* time-to-g_driver-status counter */
+            timetodisplay = 1000;  // time-to-g_driver-status counter
         }
     }
-    if (row != cur_row) /* try to avoid ghastly code generated for multiply */
+    if (row != cur_row) // try to avoid ghastly code generated for multiply
     {
-        if (row >= colsize) /* while we're at it avoid this test if not needed  */
+        if (row >= colsize) // while we're at it avoid this test if not needed
         {
             return 0;
         }
@@ -381,8 +381,8 @@ int readdisk(int col, int row)
         return 0;
     }
     offset = cur_row_base + col;
-    col_subscr = (short) offset & (BLOCKLEN-1); /* offset within cache entry */
-    if (cur_offset != (offset & (0L-BLOCKLEN))) /* same entry as last ref? */
+    col_subscr = (short) offset & (BLOCKLEN-1); // offset within cache entry
+    if (cur_offset != (offset & (0L-BLOCKLEN))) // same entry as last ref?
     {
         findload_cache(offset & (0L-BLOCKLEN));
     }
@@ -392,11 +392,11 @@ int readdisk(int col, int row)
 int FromMemDisk(long offset, int size, void *dest)
 {
     int col_subscr = (int)(offset & (BLOCKLEN - 1));
-    if (col_subscr + size > BLOCKLEN)            /* access violates  a */
+    if (col_subscr + size > BLOCKLEN)            // access violates  a
     {
-        return 0;                                 /*   cache boundary   */
+        return 0;                                 //   cache boundary
     }
-    if (cur_offset != (offset & (0L-BLOCKLEN))) /* same entry as last ref? */
+    if (cur_offset != (offset & (0L-BLOCKLEN))) // same entry as last ref?
     {
         findload_cache(offset & (0L-BLOCKLEN));
     }
@@ -420,19 +420,19 @@ void writedisk(int col, int row, int color)
     int col_subscr;
     long offset;
     char buf[41];
-    if (--timetodisplay < 0)  /* time to display status? */
+    if (--timetodisplay < 0)  // time to display status?
     {
         if (driver_diskp())
         {
             sprintf(buf, " writing line %4d",
-                    (row >= sydots) ? row-sydots : row); /* adjust when potfile */
+                    (row >= sydots) ? row-sydots : row); // adjust when potfile
             dvid_status(0, buf);
         }
         timetodisplay = 1000;
     }
-    if (row != (unsigned int) cur_row)     /* try to avoid ghastly code generated for multiply */
+    if (row != (unsigned int) cur_row)     // try to avoid ghastly code generated for multiply
     {
-        if (row >= colsize) /* while we're at it avoid this test if not needed  */
+        if (row >= colsize) // while we're at it avoid this test if not needed
         {
             return;
         }
@@ -445,7 +445,7 @@ void writedisk(int col, int row, int color)
     }
     offset = cur_row_base + col;
     col_subscr = (short) offset & (BLOCKLEN-1);
-    if (cur_offset != (offset & (0L-BLOCKLEN))) /* same entry as last ref? */
+    if (cur_offset != (offset & (0L-BLOCKLEN))) // same entry as last ref?
     {
         findload_cache(offset & (0L-BLOCKLEN));
     }
@@ -460,12 +460,12 @@ bool ToMemDisk(long offset, int size, void *src)
 {
     int col_subscr = (int)(offset & (BLOCKLEN - 1));
 
-    if (col_subscr + size > BLOCKLEN)           /* access violates  a */
+    if (col_subscr + size > BLOCKLEN)           // access violates  a
     {
-        return false;                           /*   cache boundary   */
+        return false;                           //   cache boundary
     }
 
-    if (cur_offset != (offset & (0L-BLOCKLEN))) /* same entry as last ref? */
+    if (cur_offset != (offset & (0L-BLOCKLEN))) // same entry as last ref?
     {
         findload_cache(offset & (0L-BLOCKLEN));
     }
@@ -483,26 +483,26 @@ void targa_writedisk(unsigned int col, unsigned int row,
     writedisk(col+1, row, red);
 }
 
-static void findload_cache(long offset) /* used by read/write */
+static void findload_cache(long offset) // used by read/write
 {
     unsigned int tbloffset;
     unsigned int *fwd_link;
     BYTE *pixelptr = nullptr;
-    cur_offset = offset; /* note this for next reference */
-    /* check if required entry is in cache - lookup by hash */
+    cur_offset = offset; // note this for next reference
+    // check if required entry is in cache - lookup by hash
     tbloffset = hash_ptr[((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1) ];
-    while (tbloffset != 0xffff)  /* follow the hash chain */
+    while (tbloffset != 0xffff)  // follow the hash chain
     {
         cur_cache = (struct cache *)((char *)cache_start + tbloffset);
-        if (cur_cache->offset == offset)  /* great, it is in the cache */
+        if (cur_cache->offset == offset)  // great, it is in the cache
         {
             cur_cache->lru = true;
             return;
         }
         tbloffset = cur_cache->hashlink;
     }
-    /* must load the cache entry from backing store */
-    while (true)  /* look around for something not recently used */
+    // must load the cache entry from backing store
+    while (true)  // look around for something not recently used
     {
         if (++cache_lru >= cache_end)
         {
@@ -514,11 +514,11 @@ static void findload_cache(long offset) /* used by read/write */
         }
         cache_lru->lru = false;
     }
-    if (cache_lru->dirty) /* must write this block before reusing it */
+    if (cache_lru->dirty) // must write this block before reusing it
     {
         write_cache_lru();
     }
-    /* remove block at cache_lru from its hash chain */
+    // remove block at cache_lru from its hash chain
     fwd_link = &hash_ptr[(((unsigned short)cache_lru->offset >> BLOCKSHIFT) & (HASHSIZE-1))];
     tbloffset = (int)((char *)cache_lru - (char *)cache_start);
     while (*fwd_link != tbloffset)
@@ -526,12 +526,12 @@ static void findload_cache(long offset) /* used by read/write */
         fwd_link = &((struct cache *)((char *)cache_start+*fwd_link))->hashlink;
     }
     *fwd_link = cache_lru->hashlink;
-    /* load block */
+    // load block
     cache_lru->dirty  = false;
     cache_lru->lru    = true;
     cache_lru->offset = offset;
     pixelptr = &cache_lru->pixel[0];
-    if (offset > high_offset)  /* never been this high before, just clear it */
+    if (offset > high_offset)  // never been this high before, just clear it
     {
         high_offset = offset;
         memset(pixelptr, 0, BLOCKLEN);
@@ -575,14 +575,14 @@ static void findload_cache(long offset) /* used by read/write */
             break;
         }
     }
-    /* add new block to its hash chain */
+    // add new block to its hash chain
     fwd_link = &hash_ptr[(((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1))];
     cache_lru->hashlink = *fwd_link;
     *fwd_link = (int)((char *)cache_lru - (char *)cache_start);
     cur_cache = cache_lru;
 }
 
-/* lookup for write_cache_lru */
+// lookup for write_cache_lru
 static struct cache * find_cache(long offset)
 {
     unsigned int tbloffset;
@@ -607,8 +607,8 @@ static void  write_cache_lru()
     long offset;
     BYTE tmpchar = 0;
     struct cache *ptr1, *ptr2;
-#define WRITEGAP 4 /* 1 for no gaps */
-    /* scan back to also write any preceding dirty blocks, skipping small gaps */
+#define WRITEGAP 4 // 1 for no gaps
+    // scan back to also write any preceding dirty blocks, skipping small gaps
     ptr1 = cache_lru;
     offset = ptr1->offset;
     i = 0;
@@ -620,8 +620,8 @@ static void  write_cache_lru()
             i = 0;
         }
     }
-    /* write all consecutive dirty blocks (often whole cache in 1pass modes) */
-    /* keep going past small gaps */
+    // write all consecutive dirty blocks (often whole cache in 1pass modes)
+    // keep going past small gaps
 
 write_seek:
     mem_seek(ptr1->offset >> pixelshift);
@@ -687,7 +687,7 @@ write_stuff:
             goto write_seek;
         }
     }
-    seek_offset = -1; /* force a seek before next read */
+    seek_offset = -1; // force a seek before next read
 }
 
 /* Seek, mem_getc, mem_putc routines follow.
@@ -695,7 +695,7 @@ write_stuff:
    sequences with a seek between them.  A mem_getc is never followed by
    a mem_putc nor v.v. without a seek between them.
    */
-static void mem_seek(long offset)        /* mem seek */
+static void mem_seek(long offset)        // mem seek
 {
     offset += headerlength;
     memoffset = offset >> BLOCKSHIFT;
@@ -708,7 +708,7 @@ static void mem_seek(long offset)        /* mem seek */
     membufptr = membuf + (offset & (BLOCKLEN - 1));
 }
 
-static BYTE  mem_getc()                     /* memory get_char */
+static BYTE  mem_getc()                     // memory get_char
 {
     if (membufptr - membuf >= BLOCKLEN)
     {
@@ -721,7 +721,7 @@ static BYTE  mem_getc()                     /* memory get_char */
     return (*(membufptr++));
 }
 
-static void mem_putc(BYTE c)     /* memory get_char */
+static void mem_putc(BYTE c)     // memory get_char
 {
     if (membufptr - membuf >= BLOCKLEN)
     {
