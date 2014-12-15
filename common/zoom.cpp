@@ -91,7 +91,7 @@ void clearbox()
 
 void drawbox(int drawit)
 {
-    struct coords tl,bl,tr,br; // dot addr of topleft, botleft, etc
+    coords tl,bl,tr,br; // dot addr of topleft, botleft, etc
     double tmpx,tmpy,dx,dy,rotcos,rotsin,ftemp1,ftemp2;
     double fxwidth,fxskew,fydepth,fyskew,fxadj;
     bf_t bffxwidth, bffxskew, bffydepth, bffyskew, bffxadj;
@@ -217,12 +217,12 @@ void drawbox(int drawit)
     }
 }
 
-void drawlines(struct coords fr, struct coords to,
+void drawlines(coords fr, coords to,
                          int dx, int dy)
 {
     int xincr,yincr,ctr;
     int altctr,altdec,altinc;
-    struct coords tmpp,line1,line2;
+    coords tmpp,line1,line2;
 
     if (abs(to.x-fr.x) > abs(to.y-fr.y)) { // delta.x > delta.y
         if (fr.x>to.x) { // swap so from.x is < to.x
@@ -285,7 +285,7 @@ void drawlines(struct coords fr, struct coords to,
     }
 }
 
-void addbox(struct coords point)
+void addbox(coords point)
 {
 #if defined(_WIN32)
     _ASSERTE(boxcount < NUM_BOXES);

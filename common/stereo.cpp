@@ -25,7 +25,7 @@ char image_map = 0;
 /* this structure permits variables to be temporarily static and visible
    to routines in this file without permanently hogging memory */
 
-static struct static_vars
+struct static_vars
 {
     long avg;
     long avgct;
@@ -46,7 +46,8 @@ static struct static_vars
     int y2;
     int ycen;
     BYTE *savedac;
-} *pv;
+};
+static static_vars *pv = nullptr;
 
 #define AVG         (pv->avg)
 #define AVGCT       (pv->avgct)
@@ -204,7 +205,7 @@ int outline_stereo(BYTE * pixels, int linelen)
 
 bool do_AutoStereo()
 {
-    struct static_vars v;
+    static_vars v;
     BYTE savedacbox[256*3];
     int oldhelpmode;
     bool ret = false;
