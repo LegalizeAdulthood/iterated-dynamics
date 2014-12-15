@@ -1,4 +1,4 @@
-/* Routine to decode Targa 16 bit RGB file */
+// Routine to decode Targa 16 bit RGB file
 
 /* 16 bit .tga files were generated for continuous potential "potfile"s
    from version 9.? thru version 14.  Replaced by double row gif type
@@ -11,9 +11,9 @@
 #include "targa_lc.h"
 #include "drivers.h"
 
-static FILE *fptarga = nullptr;            /* FILE pointer           */
+static FILE *fptarga = nullptr;            // FILE pointer
 
-/* Main entry decoder */
+// Main entry decoder
 int tgaview()
 {
     int cs;
@@ -46,7 +46,7 @@ int tgaview()
     return (0);
 }
 
-/* Outline function for 16 bit data with 8 bit fudge */
+// Outline function for 16 bit data with 8 bit fudge
 int outlin16(BYTE *buffer,int linelen)
 {
     U16 *buf = (U16 *)buffer;
