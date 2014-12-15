@@ -33,8 +33,8 @@ struct Perspectivefp
     double x, y, zx, zy;
 };
 
-struct Perspective LeftEye, RightEye, *Per;
-struct Perspectivefp LeftEyefp, RightEyefp, *Perfp;
+Perspective LeftEye, RightEye, *Per;
+Perspectivefp LeftEyefp, RightEyefp, *Perfp;
 
 LComplex jbc;
 DComplex jbcfp;
