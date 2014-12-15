@@ -315,10 +315,15 @@ init_clut(BYTE clut[256][3])
         clut[i][1] = (((i+16) & 28) >> 2)*8+7;
         clut[i][2] = (((i+2) & 3))*16+15;
     }
-    clut[0][0] = clut[0][1] = clut[0][2] = 0;
-    clut[1][0] = clut[1][1] = clut[1][2] = 63;
+    clut[0][2] = 0;
+    clut[0][1] = clut[0][2];
+    clut[0][0] = clut[0][1];
+    clut[1][2] = 63;
+    clut[1][1] = clut[1][2];
+    clut[1][0] = clut[1][1];
     clut[2][0] = 47;
-    clut[2][1] = clut[2][2] = 63;
+    clut[2][2] = 63;
+    clut[2][1] = clut[2][2];
 }
 
 int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)

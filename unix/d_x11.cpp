@@ -330,10 +330,15 @@ initdacbox()
         g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
         g_dac_box[i][2] = (((i+2) & 3))*16+15;
     }
-    g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-    g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 63;
+    g_dac_box[0][2] = 0;
+    g_dac_box[0][1] = g_dac_box[0][2];
+    g_dac_box[0][0] = g_dac_box[0][1];
+    g_dac_box[1][2] = 63;
+    g_dac_box[1][1] = g_dac_box[1][2];
+    g_dac_box[1][0] = g_dac_box[1][1];
     g_dac_box[2][0] = 47;
-    g_dac_box[2][1] = g_dac_box[2][2] = 63;
+    g_dac_box[2][2] = 63;
+    g_dac_box[2][1] = g_dac_box[2][2];
 }
 
 static void
@@ -573,8 +578,10 @@ xcmapstuff(DriverX11 *di)
     }
 
     if (!g_got_real_dac && colors == 2 && BlackPixelOfScreen(di->Xsc) != 0) {
-        di->pixtab[0] = di->ipixtab[0] = 1;
-        di->pixtab[1] = di->ipixtab[1] = 0;
+        di->ipixtab[0] = 1;
+        di->pixtab[0] = di->ipixtab[0];
+        di->ipixtab[1] = 0;
+        di->pixtab[1] = di->ipixtab[1];
         di->usepixtab = true;
     }
 
@@ -1125,8 +1132,10 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
         return;
     }
 
-    bandx1 = bandx0 = xevent->xbutton.x;
-    bandy1 = bandy0 = xevent->xbutton.y;
+    bandx0 = xevent->xbutton.x;
+    bandx1 = bandx0;
+    bandy0 = xevent->xbutton.y;
+    bandy1 = bandy0;
     while (!done) {
         XNextEvent(di->Xdp, xevent);
         switch (xevent->type) {

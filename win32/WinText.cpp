@@ -477,8 +477,10 @@ void wintext_putstring(WinText *me, int xpos, int ypos, int attrib, const char *
     ODS("wintext_putstring");
 
     xa = (attrib & 0x0ff);
-    j = maxrow = ypos;
-    k = maxcol = xpos-1;
+    maxrow = ypos;
+    j = maxrow;
+    maxcol = xpos-1;
+    k = maxcol;
 
     int i;
     for (i = 0; (xc = string[i]) != 0; i++)
@@ -680,8 +682,10 @@ void wintext_cursor(WinText *me, int xpos, int ypos, int cursor_type)
 void wintext_set_attr(WinText *me, int row, int col, int attr, int count)
 {
     int xmin, xmax, ymin, ymax;
-    xmin = xmax = col;
-    ymin = ymax = row;
+    xmax = col;
+    xmin = xmax;
+    ymax = row;
+    ymin = ymax;
     for (int i = 0; i < count; i++)
     {
         me->attrs[row][col+i] = (unsigned char)(attr & 0xFF);

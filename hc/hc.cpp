@@ -2568,7 +2568,8 @@ void paginate_online()    /* paginate the text for on-line help */
                 }
 
                 skip_blanks = false;
-                width = size = 0;
+                size = 0;
+                width = size;
                 break;
             }
 
@@ -2664,7 +2665,8 @@ struct PAGINATE_DOC_INFO
 LABEL *find_next_label_by_topic(int t)
 {
     LABEL *temp, *g, *p;
-    g = p = nullptr;
+    p = nullptr;
+    g = p;
     temp = label;
     for (int ctr = 0; ctr < num_label; ctr++, temp++)
         if (temp->topic_num == t && temp->doc_page == -1)
@@ -2881,7 +2883,8 @@ void paginate_document()
 
     msg("Paginating document.");
 
-    info.cnum = info.tnum = -1;
+    info.tnum = -1;
+    info.cnum = info.tnum;
     info.link_dest_warn = 1;
 
     process_document(pd_get_info, paginate_doc_output, &info);
@@ -3348,7 +3351,8 @@ void print_document(const char *fname)
 
     msg("Printing to: %s", fname);
 
-    info.cnum = info.tnum = -1;
+    info.tnum = -1;
+    info.cnum = info.tnum;
     info.link_dest_warn = 0;
 
     if ((info.file = fopen(fname, "wt")) == nullptr)
@@ -3585,7 +3589,9 @@ int main(int argc, char *argv[])
            fname2[81];
     char   swappath[81];
 
-    fname1[0] = fname2[0] = swappath[0] = 0;
+    swappath[0] = 0;
+    fname2[0] = swappath[0];
+    fname1[0] = fname2[0];
 
     printf("HC - FRACTINT Help Compiler.\n\n");
 

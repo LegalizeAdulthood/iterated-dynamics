@@ -663,10 +663,15 @@ initdacbox()
             g_dac_box[i][1] = (((i+16)&28)>>2)*8+7;
             g_dac_box[i][2] = (((i+2)&3))*16+15;
         }
-        g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-        g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 63;
+        g_dac_box[0][2] = 0;
+        g_dac_box[0][1] = g_dac_box[0][2];
+        g_dac_box[0][0] = g_dac_box[0][1];
+        g_dac_box[1][2] = 63;
+        g_dac_box[1][1] = g_dac_box[1][2];
+        g_dac_box[1][0] = g_dac_box[1][1];
         g_dac_box[2][0] = 47;
-        g_dac_box[2][1] = g_dac_box[2][2] = 63;
+        g_dac_box[2][2] = 63;
+        g_dac_box[2][1] = g_dac_box[2][2];
     }
     if (s0)
         for (int i = 0; i < 256; i++)
@@ -857,8 +862,10 @@ xcmapstuff()
     }
 
     if (!g_got_real_dac && colors == 2 && BlackPixelOfScreen(Xsc) != 0) {
-        pixtab[0] = ipixtab[0] = 1;
-        pixtab[1] = ipixtab[1] = 0;
+        ipixtab[0] = 1;
+        pixtab[0] = ipixtab[0];
+        ipixtab[1] = 0;
+        pixtab[1] = ipixtab[1];
         usepixtab = 1;
     }
 
@@ -1753,8 +1760,10 @@ xhandleevents()
                 lasty = xevent.xbutton.y;
                 break;
             }
-            bandx1 = bandx0 = xevent.xbutton.x;
-            bandy1 = bandy0 = xevent.xbutton.y;
+            bandx0 = xevent.xbutton.x;
+            bandx1 = bandx0;
+            bandy0 = xevent.xbutton.y;
+            bandy1 = bandy0;
             while (!done) {
                 XNextEvent(Xdp,&xevent);
                 switch (xevent.type) {

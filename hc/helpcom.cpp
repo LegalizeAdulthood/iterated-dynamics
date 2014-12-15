@@ -529,7 +529,8 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
                     }
 
                     skip_blanks = false;
-                    width = size = 0;
+                    size = 0;
+                    width = size;
                     break;
                 }
 
