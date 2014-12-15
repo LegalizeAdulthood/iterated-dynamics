@@ -7,14 +7,12 @@
  *
  * GIF and 'Graphics Interchange Format' are trademarks (tm) of
  * Compuserve, Incorporated, an H&R Block Company.
- *
- *                                                                                      Tim Wegner
  */
 #include <algorithm>
 #include <vector>
 
 #include <string.h>
-/* see Fractint.c for a description of the "include"  hierarchy */
+// see Fractint.c for a description of the "include"  hierarchy
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
@@ -23,28 +21,28 @@ static void close_file();
 
 #define MAXCOLORS       256
 
-static FILE *fpin = nullptr;       /* FILE pointer           */
+static FILE *fpin = nullptr;       // FILE pointer
 unsigned int height;
 unsigned numcolors;
-int bad_code_count = 0;         /* needed by decoder module */
+int bad_code_count = 0;         // needed by decoder module
 
 static int out_line_dither(BYTE *, int);
 static int out_line_migs(BYTE *, int);
 static int out_line_too_wide(BYTE *, int);
-static int colcount; /* keeps track of current column for wide images */
+static int colcount; // keeps track of current column for wide images
 
-static unsigned int gifview_image_top;    /* (for migs) */
-static unsigned int gifview_image_left;   /* (for migs) */
-static unsigned int gifview_image_twidth; /* (for migs) */
+static unsigned int gifview_image_top;    // (for migs)
+static unsigned int gifview_image_left;   // (for migs)
+static unsigned int gifview_image_twidth; // (for migs)
 
 int get_byte()
 {
-    return (getc(fpin)); /* EOF is -1, as desired */
+    return (getc(fpin)); // EOF is -1, as desired
 }
 
 int get_bytes(BYTE *where,int how_many)
 {
-    return (int) fread((char *)where,1,how_many,fpin); /* EOF is -1, as desired */
+    return (int) fread((char *)where,1,how_many,fpin); // EOF is -1, as desired
 }
 
 /*
@@ -58,33 +56,33 @@ int get_bytes(BYTE *where,int how_many)
  * The skipxdots and skipydots logic assumes that the buffer holds one line.
  */
 
-BYTE decoderline[MAXPIXELS+1]; /* write-line routines use this */
+BYTE decoderline[MAXPIXELS+1]; // write-line routines use this
 #define DECODERLINE_WIDTH MAXPIXELS
 
 extern BYTE *decoderline1;
 static std::vector<char> ditherbuf;
 
-/* Main entry decoder */
+// Main entry decoder
 
 int gifview()
 {
     BYTE buffer[16];
     unsigned top, left, width;
     char temp1[FILE_MAX_DIR];
-    BYTE byte_buf[257]; /* for decoder */
+    BYTE byte_buf[257]; // for decoder
     int status;
     int planes;
 
-    /* using stack for decoder byte buf rather than static mem */
+    // using stack for decoder byte buf rather than static mem
     set_byte_buff(byte_buf);
 
     status = 0;
 
-    /* initialize the col and row count for write-lines */
+    // initialize the col and row count for write-lines
     g_row_count = 0;
     colcount = g_row_count;
 
-    /* Open the file */
+    // Open the file
     if (outln == outline_stereo)
         strcpy(temp1,stereomapname);
     else
@@ -107,7 +105,7 @@ int gifview()
         return (-1);
     }
 
-    /* Get the screen description */
+    // Get the screen description
     for (int i = 0; i < 13; i++)
     {
         int tmp = get_byte();
@@ -119,7 +117,7 @@ int gifview()
         }
     }
 
-    if (strncmp((char *)buffer,"GIF87a",3) ||             /* use updated GIF specs */
+    if (strncmp((char *)buffer,"GIF87a",3) ||             // use updated GIF specs
             buffer[3] < '0' || buffer[3] > '9' ||
             buffer[4] < '0' || buffer[4] > '9' ||
             buffer[5] < 'A' || buffer[5] > 'z')
@@ -133,7 +131,7 @@ int gifview()
     planes = (buffer[10] & 0x0F) + 1;
     gifview_image_twidth = width;
 
-    if ((buffer[10] & 0x80)==0)    /* color map (better be!) */
+    if ((buffer[10] & 0x80)==0)    // color map (better be!)
     {
         close_file();
         return (-1);
@@ -155,20 +153,20 @@ int gifview()
             }
             if ((!display3d || (g_glasses_type != 1 && g_glasses_type != 2))
                     && !dontreadcolor)
-                g_dac_box[i][j] = (BYTE)(k >> 2); /* TODO: don't right shift color table by 2 */
+                g_dac_box[i][j] = (BYTE)(k >> 2); // TODO: don't right shift color table by 2
         }
     }
-    colorstate = 1; /* colors aren't default and not a known .map file */
+    colorstate = 1; // colors aren't default and not a known .map file
 
-    /* don't read if glasses */
+    // don't read if glasses
     if (display3d && mapset && g_glasses_type!=1 && g_glasses_type != 2)
     {
-        ValidateLuts(MAP_name);  /* read the palette file */
-        spindac(0,1); /* load it, but don't spin */
+        ValidateLuts(MAP_name);  // read the palette file
+        spindac(0,1); // load it, but don't spin
     }
     if (g_dac_box[0][0] != 255)
-        spindac(0,1);       /* update the DAC */
-    if (driver_diskp()) { /* disk-video */
+        spindac(0,1);       // update the DAC
+    if (driver_diskp()) { // disk-video
         char fname[FILE_MAX_FNAME];
         char ext[FILE_MAX_EXT];
         char tmpname[15];
@@ -180,25 +178,25 @@ int gifview()
     }
     dontreadcolor = false;
 
-    /* Now display one or more GIF objects */
+    // Now display one or more GIF objects
     bool finished = false;
     while (!finished)
     {
         switch (get_byte())
         {
         case ';':
-            /* End of the GIF dataset */
+            // End of the GIF dataset
             finished = true;
             status = 0;
             break;
 
-        case '!':                               /* GIF Extension Block */
-            get_byte();                     /* read (and ignore) the ID */
+        case '!':                               // GIF Extension Block
+            get_byte();                     // read (and ignore) the ID
             {
                 int i;
-                while ((i = get_byte()) > 0)    /* get the data length */
+                while ((i = get_byte()) > 0)    // get the data length
                     for (int j = 0; j < i; j++)
-                        get_byte();     /* flush the data */
+                        get_byte();     // flush the data
             }
             break;
         case ',':
@@ -227,7 +225,7 @@ int gifview()
             width  = buffer[4] | (buffer[5] << 8);
             height = buffer[6] | (buffer[7] << 8);
 
-            /* adjustments for handling MIGs */
+            // adjustments for handling MIGs
             gifview_image_top  = top;
             if (skipxdots > 0)
                 gifview_image_top /= (skipydots+1);
@@ -236,9 +234,9 @@ int gifview()
                 gifview_image_left /= (skipxdots+1);
             if (outln==out_line)
             {
-                /* what about continuous potential???? */
+                // what about continuous potential????
                 if (width != gifview_image_twidth || top != 0)
-                {   /* we're using normal decoding and we have a MIG */
+                {   // we're using normal decoding and we have a MIG
                     outln = out_line_migs;
                 }
                 else if (width > DECODERLINE_WIDTH && skipxdots == 0)
@@ -250,12 +248,12 @@ int gifview()
             if (pot16bit)
                 width >>= 1;
 
-            /* Skip local color palette */
-            if ((buffer[8] & 0x80)==0x80) {      /* local map? */
-                int numcolors;    /* make this local */
+            // Skip local color palette
+            if ((buffer[8] & 0x80)==0x80) {      // local map?
+                int numcolors;    // make this local
                 planes = (buffer[8] & 0x0F) + 1;
                 numcolors = 1 << planes;
-                /* skip local map */
+                // skip local map
                 for (int i = 0; i < numcolors; i++) {
                     for (int j = 0; j < 3; j++) {
                         if (get_byte() < 0) {
@@ -266,12 +264,12 @@ int gifview()
                 }
             }
 
-            /* initialize the row count for write-lines */
+            // initialize the row count for write-lines
             g_row_count = 0;
 
-            if (calc_status == CALCSTAT_IN_PROGRESS) /* should never be so, but make sure */
+            if (calc_status == CALCSTAT_IN_PROGRESS) // should never be so, but make sure
                 calc_status = CALCSTAT_PARAMS_CHANGED;
-            busy = true;      /* for slideshow CALCWAIT */
+            busy = true;      // for slideshow CALCWAIT
             /*
              * Call decoder(width) via timer.
              * Width is limited to DECODERLINE_WIDTH.
@@ -279,18 +277,18 @@ int gifview()
             if (skipxdots == 0)
                 width = std::min(width,static_cast<unsigned>(DECODERLINE_WIDTH));
             status = timer(1,nullptr,width);
-            busy = false;      /* for slideshow CALCWAIT */
-            if (calc_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */
+            busy = false;      // for slideshow CALCWAIT
+            if (calc_status == CALCSTAT_IN_PROGRESS) // e.g., set by line3d
             {
-                calctime = timer_interval; /* note how long it took */
+                calctime = timer_interval; // note how long it took
                 if (driver_key_pressed() != 0) {
-                    calc_status = CALCSTAT_NON_RESUMABLE; /* interrupted, not resumable */
+                    calc_status = CALCSTAT_NON_RESUMABLE; // interrupted, not resumable
                     finished = true;
                 }
                 else
-                    calc_status = CALCSTAT_COMPLETED; /* complete */
+                    calc_status = CALCSTAT_COMPLETED; // complete
             }
-            /* Hey! the decoder doesn't read the last (0-length) block!! */
+            // Hey! the decoder doesn't read the last (0-length) block!!
             if (get_byte() != 0) {
                 status = -1;
                 finished = true;
@@ -303,7 +301,7 @@ int gifview()
         }
     }
     close_file();
-    if (driver_diskp()) { /* disk-video */
+    if (driver_diskp()) { // disk-video
         dvid_status(0,"Restore completed");
         dvid_status(1,"");
     }
@@ -317,7 +315,7 @@ static void close_file()
     fpin = nullptr;
 }
 
-/* routine for MIGS that generates partial output lines */
+// routine for MIGS that generates partial output lines
 
 static int out_line_migs(BYTE *pixels, int linelen)
 {
@@ -341,7 +339,7 @@ static int out_line_dither(BYTE *pixels, int linelen)
     nexterr = (rand()&0x1f)-16;
     for (int i = 0; i < linelen; i++) {
         brt = (g_dac_box[pixels[i]][0]*5+g_dac_box[pixels[i]][1]*9 +
-               g_dac_box[pixels[i]][2]*2)>>4; /* brightness from 0 to 63 */
+               g_dac_box[pixels[i]][2]*2)>>4; // brightness from 0 to 63
         brt += nexterr;
         if (brt>32) {
             pixels[i] = 1;
@@ -357,17 +355,16 @@ static int out_line_dither(BYTE *pixels, int linelen)
     return out_line(pixels, linelen);
 }
 
-/* routine for images wider than the row buffer */
+// routine for images wider than the row buffer
 
 static int out_line_too_wide(BYTE *pixels, int linelen)
 {
-    /* int twidth = gifview_image_twidth;*/
     int twidth = xdots;
     int extra;
     while (linelen > 0)
     {
         extra = colcount+linelen-twidth;
-        if (extra > 0) /* line wraps */
+        if (extra > 0) // line wraps
         {
             put_line(g_row_count, colcount, twidth-1, pixels);
             pixels += twidth-colcount;
@@ -408,14 +405,13 @@ static bool put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 
 int sound_line(BYTE *pixels, int linelen)
 {
-    /* int twidth = gifview_image_twidth;*/
     int twidth = xdots;
     int extra;
     int ret=0;
     while (linelen > 0)
     {
         extra = colcount+linelen-twidth;
-        if (extra > 0) /* line wraps */
+        if (extra > 0) // line wraps
         {
             if (put_sound_line(g_row_count, colcount, twidth-1, pixels))
                 break;
@@ -450,9 +446,9 @@ int pot_line(BYTE *pixels, int linelen)
             return -1;
     saverowcount = g_row_count;
     row = (g_row_count >>= 1);
-    if ((saverowcount & 1) != 0) /* odd line */
+    if ((saverowcount & 1) != 0) // odd line
         row += ydots;
-    else if (!driver_diskp()) /* even line - display the line too */
+    else if (!driver_diskp()) // even line - display the line too
         out_line(pixels,linelen);
     for (int col = 0; col < xdots; ++col)
         writedisk(col+sxoffs,row+syoffs,*(pixels+col));
