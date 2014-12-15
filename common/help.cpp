@@ -899,19 +899,6 @@ int help(int action)
     return 0;
 }
 
-#if !defined(XFRACT) && !defined(_WIN32)
-static int dos_version()
-{
-    union REGS r;
-
-    r.x.ax = 0x3000;
-    intdos(&r, &r);
-
-    return (r.h.al*100 + r.h.ah);
-}
-
-#endif
-
 static bool can_read_file(const char *path)
 {
     int handle;
