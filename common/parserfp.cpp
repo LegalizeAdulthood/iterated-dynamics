@@ -40,19 +40,19 @@
 #include "prototyp.h"
 
 // global data
-struct fls *pfls = (struct fls *)nullptr;
+fls *pfls = (fls *)nullptr;
 
 #if !defined(XFRACT)
 
 /* not moved to PROTOTYPE.H because these only communicate within
    PARSER.C and other parser modules */
 
-extern union Arg *Arg1, *Arg2;
+extern Arg *Arg1, *Arg2;
 extern double _1_, _2_;
-extern union Arg s[20], **Store, **Load;
+extern Arg s[20], **Store, **Load;
 extern int StoPtr, LodPtr, OpPtr;
 extern unsigned int vsp, LastOp;
-extern struct ConstArg *v;
+extern ConstArg *v;
 extern int InitLodPtr, InitStoPtr, InitOpPtr, LastInitOp;
 extern void (**f)();
 extern JUMP_CONTROL_ST *jump_control;
@@ -171,7 +171,7 @@ NEW_FN  fStkOne;   // to support new parser fn.
 #define CLEAR_STK 127
 #define FNPTR(x) pfls[(x)].function  // function pointer
 #define OPPTR(x) pfls[(x)].operand   // operand pointer
-#define NO_OPERAND (union Arg  *)0
+#define NO_OPERAND (Arg  *)0
 #define NO_FUNCTION (void ( *)())0
 #define LASTSQR v[4].a
 #define PARM1 v[1].a
@@ -322,8 +322,8 @@ static void (*prevfptr)();    // previous function pointer
 // the entries in this table must be in the same order as
 //    the #defines above
 // this table is searched sequentially
-struct fn_entry {
-
+struct fn_entry
+{
 #ifdef TESTFP
     char *fname;  // function name
 #endif
@@ -340,9 +340,9 @@ struct fn_entry {
 
     char delta;  // net change to # of values on the fp stack
     // (legal values are -2, 0, +2)
-
-} static afe[NUM_OLD_FNS] = {  // array of function entries
-
+};
+static fn_entry afe[NUM_OLD_FNS] =
+{  // array of function entries
     {FNAME("Lod",     StkLod,      fStkLod,    0, 2, +2) },          //  0
     {FNAME("Clr",     StkClr,      fStkClr1,   0, 0,  CLEAR_STK) },  //  1
     {FNAME("+",       dStkAdd,     fStkAdd,    4, 0, -2) },          //  2
@@ -408,8 +408,8 @@ static char cDbgMsg[255];
 static int CvtFptr(void (* ffptr)(), int MinStk, int FreeStk,
                    int Delta)
 {
-    union Arg  *otemp;    // temp operand ptr
-    union Arg *testload;
+    Arg  *otemp;    // temp operand ptr
+    Arg *testload;
 #ifdef TESTFP
     int prevstkcnt;
 #endif
@@ -1186,7 +1186,7 @@ int CvtStk()
     extern char FormName[];
     void (*ftst)();
     void (*ntst)();
-    union Arg *testoperand;
+    Arg *testoperand;
 
     lastsqrreal = true;  // assume lastsqr is real (not stored explicitly)
     p3const = (unsigned char)1;
