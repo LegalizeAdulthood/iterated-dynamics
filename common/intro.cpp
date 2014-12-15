@@ -18,7 +18,7 @@ extern bool slowdisplay;
 
 void intro()
 {
-    /* following overlayed data safe if "putstrings" are resident */
+    // following overlayed data safe if "putstrings" are resident
 #ifdef XFRACT
     static char PRESS_ENTER[] = {"Press ENTER for main menu, Shift-1 for help."};
 #else
@@ -32,10 +32,10 @@ void intro()
     int       oldlookatmouse;
     int       oldhelpmode;
 
-    timer_start -= clock_ticks();       /* "time out" during help */
+    timer_start -= clock_ticks();       // "time out" during help
     oldlookatmouse = lookatmouse;
     oldhelpmode = helpmode;
-    lookatmouse = 0;                    /* de-activate full mouse checking */
+    lookatmouse = 0;                    // de-activate full mouse checking
 
     int i = 32767 + read_help_topic(INTRO_AUTHORS, 0, 32767, screen_text);
     screen_text[i++] = '\0';
@@ -43,7 +43,7 @@ void intro()
     credits[i++] = '\0';
 
     int j = 0;
-    authors.push_back(0);               /* find the start of each credit-line */
+    authors.push_back(0);               // find the start of each credit-line
     for (i = 0; credits[i] != 0; i++)
         if (credits[i] == 10)
             authors.push_back(i+1);
@@ -70,8 +70,8 @@ void intro()
         driver_set_attr(i,21,C_CONTRIB,58);
     driver_set_attr(toprow,0,C_CONTRIB,(21-END_MAIN_AUTHOR)*80);
     srand((unsigned int)clock_ticks());
-    j = rand()%(j-(botrow-toprow)); /* first to use */
-    i = j+botrow-toprow; /* last to use */
+    j = rand()%(j-(botrow-toprow)); // first to use
+    i = j+botrow-toprow; // last to use
     oldchar = credits[authors.at(i+1)];
     credits[authors.at(i+1)] = 0;
     driver_put_string(toprow,0,C_CONTRIB,credits+authors.at(j));
@@ -88,7 +88,7 @@ void intro()
         for (j = 0; j < delaymax && !(driver_key_pressed()); j++)
             driver_delay(100);
         if (driver_key_pressed() == FIK_SPACE)
-        {   /* spacebar pauses */
+        {   // spacebar pauses
             driver_get_key();
             driver_wait_key_pressed(0);
             if (driver_key_pressed() == FIK_SPACE)
@@ -104,10 +104,10 @@ void intro()
         driver_put_string(botrow,0,C_CONTRIB,&credits[authors.at(i)]);
         driver_set_attr(botrow,0,C_CONTRIB,80);
         credits[authors.at(i+1)] = oldchar;
-        driver_hide_text_cursor(); /* turn it off */
+        driver_hide_text_cursor(); // turn it off
     }
 
-    lookatmouse = oldlookatmouse;                /* restore the mouse-checking */
+    lookatmouse = oldlookatmouse;                // restore the mouse-checking
     helpmode = oldhelpmode;
     return;
 }

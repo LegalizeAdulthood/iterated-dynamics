@@ -6,7 +6,7 @@
 #include "fractype.h"
 #include "drivers.h"
 
-/* these need to be accessed elsewhere for saving data */
+// these need to be accessed elsewhere for saving data
 double mxminfp = -.83;
 double myminfp = -.25;
 double mxmaxfp = -.83;
@@ -73,8 +73,8 @@ JulibrotSetup()
     }
 #endif
 
-    xoffsetfp = (xxmax + xxmin) / 2;     /* Calculate average */
-    yoffsetfp = (yymax + yymin) / 2;     /* Calculate average */
+    xoffsetfp = (xxmax + xxmin) / 2;     // Calculate average
+    yoffsetfp = (yymax + yymin) / 2;     // Calculate average
     dmxfp = (mxmaxfp - mxminfp) / zdots;
     dmyfp = (mymaxfp - myminfp) / zdots;
     floatparm = &jbcfp;
@@ -110,10 +110,10 @@ JulibrotSetup()
         fg16 = (double)(1L << 16);
         jxmin = (long)(xxmin * fg);
         jxmax = (long)(xxmax * fg);
-        xoffset = (jxmax + jxmin) / 2;    /* Calculate average */
+        xoffset = (jxmax + jxmin) / 2;    // Calculate average
         jymin = (long)(yymin * fg);
         jymax = (long)(yymax * fg);
-        yoffset = (jymax + jymin) / 2;    /* Calculate average */
+        yoffset = (jymax + jymin) / 2;    // Calculate average
         mxmin = (long)(mxminfp * fg);
         mxmax = (long)(mxmaxfp * fg);
         mymin = (long)(myminfp * fg);
@@ -159,7 +159,7 @@ JulibrotSetup()
     {
         if (ValidateLuts(mapname))
             return false;
-        spindac(0, 1);               /* load it, but don't spin */
+        spindac(0, 1);               // load it, but don't spin
         if (savedac == 2)
             savedac = 1;
     }
@@ -308,7 +308,7 @@ zlinefp(double x, double y)
     jbfp_per_pixel();
     for (zpixel = 0; zpixel < zdots; zpixel++)
     {
-        /* Special initialization for Mandelbrot types */
+        // Special initialization for Mandelbrot types
         if ((neworbittype == QUATFP || neworbittype == HYPERCMPLXFP)
                 && save_release > 2002)
         {
@@ -416,7 +416,7 @@ Std4dFractal()
         if (plotted == 0)
         {
             if (y == 0)
-                plotted = -1;  /* no points first pass; don't give up */
+                plotted = -1;  // no points first pass; don't give up
             else
                 break;
         }
@@ -435,7 +435,7 @@ Std4dfpFractal()
             fractalspecific[neworbittype].orbitcalc = floatZpowerFractal;
         else
             fractalspecific[neworbittype].orbitcalc = floatCmplxZpowerFractal;
-        get_julia_attractor(param[0], param[1]);  /* another attractor? */
+        get_julia_attractor(param[0], param[1]);  // another attractor?
     }
 
     double y = 0.0;
@@ -457,7 +457,7 @@ Std4dfpFractal()
         if (plotted == 0)
         {
             if (y == 0)
-                plotted = -1;  /* no points first pass; don't give up */
+                plotted = -1;  // no points first pass; don't give up
             else
                 break;
         }
