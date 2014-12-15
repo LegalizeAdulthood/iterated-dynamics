@@ -1,4 +1,4 @@
-/* bignum.c - C routines for bignumbers */
+// bignum.c - C routines for bignumbers
 
 /*
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
@@ -120,22 +120,22 @@ double wide number can then be ignored.
 */
 
 /************************************************************************/
-/* There are three parts to the bignum library:                         */
-/*                                                                      */
-/* 1) bignum.c - initialization, general routines, routines that would  */
-/*    not be speeded up much with assembler.                            */
-/*                                                                      */
-/* 2) bignuma.asm - hand coded assembler routines.                      */
-/*                                                                      */
-/* 3) bignumc.c - portable C versions of routines in bignuma.asm        */
-/*                                                                      */
+// There are three parts to the bignum library:
+//
+// 1) bignum.c - initialization, general routines, routines that would
+//    not be speeded up much with assembler.
+//
+// 2) bignuma.asm - hand coded assembler routines.
+//
+// 3) bignumc.c - portable C versions of routines in bignuma.asm
+//
 /************************************************************************/
 #include <algorithm>
 
 #include <float.h>
 #include <string.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
+// see Fractint.c for a description of the "include"  hierarchy
 #include "port.h"
 #include "prototyp.h"
 #include "big.h"
@@ -191,13 +191,13 @@ S16 big_setS16(S16 BIGDIST *addr, S16 val)
 #endif
 
 /************************************************************************/
-/* convert_bn  -- convert bignum numbers from old to new lengths        */
+// convert_bn  -- convert bignum numbers from old to new lengths
 int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
                int oldbnlength, int oldintlength)
 {
     int savebnlength, saveintlength;
 
-    /* save lengths so not dependent on external environment */
+    // save lengths so not dependent on external environment
     saveintlength = intlength;
     savebnlength  = bnlength;
 
@@ -208,7 +208,7 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
     if (newbnlength - newintlength > oldbnlength - oldintlength)
     {
 
-        /* This will keep the integer part from overflowing past the array. */
+        // This will keep the integer part from overflowing past the array.
         bnlength = oldbnlength - oldintlength + std::min(oldintlength, newintlength);
 
         memcpy(newnum+newbnlength-newintlength-oldbnlength+oldintlength,
@@ -226,7 +226,7 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
 }
 
 /********************************************************************/
-/* bn_hexdump() - for debugging, dumps to stdout                    */
+// bn_hexdump() - for debugging, dumps to stdout
 
 void bn_hexdump(bn_t r)
 {
@@ -237,11 +237,11 @@ void bn_hexdump(bn_t r)
 }
 
 /**********************************************************************/
-/* strtobn() - converts a string into a bignumer                       */
-/*   r - pointer to a bignumber                                       */
-/*   s - string in the floating point format [-][digits].[digits]     */
-/*   note: the string may not be empty or have extra space and may    */
-/*   not use scientific notation (2.3e4).                             */
+// strtobn() - converts a string into a bignumer
+//   r - pointer to a bignumber
+//   s - string in the floating point format [-][digits].[digits]
+//   note: the string may not be empty or have extra space and may
+//   not use scientific notation (2.3e4).
 
 bn_t strtobn(bn_t r, char *s)
 {
@@ -252,20 +252,20 @@ bn_t strtobn(bn_t r, char *s)
     clear_bn(r);
     onesbyte = r + bnlength - intlength;
 
-    if (s[0] == '+')    /* for + sign */
+    if (s[0] == '+')    // for + sign
     {
         s++;
     }
-    else if (s[0] == '-')    /* for neg sign */
+    else if (s[0] == '-')    // for neg sign
     {
         signflag = true;
         s++;
     }
 
-    if (strchr(s, '.') != nullptr) /* is there a decimal point? */
+    if (strchr(s, '.') != nullptr) // is there a decimal point?
     {
-        int l = (int) strlen(s) - 1;      /* start with the last digit */
-        while (s[l] >= '0' && s[l] <= '9') /* while a digit */
+        int l = (int) strlen(s) - 1;      // start with the last digit
+        while (s[l] >= '0' && s[l] <= '9') // while a digit
         {
             *onesbyte = (BYTE)(s[l--] - '0');
             div_a_bn_int(r, 10);
@@ -275,7 +275,7 @@ bn_t strtobn(bn_t r, char *s)
         {
             longval = atol(s);
             switch (intlength)
-            {   /* only 1, 2, or 4 are allowed */
+            {   // only 1, 2, or 4 are allowed
             case 1:
                 *onesbyte = (BYTE)longval;
                 break;
@@ -292,7 +292,7 @@ bn_t strtobn(bn_t r, char *s)
     {
         longval = atol(s);
         switch (intlength)
-        {   /* only 1, 2, or 4 are allowed */
+        {   // only 1, 2, or 4 are allowed
         case 1:
             *onesbyte = (BYTE)longval;
             break;
@@ -312,38 +312,38 @@ bn_t strtobn(bn_t r, char *s)
 }
 
 /********************************************************************/
-/* strlen_needed() - returns string length needed to hold bignumber */
+// strlen_needed() - returns string length needed to hold bignumber
 
 int strlen_needed()
 {
     int length = 3;
 
-    /* first space for integer part */
+    // first space for integer part
     switch (intlength)
     {
     case 1:
-        length = 3;  /* max 127 */
+        length = 3;  // max 127
         break;
     case 2:
-        length = 5;  /* max 32767 */
+        length = 5;  // max 32767
         break;
     case 4:
-        length = 10; /* max 2147483647 */
+        length = 10; // max 2147483647
         break;
     }
-    length += decimals;  /* decimal part */
-    length += 2;         /* decimal point and sign */
-    length += 4;         /* null and a little extra for safety */
+    length += decimals;  // decimal part
+    length += 2;         // decimal point and sign
+    length += 4;         // null and a little extra for safety
     return (length);
 }
 
 /********************************************************************/
-/* bntostr() - converts a bignumber into a string                    */
-/*   s - string, must be large enough to hold the number.           */
-/*   r - bignumber                                                  */
-/*   will covert to a floating point notation                       */
-/*   SIDE-EFFECT: the bignumber, r, is destroyed.                   */
-/*                Copy it first if necessary.                       */
+// bntostr() - converts a bignumber into a string
+//   s - string, must be large enough to hold the number.
+//   r - bignumber
+//   will covert to a floating point notation
+//   SIDE-EFFECT: the bignumber, r, is destroyed.
+//                Copy it first if necessary.
 
 char *unsafe_bntostr(char *s, int dec, bn_t r)
 {
@@ -361,7 +361,7 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
         *(s++) = '-';
     }
     switch (intlength)
-    {   /* only 1, 2, or 4 are allowed */
+    {   // only 1, 2, or 4 are allowed
     case 1:
         longval = *onesbyte;
         break;
@@ -377,20 +377,20 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
     s[l++] = '.';
     for (int d = 0; d < dec; d++)
     {
-        *onesbyte = 0;  /* clear out highest byte */
+        *onesbyte = 0;  // clear out highest byte
         mult_a_bn_int(r, 10);
         if (is_bn_zero(r))
             break;
         s[l++] = (BYTE)(*onesbyte + '0');
     }
-    s[l] = '\0'; /* don't forget nul char */
+    s[l] = '\0'; // don't forget nul char
 
     return s;
 }
 
 /*********************************************************************/
-/*  b = l                                                            */
-/*  Converts a long to a bignumber                                   */
+//  b = l
+//  Converts a long to a bignumber
 bn_t inttobn(bn_t r, long longval)
 {
     bn_t onesbyte;
@@ -398,7 +398,7 @@ bn_t inttobn(bn_t r, long longval)
     clear_bn(r);
     onesbyte = r + bnlength - intlength;
     switch (intlength)
-    {   /* only 1, 2, or 4 are allowed */
+    {   // only 1, 2, or 4 are allowed
     case 1:
         *onesbyte = (BYTE)longval;
         break;
@@ -413,8 +413,8 @@ bn_t inttobn(bn_t r, long longval)
 }
 
 /*********************************************************************/
-/*  l = floor(b), floor rounds down                                  */
-/*  Converts the integer part a bignumber to a long                  */
+//  l = floor(b), floor rounds down
+//  Converts the integer part a bignumber to a long
 long bntoint(bn_t n)
 {
     bn_t onesbyte;
@@ -422,7 +422,7 @@ long bntoint(bn_t n)
 
     onesbyte = n + bnlength - intlength;
     switch (intlength)
-    {   /* only 1, 2, or 4 are allowed */
+    {   // only 1, 2, or 4 are allowed
     case 1:
         longval = *onesbyte;
         break;
@@ -437,8 +437,8 @@ long bntoint(bn_t n)
 }
 
 /*********************************************************************/
-/*  b = f                                                            */
-/*  Converts a double to a bignumber                                 */
+//  b = f
+//  Converts a double to a bignumber
 bn_t floattobn(bn_t r, LDBL f)
 {
     bn_t onesbyte;
@@ -454,7 +454,7 @@ bn_t floattobn(bn_t r, LDBL f)
     }
 
     switch (intlength)
-    {   /* only 1, 2, or 4 are allowed */
+    {   // only 1, 2, or 4 are allowed
     case 1:
         *onesbyte = (BYTE)f;
         break;
@@ -466,12 +466,12 @@ bn_t floattobn(bn_t r, LDBL f)
         break;
     }
 
-    f -= (long)f; /* keep only the decimal part */
+    f -= (long)f; // keep only the decimal part
     for (int i = bnlength-intlength-1; i >= 0 && f != 0.0; i--)
     {
         f *= 256;
-        r[i] = (BYTE)f;  /* keep use the integer part */
-        f -= (BYTE)f; /* now throw away the integer part */
+        r[i] = (BYTE)f;  // keep use the integer part
+        f -= (BYTE)f; // now throw away the integer part
     }
 
     if (signflag)
@@ -481,14 +481,14 @@ bn_t floattobn(bn_t r, LDBL f)
 }
 
 /********************************************************************/
-/* sign(r)                                                          */
+// sign(r)
 int sign_bn(bn_t n)
 {
     return is_bn_neg(n) ? -1 : is_bn_not_zero(n) ? 1 : 0;
 }
 
 /********************************************************************/
-/* r = |n|                                                          */
+// r = |n|
 bn_t abs_bn(bn_t r, bn_t n)
 {
     copy_bn(r,n);
@@ -498,7 +498,7 @@ bn_t abs_bn(bn_t r, bn_t n)
 }
 
 /********************************************************************/
-/* r = |r|                                                          */
+// r = |r|
 bn_t abs_a_bn(bn_t r)
 {
     if (is_bn_neg(r))
@@ -507,38 +507,38 @@ bn_t abs_a_bn(bn_t r)
 }
 
 /********************************************************************/
-/* r = 1/n                                                          */
-/* uses bntmp1 - bntmp3 - global temp bignumbers                    */
-/*  SIDE-EFFECTS:                                                   */
-/*      n ends up as |n|    Make copy first if necessary.           */
+// r = 1/n
+// uses bntmp1 - bntmp3 - global temp bignumbers
+//  SIDE-EFFECTS:
+//      n ends up as |n|    Make copy first if necessary.
 bn_t unsafe_inv_bn(bn_t r, bn_t n)
 {
     long maxval;
     LDBL f;
-    bn_t orig_r, orig_n; /* orig_bntmp1 not needed here */
+    bn_t orig_r, orig_n; // orig_bntmp1 not needed here
     int  orig_bnlength,
          orig_padding,
          orig_rlength,
          orig_shiftfactor;
 
-    /* use Newton's recursive method for zeroing in on 1/n : r=r(2-rn) */
+    // use Newton's recursive method for zeroing in on 1/n : r=r(2-rn)
 
     bool signflag = false;
     if (is_bn_neg(n))
-    {   /* will be a lot easier to deal with just positives */
+    {   // will be a lot easier to deal with just positives
         signflag = true;
         neg_a_bn(n);
     }
 
     f = bntofloat(n);
-    if (f == 0) /* division by zero */
+    if (f == 0) // division by zero
     {
         max_bn(r);
         return r;
     }
-    f = 1/f; /* approximate inverse */
+    f = 1/f; // approximate inverse
     maxval = (1L << ((intlength<<3)-1)) - 1;
-    if (f > maxval) /* check for overflow */
+    if (f > maxval) // check for overflow
     {
         max_bn(r);
         return r;
@@ -550,52 +550,52 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
         return r;
     }
 
-    /* With Newton's Method, there is no need to calculate all the digits */
-    /* every time.  The precision approximately doubles each iteration.   */
-    /* Save original values. */
+    // With Newton's Method, there is no need to calculate all the digits
+    // every time.  The precision approximately doubles each iteration.
+    // Save original values.
     orig_bnlength      = bnlength;
     orig_padding       = padding;
     orig_rlength       = rlength;
     orig_shiftfactor   = shiftfactor;
     orig_r             = r;
     orig_n             = n;
-    /* orig_bntmp1        = bntmp1; */
+    // orig_bntmp1        = bntmp1;
 
-    /* calculate new starting values */
-    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; /* round up */
+    // calculate new starting values
+    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
         bnlength = orig_bnlength;
     calc_lengths();
 
-    /* adjust pointers */
+    // adjust pointers
     r = orig_r + orig_bnlength - bnlength;
-    /* bntmp1 = orig_bntmp1 + orig_bnlength - bnlength; */
+    // bntmp1 = orig_bntmp1 + orig_bnlength - bnlength;
 
-    floattobn(r, f); /* start with approximate inverse */
-    clear_bn(bntmp2); /* will be used as 1.0 and 2.0 */
+    floattobn(r, f); // start with approximate inverse
+    clear_bn(bntmp2); // will be used as 1.0 and 2.0
 
-    for (int i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
+    for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
     {
-        /* adjust lengths */
-        bnlength <<= 1; /* double precision */
+        // adjust lengths
+        bnlength <<= 1; // double precision
         if (bnlength > orig_bnlength)
             bnlength = orig_bnlength;
         calc_lengths();
         r = orig_r + orig_bnlength - bnlength;
         n = orig_n + orig_bnlength - bnlength;
-        /* bntmp1 = orig_bntmp1 + orig_bnlength - bnlength; */
+        // bntmp1 = orig_bntmp1 + orig_bnlength - bnlength;
 
-        unsafe_mult_bn(bntmp1, r, n); /* bntmp1=rn */
-        inttobn(bntmp2, 1);  /* bntmp2 = 1.0 */
-        if (bnlength == orig_bnlength && cmp_bn(bntmp2, bntmp1+shiftfactor) == 0)  /* if not different */
-            break;  /* they must be the same */
-        inttobn(bntmp2, 2); /* bntmp2 = 2.0 */
-        sub_bn(bntmp3, bntmp2, bntmp1+shiftfactor); /* bntmp3=2-rn */
-        unsafe_mult_bn(bntmp1, r, bntmp3); /* bntmp1=r(2-rn) */
-        copy_bn(r, bntmp1+shiftfactor); /* r = bntmp1 */
+        unsafe_mult_bn(bntmp1, r, n); // bntmp1=rn
+        inttobn(bntmp2, 1);  // bntmp2 = 1.0
+        if (bnlength == orig_bnlength && cmp_bn(bntmp2, bntmp1+shiftfactor) == 0)  // if not different
+            break;  // they must be the same
+        inttobn(bntmp2, 2); // bntmp2 = 2.0
+        sub_bn(bntmp3, bntmp2, bntmp1+shiftfactor); // bntmp3=2-rn
+        unsafe_mult_bn(bntmp1, r, bntmp3); // bntmp1=r(2-rn)
+        copy_bn(r, bntmp1+shiftfactor); // r = bntmp1
     }
 
-    /* restore original values */
+    // restore original values
     bnlength      = orig_bnlength;
     padding       = orig_padding;
     rlength       = orig_rlength;
@@ -610,34 +610,34 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 }
 
 /********************************************************************/
-/* r = n1/n2                                                        */
-/*      r - result of length bnlength                               */
-/* uses bntmp1 - bntmp3 - global temp bignumbers                    */
-/*  SIDE-EFFECTS:                                                   */
-/*      n1, n2 can end up as GARBAGE                                */
-/*      Make copies first if necessary.                             */
+// r = n1/n2
+//      r - result of length bnlength
+// uses bntmp1 - bntmp3 - global temp bignumbers
+//  SIDE-EFFECTS:
+//      n1, n2 can end up as GARBAGE
+//      Make copies first if necessary.
 bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 {
     int scale1, scale2, i;
     long maxval;
     LDBL a, b, f;
 
-    /* first, check for valid data */
+    // first, check for valid data
     a = bntofloat(n1);
-    if (a == 0) /* division into zero */
+    if (a == 0) // division into zero
     {
-        clear_bn(r); /* return 0 */
+        clear_bn(r); // return 0
         return r;
     }
     b = bntofloat(n2);
-    if (b == 0) /* division by zero */
+    if (b == 0) // division by zero
     {
         max_bn(r);
         return r;
     }
-    f = a/b; /* approximate quotient */
+    f = a/b; // approximate quotient
     maxval = (1L << ((intlength<<3)-1)) - 1;
-    if (f > maxval) /* check for overflow */
+    if (f > maxval) // check for overflow
     {
         max_bn(r);
         return r;
@@ -648,7 +648,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
         neg_a_bn(r);
         return r;
     }
-    /* appears to be ok, do division */
+    // appears to be ok, do division
 
     bool sign = false;
     if (is_bn_neg(n1))
@@ -662,8 +662,8 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
         sign = !sign;
     }
 
-    /* scale n1 and n2 so: |n| >= 1/256 */
-    /* scale = (int)(log(1/fabs(a))/LOG_256) = LOG_256(1/|a|) */
+    // scale n1 and n2 so: |n| >= 1/256
+    // scale = (int)(log(1/fabs(a))/LOG_256) = LOG_256(1/|a|)
     i = bnlength-1;
     while (i >= 0 && n1[i] == 0)
         i--;
@@ -677,33 +677,33 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
     if (scale2 < 0)
         scale2 = 0;
 
-    /* shift n1, n2 */
-    /* important!, use memmove(), not memcpy() */
-    memmove(n1+scale1, n1, bnlength-scale1); /* shift bytes over */
-    memset(n1, 0, scale1);  /* zero out the rest */
-    memmove(n2+scale2, n2, bnlength-scale2); /* shift bytes over */
-    memset(n2, 0, scale2);  /* zero out the rest */
+    // shift n1, n2
+    // important!, use memmove(), not memcpy()
+    memmove(n1+scale1, n1, bnlength-scale1); // shift bytes over
+    memset(n1, 0, scale1);  // zero out the rest
+    memmove(n2+scale2, n2, bnlength-scale2); // shift bytes over
+    memset(n2, 0, scale2);  // zero out the rest
 
     unsafe_inv_bn(r, n2);
     unsafe_mult_bn(bntmp1, n1, r);
-    copy_bn(r, bntmp1+shiftfactor); /* r = bntmp1 */
+    copy_bn(r, bntmp1+shiftfactor); // r = bntmp1
 
     if (scale1 != scale2)
     {
-        /* Rescale r back to what it should be.  Overflow has already been checked */
-        if (scale1 > scale2) /* answer is too big, adjust it */
+        // Rescale r back to what it should be.  Overflow has already been checked
+        if (scale1 > scale2) // answer is too big, adjust it
         {
             int scale = scale1-scale2;
-            memmove(r, r+scale, bnlength-scale); /* shift bytes over */
-            memset(r+bnlength-scale, 0, scale);  /* zero out the rest */
+            memmove(r, r+scale, bnlength-scale); // shift bytes over
+            memset(r+bnlength-scale, 0, scale);  // zero out the rest
         }
-        else if (scale1 < scale2) /* answer is too small, adjust it */
+        else if (scale1 < scale2) // answer is too small, adjust it
         {
             int scale = scale2-scale1;
-            memmove(r+scale, r, bnlength-scale); /* shift bytes over */
-            memset(r, 0, scale);                 /* zero out the rest */
+            memmove(r+scale, r, bnlength-scale); // shift bytes over
+            memset(r, 0, scale);                 // zero out the rest
         }
-        /* else scale1 == scale2 */
+        // else scale1 == scale2
 
     }
 
@@ -714,10 +714,10 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 }
 
 /********************************************************************/
-/* sqrt(r)                                                          */
-/* uses bntmp1 - bntmp6 - global temp bignumbers                    */
-/*  SIDE-EFFECTS:                                                   */
-/*      n ends up as |n|                                            */
+// sqrt(r)
+// uses bntmp1 - bntmp6 - global temp bignumbers
+//  SIDE-EFFECTS:
+//      n ends up as |n|
 bn_t sqrt_bn(bn_t r, bn_t n)
 {
     int comp, almost_match=0;
@@ -728,26 +728,26 @@ bn_t sqrt_bn(bn_t r, bn_t n)
          orig_rlength,
          orig_shiftfactor;
 
-    /* use Newton's recursive method for zeroing in on sqrt(n): r=.5(r+n/r) */
+    // use Newton's recursive method for zeroing in on sqrt(n): r=.5(r+n/r)
 
     if (is_bn_neg(n))
-    {   /* sqrt of a neg, return 0 */
+    {   // sqrt of a neg, return 0
         clear_bn(r);
         return r;
     }
 
     f = bntofloat(n);
-    if (f == 0) /* division by zero will occur */
+    if (f == 0) // division by zero will occur
     {
-        clear_bn(r); /* sqrt(0) = 0 */
+        clear_bn(r); // sqrt(0) = 0
         return r;
     }
-    f = sqrtl(f); /* approximate square root */
-    /* no need to check overflow */
+    f = sqrtl(f); // approximate square root
+    // no need to check overflow
 
-    /* With Newton's Method, there is no need to calculate all the digits */
-    /* every time.  The precision approximately doubles each iteration.   */
-    /* Save original values. */
+    // With Newton's Method, there is no need to calculate all the digits
+    // every time.  The precision approximately doubles each iteration.
+    // Save original values.
     orig_bnlength      = bnlength;
     orig_padding       = padding;
     orig_rlength       = rlength;
@@ -755,22 +755,22 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     orig_r             = r;
     orig_n             = n;
 
-    /* calculate new starting values */
-    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; /* round up */
+    // calculate new starting values
+    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
         bnlength = orig_bnlength;
     calc_lengths();
 
-    /* adjust pointers */
+    // adjust pointers
     r = orig_r + orig_bnlength - bnlength;
 
-    floattobn(r, f); /* start with approximate sqrt */
+    floattobn(r, f); // start with approximate sqrt
     copy_bn(bntmp4, r);
 
-    for (int i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
+    for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
     {
-        /* adjust lengths */
-        bnlength <<= 1; /* double precision */
+        // adjust lengths
+        bnlength <<= 1; // double precision
         if (bnlength > orig_bnlength)
             bnlength = orig_bnlength;
         calc_lengths();
@@ -782,17 +782,17 @@ bn_t sqrt_bn(bn_t r, bn_t n)
         unsafe_div_bn(bntmp4, bntmp5, bntmp6);
         add_a_bn(r, bntmp4);
         half_a_bn(r);
-        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp4))) < 8)  /* if match or almost match */
+        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp4))) < 8)  // if match or almost match
         {
-            if (comp < 4  /* perfect or near perfect match */
-                    || almost_match == 1) /* close enough for 2nd time */
+            if (comp < 4  // perfect or near perfect match
+                    || almost_match == 1) // close enough for 2nd time
                 break;
-            else /* this is the first time they almost matched */
+            else // this is the first time they almost matched
                 almost_match++;
         }
     }
 
-    /* restore original values */
+    // restore original values
     bnlength      = orig_bnlength;
     padding       = orig_padding;
     rlength       = orig_rlength;
@@ -803,8 +803,8 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 }
 
 /********************************************************************/
-/* exp(r)                                                           */
-/* uses bntmp1, bntmp2, bntmp3 - global temp bignumbers             */
+// exp(r)
+// uses bntmp1, bntmp2, bntmp3 - global temp bignumbers
 bn_t exp_bn(bn_t r, bn_t n)
 {
     U16 fact=1;
@@ -815,17 +815,17 @@ bn_t exp_bn(bn_t r, bn_t n)
         return r;
     }
 
-    /* use Taylor Series (very slow convergence) */
-    inttobn(r, 1); /* start with r=1.0 */
+    // use Taylor Series (very slow convergence)
+    inttobn(r, 1); // start with r=1.0
     copy_bn(bntmp2, r);
     while (true)
     {
-        /* copy n, if n is negative, mult_bn() alters n */
+        // copy n, if n is negative, mult_bn() alters n
         unsafe_mult_bn(bntmp3, bntmp2, copy_bn(bntmp1, n));
         copy_bn(bntmp2, bntmp3+shiftfactor);
         div_a_bn_int(bntmp2, fact);
         if (!is_bn_not_zero(bntmp2))
-            break; /* too small to register */
+            break; // too small to register
         add_a_bn(r, bntmp2);
         fact++;
     }
@@ -833,10 +833,10 @@ bn_t exp_bn(bn_t r, bn_t n)
 }
 
 /********************************************************************/
-/* ln(r)                                                            */
-/* uses bntmp1 - bntmp6 - global temp bignumbers                    */
-/*  SIDE-EFFECTS:                                                   */
-/*      n ends up as |n|                                            */
+// ln(r)
+// uses bntmp1 - bntmp6 - global temp bignumbers
+//  SIDE-EFFECTS:
+//      n ends up as |n|
 bn_t unsafe_ln_bn(bn_t r, bn_t n)
 {
     int comp, almost_match=0;
@@ -848,19 +848,19 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
          orig_rlength,
          orig_shiftfactor;
 
-    /* use Newton's recursive method for zeroing in on ln(n): r=r+n*exp(-r)-1 */
+    // use Newton's recursive method for zeroing in on ln(n): r=r+n*exp(-r)-1
 
     if (is_bn_neg(n) || is_bn_zero(n))
-    {   /* error, return largest neg value */
+    {   // error, return largest neg value
         max_bn(r);
         neg_a_bn(r);
         return r;
     }
 
     f = bntofloat(n);
-    f = logl(f); /* approximate ln(x) */
+    f = logl(f); // approximate ln(x)
     maxval = (1L << ((intlength<<3)-1)) - 1;
-    if (f > maxval) /* check for overflow */
+    if (f > maxval) // check for overflow
     {
         max_bn(r);
         return r;
@@ -871,11 +871,11 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
         neg_a_bn(r);
         return r;
     }
-    /* appears to be ok, do ln */
+    // appears to be ok, do ln
 
-    /* With Newton's Method, there is no need to calculate all the digits */
-    /* every time.  The precision approximately doubles each iteration.   */
-    /* Save original values. */
+    // With Newton's Method, there is no need to calculate all the digits
+    // every time.  The precision approximately doubles each iteration.
+    // Save original values.
     orig_bnlength      = bnlength;
     orig_padding       = padding;
     orig_rlength       = rlength;
@@ -885,27 +885,27 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     orig_bntmp5        = bntmp5;
     orig_bntmp4        = bntmp4;
 
-    inttobn(bntmp4, 1); /* set before setting new values */
+    inttobn(bntmp4, 1); // set before setting new values
 
-    /* calculate new starting values */
-    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; /* round up */
+    // calculate new starting values
+    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
         bnlength = orig_bnlength;
     calc_lengths();
 
-    /* adjust pointers */
+    // adjust pointers
     r = orig_r + orig_bnlength - bnlength;
     bntmp5 = orig_bntmp5 + orig_bnlength - bnlength;
     bntmp4 = orig_bntmp4 + orig_bnlength - bnlength;
 
-    floattobn(r, f); /* start with approximate ln */
-    neg_a_bn(r); /* -r */
-    copy_bn(bntmp5, r); /* -r */
+    floattobn(r, f); // start with approximate ln
+    neg_a_bn(r); // -r
+    copy_bn(bntmp5, r); // -r
 
-    for (int i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
+    for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
     {
-        /* adjust lengths */
-        bnlength <<= 1; /* double precision */
+        // adjust lengths
+        bnlength <<= 1; // double precision
         if (bnlength > orig_bnlength)
             bnlength = orig_bnlength;
         calc_lengths();
@@ -913,23 +913,23 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
         n = orig_n + orig_bnlength - bnlength;
         bntmp5 = orig_bntmp5 + orig_bnlength - bnlength;
         bntmp4 = orig_bntmp4 + orig_bnlength - bnlength;
-        exp_bn(bntmp6, r);     /* exp(-r) */
-        unsafe_mult_bn(bntmp2, bntmp6, n);  /* n*exp(-r) */
-        sub_a_bn(bntmp2+shiftfactor, bntmp4);   /* n*exp(-r) - 1 */
-        sub_a_bn(r, bntmp2+shiftfactor);        /* -r - (n*exp(-r) - 1) */
+        exp_bn(bntmp6, r);     // exp(-r)
+        unsafe_mult_bn(bntmp2, bntmp6, n);  // n*exp(-r)
+        sub_a_bn(bntmp2+shiftfactor, bntmp4);   // n*exp(-r) - 1
+        sub_a_bn(r, bntmp2+shiftfactor);        // -r - (n*exp(-r) - 1)
 
-        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp5))) < 8)  /* if match or almost match */
+        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp5))) < 8)  // if match or almost match
         {
-            if (comp < 4  /* perfect or near perfect match */
-                    || almost_match == 1) /* close enough for 2nd time */
+            if (comp < 4  // perfect or near perfect match
+                    || almost_match == 1) // close enough for 2nd time
                 break;
-            else /* this is the first time they almost matched */
+            else // this is the first time they almost matched
                 almost_match++;
         }
-        copy_bn(bntmp5, r); /* -r */
+        copy_bn(bntmp5, r); // -r
     }
 
-    /* restore original values */
+    // restore original values
     bnlength      = orig_bnlength;
     padding       = orig_padding;
     rlength       = orig_rlength;
@@ -938,27 +938,27 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     bntmp5        = orig_bntmp5;
     bntmp4        = orig_bntmp4;
 
-    neg_a_bn(r); /* -(-r) */
+    neg_a_bn(r); // -(-r)
     return r;
 }
 
 /********************************************************************/
-/* sincos_bn(r)                                                     */
-/* uses bntmp1 - bntmp2 - global temp bignumbers                    */
-/*  SIDE-EFFECTS:                                                   */
-/*      n ends up as |n| mod (pi/4)                                 */
+// sincos_bn(r)
+// uses bntmp1 - bntmp2 - global temp bignumbers
+//  SIDE-EFFECTS:
+//      n ends up as |n| mod (pi/4)
 bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 {
     U16 fact=2;
     bool k = false;
 
 #ifndef CALCULATING_BIG_PI
-    /* assure range 0 <= x < pi/4 */
+    // assure range 0 <= x < pi/4
 
     if (is_bn_zero(n))
     {
-        clear_bn(s);    /* sin(0) = 0 */
-        inttobn(c, 1);  /* cos(0) = 1 */
+        clear_bn(s);    // sin(0) = 0
+        inttobn(c, 1);  // cos(0) = 1
         return s;
     }
 
@@ -967,107 +967,107 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
     bool switch_sincos = false;
     if (is_bn_neg(n))
     {
-        signsin = !signsin; /* sin(-x) = -sin(x), odd; cos(-x) = cos(x), even */
+        signsin = !signsin; // sin(-x) = -sin(x), odd; cos(-x) = cos(x), even
         neg_a_bn(n);
     }
-    /* n >= 0 */
+    // n >= 0
 
-    double_bn(bntmp1, bn_pi); /* 2*pi */
-    /* this could be done with remainders, but it would probably be slower */
-    while (cmp_bn(n, bntmp1) >= 0) /* while n >= 2*pi */
+    double_bn(bntmp1, bn_pi); // 2*pi
+    // this could be done with remainders, but it would probably be slower
+    while (cmp_bn(n, bntmp1) >= 0) // while n >= 2*pi
         sub_a_bn(n, bntmp1);
-    /* 0 <= n < 2*pi */
+    // 0 <= n < 2*pi
 
-    copy_bn(bntmp1, bn_pi); /* pi */
-    if (cmp_bn(n, bntmp1) >= 0) /* if n >= pi */
+    copy_bn(bntmp1, bn_pi); // pi
+    if (cmp_bn(n, bntmp1) >= 0) // if n >= pi
     {
         sub_a_bn(n, bntmp1);
         signsin = !signsin;
         signcos = !signcos;
     }
-    /* 0 <= n < pi */
+    // 0 <= n < pi
 
-    half_bn(bntmp1, bn_pi); /* pi/2 */
-    if (cmp_bn(n, bntmp1) > 0) /* if n > pi/2 */
+    half_bn(bntmp1, bn_pi); // pi/2
+    if (cmp_bn(n, bntmp1) > 0) // if n > pi/2
     {
-        sub_bn(n, bn_pi, n);   /* pi - n */
+        sub_bn(n, bn_pi, n);   // pi - n
         signcos = !signcos;
     }
-    /* 0 <= n < pi/2 */
+    // 0 <= n < pi/2
 
-    half_bn(bntmp1, bn_pi); /* pi/2 */
-    half_a_bn(bntmp1);      /* pi/4 */
-    if (cmp_bn(n, bntmp1) > 0) /* if n > pi/4 */
+    half_bn(bntmp1, bn_pi); // pi/2
+    half_a_bn(bntmp1);      // pi/4
+    if (cmp_bn(n, bntmp1) > 0) // if n > pi/4
     {
-        half_bn(bntmp1, bn_pi); /* pi/2 */
-        sub_bn(n, bntmp1, n);  /* pi/2 - n */
+        half_bn(bntmp1, bn_pi); // pi/2
+        sub_bn(n, bntmp1, n);  // pi/2 - n
         switch_sincos = !switch_sincos;
     }
-    /* 0 <= n < pi/4 */
+    // 0 <= n < pi/4
 
-    /* this looks redundant, but n could now be zero when it wasn't before */
+    // this looks redundant, but n could now be zero when it wasn't before
     if (is_bn_zero(n))
     {
-        clear_bn(s);    /* sin(0) = 0 */
-        inttobn(c, 1);  /* cos(0) = 1 */
+        clear_bn(s);    // sin(0) = 0
+        inttobn(c, 1);  // cos(0) = 1
         return s;
     }
 
-    /* at this point, the double angle trig identities could be used as many  */
-    /* times as desired to reduce the range to pi/8, pi/16, etc...  Each time */
-    /* the range is cut in half, the number of iterations required is reduced */
-    /* by "quite a bit."  It's just a matter of testing to see what gives the */
-    /* optimal results.                                                       */
-    /* halves = bnlength / 10; */ /* this is experimental */
+    // at this point, the double angle trig identities could be used as many
+    // times as desired to reduce the range to pi/8, pi/16, etc...  Each time
+    // the range is cut in half, the number of iterations required is reduced
+    // by "quite a bit."  It's just a matter of testing to see what gives the
+    // optimal results.
+    // halves = bnlength / 10; */ /* this is experimental
     int halves = 1;
     for (int i = 0; i < halves; i++)
         half_a_bn(n);
 #endif
 
-    /* use Taylor Series (very slow convergence) */
-    copy_bn(s, n); /* start with s=n */
-    inttobn(c, 1); /* start with c=1 */
-    copy_bn(bntmp1, n); /* the current x^n/n! */
+    // use Taylor Series (very slow convergence)
+    copy_bn(s, n); // start with s=n
+    inttobn(c, 1); // start with c=1
+    copy_bn(bntmp1, n); // the current x^n/n!
 
     while (true)
     {
-        /* even terms for cosine */
+        // even terms for cosine
         unsafe_mult_bn(bntmp2, bntmp1, n);
         copy_bn(bntmp1, bntmp2+shiftfactor);
         div_a_bn_int(bntmp1, fact++);
         if (!is_bn_not_zero(bntmp1))
-            break; /* too small to register */
-        if (k) /* alternate between adding and subtracting */
+            break; // too small to register
+        if (k) // alternate between adding and subtracting
             add_a_bn(c, bntmp1);
         else
             sub_a_bn(c, bntmp1);
 
-        /* odd terms for sine */
+        // odd terms for sine
         unsafe_mult_bn(bntmp2, bntmp1, n);
         copy_bn(bntmp1, bntmp2+shiftfactor);
         div_a_bn_int(bntmp1, fact++);
         if (!is_bn_not_zero(bntmp1))
-            break; /* too small to register */
-        if (k) /* alternate between adding and subtracting */
+            break; // too small to register
+        if (k) // alternate between adding and subtracting
             add_a_bn(s, bntmp1);
         else
             sub_a_bn(s, bntmp1);
-        k = !k; /* toggle */
+        k = !k; // toggle
 #ifdef CALCULATING_BIG_PI
-        printf("."); /* lets you know it's doing something */
+        printf("."); // lets you know it's doing something
 #endif
     }
 
 #ifndef CALCULATING_BIG_PI
-    /* now need to undo what was done by cutting angles in half */
+    // now need to undo what was done by cutting angles in half
     inttobn(bntmp1, 1);
     for (int i = 0; i < halves; i++)
     {
-        unsafe_mult_bn(bntmp2, s, c); /* no need for safe mult */
-        double_bn(s, bntmp2+shiftfactor); /* sin(2x) = 2*sin(x)*cos(x) */
+        unsafe_mult_bn(bntmp2, s, c); // no need for safe mult
+        double_bn(s, bntmp2+shiftfactor); // sin(2x) = 2*sin(x)*cos(x)
         unsafe_square_bn(bntmp2,c);
         double_a_bn(bntmp2+shiftfactor);
-        sub_bn(c, bntmp2+shiftfactor, bntmp1); /* cos(2x) = 2*cos(x)*cos(x) - 1 */
+        sub_bn(c, bntmp2+shiftfactor, bntmp1); // cos(2x) = 2*cos(x)*cos(x) - 1
     }
 
     if (switch_sincos)
@@ -1082,14 +1082,14 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
         neg_a_bn(c);
 #endif
 
-    return s; /* return sine I guess */
+    return s; // return sine I guess
 }
 
 /********************************************************************/
-/* atan(r)                                                          */
-/* uses bntmp1 - bntmp5 - global temp bignumbers                    */
-/*  SIDE-EFFECTS:                                                   */
-/*      n ends up as |n| or 1/|n|                                   */
+// atan(r)
+// uses bntmp1 - bntmp5 - global temp bignumbers
+//  SIDE-EFFECTS:
+//      n ends up as |n| or 1/|n|
 bn_t unsafe_atan_bn(bn_t r, bn_t n)
 {
     int comp, almost_match=0;
@@ -1100,7 +1100,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
          orig_rlength,
          orig_shiftfactor;
 
-    /* use Newton's recursive method for zeroing in on atan(n): r=r-cos(r)(sin(r)-n*cos(r)) */
+    // use Newton's recursive method for zeroing in on atan(n): r=r-cos(r)(sin(r)-n*cos(r))
     bool signflag = false;
     if (is_bn_neg(n))
     {
@@ -1108,9 +1108,9 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
         neg_a_bn(n);
     }
 
-    /* If n is very large, atanl() won't give enough decimal places to be a */
-    /* good enough initial guess for Newton's Method.  If it is larger than */
-    /* say, 1, atan(n) = pi/2 - acot(n) = pi/2 - atan(1/n).                 */
+    // If n is very large, atanl() won't give enough decimal places to be a
+    // good enough initial guess for Newton's Method.  If it is larger than
+    // say, 1, atan(n) = pi/2 - acot(n) = pi/2 - atan(1/n).
 
     f = bntofloat(n);
     bool large_arg = f > 1.0;
@@ -1121,11 +1121,11 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
         f = bntofloat(n);
     }
 
-    clear_bn(bntmp3); /* not really necessary, but makes things more consistent */
+    clear_bn(bntmp3); // not really necessary, but makes things more consistent
 
-    /* With Newton's Method, there is no need to calculate all the digits */
-    /* every time.  The precision approximately doubles each iteration.   */
-    /* Save original values. */
+    // With Newton's Method, there is no need to calculate all the digits
+    // every time.  The precision approximately doubles each iteration.
+    // Save original values.
     orig_bnlength      = bnlength;
     orig_padding       = padding;
     orig_rlength       = rlength;
@@ -1135,27 +1135,27 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     orig_n             = n;
     orig_bntmp3        = bntmp3;
 
-    /* calculate new starting values */
-    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; /* round up */
+    // calculate new starting values
+    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
         bnlength = orig_bnlength;
     calc_lengths();
 
-    /* adjust pointers */
+    // adjust pointers
     r = orig_r + orig_bnlength - bnlength;
     bn_pi = orig_bn_pi + orig_bnlength - bnlength;
     bntmp3 = orig_bntmp3 + orig_bnlength - bnlength;
 
-    f = atanl(f); /* approximate arctangent */
-    /* no need to check overflow */
+    f = atanl(f); // approximate arctangent
+    // no need to check overflow
 
-    floattobn(r, f); /* start with approximate atan */
+    floattobn(r, f); // start with approximate atan
     copy_bn(bntmp3, r);
 
-    for (int i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
+    for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
     {
-        /* adjust lengths */
-        bnlength <<= 1; /* double precision */
+        // adjust lengths
+        bnlength <<= 1; // double precision
         if (bnlength > orig_bnlength)
             bnlength = orig_bnlength;
         calc_lengths();
@@ -1167,27 +1167,27 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 #ifdef CALCULATING_BIG_PI
         printf("\natan() loop #%i, bnlength=%i\nsincos() loops\n", i, bnlength);
 #endif
-        unsafe_sincos_bn(bntmp4, bntmp5, bntmp3);   /* sin(r), cos(r) */
-        copy_bn(bntmp3, r); /* restore bntmp3 from sincos_bn() */
+        unsafe_sincos_bn(bntmp4, bntmp5, bntmp3);   // sin(r), cos(r)
+        copy_bn(bntmp3, r); // restore bntmp3 from sincos_bn()
         copy_bn(bntmp1, bntmp5);
-        unsafe_mult_bn(bntmp2, n, bntmp1);     /* n*cos(r) */
-        sub_a_bn(bntmp4, bntmp2+shiftfactor); /* sin(r) - n*cos(r) */
-        unsafe_mult_bn(bntmp1, bntmp5, bntmp4); /* cos(r) * (sin(r) - n*cos(r)) */
-        sub_a_bn(r, bntmp1+shiftfactor); /* r - cos(r) * (sin(r) - n*cos(r)) */
+        unsafe_mult_bn(bntmp2, n, bntmp1);     // n*cos(r)
+        sub_a_bn(bntmp4, bntmp2+shiftfactor); // sin(r) - n*cos(r)
+        unsafe_mult_bn(bntmp1, bntmp5, bntmp4); // cos(r) * (sin(r) - n*cos(r))
+        sub_a_bn(r, bntmp1+shiftfactor); // r - cos(r) * (sin(r) - n*cos(r))
 
 #ifdef CALCULATING_BIG_PI
         putchar('\n');
         bn_hexdump(r);
 #endif
-        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp3))) < 8)  /* if match or almost match */
+        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp3))) < 8)  // if match or almost match
         {
 #ifdef CALCULATING_BIG_PI
             printf("atan() loop comp=%i\n", comp);
 #endif
-            if (comp < 4  /* perfect or near perfect match */
-                    || almost_match == 1) /* close enough for 2nd time */
+            if (comp < 4  // perfect or near perfect match
+                    || almost_match == 1) // close enough for 2nd time
                 break;
-            else /* this is the first time they almost matched */
+            else // this is the first time they almost matched
                 almost_match++;
         }
 
@@ -1196,10 +1196,10 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
             printf("atan() loop comp=%i\n", comp);
 #endif
 
-        copy_bn(bntmp3, r); /* make a copy for later comparison */
+        copy_bn(bntmp3, r); // make a copy for later comparison
     }
 
-    /* restore original values */
+    // restore original values
     bnlength      = orig_bnlength;
     padding       = orig_padding;
     rlength       = orig_rlength;
@@ -1210,8 +1210,8 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 
     if (large_arg)
     {
-        half_bn(bntmp3, bn_pi);  /* pi/2 */
-        sub_a_bn(bntmp3, r);     /* pi/2 - atan(1/n) */
+        half_bn(bntmp3, bn_pi);  // pi/2
+        sub_a_bn(bntmp3, r);     // pi/2 - atan(1/n)
         copy_bn(r, bntmp3);
     }
 
@@ -1221,8 +1221,8 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 }
 
 /********************************************************************/
-/* atan2(r,ny,nx)                                                     */
-/* uses bntmp1 - bntmp6 - global temp bigfloats                     */
+// atan2(r,ny,nx)
+// uses bntmp1 - bntmp6 - global temp bigfloats
 bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
 {
     int signx, signy;
@@ -1233,17 +1233,17 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
     if (signy == 0)
     {
         if (signx < 0)
-            copy_bn(r, bn_pi); /* negative x axis, 180 deg */
-        else    /* signx >= 0    positive x axis, 0 */
+            copy_bn(r, bn_pi); // negative x axis, 180 deg
+        else    // signx >= 0    positive x axis, 0
             clear_bn(r);
         return (r);
     }
     if (signx == 0)
     {
-        copy_bn(r, bn_pi); /* y axis */
-        half_a_bn(r);      /* +90 deg */
+        copy_bn(r, bn_pi); // y axis
+        half_a_bn(r);      // +90 deg
         if (signy < 0)
-            neg_a_bn(r);    /* -90 deg */
+            neg_a_bn(r);    // -90 deg
         return (r);
     }
 
@@ -1262,8 +1262,8 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
 
 
 /**********************************************************************/
-/* The rest of the functions are "safe" versions of the routines that */
-/* have side effects which alter the parameters                       */
+// The rest of the functions are "safe" versions of the routines that
+// have side effects which alter the parameters
 /**********************************************************************/
 
 /**********************************************************************/
@@ -1349,7 +1349,7 @@ bn_t div_bn(bn_t r, bn_t n1, bn_t n2)
 /**********************************************************************/
 bn_t ln_bn(bn_t r, bn_t n)
 {
-    copy_bn(bntmpcpy1, n); /* allows r and n to overlap memory */
+    copy_bn(bntmpcpy1, n); // allows r and n to overlap memory
     unsafe_ln_bn(r, bntmpcpy1);
     return r;
 }
