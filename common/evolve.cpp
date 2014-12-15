@@ -37,7 +37,7 @@ U16 imgboxhandle = 0;
 int prmboxcount,imgboxcount;
 U16 oldhistory_handle = 0;
 
-struct phistory_info      // for saving evolution data of center image
+struct PARAMHIST      // for saving evolution data of center image
 {
     double param0;
     double param1;
@@ -61,8 +61,6 @@ struct phistory_info      // for saving evolution data of center image
     BYTE trigndx3;
     int bailoutest;
 };
-
-typedef struct phistory_info    PARAMHIST;
 
 void param_history(int mode);
 void varydbl(GENEBASE gene[],int randval,int i);
@@ -326,7 +324,7 @@ int get_the_rest()
     const char *evolvmodes[]= {"no","x","y","x+y","x-y","random","spread"};
     int i,k, numtrig;
     const char *choices[20];
-    struct fullscreenvalues uvalues[20];
+    fullscreenvalues uvalues[20];
     GENEBASE gene[NUMGENES];
 
     // TODO: allocate real memory, not reuse shared segment
@@ -421,7 +419,7 @@ int get_variations()
     const char *evolvmodes[]= {"no","x","y","x+y","x-y","random","spread"};
     int k, numparams;
     const char *choices[20];
-    struct fullscreenvalues uvalues[20];
+    fullscreenvalues uvalues[20];
     GENEBASE gene[NUMGENES];
     int firstparm = 0;
     int lastparm  = MAXPARAMS;
@@ -560,7 +558,7 @@ int get_evolve_Parms()
 {
     const char *choices[20];
     int oldhelpmode;
-    struct fullscreenvalues uvalues[20];
+    fullscreenvalues uvalues[20];
     int i,j, k, tmp;
     int old_evolving,old_gridsz;
     int old_variations = 0;
@@ -874,7 +872,7 @@ void drawparmbox(int mode)
 {
     // draws parameter zoom box in evolver mode
     // clears boxes off screen if mode=1, otherwise, redraws boxes
-    struct coords tl,tr,bl,br;
+    coords tl,tr,bl,br;
     int grout;
     if (!(evolving & PARMBOX))
         return; // don't draw if not asked to!
