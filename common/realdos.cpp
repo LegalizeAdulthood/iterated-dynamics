@@ -1936,7 +1936,7 @@ bad_fractint_cfg:
 
 void bad_fractint_cfg_msg()
 {
-    stopmsg(0,
+    stopmsg(STOPMSG_NONE,
             "File FRACTINT.CFG is missing or invalid.\n"
             "See Hardware Support and Video Modes in the full documentation for help.\n"
             "I will continue with only the built-in video modes available.");

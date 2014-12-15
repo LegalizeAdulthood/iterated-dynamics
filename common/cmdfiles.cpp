@@ -3179,7 +3179,7 @@ static void argerror(const char *badarg)      // oops. couldn't decode this
                "(see the Startup Help screens or documentation for a complete\n"
                " argument list with descriptions)");
     }
-    stopmsg(0, msg);
+    stopmsg(STOPMSG_NONE, msg);
     if (initbatch)
     {
         initbatch = 4;
@@ -3304,7 +3304,7 @@ int init_msg(const char *cmdstr, char *badfilename, int mode)
         }
     }
     else if (badfilename)
-        stopmsg(0,msg);
+        stopmsg(STOPMSG_NONE, msg);
     return 0;
 }
 

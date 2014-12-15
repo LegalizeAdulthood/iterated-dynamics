@@ -442,7 +442,7 @@ void *mem_alloc(unsigned size)
 
     if (mem_avail < size)   // don't let this happen!
     {
-        stopmsg(0, "editpal.c: Out of memory!\n");
+        stopmsg(STOPMSG_NONE, "editpal.c: Out of memory!\n");
         exit(1);
     }
 

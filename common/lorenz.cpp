@@ -2304,7 +2304,7 @@ static int ifs2d()
     }
     if (!resized)
     {
-        stopmsg(0,insufficient_ifs_mem);
+        stopmsg(STOPMSG_NONE, insufficient_ifs_mem);
         return (-1);
     }
 
@@ -2390,7 +2390,7 @@ static int ifs3dlong()
     }
     catch (std::bad_alloc const &)
     {
-        stopmsg(0,insufficient_ifs_mem);
+        stopmsg(STOPMSG_NONE, insufficient_ifs_mem);
         return (-1);
     }
 

@@ -222,7 +222,7 @@ static bool readLSystemFile(char *str)
     if (err)
     {
         msgbuf[strlen(msgbuf)-1]=0; // strip trailing \n
-        stopmsg(0,msgbuf);
+        stopmsg(STOPMSG_NONE, msgbuf);
         return true;
     }
     *rulind=nullptr;
@@ -279,7 +279,7 @@ int Lsystem()
     }
 
     if (stackoflow) {
-        stopmsg(0, "insufficient memory, try a lower order");
+        stopmsg(STOPMSG_NONE, "insufficient memory, try a lower order");
     }
     else if (overflow) {
         lsys_turtlestatef ts;

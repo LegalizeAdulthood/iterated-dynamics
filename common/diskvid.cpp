@@ -207,7 +207,8 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     membuf = (BYTE *)malloc((long)BLOCKLEN);
     if (cache_start == nullptr || membuf == nullptr)
     {
-        stopmsg(0, "*** insufficient free memory for cache buffers ***");
+        stopmsg(STOPMSG_NONE,
+            "*** insufficient free memory for cache buffers ***");
         return -1;
     }
     if (driver_diskp())
@@ -265,7 +266,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     }
     if (dv_handle == 0)
     {
-        stopmsg(0, "*** insufficient free memory/disk space ***");
+        stopmsg(STOPMSG_NONE, "*** insufficient free memory/disk space ***");
         g_good_mode = false;
         rowsize = 0;
         return -1;

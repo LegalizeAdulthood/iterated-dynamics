@@ -421,7 +421,7 @@ static int CvtFptr(void (* ffptr)(), int MinStk, int FreeStk,
             || (FreeStk != 0 && FreeStk != 2 && FreeStk != 4)
             || (MinStk != 0 && MinStk != 2 && MinStk != 4)) {
 awful_error:
-        stopmsg(0,"FATAL INTERNAL PARSER ERROR!");
+        stopmsg(STOPMSG_NONE, "FATAL INTERNAL PARSER ERROR!");
         return 0;  // put out dire message and revert to old parser
     }
 

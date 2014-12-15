@@ -115,7 +115,7 @@ static void DisplayError(int stored_at, long howmuch)
     sprintf(buf,"Allocating %ld Bytes of %s memory failed.\n"
             "Alternate disk space is also insufficient. Goodbye",
             howmuch,memstr[stored_at]);
-    stopmsg(0,buf);
+    stopmsg(STOPMSG_NONE, buf);
 }
 
 static int check_for_mem(int stored_at, long howmuch)
@@ -243,14 +243,15 @@ void ExitCheck()
 {
     if (numTOTALhandles != 0)
     {
-        stopmsg(0, "Error - not all memory released, I'll get it.");
+        stopmsg(STOPMSG_NONE,
+            "Error - not all memory released, I'll get it.");
         for (U16 i = 1; i < MAXHANDLES; i++)
         {
             if (handletable[i].Nowhere.stored_at != NOWHERE) {
                 char buf[MSGLEN];
                 sprintf(buf,"Memory type %s still allocated.  Handle = %i.",
                         memstr[handletable[i].Nowhere.stored_at],i);
-                stopmsg(0,(char *)buf);
+                stopmsg(STOPMSG_NONE, buf);
                 MemoryRelease(i);
             }
         }

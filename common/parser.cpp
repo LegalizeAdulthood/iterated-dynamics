@@ -2315,7 +2315,7 @@ static bool ParseStr(char *Str, int pass)
     jump_index = 0;
     if (!typespecific_workarea)
     {
-        stopmsg(0,ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+        stopmsg(STOPMSG_NONE, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
         return true;
     }
     switch (MathType)
@@ -3711,7 +3711,7 @@ int frm_get_param_stuff(char * Name)
     }
     if (find_file_item(FormFileName,Name,&entry_file, 1))
     {
-        stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
+        stopmsg(STOPMSG_NONE, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return 0;
     }
     while ((c=frmgetchar(entry_file)) != '{' && c != EOF && c != '\032')
@@ -3719,7 +3719,7 @@ int frm_get_param_stuff(char * Name)
     }
     if (c != '{')
     {
-        stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
+        stopmsg(STOPMSG_NONE, ParseErrs(PE_UNEXPECTED_EOF));
         fclose(entry_file);
         return 0;
     }
@@ -3802,11 +3802,11 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
         {
         case EOF:
         case '\032':
-            stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
+            stopmsg(STOPMSG_NONE, ParseErrs(PE_UNEXPECTED_EOF));
             return false;
         case '\r':
         case '\n':
-            stopmsg(0,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+            stopmsg(STOPMSG_NONE, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
             return false;
         case ' ':
         case '\t':
@@ -3850,7 +3850,7 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
             {
             case EOF:
             case '\032':
-                stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
+                stopmsg(STOPMSG_NONE, ParseErrs(PE_UNEXPECTED_EOF));
                 return false;
             case '\r':
             case '\n':
@@ -4047,7 +4047,7 @@ bool RunForm(char *Name, bool from_prompts1c)
 
     if (find_file_item(FormFileName,Name,&entry_file, 1))
     {
-        stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
+        stopmsg(STOPMSG_NONE, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return true;
     }
 
@@ -4063,7 +4063,7 @@ bool RunForm(char *Name, bool from_prompts1c)
         {
             if (uses_jump && fill_jump_struct())
             {
-                stopmsg(0, ParseErrs(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
+                stopmsg(STOPMSG_NONE, ParseErrs(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
                 return true;
             }
 
@@ -4100,8 +4100,9 @@ bool intFormulaSetup()
     static bool been_here = false;
     if (!been_here)
     {
-        stopmsg(0, "This integer fractal type is unimplemented;\n"
-                "Use float=yes to get a real image.");
+        stopmsg(STOPMSG_NONE,
+            "This integer fractal type is unimplemented;\n"
+            "Use float=yes to get a real image.");
         been_here = true;
     }
     return false;
@@ -4234,7 +4235,7 @@ void frm_error(FILE * open_file, long begin_frm)
             }
             else if (i == EOF || i == '}')
             {
-                stopmsg(0, "Unexpected EOF or end-of-formula in error function.\n");
+                stopmsg(STOPMSG_NONE, "Unexpected EOF or end-of-formula in error function.\n");
                 fseek(open_file, errors[j].error_pos, SEEK_SET);
                 frmgettoken(open_file, &tok); //reset file to end of error token
                 return;
@@ -4312,16 +4313,16 @@ void frm_error(FILE * open_file, long begin_frm)
             strcat(msgbuf, "^");
         strcat(msgbuf, "\n");
     }
-    stopmsg(8, msgbuf);
+    stopmsg(STOPMSG_FIXED_FONT, msgbuf);
     return;
 }
 
 void display_var_list()
 {
-    stopmsg(0, "List of user defined variables:\n");
+    stopmsg(STOPMSG_NONE, "List of user defined variables:\n");
     for (var_list_st *p = var_list; p; p=p->next_item)
     {
-        stopmsg(0, p->name);
+        stopmsg(STOPMSG_NONE, p->name);
     }
 
 }
@@ -4329,17 +4330,17 @@ void display_var_list()
 void display_const_lists()
 {
     char msgbuf[800];
-    stopmsg(0, "Complex constants are:");
+    stopmsg(STOPMSG_NONE, "Complex constants are:");
     for (const_list_st *p = complx_list; p; p=p->next_item)
     {
         sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
-        stopmsg(0, msgbuf);
+        stopmsg(STOPMSG_NONE, msgbuf);
     }
-    stopmsg(0, "Real constants are:");
+    stopmsg(STOPMSG_NONE, "Real constants are:");
     for (const_list_st *p = real_list; p; p=p->next_item)
     {
         sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
-        stopmsg(0, msgbuf);
+        stopmsg(STOPMSG_NONE, msgbuf);
     }
 }
 
@@ -4506,7 +4507,7 @@ bool frm_prescan(FILE * open_file)
             switch (this_token.token_id)
             {
             case END_OF_FILE:
-                stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
+                stopmsg(STOPMSG_NONE, ParseErrs(PE_UNEXPECTED_EOF));
                 fseek(open_file, orig_pos, SEEK_SET);
                 return false;
             case ILLEGAL_CHARACTER:
@@ -4582,7 +4583,7 @@ bool frm_prescan(FILE * open_file)
                 }
                 break;
             default:
-                stopmsg(0, "Unexpected arrival at default case in prescan()");
+                stopmsg(STOPMSG_NONE, "Unexpected arrival at default case in prescan()");
                 fseek(open_file, orig_pos, SEEK_SET);
                 return false;
             }

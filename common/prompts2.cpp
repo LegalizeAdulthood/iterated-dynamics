@@ -934,7 +934,7 @@ int starfield()
 
     if (ValidateLuts(GreyFile))
     {
-        stopmsg(0,"Unable to load ALTERN.MAP");
+        stopmsg(STOPMSG_NONE, "Unable to load ALTERN.MAP");
         busy = false;
         return (-1);
     }
@@ -968,7 +968,7 @@ int get_starfield_params()
     };
 
     if (colors < 255) {
-        stopmsg(0,"starfield requires 256 color mode");
+        stopmsg(STOPMSG_NONE, "starfield requires 256 color mode");
         return (-1);
     }
     for (int i = 0; i < 3; i++) {

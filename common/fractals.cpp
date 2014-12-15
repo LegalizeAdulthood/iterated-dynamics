@@ -661,8 +661,9 @@ JuliaFractal()
         static bool been_here = false;
         if (!been_here)
         {
-            stopmsg(0, "This integer fractal type is unimplemented;\n"
-                    "Use float=yes to get a real image.");
+            stopmsg(STOPMSG_NONE,
+                "This integer fractal type is unimplemented;\n"
+                "Use float=yes to get a real image.");
             been_here = true;
         }
         return 0;

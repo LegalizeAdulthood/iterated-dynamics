@@ -699,7 +699,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 {
                     if (debugflag)
                     {
-                        stopmsg(0, "debug, cur.color=bad");
+                        stopmsg(STOPMSG_NONE, "debug, cur.color=bad");
                     }
                     f_cur.color = (float) bad.color;
                     cur.color = (int) f_cur.color;
@@ -731,18 +731,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                             // this shouldn't happen
                             if (debugflag)
                             {
-                                stopmsg(0, "debug, normal vector err2");
-                                /* use next instead if you ever need details:
-                                 * static char tmp[] = {"debug, vector err"};
-                                 * char msg[200]; #ifndef XFRACT
-                                 * sprintf(msg,"%s\n%f %f %f\n%f %f %f\n%f %f
-                                 * %f", #else sprintf(msg,"%s\n%f %f %f\n%f %f
-                                 * %f\n%f %f %f", #endif tmp, f_cur.x, f_cur.y,
-                                 * f_cur.color, f_lastrow[col].x,
-                                 * f_lastrow[col].y, f_lastrow[col].color,
-                                 * f_lastrow[col-1].x,
-                                 * f_lastrow[col-1].y,f_lastrow[col-1].color);
-                                 * stopmsg(0,msg); */
+                                stopmsg(STOPMSG_NONE, "debug, normal vector err2");
                             }
                             f_cur.color = (float) colors;
                             cur.color = (int) f_cur.color;
@@ -1367,7 +1356,7 @@ static void File_Error(char *File_Name1, int ERROR)
         sprintf(msgbuf, "OOPS, can't handle this type of file.\n");
         break;
     }
-    stopmsg(0, msgbuf);
+    stopmsg(STOPMSG_NONE, msgbuf);
     return;
 }
 
@@ -2496,7 +2485,7 @@ static int line3dmem()
         if (check_extra > (1L << 16))     // run out of extra segment?
         {
             if (debugflag == 2222)
-                stopmsg(0,"malloc minmax");
+                stopmsg(STOPMSG_NONE,"malloc minmax");
             // not using extra segment so decrement check_extra
             check_extra -= sizeof(minmax) * ydots;
         }

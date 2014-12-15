@@ -1297,7 +1297,7 @@ bool makedoc_msg_func(int pnum, int num_pages)
     {
         sprintf(buffer, "\n*** aborted\n");
     }
-    stopmsg(0, buffer);
+    stopmsg(STOPMSG_NONE, buffer);
     return result;
 }
 

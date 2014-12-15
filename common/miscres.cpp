@@ -27,7 +27,7 @@ static void area();
 
 void notdiskmsg()
 {
-    stopmsg(0,
+    stopmsg(STOPMSG_NONE,
             "This type may be slow using a real-disk based 'video' mode, but may not \n"
             "be too bad if you have enough expanded or extended memory. Press <Esc> to \n"
             "abort if it appears that your disk drive is working too hard.");
@@ -1216,7 +1216,7 @@ static void area()
     char buf[160];
     long cnt=0;
     if (inside<0) {
-        stopmsg(0, "Need solid inside to compute area");
+        stopmsg(STOPMSG_NONE, "Need solid inside to compute area");
         return;
     }
     for (int y = 0; y < ydots; y++) {
@@ -1234,7 +1234,7 @@ static void area()
     sprintf(buf,"%s%ld inside pixels of %ld%s%f",
             msg,cnt,(long)xdots*(long)ydots,".  Total area ",
             cnt/((float)xdots*(float)ydots)*(xxmax-xxmin)*(yymax-yymin));
-    stopmsg(STOPMSG_NO_BUZZER,buf);
+    stopmsg(STOPMSG_NO_BUZZER, buf);
 }
 
 int endswithslash(const char *fl)
@@ -1309,7 +1309,7 @@ int ifsload()                   // read in IFS parameters
             break ;
         if (++i >= NUMIFS*rowsize)
         {
-            stopmsg(0, "IFS definition has too many lines");
+            stopmsg(STOPMSG_NONE, "IFS definition has too many lines");
             ret = -1;
             break;
         }
@@ -1330,11 +1330,11 @@ int ifsload()                   // read in IFS parameters
     }
 
     if ((i % rowsize) != 0 || (bufptr && *bufptr != '}')) {
-        stopmsg(0, "invalid IFS definition");
+        stopmsg(STOPMSG_NONE, "invalid IFS definition");
         ret = -1;
     }
     if (i == 0 && ret == 0) {
-        stopmsg(0, "Empty IFS definition");
+        stopmsg(STOPMSG_NONE, "Empty IFS definition");
         ret = -1;
     }
     fclose(ifsfile);
@@ -1343,7 +1343,7 @@ int ifsload()                   // read in IFS parameters
         numaffine = i/rowsize;
         if ((ifs_defn = (float *)malloc(
                             (long)((NUMIFS+1)*IFS3DPARM*sizeof(float)))) == nullptr) {
-            stopmsg(0,insufficient_ifs_mem);
+            stopmsg(STOPMSG_NONE, insufficient_ifs_mem);
             ret = -1;
         }
         else
@@ -1521,7 +1521,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
 
     if (!found) {
         sprintf(fullpath,"'%s' file entry item not found",itemname);
-        stopmsg(0,fullpath);
+        stopmsg(STOPMSG_NONE, fullpath);
         return true;
     }
     // found file

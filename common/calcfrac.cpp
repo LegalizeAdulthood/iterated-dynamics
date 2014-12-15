@@ -435,12 +435,12 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
     {
         if (savedots.empty())
         {
-            stopmsg(0,"savedots empty");
+            stopmsg(STOPMSG_NONE, "savedots empty");
             exit(0);
         }
         if (fillbuff == nullptr)
         {
-            stopmsg(0,"fillbuff NULL");
+            stopmsg(STOPMSG_NONE, "fillbuff NULL");
             exit(0);
         }
     }
@@ -605,7 +605,7 @@ int calcfract()
     parm2.y  = param[3];
 
     if (LogFlag && colors < 16) {
-        stopmsg(0, "Need at least 16 colors to use logmap");
+        stopmsg(STOPMSG_NONE, "Need at least 16 colors to use logmap");
         LogFlag = 0;
     }
 
@@ -655,10 +655,10 @@ int calcfract()
         if (!resized)
         {
             if (rangeslen || Log_Fly_Calc == 2) {
-                stopmsg(0, "Insufficient memory for logmap/ranges with this maxiter");
+                stopmsg(STOPMSG_NONE, "Insufficient memory for logmap/ranges with this maxiter");
             }
             else {
-                stopmsg(0, "Insufficient memory for logTable, using on-the-fly routine");
+                stopmsg(STOPMSG_NONE, "Insufficient memory for logTable, using on-the-fly routine");
                 Log_Fly_Calc = 1;
                 Log_Calc = true; // calculate on the fly
                 SetupLogTable();
@@ -2915,12 +2915,12 @@ int  bound_trace_main()
     int right, left, length;
     if (inside == 0 || outside == 0)
     {
-        stopmsg(0, "Boundary tracing cannot be used with inside=0 or outside=0");
+        stopmsg(STOPMSG_NONE, "Boundary tracing cannot be used with inside=0 or outside=0");
         return -1;
     }
     if (colors < 16)
     {
-        stopmsg(0, "Boundary tracing cannot be used with < 16 colors");
+        stopmsg(STOPMSG_NONE, "Boundary tracing cannot be used with < 16 colors");
         return -1;
     }
 

@@ -120,7 +120,7 @@ restart:
         if (access(openfile, 2) != 0)
         {
             sprintf(tmpmsg, "Can't write %s", openfile);
-            stopmsg(0, tmpmsg);
+            stopmsg(STOPMSG_NONE, tmpmsg);
             return -1;
         }
         newfile = false;
@@ -138,7 +138,7 @@ restart:
     if (g_outfile == nullptr)
     {
         sprintf(tmpmsg, "Can't create %s", tmpfile);
-        stopmsg(0, tmpmsg);
+        stopmsg(STOPMSG_NONE, tmpmsg);
         return -1;
     }
 
@@ -571,7 +571,7 @@ bool encoder()
 oops:
     {
         fflush(g_outfile);
-        stopmsg(0,"Error Writing to disk (Disk full?)");
+        stopmsg(STOPMSG_NONE, "Error Writing to disk (Disk full?)");
         return true;
     }
 }

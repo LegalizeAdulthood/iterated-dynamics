@@ -27,7 +27,7 @@ void show_var_bn(char *s, bn_t n)
     strcat(msg," ");
     bntostr(msg+strlen(s),40,n);
     msg[79] = 0;
-    stopmsg(0,(char *)msg);
+    stopmsg(STOPMSG_NONE, msg);
 }
 
 void showcornersdbl(char *s)
@@ -41,7 +41,7 @@ void showcornersdbl(char *s)
             "delx2= %.20Lf dely2= %.20Lf",
             s,xxmin,xxmax,yymin,yymax,xx3rd,yy3rd,
             delxx, delyy,delxx2, delyy2);
-    if (stopmsg(0,msg)==-1)
+    if (stopmsg(STOPMSG_NONE, msg) == -1)
         goodbye();
 }
 
@@ -70,7 +70,7 @@ void showcorners(char *s)
     bntostr(msg,dec,bny3rd);
     sprintf(msg1,"bny3rd=%s\nyy3rd= %.20f\n\n",msg,yy3rd);
     strcat(msg3,msg1);
-    if (stopmsg(0,msg3)==-1)
+    if (stopmsg(STOPMSG_NONE, msg3) == -1)
         goodbye();
 }
 
@@ -85,7 +85,7 @@ bfdecimals=%d ",
             s, bnstep, bnlength, intlength, rlength, padding,
             shiftfactor, decimals, bflength, rbflength,
             bfdecimals);
-    if (stopmsg(0,msg)==-1)
+    if (stopmsg(STOPMSG_NONE, msg) == -1)
         goodbye();
 }
 
@@ -116,7 +116,7 @@ void showcornersbf(char *s)
     bftostr(msg,dec,bfy3rd);
     sprintf(msg1,"bfy3rd=%s\nyy3rd= %.20f\n\n",msg,yy3rd);
     strcat(msg3,msg1);
-    if (stopmsg(0,msg3)==-1)
+    if (stopmsg(STOPMSG_NONE, msg3) == -1)
         goodbye();
 }
 
@@ -144,7 +144,7 @@ void showcornersbfs(char *s)
     bftostr(msg,dec,bfsy3rd);
     sprintf(msg1,"bfsy3rd=%s\nyy3rd= %.20f\n\n",msg,yy3rd);
     strcat(msg3,msg1);
-    if (stopmsg(0,msg3)==-1)
+    if (stopmsg(STOPMSG_NONE, msg3) == -1)
         goodbye();
 }
 
@@ -154,7 +154,7 @@ void show_two_bf(char *s1,bf_t t1,char *s2, bf_t t2, int digits)
     bftostr_e(msg1,digits,t1);
     bftostr_e(msg2,digits,t2);
     sprintf(msg3,"\n%s->%s\n%s->%s",s1,msg1,s2,msg2);
-    if (stopmsg(0,msg3)==-1)
+    if (stopmsg(STOPMSG_NONE, msg3) == -1)
         goodbye();
 }
 
@@ -165,7 +165,7 @@ void show_three_bf(char *s1,bf_t t1,char *s2, bf_t t2, char *s3, bf_t t3, int di
     bftostr_e(msg2,digits,t2);
     bftostr_e(msg3,digits,t3);
     sprintf(msg4,"\n%s->%s\n%s->%s\n%s->%s",s1,msg1,s2,msg2,s3,msg3);
-    if (stopmsg(0,msg4)==-1)
+    if (stopmsg(STOPMSG_NONE, msg4) == -1)
         goodbye();
 }
 
@@ -187,7 +187,7 @@ void showaspect(char *s)
             s,
             (yymax-yymin)/(xxmax-xxmin),
             str);
-    if (stopmsg(0,msg)==-1)
+    if (stopmsg(STOPMSG_NONE, msg) == -1)
         goodbye();
     restore_stack(saved);
 }
@@ -199,7 +199,7 @@ void comparevalues(char *s, LDBL x, bn_t bnx)
     char msg[100],msg1[100];
     bntostr(msg,dec,bnx);
     sprintf(msg1,"%s\nbignum=%s\ndouble=%.20Lf\n\n",s,msg,x);
-    if (stopmsg(0,msg1)==-1)
+    if (stopmsg(STOPMSG_NONE, msg1) == -1)
         goodbye();
 }
 // compare a double and bignumber
@@ -209,7 +209,7 @@ void comparevaluesbf(char *s, LDBL x, bf_t bfx)
     char msg[300],msg1[300];
     bftostr_e(msg,dec,bfx);
     sprintf(msg1,"%s\nbignum=%s\ndouble=%.20Lf\n\n",s,msg,x);
-    if (stopmsg(0,msg1)==-1)
+    if (stopmsg(STOPMSG_NONE, msg1) == -1)
         goodbye();
 }
 
@@ -221,7 +221,7 @@ void show_var_bf(char *s, bf_t n)
     strcat(msg," ");
     bftostr_e(msg+strlen(s),40,n);
     msg[79] = 0;
-    if (stopmsg(0,msg)==-1)
+    if (stopmsg(STOPMSG_NONE, msg) == -1)
         goodbye();
 }
 

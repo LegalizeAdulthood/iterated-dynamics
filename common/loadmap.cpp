@@ -28,7 +28,7 @@ bool ValidateLuts(const char *fn)
     f = fopen(line, "r");
     if (f == nullptr) {
         sprintf(line,"Could not load color map %s",fn);
-        stopmsg(0,line);
+        stopmsg(STOPMSG_NONE, line);
         return true;
     }
     unsigned index;
@@ -67,7 +67,7 @@ int SetColorPaletteName(char * fn)
         mapdacbox = (BYTE *) malloc(768L);
         if (mapdacbox == nullptr)
         {
-            stopmsg(0, "Insufficient memory for color map.");
+            stopmsg(STOPMSG_NONE, "Insufficient memory for color map.");
             return 1;
         }
     }

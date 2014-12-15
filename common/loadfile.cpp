@@ -70,7 +70,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         // didn't find a useable file
         sprintf(msg, "Sorry, %s isn't a file I can decode.", readname);
-        stopmsg(0, msg);
+        stopmsg(STOPMSG_NONE, msg);
         return -1;
     }
 
@@ -401,7 +401,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_init_mode = g_adapter;          // use previous adapter mode for overlays
         if (filexdots > xdots || fileydots > ydots)
         {
-            stopmsg(0, "Can't overlay with a larger image");
+            stopmsg(STOPMSG_NONE, "Can't overlay with a larger image");
             g_init_mode = -1;
             return -1;
         }

@@ -264,14 +264,14 @@ prompt_user:
                 }
             if (pxdots == 0 && (xm > 1 || ym > 1)) {
                 // no corresponding video mode!
-                stopmsg(0, "Invalid video mode entry!");
+                stopmsg(STOPMSG_NONE, "Invalid video mode entry!");
                 goto prompt_user;
             }
 #endif
 
             // bounds range on xm, ym
             if (xm < 1 || xm > 36 || ym < 1 || ym > 36) {
-                stopmsg(0, "X and Y components must be 1 to 36");
+                stopmsg(STOPMSG_NONE, "X and Y components must be 1 to 36");
                 goto prompt_user;
             }
 
@@ -281,7 +281,7 @@ prompt_user:
             xtotal *= pxdots;
             ytotal *= pydots;
             if (xtotal > 65535L || ytotal > 65535L) {
-                stopmsg(0, "Total resolution (X or Y) cannot exceed 65535");
+                stopmsg(STOPMSG_NONE, "Total resolution (X or Y) cannot exceed 65535");
                 goto prompt_user;
             }
         }
@@ -305,7 +305,7 @@ skip_UI:
             if (access(CommandFile, 6))
             {
                 sprintf(buf, "Can't write %s", CommandFile);
-                stopmsg(0, buf);
+                stopmsg(STOPMSG_NONE, buf);
                 continue;
             }
             int i = (int) strlen(outname);
@@ -318,7 +318,7 @@ skip_UI:
         if (parmfile == nullptr)
         {
             sprintf(buf, "Can't create %s", outname);
-            stopmsg(0, buf);
+            stopmsg(STOPMSG_NONE, buf);
             if (gotinfile)
                 fclose(infile);
             continue;
@@ -815,7 +815,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
 
         if (forcesymmetry != 999) {
             if (forcesymmetry == 1000 && ii == 1 && jj == 1)
-                stopmsg(0, "Regenerate before <b> to get correct symmetry");
+                stopmsg(STOPMSG_NONE, "Regenerate before <b> to get correct symmetry");
             put_parm(" %s=", "symmetry");
             if (forcesymmetry==XAXIS)
                 put_parm("xaxis");
@@ -1570,7 +1570,7 @@ static int check_modekey(int curkey,int choice)
     if ((curkey == '-' || curkey == '+')
             && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084)) {
         if (g_bad_config)
-            stopmsg(0,"Missing or bad FRACTINT.CFG file. Can't reassign keys.");
+            stopmsg(STOPMSG_NONE, "Missing or bad FRACTINT.CFG file. Can't reassign keys.");
         else {
             if (curkey == '-') {                   // deassign key?
                 if (g_video_table[i].keynum >= 1084) {
@@ -1622,7 +1622,7 @@ static void update_fractint_cfg()
 
     if (access(cfgname,6)) {
         sprintf(buf,"Can't write %s",cfgname);
-        stopmsg(0,buf);
+        stopmsg(STOPMSG_NONE, buf);
         return;
     }
     strcpy(outname,cfgname);
@@ -1633,7 +1633,7 @@ static void update_fractint_cfg()
     outfile = fopen(outname,"w");
     if (outfile == nullptr) {
         sprintf(buf,"Can't create %s",outname);
-        stopmsg(0,buf);
+        stopmsg(STOPMSG_NONE, buf);
         return;
     }
     cfgfile = fopen(cfgname,"r");
@@ -2215,7 +2215,7 @@ static const char *expand_var(char *var, char *buf)
     {
         char buff[80];
         _snprintf(buff, NUM_OF(buff), "Unknown comment variable %s", var);
-        stopmsg(0,buff);
+        stopmsg(STOPMSG_NONE, buff);
         out = "";
     }
     return (out);

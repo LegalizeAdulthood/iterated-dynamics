@@ -98,7 +98,8 @@ int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
                     }
                     else
                     {
-                        stopmsg(0, "That video mode is not available with your adapter.");
+                        stopmsg(STOPMSG_NONE,
+                            "That video mode is not available with your adapter.");
                         askvideo = true;
                     }
                     g_init_mode = -1;
@@ -114,15 +115,15 @@ int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
                     if (xdots > sxdots && ydots > sydots)
                     {
                         sprintf(buf, "%s\n%s", (char *) msgxy1, (char *) msgxy2);
-                        stopmsg(0, buf);
+                        stopmsg(STOPMSG_NONE, buf);
                     }
                     else if (ydots > sydots)
                     {
-                        stopmsg(0, msgxy2);
+                        stopmsg(STOPMSG_NONE, msgxy2);
                     }
                     else
                     {
-                        stopmsg(0, msgxy1);
+                        stopmsg(STOPMSG_NONE, msgxy1);
                     }
                 }
                 xdots = sxdots;
@@ -177,7 +178,8 @@ int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
                 }
                 if (xdots > sxdots || ydots > sydots)
                 {
-                    stopmsg(0, "View window too large; using full screen.");
+                    stopmsg(STOPMSG_NONE,
+                        "View window too large; using full screen.");
                     viewwindow = false;
                     viewxdots = sxdots;
                     xdots = viewxdots;
@@ -189,14 +191,16 @@ int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
                          && !(evolving&1))
                 {   // so ssg works
                     // but no check if in evolve mode to allow lots of small views
-                    stopmsg(0, "View window too small; using full screen.");
+                    stopmsg(STOPMSG_NONE,
+                        "View window too small; using full screen.");
                     viewwindow = false;
                     xdots = sxdots;
                     ydots = sydots;
                 }
                 if ((evolving & 1) && (curfractalspecific->flags & INFCALC))
                 {
-                    stopmsg(0, "Fractal doesn't terminate! switching off evolution.");
+                    stopmsg(STOPMSG_NONE,
+                        "Fractal doesn't terminate! switching off evolution.");
                     evolving = evolving -1;
                     viewwindow = false;
                     xdots = sxdots;

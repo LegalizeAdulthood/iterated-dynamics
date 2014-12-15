@@ -462,7 +462,7 @@ expand_retry:
                 if (++tries < 2) // for safety
                 {
                     if (tries > 1)
-                        stopmsg(0, "precision-detection error");
+                        stopmsg(STOPMSG_NONE, "precision-detection error");
                     /* Previously there were four tests of distortions in the
                        zoom box used to detect precision limitations. In some
                        cases of rotated/skewed zoom boxes, this causes the algorithm
@@ -1142,8 +1142,9 @@ int alloc_resume(int alloclen, int version)
     resume_info = MemoryAlloc((U16)sizeof(alloclen), (long)alloclen, MEMORY);
     if (resume_info == 0)
     {
-        stopmsg(0,"Warning - insufficient free memory to save status.\n"
-                "You will not be able to resume calculating this image.");
+        stopmsg(STOPMSG_NONE,
+            "Warning - insufficient free memory to save status.\n"
+            "You will not be able to resume calculating this image.");
         calc_status = CALCSTAT_NON_RESUMABLE;
         return (-1);
     }
@@ -1346,7 +1347,7 @@ bool snd_open()
         snd_fp = fopen(soundname,"w");
         if (snd_fp == nullptr)
         {
-            stopmsg(0, "Can't open sound*.txt");
+            stopmsg(STOPMSG_NONE, "Can't open sound*.txt");
         }
         else
         {

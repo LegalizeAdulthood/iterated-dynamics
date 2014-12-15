@@ -18,11 +18,15 @@
 #define BUZZER_INTERRUPT 1
 #define BUZZER_ERROR 2
 // stopmsg() flags
-#define STOPMSG_NO_STACK    1
-#define STOPMSG_CANCEL      2
-#define STOPMSG_NO_BUZZER   4
-#define STOPMSG_FIXED_FONT  8
-#define STOPMSG_INFO_ONLY   16
+enum stopmsg_flags
+{
+    STOPMSG_NONE        = 0,
+    STOPMSG_NO_STACK    = 1,
+    STOPMSG_CANCEL      = 2,
+    STOPMSG_NO_BUZZER   = 4,
+    STOPMSG_FIXED_FONT  = 8,
+    STOPMSG_INFO_ONLY   = 16
+};
 // g_video_type video types
 #define VIDEO_TYPE_HGC      1
 #define VIDEO_TYPE_EGA      3

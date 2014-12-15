@@ -369,5 +369,5 @@ static void slideshowerr(const char *msg)
     char msgbuf[300] = { "Slideshow error:\n" };
     stopslideshow();
     strcat(msgbuf,msg);
-    stopmsg(0,msgbuf);
+    stopmsg(STOPMSG_NONE, msgbuf);
 }
