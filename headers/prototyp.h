@@ -653,9 +653,10 @@ extern void Arctanz(DComplex z, DComplex *rz);
 // msccos -- C file prototypes
 extern double _cos(double);
 // parser -- C file prototypes
-struct fls { // function, load, store pointers
+struct fls
+{ // function, load, store pointers
     void (*function)();
-    union Arg *operand;
+    Arg *operand;
 };
 extern unsigned int SkipWhiteSpace(char *);
 extern unsigned long NewRandNum();

@@ -23,7 +23,8 @@
 #define ANGLE2DOUBLE    (2.0*PI / 4294967296.0)
 #define MAXRULES 27 // this limits rules to 25
 #define MAX_LSYS_LINE_LEN 255 // this limits line length to 255
-struct lsys_turtlestatei {
+struct lsys_turtlestatei
+{
     char counter, angle, reverse;
     bool stackoflow;
     // dmaxangle is maxangle - 1
@@ -35,7 +36,8 @@ struct lsys_turtlestatei {
     long aspect; // aspect ratio of each pixel, ysize/xsize
     long num;
 };
-struct lsys_turtlestatef {
+struct lsys_turtlestatef
+{
     char counter, angle, reverse;
     bool stackoflow;
     // dmaxangle is maxangle - 1
@@ -45,7 +47,8 @@ struct lsys_turtlestatef {
     LDBL xpos, ypos;
     LDBL xmin, ymin, xmax, ymax;
     LDBL aspect; // aspect ratio of each pixel, ysize/xsize
-    union {
+    union
+    {
         long n;
         LDBL nf;
     } parm;
