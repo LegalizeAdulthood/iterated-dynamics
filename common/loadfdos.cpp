@@ -45,7 +45,8 @@ static void   format_vid_inf(int i,char *err,char *buf);
 #endif
 static double vid_aspect(int tryxdots,int tryydots);
 
-struct vidinf {
+struct vidinf
+{
     int entnum;     // g_video_entry subscript
     unsigned flags; // flags for sort's compare, defined below
 };
@@ -64,9 +65,9 @@ struct vidinf {
 #ifndef XFRACT
 static int vidcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
 {
-    struct vidinf CONST *ptr1,*ptr2;
-    ptr1 = (struct vidinf CONST *)p1;
-    ptr2 = (struct vidinf CONST *)p2;
+    vidinf CONST *ptr1,*ptr2;
+    ptr1 = (vidinf CONST *)p1;
+    ptr2 = (vidinf CONST *)p2;
     if (ptr1->flags < ptr2->flags) return (-1);
     if (ptr1->flags > ptr2->flags) return (1);
     if (g_video_table[ptr1->entnum].keynum < g_video_table[ptr2->entnum].keynum) return (-1);
@@ -97,12 +98,12 @@ static double vid_aspect(int tryxdots,int tryydots)
 }
 
 #ifndef XFRACT
-static struct vidinf *vidptr;
+static vidinf *vidptr;
 #endif
 
-int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
+int get_video_mode(fractal_info *info, ext_blk_3 *blk_3_info)
 {
-    struct vidinf vid[MAXVIDEOMODES];
+    vidinf vid[MAXVIDEOMODES];
     bool gotrealmode;
     double ftemp;
     unsigned tmpflags;
