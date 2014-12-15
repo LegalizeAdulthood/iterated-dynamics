@@ -49,7 +49,7 @@ struct tagDriver
     void (*resume)(Driver *drv);            // resume this driver
     void (*schedule_alarm)(Driver *drv, int secs); // refresh alarm
     void (*window)(Driver *drv);            // creates a window
-    bool (*resize)(Driver *drv);            // handles window resize. 
+    bool (*resize)(Driver *drv);            // handles window resize.
     void (*redraw)(Driver *drv);            // redraws the screen
     int (*read_palette)(Driver *drv);       // read palette into g_dac_box
     int (*write_palette)(Driver *drv);      // write g_dac_box into palette

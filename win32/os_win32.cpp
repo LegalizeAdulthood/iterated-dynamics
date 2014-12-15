@@ -23,7 +23,7 @@
 #include "frame.h"
 #include "mpmath.h"
 
-/* External declarations */
+// External declarations
 extern void check_samename();
 
 HINSTANCE g_instance = nullptr;
@@ -36,41 +36,41 @@ static void (*lineread)(int, int, int, BYTE *) = nullptr;
 typedef enum
 {
     FE_UNKNOWN = -1,
-    FE_IMAGE_INFO,                  /* TAB */
-    FE_RESTART,                     /* INSERT */
-    FE_SELECT_VIDEO_MODE,           /* DELETE */
-    FE_EXECUTE_COMMANDS,            /* @ */
-    FE_COMMAND_SHELL,               /* d */
-    FE_ORBITS_WINDOW,               /* o */
-    FE_SELECT_FRACTAL_TYPE,         /* t */
-    FE_TOGGLE_JULIA,                /* FIK_SPACE */
-    FE_TOGGLE_INVERSE,              /* j */
-    FE_PRIOR_IMAGE,                 /* h */
-    FE_REVERSE_HISTORY,             /* ^H */
-    FE_BASIC_OPTIONS,               /* x */
-    FE_EXTENDED_OPTIONS,            /* y */
-    FE_TYPE_SPECIFIC_PARAMS,        /* z */
-    FE_PASSES_OPTIONS,              /* p */
-    FE_VIEW_WINDOW_OPTIONS,         /* v */
-    FE_3D_PARAMS,                   /* i */
-    FE_BROWSE_PARAMS,               /* ^B */
-    FE_EVOLVER_PARAMS,              /* ^E */
-    FE_SOUND_PARAMS,                /* ^F */
-    FE_SAVE_IMAGE,                  /* s */
-    FE_LOAD_IMAGE,                  /* r */
-    FE_3D_TRANSFORM,                /* 3 */
-    FE_3D_OVERLAY,                  /* # */
-    FE_SAVE_CURRENT_PARAMS,         /* b */
-    FE_PRINT_IMAGE,                 /* ^P */
-    FE_GIVE_COMMAND_STRING,         /* g */
-    FE_QUIT,                        /* ESC */
-    FE_COLOR_CYCLING_MODE,          /* c */
-    FE_ROTATE_PALETTE_DOWN,         /* - */
-    FE_ROTATE_PALETTE_UP,           /* + */
-    FE_EDIT_PALETTE,                /* e */
-    FE_MAKE_STARFIELD,              /* a */
-    FE_ANT_AUTOMATON,               /* ^A */
-    FE_STEREOGRAM,                  /* ^S */
+    FE_IMAGE_INFO,                  // TAB
+    FE_RESTART,                     // INSERT
+    FE_SELECT_VIDEO_MODE,           // DELETE
+    FE_EXECUTE_COMMANDS,            // @
+    FE_COMMAND_SHELL,               // d
+    FE_ORBITS_WINDOW,               // o
+    FE_SELECT_FRACTAL_TYPE,         // t
+    FE_TOGGLE_JULIA,                // FIK_SPACE
+    FE_TOGGLE_INVERSE,              // j
+    FE_PRIOR_IMAGE,                 // h
+    FE_REVERSE_HISTORY,             // ^H
+    FE_BASIC_OPTIONS,               // x
+    FE_EXTENDED_OPTIONS,            // y
+    FE_TYPE_SPECIFIC_PARAMS,        // z
+    FE_PASSES_OPTIONS,              // p
+    FE_VIEW_WINDOW_OPTIONS,         // v
+    FE_3D_PARAMS,                   // i
+    FE_BROWSE_PARAMS,               // ^B
+    FE_EVOLVER_PARAMS,              // ^E
+    FE_SOUND_PARAMS,                // ^F
+    FE_SAVE_IMAGE,                  // s
+    FE_LOAD_IMAGE,                  // r
+    FE_3D_TRANSFORM,                // 3
+    FE_3D_OVERLAY,                  // #
+    FE_SAVE_CURRENT_PARAMS,         // b
+    FE_PRINT_IMAGE,                 // ^P
+    FE_GIVE_COMMAND_STRING,         // g
+    FE_QUIT,                        // ESC
+    FE_COLOR_CYCLING_MODE,          // c
+    FE_ROTATE_PALETTE_DOWN,         // -
+    FE_ROTATE_PALETTE_UP,           // +
+    FE_EDIT_PALETTE,                // e
+    FE_MAKE_STARFIELD,              // a
+    FE_ANT_AUTOMATON,               // ^A
+    FE_STEREOGRAM,                  // ^S
     FE_VIDEO_F1,
     FE_VIDEO_F2,
     FE_VIDEO_F3,
@@ -109,10 +109,10 @@ typedef enum
     FE_VIDEO_CF12
 } fractint_event;
 
-/* Global variables (yuck!) */
+// Global variables (yuck!)
 struct MP Ans = { 0 };
-int g_color_dark = 0;       /* darkest color in palette */
-int g_color_bright = 0;     /* brightest color in palette */
+int g_color_dark = 0;       // darkest color in palette
+int g_color_bright = 0;     // brightest color in palette
 int g_color_medium = 0;     /* nearest to medbright grey in palette
                    Zoom-Box values (2K x 2K screens max) */
 int dacnorm = 0;
@@ -129,8 +129,8 @@ long linitx = 0;
 long linity = 0;
 int polyphony = 0;
 int g_row_count = 0;
-long savebase = 0;              /* base clock ticks */
-long saveticks = 0;             /* save after this many ticks */
+long savebase = 0;              // base clock ticks
+long saveticks = 0;             // save after this many ticks
 int g_text_cbase = 0;
 int g_text_col = 0;
 int g_text_rbase = 0;
@@ -219,7 +219,7 @@ static fractint_event keyboard_event(int key)
 
 static char *g_tos = nullptr;
 #define WIN32_STACK_SIZE 1024*1024
-/* Return available stack space ... shouldn't be needed in Win32, should it? */
+// Return available stack space ... shouldn't be needed in Win32, should it?
 long stackavail()
 {
     char junk = 0;
@@ -324,7 +324,7 @@ static void fill_dta()
  * matching the wildcard specification in path.  Return zero if a file
  * is found, or non-zero if a file was not found or an error occurred.
  */
-int fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/filespec */
+int fr_findfirst(char *path)       // Find 1st file (or subdir) meeting path/filespec
 {
     if (s_find_context != INVALID_HANDLE_VALUE)
     {
@@ -375,7 +375,7 @@ int fr_findnext()
 
 int get_sound_params()
 {
-    /* TODO */
+    // TODO
     _ASSERTE(FALSE);
     return 0;
 }
@@ -478,12 +478,12 @@ bool isadirectory(char *s)
     return PathIsDirectory(s) != 0;
 }
 
-/* tenths of millisecond timewr routine */
-/* static struct timeval tv_start; */
+// tenths of millisecond timewr routine
+// static struct timeval tv_start;
 
 void restart_uclock()
 {
-    /* TODO */
+    // TODO
 }
 
 
@@ -500,7 +500,7 @@ typedef unsigned long uclock_t;
 uclock_t usec_clock()
 {
     uclock_t result = 0;
-    /* TODO */
+    // TODO
     _ASSERTE(FALSE);
 
     return result;
@@ -519,7 +519,7 @@ uclock_t usec_clock()
 */
 void scroll_center(int tocol, int torow)
 {
-    /* TODO */
+    // TODO
     _ASSERTE(FALSE);
 }
 
@@ -639,7 +639,7 @@ int getakeynohelp()
     return ch;
 }
 
-/* converts relative path to absolute path */
+// converts relative path to absolute path
 int expand_dirname(char *dirname, char *drive)
 {
     char relative[MAX_PATH];
@@ -803,7 +803,7 @@ static int nullread(int a, int b)
     return 0;
 }
 
-/* from video.asm */
+// from video.asm
 void setnullvideo()
 {
     _ASSERTE(0 && "setnullvideo called");
@@ -869,7 +869,7 @@ void init_failure(const char *message)
     MessageBox(nullptr, message, "FractInt: Fatal Error", MB_OK);
 }
 
-void findpath(const char *filename, char *fullpathname) /* return full pathnames */
+void findpath(const char *filename, char *fullpathname) // return full pathnames
 {
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
@@ -878,17 +878,17 @@ void findpath(const char *filename, char *fullpathname) /* return full pathnames
     splitpath(filename ,nullptr,nullptr,fname,ext);
     makepath(temp_path,""   ,"" ,fname,ext);
 
-    if (checkcurdir && access(temp_path,0) == 0)   /* file exists */
+    if (checkcurdir && access(temp_path,0) == 0)   // file exists
     {
         strcpy(fullpathname,temp_path);
         return;
     }
 
-    strcpy(temp_path,filename);   /* avoid side effect changes to filename */
+    strcpy(temp_path,filename);   // avoid side effect changes to filename
 
     if (temp_path[0] == SLASHC || (temp_path[0] && temp_path[1] == ':'))
     {
-        if (access(temp_path,0) == 0)   /* file exists */
+        if (access(temp_path,0) == 0)   // file exists
         {
             strcpy(fullpathname,temp_path);
             return;
@@ -899,18 +899,18 @@ void findpath(const char *filename, char *fullpathname) /* return full pathnames
             makepath(temp_path,""   ,"" ,fname,ext);
         }
     }
-    fullpathname[0] = 0;                         /* indicate none found */
+    fullpathname[0] = 0;                         // indicate none found
     _searchenv(temp_path,"PATH",fullpathname);
-    if (fullpathname[0] != 0)                    /* found it! */
+    if (fullpathname[0] != 0)                    // found it!
     {
-        if (strncmp(&fullpathname[2],SLASHSLASH,2) == 0) /* stupid klooge! */
+        if (strncmp(&fullpathname[2],SLASHSLASH,2) == 0) // stupid klooge!
         {
             strcpy(&fullpathname[3],temp_path);
         }
     }
 }
 
-/* case independent version of strncmp */
+// case independent version of strncmp
 int strncasecmp(const char *s, const char *t,int ct)
 {
     for (; (tolower(*s) == tolower(*t)) && --ct ; s++,t++)

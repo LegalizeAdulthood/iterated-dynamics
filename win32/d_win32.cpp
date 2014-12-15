@@ -143,7 +143,6 @@ win32_terminate(Driver *drv)
     DI(di);
     ODS("win32_terminate");
 
-    /* plot_terminate(&di->plot); */
     wintext_destroy(&di->wintext);
     for (int i = 0; i < NUM_OF(di->saved_screens); i++)
     {
@@ -306,19 +305,18 @@ win32_hide_text_cursor(Driver *drv)
     ODS("win32_hide_text_cursor");
 }
 
-/* win32_set_video_mode
-*/
+// win32_set_video_mode
 extern void set_normal_dot();
 extern void set_normal_line();
 
 void
 win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
-    /* initially, set the virtual line to be the scan line length */
+    // initially, set the virtual line to be the scan line length
     g_vxdots = sxdots;
-    g_is_true_color = false;            /* assume not truecolor */
-    g_vesa_x_res = 0;                   /* reset indicators used for */
-    g_vesa_y_res = 0;                   /* virtual screen limits estimation */
+    g_is_true_color = false;            // assume not truecolor
+    g_vesa_x_res = 0;                   // reset indicators used for
+    g_vesa_y_res = 0;                   // virtual screen limits estimation
     g_good_mode = true;
     if (dotmode !=0)
     {
@@ -326,7 +324,7 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
         boxcount = 0;
         g_dac_learn = true;
         g_dac_count = cyclelimit;
-        g_got_real_dac = true;          /* we are "VGA" */
+        g_got_real_dac = true;          // we are "VGA"
 
         driver_read_palette();
     }
@@ -427,13 +425,13 @@ win32_stack_screen(Driver *drv)
     di->saved_cursor[di->screen_count+1] = g_text_row*80 + g_text_col;
     if (++di->screen_count)
     {
-        /* already have some stacked */
+        // already have some stacked
         int i = di->screen_count - 1;
 
         _ASSERTE(i < WIN32_MAXSCREENS);
         if (i >= WIN32_MAXSCREENS)
         {
-            /* bug, missing unstack? */
+            // bug, missing unstack?
             stopmsg(STOPMSG_NO_STACK, "win32_stack_screen overflow");
             exit(1);
         }
@@ -457,7 +455,7 @@ win32_unstack_screen(Driver *drv)
     g_text_col = di->saved_cursor[di->screen_count] % 80;
     if (--di->screen_count >= 0)
     {
-        /* unstack */
+        // unstack
         wintext_screen_set(&di->wintext, di->saved_screens[di->screen_count]);
         free(di->saved_screens[di->screen_count]);
         di->saved_screens[di->screen_count] = nullptr;
@@ -476,7 +474,7 @@ win32_discard_screen(Driver *drv)
 
     if (--di->screen_count >= 0)
     {
-        /* unstack */
+        // unstack
         if (di->saved_screens[di->screen_count])
         {
             free(di->saved_screens[di->screen_count]);

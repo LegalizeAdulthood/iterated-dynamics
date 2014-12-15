@@ -43,7 +43,7 @@ static void frame_add_key_press(unsigned int key)
     if (g_frame.keypress_count >= KEYBUFMAX)
     {
         _ASSERTE(g_frame.keypress_count < KEYBUFMAX);
-        /* no room */
+        // no room
         return;
     }
 
@@ -76,15 +76,15 @@ static int mod_key(int modifier, int code, int fik, int *j)
 
 static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
-    /* KEYUP, KEYDOWN, and CHAR msgs go to the 'keypressed' code */
-    /* a key has been pressed - maybe ASCII, maybe not */
-    /* if it's an ASCII key, 'WM_CHAR' will handle it  */
+    // KEYUP, KEYDOWN, and CHAR msgs go to the 'keypressed' code
+    // a key has been pressed - maybe ASCII, maybe not
+    // if it's an ASCII key, 'WM_CHAR' will handle it
     unsigned int i;
     int j;
     i = MapVirtualKey(vk, 0);
     j = MapVirtualKey(vk, 2);
 
-    /* handle modifier keys on the non-WM_CHAR keys */
+    // handle modifier keys on the non-WM_CHAR keys
     if (VK_F1 <= vk && vk <= VK_F10)
     {
         bool ctl = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
@@ -112,7 +112,7 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
     {
         switch (vk)
         {
-        /* sorted in FIK_xxx order */
+        // sorted in FIK_xxx order
         case VK_DELETE:
             i = CTL_KEY(FIK_CTL_DEL);
             break;
@@ -166,7 +166,7 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
         }
     }
 
-    /* use this call only for non-ASCII keys */
+    // use this call only for non-ASCII keys
     if (!(vk == VK_SHIFT || vk == VK_CONTROL || vk == VK_MENU) && (j == 0))
     {
         frame_add_key_press(i);
@@ -175,8 +175,8 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
 
 static void frame_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 {
-    /* KEYUP, KEYDOWN, and CHAR msgs go to the SG code */
-    /* an ASCII key has been pressed */
+    // KEYUP, KEYDOWN, and CHAR msgs go to the SG code
+    // an ASCII key has been pressed
     unsigned int i, j, k;
     i = (unsigned int)((cRepeat & 0x00ff0000) >> 16);
     j = ch;
@@ -277,7 +277,7 @@ int frame_pump_messages(bool waitflag)
     {
         if (PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE) == 0)
         {
-            /* no messages waiting */
+            // no messages waiting
             if (!waitflag
                     || (g_frame.keypress_count != 0)
                     || (waitflag && g_frame.timed_out))
@@ -353,8 +353,8 @@ void frame_window(int width, int height)
         g_frame.window = CreateWindow("FractintFrame",
                                       g_frame.title,
                                       WS_OVERLAPPEDWINDOW,
-                                      CW_USEDEFAULT,               /* default horizontal position */
-                                      CW_USEDEFAULT,               /* default vertical position */
+                                      CW_USEDEFAULT,               // default horizontal position
+                                      CW_USEDEFAULT,               // default vertical position
                                       g_frame.nc_width,
                                       g_frame.nc_height,
                                       nullptr, nullptr, g_frame.instance,

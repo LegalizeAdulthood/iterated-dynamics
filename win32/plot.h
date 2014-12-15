@@ -18,8 +18,8 @@ struct tagPlot
 
     bool dirty;
     RECT dirty_region;
-    BITMAPINFO bmi;                     /* contains first clut entry too */
-    RGBQUAD bmiColors[255];             /* color look up table */
+    BITMAPINFO bmi;                     // contains first clut entry too
+    RGBQUAD bmiColors[255];             // color look up table
 
     std::vector<BYTE> pixels;
     std::vector<BYTE> saved_pixels;

@@ -22,7 +22,7 @@
 #include "d_win32.h"
 #include "ods.h"
 
-/* read/write-a-dot/line routines */
+// read/write-a-dot/line routines
 typedef void t_dotwriter(int, int, int);
 typedef int  t_dotreader(int, int);
 typedef void t_linewriter(int y, int x, int lastx, BYTE *pixels);
@@ -49,36 +49,36 @@ static t_dotreader win32_dot_reader;
 static t_linewriter win32_line_writer;
 static t_linereader win32_line_reader;
 
-/* VIDEOINFO:                                                           */
-/*         char    name[26];       Adapter name (IBM EGA, etc)          */
-/*         char    comment[26];    Comments (UNTESTED, etc)             */
-/*         int     keynum;         key number used to invoked this mode */
-/*                                 2-10 = F2-10, 11-40 = S,C,A{F1-F10}  */
-/*         int     videomodeax;    begin with INT 10H, AX=(this)        */
-/*         int     videomodebx;                 ...and BX=(this)        */
-/*         int     videomodecx;                 ...and CX=(this)        */
-/*         int     videomodedx;                 ...and DX=(this)        */
-/*                                 NOTE:  IF AX==BX==CX==0, SEE BELOW   */
-/*         int     dotmode;        video access method used by asm code */
-/*                                      1 == BIOS 10H, AH=12,13 (SLOW)  */
-/*                                      2 == access like EGA/VGA        */
-/*                                      3 == access like MCGA           */
-/*                                      4 == Tseng-like  SuperVGA*256   */
-/*                                      5 == P'dise-like SuperVGA*256   */
-/*                                      6 == Vega-like   SuperVGA*256   */
-/*                                      7 == "Tweaked" IBM-VGA ...*256  */
-/*                                      8 == "Tweaked" SuperVGA ...*256 */
-/*                                      9 == Targa Format               */
-/*                                      10 = Hercules                   */
-/*                                      11 = "disk video" (no screen)   */
-/*                                      12 = 8514/A                     */
-/*                                      13 = CGA 320x200x4, 640x200x2   */
-/*                                      14 = Tandy 1000                 */
-/*                                      15 = TRIDENT  SuperVGA*256      */
-/*                                      16 = Chips&Tech SuperVGA*256    */
-/*         int     xdots;          number of dots across the screen     */
-/*         int     ydots;          number of dots down the screen       */
-/*         int     colors;         number of colors available           */
+// VIDEOINFO:
+//         char    name[26];       Adapter name (IBM EGA, etc)
+//         char    comment[26];    Comments (UNTESTED, etc)
+//         int     keynum;         key number used to invoked this mode
+//                                 2-10 = F2-10, 11-40 = S,C,A{F1-F10}
+//         int     videomodeax;    begin with INT 10H, AX=(this)
+//         int     videomodebx;                 ...and BX=(this)
+//         int     videomodecx;                 ...and CX=(this)
+//         int     videomodedx;                 ...and DX=(this)
+//                                 NOTE:  IF AX==BX==CX==0, SEE BELOW
+//         int     dotmode;        video access method used by asm code
+//                                      1 == BIOS 10H, AH=12,13 (SLOW)
+//                                      2 == access like EGA/VGA
+//                                      3 == access like MCGA
+//                                      4 == Tseng-like  SuperVGA*256
+//                                      5 == P'dise-like SuperVGA*256
+//                                      6 == Vega-like   SuperVGA*256
+//                                      7 == "Tweaked" IBM-VGA ...*256
+//                                      8 == "Tweaked" SuperVGA ...*256
+//                                      9 == Targa Format
+//                                      10 = Hercules
+//                                      11 = "disk video" (no screen)
+//                                      12 = 8514/A
+//                                      13 = CGA 320x200x4, 640x200x2
+//                                      14 = Tandy 1000
+//                                      15 = TRIDENT  SuperVGA*256
+//                                      16 = Chips&Tech SuperVGA*256
+//         int     xdots;          number of dots across the screen
+//         int     ydots;          number of dots down the screen
+//         int     colors;         number of colors available
 
 #define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
     { name_, comment_, key_, 0, 0, 0, 0, mode_, width_, height_, 256 }
@@ -213,10 +213,10 @@ static void win32_line_reader(int row, int col, int lastcol, BYTE *pixels)
 static void
 parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
 {
-    /* do something like XParseGeometry() */
+    // do something like XParseGeometry()
     if (2 == sscanf(spec, "%dx%d", width, height))
     {
-        /* all we care about is width and height for disk output */
+        // all we care about is width and height for disk output
         *x = 0;
         *y = 0;
     }
@@ -254,7 +254,7 @@ static bool disk_init(Driver *drv, int *argc, char **argv)
 
     initdacbox();
 
-    /* filter out driver arguments */
+    // filter out driver arguments
     for (int i = 0; i < *argc; i++)
     {
         if (check_arg(di, argv[i]))
@@ -269,7 +269,7 @@ static bool disk_init(Driver *drv, int *argc, char **argv)
         }
     }
 
-    /* add default list of video modes */
+    // add default list of video modes
     for (int m = 0; m < NUM_OF(modes); m++)
     {
         add_video_mode(drv, &modes[m]);
@@ -617,11 +617,11 @@ extern void set_normal_line();
 static void
 disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
-    /* initially, set the virtual line to be the scan line length */
+    // initially, set the virtual line to be the scan line length
     g_vxdots = sxdots;
-    g_is_true_color = false;            /* assume not truecolor */
-    g_vesa_x_res = 0;                   /* reset indicators used for */
-    g_vesa_y_res = 0;                   /* virtual screen limits estimation */
+    g_is_true_color = false;            // assume not truecolor
+    g_vesa_x_res = 0;                   // reset indicators used for
+    g_vesa_y_res = 0;                   // virtual screen limits estimation
     g_good_mode = true;
     if (dotmode !=0)
     {
@@ -765,13 +765,13 @@ disk_stack_screen(Driver *drv)
     di->base.saved_cursor[di->base.screen_count+1] = g_text_row*80 + g_text_col;
     if (++di->base.screen_count)
     {
-        /* already have some stacked */
+        // already have some stacked
         int i = di->base.screen_count - 1;
 
         _ASSERTE(i < WIN32_MAXSCREENS);
         if (i >= WIN32_MAXSCREENS)
         {
-            /* bug, missing unstack? */
+            // bug, missing unstack?
             stopmsg(STOPMSG_NO_STACK, "disk_stack_screen overflow");
             exit(1);
         }
@@ -794,7 +794,7 @@ disk_unstack_screen(Driver *drv)
     g_text_row = di->base.saved_cursor[di->base.screen_count] / 80;
     g_text_col = di->base.saved_cursor[di->base.screen_count] % 80;
     if (--di->base.screen_count >= 0)
-    {   /* unstack */
+    {   // unstack
         wintext_screen_set(&di->base.wintext, di->base.saved_screens[di->base.screen_count]);
         free(di->base.saved_screens[di->base.screen_count]);
         di->base.saved_screens[di->base.screen_count] = nullptr;
@@ -813,7 +813,7 @@ disk_discard_screen(Driver *drv)
 
     _ASSERTE(di->base.screen_count > 0);
     if (--di->base.screen_count >= 0)
-    {   /* unstack */
+    {   // unstack
         if (di->base.saved_screens[di->base.screen_count])
         {
             free(di->base.saved_screens[di->base.screen_count]);

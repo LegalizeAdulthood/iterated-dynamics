@@ -395,8 +395,8 @@ void plot_window(Plot *me, HWND parent)
         me->window = CreateWindow(s_window_class,
                                   me->title,
                                   parent ? WS_CHILD : WS_OVERLAPPEDWINDOW,
-                                  CW_USEDEFAULT,               /* default horizontal position */
-                                  CW_USEDEFAULT,               /* default vertical position */
+                                  CW_USEDEFAULT,               // default horizontal position
+                                  CW_USEDEFAULT,               // default vertical position
                                   me->width,
                                   me->height,
                                   parent, nullptr, me->instance,

@@ -42,36 +42,36 @@ struct tagGDIDriver
     bool text_not_graphics;
 };
 
-/* VIDEOINFO:                                                           */
-/*         char    name[26];       Adapter name (IBM EGA, etc)          */
-/*         char    comment[26];    Comments (UNTESTED, etc)             */
-/*         int     keynum;         key number used to invoked this mode */
-/*                                 2-10 = F2-10, 11-40 = S,C,A{F1-F10}  */
-/*         int     videomodeax;    begin with INT 10H, AX=(this)        */
-/*         int     videomodebx;                 ...and BX=(this)        */
-/*         int     videomodecx;                 ...and CX=(this)        */
-/*         int     videomodedx;                 ...and DX=(this)        */
-/*                                 NOTE:  IF AX==BX==CX==0, SEE BELOW   */
-/*         int     dotmode;        video access method used by asm code */
-/*                                      1 == BIOS 10H, AH=12,13 (SLOW)  */
-/*                                      2 == access like EGA/VGA        */
-/*                                      3 == access like MCGA           */
-/*                                      4 == Tseng-like  SuperVGA*256   */
-/*                                      5 == P'dise-like SuperVGA*256   */
-/*                                      6 == Vega-like   SuperVGA*256   */
-/*                                      7 == "Tweaked" IBM-VGA ...*256  */
-/*                                      8 == "Tweaked" SuperVGA ...*256 */
-/*                                      9 == Targa Format               */
-/*                                      10 = Hercules                   */
-/*                                      11 = "disk video" (no screen)   */
-/*                                      12 = 8514/A                     */
-/*                                      13 = CGA 320x200x4, 640x200x2   */
-/*                                      14 = Tandy 1000                 */
-/*                                      15 = TRIDENT  SuperVGA*256      */
-/*                                      16 = Chips&Tech SuperVGA*256    */
-/*         int     xdots;          number of dots across the screen     */
-/*         int     ydots;          number of dots down the screen       */
-/*         int     colors;         number of colors available           */
+// VIDEOINFO:
+//         char    name[26];       Adapter name (IBM EGA, etc)
+//         char    comment[26];    Comments (UNTESTED, etc)
+//         int     keynum;         key number used to invoked this mode
+//                                 2-10 = F2-10, 11-40 = S,C,A{F1-F10}
+//         int     videomodeax;    begin with INT 10H, AX=(this)
+//         int     videomodebx;                 ...and BX=(this)
+//         int     videomodecx;                 ...and CX=(this)
+//         int     videomodedx;                 ...and DX=(this)
+//                                 NOTE:  IF AX==BX==CX==0, SEE BELOW
+//         int     dotmode;        video access method used by asm code
+//                                      1 == BIOS 10H, AH=12,13 (SLOW)
+//                                      2 == access like EGA/VGA
+//                                      3 == access like MCGA
+//                                      4 == Tseng-like  SuperVGA*256
+//                                      5 == P'dise-like SuperVGA*256
+//                                      6 == Vega-like   SuperVGA*256
+//                                      7 == "Tweaked" IBM-VGA ...*256
+//                                      8 == "Tweaked" SuperVGA ...*256
+//                                      9 == Targa Format
+//                                      10 = Hercules
+//                                      11 = "disk video" (no screen)
+//                                      12 = 8514/A
+//                                      13 = CGA 320x200x4, 640x200x2
+//                                      14 = Tandy 1000
+//                                      15 = TRIDENT  SuperVGA*256
+//                                      16 = Chips&Tech SuperVGA*256
+//         int     xdots;          number of dots across the screen
+//         int     ydots;          number of dots down the screen
+//         int     colors;         number of colors available
 
 #define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
     { name_, comment_, key_, 0, 0, 0, 0, mode_, width_, height_, 256 }
@@ -169,10 +169,10 @@ handle_special_keys(int ch)
 static void
 parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
 {
-    /* do something like XParseGeometry() */
+    // do something like XParseGeometry()
     if (2 == sscanf(spec, "%dx%d", width, height))
     {
-        /* all we care about is width and height for disk output */
+        // all we care about is width and height for disk output
         *x = 0;
         *y = 0;
     }
@@ -307,7 +307,7 @@ static bool gdi_init(Driver *drv, int *argc, char **argv)
     }
     plot_init(&di->plot, g_instance, "Plot");
 
-    /* filter out driver arguments */
+    // filter out driver arguments
     for (int i = 0; i < *argc; i++)
     {
         if (check_arg(di, argv[i]))
@@ -322,7 +322,7 @@ static bool gdi_init(Driver *drv, int *argc, char **argv)
         }
     }
 
-    /* add default list of video modes */
+    // add default list of video modes
     {
         int width, height;
         gdi_get_max_screen(drv, &width, &height);
@@ -632,11 +632,11 @@ gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
     DI(di);
 
-    /* initially, set the virtual line to be the scan line length */
+    // initially, set the virtual line to be the scan line length
     g_vxdots = sxdots;
-    g_is_true_color = false;            /* assume not truecolor */
-    g_vesa_x_res = 0;                   /* reset indicators used for */
-    g_vesa_y_res = 0;                   /* virtual screen limits estimation */
+    g_is_true_color = false;            // assume not truecolor
+    g_vesa_x_res = 0;                   // reset indicators used for
+    g_vesa_y_res = 0;                   // virtual screen limits estimation
     g_good_mode = true;
     if (dotmode !=0)
     {
@@ -644,7 +644,7 @@ gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
         boxcount = 0;
         g_dac_learn = true;
         g_dac_count = cyclelimit;
-        g_got_real_dac = true;          /* we are "VGA" */
+        g_got_real_dac = true;          // we are "VGA"
 
         driver_read_palette();
     }
@@ -752,14 +752,14 @@ gdi_stack_screen(Driver *drv)
     di->base.saved_cursor[di->base.screen_count+1] = g_text_row*80 + g_text_col;
     if (++di->base.screen_count)
     {
-        /* already have some stacked */
+        // already have some stacked
         int i = di->base.screen_count - 1;
 
         _ASSERTE(di->text_not_graphics);
         _ASSERTE(i < WIN32_MAXSCREENS);
         if (i >= WIN32_MAXSCREENS)
         {
-            /* bug, missing unstack? */
+            // bug, missing unstack?
             stopmsg(STOPMSG_NO_STACK, "gdi_stack_screen overflow");
             exit(1);
         }
@@ -783,7 +783,7 @@ gdi_unstack_screen(Driver *drv)
     g_text_row = di->base.saved_cursor[di->base.screen_count] / 80;
     g_text_col = di->base.saved_cursor[di->base.screen_count] % 80;
     if (--di->base.screen_count >= 0)
-    {   /* unstack */
+    {   // unstack
         _ASSERTE(di->text_not_graphics);
         wintext_screen_set(&di->base.wintext, di->base.saved_screens[di->base.screen_count]);
         free(di->base.saved_screens[di->base.screen_count]);
@@ -802,7 +802,7 @@ gdi_discard_screen(Driver *drv)
     DI(di);
 
     if (--di->base.screen_count >= 0)
-    {   /* unstack */
+    {   // unstack
         _ASSERTE(di->text_not_graphics);
         if (di->base.saved_screens[di->base.screen_count])
         {
@@ -959,18 +959,18 @@ static GDIDriver gdi_driver_info =
             win32_set_keyboard_timeout,
             gdi_flush
         },
-        { 0 },              /* Frame */
-        { 0 },              /* WinText */
-        0,                  /* key_buffer */
-        -1,                 /* screen_count */
-        { nullptr },           /* saved_screens */
-        { 0 },              /* saved_cursor */
-        FALSE,              /* cursor_shown */
-        0,                  /* cursor_row */
-        0                   /* cursor_col */
+        { 0 },              // Frame
+        { 0 },              // WinText
+        0,                  // key_buffer
+        -1,                 // screen_count
+        { nullptr },           // saved_screens
+        { 0 },              // saved_cursor
+        FALSE,              // cursor_shown
+        0,                  // cursor_row
+        0                   // cursor_col
     },
-    { 0 },              /* Plot */
-    TRUE                /* text_not_graphics */
+    { 0 },              // Plot
+    TRUE                // text_not_graphics
 };
 
 Driver *gdi_driver = &gdi_driver_info.base.pub;

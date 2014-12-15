@@ -11,12 +11,12 @@ struct tagWinText
     bool AltF4hit;
     int showing_cursor;
 
-    /* Local copy of the "screen" characters and attributes */
+    // Local copy of the "screen" characters and attributes
     char chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
     unsigned char attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
-    bool buffer_init;     /* false if 'screen' is uninitialized */
+    bool buffer_init;     // false if 'screen' is uninitialized
 
-    /* font information */
+    // font information
 
     HFONT hFont;
     int char_font;
@@ -27,7 +27,7 @@ struct tagWinText
     int max_width;
     int max_height;
 
-    /* "cursor" variables (AKA the "caret" in Window-Speak) */
+    // "cursor" variables (AKA the "caret" in Window-Speak)
     int cursor_x;
     int cursor_y;
     int cursor_type;
@@ -35,13 +35,13 @@ struct tagWinText
     HBITMAP bitmap[3];
     short cursor_pattern[3][40];
 
-    char title_text[128];         /* title-bar text */
+    char title_text[128];           // title-bar text
 
-    /* a few Windows variables we need to remember globally */
+    // a few Windows variables we need to remember globally
 
-    HWND hWndCopy;                /* a Global copy of hWnd */
-    HWND hWndParent;              /* a Global copy of hWnd's Parent */
-    HINSTANCE hInstance;             /* a global copy of hInstance */
+    HWND hWndCopy;                  // a Global copy of hWnd
+    HWND hWndParent;                // a Global copy of hWnd's Parent
+    HINSTANCE hInstance;            // a global copy of hInstance
 };
 typedef struct tagWinText WinText;
 

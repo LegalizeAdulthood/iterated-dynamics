@@ -110,7 +110,7 @@ long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
         but the application program hasn't officially closed the window yet.
 */
 
-/* function prototypes */
+// function prototypes
 
 static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
 
@@ -118,7 +118,7 @@ static LPCSTR s_window_class = "FractIntText";
 static WinText *g_me = nullptr;
 
 
-/* EGA/VGA 16-color palette (which doesn't match Windows palette exactly) */
+// EGA/VGA 16-color palette (which doesn't match Windows palette exactly)
 /*
 COLORREF wintext_color[] =
 {
@@ -140,7 +140,7 @@ COLORREF wintext_color[] =
     RGB(255, 255, 255)
 };
 */
-/* 16-color Windows Palette */
+// 16-color Windows Palette
 
 static COLORREF wintext_color[] =
 {
@@ -152,7 +152,7 @@ static COLORREF wintext_color[] =
     RGB(128, 0, 128),
     RGB(128, 128, 0),
     RGB(192, 192, 192),
-    /*  RGB(128, 128, 128),  This looks lousy - make it black */
+    //  RGB(128, 128, 128),  This looks lousy - make it black
     RGB(0, 0, 0),
     RGB(0, 0, 255),
     RGB(0, 255, 0),
@@ -207,7 +207,7 @@ bool wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
         return_value = RegisterClass(&wc) != 0;
     }
 
-    /* set up the font characteristics */
+    // set up the font characteristics
     me->char_font = OEM_FIXED_FONT;
     me->hFont = static_cast<HFONT>(GetStockObject(me->char_font));
     hDC=GetDC(hWndParent);
@@ -220,12 +220,12 @@ bool wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
     me->char_xchars = WINTEXT_MAX_COL;
     me->char_ychars = WINTEXT_MAX_ROW;
 
-    /* maximum screen width */
+    // maximum screen width
     me->max_width = me->char_xchars*me->char_width;
-    /* maximum screen height */
+    // maximum screen height
     me->max_height = me->char_ychars*me->char_height;
 
-    /* set up the font and caret information */
+    // set up the font and caret information
     for (int i = 0; i < 3; i++)
     {
         size_t count = NUM_OF(me->cursor_pattern[0])*sizeof(me->cursor_pattern[0][0]);
@@ -256,11 +256,11 @@ void wintext_destroy(WinText *me)
 {
     ODS("wintext_destroy");
 
-    if (me->textmode == 2)  /* text is still active! */
+    if (me->textmode == 2)  // text is still active!
     {
         wintext_textoff(me);
     }
-    if (me->textmode != 1)  /* not in the right mode */
+    if (me->textmode != 1)  // not in the right mode
     {
         return;
     }
@@ -283,12 +283,12 @@ int wintext_texton(WinText *me)
 
     ODS("wintext_texton");
 
-    if (me->textmode != 1)  /* not in the right mode */
+    if (me->textmode != 1)  // not in the right mode
     {
         return 0;
     }
 
-    /* initialize the cursor */
+    // initialize the cursor
     me->cursor_x    = 0;
     me->cursor_y    = 0;
     me->cursor_type = 0;
@@ -302,8 +302,8 @@ int wintext_texton(WinText *me)
     hWnd = CreateWindow(s_window_class,
                         me->title_text,
                         (nullptr == me->hWndParent) ? WS_OVERLAPPEDWINDOW : WS_CHILD,
-                        CW_USEDEFAULT,               /* default horizontal position */
-                        CW_USEDEFAULT,               /* default vertical position */
+                        CW_USEDEFAULT,               // default horizontal position
+                        CW_USEDEFAULT,               // default vertical position
                         me->max_width,
                         me->max_height,
                         me->hWndParent,
@@ -312,7 +312,7 @@ int wintext_texton(WinText *me)
                         nullptr);
     _ASSERTE(hWnd);
 
-    /* squirrel away a global copy of 'hWnd' for later */
+    // squirrel away a global copy of 'hWnd' for later
     me->hWndCopy = hWnd;
 
     me->textmode = 2;
@@ -333,7 +333,7 @@ int wintext_textoff(WinText *me)
 {
     ODS("wintext_textoff");
     me->AltF4hit = false;
-    if (me->textmode != 2)  /* not in the right mode */
+    if (me->textmode != 2)  // not in the right mode
     {
         return 0;
     }
@@ -352,8 +352,8 @@ static void wintext_OnClose(HWND window)
 static void wintext_OnSetFocus(HWND window, HWND old_focus)
 {
     ODS("wintext_OnSetFocus");
-    /* get focus - display caret */
-    /* create caret & display */
+    // get focus - display caret
+    // create caret & display
     if (TRUE == g_me->showing_cursor)
     {
         g_me->cursor_owned = true;
@@ -367,7 +367,7 @@ static void wintext_OnSetFocus(HWND window, HWND old_focus)
 
 static void wintext_OnKillFocus(HWND window, HWND old_focus)
 {
-    /* kill focus - hide caret */
+    // kill focus - hide caret
     ODS("wintext_OnKillFocus");
     if (TRUE == g_me->showing_cursor)
     {
@@ -393,7 +393,7 @@ static void wintext_OnPaint(HWND window)
     PAINTSTRUCT ps;
     HDC hDC = BeginPaint(window, &ps);
 
-    /* the routine below handles *all* window updates */
+    // the routine below handles *all* window updates
     int xmin = ps.rcPaint.left/g_me->char_width;
     int xmax = (ps.rcPaint.right + g_me->char_width - 1)/g_me->char_width;
     int ymin = ps.rcPaint.top/g_me->char_height;
@@ -433,7 +433,7 @@ LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
     {
         g_me->hWndCopy = hWnd;
     }
-    else if (hWnd != g_me->hWndCopy)  /* ??? not the text-mode window! */
+    else if (hWnd != g_me->hWndCopy)  // ??? not the text-mode window!
     {
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
@@ -535,8 +535,8 @@ void wintext_scroll_up(WinText *me, int top, int bot)
 */
 
 void wintext_paintscreen(WinText *me,
-                         int xmin,       /* update this rectangular section */
-                         int xmax,       /* of the 'screen'                 */
+                         int xmin,       // update this rectangular section
+                         int xmax,       // of the 'screen'
                          int ymin,
                          int ymax)
 {
@@ -547,10 +547,10 @@ void wintext_paintscreen(WinText *me,
 
     ODS("wintext_paintscreen");
 
-    if (me->textmode != 2)  /* not in the right mode */
+    if (me->textmode != 2)  // not in the right mode
         return;
 
-    /* first time through?  Initialize the 'screen' */
+    // first time through?  Initialize the 'screen'
     if (!me->buffer_init)
     {
         me->buffer_init = true;
@@ -644,7 +644,7 @@ void wintext_cursor(WinText *me, int xpos, int ypos, int cursor_type)
     int x, y;
     ODS("wintext_cursor");
 
-    if (me->textmode != 2)  /* not in the right mode */
+    if (me->textmode != 2)  // not in the right mode
     {
         return;
     }
