@@ -21,7 +21,7 @@ static int shftwrite(BYTE * color, int numcolors);
 static int extend_blk_len(int datalen);
 static int put_extend_blk(int block_id, int block_len, char * block_data);
 static int store_item_name(char *);
-static void setup_save_info(struct fractal_info * save_info);
+static void setup_save_info(fractal_info *save_info);
 
 /*
                         Save-To-Disk Routines (GIF)
@@ -265,7 +265,7 @@ bool encoder()
     bool interrupted;
     int width, rowlimit;
     BYTE bitsperpixel, x;
-    struct fractal_info save_info;
+    fractal_info save_info;
 
     if (initbatch)               // flush any impending keystrokes
         while (driver_key_pressed())
@@ -466,8 +466,8 @@ bool encoder()
         // Extended parameters block 006
         if (evolving&1)
         {
-            struct evolution_info esave_info;
-            struct evolution_info resume_e_info;
+            evolution_info esave_info;
+            evolution_info resume_e_info;
             GENEBASE gene[NUMGENES];
             MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
             if (evolve_handle == 0 || calc_status == CALCSTAT_COMPLETED) {
@@ -530,7 +530,7 @@ bool encoder()
         // Extended parameters block 007
         if (stdcalcmode == 'o')
         {
-            struct orbits_info osave_info;
+            orbits_info osave_info;
             osave_info.oxmin     = oxmin;
             osave_info.oxmax     = oxmax;
             osave_info.oymin     = oymin;
@@ -622,7 +622,7 @@ static int put_extend_blk(int block_id, int block_len, char * block_data)
 
 static int store_item_name(char *nameptr)
 {
-    struct formula_info fsave_info;
+    formula_info fsave_info;
     for (int i = 0; i < 40; i++)
         fsave_info.form_name[i] = 0;      // initialize string
     strcpy(fsave_info.form_name, nameptr);
@@ -653,7 +653,7 @@ static int store_item_name(char *nameptr)
     return (extend_blk_len(sizeof(fsave_info)));
 }
 
-static void setup_save_info(struct fractal_info * save_info)
+static void setup_save_info(fractal_info *save_info)
 {
     if (fractype != FORMULA && fractype != FFORMULA)
         maxfn = 0;
