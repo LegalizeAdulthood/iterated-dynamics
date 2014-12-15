@@ -2647,9 +2647,9 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         if (i != -1) {
             sscanf(buf,"%f",&gamma_val);
             if (gamma_val==0) {
-                gamma_val = (float)0.0000000001;
+                gamma_val = 0.0000000001F;
             }
-            gamma_val = (float)(1./gamma_val);
+            gamma_val = (float)(1.0/gamma_val);
         }
     }
     break;

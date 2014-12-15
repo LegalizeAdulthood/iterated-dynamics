@@ -1332,8 +1332,8 @@ void reset_clock()
         next_time[i] = 0;
 }
 
-#define LOG2  (float)0.693147180
-#define LOG32 (float)3.465735902
+#define LOG2  0.693147180F
+#define LOG32 3.465735902F
 
 static FILE *snd_fp = nullptr;
 

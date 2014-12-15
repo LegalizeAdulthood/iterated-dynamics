@@ -355,7 +355,7 @@ static void initvars_restart()          // <ins> key init
     initsavetime = 0;                   // no auto-save
     g_init_mode = -1;                   // no initial video mode
     viewwindow = false;                 // no view window
-    viewreduction = (float)4.2;
+    viewreduction = 4.2F;
     viewcrop = true;
     g_virtual_screens = true;           // virtual screen modes on
     finalaspectratio = screenaspect;
@@ -498,7 +498,7 @@ static void initvars_fractal()          // init vars affecting calculation
     heightfp = 7;
     widthfp = 10;
     distfp = 24;
-    eyesfp = (float)2.5;
+    eyesfp = 2.5F;
     depthfp = 8;
     neworbittype = JULIA;
     zdots = 128;
@@ -2128,7 +2128,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
         if (totparms > 5 || floatparms-intparms > 2 || intparms > 4)
             goto badarg;
         viewwindow = true;
-        viewreduction = 4.2f;  // reset default values
+        viewreduction = 4.2F;  // reset default values
         finalaspectratio = screenaspect;
         viewcrop = true;
         viewydots = 0;

@@ -104,8 +104,8 @@ names. So for now humor us and let's keep the names short.
 #define MAXPIXELS   32767       // Maximum pixel count across/down the screen
 #define OLDMAXPIXELS 2048       // Limit of some old fixed arrays
 #define MINPIXELS 10            // Minimum pixel count across/down the screen
-#define DEFAULTASPECT 1.0f      // Assumed overall screen dimensions, y/x
-#define DEFAULTASPECTDRIFT 0.02f // drift of < 2% is forced to 0%
+#define DEFAULTASPECT 1.0F      // Assumed overall screen dimensions, y/x
+#define DEFAULTASPECTDRIFT 0.02F // drift of < 2% is forced to 0%
 typedef struct tagDriver Driver;
 struct videoinfo {              // All we need to know about a Video Adapter
     char    name[26];       // Adapter name (IBM EGA, etc)

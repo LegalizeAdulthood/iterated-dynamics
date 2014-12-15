@@ -919,7 +919,7 @@ void Jiim(int which)         // called by fractint
                         old.x = g_new.x;
                         g_new.y = luckyy;
                         old.y = g_new.y;
-                        luckyy = 0.0f;
+                        luckyy = 0.0F;
                         luckyx = luckyy;
                         for (int i = 0; i < 199; i++)
                         {

@@ -2833,7 +2833,7 @@ static int potential(double mag, long iterations)
         l_pot = iterations+2;
         pot = (float) l_pot;
         if (l_pot <= 0 || mag <= 1.0)
-            pot = (float)0.0;
+            pot = 0.0F;
         else // pot = log(mag) / pow(2.0, (double)pot);
         {
             if (l_pot < 120 && !floatflag) // empirically determined limit of fShift
@@ -2848,7 +2848,7 @@ static int potential(double mag, long iterations)
                 if (d_tmp > FLT_MIN) // prevent float type underflow
                     pot = (float)d_tmp;
                 else
-                    pot = (float)0.0;
+                    pot = 0.0F;
             }
         }
         // following transformation strictly for aesthetic reasons
@@ -2870,8 +2870,8 @@ static int potential(double mag, long iterations)
         }
         else
             pot = (float)(potparam[0] - 1.0);
-        if (pot < 1.0)
-            pot = (float)1.0; // avoid color 0
+        if (pot < 1.0F)
+            pot = 1.0F; // avoid color 0
     }
     else if (inside >= 0)
         pot = (float) inside;
