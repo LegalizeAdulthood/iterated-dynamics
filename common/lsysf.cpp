@@ -47,7 +47,7 @@ extern void lsysf_doplus(struct lsys_turtlestatef *cmd);
 #endif
 
 #if defined(XFRACT) || defined(_WIN32)
-/* This is the same as lsys_doplus, except maxangle is a power of 2. */
+// This is the same as lsys_doplus, except maxangle is a power of 2.
 static void lsysf_doplus_pow2(struct lsys_turtlestatef *cmd)
 {
     if (cmd->reverse) {
@@ -278,10 +278,10 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
 {
     bool tran;
 
-    if (overflow)     /* integer math routines overflowed */
+    if (overflow)     // integer math routines overflowed
         return nullptr;
 
-    if (stackavail() < 400) { /* leave some margin for calling subrtns */
+    if (stackavail() < 400) { // leave some margin for calling subrtns
         ts->stackoflow = true;
         return nullptr;
     }
@@ -289,7 +289,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
 
     while (command->ch && command->ch !=']') {
         if (!(ts->counter++)) {
-            /* let user know we're not dead */
+            // let user know we're not dead
             if (thinking(1, "L-System thinking (higher orders take longer)")) {
                 ts->counter--;
                 return nullptr;
@@ -373,12 +373,11 @@ lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct l
     lsys_prepfpu(ts);
     fsret = findsize(command,ts,rules,depth);
     lsys_donefpu(ts);
-    thinking(0, nullptr); /* erase thinking message if any */
+    thinking(0, nullptr); // erase thinking message if any
     xmin = ts->xmin;
     xmax = ts->xmax;
     ymin = ts->ymin;
     ymax = ts->ymax;
-    /*   locsize = ts->size; */
     if (fsret == nullptr)
         return false;
     if (xmax == xmin)
@@ -394,12 +393,10 @@ lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct l
     if (horiz == 1E37)
         ts->xpos = xdots/2;
     else
-        /*    ts->xpos = -xmin*(locsize)+5+((xdots-10)-(locsize)*(xmax-xmin))/2; */
         ts->xpos = (xdots-locsize*(xmax+xmin))/2;
     if (vert == 1E37)
         ts->ypos = ydots/2;
     else
-        /*    ts->ypos = -ymin*(locsize)+3+((ydots-6)-(locsize)*(ymax-ymin))/2; */
         ts->ypos = (ydots-locsize*(ymax+ymin))/2;
     ts->size = locsize;
 
@@ -411,11 +408,11 @@ drawLSysF(struct lsys_cmd *command,struct lsys_turtlestatef *ts, struct lsys_cmd
 {
     bool tran;
 
-    if (overflow)     /* integer math routines overflowed */
+    if (overflow)     // integer math routines overflowed
         return nullptr;
 
 
-    if (stackavail() < 400) { /* leave some margin for calling subrtns */
+    if (stackavail() < 400) { // leave some margin for calling subroutines
         ts->stackoflow = true;
         return nullptr;
     }
