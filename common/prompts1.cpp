@@ -35,7 +35,7 @@ long get_file_entry(int type, const char *title,char *fmask,
 
 // Routines in this module
 
-int prompt_valuestring(char *buf,fullscreenvalues *val);
+int prompt_valuestring(char *buf, fullscreenvalues *val);
 static  int input_field_list(int attr,char *fld,int vlen, const char **list,int llen,
                              int row,int col,int (*checkkey)(int));
 static  int select_fracttype(int t);

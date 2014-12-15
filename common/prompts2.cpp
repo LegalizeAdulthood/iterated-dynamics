@@ -48,7 +48,7 @@ static  int get_screen_corners();
 #define   SUBDIR         16
 #define   MAXNUMFILES    2977L
 
-struct DIR_SEARCH DTA;          // Allocate DTA and define structure
+DIR_SEARCH DTA;          // Allocate DTA and define structure
 
 #define GETFORMULA 0
 #define GETLSYS    1
@@ -79,7 +79,7 @@ int get_toggles()
     const char *choices[20];
     char prevsavename[FILE_MAX_DIR+1];
     char *savenameptr;
-    struct fullscreenvalues uvalues[25];
+    fullscreenvalues uvalues[25];
     int i, j, k;
     char old_usr_stdcalcmode;
     long old_maxit,old_logflag;
@@ -373,7 +373,7 @@ int get_toggles()
 int get_toggles2()
 {
     const char *choices[18];
-    struct fullscreenvalues uvalues[23];
+    fullscreenvalues uvalues[23];
     int old_rotate_lo,old_rotate_hi;
     int old_distestwidth;
     double old_potparam[3],old_inversion[3];
@@ -528,7 +528,7 @@ int passes_options()
     const char *choices[20];
     const char *passcalcmodes[] = {"rect","line"};
 
-    struct fullscreenvalues uvalues[25];
+    fullscreenvalues uvalues[25];
     int i, j, k;
     int ret;
 
@@ -674,7 +674,7 @@ pass_option_restart:
 int get_view_params()
 {
     const char *choices[16];
-    struct fullscreenvalues uvalues[25];
+    fullscreenvalues uvalues[25];
     int i, k;
     float old_viewreduction, old_aspectratio;
     int old_viewxdots, old_viewydots, old_sxdots, old_sydots;
@@ -959,7 +959,7 @@ int starfield()
 
 int get_starfield_params()
 {
-    struct fullscreenvalues uvalues[3];
+    fullscreenvalues uvalues[3];
     const char *starfield_prompts[3] =
     {
         "Star Density in Pixels per Star",
@@ -995,7 +995,7 @@ static const char *masks[] = {"*.pot","*.gif"};
 int get_rds_params() {
     char rds6[60];
     const char *stereobars[] = {"none", "middle", "top"};
-    struct fullscreenvalues uvalues[7];
+    fullscreenvalues uvalues[7];
     const char *rds_prompts[7] =
     {
         "Depth Effect (negative reverses front and back)",
@@ -1092,7 +1092,7 @@ int get_a_number(double *x, double *y)
 {
     const char *choices[2];
 
-    struct fullscreenvalues uvalues[2];
+    fullscreenvalues uvalues[2];
     int i, k;
 
     driver_stack_screen();
@@ -1311,13 +1311,12 @@ int  fr_findnext()              // Find next file (or subdir) meeting above path
 }
 #endif // !_WIN32
 
-struct tagCHOICE
+struct CHOICE
 {
     char name[13];
     char full_name[FILE_MAX_PATH];
     char type;
 };
-typedef struct tagCHOICE CHOICE;
 
 int lccompare(VOIDPTR arg1, VOIDPTR arg2) // for sort
 {
@@ -1857,7 +1856,7 @@ FILE *dir_fopen(const char *dir, const char *filename, const char *mode)
 int cmpdbl(double old, double new_val)
 {
     char buf[81];
-    struct fullscreenvalues val;
+    fullscreenvalues val;
 
     // change the old value with the same torture the new value had
     val.type = 'd'; // most values on this screen are type d
@@ -1870,7 +1869,7 @@ int cmpdbl(double old, double new_val)
 
 int get_corners()
 {
-    struct fullscreenvalues values[15];
+    fullscreenvalues values[15];
     const char *prompts[15];
     char xprompt[] = "          X";
     char yprompt[] = "          Y";
@@ -2067,7 +2066,7 @@ gc_loop:
 
 static int get_screen_corners()
 {
-    struct fullscreenvalues values[15];
+    fullscreenvalues values[15];
     const char *prompts[15];
     char xprompt[] = "          X";
     char yprompt[] = "          Y";
@@ -2308,7 +2307,7 @@ gsc_loop:
 int get_browse_params()
 {
     const char *choices[10];
-    struct fullscreenvalues uvalues[25];
+    fullscreenvalues uvalues[25];
     int i, k;
     int old_minbox;
     double old_toosmall;
