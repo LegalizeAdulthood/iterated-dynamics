@@ -1535,9 +1535,6 @@ Modes:
    S(t)ripe mode: "T", " "
 
 */
-
-
-
 struct PalTable
 {
     int           x, y;

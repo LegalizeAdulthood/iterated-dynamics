@@ -35,7 +35,7 @@ long get_file_entry(int type, const char *title,char *fmask,
 
 // Routines in this module
 
-int prompt_valuestring(char *buf,struct fullscreenvalues *val);
+int prompt_valuestring(char *buf,fullscreenvalues *val);
 static  int input_field_list(int attr,char *fld,int vlen, const char **list,int llen,
                              int row,int col,int (*checkkey)(int));
 static  int select_fracttype(int t);
@@ -78,7 +78,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     const char *hdg,        // heading, lines separated by \n
     int numprompts,         // there are this many prompts (max)
     const char **prompts,   // array of prompting pointers
-    struct fullscreenvalues *values, // array of values
+    fullscreenvalues *values, // array of values
     int fkeymask,           // bit n on if Fn to cause return
     char *extrainfo         // extra info box to display, \n separated
 )
@@ -682,7 +682,7 @@ fullscreen_exit:
     return done;
 }
 
-int prompt_valuestring(char *buf,struct fullscreenvalues *val)
+int prompt_valuestring(char *buf,fullscreenvalues *val)
 {   // format value into buf, return field width
     int i,ret;
     switch (val->type) {
@@ -887,11 +887,12 @@ int get_fracttype()             // prompt for and select fractal type
     return done;
 }
 
-struct FT_CHOICE {
+struct FT_CHOICE
+{
     char name[15];
     int  num;
 };
-static struct FT_CHOICE **ft_choices; // for sel_fractype_help subrtn
+static FT_CHOICE **ft_choices; // for sel_fractype_help subrtn
 
 static int select_fracttype(int t) // subrtn of get_fracttype, separated
 // so that storage gets freed up
@@ -900,8 +901,8 @@ static int select_fracttype(int t) // subrtn of get_fracttype, separated
     int numtypes, done;
 #define MAXFTYPES 200
     char tname[40];
-    struct FT_CHOICE storage[MAXFTYPES] = { 0 };
-    struct FT_CHOICE *choices[MAXFTYPES];
+    FT_CHOICE storage[MAXFTYPES] = { 0 };
+    FT_CHOICE *choices[MAXFTYPES];
     int attributes[MAXFTYPES];
 
     // steal existing array for "choices"
@@ -932,7 +933,7 @@ static int select_fracttype(int t) // subrtn of get_fracttype, separated
         }
         numtypes = j + 1;
     }
-    shell_sort(&choices, numtypes, sizeof(struct FT_CHOICE *), lccompare); // sort list
+    shell_sort(&choices, numtypes, sizeof(FT_CHOICE *), lccompare); // sort list
     int j = 0;
     for (int i = 0; i < numtypes; ++i) // find starting choice in sorted list
         if (choices[i]->num == t || choices[i]->num == fractalspecific[t].tofloat)
@@ -1121,7 +1122,7 @@ static char JIIMstr2[] = "Left first or Right first?";
 const char *JIIMleftright[] = {"left", "right"};
 
 // moved from miscres.c so sizeof structure can be accessed here
-struct trig_funct_lst trigfn[] =
+trig_funct_lst trigfn[] =
 // changing the order of these alters meaning of *.fra file
 // maximum 6 characters in function names or recheck all related code
 {
@@ -1158,7 +1159,7 @@ struct trig_funct_lst trigfn[] =
     {"one",   dStkOne,   dStkOne,   dStkOne   },
 };
 
-#define NUMTRIGFN  sizeof(trigfn)/sizeof(struct trig_funct_lst)
+#define NUMTRIGFN  sizeof(trigfn)/sizeof(trig_funct_lst)
 
 const int numtrigfn = NUMTRIGFN;
 
@@ -1173,7 +1174,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     const char *v3 = "To   cy (imaginary part)";
     const char *juliorbitname = nullptr;
     int curtype,numparams,numtrig;
-    struct fullscreenvalues paramvalues[30];
+    fullscreenvalues paramvalues[30];
     const char *choices[30];
     long oldbailout = 0L;
     int promptnum;
@@ -1195,7 +1196,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     static // Can't initialize aggregates on the stack
 #endif
     const char *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
-    struct fractalspecificstuff *jborbit = nullptr;
+    fractalspecificstuff *jborbit = nullptr;
     int firstparm = 0;
     int lastparm  = MAXPARAMS;
     double oldparam[MAXPARAMS];
@@ -1761,11 +1762,12 @@ long get_file_entry(int type, const char *title,char *fmask,
     }
 }
 
-struct entryinfo {
+struct entryinfo
+{
     char name[ITEMNAMELEN+2];
     long point; // points to the ( or the { following the name
 };
-static struct entryinfo **gfe_choices; // for format_getparm_line
+static entryinfo **gfe_choices; // for format_getparm_line
 static const char *gfe_title;
 
 // skip to next non-white space character and return it
@@ -1796,7 +1798,7 @@ int skip_comment(FILE *infile, long *file_offset)
 
 #define MAXENTRIES 2000L
 
-int scan_entries(FILE * infile, struct entryinfo *choices, char *itemname)
+int scan_entries(FILE * infile, entryinfo *choices, char *itemname)
 {
     /*
     function returns the number of entries found; if a
@@ -1930,8 +1932,8 @@ static long gfe_choose_entry(int type, const char *title, char *filename, char *
 #endif
     int numentries;
     char buf[101];
-    struct entryinfo storage[MAXENTRIES + 1];
-    struct entryinfo *choices[MAXENTRIES + 1] = { nullptr };
+    entryinfo storage[MAXENTRIES + 1];
+    entryinfo *choices[MAXENTRIES + 1] = { nullptr };
     int attributes[MAXENTRIES + 1] = { 0 };
     void (*formatitem)(int, char *);
     int boxwidth, boxdepth, colwidth;
@@ -1962,7 +1964,7 @@ retry:
     if (dosort)
     {
         strcat(instr, "off");
-        shell_sort((char *) &choices, numentries, sizeof(struct entryinfo *), lccompare);
+        shell_sort((char *) &choices, numentries, sizeof(entryinfo *), lccompare);
     }
     else
     {
@@ -2308,7 +2310,7 @@ static void format_parmfile_line(int choice,char *buf)
 int get_fract3d_params() // prompt for 3D fractal parameters
 {
     int i,k,ret,oldhelpmode;
-    struct fullscreenvalues uvalues[20];
+    fullscreenvalues uvalues[20];
     const char *ifs3d_prompts[7] =
     {
         "X-axis rotation in degrees",
@@ -2375,7 +2377,7 @@ int get_3d_params()     // prompt for 3D parameters
     int sphere;
     const char *s;
     const char *prompts3d[21];
-    struct fullscreenvalues uvalues[21];
+    fullscreenvalues uvalues[21];
     int k;
     int oldhelpmode;
 
@@ -2660,7 +2662,7 @@ restart_3:
 static bool get_light_params()
 {
     const char *prompts3d[13];
-    struct fullscreenvalues uvalues[13];
+    fullscreenvalues uvalues[13];
 
     int k;
     int oldhelpmode;
@@ -2822,7 +2824,7 @@ static bool get_funny_glasses_params()
 {
     const char *prompts3d[10];
 
-    struct fullscreenvalues uvalues[10];
+    fullscreenvalues uvalues[10];
 
     int k;
     int oldhelpmode;
