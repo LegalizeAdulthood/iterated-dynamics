@@ -111,7 +111,7 @@ static bool frm_prescan(FILE * open_file);
                         case '8':\
                         case '9'
 
-/* token_type definitions */
+// token_type definitions
 #define NOT_A_TOKEN           0
 #define PARENS                1
 #define PARAM_VARIABLE        2
@@ -125,7 +125,7 @@ static bool frm_prescan(FILE * open_file);
 #define OPERATOR             10
 #define END_OF_FORMULA       11
 
-/* token IDs */
+// token IDs
 #define END_OF_FILE            1
 #define ILLEGAL_CHARACTER      2
 #define ILLEGAL_VARIABLE_NAME  3
@@ -148,10 +148,10 @@ struct token_st
 };
 
 
-/* MAX_STORES must be even to make Unix alignment work */
+// MAX_STORES must be even to make Unix alignment work
 
-#define MAX_STORES ((Max_Ops/4)*2)  /* at most only half the ops can be stores */
-#define MAX_LOADS  ((unsigned)(Max_Ops*.8))  /* and 80% can be loads */
+#define MAX_STORES ((Max_Ops/4)*2)  // at most only half the ops can be stores
+#define MAX_LOADS  ((unsigned)(Max_Ops*.8))  // and 80% can be loads
 
 static struct PEND_OP o[2300];
 
@@ -171,7 +171,7 @@ static void parser_allocate();
 
 union Arg *Arg1, *Arg2;
 
-/* Some of these variables should be renamed for safety */
+// Some of these variables should be renamed for safety
 union Arg s[20];
 union Arg **Store;
 union Arg **Load;
@@ -305,7 +305,7 @@ static const char *ParseErrs(int which)
     static char e27[] = {"Invalid constant expression"};
     static char e28[] = {"This character not supported by parser"};
     static char e29[] = {"Nesting of parentheses exceeds maximum depth"};
-    static char e30[] = {"Unmatched modulus operator \"|\" in this expression"}; /*last one */
+    static char e30[] = {"Unmatched modulus operator \"|\" in this expression"}; //last one
     static char e31[] = {"Can't use function name as variable"};
     static char e32[] = {"Negative exponent must be enclosed in parens"};
     static char e33[] = {"Variable or constant exceeds 32 character limit"};
@@ -332,14 +332,14 @@ static const char *ParseErrs(int which)
 
 #if !defined(XFRACT)
 
-static void mStkFunct(void (*fct)())   /* call mStk via dStk */
+static void mStkFunct(void (*fct)())   // call mStk via dStk
 {
     Arg1->d = MPC2cmplx(Arg1->m);
     (*fct)();
     Arg1->m = cmplx2MPC(Arg1->d);
 }
 
-static void lStkFunct(void (*fct)())   /* call lStk via dStk */
+static void lStkFunct(void (*fct)())   // call lStk via dStk
 {
     double y;
     /*
@@ -410,7 +410,7 @@ void SetRandFnct()
     srand(Seed);
     SetRandom = true;
 
-    /* Clear out the seed */
+    // Clear out the seed
     NewRandNum();
     NewRandNum();
     NewRandNum();
@@ -420,7 +420,7 @@ void RandomSeed()
 {
     time_t ltime;
 
-    /* Use the current time to randomize the random number sequence. */
+    // Use the current time to randomize the random number sequence.
     time(&ltime);
     srand((unsigned int)ltime);
 
@@ -504,7 +504,7 @@ void dStkLodDbl()
 
 void dStkSqr0()
 {
-    LastSqr.d.y = Arg1->d.y * Arg1->d.y; /* use LastSqr as temp storage */
+    LastSqr.d.y = Arg1->d.y * Arg1->d.y; // use LastSqr as temp storage
     Arg1->d.y = Arg1->d.x * Arg1->d.y * 2.0;
     Arg1->d.x = Arg1->d.x * Arg1->d.x - LastSqr.d.y;
 }
@@ -660,7 +660,7 @@ void dStkFloor()
 #if !defined(XFRACT)
 void mStkFloor()
 {
-    mStkFunct(dStkFloor);   /* call lStk via dStk */
+    mStkFunct(dStkFloor);   // call lStk via dStk
 }
 
 void lStkFloor()
@@ -687,7 +687,7 @@ void dStkCeil()
 #if !defined(XFRACT)
 void mStkCeil()
 {
-    mStkFunct(dStkCeil);   /* call lStk via dStk */
+    mStkFunct(dStkCeil);   // call lStk via dStk
 }
 
 void lStkCeil()
@@ -712,7 +712,7 @@ void dStkTrunc()
 #if !defined(XFRACT)
 void mStkTrunc()
 {
-    mStkFunct(dStkTrunc);   /* call lStk via dStk */
+    mStkFunct(dStkTrunc);   // call lStk via dStk
 }
 
 void lStkTrunc()
@@ -744,12 +744,12 @@ void dStkRound()
 #if !defined(XFRACT)
 void mStkRound()
 {
-    mStkFunct(dStkRound);   /* call lStk via dStk */
+    mStkFunct(dStkRound);   // call lStk via dStk
 }
 
 void lStkRound()
 {
-    /* Add .5 then truncate */
+    // Add .5 then truncate
     Arg1->l.x += (1L<<bitshiftless1);
     Arg1->l.y += (1L<<bitshiftless1);
     lStkFloor();
@@ -951,8 +951,8 @@ void mStkMod()
 
 void lStkMod()
 {
-    /*   Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) + */
-    /*   multiply(Arg2->l.y, Arg1->l.y, bitshift); */
+    //   Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) +
+    //   multiply(Arg2->l.y, Arg1->l.y, bitshift);
     Arg1->l.x = multiply(Arg1->l.x, Arg1->l.x, bitshift) +
                 multiply(Arg1->l.y, Arg1->l.y, bitshift);
     if (Arg1->l.x < 0)
@@ -1040,7 +1040,7 @@ void dStkSin()
 #if !defined(XFRACT)
 void mStkSin()
 {
-    mStkFunct(dStkSin);   /* call lStk via dStk */
+    mStkFunct(dStkSin);   // call lStk via dStk
 }
 
 void lStkSin()
@@ -1076,7 +1076,7 @@ void dStkTan()
 #if !defined(XFRACT)
 void mStkTan()
 {
-    mStkFunct(dStkTan);   /* call lStk via dStk */
+    mStkFunct(dStkTan);   // call lStk via dStk
 }
 
 void lStkTan()
@@ -1113,7 +1113,7 @@ void dStkTanh()
 #if !defined(XFRACT)
 void mStkTanh()
 {
-    mStkFunct(dStkTanh);   /* call lStk via dStk */
+    mStkFunct(dStkTanh);   // call lStk via dStk
 }
 
 void lStkTanh()
@@ -1150,7 +1150,7 @@ void dStkCoTan()
 #if !defined(XFRACT)
 void mStkCoTan()
 {
-    mStkFunct(dStkCoTan);   /* call lStk via dStk */
+    mStkFunct(dStkCoTan);   // call lStk via dStk
 }
 
 void lStkCoTan()
@@ -1187,7 +1187,7 @@ void dStkCoTanh()
 #if !defined(XFRACT)
 void mStkCoTanh()
 {
-    mStkFunct(dStkCoTanh);   /* call lStk via dStk */
+    mStkFunct(dStkCoTanh);   // call lStk via dStk
 }
 
 void lStkCoTanh()
@@ -1256,7 +1256,7 @@ void lStkRecip()
 #endif
 
 void StkIdent()
-{ /* do nothing - the function Z */
+{ // do nothing - the function Z
 }
 
 void dStkSinh()
@@ -1272,7 +1272,7 @@ void dStkSinh()
 #if !defined(XFRACT)
 void mStkSinh()
 {
-    mStkFunct(dStkSinh);   /* call lStk via dStk */
+    mStkFunct(dStkSinh);   // call lStk via dStk
 }
 
 void lStkSinh()
@@ -1303,7 +1303,7 @@ void dStkCos()
 #if !defined(XFRACT)
 void mStkCos()
 {
-    mStkFunct(dStkCos);   /* call lStk via dStk */
+    mStkFunct(dStkCos);   // call lStk via dStk
 }
 
 void lStkCos()
@@ -1321,7 +1321,7 @@ void lStkCos()
 
 void (*StkCos)() = dStkCos;
 
-/* Bogus version of cos, to replicate bug which was in regular cos till v16: */
+// Bogus version of cos, to replicate bug which was in regular cos till v16:
 
 void dStkCosXX()
 {
@@ -1332,7 +1332,7 @@ void dStkCosXX()
 #if !defined(XFRACT)
 void mStkCosXX()
 {
-    mStkFunct(dStkCosXX);   /* call lStk via dStk */
+    mStkFunct(dStkCosXX);   // call lStk via dStk
 }
 
 void lStkCosXX()
@@ -1357,7 +1357,7 @@ void dStkCosh()
 #if !defined(XFRACT)
 void mStkCosh()
 {
-    mStkFunct(dStkCosh);   /* call lStk via dStk */
+    mStkFunct(dStkCosh);   // call lStk via dStk
 }
 
 void lStkCosh()
@@ -1502,7 +1502,7 @@ void mStkSqrt()
 
 void lStkSqrt()
 {
-    /* lStkFunct(dStkSqrt); */
+    // lStkFunct(dStkSqrt);
     Arg1->l = ComplexSqrtLong(Arg1->l.x, Arg1->l.y);
 }
 #endif
@@ -1780,7 +1780,7 @@ void dStkLog()
 #if !defined(XFRACT)
 void mStkLog()
 {
-    mStkFunct(dStkLog);   /* call lStk via dStk */
+    mStkFunct(dStkLog);   // call lStk via dStk
 }
 
 void lStkLog()
@@ -1808,7 +1808,7 @@ void dStkExp()
 #if !defined(XFRACT)
 void mStkExp()
 {
-    mStkFunct(dStkExp);   /* call lStk via dStk */
+    mStkFunct(dStkExp);   // call lStk via dStk
 }
 
 void lStkExp()
@@ -1960,12 +1960,12 @@ unsigned SkipWhiteSpace(char *Str)
     return n - 1;
 }
 
-/* detect if constant is part of a (a,b) construct */
+// detect if constant is part of a (a,b) construct
 static bool isconst_pair(char *Str)
 {
     int n,j;
     bool answer = false;
-    /* skip past first number */
+    // skip past first number
     for (n = 0; isdigit(Str[n]) || Str[n] == '.'; n++)
     {
     }
@@ -1985,26 +1985,26 @@ static bool isconst_pair(char *Str)
 struct ConstArg *isconst(char *Str, int Len)
 {
     DComplex z;
-    /* next line enforces variable vs constant naming convention */
+    // next line enforces variable vs constant naming convention
     for (unsigned n = 0; n < vsp; n++)
     {
         if (v[n].len == Len)
         {
             if (!strnicmp(v[n].s, Str, Len))
             {
-                if (n == 1)        /* The formula uses 'p1'. */
+                if (n == 1)        // The formula uses 'p1'.
                     uses_p1 = true;
-                if (n == 2)        /* The formula uses 'p2'. */
+                if (n == 2)        // The formula uses 'p2'.
                     uses_p2 = true;
-                if (n == 7)        /* The formula uses 'rand'. */
+                if (n == 7)        // The formula uses 'rand'.
                     RandomSeed();
-                if (n == 8)        /* The formula uses 'p3'. */
+                if (n == 8)        // The formula uses 'p3'.
                     uses_p3 = true;
-                if (n == 13)        /* The formula uses 'ismand'. */
+                if (n == 13)        // The formula uses 'ismand'.
                     uses_ismand = true;
-                if (n == 17)        /* The formula uses 'p4'. */
+                if (n == 17)        // The formula uses 'p4'.
                     uses_p4 = true;
-                if (n == 18)        /* The formula uses 'p5'. */
+                if (n == 18)        // The formula uses 'p5'.
                     uses_p5 = true;
 #if !defined(XFRACT)
                 if (n == 10 || n == 11 || n == 12)
@@ -2022,7 +2022,7 @@ struct ConstArg *isconst(char *Str, int Len)
     v[vsp].a.d.x = v[vsp].a.d.y;
 
 #if !defined(XFRACT)
-    /* v[vsp].a should already be zeroed out */
+    // v[vsp].a should already be zeroed out
     switch (MathType)
     {
     case M_MATH:
@@ -2174,23 +2174,23 @@ struct FNCT_LIST FnctList[] =
 
 const char *OPList[] =
 {
-    ",",    /*  0 */
-    "!=",   /*  1 */
-    "=",    /*  2 */
-    "==",   /*  3 */
-    "<",    /*  4 */
-    "<=",   /*  5 */
-    ">",    /*  6 */
-    ">=",   /*  7 */
-    "|",    /*  8 */
-    "||",   /*  9 */
-    "&&",   /* 10 */
-    ":",    /* 11 */
-    "+",    /* 12 */
-    "-",    /* 13 */
-    "*",    /* 14 */
-    "/",    /* 15 */
-    "^"     /* 16 */
+    ",",    //  0
+    "!=",   //  1
+    "=",    //  2
+    "==",   //  3
+    "<",    //  4
+    "<=",   //  5
+    ">",    //  6
+    ">=",   //  7
+    "|",    //  8
+    "||",   //  9
+    "&&",   // 10
+    ":",    // 11
+    "+",    // 12
+    "-",    // 13
+    "*",    // 14
+    "/",    // 15
+    "^"     // 16
 };
 
 
@@ -2201,7 +2201,7 @@ void FnctNotFound()
 {
 }
 
-/* determine if s names a function and if so which one */
+// determine if s names a function and if so which one
 
 int whichfn(char *s, int len)
 {
@@ -2228,7 +2228,7 @@ void (*isfunct(char *Str, int Len))()
             {
                 if (!strnicmp(FnctList[n].s, Str, Len))
                 {
-                    /* count function variables */
+                    // count function variables
                     int functnum = whichfn(Str, Len);
                     if (functnum != 0)
                         if (functnum > maxfn)
@@ -2252,25 +2252,25 @@ void RecSortPrec()
 
 static const char *Constants[] =
 {
-    "pixel",        /* v[0] */
-    "p1",           /* v[1] */
-    "p2",           /* v[2] */
-    "z",            /* v[3] */
-    "LastSqr",      /* v[4] */
-    "pi",           /* v[5] */
-    "e",            /* v[6] */
-    "rand",         /* v[7] */
-    "p3",           /* v[8] */
-    "whitesq",      /* v[9] */
-    "scrnpix",      /* v[10] */
-    "scrnmax",      /* v[11] */
-    "maxit",        /* v[12] */
-    "ismand",       /* v[13] */
-    "center",       /* v[14] */
-    "magxmag",      /* v[15] */
-    "rotskew",      /* v[16] */
-    "p4",           /* v[17] */
-    "p5"            /* v[18] */
+    "pixel",        // v[0]
+    "p1",           // v[1]
+    "p2",           // v[2]
+    "z",            // v[3]
+    "LastSqr",      // v[4]
+    "pi",           // v[5]
+    "e",            // v[6]
+    "rand",         // v[7]
+    "p3",           // v[8]
+    "whitesq",      // v[9]
+    "scrnpix",      // v[10]
+    "scrnmax",      // v[11]
+    "maxit",        // v[12]
+    "ismand",       // v[13]
+    "center",       // v[14]
+    "magxmag",      // v[15]
+    "rotskew",      // v[16]
+    "p4",           // v[17]
+    "p5"            // v[18]
 };
 
 struct SYMETRY
@@ -2748,13 +2748,13 @@ static bool ParseStr(char *Str, int pass)
                 uses_jump = true;
                 switch (jumptype)
                 {
-                case 1:                      /* if */
+                case 1:                      // if
                     ExpectingArg = true;
                     jump_control[jump_index++].type = 1;
                     o[posp].f = StkJumpOnFalse;
                     o[posp++].p = 1;
                     break;
-                case 2:                     /* elseif */
+                case 2:                     // elseif
                     ExpectingArg = true;
                     jump_control[jump_index++].type = 2;
                     jump_control[jump_index++].type = 2;
@@ -2767,12 +2767,12 @@ static bool ParseStr(char *Str, int pass)
                     o[posp].f = StkJumpOnFalse;
                     o[posp++].p = 1;
                     break;
-                case 3:                     /* else */
+                case 3:                     // else
                     jump_control[jump_index++].type = 3;
                     o[posp].f = StkJump;
                     o[posp++].p = 1;
                     break;
-                case 4: /* endif */
+                case 4: // endif
                     jump_control[jump_index++].type = 4;
                     o[posp].f = StkJumpLabel;
                     o[posp++].p = 1;
@@ -2828,7 +2828,7 @@ int Formula()
     StoPtr = InitStoPtr;
     OpPtr = InitOpPtr;
     jump_index=InitJumpIndex;
-    /* Set the random number */
+    // Set the random number
     if (SetRandom || Randomized)
     {
         switch (MathType)
@@ -2950,13 +2950,13 @@ int form_per_pixel()
                 v[0].a.m.y = *d2MP(old.y);
                 break;
             case L_MATH:
-                /* watch out for overflow */
+                // watch out for overflow
                 if (sqr(old.x)+sqr(old.y) >= 127)
                 {
-                    old.x = 8;  /* value to bail out in one iteration */
+                    old.x = 8;  // value to bail out in one iteration
                     old.y = 8;
                 }
-                /* convert to fudged longs */
+                // convert to fudged longs
                 v[0].a.l.x = (long)(old.x*fg);
                 v[0].a.l.y = (long)(old.y*fg);
                 break;
@@ -2993,7 +2993,7 @@ int form_per_pixel()
     InitLodPtr = LodPtr;
     InitStoPtr = StoPtr;
     InitOpPtr = OpPtr;
-    /* Set old variable for orbits */
+    // Set old variable for orbits
     switch (MathType)
     {
     case D_MATH:
@@ -3018,41 +3018,41 @@ int form_per_pixel()
 int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
 {
     int i   = endif_index;
-    int ljp = endif_index; /* ljp means "last jump processed" */
+    int ljp = endif_index; // ljp means "last jump processed"
     while (i > 0)
     {
         i--;
         switch (jump_control[i].type)
         {
-        case 1:    /*if (); this concludes processing of this group*/
+        case 1:    //if (); this concludes processing of this group
             jump_control[i].ptrs = jump_data[ljp];
             jump_control[i].DestJumpIndex = ljp + 1;
             return i;
-        case 2:    /*elseif* ( 2 jumps, the else and the if*/
-            /* first, the "if" part */
+        case 2:    //elseif* ( 2 jumps, the else and the if
+            // first, the "if" part
             jump_control[i].ptrs = jump_data[ljp];
             jump_control[i].DestJumpIndex = ljp + 1;
 
-            /* then, the else part */
-            i--; /*fall through to "else" is intentional*/
+            // then, the else part
+            i--; //fall through to "else" is intentional
         case 3:
             jump_control[i].ptrs = jump_data[endif_index];
             jump_control[i].DestJumpIndex = endif_index + 1;
             ljp = i;
             break;
-        case 4:    /*endif*/
+        case 4:    //endif
             i = fill_if_group(i, jump_data);
             break;
         default:
             break;
         }
     }
-    return -1; /* should never get here */
+    return -1; // should never get here
 }
 
 static bool fill_jump_struct()
-{   /* Completes all entries in jump structure. Returns 1 on error) */
-    /* On entry, jump_index is the number of jump functions in the formula*/
+{   // Completes all entries in jump structure. Returns 1 on error)
+    // On entry, jump_index is the number of jump functions in the formula
     int i = 0;
     int loadcount = 0;
     int storecount = 0;
@@ -3103,7 +3103,7 @@ static bool fill_jump_struct()
         }
     }
 
-    /* Following for safety only; all should always be false */
+    // Following for safety only; all should always be false
     if (i != jump_index || jump_control[i - 1].type != 4
             || jump_control[0].type != 1)
     {
@@ -3156,7 +3156,7 @@ int frmgetchar(FILE * openfile)
     return tolower(c);
 }
 
-/* This function also gets flow control info */
+// This function also gets flow control info
 
 void getfuncinfo(struct token_st * tok)
 {
@@ -3173,7 +3173,7 @@ void getfuncinfo(struct token_st * tok)
         }
     }
 
-    for (int i = 0; i < 4; i++)        /*pick up flow control*/
+    for (int i = 0; i < 4; i++)        //pick up flow control
     {
         if (!strcmp(JumpList[i], tok->token_str))
         {
@@ -3215,11 +3215,11 @@ void getvarinfo(struct token_st * tok)
     tok->token_id   = 0;
 }
 
-/* fills in token structure where numeric constant is indicated */
+// fills in token structure where numeric constant is indicated
 /* Note - this function will be called twice to fill in the components
         of a complex constant. See is_complex_constant() below. */
 
-/* returns 1 on success, 0 on NOT_A_TOKEN */
+// returns 1 on success, 0 on NOT_A_TOKEN
 static bool  frmgetconstant(FILE * openfile, struct token_st * tok)
 {
     int c;
@@ -3228,7 +3228,7 @@ static bool  frmgetconstant(FILE * openfile, struct token_st * tok)
     long filepos = ftell(openfile);
     bool got_decimal_already = false;
     bool done = false;
-    tok->token_const.x = 0.0;          /*initialize values to 0*/
+    tok->token_const.x = 0.0;          //initialize values to 0
     tok->token_const.y = 0.0;
     if (tok->token_str[0] == '.')
         got_decimal_already = true;
@@ -3311,7 +3311,7 @@ CASE_NUM:
             tok->token_id = TOKEN_TOO_LONG;
             return false;
         }
-    }    /* end of while loop. Now fill in the value */
+    }    // end of while loop. Now fill in the value
     tok->token_const.x = atof(tok->token_str);
     tok->token_type = REAL_CONSTANT;
     tok->token_id   = 0;
@@ -3320,7 +3320,7 @@ CASE_NUM:
 
 void is_complex_constant(FILE * openfile, struct token_st * tok)
 {
-    /* should test to make sure tok->token_str[0] == '(' */
+    // should test to make sure tok->token_str[0] == '('
     struct token_st temp_tok;
     long filepos;
     int c;
@@ -3328,7 +3328,7 @@ void is_complex_constant(FILE * openfile, struct token_st * tok)
     bool done = false;
     bool getting_real = true;
     FILE * debug_token = nullptr;
-    tok->token_str[1] = (char) 0;  /* so we can concatenate later */
+    tok->token_str[1] = (char) 0;  // so we can concatenate later
 
     filepos = ftell(openfile);
     if (debugflag == 96)
@@ -3391,7 +3391,7 @@ CASE_NUM :
             {
                 fprintf(debug_token, "frmgetconstant returned 1; next token is %c\n", c);
             }
-            if (getting_real && c == ',')   /* we have the real part now*/
+            if (getting_real && c == ',')   // we have the real part now
             {
                 if (sign_value == -1)
                 {
@@ -3403,7 +3403,7 @@ CASE_NUM :
                 getting_real = false;
                 sign_value = 1;
             }
-            else if (!getting_real && c == ')') /* we have the complex part */
+            else if (!getting_real && c == ')') // we have the complex part
             {
                 if (sign_value == -1)
                 {
@@ -3469,7 +3469,7 @@ CASE_NUM:
             last_filepos = filepos;
             break;
         default:
-            if (c == '.')       /* illegal character in variable or func name */
+            if (c == '.')       // illegal character in variable or func name
             {
                 tok->token_type = NOT_A_TOKEN;
                 tok->token_id   = ILLEGAL_VARIABLE_NAME;
@@ -3488,7 +3488,7 @@ CASE_NUM:
             tok->token_str[i] = (char) 0;
             fseek(openfile, last_filepos, SEEK_SET);
             getfuncinfo(tok);
-            if (c=='(') /*getfuncinfo() correctly filled structure*/
+            if (c=='(') //getfuncinfo() correctly filled structure
             {
                 if (tok->token_type == NOT_A_TOKEN)
                     return false;
@@ -3501,7 +3501,7 @@ CASE_NUM:
                 else
                     return true;
             }
-            /*can't use function names as variables*/
+            //can't use function names as variables
             else if (tok->token_type == FUNCTION || tok->token_type == PARAM_FUNCTION)
             {
                 tok->token_type = NOT_A_TOKEN;
@@ -3587,7 +3587,7 @@ CASE_ALPHA:
         this_token->token_str[0] = (char) c;
         return frmgetalpha(openfile, this_token);
 CASE_TERMINATOR:
-        this_token->token_type = OPERATOR; /* this may be changed below */
+        this_token->token_type = OPERATOR; // this may be changed below
         this_token->token_str[0] = (char) c;
         filepos = ftell(openfile);
         if (c=='<' || c=='>' || c=='=')
@@ -3703,7 +3703,7 @@ int frm_get_param_stuff(char * Name)
 
     if (FormName[0] == 0)
     {
-        return 0;  /*  and don't reset the pointers  */
+        return 0;  //  and don't reset the pointers
     }
     if (find_file_item(FormFileName,Name,&entry_file, 1))
     {
@@ -3789,7 +3789,7 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
     int c, i;
     bool at_end_of_name = false;
 
-    /* first, test name */
+    // first, test name
     i = 0;
     bool done = false;
     while (!done)
@@ -3833,7 +3833,7 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
         stopmsg(STOPMSG_FIXED_FONT, msgbuf);
         return false;
     }
-    /* get symmetry */
+    // get symmetry
     symmetry = 0;
     if (c == '(')
     {
@@ -3927,7 +3927,7 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
     struct token_st temp_tok;
     long filepos = ftell(File);
 
-    /*Test for a repeat*/
+    //Test for a repeat
 
     if (!frm_check_name_and_sym(File, from_prompts1c))
     {
@@ -3957,11 +3957,11 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
     }
 
     FormulaStr = (char *)boxx;
-    FormulaStr[0] = (char) 0; /* To permit concatenation later */
+    FormulaStr[0] = (char) 0; // To permit concatenation later
 
     bool Done = false;
 
-    /*skip opening end-of-lines */
+    //skip opening end-of-lines
     while (!Done)
     {
         frmgettoken(File, &temp_tok);
@@ -4017,32 +4017,28 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
     if (debug_fp != nullptr)
         fclose(debug_fp);
 
-
-    /* sprintf(debugmsg, "Chars in formula per boxx is %u.\n", strlen(FormulaStr));
-       stopmsg(0, debugmsg);
-    */
     return FormulaStr;
 }
 
 int BadFormula()
 {
-    /*  this is called when a formula is bad, instead of calling  */
-    /*     the normal functions which will produce undefined results  */
+    //  this is called when a formula is bad, instead of calling
+    //     the normal functions which will produce undefined results
     return 1;
 }
 
-/*  returns true if an error occurred  */
+//  returns true if an error occurred
 bool RunForm(char *Name, bool from_prompts1c)
 {
     FILE * entry_file = nullptr;
 
-    /*  first set the pointers so they point to a fn which always returns 1  */
+    //  first set the pointers so they point to a fn which always returns 1
     curfractalspecific->per_pixel = BadFormula;
     curfractalspecific->orbitcalc = BadFormula;
 
     if (FormName[0] == 0)
     {
-        return true;  /*  and don't reset the pointers  */
+        return true;  //  and don't reset the pointers
     }
 
     if (find_file_item(FormFileName,Name,&entry_file, 1))
@@ -4054,11 +4050,11 @@ bool RunForm(char *Name, bool from_prompts1c)
     FormStr = PrepareFormula(entry_file, from_prompts1c);
     fclose(entry_file);
 
-    if (FormStr)  /*  No errors while making string */
+    if (FormStr)  //  No errors while making string
     {
-        parser_allocate();  /*  ParseStr() will test if this alloc worked  */
+        parser_allocate();  //  ParseStr() will test if this alloc worked
         if (ParseStr(FormStr,1))
-            return true;   /*  parse failed, don't change fn pointers  */
+            return true;   //  parse failed, don't change fn pointers
         else
         {
             if (uses_jump && fill_jump_struct())
@@ -4067,30 +4063,30 @@ bool RunForm(char *Name, bool from_prompts1c)
                 return true;
             }
 
-            /* all parses succeeded so set the pointers back to good functions*/
+            // all parses succeeded so set the pointers back to good functions
             curfractalspecific->per_pixel = form_per_pixel;
             curfractalspecific->orbitcalc = Formula;
             return false;
         }
     }
     else
-        return true;   /* error in making string*/
+        return true;   // error in making string
 }
 
 
 bool fpFormulaSetup()
 {
-    /* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
+    // TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32)
 #if !defined(XFRACT) && !defined(_WIN32)
     MathType = D_MATH;
-    bool RunFormRes = !RunForm(FormName, false); /* RunForm() returns true for failure */
+    bool RunFormRes = !RunForm(FormName, false); // RunForm() returns true for failure
     if (RunFormRes && fpu >=387 && debugflag != 90 && (orbitsave&2) == 0
             && !Randomized)
-        return CvtStk() != 0; /* run fast assembler code in parsera.asm */
+        return CvtStk() != 0; // run fast assembler code in parsera.asm
     return RunFormRes;
 #else
     MathType = D_MATH;
-    return !RunForm(FormName, false); /* RunForm() returns true for failure */
+    return !RunForm(FormName, false); // RunForm() returns true for failure
 #endif
 }
 
@@ -4123,7 +4119,7 @@ void init_misc()
     if (!v)
         v = vv;
     Arg1 = &argfirst;
-    Arg2 = &argsecond; /* needed by all the ?Stk* functions */
+    Arg2 = &argsecond; // needed by all the ?Stk* functions
     fg = (double)(1L << bitshift);
     fgLimit = (double)0x7fffffffL / fg;
     ShiftBack = 32 - bitshift;
@@ -4142,16 +4138,16 @@ void init_misc()
 long total_formula_mem;
 static void parser_allocate()
 {
-    /* Note that XFRACT will waste about 6k here for pfls */
-    /* Somewhat more memory is now allocated than in v17 here */
-    /* however Store and Load were reduced in size to help make up for it */
+    // Note that XFRACT will waste about 6k here for pfls
+    // Somewhat more memory is now allocated than in v17 here
+    // however Store and Load were reduced in size to help make up for it
     long f_size,Store_size,Load_size,v_size, p_size;
     for (int pass = 0; pass < 2; pass++)
     {
         free_workarea();
         if (pass == 0)
         {
-            Max_Ops = 2300; /* this value uses up about 64K memory */
+            Max_Ops = 2300; // this value uses up about 64K memory
             Max_Args = (unsigned)(Max_Ops/2.5);
         }
         f_size = sizeof(void (**)())*Max_Ops;
@@ -4159,7 +4155,7 @@ static void parser_allocate()
         Load_size = sizeof(union Arg *)*MAX_LOADS;
         v_size = sizeof(struct ConstArg)*Max_Args;
         p_size = sizeof(struct fls *)*Max_Ops;
-        total_formula_mem = f_size + Load_size + Store_size + v_size + p_size /*+ jump_size*/
+        total_formula_mem = f_size + Load_size + Store_size + v_size + p_size //+ jump_size
                             + sizeof(struct PEND_OP)*Max_Ops;
 
         typespecific_workarea = malloc(f_size + Load_size + Store_size + v_size + p_size);
@@ -4173,7 +4169,7 @@ static void parser_allocate()
         {
             if (!ParseStr(FormStr, pass))
             {
-                /* per Chuck Ebbert, fudge these up a little */
+                // per Chuck Ebbert, fudge these up a little
                 Max_Ops = posp + 4;
                 Max_Args = vsp + 4;
             }
@@ -4234,7 +4230,7 @@ void frm_error(FILE * open_file, long begin_frm)
             {
                 stopmsg(0, "Unexpected EOF or end-of-formula in error function.\n");
                 fseek(open_file, errors[j].error_pos, SEEK_SET);
-                frmgettoken(open_file, &tok); /*reset file to end of error token */
+                frmgettoken(open_file, &tok); //reset file to end of error token
                 return;
             }
         }
@@ -4653,7 +4649,7 @@ bool frm_prescan(FILE * open_file)
                 break;
             }
             break;
-        case PARAM_VARIABLE: /*i.e. p1, p2, p3, p4 or p5*/
+        case PARAM_VARIABLE: //i.e. p1, p2, p3, p4 or p5
             number_of_ops++;
             number_of_loads++;
             NewStatement = false;
@@ -4683,7 +4679,7 @@ bool frm_prescan(FILE * open_file)
             }
             ExpectingArg = false;
             break;
-        case USER_NAMED_VARIABLE: /* i.e. c, iter, etc. */
+        case USER_NAMED_VARIABLE: // i.e. c, iter, etc.
             number_of_ops++;
             number_of_loads++;
             NewStatement = false;
@@ -4698,7 +4694,7 @@ bool frm_prescan(FILE * open_file)
             }
             ExpectingArg = false;
             break;
-        case PREDEFINED_VARIABLE: /* i.e. z, pixel, whitesq, etc. */
+        case PREDEFINED_VARIABLE: // i.e. z, pixel, whitesq, etc.
             number_of_ops++;
             number_of_loads++;
             NewStatement = false;
@@ -4713,34 +4709,34 @@ bool frm_prescan(FILE * open_file)
             }
             switch (this_token.token_id)
             {
-            case 0:     /* pixel */
+            case 0:     // pixel
                 break;
-            case 3:     /* z */
+            case 3:     // z
                 break;
-            case 4:     /* LastSqr */
+            case 4:     // LastSqr
                 break;
-            case 5:     /* pi */
+            case 5:     // pi
                 break;
-            case 6:     /* e */
+            case 6:     // e
                 break;
-            case 7:     /* rand */
+            case 7:     // rand
                 break;
-            case 9:     /* whitesq */
+            case 9:     // whitesq
                 break;
-            case 10:    /* scrnpix */
+            case 10:    // scrnpix
                 break;
-            case 11:    /* scrnmax */
+            case 11:    // scrnmax
                 break;
-            case 12:    /* maxit */
+            case 12:    // maxit
                 break;
-            case 13:    /* ismand */
+            case 13:    // ismand
                 break;
             default:
                 break;
             }
             ExpectingArg = false;
             break;
-        case REAL_CONSTANT: /* i.e. 4, (4,0), etc.) */
+        case REAL_CONSTANT: // i.e. 4, (4,0), etc.
             assignment_ok = false;
             number_of_ops++;
             number_of_loads++;
@@ -4756,7 +4752,7 @@ bool frm_prescan(FILE * open_file)
             }
             ExpectingArg = false;
             break;
-        case COMPLEX_CONSTANT: /* i.e. (1,2) etc. */
+        case COMPLEX_CONSTANT: // i.e. (1,2) etc.
             assignment_ok = false;
             number_of_ops++;
             number_of_loads++;
@@ -4898,13 +4894,13 @@ bool frm_prescan(FILE * open_file)
                 uses_jump = true;
                 switch (this_token.token_id)
                 {
-                case 1:  /* if */
+                case 1:  // if
                     else_has_been_used = else_has_been_used << 1;
                     waiting_for_endif++;
                     break;
-                case 2: /*ELSEIF*/
-                    number_of_ops += 3; /*else + two clear statements*/
-                    number_of_jumps++;  /* this involves two jumps */
+                case 2: //ELSEIF
+                    number_of_ops += 3; //else + two clear statements
+                    number_of_jumps++;  // this involves two jumps
                     if (else_has_been_used % 2)
                     {
                         if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -4924,7 +4920,7 @@ bool frm_prescan(FILE * open_file)
                         }
                     }
                     break;
-                case 3: /*ELSE*/
+                case 3: //ELSE
                     if (else_has_been_used % 2)
                     {
                         if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -4945,7 +4941,7 @@ bool frm_prescan(FILE * open_file)
                     }
                     else_has_been_used = else_has_been_used | 1;
                     break;
-                case 4: /*ENDIF*/
+                case 4: //ENDIF
                     else_has_been_used = else_has_been_used >> 1;
                     waiting_for_endif--;
                     if (waiting_for_endif < 0)
@@ -4965,12 +4961,12 @@ bool frm_prescan(FILE * open_file)
             }
             break;
         case OPERATOR:
-            number_of_ops++; /*This will be corrected below in certain cases*/
+            number_of_ops++; //This will be corrected below in certain cases
             switch (this_token.token_id)
             {
             case 0:
-            case 11:    /* end of statement and : */
-                number_of_ops++; /* ParseStr inserts a dummy op*/
+            case 11:    // end of statement and :
+                number_of_ops++; // ParseStr inserts a dummy op
                 if (paren)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5033,7 +5029,7 @@ bool frm_prescan(FILE * open_file)
                 assignment_ok = true;
                 statement_pos = ftell(open_file);
                 break;
-            case 1:     /* != */
+            case 1:     // !=
                 assignment_ok = false;
                 if (ExpectingArg)
                 {
@@ -5046,8 +5042,8 @@ bool frm_prescan(FILE * open_file)
                 }
                 ExpectingArg = true;
                 break;
-            case 2:     /* = */
-                number_of_ops--; /*this just converts a load to a store*/
+            case 2:     // =
+                number_of_ops--; //this just converts a load to a store
                 number_of_loads--;
                 number_of_stores++;
                 if (!assignment_ok)
@@ -5061,7 +5057,7 @@ bool frm_prescan(FILE * open_file)
                 }
                 ExpectingArg = true;
                 break;
-            case 3:     /* == */
+            case 3:     // ==
                 assignment_ok = false;
                 if (ExpectingArg)
                 {
@@ -5074,7 +5070,7 @@ bool frm_prescan(FILE * open_file)
                 }
                 ExpectingArg = true;
                 break;
-            case 4:     /* < */
+            case 4:     // <
                 assignment_ok = false;
                 if (ExpectingArg)
                 {
@@ -5087,7 +5083,7 @@ bool frm_prescan(FILE * open_file)
                 }
                 ExpectingArg = true;
                 break;
-            case 5:     /* <= */
+            case 5:     // <=
                 assignment_ok = false;
                 if (ExpectingArg)
                 {
@@ -5100,7 +5096,7 @@ bool frm_prescan(FILE * open_file)
                 }
                 ExpectingArg = true;
                 break;
-            case 6:     /* > */
+            case 6:     // >
                 assignment_ok = false;
                 if (ExpectingArg)
                 {
@@ -5113,7 +5109,7 @@ bool frm_prescan(FILE * open_file)
                 }
                 ExpectingArg = true;
                 break;
-            case 7:     /* >= */
+            case 7:     // >=
                 assignment_ok = false;
                 if (ExpectingArg)
                 {
@@ -5126,7 +5122,7 @@ bool frm_prescan(FILE * open_file)
                 }
                 ExpectingArg = true;
                 break;
-            case 8:     /* | */ /* (half of the modulus operator */
+            case 8:     // | (half of the modulus operator)
                 assignment_ok = false;
                 if (!(waiting_for_mod & 1L))
                 {
@@ -5150,9 +5146,9 @@ bool frm_prescan(FILE * open_file)
                         errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
                     }
                 }
-                waiting_for_mod = waiting_for_mod ^ 1L; /*switch right bit*/
+                waiting_for_mod = waiting_for_mod ^ 1L; //switch right bit
                 break;
-            case 9:     /* || */
+            case 9:     // ||
                 assignment_ok = false;
                 if (ExpectingArg)
                 {
@@ -5165,7 +5161,7 @@ bool frm_prescan(FILE * open_file)
                 }
                 ExpectingArg = true;
                 break;
-            case 10:    /* && */
+            case 10:    // &&
                 assignment_ok = false;
                 if (ExpectingArg)
                 {
@@ -5178,7 +5174,7 @@ bool frm_prescan(FILE * open_file)
                 }
                 ExpectingArg = true;
                 break;
-            case 12:    /* + */ /* case 11 (":") is up with case 0 */
+            case 12:    // + case 11 (":") is up with case 0
                 assignment_ok = false;
                 if (ExpectingArg)
                 {
@@ -5191,24 +5187,11 @@ bool frm_prescan(FILE * open_file)
                 }
                 ExpectingArg = true;
                 break;
-            case 13:    /* - */
+            case 13:    // -
                 assignment_ok = false;
                 ExpectingArg = true;
                 break;
-            case 14:    /* * */
-                assignment_ok = false;
-                if (ExpectingArg)
-                {
-                    if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-                    {
-                        errors[errors_found].start_pos      = statement_pos;
-                        errors[errors_found].error_pos      = filepos;
-                        errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-                    }
-                }
-                ExpectingArg = true;
-                break;
-            case 15:    /* / */
+            case 14:    // *
                 assignment_ok = false;
                 if (ExpectingArg)
                 {
@@ -5221,7 +5204,20 @@ bool frm_prescan(FILE * open_file)
                 }
                 ExpectingArg = true;
                 break;
-            case 16:    /* ^ */
+            case 15:    // /
+                assignment_ok = false;
+                if (ExpectingArg)
+                {
+                    if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+                    {
+                        errors[errors_found].start_pos      = statement_pos;
+                        errors[errors_found].error_pos      = filepos;
+                        errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                    }
+                }
+                ExpectingArg = true;
+                break;
+            case 16:    // ^
                 assignment_ok = false;
                 if (ExpectingArg)
                 {
@@ -5252,7 +5248,7 @@ bool frm_prescan(FILE * open_file)
             }
             break;
         case END_OF_FORMULA:
-            number_of_ops+= 3; /* Just need one, but a couple of extra just for the heck of it */
+            number_of_ops+= 3; // Just need one, but a couple of extra just for the heck of it
             if (paren)
             {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
