@@ -1,13 +1,11 @@
 #ifndef EXTERNS_H
 #define EXTERNS_H
-
 #include <vector>
-
-/* keep var names in column 30 for sorting via sort /+30 <in >out */
-extern int                   g_adapter;         /* index into g_video_table[] */
-extern AlternateMath         alternatemath[];   /* alternate math function pointers */
-extern int                   Ambient;           /* Ambient= parameter value */
-extern int                   g_and_color;       /* AND mask for iteration to get color index */
+// keep var names in column 30 for sorting via sort /+30 <in >out
+extern int                   g_adapter;         // index into g_video_table[]
+extern AlternateMath         alternatemath[];   // alternate math function pointers
+extern int                   Ambient;           // Ambient= parameter value
+extern int                   g_and_color;       // AND mask for iteration to get color index
 extern struct MP             Ans;
 extern int                   Ap1deg;
 extern int                   AplusOne;
@@ -68,9 +66,9 @@ extern long                  coloriter;
 extern bool                  colorpreloaded;
 extern int                   colors;
 extern int                   colorstate;
-extern int                   g_color_bright;    /* brightest color in palette */
-extern int                   g_color_dark;      /* darkest color in palette */
-extern int                   g_color_medium;    /* nearest to medbright grey in palette */
+extern int                   g_color_bright;    // brightest color in palette
+extern int                   g_color_dark;      // darkest color in palette
+extern int                   g_color_medium;    // nearest to medbright grey in palette
 extern char                  CommandComment[4][MAXCMT];
 extern char                  CommandFile[FILE_MAX_PATH];
 extern char                  CommandName[ITEMNAMELEN + 1];
@@ -106,7 +104,7 @@ extern float                 depthfp;
 extern unsigned long         dif_counter;
 extern unsigned long         dif_limit;
 extern bool                  disk16bit;
-extern bool                  g_disk_flag;       /* disk video active flag */
+extern bool                  g_disk_flag;       // disk video active flag
 extern bool                  disktarga;
 extern int                   display3d;
 extern long                  distest;
@@ -163,7 +161,7 @@ extern int                   fm_decay;
 extern int                   fm_release;
 extern int                   fm_sustain;
 extern int                   fm_wavetype;
-extern int                   fm_vol;            /*volume of OPL-3 soundcard output*/
+extern int                   fm_vol;            // volume of OPL-3 soundcard output
 extern int                   forcesymmetry;
 extern char                  FormFileName[];
 extern char                  FormName[];
@@ -182,8 +180,8 @@ extern bool                  gif87a_flag;
 extern char                  gifmask[];
 extern char                  Glasses1Map[];
 extern int                   g_glasses_type;
-extern bool                  g_good_mode;       /* video mode ok? */
-extern bool                  g_got_real_dac;    /* loaddac worked, really got a dac */
+extern bool                  g_good_mode;       // video mode ok?
+extern bool                  g_got_real_dac;    // loaddac worked, really got a dac
 extern int                   got_status;
 extern bool                  grayflag;
 extern char                  GreyFile[];
@@ -420,7 +418,7 @@ extern int                   rotate_hi;
 extern int                   rotate_lo;
 extern double                roverd;
 extern int                   row;
-extern int                   g_row_count;       /* row-counter for decoder and out_line */
+extern int                   g_row_count;       // row-counter for decoder and out_line
 extern double                rqlim2;
 extern double                rqlim;
 extern int                   rseed;
@@ -480,10 +478,10 @@ extern char                  temp1[];
 extern double                tempsqrx;
 extern double                tempsqry;
 extern BYTE                  teststring[];
-extern int                   g_text_cbase;      /* g_text_col is relative to this */
-extern int                   g_text_col;        /* current column in text mode */
-extern int                   g_text_rbase;      /* g_text_row is relative to this */
-extern int                   g_text_row;        /* current row in text mode */
+extern int                   g_text_cbase;      // g_text_col is relative to this
+extern int                   g_text_col;        // current column in text mode
+extern int                   g_text_rbase;      // g_text_row is relative to this
+extern int                   g_text_row;        // current row in text mode
 extern unsigned int          this_gen_rseed;
 extern unsigned *            tga16;
 extern long *                tga32;
@@ -530,7 +528,7 @@ extern bool                  video_cutboth;
 extern bool                  g_video_scroll;
 extern int                   g_video_start_x;
 extern int                   g_video_start_y;
-extern int                   g_video_type;      /* video adapter type */
+extern int                   g_video_type;      // video adapter type
 extern VECTOR                view;
 extern bool                  viewcrop;
 extern float                 viewreduction;
@@ -589,12 +587,10 @@ extern int                   zrotate;
 extern bool                  zscroll;
 extern double                zskew;
 extern double                zwidth;
-
 #if defined(XFRACT)
 extern bool                  fake_lut;
 extern bool                  XZoomWaiting;
 #else
 extern U16                   prefix[];
 #endif
-
 #endif

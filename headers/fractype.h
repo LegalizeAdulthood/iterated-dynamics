@@ -1,16 +1,14 @@
 #ifndef FRACTYPE_H
 #define FRACTYPE_H
-
 #define SIN             0
-#define COS             1   /* Beware this is really COSXX */
+#define COS             1   // Beware this is really COSXX
 #define SINH            2
 #define COSH            3
 #define EXP             4
 #define LOG             5
 #define SQR             6
 #define TAN            10
-
-/* These MUST match the corresponding fractalspecific record in fractals.c */
+// These MUST match the corresponding fractalspecific record in fractals.c
 #define NOFRACTAL               -1
 #define MANDEL                   0
 #define JULIA                    1
@@ -20,11 +18,11 @@
 #define NEWTON                   5
 #define JULIAFP                  6
 #define PLASMA                   7
-#define LAMBDASINE               8 /* obsolete */
+#define LAMBDASINE               8 // obsolete
 #define MANDELTRIGFP             8
-#define LAMBDACOS                9 /* obsolete */
+#define LAMBDACOS                9 // obsolete
 #define MANOWARFP                9
-#define LAMBDAEXP               10 /* obsolete */
+#define LAMBDAEXP               10 // obsolete
 #define MANOWAR                 10
 #define TEST                    11
 #define SIERPINSKI              12
@@ -32,11 +30,11 @@
 #define BARNSLEYJ1              14
 #define BARNSLEYM2              15
 #define BARNSLEYJ2              16
-#define MANDELSINE              17 /* obsolete */
+#define MANDELSINE              17 // obsolete
 #define SQRTRIG                 17
-#define MANDELCOS               18 /* obsolete */
+#define MANDELCOS               18 // obsolete
 #define SQRTRIGFP               18
-#define MANDELEXP               19 /* obsolete */
+#define MANDELEXP               19 // obsolete
 #define TRIGPLUSTRIG            19
 #define MANDELLAMBDA            20
 #define MARKSMANDEL             21
@@ -48,42 +46,42 @@
 #define IFS3D                   27
 #define BARNSLEYM3              28
 #define BARNSLEYJ3              29
-#define DEMM                    30 /* obsolete */
+#define DEMM                    30 // obsolete
 #define TRIGSQR                 30
-#define DEMJ                    31 /* obsolete */
+#define DEMJ                    31 // obsolete
 #define TRIGSQRFP               31
 #define BIFURCATION             32
-#define MANDELSINH              33 /* obsolete */
+#define MANDELSINH              33 // obsolete
 #define TRIGPLUSTRIGFP          33
-#define LAMBDASINH              34 /* obsolete */
+#define LAMBDASINH              34 // obsolete
 #define TRIGXTRIG               34
-#define MANDELCOSH              35 /* obsolete */
+#define MANDELCOSH              35 // obsolete
 #define TRIGXTRIGFP             35
-#define LAMBDACOSH              36 /* obsolete */
+#define LAMBDACOSH              36 // obsolete
 #define SQR1OVERTRIG            36
-#define LMANDELSINE             37 /* obsolete */
+#define LMANDELSINE             37 // obsolete
 #define SQR1OVERTRIGFP          37
-#define LLAMBDASINE             38 /* obsolete */
+#define LLAMBDASINE             38 // obsolete
 #define ZXTRIGPLUSZ             38
-#define LMANDELCOS              39 /* obsolete */
+#define LMANDELCOS              39 // obsolete
 #define ZXTRIGPLUSZFP           39
-#define LLAMBDACOS              40 /* obsolete */
+#define LLAMBDACOS              40 // obsolete
 #define KAMFP                   40
-#define LMANDELSINH             41 /* obsolete */
+#define LMANDELSINH             41 // obsolete
 #define KAM                     41
-#define LLAMBDASINH             42 /* obsolete */
+#define LLAMBDASINH             42 // obsolete
 #define KAM3DFP                 42
-#define LMANDELCOSH             43 /* obsolete */
+#define LMANDELCOSH             43 // obsolete
 #define KAM3D                   43
-#define LLAMBDACOSH             44 /* obsolete */
+#define LLAMBDACOSH             44 // obsolete
 #define LAMBDATRIG              44
 #define LMANTRIGPLUSZSQRD       45
 #define LJULTRIGPLUSZSQRD       46
 #define FPMANTRIGPLUSZSQRD      47
 #define FPJULTRIGPLUSZSQRD      48
-#define LMANDELEXP              49 /* obsolete */
+#define LMANDELEXP              49 // obsolete
 #define LAMBDATRIGFP            49
-#define LLAMBDAEXP              50 /* obsolete */
+#define LLAMBDAEXP              50 // obsolete
 #define MANDELTRIG              50
 #define LMANDELZPOWER           51
 #define LJULIAZPOWER            52

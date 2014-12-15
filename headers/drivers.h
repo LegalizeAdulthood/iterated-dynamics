@@ -1,6 +1,5 @@
 #if !defined(DRIVERS_H)
 #define DRIVERS_H
-
 /*------------------------------------------------------------
  * Driver Methods:
  *
@@ -40,43 +39,43 @@
  */
 struct tagDriver
 {
-    /* name of driver */                const char *name;
-    /* driver description */            const char *description;
-    /* init the driver */               bool (*init)(Driver *drv, int *argc, char **argv);
-    /* validate a fractint.cfg mode */  bool (*validate_mode)(Driver *drv, VIDEOINFO *mode);
-    /* find max screen extents */       void (*get_max_screen)(Driver *drv, int *xmax, int *ymax);
-    /* shutdown the driver */           void (*terminate)(Driver *drv);
-    /* pause this driver */             void (*pause)(Driver *drv);
-    /* resume this driver */            void (*resume)(Driver *drv);
-    /* refresh alarm */                 void (*schedule_alarm)(Driver *drv, int secs);
-    /* creates a window */              void (*window)(Driver *drv);
-    /* handles window resize.  */       bool (*resize)(Driver *drv);
-    /* redraws the screen */            void (*redraw)(Driver *drv);
-    /* read palette into g_dac_box */   int (*read_palette)(Driver *drv);
-    /* write g_dac_box into palette */  int (*write_palette)(Driver *drv);
-    /* reads a single pixel */          int (*read_pixel)(Driver *drv, int x, int y);
-    /* writes a single pixel */         void (*write_pixel)(Driver *drv, int x, int y, int color);
-    /* reads a span of pixel */         void (*read_span)(Driver *drv, int y, int x, int lastx, BYTE *pixels);
-    /* writes a span of pixels */       void (*write_span)(Driver *drv, int y, int x, int lastx, BYTE *pixels);
+    const char *name;                       // name of driver
+    const char *description;                // driver description
+    bool (*init)(Driver *drv, int *argc, char **argv); // init the driver
+    bool (*validate_mode)(Driver *drv, VIDEOINFO *mode); // validate a fractint.cfg mode
+    void (*get_max_screen)(Driver *drv, int *xmax, int *ymax); // find max screen extents
+    void (*terminate)(Driver *drv);         // shutdown the driver
+    void (*pause)(Driver *drv);             // pause this driver
+    void (*resume)(Driver *drv);            // resume this driver
+    void (*schedule_alarm)(Driver *drv, int secs); // refresh alarm
+    void (*window)(Driver *drv);            // creates a window
+    bool (*resize)(Driver *drv);            // handles window resize. 
+    void (*redraw)(Driver *drv);            // redraws the screen
+    int (*read_palette)(Driver *drv);       // read palette into g_dac_box
+    int (*write_palette)(Driver *drv);      // write g_dac_box into palette
+    int (*read_pixel)(Driver *drv, int x, int y); // reads a single pixel
+    void (*write_pixel)(Driver *drv, int x, int y, int color); // writes a single pixel
+    void (*read_span)(Driver *drv, int y, int x, int lastx, BYTE *pixels); // reads a span of pixel
+    void (*write_span)(Driver *drv, int y, int x, int lastx, BYTE *pixels); // writes a span of pixels
     void (*get_truecolor)(Driver *drv, int x, int y, int *r, int *g, int *b, int *a);
     void (*put_truecolor)(Driver *drv, int x, int y, int r, int g, int b, int a);
-    /* set copy/xor line */             void (*set_line_mode)(Driver *drv, int mode);
-    /* draw line */                     void (*draw_line)(Driver *drv, int x1, int y1, int x2, int y2, int color);
-    /* draw string in graphics mode */  void (*display_string)(Driver *drv, int x, int y, int fg, int bg, const char *text);
-    /* save graphics */                 void (*save_graphics)(Driver *drv);
-    /* restore graphics */              void (*restore_graphics)(Driver *drv);
-    /* poll or block for a key */       int (*get_key)(Driver *drv);
+    void (*set_line_mode)(Driver *drv, int mode); // set copy/xor line
+    void (*draw_line)(Driver *drv, int x1, int y1, int x2, int y2, int color); // draw line
+    void (*display_string)(Driver *drv, int x, int y, int fg, int bg, const char *text); // draw string in graphics mode
+    void (*save_graphics)(Driver *drv);     // save graphics
+    void (*restore_graphics)(Driver *drv);  // restore graphics
+    int (*get_key)(Driver *drv);            // poll or block for a key
     int (*key_cursor)(Driver *drv, int row, int col);
     int (*key_pressed)(Driver *drv);
     int (*wait_key_pressed)(Driver *drv, int timeout);
     void (*unget_key)(Driver *drv, int key);
-    /* invoke a command shell */        void (*shell)(Driver *drv);
+    void (*shell)(Driver *drv);             // invoke a command shell
     void (*set_video_mode)(Driver *drv, VIDEOINFO *mode);
     void (*put_string)(Driver *drv, int row, int col, int attr, const char *msg);
-    /* set for text mode & save gfx */  void (*set_for_text)(Driver *drv);
-    /* restores graphics and data */    void (*set_for_graphics)(Driver *drv);
-    /* clears text screen */            void (*set_clear)(Driver *drv);
-    /* text screen functions */
+    void (*set_for_text)(Driver *drv);      // set for text mode & save gfx
+    void (*set_for_graphics)(Driver *drv);  // restores graphics and data
+    void (*set_clear)(Driver *drv);         // clears text screen
+    // text screen functions
     void (*move_cursor)(Driver *drv, int row, int col);
     void (*hide_text_cursor)(Driver *drv);
     void (*set_attr)(Driver *drv, int row, int col, int attr, int count);
@@ -84,13 +83,12 @@ struct tagDriver
     void (*stack_screen)(Driver *drv);
     void (*unstack_screen)(Driver *drv);
     void (*discard_screen)(Driver *drv);
-    /* sound routines */
+    // sound routines
     int (*init_fm)(Driver *drv);
     void (*buzzer)(Driver *drv, int kind);
     bool (*sound_on)(Driver *drv, int frequency);
     void (*sound_off)(Driver *drv);
     void (*mute)(Driver *drv);
-
     bool (*diskp)(Driver *drv);
     int (*get_char_attr)(Driver *drv);
     void (*put_char_attr)(Driver *drv, int char_attr);
@@ -155,9 +153,7 @@ struct tagDriver
     name_##_set_keyboard_timeout, \
     name_##_flush \
   }
-
 /* Define the drivers to be included in the compilation:
-
     HAVE_CURSES_DRIVER      Curses based disk driver
     HAVE_X11_DRIVER         XFractint code path
     HAVE_GDI_DRIVER         Win32 GDI driver
@@ -173,21 +169,15 @@ struct tagDriver
 #define HAVE_GDI_DRIVER         1
 #define HAVE_WIN32_DISK_DRIVER  1
 #endif
-
 extern int init_drivers(int *argc, char **argv);
 extern void add_video_mode(Driver *drv, VIDEOINFO *mode);
 extern void close_drivers();
 extern Driver *driver_find_by_name(const char *name);
-
-extern Driver *g_driver;            /* current driver in use */
-
-/* always use a function for this one */
+extern Driver *g_driver;            // current driver in use
+// always use a function for this one
 extern void driver_set_video_mode(VIDEOINFO *mode);
-
 #define USE_DRIVER_FUNCTIONS 1
-
 #if defined(USE_DRIVER_FUNCTIONS)
-
 extern bool driver_validate_mode(VIDEOINFO *mode);
 extern void driver_get_max_screen(int *xmax, int *ymax);
 extern void driver_terminate();
@@ -237,9 +227,7 @@ extern void driver_put_char_attr(int char_attr);
 extern void driver_delay(int ms);
 extern void driver_set_keyboard_timeout(int ms);
 extern void driver_flush();
-
 #else
-
 #define driver_validate_mode(mode_)                 (*g_driver->validate_mode)(g_driver, mode_)
 #define driver_get_max_screen(xmax_, ymax_)         (*g_driver->get_max_screen)(g_driver, xmax_, ymax_)
 #define driver_terminate()                          (*g_driver->terminate)(g_driver)
@@ -289,7 +277,5 @@ extern void driver_flush();
 #define driver_delay(ms_)                           (*g_driver->delay)(g_driver, ms_)
 #define driver_set_keyboard_timeout(ms_)            (*g_driver->set_keyboard_timeout)(g_driver, ms_)
 #define driver_flush()                              (*g_driver->flush)(g_driver)
-
 #endif
-
-#endif /* DRIVERS_H */
+#endif

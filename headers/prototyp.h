@@ -1,15 +1,11 @@
 #ifndef PROTOTYP_H
 #define PROTOTYP_H
-
-/* includes needed to define the prototypes */
-
+// includes needed to define the prototypes
 #include "mpmath.h"
 #include "big.h"
 #include "fractint.h"
 #include "externs.h"
-
-/* maintain the common prototypes in this file
- */
+// maintain the common prototypes in this file
 
 #ifdef XFRACT
 #include "unixprot.h"
@@ -18,7 +14,6 @@
 #include "winprot.h"
 #endif
 #endif
-
 extern long multiply(long x, long y, int n);
 extern long divide(long x, long y, int n);
 extern void spindac(int dir, int inc);
@@ -29,18 +24,12 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-
-/*  calcmand -- assembler file prototypes */
-
+// calcmand -- assembler file prototypes
 extern long calcmandasm();
-
-/*  calmanfp -- assembler file prototypes */
-
+// calmanfp -- assembler file prototypes
 extern void calcmandfpasmstart();
 extern long calcmandfpasm();
-
-/*  fpu087 -- assembler file prototypes */
-
+// fpu087 -- assembler file prototypes
 extern void FPUcplxmul(DComplex *, DComplex *, DComplex *);
 extern void FPUcplxdiv(DComplex *, DComplex *, DComplex *);
 extern void FPUsincos(double *, double *, double *);
@@ -57,9 +46,7 @@ extern long LogFudged(unsigned long , int);
 extern long LogFloat14(unsigned long);
 extern long RegFg2Float(long , int);
 extern long RegSftFloat(long , int);
-
-/*  fracsuba -- assembler file prototypes */
-
+// fracsuba -- assembler file prototypes
 extern int asmlMODbailout();
 extern int asmlREALbailout();
 extern int asmlIMAGbailout();
@@ -81,9 +68,7 @@ extern int asmfpORbailout();
 extern int asmfpANDbailout();
 extern int asmfpMANHbailout();
 extern int asmfpMANRbailout();
-
-/*  mpmath_a -- assembler file prototypes */
-
+// mpmath_a -- assembler file prototypes
 extern struct MP * MPmul086(struct MP , struct MP);
 extern struct MP * MPdiv086(struct MP , struct MP);
 extern struct MP * MPadd086(struct MP , struct MP);
@@ -103,21 +88,15 @@ extern int         MPcmp(struct MP , struct MP);
 extern struct MP * MPmul(struct MP , struct MP);
 extern struct MP * MPadd(struct MP , struct MP);
 extern struct MP * MPdiv(struct MP , struct MP);
-extern struct MP * d2MP(double);   /* Convert double to type MP */
-extern struct MP * fg2MP(long , int);  /* Convert fudged to type MP */
-
-/*  newton -- assembler file prototypes */
-
+extern struct MP * d2MP(double);   // Convert double to type MP
+extern struct MP * fg2MP(long , int);  // Convert fudged to type MP
+// newton -- assembler file prototypes
 extern int NewtonFractal2();
 extern void invertz2(DComplex *);
-
-/*  tplus_a -- assembler file prototypes */
-
+// tplus_a -- assembler file prototypes
 extern void WriteTPlusBankedPixel(int, int, unsigned long);
 extern unsigned long ReadTPlusBankedPixel(int, int);
-
-/*  3d -- C file prototypes */
-
+// 3d -- C file prototypes
 extern void identity(MATRIX);
 extern void mat_mul(MATRIX,MATRIX,MATRIX);
 extern void scale(double ,double ,double ,MATRIX);
@@ -133,9 +112,7 @@ extern int perspective(VECTOR);
 extern int longvmultpersp(LVECTOR,LMATRIX,LVECTOR,LVECTOR,LVECTOR,int);
 extern int longpersp(LVECTOR,LVECTOR,int);
 extern int longvmult(LVECTOR,LMATRIX,LVECTOR,int);
-
-/*  biginit -- C file prototypes */
-
+// biginit -- C file prototypes
 void free_bf_vars();
 bn_t alloc_stack(size_t size);
 int save_stack();
@@ -143,10 +120,7 @@ void restore_stack(int old_offset);
 void init_bf_dec(int dec);
 void init_bf_length(int bnl);
 void init_big_pi();
-
-
-/*  calcfrac -- C file prototypes */
-
+// calcfrac -- C file prototypes
 extern int calcfract();
 extern int calcmand();
 extern int calcmandfp();
@@ -180,9 +154,7 @@ extern int froth_per_orbit();
 extern bool froth_setup();
 extern int logtable_in_extra_ok();
 extern int find_alternate_math(int, int);
-
-/*  cmdfiles -- C file prototypes */
-
+// cmdfiles -- C file prototypes
 extern int cmdfiles(int ,char **);
 extern int load_commands(FILE *);
 extern void set_3d_defaults();
@@ -192,14 +164,10 @@ extern int init_msg(const char *cmdstr, char *badfilename, int mode);
 extern int cmdarg(char *curarg,int mode);
 extern int getpower10(LDBL x);
 extern void dopause(int);
-
-/*  decoder -- C file prototypes */
-
+// decoder -- C file prototypes
 extern short decoder(short);
 extern void set_byte_buff(BYTE *ptr);
-
-/*  diskvid -- C file prototypes */
-
+// diskvid -- C file prototypes
 extern int pot_startdisk();
 extern int targa_startdisk(FILE *,int);
 extern void enddisk();
@@ -211,9 +179,7 @@ extern void dvid_status(int line, const char *msg);
 extern int  common_startdisk(long, long, int);
 extern int FromMemDisk(long,int,void *);
 extern bool ToMemDisk(long,int,void *);
-
-/*  editpal -- C file prototypes */
-
+// editpal -- C file prototypes
 extern void EditPalette();
 extern void *mem_alloc(unsigned size);
 void putrow(int x, int y, int width, char *buff);
@@ -232,15 +198,11 @@ int Cursor_GetY();
 void Cursor_Hide();
 void Cursor_Show();
 extern void displayc(int, int, int, int, int);
-
-/*  encoder -- C file prototypes */
-
+// encoder -- C file prototypes
 extern int savetodisk(char *);
 extern bool encoder();
 extern int new_to_old(int new_fractype);
-
-/*  evolve -- C file prototypes */
-
+// evolve -- C file prototypes
 extern  void initgene();
 extern  void param_history(int);
 extern  int get_variations();
@@ -254,14 +216,10 @@ extern  void spiralmap(int);
 extern  int unspiralmap();
 extern  void SetupParamBox();
 extern  void ReleaseParamBox();
-
-/*  f16 -- C file prototypes */
-
+// f16 -- C file prototypes
 extern FILE *t16_open(char *,int *,int *,int *,U8 *);
 extern int t16_getline(FILE *,int ,U16 *);
-
-/*  fracsubr -- C file prototypes */
-
+// fracsubr -- C file prototypes
 extern void free_grid_pointers();
 extern void calcfracinit();
 extern void adjust_corner();
@@ -298,14 +256,10 @@ extern bool snd_open();
 extern void w_snd(int);
 extern void snd_time_write();
 extern void close_snd();
-
-/*  fractalp -- C file prototypes */
-
+// fractalp -- C file prototypes
 extern bool typehasparm(int type, int parm, char *buf);
 extern bool paramnotused(int);
-
-/*  fractals -- C file prototypes */
-
+// fractals -- C file prototypes
 extern void FloatPreCalcMagnet2();
 extern void cpower(DComplex *,int ,DComplex *);
 extern int lcpower(LComplex *,int ,LComplex *,int);
@@ -481,14 +435,10 @@ extern void set_pixel_calc_functions();
 extern int MandelbrotMix4fp_per_pixel();
 extern int MandelbrotMix4fpFractal();
 extern bool MandelbrotMix4Setup();
-
-/*  fractint -- C file prototypes */
-
+// fractint -- C file prototypes
 extern int main(int argc,char **argv);
 extern int elapsed_time(int);
-
-/*  framain2 -- C file prototypes */
-
+// framain2 -- C file prototypes
 extern int big_while_loop(bool *kbdmore, bool *stacked, bool resume_flag);
 extern bool check_key();
 extern int cmp_line(BYTE *,int);
@@ -497,13 +447,10 @@ extern int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
 extern int pot_line(BYTE *,int);
 extern int sound_line(BYTE *,int);
 extern int timer(int,int (*subrtn)(),...);
-
 extern void clear_zoombox();
 extern void flip_image(int kbdchar);
 extern void reset_zoom_corners();
-
-/*  frasetup -- C file prototypes */
-
+// frasetup -- C file prototypes
 extern bool VLSetup();
 extern bool MandelSetup();
 extern bool MandelfpSetup();
@@ -540,23 +487,15 @@ extern bool PhoenixSetup();
 extern bool MandPhoenixSetup();
 extern bool PhoenixCplxSetup();
 extern bool MandPhoenixCplxSetup();
-
-/*  gifview -- C file prototypes */
-
+// gifview -- C file prototypes
 extern int get_byte();
 extern int get_bytes(BYTE *,int);
 extern int gifview();
-
-/*  hcmplx -- C file prototypes */
-
+// hcmplx -- C file prototypes
 extern void HComplexTrig0(DHyperComplex *,DHyperComplex *);
-
-/*  intro -- C file prototypes */
-
+// intro -- C file prototypes
 extern void intro();
-
-/*  jb -- C file prototypes */
-
+// jb -- C file prototypes
 extern bool JulibrotSetup();
 extern bool JulibrotfpSetup();
 extern int jb_per_pixel();
@@ -565,9 +504,7 @@ extern int zline(long ,long);
 extern int zlinefp(double ,double);
 extern int Std4dFractal();
 extern int Std4dfpFractal();
-
-/*  jiim -- C file prototypes */
-
+// jiim -- C file prototypes
 extern void Jiim(int);
 extern LCMPLX PopLong();
 extern DComplex PopFloat();
@@ -585,19 +522,14 @@ extern int    PushLong(long ,  long);
 extern int    PushFloat(float,  float);
 extern int    EnQueueLong(long ,  long);
 extern int    EnQueueFloat(float,  float);
-
-/*  line3d -- C file prototypes */
-
+// line3d -- C file prototypes
 extern int line3d(BYTE *,unsigned int);
 extern int targa_color(int ,int ,int);
 extern bool targa_validate(char *File_Name);
 bool startdisk1(char *File_Name2, FILE *Source, bool overlay);
-
-/*  loadfdos -- C file prototypes */
+// loadfdos -- C file prototypes
 extern int get_video_mode(struct fractal_info *,struct ext_blk_3 *);
-
-/*  loadfile -- C file prototypes */
-
+// loadfile -- C file prototypes
 extern int read_overlay();
 extern void set_if_old_bif();
 extern void set_function_parm_defaults();
@@ -606,15 +538,11 @@ extern void backwards_v18();
 extern void backwards_v19();
 extern void backwards_v20();
 extern bool check_back();
-
-/*  loadmap -- C file prototypes */
-
+// loadmap -- C file prototypes
 //extern void SetTgaColors();
 extern bool ValidateLuts(const char *mapname);
 extern int SetColorPaletteName(char *);
-
-/*  lorenz -- C file prototypes */
-
+// lorenz -- C file prototypes
 extern bool orbit3dlongsetup();
 extern bool orbit3dfloatsetup();
 extern int lorenz3dlongorbit(long *,long *,long *);
@@ -650,20 +578,14 @@ extern int latoofloatorbit(double *, double *, double *);
 extern bool setup_convert_to_screen(struct affine *);
 extern int plotorbits2dsetup();
 extern int plotorbits2dfloat();
-
-/*  lsys -- C file prototypes */
-
+// lsys -- C file prototypes
 extern LDBL  getnumber(char **);
 extern bool ispow2(int);
 extern int Lsystem();
 extern bool LLoad();
-
-/*  miscfrac -- C file prototypes */
-
+// miscfrac -- C file prototypes
 extern void froth_cleanup();
-
-/*  miscovl -- C file prototypes */
-
+// miscovl -- C file prototypes
 extern void make_batch_file();
 extern void edit_text_colors();
 extern int select_video_mode(int);
@@ -676,9 +598,7 @@ extern void parse_comments(char *value);
 extern void init_comments();
 extern void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor,int i, int j);
 extern void expand_comments(char *, char *);
-
-/*  miscres -- C file prototypes */
-
+// miscres -- C file prototypes
 extern void restore_active_ovly();
 extern void findpath(const char *filename, char *fullpathname);
 extern void notdiskmsg();
@@ -700,9 +620,7 @@ extern void roundfloatd(double *);
 extern void fix_inversion(double *);
 extern int ungetakey(int);
 extern void get_calculation_time(char *, long);
-
-/*  mpmath_c -- C file prototypes */
-
+// mpmath_c -- C file prototypes
 extern struct MP *MPsub(struct MP ,struct MP);
 extern struct MP *MPsub086(struct MP ,struct MP);
 extern struct MP *MPsub386(struct MP ,struct MP);
@@ -732,18 +650,13 @@ extern void Arcsinhz(DComplex z, DComplex *rz);
 extern void Arccoshz(DComplex z, DComplex *rz);
 extern void Arctanhz(DComplex z, DComplex *rz);
 extern void Arctanz(DComplex z, DComplex *rz);
-
-/*  msccos -- C file prototypes */
-
+// msccos -- C file prototypes
 extern double _cos(double);
-
-/*  parser -- C file prototypes */
-
-struct fls { /* function, load, store pointers */
+// parser -- C file prototypes
+struct fls { // function, load, store pointers
     void (*function)();
     union Arg *operand;
 };
-
 extern unsigned int SkipWhiteSpace(char *);
 extern unsigned long NewRandNum();
 extern void lRandom();
@@ -923,22 +836,16 @@ extern bool intFormulaSetup();
 extern void init_misc();
 extern void free_workarea();
 extern int fill_if_group(int endif_index, JUMP_PTRS_ST *jump_data);
-
-/*  plot3d -- C file prototypes */
-
+// plot3d -- C file prototypes
 extern void draw_line(int ,int ,int ,int ,int);
 extern void plot3dsuperimpose16(int ,int ,int);
 extern void plot3dsuperimpose256(int ,int ,int);
 extern void plotIFS3dsuperimpose256(int ,int ,int);
 extern void plot3dalternate(int ,int ,int);
 extern void plot_setup();
-
-/*  printer -- C file prototypes */
-
+// printer -- C file prototypes
 extern void Print_Screen();
-
-/*  prompts1 -- C file prototypes */
-
+// prompts1 -- C file prototypes
 extern int fullscreen_prompt(
     const char *hdg,
     int numprompts,
@@ -959,9 +866,7 @@ extern void load_params(int fractype);
 extern bool check_orbit_name(char *);
 struct entryinfo;
 extern int scan_entries(FILE *infile, struct entryinfo *ch, char *itemname);
-
-/*  prompts2 -- C file prototypes */
-
+// prompts2 -- C file prototypes
 extern int get_toggles();
 extern int get_toggles2();
 extern int passes_options();
@@ -988,9 +893,7 @@ extern int dir_remove(char *,char *);
 extern FILE *dir_fopen(const char *dir, const char *filename, const char *mode);
 extern void extract_filename(char *, char *);
 extern char *has_ext(char *source);
-
-/*  realdos -- C file prototypes */
-
+// realdos -- C file prototypes
 extern int showvidlength();
 extern int stopmsg(int flags, const char *msg);
 extern void blankrows(int ,int ,int);
@@ -1012,7 +915,6 @@ extern int fullscreen_choice(
     int (*speedprompt)(int,int,int,char *,int),
     int (*checkkey)(int,int)
 );
-
 extern bool showtempmsg(const char *);
 extern void cleartempmsg();
 extern void helptitle();
@@ -1029,38 +931,26 @@ extern void vidmode_keyname(int ,char *);
 extern void freetempmsg();
 extern void load_videotable(int);
 extern void bad_fractint_cfg_msg();
-
-/*  rotate -- C file prototypes */
-
+// rotate -- C file prototypes
 extern void rotate(int);
 extern void save_palette();
 extern bool load_palette();
-
-/*  slideshw -- C file prototypes */
-
+// slideshw -- C file prototypes
 extern int slideshw();
 extern int startslideshow();
 extern void stopslideshow();
 extern void recordshw(int);
-
-/*  stereo -- C file prototypes */
-
+// stereo -- C file prototypes
 extern bool do_AutoStereo();
 extern int outline_stereo(BYTE *, int);
-
-/*  testpt -- C file prototypes */
-
+// testpt -- C file prototypes
 extern int teststart();
 extern void testend();
 extern int testpt(double ,double ,double ,double ,long ,int);
-
-/*  tgaview -- C file prototypes */
-
+// tgaview -- C file prototypes
 extern int tgaview();
 extern int outlin16(BYTE*,int);
-
-/*  zoom -- C file prototypes */
-
+// zoom -- C file prototypes
 extern void drawbox(int);
 extern void moveboxf(double ,double);
 extern void resizebox(int);
@@ -1072,9 +962,7 @@ extern void drawlines(struct coords, struct coords, int, int);
 extern void addbox(struct coords);
 extern void clearbox();
 extern void dispbox();
-
-/*  fractalb.c -- C file prototypes */
-
+// fractalb.c -- C file prototypes
 extern DComplex cmplxbntofloat(BNComplex *);
 extern DComplex cmplxbftofloat(BFComplex *);
 extern void comparevalues(char *,LDBL,bn_t);
@@ -1099,11 +987,9 @@ extern int JuliaZpowerbfFractal();
 extern BFComplex *cmplxlog_bf(BFComplex *t, BFComplex *s);
 extern BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y);
 extern BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy);
-
-/*  memory -- C file prototypes */
-/* TODO: Get rid of this and use regular memory routines;
-** see about creating standard disk memory routines for disk video
-*/
+// memory -- C file prototypes
+// TODO: Get rid of this and use regular memory routines;
+// see about creating standard disk memory routines for disk video
 extern void DisplayHandle(U16 handle);
 extern int MemoryType(U16 handle);
 extern void InitMemory();
@@ -1113,35 +999,27 @@ extern void MemoryRelease(U16 handle);
 extern bool MoveToMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle);
 extern bool MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle);
 extern bool SetMemory(int value,U16 size,long count,long offset,U16 handle);
-
-/*  soi -- C file prototypes */
-
+// soi -- C file prototypes
 extern void soi();
 extern void soi_ldbl();
-
 /*
  *  uclock -- C file prototypes
  *  The  uclock_t typedef placed here because uclock.h
  *  prototype is for DOS version only.
  */
 typedef unsigned long uclock_t;
-
 extern uclock_t usec_clock();
 extern void restart_uclock();
 extern void wait_until(int index, uclock_t wait_time);
-
 extern void init_failure(const char *message);
 extern int expand_dirname(char *dirname,char *drive);
 extern int abortmsg(char *file, unsigned int line, int flags, char *msg);
 #define ABORT(flags_,msg_) abortmsg(__FILE__, __LINE__, flags_, msg_)
-
 extern long stackavail();
-
 extern int getcolor(int, int);
 extern int out_line(BYTE *, int);
 extern void setvideomode(int, int, int, int);
 extern int pot_startdisk();
 extern void putcolor_a(int, int, int);
 extern int startdisk();
-
 #endif

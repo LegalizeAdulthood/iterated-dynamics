@@ -1,13 +1,9 @@
-/* UNIX.H - unix port declarations */
-
-
+// UNIX.H - unix port declarations
 #ifndef UNIX_H
 #define UNIX_H
-
 #if !defined(O_BINARY)
 #define O_BINARY 0
 #endif
-
 typedef float FLOAT4;
 #define remove(x) unlink(x)
 #if !defined(_MAX_FNAME)
@@ -17,20 +13,15 @@ typedef float FLOAT4;
 #define _MAX_EXT 4
 #endif
 #define chsize(fd,len) ftruncate(fd,len)
-
-/* We get a problem with connect, since it is used by X */
+// We get a problem with connect, since it is used by X
 #define connect connect1
-/* dysize may conflict with time.h */
+// dysize may conflict with time.h
 #define dysize dysize1
-
 typedef void (*SignalHandler)(int);
-
 extern int iocount;
-
 char *strlwr(char *s);
 char *strupr(char *s);
-
-/* ftime replacement */
+// ftime replacement
 #include <sys/types.h>
 typedef struct  timebx
 {
@@ -39,6 +30,4 @@ typedef struct  timebx
     int   timezone;
     int   dstflag;
 } timebx;
-
-
 #endif
