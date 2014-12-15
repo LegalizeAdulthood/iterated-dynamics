@@ -17,7 +17,8 @@ struct lsys_cmd
 {
     void (*f)(lsys_turtlestatef *);
     int ptype;
-    union {
+    union
+    {
         long n;
         LDBL nf;
     } parm;
