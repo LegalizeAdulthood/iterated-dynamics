@@ -26,29 +26,29 @@ int MPOverflow = 0;
 
 #if !defined(XFRACT)
 
-struct MP *MPsub(struct MP x, struct MP y) {
+MP *MPsub(MP x, MP y) {
     y.Exp ^= 0x8000;
     return (MPadd(x, y));
 }
 
-struct MP *MPsub086(struct MP x, struct MP y) {
+MP *MPsub086(MP x, MP y) {
     y.Exp ^= 0x8000;
     return (MPadd086(x, y));
 }
 
-struct MP *MPsub386(struct MP x, struct MP y) {
+MP *MPsub386(MP x, MP y) {
     y.Exp ^= 0x8000;
     return (MPadd386(x, y));
 }
 
-struct MP *MPabs(struct MP x) {
+MP *MPabs(MP x) {
     Ans = x;
     Ans.Exp &= 0x7fff;
     return (&Ans);
 }
 
-struct MPC MPCsqr(struct MPC x) {
-    struct MPC z;
+MPC MPCsqr(MPC x) {
+    MPC z;
 
     z.x = *pMPsub(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
     z.y = *pMPmul(x.x, x.y);
@@ -56,20 +56,20 @@ struct MPC MPCsqr(struct MPC x) {
     return (z);
 }
 
-struct MP MPCmod(struct MPC x) {
+MP MPCmod(MPC x) {
     return (*pMPadd(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y)));
 }
 
-struct MPC MPCmul(struct MPC x, struct MPC y) {
-    struct MPC z;
+MPC MPCmul(MPC x, MPC y) {
+    MPC z;
 
     z.x = *pMPsub(*pMPmul(x.x, y.x), *pMPmul(x.y, y.y));
     z.y = *pMPadd(*pMPmul(x.x, y.y), *pMPmul(x.y, y.x));
     return (z);
 }
 
-struct MPC MPCdiv(struct MPC x, struct MPC y) {
-    struct MP mod;
+MPC MPCdiv(MPC x, MPC y) {
+    MP mod;
 
     mod = MPCmod(y);
     y.y.Exp ^= 0x8000;
@@ -78,29 +78,30 @@ struct MPC MPCdiv(struct MPC x, struct MPC y) {
     return (MPCmul(x, y));
 }
 
-struct MPC MPCadd(struct MPC x, struct MPC y) {
-    struct MPC z;
+MPC MPCadd(MPC x, MPC y) {
+    MPC z;
 
     z.x = *pMPadd(x.x, y.x);
     z.y = *pMPadd(x.y, y.y);
     return (z);
 }
 
-struct MPC MPCsub(struct MPC x, struct MPC y) {
-    struct MPC z;
+MPC MPCsub(MPC x, MPC y) {
+    MPC z;
 
     z.x = *pMPsub(x.x, y.x);
     z.y = *pMPsub(x.y, y.y);
     return (z);
 }
 
-struct MPC MPCone = { {0x3fff, 0x80000000l},
+MPC MPCone = {
+    {0x3fff, 0x80000000l},
     {0, 0l}
 };
 
-struct MPC MPCpow(struct MPC x, int exp) {
-    struct MPC z;
-    struct MPC zz;
+MPC MPCpow(MPC x, int exp) {
+    MPC z;
+    MPC zz;
 
     if (exp & 1)
         z = x;
@@ -122,8 +123,8 @@ struct MPC MPCpow(struct MPC x, int exp) {
     return (z);
 }
 
-int MPCcmp(struct MPC x, struct MPC y) {
-    struct MPC z;
+int MPCcmp(MPC x, MPC y) {
+    MPC z;
 
     if (pMPcmp(x.x, y.x) || pMPcmp(x.y, y.y)) {
         z.x = MPCmod(x);
@@ -134,7 +135,7 @@ int MPCcmp(struct MPC x, struct MPC y) {
         return (0);
 }
 
-DComplex MPC2cmplx(struct MPC x) {
+DComplex MPC2cmplx(MPC x) {
     DComplex z;
 
     z.x = *pMP2d(x.x);
@@ -142,21 +143,21 @@ DComplex MPC2cmplx(struct MPC x) {
     return (z);
 }
 
-struct MPC cmplx2MPC(DComplex z) {
-    struct MPC x;
+MPC cmplx2MPC(DComplex z) {
+    MPC x;
 
     x.x = *pd2MP(z.x);
     x.y = *pd2MP(z.y);
     return (x);
 }
 
-int (*pMPcmp)(struct MP x, struct MP y) = MPcmp086;
-struct MP  *(*pMPmul)(struct MP x, struct MP y)= MPmul086;
-struct MP  *(*pMPdiv)(struct MP x, struct MP y)= MPdiv086;
-struct MP  *(*pMPadd)(struct MP x, struct MP y)= MPadd086;
-struct MP  *(*pMPsub)(struct MP x, struct MP y)= MPsub086;
-struct MP  *(*pd2MP)(double x)                 = d2MP086 ;
-double *(*pMP2d)(struct MP m)                  = MP2d086 ;
+int (*pMPcmp)(MP x, MP y) = MPcmp086;
+MP  *(*pMPmul)(MP x, MP y)= MPmul086;
+MP  *(*pMPdiv)(MP x, MP y)= MPdiv086;
+MP  *(*pMPadd)(MP x, MP y)= MPadd086;
+MP  *(*pMPsub)(MP x, MP y)= MPsub086;
+MP  *(*pd2MP)(double x)                 = d2MP086 ;
+double *(*pMP2d)(MP m)                  = MP2d086 ;
 
 void setMPfunctions() {
     pMPmul = MPmul386;
@@ -747,7 +748,7 @@ StoreAns:
    ret
 MP2d086     ENDP
 */
-double *MP2d086(struct MP x)
+double *MP2d086(MP x)
 {
     // TODO: implement
     static double ans = 0.0;
@@ -793,7 +794,7 @@ StoreAns:
    ret
 d2MP086     ENDP
 */
-struct MP *d2MP086(double x)
+MP *d2MP086(double x)
 {
     // TODO: implement
     if (0.0 == x)
@@ -986,7 +987,7 @@ StoreAns:
    ret
 MPadd086    ENDP
 */
-struct MP *MPadd086(struct MP x, struct MP y)
+MP *MPadd086(MP x, MP y)
 {
     // TODO: implement
     _ASSERTE(0 && "MPadd086 called.");
@@ -1063,7 +1064,7 @@ ExitCmp:
    ret
 MPcmp086    ENDP
 */
-int MPcmp086(struct MP x, struct MP y)
+int MPcmp086(MP x, MP y)
 {
     // TODO: implement
     _ASSERTE(0 && "MPcmp086 called.");
@@ -1167,7 +1168,7 @@ StoreMant:
    ret
 MPdiv086    ENDP
 */
-struct MP *MPdiv086(struct MP x, struct MP y)
+MP *MPdiv086(MP x, MP y)
 {
     // TODO: implement
     _ASSERTE(0 && "MPdiv086 called.");
@@ -1267,7 +1268,7 @@ StoreMant:
    ret
 MPmul086    ENDP
 */
-struct MP *MPmul086(struct MP x, struct MP y)
+MP *MPmul086(MP x, MP y)
 {
     // TODO: implement
     __asm
@@ -1402,7 +1403,7 @@ StoreAns:
    ret
 d2MP386     ENDP
 */
-struct MP *d2MP386(double x)
+MP *d2MP386(double x)
 {
     // TODO: implement
     _ASSERTE(0 && "d2MP386 called.");
@@ -1449,7 +1450,7 @@ StoreAns:
    ret
 MP2d386     ENDP
 */
-double *MP2d386(struct MP x)
+double *MP2d386(MP x)
 {
     // TODO: implement
     static double ans = 0.0;
@@ -1603,7 +1604,7 @@ StoreAns:
    ret
 MPadd086    ENDP
 */
-struct MP *MPadd(struct MP x, struct MP y)
+MP *MPadd(MP x, MP y)
 {
     // TODO: implement
     _ASSERTE(0 && "MPadd called.");
@@ -1703,7 +1704,7 @@ StoreAns:
    ret
 MPadd386    ENDP
 */
-struct MP *MPadd386(struct MP x, struct MP y)
+MP *MPadd386(MP x, MP y)
 {
     // TODO: implement
     _ASSERTE(0 && "MPadd386 called.");
@@ -1766,7 +1767,7 @@ ExitCmp:
    ret
 MPcmp386    ENDP
 */
-int MPcmp386(struct MP x, struct MP y)
+int MPcmp386(MP x, MP y)
 {
     // TODO: implement
     _ASSERTE(0 && "MPcmp386 called.");
@@ -1828,7 +1829,7 @@ StoreMant:
    ret
 MPdiv386    ENDP
 */
-struct MP *MPdiv386(struct MP x, struct MP y)
+MP *MPdiv386(MP x, MP y)
 {
     // TODO: implement
     _ASSERTE(0 && "MPdiv386 called.");
@@ -1892,7 +1893,7 @@ StoreMant:
    ret
 MPmul386    ENDP
 */
-struct MP *MPmul386(struct MP x, struct MP y)
+MP *MPmul386(MP x, MP y)
 {
     // TODO: implement
     _ASSERTE(0 && "MPmul386 called.");
@@ -1901,22 +1902,22 @@ struct MP *MPmul386(struct MP x, struct MP y)
 
 //
 
-struct MP *d2MP(double x)
+MP *d2MP(double x)
 {
     return d2MP386(x);
 }
 
-struct MP *MPmul(struct MP x, struct MP y)
+MP *MPmul(MP x, MP y)
 {
     return MPmul386(x, y);
 }
 
-struct MP *MPdiv(struct MP x, struct MP y)
+MP *MPdiv(MP x, MP y)
 {
     return MPdiv386(x, y);
 }
 
-int MPcmp(struct MP x, struct MP y)
+int MPcmp(MP x, MP y)
 {
     return MPcmp386(x, y);
 }
@@ -1957,7 +1958,7 @@ ExitFg2MP:
    ret
 fg2MP086    ENDP
 */
-struct MP *fg2MP086(long x, int fg)
+MP *fg2MP086(long x, int fg)
 {
     _ASSERTE(0 && "fg2MP086 called");
     return &Ans;
@@ -1998,13 +1999,13 @@ StoreAns:
    ret
 fg2MP386    ENDP
 */
-struct MP *fg2MP386(long x, int fg)
+MP *fg2MP386(long x, int fg)
 {
     _ASSERTE(0 && "fg2MP386 called");
     return &Ans;
 }
 
-struct MP *fg2MP(long x, int fg)
+MP *fg2MP(long x, int fg)
 {
     return fg2MP386(x, fg);
 }
