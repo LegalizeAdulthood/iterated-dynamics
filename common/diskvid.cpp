@@ -35,16 +35,18 @@ bool g_good_mode = false;        // if non-zero, OK to read/write pixels
 #define FREEMEM  33     // try to leave this much memory unallocated
 #define HASHSIZE 1024   // power of 2, near CACHEMAX/(BLOCKLEN+8)
 
-static struct cache     // structure of each cache entry
+struct cache                // structure of each cache entry
 {
-    long offset;           // pixel offset in image
-    BYTE pixel[BLOCKLEN];  // one pixel per byte (this *is* faster)
-    unsigned int hashlink; // ptr to next cache entry with same hash
-    bool dirty;            // changed since read?
+    long offset;            // pixel offset in image
+    BYTE pixel[BLOCKLEN];   // one pixel per byte (this *is* faster)
+    unsigned int hashlink;  // ptr to next cache entry with same hash
+    bool dirty;             // changed since read?
     bool lru;               // recently used?
-} *cache_end, *cache_lru, *cur_cache;
-
-static struct cache *cache_start = nullptr;
+};
+static cache *cache_end = nullptr;
+static cache *cache_lru = nullptr;
+static cache *cur_cache = nullptr;
+static cache *cache_start = nullptr;
 static long high_offset;           // highwater mark of writes
 static long seek_offset;           // what we'll get next if we don't seek
 static long cur_offset;            // offset of last block referenced
@@ -63,7 +65,7 @@ static long oldmemoffset = 0;
 static BYTE *membufptr;
 
 static void findload_cache(long);
-static struct cache * find_cache(long);
+static cache *find_cache(long);
 static void  write_cache_lru();
 static void mem_putc(BYTE);
 static BYTE  mem_getc();
@@ -195,7 +197,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         cache_size = CACHEMIN;
     }
     longtmp = (long)cache_size << 10;
-    cache_start = (struct cache *)malloc(longtmp);
+    cache_start = (cache *)malloc(longtmp);
     if (cache_size == 64)
     {
         --longtmp; // safety for next line
@@ -221,7 +223,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         hash_ptr[i] = 0xffff; // 0xffff marks the end of a hash chain
     }
     longtmp = 100000000L;
-    for (struct cache *ptr1 = cache_start; ptr1 < cache_end; ++ptr1)
+    for (cache *ptr1 = cache_start; ptr1 < cache_end; ++ptr1)
     {
         ptr1->dirty = false;
         ptr1->lru = false;
@@ -493,7 +495,7 @@ static void findload_cache(long offset) // used by read/write
     tbloffset = hash_ptr[((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1) ];
     while (tbloffset != 0xffff)  // follow the hash chain
     {
-        cur_cache = (struct cache *)((char *)cache_start + tbloffset);
+        cur_cache = (cache *)((char *)cache_start + tbloffset);
         if (cur_cache->offset == offset)  // great, it is in the cache
         {
             cur_cache->lru = true;
@@ -523,7 +525,7 @@ static void findload_cache(long offset) // used by read/write
     tbloffset = (int)((char *)cache_lru - (char *)cache_start);
     while (*fwd_link != tbloffset)
     {
-        fwd_link = &((struct cache *)((char *)cache_start+*fwd_link))->hashlink;
+        fwd_link = &((cache *)((char *)cache_start+*fwd_link))->hashlink;
     }
     *fwd_link = cache_lru->hashlink;
     // load block
@@ -583,14 +585,14 @@ static void findload_cache(long offset) // used by read/write
 }
 
 // lookup for write_cache_lru
-static struct cache * find_cache(long offset)
+static cache *find_cache(long offset)
 {
     unsigned int tbloffset;
-    struct cache *ptr1;
+    cache *ptr1;
     tbloffset = hash_ptr[((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1)];
     while (tbloffset != 0xffff)
     {
-        ptr1 = (struct cache *)((char *)cache_start + tbloffset);
+        ptr1 = (cache *)((char *)cache_start + tbloffset);
         if (ptr1->offset == offset)
         {
             return (ptr1);
@@ -606,7 +608,7 @@ static void  write_cache_lru()
     BYTE *pixelptr;
     long offset;
     BYTE tmpchar = 0;
-    struct cache *ptr1, *ptr2;
+    cache *ptr1, *ptr2;
 #define WRITEGAP 4 // 1 for no gaps
     // scan back to also write any preceding dirty blocks, skipping small gaps
     ptr1 = cache_lru;
