@@ -140,7 +140,7 @@ bool first_init = true;                 // first time into cmdfiles?
 static int init_rseed = 0;
 static bool initcorners = false;
 static bool initparams = false;
-struct fractalspecificstuff *curfractalspecific = nullptr;
+fractalspecificstuff *curfractalspecific = nullptr;
 
 char FormFileName[FILE_MAX_PATH] = { 0 };// file to find (type=)formulas in
 char FormName[ITEMNAMELEN+1] = { 0 };    // Name of the Formula (if not null)
@@ -151,7 +151,7 @@ char CommandName[ITEMNAMELEN+1] = { 0 }; // Name of Command set
 char CommandComment[4][MAXCMT] = { 0 };    // comments for command set
 char IFSFileName[FILE_MAX_PATH] = { 0 };// file to find (type=)IFS in
 char IFSName[ITEMNAMELEN+1] = { 0 };    // Name of the IFS def'n (if not null)
-struct SearchPath searchfor = { 0 };
+SearchPath searchfor = { 0 };
 float *ifs_defn = nullptr;              // ifs parameters
 bool ifs_type = false;                  // false=2d, true=3d
 int  g_slides = SLIDES_OFF;             // 1 autokey=play, 2 autokey=record
@@ -1362,7 +1362,8 @@ int cmdarg(char *curarg, int mode) // process a single argument
         {
             const char *arg;
             int inside;
-        } args[] =
+        }
+        args[] =
         {
             { "zmag", ZMAG },
             { "bof60", BOF60 },
