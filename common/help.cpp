@@ -33,34 +33,34 @@
 #define MAX_PAGE_SIZE       (80*25)  // no page of text may be larger
 #define TEXT_START_ROW      2        // start print the help text here
 
-typedef struct
+struct LINK
 {
     BYTE r, c;
     int           width;
     unsigned      offset;
     int           topic_num;
     unsigned      topic_off;
-} LINK;
+};
 
-typedef struct
+struct LABEL
 {
     int      topic_num;
     unsigned topic_off;
-} LABEL;
+};
 
-typedef struct
+struct PAGE
 {
     unsigned      offset;
     unsigned      len;
     int           margin;
-} PAGE;
+};
 
-typedef struct
+struct HIST
 {
     int      topic_num;
     unsigned topic_off;
     int      link;
-} HIST;
+};
 
 struct help_sig_info
 {
@@ -1033,7 +1033,7 @@ int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
 #define MAX_NUM_TOPIC_SEC  (10)          // max. number of topics under any
 //    single section (CONTENT)
 
-typedef struct PRINT_DOC_INFO
+struct PRINT_DOC_INFO
 {
     int       cnum;          // current CONTENT num
     int       tnum;          // current topic num
@@ -1057,7 +1057,7 @@ typedef struct PRINT_DOC_INFO
     int       margin;        // indent text by this much
     bool      start_of_line; // are we at the beginning of a line?
     int       spaces;        // number of spaces in a row
-} PRINT_DOC_INFO;
+};
 
 static void printerc(PRINT_DOC_INFO *info, int c, int n)
 {
@@ -1398,7 +1398,7 @@ ErrorAbort:
 
 int init_help()
 {
-    struct help_sig_info hs = { 0 };
+    help_sig_info hs = { 0 };
     char path[FILE_MAX_PATH+1];
 
     help_file = nullptr;
