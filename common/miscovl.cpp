@@ -67,7 +67,7 @@ void make_batch_file()
     bool have3rd = false;
     char inpcommandfile[80], inpcommandname[ITEMNAMELEN+1];
     char inpcomment[4][MAXCMT];
-    struct fullscreenvalues paramvalues[18];
+    fullscreenvalues paramvalues[18];
     const char *choices[MAXPROMPTS];
     char outname[FILE_MAX_PATH+1], buf[256], buf2[128];
     FILE *infile = nullptr;
@@ -487,11 +487,12 @@ skip_UI:
     driver_unstack_screen();
 }
 
-static struct write_batch_data // buffer for parms to break lines nicely
+struct write_batch_data // buffer for parms to break lines nicely
 {
     int len;
     char buf[10000];
-} s_wbdata;
+};
+static write_batch_data s_wbdata;
 
 void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, int jj)
 {
@@ -1615,7 +1616,7 @@ static void update_fractint_cfg()
     char cfgname[100],outname[100],buf[121],kname[5];
     FILE *cfgfile,*outfile;
     int i,j,linenum,nextlinenum,nextmode;
-    struct videoinfo vident;
+    videoinfo vident;
 
     findpath("fractint.cfg",cfgname);
 
