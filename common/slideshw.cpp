@@ -26,7 +26,7 @@ struct scancodes
     const char *mnemonic;
 };
 
-static struct scancodes scancodes[] =
+static scancodes scancodes[] =
 {
     { FIK_ENTER,            "ENTER"     },
     { FIK_INSERT,           "INSERT"    },
@@ -50,7 +50,7 @@ static struct scancodes scancodes[] =
     { FIK_CTL_HOME,         "CTRL_HOME" },
     { -1,                   nullptr        }
 };
-#define stop sizeof(scancodes)/sizeof(struct scancodes)-1
+#define stop sizeof(scancodes)/sizeof(scancodes)-1
 
 static int get_scancode(char *mn)
 {
