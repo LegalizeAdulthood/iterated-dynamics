@@ -290,12 +290,12 @@ static int  Halleybailout()
 
 #if !defined(XFRACT)
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
-struct MPC mpcold, mpcnew, mpctmp, mpctmp1;
-struct MP mptmpparm2x;
+MPC mpcold, mpcnew, mpctmp, mpctmp1;
+MP mptmpparm2x;
 
 static int  MPCHalleybailout()
 {
-    static struct MP mptmpbailout;
+    static MP mptmpbailout;
     mptmpbailout = *MPabs(*pMPsub(MPCmod(mpcnew), MPCmod(mpcold)));
     if (pMPcmp(mptmpbailout, mptmpparm2x) < 0)
         return 1;
@@ -483,9 +483,9 @@ complex_div(DComplex numerator,DComplex denominator,DComplex *pout)
 }
 
 #if !defined(XFRACT)
-struct MP mproverd, mpd1overd, mpthreshold;
-struct MP mpt2;
-struct MP mpone;
+MP mproverd, mpd1overd, mpthreshold;
+MP mpt2;
+MP mpone;
 #endif
 
 int MPCNewtonFractal()
@@ -1619,8 +1619,8 @@ JuliaTrigOrTrigfpFractal()
 }
 
 int AplusOne, Ap1deg;
-struct MP mpAplusOne, mpAp1deg;
-struct MPC mpctmpparm;
+MP mpAplusOne, mpAp1deg;
+MPC mpctmpparm;
 
 int MPCHalleyFractal()
 {
@@ -1628,10 +1628,10 @@ int MPCHalleyFractal()
     //  X(X^a - 1) = 0, Halley Map
     //  a = parm.x,  relaxation coeff. = parm.y,  epsilon = parm2.x
 
-    struct MPC mpcXtoAlessOne, mpcXtoA;
-    struct MPC mpcXtoAplusOne; // a-1, a, a+1
-    struct MPC mpcFX, mpcF1prime, mpcF2prime, mpcHalnumer1;
-    struct MPC mpcHalnumer2, mpcHaldenom, mpctmp;
+    MPC mpcXtoAlessOne, mpcXtoA;
+    MPC mpcXtoAplusOne; // a-1, a, a+1
+    MPC mpcFX, mpcF1prime, mpcF2prime, mpcHalnumer1;
+    MPC mpcHalnumer2, mpcHaldenom, mpctmp;
 
     MPOverflow = 0;
     mpcXtoAlessOne.x = mpcold.x;
