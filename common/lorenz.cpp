@@ -54,7 +54,7 @@ struct long3dvtinf // data used by 3d view transform subroutine
     long longmat1[4][4]; // long version of matrix
     int row,col;         // results
     int row1,col1;
-    struct l_affine cvt;
+    l_affine cvt;
 };
 
 struct float3dvtinf // data used by 3d view transform subroutine
@@ -68,7 +68,7 @@ struct float3dvtinf // data used by 3d view transform subroutine
     MATRIX doublemat1;   // transformation matrix
     int row,col;         // results
     int row1,col1;
-    struct affine cvt;
+    affine cvt;
 };
 
 // Routines in this module
@@ -77,10 +77,10 @@ static int  ifs2d();
 static int  ifs3d();
 static int  ifs3dlong();
 static int  ifs3dfloat();
-static bool l_setup_convert_to_screen(struct l_affine *);
+static bool l_setup_convert_to_screen(l_affine *);
 static void setupmatrix(MATRIX);
-static bool long3dviewtransf(struct long3dvtinf *inf);
-static bool float3dviewtransf(struct float3dvtinf *inf);
+static bool long3dviewtransf(long3dvtinf *inf);
+static bool float3dviewtransf(float3dvtinf *inf);
 static FILE *open_orbitsave();
 static void plothist(int x, int y, int color);
 static bool realtime = false;
@@ -104,8 +104,8 @@ static int    mxhits;
 int    run_length;
 enum   Major major_method;
 enum   Minor minor_method;
-struct affine cvt;
-struct l_affine lcvt;
+affine cvt;
+l_affine lcvt;
 
 double Cx, Cy;
 long   CxLong, CyLong;
@@ -208,7 +208,7 @@ The same technique can be applied to the second set of equations:
         -  Sylvie
 */
 
-bool setup_convert_to_screen(struct affine *scrn_cnvt)
+bool setup_convert_to_screen(affine *scrn_cnvt)
 {
     double det, xd, yd;
 
@@ -230,9 +230,9 @@ bool setup_convert_to_screen(struct affine *scrn_cnvt)
     return false;
 }
 
-static bool l_setup_convert_to_screen(struct l_affine *l_cvt)
+static bool l_setup_convert_to_screen(l_affine *l_cvt)
 {
-    struct affine cvt;
+    affine cvt;
 
     // This function should return a something!
     if (setup_convert_to_screen(&cvt))
@@ -1255,7 +1255,7 @@ int orbit2dfloat()
     int count;
     int oldrow, oldcol;
     double *p0, *p1, *p2;
-    struct affine cvt;
+    affine cvt;
     int ret;
 
     p2 = nullptr;
@@ -1426,7 +1426,7 @@ int orbit2dlong()
     int count;
     int oldrow, oldcol;
     long *p0, *p1, *p2;
-    struct l_affine cvt;
+    l_affine cvt;
     int ret;
 
     bool start = true;
@@ -1595,7 +1595,7 @@ static int orbit3dlongcalc()
     unsigned long count;
     int oldcol,oldrow;
     int oldcol1,oldrow1;
-    struct long3dvtinf inf;
+    long3dvtinf inf;
     int color;
     int ret;
 
@@ -1700,7 +1700,7 @@ static int orbit3dfloatcalc()
     int oldcol1,oldrow1;
     int color;
     int ret;
-    struct float3dvtinf inf;
+    float3dvtinf inf;
 
     // setup affine screen coord conversion
     setup_convert_to_screen(&inf.cvt);
@@ -1839,7 +1839,7 @@ int dynam2dfloat()
     int oldcol = 0;
     double *p0 = nullptr;
     double *p1 = nullptr;
-    struct affine cvt;
+    affine cvt;
     int ret = 0;
     int xstep = 0;
     int ystep = 0; // The starting position step number
@@ -1964,10 +1964,10 @@ bool keep_scrn_coords = false;
 bool set_orbit_corners = false;
 long orbit_interval;
 double oxmin, oymin, oxmax, oymax, ox3rd, oy3rd;
-struct affine o_cvt;
+affine o_cvt;
 static int o_color;
 
-int setup_orbits_to_screen(struct affine *scrn_cnvt)
+int setup_orbits_to_screen(affine *scrn_cnvt)
 {
     double det, xd, yd;
 
@@ -2167,7 +2167,7 @@ static int ifs3dfloat()
     int k;
     int ret;
 
-    struct float3dvtinf inf;
+    float3dvtinf inf;
 
     float *ffptr;
 
@@ -2287,7 +2287,7 @@ static int ifs2d()
     std::vector<long> localifs;
     long *lfptr;
     long x,y,newx,newy,r,sum, tempr;
-    struct l_affine cvt;
+    l_affine cvt;
     // setup affine screen coord conversion
     l_setup_convert_to_screen(&cvt);
 
@@ -2380,7 +2380,7 @@ static int ifs3dlong()
     std::vector<long> localifs;
     long *lfptr;
     long newx,newy,newz,r,sum, tempr;
-    struct long3dvtinf inf;
+    long3dvtinf inf;
 
     srand(1);
     color_method = (int)param[0];
@@ -2539,7 +2539,7 @@ static int ifs3d()
         return (funny_glasses_call(ifs3dlong)); // long version of ifs3d
 }
 
-static bool long3dviewtransf(struct long3dvtinf *inf)
+static bool long3dviewtransf(long3dvtinf *inf)
 {
     if (coloriter == 1)  // initialize on first call
     {
@@ -2701,7 +2701,7 @@ static bool long3dviewtransf(struct long3dvtinf *inf)
     return true;
 }
 
-static bool float3dviewtransf(struct float3dvtinf *inf)
+static bool float3dviewtransf(float3dvtinf *inf)
 {
     if (coloriter == 1)  // initialize on first call
     {
