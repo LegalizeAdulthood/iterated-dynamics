@@ -22,7 +22,7 @@ static int  check_pan();
 static void fix_worklist();
 static void move_row(int fromrow,int torow,int col);
 
-/* big number declarations */
+// big number declarations
 void calc_corner(bf_t target,bf_t p1,double p2,bf_t p3,double p4,bf_t p5)
 {
     bf_t btmp1, btmp2 ,btmp3;
@@ -32,7 +32,7 @@ void calc_corner(bf_t target,bf_t p1,double p2,bf_t p3,double p4,bf_t p5)
     btmp2 = alloc_stack(rbflength+2);
     btmp3 = alloc_stack(rbflength+2);
 
-    /* use target as temporary variable */
+    // use target as temporary variable
     floattobf(btmp3, p2);
     mult_bf(btmp1,btmp3,p3);
     mult_bf(btmp2,floattobf(target, p4),p5);
@@ -41,7 +41,7 @@ void calc_corner(bf_t target,bf_t p1,double p2,bf_t p3,double p4,bf_t p5)
     restore_stack(saved);
 }
 
-/* Zoom-Box color */
+// Zoom-Box color
 int boxcolor = 0;
 
 #ifndef XFRACT
@@ -61,8 +61,8 @@ void dispbox()
         else
             values[i] = (unsigned char)getcolor(boxx[i]-sxoffs,boxy[i]-syoffs);
     }
-    /* There is an interaction between getcolor and putcolor, so separate them */
-    if (!(g_is_true_color && truemode)) /* don't need this for truecolor with truemode set */
+    // There is an interaction between getcolor and putcolor, so separate them
+    if (!(g_is_true_color && truemode)) // don't need this for truecolor with truemode set
         for (int i = 0; i < boxcount; i++)
         {
             if (colors == 2)
@@ -91,13 +91,13 @@ void clearbox()
 
 void drawbox(int drawit)
 {
-    struct coords tl,bl,tr,br; /* dot addr of topleft, botleft, etc */
+    struct coords tl,bl,tr,br; // dot addr of topleft, botleft, etc
     double tmpx,tmpy,dx,dy,rotcos,rotsin,ftemp1,ftemp2;
     double fxwidth,fxskew,fydepth,fyskew,fxadj;
     bf_t bffxwidth, bffxskew, bffydepth, bffyskew, bffxadj;
     int saved=0;
-    if (zwidth==0) { /* no box to draw */
-        if (boxcount!=0) { /* remove the old box from display */
+    if (zwidth==0) { // no box to draw
+        if (boxcount!=0) { // remove the old box from display
             clearbox();
             boxcount = 0;
         }
@@ -113,11 +113,11 @@ void drawbox(int drawit)
         bffyskew  = alloc_stack(rbflength+2);
         bffxadj   = alloc_stack(rbflength+2);
     }
-    ftemp1 = PI*zrotate/72; /* convert to radians */
-    rotcos = cos(ftemp1);   /* sin & cos of rotation */
+    ftemp1 = PI*zrotate/72; // convert to radians
+    rotcos = cos(ftemp1);   // sin & cos of rotation
     rotsin = sin(ftemp1);
 
-    /* do some calcs just once here to reduce fp work a bit */
+    // do some calcs just once here to reduce fp work a bit
     fxwidth = sxmax-sx3rd;
     fxskew  = sx3rd-sxmin;
     fydepth = sy3rd-symax;
@@ -126,7 +126,7 @@ void drawbox(int drawit)
 
     if (bf_math)
     {
-        /* do some calcs just once here to reduce fp work a bit */
+        // do some calcs just once here to reduce fp work a bit
         sub_bf(bffxwidth,bfsxmax,bfsx3rd);
         sub_bf(bffxskew,bfsx3rd,bfsxmin);
         sub_bf(bffydepth,bfsy3rd,bfsymax);
@@ -134,19 +134,19 @@ void drawbox(int drawit)
         floattobf(bffxadj, fxadj);
     }
 
-    /* calc co-ords of topleft & botright corners of box */
-    tmpx = zwidth/-2+fxadj; /* from zoombox center as origin, on xdots scale */
+    // calc co-ords of topleft & botright corners of box
+    tmpx = zwidth/-2+fxadj; // from zoombox center as origin, on xdots scale
     tmpy = zdepth*finalaspectratio/2;
-    dx = (rotcos*tmpx - rotsin*tmpy) - tmpx; /* delta x to rotate topleft */
-    dy = tmpy - (rotsin*tmpx + rotcos*tmpy); /* delta y to rotate topleft */
+    dx = (rotcos*tmpx - rotsin*tmpy) - tmpx; // delta x to rotate topleft
+    dy = tmpy - (rotsin*tmpx + rotcos*tmpy); // delta y to rotate topleft
 
-    /* calc co-ords of topleft */
+    // calc co-ords of topleft
     ftemp1 = zbx + dx + fxadj;
     ftemp2 = zby + dy/finalaspectratio;
 
-    tl.x   = (int)(ftemp1*(dxsize+PIXELROUND)); /* screen co-ords */
+    tl.x   = (int)(ftemp1*(dxsize+PIXELROUND)); // screen co-ords
     tl.y   = (int)(ftemp2*(dysize+PIXELROUND));
-    xxmin  = sxmin + ftemp1*fxwidth + ftemp2*fxskew; /* real co-ords */
+    xxmin  = sxmin + ftemp1*fxwidth + ftemp2*fxskew; // real co-ords
     yymax  = symax + ftemp2*fydepth + ftemp1*fyskew;
     if (bf_math)
     {
@@ -154,7 +154,7 @@ void drawbox(int drawit)
         calc_corner(bfymax,bfsymax,ftemp2,bffydepth,ftemp1,bffyskew);
     }
 
-    /* calc co-ords of bottom right */
+    // calc co-ords of bottom right
     ftemp1 = zbx + zwidth - dx - fxadj;
     ftemp2 = zby - dy/finalaspectratio + zdepth;
     br.x   = (int)(ftemp1*(dxsize+PIXELROUND));
@@ -166,7 +166,7 @@ void drawbox(int drawit)
         calc_corner(bfxmax,bfsxmin,ftemp1,bffxwidth,ftemp2,bffxskew);
         calc_corner(bfymin,bfsymax,ftemp2,bffydepth,ftemp1,bffyskew);
     }
-    /* do the same for botleft & topright */
+    // do the same for botleft & topright
     tmpx = zwidth/-2 - fxadj;
     tmpy = 0.0-tmpy;
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx;
@@ -188,20 +188,20 @@ void drawbox(int drawit)
     tr.x   = (int)(ftemp1*(dxsize+PIXELROUND));
     tr.y   = (int)(ftemp2*(dysize+PIXELROUND));
 
-    if (boxcount!=0) { /* remove the old box from display */
+    if (boxcount!=0) { // remove the old box from display
         clearbox();
         boxcount = 0;
     }
 
-    if (drawit) { /* caller wants box drawn as well as co-ords calc'd */
+    if (drawit) { // caller wants box drawn as well as co-ords calc'd
 #ifndef XFRACT
-        /* build the list of zoom box pixels */
+        // build the list of zoom box pixels
         addbox(tl);
-        addbox(tr);               /* corner pixels */
+        addbox(tr);               // corner pixels
         addbox(bl);
         addbox(br);
-        drawlines(tl,tr,bl.x-tl.x,bl.y-tl.y); /* top & bottom lines */
-        drawlines(tl,bl,tr.x-tl.x,tr.y-tl.y); /* left & right lines */
+        drawlines(tl,tr,bl.x-tl.x,bl.y-tl.y); // top & bottom lines
+        drawlines(tl,bl,tr.x-tl.x,tr.y-tl.y); // left & right lines
 #else
         boxx[0] = tl.x + sxoffs;
         boxy[0] = tl.y + syoffs;
@@ -224,13 +224,13 @@ void drawlines(struct coords fr, struct coords to,
     int altctr,altdec,altinc;
     struct coords tmpp,line1,line2;
 
-    if (abs(to.x-fr.x) > abs(to.y-fr.y)) { /* delta.x > delta.y */
-        if (fr.x>to.x) { /* swap so from.x is < to.x */
+    if (abs(to.x-fr.x) > abs(to.y-fr.y)) { // delta.x > delta.y
+        if (fr.x>to.x) { // swap so from.x is < to.x
             tmpp = fr;
             fr = to;
             to = tmpp;
         }
-        xincr = (to.x-fr.x)*4/sxdots+1; /* do every 1st, 2nd, 3rd, or 4th dot */
+        xincr = (to.x-fr.x)*4/sxdots+1; // do every 1st, 2nd, 3rd, or 4th dot
         ctr = (to.x-fr.x-1)/xincr;
         altdec = abs(to.y-fr.y)*xincr;
         altinc = to.x-fr.x;
@@ -254,13 +254,13 @@ void drawlines(struct coords fr, struct coords to,
         }
     }
 
-    else { /* delta.y > delta.x */
-        if (fr.y>to.y) { /* swap so from.y is < to.y */
+    else { // delta.y > delta.x
+        if (fr.y>to.y) { // swap so from.y is < to.y
             tmpp = fr;
             fr = to;
             to = tmpp;
         }
-        yincr = (to.y-fr.y)*4/sydots+1; /* do every 1st, 2nd, 3rd, or 4th dot */
+        yincr = (to.y-fr.y)*4/sydots+1; // do every 1st, 2nd, 3rd, or 4th dot
         ctr = (to.y-fr.y-1)/yincr;
         altdec = abs(to.x-fr.x)*yincr;
         altinc = to.y-fr.y;
@@ -305,7 +305,7 @@ void moveboxf(double dx, double dy)
     int align;
     align = check_pan();
     if (dx!=0.0) {
-        if ((zbx += dx) + zwidth/2 < 0)  /* center must stay onscreen */
+        if ((zbx += dx) + zwidth/2 < 0)  // center must stay onscreen
             zbx = zwidth/-2;
         if (zbx + zwidth/2 > 1)
             zbx = 1.0 - zwidth/2;
@@ -314,7 +314,7 @@ void moveboxf(double dx, double dy)
                 && ((col = (int)(zbx*(dxsize+PIXELROUND))) & (align-1)) != 0) {
             if (dx > 0)
                 col += align;
-            col -= col & (align-1); /* adjust col to pass alignment */
+            col -= col & (align-1); // adjust col to pass alignment
             zbx = (double)col/dxsize;
         }
     }
@@ -333,18 +333,18 @@ void moveboxf(double dx, double dy)
         }
     }
 #ifndef XFRACT
-    if (g_video_scroll)                 /* scroll screen center to the box center */
+    if (g_video_scroll)                 // scroll screen center to the box center
     {
         int col = (int)((zbx + zwidth/2)*(dxsize + PIXELROUND)) + sxoffs;
         int row = (int)((zby + zdepth/2)*(dysize + PIXELROUND)) + syoffs;
         if (!zscroll)
         {
-            /* fixed - screen center fixed to the zoombox center */
+            // fixed - screen center fixed to the zoombox center
             scroll_center(col,row);
         }
         else
         {
-            /* relaxed - as the zoombox center leaves the screen */
+            // relaxed - as the zoombox center leaves the screen
             if ((col -= g_video_start_x) > 0 && (col -= g_vesa_x_res - 1) < 0)
                 col = 0;
             if ((row -= g_video_start_y) > 0 && (row -= g_vesa_y_res - 1) < 0)
@@ -368,17 +368,17 @@ static void chgboxf(double dwidth, double ddepth)
     if (zdepth+ddepth < 0.05)
         ddepth = 0.05-zdepth;
     zdepth += ddepth;
-    moveboxf(dwidth/-2,ddepth/-2); /* keep it centered & check limits */
+    moveboxf(dwidth/-2,ddepth/-2); // keep it centered & check limits
 }
 
 void resizebox(int steps)
 {
     double deltax,deltay;
-    if (zdepth*screenaspect > zwidth) { /* box larger on y axis */
+    if (zdepth*screenaspect > zwidth) { // box larger on y axis
         deltay = steps * 0.036 / screenaspect;
         deltax = zwidth * deltay / zdepth;
     }
-    else {                              /* box larger on x axis */
+    else {                              // box larger on x axis
         deltax = steps * 0.036;
         deltay = zdepth * deltax / zwidth;
     }
@@ -387,7 +387,7 @@ void resizebox(int steps)
 
 void chgboxi(int dw, int dd)
 {
-    /* change size by pixels */
+    // change size by pixels
     chgboxf((double)dw/dxsize, (double)dd/dysize);
 }
 
@@ -414,30 +414,30 @@ static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
        are taken as (0,0) topleft thru (1,1) bottom right */
 
-    /* tempx = dy * plotmx1 - dx * plotmx2; */
+    // tempx = dy * plotmx1 - dx * plotmx2;
     mult_bf(btmp1,bfdy,bfplotmx1);
     mult_bf(btmp2,bfdx,bfplotmx2);
     sub_bf(btempx,btmp1,btmp2);
 
-    /* tempy = dx * plotmy1 - dy * plotmy2; */
+    // tempy = dx * plotmy1 - dy * plotmy2;
     mult_bf(btmp1,bfdx,bfplotmy1);
     mult_bf(btmp2,bfdy,bfplotmy2);
     sub_bf(btempy,btmp1,btmp2);
 
-    /* calc new corner by extending from current screen corners */
-    /* *newx = sxmin + tempx*(sxmax-sx3rd)/ftemp + tempy*(sx3rd-sxmin)/ftemp; */
+    // calc new corner by extending from current screen corners
+    // *newx = sxmin + tempx*(sxmax-sx3rd)/ftemp + tempy*(sx3rd-sxmin)/ftemp;
     sub_bf(btmp1,bfsxmax,bfsx3rd);
     mult_bf(btmp2,btempx,btmp1);
-    /* show_three_bf("fact1",btempx,"fact2",btmp1,"prod ",btmp2,70); */
+    // show_three_bf("fact1",btempx,"fact2",btmp1,"prod ",btmp2,70);
     div_bf(btmp2a,btmp2,bfftemp);
-    /* show_three_bf("num  ",btmp2,"denom",bfftemp,"quot ",btmp2a,70); */
+    // show_three_bf("num  ",btmp2,"denom",bfftemp,"quot ",btmp2a,70);
     sub_bf(btmp3,bfsx3rd,bfsxmin);
     mult_bf(btmp4,btempy,btmp3);
     div_bf(btmp4a,btmp4,bfftemp);
     add_bf(bfnewx,bfsxmin,btmp2a);
     add_a_bf(bfnewx,btmp4a);
 
-    /* *newy = symax + tempy*(sy3rd-symax)/ftemp + tempx*(symin-sy3rd)/ftemp; */
+    // *newy = symax + tempy*(sy3rd-symax)/ftemp + tempx*(symin-sy3rd)/ftemp;
     sub_bf(btmp1,bfsy3rd,bfsymax);
     mult_bf(btmp2,btempy,btmp1);
     div_bf(btmp2a,btmp2,bfftemp);
@@ -457,12 +457,12 @@ static void zmo_calc(double dx, double dy, double *newx, double *newy, double ft
     tempx = dy * plotmx1 - dx * plotmx2;
     tempy = dx * plotmy1 - dy * plotmy2;
 
-    /* calc new corner by extending from current screen corners */
+    // calc new corner by extending from current screen corners
     *newx = sxmin + tempx*(sxmax-sx3rd)/ftemp + tempy*(sx3rd-sxmin)/ftemp;
     *newy = symax + tempy*(sy3rd-symax)/ftemp + tempx*(symin-sy3rd)/ftemp;
 }
 
-void zoomoutbf() /* for ctl-enter, calc corners for zooming out */
+void zoomoutbf() // for ctl-enter, calc corners for zooming out
 {
     /* (xxmin,yymax), etc, are already set to zoombox corners;
        (sxmin,symax), etc, are still the screen's corners;
@@ -490,7 +490,7 @@ void zoomoutbf() /* for ctl-enter, calc corners for zooming out */
     bfplotmx2 = alloc_stack(rbflength+2);
     bfplotmy1 = alloc_stack(rbflength+2);
     bfplotmy2 = alloc_stack(rbflength+2);
-    /* ftemp = (yymin-yy3rd)*(xx3rd-xxmin) - (xxmax-xx3rd)*(yy3rd-yymax); */
+    // ftemp = (yymin-yy3rd)*(xx3rd-xxmin) - (xxmax-xx3rd)*(yy3rd-yymax);
     sub_bf(tmp1,bfymin,bfy3rd);
     sub_bf(tmp2,bfx3rd,bfxmin);
     sub_bf(tmp3,bfxmax,bfx3rd);
@@ -498,16 +498,16 @@ void zoomoutbf() /* for ctl-enter, calc corners for zooming out */
     mult_bf(tmp5,tmp1,tmp2);
     mult_bf(tmp6,tmp3,tmp4);
     sub_bf(bfftemp,tmp5,tmp6);
-    /* plotmx1 = (xx3rd-xxmin); */ ; /* reuse the plotxxx vars is safe */
+    // plotmx1 = (xx3rd-xxmin); */ ; /* reuse the plotxxx vars is safe
     copy_bf(bfplotmx1,tmp2);
-    /* plotmx2 = (yy3rd-yymax); */
+    // plotmx2 = (yy3rd-yymax);
     copy_bf(bfplotmx2,tmp4);
-    /* plotmy1 = (yymin-yy3rd); */
+    // plotmy1 = (yymin-yy3rd);
     copy_bf(bfplotmy1,tmp1);
     /* plotmy2 = (xxmax-xx3rd); */;
     copy_bf(bfplotmy2,tmp3);
 
-    /* savxxmin = xxmin; savyymax = yymax; */
+    // savxxmin = xxmin; savyymax = yymax;
     copy_bf(savbfxmin,bfxmin);
     copy_bf(savbfymax,bfymax);
 
@@ -526,7 +526,7 @@ void zoomoutbf() /* for ctl-enter, calc corners for zooming out */
     restore_stack(saved);
 }
 
-void zoomoutdbl() /* for ctl-enter, calc corners for zooming out */
+void zoomoutdbl() // for ctl-enter, calc corners for zooming out
 {
     /* (xxmin,yymax), etc, are already set to zoombox corners;
        (sxmin,symax), etc, are still the screen's corners;
@@ -539,7 +539,7 @@ void zoomoutdbl() /* for ctl-enter, calc corners for zooming out */
        */
     double savxxmin,savyymax,ftemp;
     ftemp = (yymin-yy3rd)*(xx3rd-xxmin) - (xxmax-xx3rd)*(yy3rd-yymax);
-    plotmx1 = (xx3rd-xxmin); /* reuse the plotxxx vars is safe */
+    plotmx1 = (xx3rd-xxmin); // reuse the plotxxx vars is safe
     plotmx2 = (yy3rd-yymax);
     plotmy1 = (yymin-yy3rd);
     plotmy2 = (xxmax-xx3rd);
@@ -550,7 +550,7 @@ void zoomoutdbl() /* for ctl-enter, calc corners for zooming out */
     zmo_calc(sx3rd-savxxmin,sy3rd-savyymax,&xx3rd,&yy3rd,ftemp);
 }
 
-void zoomout() /* for ctl-enter, calc corners for zooming out */
+void zoomout() // for ctl-enter, calc corners for zooming out
 {
     if (bf_math)
     {
@@ -563,14 +563,14 @@ void zoomout() /* for ctl-enter, calc corners for zooming out */
 void aspectratio_crop(float oldaspect,float newaspect)
 {
     double ftemp,xmargin,ymargin;
-    if (newaspect > oldaspect) { /* new ratio is taller, crop x */
+    if (newaspect > oldaspect) { // new ratio is taller, crop x
         ftemp = (1.0 - oldaspect / newaspect) / 2;
         xmargin = (xxmax - xx3rd) * ftemp;
         ymargin = (yymin - yy3rd) * ftemp;
         xx3rd += xmargin;
         yy3rd += ymargin;
     }
-    else                       { /* new ratio is wider, crop y */
+    else                       { // new ratio is wider, crop y
         ftemp = (1.0 - newaspect / oldaspect) / 2;
         xmargin = (xx3rd - xxmin) * ftemp;
         ymargin = (yy3rd - yymax) * ftemp;
@@ -583,56 +583,56 @@ void aspectratio_crop(float oldaspect,float newaspect)
     yymin -= ymargin;
 }
 
-static int check_pan() /* return 0 if can't, alignment requirement if can */
+static int check_pan() // return 0 if can't, alignment requirement if can
 {
     if ((calc_status != CALCSTAT_RESUMABLE && calc_status != CALCSTAT_COMPLETED) || evolving)
-        return (0); /* not resumable, not complete */
+        return (0); // not resumable, not complete
     if (curfractalspecific->calctype != StandardFractal
             && curfractalspecific->calctype != calcmand
             && curfractalspecific->calctype != calcmandfp
             && curfractalspecific->calctype != lyapunov
             && curfractalspecific->calctype != calcfroth)
-        return (0); /* not a worklist-driven type */
+        return (0); // not a worklist-driven type
     if (zwidth != 1.0 || zdepth != 1.0 || zskew != 0.0 || zrotate != 0.0)
-        return (0); /* not a full size unrotated unskewed zoombox */
+        return (0); // not a full size unrotated unskewed zoombox
     if (stdcalcmode == 't')
-        return (0); /* tesselate, can't do it */
+        return (0); // tesselate, can't do it
     if (stdcalcmode == 'd')
-        return (0); /* diffusion scan: can't do it either */
+        return (0); // diffusion scan: can't do it either
     if (stdcalcmode == 'o')
-        return (0); /* orbits, can't do it */
+        return (0); // orbits, can't do it
 
-    /* can pan if we get this far */
+    // can pan if we get this far
 
     if (calc_status == CALCSTAT_COMPLETED)
-        return (1); /* image completed, align on any pixel */
+        return (1); // image completed, align on any pixel
     if (potflag && pot16bit)
-        return (1); /* 1 pass forced so align on any pixel */
+        return (1); // 1 pass forced so align on any pixel
     if (stdcalcmode == 'b')
-        return (1); /* btm, align on any pixel */
+        return (1); // btm, align on any pixel
     if (stdcalcmode != 'g' || (curfractalspecific->flags&NOGUESS)) {
-        if (stdcalcmode == '2' || stdcalcmode == '3') /* align on even pixel for 2pass */
+        if (stdcalcmode == '2' || stdcalcmode == '3') // align on even pixel for 2pass
             return (2);
-        return (1); /* assume 1pass */
+        return (1); // assume 1pass
     }
-    /* solid guessing */
+    // solid guessing
     start_resume();
     get_resume(sizeof(num_worklist),&num_worklist,sizeof(worklist),worklist,0);
-    /* don't do end_resume! we're just looking */
+    // don't do end_resume! we're just looking
     int i = 9;
-    for (int j = 0; j < num_worklist; ++j) /* find lowest pass in any pending window */
+    for (int j = 0; j < num_worklist; ++j) // find lowest pass in any pending window
         if (worklist[j].pass < i)
             i = worklist[j].pass;
-    int j = ssg_blocksize(); /* worst-case alignment requirement */
+    int j = ssg_blocksize(); // worst-case alignment requirement
     while (--i >= 0)
-        j = j >> 1; /* reduce requirement */
+        j = j >> 1; // reduce requirement
     return (j);
 }
 
 static void move_row(int fromrow,int torow,int col)
-/* move a row on the screen */
+// move a row on the screen
 {
-    memset(dstack,0,xdots); /* use dstack as a temp for the row; clear it */
+    memset(dstack,0,xdots); // use dstack as a temp for the row; clear it
     if (fromrow >= 0 && fromrow < ydots) {
         int startcol = 0;
         int tocol = 0;
@@ -648,40 +648,40 @@ static void move_row(int fromrow,int torow,int col)
     put_line(torow,0,xdots-1,(BYTE *)dstack);
 }
 
-int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist & pan */
+int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist & pan
 {
     int row;
     int col;
     int alignmask;
     int listfull;
     if (zwidth == 0.0)
-        return (0); /* no zoombox, leave calc_status as is */
-    /* got a zoombox */
+        return (0); // no zoombox, leave calc_status as is
+    // got a zoombox
     if ((alignmask=check_pan()-1) < 0 || evolving) {
-        calc_status = CALCSTAT_PARAMS_CHANGED; /* can't pan, trigger recalc */
+        calc_status = CALCSTAT_PARAMS_CHANGED; // can't pan, trigger recalc
         return (0);
     }
     if (zbx == 0.0 && zby == 0.0) {
         clearbox();
         return (0);
-    } /* box is full screen, leave calc_status as is */
-    col = (int)(zbx*(dxsize+PIXELROUND)); /* calc dest col,row of topleft pixel */
+    } // box is full screen, leave calc_status as is
+    col = (int)(zbx*(dxsize+PIXELROUND)); // calc dest col,row of topleft pixel
     row = (int)(zby*(dysize+PIXELROUND));
-    if (do_zoomout) { /* invert row and col */
+    if (do_zoomout) { // invert row and col
         row = 0-row;
         col = 0-col;
     }
     if ((row&alignmask) != 0 || (col&alignmask) != 0) {
-        calc_status = CALCSTAT_PARAMS_CHANGED; /* not on useable pixel alignment, trigger recalc */
+        calc_status = CALCSTAT_PARAMS_CHANGED; // not on useable pixel alignment, trigger recalc
         return (0);
     }
-    /* pan */
+    // pan
     num_worklist = 0;
     if (calc_status == CALCSTAT_RESUMABLE) {
         start_resume();
         get_resume(sizeof(num_worklist),&num_worklist,sizeof(worklist),worklist,0);
-    } /* don't do end_resume! we might still change our mind */
-    /* adjust existing worklist entries */
+    } // don't do end_resume! we might still change our mind
+    // adjust existing worklist entries
     for (int i = 0; i < num_worklist; ++i) {
         worklist[i].yystart -= row;
         worklist[i].yystop  -= row;
@@ -690,7 +690,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
         worklist[i].xxstop  -= col;
         worklist[i].xxbegin -= col;
     }
-    /* add worklist entries for the new edges */
+    // add worklist entries for the new edges
     listfull = 0;
     int i = 0;
     int j = ydots-1;
@@ -710,30 +710,30 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
         if (stopmsg(STOPMSG_CANCEL,
                     "Tables full, can't pan current image.\n"
                     "Cancel resumes old image, continue pans and calculates a new one.")) {
-            zwidth = 0; /* cancel the zoombox */
+            zwidth = 0; // cancel the zoombox
             drawbox(1);
         }
         else
-            calc_status = CALCSTAT_PARAMS_CHANGED; /* trigger recalc */
+            calc_status = CALCSTAT_PARAMS_CHANGED; // trigger recalc
         return (0);
     }
-    /* now we're committed */
+    // now we're committed
     calc_status = CALCSTAT_RESUMABLE;
     clearbox();
-    if (row > 0) /* move image up */
+    if (row > 0) // move image up
         for (int y=0; y < ydots; ++y)
             move_row(y+row,y,col);
-    else         /* move image down */
+    else         // move image down
         for (int y = ydots; --y >=0;)
             move_row(y+row,y,col);
-    fix_worklist(); /* fixup any out of bounds worklist entries */
-    alloc_resume(sizeof(worklist)+20,2); /* post the new worklist */
+    fix_worklist(); // fixup any out of bounds worklist entries
+    alloc_resume(sizeof(worklist)+20,2); // post the new worklist
     put_resume(sizeof(num_worklist),&num_worklist,sizeof(worklist),worklist,0);
     return (0);
 }
 
 static void restart_window(int wknum)
-/* force a worklist entry to restart */
+// force a worklist entry to restart
 {
     int yfrom = worklist[wknum].yystart;
     if (yfrom < 0)
@@ -747,7 +747,7 @@ static void restart_window(int wknum)
     int xto = worklist[wknum].xxstop;
     if (xto >= xdots)
         xto = xdots - 1;
-    memset(dstack,0,xdots); /* use dstack as a temp for the row; clear it */
+    memset(dstack,0,xdots); // use dstack as a temp for the row; clear it
     while (yfrom <= yto)
         put_line(yfrom++,xfrom,xto,(BYTE *)dstack);
     worklist[wknum].pass = 0;
@@ -756,27 +756,27 @@ static void restart_window(int wknum)
     worklist[wknum].xxbegin = worklist[wknum].xxstart;
 }
 
-static void fix_worklist() /* fix out of bounds and symmetry related stuff */
+static void fix_worklist() // fix out of bounds and symmetry related stuff
 {
     for (int i = 0; i < num_worklist; ++i) {
         WORKLIST *wk = &worklist[i];
         if (wk->yystart >= ydots || wk->yystop < 0
-                || wk->xxstart >= xdots || wk->xxstop < 0) { /* offscreen, delete */
+                || wk->xxstart >= xdots || wk->xxstop < 0) { // offscreen, delete
             for (int j = i+1; j < num_worklist; ++j)
                 worklist[j-1] = worklist[j];
             --num_worklist;
             --i;
             continue;
         }
-        if (wk->yystart < 0) { /* partly off top edge */
-            if ((wk->sym&1) == 0) { /* no sym, easy */
+        if (wk->yystart < 0) { // partly off top edge
+            if ((wk->sym&1) == 0) { // no sym, easy
                 wk->yystart = 0;
                 wk->xxbegin = 0;
             }
-            else { /* xaxis symmetry */
+            else { // xaxis symmetry
                 int j = wk->yystop + wk->yystart;
                 if (j > 0
-                        && num_worklist < MAXCALCWORK) { /* split the sym part */
+                        && num_worklist < MAXCALCWORK) { // split the sym part
                     worklist[num_worklist] = worklist[i];
                     worklist[num_worklist].yystart = 0;
                     worklist[num_worklist++].yystop = j;
@@ -784,17 +784,17 @@ static void fix_worklist() /* fix out of bounds and symmetry related stuff */
                 }
                 else
                     wk->yystart = 0;
-                restart_window(i); /* restart the no-longer sym part */
+                restart_window(i); // restart the no-longer sym part
             }
         }
-        if (wk->yystop >= ydots) { /* partly off bottom edge */
+        if (wk->yystop >= ydots) { // partly off bottom edge
             int j = ydots-1;
-            if ((wk->sym&1) != 0) { /* uses xaxis symmetry */
+            if ((wk->sym&1) != 0) { // uses xaxis symmetry
                 int k = wk->yystart + (wk->yystop - j);
                 if (k < j) {
-                    if (num_worklist >= MAXCALCWORK) /* no room to split */
+                    if (num_worklist >= MAXCALCWORK) // no room to split
                         restart_window(i);
-                    else { /* split it */
+                    else { // split it
                         worklist[num_worklist] = worklist[i];
                         worklist[num_worklist].yystart = k;
                         worklist[num_worklist++].yystop = j;
@@ -805,13 +805,13 @@ static void fix_worklist() /* fix out of bounds and symmetry related stuff */
             }
             wk->yystop = j;
         }
-        if (wk->xxstart < 0) { /* partly off left edge */
-            if ((wk->sym&2) == 0) /* no sym, easy */
+        if (wk->xxstart < 0) { // partly off left edge
+            if ((wk->sym&2) == 0) // no sym, easy
                 wk->xxstart = 0;
-            else { /* yaxis symmetry */
+            else { // yaxis symmetry
                 int j = wk->xxstop + wk->xxstart;
                 if (j > 0
-                        && num_worklist < MAXCALCWORK) { /* split the sym part */
+                        && num_worklist < MAXCALCWORK) { // split the sym part
                     worklist[num_worklist] = worklist[i];
                     worklist[num_worklist].xxstart = 0;
                     worklist[num_worklist++].xxstop = j;
@@ -819,17 +819,17 @@ static void fix_worklist() /* fix out of bounds and symmetry related stuff */
                 }
                 else
                     wk->xxstart = 0;
-                restart_window(i); /* restart the no-longer sym part */
+                restart_window(i); // restart the no-longer sym part
             }
         }
-        if (wk->xxstop >= xdots) { /* partly off right edge */
+        if (wk->xxstop >= xdots) { // partly off right edge
             int j = xdots-1;
-            if ((wk->sym&2) != 0) { /* uses xaxis symmetry */
+            if ((wk->sym&2) != 0) { // uses xaxis symmetry
                 int k = wk->xxstart + (wk->xxstop - j);
                 if (k < j) {
-                    if (num_worklist >= MAXCALCWORK) /* no room to split */
+                    if (num_worklist >= MAXCALCWORK) // no room to split
                         restart_window(i);
-                    else { /* split it */
+                    else { // split it
                         worklist[num_worklist] = worklist[i];
                         worklist[num_worklist].xxstart = k;
                         worklist[num_worklist++].xxstop = j;
@@ -849,5 +849,5 @@ static void fix_worklist() /* fix out of bounds and symmetry related stuff */
         if (wk->xxbegin > wk->xxstop)
             wk->xxbegin = wk->xxstop;
     }
-    tidy_worklist(); /* combine where possible, re-sort */
+    tidy_worklist(); // combine where possible, re-sort
 }
