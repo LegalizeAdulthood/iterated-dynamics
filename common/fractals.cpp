@@ -1120,7 +1120,6 @@ Richard8fpFractal()
 {
     //  Richard8 {c = z = pixel: z=sin(z)+sin(pixel),|z|<=50}
     CMPLXtrig0(old,g_new);
-    //   CMPLXtrig1(*floatparm,tmp);
     g_new.x += tmp.x;
     g_new.y += tmp.y;
     return floatbailout();
@@ -1132,7 +1131,6 @@ Richard8Fractal()
 #if !defined(XFRACT)
     //  Richard8 {c = z = pixel: z=sin(z)+sin(pixel),|z|<=50}
     LCMPLXtrig0(lold,lnew);
-    //   LCMPLXtrig1(*longparm,ltmp);
     lnew.x += ltmp.x;
     lnew.y += ltmp.y;
     return longbailout();
@@ -1161,7 +1159,6 @@ PopcornFractal_Old()
         old = g_new;
     }
     else
-        // FLOATBAILOUT();
         tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
     if ((magnitude = tempsqrx + tempsqry) >= rqlim)
@@ -1223,7 +1220,6 @@ LPopcornFractal_Old()
         lold = lnew;
     }
     else
-        // LONGBAILOUT();
     {
         ltempsqrx = lsqr(lnew.x);
         ltempsqry = lsqr(lnew.y);
@@ -3116,7 +3112,6 @@ HyperComplexFPFractal()
     hold.z = floatparm->x;
     hold.t = floatparm->y;
 
-    //   HComplexSqr(&hold,&hnew);
     HComplexTrig0(&hold,&hnew);
 
     hnew.x += qc;
