@@ -693,15 +693,15 @@ void Jiim(int which)         // called by fractint
                     break;
                 case 'z':
                 case 'Z':
-                    zoom = (float)1.0;
+                    zoom = 1.0F;
                     break;
                 case '<':
                 case ',':
-                    zoom /= (float)1.15;
+                    zoom /= 1.15F;
                     break;
                 case '>':
                 case '.':
-                    zoom *= (float)1.15;
+                    zoom *= 1.15F;
                     break;
                 case FIK_SPACE:
                     xcjul = cr;
@@ -1200,7 +1200,7 @@ finish:
         viewwindow = false;
         viewxdots = 0;
         viewydots = 0;
-        viewreduction = (float)4.2;
+        viewreduction = 4.2F;
         viewcrop = true;
         finalaspectratio = screenaspect;
         xdots = sxdots;

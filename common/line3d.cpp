@@ -149,7 +149,7 @@ static struct point oldlast = { 0, 0, 0 }; // old pixels
 int line3d(BYTE * pixels, unsigned linelen)
 {
     int RND;
-    float f_water = (float)0.0;        // transformed WATERLINE for ray trace files
+    float f_water = 0.0F;       // transformed WATERLINE for ray trace files
     double r0;
     int xcenter0 = 0;
     int ycenter0 = 0;      // Unfudged versions
@@ -436,11 +436,11 @@ int line3d(BYTE * pixels, unsigned linelen)
                 if (FILLTYPE >= 5 && !overflow)
                 {
                     f_cur.x = (float) lv0[0];
-                    f_cur.x /= (float)65536.0;
+                    f_cur.x /= 65536.0F;
                     f_cur.y = (float) lv0[1];
-                    f_cur.y /= (float)65536.0;
+                    f_cur.y /= 65536.0F;
                     f_cur.color = (float) lv0[2];
-                    f_cur.color /= (float)65536.0;
+                    f_cur.color /= 65536.0F;
                 }
             }
 
@@ -462,9 +462,9 @@ int line3d(BYTE * pixels, unsigned linelen)
 
                     if (RAY == 6)
                     {
-                        f_cur.x = f_cur.x * ((float)2.0 / xdots) - (float)1.0;
-                        f_cur.y = f_cur.y * ((float)2.0 / ydots) - (float)1.0;
-                        f_cur.color = -f_cur.color * ((float)2.0 / numcolors) - (float)1.0;
+                        f_cur.x = f_cur.x * (2.0F / xdots) - 1.0F;
+                        f_cur.y = f_cur.y * (2.0F / ydots) - 1.0F;
+                        f_cur.color = -f_cur.color * (2.0F / numcolors) - 1.0F;
                     }
                 }
 
@@ -1921,10 +1921,10 @@ static int start_object()
         return 0;
 
     // Reset the min/max values, for bounding box
-    min_xyz[2] = (float) 999999.0;
+    min_xyz[2] = 999999.0F;
     min_xyz[1] = min_xyz[2];
     min_xyz[0] = min_xyz[1];
-    max_xyz[2] = (float) -999999.0;
+    max_xyz[2] = -999999.0F;
     max_xyz[1] = max_xyz[2];
     max_xyz[0] = max_xyz[1];
 
@@ -1954,13 +1954,13 @@ static int end_object(bool triout)
             {
                 if (min_xyz[i] == max_xyz[i])
                 {
-                    min_xyz[i] -= (float)0.01;
-                    max_xyz[i] += (float)0.01;
+                    min_xyz[i] -= 0.01F;
+                    max_xyz[i] += 0.01F;
                 }
                 else
                 {
-                    min_xyz[i] -= (max_xyz[i] - min_xyz[i]) * (float)0.01;
-                    max_xyz[i] += (max_xyz[i] - min_xyz[i]) * (float)0.01;
+                    min_xyz[i] -= (max_xyz[i] - min_xyz[i]) * 0.01F;
+                    max_xyz[i] += (max_xyz[i] - min_xyz[i]) * 0.01F;
                 }
             }
 

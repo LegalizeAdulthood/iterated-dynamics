@@ -44,13 +44,13 @@ static double fg, fg16;
 #endif
 int zdots = 128;
 
-float originfp  = (float)8.0;
-float heightfp  = (float)7.0;
-float widthfp   = (float)10.0;
-float distfp    = (float)24.0;
-float eyesfp    = (float)2.5;
-float depthfp   = (float)8.0;
-float brratiofp = (float)1.0;
+float originfp  = 8.0F;
+float heightfp  = 7.0F;
+float widthfp   = 10.0F;
+float distfp    = 24.0F;
+float eyesfp    = 2.5F;
+float depthfp   = 8.0F;
+float brratiofp = 1.0F;
 static long width, dist, depth, brratio;
 #ifndef XFRACT
 static long eyes;

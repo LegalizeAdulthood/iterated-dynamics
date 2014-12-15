@@ -784,7 +784,7 @@ get_view_restart:
         viewwindow = false;
         viewxdots = 0;
         viewydots = 0;
-        viewreduction = (float) 4.2;
+        viewreduction = 4.2F;
         viewcrop = true;
         finalaspectratio = screenaspect;
         sxdots = old_sxdots;

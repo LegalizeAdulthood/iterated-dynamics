@@ -548,8 +548,9 @@ long logtablecalc(long citer) {
     return (ret);
 }
 
-long ExpFloat14(long xx) {
-    static float fLogTwo = (float)0.6931472;
+long ExpFloat14(long xx)
+{
+    static float fLogTwo = 0.6931472F;
     int f;
     long Ans;
 
