@@ -18,7 +18,7 @@
 */
 #include <algorithm>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
+// see Fractint.c for a description of the "include"  hierarchy
 #include "port.h"
 #include "prototyp.h"
 
@@ -167,7 +167,7 @@ void setMPfunctions() {
     pd2MP  = d2MP386 ;
     pMP2d  = MP2d386 ;
 }
-#endif /* XFRACT */
+#endif // XFRACT
 
 DComplex ComplexPower(DComplex xx, DComplex yy)
 {
@@ -196,68 +196,68 @@ DComplex ComplexPower(DComplex xx, DComplex yy)
 
 #define Sqrtz(z,rz) (*(rz) = ComplexSqrtFloat((z).x, (z).y))
 
-/* rz=Arcsin(z)=-i*Log{i*z+sqrt(1-z*z)} */
+// rz=Arcsin(z)=-i*Log{i*z+sqrt(1-z*z)}
 void Arcsinz(DComplex z,DComplex *rz)
 {
     DComplex tempz1,tempz2;
 
     FPUcplxmul(&z, &z, &tempz1);
     tempz1.x = 1 - tempz1.x;
-    tempz1.y = -tempz1.y;  /* tempz1 = 1 - tempz1 */
+    tempz1.y = -tempz1.y;  // tempz1 = 1 - tempz1
     Sqrtz(tempz1, &tempz1);
 
     tempz2.x = -z.y;
-    tempz2.y = z.x;                /* tempz2 = i*z  */
+    tempz2.y = z.x;                // tempz2 = i*z
     tempz1.x += tempz2.x;
-    tempz1.y += tempz2.y;    /* tempz1 += tempz2 */
+    tempz1.y += tempz2.y;    // tempz1 += tempz2
     FPUcplxlog(&tempz1, &tempz1);
     rz->x = tempz1.y;
-    rz->y = -tempz1.x;           /* rz = (-i)*tempz1 */
-}   /* end. Arcsinz */
+    rz->y = -tempz1.x;           // rz = (-i)*tempz1
+}   // end. Arcsinz
 
 
-/* rz=Arccos(z)=-i*Log{z+sqrt(z*z-1)} */
+// rz=Arccos(z)=-i*Log{z+sqrt(z*z-1)}
 void Arccosz(DComplex z,DComplex *rz)
 {
     DComplex temp;
 
     FPUcplxmul(&z, &z, &temp);
-    temp.x -= 1;                                 /* temp = temp - 1 */
+    temp.x -= 1;                                 // temp = temp - 1
     Sqrtz(temp, &temp);
 
     temp.x += z.x;
-    temp.y += z.y;                /* temp = z + temp */
+    temp.y += z.y;                // temp = z + temp
 
     FPUcplxlog(&temp, &temp);
     rz->x = temp.y;
-    rz->y = -temp.x;              /* rz = (-i)*tempz1 */
-}   /* end. Arccosz */
+    rz->y = -temp.x;              // rz = (-i)*tempz1
+}   // end. Arccosz
 
 void Arcsinhz(DComplex z,DComplex *rz)
 {
     DComplex temp;
 
     FPUcplxmul(&z, &z, &temp);
-    temp.x += 1;                                 /* temp = temp + 1 */
+    temp.x += 1;                                 // temp = temp + 1
     Sqrtz(temp, &temp);
     temp.x += z.x;
-    temp.y += z.y;                /* temp = z + temp */
+    temp.y += z.y;                // temp = z + temp
     FPUcplxlog(&temp, rz);
-}  /* end. Arcsinhz */
+}  // end. Arcsinhz
 
-/* rz=Arccosh(z)=Log(z+sqrt(z*z-1)} */
+// rz=Arccosh(z)=Log(z+sqrt(z*z-1)}
 void Arccoshz(DComplex z,DComplex *rz)
 {
     DComplex tempz;
     FPUcplxmul(&z, &z, &tempz);
-    tempz.x -= 1;                              /* tempz = tempz - 1 */
+    tempz.x -= 1;                              // tempz = tempz - 1
     Sqrtz(tempz, &tempz);
     tempz.x = z.x + tempz.x;
-    tempz.y = z.y + tempz.y;  /* tempz = z + tempz */
+    tempz.y = z.y + tempz.y;  // tempz = z + tempz
     FPUcplxlog(&tempz, rz);
-}   /* end. Arccoshz */
+}   // end. Arccoshz
 
-/* rz=Arctanh(z)=1/2*Log{(1+z)/(1-z)} */
+// rz=Arctanh(z)=1/2*Log{(1+z)/(1-z)}
 void Arctanhz(DComplex z,DComplex *rz)
 {
     DComplex temp0,temp1,temp2;
@@ -278,19 +278,19 @@ void Arctanhz(DComplex z,DComplex *rz)
         }
         else {
             temp0.x = 1 + z.x;
-            temp0.y = z.y;             /* temp0 = 1 + z */
+            temp0.y = z.y;             // temp0 = 1 + z
             temp1.x = 1 - z.x;
-            temp1.y = -z.y;            /* temp1 = 1 - z */
+            temp1.y = -z.y;            // temp1 = 1 - z
             FPUcplxdiv(&temp0, &temp1, &temp2);
             FPUcplxlog(&temp2, &temp2);
             rz->x = .5*temp2.x;
-            rz->y = .5*temp2.y;       /* rz = .5*temp2 */
+            rz->y = .5*temp2.y;       // rz = .5*temp2
             return;
         }
     }
-}   /* end. Arctanhz */
+}   // end. Arctanhz
 
-/* rz=Arctan(z)=i/2*Log{(1-i*z)/(1+i*z)} */
+// rz=Arctan(z)=i/2*Log{(1-i*z)/(1+i*z)}
 void Arctanz(DComplex z,DComplex *rz)
 {
     DComplex temp0,temp1,temp2,temp3;
@@ -308,23 +308,23 @@ void Arctanz(DComplex z,DComplex *rz)
         temp0.y = 0.0;
         Arctanhz(temp0, &temp0);
         rz->x = -temp0.y;
-        rz->y = temp0.x;              /* i*temp0 */
+        rz->y = temp0.x;              // i*temp0
     }
     else if (z.x != 0.0 && z.y != 0.0) {
 
         temp0.x = -z.y;
-        temp0.y = z.x;                  /* i*z */
+        temp0.y = z.x;                  // i*z
         temp1.x = 1 - temp0.x;
-        temp1.y = -temp0.y;      /* temp1 = 1 - temp0 */
+        temp1.y = -temp0.y;      // temp1 = 1 - temp0
         temp2.x = 1 + temp0.x;
-        temp2.y = temp0.y;       /* temp2 = 1 + temp0 */
+        temp2.y = temp0.y;       // temp2 = 1 + temp0
 
         FPUcplxdiv(&temp1, &temp2, &temp3);
         FPUcplxlog(&temp3, &temp3);
         rz->x = -temp3.y*.5;
-        rz->y = .5*temp3.x;           /* .5*i*temp0 */
+        rz->y = .5*temp3.x;           // .5*i*temp0
     }
-}   /* end. Arctanz */
+}   // end. Arctanz
 
 #define SinCosFudge 0x10000L
 #ifdef LONGSQRT
@@ -332,14 +332,14 @@ long lsqrt(long f)
 {
     int N;
     unsigned long y0, z;
-    static long a=0, b=0, c=0;                  /* constant factors */
+    static long a=0, b=0, c=0;                  // constant factors
 
     if (f == 0)
         return f;
     if (f <  0)
         return 0;
 
-    if (a==0)                                   /* one-time compute consts */
+    if (a==0)                                   // one-time compute consts
     {
         a = (long)(fudge * .41731);
         b = (long)(fudge * .59016);
@@ -347,8 +347,8 @@ long lsqrt(long f)
     }
 
     N  = 0;
-    while (f & 0xff000000L)                     /* shift arg f into the */
-    {   /* range: 0.5 <= f < 1  */
+    while (f & 0xff000000L)                     // shift arg f into the
+    {   // range: 0.5 <= f < 1
         N++;
         f /= 2;
     }
@@ -358,7 +358,7 @@ long lsqrt(long f)
         f *= 2;
     }
 
-    y0 = a + multiply(b, f,  bitshift);         /* Newton's approximation */
+    y0 = a + multiply(b, f,  bitshift);         // Newton's approximation
 
     z  = y0 + divide(f, y0, bitshift);
     y0 = (z>>2) + divide(f, z,  bitshift);
@@ -370,7 +370,7 @@ long lsqrt(long f)
     }
     N /= 2;
     if (N >= 0)
-        return y0 <<  N;                        /* correct for shift above */
+        return y0 <<  N;                        // correct for shift above
     else
         return y0 >> -N;
 }
@@ -417,7 +417,7 @@ DComplex ComplexSqrtFloat(double x, double y)
 }
 
 
-/***** FRACTINT specific routines and variables *****/
+//**** FRACTINT specific routines and variables ****
 
 #ifndef TESTING_MATH
 
@@ -438,15 +438,15 @@ void SetupLogTable() {
     float l, f, c, m;
     unsigned long limit;
 
-    if (save_release > 1920 || Log_Fly_Calc == 1) { /* set up on-the-fly variables */
-        if (LogFlag > 0) { /* new log function */
+    if (save_release > 1920 || Log_Fly_Calc == 1) { // set up on-the-fly variables
+        if (LogFlag > 0) { // new log function
             lf = (LogFlag > 1) ? LogFlag : 0;
             if (lf >= (unsigned long)MaxLTSize)
                 lf = MaxLTSize - 1;
             mlf = (colors - (lf?2:1)) / log(static_cast<double>(MaxLTSize - lf));
-        } else if (LogFlag == -1) { /* old log function */
+        } else if (LogFlag == -1) { // old log function
             mlf = (colors - 1) / log(static_cast<double>(MaxLTSize));
-        } else if (LogFlag <= -2) { /* sqrt function */
+        } else if (LogFlag <= -2) { // sqrt function
             if ((lf = 0 - LogFlag) >= (unsigned long)MaxLTSize)
                 lf = MaxLTSize - 1;
             mlf = (colors - 2) / sqrt(static_cast<double>(MaxLTSize - lf));
@@ -454,13 +454,13 @@ void SetupLogTable() {
     }
 
     if (Log_Calc)
-        return; /* LogTable not defined, bail out now */
+        return; // LogTable not defined, bail out now
 
     if (save_release > 1920 && !Log_Calc) {
-        Log_Calc = true;   /* turn it on */
+        Log_Calc = true;   // turn it on
         for (unsigned long prev = 0; prev <= (unsigned long)MaxLTSize; prev++)
             LogTable[prev] = (BYTE)logtablecalc((long)prev);
-        Log_Calc = false;   /* turn it off, again */
+        Log_Calc = false;   // turn it off, again
         return;
     }
 
@@ -508,7 +508,7 @@ void SetupLogTable() {
     }
     LogTable[0] = 0;
     if (LogFlag != -1)
-        for (unsigned long sptop = 1; sptop < (unsigned long)MaxLTSize; sptop++) /* spread top to incl unused colors */
+        for (unsigned long sptop = 1; sptop < (unsigned long)MaxLTSize; sptop++) // spread top to incl unused colors
             if (LogTable[sptop] > LogTable[sptop-1])
                 LogTable[sptop] = (BYTE)(LogTable[sptop-1]+1);
 }
@@ -516,12 +516,12 @@ void SetupLogTable() {
 long logtablecalc(long citer) {
     long ret = 0;
 
-    if (LogFlag == 0 && !rangeslen) /* Oops, how did we get here? */
+    if (LogFlag == 0 && !rangeslen) // Oops, how did we get here?
         return (citer);
     if (!LogTable.empty() && !Log_Calc)
         return (LogTable[(long)std::min(citer, MaxLTSize)]);
 
-    if (LogFlag > 0) { /* new log function */
+    if (LogFlag > 0) { // new log function
         if ((unsigned long)citer <= lf + 1)
             ret = 1;
         else if ((citer - lf) / log(static_cast<double>(citer - lf)) <= mlf) {
@@ -532,12 +532,12 @@ long logtablecalc(long citer) {
         }
         else
             ret = (long)(mlf * log(static_cast<double>(citer - lf))) + 1;
-    } else if (LogFlag == -1) { /* old log function */
+    } else if (LogFlag == -1) { // old log function
         if (citer == 0)
             ret = 1;
         else
             ret = (long)(mlf * log(static_cast<double>(citer))) + 1;
-    } else if (LogFlag <= -2) { /* sqrt function */
+    } else if (LogFlag <= -2) { // sqrt function
         if ((unsigned long)citer <= lf)
             ret = 1;
         else if ((unsigned long)(citer - lf) <= (unsigned long)(mlf * mlf))
@@ -748,7 +748,7 @@ MP2d086     ENDP
 */
 double *MP2d086(struct MP x)
 {
-    /* TODO: implement */
+    // TODO: implement
     static double ans = 0.0;
     _ASSERTE(0 && "MP2d086 called.");
     return &ans;
@@ -794,7 +794,7 @@ d2MP086     ENDP
 */
 struct MP *d2MP086(double x)
 {
-    /* TODO: implement */
+    // TODO: implement
     if (0.0 == x)
     {
         Ans.Exp = 0;
@@ -987,7 +987,7 @@ MPadd086    ENDP
 */
 struct MP *MPadd086(struct MP x, struct MP y)
 {
-    /* TODO: implement */
+    // TODO: implement
     _ASSERTE(0 && "MPadd086 called.");
     return &Ans;
 }
@@ -1064,7 +1064,7 @@ MPcmp086    ENDP
 */
 int MPcmp086(struct MP x, struct MP y)
 {
-    /* TODO: implement */
+    // TODO: implement
     _ASSERTE(0 && "MPcmp086 called.");
     return 0;
 }
@@ -1168,7 +1168,7 @@ MPdiv086    ENDP
 */
 struct MP *MPdiv086(struct MP x, struct MP y)
 {
-    /* TODO: implement */
+    // TODO: implement
     _ASSERTE(0 && "MPdiv086 called.");
     return &Ans;
 }
@@ -1268,7 +1268,7 @@ MPmul086    ENDP
 */
 struct MP *MPmul086(struct MP x, struct MP y)
 {
-    /* TODO: implement */
+    // TODO: implement
     __asm
     {
         xor   eax, eax
@@ -1403,7 +1403,7 @@ d2MP386     ENDP
 */
 struct MP *d2MP386(double x)
 {
-    /* TODO: implement */
+    // TODO: implement
     _ASSERTE(0 && "d2MP386 called.");
     return &Ans;
 }
@@ -1450,7 +1450,7 @@ MP2d386     ENDP
 */
 double *MP2d386(struct MP x)
 {
-    /* TODO: implement */
+    // TODO: implement
     static double ans = 0.0;
     _ASSERTE(0 && "MP2d386 called.");
     return &ans;
@@ -1604,7 +1604,7 @@ MPadd086    ENDP
 */
 struct MP *MPadd(struct MP x, struct MP y)
 {
-    /* TODO: implement */
+    // TODO: implement
     _ASSERTE(0 && "MPadd called.");
     return &Ans;
 }
@@ -1704,7 +1704,7 @@ MPadd386    ENDP
 */
 struct MP *MPadd386(struct MP x, struct MP y)
 {
-    /* TODO: implement */
+    // TODO: implement
     _ASSERTE(0 && "MPadd386 called.");
     return &Ans;
 }
@@ -1767,7 +1767,7 @@ MPcmp386    ENDP
 */
 int MPcmp386(struct MP x, struct MP y)
 {
-    /* TODO: implement */
+    // TODO: implement
     _ASSERTE(0 && "MPcmp386 called.");
     return 0;
 }
@@ -1829,7 +1829,7 @@ MPdiv386    ENDP
 */
 struct MP *MPdiv386(struct MP x, struct MP y)
 {
-    /* TODO: implement */
+    // TODO: implement
     _ASSERTE(0 && "MPdiv386 called.");
     return &Ans;
 }
@@ -1893,13 +1893,13 @@ MPmul386    ENDP
 */
 struct MP *MPmul386(struct MP x, struct MP y)
 {
-    /* TODO: implement */
+    // TODO: implement
     _ASSERTE(0 && "MPmul386 called.");
     return &Ans;
 }
 
-/*
-*/
+//
+
 struct MP *d2MP(double x)
 {
     return d2MP386(x);
