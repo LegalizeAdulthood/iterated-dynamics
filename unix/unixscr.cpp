@@ -1936,7 +1936,7 @@ pr_dwmroot(Display *dpy, Window pwin)
     }
     unsigned int nchild;
     if (XQueryTree(dpy,pwin,&root,&parent,&child,&nchild)) {
-        for (unsigned int i = 0; i < nchild; i++) {
+        for (unsigned int i = 0U; i < nchild; i++) {
             if (!XGetWindowAttributes(dpy,child[i],&cxwa)) {
                 printf("Search for root: XGetWindowAttributes failed\n");
                 return RootWindow(dpy, scr);

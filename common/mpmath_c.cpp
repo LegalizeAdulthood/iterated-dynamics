@@ -458,7 +458,7 @@ void SetupLogTable() {
 
     if (save_release > 1920 && !Log_Calc) {
         Log_Calc = true;   // turn it on
-        for (unsigned long prev = 0; prev <= (unsigned long)MaxLTSize; prev++)
+        for (unsigned long prev = 0U; prev <= (unsigned long)MaxLTSize; prev++)
             LogTable[prev] = (BYTE)logtablecalc((long)prev);
         Log_Calc = false;   // turn it off, again
         return;
@@ -475,7 +475,7 @@ void SetupLogTable() {
         unsigned long prev;
         for (prev = 1; prev <= lf; prev++)
             LogTable[prev] = 1;
-        for (unsigned n = (lf?2:1); n < (unsigned int)colors; n++) {
+        for (unsigned n = (lf ? 2U : 1U); n < (unsigned int)colors; n++) {
             Fg2Float((long)n, 0, f);
             fMul16(f, m, f);
             fExp14(f, l);
@@ -495,7 +495,7 @@ void SetupLogTable() {
         unsigned long prev;
         for (prev = 1; prev <= lf; prev++)
             LogTable[prev] = 1;
-        for (unsigned n = 2; n < (unsigned int)colors; n++) {
+        for (unsigned n = 2U; n < (unsigned int)colors; n++) {
             Fg2Float((long)n, 0, f);
             fMul16(f, m, f);
             fMul16(f, f, l);
@@ -508,7 +508,7 @@ void SetupLogTable() {
     }
     LogTable[0] = 0;
     if (LogFlag != -1)
-        for (unsigned long sptop = 1; sptop < (unsigned long)MaxLTSize; sptop++) // spread top to incl unused colors
+        for (unsigned long sptop = 1U; sptop < (unsigned long)MaxLTSize; sptop++) // spread top to incl unused colors
             if (LogTable[sptop] > LogTable[sptop-1])
                 LogTable[sptop] = (BYTE)(LogTable[sptop-1]+1);
 }

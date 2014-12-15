@@ -1730,9 +1730,9 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     gif87a_flag = true;                     // for now, force this
 
     // process each input image, one at a time
-    for (unsigned ystep = 0; ystep < ymult; ystep++)
+    for (unsigned ystep = 0U; ystep < ymult; ystep++)
     {
-        for (unsigned xstep = 0; xstep < xmult; xstep++)
+        for (unsigned xstep = 0U; xstep < xmult; xstep++)
         {
             if (xstep == 0 && ystep == 0)          // first time through?
             {
@@ -1991,9 +1991,9 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     // now delete each input image, one at a time
     if (errorflag == 0 && inputerrorflag == 0)
     {
-        for (unsigned ystep = 0; ystep < ymult; ystep++)
+        for (unsigned ystep = 0U; ystep < ymult; ystep++)
         {
-            for (unsigned xstep = 0; xstep < xmult; xstep++)
+            for (unsigned xstep = 0U; xstep < xmult; xstep++)
             {
                 sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
                 remove(gifin);

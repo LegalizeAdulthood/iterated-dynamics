@@ -875,7 +875,7 @@ static void verhulst()          // P. F. Verhulst (1845)
 
     overflow = false;
 
-    for (unsigned long counter = 0; counter < filter_cycles ; counter++)
+    for (unsigned long counter = 0UL; counter < filter_cycles ; counter++)
     {
         if (curfractalspecific->orbitcalc())
         {
@@ -908,7 +908,7 @@ static void verhulst()          // P. F. Verhulst (1845)
     }
 
     if (periodicitycheck) Bif_Period_Init();
-    for (unsigned long counter = 0; counter < (unsigned long)maxit ; counter++)
+    for (unsigned long counter = 0UL; counter < (unsigned long)maxit ; counter++)
     {
         if (curfractalspecific->orbitcalc())
         {

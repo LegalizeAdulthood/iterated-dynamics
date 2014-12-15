@@ -1986,7 +1986,7 @@ struct ConstArg *isconst(char *Str, int Len)
 {
     DComplex z;
     // next line enforces variable vs constant naming convention
-    for (unsigned n = 0; n < vsp; n++)
+    for (unsigned n = 0U; n < vsp; n++)
     {
         if (v[n].len == Len)
         {
