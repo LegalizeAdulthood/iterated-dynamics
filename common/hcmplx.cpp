@@ -1,4 +1,4 @@
-/* some hyper complex functions */
+// some hyper complex functions
 #include <float.h>
 
 #include "port.h"
@@ -6,9 +6,6 @@
 
 void HComplexMult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
 {
-    /* it is possible to reoganize this code and reduce the multiplies
-        from 16 to 10, but on my 486 it is SLOWER !!! so I left it
-        like this - Tim Wegner */
     out->x = arg1->x * arg2->x - arg1->y * arg2->y
              - arg1->z * arg2->z + arg1->t * arg2->t;
     out->y = arg1->y * arg2->x + arg1->x * arg2->y
@@ -71,7 +68,7 @@ void HComplexMinus(DHyperComplex *arg1, DHyperComplex *out)
     out->t = -arg1->t;
 }
 
-/* extends the unary function f to *h1 */
+// extends the unary function f to *h1
 void HComplexTrig0(DHyperComplex *h, DHyperComplex *out)
 {
     /* This is the whole beauty of Hypercomplex numbers - *ANY* unary
@@ -80,17 +77,17 @@ void HComplexTrig0(DHyperComplex *h, DHyperComplex *out)
 
     DComplex a,b, resulta,resultb;
 
-    /* convert to duplex form */
+    // convert to duplex form
     a.x = h->x - h->t;
     a.y = h->y + h->z;
     b.x = h->x + h->t;
     b.y = h->y - h->z;
 
-    /* apply function to each part */
+    // apply function to each part
     CMPLXtrig0(a,resulta);
     CMPLXtrig0(b,resultb);
 
-    /* convert back */
+    // convert back
     out->x = (resulta.x + resultb.x)/2;
     out->y = (resulta.y + resultb.y)/2;
     out->z = (resulta.y - resultb.y)/2;
