@@ -74,15 +74,15 @@ int (*outln)(BYTE *, int) = out_line;
 #define NOPE 0
 #define YUP -1
 
-static short curr_size;         /* The current code size */
+static short curr_size;         // The current code size
 
 /* The following static variables are used
  * for seperating out codes
  */
-static short navail_bytes;      /* # bytes left in block */
-static short nbits_left;        /* # bits left in current byte */
-static BYTE *byte_buff;         /* Current block, reuse shared mem */
-static BYTE *pbytes;            /* Pointer to next byte in block */
+static short navail_bytes;      // # bytes left in block
+static short nbits_left;        // # bits left in current byte
+static BYTE *byte_buff;         // Current block, reuse shared mem
+static BYTE *pbytes;            // Pointer to next byte in block
 
 static short code_mask[13] =
 {
@@ -95,7 +95,7 @@ static short code_mask[13] =
     0x07FF, 0x0FFF
 };
 
-/***** External Variables ***********************************************/
+//**** External Variables **********************************************
 /* extern short bad_code_count;
  *
  * This value is the only other global required by the using program, and
@@ -117,7 +117,7 @@ BYTE decoderline1[MAXPIXELS];
  */
 
 
-/***** Program **********************************************************/
+//**** Program *********************************************************
 /* short decoder(linewidth)
  *    short linewidth;              * Pixels per line of image *
  *
@@ -137,12 +137,12 @@ BYTE decoderline1[MAXPIXELS];
  *
  */
 
-/* moved sizeofstring here for possible re-use elsewhere */
-short sizeofstring[MAX_CODES + 1];  /* size of string list */
+// moved sizeofstring here for possible re-use elsewhere
+short sizeofstring[MAX_CODES + 1];  // size of string list
 
 short decoder(short linewidth)
 {
-    U16 prefix[MAX_CODES+1] = { 0 };     /* Prefix linked list */
+    U16 prefix[MAX_CODES+1] = { 0 };     // Prefix linked list
     BYTE *sp;
     short code;
     short old_code;
@@ -151,18 +151,18 @@ short decoder(short linewidth)
     short size;
     short j;
     short fastloop;
-    short bufcnt;                /* how many empty spaces left in buffer */
+    short bufcnt;                // how many empty spaces left in buffer
     short xskip;
-    short slot;                  /* Last read code */
-    short newcodes;              /* First available code */
+    short slot;                  // Last read code
+    short newcodes;              // First available code
     BYTE *bufptr;
     short yskip;
-    short top_slot;              /* Highest code for current size */
-    short clear;                 /* Value for a clear code */
-    short ending;                /* Value for a ending code */
+    short top_slot;              // Highest code for current size
+    short clear;                 // Value for a clear code
+    short ending;                // Value for a ending code
     BYTE out_value;
 
-    /* Initialize for decoding a new image... */
+    // Initialize for decoding a new image...
 
     if ((size = (short) get_byte()) < 0)
         return (size);
@@ -190,7 +190,7 @@ short decoder(short linewidth)
     /* Initialize in case they forgot to put in a clear code. (This shouldn't
      * happen, but we'll try and decode it anyway...) */
 
-    /* Set up the stack pointer and decode buffer pointer */
+    // Set up the stack pointer and decode buffer pointer
     sp = dstack;
     bufptr = decoderline;
     bufcnt = linewidth;
@@ -204,11 +204,11 @@ short decoder(short linewidth)
     while ((c = get_next_code()) != ending)
     {
 
-        /* If we had a file error, return without completing the decode */
+        // If we had a file error, return without completing the decode
         if (c < 0)
             return (0);
 
-        /* If the code is a clear code, reinitialize all necessary items. */
+        // If the code is a clear code, reinitialize all necessary items.
         if (c == clear)
         {
             curr_size = (short)(size + 1);
@@ -238,7 +238,7 @@ short decoder(short linewidth)
             old_code = c;
             out_value = (BYTE) old_code;
 
-            /* And let us not forget to put the char into the buffer... */
+            // And let us not forget to put the char into the buffer...
             *sp++ = (BYTE) c;
         }
         else
@@ -286,7 +286,7 @@ short decoder(short linewidth)
                     *bufptr = (BYTE) code;
                     bufptr += ++i;
                     bufcnt -= i;
-                    if (bufcnt == 0) /* finished an input row? */
+                    if (bufcnt == 0) // finished an input row?
                     {
                         if (--yskip < 0)
                         {
@@ -340,7 +340,7 @@ short decoder(short linewidth)
                 xskip = skipxdots;
                 *bufptr++ = *sp;
             }
-            if (--bufcnt == 0)     /* finished an input row? */
+            if (--bufcnt == 0)     // finished an input row?
             {
                 if (--yskip < 0)
                 {
@@ -359,14 +359,14 @@ short decoder(short linewidth)
     return (0);
 }
 
-/***** Program **********************************************************/
+//**** Program *********************************************************
 /* get_next_code()
  * - gets the next code from the GIF file.  Returns the code, or else
  * a negative number in case of file errors...
  */
 static short get_next_code()
 {
-    static BYTE b1;              /* Current byte */
+    static BYTE b1;              // Current byte
     static unsigned short ret_code;
 
     if (nbits_left == 0)
@@ -374,7 +374,7 @@ static short get_next_code()
         if (navail_bytes <= 0)
         {
 
-            /* Out of bytes in current block, so read next block */
+            // Out of bytes in current block, so read next block
             pbytes = byte_buff;
             if ((navail_bytes = (short) get_byte()) < 0)
                 return (navail_bytes);
@@ -392,7 +392,7 @@ static short get_next_code()
         if (navail_bytes <= 0)
         {
 
-            /* Out of bytes in current block, so read next block */
+            // Out of bytes in current block, so read next block
             pbytes = byte_buff;
             if ((navail_bytes = (short) get_byte()) < 0)
                 return (navail_bytes);
@@ -408,7 +408,7 @@ static short get_next_code()
     return ((short)(ret_code & code_mask[curr_size]));
 }
 
-/* called in parent reoutine to set byte_buff */
+// called in parent reoutine to set byte_buff
 void set_byte_buff(BYTE * ptr)
 {
     byte_buff = ptr;
