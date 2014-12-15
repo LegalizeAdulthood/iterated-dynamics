@@ -1389,7 +1389,7 @@ FindRootWindow(DriverX11 *di)
             Window *newRoot = nullptr;
 
             if (XGetWindowProperty(di->Xdp, children[i], SWM_VROOT,
-                                   (long) 0, (long) 1,
+                                   0L, 1L,
                                    False, XA_WINDOW,
                                    &actual_type, &actual_format,
                                    &nitems, &bytesafter,
@@ -1427,7 +1427,7 @@ RemoveRootPixmap(DriverX11 *di)
     Pixmap *pm;
 
     prop = XInternAtom(di->Xdp, "_XSETROOT_ID", False);
-    if (XGetWindowProperty(di->Xdp, di->Xroot, prop, (long) 0, (long) 1, 1,
+    if (XGetWindowProperty(di->Xdp, di->Xroot, prop, 0L, 1L, 1,
                            AnyPropertyType, &type, &format, &nitems, &after,
                            (unsigned char **) &pm) == Success && nitems == 1) {
         if (type == XA_PIXMAP && format == 32 && after == 0) {

@@ -1986,7 +1986,7 @@ FindRootWindow()
             unsigned long nitems, bytesafter;
             Window *newRoot = nullptr;
 
-            if (XGetWindowProperty(dpy, children[i], SWM_VROOT,(long)0,(long)1,
+            if (XGetWindowProperty(dpy, children[i], SWM_VROOT, 0L, 1L,
                                    False, XA_WINDOW, &actual_type, &actual_format, &nitems, &bytesafter,
                                    (unsigned char **) &newRoot) == Success && newRoot) {
                 w_root = *newRoot;
@@ -2021,7 +2021,7 @@ RemoveRootPixmap()
     Pixmap *pm;
 
     prop = XInternAtom(Xdp,"_XSETROOT_ID",False);
-    if (XGetWindowProperty(Xdp,Xroot,prop,(long)0,(long)1,1,AnyPropertyType,
+    if (XGetWindowProperty(Xdp,Xroot,prop, 0L, 1L, 1, AnyPropertyType,
                            &type, &format, &nitems, &after, (unsigned char **)&pm) ==
             Success && nitems == 1) {
         if (type==XA_PIXMAP && format==32 && after==0) {

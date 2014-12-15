@@ -1444,7 +1444,7 @@ int init_help()
     fread(&max_links, sizeof(int), 1, help_file);
     fread(&num_topic, sizeof(int), 1, help_file);
     fread(&num_label, sizeof(int), 1, help_file);
-    help_seek((long)6*sizeof(int));  // skip num_contents and num_doc_pages
+    help_seek(6L*sizeof(int));  // skip num_contents and num_doc_pages
 
     assert(max_pages > 0);
     assert(max_links >= 0);
