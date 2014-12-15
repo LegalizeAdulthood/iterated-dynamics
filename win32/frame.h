@@ -17,7 +17,7 @@ struct tagFrame
     bool has_focus;
     bool timed_out;
 
-    /* the keypress buffer */
+    // the keypress buffer
     unsigned int  keypress_count;
     unsigned int  keypress_head;
     unsigned int  keypress_tail;

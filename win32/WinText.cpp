@@ -666,16 +666,11 @@ void wintext_cursor(WinText *me, int xpos, int ypos, int cursor_type)
         me->showing_cursor = TRUE;
     }
     else
-        //if (me->cursor_owned != 0)
     {
-        /* CreateCaret(me->hWndCopy, me->bitmap[me->cursor_type],
-            me->char_width, me->char_height); */
         x = me->cursor_x*me->char_width;
         y = me->cursor_y*me->char_height;
         SetCaretPos(x, y);
-        /*SetCaretBlinkTime(500);*/
         ODS2("======================== Set Caret Pos #1 (%d,%d)", x, y);
-        /*ShowCaret(me->hWndCopy);*/
     }
 }
 
