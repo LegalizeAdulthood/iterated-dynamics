@@ -429,7 +429,7 @@ DComplex SaveC = {-3000.0, -3000.0};
 
 void Jiim(int which)         // called by fractint
 {
-    struct affine cvt;
+    affine cvt;
     bool exact = false;
     int oldhelpmode;
     int count = 0;            // coloring julia
