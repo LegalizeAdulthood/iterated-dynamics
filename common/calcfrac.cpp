@@ -3939,7 +3939,7 @@ struct tess             // one of these per box to be done gets stacked
 
 static int tesseral()
 {
-    struct tess *tp;
+    tess *tp;
 
     guessplot = (plot != putcolor && plot != symplot2);
     tp = (struct tess *)&dstack[0];
@@ -3962,7 +3962,7 @@ static int tesseral()
     else // resuming, rebuild work stack
     {
         int i,mid,curx,cury,xsize,ysize;
-        struct tess *tp2;
+        tess *tp2;
         tp->rgt = -2;
         tp->lft = tp->rgt;
         tp->bot = tp->lft;
@@ -4002,7 +4002,7 @@ static int tesseral()
 
     got_status = 4; // for tab_display
 
-    while (tp >= (struct tess *)&dstack[0]) { // do next box
+    while (tp >= (tess *)&dstack[0]) { // do next box
         curcol = tp->x1; // for tab_display
         currow = tp->y1;
 
@@ -4082,7 +4082,7 @@ static int tesseral()
 tess_split:
         {   // box not surrounded by same color, sub-divide
             int mid,midcolor;
-            struct tess *tp2;
+            tess *tp2;
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1) { // divide down the middle
                 mid = (tp->x1 + tp->x2) >> 1;                // Find mid point
                 midcolor = tesscol(mid, tp->y1+1, tp->y2-1); // Do mid column
@@ -4132,7 +4132,7 @@ tess_split:
     }
 
 tess_end:
-    if (tp >= (struct tess *)&dstack[0]) { // didn't complete
+    if (tp >= (tess *)&dstack[0]) { // didn't complete
         int i,xsize,ysize;
         ysize = 1;
         xsize = ysize;
