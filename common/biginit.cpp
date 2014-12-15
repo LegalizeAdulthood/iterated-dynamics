@@ -1,4 +1,4 @@
-/* biginit.c - C routines for bignumbers */
+// biginit.c - C routines for bignumbers
 
 /*
 Note: This is NOT the biginit.c file that come the standard BigNum library,
@@ -22,43 +22,43 @@ is in the allocations of memory for the big numbers.
 #endif
 #define ENDVID 0
 
-/* globals */
+// globals
 int bnstep = 0, bnlength = 0, intlength = 0, rlength = 0, padding = 0, shiftfactor = 0, decimals = 0;
 int bflength = 0, rbflength = 0, bfdecimals = 0;
 
-/* used internally by bignum.c routines */
+// used internally by bignum.c routines
 static char s_storage[4096];
 static bn_t bnroot = BIG_NULL;
-static bn_t stack_ptr = BIG_NULL; /* memory allocator base after global variables */
-bn_t bntmp1 = BIG_NULL, bntmp2 = BIG_NULL, bntmp3 = BIG_NULL, bntmp4 = BIG_NULL, bntmp5 = BIG_NULL, bntmp6 = BIG_NULL; /* rlength  */
-bn_t bntmpcpy1 = BIG_NULL, bntmpcpy2 = BIG_NULL;                           /* bnlength */
+static bn_t stack_ptr = BIG_NULL; // memory allocator base after global variables
+bn_t bntmp1 = BIG_NULL, bntmp2 = BIG_NULL, bntmp3 = BIG_NULL, bntmp4 = BIG_NULL, bntmp5 = BIG_NULL, bntmp6 = BIG_NULL; // rlength
+bn_t bntmpcpy1 = BIG_NULL, bntmpcpy2 = BIG_NULL;                           // bnlength
 
-/* used by other routines */
-bn_t bnxmin = BIG_NULL, bnxmax = BIG_NULL, bnymin = BIG_NULL, bnymax = BIG_NULL, bnx3rd = BIG_NULL, bny3rd = BIG_NULL;        /* bnlength */
-bn_t bnxdel = BIG_NULL, bnydel = BIG_NULL, bnxdel2 = BIG_NULL, bnydel2 = BIG_NULL, bnclosenuff = BIG_NULL;         /* bnlength */
-bn_t bntmpsqrx = BIG_NULL, bntmpsqry = BIG_NULL, bntmp = BIG_NULL;                           /* rlength  */
-BNComplex bnold = { BIG_NULL, BIG_NULL }, /* bnnew, */ bnparm = { BIG_NULL, BIG_NULL }, bnsaved = { BIG_NULL, BIG_NULL };               /* bnlength */
-BNComplex bnnew = { BIG_NULL, BIG_NULL };                                              /* rlength */
-bn_t bn_pi = BIG_NULL;                                           /* TAKES NO SPACE */
+// used by other routines
+bn_t bnxmin = BIG_NULL, bnxmax = BIG_NULL, bnymin = BIG_NULL, bnymax = BIG_NULL, bnx3rd = BIG_NULL, bny3rd = BIG_NULL;        // bnlength
+bn_t bnxdel = BIG_NULL, bnydel = BIG_NULL, bnxdel2 = BIG_NULL, bnydel2 = BIG_NULL, bnclosenuff = BIG_NULL;         // bnlength
+bn_t bntmpsqrx = BIG_NULL, bntmpsqry = BIG_NULL, bntmp = BIG_NULL;                           // rlength
+BNComplex bnold = { BIG_NULL, BIG_NULL }, bnparm = { BIG_NULL, BIG_NULL }, bnsaved = { BIG_NULL, BIG_NULL };               // bnlength
+BNComplex bnnew = { BIG_NULL, BIG_NULL };                                              // rlength
+bn_t bn_pi = BIG_NULL;                                           // TAKES NO SPACE
 
-bf_t bftmp1 = BIG_NULL, bftmp2 = BIG_NULL, bftmp3 = BIG_NULL, bftmp4 = BIG_NULL, bftmp5 = BIG_NULL, bftmp6 = BIG_NULL;     /* rbflength+2 */
-bf_t bftmpcpy1 = BIG_NULL, bftmpcpy2 = BIG_NULL;                               /* rbflength+2 */
-bf_t bfxdel = BIG_NULL, bfydel = BIG_NULL, bfxdel2 = BIG_NULL, bfydel2 = BIG_NULL, bfclosenuff = BIG_NULL;      /* rbflength+2 */
-bf_t bftmpsqrx = BIG_NULL, bftmpsqry = BIG_NULL;                               /* rbflength+2 */
-BFComplex /* bfold,  bfnew, */ bfparm = { BIG_NULL, BIG_NULL }, bfsaved = { BIG_NULL, BIG_NULL };            /* bflength+2 */
-BFComplex bfold = { BIG_NULL, BIG_NULL },  bfnew = { BIG_NULL, BIG_NULL };                                  /* rbflength+2 */
-bf_t bf_pi = BIG_NULL;                                           /* TAKES NO SPACE */
-bf_t big_pi = BIG_NULL;                                              /* bflength+2 */
+bf_t bftmp1 = BIG_NULL, bftmp2 = BIG_NULL, bftmp3 = BIG_NULL, bftmp4 = BIG_NULL, bftmp5 = BIG_NULL, bftmp6 = BIG_NULL;     // rbflength+2
+bf_t bftmpcpy1 = BIG_NULL, bftmpcpy2 = BIG_NULL;                               // rbflength+2
+bf_t bfxdel = BIG_NULL, bfydel = BIG_NULL, bfxdel2 = BIG_NULL, bfydel2 = BIG_NULL, bfclosenuff = BIG_NULL;      // rbflength+2
+bf_t bftmpsqrx = BIG_NULL, bftmpsqry = BIG_NULL;                               // rbflength+2
+BFComplex bfparm = { BIG_NULL, BIG_NULL }, bfsaved = { BIG_NULL, BIG_NULL };            // bflength+2
+BFComplex bfold = { BIG_NULL, BIG_NULL },  bfnew = { BIG_NULL, BIG_NULL };                                  // rbflength+2
+bf_t bf_pi = BIG_NULL;                                           // TAKES NO SPACE
+bf_t big_pi = BIG_NULL;                                              // bflength+2
 
-/* for testing only */
+// for testing only
 
-/* used by other routines */
-bf_t bfxmin = BIG_NULL, bfxmax = BIG_NULL, bfymin = BIG_NULL, bfymax = BIG_NULL, bfx3rd = BIG_NULL, bfy3rd = BIG_NULL;      /* bflength+2 */
-bf_t bfsxmin = BIG_NULL, bfsxmax = BIG_NULL, bfsymin = BIG_NULL, bfsymax = BIG_NULL, bfsx3rd = BIG_NULL, bfsy3rd = BIG_NULL;/* bflength+2 */
-bf_t bfparms[10];                                    /* (bflength+2)*10 */
+// used by other routines
+bf_t bfxmin = BIG_NULL, bfxmax = BIG_NULL, bfymin = BIG_NULL, bfymax = BIG_NULL, bfx3rd = BIG_NULL, bfy3rd = BIG_NULL;      // bflength+2
+bf_t bfsxmin = BIG_NULL, bfsxmax = BIG_NULL, bfsymin = BIG_NULL, bfsymax = BIG_NULL, bfsx3rd = BIG_NULL, bfsy3rd = BIG_NULL;// bflength+2
+bf_t bfparms[10];                                    // (bflength+2)*10
 bf_t bftmp = BIG_NULL;
 
-bf_t bf10tmp = BIG_NULL;                                              /* dec+4 */
+bf_t bf10tmp = BIG_NULL;                                              // dec+4
 
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
@@ -67,10 +67,10 @@ static int save_bf_vars();
 static int restore_bf_vars();
 
 /*********************************************************************/
-/* given bnlength, calc_lengths will calculate all the other lengths */
+// given bnlength, calc_lengths will calculate all the other lengths
 void calc_lengths()
 {
-    bnstep = 4;  /* use 4 in all cases */
+    bnstep = 4;  // use 4 in all cases
 
     if (bnlength % bnstep != 0)
         bnlength = (bnlength / bnstep + 1) * bnstep;
@@ -80,18 +80,18 @@ void calc_lengths()
         padding = 2*bnstep;
     rlength = bnlength + padding;
 
-    /* This shiftfactor assumes non-full multiplications will be performed.*/
-    /* Change to bnlength-intlength for full multiplications.              */
+    // This shiftfactor assumes non-full multiplications will be performed.
+    // Change to bnlength-intlength for full multiplications.
     shiftfactor = padding - intlength;
 
-    bflength = bnlength+bnstep; /* one extra step for added precision */
+    bflength = bnlength+bnstep; // one extra step for added precision
     rbflength = bflength + padding;
     bfdecimals = (int)((bflength-2)*LOG10_256);
 }
 
 /************************************************************************/
-/* intended only to be called from init_bf_dec() or init_bf_length().   */
-/* initialize bignumber global variables                                */
+// intended only to be called from init_bf_dec() or init_bf_length().
+// initialize bignumber global variables
 
 long maxptr = 0;
 long startstack = 0;
@@ -102,7 +102,7 @@ static void init_bf_2()
 {
     int i;
     long ptr;
-    save_bf_vars(); /* copy corners values for conversion */
+    save_bf_vars(); // copy corners values for conversion
 
     calc_lengths();
 
@@ -115,12 +115,12 @@ static void init_bf_2()
     else if ((i = find_alternate_math(fractype, BIGFLT)) > -1)
         bf_math = alternatemath[i].math;
     else
-        bf_math = BIGNUM; /* maybe called from cmdfiles.c and fractype not set */
+        bf_math = BIGNUM; // maybe called from cmdfiles.c and fractype not set
 
     floatflag = true;
 
-    /* Now split up the memory among the pointers */
-    /* internal pointers */
+    // Now split up the memory among the pointers
+    // internal pointers
     ptr        = 0;
     bntmp1     = bnroot+ptr;
     ptr += rlength;
@@ -245,18 +245,18 @@ static void init_bf_2()
     bf10tmp    = bnroot+ptr;
     ptr += bfdecimals+4;
 
-    /* ptr needs to be 16-bit aligned on some systems */
+    // ptr needs to be 16-bit aligned on some systems
     ptr = (ptr+1)&~1;
 
     stack_ptr  = bnroot + ptr;
     startstack = ptr;
 
-    /* max stack offset from bnroot */
+    // max stack offset from bnroot
     maxstack = (long)0x10000l-(bflength+2)*22-ENDVID;
 
-    /* sanity check */
-    /* leave room for NUMVARS variables allocated from stack */
-    /* also leave room for the safe area at top of segment */
+    // sanity check
+    // leave room for NUMVARS variables allocated from stack
+    // also leave room for the safe area at top of segment
     if (ptr + NUMVARS*(bflength+2) > maxstack)
     {
         char msg[80];
@@ -265,9 +265,9 @@ static void init_bf_2()
         goodbye();
     }
 
-    /* room for 6 corners + 6 save corners + 10 params at top of extraseg */
-    /* this area is safe - use for variables that are used outside fractal*/
-    /* generation - e.g. zoom box variables */
+    // room for 6 corners + 6 save corners + 10 params at top of extraseg
+    // this area is safe - use for variables that are used outside fractal
+    // generation - e.g. zoom box variables
     ptr  = maxstack;
     bfxmin     = bnroot+ptr;
     ptr += bflength+2;
@@ -297,41 +297,41 @@ static void init_bf_2()
     bfsx3rd    = bnroot+ptr;
     ptr += bflength+2;
     bfsy3rd    = bnroot+ptr;
-    /* end safe vars */
+    // end safe vars
 
-    /* good citizens initialize variables */
-    if (bf_save_len > 0)  /* leave save area */
+    // good citizens initialize variables
+    if (bf_save_len > 0)  // leave save area
         memset(bnroot+(bf_save_len+2)*22,0,(unsigned)(startstack-(bf_save_len+2)*22));
-    else /* first time through - nothing saved */
+    else // first time through - nothing saved
     {
-        /* high variables */
+        // high variables
         memset(bnroot+maxstack,0,(bflength+2)*22);
-        /* low variables */
+        // low variables
         memset(bnroot,0,(unsigned)startstack);
     }
 
     restore_bf_vars();
 
-    /* Initialize the value of pi.  Needed for trig functions. */
-    /* init_big_pi(); */
-    /* call to init_big_pi() has been moved to fractal setup routine */
-    /* so as to use only when necessary. */
+    // Initialize the value of pi.  Needed for trig functions.
+    // init_big_pi();
+    // call to init_big_pi() has been moved to fractal setup routine
+    // so as to use only when necessary.
 
 }
 
 
 /**********************************************************/
-/* save current corners and parameters to start of bnroot */
-/* to preserve values across calls to init_bf()           */
+// save current corners and parameters to start of bnroot
+// to preserve values across calls to init_bf()
 static int save_bf_vars()
 {
     int ret;
     if (bnroot != BIG_NULL)
     {
-        unsigned int mem = (bflength+2)*22;  /* 6 corners + 6 save corners + 10 params */
+        unsigned int mem = (bflength+2)*22;  // 6 corners + 6 save corners + 10 params
         bf_save_len = bflength;
         memcpy(bnroot,bfxmin,mem);
-        /* scrub old high area */
+        // scrub old high area
         memset(bfxmin,0,mem);
         ret = 0;
     }
@@ -344,7 +344,7 @@ static int save_bf_vars()
 }
 
 /************************************************************************/
-/* copy current corners and parameters from save location               */
+// copy current corners and parameters from save location
 static int restore_bf_vars()
 {
     bf_t ptr;
@@ -380,13 +380,13 @@ static int restore_bf_vars()
     ptr += bf_save_len+2;
     convert_bf(bfsy3rd,ptr,bflength,bf_save_len);
 
-    /* scrub save area */
+    // scrub save area
     memset(bnroot,0,(bf_save_len+2)*22);
     return (0);
 }
 
 /*******************************************/
-/* free corners and parameters save memory */
+// free corners and parameters save memory
 void free_bf_vars()
 {
     bf_save_len = bf_math = 0;
@@ -395,9 +395,9 @@ void free_bf_vars()
 }
 
 /************************************************************************/
-/* Memory allocator routines start here.                                */
+// Memory allocator routines start here.
 /************************************************************************/
-/* Allocates a bn_t variable on stack                                   */
+// Allocates a bn_t variable on stack
 bn_t alloc_stack(size_t size)
 {
     long stack_addr;
@@ -406,86 +406,86 @@ bn_t alloc_stack(size_t size)
         stopmsg(0,"alloc_stack called with bf_math==0");
         return (nullptr);
     }
-    stack_addr = (long)((stack_ptr-bnroot)+size); /* +ENDVID, part of bnroot */
+    stack_addr = (long)((stack_ptr-bnroot)+size); // +ENDVID, part of bnroot
 
     if (stack_addr > maxstack)
     {
         stopmsg(0,"Aborting, Out of Bignum Stack Space");
         goodbye();
     }
-    /* keep track of max ptr */
+    // keep track of max ptr
     if (stack_addr > maxptr)
         maxptr = stack_addr;
-    stack_ptr += size;   /* increment stack pointer */
+    stack_ptr += size;   // increment stack pointer
     return (stack_ptr - size);
 }
 
 /************************************************************************/
-/* Returns stack pointer offset so it can be saved.                            */
+// Returns stack pointer offset so it can be saved.
 int save_stack()
 {
     return (int)(stack_ptr - bnroot);
 }
 
 /************************************************************************/
-/* Restores stack pointer, effectively freeing local variables          */
-/*    allocated since save_stack()                                   */
+// Restores stack pointer, effectively freeing local variables
+//    allocated since save_stack()
 void restore_stack(int old_offset)
 {
     stack_ptr  = bnroot+old_offset;
 }
 
 /************************************************************************/
-/* Memory allocator routines end here.                                  */
+// Memory allocator routines end here.
 /************************************************************************/
 
 /************************************************************************/
-/* initialize bignumber global variables                                */
-/*   dec = decimal places after decimal point                           */
-/*   intl = bytes for integer part (1, 2, or 4)                         */
+// initialize bignumber global variables
+//   dec = decimal places after decimal point
+//   intl = bytes for integer part (1, 2, or 4)
 
 void init_bf_dec(int dec)
 {
     if (bfdigits > 0)
-        decimals=bfdigits;   /* blindly force */
+        decimals=bfdigits;   // blindly force
     else
         decimals = dec;
-    if (bailout > 10)    /* arbitrary value */
-        /* using 2 doesn't gain much and requires another test */
+    if (bailout > 10)    // arbitrary value
+        // using 2 doesn't gain much and requires another test
         intlength = 4;
     else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
         intlength = 2;
-    /* the bailout tests need greater dynamic range */
+    // the bailout tests need greater dynamic range
     else if (bailoutest == Real || bailoutest == Imag || bailoutest == And ||
              bailoutest == Manr)
         intlength = 2;
     else
         intlength = 1;
-    /* conservative estimate */
-    bnlength = intlength + (int)(decimals/LOG10_256) + 1; /* round up */
+    // conservative estimate
+    bnlength = intlength + (int)(decimals/LOG10_256) + 1; // round up
     init_bf_2();
 }
 
 /************************************************************************/
-/* initialize bignumber global variables                                */
-/*   bnl = bignumber length                                             */
-/*   intl = bytes for integer part (1, 2, or 4)                         */
+// initialize bignumber global variables
+//   bnl = bignumber length
+//   intl = bytes for integer part (1, 2, or 4)
 void init_bf_length(int bnl)
 {
     bnlength = bnl;
 
-    if (bailout > 10)    /* arbitrary value */
-        /* using 2 doesn't gain much and requires another test */
+    if (bailout > 10)    // arbitrary value
+        // using 2 doesn't gain much and requires another test
         intlength = 4;
     else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
         intlength = 2;
-    /* the bailout tests need greater dynamic range */
+    // the bailout tests need greater dynamic range
     else if (bailoutest == Real || bailoutest == Imag || bailoutest == And ||
              bailoutest == Manr)
         intlength = 2;
     else
         intlength = 1;
-    /* conservative estimate */
+    // conservative estimate
     decimals = (int)((bnlength-intlength)*LOG10_256);
     init_bf_2();
 }
@@ -493,8 +493,8 @@ void init_bf_length(int bnl)
 
 void init_big_pi()
 {
-    /* What, don't you recognize the first 700 digits of pi, */
-    /* in base 256, in reverse order?                        */
+    // What, don't you recognize the first 700 digits of pi,
+    // in base 256, in reverse order?
     int length, pi_offset;
     static BYTE pi_table[] = {
         0x44, 0xD5, 0xDB, 0x69, 0x17, 0xDF, 0x2E, 0x56, 0x87, 0x1A,
@@ -568,15 +568,15 @@ void init_big_pi()
         0x09, 0xA4, 0x44, 0x73, 0x70, 0x03, 0x2E, 0x8A, 0x19, 0x13,
         0xD3, 0x08, 0xA3, 0x85, 0x88, 0x6A, 0x3F, 0x24,
         /* . */  0x03, 0x00, 0x00, 0x00
-        /*  <- up to intlength 4 -> */
-        /* or bf_t int length of 2 + 2 byte exp  */
+        //  <- up to intlength 4 ->
+        // or bf_t int length of 2 + 2 byte exp
     };
 
-    length = bflength+2; /* 2 byte exp */
+    length = bflength+2; // 2 byte exp
     pi_offset = sizeof pi_table - length;
     memcpy(big_pi, pi_table + pi_offset, length);
 
-    /* notice that bf_pi and bn_pi can share the same memory space */
+    // notice that bf_pi and bn_pi can share the same memory space
     bf_pi = big_pi;
     bn_pi = big_pi + (bflength-2) - (bnlength-intlength);
     return;
