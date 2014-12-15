@@ -72,7 +72,7 @@ void FPUcplxlog(DComplex *x, DComplex *z)
     z->y = zy;
 }
 
-/* Integer Routines */
+// Integer Routines
 void SinCos086(long x, long *sinx, long *cosx)
 {
     double a;
@@ -105,20 +105,20 @@ unsigned long ExpFudged(long x, int Fudge)
     return (long)(exp((double) x / (double)(1 << 16))*(double)(1 << Fudge));
 }
 
-/* This multiplies two e/m numbers and returns an e/m number. */
+// This multiplies two e/m numbers and returns an e/m number.
 long r16Mul(long x, long y)
 {
     float f = em2float(x)*em2float(y);
     return float2em(f);
 }
 
-/* This takes an exp/mant number and returns a shift-16 number */
+// This takes an exp/mant number and returns a shift-16 number
 long LogFloat14(unsigned long x)
 {
     return (long) log((double) em2float(x))*(1 << 16);
 }
 
-/* This divides two e/m numbers and returns an e/m number. */
+// This divides two e/m numbers and returns an e/m number.
 long RegDivFloat(long x, long y)
 {
     float f = em2float(x)/em2float(y);
