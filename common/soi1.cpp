@@ -32,7 +32,7 @@ extern int rhombus_stack[10];
 extern int rhombus_depth;
 extern int max_rhombus_depth;
 extern int minstackavail;
-extern int minstack; /* need this much stack to recurse */
+extern int minstack; // need this much stack to recurse
 static DBLS twidth;
 static DBLS equal;
 
@@ -71,10 +71,10 @@ static void putbox(int x1, int y1, int x2, int y2, int color)
    subdividing */
 #define SCAN 16
 
-/* pixel interleave used in scanning */
+// pixel interleave used in scanning
 #define INTERLEAVE 4
 
-/* compute the value of the interpolation polynomial at (x,y) */
+// compute the value of the interpolation polynomial at (x,y)
 #define GET_REAL(x,y) \
 interpolate(cim1,midi,cim2,\
         interpolate(cre1,midr,cre2,zre1,zre5,zre2,x),\
@@ -121,7 +121,7 @@ b0=w0;\
 b1=(w1-w0)/(x1-x0);\
 b2=((w2-w1)/(x2-x1)-b1)/(x2-x0)
 
-/* evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t */
+// evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t
 #define EVALUATE(x0,x1,b0,b1,b2,t) \
 ((b2*(t-x1)+b1)*(t-x0)+b0)
 
@@ -192,8 +192,8 @@ static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
 static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
                    int x1, int x2, int y1, int y2, long iter)
 {
-    /* The following variables do not need their values saved */
-    /* used in scanning */
+    // The following variables do not need their values saved
+    // used in scanning
     static long savecolor, color, helpcolor;
     static int x,y,z,savex;
 
@@ -264,15 +264,15 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 #define trq4      mem_static[64]
 #define tiq4      mem_static[65]
 
-    /* number of iterations before SOI iteration cycle */
+    // number of iterations before SOI iteration cycle
     static long before;
     static int avail;
 
-    /* the variables below need to have local copies for recursive calls */
+    // the variables below need to have local copies for recursive calls
     int  *mem_int;
     DBLS *mem;
     DBLS *mem_static;
-    /* center of rectangle */
+    // center of rectangle
     DBLS midr=(cre1+cre2)/2,midi=(cim1+cim2)/2;
 
 #define esc1  mem_int[0]
@@ -374,7 +374,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 
     if ((y2-y1<=SCAN) || (avail < minstack))
     {
-        /* finish up the image by scanning the rectangle */
+        // finish up the image by scanning the rectangle
 scan:
         INTERPOLATE(cre1,midr,cre2,zre1,zre5,zre2,br10,br11,br12);
         INTERPOLATE(cre1,midr,cre2,zre6,zre9,zre7,br20,br21,br22);
@@ -561,7 +561,7 @@ scan:
       iq=zi*zi;\
       esc = ((rq+iq)>16.0)?1:0
 
-        /* iterate key values */
+        // iterate key values
         SOI_ORBIT(zre1,rq1,zim1,iq1,cre1,cim1,esc1);
         /*
               zim1=(zim1+zim1)*zre1+cim1;
@@ -625,7 +625,7 @@ scan:
               rq9=zre9*zre9;
               iq9=zim9*zim9;
         */
-        /* iterate test point */
+        // iterate test point
         SOI_ORBIT(tzr1,trq1,tzi1,tiq1,cr1,ci1,tesc1);
         /*
               tzi1=(tzi1+tzi1)*tzr1+ci1;
@@ -657,7 +657,7 @@ scan:
         */
         iter++;
 
-        /* if one of the iterated values bails out, subdivide */
+        // if one of the iterated values bails out, subdivide
         /*
               if ((rq1+iq1)>16.0||
              (rq2+iq2)>16.0||
@@ -749,7 +749,7 @@ scan:
 
     iter--;
 
-    /* this is a little heuristic I tried to improve performance. */
+    // this is a little heuristic I tried to improve performance.
     if (iter-before<10)
     {
         zre1=sr1;
@@ -773,7 +773,7 @@ scan:
         goto scan;
     }
 
-    /* compute key values for subsequent rectangles */
+    // compute key values for subsequent rectangles
 
     re10=interpolate(cre1,midr,cre2,sr1,sr5,sr2,cr1);
     im10=interpolate(cre1,midr,cre2,si1,si5,si2,cr1);
