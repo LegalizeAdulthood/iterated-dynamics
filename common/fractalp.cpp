@@ -124,7 +124,7 @@ MOREPARAMS moreparams[] =
 /*
      type math orbitcalc fnct per_pixel fnct per_image fnct
    |-----|----|--------------|--------------|--------------| */
-struct alternatemathstuff alternatemath[] =
+alternatemathstuff alternatemath[] =
 {
 #define USEBN
 #ifdef USEBN
@@ -216,7 +216,7 @@ char t_halley[]= "*halley";
 // use next to cast orbitcalcs() that have arguments
 #define VF int(*)()
 
-struct fractalspecificstuff fractalspecific[]=
+fractalspecificstuff fractalspecific[]=
 {
     /*
     {
@@ -2262,7 +2262,7 @@ struct fractalspecificstuff fractalspecific[]=
 };
 
 int num_fractal_types = (sizeof(fractalspecific)/
-                         sizeof(struct fractalspecificstuff)) -1;
+                         sizeof(fractalspecificstuff)) -1;
 
 /*
  *  Returns 1 if the formula parameter is not used in the current
