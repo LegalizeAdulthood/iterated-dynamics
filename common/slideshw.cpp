@@ -58,6 +58,7 @@ static int get_scancode(char *mn)
     for (i = 0; i < stop; i++)
         if (strcmp((char *)mn,scancodes[i].mnemonic)==0)
             break;
+    // cppcheck-suppress uninitvar
     return (scancodes[i].code);
 }
 
