@@ -20,7 +20,7 @@
 #include "helpdefs.h"
 #include "drivers.h"
 
-/* routines in this module      */
+// routines in this module
 
 static  void trigdetails(char *);
 static void area();
@@ -33,13 +33,13 @@ void notdiskmsg()
             "abort if it appears that your disk drive is working too hard.");
 }
 
-/* Wrapping version of putstring for long numbers                         */
-/* row     -- pointer to row variable, internally incremented if needed   */
-/* col1    -- starting column                                             */
-/* col2    -- last column                                                 */
-/* color   -- attribute (same as for putstring)                           */
-/* maxrow -- max number of rows to write                                 */
-/* returns false if success, true if hit maxrow before done             */
+// Wrapping version of putstring for long numbers
+// row     -- pointer to row variable, internally incremented if needed
+// col1    -- starting column
+// col2    -- last column
+// color   -- attribute (same as for putstring)
+// maxrow -- max number of rows to write
+// returns false if success, true if hit maxrow before done
 static bool putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow)
 {
     char save1, save2;
@@ -47,8 +47,8 @@ static bool putstringwrap(int *row, int col1, int col2, int color, char *str, in
     bool done = false;
     startrow = *row;
     length = (int) strlen(str);
-    padding = 3; /* space between col1 and decimal. */
-    /* find decimal point */
+    padding = 3; // space between col1 and decimal.
+    // find decimal point
     for (decpt = 0; decpt < length; decpt++)
         if (str[decpt] == '.')
             break;
@@ -59,7 +59,7 @@ static bool putstringwrap(int *row, int col1, int col2, int color, char *str, in
     else
         padding = 0;
     col1 += padding;
-    decpt += col1+1; /* column just past where decimal is */
+    decpt += col1+1; // column just past where decimal is
     while (length > 0)
     {
         if (col2-col1 < length)
@@ -85,12 +85,12 @@ static bool putstringwrap(int *row, int col1, int col2, int color, char *str, in
         } else
             driver_put_string(*row,col1,color,str);
         length -= col2-col1;
-        col1 = decpt; /* align with decimal */
+        col1 = decpt; // align with decimal
     }
     return done;
 }
 
-#define rad_to_deg(x) ((x)*(180.0/PI)) /* most people "think" in degrees */
+#define rad_to_deg(x) ((x)*(180.0/PI)) // most people "think" in degrees
 #define deg_to_rad(x) ((x)*(PI/180.0))
 /*
 convert corners to center/mag
@@ -102,9 +102,9 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 {
     double Height;
 
-    /* simple normal case first */
+    // simple normal case first
     if (xx3rd == xxmin && yy3rd == yymin)
-    {   /* no rotation or skewing, but stretching is allowed */
+    {   // no rotation or skewing, but stretching is allowed
         double Width = xxmax - xxmin;
         Height = yymax - yymin;
         *Xctr = (xxmin + xxmax)/2.0;
@@ -116,8 +116,8 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
     }
     else
     {
-        /* set up triangle ABC, having sides abc */
-        /* side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd) */
+        // set up triangle ABC, having sides abc
+        // side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd)
         double tmpx1 = xxmax - xxmin;
         double tmpy1 = yymax - yymin;
         double c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
@@ -126,14 +126,14 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
         tmpy1 = yymin - yy3rd;
         double a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
         double a = sqrt(a2);
-        *Rotation = -rad_to_deg(atan2(tmpy1, tmpx1));   /* negative for image rotation */
+        *Rotation = -rad_to_deg(atan2(tmpy1, tmpx1));   // negative for image rotation
 
         double tmpx2 = xxmin - xx3rd;
         double tmpy2 = yymax - yy3rd;
         double b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
         double b = sqrt(b2);
 
-        double tmpa = acos((a2+b2-c2)/(2*a*b)); /* save tmpa for later use */
+        double tmpa = acos((a2+b2-c2)/(2*a*b)); // save tmpa for later use
         *Skew = 90.0 - rad_to_deg(tmpa);
 
         *Xctr = (xxmin + xxmax)*0.5;
@@ -141,11 +141,11 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 
         Height = b * sin(tmpa);
 
-        *Magnification  = 2.0/Height; /* 1/(h/2) */
+        *Magnification  = 2.0/Height; // 1/(h/2)
         *Xmagfactor = Height / (DEFAULTASPECT * a);
 
-        /* if vector_a cross vector_b is negative */
-        /* then adjust for left-hand coordinate system */
+        // if vector_a cross vector_b is negative
+        // then adjust for left-hand coordinate system
         if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != 4010)
         {
             *Skew = -*Skew;
@@ -153,7 +153,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
             *Magnification = -*Magnification;
         }
     }
-    /* just to make par file look nicer */
+    // just to make par file look nicer
     if (*Magnification < 0)
     {
         *Magnification = -*Magnification;
@@ -190,11 +190,11 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 }
 
 
-/* convert center/mag to corners */
+// convert center/mag to corners
 void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
     double x, y;
-    double h, w; /* half height, width */
+    double h, w; // half height, width
     double tanskew, sinrot, cosrot;
 
     if (Xmagfactor == 0.0)
@@ -204,7 +204,7 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
     w = h / (DEFAULTASPECT * Xmagfactor);
 
     if (Rotation == 0.0 && Skew == 0.0)
-    {   /* simple, faster case */
+    {   // simple, faster case
         xxmin = Xctr - w;
         xx3rd = xxmin;
         xxmax = Xctr + w;
@@ -214,7 +214,7 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
         return;
     }
 
-    /* in unrotated, untranslated coordinate system */
+    // in unrotated, untranslated coordinate system
     tanskew = tan(deg_to_rad(Skew));
     xxmin = -w + h*tanskew;
     xxmax =  w - h*tanskew;
@@ -223,24 +223,24 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
     yymin = -h;
     yy3rd = yymin;
 
-    /* rotate coord system and then translate it */
+    // rotate coord system and then translate it
     Rotation = deg_to_rad(Rotation);
     sinrot = sin(Rotation);
     cosrot = cos(Rotation);
 
-    /* top left */
+    // top left
     x = xxmin * cosrot + yymax *  sinrot;
     y = -xxmin * sinrot + yymax *  cosrot;
     xxmin = x + Xctr;
     yymax = y + Yctr;
 
-    /* bottom right */
+    // bottom right
     x = xxmax * cosrot + yymin *  sinrot;
     y = -xxmax * sinrot + yymin *  cosrot;
     xxmax = x + Xctr;
     yymin = y + Yctr;
 
-    /* bottom left */
+    // bottom left
     x = xx3rd * cosrot + yy3rd *  sinrot;
     y = -xx3rd * sinrot + yy3rd *  cosrot;
     xx3rd = x + Xctr;
@@ -249,10 +249,10 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
     return;
 }
 
-/* convert corners to center/mag using bf */
+// convert corners to center/mag using bf
 void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
 {
-    /* needs to be LDBL or won't work past 307 (-DBL_MIN_10_EXP) or so digits */
+    // needs to be LDBL or won't work past 307 (-DBL_MIN_10_EXP) or so digits
     LDBL Height;
     bf_t bfWidth;
     bf_t bftmpx;
@@ -260,22 +260,22 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 
     saved = save_stack();
 
-    /* simple normal case first */
-    /* if (xx3rd == xxmin && yy3rd == yymin) */
+    // simple normal case first
+    // if (xx3rd == xxmin && yy3rd == yymin)
     if (!cmp_bf(bfx3rd, bfxmin) && !cmp_bf(bfy3rd, bfymin))
-    {   /* no rotation or skewing, but stretching is allowed */
+    {   // no rotation or skewing, but stretching is allowed
         bfWidth  = alloc_stack(bflength+2);
         bf_t bfHeight = alloc_stack(bflength+2);
-        /* Width  = xxmax - xxmin; */
+        // Width  = xxmax - xxmin;
         sub_bf(bfWidth, bfxmax, bfxmin);
         LDBL Width = bftofloat(bfWidth);
-        /* Height = yymax - yymin; */
+        // Height = yymax - yymin;
         sub_bf(bfHeight, bfymax, bfymin);
         Height = bftofloat(bfHeight);
-        /* *Xctr = (xxmin + xxmax)/2; */
+        // *Xctr = (xxmin + xxmax)/2;
         add_bf(Xctr, bfxmin, bfxmax);
         half_a_bf(Xctr);
-        /* *Yctr = (yymin + yymax)/2; */
+        // *Yctr = (yymin + yymax)/2;
         add_bf(Yctr, bfymin, bfymax);
         half_a_bf(Yctr);
         *Magnification  = 2/Height;
@@ -288,62 +288,62 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         bftmpx = alloc_stack(bflength+2);
         bf_t bftmpy = alloc_stack(bflength+2);
 
-        /* set up triangle ABC, having sides abc */
-        /* side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd) */
-        /* IMPORTANT: convert from bf AFTER subtracting */
+        // set up triangle ABC, having sides abc
+        // side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd)
+        // IMPORTANT: convert from bf AFTER subtracting
 
-        /* tmpx = xxmax - xxmin; */
+        // tmpx = xxmax - xxmin;
         sub_bf(bftmpx, bfxmax, bfxmin);
         LDBL tmpx1 = bftofloat(bftmpx);
-        /* tmpy = yymax - yymin; */
+        // tmpy = yymax - yymin;
         sub_bf(bftmpy, bfymax, bfymin);
         LDBL tmpy1 = bftofloat(bftmpy);
         LDBL c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
-        /* tmpx = xxmax - xx3rd; */
+        // tmpx = xxmax - xx3rd;
         sub_bf(bftmpx, bfxmax, bfx3rd);
         tmpx1 = bftofloat(bftmpx);
 
-        /* tmpy = yymin - yy3rd; */
+        // tmpy = yymin - yy3rd;
         sub_bf(bftmpy, bfymin, bfy3rd);
         tmpy1 = bftofloat(bftmpy);
         LDBL a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
         LDBL a = sqrtl(a2);
 
-        /* divide tmpx and tmpy by |tmpx| so that double version of atan2() can be used */
-        /* atan2() only depends on the ratio, this puts it in double's range */
+        // divide tmpx and tmpy by |tmpx| so that double version of atan2() can be used
+        // atan2() only depends on the ratio, this puts it in double's range
         int signx = sign(tmpx1);
         LDBL tmpy=0.0;
         if (signx)
-            tmpy = tmpy1/tmpx1 * signx;    /* tmpy = tmpy / |tmpx| */
-        *Rotation = (double)(-rad_to_deg(atan2((double)tmpy, signx)));   /* negative for image rotation */
+            tmpy = tmpy1/tmpx1 * signx;    // tmpy = tmpy / |tmpx|
+        *Rotation = (double)(-rad_to_deg(atan2((double)tmpy, signx)));   // negative for image rotation
 
-        /* tmpx = xxmin - xx3rd; */
+        // tmpx = xxmin - xx3rd;
         sub_bf(bftmpx, bfxmin, bfx3rd);
         LDBL tmpx2 = bftofloat(bftmpx);
-        /* tmpy = yymax - yy3rd; */
+        // tmpy = yymax - yy3rd;
         sub_bf(bftmpy, bfymax, bfy3rd);
         LDBL tmpy2 = bftofloat(bftmpy);
         LDBL b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
         LDBL b = sqrtl(b2);
 
-        double tmpa = acos((double)((a2+b2-c2)/(2*a*b))); /* save tmpa for later use */
+        double tmpa = acos((double)((a2+b2-c2)/(2*a*b))); // save tmpa for later use
         *Skew = 90 - rad_to_deg(tmpa);
 
-        /* these are the only two variables that must use big precision */
-        /* *Xctr = (xxmin + xxmax)/2; */
+        // these are the only two variables that must use big precision
+        // *Xctr = (xxmin + xxmax)/2;
         add_bf(Xctr, bfxmin, bfxmax);
         half_a_bf(Xctr);
-        /* *Yctr = (yymin + yymax)/2; */
+        // *Yctr = (yymin + yymax)/2;
         add_bf(Yctr, bfymin, bfymax);
         half_a_bf(Yctr);
 
         Height = b * sin(tmpa);
-        *Magnification  = 2/Height; /* 1/(h/2) */
+        *Magnification  = 2/Height; // 1/(h/2)
         *Xmagfactor = (double)(Height / (DEFAULTASPECT * a));
 
-        /* if vector_a cross vector_b is negative */
-        /* then adjust for left-hand coordinate system */
+        // if vector_a cross vector_b is negative
+        // then adjust for left-hand coordinate system
         if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != 4010)
         {
             *Skew = -*Skew;
@@ -361,11 +361,11 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 }
 
 
-/* convert center/mag to corners using bf */
+// convert center/mag to corners using bf
 void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
     LDBL x, y;
-    LDBL h, w; /* half height, width */
+    LDBL h, w; // half height, width
     LDBL xmin, ymin, xmax, ymax, x3rd, y3rd;
     double tanskew, sinrot, cosrot;
     bf_t bfh, bfw;
@@ -385,23 +385,23 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
     floattobf(bfw, w);
 
     if (Rotation == 0.0 && Skew == 0.0)
-    {   /* simple, faster case */
-        /* xx3rd = xxmin = Xctr - w; */
+    {   // simple, faster case
+        // xx3rd = xxmin = Xctr - w;
         sub_bf(bfxmin, Xctr, bfw);
         copy_bf(bfx3rd, bfxmin);
-        /* xxmax = Xctr + w; */
+        // xxmax = Xctr + w;
         add_bf(bfxmax, Xctr, bfw);
-        /* yy3rd = yymin = Yctr - h; */
+        // yy3rd = yymin = Yctr - h;
         sub_bf(bfymin, Yctr, bfh);
         copy_bf(bfy3rd, bfymin);
-        /* yymax = Yctr + h; */
+        // yymax = Yctr + h;
         add_bf(bfymax, Yctr, bfh);
         restore_stack(saved);
         return;
     }
 
     bftmp = alloc_stack(bflength+2);
-    /* in unrotated, untranslated coordinate system */
+    // in unrotated, untranslated coordinate system
     tanskew = tan(deg_to_rad(Skew));
     xmin = -w + h*tanskew;
     xmax =  w - h*tanskew;
@@ -410,38 +410,38 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
     ymin = -h;
     y3rd = ymin;
 
-    /* rotate coord system and then translate it */
+    // rotate coord system and then translate it
     Rotation = deg_to_rad(Rotation);
     sinrot = sin(Rotation);
     cosrot = cos(Rotation);
 
-    /* top left */
+    // top left
     x =  xmin * cosrot + ymax *  sinrot;
     y = -xmin * sinrot + ymax *  cosrot;
-    /* xxmin = x + Xctr; */
+    // xxmin = x + Xctr;
     floattobf(bftmp, x);
     add_bf(bfxmin, bftmp, Xctr);
-    /* yymax = y + Yctr; */
+    // yymax = y + Yctr;
     floattobf(bftmp, y);
     add_bf(bfymax, bftmp, Yctr);
 
-    /* bottom right */
+    // bottom right
     x =  xmax * cosrot + ymin *  sinrot;
     y = -xmax * sinrot + ymin *  cosrot;
-    /* xxmax = x + Xctr; */
+    // xxmax = x + Xctr;
     floattobf(bftmp, x);
     add_bf(bfxmax, bftmp, Xctr);
-    /* yymin = y + Yctr; */
+    // yymin = y + Yctr;
     floattobf(bftmp, y);
     add_bf(bfymin, bftmp, Yctr);
 
-    /* bottom left */
+    // bottom left
     x =  x3rd * cosrot + y3rd *  sinrot;
     y = -x3rd * sinrot + y3rd *  cosrot;
-    /* xx3rd = x + Xctr; */
+    // xx3rd = x + Xctr;
     floattobf(bftmp, x);
     add_bf(bfx3rd, bftmp, Xctr);
-    /* yy3rd = y + Yctr; */
+    // yy3rd = y + Yctr;
     floattobf(bftmp, y);
     add_bf(bfy3rd, bftmp, Yctr);
 
@@ -449,7 +449,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
     return;
 }
 
-void updatesavename(char *filename) /* go to the next file name */
+void updatesavename(char *filename) // go to the next file name
 {
     char *save, *hold;
     char drive[FILE_MAX_DRIVE];
@@ -459,33 +459,32 @@ void updatesavename(char *filename) /* go to the next file name */
 
     splitpath(filename ,drive,dir,fname,ext);
 
-    hold = fname + strlen(fname) - 1; /* start at the end */
-    while (hold >= fname && (*hold == ' ' || isdigit(*hold))) /* skip backwards */
+    hold = fname + strlen(fname) - 1; // start at the end
+    while (hold >= fname && (*hold == ' ' || isdigit(*hold))) // skip backwards
         hold--;
-    hold++;                      /* recover first digit */
-    while (*hold == '0')         /* skip leading zeros */
+    hold++;                      // recover first digit
+    while (*hold == '0')         // skip leading zeros
         hold++;
     save = hold;
-    while (*save) {              /* check for all nines */
+    while (*save) {              // check for all nines
         if (*save != '9')
             break;
         save++;
     }
-    if (!*save)                  /* if the whole thing is nines then back */
-        save = hold - 1;          /* up one place. Note that this will eat */
-    /* your last letter if you go to far.    */
+    if (!*save)                  // if the whole thing is nines then back
+        save = hold - 1;          // up one place. Note that this will eat
+    // your last letter if you go to far.
     else
         save = hold;
-    sprintf(save,"%ld",atol(hold)+1); /* increment the number */
+    sprintf(save,"%ld",atol(hold)+1); // increment the number
     makepath(filename,drive,dir,fname,ext);
 }
 
 int check_writefile(char *name, const char *ext)
 {
-    /* after v16 release, change encoder.c to also use this routine */
+    // after v16 release, change encoder.c to also use this routine
     char openfile[FILE_MAX_DIR];
     char opentype[20];
-    /* int i; */
     char *period;
 nextname:
     strcpy(openfile,name);
@@ -496,12 +495,12 @@ nextname:
         *period = 0;
     }
     strcat(openfile,opentype);
-    if (access(openfile,0) != 0) /* file doesn't exist */
+    if (access(openfile,0) != 0) // file doesn't exist
     {
         strcpy(name,openfile);
         return 0;
     }
-    /* file already exists */
+    // file already exists
     if (!fract_overwrite)
     {
         updatesavename(name);
@@ -526,12 +525,12 @@ void (*dtrig1)() = dStkSqr;
 void (*dtrig2)() = dStkSinh;
 void (*dtrig3)() = dStkCosh;
 
-/* struct trig_funct_lst trigfn[]  was moved to prompts1.c */
+// struct trig_funct_lst trigfn[]  was moved to prompts1.c
 
-void showtrig(char *buf) /* return display form of active trig functions */
+void showtrig(char *buf) // return display form of active trig functions
 {
     char tmpbuf[30];
-    *buf = 0; /* null string if none */
+    *buf = 0; // null string if none
     trigdetails(tmpbuf);
     if (tmpbuf[0])
         sprintf(buf," function=%s",tmpbuf);
@@ -548,7 +547,7 @@ static void trigdetails(char *buf)
     if (curfractalspecific == &fractalspecific[FORMULA] ||
             curfractalspecific == &fractalspecific[FFORMULA])
         numfn = maxfn;
-    *buf = 0; /* null string if none */
+    *buf = 0; // null string if none
     if (numfn>0) {
         strcpy(buf,trigfn[trigndx[0]].name);
         int i = 0;
@@ -559,13 +558,13 @@ static void trigdetails(char *buf)
     }
 }
 
-/* set array of trig function indices according to "function=" command */
+// set array of trig function indices according to "function=" command
 int set_trig_array(int k, const char *name)
 {
     char trigname[10];
     char *slash;
     strncpy(trigname,name,6);
-    trigname[6] = 0; /* safety first */
+    trigname[6] = 0; // safety first
 
     if ((slash = strchr(trigname,'/')) != nullptr)
         *slash = 0;
@@ -585,7 +584,7 @@ int set_trig_array(int k, const char *name)
 }
 void set_trig_pointers(int which)
 {
-    /* set trig variable functions to avoid array lookup time */
+    // set trig variable functions to avoid array lookup time
     switch (which)
     {
     case 0:
@@ -616,7 +615,7 @@ void set_trig_pointers(int which)
 #endif
         dtrig3 = trigfn[trigndx[3]].dfunct;
         break;
-    default: /* do 'em all */
+    default: // do 'em all
         for (int i = 0; i < 4; i++)
             set_trig_pointers(i);
         break;
@@ -673,7 +672,7 @@ bool tab_display_2(char *msg)
     int row, key = 0;
 
     helptitle();
-    driver_set_attr(1, 0, C_GENERAL_MED, 24*80); /* init rest to background */
+    driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background
 
     row = 1;
     putstringcenter(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
@@ -690,7 +689,6 @@ bool tab_display_2(char *msg)
     row++;
     show_str_var("tempdir",     tempdir,      &row, msg);
     show_str_var("workdir",     workdir,      &row, msg);
-//  show_str_var("printfile",   PrintName,    &row, msg);
     show_str_var("filename",    readname,     &row, msg);
     show_str_var("formulafile", FormFileName, &row, msg);
     show_str_var("savename",    savename,     &row, msg);
@@ -742,7 +740,7 @@ bool tab_display_2(char *msg)
     putstringcenter(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
     *msg = 0;
 
-    /* display keycodes while waiting for ESC, BACKSPACE or TAB */
+    // display keycodes while waiting for ESC, BACKSPACE or TAB
     while ((key != FIK_ESC) && (key != FIK_BACKSPACE) && (key != FIK_TAB))
     {
         driver_put_string(row, 2, C_GENERAL_HI, msg);
@@ -752,7 +750,7 @@ bool tab_display_2(char *msg)
     return (key != FIK_ESC);
 }
 
-int tab_display()       /* display the status of the current image */
+int tab_display()       // display the status of the current image
 {
     int addrow = 0;
     double Xctr;
@@ -770,11 +768,11 @@ int tab_display()       /* display the status of the current image */
     int k;
     int hasformparam = 0;
 
-    if (calc_status < CALCSTAT_PARAMS_CHANGED)        /* no active fractal image */
+    if (calc_status < CALCSTAT_PARAMS_CHANGED)        // no active fractal image
     {
-        return 0;                /* (no TAB on the credits screen) */
+        return 0;                // (no TAB on the credits screen)
     }
-    if (calc_status == CALCSTAT_IN_PROGRESS)        /* next assumes CLOCKS_PER_SEC is 10^n, n>=2 */
+    if (calc_status == CALCSTAT_IN_PROGRESS)        // next assumes CLOCKS_PER_SEC is 10^n, n>=2
     {
         calctime += (clock_ticks() - timer_start) / (CLOCKS_PER_SEC/100);
     }
@@ -800,7 +798,7 @@ top:
     k = 0; /* initialize here so parameter line displays correctly on return
                 from control-tab */
     helptitle();
-    driver_set_attr(1, 0, C_GENERAL_MED, 24*80); /* init rest to background */
+    driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background
     int s_row = 2;
     driver_put_string(s_row, 2, C_GENERAL_MED, "Fractal type:");
     if (display3d > 0)
@@ -882,7 +880,7 @@ top:
         driver_put_string(s_row+1, 45, C_GENERAL_HI, "You are in color-cycling mode");
     }
     ++s_row;
-    /* if (bf_math == 0) */
+    // if (bf_math == 0)
     ++s_row;
 
     int j = 0;
@@ -983,7 +981,7 @@ top:
             sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
                     yystart, xxstart, yystop, xxstop);
             driver_put_string(s_row, 2, C_GENERAL_MED, msg);
-            if (got_status == 2 || got_status == 4)  /* btm or tesseral */
+            if (got_status == 2 || got_status == 4)  // btm or tesseral
             {
                 driver_put_string(-1, -1, C_GENERAL_MED, "at ");
                 sprintf(msg, "[%d, %d]", currow, curcol);
@@ -1014,7 +1012,7 @@ top:
     driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
     get_calculation_time(msg, calctime);
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
-    if ((got_status == 5) && (calc_status == CALCSTAT_IN_PROGRESS))  /* estimate total time */
+    if ((got_status == 5) && (calc_status == CALCSTAT_IN_PROGRESS))  // estimate total time
     {
         driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
         get_calculation_time(msg, (long)(calctime*((dif_limit*1.0)/dif_counter)));
@@ -1044,14 +1042,14 @@ top:
     }
     if (!(curfractalspecific->flags&NOZOOM))
     {
-        adjust_corner(); /* make bottom left exact if very near exact */
+        adjust_corner(); // make bottom left exact if very near exact
         if (bf_math)
         {
             int truncaterow;
             int dec = std::min(320, decimals);
-            adjust_cornerbf(); /* make bottom left exact if very near exact */
+            adjust_cornerbf(); // make bottom left exact if very near exact
             cvtcentermagbf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-            /* find alignment information */
+            // find alignment information
             msg[0] = 0;
             bool truncate = false;
             if (dec < decimals)
@@ -1085,7 +1083,7 @@ top:
             sprintf(msg, "%9.3f", Skew);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
         }
-        else /* bf != 1 */
+        else // bf != 1
         {
             driver_put_string(s_row, 2, C_GENERAL_MED, "Corners:                X                     Y");
             driver_put_string(++s_row, 3, C_GENERAL_MED, "Top-l");
@@ -1135,7 +1133,7 @@ top:
                 }
                 else
                     col = -1;
-                if (k == 0) /* only true with first displayed parameter */
+                if (k == 0) // only true with first displayed parameter
                     driver_put_string(++s_row, 2, C_GENERAL_MED, "Params ");
                 sprintf(msg, "%3d: ", i+1);
                 driver_put_string(s_row, col, C_GENERAL_MED, msg);
@@ -1181,7 +1179,7 @@ top:
     {
         ++s_row;
     }
-    /*waitforkey:*/
+    //waitforkey:
     putstringcenter(/*s_row*/24, 0, 80, C_GENERAL_LO, spressanykey);
     driver_hide_text_cursor();
 #ifdef XFRACT
@@ -1206,7 +1204,7 @@ top:
         }
     }
     driver_unstack_screen();
-    timer_start = clock_ticks(); /* tab display was "time out" */
+    timer_start = clock_ticks(); // tab display was "time out"
     if (bf_math)
     {
         restore_stack(saved);
@@ -1251,7 +1249,7 @@ int endswithslash(const char *fl)
     return (0);
 }
 
-/* --------------------------------------------------------------------- */
+// ---------------------------------------------------------------------
 static char seps[] = {"' ','\t',\n',\r'"};
 char *get_ifs_token(char *buf,FILE *ifsfile)
 {
@@ -1262,7 +1260,7 @@ char *get_ifs_token(char *buf,FILE *ifsfile)
             return (nullptr);
         else
         {
-            if ((bufptr = strchr(buf,';')) != nullptr) /* use ';' as comment to eol */
+            if ((bufptr = strchr(buf,';')) != nullptr) // use ';' as comment to eol
                 *bufptr = 0;
             if ((bufptr = strtok(buf, seps)) != nullptr)
                 return (bufptr);
@@ -1272,14 +1270,14 @@ char *get_ifs_token(char *buf,FILE *ifsfile)
 
 char insufficient_ifs_mem[]= {"Insufficient memory for IFS"};
 int numaffine;
-int ifsload()                   /* read in IFS parameters */
+int ifsload()                   // read in IFS parameters
 {
     FILE *ifsfile;
     char buf[201];
     char *bufptr;
     int ret,rowsize;
 
-    if (ifs_defn) { /* release prior parms */
+    if (ifs_defn) { // release prior parms
         free((char *)ifs_defn);
         ifs_defn = nullptr;
     }
@@ -1290,7 +1288,7 @@ int ifsload()                   /* read in IFS parameters */
         return (-1);
 
     file_gets(buf,200,ifsfile);
-    if ((bufptr = strchr(buf,';')) != nullptr) /* use ';' as comment to eol */
+    if ((bufptr = strchr(buf,';')) != nullptr) // use ';' as comment to eol
         *bufptr = 0;
 
     strlwr(buf);
@@ -1402,27 +1400,27 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
     case 1:
         strcpy(parsearchname, "frm:");
         strcat(parsearchname, itemname);
-        parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
+        parsearchname[ITEMNAMELEN + 5] = (char) 0; //safety
         strcpy(defaultextension, ".frm");
         splitpath(searchfor.frm,drive,dir,nullptr,nullptr);
         break;
     case 2:
         strcpy(parsearchname, "lsys:");
         strcat(parsearchname, itemname);
-        parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
+        parsearchname[ITEMNAMELEN + 5] = (char) 0; //safety
         strcpy(defaultextension, ".l");
         splitpath(searchfor.lsys,drive,dir,nullptr,nullptr);
         break;
     case 3:
         strcpy(parsearchname, "ifs:");
         strcat(parsearchname, itemname);
-        parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
+        parsearchname[ITEMNAMELEN + 5] = (char) 0; //safety
         strcpy(defaultextension, ".ifs");
         splitpath(searchfor.ifs,drive,dir,nullptr,nullptr);
         break;
     default:
         strcpy(parsearchname, itemname);
-        parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
+        parsearchname[ITEMNAMELEN + 5] = (char) 0; //safety
         strcpy(defaultextension, ".par");
         splitpath(searchfor.par,drive,dir,nullptr,nullptr);
         break;
@@ -1455,7 +1453,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
         }
     }
 
-    if (!found) {  /* search for file */
+    if (!found) {  // search for file
         int out;
         makepath(fullpath,drive,dir,"*",defaultextension);
         out = fr_findfirst(fullpath);
@@ -1528,7 +1526,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
         stopmsg(0,fullpath);
         return true;
     }
-    /* found file */
+    // found file
     if (fileptr != nullptr)
         *fileptr = infile;
     else if (infile != nullptr)
@@ -1540,8 +1538,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
 int file_gets(char *buf,int maxlen,FILE *infile)
 {
     int len,c;
-    /* similar to 'fgets', but file may be in either text or binary mode */
-    /* returns -1 at eof, length of string otherwise */
+    // similar to 'fgets', but file may be in either text or binary mode
+    // returns -1 at eof, length of string otherwise
     if (feof(infile)) return -1;
     len = 0;
     while (len < maxlen) {
@@ -1550,21 +1548,21 @@ int file_gets(char *buf,int maxlen,FILE *infile)
             if (len) break;
             return -1;
         }
-        if (c == '\n') break;             /* linefeed is end of line */
-        if (c != '\r') buf[len++] = (char)c;    /* ignore c/r */
+        if (c == '\n') break;             // linefeed is end of line
+        if (c != '\r') buf[len++] = (char)c;    // ignore c/r
     }
     buf[len] = 0;
     return len;
 }
 
-void roundfloatd(double *x) /* make double converted from float look ok */
+void roundfloatd(double *x) // make double converted from float look ok
 {
     char buf[30];
     sprintf(buf,"%-10.7g",*x);
     *x = atof(buf);
 }
 
-void fix_inversion(double *x) /* make double converted from string look ok */
+void fix_inversion(double *x) // make double converted from string look ok
 {
     char buf[30];
     sprintf(buf,"%-1.15lg",*x);
