@@ -26,14 +26,14 @@
 
 #include "drivers.h"
 
-/* Routines used in prompts2.c */
+// Routines used in prompts2.c
 
 int prompt_checkkey(int curkey);
 int prompt_checkkey_scroll(int curkey);
 long get_file_entry(int type, const char *title,char *fmask,
                     char *filename,char *entryname);
 
-/* Routines in this module      */
+// Routines in this module
 
 int prompt_valuestring(char *buf,struct fullscreenvalues *val);
 static  int input_field_list(int attr,char *fld,int vlen, const char **list,int llen,
@@ -62,25 +62,25 @@ char lsysmask[13]    = {"*.l"};
 char Glasses1Map[] = "glasses1.map";
 char MAP_name[FILE_MAX_DIR] = "";
 bool mapset = false;
-bool julibrot = false;                  /* flag for julibrot */
+bool julibrot = false;                  // flag for julibrot
 
-/* --------------------------------------------------------------------- */
+// ---------------------------------------------------------------------
 
 int promptfkeys;
 
-/* These need to be global because F6 exits fullscreen_prompt() */
+// These need to be global because F6 exits fullscreen_prompt()
 int scroll_row_status;    /* will be set to first line of extra info to
                              be displayed ( 0 = top line) */
 int scroll_column_status; /* will be set to first column of extra info to
                              be displayed ( 0 = leftmost column )*/
 
-int fullscreen_prompt(      /* full-screen prompting routine */
-    const char *hdg,        /* heading, lines separated by \n */
-    int numprompts,         /* there are this many prompts (max) */
-    const char **prompts,   /* array of prompting pointers */
-    struct fullscreenvalues *values, /* array of values */
-    int fkeymask,           /* bit n on if Fn to cause return */
-    char *extrainfo         /* extra info box to display, \n separated */
+int fullscreen_prompt(      // full-screen prompting routine
+    const char *hdg,        // heading, lines separated by \n
+    int numprompts,         // there are this many prompts (max)
+    const char **prompts,   // array of prompting pointers
+    struct fullscreenvalues *values, // array of values
+    int fkeymask,           // bit n on if Fn to cause return
+    char *extrainfo         // extra info box to display, \n separated
 )
 {
     const char *hdgscan;
@@ -97,20 +97,20 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     int curtype, curlen;
     char buf[81];
 
-    /* scrolling related variables */
-    FILE * scroll_file = nullptr;     /* file with extrainfo entry to scroll   */
-    long scroll_file_start = 0;    /* where entry starts in scroll_file     */
-    bool in_scrolling_mode = false; /* will be true if need to scroll extrainfo */
-    int lines_in_entry = 0;        /* total lines in entry to be scrolled   */
-    int vertical_scroll_limit = 0; /* don't scroll down if this is top line */
-    int widest_entry_line = 0;     /* length of longest line in entry       */
-    bool rewrite_extrainfo = false; /* if true: rewrite extrainfo to text box   */
-    char blanks[78];               /* used to clear text box                */
+    // scrolling related variables
+    FILE * scroll_file = nullptr;     // file with extrainfo entry to scroll
+    long scroll_file_start = 0;    // where entry starts in scroll_file
+    bool in_scrolling_mode = false; // will be true if need to scroll extrainfo
+    int lines_in_entry = 0;        // total lines in entry to be scrolled
+    int vertical_scroll_limit = 0; // don't scroll down if this is top line
+    int widest_entry_line = 0;     // length of longest line in entry
+    bool rewrite_extrainfo = false; // if true: rewrite extrainfo to text box
+    char blanks[78];               // used to clear text box
 
     savelookatmouse = lookatmouse;
     lookatmouse = 0;
     promptfkeys = fkeymask;
-    memset(blanks,' ',77);   /* initialize string of blanks */
+    memset(blanks,' ',77);   // initialize string of blanks
     blanks[77] = (char) 0;
 
     /* If applicable, open file for scrolling extrainfo. The function
@@ -136,7 +136,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         }
     }
 
-    /* initialize widest_entry_line and lines_in_entry */
+    // initialize widest_entry_line and lines_in_entry
     if (in_scrolling_mode && scroll_file != nullptr) {
         bool comment = false;
         int c = 0;
@@ -160,7 +160,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                 break;
             }
         }
-        if (c == EOF || c == '\032') { /* should never happen */
+        if (c == EOF || c == '\032') { // should never happen
             fclose(scroll_file);
             in_scrolling_mode = false;
         }
@@ -168,11 +168,11 @@ int fullscreen_prompt(      /* full-screen prompting routine */
 
 
 
-    helptitle();                        /* clear screen, display title line  */
-    driver_set_attr(1,0,C_PROMPT_BKGRD,24*80);  /* init rest of screen to background */
+    helptitle();                        // clear screen, display title line
+    driver_set_attr(1,0,C_PROMPT_BKGRD,24*80);  // init rest of screen to background
 
 
-    hdgscan = hdg;                      /* count title lines, find widest */
+    hdgscan = hdg;                      // count title lines, find widest
     titlewidth = 0;
     titlelines = 1;
     {
@@ -192,7 +192,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         if ((hdgscan = extrainfo) != nullptr) {
             if (*hdgscan == 0)
                 extrainfo = nullptr;
-            else { /* count extra lines, find widest */
+            else { // count extra lines, find widest
                 extralines = 3;
                 int i = 0;
                 while (*hdgscan) {
@@ -211,7 +211,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         }
     }
 
-    /* if entry fits in available space, shut off scrolling */
+    // if entry fits in available space, shut off scrolling
     if (in_scrolling_mode && scroll_row_status == 0
             && lines_in_entry == extralines - 2
             && scroll_column_status == 0
@@ -228,38 +228,38 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     if (in_scrolling_mode)
         vertical_scroll_limit = lines_in_entry - (extralines - 2);
 
-    /* work out vertical positioning */
+    // work out vertical positioning
     {
-        int i = numprompts + titlelines + extralines + 3; /* total rows required */
-        int j = (25 - i) / 2;                   /* top row of it all when centered */
-        j -= j / 4;                         /* higher is better if lots extra */
+        int i = numprompts + titlelines + extralines + 3; // total rows required
+        int j = (25 - i) / 2;                   // top row of it all when centered
+        j -= j / 4;                         // higher is better if lots extra
         boxlines = numprompts;
         titlerow = 1 + j;
     }
     boxrow = titlerow + titlelines;
     promptrow = boxrow;
-    if (titlerow > 2) {                 /* room for blank between title & box? */
+    if (titlerow > 2) {                 // room for blank between title & box?
         --titlerow;
         --boxrow;
         ++boxlines;
     }
     instrrow = boxrow+boxlines;
     if (instrrow + 3 + extralines < 25) {
-        ++boxlines;    /* blank at bottom of box */
+        ++boxlines;    // blank at bottom of box
         ++instrrow;
         if (instrrow + 3 + extralines < 25)
-            ++instrrow; /* blank before instructions */
+            ++instrrow; // blank before instructions
     }
     extrarow = instrrow + 2;
-    if (numprompts > 1) /* 3 instructions lines */
+    if (numprompts > 1) // 3 instructions lines
         ++extrarow;
     if (extrarow + extralines < 25)
         ++extrarow;
 
-    if (in_scrolling_mode)  /* set box to max width if in scrolling mode */
+    if (in_scrolling_mode)  // set box to max width if in scrolling mode
         extrawidth = 76;
 
-    /* work out horizontal positioning */
+    // work out horizontal positioning
     maxcomment = 0;
     maxpromptwidth = maxcomment;
     maxfldwidth = maxpromptwidth;
@@ -289,10 +289,10 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     boxwidth = maxpromptwidth + maxfldwidth + 2;
     if (maxcomment > boxwidth) boxwidth = maxcomment;
     if ((boxwidth += 4) > 80) boxwidth = 80;
-    boxcol = (80 - boxwidth) / 2;       /* center the box */
+    boxcol = (80 - boxwidth) / 2;       // center the box
     promptcol = boxcol + 2;
     valuecol = boxcol + boxwidth - maxfldwidth - 2;
-    if (boxwidth <= 76) {               /* make margin a bit wider if we can */
+    if (boxwidth <= 76) {               // make margin a bit wider if we can
         boxwidth += 2;
         --boxcol;
     }
@@ -301,7 +301,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         if (j < extrawidth)
             j = extrawidth;
         int i = j + 4 - boxwidth;
-        if (i > 0) {   /* expand box for title/extra */
+        if (i > 0) {   // expand box for title/extra
             if (boxwidth + i > 80)
                 i = 80 - boxwidth;
             boxwidth += i;
@@ -315,20 +315,20 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         valuecol  -= i;
     }
 
-    /* display box heading */
+    // display box heading
     for (int i = titlerow; i < boxrow; ++i)
         driver_set_attr(i,boxcol,C_PROMPT_HI,boxwidth);
 
     {
         char buffer[256], *hdgline = buffer;
-        /* center each line of heading independently */
+        // center each line of heading independently
         int i;
         strcpy(hdgline, hdg);
         for (i = 0; i < titlelines-1; i++)
         {
             char *next = strchr(hdgline,'\n');
             if (next == nullptr)
-                break; /* shouldn't happen */
+                break; // shouldn't happen
             *next = '\0';
             titlewidth = (int) strlen(hdgline);
             g_text_cbase = boxcol + (boxwidth - titlewidth) / 2;
@@ -336,9 +336,9 @@ int fullscreen_prompt(      /* full-screen prompting routine */
             *next = '\n';
             hdgline = next+1;
         }
-        /* add scrolling key message, if applicable */
+        // add scrolling key message, if applicable
         if (in_scrolling_mode) {
-            *(hdgline + 31) = (char) 0;   /* replace the ')' */
+            *(hdgline + 31) = (char) 0;   // replace the ')'
             strcat(hdgline, ". CTRL+(direction key) to scroll text.)");
         }
 
@@ -347,7 +347,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         driver_put_string(titlerow+i,0,C_PROMPT_HI,hdgline);
     }
 
-    /* display extra info */
+    // display extra info
     if (extrainfo) {
 #ifndef XFRACT
 #define S1 '\xC4'
@@ -358,11 +358,11 @@ int fullscreen_prompt(      /* full-screen prompting routine */
 #define S6 "\xBF"
 #else
 #define S1 '-'
-#define S2 "+" /* ll corner */
-#define S3 "+" /* lr corner */
+#define S2 "+" // ll corner
+#define S3 "+" // lr corner
 #define S4 "|"
-#define S5 "+" /* ul corner */
-#define S6 "+" /* ur corner */
+#define S5 "+" // ul corner
+#define S6 "+" // ur corner
 #endif
         memset(buf,S1,80);
         buf[boxwidth-2] = 0;
@@ -388,11 +388,11 @@ int fullscreen_prompt(      /* full-screen prompting routine */
 
     g_text_cbase = 0;
 
-    /* display empty box */
+    // display empty box
     for (int i = 0; i < boxlines; ++i)
         driver_set_attr(boxrow+i,boxcol,C_PROMPT_LO,boxwidth);
 
-    /* display initial values */
+    // display initial values
     for (int i = 0; i < numprompts; i++) {
         driver_put_string(promptrow+i, promptcol, C_PROMPT_LO, prompts[i]);
         prompt_valuestring(buf,&values[i]);
@@ -417,7 +417,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                     driver_put_string(extrarow+i,0,C_PROMPT_TEXT,blanks);
                 driver_put_string(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
             }
-            /* TODO: rework key interaction to blocking wait */
+            // TODO: rework key interaction to blocking wait
             while (!driver_key_pressed()) { }
             done = driver_get_key();
             switch (done) {
@@ -426,31 +426,31 @@ int fullscreen_prompt(      /* full-screen prompting routine */
             case FIK_ENTER:
             case FIK_ENTER_2:
                 goto fullscreen_exit;
-            case FIK_CTL_DOWN_ARROW:    /* scrolling key - down one row */
+            case FIK_CTL_DOWN_ARROW:    // scrolling key - down one row
                 if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit) {
                     scroll_row_status++;
                     rewrite_extrainfo = true;
                 }
                 break;
-            case FIK_CTL_UP_ARROW:      /* scrolling key - up one row */
+            case FIK_CTL_UP_ARROW:      // scrolling key - up one row
                 if (in_scrolling_mode && scroll_row_status > 0) {
                     scroll_row_status--;
                     rewrite_extrainfo = true;
                 }
                 break;
-            case FIK_CTL_LEFT_ARROW:    /* scrolling key - left one column */
+            case FIK_CTL_LEFT_ARROW:    // scrolling key - left one column
                 if (in_scrolling_mode && scroll_column_status > 0) {
                     scroll_column_status--;
                     rewrite_extrainfo = true;
                 }
                 break;
-            case FIK_CTL_RIGHT_ARROW:   /* scrolling key - right one column */
+            case FIK_CTL_RIGHT_ARROW:   // scrolling key - right one column
                 if (in_scrolling_mode && strchr(extrainfo, '\021') != nullptr) {
                     scroll_column_status++;
                     rewrite_extrainfo = true;
                 }
                 break;
-            case FIK_CTL_PAGE_DOWN:   /* scrolling key - down one screen */
+            case FIK_CTL_PAGE_DOWN:   // scrolling key - down one screen
                 if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit) {
                     scroll_row_status += extralines - 2;
                     if (scroll_row_status > vertical_scroll_limit)
@@ -458,7 +458,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                     rewrite_extrainfo = true;
                 }
                 break;
-            case FIK_CTL_PAGE_UP:     /* scrolling key - up one screen */
+            case FIK_CTL_PAGE_UP:     // scrolling key - up one screen
                 if (in_scrolling_mode && scroll_row_status > 0) {
                     scroll_row_status -= extralines - 2;
                     if (scroll_row_status < 0)
@@ -466,14 +466,14 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                     rewrite_extrainfo = true;
                 }
                 break;
-            case FIK_CTL_END:         /* scrolling key - to end of entry */
+            case FIK_CTL_END:         // scrolling key - to end of entry
                 if (in_scrolling_mode) {
                     scroll_row_status = vertical_scroll_limit;
                     scroll_column_status = 0;
                     rewrite_extrainfo = true;
                 }
                 break;
-            case FIK_CTL_HOME:        /* scrolling key - to beginning of entry */
+            case FIK_CTL_HOME:        // scrolling key - to beginning of entry
                 if (in_scrolling_mode) {
                     scroll_column_status = 0;
                     scroll_row_status = scroll_column_status;
@@ -496,7 +496,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
     }
 
 
-    /* display footing */
+    // display footing
     if (numprompts > 1)
         putstringcenter(instrrow++,0,80,C_PROMPT_BKGRD,
                         "Use " UPARR1 " and " DNARR1 " to select values to change");
@@ -572,7 +572,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
             case 's':
                 strncpy(values[curchoice].uval.sval,buf,16);
                 break;
-            default: /* assume 0x100+n */
+            default: // assume 0x100+n
                 strcpy(values[curchoice].uval.sbuf,buf);
             }
         }
@@ -586,10 +586,10 @@ int fullscreen_prompt(      /* full-screen prompting routine */
         driver_put_string(promptrow+curchoice, valuecol, C_PROMPT_LO,  buf);
 
         switch (i) {
-        case 0:  /* enter  */
+        case 0:  // enter
             done = 13;
             break;
-        case -1: /* escape */
+        case -1: // escape
         case FIK_F2:
         case FIK_F3:
         case FIK_F4:
@@ -615,31 +615,31 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                 if (--curchoice < 0) curchoice = numprompts - 1;
             } while (values[curchoice].type == '*');
             break;
-        case FIK_CTL_DOWN_ARROW:     /* scrolling key - down one row */
+        case FIK_CTL_DOWN_ARROW:     // scrolling key - down one row
             if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit) {
                 scroll_row_status++;
                 rewrite_extrainfo = true;
             }
             break;
-        case FIK_CTL_UP_ARROW:       /* scrolling key - up one row */
+        case FIK_CTL_UP_ARROW:       // scrolling key - up one row
             if (in_scrolling_mode && scroll_row_status > 0) {
                 scroll_row_status--;
                 rewrite_extrainfo = true;
             }
             break;
-        case FIK_CTL_LEFT_ARROW:     /*scrolling key - left one column */
+        case FIK_CTL_LEFT_ARROW:     //scrolling key - left one column
             if (in_scrolling_mode && scroll_column_status > 0) {
                 scroll_column_status--;
                 rewrite_extrainfo = true;
             }
             break;
-        case FIK_CTL_RIGHT_ARROW:    /* scrolling key - right one column */
+        case FIK_CTL_RIGHT_ARROW:    // scrolling key - right one column
             if (in_scrolling_mode && strchr(extrainfo, '\021') != nullptr) {
                 scroll_column_status++;
                 rewrite_extrainfo = true;
             }
             break;
-        case FIK_CTL_PAGE_DOWN:    /* scrolling key - down on screen */
+        case FIK_CTL_PAGE_DOWN:    // scrolling key - down on screen
             if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit) {
                 scroll_row_status += extralines - 2;
                 if (scroll_row_status > vertical_scroll_limit)
@@ -647,7 +647,7 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                 rewrite_extrainfo = true;
             }
             break;
-        case FIK_CTL_PAGE_UP:      /* scrolling key - up one screen */
+        case FIK_CTL_PAGE_UP:      // scrolling key - up one screen
             if (in_scrolling_mode && scroll_row_status > 0) {
                 scroll_row_status -= extralines - 2;
                 if (scroll_row_status < 0)
@@ -655,14 +655,14 @@ int fullscreen_prompt(      /* full-screen prompting routine */
                 rewrite_extrainfo = true;
             }
             break;
-        case FIK_CTL_END:          /* scrolling key - go to end of entry */
+        case FIK_CTL_END:          // scrolling key - go to end of entry
             if (in_scrolling_mode) {
                 scroll_row_status = vertical_scroll_limit;
                 scroll_column_status = 0;
                 rewrite_extrainfo = true;
             }
             break;
-        case FIK_CTL_HOME:         /* scrolling key - go to beginning of entry */
+        case FIK_CTL_HOME:         // scrolling key - go to beginning of entry
             if (in_scrolling_mode) {
                 scroll_column_status = 0;
                 scroll_row_status = scroll_column_status;
@@ -683,12 +683,12 @@ fullscreen_exit:
 }
 
 int prompt_valuestring(char *buf,struct fullscreenvalues *val)
-{   /* format value into buf, return field width */
+{   // format value into buf, return field width
     int i,ret;
     switch (val->type) {
     case 'd':
         ret = 20;
-        i = 16;    /* cellular needs 16 (was 15)*/
+        i = 16;    // cellular needs 16 (was 15)
         while (1) {
             sprintf(buf,"%.*g",i,val->uval.dval);
             if ((int)strlen(buf) <= ret) break;
@@ -696,7 +696,7 @@ int prompt_valuestring(char *buf,struct fullscreenvalues *val)
         }
         break;
     case 'D':
-        if (val->uval.dval<0) { /* We have to round the right way */
+        if (val->uval.dval<0) { // We have to round the right way
             sprintf(buf,"%ld",(long)(val->uval.dval-.5));
         }
         else {
@@ -729,7 +729,7 @@ int prompt_valuestring(char *buf,struct fullscreenvalues *val)
         strcpy(buf,val->uval.ch.list[val->uval.ch.val]);
         ret = val->uval.ch.vlen;
         break;
-    default: /* assume 0x100+n */
+    default: // assume 0x100+n
         strcpy(buf,val->uval.sbuf);
         ret = val->type & 0xff;
     }
@@ -791,14 +791,14 @@ int prompt_checkkey_scroll(int curkey)
 }
 
 static int input_field_list(
-    int attr,             /* display attribute */
-    char *fld,            /* display form field value */
-    int vlen,             /* field length */
-    const char **list,          /* list of values */
-    int llen,             /* number of entries in list */
-    int row,              /* display row */
-    int col,              /* display column */
-    int (*checkkey)(int)  /* routine to check non data keys, or nullptr */
+    int attr,             // display attribute
+    char *fld,            // display form field value
+    int vlen,             // field length
+    const char **list,          // list of values
+    int llen,             // number of entries in list
+    int row,              // display row
+    int col,              // display column
+    int (*checkkey)(int)  // routine to check non data keys, or nullptr
 )
 {
     int initval,curval;
@@ -823,7 +823,7 @@ static int input_field_list(
         }
         buf[vlen] = 0;
         driver_put_string(row,col,attr,buf);
-        curkey = driver_key_cursor(row,col); /* get a keystroke */
+        curkey = driver_key_cursor(row,col); // get a keystroke
         switch (curkey) {
         case FIK_ENTER:
         case FIK_ENTER_2:
@@ -846,7 +846,7 @@ static int input_field_list(
             if (nonalpha(curkey)) {
                 if (checkkey && (ret = (*checkkey)(curkey)) != 0)
                     goto inpfldl_end;
-                break;                                /* non alphanum char */
+                break;                                // non alphanum char
             }
             int j = curval;
             for (int i = 0; i < llen; ++i) {
@@ -865,7 +865,7 @@ inpfldl_end:
     return ret;
 }
 
-int get_fracttype()             /* prompt for and select fractal type */
+int get_fracttype()             // prompt for and select fractal type
 {
     int t;
     int done = -1;
@@ -874,11 +874,11 @@ int get_fracttype()             /* prompt for and select fractal type */
         if ((t = select_fracttype(fractype)) < 0)
             break;
         bool i = select_type_params(t, fractype);
-        if (!i) { /* ok, all done */
+        if (!i) { // ok, all done
             done = 0;
             break;
         }
-        if (i) /* can't return to prior image anymore */
+        if (i) // can't return to prior image anymore
             done = 1;
     }
     if (done < 0)
@@ -891,10 +891,10 @@ struct FT_CHOICE {
     char name[15];
     int  num;
 };
-static struct FT_CHOICE **ft_choices; /* for sel_fractype_help subrtn */
+static struct FT_CHOICE **ft_choices; // for sel_fractype_help subrtn
 
-static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
-/* so that storage gets freed up      */
+static int select_fracttype(int t) // subrtn of get_fracttype, separated
+// so that storage gets freed up
 {
     int oldhelpmode;
     int numtypes, done;
@@ -904,7 +904,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
     struct FT_CHOICE *choices[MAXFTYPES];
     int attributes[MAXFTYPES];
 
-    /* steal existing array for "choices" */
+    // steal existing array for "choices"
     choices[0] = &storage[0];
     attributes[0] = 1;
     for (int i = 1; i < MAXFTYPES; ++i) {
@@ -913,7 +913,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
     }
     ft_choices = &choices[0];
 
-    /* setup context sensitive help */
+    // setup context sensitive help
     oldhelpmode = helpmode;
     helpmode = HELPFRACTALS;
     if (t == IFS3D) t = IFS;
@@ -927,14 +927,14 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
             if (fractalspecific[i].name[0] == '*')
                 continue;
             strcpy(choices[++j]->name,fractalspecific[i].name);
-            choices[j]->name[14] = 0; /* safety */
-            choices[j]->num = i;      /* remember where the real item is */
+            choices[j]->name[14] = 0; // safety
+            choices[j]->num = i;      // remember where the real item is
         }
         numtypes = j + 1;
     }
-    shell_sort(&choices, numtypes, sizeof(struct FT_CHOICE *), lccompare); /* sort list */
+    shell_sort(&choices, numtypes, sizeof(struct FT_CHOICE *), lccompare); // sort list
     int j = 0;
-    for (int i = 0; i < numtypes; ++i) /* find starting choice in sorted list */
+    for (int i = 0; i < numtypes; ++i) // find starting choice in sorted list
         if (choices[i]->num == t || choices[i]->num == fractalspecific[t].tofloat)
             j = i;
 
@@ -969,9 +969,9 @@ static int sel_fractype_help(int curkey,int choice)
     return 0;
 }
 
-bool select_type_params( /* prompt for new fractal type parameters */
-    int newfractype,        /* new fractal type */
-    int oldfractype         /* previous fractal type */
+bool select_type_params( // prompt for new fractal type parameters
+    int newfractype,        // new fractal type
+    int oldfractype         // previous fractal type
 )
 {
     bool ret;
@@ -1031,7 +1031,7 @@ sel_type_restart:
               (oldfractype == FPPOPCORNJUL) || (oldfractype == LPOPCORNJUL)))
         set_function_parm_defaults();
 
-    /* set LATOO function defaults */
+    // set LATOO function defaults
     if (fractype == LATOO && oldfractype != LATOO)
     {
         set_function_parm_defaults();
@@ -1074,7 +1074,7 @@ void set_default_parms()
         param[i] = curfractalspecific->paramvalue[i];
         if (fractype != CELLULAR && fractype != FROTH && fractype != FROTHFP &&
                 fractype != ANT)
-            roundfloatd(&param[i]); /* don't round cellular, frothybasin or ant */
+            roundfloatd(&param[i]); // don't round cellular, frothybasin or ant
     }
     int extra = find_extra_param(fractype);
     if (extra > -1)
@@ -1109,7 +1109,7 @@ int build_fractal_list(int fractals[], int *last_val, const char *nameptr[])
 
 const char *juli3Doptions[] = {"monocular","lefteye","righteye","red-blue"};
 
-/* JIIM */
+// JIIM
 #ifdef RANDOM_RUN
 static char JIIMstr1[] = "Breadth first, Depth first, Random Walk, Random Run?";
 const char *JIIMmethod[] = {"breadth", "depth", "walk", "run"};
@@ -1120,10 +1120,10 @@ const char *JIIMmethod[] = {"breadth", "depth", "walk"};
 static char JIIMstr2[] = "Left first or Right first?";
 const char *JIIMleftright[] = {"left", "right"};
 
-/* moved from miscres.c so sizeof structure can be accessed here */
+// moved from miscres.c so sizeof structure can be accessed here
 struct trig_funct_lst trigfn[] =
-/* changing the order of these alters meaning of *.fra file */
-/* maximum 6 characters in function names or recheck all related code */
+// changing the order of these alters meaning of *.fra file
+// maximum 6 characters in function names or recheck all related code
 {
     {"sin",   dStkSin,   dStkSin,   dStkSin   },
     {"cosxx", dStkCosXX, dStkCosXX, dStkCosXX },
@@ -1132,7 +1132,7 @@ struct trig_funct_lst trigfn[] =
     {"exp",   dStkExp,   dStkExp,   dStkExp   },
     {"log",   dStkLog,   dStkLog,   dStkLog   },
     {"sqr",   dStkSqr,   dStkSqr,   dStkSqr   },
-    {"recip", dStkRecip, dStkRecip, dStkRecip }, /* from recip on new in v16 */
+    {"recip", dStkRecip, dStkRecip, dStkRecip }, // from recip on new in v16
     {"ident", StkIdent,  StkIdent,  StkIdent  },
     {"cos",   dStkCos,   dStkCos,   dStkCos   },
     {"tan",   dStkTan,   dStkTan,   dStkTan   },
@@ -1164,8 +1164,8 @@ const int numtrigfn = NUMTRIGFN;
 
 char tstack[4096] = { 0 };
 
-/* --------------------------------------------------------------------- */
-int get_fract_params(int caller)        /* prompt for type-specific parms */
+// ---------------------------------------------------------------------
+int get_fract_params(int caller)        // prompt for type-specific parms
 {
     const char *v0 = "From cx (real part)";
     const char *v1 = "From cy (imaginary part)";
@@ -1192,7 +1192,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
     FILE *entryfile;
     const char *trignameptr[NUMTRIGFN];
 #ifdef XFRACT
-    static /* Can't initialize aggregates on the stack */
+    static // Can't initialize aggregates on the stack
 #endif
     const char *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
     struct fractalspecificstuff *jborbit = nullptr;
@@ -1209,7 +1209,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
     {
         int i;
         if (curfractalspecific->name[0] == '*'
-                && (i = curfractalspecific->tofloat) != NOFRACTAL  /* FIXED BUG HERE!! */
+                && (i = curfractalspecific->tofloat) != NOFRACTAL  // FIXED BUG HERE!!
                 && fractalspecific[i].name[0] != '*')
             curtype = i;
     }
@@ -1217,19 +1217,19 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
     tstack[0] = 0;
     int help_formula = curfractalspecific->helpformula;
     if (help_formula < -1) {
-        if (help_formula == -2) { /* special for formula */
+        if (help_formula == -2) { // special for formula
             filename = FormFileName;
             entryname = FormName;
         }
-        else if (help_formula == -3)  {       /* special for lsystem */
+        else if (help_formula == -3)  {       // special for lsystem
             filename = LFileName;
             entryname = LName;
         }
-        else if (help_formula == -4)  {       /* special for ifs */
+        else if (help_formula == -4)  {       // special for ifs
             filename = IFSFileName;
             entryname = IFSName;
         }
-        else { /* this shouldn't happen */
+        else { // this shouldn't happen
             filename = nullptr;
             entryname = nullptr;
         }
@@ -1237,30 +1237,30 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
             load_entry_text(entryfile,tstack,17, 0, 0);
             fclose(entryfile);
             if (fractype == FORMULA || fractype == FFORMULA)
-                frm_get_param_stuff(entryname); /* no error check, should be okay, from above */
+                frm_get_param_stuff(entryname); // no error check, should be okay, from above
         }
     }
     else if (help_formula >= 0) {
         int c,lines;
-        read_help_topic(help_formula,0,2000,tstack); /* need error handling here ?? */
+        read_help_topic(help_formula,0,2000,tstack); // need error handling here ??
         tstack[2000-help_formula] = 0;
         int i = 0;
         lines = 0;
         int j = 0;
         int k = 1;
         while ((c = tstack[i++]) != 0) {
-            /* stop at ctl, blank, or line with col 1 nonblank, max 16 lines */
-            if (k && c == ' ' && ++k <= 5) { } /* skip 4 blanks at start of line */
+            // stop at ctl, blank, or line with col 1 nonblank, max 16 lines
+            if (k && c == ' ' && ++k <= 5) { } // skip 4 blanks at start of line
             else {
                 if (c == '\n') {
-                    if (k) break; /* blank line */
+                    if (k) break; // blank line
                     if (++lines >= 16) break;
                     k = 1;
                 }
-                else if (c < 16) /* a special help format control char */
+                else if (c < 16) // a special help format control char
                     break;
                 else {
-                    if (k == 1) /* line starts in column 1 */
+                    if (k == 1) // line starts in column 1
                         break;
                     k = 0;
                 }
@@ -1292,7 +1292,7 @@ gfp_top:
     }
 
     if (fractype == FORMULA || fractype == FFORMULA) {
-        if (uses_p1)  /* set first parameter */
+        if (uses_p1)  // set first parameter
             firstparm = 0;
         else if (uses_p2)
             firstparm = 2;
@@ -1301,9 +1301,9 @@ gfp_top:
         else if (uses_p4)
             firstparm = 6;
         else
-            firstparm = 8; /* uses_p5 or no parameter */
+            firstparm = 8; // uses_p5 or no parameter
 
-        if (uses_p5)  /* set last parameter */
+        if (uses_p5)  // set last parameter
             lastparm = 10;
         else if (uses_p4)
             lastparm = 8;
@@ -1312,20 +1312,20 @@ gfp_top:
         else if (uses_p2)
             lastparm = 4;
         else
-            lastparm = 2; /* uses_p1 or no parameter */
+            lastparm = 2; // uses_p1 or no parameter
     }
 
     if (julibrot)
     {
         curfractalspecific = jborbit;
-        firstparm = 2; /* in most case Julibrot does not need first two parms */
-        if (neworbittype == QUATJULFP     ||   /* all parameters needed */
+        firstparm = 2; // in most case Julibrot does not need first two parms
+        if (neworbittype == QUATJULFP     ||   // all parameters needed
                 neworbittype == HYPERCMPLXJFP)
         {
             firstparm = 0;
             lastparm = 4;
         }
-        if (neworbittype == QUATFP        ||   /* no parameters needed */
+        if (neworbittype == QUATFP        ||   // no parameters needed
                 neworbittype == HYPERCMPLXFP)
             firstparm = 4;
     }
@@ -1496,7 +1496,7 @@ gfp_top:
 #ifdef RANDOM_RUN
         paramvalues[promptnum].uval.ch.llen = 4;
 #else
-        paramvalues[promptnum].uval.ch.llen = 3; /* disable random run */
+        paramvalues[promptnum].uval.ch.llen = 3; // disable random run
 #endif
         paramvalues[promptnum++].uval.ch.val  = major_method;
 
@@ -1514,8 +1514,8 @@ gfp_top:
         paramvalues[promptnum++].uval.ch.val = ismand ? 1 : 0;
     }
 
-    if (caller                           /* <z> command ? */
-            /*      && (display3d > 0 || promptnum == 0)) */
+    if (caller                           // <z> command ?
+            //      && (display3d > 0 || promptnum == 0))
             && (display3d > 0))
     {
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Current type has no type-specific parameters");
@@ -1531,7 +1531,7 @@ gfp_top:
     }
     else
         fkeymask = 0;
-    scroll_row_status = 0; /* make sure we start at beginning of entry */
+    scroll_row_status = 0; // make sure we start at beginning of entry
     scroll_column_status = 0;
     while (1)
     {
@@ -1623,7 +1623,7 @@ gfp_top:
         heightfp   = (float)paramvalues[promptnum++].uval.dval;
         widthfp    = (float)paramvalues[promptnum++].uval.dval;
         distfp     = (float)paramvalues[promptnum++].uval.dval;
-        ret = 1;  /* force new calc since not resumable anyway */
+        ret = 1;  // force new calc since not resumable anyway
     }
     if (curtype == INVERSEJULIA || curtype == INVERSEJULIAFP)
     {
@@ -1668,7 +1668,7 @@ void load_params(int fractype)
     {
         param[i] = fractalspecific[fractype].paramvalue[i];
         if (fractype != CELLULAR && fractype != ANT)
-            roundfloatd(&param[i]); /* don't round cellular or ant */
+            roundfloatd(&param[i]); // don't round cellular or ant
     }
     int extra = find_extra_param(fractype);
     if (extra > -1)
@@ -1697,22 +1697,22 @@ bool check_orbit_name(char *orbitname)
     return bad;
 }
 
-/* --------------------------------------------------------------------- */
+// ---------------------------------------------------------------------
 
 static FILE *gfe_file;
 
 long get_file_entry(int type, const char *title,char *fmask,
                     char *filename,char *entryname)
 {
-    /* Formula, LSystem, etc type structure, select from file */
-    /* containing definitions in the form    name { ... }     */
+    // Formula, LSystem, etc type structure, select from file
+    // containing definitions in the form    name { ... }
     bool firsttry;
     long entry_pointer;
     bool newfile = false;
     while (1) {
         firsttry = false;
-        /* binary mode used here - it is more work, but much faster, */
-        /*     especially when ftell or fgetpos is used                  */
+        // binary mode used here - it is more work, but much faster,
+        //     especially when ftell or fgetpos is used
         while (newfile || (gfe_file = fopen(filename, "rb")) == nullptr) {
             char buf[60];
             newfile = false;
@@ -1724,15 +1724,15 @@ long get_file_entry(int type, const char *title,char *fmask,
             if (getafilename(buf,fmask,filename))
                 return -1;
 
-            firsttry = true; /* if around open loop again it is an error */
+            firsttry = true; // if around open loop again it is an error
         }
-        setvbuf(gfe_file,tstack,_IOFBF,4096); /* improves speed when file is big */
+        setvbuf(gfe_file,tstack,_IOFBF,4096); // improves speed when file is big
         newfile = false;
         entry_pointer = gfe_choose_entry(type,title,filename,entryname);
         if (entry_pointer == -2)
         {
-            newfile = true; /* go to file list, */
-            continue;    /* back to getafilename */
+            newfile = true; // go to file list,
+            continue;    // back to getafilename
         }
         if (entry_pointer == -1)
             return -1;
@@ -1751,7 +1751,7 @@ long get_file_entry(int type, const char *title,char *fmask,
             {
                 fractype = !ifs_type ? IFS : IFS3D;
                 curfractalspecific = &fractalspecific[fractype];
-                set_default_parms(); /* to correct them if 3d */
+                set_default_parms(); // to correct them if 3d
                 return 0;
             }
             break;
@@ -1763,12 +1763,12 @@ long get_file_entry(int type, const char *title,char *fmask,
 
 struct entryinfo {
     char name[ITEMNAMELEN+2];
-    long point; /* points to the ( or the { following the name */
+    long point; // points to the ( or the { following the name
 };
-static struct entryinfo **gfe_choices; /* for format_getparm_line */
+static struct entryinfo **gfe_choices; // for format_getparm_line
 static const char *gfe_title;
 
-/* skip to next non-white space character and return it */
+// skip to next non-white space character and return it
 int skip_white_space(FILE *infile, long *file_offset)
 {
     int c;
@@ -1781,7 +1781,7 @@ int skip_white_space(FILE *infile, long *file_offset)
     return c;
 }
 
-/* skip to end of line */
+// skip to end of line
 int skip_comment(FILE *infile, long *file_offset)
 {
     int c;
@@ -1810,7 +1810,7 @@ int scan_entries(FILE * infile, struct entryinfo *choices, char *itemname)
     int numentries = 0;
 
     while (true)
-    {   /* scan the file for entry names */
+    {   // scan the file for entry names
         int c, len;
 top:
         c = skip_white_space(infile, &file_offset);
@@ -1823,9 +1823,9 @@ top:
         }
         temp_offset = file_offset;
         name_offset = temp_offset;
-        /* next equiv roughly to fscanf(..,"%40[^* \n\r\t({\032]",buf) */
+        // next equiv roughly to fscanf(..,"%40[^* \n\r\t({\032]",buf)
         len = 0;
-        /* allow spaces in entry names in next */
+        // allow spaces in entry names in next
         while (c != ' ' && c != '\t' && c != '(' && c != ';'
                 && c != '{' && c != '\n' && c != '\r' && c != EOF && c != '\032')
         {
@@ -1857,27 +1857,27 @@ top:
                     c = skip_comment(infile, &file_offset);
                 else
                 {
-                    if (c == '\n' || c == '\r')     /* reset temp_offset to  */
-                        temp_offset = file_offset;  /* beginning of new line */
+                    if (c == '\n' || c == '\r')     // reset temp_offset to
+                        temp_offset = file_offset;  // beginning of new line
                     c = getc(infile);
                     ++file_offset;
                 }
-                if (c == '{') /*second '{' found*/
+                if (c == '{') //second '{' found
                 {
-                    if (temp_offset == name_offset) /*if on same line, skip line*/
+                    if (temp_offset == name_offset) //if on same line, skip line
                     {
                         skip_comment(infile, &file_offset);
                         goto top;
                     }
                     else
                     {
-                        fseek(infile, temp_offset, SEEK_SET); /*else, go back to */
-                        file_offset = temp_offset - 1;        /*beginning of line*/
+                        fseek(infile, temp_offset, SEEK_SET); //else, go back to
+                        file_offset = temp_offset - 1;        //beginning of line
                         goto top;
                     }
                 }
             }
-            if (c != '}')   /* i.e. is EOF or '\032'*/
+            if (c != '}')   // i.e. is EOF or '\032'
                 break;
 
             if (strnicmp(buf, "frm:", 4) == 0 ||
@@ -1890,7 +1890,7 @@ top:
                 exclude_entry = 0;
 
             buf[ITEMNAMELEN + exclude_entry] = 0;
-            if (itemname != nullptr)  /* looking for one entry */
+            if (itemname != nullptr)  // looking for one entry
             {
                 if (stricmp(buf, itemname) == 0)
                 {
@@ -1898,7 +1898,7 @@ top:
                     return -1;
                 }
             }
-            else /* make a whole list of entries */
+            else // make a whole list of entries
             {
                 if (buf[0] != 0 && stricmp(buf, "comment") != 0 && !exclude_entry)
                 {
@@ -1919,12 +1919,12 @@ top:
     return numentries;
 }
 
-/* subrtn of get_file_entry, separated so that storage gets freed up */
+// subrtn of get_file_entry, separated so that storage gets freed up
 static long gfe_choose_entry(int type, const char *title, char *filename, char *entryname)
 {
 #ifdef XFRACT
     const char *o_instr = "Press " FK_F6 " to select file, " FK_F2 " for details, " FK_F4 " to toggle sort ";
-    /* keep the above line length < 80 characters */
+    // keep the above line length < 80 characters
 #else
     const char *o_instr = "Press " FK_F6 " to select different file, " FK_F2 " for details, " FK_F4 " to toggle sort ";
 #endif
@@ -1949,14 +1949,14 @@ retry:
         attributes[i] = 1;
     }
 
-    helptitle(); /* to display a clue when file big and next is slow */
+    helptitle(); // to display a clue when file big and next is slow
 
     numentries = scan_entries(gfe_file, &storage[0], nullptr);
     if (numentries == 0)
     {
         stopmsg(0, "File doesn't contain any valid entries");
         fclose(gfe_file);
-        return -2; /* back to file list */
+        return -2; // back to file list
     }
     strcpy(instr, o_instr);
     if (dosort)
@@ -1969,7 +1969,7 @@ retry:
         strcat(instr, "on");
     }
 
-    strcpy(buf, entryname); /* preset to last choice made */
+    strcpy(buf, entryname); // preset to last choice made
     sprintf(temp1, "%s Selection\nFile: %s", title, filename);
     formatitem = nullptr;
     boxdepth = 0;
@@ -1996,7 +1996,7 @@ retry:
     fclose(gfe_file);
     if (i < 0)
     {
-        /* go back to file list or cancel */
+        // go back to file list or cancel
         return (i == -FIK_F6) ? -2 : -1;
     }
     strcpy(entryname, choices[i]->name);
@@ -2008,7 +2008,7 @@ static int check_gfe_key(int curkey,int choice)
 {
     char infhdg[60];
     char infbuf[25*80];
-    char blanks[79];         /* used to clear the entry portion of screen */
+    char blanks[79];         // used to clear the entry portion of screen
     memset(blanks, ' ', 78);
     blanks[78] = (char) 0;
 
@@ -2042,8 +2042,8 @@ static int check_gfe_key(int curkey,int choice)
                 break;
             }
         }
-        bool in_scrolling_mode = false; /* true if entry doesn't fit available space */
-        if (c == EOF || c == '\032') { /* should never happen */
+        bool in_scrolling_mode = false; // true if entry doesn't fit available space
+        if (c == EOF || c == '\032') { // should never happen
             fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
             in_scrolling_mode = false;
         }
@@ -2053,14 +2053,14 @@ static int check_gfe_key(int curkey,int choice)
             in_scrolling_mode = true;
         strcpy(infhdg,gfe_title);
         strcat(infhdg," file entry:\n\n");
-        /* ... instead, call help with buffer?  heading added */
+        // ... instead, call help with buffer?  heading added
         driver_stack_screen();
         helptitle();
         driver_set_attr(1,0,C_GENERAL_MED,24*80);
 
         g_text_cbase = 0;
         driver_put_string(2,1,C_GENERAL_HI,infhdg);
-        g_text_cbase = 2; /* left margin is 2 */
+        g_text_cbase = 2; // left margin is 2
         driver_put_string(4,0,C_GENERAL_MED,infbuf);
 
         {
@@ -2071,7 +2071,7 @@ static int check_gfe_key(int curkey,int choice)
         int top_line = 0;
         int left_column = 0;
         bool done = false;
-        bool rewrite_infbuf = false;  /* if true: rewrite the entry portion of screen */
+        bool rewrite_infbuf = false;  // if true: rewrite the entry portion of screen
         while (!done) {
             if (rewrite_infbuf) {
                 rewrite_infbuf = false;
@@ -2092,35 +2092,35 @@ static int check_gfe_key(int curkey,int choice)
                     || i == FIK_PAGE_DOWN      || i == FIK_CTL_PAGE_DOWN) {
                 switch (i) {
                 case FIK_DOWN_ARROW:
-                case FIK_CTL_DOWN_ARROW: /* down one line */
+                case FIK_CTL_DOWN_ARROW: // down one line
                     if (in_scrolling_mode && top_line < lines_in_entry - 17) {
                         top_line++;
                         rewrite_infbuf = true;
                     }
                     break;
                 case FIK_UP_ARROW:
-                case FIK_CTL_UP_ARROW:  /* up one line */
+                case FIK_CTL_UP_ARROW:  // up one line
                     if (in_scrolling_mode && top_line > 0) {
                         top_line--;
                         rewrite_infbuf = true;
                     }
                     break;
                 case FIK_LEFT_ARROW:
-                case FIK_CTL_LEFT_ARROW:  /* left one column */
+                case FIK_CTL_LEFT_ARROW:  // left one column
                     if (in_scrolling_mode && left_column > 0) {
                         left_column--;
                         rewrite_infbuf = true;
                     }
                     break;
                 case FIK_RIGHT_ARROW:
-                case FIK_CTL_RIGHT_ARROW: /* right one column */
+                case FIK_CTL_RIGHT_ARROW: // right one column
                     if (in_scrolling_mode && strchr(infbuf, '\021') != nullptr) {
                         left_column++;
                         rewrite_infbuf = true;
                     }
                     break;
                 case FIK_PAGE_DOWN:
-                case FIK_CTL_PAGE_DOWN: /* down 17 lines */
+                case FIK_CTL_PAGE_DOWN: // down 17 lines
                     if (in_scrolling_mode && top_line < lines_in_entry - 17) {
                         top_line += 17;
                         if (top_line > lines_in_entry - 17)
@@ -2129,7 +2129,7 @@ static int check_gfe_key(int curkey,int choice)
                     }
                     break;
                 case FIK_PAGE_UP:
-                case FIK_CTL_PAGE_UP: /* up 17 lines */
+                case FIK_CTL_PAGE_UP: // up 17 lines
                     if (in_scrolling_mode && top_line > 0) {
                         top_line -= 17;
                         if (top_line < 0)
@@ -2138,7 +2138,7 @@ static int check_gfe_key(int curkey,int choice)
                     }
                     break;
                 case FIK_END:
-                case FIK_CTL_END:       /* to end of entry */
+                case FIK_CTL_END:       // to end of entry
                     if (in_scrolling_mode) {
                         top_line = lines_in_entry - 17;
                         left_column = 0;
@@ -2146,7 +2146,7 @@ static int check_gfe_key(int curkey,int choice)
                     }
                     break;
                 case FIK_HOME:
-                case FIK_CTL_HOME:     /* to beginning of entry */
+                case FIK_CTL_HOME:     // to beginning of entry
                     if (in_scrolling_mode) {
                         left_column = 0;
                         top_line = left_column;
@@ -2158,7 +2158,7 @@ static int check_gfe_key(int curkey,int choice)
                 }
             }
             else
-                done = true;  /* a key other than scrolling key was pressed */
+                done = true;  // a key other than scrolling key was pressed
         }
         g_text_cbase = 0;
         driver_hide_text_cursor();
@@ -2179,39 +2179,39 @@ static void load_entry_text(
     int c = 0;
     int tabpos = 7 - (startcol % 8);
 
-    if (maxlines <= 0) { /* no lines to get! */
+    if (maxlines <= 0) { // no lines to get!
         *buf = (char) 0;
         return;
     }
 
-    /*move down to starting row*/
+    //move down to starting row
     for (int i = 0; i < startrow; i++) {
         while ((c=fgetc(entfile)) != '\n' && c != EOF && c != '\032') {
             if (c == ';')
                 comment = true;
-            if (c == '}' && !comment)  /* end of entry before start line */
-                break;                 /* this should never happen       */
+            if (c == '}' && !comment)  // end of entry before start line
+                break;                 // this should never happen
         }
         if (c == '\n')
             comment = false;
-        else {                       /* reached end of file or end of entry */
+        else {                       // reached end of file or end of entry
             *buf = (char) 0;
             return;
         }
     }
 
-    /* write maxlines of entry */
+    // write maxlines of entry
     while (maxlines-- > 0) {
         comment = false;
         c = 0;
         linelen = c;
 
-        /* skip line up to startcol */
+        // skip line up to startcol
         int i = 0;
         while (i++ < startcol && (c = fgetc(entfile)) != EOF && c != '\032') {
             if (c == ';')
                 comment = true;
-            if (c == '}' && !comment) { /*reached end of entry*/
+            if (c == '}' && !comment) { //reached end of entry
                 *buf = (char) 0;
                 return;
             }
@@ -2221,26 +2221,26 @@ static void load_entry_text(
             }
             if (c == '\t')
                 i += 7 - (i % 8);
-            if (c == '\n') {  /*need to insert '\n', even for short lines*/
+            if (c == '\n') {  //need to insert '\n', even for short lines
                 *(buf++) = (char)c;
                 break;
             }
         }
-        if (c == EOF || c == '\032') { /* unexpected end of file */
+        if (c == EOF || c == '\032') { // unexpected end of file
             *buf = (char) 0;
             return;
         }
-        if (c == '\n')       /* line is already completed */
+        if (c == '\n')       // line is already completed
             continue;
 
-        if (i > startcol) {  /* can happen because of <tab> character */
+        if (i > startcol) {  // can happen because of <tab> character
             while (i-- > startcol) {
                 *(buf++) = ' ';
                 linelen++;
             }
         }
 
-        /*process rest of line into buf */
+        //process rest of line into buf
         while ((c = fgetc(entfile)) != EOF && c != '\032') {
             if (c == ';')
                 comment = true;
@@ -2248,7 +2248,7 @@ static void load_entry_text(
                 comment = false;
             if (c != '\r') {
                 if (c == '\t') {
-                    while ((linelen % 8) != tabpos && linelen < 75) { /* 76 wide max */
+                    while ((linelen % 8) != tabpos && linelen < 75) { // 76 wide max
                         *(buf++) = ' ';
                         ++linelen;
                     }
@@ -2264,18 +2264,18 @@ static void load_entry_text(
                 }
                 else
                     *(buf++) = (char)c;
-                if (c == '}' && !comment) { /*reached end of entry*/
+                if (c == '}' && !comment) { //reached end of entry
                     *(buf) = (char) 0;
                     return;
                 }
             }
         }
-        if (c == EOF || c == '\032') { /* unexpected end of file */
+        if (c == EOF || c == '\032') { // unexpected end of file
             *buf = (char) 0;
             return;
         }
     }
-    if (*(buf-1) == '\n') /* specified that buf will not end with a '\n' */
+    if (*(buf-1) == '\n') // specified that buf will not end with a '\n'
         buf--;
     *buf = (char) 0;
 }
@@ -2303,9 +2303,9 @@ static void format_parmfile_line(int choice,char *buf)
 #endif
 }
 
-/* --------------------------------------------------------------------- */
+// ---------------------------------------------------------------------
 
-int get_fract3d_params() /* prompt for 3D fractal parameters */
+int get_fract3d_params() // prompt for 3D fractal parameters
 {
     int i,k,ret,oldhelpmode;
     struct fullscreenvalues uvalues[20];
@@ -2365,10 +2365,10 @@ get_f3d_exit:
     return ret;
 }
 
-/* --------------------------------------------------------------------- */
-/* These macros streamline the "save near space" campaign */
+// ---------------------------------------------------------------------
+// These macros streamline the "save near space" campaign
 
-int get_3d_params()     /* prompt for 3D parameters */
+int get_3d_params()     // prompt for 3D parameters
 {
     const char *choices[11];
     int attributes[21];
@@ -2463,7 +2463,7 @@ restart_1:
     Targa_Out = uvalues[k++].uval.ch.val != 0;
     grayflag  = uvalues[k++].uval.ch.val != 0;
 
-    /* check ranges */
+    // check ranges
     if (previewfactor < 2)
         previewfactor = 2;
     if (previewfactor > 2000)
@@ -2656,7 +2656,7 @@ restart_3:
     return 0;
 }
 
-/* --------------------------------------------------------------------- */
+// ---------------------------------------------------------------------
 static bool get_light_params()
 {
     const char *prompts3d[13];
@@ -2665,7 +2665,7 @@ static bool get_light_params()
     int k;
     int oldhelpmode;
 
-    /* defaults go here */
+    // defaults go here
 
     k = -1;
 
@@ -2769,7 +2769,7 @@ static bool get_light_params()
     return false;
 }
 
-/* --------------------------------------------------------------------- */
+// ---------------------------------------------------------------------
 
 
 static bool check_mapfile()
@@ -2803,10 +2803,10 @@ static bool check_mapfile()
                 break;
             }
         }
-        memcpy(olddacbox,g_dac_box,256*3); /* save the DAC */
+        memcpy(olddacbox,g_dac_box,256*3); // save the DAC
         bool valid = ValidateLuts(temp1);
-        memcpy(g_dac_box,olddacbox,256*3); /* restore the DAC */
-        if (valid) /* Oops, somethings wrong */
+        memcpy(g_dac_box,olddacbox,256*3); // restore the DAC
+        if (valid) // Oops, somethings wrong
         {
             askflag = true;
             continue;
@@ -2827,7 +2827,7 @@ static bool get_funny_glasses_params()
     int k;
     int oldhelpmode;
 
-    /* defaults */
+    // defaults
     if (ZVIEWER == 0)
         ZVIEWER = 150;
     if (g_eye_separation == 0)
@@ -2926,11 +2926,11 @@ void setbailoutformula(enum bailouts test)
     case Mod:
     default:
     {
-        if (debugflag != 72)     /* Fast 287 math */
+        if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpMODbailout;
         else
             floatbailout = fpMODbailout;
-        if (debugflag != 8088)    /* Fast 386 math */
+        if (debugflag != 8088)    // Fast 386 math
             longbailout = asm386lMODbailout;
         else
             longbailout = asmlMODbailout;
@@ -2940,11 +2940,11 @@ void setbailoutformula(enum bailouts test)
     }
     case Real:
     {
-        if (debugflag != 72)     /* Fast 287 math */
+        if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpREALbailout;
         else
             floatbailout = fpREALbailout;
-        if (debugflag != 8088)    /* Fast 386 math */
+        if (debugflag != 8088)    // Fast 386 math
             longbailout = asm386lREALbailout;
         else
             longbailout = asmlREALbailout;
@@ -2954,11 +2954,11 @@ void setbailoutformula(enum bailouts test)
     }
     case Imag:
     {
-        if (debugflag != 72)     /* Fast 287 math */
+        if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpIMAGbailout;
         else
             floatbailout = fpIMAGbailout;
-        if (debugflag != 8088)    /* Fast 386 math */
+        if (debugflag != 8088)    // Fast 386 math
             longbailout = asm386lIMAGbailout;
         else
             longbailout = asmlIMAGbailout;
@@ -2968,11 +2968,11 @@ void setbailoutformula(enum bailouts test)
     }
     case Or:
     {
-        if (debugflag != 72)     /* Fast 287 math */
+        if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpORbailout;
         else
             floatbailout = fpORbailout;
-        if (debugflag != 8088)    /* Fast 386 math */
+        if (debugflag != 8088)    // Fast 386 math
             longbailout = asm386lORbailout;
         else
             longbailout = asmlORbailout;
@@ -2982,11 +2982,11 @@ void setbailoutformula(enum bailouts test)
     }
     case And:
     {
-        if (debugflag != 72)     /* Fast 287 math */
+        if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpANDbailout;
         else
             floatbailout = fpANDbailout;
-        if (debugflag != 8088)    /* Fast 386 math */
+        if (debugflag != 8088)    // Fast 386 math
             longbailout = asm386lANDbailout;
         else
             longbailout = asmlANDbailout;
@@ -2996,11 +2996,11 @@ void setbailoutformula(enum bailouts test)
     }
     case Manh:
     {
-        if (debugflag != 72)     /* Fast 287 math */
+        if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpMANHbailout;
         else
             floatbailout = fpMANHbailout;
-        if (debugflag != 8088)    /* Fast 386 math */
+        if (debugflag != 8088)    // Fast 386 math
             longbailout = asm386lMANHbailout;
         else
             longbailout = asmlMANHbailout;
@@ -3010,11 +3010,11 @@ void setbailoutformula(enum bailouts test)
     }
     case Manr:
     {
-        if (debugflag != 72)     /* Fast 287 math */
+        if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpMANRbailout;
         else
             floatbailout = fpMANRbailout;
-        if (debugflag != 8088)    /* Fast 386 math */
+        if (debugflag != 8088)    // Fast 386 math
             longbailout = asm386lMANRbailout;
         else
             longbailout = asmlMANRbailout;
