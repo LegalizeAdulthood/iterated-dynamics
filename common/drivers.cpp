@@ -11,8 +11,8 @@ extern Driver *x11_driver;
 extern Driver *gdi_driver;
 extern Driver *disk_driver;
 
-/* list of drivers that are supported by source code in fractint */
-/* default driver is first one in the list that initializes. */
+// list of drivers that are supported by source code in fractint
+// default driver is first one in the list that initializes.
 #define MAX_DRIVERS 10
 static int num_drivers = 0;
 static Driver *s_available[MAX_DRIVERS];
@@ -57,7 +57,7 @@ init_drivers(int *argc, char **argv)
     load_driver(gdi_driver, argc, argv);
 #endif
 
-    return num_drivers;     /* number of drivers supported at runtime */
+    return num_drivers;     // number of drivers supported at runtime
 }
 
 /* add_video_mode
@@ -70,8 +70,8 @@ add_video_mode(Driver *drv, VIDEOINFO *mode)
 #if defined(_WIN32)
     _ASSERTE(g_video_table_len < MAXVIDEOMODES);
 #endif
-    /* stash away driver pointer so we can init driver for selected mode */
-    mode->driver = drv;
+    // stash away driver pointer so we can init driver for selected mode
+ mode->driver = drv;
     memcpy(&g_video_table[g_video_table_len], mode, sizeof(g_video_table[0]));
     g_video_table_len++;
 }
