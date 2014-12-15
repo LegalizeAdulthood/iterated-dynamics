@@ -23,7 +23,7 @@
 #include "drivers.h"
 #include "helpcom.h"
 
-struct videoinfo g_video_entry;
+videoinfo g_video_entry;
 int helpmode;
 
 int lookatmouse=0;  /* see notes at mouseread routine */
