@@ -46,8 +46,8 @@ static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
 bool startdisk1(char *File_Name2, FILE *Source, bool overlay);
 static void set_upr_lwr();
 static int end_object(bool triout);
-static int offscreen(struct point);
-static int out_triangle(struct f_point, struct f_point, struct f_point, int, int, int);
+static int offscreen(point);
+static int out_triangle(f_point, f_point, f_point, int, int, int);
 static int RAY_Header();
 static int start_object();
 static void draw_light_box(double *, double *, MATRIX);
@@ -56,7 +56,7 @@ static void File_Error(char *, int);
 static void line3d_cleanup();
 static void clipcolor(int, int, int);
 static void interpcolor(int, int, int);
-static void putatriangle(struct point, struct point, struct point, int);
+static void putatriangle(point, point, point, int);
 static void putminmax(int, int, int);
 static void triangle_bounds(float pt_t[3][3]);
 static void T_clipcolor(int, int, int);
@@ -102,13 +102,13 @@ static float *sinthetaarray;    // all sine thetas go here
 static float *costhetaarray;    // all cosine thetas go here
 static double rXrscale;     // precalculation factor
 static bool persp = false;      // flag for indicating perspective transformations
-static struct point p1, p2, p3;
-static struct f_point f_bad;// out of range value
-static struct point bad;    // out of range value
+static point p1, p2, p3;
+static f_point f_bad;// out of range value
+static point bad;    // out of range value
 static long num_tris; // number of triangles output to ray trace file
 
 // global variables defined here
-struct f_point *f_lastrow = nullptr;
+f_point *f_lastrow = nullptr;
 void (* standardplot)(int, int, int);
 MATRIX m; // transformation matrix
 int Ambient;
@@ -133,7 +133,7 @@ int xshift;
 int yshift;
 int bad_value = -10000;         // set bad values to this
 int bad_check = -3000;          // check values against this to determine if good
-struct point *lastrow = nullptr; // this array remembers the previous line
+point *lastrow = nullptr; // this array remembers the previous line
 int RAY = 0;                    // Flag to generate Ray trace compatible files in 3d
 bool BRIEF = false;             // 1 = short ray trace files
 
@@ -143,7 +143,7 @@ VECTOR view;                // position of observer for perspective
 VECTOR cross;
 static VECTOR tmpcross;
 
-static struct point oldlast = { 0, 0, 0 }; // old pixels
+static point oldlast = { 0, 0, 0 }; // old pixels
 
 
 int line3d(BYTE * pixels, unsigned linelen)
@@ -157,10 +157,10 @@ int line3d(BYTE * pixels, unsigned linelen)
     float costheta, sintheta;    // precalculated sin/cos of latitude
     int next;                    // used by preview and grid
     int col;                     // current column (original GIF)
-    struct point cur;            // current pixels
-    struct point old;            // old pixels
-    struct f_point f_cur = { 0.0 };
-    struct f_point f_old;
+    point cur;            // current pixels
+    point old;            // old pixels
+    f_point f_cur = { 0.0 };
+    f_point f_old;
     VECTOR v;                    // double vector
     VECTOR v1, v2;
     VECTOR crossavg;
@@ -1068,7 +1068,7 @@ static void putminmax(int x, int y, int /*color*/)
 */
 #define MAXOFFSCREEN  2    // allow two of three points to be off screen
 
-static void putatriangle(struct point pt1, struct point pt2, struct point pt3, int color)
+static void putatriangle(point pt1, point pt2, point pt3, int color)
 {
     int miny, maxy;
     int xlim;
@@ -1141,7 +1141,7 @@ static void putatriangle(struct point pt1, struct point pt2, struct point pt3, i
     plot = normalplot;
 }
 
-static int offscreen(struct point pt)
+static int offscreen(point pt)
 {
     if (pt.x >= 0)
         if (pt.x < xdots)
@@ -1757,7 +1757,7 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
 //
 //******************************************************************
 
-static int out_triangle(struct f_point pt1, struct f_point pt2, struct f_point pt3, int c1, int c2, int c3)
+static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, int c3)
 {
     float c[3];
     float pt_t[3][3];
@@ -2474,11 +2474,11 @@ static int line3dmem()
         check_extra += sizeof(*sinthetaarray) * xdots;
         costhetaarray = (float *)(sinthetaarray + xdots);
         check_extra += sizeof(*costhetaarray) * xdots;
-        f_lastrow = (struct f_point *)(costhetaarray + xdots);
+        f_lastrow = (f_point *)(costhetaarray + xdots);
     }
     else
     {
-        f_lastrow = (struct f_point *)(lastrow + xdots);
+        f_lastrow = (f_point *)(lastrow + xdots);
     }
     check_extra += sizeof(*f_lastrow) * (xdots);
     if (pot16bit)
@@ -2492,13 +2492,13 @@ static int line3dmem()
     if (FILLTYPE == 2 || FILLTYPE == 3 || FILLTYPE == 5 || FILLTYPE == 6)
     {
         // end of arrays if we use extra segement
-        check_extra += sizeof(struct minmax) * ydots;
+        check_extra += sizeof(minmax) * ydots;
         if (check_extra > (1L << 16))     // run out of extra segment?
         {
             if (debugflag == 2222)
                 stopmsg(0,"malloc minmax");
             // not using extra segment so decrement check_extra
-            check_extra -= sizeof(struct minmax) * ydots;
+            check_extra -= sizeof(minmax) * ydots;
         }
         bool resized = false;
         try
