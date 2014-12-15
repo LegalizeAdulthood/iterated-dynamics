@@ -1221,7 +1221,7 @@ void sleepms_old(long ms)
 {
     static long scalems = 0L;
     int savehelpmode;
-    struct timebx t1,t2;
+    timebx t1,t2;
 #define SLEEPINIT 250 // milliseconds for calibration
     bool const savetabmode  = tabmode;
     savehelpmode = helpmode;
