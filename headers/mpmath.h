@@ -4,29 +4,32 @@
 #include "cmplx.h"
 #endif
 #if !defined(XFRACT)
-struct MP {
+struct MP
+{
     int Exp;
     unsigned long Mant;
 };
 #else
-struct MP {
+struct MP
+{
     double val;
 };
 #endif
-struct MPC {
-    struct MP x, y;
+struct MPC
+{
+    MP x, y;
 };
 extern int MPOverflow;
 /* Mark Peterson's expanded floating point operators. If
    the operation results in an overflow (result < 2**(2**14), or division
    by zero) the global 'MPoverflow' is set to one. */
-extern int (*pMPcmp)(struct MP , struct MP);
-extern struct MP  *(*pMPmul)(struct MP , struct MP);
-extern struct MP  *(*pMPdiv)(struct MP , struct MP);
-extern struct MP  *(*pMPadd)(struct MP , struct MP);
-extern struct MP  *(*pMPsub)(struct MP , struct MP);
-extern struct MP  *(*pd2MP)(double)                ;
-extern double     *(*pMP2d)(struct MP)             ;
+extern int (*pMPcmp)(MP , MP);
+extern MP  *(*pMPmul)(MP , MP);
+extern MP  *(*pMPdiv)(MP , MP);
+extern MP  *(*pMPadd)(MP , MP);
+extern MP  *(*pMPsub)(MP , MP);
+extern MP  *(*pd2MP)(double)                ;
+extern double     *(*pMP2d)(MP)             ;
 // ** Formula Declarations **
 #if !defined(XFRACT)
 enum MATH_TYPE { D_MATH, M_MATH, L_MATH };
@@ -47,17 +50,19 @@ extern enum MATH_TYPE MathType;
 // the following are declared 4 dimensional as an experiment
 // changeing declarations to DComplex and LComplex restores the code
 // to 2D
-union Arg {
+union Arg
+{
     DComplex     d;
-    struct MPC m;
+    MPC m;
     LComplex    l;
 };
-struct ConstArg {
+struct ConstArg
+{
     const char *s;
     int len;
-    union Arg a;
+    Arg a;
 };
-extern union Arg *Arg1,*Arg2;
+extern Arg *Arg1,*Arg2;
 extern void lStkSin(),lStkCos(),lStkSinh(),lStkCosh(),lStkLog(),lStkExp(),lStkSqr();
 extern void dStkSin(),dStkCos(),dStkSinh(),dStkCosh(),dStkLog(),dStkExp(),dStkSqr();
 extern void (*ltrig0)();
