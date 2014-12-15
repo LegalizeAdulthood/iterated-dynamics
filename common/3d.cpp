@@ -55,7 +55,7 @@ ROTZ(i) =           cosi  sini    0     0
 #include <float.h>
 #include <string.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
+// see Fractint.c for a description of the "include"  hierarchy
 #include "port.h"
 #include "prototyp.h"
 
@@ -71,7 +71,7 @@ void identity(MATRIX m)
                 m[j][i] = 0.0;
 }
 
-/* Multiply two matrices */
+// Multiply two matrices
 void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
 {
     /* result stored in MATRIX new to avoid problems
@@ -86,7 +86,7 @@ void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
     memcpy(mat3,newmat,sizeof(newmat));
 }
 
-/* multiply a matrix by a scalar */
+// multiply a matrix by a scalar
 void scale(double sx, double sy, double sz, MATRIX m)
 {
     MATRIX scale;
@@ -97,7 +97,7 @@ void scale(double sx, double sy, double sz, MATRIX m)
     mat_mul(m,scale,m);
 }
 
-/* rotate about X axis  */
+// rotate about X axis
 void xrot(double theta, MATRIX m)
 {
     MATRIX rot;
@@ -112,7 +112,7 @@ void xrot(double theta, MATRIX m)
     mat_mul(m,rot,m);
 }
 
-/* rotate about Y axis  */
+// rotate about Y axis
 void yrot(double theta, MATRIX m)
 {
     MATRIX rot;
@@ -127,7 +127,7 @@ void yrot(double theta, MATRIX m)
     mat_mul(m,rot,m);
 }
 
-/* rotate about Z axis  */
+// rotate about Z axis
 void zrot(double theta, MATRIX m)
 {
     MATRIX rot;
@@ -142,7 +142,7 @@ void zrot(double theta, MATRIX m)
     mat_mul(m,rot,m);
 }
 
-/* translate  */
+// translate
 void trans(double tx, double ty, double tz, MATRIX m)
 {
     MATRIX trans;
@@ -153,7 +153,7 @@ void trans(double tx, double ty, double tz, MATRIX m)
     mat_mul(m,trans,m);
 }
 
-/* cross product  - useful because cross is perpendicular to v and w */
+// cross product  - useful because cross is perpendicular to v and w
 int cross_product(VECTOR v, VECTOR w, VECTOR cross)
 {
     VECTOR tmp;
@@ -166,13 +166,13 @@ int cross_product(VECTOR v, VECTOR w, VECTOR cross)
     return 0;
 }
 
-/* normalize a vector to length 1 */
+// normalize a vector to length 1
 bool normalize_vector(VECTOR v)
 {
     double vlength;
     vlength = dot_product(v,v);
 
-    /* bailout if zero vlength */
+    // bailout if zero vlength
     if (vlength < FLT_MIN || vlength > FLT_MAX)
         return true;
     vlength = sqrt(vlength);
@@ -185,8 +185,8 @@ bool normalize_vector(VECTOR v)
     return false;
 }
 
-/* multiply source vector s by matrix m, result in target t */
-/* used to apply transformations to a vector */
+// multiply source vector s by matrix m, result in target t
+// used to apply transformations to a vector
 int vmult(VECTOR s, MATRIX m, VECTOR t)
 {
     VECTOR tmp;
@@ -195,18 +195,18 @@ int vmult(VECTOR s, MATRIX m, VECTOR t)
         tmp[j] = 0.0;
         for (int i = 0; i < RMAX-1; i++)
             tmp[j] += s[i]*m[i][j];
-        /* vector is really four dimensional with last component always 1 */
+        // vector is really four dimensional with last component always 1
         tmp[j] += m[3][j];
     }
-    /* set target = tmp. Necessary to use tmp in case source = target */
+    // set target = tmp. Necessary to use tmp in case source = target
     memcpy(t,tmp,sizeof(tmp));
     return 0;
 }
 
-/* multiply vector s by matrix m, result in s */
-/* use with a function pointer in line3d.c */
-/* must coordinate calling conventions with */
-/* mult_vec in general.asm */
+// multiply vector s by matrix m, result in s
+// use with a function pointer in line3d.c
+// must coordinate calling conventions with
+// mult_vec in general.asm
 void mult_vec(VECTOR s)
 {
     VECTOR tmp;
@@ -215,14 +215,14 @@ void mult_vec(VECTOR s)
         tmp[j] = 0.0;
         for (int i = 0; i < RMAX-1; i++)
             tmp[j] += s[i]*m[i][j];
-        /* vector is really four dimensional with last component always 1 */
+        // vector is really four dimensional with last component always 1
         tmp[j] += m[3][j];
     }
-    /* set target = tmp. Necessary to use tmp in case source = target */
+    // set target = tmp. Necessary to use tmp in case source = target
     memcpy(s,tmp,sizeof(tmp));
 }
 
-/* perspective projection of vector v with respect to viewpont vector view */
+// perspective projection of vector v with respect to viewpont vector view
 int
 perspective(VECTOR v)
 {
@@ -231,34 +231,34 @@ perspective(VECTOR v)
 
     if (denom >= 0.0)
     {
-        v[0] = bad_value;   /* clipping will catch these values */
-        v[1] = bad_value;   /* so they won't plot values BEHIND viewer */
+        v[0] = bad_value;   // clipping will catch these values
+        v[1] = bad_value;   // so they won't plot values BEHIND viewer
         v[2] = bad_value;
         return -1;
     }
     v[0] = (v[0]*view[2] - view[0]*v[2])/denom;
     v[1] = (v[1]*view[2] - view[1]*v[2])/denom;
 
-    /* calculation of z if needed later */
-    /* v[2] =  v[2]/denom;*/
+    // calculation of z if needed later
+    // v[2] =  v[2]/denom;
     return 0;
 }
 
-/* long version of vmult and perspective combined for speed */
+// long version of vmult and perspective combined for speed
 int
 longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
                int bitshift)
 {
-    /* s: source vector */
-    /* m: transformation matrix */
-    /* t0: after transformation, before persp */
-    /* t: target vector */
-    /* lview: perspective viewer coordinates */
-    /* bitshift: fixed point conversion bitshift */
+    // s: source vector
+    // m: transformation matrix
+    // t0: after transformation, before persp
+    // t: target vector
+    // lview: perspective viewer coordinates
+    // bitshift: fixed point conversion bitshift
     LVECTOR tmp;
     int k;
     overflow = false;
-    k = CMAX-1;                  /* shorten the math if non-perspective and non-illum */
+    k = CMAX-1;                  // shorten the math if non-perspective and non-illum
     if (lview[2] == 0 && t0[0] == 0)
         k--;
 
@@ -267,24 +267,24 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
         tmp[j] = 0;
         for (int i = 0; i < RMAX-1; i++)
             tmp[j] += multiply(s[i],m[i][j],bitshift);
-        /* vector is really four dimensional with last component always 1 */
+        // vector is really four dimensional with last component always 1
         tmp[j] += m[3][j];
     }
-    if (t0[0]) /* first component of  t0 used as flag */
+    if (t0[0]) // first component of  t0 used as flag
     {
-        /* faster than for loop, if less general */
+        // faster than for loop, if less general
         t0[0] = tmp[0];
         t0[1] = tmp[1];
         t0[2] = tmp[2];
     }
-    if (lview[2] != 0)           /* perspective 3D */
+    if (lview[2] != 0)           // perspective 3D
     {
 
         LVECTOR tmpview;
         long denom;
 
         denom = lview[2] - tmp[2];
-        if (denom >= 0)           /* bail out if point is "behind" us */
+        if (denom >= 0)           // bail out if point is "behind" us
         {
             t[0] = bad_value;
             t[0] = t[0]<<bitshift;
@@ -293,7 +293,7 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
             return -1;
         }
 
-        /* doing math in this order helps prevent overflow */
+        // doing math in this order helps prevent overflow
         tmpview[0] = divide(lview[0],denom,bitshift);
         tmpview[1] = divide(lview[1],denom,bitshift);
         tmpview[2] = divide(lview[2],denom,bitshift);
@@ -304,12 +304,12 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
         tmp[1] = multiply(tmp[1], tmpview[2], bitshift) -
                  multiply(tmpview[1], tmp[2], bitshift);
 
-        /* z coordinate if needed           */
-        /* tmp[2] = divide(lview[2],denom);  */
+        // z coordinate if needed
+        // tmp[2] = divide(lview[2],denom);
     }
 
-    /* set target = tmp. Necessary to use tmp in case source = target */
-    /* faster than for loop, if less general */
+    // set target = tmp. Necessary to use tmp in case source = target
+    // faster than for loop, if less general
     t[0] = tmp[0];
     t[1] = tmp[1];
     t[2] = tmp[2];
@@ -325,7 +325,7 @@ longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
     long denom;
     overflow = 0;
     denom = lview[2] - lv[2];
-    if (denom >= 0)              /* bail out if point is "behind" us */
+    if (denom >= 0)              // bail out if point is "behind" us
     {
         lv[0] = bad_value;
         lv[0] = lv[0]<<bitshift;
@@ -334,7 +334,7 @@ longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
         return -1;
     }
 
-    /* doing math in this order helps prevent overflow */
+    // doing math in this order helps prevent overflow
     tmpview[0] = divide(lview[0],denom,bitshift);
     tmpview[1] = divide(lview[1],denom,bitshift);
     tmpview[2] = divide(lview[2],denom,bitshift);
@@ -345,8 +345,8 @@ longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
     lv[1] = multiply(lv[1], tmpview[2], bitshift) -
             multiply(tmpview[1], lv[2], bitshift);
 
-    /* z coordinate if needed           */
-    /* lv[2] = divide(lview[2],denom);  */
+    // z coordinate if needed
+    // lv[2] = divide(lview[2],denom);
     return overflow ? 1 : 0;
 }
 
@@ -362,12 +362,12 @@ int longvmult(LVECTOR s,LMATRIX m,LVECTOR t,int bitshift)
         tmp[j] = 0;
         for (int i = 0; i < RMAX-1; i++)
             tmp[j] += multiply(s[i],m[i][j],bitshift);
-        /* vector is really four dimensional with last component always 1 */
+        // vector is really four dimensional with last component always 1
         tmp[j] += m[3][j];
     }
 
-    /* set target = tmp. Necessary to use tmp in case source = target */
-    /* faster than for loop, if less general */
+    // set target = tmp. Necessary to use tmp in case source = target
+    // faster than for loop, if less general
     t[0] = tmp[0];
     t[1] = tmp[1];
     t[2] = tmp[2];
