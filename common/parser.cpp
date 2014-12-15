@@ -153,31 +153,35 @@ struct token_st
 #define MAX_STORES ((Max_Ops/4)*2)  // at most only half the ops can be stores
 #define MAX_LOADS  ((unsigned)(Max_Ops*.8))  // and 80% can be loads
 
-static struct PEND_OP o[2300];
+static PEND_OP o[2300];
 
 struct var_list_st
 {
     char name[34];
-    struct var_list_st * next_item;
-} * var_list;
+    var_list_st *next_item;
+};
+var_list_st *var_list;
 
 struct const_list_st
 {
     DComplex complex_const;
-    struct const_list_st * next_item;
-} * complx_list, * real_list;
+    const_list_st * next_item;
+};
+const_list_st *complx_list;
+const_list_st *real_list;
 
 static void parser_allocate();
 
-union Arg *Arg1, *Arg2;
+Arg *Arg1;
+Arg *Arg2;
 
 // Some of these variables should be renamed for safety
-union Arg s[20];
-union Arg **Store;
-union Arg **Load;
+Arg s[20];
+Arg **Store;
+Arg **Load;
 int OpPtr;
 void (**f)() = nullptr;
-struct ConstArg *v = nullptr;
+ConstArg *v = nullptr;
 int StoPtr, LodPtr;
 int var_count;
 int complx_count;
@@ -1008,7 +1012,7 @@ void dStkFlip()
 #if !defined(XFRACT)
 void mStkFlip()
 {
-    struct MP t;
+    MP t;
 
     t = Arg1->m.x;
     Arg1->m.x = Arg1->m.y;
@@ -1227,7 +1231,7 @@ void dStkRecip()
 #if !defined(XFRACT)
 void mStkRecip()
 {
-    struct MP mod;
+    MP mod;
     mod = *MPadd(*MPmul(Arg1->m.x, Arg1->m.x),*MPmul(Arg1->m.y, Arg1->m.y));
     if (mod.Mant == 0L)
     {
@@ -1982,7 +1986,7 @@ static bool isconst_pair(char *Str)
     return answer;
 }
 
-struct ConstArg *isconst(char *Str, int Len)
+ConstArg *isconst(char *Str, int Len)
 {
     DComplex z;
     // next line enforces variable vs constant naming convention
@@ -2134,7 +2138,7 @@ int isjump(char *Str, int Len)
 
 char maxfn = 0;
 
-struct FNCT_LIST FnctList[] =
+FNCT_LIST FnctList[] =
 {
     {"sin",   &StkSin},
     {"sinh",  &StkSinh},
@@ -2222,7 +2226,7 @@ void (*isfunct(char *Str, int Len))()
     unsigned n = SkipWhiteSpace(&Str[Len]);
     if (Str[Len+n] == '(')
     {
-        for (n = 0; n < sizeof(FnctList)/sizeof(struct FNCT_LIST); n++)
+        for (n = 0; n < sizeof(FnctList)/sizeof(FNCT_LIST); n++)
         {
             if ((int) strlen(FnctList[n].s) == Len)
             {
@@ -2277,8 +2281,8 @@ struct SYMETRY
 {
     const char *s;
     int n;
-}
-SymStr[] =
+};
+SYMETRY SymStr[] =
 {
     {"NOSYM",         0},
     {"XAXIS_NOPARM", -1},
@@ -2299,7 +2303,7 @@ SymStr[] =
 
 static bool ParseStr(char *Str, int pass)
 {
-    struct ConstArg *c;
+    ConstArg *c;
     int ModFlag = 999, Len, Equals = 0, Mods[20], mdstk = 0;
     int jumptype;
     double const_pi, const_e;
@@ -3158,9 +3162,9 @@ int frmgetchar(FILE * openfile)
 
 // This function also gets flow control info
 
-void getfuncinfo(struct token_st * tok)
+void getfuncinfo(token_st * tok)
 {
-    for (int i = 0; i < sizeof(FnctList)/sizeof(struct FNCT_LIST); i++)
+    for (int i = 0; i < sizeof(FnctList)/sizeof(FNCT_LIST); i++)
     {
         if (!strcmp(FnctList[i].s, tok->token_str))
         {
@@ -3187,7 +3191,7 @@ void getfuncinfo(struct token_st * tok)
     return;
 }
 
-void getvarinfo(struct token_st * tok)
+void getvarinfo(token_st * tok)
 {
     for (int i = 0; i < sizeof(Constants)/sizeof(char*); i++)
     {
@@ -3220,7 +3224,7 @@ void getvarinfo(struct token_st * tok)
         of a complex constant. See is_complex_constant() below. */
 
 // returns 1 on success, 0 on NOT_A_TOKEN
-static bool  frmgetconstant(FILE * openfile, struct token_st * tok)
+static bool  frmgetconstant(FILE * openfile, token_st * tok)
 {
     int c;
     int i = 1;
@@ -3318,10 +3322,10 @@ CASE_NUM:
     return true;
 }
 
-void is_complex_constant(FILE * openfile, struct token_st * tok)
+void is_complex_constant(FILE * openfile, token_st * tok)
 {
     // should test to make sure tok->token_str[0] == '('
-    struct token_st temp_tok;
+    token_st temp_tok;
     long filepos;
     int c;
     int sign_value = 1;
@@ -3441,7 +3445,7 @@ CASE_NUM :
     return;
 }
 
-bool frmgetalpha(FILE * openfile, struct token_st * tok)
+bool frmgetalpha(FILE * openfile, token_st * tok)
 {
     int c;
     int i = 1;
@@ -3538,7 +3542,7 @@ CASE_NUM:
     return false;
 }
 
-void frm_get_eos(FILE * openfile, struct token_st * this_token)
+void frm_get_eos(FILE * openfile, token_st * this_token)
 {
     long last_filepos = ftell(openfile);
     int c;
@@ -3570,7 +3574,7 @@ void frm_get_eos(FILE * openfile, struct token_st * this_token)
 /*frmgettoken fills token structure; returns 1 on success and 0 on
   NOT_A_TOKEN and END_OF_FORMULA
 */
-static bool frmgettoken(FILE * openfile, struct token_st * this_token)
+static bool frmgettoken(FILE * openfile, token_st * this_token)
 {
     int c;
     int i=1;
@@ -3691,7 +3695,7 @@ int frm_get_param_stuff(char * Name)
 {
     FILE *debug_token = nullptr;
     int c;
-    struct token_st current_token;
+    token_st current_token;
     FILE * entry_file = nullptr;
     uses_p1 = false;
     uses_p2 = false;
@@ -3924,7 +3928,7 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
 
     FILE *debug_fp = nullptr;
     char *FormulaStr;
-    struct token_st temp_tok;
+    token_st temp_tok;
     long filepos = ftell(File);
 
     //Test for a repeat
@@ -4114,8 +4118,8 @@ bool intFormulaSetup()
 
 void init_misc()
 {
-    static struct ConstArg vv[5];
-    static union Arg argfirst,argsecond;
+    static ConstArg vv[5];
+    static Arg argfirst,argsecond;
     if (!v)
         v = vv;
     Arg1 = &argfirst;
@@ -4151,19 +4155,19 @@ static void parser_allocate()
             Max_Args = (unsigned)(Max_Ops/2.5);
         }
         f_size = sizeof(void (**)())*Max_Ops;
-        Store_size = sizeof(union Arg *)*MAX_STORES;
-        Load_size = sizeof(union Arg *)*MAX_LOADS;
-        v_size = sizeof(struct ConstArg)*Max_Args;
-        p_size = sizeof(struct fls *)*Max_Ops;
+        Store_size = sizeof(Arg *)*MAX_STORES;
+        Load_size = sizeof(Arg *)*MAX_LOADS;
+        v_size = sizeof(ConstArg)*Max_Args;
+        p_size = sizeof(fls *)*Max_Ops;
         total_formula_mem = f_size + Load_size + Store_size + v_size + p_size //+ jump_size
-                            + sizeof(struct PEND_OP)*Max_Ops;
+                            + sizeof(PEND_OP)*Max_Ops;
 
         typespecific_workarea = malloc(f_size + Load_size + Store_size + v_size + p_size);
         f = (void (**)()) typespecific_workarea;
-        Store = (union Arg **)(f + Max_Ops);
-        Load = (union Arg **)(Store + MAX_STORES);
-        v = (struct ConstArg *)(Load + MAX_LOADS);
-        pfls = (struct fls *)(v + Max_Args);
+        Store = (Arg **)(f + Max_Ops);
+        Load = (Arg **)(Store + MAX_STORES);
+        v = (ConstArg *)(Load + MAX_LOADS);
+        pfls = (fls *)(v + Max_Args);
 
         if (pass == 0)
         {
@@ -4189,25 +4193,27 @@ void free_workarea()
         free(typespecific_workarea);
     }
     typespecific_workarea = nullptr;
-    Store = (union Arg **) nullptr;
-    Load = (union Arg **) nullptr;
-    v = (struct ConstArg *) nullptr;
+    Store = (Arg **) nullptr;
+    Load = (Arg **) nullptr;
+    v = (ConstArg *) nullptr;
     f = (void (**)()) nullptr;
-    pfls = (struct fls *) nullptr;
+    pfls = (fls *) nullptr;
     total_formula_mem = 0;
 }
 
 
-struct error_data_st {
+struct error_data_st
+{
     long start_pos;
     long error_pos;
     int error_number;
-} errors[3];
+};
+error_data_st errors[3];
 
 
 void frm_error(FILE * open_file, long begin_frm)
 {
-    struct token_st tok;
+    token_st tok;
     int chars_to_error=0, chars_in_error=0, token_count;
     int statement_len, line_number;
     char msgbuf[900];
@@ -4338,15 +4344,15 @@ void display_const_lists()
 }
 
 
-struct var_list_st *var_list_alloc()
+var_list_st *var_list_alloc()
 {
-    return (struct var_list_st *) malloc(sizeof(struct var_list_st));
+    return (var_list_st *) malloc(sizeof(var_list_st));
 }
 
 
-struct const_list_st  *const_list_alloc()
+const_list_st  *const_list_alloc()
 {
-    return (struct const_list_st *) malloc(sizeof(struct const_list_st));
+    return (const_list_st *) malloc(sizeof(const_list_st));
 }
 
 void init_var_list()
@@ -4378,7 +4384,7 @@ void init_const_lists()
     real_list = nullptr;
 }
 
-struct var_list_st * add_var_to_list(struct var_list_st * p, struct token_st tok)
+var_list_st * add_var_to_list(var_list_st * p, token_st tok)
 {
     if (p == nullptr)
     {
@@ -4400,7 +4406,7 @@ struct var_list_st * add_var_to_list(struct var_list_st * p, struct token_st tok
     return p;
 }
 
-struct const_list_st *  add_const_to_list(struct const_list_st * p, struct token_st tok)
+const_list_st *  add_const_to_list(const_list_st * p, token_st tok)
 {
     if (p == nullptr)
     {
@@ -4457,7 +4463,7 @@ bool frm_prescan(FILE * open_file)
     long filepos;
     long statement_pos, orig_pos;
     bool done = false;
-    struct token_st this_token;
+    token_st this_token;
     int errors_found = 0;
     bool ExpectingArg = true;
     bool NewStatement = true;
