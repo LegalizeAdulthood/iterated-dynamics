@@ -12,7 +12,7 @@
  *
  * Release Notes: This file contains a decoder routine for GIF images
  * which is similar, structurally, to the original routine by Steve Wilhite.
- * It is, however, somewhat noticably faster in most cases.
+ * It is, however, somewhat noticeably faster in most cases.
  *
  == This routine was modified for use in FRACTINT in two ways.
  ==
@@ -29,7 +29,7 @@
  ==    '*outln()' for flexibility (in particular, 3D transformations)
  ==
  == 4) A call to 'driver_key_pressed()' has been added after the 'outln()' calls
- ==    to check for the presenc of a key-press as a bail-out signal
+ ==    to check for the presence of a key-press as a bail-out signal
  ==
  */
 #include <float.h>
