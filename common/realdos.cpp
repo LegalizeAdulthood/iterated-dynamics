@@ -334,7 +334,8 @@ int putstringcenter(int row, int col, int width, int attr, const char *msg)
     buf[width] = 0;
     i = 0;
     k = j;
-    while (msg[i]) buf[k++] = msg[i++]; // strcpy for a
+    while (msg[i])
+        buf[k++] = msg[i++]; // strcpy for a
     driver_put_string(row,col,attr,buf);
     return j;
 }
@@ -517,7 +518,7 @@ int fullscreen_choice(
         else
         {
             int k;
-            while (current < numchoices && (k = strncasecmp(speedstring,choices[current],len)) > 0)
+            while (current < numchoices && (k = strncasecmp(speedstring, choices[current], len)) > 0)
             {
                 ++current;
             }
@@ -896,7 +897,7 @@ int fullscreen_choice(
             increment = 0 - rev_increment;
             {
                 int newcurrent = current;
-                while ((newcurrent-=boxwidth) != current)
+                while ((newcurrent -= boxwidth) != current)
                 {
                     if (newcurrent < 0)
                     {

@@ -1254,8 +1254,7 @@ void sleepms_old(long ms)
                 goto sleepexit;
             }
         }
-        while ((elapsed = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm)
-                < SLEEPINIT);
+        while ((elapsed = (int)(t2.time - t1.time)*1000 + t2.millitm - t1.millitm) < SLEEPINIT);
         // once more to see if faster (eg multi-tasking)
         do { // wait for the start of a new tick
             ftimex(&t1);
@@ -1555,7 +1554,7 @@ void tidy_worklist()
 {
     {
         int i;
-        while ((i=combine_worklist()) != 0)
+        while ((i = combine_worklist()) != 0)
         {   // merged two, delete the gone one
             while (++i < num_worklist)
                 worklist[i-1] = worklist[i];

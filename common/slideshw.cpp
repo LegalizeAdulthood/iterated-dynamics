@@ -161,7 +161,9 @@ start:
         quotes = false;
     }
     // skip white space:
-    while ((out=fgetc(fpss)) == ' ' || out == '\t' || out == '\n') { }
+    while ((out = fgetc(fpss)) == ' ' || out == '\t' || out == '\n')
+    {
+    }
     switch (out)
     {
     case EOF:
@@ -171,7 +173,9 @@ start:
         quotes = true;
         goto start;
     case ';':         // comment from here to end of line, skip it
-        while ((out=fgetc(fpss)) != '\n' && out != EOF) { }
+        while ((out = fgetc(fpss)) != '\n' && out != EOF)
+        {
+        }
         goto start;
     case '*':
         if (fscanf(fpss,"%d",&repeats) != 1

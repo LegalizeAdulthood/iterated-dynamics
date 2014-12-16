@@ -1656,7 +1656,7 @@ int find_extra_param(int type)
 
     if (fractalspecific[type].flags&MORE)
     {
-        while ((curtyp=moreparams[++i].type) != type && curtyp != -1);
+        while ((curtyp = moreparams[++i].type) != type && curtyp != -1);
         if (curtyp == type)
             ret = i;
     }
@@ -2188,7 +2188,7 @@ static void load_entry_text(
 
     //move down to starting row
     for (int i = 0; i < startrow; i++) {
-        while ((c=fgetc(entfile)) != '\n' && c != EOF && c != '\032') {
+        while ((c = fgetc(entfile)) != '\n' && c != EOF && c != '\032') {
             if (c == ';')
                 comment = true;
             if (c == '}' && !comment)  // end of entry before start line

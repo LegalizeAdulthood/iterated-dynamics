@@ -357,7 +357,8 @@ static bool save_rule(char *rule, char **saveptr)
         return true;
     }
     *saveptr=tmpfar;
-    while (--i>=0) *(tmpfar++)= *(rule++);
+    while (--i >= 0)
+        *(tmpfar++)= *(rule++);
     return false;
 }
 
@@ -377,8 +378,10 @@ static bool append_rule(char *rule, int index)
 
     old = sav;
     ruleptrs[index] = dst;
-    while (i-- > 0) *(dst++) = *(old++);
-    while (j-- > 0) *(dst++) = *(rule++);
+    while (i-- > 0)
+        *(dst++) = *(old++);
+    while (j-- > 0)
+        *(dst++) = *(rule++);
     free(sav);
     return false;
 }

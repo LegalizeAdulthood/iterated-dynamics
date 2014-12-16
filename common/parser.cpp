@@ -3433,7 +3433,7 @@ bool frmgetalpha(FILE * openfile, token_st * tok)
     bool var_name_too_long = false;
     long filepos;
     long last_filepos = ftell(openfile);
-    while ((c=frmgetchar(openfile)) != EOF && c != '\032')
+    while ((c = frmgetchar(openfile)) != EOF && c != '\032')
     {
         filepos = ftell(openfile);
         switch (c)
@@ -3695,7 +3695,7 @@ int frm_get_param_stuff(char * Name)
         stopmsg(STOPMSG_NONE, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return 0;
     }
-    while ((c=frmgetchar(entry_file)) != '{' && c != EOF && c != '\032')
+    while ((c = frmgetchar(entry_file)) != '{' && c != EOF && c != '\032')
     {
     }
     if (c != '{')

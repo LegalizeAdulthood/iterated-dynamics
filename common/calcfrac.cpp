@@ -884,7 +884,7 @@ int find_alternate_math(int type, int math)
     if (math==0)
         return ret;
     i= -1;
-    while ((curtype=alternatemath[++i].type) != type && curtype != -1)
+    while ((curtype = alternatemath[++i].type) != type && curtype != -1)
         ;
     if (curtype == type && alternatemath[i].math)
         ret = i;
@@ -1080,7 +1080,7 @@ static void perform_worklist()
                    triangular-shaped shotdot cursor. The that cursor
                    is changed, this formula must match.
                 */
-                while ((savedotslen=sqr(showdot_width)+5*showdot_width+4) > 1000)
+                while ((savedotslen = sqr(showdot_width) + 5*showdot_width + 4) > 1000)
                     showdot_width--;
                 bool resized = false;
                 try
@@ -3258,7 +3258,7 @@ static int solidguess()
     while (--i > 0) // allow for already done passes
         blocksize = blocksize>>1;
     reset_periodicity = false;
-    while ((blocksize=blocksize>>1)>=2)
+    while ((blocksize = blocksize >> 1) >= 2)
     {
         if (stoppass > 0)
             if (workpass >= stoppass)

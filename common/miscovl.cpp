@@ -2234,7 +2234,7 @@ void expand_comments(char *target, char *source)
     int j = k;
     int i = j;
     oldc = 0;
-    while (i < MAXCMT && j < MAXCMT && (c = *(source+i++)) != '\0')
+    while (i < MAXCMT && j < MAXCMT && (c = *(source + i++)) != '\0')
     {
         if (c == '\\' && oldc != '\\')
         {
