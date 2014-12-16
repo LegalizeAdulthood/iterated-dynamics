@@ -1280,7 +1280,9 @@ void sleepms_old(long ms)
     }
     else if (!driver_key_pressed()) {
         ms *= scalems;
-        while (ms-- >= 0);
+        while (ms-- >= 0)
+        {
+        }
     }
 sleepexit:
     tabmode  = savetabmode;

@@ -2692,7 +2692,9 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
                 tick = readticker();
                 PalTable__Rotate(me, dir, rotate_lo, rotate_hi);
                 diff += dir;
-                while (readticker() == tick) ;   // wait until a tick passes
+                while (readticker() == tick)    // wait until a tick passes
+                {
+                }
             }
 
             key = driver_get_key();

@@ -325,9 +325,12 @@ int putstringcenter(int row, int col, int width, int attr, const char *msg)
 #ifdef XFRACT
     if (width>=80) width=79; // Some systems choke in column 80
 #endif
-    while (msg[i]) ++i; // strlen for a
-    if (i == 0) return (-1);
-    if (i >= width) i = width - 1; // sanity check
+    while (msg[i])
+        ++i; // strlen for a
+    if (i == 0)
+        return (-1);
+    if (i >= width)
+        i = width - 1; // sanity check
     j = (width - i) / 2;
     j -= (width + 10 - i) / 20; // when wide a bit left of center looks better
     memset(buf,' ',width);

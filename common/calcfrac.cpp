@@ -3152,7 +3152,8 @@ static int solidguess()
     maxblock = blocksize;
     i = maxblock;
     totpasses = 1;
-    while ((i >>= 1) > 1) ++totpasses;
+    while ((i >>= 1) > 1)
+        ++totpasses;
 
     /* ensure window top and left are on required boundary, treat window
           as larger than it really is if necessary (this is the reason symplot
@@ -3965,11 +3966,13 @@ static int tesseral()
         cury = yybegin & 0xfff;
         ysize = 1;
         i = (unsigned)yybegin >> 12;
-        while (--i >= 0) ysize <<= 1;
+        while (--i >= 0)
+            ysize <<= 1;
         curx = workpass & 0xfff;
         xsize = 1;
         i = (unsigned)workpass >> 12;
-        while (--i >= 0) xsize <<= 1;
+        while (--i >= 0)
+            xsize <<= 1;
         while (1) {
             tp2 = tp;
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1) { // next divide down middle

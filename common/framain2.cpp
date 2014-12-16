@@ -295,7 +295,8 @@ int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
                 if (driver_key_pressed())
                 {
                     driver_buzzer(BUZZER_INTERRUPT);
-                    while (driver_key_pressed()) driver_get_key();
+                    while (driver_key_pressed())
+                        driver_get_key();
                     texttempmsg("*** load incomplete ***");
                 }
             }
