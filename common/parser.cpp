@@ -3217,7 +3217,8 @@ static bool  frmgetconstant(FILE * openfile, token_st * tok)
         got_decimal_already = true;
     while (!done)
     {
-        switch (c=frmgetchar(openfile))
+        c = frmgetchar(openfile);
+        switch (c)
         {
         case EOF:
         case '\032':
@@ -3321,7 +3322,8 @@ void is_complex_constant(FILE * openfile, token_st * tok)
 
     while (!done)
     {
-        switch (c = frmgetchar(openfile))
+        c = frmgetchar(openfile);
+        switch (c)
         {
 CASE_NUM :
         case '.':
@@ -3555,11 +3557,11 @@ void frm_get_eos(FILE * openfile, token_st * this_token)
 */
 static bool frmgettoken(FILE * openfile, token_st * this_token)
 {
-    int c;
-    int i=1;
+    int i = 1;
     long filepos;
 
-    switch (c = frmgetchar(openfile))
+    int c = frmgetchar(openfile);
+    switch (c)
     {
 CASE_NUM:
     case '.':
@@ -3777,7 +3779,8 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
     bool done = false;
     while (!done)
     {
-        switch (c = getc(open_file))
+        c = getc(open_file);
+        switch (c)
         {
         case EOF:
         case '\032':
@@ -3825,7 +3828,8 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
         i = 0;
         while (!done)
         {
-            switch (c = getc(open_file))
+            c = getc(open_file);
+            switch (c)
             {
             case EOF:
             case '\032':
@@ -3872,7 +3876,8 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
         done = false;
         while (!done)
         {
-            switch (c = getc(open_file))
+            c = getc(open_file);
+            switch (c)
             {
             case EOF:
             case '\032':
