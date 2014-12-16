@@ -155,8 +155,6 @@ int yybegin = 0;                        // declared as separate items
 int workpass = 0;
 int worksym = 0;                        // for the sake of calcmand
 
-VOIDPTR typespecific_workarea = nullptr;
-
 static double dem_delta = 0.0;
 static double dem_width = 0.0;          // distance estimator variables
 static double dem_toobig = 0.0;
@@ -866,10 +864,7 @@ int calcfract()
     {
         LogTable.clear();
     }
-    if (typespecific_workarea)
-    {
-        free_workarea();
-    }
+    free_workarea();
 
     if (curfractalspecific->calctype == calcfroth)
         froth_cleanup();

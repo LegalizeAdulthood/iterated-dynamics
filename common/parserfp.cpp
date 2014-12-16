@@ -40,7 +40,7 @@
 #include "prototyp.h"
 
 // global data
-fls *pfls = (fls *)nullptr;
+std::vector<fls> pfls;
 
 #if !defined(XFRACT)
 
@@ -49,12 +49,14 @@ fls *pfls = (fls *)nullptr;
 
 extern Arg *Arg1, *Arg2;
 extern double _1_, _2_;
-extern Arg s[20], **Store, **Load;
+extern Arg s[20];
+extern std::vector<Arg *> Store;
+extern std::vector<Arg *> Load;
 extern int StoPtr, LodPtr, OpPtr;
 extern unsigned int vsp, LastOp;
-extern ConstArg *v;
+extern std::vector<ConstArg> v;
 extern int InitLodPtr, InitStoPtr, InitOpPtr, LastInitOp;
-extern void (**f)();
+extern std::vector<void (*)()> f;
 extern JUMP_CONTROL_ST *jump_control;
 extern bool uses_jump;
 extern int jump_index;

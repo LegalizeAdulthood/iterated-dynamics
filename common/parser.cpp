@@ -177,11 +177,11 @@ Arg *Arg2;
 
 // Some of these variables should be renamed for safety
 Arg s[20];
-Arg **Store;
-Arg **Load;
+std::vector<Arg *> Store;
+std::vector<Arg *> Load;
 int OpPtr;
-void (**f)() = nullptr;
-ConstArg *v = nullptr;
+std::vector<void (*)()> f;
+std::vector<ConstArg> v;
 int StoPtr, LodPtr;
 int var_count;
 int complx_count;
@@ -2313,11 +2313,6 @@ static bool ParseStr(char *Str, int pass)
     Randomized = false;
     uses_jump = false;
     jump_index = 0;
-    if (!typespecific_workarea)
-    {
-        stopmsg(STOPMSG_NONE, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-        return true;
-    }
     switch (MathType)
     {
     case D_MATH:
@@ -4119,10 +4114,9 @@ bool intFormulaSetup()
 
 void init_misc()
 {
-    static ConstArg vv[5];
     static Arg argfirst,argsecond;
-    if (!v)
-        v = vv;
+    if (v.empty())
+        v.resize(5);;
     Arg1 = &argfirst;
     Arg2 = &argsecond; // needed by all the ?Stk* functions
     fg = (double)(1L << bitshift);
@@ -4140,35 +4134,22 @@ void init_misc()
 }
 
 
-long total_formula_mem;
 static void parser_allocate()
 {
-    // Note that XFRACT will waste about 6k here for pfls
-    // Somewhat more memory is now allocated than in v17 here
-    // however Store and Load were reduced in size to help make up for it
-    long f_size,Store_size,Load_size,v_size, p_size;
     for (int pass = 0; pass < 2; pass++)
     {
         free_workarea();
         if (pass == 0)
         {
-            Max_Ops = 2300; // this value uses up about 64K memory
+            Max_Ops = 2300;
             Max_Args = (unsigned)(Max_Ops/2.5);
         }
-        f_size = sizeof(void (**)())*Max_Ops;
-        Store_size = sizeof(Arg *)*MAX_STORES;
-        Load_size = sizeof(Arg *)*MAX_LOADS;
-        v_size = sizeof(ConstArg)*Max_Args;
-        p_size = sizeof(fls *)*Max_Ops;
-        total_formula_mem = f_size + Load_size + Store_size + v_size + p_size //+ jump_size
-                            + sizeof(PEND_OP)*Max_Ops;
 
-        typespecific_workarea = malloc(f_size + Load_size + Store_size + v_size + p_size);
-        f = (void (**)()) typespecific_workarea;
-        Store = (Arg **)(f + Max_Ops);
-        Load = (Arg **)(Store + MAX_STORES);
-        v = (ConstArg *)(Load + MAX_LOADS);
-        pfls = (fls *)(v + Max_Args);
+        f.resize(Max_Ops);
+        Store.resize(MAX_STORES);
+        Load.resize(MAX_LOADS);
+        v.resize(Max_Args);
+        pfls.resize(Max_Ops);
 
         if (pass == 0)
         {
@@ -4189,17 +4170,11 @@ static void parser_allocate()
 
 void free_workarea()
 {
-    if (typespecific_workarea)
-    {
-        free(typespecific_workarea);
-    }
-    typespecific_workarea = nullptr;
-    Store = (Arg **) nullptr;
-    Load = (Arg **) nullptr;
-    v = (ConstArg *) nullptr;
-    f = (void (**)()) nullptr;
-    pfls = (fls *) nullptr;
-    total_formula_mem = 0;
+    Store.clear();
+    Load.clear();
+    v.clear();
+    f.clear();
+    pfls.clear();
 }
 
 
