@@ -155,14 +155,6 @@ struct token_st
 
 static PEND_OP o[2300];
 
-struct const_list_st
-{
-    DComplex complex_const;
-    const_list_st * next_item;
-};
-const_list_st *complx_list;
-const_list_st *real_list;
-
 static void parser_allocate();
 
 Arg *Arg1;
@@ -4284,86 +4276,6 @@ void frm_error(FILE * open_file, long begin_frm)
     return;
 }
 
-void display_const_lists()
-{
-    char msgbuf[800];
-    stopmsg(STOPMSG_NONE, "Complex constants are:");
-    for (const_list_st *p = complx_list; p; p=p->next_item)
-    {
-        sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
-        stopmsg(STOPMSG_NONE, msgbuf);
-    }
-    stopmsg(STOPMSG_NONE, "Real constants are:");
-    for (const_list_st *p = real_list; p; p=p->next_item)
-    {
-        sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
-        stopmsg(STOPMSG_NONE, msgbuf);
-    }
-}
-
-
-const_list_st  *const_list_alloc()
-{
-    return (const_list_st *) malloc(sizeof(const_list_st));
-}
-
-void init_const_lists()
-{
-    const_list_st *temp;
-    for (const_list_st *p = complx_list; p; p = temp)
-    {
-        temp = p->next_item;
-        free(p);
-    }
-    complx_list = nullptr;
-    for (const_list_st *p = real_list; p; p = temp)
-    {
-        temp = p->next_item;
-        free(p);
-    }
-    real_list = nullptr;
-}
-
-const_list_st *  add_const_to_list(const_list_st * p, token_st tok)
-{
-    if (p == nullptr)
-    {
-        p = const_list_alloc();
-        if (p == nullptr)
-            return nullptr;
-        p->complex_const.x = tok.token_const.x;
-        p->complex_const.y = tok.token_const.y;
-        p->next_item = nullptr;
-    }
-    else if (p->complex_const.x == tok.token_const.x && p->complex_const.y == tok.token_const.y)
-    {
-    }
-    else
-    {
-        p->next_item = add_const_to_list(p->next_item, tok);
-        if (p->next_item == nullptr)
-            return nullptr;
-    }
-    return p;
-}
-
-void count_lists()
-{
-    complx_count = 0;
-    real_count = 0;
-
-    for (const_list_st *q = complx_list; q; q = q->next_item)
-    {
-        complx_count++;
-    }
-    for (const_list_st *q = real_list; q; q = q->next_item)
-    {
-        real_count++;
-    }
-}
-
-
-
 /*frm_prescan() takes an open file with the file pointer positioned at
   the beginning of the relevant formula, and parses the formula, token
   by token, for syntax errors. The function also accumulates data for
@@ -4394,8 +4306,6 @@ bool frm_prescan(FILE * open_file)
     chars_in_formula = 0U;
     uses_jump = false;
     paren = 0;
-
-    init_const_lists();
 
     statement_pos = ftell(open_file);
     orig_pos = statement_pos;
@@ -5232,8 +5142,6 @@ bool frm_prescan(FILE * open_file)
         return false;
     }
     fseek(open_file, orig_pos, SEEK_SET);
-
-    count_lists();
 
     return true;
 }
