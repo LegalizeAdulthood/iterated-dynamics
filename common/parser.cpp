@@ -155,13 +155,6 @@ struct token_st
 
 static PEND_OP o[2300];
 
-struct var_list_st
-{
-    char name[34];
-    var_list_st *next_item;
-};
-var_list_st *var_list;
-
 struct const_list_st
 {
     DComplex complex_const;
@@ -183,7 +176,6 @@ int OpPtr;
 std::vector<void (*)()> f;
 std::vector<ConstArg> v;
 int StoPtr, LodPtr;
-int var_count;
 int complx_count;
 int real_count;
 
@@ -4292,16 +4284,6 @@ void frm_error(FILE * open_file, long begin_frm)
     return;
 }
 
-void display_var_list()
-{
-    stopmsg(STOPMSG_NONE, "List of user defined variables:\n");
-    for (var_list_st *p = var_list; p; p=p->next_item)
-    {
-        stopmsg(STOPMSG_NONE, p->name);
-    }
-
-}
-
 void display_const_lists()
 {
     char msgbuf[800];
@@ -4320,28 +4302,10 @@ void display_const_lists()
 }
 
 
-var_list_st *var_list_alloc()
-{
-    return (var_list_st *) malloc(sizeof(var_list_st));
-}
-
-
 const_list_st  *const_list_alloc()
 {
     return (const_list_st *) malloc(sizeof(const_list_st));
 }
-
-void init_var_list()
-{
-    var_list_st *temp;
-    for (var_list_st *p = var_list; p; p = temp)
-    {
-        temp = p->next_item;
-        free(p);
-    }
-    var_list = nullptr;
-}
-
 
 void init_const_lists()
 {
@@ -4358,28 +4322,6 @@ void init_const_lists()
         free(p);
     }
     real_list = nullptr;
-}
-
-var_list_st * add_var_to_list(var_list_st * p, token_st tok)
-{
-    if (p == nullptr)
-    {
-        p = var_list_alloc();
-        if (p == nullptr)
-            return nullptr;
-        strcpy(p->name, tok.token_str);
-        p->next_item = nullptr;
-    }
-    else if (strcmp(p->name, tok.token_str) == 0)
-    {
-    }
-    else
-    {
-        p->next_item = add_var_to_list(p->next_item, tok);
-        if (p->next_item == nullptr)
-            return nullptr;
-    }
-    return p;
 }
 
 const_list_st *  add_const_to_list(const_list_st * p, token_st tok)
@@ -4407,14 +4349,9 @@ const_list_st *  add_const_to_list(const_list_st * p, token_st tok)
 
 void count_lists()
 {
-    var_count = 0;
     complx_count = 0;
     real_count = 0;
 
-    for (var_list_st *p = var_list; p; p = p->next_item)
-    {
-        var_count++;
-    }
     for (const_list_st *q = complx_list; q; q = q->next_item)
     {
         complx_count++;
@@ -4458,7 +4395,6 @@ bool frm_prescan(FILE * open_file)
     uses_jump = false;
     paren = 0;
 
-    init_var_list();
     init_const_lists();
 
     statement_pos = ftell(open_file);
