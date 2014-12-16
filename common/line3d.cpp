@@ -4,6 +4,7 @@
 // before displaying points. Called once per line of the input file.
 //**********************************************************************
 #include <algorithm>
+#include <vector>
 
 #include <limits.h>
 #if defined(XFRACT)
@@ -78,7 +79,7 @@ static float twocosdeltaphi;
 static float cosphi, sinphi;    // precalculated sin/cos of longitude
 static float oldcosphi1, oldsinphi1;
 static float oldcosphi2, oldsinphi2;
-static BYTE *fraction;      // float version of pixels array
+static std::vector<BYTE> fraction;  // float version of pixels array
 static float min_xyz[3], max_xyz[3];        // For Raytrace output
 static int line_length1;
 static int T_header_24 = 18;// Size of current Targa-24 header
@@ -98,8 +99,8 @@ static int localpreviewfactor;
 static int zcoord = 256;
 static double aspect;       // aspect ratio
 static int evenoddrow;
-static float *sinthetaarray;    // all sine thetas go here
-static float *costhetaarray;    // all cosine thetas go here
+static std::vector<float> sinthetaarray;    // all sine thetas go here
+static std::vector<float> costhetaarray;    // all cosine thetas go here
 static double rXrscale;     // precalculation factor
 static bool persp = false;      // flag for indicating perspective transformations
 static point p1, p2, p3;
@@ -108,7 +109,7 @@ static point bad;    // out of range value
 static long num_tris; // number of triangles output to ray trace file
 
 // global variables defined here
-f_point *f_lastrow = nullptr;
+std::vector<f_point> f_lastrow;
 void (* standardplot)(int, int, int);
 MATRIX m; // transformation matrix
 int Ambient;
@@ -133,7 +134,7 @@ int xshift;
 int yshift;
 int bad_value = -10000;         // set bad values to this
 int bad_check = -3000;          // check values against this to determine if good
-point *lastrow = nullptr; // this array remembers the previous line
+std::vector<point> lastrow; // this array remembers the previous line
 int RAY = 0;                    // Flag to generate Ray trace compatible files in 3d
 bool BRIEF = false;             // 1 = short ray trace files
 
@@ -216,7 +217,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     // copies pixels buffer to float type fraction buffer for fill purposes
     if (pot16bit)
     {
-        if (set_pixel_buff(pixels, fraction, linelen))
+        if (set_pixel_buff(pixels, &fraction[0], linelen))
             return 0;
     }
     else if (grayflag)           // convert color numbers to grayscale values
@@ -2103,7 +2104,8 @@ static int first_time(int linelen, VECTOR v)
 
     zcoord = filecolors;
 
-    if ((err=line3dmem()) != 0)
+    err = line3dmem();
+    if (err != 0)
         return err;
 
 
@@ -2437,77 +2439,27 @@ static int first_time(int linelen, VECTOR v)
 
 static int line3dmem()
 {
-    //*******************************************************************
-    //  Memory allocation - assumptions - a 64K segment starting at
-    //  extraseg has been grabbed. It may have other purposes elsewhere,
-    //  but it is assumed that it is totally free for use here. Our
-    //  strategy is to assign all the pointers needed here to various
-    //  spots in the extra segment, depending on the pixel dimensions of
-    //  the video mode, and check whether we have run out. There is
-    //  basically one case where the extra segment is not big enough
-    //  -- SPHERE mode with a fill type that uses putatriangle() (array
-    //  minmax_x) at the largest legal resolution of MAXPIXELSxMAXPIXELS
-    //  or thereabouts. In that case we use farmemalloc to grab memory
-    //  for minmax_x. This memory is never freed.
-    //*******************************************************************
-    long check_extra;  // keep track ofd extraseg array use
-
     /* lastrow stores the previous row of the original GIF image for
        the purpose of filling in gaps with triangle procedure */
-    lastrow = (point *) malloc(sizeof(point)*xdots);
+    lastrow.resize(xdots);
 
-    check_extra = sizeof(*lastrow) * xdots;
     if (SPHERE)
     {
-        sinthetaarray = (float *)(lastrow + xdots);
-        check_extra += sizeof(*sinthetaarray) * xdots;
-        costhetaarray = (float *)(sinthetaarray + xdots);
-        check_extra += sizeof(*costhetaarray) * xdots;
-        f_lastrow = (f_point *)(costhetaarray + xdots);
+        sinthetaarray.resize(xdots);
+        costhetaarray.resize(xdots);
     }
-    else
-    {
-        f_lastrow = (f_point *)(lastrow + xdots);
-    }
-    check_extra += sizeof(*f_lastrow) * (xdots);
+    f_lastrow.resize(xdots);
     if (pot16bit)
     {
-        fraction = (BYTE *)(f_lastrow + xdots);
-        check_extra += sizeof(*fraction) * xdots;
+        fraction.resize(xdots);
     }
     minmax_x.clear();
 
     // these fill types call putatriangle which uses minmax_x
     if (FILLTYPE == 2 || FILLTYPE == 3 || FILLTYPE == 5 || FILLTYPE == 6)
     {
-        // end of arrays if we use extra segement
-        check_extra += sizeof(minmax) * ydots;
-        if (check_extra > (1L << 16))     // run out of extra segment?
-        {
-            if (debugflag == 2222)
-                stopmsg(STOPMSG_NONE,"malloc minmax");
-            // not using extra segment so decrement check_extra
-            check_extra -= sizeof(minmax) * ydots;
-        }
-        bool resized = false;
-        try
-        {
-            minmax_x.resize(OLDMAXPIXELS);
-            resized = true;
-        }
-        catch (std::bad_alloc const&)
-        {
-        }
-        if (!resized)
-        {
-            return -1;
-        }
+        minmax_x.resize(OLDMAXPIXELS);
     }
-    if (debugflag == 2222 || check_extra > (1L << 16))
-    {
-        char tmpmsg[70];
-        sprintf(tmpmsg, "used %ld of extra segment", check_extra);
-        stopmsg(STOPMSG_NO_BUZZER, tmpmsg);
-    }
+
     return 0;
 }
