@@ -152,7 +152,7 @@ char CommandComment[4][MAXCMT] = { 0 };    // comments for command set
 char IFSFileName[FILE_MAX_PATH] = { 0 };// file to find (type=)IFS in
 char IFSName[ITEMNAMELEN+1] = { 0 };    // Name of the IFS def'n (if not null)
 SearchPath searchfor = { 0 };
-float *ifs_defn = nullptr;              // ifs parameters
+std::vector<float> ifs_defn;            // ifs parameters
 bool ifs_type = false;                  // false=2d, true=3d
 int  g_slides = SLIDES_OFF;             // 1 autokey=play, 2 autokey=record
 
@@ -543,9 +543,9 @@ static void initvars_3d()               // init vars affecting 3d
 
 static void reset_ifs_defn()
 {
-    if (ifs_defn) {
-        free((char *)ifs_defn);
-        ifs_defn = nullptr;
+    if (!ifs_defn.empty())
+    {
+        ifs_defn.clear();
     }
 }
 

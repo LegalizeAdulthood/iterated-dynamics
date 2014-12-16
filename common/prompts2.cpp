@@ -1179,10 +1179,9 @@ void goodbye()                  // we done.  Bail out
     {
         MemoryRelease(oldhistory_handle);
     }
-    if (ifs_defn != nullptr)
+    if (!ifs_defn.empty())
     {
-        free(ifs_defn);
-        ifs_defn = nullptr;
+        ifs_defn.clear();
     }
     free_grid_pointers();
     free_ant_storage();

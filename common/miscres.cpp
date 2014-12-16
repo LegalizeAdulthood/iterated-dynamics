@@ -1275,9 +1275,9 @@ int ifsload()                   // read in IFS parameters
     char *bufptr;
     int ret,rowsize;
 
-    if (ifs_defn) { // release prior parms
-        free((char *)ifs_defn);
-        ifs_defn = nullptr;
+    if (!ifs_defn.empty())
+    {                           // release prior parms
+        ifs_defn.clear();
     }
 
     ifs_type = false;
@@ -1299,14 +1299,15 @@ int ifsload()                   // read in IFS parameters
         ++bufptr;
     }
 
-    float ifs_param_tmp[(NUMIFS+1)*IFS3DPARM] = { 0.f };
     ret = 0;
     int i = ret;
     bufptr = get_ifs_token(buf,ifsfile);
     while (bufptr != nullptr)
     {
-        if (sscanf(bufptr," %f ",&ifs_param_tmp[i]) != 1)
-            break ;
+        float value = 0.0f;
+        if (sscanf(bufptr," %f ", &value) != 1)
+            break;
+        ifs_defn.push_back(value);
         if (++i >= NUMIFS*rowsize)
         {
             stopmsg(STOPMSG_NONE, "IFS definition has too many lines");
@@ -1341,14 +1342,6 @@ int ifsload()                   // read in IFS parameters
 
     if (ret == 0) {
         numaffine = i/rowsize;
-        if ((ifs_defn = (float *)malloc(
-                            (long)((NUMIFS+1)*IFS3DPARM*sizeof(float)))) == nullptr) {
-            stopmsg(STOPMSG_NONE, insufficient_ifs_mem);
-            ret = -1;
-        }
-        else
-            for (int i = 0; i < (NUMIFS+1)*IFS3DPARM; ++i)
-                ifs_defn[i] = ifs_param_tmp[i];
     }
     return (ret);
 }

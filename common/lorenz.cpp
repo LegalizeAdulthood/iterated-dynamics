@@ -2206,11 +2206,12 @@ static int ifs3dfloat()
         while (sum < r && ++k < numaffine*IFS3DPARM)
         {
             sum += ifs_defn[k*IFS3DPARM+12];
-            if (ifs_defn[(k+1)*IFS3DPARM+12] == 0) break; // for safety
+            if (ifs_defn[(k+1)*IFS3DPARM+12] == 0)
+                break; // for safety
         }
 
         // calculate image of last point under selected iterated function
-        ffptr = ifs_defn + k*IFS3DPARM; // point to first parm in row
+        ffptr = &ifs_defn[k*IFS3DPARM];     // point to first parm in row
         newx = *ffptr * inf.orbit[0] +
                *(ffptr+1) * inf.orbit[1] +
                *(ffptr+2) * inf.orbit[2] + *(ffptr+9);
@@ -2267,7 +2268,7 @@ static int ifs3dfloat()
 
 int ifs()                       // front-end for ifs2d and ifs3d
 {
-    if (ifs_defn == nullptr && ifsload() < 0)
+    if (ifs_defn.empty() && ifsload() < 0)
         return (-1);
     if (driver_diskp())                // this would KILL a disk drive!
         notdiskmsg();
