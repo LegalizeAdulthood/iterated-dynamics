@@ -1,7 +1,7 @@
 // win32.h - Win32 port declarations
 #ifndef WIN32_H
 #define WIN32_H
-typedef float FLOAT4;
+
 #define remove(x) unlink(x)
 #if !defined(_MAX_FNAME)
 #define _MAX_FNAME 20
