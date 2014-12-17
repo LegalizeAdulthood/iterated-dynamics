@@ -238,19 +238,6 @@ readticker()
     return clock_ticks();
 }
 
-/*
-; ************************* Far Segment RAM Support **************************
-;
-;
-;       farptr = (char *)malloc(long bytestoalloc);
-;       ()free(farptr);
-*/
-
-void erasesegment(int segaddress, int segvalue)
-{
-}
-
-
 /* --------------------------------------------------------------------
  * The following routines are used for encoding/decoding gif images.
  * If we aren't on a PC, things are rough for decoding the fractal info
