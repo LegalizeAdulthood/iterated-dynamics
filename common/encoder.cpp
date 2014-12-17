@@ -238,13 +238,12 @@ restart:
     return 0;
 }
 
-enum tag_save_format
+enum e_save_format
 {
     SAVEFORMAT_GIF = 0,
     SAVEFORMAT_PNG,
     SAVEFORMAT_JPEG
 };
-typedef enum tag_save_format e_save_format;
 
 int savetodisk(char *filename)
 {
