@@ -844,7 +844,9 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     break;
                 case 4: // ranges info
                     skip_ext_blk(&block_len,&data_len); // once to get lengths
-                    if ((blk_4_info->range_data = (int *)malloc((long)data_len)) != nullptr) {
+                    blk_4_info->range_data = (int *)malloc((long)data_len);
+                    if (blk_4_info->range_data != nullptr)
+                    {
                         fseek(fp,(long)(0-block_len),SEEK_CUR);
                         load_ext_blk((char *)blk_4_info->range_data,data_len);
                         blk_4_info->length = data_len/2;
@@ -853,7 +855,9 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     break;
                 case 5: // extended precision parameters
                     skip_ext_blk(&block_len,&data_len); // once to get lengths
-                    if ((blk_5_info->apm_data = (char *)malloc((long)data_len)) != nullptr) {
+                    blk_5_info->apm_data = (char *)malloc((long)data_len);
+                    if (blk_5_info->apm_data != nullptr)
+                    {
                         fseek(fp,(long)(0-block_len),SEEK_CUR);
                         load_ext_blk(blk_5_info->apm_data,data_len);
                         blk_5_info->length = data_len;
