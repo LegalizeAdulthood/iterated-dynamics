@@ -480,13 +480,12 @@ struct orbits_info      // for saving orbits data in a GIF file
 };
 #define MAXVIDEOMODES 300       // maximum entries in fractint.cfg
 #define AUTOINVERT -123456.789
-#define ENDVID 22400   // video table uses extra seg up to here
-#define N_ATTR 8                        // max number of attractors
+#define N_ATTR 8                // max number of attractors
 extern  long     l_at_rad;      // finite attractor radius
 extern  double   f_at_rad;      // finite attractor radius
-#define NUMIFS    64     // number of ifs functions in ifs array
-#define IFSPARM    7     // number of ifs parameters
-#define IFS3DPARM 13     // number of ifs 3D parameters
+#define NUMIFS    64            // number of ifs functions in ifs array
+#define IFSPARM    7            // number of ifs parameters
+#define IFS3DPARM 13            // number of ifs 3D parameters
 struct moreparams
 {
     int      type;                      // index in fractalname of the fractal

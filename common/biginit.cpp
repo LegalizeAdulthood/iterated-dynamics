@@ -15,13 +15,6 @@ is in the allocations of memory for the big numbers.
 #include "prototyp.h"
 #include "fractype.h"
 
-/* appears to me that avoiding the start of extraseg is unnecessary. If
-   correct, later we can eliminate ENDVID here. */
-#ifdef ENDVID
-#undef ENDVID
-#endif
-#define ENDVID 0
-
 // globals
 int bnstep = 0, bnlength = 0, intlength = 0, rlength = 0, padding = 0, shiftfactor = 0, decimals = 0;
 int bflength = 0, rbflength = 0, bfdecimals = 0;
@@ -252,7 +245,7 @@ static void init_bf_2()
     startstack = ptr;
 
     // max stack offset from bnroot
-    maxstack = (long)0x10000L-(bflength+2)*22-ENDVID;
+    maxstack = (long)0x10000L-(bflength+2)*22;
 
     // sanity check
     // leave room for NUMVARS variables allocated from stack
@@ -406,7 +399,7 @@ bn_t alloc_stack(size_t size)
         stopmsg(STOPMSG_NONE, "alloc_stack called with bf_math==0");
         return (nullptr);
     }
-    stack_addr = (long)((stack_ptr-bnroot)+size); // +ENDVID, part of bnroot
+    stack_addr = (long)((stack_ptr-bnroot)+size); // part of bnroot
 
     if (stack_addr > maxstack)
     {
