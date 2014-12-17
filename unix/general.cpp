@@ -200,7 +200,7 @@ delay(int delaytime)
     static struct timeval delay;
     delay.tv_sec = delaytime/1000;
     delay.tv_usec = (delaytime%1000)*1000;
-    select(0, (fd_set *) 0, (fd_set *) 0, (fd_set *) 0, &delay);
+    select(0, nullptr, nullptr, nullptr, &delay);
 }
 
 /*
@@ -266,7 +266,7 @@ static void getFloat(float *dst, unsigned char **src, int dir);
 static void getDouble(double *dst, unsigned char **src, int dir);
 
 void
-decode_fractal_info(struct fractal_info *info, int dir)
+decode_fractal_info(FRACTAL_INFO *info, int dir)
 {
     std::vector<unsigned char> info_buff;
     unsigned char *buf;
@@ -278,10 +278,10 @@ decode_fractal_info(struct fractal_info *info, int dir)
         bufPtr = buf;
         bcopy((char *)info,(char *)buf,FRACTAL_INFO_SIZE);
     }  else {
-        info_buff.resize(sizeof(fractal_info));
+        info_buff.resize(sizeof(FRACTAL_INFO));
         buf = &info_buff[0];
         bufPtr = buf;
-        bcopy((char *)info,(char *)buf,sizeof(struct fractal_info));
+        bcopy((char *)info,(char *)buf,sizeof(FRACTAL_INFO));
     }
 
     if (dir==1) {
@@ -651,7 +651,7 @@ fix_ranges(int *ranges, int num, int dir)
 }
 
 void
-decode_evolver_info(struct evolution_info *info, int dir)
+decode_evolver_info(EVOLUTION_INFO *info, int dir)
 {
     std::vector<unsigned char> evolution_info_buff;
     unsigned char *buf;
@@ -663,10 +663,10 @@ decode_evolver_info(struct evolution_info *info, int dir)
         bufPtr = buf;
         bcopy((char *)info,(char *)buf,EVOLVER_INFO_SIZE);
     }  else {
-        evolution_info_buff.resize(sizeof(evolution_info));
+        evolution_info_buff.resize(sizeof(EVOLUTION_INFO));
         buf = &evolution_info_buff[0];
         bufPtr = buf;
-        bcopy((char *)info,(char *)buf,sizeof(struct evolution_info));
+        bcopy((char *)info,(char *)buf,sizeof(EVOLUTION_INFO));
     }
 
     getInt((short *) &info->evolving,&bufPtr,dir);
@@ -704,7 +704,7 @@ decode_evolver_info(struct evolution_info *info, int dir)
 }
 
 void
-decode_orbits_info(struct orbits_info *info, int dir)
+decode_orbits_info(ORBITS_INFO *info, int dir)
 {
     std::vector<unsigned char> orbits_info_buff;
     unsigned char *buf;
@@ -716,10 +716,10 @@ decode_orbits_info(struct orbits_info *info, int dir)
         bufPtr = buf;
         bcopy((char *)info,(char *)buf,ORBITS_INFO_SIZE);
     }  else {
-        orbits_info_buff.resize(sizeof(struct orbits_info));
+        orbits_info_buff.resize(sizeof(ORBITS_INFO));
         buf = &orbits_info_buff[0];
         bufPtr = buf;
-        bcopy((char *)info,(char *)buf,sizeof(struct orbits_info));
+        bcopy((char *)info,(char *)buf,sizeof(ORBITS_INFO));
     }
 
     getDouble(&info->oxmin,&bufPtr,dir);

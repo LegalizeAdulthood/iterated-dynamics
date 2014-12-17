@@ -9,9 +9,9 @@ void Cursor_EndMouseTracking();
 extern int getakey();
 extern int waitkeypressed(int);
 extern void fix_ranges(int *, int, int);
-extern void decode_evolver_info(struct evolution_info *, int);
-extern void decode_fractal_info(struct fractal_info *, int);
-extern void decode_orbits_info(struct orbits_info *, int);
+extern void decode_evolver_info(EVOLUTION_INFO *, int);
+extern void decode_fractal_info(FRACTAL_INFO *, int);
+extern void decode_orbits_info(ORBITS_INFO *, int);
 /*
  *   unix.c -- C file prototypes
  */
@@ -21,7 +21,7 @@ extern int stricmp(const char *, const char *);
 extern int strnicmp(const char *, const char *, int);
 #endif
 extern int ltoa(long, char *, int);
-extern void ftimex(struct timebx *);
+extern void ftimex(timebx *);
 // unixscr.c -- C file prototypes
 void UnixInit();
 // initializes curses text window and the signal handlers.

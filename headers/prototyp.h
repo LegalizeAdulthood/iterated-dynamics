@@ -69,27 +69,27 @@ extern int asmfpANDbailout();
 extern int asmfpMANHbailout();
 extern int asmfpMANRbailout();
 // mpmath_a -- assembler file prototypes
-extern struct MP * MPmul086(struct MP , struct MP);
-extern struct MP * MPdiv086(struct MP , struct MP);
-extern struct MP * MPadd086(struct MP , struct MP);
-extern int         MPcmp086(struct MP , struct MP);
-extern struct MP * d2MP086(double);
-extern double    * MP2d086(struct MP);
-extern struct MP * fg2MP086(long , int);
-extern struct MP * MPmul386(struct MP , struct MP);
-extern struct MP * MPdiv386(struct MP , struct MP);
-extern struct MP * MPadd386(struct MP , struct MP);
-extern int         MPcmp386(struct MP , struct MP);
-extern struct MP * d2MP386(double);
-extern double    * MP2d386(struct MP);
-extern struct MP * fg2MP386(long , int);
-extern double *    MP2d(struct MP);
-extern int         MPcmp(struct MP , struct MP);
-extern struct MP * MPmul(struct MP , struct MP);
-extern struct MP * MPadd(struct MP , struct MP);
-extern struct MP * MPdiv(struct MP , struct MP);
-extern struct MP * d2MP(double);   // Convert double to type MP
-extern struct MP * fg2MP(long , int);  // Convert fudged to type MP
+extern MP * MPmul086(MP , MP);
+extern MP * MPdiv086(MP , MP);
+extern MP * MPadd086(MP , MP);
+extern int         MPcmp086(MP , MP);
+extern MP * d2MP086(double);
+extern double    * MP2d086(MP);
+extern MP * fg2MP086(long , int);
+extern MP * MPmul386(MP , MP);
+extern MP * MPdiv386(MP , MP);
+extern MP * MPadd386(MP , MP);
+extern int         MPcmp386(MP , MP);
+extern MP * d2MP386(double);
+extern double    * MP2d386(MP);
+extern MP * fg2MP386(long , int);
+extern double *    MP2d(MP);
+extern int         MPcmp(MP , MP);
+extern MP * MPmul(MP , MP);
+extern MP * MPadd(MP , MP);
+extern MP * MPdiv(MP , MP);
+extern MP * d2MP(double);   // Convert double to type MP
+extern MP * fg2MP(long , int);  // Convert fudged to type MP
 // newton -- assembler file prototypes
 extern int NewtonFractal2();
 extern void invertz2(DComplex *);
@@ -575,7 +575,7 @@ extern int orbit3dfloat();
 extern int orbit3dlong();
 extern int iconfloatorbit(double *, double *, double *);
 extern int latoofloatorbit(double *, double *, double *);
-extern bool setup_convert_to_screen(struct affine *);
+extern bool setup_convert_to_screen(affine *);
 extern int plotorbits2dsetup();
 extern int plotorbits2dfloat();
 // lsys -- C file prototypes
@@ -621,20 +621,20 @@ extern void fix_inversion(double *);
 extern int ungetakey(int);
 extern void get_calculation_time(char *, long);
 // mpmath_c -- C file prototypes
-extern struct MP *MPsub(struct MP ,struct MP);
-extern struct MP *MPsub086(struct MP ,struct MP);
-extern struct MP *MPsub386(struct MP ,struct MP);
-extern struct MP *MPabs(struct MP);
-extern struct MPC MPCsqr(struct MPC);
-extern struct MP MPCmod(struct MPC);
-extern struct MPC MPCmul(struct MPC ,struct MPC);
-extern struct MPC MPCdiv(struct MPC ,struct MPC);
-extern struct MPC MPCadd(struct MPC ,struct MPC);
-extern struct MPC MPCsub(struct MPC ,struct MPC);
-extern struct MPC MPCpow(struct MPC ,int);
-extern int MPCcmp(struct MPC ,struct MPC);
-extern DComplex MPC2cmplx(struct MPC);
-extern struct MPC cmplx2MPC(DComplex);
+extern MP *MPsub(MP ,MP);
+extern MP *MPsub086(MP ,MP);
+extern MP *MPsub386(MP ,MP);
+extern MP *MPabs(MP);
+extern MPC MPCsqr(MPC);
+extern MP MPCmod(MPC);
+extern MPC MPCmul(MPC ,MPC);
+extern MPC MPCdiv(MPC ,MPC);
+extern MPC MPCadd(MPC ,MPC);
+extern MPC MPCsub(MPC ,MPC);
+extern MPC MPCpow(MPC ,int);
+extern int MPCcmp(MPC ,MPC);
+extern DComplex MPC2cmplx(MPC);
+extern MPC cmplx2MPC(DComplex);
 extern void setMPfunctions();
 extern DComplex ComplexPower(DComplex ,DComplex);
 extern void SetupLogTable();
@@ -847,11 +847,12 @@ extern void plot_setup();
 // printer -- C file prototypes
 extern void Print_Screen();
 // prompts1 -- C file prototypes
+struct fullscreenvalues;
 extern int fullscreen_prompt(
     const char *hdg,
     int numprompts,
     const char **prompts,
-    struct fullscreenvalues *values,
+    fullscreenvalues *values,
     int fkeymask,
     char *extrainfo);
 extern long get_file_entry(int type, const char *title,char *fmask,
@@ -860,7 +861,7 @@ extern int get_fracttype();
 extern int get_fract_params(int);
 extern int get_fract3d_params();
 extern int get_3d_params();
-extern int prompt_valuestring(char *buf,struct fullscreenvalues *val);
+extern int prompt_valuestring(char *buf,fullscreenvalues *val);
 extern void setbailoutformula(enum bailouts);
 extern int find_extra_param(int);
 extern void load_params(int fractype);

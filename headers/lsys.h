@@ -60,17 +60,18 @@ extern char maxangle;
 #define lsysi_dosizegf_386 lsys_dosizegf
 #define lsysi_dodrawg_386 lsys_dodrawg
 #else
-extern void lsysi_doat_386(struct lsys_turtlestatei *cmd);
-extern void lsysi_dosizegf_386(struct lsys_turtlestatei *cmd);
-extern void lsysi_dodrawg_386(struct lsys_turtlestatei *cmd);
+extern void lsysi_doat_386(lsys_turtlestatei *cmd);
+extern void lsysi_dosizegf_386(lsys_turtlestatei *cmd);
+extern void lsysi_dodrawg_386(lsys_turtlestatei *cmd);
 #endif
 // routines in lsysaf.asm
-extern void lsys_prepfpu(struct lsys_turtlestatef *);
-extern void lsys_donefpu(struct lsys_turtlestatef *);
+extern void lsys_prepfpu(lsys_turtlestatef *);
+extern void lsys_donefpu(lsys_turtlestatef *);
 // routines in lsysf.c
-extern struct lsys_cmd * drawLSysF(struct lsys_cmd *command,struct lsys_turtlestatef *ts, struct lsys_cmd **rules,int depth);
-extern bool lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd **rules, int depth);
-extern struct lsys_cmd *LSysFSizeTransform(char *s, struct lsys_turtlestatef *ts);
-extern struct lsys_cmd *LSysFDrawTransform(char *s, struct lsys_turtlestatef *ts);
+struct lsys_cmd;
+extern lsys_cmd *drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules,int depth);
+extern bool lsysf_findscale(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth);
+extern lsys_cmd *LSysFSizeTransform(char *s, lsys_turtlestatef *ts);
+extern lsys_cmd *LSysFDrawTransform(char *s, lsys_turtlestatef *ts);
 extern void lsysf_dosincos();
 #endif

@@ -594,8 +594,8 @@ enum Minor  {left_first, right_first};
 #define RANDWALK        2    // newparm = lastparm +- rand()
 #define RANDPARAM       4    // newparm = constant +- rand()
 #define NOGROUT         8    // no gaps between images
-extern struct fractalspecificstuff fractalspecific[];
-extern struct fractalspecificstuff *curfractalspecific;
+extern fractalspecificstuff fractalspecific[];
+extern fractalspecificstuff *curfractalspecific;
 #define DEFAULTFRACTALTYPE      ".gif"
 #define ALTERNATEFRACTALTYPE    ".fra"
 inline int sqr(int x)
@@ -745,10 +745,12 @@ struct WORKLIST     // work list entry for std escape time engines
 };
 
 #define MAXCALCWORK 12
-struct coords {
+struct coords
+{
     int x,y;
 };
-struct dblcoords {
+struct dblcoords
+{
     double x,y;
 };
 extern BYTE trigndx[];
@@ -761,7 +763,7 @@ struct trig_funct_lst
     void (*dfunct)();
     void (*mfunct)();
 } ;
-extern struct trig_funct_lst trigfn[];
+extern trig_funct_lst trigfn[];
 // function prototypes
 extern  void (*plot)(int, int, int);
 // for overlay return stack
@@ -922,16 +924,17 @@ struct fullscreenvalues
     // 'L' for long
     union
     {
-        double dval;      // when type 'd' or 'f'
-        int    ival;      // when type is 'i'
-        long   Lval;      // when type is 'L'
-        char   sval[16];  // when type is 's'
-        char  *sbuf;  // when type is 0x100+n
-        struct {          // when type is 'l'
-            int  val;      // selected choice
-            int  vlen;     // char len per choice
-            const char **list;   // list of values
-            int  llen;     // number of values
+        double dval;        // when type 'd' or 'f'
+        int    ival;        // when type is 'i'
+        long   Lval;        // when type is 'L'
+        char   sval[16];    // when type is 's'
+        char  *sbuf;        // when type is 0x100+n
+        struct              // when type is 'l'
+        {
+            int  val;       // selected choice
+            int  vlen;      // char len per choice
+            const char **list;  // list of values
+            int  llen;      // number of values
         } ch;
     } uval;
 };
@@ -948,7 +951,7 @@ struct DIR_SEARCH               // Allocate DTA and define structure
     long size;                  // File size in bytes
     char filename[FILE_MAX_PATH];   // Filename and extension
 };
-extern struct DIR_SEARCH DTA;   // Disk Transfer Area
+extern DIR_SEARCH DTA;          // Disk Transfer Area
 struct Palettetype
 {
     BYTE red;
@@ -972,12 +975,14 @@ struct JUMP_CONTROL_ST
 #if defined(_WIN32)
 #pragma pack(push, 1)
 #endif
-struct ext_blk_2 {
+struct ext_blk_2
+{
     char got_data;
     int length;
     int resume_data;
 };
-struct ext_blk_3 {
+struct ext_blk_3
+{
     char got_data;
     int length;
     char form_name[40];
@@ -989,18 +994,21 @@ struct ext_blk_3 {
     short uses_p4;
     short uses_p5;
 };
-struct ext_blk_4 {
+struct ext_blk_4
+{
     char got_data;
     int length;
     int *range_data;
 };
-struct ext_blk_5 {
+struct ext_blk_5
+{
     char got_data;
     int length;
     char *apm_data;
 };
 // parameter evolution stuff
-struct ext_blk_6 {
+struct ext_blk_6
+{
     char got_data;
     int length;
     short evolving;
@@ -1022,7 +1030,8 @@ struct ext_blk_6 {
     short  ecount;
     short  mutate[NUMGENES];
 };
-struct ext_blk_7 {
+struct ext_blk_7
+{
     char got_data;
     int length;
     double oxmin;
@@ -1037,12 +1046,13 @@ struct ext_blk_7 {
 #if defined(_WIN32)
 #pragma pack(pop)
 #endif
-struct SearchPath {
+struct SearchPath
+{
     char par[FILE_MAX_PATH];
     char frm[FILE_MAX_PATH];
     char ifs[FILE_MAX_PATH];
     char lsys[FILE_MAX_PATH];
-} ;
+};
 struct affine
 {
     // weird order so a,b,e and c,d,f are vectors

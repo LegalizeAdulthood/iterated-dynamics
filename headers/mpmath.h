@@ -17,7 +17,8 @@ struct MP
 #endif
 struct MPC
 {
-    MP x, y;
+    MP x;
+    MP y;
 };
 extern int MPOverflow;
 /* Mark Peterson's expanded floating point operators. If
