@@ -190,8 +190,6 @@ static bool bottom_guess = false;
    at end of 1st pass [0]... bits are set if any surrounding block not guessed;
    bits are numbered [..][y/16+1][x+1]&(1<<(y&15)) */
 
-typedef int (*TPREFIX)[2][maxyblk][maxxblk];
-
 // size of next puts a limit of MAXPIXELS pixels across on solid guessing logic
 BYTE dstack[4096] = { 0 };              // common temp, two put_line calls
 unsigned int tprefix[2][maxyblk][maxxblk] = { 0 }; // common temp
