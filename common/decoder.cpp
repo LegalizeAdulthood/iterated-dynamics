@@ -95,6 +95,8 @@ static short code_mask[13] =
     0x07FF, 0x0FFF
 };
 
+static BYTE suffix[10000] = { 0 };
+
 //**** External Variables **********************************************
 /* extern short bad_code_count;
  *

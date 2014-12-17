@@ -372,7 +372,6 @@ void free_ant_storage()
     }
 }
 
-// N.B. use the common memory in extraseg - suffix not large enough
 int ant()
 {
     int maxants, type;

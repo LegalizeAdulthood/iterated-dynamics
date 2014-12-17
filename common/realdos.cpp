@@ -1745,8 +1745,6 @@ int swaplength;
 #define SWAPBLKLEN 4096 // must be a power of 2
 U16 memhandle = 0;
 
-BYTE suffix[10000];
-
 void discardgraphics() // release expanded/extended memory if any in use
 {
 #ifndef XFRACT

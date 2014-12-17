@@ -458,7 +458,6 @@ extern char                  stereomapname[];
 extern int                   StoPtr;
 extern int                   stoppass;
 extern unsigned int          strlocn[];
-extern BYTE                  suffix[];
 extern double                sx3rd;
 extern int                   sxdots;
 extern double                sxmax;
