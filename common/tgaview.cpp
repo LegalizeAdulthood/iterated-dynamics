@@ -18,7 +18,7 @@ int tgaview()
 {
     int cs;
     unsigned int width;
-    fractal_info info;
+    FRACTAL_INFO info;
 
     fptarga = t16_open(readname, (int *)&width, (int *)&height, &cs, (U8 *)&info);
     if (fptarga==nullptr)

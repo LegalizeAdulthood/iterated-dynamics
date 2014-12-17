@@ -33,8 +33,7 @@ extern HINSTANCE g_instance;
 
 #define DI(name_) GDIDriver *name_ = (GDIDriver *) drv
 
-typedef struct tagGDIDriver GDIDriver;
-struct tagGDIDriver
+struct GDIDriver
 {
     Win32BaseDriver base;
 

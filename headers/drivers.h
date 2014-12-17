@@ -37,7 +37,7 @@
  * stack_screen, unstack_screen, discard_screen
  * get_char_attr, put_char_attr
  */
-struct tagDriver
+struct Driver
 {
     const char *name;                       // name of driver
     const char *description;                // driver description

@@ -5,7 +5,7 @@
 #define WINTEXT_MAX_COL 80
 #define WINTEXT_MAX_ROW 25
 
-struct tagWinText
+struct WinText
 {
     int textmode;
     bool AltF4hit;
@@ -43,7 +43,6 @@ struct tagWinText
     HWND hWndParent;                // a Global copy of hWnd's Parent
     HINSTANCE hInstance;            // a global copy of hInstance
 };
-typedef struct tagWinText WinText;
 
 extern void         wintext_clear(WinText *);
 extern void         wintext_cursor(WinText *, int, int, int);

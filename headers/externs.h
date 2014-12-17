@@ -519,7 +519,7 @@ extern int                   usr_periodicitycheck;
 extern char                  usr_stdcalcmode;
 extern int                   g_vesa_x_res;
 extern int                   g_vesa_y_res;
-extern struct videoinfo      g_video_entry;
+extern VIDEOINFO             g_video_entry;
 extern VIDEOINFO             g_video_table[];
 extern int                   g_video_table_len;
 extern bool                  video_cutboth;

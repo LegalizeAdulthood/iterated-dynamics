@@ -19,7 +19,7 @@
 
 // routines in this module
 
-static int  find_fractal_info(char *, fractal_info *,
+static int  find_fractal_info(char *, FRACTAL_INFO *,
                               ext_blk_2 *,
                               ext_blk_3 *,
                               ext_blk_4 *,
@@ -28,7 +28,7 @@ static int  find_fractal_info(char *, fractal_info *,
                               ext_blk_7 *);
 static void load_ext_blk(char *loadptr,int loadlen);
 static void skip_ext_blk(int *,int *);
-static void backwardscompat(fractal_info *info);
+static void backwardscompat(FRACTAL_INFO *info);
 static bool fix_bof();
 static bool fix_period_bof();
 
@@ -43,7 +43,7 @@ bool ldcheck = false;
 
 int read_overlay()      // read overlay/3D files, if reqr'd
 {
-    fractal_info read_info;
+    FRACTAL_INFO read_info;
     char msg[110];
     ext_blk_2 blk_2_info;
     ext_blk_3 blk_3_info;
@@ -519,7 +519,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (blk_6_info.got_data == 1)
     {
-        evolution_info resume_e_info;
+        EVOLUTION_INFO resume_e_info;
         GENEBASE gene[NUMGENES];
 
         // TODO: MemoryAlloc
@@ -644,7 +644,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     return 0;
 }
 
-static int find_fractal_info(char *gif_file, fractal_info *info,
+static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                              ext_blk_2 *blk_2_info,
                              ext_blk_3 *blk_3_info,
                              ext_blk_4 *blk_4_info,
@@ -659,8 +659,8 @@ static int find_fractal_info(char *gif_file, fractal_info *info,
     int fractinf_len;
     int hdr_offset;
     formula_info fload_info;
-    evolution_info eload_info;
-    orbits_info oload_info;
+    EVOLUTION_INFO eload_info;
+    ORBITS_INFO oload_info;
 
     blk_2_info->got_data = 0; // initialize to no data
     blk_3_info->got_data = 0; // initialize to no data
@@ -718,11 +718,11 @@ static int find_fractal_info(char *gif_file, fractal_info *info,
            x bytes   block info
             }
            1 byte    0, extension terminator
-       To scan extension blocks, we first look in file at length of fractal_info
+       To scan extension blocks, we first look in file at length of FRACTAL_INFO
        (the main extension block) from end of file, looking for a literal known
        to be at start of our block info.  Then we scan forward a bit, in case
-       the file is from an earlier fractint vsn with shorter fractal_info.
-       If fractal_info is found and is from vsn>=14, it includes the total length
+       the file is from an earlier fractint vsn with shorter FRACTAL_INFO.
+       If FRACTAL_INFO is found and is from vsn>=14, it includes the total length
        of all extension blocks; we then scan them all first to last to load
        any optional ones which are present.
        Defined extension blocks:
@@ -975,7 +975,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
 
 
 // switch obsolete fractal types to new generalizations
-static void backwardscompat(fractal_info *info)
+static void backwardscompat(FRACTAL_INFO *info)
 {
     switch (fractype) {
     case LAMBDASINE:
@@ -1257,11 +1257,11 @@ struct window
 
 // prototypes
 static void drawindow(int, window *);
-static bool is_visible_window(window *, fractal_info *, ext_blk_5 *);
+static bool is_visible_window(window *, FRACTAL_INFO *, ext_blk_5 *);
 static void transform(dblcoords *);
-static bool paramsOK(fractal_info *);
-static bool typeOK(fractal_info *, ext_blk_3 *);
-static bool functionOK(fractal_info *, int);
+static bool paramsOK(FRACTAL_INFO *);
+static bool typeOK(FRACTAL_INFO *, ext_blk_3 *);
+static bool functionOK(FRACTAL_INFO *, int);
 static void check_history(char *, char *);
 static void bfsetup_convert_to_screen();
 static void bftransform(bf_t, bf_t, dblcoords *);
@@ -1282,7 +1282,7 @@ int oldbf_math;
 int fgetwindow()
 {
     affine stack_cvt;
-    fractal_info read_info;
+    FRACTAL_INFO read_info;
     ext_blk_2 blk_2_info;
     ext_blk_3 blk_3_info;
     ext_blk_4 blk_4_info;
@@ -1709,7 +1709,7 @@ static void transform(dblcoords *point)
 
 static bool is_visible_window(
     window *list,
-    fractal_info *info,
+    FRACTAL_INFO *info,
     ext_blk_5 *blk_5_info)
 {
     dblcoords tl,tr,bl,br;
@@ -1910,7 +1910,7 @@ static bool is_visible_window(
         return false;
 }
 
-static bool paramsOK(fractal_info *info)
+static bool paramsOK(FRACTAL_INFO *info)
 {
     double tmpparm3, tmpparm4;
     double tmpparm5, tmpparm6;
@@ -1960,7 +1960,7 @@ static bool paramsOK(fractal_info *info)
         return false;
 }
 
-static bool functionOK(fractal_info *info, int numfn)
+static bool functionOK(FRACTAL_INFO *info, int numfn)
 {
     int mzmatch = 0;
     for (int i = 0; i < numfn; i++) {
@@ -1973,7 +1973,7 @@ static bool functionOK(fractal_info *info, int numfn)
         return true; // they all match
 }
 
-static bool typeOK(fractal_info *info, ext_blk_3 *blk_3_info)
+static bool typeOK(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 {
     int numfn;
     if ((fractype == FORMULA || fractype == FFORMULA) &&

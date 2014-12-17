@@ -2,8 +2,7 @@
 
 #define WIN32_MAXSCREENS 10
 
-typedef struct tagWin32BaseDriver Win32BaseDriver;
-struct tagWin32BaseDriver
+struct Win32BaseDriver
 {
     Driver pub;
 

@@ -3,8 +3,7 @@
 
 #include <vector>
 
-typedef struct tagPlot Plot;
-struct tagPlot
+struct Plot
 {
     HINSTANCE instance;
     char title[120];

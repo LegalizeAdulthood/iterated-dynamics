@@ -3,8 +3,7 @@
 
 #define KEYBUFMAX 80
 
-typedef struct tagFrame Frame;
-struct tagFrame
+struct Frame
 {
     HINSTANCE instance;
     HWND window;

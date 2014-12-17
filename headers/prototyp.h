@@ -506,11 +506,11 @@ extern int Std4dFractal();
 extern int Std4dfpFractal();
 // jiim -- C file prototypes
 extern void Jiim(int);
-extern LCMPLX PopLong();
+extern LComplex PopLong();
 extern DComplex PopFloat();
-extern LCMPLX DeQueueLong();
+extern LComplex DeQueueLong();
 extern DComplex DeQueueFloat();
-extern LCMPLX ComplexSqrtLong(long ,  long);
+extern LComplex ComplexSqrtLong(long ,  long);
 extern DComplex ComplexSqrtFloat(double, double);
 extern bool Init_Queue(unsigned long);
 extern void   Free_Queue();
@@ -528,7 +528,7 @@ extern int targa_color(int ,int ,int);
 extern bool targa_validate(char *File_Name);
 bool startdisk1(char *File_Name2, FILE *Source, bool overlay);
 // loadfdos -- C file prototypes
-extern int get_video_mode(struct fractal_info *,struct ext_blk_3 *);
+extern int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info);
 // loadfile -- C file prototypes
 extern int read_overlay();
 extern void set_if_old_bif();

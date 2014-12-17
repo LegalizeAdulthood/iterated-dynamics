@@ -65,7 +65,7 @@
 /*
  * struct PD_INFO used by process_document()
  */
-typedef struct
+struct PD_INFO
 {
     // used by process_document -- look but don't touch!
     int       pnum,
@@ -80,7 +80,7 @@ typedef struct
     // general parameters
     char *s;
     int       i;
-} PD_INFO;
+};
 /*
  * Commands passed to (*get_info)() and (*output)() by process_document()
  */

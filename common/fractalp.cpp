@@ -124,7 +124,7 @@ MOREPARAMS moreparams[] =
 /*
      type math orbitcalc fnct per_pixel fnct per_image fnct
    |-----|----|--------------|--------------|--------------| */
-alternatemathstuff alternatemath[] =
+AlternateMath alternatemath[] =
 {
 #define USEBN
 #ifdef USEBN

@@ -35,14 +35,13 @@ extern HINSTANCE g_instance;
 
 #define DI(name_) Win32DiskDriver *name_ = (Win32DiskDriver *) drv
 
-struct tagWin32DiskDriver
+struct Win32DiskDriver
 {
     Win32BaseDriver base;
     int width;
     int height;
     unsigned char clut[256][3];
 };
-typedef struct tagWin32DiskDriver Win32DiskDriver;
 
 static t_dotwriter win32_dot_writer;
 static t_dotreader win32_dot_reader;

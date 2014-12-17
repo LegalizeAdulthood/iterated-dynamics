@@ -300,7 +300,7 @@ bool orbit3dlongsetup()
     }
     else if (fractype == INVERSEJULIA)
     {
-        LCMPLX Sqrt;
+        LComplex Sqrt;
 
         CxLong = (long)(param[0] * fudge);
         CyLong = (long)(param[1] * fudge);

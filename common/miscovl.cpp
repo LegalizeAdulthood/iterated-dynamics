@@ -1616,7 +1616,7 @@ static void update_fractint_cfg()
     char cfgname[100],outname[100],buf[121],kname[5];
     FILE *cfgfile,*outfile;
     int i,j,linenum,nextlinenum,nextmode;
-    videoinfo vident;
+    VIDEOINFO vident;
 
     findpath("fractint.cfg",cfgname);
 

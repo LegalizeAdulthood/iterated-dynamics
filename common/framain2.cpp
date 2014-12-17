@@ -365,7 +365,7 @@ int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
             {
                 // generate a set of images with varied parameters on each one
                 int grout, ecount, tmpxdots, tmpydots, gridsqr;
-                evolution_info resume_e_info;
+                EVOLUTION_INFO resume_e_info;
                 GENEBASE gene[NUMGENES];
                 // get the gene array from memory
                 MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);

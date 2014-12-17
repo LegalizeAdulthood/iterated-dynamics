@@ -110,8 +110,9 @@ names. So for now humor us and let's keep the names short.
 #define MINPIXELS 10            // Minimum pixel count across/down the screen
 #define DEFAULTASPECT 1.0F      // Assumed overall screen dimensions, y/x
 #define DEFAULTASPECTDRIFT 0.02F // drift of < 2% is forced to 0%
-typedef struct tagDriver Driver;
-struct videoinfo {              // All we need to know about a Video Adapter
+struct Driver;
+struct VIDEOINFO
+{                           // All we need to know about a Video Adapter
     char    name[26];       // Adapter name (IBM EGA, etc)
     char    comment[26];    // Comments (UNTESTED, etc)
     int     keynum;         // key number used to invoked this mode
@@ -143,9 +144,7 @@ struct videoinfo {              // All we need to know about a Video Adapter
     int     colors;         // number of colors available
     Driver *driver;
 };
-typedef struct videoinfo VIDEOINFO;
 #define INFO_ID         "Fractal"
-typedef    struct fractal_info FRACTAL_INFO;
 /*
  * Note: because non-MSDOS machines store structures differently, we have
  * to do special processing of the fractal_info structure in loadfile.c.
@@ -163,7 +162,7 @@ typedef    struct fractal_info FRACTAL_INFO;
 #if defined(_WIN32)
 #pragma pack(push, 1)
 #endif
-struct fractal_info         // for saving data in GIF file
+struct FRACTAL_INFO         // for saving data in GIF file
 {
     char  info_id[8];       // Unique identifier for info block
     short iterationsold;    // Pre version 18.24
@@ -291,7 +290,7 @@ struct fractal_info         // for saving data in GIF file
 #pragma pack(pop)
 #endif
 #define ITEMNAMELEN 18   // max length of names in .frm/.l/.ifs/.fc
-struct history_info
+struct HISTORY
 {
     short fractal_type;
     double xmin;
@@ -397,7 +396,6 @@ struct history_info
     short keep_scrn_coords;
     char drawmode;
 };
-typedef struct history_info HISTORY;
 struct formula_info         // for saving formula data in GIF file
 {
     char  form_name[40];
@@ -417,7 +415,6 @@ enum stored_at_values
     DISK
 };
 #define NUMGENES 21
-typedef    struct evolution_info EVOLUTION_INFO;
 /*
  * Note: because non-MSDOS machines store structures differently, we have
  * to do special processing of the evolution_info structure in loadfile.c and
@@ -430,7 +427,7 @@ typedef    struct evolution_info EVOLUTION_INFO;
 // This value should be the MSDOS size, not the Unix size.
 #define EVOLVER_INFO_SIZE 200
 #endif
-struct evolution_info      // for saving evolution data in a GIF file
+struct EVOLUTION_INFO      // for saving evolution data in a GIF file
 {
     short evolving;
     short gridsz;
@@ -452,7 +449,6 @@ struct evolution_info      // for saving evolution data in a GIF file
     short ecount; // count of how many images have been calc'ed so far
     short future[68 - NUMGENES];      // total of 200 bytes
 };
-typedef    struct orbits_info ORBITS_INFO;
 /*
  * Note: because non-MSDOS machines store structures differently, we have
  * to do special processing of the orbits_info structure in loadfile.c and
@@ -465,7 +461,7 @@ typedef    struct orbits_info ORBITS_INFO;
 // This value should be the MSDOS size, not the Unix size.
 #define ORBITS_INFO_SIZE 200
 #endif
-struct orbits_info      // for saving orbits data in a GIF file
+struct ORBITS_INFO      // for saving orbits data in a GIF file
 {
     double oxmin;
     double oxmax;
@@ -486,13 +482,12 @@ extern  double   f_at_rad;      // finite attractor radius
 #define NUMIFS    64            // number of ifs functions in ifs array
 #define IFSPARM    7            // number of ifs parameters
 #define IFS3DPARM 13            // number of ifs 3D parameters
-struct moreparams
+struct MOREPARAMS
 {
     int      type;                      // index in fractalname of the fractal
     const char *param[MAXPARAMS-4];     // name of the parameters
     double   paramvalue[MAXPARAMS-4];   // default parameter values
 };
-typedef struct moreparams MOREPARAMS;
 struct fractalspecificstuff
 {
     const char  *name;                  // name of the fractal
@@ -529,7 +524,8 @@ struct fractalspecificstuff
     int (*calctype)();                  // name of main fractal function
     int orbit_bailout;                  // usual bailout value for orbit calc
 };
-struct alternatemathstuff
+
+struct AlternateMath
 {
     int type;                           // index in fractalname of the fractal
     int math;                           // kind of math used
@@ -537,7 +533,7 @@ struct alternatemathstuff
     int (*per_pixel)();                 // once-per-pixel init
     bool (*per_image)();                // once-per-image setup
 };
-typedef struct alternatemathstuff AlternateMath;
+
 // defines for symmetry
 #define  NOSYM          0
 #define  XAXIS_NOPARM  -1
@@ -627,7 +623,7 @@ inline long lsqr(long x)
 #define PER_IMAGE   (fractalspecific[fractype].per_image)
 #define PER_PIXEL   (fractalspecific[fractype].per_pixel)
 #define ORBITCALC   (fractalspecific[fractype].orbitcalc)
-typedef  LComplex LCMPLX;
+
 // 3D stuff - formerly in 3d.h
 #define    CMAX    4   // maximum column (4 x 4 matrix)
 #define    RMAX    4   // maximum row    (4 x 4 matrix)
@@ -736,7 +732,7 @@ inline double dot_product(VECTOR v1, VECTOR v2)
 #endif
 #define JIIM  0
 #define ORBIT 1
-struct workliststuff    // work list entry for std escape time engines
+struct WORKLIST     // work list entry for std escape time engines
 {
     int xxstart;    // screen window for this entry
     int xxstop;
@@ -747,7 +743,7 @@ struct workliststuff    // work list entry for std escape time engines
     int pass;       // for 2pass and solid guessing
     int xxbegin;    // start col within window, =0 except on resume
 };
-typedef struct workliststuff        WORKLIST;
+
 #define MAXCALCWORK 12
 struct coords {
     int x,y;
@@ -953,24 +949,26 @@ struct DIR_SEARCH               // Allocate DTA and define structure
     char filename[FILE_MAX_PATH];   // Filename and extension
 };
 extern struct DIR_SEARCH DTA;   // Disk Transfer Area
-typedef struct palett
+struct Palettetype
 {
     BYTE red;
     BYTE green;
     BYTE blue;
-}
-Palettetype;
+};
+
 #define MAX_JUMPS 200  // size of JUMP_CONTROL array
-typedef struct frm_jmpptrs_st {
+struct JUMP_PTRS_ST
+{
     int      JumpOpPtr;
     int      JumpLodPtr;
     int      JumpStoPtr;
-} JUMP_PTRS_ST;
-typedef struct frm_jump_st {
+};
+struct JUMP_CONTROL_ST
+{
     int      type;
     JUMP_PTRS_ST ptrs;
     int      DestJumpIndex;
-} JUMP_CONTROL_ST;
+};
 #if defined(_WIN32)
 #pragma pack(push, 1)
 #endif
@@ -1055,9 +1053,12 @@ struct affine
     double d;
     double f;
 };
-struct baseunit { // smallest part of a fractint 'gene'
+
+// smallest part of a fractint 'gene'
+struct GENEBASE
+{
     void *addr               ; // address of variable to be referenced
-    void (*varyfunc)(struct baseunit*,int,int); // pointer to func used to vary it
+    void (*varyfunc)(GENEBASE*,int,int); // pointer to func used to vary it
     // takes random number and pointer to var
     int mutate ;  // flag to switch on variation of this variable
     // 0 for no mutation, 1 for x axis, 2 for y axis
@@ -1065,6 +1066,7 @@ struct baseunit { // smallest part of a fractint 'gene'
     char name[16]; // name of variable (for menu )
     char level;    // mutation level at which this should become active
 };
-typedef struct baseunit    GENEBASE;
+
 #define sign(x) (((x) < 0) ? -1 : ((x) != 0)  ? 1 : 0)
+
 #endif

@@ -33,7 +33,7 @@ static int (*dotread)(int, int) = nullptr;
 static void (*linewrite)(int, int, int, BYTE *) = nullptr;
 static void (*lineread)(int, int, int, BYTE *) = nullptr;
 
-typedef enum
+enum fractint_event
 {
     FE_UNKNOWN = -1,
     FE_IMAGE_INFO,                  // TAB
@@ -107,7 +107,7 @@ typedef enum
     FE_VIDEO_CF10,
     FE_VIDEO_CF11,
     FE_VIDEO_CF12
-} fractint_event;
+};
 
 // Global variables (yuck!)
 struct MP Ans = { 0 };

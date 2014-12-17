@@ -376,11 +376,11 @@ long lsqrt(long f)
         return y0 >> -N;
 }
 #endif
-LCMPLX ComplexSqrtLong(long x, long y)
+LComplex ComplexSqrtLong(long x, long y)
 {
     double theta;
     long      maglong, thetalong;
-    LCMPLX    result;
+    LComplex    result;
 
 #ifndef LONGSQRT
     double mag = sqrt(sqrt(((double) multiply(x,x,bitshift))/fudge +

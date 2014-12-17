@@ -101,7 +101,7 @@ static double vid_aspect(int tryxdots,int tryydots)
 static vidinf *vidptr;
 #endif
 
-int get_video_mode(fractal_info *info, ext_blk_3 *blk_3_info)
+int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 {
     vidinf vid[MAXVIDEOMODES];
     bool gotrealmode;

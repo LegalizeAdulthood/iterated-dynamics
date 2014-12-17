@@ -23,11 +23,11 @@ char *strlwr(char *s);
 char *strupr(char *s);
 // ftime replacement
 #include <sys/types.h>
-typedef struct  timebx
+struct timebx
 {
     time_t  time;
     unsigned short millitm;
     int   timezone;
     int   dstflag;
-} timebx;
+};
 #endif
