@@ -1,4 +1,4 @@
-#include <curses.h>
+//#include <curses.h>
 #include <string.h>
 
 #include "port.h"
@@ -13,7 +13,7 @@ extern unsigned char *xgetfont();
 extern int startdisk();
 extern int waitkeypressed(int);
 
-WINDOW *curwin;
+//WINDOW *curwin;
 
 bool fake_lut = false;
 int dacnorm = 0;
@@ -125,6 +125,7 @@ setnullvideo()
 void normalineread(int y, int x, int lastx, BYTE *pixels);
 void normaline(int y, int x, int lastx, BYTE const *pixels);
 
+#if 0
 void
 putprompt()
 {
@@ -133,6 +134,7 @@ putprompt()
     wrefresh(curwin);
     return;
 }
+#endif
 
 void
 loaddac()
@@ -154,6 +156,8 @@ loaddac()
 ; Unix: We ignore ax,bx,cx,dx.  dotmode is the "mode" field in the video
 ; table.  We use mode 19 for the X window.
 */
+
+#if 0
 void
 setvideomode(int ax, int bx, int cx, int dx)
 {
@@ -206,6 +210,7 @@ setvideomode(int ax, int bx, int cx, int dx)
     g_vesa_x_res = sxdots;
     g_vesa_y_res = sydots;
 }
+#endif
 
 
 /*
@@ -240,6 +245,7 @@ putcolor_a(int xdot, int ydot, int color)
 
 ;       Move the cursor (called before printfs)
 */
+#if 0
 void
 movecursor(int row, int col)
 {
@@ -261,12 +267,14 @@ movecursor(int row, int col)
     }
     wmove(curwin, row, col);
 }
+#endif
 
 /*
 ; **************** Function keycursor(row, col)  **********************
 
 ;       Subroutine to wait cx ticks, or till keystroke pending
 */
+#if 0
 int
 keycursor(int row, int col)
 {
@@ -275,6 +283,7 @@ keycursor(int row, int col)
     waitkeypressed(0);
     return getakey();
 }
+#endif
 
 /*
 ; PUTSTR.asm puts a string directly to video display memory. Called from C by:
@@ -283,6 +292,7 @@ keycursor(int row, int col)
 ;         attr = color attribute.
 ;         string = far pointer to the null terminated string to print.
 */
+#if 0
 void
 putstring(int row, int col, int attr, char const *msg)
 {
@@ -336,6 +346,7 @@ putstring(int row, int col, int attr, char const *msg)
     g_text_row -= g_text_rbase;
     g_text_col -= g_text_cbase;
 }
+#endif
 
 /*
 ; setattr(row, col, attr, count) where
@@ -344,17 +355,20 @@ putstring(int row, int col, int attr, char const *msg)
 ;         count = number of characters to set
 ;         This routine works only in real color text mode.
 */
+#if 0
 void
 setattr(int row, int col, int attr, int count)
 {
     movecursor(row, col);
 }
+#endif
 
 /*
 ; **************** Function home()  ********************************
 
 ;       Home the cursor (called before printfs)
 */
+#if 0
 void
 home()
 {
@@ -362,13 +376,14 @@ home()
     g_text_row = 0;
     g_text_col = 0;
 }
-
+#endif
 
 /*
 ; ************* Function scrollup(toprow, botrow) ******************
 
 ;       Scroll the screen up (from toprow to botrow)
 */
+#if 0
 void
 scrollup(int top, int bot)
 {
@@ -378,6 +393,7 @@ scrollup(int top, int bot)
     winsertln(curwin);
     wrefresh(curwin);
 }
+#endif
 
 /*
 ; *************** Function spindac(direction, rstep) ********************
@@ -435,12 +451,14 @@ setfortext()
 {
 }
 
+#if 0
 void
 setclear()
 {
     wclear(curwin);
     wrefresh(curwin);
 }
+#endif
 
 void
 setforgraphics()

@@ -1890,6 +1890,26 @@ static bool x11_resize(Driver *drv)
         di->Xwinheight = sydots;
         screenaspect = sydots/(float) sxdots;
         finalaspectratio = screenaspect;
+        int Xpad = 9;
+        int Xmwidth;
+        if (di->Xdepth == 1)
+        {
+            Xmwidth = 1 + sxdots/8;
+        }
+        else if (di->Xdepth <= 8)
+        {
+            Xmwidth = sxdots;
+        }
+        else if (di->Xdepth <= 16)
+        {
+            Xmwidth = 2*sxdots;
+            Xpad = 16;
+        }
+        else
+        {
+            Xmwidth = 4*sxdots;
+            Xpad = 32;
+        }
         if (di->pixbuf != nullptr)
             free(di->pixbuf);
         di->pixbuf = (BYTE *) malloc(di->Xwinwidth *sizeof(BYTE));
@@ -1899,7 +1919,7 @@ static bool x11_resize(Driver *drv)
             XDestroyImage(di->Ximage);
         }
         di->Ximage = XCreateImage(di->Xdp, di->Xvi, di->Xdepth, ZPixmap, 0, nullptr, sxdots,
-                                  sydots, di->Xdepth, 0);
+                                  sydots, Xpad, Xmwidth);
         if (di->Ximage == nullptr)
         {
             printf("XCreateImage failed\n");

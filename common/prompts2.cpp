@@ -1213,7 +1213,7 @@ void goodbye()                  // we done.  Bail out
     {
         driver_set_for_text();
     }
-#ifdef XFRACT
+#if 0 && defined(XFRACT)
     UnixDone();
     printf("\n\n\n%s\n", "   Thank You for using " FRACTINT); // printf takes pointer
 #endif

@@ -40,7 +40,7 @@ else()
         unix/unix.cpp
         unix/unixscr.cpp
         unix/video.cpp)
-    set(OS_DRIVER_LIBRARIES ncurses X11 m)
+    set(OS_DRIVER_LIBRARIES X11 m)
     set(OS_DEFINITIONS "XFRACT" "NOBSTRING" "LINUX")
     set(HAVE_OS_DEFINITIONS true)
     set_source_files_properties(unix/unix.cpp
@@ -52,6 +52,7 @@ endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)")
     set(CMAKE_CXX_FLAGS "-std=c++11 -Werror")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
 endif()
 
 add_executable(id ${OS_ID_OPTIONS}
