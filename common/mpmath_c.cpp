@@ -333,7 +333,7 @@ long lsqrt(long f)
 {
     int N;
     unsigned long y0, z;
-    static long a=0, b=0, c=0;                  // constant factors
+    static long a = 0, b = 0, c = 0;                  // constant factors
 
     if (f == 0)
         return f;
