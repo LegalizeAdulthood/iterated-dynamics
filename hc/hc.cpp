@@ -1293,7 +1293,7 @@ void process_bininc()
 
     if (len >= BUFFER_SIZE)
     {
-        error(0,"File \"%s\" is too large to BinInc (%dK).", cmd+7, (int)(len>>10));
+        error(0,"File \"%s\" is too large to BinInc (%dK).", cmd+7, (int)(len >> 10));
         close(handle);
         return ;
     }
@@ -3600,7 +3600,7 @@ int main(int argc, char *argv[])
     if (buffer == nullptr)
         fatal(0,"Not enough memory to allocate buffer.");
 
-    for (arg= &argv[1]; argc > 1; argc--, arg++)
+    for (arg = &argv[1]; argc > 1; argc--, arg++)
     {
         switch ((*arg)[0])
         {
