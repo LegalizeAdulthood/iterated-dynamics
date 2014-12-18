@@ -2325,7 +2325,7 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
         printf("Bad mode %d\n", dotmode);
         exit(-1);
     }
-    if (dotmode !=0) {
+    if (dotmode != 0) {
         x11_read_palette(drv);
         g_and_color = colors-1;
         boxcount =0;

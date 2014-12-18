@@ -637,7 +637,7 @@ gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
     g_vesa_x_res = 0;                   // reset indicators used for
     g_vesa_y_res = 0;                   // virtual screen limits estimation
     g_good_mode = true;
-    if (dotmode !=0)
+    if (dotmode != 0)
     {
         g_and_color = colors-1;
         boxcount = 0;

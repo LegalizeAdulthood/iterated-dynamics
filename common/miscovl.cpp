@@ -987,7 +987,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         if (polyphony != 0)
             put_parm(" %s=%d", "polyphony",polyphony+1);
 
-        if (fm_wavetype !=0)
+        if (fm_wavetype != 0)
             put_parm(" %s=%d", "wavetype",fm_wavetype);
 
         if (fm_attack != 5)
@@ -1066,7 +1066,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         }
 docolors:
         put_parm(" %s=", "colors");
-        if (recordcolors !='c' && recordcolors != 'y' && *colorinf == '@')
+        if (recordcolors != 'c' && recordcolors != 'y' && *colorinf == '@')
             put_parm(colorinf);
         else {
             int curc,scanc,force,diffmag = -1;
@@ -1403,7 +1403,8 @@ static void strip_zeros(char *buf)
     strlwr(buf);
     if ((dptr = strchr(buf,'.')) != nullptr) {
         ++dptr;
-        if ((exptr = strchr(buf,'e')) !=nullptr)  // scientific notation with 'e'?
+        exptr = strchr(buf,'e');
+        if (exptr != nullptr)  // scientific notation with 'e'?
             bptr = exptr;
         else
             bptr = buf + strlen(buf);

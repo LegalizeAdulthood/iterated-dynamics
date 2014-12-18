@@ -660,7 +660,7 @@ findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
         return nullptr;
     }
 
-    while (command->ch && command->ch !=']') {
+    while (command->ch && command->ch != ']') {
         if (!(ts->counter++)) {
             // let user know we're not dead
             if (thinking(1, "L-System thinking (higher orders take longer)")) {
@@ -778,7 +778,7 @@ drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules,int depth)
     }
 
 
-    while (command->ch && command->ch !=']') {
+    while (command->ch && command->ch != ']') {
         if (!(ts->counter++)) {
             if (driver_key_pressed()) {
                 ts->counter--;
