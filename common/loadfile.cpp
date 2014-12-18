@@ -670,7 +670,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
     blk_7_info->got_data = 0; // initialize to no data
 
     fp = fopen(gif_file,"rb");
-    if (fp==nullptr)
+    if (fp == nullptr)
         return (-1);
     fread(gifstart,13,1,fp);
     if (strncmp((char *)gifstart,"GIF",3) != 0) { // not GIF, maybe old .tga?
@@ -693,7 +693,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
     else if (fileydots * 4 == filexdots * 3) // assume the common square pixels
         fileaspectratio = screenaspect;
 
-    if (*s_makepar == 0 && (gifstart[10] & 0x80)!=0)
+    if (*s_makepar == 0 && (gifstart[10] & 0x80) != 0)
     {
         for (int i = 0; i < filecolors; i++)
         {
@@ -1129,29 +1129,29 @@ void backwards_v18()
 {
     if (!functionpreloaded)
         set_if_old_bif(); // old bifs need function set
-    if (fractype==MANDELTRIG && usr_floatflag
+    if (fractype == MANDELTRIG && usr_floatflag
             && save_release < 1800 && bailout == 0)
         bailout = 2500;
-    if (fractype==LAMBDATRIG && usr_floatflag
+    if (fractype == LAMBDATRIG && usr_floatflag
             && save_release < 1800 && bailout == 0)
         bailout = 2500;
 }
 
 void backwards_v19()
 {
-    if (fractype==MARKSJULIA && save_release < 1825) {
+    if (fractype == MARKSJULIA && save_release < 1825) {
         if (param[2] == 0)
             param[2] = 2;
         else
             param[2] += 1;
     }
-    if (fractype==MARKSJULIAFP && save_release < 1825) {
+    if (fractype == MARKSJULIAFP && save_release < 1825) {
         if (param[2] == 0)
             param[2] = 2;
         else
             param[2] += 1;
     }
-    if ((fractype==FORMULA || fractype==FFORMULA) && save_release < 1824)
+    if ((fractype == FORMULA || fractype == FFORMULA) && save_release < 1824)
     {
         invert = 0;
         inversion[2] = invert;
@@ -1231,7 +1231,7 @@ static bool fix_bof()
     if (inside <= BOF60 && inside >= BOF61 && save_release < 1826)
         if ((curfractalspecific->calctype == StandardFractal &&
                 (curfractalspecific->flags & BAILTEST) == 0) ||
-                (fractype==FORMULA || fractype==FFORMULA))
+                (fractype == FORMULA || fractype == FFORMULA))
             ret = true;
     return ret;
 }
@@ -1340,7 +1340,7 @@ int fgetwindow()
     browsehandle = MemoryAlloc((U16)sizeof(window),(long)MAX_WINDOWS_OPEN,MEMORY);
     boxxhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
     boxyhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
-    boxvalueshandle = MemoryAlloc((U16)(vidlength>>1),(long)MAX_WINDOWS_OPEN,MEMORY);
+    boxvalueshandle = MemoryAlloc((U16)(vidlength >> 1),(long)MAX_WINDOWS_OPEN,MEMORY);
     if (!browsehandle || !boxxhandle || !boxyhandle || !boxvalueshandle)
         no_memory = true;
 
@@ -1369,7 +1369,7 @@ rescan:  // entry for changed browse parms
     splitpath(readname,drive,dir,nullptr,nullptr);
     splitpath(browsemask,nullptr,nullptr,fname,ext);
     makepath(tmpmask,drive,dir,fname,ext);
-    done=(vid_too_big==2) || no_memory || fr_findfirst(tmpmask);
+    done=(vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
     // draw all visible windows
     while (!done)
     {
@@ -1397,7 +1397,7 @@ rescan:  // entry for changed browse parms
             MoveToMemory(winlistptr,(U16)sizeof(window),1L,(long)wincount,browsehandle);
             MoveToMemory((BYTE *)boxx,vidlength,1L,(long)wincount,boxxhandle);
             MoveToMemory((BYTE *)boxy,vidlength,1L,(long)wincount,boxyhandle);
-            MoveToMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)wincount,boxvalueshandle);
+            MoveToMemory((BYTE *)boxvalues,(U16)(vidlength >> 1),1L,(long)wincount,boxvalueshandle);
             wincount++;
         }
 
@@ -1419,7 +1419,7 @@ rescan:  // entry for changed browse parms
     {   // hard code message at MAX_WINDOWS_OPEN = 450
         texttempmsg("Sorry...no more space, 450 displayed.");
     }
-    if (vid_too_big==2)
+    if (vid_too_big == 2)
     {
         texttempmsg("Xdots + Ydots > 4096.");
     }
@@ -1432,7 +1432,7 @@ rescan:  // entry for changed browse parms
         MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)index,browsehandle);
         MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
         MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)index,boxyhandle);
-        MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)index,boxvalueshandle);
+        MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength >> 1),1L,(long)index,boxvalueshandle);
         showtempmsg(winlist.name);
         while (!done)  /* on exit done = 1 for quick exit,
                                  done = 2 for erase boxes and  exit
@@ -1470,7 +1470,7 @@ rescan:  // entry for changed browse parms
             case FIK_UP_ARROW:
                 cleartempmsg();
                 drawindow(color_of_box,&winlist);// dim last window
-                if (c==FIK_RIGHT_ARROW || c== FIK_UP_ARROW) {
+                if (c == FIK_RIGHT_ARROW || c== FIK_UP_ARROW) {
                     index++;                     // shift attention to next window
                     if (index >= wincount) index=0;
                 }
@@ -1481,7 +1481,7 @@ rescan:  // entry for changed browse parms
                 MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)index,browsehandle);
                 MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
                 MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)index,boxyhandle);
-                MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)index,boxvalueshandle);
+                MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength >> 1),1L,(long)index,boxvalueshandle);
                 showtempmsg(winlist.name);
                 break;
 #ifndef XFRACT
@@ -1621,7 +1621,7 @@ rescan:  // entry for changed browse parms
                 boxcount = winlist.boxcount;
                 MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)i,boxxhandle);
                 MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)i,boxyhandle);
-                MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)i,boxvalueshandle);
+                MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength >> 1),1L,(long)i,boxvalueshandle);
                 boxcount >>= 1;
                 if (boxcount > 0)
 #ifdef XFRACT
@@ -1899,16 +1899,16 @@ static bool is_visible_window(
         return false;
 
     // now see how many corners are on the screen, accept if one or more
-    if (tl.x >=(0-sxoffs) && tl.x <= (sxdots-sxoffs) && tl.y >=(0-syoffs) && tl.y<= (sydots-syoffs))
+    if (tl.x >= (0-sxoffs) && tl.x <= (sxdots-sxoffs) && tl.y >= (0-syoffs) && tl.y <= (sydots-syoffs))
         cornercount++;
-    if (bl.x >=(0-sxoffs) && bl.x <= (sxdots-sxoffs) && bl.y >=(0-syoffs) && bl.y<= (sydots-syoffs))
+    if (bl.x >= (0-sxoffs) && bl.x <= (sxdots-sxoffs) && bl.y >= (0-syoffs) && bl.y <= (sydots-syoffs))
         cornercount++;
-    if (tr.x >=(0-sxoffs) && tr.x <= (sxdots-sxoffs) && tr.y >=(0-syoffs) && tr.y<= (sydots-syoffs))
+    if (tr.x >= (0-sxoffs) && tr.x <= (sxdots-sxoffs) && tr.y >= (0-syoffs) && tr.y <= (sydots-syoffs))
         cornercount++;
-    if (br.x >=(0-sxoffs) && br.x <= (sxdots-sxoffs) && br.y >=(0-syoffs) && br.y<= (sydots-syoffs))
+    if (br.x >= (0-sxoffs) && br.x <= (sxdots-sxoffs) && br.y >= (0-syoffs) && br.y <= (sydots-syoffs))
         cornercount++;
 
-    if (cornercount >=1)
+    if (cornercount >= 1)
         return true;
     else
         return false;
@@ -1986,7 +1986,7 @@ static bool typeOK(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         if (!stricmp(blk_3_info->form_name,FormName))
         {
             numfn = maxfn;
-            if (numfn>0)
+            if (numfn > 0)
                 return functionOK(info, numfn);
             else
                 return true; // match up formula names with no functions
@@ -1998,7 +1998,7 @@ static bool typeOK(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
              info->fractal_type == curfractalspecific->tofloat)
     {
         numfn = (curfractalspecific->flags >> 6) & 7;
-        if (numfn>0)
+        if (numfn > 0)
             return functionOK(info, numfn);
         else
             return true; // match types with no functions
