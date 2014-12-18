@@ -577,7 +577,7 @@ get_evol_restart:
 
     // TODO: allocate real memory, not reuse shared segment
 //   ptr = (char *) extraseg;
-    if ((evolving & RANDWALK)||(evolving & RANDPARAM)) {
+    if ((evolving & RANDWALK) || (evolving & RANDPARAM)) {
         // adjust field param to make some sense when changing from random modes
         // maybe should adjust for aspect ratio here?
         paramrangey = fiddlefactor * 2;

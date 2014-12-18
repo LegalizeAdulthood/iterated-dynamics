@@ -179,7 +179,7 @@ long iteration(DBLS cr, DBLS ci,
 #ifdef INTEL
         while (magi < bail&&--iter != 0);
 #else
-        while (mag < 16.0&&--iter != 0);
+        while (mag < 16.0 && --iter != 0);
 #endif
     }
     else
@@ -270,7 +270,7 @@ long iteration(DBLS cr, DBLS ci,
 #ifdef INTEL
         while (magi < bail&&--iter != 0);
 #else
-        while (mag < 16.0&&--iter != 0);
+        while (mag < 16.0 && --iter != 0);
 #endif
     }
 

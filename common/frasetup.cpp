@@ -428,7 +428,7 @@ MandellongSetup()
         if (param[3] != 0 || (double)c_exp != param[2])
             symmetry = NOSYM;
     }
-    if ((fractype == LMANTRIGPLUSEXP)||(fractype == LMANTRIGPLUSZSQRD))
+    if ((fractype == LMANTRIGPLUSEXP) || (fractype == LMANTRIGPLUSZSQRD))
     {
         if (parm.y == 0.0)
             symmetry = XAXIS;

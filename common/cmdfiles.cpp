@@ -2883,14 +2883,14 @@ int cmdarg(char *curarg, int mode) // process a single argument
     }
 
     if (strcmp(variable, "ambient") == 0) {       // ambient=?
-        if (numval < 0||numval > 100)
+        if (numval < 0 || numval > 100)
             goto badarg;
         Ambient = numval;
         return 2;
     }
 
     if (strcmp(variable, "haze") == 0) {          // haze=?
-        if (numval < 0||numval > 100)
+        if (numval < 0 || numval > 100)
             goto badarg;
         haze = numval;
         return 2;
