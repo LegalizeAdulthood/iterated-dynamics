@@ -89,7 +89,7 @@ LDBL getnumber(char **str)
         break;
     }
     i=0;
-    while ((**str<='9' && **str>='0') || **str=='.')
+    while ((**str <= '9' && **str >= '0') || **str == '.')
     {
         numstr[i++]= **str;
         (*str)++;
@@ -189,7 +189,7 @@ static bool readLSystemFile(char *str)
                 }
                 check = true;
             }
-            else if (err<6)
+            else if (err < 6)
             {
                 sprintf(&msgbuf[strlen(msgbuf)],
                         "Syntax error line %d: %s\n",linenum,word);
@@ -198,8 +198,8 @@ static bool readLSystemFile(char *str)
             if (check)
             {
                 check = false;
-                if ((word=strtok(nullptr," \t\n"))!=nullptr)
-                    if (err<6)
+                if ((word=strtok(nullptr," \t\n")) != nullptr)
+                    if (err < 6)
                     {
                         sprintf(&msgbuf[strlen(msgbuf)],
                                 "Extra text after command line %d: %s\n",linenum,word);
@@ -209,12 +209,12 @@ static bool readLSystemFile(char *str)
         }
     }
     fclose(infile);
-    if (!ruleptrs[0] && err<6)
+    if (!ruleptrs[0] && err < 6)
     {
         strcat(msgbuf,"Error:  no axiom\n");
         ++err;
     }
-    if ((maxangle<3||maxangle>50) && err<6)
+    if ((maxangle < 3||maxangle > 50) && err < 6)
     {
         strcat(msgbuf,"Error:  illegal or missing angle\n");
         ++err;
@@ -241,7 +241,7 @@ int Lsystem()
     overflow = false;           // reset integer math overflow flag
 
     order=(int)param[0];
-    if (order<=0)
+    if (order <= 0)
         order=0;
     if (usr_floatflag)
         overflow = true;
@@ -544,10 +544,10 @@ static void lsysi_dosizedm(lsys_turtlestatei *cmd)
 
     // xpos+=size*aspect*cos(realangle*PI/180);
     // ypos+=size*sin(realangle*PI/180);
-    if (cmd->xpos>cmd->xmax) cmd->xmax=cmd->xpos;
-    if (cmd->ypos>cmd->ymax) cmd->ymax=cmd->ypos;
-    if (cmd->xpos<cmd->xmin) cmd->xmin=cmd->xpos;
-    if (cmd->ypos<cmd->ymin) cmd->ymin=cmd->ypos;
+    if (cmd->xpos > cmd->xmax) cmd->xmax=cmd->xpos;
+    if (cmd->ypos > cmd->ymax) cmd->ymax=cmd->ypos;
+    if (cmd->xpos < cmd->xmin) cmd->xmin=cmd->xpos;
+    if (cmd->ypos < cmd->ymin) cmd->ymin=cmd->ypos;
 }
 
 static void lsysi_dosizegf(lsys_turtlestatei *cmd)
@@ -556,10 +556,10 @@ static void lsysi_dosizegf(lsys_turtlestatei *cmd)
     cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
-    if (cmd->xpos>cmd->xmax) cmd->xmax=cmd->xpos;
-    if (cmd->ypos>cmd->ymax) cmd->ymax=cmd->ypos;
-    if (cmd->xpos<cmd->xmin) cmd->xmin=cmd->xpos;
-    if (cmd->ypos<cmd->ymin) cmd->ymin=cmd->ypos;
+    if (cmd->xpos > cmd->xmax) cmd->xmax=cmd->xpos;
+    if (cmd->ypos > cmd->ymax) cmd->ymax=cmd->ypos;
+    if (cmd->xpos < cmd->xmin) cmd->xmin=cmd->xpos;
+    if (cmd->ypos < cmd->ymin) cmd->ymin=cmd->ypos;
 }
 
 static void lsysi_dodrawd(lsys_turtlestatei *cmd)
@@ -661,7 +661,7 @@ findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
         tran = false;
         if (depth) {
             for (lsys_cmd **rulind = rules; *rulind; rulind++)
-                if ((*rulind)->ch==command->ch) {
+                if ((*rulind)->ch == command->ch) {
                     tran = true;
                     if (findsize((*rulind)+1,ts,rules,depth-1) == nullptr)
                         return (nullptr);
@@ -737,7 +737,7 @@ lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int 
         vert = (float)1E37;
     else
         vert = (float)((ydots-6) /(ymax-ymin));
-    locsize = (vert<horiz) ? vert : horiz;
+    locsize = (vert < horiz) ? vert : horiz;
 
     if (horiz == 1E37)
         ts->xpos = FIXEDPT(xdots/2);
