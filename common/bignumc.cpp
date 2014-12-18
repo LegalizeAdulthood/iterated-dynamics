@@ -66,8 +66,8 @@ int cmp_bn(bn_t n1, bn_t n2)
 
     // two bytes at a time
     // signed comparison for msb
-    if ((Svalue1=big_accessS16((S16 BIGDIST *)(n1+bnlength-2))) >
-            (Svalue2=big_accessS16((S16 BIGDIST *)(n2+bnlength-2))))
+    if ((Svalue1 = big_accessS16((S16 BIGDIST *)(n1+bnlength-2))) >
+            (Svalue2 = big_accessS16((S16 BIGDIST *)(n2+bnlength-2))))
     {   // now determine which of the two bytes was different
         if ((S16)(Svalue1&0xFF00) > (S16)(Svalue2&0xFF00))   // compare just high bytes
             return (bnlength); // high byte was different
@@ -85,7 +85,7 @@ int cmp_bn(bn_t n1, bn_t n2)
     // unsigned comparison for the rest
     for (int i = bnlength-4; i >= 0; i -= 2)
     {
-        if ((value1=big_access16(n1+i)) > (value2=big_access16(n2+i)))
+        if ((value1 = big_access16(n1+i)) > (value2 = big_access16(n2+i)))
         {   // now determine which of the two bytes was different
             if ((value1&0xFF00) > (value2&0xFF00))   // compare just high bytes
                 return (i+2); // high byte was different
@@ -127,7 +127,7 @@ bool is_bn_not_zero(bn_t n)
 // r = n1 + n2
 bn_t add_bn(bn_t r, bn_t n1, bn_t n2)
 {
-    U32 sum=0;
+    U32 sum = 0;
 
     // two bytes at a time
     for (int i = 0; i < bnlength; i += 2)
@@ -143,7 +143,7 @@ bn_t add_bn(bn_t r, bn_t n1, bn_t n2)
 // r += n
 bn_t add_a_bn(bn_t r, bn_t n)
 {
-    U32 sum=0;
+    U32 sum = 0;
 
     // two bytes at a time
     for (int i = 0; i < bnlength; i += 2)
@@ -159,7 +159,7 @@ bn_t add_a_bn(bn_t r, bn_t n)
 // r = n1 - n2
 bn_t sub_bn(bn_t r, bn_t n1, bn_t n2)
 {
-    U32 diff=0;
+    U32 diff = 0;
 
     // two bytes at a time
     for (int i = 0; i < bnlength; i += 2)
@@ -175,7 +175,7 @@ bn_t sub_bn(bn_t r, bn_t n1, bn_t n2)
 // r -= n
 bn_t sub_a_bn(bn_t r, bn_t n)
 {
-    U32 diff=0;
+    U32 diff = 0;
 
     // two bytes at a time
     for (int i = 0; i < bnlength; i += 2)
@@ -193,7 +193,7 @@ bn_t neg_bn(bn_t r, bn_t n)
 {
     int i;
     U16 t_short;
-    U32 neg=1; // to get the 2's complement started
+    U32 neg = 1; // to get the 2's complement started
 
     // two bytes at a time
     for (i = 0; neg != 0 && i < bnlength; i += 2)
@@ -217,7 +217,7 @@ bn_t neg_a_bn(bn_t r)
 {
     int i;
     U16 t_short;
-    U32 neg=1; // to get the 2's complement started
+    U32 neg = 1; // to get the 2's complement started
 
     // two bytes at a time
     for (i = 0; neg != 0 && i < bnlength; i += 2)
@@ -239,7 +239,7 @@ bn_t neg_a_bn(bn_t r)
 // r = 2*n
 bn_t double_bn(bn_t r, bn_t n)
 {
-    U32 prod=0;
+    U32 prod = 0;
 
     // two bytes at a time
     for (int i = 0; i < bnlength; i += 2)
@@ -255,7 +255,7 @@ bn_t double_bn(bn_t r, bn_t n)
 // r *= 2
 bn_t double_a_bn(bn_t r)
 {
-    U32 prod=0;
+    U32 prod = 0;
 
     // two bytes at a time
     for (int i = 0; i < bnlength; i += 2)
@@ -272,12 +272,12 @@ bn_t double_a_bn(bn_t r)
 bn_t half_bn(bn_t r, bn_t n)
 {
     int i;
-    U32 quot=0;
+    U32 quot = 0;
 
     // two bytes at a time
 
     // start with an arithmetic shift
-    i=bnlength-2;
+    i = bnlength-2;
     quot += (U32)(((S32)(S16)big_access16(n+i) << 16) >> 1); // shift to upper 2 bytes and half it
     big_set16(r+i, (U16)(quot >> 16));   // store the upper 2 bytes
     quot <<= 16; // shift the underflow for next time
@@ -298,12 +298,12 @@ bn_t half_bn(bn_t r, bn_t n)
 bn_t half_a_bn(bn_t r)
 {
     int i;
-    U32 quot=0;
+    U32 quot = 0;
 
     // two bytes at a time
 
     // start with an arithmetic shift
-    i=bnlength-2;
+    i = bnlength-2;
     quot += (U32)(((S32)(S16)big_access16(r+i) << 16) >> 1); // shift to upper 2 bytes and half it
     big_set16(r+i, (U16)(quot >> 16));   // store the upper 2 bytes
     quot <<= 16; // shift the underflow for next time
@@ -721,7 +721,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 // r = n * u  where u is an unsigned integer
 bn_t mult_bn_int(bn_t r, bn_t n, U16 u)
 {
-    U32 prod=0;
+    U32 prod = 0;
 
     // two bytes at a time
     for (int i = 0; i < bnlength; i += 2)
@@ -737,7 +737,7 @@ bn_t mult_bn_int(bn_t r, bn_t n, U16 u)
 // r *= u  where u is an unsigned integer
 bn_t mult_a_bn_int(bn_t r, U16 u)
 {
-    U32 prod=0;
+    U32 prod = 0;
 
     // two bytes at a time
     for (int i = 0; i < bnlength; i += 2)
@@ -754,7 +754,7 @@ bn_t mult_a_bn_int(bn_t r, U16 u)
 bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 {
     U32 full_number;
-    U16 quot, rem=0;
+    U16 quot, rem = 0;
 
     bool sign = is_bn_neg(n);
     if (sign)
@@ -787,7 +787,7 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 bn_t div_a_bn_int(bn_t r, U16 u)
 {
     U32 full_number;
-    U16 quot, rem=0;
+    U16 quot, rem = 0;
 
     bool sign = is_bn_neg(r);
     if (sign)
@@ -822,7 +822,7 @@ LDBL bntofloat(bn_t n)
 {
     int expon;
     bn_t getbyte;
-    LDBL f=0;
+    LDBL f = 0;
 
     bool signflag = false;
     if (is_bn_neg(n))
