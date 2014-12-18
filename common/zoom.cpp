@@ -96,8 +96,8 @@ void drawbox(int drawit)
     double fxwidth,fxskew,fydepth,fyskew,fxadj;
     bf_t bffxwidth, bffxskew, bffydepth, bffyskew, bffxadj;
     int saved=0;
-    if (zwidth==0) { // no box to draw
-        if (boxcount!=0) { // remove the old box from display
+    if (zwidth == 0) { // no box to draw
+        if (boxcount != 0) { // remove the old box from display
             clearbox();
             boxcount = 0;
         }
@@ -188,7 +188,7 @@ void drawbox(int drawit)
     tr.x   = (int)(ftemp1*(dxsize+PIXELROUND));
     tr.y   = (int)(ftemp2*(dysize+PIXELROUND));
 
-    if (boxcount!=0) { // remove the old box from display
+    if (boxcount != 0) { // remove the old box from display
         clearbox();
         boxcount = 0;
     }
@@ -225,7 +225,7 @@ void drawlines(coords fr, coords to,
     coords tmpp,line1,line2;
 
     if (abs(to.x-fr.x) > abs(to.y-fr.y)) { // delta.x > delta.y
-        if (fr.x>to.x) { // swap so from.x is < to.x
+        if (fr.x > to.x) { // swap so from.x is < to.x
             tmpp = fr;
             fr = to;
             to = tmpp;
@@ -235,16 +235,16 @@ void drawlines(coords fr, coords to,
         altdec = abs(to.y-fr.y)*xincr;
         altinc = to.x-fr.x;
         altctr = altinc/2;
-        yincr = (to.y>fr.y)?1:-1;
+        yincr = (to.y > fr.y)?1:-1;
         line1.x = fr.x;
         line2.x = line1.x + dx;
         line1.y = fr.y;
         line2.y = line1.y + dy;
-        while (--ctr>=0) {
+        while (--ctr >= 0) {
             line1.x += xincr;
             line2.x += xincr;
             altctr -= altdec;
-            while (altctr<0) {
+            while (altctr < 0) {
                 altctr  += altinc;
                 line1.y += yincr;
                 line2.y += yincr;
@@ -255,7 +255,7 @@ void drawlines(coords fr, coords to,
     }
 
     else { // delta.y > delta.x
-        if (fr.y>to.y) { // swap so from.y is < to.y
+        if (fr.y > to.y) { // swap so from.y is < to.y
             tmpp = fr;
             fr = to;
             to = tmpp;
@@ -265,16 +265,16 @@ void drawlines(coords fr, coords to,
         altdec = abs(to.x-fr.x)*yincr;
         altinc = to.y-fr.y;
         altctr = altinc/2;
-        xincr = (to.x>fr.x) ? 1 : -1;
+        xincr = (to.x > fr.x) ? 1 : -1;
         line1.x = fr.x;
         line2.x = line1.x + dx;
         line1.y = fr.y;
         line2.y = line1.y + dy;
-        while (--ctr>=0) {
+        while (--ctr >= 0) {
             line1.y += yincr;
             line2.y += yincr;
             altctr  -= altdec;
-            while (altctr<0) {
+            while (altctr < 0) {
                 altctr  += altinc;
                 line1.x += xincr;
                 line2.x += xincr;
@@ -304,7 +304,7 @@ void moveboxf(double dx, double dy)
 {
     int align;
     align = check_pan();
-    if (dx!=0.0) {
+    if (dx != 0.0) {
         if ((zbx += dx) + zwidth/2 < 0)  // center must stay onscreen
             zbx = zwidth/-2;
         if (zbx + zwidth/2 > 1)
@@ -318,7 +318,7 @@ void moveboxf(double dx, double dy)
             zbx = (double)col/dxsize;
         }
     }
-    if (dy!=0.0) {
+    if (dy != 0.0) {
         if ((zby += dy) + zdepth/2 < 0)
             zby = zdepth/-2;
         if (zby + zdepth/2 > 1)
