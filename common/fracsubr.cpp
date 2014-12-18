@@ -282,8 +282,8 @@ init_restart:
     }
     else if (fractype == JULIBROT && fractalspecific[neworbittype].isinteger == 0)
     {
-        int i;
-        if ((i = fractalspecific[neworbittype].tofloat) != NOFRACTAL)
+        int i = fractalspecific[neworbittype].tofloat;
+        if (i != NOFRACTAL)
             neworbittype = i;
         else
             fractype = JULIBROTFP;
@@ -983,7 +983,8 @@ static void adjust_to_limits(double expand)
         ftemp = highy-lowy;
 
     // if image is too large, downsize it maintaining center
-    if ((ftemp = limit*2/ftemp) < 1.0) {
+    ftemp = limit*2/ftemp;
+    if (ftemp < 1.0) {
         for (int i = 0; i < 4; ++i) {
             cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp;
             cornery[i] = centery + (cornery[i]-centery)*ftemp;
@@ -1262,7 +1263,8 @@ void sleepms_old(long ms)
         while (t2.time == t1.time && t2.millitm == t1.millitm);
         sleepms_old(10L * SLEEPINIT);
         ftimex(&t2);
-        if ((i = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm) < elapsed)
+        i = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
+        if (i < elapsed)
             elapsed = (i == 0) ? 1 : i;
         scalems = (long)((float)SLEEPINIT/(float)(elapsed) * scalems);
         cleartempmsg();

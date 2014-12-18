@@ -158,7 +158,8 @@ int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
             {
                 // bypass for VESA virtual screen
                 ftemp = finalaspectratio*(((double) sydots)/((double) sxdots)/screenaspect);
-                if ((xdots = viewxdots) != 0)
+                xdots = viewxdots;
+                if (xdots != 0)
                 {   // xdots specified
                     ydots = viewydots;
                     if (ydots == 0) // calc ydots?
@@ -789,7 +790,8 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
         julibrot = false;
         clear_zoombox();
         driver_stack_screen();
-        if ((i = get_fracttype()) >= 0)
+        i = get_fracttype();
+        if (i >= 0)
         {
             driver_discard_screen();
             savedac = 0;
@@ -955,7 +957,8 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
             if (!fromtext_flag)
                 driver_stack_screen();
             fromtext_flag = false;
-            if ((err = get_fract_params(2)) >= 0)
+            err = get_fract_params(2);
+            if (err >= 0)
             {
                 driver_unstack_screen();
                 if (ant() >= 0)
@@ -1440,7 +1443,8 @@ do_3d_transform:
         // fall through
     }
     default:                     // other (maybe a valid Fn key)
-        if ((k = check_vidmode_key(0, *kbdchar)) >= 0)
+        k = check_vidmode_key(0, *kbdchar);
+        if (k >= 0)
         {
             g_adapter = k;
             if (g_video_table[g_adapter].colors != colors)

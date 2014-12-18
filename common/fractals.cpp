@@ -450,7 +450,8 @@ int NewtonFractal2()
     g_new.y *= d1overd;
 
     // Watch for divide underflow
-    if ((t2 = tmp.x * tmp.x + tmp.y * tmp.y) < FLT_MIN)
+    t2 = tmp.x*tmp.x + tmp.y*tmp.y;
+    if (t2 < FLT_MIN)
         return 1;
     else
     {
@@ -472,8 +473,8 @@ complex_mult(DComplex arg1,DComplex arg2,DComplex *pz)
 int
 complex_div(DComplex numerator,DComplex denominator,DComplex *pout)
 {
-    double mod;
-    if ((mod = modulus(denominator)) < FLT_MIN)
+    double mod = modulus(denominator);
+    if (mod < FLT_MIN)
         return 1;
     conjugate(&denominator);
     complex_mult(numerator,denominator,pout);
@@ -1162,7 +1163,8 @@ PopcornFractal_Old()
     else
         tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    if ((magnitude = tempsqrx + tempsqry) >= rqlim)
+    magnitude = tempsqrx + tempsqry;
+    if (magnitude >= rqlim)
         return 1;
     old = g_new;
     return 0;
@@ -1189,7 +1191,8 @@ PopcornFractal()
     }
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    if ((magnitude = tempsqrx + tempsqry) >= rqlim
+    magnitude = tempsqrx + tempsqry;
+    if (magnitude >= rqlim
             || fabs(g_new.x) > rqlim2 || fabs(g_new.y) > rqlim2)
         return 1;
     old = g_new;
@@ -1309,7 +1312,8 @@ PopcornFractalFn()
 
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    if ((magnitude = tempsqrx + tempsqry) >= rqlim
+    magnitude = tempsqrx + tempsqry;
+    if (magnitude >= rqlim
             || fabs(g_new.x) > rqlim2 || fabs(g_new.y) > rqlim2)
         return 1;
     old = g_new;
