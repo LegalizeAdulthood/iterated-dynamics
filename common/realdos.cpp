@@ -54,7 +54,7 @@ int stopmsg(int flags, const char *msg)
     if (debugflag != 0 || initbatch >= 1)
     {
         static FILE *fp = nullptr;
-        if (fp==nullptr && initbatch == 0)
+        if (fp == nullptr && initbatch == 0)
             fp=dir_fopen(workdir,"stopmsg.txt","w");
         else
             fp=dir_fopen(workdir,"stopmsg.txt","a");
@@ -323,7 +323,7 @@ int putstringcenter(int row, int col, int width, int attr, const char *msg)
     int i,j,k;
     i = 0;
 #ifdef XFRACT
-    if (width>=80) width=79; // Some systems choke in column 80
+    if (width >= 80) width=79; // Some systems choke in column 80
 #endif
     while (msg[i])
         ++i; // strlen for a
@@ -412,7 +412,7 @@ void process_speedstring(char    *speedstring,
         *pcurrent = 0;
         int comp_result;
         while (*pcurrent < numchoices
-                && (comp_result = strncasecmp(speedstring,choices[*pcurrent],i))!=0) {
+                && (comp_result = strncasecmp(speedstring,choices[*pcurrent],i)) != 0) {
             if (comp_result < 0 && !is_unsorted) {
                 *pcurrent -= *pcurrent ? 1 : 0;
                 break;
@@ -1140,7 +1140,7 @@ top:
         choicekey[nextleft] = 'o';
         attributes[nextleft] = MENU_ITEM;
         choices[nextleft] = "orbits window          <o>  ";
-        if (!(fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA))
+        if (!(fractype == JULIA || fractype == JULIAFP || fractype == INVERSEJULIA))
         {
             nextleft += 2;
         }
@@ -1176,7 +1176,7 @@ top:
             choices[nextleft] = "toggle to/from julia <space>";
             showjuliatoggle = true;
         }
-        if (fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA)
+        if (fractype == JULIA || fractype == JULIAFP || fractype == INVERSEJULIA)
         {
             nextleft += 2;
             choicekey[nextleft] = 'j';
@@ -1442,7 +1442,7 @@ top:
 
 static int menu_checkkey(int curkey, int /*choice*/)
 {
-    int testkey = (curkey>='A' && curkey<='Z') ? curkey+('a'-'A') : curkey;
+    int testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey+('a'-'A') : curkey;
 #ifdef XFRACT
     // We use F2 for shift-@, annoyingly enough
     if (testkey == FIK_F2) return (0-testkey);
@@ -1724,7 +1724,7 @@ bool thinking(int options, const char *msg)
         thinkcol = g_text_col - 3;
         count = 0;
     }
-    if ((count++)<100) {
+    if ((count++) < 100) {
         return false;
     }
     count = 0;
