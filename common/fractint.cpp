@@ -159,7 +159,7 @@ void check_samename()
     if (strcmp(fname,"fract001"))
     {
         makepath(path,drive,dir,fname,"gif");
-        if (access(path,0)==0)
+        if (access(path,0) == 0)
             exit(0);
     }
 }
@@ -238,7 +238,7 @@ restart:   /* insert key re-starts here */
     calc_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
 
     fract_dir1 = getenv("FRACTDIR");
-    if (fract_dir1==nullptr)
+    if (fract_dir1 == nullptr)
     {
         fract_dir1 = ".";
     }
@@ -262,7 +262,7 @@ restart:   /* insert key re-starts here */
         maxhistory--;
     }
 
-    if (debugflag==450 && initbatch==1)   /* abort if savename already exists */
+    if (debugflag == 450 && initbatch == 1)   /* abort if savename already exists */
     {
         check_samename();
     }
