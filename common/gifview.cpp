@@ -131,14 +131,14 @@ int gifview()
     planes = (buffer[10] & 0x0F) + 1;
     gifview_image_twidth = width;
 
-    if ((buffer[10] & 0x80)==0)    // color map (better be!)
+    if ((buffer[10] & 0x80) == 0)    // color map (better be!)
     {
         close_file();
         return (-1);
     }
     numcolors = 1 << planes;
 
-    if (dither_flag && numcolors>2 && colors==2 && outln==out_line) {
+    if (dither_flag && numcolors > 2 && colors == 2 && outln == out_line) {
         outln = out_line_dither;
     }
 
@@ -159,7 +159,7 @@ int gifview()
     colorstate = 1; // colors aren't default and not a known .map file
 
     // don't read if glasses
-    if (display3d && mapset && g_glasses_type!=1 && g_glasses_type != 2)
+    if (display3d && mapset && g_glasses_type != 1 && g_glasses_type != 2)
     {
         ValidateLuts(MAP_name);  // read the palette file
         spindac(0,1); // load it, but don't spin
@@ -232,7 +232,7 @@ int gifview()
             gifview_image_left = left;
             if (skipydots > 0)
                 gifview_image_left /= (skipxdots+1);
-            if (outln==out_line)
+            if (outln == out_line)
             {
                 // what about continuous potential????
                 if (width != gifview_image_twidth || top != 0)
@@ -249,7 +249,7 @@ int gifview()
                 width >>= 1;
 
             // Skip local color palette
-            if ((buffer[8] & 0x80)==0x80) {      // local map?
+            if ((buffer[8] & 0x80) == 0x80) {      // local map?
                 int numcolors;    // make this local
                 planes = (buffer[8] & 0x0F) + 1;
                 numcolors = 1 << planes;
@@ -339,9 +339,9 @@ static int out_line_dither(BYTE *pixels, int linelen)
     nexterr = (rand()&0x1f)-16;
     for (int i = 0; i < linelen; i++) {
         brt = (g_dac_box[pixels[i]][0]*5+g_dac_box[pixels[i]][1]*9 +
-               g_dac_box[pixels[i]][2]*2)>>4; // brightness from 0 to 63
+               g_dac_box[pixels[i]][2]*2) >> 4; // brightness from 0 to 63
         brt += nexterr;
-        if (brt>32) {
+        if (brt > 32) {
             pixels[i] = 1;
             err = brt-63;
         } else {
