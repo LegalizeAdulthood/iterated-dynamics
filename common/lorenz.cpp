@@ -1652,7 +1652,7 @@ static int orbit3dlongcalc()
             if (inf.col >= 0)
             {
                 if (realtime)
-                    g_which_image=1;
+                    g_which_image = 1;
                 if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                 {
                     double yy;
@@ -1671,7 +1671,7 @@ static int orbit3dlongcalc()
             oldrow = inf.row;
             if (realtime)
             {
-                g_which_image=2;
+                g_which_image = 2;
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {
@@ -1755,7 +1755,7 @@ static int orbit3dfloatcalc()
             if (inf.col >= 0)
             {
                 if (realtime)
-                    g_which_image=1;
+                    g_which_image = 1;
                 if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) {
                     w_snd((int)(inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100+basehertz));
                 }
@@ -1770,7 +1770,7 @@ static int orbit3dfloatcalc()
             oldrow = inf.row;
             if (realtime)
             {
-                g_which_image=2;
+                g_which_image = 2;
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {
@@ -2235,7 +2235,7 @@ static int ifs3dfloat()
             if (inf.col >= 0)
             {
                 if (realtime)
-                    g_which_image=1;
+                    g_which_image = 1;
                 if (color_method)
                     color = (k%colors)+1;
                 else
@@ -2247,7 +2247,7 @@ static int ifs3dfloat()
                 return (ret);
             if (realtime)
             {
-                g_which_image=2;
+                g_which_image = 2;
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {
@@ -2466,7 +2466,7 @@ static int ifs3dlong()
             if (inf.col >= 0)
             {
                 if (realtime)
-                    g_which_image=1;
+                    g_which_image = 1;
                 if (color_method)
                     color = (k%colors)+1;
                 else
@@ -2476,7 +2476,7 @@ static int ifs3dlong()
             }
             if (realtime)
             {
-                g_which_image=2;
+                g_which_image = 2;
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {
