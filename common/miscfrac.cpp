@@ -1249,10 +1249,10 @@ int lyapunov() {
 #if WES
     color=lyapunov_cycles(a, b);
 #else
-    if (lyaSeedOK && a>0 && b>0 && a<=4 && b<=4)
-        color=lyapunov_cycles(filter_cycles, Population, a, b);
+    if (lyaSeedOK && a > 0 && b > 0 && a <= 4 && b <= 4)
+        color = lyapunov_cycles(filter_cycles, Population, a, b);
     else
-        color=lyapunov_cycles_in_c(filter_cycles, a, b);
+        color = lyapunov_cycles_in_c(filter_cycles, a, b);
 #endif
 #else
     color=lyapunov_cycles_in_c(filter_cycles, a, b);
@@ -1312,20 +1312,20 @@ bool lya_setup()
     lyaRxy[0] = 1;
     int t;
     for (t = 31; t >= 0; t--)
-        if (i & (1<<t))
+        if (i & (1 << t))
             break;
     for (; t >= 0; t--)
         lyaRxy[lyaLength++] = (i & (1<<t)) != 0;
     lyaRxy[lyaLength++] = 0;
-    if (save_release<1732)              // swap axes prior to 1732
+    if (save_release < 1732)              // swap axes prior to 1732
         for (t = lyaLength; t >= 0; t--)
             lyaRxy[t] = !lyaRxy[t];
-    if (save_release<1731) {            // ignore inside=, stdcalcmode
+    if (save_release < 1731) {            // ignore inside=, stdcalcmode
         stdcalcmode='1';
         if (inside == 1)
             inside = 0;
     }
-    if (inside<0) {
+    if (inside < 0) {
         stopmsg(STOPMSG_NONE,
             "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
         inside=1;
@@ -1673,7 +1673,7 @@ int cellular()
             twor=(U16)(r+r);
             for (int i = 0; i <= twor; i++)
                 t = (S16)(t + (S16)cell_array[filled][i]);
-            if (t>rule_digits || t<0) {
+            if (t > rule_digits || t < 0) {
                 thinking(0, nullptr);
                 abort_cellular(BAD_T, t);
                 return (-1);
@@ -1683,7 +1683,7 @@ int cellular()
             // use a rolling sum in t
             for (col = r+1; col < ixstop-r; col++) { // now do the rest
                 t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
-                if (t>rule_digits || t<0) {
+                if (t > rule_digits || t < 0) {
                     thinking(0, nullptr);
                     abort_cellular(BAD_T, t);
                     return (-1);
@@ -1726,7 +1726,7 @@ contloop:
         twor=(U16)(r+r);
         for (int i = 0; i <= twor; i++)
             t = (S16)(t + (S16)cell_array[filled][i]);
-        if (t>rule_digits || t<0) {
+        if (t > rule_digits || t < 0) {
             thinking(0, nullptr);
             abort_cellular(BAD_T, t);
             return (-1);
@@ -1736,7 +1736,7 @@ contloop:
         // use a rolling sum in t
         for (col = r+1; col < ixstop-r; col++) { // now do the rest
             t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
-            if (t>rule_digits || t<0) {
+            if (t > rule_digits || t < 0) {
                 thinking(0, nullptr);
                 abort_cellular(BAD_T, t);
                 return (-1);

@@ -525,7 +525,7 @@ long logtablecalc(long citer) {
     if (LogFlag > 0) { // new log function
         if ((unsigned long)citer <= lf + 1)
             ret = 1;
-        else if ((citer - lf) / log(static_cast<double>(citer - lf)) <= mlf) {
+        else if ((citer - lf)/log(static_cast<double>(citer - lf)) <= mlf) {
             if (save_release < 2002)
                 ret = (long)(citer - lf + (lf?1:0));
             else

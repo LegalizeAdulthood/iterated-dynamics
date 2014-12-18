@@ -498,7 +498,7 @@ int MPCNewtonFractal()
     mpcnew.y = *pMPadd(*pMPmul(mpctmp.x,mpcold.y),*pMPmul(mpctmp.y,mpcold.x));
     mpctmp1.x = *pMPsub(mpcnew.x, MPCone.x);
     mpctmp1.y = *pMPsub(mpcnew.y, MPCone.y);
-    if (pMPcmp(MPCmod(mpctmp1),mpthreshold)< 0)
+    if (pMPcmp(MPCmod(mpctmp1),mpthreshold) < 0)
     {
         if (fractype == MPNEWTBASIN)
         {
