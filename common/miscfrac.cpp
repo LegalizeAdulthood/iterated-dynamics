@@ -1212,10 +1212,10 @@ int lyapunov() {
         return -1;
     }
     overflow = false;
-    if (param[1]==1)
+    if (param[1] == 1)
         Population = (1.0+rand())/(2.0+RAND_MAX);
-    else if (param[1]==0) {
-        if (fabs(Population)>BIG || Population==0 || Population==1)
+    else if (param[1] == 0) {
+        if (fabs(Population)>BIG || Population == 0 || Population == 1)
             Population = (1.0+rand())/(2.0+RAND_MAX);
     }
     else Population = param[1];
@@ -1245,7 +1245,7 @@ int lyapunov() {
 #else
     color=lyapunov_cycles_in_c(filter_cycles, a, b);
 #endif
-    if (inside>0 && color==0)
+    if (inside>0 && color == 0)
         color = inside;
     else if (color>=colors)
         color = colors-1;
@@ -1309,7 +1309,7 @@ bool lya_setup()
             lyaRxy[t] = !lyaRxy[t];
     if (save_release<1731) {            // ignore inside=, stdcalcmode
         stdcalcmode='1';
-        if (inside==1) inside = 0;
+        if (inside == 1) inside = 0;
     }
     if (inside<0) {
         stopmsg(STOPMSG_NONE,
@@ -1351,7 +1351,7 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
             }
             temp = fabs(Rate-2.0*Rate*Population);
             total *= temp;
-            if (total==0) {
+            if (total == 0) {
                 overflow = true;
                 goto jumpout;
             }
@@ -1446,7 +1446,7 @@ void abort_cellular(int err, int t)
     {
         static char msg[]= {"Rule must be    digits long" };
         i = rule_digits / 10;
-        if (i==0)
+        if (i == 0)
             msg[14] = (char)(rule_digits + 48);
         else {
             msg[13] = (char)(i+48);
@@ -1610,7 +1610,7 @@ int cellular()
         start_row = -1; // after 1st iteration its = 0
     }
     else {
-        if (rflag || randparam==0 || randparam==-1) {
+        if (rflag || randparam == 0 || randparam == -1) {
             for (col = 0; col <= ixstop; col++) {
                 cell_array[filled][col] = (BYTE)(rand()%(int)k);
             }
@@ -1640,7 +1640,7 @@ int cellular()
     {
         for (U32 big_row = (U32)start_row; big_row < lnnmbr; big_row++) {
             thinking(1, "Cellular thinking (higher start row takes longer)");
-            if (rflag || randparam==0 || randparam==-1) {
+            if (rflag || randparam == 0 || randparam == -1) {
                 // Use a random border
                 for (int i = 0; i <= r; i++) {
                     cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
@@ -1693,7 +1693,7 @@ int cellular()
     // This section does all the work
 contloop:
     for (row = start_row; row <= iystop; row++) {
-        if (rflag || randparam==0 || randparam==-1) {
+        if (rflag || randparam == 0 || randparam == -1) {
             // Use a random border
             for (int i = 0; i <= r; i++) {
                 cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
