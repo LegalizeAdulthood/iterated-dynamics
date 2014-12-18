@@ -117,7 +117,7 @@ void putpot(int x, int y, U16 color)
 // fixes border
 void putpotborder(int x, int y, U16 color)
 {
-    if ((x==0) || (y==0) || (x==xdots-1) || (y==ydots-1))
+    if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
         color = (U16)outside;
     putpot(x,y,color);
 }
@@ -125,7 +125,7 @@ void putpotborder(int x, int y, U16 color)
 // fixes border
 void putcolorborder(int x, int y, int color)
 {
-    if ((x==0) || (y==0) || (x==xdots-1) || (y==ydots-1))
+    if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
         color = outside;
     if (color < 1)
         color = 1;
@@ -149,7 +149,7 @@ static U16 adjust(int xa,int ya,int x,int y,int xb,int yb)
     pseudorandom = ((S32)iparmx)*((rand15()-16383));
     pseudorandom = pseudorandom * recur1;
     pseudorandom = pseudorandom >> shiftvalue;
-    pseudorandom = (((S32)getpix(xa,ya)+(S32)getpix(xb,yb)+1)>>1)+pseudorandom;
+    pseudorandom = (((S32)getpix(xa,ya)+(S32)getpix(xb,yb)+1) >> 1)+pseudorandom;
     if (max_plasma == 0)
     {
         if (pseudorandom >= pcolors)
@@ -285,13 +285,13 @@ static void subDivide(int x1,int y1,int x2,int y2)
             plasma_check--;
             return;
         }
-    if (x2-x1<2 && y2-y1<2)
+    if (x2-x1 < 2 && y2-y1 < 2)
         return;
     recur_level++;
     recur1 = (int)(320L >> recur_level);
 
-    x = (x1+x2)>>1;
-    y = (y1+y2)>>1;
+    x = (x1+x2) >> 1;
+    y = (y1+y2) >> 1;
     v=getpix(x,y1);
     if (v == 0)
         v=adjust(x1,y1,x ,y1,x2,y1);
@@ -299,18 +299,18 @@ static void subDivide(int x1,int y1,int x2,int y2)
     v=getpix(x2,y);
     if (v == 0)
         v=adjust(x2,y1,x2,y ,x2,y2);
-    i+=v;
+    i += v;
     v=getpix(x,y2);
     if (v == 0)
         v=adjust(x1,y2,x ,y2,x2,y2);
-    i+=v;
+    i += v;
     v=getpix(x1,y);
     if (v == 0)
         v=adjust(x1,y1,x1,y ,x1,y2);
-    i+=v;
+    i += v;
 
     if (getpix(x,y) == 0)
-        plot(x,y,(U16)((i+2)>>2));
+        plot(x,y,(U16)((i+2) >> 2));
 
     subDivide(x1,y1,x ,y);
     subDivide(x ,y1,x2,y);
@@ -411,12 +411,12 @@ int plasma()
     {
         pcolors = std::min(colors, max_colors);
         for (int n = 0; n < 4; n++)
-            rnd[n] = (U16)(1+(((rand15()/pcolors)*(pcolors-1))>>(shiftvalue-11)));
+            rnd[n] = (U16)(1+(((rand15()/pcolors)*(pcolors-1)) >> (shiftvalue-11)));
     }
     else
         for (int n = 0; n < 4; n++)
             rnd[n] = rand16();
-    if (debugflag==3600)
+    if (debugflag == 3600)
         for (int n = 0; n < 4; n++)
             rnd[n] = 1;
 
@@ -434,7 +434,7 @@ int plasma()
         int i = 1;
         int k = 1;
         recur1 = 1;
-        while (new_subD(0,0,xdots-1,ydots-1,i)==0)
+        while (new_subD(0,0,xdots-1,ydots-1,i) == 0)
         {
             k = k * 2;
             if (k  >(int)std::max(xdots-1,ydots-1))
@@ -627,25 +627,25 @@ int diffusion()
             if (show_orbit)
                 putcolor(x,y,0);
 
-            if (mode==0) { // Make sure point is inside the box
-                if (x==xmax)
+            if (mode == 0) { // Make sure point is inside the box
+                if (x == xmax)
                     x--;
-                else if (x==xmin)
+                else if (x == xmin)
                     x++;
-                if (y==ymax)
+                if (y == ymax)
                     y--;
-                else if (y==ymin)
+                else if (y == ymin)
                     y++;
             }
 
-            if (mode==1) /* Make sure point is on the screen below ymin, but
+            if (mode == 1) /* Make sure point is on the screen below ymin, but
                     we need a 1 pixel margin because of the next random step.*/
             {
-                if (x>=xdots-1)
+                if (x >= xdots-1)
                     x--;
-                else if (x<=1)
+                else if (x <= 1)
                     x++;
-                if (y<ymin)
+                if (y < ymin)
                     y++;
             }
 
@@ -658,7 +658,7 @@ int diffusion()
                 if (check_key())
                 {
                     alloc_resume(20,1);
-                    if (mode!=2)
+                    if (mode != 2)
                         put_resume(sizeof(xmax),&xmax,sizeof(xmin),&xmin,
                                    sizeof(ymax),&ymax,sizeof(ymin),&ymin,0);
                     else
@@ -695,28 +695,28 @@ int diffusion()
 
         switch (mode) {
         case 0:
-            if (((x+border)>xmax) || ((x-border)<xmin)
-                    || ((y-border)<ymin) || ((y+border)>ymax))
+            if (((x+border) > xmax) || ((x-border) < xmin)
+                    || ((y-border) < ymin) || ((y+border) > ymax))
             {
                 // Increase box size, but not past the edge of the screen
                 ymin--;
                 ymax++;
                 xmin--;
                 xmax++;
-                if ((ymin==0) || (xmin==0))
+                if ((ymin == 0) || (xmin == 0))
                     return 0;
             }
             break;
         case 1: // Decrease ymin, but not past top of screen
             if (y-border < ymin)
                 ymin--;
-            if (ymin==0)
+            if (ymin == 0)
                 return 0;
             break;
         case 2: /* Decrease the radius where points are released to stay away
                  from the fractal.  It might be decreased by 1 or 2 */
             r = sqr((float)x-xdots/2) + sqr((float)y-ydots/2);
-            if (r<=border*border)
+            if (r <= border*border)
                 return 0;
             while ((radius-border)*(radius-border) > r)
                 radius--;
