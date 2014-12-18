@@ -2810,7 +2810,7 @@ int Formula()
     LodPtr = InitLodPtr;
     StoPtr = InitStoPtr;
     OpPtr = InitOpPtr;
-    jump_index=InitJumpIndex;
+    jump_index = InitJumpIndex;
     // Set the random number
     if (SetRandom || Randomized)
     {
@@ -3228,7 +3228,7 @@ static bool  frmgetconstant(FILE * openfile, token_st * tok)
             return false;
 CASE_NUM:
             tok->token_str[i++] = (char) c;
-            filepos=ftell(openfile);
+            filepos = ftell(openfile);
             break;
         case '.':
             if (got_decimal_already || !getting_base)
@@ -3243,7 +3243,7 @@ CASE_NUM:
             {
                 tok->token_str[i++] = (char) c;
                 got_decimal_already = true;
-                filepos=ftell(openfile);
+                filepos = ftell(openfile);
             }
             break;
         default :
@@ -3252,7 +3252,7 @@ CASE_NUM:
                 tok->token_str[i++] = (char) c;
                 getting_base = false;
                 got_decimal_already = false;
-                filepos=ftell(openfile);
+                filepos = ftell(openfile);
                 c = frmgetchar(openfile);
                 if (c == '-' || c == '+')
                 {
@@ -3577,7 +3577,7 @@ CASE_TERMINATOR:
         filepos = ftell(openfile);
         if (c == '<' || c == '>' || c == '=')
         {
-            c=frmgetchar(openfile);
+            c = frmgetchar(openfile);
             if (c == '=')
                 this_token->token_str[i++] = (char) c;
             else
@@ -3587,7 +3587,7 @@ CASE_TERMINATOR:
         }
         else if (c == '!')
         {
-            c=frmgetchar(openfile);
+            c = frmgetchar(openfile);
             if (c == '=')
                 this_token->token_str[i++] = (char) c;
             else
@@ -3601,7 +3601,7 @@ CASE_TERMINATOR:
         }
         else if (c == '|')
         {
-            c=frmgetchar(openfile);
+            c = frmgetchar(openfile);
             if (c == '|')
                 this_token->token_str[i++] = (char) c;
             else
@@ -3609,7 +3609,7 @@ CASE_TERMINATOR:
         }
         else if (c == '&')
         {
-            c=frmgetchar(openfile);
+            c = frmgetchar(openfile);
             if (c == '&')
                 this_token->token_str[i++] = (char) c;
             else
@@ -4179,7 +4179,7 @@ error_data_st errors[3];
 void frm_error(FILE * open_file, long begin_frm)
 {
     token_st tok;
-    int chars_to_error=0, chars_in_error=0, token_count;
+    int chars_to_error = 0, chars_in_error = 0, token_count;
     int statement_len, line_number;
     char msgbuf[900];
     long filepos;
