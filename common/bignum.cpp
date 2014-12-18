@@ -720,7 +720,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 //      n ends up as |n|
 bn_t sqrt_bn(bn_t r, bn_t n)
 {
-    int comp, almost_match=0;
+    int comp, almost_match = 0;
     LDBL f;
     bn_t orig_r, orig_n;
     int  orig_bnlength,
@@ -782,7 +782,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
         unsafe_div_bn(bntmp4, bntmp5, bntmp6);
         add_a_bn(r, bntmp4);
         half_a_bn(r);
-        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp4))) < 8)  // if match or almost match
+        if (bnlength == orig_bnlength && (comp = abs(cmp_bn(r, bntmp4))) < 8)  // if match or almost match
         {
             if (comp < 4  // perfect or near perfect match
                     || almost_match == 1) // close enough for 2nd time
@@ -807,7 +807,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 // uses bntmp1, bntmp2, bntmp3 - global temp bignumbers
 bn_t exp_bn(bn_t r, bn_t n)
 {
-    U16 fact=1;
+    U16 fact = 1;
 
     if (is_bn_zero(n))
     {
@@ -839,7 +839,7 @@ bn_t exp_bn(bn_t r, bn_t n)
 //      n ends up as |n|
 bn_t unsafe_ln_bn(bn_t r, bn_t n)
 {
-    int comp, almost_match=0;
+    int comp, almost_match = 0;
     long maxval;
     LDBL f;
     bn_t orig_r, orig_n, orig_bntmp5, orig_bntmp4;
@@ -918,7 +918,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
         sub_a_bn(bntmp2+shiftfactor, bntmp4);   // n*exp(-r) - 1
         sub_a_bn(r, bntmp2+shiftfactor);        // -r - (n*exp(-r) - 1)
 
-        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp5))) < 8)  // if match or almost match
+        if (bnlength == orig_bnlength && (comp = abs(cmp_bn(r, bntmp5))) < 8)  // if match or almost match
         {
             if (comp < 4  // perfect or near perfect match
                     || almost_match == 1) // close enough for 2nd time
@@ -949,7 +949,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 //      n ends up as |n| mod (pi/4)
 bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 {
-    U16 fact=2;
+    U16 fact = 2;
     bool k = false;
 
 #ifndef CALCULATING_BIG_PI
@@ -1092,7 +1092,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 //      n ends up as |n| or 1/|n|
 bn_t unsafe_atan_bn(bn_t r, bn_t n)
 {
-    int comp, almost_match=0;
+    int comp, almost_match = 0;
     LDBL f;
     bn_t orig_r, orig_n, orig_bn_pi, orig_bntmp3;
     int  orig_bnlength,
@@ -1179,7 +1179,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
         putchar('\n');
         bn_hexdump(r);
 #endif
-        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp3))) < 8)  // if match or almost match
+        if (bnlength == orig_bnlength && (comp = abs(cmp_bn(r, bntmp3))) < 8)  // if match or almost match
         {
 #ifdef CALCULATING_BIG_PI
             printf("atan() loop comp=%i\n", comp);
