@@ -264,9 +264,9 @@ int  fpMANRbailout()
         return 1;
 
 #define LONGEXPBAILOUT()  \
-    if (labs(lold.y) >= (1000L<<bitshift)) \
+    if (labs(lold.y) >= (1000L << bitshift)) \
         return 1;\
-    if (labs(lold.x) >=    (8L<<bitshift)) \
+    if (labs(lold.x) >=    (8L << bitshift)) \
         return 1;
 
 #define LTRIGARG(X)    \
@@ -314,7 +314,7 @@ static double xt, yt, t2;
 */
 void cpower(DComplex *base, int exp, DComplex *result)
 {
-    if (exp<0) {
+    if (exp < 0) {
         cpower(base,-exp,result);
         CMPLXrecip(*result,*result);
         return;
@@ -357,7 +357,7 @@ static long lxt, lyt, lt2;
 int
 lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
 {
-    if (exp<0) {
+    if (exp < 0) {
         overflow = lcpower(base,-exp,result,bitshift) != 0;
         LCMPLXrecip(*result,*result);
         return overflow ? 1 : 0;
@@ -374,7 +374,7 @@ lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
     }
     else
     {
-        result->x = 1L<<bitshift;
+        result->x = 1L << bitshift;
         result->y = 0L;
     }
 
@@ -420,7 +420,7 @@ int NewtonFractal2()
 
     if (DIST1(g_new) < threshold)
     {
-        if (fractype==NEWTBASIN || fractype==MPNEWTBASIN)
+        if (fractype == NEWTBASIN || fractype == MPNEWTBASIN)
         {
             long tmpcolor;
             tmpcolor = -1;
@@ -432,8 +432,8 @@ int NewtonFractal2()
                    which root of 1 it converged to */
                 if (distance(roots[i],old) < threshold)
                 {
-                    if (basin==2) {
-                        tmpcolor = 1+(i&7)+((coloriter&1)<<3);
+                    if (basin == 2) {
+                        tmpcolor = 1+(i&7)+((coloriter&1) << 3);
                     } else {
                         tmpcolor = 1+i;
                     }
@@ -500,15 +500,15 @@ int MPCNewtonFractal()
     mpctmp1.y = *pMPsub(mpcnew.y, MPCone.y);
     if (pMPcmp(MPCmod(mpctmp1),mpthreshold)< 0)
     {
-        if (fractype==MPNEWTBASIN)
+        if (fractype == MPNEWTBASIN)
         {
             long tmpcolor;
             tmpcolor = -1;
             for (int i = 0; i < degree; i++)
                 if (pMPcmp(MPdistance(MPCroots[i],mpcold),mpthreshold) < 0)
                 {
-                    if (basin==2)
-                        tmpcolor = 1+(i&7) + ((coloriter&1)<<3);
+                    if (basin == 2)
+                        tmpcolor = 1+(i&7) + ((coloriter&1) << 3);
                     else
                         tmpcolor = 1+i;
                     break;
@@ -3092,7 +3092,7 @@ QuaternionFPFractal()
     n3 = 2*a0*a3 + qck;
     // Check bailout
     magnitude = a0*a0+a1*a1+a2*a2+a3*a3;
-    if (magnitude>rqlim) {
+    if (magnitude > rqlim) {
         return 1;
     }
     g_new.x = n0;
@@ -3129,7 +3129,7 @@ HyperComplexFPFractal()
 
     // Check bailout
     magnitude = sqr(old.x)+sqr(old.y)+sqr(floatparm->x)+sqr(floatparm->y);
-    if (magnitude>rqlim) {
+    if (magnitude > rqlim) {
         return 1;
     }
     return 0;
