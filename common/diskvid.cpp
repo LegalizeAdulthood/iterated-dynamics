@@ -186,7 +186,8 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     {
         longtmp = ((int)cache_size < freemem) ?
                   (long)cache_size << 11 : (long)(cache_size+freemem) << 10;
-        if ((tempfar = static_cast<BYTE *>(malloc(longtmp))) != nullptr)
+        tempfar = static_cast<BYTE *>(malloc(longtmp));
+        if (tempfar != nullptr)
         {
             free(tempfar);
             break;
@@ -617,7 +618,9 @@ static void  write_cache_lru()
     i = 0;
     while (++i <= WRITEGAP)
     {
-        if ((ptr2 = find_cache(offset -= BLOCKLEN)) != nullptr && ptr2->dirty)
+        offset -= BLOCKLEN;
+        ptr2 = find_cache(offset);
+        if (ptr2 != nullptr && ptr2->dirty)
         {
             ptr1 = ptr2;
             i = 0;
@@ -678,14 +681,17 @@ write_stuff:
     }
     ptr1->dirty = false;
     offset = ptr1->offset + BLOCKLEN;
-    if ((ptr1 = find_cache(offset)) != nullptr && ptr1->dirty)
+    ptr1 = find_cache(offset);
+    if (ptr1 != nullptr && ptr1->dirty)
     {
         goto write_stuff;
     }
     i = 1;
     while (++i <= WRITEGAP)
     {
-        if ((ptr1 = find_cache(offset += BLOCKLEN)) != nullptr && ptr1->dirty)
+        offset += BLOCKLEN;
+        ptr1 = find_cache(offset);
+        if (ptr1 != nullptr && ptr1->dirty)
         {
             goto write_seek;
         }
