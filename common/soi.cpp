@@ -156,7 +156,7 @@ long iteration(DBLS cr, DBLS ci,
                     return BASIN_COLOR;
             }
 #else // INTEL
-            if (FABS(sre-re) < equal&&FABS(sim-im) < equal)
+            if (FABS(sre-re) < equal && FABS(sim-im) < equal)
                 return BASIN_COLOR;
 #endif // INTEL
 
@@ -177,7 +177,7 @@ long iteration(DBLS cr, DBLS ci,
 #endif
         }
 #ifdef INTEL
-        while (magi < bail&&--iter != 0);
+        while (magi < bail && --iter != 0);
 #else
         while (mag < 16.0 && --iter != 0);
 #endif
@@ -268,7 +268,7 @@ long iteration(DBLS cr, DBLS ci,
 #endif
         }
 #ifdef INTEL
-        while (magi < bail&&--iter != 0);
+        while (magi < bail && --iter != 0);
 #else
         while (mag < 16.0 && --iter != 0);
 #endif

@@ -1150,7 +1150,7 @@ void Jiim(int which)         // called by fractint
 finish:
     Free_Queue();
 
-    if (kbdchar != 's'&& kbdchar != 'S')
+    if (kbdchar != 's' && kbdchar != 'S')
     {
         Cursor_Hide();
         if (windows == 0)
