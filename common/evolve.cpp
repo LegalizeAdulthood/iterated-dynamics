@@ -746,7 +746,7 @@ get_evol_restart:
     i = 0;
 
     if (evolving != old_evolving
-            || (gridsz != old_gridsz) ||(paramrangex!= old_paramrangex)
+            || (gridsz != old_gridsz) || (paramrangex != old_paramrangex)
             || (opx != old_opx) || (paramrangey != old_paramrangey)
             || (opy != old_opy)  || (fiddlefactor != old_fiddlefactor)
             || (old_variations > 0))
