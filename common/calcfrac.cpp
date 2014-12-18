@@ -763,7 +763,7 @@ int calcfract()
             llimit = 0x7fffffffL; // klooge for integer math
         llimit2 = (long)(rqlim2 * fudge);    // stop if magnitude exceeds this
         lclosenuff = (long)(closenuff * fudge); // "close enough" value
-        l16triglim = 8L<<16;         // domain limit of fast trig functions
+        l16triglim = 8L << 16;         // domain limit of fast trig functions
         linitorbit.x = (long)(initorbit.x * fudge);
         linitorbit.y = (long)(initorbit.y * fudge);
     }
@@ -1271,7 +1271,7 @@ static int diffusion_engine()
         dif_counter =0l;
     } else {
         // yybegin and passes contain data for resuming the type:
-        dif_counter = (((long)((unsigned)yybegin))<<16) | ((unsigned)workpass);
+        dif_counter = (((long)((unsigned)yybegin)) << 16) | ((unsigned)workpass);
     }
 
     dif_offset = 12-(bits/2); // offset to adjust coordinates
@@ -1280,7 +1280,7 @@ static int diffusion_engine()
     /*************************************/
     // only the points (dithering only) :
     if (fillcolor == 0) {
-        while (dif_counter < (dif_limit>>1)) {
+        while (dif_counter < (dif_limit >> 1)) {
             count_to_int(dif_counter, colo, rowo);
 
             i = 0;
@@ -1323,9 +1323,9 @@ static int diffusion_engine()
     } else {
         /*********************************/
         // with progressive filling :
-        while (dif_counter < (dif_limit>>1))
+        while (dif_counter < (dif_limit >> 1))
         {
-            sqsz = 1<<((int)(bits-(int)(log(dif_counter+0.5)/log2)-1)/2);
+            sqsz = 1 << ((int)(bits-(int)(log(dif_counter+0.5)/log2)-1)/2);
 
             count_to_int(dif_counter, colo, rowo);
 
@@ -2057,12 +2057,12 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
                 {
                     if (labs(lnew.x) < labs(lcloseprox))
                     {
-                        hooper = (lcloseprox>0? 1 : -1); // close to y axis
+                        hooper = (lcloseprox > 0? 1 : -1); // close to y axis
                         goto plot_inside;
                     }
                     else if (labs(lnew.y) < labs(lcloseprox))
                     {
-                        hooper = (lcloseprox>0 ? 2: -2); // close to x axis
+                        hooper = (lcloseprox > 0 ? 2: -2); // close to x axis
                         goto plot_inside;
                     }
                 }
@@ -2070,12 +2070,12 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
                 {
                     if (fabs(g_new.x) < fabs(closeprox))
                     {
-                        hooper = (closeprox>0? 1 : -1); // close to y axis
+                        hooper = (closeprox > 0? 1 : -1); // close to y axis
                         goto plot_inside;
                     }
                     else if (fabs(g_new.y) < fabs(closeprox))
                     {
-                        hooper = (closeprox>0? 2 : -2); // close to x axis
+                        hooper = (closeprox > 0? 2 : -2); // close to x axis
                         goto plot_inside;
                     }
                 }
@@ -2451,7 +2451,7 @@ plot_inside: // we're "inside"
             }
         }
         else if (inside == PERIOD) {
-            if (cyclelen>0) {
+            if (cyclelen > 0) {
                 coloriter = cyclelen;
             } else {
                 coloriter = maxit;
@@ -2493,10 +2493,10 @@ plot_inside: // we're "inside"
                 g_new.y = ((double)lnew.y) / fudge;
                 coloriter = (long)((((double)lsqr(lnew.x))/fudge + ((double)lsqr(lnew.y))/fudge) * (maxit>>1) + 1);
                 */
-                coloriter = (long)(((double)lmagnitud/fudge) * (maxit>>1) + 1);
+                coloriter = (long)(((double)lmagnitud/fudge) * (maxit >> 1) + 1);
             }
             else
-                coloriter = (long)((sqr(g_new.x) + sqr(g_new.y)) * (maxit>>1) + 1);
+                coloriter = (long)((sqr(g_new.x) + sqr(g_new.y)) * (maxit >> 1) + 1);
         }
         else // inside == -1
             coloriter = maxit;
@@ -3228,7 +3228,7 @@ static int solidguess()
         {
             i = (iystop+maxblock)/maxblock+1;
             int y = i/16+1;
-            i = 1<<(i&15);
+            i = 1 << (i&15);
             for (int x = 0; x <= xlim; ++x)
                 tprefix[1][y][x] |= i;
         }
@@ -3241,9 +3241,9 @@ static int solidguess()
             {
                 ++pfxp1;
                 u= *(pfxp1-1)|*pfxp1|*(pfxp1+1);
-                *(++pfxp0) = u|(u>>1)|(u<<1)
-                           |((*(pfxp1-(maxxblk+1))|*(pfxp1-maxxblk)|*(pfxp1-(maxxblk-1)))>>15)
-                           |((*(pfxp1+(maxxblk-1))|*(pfxp1+maxxblk)|*(pfxp1+(maxxblk+1)))<<15);
+                *(++pfxp0) = u|(u >> 1)|(u << 1)
+                           |((*(pfxp1-(maxxblk+1))|*(pfxp1-maxxblk)|*(pfxp1-(maxxblk-1))) >> 15)
+                           |((*(pfxp1+(maxxblk-1))|*(pfxp1+maxxblk)|*(pfxp1+(maxxblk+1))) << 15);
             }
         }
     }
@@ -3255,7 +3255,7 @@ static int solidguess()
     // remaining pass(es), halve blocksize & quarter each blocksize**2
     i = workpass;
     while (--i > 0) // allow for already done passes
-        blocksize = blocksize>>1;
+        blocksize = blocksize >> 1;
     reset_periodicity = false;
     while ((blocksize = blocksize >> 1) >= 2)
     {
@@ -3276,7 +3276,7 @@ static int solidguess()
         }
         ++workpass;
         if (num_worklist // work list not empty, do one pass at a time
-                && blocksize>2) // if 2, we just did last pass
+                && blocksize > 2) // if 2, we just did last pass
         {
             add_worklist(xxstart,xxstop,xxstart,yystart,yystop,yystart,workpass,worksym);
             goto exit_solidguess;
@@ -3328,7 +3328,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
     c13 = c22;
     c12 = c13;
     c24 = c12;
-    c21 = getcolor(ixstart,(y>0)?ylesshalf:0);
+    c21 = getcolor(ixstart,(y > 0)?ylesshalf:0);
     c31 = c21;
     if (yplusblock <= iystop)
         c24 = getcolor(ixstart,yplusblock);
@@ -3362,18 +3362,18 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         // setup variables
         xplushalf = x + halfblock;
         xplusblock = xplushalf + halfblock;
-        if (xplushalf>ixstop)
+        if (xplushalf > ixstop)
         {
             if (!right_guess)
                 c31= -1;
         }
-        else if (y>0)
+        else if (y > 0)
             c31 = getcolor(xplushalf,ylesshalf);
         if (xplusblock <= ixstop)
         {
             if (yplusblock <= iystop)
                 c44 = getcolor(xplusblock,yplusblock);
-            c41 = getcolor(xplusblock,(y>0)?ylesshalf:0);
+            c41 = getcolor(xplusblock,(y > 0)?ylesshalf:0);
             c42 = getcolor(xplusblock,y);
         }
         else if (!right_guess)
@@ -3382,7 +3382,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             c42 = c44;
             c41 = c42;
         }
-        if (yplusblock>iystop)
+        if (yplusblock > iystop)
             c44 = bottom_guess ? c42 : -1;
 
         // guess or calc the remaining 3 quarters of current block
@@ -3392,7 +3392,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         c33 = c22;
         c32 = c33;
         c23 = c32;
-        if (yplushalf>iystop)
+        if (yplushalf > iystop)
         {
             if (!bottom_guess)
             {
@@ -3403,7 +3403,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             guessed23 = guessed33;
             guessed13 = 0;
         }
-        if (xplushalf>ixstop)
+        if (xplushalf > ixstop)
         {
             if (!right_guess)
             {
@@ -3415,13 +3415,13 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         }
         while (1) // go around till none of 23,32,33 change anymore
         {
-            if (guessed33>0
+            if (guessed33 > 0
                     && (c33 != c44 || c33 != c42 || c33 != c24 || c33 != c32 || c33 != c23))
             {
                 calcadot(c33,xplushalf,yplushalf);
                 guessed33 = 0;
             }
-            if (guessed32>0
+            if (guessed32 > 0
                     && (c32 != c33 || c32 != c42 || c32 != c31 || c32 != c21
                         || c32 != c41 || c32 != c23))
             {
@@ -3429,7 +3429,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
                 guessed32 = 0;
                 continue;
             }
-            if (guessed23>0
+            if (guessed23 > 0
                     && (c23 != c33 || c23 != c24 || c23 != c13 || c23 != c12 || c23 != c32))
             {
                 calcadot(c23,x,yplushalf);
@@ -3443,16 +3443,16 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             if (guessed23 == 0 || guessed32 == 0 || guessed33 == 0)
                 *pfxptr |= pfxmask;
 
-        if (halfblock>1) { // not last pass, check if something to display
+        if (halfblock > 1) { // not last pass, check if something to display
             if (firstpass)  // display guessed corners, fill in block
             {
                 if (guessplot)
                 {
-                    if (guessed23>0)
+                    if (guessed23 > 0)
                         (*plot)(x,yplushalf,c23);
-                    if (guessed32>0)
+                    if (guessed32 > 0)
                         (*plot)(xplushalf,y,c32);
-                    if (guessed33>0)
+                    if (guessed33 > 0)
                         (*plot)(xplushalf,yplushalf,c33);
                 }
                 plotblock(1,x,yplushalf,c23);
@@ -3473,27 +3473,27 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         // check if some calcs in this block mean earlier guesses need fixing
         fix21 = ((c22 != c12 || c22 != c32)
                && c21 == c22 && c21 == c31 && c21 == prev11
-               && y>0
+               && y > 0
                && (x == ixstart || c21 == getcolor(x-halfblock,ylessblock))
-               && (xplushalf>ixstop || c21 == getcolor(xplushalf,ylessblock))
+               && (xplushalf > ixstop || c21 == getcolor(xplushalf,ylessblock))
                && c21 == getcolor(x,ylessblock));
         fix31 = (c22 != c32
                && c31 == c22 && c31 == c42 && c31 == c21 && c31 == c41
-               && y>0 && xplushalf <= ixstop
+               && y > 0 && xplushalf <= ixstop
                && c31 == getcolor(xplushalf,ylessblock)
-               && (xplusblock>ixstop || c31 == getcolor(xplusblock,ylessblock))
+               && (xplusblock > ixstop || c31 == getcolor(xplusblock,ylessblock))
                && c31 == getcolor(x,ylessblock));
         prev11 = c31; // for next time around
         if (fix21)
         {
             calcadot(c21,x,ylesshalf);
-            if (halfblock>1 && c21 != c22)
+            if (halfblock > 1 && c21 != c22)
                 plotblock(-1,x,ylesshalf,c21);
         }
         if (fix31)
         {
             calcadot(c31,xplushalf,ylesshalf);
-            if (halfblock>1 && c31 != c22)
+            if (halfblock > 1 && c31 != c22)
                 plotblock(-1,xplushalf,ylesshalf,c31);
         }
         if (c23 != c22)
@@ -3501,13 +3501,13 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             if (guessed12)
             {
                 calcadot(c12,x-halfblock,y);
-                if (halfblock>1 && c12 != c22)
+                if (halfblock > 1 && c12 != c22)
                     plotblock(-1,x-halfblock,y,c12);
             }
             if (guessed13)
             {
                 calcadot(c13,x-halfblock,yplushalf);
-                if (halfblock>1 && c13 != c22)
+                if (halfblock > 1 && c13 != c22)
                     plotblock(-1,x-halfblock,yplushalf,c13);
             }
         }
@@ -3551,9 +3551,9 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             }
         for (int i = 0; i < halfblock; ++i)
         {
-            if ((j = yystop-(y+i-yystart))>iystop && j<ydots)
+            if ((j = yystop-(y+i-yystart)) > iystop && j < ydots)
                 put_line(j,xxstart,ixstop,&dstack[xxstart]);
-            if ((j = yystop-(y+i+halfblock-yystart))>iystop && j<ydots)
+            if ((j = yystop-(y+i+halfblock-yystart)) > iystop && j < ydots)
                 put_line(j,xxstart,ixstop,&dstack[xxstart+OLDMAXPIXELS]);
             if (driver_key_pressed())
                 return true;
@@ -3566,7 +3566,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
 static void plotblock(int buildrow,int x,int y,int color)
 {
     int xlim,ylim;
-    if ((xlim = x+halfblock)>ixstop)
+    if ((xlim = x+halfblock) > ixstop)
         xlim = ixstop+1;
     if (buildrow >= 0 && !guessplot) // save it for later put_line
     {
@@ -3580,15 +3580,15 @@ static void plotblock(int buildrow,int x,int y,int color)
             return; // the usual case
     }
     // paint it
-    if ((ylim = y+halfblock)>iystop)
+    if ((ylim = y+halfblock) > iystop)
     {
-        if (y>iystop)
+        if (y > iystop)
             return;
         ylim = iystop+1;
     }
     for (int i = x; ++i < xlim;)
         (*plot)(i,y,color); // skip 1st dot on 1st row
-    while (++y<ylim)
+    while (++y < ylim)
         for (int i = x; i < xlim; ++i)
             (*plot)(i,y,color);
 }
@@ -4143,7 +4143,7 @@ tess_end:
             ++ysize;
         }
         add_worklist(xxstart,xxstop,xxstart,yystart,yystop,
-                     (ysize<<12)+tp->y1,(xsize<<12)+tp->x1,worksym);
+                     (ysize << 12)+tp->y1,(xsize << 12)+tp->x1,worksym);
         return -1;
     }
     return 0;
