@@ -313,7 +313,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         // divide tmpx and tmpy by |tmpx| so that double version of atan2() can be used
         // atan2() only depends on the ratio, this puts it in double's range
         int signx = sign(tmpx1);
-        LDBL tmpy=0.0;
+        LDBL tmpy = 0.0;
         if (signx)
             tmpy = tmpy1/tmpx1 * signx;    // tmpy = tmpy / |tmpx|
         *Rotation = (double)(-rad_to_deg(atan2((double)tmpy, signx)));   // negative for image rotation
@@ -762,7 +762,7 @@ int tab_display()       // display the status of the current image
     char msg[350];
     const char *msgptr;
     int key;
-    int saved=0;
+    int saved = 0;
     int k;
     int hasformparam = 0;
 
@@ -1214,7 +1214,7 @@ static void area()
 {
     const char *msg;
     char buf[160];
-    long cnt=0;
+    long cnt = 0;
     if (inside < 0) {
         stopmsg(STOPMSG_NONE, "Need solid inside to compute area");
         return;
@@ -1351,7 +1351,7 @@ int ifsload()                   // read in IFS parameters
 
 bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
 {
-    FILE *infile=nullptr;
+    FILE *infile = nullptr;
     bool found = false;
     char parsearchname[ITEMNAMELEN + 6];
     char drive[FILE_MAX_DRIVE];
@@ -1365,7 +1365,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
     splitpath(filename,drive,dir,fname,ext);
     makepath(fullpath,"","",fname,ext);
     if (stricmp(filename, CommandFile)) {
-        if ((infile=fopen(filename, "rb")) != nullptr) {
+        if ((infile = fopen(filename, "rb")) != nullptr) {
             if (scan_entries(infile, nullptr, itemname) == -1) {
                 found = true;
             }
@@ -1377,7 +1377,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
 
         if (!found && checkcurdir) {
             makepath(fullpath,"",DOTSLASH,fname,ext);
-            if ((infile=fopen(fullpath, "rb")) != nullptr) {
+            if ((infile = fopen(fullpath, "rb")) != nullptr) {
                 if (scan_entries(infile, nullptr, itemname) == -1) {
                     strcpy(filename, fullpath);
                     found = true;
@@ -1421,7 +1421,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
     }
 
     if (!found) {
-        if ((infile=fopen(CommandFile, "rb")) != nullptr) {
+        if ((infile = fopen(CommandFile, "rb")) != nullptr) {
             if (scan_entries(infile, nullptr, parsearchname) == -1) {
                 strcpy(filename, CommandFile);
                 found = true;
@@ -1435,7 +1435,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
 
     if (!found) {
         makepath(fullpath,drive,dir,fname,ext);
-        if ((infile=fopen(fullpath, "rb")) != nullptr) {
+        if ((infile = fopen(fullpath, "rb")) != nullptr) {
             if (scan_entries(infile, nullptr, itemname) == -1) {
                 strcpy(filename, fullpath);
                 found = true;
@@ -1461,7 +1461,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
                     strcmp(DTA.filename,"..")) {
                 splitpath(DTA.filename,nullptr,nullptr,fname,ext);
                 makepath(fullpath,drive,dir,fname,ext);
-                if ((infile=fopen(fullpath, "rb")) != nullptr) {
+                if ((infile = fopen(fullpath, "rb")) != nullptr) {
                     if (scan_entries(infile, nullptr, itemname) == -1) {
                         strcpy(filename, fullpath);
                         found = true;
@@ -1503,7 +1503,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
             strcat(fname, "chr");
         }
         makepath(fullpath,drive,dir,fname,defaultextension);
-        if ((infile=fopen(fullpath, "rb")) != nullptr) {
+        if ((infile = fopen(fullpath, "rb")) != nullptr) {
             if (scan_entries(infile, nullptr, itemname) == -1) {
                 strcpy(filename, fullpath);
                 found = true;
