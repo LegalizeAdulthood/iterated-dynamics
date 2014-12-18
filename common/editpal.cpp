@@ -892,7 +892,7 @@ static void MoveBox__Move(MoveBox *me, int key)
     if (yoff+me->base_depth+me->csize*16+1 > sydots)
         yoff = sydots - (me->base_depth+me->csize*16+1);
 
-    if (xoff!=me->x || yoff!=me->y)
+    if (xoff != me->x || yoff != me->y)
     {
         MoveBox__Erase(me);
         me->y = yoff;
@@ -919,7 +919,7 @@ static bool MoveBox_Process(MoveBox *me)
         Cursor_WaitKey();
         key = driver_get_key();
 
-        if (key==FIK_ENTER || key==FIK_ENTER_2 || key==FIK_ESC || key=='H' || key=='h')
+        if (key == FIK_ENTER || key == FIK_ENTER_2 || key == FIK_ESC || key == 'H' || key == 'h')
         {
             if (me->x != orig_x || me->y != orig_y || me->csize != orig_csize)
                 me->moved = true;
@@ -1982,14 +1982,14 @@ static void PalTable__SetCurr(PalTable *me, int which, int curr)
     me->curr[which] = curr;
 
     if (me->curr[0] != me->curr[1])
-        PalTable__HlPal(me, me->curr[me->active==0?1:0], -1);
+        PalTable__HlPal(me, me->curr[me->active == 0?1:0], -1);
     PalTable__HlPal(me, me->curr[me->active], fg_color);
 
     RGBEditor_SetRGB(me->rgb[which], me->curr[which], &(me->pal[me->curr[which]]));
 
     if (redraw)
     {
-        int other = (which==0) ? 1 : 0;
+        int other = (which == 0) ? 1 : 0;
         RGBEditor_SetRGB(me->rgb[other], me->curr[other], &(me->pal[me->curr[other]]));
         RGBEditor_Update(me->rgb[0]);
         RGBEditor_Update(me->rgb[1]);
@@ -2283,7 +2283,7 @@ static void PalTable__change(RGBEditor *rgb, void *info)
 
     if (me->curr[0] == me->curr[1])
     {
-        int      other = me->active==0 ? 1 : 0;
+        int      other = me->active == 0 ? 1 : 0;
         PALENTRY color;
 
         color = RGBEditor_GetRGB(me->rgb[me->active]);
@@ -2312,7 +2312,7 @@ static void PalTable__UpdateDAC(PalTable *me)
             int a = me->curr[0],
                 b = me->curr[1];
 
-            if (a>b)
+            if (a > b)
             {
                 int t=a;
                 a=b;
@@ -2407,7 +2407,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
     case 'Y':    // exclude range
     case 'y':
-        if (me->exclude==2)
+        if (me->exclude == 2)
             me->exclude = 0;
         else
             me->exclude = 2;
@@ -2416,7 +2416,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
     case 'X':
     case 'x':     // exclude current entry
-        if (me->exclude==1)
+        if (me->exclude == 1)
             me->exclude = 0;
         else
             me->exclude = 1;
@@ -2440,7 +2440,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         break;
 
     case ' ':     // select the other palette register
-        me->active = (me->active==0) ? 1 : 0;
+        me->active = (me->active == 0) ? 1 : 0;
         if (me->auto_select)
             PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
         else
@@ -2473,7 +2473,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case 'd':
     {
         int   a = me->active,
-              b = (a==0) ? 1 : 0;
+              b = (a == 0) ? 1 : 0;
         PALENTRY t;
 
         t = RGBEditor_GetRGB(me->rgb[b]);
@@ -2631,7 +2631,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         driver_unstack_screen();
         if (i != -1) {
             sscanf(buf,"%f",&gamma_val);
-            if (gamma_val==0) {
+            if (gamma_val == 0) {
                 gamma_val = 0.0000000001F;
             }
             gamma_val = (float)(1.0/gamma_val);
@@ -2659,7 +2659,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case '.':   // rotate once
     case ',':
     {
-        int dir = (key=='.') ? 1 : -1;
+        int dir = (key == '.') ? 1 : -1;
 
         PalTable__SaveUndoRotate(me, dir, rotate_lo, rotate_hi);
         PalTable__Rotate(me, dir, rotate_lo, rotate_hi);
@@ -2685,7 +2685,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         do
         {
-            dir = (key=='>') ? 1 : -1;
+            dir = (key == '>') ? 1 : -1;
 
             while (!driver_key_pressed())
             {
@@ -2699,7 +2699,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
             key = driver_get_key();
         }
-        while (key=='<' || key=='>');
+        while (key == '<' || key == '>');
 
         if (!me->hidden)
         {
@@ -3033,7 +3033,7 @@ static PalTable *PalTable_Construct()
         csize = ((sydots-(PalTable_PALY+1+1)) / 2) / 16;
     }
 
-    if (csize<CSIZE_MIN)
+    if (csize < CSIZE_MIN)
         csize = CSIZE_MIN;
     PalTable__SetCSize(me, csize);
 
@@ -3141,7 +3141,7 @@ static void PalTable_Process(PalTable *me)
     }
 
     PalTable__SetCurr(me, me->active,          PalTable__GetCursorColor(me));
-    PalTable__SetCurr(me, (me->active==1)?0:1, PalTable__GetCursorColor(me));
+    PalTable__SetCurr(me, (me->active == 1)?0:1, PalTable__GetCursorColor(me));
     Cursor_Show();
     PalTable__MkDefaultPalettes(me);
     me->done = false;
