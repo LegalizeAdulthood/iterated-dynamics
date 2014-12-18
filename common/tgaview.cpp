@@ -21,7 +21,7 @@ int tgaview()
     FRACTAL_INFO info;
 
     fptarga = t16_open(readname, (int *)&width, (int *)&height, &cs, (U8 *)&info);
-    if (fptarga==nullptr)
+    if (fptarga == nullptr)
         return (-1);
 
     g_row_count = 0;
@@ -51,7 +51,7 @@ int outlin16(BYTE *buffer,int linelen)
 {
     U16 *buf = (U16 *)buffer;
     for (int i = 0; i < linelen; i++)
-        putcolor(i,g_row_count,buf[i]>>8);
+        putcolor(i,g_row_count,buf[i] >> 8);
     g_row_count++;
     return (0);
 }
