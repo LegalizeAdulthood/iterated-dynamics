@@ -42,7 +42,7 @@ bool is_hyphen(const char *ptr)   /* true if ptr points to a real hyphen */
 
     --ptr;
 
-    return (*ptr!=' ' && *ptr!='-');
+    return (*ptr != ' ' && *ptr != '-');
 }
 
 
@@ -518,7 +518,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
                             }
                             else
                             {
-                                if (!DO_PRINT(pd.curr, (size==0) ? width : size))
+                                if (!DO_PRINT(pd.curr, (size == 0) ? width : size))
                                     return false;
                             }
                         }

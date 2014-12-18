@@ -235,8 +235,8 @@ void report_errors()
 {
     printf("\n");
     printf("Compiler Status:\n");
-    printf("%8d Error%c\n",       errors, (errors==1)   ? ' ' : 's');
-    printf("%8d Warning%c\n",     warnings, (warnings==1) ? ' ' : 's');
+    printf("%8d Error%c\n",       errors, (errors == 1)   ? ' ' : 's');
+    printf("%8d Warning%c\n",     warnings, (warnings == 1) ? ' ' : 's');
 }
 
 
@@ -539,7 +539,7 @@ void unread_string(char *s)
 
 int eos()    /* end-of-source ? */
 {
-    return (!((read_char_sp==0) && (read_char_buff_pos==0) && feof(srcfile)));
+    return (!((read_char_sp == 0) && (read_char_buff_pos == 0) && feof(srcfile)));
 }
 
 
@@ -624,7 +624,7 @@ int read_char()
 
     ch = _read_char();
 
-    while (ch == ';' && srccol==1)    /* skip over comments */
+    while (ch == ';' && srccol == 1)    /* skip over comments */
     {
         ch = _read_char();
 
@@ -645,7 +645,7 @@ int read_char()
 
             for (ctr = 0; true; ctr++)
             {
-                if (ch<'0' || ch>'9' || ch==-1 || ctr>=3)
+                if (ch<'0' || ch>'9' || ch == -1 || ctr>=3)
                 {
                     unread_char(ch);
                     break;
@@ -766,7 +766,7 @@ char *read_until(char *buff, int len, const char *stop_chars)
 
         *buff++ = ch;
 
-        if ((ch&0x100)==0 && strchr(stop_chars, ch) != nullptr)
+        if ((ch&0x100) == 0 && strchr(stop_chars, ch) != nullptr)
             break;
     }
 
@@ -1128,7 +1128,7 @@ int create_table()
     {
         do
             ch = read_char();
-        while (ch=='\n' || ch == ' ');
+        while (ch == '\n' || ch == ' ');
 
         if (done)
             break;
@@ -1244,7 +1244,7 @@ void process_comment()
 
             ch = read_char();
 
-            if (ch=='(')
+            if (ch == '(')
                 imbedded = true;
             else
             {
@@ -1283,7 +1283,7 @@ void process_bininc()
     int  handle;
     long len;
 
-    if ((handle=open(cmd+7, O_RDONLY|O_BINARY)) == -1)
+    if ((handle = open(cmd+7, O_RDONLY|O_BINARY)) == -1)
     {
         error(0,"Unable to open \"%s\"", cmd+7);
         return ;
@@ -1340,7 +1340,7 @@ bool end_of_sentence(char *ptr)  /* true if ptr is at the end of a sentence */
     if (*ptr == '\"')
         --ptr;
 
-    return (*ptr=='.' || *ptr=='?' || *ptr=='!');
+    return (*ptr == '.' || *ptr == '?' || *ptr == '!');
 }
 
 
@@ -1462,7 +1462,7 @@ void read_src(char *fname)
             else
             {
                 imbedded = false;
-                eoff=0;
+                eoff = 0;
                 unread_char(ch);
             }
 
@@ -2394,7 +2394,7 @@ void make_hot_links()
      * Find topic_num and topic_off for all hot-links.  Also flag all hot-
      * links which will (probably) appear in the document.
      */
-    l=a_link;
+    l = a_link;
     for (int lctr = 0; lctr < num_link; l++, lctr++)
     {
         switch (l->type)
@@ -2580,7 +2580,7 @@ void paginate_online()    /* paginate the text for on-line help */
                     break;
                 }
                 ++lnum;
-                if (lnum >= SCREEN_DEPTH || (col == 0 && lnum==SCREEN_DEPTH-1))
+                if (lnum >= SCREEN_DEPTH || (col == 0 && lnum == SCREEN_DEPTH-1))
                 {
                     add_page_break(t, start_margin, text, start, curr, num_links);
                     start = curr + size;
@@ -2677,7 +2677,7 @@ LABEL *find_next_label_by_topic(int t)
         else if (temp->topic_num > t)
             break;
 
-    temp=plabel;
+    temp = plabel;
     for (int ctr = 0; ctr < num_plabel; ctr++, temp++)
         if (temp->topic_num == t && temp->doc_page == -1)
         {
@@ -2707,7 +2707,7 @@ void set_hot_link_doc_page()
     LABEL *lbl;
     int    t;
 
-    l=a_link;
+    l = a_link;
     for (int lctr = 0; lctr < num_link; l++, lctr++)
     {
         switch (l->type)
@@ -2906,7 +2906,7 @@ int fcmp_LABEL(VOIDCONSTPTR a, VOIDCONSTPTR b)
 
     /* compare the names, making sure that the index goes first */
 
-    if ((diff=strcmp(an,bn)) == 0)
+    if ((diff = strcmp(an,bn)) == 0)
         return (0);
 
     if (strcmp(an, INDEX_LABEL) == 0)
@@ -3241,10 +3241,10 @@ void printerc(PRINT_DOC_INFO *info, int c, int n)
 {
     while (n-- > 0)
     {
-        if (c==' ')
+        if (c == ' ')
             ++info->spaces;
 
-        else if (c=='\n' || c=='\f')
+        else if (c == '\n' || c == '\f')
         {
             info->start_of_line = 1;
             info->spaces = 0;   /* strip spaces before a new-line */
@@ -3481,10 +3481,10 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
     int                  size;
     help_sig_info hs;
 
-    if ((exe=open(exe_fname, O_RDWR|O_BINARY)) == -1)
+    if ((exe = open(exe_fname, O_RDWR|O_BINARY)) == -1)
         fatal(0,"Unable to open \"%s\"", exe_fname);
 
-    if ((hlp=open(hlp_fname, O_RDONLY|O_BINARY)) == -1)
+    if ((hlp = open(hlp_fname, O_RDONLY|O_BINARY)) == -1)
         fatal(0,"Unable to open \"%s\"", hlp_fname);
 
     msg("Appending %s to %s", hlp_fname, exe_fname);
@@ -3539,7 +3539,7 @@ void delete_hlp_from_exe(const char *exe_fname)
     int   exe;   /* file handle */
     help_sig_info hs;
 
-    if ((exe=open(exe_fname, O_RDWR|O_BINARY)) == -1)
+    if ((exe = open(exe_fname, O_RDWR|O_BINARY)) == -1)
         fatal(0,"Unable to open \"%s\"", exe_fname);
 
     msg("Deleting help from %s", exe_fname);
@@ -3712,11 +3712,11 @@ int main(int argc, char *argv[])
         if (fname2[0] != '\0')
             fatal(0,"Unexpected command-line argument \"%s\"", fname2);
 
-        strcpy(src_fname, (fname1[0]=='\0') ? DEFAULT_SRC_FNAME : fname1);
+        strcpy(src_fname, (fname1[0] == '\0') ? DEFAULT_SRC_FNAME : fname1);
 
         strcat(swappath, SWAP_FNAME);
 
-        if ((swapfile=fopen(swappath, "w+b")) == nullptr)
+        if ((swapfile = fopen(swappath, "w+b")) == nullptr)
             fatal(0,"Cannot create swap file \"%s\"", swappath);
         swappos = 0;
 
@@ -3756,11 +3756,11 @@ int main(int argc, char *argv[])
         break;
 
     case MODE_PRINT:
-        strcpy(src_fname, (fname1[0]=='\0') ? DEFAULT_SRC_FNAME : fname1);
+        strcpy(src_fname, (fname1[0] == '\0') ? DEFAULT_SRC_FNAME : fname1);
 
         strcat(swappath, SWAP_FNAME);
 
-        if ((swapfile=fopen(swappath, "w+b")) == nullptr)
+        if ((swapfile = fopen(swappath, "w+b")) == nullptr)
             fatal(0,"Cannot create swap file \"%s\"", swappath);
         swappos = 0;
 
@@ -3769,7 +3769,7 @@ int main(int argc, char *argv[])
         make_hot_links();
 
         if (!errors)     paginate_document();
-        if (!errors)     print_document((fname2[0]=='\0') ? DEFAULT_DOC_FNAME : fname2);
+        if (!errors)     print_document((fname2[0] == '\0') ? DEFAULT_DOC_FNAME : fname2);
 
         if (errors || warnings)
             report_errors();
@@ -3780,14 +3780,14 @@ int main(int argc, char *argv[])
         break;
 
     case MODE_APPEND:
-        add_hlp_to_exe((fname1[0]=='\0') ? DEFAULT_HLP_FNAME : fname1,
-                       (fname2[0]=='\0') ? DEFAULT_EXE_FNAME : fname2);
+        add_hlp_to_exe((fname1[0] == '\0') ? DEFAULT_HLP_FNAME : fname1,
+                       (fname2[0] == '\0') ? DEFAULT_EXE_FNAME : fname2);
         break;
 
     case MODE_DELETE:
         if (fname2[0] != '\0')
             fatal(0,"Unexpected argument \"%s\"", fname2);
-        delete_hlp_from_exe((fname1[0]=='\0') ? DEFAULT_EXE_FNAME : fname1);
+        delete_hlp_from_exe((fname1[0] == '\0') ? DEFAULT_EXE_FNAME : fname1);
         break;
     }
 
