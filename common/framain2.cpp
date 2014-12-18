@@ -30,7 +30,7 @@ static  void cmp_line_cleanup();
 static void restore_history_info(int);
 static void save_history_info();
 
-int finishrow=0;    // save when this row is finished
+int finishrow = 0;    // save when this row is finished
 U16 evolve_handle = 0;
 char old_stdcalcmode;
 static std::vector<int> save_boxx;
@@ -2069,7 +2069,7 @@ int cmp_line(BYTE *pixels, int linelen)
         row >>= 1;
     }
     for (int col = 0; col < linelen; col++) {
-        oldcolor=getcolor(col,row);
+        oldcolor = getcolor(col,row);
         if (oldcolor == (int)pixels[col])
             putcolor(col,row,0);
         else {
