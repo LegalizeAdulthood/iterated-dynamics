@@ -12,18 +12,12 @@
 #include "drivers.h"
 #include "helpcom.h"
 
-#ifdef XFRACT
-extern bool slowdisplay;
-#endif
+bool slowdisplay = false;
 
 void intro()
 {
     // following overlayed data safe if "putstrings" are resident
-#ifdef XFRACT
-    static char PRESS_ENTER[] = {"Press ENTER for main menu, Shift-1 for help."};
-#else
     static char PRESS_ENTER[] = {"Press ENTER for main menu, F1 for help."};
-#endif
     int       toprow, botrow, delaymax;
     char      oldchar;
     std::vector<int> authors;
@@ -45,20 +39,14 @@ void intro()
     int j = 0;
     authors.push_back(0);               // find the start of each credit-line
     for (i = 0; credits[i] != 0; i++)
-        if (credits[i] == 10)
+        if (credits[i] == '\n')
             authors.push_back(i+1);
     authors.push_back(i);
 
     helptitle();
 #define END_MAIN_AUTHOR 5
     toprow = END_MAIN_AUTHOR+1;
-#ifndef XFRACT
     botrow = 21;
-#else
-    botrow = 20;
-    putstringcenter(21, 0, 80, C_TITLE,
-                    "Unix/X port of fractint by Ken Shirriff");
-#endif
     putstringcenter(1, 0, 80, C_TITLE, PRESS_ENTER);
     driver_put_string(2, 0, C_CONTRIB, screen_text);
     driver_set_attr(2, 0, C_AUTHDIV1, 80);
@@ -81,10 +69,8 @@ void intro()
     helpmode = HELPMENU;
     while (! driver_key_pressed())
     {
-#ifdef XFRACT
         if (slowdisplay)
             delaymax *= 15;
-#endif
         for (j = 0; j < delaymax && !(driver_key_pressed()); j++)
             driver_delay(100);
         if (driver_key_pressed() == FIK_SPACE)

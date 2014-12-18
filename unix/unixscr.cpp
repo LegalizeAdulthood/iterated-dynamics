@@ -86,7 +86,6 @@ static int sharecolor = 0;
 static int privatecolor = 0;
 static int fixcolors = 0;
 static int synch = 0; // Run X events synchronously (debugging)
-bool slowdisplay = false; // We have a slow display, so don't print too much
 static int simple_input = 0; // Use simple input (debugging)
 static int resize_flag = 0; // Main window being resized ?
 static int drawing_or_drawn = 0; // Is image (being) drawn ?

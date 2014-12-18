@@ -252,14 +252,7 @@ void helptitle()
 {
     char msg[MSGLEN], buf[MSGLEN];
     driver_set_clear(); // clear the screen
-#ifdef XFRACT
-    sprintf(msg, "XFRACTINT  Version %d.%02d (FRACTINT Version %d.%02d)",
-            xrelease/100, xrelease%100, g_release/100, g_release%100);
-#else
-    *msg = 0;
-#endif
-    sprintf(buf, "FRACTINT Version %d.%01d", g_release/100, (g_release%100)/10);
-    strcat(msg, buf);
+    sprintf(msg, "FRACTINT Version %d.%01d", g_release/100, (g_release%100)/10);
     if (g_release%10)
     {
         sprintf(buf, "%01d", g_release%10);

@@ -655,9 +655,6 @@ static int cmdfile(FILE *handle, cmd_file mode)
         changeflag |= i;
     }
     fclose(handle);
-#ifdef XFRACT
-    g_init_mode = 0;                // Skip credits if @file is used.
-#endif
     if (changeflag & CMDARG_FRACTAL_PARAM)
     {
         backwards_v18();
