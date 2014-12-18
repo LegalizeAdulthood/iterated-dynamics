@@ -47,7 +47,7 @@ static long iteration(DBLS cr, DBLS ci,
     floatparm = &init;
     floatparm->x = cr;
     floatparm->y = ci;
-    while (ORBITCALC()==0 && start < maxit)
+    while (ORBITCALC() == 0 && start < maxit)
         start++;
     if (start >= maxit)
         start = BASIN_COLOR;
@@ -57,13 +57,13 @@ static long iteration(DBLS cr, DBLS ci,
 static void puthline(int x1,int y1,int x2,int color)
 {
     int x;
-    for (x=x1; x<=x2; x++)
+    for (x=x1; x <= x2; x++)
         (*plot)(x,y1,color);
 }
 
 static void putbox(int x1, int y1, int x2, int y2, int color)
 {
-    for (; y1<=y2; y1++)
+    for (; y1 <= y2; y1++)
         puthline(x1,y1,x2,color);
 }
 
@@ -365,14 +365,14 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
         status = true;
         goto rhombus_done;
     }
-    if (iter>maxit)
+    if (iter > maxit)
     {
         putbox(x1,y1,x2,y2,0);
         status = false;
         goto rhombus_done;
     }
 
-    if ((y2-y1<=SCAN) || (avail < minstack))
+    if ((y2-y1 <= SCAN) || (avail < minstack))
     {
         // finish up the image by scanning the rectangle
 scan:
@@ -388,7 +388,7 @@ scan:
         imstep=(cim2-cim1)/(y2-y1);
         interstep=INTERLEAVE*restep;
 
-        for (y=y1, im=cim1; y<y2; y++, im+=imstep)
+        for (y=y1, im=cim1; y < y2; y++, im += imstep)
         {
             if (driver_key_pressed())
             {
@@ -405,8 +405,8 @@ scan:
                 goto rhombus_done;
             }
             savex=x1;
-            for (x=x1+INTERLEAVE, re=cre1+interstep; x<x2;
-                    x+=INTERLEAVE, re+=interstep)
+            for (x=x1+INTERLEAVE, re=cre1+interstep; x < x2;
+                    x += INTERLEAVE, re += interstep)
             {
                 zre=GET_SCAN_REAL(re,im);
                 zim=GET_SCAN_IMAG(re,im);
@@ -417,10 +417,10 @@ scan:
                     status = true;
                     goto rhombus_done;
                 }
-                else if (color==savecolor)
+                else if (color == savecolor)
                     continue;
 
-                for (z=x-1, helpre=re-restep; z>x-INTERLEAVE; z--,helpre-=restep)
+                for (z=x-1, helpre=re-restep; z > x-INTERLEAVE; z--,helpre -= restep)
                 {
                     zre=GET_SCAN_REAL(helpre,im);
                     zim=GET_SCAN_IMAG(helpre,im);
@@ -430,12 +430,12 @@ scan:
                         status = true;
                         goto rhombus_done;
                     }
-                    else if (helpcolor==savecolor)
+                    else if (helpcolor == savecolor)
                         break;
                     (*plot)(z,y,(int)(helpcolor&255));
                 }
 
-                if (savex<z)
+                if (savex < z)
                     puthline(savex, y, z, (int)(savecolor&255));
                 else
                     (*plot)(savex, y, (int)(savecolor&255));
@@ -444,7 +444,7 @@ scan:
                 savecolor = color;
             }
 
-            for (z=x2-1, helpre=cre2-restep; z>savex; z--,helpre-=restep)
+            for (z=x2-1, helpre=cre2-restep; z > savex; z--,helpre -= restep)
             {
                 zre=GET_SCAN_REAL(helpre,im);
                 zim=GET_SCAN_IMAG(helpre,im);
@@ -454,13 +454,13 @@ scan:
                     status = true;
                     goto rhombus_done;
                 }
-                else if (helpcolor==savecolor)
+                else if (helpcolor == savecolor)
                     break;
 
                 (*plot)(z,y,(int)(helpcolor&255));
             }
 
-            if (savex<z)
+            if (savex < z)
                 puthline(savex, y, z, (int)(savecolor&255));
             else
                 (*plot)(savex, y, (int)(savecolor&255));
@@ -559,7 +559,7 @@ scan:
       zr=rq-iq+cr;\
       rq=zr*zr;\
       iq=zi*zi;\
-      esc = ((rq+iq)>16.0)?1:0
+      esc = ((rq+iq) > 16.0)?1:0
 
         // iterate key values
         SOI_ORBIT(zre1,rq1,zim1,iq1,cre1,cim1,esc1);
@@ -681,7 +681,7 @@ scan:
         /* if maximum number of iterations is reached, the whole rectangle
         can be assumed part of M. This is of course best case behavior
         of SOI, we seldomly get there */
-        if (iter>maxit)
+        if (iter > maxit)
         {
             putbox(x1,y1,x2,y2,0);
             status = false;
@@ -691,66 +691,66 @@ scan:
         /* now for all test points, check whether they exceed the
         allowed tolerance. if so, subdivide */
         l1=GET_REAL(cr1,ci1);
-        l1=(tzr1==0.0)?
-           (l1==0.0)?1.0:1000.0:
+        l1=(tzr1 == 0.0)?
+           (l1 == 0.0)?1.0:1000.0:
            l1/tzr1;
-        if (FABS(1.0-l1)>twidth)
+        if (FABS(1.0-l1) > twidth)
             break;
 
         l2=GET_IMAG(cr1,ci1);
-        l2=(tzi1==0.0)?
-           (l2==0.0)?1.0:1000.0:
+        l2=(tzi1 == 0.0)?
+           (l2 == 0.0)?1.0:1000.0:
            l2/tzi1;
-        if (FABS(1.0-l2)>twidth)
+        if (FABS(1.0-l2) > twidth)
             break;
 
         l1=GET_REAL(cr2,ci1);
-        l1=(tzr2==0.0)?
-           (l1==0.0)?1.0:1000.0:
+        l1=(tzr2 == 0.0)?
+           (l1 == 0.0)?1.0:1000.0:
            l1/tzr2;
-        if (FABS(1.0-l1)>twidth)
+        if (FABS(1.0-l1) > twidth)
             break;
 
         l2=GET_IMAG(cr2,ci1);
-        l2=(tzi2==0.0)?
-           (l2==0.0)?1.0:1000.0:
+        l2=(tzi2 == 0.0)?
+           (l2 == 0.0)?1.0:1000.0:
            l2/tzi2;
-        if (FABS(1.0-l2)>twidth)
+        if (FABS(1.0-l2) > twidth)
             break;
 
         l1=GET_REAL(cr1,ci2);
-        l1=(tzr3==0.0)?
-           (l1==0.0)?1.0:1000.0:
+        l1=(tzr3 == 0.0)?
+           (l1 == 0.0)?1.0:1000.0:
            l1/tzr3;
-        if (FABS(1.0-l1)>twidth)
+        if (FABS(1.0-l1) > twidth)
             break;
 
         l2=GET_IMAG(cr1,ci2);
-        l2=(tzi3==0.0)?
-           (l2==0.0)?1.0:1000.0:
+        l2=(tzi3 == 0.0)?
+           (l2 == 0.0)?1.0:1000.0:
            l2/tzi3;
-        if (FABS(1.0-l2)>twidth)
+        if (FABS(1.0-l2) > twidth)
             break;
 
         l1=GET_REAL(cr2,ci2);
-        l1=(tzr4==0.0)?
-           (l1==0.0)?1.0:1000.0:
+        l1=(tzr4 == 0.0)?
+           (l1 == 0.0)?1.0:1000.0:
            l1/tzr4;
-        if (FABS(1.0-l1)>twidth)
+        if (FABS(1.0-l1) > twidth)
             break;
 
         l2=GET_IMAG(cr2,ci2);
-        l2=(tzi4==0.0)?
-           (l2==0.0)?1.0:1000.0:
+        l2=(tzi4 == 0.0)?
+           (l2 == 0.0)?1.0:1000.0:
            l2/tzi4;
-        if (FABS(1.0-l2)>twidth)
+        if (FABS(1.0-l2) > twidth)
             break;
     }
 
     iter--;
 
     // this is a little heuristic I tried to improve performance.
-    if (iter-before<10)
+    if (iter-before < 10)
     {
         zre1=sr1;
         zim1=si1;
@@ -821,7 +821,7 @@ scan:
     im93=GET_SAVED_IMAG(cr1,ci2);
     im94=GET_SAVED_IMAG(cr2,ci2);
 
-    RHOMBUS(cre1,midr,cim1,midi,x1,((x1+x2)>>1),y1,((y1+y2)>>1),
+    RHOMBUS(cre1,midr,cim1,midi,x1,((x1+x2) >> 1),y1,((y1+y2) >> 1),
             sr1,si1,
             sr5,si5,
             sr6,si6,
@@ -832,7 +832,7 @@ scan:
             re15,im15,
             re91,im91,
             iter);
-    RHOMBUS(midr,cre2,cim1,midi,(x1+x2)>>1,x2,y1,(y1+y2)>>1,
+    RHOMBUS(midr,cre2,cim1,midi,(x1+x2) >> 1,x2,y1,(y1+y2) >> 1,
             sr5,si5,
             sr2,si2,
             sr9,si9,
@@ -843,7 +843,7 @@ scan:
             re16,im16,
             re92,im92,
             iter);
-    RHOMBUS(cre1,midr,midi,cim2,x1,(x1+x2)>>1,(y1+y2)>>1,y2,
+    RHOMBUS(cre1,midr,midi,cim2,x1,(x1+x2) >> 1,(y1+y2) >> 1,y2,
             sr6,si6,
             sr9,si9,
             sr3,si3,
@@ -854,7 +854,7 @@ scan:
             re20,im20,
             re93,im93,
             iter);
-    RHOMBUS(midr,cre2,midi,cim2,(x1+x2)>>1,x2,(y1+y2)>>1,y2,
+    RHOMBUS(midr,cre2,midi,cim2,(x1+x2) >> 1,x2,(y1+y2) >> 1,y2,
             sr9,si9,
             sr7,si7,
             sr8,si8,
