@@ -184,28 +184,28 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     }
     else if ((fractype == MANDEL || fractype == MANDELFP) && debugflag == 3200)
     {
-        fractype=MANDELFP;
+        fractype = MANDELFP;
         curfractalspecific = &fractalspecific[MANDELFP];
         fractal_floattobf();
         usr_floatflag = true;
     }
     else if ((fractype == JULIA || fractype == JULIAFP) && debugflag == 3200)
     {
-        fractype=JULIAFP;
+        fractype = JULIAFP;
         curfractalspecific = &fractalspecific[JULIAFP];
         fractal_floattobf();
         usr_floatflag = true;
     }
     else if ((fractype == LMANDELZPOWER || fractype == FPMANDELZPOWER) && debugflag == 3200)
     {
-        fractype=FPMANDELZPOWER;
+        fractype = FPMANDELZPOWER;
         curfractalspecific = &fractalspecific[FPMANDELZPOWER];
         fractal_floattobf();
         usr_floatflag = true;
     }
     else if ((fractype == LJULIAZPOWER || fractype == FPJULIAZPOWER) && debugflag == 3200)
     {
-        fractype=FPJULIAZPOWER;
+        fractype = FPJULIAZPOWER;
         curfractalspecific = &fractalspecific[FPJULIAZPOWER];
         fractal_floattobf();
         usr_floatflag = true;
@@ -275,7 +275,7 @@ init_restart:
     if (fractype == JULIBROTFP && fractalspecific[neworbittype].isinteger)
     {
         int i;
-        if ((i=fractalspecific[neworbittype].tofloat) != NOFRACTAL)
+        if ((i = fractalspecific[neworbittype].tofloat) != NOFRACTAL)
             neworbittype = i;
         else
             fractype = JULIBROT;
@@ -283,7 +283,7 @@ init_restart:
     else if (fractype == JULIBROT && fractalspecific[neworbittype].isinteger == 0)
     {
         int i;
-        if ((i=fractalspecific[neworbittype].tofloat) != NOFRACTAL)
+        if ((i = fractalspecific[neworbittype].tofloat) != NOFRACTAL)
             neworbittype = i;
         else
             fractype = JULIBROTFP;
@@ -1665,8 +1665,8 @@ int ssg_blocksize() // used by solidguessing and by zoom panning
 {
     int blocksize,i;
     // blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >=1200
-    blocksize=4;
-    i=300;
+    blocksize = 4;
+    i = 300;
     while (i <= ydots)
     {
         blocksize += blocksize;
