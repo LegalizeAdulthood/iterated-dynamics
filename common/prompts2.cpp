@@ -351,7 +351,7 @@ int get_toggles()
     decomp[0] = uvalues[++k].uval.ival;
     if (decomp[0] != old_decomp) j++;
 
-    if (strncmp(strlwr(uvalues[++k].uval.sval), "normal",4)==0)
+    if (strncmp(strlwr(uvalues[++k].uval.sval), "normal",4) == 0)
         fillcolor = -1;
     else
         fillcolor = atoi(uvalues[k].uval.sval);
@@ -1043,7 +1043,7 @@ int get_rds_params() {
             for (int i = 0; i < sizeof(rds6); i++)
                 rds6[i] = ' ';
             p = strrchr(stereomapname,SLASHC);
-            if (p==nullptr ||
+            if (p == nullptr ||
                     (int) strlen(stereomapname) < sizeof(rds6)-2)
                 p = strlwr(stereomapname);
             else
@@ -1247,12 +1247,12 @@ int  fr_findfirst(char *path)       // Find 1st file (or subdir) meeting path/fi
         currdir = nullptr;
     }
     splitpath(path,nullptr,searchdir,searchname,searchext);
-    if (searchdir[0]=='\0') {
+    if (searchdir[0] == '\0') {
         currdir = opendir(".");
     } else {
         currdir = opendir(searchdir);
     }
-    if (currdir==nullptr) {
+    if (currdir == nullptr) {
         return -1;
     } else {
         return fr_findnext();
@@ -1292,15 +1292,15 @@ int  fr_findnext()              // Find next file (or subdir) meeting above path
             strcat(tmpname,dirEntry->d_name);
             stat(tmpname,&sbuf);
             DTA.size = sbuf.st_size;
-            if ((sbuf.st_mode&S_IFMT)==S_IFREG &&
-                    (searchname[0]=='*' || strcmp(searchname,thisname)==0) &&
-                    (searchext[0]=='*' || strcmp(searchext,thisext)==0)) {
+            if ((sbuf.st_mode&S_IFMT) == S_IFREG &&
+                    (searchname[0] == '*' || strcmp(searchname,thisname) == 0) &&
+                    (searchext[0] == '*' || strcmp(searchext,thisext) == 0)) {
                 DTA.attribute = 0;
                 return 0;
             }
-            else if (((sbuf.st_mode&S_IFMT)==S_IFDIR) &&
-                     ((searchname[0]=='*' || searchext[0]=='*') ||
-                      (strcmp(searchname,thisname)==0))) {
+            else if (((sbuf.st_mode&S_IFMT) == S_IFDIR) &&
+                     ((searchname[0] == '*' || searchext[0] == '*') ||
+                      (strcmp(searchname,thisname) == 0))) {
                 DTA.attribute = SUBDIR;
                 return 0;
             }
@@ -1863,7 +1863,7 @@ int cmpdbl(double old, double new_val)
     prompt_valuestring(buf,&val);   // convert "old" to string
 
     old = atof(buf);                // convert back
-    return (fabs(old-new_val)<DBL_EPSILON?0:1); // zero if same
+    return (fabs(old-new_val) < DBL_EPSILON?0:1); // zero if same
 }
 
 int get_corners()
@@ -2451,7 +2451,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
     char ext1[FILE_MAX_EXT];
 
     // no dot or slash so assume a file
-    if (strchr(newfilename,'.')==nullptr && strchr(newfilename,SLASHC) == nullptr)
+    if (strchr(newfilename,'.') == nullptr && strchr(newfilename,SLASHC) == nullptr)
         isafile = true;
     bool isadir = isadirectory(newfilename);
     if (isadir)
