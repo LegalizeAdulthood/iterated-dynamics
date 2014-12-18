@@ -122,9 +122,6 @@ setnullvideo()
     dotread = nullread;
 }
 
-void normalineread(int y, int x, int lastx, BYTE *pixels);
-void normaline(int y, int x, int lastx, BYTE const *pixels);
-
 #if 0
 void
 putprompt()
@@ -531,32 +528,6 @@ int
 SetupShadowVideo()
 {
     return 0;
-}
-
-/*
-; **************** internal Read/Write-a-line routines *********************
-;
-;       These routines are called by out_line(), put_line() and get_line().
-*/
-
-void
-normaline(int y, int x, int lastx, BYTE const *pixels)
-{
-    int width = lastx - x + 1;
-    for (int i = 0; i < width; i++)
-    {
-        dotwrite(x + i, y, pixels[i]);
-    }
-}
-
-void
-normalineread(int y, int x, int lastx, BYTE *pixels)
-{
-    int width = lastx - x + 1;
-    for (int i = 0; i < width; i++)
-    {
-        pixels[i] = dotread(x + i, y);
-    }
 }
 
 /*

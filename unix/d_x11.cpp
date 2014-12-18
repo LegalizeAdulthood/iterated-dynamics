@@ -185,11 +185,6 @@ extern void Cursor_SetPos();
 #define FONT "-*-*-medium-r-*-*-9-*-*-*-*-*-iso8859-*"
 #define DRAW_INTERVAL 6
 
-extern void (*dotwrite)(int, int, int); // write-a-dot routine
-extern int (*dotread)(int, int);    // read-a-dot routine
-extern void (*linewrite)(int y, int x, int lastx, BYTE const *pixels);     // write-a-line routine
-extern void (*lineread)(int y, int x, int lastx, BYTE *pixels);      // read-a-line routine
-
 static void x11_terminate(Driver *drv);
 static void x11_flush(Driver *drv);
 static int x11_write_palette(Driver *drv);
@@ -2505,6 +2500,8 @@ x11_shell(Driver * /*drv*/)
 ; Unix: We ignore ax,bx,cx,dx.  dotmode is the "mode" field in the video
 ; table.  We use mode 19 for the X window.
 */
+extern void set_normal_dot();
+extern void set_normal_line();
 static void
 x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
@@ -2518,10 +2515,8 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
         break;
 
     case 19: // X window
-        dotwrite = writevideo;
-        dotread = readvideo;
-        lineread = readvideoline;
-        linewrite = writevideoline;
+        set_normal_dot();
+        set_normal_line();
         x11_start_video(drv);
         x11_set_for_graphics(drv);
         break;
