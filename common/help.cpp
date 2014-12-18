@@ -28,8 +28,8 @@
 #define ACTION_PREV2        2        // special - go back two topics
 #define ACTION_INDEX        3
 #define ACTION_QUIT         4
-#define F_HIST              (1<<0)   // flags for help_topic()
-#define F_INDEX             (1<<1)
+#define F_HIST              (1 << 0)   // flags for help_topic()
+#define F_INDEX             (1 << 1)
 #define MAX_PAGE_SIZE       (80*25)  // no page of text may be larger
 #define TEXT_START_ROW      2        // start print the help text here
 
@@ -364,10 +364,10 @@ static void display_page(const char *title, char *text, unsigned text_len,
     putstringcenter(1, 0, 80, C_HELP_HDG, title);
     sprintf(temp, "%2d of %d", page+1, num_pages);
 #if !defined(XFRACT) && !defined(_WIN32)
-    driver_put_string(1, 79-(6 + ((num_pages>=10)?2:1)), C_HELP_INSTR, temp);
+    driver_put_string(1, 79-(6 + ((num_pages >= 10)?2:1)), C_HELP_INSTR, temp);
 #else
     // Some systems (Ultrix) mess up if you write to column 80
-    driver_put_string(1, 78-(6 + ((num_pages>=10)?2:1)), C_HELP_INSTR, temp);
+    driver_put_string(1, 78-(6 + ((num_pages >= 10)?2:1)), C_HELP_INSTR, temp);
 #endif
 
     if (text != nullptr)
@@ -536,9 +536,9 @@ static int find_link_key(LINK * /*link*/, int num_link, int curr_link, int key)
     switch (key)
     {
     case FIK_TAB:
-        return ((curr_link>=num_link-1) ? -1 : curr_link+1);
+        return ((curr_link >= num_link-1) ? -1 : curr_link+1);
     case FIK_SHF_TAB:
-        return ((curr_link<=0)          ? -1 : curr_link-1);
+        return ((curr_link <= 0)          ? -1 : curr_link-1);
     default:
         assert(0);
         return (-1);
@@ -586,13 +586,13 @@ static int help_topic(HIST *curr, HIST *next, int flags)
     help_seek(where);
 
     fread(&num_pages, sizeof(int), 1, help_file);
-    assert(num_pages>0 && num_pages<=max_pages);
+    assert(num_pages > 0 && num_pages <= max_pages);
 
     fread(&page_table[0], 3*sizeof(int), num_pages, help_file);
 
     fread(&ch, sizeof(char), 1, help_file);
     len = ch;
-    assert(len<81);
+    assert(len < 81);
     fread(title, sizeof(char), len, help_file);
     title[len] = '\0';
 
@@ -620,11 +620,11 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             display_page(title, &buffer[0], page_table[page].len, page, num_pages,
                          page_table[page].margin, &num_link, &link_table[0]);
 
-            if (draw_page==2)
+            if (draw_page == 2)
             {
-                assert(num_link<=0 || (curr_link>=0 && curr_link<num_link));
+                assert(num_link <= 0 || (curr_link >= 0 && curr_link < num_link));
             }
-            else if (draw_page==3)
+            else if (draw_page == 3)
                 curr_link = num_link - 1;
             else
                 curr_link = 0;
@@ -640,7 +640,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
         switch (key)
         {
         case FIK_PAGE_DOWN:
-            if (page<num_pages-1)
+            if (page < num_pages-1)
             {
                 page++;
                 draw_page = 1;
@@ -648,7 +648,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
         case FIK_PAGE_UP:
-            if (page>0)
+            if (page > 0)
             {
                 page--;
                 draw_page = 1;
@@ -677,7 +677,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
         case FIK_TAB:
             if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_key, key) &&
-                    page<num_pages-1)
+                    page < num_pages-1)
             {
                 ++page;
                 draw_page = 1;
@@ -686,7 +686,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
         case FIK_SHF_TAB:
             if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_key, key) &&
-                    page>0)
+                    page > 0)
             {
                 --page;
                 draw_page = 3;
@@ -695,7 +695,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
         case FIK_DOWN_ARROW:
             if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_updown, 0) &&
-                    page<num_pages-1)
+                    page < num_pages-1)
             {
                 ++page;
                 draw_page = 1;
@@ -704,7 +704,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
         case FIK_UP_ARROW:
             if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_updown, 1) &&
-                    page>0)
+                    page > 0)
             {
                 --page;
                 draw_page = 3;
@@ -922,7 +922,7 @@ static bool exe_path(const char *filename, char *path)
     {
         extern char **__argv;
         strcpy(path, __argv[0]);   // note: __argv may be undocumented in MSC
-        if (strcmp(filename,"FRACTINT.EXE")==0)
+        if (strcmp(filename,"FRACTINT.EXE") == 0)
             if (can_read_file(path))
                 return true;
         ptr = strrchr(path, SLASHC);
@@ -978,13 +978,13 @@ static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
         fread(&t, sizeof(int), 1, help_file); // read num_pages
         curr_base += sizeof(int) + t*3*sizeof(int); // skip page info
 
-        if (t>0)
+        if (t > 0)
             help_seek(curr_base);
         fread(&ch, sizeof(char), 1, help_file);                  // read title_len
         t = ch;
         curr_base += 1 + t;                       // skip title
 
-        if (t>0)
+        if (t > 0)
             help_seek(curr_base);
         fread(&curr_len, sizeof(int), 1, help_file); // read topic len
         curr_base += sizeof(int);
@@ -1050,10 +1050,10 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
 {
     while (n-- > 0)
     {
-        if (c==' ')
+        if (c == ' ')
             ++info->spaces;
 
-        else if (c=='\n' || c=='\f')
+        else if (c == '\n' || c == '\f')
         {
             info->start_of_line = true;
             info->spaces = 0;   // strip spaces before a new-line
@@ -1114,21 +1114,21 @@ static bool print_doc_get_info(int cmd, PD_INFO *pd, void *context)
         fread(&ch, sizeof(char), 1, help_file);       // read id len
 
         t = ch;
-        assert(t<80);
+        assert(t < 80);
         fread(info->id, sizeof(char), t, help_file);  // read the id
         info->content_pos += 1 + t;
         info->id[t] = '\0';
 
         fread(&ch, sizeof(char), 1, help_file);       // read title len
         t = ch;
-        assert(t<80);
+        assert(t < 80);
         fread(info->title, sizeof(char), t, help_file); // read the title
         info->content_pos += 1 + t;
         info->title[t] = '\0';
 
         fread(&ch, sizeof(char), 1, help_file);       // read num_topic
         t = ch;
-        assert(t<MAX_NUM_TOPIC_SEC);
+        assert(t < MAX_NUM_TOPIC_SEC);
         fread(info->topic_num, sizeof(int), t, help_file);  // read topic_num[]
         info->num_topic = t;
         info->content_pos += 1 + t*sizeof(int);
