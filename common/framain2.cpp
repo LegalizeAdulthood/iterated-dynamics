@@ -1766,7 +1766,7 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case FIK_CTL_PAGE_UP:
         if (prmboxcount) {
             parmzoom -= 1.0;
-            if (parmzoom<1.0) parmzoom=1.0;
+            if (parmzoom < 1.0) parmzoom=1.0;
             drawparmbox(0);
             set_evolve_ranges();
         }
@@ -1774,7 +1774,7 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case FIK_CTL_PAGE_DOWN:
         if (prmboxcount) {
             parmzoom += 1.0;
-            if (parmzoom>(double)gridsz/2.0) parmzoom=(double)gridsz/2.0;
+            if (parmzoom > (double)gridsz/2.0) parmzoom=(double)gridsz/2.0;
             drawparmbox(0);
             set_evolve_ranges();
         }
@@ -1873,7 +1873,7 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         break;
 
     case FIK_F5: // increment gridsize and regen
-        if (gridsz < (sxdots / (MINPIXELS<<1))) {
+        if (gridsz < (sxdots / (MINPIXELS << 1))) {
             gridsz = gridsz + 2;
             *kbdmore = false;
             calc_status = CALCSTAT_PARAMS_CHANGED;
@@ -2062,10 +2062,10 @@ int cmp_line(BYTE *pixels, int linelen)
     }
     for (int col = 0; col < linelen; col++) {
         oldcolor=getcolor(col,row);
-        if (oldcolor==(int)pixels[col])
+        if (oldcolor == (int)pixels[col])
             putcolor(col,row,0);
         else {
-            if (oldcolor==0)
+            if (oldcolor == 0)
                 putcolor(col,row,1);
             ++errcount;
             if (initbatch == 0)
