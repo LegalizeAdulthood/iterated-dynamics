@@ -5081,7 +5081,7 @@ bool frm_prescan(FILE * open_file)
             }
             break;
         case END_OF_FORMULA:
-            number_of_ops+= 3; // Just need one, but a couple of extra just for the heck of it
+            number_of_ops += 3; // Just need one, but a couple of extra just for the heck of it
             if (paren)
             {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)

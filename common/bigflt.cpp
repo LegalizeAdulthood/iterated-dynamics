@@ -42,7 +42,7 @@ bf_t strtobf(bf_t r, const char *s)
     const char *l;
     const char *d;
     const char *e; // pointer to s, ".", "[eE]"
-    int powerten=0;
+    int powerten = 0;
 
     clear_bf(r);
 
@@ -80,7 +80,7 @@ bf_t strtobf(bf_t r, const char *s)
 
         if (*(l--) == '.') // the digit was found
         {
-            bool keeplooping = *l >= '0' && *l <= '9' && l >=s ;
+            bool keeplooping = *l >= '0' && *l <= '9' && l >= s;
             while (keeplooping) // while a digit
             {
                 onesbyte = (BYTE)(*(l--) - '0');
