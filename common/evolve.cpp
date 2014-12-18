@@ -261,7 +261,7 @@ void varyinside(GENEBASE gene[], int randval, int i)
 {
     int choices[9]= {-59,-60,-61,-100,-101,-102,-103,-104,-1};
     if (gene[i].mutate)
-        *(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
     return;
 }
 
@@ -269,7 +269,7 @@ void varyoutside(GENEBASE gene[], int randval, int i)
 {
     int choices[8]= {-1,-2,-3,-4,-5,-6,-7,-8};
     if (gene[i].mutate)
-        *(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,8,gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,8,gene[i].mutate)];
     return;
 }
 
@@ -277,7 +277,7 @@ void varybotest(GENEBASE gene[], int randval, int i)
 {
     int choices[7]= {Mod, Real, Imag, Or, And, Manh, Manr};
     if (gene[i].mutate) {
-        *(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,7,gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,7,gene[i].mutate)];
         // move this next bit to varybot where it belongs
         setbailoutformula(bailoutest);
     }
@@ -288,7 +288,7 @@ void varypwr2(GENEBASE gene[], int randval, int i)
 {
     int choices[9]= {0,2,4,8,16,32,64,128,256};
     if (gene[i].mutate)
-        *(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
     return;
 }
 
@@ -297,8 +297,8 @@ void varytrig(GENEBASE gene[], int randval, int i)
     if (gene[i].mutate)
         // Changed following to BYTE since trigfn is an array of BYTEs and if one
         // of the functions isn't varied, it's value was being zeroed by the high
-        // BYTE of the preceeding function.
-        *(BYTE*)gene[i].addr=(BYTE)wrapped_positive_varyint(randval,numtrigfn,gene[i].mutate);
+        // BYTE of the preceding function.
+        *(BYTE*)gene[i].addr = (BYTE)wrapped_positive_varyint(randval,numtrigfn,gene[i].mutate);
     // replaced '30' with numtrigfn, set in prompts1.c
     set_trig_pointers(5); //set all trig ptrs up
     return;
@@ -777,7 +777,7 @@ void SetupParamBox()
 {
     int vidsize;
     prmboxcount = 0;
-    parmzoom=((double)gridsz-1.0)/2.0;
+    parmzoom = ((double)gridsz-1.0)/2.0;
     // need to allocate 2 int arrays for boxx and boxy plus 1 byte array for values
     vidsize = (xdots+ydots) * 4 * sizeof(int) ;
     vidsize = vidsize + xdots + ydots + 2 ;
@@ -786,9 +786,9 @@ void SetupParamBox()
         prmboxhandle = MemoryAlloc((U16)(vidsize),1L,MEMORY);
     if (prmboxhandle == 0) {
         texttempmsg("Sorry...can't allocate mem for parmbox");
-        evolving=0;
+        evolving = 0;
     }
-    prmboxcount=0;
+    prmboxcount = 0;
 
     // TODO: MemoryAlloc
     if (imgboxhandle == 0)
@@ -871,7 +871,7 @@ static bool explore_check()
 void drawparmbox(int mode)
 {
     // draws parameter zoom box in evolver mode
-    // clears boxes off screen if mode=1, otherwise, redraws boxes
+    // clears boxes off screen if mode = 1, otherwise, redraws boxes
     coords tl,tr,bl,br;
     int grout;
     if (!(evolving & PARMBOX))
@@ -886,7 +886,7 @@ void drawparmbox(int mode)
         clearbox(); // to avoid probs when one box overlaps the other
     }
     if (prmboxcount != 0)  { // clear last parmbox
-        boxcount=prmboxcount;
+        boxcount = prmboxcount;
         MoveFromMemory((BYTE *)boxx,(U16)(boxcount*2),1L,0L,prmboxhandle);
         MoveFromMemory((BYTE *)boxy,(U16)(boxcount*2),1L,1L,prmboxhandle);
         MoveFromMemory((BYTE *)boxvalues,(U16)boxcount,1L,4L,prmboxhandle);
@@ -950,13 +950,13 @@ void set_evolve_ranges()
 {
     int lclpy = gridsz - py - 1;
     // set up ranges and offsets for parameter explorer/evolver
-    paramrangex=dpx*(parmzoom*2.0);
-    paramrangey=dpy*(parmzoom*2.0);
-    newopx=opx+(((double)px-parmzoom)*dpx);
-    newopy=opy+(((double)lclpy-parmzoom)*dpy);
+    paramrangex = dpx*(parmzoom*2.0);
+    paramrangey = dpy*(parmzoom*2.0);
+    newopx = opx+(((double)px-parmzoom)*dpx);
+    newopy = opy+(((double)lclpy-parmzoom)*dpy);
 
-    newodpx=(char)(odpx+(px-gridsz/2));
-    newodpy=(char)(odpy+(lclpy-gridsz/2));
+    newodpx = (char)(odpx+(px-gridsz/2));
+    newodpy = (char)(odpy+(lclpy-gridsz/2));
     return;
 }
 
