@@ -156,7 +156,7 @@ int slideshw()
 start:
     if (quotes) // reading a quoted string
     {
-        if ((out=fgetc(fpss)) != '\"' && out != EOF)
+        if ((out = fgetc(fpss)) != '\"' && out != EOF)
             return (last1 = out);
         quotes = false;
     }
@@ -194,7 +194,7 @@ start:
     {
         if (i < 80)
             buffer[i++] = (char)out;
-        out=fgetc(fpss);
+        out = fgetc(fpss);
         if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
             break;
     }
@@ -203,7 +203,7 @@ start:
         goto start;
     out = -12345;
     if (isdigit(buffer[0]))       // an arbitrary scan code number - use it
-        out=atoi(buffer);
+        out = atoi(buffer);
     else if (strcmp((char *)buffer,"MESSAGE") == 0)
     {
         int secs;
@@ -273,7 +273,7 @@ start:
         out = 0;
         slowcount = out;
     }
-    else if ((i=check_vidmode_keyname(buffer)) != 0)
+    else if ((i = check_vidmode_keyname(buffer)) != 0)
         out = i;
     if (out == -12345)
     {
@@ -288,7 +288,7 @@ start:
 int
 startslideshow()
 {
-    fpss=fopen(autoname,"r");
+    fpss = fopen(autoname,"r");
     if (fpss == nullptr)
         g_slides = SLIDES_OFF;
     ticks = 0;
@@ -311,10 +311,10 @@ void recordshw(int key)
     char mn[MAX_MNEMONIC];
     float dt;
     dt = (float)ticks;      // save time of last call
-    ticks=clock_ticks();  // current time
+    ticks = clock_ticks();  // current time
     if (fpss == nullptr)
     {
-        fpss=fopen(autoname,"w");
+        fpss = fopen(autoname,"w");
         if (fpss == nullptr)
             return;
     }
