@@ -166,7 +166,8 @@ short decoder(short linewidth)
 
     // Initialize for decoding a new image...
 
-    if ((size = (short) get_byte()) < 0)
+    size = (short) get_byte();
+    if (size < 0)
         return (size);
     if (size < 2 || 9 < size)
         return (BAD_CODE_SIZE);

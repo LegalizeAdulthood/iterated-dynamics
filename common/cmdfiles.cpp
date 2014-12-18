@@ -3266,8 +3266,11 @@ int get_max_curarg_len(const char *floatvalstr[], int totparms)
     int tmp,max_str;
     max_str = 0;
     for (int i = 0; i < totparms; i++)
-        if ((tmp = get_curarg_len(floatvalstr[i])) > max_str)
+    {
+        tmp = get_curarg_len(floatvalstr[i]);
+        if (tmp > max_str)
             max_str = tmp;
+    }
     return max_str;
 }
 
