@@ -424,7 +424,7 @@ skip_UI:
                         if (*par_comment[i])
                             last=i;
                     for (int i = 0; i < last; i++)
-                        if (*CommandComment[i]=='\0')
+                        if (*CommandComment[i] == '\0')
                             strcpy(CommandComment[i],";");
                 }
                 if (CommandComment[0][0])
@@ -544,7 +544,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
             {
                 const char *name;
                 name = fractalspecific[neworbittype].name;
-                if (*name=='*')
+                if (*name == '*')
                     name++;
                 put_parm(" %s=%s", "orbitname",name);
             }
@@ -665,7 +665,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
 
         int i;
         for (i = (MAXPARAMS-1); i >= 0; --i)
-            if (typehasparm((fractype==JULIBROT || fractype==JULIBROTFP)
+            if (typehasparm((fractype == JULIBROT || fractype == JULIBROTFP)
                             ?neworbittype:fractype,i,nullptr)) break;
 
         if (i >= 0) {
@@ -749,7 +749,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
                 put_parm("%d",inside);
         }
         if (closeprox != 0.01 && (inside == EPSCROSS || inside == FMODI
-                                  || outside==FMOD)) {
+                                  || outside == FMOD)) {
             put_parm(" %s=%.15g", "proximity",closeprox);
         }
         if (outside != -1)
@@ -817,15 +817,15 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
             if (forcesymmetry == 1000 && ii == 1 && jj == 1)
                 stopmsg(STOPMSG_NONE, "Regenerate before <b> to get correct symmetry");
             put_parm(" %s=", "symmetry");
-            if (forcesymmetry==XAXIS)
+            if (forcesymmetry == XAXIS)
                 put_parm("xaxis");
-            else if (forcesymmetry==YAXIS)
+            else if (forcesymmetry == YAXIS)
                 put_parm("yaxis");
-            else if (forcesymmetry==XYAXIS)
+            else if (forcesymmetry == XYAXIS)
                 put_parm("xyaxis");
-            else if (forcesymmetry==ORIGIN)
+            else if (forcesymmetry == ORIGIN)
                 put_parm("origin");
-            else if (forcesymmetry==PI_SYM)
+            else if (forcesymmetry == PI_SYM)
                 put_parm("pi");
             else
                 put_parm("none");
@@ -1006,7 +1006,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
             for (i = 0; i <= 11; i++)
                 if (scale_map[i] != i+1)
                     i=15;
-            if (i>12)
+            if (i > 12)
                 put_parm(" %s=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", "scalemap",scale_map[0],scale_map[1],scale_map[2],scale_map[3]
                          ,scale_map[4],scale_map[5],scale_map[6],scale_map[7],scale_map[8]
                          ,scale_map[9],scale_map[10],scale_map[11]);
@@ -1056,7 +1056,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
 
     if (*colorinf != 'n')
     {
-        if (recordcolors=='c' && *colorinf == '@')
+        if (recordcolors == 'c' && *colorinf == '@')
         {
             put_parm_line();
             put_parm("; %s=", "colors");
