@@ -1090,7 +1090,7 @@ int get_rds_params() {
         }
         else
         {
-            k=0;
+            k = 0;
             AutoStereo_depth = uvalues[k++].uval.ival;
             AutoStereo_width = uvalues[k++].uval.dval;
             grayflag         = uvalues[k++].uval.ch.val != 0;
@@ -2365,7 +2365,7 @@ get_brws_restart:
     uvalues[k].uval.ch.val = brwscheckparms ? 1 : 0;
 
     choices[++k] = "Confirm file deletes (y/n)";
-    uvalues[k].type='y';
+    uvalues[k].type = 'y';
     uvalues[k].uval.ch.val = doublecaution ? 1 : 0;
 
     choices[++k] = "Smallest window to display (size in pixels)";
