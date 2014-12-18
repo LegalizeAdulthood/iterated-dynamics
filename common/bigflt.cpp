@@ -114,14 +114,14 @@ bf_t strtobf(bf_t r, const char *s)
 
     if (powerten > 0)
     {
-        for (; powerten>0; powerten--)
+        for (; powerten > 0; powerten--)
         {
             mult_a_bf_int(r, 10);
         }
     }
     else if (powerten < 0)
     {
-        for (; powerten<0; powerten++)
+        for (; powerten < 0; powerten++)
         {
             div_a_bf_int(r, 10);
         }
@@ -2259,7 +2259,7 @@ bf10_t div_a_bf10_int(bf10_t r, int dec, U16 n)
             p--;      // and decrease by a factor of 10
         }
     }
-    for (; dest<=dec; dest++)
+    for (; dest <= dec; dest++)
     {
         value = 10*remainder;
         r[dest] = (BYTE)(value / n);
