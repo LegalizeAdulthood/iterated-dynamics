@@ -49,7 +49,7 @@ char undofile[] = "FRACTINT.$$2";  // file where undo list is stored
 
 #define newx(size)     mem_alloc(size)
 #define allocate(class)     (class *)(mem_alloc(sizeof(class)))
-#define deallocate(block)  block=nullptr  // just for warning
+#define deallocate(block)  block = nullptr  // just for warning
 
 #ifdef XFRACT
 bool editpal_cursor = false;
@@ -2314,9 +2314,9 @@ static void PalTable__UpdateDAC(PalTable *me)
 
             if (a > b)
             {
-                int t=a;
-                a=b;
-                b=t;
+                int t = a;
+                a = b;
+                b = t;
             }
 
             memmove(g_dac_box[a], &me->pal[a], 3*(1+(b-a)));
@@ -2865,9 +2865,9 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
     case FIK_CTL_DEL:  // rt plus down
         if (me->bandwidth >0)
-            me->bandwidth  --;
+            me->bandwidth--;
         else
-            me->bandwidth=0;
+            me->bandwidth = 0;
         PalTable__SetCurr(me, -1, 0);
         break;
 
