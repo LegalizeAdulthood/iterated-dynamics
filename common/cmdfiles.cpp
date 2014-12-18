@@ -231,8 +231,11 @@ int cmdfiles(int argc,char **argv)
     strcpy(curarg, "sstools.ini");
     findpath(curarg, tempstring); // look for SSTOOLS.INI
     if (tempstring[0] != 0)              // found it!
-        if ((initfile = fopen(tempstring,"r")) != nullptr)
+    {
+        initfile = fopen(tempstring,"r");
+        if (initfile != nullptr)
             cmdfile(initfile, CMDFILE_SSTOOLS_INI);           // process it
+    }
 
     // cycle through args
     for (int i = 1; i < argc; i++)
@@ -245,7 +248,8 @@ int cmdfiles(int argc,char **argv)
                 strcpy(tempstring,curarg);
                 if (has_ext(curarg) == nullptr)
                     strcat(tempstring,".gif");
-                if ((initfile = fopen(tempstring,"rb")) != nullptr) {
+                initfile = fopen(tempstring,"rb");
+                if (initfile != nullptr) {
                     fread(tempstring,6,1,initfile);
                     if (tempstring[0] == 'G'
                             && tempstring[1] == 'I'
@@ -573,7 +577,8 @@ static int cmdfile(FILE *handle,int mode)
     while (next_command(cmdbuf,10000,handle,linebuf,&lineoffset,mode) > 0) {
         if ((mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME) && strcmp(cmdbuf,"}") == 0)
             break;
-        if ((i = cmdarg(cmdbuf,mode)) < 0)
+        i = cmdarg(cmdbuf,mode);
+        if (i < 0)
             break;
         changeflag |= i;
     }
@@ -1605,9 +1610,11 @@ int cmdarg(char *curarg, int mode) // process a single argument
         LogFlag = 0; // ranges overrides logmap
         while (i < totparms)
         {
-            if ((j = intval[i++]) < 0) // striping
+            j = intval[i++];
+            if (j < 0) // striping
             {
-                if ((j = 0-j) < 1 || j >= 16384 || i >= totparms)
+                j = -j;
+                if (j < 1 || j >= 16384 || i >= totparms)
                 {
                     goto badarg;
                 }

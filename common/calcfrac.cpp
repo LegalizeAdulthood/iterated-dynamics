@@ -4407,7 +4407,8 @@ void symplot2basin(int x, int y, int color)
         stripe = 8;
     else
         stripe = 0;
-    if ((i = yystop-(y-yystart)) > iystop && i < ydots)
+    i = yystop-(y-yystart);
+    if (i > iystop && i < ydots)
     {
         color -= stripe;                    // reconstruct unstriped color
         color = (degree+1-color)%degree+1;  // symmetrical color
@@ -4438,7 +4439,8 @@ void symplot4basin(int x, int y, int color)
     putcolor(x, y, color+stripe) ;
     if (j < xdots)
         putcolor(j, y, color1+stripe) ;
-    if ((i = yystop-(y-yystart)) > iystop && i < ydots)
+    i = yystop-(y-yystart);
+    if (i > iystop && i < ydots)
     {
         putcolor(x, i, stripe + (degree+1 - color)%degree+1) ;
         if (j < xdots)
