@@ -261,26 +261,26 @@ bool orbit3dlongsetup()
     connect = true;
     waste = 100;
     projection = 2;
-    if (fractype==LHENON || fractype==KAM || fractype==KAM3D ||
-            fractype==INVERSEJULIA)
+    if (fractype == LHENON || fractype == KAM || fractype == KAM3D ||
+            fractype == INVERSEJULIA)
         connect = false;
-    if (fractype==LROSSLER)
+    if (fractype == LROSSLER)
         waste = 500;
-    if (fractype==LLORENZ)
+    if (fractype == LLORENZ)
         projection = 1;
 
     initorbitlong[0] = fudge;  // initial conditions
     initorbitlong[1] = fudge;
     initorbitlong[2] = fudge;
 
-    if (fractype==LHENON)
+    if (fractype == LHENON)
     {
         l_a = (long)(param[0]*fudge);
         l_b = (long)(param[1]*fudge);
         l_c = (long)(param[2]*fudge);
         l_d = (long)(param[3]*fudge);
     }
-    else if (fractype==KAM || fractype==KAM3D)
+    else if (fractype == KAM || fractype == KAM3D)
     {
         maxct = 1L;
         a   = param[0];           // angle
@@ -394,28 +394,28 @@ bool orbit3dfloatsetup()
     waste = 100;
     projection = 2;
 
-    if (fractype==FPHENON || fractype==FPPICKOVER || fractype==FPGINGERBREAD
+    if (fractype == FPHENON || fractype == FPPICKOVER || fractype == FPGINGERBREAD
             || fractype == KAMFP || fractype == KAM3DFP
             || fractype == FPHOPALONG || fractype == INVERSEJULIAFP)
         connect = false;
-    if (fractype==FPLORENZ3D1 || fractype==FPLORENZ3D3 ||
-            fractype==FPLORENZ3D4)
+    if (fractype == FPLORENZ3D1 || fractype == FPLORENZ3D3 ||
+            fractype == FPLORENZ3D4)
         waste = 750;
-    if (fractype==FPROSSLER)
+    if (fractype == FPROSSLER)
         waste = 500;
-    if (fractype==FPLORENZ)
+    if (fractype == FPLORENZ)
         projection = 1; // plot x and z
 
     initorbitfp[0] = 1;  // initial conditions
     initorbitfp[1] = 1;
     initorbitfp[2] = 1;
-    if (fractype==FPGINGERBREAD)
+    if (fractype == FPGINGERBREAD)
     {
         initorbitfp[0] = param[0];        // initial conditions
         initorbitfp[1] = param[1];
     }
 
-    if (fractype==ICON || fractype==ICON3D)
+    if (fractype == ICON || fractype == ICON3D)
     {
         initorbitfp[0] = 0.01;  // initial conditions
         initorbitfp[1] = 0.003;
@@ -423,19 +423,19 @@ bool orbit3dfloatsetup()
         waste = 2000;
     }
 
-    if (fractype==LATOO)
+    if (fractype == LATOO)
     {
         connect = false;
     }
 
-    if (fractype==FPHENON || fractype==FPPICKOVER)
+    if (fractype == FPHENON || fractype == FPPICKOVER)
     {
         a =  param[0];
         b =  param[1];
         c =  param[2];
         d =  param[3];
     }
-    else if (fractype==ICON || fractype==ICON3D)
+    else if (fractype == ICON || fractype == ICON3D)
     {
         initorbitfp[0] = 0.01;  // initial conditions
         initorbitfp[1] = 0.003;
@@ -447,7 +447,7 @@ bool orbit3dfloatsetup()
         c  =   param[2];
         d  =   param[3];
     }
-    else if (fractype==KAMFP || fractype==KAM3DFP)
+    else if (fractype == KAMFP || fractype == KAM3DFP)
     {
         maxct = 1L;
         a = param[0];           // angle
@@ -464,8 +464,8 @@ bool orbit3dfloatsetup()
         initorbitfp[1] = initorbitfp[2];
         initorbitfp[0] = initorbitfp[1];
     }
-    else if (fractype==FPHOPALONG || fractype==FPMARTIN || fractype==CHIP
-             || fractype==QUADRUPTWO || fractype==THREEPLY)
+    else if (fractype == FPHOPALONG || fractype == FPMARTIN || fractype == CHIP
+             || fractype == QUADRUPTWO || fractype == THREEPLY)
     {
         initorbitfp[0] = 0;  // initial conditions
         initorbitfp[1] = 0;
@@ -475,7 +475,7 @@ bool orbit3dfloatsetup()
         b =  param[1];
         c =  param[2];
         d =  param[3];
-        if (fractype==THREEPLY)
+        if (fractype == THREEPLY)
         {
             COSB   = cos(b);
             SINABC = sin(a+b+c);
@@ -1112,7 +1112,7 @@ int mandelcloudfloat(double *x, double *y, double * /*z*/)
     double newx,newy,x2,y2;
     x2 = (*x)*(*x);
     y2 = (*y)*(*y);
-    if (x2+y2>2) return 1;
+    if (x2+y2 > 2) return 1;
     newx = x2-y2+a;
     newy = 2*(*x)*(*y)+b;
     *x = newx;
@@ -1795,22 +1795,22 @@ bool dynam2dfloatsetup()
     connect = false;
     euler = false;
     d = param[0]; // number of intervals
-    if (d<0) {
+    if (d < 0) {
         d = -d;
         connect = true;
     }
-    else if (d==0) {
+    else if (d == 0) {
         d = 1;
     }
-    if (fractype==DYNAMICFP) {
+    if (fractype == DYNAMICFP) {
         a = param[2]; // parameter
         b = param[3]; // parameter
         dt = param[1]; // step size
-        if (dt<0) {
+        if (dt < 0) {
             dt = -dt;
             euler = true;
         }
-        if (dt==0) dt = 0.01;
+        if (dt == 0) dt = 0.01;
     }
     if (outside == SUM) {
         plot = plothist;
@@ -1853,11 +1853,11 @@ int dynam2dfloat()
     p0 = &x;
     p1 = &y;
 
-    if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_X)
+    if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
         soundvar = &x;
-    else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Y)
+    else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
         soundvar = &y;
-    else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Z)
+    else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
         soundvar = &z;
 
     long count = 0;
@@ -1897,10 +1897,10 @@ int dynam2dfloat()
         }
 
         xstep ++;
-        if (xstep>=d) {
+        if (xstep >= d) {
             xstep = 0;
             ystep ++;
-            if (ystep>d) {
+            if (ystep > d) {
                 driver_mute();
                 ret = -1;
                 break;
@@ -1911,7 +1911,7 @@ int dynam2dfloat()
         ypixel = dysize*(ystep+.5)/d;
         x = (double)((xxmin+delxx*xpixel) + (delxx2*ypixel));
         y = (double)((yymax-delyy*ypixel) + (-delyy2*xpixel));
-        if (fractype==MANDELCLOUD) {
+        if (fractype == MANDELCLOUD) {
             a = x;
             b = y;
         }
@@ -1932,7 +1932,7 @@ int dynam2dfloat()
                 if (soundvar && (soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                     w_snd((int)(*soundvar*100+basehertz));
 
-                if (count>=orbit_delay) {
+                if (count >= orbit_delay) {
                     if (oldcol != -1 && connect)
                         driver_draw_line(col,row,oldcol,oldrow,color%colors);
                     else if (count > 0 || fractype != MANDELCLOUD)
@@ -2048,11 +2048,11 @@ int plotorbits2dfloat()
         return (-1);
     }
 
-    if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_X)
+    if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
         soundvar = &x;
-    else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Y)
+    else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
         soundvar = &y;
-    else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Z)
+    else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
         soundvar = &z;
 
     if (resuming)
@@ -2121,7 +2121,7 @@ int funny_glasses_call(int (*calc)())
     }
     if (g_glasses_type && status == 0 && display3d)
     {
-        if (g_glasses_type==3)  { // photographer's mode
+        if (g_glasses_type == 3)  { // photographer's mode
             stopmsg(STOPMSG_INFO_ONLY,
                     "First image (left eye) is ready.  Hit any key to see it,\n"
                     "then hit <s> to save, hit any other key to create second image.");
@@ -2139,7 +2139,7 @@ int funny_glasses_call(int (*calc)())
         // is there a better way to clear the graphics screen ?
         if ((status = calc()) != 0)
             goto done;
-        if (g_glasses_type==3) // photographer's mode
+        if (g_glasses_type == 3) // photographer's mode
             stopmsg(STOPMSG_INFO_ONLY,"Second image (right eye) is ready");
     }
 done:
@@ -2627,7 +2627,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
     // apply perspective if requested
     if (ZVIEWER)
     {
-        if (debugflag==22 || ZVIEWER < 100) // use float for small persp
+        if (debugflag == 22 || ZVIEWER < 100) // use float for small persp
         {
             // use float perspective calc
             VECTOR tmpv;
