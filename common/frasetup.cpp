@@ -845,12 +845,16 @@ FnXFnSetup()
         symmetry = fnxfn[trigndx[0]][trigndx[1]];
     // defaults to XAXIS symmetry
     else {
-        if (trigndx[0] == LOG || trigndx[1] ==LOG) symmetry = NOSYM;
-        if (trigndx[0] == 9 || trigndx[1] ==9) { // 'real' cos
-            if (trigndx[0] == SIN || trigndx[1] ==SIN) symmetry = PI_SYM;
-            if (trigndx[0] == COS || trigndx[1] ==COS) symmetry = PI_SYM;
+        if (trigndx[0] == LOG || trigndx[1] == LOG)
+            symmetry = NOSYM;
+        if (trigndx[0] == 9 || trigndx[1] == 9) { // 'real' cos
+            if (trigndx[0] == SIN || trigndx[1] == SIN)
+                symmetry = PI_SYM;
+            if (trigndx[0] == COS || trigndx[1] == COS)
+                symmetry = PI_SYM;
         }
-        if (trigndx[0] == 9 && trigndx[1] ==9) symmetry = PI_SYM;
+        if (trigndx[0] == 9 && trigndx[1] == 9)
+            symmetry = PI_SYM;
     }
     if (curfractalspecific->isinteger)
         return JulialongSetup();

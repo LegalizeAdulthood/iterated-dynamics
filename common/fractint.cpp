@@ -379,7 +379,7 @@ restorestart:
         stacked = 0;
         overlay3d = false;              /* forget overlays */
         display3d = 0;                    /* forget 3D */
-        if (calc_status ==CALCSTAT_NON_RESUMABLE)
+        if (calc_status == CALCSTAT_NON_RESUMABLE)
             calc_status = CALCSTAT_PARAMS_CHANGED;
         resumeflag = true;
         goto resumeloop;                  /* ooh, this is ugly */

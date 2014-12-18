@@ -1450,7 +1450,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
     if (testkey == '2')
         testkey = '@';
     if (strchr("#@2txyzgvir3dj",testkey) || testkey == FIK_INSERT || testkey == FIK_CTL_B
-            || testkey == FIK_ESC || testkey == FIK_DELETE || testkey == FIK_CTL_F) //RB 6== ctrl-F for sound menu
+            || testkey == FIK_ESC || testkey == FIK_DELETE || testkey == FIK_CTL_F)
         return (0-testkey);
     if (menutype) {
         if (strchr("\\sobpkrh",testkey) || testkey == FIK_TAB

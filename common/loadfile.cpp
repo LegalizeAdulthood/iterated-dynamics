@@ -1470,7 +1470,7 @@ rescan:  // entry for changed browse parms
             case FIK_UP_ARROW:
                 cleartempmsg();
                 drawindow(color_of_box,&winlist);// dim last window
-                if (c == FIK_RIGHT_ARROW || c== FIK_UP_ARROW) {
+                if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW) {
                     index++;                     // shift attention to next window
                     if (index >= wincount) index=0;
                 }
