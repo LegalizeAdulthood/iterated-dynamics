@@ -289,11 +289,11 @@ void plot3dalternate(int x,int y,int color)
     {
         if (red_local_left < x && x < red_local_right)
         {
-            putcolor(x,y,color>>1);
+            putcolor(x,y,color >> 1);
             if (Targa_Out)
             {
                 if (!ILLUMINE)
-                    targa_color(x, y, color>>1);
+                    targa_color(x, y, color >> 1);
                 else
                     targa_writedisk(x+sxoffs, y+syoffs, t_c, 0, 0);
             }
@@ -303,11 +303,11 @@ void plot3dalternate(int x,int y,int color)
     {
         if (blue_local_left < x && x < blue_local_right)
         {
-            putcolor(x,y,(color>>1)+(colors>>1));
+            putcolor(x,y,(color >> 1)+(colors >> 1));
             if (Targa_Out)
             {
                 if (!ILLUMINE)
-                    targa_color(x, y, (color>>1)+(colors>>1));
+                    targa_color(x, y, (color >> 1)+(colors >> 1));
                 else
                     targa_writedisk(x+sxoffs, y+syoffs, T_RED, 0, t_c);
             }
@@ -427,7 +427,7 @@ void plot_setup()
     if (mapset)
     {
         ValidateLuts(MAP_name); // read the palette file
-        if (g_glasses_type==1 || g_glasses_type==2)
+        if (g_glasses_type == 1 || g_glasses_type == 2)
         {
             if (g_glasses_type == 2 && colors < 256)
             {
