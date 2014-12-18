@@ -808,8 +808,8 @@ void Jiim(int which)         // called by fractint
                 {
                     cr = lxpixel();
                     ci = lypixel();
-                    cr /= (1L<<bitshift);
-                    ci /= (1L<<bitshift);
+                    cr /= (1L << bitshift);
+                    ci /= (1L << bitshift);
                 }
                 else
                 {
@@ -878,7 +878,7 @@ void Jiim(int which)         // called by fractint
                 PER_PIXEL();
             }
             // move window if bumped
-            if (windows==0 && col>xc && col < xc+xd && row>yc && row < yc+yd)
+            if (windows == 0 && col > xc && col < xc+xd && row > yc && row < yc+yd)
             {
                 RestoreRect(xc,yc,xd,yd);
                 if (xc == g_video_start_x + xd*2)
@@ -963,8 +963,8 @@ void Jiim(int which)         // called by fractint
                     r = 0;
                 }
                 iter++;
-                color = ((count++)>>5)%colors; // chg color every 32 pts
-                if (color==0)
+                color = ((count++) >> 5)%colors; // chg color every 32 pts
+                if (color == 0)
                     color = 1;
 
                 //       r = sqrt(old.x*old.x + old.y*old.y); calculated above
