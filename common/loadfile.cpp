@@ -758,7 +758,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
             for (int i = 0; i < 100; ++i)
                 if (!strcmp(INFO_ID,&tmpbuf[i])) { // found header?
                     strcpy(info->info_id,INFO_ID);
-                    fseek(fp,(long)(hdr_offset=i-offset),SEEK_END);
+                    fseek(fp,(long)(hdr_offset = i-offset),SEEK_END);
                     /* TODO: revise this to read members one at a time so we get natural alignment
                         of fields within the FRACTAL_INFO structure for the platform */
                     fread(info,1,FRACTAL_INFO_SIZE,fp);
@@ -937,10 +937,10 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
     info->y3rd = -1;
     info->creal = 0;
     info->cimag = 0;
-    info->videomodeax=255;
-    info->videomodebx=255;
-    info->videomodecx=255;
-    info->videomodedx=255;
+    info->videomodeax = 255;
+    info->videomodebx = 255;
+    info->videomodecx = 255;
+    info->videomodedx = 255;
     info->dotmode = 0;
     info->xdots = (short)filexdots;
     info->ydots = (short)fileydots;
@@ -1369,7 +1369,7 @@ rescan:  // entry for changed browse parms
     splitpath(readname,drive,dir,nullptr,nullptr);
     splitpath(browsemask,nullptr,nullptr,fname,ext);
     makepath(tmpmask,drive,dir,fname,ext);
-    done=(vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
+    done = (vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
     // draw all visible windows
     while (!done)
     {
@@ -1408,7 +1408,7 @@ rescan:  // entry for changed browse parms
         if (blk_5_info.got_data == 1) // Clean up any memory allocated
             free(blk_5_info.apm_data);
 
-        done=(fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
+        done = (fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
     }
 
     if (no_memory)
@@ -1423,7 +1423,7 @@ rescan:  // entry for changed browse parms
     {
         texttempmsg("Xdots + Ydots > 4096.");
     }
-    c=0;
+    c = 0;
     if (wincount)
     {
         driver_buzzer(BUZZER_COMPLETE); //let user know we've finished
@@ -1446,7 +1446,7 @@ rescan:  // entry for changed browse parms
             {
                 time(&thistime);
                 if (difftime(thistime,lastime) > .2) {
-                    lastime=thistime;
+                    lastime = thistime;
                     toggle = 1- toggle;
                 }
                 if (toggle)
@@ -1462,7 +1462,7 @@ rescan:  // entry for changed browse parms
                 drawindow(g_color_bright,&winlist);
 #endif
 
-            c=driver_get_key();
+            c = driver_get_key();
             switch (c) {
             case FIK_RIGHT_ARROW:
             case FIK_LEFT_ARROW:
@@ -1473,7 +1473,7 @@ rescan:  // entry for changed browse parms
                 if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW) {
                     index++;                     // shift attention to next window
                     if (index >= wincount)
-                        index=0;
+                        index = 0;
                 }
                 else {
                     index -- ;
@@ -1665,7 +1665,7 @@ static void drawindow(int colour, window *info)
     coords ibl,itr;
 #endif
 
-    boxcolor=colour;
+    boxcolor = colour;
     boxcount = 0;
     if (info->win_size >= minbox) {
         // big enough on screen to show up as a box so draw it
@@ -1736,7 +1736,7 @@ static bool is_visible_window(
     double toobig, tmp_sqrt;
     toobig = sqrt(sqr((double)sxdots)+sqr((double)sydots)) * 1.5;
     // arbitrary value... stops browser zooming out too far
-    cornercount=0;
+    cornercount = 0;
     cant_see = false;
 
     saved = save_stack();
@@ -1821,12 +1821,12 @@ static bool is_visible_window(
         bftransform(bt_x, bt_y, &tl);
     }
     else {
-        tl.x=info->xmin;
-        tl.y=info->ymax;
+        tl.x = info->xmin;
+        tl.y = info->ymax;
         transform(&tl);
     }
-    list->itl.x=(int)(tl.x + 0.5);
-    list->itl.y=(int)(tl.y + 0.5);
+    list->itl.x = (int)(tl.x + 0.5);
+    list->itl.y = (int)(tl.y + 0.5);
     if (oldbf_math || info->bf_math) {
         if (!info->bf_math) {
             floattobf(bt_x, (info->xmax)-(info->x3rd-info->xmin));
@@ -1841,12 +1841,12 @@ static bool is_visible_window(
         bftransform(bt_x, bt_y, &tr);
     }
     else {
-        tr.x=(info->xmax)-(info->x3rd-info->xmin);
-        tr.y=(info->ymax)+(info->ymin-info->y3rd);
+        tr.x = (info->xmax)-(info->x3rd-info->xmin);
+        tr.y = (info->ymax)+(info->ymin-info->y3rd);
         transform(&tr);
     }
-    list->itr.x=(int)(tr.x + 0.5);
-    list->itr.y=(int)(tr.y + 0.5);
+    list->itr.x = (int)(tr.x + 0.5);
+    list->itr.y = (int)(tr.y + 0.5);
     if (oldbf_math || info->bf_math) {
         if (!info->bf_math) {
             floattobf(bt_x, info->x3rd);
@@ -1859,12 +1859,12 @@ static bool is_visible_window(
         bftransform(bt_x, bt_y, &bl);
     }
     else {
-        bl.x=info->x3rd;
-        bl.y=info->y3rd;
+        bl.x = info->x3rd;
+        bl.y = info->y3rd;
         transform(&bl);
     }
-    list->ibl.x=(int)(bl.x + 0.5);
-    list->ibl.y=(int)(bl.y + 0.5);
+    list->ibl.x = (int)(bl.x + 0.5);
+    list->ibl.y = (int)(bl.y + 0.5);
     if (oldbf_math || info->bf_math) {
         if (!info->bf_math) {
             floattobf(bt_x, info->xmax);
@@ -1877,12 +1877,12 @@ static bool is_visible_window(
         bftransform(bt_x, bt_y, &br);
     }
     else {
-        br.x=info->xmax;
-        br.y=info->ymin;
+        br.x = info->xmax;
+        br.y = info->ymin;
         transform(&br);
     }
-    list->ibr.x=(int)(br.x + 0.5);
-    list->ibr.y=(int)(br.y + 0.5);
+    list->ibr.x = (int)(br.x + 0.5);
+    list->ibr.y = (int)(br.y + 0.5);
 
     tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
     list->win_size = tmp_sqrt; // used for box vs crosshair in drawindow()
