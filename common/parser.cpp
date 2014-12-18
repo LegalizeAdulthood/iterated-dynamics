@@ -452,11 +452,11 @@ void (*StkSRand)() = dStkSRand;
 
 void dStkLodDup()
 {
-    Arg1+=2;
-    Arg2+=2;
+    Arg1 += 2;
+    Arg2 += 2;
     *Arg1 = *Load[LodPtr];
     *Arg2 = *Arg1;
-    LodPtr+=2;
+    LodPtr += 2;
 }
 
 void dStkLodSqr()
@@ -738,8 +738,8 @@ void mStkRound()
 void lStkRound()
 {
     // Add .5 then truncate
-    Arg1->l.x += (1L<<bitshiftless1);
-    Arg1->l.y += (1L<<bitshiftless1);
+    Arg1->l.x += (1L << bitshiftless1);
+    Arg1->l.y += (1L << bitshiftless1);
     lStkFloor();
 }
 #endif
@@ -1236,7 +1236,7 @@ void lStkRecip()
     {
         ChkLongDenom(mod);
     }
-    else if (mod<=0L)
+    else if (mod <= 0L)
         return;
     Arg1->l.x =  divide(Arg1->l.x,mod,bitshift);
     Arg1->l.y = -divide(Arg1->l.y,mod,bitshift);
@@ -3441,7 +3441,7 @@ bool frmgetalpha(FILE * openfile, token_st * tok)
 CASE_ALPHA:
 CASE_NUM:
         case '_':
-            if (i<79)
+            if (i < 79)
                 tok->token_str[i++] = (char) c;
             else
             {
@@ -3473,7 +3473,7 @@ CASE_NUM:
             tok->token_str[i] = (char) 0;
             fseek(openfile, last_filepos, SEEK_SET);
             getfuncinfo(tok);
-            if (c=='(') //getfuncinfo() correctly filled structure
+            if (c == '(') //getfuncinfo() correctly filled structure
             {
                 if (tok->token_type == NOT_A_TOKEN)
                     return false;
@@ -3575,7 +3575,7 @@ CASE_TERMINATOR:
         this_token->token_type = OPERATOR; // this may be changed below
         this_token->token_str[0] = (char) c;
         filepos = ftell(openfile);
-        if (c=='<' || c=='>' || c=='=')
+        if (c == '<' || c == '>' || c == '=')
         {
             c=frmgetchar(openfile);
             if (c == '=')
@@ -3585,7 +3585,7 @@ CASE_TERMINATOR:
                 fseek(openfile, filepos, SEEK_SET);
             }
         }
-        else if (c=='!')
+        else if (c == '!')
         {
             c=frmgetchar(openfile);
             if (c == '=')
@@ -3599,7 +3599,7 @@ CASE_TERMINATOR:
                 return false;
             }
         }
-        else if (c=='|')
+        else if (c == '|')
         {
             c=frmgetchar(openfile);
             if (c == '|')
@@ -3607,7 +3607,7 @@ CASE_TERMINATOR:
             else
                 fseek(openfile, filepos, SEEK_SET);
         }
-        else if (c=='&')
+        else if (c == '&')
         {
             c=frmgetchar(openfile);
             if (c == '&')
