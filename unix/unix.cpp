@@ -329,7 +329,8 @@ int splitpath(const char *file_template,char *drive,char *dir,char *fname,char *
     if (ext)
         ext[0]   = 0;
 
-    if ((length = strlen(file_template)) == 0)
+    length = strlen(file_template);
+    if (length == 0)
         return (0);
     offset = 0;
 

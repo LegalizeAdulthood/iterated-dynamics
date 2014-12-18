@@ -433,7 +433,8 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         --skipydots;
     }
 
-    if ((finalaspectratio = fileaspectratio) == 0) // assume display correct
+    finalaspectratio = fileaspectratio;
+    if (finalaspectratio == 0) // assume display correct
     {
         finalaspectratio = (float)vid_aspect(filexdots, fileydots);
     }

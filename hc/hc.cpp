@@ -1283,7 +1283,8 @@ void process_bininc()
     int  handle;
     long len;
 
-    if ((handle = open(cmd+7, O_RDONLY|O_BINARY)) == -1)
+    handle = open(cmd+7, O_RDONLY|O_BINARY);
+    if (handle == -1)
     {
         error(0,"Unable to open \"%s\"", cmd+7);
         return ;
@@ -1412,7 +1413,8 @@ void read_src(char *fname)
 
     src_cfname = fname;
 
-    if ((srcfile = fopen(fname, "rt")) == nullptr)
+    srcfile = fopen(fname, "rt");
+    if (srcfile == nullptr)
         fatal(0,"Unable to open \"%s\"", fname);
 
     msg("Compiling: %s", fname);
@@ -1696,7 +1698,8 @@ void read_src(char *fname)
                         include_stack[include_stack_top].line = srcline;
                         include_stack[include_stack_top].col  = srccol;
                         strupr(cmd+8);
-                        if ((srcfile = fopen(cmd+8, "rt")) == nullptr)
+                        srcfile = fopen(cmd+8, "rt");
+                        if (srcfile == nullptr)
                         {
                             error(eoff, "Unable to open \"%s\"", cmd+8);
                             srcfile = include_stack[include_stack_top--].file;
@@ -2905,8 +2908,8 @@ int fcmp_LABEL(VOIDCONSTPTR a, VOIDCONSTPTR b)
     int   diff;
 
     /* compare the names, making sure that the index goes first */
-
-    if ((diff = strcmp(an,bn)) == 0)
+    diff = strcmp(an,bn);
+    if (diff == 0)
         return (0);
 
     if (strcmp(an, INDEX_LABEL) == 0)
@@ -3355,7 +3358,8 @@ void print_document(const char *fname)
     info.cnum = info.tnum;
     info.link_dest_warn = 0;
 
-    if ((info.file = fopen(fname, "wt")) == nullptr)
+    info.file = fopen(fname, "wt");
+    if (info.file == nullptr)
         fatal(0,"Couldn't create \"%s\"", fname);
 
     info.margin = PAGE_INDENT;
@@ -3481,10 +3485,12 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
     int                  size;
     help_sig_info hs;
 
-    if ((exe = open(exe_fname, O_RDWR|O_BINARY)) == -1)
+    exe = open(exe_fname, O_RDWR|O_BINARY);
+    if (exe == -1)
         fatal(0,"Unable to open \"%s\"", exe_fname);
 
-    if ((hlp = open(hlp_fname, O_RDONLY|O_BINARY)) == -1)
+    hlp = open(hlp_fname, O_RDONLY|O_BINARY);
+    if (hlp == -1)
         fatal(0,"Unable to open \"%s\"", hlp_fname);
 
     msg("Appending %s to %s", hlp_fname, exe_fname);
@@ -3539,7 +3545,8 @@ void delete_hlp_from_exe(const char *exe_fname)
     int   exe;   /* file handle */
     help_sig_info hs;
 
-    if ((exe = open(exe_fname, O_RDWR|O_BINARY)) == -1)
+    exe = open(exe_fname, O_RDWR|O_BINARY);
+    if (exe == -1)
         fatal(0,"Unable to open \"%s\"", exe_fname);
 
     msg("Deleting help from %s", exe_fname);
@@ -3716,7 +3723,8 @@ int main(int argc, char *argv[])
 
         strcat(swappath, SWAP_FNAME);
 
-        if ((swapfile = fopen(swappath, "w+b")) == nullptr)
+        swapfile = fopen(swappath, "w+b");
+        if (swapfile == nullptr)
             fatal(0,"Cannot create swap file \"%s\"", swappath);
         swappos = 0;
 
@@ -3760,7 +3768,8 @@ int main(int argc, char *argv[])
 
         strcat(swappath, SWAP_FNAME);
 
-        if ((swapfile = fopen(swappath, "w+b")) == nullptr)
+        swapfile = fopen(swappath, "w+b");
+        if (swapfile == nullptr)
             fatal(0,"Cannot create swap file \"%s\"", swappath);
         swappos = 0;
 
