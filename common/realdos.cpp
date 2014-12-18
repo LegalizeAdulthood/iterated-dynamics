@@ -29,7 +29,7 @@ static int menu_checkkey(int curkey,int choice);
 int g_release = 2099;   // this has 2 implied decimals; increment it every synch
 int g_patch_level = 8;  // patchlevel for DOS version
 #ifdef XFRACT
-int xrelease=304;
+int xrelease = 304;
 #endif
 
 /* int stopmsg(flags,message) displays message and waits for a key:
@@ -55,9 +55,9 @@ int stopmsg(int flags, const char *msg)
     {
         static FILE *fp = nullptr;
         if (fp == nullptr && initbatch == 0)
-            fp=dir_fopen(workdir,"stopmsg.txt","w");
+            fp = dir_fopen(workdir,"stopmsg.txt","w");
         else
-            fp=dir_fopen(workdir,"stopmsg.txt","a");
+            fp = dir_fopen(workdir,"stopmsg.txt","a");
         if (fp != nullptr)
             fprintf(fp,"%s\n",msg);
         fclose(fp);
@@ -90,7 +90,7 @@ int stopmsg(int flags, const char *msg)
     savelookatmouse = lookatmouse;
     lookatmouse = -13;
     if ((flags & STOPMSG_NO_STACK))
-        blankrows(toprow=12,10,7);
+        blankrows(toprow = 12,10,7);
     else {
         driver_stack_screen();
         toprow = 4;
@@ -275,7 +275,7 @@ void helptitle()
     sprintf(msg,"XFRACTINT  Version %d.%02d (FRACTINT Version %d.%02d)",
             xrelease/100,xrelease%100, g_release/100,g_release%100);
 #else
-    *msg=0;
+    *msg = 0;
 #endif
     sprintf(buf,"FRACTINT Version %d.%01d",g_release/100,(g_release%100)/10);
     strcat(msg,buf);
@@ -325,7 +325,7 @@ int putstringcenter(int row, int col, int width, int attr, const char *msg)
     i = 0;
 #ifdef XFRACT
     if (width >= 80)
-        width=79; // Some systems choke in column 80
+        width = 79; // Some systems choke in column 80
 #endif
     while (msg[i])
         ++i; // strlen for a
@@ -773,7 +773,7 @@ int fullscreen_choice(
                 if (formatitem)
                 {
                     (*formatitem)(j, buf);
-                    charptr=buf;
+                    charptr = buf;
                 }
                 else
                 {
