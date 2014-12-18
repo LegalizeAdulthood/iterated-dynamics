@@ -267,7 +267,7 @@ int cmdfiles(int argc,char **argv)
             if (merge_pathnames(CommandFile, &curarg[1], 0) < 0)
                 init_msg("",CommandFile,0);
             strcpy(CommandName,sptr+1);
-            if (find_file_item(CommandFile,CommandName,&initfile, 0) || initfile==nullptr)
+            if (find_file_item(CommandFile,CommandName,&initfile, 0) || initfile == nullptr)
                 argerror(curarg);
             cmdfile(initfile, CMDFILE_AT_CMDLINE_SETNAME);
         }
@@ -290,7 +290,7 @@ int cmdfiles(int argc,char **argv)
     if (debugflag != 110)
         first_init = false;
 
-    if (colorpreloaded && showfile==0) // PAR reads a file and sets color
+    if (colorpreloaded && showfile == 0) // PAR reads a file and sets color
         dontreadcolor = true;   // don't read colors from GIF
     else
         dontreadcolor = false;   // read colors from GIF
@@ -313,7 +313,7 @@ int load_commands(FILE *infile)
     initparams = false; // reset flags for type=
     ret = cmdfile(infile, CMDFILE_AT_AFTER_STARTUP);
 
-    if (colorpreloaded && showfile==0) // PAR reads a file and sets color
+    if (colorpreloaded && showfile == 0) // PAR reads a file and sets color
         dontreadcolor = true;   // don't read colors from GIF
     else
         dontreadcolor = false;   // read colors from GIF
@@ -1014,7 +1014,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
             {
                 strcat(CommandFile, ".par");
             }
-            if (strcmp(readname, DOTSLASH)==0)
+            if (strcmp(readname, DOTSLASH) == 0)
             {
                 *readname = 0;
             }
@@ -1402,7 +1402,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
 
     if (strcmp(variable, "fillcolor") == 0)       // fillcolor
     {
-        if (strcmp(value, "normal")==0)
+        if (strcmp(value, "normal") == 0)
         {
             fillcolor = -1;
         }
@@ -1752,7 +1752,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
         int k = 0;
         while (k < 3 && *value)
         {
-            if (k==1)
+            if (k == 1)
             {
                 potparam[k] = atof(value);
             }
@@ -1858,7 +1858,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
 
     if (strcmp(variable, "initorbit") == 0)     // initorbit=?,?
     {
-        if (strcmp(value, "pixel")==0)
+        if (strcmp(value, "pixel") == 0)
         {
             useinitorbit = 2;
         }
@@ -2313,19 +2313,19 @@ int cmdarg(char *curarg, int mode) // process a single argument
     }
 
     if (strcmp(variable, "bailoutest") == 0) {    // bailoutest=?
-        if (strcmp(value, "mod")==0)
+        if (strcmp(value, "mod") == 0)
             bailoutest = Mod;
-        else if (strcmp(value, "real")==0)
+        else if (strcmp(value, "real") == 0)
             bailoutest = Real;
-        else if (strcmp(value, "imag")==0)
+        else if (strcmp(value, "imag") == 0)
             bailoutest = Imag;
-        else if (strcmp(value, "or")==0)
+        else if (strcmp(value, "or") == 0)
             bailoutest = Or;
-        else if (strcmp(value, "and")==0)
+        else if (strcmp(value, "and") == 0)
             bailoutest = And;
-        else if (strcmp(value, "manh")==0)
+        else if (strcmp(value, "manh") == 0)
             bailoutest = Manh;
-        else if (strcmp(value, "manr")==0)
+        else if (strcmp(value, "manr") == 0)
             bailoutest = Manr;
         else
             goto badarg;
@@ -2334,17 +2334,17 @@ int cmdarg(char *curarg, int mode) // process a single argument
     }
 
     if (strcmp(variable, "symmetry") == 0) {      // symmetry=?
-        if (strcmp(value, "xaxis")==0)
+        if (strcmp(value, "xaxis") == 0)
             forcesymmetry = XAXIS;
-        else if (strcmp(value, "yaxis")==0)
+        else if (strcmp(value, "yaxis") == 0)
             forcesymmetry = YAXIS;
-        else if (strcmp(value, "xyaxis")==0)
+        else if (strcmp(value, "xyaxis") == 0)
             forcesymmetry = XYAXIS;
-        else if (strcmp(value, "origin")==0)
+        else if (strcmp(value, "origin") == 0)
             forcesymmetry = ORIGIN;
-        else if (strcmp(value, "pi")==0)
+        else if (strcmp(value, "pi") == 0)
             forcesymmetry = PI_SYM;
-        else if (strcmp(value, "none")==0)
+        else if (strcmp(value, "none") == 0)
             forcesymmetry = NOSYM;
         else
             goto badarg;
@@ -2575,7 +2575,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
             else
             {
                 showdot=numval;
-                if (showdot<0)
+                if (showdot < 0)
                     showdot=-1;
             }
             if (totparms > 1 && intparms > 0)
@@ -2627,7 +2627,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
     if (strcmp(variable, "formulafile") == 0) {   // formulafile=?
         if (valuelen > (FILE_MAX_PATH-1))
             goto badarg;
-        if (merge_pathnames(FormFileName, value, mode)<0)
+        if (merge_pathnames(FormFileName, value, mode) < 0)
             init_msg(variable, value, mode);
         return 1;
     }
@@ -2642,7 +2642,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
     if (strcmp(variable, "lfile") == 0) {    // lfile=?
         if (valuelen > (FILE_MAX_PATH-1))
             goto badarg;
-        if (merge_pathnames(LFileName, value, mode)<0)
+        if (merge_pathnames(LFileName, value, mode) < 0)
             init_msg(variable, value, mode);
         return 1;
     }
@@ -2659,7 +2659,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
         if (valuelen > (FILE_MAX_PATH-1))
             goto badarg;
         existdir=merge_pathnames(IFSFileName, value, mode);
-        if (existdir==0)
+        if (existdir == 0)
             reset_ifs_defn();
         else if (existdir < 0)
             init_msg(variable, value, mode);
@@ -2679,13 +2679,13 @@ int cmdarg(char *curarg, int mode) // process a single argument
     if (strcmp(variable, "parmfile") == 0) {   // parmfile=?
         if (valuelen > (FILE_MAX_PATH-1))
             goto badarg;
-        if (merge_pathnames(CommandFile, value, mode)<0)
+        if (merge_pathnames(CommandFile, value, mode) < 0)
             init_msg(variable, value, mode);
         return 1;
     }
 
     if (strcmp(variable, "stereo") == 0) {        // stereo=?
-        if ((numval<0) || (numval>4))
+        if ((numval < 0) || (numval > 4))
             goto badarg;
         g_glasses_type = numval;
         return 3;
@@ -2756,7 +2756,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
     }
 
     if (strcmp(variable, "3d") == 0) {            // 3d=?/?/..
-        if (strcmp(value, "overlay")==0) {
+        if (strcmp(value, "overlay") == 0) {
             yesnoval[0]=1;
             if (calc_status > CALCSTAT_NO_FRACTAL) // if no image, treat same as 3D=yes
                 overlay3d = true;
@@ -2792,7 +2792,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
     }
 
     if (strcmp(variable, "waterline") == 0) {     // waterline=?
-        if (numval<0)
+        if (numval < 0)
             goto badarg;
         WATERLINE = numval;
         return 2;
@@ -2815,7 +2815,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
     }
 
     if (strcmp(variable, "smoothing") == 0) {     // smoothing=?
-        if (numval<0)
+        if (numval < 0)
             goto badarg;
         LIGHTAVG = numval;
         return 2;
@@ -2876,21 +2876,21 @@ int cmdarg(char *curarg, int mode) // process a single argument
     }
 
     if (strcmp(variable, "randomize") == 0) {     // RANDOMIZE=?
-        if (numval<0 || numval>7)
+        if (numval < 0 || numval > 7)
             goto badarg;
         RANDOMIZE = numval;
         return 2;
     }
 
     if (strcmp(variable, "ambient") == 0) {       // ambient=?
-        if (numval<0||numval>100)
+        if (numval < 0||numval > 100)
             goto badarg;
         Ambient = numval;
         return 2;
     }
 
     if (strcmp(variable, "haze") == 0) {          // haze=?
-        if (numval<0||numval>100)
+        if (numval < 0||numval > 100)
             goto badarg;
         haze = numval;
         return 2;
@@ -3064,7 +3064,7 @@ static void parse_textcolors(char *value)
 static int parse_colors(char *value)
 {
     if (*value == '@') {
-        if (merge_pathnames(MAP_name,&value[1],3)<0)
+        if (merge_pathnames(MAP_name,&value[1],3) < 0)
             init_msg("",&value[1],3);
         if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(MAP_name))
             goto badcolor;
@@ -3073,7 +3073,7 @@ static int parse_colors(char *value)
             mapset = true;
         }
         else {
-            if (merge_pathnames(colorfile,&value[1],3)<0)
+            if (merge_pathnames(colorfile,&value[1],3) < 0)
                 init_msg("",&value[1],3);
             colorstate = 2;
         }
