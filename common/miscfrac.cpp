@@ -1286,7 +1286,8 @@ bool lya_setup()
 
     long i;
 
-    if ((filter_cycles=(long)param[2])==0)
+    filter_cycles = (long)param[2];
+    if (filter_cycles == 0)
         filter_cycles=maxit/2;
     lyaSeedOK = param[1]>0 && param[1]<=1 && debugflag!=90;
     lyaLength = 1;

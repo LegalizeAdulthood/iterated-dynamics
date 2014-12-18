@@ -1322,7 +1322,8 @@ void print_document(const char *outfname, bool (*msg_func)(int,int), int save_ex
 
     if (save_extraseg)
     {
-        if ((temp_file=fopen(TEMP_FILE_NAME, "wb")) == nullptr)
+        temp_file = fopen(TEMP_FILE_NAME, "wb");
+        if (temp_file == nullptr)
         {
             msg = "Unable to create temporary file.\n";
             goto ErrorAbort;

@@ -633,7 +633,8 @@ static void lsysi_dodrawgt(lsys_turtlestatei *cmd)
 static void lsysi_dodrawlt(lsys_turtlestatei *cmd)
 {
     cmd->curcolor = (char)(cmd->curcolor + (char)cmd->num);
-    if ((cmd->curcolor %= colors) == 0)
+    cmd->curcolor %= colors;
+    if (cmd->curcolor == 0)
         cmd->curcolor = 1;
 }
 
