@@ -162,7 +162,7 @@ int strnicmp(const char *s1, const char *s2, int numChars)
 char *
 strlwr(char *s)
 {
-    char *sptr=s;
+    char *sptr = s;
     while (*sptr != '\0') {
         if (isupper(*sptr)) {
             *sptr = tolower(*sptr);
@@ -189,7 +189,7 @@ strlwr(char *s)
 char *
 strupr(char *s)
 {
-    char *sptr=s;
+    char *sptr = s;
     while (*sptr != '\0') {
         if (islower(*sptr)) {
             *sptr = toupper(*sptr);
@@ -256,7 +256,7 @@ void findpath(const char *filename, char *fullpathname)
         close(fd);
         return;
     }
-    fullpathname=nullptr;
+    fullpathname = nullptr;
 }
 
 /*

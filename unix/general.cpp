@@ -519,7 +519,7 @@ static void getDouble(double *dst, unsigned char **src, int dir)
         if (*dst == 0) {
             bzero((char *)(*src),8);
         } else {
-            int s=0;
+            int s = 0;
             f = *dst;
             if (f < 0) {
                 s = 0x80;
@@ -584,7 +584,7 @@ static void getFloat(float *dst, unsigned char **src, int dir)
         if (*dst == 0) {
             bzero((char *)(*src),4);
         } else {
-            int s=0;
+            int s = 0;
             f = *dst;
             if (f < 0) {
                 s = 0x80;

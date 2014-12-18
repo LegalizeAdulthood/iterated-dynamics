@@ -310,7 +310,7 @@ static int Xdepth;
 static XImage *Ximage =nullptr;
 static int Xdscreen;
 static Pixmap   Xpixmap = 0;
-static int Xwinwidth=DEFX,Xwinheight=DEFY;
+static int Xwinwidth = DEFX,Xwinheight = DEFY;
 static XSizeHints *size_hints = nullptr;
 static int gravity;
 static Window Xroot;
@@ -1580,7 +1580,7 @@ xhandleevents()
     static int ctl_mode = 0;
     static int shift_mode = 0;
     int bandx0,bandy0,bandx1,bandy1;
-    static int bnum=0;
+    static int bnum = 0;
     static int lastx,lasty;
     static int dx,dy;
 
