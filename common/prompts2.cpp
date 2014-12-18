@@ -330,7 +330,11 @@ int get_toggles()
         j++;
 
     outside = uvalues[++k].uval.ival;
+<<<<<<< HEAD
     if (outside < COLOR_BLACK)
+=======
+    if (outside < 0)
+>>>>>>> Refactor: Reformat conditions and statement on separate lines
         outside = -outside;
     if (outside >= colors)
         outside = (outside % colors) + (outside / colors);

@@ -1844,6 +1844,7 @@ bool CellularSetup()
 
 static void set_Cellular_palette()
 {
+<<<<<<< HEAD
     static BYTE const Red[3]    = { 42, 0, 0 };
     static BYTE const Green[3]  = { 10, 35, 10 };
     static BYTE const Blue[3]   = { 13, 12, 29 };
@@ -1874,6 +1875,42 @@ static void set_Cellular_palette()
     g_dac_box[5][2] = Brown[2];
 
     spindac(0, 1);
+=======
+    static Palettetype Red    = { 42, 0, 0 };
+    static Palettetype Green  = { 10,35,10 };
+    static Palettetype Blue   = { 13,12,29 };
+    static Palettetype Yellow = { 60,58,18 };
+    static Palettetype Brown  = { 42,21, 0 };
+
+    if (mapdacbox && colorstate != 0)
+        return;       // map= specified
+
+    dac[0].red  = 0 ;
+    dac[0].green= 0 ;
+    dac[0].blue = 0 ;
+
+    dac[1].red    = Red.red;
+    dac[1].green = Red.green;
+    dac[1].blue  = Red.blue;
+
+    dac[2].red   = Green.red;
+    dac[2].green = Green.green;
+    dac[2].blue  = Green.blue;
+
+    dac[3].red   = Blue.red;
+    dac[3].green = Blue.green;
+    dac[3].blue  = Blue.blue;
+
+    dac[4].red   = Yellow.red;
+    dac[4].green = Yellow.green;
+    dac[4].blue  = Yellow.blue;
+
+    dac[5].red   = Brown.red;
+    dac[5].green = Brown.green;
+    dac[5].blue  = Brown.blue;
+
+    spindac(0,1);
+>>>>>>> Refactor: Reformat conditions and statement on separate lines
 }
 
 // frothy basin routines

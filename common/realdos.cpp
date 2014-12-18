@@ -1497,11 +1497,18 @@ int input_field(
             driver_put_string(row, col, attr, buf);
             display = false;
         }
+<<<<<<< HEAD
         curkey = driver_key_cursor(row+insert, col+offset);  // get a keystroke
         if (curkey == 1047)
             curkey = 47; // numeric slash
         switch (curkey)
         {
+=======
+        curkey = driver_key_cursor(row+insert,col+offset);  // get a keystroke
+        if (curkey == 1047)
+            curkey = 47; // numeric slash
+        switch (curkey) {
+>>>>>>> Refactor: Reformat conditions and statement on separate lines
         case FIK_ENTER:
         case FIK_ENTER_2:
             ret = 0;
