@@ -60,13 +60,13 @@ keypressed() {
     ch = getkeynowait();
     if (!ch) return 0;
     keybuffer = ch;
-    if (ch==FIK_F1 && helpmode) {
+    if (ch == FIK_F1 && helpmode) {
         keybuffer = 0;
         inside_help = true;
         help(0);
         inside_help = false;
         return 0;
-    } else if (ch==FIK_TAB && tabmode) {
+    } else if (ch == FIK_TAB && tabmode) {
         keybuffer = 0;
         tab_display();
         return 0;
@@ -111,7 +111,7 @@ getakey()
 
     do {
         ch = getkeyint(1);
-    } while (ch==0);
+    } while (ch == 0);
     return ch;
 }
 
@@ -139,24 +139,24 @@ getkeyint(int block)
         return ch;
     }
     int curkey = xgetkey(0);
-    if (g_slides==SLIDES_PLAY && curkey == FIK_ESC) {
+    if (g_slides == SLIDES_PLAY && curkey == FIK_ESC) {
         stopslideshow();
         return 0;
     }
 
-    if (curkey==0 && g_slides==SLIDES_PLAY) {
+    if (curkey == 0 && g_slides == SLIDES_PLAY) {
         curkey = slideshw();
     }
 
-    if (curkey==0 && block) {
+    if (curkey == 0 && block) {
         curkey = xgetkey(1);
-        if (g_slides==SLIDES_PLAY && curkey == FIK_ESC) {
+        if (g_slides == SLIDES_PLAY && curkey == FIK_ESC) {
             stopslideshow();
             return 0;
         }
     }
 
-    if (curkey && g_slides==SLIDES_RECORD) {
+    if (curkey && g_slides == SLIDES_RECORD) {
         recordshw(curkey);
     }
 
@@ -184,7 +184,7 @@ buzzer(int buzzertype)
         printf("\007");
         fflush(stdout);
     }
-    if (buzzertype==0) {
+    if (buzzertype == 0) {
         redrawscreen();
     }
 }
@@ -259,7 +259,7 @@ decode_fractal_info(FRACTAL_INFO *info, int dir)
     unsigned char *buf;
     unsigned char *bufPtr;
 
-    if (dir==1) {
+    if (dir == 1) {
         info_buff.resize(FRACTAL_INFO_SIZE);
         buf = &info_buff[0];
         bufPtr = buf;
@@ -271,7 +271,7 @@ decode_fractal_info(FRACTAL_INFO *info, int dir)
         bcopy((char *)info,(char *)buf,sizeof(FRACTAL_INFO));
     }
 
-    if (dir==1) {
+    if (dir == 1) {
         strncpy(info->info_id,(char *)bufPtr,8);
     } else {
         strncpy((char *)bufPtr,info->info_id,8);
@@ -418,7 +418,7 @@ decode_fractal_info(FRACTAL_INFO *info, int dir)
         printf("Components add up to %d bytes, but FRACTAL_INFO_SIZE = %d\n",
                (int)(bufPtr-buf), (int) FRACTAL_INFO_SIZE);
     }
-    if (dir==0) {
+    if (dir == 0) {
         bcopy((char *)buf,(char *)info,FRACTAL_INFO_SIZE);
     }
 }
@@ -429,7 +429,7 @@ decode_fractal_info(FRACTAL_INFO *info, int dir)
  */
 static void getChar(unsigned char *dst, unsigned char **src, int dir)
 {
-    if (dir==1) {
+    if (dir == 1) {
         *dst = **src;
     } else {
         **src = *dst;
@@ -443,11 +443,11 @@ static void getChar(unsigned char *dst, unsigned char **src, int dir)
  */
 static void getInt(short *dst, unsigned char **src, int dir)
 {
-    if (dir==1) {
-        *dst = (*src)[0] + ((((char *)(*src))[1])<<8);
+    if (dir == 1) {
+        *dst = (*src)[0] + ((((char *)(*src))[1]) << 8);
     } else {
         (*src)[0] = (*dst)&0xff;
-        (*src)[1] = ((*dst)&0xff00)>>8;
+        (*src)[1] = ((*dst)&0xff00) >> 8;
     }
     (*src) += 2; // sizeof(int) in MS_DOS
 }
@@ -458,16 +458,16 @@ static void getInt(short *dst, unsigned char **src, int dir)
  */
 static void getLong(long *dst, unsigned char **src, int dir)
 {
-    if (dir==1) {
+    if (dir == 1) {
         *dst = ((unsigned long)((*src)[0])) +
-               (((unsigned long)((*src)[1]))<<8) +
-               (((unsigned long)((*src)[2]))<<16) +
-               (((long)(((char *)(*src))[3]))<<24);
+               (((unsigned long)((*src)[1])) << 8) +
+               (((unsigned long)((*src)[2])) << 16) +
+               (((long)(((char *)(*src))[3])) << 24);
     } else {
         (*src)[0] = (*dst)&0xff;
-        (*src)[1] = ((*dst)&0xff00)>>8;
-        (*src)[2] = ((*dst)&0xff0000)>>16;
-        (*src)[3] = ((*dst)&0xff000000)>>24;
+        (*src)[1] = ((*dst)&0xff00) >> 8;
+        (*src)[2] = ((*dst)&0xff0000) >> 16;
+        (*src)[3] = ((*dst)&0xff000000) >> 24;
     }
     (*src) += 4; // sizeof(long) in MS_DOS
 }
@@ -494,16 +494,16 @@ static void getDouble(double *dst, unsigned char **src, int dir)
 {
     int e;
     double f;
-    if (dir==1) {
+    if (dir == 1) {
         int i;
         for (i = 0; i < 8; i++) {
             if ((*src)[i] != 0)
                 break;
         }
-        if (i==8) {
+        if (i == 8) {
             *dst = 0;
         } else {
-            e = (((*src)[7]&0x7f)<<4) + (((*src)[6]&0xf0)>>4) - 1023;
+            e = (((*src)[7]&0x7f) << 4) + (((*src)[6]&0xf0) >> 4) - 1023;
             f = 1 + ((*src)[6]&0x0f)/P4 + (*src)[5]/P12 + (*src)[4]/P20 +
                 (*src)[3]/P28 + (*src)[2]/P36 + (*src)[1]/P44 + (*src)[0]/P52;
             f *= pow(2.,(double)e);
@@ -513,28 +513,28 @@ static void getDouble(double *dst, unsigned char **src, int dir)
             *dst = f;
         }
     } else {
-        if (*dst==0) {
+        if (*dst == 0) {
             bzero((char *)(*src),8);
         } else {
             int s=0;
             f = *dst;
-            if (f<0) {
+            if (f < 0) {
                 s = 0x80;
                 f = -f;
             }
             e = log(f)/log(2.);
             f = f/pow(2.,(double)e) - 1;
-            if (f<0) {
+            if (f < 0) {
                 e--;
                 f = (f+1)*2-1;
-            } else if (f>=1) {
+            } else if (f >= 1) {
                 e++;
                 f = (f+1)/2-1;
             }
             e += 1023;
-            (*src)[7] = s | ((e&0x7f0)>>4);
+            (*src)[7] = s | ((e&0x7f0) >> 4);
             f *= P4;
-            (*src)[6] = ((e&0x0f)<<4) | (((int)f)&0x0f);
+            (*src)[6] = ((e&0x0f) << 4) | (((int)f)&0x0f);
             f = (f-(int)f)*P8;
             (*src)[5] = (((int)f)&0xff);
             f = (f-(int)f)*P8;
@@ -560,16 +560,16 @@ static void getFloat(float *dst, unsigned char **src, int dir)
 {
     int e;
     double f;
-    if (dir==1) {
+    if (dir == 1) {
         int i;
         for (i = 0; i < 4; i++) {
             if ((*src)[i] != 0)
                 break;
         }
-        if (i==4) {
+        if (i == 4) {
             *dst = 0;
         } else {
-            e = ((((*src)[3]&0x7f)<<1) | (((*src)[2]&0x80)>>7)) - 127;
+            e = ((((*src)[3]&0x7f) << 1) | (((*src)[2]&0x80) >> 7)) - 127;
             f = 1 + ((*src)[2]&0x7f)/P7 + (*src)[1]/P15 + (*src)[0]/P23;
             f *= pow(2.,(double)e);
             if ((*src)[3]&0x80) {
@@ -578,28 +578,28 @@ static void getFloat(float *dst, unsigned char **src, int dir)
             *dst = f;
         }
     } else {
-        if (*dst==0) {
+        if (*dst == 0) {
             bzero((char *)(*src),4);
         } else {
             int s=0;
             f = *dst;
-            if (f<0) {
+            if (f < 0) {
                 s = 0x80;
                 f = -f;
             }
             e = log(f)/log(2.);
             f = f/pow(2.,(double)e) - 1;
-            if (f<0) {
+            if (f < 0) {
                 e--;
                 f = (f+1)*2-1;
-            } else if (f>=1) {
+            } else if (f >= 1) {
                 e++;
                 f = (f+1)/2-1;
             }
             e += 127;
-            (*src)[3] = s | ((e&0xf7)>>1);
+            (*src)[3] = s | ((e&0xf7) >> 1);
             f *= P7;
-            (*src)[2] = ((e&0x01)<<7) | (((int)f)&0x7f);
+            (*src)[2] = ((e&0x01) << 7) | (((int)f)&0x7f);
             f = (f-(int)f)*P8;
             (*src)[1] = (((int)f)&0xff);
             f = (f-(int)f)*P8;
@@ -619,7 +619,7 @@ fix_ranges(int *ranges, int num, int dir)
     unsigned char *buf;
     unsigned char *bufPtr;
 
-    if (dir==1) {
+    if (dir == 1) {
         ranges_buff.resize(num*2);
         buf = &ranges_buff[0];
         bufPtr = buf;
@@ -685,7 +685,7 @@ decode_evolver_info(EVOLUTION_INFO *info, int dir)
         printf("Components add up to %d bytes, but EVOLVER_INFO_SIZE = %d\n",
                (int)(bufPtr-buf), (int) EVOLVER_INFO_SIZE);
     }
-    if (dir==0) {
+    if (dir == 0) {
         bcopy((char *)buf,(char *)info,EVOLVER_INFO_SIZE);
     }
 }
@@ -697,7 +697,7 @@ decode_orbits_info(ORBITS_INFO *info, int dir)
     unsigned char *buf;
     unsigned char *bufPtr;
 
-    if (dir==1) {
+    if (dir == 1) {
         orbits_info_buff.resize(ORBITS_INFO_SIZE);
         buf = &orbits_info_buff[0];
         bufPtr = buf;
@@ -727,7 +727,7 @@ decode_orbits_info(ORBITS_INFO *info, int dir)
         printf("Components add up to %d bytes, but ORBITS_INFO_SIZE = %d\n",
                (int)(bufPtr-buf), (int) ORBITS_INFO_SIZE);
     }
-    if (dir==0) {
+    if (dir == 0) {
         bcopy((char *)buf,(char *)info,ORBITS_INFO_SIZE);
     }
 }

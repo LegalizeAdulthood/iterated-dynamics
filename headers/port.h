@@ -99,7 +99,7 @@ typedef int sigfunc(int);
 #       define READMODE       "r"
 #       define WRITEMODE        "w"
 #       define write1(ptr,len,n,stream) (fputc(*(ptr),stream),1)
-#       define write2(ptr,len,n,stream) (fputc((*(ptr))&255,stream),fputc((*(ptr))>>8,stream),1)
+#       define write2(ptr,len,n,stream) (fputc((*(ptr))&255,stream),fputc((*(ptr)) >> 8,stream),1)
 #       define rand15() (rand()&0x7FFF)
 #       include "unix.h"
 #    endif // unix
@@ -113,7 +113,7 @@ typedef int sigfunc(int);
 #define GET16(c,i)              (i) = *((U16*)(&(c)))
 #else
 #define GET16(c,i)              (i) = (*(unsigned char *)&(c))+\
-                                ((*((unsigned char*)&(c)+1))<<8)
+                                ((*((unsigned char*)&(c)+1)) << 8)
 #endif
 typedef long double LDBL;
 #endif  /* PORT_H */
