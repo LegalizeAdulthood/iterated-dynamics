@@ -863,7 +863,7 @@ static unsigned short *codetab = (unsigned short *)strlocn;
 
 #define tab_prefixof(i)   codetab[i]
 #define tab_suffixof(i)   ((char_type *)(htab))[i]
-#define de_stack          ((char_type *)&tab_suffixof((int)1<<BITSF))
+#define de_stack          ((char_type *)&tab_suffixof((int)1 << BITSF))
 
 static int free_ent;                  // first unused entry
 
