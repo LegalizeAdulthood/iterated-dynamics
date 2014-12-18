@@ -170,10 +170,10 @@ static void lsysf_dosizedm(lsys_turtlestatef *cmd)
     cmd->xpos += cmd->size * cmd->aspect * c;
     cmd->ypos += cmd->size * s;
 
-    if (cmd->xpos>cmd->xmax) cmd->xmax=cmd->xpos;
-    if (cmd->ypos>cmd->ymax) cmd->ymax=cmd->ypos;
-    if (cmd->xpos<cmd->xmin) cmd->xmin=cmd->xpos;
-    if (cmd->ypos<cmd->ymin) cmd->ymin=cmd->ypos;
+    if (cmd->xpos > cmd->xmax) cmd->xmax=cmd->xpos;
+    if (cmd->ypos > cmd->ymax) cmd->ymax=cmd->ypos;
+    if (cmd->xpos < cmd->xmin) cmd->xmin=cmd->xpos;
+    if (cmd->ypos < cmd->ymin) cmd->ymin=cmd->ypos;
 }
 #else
 extern void lsysf_dosizedm(lsys_turtlestatef *cmd, long n);
@@ -185,10 +185,10 @@ static void lsysf_dosizegf(lsys_turtlestatef *cmd)
     cmd->xpos += cmd->size * coss_f[(int)cmd->angle];
     cmd->ypos += cmd->size * sins_f[(int)cmd->angle];
 
-    if (cmd->xpos>cmd->xmax) cmd->xmax=cmd->xpos;
-    if (cmd->ypos>cmd->ymax) cmd->ymax=cmd->ypos;
-    if (cmd->xpos<cmd->xmin) cmd->xmin=cmd->xpos;
-    if (cmd->ypos<cmd->ymin) cmd->ymin=cmd->ypos;
+    if (cmd->xpos > cmd->xmax) cmd->xmax=cmd->xpos;
+    if (cmd->ypos > cmd->ymax) cmd->ymax=cmd->ypos;
+    if (cmd->xpos < cmd->xmin) cmd->xmin=cmd->xpos;
+    if (cmd->ypos < cmd->ymin) cmd->ymin=cmd->ypos;
 }
 #else
 extern void lsysf_dosizegf(lsys_turtlestatef *cmd);
@@ -300,7 +300,7 @@ findsize(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
         tran = false;
         if (depth) {
             for (lsys_cmd **rulind = rules; *rulind; rulind++)
-                if ((*rulind)->ch==command->ch) {
+                if ((*rulind)->ch == command->ch) {
                     tran = true;
                     if (findsize((*rulind)+1,ts,rules,depth-1) == nullptr)
                         return (nullptr);
@@ -390,7 +390,7 @@ lsysf_findscale(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int 
         vert = (float)1E37;
     else
         vert = (float)((ydots-6) /(ymax-ymin));
-    locsize = (vert<horiz) ? vert : horiz;
+    locsize = (vert < horiz) ? vert : horiz;
 
     if (horiz == 1E37)
         ts->xpos = xdots/2;
