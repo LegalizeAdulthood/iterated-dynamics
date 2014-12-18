@@ -1112,7 +1112,8 @@ int mandelcloudfloat(double *x, double *y, double * /*z*/)
     double newx,newy,x2,y2;
     x2 = (*x)*(*x);
     y2 = (*y)*(*y);
-    if (x2+y2 > 2) return 1;
+    if (x2+y2 > 2)
+        return 1;
     newx = x2-y2+a;
     newy = 2*(*x)*(*y)+b;
     *x = newx;
@@ -1810,7 +1811,8 @@ bool dynam2dfloatsetup()
             dt = -dt;
             euler = true;
         }
-        if (dt == 0) dt = 0.01;
+        if (dt == 0)
+            dt = 0.01;
     }
     if (outside == SUM) {
         plot = plothist;
@@ -2432,7 +2434,8 @@ static int ifs3dlong()
         while (sum < r && ++k < numaffine*IFS3DPARM)
         {
             sum += localifs[k*IFS3DPARM+12];
-            if (ifs_defn[(k+1)*IFS3DPARM+12] == 0) break; // for safety
+            if (ifs_defn[(k+1)*IFS3DPARM+12] == 0)
+                break; // for safety
         }
 
         // calculate image of last point under selected iterated function

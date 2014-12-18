@@ -267,10 +267,12 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
                 plot(x,y,(U16)((v + 2) >> 2));
             }
 
-            if (subx.r[subx.t-1] == (BYTE)recur) subx.t = (BYTE)(subx.t - 2);
+            if (subx.r[subx.t-1] == (BYTE)recur)
+                subx.t = (BYTE)(subx.t - 2);
         }
 
-        if (suby.r[suby.t-1] == (BYTE)recur) suby.t = (BYTE)(suby.t - 2);
+        if (suby.r[suby.t-1] == (BYTE)recur)
+            suby.t = (BYTE)(suby.t - 2);
     }
     return false;
 }
@@ -335,15 +337,23 @@ int plasma()
         return (-1);
     }
     iparmx = (int)(param[0] * 8);
-    if (parm.x <= 0.0) iparmx = 0;
-    if (parm.x >= 100) iparmx = 800;
+    if (parm.x <= 0.0)
+        iparmx = 0;
+    if (parm.x >= 100)
+        iparmx = 800;
     param[0] = (double)iparmx / 8.0;  // let user know what was used
-    if (param[1] < 0) param[1] = 0;  // limit parameter values
-    if (param[1] > 1) param[1] = 1;
-    if (param[2] < 0) param[2] = 0;  // limit parameter values
-    if (param[2] > 1) param[2] = 1;
-    if (param[3] < 0) param[3] = 0;  // limit parameter values
-    if (param[3] > 1) param[3] = 1;
+    if (param[1] < 0)
+        param[1] = 0;  // limit parameter values
+    if (param[1] > 1)
+        param[1] = 1;
+    if (param[2] < 0)
+        param[2] = 0;  // limit parameter values
+    if (param[2] > 1)
+        param[2] = 1;
+    if (param[3] < 0)
+        param[3] = 0;  // limit parameter values
+    if (param[3] > 1)
+        param[3] = 1;
 
     if (!rflag && param[2] == 1)
         --rseed;
@@ -683,9 +693,10 @@ int diffusion()
         if (colorshift) {
             if (!--colorcount) { // If the counter reaches zero then shift
                 currentcolor++;      // Increase the current color and wrap
-                currentcolor%=colors;  // around skipping zero
-                if (!currentcolor) currentcolor++;
-                colorcount=colorshift;  // and reset the counter
+                currentcolor %= colors;  // around skipping zero
+                if (!currentcolor)
+                    currentcolor++;
+                colorcount = colorshift;  // and reset the counter
             }
         }
 
@@ -907,7 +918,8 @@ static void verhulst()          // P. F. Verhulst (1845)
         }
     }
 
-    if (periodicitycheck) Bif_Period_Init();
+    if (periodicitycheck)
+        Bif_Period_Init();
     for (unsigned long counter = 0UL; counter < (unsigned long)maxit ; counter++)
     {
         if (curfractalspecific->orbitcalc())
@@ -1294,7 +1306,8 @@ bool lya_setup()
 
     i = (long)param[0];
 #if !defined(XFRACT)
-    if (save_release<1732) i &= 0x0FFFFL; // make it a short to reproduce prior stuff
+    if (save_release < 1732)
+        i &= 0x0FFFFL; // make it a short to reproduce prior stuff
 #endif
     lyaRxy[0] = 1;
     int t;
@@ -1309,7 +1322,8 @@ bool lya_setup()
             lyaRxy[t] = !lyaRxy[t];
     if (save_release<1731) {            // ignore inside=, stdcalcmode
         stdcalcmode='1';
-        if (inside == 1) inside = 0;
+        if (inside == 1)
+            inside = 0;
     }
     if (inside<0) {
         stopmsg(STOPMSG_NONE,
@@ -1767,7 +1781,8 @@ static void set_Cellular_palette()
     static Palettetype Yellow = { 60,58,18 };
     static Palettetype Brown  = { 42,21, 0 };
 
-    if (mapdacbox && colorstate != 0) return;       // map= specified
+    if (mapdacbox && colorstate != 0)
+        return;       // map= specified
 
     dac[0].red  = 0 ;
     dac[0].green= 0 ;

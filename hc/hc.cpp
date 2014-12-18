@@ -3742,12 +3742,18 @@ int main(int argc, char *argv[])
         make_hot_links();  /* do even if errors since it may report */
         /* more... */
 
-        if (!errors)     paginate_online();
-        if (!errors)     paginate_document();
-        if (!errors)     calc_offsets();
-        if (!errors)     sort_labels();
-        if (!errors)     write_hdr(hdr_fname);
-        if (!errors)     write_help(hlp_fname);
+        if (!errors)
+            paginate_online();
+        if (!errors)
+            paginate_document();
+        if (!errors)
+            calc_offsets();
+        if (!errors)
+            sort_labels();
+        if (!errors)
+            write_hdr(hdr_fname);
+        if (!errors)
+            write_help(hlp_fname);
 
         if (show_stats)
             report_stats();
@@ -3777,8 +3783,10 @@ int main(int argc, char *argv[])
 
         make_hot_links();
 
-        if (!errors)     paginate_document();
-        if (!errors)     print_document((fname2[0] == '\0') ? DEFAULT_DOC_FNAME : fname2);
+        if (!errors)
+            paginate_document();
+        if (!errors)
+            print_document((fname2[0] == '\0') ? DEFAULT_DOC_FNAME : fname2);
 
         if (errors || warnings)
             report_errors();

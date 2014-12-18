@@ -3262,12 +3262,14 @@ bool MandelbrotMix4Setup()
             ;
         }
         // in case our kludge failed, let the user fix it
-        if (debugflag == 1012)  tmp.y = -tmp.y;
+        if (debugflag == 1012)
+            tmp.y = -tmp.y;
     }
 
     CMPLXpwr(tmp,J,tmp);   // note: z is old
     // in case our kludge failed, let the user fix it
-    if (param[6] < 0.0) tmp.y = -tmp.y;
+    if (param[6] < 0.0)
+        tmp.y = -tmp.y;
 
     if (bailout == 0)
     {

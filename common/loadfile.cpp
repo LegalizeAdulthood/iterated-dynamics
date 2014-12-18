@@ -1472,11 +1472,13 @@ rescan:  // entry for changed browse parms
                 drawindow(color_of_box,&winlist);// dim last window
                 if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW) {
                     index++;                     // shift attention to next window
-                    if (index >= wincount) index=0;
+                    if (index >= wincount)
+                        index=0;
                 }
                 else {
                     index -- ;
-                    if (index < 0)  index = wincount -1 ;
+                    if (index < 0)
+                        index = wincount -1 ;
                 }
                 MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)index,browsehandle);
                 MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
@@ -1531,7 +1533,8 @@ rescan:  // entry for changed browse parms
                 c = driver_get_key();
                 if (c == 'Y' && doublecaution) {
                     texttempmsg("ARE YOU SURE???? (Y/N)");
-                    if (driver_get_key() != 'Y') c = 'N';
+                    if (driver_get_key() != 'Y')
+                        c = 'N';
                 }
                 if (c == 'Y') {
                     splitpath(readname,drive,dir,nullptr,nullptr);
@@ -1690,7 +1693,8 @@ static void drawindow(int colour, window *info)
     else { // draw crosshairs
 #ifndef XFRACT
         int cross_size = ydots / 45;
-        if (cross_size < 2) cross_size = 2;
+        if (cross_size < 2)
+            cross_size = 2;
         itr.x = info->itl.x - cross_size;
         itr.y = info->itl.y;
         ibl.y = info->itl.y - cross_size;

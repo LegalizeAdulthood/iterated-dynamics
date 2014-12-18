@@ -1258,9 +1258,11 @@ char *get_ifs_token(char *buf,FILE *ifsfile)
             return (nullptr);
         else
         {
-            if ((bufptr = strchr(buf,';')) != nullptr) // use ';' as comment to eol
+            bufptr = strchr(buf,';');
+            if (bufptr != nullptr) // use ';' as comment to eol
                 *bufptr = 0;
-            if ((bufptr = strtok(buf, seps)) != nullptr)
+            bufptr = strtok(buf, seps);
+            if (bufptr != nullptr)
                 return (bufptr);
         }
     }
@@ -1286,7 +1288,8 @@ int ifsload()                   // read in IFS parameters
         return (-1);
 
     file_gets(buf,200,ifsfile);
-    if ((bufptr = strchr(buf,';')) != nullptr) // use ';' as comment to eol
+    bufptr = strchr(buf,';');
+    if (bufptr != nullptr) // use ';' as comment to eol
         *bufptr = 0;
 
     strlwr(buf);
@@ -1531,16 +1534,20 @@ int file_gets(char *buf,int maxlen,FILE *infile)
     int len,c;
     // similar to 'fgets', but file may be in either text or binary mode
     // returns -1 at eof, length of string otherwise
-    if (feof(infile)) return -1;
+    if (feof(infile))
+        return -1;
     len = 0;
     while (len < maxlen) {
         c = getc(infile);
         if (c == EOF || c == '\032') {
-            if (len) break;
+            if (len)
+                break;
             return -1;
         }
-        if (c == '\n') break;             // linefeed is end of line
-        if (c != '\r') buf[len++] = (char)c;    // ignore c/r
+        if (c == '\n')
+            break;             // linefeed is end of line
+        if (c != '\r')
+            buf[len++] = (char)c;    // ignore c/r
     }
     buf[len] = 0;
     return len;

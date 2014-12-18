@@ -421,10 +421,12 @@ imagestart:                             /* calc/display a new image */
             goodbye();
         }
         kbdchar = main_menu(0);
-        if (kbdchar == FIK_INSERT) goto restart;      /* restart pgm on Insert Key */
+        if (kbdchar == FIK_INSERT)
+            goto restart;      /* restart pgm on Insert Key */
         if (kbdchar == FIK_DELETE)                    /* select video mode list */
             kbdchar = select_video_mode(-1);
-        if ((g_adapter = check_vidmode_key(0,kbdchar)) >= 0)
+        g_adapter = check_vidmode_key(0,kbdchar);
+        if (g_adapter >= 0)
             break;                                 /* got a video mode now */
 #ifndef XFRACT
         if ('A' <= kbdchar && kbdchar <= 'Z')

@@ -1027,7 +1027,8 @@ PhoenixSetup()
     longparm = &lparm;
     floatparm = &parm;
     degree = (int)parm2.x;
-    if (degree < 2 && degree > -3) degree = 0;
+    if (degree < 2 && degree > -3)
+        degree = 0;
     param[2] = (double)degree;
     if (degree == 0) {
         if (usr_floatflag)
@@ -1059,7 +1060,8 @@ PhoenixCplxSetup()
     longparm = &lparm;
     floatparm = &parm;
     degree = (int)param[4];
-    if (degree < 2 && degree > -3) degree = 0;
+    if (degree < 2 && degree > -3)
+        degree = 0;
     param[4] = (double)degree;
     if (degree == 0) {
         if (parm2.x != 0 || parm2.y != 0)
@@ -1105,7 +1107,8 @@ MandPhoenixSetup()
     longparm = &linit;
     floatparm = &init;
     degree = (int)parm2.x;
-    if (degree < 2 && degree > -3) degree = 0;
+    if (degree < 2 && degree > -3)
+        degree = 0;
     param[2] = (double)degree;
     if (degree == 0) {
         if (usr_floatflag)
@@ -1137,7 +1140,8 @@ MandPhoenixCplxSetup()
     longparm = &linit;
     floatparm = &init;
     degree = (int)param[4];
-    if (degree < 2 && degree > -3) degree = 0;
+    if (degree < 2 && degree > -3)
+        degree = 0;
     param[4] = (double)degree;
     if (parm.y != 0 || parm2.y != 0)
         symmetry = NOSYM;
@@ -1176,10 +1180,14 @@ StandardSetup()
 bool
 VLSetup()
 {
-    if (param[0] < 0.0) param[0] = 0.0;
-    if (param[1] < 0.0) param[1] = 0.0;
-    if (param[0] > 1.0) param[0] = 1.0;
-    if (param[1] > 1.0) param[1] = 1.0;
+    if (param[0] < 0.0)
+        param[0] = 0.0;
+    if (param[1] < 0.0)
+        param[1] = 0.0;
+    if (param[0] > 1.0)
+        param[0] = 1.0;
+    if (param[1] > 1.0)
+        param[1] = 1.0;
     floatparm = &parm;
     return true;
 }

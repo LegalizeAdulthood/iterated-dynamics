@@ -1726,10 +1726,14 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
                 if (*kbdchar == FIK_CTL_DOWN_ARROW) {
                     py++;
                 }
-                if (px <0) px = gridsz-1;
-                if (px >(gridsz-1)) px = 0;
-                if (py <0) py = gridsz-1;
-                if (py > (gridsz-1)) py = 0;
+                if (px <0)
+                    px = gridsz-1;
+                if (px > (gridsz-1))
+                    px = 0;
+                if (py < 0)
+                    py = gridsz-1;
+                if (py > (gridsz-1))
+                    py = 0;
                 int grout = !((evolving & NOGROUT)/NOGROUT) ;
                 sxoffs = px * (int)(dxsize+1+grout);
                 syoffs = py * (int)(dysize+1+grout);
@@ -1766,7 +1770,8 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case FIK_CTL_PAGE_UP:
         if (prmboxcount) {
             parmzoom -= 1.0;
-            if (parmzoom < 1.0) parmzoom=1.0;
+            if (parmzoom < 1.0)
+                parmzoom = 1.0;
             drawparmbox(0);
             set_evolve_ranges();
         }
@@ -1774,7 +1779,8 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case FIK_CTL_PAGE_DOWN:
         if (prmboxcount) {
             parmzoom += 1.0;
-            if (parmzoom > (double)gridsz/2.0) parmzoom=(double)gridsz/2.0;
+            if (parmzoom > (double)gridsz/2.0)
+                parmzoom = (double)gridsz/2.0;
             drawparmbox(0);
             set_evolve_ranges();
         }
@@ -1891,7 +1897,8 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
                 gene[i].mutate = 6;
                 continue;
             }
-            if (gene[i].mutate == 6) gene[i].mutate = 5;
+            if (gene[i].mutate == 6)
+                gene[i].mutate = 5;
         }
         // now put the gene array back in memory
         MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -2057,7 +2064,8 @@ int cmp_line(BYTE *pixels, int linelen)
     }
     if (pot16bit)
     {                                   // 16 bit info, ignore odd numbered rows
-        if ((row & 1) != 0) return 0;
+        if ((row & 1) != 0)
+            return 0;
         row >>= 1;
     }
     for (int col = 0; col < linelen; col++) {

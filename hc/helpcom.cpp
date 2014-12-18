@@ -172,8 +172,10 @@ int _find_token_length(char *curr, unsigned len, int *size, int *width)
         } /* switch */
     }
 
-    if (size  != nullptr)   *size  = _size;
-    if (width != nullptr)   *width = _width;
+    if (size  != nullptr)
+        *size  = _size;
+    if (width != nullptr)
+        *width = _width;
 
     return (tok);
 }

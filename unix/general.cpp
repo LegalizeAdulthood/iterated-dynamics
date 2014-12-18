@@ -58,7 +58,8 @@ int
 keypressed() {
     int ch;
     ch = getkeynowait();
-    if (!ch) return 0;
+    if (!ch)
+        return 0;
     keybuffer = ch;
     if (ch == FIK_F1 && helpmode) {
         keybuffer = 0;
@@ -84,7 +85,8 @@ waitkeypressed(int timeout)
 {
     while (!keybuffer) {
         keybuffer = getkeyint(1);
-        if (timeout) break;
+        if (timeout)
+            break;
     }
     return keypressed();
 }
@@ -97,7 +99,8 @@ getakeynohelp() {
     int ch;
     while (1) {
         ch = getakey();
-        if (ch != FIK_F1) break;
+        if (ch != FIK_F1)
+            break;
     }
     return ch;
 }

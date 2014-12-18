@@ -502,7 +502,8 @@ initUnixWindow()
             Xgc = XCreateGC(Xdp, Xw, 0, &Xgcvals);
         }
         colors = xcmapstuff();
-        if (rotate_hi == 255) rotate_hi = colors-1;
+        if (rotate_hi == 255)
+            rotate_hi = colors-1;
 
         XSetWMNormalHints(Xdp, Xw, size_hints);
 
@@ -653,8 +654,10 @@ initdacbox()
         for (int i = 0; i < 256; i++) {
             for (int j = 0; j < 3; j++) {
                 int k = (i*(cyclic[sp][j])) & 127;
-                if (k < 64) g_dac_box[i][j] = k;
-                else g_dac_box[i][j] = (127 - k);
+                if (k < 64)
+                    g_dac_box[i][j] = k;
+                else
+                    g_dac_box[i][j] = (127 - k);
             }
         }
     } else {
@@ -717,12 +720,14 @@ resizeWindow()
     Window junkw;
     unsigned int width, height;
 
-    if (unixDisk) return 0;
+    if (unixDisk)
+        return 0;
     if (resize_flag) {
         Window root, parent, *children;
         resize_flag = 0;
         XQueryTree(Xdp, Xw, &root, &parent, &children, &junkui);
-        if (!parent) return 0;
+        if (!parent)
+            return 0;
         XGetGeometry(Xdp, parent, &root, &junki, &junki,
                      &width, &height, &junkui, &junkui);
         XResizeWindow(Xdp, Xw, width, height);
@@ -1159,7 +1164,8 @@ int writevideopalette()
 void
 setlinemode(int mode)
 {
-    if (unixDisk) return;
+    if (unixDisk)
+        return;
     xlastcolor = -1;
     if (mode == 0) {
         XSetFunction(Xdp, Xgc, GXcopy);
@@ -1290,7 +1296,8 @@ xgetkey(int block)
 
         // Don't check X events every time, since that is expensive
         skipcount++;
-        if (block == 0 && skipcount < 25) break;
+        if (block == 0 && skipcount < 25)
+            break;
         skipcount = 0;
 
         if (!unixDisk) {
@@ -1306,7 +1313,8 @@ xgetkey(int block)
                 return translatekey(ch);
             }
         }
-        if (!block) break;
+        if (!block)
+            break;
         FD_ZERO(&reads);
         // See http://llvm.org/bugs/show_bug.cgi?id=8920
 #if !defined(__clang_analyzer__)
@@ -2072,7 +2080,8 @@ xgetfont()
         sleep(2);
         font_info = XLoadQueryFont(Xdp, "6x12");
     }
-    if (font_info == nullptr) return nullptr;
+    if (font_info == nullptr)
+        return nullptr;
     width = font_info->max_bounds.width;
     if (font_info->max_bounds.width > 8 ||
             font_info->max_bounds.width != font_info->min_bounds.width) {
@@ -2176,7 +2185,8 @@ shell_to_dos()
 
     while (1) {
         donepid = wait(0);
-        if (donepid < 0 || donepid == pid) break;
+        if (donepid < 0 || donepid == pid)
+            break;
     }
 
     // Go back to curses mode
@@ -2213,7 +2223,8 @@ shell_to_dos()
 void
 schedulealarm(int soon)
 {
-    if (!fastmode) return;
+    if (!fastmode)
+        return;
     signal(SIGALRM, (SignalHandler)setredrawscreen);
     if (soon) {
         alarm(1);

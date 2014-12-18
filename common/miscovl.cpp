@@ -526,7 +526,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
             put_parm("=%d",g_release);
 
         sptr = curfractalspecific->name;
-        if (*sptr == '*') ++sptr;
+        if (*sptr == '*')
+            ++sptr;
         put_parm(" %s=%s", "type",sptr);
 
         if (fractype == JULIBROT || fractype == JULIBROTFP)
@@ -1073,7 +1074,8 @@ docolors:
             force = 0;
             curc = force;
 #ifdef XFRACT
-            if (fake_lut && !truemode) loaddac(); // stupid kludge
+            if (fake_lut && !truemode)
+                loaddac(); // stupid kludge
 #endif
             while (1) {
                 // emit color in rgb 3 char encoded form
@@ -1177,7 +1179,8 @@ static void put_filename(const char *keyword, const char *fname)
         if ((p = strrchr(fname, SLASHC)) != nullptr)
         {
             fname = p+1;
-            if (*fname == 0) return;
+            if (*fname == 0)
+                return;
         }
         put_parm(" %s=%s",keyword,fname);
     }
@@ -1259,13 +1262,18 @@ static int getprec(double a,double b,double c)
     int digits;
     double highv = 1.0E20;
     diff = fabs(a - b);
-    if (diff == 0.0) diff = highv;
+    if (diff == 0.0)
+        diff = highv;
     temp = fabs(a - c);
-    if (temp == 0.0) temp = highv;
-    if (temp < diff) diff = temp;
+    if (temp == 0.0)
+        temp = highv;
+    if (temp < diff)
+        diff = temp;
     temp = fabs(b - c);
-    if (temp == 0.0) temp = highv;
-    if (temp < diff) diff = temp;
+    if (temp == 0.0)
+        temp = highv;
+    if (temp < diff)
+        diff = temp;
     digits = 7;
     if (debugflag >= 700 && debugflag < 720)
         digits =  debugflag - 700;
@@ -1600,9 +1608,11 @@ static int entcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
 {
     int i,j;
     i = g_video_table[*((int *)p1)].keynum;
-    if (i == 0) i = 9999;
+    if (i == 0)
+        i = 9999;
     j = g_video_table[*((int *)p2)].keynum;
-    if (j == 0) j = 9999;
+    if (j == 0)
+        j = 9999;
     if (i < j || (i == j && *((int *)p1) < *((int *)p2)))
         return (-1);
     return (1);

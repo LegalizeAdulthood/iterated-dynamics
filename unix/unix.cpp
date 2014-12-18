@@ -95,8 +95,10 @@ int stricmp(const char *s1, const char *s2)
     while (1) {
         c1 = *s1++;
         c2 = *s2++;
-        if (isupper(c1)) c1 = tolower(c1);
-        if (isupper(c2)) c2 = tolower(c2);
+        if (isupper(c1))
+            c1 = tolower(c1);
+        if (isupper(c2))
+            c2 = tolower(c2);
         if (c1 != c2) {
             return c1 - c2;
         }
@@ -127,8 +129,10 @@ int strnicmp(const char *s1, const char *s2, int numChars)
     for (; numChars > 0; --numChars) {
         c1 = *s1++;
         c2 = *s2++;
-        if (isupper(c1)) c1 = tolower(c1);
-        if (isupper(c2)) c2 = tolower(c2);
+        if (isupper(c1))
+            c1 = tolower(c1);
+        if (isupper(c2))
+            c2 = tolower(c2);
         if (c1 != c2) {
             return c1 - c2;
         }

@@ -260,8 +260,10 @@ int get_toggles()
         // doesn't use 'new' & breaks orbits
         usr_stdcalcmode = old_usr_stdcalcmode;
 
-    if (old_usr_stdcalcmode != usr_stdcalcmode) j++;
-    if (old_stoppass != stoppass) j++;
+    if (old_usr_stdcalcmode != usr_stdcalcmode)
+        j++;
+    if (old_stoppass != stoppass)
+        j++;
 #ifndef XFRACT
     if ((uvalues[++k].uval.ch.val != 0) != usr_floatflag) {
         usr_floatflag = uvalues[k].uval.ch.val != 0;
@@ -270,14 +272,19 @@ int get_toggles()
 #endif
     ++k;
     maxit = uvalues[k].uval.Lval;
-    if (maxit < 0) maxit = old_maxit;
-    if (maxit < 2) maxit = 2;
+    if (maxit < 0)
+        maxit = old_maxit;
+    if (maxit < 2)
+        maxit = 2;
 
-    if (maxit != old_maxit) j++;
+    if (maxit != old_maxit)
+        j++;
 
     inside = uvalues[++k].uval.ival;
-    if (inside < 0) inside = -inside;
-    if (inside >= colors) inside = (inside % colors) + (inside / colors);
+    if (inside < 0)
+        inside = -inside;
+    if (inside >= colors)
+        inside = (inside % colors) + (inside / colors);
 
     {   int tmp;
         tmp = uvalues[++k].uval.ch.val;
@@ -313,18 +320,22 @@ int get_toggles()
                 break;
             }
     }
-    if (inside != old_inside) j++;
+    if (inside != old_inside)
+        j++;
 
     outside = uvalues[++k].uval.ival;
-    if (outside < 0) outside = -outside;
-    if (outside >= colors) outside = (outside % colors) + (outside / colors);
+    if (outside < 0)
+        outside = -outside;
+    if (outside >= colors)
+        outside = (outside % colors) + (outside / colors);
 
     {   int tmp;
         tmp = uvalues[++k].uval.ch.val;
         if (tmp > 0)
             outside = -tmp;
     }
-    if (outside != old_outside) j++;
+    if (outside != old_outside)
+        j++;
 
     strcpy(savenameptr,uvalues[++k].uval.sval);
     if (strcmp(savename,prevsavename))
@@ -345,23 +356,30 @@ int get_toggles()
     }
 
     usr_biomorph = uvalues[++k].uval.ival;
-    if (usr_biomorph >= colors) usr_biomorph = (usr_biomorph % colors) + (usr_biomorph / colors);
-    if (usr_biomorph != old_biomorph) j++;
+    if (usr_biomorph >= colors)
+        usr_biomorph = (usr_biomorph % colors) + (usr_biomorph / colors);
+    if (usr_biomorph != old_biomorph)
+        j++;
 
     decomp[0] = uvalues[++k].uval.ival;
-    if (decomp[0] != old_decomp) j++;
+    if (decomp[0] != old_decomp)
+        j++;
 
     if (strncmp(strlwr(uvalues[++k].uval.sval), "normal",4) == 0)
         fillcolor = -1;
     else
         fillcolor = atoi(uvalues[k].uval.sval);
-    if (fillcolor < 0) fillcolor = -1;
-    if (fillcolor >= colors) fillcolor = (fillcolor % colors) + (fillcolor / colors);
-    if (fillcolor != old_fillcolor) j++;
+    if (fillcolor < 0)
+        fillcolor = -1;
+    if (fillcolor >= colors)
+        fillcolor = (fillcolor % colors) + (fillcolor / colors);
+    if (fillcolor != old_fillcolor)
+        j++;
 
     ++k;
     closeprox = uvalues[k].uval.dval;
-    if (closeprox != old_closeprox) j++;
+    if (closeprox != old_closeprox)
+        j++;
 
     return (j);
 }
@@ -921,12 +939,18 @@ int starfield()
 {
     int c;
     busy = true;
-    if (starfield_values[0] <   1.0) starfield_values[0] =   1.0;
-    if (starfield_values[0] > 100.0) starfield_values[0] = 100.0;
-    if (starfield_values[1] <   1.0) starfield_values[1] =   1.0;
-    if (starfield_values[1] > 100.0) starfield_values[1] = 100.0;
-    if (starfield_values[2] <   1.0) starfield_values[2] =   1.0;
-    if (starfield_values[2] > 100.0) starfield_values[2] = 100.0;
+    if (starfield_values[0] <   1.0)
+        starfield_values[0] =   1.0;
+    if (starfield_values[0] > 100.0)
+        starfield_values[0] = 100.0;
+    if (starfield_values[1] <   1.0)
+        starfield_values[1] =   1.0;
+    if (starfield_values[1] > 100.0)
+        starfield_values[1] = 100.0;
+    if (starfield_values[2] <   1.0)
+        starfield_values[2] =   1.0;
+    if (starfield_values[2] > 100.0)
+        starfield_values[2] = 100.0;
 
     Distribution = (int)(starfield_values[0]);
     con  = (long)(((starfield_values[1]) / 100.0) * (1L << 16));

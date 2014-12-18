@@ -1684,7 +1684,8 @@ x11_window(Driver *drv)
         di->Xgc = XCreateGC(di->Xdp, di->Xw, 0, &Xgcvals);
     }
     colors = xcmapstuff(di);
-    if (rotate_hi == 255) rotate_hi = colors-1;
+    if (rotate_hi == 255)
+        rotate_hi = colors-1;
 
     {
         unsigned long event_mask = KeyPressMask | KeyReleaseMask | ExposureMask;

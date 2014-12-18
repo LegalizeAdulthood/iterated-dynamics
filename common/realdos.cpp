@@ -294,7 +294,8 @@ void helptitle()
     return;
     //NOTREACHED
 #else
-    if (debugflag == 3002) return;
+    if (debugflag == 3002)
+        return;
 #define DEVELOPMENT
 #ifdef DEVELOPMENT
     driver_put_string(0, 2, C_TITLE_DEV, "Development Version");
@@ -323,7 +324,8 @@ int putstringcenter(int row, int col, int width, int attr, const char *msg)
     int i,j,k;
     i = 0;
 #ifdef XFRACT
-    if (width >= 80) width=79; // Some systems choke in column 80
+    if (width >= 80)
+        width=79; // Some systems choke in column 80
 #endif
     while (msg[i])
         ++i; // strlen for a
@@ -1445,7 +1447,8 @@ static int menu_checkkey(int curkey, int /*choice*/)
     int testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey+('a'-'A') : curkey;
 #ifdef XFRACT
     // We use F2 for shift-@, annoyingly enough
-    if (testkey == FIK_F2) return (0-testkey);
+    if (testkey == FIK_F2)
+        return (0-testkey);
 #endif
     if (testkey == '2')
         testkey = '@';
@@ -1511,7 +1514,8 @@ int input_field(
             display = false;
         }
         curkey = driver_key_cursor(row+insert,col+offset);  // get a keystroke
-        if (curkey == 1047) curkey = 47; // numeric slash
+        if (curkey == 1047)
+            curkey = 47; // numeric slash
         switch (curkey) {
         case FIK_ENTER:
         case FIK_ENTER_2:
@@ -1520,11 +1524,13 @@ int input_field(
         case FIK_ESC:
             goto inpfld_end;
         case FIK_RIGHT_ARROW:
-            if (offset < len-1) ++offset;
+            if (offset < len-1)
+                ++offset;
             started = true;
             break;
         case FIK_LEFT_ARROW:
-            if (offset > 0) --offset;
+            if (offset > 0)
+                --offset;
             started = true;
             break;
         case FIK_HOME:
@@ -1570,7 +1576,8 @@ int input_field(
                     goto inpfld_end;
                 break;                                // non alphanum char
             }
-            if (offset >= len) break;                // at end of field
+            if (offset >= len)
+                break;                // at end of field
             if (insert && started && strlen(fld) >= (size_t)len)
                 break;                                // insert & full
             if ((options & INPUTFIELD_NUMERIC)

@@ -274,7 +274,8 @@ int fullscreen_prompt(      // full-screen prompting routine
         }
         int j = (int) strlen(prompts[i]);
         if (values[i].type == '*') {
-            if (j > maxcomment)     maxcomment = j;
+            if (j > maxcomment)
+                maxcomment = j;
         }
         else
         {
@@ -287,8 +288,10 @@ int fullscreen_prompt(      // full-screen prompting routine
         }
     }
     boxwidth = maxpromptwidth + maxfldwidth + 2;
-    if (maxcomment > boxwidth) boxwidth = maxcomment;
-    if ((boxwidth += 4) > 80) boxwidth = 80;
+    if (maxcomment > boxwidth)
+        boxwidth = maxcomment;
+    if ((boxwidth += 4) > 80)
+        boxwidth = 80;
     boxcol = (80 - boxwidth) / 2;       // center the box
     promptcol = boxcol + 2;
     valuecol = boxcol + boxwidth - maxfldwidth - 2;
@@ -606,14 +609,16 @@ int fullscreen_prompt(      // full-screen prompting routine
             curchoice = -1;
         case FIK_DOWN_ARROW:
             do {
-                if (++curchoice >= numprompts) curchoice = 0;
+                if (++curchoice >= numprompts)
+                    curchoice = 0;
             } while (values[curchoice].type == '*');
             break;
         case FIK_PAGE_DOWN:
             curchoice = numprompts;
         case FIK_UP_ARROW:
             do {
-                if (--curchoice < 0) curchoice = numprompts - 1;
+                if (--curchoice < 0)
+                    curchoice = numprompts - 1;
             } while (values[curchoice].type == '*');
             break;
         case FIK_CTL_DOWN_ARROW:     // scrolling key - down one row
@@ -692,7 +697,8 @@ int prompt_valuestring(char *buf,fullscreenvalues *val)
         i = 16;    // cellular needs 16 (was 15)
         while (1) {
             sprintf(buf,"%.*g",i,val->uval.dval);
-            if ((int)strlen(buf) <= ret) break;
+            if ((int)strlen(buf) <= ret)
+                break;
             --i;
         }
         break;
@@ -918,7 +924,8 @@ static int select_fracttype(int t) // subrtn of get_fracttype, separated
     // setup context sensitive help
     oldhelpmode = helpmode;
     helpmode = HELPFRACTALS;
-    if (t == IFS3D) t = IFS;
+    if (t == IFS3D)
+        t = IFS;
     {
         int i = -1;
         int j = -1;
@@ -1255,8 +1262,10 @@ int get_fract_params(int caller)        // prompt for type-specific parms
             if (k && c == ' ' && ++k <= 5) { } // skip 4 blanks at start of line
             else {
                 if (c == '\n') {
-                    if (k) break; // blank line
-                    if (++lines >= 16) break;
+                    if (k)
+                        break; // blank line
+                    if (++lines >= 16)
+                        break;
                     k = 1;
                 }
                 else if (c < 16) // a special help format control char
@@ -2358,7 +2367,8 @@ int get_fract3d_params() // prompt for 3D fractal parameters
     XSHIFT  =  uvalues[k++].uval.ival;
     YSHIFT  =  uvalues[k++].uval.ival;
     g_glasses_type = uvalues[k++].uval.ival;
-    if (g_glasses_type < 0 || g_glasses_type > 4) g_glasses_type = 0;
+    if (g_glasses_type < 0 || g_glasses_type > 4)
+        g_glasses_type = 0;
     if (g_glasses_type)
         if (get_funny_glasses_params() || check_mapfile())
             ret = -1;
@@ -2651,8 +2661,10 @@ restart_3:
         transparent[1] = uvalues[k++].uval.ival;
     }
     RANDOMIZE  = uvalues[k++].uval.ival;
-    if (RANDOMIZE >= 7) RANDOMIZE = 7;
-    if (RANDOMIZE <= 0) RANDOMIZE = 0;
+    if (RANDOMIZE >= 7)
+        RANDOMIZE = 7;
+    if (RANDOMIZE <= 0)
+        RANDOMIZE = 0;
 
     if (Targa_Out || ILLUMINE || RAY)
         if (get_light_params())
@@ -2751,16 +2763,20 @@ static bool get_light_params()
         {
             LIGHTAVG = uvalues[k++].uval.ival;
             Ambient  = uvalues[k++].uval.ival;
-            if (Ambient >= 100) Ambient = 100;
-            if (Ambient <= 0) Ambient = 0;
+            if (Ambient >= 100)
+                Ambient = 100;
+            if (Ambient <= 0)
+                Ambient = 0;
         }
     }
 
     if (Targa_Out && !RAY)
     {
         haze  =  uvalues[k++].uval.ival;
-        if (haze >= 100) haze = 100;
-        if (haze <= 0) haze = 0;
+        if (haze >= 100)
+            haze = 100;
+        if (haze <= 0)
+            haze = 0;
         strcpy(light_name,uvalues[k++].uval.sval);
         /* In case light_name conflicts with an existing name it is checked
                 again in line3d */

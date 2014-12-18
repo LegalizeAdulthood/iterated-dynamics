@@ -336,7 +336,8 @@ bool LLoad()
 static void free_rules_mem()
 {
     for (int i = 0; i < MAXRULES; ++i)
-        if (ruleptrs[i]) free(ruleptrs[i]);
+        if (ruleptrs[i])
+            free(ruleptrs[i]);
 }
 
 static int rule_present(char symbol)
@@ -544,10 +545,14 @@ static void lsysi_dosizedm(lsys_turtlestatei *cmd)
 
     // xpos+=size*aspect*cos(realangle*PI/180);
     // ypos+=size*sin(realangle*PI/180);
-    if (cmd->xpos > cmd->xmax) cmd->xmax=cmd->xpos;
-    if (cmd->ypos > cmd->ymax) cmd->ymax=cmd->ypos;
-    if (cmd->xpos < cmd->xmin) cmd->xmin=cmd->xpos;
-    if (cmd->ypos < cmd->ymin) cmd->ymin=cmd->ypos;
+    if (cmd->xpos > cmd->xmax)
+        cmd->xmax = cmd->xpos;
+    if (cmd->ypos > cmd->ymax)
+        cmd->ymax=cmd->ypos;
+    if (cmd->xpos < cmd->xmin)
+        cmd->xmin = cmd->xpos;
+    if (cmd->ypos < cmd->ymin)
+        cmd->ymin = cmd->ypos;
 }
 
 static void lsysi_dosizegf(lsys_turtlestatei *cmd)
@@ -556,10 +561,14 @@ static void lsysi_dosizegf(lsys_turtlestatei *cmd)
     cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
-    if (cmd->xpos > cmd->xmax) cmd->xmax=cmd->xpos;
-    if (cmd->ypos > cmd->ymax) cmd->ymax=cmd->ypos;
-    if (cmd->xpos < cmd->xmin) cmd->xmin=cmd->xpos;
-    if (cmd->ypos < cmd->ymin) cmd->ymin=cmd->ypos;
+    if (cmd->xpos > cmd->xmax)
+        cmd->xmax = cmd->xpos;
+    if (cmd->ypos > cmd->ymax)
+        cmd->ymax = cmd->ypos;
+    if (cmd->xpos < cmd->xmin)
+        cmd->xmin = cmd->xpos;
+    if (cmd->ypos < cmd->ymin)
+        cmd->ymin = cmd->ypos;
 }
 
 static void lsysi_dodrawd(lsys_turtlestatei *cmd)
@@ -573,8 +582,8 @@ static void lsysi_dodrawd(lsys_turtlestatei *cmd)
     fixedsin = (long)(s * FIXEDLT1);
     fixedcos = (long)(c * FIXEDLT1);
 
-    lastx=(int)(cmd->xpos >> 19);
-    lasty=(int)(cmd->ypos >> 19);
+    lastx = (int)(cmd->xpos >> 19);
+    lasty = (int)(cmd->ypos >> 19);
     cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
     cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
     // xpos+=size*aspect*cos(realangle*PI/180);
