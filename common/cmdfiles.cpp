@@ -383,7 +383,7 @@ static void initvars_restart()          // <ins> key init
     strcpy(readname,DOTSLASH);           // initially current directory
     showfile = 1;
     // next should perhaps be fractal re-init, not just <ins> ?
-    initcyclelimit=55;                   // spin-DAC default speed limit
+    initcyclelimit = 55;                   // spin-DAC default speed limit
     mapset = false;                     // no map= name active
     if (mapdacbox) {
         free(mapdacbox);
@@ -2487,17 +2487,17 @@ int cmdarg(char *curarg, int mode) // process a single argument
     }
 
     if (strcmp(variable, "periodicity") == 0) {   // periodicity=?
-        usr_periodicitycheck=1;
+        usr_periodicitycheck = 1;
         if ((charval[0] == 'n') || (numval == 0))
-            usr_periodicitycheck=0;
+            usr_periodicitycheck = 0;
         else if (charval[0] == 'y')
-            usr_periodicitycheck=1;
+            usr_periodicitycheck = 1;
         else if (charval[0] == 's')   // 's' for 'show'
             usr_periodicitycheck= -1;
         else if (numval == NONNUMERIC)
             goto badarg;
         else if (numval != 0)
-            usr_periodicitycheck=numval;
+            usr_periodicitycheck = numval;
         if (usr_periodicitycheck > 255)
             usr_periodicitycheck = 255;
         if (usr_periodicitycheck < -255)
@@ -2574,9 +2574,9 @@ int cmdarg(char *curarg, int mode) // process a single argument
             }
             else
             {
-                showdot=numval;
+                showdot = numval;
                 if (showdot < 0)
-                    showdot=-1;
+                    showdot = -1;
             }
             if (totparms > 1 && intparms > 0)
                 sizedot = intval[1];
@@ -2658,7 +2658,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
         int existdir;
         if (valuelen > (FILE_MAX_PATH-1))
             goto badarg;
-        existdir=merge_pathnames(IFSFileName, value, mode);
+        existdir = merge_pathnames(IFSFileName, value, mode);
         if (existdir == 0)
             reset_ifs_defn();
         else if (existdir < 0)
@@ -3231,7 +3231,7 @@ void set_3d_defaults()
 static int get_bf(bf_t bf, const char *curarg)
 {
     const char *s;
-    s=strchr(curarg,'/');
+    s = strchr(curarg,'/');
     if (s) {
         std::string buff(curarg, s);
         strtobf(bf, buff.c_str());
@@ -3245,7 +3245,7 @@ static int get_bf(bf_t bf, const char *curarg)
 int get_curarg_len(const char *curarg)
 {
     const char *s;
-    s=strchr(curarg,'/');
+    s = strchr(curarg,'/');
     if (s) {
         return s - curarg;
     } else {
@@ -3259,7 +3259,7 @@ int get_max_curarg_len(const char *floatvalstr[], int totparms)
     int tmp,max_str;
     max_str = 0;
     for (int i = 0; i < totparms; i++)
-        if ((tmp=get_curarg_len(floatvalstr[i])) > max_str)
+        if ((tmp = get_curarg_len(floatvalstr[i])) > max_str)
             max_str = tmp;
     return max_str;
 }
