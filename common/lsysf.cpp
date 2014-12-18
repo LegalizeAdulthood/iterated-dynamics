@@ -211,8 +211,8 @@ static void lsysf_dodrawd(lsys_turtlestatef *cmd)
     s = sin(angle);
     c = cos(angle);
 
-    lastx=(int) cmd->xpos;
-    lasty=(int) cmd->ypos;
+    lastx = (int) cmd->xpos;
+    lasty = (int) cmd->ypos;
 
     cmd->xpos += cmd->size * cmd->aspect * c;
     cmd->ypos += cmd->size * s;
@@ -333,23 +333,23 @@ findsize(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
                 LDBL savesize,savex,savey,saverang;
 
                 lsys_donefpu(ts);
-                saveang=ts->angle;
-                saverev=ts->reverse;
-                savesize=ts->size;
-                saverang=ts->realangle;
-                savex=ts->xpos;
-                savey=ts->ypos;
+                saveang = ts->angle;
+                saverev = ts->reverse;
+                savesize = ts->size;
+                saverang = ts->realangle;
+                savex = ts->xpos;
+                savey = ts->ypos;
                 lsys_prepfpu(ts);
                 command = findsize(command+1, ts, rules, depth);
                 if (command == nullptr)
                     return (nullptr);
                 lsys_donefpu(ts);
-                ts->angle=saveang;
-                ts->reverse=saverev;
-                ts->size=savesize;
-                ts->realangle=saverang;
-                ts->xpos=savex;
-                ts->ypos=savey;
+                ts->angle = saveang;
+                ts->reverse = saverev;
+                ts->size = savesize;
+                ts->realangle = saverang;
+                ts->xpos = savex;
+                ts->ypos = savey;
                 lsys_prepfpu(ts);
             }
         }
@@ -367,7 +367,7 @@ lsysf_findscale(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int 
     LDBL locaspect;
     lsys_cmd *fsret;
 
-    locaspect=screenaspect*xdots/ydots;
+    locaspect = screenaspect*xdots/ydots;
     ts->aspect = locaspect;
     ts->ymin = 0;
     ts->ymax = ts->ymin;
@@ -463,25 +463,25 @@ drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules,int depth)
                 LDBL savesize,savex,savey,saverang;
 
                 lsys_donefpu(ts);
-                saveang=ts->angle;
-                saverev=ts->reverse;
-                savesize=ts->size;
-                saverang=ts->realangle;
-                savex=ts->xpos;
-                savey=ts->ypos;
-                savecolor=ts->curcolor;
+                saveang = ts->angle;
+                saverev = ts->reverse;
+                savesize = ts->size;
+                saverang = ts->realangle;
+                savex = ts->xpos;
+                savey = ts->ypos;
+                savecolor = ts->curcolor;
                 lsys_prepfpu(ts);
                 command = drawLSysF(command+1, ts, rules, depth);
                 if (command == nullptr)
                     return (nullptr);
                 lsys_donefpu(ts);
-                ts->angle=saveang;
-                ts->reverse=saverev;
-                ts->size=savesize;
-                ts->realangle=saverang;
-                ts->xpos=savex;
-                ts->ypos=savey;
-                ts->curcolor=savecolor;
+                ts->angle = saveang;
+                ts->reverse = saverev;
+                ts->size = savesize;
+                ts->realangle = saverang;
+                ts->xpos = savex;
+                ts->ypos = savey;
+                ts->curcolor = savecolor;
                 lsys_prepfpu(ts);
             }
         }
@@ -743,7 +743,7 @@ void lsysf_dosincos()
     LDBL twopimax;
     LDBL twopimaxi;
 
-    locaspect=screenaspect*xdots/ydots;
+    locaspect = screenaspect*xdots/ydots;
     twopimax = TWOPI / maxangle;
     for (int i = 0; i < maxangle; i++) {
         twopimaxi = i * twopimax;
