@@ -407,7 +407,7 @@ int sound_line(BYTE *pixels, int linelen)
 {
     int twidth = xdots;
     int extra;
-    int ret=0;
+    int ret = 0;
     while (linelen > 0)
     {
         extra = colcount+linelen-twidth;

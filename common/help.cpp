@@ -903,7 +903,7 @@ static bool can_read_file(const char *path)
 {
     int handle;
 
-    if ((handle=open(path, O_RDONLY)) != -1)
+    if ((handle = open(path, O_RDONLY)) != -1)
     {
         close(handle);
         return true;

@@ -22,7 +22,7 @@
 #define MAXRECT         1024      // largest width of SaveRect/RestoreRect
 
 #define newx(size)     mem_alloc(size)
-#define delete(block)  block=nullptr
+#define delete(block)  block = nullptr
 
 int show_numbers =0;              // toggle for display of coords
 U16 memory_handle = 0;
