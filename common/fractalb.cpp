@@ -48,7 +48,7 @@ void showcornersdbl(char *s)
 // show floating point and bignumber corners
 void showcorners(char *s)
 {
-    int dec=20;
+    int dec = 20;
     char msg[100],msg1[100],msg3[100];
     bntostr(msg,dec,bnxmin);
     sprintf(msg1,"bnxmin=%s\nxxmin= %.20f\n\n",msg,xxmin);
@@ -91,7 +91,7 @@ bfdecimals=%d ",
 
 void showcornersbf(char *s)
 {
-    int dec=decimals;
+    int dec = decimals;
     char msg[100],msg1[100],msg3[600];
     if (dec > 20)
         dec = 20;
@@ -122,7 +122,7 @@ void showcornersbf(char *s)
 
 void showcornersbfs(char *s)
 {
-    int dec=20;
+    int dec = 20;
     char msg[100],msg1[100],msg3[500];
     bftostr(msg,dec,bfsxmin);
     sprintf(msg1,"bfsxmin=%s\nxxmin= %.20f\n\n",msg,xxmin);
@@ -195,7 +195,7 @@ void showaspect(char *s)
 // compare a double and bignumber
 void comparevalues(char *s, LDBL x, bn_t bnx)
 {
-    int dec=40;
+    int dec = 40;
     char msg[100],msg1[100];
     bntostr(msg,dec,bnx);
     sprintf(msg1,"%s\nbignum=%s\ndouble=%.20Lf\n\n",s,msg,x);
@@ -205,7 +205,7 @@ void comparevalues(char *s, LDBL x, bn_t bnx)
 // compare a double and bignumber
 void comparevaluesbf(char *s, LDBL x, bf_t bfx)
 {
-    int dec=40;
+    int dec = 40;
     char msg[300],msg1[300];
     bftostr_e(msg,dec,bfx);
     sprintf(msg1,"%s\nbignum=%s\ndouble=%.20Lf\n\n",s,msg,x);
