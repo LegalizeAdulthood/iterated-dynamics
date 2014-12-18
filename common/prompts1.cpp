@@ -489,7 +489,7 @@ int fullscreen_prompt(      // full-screen prompting routine
             case FIK_F8:
             case FIK_F9:
             case FIK_F10:
-                if (promptfkeys & (1<<(done+1-FIK_F1)))
+                if (promptfkeys & (1 << (done+1-FIK_F1)))
                     goto fullscreen_exit;
             }
         }
@@ -697,7 +697,7 @@ int prompt_valuestring(char *buf,fullscreenvalues *val)
         }
         break;
     case 'D':
-        if (val->uval.dval<0) { // We have to round the right way
+        if (val->uval.dval < 0) { // We have to round the right way
             sprintf(buf,"%ld",(long)(val->uval.dval-.5));
         }
         else {
@@ -754,7 +754,7 @@ int prompt_checkkey(int curkey)
     case FIK_F8:
     case FIK_F9:
     case FIK_F10:
-        if (promptfkeys & (1<<(curkey+1-FIK_F1)))
+        if (promptfkeys & (1 << (curkey+1-FIK_F1)))
             return curkey;
     }
     return 0;
@@ -785,7 +785,7 @@ int prompt_checkkey_scroll(int curkey)
     case FIK_F8:
     case FIK_F9:
     case FIK_F10:
-        if (promptfkeys & (1<<(curkey+1-FIK_F1)))
+        if (promptfkeys & (1 << (curkey+1-FIK_F1)))
             return curkey;
     }
     return 0;
@@ -1203,7 +1203,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     double oldparam[MAXPARAMS];
     int fkeymask = 0x40;
     oldbailout = bailout;
-    if (fractype==JULIBROT || fractype==JULIBROTFP)
+    if (fractype == JULIBROT || fractype == JULIBROTFP)
         julibrot = true;
     else
         julibrot = false;
@@ -1367,7 +1367,7 @@ gfp_top:
         numparams = lastparm - firstparm;
 
     numtrig = (curfractalspecific->flags >> 6) & 7;
-    if (curtype==FORMULA || curtype==FFORMULA) {
+    if (curtype == FORMULA || curtype == FFORMULA) {
         numtrig = maxfn;
     }
 
@@ -1510,7 +1510,7 @@ gfp_top:
         paramvalues[promptnum++].uval.ch.val  = minor_method;
     }
 
-    if ((curtype==FORMULA || curtype==FFORMULA) && uses_ismand) {
+    if ((curtype == FORMULA || curtype == FFORMULA) && uses_ismand) {
         choices[promptnum] = "ismand";
         paramvalues[promptnum].type = 'y';
         paramvalues[promptnum++].uval.ch.val = ismand ? 1 : 0;
@@ -1635,7 +1635,7 @@ gfp_top:
         major_method = (enum Major)paramvalues[promptnum++].uval.ch.val;
         minor_method = (enum Minor)paramvalues[promptnum++].uval.ch.val;
     }
-    if ((curtype==FORMULA || curtype==FFORMULA) && uses_ismand)
+    if ((curtype == FORMULA || curtype == FFORMULA) && uses_ismand)
     {
         if (ismand != (paramvalues[promptnum].uval.ch.val != 0))
         {
@@ -2836,7 +2836,7 @@ static bool get_funny_glasses_params()
         ZVIEWER = 150;
     if (g_eye_separation == 0)
     {
-        if (fractype==IFS3D || fractype==LLORENZ3D || fractype==FPLORENZ3D)
+        if (fractype == IFS3D || fractype == LLORENZ3D || fractype == FPLORENZ3D)
         {
             g_eye_separation =  2;
             xadjust       = -2;
