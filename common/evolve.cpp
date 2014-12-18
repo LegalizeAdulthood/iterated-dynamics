@@ -333,7 +333,7 @@ int get_the_rest()
     MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
     numtrig = (curfractalspecific->flags >> 6) & 7;
-    if (fractype==FORMULA || fractype==FFORMULA) {
+    if (fractype == FORMULA || fractype == FFORMULA) {
         numtrig = maxfn;
     }
 
@@ -457,7 +457,7 @@ int get_variations()
     numparams = 0;
     for (int i = firstparm; i < lastparm; i++)
     {
-        if (typehasparm(julibrot ? neworbittype : fractype, i, nullptr)==0) {
+        if (typehasparm(julibrot ? neworbittype : fractype, i, nullptr) == 0) {
             if (fractype == FORMULA || fractype == FFORMULA)
                 if (paramnotused(i))
                     continue;
@@ -669,7 +669,7 @@ get_evol_restart:
         fiddle_reduction = 1.0;
         goto get_evol_restart;
     }
-    if (i==FIK_F2) {
+    if (i == FIK_F2) {
         paramrangex = paramrangex / 2;
         newopx = opx + paramrangex/2;
         opx = newopx;
@@ -679,7 +679,7 @@ get_evol_restart:
         fiddlefactor = fiddlefactor / 2;
         goto get_evol_restart;
     }
-    if (i==FIK_F3) {
+    if (i == FIK_F3) {
         double centerx, centery;
         centerx = opx + paramrangex / 2;
         paramrangex = paramrangex * 2;
@@ -706,7 +706,7 @@ get_evol_restart:
         return (1);             // the following code can set evolving even if it's off
 
     gridsz = uvalues[++k].uval.ival;
-    tmp = sxdots / (MINPIXELS<<1);
+    tmp = sxdots / (MINPIXELS << 1);
     // (sxdots / 20), max # of subimages @ 20 pixels per subimage
     // MAXGRIDSZ == 1024 / 20 == 51
     if (gridsz > MAXGRIDSZ)
@@ -758,7 +758,7 @@ get_evol_restart:
     if (!evolving && (evolving == old_evolving))
         i = 0;
 
-    if (j==FIK_F6) {
+    if (j == FIK_F6) {
         old_variations = get_variations();
         set_current_params();
         if (old_variations > 0)
@@ -885,7 +885,7 @@ void drawparmbox(int mode)
         MoveToMemory((BYTE *)boxvalues,(U16)boxcount,1L,4L,imgboxhandle);
         clearbox(); // to avoid probs when one box overlaps the other
     }
-    if (prmboxcount!=0)  { // clear last parmbox
+    if (prmboxcount != 0)  { // clear last parmbox
         boxcount=prmboxcount;
         MoveFromMemory((BYTE *)boxx,(U16)(boxcount*2),1L,0L,prmboxhandle);
         MoveFromMemory((BYTE *)boxy,(U16)(boxcount*2),1L,1L,prmboxhandle);
@@ -979,7 +979,7 @@ void spiralmap(int count)
         py = (mid - offset);
         for (px = (mid - offset)+1; px < mid+offset; px++) {
             i++;
-            if (i==count)
+            if (i == count)
                 return;
         }
         // then do the right hand column
