@@ -152,39 +152,39 @@ double wide number can then be ignored.
 #ifdef ACCESS_BY_BYTE
 U32 big_access32(BYTE BIGDIST *addr)
 {
-    return addr[0] | ((U32)addr[1]<<8) | ((U32)addr[2]<<16) | ((U32)addr[3]<<24);
+    return addr[0] | ((U32)addr[1] << 8) | ((U32)addr[2] << 16) | ((U32)addr[3] << 24);
 }
 
 U16 big_access16(BYTE BIGDIST *addr)
 {
-    return (U16)addr[0] | ((U16)addr[1]<<8);
+    return (U16)addr[0] | ((U16)addr[1] << 8);
 }
 
 S16 big_accessS16(S16 BIGDIST *addr)
 {
-    return (S16)((BYTE *)addr)[0] | ((S16)((BYTE *)addr)[1]<<8);
+    return (S16)((BYTE *)addr)[0] | ((S16)((BYTE *)addr)[1] << 8);
 }
 
 U32 big_set32(BYTE BIGDIST *addr, U32 val)
 {
     addr[0] = (BYTE)(val&0xff);
-    addr[1] = (BYTE)((val>>8)&0xff);
-    addr[2] = (BYTE)((val>>16)&0xff);
-    addr[3] = (BYTE)((val>>24)&0xff);
+    addr[1] = (BYTE)((val >> 8)&0xff);
+    addr[2] = (BYTE)((val >> 16)&0xff);
+    addr[3] = (BYTE)((val >> 24)&0xff);
     return val;
 }
 
 U16 big_set16(BYTE BIGDIST *addr, U16 val)
 {
     addr[0] = (BYTE)(val&0xff);
-    addr[1] = (BYTE)((val>>8)&0xff);
+    addr[1] = (BYTE)((val >> 8)&0xff);
     return val;
 }
 
 S16 big_setS16(S16 BIGDIST *addr, S16 val)
 {
     ((BYTE *)addr)[0] = (BYTE)(val&0xff);
-    ((BYTE *)addr)[1] = (BYTE)((val>>8)&0xff);
+    ((BYTE *)addr)[1] = (BYTE)((val >> 8)&0xff);
     return val;
 }
 
@@ -537,7 +537,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
         return r;
     }
     f = 1/f; // approximate inverse
-    maxval = (1L << ((intlength<<3)-1)) - 1;
+    maxval = (1L << ((intlength << 3)-1)) - 1;
     if (f > maxval) // check for overflow
     {
         max_bn(r);
@@ -636,7 +636,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
         return r;
     }
     f = a/b; // approximate quotient
-    maxval = (1L << ((intlength<<3)-1)) - 1;
+    maxval = (1L << ((intlength << 3)-1)) - 1;
     if (f > maxval) // check for overflow
     {
         max_bn(r);
@@ -859,7 +859,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 
     f = bntofloat(n);
     f = logl(f); // approximate ln(x)
-    maxval = (1L << ((intlength<<3)-1)) - 1;
+    maxval = (1L << ((intlength << 3)-1)) - 1;
     if (f > maxval) // check for overflow
     {
         max_bn(r);
