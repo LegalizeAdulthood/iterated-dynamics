@@ -182,28 +182,28 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         else
             init_bf_dec(gotprec);
     }
-    else if ((fractype==MANDEL || fractype==MANDELFP) && debugflag==3200)
+    else if ((fractype == MANDEL || fractype == MANDELFP) && debugflag == 3200)
     {
         fractype=MANDELFP;
         curfractalspecific = &fractalspecific[MANDELFP];
         fractal_floattobf();
         usr_floatflag = true;
     }
-    else if ((fractype==JULIA || fractype==JULIAFP) && debugflag==3200)
+    else if ((fractype == JULIA || fractype == JULIAFP) && debugflag == 3200)
     {
         fractype=JULIAFP;
         curfractalspecific = &fractalspecific[JULIAFP];
         fractal_floattobf();
         usr_floatflag = true;
     }
-    else if ((fractype==LMANDELZPOWER || fractype==FPMANDELZPOWER) && debugflag==3200)
+    else if ((fractype == LMANDELZPOWER || fractype == FPMANDELZPOWER) && debugflag == 3200)
     {
         fractype=FPMANDELZPOWER;
         curfractalspecific = &fractalspecific[FPMANDELZPOWER];
         fractal_floattobf();
         usr_floatflag = true;
     }
-    else if ((fractype==LJULIAZPOWER || fractype==FPJULIAZPOWER) && debugflag==3200)
+    else if ((fractype == LJULIAZPOWER || fractype == FPJULIAZPOWER) && debugflag == 3200)
     {
         fractype=FPJULIAZPOWER;
         curfractalspecific = &fractalspecific[FPJULIAZPOWER];
@@ -280,7 +280,7 @@ init_restart:
         else
             fractype = JULIBROT;
     }
-    else if (fractype == JULIBROT && fractalspecific[neworbittype].isinteger==0)
+    else if (fractype == JULIBROT && fractalspecific[neworbittype].isinteger == 0)
     {
         int i;
         if ((i=fractalspecific[neworbittype].tofloat) != NOFRACTAL)
@@ -403,8 +403,8 @@ init_restart:
             // past max res?  check corners within 10% of expected
             if (ratio_bad((double)lx0[xdots-1]-xmin,(double)xmax-x3rd)
                     || ratio_bad((double)ly0[ydots-1]-ymax,(double)y3rd-ymax)
-                    || ratio_bad((double)lx1[(ydots>>1)-1],((double)x3rd-xmin)/2)
-                    || ratio_bad((double)ly1[(xdots>>1)-1],((double)ymin-y3rd)/2))
+                    || ratio_bad((double)lx1[(ydots >> 1)-1],((double)x3rd-xmin)/2)
+                    || ratio_bad((double)ly1[(xdots >> 1)-1],((double)ymin-y3rd)/2))
             {
 expand_retry:
                 if (integerfractal          // integer fractal type?
@@ -733,25 +733,25 @@ static void adjust_to_limitsbf(double expand)
     half_a_bf(bcentery);
 
     // if (xxmin == centerx) {
-    if (cmp_bf(bfxmin,bcenterx)==0) { // ohoh, infinitely thin, fix it
+    if (cmp_bf(bfxmin,bcenterx) == 0) { // ohoh, infinitely thin, fix it
         smallest_add_bf(bfxmax);
         // bfxmin -= bfxmax-centerx;
         sub_a_bf(bfxmin,sub_bf(btmp1,bfxmax,bcenterx));
     }
 
     // if (bfymin == centery)
-    if (cmp_bf(bfymin,bcentery)==0) {
+    if (cmp_bf(bfymin,bcentery) == 0) {
         smallest_add_bf(bfymax);
         // bfymin -= bfymax-centery;
         sub_a_bf(bfymin,sub_bf(btmp1,bfymax,bcentery));
     }
 
     // if (bfx3rd == centerx)
-    if (cmp_bf(bfx3rd,bcenterx)==0)
+    if (cmp_bf(bfx3rd,bcenterx) == 0)
         smallest_add_bf(bfx3rd);
 
     // if (bfy3rd == centery)
-    if (cmp_bf(bfy3rd,bcentery)==0)
+    if (cmp_bf(bfy3rd,bcentery) == 0)
         smallest_add_bf(bfy3rd);
 
     // setup array for easier manipulation
@@ -1228,7 +1228,7 @@ void sleepms_old(long ms)
     savehelpmode = helpmode;
     tabmode  = false;
     helpmode = -1;
-    if (scalems==0L) // calibrate
+    if (scalems == 0L) // calibrate
     {
         /* selects a value of scalems that makes the units
            10000 per sec independent of CPU speed */
@@ -1653,7 +1653,7 @@ void get_julia_attractor(double real, double imag)
             }
         }
     }
-    if (attractors==0)
+    if (attractors == 0)
         periodicitycheck = savper;
     maxit = savmaxit;
 }
@@ -1667,13 +1667,13 @@ int ssg_blocksize() // used by solidguessing and by zoom panning
     // blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >=1200
     blocksize=4;
     i=300;
-    while (i<=ydots)
+    while (i <= ydots)
     {
-        blocksize+=blocksize;
-        i+=i;
+        blocksize += blocksize;
+        i += i;
     }
     // increase blocksize if prefix array not big enough
-    while (blocksize*(maxxblk-2)<xdots || blocksize*(maxyblk-2)*16<ydots)
-        blocksize+=blocksize;
+    while (blocksize*(maxxblk-2) < xdots || blocksize*(maxyblk-2)*16 < ydots)
+        blocksize += blocksize;
     return (blocksize);
 }
