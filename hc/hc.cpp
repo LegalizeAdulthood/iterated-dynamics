@@ -645,7 +645,7 @@ int read_char()
 
             for (ctr = 0; true; ctr++)
             {
-                if (ch<'0' || ch>'9' || ch == -1 || ctr >= 3)
+                if (ch < '0' || ch > '9' || ch == -1 || ctr >= 3)
                 {
                     unread_char(ch);
                     break;
@@ -1110,7 +1110,7 @@ int create_table()
         return (0);
     }
 
-    if (width <= 0 || width > 78 || cols <= 0 || start_off<0 || start_off > 78)
+    if (width <= 0 || width > 78 || cols <= 0 || start_off < 0 || start_off > 78)
     {
         error(1,"Argument out of range.");
         return (0);
@@ -3051,7 +3051,7 @@ void calc_offsets()    /* calc file offset to each topic */
                   cp->num_topic*sizeof(int);    /* topic numbers */
 
     TOPIC *tp = topic;
-    for (int t = 0; t<num_topic; t++, tp++)
+    for (int t = 0; t < num_topic; t++, tp++)
     {
         tp->offset = offset;
         offset += (long)sizeof(int) + /* topic flags */
@@ -3600,7 +3600,7 @@ int main(int argc, char *argv[])
     if (buffer == nullptr)
         fatal(0,"Not enough memory to allocate buffer.");
 
-    for (arg= &argv[1]; argc>1; argc--, arg++)
+    for (arg= &argv[1]; argc > 1; argc--, arg++)
     {
         switch ((*arg)[0])
         {
