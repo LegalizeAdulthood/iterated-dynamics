@@ -340,7 +340,7 @@ long lsqrt(long f)
     if (f <  0)
         return 0;
 
-    if (a==0)                                   // one-time compute consts
+    if (a == 0)                                   // one-time compute consts
     {
         a = (long)(fudge * .41731);
         b = (long)(fudge * .59016);
@@ -362,7 +362,7 @@ long lsqrt(long f)
     y0 = a + multiply(b, f,  bitshift);         // Newton's approximation
 
     z  = y0 + divide(f, y0, bitshift);
-    y0 = (z>>2) + divide(f, z,  bitshift);
+    y0 = (z >> 2) + divide(f, z,  bitshift);
 
     if (N % 2)
     {
