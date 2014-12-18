@@ -95,7 +95,7 @@ void drawbox(int drawit)
     double tmpx,tmpy,dx,dy,rotcos,rotsin,ftemp1,ftemp2;
     double fxwidth,fxskew,fydepth,fyskew,fxadj;
     bf_t bffxwidth, bffxskew, bffydepth, bffyskew, bffxadj;
-    int saved=0;
+    int saved = 0;
     if (zwidth == 0) { // no box to draw
         if (boxcount != 0) { // remove the old box from display
             clearbox();
@@ -657,7 +657,7 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     if (zwidth == 0.0)
         return (0); // no zoombox, leave calc_status as is
     // got a zoombox
-    if ((alignmask=check_pan()-1) < 0 || evolving) {
+    if ((alignmask = check_pan()-1) < 0 || evolving) {
         calc_status = CALCSTAT_PARAMS_CHANGED; // can't pan, trigger recalc
         return (0);
     }
@@ -721,7 +721,7 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     calc_status = CALCSTAT_RESUMABLE;
     clearbox();
     if (row > 0) // move image up
-        for (int y=0; y < ydots; ++y)
+        for (int y = 0; y < ydots; ++y)
             move_row(y+row,y,col);
     else         // move image down
         for (int y = ydots; --y >=0;)
