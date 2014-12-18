@@ -163,7 +163,7 @@ long iteration(DBLS cr, DBLS ci,
             k -= 8;
             if (k <= 0)
             {
-                n<<=1;
+                n <<= 1;
                 sre=re;
                 sim=im;
                 k=n;
