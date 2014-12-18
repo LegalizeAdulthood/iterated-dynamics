@@ -1424,9 +1424,9 @@ bool startdisk1(char *File_Name2, FILE *Source, bool overlay)
     if (truecolor) // write maxit
     {
         fputc((BYTE)(maxit       & 0xff), fps);
-        fputc((BYTE)((maxit>>8) & 0xff), fps);
-        fputc((BYTE)((maxit>>16) & 0xff), fps);
-        fputc((BYTE)((maxit>>24) & 0xff), fps);
+        fputc((BYTE)((maxit >> 8) & 0xff), fps);
+        fputc((BYTE)((maxit >> 16) & 0xff), fps);
+        fputc((BYTE)((maxit >> 24) & 0xff), fps);
     }
 
     // Finished with the header, now lets work on the display area
