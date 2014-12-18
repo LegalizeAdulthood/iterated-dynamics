@@ -56,7 +56,7 @@ static int get_scancode(char *mn)
 {
     int i;
     for (i = 0; i < stop; i++)
-        if (strcmp((char *)mn,scancodes[i].mnemonic)==0)
+        if (strcmp((char *)mn,scancodes[i].mnemonic) == 0)
             break;
     // cppcheck-suppress uninitvar
     return (scancodes[i].code);
@@ -128,8 +128,8 @@ int slideshw()
             return (0); // wait for calc to finish before reading more keystrokes
         calcwait = false;
     }
-    if (fpss==nullptr)   // open files first time through
-        if (startslideshow()==0)
+    if (fpss == nullptr)   // open files first time through
+        if (startslideshow() == 0)
         {
             stopslideshow();
             return (0);
@@ -148,7 +148,7 @@ int slideshw()
         if (slowcount > 10)
             ticks /= 2;
     }
-    if (repeats>0)
+    if (repeats > 0)
     {
         repeats--;
         return (last1);
@@ -204,7 +204,7 @@ start:
     out = -12345;
     if (isdigit(buffer[0]))       // an arbitrary scan code number - use it
         out=atoi(buffer);
-    else if (strcmp((char *)buffer,"MESSAGE")==0)
+    else if (strcmp((char *)buffer,"MESSAGE") == 0)
     {
         int secs;
         if (fscanf(fpss,"%d",&secs) != 1)
@@ -223,7 +223,7 @@ start:
         }
         out = 0;
     }
-    else if (strcmp((char *)buffer,"GOTO")==0)
+    else if (strcmp((char *)buffer,"GOTO") == 0)
     {
         if (fscanf(fpss,"%s",buffer) != 1)
         {
@@ -249,13 +249,13 @@ start:
     }
     else if ((i = get_scancode(buffer)) > 0)
         out = i;
-    else if (strcmp("WAIT",(char *)buffer)==0)
+    else if (strcmp("WAIT",(char *)buffer) == 0)
     {
         float fticks;
         err = fscanf(fpss,"%f",&fticks); // how many ticks to wait
         driver_set_keyboard_timeout((int)(fticks*1000.f));
         fticks *= CLOCKS_PER_SEC;             // convert from seconds to ticks
-        if (err==1)
+        if (err == 1)
         {
             ticks = (long)fticks;
             starttick = clock_ticks();  // start timing
@@ -267,7 +267,7 @@ start:
         out = 0;
         slowcount = out;
     }
-    else if (strcmp("CALCWAIT",(char *)buffer)==0) // wait for calc to finish
+    else if (strcmp("CALCWAIT",(char *)buffer) == 0) // wait for calc to finish
     {
         calcwait = true;
         out = 0;
@@ -289,7 +289,7 @@ int
 startslideshow()
 {
     fpss=fopen(autoname,"r");
-    if (fpss==nullptr)
+    if (fpss == nullptr)
         g_slides = SLIDES_OFF;
     ticks = 0;
     quotes = false;
@@ -312,10 +312,10 @@ void recordshw(int key)
     float dt;
     dt = (float)ticks;      // save time of last call
     ticks=clock_ticks();  // current time
-    if (fpss==nullptr)
+    if (fpss == nullptr)
     {
         fpss=fopen(autoname,"w");
-        if (fpss==nullptr)
+        if (fpss == nullptr)
             return;
     }
     dt = ticks-dt;
