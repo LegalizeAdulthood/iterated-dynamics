@@ -245,7 +245,7 @@ void print_msg(const char *type, int lnum, const char *format, va_list arg)
     if (type != nullptr)
     {
         printf("   %s", type);
-        if (lnum>0)
+        if (lnum > 0)
             printf(" %s %d", src_cfname, lnum);
         printf(": ");
     }
@@ -628,7 +628,7 @@ int read_char()
     {
         ch = _read_char();
 
-        while (ch!='\n' && ch!=-1)
+        while (ch != '\n' && ch != -1)
             ch = _read_char();
 
         ch = _read_char();
@@ -645,7 +645,7 @@ int read_char()
 
             for (ctr = 0; true; ctr++)
             {
-                if (ch<'0' || ch>'9' || ch == -1 || ctr>=3)
+                if (ch<'0' || ch>'9' || ch == -1 || ctr >= 3)
                 {
                     unread_char(ch);
                     break;
@@ -659,7 +659,7 @@ int read_char()
 
 #ifdef XFRACT
         /* Convert graphics arrows into keyboard chars */
-        if (ch>=24 && ch<=27) {
+        if (ch >= 24 && ch <= 27) {
             ch = "KJHL"[ch-24];
         }
 #endif
@@ -736,11 +736,11 @@ int find_topic_title(const char *title)
 
 int validate_label_name(char *name)
 {
-    if (!isalpha(*name) && *name!='@' && *name!='_')
+    if (!isalpha(*name) && *name != '@' && *name != '_')
         return (0);  /* invalid */
 
     while (*(++name) != '\0')
-        if (!isalpha(*name) && !isdigit(*name) && *name!='_')
+        if (!isalpha(*name) && !isdigit(*name) && *name != '_')
             return (0); /* invalid */
 
     return (1);  /* valid */
@@ -1110,7 +1110,7 @@ int create_table()
         return (0);
     }
 
-    if (width<=0 || width > 78 || cols<=0 || start_off<0 || start_off > 78)
+    if (width <= 0 || width > 78 || cols <= 0 || start_off<0 || start_off > 78)
     {
         error(1,"Argument out of range.");
         return (0);
@@ -2757,7 +2757,7 @@ void set_content_doc_page()
     int      len;
 
     tnum = find_topic_title(DOCCONTENTS_TITLE);
-    assert(tnum>=0);
+    assert(tnum >= 0);
     t = &topic[tnum];
 
     base = get_topic_text(t);
@@ -2765,10 +2765,10 @@ void set_content_doc_page()
     CONTENT *c = contents+1;
     for (int ctr = 1; ctr < num_contents; ctr++, c++)
     {
-        assert(c->doc_page>=1);
+        assert(c->doc_page >= 1);
         sprintf(buf, "%d", c->doc_page);
         len = (int) strlen(buf);
-        assert(len<=3);
+        assert(len <= 3);
         memcpy(base+c->page_num_pos+(3-len), buf, len);
     }
 
