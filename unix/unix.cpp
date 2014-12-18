@@ -218,7 +218,7 @@ void findpath(const char *filename, char *fullpathname)
     int fd;
     char *fractdir;
 
-    if (filename[0]=='/') {
+    if (filename[0] == '/') {
         strcpy(fullpathname,filename);
         fd = open(fullpathname,O_RDONLY);
         if (fd != -1) {

@@ -540,7 +540,7 @@ initUnixWindow()
 static void
 doneXwindow()
 {
-    if (Xdp==nullptr) {
+    if (Xdp == nullptr) {
         return;
     }
     if (Xgc) {
@@ -659,8 +659,8 @@ initdacbox()
         }
     } else {
         for (int i = 0; i < 256; i++) {
-            g_dac_box[i][0] = (i>>5)*8+7;
-            g_dac_box[i][1] = (((i+16)&28)>>2)*8+7;
+            g_dac_box[i][0] = (i >> 5)*8+7;
+            g_dac_box[i][1] = (((i+16)&28) >> 2)*8+7;
             g_dac_box[i][2] = (((i+2)&3))*16+15;
         }
         g_dac_box[0][2] = 0;
@@ -745,11 +745,11 @@ resizeWindow()
         finalaspectratio = screenaspect;
         int Xpad = 8;  // default, unless changed below
         int Xmwidth;
-        if (Xdepth==1)
+        if (Xdepth == 1)
             Xmwidth = 1 + sxdots/8;
-        else if (Xdepth<=8)
+        else if (Xdepth <= 8)
             Xmwidth = sxdots;
-        else if (Xdepth<=16) {  // 15 or 16 bpp
+        else if (Xdepth <= 16) {  // 15 or 16 bpp
             Xmwidth = 2*sxdots;
             Xpad = 16;
         } else {  // 24 or 32 bpp
@@ -770,7 +770,7 @@ resizeWindow()
             exit(-1);
         }
         Ximage->data = static_cast<char *>(malloc(Ximage->bytes_per_line * Ximage->height));
-        if (Ximage->data==nullptr) {
+        if (Ximage->data == nullptr) {
             fprintf(stderr,"Malloc failed: %d\n", Ximage->bytes_per_line *
                     Ximage->height);
             exit(-1);
@@ -895,7 +895,7 @@ writevideoline(int y, int x, int lastx, BYTE *pixels)
     drawing_or_drawn = 1;
 
 #if 1
-    if (x==lastx) {
+    if (x == lastx) {
         writevideo(x,y,pixels[0]);
         return;
     }
@@ -911,7 +911,7 @@ writevideoline(int y, int x, int lastx, BYTE *pixels)
     for (int i = 0; i < width; i++) {
         XPutPixel(Ximage, x+i, y, FAKE_LUT(pixline[i]));
     }
-    if (fastmode==1 && helpmode != HELPXHAIR) {
+    if (fastmode == 1 && helpmode != HELPXHAIR) {
         if (!alarmon) {
             schedulealarm(0);
         }
@@ -970,10 +970,10 @@ readvideoline(int y, int x, int lastx, BYTE *pixels)
 void writevideo(int x, int y, int color)
 {
 #ifdef DEBUG // Debugging checks
-    if (color>=colors || color < 0) {
+    if (color >= colors || color < 0) {
         fprintf(stderr,"Color %d too big %d\n", color, colors);
     }
-    if (x>=sxdots || x<0 || y>=sydots || y<0) {
+    if (x >= sxdots || x < 0 || y >= sydots || y < 0) {
         fprintf(stderr,"Bad coord %d %d\n", x,y);
     }
 #endif
@@ -1012,7 +1012,7 @@ void writevideo(int x, int y, int color)
 int readvideo(int x, int y)
 {
 #ifdef DEBUG // Debugging checks
-    if (x>=sxdots || x<0 || y>=sydots || y<0) {
+    if (x >= sxdots || x < 0 || y >= sydots || y < 0) {
         fprintf(stderr,"Bad coord %d %d\n", x,y);
     }
 #endif
@@ -1161,7 +1161,7 @@ setlinemode(int mode)
 {
     if (unixDisk) return;
     xlastcolor = -1;
-    if (mode==0) {
+    if (mode == 0) {
         XSetFunction(Xdp, Xgc, GXcopy);
         xlastfcn = GXcopy;
     } else {
@@ -1240,7 +1240,7 @@ getachar()
         char ch;
         int status;
         status = read(0,&ch,1);
-        if (status<0) {
+        if (status < 0) {
             return -1;
         } else {
             return ch;
@@ -1290,7 +1290,7 @@ xgetkey(int block)
 
         // Don't check X events every time, since that is expensive
         skipcount++;
-        if (block==0 && skipcount<25) break;
+        if (block == 0 && skipcount < 25) break;
         skipcount = 0;
 
         if (!unixDisk) {
@@ -1321,7 +1321,7 @@ xgetkey(int block)
 #endif
             status = select(ConnectionNumber(Xdp)+1,&reads,nullptr,nullptr,&tout);
         }
-        if (status<=0) {
+        if (status <= 0) {
             return 0;
         }
     }
@@ -1346,7 +1346,7 @@ xgetkey(int block)
 static int
 translatekey(int ch)
 {
-    if (ch>='a' && ch<='z') {
+    if (ch >= 'a' && ch <= 'z') {
         return ch;
     } else {
         switch (ch) {
@@ -1445,7 +1445,7 @@ handleesc()
     }
     // SUN escape key sequences
     int ch1 = getachar();
-    if (ch1==-1) {
+    if (ch1 == -1) {
         driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
         ch1 = getachar();
     }
@@ -1453,11 +1453,11 @@ handleesc()
         return FIK_ESC;
     }
     ch1 = getachar();
-    if (ch1==-1) {
+    if (ch1 == -1) {
         driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
         ch1 = getachar();
     }
-    if (ch1==-1) {
+    if (ch1 == -1) {
         return FIK_ESC;
     }
     switch (ch1) {
@@ -1473,7 +1473,7 @@ handleesc()
         break;
     }
     int ch2 = getachar();
-    if (ch2==-1) {
+    if (ch2 == -1) {
         driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
         ch2 = getachar();
     }
@@ -1490,18 +1490,18 @@ handleesc()
         default:
             return FIK_ESC;
         }
-    } else if (ch2==-1) {
+    } else if (ch2 == -1) {
         return FIK_ESC;
     } else {
         int ch3 = getachar();
-        if (ch3==-1) {
+        if (ch3 == -1) {
             driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
             ch3 = getachar();
         }
         if (ch3 != '~') {   // esc [ ch1 ch2 ~
             return FIK_ESC;
         }
-        if (ch1=='1') {
+        if (ch1 == '1') {
             switch (ch2) {
             case '1':   // esc [ 1 1 ~
                 return FIK_F1;
@@ -1524,7 +1524,7 @@ handleesc()
             default:
                 return FIK_ESC;
             }
-        } else if (ch1=='2') {
+        } else if (ch1 == '2') {
             switch (ch2) {
             case '0':   // esc [ 2 0 ~
                 return FIK_F10;
@@ -1709,9 +1709,9 @@ xhandleevents()
                 xbufkey = ctl_mode ? CTL('T') : '\n';
                 return;
             }
-            if (charcount==1) {
+            if (charcount == 1) {
                 xbufkey = buffer[0];
-                if (xbufkey=='\003') {
+                if (xbufkey == '\003') {
                     goodbye();
                 }
             }
@@ -1737,7 +1737,7 @@ xhandleevents()
 
 #define MSCALE 1
 
-                if (lookatmouse==3 && bnum != 0) {
+                if (lookatmouse == 3 && bnum != 0) {
                     dx += (xevent.xmotion.x-lastx)/MSCALE;
                     dy += (xevent.xmotion.y-lasty)/MSCALE;
                     lastx = xevent.xmotion.x;
@@ -1754,7 +1754,7 @@ xhandleevents()
         {
             int done = 0;
             int banding = 0;
-            if (lookatmouse==3 || !zoomoff)
+            if (lookatmouse == 3 || !zoomoff)
             {
                 lastx = xevent.xbutton.x;
                 lasty = xevent.xbutton.y;
@@ -1789,8 +1789,8 @@ xhandleevents()
                         /* Don't start rubber-banding until the mouse
                            gets moved.  Otherwise a click messes up the
                            window */
-                        if (ABS(bandx1-bandx0)>10 ||
-                                ABS(bandy1-bandy0)>10) {
+                        if (ABS(bandx1-bandx0) > 10 ||
+                                ABS(bandy1-bandy0) > 10) {
                             banding = 1;
                             XSetForeground(Xdp, Xgc, colors-1);
                             XSetFunction(Xdp, Xgc, GXxor);
@@ -1814,10 +1814,10 @@ xhandleevents()
             XDrawRectangle(Xdp,Xw,Xgc,MIN(bandx0,bandx1),
                            MIN(bandy0,bandy1), ABS(bandx1-bandx0),
                            ABS(bandy1-bandy0));
-            if (bandx1==bandx0) {
+            if (bandx1 == bandx0) {
                 bandx1 = bandx0+1;
             }
-            if (bandy1==bandy0) {
+            if (bandy1 == bandy0) {
                 bandy1 = bandy0+1;
             }
             zrotate = 0;
@@ -1859,13 +1859,13 @@ xhandleevents()
                 y = xevent.xexpose.y;
                 w = xevent.xexpose.width;
                 h = xevent.xexpose.height;
-                if (x+w>sxdots) {
+                if (x+w > sxdots) {
                     w = sxdots-x;
                 }
-                if (y+h>sydots) {
+                if (y+h > sydots) {
                     h = sydots-y;
                 }
-                if (x<sxdots && y<sydots && w>0 && h>0) {
+                if (x < sxdots && y < sydots && w > 0 && h > 0) {
 
                     XPutImage(Xdp,Xw,Xgc,Ximage,xevent.xexpose.x,
                               xevent.xexpose.y, xevent.xexpose.x,
@@ -1884,19 +1884,19 @@ xhandleevents()
 
     if (!xbufkey && editpal_cursor && !inside_help && lookatmouse == 3 &&
             (dx != 0 || dy != 0)) {
-        if (ABS(dx)>ABS(dy)) {
-            if (dx>0) {
+        if (ABS(dx) > ABS(dy)) {
+            if (dx > 0) {
                 xbufkey = mousefkey[bnum][0]; // right
                 dx--;
-            } else if (dx<0) {
+            } else if (dx < 0) {
                 xbufkey = mousefkey[bnum][1]; // left
                 dx++;
             }
         } else {
-            if (dy>0) {
+            if (dy > 0) {
                 xbufkey = mousefkey[bnum][2]; // down
                 dy--;
-            } else if (dy<0) {
+            } else if (dy < 0) {
                 xbufkey = mousefkey[bnum][3]; // up
                 dy++;
             }
@@ -2024,7 +2024,7 @@ RemoveRootPixmap()
     if (XGetWindowProperty(Xdp,Xroot,prop, 0L, 1L, 1, AnyPropertyType,
                            &type, &format, &nitems, &after, (unsigned char **)&pm) ==
             Success && nitems == 1) {
-        if (type==XA_PIXMAP && format==32 && after==0) {
+        if (type == XA_PIXMAP && format == 32 && after == 0) {
             XKillClient(Xdp,(XID)*pm);
             XFree((char *)pm);
         }
@@ -2089,7 +2089,7 @@ xgetfont()
                         GCForeground | GCBackground | GCFont, &values);
     assert(font_gc);
 
-    for (int i = 0; i < 128; i+=8) {
+    for (int i = 0; i < 128; i += 8) {
         for (int j = 0; j < 8; j++) {
             str[j] = i+j;
         }
@@ -2144,7 +2144,7 @@ shell_to_dos()
 
     sigint = (SignalHandler)signal(SIGINT, SIG_IGN);
     shell = getenv("SHELL");
-    if (shell==nullptr) {
+    if (shell == nullptr) {
         shell = const_cast<char *>(SHELL);
     }
     argv[0] = shell;
@@ -2166,7 +2166,7 @@ shell_to_dos()
     if (pid < 0) {
         perror("fork to shell");
     }
-    if (pid==0) {
+    if (pid == 0) {
         execvp(shell, argv);
         perror("fork to shell");
         exit(1);
@@ -2176,7 +2176,7 @@ shell_to_dos()
 
     while (1) {
         donepid = wait(0);
-        if (donepid<0 || donepid==pid) break;
+        if (donepid < 0 || donepid == pid) break;
     }
 
     // Go back to curses mode
