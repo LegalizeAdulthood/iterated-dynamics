@@ -69,15 +69,15 @@ long iteration(DBLS cr, DBLS ci,
         DBLS sim = im;
         ren=re*re;
         imn=im*im;
-        if (start!=0)
+        if (start != 0)
         {
             offset=maxit-start+7;
-            iter=offset>>3;
-            offset&=7;
+            iter=offset >> 3;
+            offset &= 7;
             offset=(8-offset);
         }
         else
-            iter=maxit>>3;
+            iter=maxit >> 3;
 
         int k = 8;
         int n = 8;
@@ -85,83 +85,83 @@ long iteration(DBLS cr, DBLS ci,
         {
             im=im*re;
             re=ren-imn;
-            im+=im;
-            re+=cr;
-            im+=ci;
+            im += im;
+            re += cr;
+            im += ci;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
 #ifdef INTEL
             mag=FABS(sre-re);
             magi=*(unsigned long *)&mag;
-            if (magi<eq)
+            if (magi < eq)
             {
                 mag=FABS(sim-im);
                 magi=*(unsigned long *)&mag;
-                if (magi<eq)
+                if (magi < eq)
                     return BASIN_COLOR;
             }
 #else // INTEL
-            if (FABS(sre-re)<equal&&FABS(sim-im)<equal)
+            if (FABS(sre-re) < equal&&FABS(sim-im) < equal)
                 return BASIN_COLOR;
 #endif // INTEL
 
-            k-=8;
-            if (k<=0)
+            k -= 8;
+            if (k <= 0)
             {
                 n<<=1;
                 sre=re;
@@ -177,88 +177,88 @@ long iteration(DBLS cr, DBLS ci,
 #endif
         }
 #ifdef INTEL
-        while (magi<bail&&--iter!=0);
+        while (magi < bail&&--iter != 0);
 #else
-        while (mag<16.0&&--iter!=0);
+        while (mag < 16.0&&--iter != 0);
 #endif
     }
     else
     {
         ren=re*re;
         imn=im*im;
-        if (start!=0)
+        if (start != 0)
         {
             offset=maxit-start+7;
-            iter=offset>>3;
-            offset&=7;
+            iter=offset >> 3;
+            offset &= 7;
             offset=(8-offset);
         }
         else
-            iter=maxit>>3;
+            iter=maxit >> 3;
 
         do
         {
             im=im*re;
             re=ren-imn;
-            im+=im;
-            re+=cr;
-            im+=ci;
+            im += im;
+            re += cr;
+            im += ci;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
             imn=im*re;
             ren=re+im;
             re=re-im;
-            imn+=imn;
+            imn += imn;
             re=ren*re;
             im=imn+ci;
-            re+=cr;
+            re += cr;
 
             imn=im*im;
             ren=re*re;
@@ -268,13 +268,13 @@ long iteration(DBLS cr, DBLS ci,
 #endif
         }
 #ifdef INTEL
-        while (magi<bail&&--iter!=0);
+        while (magi < bail&&--iter != 0);
 #else
-        while (mag<16.0&&--iter!=0);
+        while (mag < 16.0&&--iter != 0);
 #endif
     }
 
-    if (iter==0)
+    if (iter == 0)
     {
         baxinxx = true;
         return BASIN_COLOR;
@@ -307,7 +307,7 @@ long iteration(DBLS cr, DBLS ci,
         DBLS d = mag;
 #endif
         FREXP(d,&exponent);
-        return (maxit+offset-(((iter-1)<<3)+(long)adjust[exponent>>3]));
+        return (maxit+offset-(((iter-1) << 3)+(long)adjust[exponent >> 3]));
     }
 }
 
@@ -319,7 +319,7 @@ static void puthline(int x1,int y1,int x2,int color)
 
 static void putbox(int x1, int y1, int x2, int y2, int color)
 {
-    for (; y1<=y2; y1++)
+    for (; y1 <= y2; y1++)
         puthline(x1,y1,x2,color);
 }
 
@@ -605,14 +605,14 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
         status = true;
         goto rhombus_done;
     }
-    if (iter>maxit)
+    if (iter > maxit)
     {
         putbox(x1,y1,x2,y2,0);
         status = false;
         goto rhombus_done;
     }
 
-    if ((y2-y1<=SCAN) || (avail < minstack))
+    if ((y2-y1 <= SCAN) || (avail < minstack))
     {
         // finish up the image by scanning the rectangle
 scan:
@@ -628,7 +628,7 @@ scan:
         imstep=(cim2-cim1)/(y2-y1);
         interstep=INTERLEAVE*restep;
 
-        for (y=y1, im=cim1; y<y2; y++, im+=imstep)
+        for (y=y1, im=cim1; y < y2; y++, im += imstep)
         {
             if (driver_key_pressed())
             {
@@ -645,8 +645,8 @@ scan:
                 goto rhombus_done;
             }
             savex=x1;
-            for (x=x1+INTERLEAVE, re=cre1+interstep; x<x2;
-                    x+=INTERLEAVE, re+=interstep)
+            for (x=x1+INTERLEAVE, re=cre1+interstep; x < x2;
+                    x += INTERLEAVE, re += interstep)
             {
                 zre=GET_SCAN_REAL(re,im);
                 zim=GET_SCAN_IMAG(re,im);
@@ -657,10 +657,10 @@ scan:
                     status = true;
                     goto rhombus_done;
                 }
-                else if (color==savecolor)
+                else if (color == savecolor)
                     continue;
 
-                for (z=x-1, helpre=re-restep; z>x-INTERLEAVE; z--,helpre-=restep)
+                for (z=x-1, helpre=re-restep; z > x-INTERLEAVE; z--,helpre -= restep)
                 {
                     zre=GET_SCAN_REAL(helpre,im);
                     zim=GET_SCAN_IMAG(helpre,im);
@@ -670,12 +670,12 @@ scan:
                         status = true;
                         goto rhombus_done;
                     }
-                    else if (helpcolor==savecolor)
+                    else if (helpcolor == savecolor)
                         break;
                     (*plot)(z,y,(int)(helpcolor&255));
                 }
 
-                if (savex<z)
+                if (savex < z)
                     puthline(savex, y, z, (int)(savecolor&255));
                 else
                     (*plot)(savex, y, (int)(savecolor&255));
@@ -684,7 +684,7 @@ scan:
                 savecolor = color;
             }
 
-            for (z=x2-1, helpre=cre2-restep; z>savex; z--,helpre-=restep)
+            for (z=x2-1, helpre=cre2-restep; z > savex; z--,helpre -= restep)
             {
                 zre=GET_SCAN_REAL(helpre,im);
                 zim=GET_SCAN_IMAG(helpre,im);
@@ -694,13 +694,13 @@ scan:
                     status = true;
                     goto rhombus_done;
                 }
-                else if (helpcolor==savecolor)
+                else if (helpcolor == savecolor)
                     break;
 
                 (*plot)(z,y,(int)(helpcolor&255));
             }
 
-            if (savex<z)
+            if (savex < z)
                 puthline(savex, y, z, (int)(savecolor&255));
             else
                 (*plot)(savex, y, (int)(savecolor&255));
@@ -850,25 +850,25 @@ scan:
         iter++;
 
         // if one of the iterated values bails out, subdivide
-        if ((rq1+iq1)>16.0||
-                (rq2+iq2)>16.0||
-                (rq3+iq3)>16.0||
-                (rq4+iq4)>16.0||
-                (rq5+iq5)>16.0||
-                (rq6+iq6)>16.0||
-                (rq7+iq7)>16.0||
-                (rq8+iq8)>16.0||
-                (rq9+iq9)>16.0||
-                (trq1+tiq1)>16.0||
-                (trq2+tiq2)>16.0||
-                (trq3+tiq3)>16.0||
-                (trq4+tiq4)>16.0)
+        if ((rq1+iq1) > 16.0||
+                (rq2+iq2) > 16.0||
+                (rq3+iq3) > 16.0||
+                (rq4+iq4) > 16.0||
+                (rq5+iq5) > 16.0||
+                (rq6+iq6) > 16.0||
+                (rq7+iq7) > 16.0||
+                (rq8+iq8) > 16.0||
+                (rq9+iq9) > 16.0||
+                (trq1+tiq1) > 16.0||
+                (trq2+tiq2) > 16.0||
+                (trq3+tiq3) > 16.0||
+                (trq4+tiq4) > 16.0)
             break;
 
         /* if maximum number of iterations is reached, the whole rectangle
         can be assumed part of M. This is of course best case behavior
         of SOI, we seldomly get there */
-        if (iter>maxit)
+        if (iter > maxit)
         {
             putbox(x1,y1,x2,y2,0);
             status = false;
@@ -878,66 +878,66 @@ scan:
         /* now for all test points, check whether they exceed the
         allowed tolerance. if so, subdivide */
         l1=GET_REAL(cr1,ci1);
-        l1=(tzr1==0.0)?
-           (l1==0.0)?1.0:1000.0:
+        l1=(tzr1 == 0.0)?
+           (l1 == 0.0)?1.0:1000.0:
            l1/tzr1;
-        if (FABS(1.0-l1)>twidth)
+        if (FABS(1.0-l1) > twidth)
             break;
 
         l2=GET_IMAG(cr1,ci1);
-        l2=(tzi1==0.0)?
-           (l2==0.0)?1.0:1000.0:
+        l2=(tzi1 == 0.0)?
+           (l2 == 0.0)?1.0:1000.0:
            l2/tzi1;
-        if (FABS(1.0-l2)>twidth)
+        if (FABS(1.0-l2) > twidth)
             break;
 
         l1=GET_REAL(cr2,ci1);
-        l1=(tzr2==0.0)?
-           (l1==0.0)?1.0:1000.0:
+        l1=(tzr2 == 0.0)?
+           (l1 == 0.0)?1.0:1000.0:
            l1/tzr2;
-        if (FABS(1.0-l1)>twidth)
+        if (FABS(1.0-l1) > twidth)
             break;
 
         l2=GET_IMAG(cr2,ci1);
-        l2=(tzi2==0.0)?
-           (l2==0.0)?1.0:1000.0:
+        l2=(tzi2 == 0.0)?
+           (l2 == 0.0)?1.0:1000.0:
            l2/tzi2;
-        if (FABS(1.0-l2)>twidth)
+        if (FABS(1.0-l2) > twidth)
             break;
 
         l1=GET_REAL(cr1,ci2);
-        l1=(tzr3==0.0)?
-           (l1==0.0)?1.0:1000.0:
+        l1=(tzr3 == 0.0)?
+           (l1 == 0.0)?1.0:1000.0:
            l1/tzr3;
-        if (FABS(1.0-l1)>twidth)
+        if (FABS(1.0-l1) > twidth)
             break;
 
         l2=GET_IMAG(cr1,ci2);
-        l2=(tzi3==0.0)?
-           (l2==0.0)?1.0:1000.0:
+        l2=(tzi3 == 0.0)?
+           (l2 == 0.0)?1.0:1000.0:
            l2/tzi3;
-        if (FABS(1.0-l2)>twidth)
+        if (FABS(1.0-l2) > twidth)
             break;
 
         l1=GET_REAL(cr2,ci2);
-        l1=(tzr4==0.0)?
-           (l1==0.0)?1.0:1000.0:
+        l1=(tzr4 == 0.0)?
+           (l1 == 0.0)?1.0:1000.0:
            l1/tzr4;
-        if (FABS(1.0-l1)>twidth)
+        if (FABS(1.0-l1) > twidth)
             break;
 
         l2=GET_IMAG(cr2,ci2);
-        l2=(tzi4==0.0)?
-           (l2==0.0)?1.0:1000.0:
+        l2=(tzi4 == 0.0)?
+           (l2 == 0.0)?1.0:1000.0:
            l2/tzi4;
-        if (FABS(1.0-l2)>twidth)
+        if (FABS(1.0-l2) > twidth)
             break;
     }
 
     iter--;
 
     // this is a little heuristic I tried to improve performance.
-    if (iter-before<10)
+    if (iter-before < 10)
     {
         zre1=sr1;
         zim1=si1;
@@ -1008,7 +1008,7 @@ scan:
     im93=GET_SAVED_IMAG(cr1,ci2);
     im94=GET_SAVED_IMAG(cr2,ci2);
 
-    RHOMBUS(cre1,midr,cim1,midi,x1,((x1+x2)>>1),y1,((y1+y2)>>1),
+    RHOMBUS(cre1,midr,cim1,midi,x1,((x1+x2) >> 1),y1,((y1+y2) >> 1),
             sr1,si1,
             sr5,si5,
             sr6,si6,
@@ -1019,7 +1019,7 @@ scan:
             re15,im15,
             re91,im91,
             iter);
-    RHOMBUS(midr,cre2,cim1,midi,(x1+x2)>>1,x2,y1,(y1+y2)>>1,
+    RHOMBUS(midr,cre2,cim1,midi,(x1+x2) >> 1,x2,y1,(y1+y2) >> 1,
             sr5,si5,
             sr2,si2,
             sr9,si9,
@@ -1030,7 +1030,7 @@ scan:
             re16,im16,
             re92,im92,
             iter);
-    RHOMBUS(cre1,midr,midi,cim2,x1,(x1+x2)>>1,(y1+y2)>>1,y2,
+    RHOMBUS(cre1,midr,midi,cim2,x1,(x1+x2) >> 1,(y1+y2) >> 1,y2,
             sr6,si6,
             sr9,si9,
             sr3,si3,
@@ -1041,7 +1041,7 @@ scan:
             re20,im20,
             re93,im93,
             iter);
-    RHOMBUS(midr,cre2,midi,cim2,(x1+x2)>>1,x2,(y1+y2)>>1,y2,
+    RHOMBUS(midr,cre2,midi,cim2,(x1+x2) >> 1,x2,(y1+y2) >> 1,y2,
             sr9,si9,
             sr7,si7,
             sr8,si8,
