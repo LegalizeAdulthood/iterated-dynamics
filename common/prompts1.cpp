@@ -2455,7 +2455,7 @@ restart_1:
         return -1;
     }
 
-    k=0;
+    k = 0;
     preview = uvalues[k++].uval.ch.val != 0;
     showbox = uvalues[k++].uval.ch.val != 0;
     previewfactor  = uvalues[k++].uval.ival;
