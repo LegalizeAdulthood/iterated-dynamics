@@ -62,33 +62,33 @@ LDBL getnumber(char **str)
     LDBL ret;
     int i,root,inverse;
 
-    root=0;
-    inverse=0;
+    root = 0;
+    inverse = 0;
     strcpy(numstr,"");
     (*str)++;
     switch (**str)
     {
     case 'q':
-        root=1;
+        root = 1;
         (*str)++;
         break;
     case 'i':
-        inverse=1;
+        inverse = 1;
         (*str)++;
         break;
     }
     switch (**str)
     {
     case 'q':
-        root=1;
+        root = 1;
         (*str)++;
         break;
     case 'i':
-        inverse=1;
+        inverse = 1;
         (*str)++;
         break;
     }
-    i=0;
+    i = 0;
     while ((**str <= '9' && **str >= '0') || **str == '.')
     {
         numstr[i++]= **str;
@@ -96,11 +96,11 @@ LDBL getnumber(char **str)
     }
     (*str)--;
     numstr[i]=0;
-    ret=atof(numstr);
+    ret = atof(numstr);
     if (ret <= 0.0) // this is a sanity check
         return 0;
     if (root)
-        ret=sqrtl(ret);
+        ret = sqrtl(ret);
     if (inverse)
         ret = 1.0/ret;
     return ret;
@@ -110,7 +110,7 @@ static bool readLSystemFile(char *str)
 {
     int c;
     char **rulind;
-    int err=0;
+    int err = 0;
     bool check = false;
     char inline1[MAX_LSYS_LINE_LEN+1],fixed[MAX_LSYS_LINE_LEN+1],*word;
     FILE *infile;
@@ -121,7 +121,7 @@ static bool readLSystemFile(char *str)
     while ((c = fgetc(infile)) != '{')
         if (c == EOF)
             return true;
-    maxangle=0;
+    maxangle = 0;
     for (int linenum = 0; linenum < MAXRULES; ++linenum)
         ruleptrs[linenum]=nullptr;
     rulind= &ruleptrs[1];
@@ -137,7 +137,7 @@ static bool readLSystemFile(char *str)
 
         if ((int)strspn(inline1," \t\n") < (int)strlen(inline1)) // not a blank line
         {
-            word=strtok(inline1," =\t\n");
+            word = strtok(inline1," =\t\n");
             if (!strcmp(word,"axiom"))
             {
                 if (save_rule(strtok(nullptr," \t\n"),&ruleptrs[0])) {
@@ -149,7 +149,7 @@ static bool readLSystemFile(char *str)
             }
             else if (!strcmp(word,"angle"))
             {
-                maxangle=(char)atoi(strtok(nullptr," \t\n"));
+                maxangle = (char)atoi(strtok(nullptr," \t\n"));
                 check = true;
             }
             else if (!strcmp(word,"}"))
@@ -198,7 +198,7 @@ static bool readLSystemFile(char *str)
             if (check)
             {
                 check = false;
-                if ((word=strtok(nullptr," \t\n")) != nullptr)
+                if ((word = strtok(nullptr," \t\n")) != nullptr)
                     if (err < 6)
                     {
                         sprintf(&msgbuf[strlen(msgbuf)],
@@ -225,7 +225,7 @@ static bool readLSystemFile(char *str)
         stopmsg(STOPMSG_NONE, msgbuf);
         return true;
     }
-    *rulind=nullptr;
+    *rulind = nullptr;
     return false;
 }
 
@@ -240,9 +240,9 @@ int Lsystem()
 
     overflow = false;           // reset integer math overflow flag
 
-    order=(int)param[0];
+    order = (int)param[0];
     if (order <= 0)
-        order=0;
+        order = 0;
     if (usr_floatflag)
         overflow = true;
     else {
@@ -271,8 +271,8 @@ int Lsystem()
             *sc = nullptr;
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
-            if ((ts.curcolor=15) > colors)
-                ts.curcolor=(char)(colors-1);
+            if ((ts.curcolor = 15) > colors)
+                ts.curcolor = (char)(colors-1);
             drawLSysI(rules2[0], &ts, &rules2[1], order);
         }
         stackoflow = ts.stackoflow;
@@ -308,8 +308,8 @@ int Lsystem()
             *sc = nullptr;
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
-            if ((ts.curcolor=15) > colors)
-                ts.curcolor=(char)(colors-1);
+            if ((ts.curcolor = 15) > colors)
+                ts.curcolor = (char)(colors-1);
             lsys_prepfpu(&ts);
             drawLSysF(rules2[0], &ts, &rules2[1], order);
             lsys_donefpu(&ts);
@@ -352,12 +352,12 @@ static bool save_rule(char *rule, char **saveptr)
 {
     int i;
     char *tmpfar;
-    i=(int) strlen(rule)+1;
+    i = (int) strlen(rule)+1;
     tmpfar = (char *) malloc(i);
     if (tmpfar == nullptr) {
         return true;
     }
-    *saveptr=tmpfar;
+    *saveptr = tmpfar;
     while (--i >= 0)
         *(tmpfar++)= *(rule++);
     return false;
@@ -548,7 +548,7 @@ static void lsysi_dosizedm(lsys_turtlestatei *cmd)
     if (cmd->xpos > cmd->xmax)
         cmd->xmax = cmd->xpos;
     if (cmd->ypos > cmd->ymax)
-        cmd->ymax=cmd->ypos;
+        cmd->ymax = cmd->ypos;
     if (cmd->xpos < cmd->xmin)
         cmd->xmin = cmd->xpos;
     if (cmd->ypos < cmd->ymin)
@@ -687,21 +687,21 @@ findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
                 long savesize,savex,savey;
                 unsigned long saverang;
 
-                saveang=ts->angle;
-                saverev=ts->reverse;
-                savesize=ts->size;
-                saverang=ts->realangle;
-                savex=ts->xpos;
-                savey=ts->ypos;
+                saveang = ts->angle;
+                saverev = ts->reverse;
+                savesize = ts->size;
+                saverang = ts->realangle;
+                savex = ts->xpos;
+                savey = ts->ypos;
                 command = findsize(command+1, ts, rules, depth);
                 if (command == nullptr)
                     return (nullptr);
-                ts->angle=saveang;
-                ts->reverse=saverev;
-                ts->size=savesize;
-                ts->realangle=saverang;
-                ts->xpos=savex;
-                ts->ypos=savey;
+                ts->angle = saveang;
+                ts->reverse = saverev;
+                ts->size = savesize;
+                ts->realangle = saverang;
+                ts->xpos = savex;
+                ts->ypos = savey;
             }
         }
         command++;
@@ -718,7 +718,7 @@ lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int 
     double locaspect;
     lsys_cmd *fsret;
 
-    locaspect=screenaspect*xdots/ydots;
+    locaspect = screenaspect*xdots/ydots;
     ts->aspect = FIXEDPT(locaspect);
     ts->counter = 0;
     ts->reverse = ts->counter;
@@ -730,7 +730,7 @@ lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int 
     ts->xmin = ts->xmax;
     ts->ypos = ts->xmin;
     ts->xpos = ts->ypos;
-    ts->size=FIXEDPT(1L);
+    ts->size = FIXEDPT(1L);
     fsret = findsize(command,ts,rules,depth);
     thinking(0, nullptr); // erase thinking message if any
     xmin = (double) ts->xmin / FIXEDMUL;
@@ -804,23 +804,23 @@ drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules,int depth)
                 long savesize,savex,savey;
                 unsigned long saverang;
 
-                saveang=ts->angle;
-                saverev=ts->reverse;
-                savesize=ts->size;
-                saverang=ts->realangle;
-                savex=ts->xpos;
-                savey=ts->ypos;
-                savecolor=ts->curcolor;
+                saveang = ts->angle;
+                saverev = ts->reverse;
+                savesize = ts->size;
+                saverang = ts->realangle;
+                savex = ts->xpos;
+                savey = ts->ypos;
+                savecolor = ts->curcolor;
                 command = drawLSysI(command+1, ts, rules, depth);
                 if (command == nullptr)
                     return (nullptr);
-                ts->angle=saveang;
-                ts->reverse=saverev;
-                ts->size=savesize;
-                ts->realangle=saverang;
-                ts->xpos=savex;
-                ts->ypos=savey;
-                ts->curcolor=savecolor;
+                ts->angle = saveang;
+                ts->reverse = saverev;
+                ts->size = savesize;
+                ts->realangle = saverang;
+                ts->xpos = savex;
+                ts->ypos = savey;
+                ts->curcolor = savecolor;
             }
         }
         command++;
@@ -1058,7 +1058,7 @@ static void lsysi_dosincos()
     double twopimaxi;
     double s, c;
 
-    locaspect=screenaspect*xdots/ydots;
+    locaspect = screenaspect*xdots/ydots;
     twopimax = TWOPI / maxangle;
     for (int i = 0; i < maxangle; i++) {
         twopimaxi = i * twopimax;
