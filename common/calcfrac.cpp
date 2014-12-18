@@ -308,8 +308,9 @@ double fmodtest()
     break;
     case Or:
     {
-        double tmpx, tmpy;
-        if ((tmpx = sqr(g_new.x)) > (tmpy = sqr(g_new.y)))
+        double tmpx = sqr(g_new.x);
+        double tmpy = sqr(g_new.y);
+        if (tmpx > tmpy)
             result = tmpx;
         else
             result = tmpy;
@@ -673,7 +674,8 @@ int calcfract()
                 flip = 0;
                 m = flip;
                 altern = 32767;
-                if ((numval = ranges[i++]) < 0) {
+                numval = ranges[i++];
+                if (numval < 0) {
                     altern = ranges[i++];    // sub-range iterations
                     numval = ranges[i++];
                 }
@@ -897,9 +899,9 @@ static void perform_worklist()
     int (*sv_orbitcalc)() = nullptr;  // function that calculates one orbit
     int (*sv_per_pixel)() = nullptr;  // once-per-pixel init
     bool (*sv_per_image)() = nullptr;  // once-per-image setup
-    int alt;
+    int alt = find_alternate_math(fractype,bf_math);
 
-    if ((alt = find_alternate_math(fractype,bf_math)) > -1)
+    if (alt > -1)
     {
         sv_orbitcalc = curfractalspecific->orbitcalc;
         sv_per_pixel = curfractalspecific->per_pixel;
@@ -986,7 +988,8 @@ static void perform_worklist()
         else
             dem_mandel = false;
         dem_delta = sqr(delxx) + sqr(delyy2);
-        if ((ftemp = sqr(delyy) + sqr(delxx2)) > dem_delta)
+        ftemp = sqr(delyy) + sqr(delxx2);
+        if (ftemp > dem_delta)
             dem_delta = ftemp;
         if (distestwidth == 0)
             distestwidth = 1;
@@ -1664,10 +1667,13 @@ static int StandardCalc(int passnum)
         {
             // on 2nd pass of two, skip even pts
             if (quick_calc && !resuming)
-                if ((color = getcolor(col,row)) != inside) {
+            {
+                color = getcolor(col,row);
+                if (color != inside) {
                     ++col;
                     continue;
                 }
+            }
             if (passnum == 1 || stdcalcmode == '1' || (row&1) != 0 || (col&1) != 0)
             {
                 if ((*calctype)() == -1) // StandardFractal(), calcmand() or calcmandfp()
@@ -3528,9 +3534,11 @@ static bool guessrow(bool firstpass, int y, int blocksize)
     // paint rows the fast way
     for (int i = 0; i < halfblock; ++i)
     {
-        if ((j = y+i) <= iystop)
+        j = y+i;
+        if (j <= iystop)
             put_line(j,xxstart,ixstop,&dstack[xxstart]);
-        if ((j = y+i+halfblock) <= iystop)
+        j = y+i+halfblock;
+        if (j <= iystop)
             put_line(j,xxstart,ixstop,&dstack[xxstart+OLDMAXPIXELS]);
         if (driver_key_pressed())
             return true;
@@ -3551,9 +3559,11 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             }
         for (int i = 0; i < halfblock; ++i)
         {
-            if ((j = yystop-(y+i-yystart)) > iystop && j < ydots)
+            j = yystop-(y+i-yystart);
+            if (j > iystop && j < ydots)
                 put_line(j,xxstart,ixstop,&dstack[xxstart]);
-            if ((j = yystop-(y+i+halfblock-yystart)) > iystop && j < ydots)
+            j = yystop-(y+i+halfblock-yystart);
+            if (j > iystop && j < ydots)
                 put_line(j,xxstart,ixstop,&dstack[xxstart+OLDMAXPIXELS]);
             if (driver_key_pressed())
                 return true;
@@ -3566,7 +3576,8 @@ static bool guessrow(bool firstpass, int y, int blocksize)
 static void plotblock(int buildrow,int x,int y,int color)
 {
     int xlim,ylim;
-    if ((xlim = x+halfblock) > ixstop)
+    xlim = x+halfblock;
+    if (xlim > ixstop)
         xlim = ixstop+1;
     if (buildrow >= 0 && !guessplot) // save it for later put_line
     {
@@ -3580,7 +3591,8 @@ static void plotblock(int buildrow,int x,int y,int color)
             return; // the usual case
     }
     // paint it
-    if ((ylim = y+halfblock) > iystop)
+    ylim = y+halfblock;
+    if (ylim > iystop)
     {
         if (y > iystop)
             return;
@@ -3911,9 +3923,11 @@ originsym:
         else
             pixelpi = (int)((PI/fabs(xxmax-xxmin))*xdots); // PI in pixels
 
-        if ((ixstop = xxstart+pixelpi-1) > xxstop)
+        ixstop = xxstart+pixelpi-1;
+        if (ixstop > xxstop)
             ixstop = xxstop;
-        if (plot == symPIplot4J && ixstop > (i = (xxstart+xxstop)/2))
+        i = (xxstart+xxstop)/2;
+        if (plot == symPIplot4J && ixstop > i)
             ixstop = i;
         break;
     default:                  // no symmetry
@@ -4181,7 +4195,8 @@ static int tesscol(int x,int y1,int y2)
     colcolor = (*calctype)();
     reset_periodicity = false;
     while (++row <= y2) { // generate the column
-        if ((i = (*calctype)()) < 0)
+        i = (*calctype)();
+        if (i < 0)
             return -3;
         if (i != colcolor)
             colcolor = -1;
@@ -4198,7 +4213,8 @@ static int tessrow(int x1,int x2,int y)
     rowcolor = (*calctype)();
     reset_periodicity = false;
     while (++col <= x2) { // generate the row
-        if ((i = (*calctype)()) < 0)
+        i = (*calctype)();
+        if (i < 0)
             return -3;
         if (i != rowcolor)
             rowcolor = -1;
@@ -4306,7 +4322,8 @@ void symPIplot2J(int x, int y, int color)
     while (x <= xxstop)
     {
         putcolor(x, y, color) ;
-        if ((i = yystop-(y-yystart)) > iystop && i < ydots
+        i = yystop-(y-yystart);
+        if (i > iystop && i < ydots
                 && (j = xxstop-(x-xxstart)) < xdots)
             putcolor(j, i, color) ;
         x += pixelpi;
@@ -4322,7 +4339,8 @@ void symPIplot4J(int x, int y, int color)
         putcolor(x , y , color) ;
         if (j < xdots)
             putcolor(j , y , color) ;
-        if ((i = yystop-(y-yystart)) > iystop && i < ydots)
+        i = yystop-(y-yystart);
+        if (i > iystop && i < ydots)
         {
             putcolor(x , i , color) ;
             if (j < xdots)
@@ -4337,7 +4355,8 @@ void symplot2(int x, int y, int color)
 {
     int i;
     putcolor(x, y, color) ;
-    if ((i = yystop-(y-yystart)) > iystop && i < ydots)
+    i = yystop-(y-yystart);
+    if (i > iystop && i < ydots)
         putcolor(x, i, color) ;
 }
 
@@ -4346,7 +4365,8 @@ void symplot2Y(int x, int y, int color)
 {
     int i;
     putcolor(x, y, color) ;
-    if ((i = xxstop-(x-xxstart)) < xdots)
+    i = xxstop-(x-xxstart);
+    if (i < xdots)
         putcolor(i, y, color) ;
 }
 
@@ -4355,7 +4375,8 @@ void symplot2J(int x, int y, int color)
 {
     int i,j;
     putcolor(x, y, color) ;
-    if ((i = yystop-(y-yystart)) > iystop && i < ydots
+    i = yystop-(y-yystart);
+    if (i > iystop && i < ydots
             && (j = xxstop-(x-xxstart)) < xdots)
         putcolor(j, i, color) ;
 }
@@ -4368,7 +4389,8 @@ void symplot4(int x, int y, int color)
     putcolor(x , y, color) ;
     if (j < xdots)
         putcolor(j , y, color) ;
-    if ((i = yystop-(y-yystart)) > iystop && i < ydots)
+    i = yystop-(y-yystart);
+    if (i > iystop && i < ydots)
     {
         putcolor(x , i, color) ;
         if (j < xdots)
