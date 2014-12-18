@@ -26,7 +26,7 @@
 VIDEOINFO g_video_entry;
 int helpmode;
 
-int lookatmouse=0;  /* see notes at mouseread routine */
+int lookatmouse = 0;  /* see notes at mouseread routine */
 
 long timer_start,timer_interval;        /* timer(...) start & total */
 int     g_adapter;                /* Video Adapter chosen from list in ...h */
@@ -102,8 +102,8 @@ int maxhistory = 10;
 
 /* variables defined by the command line/files processor */
 bool    comparegif = false;             /* compare two gif files flag */
-int     timedsave=0;                    /* when doing a timed save */
-int     resave_flag=0;                  /* tells encoder not to incr filename */
+int     timedsave = 0;                    /* when doing a timed save */
+int     resave_flag = 0;                  /* tells encoder not to incr filename */
 bool    started_resaves = false;        /* but incr on first resave */
 int     save_system;                    /* from and for save files */
 bool    tabmode = true;                 /* tab display enabled */
@@ -567,7 +567,7 @@ int timer(int timertype,int(*subrtn)(),...)
     char *timestring;
     time_t ltime;
     FILE *fp = nullptr;
-    int out=0;
+    int out = 0;
     int i;
     int do_bench;
 
@@ -577,7 +577,7 @@ int timer(int timertype,int(*subrtn)(),...)
     if (timertype == 2)   /* encoder, record time only if debug=200 */
         do_bench = (debugflag == 200);
     if (do_bench)
-        fp=dir_fopen(workdir,"bench","a");
+        fp = dir_fopen(workdir,"bench","a");
     timer_start = clock_ticks();
     switch (timertype) {
     case 0:
