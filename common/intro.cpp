@@ -54,6 +54,7 @@ void intro()
     driver_set_attr(22, 0, C_AUTHDIV2, 80);
     driver_set_attr(3, 0, C_PRIMARY, 80*(END_MAIN_AUTHOR-3));
     driver_set_attr(23, 0, C_TITLE_LOW, 160);
+
     for (int i = 3; i < END_MAIN_AUTHOR; ++i)
         driver_set_attr(i, 21, C_CONTRIB, 58);
     driver_set_attr(toprow, 0, C_CONTRIB, (21-END_MAIN_AUTHOR)*80);
