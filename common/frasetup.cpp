@@ -142,7 +142,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
     else
         symmetry = XAXIS;
 
-    calctype=StandardFractal;
+    calctype = StandardFractal;
 #if !defined(XFRACT)
     if (fractype == MPNEWTON || fractype == MPNEWTBASIN)
         setMPfunctions();
@@ -233,7 +233,7 @@ MandelfpSetup()
         break;
     case SPIDERFP:
         if (periodicitycheck == 1) // if not user set
-            periodicitycheck=4;
+            periodicitycheck = 4;
         break;
     case MANDELEXP:
         symmetry = XAXIS_NOPARM;
@@ -341,7 +341,7 @@ JuliafpSetup()
         break;
     case LAMBDAEXP:
         if (parm.y == 0.0)
-            symmetry=XAXIS;
+            symmetry = XAXIS;
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
     case FPJULTRIGPLUSEXP:
@@ -358,7 +358,7 @@ JuliafpSetup()
         if (param[2] != 0)
             symmetry = NOSYM;
         if (trigndx[0] != SQR)
-            symmetry=NOSYM;
+            symmetry = NOSYM;
     case QUATJULFP:
         attractors = 0;   // attractors broken since code checks r,i not j,k
         periodicitycheck = 0;
@@ -417,7 +417,7 @@ MandellongSetup()
     if ((fractype == MARKSMANDEL && (c_exp & 1)) || fractype == LMANDELEXP)
         symmetry = XAXIS_NOPARM;
     if (fractype == SPIDER && periodicitycheck == 1)
-        periodicitycheck=4;
+        periodicitycheck = 4;
     longparm = &linit;
     if (fractype == LMANDELZPOWER)
     {
@@ -984,7 +984,7 @@ bool
 HalleySetup()
 {
     // Halley
-    periodicitycheck=0;
+    periodicitycheck = 0;
 
     if (usr_floatflag)
         fractype = HALLEY; // float on
@@ -1173,7 +1173,7 @@ bool
 StandardSetup()
 {
     if (fractype == UNITYFP)
-        periodicitycheck=0;
+        periodicitycheck = 0;
     return true;
 }
 
