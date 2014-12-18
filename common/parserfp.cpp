@@ -154,11 +154,11 @@ NEW_FN  fStkOne;   // to support new parser fn.
 //    then this is a const.
 #define IS_CONST(x) \
       (!isalpha(**(((char * *)x ) - 2 ) ) \
-      || (x==&PARM1 && p1const ) \
-      || (x==&PARM2 && p2const ) \
-      || (x==&PARM3 && p3const ) \
-      || (x==&PARM4 && p4const ) \
-      || (x==&PARM5 && p5const ) )
+      || (x == &PARM1 && p1const ) \
+      || (x == &PARM2 && p2const ) \
+      || (x == &PARM3 && p3const ) \
+      || (x == &PARM4 && p4const ) \
+      || (x == &PARM5 && p5const ) )
 
 // is stack top a real?
 #define STACK_TOP_IS_REAL \
@@ -168,7 +168,7 @@ NEW_FN  fStkOne;   // to support new parser fn.
       || prevfptr == fStkImag || prevfptr == fStkLodImag )
 
 // remove push operator from stack top
-#define REMOVE_PUSH --cvtptrx, stkcnt+=2
+#define REMOVE_PUSH --cvtptrx, stkcnt += 2
 
 #define CLEAR_STK 127
 #define FNPTR(x) pfls[(x)].function  // function pointer
@@ -200,28 +200,28 @@ int pstopmsg(int x,char *msg)
 #define stopmsg pstopmsg
 
 #define DBUGMSG(y)                          \
-    if (debugflag==324 || debugflag==322 )  \
+    if (debugflag == 324 || debugflag == 322 )  \
         stopmsg(0, (y))
 #define DBUGMSG1(y,p)                           \
-      if (debugflag==324 || debugflag==322 )    \
+      if (debugflag == 324 || debugflag == 322 )    \
       {                                         \
          sprintf(cDbgMsg, (y), (p) );           \
          stopmsg(0, cDbgMsg );                  \
       }
 #define DBUGMSG2(y,p,q)                         \
-      if (debugflag==324 || debugflag==322 )    \
+      if (debugflag == 324 || debugflag == 322 )    \
       {                                         \
          sprintf(cDbgMsg, (y), (p), (q) );      \
          stopmsg(0, cDbgMsg );                  \
       }
 #define DBUGMSG3(y,p,q,r)                       \
-      if (debugflag==324 || debugflag==322 )    \
+      if (debugflag == 324 || debugflag == 322 )    \
       {                                         \
          sprintf(cDbgMsg, (y), (p), (q), (r) ); \
          stopmsg(0, cDbgMsg );                  \
       }
 #define DBUGMSG4(y,p,q,r,s)                             \
-      if (debugflag==324 || debugflag==322 )            \
+      if (debugflag == 324 || debugflag == 322 )            \
       {                                                 \
          sprintf(cDbgMsg, (y), (p), (q), (r), (s) );    \
          stopmsg(0, cDbgMsg );                          \
@@ -555,13 +555,13 @@ awful_error:
 
         if (prevfptr == fStkLodDup) {  // there is never a push before add
             --cvtptrx;  // found  ? *loddup (add)
-            if (cvtptrx!=0 && FNPTR(cvtptrx-1) == fStkPush2a) {
+            if (cvtptrx != 0 && FNPTR(cvtptrx-1) == fStkPush2a) {
                 // because  push lod lod  is impossible so is  push loddup
                 DBUGMSG("pusha *loddup (add) -> (*loddbl),stk+=2");
                 REMOVE_PUSH;
                 OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  // fix opptr
             }
-            else if (cvtptrx!=0 && FNPTR(cvtptrx-1) == fStkPush4) {
+            else if (cvtptrx != 0 && FNPTR(cvtptrx-1) == fStkPush4) {
                 DBUGMSG("push4 *loddup (add) -> push2 (*loddbl),stk+=2");
                 FNPTR(cvtptrx-1) = fStkPush2;
                 stkcnt += 2;
