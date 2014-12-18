@@ -344,7 +344,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
         if (j == 0) // mode has no key, add to reserved slot at end
         {
-            memcpy((char *)&g_video_table[g_init_mode=MAXVIDEOMODES-1],
+            memcpy((char *)&g_video_table[g_init_mode = MAXVIDEOMODES-1],
                    (char *)&g_video_table[i], sizeof(*g_video_table));
         }
     }
@@ -523,10 +523,10 @@ static void format_item(int choice,char *buf)
     format_vid_inf(vidptr[choice].entnum,errbuf,buf);
 }
 
-static int check_modekey(int curkey,int choice)
+static int check_modekey(int curkey, int choice)
 {
     int i;
-    i=choice; // avoid warning
+    i = choice; // avoid warning
     return (((i = check_vidmode_key(0,curkey)) >= 0) ? -100-i : 0);
 }
 #endif
