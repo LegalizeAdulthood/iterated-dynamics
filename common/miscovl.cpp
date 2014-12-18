@@ -381,7 +381,7 @@ skip_UI:
                     int w;
                     char c;
                     char PCommandName[80];
-                    w=0;
+                    w = 0;
                     while (w < (int)strlen(CommandName))
                     {
                         c = CommandName[w];
@@ -422,7 +422,7 @@ skip_UI:
                     int last = -1;
                     for (int i = 0; i < 4; i++)
                         if (*par_comment[i])
-                            last=i;
+                            last = i;
                     for (int i = 0; i < last; i++)
                         if (*CommandComment[i] == '\0')
                             strcpy(CommandComment[i],";");
@@ -501,7 +501,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
     double Xmagfactor, Rotation, Skew;
     const char *sptr;
     char buf[81];
-    bf_t bfXctr=nullptr, bfYctr=nullptr;
+    bf_t bfXctr = nullptr, bfYctr = nullptr;
     int saved;
     saved = save_stack();
     if (bf_math)
@@ -1006,7 +1006,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
             int i;
             for (i = 0; i <= 11; i++)
                 if (scale_map[i] != i+1)
-                    i=15;
+                    i = 15;
             if (i > 12)
                 put_parm(" %s=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", "scalemap",scale_map[0],scale_map[1],scale_map[2],scale_map[3]
                          ,scale_map[4],scale_map[5],scale_map[6],scale_map[7],scale_map[8]
@@ -1203,7 +1203,7 @@ static void put_parm(const char *parm,...)
         put_parm_line();
 }
 
-int maxlinelength=72;
+int maxlinelength = 72;
 #define MAXLINELEN  maxlinelength
 #define NICELINELEN (MAXLINELEN-4)
 
@@ -2046,7 +2046,7 @@ void flip_image(int key)
                 break;
             for (int j = 0; j < ydots; j++)
             {
-                tempdot=getcolor(i,j);
+                tempdot = getcolor(i,j);
                 putcolor(i, j, getcolor(xdots-1-i,j));
                 putcolor(xdots-1-i, j, tempdot);
             }
@@ -2076,7 +2076,7 @@ void flip_image(int key)
                 break;
             for (int i = 0; i < xdots; i++)
             {
-                tempdot=getcolor(i,j);
+                tempdot = getcolor(i,j);
                 putcolor(i, j, getcolor(i,ydots-1-j));
                 putcolor(i,ydots-1-j, tempdot);
             }
@@ -2106,7 +2106,7 @@ void flip_image(int key)
                 break;
             for (int j = 0; j < ydots; j++)
             {
-                tempdot=getcolor(i,j);
+                tempdot = getcolor(i,j);
                 putcolor(i, j, getcolor(xdots-1-i,ydots-1-j));
                 putcolor(xdots-1-i, ydots-1-j, tempdot);
             }
