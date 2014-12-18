@@ -60,7 +60,8 @@ FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
     }
     GET16(header[O_HSIZE], *hs);
     GET16(header[O_VSIZE], *vs);
-    if ((*csize = header[O_COMMENTLEN]) != 0)
+    *csize = header[O_COMMENTLEN];
+    if (*csize != 0)
         fread(cp, *csize, 1, fp);
 
     bufp = 0;
@@ -74,7 +75,8 @@ int t16_getline(FILE *fp, int hs, U16 *data)
     for (int i = 0; i < hs; ++i) {
         if (state == 0) {
             bufp = 0;
-            if ((count = getc(fp)) > 127) {
+            count = getc(fp);
+            if (count > 127) {
                 state = 1;
                 count -= 127;
                 fread(rlebuf, 2, 1, fp);

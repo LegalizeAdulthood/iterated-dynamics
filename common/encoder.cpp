@@ -92,7 +92,8 @@ restart:
     if (save16bit)
         strcpy(openfiletype, ".pot");
 
-    if ((period = has_ext(openfile)) != nullptr)
+    period = has_ext(openfile);
+    if (period != nullptr)
     {
         strcpy(openfiletype, period);
         *period = 0;
