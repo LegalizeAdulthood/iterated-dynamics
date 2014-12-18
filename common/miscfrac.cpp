@@ -85,7 +85,7 @@ int test()
 
 static int iparmx;      // iparmx = parm.x * 8
 static int shiftvalue;  // shift based on #colors
-static int recur1=1;
+static int recur1 = 1;
 static int pcolors;
 static int recur_level = 0;
 U16 max_plasma;
@@ -294,21 +294,21 @@ static void subDivide(int x1,int y1,int x2,int y2)
 
     x = (x1+x2) >> 1;
     y = (y1+y2) >> 1;
-    v=getpix(x,y1);
+    v = getpix(x,y1);
     if (v == 0)
-        v=adjust(x1,y1,x ,y1,x2,y1);
-    i=v;
-    v=getpix(x2,y);
+        v = adjust(x1,y1,x ,y1,x2,y1);
+    i = v;
+    v = getpix(x2,y);
     if (v == 0)
-        v=adjust(x2,y1,x2,y ,x2,y2);
+        v = adjust(x2,y1,x2,y ,x2,y2);
     i += v;
-    v=getpix(x,y2);
+    v = getpix(x,y2);
     if (v == 0)
-        v=adjust(x1,y2,x ,y2,x2,y2);
+        v = adjust(x1,y2,x ,y2,x2,y2);
     i += v;
-    v=getpix(x1,y);
+    v = getpix(x1,y);
     if (v == 0)
-        v=adjust(x1,y1,x1,y ,x1,y2);
+        v = adjust(x1,y1,x1,y ,x1,y2);
     i += v;
 
     if (getpix(x,y) == 0)
@@ -534,7 +534,7 @@ int diffusion()
     currentcolor = 1;  // Start at color 1 (color 0 is probably invisible)
 
     if (mode > 2)
-        mode=0;
+        mode = 0;
 
     if (border <= 0)
         border = 10;
@@ -602,7 +602,7 @@ int diffusion()
     {
         switch (mode) {
         case 0: // Release new point on a circle inside the box
-            angle=2*(double)rand()/(RAND_MAX/PI);
+            angle = 2*(double)rand()/(RAND_MAX/PI);
             FPUsincos(&angle,&sine,&cosine);
             x = (int)(cosine*(xmax-xmin) + xdots);
             y = (int)(sine  *(ymax-ymin) + ydots);
@@ -611,12 +611,12 @@ int diffusion()
             break;
         case 1: /* Release new point on the line ymin somewhere between xmin
                  and xmax */
-            y=ymin;
-            x=RANDOM(xmax-xmin) + (xdots-xmax+xmin)/2;
+            y = ymin;
+            x = RANDOM(xmax-xmin) + (xdots-xmax+xmin)/2;
             break;
         case 2: /* Release new point on a circle inside the box with radius
                  given by the radius variable */
-            angle=2*(double)rand()/(RAND_MAX/PI);
+            angle = 2*(double)rand()/(RAND_MAX/PI);
             FPUsincos(&angle,&sine,&cosine);
             x = (int)(cosine*radius + xdots);
             y = (int)(sine  *radius + ydots);
@@ -1176,7 +1176,7 @@ int popcorn()   // subset of std engine
         get_resume(sizeof(start_row),&start_row,0);
         end_resume();
     }
-    kbdcount=max_kbdcount;
+    kbdcount = max_kbdcount;
     plot = noplot;
     ltempsqrx = 0;
     tempsqrx = ltempsqrx;
@@ -1247,7 +1247,7 @@ int lyapunov() {
         routines if part of the image sticks out.
         */
 #if WES
-    color=lyapunov_cycles(a, b);
+    color = lyapunov_cycles(a, b);
 #else
     if (lyaSeedOK && a > 0 && b > 0 && a <= 4 && b <= 4)
         color = lyapunov_cycles(filter_cycles, Population, a, b);
@@ -1255,7 +1255,7 @@ int lyapunov() {
         color = lyapunov_cycles_in_c(filter_cycles, a, b);
 #endif
 #else
-    color=lyapunov_cycles_in_c(filter_cycles, a, b);
+    color = lyapunov_cycles_in_c(filter_cycles, a, b);
 #endif
     if (inside>0 && color == 0)
         color = inside;
@@ -1300,7 +1300,7 @@ bool lya_setup()
 
     filter_cycles = (long)param[2];
     if (filter_cycles == 0)
-        filter_cycles=maxit/2;
+        filter_cycles = maxit/2;
     lyaSeedOK = param[1] > 0 && param[1] <= 1 && debugflag != 90;
     lyaLength = 1;
 
@@ -1321,14 +1321,14 @@ bool lya_setup()
         for (t = lyaLength; t >= 0; t--)
             lyaRxy[t] = !lyaRxy[t];
     if (save_release < 1731) {            // ignore inside=, stdcalcmode
-        stdcalcmode='1';
+        stdcalcmode = '1';
         if (inside == 1)
             inside = 0;
     }
     if (inside < 0) {
         stopmsg(STOPMSG_NONE,
             "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
-        inside=1;
+        inside = 1;
     }
     if (usr_stdcalcmode == 'o') { // Oops,lyapunov type
         usr_stdcalcmode = '1';  // doesn't use new & breaks orbits
@@ -1670,7 +1670,7 @@ int cellular()
             }
 
             t = 0; // do first cell
-            twor=(U16)(r+r);
+            twor = (U16)(r+r);
             for (int i = 0; i <= twor; i++)
                 t = (S16)(t + (S16)cell_array[filled][i]);
             if (t > rule_digits || t < 0) {
@@ -1723,7 +1723,7 @@ contloop:
         }
 
         t = 0; // do first cell
-        twor=(U16)(r+r);
+        twor = (U16)(r+r);
         for (int i = 0; i <= twor; i++)
             t = (S16)(t + (S16)cell_array[filled][i]);
         if (t > rule_digits || t < 0) {
@@ -1991,7 +1991,7 @@ bool froth_setup()
     // rqlim needs to be at least sq(1+sqrt(1+sq(a))),
     // which is never bigger than 6.93..., so we'll call it 7.0
     if (rqlim < 7.0)
-        rqlim=7.0;
+        rqlim = 7.0;
     set_Froth_palette();
     // make the best of the .map situation
     orbit_color = fsp.attractors != 6 && colors >= 16 ? (fsp.shades<<1)+1 : colors-1;
@@ -2031,7 +2031,7 @@ void froth_cleanup()
 // Froth Fractal type
 int calcfroth()   // per pixel 1/2/g, called with row & col set
 {
-    int found_attractor=0;
+    int found_attractor = 0;
 
     if (check_key())
     {
@@ -2168,7 +2168,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             lold.x = lnew.x;
             if (fsp.repeat_mapping)
             {
-                lmagnitud = (ltempsqrx=lsqr(lold.x)) + (ltempsqry=lsqr(lold.y));
+                lmagnitud = (ltempsqrx = lsqr(lold.x)) + (ltempsqry = lsqr(lold.y));
                 if ((lmagnitud > llimit) || (lmagnitud < 0))
                     break;
                 lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a,lold.y,bitshift);
@@ -2329,8 +2329,8 @@ int froth_per_pixel()
     {
         old.x = dxpixel();
         old.y = dypixel();
-        tempsqrx=sqr(old.x);
-        tempsqry=sqr(old.y);
+        tempsqrx = sqr(old.x);
+        tempsqry = sqr(old.y);
     }
     else  // integer mode
     {
