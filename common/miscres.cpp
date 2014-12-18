@@ -538,7 +538,7 @@ static void trigdetails(char *buf)
 {
     int numfn;
     char tmpbuf[20];
-    if (fractype==JULIBROT || fractype==JULIBROTFP)
+    if (fractype == JULIBROT || fractype == JULIBROTFP)
         numfn = (fractalspecific[neworbittype].flags >> 6) & 7;
     else
         numfn = (curfractalspecific->flags >> 6) & 7;
@@ -546,7 +546,7 @@ static void trigdetails(char *buf)
             curfractalspecific == &fractalspecific[FFORMULA])
         numfn = maxfn;
     *buf = 0; // null string if none
-    if (numfn>0) {
+    if (numfn > 0) {
         strcpy(buf,trigfn[trigndx[0]].name);
         int i = 0;
         while (++i < numfn) {
@@ -571,7 +571,7 @@ int set_trig_array(int k, const char *name)
 
     for (int i = 0; i < numtrigfn; i++)
     {
-        if (strcmp(trigname,trigfn[i].name)==0)
+        if (strcmp(trigname,trigfn[i].name) == 0)
         {
             trigndx[k] = (BYTE)i;
             set_trig_pointers(k);
@@ -1215,18 +1215,18 @@ static void area()
     const char *msg;
     char buf[160];
     long cnt=0;
-    if (inside<0) {
+    if (inside < 0) {
         stopmsg(STOPMSG_NONE, "Need solid inside to compute area");
         return;
     }
     for (int y = 0; y < ydots; y++) {
         for (int x = 0; x < xdots; x++) {
-            if (getcolor(x,y)==inside) {
+            if (getcolor(x,y) == inside) {
                 cnt++;
             }
         }
     }
-    if (inside>0 && outside<0 && maxit>inside) {
+    if (inside > 0 && outside < 0 && maxit > inside) {
         msg = "Warning: inside may not be unique\n";
     } else {
         msg = "";
@@ -1315,7 +1315,7 @@ int ifsload()                   // read in IFS parameters
             break;
         }
         bufptr = strtok(nullptr, seps);
-        if (bufptr==nullptr)
+        if (bufptr == nullptr)
         {
             bufptr = get_ifs_token(buf,ifsfile);
             if (bufptr == nullptr)
