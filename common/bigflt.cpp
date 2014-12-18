@@ -488,7 +488,7 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
 //      n ends up as |n|
 bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 {
-    int comp, almost_match=0;
+    int comp, almost_match = 0;
     LDBL f;
     bf_t orig_r, orig_n;
     int  orig_bflength,
@@ -551,7 +551,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
         unsafe_div_bf(bftmp3, n, r);
         unsafe_add_a_bf(r, bftmp3);
         half_a_bf(r);
-        if (bflength == orig_bflength && (comp=abs(cmp_bf(r, bftmp3))) < 8)  // if match or almost match
+        if (bflength == orig_bflength && (comp = abs(cmp_bf(r, bftmp3))) < 8)  // if match or almost match
         {
             if (comp < 4  // perfect or near perfect match
                     || almost_match == 1) // close enough for 2nd time
@@ -578,7 +578,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 // uses bftmp1, bftmp2, bftmp3 - global temp bigfloats
 bf_t exp_bf(bf_t r, bf_t n)
 {
-    U16 fact=1;
+    U16 fact = 1;
     S16 BIGDIST * testexp, BIGDIST * rexp;
 
     testexp = (S16 BIGDIST *)(bftmp2+bflength);
@@ -614,7 +614,7 @@ bf_t exp_bf(bf_t r, bf_t n)
 //      n ends up as |n|
 bf_t unsafe_ln_bf(bf_t r, bf_t n)
 {
-    int comp, almost_match=0;
+    int comp, almost_match = 0;
     LDBL f;
     bf_t orig_r, orig_n, orig_bftmp5;
     int  orig_bflength,
@@ -681,7 +681,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
         inttobf(bftmp4, 1);
         unsafe_sub_a_bf(bftmp2, bftmp4);   // n*exp(-r) - 1
         unsafe_sub_a_bf(r, bftmp2);        // -r - (n*exp(-r) - 1)
-        if (bflength == orig_bflength && (comp=abs(cmp_bf(r, bftmp5))) < 8)  // if match or almost match
+        if (bflength == orig_bflength && (comp = abs(cmp_bf(r, bftmp5))) < 8)  // if match or almost match
         {
             if (comp < 4  // perfect or near perfect match
                     || almost_match == 1) // close enough for 2nd time
@@ -713,7 +713,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 //      n ends up as |n| mod (pi/4)
 bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 {
-    U16 fact=2;
+    U16 fact = 2;
     bool k = false;
     int sin_done = 0;
     int cos_done = 0;
@@ -879,7 +879,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 //      n ends up as |n| or 1/|n|
 bf_t unsafe_atan_bf(bf_t r, bf_t n)
 {
-    int comp, almost_match=0;
+    int comp, almost_match = 0;
     bool signflag = false;
     LDBL f;
     bf_t orig_r, orig_n, orig_bf_pi, orig_bftmp3;
@@ -972,7 +972,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
         putchar('\n');
         bf_hexdump(r);
 #endif
-        if (bflength == orig_bflength && (comp=abs(cmp_bf(r, bftmp3))) < 8)  // if match or almost match
+        if (bflength == orig_bflength && (comp = abs(cmp_bf(r, bftmp3))) < 8)  // if match or almost match
         {
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
             printf("atan() loop comp=%i\n", comp);
@@ -2016,7 +2016,7 @@ LDBL extract_value(LDBL f, LDBL b, int *exp_ptr)
 // sort of like ldexp()
 LDBL scale_value(LDBL f, LDBL b , int n)
 {
-    LDBL total=1;
+    LDBL total = 1;
     int an;
 
     if (b == 0 || f == 0)
