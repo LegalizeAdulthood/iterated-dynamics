@@ -644,7 +644,7 @@ decode_evolver_info(EVOLUTION_INFO *info, int dir)
     unsigned char *buf;
     unsigned char *bufPtr;
 
-    if (dir==1) {
+    if (dir == 1) {
         evolution_info_buff.resize(EVOLVER_INFO_SIZE);
         buf = &evolution_info_buff[0];
         bufPtr = buf;
