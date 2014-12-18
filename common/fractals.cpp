@@ -141,8 +141,8 @@ int (*bigfltbailout)();
 
 int  fpMODbailout()
 {
-    tempsqrx=sqr(g_new.x);
-    tempsqry=sqr(g_new.y);
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     if (magnitude >= rqlim)
         return 1;
@@ -152,8 +152,8 @@ int  fpMODbailout()
 
 int  fpREALbailout()
 {
-    tempsqrx=sqr(g_new.x);
-    tempsqry=sqr(g_new.y);
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     if (tempsqrx >= rqlim)
         return 1;
@@ -163,8 +163,8 @@ int  fpREALbailout()
 
 int  fpIMAGbailout()
 {
-    tempsqrx=sqr(g_new.x);
-    tempsqry=sqr(g_new.y);
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     if (tempsqry >= rqlim)
         return 1;
@@ -174,8 +174,8 @@ int  fpIMAGbailout()
 
 int  fpORbailout()
 {
-    tempsqrx=sqr(g_new.x);
-    tempsqry=sqr(g_new.y);
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     if (tempsqrx >= rqlim || tempsqry >= rqlim)
         return 1;
@@ -185,8 +185,8 @@ int  fpORbailout()
 
 int  fpANDbailout()
 {
-    tempsqrx=sqr(g_new.x);
-    tempsqry=sqr(g_new.y);
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     if (tempsqrx >= rqlim && tempsqry >= rqlim)
         return 1;
@@ -197,8 +197,8 @@ int  fpANDbailout()
 int  fpMANHbailout()
 {
     double manhmag;
-    tempsqrx=sqr(g_new.x);
-    tempsqry=sqr(g_new.y);
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     manhmag = fabs(g_new.x) + fabs(g_new.y);
     if ((manhmag * manhmag) >= rqlim)
@@ -210,8 +210,8 @@ int  fpMANHbailout()
 int  fpMANRbailout()
 {
     double manrmag;
-    tempsqrx=sqr(g_new.x);
-    tempsqry=sqr(g_new.y);
+    tempsqrx = sqr(g_new.x);
+    tempsqry = sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     manrmag = g_new.x + g_new.y; // don't need abs() since we square it next
     if ((manrmag * manrmag) >= rqlim)
@@ -410,7 +410,7 @@ int complex_mult(DComplex arg1,DComplex arg2,DComplex *pz);
 
 int NewtonFractal2()
 {
-    static char start=1;
+    static char start = 1;
     if (start)
     {
         start = 0;
@@ -892,7 +892,7 @@ UnityFractal()
         return 1;
     lold.y = multiply(FgTwo - XXOne, lold.x, bitshift);
     lold.x = multiply(FgTwo - XXOne, lold.y, bitshift);
-    lnew=lold;
+    lnew = lold;
     return 0;
 #else
     return 0;
@@ -908,7 +908,7 @@ UnityfpFractal()
         return 1;
     old.y = (2.0 - XXOne)* old.x;
     old.x = (2.0 - XXOne)* old.y;
-    g_new=old;
+    g_new = old;
     return 0;
 }
 
@@ -3202,18 +3202,18 @@ EscherfpFractal() // Science of Fractal Images pp. 185, 187
 bool MandelbrotMix4Setup()
 {
     int sign_array = 0;
-    A.x=param[0];
-    A.y=0.0;    // a=real(p1),
-    B.x=param[1];
-    B.y=0.0;    // b=imag(p1),
-    D.x=param[2];
-    D.y=0.0;    // d=real(p2),
-    F.x=param[3];
-    F.y=0.0;    // f=imag(p2),
-    K.x=param[4]+1.0;
-    K.y=0.0;    // k=real(p3)+1,
-    L.x=param[5]+100.0;
-    L.y=0.0;    // l=imag(p3)+100,
+    A.x = param[0];
+    A.y = 0.0;    // a=real(p1),
+    B.x = param[1];
+    B.y = 0.0;    // b=imag(p1),
+    D.x = param[2];
+    D.y = 0.0;    // d=real(p2),
+    F.x = param[3];
+    F.y = 0.0;    // f=imag(p2),
+    K.x = param[4]+1.0;
+    K.y = 0.0;    // k=real(p3)+1,
+    L.x = param[5]+100.0;
+    L.y = 0.0;    // l=imag(p3)+100,
     CMPLXrecip(F,G);                // g=1/f,
     CMPLXrecip(D,H);                // h=1/d,
     CMPLXsub(F,B,tmp);              // tmp = f-b
