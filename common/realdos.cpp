@@ -347,7 +347,7 @@ int putstringcenter(int row, int col, int width, int attr, const char *msg)
 
 // ------------------------------------------------------------------------
 
-char speed_prompt[]="Speed key string";
+char speed_prompt[] = "Speed key string";
 
 /* For file list purposes only, it's a directory name if first
    char is a dot or last char is a slash */
