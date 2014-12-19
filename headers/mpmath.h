@@ -83,15 +83,15 @@ extern void (*dtrig3)();
 #define CMPLXconj(z)    ((z).y =  -((z).y))
 #define LCMPLXmod(z)       (lsqr((z).x)+lsqr((z).y))
 #define LCMPLXconj(z)   ((z).y =  -((z).y))
-#define LCMPLXtrig0(arg,out) Arg1->l = (arg); ltrig0(); (out)=Arg1->l
-#define LCMPLXtrig1(arg,out) Arg1->l = (arg); ltrig1(); (out)=Arg1->l
-#define LCMPLXtrig2(arg,out) Arg1->l = (arg); ltrig2(); (out)=Arg1->l
-#define LCMPLXtrig3(arg,out) Arg1->l = (arg); ltrig3(); (out)=Arg1->l
+#define LCMPLXtrig0(arg,out) Arg1->l = (arg); ltrig0(); (out) = Arg1->l
+#define LCMPLXtrig1(arg,out) Arg1->l = (arg); ltrig1(); (out) = Arg1->l
+#define LCMPLXtrig2(arg,out) Arg1->l = (arg); ltrig2(); (out) = Arg1->l
+#define LCMPLXtrig3(arg,out) Arg1->l = (arg); ltrig3(); (out) = Arg1->l
 #endif /* XFRACT */
-#define  CMPLXtrig0(arg,out) Arg1->d = (arg); dtrig0(); (out)=Arg1->d
-#define  CMPLXtrig1(arg,out) Arg1->d = (arg); dtrig1(); (out)=Arg1->d
-#define  CMPLXtrig2(arg,out) Arg1->d = (arg); dtrig2(); (out)=Arg1->d
-#define  CMPLXtrig3(arg,out) Arg1->d = (arg); dtrig3(); (out)=Arg1->d
+#define  CMPLXtrig0(arg,out) Arg1->d = (arg); dtrig0(); (out) = Arg1->d
+#define  CMPLXtrig1(arg,out) Arg1->d = (arg); dtrig1(); (out) = Arg1->d
+#define  CMPLXtrig2(arg,out) Arg1->d = (arg); dtrig2(); (out) = Arg1->d
+#define  CMPLXtrig3(arg,out) Arg1->d = (arg); dtrig3(); (out) = Arg1->d
 #if !defined(XFRACT)
 #define LCMPLXsin(arg,out)   Arg1->l = (arg); lStkSin();  (out) = Arg1->l
 #define LCMPLXcos(arg,out)   Arg1->l = (arg); lStkCos();  (out) = Arg1->l
