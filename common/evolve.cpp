@@ -259,7 +259,7 @@ int wrapped_positive_varyint(int randvalue, int limit, int mode)
 
 void varyinside(GENEBASE gene[], int randval, int i)
 {
-    int choices[9]= {-59,-60,-61,-100,-101,-102,-103,-104,-1};
+    int choices[9] = {-59,-60,-61,-100,-101,-102,-103,-104,-1};
     if (gene[i].mutate)
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
     return;
@@ -267,7 +267,7 @@ void varyinside(GENEBASE gene[], int randval, int i)
 
 void varyoutside(GENEBASE gene[], int randval, int i)
 {
-    int choices[8]= {-1,-2,-3,-4,-5,-6,-7,-8};
+    int choices[8] = {-1,-2,-3,-4,-5,-6,-7,-8};
     if (gene[i].mutate)
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,8,gene[i].mutate)];
     return;
@@ -275,7 +275,7 @@ void varyoutside(GENEBASE gene[], int randval, int i)
 
 void varybotest(GENEBASE gene[], int randval, int i)
 {
-    int choices[7]= {Mod, Real, Imag, Or, And, Manh, Manr};
+    int choices[7] = {Mod, Real, Imag, Or, And, Manh, Manr};
     if (gene[i].mutate) {
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,7,gene[i].mutate)];
         // move this next bit to varybot where it belongs
@@ -286,7 +286,7 @@ void varybotest(GENEBASE gene[], int randval, int i)
 
 void varypwr2(GENEBASE gene[], int randval, int i)
 {
-    int choices[9]= {0,2,4,8,16,32,64,128,256};
+    int choices[9] = {0,2,4,8,16,32,64,128,256};
     if (gene[i].mutate)
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
     return;
@@ -321,7 +321,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
 */
 int get_the_rest()
 {
-    const char *evolvmodes[]= {"no","x","y","x+y","x-y","random","spread"};
+    const char *evolvmodes[] = {"no","x","y","x+y","x-y","random","spread"};
     int i,k, numtrig;
     const char *choices[20];
     fullscreenvalues uvalues[20];
@@ -341,7 +341,7 @@ choose_vars_restart:
 
     k = -1;
     for (int num = MAXPARAMS; num < (NUMGENES - 5); num++) {
-        choices[++k]=gene[num].name;
+        choices[++k] = gene[num].name;
         uvalues[k].type = 'l';
         uvalues[k].uval.ch.vlen = 7;
         uvalues[k].uval.ch.llen = 7;
@@ -350,7 +350,7 @@ choose_vars_restart:
     }
 
     for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++) {
-        choices[++k]=gene[num].name;
+        choices[++k] = gene[num].name;
         uvalues[k].type = 'l';
         uvalues[k].uval.ch.vlen = 7;
         uvalues[k].uval.ch.llen = 7;
@@ -360,7 +360,7 @@ choose_vars_restart:
 
     if (curfractalspecific->calctype == StandardFractal &&
             (curfractalspecific->flags & BAILTEST)) {
-        choices[++k]=gene[NUMGENES - 1].name;
+        choices[++k] = gene[NUMGENES - 1].name;
         uvalues[k].type = 'l';
         uvalues[k].uval.ch.vlen = 7;
         uvalues[k].uval.ch.llen = 7;
@@ -368,13 +368,13 @@ choose_vars_restart:
         uvalues[k].uval.ch.val =  gene[NUMGENES - 1].mutate;
     }
 
-    choices[++k]= "";
+    choices[++k] = "";
     uvalues[k].type = '*';
-    choices[++k]= "Press F2 to set all to off";
+    choices[++k] = "Press F2 to set all to off";
     uvalues[k].type ='*';
-    choices[++k]= "Press F3 to set all on";
+    choices[++k] = "Press F3 to set all on";
     uvalues[k].type = '*';
-    choices[++k]= "Press F4 to randomize all";
+    choices[++k] = "Press F4 to randomize all";
     uvalues[k].type = '*';
 
     i = fullscreen_prompt("Variable tweak central 2 of 2",k+1,choices,uvalues,28,nullptr);
@@ -416,7 +416,7 @@ choose_vars_restart:
 
 int get_variations()
 {
-    const char *evolvmodes[]= {"no","x","y","x+y","x-y","random","spread"};
+    const char *evolvmodes[] = {"no","x","y","x+y","x-y","random","spread"};
     int k, numparams;
     const char *choices[20];
     fullscreenvalues uvalues[20];
@@ -476,7 +476,7 @@ choose_vars_restart:
         if (fractype == FORMULA || fractype == FFORMULA)
             if (paramnotused(num))
                 continue;
-        choices[++k]=gene[num].name;
+        choices[++k] = gene[num].name;
         uvalues[k].type = 'l';
         uvalues[k].uval.ch.vlen = 7;
         uvalues[k].uval.ch.llen = 7;
@@ -484,15 +484,15 @@ choose_vars_restart:
         uvalues[k].uval.ch.val =  gene[num].mutate;
     }
 
-    choices[++k]= "";
+    choices[++k] = "";
     uvalues[k].type = '*';
-    choices[++k]= "Press F2 to set all to off";
+    choices[++k] = "Press F2 to set all to off";
     uvalues[k].type ='*';
-    choices[++k]= "Press F3 to set all on";
+    choices[++k] = "Press F3 to set all on";
     uvalues[k].type = '*';
-    choices[++k]= "Press F4 to randomize all";
+    choices[++k] = "Press F4 to randomize all";
     uvalues[k].type = '*';
-    choices[++k]= "Press F6 for second page"; // F5 gets eaten
+    choices[++k] = "Press F6 for second page"; // F5 gets eaten
     uvalues[k].type = '*';
 
     int i = fullscreen_prompt("Variable tweak central 1 of 2",k+1,choices,uvalues,92,nullptr);
@@ -589,62 +589,62 @@ get_evol_restart:
 
     k = -1;
 
-    choices[++k]= "Evolution mode? (no for full screen)";
+    choices[++k] = "Evolution mode? (no for full screen)";
     uvalues[k].type = 'y';
     uvalues[k].uval.ch.val = evolving&1;
 
-    choices[++k]= "Image grid size (odd numbers only)";
+    choices[++k] = "Image grid size (odd numbers only)";
     uvalues[k].type = 'i';
     uvalues[k].uval.ival = gridsz;
 
     if (explore_check()) {  // test to see if any parms are set to linear
         // variation 'explore mode'
-        choices[++k]= "Show parameter zoom box?";
+        choices[++k] = "Show parameter zoom box?";
         uvalues[k].type = 'y';
         uvalues[k].uval.ch.val = ((evolving & PARMBOX) / PARMBOX);
 
-        choices[++k]= "x parameter range (across screen)";
+        choices[++k] = "x parameter range (across screen)";
         uvalues[k].type = 'f';
         uvalues[k].uval.dval = paramrangex;
 
-        choices[++k]= "x parameter offset (left hand edge)";
+        choices[++k] = "x parameter offset (left hand edge)";
         uvalues[k].type = 'f';
         uvalues[k].uval.dval = opx;
 
-        choices[++k]= "y parameter range (up screen)";
+        choices[++k] = "y parameter range (up screen)";
         uvalues[k].type = 'f';
         uvalues[k].uval.dval = paramrangey;
 
-        choices[++k]= "y parameter offset (lower edge)";
+        choices[++k] = "y parameter offset (lower edge)";
         uvalues[k].type = 'f';
-        uvalues[k].uval.dval= opy;
+        uvalues[k].uval.dval = opy;
     }
 
-    choices[++k]= "Max random mutation";
+    choices[++k] = "Max random mutation";
     uvalues[k].type = 'f';
     uvalues[k].uval.dval = fiddlefactor;
 
-    choices[++k]= "Mutation reduction factor (between generations)";
+    choices[++k] = "Mutation reduction factor (between generations)";
     uvalues[k].type = 'f';
     uvalues[k].uval.dval = fiddle_reduction;
 
-    choices[++k]= "Grouting? ";
+    choices[++k] = "Grouting? ";
     uvalues[k].type = 'y';
     uvalues[k].uval.ch.val = !((evolving & NOGROUT) / NOGROUT);
 
-    choices[++k]= "";
+    choices[++k] = "";
     uvalues[k].type = '*';
 
-    choices[++k]= "Press F4 to reset view parameters to defaults.";
+    choices[++k] = "Press F4 to reset view parameters to defaults.";
     uvalues[k].type = '*';
 
-    choices[++k]= "Press F2 to halve mutation levels";
+    choices[++k] = "Press F2 to halve mutation levels";
     uvalues[k].type = '*';
 
-    choices[++k]= "Press F3 to double mutation levels" ;
+    choices[++k] = "Press F3 to double mutation levels" ;
     uvalues[k].type ='*';
 
-    choices[++k]= "Press F6 to control which parameters are varied";
+    choices[++k] = "Press F6 to control which parameters are varied";
     uvalues[k].type = '*';
     oldhelpmode = helpmode;     // this prevents HELP from activating
     helpmode = HELPEVOL;
