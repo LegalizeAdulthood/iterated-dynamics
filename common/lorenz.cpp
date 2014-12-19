@@ -2139,7 +2139,8 @@ int funny_glasses_call(int (*calc)())
         plot_setup();
         plot = standardplot;
         // is there a better way to clear the graphics screen ?
-        if ((status = calc()) != 0)
+        status = calc();
+        if (status != 0)
             goto done;
         if (g_glasses_type == 3) // photographer's mode
             stopmsg(STOPMSG_INFO_ONLY,"Second image (right eye) is ready");
