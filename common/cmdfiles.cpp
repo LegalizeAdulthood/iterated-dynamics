@@ -55,9 +55,9 @@ char    tempdir[FILE_MAX_DIR] = {""}; // name of temporary directory
 char    workdir[FILE_MAX_DIR] = {""}; // name of directory for misc files
 char    orgfrmdir[FILE_MAX_DIR] = {""};// name of directory for orgfrm files
 char    gifmask[13] = {""};
-char    PrintName[FILE_MAX_PATH]= {"fract001.prn"}; // Name for print-to-file
-char    savename[FILE_MAX_PATH]= {"fract001"}; // save files using this name
-char    autoname[FILE_MAX_PATH]= {"auto.key"}; // record auto keystrokes here
+char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; // Name for print-to-file
+char    savename[FILE_MAX_PATH] = {"fract001"}; // save files using this name
+char    autoname[FILE_MAX_PATH] = {"auto.key"}; // record auto keystrokes here
 bool    potflag = false;        // continuous potential enabled?
 bool    pot16bit = false;               // store 16 bit continuous potential values
 bool    gif87a_flag = false;    // true if GIF87a format, false otherwise
@@ -108,7 +108,7 @@ int     colorstate = 0;         // 0, g_dac_box matches default (bios or map=)
 bool    colorpreloaded = false; // if g_dac_box preloaded for next mode select
 int     save_release = 0;       // release creating PAR file
 bool    dontreadcolor = false;  // flag for reading color from GIF
-double  math_tol[2]= {.05,.05}; // For math transition
+double  math_tol[2] = {.05,.05}; // For math transition
 bool Targa_Out = false;                 // 3D fullcolor flag
 bool truecolor = false;                 // escape time truecolor flag
 int truemode = 0;               // truecolor coloring scheme
@@ -156,7 +156,7 @@ std::vector<float> ifs_defn;            // ifs parameters
 bool ifs_type = false;                  // false=2d, true=3d
 int  g_slides = SLIDES_OFF;             // 1 autokey=play, 2 autokey=record
 
-BYTE txtcolor[]= {
+BYTE txtcolor[] = {
     BLUE*16+L_WHITE,    // C_TITLE           title background
     BLUE*16+L_GREEN,    // C_TITLE_DEV       development vsn foreground
     GREEN*16+YELLOW,    // C_HELP_HDG        help page title line
@@ -518,7 +518,7 @@ static void initvars_fractal()          // init vars affecting calculation
     fm_wavetype = 0;                     // sin wave
     polyphony = 0;                       // no polyphony
     for (int i = 0; i <= 11; i++)
-        scale_map[i]=i+1;    // straight mapping of notes in octave
+        scale_map[i] = i+1;    // straight mapping of notes in octave
 #endif
 }
 
@@ -2500,7 +2500,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
         else if (charval[0] == 'y')
             usr_periodicitycheck = 1;
         else if (charval[0] == 's')   // 's' for 'show'
-            usr_periodicitycheck= -1;
+            usr_periodicitycheck = -1;
         else if (numval == NONNUMERIC)
             goto badarg;
         else if (numval != 0)
@@ -2764,7 +2764,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
 
     if (strcmp(variable, "3d") == 0) {            // 3d=?/?/..
         if (strcmp(value, "overlay") == 0) {
-            yesnoval[0]=1;
+            yesnoval[0] = 1;
             if (calc_status > CALCSTAT_NO_FRACTAL) // if no image, treat same as 3D=yes
                 overlay3d = true;
         }
