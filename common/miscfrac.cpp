@@ -483,7 +483,7 @@ static void set_Plasma_palette()
         return;    // map= specified
 
     dac[0].red  = 0 ;
-    dac[0].green= 0 ;
+    dac[0].green = 0 ;
     dac[0].blue = 0 ;
     for (int i = 1; i <= 85; i++)
     {
@@ -1010,8 +1010,8 @@ int BifurcLambda() // Used by lyanupov
 }
 #endif
 
-#define LCMPLXtrig0(arg,out) Arg1->l = (arg); ltrig0(); (out)=Arg1->l
-#define  CMPLXtrig0(arg,out) Arg1->d = (arg); dtrig0(); (out)=Arg1->d
+#define LCMPLXtrig0(arg,out) Arg1->l = (arg); ltrig0(); (out) = Arg1->l
+#define  CMPLXtrig0(arg,out) Arg1->d = (arg); dtrig0(); (out) = Arg1->d
 
 int BifurcVerhulstTrig()
 {
@@ -1438,14 +1438,14 @@ void abort_cellular(int err, int t)
     break;
     case STRING2:
     {
-        static char msg[]= {"Make string of 0's through  's" };
+        static char msg[] = {"Make string of 0's through  's" };
         msg[27] = (char)(k_1 + 48); // turn into a character value
         stopmsg(STOPMSG_NONE, msg);
     }
     break;
     case TABLEK:
     {
-        static char msg[]= {"Make Rule with 0's through  's" };
+        static char msg[] = {"Make Rule with 0's through  's" };
         msg[27] = (char)(k_1 + 48); // turn into a character value
         stopmsg(STOPMSG_NONE, msg);
     }
@@ -1458,7 +1458,7 @@ void abort_cellular(int err, int t)
     break;
     case RULELENGTH:
     {
-        static char msg[]= {"Rule must be    digits long" };
+        static char msg[] = {"Rule must be    digits long" };
         i = rule_digits / 10;
         if (i == 0)
             msg[14] = (char)(rule_digits + 48);
@@ -1657,15 +1657,15 @@ int cellular()
             if (rflag || randparam == 0 || randparam == -1) {
                 // Use a random border
                 for (int i = 0; i <= r; i++) {
-                    cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
-                    cell_array[notfilled][ixstop-i]=(BYTE)(rand()%(int)k);
+                    cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
+                    cell_array[notfilled][ixstop-i] = (BYTE)(rand()%(int)k);
                 }
             }
             else {
                 // Use a zero border
                 for (int i = 0; i <= r; i++) {
-                    cell_array[notfilled][i]=0;
-                    cell_array[notfilled][ixstop-i]=0;
+                    cell_array[notfilled][i] = 0;
+                    cell_array[notfilled][ixstop-i] = 0;
                 }
             }
 
@@ -1710,15 +1710,15 @@ contloop:
         if (rflag || randparam == 0 || randparam == -1) {
             // Use a random border
             for (int i = 0; i <= r; i++) {
-                cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
-                cell_array[notfilled][ixstop-i]=(BYTE)(rand()%(int)k);
+                cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
+                cell_array[notfilled][ixstop-i] = (BYTE)(rand()%(int)k);
             }
         }
         else {
             // Use a zero border
             for (int i = 0; i <= r; i++) {
-                cell_array[notfilled][i]=0;
-                cell_array[notfilled][ixstop-i]=0;
+                cell_array[notfilled][i] = 0;
+                cell_array[notfilled][ixstop-i] = 0;
             }
         }
 
@@ -1785,7 +1785,7 @@ static void set_Cellular_palette()
         return;       // map= specified
 
     dac[0].red  = 0 ;
-    dac[0].green= 0 ;
+    dac[0].green = 0 ;
     dac[0].blue = 0 ;
 
     dac[1].red    = Red.red;
