@@ -1664,7 +1664,7 @@ int find_extra_param(int type)
 {
     int i,ret,curtyp;
     ret = -1;
-    i= -1;
+    i = -1;
 
     if (fractalspecific[type].flags&MORE)
     {
@@ -2398,7 +2398,7 @@ restart_1:
     if (Targa_Out && overlay3d)
         Targa_Overlay = true;
 
-    k= -1;
+    k = -1;
 
     prompts3d[++k] = "Preview Mode?";
     uvalues[k].type = 'y';
@@ -2717,7 +2717,7 @@ static bool get_light_params()
     {
         prompts3d[++k] = "Haze Factor        (0 - 100, '0' disables)";
         uvalues[k].type = 'i';
-        uvalues[k].uval.ival= haze;
+        uvalues[k].uval.ival = haze;
 
         if (!Targa_Overlay)
             check_writefile(light_name,".tga");
@@ -2882,7 +2882,7 @@ static bool get_funny_glasses_params()
     k = -1;
     prompts3d[++k] = "Interocular distance (as % of screen)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival= g_eye_separation;
+    uvalues[k].uval.ival = g_eye_separation;
 
     prompts3d[++k] = "Convergence adjust (positive = spread greater)";
     uvalues[k].type = 'i';
