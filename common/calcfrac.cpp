@@ -979,25 +979,25 @@ static void perform_worklist()
 
     if (distest) // setup stuff for distance estimator
     {
-        double ftemp, ftemp2, delxx, delyy2, delyy, delxx2, dxsize, d_y_size;
+        double ftemp, ftemp2, delxx, delyy2, delyy, delxx2, d_x_size, d_y_size;
         double aspect;
         if (pseudox && pseudoy)
         {
             aspect = (double)pseudoy/(double)pseudox;
-            dxsize = pseudox-1;
+            d_x_size = pseudox-1;
             d_y_size = pseudoy-1;
         }
         else
         {
             aspect = (double)ydots/(double)xdots;
-            dxsize = xdots-1;
+            d_x_size = xdots-1;
             d_y_size = ydots-1;
         }
 
-        delxx  = (xxmax - xx3rd) / dxsize; // calculate stepsizes
+        delxx  = (xxmax - xx3rd) / d_x_size; // calculate stepsizes
         delyy  = (yymax - yy3rd) / d_y_size;
         delxx2 = (xx3rd - xxmin) / d_y_size;
-        delyy2 = (yy3rd - yymin) / dxsize;
+        delyy2 = (yy3rd - yymin) / d_x_size;
 
         use_old_distest = save_release < 1827;
         rqlim = rqlim_save; // just in case changed to DEM_BAILOUT earlier
