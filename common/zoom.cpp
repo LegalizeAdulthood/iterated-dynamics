@@ -657,7 +657,8 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     if (zwidth == 0.0)
         return (0); // no zoombox, leave calc_status as is
     // got a zoombox
-    if ((alignmask = check_pan()-1) < 0 || evolving) {
+    alignmask = check_pan()-1;
+    if (alignmask < 0 || evolving) {
         calc_status = CALCSTAT_PARAMS_CHANGED; // can't pan, trigger recalc
         return (0);
     }
