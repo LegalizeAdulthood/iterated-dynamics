@@ -576,8 +576,8 @@ int fullscreen_choice(
     {
         for (int i = 0; i < numchoices; ++i)
         {
-            int len;
-            if ((len = (int) strlen(choices[i])) > colwidth)
+            int len = (int) strlen(choices[i]);
+            if (len > colwidth)
             {
                 colwidth = len;
             }
@@ -633,7 +633,8 @@ int fullscreen_choice(
                         || (boxdepth = (numchoices + boxwidth - 1)/boxwidth) > max_depth - 2)
                 {
                     boxwidth = 80 / (colwidth + 1); // last gasp, full width
-                    if ((boxdepth = (numchoices + boxwidth - 1)/boxwidth) > max_depth)
+                    boxdepth = (numchoices + boxwidth - 1)/boxwidth;
+                    if (boxdepth > max_depth)
                     {
                         boxdepth = max_depth;
                     }
@@ -1031,7 +1032,8 @@ int fullscreen_choice(
         default:
             if (checkkey)
             {
-                if ((ret = (*checkkey)(curkey, current)) < -1 || ret > 0)
+                ret = (*checkkey)(curkey, current);
+                if (ret < -1 || ret > 0)
                 {
                     goto fs_choice_end;
                 }
@@ -1670,7 +1672,8 @@ int field_prompt(
     titlecol -= (90 - boxwidth) / 20;
     promptcol = titlecol - (boxwidth-len)/2;
     j = titlecol;                          // add margin at each side of box
-    if ((i = (82-boxwidth)/4) > 3)
+    i = (82-boxwidth)/4;
+    if (i > 3)
         i = 3;
     j -= i;
     boxwidth += i * 2;
