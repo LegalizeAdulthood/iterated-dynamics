@@ -258,12 +258,16 @@ prompt_user:
             // get resolution from the video name (which must be valid)
             pydots = 0;
             pxdots = pydots;
-            if ((i = check_vidmode_keyname(vidmde)) > 0)
-                if ((i = check_vidmode_key(0, i)) >= 0) {
+            i = check_vidmode_keyname(vidmde);
+            if (i > 0)
+            {
+                i = check_vidmode_key(0, i);
+                if (i >= 0) {
                     // get the resolution of this video mode
                     pxdots = g_video_table[i].xdots;
                     pydots = g_video_table[i].ydots;
                 }
+            }
             if (pxdots == 0 && (xm > 1 || ym > 1)) {
                 // no corresponding video mode!
                 stopmsg(STOPMSG_NONE, "Invalid video mode entry!");
@@ -1178,7 +1182,8 @@ static void put_filename(const char *keyword, const char *fname)
 {
     const char *p;
     if (*fname && !endswithslash(fname)) {
-        if ((p = strrchr(fname, SLASHC)) != nullptr)
+        p = strrchr(fname, SLASHC);
+        if (p != nullptr)
         {
             fname = p+1;
             if (*fname == 0)
@@ -1211,8 +1216,8 @@ int maxlinelength = 72;
 
 static void put_parm_line()
 {
-    int len,c;
-    if ((len = s_wbdata.len) > NICELINELEN) {
+    int len = s_wbdata.len,c;
+    if (len > NICELINELEN) {
         len = NICELINELEN+1;
         while (--len != 0 && s_wbdata.buf[len] != ' ') { }
         if (len == 0) {
@@ -1403,7 +1408,8 @@ static void strip_zeros(char *buf)
 {
     char *dptr, *bptr, *exptr;
     strlwr(buf);
-    if ((dptr = strchr(buf,'.')) != nullptr) {
+    dptr = strchr(buf,'.');
+    if (dptr != nullptr) {
         ++dptr;
         exptr = strchr(buf,'e');
         if (exptr != nullptr)  // scientific notation with 'e'?
@@ -1573,11 +1579,11 @@ void format_vid_table(int choice,char *buf)
 
 static int check_modekey(int curkey,int choice)
 {
-    int i, ret;
-    if ((i = check_vidmode_key(1,curkey)) >= 0)
+    int i = check_vidmode_key(1,curkey);
+    if (i >= 0)
         return (-1-i);
     i = entnums[choice];
-    ret = 0;
+    int ret = 0;
     if ((curkey == '-' || curkey == '+')
             && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084)) {
         if (g_bad_config)
