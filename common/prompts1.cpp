@@ -189,7 +189,8 @@ int fullscreen_prompt(      // full-screen prompting routine
     extrawidth = 0;
     extralines = extrawidth;
     {
-        if ((hdgscan = extrainfo) != nullptr) {
+        hdgscan = extrainfo;
+        if (hdgscan != nullptr) {
             if (*hdgscan == 0)
                 extrainfo = nullptr;
             else { // count extra lines, find widest
@@ -878,7 +879,8 @@ int get_fracttype()             // prompt for and select fractal type
     int done = -1;
     int oldfractype = fractype;
     while (1) {
-        if ((t = select_fracttype(fractype)) < 0)
+        t = select_fracttype(fractype);
+        if (t < 0)
             break;
         bool i = select_type_params(t, fractype);
         if (!i) { // ok, all done
