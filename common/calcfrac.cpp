@@ -3228,7 +3228,7 @@ static int solidguess()
         ylim = ((iystop+maxblock)/maxblock+15)/16+1;
         if (!right_guess)       // no right edge guessing, zap border
             for (int y = 0; y <= ylim; ++y)
-                tprefix[1][y][xlim]= 0xffff;
+                tprefix[1][y][xlim] = 0xffff;
         if (!bottom_guess)      // no bottom edge guessing, zap border
         {
             i = (iystop+maxblock)/maxblock+1;
@@ -3240,12 +3240,12 @@ static int solidguess()
         // set each bit in tprefix[0] to OR of it & surrounding 8 in tprefix[1]
         for (int y = 0; ++y < ylim;)
         {
-            pfxp0= (unsigned int *)&tprefix[0][y][0];
-            pfxp1= (unsigned int *)&tprefix[1][y][0];
+            pfxp0 = (unsigned int *)&tprefix[0][y][0];
+            pfxp1 = (unsigned int *)&tprefix[1][y][0];
             for (int x = 0; ++x < xlim;)
             {
                 ++pfxp1;
-                u= *(pfxp1-1)|*pfxp1|*(pfxp1+1);
+                u = *(pfxp1-1)|*pfxp1|*(pfxp1+1);
                 *(++pfxp0) = u|(u >> 1)|(u << 1)
                            |((*(pfxp1-(maxxblk+1))|*(pfxp1-maxxblk)|*(pfxp1-(maxxblk-1))) >> 15)
                            |((*(pfxp1+(maxxblk-1))|*(pfxp1+maxxblk)|*(pfxp1+(maxxblk+1))) << 15);
@@ -3370,7 +3370,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         if (xplushalf > ixstop)
         {
             if (!right_guess)
-                c31= -1;
+                c31 = -1;
         }
         else if (y > 0)
             c31 = getcolor(xplushalf,ylesshalf);
