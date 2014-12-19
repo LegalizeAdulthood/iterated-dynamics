@@ -1745,7 +1745,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 
     strcpy(gifout,"fractmig.gif");
 
-    temp= &olddacbox[0][0];                 // a safe place for our temp data
+    temp = &olddacbox[0][0];                 // a safe place for our temp data
 
     gif87a_flag = true;                     // for now, force this
 
