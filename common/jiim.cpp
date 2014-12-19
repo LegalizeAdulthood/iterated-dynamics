@@ -392,7 +392,8 @@ static void SaveRect(int x, int y, int width, int depth)
 
     memset(dstack, g_color_dark, width);
     // TODO: MemoryAlloc
-    if ((memory_handle = MemoryAlloc((U16)width, (long)depth, MEMORY)) != 0)
+    memory_handle = MemoryAlloc((U16)width, (long)depth, MEMORY);
+    if (memory_handle != 0)
     {
         Cursor_Hide();
         for (int yoff = 0; yoff < depth; yoff++)
