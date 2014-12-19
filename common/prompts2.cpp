@@ -89,11 +89,11 @@ int get_toggles()
     int old_stoppass;
     double old_closeprox;
     const char *calcmodes[] = {"1","2","3","g","g1","g2","g3","g4","g5","g6","b","s","t","d","o"};
-    const char *soundmodes[5]= {"off", "beep","x","y","z"};
-    const char *insidemodes[]= {"numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross",
+    const char *soundmodes[5] = {"off", "beep","x","y","z"};
+    const char *insidemodes[] = {"numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross",
                           "startrail", "period", "atan", "fmod"
                          };
-    const char *outsidemodes[]= {"numb", "iter", "real", "imag", "mult", "summ", "atan",
+    const char *outsidemodes[] = {"numb", "iter", "real", "imag", "mult", "summ", "atan",
                            "fmod", "tdis"
                           };
 
@@ -772,11 +772,11 @@ get_view_restart:
     uvalues[k].type = '*';
 
     sprintf(dim1, "Video memory limits: (for y = %4d) x <= %d", ymax,  xmax);
-    choices[++k]= dim1;
+    choices[++k] = dim1;
     uvalues[k].type = '*';
 
     sprintf(dim2, "                     (for x = %4d) y <= %d", xmax, ymax);
-    choices[++k]= dim2;
+    choices[++k] = dim2;
     uvalues[k].type = '*';
 
     choices[++k] = "";
@@ -1310,7 +1310,7 @@ int  fr_findnext()              // Find next file (or subdir) meeting above path
         } else if (dirEntry->d_ino != 0) {
             splitpath(dirEntry->d_name,nullptr,nullptr,thisname,thisext);
             strncpy(DTA.filename,dirEntry->d_name,13);
-            DTA.filename[12]='\0';
+            DTA.filename[12] = '\0';
             strcpy(tmpname,searchdir);
             strcat(tmpname,dirEntry->d_name);
             stat(tmpname,&sbuf);
@@ -1920,46 +1920,46 @@ gc_loop:
 
     nump = -1;
     if (cmag) {
-        prompts[++nump]= "Center X";
+        prompts[++nump] = "Center X";
         values[nump].uval.dval = Xctr;
-        prompts[++nump]= "Center Y";
+        prompts[++nump] = "Center Y";
         values[nump].uval.dval = Yctr;
-        prompts[++nump]= "Magnification";
+        prompts[++nump] = "Magnification";
         values[nump].uval.dval = (double)Magnification;
-        prompts[++nump]= "X Magnification Factor";
+        prompts[++nump] = "X Magnification Factor";
         values[nump].uval.dval = Xmagfactor;
-        prompts[++nump]= "Rotation Angle (degrees)";
+        prompts[++nump] = "Rotation Angle (degrees)";
         values[nump].uval.dval = Rotation;
-        prompts[++nump]= "Skew Angle (degrees)";
+        prompts[++nump] = "Skew Angle (degrees)";
         values[nump].uval.dval = Skew;
-        prompts[++nump]= "";
+        prompts[++nump] = "";
         values[nump].type = '*';
-        prompts[++nump]= "Press " FK_F7 " to switch to \"corners\" mode";
+        prompts[++nump] = "Press " FK_F7 " to switch to \"corners\" mode";
         values[nump].type = '*';
     }
 
     else {
         if (drawmode == 'l') {
-            prompts[++nump]= "Left End Point";
+            prompts[++nump] = "Left End Point";
             values[nump].type = '*';
             prompts[++nump] = xprompt;
             values[nump].uval.dval = xxmin;
             prompts[++nump] = yprompt;
             values[nump].uval.dval = yymax;
-            prompts[++nump]= "Right End Point";
+            prompts[++nump] = "Right End Point";
             values[nump].type = '*';
             prompts[++nump] = xprompt;
             values[nump].uval.dval = xxmax;
             prompts[++nump] = yprompt;
             values[nump].uval.dval = yymin;
         } else {
-            prompts[++nump]= "Top-Left Corner";
+            prompts[++nump] = "Top-Left Corner";
             values[nump].type = '*';
             prompts[++nump] = xprompt;
             values[nump].uval.dval = xxmin;
             prompts[++nump] = yprompt;
             values[nump].uval.dval = yymax;
-            prompts[++nump]= "Bottom-Right Corner";
+            prompts[++nump] = "Bottom-Right Corner";
             values[nump].type = '*';
             prompts[++nump] = xprompt;
             values[nump].uval.dval = xxmax;
@@ -1970,18 +1970,18 @@ gc_loop:
                 yy3rd = 0;
                 xx3rd = yy3rd;
             }
-            prompts[++nump]= "Bottom-left (zeros for top-left X, bottom-right Y)";
+            prompts[++nump] = "Bottom-left (zeros for top-left X, bottom-right Y)";
             values[nump].type = '*';
             prompts[++nump] = xprompt;
             values[nump].uval.dval = xx3rd;
             prompts[++nump] = yprompt;
             values[nump].uval.dval = yy3rd;
-            prompts[++nump]= "Press " FK_F7 " to switch to \"center-mag\" mode";
+            prompts[++nump] = "Press " FK_F7 " to switch to \"center-mag\" mode";
             values[nump].type = '*';
         }
     }
 
-    prompts[++nump]= "Press " FK_F4 " to reset to type default values";
+    prompts[++nump] = "Press " FK_F4 " to reset to type default values";
     values[nump].type = '*';
 
     int const oldhelpmode = helpmode;
@@ -2141,30 +2141,30 @@ gsc_loop:
 
     nump = -1;
     if (cmag) {
-        prompts[++nump]= "Center X";
+        prompts[++nump] = "Center X";
         values[nump].uval.dval = Xctr;
-        prompts[++nump]= "Center Y";
+        prompts[++nump] = "Center Y";
         values[nump].uval.dval = Yctr;
-        prompts[++nump]= "Magnification";
+        prompts[++nump] = "Magnification";
         values[nump].uval.dval = (double)Magnification;
-        prompts[++nump]= "X Magnification Factor";
+        prompts[++nump] = "X Magnification Factor";
         values[nump].uval.dval = Xmagfactor;
-        prompts[++nump]= "Rotation Angle (degrees)";
+        prompts[++nump] = "Rotation Angle (degrees)";
         values[nump].uval.dval = Rotation;
-        prompts[++nump]= "Skew Angle (degrees)";
+        prompts[++nump] = "Skew Angle (degrees)";
         values[nump].uval.dval = Skew;
-        prompts[++nump]= "";
+        prompts[++nump] = "";
         values[nump].type = '*';
-        prompts[++nump]= "Press " FK_F7 " to switch to \"corners\" mode";
+        prompts[++nump] = "Press " FK_F7 " to switch to \"corners\" mode";
         values[nump].type = '*';
     } else {
-        prompts[++nump]= "Top-Left Corner";
+        prompts[++nump] = "Top-Left Corner";
         values[nump].type = '*';
         prompts[++nump] = xprompt;
         values[nump].uval.dval = oxmin;
         prompts[++nump] = yprompt;
         values[nump].uval.dval = oymax;
-        prompts[++nump]= "Bottom-Right Corner";
+        prompts[++nump] = "Bottom-Right Corner";
         values[nump].type = '*';
         prompts[++nump] = xprompt;
         values[nump].uval.dval = oxmax;
@@ -2175,17 +2175,17 @@ gsc_loop:
             oy3rd = 0;
             ox3rd = oy3rd;
         }
-        prompts[++nump]= "Bottom-left (zeros for top-left X, bottom-right Y)";
+        prompts[++nump] = "Bottom-left (zeros for top-left X, bottom-right Y)";
         values[nump].type = '*';
         prompts[++nump] = xprompt;
         values[nump].uval.dval = ox3rd;
         prompts[++nump] = yprompt;
         values[nump].uval.dval = oy3rd;
-        prompts[++nump]= "Press " FK_F7 " to switch to \"center-mag\" mode";
+        prompts[++nump] = "Press " FK_F7 " to switch to \"center-mag\" mode";
         values[nump].type = '*';
     }
 
-    prompts[++nump]= "Press " FK_F4 " to reset to type default values";
+    prompts[++nump] = "Press " FK_F4 " to reset to type default values";
     values[nump].type = '*';
 
     int const oldhelpmode = helpmode;
