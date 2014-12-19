@@ -216,7 +216,7 @@ restart:   /* insert key re-starts here */
     minbox   = 3;
     strcpy(browsemask,"*.gif");
     strcpy(browsename,"            ");
-    name_stack_ptr= -1; /* init loaded files stack */
+    name_stack_ptr = -1; /* init loaded files stack */
 
     evolving = 0;
     paramrangex = 4;
