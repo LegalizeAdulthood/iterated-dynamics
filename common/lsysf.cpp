@@ -747,8 +747,8 @@ void lsysf_dosincos()
     twopimax = TWOPI / maxangle;
     for (int i = 0; i < maxangle; i++) {
         twopimaxi = i * twopimax;
-        sins_f[i]= sinl(twopimaxi);
-        coss_f[i]= locaspect * cosl(twopimaxi);
+        sins_f[i] = sinl(twopimaxi);
+        coss_f[i] = locaspect * cosl(twopimaxi);
     }
 
 }
