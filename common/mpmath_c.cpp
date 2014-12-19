@@ -448,7 +448,8 @@ void SetupLogTable() {
         } else if (LogFlag == -1) { // old log function
             mlf = (colors - 1) / log(static_cast<double>(MaxLTSize));
         } else if (LogFlag <= -2) { // sqrt function
-            if ((lf = 0 - LogFlag) >= (unsigned long)MaxLTSize)
+            lf = 0 - LogFlag;
+            if (lf >= (unsigned long)MaxLTSize)
                 lf = MaxLTSize - 1;
             mlf = (colors - 2) / sqrt(static_cast<double>(MaxLTSize - lf));
         }
@@ -487,7 +488,8 @@ void SetupLogTable() {
                 LogTable[prev++] = (BYTE)n;
         }
     } else {
-        if ((lf = 0 - LogFlag) >= (unsigned long)MaxLTSize)
+        lf = 0 - LogFlag;
+        if (lf >= (unsigned long)MaxLTSize)
             lf = MaxLTSize - 1;
         Fg2Float((long)(MaxLTSize-lf), 0, m);
         fSqrt14(m, m);
