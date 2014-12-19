@@ -699,7 +699,8 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
         {
             int k = 0;
             for (int j = 0; j < 3; j++) {
-                if ((k = getc(fp)) < 0)
+                k = getc(fp);
+                if (k < 0)
                     break;
                 g_dac_box[i][j] = (BYTE)(k >> 2);
             }
@@ -1329,7 +1330,8 @@ int fgetwindow()
     bt_e = alloc_stack(rbflength+2);
     bt_f = alloc_stack(rbflength+2);
 
-    if ((vidlength = (U16)(sxdots + sydots)) > (U16)4096)
+    vidlength = (U16)(sxdots + sydots);
+    if (vidlength > (U16)4096)
         vid_too_big = 2;
     // 4096 based on 4096B in boxx... max 1/4 pixels plotted, and need words
     // 4096 = 10240/2.5 based on size of boxx+boxy+boxvalues
