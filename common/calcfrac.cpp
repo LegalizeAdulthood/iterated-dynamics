@@ -878,14 +878,13 @@ int calcfract()
 // locate alternate math record
 int find_alternate_math(int type, int math)
 {
-    int i,ret,curtype /* ,curmath = 0 */;
-    // unsigned umath;
-    ret = -1;
     if (math == 0)
-        return ret;
-    i= -1;
+        return -1;
+    int i = -1;
+    int curtype;
     while ((curtype = alternatemath[++i].type) != type && curtype != -1)
         ;
+    int ret = -1;
     if (curtype == type && alternatemath[i].math)
         ret = i;
     return ret;
