@@ -125,9 +125,11 @@ void make_batch_file()
 
         if (sptr && colorspec[0] == '@')
         {
-            if ((sptr2 = strrchr(sptr, SLASHC)) != nullptr)
+            sptr2 = strrchr(sptr, SLASHC);
+            if (sptr2 != nullptr)
                 sptr = sptr2 + 1;
-            if ((sptr2 = strrchr(sptr, ':')) != nullptr)
+            sptr2 = strrchr(sptr, ':');
+            if (sptr2 != nullptr)
                 sptr = sptr2 + 1;
             strncpy(&colorspec[1], sptr, 12);
             colorspec[13] = 0;
