@@ -186,7 +186,7 @@ static void init_bf_2()
         ptr += bnlength;
         bnsaved.y  = bnroot+ptr;
         ptr += bnlength;
-        bnclosenuff= bnroot+ptr;
+        bnclosenuff = bnroot+ptr;
         ptr += bnlength;
         bnparm.x   = bnroot+ptr;
         ptr += bnlength;
@@ -221,7 +221,7 @@ static void init_bf_2()
         ptr += bflength+2;
         bfsaved.y  = bnroot+ptr;
         ptr += bflength+2;
-        bfclosenuff= bnroot+ptr;
+        bfclosenuff = bnroot+ptr;
         ptr += bflength+2;
         bfparm.x   = bnroot+ptr;
         ptr += bflength+2;
@@ -384,8 +384,8 @@ static int restore_bf_vars()
 void free_bf_vars()
 {
     bf_save_len = bf_math = 0;
-    bnstep=bnlength=intlength=rlength=padding=shiftfactor=decimals=0;
-    bflength=rbflength=bfdecimals=0;
+    bnstep = bnlength = intlength = rlength = padding = shiftfactor = decimals = 0;
+    bflength = rbflength = bfdecimals = 0;
 }
 
 /************************************************************************/
@@ -441,7 +441,7 @@ void restore_stack(int old_offset)
 void init_bf_dec(int dec)
 {
     if (bfdigits > 0)
-        decimals=bfdigits;   // blindly force
+        decimals = bfdigits;   // blindly force
     else
         decimals = dec;
     if (bailout > 10)    // arbitrary value
