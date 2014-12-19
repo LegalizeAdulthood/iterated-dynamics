@@ -1270,7 +1270,7 @@ char *get_ifs_token(char *buf,FILE *ifsfile)
     }
 }
 
-char insufficient_ifs_mem[]= {"Insufficient memory for IFS"};
+char insufficient_ifs_mem[] = {"Insufficient memory for IFS"};
 int numaffine;
 int ifsload()                   // read in IFS parameters
 {
@@ -1459,7 +1459,7 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
         out = fr_findfirst(fullpath);
         while (out == 0) {
             char msg[200];
-            DTA.filename[FILE_MAX_FNAME+FILE_MAX_EXT-2]=0;
+            DTA.filename[FILE_MAX_FNAME+FILE_MAX_EXT-2] = 0;
             sprintf(msg,"Searching %13s for %s      ",DTA.filename,itemname);
             showtempmsg(msg);
             if (!(DTA.attribute & SUBDIR) &&
