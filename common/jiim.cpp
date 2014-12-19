@@ -441,7 +441,7 @@ void Jiim(int which)         // called by fractint
 
     int xoff, yoff;                   // center of the window
     int x, y;
-    int kbdchar= -1;
+    int kbdchar = -1;
 
     long iter;
     int color;
