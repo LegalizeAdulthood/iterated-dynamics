@@ -91,11 +91,11 @@ LDBL getnumber(char **str)
     i = 0;
     while ((**str <= '9' && **str >= '0') || **str == '.')
     {
-        numstr[i++]= **str;
+        numstr[i++] = **str;
         (*str)++;
     }
     (*str)--;
-    numstr[i]=0;
+    numstr[i] = 0;
     ret = atof(numstr);
     if (ret <= 0.0) // this is a sanity check
         return 0;
@@ -123,9 +123,9 @@ static bool readLSystemFile(char *str)
             return true;
     maxangle = 0;
     for (int linenum = 0; linenum < MAXRULES; ++linenum)
-        ruleptrs[linenum]=nullptr;
-    rulind= &ruleptrs[1];
-    msgbuf[0]= 0;;
+        ruleptrs[linenum] = nullptr;
+    rulind = &ruleptrs[1];
+    msgbuf[0] = 0;;
 
     int linenum = 0;
     while (file_gets(inline1,MAX_LSYS_LINE_LEN,infile) > -1)  // Max line length chars
@@ -223,7 +223,7 @@ static bool readLSystemFile(char *str)
     }
     if (err)
     {
-        msgbuf[strlen(msgbuf)-1]=0; // strip trailing \n
+        msgbuf[strlen(msgbuf)-1] = 0; // strip trailing \n
         stopmsg(STOPMSG_NONE, msgbuf);
         return true;
     }
@@ -363,7 +363,7 @@ static bool save_rule(char *rule, char **saveptr)
     }
     *saveptr = tmpfar;
     while (--i >= 0)
-        *(tmpfar++)= *(rule++);
+        *(tmpfar++) = *(rule++);
     return false;
 }
 
