@@ -131,7 +131,8 @@ static bool readLSystemFile(char *str)
     while (file_gets(inline1,MAX_LSYS_LINE_LEN,infile) > -1)  // Max line length chars
     {
         linenum++;
-        if ((word = strchr(inline1,';')) != nullptr) // strip comment
+        word = strchr(inline1,';');
+        if (word != nullptr) // strip comment
             *word = 0;
         strlwr(inline1);
 
@@ -198,7 +199,8 @@ static bool readLSystemFile(char *str)
             if (check)
             {
                 check = false;
-                if ((word = strtok(nullptr," \t\n")) != nullptr)
+                word = strtok(nullptr," \t\n");
+                if (word != nullptr)
                     if (err < 6)
                     {
                         sprintf(&msgbuf[strlen(msgbuf)],
@@ -271,7 +273,8 @@ int Lsystem()
             *sc = nullptr;
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
-            if ((ts.curcolor = 15) > colors)
+            ts.curcolor = 15;
+            if (ts.curcolor > colors)
                 ts.curcolor = (char)(colors-1);
             drawLSysI(rules2[0], &ts, &rules2[1], order);
         }
@@ -308,7 +311,8 @@ int Lsystem()
             *sc = nullptr;
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
-            if ((ts.curcolor = 15) > colors)
+            ts.curcolor = 15;
+            if (ts.curcolor > colors)
                 ts.curcolor = (char)(colors-1);
             lsys_prepfpu(&ts);
             drawLSysF(rules2[0], &ts, &rules2[1], order);
