@@ -89,7 +89,8 @@ int gifview()
         strcpy(temp1,readname);
     if (has_ext(temp1) == nullptr) {
         strcat(temp1,DEFAULTFRACTALTYPE);
-        if ((fpin = fopen(temp1,"rb")) != nullptr) {
+        fpin = fopen(temp1,"rb");
+        if (fpin != nullptr) {
             fclose(fpin);
         }
         else {

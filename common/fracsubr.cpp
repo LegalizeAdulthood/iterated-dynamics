@@ -274,8 +274,8 @@ init_restart:
     // match Julibrot with integer mode of orbit
     if (fractype == JULIBROTFP && fractalspecific[neworbittype].isinteger)
     {
-        int i;
-        if ((i = fractalspecific[neworbittype].tofloat) != NOFRACTAL)
+        int i = fractalspecific[neworbittype].tofloat;
+        if (i != NOFRACTAL)
             neworbittype = i;
         else
             fractype = JULIBROT;

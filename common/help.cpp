@@ -451,7 +451,8 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
         {
             temp_overlap = overlap(curr->c, curr_c2, temp->c, temp->c+temp->width-1);
             // if >= 3 lines between, prioritize on vertical distance:
-            if ((temp_dist = dist1(temp->r, curr->r)) >= 4)
+            temp_dist = dist1(temp->r, curr->r);
+            if (temp_dist >= 4)
             {
                 temp_overlap -= temp_dist*100;
             }
@@ -901,9 +902,9 @@ int help(int action)
 
 static bool can_read_file(const char *path)
 {
-    int handle;
+    int handle = open(path, O_RDONLY);
 
-    if ((handle = open(path, O_RDONLY)) != -1)
+    if (handle != -1)
     {
         close(handle);
         return true;
@@ -1393,7 +1394,8 @@ int init_help()
 
     if (find_file("fractint.hlp", path))
     {
-        if ((help_file = fopen(path, "rb")) != nullptr)
+        help_file = fopen(path, "rb");
+        if (help_file != nullptr)
         {
             fread(&hs, sizeof(long)+sizeof(int), 1, help_file);
 

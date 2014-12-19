@@ -1468,7 +1468,8 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         julibrot = false;
         clear_zoombox();
         driver_stack_screen();
-        if ((i = get_fracttype()) >= 0)
+        i = get_fracttype();
+        if (i >= 0)
         {
             driver_discard_screen();
             savedac = 0;
@@ -1956,7 +1957,8 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             driver_unstack_screen();
     // fall through
     default:             // other (maybe valid Fn key
-        if ((k = check_vidmode_key(0, *kbdchar)) >= 0)
+        k = check_vidmode_key(0, *kbdchar);
+        if (k >= 0)
         {
             g_adapter = k;
             if (g_video_table[g_adapter].colors != colors)
