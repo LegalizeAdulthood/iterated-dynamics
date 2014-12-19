@@ -152,10 +152,10 @@ MPC cmplx2MPC(DComplex z) {
 }
 
 int (*pMPcmp)(MP x, MP y) = MPcmp086;
-MP  *(*pMPmul)(MP x, MP y)= MPmul086;
-MP  *(*pMPdiv)(MP x, MP y)= MPdiv086;
-MP  *(*pMPadd)(MP x, MP y)= MPadd086;
-MP  *(*pMPsub)(MP x, MP y)= MPsub086;
+MP  *(*pMPmul)(MP x, MP y) = MPmul086;
+MP  *(*pMPdiv)(MP x, MP y) = MPdiv086;
+MP  *(*pMPadd)(MP x, MP y) = MPadd086;
+MP  *(*pMPsub)(MP x, MP y) = MPsub086;
 MP  *(*pd2MP)(double x)                 = d2MP086 ;
 double *(*pMP2d)(MP m)                  = MP2d086 ;
 
