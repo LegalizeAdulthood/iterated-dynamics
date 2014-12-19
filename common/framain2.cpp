@@ -72,7 +72,7 @@ int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
             xdots   = g_video_entry.xdots;       // # dots across the screen
             ydots   = g_video_entry.ydots;       // # dots down the screen
             colors  = g_video_entry.colors;      // # colors available
-            dotmode  %= 100;
+            dotmode %= 100;
             sxdots  = xdots;
             sydots  = ydots;
             syoffs = 0;
