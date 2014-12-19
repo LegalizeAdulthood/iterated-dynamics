@@ -197,8 +197,8 @@ int line3d(BYTE * pixels, unsigned linelen)
     //**********************************************************************
     if (g_row_count++ == 0)
     {
-        int err;
-        if ((err = first_time(linelen, v)) != 0)
+        int err = first_time(linelen, v);
+        if (err != 0)
             return err;
         if (xdots > OLDMAXPIXELS)
             return -1;
