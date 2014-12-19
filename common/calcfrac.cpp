@@ -979,24 +979,24 @@ static void perform_worklist()
 
     if (distest) // setup stuff for distance estimator
     {
-        double ftemp, ftemp2, delxx, delyy2, delyy, delxx2, dxsize, dysize;
+        double ftemp, ftemp2, delxx, delyy2, delyy, delxx2, dxsize, d_y_size;
         double aspect;
         if (pseudox && pseudoy)
         {
             aspect = (double)pseudoy/(double)pseudox;
             dxsize = pseudox-1;
-            dysize = pseudoy-1;
+            d_y_size = pseudoy-1;
         }
         else
         {
             aspect = (double)ydots/(double)xdots;
             dxsize = xdots-1;
-            dysize = ydots-1;
+            d_y_size = ydots-1;
         }
 
         delxx  = (xxmax - xx3rd) / dxsize; // calculate stepsizes
-        delyy  = (yymax - yy3rd) / dysize;
-        delxx2 = (xx3rd - xxmin) / dysize;
+        delyy  = (yymax - yy3rd) / d_y_size;
+        delxx2 = (xx3rd - xxmin) / d_y_size;
         delyy2 = (yy3rd - yymin) / dxsize;
 
         use_old_distest = save_release < 1827;
