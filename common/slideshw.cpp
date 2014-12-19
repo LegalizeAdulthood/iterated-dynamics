@@ -219,7 +219,7 @@ start:
             buf[40] = 0;
             fgets(buf,40,fpss);
             len = (int) strlen(buf);
-            buf[len-1]=0; // zap newline
+            buf[len-1] = 0; // zap newline
             message(secs,(char *)buf);
         }
         out = 0;

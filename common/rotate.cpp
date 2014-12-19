@@ -37,7 +37,7 @@ void rotate(int direction)      // rotate-the-palette routine
 {
     int  kbdchar, last, next;
     int fkey, step, fstep, jstep, oldstep;
-    int incr, fromred=0, fromblue=0, fromgreen=0, tored=0, toblue=0, togreen=0;
+    int incr, fromred = 0, fromblue = 0, fromgreen = 0, tored = 0, toblue = 0, togreen = 0;
     int changecolor, changedirection;
     int oldhelpmode;
     int rotate_max,rotate_size;
