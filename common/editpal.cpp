@@ -2854,7 +2854,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
     case 'F':
     case 'f':    // toggle freestyle palette edit mode
-        me->freestyle= !me->freestyle;
+        me->freestyle = !me->freestyle;
 
         PalTable__SetCurr(me, -1, 0);
 
