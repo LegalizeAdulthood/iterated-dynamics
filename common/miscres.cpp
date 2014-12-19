@@ -489,7 +489,8 @@ int check_writefile(char *name, const char *ext)
 nextname:
     strcpy(openfile,name);
     strcpy(opentype,ext);
-    if ((period = has_ext(openfile)) != nullptr)
+    period = has_ext(openfile);
+    if (period != nullptr)
     {
         strcpy(opentype,period);
         *period = 0;
@@ -564,7 +565,8 @@ int set_trig_array(int k, const char *name)
     strncpy(trigname,name,6);
     trigname[6] = 0; // safety first
 
-    if ((slash = strchr(trigname,'/')) != nullptr)
+    slash = strchr(trigname,'/');
+    if (slash != nullptr)
         *slash = 0;
 
     strlwr(trigname);
@@ -1365,7 +1367,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
     splitpath(filename,drive,dir,fname,ext);
     makepath(fullpath,"","",fname,ext);
     if (stricmp(filename, CommandFile)) {
-        if ((infile = fopen(filename, "rb")) != nullptr) {
+        infile = fopen(filename, "rb");
+        if (infile != nullptr) {
             if (scan_entries(infile, nullptr, itemname) == -1) {
                 found = true;
             }
@@ -1377,7 +1380,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
 
         if (!found && checkcurdir) {
             makepath(fullpath,"",DOTSLASH,fname,ext);
-            if ((infile = fopen(fullpath, "rb")) != nullptr) {
+            infile = fopen(fullpath, "rb");
+            if (infile != nullptr) {
                 if (scan_entries(infile, nullptr, itemname) == -1) {
                     strcpy(filename, fullpath);
                     found = true;
@@ -1421,7 +1425,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
     }
 
     if (!found) {
-        if ((infile = fopen(CommandFile, "rb")) != nullptr) {
+        infile = fopen(CommandFile, "rb");
+        if (infile != nullptr) {
             if (scan_entries(infile, nullptr, parsearchname) == -1) {
                 strcpy(filename, CommandFile);
                 found = true;
@@ -1435,7 +1440,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
 
     if (!found) {
         makepath(fullpath,drive,dir,fname,ext);
-        if ((infile = fopen(fullpath, "rb")) != nullptr) {
+        infile = fopen(fullpath, "rb");
+        if (infile != nullptr) {
             if (scan_entries(infile, nullptr, itemname) == -1) {
                 strcpy(filename, fullpath);
                 found = true;
@@ -1461,7 +1467,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
                     strcmp(DTA.filename,"..")) {
                 splitpath(DTA.filename,nullptr,nullptr,fname,ext);
                 makepath(fullpath,drive,dir,fname,ext);
-                if ((infile = fopen(fullpath, "rb")) != nullptr) {
+                infile = fopen(fullpath, "rb");
+                if (infile != nullptr) {
                     if (scan_entries(infile, nullptr, itemname) == -1) {
                         strcpy(filename, fullpath);
                         found = true;
@@ -1503,7 +1510,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
             strcat(fname, "chr");
         }
         makepath(fullpath,drive,dir,fname,defaultextension);
-        if ((infile = fopen(fullpath, "rb")) != nullptr) {
+        infile = fopen(fullpath, "rb");
+        if (infile != nullptr) {
             if (scan_entries(infile, nullptr, itemname) == -1) {
                 strcpy(filename, fullpath);
                 found = true;
