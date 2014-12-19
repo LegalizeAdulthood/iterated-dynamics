@@ -66,8 +66,9 @@ int cmp_bn(bn_t n1, bn_t n2)
 
     // two bytes at a time
     // signed comparison for msb
-    if ((Svalue1 = big_accessS16((S16 BIGDIST *)(n1+bnlength-2))) >
-            (Svalue2 = big_accessS16((S16 BIGDIST *)(n2+bnlength-2))))
+    Svalue1 = big_accessS16((S16 BIGDIST *)(n1+bnlength-2));
+    Svalue2 = big_accessS16((S16 BIGDIST *)(n2+bnlength-2));
+    if (Svalue1 > Svalue2)
     {   // now determine which of the two bytes was different
         if ((S16)(Svalue1&0xFF00) > (S16)(Svalue2&0xFF00))   // compare just high bytes
             return (bnlength); // high byte was different
@@ -85,7 +86,9 @@ int cmp_bn(bn_t n1, bn_t n2)
     // unsigned comparison for the rest
     for (int i = bnlength-4; i >= 0; i -= 2)
     {
-        if ((value1 = big_access16(n1+i)) > (value2 = big_access16(n2+i)))
+        value1 = big_access16(n1+i);
+        value2 = big_access16(n2+i);
+        if (value1 > value2)
         {   // now determine which of the two bytes was different
             if ((value1&0xFF00) > (value2&0xFF00))   // compare just high bytes
                 return (i+2); // high byte was different

@@ -103,7 +103,8 @@ static void init_bf_2()
 
     /* at present time one call would suffice, but this logic allows
        multiple kinds of alternate math eg long double */
-    if ((i = find_alternate_math(fractype, BIGNUM)) > -1)
+    i = find_alternate_math(fractype, BIGNUM);
+    if (i > -1)
         bf_math = alternatemath[i].math;
     else if ((i = find_alternate_math(fractype, BIGFLT)) > -1)
         bf_math = alternatemath[i].math;

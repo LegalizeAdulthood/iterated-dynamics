@@ -4075,8 +4075,11 @@ static int tesseral()
                     for (row = tp->y1 + 1; row < tp->y2; row++) {
                         put_line(row,tp->x1+1,tp->x2-1,&dstack[OLDMAXPIXELS]);
                         if (plot != putcolor) // symmetry
-                            if ((j = yystop-(row-yystart)) > iystop && j < ydots)
+                        {
+                            j = yystop-(row-yystart);
+                            if (j > iystop && j < ydots)
                                 put_line(j,tp->x1+1,tp->x2-1,&dstack[OLDMAXPIXELS]);
+                        }
                         if (++i > 25) {
                             if (check_key())
                                 goto tess_end;
