@@ -25,7 +25,7 @@ MandelSetup()           // Mandelbrot Routine
             && !invert && decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !potflag
             && biomorph == -1 && inside > -59 && outside >= -1
-            && useinitorbit != 1 && !using_jiim && bailoutest == Mod
+            && useinitorbit != 1 && !using_jiim && bailoutest == bailouts::Mod
             && (orbitsave&2) == 0)
         calctype = calcmand; // the normal case - use CALCMAND
     else
@@ -44,7 +44,7 @@ JuliaSetup()            // Julia Routine
             && !invert && decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !potflag
             && biomorph == -1 && inside > -59 && outside >= -1
-            && !finattract && !using_jiim && bailoutest == Mod
+            && !finattract && !using_jiim && bailoutest == bailouts::Mod
             && (orbitsave&2) == 0)
         calctype = calcmand; // the normal case - use CALCMAND
     else
@@ -202,7 +202,7 @@ MandelfpSetup()
                 && outside >= -6
                 && useinitorbit != 1
                 && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
-                && !using_jiim && bailoutest == Mod
+                && !using_jiim && bailoutest == bailouts::Mod
                 && (orbitsave&2) == 0)
         {
             calctype = calcmandfp; // the normal case - use calcmandfp
@@ -304,7 +304,7 @@ JuliafpSetup()
                 && useinitorbit != 1
                 && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
                 && !finattract
-                && !using_jiim && bailoutest == Mod
+                && !using_jiim && bailoutest == bailouts::Mod
                 && (orbitsave&2) == 0)
         {
             calctype = calcmandfp; // the normal case - use calcmandfp

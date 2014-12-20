@@ -319,11 +319,11 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version > 9)
     {   // post-version 18.22
         bailout     = read_info.bailout; // use long bailout
-        bailoutest = (enum bailouts) read_info.bailoutest;
+        bailoutest = static_cast<bailouts>(read_info.bailoutest);
     }
     else
     {
-        bailoutest = Mod;
+        bailoutest = bailouts::Mod;
     }
     setbailoutformula(bailoutest);
 

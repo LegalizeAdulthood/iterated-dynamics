@@ -59,7 +59,7 @@ struct PARAMHIST      // for saving evolution data of center image
     BYTE trigndx1;
     BYTE trigndx2;
     BYTE trigndx3;
-    int bailoutest;
+    bailouts bailoutest;
 };
 
 void param_history(int mode);
@@ -275,8 +275,18 @@ void varyoutside(GENEBASE gene[], int randval, int i)
 
 void varybotest(GENEBASE gene[], int randval, int i)
 {
-    int choices[7] = {Mod, Real, Imag, Or, And, Manh, Manr};
-    if (gene[i].mutate) {
+    int choices[7] =
+    {
+        static_cast<int>(bailouts::Mod),
+        static_cast<int>(bailouts::Real),
+        static_cast<int>(bailouts::Imag),
+        static_cast<int>(bailouts::Or),
+        static_cast<int>(bailouts::And),
+        static_cast<int>(bailouts::Manh),
+        static_cast<int>(bailouts::Manr)
+    };
+    if (gene[i].mutate)
+    {
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,7,gene[i].mutate)];
         // move this next bit to varybot where it belongs
         setbailoutformula(bailoutest);

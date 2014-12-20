@@ -95,7 +95,7 @@ int     g_init_mode = 0;        // initial video mode
 int     initcyclelimit = 0;     // initial cycle limit
 bool    usemag = false;         // use center-mag corners
 long    bailout = 0;            // user input bailout value
-enum bailouts bailoutest;       // test used for determining bailout
+bailouts bailoutest;            // test used for determining bailout
 double  inversion[3] = { 0.0 }; // radius, xcenter, ycenter
 int     rotate_lo = 0;
 int     rotate_hi = 0;          // cycling color range
@@ -487,7 +487,7 @@ static void initvars_fractal()          // init vars affecting calculation
     overlay3d = false;                  // 3D overlay is off
 
     old_demm_colors = false;
-    bailoutest    = Mod;
+    bailoutest    = bailouts::Mod;
     floatbailout  = fpMODbailout;
     longbailout   = asmlMODbailout;
     bignumbailout = bnMODbailout;
@@ -2318,19 +2318,19 @@ int cmdarg(char *curarg, int mode) // process a single argument
 
     if (strcmp(variable, "bailoutest") == 0) {    // bailoutest=?
         if (strcmp(value, "mod") == 0)
-            bailoutest = Mod;
+            bailoutest = bailouts::Mod;
         else if (strcmp(value, "real") == 0)
-            bailoutest = Real;
+            bailoutest = bailouts::Real;
         else if (strcmp(value, "imag") == 0)
-            bailoutest = Imag;
+            bailoutest = bailouts::Imag;
         else if (strcmp(value, "or") == 0)
-            bailoutest = Or;
+            bailoutest = bailouts::Or;
         else if (strcmp(value, "and") == 0)
-            bailoutest = And;
+            bailoutest = bailouts::And;
         else if (strcmp(value, "manh") == 0)
-            bailoutest = Manh;
+            bailoutest = bailouts::Manh;
         else if (strcmp(value, "manr") == 0)
-            bailoutest = Manr;
+            bailoutest = bailouts::Manr;
         else
             goto badarg;
         setbailoutformula(bailoutest);

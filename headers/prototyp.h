@@ -862,7 +862,7 @@ extern int get_fract_params(int);
 extern int get_fract3d_params();
 extern int get_3d_params();
 extern int prompt_valuestring(char *buf,fullscreenvalues *val);
-extern void setbailoutformula(enum bailouts);
+extern void setbailoutformula(bailouts);
 extern int find_extra_param(int);
 extern void load_params(int fractype);
 extern bool check_orbit_name(char *);

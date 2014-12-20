@@ -711,19 +711,19 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         if (bailout && (!potflag || potparam[2] == 0.0))
             put_parm(" %s=%ld", "bailout",bailout);
 
-        if (bailoutest != Mod) {
+        if (bailoutest != bailouts::Mod) {
             put_parm(" %s=", "bailoutest");
-            if (bailoutest == Real)
+            if (bailoutest == bailouts::Real)
                 put_parm("real");
-            else if (bailoutest == Imag)
+            else if (bailoutest == bailouts::Imag)
                 put_parm("imag");
-            else if (bailoutest == Or)
+            else if (bailoutest == bailouts::Or)
                 put_parm("or");
-            else if (bailoutest == And)
+            else if (bailoutest == bailouts::And)
                 put_parm("and");
-            else if (bailoutest == Manh)
+            else if (bailoutest == bailouts::Manh)
                 put_parm("manh");
-            else if (bailoutest == Manr)
+            else if (bailoutest == bailouts::Manr)
                 put_parm("manr");
             else
                 put_parm("mod"); // default, just in case

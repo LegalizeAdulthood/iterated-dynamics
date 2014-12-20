@@ -288,7 +288,7 @@ double fmodtest()
 
     switch (bailoutest)
     {
-    case Mod:
+    case bailouts::Mod:
     {
         if (magnitude == 0.0 || !no_mag_calc || integerfractal)
             result = sqr(g_new.x)+sqr(g_new.y);
@@ -296,17 +296,17 @@ double fmodtest()
             result = magnitude; // don't recalculate
     }
     break;
-    case Real:
+    case bailouts::Real:
     {
         result = sqr(g_new.x);
     }
     break;
-    case Imag:
+    case bailouts::Imag:
     {
         result = sqr(g_new.y);
     }
     break;
-    case Or:
+    case bailouts::Or:
     {
         double tmpx = sqr(g_new.x);
         double tmpy = sqr(g_new.y);
@@ -316,12 +316,12 @@ double fmodtest()
             result = tmpy;
     }
     break;
-    case Manh:
+    case bailouts::Manh:
     {
         result = sqr(fabs(g_new.x)+fabs(g_new.y));
     }
     break;
-    case Manr:
+    case bailouts::Manr:
     {
         result = sqr(g_new.x+g_new.y);
     }
@@ -3721,7 +3721,7 @@ static void setsymmetry(int sym, bool uselist) // set up proper symmetrical plot
     else if (forcesymmetry == 1000)
         forcesymmetry = sym;  // for backwards compatibility
     else if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
-             || outside == ATAN || bailoutest == Manr || outside == FMOD)
+             || outside == ATAN || bailoutest == bailouts::Manr || outside == FMOD)
         return;
     else if (inside == FMODI || outside == TDIS)
         return;

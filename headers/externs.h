@@ -25,7 +25,7 @@ extern int                   bad_code_count;
 extern bool                  bad_outside;
 extern int                   bad_value;
 extern long                  bailout;
-extern enum bailouts         bailoutest;
+extern bailouts              bailoutest;
 extern int                   basehertz;
 extern int                   basin;
 extern int                   bf_save_len;

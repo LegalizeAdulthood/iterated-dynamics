@@ -2428,7 +2428,7 @@ static void restore_history_info(int i)
     major_method          = (enum Major)last.major_method   ;
     minor_method          = (enum Minor)last.minor_method   ;
     bailout               = last.bailout        ;
-    bailoutest            = (enum bailouts)last.bailoutest     ;
+    bailoutest            = static_cast<bailouts>(last.bailoutest);
     maxit                 = last.iterations     ;
     old_demm_colors       = last.old_demm_colors != 0;
     curfractalspecific    = &fractalspecific[fractype];

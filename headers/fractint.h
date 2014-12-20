@@ -571,7 +571,16 @@ struct AlternateMath
 #define FMODI     -103
 #define ATANI     -104
 // defines for bailoutest
-enum bailouts { Mod, Real, Imag, Or, And, Manh, Manr };
+enum class bailouts
+{
+    Mod,
+    Real,
+    Imag,
+    Or,
+    And,
+    Manh,
+    Manr
+};
 enum Major  {breadth_first, depth_first, random_walk, random_run};
 enum Minor  {left_first, right_first};
 // bitmask defines for fractalspecific flags

@@ -1400,7 +1400,7 @@ gfp_top:
     if (orbit_bailout != 0 && curfractalspecific->calctype == StandardFractal &&
             (curfractalspecific->flags & BAILTEST)) {
         paramvalues[promptnum].type = 'l';
-        paramvalues[promptnum].uval.ch.val  = (int)bailoutest;
+        paramvalues[promptnum].uval.ch.val  = static_cast<int>(bailoutest);
         paramvalues[promptnum].uval.ch.llen = 7;
         paramvalues[promptnum].uval.ch.vlen = 6;
         paramvalues[promptnum].uval.ch.list = bailnameptr;
@@ -1598,14 +1598,15 @@ gfp_top:
     orbit_bailout = curfractalspecific->orbit_bailout;
     if (orbit_bailout != 0 && curfractalspecific->calctype == StandardFractal &&
             (curfractalspecific->flags & BAILTEST)) {
-        if (paramvalues[promptnum].uval.ch.val != (int)bailoutest) {
-            bailoutest = (enum bailouts)paramvalues[promptnum].uval.ch.val;
+        if (paramvalues[promptnum].uval.ch.val != static_cast<int>(bailoutest))
+        {
+            bailoutest = static_cast<bailouts>(paramvalues[promptnum].uval.ch.val);
             ret = 1;
         }
         promptnum++;
     }
     else
-        bailoutest = Mod;
+        bailoutest = bailouts::Mod;
     setbailoutformula(bailoutest);
 
     if (orbit_bailout) {
@@ -2941,13 +2942,12 @@ static bool get_funny_glasses_params()
     return false;
 }
 
-void setbailoutformula(enum bailouts test)
+void setbailoutformula(bailouts test)
 {
     switch (test)
     {
-    case Mod:
+    case bailouts::Mod:
     default:
-    {
         if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpMODbailout;
         else
@@ -2959,9 +2959,8 @@ void setbailoutformula(enum bailouts test)
         bignumbailout = bnMODbailout;
         bigfltbailout = bfMODbailout;
         break;
-    }
-    case Real:
-    {
+
+    case bailouts::Real:
         if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpREALbailout;
         else
@@ -2973,9 +2972,8 @@ void setbailoutformula(enum bailouts test)
         bignumbailout = bnREALbailout;
         bigfltbailout = bfREALbailout;
         break;
-    }
-    case Imag:
-    {
+
+    case bailouts::Imag:
         if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpIMAGbailout;
         else
@@ -2987,9 +2985,8 @@ void setbailoutformula(enum bailouts test)
         bignumbailout = bnIMAGbailout;
         bigfltbailout = bfIMAGbailout;
         break;
-    }
-    case Or:
-    {
+
+    case bailouts::Or:
         if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpORbailout;
         else
@@ -3001,9 +2998,8 @@ void setbailoutformula(enum bailouts test)
         bignumbailout = bnORbailout;
         bigfltbailout = bfORbailout;
         break;
-    }
-    case And:
-    {
+
+    case bailouts::And:
         if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpANDbailout;
         else
@@ -3015,9 +3011,8 @@ void setbailoutformula(enum bailouts test)
         bignumbailout = bnANDbailout;
         bigfltbailout = bfANDbailout;
         break;
-    }
-    case Manh:
-    {
+
+    case bailouts::Manh:
         if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpMANHbailout;
         else
@@ -3029,9 +3024,8 @@ void setbailoutformula(enum bailouts test)
         bignumbailout = bnMANHbailout;
         bigfltbailout = bfMANHbailout;
         break;
-    }
-    case Manr:
-    {
+
+    case bailouts::Manr:
         if (debugflag != 72)     // Fast 287 math
             floatbailout = asmfpMANRbailout;
         else
@@ -3043,6 +3037,5 @@ void setbailoutformula(enum bailouts test)
         bignumbailout = bnMANRbailout;
         bigfltbailout = bfMANRbailout;
         break;
-    }
     }
 }

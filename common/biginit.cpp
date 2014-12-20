@@ -451,8 +451,8 @@ void init_bf_dec(int dec)
     else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
         intlength = 2;
     // the bailout tests need greater dynamic range
-    else if (bailoutest == Real || bailoutest == Imag || bailoutest == And ||
-             bailoutest == Manr)
+    else if (bailoutest == bailouts::Real || bailoutest == bailouts::Imag || bailoutest == bailouts::And ||
+             bailoutest == bailouts::Manr)
         intlength = 2;
     else
         intlength = 1;
@@ -475,8 +475,8 @@ void init_bf_length(int bnl)
     else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
         intlength = 2;
     // the bailout tests need greater dynamic range
-    else if (bailoutest == Real || bailoutest == Imag || bailoutest == And ||
-             bailoutest == Manr)
+    else if (bailoutest == bailouts::Real || bailoutest == bailouts::Imag || bailoutest == bailouts::And ||
+             bailoutest == bailouts::Manr)
         intlength = 2;
     else
         intlength = 1;

@@ -346,7 +346,7 @@ init_restart:
                 && (outside > -2 || outside < -6)         // and no funny outside stuff
                 && debugflag != 1234                      // and not debugging
                 && closeprox <= 2.0                       // and closeprox not too large
-                && bailoutest == Mod)                     // and bailout test = mod
+                && bailoutest == bailouts::Mod)         // and bailout test = mod
             bitshift = FUDGEFACTOR;                  // use the larger bitshift
     }
 
