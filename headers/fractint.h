@@ -30,12 +30,6 @@ enum stopmsg_flags
     STOPMSG_FIXED_FONT  = 8,
     STOPMSG_INFO_ONLY   = 16
 };
-// g_video_type video types
-#define VIDEO_TYPE_HGC      1
-#define VIDEO_TYPE_EGA      3
-#define VIDEO_TYPE_CGA      2
-#define VIDEO_TYPE_MCGA     4
-#define VIDEO_TYPE_VGA      5
 // for gotos in former FRACTINT.C pieces
 #define RESTART           1
 #define IMAGESTART        2
