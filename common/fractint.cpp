@@ -456,41 +456,41 @@ imagestart:                             /* calc/display a new image */
             if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
                 display3d = 1;
             if (colorpreloaded)
-                memcpy(olddacbox,g_dac_box,256*3);     /* save in case colors= present */
+                memcpy(olddacbox,g_dac_box,256*3); /* save in case colors= present */
             driver_set_for_text(); /* switch to text mode */
             showfile = -1;
             goto restorestart;
         }
-        if (kbdchar == 't') {                     /* set fractal type */
+        if (kbdchar == 't') {                   /* set fractal type */
             julibrot = false;
             get_fracttype();
             goto imagestart;
         }
-        if (kbdchar == 'x') {                     /* generic toggle switch */
+        if (kbdchar == 'x') {                   /* generic toggle switch */
             get_toggles();
             goto imagestart;
         }
-        if (kbdchar == 'y') {                     /* generic toggle switch */
+        if (kbdchar == 'y') {                   /* generic toggle switch */
             get_toggles2();
             goto imagestart;
         }
-        if (kbdchar == 'z') {                     /* type specific parms */
+        if (kbdchar == 'z') {                   /* type specific parms */
             get_fract_params(1);
             goto imagestart;
         }
-        if (kbdchar == 'v') {                     /* view parameters */
+        if (kbdchar == 'v') {                   /* view parameters */
             get_view_params();
             goto imagestart;
         }
-        if (kbdchar == 2) {                       /* ctrl B = browse parms*/
+        if (kbdchar == FIK_CTL_B) {             /* ctrl B = browse parms*/
             get_browse_params();
             goto imagestart;
         }
-        if (kbdchar == 6) {                       /* ctrl f = sound parms*/
+        if (kbdchar == FIK_CTL_F) {             /* ctrl f = sound parms*/
             get_sound_params();
             goto imagestart;
         }
-        if (kbdchar == 'f') {                     /* floating pt toggle */
+        if (kbdchar == 'f') {                   /* floating pt toggle */
             if (!usr_floatflag)
                 usr_floatflag = true;
             else
