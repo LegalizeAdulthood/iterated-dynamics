@@ -35,6 +35,7 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
 else()
     set(OS_DRIVER_SOURCES
         unix/d_x11.cpp
+        unix/x11_text.cpp
         unix/general.cpp
         unix/os_unix.cpp
         unix/unix.cpp

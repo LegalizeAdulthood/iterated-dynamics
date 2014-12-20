@@ -43,6 +43,9 @@
 #include "prototyp.h"
 #include "drivers.h"
 #include "externs.h"
+#include "x11_frame.h"
+#include "x11_text.h"
+#include "x11_plot.h"
 
 #ifdef LINUX
 #define FNDELAY O_NDELAY
@@ -149,6 +152,10 @@ struct DriverX11
     int button_num;
     int last_x, last_y;
     int dx, dy;
+
+    x11_frame_window frame_;
+    x11_text_window text_;
+    x11_plot_window plot_;
 };
 
 /* convenience macro to declare local variable di pointing to private
@@ -182,7 +189,7 @@ extern void Cursor_SetPos();
 
 #define SHELL "/bin/csh"
 
-#define FONT "-*-*-medium-r-*-*-9-*-*-*-*-*-iso8859-*"
+#define FONT "-*-*-medium-r-*-*-9-*-*-*-c-*-iso8859-*"
 #define DRAW_INTERVAL 6
 
 static void x11_terminate(Driver *drv);
@@ -1667,10 +1674,15 @@ x11_init(Driver *drv, int *argc, char **argv)
     }
     di->Xdscreen = XDefaultScreen(di->Xdp);
 
+    // TODO: enumerate visuals here and build video modes for each
+    add_video_mode(drv, &x11_video_table[0]);
+
+    //di->frame_->initialize(di->Xdp);
+    //di->text_.initialize(di->Xdp, 0);
+
     erase_text_screen(di);
 
-    // should enumerate visuals here and build video modes for each
-    add_video_mode(drv, &x11_video_table[0]);
+    load_font(di);
 
     return true;
 }
@@ -1741,6 +1753,61 @@ x11_schedule_alarm(Driver *drv, int soon)
     di->alarmon = true;
 }
 
+static void
+max_size(DriverX11 *di, int *width, int *height, bool *center_x, bool *center_y)
+{
+    *width = di->text_.max_width();
+    *height = di->text_.max_height();
+    if (g_video_table[g_adapter].xdots > *width)
+    {
+        *width = g_video_table[g_adapter].xdots;
+        *center_x = false;
+    }
+    if (g_video_table[g_adapter].ydots > *height)
+    {
+        *height = g_video_table[g_adapter].ydots;
+        *center_y = false;
+    }
+}
+
+static void center_window(DriverX11 *di, bool center_x, bool center_y)
+{
+    struct x11_point
+    {
+        int x;
+        int y;
+    };
+    x11_point text_pos = { 0 };
+    x11_point plot_pos = { 0 };
+
+    if (center_x)
+    {
+        plot_pos.x = (di->frame_.width() - di->plot_.width())/2;
+    }
+    else
+    {
+        text_pos.x = (di->frame_.width() - di->text_.max_width())/2;
+    }
+
+    if (center_y)
+    {
+        plot_pos.y = (di->frame_.height() - di->plot_.height())/2;
+    }
+    else
+    {
+        text_pos.y = (di->frame_.height() - di->text_.max_height())/2;
+    }
+
+    int status = XMoveWindow(di->Xdp, di->plot_.window(), plot_pos.x, plot_pos.y);
+    assert(status == Success);
+    status = XMoveWindow(di->Xdp, di->text_.window(), text_pos.x, text_pos.y);
+    assert(status == Success);
+}
+
+void frame_window(int width, int height)
+{
+}
+
 /*----------------------------------------------------------------------
  *
  * x11_window --
@@ -1758,6 +1825,18 @@ x11_schedule_alarm(Driver *drv, int soon)
 static void
 x11_window(Driver *drv)
 {
+    DIX11(drv);
+    int width;
+    int height;
+    bool center_x = true;
+    bool center_y = true;
+    max_size(di, &width, &height, &center_x, &center_y);
+    frame_window(width, height);
+    //di->text_.set_parent(di->frame);
+    di->text_.text_on();
+    //plot_window(&di->plot, di->frame);
+    center_window(di, center_x, center_y);
+#if 0
     XSetWindowAttributes Xwatt;
     XGCValues Xgcvals;
     int Xwinx = 0, Xwiny = 0;
@@ -1844,6 +1923,7 @@ x11_window(Driver *drv)
     x11_video_table[0].ydots = sydots;
     x11_video_table[0].colors = colors;
     x11_video_table[0].dotmode = 19;
+#endif
 }
 
 /*----------------------------------------------------------------------
@@ -2805,7 +2885,10 @@ static DriverX11 x11_driver_info = {
     false,                // shift_mode
     0,                    // button_num
     0, 0,                 // last_x, last_y
-    0, 0                  // dx, dy
+    0, 0,                 // dx, dy
+    {},                   // frame_
+    {},                   // text_
+    {}                    // plot_
 };
 
 Driver *x11_driver = &x11_driver_info.pub;
