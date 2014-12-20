@@ -564,11 +564,10 @@ int timer(int timertype,int(*subrtn)(),...)
     FILE *fp = nullptr;
     int out = 0;
     int i;
-    int do_bench;
 
     va_start(arg_marker,subrtn);
 
-    do_bench = timerflag ? 1 : 0; /* record time? */
+    bool do_bench = timerflag; /* record time? */
     if (timertype == 2)   /* encoder, record time only if debug=200 */
         do_bench = (debugflag == 200);
     if (do_bench)
