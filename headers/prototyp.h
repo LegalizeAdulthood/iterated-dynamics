@@ -439,11 +439,11 @@ extern bool MandelbrotMix4Setup();
 extern int main(int argc,char **argv);
 extern int elapsed_time(int);
 // framain2 -- C file prototypes
-extern int big_while_loop(bool *kbdmore, bool *stacked, bool resume_flag);
+extern big_while_loop_result big_while_loop(bool *kbdmore, bool *stacked, bool resume_flag);
 extern bool check_key();
 extern int cmp_line(BYTE *,int);
 extern int key_count(int);
-extern int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked, int axmode);
+extern big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked, int axmode);
 extern int pot_line(BYTE *,int);
 extern int sound_line(BYTE *,int);
 extern int timer(int,int (*subrtn)(),...);

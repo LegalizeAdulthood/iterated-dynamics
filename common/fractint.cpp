@@ -143,11 +143,6 @@ char browsemask[13];
 int scale_map[12] = {1,2,3,4,5,6,7,8,9,10,11,12}; /*RB, array for mapping notes to a (user defined) scale */
 
 
-#define RESTART           1
-#define IMAGESTART        2
-#define RESTORESTART      3
-#define CONTINUE          4
-
 void check_samename()
 {
     char drive[FILE_MAX_DRIVE];
@@ -521,11 +516,11 @@ resumeloop:
     /* this switch processes gotos that are now inside function */
     switch (big_while_loop(&kbdmore, &stacked, resumeflag))
     {
-    case RESTART:
+    case big_while_loop_result::RESTART:
         goto restart;
-    case IMAGESTART:
+    case big_while_loop_result::IMAGE_START:
         goto imagestart;
-    case RESTORESTART:
+    case big_while_loop_result::RESTORE_START:
         goto restorestart;
     default:
         break;

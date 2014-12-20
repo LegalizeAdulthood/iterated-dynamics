@@ -31,10 +31,14 @@ enum stopmsg_flags
     STOPMSG_INFO_ONLY   = 16
 };
 // for gotos in former FRACTINT.C pieces
-#define RESTART           1
-#define IMAGESTART        2
-#define RESTORESTART      3
-#define CONTINUE          4
+enum class big_while_loop_result
+{
+    NOTHING = 0,
+    RESTART,
+    IMAGE_START,
+    RESTORE_START,
+    CONTINUE,
+};
 #define SLIDES_OFF      0
 #define SLIDES_PLAY     1
 #define SLIDES_RECORD   2
