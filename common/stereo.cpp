@@ -236,7 +236,7 @@ bool do_AutoStereo()
     {
         stopmsg(STOPMSG_NONE,
             "Stereo not allowed with resolution > 2048 pixels wide");
-        driver_buzzer(BUZZER_INTERRUPT);
+        driver_buzzer(buzzer_codes::INTERRUPT);
         ret = true;
         goto exit_stereo;
     }
@@ -254,7 +254,7 @@ bool do_AutoStereo()
     DEPTH = labs(DEPTH) + 1;
     if (get_min_max())
     {
-        driver_buzzer(BUZZER_INTERRUPT);
+        driver_buzzer(buzzer_codes::INTERRUPT);
         ret = true;
         goto exit_stereo;
     }
@@ -339,7 +339,7 @@ bool do_AutoStereo()
             if (kbdchar == FIK_ESC)   // if ESC avoid returning to menu
                 kbdchar = 255;
             driver_unget_key(kbdchar);
-            driver_buzzer(BUZZER_COMPLETE);
+            driver_buzzer(buzzer_codes::COMPLETE);
             done = true;
             break;
         }

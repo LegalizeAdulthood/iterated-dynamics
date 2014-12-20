@@ -181,13 +181,14 @@ getkeyint(int block)
 ;               delay     == 0 means end-of-tune
 */
 void
-buzzer(int buzzertype)
+buzzer(buzzer_codes buzzertype)
 {
     if ((soundflag & 7) != 0) {
         printf("\007");
         fflush(stdout);
     }
-    if (buzzertype == 0) {
+    if (buzzertype == buzzer_codes::COMPLETE)
+    {
         redrawscreen();
     }
 }

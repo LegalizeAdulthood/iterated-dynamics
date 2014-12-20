@@ -16,10 +16,14 @@
 #define difftime(now,then) ((now)-(then))
 #endif
 #define NUM_BOXES 4096
-// driver_buzzer() codes
-#define BUZZER_COMPLETE 0
-#define BUZZER_INTERRUPT 1
-#define BUZZER_ERROR 2
+
+enum class buzzer_codes
+{
+    COMPLETE = 0,
+    INTERRUPT = 1,
+    PROBLEM = 2
+};
+
 // stopmsg() flags
 enum stopmsg_flags
 {

@@ -829,7 +829,7 @@ disk_init_fm(Driver *drv)
 }
 
 static void
-disk_buzzer(Driver *drv, int kind)
+disk_buzzer(Driver *drv, buzzer_codes kind)
 {
     ODS1("disk_buzzer %d", kind);
     MessageBeep(MB_OK);

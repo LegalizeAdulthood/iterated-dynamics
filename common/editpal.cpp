@@ -2079,7 +2079,7 @@ static void PalTable__SaveRect(PalTable *me)
             if (me->file == nullptr)
             {
                 me->stored_at = NOWHERE;
-                driver_buzzer(BUZZER_ERROR);
+                driver_buzzer(buzzer_codes::PROBLEM);
                 return ;
             }
         }
@@ -2092,7 +2092,7 @@ static void PalTable__SaveRect(PalTable *me)
             hline(me->x, me->y+yoff, width, bg_color);
             if (fwrite(buff, width, 1, me->file) != 1)
             {
-                driver_buzzer(BUZZER_ERROR);
+                driver_buzzer(buzzer_codes::PROBLEM);
                 break;
             }
         }
@@ -2120,7 +2120,7 @@ static void PalTable__RestoreRect(PalTable *me)
         {
             if (fread(buff, width, 1, me->file) != 1)
             {
-                driver_buzzer(BUZZER_ERROR);
+                driver_buzzer(buzzer_codes::PROBLEM);
                 break;
             }
             putrow(me->x, me->y+yoff, width, buff);
@@ -2727,7 +2727,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         if (me->curr[0] >= colors || me->curr[1] >= colors ||
                 me->curr[0] == me->curr[1])
         {
-            driver_buzzer(BUZZER_ERROR);
+            driver_buzzer(buzzer_codes::PROBLEM);
             break;
         }
 

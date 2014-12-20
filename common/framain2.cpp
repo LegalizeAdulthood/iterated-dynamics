@@ -288,14 +288,14 @@ big_while_loop_result big_while_loop(bool *kbdmore, bool *stacked, bool resumefl
             }
             if (i == 0)
             {
-                driver_buzzer(BUZZER_COMPLETE);
+                driver_buzzer(buzzer_codes::COMPLETE);
             }
             else
             {
                 calc_status = calc_status_value::NO_FRACTAL;
                 if (driver_key_pressed())
                 {
-                    driver_buzzer(BUZZER_INTERRUPT);
+                    driver_buzzer(buzzer_codes::INTERRUPT);
                     while (driver_key_pressed())
                         driver_get_key();
                     texttempmsg("*** load incomplete ***");
@@ -442,7 +442,7 @@ done:
                 if (ecount == gridsqr)
                 {
                     i = 0;
-                    driver_buzzer(BUZZER_COMPLETE); // finished!!
+                    driver_buzzer(buzzer_codes::COMPLETE); // finished!!
                 }
                 else
                 {   // interrupted screen generation, save info
@@ -490,7 +490,7 @@ done:
                 i = calcfract();       // draw the fractal using "C"
                 if (i == 0)
                 {
-                    driver_buzzer(BUZZER_COMPLETE); // finished!!
+                    driver_buzzer(buzzer_codes::COMPLETE); // finished!!
                 }
             }
 
@@ -1121,7 +1121,7 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
                 *kbdmore = false;
             }
             else
-                driver_buzzer(BUZZER_ERROR);          // can't switch
+                driver_buzzer(buzzer_codes::PROBLEM);          // can't switch
         }                         // end of else for if == cellular
         break;
     case 'j':                    // inverse julia toggle
@@ -1147,7 +1147,7 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
             *kbdmore = false;
         }
         else
-            driver_buzzer(BUZZER_ERROR);
+            driver_buzzer(buzzer_codes::PROBLEM);
         break;
     case '\\':                   // return to prev image
     case FIK_CTL_BACKSLASH:
@@ -1300,7 +1300,7 @@ do_3d_transform:
         if ((zwidth != 0) || driver_diskp())
         {
             browsing = false;
-            driver_buzzer(BUZZER_ERROR);             // can't browse if zooming or disk video
+            driver_buzzer(buzzer_codes::PROBLEM);             // can't browse if zooming or disk video
         }
         else if (look(stacked))
         {
@@ -1311,7 +1311,7 @@ do_3d_transform:
         make_batch_file();
         break;
     case FIK_CTL_P:                    // print current image
-        driver_buzzer(BUZZER_INTERRUPT);
+        driver_buzzer(buzzer_codes::INTERRUPT);
         return big_while_loop_result::CONTINUE;
     case FIK_ENTER:                  // Enter
     case FIK_ENTER_2:                // Numeric-Keypad Enter

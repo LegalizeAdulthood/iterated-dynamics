@@ -966,7 +966,7 @@ int starfield()
     for (row = 0; row < ydots; row++) {
         for (col = 0; col < xdots; col++) {
             if (driver_key_pressed()) {
-                driver_buzzer(BUZZER_INTERRUPT);
+                driver_buzzer(buzzer_codes::INTERRUPT);
                 busy = false;
                 return (1);
             }
@@ -976,7 +976,7 @@ int starfield()
             putcolor(col, row, GausianNumber(c, colors));
         }
     }
-    driver_buzzer(BUZZER_COMPLETE);
+    driver_buzzer(buzzer_codes::COMPLETE);
     busy = false;
     return (0);
 }

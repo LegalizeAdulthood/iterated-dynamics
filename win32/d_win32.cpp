@@ -495,7 +495,7 @@ win32_init_fm(Driver *drv)
 }
 
 void
-win32_buzzer(Driver *drv, int kind)
+win32_buzzer(Driver *drv, buzzer_codes kind)
 {
     ODS1("win32_buzzer %d", kind);
     MessageBeep(MB_OK);

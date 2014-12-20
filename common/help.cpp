@@ -769,7 +769,7 @@ int help(int action)
 
     if (help_file == nullptr)
     {
-        driver_buzzer(BUZZER_ERROR);
+        driver_buzzer(buzzer_codes::PROBLEM);
         return 0;
     }
 
@@ -786,7 +786,7 @@ int help(int action)
     }
     if (!resized)
     {
-        driver_buzzer(BUZZER_ERROR);
+        driver_buzzer(buzzer_codes::PROBLEM);
         return 0;
     }
 
@@ -1245,7 +1245,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
 
     if (pnum == -1)      // successful completion
     {
-        driver_buzzer(BUZZER_COMPLETE);
+        driver_buzzer(buzzer_codes::COMPLETE);
         putstringcenter(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
         driver_get_key();
         return false;
@@ -1253,7 +1253,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
 
     if (pnum == -2)     // aborted
     {
-        driver_buzzer(BUZZER_INTERRUPT);
+        driver_buzzer(buzzer_codes::INTERRUPT);
         putstringcenter(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
         driver_get_key();
         return false;

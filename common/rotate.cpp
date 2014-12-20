@@ -51,7 +51,7 @@ void rotate(int direction)      // rotate-the-palette routine
 #endif
             || colors < 16)
     {                                   // strange things happen in 2x modes
-        driver_buzzer(BUZZER_ERROR);
+        driver_buzzer(buzzer_codes::PROBLEM);
         return;
     }
 
@@ -471,7 +471,7 @@ void save_palette()
         merge_pathnames(palname,temp1,2);
         dacfile = fopen(palname,"w");
         if (dacfile == nullptr)
-            driver_buzzer(BUZZER_ERROR);
+            driver_buzzer(buzzer_codes::PROBLEM);
         else {
 #ifndef XFRACT
             for (i = 0; i < colors; i++)

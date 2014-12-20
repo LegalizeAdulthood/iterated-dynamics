@@ -2483,7 +2483,7 @@ x11_init_fm(Driver *drv)
 }
 
 static void
-x11_buzzer(Driver *drv, int kind)
+x11_buzzer(Driver *drv, buzzer_codes kind)
 {
     // TODO
     fprintf(stderr, "x11_buzzer(%d)\n", kind);

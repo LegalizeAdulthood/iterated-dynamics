@@ -85,7 +85,7 @@ struct Driver
     void (*discard_screen)(Driver *drv);
     // sound routines
     int (*init_fm)(Driver *drv);
-    void (*buzzer)(Driver *drv, int kind);
+    void (*buzzer)(Driver *drv, buzzer_codes kind);
     bool (*sound_on)(Driver *drv, int frequency);
     void (*sound_off)(Driver *drv);
     void (*mute)(Driver *drv);
@@ -217,7 +217,7 @@ extern void driver_stack_screen();
 extern void driver_unstack_screen();
 extern void driver_discard_screen();
 extern int driver_init_fm();
-extern void driver_buzzer(int kind);
+extern void driver_buzzer(buzzer_codes kind);
 extern bool driver_sound_on(int frequency);
 extern void driver_sound_off();
 extern void driver_mute();

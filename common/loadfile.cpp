@@ -1428,7 +1428,7 @@ rescan:  // entry for changed browse parms
     c = 0;
     if (wincount)
     {
-        driver_buzzer(BUZZER_COMPLETE); //let user know we've finished
+        driver_buzzer(buzzer_codes::COMPLETE); //let user know we've finished
         int index = 0;
         done = 0;
         MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)index,browsehandle);
@@ -1642,7 +1642,7 @@ rescan:  // entry for changed browse parms
         }
     }//if
     else {
-        driver_buzzer(BUZZER_INTERRUPT); //no suitable files in directory!
+        driver_buzzer(buzzer_codes::INTERRUPT); //no suitable files in directory!
         texttempmsg("Sorry.. I can't find anything");
         no_sub_images = true;
     }

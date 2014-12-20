@@ -66,7 +66,7 @@ int stopmsg(int flags, const char *msg)
     {     // & cmdfiles hasn't finished 1st try
 #ifdef XFRACT
         driver_set_for_text();
-        driver_buzzer(BUZZER_ERROR);
+        driver_buzzer(buzzer_codes::PROBLEM);
         driver_put_string(0,0,15, "*** Error during startup:");
         driver_put_string(2,0,15,msg);
         driver_move_cursor(8,0);
@@ -107,7 +107,7 @@ int stopmsg(int flags, const char *msg)
     driver_set_attr(toprow,0,color,(g_text_row+1-toprow)*80);
     driver_hide_text_cursor();   // cursor off
     if ((flags & STOPMSG_NO_BUZZER) == 0)
-        driver_buzzer((flags & STOPMSG_INFO_ONLY) ? 0 : 2);
+        driver_buzzer((flags & STOPMSG_INFO_ONLY) ? buzzer_codes::COMPLETE : buzzer_codes::PROBLEM);
     while (driver_key_pressed()) // flush any keyahead
         driver_get_key();
     if (debugflag != 324)

@@ -240,7 +240,7 @@ METHOD_VOID(discard_screen)
 METHOD_INT(init_fm)
 
 void
-driver_buzzer(int kind)
+driver_buzzer(buzzer_codes kind)
 {
     (*g_driver->buzzer)(g_driver, kind);
 }

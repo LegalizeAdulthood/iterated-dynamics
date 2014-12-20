@@ -226,7 +226,7 @@ restart:
     }
     if (timedsave == 0)
     {
-        driver_buzzer(BUZZER_COMPLETE);
+        driver_buzzer(buzzer_codes::COMPLETE);
         if (initbatch == 0)
         {
             extract_filename(tmpfile, openfile);

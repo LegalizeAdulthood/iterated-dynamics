@@ -824,7 +824,7 @@ gdi_init_fm(Driver *drv)
 }
 
 static void
-gdi_buzzer(Driver *drv, int kind)
+gdi_buzzer(Driver *drv, buzzer_codes kind)
 {
     ODS1("gdi_buzzer %d", kind);
     MessageBeep(MB_OK);

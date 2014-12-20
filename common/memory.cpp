@@ -325,7 +325,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
             use_this_type = NOWHERE;
             WhichDiskError(1);
             DisplayMemory();
-            driver_buzzer(BUZZER_ERROR);
+            driver_buzzer(buzzer_codes::PROBLEM);
             break;
         }
         numTOTALhandles++;
