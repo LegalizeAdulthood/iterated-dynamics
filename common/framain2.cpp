@@ -2425,8 +2425,8 @@ static void restore_history_info(int i)
     neworbittype          = last.orbittype      ;
     juli3Dmode            = last.juli3Dmode     ;
     maxfn                 = last.maxfn          ;
-    major_method          = (enum Major)last.major_method   ;
-    minor_method          = (enum Minor)last.minor_method   ;
+    major_method          = static_cast<Major>(last.major_method);
+    minor_method          = static_cast<Minor>(last.minor_method);
     bailout               = last.bailout        ;
     bailoutest            = static_cast<bailouts>(last.bailoutest);
     maxit                 = last.iterations     ;

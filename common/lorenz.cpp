@@ -102,8 +102,8 @@ static char NoQueue[] =
 
 static int    mxhits;
 int    run_length;
-enum   Major major_method;
-enum   Minor minor_method;
+Major major_method;
+Minor minor_method;
 affine cvt;
 l_affine lcvt;
 
@@ -325,43 +325,46 @@ bool orbit3dlongsetup()
 
         Sqrt = ComplexSqrtLong(fudge - 4 * CxLong, -4 * CyLong);
 
-        switch (major_method) {
-        case breadth_first:
+        switch (major_method)
+        {
+        case Major::breadth_first:
             if (!Init_Queue(32*1024UL))
             {   // can't get queue memory: fall back to random walk
                 stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-                major_method = random_walk;
+                major_method = Major::random_walk;
                 goto lrwalk;
             }
             EnQueueLong((fudge + Sqrt.x) / 2,  Sqrt.y / 2);
             EnQueueLong((fudge - Sqrt.x) / 2, -Sqrt.y / 2);
             break;
-        case depth_first:
+
+        case Major::depth_first:
             if (!Init_Queue(32*1024UL))
             {   // can't get queue memory: fall back to random walk
                 stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-                major_method = random_walk;
+                major_method = Major::random_walk;
                 goto lrwalk;
             }
-            switch (minor_method) {
-            case left_first:
+            switch (minor_method)
+            {
+            case Minor::left_first:
                 PushLong((fudge + Sqrt.x) / 2,  Sqrt.y / 2);
                 PushLong((fudge - Sqrt.x) / 2, -Sqrt.y / 2);
                 break;
-            case right_first:
+            case Minor::right_first:
                 PushLong((fudge - Sqrt.x) / 2, -Sqrt.y / 2);
                 PushLong((fudge + Sqrt.x) / 2,  Sqrt.y / 2);
                 break;
             }
             break;
-        case random_walk:
+        case Major::random_walk:
 lrwalk:
             initorbitlong[0] = fudge + Sqrt.x / 2;
             lnew.x = initorbitlong[0];
             initorbitlong[1] =         Sqrt.y / 2;
             lnew.y = initorbitlong[1];
             break;
-        case random_run:
+        case Major::random_run:
             initorbitlong[0] = fudge + Sqrt.x / 2;
             lnew.x = initorbitlong[0];
             initorbitlong[1] =         Sqrt.y / 2;
@@ -500,44 +503,46 @@ bool orbit3dfloatsetup()
 
         // find fixed points: guaranteed to be in the set
         Sqrt = ComplexSqrtFloat(1 - 4 * Cx, -4 * Cy);
-        switch ((int) major_method) {
-        case breadth_first:
+        switch (major_method)
+        {
+        case Major::breadth_first:
             if (!Init_Queue(32*1024UL))
             {   // can't get queue memory: fall back to random walk
                 stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-                major_method = random_walk;
+                major_method = Major::random_walk;
                 goto rwalk;
             }
             EnQueueFloat((float)((1 + Sqrt.x) / 2), (float)(Sqrt.y / 2));
             EnQueueFloat((float)((1 - Sqrt.x) / 2), (float)(-Sqrt.y / 2));
             break;
-        case depth_first:                      // depth first (choose direction)
+        case Major::depth_first:                      // depth first (choose direction)
             if (!Init_Queue(32*1024UL))
             {   // can't get queue memory: fall back to random walk
                 stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-                major_method = random_walk;
+                major_method = Major::random_walk;
                 goto rwalk;
             }
-            switch (minor_method) {
-            case left_first:
+            switch (minor_method)
+            {
+            case Minor::left_first:
                 PushFloat((float)((1 + Sqrt.x) / 2), (float)(Sqrt.y / 2));
                 PushFloat((float)((1 - Sqrt.x) / 2), (float)(-Sqrt.y / 2));
                 break;
-            case right_first:
+            case Minor::right_first:
                 PushFloat((float)((1 - Sqrt.x) / 2), (float)(-Sqrt.y / 2));
                 PushFloat((float)((1 + Sqrt.x) / 2), (float)(Sqrt.y / 2));
                 break;
             }
             break;
-        case random_walk:
+        case Major::random_walk:
 rwalk:
             initorbitfp[0] = 1 + Sqrt.x / 2;
             g_new.x = initorbitfp[0];
             initorbitfp[1] = Sqrt.y / 2;
             g_new.y = initorbitfp[1];
             break;
-        case random_run:       // random run, choose intervals
-            major_method = random_run;
+        case Major::random_run:       // random run, choose intervals
+            major_method = Major::random_run;
             initorbitfp[0] = 1 + Sqrt.x / 2;
             g_new.x = initorbitfp[0];
             initorbitfp[1] = Sqrt.y / 2;
@@ -576,20 +581,21 @@ Minverse_julia_orbit()
     /*
      * First, compute new point
      */
-    switch (major_method) {
-    case breadth_first:
+    switch (major_method)
+    {
+    case Major::breadth_first:
         if (QueueEmpty())
             return -1;
         g_new = DeQueueFloat();
         break;
-    case depth_first:
+    case Major::depth_first:
         if (QueueEmpty())
             return -1;
         g_new = PopFloat();
         break;
-    case random_walk:
+    case Major::random_walk:
         break;
-    case random_run:
+    case Major::random_run:
         break;
     }
 
@@ -612,15 +618,16 @@ Minverse_julia_orbit()
          * MIIM must skip points that are off the screen boundary,
          * since it cannot read their color.
          */
-        switch (major_method) {
-        case breadth_first:
+        switch (major_method)
+        {
+        case Major::breadth_first:
             EnQueueFloat((float)(leftright * g_new.x), (float)(leftright * g_new.y));
             return 1;
-        case depth_first:
+        case Major::depth_first:
             PushFloat((float)(leftright * g_new.x), (float)(leftright * g_new.y));
             return 1;
-        case random_run:
-        case random_walk:
+        case Major::random_run:
+        case Major::random_walk:
             break;
         }
     }
@@ -631,8 +638,9 @@ Minverse_julia_orbit()
      *           else put the point's children onto the queue
      */
     color  = getcolor(newcol, newrow);
-    switch (major_method) {
-    case breadth_first:
+    switch (major_method)
+    {
+    case Major::breadth_first:
         if (color < mxhits)
         {
             putcolor(newcol, newrow, color+1);
@@ -640,11 +648,11 @@ Minverse_julia_orbit()
             EnQueueFloat((float)-g_new.x, (float)-g_new.y);
         }
         break;
-    case depth_first:
+    case Major::depth_first:
         if (color < mxhits)
         {
             putcolor(newcol, newrow, color+1);
-            if (minor_method == left_first)
+            if (minor_method == Minor::left_first)
             {
                 if (QueueFullAlmost())
                     PushFloat((float)-g_new.x, (float)-g_new.y);
@@ -666,13 +674,14 @@ Minverse_julia_orbit()
             }
         }
         break;
-    case random_run:
+    case Major::random_run:
         if (random_len-- == 0)
         {
             random_len = RANDOM(run_length);
             random_dir = RANDOM(3);
         }
-        switch (random_dir) {
+        switch (random_dir)
+        {
         case 0:     // left
             break;
         case 1:     // right
@@ -687,7 +696,7 @@ Minverse_julia_orbit()
         if (color < colors-1)
             putcolor(newcol, newrow, color+1);
         break;
-    case random_walk:
+    case Major::random_walk:
         if (color < colors-1)
             putcolor(newcol, newrow, color+1);
         g_new.x = leftright * g_new.x;
@@ -708,18 +717,19 @@ Linverse_julia_orbit()
     /*
      * First, compute new point
      */
-    switch (major_method) {
-    case breadth_first:
+    switch (major_method)
+    {
+    case Major::breadth_first:
         if (QueueEmpty())
             return -1;
         lnew = DeQueueLong();
         break;
-    case depth_first:
+    case Major::depth_first:
         if (QueueEmpty())
             return -1;
         lnew = PopLong();
         break;
-    case random_walk:
+    case Major::random_walk:
         lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
         if (RANDOM(2))
         {
@@ -727,14 +737,15 @@ Linverse_julia_orbit()
             lnew.y = -lnew.y;
         }
         break;
-    case random_run:
+    case Major::random_run:
         lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
         if (random_len == 0)
         {
             random_len = RANDOM(run_length);
             random_dir = RANDOM(3);
         }
-        switch (random_dir) {
+        switch (random_dir)
+        {
         case 0:     // left
             break;
         case 1:     // right
@@ -773,18 +784,19 @@ Linverse_julia_orbit()
             color =  1;
         else
             color = -1;
-        switch (major_method) {
-        case breadth_first:
+        switch (major_method)
+        {
+        case Major::breadth_first:
             lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
             EnQueueLong(color * lnew.x, color * lnew.y);
             break;
-        case depth_first:
+        case Major::depth_first:
             lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
             PushLong(color * lnew.x, color * lnew.y);
             break;
-        case random_run:
+        case Major::random_run:
             random_len--;
-        case random_walk:
+        case Major::random_walk:
             break;
         }
         return 1;
@@ -796,8 +808,9 @@ Linverse_julia_orbit()
      *           else put the point's children onto the queue
      */
     color  = getcolor(newcol, newrow);
-    switch (major_method) {
-    case breadth_first:
+    switch (major_method)
+    {
+    case Major::breadth_first:
         if (color < mxhits)
         {
             putcolor(newcol, newrow, color+1);
@@ -806,12 +819,12 @@ Linverse_julia_orbit()
             EnQueueLong(-lnew.x, -lnew.y);
         }
         break;
-    case depth_first:
+    case Major::depth_first:
         if (color < mxhits)
         {
             putcolor(newcol, newrow, color+1);
             lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
-            if (minor_method == left_first)
+            if (minor_method == Minor::left_first)
             {
                 if (QueueFullAlmost())
                     PushLong(-lnew.x, -lnew.y);
@@ -833,10 +846,10 @@ Linverse_julia_orbit()
             }
         }
         break;
-    case random_run:
+    case Major::random_run:
         random_len--;
     // fall through
-    case random_walk:
+    case Major::random_walk:
         if (color < colors-1)
             putcolor(newcol, newrow, color+1);
         break;

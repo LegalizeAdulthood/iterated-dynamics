@@ -780,7 +780,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->orbittype = (short) neworbittype;
     save_info->juli3Dmode = (short) juli3Dmode;
     save_info->maxfn = maxfn;
-    save_info->inversejulia = (short)((major_method << 8) + minor_method);       // MVS
+    save_info->inversejulia = (short)((static_cast<int>(major_method) << 8) + static_cast<int>(minor_method));
     save_info->bailout = bailout;
     save_info->bailoutest = (short) bailoutest;
     save_info->iterations = maxit;

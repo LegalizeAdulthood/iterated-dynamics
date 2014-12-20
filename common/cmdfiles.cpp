@@ -400,8 +400,8 @@ static void initvars_restart()          // <ins> key init
         mapdacbox = nullptr;
     }
 
-    major_method = breadth_first;        // default inverse julia methods
-    minor_method = left_first;   // default inverse julia methods
+    major_method = Major::breadth_first;    // default inverse julia methods
+    minor_method = Minor::left_first;       // default inverse julia methods
     truecolor = false;                  // truecolor output flag
     truemode = 0;               // set to default color scheme
 }
@@ -1827,20 +1827,20 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (charval[0] == 'b')
         {
-            major_method = breadth_first;
+            major_method = Major::breadth_first;
         }
         else if (charval[0] == 'd')
         {
-            major_method = depth_first;
+            major_method = Major::depth_first;
         }
         else if (charval[0] == 'w')
         {
-            major_method = random_walk;
+            major_method = Major::random_walk;
         }
 #ifdef RANDOM_RUN
         else if (charval[0] == 'r')
         {
-            major_method = random_run;
+            major_method = Major::random_run;
         }
 #endif
         else
@@ -1850,11 +1850,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
         if (charval[1] == 'l')
         {
-            minor_method = left_first;
+            minor_method = Minor::left_first;
         }
         else if (charval[1] == 'r')
         {
-            minor_method = right_first;
+            minor_method = Minor::right_first;
         }
         else
         {

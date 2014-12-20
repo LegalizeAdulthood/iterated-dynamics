@@ -576,7 +576,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
             put_parm(" %s=%s", "ifs",IFSName);
         }
         if (fractype == INVERSEJULIA || fractype == INVERSEJULIAFP)
-            put_parm(" %s=%s/%s", "miim",JIIMmethod[major_method], JIIMleftright[minor_method]);
+            put_parm(" %s=%s/%s", "miim", JIIMmethod[static_cast<int>(major_method)], JIIMleftright[static_cast<int>(minor_method)]);
 
         showtrig(buf); // this function is in miscres.c
         if (buf[0])

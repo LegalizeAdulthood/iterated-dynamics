@@ -595,6 +595,7 @@ struct AlternateMath
 #define PERIOD    -102
 #define FMODI     -103
 #define ATANI     -104
+
 // defines for bailoutest
 enum class bailouts
 {
@@ -606,8 +607,21 @@ enum class bailouts
     Manh,
     Manr
 };
-enum Major  {breadth_first, depth_first, random_walk, random_run};
-enum Minor  {left_first, right_first};
+
+enum class Major
+{
+    breadth_first,
+    depth_first,
+    random_walk,
+    random_run
+};
+
+enum class Minor
+{
+    left_first,
+    right_first
+};
+
 // bitmask defines for fractalspecific flags
 #define  NOZOOM         1    // zoombox not allowed at all
 #define  NOGUESS        2    // solid guessing not allowed

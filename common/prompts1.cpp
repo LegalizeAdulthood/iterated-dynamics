@@ -1123,10 +1123,16 @@ const char *juli3Doptions[] = {"monocular","lefteye","righteye","red-blue"};
 // JIIM
 #ifdef RANDOM_RUN
 static char JIIMstr1[] = "Breadth first, Depth first, Random Walk, Random Run?";
-const char *JIIMmethod[] = {"breadth", "depth", "walk", "run"};
+const char *JIIMmethod[] =
+{
+    "breadth", "depth", "walk", "run"
+};
 #else
 static char JIIMstr1[] = "Breadth first, Depth first, Random Walk";
-const char *JIIMmethod[] = {"breadth", "depth", "walk"};
+const char *JIIMmethod[] =
+{
+    "breadth", "depth", "walk"
+};
 #endif
 static char JIIMstr2[] = "Left first or Right first?";
 const char *JIIMleftright[] = {"left", "right"};
@@ -1511,14 +1517,14 @@ gfp_top:
 #else
         paramvalues[promptnum].uval.ch.llen = 3; // disable random run
 #endif
-        paramvalues[promptnum++].uval.ch.val  = major_method;
+        paramvalues[promptnum++].uval.ch.val  = static_cast<int>(major_method);
 
         choices[promptnum] = JIIMstr2;
         paramvalues[promptnum].type = 'l';
         paramvalues[promptnum].uval.ch.list = JIIMleftright;
         paramvalues[promptnum].uval.ch.vlen = 5;
         paramvalues[promptnum].uval.ch.llen = 2;
-        paramvalues[promptnum++].uval.ch.val  = minor_method;
+        paramvalues[promptnum++].uval.ch.val  = static_cast<int>(minor_method);
     }
 
     if ((curtype == FORMULA || curtype == FFORMULA) && uses_ismand) {
@@ -1641,11 +1647,11 @@ gfp_top:
     }
     if (curtype == INVERSEJULIA || curtype == INVERSEJULIAFP)
     {
-        if (paramvalues[promptnum].uval.ch.val != major_method ||
-                paramvalues[promptnum+1].uval.ch.val != minor_method)
+        if (paramvalues[promptnum].uval.ch.val != static_cast<int>(major_method) ||
+                paramvalues[promptnum+1].uval.ch.val != static_cast<int>(minor_method))
             ret = 1;
-        major_method = (enum Major)paramvalues[promptnum++].uval.ch.val;
-        minor_method = (enum Minor)paramvalues[promptnum++].uval.ch.val;
+        major_method = static_cast<Major>(paramvalues[promptnum++].uval.ch.val);
+        minor_method = static_cast<Minor>(paramvalues[promptnum++].uval.ch.val);
     }
     if ((curtype == FORMULA || curtype == FFORMULA) && uses_ismand)
     {
