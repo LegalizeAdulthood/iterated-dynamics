@@ -449,7 +449,7 @@ static void initvars_fractal()          // init vars affecting calculation
     yymin = -1.5;
     yy3rd = yymin;
     yymax = 1.5;   // initial corner values
-    bf_math = 0;
+    bf_math = bf_math_type::NONE;
     pot16bit = false;
     potflag = false;
     LogFlag = 0;                         // no logarithmic palette
@@ -1798,7 +1798,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
         {
             param[k] = (k < totparms) ? floatval[k] : 0.0;
         }
-        if (bf_math)
+        if (bf_math != bf_math_type::NONE)
         {
             for (int k = 0; k < MAXPARAMS; k++)
             {
@@ -1990,14 +1990,12 @@ int cmdarg(char *curarg, int mode) // process a single argument
         dec = get_max_curarg_len(floatvalstr, totparms) + 1;
         if ((dec > DBL_DIG+1 || debugflag == 3200) && debugflag != 3400)
         {
-            int old_bf_math;
-
-            old_bf_math = bf_math;
-            if (!bf_math || dec > decimals)
+            bf_math_type old_bf_math = bf_math;
+            if (bf_math == bf_math_type::NONE || dec > decimals)
             {
                 init_bf_dec(dec);
             }
-            if (old_bf_math == 0)
+            if (old_bf_math == bf_math_type::NONE)
             {
                 for (int k = 0; k < MAXPARAMS; k++)
                 {
@@ -2197,13 +2195,12 @@ int cmdarg(char *curarg, int mode) // process a single argument
             return 1;
         }
         else { // use arbitrary precision
-            int old_bf_math;
             int saved;
             initcorners = true;
-            old_bf_math = bf_math;
-            if (!bf_math || dec > decimals)
+            bf_math_type old_bf_math = bf_math;
+            if (bf_math == bf_math_type::NONE || dec > decimals)
                 init_bf_dec(dec);
-            if (old_bf_math == 0)
+            if (old_bf_math == bf_math_type::NONE)
             {
                 for (int k = 0; k < MAXPARAMS; k++)
                     floattobf(bfparms[k], param[k]);

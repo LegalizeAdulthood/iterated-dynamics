@@ -1067,7 +1067,7 @@ void soi_ldbl()
     minstackavail = 30000;
     rhombus_depth = -1;
     max_rhombus_depth = 0;
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         xxminl = bftofloat(bfxmin);
         yyminl = bftofloat(bfymin);

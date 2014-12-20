@@ -128,11 +128,11 @@ AlternateMath alternatemath[] =
 {
 #define USEBN
 #ifdef USEBN
-    {JULIAFP, 1,JuliabnFractal,juliabn_per_pixel,  MandelbnSetup},
-    {MANDELFP,1,JuliabnFractal,mandelbn_per_pixel, MandelbnSetup},
+    {JULIAFP, bf_math_type::BIGNUM,JuliabnFractal,juliabn_per_pixel,  MandelbnSetup},
+    {MANDELFP,bf_math_type::BIGNUM,JuliabnFractal,mandelbn_per_pixel, MandelbnSetup},
 #else
-    {JULIAFP, 2,JuliabfFractal,juliabf_per_pixel,  MandelbfSetup},
-    {MANDELFP,2,JuliabfFractal,mandelbf_per_pixel, MandelbfSetup},
+    {JULIAFP, bf_math_type::BIGFLT,JuliabfFractal,juliabf_per_pixel,  MandelbfSetup},
+    {MANDELFP,bf_math_type::BIGFLT,JuliabfFractal,mandelbf_per_pixel, MandelbfSetup},
 #endif
     /*
     NOTE: The default precision for bf_math=BIGNUM is not high enough
@@ -140,9 +140,9 @@ AlternateMath alternatemath[] =
           of the usual BIGFLT (2), then set bfdigits on the command to
           increase the precision.
     */
-    {FPJULIAZPOWER,2,JuliaZpowerbfFractal,juliabf_per_pixel, MandelbfSetup  },
-    {FPMANDELZPOWER,2,JuliaZpowerbfFractal,mandelbf_per_pixel, MandelbfSetup},
-    {-1,            0,nullptr,                nullptr,               nullptr         }
+    {FPJULIAZPOWER,bf_math_type::BIGFLT,JuliaZpowerbfFractal,juliabf_per_pixel, MandelbfSetup  },
+    {FPMANDELZPOWER,bf_math_type::BIGFLT,JuliaZpowerbfFractal,mandelbf_per_pixel, MandelbfSetup},
+    {-1,            bf_math_type::NONE,nullptr,                nullptr,               nullptr         }
 };
 
 // These are only needed for types with both integer and float variations

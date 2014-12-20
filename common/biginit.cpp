@@ -103,13 +103,13 @@ static void init_bf_2()
 
     /* at present time one call would suffice, but this logic allows
        multiple kinds of alternate math eg long double */
-    i = find_alternate_math(fractype, BIGNUM);
+    i = find_alternate_math(fractype, bf_math_type::BIGNUM);
     if (i > -1)
         bf_math = alternatemath[i].math;
-    else if ((i = find_alternate_math(fractype, BIGFLT)) > -1)
+    else if ((i = find_alternate_math(fractype, bf_math_type::BIGFLT)) > -1)
         bf_math = alternatemath[i].math;
     else
-        bf_math = BIGNUM; // maybe called from cmdfiles.c and fractype not set
+        bf_math = bf_math_type::BIGNUM; // maybe called from cmdfiles.c and fractype not set
 
     floatflag = true;
 
@@ -152,7 +152,7 @@ static void init_bf_2()
     bntmpcpy2  = bnroot+ptr;
     ptr += (rlength*2);
 
-    if (bf_math == BIGNUM)
+    if (bf_math == bf_math_type::BIGNUM)
     {
         bnxmin     = bnroot+ptr;
         ptr += bnlength;
@@ -199,7 +199,7 @@ static void init_bf_2()
         bntmp      = bnroot+ptr;
         ptr += rlength;
     }
-    if (bf_math == BIGFLT)
+    if (bf_math == bf_math_type::BIGFLT)
     {
         bfxdel     = bnroot+ptr;
         ptr += bflength+2;
@@ -383,7 +383,8 @@ static int restore_bf_vars()
 // free corners and parameters save memory
 void free_bf_vars()
 {
-    bf_save_len = bf_math = 0;
+    bf_save_len = 0;
+    bf_math = bf_math_type::NONE;
     bnstep = bnlength = intlength = rlength = padding = shiftfactor = decimals = 0;
     bflength = rbflength = bfdecimals = 0;
 }
@@ -395,7 +396,7 @@ void free_bf_vars()
 bn_t alloc_stack(size_t size)
 {
     long stack_addr;
-    if (bf_math == 0)
+    if (bf_math == bf_math_type::NONE)
     {
         stopmsg(STOPMSG_NONE, "alloc_stack called with bf_math==0");
         return (nullptr);

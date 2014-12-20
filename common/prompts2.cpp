@@ -2009,7 +2009,7 @@ gc_loop:
         yymax = curfractalspecific->ymax;
         if (viewcrop && finalaspectratio != screenaspect)
             aspectratio_crop(screenaspect,finalaspectratio);
-        if (bf_math != 0)
+        if (bf_math != bf_math_type::NONE)
             fractal_floattobf();
         goto gc_loop;
     }

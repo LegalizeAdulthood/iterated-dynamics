@@ -1,6 +1,9 @@
 // FRACTINT.H - common structures and values for the FRACTINT routines
 #ifndef FRACTINT_H
 #define FRACTINT_H
+
+#include "big.h"
+
 /* Returns the number of items in an array declared of fixed size, i.e:
     int stuff[100];
     NUM_OF(stuff) returns 100.
@@ -528,7 +531,7 @@ struct fractalspecificstuff
 struct AlternateMath
 {
     int type;                           // index in fractalname of the fractal
-    int math;                           // kind of math used
+    bf_math_type math;                  // kind of math used
     int (*orbitcalc)();                 // function that calculates one orbit
     int (*per_pixel)();                 // once-per-pixel init
     bool (*per_image)();                // once-per-image setup

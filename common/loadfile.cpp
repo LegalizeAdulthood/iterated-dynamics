@@ -507,14 +507,14 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (blk_5_info.got_data == 1)
     {
-        bf_math = BIGNUM;
+        bf_math = bf_math_type::BIGNUM;
         init_bf_length(read_info.bflength);
         memcpy((char *) bfxmin, blk_5_info.apm_data, blk_5_info.length);
         free(blk_5_info.apm_data);
     }
     else
     {
-        bf_math = 0;
+        bf_math = bf_math_type::NONE;
     }
 
     if (blk_6_info.got_data == 1)
@@ -1281,7 +1281,7 @@ U16 boxvalueshandle;
 static affine *cvt;
 static bf_t   bt_a, bt_b, bt_c, bt_d, bt_e, bt_f;
 static bf_t   n_a, n_b, n_c, n_d, n_e, n_f;
-int oldbf_math;
+bf_math_type oldbf_math;
 
 // fgetwindow reads all .GIF files and draws window outlines on the screen
 int fgetwindow()
@@ -1316,8 +1316,8 @@ int fgetwindow()
     int saved;
 
     oldbf_math = bf_math;
-    bf_math = BIGFLT;
-    if (!oldbf_math) {
+    bf_math = bf_math_type::BIGFLT;
+    if (oldbf_math == bf_math_type::NONE) {
         int oldcalc_status = calc_status; // kludge because next sets it = 0
         fractal_floattobf();
         calc_status = oldcalc_status;
@@ -1347,7 +1347,7 @@ int fgetwindow()
         no_memory = true;
 
     // set up complex-plane-to-screen transformation
-    if (oldbf_math) {
+    if (oldbf_math != bf_math_type::NONE) {
         bfsetup_convert_to_screen();
     }
     else {
@@ -1652,7 +1652,7 @@ rescan:  // entry for changed browse parms
     MemoryRelease(boxyhandle);
     MemoryRelease(boxvalueshandle);
     restore_stack(saved);
-    if (!oldbf_math)
+    if (oldbf_math == bf_math_type::NONE)
         free_bf_vars();
     bf_math = oldbf_math;
     floatflag = usr_floatflag;
@@ -1811,7 +1811,7 @@ static bool is_visible_window(
 
     /* tranform maps real plane co-ords onto the current screen view
       see above */
-    if (oldbf_math || info->bf_math) {
+    if (oldbf_math != bf_math_type::NONE || info->bf_math != 0) {
         if (!info->bf_math) {
             floattobf(bt_x, info->xmin);
             floattobf(bt_y, info->ymax);
@@ -1829,7 +1829,7 @@ static bool is_visible_window(
     }
     list->itl.x = (int)(tl.x + 0.5);
     list->itl.y = (int)(tl.y + 0.5);
-    if (oldbf_math || info->bf_math) {
+    if (oldbf_math != bf_math_type::NONE || info->bf_math) {
         if (!info->bf_math) {
             floattobf(bt_x, (info->xmax)-(info->x3rd-info->xmin));
             floattobf(bt_y, (info->ymax)+(info->ymin-info->y3rd));
@@ -1849,7 +1849,7 @@ static bool is_visible_window(
     }
     list->itr.x = (int)(tr.x + 0.5);
     list->itr.y = (int)(tr.y + 0.5);
-    if (oldbf_math || info->bf_math) {
+    if (oldbf_math != bf_math_type::NONE || info->bf_math) {
         if (!info->bf_math) {
             floattobf(bt_x, info->x3rd);
             floattobf(bt_y, info->y3rd);
@@ -1867,7 +1867,7 @@ static bool is_visible_window(
     }
     list->ibl.x = (int)(bl.x + 0.5);
     list->ibl.y = (int)(bl.y + 0.5);
-    if (oldbf_math || info->bf_math) {
+    if (oldbf_math != bf_math_type::NONE || info->bf_math) {
         if (!info->bf_math) {
             floattobf(bt_x, info->xmax);
             floattobf(bt_y, info->ymin);

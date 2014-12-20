@@ -18,8 +18,12 @@
 // values that bf_math can hold,
 // 0 = bf_math is not being used
 // 1 = bf_math is being used
-#define BIGNUM 1  // bf_math is being used with bn_t numbers
-#define BIGFLT 2  // bf_math is being used with bf_t numbers
+enum class bf_math_type
+{
+    NONE = 0,
+    BIGNUM = 1,         // bf_math is being used with bn_t numbers
+    BIGFLT = 2          // bf_math is being used with bf_t numbers
+};
 #ifdef BIG_ANSI_C
 #define USE_BIGNUM_C_CODE
 #define BIGDIST
@@ -44,7 +48,7 @@ struct BNComplex
     bn_t y;
 };
 // globals
-extern int bf_math;
+extern bf_math_type bf_math;
 extern int bnstep, intlength;
 extern int bnlength, rlength,   padding,   decimals,   shiftfactor;
 extern int bflength, rbflength, bfpadding, bfdecimals;

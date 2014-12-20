@@ -170,7 +170,7 @@ UnitySetup()
 bool
 MandelfpSetup()
 {
-    bf_math = 0;
+    bf_math = bf_math_type::NONE;
     c_exp = (int)param[2];
     pwr.x = param[2] - 1.0;
     pwr.y = param[3];

@@ -153,7 +153,7 @@ extern int froth_per_pixel();
 extern int froth_per_orbit();
 extern bool froth_setup();
 extern int logtable_in_extra_ok();
-extern int find_alternate_math(int, int);
+extern int find_alternate_math(int type, bf_math_type math);
 // cmdfiles -- C file prototypes
 extern int cmdfiles(int ,char **);
 extern int load_commands(FILE *);

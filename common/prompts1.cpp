@@ -1092,8 +1092,8 @@ void set_default_parms()
         for (int i = 0; i < MAXPARAMS-4; i++)
             param[i+4] = moreparams[extra].paramvalue[i];
     if (debugflag != 3200)
-        bf_math = 0;
-    else if (bf_math)
+        bf_math = bf_math_type::NONE;
+    else if (bf_math != bf_math_type::NONE)
         fractal_floattobf();
 }
 
@@ -1538,7 +1538,7 @@ gfp_top:
         sprintf(msg,"Julibrot Parameters (orbit= %s)",juliorbitname);
     else
         sprintf(msg,"Parameters for fractal type %s",type_name);
-    if (bf_math == 0)
+    if (bf_math == bf_math_type::NONE)
     {
         strcat(msg,"\n(Press " FK_F6 " for corner parameters)");
     }
@@ -1562,7 +1562,7 @@ gfp_top:
         }
         if (i != FIK_F6)
             break;
-        if (bf_math == 0)
+        if (bf_math == bf_math_type::NONE)
             if (get_corners() > 0)
                 ret = 1;
     }

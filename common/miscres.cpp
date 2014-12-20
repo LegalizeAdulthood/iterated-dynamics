@@ -682,7 +682,7 @@ bool tab_display_2(char *msg)
     write_row(++row, "   %ld used for bignum globals", startstack);
     write_row(++row, "   %ld stack used == %ld variables of length %d",
               maxptr-startstack, (long)((maxptr-startstack)/(rbflength+2)), rbflength+2);
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         write_row(++row, "intlength %-d bflength %-d ", intlength, bflength);
     }
@@ -777,7 +777,7 @@ int tab_display()       // display the status of the current image
         calctime += (clock_ticks() - timer_start) / (CLOCKS_PER_SEC/100);
     }
     driver_stack_screen();
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         saved = save_stack();
         bfXctr = alloc_stack(bflength+2);
@@ -880,7 +880,7 @@ top:
         driver_put_string(s_row+1, 45, C_GENERAL_HI, "You are in color-cycling mode");
     }
     ++s_row;
-    // if (bf_math == 0)
+    // if (bf_math == bf_math_type::NONE)
     ++s_row;
 
     int j = 0;
@@ -896,7 +896,7 @@ top:
         j = usr_floatflag ? 1 : 2;
     }
 
-    if (bf_math == 0)
+    if (bf_math == bf_math_type::NONE)
     {
         if (j)
         {
@@ -1027,13 +1027,13 @@ top:
     }
 
     ++s_row;
-    if (bf_math == 0)
+    if (bf_math == bf_math_type::NONE)
     {
         ++s_row;
     }
     _snprintf(msg, NUM_OF(msg), "Driver: %s, %s", g_driver->name, g_driver->description);
     driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
-    if (g_video_entry.xdots && bf_math == 0)
+    if (g_video_entry.xdots && bf_math == bf_math_type::NONE)
     {
         sprintf(msg, "Video: %dx%dx%d %s %s",
                 g_video_entry.xdots, g_video_entry.ydots, g_video_entry.colors,
@@ -1043,7 +1043,7 @@ top:
     if (!(curfractalspecific->flags&NOZOOM))
     {
         adjust_corner(); // make bottom left exact if very near exact
-        if (bf_math)
+        if (bf_math != bf_math_type::NONE)
         {
             int truncaterow;
             int dec = std::min(320, decimals);
@@ -1205,7 +1205,7 @@ top:
     }
     driver_unstack_screen();
     timer_start = clock_ticks(); // tab display was "time out"
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         restore_stack(saved);
     }

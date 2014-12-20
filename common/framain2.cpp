@@ -321,7 +321,7 @@ int big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
         symax = yymax;
         sy3rd = yy3rd;
 
-        if (bf_math)
+        if (bf_math != bf_math_type::NONE)
         {
             copy_bf(bfsxmin, bfxmin);
             copy_bf(bfsxmax, bfxmax);
@@ -999,7 +999,7 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
                 || fractalspecific[fractype].calctype == calcfroth) &&
                 (fractalspecific[fractype].isinteger == 0 ||
                  fractalspecific[fractype].tofloat != NOFRACTAL) &&
-                !bf_math && // for now no arbitrary precision support
+                (bf_math == bf_math_type::NONE) && // for now no arbitrary precision support
                 !(g_is_true_color && truemode))
         {
             clear_zoombox();
@@ -1007,7 +1007,7 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
         }
         break;
     case FIK_SPACE:                  // spacebar, toggle mand/julia
-        if (bf_math || evolving)
+        if (bf_math != bf_math_type::NONE || evolving)
             break;
         if (fractype == CELLULAR)
         {
@@ -1037,7 +1037,7 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
             {
                 // switch to corresponding Julia set
                 int key;
-                if ((fractype == MANDEL || fractype == MANDELFP) && bf_math == 0)
+                if ((fractype == MANDEL || fractype == MANDELFP) && bf_math == bf_math_type::NONE)
                     hasinverse = true;
                 else
                     hasinverse = false;
@@ -1174,7 +1174,7 @@ int main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacke
             }
             return RESTORESTART;
         }
-        else if (maxhistory > 0 && bf_math == 0)
+        else if (maxhistory > 0 && bf_math == bf_math_type::NONE)
         {
             if (*kbdchar == '\\' || *kbdchar == 'h')
                 if (--historyptr < 0)
@@ -1549,7 +1549,7 @@ static int evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case FIK_CTL_BACKSLASH:
     case 'h':
     case FIK_BACKSPACE:
-        if (maxhistory > 0 && bf_math == 0)
+        if (maxhistory > 0 && bf_math == bf_math_type::NONE)
         {
             if (*kbdchar == '\\' || *kbdchar == 'h')
                 if (--historyptr < 0)
@@ -2119,7 +2119,7 @@ void reset_zoom_corners()
     yymax = symax;
     yymin = symin;
     yy3rd = sy3rd;
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         copy_bf(bfxmin,bfsxmin);
         copy_bf(bfxmax,bfsxmax);
@@ -2145,7 +2145,7 @@ int key_count(int keynum)
 static void save_history_info()
 {
     HISTORY current,last;
-    if (maxhistory <= 0 || bf_math || history == 0)
+    if (maxhistory <= 0 || bf_math != bf_math_type::NONE || history == 0)
         return;
     MoveFromMemory((BYTE *)&last,(U16)sizeof(HISTORY),1L,(long)saveptr,history);
 
@@ -2315,7 +2315,7 @@ static void save_history_info()
 static void restore_history_info(int i)
 {
     HISTORY last;
-    if (maxhistory <= 0 || bf_math || history == 0)
+    if (maxhistory <= 0 || bf_math != bf_math_type::NONE || history == 0)
         return;
     MoveFromMemory((BYTE *)&last,(U16)sizeof(HISTORY),1L,(long)i,history);
     invert = 0;

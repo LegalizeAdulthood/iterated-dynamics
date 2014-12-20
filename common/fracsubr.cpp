@@ -160,10 +160,10 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     {
         int tofloat = curfractalspecific->tofloat;
         if (tofloat == NOFRACTAL)
-            bf_math = 0;
+            bf_math = bf_math_type::NONE;
         else if (!(fractalspecific[tofloat].flags & BF_MATH))
-            bf_math = 0;
-        else if (bf_math)
+            bf_math = bf_math_type::NONE;
+        else if (bf_math != bf_math_type::NONE)
         {
             curfractalspecific = &fractalspecific[tofloat];
             fractype = tofloat;
@@ -171,13 +171,13 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     }
 
     // switch back to double when zooming out if using arbitrary precision
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         int gotprec = getprecbf(CURRENTREZ);
         if ((gotprec <= DBL_DIG+1 && debugflag != 3200) || math_tol[1] >= 1.0)
         {
             bfcornerstofloat();
-            bf_math = 0;
+            bf_math = bf_math_type::NONE;
         }
         else
             init_bf_dec(gotprec);
@@ -212,7 +212,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     }
     else
         free_bf_vars();
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
         floatflag = true;
     else
         floatflag = usr_floatflag;
@@ -356,7 +356,7 @@ init_restart:
     f_at_rad = 1.0/32768L;
 
     // now setup arrays of real coordinates corresponding to each pixel
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
         adjust_to_limitsbf(1.0); // make sure all corners in valid range
     else
     {
@@ -388,7 +388,7 @@ init_restart:
     // skip if bf_math to avoid extraseg conflict with dx0 arrays
     // skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance
     // is set.  These types don't auto switch between float and integer math
-    if (fractype != PLASMA && bf_math == 0
+    if (fractype != PLASMA && bf_math == bf_math_type::NONE
             && fractype != IFS && fractype != IFS3D && fractype != LSYSTEM)
     {
         if (integerfractal && !invert && use_grid)
@@ -451,7 +451,7 @@ expand_retry:
                 dy0 = (double)(dy0 - (double)delyy);
                 dx1 = (double)(dx1 + (double)delxx2);
             }
-            if (bf_math == 0) // redundant test, leave for now
+            if (bf_math == bf_math_type::NONE) // redundant test, leave for now
             {
                 /* Following is the old logic for detecting failure of double
                    precision. It has two advantages: it is independent of the
@@ -544,7 +544,7 @@ expand_retry:
         plotmy1 = (double)((0.0-delyy2) * dxsize * dysize / ftemp);
         plotmy2 = (xxmax-xx3rd) * dysize / ftemp;
     }
-    if (bf_math == 0)
+    if (bf_math == bf_math_type::NONE)
         free_bf_vars();
 }
 

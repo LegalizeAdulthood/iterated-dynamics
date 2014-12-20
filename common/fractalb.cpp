@@ -16,7 +16,7 @@ fractal routines.
 #include "fractype.h"
 
 
-int bf_math = 0;
+bf_math_type bf_math = bf_math_type::NONE;
 
 #ifdef DEBUG
 //********************************************************************
@@ -229,7 +229,7 @@ void show_var_bf(char *s, bf_t n)
 
 void bfcornerstofloat()
 {
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         xxmin = (double)bftofloat(bfxmin);
         yymin = (double)bftofloat(bfymin);
@@ -492,7 +492,7 @@ bool MandelbnSetup()
     bftobn(bnx3rd,bfx3rd);
     bftobn(bny3rd,bfy3rd);
 
-    bf_math = BIGNUM;
+    bf_math = bf_math_type::BIGNUM;
 
     // bnxdel = (bnxmax - bnx3rd)/(xdots-1)
     sub_bn(bnxdel, bnxmax, bnx3rd);
@@ -563,7 +563,7 @@ bool MandelbfSetup()
     bftemp1 = alloc_stack(bflength+2);
     bftemp2 = alloc_stack(bflength+2);
 
-    bf_math = BIGFLT;
+    bf_math = bf_math_type::BIGFLT;
 
     // bfxdel = (bfxmax - bfx3rd)/(xdots-1)
     sub_bf(bfxdel, bfxmax, bfx3rd);

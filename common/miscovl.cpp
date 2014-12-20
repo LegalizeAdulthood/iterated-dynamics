@@ -510,7 +510,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
     bf_t bfXctr = nullptr, bfYctr = nullptr;
     int saved;
     saved = save_stack();
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         bfXctr = alloc_stack(bflength+2);
         bfYctr = alloc_stack(bflength+2);
@@ -591,7 +591,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
 
         if (usemag)
         {
-            if (bf_math)
+            if (bf_math != bf_math_type::NONE)
             {
                 int digits;
                 cvtcentermagbf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -639,7 +639,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         else // not usemag
         {
             put_parm(" %s=", "corners");
-            if (bf_math)
+            if (bf_math != bf_math_type::NONE)
             {
                 int digits;
                 digits = getprecbf(MAXREZ);
@@ -2041,7 +2041,7 @@ void flip_image(int key)
             || calc_status == CALCSTAT_IN_PROGRESS
             || calc_status == CALCSTAT_RESUMABLE)
         return;
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
         clear_zoombox(); // clear, don't copy, the zoombox
     ixhalf = xdots / 2;
     iyhalf = ydots / 2;
@@ -2065,7 +2065,7 @@ void flip_image(int key)
         symin = yy3rd;
         sx3rd = xxmax;
         sy3rd = yymin;
-        if (bf_math)
+        if (bf_math != bf_math_type::NONE)
         {
             add_bf(bfsxmin, bfxmax, bfxmin); // sxmin = xxmax + xxmin - xx3rd;
             sub_a_bf(bfsxmin, bfx3rd);
@@ -2095,7 +2095,7 @@ void flip_image(int key)
         symin = yymax + yymin - yy3rd;
         sx3rd = xxmin;
         sy3rd = yymax;
-        if (bf_math)
+        if (bf_math != bf_math_type::NONE)
         {
             copy_bf(bfsxmin, bfx3rd);        // sxmin = xx3rd;
             copy_bf(bfsymax, bfy3rd);        // symax = yy3rd;
@@ -2125,7 +2125,7 @@ void flip_image(int key)
         symin = yymax;
         sx3rd = xxmax + xxmin - xx3rd;
         sy3rd = yymax + yymin - yy3rd;
-        if (bf_math)
+        if (bf_math != bf_math_type::NONE)
         {
             copy_bf(bfsxmin, bfxmax);        // sxmin = xxmax;
             copy_bf(bfsymax, bfymin);        // symax = yymin;

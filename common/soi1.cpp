@@ -881,7 +881,7 @@ void soi()
     minstackavail = 30000;
     rhombus_depth = -1;
     max_rhombus_depth = 0;
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         xxminl = (DBLS)bftofloat(bfxmin);
         yyminl = (DBLS)bftofloat(bfymin);

@@ -104,7 +104,7 @@ void drawbox(int drawit)
         reset_zoom_corners();
         return;
     }
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         saved = save_stack();
         bffxwidth = alloc_stack(rbflength+2);
@@ -124,7 +124,7 @@ void drawbox(int drawit)
     fyskew  = symin-sy3rd;
     fxadj   = zwidth*zskew;
 
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         // do some calcs just once here to reduce fp work a bit
         sub_bf(bffxwidth,bfsxmax,bfsx3rd);
@@ -148,7 +148,7 @@ void drawbox(int drawit)
     tl.y   = (int)(ftemp2*(dysize+PIXELROUND));
     xxmin  = sxmin + ftemp1*fxwidth + ftemp2*fxskew; // real co-ords
     yymax  = symax + ftemp2*fydepth + ftemp1*fyskew;
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         calc_corner(bfxmin,bfsxmin,ftemp1,bffxwidth,ftemp2,bffxskew);
         calc_corner(bfymax,bfsymax,ftemp2,bffydepth,ftemp1,bffyskew);
@@ -161,7 +161,7 @@ void drawbox(int drawit)
     br.y   = (int)(ftemp2*(dysize+PIXELROUND));
     xxmax  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
     yymin  = symax + ftemp2*fydepth + ftemp1*fyskew;
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         calc_corner(bfxmax,bfsxmin,ftemp1,bffxwidth,ftemp2,bffxskew);
         calc_corner(bfymin,bfsymax,ftemp2,bffydepth,ftemp1,bffyskew);
@@ -177,7 +177,7 @@ void drawbox(int drawit)
     bl.y   = (int)(ftemp2*(dysize+PIXELROUND));
     xx3rd  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
     yy3rd  = symax + ftemp2*fydepth + ftemp1*fyskew;
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         calc_corner(bfx3rd,bfsxmin,ftemp1,bffxwidth,ftemp2,bffxskew);
         calc_corner(bfy3rd,bfsymax,ftemp2,bffydepth,ftemp1,bffyskew);
@@ -552,7 +552,7 @@ void zoomoutdbl() // for ctl-enter, calc corners for zooming out
 
 void zoomout() // for ctl-enter, calc corners for zooming out
 {
-    if (bf_math)
+    if (bf_math != bf_math_type::NONE)
     {
         zoomoutbf();
     }
