@@ -30,6 +30,7 @@ enum stopmsg_flags
     STOPMSG_FIXED_FONT  = 8,
     STOPMSG_INFO_ONLY   = 16
 };
+
 // for gotos in former FRACTINT.C pieces
 enum class big_while_loop_result
 {
@@ -39,9 +40,14 @@ enum class big_while_loop_result
     RESTORE_START,
     CONTINUE,
 };
-#define SLIDES_OFF      0
-#define SLIDES_PLAY     1
-#define SLIDES_RECORD   2
+
+enum class slides_mode
+{
+    OFF = 0,
+    PLAY = 1,
+    RECORD = 2
+};
+
 // fullscreen_choice options
 #define CHOICE_RETURN_KEY   1
 #define CHOICE_MENU         2

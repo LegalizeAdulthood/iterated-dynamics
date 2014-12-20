@@ -46,7 +46,7 @@ handle_special_keys(int ch)
 {
     static bool inside_help = false;
 
-    if (SLIDES_PLAY == g_slides)
+    if (slides_mode::PLAY == g_slides)
     {
         if (ch == FIK_ESC)
         {
@@ -58,7 +58,7 @@ handle_special_keys(int ch)
             ch = slideshw();
         }
     }
-    else if ((SLIDES_RECORD == g_slides) && ch)
+    else if ((slides_mode::RECORD == g_slides) && ch)
     {
         recordshw(ch);
     }

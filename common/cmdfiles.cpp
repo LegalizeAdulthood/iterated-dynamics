@@ -154,7 +154,7 @@ char IFSName[ITEMNAMELEN+1] = { 0 };    // Name of the IFS def'n (if not null)
 SearchPath searchfor = { 0 };
 std::vector<float> ifs_defn;            // ifs parameters
 bool ifs_type = false;                  // false=2d, true=3d
-int  g_slides = SLIDES_OFF;             // 1 autokey=play, 2 autokey=record
+slides_mode g_slides = slides_mode::OFF; // PLAY autokey=play, RECORD autokey=record
 
 BYTE txtcolor[] = {
     BLUE*16+L_WHITE,    // C_TITLE           title background
@@ -1298,11 +1298,11 @@ int cmdarg(char *curarg, int mode) // process a single argument
     {
         if (strcmp(value, "record") == 0)
         {
-            g_slides = SLIDES_RECORD;
+            g_slides = slides_mode::RECORD;
         }
         else if (strcmp(value, "play") == 0)
         {
-            g_slides = SLIDES_PLAY;
+            g_slides = slides_mode::PLAY;
         }
         else
         {

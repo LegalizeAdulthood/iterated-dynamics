@@ -445,7 +445,7 @@ extern int                   sizedot;
 extern short                 sizeofstring[];
 extern short                 skipxdots;
 extern short                 skipydots;
-extern int                   g_slides;
+extern slides_mode           g_slides;
 extern int                   Slope;
 extern int                   soundflag;
 extern char                  speed_prompt[];

@@ -129,7 +129,7 @@ int slideshw()
         calcwait = false;
     }
     if (fpss == nullptr)   // open files first time through
-        if (startslideshow() == 0)
+        if (startslideshow() == slides_mode::OFF)
         {
             stopslideshow();
             return (0);
@@ -286,17 +286,17 @@ start:
     return (last1 = out);
 }
 
-int
+slides_mode
 startslideshow()
 {
     fpss = fopen(autoname,"r");
     if (fpss == nullptr)
-        g_slides = SLIDES_OFF;
+        g_slides = slides_mode::OFF;
     ticks = 0;
     quotes = false;
     calcwait = false;
     slowcount = 0;
-    return (g_slides);
+    return g_slides;
 }
 
 void stopslideshow()
@@ -304,7 +304,7 @@ void stopslideshow()
     if (fpss)
         fclose(fpss);
     fpss = nullptr;
-    g_slides = SLIDES_OFF;
+    g_slides = slides_mode::OFF;
 }
 
 void recordshw(int key)

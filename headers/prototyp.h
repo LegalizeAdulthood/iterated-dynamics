@@ -939,7 +939,7 @@ extern void save_palette();
 extern bool load_palette();
 // slideshw -- C file prototypes
 extern int slideshw();
-extern int startslideshow();
+extern slides_mode startslideshow();
 extern void stopslideshow();
 extern void recordshw(int);
 // stereo -- C file prototypes
