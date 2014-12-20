@@ -2236,18 +2236,16 @@ fractalspecificstuff fractalspecific[] =
         (VF)latoofloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
         NOBAILOUT
     },
-#if 0
     {
         "mandelbrotmix4",
         {p1real, p1imag, p2real, p2imag},
         {0.05, 3, -1.5, -2},
         HT_MANDELBROTMIX4, HF_MANDELBROTMIX4, BAILTEST+TRIG1+MORE,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        0, NOFRACTAL, NOFRACTAL, NOFRACTAL, symmetry::NONE,
+        0, NOFRACTAL, NOFRACTAL, NOFRACTAL, symmetry_type::NONE,
         MandelbrotMix4fpFractal, MandelbrotMix4fp_per_pixel, MandelbrotMix4Setup, StandardFractal,
         STDBAILOUT
     },
-#endif
 
     {
         nullptr,            // marks the END of the list
