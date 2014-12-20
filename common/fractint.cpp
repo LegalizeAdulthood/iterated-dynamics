@@ -117,7 +117,7 @@ long    xmin, xmax, ymin, ymax, x3rd, y3rd;  /* integer equivs           */
 double  sxmin,sxmax,symin,symax,sx3rd,sy3rd; /* displayed screen corners */
 double  plotmx1,plotmx2,plotmy1,plotmy2;     /* real->screen multipliers */
 
-int calc_status = CALCSTAT_NO_FRACTAL;
+calc_status_value calc_status = calc_status_value::NO_FRACTAL;
 /* -1 no fractal                   */
 /*  0 parms changed, recalc reqd   */
 /*  1 actively calculating         */
@@ -230,7 +230,7 @@ restart:   /* insert key re-starts here */
     initgene(); /*initialise pointers to lots of fractint variables for the evolution engine*/
     start_showorbit = false;
     showdot = -1; /* turn off showdot if entered with <g> command */
-    calc_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
+    calc_status = calc_status_value::NO_FRACTAL;                    /* no active fractal image */
 
     fract_dir1 = getenv("FRACTDIR");
     if (fract_dir1 == nullptr)
@@ -374,8 +374,8 @@ restorestart:
         stacked = 0;
         overlay3d = false;              /* forget overlays */
         display3d = 0;                    /* forget 3D */
-        if (calc_status == CALCSTAT_NON_RESUMABLE)
-            calc_status = CALCSTAT_PARAMS_CHANGED;
+        if (calc_status == calc_status_value::NON_RESUMABLE)
+            calc_status = calc_status_value::PARAMS_CHANGED;
         resumeflag = true;
         goto resumeloop;                  /* ooh, this is ugly */
     }
@@ -398,8 +398,8 @@ imagestart:                             /* calc/display a new image */
     got_status = -1;                     /* for tab_display */
 
     if (showfile)
-        if (calc_status > CALCSTAT_PARAMS_CHANGED)              /* goto imagestart implies re-calc */
-            calc_status = CALCSTAT_PARAMS_CHANGED;
+        if (calc_status > calc_status_value::PARAMS_CHANGED)              /* goto imagestart implies re-calc */
+            calc_status = calc_status_value::PARAMS_CHANGED;
 
     if (initbatch == 0)
         lookatmouse = -FIK_PAGE_UP;           /* just mouse left button, == pgup */

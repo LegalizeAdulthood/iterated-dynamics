@@ -768,11 +768,11 @@ int tab_display()       // display the status of the current image
     int k;
     int hasformparam = 0;
 
-    if (calc_status < CALCSTAT_PARAMS_CHANGED)        // no active fractal image
+    if (calc_status < calc_status_value::PARAMS_CHANGED)        // no active fractal image
     {
         return 0;                // (no TAB on the credits screen)
     }
-    if (calc_status == CALCSTAT_IN_PROGRESS)        // next assumes CLOCKS_PER_SEC is 10^n, n>=2
+    if (calc_status == calc_status_value::IN_PROGRESS)        // next assumes CLOCKS_PER_SEC is 10^n, n>=2
     {
         calctime += (clock_ticks() - timer_start) / (CLOCKS_PER_SEC/100);
     }
@@ -851,26 +851,26 @@ top:
 
     switch (calc_status)
     {
-    case 0:
+    case calc_status_value::PARAMS_CHANGED:
         msgptr = "Parms chgd since generated";
         break;
-    case 1:
+    case calc_status_value::IN_PROGRESS:
         msgptr = "Still being generated";
         break;
-    case 2:
+    case calc_status_value::RESUMABLE:
         msgptr = "Interrupted, resumable";
         break;
-    case 3:
+    case calc_status_value::NON_RESUMABLE:
         msgptr = "Interrupted, non-resumable";
         break;
-    case 4:
+    case calc_status_value::COMPLETED:
         msgptr = "Image completed";
         break;
     default:
         msgptr = "";
     }
     driver_put_string(s_row, 45, C_GENERAL_HI, msgptr);
-    if (initbatch && calc_status != CALCSTAT_PARAMS_CHANGED)
+    if (initbatch && calc_status != calc_status_value::PARAMS_CHANGED)
     {
         driver_put_string(-1, -1, C_GENERAL_HI, " (Batch mode)");
     }
@@ -917,7 +917,7 @@ top:
     }
     s_row += 1;
 
-    if (calc_status == CALCSTAT_IN_PROGRESS || calc_status == CALCSTAT_RESUMABLE)
+    if (calc_status == calc_status_value::IN_PROGRESS || calc_status == calc_status_value::RESUMABLE)
     {
         if (curfractalspecific->flags&NORESUME)
         {
@@ -931,7 +931,7 @@ top:
 
     ++s_row;
 
-    if (got_status >= 0 && (calc_status == CALCSTAT_IN_PROGRESS || calc_status == CALCSTAT_RESUMABLE))
+    if (got_status >= 0 && (calc_status == calc_status_value::IN_PROGRESS || calc_status == calc_status_value::RESUMABLE))
     {
         switch (got_status)
         {
@@ -1012,7 +1012,7 @@ top:
     driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
     get_calculation_time(msg, calctime);
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
-    if ((got_status == 5) && (calc_status == CALCSTAT_IN_PROGRESS))  // estimate total time
+    if ((got_status == 5) && (calc_status == calc_status_value::IN_PROGRESS))  // estimate total time
     {
         driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
         get_calculation_time(msg, (long)(calctime*((dif_limit*1.0)/dif_counter)));

@@ -1131,7 +1131,7 @@ top:
         nextleft += 2;
         choicekey[nextleft] = 13; // enter
         attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = (calc_status == CALCSTAT_RESUMABLE) ?
+        choices[nextleft] = (calc_status == calc_status_value::RESUMABLE) ?
                             "continue calculation        " :
                             "return to image             ";
 

@@ -585,7 +585,7 @@ void aspectratio_crop(float oldaspect,float newaspect)
 
 static int check_pan() // return 0 if can't, alignment requirement if can
 {
-    if ((calc_status != CALCSTAT_RESUMABLE && calc_status != CALCSTAT_COMPLETED) || evolving)
+    if ((calc_status != calc_status_value::RESUMABLE && calc_status != calc_status_value::COMPLETED) || evolving)
         return (0); // not resumable, not complete
     if (curfractalspecific->calctype != StandardFractal
             && curfractalspecific->calctype != calcmand
@@ -604,7 +604,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 
     // can pan if we get this far
 
-    if (calc_status == CALCSTAT_COMPLETED)
+    if (calc_status == calc_status_value::COMPLETED)
         return (1); // image completed, align on any pixel
     if (potflag && pot16bit)
         return (1); // 1 pass forced so align on any pixel
@@ -659,7 +659,7 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     // got a zoombox
     alignmask = check_pan()-1;
     if (alignmask < 0 || evolving) {
-        calc_status = CALCSTAT_PARAMS_CHANGED; // can't pan, trigger recalc
+        calc_status = calc_status_value::PARAMS_CHANGED; // can't pan, trigger recalc
         return (0);
     }
     if (zbx == 0.0 && zby == 0.0) {
@@ -673,12 +673,12 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
         col = 0-col;
     }
     if ((row&alignmask) != 0 || (col&alignmask) != 0) {
-        calc_status = CALCSTAT_PARAMS_CHANGED; // not on useable pixel alignment, trigger recalc
+        calc_status = calc_status_value::PARAMS_CHANGED; // not on useable pixel alignment, trigger recalc
         return (0);
     }
     // pan
     num_worklist = 0;
-    if (calc_status == CALCSTAT_RESUMABLE) {
+    if (calc_status == calc_status_value::RESUMABLE) {
         start_resume();
         get_resume(sizeof(num_worklist),&num_worklist,sizeof(worklist),worklist,0);
     } // don't do end_resume! we might still change our mind
@@ -715,11 +715,11 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
             drawbox(1);
         }
         else
-            calc_status = CALCSTAT_PARAMS_CHANGED; // trigger recalc
+            calc_status = calc_status_value::PARAMS_CHANGED; // trigger recalc
         return (0);
     }
     // now we're committed
-    calc_status = CALCSTAT_RESUMABLE;
+    calc_status = calc_status_value::RESUMABLE;
     clearbox();
     if (row > 0) // move image up
         for (int y = 0; y < ydots; ++y)

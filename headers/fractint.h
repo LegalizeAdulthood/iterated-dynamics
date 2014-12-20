@@ -55,13 +55,18 @@ enum class slides_mode
 #define CHOICE_INSTRUCTIONS 8
 #define CHOICE_CRUNCH       16
 #define CHOICE_NOT_SORTED   32
+
 // calc_status values
-#define CALCSTAT_NO_FRACTAL     -1
-#define CALCSTAT_PARAMS_CHANGED 0
-#define CALCSTAT_IN_PROGRESS    1
-#define CALCSTAT_RESUMABLE      2
-#define CALCSTAT_NON_RESUMABLE  3
-#define CALCSTAT_COMPLETED      4
+enum class calc_status_value
+{
+    NO_FRACTAL = -1,
+    PARAMS_CHANGED = 0,
+    IN_PROGRESS = 1,
+    RESUMABLE = 2,
+    NON_RESUMABLE = 3,
+    COMPLETED = 4
+};
+
 #define CMDARG_FRACTAL_PARAM 1
 #define CMDARG_3D_PARAM 2
 #define CMDARG_3D_YES 4

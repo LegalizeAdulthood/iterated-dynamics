@@ -2762,7 +2762,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
     if (strcmp(variable, "3d") == 0) {            // 3d=?/?/..
         if (strcmp(value, "overlay") == 0) {
             yesnoval[0] = 1;
-            if (calc_status > CALCSTAT_NO_FRACTAL) // if no image, treat same as 3D=yes
+            if (calc_status > calc_status_value::NO_FRACTAL) // if no image, treat same as 3D=yes
                 overlay3d = true;
         }
         else if (yesnoval[0] < 0)

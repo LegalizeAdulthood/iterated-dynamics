@@ -154,7 +154,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         outside      = read_info.outside;
     }
 
-    calc_status = CALCSTAT_PARAMS_CHANGED;       // defaults if version < 4
+    calc_status = calc_status_value::PARAMS_CHANGED;       // defaults if version < 4
     xx3rd = xxmin;
     yy3rd = yymin;
     usr_distest = 0;
@@ -164,7 +164,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         save_release = 1400;
         xx3rd       = read_info.x3rd;
         yy3rd       = read_info.y3rd;
-        calc_status = read_info.calc_status;
+        calc_status = static_cast<calc_status_value>(read_info.calc_status);
         usr_stdcalcmode = read_info.stdcalcmode;
         three_pass = false;
         if (usr_stdcalcmode == 127)
@@ -432,7 +432,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (display3d)
     {
-        calc_status = CALCSTAT_PARAMS_CHANGED;
+        calc_status = calc_status_value::PARAMS_CHANGED;
         fractype = PLASMA;
         curfractalspecific = &fractalspecific[PLASMA];
         param[0] = 0;
@@ -535,9 +535,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             blk_6_info.ecount = blk_6_info.mutate[NUMGENES - 4];
         }
         if (blk_6_info.ecount != blk_6_info.gridsz*blk_6_info.gridsz
-                && calc_status != CALCSTAT_COMPLETED)
+                && calc_status != calc_status_value::COMPLETED)
         {
-            calc_status = CALCSTAT_RESUMABLE;
+            calc_status = calc_status_value::RESUMABLE;
             // TODO: MemoryAlloc
             if (evolve_handle == 0)
             {
@@ -569,7 +569,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
                 MemoryRelease(evolve_handle);
             }
             evolve_handle = 0;
-            calc_status = CALCSTAT_COMPLETED;
+            calc_status = calc_status_value::COMPLETED;
         }
         paramrangex  = blk_6_info.paramrangex;
         paramrangey  = blk_6_info.paramrangey;
@@ -807,7 +807,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     // TODO: MemoryAlloc
                     blk_2_info->resume_data = MemoryAlloc((U16)1,(long)data_len,MEMORY);
                     if (blk_2_info->resume_data == 0)
-                        info->calc_status = CALCSTAT_NON_RESUMABLE; // not resumable after all
+                        info->calc_status = static_cast<short>(calc_status_value::NON_RESUMABLE); // not resumable after all
                     else {
                         fseek(fp,(long)(0-block_len),SEEK_CUR);
                         load_ext_blk((char *)block,data_len);
@@ -1318,7 +1318,7 @@ int fgetwindow()
     oldbf_math = bf_math;
     bf_math = bf_math_type::BIGFLT;
     if (oldbf_math == bf_math_type::NONE) {
-        int oldcalc_status = calc_status; // kludge because next sets it = 0
+        calc_status_value oldcalc_status = calc_status; // kludge because next sets it = 0
         fractal_floattobf();
         calc_status = oldcalc_status;
     }

@@ -2055,7 +2055,7 @@ static int first_time(int linelen, VECTOR v)
     evenoddrow = 0;
     calctime = evenoddrow;
     // mark as in-progress, and enable <tab> timer display
-    calc_status = CALCSTAT_IN_PROGRESS;
+    calc_status = calc_status_value::IN_PROGRESS;
 
     IAmbient = (unsigned int)(255 * (float)(100 - Ambient) / 100.0);
     if (IAmbient < 1)

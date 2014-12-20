@@ -52,7 +52,7 @@ extern bool                  brwschecktype;
 extern bool                  busy;
 extern long                  calctime;
 extern int                 (*calctype)();
-extern int                   calc_status;
+extern calc_status_value     calc_status;
 extern char                  calibrate;
 extern bool                  checkcurdir;
 extern long                  c_imag;

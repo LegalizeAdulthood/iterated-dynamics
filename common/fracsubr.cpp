@@ -126,7 +126,7 @@ void fractal_floattobf()
     for (int i = 0; i < MAXPARAMS; i++)
         if (typehasparm(fractype,i,nullptr))
             floattobf(bfparms[i],param[i]);
-    calc_status = CALCSTAT_PARAMS_CHANGED;
+    calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
 
@@ -216,7 +216,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         floatflag = true;
     else
         floatflag = usr_floatflag;
-    if (calc_status == CALCSTAT_RESUMABLE) { // on resume, ensure floatflag correct
+    if (calc_status == calc_status_value::RESUMABLE) { // on resume, ensure floatflag correct
         if (curfractalspecific->isinteger)
             floatflag = false;
         else
@@ -412,8 +412,8 @@ expand_retry:
                     floatflag = true;       // switch to floating pt
                 else
                     adjust_to_limits(2.0);   // double the size
-                if (calc_status == CALCSTAT_RESUMABLE)       // due to restore of an old file?
-                    calc_status = CALCSTAT_PARAMS_CHANGED;         //   whatever, it isn't resumable
+                if (calc_status == calc_status_value::RESUMABLE)       // due to restore of an old file?
+                    calc_status = calc_status_value::PARAMS_CHANGED;         //   whatever, it isn't resumable
                 goto init_restart;
             } // end if ratio bad
 
@@ -882,10 +882,10 @@ static void adjust_to_limitsbf(double expand)
             copy_bf(badjy,bftemp);
     }
 
-    /* if (calc_status == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (zwidth == 1.0))
-       calc_status = CALCSTAT_PARAMS_CHANGED; */
-    if (calc_status == CALCSTAT_RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (zwidth == 1.0))
-        calc_status = CALCSTAT_PARAMS_CHANGED;
+    /* if (calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zwidth == 1.0))
+       calc_status = calc_status_value::PARAMS_CHANGED; */
+    if (calc_status == calc_status_value::RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (zwidth == 1.0))
+        calc_status = calc_status_value::PARAMS_CHANGED;
 
     // xxmin = cornerx[0] - adjx;
     sub_bf(bfxmin,bcornerx[0],badjx);
@@ -1005,8 +1005,8 @@ static void adjust_to_limits(double expand)
         if (cornery[i] < 0.0-limit && (ftemp = cornery[i] + limit) < adjy)
             adjy = ftemp;
     }
-    if (calc_status == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (zwidth == 1.0))
-        calc_status = CALCSTAT_PARAMS_CHANGED;
+    if (calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zwidth == 1.0))
+        calc_status = calc_status_value::PARAMS_CHANGED;
     xxmin = cornerx[0] - adjx;
     xxmax = cornerx[1] - adjx;
     xx3rd = cornerx[2] - adjx;
@@ -1060,10 +1060,10 @@ static int ratio_bad(double actual, double desired)
 
    Before calling the (per_image,calctype) routines (engine), calcfract sets:
       "resuming" to false if new image, true if resuming a partially done image
-      "calc_status" to CALCSTAT_IN_PROGRESS
+      "calc_status" to IN_PROGRESS
    If an engine is interrupted and wants to be able to resume it must:
       store whatever status info it needs to be able to resume later
-      set calc_status to CALCSTAT_RESUMABLE and return
+      set calc_status to RESUMABLE and return
    If subsequently called with resuming true, the engine must restore status
    info and continue from where it left off.
 
@@ -1077,8 +1077,8 @@ static int ratio_bad(double actual, double desired)
          undersize is not checked and probably causes serious misbehaviour.
          Version is an arbitrary number so that subsequent revisions of the
          engine can be made backward compatible.
-         Alloc_resume sets calc_status to CALCSTAT_RESUMABLE if it succeeds;
-         to CALCSTAT_NON_RESUMABLE if it cannot allocate memory
+         Alloc_resume sets calc_status to RESUMABLE if it succeeds;
+         to NON_RESUMABLE if it cannot allocate memory
          (and issues warning to user).
       put_resume({bytes,&argument,} ... 0)
          Can be called as often as required to store the info.
@@ -1146,12 +1146,12 @@ int alloc_resume(int alloclen, int version)
         stopmsg(STOPMSG_NONE,
             "Warning - insufficient free memory to save status.\n"
             "You will not be able to resume calculating this image.");
-        calc_status = CALCSTAT_NON_RESUMABLE;
+        calc_status = calc_status_value::NON_RESUMABLE;
         return (-1);
     }
     resume_len = 0;
     put_resume(sizeof(version),&version,0);
-    calc_status = CALCSTAT_RESUMABLE;
+    calc_status = calc_status_value::RESUMABLE;
     return (0);
 }
 
