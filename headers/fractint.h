@@ -596,7 +596,7 @@ struct AlternateMath
 #define FMODI     -103
 #define ATANI     -104
 
-// defines for bailoutest
+// for bailoutest
 enum class bailouts
 {
     Mod,
@@ -633,7 +633,6 @@ enum class Minor
 #define  TRIG2        128
 #define  TRIG3        192
 #define  TRIG4        256
-#define  WINFRAC      512    // supported in WinFrac
 #define  PARMS3D     1024    // uses 3d parameters
 #define  OKJB        2048    // works with Julibrot
 #define  MORE        4096    // more than 4 parms
