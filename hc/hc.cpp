@@ -2806,12 +2806,14 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
         return true;
 
     case PD_GET_LINK_PAGE:
-        if (a_link[getint(pd->s)].doc_page == -1)
+    {
+        LINK &link = a_link[getint(pd->s)];
+        if (link.doc_page == -1)
         {
             if (info[LINK_DEST_WARN])
             {
-                src_cfname = a_link[getint(pd->s)].srcfile;
-                srcline    = a_link[getint(pd->s)].srcline;
+                src_cfname = link.srcfile;
+                srcline    = link.srcline;
                 warn(0,"Hot-link destination is not in the document.");
                 srcline = -1;
             }
@@ -2819,6 +2821,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
         }
         pd->i = a_link[getint(pd->s)].doc_page;
         return true;
+    }
 
     case PD_RELEASE_TOPIC:
         c = &contents[info[CNUM]];
