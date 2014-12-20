@@ -511,6 +511,27 @@ struct MOREPARAMS
     const char *param[MAXPARAMS-4];     // name of the parameters
     double   paramvalue[MAXPARAMS-4];   // default parameter values
 };
+
+enum class symmetry_type
+{
+    NONE = 0,
+    X_AXIS_NO_PARAM = -1,
+    X_AXIS = 1,
+    Y_AXIS_NO_PARAM = -2,
+    Y_AXIS = 2,
+    XY_AXIS_NO_PARAM = -3,
+    XY_AXIS = 3,
+    ORIGIN_NO_PARAM = -4,
+    ORIGIN = 4,
+    PI_SYM_NO_PARAM = -5,
+    PI_SYM = 5,
+    X_AXIS_NO_IMAG = -6,
+    X_AXIS_NO_REAL = 6,
+    NO_PLOT = 99,
+    SETUP = 100,
+    NOT_FORCED = 999
+};
+
 struct fractalspecificstuff
 {
     const char  *name;                  // name of the fractal
@@ -528,7 +549,7 @@ struct fractalspecificstuff
     int   tojulia;                      // mandel-to-julia switch
     int   tomandel;                     // julia-to-mandel switch
     int   tofloat;                      // integer-to-floating switch
-    int   symmetry;                     // applicable symmetry logic
+    symmetry_type symmetry;             // applicable symmetry logic
                                         //  0 = no symmetry
                                         // -1 = y-axis symmetry (If No Params)
                                         //  1 = y-axis symmetry
@@ -557,22 +578,6 @@ struct AlternateMath
     bool (*per_image)();                // once-per-image setup
 };
 
-// defines for symmetry
-#define  NOSYM          0
-#define  XAXIS_NOPARM  -1
-#define  XAXIS          1
-#define  YAXIS_NOPARM  -2
-#define  YAXIS          2
-#define  XYAXIS_NOPARM -3
-#define  XYAXIS         3
-#define  ORIGIN_NOPARM -4
-#define  ORIGIN         4
-#define  PI_SYM_NOPARM -5
-#define  PI_SYM         5
-#define  XAXIS_NOIMAG  -6
-#define  XAXIS_NOREAL   6
-#define  NOPLOT        99
-#define  SETUP_SYM    100
 // defines for inside/outside
 #define ITER        -1
 #define REAL        -2

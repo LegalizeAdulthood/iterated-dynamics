@@ -820,19 +820,19 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         if (finattract)
             put_parm(" %s=y", "finattract");
 
-        if (forcesymmetry != 999) {
-            if (forcesymmetry == 1000 && ii == 1 && jj == 1)
+        if (forcesymmetry != symmetry_type::NOT_FORCED) {
+            if (forcesymmetry == static_cast<symmetry_type>(1000) && ii == 1 && jj == 1)
                 stopmsg(STOPMSG_NONE, "Regenerate before <b> to get correct symmetry");
             put_parm(" %s=", "symmetry");
-            if (forcesymmetry == XAXIS)
+            if (forcesymmetry == symmetry_type::X_AXIS)
                 put_parm("xaxis");
-            else if (forcesymmetry == YAXIS)
+            else if (forcesymmetry == symmetry_type::Y_AXIS)
                 put_parm("yaxis");
-            else if (forcesymmetry == XYAXIS)
+            else if (forcesymmetry == symmetry_type::XY_AXIS)
                 put_parm("xyaxis");
-            else if (forcesymmetry == ORIGIN)
+            else if (forcesymmetry == symmetry_type::ORIGIN)
                 put_parm("origin");
-            else if (forcesymmetry == PI_SYM)
+            else if (forcesymmetry == symmetry_type::PI_SYM)
                 put_parm("pi");
             else
                 put_parm("none");

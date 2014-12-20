@@ -16,6 +16,8 @@
     Southington, CT 06489
     (203) 276-9721
 */
+#include <algorithm>
+#include <iterator>
 #include <string>
 
 #include <ctype.h>
@@ -2264,25 +2266,25 @@ static const char *Constants[] =
 struct SYMETRY
 {
     const char *s;
-    int n;
+    symmetry_type n;
 };
 SYMETRY SymStr[] =
 {
-    {"NOSYM",         0},
-    {"XAXIS_NOPARM", -1},
-    {"XAXIS",         1},
-    {"YAXIS_NOPARM", -2},
-    {"YAXIS",         2},
-    {"XYAXIS_NOPARM",-3},
-    {"XYAXIS",        3},
-    {"ORIGIN_NOPARM",-4},
-    {"ORIGIN",        4},
-    {"PI_SYM_NOPARM",-5},
-    {"PI_SYM",        5},
-    {"XAXIS_NOIMAG", -6},
-    {"XAXIS_NOREAL",  6},
-    {"NOPLOT",       99},
-    {"",              0}
+    { "NOSYM",         symmetry_type::NONE },
+    { "XAXIS_NOPARM",  symmetry_type::X_AXIS_NO_PARAM },
+    { "XAXIS",         symmetry_type::X_AXIS },
+    { "YAXIS_NOPARM",  symmetry_type::Y_AXIS_NO_PARAM },
+    { "YAXIS",         symmetry_type::Y_AXIS },
+    { "XYAXIS_NOPARM", symmetry_type::XY_AXIS_NO_PARAM },
+    { "XYAXIS",        symmetry_type::XY_AXIS },
+    { "ORIGIN_NOPARM", symmetry_type::ORIGIN_NO_PARAM },
+    { "ORIGIN",        symmetry_type::ORIGIN },
+    { "PI_SYM_NOPARM", symmetry_type::PI_SYM_NO_PARAM },
+    { "PI_SYM",        symmetry_type::PI_SYM },
+    { "XAXIS_NOIMAG",  symmetry_type::X_AXIS_NO_IMAG },
+    { "XAXIS_NOREAL",  symmetry_type::X_AXIS_NO_REAL },
+    { "NOPLOT",        symmetry_type::NO_PLOT },
+    { "",              symmetry_type::NONE }
 };
 
 static bool ParseStr(char *Str, int pass)
@@ -3822,7 +3824,7 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
         return false;
     }
     // get symmetry
-    symmetry = 0;
+    symmetry = symmetry_type::NONE;
     if (c == '(')
     {
         char sym_buf[20];
@@ -3942,8 +3944,15 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
         if (debug_fp != nullptr)
         {
             fprintf(debug_fp,"%s\n",FormName);
-            if (symmetry != 0)
-                fprintf(debug_fp,"%s\n", SymStr[symmetry].s);
+            if (symmetry != symmetry_type::NONE)
+            {
+                auto it = std::find_if(std::begin(SymStr), std::end(SymStr),
+                    [](SYMETRY const& item) { return item.n == symmetry; });
+                if (it != std::end(SymStr))
+                {
+                    fprintf(debug_fp,"%s\n", it->s);
+                }
+            }
         }
     }
 

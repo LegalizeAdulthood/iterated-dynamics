@@ -2350,7 +2350,7 @@ static void restore_history_info(int i)
     decomp[0]             = last.decomp         ;
     usr_biomorph          = last.biomorph       ;
     biomorph              = last.biomorph       ;
-    forcesymmetry         = last.symmetry       ;
+    forcesymmetry         = static_cast<symmetry_type>(last.symmetry);
     init3d[0]             = last.init3d[0]      ;
     init3d[1]             = last.init3d[1]      ;
     init3d[2]             = last.init3d[2]      ;

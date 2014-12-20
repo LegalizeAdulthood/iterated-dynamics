@@ -138,9 +138,9 @@ NewtonSetup()           // Newton/NewtBasin Routines
 
     param[0] = (double)degree;
     if (degree%4 == 0)
-        symmetry = XYAXIS;
+        symmetry = symmetry_type::XY_AXIS;
     else
-        symmetry = XAXIS;
+        symmetry = symmetry_type::X_AXIS;
 
     calctype = StandardFractal;
 #if !defined(XFRACT)
@@ -183,9 +183,9 @@ MandelfpSetup()
             param[2] = 1;
         }
         if (!(c_exp & 1))
-            symmetry = XYAXIS_NOPARM;    // odd exponents
+            symmetry = symmetry_type::XY_AXIS_NO_PARAM;    // odd exponents
         if (c_exp & 1)
-            symmetry = XAXIS_NOPARM;
+            symmetry = symmetry_type::X_AXIS_NO_PARAM;
         break;
     case MANDELFP:
         /*
@@ -216,9 +216,9 @@ MandelfpSetup()
         break;
     case FPMANDELZPOWER:
         if ((double)c_exp == param[2] && (c_exp & 1)) // odd exponents
-            symmetry = XYAXIS_NOPARM;
+            symmetry = symmetry_type::XY_AXIS_NO_PARAM;
         if (param[3] != 0)
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         if (param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
             fractalspecific[fractype].orbitcalc = floatZpowerFractal;
         else
@@ -236,16 +236,16 @@ MandelfpSetup()
             periodicitycheck = 4;
         break;
     case MANDELEXP:
-        symmetry = XAXIS_NOPARM;
+        symmetry = symmetry_type::X_AXIS_NO_PARAM;
         break;
     case FPMANTRIGPLUSEXP:
     case FPMANTRIGPLUSZSQRD:
         if (parm.y == 0.0)
-            symmetry = XAXIS;
+            symmetry = symmetry_type::X_AXIS;
         else
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         if ((trigndx[0] == LOG) || (trigndx[0] == 14)) // LOG or FLIP
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         break;
     case QUATFP:
         floatparm = &tmp;
@@ -257,17 +257,17 @@ MandelfpSetup()
         attractors = 0;
         periodicitycheck = 0;
         if (param[2] != 0)
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         if (trigndx[0] == 14) // FLIP
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         break;
     case TIMSERRORFP:
         if (trigndx[0] == 14) // FLIP
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         break;
     case MARKSMANDELPWRFP:
         if (trigndx[0] == 14) // FLIP
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         break;
     default:
         break;
@@ -319,7 +319,7 @@ JuliafpSetup()
         break;
     case FPJULIAZPOWER:
         if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         if (param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
             fractalspecific[fractype].orbitcalc = floatZpowerFractal;
         else
@@ -341,29 +341,29 @@ JuliafpSetup()
         break;
     case LAMBDAEXP:
         if (parm.y == 0.0)
-            symmetry = XAXIS;
+            symmetry = symmetry_type::X_AXIS;
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
     case FPJULTRIGPLUSEXP:
     case FPJULTRIGPLUSZSQRD:
         if (parm.y == 0.0)
-            symmetry = XAXIS;
+            symmetry = symmetry_type::X_AXIS;
         else
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         if ((trigndx[0] == LOG) || (trigndx[0] == 14)) // LOG or FLIP
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
     case HYPERCMPLXJFP:
         if (param[2] != 0)
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         if (trigndx[0] != SQR)
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
     case QUATJULFP:
         attractors = 0;   // attractors broken since code checks r,i not j,k
         periodicitycheck = 0;
         if (param[4] != 0.0 || param[5] != 0)
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         break;
     case FPPOPCORN:
     case FPPOPCORNJUL:
@@ -379,7 +379,7 @@ JuliafpSetup()
         {
             default_functions = true;
             if (fractype == FPPOPCORNJUL)
-                symmetry = ORIGIN;
+                symmetry = symmetry_type::ORIGIN;
         }
         if (save_release <=1960)
             curfractalspecific->orbitcalc = PopcornFractal_Old;
@@ -413,9 +413,9 @@ MandellongSetup()
     }
     if ((fractype == MARKSMANDEL   && !(c_exp & 1)) ||
             (fractype == LMANDELZPOWER && (c_exp & 1)))
-        symmetry = XYAXIS_NOPARM;    // odd exponents
+        symmetry = symmetry_type::XY_AXIS_NO_PARAM;    // odd exponents
     if ((fractype == MARKSMANDEL && (c_exp & 1)) || fractype == LMANDELEXP)
-        symmetry = XAXIS_NOPARM;
+        symmetry = symmetry_type::X_AXIS_NO_PARAM;
     if (fractype == SPIDER && periodicitycheck == 1)
         periodicitycheck = 4;
     longparm = &linit;
@@ -426,26 +426,26 @@ MandellongSetup()
         else
             fractalspecific[fractype].orbitcalc = longCmplxZpowerFractal;
         if (param[3] != 0 || (double)c_exp != param[2])
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
     }
     if ((fractype == LMANTRIGPLUSEXP) || (fractype == LMANTRIGPLUSZSQRD))
     {
         if (parm.y == 0.0)
-            symmetry = XAXIS;
+            symmetry = symmetry_type::X_AXIS;
         else
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         if ((trigndx[0] == LOG) || (trigndx[0] == 14)) // LOG or FLIP
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
     }
     if (fractype == TIMSERROR)
     {
         if (trigndx[0] == 14) // FLIP
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
     }
     if (fractype == MARKSMANDELPWR)
     {
         if (trigndx[0] == 14) // FLIP
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
     }
     return true;
 }
@@ -459,7 +459,7 @@ JulialongSetup()
     {
     case LJULIAZPOWER:
         if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         if (param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
             fractalspecific[fractype].orbitcalc = longZpowerFractal;
         else
@@ -471,16 +471,16 @@ JulialongSetup()
         break;
     case LLAMBDAEXP:
         if (lparm.y == 0)
-            symmetry = XAXIS;
+            symmetry = symmetry_type::X_AXIS;
         break;
     case LJULTRIGPLUSEXP:
     case LJULTRIGPLUSZSQRD:
         if (parm.y == 0.0)
-            symmetry = XAXIS;
+            symmetry = symmetry_type::X_AXIS;
         else
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         if ((trigndx[0] == LOG) || (trigndx[0] == 14)) // LOG or FLIP
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
     case LPOPCORN:
@@ -497,7 +497,7 @@ JulialongSetup()
         {
             default_functions = true;
             if (fractype == LPOPCORNJUL)
-                symmetry = ORIGIN;
+                symmetry = symmetry_type::ORIGIN;
         }
         if (save_release <= 1960)
             curfractalspecific->orbitcalc = LPopcornFractal_Old;
@@ -584,38 +584,38 @@ TrigPlusTrigfpSetup()
 bool
 FnPlusFnSym() // set symmetry matrix for fn+fn type
 {
-    static char fnplusfn[7][7] =
+    static symmetry_type fnplusfn[7][7] =
     {   // fn2 ->sin     cos    sinh    cosh   exp    log    sqr
         // fn1
-        /* sin */ {PI_SYM,XAXIS, XYAXIS, XAXIS, XAXIS, XAXIS, XAXIS},
-        /* cos */ {XAXIS, PI_SYM,XAXIS,  XYAXIS,XAXIS, XAXIS, XAXIS},
-        /* sinh*/ {XYAXIS,XAXIS, XYAXIS, XAXIS, XAXIS, XAXIS, XAXIS},
-        /* cosh*/ {XAXIS, XYAXIS,XAXIS,  XYAXIS,XAXIS, XAXIS, XAXIS},
-        /* exp */ {XAXIS, XYAXIS,XAXIS,  XAXIS, XYAXIS,XAXIS, XAXIS},
-        /* log */ {XAXIS, XAXIS, XAXIS,  XAXIS, XAXIS, XAXIS, XAXIS},
-        /* sqr */ {XAXIS, XAXIS, XAXIS,  XAXIS, XAXIS, XAXIS, XYAXIS}
+        /* sin */ {symmetry_type::PI_SYM,  symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
+        /* cos */ {symmetry_type::X_AXIS,  symmetry_type::PI_SYM,  symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
+        /* sinh*/ {symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
+        /* cosh*/ {symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
+        /* exp */ {symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::XY_AXIS,symmetry_type::X_AXIS, symmetry_type::X_AXIS},
+        /* log */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
+        /* sqr */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::XY_AXIS}
     };
     if (parm.y == 0.0 && parm2.y == 0.0)
     {   if (trigndx[0] < 7 && trigndx[1] < 7)  // bounds of array
             symmetry = fnplusfn[trigndx[0]][trigndx[1]];
         if (trigndx[0] == 14 || trigndx[1] == 14) // FLIP
-            symmetry = NOSYM;
-    }                 // defaults to XAXIS symmetry
+            symmetry = symmetry_type::NONE;
+    }                 // defaults to symmetry::X_AXIS symmetry
     else
-        symmetry = NOSYM;
+        symmetry = symmetry_type::NONE;
     return (0);
 }
 
 bool
 LambdaTrigOrTrigSetup()
 {
-    // default symmetry is ORIGIN
+    // default symmetry is symmetry::ORIGIN
     longparm = &lparm;
     floatparm = &parm;
     if ((trigndx[0] == EXP) || (trigndx[1] == EXP))
-        symmetry = NOSYM;
+        symmetry = symmetry_type::NONE;
     if ((trigndx[0] == LOG) || (trigndx[1] == LOG))
-        symmetry = XAXIS;
+        symmetry = symmetry_type::X_AXIS;
     get_julia_attractor(0.0, 0.0);       // an attractor?
     return true;
 }
@@ -623,13 +623,13 @@ LambdaTrigOrTrigSetup()
 bool
 JuliaTrigOrTrigSetup()
 {
-    // default symmetry is XAXIS
+    // default symmetry is symmetry::X_AXIS
     longparm = &lparm;
     floatparm = &parm;
     if (parm.y != 0.0)
-        symmetry = NOSYM;
+        symmetry = symmetry_type::NONE;
     if (trigndx[0] == 14 || trigndx[1] == 14) // FLIP
-        symmetry = NOSYM;
+        symmetry = symmetry_type::NONE;
     get_julia_attractor(0.0, 0.0);       // an attractor?
     return (1);
 }
@@ -637,24 +637,24 @@ JuliaTrigOrTrigSetup()
 bool
 ManlamTrigOrTrigSetup()
 {   // psuedo
-    // default symmetry is XAXIS
+    // default symmetry is symmetry::X_AXIS
     longparm = &linit;
     floatparm = &init;
     if (trigndx[0] == SQR)
-        symmetry = NOSYM;
+        symmetry = symmetry_type::NONE;
     if ((trigndx[0] == LOG) || (trigndx[1] == LOG))
-        symmetry = NOSYM;
+        symmetry = symmetry_type::NONE;
     return true;
 }
 
 bool
 MandelTrigOrTrigSetup()
 {
-    // default symmetry is XAXIS_NOPARM
+    // default symmetry is symmetry::X_AXIS_NO_PARAM
     longparm = &linit;
     floatparm = &init;
     if ((trigndx[0] == 14) || (trigndx[1] == 14)) // FLIP
-        symmetry = NOSYM;
+        symmetry = symmetry_type::NONE;
     return true;
 }
 
@@ -664,29 +664,29 @@ ZXTrigPlusZSetup()
 {
     //   static char ZXTrigPlusZSym1[] =
     // fn1 ->  sin   cos    sinh  cosh exp   log   sqr
-    //           {XAXIS,XYAXIS,XAXIS,XYAXIS,XAXIS,NOSYM,XYAXIS};
+    //           {symmetry::X_AXIS,symmetry::XY_AXIS,symmetry::X_AXIS,symmetry::XY_AXIS,symmetry::X_AXIS,symmetry::NONE,symmetry::XY_AXIS};
     //   static char ZXTrigPlusZSym2[] =
     // fn1 ->  sin   cos    sinh  cosh exp   log   sqr
-    //           {NOSYM,ORIGIN,NOSYM,ORIGIN,NOSYM,NOSYM,ORIGIN};
+    //           {symmetry::NONE,symmetry::ORIGIN,symmetry::NONE,symmetry::ORIGIN,symmetry::NONE,symmetry::NONE,symmetry::ORIGIN};
 
     if (param[1] == 0.0 && param[3] == 0.0)
         //      symmetry = ZXTrigPlusZSym1[trigndx[0]];
         switch (trigndx[0])
         {
         case COS:   // changed to two case statments and made any added
-        case COSH:  // functions default to XAXIS symmetry.
+        case COSH:  // functions default to symmetry::X_AXIS symmetry.
         case SQR:
         case 9:   // 'real' cos
-            symmetry = XYAXIS;
+            symmetry = symmetry_type::XY_AXIS;
             break;
         case 14:   // FLIP
-            symmetry = YAXIS;
+            symmetry = symmetry_type::Y_AXIS;
             break;
         case LOG:
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
             break;
         default:
-            symmetry = XAXIS;
+            symmetry = symmetry_type::X_AXIS;
             break;
         }
     else
@@ -697,13 +697,13 @@ ZXTrigPlusZSetup()
         case COSH:
         case SQR:
         case 9:   // 'real' cos
-            symmetry = ORIGIN;
+            symmetry = symmetry_type::ORIGIN;
             break;
         case 14:   // FLIP
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
             break;
         default:
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
             break;
         }
     if (curfractalspecific->isinteger)
@@ -745,7 +745,7 @@ LambdaTrigSetup()
     case SIN:
     case COS:
     case 9:   // 'real' cos, added this and default for additional functions
-        symmetry = PI_SYM;
+        symmetry = symmetry_type::PI_SYM;
         if (isinteger)
             curfractalspecific->orbitcalc =  LambdaTrigFractal1;
         else
@@ -753,27 +753,27 @@ LambdaTrigSetup()
         break;
     case SINH:
     case COSH:
-        symmetry = ORIGIN;
+        symmetry = symmetry_type::ORIGIN;
         if (isinteger)
             curfractalspecific->orbitcalc =  LambdaTrigFractal2;
         else
             curfractalspecific->orbitcalc =  LambdaTrigfpFractal2;
         break;
     case SQR:
-        symmetry = ORIGIN;
+        symmetry = symmetry_type::ORIGIN;
         break;
     case EXP:
         if (isinteger)
             curfractalspecific->orbitcalc =  LongLambdaexponentFractal;
         else
             curfractalspecific->orbitcalc =  LambdaexponentFractal;
-        symmetry = NOSYM;
+        symmetry = symmetry_type::NONE;
         break;
     case LOG:
-        symmetry = NOSYM;
+        symmetry = symmetry_type::NONE;
         break;
     default:   // default for additional functions
-        symmetry = ORIGIN;
+        symmetry = symmetry_type::ORIGIN;
         break;
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
@@ -788,7 +788,7 @@ JuliafnPlusZsqrdSetup()
 {
     //   static char fnpluszsqrd[] =
     // fn1 ->  sin   cos    sinh  cosh   sqr    exp   log
-    // sin    {NOSYM,ORIGIN,NOSYM,ORIGIN,ORIGIN,NOSYM,NOSYM};
+    // sin    {symmetry::NONE,symmetry::ORIGIN,symmetry::NONE,symmetry::ORIGIN,symmetry::ORIGIN,symmetry::NONE,symmetry::NONE};
 
     switch (trigndx[0]) // fix sqr symmetry & add additional functions
     {
@@ -798,8 +798,8 @@ JuliafnPlusZsqrdSetup()
     case 9:   // 'real' cos
     case 10:  // tan
     case 11:  // tanh
-        symmetry = ORIGIN;
-        // default is for NOSYM symmetry
+        symmetry = symmetry_type::ORIGIN;
+        // default is for symmetry::NONE symmetry
     }
     if (curfractalspecific->isinteger)
         return JulialongSetup();
@@ -812,14 +812,14 @@ SqrTrigSetup()
 {
     //   static char SqrTrigSym[] =
     // fn1 ->  sin    cos    sinh   cosh   sqr    exp   log
-    //           {PI_SYM,PI_SYM,XYAXIS,XYAXIS,XYAXIS,XAXIS,XAXIS};
+    //           {symmetry::PI_SYM,symmetry::PI_SYM,symmetry::XY_AXIS,symmetry::XY_AXIS,symmetry::XY_AXIS,symmetry::X_AXIS,symmetry::X_AXIS};
     switch (trigndx[0]) // fix sqr symmetry & add additional functions
     {
     case SIN:
     case COS: // cosxx
     case 9:   // 'real' cos
-        symmetry = PI_SYM;
-        // default is for XAXIS symmetry
+        symmetry = symmetry_type::PI_SYM;
+        // default is for symmetry::X_AXIS symmetry
     }
     if (curfractalspecific->isinteger)
         return JulialongSetup();
@@ -830,31 +830,31 @@ SqrTrigSetup()
 bool
 FnXFnSetup()
 {
-    static char fnxfn[7][7] =
+    static symmetry_type fnxfn[7][7] =
     {   // fn2 ->sin     cos    sinh    cosh  exp    log    sqr
         // fn1
-        /* sin */ {PI_SYM,YAXIS, XYAXIS,XYAXIS,XAXIS, NOSYM, XYAXIS},
-        /* cos */ {YAXIS, PI_SYM,XYAXIS,XYAXIS,XAXIS, NOSYM, XYAXIS},
-        /* sinh*/ {XYAXIS,XYAXIS,XYAXIS,XYAXIS,XAXIS, NOSYM, XYAXIS},
-        /* cosh*/ {XYAXIS,XYAXIS,XYAXIS,XYAXIS,XAXIS, NOSYM, XYAXIS},
-        /* exp */ {XAXIS, XAXIS, XAXIS, XAXIS, XAXIS, NOSYM, XYAXIS},
-        /* log */ {NOSYM, NOSYM, NOSYM, NOSYM, NOSYM, XAXIS, NOSYM},
-        /* sqr */ {XYAXIS,XYAXIS,XYAXIS,XYAXIS,XYAXIS,NOSYM, XYAXIS},
+        /* sin */ {symmetry_type::PI_SYM,  symmetry_type::Y_AXIS,  symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::NONE,   symmetry_type::XY_AXIS},
+        /* cos */ {symmetry_type::Y_AXIS,  symmetry_type::PI_SYM,  symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::NONE,   symmetry_type::XY_AXIS},
+        /* sinh*/ {symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::NONE,   symmetry_type::XY_AXIS},
+        /* cosh*/ {symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::NONE,   symmetry_type::XY_AXIS},
+        /* exp */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::NONE,   symmetry_type::XY_AXIS},
+        /* log */ {symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::X_AXIS, symmetry_type::NONE},
+        /* sqr */ {symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::NONE,   symmetry_type::XY_AXIS},
     };
     if (trigndx[0] < 7 && trigndx[1] < 7)  // bounds of array
         symmetry = fnxfn[trigndx[0]][trigndx[1]];
-    // defaults to XAXIS symmetry
+    // defaults to symmetry::X_AXIS symmetry
     else {
         if (trigndx[0] == LOG || trigndx[1] == LOG)
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         if (trigndx[0] == 9 || trigndx[1] == 9) { // 'real' cos
             if (trigndx[0] == SIN || trigndx[1] == SIN)
-                symmetry = PI_SYM;
+                symmetry = symmetry_type::PI_SYM;
             if (trigndx[0] == COS || trigndx[1] == COS)
-                symmetry = PI_SYM;
+                symmetry = symmetry_type::PI_SYM;
         }
         if (trigndx[0] == 9 && trigndx[1] == 9)
-            symmetry = PI_SYM;
+            symmetry = symmetry_type::PI_SYM;
     }
     if (curfractalspecific->isinteger)
         return JulialongSetup();
@@ -870,7 +870,7 @@ MandelTrigSetup()
         curfractalspecific->orbitcalc =  LambdaTrigFractal;
     else
         curfractalspecific->orbitcalc =  LambdaTrigfpFractal;
-    symmetry = XYAXIS_NOPARM;
+    symmetry = symmetry_type::XY_AXIS_NO_PARAM;
     switch (trigndx[0])
     {
     case SIN:
@@ -888,17 +888,17 @@ MandelTrigSetup()
             curfractalspecific->orbitcalc =  LambdaTrigfpFractal2;
         break;
     case EXP:
-        symmetry = XAXIS_NOPARM;
+        symmetry = symmetry_type::X_AXIS_NO_PARAM;
         if (isinteger)
             curfractalspecific->orbitcalc =  LongLambdaexponentFractal;
         else
             curfractalspecific->orbitcalc =  LambdaexponentFractal;
         break;
     case LOG:
-        symmetry = XAXIS_NOPARM;
+        symmetry = symmetry_type::X_AXIS_NO_PARAM;
         break;
     default:
-        symmetry = XYAXIS_NOPARM;
+        symmetry = symmetry_type::XY_AXIS_NO_PARAM;
         break;
     }
     if (isinteger)
@@ -1015,9 +1015,9 @@ HalleySetup()
 #endif
 
     if (degree % 2)
-        symmetry = XAXIS;   // odd
+        symmetry = symmetry_type::X_AXIS;   // odd
     else
-        symmetry = XYAXIS; // even
+        symmetry = symmetry_type::XY_AXIS; // even
     return true;
 }
 
@@ -1065,11 +1065,11 @@ PhoenixCplxSetup()
     param[4] = (double)degree;
     if (degree == 0) {
         if (parm2.x != 0 || parm2.y != 0)
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         else
-            symmetry = ORIGIN;
+            symmetry = symmetry_type::ORIGIN;
         if (parm.y == 0 && parm2.y == 0)
-            symmetry = XAXIS;
+            symmetry = symmetry_type::X_AXIS;
         if (usr_floatflag)
             curfractalspecific->orbitcalc =  PhoenixFractalcplx;
         else
@@ -1078,9 +1078,9 @@ PhoenixCplxSetup()
     if (degree >= 2) {
         degree = degree - 1;
         if (parm.y == 0 && parm2.y == 0)
-            symmetry = XAXIS;
+            symmetry = symmetry_type::X_AXIS;
         else
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         if (usr_floatflag)
             curfractalspecific->orbitcalc =  PhoenixCplxPlusFractal;
         else
@@ -1089,9 +1089,9 @@ PhoenixCplxSetup()
     if (degree <= -3) {
         degree = abs(degree) - 2;
         if (parm.y == 0 && parm2.y == 0)
-            symmetry = XAXIS;
+            symmetry = symmetry_type::X_AXIS;
         else
-            symmetry = NOSYM;
+            symmetry = symmetry_type::NONE;
         if (usr_floatflag)
             curfractalspecific->orbitcalc =  PhoenixCplxMinusFractal;
         else
@@ -1144,7 +1144,7 @@ MandPhoenixCplxSetup()
         degree = 0;
     param[4] = (double)degree;
     if (parm.y != 0 || parm2.y != 0)
-        symmetry = NOSYM;
+        symmetry = symmetry_type::NONE;
     if (degree == 0) {
         if (usr_floatflag)
             curfractalspecific->orbitcalc =  PhoenixFractalcplx;

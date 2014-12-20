@@ -37,7 +37,7 @@ static void step_col_row();
 static int  solidguess();
 static bool guessrow(bool firstpass, int y, int blocksize);
 static void plotblock(int,int,int,int);
-static void setsymmetry(int sym, bool uselist);
+static void setsymmetry(symmetry_type sym, bool uselist);
 static bool xsym_split(int xaxis_row, bool xaxis_between);
 static bool ysym_split(int yaxis_col, bool yaxis_between);
 static void puttruecolor_disk(int,int,int);
@@ -137,7 +137,7 @@ int ixstart = 0;
 int ixstop = 0;
 int iystart = 0;
 int iystop = 0;                         // start, stop here
-int symmetry = 0;                       // symmetry flag
+symmetry_type symmetry = symmetry_type::NONE; // symmetry flag
 bool reset_periodicity = false;         // true if escape time pixel rtn to reset
 int kbdcount = 0;
 int max_kbdcount = 0;                   // avoids checking keyboard too often
@@ -400,7 +400,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 
 /*
   The sym_put_line() routine is the symmetry-aware version of put_line().
-  It only works efficiently in the no symmetry or XAXIS symmetry case,
+  It only works efficiently in the no symmetry or X_AXIS symmetry case,
   otherwise it just writes the pixels one-by-one.
 */
 static void sym_put_line(int row, int left, int right, BYTE *str)
@@ -3642,7 +3642,7 @@ static bool xsym_split(int xaxis_row, bool xaxis_between)
         iystop = xaxis_row;
         worksym |= 1;
     }
-    symmetry = 0;
+    symmetry = symmetry_type::NONE;
     return false; // tell set_symmetry its a go
 }
 
@@ -3681,11 +3681,11 @@ static bool ysym_split(int yaxis_col, bool yaxis_between)
         ixstop = yaxis_col;
         worksym |= 2;
     }
-    symmetry = 0;
+    symmetry = symmetry_type::NONE;
     return false; // tell set_symmetry its a go
 }
 
-static void setsymmetry(int sym, bool uselist) // set up proper symmetrical plot functions
+static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmetrical plot functions
 {
     int i;
     int xaxis_row, yaxis_col;           // pixel number for origin
@@ -3696,10 +3696,10 @@ static void setsymmetry(int sym, bool uselist) // set up proper symmetrical plot
     double ftemp;
     bf_t bft1;
     int saved = 0;
-    symmetry = 1;
+    symmetry = symmetry_type::X_AXIS;
     if (stdcalcmode == 's' || stdcalcmode == 'o')
         return;
-    if (sym == NOPLOT && forcesymmetry == 999)
+    if (sym == symmetry_type::NO_PLOT && forcesymmetry == symmetry_type::NOT_FORCED)
     {
         plot = noplot;
         return;
@@ -3714,11 +3714,14 @@ static void setsymmetry(int sym, bool uselist) // set up proper symmetrical plot
             || decomp[0] != 0
             || xxmin != xx3rd || yymin != yy3rd)
         return;
-    if (sym != XAXIS && sym != XAXIS_NOPARM && inversion[1] != 0.0 && forcesymmetry == 999)
+    if (sym != symmetry_type::X_AXIS
+        && sym != symmetry_type::X_AXIS_NO_PARAM
+        && inversion[1] != 0.0
+        && forcesymmetry == symmetry_type::NOT_FORCED)
         return;
-    if (forcesymmetry < 999)
+    if (forcesymmetry < symmetry_type::NOT_FORCED)
         sym = forcesymmetry;
-    else if (forcesymmetry == 1000)
+    else if (forcesymmetry == static_cast<symmetry_type>(1000))
         forcesymmetry = sym;  // for backwards compatibility
     else if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
              || outside == ATAN || bailoutest == bailouts::Manr || outside == FMOD)
@@ -3808,19 +3811,19 @@ static void setsymmetry(int sym, bool uselist) // set up proper symmetrical plot
     }
     switch (sym)       // symmetry switch
     {
-    case XAXIS_NOREAL:    // X-axis Symmetry (no real param)
+    case symmetry_type::X_AXIS_NO_REAL:    // X-axis Symmetry (no real param)
         if (!parmsnoreal)
             break;
         goto xsym;
-    case XAXIS_NOIMAG:    // X-axis Symmetry (no imag param)
+    case symmetry_type::X_AXIS_NO_IMAG:    // X-axis Symmetry (no imag param)
         if (!parmsnoimag)
             break;
         goto xsym;
-    case XAXIS_NOPARM:                        // X-axis Symmetry  (no params)
+    case symmetry_type::X_AXIS_NO_PARAM:                        // X-axis Symmetry  (no params)
         if (!parmszero)
             break;
 xsym:
-    case XAXIS:                       // X-axis Symmetry
+    case symmetry_type::X_AXIS:                       // X-axis Symmetry
         if (!xsym_split(xaxis_row, xaxis_between))
         {
             if (basin)
@@ -3829,17 +3832,17 @@ xsym:
                 plot = symplot2;
         }
         break;
-    case YAXIS_NOPARM:                        // Y-axis Symmetry (No Parms)
+    case symmetry_type::Y_AXIS_NO_PARAM:                        // Y-axis Symmetry (No Parms)
         if (!parmszero)
             break;
-    case YAXIS:                       // Y-axis Symmetry
+    case symmetry_type::Y_AXIS:                       // Y-axis Symmetry
         if (!ysym_split(yaxis_col, yaxis_between))
             plot = symplot2Y;
         break;
-    case XYAXIS_NOPARM:                       // X-axis AND Y-axis Symmetry (no parms)
+    case symmetry_type::XY_AXIS_NO_PARAM:                       // X-axis AND Y-axis Symmetry (no parms)
         if (!parmszero)
             break;
-    case XYAXIS:                      // X-axis AND Y-axis Symmetry
+    case symmetry_type::XY_AXIS:                      // X-axis AND Y-axis Symmetry
         xsym_split(xaxis_row, xaxis_between);
         ysym_split(yaxis_col, yaxis_between);
         switch (worksym & 3)
@@ -3854,7 +3857,7 @@ xsym:
             if (basin) // got no routine for this case
             {
                 ixstop = xxstop; // fix what split should not have done
-                symmetry = 1;
+                symmetry = symmetry_type::X_AXIS;
             }
             else
                 plot = symplot2Y;
@@ -3866,10 +3869,10 @@ xsym:
                 plot = symplot4 ;
         }
         break;
-    case ORIGIN_NOPARM:                       // Origin Symmetry (no parms)
+    case symmetry_type::ORIGIN_NO_PARAM:                       // Origin Symmetry (no parms)
         if (!parmszero)
             break;
-    case ORIGIN:                      // Origin Symmetry
+    case symmetry_type::ORIGIN:                      // Origin Symmetry
 originsym:
         if (!xsym_split(xaxis_row, xaxis_between)
                 && !ysym_split(yaxis_col, yaxis_between))
@@ -3880,14 +3883,14 @@ originsym:
         else
         {
             iystop = yystop; // in case first split worked
-            symmetry = 1;
+            symmetry = symmetry_type::X_AXIS;
             worksym = 0x30; // let it recombine with others like it
         }
         break;
-    case PI_SYM_NOPARM:
+    case symmetry_type::PI_SYM_NO_PARAM:
         if (!parmszero)
             break;
-    case PI_SYM:                      // PI symmetry
+    case symmetry_type::PI_SYM:                      // PI symmetry
         if (bf_math != bf_math_type::NONE)
         {
             if ((double)bftofloat(abs_a_bf(sub_bf(bft1,bfxmax,bfxmin))) < PI/4)
@@ -3898,10 +3901,10 @@ originsym:
             if (fabs(xxmax - xxmin) < PI/4)
                 break; // no point in pi symmetry if values too close
         }
-        if (invert && forcesymmetry == 999)
+        if (invert && forcesymmetry == symmetry_type::NOT_FORCED)
             goto originsym;
         plot = symPIplot ;
-        symmetry = 0;
+        symmetry = symmetry_type::NONE;
         if (!xsym_split(xaxis_row, xaxis_between)
                 && !ysym_split(yaxis_col, yaxis_between))
             if (parm.y == 0.0)

@@ -72,7 +72,7 @@ bool    askvideo = false;       // flag for video prompting
 bool    floatflag = false;
 int     biomorph = 0;           // flag for biomorph
 int     usr_biomorph = 0;
-int     forcesymmetry = 0;      // force symmetry
+symmetry_type forcesymmetry = symmetry_type::NONE;      // force symmetry
 int     showfile = 0;           // zero if file display pending
 bool    rflag = false;
 int     rseed = 0;              // Random number seeding flag and value
@@ -448,7 +448,7 @@ static void initvars_fractal()          // init vars affecting calculation
     pseudox = 0;
     pseudoy = 0;
     distestwidth = 71;
-    forcesymmetry = 999;                 // symmetry not forced
+    forcesymmetry = symmetry_type::NOT_FORCED;
     xxmin = -2.5;
     xx3rd = xxmin;
     xxmax = 1.5;   // initial corner values
@@ -2350,17 +2350,17 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (strcmp(variable, "symmetry") == 0) {      // symmetry=?
         if (strcmp(value, "xaxis") == 0)
-            forcesymmetry = XAXIS;
+            forcesymmetry = symmetry_type::X_AXIS;
         else if (strcmp(value, "yaxis") == 0)
-            forcesymmetry = YAXIS;
+            forcesymmetry = symmetry_type::Y_AXIS;
         else if (strcmp(value, "xyaxis") == 0)
-            forcesymmetry = XYAXIS;
+            forcesymmetry = symmetry_type::XY_AXIS;
         else if (strcmp(value, "origin") == 0)
-            forcesymmetry = ORIGIN;
+            forcesymmetry = symmetry_type::ORIGIN;
         else if (strcmp(value, "pi") == 0)
-            forcesymmetry = PI_SYM;
+            forcesymmetry = symmetry_type::PI_SYM;
         else if (strcmp(value, "none") == 0)
-            forcesymmetry = NOSYM;
+            forcesymmetry = symmetry_type::NONE;
         else
             goto badarg;
         return 1;

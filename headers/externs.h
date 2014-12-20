@@ -162,7 +162,7 @@ extern int                   fm_release;
 extern int                   fm_sustain;
 extern int                   fm_wavetype;
 extern int                   fm_vol;            // volume of OPL-3 soundcard output
-extern int                   forcesymmetry;
+extern symmetry_type         forcesymmetry;
 extern char                  FormFileName[];
 extern char                  FormName[];
 extern int                   fractype;
@@ -467,7 +467,7 @@ extern double                sy3rd;
 extern int                   sydots;
 extern double                symax;
 extern double                symin;
-extern int                   symmetry;
+extern symmetry_type         symmetry;
 extern int                   syoffs;
 extern char                  s_makepar[];
 extern bool                  tabmode;

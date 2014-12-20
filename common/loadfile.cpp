@@ -119,7 +119,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         decomp[0]     = read_info.decomp[0];
         decomp[1]     = read_info.decomp[1];
         usr_biomorph  = read_info.biomorph;
-        forcesymmetry = read_info.symmetry;
+        forcesymmetry = static_cast<symmetry_type>(read_info.symmetry);
     }
 
     if (read_info.version > 1)
@@ -304,9 +304,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
                 || outside == ATAN)
         {
-            if (forcesymmetry == 999)
+            if (forcesymmetry == symmetry_type::NOT_FORCED)
             {
-                forcesymmetry = 1000;
+                forcesymmetry = static_cast<symmetry_type>(1000);
             }
         }
     }
