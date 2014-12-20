@@ -468,7 +468,7 @@ void save_palette()
     if (i != -1 && temp1[0]) {
         if (strchr(temp1,'.') == nullptr)
             strcat(temp1,".map");
-        merge_pathnames(palname,temp1,2);
+        merge_pathnames(palname, temp1, cmd_file::AT_AFTER_STARTUP);
         dacfile = fopen(palname,"w");
         if (dacfile == nullptr)
             driver_buzzer(buzzer_codes::PROBLEM);
@@ -506,7 +506,7 @@ bool load_palette()
     {
         if (!ValidateLuts(filename))
             memcpy(olddacbox,g_dac_box,256*3);
-        merge_pathnames(MAP_name,filename,0);
+        merge_pathnames(MAP_name, filename, cmd_file::AT_CMD_LINE);
     }
     helpmode = oldhelpmode;
     return i;

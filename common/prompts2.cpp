@@ -910,7 +910,7 @@ int get_cmd_string()
     i = field_prompt("Enter command string to use.",nullptr,cmdbuf,60,nullptr);
     helpmode = oldhelpmode;
     if (i >= 0 && cmdbuf[0] != 0) {
-        i = cmdarg(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
+        i = cmdarg(cmdbuf, cmd_file::AT_AFTER_STARTUP);
         if (debugflag == 98)
         {
             backwards_v18();
@@ -2449,8 +2449,6 @@ get_brws_restart:
 #define ATCOMMANDINTERACTIVE 2
 #define ATFILENAMESETNAME  3
 
-#define GETPATH (mode < 2)
-
 #ifndef XFRACT
 #include <direct.h>
 #endif
@@ -2458,7 +2456,7 @@ get_brws_restart:
 // copies the proposed new filename to the fullpath variable
 // does not copy directories for PAR files (modes 2 and 3)
 // attempts to extract directory and test for existence (modes 0 and 1)
-int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
+int merge_pathnames(char *oldfullpath, char *newfilename, cmd_file mode)
 {
     bool isadir_error = false;
     bool isafile = false;
@@ -2541,15 +2539,17 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 
     splitpath(newfilename,drive,dir,fname,ext);
     splitpath(oldfullpath,drive1,dir1,fname1,ext1);
-    if ((int) strlen(drive) != 0 && GETPATH)
+    bool const get_path = (mode == cmd_file::AT_CMD_LINE)
+        || (mode == cmd_file::SSTOOLS_INI);
+    if ((int) strlen(drive) != 0 && get_path)
         strcpy(drive1,drive);
-    if ((int) strlen(dir) != 0 && GETPATH)
+    if ((int) strlen(dir) != 0 && get_path)
         strcpy(dir1,dir);
     if ((int) strlen(fname) != 0)
         strcpy(fname1,fname);
     if ((int) strlen(ext) != 0)
         strcpy(ext1,ext);
-    if (!isadir && !isafile && GETPATH)
+    if (!isadir && !isafile && get_path)
     {
         makepath(oldfullpath,drive1,dir1,nullptr,nullptr);
         int len = (int) strlen(oldfullpath);

@@ -24,10 +24,16 @@
 #define PRT_RESOLUTION  60      // Assume low resolution
 #endif
 
-static int  cmdfile(FILE *,int);
-static int  next_command(char *,int,FILE *,char *,int *,int);
-static bool next_line(FILE *handle, char *linebuf, int mode);
-int  cmdarg(char *,int);
+static int  cmdfile(FILE *handle, cmd_file mode);
+static int  next_command(
+    char *cmdbuf,
+    int maxlen,
+    FILE *handle,
+    char *linebuf,
+    int *lineoffset,
+    cmd_file mode);
+static bool next_line(FILE *handle, char *linebuf, cmd_file mode);
+int cmdarg(char *argument, cmd_file mode);
 static void argerror(const char *);
 static void initvars_run();
 static void initvars_restart();
@@ -234,7 +240,7 @@ int cmdfiles(int argc,char **argv)
     {
         initfile = fopen(tempstring,"r");
         if (initfile != nullptr)
-            cmdfile(initfile, CMDFILE_SSTOOLS_INI);           // process it
+            cmdfile(initfile, cmd_file::SSTOOLS_INI);           // process it
     }
 
     // cycle through args
@@ -264,22 +270,22 @@ int cmdfiles(int argc,char **argv)
                 }
             }
             if (curarg[0])
-                cmdarg(curarg, CMDFILE_AT_CMDLINE);           // process simple command
+                cmdarg(curarg, cmd_file::AT_CMD_LINE);           // process simple command
         }
         else if ((sptr = strchr(curarg,'/')) != nullptr) { // @filename/setname?
             *sptr = 0;
-            if (merge_pathnames(CommandFile, &curarg[1], 0) < 0)
-                init_msg("",CommandFile,0);
+            if (merge_pathnames(CommandFile, &curarg[1], cmd_file::AT_CMD_LINE) < 0)
+                init_msg("", CommandFile, cmd_file::AT_CMD_LINE);
             strcpy(CommandName,sptr+1);
             if (find_file_item(CommandFile,CommandName,&initfile, 0) || initfile == nullptr)
                 argerror(curarg);
-            cmdfile(initfile, CMDFILE_AT_CMDLINE_SETNAME);
+            cmdfile(initfile, cmd_file::AT_CMD_LINE_SET_NAME);
         }
         else {                            // @filename
             initfile = fopen(&curarg[1],"r");
             if (initfile == nullptr)
                 argerror(curarg);
-            cmdfile(initfile, CMDFILE_AT_CMDLINE);
+            cmdfile(initfile, cmd_file::AT_CMD_LINE);
         }
     }
 
@@ -289,7 +295,7 @@ int cmdfiles(int argc,char **argv)
         showfile = 1;  // nor startup image file
     }
 
-    init_msg("",nullptr,0);  // this causes driver_get_key if init_msg called on runup
+    init_msg("", nullptr, cmd_file::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
 
     if (debugflag != 110)
         first_init = false;
@@ -315,7 +321,7 @@ int load_commands(FILE *infile)
     int ret;
     initcorners = false;
     initparams = false; // reset flags for type=
-    ret = cmdfile(infile, CMDFILE_AT_AFTER_STARTUP);
+    ret = cmdfile(infile, cmd_file::AT_AFTER_STARTUP);
 
     if (colorpreloaded && showfile == 0) // PAR reads a file and sets color
         dontreadcolor = true;   // don't read colors from GIF
@@ -558,7 +564,7 @@ static void reset_ifs_defn()
 //        1 sstools.ini
 //        2 <@> command after startup
 //        3 command line @filename/setname
-static int cmdfile(FILE *handle,int mode)
+static int cmdfile(FILE *handle, cmd_file mode)
 {
     // note that cmdfile could be open as text OR as binary
     // binary is used in @ command processing for reasonable speed note/point
@@ -568,14 +574,14 @@ static int cmdfile(FILE *handle,int mode)
     char linebuf[513];
     char cmdbuf[10000] = { 0 };
 
-    if (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME) {
+    if (mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME) {
         while ((i = getc(handle)) != '{' && i != EOF) { }
         for (int i = 0; i < 4; i++)
             CommandComment[i][0] = 0;
     }
     linebuf[0] = 0;
-    while (next_command(cmdbuf,10000,handle,linebuf,&lineoffset,mode) > 0) {
-        if ((mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME) && strcmp(cmdbuf,"}") == 0)
+    while (next_command(cmdbuf, 10000, handle, linebuf, &lineoffset, mode) > 0) {
+        if ((mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME) && strcmp(cmdbuf,"}") == 0)
             break;
         i = cmdarg(cmdbuf,mode);
         if (i < 0)
@@ -595,8 +601,13 @@ static int cmdfile(FILE *handle,int mode)
     return changeflag;
 }
 
-static int next_command(char *cmdbuf,int maxlen,
-                        FILE *handle,char *linebuf,int *lineoffset,int mode)
+static int next_command(
+    char *cmdbuf,
+    int maxlen,
+    FILE *handle,
+    char *linebuf,
+    int *lineoffset,
+    cmd_file mode)
 {
     int cmdlen = 0;
     char *lineptr;
@@ -616,7 +627,7 @@ static int next_command(char *cmdbuf,int maxlen,
             if (*lineptr == ';' || *lineptr == 0)
             {
                 if (*lineptr == ';'
-                        && (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME)
+                        && (mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME)
                         && (CommandComment[0][0] == 0 || CommandComment[1][0] == 0 ||
                             CommandComment[2][0] == 0 || CommandComment[3][0] == 0))
                 {
@@ -662,14 +673,14 @@ static int next_command(char *cmdbuf,int maxlen,
     }
 }
 
-static bool next_line(FILE *handle, char *linebuf, int mode)
+static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
 {
     int toolssection;
     char tmpbuf[11];
     toolssection = 0;
     while (file_gets(linebuf,512,handle) >= 0)
     {
-        if (mode == CMDFILE_SSTOOLS_INI && linebuf[0] == '[')   // check for [fractint]
+        if (mode == cmd_file::SSTOOLS_INI && linebuf[0] == '[')   // check for [fractint]
         {
 #ifndef XFRACT
             strncpy(tmpbuf,&linebuf[1],9);
@@ -703,7 +714,7 @@ static bool next_line(FILE *handle, char *linebuf, int mode)
 
 #define NONNUMERIC -32767
 
-int cmdarg(char *curarg, int mode) // process a single argument
+int cmdarg(char *curarg, cmd_file mode) // process a single argument
 {
     char    variable[21] = { 0 };       // variable name goes here
     int     valuelen = 0;               // length of value
@@ -888,7 +899,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
         }
     }
 
-    if (mode != CMDFILE_AT_AFTER_STARTUP || debugflag == 110)
+    if (mode != cmd_file::AT_AFTER_STARTUP || debugflag == 110)
     {
         // these commands are allowed only at startup
         if (strcmp(variable, "batch") == 0)     // batch=?
@@ -1107,7 +1118,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
         {
             goto badarg;
         }
-        if (mode == CMDFILE_AT_AFTER_STARTUP && display3d == 0) // can't do this in @ command
+        if (mode == cmd_file::AT_AFTER_STARTUP && display3d == 0) // can't do this in @ command
         {
             goto badarg;
         }
@@ -1661,7 +1672,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
         {
             goto badarg;
         }
-        if (first_init || mode == CMDFILE_AT_AFTER_STARTUP)
+        if (first_init || mode == cmd_file::AT_AFTER_STARTUP)
         {
             if (merge_pathnames(savename, value, mode) < 0)
             {
@@ -2963,7 +2974,7 @@ int cmdarg(char *curarg, int mode) // process a single argument
     if (strcmp(variable, "lightname") == 0) {     // lightname=?
         if (valuelen > (FILE_MAX_PATH-1))
             goto badarg;
-        if (first_init || mode == CMDFILE_AT_AFTER_STARTUP)
+        if (first_init || mode == cmd_file::AT_AFTER_STARTUP)
             strcpy(light_name, value);
         return 0;
     }
@@ -3068,8 +3079,8 @@ static void parse_textcolors(char *value)
 static int parse_colors(char *value)
 {
     if (*value == '@') {
-        if (merge_pathnames(MAP_name,&value[1],3) < 0)
-            init_msg("",&value[1],3);
+        if (merge_pathnames(MAP_name,&value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
+            init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
         if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(MAP_name))
             goto badcolor;
         if (display3d)
@@ -3077,8 +3088,8 @@ static int parse_colors(char *value)
             mapset = true;
         }
         else {
-            if (merge_pathnames(colorfile,&value[1],3) < 0)
-                init_msg("",&value[1],3);
+            if (merge_pathnames(colorfile, &value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
+                init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
             colorstate = 2;
         }
     }
@@ -3277,7 +3288,7 @@ int get_max_curarg_len(const char *floatvalstr[], int totparms)
 //        3 command line @filename/setname
 // this is like stopmsg() but can be used in cmdfiles()
 // call with NULL for badfilename to get pause for driver_get_key()
-int init_msg(const char *cmdstr, char *badfilename, int mode)
+int init_msg(const char *cmdstr, char *badfilename, cmd_file mode)
 {
     const char *modestr[4] =
     {"command line", "sstools.ini", "PAR file", "PAR file"};
@@ -3295,7 +3306,7 @@ int init_msg(const char *cmdstr, char *badfilename, int mode)
     if (*cmd)
         strcat(cmd,"=");
     if (badfilename)
-        sprintf(msg,"Can't find %s%s, please check %s",cmd,badfilename,modestr[mode]);
+        sprintf(msg,"Can't find %s%s, please check %s", cmd, badfilename, modestr[static_cast<int>(mode)]);
     if (first_init)
     {     // & cmdfiles hasn't finished 1st try
         if (row == 1 && badfilename) {

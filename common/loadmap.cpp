@@ -18,9 +18,9 @@ bool ValidateLuts(const char *fn)
     strcpy(temp,MAP_name);
     strcpy(temp_fn,fn);
 #ifdef XFRACT
-    merge_pathnames(temp,temp_fn,3);
+    merge_pathnames(temp, temp_fn, cmd_file::AT_CMD_LINE_SET_NAME);
 #else
-    merge_pathnames(temp,temp_fn,0);
+    merge_pathnames(temp, temp_fn, cmd_file::AT_CMD_LINE);
 #endif
     if (has_ext(temp) == nullptr) // Did name have an extension?
         strcat(temp,".map");  // No? Then add .map

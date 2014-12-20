@@ -717,7 +717,7 @@ static bool look(bool *stacked)
         }
         name_stack_ptr++;
         strcpy(file_name_stack[name_stack_ptr], browsename);
-        merge_pathnames(readname, browsename, 2);
+        merge_pathnames(readname, browsename, cmd_file::AT_AFTER_STARTUP);
         if (askvideo)
         {
             driver_stack_screen();   // save graphics image
@@ -740,7 +740,7 @@ static bool look(bool *stacked)
                 break;
             }
             strcpy(browsename, file_name_stack[name_stack_ptr]);
-            merge_pathnames(readname,browsename,2);
+            merge_pathnames(readname, browsename, cmd_file::AT_AFTER_STARTUP);
             browsing = true;
             showfile = 0;
             if (askvideo)
@@ -1163,7 +1163,7 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
             if (name_stack_ptr < 0) // oops, must have deleted first one
                 break;
             strcpy(browsename, file_name_stack[name_stack_ptr]);
-            merge_pathnames(readname,browsename,2);
+            merge_pathnames(readname, browsename, cmd_file::AT_AFTER_STARTUP);
             browsing = true;
             no_sub_images = false;
             showfile = 0;

@@ -2807,7 +2807,7 @@ static bool check_mapfile()
     if (!(g_glasses_type == 1 || g_glasses_type == 2))
         askflag = true;
     else
-        merge_pathnames(temp1,funnyglasses_map_name,0);
+        merge_pathnames(temp1, funnyglasses_map_name, cmd_file::AT_CMD_LINE);
 
     while (1) {
         if (askflag)
@@ -2835,7 +2835,7 @@ static bool check_mapfile()
             continue;
         }
         mapset = true;
-        merge_pathnames(MAP_name, temp1, 0);
+        merge_pathnames(MAP_name, temp1, cmd_file::AT_CMD_LINE);
         break;
     }
     return false;

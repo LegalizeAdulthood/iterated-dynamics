@@ -245,7 +245,7 @@ restart:   /* insert key re-starts here */
 
     cmdfiles(argc,argv);         /* process the command-line */
     dopause(0);                  /* pause for error msg if not batch */
-    init_msg("",nullptr,0);  /* this causes driver_get_key if init_msg called on runup */
+    init_msg("", nullptr, cmd_file::AT_CMD_LINE);  /* this causes driver_get_key if init_msg called on runup */
 
     while (maxhistory > 0) /* decrease history if necessary */
     {

@@ -75,10 +75,15 @@ enum class calc_status_value
 #define CMDARG_3D_PARAM 2
 #define CMDARG_3D_YES 4
 #define CMDARG_RESET 8
-#define CMDFILE_AT_CMDLINE 0
-#define CMDFILE_SSTOOLS_INI 1
-#define CMDFILE_AT_AFTER_STARTUP 2
-#define CMDFILE_AT_CMDLINE_SETNAME 3
+
+enum class cmd_file
+{
+    AT_CMD_LINE = 0,
+    SSTOOLS_INI = 1,
+    AT_AFTER_STARTUP = 2,
+    AT_CMD_LINE_SET_NAME = 3
+};
+
 #define INPUTFIELD_NUMERIC 1
 #define INPUTFIELD_INTEGER 2
 #define INPUTFIELD_DOUBLE 4
