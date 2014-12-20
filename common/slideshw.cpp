@@ -2,6 +2,8 @@
 // These routines are called by driver_get_key to allow keystrokes to control
 // Fractint to be read from a file.
 //*********************************************************************
+#include <sstream>
+
 #include <ctype.h>
 #include <float.h>
 #include <string.h>
@@ -278,9 +280,9 @@ start:
         out = i;
     if (out == -12345)
     {
-        char msg[MSGLEN];
-        sprintf(msg,"Can't understand %s",buffer);
-        slideshowerr(msg);
+        std::ostringstream msg;
+        msg << "Can't understand " << buffer;
+        slideshowerr(msg.str().c_str());
         out = 0;
     }
     return (last1 = out);
