@@ -87,6 +87,7 @@ enum class cmd_file
 #define INPUTFIELD_NUMERIC 1
 #define INPUTFIELD_INTEGER 2
 #define INPUTFIELD_DOUBLE 4
+
 #define SOUNDFLAG_OFF       0
 #define SOUNDFLAG_BEEP      1
 #define SOUNDFLAG_X         2
@@ -98,6 +99,7 @@ enum class cmd_file
 #define SOUNDFLAG_MIDI      0x20
 #define SOUNDFLAG_QUANTIZED 0x40
 #define SOUNDFLAG_MASK      0x7F
+
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH
@@ -497,7 +499,7 @@ struct ORBITS_INFO      // for saving orbits data in a GIF file
 };
 #define MAXVIDEOMODES 300       // maximum entries in fractint.cfg
 #define AUTOINVERT -123456.789
-#define N_ATTR 8                // max number of attractors
+#define MAX_NUM_ATTRACTORS 8
 extern  long     l_at_rad;      // finite attractor radius
 extern  double   f_at_rad;      // finite attractor radius
 #define NUMIFS    64            // number of ifs functions in ifs array

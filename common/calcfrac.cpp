@@ -196,9 +196,9 @@ unsigned int tprefix[2][maxyblk][maxxblk] = { 0 }; // common temp
 
 bool nxtscreenflag = false;             // for cellular next screen generation
 int attractors = 0;                     // number of finite attractors
-DComplex attr[N_ATTR] = { 0.0 };        // finite attractor vals (f.p)
-LComplex lattr[N_ATTR] = { 0 };         // finite attractor vals (int)
-int attrperiod[N_ATTR] = { 0 };         // period of the finite attractor
+DComplex attr[MAX_NUM_ATTRACTORS] = { 0.0 };        // finite attractor vals (f.p)
+LComplex lattr[MAX_NUM_ATTRACTORS] = { 0 };         // finite attractor vals (int)
+int attrperiod[MAX_NUM_ATTRACTORS] = { 0 };         // period of the finite attractor
 
 /***** vars for new btm *****/
 enum direction

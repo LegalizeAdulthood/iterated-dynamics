@@ -1590,7 +1590,7 @@ void get_julia_attractor(double real, double imag)
     if (attractors == 0 && !finattract) // not magnet & not requested
         return;
 
-    if (attractors >= N_ATTR)     // space for more attractors ?
+    if (attractors >= MAX_NUM_ATTRACTORS)     // space for more attractors ?
         return;                  // Bad luck - no room left !
 
     savper = periodicitycheck;
