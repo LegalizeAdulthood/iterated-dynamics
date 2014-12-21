@@ -201,14 +201,14 @@ LComplex lattr[MAX_NUM_ATTRACTORS] = { 0 };         // finite attractor vals (in
 int attrperiod[MAX_NUM_ATTRACTORS] = { 0 };         // period of the finite attractor
 
 /***** vars for new btm *****/
-enum direction
+enum class direction
 {
     North,
     East,
     South,
     West
 };
-enum direction going_to;
+direction going_to;
 int trail_row = 0;
 int trail_col = 0;
 
@@ -2907,16 +2907,27 @@ static int potential(double mag, long iterations)
 
 /******************* boundary trace method ***************************/
 #define bkcolor 0
-#define advance_match()                                             \
-    going_to = static_cast<direction>((going_to - 1) & 0x03);       \
-    coming_from = static_cast<direction>(((going_to) - 1) & 0x03)
-#define advance_no_match()  \
-    going_to = static_cast<direction>((going_to + 1) & 0x03)
+
+inline direction advance(direction dir, int increment)
+{
+    return static_cast<direction>((static_cast<int>(dir) + increment) % 4);
+}
+
+inline void advance_match(direction &coming_from)
+{
+    going_to = advance(going_to, -1);
+    coming_from = advance(going_to, -1);
+}
+
+inline void advance_no_match()
+{
+    going_to = advance(going_to, 1);
+}
 
 static
 int  bound_trace_main()
 {
-    enum direction coming_from;
+    direction coming_from;
     unsigned int matches_found;
     int trail_color, fillcolor_used, last_fillcolor_used = -1;
     int max_putline_length;
@@ -2969,8 +2980,8 @@ int  bound_trace_main()
             trail_col = curcol;
             trail_color = color;
             fillcolor_used = fillcolor > 0 ? fillcolor : trail_color;
-            coming_from = West;
-            going_to = East;
+            coming_from = direction::West;
+            going_to = direction::East;
             matches_found = 0;
             bool continue_loop = true;
             do
@@ -2999,7 +3010,7 @@ int  bound_trace_main()
                             matches_found++;
                         trail_row = row;
                         trail_col = col;
-                        advance_match();
+                        advance_match(coming_from);
                     }
                     else
                     {
@@ -3027,8 +3038,8 @@ int  bound_trace_main()
             */
             trail_row = currow;
             trail_col = curcol;
-            coming_from = West;
-            going_to = East;
+            coming_from = direction::West;
+            going_to = direction::East;
             do
             {
                 bool match_found = false;
@@ -3042,8 +3053,8 @@ int  bound_trace_main()
                             && getcolor(col,row) == trail_color)
                         // getcolor() must be last
                     {
-                        if (going_to == South
-                                || (going_to == West && coming_from != East))
+                        if (going_to == direction::South
+                                || (going_to == direction::West && coming_from != direction::East))
                         {   // fill a row, but only once
                             right = col;
                             while (--right >= ixstart)
@@ -3078,7 +3089,7 @@ int  bound_trace_main()
                         }
                         trail_row = row;
                         trail_col = col;
-                        advance_match();
+                        advance_match(coming_from);
                         match_found = true;
                     }
                     else
@@ -3090,7 +3101,7 @@ int  bound_trace_main()
                     step_col_row();
                     trail_row = row;
                     trail_col = col;
-                    advance_match();
+                    advance_match(coming_from);
                 }
             } while (trail_col != curcol || trail_row != currow);
             reset_periodicity = true; // reset after a trace/fill
@@ -3106,19 +3117,19 @@ static void step_col_row()
 {
     switch (going_to)
     {
-    case North:
+    case direction::North:
         col = trail_col;
         row = trail_row - 1;
         break;
-    case East:
+    case direction::East:
         col = trail_col + 1;
         row = trail_row;
         break;
-    case South:
+    case direction::South:
         col = trail_col;
         row = trail_row + 1;
         break;
-    case West:
+    case direction::West:
         col = trail_col - 1;
         row = trail_row;
         break;
