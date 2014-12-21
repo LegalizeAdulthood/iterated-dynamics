@@ -11,7 +11,7 @@ U16 gene_handle = 0;
 
 // px and py are coordinates in the parameter grid (small images on screen)
 // evolving = flag, gridsz = dimensions of image grid (gridsz x gridsz)
-int px,py,evolving,gridsz;
+int px, py, evolving, gridsz;
 #define MAXGRIDSZ 51  // This is arbitrary, = 1024/20
 static int ecountbox[MAXGRIDSZ][MAXGRIDSZ];
 
@@ -19,13 +19,13 @@ unsigned int this_gen_rseed;
 /* used to replay random sequences to obtain correct values when selecting a
    seed image for next generation */
 
-double opx,opy,newopx,newopy,paramrangex,paramrangey,dpx,dpy,fiddlefactor;
+double opx, opy, newopx, newopy, paramrangex, paramrangey, dpx, dpy, fiddlefactor;
 double fiddle_reduction;
 double parmzoom;
-char odpx,odpy,newodpx,newodpy;
+char odpx, odpy, newodpx, newodpy;
 // offset for discrete parameters x and y..
 // used for things like inside or outside types, bailout tests, trig fn etc
-/* variation factors, opx,opy, paramrangex/y dpx, dpy.. used in field mapping
+/* variation factors, opx, opy, paramrangex/y dpx, dpy.. used in field mapping
    for smooth variation across screen. opx =offset param x, dpx = delta param
    per image, paramrangex = variation across grid of param ...likewise for py */
 /* fiddlefactor is amount of random mutation used in random modes ,
@@ -34,7 +34,7 @@ char odpx,odpy,newodpx,newodpy;
 
 U16 prmboxhandle = 0;
 U16 imgboxhandle = 0;
-int prmboxcount,imgboxcount;
+int prmboxcount, imgboxcount;
 U16 oldhistory_handle = 0;
 
 struct PARAMHIST      // for saving evolution data of center image
@@ -63,7 +63,7 @@ struct PARAMHIST      // for saving evolution data of center image
 };
 
 void param_history(int mode);
-void varydbl(GENEBASE gene[],int randval,int i);
+void varydbl(GENEBASE gene[], int randval, int i);
 int varyint(int randvalue, int limit, int mode);
 int wrapped_positive_varyint(int randvalue, int limit, int mode);
 void varyinside(GENEBASE gene[], int randval, int i);
@@ -88,32 +88,32 @@ void initgene() /* set up pointers and mutation params for all usable image
     // 3 = with x+y, 4 = with x-y, 5 = random, 6 = weighted random
     //     Use only 15 letters below: 123456789012345
     GENEBASE gene[NUMGENES] = {
-        { &param[0],   varydbl,     5, "Param 1 real",1 },
-        { &param[1],   varydbl,     5, "Param 1 imag",1 },
-        { &param[2],   varydbl,     0, "Param 2 real",1 },
-        { &param[3],   varydbl,     0, "Param 2 imag",1 },
-        { &param[4],   varydbl,     0, "Param 3 real",1 },
-        { &param[5],   varydbl,     0, "Param 3 imag",1 },
-        { &param[6],   varydbl,     0, "Param 4 real",1 },
-        { &param[7],   varydbl,     0, "Param 4 imag",1 },
-        { &param[8],   varydbl,     0, "Param 5 real",1 },
-        { &param[9],   varydbl,     0, "Param 5 imag",1 },
-        { &inside,     varyinside,  0, "inside color",2 },
-        { &outside,    varyoutside, 0, "outside color",3 },
-        { &decomp[0],  varypwr2,    0, "decomposition",4 },
-        { &inversion[0],varyinv,    0, "invert radius",7 },
-        { &inversion[1],varyinv,    0, "invert center x",7 },
-        { &inversion[2],varyinv,    0, "invert center y",7 },
-        { &trigndx[0], varytrig,    0, "trig function 1",5 },
-        { &trigndx[1], varytrig,    0, "trig fn 2",5 },
-        { &trigndx[2], varytrig,    0, "trig fn 3",5 },
-        { &trigndx[3], varytrig,    0, "trig fn 4",5 },
-        { &bailoutest, varybotest,  0, "bailout test",6 }
+        { &param[0],   varydbl,     5, "Param 1 real", 1 },
+        { &param[1],   varydbl,     5, "Param 1 imag", 1 },
+        { &param[2],   varydbl,     0, "Param 2 real", 1 },
+        { &param[3],   varydbl,     0, "Param 2 imag", 1 },
+        { &param[4],   varydbl,     0, "Param 3 real", 1 },
+        { &param[5],   varydbl,     0, "Param 3 imag", 1 },
+        { &param[6],   varydbl,     0, "Param 4 real", 1 },
+        { &param[7],   varydbl,     0, "Param 4 imag", 1 },
+        { &param[8],   varydbl,     0, "Param 5 real", 1 },
+        { &param[9],   varydbl,     0, "Param 5 imag", 1 },
+        { &inside,     varyinside,  0, "inside color", 2 },
+        { &outside,    varyoutside, 0, "outside color", 3 },
+        { &decomp[0],  varypwr2,    0, "decomposition", 4 },
+        { &inversion[0], varyinv,    0, "invert radius", 7 },
+        { &inversion[1], varyinv,    0, "invert center x", 7 },
+        { &inversion[2], varyinv,    0, "invert center y", 7 },
+        { &trigndx[0], varytrig,    0, "trig function 1", 5 },
+        { &trigndx[1], varytrig,    0, "trig fn 2", 5 },
+        { &trigndx[2], varytrig,    0, "trig fn 3", 5 },
+        { &trigndx[3], varytrig,    0, "trig fn 4", 5 },
+        { &bailoutest, varybotest,  0, "bailout test", 6 }
     };
 
     // TODO: MemoryAlloc, MoveToMemory
     if (gene_handle == 0)
-        gene_handle = MemoryAlloc((U16)sizeof(gene),1L,MEMORY);
+        gene_handle = MemoryAlloc((U16)sizeof(gene), 1L, MEMORY);
     MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 }
 
@@ -125,7 +125,7 @@ void param_history(int mode)
 
     // TODO: MemoryAlloc
     if (oldhistory_handle == 0)
-        oldhistory_handle = MemoryAlloc((U16)sizeof(oldhistory),1L,MEMORY);
+        oldhistory_handle = MemoryAlloc((U16)sizeof(oldhistory), 1L, MEMORY);
 
     if (mode == 0)
     { // save the old parameter history
@@ -181,7 +181,8 @@ void param_history(int mode)
     }
 }
 
-void varydbl(GENEBASE gene[],int randval,int i) // routine to vary doubles
+// routine to vary doubles
+void varydbl(GENEBASE gene[], int randval, int i)
 {
     int lclpy = gridsz - py - 1;
     switch (gene[i].mutate)
@@ -254,7 +255,7 @@ int varyint(int randvalue, int limit, int mode)
 int wrapped_positive_varyint(int randvalue, int limit, int mode)
 {
     int i;
-    i = varyint(randvalue,limit,mode);
+    i = varyint(randvalue, limit, mode);
     if (i < 0)
         return (limit + i);
     else
@@ -265,7 +266,7 @@ void varyinside(GENEBASE gene[], int randval, int i)
 {
     int choices[9] = { ZMAG, BOF60, BOF61, EPSCROSS, STARTRAIL, PERIOD, FMODI, ATANI, ITER };
     if (gene[i].mutate)
-        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
     return;
 }
 
@@ -273,7 +274,7 @@ void varyoutside(GENEBASE gene[], int randval, int i)
 {
     int choices[8] = { ITER, REAL, IMAG, MULT, SUM, ATAN, FMOD, TDIS };
     if (gene[i].mutate)
-        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,8,gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 8, gene[i].mutate)];
     return;
 }
 
@@ -291,7 +292,7 @@ void varybotest(GENEBASE gene[], int randval, int i)
     };
     if (gene[i].mutate)
     {
-        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,7,gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 7, gene[i].mutate)];
         // move this next bit to varybot where it belongs
         setbailoutformula(bailoutest);
     }
@@ -300,9 +301,9 @@ void varybotest(GENEBASE gene[], int randval, int i)
 
 void varypwr2(GENEBASE gene[], int randval, int i)
 {
-    int choices[9] = {0,2,4,8,16,32,64,128,256};
+    int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
     if (gene[i].mutate)
-        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
     return;
 }
 
@@ -320,7 +321,7 @@ void varytrig(GENEBASE gene[], int randval, int i)
 void varyinv(GENEBASE gene[], int randval, int i)
 {
     if (gene[i].mutate)
-        varydbl(gene,randval,i);
+        varydbl(gene, randval, i);
     invert = (inversion[0] == 0.0) ? 0 : 3 ;
 }
 
@@ -334,8 +335,8 @@ void varyinv(GENEBASE gene[], int randval, int i)
 */
 int get_the_rest()
 {
-    const char *evolvmodes[] = {"no","x","y","x+y","x-y","random","spread"};
-    int i,k, numtrig;
+    const char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
+    int i, k, numtrig;
     const char *choices[20];
     fullscreenvalues uvalues[20];
     GENEBASE gene[NUMGENES];
@@ -394,7 +395,7 @@ choose_vars_restart:
     choices[++k] = "Press F4 to randomize all";
     uvalues[k].type = '*';
 
-    i = fullscreen_prompt("Variable tweak central 2 of 2",k+1,choices,uvalues,28,nullptr);
+    i = fullscreen_prompt("Variable tweak central 2 of 2", k+1, choices, uvalues, 28, nullptr);
 
     switch (i)
     {
@@ -434,7 +435,7 @@ choose_vars_restart:
 
 int get_variations()
 {
-    const char *evolvmodes[] = {"no","x","y","x+y","x-y","random","spread"};
+    const char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
     int k, numparams;
     const char *choices[20];
     fullscreenvalues uvalues[20];
@@ -516,7 +517,7 @@ choose_vars_restart:
     choices[++k] = "Press F6 for second page"; // F5 gets eaten
     uvalues[k].type = '*';
 
-    int i = fullscreen_prompt("Variable tweak central 1 of 2",k+1,choices,uvalues,92,nullptr);
+    int i = fullscreen_prompt("Variable tweak central 1 of 2", k+1, choices, uvalues, 92, nullptr);
 
     switch (i)
     {
@@ -582,10 +583,10 @@ int get_evolve_Parms()
     const char *choices[20];
     int oldhelpmode;
     fullscreenvalues uvalues[20];
-    int i,j, k, tmp;
-    int old_evolving,old_gridsz;
+    int i, j, k, tmp;
+    int old_evolving, old_gridsz;
     int old_variations = 0;
-    double old_paramrangex,old_paramrangey,old_opx,old_opy,old_fiddlefactor;
+    double old_paramrangex, old_paramrangey, old_opx, old_opy, old_fiddlefactor;
 
     // fill up the previous values arrays
     old_evolving      = evolving;
@@ -671,7 +672,7 @@ get_evol_restart:
     uvalues[k].type = '*';
     oldhelpmode = helpmode;     // this prevents HELP from activating
     helpmode = HELPEVOL;
-    i = fullscreen_prompt("Evolution Mode Options",k+1,choices,uvalues,255,nullptr);
+    i = fullscreen_prompt("Evolution Mode Options", k+1, choices, uvalues, 255, nullptr);
     helpmode = oldhelpmode;     // re-enable HELP
     if (i < 0)
     {
@@ -812,7 +813,7 @@ void SetupParamBox()
     vidsize = vidsize + xdots + ydots + 2 ;
     // TODO: MemoryAlloc
     if (prmboxhandle == 0)
-        prmboxhandle = MemoryAlloc((U16)(vidsize),1L,MEMORY);
+        prmboxhandle = MemoryAlloc((U16)(vidsize), 1L, MEMORY);
     if (prmboxhandle == 0)
     {
         texttempmsg("Sorry...can't allocate mem for parmbox");
@@ -822,7 +823,7 @@ void SetupParamBox()
 
     // TODO: MemoryAlloc
     if (imgboxhandle == 0)
-        imgboxhandle = MemoryAlloc((U16)(vidsize),1L,MEMORY);
+        imgboxhandle = MemoryAlloc((U16)(vidsize), 1L, MEMORY);
     if (!imgboxhandle)
     {
         texttempmsg("Sorry...can't allocate mem for imagebox");
@@ -850,8 +851,8 @@ void set_current_params()
 
 void fiddleparms(GENEBASE gene[], int ecount)
 {
-    // call with px,py ... parameter set co-ords
-    // set random seed then call rnd enough times to get to px,py
+    // call with px, py ... parameter set co-ords
+    // set random seed then call rnd enough times to get to px, py
 
     /* when writing routines to vary param types make sure that rand() gets called
     the same number of times whether gene[].mutate is set or not to allow
@@ -869,7 +870,7 @@ void fiddleparms(GENEBASE gene[], int ecount)
     set_random(ecount);   // generate the right number of pseudo randoms
 
     for (int i = 0; i < NUMGENES; i++)
-        (*(gene[i].varyfunc))(gene,rand(),i);
+        (*(gene[i].varyfunc))(gene, rand(), i);
 
 }
 
@@ -903,7 +904,7 @@ void drawparmbox(int mode)
 {
     // draws parameter zoom box in evolver mode
     // clears boxes off screen if mode = 1, otherwise, redraws boxes
-    coords tl,tr,bl,br;
+    coords tl, tr, bl, br;
     int grout;
     if (!(evolving & PARMBOX))
         return; // don't draw if not asked to!
@@ -912,17 +913,17 @@ void drawparmbox(int mode)
     if (boxcount)
     {
         // stash normal zoombox pixels
-        MoveToMemory((BYTE *)boxx,(U16)(boxcount*2),1L,0L,imgboxhandle);
-        MoveToMemory((BYTE *)boxy,(U16)(boxcount*2),1L,1L,imgboxhandle);
-        MoveToMemory((BYTE *)boxvalues,(U16)boxcount,1L,4L,imgboxhandle);
+        MoveToMemory((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, imgboxhandle);
+        MoveToMemory((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, imgboxhandle);
+        MoveToMemory((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, imgboxhandle);
         clearbox(); // to avoid probs when one box overlaps the other
     }
     if (prmboxcount != 0)
     { // clear last parmbox
         boxcount = prmboxcount;
-        MoveFromMemory((BYTE *)boxx,(U16)(boxcount*2),1L,0L,prmboxhandle);
-        MoveFromMemory((BYTE *)boxy,(U16)(boxcount*2),1L,1L,prmboxhandle);
-        MoveFromMemory((BYTE *)boxvalues,(U16)boxcount,1L,4L,prmboxhandle);
+        MoveFromMemory((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, prmboxhandle);
+        MoveFromMemory((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, prmboxhandle);
+        MoveFromMemory((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, prmboxhandle);
         clearbox();
     }
 
@@ -948,8 +949,8 @@ void drawparmbox(int mode)
     addbox(tr);
     addbox(bl);
     addbox(tl);
-    drawlines(tl,tr,bl.x-tl.x,bl.y-tl.y);
-    drawlines(tl,bl,tr.x-tl.x,tr.y-tl.y);
+    drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y);
+    drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y);
 #else
     boxx[0] = tl.x + sxoffs;
     boxy[0] = tl.y + syoffs;
@@ -965,18 +966,18 @@ void drawparmbox(int mode)
     {
         dispbox();
         // stash pixel values for later
-        MoveToMemory((BYTE *)boxx,(U16)(boxcount*2),1L,0L,prmboxhandle);
-        MoveToMemory((BYTE *)boxy,(U16)(boxcount*2),1L,1L,prmboxhandle);
-        MoveToMemory((BYTE *)boxvalues,(U16)boxcount,1L,4L,prmboxhandle);
+        MoveToMemory((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, prmboxhandle);
+        MoveToMemory((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, prmboxhandle);
+        MoveToMemory((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, prmboxhandle);
     }
     prmboxcount = boxcount;
     boxcount = imgboxcount;
     if (imgboxcount)
     {
         // and move back old values so that everything can proceed as normal
-        MoveFromMemory((BYTE *)boxx,(U16)(boxcount*2),1L,0L,imgboxhandle);
-        MoveFromMemory((BYTE *)boxy,(U16)(boxcount*2),1L,1L,imgboxhandle);
-        MoveFromMemory((BYTE *)boxvalues,(U16)boxcount,1L,4L,imgboxhandle);
+        MoveFromMemory((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, imgboxhandle);
+        MoveFromMemory((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, imgboxhandle);
+        MoveFromMemory((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, imgboxhandle);
         dispbox();
     }
     return;
@@ -1002,7 +1003,7 @@ void spiralmap(int count)
     // more intuitively useful order of drawing the sub images.
     // All the malarky with count is to allow resuming
 
-    int i,mid;
+    int i, mid;
     i = 0;
     mid = gridsz / 2;
     if (count == 0)
