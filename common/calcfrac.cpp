@@ -289,49 +289,44 @@ double fmodtest()
     switch (bailoutest)
     {
     case bailouts::Mod:
-    {
         if (magnitude == 0.0 || !no_mag_calc || integerfractal)
             result = sqr(g_new.x)+sqr(g_new.y);
         else
             result = magnitude; // don't recalculate
-    }
-    break;
+        break;
+
     case bailouts::Real:
-    {
         result = sqr(g_new.x);
-    }
-    break;
+        break;
+
     case bailouts::Imag:
-    {
         result = sqr(g_new.y);
-    }
-    break;
+        break;
+
     case bailouts::Or:
     {
-        double tmpx = sqr(g_new.x);
-        double tmpy = sqr(g_new.y);
+        double const tmpx = sqr(g_new.x);
+        double const tmpy = sqr(g_new.y);
         if (tmpx > tmpy)
             result = tmpx;
         else
             result = tmpy;
+        break;
     }
-    break;
+
     case bailouts::Manh:
-    {
         result = sqr(fabs(g_new.x)+fabs(g_new.y));
-    }
-    break;
+        break;
+
     case bailouts::Manr:
-    {
         result = sqr(g_new.x+g_new.y);
-    }
-    break;
+        break;
+
     default:
-    {
         result = sqr(g_new.x)+sqr(g_new.y);
+        break;
     }
-    break;
-    }
+
     return result;
 }
 
