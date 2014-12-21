@@ -1,19 +1,24 @@
 #ifndef FRACTYPE_H
 #define FRACTYPE_H
 
+// The values must match the values in the trigfn array in prompts1
 enum class trig_fn
 {
-    SIN = 0,
-    COS = 1,    // Beware this is really COSXX
-    SINH = 2,
-    COSH = 3,
-    EXP = 4,
-    LOG = 5,
-    SQR = 6,
-    REAL_COS = 9,
-    TAN = 10,
-    TANH = 11,
-    FLIP = 14
+    SIN     = 0,
+    COSXX   = 1,
+    SINH    = 2,
+    COSH    = 3,
+    EXP     = 4,
+    LOG     = 5,
+    SQR     = 6,
+    RECIP   = 7,
+    IDENT   = 8,
+    COS     = 9,
+    TAN     = 10,
+    TANH    = 11,
+    COTAN   = 12,
+    COTANH  = 13,
+    FLIP    = 14
 };
 
 extern trig_fn trigndx[];

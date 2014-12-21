@@ -677,10 +677,10 @@ ZXTrigPlusZSetup()
         //      symmetry = ZXTrigPlusZSym1[trigndx[0]];
         switch (trigndx[0])
         {
-        case trig_fn::COS:
+        case trig_fn::COSXX:
         case trig_fn::COSH:
         case trig_fn::SQR:
-        case trig_fn::REAL_COS:
+        case trig_fn::COS:
             symmetry = symmetry_type::XY_AXIS;
             break;
         case trig_fn::FLIP:
@@ -697,10 +697,10 @@ ZXTrigPlusZSetup()
         //      symmetry = ZXTrigPlusZSym2[trigndx[0]];
         switch (trigndx[0])
         {
-        case trig_fn::COS:
+        case trig_fn::COSXX:
         case trig_fn::COSH:
         case trig_fn::SQR:
-        case trig_fn::REAL_COS:
+        case trig_fn::COS:
             symmetry = symmetry_type::ORIGIN;
             break;
         case trig_fn::FLIP:
@@ -747,8 +747,8 @@ LambdaTrigSetup()
     switch (trigndx[0])
     {
     case trig_fn::SIN:
+    case trig_fn::COSXX:
     case trig_fn::COS:
-    case trig_fn::REAL_COS:
         symmetry = symmetry_type::PI_SYM;
         if (isinteger)
             curfractalspecific->orbitcalc =  LambdaTrigFractal1;
@@ -796,10 +796,10 @@ JuliafnPlusZsqrdSetup()
 
     switch (trigndx[0]) // fix sqr symmetry & add additional functions
     {
-    case trig_fn::COS: // cosxx
+    case trig_fn::COSXX: // cosxx
     case trig_fn::COSH:
     case trig_fn::SQR:
-    case trig_fn::REAL_COS:
+    case trig_fn::COS:
     case trig_fn::TAN:
     case trig_fn::TANH:
         symmetry = symmetry_type::ORIGIN;
@@ -824,8 +824,8 @@ SqrTrigSetup()
     switch (trigndx[0]) // fix sqr symmetry & add additional functions
     {
     case trig_fn::SIN:
-    case trig_fn::COS: // cosxx
-    case trig_fn::REAL_COS:   // 'real' cos
+    case trig_fn::COSXX: // cosxx
+    case trig_fn::COS:   // 'real' cos
         symmetry = symmetry_type::PI_SYM;
         break;
         // default is for symmetry::X_AXIS symmetry
@@ -860,14 +860,14 @@ FnXFnSetup()
     {
         if (trigndx[0] == trig_fn::LOG || trigndx[1] == trig_fn::LOG)
             symmetry = symmetry_type::NONE;
-        if (trigndx[0] == trig_fn::REAL_COS || trigndx[1] == trig_fn::REAL_COS)
+        if (trigndx[0] == trig_fn::COS || trigndx[1] == trig_fn::COS)
         {
             if (trigndx[0] == trig_fn::SIN || trigndx[1] == trig_fn::SIN)
                 symmetry = symmetry_type::PI_SYM;
-            if (trigndx[0] == trig_fn::COS || trigndx[1] == trig_fn::COS)
+            if (trigndx[0] == trig_fn::COSXX || trigndx[1] == trig_fn::COSXX)
                 symmetry = symmetry_type::PI_SYM;
         }
-        if (trigndx[0] == trig_fn::REAL_COS && trigndx[1] == trig_fn::REAL_COS)
+        if (trigndx[0] == trig_fn::COS && trigndx[1] == trig_fn::COS)
             symmetry = symmetry_type::PI_SYM;
     }
     if (curfractalspecific->isinteger)
@@ -888,7 +888,7 @@ MandelTrigSetup()
     switch (trigndx[0])
     {
     case trig_fn::SIN:
-    case trig_fn::COS:
+    case trig_fn::COSXX:
         if (isinteger)
             curfractalspecific->orbitcalc =  LambdaTrigFractal1;
         else

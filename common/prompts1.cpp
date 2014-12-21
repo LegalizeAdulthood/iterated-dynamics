@@ -1223,7 +1223,7 @@ const char *JIIMmethod[] =
 static char JIIMstr2[] = "Left first or Right first?";
 const char *JIIMleftright[] = {"left", "right"};
 
-// moved from miscres.c so sizeof structure can be accessed here
+// The index into this array must correspond to enum trig_fn
 trig_funct_lst trigfn[] =
 // changing the order of these alters meaning of *.fra file
 // maximum 6 characters in function names or recheck all related code

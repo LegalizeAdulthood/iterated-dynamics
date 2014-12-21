@@ -1008,7 +1008,7 @@ static void backwardscompat(FRACTAL_INFO *info)
         break;
     case LAMBDACOS    :
         fractype = LAMBDATRIGFP;
-        trigndx[0] = trig_fn::COS;
+        trigndx[0] = trig_fn::COSXX;
         break;
     case LAMBDAEXP    :
         fractype = LAMBDATRIGFP;
@@ -1020,7 +1020,7 @@ static void backwardscompat(FRACTAL_INFO *info)
         break;
     case MANDELCOS    :
         fractype = MANDELTRIGFP;
-        trigndx[0] = trig_fn::COS;
+        trigndx[0] = trig_fn::COSXX;
         break;
     case MANDELEXP    :
         fractype = MANDELTRIGFP;
@@ -1052,11 +1052,11 @@ static void backwardscompat(FRACTAL_INFO *info)
         break;
     case LMANDELCOS   :
         fractype = MANDELTRIG;
-        trigndx[0] = trig_fn::COS;
+        trigndx[0] = trig_fn::COSXX;
         break;
     case LLAMBDACOS   :
         fractype = LAMBDATRIG;
-        trigndx[0] = trig_fn::COS;
+        trigndx[0] = trig_fn::COSXX;
         break;
     case LMANDELSINH  :
         fractype = MANDELTRIG;
