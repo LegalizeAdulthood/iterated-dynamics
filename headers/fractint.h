@@ -1238,7 +1238,7 @@ struct affine
 struct GENEBASE
 {
     void *addr;             // address of variable to be referenced
-    void (*varyfunc)(GENEBASE*,int,int); // pointer to func used to vary it
+    void (*varyfunc)(GENEBASE *genes, int randval, int gene); // pointer to func used to vary it
                             // takes random number and pointer to var
     int mutate;             // flag to switch on variation of this variable
                             // 0 for no mutation, 1 for x axis, 2 for y axis
