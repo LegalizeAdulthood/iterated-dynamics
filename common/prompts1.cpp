@@ -424,7 +424,8 @@ int fullscreen_prompt(      // full-screen prompting routine
             // TODO: rework key interaction to blocking wait
             while (!driver_key_pressed()) { }
             done = driver_get_key();
-            switch (done) {
+            switch (done)
+            {
             case FIK_ESC:
                 done = -1;
             case FIK_ENTER:

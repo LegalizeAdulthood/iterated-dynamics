@@ -123,7 +123,8 @@ void rotate(int direction)      // rotate-the-palette routine
                        && kbdchar != FIK_HOME
                        && kbdchar != 'C'))
             paused = false;                 // clear paused condition
-        switch (kbdchar) {
+        switch (kbdchar)
+        {
         case '+':                      // '+' means rotate forward
         case FIK_RIGHT_ARROW:              // RightArrow = rotate fwd
             fkey = 0;
@@ -337,45 +338,45 @@ void rotate(int direction)      // rotate-the-palette routine
                 set_palette(Red, Green);
             if (kbdchar == FIK_SF10)
                 set_palette(Green, White);
-            if (kbdchar == 1094)
+            if (kbdchar == FIK_CTL_F1)
                 set_palette2(Black, White);
-            if (kbdchar == 1095)
+            if (kbdchar == FIK_CTL_F2)
                 set_palette2(Red, Yellow);
-            if (kbdchar == 1096)
+            if (kbdchar == FIK_CTL_F3)
                 set_palette2(Blue, Green);
-            if (kbdchar == 1097)
+            if (kbdchar == FIK_CTL_F4)
                 set_palette2(Black, Yellow);
-            if (kbdchar == 1098)
+            if (kbdchar == FIK_CTL_F5)
                 set_palette2(Black, Red);
-            if (kbdchar == 1099)
+            if (kbdchar == FIK_CTL_F6)
                 set_palette2(Black, Blue);
-            if (kbdchar == 1100)
+            if (kbdchar == FIK_CTL_F7)
                 set_palette2(Black, Green);
-            if (kbdchar == 1101)
+            if (kbdchar == FIK_CTL_F8)
                 set_palette2(Blue, Yellow);
-            if (kbdchar == 1102)
+            if (kbdchar == FIK_CTL_F9)
                 set_palette2(Red, Green);
-            if (kbdchar == 1103)
+            if (kbdchar == FIK_CTL_F10)
                 set_palette2(Green, White);
             if (kbdchar == FIK_ALT_F1)
                 set_palette3(Blue, Green, Red);
-            if (kbdchar == 1105)
+            if (kbdchar == FIK_ALT_F2)
                 set_palette3(Blue, Yellow, Red);
-            if (kbdchar == 1106)
+            if (kbdchar == FIK_ALT_F3)
                 set_palette3(Red, White, Blue);
-            if (kbdchar == 1107)
+            if (kbdchar == FIK_ALT_F4)
                 set_palette3(Red, Yellow, White);
-            if (kbdchar == 1108)
+            if (kbdchar == FIK_ALT_F5)
                 set_palette3(Black, Brown, Yellow);
-            if (kbdchar == 1109)
+            if (kbdchar == FIK_ALT_F6)
                 set_palette3(Blue, Brown, Green);
-            if (kbdchar == 1110)
+            if (kbdchar == FIK_ALT_F7)
                 set_palette3(Blue, Green, Green);
-            if (kbdchar == 1111)
+            if (kbdchar == FIK_ALT_F8)
                 set_palette3(Blue, Green, White);
-            if (kbdchar == 1112)
+            if (kbdchar == FIK_ALT_F9)
                 set_palette3(Green, Green, White);
-            if (kbdchar == 1113)
+            if (kbdchar == FIK_ALT_F10)
                 set_palette3(Red, Blue, White);
             pauserotate();  // update palette and pause
             break;

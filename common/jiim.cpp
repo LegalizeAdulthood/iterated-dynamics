@@ -633,9 +633,9 @@ void Jiim(int which)         // called by fractint
                 ycjul = BIG;
                 switch (kbdchar)
                 {
-                case 1143:    // ctrl - keypad 5
-                case 1076:    // keypad 5
-                    break;     // do nothing
+                case FIK_CTL_KEYPAD_5:      // ctrl - keypad 5
+                case FIK_KEYPAD_5:          // keypad 5
+                    break;                  // do nothing
                 case FIK_CTL_PAGE_UP:
                     dcol = 4;
                     drow = -4;

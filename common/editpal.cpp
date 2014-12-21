@@ -1142,7 +1142,7 @@ static int CEditor_Edit(CEditor *me)
             break;
 
         case '+':
-        case FIK_CTL_PLUS:        //RB
+        case FIK_CTL_PLUS:
             diff = 1;
             while (driver_key_pressed() == key)
             {
@@ -1171,7 +1171,7 @@ static int CEditor_Edit(CEditor *me)
             break;
 
         case '-':
-        case FIK_CTL_MINUS:     //RB
+        case FIK_CTL_MINUS:
             diff = 1;
             while (driver_key_pressed() == key)
             {

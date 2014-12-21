@@ -2140,7 +2140,8 @@ int funny_glasses_call(int (*calc)())
             stopmsg(STOPMSG_INFO_ONLY,
                     "First image (left eye) is ready.  Hit any key to see it,\n"
                     "then hit <s> to save, hit any other key to create second image.");
-            for (int i = driver_get_key(); i == 's' || i == 'S'; i = driver_get_key()) {
+            for (int i = driver_get_key(); i == 's' || i == 'S'; i = driver_get_key())
+            {
                 savetodisk(savename);
             }
             // is there a better way to clear the screen in graphics mode?

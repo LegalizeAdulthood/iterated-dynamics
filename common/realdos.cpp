@@ -1402,7 +1402,7 @@ top:
 #endif
                        );
         driver_hide_text_cursor();
-        while ((i = driver_get_key()) != 'y' && i != 'Y' && i != 13)
+        while ((i = driver_get_key()) != 'y' && i != 'Y' && i != FIK_ENTER)
         {
             if (i == 'n' || i == 'N')
             {

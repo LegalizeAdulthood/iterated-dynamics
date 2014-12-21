@@ -588,15 +588,15 @@ resumeloop:                             // return here on failed overlays
                         }
 #endif
                         if (kbdchar == '\\' || kbdchar == FIK_CTL_BACKSLASH ||
-                                kbdchar == 'h' || kbdchar == 8 ||
+                                kbdchar == 'h' || kbdchar == FIK_CTL_H ||
                                 check_vidmode_key(0, kbdchar) >= 0)
                         {
                             driver_discard_screen();
                         }
                         else if (kbdchar == 'x' || kbdchar == 'y' ||
                                  kbdchar == 'z' || kbdchar == 'g' ||
-                                 kbdchar == 'v' || kbdchar == 2 ||
-                                 kbdchar == 5 || kbdchar == 6)
+                                 kbdchar == 'v' || kbdchar == FIK_CTL_B ||
+                                 kbdchar == FIK_CTL_E || kbdchar == FIK_CTL_F)
                         {
                             fromtext_flag = true;
                         }
@@ -1417,16 +1417,16 @@ do_3d_transform:
         boxcolor -= key_count(FIK_CTL_DEL);
         break;
 
-    case 1120: // alt + number keys set mutation level and start evolution engine
-    case 1121:
-    case 1122:
-    case 1123:
-    case 1124:
-    case 1125:
-    case 1126:
+    case FIK_ALT_1: // alt + number keys set mutation level and start evolution engine
+    case FIK_ALT_2:
+    case FIK_ALT_3:
+    case FIK_ALT_4:
+    case FIK_ALT_5:
+    case FIK_ALT_6:
+    case FIK_ALT_7:
         evolving = 1;
         viewwindow = true;
-        set_mutation_level(*kbdchar-1119);
+        set_mutation_level(*kbdchar - FIK_ALT_1 + 1);
         param_history(0); // save parameter history
         *kbdmore = false;
         calc_status = calc_status_value::PARAMS_CHANGED;
@@ -1517,7 +1517,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
             i = passes_options();
         else if (*kbdchar == 'z')
             i = get_fract_params(1);
-        else if (*kbdchar == 5 || *kbdchar == FIK_SPACE)
+        else if (*kbdchar == FIK_CTL_E || *kbdchar == FIK_SPACE)
             i = get_evolve_Parms();
         else
             i = get_cmd_string();
@@ -1608,7 +1608,8 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         }
         return big_while_loop_result::CONTINUE;
     case 's':                    // save-to-disk
-    {   int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
+    {
+        int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
         GENEBASE gene[NUMGENES];
 
         if (driver_diskp() && disktarga)
@@ -1640,8 +1641,9 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         xdots = oldxdots;
         ydots = oldydots;
         MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+        return big_while_loop_result::CONTINUE;
     }
-    return big_while_loop_result::CONTINUE;
+
     case 'r':                    // restore-from
         comparegif = false;
         *frommandel = false;
@@ -1891,8 +1893,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         }
         break;
 
-    case FIK_F6: /* toggle all variables selected for random variation to
-               center weighted variation and vice versa */
+    case FIK_F6: /* toggle all variables selected for random variation to center weighted variation and vice versa */
     {
         GENEBASE gene[NUMGENES];
         // get the gene array from memory
@@ -1912,13 +1913,13 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
     calc_status = calc_status_value::PARAMS_CHANGED;
     break;
 
-    case 1120: // alt + number keys set mutation level
-    case 1121:
-    case 1122:
-    case 1123:
-    case 1124:
-    case 1125:
-    case 1126:
+    case FIK_ALT_1: // alt + number keys set mutation level
+    case FIK_ALT_2:
+    case FIK_ALT_3:
+    case FIK_ALT_4:
+    case FIK_ALT_5:
+    case FIK_ALT_6:
+    case FIK_ALT_7:
         set_mutation_level(*kbdchar-1119);
         param_history(1); // restore old history
         *kbdmore = false;
@@ -1932,15 +1933,12 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
     case '5':
     case '6':
     case '7':
-        /*  add these in when more parameters can be varied
-           case '8':
-           case '9':
-        */
         set_mutation_level(*kbdchar-(int)'0');
         param_history(1); // restore old history
         *kbdmore = false;
         calc_status = calc_status_value::PARAMS_CHANGED;
         break;
+
     case '0': // mutation level 0 == turn off evolving
         evolving = 0;
         viewwindow = false;
@@ -1955,7 +1953,8 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
             driver_discard_screen();
         else
             driver_unstack_screen();
-    // fall through
+        // fall through
+
     default:             // other (maybe valid Fn key
         k = check_vidmode_key(0, *kbdchar);
         if (k >= 0)

@@ -1024,13 +1024,13 @@ nomatch:
                 last_colorbar = ydot;
             } // end if !driver_diskp()
             tempkey = driver_key_pressed();
-            if (tempkey && (tempkey != (int)'s'))  // keyboard hit - bail out
+            if (tempkey && (tempkey != 's'))  // keyboard hit - bail out
             {
                 interrupted = true;
                 rownum = ydots;
                 break;
             }
-            if (tempkey == (int)'s')
+            if (tempkey == 's')
                 driver_get_key();   // eat the keystroke
         } // end for ydot
     } // end for rownum

@@ -1465,7 +1465,8 @@ rescan:  // entry for changed browse parms
 #endif
 
             c = driver_get_key();
-            switch (c) {
+            switch (c)
+            {
             case FIK_RIGHT_ARROW:
             case FIK_LEFT_ARROW:
             case FIK_DOWN_ARROW:
@@ -1594,7 +1595,7 @@ rescan:  // entry for changed browse parms
                 }
                 break;
 
-            case 2: // ctrl B
+            case FIK_CTL_B:
                 cleartempmsg();
                 driver_stack_screen();
                 done = abs(get_browse_params());
