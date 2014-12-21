@@ -576,22 +576,22 @@ struct MOREPARAMS
 
 enum class symmetry_type
 {
-    NONE = 0,
-    X_AXIS_NO_PARAM = -1,
-    X_AXIS = 1,
-    Y_AXIS_NO_PARAM = -2,
-    Y_AXIS = 2,
-    XY_AXIS_NO_PARAM = -3,
-    XY_AXIS = 3,
-    ORIGIN_NO_PARAM = -4,
-    ORIGIN = 4,
-    PI_SYM_NO_PARAM = -5,
-    PI_SYM = 5,
-    X_AXIS_NO_IMAG = -6,
-    X_AXIS_NO_REAL = 6,
-    NO_PLOT = 99,
-    SETUP = 100,
-    NOT_FORCED = 999
+    NONE                = 0,
+    X_AXIS_NO_PARAM     = -1,
+    X_AXIS              = 1,
+    Y_AXIS_NO_PARAM     = -2,
+    Y_AXIS              = 2,
+    XY_AXIS_NO_PARAM    = -3,
+    XY_AXIS             = 3,
+    ORIGIN_NO_PARAM     = -4,
+    ORIGIN              = 4,
+    PI_SYM_NO_PARAM     = -5,
+    PI_SYM              = 5,
+    X_AXIS_NO_IMAG      = -6,
+    X_AXIS_NO_REAL      = 6,
+    NO_PLOT             = 99,
+    SETUP               = 100,
+    NOT_FORCED          = 999
 };
 
 enum class fractal_type;
