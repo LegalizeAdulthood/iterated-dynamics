@@ -706,33 +706,41 @@ enum class Minor
 #define  BAILTEST    8192    // can use different bailout tests
 #define  BF_MATH    16384    // supports arbitrary precision
 #define  LD_MATH    32768    // supports long double
+
 // more bitmasks for evolution mode flag
 #define FIELDMAP        1    // steady field varyiations across screen
 #define RANDWALK        2    // newparm = lastparm +- rand()
 #define RANDPARAM       4    // newparm = constant +- rand()
 #define NOGROUT         8    // no gaps between images
+
 extern fractalspecificstuff fractalspecific[];
 extern fractalspecificstuff *curfractalspecific;
+
 #define DEFAULTFRACTALTYPE      ".gif"
 #define ALTERNATEFRACTALTYPE    ".fra"
+
 inline int sqr(int x)
 {
     return x*x;
 }
+
 inline float sqr(float x)
 {
     return x*x;
 }
+
 inline double sqr(double x)
 {
     return x*x;
 }
+
 inline long lsqr(long x)
 {
     extern int bitshift;
     extern long multiply(long x, long y, int n);
     return multiply(x, x, bitshift);
 }
+
 #define CMPLXmod(z)     (sqr((z).x)+sqr((z).y))
 #define CMPLXconj(z)    ((z).y =  -((z).y))
 #define LCMPLXmod(z)    (lsqr((z).x)+lsqr((z).y))
@@ -1229,14 +1237,14 @@ struct affine
 // smallest part of a fractint 'gene'
 struct GENEBASE
 {
-    void *addr               ; // address of variable to be referenced
+    void *addr;             // address of variable to be referenced
     void (*varyfunc)(GENEBASE*,int,int); // pointer to func used to vary it
-    // takes random number and pointer to var
-    int mutate ;  // flag to switch on variation of this variable
-    // 0 for no mutation, 1 for x axis, 2 for y axis
-    // in steady field maps, either x or y=yes in random modes
-    char name[16]; // name of variable (for menu )
-    char level;    // mutation level at which this should become active
+                            // takes random number and pointer to var
+    int mutate;             // flag to switch on variation of this variable
+                            // 0 for no mutation, 1 for x axis, 2 for y axis
+                            // in steady field maps, either x or y=yes in random modes
+    char name[16];          // name of variable (for menu )
+    char level;             // mutation level at which this should become active
 };
 
 #define sign(x) (((x) < 0) ? -1 : ((x) != 0)  ? 1 : 0)
