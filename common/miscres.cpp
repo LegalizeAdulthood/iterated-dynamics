@@ -1301,7 +1301,7 @@ int ifsload()                   // read in IFS parameters
     }
 
     ifs_type = false;
-    rowsize = IFSPARM;
+    rowsize = NUM_IFS_PARAMS;
     if (find_file_item(IFSFileName,IFSName,&ifsfile, 3))
         return (-1);
 
@@ -1317,7 +1317,7 @@ int ifsload()                   // read in IFS parameters
         if (strncmp(bufptr,"(3d)",4) == 0)
         {
             ifs_type = true;
-            rowsize = IFS3DPARM;
+            rowsize = NUM_IFS_3D_PARAMS;
         }
         ++bufptr;
     }
@@ -1331,7 +1331,7 @@ int ifsload()                   // read in IFS parameters
         if (sscanf(bufptr," %f ", &value) != 1)
             break;
         ifs_defn.push_back(value);
-        if (++i >= NUMIFS*rowsize)
+        if (++i >= NUM_IFS_FUNCTIONS*rowsize)
         {
             stopmsg(STOPMSG_NONE, "IFS definition has too many lines");
             ret = -1;

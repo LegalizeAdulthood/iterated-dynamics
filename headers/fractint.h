@@ -561,9 +561,9 @@ struct ORBITS_INFO      // for saving orbits data in a GIF file
 #define MAX_NUM_ATTRACTORS 8
 extern  long     l_at_rad;      // finite attractor radius
 extern  double   f_at_rad;      // finite attractor radius
-#define NUMIFS    64            // number of ifs functions in ifs array
-#define IFSPARM    7            // number of ifs parameters
-#define IFS3DPARM 13            // number of ifs 3D parameters
+#define NUM_IFS_FUNCTIONS 64
+#define NUM_IFS_PARAMS    7
+#define NUM_IFS_3D_PARAMS 13
 
 enum class fractal_type;
 

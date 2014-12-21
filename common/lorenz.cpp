@@ -2240,15 +2240,15 @@ static int ifs3dfloat()
         // pick which iterated function to execute, weighted by probability
         sum = ifs_defn[12]; // [0][12]
         k = 0;
-        while (sum < r && ++k < numaffine*IFS3DPARM)
+        while (sum < r && ++k < numaffine*NUM_IFS_3D_PARAMS)
         {
-            sum += ifs_defn[k*IFS3DPARM+12];
-            if (ifs_defn[(k+1)*IFS3DPARM+12] == 0)
+            sum += ifs_defn[k*NUM_IFS_3D_PARAMS+12];
+            if (ifs_defn[(k+1)*NUM_IFS_3D_PARAMS+12] == 0)
                 break; // for safety
         }
 
         // calculate image of last point under selected iterated function
-        ffptr = &ifs_defn[k*IFS3DPARM];     // point to first parm in row
+        ffptr = &ifs_defn[k*NUM_IFS_3D_PARAMS];     // point to first parm in row
         newx = *ffptr * inf.orbit[0] +
                *(ffptr+1) * inf.orbit[1] +
                *(ffptr+2) * inf.orbit[2] + *(ffptr+9);
@@ -2334,7 +2334,7 @@ static int ifs2d()
     bool resized = false;
     try
     {
-        localifs.resize(numaffine*IFSPARM);
+        localifs.resize(numaffine*NUM_IFS_PARAMS);
         resized = true;
     }
     catch (std::bad_alloc const&)
@@ -2347,8 +2347,8 @@ static int ifs2d()
     }
 
     for (int i = 0; i < numaffine; i++)    // fill in the local IFS array
-        for (int j = 0; j < IFSPARM; j++)
-            localifs[i*IFSPARM+j] = (long)(ifs_defn[i*IFSPARM+j] * fudge);
+        for (int j = 0; j < NUM_IFS_PARAMS; j++)
+            localifs[i*NUM_IFS_PARAMS+j] = (long)(ifs_defn[i*NUM_IFS_PARAMS+j] * fudge);
 
     tempr = fudge / 32767;        // find the proper rand() fudge
 
@@ -2376,9 +2376,9 @@ static int ifs2d()
         sum = localifs[6];  // [0][6]
         int k = 0;
         while (sum < r && k < numaffine-1)  // fixed bug of error if sum < 1
-            sum += localifs[++k*IFSPARM+6];
+            sum += localifs[++k*NUM_IFS_PARAMS+6];
         // calculate image of last point under selected iterated function
-        lfptr = &localifs[0] + k*IFSPARM; // point to first parm in row
+        lfptr = &localifs[0] + k*NUM_IFS_PARAMS; // point to first parm in row
         newx = multiply(lfptr[0],x,bitshift) +
                multiply(lfptr[1],y,bitshift) + lfptr[4];
         newy = multiply(lfptr[2],x,bitshift) +
@@ -2424,7 +2424,7 @@ static int ifs3dlong()
     color_method = (int)param[0];
     try
     {
-        localifs.resize(numaffine*IFS3DPARM);
+        localifs.resize(numaffine*NUM_IFS_3D_PARAMS);
     }
     catch (std::bad_alloc const &)
     {
@@ -2436,8 +2436,8 @@ static int ifs3dlong()
     l_setup_convert_to_screen(&inf.cvt);
 
     for (int i = 0; i < numaffine; i++)    // fill in the local IFS array
-        for (int j = 0; j < IFS3DPARM; j++)
-            localifs[i*IFS3DPARM+j] = (long)(ifs_defn[i*IFS3DPARM+j] * fudge);
+        for (int j = 0; j < NUM_IFS_3D_PARAMS; j++)
+            localifs[i*NUM_IFS_3D_PARAMS+j] = (long)(ifs_defn[i*NUM_IFS_3D_PARAMS+j] * fudge);
 
     tempr = fudge / 32767;        // find the proper rand() fudge
 
@@ -2466,15 +2466,15 @@ static int ifs3dlong()
         // pick which iterated function to execute, weighted by probability
         sum = localifs[12];  // [0][12]
         int k = 0;
-        while (sum < r && ++k < numaffine*IFS3DPARM)
+        while (sum < r && ++k < numaffine*NUM_IFS_3D_PARAMS)
         {
-            sum += localifs[k*IFS3DPARM+12];
-            if (ifs_defn[(k+1)*IFS3DPARM+12] == 0)
+            sum += localifs[k*NUM_IFS_3D_PARAMS+12];
+            if (ifs_defn[(k+1)*NUM_IFS_3D_PARAMS+12] == 0)
                 break; // for safety
         }
 
         // calculate image of last point under selected iterated function
-        lfptr = &localifs[0] + k*IFS3DPARM; // point to first parm in row
+        lfptr = &localifs[0] + k*NUM_IFS_3D_PARAMS; // point to first parm in row
 
         // calculate image of last point under selected iterated function
         newx = multiply(lfptr[0], inf.orbit[0], bitshift) +
