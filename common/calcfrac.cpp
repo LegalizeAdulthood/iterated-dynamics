@@ -1051,17 +1051,17 @@ static void perform_worklist()
             switch (autoshowdot)
             {
             case 'd':
-                showdotcolor = g_color_dark%colors;
+                showdotcolor = g_color_dark % colors;
                 break;
             case 'm':
-                showdotcolor = g_color_medium%colors;
+                showdotcolor = g_color_medium % colors;
                 break;
             case 'b':
             case 'a':
-                showdotcolor = g_color_bright%colors;
+                showdotcolor = g_color_bright % colors;
                 break;
             default:
-                showdotcolor = showdot%colors;
+                showdotcolor = showdot % colors;
                 break;
             }
             if (sizedot <= 0)
