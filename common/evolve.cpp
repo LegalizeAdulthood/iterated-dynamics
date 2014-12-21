@@ -263,7 +263,7 @@ int wrapped_positive_varyint(int randvalue, int limit, int mode)
 
 void varyinside(GENEBASE gene[], int randval, int i)
 {
-    int choices[9] = {-59,-60,-61,-100,-101,-102,-103,-104,-1};
+    int choices[9] = { ZMAG, BOF60, BOF61, EPSCROSS, STARTRAIL, PERIOD, FMODI, ATANI, ITER };
     if (gene[i].mutate)
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
     return;
@@ -271,7 +271,7 @@ void varyinside(GENEBASE gene[], int randval, int i)
 
 void varyoutside(GENEBASE gene[], int randval, int i)
 {
-    int choices[8] = {-1,-2,-3,-4,-5,-6,-7,-8};
+    int choices[8] = { ITER, REAL, IMAG, MULT, SUM, ATAN, FMOD, TDIS };
     if (gene[i].mutate)
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,8,gene[i].mutate)];
     return;
