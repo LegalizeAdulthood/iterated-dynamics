@@ -2040,7 +2040,8 @@ int plotorbits2dsetup()
     {
         if (setup_orbits_to_screen(&o_cvt))
             return (-1);
-    } else {
+    } else
+    {
         if (setup_convert_to_screen(&o_cvt))
             return (-1);
     }
@@ -2094,7 +2095,8 @@ int plotorbits2dfloat()
 
     if (inside > 0)
         o_color = inside;
-    else { // inside <= 0
+    else
+    { // inside <= 0
         o_color++;
         if (o_color >= colors) // another color to switch to?
             o_color = 1;    // (don't use the background color)

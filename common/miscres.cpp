@@ -1243,7 +1243,8 @@ static void area()
     if (inside > 0 && outside < 0 && maxit > inside)
     {
         msg = "Warning: inside may not be unique\n";
-    } else {
+    } else
+    {
         msg = "";
     }
     sprintf(buf,"%s%ld inside pixels of %ld%s%f",
@@ -1393,7 +1394,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
             {
                 found = true;
             }
-            else {
+            else
+            {
                 fclose(infile);
                 infile = nullptr;
             }
@@ -1410,7 +1412,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
                     strcpy(filename, fullpath);
                     found = true;
                 }
-                else {
+                else
+                {
                     fclose(infile);
                     infile = nullptr;
                 }
@@ -1459,7 +1462,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
                 strcpy(filename, CommandFile);
                 found = true;
             }
-            else {
+            else
+            {
                 fclose(infile);
                 infile = nullptr;
             }
@@ -1477,7 +1481,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
                 strcpy(filename, fullpath);
                 found = true;
             }
-            else {
+            else
+            {
                 fclose(infile);
                 infile = nullptr;
             }
@@ -1510,7 +1515,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
                         found = true;
                         break;
                     }
-                    else {
+                    else
+                    {
                         fclose(infile);
                         infile = nullptr;
                     }
@@ -1539,7 +1545,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
                 fname[3] = itemname[4];
                 fname[4] = (char) 0;
             }
-            else {
+            else
+            {
                 strcat(fname, "rc");
             }
         }
@@ -1547,7 +1554,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
         {
             strcat(fname, "num");
         }
-        else {
+        else
+        {
             strcat(fname, "chr");
         }
         makepath(fullpath,drive,dir,fname,defaultextension);
@@ -1559,7 +1567,8 @@ bool find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
                 strcpy(filename, fullpath);
                 found = true;
             }
-            else {
+            else
+            {
                 fclose(infile);
                 infile = nullptr;
             }

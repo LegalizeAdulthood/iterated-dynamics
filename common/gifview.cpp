@@ -95,7 +95,8 @@ int gifview()
         {
             fclose(fpin);
         }
-        else {
+        else
+        {
             if (outln == outline_stereo)
                 strcpy(temp1,stereomapname);
             else
@@ -360,7 +361,8 @@ static int out_line_dither(BYTE *pixels, int linelen)
         {
             pixels[i] = 1;
             err = brt-63;
-        } else {
+        } else
+        {
             pixels[i] = 0;
             err = brt;
         }

@@ -750,7 +750,8 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
         decode_fractal_info(info,1);
 #endif
         hdr_offset = -1-fractinf_len;
-    } else {
+    } else
+    {
         // didn't work 1st try, maybe an older vsn, maybe junk at eof, scan:
         int offset;
         char tmpbuf[110];
@@ -818,7 +819,8 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     blk_2_info->resume_data = MemoryAlloc((U16)1,(long)data_len,MEMORY);
                     if (blk_2_info->resume_data == 0)
                         info->calc_status = static_cast<short>(calc_status_value::NON_RESUMABLE); // not resumable after all
-                    else {
+                    else
+                    {
                         fseek(fp,(long)(0-block_len),SEEK_CUR);
                         load_ext_blk((char *)block,data_len);
                         MoveToMemory((BYTE *)block,(U16)1,(long)data_len,0,(U16)blk_2_info->resume_data);
@@ -844,7 +846,8 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                         blk_3_info->uses_p4 = 0;
                         blk_3_info->uses_p5 = 0;
                     }
-                    else {
+                    else
+                    {
                         blk_3_info->uses_p1 = fload_info.uses_p1;
                         blk_3_info->uses_p2 = fload_info.uses_p2;
                         blk_3_info->uses_p3 = fload_info.uses_p3;
@@ -1370,7 +1373,8 @@ int fgetwindow()
     {
         bfsetup_convert_to_screen();
     }
-    else {
+    else
+    {
         cvt = &stack_cvt; // use stack
         setup_convert_to_screen(cvt);
         // put in bf variables
@@ -1500,7 +1504,8 @@ rescan:  // entry for changed browse parms
                     if (index >= wincount)
                         index = 0;
                 }
-                else {
+                else
+                {
                     index -- ;
                     if (index < 0)
                         index = wincount -1 ;
@@ -1611,7 +1616,8 @@ rescan:  // entry for changed browse parms
                             {
                                 texttempmsg("Sorry....can't rename");
                             }
-                            else {
+                            else
+                            {
                                 splitpath(newname,nullptr,nullptr,fname,ext);
                                 makepath(tmpmask,nullptr,nullptr,fname,ext);
                                 strcpy(oldname,winlist.name);
@@ -1673,7 +1679,8 @@ rescan:  // entry for changed browse parms
             goto rescan; // hey everybody I just used the g word!
         }
     }//if
-    else {
+    else
+    {
         driver_buzzer(buzzer_codes::INTERRUPT); //no suitable files in directory!
         texttempmsg("Sorry.. I can't find anything");
         no_sub_images = true;
@@ -1725,7 +1732,8 @@ static void drawindow(int colour, window *info)
 #endif
         dispbox();
     }
-    else { // draw crosshairs
+    else
+    { // draw crosshairs
 #ifndef XFRACT
         int cross_size = ydots / 45;
         if (cross_size < 2)
@@ -1852,13 +1860,15 @@ static bool is_visible_window(
             floattobf(bt_x, info->xmin);
             floattobf(bt_y, info->ymax);
         }
-        else {
+        else
+        {
             copy_bf(bt_x, bt_xmin);
             copy_bf(bt_y, bt_ymax);
         }
         bftransform(bt_x, bt_y, &tl);
     }
-    else {
+    else
+    {
         tl.x = info->xmin;
         tl.y = info->ymax;
         transform(&tl);
@@ -1872,7 +1882,8 @@ static bool is_visible_window(
             floattobf(bt_x, (info->xmax)-(info->x3rd-info->xmin));
             floattobf(bt_y, (info->ymax)+(info->ymin-info->y3rd));
         }
-        else {
+        else
+        {
             neg_a_bf(sub_bf(bt_x, bt_x3rd, bt_xmin));
             add_a_bf(bt_x, bt_xmax);
             sub_bf(bt_y, bt_ymin, bt_y3rd);
@@ -1880,7 +1891,8 @@ static bool is_visible_window(
         }
         bftransform(bt_x, bt_y, &tr);
     }
-    else {
+    else
+    {
         tr.x = (info->xmax)-(info->x3rd-info->xmin);
         tr.y = (info->ymax)+(info->ymin-info->y3rd);
         transform(&tr);
@@ -1894,13 +1906,15 @@ static bool is_visible_window(
             floattobf(bt_x, info->x3rd);
             floattobf(bt_y, info->y3rd);
         }
-        else {
+        else
+        {
             copy_bf(bt_x, bt_x3rd);
             copy_bf(bt_y, bt_y3rd);
         }
         bftransform(bt_x, bt_y, &bl);
     }
-    else {
+    else
+    {
         bl.x = info->x3rd;
         bl.y = info->y3rd;
         transform(&bl);
@@ -1914,13 +1928,15 @@ static bool is_visible_window(
             floattobf(bt_x, info->xmax);
             floattobf(bt_y, info->ymin);
         }
-        else {
+        else
+        {
             copy_bf(bt_x, bt_xmax);
             copy_bf(bt_y, bt_ymin);
         }
         bftransform(bt_x, bt_y, &br);
     }
-    else {
+    else
+    {
         br.x = info->xmax;
         br.y = info->ymin;
         transform(&br);
@@ -1975,7 +1991,8 @@ static bool paramsOK(FRACTAL_INFO *info)
         tmpparm3 = info->dparm3;
         tmpparm4 = info->dparm4;
     }
-    else {
+    else
+    {
         tmpparm3 = info->parm3;
         roundfloatd(&tmpparm3);
         tmpparm4 = info->parm4;
@@ -1990,7 +2007,8 @@ static bool paramsOK(FRACTAL_INFO *info)
         tmpparm9 = info->dparm9;
         tmpparm10 = info->dparm10;
     }
-    else {
+    else
+    {
         tmpparm5 = 0.0;
         tmpparm6 = 0.0;
         tmpparm7 = 0.0;

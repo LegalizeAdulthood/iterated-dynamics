@@ -88,7 +88,8 @@ int stopmsg(int flags, const char *msg)
     lookatmouse = -13;
     if ((flags & STOPMSG_NO_STACK))
         blankrows(toprow = 12,10,7);
-    else {
+    else
+    {
         driver_stack_screen();
         toprow = 4;
         driver_move_cursor(4,0);
@@ -359,7 +360,8 @@ void show_speedstring(int speedrow,
             int speed_match = 0;
             j = speedprompt(speedrow,16,C_CHOICE_SP_INSTR,speedstring,speed_match);
         }
-        else {
+        else
+        {
             driver_put_string(speedrow,16,C_CHOICE_SP_INSTR,speed_prompt);
             j = sizeof(speed_prompt)-1;
         }
@@ -1983,7 +1985,8 @@ int check_vidmode_key(int option,int k)
                     return (i);
             }
         }
-        else { // check full g_video_table
+        else
+        { // check full g_video_table
             for (int i = 0; i < g_video_table_len; ++i)
             {
                 if (g_video_table[i].keynum == k)

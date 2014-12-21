@@ -209,7 +209,8 @@ int get_toggles()
         choices[++k] = "Log Palette (0=no,1=yes,-1=old,+n=cmprsd,-n=sqrt, 2=auto)";
         uvalues[k].type = 'L';
     }
-    else {
+    else
+    {
         choices[++k] = "Log Palette (n/a, ranges= parameter is in effect)";
         uvalues[k].type = '*';
     }
@@ -1299,13 +1300,15 @@ int  fr_findfirst(char *path)       // Find 1st file (or subdir) meeting path/fi
     if (searchdir[0] == '\0')
     {
         currdir = opendir(".");
-    } else {
+    } else
+    {
         currdir = opendir(searchdir);
     }
     if (currdir == nullptr)
     {
         return -1;
-    } else {
+    } else
+    {
         return fr_findnext();
     }
 #endif
@@ -1725,7 +1728,8 @@ static int filename_speedstr(int row, int col, int vid,
         speedstate = SEARCHPATH; // does not match list
         prompt = "Search Path for";
     }
-    else {
+    else
+    {
         speedstate = MATCHING;
         prompt = speed_prompt;
     }
@@ -1974,7 +1978,8 @@ gc_loop:
         values[nump].type = '*';
     }
 
-    else {
+    else
+    {
         if (drawmode == 'l')
         {
             prompts[++nump] = "Left End Point";
@@ -1989,7 +1994,8 @@ gc_loop:
             values[nump].uval.dval = xxmax;
             prompts[++nump] = yprompt;
             values[nump].uval.dval = yymin;
-        } else {
+        } else
+        {
             prompts[++nump] = "Top-Left Corner";
             values[nump].type = '*';
             prompts[++nump] = xprompt;
@@ -2074,7 +2080,8 @@ gc_loop:
         }
     }
 
-    else {
+    else
+    {
         if (drawmode == 'l')
         {
             nump = 1;
@@ -2083,7 +2090,8 @@ gc_loop:
             nump++;
             xxmax = values[nump++].uval.dval;
             yymin = values[nump++].uval.dval;
-        } else {
+        } else
+        {
             nump = 1;
             xxmin = values[nump++].uval.dval;
             yymax = values[nump++].uval.dval;
@@ -2201,7 +2209,8 @@ gsc_loop:
         values[nump].type = '*';
         prompts[++nump] = "Press " FK_F7 " to switch to \"corners\" mode";
         values[nump].type = '*';
-    } else {
+    } else
+    {
         prompts[++nump] = "Top-Left Corner";
         values[nump].type = '*';
         prompts[++nump] = xprompt;
@@ -2309,7 +2318,8 @@ gsc_loop:
             oy3rd = yy3rd;
         }
     }
-    else {
+    else
+    {
         nump = 1;
         oxmin = values[nump++].uval.dval;
         oymax = values[nump++].uval.dval;

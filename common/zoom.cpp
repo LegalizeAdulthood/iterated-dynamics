@@ -262,7 +262,8 @@ void drawlines(coords fr, coords to,
         }
     }
 
-    else { // delta.y > delta.x
+    else
+    { // delta.y > delta.x
         if (fr.y > to.y)
         { // swap so from.y is < to.y
             tmpp = fr;
@@ -395,7 +396,8 @@ void resizebox(int steps)
         deltay = steps * 0.036 / screenaspect;
         deltax = zwidth * deltay / zdepth;
     }
-    else {                              // box larger on x axis
+    else
+    {                              // box larger on x axis
         deltax = steps * 0.036;
         deltay = zdepth * deltax / zwidth;
     }
@@ -588,7 +590,8 @@ void aspectratio_crop(float oldaspect,float newaspect)
         xx3rd += xmargin;
         yy3rd += ymargin;
     }
-    else                       { // new ratio is wider, crop y
+    else
+    { // new ratio is wider, crop y
         ftemp = (1.0 - newaspect / oldaspect) / 2;
         xmargin = (xx3rd - xxmin) * ftemp;
         ymargin = (yy3rd - yymax) * ftemp;
@@ -809,7 +812,8 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                 wk->yystart = 0;
                 wk->xxbegin = 0;
             }
-            else { // xaxis symmetry
+            else
+            { // xaxis symmetry
                 int j = wk->yystop + wk->yystart;
                 if (j > 0
                         && num_worklist < MAXCALCWORK)
@@ -834,7 +838,8 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                 {
                     if (num_worklist >= MAXCALCWORK) // no room to split
                         restart_window(i);
-                    else { // split it
+                    else
+                    { // split it
                         worklist[num_worklist] = worklist[i];
                         worklist[num_worklist].yystart = k;
                         worklist[num_worklist++].yystop = j;
@@ -849,7 +854,8 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
         { // partly off left edge
             if ((wk->sym&2) == 0) // no sym, easy
                 wk->xxstart = 0;
-            else { // yaxis symmetry
+            else
+            { // yaxis symmetry
                 int j = wk->xxstop + wk->xxstart;
                 if (j > 0
                         && num_worklist < MAXCALCWORK)
@@ -874,7 +880,8 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                 {
                     if (num_worklist >= MAXCALCWORK) // no room to split
                         restart_window(i);
-                    else { // split it
+                    else
+                    { // split it
                         worklist[num_worklist] = worklist[i];
                         worklist[num_worklist].xxstart = k;
                         worklist[num_worklist++].xxstop = j;

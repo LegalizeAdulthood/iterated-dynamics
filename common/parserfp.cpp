@@ -462,7 +462,8 @@ awful_error:
                 // push stack down from max-2 to max-4
                 FNPTR(cvtptrx) = fStkPush2a;
             }
-            else {
+            else
+            {
                 goto awful_error;
             }
             DBUGMSG2("Inserted push.  Stack: %2d --> %2d", stkcnt, stkcnt-2);
@@ -477,7 +478,8 @@ awful_error:
             OPPTR(cvtptrx++) = NO_OPERAND;
             stkcnt -= 4;
         }
-        else {
+        else
+        {
             goto awful_error;
         }
     }
@@ -492,7 +494,8 @@ awful_error:
         // when disabling optimizer, set load pointer here
         OPPTR(cvtptrx) = Load[LodPtr++];
     }
-    else { // the optimizer will set the pointer for load fn.
+    else
+    { // the optimizer will set the pointer for load fn.
         OPPTR(cvtptrx) = NO_OPERAND;
     }
 
@@ -527,14 +530,16 @@ awful_error:
                     DBUGMSG("push *lod push (lod) -> push4 (*loddup)");
                     FNPTR(cvtptrx-1) = fStkPush4;
                 }
-                else { // prev op not push
+                else
+                { // prev op not push
                     DBUGMSG("op *lod push (lod) -> op pusha(p=0) (*loddup)");
                     OPPTR(cvtptrx) = NO_OPERAND;  // use 'alternate' push fn.
                     FNPTR(cvtptrx++) = fStkPush2a;  // push w/2 free on stack
                     // operand ptr will be set below
                 }
             }
-            else {  // never  push *lod (lod)  so must be
+            else
+            {  // never  push *lod (lod)  so must be
                 DBUGMSG("op *lod (lod) -> op (*loddup)");
             }
             ffptr = fStkLodDup;
@@ -560,7 +565,8 @@ awful_error:
             --cvtptrx;
             ffptr = fStkSto2;  // use different Sto fn
         }
-        else {
+        else
+        {
             testload = Load[LodPtr];
             if (testload == &LASTSQR && lastsqrreal)
             {
@@ -597,7 +603,8 @@ awful_error:
                 FNPTR(cvtptrx-1) = fStkPush2;
                 stkcnt += 2;
             }
-            else {
+            else
+            {
                 DBUGMSG("op *loddup (add) -> op (*loddbl)");
             }
             ffptr = fStkLodDbl;
@@ -619,7 +626,8 @@ awful_error:
                 OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  // fix opptrs
                 ffptr = fStkPLodAdd;
             }
-            else {
+            else
+            {
                 DBUGMSG("op *lod (add) -> op (*lodadd)");
                 ffptr = fStkLodAdd;
             }
@@ -633,7 +641,8 @@ awful_error:
                 REMOVE_PUSH;
                 OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  // fix opptrs
             }
-            else {
+            else
+            {
                 DBUGMSG("*lodreal (add) -> (*lodrealadd)");
             }
             ffptr = fStkLodRealAdd;
@@ -647,7 +656,8 @@ awful_error:
                 REMOVE_PUSH;
                 OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  // fix opptrs
             }
-            else {
+            else
+            {
                 DBUGMSG("*lodimag (add) -> (*lodimagadd)");
             }
             ffptr = fStkLodImagAdd;
@@ -669,7 +679,8 @@ awful_error:
                 OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  // fix opptrs
                 ffptr = fStkPLodSub;
             }
-            else {
+            else
+            {
                 DBUGMSG("*lod (sub) -> (*lodsub)");
                 ffptr = fStkLodSub;
             }
@@ -683,7 +694,8 @@ awful_error:
                 REMOVE_PUSH;
                 OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  // fix opptrs
             }
-            else {
+            else
+            {
                 DBUGMSG("*lodreal (sub) -> (*lodrealsub)");
             }
             ffptr = fStkLodRealSub;
@@ -697,7 +709,8 @@ awful_error:
                 REMOVE_PUSH;
                 OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  // fix opptrs
             }
-            else {
+            else
+            {
                 DBUGMSG("*lodimag (sub) -> (*lodimagsub)");
             }
             ffptr = fStkLodImagSub;
@@ -715,7 +728,8 @@ awful_error:
                 DBUGMSG("loddup *push (mul) -> (*lodsqr),stk+=2");
                 REMOVE_PUSH;
             }
-            else {
+            else
+            {
                 DBUGMSG("*loddup (mul) -> (*lodsqr)");
             }
             ffptr = fStkLodSqr;
@@ -737,7 +751,8 @@ awful_error:
                     DBUGMSG("push *lod push (mul) -> push4 (*lodmul)");
                     FNPTR(cvtptrx-1) = fStkPush4;
                 }
-                else {
+                else
+                {
                     DBUGMSG("op *lod push (mul) -> op pusha (*lodmul)");
                     OPPTR(cvtptrx+1) = OPPTR(cvtptrx);  // fix operand ptr
                     FNPTR(cvtptrx) = fStkPush2a;
@@ -745,7 +760,8 @@ awful_error:
                     cvtptrx++;
                 }
             }
-            else {
+            else
+            {
                 DBUGMSG("*lod (mul) -> (*lodmul)");
             }
             ffptr = fStkLodMul;
@@ -838,7 +854,8 @@ awful_error:
                 DBUGMSG("lodreal *push2 (mul) -> (*lodrealmul),stk+=2");
                 REMOVE_PUSH;
             }
-            else {
+            else
+            {
                 DBUGMSG("*lodreal (mul) -> (*lodrealmul)");
             }
             ffptr = fStkLodRealMul;
@@ -851,7 +868,8 @@ awful_error:
                     DBUGMSG("push (*lodrealmul[2]) -> (*dbl),stk+=2");
                     REMOVE_PUSH;
                 }
-                else {
+                else
+                {
                     DBUGMSG("*lodrealmul[2] -> (*dbl)");
                 }
                 OPPTR(cvtptrx) = NO_OPERAND;
@@ -880,7 +898,8 @@ awful_error:
                 DBUGMSG("lodimag *push2 (mul) -> (*lodimagmul),stk+=2");
                 REMOVE_PUSH;
             }
-            else {
+            else
+            {
                 DBUGMSG("*lodimag (mul) -> (*lodimagmul)");
             }
             ffptr = fStkLodImagMul;
@@ -908,7 +927,8 @@ awful_error:
             DBUGMSG("sto (*clr1) -> (*stoclr2)");
             ffptr = fStkStoClr2;
         }
-        else {
+        else
+        {
             DBUGMSG("sto (*clr1) -> (*stoclr1)");
             ffptr = fStkStoClr1;
         }
@@ -926,7 +946,8 @@ awful_error:
                 DBUGMSG("lodrealc *push (div) -> (*lodrealmul),stk+=2");
                 REMOVE_PUSH;
             }
-            else {
+            else
+            {
                 DBUGMSG("*lodrealc (div) -> (*lodrealmul)");
             }
             v[vsp].s = nullptr;  // this constant has no name
@@ -1070,7 +1091,8 @@ awful_error:
                 ffptr = fStkStoSqr;  // save lastsqr
             }
         }
-        else {
+        else
+        {
             if (!lastsqrused)
             {
                 DBUGMSG("(*sqr) -> (*sqr0)");
@@ -1099,7 +1121,8 @@ awful_error:
                             " -> (*[recip,1,ident,Sqr0]), stk+=2");
                     REMOVE_PUSH;  // lod[?] (push) *pwr
                 }
-                else {
+                else
+                {
                     DBUGMSG("LodRealC[-1,0,1,2] (*Pwr)"
                             " -> (*[recip,1,ident,sqr0])");
                 }
@@ -1236,7 +1259,8 @@ SkipOptimizer:  // -------------  end of optimizer -----------------------
         stkcnt = 0;
         realstkcnt = stkcnt;
     }
-    else {
+    else
+    {
         stkcnt = (unsigned char)(stkcnt + Delta);
         realstkcnt = (unsigned char)(realstkcnt + Delta);
     }
@@ -1433,7 +1457,8 @@ int CvtStk()
                     // this is really part of the optimizer
                     DBUGMSG("IDENT was skipped");
                 }
-                else {
+                else
+                {
                     DBUGMSG4("fn=%s, minstk=%1i, freestk=%1i, delta=%3i",
                              pfe->fname,
                              (int)(pfe->min_regs),
@@ -1518,7 +1543,8 @@ int CvtStk()
         DBUGMSG("OR Clr2 -> ORClr2");
         FNPTR(cvtptrx-1) = fStkORClr2;
     }
-    else {
+    else
+    {
         ++cvtptrx;  // adjust this back since no optimization was found
     }
 
@@ -1534,7 +1560,8 @@ skipfinalopt:  // -------------- end of final optimizations ------------
         curfractalspecific->per_pixel = fform_per_pixel;
         curfractalspecific->orbitcalc = fFormula;
     }
-    else {
+    else
+    {
         curfractalspecific->per_pixel = BadFormula;
         curfractalspecific->orbitcalc = BadFormula;
     }

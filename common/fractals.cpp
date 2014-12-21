@@ -440,7 +440,8 @@ int NewtonFractal2()
                     if (basin == 2)
                     {
                         tmpcolor = 1+(i&7)+((coloriter&1) << 3);
-                    } else {
+                    } else
+                    {
                         tmpcolor = 1+i;
                     }
                     break;
@@ -768,7 +769,8 @@ LambdaexponentFractal()
     { // need braces since these are macros
         FLOATEXPBAILOUT();
     }
-    else {
+    else
+    {
         OLD_FLOATEXPBAILOUT();
     }
     FPUsincos(&old.y,&siny,&cosy);
@@ -1570,7 +1572,8 @@ LambdaTrigOrTrigFractal()
         LCMPLXtrig0(lold,ltmp);
         LCMPLXmult(*longparm,ltmp,lnew);
     }
-    else {
+    else
+    {
         LCMPLXtrig1(lold,ltmp);
         LCMPLXmult(*longparm,ltmp,lnew);
     }
@@ -1590,7 +1593,8 @@ LambdaTrigOrTrigfpFractal()
         CMPLXtrig0(old,old);
         FPUcplxmul(floatparm,&old,&g_new);
     }
-    else {
+    else
+    {
         CMPLXtrig1(old,old);
         FPUcplxmul(floatparm,&old,&g_new);
     }
@@ -1608,7 +1612,8 @@ JuliaTrigOrTrigFractal()
         LCMPLXtrig0(lold,ltmp);
         LCMPLXadd(*longparm,ltmp,lnew);
     }
-    else {
+    else
+    {
         LCMPLXtrig1(lold,ltmp);
         LCMPLXadd(*longparm,ltmp,lnew);
     }
@@ -1628,7 +1633,8 @@ JuliaTrigOrTrigfpFractal()
         CMPLXtrig0(old,old);
         CMPLXadd(*floatparm,old,g_new);
     }
-    else {
+    else
+    {
         CMPLXtrig1(old,old);
         CMPLXadd(*floatparm,old,g_new);
     }
@@ -2039,7 +2045,8 @@ static int TryFloatFractal(int (*fpFractal)())
     { // for backwards compatibility
         lnew.x = (long)(g_new.x/fudge); // this error has been here a long time
         lnew.y = (long)(g_new.y/fudge);
-    } else {
+    } else
+    {
         lnew.x = (long)(g_new.x*fudge);
         lnew.y = (long)(g_new.y*fudge);
     }
@@ -2633,7 +2640,8 @@ int mandel_per_pixel()
         linit.x = (long)(init.x*fudge);
         linit.y = (long)(init.y*fudge);
     }
-    else {
+    else
+    {
         linit.x = lxpixel();
         if (save_release >= 2004)
             linit.y = lypixel();
@@ -2693,7 +2701,8 @@ int marksmandel_per_pixel()
         linit.x = (long)(init.x*fudge);
         linit.y = (long)(init.y*fudge);
     }
-    else {
+    else
+    {
         linit.x = lxpixel();
         if (save_release >= 2004)
             linit.y = lypixel();
@@ -2735,7 +2744,8 @@ int marksmandelfp_per_pixel()
 
     if (invert)
         invertz2(&init);
-    else {
+    else
+    {
         init.x = dxpixel();
         if (save_release >= 2004)
             init.y = dypixel();
@@ -2787,7 +2797,8 @@ int mandelfp_per_pixel()
 
     if (invert)
         invertz2(&init);
-    else {
+    else
+    {
         init.x = dxpixel();
         if (save_release >= 2004)
             init.y = dypixel();
@@ -2884,7 +2895,8 @@ int othermandelfp_per_pixel()
 {
     if (invert)
         invertz2(&init);
-    else {
+    else
+    {
         init.x = dxpixel();
         if (save_release >= 2004)
             init.y = dypixel();
@@ -2907,7 +2919,8 @@ int MPCHalley_per_pixel()
     // MPC halley
     if (invert)
         invertz2(&init);
-    else {
+    else
+    {
         init.x = dxpixel();
         if (save_release >= 2004)
             init.y = dypixel();
@@ -2926,7 +2939,8 @@ int Halley_per_pixel()
 {
     if (invert)
         invertz2(&init);
-    else {
+    else
+    {
         init.x = dxpixel();
         if (save_release >= 2004)
             init.y = dypixel();
@@ -2982,7 +2996,8 @@ int MarksCplxMandperp()
 {
     if (invert)
         invertz2(&init);
-    else {
+    else
+    {
         init.x = dxpixel();
         if (save_release >= 2004)
             init.y = dypixel();
@@ -3088,7 +3103,8 @@ int mandphoenix_per_pixel()
 {
     if (invert)
         invertz2(&init);
-    else {
+    else
+    {
         init.x = dxpixel();
         if (save_release >= 2004)
             init.y = dypixel();
@@ -3316,7 +3332,8 @@ int MandelbrotMix4fp_per_pixel()
 {
     if (invert)
         invertz2(&init);
-    else {
+    else
+    {
         init.x = dxpixel();
         init.y = dypixel();
     }

@@ -1254,7 +1254,8 @@ int lyapunov()
         a = init.y;
         b = init.x;
     }
-    else {
+    else
+    {
         a = dypixel();
         b = dxpixel();
     }
@@ -1491,7 +1492,8 @@ void abort_cellular(int err, int t)
         i = rule_digits / 10;
         if (i == 0)
             msg[14] = (char)(rule_digits + 48);
-        else {
+        else
+        {
             msg[13] = (char)(i+48);
             msg[14] = (char)((rule_digits % 10) + 48);
         }
@@ -1593,7 +1595,8 @@ int cellular()
     {
         n = (param[1]-0x7fffffff);
         n += 0x7fffffff;
-    } else {
+    } else
+    {
         n = param[1];
     }
 #endif
@@ -1664,7 +1667,8 @@ int cellular()
         param[3] += iystop + 1;
         start_row = -1; // after 1st iteration its = 0
     }
-    else {
+    else
+    {
         if (rflag || randparam == 0 || randparam == -1)
         {
             for (col = 0; col <= ixstop; col++)
@@ -1673,7 +1677,8 @@ int cellular()
             }
         } // end of if random
 
-        else {
+        else
+        {
             for (col = 0; col <= ixstop; col++)
             { // Clear from end to end
                 cell_array[filled][col] = 0;
@@ -1709,7 +1714,8 @@ int cellular()
                     cell_array[notfilled][ixstop-i] = (BYTE)(rand()%(int)k);
                 }
             }
-            else {
+            else
+            {
                 // Use a zero border
                 for (int i = 0; i <= r; i++)
                 {
@@ -1770,7 +1776,8 @@ contloop:
                 cell_array[notfilled][ixstop-i] = (BYTE)(rand()%(int)k);
             }
         }
-        else {
+        else
+        {
             // Use a zero border
             for (int i = 0; i <= r; i++)
             {

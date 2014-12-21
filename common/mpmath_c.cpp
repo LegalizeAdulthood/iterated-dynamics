@@ -288,7 +288,8 @@ void Arctanhz(DComplex z,DComplex *rz)
         rz->y = atan(z.y);
         return;
     }
-    else {
+    else
+    {
         if (fabs(z.x) == 1.0 && z.y == 0.0)
         {
             return;
@@ -299,7 +300,8 @@ void Arctanhz(DComplex z,DComplex *rz)
             rz->y = 0;
             return;
         }
-        else {
+        else
+        {
             temp0.x = 1 + z.x;
             temp0.y = z.y;             // temp0 = 1 + z
             temp1.x = 1 - z.x;
@@ -520,7 +522,8 @@ void SetupLogTable()
             while (prev <= limit)
                 LogTable[prev++] = (BYTE)n;
         }
-    } else {
+    } else
+    {
         lf = 0 - LogFlag;
         if (lf >= (unsigned long)MaxLTSize)
             lf = MaxLTSize - 1;

@@ -2717,7 +2717,8 @@ static bool ParseStr(char *Str, int pass)
                 o[posp].f = StkEQ;
                 o[posp++].p = 6 - (paren + Equals)*15;
             }
-            else {
+            else
+            {
                 o[posp-1].f = StkSto;
                 o[posp-1].p = 5 - (paren + Equals)*15;
                 Store[StoPtr++] = Load[--LodPtr];

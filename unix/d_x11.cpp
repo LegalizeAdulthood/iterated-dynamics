@@ -275,7 +275,8 @@ check_arg(DriverX11 *di, int argc, char **argv, int *i)
         di->x_font_name = argv[(*i)+1];
         (*i)++;
         return 1;
-    } else {
+    } else
+    {
         return 0;
     }
 }
@@ -492,7 +493,8 @@ clearXwindow(DriverX11 *di)
             {
                 di->Ximage->data[i] = 0xff;
             }
-        } else {
+        } else
+        {
             for (int i = 0; i < di->Ximage->bytes_per_line; i++)
             {
                 di->Ximage->data[i] = di->pixtab[0];
@@ -503,7 +505,8 @@ clearXwindow(DriverX11 *di)
             bcopy(di->Ximage->data, di->Ximage->data+i*di->Ximage->bytes_per_line,
                   di->Ximage->bytes_per_line);
         }
-    } else {
+    } else
+    {
         /*
          * Initialize image to 0's.
          */
@@ -561,7 +564,8 @@ xcmapstuff(DriverX11 *di)
     {
         di->Xcmap = XCreateColormap(di->Xdp, di->Xw, di->Xvi, AllocAll);
         XSetWindowColormap(di->Xdp, di->Xw, di->Xcmap);
-    } else {
+    } else
+    {
         di->Xcmap = DefaultColormap(di->Xdp, di->Xdscreen);
         for (int powr = di->Xdepth; powr >= 1; powr--)
         {
@@ -674,14 +678,16 @@ getachar(DriverX11 *di)
     if (0)
     {
         return getchar();
-    } else {
+    } else
+    {
         char ch;
         int status;
         status = read(0, &ch, 1);
         if (status < 0)
         {
             return -1;
-        } else {
+        } else
+        {
             return ch;
         }
     }
@@ -707,7 +713,8 @@ translate_key(int ch)
 {
     if (ch >= 'a' && ch <= 'z')
         return ch;
-    else {
+    else
+    {
         switch (ch)
         {
         case 'I':
@@ -859,7 +866,8 @@ handle_esc(DriverX11 *di)
     } else if (ch3 != '~')
     {
         return FIK_ESC;
-    } else {
+    } else
+    {
         ch2 = ch2-'0';
     }
     switch (ch2)
@@ -944,7 +952,8 @@ handle_esc(DriverX11 *di)
     } else if (ch2 == -1)
     {
         return FIK_ESC;
-    } else {
+    } else
+    {
         int ch3 = getachar(di);
         if (ch3 == -1)
         {
@@ -991,7 +1000,8 @@ handle_esc(DriverX11 *di)
             default:
                 return FIK_ESC;
             }
-        } else {
+        } else
+        {
             return FIK_ESC;
         }
     }
@@ -1154,7 +1164,8 @@ ev_expose(DriverX11 *di, XExposeEvent *xevent)
     if (di->text_modep)
     {
         // if text window, refresh text
-    } else {
+    } else
+    {
         // refresh graphics
         int x, y, w, h;
         x = xevent->x;
@@ -1286,7 +1297,8 @@ ev_motion_notify(DriverX11 *di, XEvent *xevent)
         } else if (xevent->xmotion.state & Button3Mask)
         {
             di->button_num = 2;
-        } else {
+        } else
+        {
             di->button_num = 0;
         }
 
@@ -1296,7 +1308,8 @@ ev_motion_notify(DriverX11 *di, XEvent *xevent)
             di->dy += (xevent->xmotion.y-di->last_y)/MOUSE_SCALE;
             di->last_x = xevent->xmotion.x;
             di->last_y = xevent->xmotion.y;
-        } else {
+        } else
+        {
             Cursor_SetPos(xevent->xmotion.x, xevent->xmotion.y);
             di->xbufkey = FIK_ENTER;
         }
@@ -1367,7 +1380,8 @@ handle_events(DriverX11 *di)
                 di->xbufkey = mousefkey[di->button_num][1]; // left
                 di->dx++;
             }
-        } else {
+        } else
+        {
             if (di->dy > 0)
             {
                 di->xbufkey = mousefkey[di->button_num][2]; // down
@@ -1428,7 +1442,8 @@ pr_dwmroot(DriverX11 *di, Display *dpy, Window pwin)
                 return pr_dwmroot(di, dpy, child[i]);
         }
         return (pwin);
-    } else {
+    } else
+    {
         printf("xfractint: failed to find root window\n");
         return RootWindow(dpy, di->Xdscreen);
     }
@@ -1762,7 +1777,8 @@ x11_window(Driver *drv)
         di->Xw = di->Xroot;
         XFillRectangle(di->Xdp, di->Xpixmap, di->Xgc, 0, 0, di->Xwinwidth, di->Xwinheight);
         XSetWindowBackgroundPixmap(di->Xdp, di->Xroot, di->Xpixmap);
-    } else {
+    } else
+    {
         di->Xroot = DefaultRootWindow(di->Xdp);
         di->Xw = XCreateWindow(di->Xdp, di->Xroot, Xwinx, Xwiny,
                                di->Xwinwidth, di->Xwinheight, 0, di->Xdepth,
@@ -1982,7 +1998,8 @@ x11_write_palette(Driver *drv)
                     if (XAllocColor(di->Xdp, di->Xcmap, &di->cols[i]))
                     {
                         di->cmap_pixtab[i] = di->cols[i].pixel;
-                    } else {
+                    } else
+                    {
                         assert(1);
                         printf("Allocating color %d failed.\n", i);
                     }
@@ -1994,11 +2011,13 @@ x11_write_palette(Driver *drv)
             }
             di->cmap_pixtab_alloced = true;
             last_dac_inited = true;
-        } else {
+        } else
+        {
             // !g_got_real_dac, !fake_lut => static color, static gray displays
             assert(1);
         }
-    } else {
+    } else
+    {
         // g_got_real_dac => grayscale or pseudocolor displays
         for (int i = 0; i < 256; i++)
         {
@@ -2087,7 +2106,8 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
         {
             x11_schedule_alarm(drv, 0);
         }
-    } else {
+    } else
+    {
         XDrawPoint(di->Xdp, di->Xw, di->Xgc, x, y);
         if (di->onroot)
         {
@@ -2157,7 +2177,8 @@ x11_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
             di->pixbuf[i] = di->pixtab[pixels[i]];
         }
         pixline = di->pixbuf;
-    } else {
+    } else
+    {
         pixline = pixels;
     }
     for (int i = 0; i < width; i++)
@@ -2170,7 +2191,8 @@ x11_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
         {
             x11_schedule_alarm(drv, 0);
         }
-    } else {
+    } else
+    {
         XPutImage(di->Xdp, di->Xw, di->Xgc, di->Ximage, x, y, x, y, width, 1);
         if (di->onroot)
         {
@@ -2220,7 +2242,8 @@ x11_set_line_mode(Driver *drv, int mode)
     {
         XSetFunction(di->Xdp, di->Xgc, GXcopy);
         di->xlastfcn = GXcopy;
-    } else {
+    } else
+    {
         XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, colors-1));
         di->xlastcolor = -1;
         XSetFunction(di->Xdp, di->Xgc, GXxor);
@@ -2480,7 +2503,8 @@ x11_put_string(Driver *drv, int row, int col, int attr, const char *msg)
             r++;
             g_text_col = 0;
             c = g_text_cbase;
-        } else {
+        } else
+        {
             assert(r < TEXT_HEIGHT);
             assert(c < TEXT_WIDTH);
             di->text_screen[r][c] = *msg;

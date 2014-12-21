@@ -53,7 +53,8 @@ static int tessrow(int,int,int);
 static int diffusion_scan();
 
 // lookup tables to avoid too much bit fiddling :
-static char dif_la[] = {
+static char dif_la[] =
+{
     0, 8, 0, 8,4,12,4,12,0, 8, 0, 8,4,12,4,12, 2,10, 2,10,6,14,6,14,2,10,
     2,10, 6,14,6,14,0, 8,0, 8, 4,12,4,12,0, 8, 0, 8, 4,12,4,12,2,10,2,10,
     6,14, 6,14,2,10,2,10,6,14, 6,14,1, 9,1, 9, 5,13, 5,13,1, 9,1, 9,5,13,
@@ -66,7 +67,8 @@ static char dif_la[] = {
     1, 9, 5,13,5,13,3,11,3,11, 7,15,7,15,3,11, 3,11, 7,15,7,15
 };
 
-static char dif_lb[] = {
+static char dif_lb[] =
+{
     0, 8, 8, 0, 4,12,12, 4, 4,12,12, 4, 8, 0, 0, 8, 2,10,10, 2, 6,14,14,
     6, 6,14,14, 6,10, 2, 2,10, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2,
     2,10, 4,12,12, 4, 8, 0, 0, 8, 8, 0, 0, 8,12, 4, 4,12, 1, 9, 9, 1, 5,
@@ -623,7 +625,8 @@ int calcfract()
         nextsavedincr = 1;
         firstsavedand = 1;
     }
-    else {
+    else
+    {
         nextsavedincr = (int)log10(static_cast<double>(maxit)); // works better than log()
         if (nextsavedincr < 4)
             nextsavedincr = 4; // maintains image with low iterations
@@ -670,7 +673,8 @@ int calcfract()
             {
                 stopmsg(STOPMSG_NONE, "Insufficient memory for logmap/ranges with this maxiter");
             }
-            else {
+            else
+            {
                 stopmsg(STOPMSG_NONE, "Insufficient memory for logTable, using on-the-fly routine");
                 Log_Fly_Calc = 1;
                 Log_Calc = true; // calculate on the fly
@@ -1293,7 +1297,8 @@ static int diffusion_engine()
     if (yybegin == iystart && workpass == 0)
     { // if restarting on pan:
         dif_counter =0l;
-    } else {
+    } else
+    {
         // yybegin and passes contain data for resuming the type:
         dif_counter = (((long)((unsigned)yybegin)) << 16) | ((unsigned)workpass);
     }
@@ -1348,7 +1353,8 @@ static int diffusion_engine()
             }
             dif_counter++;
         }
-    } else {
+    } else
+    {
         /*********************************/
         // with progressive filling :
         while (dif_counter < (dif_limit >> 1))
@@ -1756,7 +1762,8 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
                 else
                     color = ((color - 1) % g_and_color) + 1;  // skip color zero
             }
-            else {
+            else
+            {
                 if (colors < 16)
                     color = (int)(coloriter & g_and_color);
                 else
@@ -1804,7 +1811,8 @@ int calcmandfp()
                 else
                     color = ((color - 1) % g_and_color) + 1;  // skip color zero
             }
-            else {
+            else
+            {
                 if (colors < 16)
                     color = (int)(coloriter & g_and_color);
                 else
@@ -1890,7 +1898,8 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
     {
         if (useinitorbit == 1)
             saved = initorbit;
-        else {
+        else
+        {
             saved.x = 0;
             saved.y = 0;
         }
@@ -1932,7 +1941,8 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
     {
         if (useinitorbit == 1)
             lsaved = linitorbit;
-        else {
+        else
+        {
             lsaved.x = 0;
             lsaved.y = 0;
         }
@@ -1946,7 +1956,8 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
     if (inside == PERIOD)
     {
         savedand = 16;           // begin checking every 16th cycle
-    } else {
+    } else
+    {
 #ifdef MINSAVEDAND
         savedand = MINSAVEDAND;
 #else
@@ -2424,7 +2435,8 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
         dist = sqr(g_new.x) + sqr(g_new.y);
         if (dist == 0 || overflow)
             dist = 0;
-        else {
+        else
+        {
             double temp;
             temp = log(dist);
             dist = dist * sqr(temp) / (sqr(deriv.x) + sqr(deriv.y));
@@ -2505,7 +2517,8 @@ plot_inside: // we're "inside"
             if (cyclelen > 0)
             {
                 coloriter = cyclelen;
-            } else {
+            } else
+            {
                 coloriter = maxit;
             }
         }
@@ -2569,7 +2582,8 @@ plot_pixel:
             else
                 color = ((color - 1) % g_and_color) + 1;  // skip color zero
         }
-        else {
+        else
+        {
             if (colors < 16)
                 color = (int)(coloriter & g_and_color);
             else
@@ -4066,7 +4080,8 @@ static int tesseral()
                 }
                 tp2->x1 = mid;
             }
-            else {                                   // next divide across
+            else
+            {                                   // next divide across
                 if (tp->y1 == cury && (tp->y2 - tp->y1 - 2) < ysize)
                     break;
                 mid = (tp->y1 + tp->y2) >> 1;                // Find mid point
@@ -4116,7 +4131,8 @@ static int tesseral()
                 if (midcolor != tp->top)
                     goto tess_split;
             }
-            else {                              // divide across the middle
+            else
+            {                              // divide across the middle
                 mid = (tp->y1 + tp->y2) >> 1;           // Find mid point
                 midcolor = tessrow(tp->x1+1, tp->x2-1, mid); // Do mid row
                 if (midcolor != tp->top)
@@ -4145,7 +4161,8 @@ static int tesseral()
                             }
                         }
                 }
-                else { // use put_line for speed
+                else
+                { // use put_line for speed
                     memset(&dstack[OLDMAXPIXELS],tp->top,j);
                     for (row = tp->y1 + 1; row < tp->y2; row++)
                     {
@@ -4198,7 +4215,8 @@ tess_split:
                 else
                     --tp;
             }
-            else {                                   // divide across the middle
+            else
+            {                                   // divide across the middle
                 mid = (tp->y1 + tp->y2) >> 1;                // Find mid point
                 midcolor = tessrow(tp->x1+1, tp->x2-1, mid); // Do mid row
                 if (midcolor == -3)

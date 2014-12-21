@@ -274,7 +274,8 @@ init_restart:
                 && curfractalspecific->tofloat != NOFRACTAL)
             fractype = curfractalspecific->tofloat;
     }
-    else {
+    else
+    {
         if (curfractalspecific->isinteger == 0
                 && curfractalspecific->tofloat != NOFRACTAL)
             fractype = curfractalspecific->tofloat;
@@ -1687,7 +1688,8 @@ void get_julia_attractor(double real, double imag)
                         break;
                     }
                 }
-            } else {
+            } else
+            {
                 break;
             }
         }

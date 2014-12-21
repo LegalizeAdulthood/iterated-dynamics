@@ -1103,7 +1103,8 @@ docolors:
         put_parm(" %s=", "colors");
         if (recordcolors != 'c' && recordcolors != 'y' && *colorinf == '@')
             put_parm(colorinf);
-        else {
+        else
+        {
             int curc,scanc,force,diffmag = -1;
             int delta,diff1[4][3],diff2[4][3];
             force = 0;
@@ -1644,7 +1645,8 @@ static int check_modekey(int curkey,int choice)
     {
         if (g_bad_config)
             stopmsg(STOPMSG_NONE, "Missing or bad FRACTINT.CFG file. Can't reassign keys.");
-        else {
+        else
+        {
             if (curkey == '-')
             {                   // deassign key?
                 if (g_video_table[i].keynum >= 1084)
@@ -1653,7 +1655,8 @@ static int check_modekey(int curkey,int choice)
                     modes_changed = true;
                 }
             }
-            else {                                 // assign key?
+            else
+            {                                 // assign key?
                 int j = getakeynohelp();
                 if (j >= 1084 && j <= 1113)
                 {

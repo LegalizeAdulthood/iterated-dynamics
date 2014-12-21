@@ -2105,7 +2105,8 @@ int cmp_line(BYTE *pixels, int linelen)
         oldcolor = getcolor(col,row);
         if (oldcolor == (int)pixels[col])
             putcolor(col,row,0);
-        else {
+        else
+        {
             if (oldcolor == 0)
                 putcolor(col,row,1);
             ++errcount;

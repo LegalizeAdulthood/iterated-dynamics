@@ -204,7 +204,8 @@ int fullscreen_prompt(      // full-screen prompting routine
         {
             if (*hdgscan == 0)
                 extrainfo = nullptr;
-            else { // count extra lines, find widest
+            else
+            { // count extra lines, find widest
                 extralines = 3;
                 int i = 0;
                 while (*hdgscan)
@@ -588,7 +589,8 @@ int fullscreen_prompt(      // full-screen prompting routine
                     break;
             values[curchoice].uval.ch.val = j;
         }
-        else {
+        else
+        {
             int j = 0;
             if (curtype == 'i')
                 j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
@@ -764,7 +766,8 @@ int prompt_valuestring(char *buf,fullscreenvalues *val)
         { // We have to round the right way
             sprintf(buf,"%ld",(long)(val->uval.dval-.5));
         }
-        else {
+        else
+        {
             sprintf(buf,"%ld",(long)(val->uval.dval+.5));
         }
         ret = 20;
@@ -1132,7 +1135,8 @@ sel_type_restart:
             goto sel_type_restart;
         else
             ret = true;
-    else {
+    else
+    {
         if (newfractype != oldfractype)
         {
             invert = 0;
@@ -1328,7 +1332,8 @@ int get_fract_params(int caller)        // prompt for type-specific parms
             filename = IFSFileName;
             entryname = IFSName;
         }
-        else { // this shouldn't happen
+        else
+        { // this shouldn't happen
             filename = nullptr;
             entryname = nullptr;
         }
@@ -1355,7 +1360,8 @@ int get_fract_params(int caller)        // prompt for type-specific parms
             if (k && c == ' ' && ++k <= 5)
             {
             } // skip 4 blanks at start of line
-            else {
+            else
+            {
                 if (c == '\n')
                 {
                     if (k)
@@ -1366,7 +1372,8 @@ int get_fract_params(int caller)        // prompt for type-specific parms
                 }
                 else if (c < 16) // a special help format control char
                     break;
-                else {
+                else
+                {
                     if (k == 1) // line starts in column 1
                         break;
                     k = 0;
@@ -2337,7 +2344,8 @@ static void load_entry_text(
         }
         if (c == '\n')
             comment = false;
-        else {                       // reached end of file or end of entry
+        else
+        {                       // reached end of file or end of entry
             *buf = (char) 0;
             return;
         }

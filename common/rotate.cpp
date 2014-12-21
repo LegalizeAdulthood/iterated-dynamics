@@ -282,7 +282,8 @@ void rotate(int direction)      // rotate-the-palette routine
                 next = rotate_max;
                 incr = 999;
             }
-            else {
+            else
+            {
                 direction = 1;
                 last = rotate_max;
                 next = rotate_lo;
@@ -488,7 +489,8 @@ void save_palette()
         dacfile = fopen(palname,"w");
         if (dacfile == nullptr)
             driver_buzzer(buzzer_codes::PROBLEM);
-        else {
+        else
+        {
 #ifndef XFRACT
             for (i = 0; i < colors; i++)
 #else

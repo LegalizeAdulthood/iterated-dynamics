@@ -38,7 +38,8 @@ static void lsysf_doplus(lsys_turtlestatef *cmd)
         if (++cmd->angle == cmd->maxangle)
             cmd->angle = 0;
     }
-    else {
+    else
+    {
         if (cmd->angle)
             cmd->angle--;
         else
@@ -58,7 +59,8 @@ static void lsysf_doplus_pow2(lsys_turtlestatef *cmd)
         cmd->angle++;
         cmd->angle &= cmd->dmaxangle;
     }
-    else {
+    else
+    {
         cmd->angle--;
         cmd->angle &= cmd->dmaxangle;
     }
@@ -77,7 +79,8 @@ static void lsysf_dominus(lsys_turtlestatef *cmd)
         else
             cmd->angle = cmd->dmaxangle;
     }
-    else {
+    else
+    {
         if (++cmd->angle == cmd->maxangle)
             cmd->angle = 0;
     }
@@ -94,7 +97,8 @@ static void lsysf_dominus_pow2(lsys_turtlestatef *cmd)
         cmd->angle--;
         cmd->angle &= cmd->dmaxangle;
     }
-    else {
+    else
+    {
         cmd->angle++;
         cmd->angle &= cmd->dmaxangle;
     }

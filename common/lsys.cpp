@@ -249,7 +249,8 @@ int Lsystem()
         order = 0;
     if (usr_floatflag)
         overflow = true;
-    else {
+    else
+    {
         lsys_turtlestatei ts;
 
         ts.stackoflow = false;
@@ -426,7 +427,8 @@ static void lsysi_doplus(lsys_turtlestatei *cmd)
         if (++cmd->angle == cmd->maxangle)
             cmd->angle = 0;
     }
-    else {
+    else
+    {
         if (cmd->angle)
             cmd->angle--;
         else
@@ -446,7 +448,8 @@ static void lsysi_doplus_pow2(lsys_turtlestatei *cmd)
         cmd->angle++;
         cmd->angle &= cmd->dmaxangle;
     }
-    else {
+    else
+    {
         cmd->angle--;
         cmd->angle &= cmd->dmaxangle;
     }
@@ -465,7 +468,8 @@ static void lsysi_dominus(lsys_turtlestatei *cmd)
         else
             cmd->angle = cmd->dmaxangle;
     }
-    else {
+    else
+    {
         if (++cmd->angle == cmd->maxangle)
             cmd->angle = 0;
     }
@@ -482,7 +486,8 @@ static void lsysi_dominus_pow2(lsys_turtlestatei *cmd)
         cmd->angle--;
         cmd->angle &= cmd->dmaxangle;
     }
-    else {
+    else
+    {
         cmd->angle++;
         cmd->angle &= cmd->dmaxangle;
     }

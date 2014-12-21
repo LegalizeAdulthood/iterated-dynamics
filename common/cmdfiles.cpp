@@ -286,7 +286,8 @@ int cmdfiles(int argc,char **argv)
                 argerror(curarg);
             cmdfile(initfile, cmd_file::AT_CMD_LINE_SET_NAME);
         }
-        else {                            // @filename
+        else
+        {                            // @filename
             initfile = fopen(&curarg[1],"r");
             if (initfile == nullptr)
                 argerror(curarg);
@@ -3197,13 +3198,15 @@ static int parse_colors(char *value)
         {
             mapset = true;
         }
-        else {
+        else
+        {
             if (merge_pathnames(colorfile, &value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
                 init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
             colorstate = 2;
         }
     }
-    else {
+    else
+    {
         int smooth = 0;
         int i = 0;
         while (*value)
@@ -3259,7 +3262,8 @@ static int parse_colors(char *value)
                             while (++cnum < spread)
                                 g_dac_box[start+cnum][j] = (BYTE)k;
                         }
-                        else {
+                        else
+                        {
                             while (++cnum < spread)
                                 g_dac_box[start+cnum][j] =
                                     (BYTE)((cnum *g_dac_box[i][j]
@@ -3346,7 +3350,8 @@ void set_3d_defaults()
         YLIGHT    = 1;
         ZLIGHT    = 1;
     }
-    else {
+    else
+    {
         XROT      = 60;
         YROT      = 30;
         ZROT      = 0;
@@ -3368,7 +3373,8 @@ static int get_bf(bf_t bf, const char *curarg)
     {
         std::string buff(curarg, s);
         strtobf(bf, buff.c_str());
-    } else {
+    } else
+    {
         strtobf(bf,curarg);
     }
     return 0;
@@ -3382,7 +3388,8 @@ int get_curarg_len(const char *curarg)
     if (s)
     {
         return s - curarg;
-    } else {
+    } else
+    {
         return strlen(curarg);
     }
 }
