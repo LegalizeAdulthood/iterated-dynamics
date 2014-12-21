@@ -22,10 +22,6 @@
 
 static int menu_checkkey(int curkey,int choice);
 
-// uncomment following for production version
-/*
-#define PRODUCTION
-*/
 int g_release = 2099;   // this has 2 implied decimals; increment it every synch
 int g_patch_level = 8;  // patchlevel for DOS version
 #ifdef XFRACT
@@ -288,22 +284,6 @@ void helptitle()
         strcat(msg,buf);
     }
     putstringcenter(0,0,80,C_TITLE,msg);
-
-    // uncomment next for production executable:
-#if defined(PRODUCTION) || defined(XFRACT)
-    return;
-    //NOTREACHED
-#else
-    if (debugflag == 3002)
-        return;
-#define DEVELOPMENT
-#ifdef DEVELOPMENT
-    driver_put_string(0, 2, C_TITLE_DEV, "Development Version");
-#else
-    driver_put_string(0, 3, C_TITLE_DEV, "Customized Version");
-#endif
-    driver_put_string(0, 55, C_TITLE_DEV, "Not for Public Release");
-#endif
 }
 
 
