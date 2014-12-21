@@ -868,7 +868,7 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
         driver_unstack_screen();
         if (evolving && truecolor)
             truecolor = false;          // truecolor doesn't play well with the evolver
-        if (maxit > old_maxit && inside >= 0 && calc_status == calc_status_value::COMPLETED &&
+        if (maxit > old_maxit && inside >= COLOR_BLACK && calc_status == calc_status_value::COMPLETED &&
                 curfractalspecific->calctype == StandardFractal && !LogFlag &&
                 !truecolor &&    // recalc not yet implemented with truecolor
                 !(usr_stdcalcmode == 't' && fillcolor > -1) &&

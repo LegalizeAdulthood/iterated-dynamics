@@ -24,7 +24,7 @@ MandelSetup()           // Mandelbrot Routine
     if (debugflag != debug_flags::force_standard_fractal
             && !invert && decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !potflag
-            && biomorph == -1 && inside > -59 && outside >= -1
+            && biomorph == -1 && inside > ZMAG && outside >= ITER
             && useinitorbit != 1 && !using_jiim && bailoutest == bailouts::Mod
             && (orbitsave&2) == 0)
         calctype = calcmand; // the normal case - use CALCMAND
@@ -43,7 +43,7 @@ JuliaSetup()            // Julia Routine
     if (debugflag != debug_flags::force_standard_fractal
             && !invert && decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !potflag
-            && biomorph == -1 && inside > -59 && outside >= -1
+            && biomorph == -1 && inside > ZMAG && outside >= ITER
             && !finattract && !using_jiim && bailoutest == bailouts::Mod
             && (orbitsave&2) == 0)
         calctype = calcmand; // the normal case - use CALCMAND
@@ -200,8 +200,8 @@ MandelfpSetup()
                 && !distest
                 && decomp[0] == 0
                 && biomorph == -1
-                && (inside >= -1)
-                && outside >= -6
+                && (inside >= ITER)
+                && outside >= ATAN
                 && useinitorbit != 1
                 && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
                 && !using_jiim && bailoutest == bailouts::Mod
@@ -301,8 +301,8 @@ JuliafpSetup()
                 && !distest
                 && decomp[0] == 0
                 && biomorph == -1
-                && (inside >= -1)
-                && outside >= -6
+                && (inside >= ITER)
+                && outside >= ATAN
                 && useinitorbit != 1
                 && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
                 && !finattract
@@ -395,7 +395,7 @@ JuliafpSetup()
 
     case fractal_type::FPCIRCLE:
         if (inside == STARTRAIL) // FPCIRCLE locks up when used with STARTRAIL
-            inside = 0; // arbitrarily set inside = NUMB
+            inside = COLOR_BLACK; // arbitrarily set inside = NUMB
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
     default:

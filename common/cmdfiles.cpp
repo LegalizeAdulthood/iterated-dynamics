@@ -87,7 +87,7 @@ bool    timerflag = false;      // you didn't see this, either
 int     cyclelimit = 0;         // color-rotator upper limit
 int     inside = 0;             // inside color: 1=blue
 int     fillcolor = 0;          // fillcolor: -1=normal
-int     outside = 0;            // outside color
+int     outside = COLOR_BLACK;  // outside color
 bool finattract = false;        // finite attractor logic
 int     display3d = 0;          // 3D display flag: 0 = OFF
 bool    overlay3d = false;      // 3D overlay flag
@@ -416,14 +416,14 @@ static void initvars_restart()          // <ins> key init
 static void initvars_fractal()          // init vars affecting calculation
 {
     escape_exit = false;                // don't disable the "are you sure?" screen
-    usr_periodicitycheck = 1;            // turn on periodicity
-    inside = 1;                          // inside color = blue
-    fillcolor = -1;                      // no special fill color
-    usr_biomorph = -1;                   // turn off biomorph flag
-    outside = -1;                        // outside color = -1 (not used)
-    maxit = 150;                         // initial maxiter
-    usr_stdcalcmode = 'g';               // initial solid-guessing
-    stoppass = 0;                        // initial guessing stoppass
+    usr_periodicitycheck = 1;           // turn on periodicity
+    inside = 1;                         // inside color = blue
+    fillcolor = -1;                     // no special fill color
+    usr_biomorph = -1;                  // turn off biomorph flag
+    outside = ITER;                     // outside color = -1 (not used)
+    maxit = 150;                        // initial maxiter
+    usr_stdcalcmode = 'g';              // initial solid-guessing
+    stoppass = 0;                       // initial guessing stoppass
     quick_calc = false;
     closeprox = 0.01;
     ismand = true;                      // default formula mand/jul toggle

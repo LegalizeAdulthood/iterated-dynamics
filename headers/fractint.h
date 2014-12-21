@@ -645,6 +645,7 @@ struct AlternateMath
 };
 
 // defines for inside/outside
+#define COLOR_BLACK 0
 #define ITER        -1
 #define REAL        -2
 #define IMAG        -3

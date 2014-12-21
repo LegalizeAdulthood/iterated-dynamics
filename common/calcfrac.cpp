@@ -1770,7 +1770,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
     if (calcmandasm() >= 0)
     {
         if ((!LogTable.empty() || Log_Calc) // map color, but not if maxit & adjusted for inside,etc
-                && (realcoloriter < maxit || (inside < 0 && coloriter == maxit)))
+                && (realcoloriter < maxit || (inside < COLOR_BLACK && coloriter == maxit)))
             coloriter = logtablecalc(coloriter);
         color = abs((int)coloriter);
         if (coloriter >= colors)
@@ -1819,7 +1819,7 @@ int calcmandfp()
         if (potflag)
             coloriter = potential(magnitude, realcoloriter);
         if ((!LogTable.empty() || Log_Calc) // map color, but not if maxit & adjusted for inside,etc
-                && (realcoloriter < maxit || (inside < 0 && coloriter == maxit)))
+                && (realcoloriter < maxit || (inside < COLOR_BLACK && coloriter == maxit)))
             coloriter = logtablecalc(coloriter);
         color = abs((int)coloriter);
         if (coloriter >= colors)
@@ -2090,7 +2090,7 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
             else
                 iplot_orbit(lnew.x, lnew.y, -1);
         }
-        if (inside < -1)
+        if (inside < ITER)
         {
             if (bf_math == bf_math_type::BIGNUM)
                 g_new = cmplxbntofloat(&bnnew);
@@ -2409,7 +2409,7 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
         goto plot_inside;         // distest, decomp, biomorph don't apply
 
 
-    if (outside < -1)
+    if (outside < ITER)
     {
         if (integerfractal)
         {
@@ -2506,7 +2506,7 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
             coloriter = biomorph;
     }
 
-    if (outside >= 0 && !attracted)     // merge escape-time stripes
+    if (outside >= COLOR_BLACK && !attracted)     // merge escape-time stripes
         coloriter = outside;
     else if (!LogTable.empty() || Log_Calc)
         coloriter = logtablecalc(coloriter);
@@ -2515,7 +2515,7 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
 plot_inside: // we're "inside"
     if (periodicitycheck < 0 && caught_a_cycle)
         coloriter = 7;           // show periodicity
-    else if (inside >= 0)
+    else if (inside >= COLOR_BLACK)
         coloriter = inside;              // set to specified color, ignore logpal
     else
     {
@@ -2958,7 +2958,7 @@ static int potential(double mag, long iterations)
         if (pot < 1.0F)
             pot = 1.0F; // avoid color 0
     }
-    else if (inside >= 0)
+    else if (inside >= COLOR_BLACK)
         pot = (float) inside;
     else // inside < 0 implies inside = maxit, so use 1st pot param instead
         pot = (float)potparam[0];
@@ -3009,7 +3009,7 @@ int  bound_trace_main()
     int trail_color, fillcolor_used, last_fillcolor_used = -1;
     int max_putline_length;
     int right, left, length;
-    if (inside == 0 || outside == 0)
+    if (inside == COLOR_BLACK || outside == COLOR_BLACK)
     {
         stopmsg(STOPMSG_NONE, "Boundary tracing cannot be used with inside=0 or outside=0");
         return -1;

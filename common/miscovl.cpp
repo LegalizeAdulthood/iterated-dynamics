@@ -94,11 +94,11 @@ void make_batch_file()
 #endif
     {
         --maxcolor;
-        if (inside > 0 && inside > maxcolor)
+        if (inside > COLOR_BLACK && inside > maxcolor)
             maxcolor = inside;
-        if (outside > 0 && outside > maxcolor)
+        if (outside > COLOR_BLACK && outside > maxcolor)
             maxcolor = outside;
-        if (distest < 0 && 0 - distest > maxcolor)
+        if (distest < COLOR_BLACK && -distest > maxcolor)
             maxcolor = (int)(0 - distest);
         if (decomp[0] > maxcolor)
             maxcolor = decomp[0] - 1;
@@ -743,7 +743,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         if (inside != 1)
         {
             put_parm(" %s=", "inside");
-            if (inside == -1)
+            if (inside == ITER)
                 put_parm("maxiter");
             else if (inside == ZMAG)
                 put_parm("zmag");
@@ -769,7 +769,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         {
             put_parm(" %s=%.15g", "proximity",closeprox);
         }
-        if (outside != -1)
+        if (outside != ITER)
         {
             put_parm(" %s=", "outside");
             if (outside == REAL)

@@ -133,7 +133,7 @@ int get_toggles()
 
     choices[++k] = "Inside Color (0-# of colors, if Inside=numb)";
     uvalues[k].type = 'i';
-    if (inside >= 0)
+    if (inside >= COLOR_BLACK)
         uvalues[k].uval.ival = inside;
     else
         uvalues[k].uval.ival = 0;
@@ -143,9 +143,9 @@ int get_toggles()
     uvalues[k].uval.ch.vlen = 12;
     uvalues[k].uval.ch.llen = sizeof(insidemodes)/sizeof(*insidemodes);
     uvalues[k].uval.ch.list = insidemodes;
-    if (inside >= 0)  // numb
+    if (inside >= COLOR_BLACK)  // numb
         uvalues[k].uval.ch.val = 0;
-    else if (inside == -1)  // maxiter
+    else if (inside == ITER)
         uvalues[k].uval.ch.val = 1;
     else if (inside == ZMAG)
         uvalues[k].uval.ch.val = 2;
@@ -167,7 +167,7 @@ int get_toggles()
 
     choices[++k] = "Outside Color (0-# of colors, if Outside=numb)";
     uvalues[k].type = 'i';
-    if (outside >= 0)
+    if (outside >= COLOR_BLACK)
         uvalues[k].uval.ival = outside;
     else
         uvalues[k].uval.ival = 0;
@@ -177,7 +177,7 @@ int get_toggles()
     uvalues[k].uval.ch.vlen = 4;
     uvalues[k].uval.ch.llen = sizeof(outsidemodes)/sizeof(*outsidemodes);
     uvalues[k].uval.ch.list = outsidemodes;
-    if (outside >= 0)  // numb
+    if (outside >= COLOR_BLACK)  // numb
         uvalues[k].uval.ch.val = 0;
     else
         uvalues[k].uval.ch.val = -outside;
@@ -285,7 +285,7 @@ int get_toggles()
         j++;
 
     inside = uvalues[++k].uval.ival;
-    if (inside < 0)
+    if (inside < COLOR_BLACK)
         inside = -inside;
     if (inside >= colors)
         inside = (inside % colors) + (inside / colors);
@@ -296,7 +296,7 @@ int get_toggles()
             switch (tmp)
             {
             case 1:
-                inside = -1;  // maxiter
+                inside = ITER;
                 break;
             case 2:
                 inside = ZMAG;
@@ -328,7 +328,7 @@ int get_toggles()
         j++;
 
     outside = uvalues[++k].uval.ival;
-    if (outside < 0)
+    if (outside < COLOR_BLACK)
         outside = -outside;
     if (outside >= colors)
         outside = (outside % colors) + (outside / colors);

@@ -18,7 +18,7 @@ static int inside_color, periodicity_color;
 
 void calcmandfpasmstart()
 {
-    inside_color = (inside < 0) ? maxit : inside;
+    inside_color = (inside < COLOR_BLACK) ? maxit : inside;
     periodicity_color = (periodicitycheck < 0) ? 7 : inside_color;
     oldcoloriter = 0;
 }
@@ -187,7 +187,7 @@ pop_stack:
     return coloriter;
 
 over_bailout_87:
-    if (outside <= -2)
+    if (outside <= REAL)
     {
         g_new.x = x;
         g_new.y = y;
@@ -207,10 +207,10 @@ over_bailout_87:
         coloriter = 1;
     }
     kbdcount -= realcoloriter;
-    if (outside == -1)
+    if (outside == ITER)
     {
     }
-    else if (outside > -2)
+    else if (outside > REAL)
     {
         coloriter = outside;
     }

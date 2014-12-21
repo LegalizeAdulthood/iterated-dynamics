@@ -368,7 +368,7 @@ int plasma()
         if (pot_startdisk() >= 0)
         {
             max_plasma = 0xFFFF;
-            if (outside >= 0)
+            if (outside >= COLOR_BLACK)
                 plot    = (PLOT)putpotborder;
             else
                 plot    = (PLOT)putpot;
@@ -380,7 +380,7 @@ int plasma()
         {
             max_plasma = 0;        // can't do potential (startdisk failed)
             param[3]   = 0;
-            if (outside >= 0)
+            if (outside >= COLOR_BLACK)
                 plot    = putcolorborder;
             else
                 plot    = putcolor;
@@ -389,7 +389,7 @@ int plasma()
     }
     else
     {
-        if (outside >= 0)
+        if (outside >= COLOR_BLACK)
             plot    = putcolorborder;
         else
             plot    = putcolor;
@@ -831,7 +831,7 @@ int Bifurcation()
         mono = true;
     if (mono)
     {
-        if (inside)
+        if (inside != COLOR_BLACK)
         {
             outside_x = 0;
             inside = 1;
@@ -1275,7 +1275,7 @@ int lyapunov()
 #else
     color = lyapunov_cycles_in_c(filter_cycles, a, b);
 #endif
-    if (inside>0 && color == 0)
+    if (inside > COLOR_BLACK && color == 0)
         color = inside;
     else if (color>=colors)
         color = colors-1;
@@ -1342,9 +1342,9 @@ bool lya_setup()
     {            // ignore inside=, stdcalcmode
         stdcalcmode = '1';
         if (inside == 1)
-            inside = 0;
+            inside = COLOR_BLACK;
     }
-    if (inside < 0)
+    if (inside < COLOR_BLACK)
     {
         stopmsg(STOPMSG_NONE,
             "Sorry, inside options other than inside=nnn are not supported by the lyapunov");

@@ -350,18 +350,18 @@ init_restart:
     }
     // We want this code if we're using the assembler calcmand
     if (fractype == fractal_type::MANDEL || fractype == fractal_type::JULIA)
-    { // adust shift bits if..
+    { // adjust shift bits if..
         if (!potflag                                    // not using potential
                 && (param[0] > -2.0 && param[0] < 2.0)  // parameters not too large
                 && (param[1] > -2.0 && param[1] < 2.0)
-                && !invert                                // and not inverting
-                && biomorph == -1                         // and not biomorphing
-                && rqlim <= 4.0                           // and bailout not too high
-                && (outside > -2 || outside < -6)         // and no funny outside stuff
+                && !invert                              // and not inverting
+                && biomorph == -1                       // and not biomorphing
+                && rqlim <= 4.0                         // and bailout not too high
+                && (outside > REAL || outside < ATAN)   // and no funny outside stuff
                 && debugflag != debug_flags::force_smaller_bitshift // and not debugging
-                && closeprox <= 2.0                       // and closeprox not too large
+                && closeprox <= 2.0                     // and closeprox not too large
                 && bailoutest == bailouts::Mod)         // and bailout test = mod
-            bitshift = FUDGEFACTOR;                  // use the larger bitshift
+            bitshift = FUDGEFACTOR;                     // use the larger bitshift
     }
 
     fudge = 1L << bitshift;

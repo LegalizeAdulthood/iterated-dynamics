@@ -1315,7 +1315,7 @@ int orbit2dfloat()
         break;
     }
 
-    if (inside > 0)
+    if (inside > COLOR_BLACK)
     {
         color = inside;
     }
@@ -1487,7 +1487,7 @@ int orbit2dlong()
         break;
     }
 
-    if (inside > 0)
+    if (inside > COLOR_BLACK)
     {
         color = inside;
     }
@@ -1884,7 +1884,7 @@ int dynam2dfloat()
         soundvar = &z;
 
     long count = 0;
-    if (inside > 0)
+    if (inside > COLOR_BLACK)
         color = inside;
     if (color >= colors)
         color = 1;
@@ -2094,7 +2094,7 @@ int plotorbits2dfloat()
         end_resume();
     }
 
-    if (inside > 0)
+    if (inside > COLOR_BLACK)
         o_color = inside;
     else
     { // inside <= 0
