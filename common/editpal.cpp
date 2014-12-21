@@ -2056,7 +2056,7 @@ static void PalTable__SaveRect(PalTable *me)
             free(me->memory);
         me->memory = nullptr;
         break;
-    } ;
+    }
 
     // allocate space and store the rect
 

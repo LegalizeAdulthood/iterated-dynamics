@@ -117,9 +117,11 @@ getakey()
 {
     int ch;
 
-    do {
+    do
+    {
         ch = getkeyint(1);
-    } while (ch == 0);
+    }
+    while (ch == 0);
     return ch;
 }
 

@@ -241,7 +241,8 @@ start:
             do
             {
                 err = fscanf(fpss,"%s",buffer1);
-            } while (err == 1 && strcmp(buffer1,buffer) != 0);
+            }
+            while (err == 1 && strcmp(buffer1,buffer) != 0);
             if (feof(fpss))
             {
                 slideshowerr("GOTO target not found");

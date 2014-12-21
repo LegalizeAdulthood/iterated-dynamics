@@ -1325,7 +1325,8 @@ static int diffusion_engine()
                     (*plot)(col,row,color);
                     j++;
                     row += s;                  // next tile
-                } while (j < ny);
+                }
+                while (j < ny);
                 /* in the last y tile we may not need to plot the point
                  */
                 if (rowo < rem_y)
@@ -1335,7 +1336,8 @@ static int diffusion_engine()
                 }
                 i++;
                 col += s;
-            } while (i < nx);
+            }
+            while (i < nx);
             /* in the last x tiles we may not need to plot the point */
             if (colo < rem_x)
             {
@@ -1346,8 +1348,10 @@ static int diffusion_engine()
                     (*plot)(col,row,color);
                     j++;
                     row += s; // next tile
-                } while (j < ny);
-                if (rowo < rem_y) {
+                }
+                while (j < ny);
+                if (rowo < rem_y)
+                {
                     calculate;
                     (*plot)(col,row,color);
                 }
@@ -1375,7 +1379,8 @@ static int diffusion_engine()
                     calculate;
                     plot_block(col,row,sqsz,color);
                     j++;
-                } while (j < ny);
+                }
+                while (j < ny);
                 // in the last tile we may not need to plot the point
                 if (rowo < rem_y)
                 {
@@ -1385,7 +1390,8 @@ static int diffusion_engine()
                     plot_block_lim(col,row,sqsz,color);
                 }
                 i++;
-            } while (i < nx);
+            }
+            while (i < nx);
             // in the last tile we may not need to plot the point
             if (colo < rem_x)
             {
@@ -1397,7 +1403,8 @@ static int diffusion_engine()
                     calculate;
                     plot_block_lim(col,row,sqsz,color);
                     j++;
-                } while (j < ny);
+                }
+                while (j < ny);
                 if (rowo < rem_y)
                 {
                     row = iystart + rowo + ny * s;
@@ -1425,7 +1432,8 @@ static int diffusion_engine()
                 calculate;
                 (*plot)(col,row,color);
                 j++;
-            } while (j < ny);
+            }
+            while (j < ny);
             // in the last tile we may not need to plot the point
             if (rowo < rem_y)
             {
@@ -1435,7 +1443,8 @@ static int diffusion_engine()
                 (*plot)(col,row,color);
             }
             i++;
-        } while (i < nx);
+        }
+        while (i < nx);
         // in the last tile we may nnt need to plot the point
         if (colo < rem_x)
         {
@@ -1447,7 +1456,8 @@ static int diffusion_engine()
                 calculate;
                 (*plot)(col,row,color);
                 j++;
-            } while (j < ny);
+            }
+            while (j < ny);
             if (rowo < rem_y)
             {
                 row = iystart + rowo + ny * s;
@@ -1616,8 +1626,9 @@ static int sticky_orbits()
                         G += inc1;
                 }
         }
-        } // end case 'l'
-    break;
+        break;
+    } // end case 'l'
+
     case 'f':  // this code does not yet work???
     {
         double Xctr,Yctr;
@@ -1647,10 +1658,8 @@ static int sticky_orbits()
             }
             angle++;
         }
-
-
-        }  // end case 'f'
-    break;
+        break;
+    }  // end case 'f'
     }  // end switch
 
     return 0;
@@ -3082,7 +3091,8 @@ int  bound_trace_main()
                     advance_no_match();
                     continue_loop = (going_to != coming_from) || (matches_found > 0);
                 }
-            } while (continue_loop && (col != curcol || row != currow));
+            }
+            while (continue_loop && (col != curcol || row != currow));
 
             if (matches_found <= 3)
             {   // no hole
@@ -3153,7 +3163,8 @@ int  bound_trace_main()
                     }
                     else
                         advance_no_match();
-                } while (!match_found && going_to != coming_from);
+                }
+                while (!match_found && going_to != coming_from);
 
                 if (!match_found)
                 {   // next one has to be a match
@@ -3162,7 +3173,8 @@ int  bound_trace_main()
                     trail_col = col;
                     advance_match(coming_from);
                 }
-            } while (trail_col != curcol || trail_row != currow);
+            }
+            while (trail_col != curcol || trail_row != currow);
             reset_periodicity = true; // reset after a trace/fill
             color = bkcolor;
         }

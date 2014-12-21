@@ -659,7 +659,8 @@ int fullscreen_prompt(      // full-screen prompting routine
             do {
                 if (++curchoice >= numprompts)
                     curchoice = 0;
-            } while (values[curchoice].type == '*');
+            }
+            while (values[curchoice].type == '*');
             break;
         case FIK_PAGE_DOWN:
             curchoice = numprompts;
@@ -667,7 +668,8 @@ int fullscreen_prompt(      // full-screen prompting routine
             do {
                 if (--curchoice < 0)
                     curchoice = numprompts - 1;
-            } while (values[curchoice].type == '*');
+            }
+            while (values[curchoice].type == '*');
             break;
         case FIK_CTL_DOWN_ARROW:     // scrolling key - down one row
             if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
@@ -2458,7 +2460,8 @@ static void format_parmfile_line(int choice,char *buf)
     do
     {
         c = getc(gfe_file);
-    } while (c == ' ' || c == '\t' || c == ';');
+    }
+    while (c == ' ' || c == '\t' || c == ';');
     i = 0;
     while (i < 56 && c != '\n' && c != '\r' && c != EOF && c != '\032')
     {

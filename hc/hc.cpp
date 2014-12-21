@@ -1383,7 +1383,7 @@ enum STATES   /* states for FSM's */
     S_FormatDisabled,        /* format automatically disabled for this line */
     S_FormatDisabledSpaces,  /* spaces in line which format is disabled     */
     S_Spaces
-} ;
+};
 
 
 void check_command_length(int eoff, int len)

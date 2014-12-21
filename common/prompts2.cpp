@@ -1528,7 +1528,8 @@ retry_dir:
             }
             out = fr_findnext();
         }
-    } while (++j < numtemplates);
+    }
+    while (++j < numtemplates);
     if (++filecount == 0)
     {
         strcpy(choices[filecount]->name, "*nofiles*");
