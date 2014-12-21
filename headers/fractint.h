@@ -53,12 +53,15 @@ enum class slides_mode
 };
 
 // fullscreen_choice options
-#define CHOICE_RETURN_KEY   1
-#define CHOICE_MENU         2
-#define CHOICE_HELP         4
-#define CHOICE_INSTRUCTIONS 8
-#define CHOICE_CRUNCH       16
-#define CHOICE_NOT_SORTED   32
+enum choice_flags
+{
+    CHOICE_RETURN_KEY   = 1,
+    CHOICE_MENU         = 2,
+    CHOICE_HELP         = 4,
+    CHOICE_INSTRUCTIONS = 8,
+    CHOICE_CRUNCH       = 16,
+    CHOICE_NOT_SORTED   = 32
+};
 
 // calc_status values
 enum class calc_status_value
@@ -71,10 +74,13 @@ enum class calc_status_value
     COMPLETED = 4
 };
 
-#define CMDARG_FRACTAL_PARAM 1
-#define CMDARG_3D_PARAM 2
-#define CMDARG_3D_YES 4
-#define CMDARG_RESET 8
+enum cmdarg_flags
+{
+    CMDARG_FRACTAL_PARAM    = 1,
+    CMDARG_3D_PARAM         = 2,
+    CMDARG_3D_YES           = 4,
+    CMDARG_RESET            = 8
+};
 
 enum class cmd_file
 {
@@ -84,21 +90,27 @@ enum class cmd_file
     AT_CMD_LINE_SET_NAME = 3
 };
 
-#define INPUTFIELD_NUMERIC 1
-#define INPUTFIELD_INTEGER 2
-#define INPUTFIELD_DOUBLE 4
+enum input_field_flags
+{
+    INPUTFIELD_NUMERIC  = 1,
+    INPUTFIELD_INTEGER  = 2,
+    INPUTFIELD_DOUBLE   = 4
+};
 
-#define SOUNDFLAG_OFF       0
-#define SOUNDFLAG_BEEP      1
-#define SOUNDFLAG_X         2
-#define SOUNDFLAG_Y         3
-#define SOUNDFLAG_Z         4
-#define SOUNDFLAG_ORBITMASK 0x07
-#define SOUNDFLAG_SPEAKER   0x08
-#define SOUNDFLAG_OPL3_FM   0x10
-#define SOUNDFLAG_MIDI      0x20
-#define SOUNDFLAG_QUANTIZED 0x40
-#define SOUNDFLAG_MASK      0x7F
+enum sound_flags
+{
+    SOUNDFLAG_OFF       = 0,
+    SOUNDFLAG_BEEP      = 1,
+    SOUNDFLAG_X         = 2,
+    SOUNDFLAG_Y         = 3,
+    SOUNDFLAG_Z         = 4,
+    SOUNDFLAG_ORBITMASK = 0x07,
+    SOUNDFLAG_SPEAKER   = 8,
+    SOUNDFLAG_OPL3_FM   = 16,
+    SOUNDFLAG_MIDI      = 32,
+    SOUNDFLAG_QUANTIZED = 64,
+    SOUNDFLAG_MASK      = 0x7F
+};
 
 // these are used to declare arrays for file names
 #if defined(_WIN32)
