@@ -163,7 +163,7 @@ extern void (*dtrig3)();
 #define CMPLXtimesreal(arg, real, out)   \
     (out).x = (arg).x*(real);\
     (out).y = (arg).y*(real)
-#define CMPLXrecip(arg, out)                     \
+#define CMPLXrecip(arg, out)                    \
     {                                           \
         double denom;                           \
         denom = sqr((arg).x) + sqr((arg).y);    \

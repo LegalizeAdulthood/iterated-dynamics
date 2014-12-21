@@ -662,36 +662,22 @@ int fullscreen_prompt(      // full-screen prompting routine
         case FIK_PAGE_UP:
             curchoice = -1;
         case FIK_DOWN_ARROW:
-<<<<<<< HEAD
             do
             {
                 if (++curchoice >= numprompts)
                     curchoice = 0;
             }
             while (values[curchoice].type == '*');
-=======
-            do {
-                if (++curchoice >= numprompts)
-                    curchoice = 0;
-            } while (values[curchoice].type == '*');
->>>>>>> Refactor: Reformat conditions and statement on separate lines
             break;
         case FIK_PAGE_DOWN:
             curchoice = numprompts;
         case FIK_UP_ARROW:
-<<<<<<< HEAD
             do
             {
                 if (--curchoice < 0)
                     curchoice = numprompts - 1;
             }
             while (values[curchoice].type == '*');
-=======
-            do {
-                if (--curchoice < 0)
-                    curchoice = numprompts - 1;
-            } while (values[curchoice].type == '*');
->>>>>>> Refactor: Reformat conditions and statement on separate lines
             break;
         case FIK_CTL_DOWN_ARROW:     // scrolling key - down one row
             if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
@@ -777,14 +763,9 @@ int prompt_valuestring(char *buf, fullscreenvalues const *val)
     case 'd':
         ret = 20;
         i = 16;    // cellular needs 16 (was 15)
-<<<<<<< HEAD
         while (1)
         {
             sprintf(buf, "%.*g", i, val->uval.dval);
-=======
-        while (1) {
-            sprintf(buf,"%.*g",i,val->uval.dval);
->>>>>>> Refactor: Reformat conditions and statement on separate lines
             if ((int)strlen(buf) <= ret)
                 break;
             --i;
@@ -1025,13 +1006,8 @@ static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype,
     // setup context sensitive help
     oldhelpmode = helpmode;
     helpmode = HELPFRACTALS;
-<<<<<<< HEAD
     if (t == fractal_type::IFS3D)
         t = fractal_type::IFS;
-=======
-    if (t == IFS3D)
-        t = IFS;
->>>>>>> Refactor: Reformat conditions and statement on separate lines
     {
         int i = -1;
         int j = -1;
@@ -1432,7 +1408,6 @@ int get_fract_params(int caller)        // prompt for type-specific parms
         while ((c = tstack[i++]) != 0)
         {
             // stop at ctl, blank, or line with col 1 nonblank, max 16 lines
-<<<<<<< HEAD
             if (k && c == ' ' && ++k <= 5)
             {
             } // skip 4 blanks at start of line
@@ -1440,11 +1415,6 @@ int get_fract_params(int caller)        // prompt for type-specific parms
             {
                 if (c == '\n')
                 {
-=======
-            if (k && c == ' ' && ++k <= 5) { } // skip 4 blanks at start of line
-            else {
-                if (c == '\n') {
->>>>>>> Refactor: Reformat conditions and statement on separate lines
                     if (k)
                         break; // blank line
                     if (++lines >= 16)
@@ -3050,13 +3020,8 @@ static bool get_light_params()
             haze = 100;
         if (haze <= 0)
             haze = 0;
-<<<<<<< HEAD
         light_name = uvalues[k++].uval.sval;
-=======
-        strcpy(light_name,uvalues[k++].uval.sval);
->>>>>>> Refactor: Reformat conditions and statement on separate lines
-        /* In case light_name conflicts with an existing name it is checked
-                again in line3d */
+        /* In case light_name conflicts with an existing name it is checked again in line3d */
         k++;
         back_color[0] = (char)(uvalues[k++].uval.ival % 255);
         back_color[1] = (char)(uvalues[k++].uval.ival % 255);

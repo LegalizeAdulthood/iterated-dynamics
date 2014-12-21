@@ -2818,8 +2818,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     }
 
 
-    if (variable == "ifs"
-            || variable == "ifs3d")
+    if (variable == "ifs" || variable == "ifs3d")
     {        // ifs3d for old time's sake
         if (valuelen > ITEMNAMELEN)
             goto badarg;
