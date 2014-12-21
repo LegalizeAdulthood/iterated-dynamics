@@ -229,14 +229,21 @@ static int showdotcolor = 0;
 int atan_colors = 180;
 
 static int showdot_width = 0;
-#define SAVE    1
-#define RESTORE 2
 
-#define JUST_A_POINT 0
-#define LOWER_RIGHT  1
-#define UPPER_RIGHT  2
-#define LOWER_LEFT   3
-#define UPPER_LEFT   4
+enum class show_dot_action
+{
+    SAVE = 1,
+    RESTORE = 2
+};
+
+enum class show_dot_direction
+{
+    JUST_A_POINT = 0,
+    LOWER_RIGHT = 1,
+    UPPER_RIGHT = 2,
+    LOWER_LEFT = 3,
+    UPPER_LEFT = 4
+};
 
 int g_and_color = 0;        // "and" value used for color selection
 
@@ -420,10 +427,16 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
     }
 }
 
-void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direction, int action)
+void showdotsaverestore(
+    int startx,
+    int stopx,
+    int starty,
+    int stopy,
+    show_dot_direction direction,
+    show_dot_action action)
 {
     int ct = 0;
-    if (direction != JUST_A_POINT)
+    if (direction != show_dot_direction::JUST_A_POINT)
     {
         if (savedots.empty())
         {
@@ -438,10 +451,10 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
     }
     switch (direction)
     {
-    case LOWER_RIGHT:
+    case show_dot_direction::LOWER_RIGHT:
         for (int j = starty; j <= stopy; startx++, j++)
         {
-            if (action == SAVE)
+            if (action == show_dot_action::SAVE)
             {
                 get_line(j, startx, stopx, &savedots[0] + ct);
                 sym_fill_line(j,startx,stopx,fillbuff);
@@ -451,10 +464,10 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
             ct += stopx-startx+1;
         }
         break;
-    case UPPER_RIGHT:
+    case show_dot_direction::UPPER_RIGHT:
         for (int j = starty; j >= stopy; startx++, j--)
         {
-            if (action == SAVE)
+            if (action == show_dot_action::SAVE)
             {
                 get_line(j, startx, stopx, &savedots[0] + ct);
                 sym_fill_line(j,startx,stopx,fillbuff);
@@ -464,10 +477,10 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
             ct += stopx-startx+1;
         }
         break;
-    case LOWER_LEFT:
+    case show_dot_direction::LOWER_LEFT:
         for (int j = starty; j <= stopy; stopx--, j++)
         {
-            if (action == SAVE)
+            if (action == show_dot_action::SAVE)
             {
                 get_line(j, startx, stopx, &savedots[0] + ct);
                 sym_fill_line(j,startx,stopx,fillbuff);
@@ -477,10 +490,10 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
             ct += stopx-startx+1;
         }
         break;
-    case UPPER_LEFT:
+    case show_dot_direction::UPPER_LEFT:
         for (int j = starty; j >= stopy; stopx--, j--)
         {
-            if (action == SAVE)
+            if (action == show_dot_action::SAVE)
             {
                 get_line(j, startx, stopx, &savedots[0] + ct);
                 sym_fill_line(j,startx,stopx,fillbuff);
@@ -490,15 +503,17 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
             ct += stopx-startx+1;
         }
         break;
+    case show_dot_direction::JUST_A_POINT:
+        break;
     }
-    if (action == SAVE)
+    if (action == show_dot_action::SAVE)
         (*plot)(col,row, showdotcolor);
 }
 
 int calctypeshowdot()
 {
-    int out, startx, starty, stopx, stopy, direction, width;
-    direction = JUST_A_POINT;
+    int out, startx, starty, stopx, stopy, width;
+    show_dot_direction direction = show_dot_direction::JUST_A_POINT;
     stopx = col;
     startx = stopx;
     stopy = row;
@@ -508,7 +523,7 @@ int calctypeshowdot()
         if (col+width <= ixstop && row+width <= iystop)
         {
             // preferred showdot shape
-            direction = UPPER_LEFT;
+            direction = show_dot_direction::UPPER_LEFT;
             startx = col;
             stopx  = col+width;
             starty = row+width;
@@ -517,7 +532,7 @@ int calctypeshowdot()
         else if (col-width >= ixstart && row+width <= iystop)
         {
             // second choice
-            direction = UPPER_RIGHT;
+            direction = show_dot_direction::UPPER_RIGHT;
             startx = col-width;
             stopx  = col;
             starty = row+width;
@@ -525,7 +540,7 @@ int calctypeshowdot()
         }
         else if (col-width >= ixstart && row-width >= iystart)
         {
-            direction = LOWER_RIGHT;
+            direction = show_dot_direction::LOWER_RIGHT;
             startx = col-width;
             stopx  = col;
             starty = row-width;
@@ -533,18 +548,18 @@ int calctypeshowdot()
         }
         else if (col+width <= ixstop && row-width >= iystart)
         {
-            direction = LOWER_LEFT;
+            direction = show_dot_direction::LOWER_LEFT;
             startx = col;
             stopx  = col+width;
             starty = row-width;
             stopy  = row-1;
         }
     }
-    showdotsaverestore(startx, stopx, starty, stopy, direction, SAVE);
+    showdotsaverestore(startx, stopx, starty, stopy, direction, show_dot_action::SAVE);
     if (orbit_delay > 0)
         sleepms(orbit_delay);
     out = (*calctypetmp)();
-    showdotsaverestore(startx, stopx, starty, stopy, direction, RESTORE);
+    showdotsaverestore(startx, stopx, starty, stopy, direction, show_dot_action::RESTORE);
     return out;
 }
 
