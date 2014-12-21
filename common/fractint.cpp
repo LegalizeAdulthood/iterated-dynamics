@@ -257,7 +257,7 @@ restart:   /* insert key re-starts here */
         maxhistory--;
     }
 
-    if (debugflag == 450 && initbatch == 1)   /* abort if savename already exists */
+    if (debugflag == debug_flags::prevent_overwrite_savename && initbatch == 1)   /* abort if savename already exists */
     {
         check_samename();
     }
@@ -568,8 +568,8 @@ int timer(int timertype,int(*subrtn)(),...)
     va_start(arg_marker,subrtn);
 
     bool do_bench = timerflag; /* record time? */
-    if (timertype == 2)   /* encoder, record time only if debug=200 */
-        do_bench = (debugflag == 200);
+    if (timertype == 2)   /* encoder, record time only if debug flag set */
+        do_bench = (debugflag == debug_flags::benchmark_encoder);
     if (do_bench)
         fp = dir_fopen(workdir,"bench","a");
     timer_start = clock_ticks();

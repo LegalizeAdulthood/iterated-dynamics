@@ -47,7 +47,7 @@ int stopmsg(int flags, const char *msg)
 {
     int ret,toprow,color,savelookatmouse;
     static bool batchmode = false;
-    if (debugflag != 0 || initbatch >= 1)
+    if (debugflag != debug_flags::none || initbatch >= 1)
     {
         static FILE *fp = nullptr;
         if (fp == nullptr && initbatch == 0)
@@ -106,7 +106,7 @@ int stopmsg(int flags, const char *msg)
         driver_buzzer((flags & STOPMSG_INFO_ONLY) ? buzzer_codes::COMPLETE : buzzer_codes::PROBLEM);
     while (driver_key_pressed()) // flush any keyahead
         driver_get_key();
-    if (debugflag != 324)
+    if (debugflag != debug_flags::show_formula_info_after_compile)
         if (getakeynohelp() == FIK_ESC)
             ret = -1;
     if ((flags & STOPMSG_NO_STACK))

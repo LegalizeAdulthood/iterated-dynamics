@@ -95,7 +95,7 @@ static void WhichDiskError(int I_O)
         "Read file error %d:  %s"
     };
     sprintf(buf, pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
-    if (debugflag == 10000)
+    if (debugflag == debug_flags::display_memory_statistics)
         if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER,(char *)buf) == -1)
             goodbye(); // bailout if ESC
 }
@@ -129,9 +129,9 @@ static int check_for_mem(int stored_at, long howmuch)
 
     maxmem = (long)USHRT_MAX;
 
-    if (debugflag == 420)
+    if (debugflag == debug_flags::force_memory_from_disk)
         stored_at = DISK;
-    if (debugflag == 422)
+    if (debugflag == debug_flags::force_memory_from_memory)
         stored_at = MEMORY;
 
     switch (stored_at)
@@ -342,7 +342,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         break;
     } // end of switch
 
-    if (stored_at != use_this_type && debugflag == 10000) {
+    if (stored_at != use_this_type && debugflag == debug_flags::display_memory_statistics) {
         char buf[MSGLEN];
         sprintf(buf,"Asked for %s, allocated %lu bytes of %s, handle = %u.",
                 memstr[stored_at],toallocate,memstr[use_this_type],handle);
@@ -399,7 +399,7 @@ bool MoveToMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
 
     start = (long)offset * size;
     tomove = (long)count * size;
-    if (debugflag == 10000)
+    if (debugflag == debug_flags::display_memory_statistics)
         if (CheckBounds(start, tomove, handle))
             return false; // out of bounds, don't do it
 
@@ -442,7 +442,7 @@ bool MoveToMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
 diskerror:
         break;
     } // end of switch
-    if (!success && debugflag == 10000)
+    if (!success && debugflag == debug_flags::display_memory_statistics)
         DisplayHandle(handle);
     return success;
 }
@@ -459,7 +459,7 @@ bool MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
 
     start = (long)offset * size;
     tomove = (long)count * size;
-    if (debugflag == 10000)
+    if (debugflag == debug_flags::display_memory_statistics)
         if (CheckBounds(start, tomove, handle))
             return false; // out of bounds, don't do it
 
@@ -503,7 +503,7 @@ bool MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
 diskerror:
         break;
     } // end of switch
-    if (!success && debugflag == 10000)
+    if (!success && debugflag == debug_flags::display_memory_statistics)
         DisplayHandle(handle);
     return success;
 }
@@ -520,7 +520,7 @@ bool SetMemory(int value,U16 size,long count,long offset,U16 handle)
 
     start = (long)offset * size;
     tomove = (long)count * size;
-    if (debugflag == 10000)
+    if (debugflag == debug_flags::display_memory_statistics)
         if (CheckBounds(start, tomove, handle))
             return false; // out of bounds, don't do it
 
@@ -561,7 +561,7 @@ bool SetMemory(int value,U16 size,long count,long offset,U16 handle)
 diskerror:
         break;
     } // end of switch
-    if (!success && debugflag == 10000)
+    if (!success && debugflag == debug_flags::display_memory_statistics)
         DisplayHandle(handle);
     return success;
 }

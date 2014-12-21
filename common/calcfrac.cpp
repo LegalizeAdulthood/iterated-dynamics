@@ -1128,7 +1128,7 @@ static void perform_worklist()
         switch (stdcalcmode)
         {
         case 's':
-            if (debugflag == 3444)
+            if (debugflag == debug_flags::use_soi_long_double)
                 soi_ldbl();
             else
                 soi();
@@ -1727,7 +1727,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
                     color = (int)(((coloriter - 1) % g_and_color) + 1);
             }
         }
-        if (debugflag != 470)
+        if (debugflag != debug_flags::force_boundary_trace_error)
             if (color <= 0 && stdcalcmode == 'b')
                 color = 1;
         (*plot)(col, row, color);
@@ -1773,7 +1773,7 @@ int calcmandfp()
                     color = (int)(((coloriter - 1) % g_and_color) + 1);
             }
         }
-        if (debugflag != 470)
+        if (debugflag != debug_flags::force_boundary_trace_error)
             if (color == 0 && stdcalcmode == 'b')
                 color = 1;
         (*plot)(col, row, color);
@@ -2526,8 +2526,8 @@ plot_pixel:
                 color = (int)(((coloriter - 1) % g_and_color) + 1);
         }
     }
-    if (debugflag != 470)
-        if (color <= 0 && stdcalcmode == 'b')    // fix BTM bug
+    if (debugflag != debug_flags::force_boundary_trace_error)
+        if (color <= 0 && stdcalcmode == 'b')
             color = 1;
     (*plot)(col, row, color);
 
@@ -3145,7 +3145,7 @@ static int solidguess()
                     || ((plot == putcolor || plot == symplot2) && ixstop+1 == xdots));
 
     // there seems to be a bug in solid guessing at bottom and side
-    if (debugflag != 472)
+    if (debugflag != debug_flags::force_solid_guess_error)
     {
         bottom_guess = false;
         right_guess = false;

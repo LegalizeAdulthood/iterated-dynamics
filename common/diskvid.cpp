@@ -193,7 +193,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
             break;
         }
     }
-    if (debugflag == 4200)
+    if (debugflag == debug_flags::force_disk_min_cache)
     {
         cache_size = CACHEMIN;
     }

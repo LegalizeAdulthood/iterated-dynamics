@@ -1091,7 +1091,7 @@ void set_default_parms()
     if (extra > -1)
         for (int i = 0; i < MAXPARAMS-4; i++)
             param[i+4] = moreparams[extra].paramvalue[i];
-    if (debugflag != 3200)
+    if (debugflag != debug_flags::force_arbitrary_precision_math)
         bf_math = bf_math_type::NONE;
     else if (bf_math != bf_math_type::NONE)
         fractal_floattobf();
@@ -2954,11 +2954,11 @@ void setbailoutformula(bailouts test)
     {
     case bailouts::Mod:
     default:
-        if (debugflag != 72)     // Fast 287 math
+        if (debugflag != debug_flags::prevent_287_math)
             floatbailout = asmfpMODbailout;
         else
             floatbailout = fpMODbailout;
-        if (debugflag != 8088)    // Fast 386 math
+        if (debugflag != debug_flags::prevent_386_math)
             longbailout = asm386lMODbailout;
         else
             longbailout = asmlMODbailout;
@@ -2967,11 +2967,11 @@ void setbailoutformula(bailouts test)
         break;
 
     case bailouts::Real:
-        if (debugflag != 72)     // Fast 287 math
+        if (debugflag != debug_flags::prevent_287_math)
             floatbailout = asmfpREALbailout;
         else
             floatbailout = fpREALbailout;
-        if (debugflag != 8088)    // Fast 386 math
+        if (debugflag != debug_flags::prevent_386_math)
             longbailout = asm386lREALbailout;
         else
             longbailout = asmlREALbailout;
@@ -2980,11 +2980,11 @@ void setbailoutformula(bailouts test)
         break;
 
     case bailouts::Imag:
-        if (debugflag != 72)     // Fast 287 math
+        if (debugflag != debug_flags::prevent_287_math)
             floatbailout = asmfpIMAGbailout;
         else
             floatbailout = fpIMAGbailout;
-        if (debugflag != 8088)    // Fast 386 math
+        if (debugflag != debug_flags::prevent_386_math)
             longbailout = asm386lIMAGbailout;
         else
             longbailout = asmlIMAGbailout;
@@ -2993,11 +2993,11 @@ void setbailoutformula(bailouts test)
         break;
 
     case bailouts::Or:
-        if (debugflag != 72)     // Fast 287 math
+        if (debugflag != debug_flags::prevent_287_math)
             floatbailout = asmfpORbailout;
         else
             floatbailout = fpORbailout;
-        if (debugflag != 8088)    // Fast 386 math
+        if (debugflag != debug_flags::prevent_386_math)
             longbailout = asm386lORbailout;
         else
             longbailout = asmlORbailout;
@@ -3006,11 +3006,11 @@ void setbailoutformula(bailouts test)
         break;
 
     case bailouts::And:
-        if (debugflag != 72)     // Fast 287 math
+        if (debugflag != debug_flags::prevent_287_math)
             floatbailout = asmfpANDbailout;
         else
             floatbailout = fpANDbailout;
-        if (debugflag != 8088)    // Fast 386 math
+        if (debugflag != debug_flags::prevent_386_math)
             longbailout = asm386lANDbailout;
         else
             longbailout = asmlANDbailout;
@@ -3019,11 +3019,11 @@ void setbailoutformula(bailouts test)
         break;
 
     case bailouts::Manh:
-        if (debugflag != 72)     // Fast 287 math
+        if (debugflag != debug_flags::prevent_287_math)
             floatbailout = asmfpMANHbailout;
         else
             floatbailout = fpMANHbailout;
-        if (debugflag != 8088)    // Fast 386 math
+        if (debugflag != debug_flags::prevent_386_math)
             longbailout = asm386lMANHbailout;
         else
             longbailout = asmlMANHbailout;
@@ -3032,11 +3032,11 @@ void setbailoutformula(bailouts test)
         break;
 
     case bailouts::Manr:
-        if (debugflag != 72)     // Fast 287 math
+        if (debugflag != debug_flags::prevent_287_math)
             floatbailout = asmfpMANRbailout;
         else
             floatbailout = fpMANRbailout;
-        if (debugflag != 8088)    // Fast 386 math
+        if (debugflag != debug_flags::prevent_386_math)
             longbailout = asm386lMANRbailout;
         else
             longbailout = asmlMANRbailout;

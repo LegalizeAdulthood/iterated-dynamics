@@ -17,6 +17,7 @@
     (203) 276-9721
 */
 #include <algorithm>
+#include <cassert>
 #include <iterator>
 #include <string>
 
@@ -3307,7 +3308,7 @@ CASE_NUM:
 
 void is_complex_constant(FILE * openfile, token_st * tok)
 {
-    // should test to make sure tok->token_str[0] == '('
+    assert(tok->token_str[0] == '(');
     token_st temp_tok;
     long filepos;
     int c;
@@ -3318,7 +3319,7 @@ void is_complex_constant(FILE * openfile, token_st * tok)
     tok->token_str[1] = (char) 0;  // so we can concatenate later
 
     filepos = ftell(openfile);
-    if (debugflag == 96)
+    if (debugflag == debug_flags::write_formula_debug_information)
     {
         debug_token = fopen("frmconst.txt","at");
     }
@@ -3708,7 +3709,7 @@ int frm_get_param_stuff(char * Name)
         return 0;
     }
 
-    if (debugflag == 96)
+    if (debugflag == debug_flags::write_formula_debug_information)
     {
         debug_token = fopen("frmtokens.txt","at");
         if (debug_token != nullptr)
@@ -3938,7 +3939,7 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
         return nullptr;
     }
 
-    if (debugflag == 96)
+    if (debugflag == debug_flags::write_formula_debug_information)
     {
         debug_fp = fopen("debugfrm.txt","at");
         if (debug_fp != nullptr)
@@ -4080,7 +4081,7 @@ bool fpFormulaSetup()
 #if !defined(XFRACT) && !defined(_WIN32)
     MathType = D_MATH;
     bool RunFormRes = !RunForm(FormName, false); // RunForm() returns true for failure
-    if (RunFormRes && fpu >=387 && debugflag != 90 && (orbitsave&2) == 0
+    if (RunFormRes && fpu >=387 && debugflag != debug_flags::force_standard_fractal && (orbitsave&2) == 0
             && !Randomized)
         return CvtStk() != 0; // run fast assembler code in parsera.asm
     return RunFormRes;

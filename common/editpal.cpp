@@ -2008,7 +2008,7 @@ static void PalTable__SetCurr(PalTable *me, int which, int curr)
 
 static bool PalTable__MemoryAlloc(PalTable *me, long size)
 {
-    if (debugflag == 420)
+    if (debugflag == debug_flags::force_memory_from_disk)
     {
         me->stored_at = NOWHERE;
         return false;   // can't do it

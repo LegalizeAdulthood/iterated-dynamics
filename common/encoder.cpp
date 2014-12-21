@@ -162,7 +162,7 @@ restart:
 
     busy = true;
 
-    if (debugflag != 200)
+    if (debugflag != debug_flags::benchmark_encoder)
         interrupted = encoder() ? 1 : 0;
     else
         interrupted = timer(2, nullptr);     // invoke encoder() via timer

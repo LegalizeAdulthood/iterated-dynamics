@@ -680,7 +680,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
                 put_parm(" %s=%.1f", "params",param[0]);
             else
             {
-                if (debugflag == 750)
+                if (debugflag == debug_flags::force_long_double_param_output)
                     put_parm(" %s=%.17Lg", "params",(long double)param[0]);
                 else
                     put_parm(" %s=%.17g", "params",param[0]);
@@ -690,7 +690,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
                     put_parm("/%.1f",param[j]);
                 else
                 {
-                    if (debugflag == 750)
+                    if (debugflag == debug_flags::force_long_double_param_output)
                         put_parm("/%.17Lg",(long double)param[j]);
                     else
                         put_parm("/%.17g",param[j]);
@@ -1099,7 +1099,7 @@ docolors:
                 put_parm(buf);
                 if (++curc >= maxcolor)      // quit if done last color
                     break;
-                if (debugflag == 920)  // lossless compression
+                if (debugflag == debug_flags::force_lossless_colormap)  // lossless compression
                     continue;
                 /* Next a P Branderhorst special, a tricky scan for smooth-shaded
                    ranges which can be written as <nn> to compress .par file entry.
@@ -1116,19 +1116,27 @@ docolors:
                 }
                 scanc = curc;
                 int k;
-                while (scanc < maxcolor) {   // scan while same diff to next
+                while (scanc < maxcolor)
+                {
+                    // scan while same diff to next
                     int i = scanc - curc;
                     if (i > 3) // check spans up to 4 steps
                         i = 3;
-                    for (k = 0; k <= i; ++k) {
+                    for (k = 0; k <= i; ++k)
+                    {
                         int j;
-                        for (j = 0; j < 3; ++j) { // check pattern of chg per color
-                            // Sylvie Gallet's fix
-                            if (debugflag != 910 && scanc > (curc+4) && scanc < maxcolor-5)
+                        for (j = 0; j < 3; ++j)
+                        {
+                            // check pattern of chg per color
+                            if (debugflag != debug_flags::allow_large_colormap_changes
+                                && scanc > (curc+4) && scanc < maxcolor-5)
+                            {
                                 if (abs(2*g_dac_box[scanc][j] - g_dac_box[scanc-5][j]
                                         - g_dac_box[scanc+5][j]) >= 2)
+                                {
                                     break;
-                            // end Sylvie's fix
+                                }
+                            }
                             delta = (int)g_dac_box[scanc][j] - (int)g_dac_box[scanc-k-1][j];
                             if (k == scanc - curc)
                             {
@@ -1282,8 +1290,8 @@ static int getprec(double a,double b,double c)
     if (temp < diff)
         diff = temp;
     digits = 7;
-    if (debugflag >= 700 && debugflag < 720)
-        digits =  debugflag - 700;
+    if (debugflag >= debug_flags::force_precision_0_digits && debugflag < debug_flags::force_precision_20_digits)
+        digits = debugflag - debug_flags::force_precision_0_digits;
     while (diff < 1.0 && digits <= DBL_DIG+1) {
         diff *= 10;
         ++digits;

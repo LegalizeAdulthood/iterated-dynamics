@@ -82,7 +82,7 @@ int     distestwidth = 0;
 bool    fract_overwrite = false;// true if file overwrite allowed
 int     soundflag = 0;          // sound control bitfield... see sound.c for useage
 int     basehertz = 0;          // sound=x/y/x hertz value
-int     debugflag = 0;          // internal use only - you didn't see this
+int     debugflag = debug_flags::none; // internal use only - you didn't see this
 bool    timerflag = false;      // you didn't see this, either
 int     cyclelimit = 0;         // color-rotator upper limit
 int     inside = 0;             // inside color: 1=blue
@@ -297,7 +297,7 @@ int cmdfiles(int argc,char **argv)
 
     init_msg("", nullptr, cmd_file::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
 
-    if (debugflag != 110)
+    if (debugflag != debug_flags::allow_init_commands_anytime)
         first_init = false;
 
     if (colorpreloaded && showfile == 0) // PAR reads a file and sets color
@@ -375,7 +375,7 @@ static void initvars_restart()          // <ins> key init
     zscroll = true;                     // relaxed screen scrolling
     orbit_delay = 0;                    // full speed orbits
     orbit_interval = 1;                 // plot all orbits
-    debugflag = 0;                      // debugging flag(s) are off
+    debugflag = debug_flags::none;      // debugging flag(s) are off
     timerflag = false;                  // timer flags are off
     strcpy(FormFileName, "fractint.frm"); // default formula file
     FormName[0] = 0;
@@ -899,7 +899,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
     }
 
-    if (mode != cmd_file::AT_AFTER_STARTUP || debugflag == 110)
+    if (mode != cmd_file::AT_AFTER_STARTUP || debugflag == debug_flags::allow_init_commands_anytime)
     {
         // these commands are allowed only at startup
         if (strcmp(variable, "batch") == 0)     // batch=?
@@ -1999,7 +1999,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         initcorners = true;
         // good first approx, but dec could be too big
         dec = get_max_curarg_len(floatvalstr, totparms) + 1;
-        if ((dec > DBL_DIG+1 || debugflag == 3200) && debugflag != 3400)
+        if ((dec > DBL_DIG+1 || debugflag == debug_flags::force_arbitrary_precision_math)
+            && debugflag != debug_flags::prevent_arbitrary_precision_math)
         {
             bf_math_type old_bf_math = bf_math;
             if (bf_math == bf_math_type::NONE || dec > decimals)
@@ -2187,7 +2188,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
         dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
 
-        if ((dec <= DBL_DIG+1 && debugflag != 3200) || debugflag == 3400) { // rough estimate that double is OK
+        if ((dec <= DBL_DIG+1 && debugflag != debug_flags::force_arbitrary_precision_math)
+            || debugflag == debug_flags::prevent_arbitrary_precision_math)
+        {
+            // rough estimate that double is OK
             Xctr = floatval[0];
             Yctr = floatval[1];
             Xmagfactor = 1;
@@ -2205,7 +2209,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
             return 1;
         }
-        else { // use arbitrary precision
+        else
+        {
+            // use arbitrary precision
             int saved;
             initcorners = true;
             bf_math_type old_bf_math = bf_math;
@@ -2550,8 +2556,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (strcmp(variable, "debugflag") == 0
             || strcmp(variable, "debug") == 0) {        // internal use only
         debugflag = numval;
-        timerflag = (debugflag & 1) != 0;       // separate timer flag
-        debugflag &= ~1;
+        timerflag = (debugflag & debug_flags::benchmark_timer) != 0;       // separate timer flag
+        debugflag &= ~debug_flags::benchmark_timer;
         return 0;
     }
 

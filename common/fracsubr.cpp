@@ -145,7 +145,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     long xytemp = xdots + ydots;
     if ((!usr_floatflag && (xytemp*sizeof(long) > 32768)) ||
             (usr_floatflag && (xytemp*sizeof(double) > 32768)) ||
-            debugflag == 3800)
+            debugflag == debug_flags::prevent_coordinate_grid)
     {
         use_grid = false;
         floatflag = true;
@@ -174,7 +174,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     if (bf_math != bf_math_type::NONE)
     {
         int gotprec = getprecbf(CURRENTREZ);
-        if ((gotprec <= DBL_DIG+1 && debugflag != 3200) || math_tol[1] >= 1.0)
+        if ((gotprec <= DBL_DIG+1 && debugflag != debug_flags::force_arbitrary_precision_math) || math_tol[1] >= 1.0)
         {
             bfcornerstofloat();
             bf_math = bf_math_type::NONE;
@@ -182,28 +182,28 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         else
             init_bf_dec(gotprec);
     }
-    else if ((fractype == MANDEL || fractype == MANDELFP) && debugflag == 3200)
+    else if ((fractype == MANDEL || fractype == MANDELFP) && debugflag == debug_flags::force_arbitrary_precision_math)
     {
         fractype = MANDELFP;
         curfractalspecific = &fractalspecific[MANDELFP];
         fractal_floattobf();
         usr_floatflag = true;
     }
-    else if ((fractype == JULIA || fractype == JULIAFP) && debugflag == 3200)
+    else if ((fractype == JULIA || fractype == JULIAFP) && debugflag == debug_flags::force_arbitrary_precision_math)
     {
         fractype = JULIAFP;
         curfractalspecific = &fractalspecific[JULIAFP];
         fractal_floattobf();
         usr_floatflag = true;
     }
-    else if ((fractype == LMANDELZPOWER || fractype == FPMANDELZPOWER) && debugflag == 3200)
+    else if ((fractype == LMANDELZPOWER || fractype == FPMANDELZPOWER) && debugflag == debug_flags::force_arbitrary_precision_math)
     {
         fractype = FPMANDELZPOWER;
         curfractalspecific = &fractalspecific[FPMANDELZPOWER];
         fractal_floattobf();
         usr_floatflag = true;
     }
-    else if ((fractype == LJULIAZPOWER || fractype == FPJULIAZPOWER) && debugflag == 3200)
+    else if ((fractype == LJULIAZPOWER || fractype == FPJULIAZPOWER) && debugflag == debug_flags::force_arbitrary_precision_math)
     {
         fractype = FPJULIAZPOWER;
         curfractalspecific = &fractalspecific[FPJULIAZPOWER];
@@ -344,7 +344,7 @@ init_restart:
                 && biomorph == -1                         // and not biomorphing
                 && rqlim <= 4.0                           // and bailout not too high
                 && (outside > -2 || outside < -6)         // and no funny outside stuff
-                && debugflag != 1234                      // and not debugging
+                && debugflag != debug_flags::force_smaller_bitshift // and not debugging
                 && closeprox <= 2.0                       // and closeprox not too large
                 && bailoutest == bailouts::Mod)         // and bailout test = mod
             bitshift = FUDGEFACTOR;                  // use the larger bitshift
@@ -1044,7 +1044,7 @@ static int ratio_bad(double actual, double desired)
         return (1);
     else if (tol >= 1.0)
         return (0);
-    if (desired != 0 && debugflag != 3400)
+    if (desired != 0 && debugflag != debug_flags::prevent_arbitrary_precision_math)
     {
         double ftemp = actual / desired;
         if (ftemp < (1.0-tol) || ftemp > (1.0+tol))
@@ -1303,7 +1303,7 @@ static void sleepms_new(long ms)
 
 void sleepms(long ms)
 {
-    if (debugflag == 4020)
+    if (debugflag == debug_flags::force_old_sleep)
         sleepms_old(ms);
     else
         sleepms_new(ms);
@@ -1317,7 +1317,7 @@ void sleepms(long ms)
 static uclock_t next_time[MAX_INDEX];
 void wait_until(int index, uclock_t wait_time)
 {
-    if (debugflag == 4020)
+    if (debugflag == debug_flags::force_old_sleep)
         sleepms_old(wait_time);
     else
     {
@@ -1431,7 +1431,8 @@ static void plotdorbit(double dx, double dy, int color)
         putcolor(i,j,color);
     sxoffs = save_sxoffs;
     syoffs = save_syoffs;
-    if (debugflag == 4030) {
+    if (debugflag == debug_flags::force_scaled_sound_formula)
+    {
         if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) // sound = x
             w_snd((int)(i*1000/xdots+basehertz));
         else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) // sound = y or z
@@ -1441,7 +1442,8 @@ static void plotdorbit(double dx, double dy, int color)
             wait_until(0,orbit_delay);
         }
     }
-    else {
+    else
+    {
         if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) // sound = x
             w_snd((int)(i+basehertz));
         else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) // sound = y

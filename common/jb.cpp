@@ -391,7 +391,7 @@ Std4dFractal()
     {
         if (c_exp < 1)
             c_exp = 1;
-        if (param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
+        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
             fractalspecific[neworbittype].orbitcalc = longZpowerFractal;
         else
             fractalspecific[neworbittype].orbitcalc = longCmplxZpowerFractal;
@@ -431,7 +431,7 @@ Std4dfpFractal()
 
     if (neworbittype == FPJULIAZPOWER)
     {
-        if (param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
+        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
             fractalspecific[neworbittype].orbitcalc = floatZpowerFractal;
         else
             fractalspecific[neworbittype].orbitcalc = floatCmplxZpowerFractal;

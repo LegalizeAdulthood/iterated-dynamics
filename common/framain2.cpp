@@ -270,11 +270,11 @@ big_while_loop_result big_while_loop(bool *kbdmore, bool *stacked, bool resumefl
             }
             if (filetype == 0)
             {
-                if (debugflag == 2224)
+                if (debugflag == debug_flags::show_float_flag)
                 {
                     char msg[MSGLEN];
                     sprintf(msg, "floatflag=%d", usr_floatflag ? 1 : 0);
-                    stopmsg(STOPMSG_NO_BUZZER, (char *)msg);
+                    stopmsg(STOPMSG_NO_BUZZER, msg);
                 }
                 i = funny_glasses_call(gifview);
             }
@@ -624,7 +624,7 @@ resumeloop:                             // return here on failed overlays
                 }
                 else if (initbatch == 1 || initbatch == 4)         // save-to-disk
                 {
-                    kbdchar = (debugflag == 50) ? 'r' : 's';
+                    kbdchar = (debugflag == debug_flags::force_disk_restore_not_save) ? 'r' : 's';
                     if (initbatch == 1)
                     {
                         initbatch = 2;
@@ -1263,7 +1263,7 @@ do_3d_transform:
         browsing = false;
         if (*kbdchar == 'r')
         {
-            if (debugflag == 50)
+            if (debugflag == debug_flags::force_disk_restore_not_save)
             {
                 comparegif = true;
                 overlay3d = true;
@@ -1648,7 +1648,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         browsing = false;
         if (*kbdchar == 'r')
         {
-            if (debugflag == 50)
+            if (debugflag == debug_flags::force_disk_restore_not_save)
             {
                 comparegif = true;
                 overlay3d = true;

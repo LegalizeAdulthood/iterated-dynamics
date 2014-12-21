@@ -146,7 +146,8 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 
         // if vector_a cross vector_b is negative
         // then adjust for left-hand coordinate system
-        if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != 4010)
+        if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0
+            && debugflag != debug_flags::allow_negative_cross_product)
         {
             *Skew = -*Skew;
             *Xmagfactor = -*Xmagfactor;
@@ -344,7 +345,8 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 
         // if vector_a cross vector_b is negative
         // then adjust for left-hand coordinate system
-        if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != 4010)
+        if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0
+            && debugflag != debug_flags::allow_negative_cross_product)
         {
             *Skew = -*Skew;
             *Xmagfactor = -*Xmagfactor;

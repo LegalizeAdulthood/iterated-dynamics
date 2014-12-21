@@ -426,7 +426,7 @@ int plasma()
     else
         for (int n = 0; n < 4; n++)
             rnd[n] = rand16();
-    if (debugflag == 3600)
+    if (debugflag == debug_flags::prevent_plasma_random)
         for (int n = 0; n < 4; n++)
             rnd[n] = 1;
 
@@ -1301,7 +1301,7 @@ bool lya_setup()
     filter_cycles = (long)param[2];
     if (filter_cycles == 0)
         filter_cycles = maxit/2;
-    lyaSeedOK = param[1] > 0 && param[1] <= 1 && debugflag != 90;
+    lyaSeedOK = param[1] > 0 && param[1] <= 1 && debugflag != debug_flags::force_standard_fractal;
     lyaLength = 1;
 
     i = (long)param[0];

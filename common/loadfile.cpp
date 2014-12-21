@@ -1182,7 +1182,7 @@ void backwards_v20()
     else
         bad_outside = false;
     if ((fractype == FORMULA || fractype == FFORMULA) &&
-            (save_release < 1900 || debugflag == 94))
+            (save_release < 1900 || debugflag == debug_flags::force_ld_check))
         ldcheck = true;
     else
         ldcheck = false;
