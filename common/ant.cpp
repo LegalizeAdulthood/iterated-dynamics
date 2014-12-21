@@ -374,11 +374,6 @@ void free_ant_storage()
 
 int ant()
 {
-    int maxants, type;
-    int oldhelpmode, rule_len;
-    long maxpts, wait;
-    char rule[MAX_ANTS];
-
     if (xdots != s_last_xdots || ydots != s_last_ydots)
     {
         s_last_xdots = xdots;
@@ -420,13 +415,13 @@ int ant()
     for (int i = 1; i < ydots; i++)
         s_incy[2][i] = i - 1;
     s_incy[2][0] = ydots - 1; // wrap from the bottom of the screen to the top
-    oldhelpmode = helpmode;
+    int const oldhelpmode = helpmode;
     helpmode = ANTCOMMANDS;
-    maxpts = (long) param[1];
-    maxpts = labs(maxpts);
-    wait = abs(orbit_delay);
+    long const maxpts = labs(static_cast<long>(param[1]));
+    long const wait = abs(orbit_delay);
+    char rule[MAX_ANTS];
     sprintf(rule, "%.17g", param[0]);
-    rule_len = (int) strlen(rule);
+    int rule_len = (int) strlen(rule);
     if (rule_len > 1)
     {   // if rule_len == 0 random rule
         for (int i = 0; i < rule_len; i++)
@@ -450,7 +445,7 @@ int ant()
     if (!rflag)
         ++rseed;
 
-    maxants = (int) param[2];
+    int maxants = static_cast<int>(param[2]);
     if (maxants < 1)             // if maxants == 0 maxants random
         maxants = 2 + RANDOM(MAX_ANTS - 2);
     else if (maxants > MAX_ANTS)
@@ -458,15 +453,15 @@ int ant()
         maxants = MAX_ANTS;
         param[2] = MAX_ANTS;
     }
-    type = (int) param[3] - 1;
-    if (type < 0 || type > 1)
+    int type = static_cast<int>(param[3]);
+    if (type < 1 || type > 2)
         type = RANDOM(2);         // if type == 0 choose a random type
     switch (type)
     {
-    case 0:
+    case 1:
         TurkMite1(maxants, rule_len, rule, maxpts, wait);
         break;
-    case 1:
+    case 2:
         TurkMite2(maxants, rule_len, rule, maxpts, wait);
         break;
     }
