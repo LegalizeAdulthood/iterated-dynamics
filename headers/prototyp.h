@@ -153,7 +153,7 @@ extern int froth_per_pixel();
 extern int froth_per_orbit();
 extern bool froth_setup();
 extern int logtable_in_extra_ok();
-extern int find_alternate_math(int type, bf_math_type math);
+extern int find_alternate_math(fractal_type type, bf_math_type math);
 // cmdfiles -- C file prototypes
 extern int cmdfiles(int ,char **);
 extern int load_commands(FILE *);
@@ -257,7 +257,7 @@ extern void w_snd(int);
 extern void snd_time_write();
 extern void close_snd();
 // fractalp -- C file prototypes
-extern bool typehasparm(int type, int parm, char *buf);
+extern bool typehasparm(fractal_type type, int parm, char *buf);
 extern bool paramnotused(int);
 // fractals -- C file prototypes
 extern void FloatPreCalcMagnet2();
@@ -863,8 +863,8 @@ extern int get_fract3d_params();
 extern int get_3d_params();
 extern int prompt_valuestring(char *buf,fullscreenvalues *val);
 extern void setbailoutformula(bailouts);
-extern int find_extra_param(int);
-extern void load_params(int fractype);
+extern int find_extra_param(fractal_type type);
+extern void load_params(fractal_type fractype);
 extern bool check_orbit_name(char *);
 struct entryinfo;
 extern int scan_entries(FILE *infile, struct entryinfo *ch, char *itemname);

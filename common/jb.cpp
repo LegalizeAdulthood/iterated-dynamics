@@ -57,7 +57,7 @@ static long eyes;
 #endif
 int juli3Dmode = 0;
 
-int neworbittype = JULIA;
+fractal_type neworbittype = fractal_type::JULIA;
 
 bool
 JulibrotSetup()
@@ -97,15 +97,15 @@ JulibrotSetup()
     bbase = 128;
 
 #ifndef XFRACT
-    if (fractalspecific[fractype].isinteger > 0)
+    if (fractalspecific[static_cast<int>(fractype)].isinteger > 0)
     {
         long jxmin, jxmax, jymin, jymax, mxmax, mymax;
-        if (fractalspecific[neworbittype].isinteger == 0)
+        if (fractalspecific[static_cast<int>(neworbittype)].isinteger == 0)
         {
             stopmsg(STOPMSG_NONE, "Julibrot orbit type isinteger mismatch");
         }
-        if (fractalspecific[neworbittype].isinteger > 1)
-            bitshift = fractalspecific[neworbittype].isinteger;
+        if (fractalspecific[static_cast<int>(neworbittype)].isinteger > 1)
+            bitshift = fractalspecific[static_cast<int>(neworbittype)].isinteger;
         fg = (double)(1L << bitshift);
         fg16 = (double)(1L << 16);
         jxmin = (long)(xxmin * fg);
@@ -241,7 +241,7 @@ zline(long x, long y)
         ltempsqrx = multiply(lold.x, lold.x, bitshift);
         ltempsqry = multiply(lold.y, lold.y, bitshift);
         for (n = 0; n < maxit; n++)
-            if (fractalspecific[neworbittype].orbitcalc())
+            if (fractalspecific[static_cast<int>(neworbittype)].orbitcalc())
                 break;
         if (n == maxit)
         {
@@ -309,7 +309,7 @@ zlinefp(double x, double y)
     for (zpixel = 0; zpixel < zdots; zpixel++)
     {
         // Special initialization for Mandelbrot types
-        if ((neworbittype == QUATFP || neworbittype == HYPERCMPLXFP)
+        if ((neworbittype == fractal_type::QUATFP || neworbittype == fractal_type::HYPERCMPLXFP)
                 && save_release > 2002)
         {
             old.x = 0.0;
@@ -347,7 +347,7 @@ zlinefp(double x, double y)
         tempsqry = sqr(old.y);
 
         for (n = 0; n < maxit; n++)
-            if (fractalspecific[neworbittype].orbitcalc())
+            if (fractalspecific[static_cast<int>(neworbittype)].orbitcalc())
                 break;
         if (n == maxit)
         {
@@ -387,14 +387,14 @@ Std4dFractal()
 {
     long x;
     c_exp = (int)param[2];
-    if (neworbittype == LJULIAZPOWER)
+    if (neworbittype == fractal_type::LJULIAZPOWER)
     {
         if (c_exp < 1)
             c_exp = 1;
         if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
-            fractalspecific[neworbittype].orbitcalc = longZpowerFractal;
+            fractalspecific[static_cast<int>(neworbittype)].orbitcalc = longZpowerFractal;
         else
-            fractalspecific[neworbittype].orbitcalc = longCmplxZpowerFractal;
+            fractalspecific[static_cast<int>(neworbittype)].orbitcalc = longCmplxZpowerFractal;
     }
 
     long y = 0;
@@ -429,12 +429,12 @@ Std4dfpFractal()
     double x;
     c_exp = (int)param[2];
 
-    if (neworbittype == FPJULIAZPOWER)
+    if (neworbittype == fractal_type::FPJULIAZPOWER)
     {
         if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
-            fractalspecific[neworbittype].orbitcalc = floatZpowerFractal;
+            fractalspecific[static_cast<int>(neworbittype)].orbitcalc = floatZpowerFractal;
         else
-            fractalspecific[neworbittype].orbitcalc = floatCmplxZpowerFractal;
+            fractalspecific[static_cast<int>(neworbittype)].orbitcalc = floatCmplxZpowerFractal;
         get_julia_attractor(param[0], param[1]);  // another attractor?
     }
 

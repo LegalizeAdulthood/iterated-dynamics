@@ -23,201 +23,207 @@ enum class trig_fn
 
 extern trig_fn trigndx[];
 
-// These MUST match the corresponding fractalspecific record in fractals.c
-#define NOFRACTAL               -1
-#define MANDEL                   0
-#define JULIA                    1
-#define NEWTBASIN                2
-#define LAMBDA                   3
-#define MANDELFP                 4
-#define NEWTON                   5
-#define JULIAFP                  6
-#define PLASMA                   7
-#define LAMBDASINE               8 // obsolete
-#define MANDELTRIGFP             8
-#define LAMBDACOS                9 // obsolete
-#define MANOWARFP                9
-#define LAMBDAEXP               10 // obsolete
-#define MANOWAR                 10
-#define TEST                    11
-#define SIERPINSKI              12
-#define BARNSLEYM1              13
-#define BARNSLEYJ1              14
-#define BARNSLEYM2              15
-#define BARNSLEYJ2              16
-#define MANDELSINE              17 // obsolete
-#define SQRTRIG                 17
-#define MANDELCOS               18 // obsolete
-#define SQRTRIGFP               18
-#define MANDELEXP               19 // obsolete
-#define TRIGPLUSTRIG            19
-#define MANDELLAMBDA            20
-#define MARKSMANDEL             21
-#define MARKSJULIA              22
-#define UNITY                   23
-#define MANDEL4                 24
-#define JULIA4                  25
-#define IFS                     26
-#define IFS3D                   27
-#define BARNSLEYM3              28
-#define BARNSLEYJ3              29
-#define DEMM                    30 // obsolete
-#define TRIGSQR                 30
-#define DEMJ                    31 // obsolete
-#define TRIGSQRFP               31
-#define BIFURCATION             32
-#define MANDELSINH              33 // obsolete
-#define TRIGPLUSTRIGFP          33
-#define LAMBDASINH              34 // obsolete
-#define TRIGXTRIG               34
-#define MANDELCOSH              35 // obsolete
-#define TRIGXTRIGFP             35
-#define LAMBDACOSH              36 // obsolete
-#define SQR1OVERTRIG            36
-#define LMANDELSINE             37 // obsolete
-#define SQR1OVERTRIGFP          37
-#define LLAMBDASINE             38 // obsolete
-#define ZXTRIGPLUSZ             38
-#define LMANDELCOS              39 // obsolete
-#define ZXTRIGPLUSZFP           39
-#define LLAMBDACOS              40 // obsolete
-#define KAMFP                   40
-#define LMANDELSINH             41 // obsolete
-#define KAM                     41
-#define LLAMBDASINH             42 // obsolete
-#define KAM3DFP                 42
-#define LMANDELCOSH             43 // obsolete
-#define KAM3D                   43
-#define LLAMBDACOSH             44 // obsolete
-#define LAMBDATRIG              44
-#define LMANTRIGPLUSZSQRD       45
-#define LJULTRIGPLUSZSQRD       46
-#define FPMANTRIGPLUSZSQRD      47
-#define FPJULTRIGPLUSZSQRD      48
-#define LMANDELEXP              49 // obsolete
-#define LAMBDATRIGFP            49
-#define LLAMBDAEXP              50 // obsolete
-#define MANDELTRIG              50
-#define LMANDELZPOWER           51
-#define LJULIAZPOWER            52
-#define FPMANDELZPOWER          53
-#define FPJULIAZPOWER           54
-#define FPMANZTOZPLUSZPWR       55
-#define FPJULZTOZPLUSZPWR       56
-#define LMANTRIGPLUSEXP         57
-#define LJULTRIGPLUSEXP         58
-#define FPMANTRIGPLUSEXP        59
-#define FPJULTRIGPLUSEXP        60
-#define FPPOPCORN               61
-#define LPOPCORN                62
-#define FPLORENZ                63
-#define LLORENZ                 64
-#define LLORENZ3D               65
-#define MPNEWTON                66
-#define MPNEWTBASIN             67
-#define COMPLEXNEWTON           68
-#define COMPLEXBASIN            69
-#define COMPLEXMARKSMAND        70
-#define COMPLEXMARKSJUL         71
-#define FORMULA                 72
-#define FFORMULA                73
-#define SIERPINSKIFP            74
-#define LAMBDAFP                75
-#define BARNSLEYM1FP            76
-#define BARNSLEYJ1FP            77
-#define BARNSLEYM2FP            78
-#define BARNSLEYJ2FP            79
-#define BARNSLEYM3FP            80
-#define BARNSLEYJ3FP            81
-#define MANDELLAMBDAFP          82
-#define JULIBROT                83
-#define FPLORENZ3D              84
-#define LROSSLER                85
-#define FPROSSLER               86
-#define LHENON                  87
-#define FPHENON                 88
-#define FPPICKOVER              89
-#define FPGINGERBREAD           90
-#define DIFFUSION               91
-#define UNITYFP                 92
-#define SPIDERFP                93
-#define SPIDER                  94
-#define TETRATEFP               95
-#define MAGNET1M                96
-#define MAGNET1J                97
-#define MAGNET2M                98
-#define MAGNET2J                99
-#define LBIFURCATION           100
-#define LBIFLAMBDA             101
-#define BIFLAMBDA              102
-#define BIFADSINPI             103
-#define BIFEQSINPI             104
-#define FPPOPCORNJUL           105
-#define LPOPCORNJUL            106
-#define LSYSTEM                107
-#define MANOWARJFP             108
-#define MANOWARJ               109
-#define FNPLUSFNPIXFP          110
-#define FNPLUSFNPIXLONG        111
-#define MARKSMANDELPWRFP       112
-#define MARKSMANDELPWR         113
-#define TIMSERRORFP            114
-#define TIMSERROR              115
-#define LBIFEQSINPI            116
-#define LBIFADSINPI            117
-#define BIFSTEWART             118
-#define LBIFSTEWART            119
-#define FPHOPALONG             120
-#define FPCIRCLE               121
-#define FPMARTIN               122
-#define LYAPUNOV               123
-#define FPLORENZ3D1            124
-#define FPLORENZ3D3            125
-#define FPLORENZ3D4            126
-#define LLAMBDAFNFN            127
-#define FPLAMBDAFNFN           128
-#define LJULFNFN               129
-#define FPJULFNFN              130
-#define LMANLAMFNFN            131
-#define FPMANLAMFNFN           132
-#define LMANFNFN               133
-#define FPMANFNFN              134
-#define LBIFMAY                135
-#define BIFMAY                 136
-#define MPHALLEY               137
-#define HALLEY                 138
-#define DYNAMICFP              139
-#define QUATFP                 140
-#define QUATJULFP              141
-#define CELLULAR               142
-#define JULIBROTFP             143
-#define INVERSEJULIA           144
-#define INVERSEJULIAFP         145
-#define MANDELCLOUD            146
-#define PHOENIX                147
-#define PHOENIXFP              148
-#define MANDPHOENIX            149
-#define MANDPHOENIXFP          150
-#define HYPERCMPLXFP           151
-#define HYPERCMPLXJFP          152
-#define FROTH                  153
-#define FROTHFP                154
-#define MANDEL4FP              155
-#define JULIA4FP               156
-#define MARKSMANDELFP          157
-#define MARKSJULIAFP           158
-#define ICON                   159
-#define ICON3D                 160
-#define PHOENIXCPLX            161
-#define PHOENIXFPCPLX          162
-#define MANDPHOENIXCPLX        163
-#define MANDPHOENIXFPCPLX      164
-#define ANT                    165
-#define CHIP                   166
-#define QUADRUPTWO             167
-#define THREEPLY               168
-#define VL                     169
-#define ESCHER                 170
-#define LATOO                  171
-#define MANDELBROTMIX4         172
+// These MUST match the corresponding indices into the fractalspecific array
+enum class fractal_type
+{
+    NOFRACTAL                   = -1,
+    MANDEL                      = 0,
+    JULIA                       = 1,
+    NEWTBASIN                   = 2,
+    LAMBDA                      = 3,
+    MANDELFP                    = 4,
+    NEWTON                      = 5,
+    JULIAFP                     = 6,
+    PLASMA                      = 7,
+    LAMBDASINE                  = 8, // obsolete
+    MANDELTRIGFP                = 8,
+    LAMBDACOS                   = 9, // obsolete
+    MANOWARFP                   = 9,
+    LAMBDAEXP                   = 10, // obsolete
+    MANOWAR                     = 10,
+    TEST                        = 11,
+    SIERPINSKI                  = 12,
+    BARNSLEYM1                  = 13,
+    BARNSLEYJ1                  = 14,
+    BARNSLEYM2                  = 15,
+    BARNSLEYJ2                  = 16,
+    MANDELSINE                  = 17, // obsolete
+    SQRTRIG                     = 17,
+    MANDELCOS                   = 18, // obsolete
+    SQRTRIGFP                   = 18,
+    MANDELEXP                   = 19, // obsolete
+    TRIGPLUSTRIG                = 19,
+    MANDELLAMBDA                = 20,
+    MARKSMANDEL                 = 21,
+    MARKSJULIA                  = 22,
+    UNITY                       = 23,
+    MANDEL4                     = 24,
+    JULIA4                      = 25,
+    IFS                         = 26,
+    IFS3D                       = 27,
+    BARNSLEYM3                  = 28,
+    BARNSLEYJ3                  = 29,
+    DEMM                        = 30, // obsolete
+    TRIGSQR                     = 30,
+    DEMJ                        = 31, // obsolete
+    TRIGSQRFP                   = 31,
+    BIFURCATION                 = 32,
+    MANDELSINH                  = 33, // obsolete
+    TRIGPLUSTRIGFP              = 33,
+    LAMBDASINH                  = 34, // obsolete
+    TRIGXTRIG                   = 34,
+    MANDELCOSH                  = 35, // obsolete
+    TRIGXTRIGFP                 = 35,
+    LAMBDACOSH                  = 36, // obsolete
+    SQR1OVERTRIG                = 36,
+    LMANDELSINE                 = 37, // obsolete
+    SQR1OVERTRIGFP              = 37,
+    LLAMBDASINE                 = 38, // obsolete
+    ZXTRIGPLUSZ                 = 38,
+    LMANDELCOS                  = 39, // obsolete
+    ZXTRIGPLUSZFP               = 39,
+    LLAMBDACOS                  = 40, // obsolete
+    KAMFP                       = 40,
+    LMANDELSINH                 = 41, // obsolete
+    KAM                         = 41,
+    LLAMBDASINH                 = 42, // obsolete
+    KAM3DFP                     = 42,
+    LMANDELCOSH                 = 43, // obsolete
+    KAM3D                       = 43,
+    LLAMBDACOSH                 = 44, // obsolete
+    LAMBDATRIG                  = 44,
+    LMANTRIGPLUSZSQRD           = 45,
+    LJULTRIGPLUSZSQRD           = 46,
+    FPMANTRIGPLUSZSQRD          = 47,
+    FPJULTRIGPLUSZSQRD          = 48,
+    LMANDELEXP                  = 49, // obsolete
+    LAMBDATRIGFP                = 49,
+    LLAMBDAEXP                  = 50, // obsolete
+    MANDELTRIG                  = 50,
+    LMANDELZPOWER               = 51,
+    LJULIAZPOWER                = 52,
+    FPMANDELZPOWER              = 53,
+    FPJULIAZPOWER               = 54,
+    FPMANZTOZPLUSZPWR           = 55,
+    FPJULZTOZPLUSZPWR           = 56,
+    LMANTRIGPLUSEXP             = 57,
+    LJULTRIGPLUSEXP             = 58,
+    FPMANTRIGPLUSEXP            = 59,
+    FPJULTRIGPLUSEXP            = 60,
+    FPPOPCORN                   = 61,
+    LPOPCORN                    = 62,
+    FPLORENZ                    = 63,
+    LLORENZ                     = 64,
+    LLORENZ3D                   = 65,
+    MPNEWTON                    = 66,
+    MPNEWTBASIN                 = 67,
+    COMPLEXNEWTON               = 68,
+    COMPLEXBASIN                = 69,
+    COMPLEXMARKSMAND            = 70,
+    COMPLEXMARKSJUL             = 71,
+    FORMULA                     = 72,
+    FFORMULA                    = 73,
+    SIERPINSKIFP                = 74,
+    LAMBDAFP                    = 75,
+    BARNSLEYM1FP                = 76,
+    BARNSLEYJ1FP                = 77,
+    BARNSLEYM2FP                = 78,
+    BARNSLEYJ2FP                = 79,
+    BARNSLEYM3FP                = 80,
+    BARNSLEYJ3FP                = 81,
+    MANDELLAMBDAFP              = 82,
+    JULIBROT                    = 83,
+    FPLORENZ3D                  = 84,
+    LROSSLER                    = 85,
+    FPROSSLER                   = 86,
+    LHENON                      = 87,
+    FPHENON                     = 88,
+    FPPICKOVER                  = 89,
+    FPGINGERBREAD               = 90,
+    DIFFUSION                   = 91,
+    UNITYFP                     = 92,
+    SPIDERFP                    = 93,
+    SPIDER                      = 94,
+    TETRATEFP                   = 95,
+    MAGNET1M                    = 96,
+    MAGNET1J                    = 97,
+    MAGNET2M                    = 98,
+    MAGNET2J                    = 99,
+    LBIFURCATION                = 100,
+    LBIFLAMBDA                  = 101,
+    BIFLAMBDA                   = 102,
+    BIFADSINPI                  = 103,
+    BIFEQSINPI                  = 104,
+    FPPOPCORNJUL                = 105,
+    LPOPCORNJUL                 = 106,
+    LSYSTEM                     = 107,
+    MANOWARJFP                  = 108,
+    MANOWARJ                    = 109,
+    FNPLUSFNPIXFP               = 110,
+    FNPLUSFNPIXLONG             = 111,
+    MARKSMANDELPWRFP            = 112,
+    MARKSMANDELPWR              = 113,
+    TIMSERRORFP                 = 114,
+    TIMSERROR                   = 115,
+    LBIFEQSINPI                 = 116,
+    LBIFADSINPI                 = 117,
+    BIFSTEWART                  = 118,
+    LBIFSTEWART                 = 119,
+    FPHOPALONG                  = 120,
+    FPCIRCLE                    = 121,
+    FPMARTIN                    = 122,
+    LYAPUNOV                    = 123,
+    FPLORENZ3D1                 = 124,
+    FPLORENZ3D3                 = 125,
+    FPLORENZ3D4                 = 126,
+    LLAMBDAFNFN                 = 127,
+    FPLAMBDAFNFN                = 128,
+    LJULFNFN                    = 129,
+    FPJULFNFN                   = 130,
+    LMANLAMFNFN                 = 131,
+    FPMANLAMFNFN                = 132,
+    LMANFNFN                    = 133,
+    FPMANFNFN                   = 134,
+    LBIFMAY                     = 135,
+    BIFMAY                      = 136,
+    MPHALLEY                    = 137,
+    HALLEY                      = 138,
+    DYNAMICFP                   = 139,
+    QUATFP                      = 140,
+    QUATJULFP                   = 141,
+    CELLULAR                    = 142,
+    JULIBROTFP                  = 143,
+    INVERSEJULIA                = 144,
+    INVERSEJULIAFP              = 145,
+    MANDELCLOUD                 = 146,
+    PHOENIX                     = 147,
+    PHOENIXFP                   = 148,
+    MANDPHOENIX                 = 149,
+    MANDPHOENIXFP               = 150,
+    HYPERCMPLXFP                = 151,
+    HYPERCMPLXJFP               = 152,
+    FROTH                       = 153,
+    FROTHFP                     = 154,
+    MANDEL4FP                   = 155,
+    JULIA4FP                    = 156,
+    MARKSMANDELFP               = 157,
+    MARKSJULIAFP                = 158,
+    ICON                        = 159,
+    ICON3D                      = 160,
+    PHOENIXCPLX                 = 161,
+    PHOENIXFPCPLX               = 162,
+    MANDPHOENIXCPLX             = 163,
+    MANDPHOENIXFPCPLX           = 164,
+    ANT                         = 165,
+    CHIP                        = 166,
+    QUADRUPTWO                  = 167,
+    THREEPLY                    = 168,
+    VL                          = 169,
+    ESCHER                      = 170,
+    LATOO                       = 171,
+    MANDELBROTMIX4              = 172,
+};
+
+extern fractal_type fractype;
+
 #endif

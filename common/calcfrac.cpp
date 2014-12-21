@@ -901,13 +901,13 @@ int calcfract()
 }
 
 // locate alternate math record
-int find_alternate_math(int type, bf_math_type math)
+int find_alternate_math(fractal_type type, bf_math_type math)
 {
     if (math == bf_math_type::NONE)
         return -1;
     int i = -1;
-    int curtype;
-    while ((curtype = alternatemath[++i].type) != type && curtype != -1)
+    fractal_type curtype;
+    while ((curtype = alternatemath[++i].type) != type && curtype != fractal_type::NOFRACTAL)
         ;
     int ret = -1;
     if (curtype == type && alternatemath[i].math != bf_math_type::NONE)
@@ -1006,8 +1006,8 @@ static void perform_worklist()
         if (distest != 1 || colors == 2) // not doing regular outside colors
             if (rqlim < DEM_BAILOUT)         // so go straight for dem bailout
                 rqlim = DEM_BAILOUT;
-        if (curfractalspecific->tojulia != NOFRACTAL || use_old_distest
-                || fractype == FORMULA || fractype == FFORMULA)
+        if (curfractalspecific->tojulia != fractal_type::NOFRACTAL || use_old_distest
+                || fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
             dem_mandel = true;  // must be mandel type, formula, or old PAR/GIF
         else
             dem_mandel = false;
@@ -1970,7 +1970,7 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
     }
     orbit_ptr = 0;
     coloriter = 0;
-    if (fractype == JULIAFP || fractype == JULIA)
+    if (fractype == fractal_type::JULIAFP || fractype == fractal_type::JULIA)
         coloriter = -1;
     caught_a_cycle = false;
     if (inside == PERIOD)
@@ -3835,20 +3835,20 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     bool parmsnoimag = (parm.y == 0.0 && useinitorbit != 1);
     switch (fractype)
     {
-    case LMANLAMFNFN:      // These need only P1 checked.
-    case FPMANLAMFNFN:     // P2 is used for a switch value
-    case LMANFNFN:         // These have NOPARM set in fractalp.c,
-    case FPMANFNFN:        // but it only applies to P1.
-    case FPMANDELZPOWER:   // or P2 is an exponent
-    case LMANDELZPOWER:
-    case FPMANZTOZPLUSZPWR:
-    case MARKSMANDEL:
-    case MARKSMANDELFP:
-    case MARKSJULIA:
-    case MARKSJULIAFP:
+    case fractal_type::LMANLAMFNFN:      // These need only P1 checked.
+    case fractal_type::FPMANLAMFNFN:     // P2 is used for a switch value
+    case fractal_type::LMANFNFN:         // These have NOPARM set in fractalp.c,
+    case fractal_type::FPMANFNFN:        // but it only applies to P1.
+    case fractal_type::FPMANDELZPOWER:   // or P2 is an exponent
+    case fractal_type::LMANDELZPOWER:
+    case fractal_type::FPMANZTOZPLUSZPWR:
+    case fractal_type::MARKSMANDEL:
+    case fractal_type::MARKSMANDELFP:
+    case fractal_type::MARKSJULIA:
+    case fractal_type::MARKSJULIAFP:
         break;
-    case FORMULA:  // Check P2, P3, P4 and P5
-    case FFORMULA:
+    case fractal_type::FORMULA:  // Check P2, P3, P4 and P5
+    case fractal_type::FFORMULA:
         parmszero = (parmszero && param[2] == 0.0 && param[3] == 0.0
                      && param[4] == 0.0 && param[5] == 0.0
                      && param[6] == 0.0 && param[7] == 0.0

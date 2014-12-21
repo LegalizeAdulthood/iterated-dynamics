@@ -88,7 +88,7 @@ long calcmandfpasm()
     }
 
     cx = maxit;
-    if (fractype != JULIAFP && fractype != JULIA)
+    if (fractype != fractal_type::JULIAFP && fractype != fractal_type::JULIA)
     {
         // Mandelbrot_87
         Cx = init.x;

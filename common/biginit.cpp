@@ -448,7 +448,7 @@ void init_bf_dec(int dec)
     if (bailout > 10)    // arbitrary value
         // using 2 doesn't gain much and requires another test
         intlength = 4;
-    else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
+    else if (fractype == fractal_type::FPMANDELZPOWER || fractype == fractal_type::FPJULIAZPOWER)
         intlength = 2;
     // the bailout tests need greater dynamic range
     else if (bailoutest == bailouts::Real || bailoutest == bailouts::Imag || bailoutest == bailouts::And ||
@@ -472,7 +472,7 @@ void init_bf_length(int bnl)
     if (bailout > 10)    // arbitrary value
         // using 2 doesn't gain much and requires another test
         intlength = 4;
-    else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
+    else if (fractype == fractal_type::FPMANDELZPOWER || fractype == fractal_type::FPJULIAZPOWER)
         intlength = 2;
     // the bailout tests need greater dynamic range
     else if (bailoutest == bailouts::Real || bailoutest == bailouts::Imag || bailoutest == bailouts::And ||

@@ -360,7 +360,7 @@ void plot_setup()
 
     case 2:
         if (colors == 256)
-            if (fractype != IFS3D)
+            if (fractype != fractal_type::IFS3D)
                 standardplot = plot3dsuperimpose256;
             else
                 standardplot = plotIFS3dsuperimpose256;

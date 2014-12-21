@@ -346,7 +346,7 @@ int get_the_rest()
     MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
     numtrig = (curfractalspecific->flags >> 6) & 7;
-    if (fractype == FORMULA || fractype == FFORMULA)
+    if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
         numtrig = maxfn;
     }
@@ -448,7 +448,7 @@ int get_variations()
 
     MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
-    if (fractype == FORMULA || fractype == FFORMULA)
+    if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
         if (uses_p1)  // set first parameter
             firstparm = 0;
@@ -478,7 +478,7 @@ int get_variations()
     {
         if (typehasparm(julibrot ? neworbittype : fractype, i, nullptr) == 0)
         {
-            if (fractype == FORMULA || fractype == FFORMULA)
+            if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
                 if (paramnotused(i))
                     continue;
             break;
@@ -486,7 +486,7 @@ int get_variations()
         numparams++;
     }
 
-    if (fractype != FORMULA && fractype != FFORMULA)
+    if (fractype != fractal_type::FORMULA && fractype != fractal_type::FFORMULA)
         lastparm = numparams;
 
 choose_vars_restart:
@@ -494,7 +494,7 @@ choose_vars_restart:
     k = -1;
     for (int num = firstparm; num < lastparm; num++)
     {
-        if (fractype == FORMULA || fractype == FFORMULA)
+        if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
             if (paramnotused(num))
                 continue;
         choices[++k] = gene[num].name;
@@ -547,7 +547,7 @@ choose_vars_restart:
     k = -1;
     for (int num = firstparm; num < lastparm; num++)
     {
-        if (fractype == FORMULA || fractype == FFORMULA)
+        if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
             if (paramnotused(num))
                 continue;
         gene[num].mutate = (char)(uvalues[++k].uval.ch.val);

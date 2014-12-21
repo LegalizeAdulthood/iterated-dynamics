@@ -165,7 +165,6 @@ extern int                   fm_vol;            // volume of OPL-3 soundcard out
 extern symmetry_type         forcesymmetry;
 extern char                  FormFileName[];
 extern char                  FormName[];
-extern int                   fractype;
 extern const char *          fract_dir1;
 extern const char *          fract_dir2;
 extern long                  fudge;
@@ -314,7 +313,7 @@ extern char                  newodpx;
 extern char                  newodpy;
 extern double                newopx;
 extern double                newopy;
-extern int                   neworbittype;
+extern fractal_type          neworbittype;
 extern int                   nextsavedincr;
 extern bool                  no_sub_images;
 extern bool                  no_mag_calc;

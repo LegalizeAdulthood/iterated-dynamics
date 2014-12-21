@@ -434,13 +434,13 @@ bool encoder()
         }
         // save_info.fractal_type gets modified in setup_save_info() in float only version, so we need to use fractype.
         //    if (save_info.fractal_type == FORMULA || save_info.fractal_type == FFORMULA)
-        if (fractype == FORMULA || fractype == FFORMULA)
+        if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
             save_info.tot_extend_len += store_item_name(FormName);
         //    if (save_info.fractal_type == LSYSTEM)
-        if (fractype == LSYSTEM)
+        if (fractype == fractal_type::LSYSTEM)
             save_info.tot_extend_len += store_item_name(LName);
         //    if (save_info.fractal_type == IFS || save_info.fractal_type == IFS3D)
-        if (fractype == IFS || fractype == IFS3D)
+        if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
             save_info.tot_extend_len += store_item_name(IFSName);
         if (display3d <= 0 && rangeslen)
         {
@@ -627,7 +627,7 @@ static int store_item_name(char *nameptr)
     for (int i = 0; i < 40; i++)
         fsave_info.form_name[i] = 0;      // initialize string
     strcpy(fsave_info.form_name, nameptr);
-    if (fractype == FORMULA || fractype == FFORMULA)
+    if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
         fsave_info.uses_p1 = (short) (uses_p1 ? 1 : 0);
         fsave_info.uses_p2 = (short) (uses_p2 ? 1 : 0);
@@ -656,7 +656,7 @@ static int store_item_name(char *nameptr)
 
 static void setup_save_info(FRACTAL_INFO *save_info)
 {
-    if (fractype != FORMULA && fractype != FFORMULA)
+    if (fractype != fractal_type::FORMULA && fractype != fractal_type::FFORMULA)
         maxfn = 0;
     // set save parameters in save structure
     strcpy(save_info->info_id, INFO_ID);

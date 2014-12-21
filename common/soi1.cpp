@@ -20,6 +20,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+#include "fractype.h"
 
 #define DBLS double
 #define FABS(x)  fabs(x)

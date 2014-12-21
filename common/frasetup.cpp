@@ -63,19 +63,19 @@ NewtonSetup()           // Newton/NewtBasin Routines
 #if !defined(XFRACT)
     if (debugflag != debug_flags::allow_mp_newton_type)
     {
-        if (fractype == MPNEWTON)
-            fractype = NEWTON;
-        else if (fractype == MPNEWTBASIN)
-            fractype = NEWTBASIN;
-        curfractalspecific = &fractalspecific[fractype];
+        if (fractype == fractal_type::MPNEWTON)
+            fractype = fractal_type::NEWTON;
+        else if (fractype == fractal_type::MPNEWTBASIN)
+            fractype = fractal_type::NEWTBASIN;
+        curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
     }
 #else
-    if (fractype == MPNEWTON)
-        fractype = NEWTON;
-    else if (fractype == MPNEWTBASIN)
-        fractype = NEWTBASIN;
+    if (fractype == fractal_type::MPNEWTON)
+        fractype = fractal_type::NEWTON;
+    else if (fractype == fractal_type::MPNEWTBASIN)
+        fractype = fractal_type::NEWTBASIN;
 
-    curfractalspecific = &fractalspecific[fractype];
+    curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
 #endif
     // set up table of roots of 1 along unit circle
     degree = (int)parm.x;
@@ -89,7 +89,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
     maxcolor     = 0;
     threshold    = .3*PI/degree; // less than half distance between roots
 #if !defined(XFRACT)
-    if (fractype == MPNEWTON || fractype == MPNEWTBASIN)
+    if (fractype == fractal_type::MPNEWTON || fractype == fractal_type::MPNEWTBASIN)
     {
         mproverd     = *pd2MP(roverd);
         mpd1overd    = *pd2MP(d1overd);
@@ -103,7 +103,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
 
     basin = 0;
     roots.resize(16);
-    if (fractype == NEWTBASIN)
+    if (fractype == fractal_type::NEWTBASIN)
     {
         if (parm.y)
             basin = 2; //stripes
@@ -119,7 +119,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
         }
     }
 #if !defined(XFRACT)
-    else if (fractype == MPNEWTBASIN)
+    else if (fractype == fractal_type::MPNEWTBASIN)
     {
         if (parm.y)
             basin = 2; //stripes
@@ -145,7 +145,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
 
     calctype = StandardFractal;
 #if !defined(XFRACT)
-    if (fractype == MPNEWTON || fractype == MPNEWTBASIN)
+    if (fractype == fractal_type::MPNEWTON || fractype == fractal_type::MPNEWTBASIN)
         setMPfunctions();
 #endif
     return true;
@@ -178,7 +178,7 @@ MandelfpSetup()
     floatparm = &init;
     switch (fractype)
     {
-    case MARKSMANDELFP:
+    case fractal_type::MARKSMANDELFP:
         if (c_exp < 1)
         {
             c_exp = 1;
@@ -189,7 +189,7 @@ MandelfpSetup()
         if (c_exp & 1)
             symmetry = symmetry_type::X_AXIS_NO_PARAM;
         break;
-    case MANDELFP:
+    case fractal_type::MANDELFP:
         /*
            floating point code could probably be altered to handle many of
            the situations that otherwise are using StandardFractal().
@@ -216,32 +216,32 @@ MandelfpSetup()
             calctype = StandardFractal;
         }
         break;
-    case FPMANDELZPOWER:
+    case fractal_type::FPMANDELZPOWER:
         if ((double)c_exp == param[2] && (c_exp & 1)) // odd exponents
             symmetry = symmetry_type::XY_AXIS_NO_PARAM;
         if (param[3] != 0)
             symmetry = symmetry_type::NONE;
         if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
-            fractalspecific[fractype].orbitcalc = floatZpowerFractal;
+            fractalspecific[static_cast<int>(fractype)].orbitcalc = floatZpowerFractal;
         else
-            fractalspecific[fractype].orbitcalc = floatCmplxZpowerFractal;
+            fractalspecific[static_cast<int>(fractype)].orbitcalc = floatCmplxZpowerFractal;
         break;
-    case MAGNET1M:
-    case MAGNET2M:
+    case fractal_type::MAGNET1M:
+    case fractal_type::MAGNET2M:
         attr[0].x = 1.0;      // 1.0 + 0.0i always attracts
         attr[0].y = 0.0;      // - both MAGNET1 and MAGNET2
         attrperiod[0] = 1;
         attractors = 1;
         break;
-    case SPIDERFP:
+    case fractal_type::SPIDERFP:
         if (periodicitycheck == 1) // if not user set
             periodicitycheck = 4;
         break;
-    case MANDELEXP:
+    case fractal_type::MANDELEXP:
         symmetry = symmetry_type::X_AXIS_NO_PARAM;
         break;
-    case FPMANTRIGPLUSEXP:
-    case FPMANTRIGPLUSZSQRD:
+    case fractal_type::FPMANTRIGPLUSEXP:
+    case fractal_type::FPMANTRIGPLUSZSQRD:
         if (parm.y == 0.0)
             symmetry = symmetry_type::X_AXIS;
         else
@@ -249,12 +249,12 @@ MandelfpSetup()
         if ((trigndx[0] == trig_fn::LOG) || (trigndx[0] == trig_fn::FLIP))
             symmetry = symmetry_type::NONE;
         break;
-    case QUATFP:
+    case fractal_type::QUATFP:
         floatparm = &tmp;
         attractors = 0;
         periodicitycheck = 0;
         break;
-    case HYPERCMPLXFP:
+    case fractal_type::HYPERCMPLXFP:
         floatparm = &tmp;
         attractors = 0;
         periodicitycheck = 0;
@@ -263,11 +263,11 @@ MandelfpSetup()
         if (trigndx[0] == trig_fn::FLIP)
             symmetry = symmetry_type::NONE;
         break;
-    case TIMSERRORFP:
+    case fractal_type::TIMSERRORFP:
         if (trigndx[0] == trig_fn::FLIP)
             symmetry = symmetry_type::NONE;
         break;
-    case MARKSMANDELPWRFP:
+    case fractal_type::MARKSMANDELPWRFP:
         if (trigndx[0] == trig_fn::FLIP)
             symmetry = symmetry_type::NONE;
         break;
@@ -282,7 +282,7 @@ JuliafpSetup()
 {
     c_exp = (int)param[2];
     floatparm = &parm;
-    if (fractype == COMPLEXMARKSJUL)
+    if (fractype == fractal_type::COMPLEXMARKSJUL)
     {
         pwr.x = param[2] - 1.0;
         pwr.y = param[3];
@@ -290,7 +290,7 @@ JuliafpSetup()
     }
     switch (fractype)
     {
-    case JULIAFP:
+    case fractal_type::JULIAFP:
         /*
            floating point code could probably be altered to handle many of
            the situations that otherwise are using StandardFractal().
@@ -319,35 +319,35 @@ JuliafpSetup()
             get_julia_attractor(0.0, 0.0);    // another attractor?
         }
         break;
-    case FPJULIAZPOWER:
+    case fractal_type::FPJULIAZPOWER:
         if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
             symmetry = symmetry_type::NONE;
         if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
-            fractalspecific[fractype].orbitcalc = floatZpowerFractal;
+            fractalspecific[static_cast<int>(fractype)].orbitcalc = floatZpowerFractal;
         else
-            fractalspecific[fractype].orbitcalc = floatCmplxZpowerFractal;
+            fractalspecific[static_cast<int>(fractype)].orbitcalc = floatCmplxZpowerFractal;
         get_julia_attractor(param[0], param[1]);  // another attractor?
         break;
-    case MAGNET2J:
+    case fractal_type::MAGNET2J:
         FloatPreCalcMagnet2();
-    case MAGNET1J:
+    case fractal_type::MAGNET1J:
         attr[0].x = 1.0;      // 1.0 + 0.0i always attracts
         attr[0].y = 0.0;      // - both MAGNET1 and MAGNET2
         attrperiod[0] = 1;
         attractors = 1;
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
-    case LAMBDAFP:
+    case fractal_type::LAMBDAFP:
         get_julia_attractor(0.0, 0.0);    // another attractor?
         get_julia_attractor(0.5, 0.0);    // another attractor?
         break;
-    case LAMBDAEXP:
+    case fractal_type::LAMBDAEXP:
         if (parm.y == 0.0)
             symmetry = symmetry_type::X_AXIS;
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
-    case FPJULTRIGPLUSEXP:
-    case FPJULTRIGPLUSZSQRD:
+    case fractal_type::FPJULTRIGPLUSEXP:
+    case fractal_type::FPJULTRIGPLUSZSQRD:
         if (parm.y == 0.0)
             symmetry = symmetry_type::X_AXIS;
         else
@@ -356,19 +356,19 @@ JuliafpSetup()
             symmetry = symmetry_type::NONE;
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
-    case HYPERCMPLXJFP:
+    case fractal_type::HYPERCMPLXJFP:
         if (param[2] != 0)
             symmetry = symmetry_type::NONE;
         if (trigndx[0] != trig_fn::SQR)
             symmetry = symmetry_type::NONE;
-    case QUATJULFP:
+    case fractal_type::QUATJULFP:
         attractors = 0;   // attractors broken since code checks r,i not j,k
         periodicitycheck = 0;
         if (param[4] != 0.0 || param[5] != 0)
             symmetry = symmetry_type::NONE;
         break;
-    case FPPOPCORN:
-    case FPPOPCORNJUL:
+    case fractal_type::FPPOPCORN:
+    case fractal_type::FPPOPCORNJUL:
     {
         bool default_functions = false;
         if (trigndx[0] == trig_fn::SIN &&
@@ -380,7 +380,7 @@ JuliafpSetup()
                 parm.y == 0)
         {
             default_functions = true;
-            if (fractype == FPPOPCORNJUL)
+            if (fractype == fractal_type::FPPOPCORNJUL)
                 symmetry = symmetry_type::ORIGIN;
         }
         if (save_release <= 1960)
@@ -390,9 +390,10 @@ JuliafpSetup()
         else
             curfractalspecific->orbitcalc = PopcornFractalFn;
         get_julia_attractor(0.0, 0.0);    // another attractor?
+        break;
     }
-    break;
-    case FPCIRCLE:
+
+    case fractal_type::FPCIRCLE:
         if (inside == STARTRAIL) // FPCIRCLE locks up when used with STARTRAIL
             inside = 0; // arbitrarily set inside = NUMB
         get_julia_attractor(0.0, 0.0);    // another attractor?
@@ -409,29 +410,29 @@ MandellongSetup()
 {
     FgHalf = fudge >> 1;
     c_exp = (int)param[2];
-    if (fractype == MARKSMANDEL && c_exp < 1)
+    if (fractype == fractal_type::MARKSMANDEL && c_exp < 1)
     {
         c_exp = 1;
         param[2] = 1;
     }
-    if ((fractype == MARKSMANDEL   && !(c_exp & 1)) ||
-            (fractype == LMANDELZPOWER && (c_exp & 1)))
+    if ((fractype == fractal_type::MARKSMANDEL   && !(c_exp & 1)) ||
+            (fractype == fractal_type::LMANDELZPOWER && (c_exp & 1)))
         symmetry = symmetry_type::XY_AXIS_NO_PARAM;    // odd exponents
-    if ((fractype == MARKSMANDEL && (c_exp & 1)) || fractype == LMANDELEXP)
+    if ((fractype == fractal_type::MARKSMANDEL && (c_exp & 1)) || fractype == fractal_type::LMANDELEXP)
         symmetry = symmetry_type::X_AXIS_NO_PARAM;
-    if (fractype == SPIDER && periodicitycheck == 1)
+    if (fractype == fractal_type::SPIDER && periodicitycheck == 1)
         periodicitycheck = 4;
     longparm = &linit;
-    if (fractype == LMANDELZPOWER)
+    if (fractype == fractal_type::LMANDELZPOWER)
     {
         if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
-            fractalspecific[fractype].orbitcalc = longZpowerFractal;
+            fractalspecific[static_cast<int>(fractype)].orbitcalc = longZpowerFractal;
         else
-            fractalspecific[fractype].orbitcalc = longCmplxZpowerFractal;
+            fractalspecific[static_cast<int>(fractype)].orbitcalc = longCmplxZpowerFractal;
         if (param[3] != 0 || (double)c_exp != param[2])
             symmetry = symmetry_type::NONE;
     }
-    if ((fractype == LMANTRIGPLUSEXP) || (fractype == LMANTRIGPLUSZSQRD))
+    if ((fractype == fractal_type::LMANTRIGPLUSEXP) || (fractype == fractal_type::LMANTRIGPLUSZSQRD))
     {
         if (parm.y == 0.0)
             symmetry = symmetry_type::X_AXIS;
@@ -440,12 +441,12 @@ MandellongSetup()
         if ((trigndx[0] == trig_fn::LOG) || (trigndx[0] == trig_fn::FLIP))
             symmetry = symmetry_type::NONE;
     }
-    if (fractype == TIMSERROR)
+    if (fractype == fractal_type::TIMSERROR)
     {
         if (trigndx[0] == trig_fn::FLIP)
             symmetry = symmetry_type::NONE;
     }
-    if (fractype == MARKSMANDELPWR)
+    if (fractype == fractal_type::MARKSMANDELPWR)
     {
         if (trigndx[0] == trig_fn::FLIP)
             symmetry = symmetry_type::NONE;
@@ -460,24 +461,24 @@ JulialongSetup()
     longparm = &lparm;
     switch (fractype)
     {
-    case LJULIAZPOWER:
+    case fractal_type::LJULIAZPOWER:
         if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
             symmetry = symmetry_type::NONE;
         if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
-            fractalspecific[fractype].orbitcalc = longZpowerFractal;
+            fractalspecific[static_cast<int>(fractype)].orbitcalc = longZpowerFractal;
         else
-            fractalspecific[fractype].orbitcalc = longCmplxZpowerFractal;
+            fractalspecific[static_cast<int>(fractype)].orbitcalc = longCmplxZpowerFractal;
         break;
-    case LAMBDA:
+    case fractal_type::LAMBDA:
         get_julia_attractor(0.0, 0.0);    // another attractor?
         get_julia_attractor(0.5, 0.0);    // another attractor?
         break;
-    case LLAMBDAEXP:
+    case fractal_type::LLAMBDAEXP:
         if (lparm.y == 0)
             symmetry = symmetry_type::X_AXIS;
         break;
-    case LJULTRIGPLUSEXP:
-    case LJULTRIGPLUSZSQRD:
+    case fractal_type::LJULTRIGPLUSEXP:
+    case fractal_type::LJULTRIGPLUSZSQRD:
         if (parm.y == 0.0)
             symmetry = symmetry_type::X_AXIS;
         else
@@ -486,8 +487,8 @@ JulialongSetup()
             symmetry = symmetry_type::NONE;
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
-    case LPOPCORN:
-    case LPOPCORNJUL:
+    case fractal_type::LPOPCORN:
+    case fractal_type::LPOPCORNJUL:
     {
         bool default_functions = false;
         if (trigndx[0] == trig_fn::SIN &&
@@ -499,7 +500,7 @@ JulialongSetup()
                 parm.y == 0)
         {
             default_functions = true;
-            if (fractype == LPOPCORNJUL)
+            if (fractype == fractal_type::LPOPCORNJUL)
                 symmetry = symmetry_type::ORIGIN;
         }
         if (save_release <= 1960)
@@ -509,8 +510,9 @@ JulialongSetup()
         else
             curfractalspecific->orbitcalc = LPopcornFractalFn;
         get_julia_attractor(0.0, 0.0);    // another attractor?
+        break;
     }
-    break;
+
     default:
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
@@ -1003,11 +1005,11 @@ HalleySetup()
     periodicitycheck = 0;
 
     if (usr_floatflag)
-        fractype = HALLEY; // float on
+        fractype = fractal_type::HALLEY; // float on
     else
-        fractype = MPHALLEY;
+        fractype = fractal_type::MPHALLEY;
 
-    curfractalspecific = &fractalspecific[fractype];
+    curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
 
     degree = (int)parm.x;
     if (degree < 2)
@@ -1019,7 +1021,7 @@ HalleySetup()
     Ap1deg = AplusOne * degree;
 
 #if !defined(XFRACT)
-    if (fractype == MPHALLEY)
+    if (fractype == fractal_type::MPHALLEY)
     {
         setMPfunctions();
         mpAplusOne = *pd2MP((double)AplusOne);
@@ -1201,7 +1203,7 @@ MandPhoenixCplxSetup()
 bool
 StandardSetup()
 {
-    if (fractype == UNITYFP)
+    if (fractype == fractal_type::UNITYFP)
         periodicitycheck = 0;
     return true;
 }

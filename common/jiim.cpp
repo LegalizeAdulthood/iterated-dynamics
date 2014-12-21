@@ -459,8 +459,8 @@ void Jiim(int which)         // called by fractint
 
     old_debugflag = debugflag;
     // must use standard fractal or be calcfroth
-    if (fractalspecific[fractype].calctype != StandardFractal
-            && fractalspecific[fractype].calctype != calcfroth)
+    if (fractalspecific[static_cast<int>(fractype)].calctype != StandardFractal
+            && fractalspecific[static_cast<int>(fractype)].calctype != calcfroth)
         return;
     oldhelpmode = helpmode;
     if (which == JIIM)

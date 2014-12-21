@@ -259,7 +259,7 @@ int get_toggles()
     if (stoppass < 0 || stoppass > 6 || usr_stdcalcmode != 'g')
         stoppass = 0;
 
-    if (usr_stdcalcmode == 'o' && fractype == LYAPUNOV) // Oops,lyapunov type
+    if (usr_stdcalcmode == 'o' && fractype == fractal_type::LYAPUNOV) // Oops,lyapunov type
         // doesn't use 'new' & breaks orbits
         usr_stdcalcmode = old_usr_stdcalcmode;
 

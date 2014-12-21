@@ -546,12 +546,12 @@ static void trigdetails(char *buf)
 {
     int numfn;
     char tmpbuf[20];
-    if (fractype == JULIBROT || fractype == JULIBROTFP)
-        numfn = (fractalspecific[neworbittype].flags >> 6) & 7;
+    if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
+        numfn = (fractalspecific[static_cast<int>(neworbittype)].flags >> 6) & 7;
     else
         numfn = (curfractalspecific->flags >> 6) & 7;
-    if (curfractalspecific == &fractalspecific[FORMULA] ||
-            curfractalspecific == &fractalspecific[FFORMULA])
+    if (curfractalspecific == &fractalspecific[static_cast<int>(fractal_type::FORMULA)] ||
+            curfractalspecific == &fractalspecific[static_cast<int>(fractal_type::FFORMULA)])
         numfn = maxfn;
     *buf = 0; // null string if none
     if (numfn > 0)
@@ -710,7 +710,7 @@ bool tab_display_2(char *msg)
               num_fractal_types*(int)sizeof(fractalspecificstuff));
     write_row(row, "calc_status %d pixel [%d, %d]", calc_status, col, row);
     ++row;
-    if (fractype == FORMULA || fractype == FFORMULA)
+    if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
         write_row(row++, "Max_Ops (posp) %u Max_Args (vsp) %u",
                   posp, vsp);
@@ -792,7 +792,7 @@ int tab_display()       // display the status of the current image
         bfXctr = alloc_stack(bflength+2);
         bfYctr = alloc_stack(bflength+2);
     }
-    if (fractype == FORMULA || fractype == FFORMULA)
+    if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
         for (int i = 0; i < MAXPARAMS; i += 2)
         {
@@ -820,7 +820,7 @@ top:
                           curfractalspecific->name[0] == '*' ?
                           &curfractalspecific->name[1] : curfractalspecific->name);
         int i = 0;
-        if (fractype == FORMULA || fractype == FFORMULA)
+        if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
         {
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(s_row+1, 16, C_GENERAL_HI, FormName);
@@ -834,7 +834,7 @@ top:
         }
         trigdetails(msg);
         driver_put_string(s_row+1, 16+i, C_GENERAL_HI, msg);
-        if (fractype == LSYSTEM)
+        if (fractype == fractal_type::LSYSTEM)
         {
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(s_row+1, 16, C_GENERAL_HI, LName);
@@ -845,7 +845,7 @@ top:
             }
             driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, LFileName);
         }
-        if (fractype == IFS || fractype == IFS3D)
+        if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
         {
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(s_row+1, 16, C_GENERAL_HI, IFSName);
@@ -1164,7 +1164,7 @@ top:
     sprintf(msg, "%f", rqlim);
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
 
-    if (fractype == PLASMA || fractype == ANT || fractype == CELLULAR)
+    if (fractype == fractal_type::PLASMA || fractype == fractal_type::ANT || fractype == fractal_type::CELLULAR)
     {
         driver_put_string(++s_row, 2, C_GENERAL_MED, "Current 'rseed': ");
         sprintf(msg, "%d", rseed);

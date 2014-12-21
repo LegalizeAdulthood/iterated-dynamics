@@ -552,9 +552,12 @@ extern  double   f_at_rad;      // finite attractor radius
 #define NUMIFS    64            // number of ifs functions in ifs array
 #define IFSPARM    7            // number of ifs parameters
 #define IFS3DPARM 13            // number of ifs 3D parameters
+
+enum class fractal_type;
+
 struct MOREPARAMS
 {
-    int      type;                      // index in fractalname of the fractal
+    fractal_type type;                      // index in fractalname of the fractal
     const char *param[MAXPARAMS-4];     // name of the parameters
     double   paramvalue[MAXPARAMS-4];   // default parameter values
 };
@@ -579,6 +582,8 @@ enum class symmetry_type
     NOT_FORCED = 999
 };
 
+enum class fractal_type;
+
 struct fractalspecificstuff
 {
     const char  *name;                  // name of the fractal
@@ -593,9 +598,9 @@ struct fractalspecificstuff
     float ymin;                         // default YMIN corner
     float ymax;                         // default YMAX corner
     int   isinteger;                    // 1 if integerfractal, 0 otherwise
-    int   tojulia;                      // mandel-to-julia switch
-    int   tomandel;                     // julia-to-mandel switch
-    int   tofloat;                      // integer-to-floating switch
+    fractal_type tojulia;               // mandel-to-julia switch
+    fractal_type tomandel;              // julia-to-mandel switch
+    fractal_type tofloat;               // integer-to-floating switch
     symmetry_type symmetry;             // applicable symmetry logic
                                         //  0 = no symmetry
                                         // -1 = y-axis symmetry (If No Params)
@@ -616,9 +621,11 @@ struct fractalspecificstuff
     int orbit_bailout;                  // usual bailout value for orbit calc
 };
 
+enum class fractal_type;
+
 struct AlternateMath
 {
-    int type;                           // index in fractalname of the fractal
+    fractal_type type;                  // index in fractalname of the fractal
     bf_math_type math;                  // kind of math used
     int (*orbitcalc)();                 // function that calculates one orbit
     int (*per_pixel)();                 // once-per-pixel init
@@ -717,9 +724,9 @@ inline long lsqr(long x)
 #define CMPLXconj(z)    ((z).y =  -((z).y))
 #define LCMPLXmod(z)    (lsqr((z).x)+lsqr((z).y))
 #define LCMPLXconj(z)   ((z).y =  -((z).y))
-#define PER_IMAGE   (fractalspecific[fractype].per_image)
-#define PER_PIXEL   (fractalspecific[fractype].per_pixel)
-#define ORBITCALC   (fractalspecific[fractype].orbitcalc)
+#define PER_IMAGE   (fractalspecific[static_cast<int>(fractype)].per_image)
+#define PER_PIXEL   (fractalspecific[static_cast<int>(fractype)].per_pixel)
+#define ORBITCALC   (fractalspecific[static_cast<int>(fractype)].orbitcalc)
 
 // 3D stuff - formerly in 3d.h
 #define    CMAX    4   // maximum column (4 x 4 matrix)

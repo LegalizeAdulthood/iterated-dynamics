@@ -38,9 +38,9 @@ long get_file_entry(int type, const char *title,char *fmask,
 int prompt_valuestring(char *buf, fullscreenvalues *val);
 static  int input_field_list(int attr,char *fld,int vlen, const char **list,int llen,
                              int row,int col,int (*checkkey)(int));
-static  int select_fracttype(int t);
+static  fractal_type select_fracttype(fractal_type t);
 static  int sel_fractype_help(int curkey, int choice);
-static bool select_type_params(int newfractype, int oldfractype);
+static bool select_type_params(fractal_type newfractype, fractal_type oldfractype);
 void set_default_parms();
 static  long gfe_choose_entry(int, const char *,char *,char *);
 static  int check_gfe_key(int curkey,int choice);
@@ -119,19 +119,19 @@ int fullscreen_prompt(      // full-screen prompting routine
     */
     if (extrainfo && *extrainfo)
     {
-        if (fractype == FORMULA || fractype == FFORMULA)
+        if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
         {
             find_file_item(FormFileName, FormName, &scroll_file, 1);
             in_scrolling_mode = true;
             scroll_file_start = ftell(scroll_file);
         }
-        else if (fractype == LSYSTEM)
+        else if (fractype == fractal_type::LSYSTEM)
         {
             find_file_item(LFileName, LName, &scroll_file, 2);
             in_scrolling_mode = true;
             scroll_file_start = ftell(scroll_file);
         }
-        else if (fractype == IFS || fractype == IFS3D)
+        else if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
         {
             find_file_item(IFSFileName, IFSName, &scroll_file, 3);
             in_scrolling_mode = true;
@@ -946,13 +946,13 @@ inpfldl_end:
 
 int get_fracttype()             // prompt for and select fractal type
 {
-    int t;
+    fractal_type t;
     int done = -1;
-    int oldfractype = fractype;
+    fractal_type oldfractype = fractype;
     while (1)
     {
         t = select_fracttype(fractype);
-        if (t < 0)
+        if (t == fractal_type::NOFRACTAL)
             break;
         bool i = select_type_params(t, fractype);
         if (!i)
@@ -965,7 +965,7 @@ int get_fracttype()             // prompt for and select fractal type
     }
     if (done < 0)
         fractype = oldfractype;
-    curfractalspecific = &fractalspecific[fractype];
+    curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
     return done;
 }
 
@@ -976,11 +976,11 @@ struct FT_CHOICE
 };
 static FT_CHOICE **ft_choices; // for sel_fractype_help subrtn
 
-static int select_fracttype(int t) // subrtn of get_fracttype, separated
+static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype, separated
 // so that storage gets freed up
 {
     int oldhelpmode;
-    int numtypes, done;
+    int numtypes;
 #define MAXFTYPES 200
     char tname[40];
     FT_CHOICE storage[MAXFTYPES] = { 0 };
@@ -1000,8 +1000,8 @@ static int select_fracttype(int t) // subrtn of get_fracttype, separated
     // setup context sensitive help
     oldhelpmode = helpmode;
     helpmode = HELPFRACTALS;
-    if (t == IFS3D)
-        t = IFS;
+    if (t == fractal_type::IFS3D)
+        t = fractal_type::IFS;
     {
         int i = -1;
         int j = -1;
@@ -1021,28 +1021,32 @@ static int select_fracttype(int t) // subrtn of get_fracttype, separated
     shell_sort(&choices, numtypes, sizeof(FT_CHOICE *), lccompare); // sort list
     int j = 0;
     for (int i = 0; i < numtypes; ++i) // find starting choice in sorted list
-        if (choices[i]->num == t || choices[i]->num == fractalspecific[t].tofloat)
+        if (choices[i]->num == static_cast<int>(t)
+            || choices[i]->num == static_cast<int>(fractalspecific[static_cast<int>(t)].tofloat))
+        {
             j = i;
+        }
 
     tname[0] = 0;
-    done = fullscreen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
+    int done = fullscreen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
                              julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
                              nullptr, "Press " FK_F2 " for a description of the highlighted type", numtypes,
                              (const char **)choices,attributes,0,0,0,j,nullptr,tname,nullptr,sel_fractype_help);
+    fractal_type result = fractal_type::NOFRACTAL;
     if (done >= 0)
     {
-        done = choices[done]->num;
-        if ((done == FORMULA || done == FFORMULA) && !strcmp(FormFileName, CommandFile))
+        result = static_cast<fractal_type>(choices[done]->num);
+        if ((result == fractal_type::FORMULA || result == fractal_type::FFORMULA) && !strcmp(FormFileName, CommandFile))
             strcpy(FormFileName, searchfor.frm);
-        if (done == LSYSTEM && !strcmp(LFileName, CommandFile))
+        if (result == fractal_type::LSYSTEM && !strcmp(LFileName, CommandFile))
             strcpy(LFileName, searchfor.lsys);
-        if ((done == IFS || done == IFS3D) && !strcmp(IFSFileName, CommandFile))
+        if ((result == fractal_type::IFS || result == fractal_type::IFS3D) && !strcmp(IFSFileName, CommandFile))
             strcpy(IFSFileName, searchfor.ifs);
     }
 
 
     helpmode = oldhelpmode;
-    return done;
+    return result;
 }
 
 static int sel_fractype_help(int curkey,int choice)
@@ -1058,8 +1062,8 @@ static int sel_fractype_help(int curkey,int choice)
 }
 
 bool select_type_params( // prompt for new fractal type parameters
-    int newfractype,        // new fractal type
-    int oldfractype         // previous fractal type
+    fractal_type newfractype,        // new fractal type
+    fractal_type oldfractype         // previous fractal type
 )
 {
     bool ret;
@@ -1069,9 +1073,9 @@ bool select_type_params( // prompt for new fractal type parameters
 sel_type_restart:
     ret = false;
     fractype = newfractype;
-    curfractalspecific = &fractalspecific[fractype];
+    curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
 
-    if (fractype == LSYSTEM)
+    if (fractype == fractal_type::LSYSTEM)
     {
         helpmode = HT_LSYS;
         if (get_file_entry(GETLSYS,"L-System",lsysmask,LFileName,LName) < 0)
@@ -1080,7 +1084,7 @@ sel_type_restart:
             goto sel_type_exit;
         }
     }
-    if (fractype == FORMULA || fractype == FFORMULA)
+    if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
         helpmode = HT_FORMULA;
         if (get_file_entry(GETFORMULA,"Formula",formmask,FormFileName,FormName) < 0)
@@ -1089,7 +1093,7 @@ sel_type_restart:
             goto sel_type_exit;
         }
     }
-    if (fractype == IFS || fractype == IFS3D)
+    if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
     {
         helpmode = HT_IFS;
         if (get_file_entry(GETIFS,"IFS",ifsmask,IFSFileName,IFSName) < 0)
@@ -1099,43 +1103,43 @@ sel_type_restart:
         }
     }
 
-    if (((fractype == BIFURCATION) || (fractype == LBIFURCATION)) &&
-            !((oldfractype == BIFURCATION) || (oldfractype == LBIFURCATION)))
+    if (((fractype == fractal_type::BIFURCATION) || (fractype == fractal_type::LBIFURCATION)) &&
+            !((oldfractype == fractal_type::BIFURCATION) || (oldfractype == fractal_type::LBIFURCATION)))
         set_trig_array(0, "ident");
-    if (((fractype == BIFSTEWART) || (fractype == LBIFSTEWART)) &&
-            !((oldfractype == BIFSTEWART) || (oldfractype == LBIFSTEWART)))
+    if (((fractype == fractal_type::BIFSTEWART) || (fractype == fractal_type::LBIFSTEWART)) &&
+            !((oldfractype == fractal_type::BIFSTEWART) || (oldfractype == fractal_type::LBIFSTEWART)))
         set_trig_array(0, "ident");
-    if (((fractype == BIFLAMBDA) || (fractype == LBIFLAMBDA)) &&
-            !((oldfractype == BIFLAMBDA) || (oldfractype == LBIFLAMBDA)))
+    if (((fractype == fractal_type::BIFLAMBDA) || (fractype == fractal_type::LBIFLAMBDA)) &&
+            !((oldfractype == fractal_type::BIFLAMBDA) || (oldfractype == fractal_type::LBIFLAMBDA)))
         set_trig_array(0, "ident");
-    if (((fractype == BIFEQSINPI) || (fractype == LBIFEQSINPI)) &&
-            !((oldfractype == BIFEQSINPI) || (oldfractype == LBIFEQSINPI)))
+    if (((fractype == fractal_type::BIFEQSINPI) || (fractype == fractal_type::LBIFEQSINPI)) &&
+            !((oldfractype == fractal_type::BIFEQSINPI) || (oldfractype == fractal_type::LBIFEQSINPI)))
         set_trig_array(0, "sin");
-    if (((fractype == BIFADSINPI) || (fractype == LBIFADSINPI)) &&
-            !((oldfractype == BIFADSINPI) || (oldfractype == LBIFADSINPI)))
+    if (((fractype == fractal_type::BIFADSINPI) || (fractype == fractal_type::LBIFADSINPI)) &&
+            !((oldfractype == fractal_type::BIFADSINPI) || (oldfractype == fractal_type::LBIFADSINPI)))
         set_trig_array(0, "sin");
 
     /*
      * Next assumes that user going between popcorn and popcornjul
      * might not want to change function variables
      */
-    if (((fractype    == FPPOPCORN) || (fractype    == LPOPCORN) ||
-            (fractype    == FPPOPCORNJUL) || (fractype    == LPOPCORNJUL)) &&
-            !((oldfractype == FPPOPCORN) || (oldfractype == LPOPCORN) ||
-              (oldfractype == FPPOPCORNJUL) || (oldfractype == LPOPCORNJUL)))
+    if (((fractype    == fractal_type::FPPOPCORN) || (fractype    == fractal_type::LPOPCORN) ||
+            (fractype    == fractal_type::FPPOPCORNJUL) || (fractype    == fractal_type::LPOPCORNJUL)) &&
+            !((oldfractype == fractal_type::FPPOPCORN) || (oldfractype == fractal_type::LPOPCORN) ||
+              (oldfractype == fractal_type::FPPOPCORNJUL) || (oldfractype == fractal_type::LPOPCORNJUL)))
         set_function_parm_defaults();
 
     // set LATOO function defaults
-    if (fractype == LATOO && oldfractype != LATOO)
+    if (fractype == fractal_type::LATOO && oldfractype != fractal_type::LATOO)
     {
         set_function_parm_defaults();
     }
     set_default_parms();
 
     if (get_fract_params(0) < 0)
-        if (fractype == FORMULA || fractype == FFORMULA ||
-                fractype == IFS || fractype == IFS3D ||
-                fractype == LSYSTEM)
+        if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA ||
+                fractype == fractal_type::IFS || fractype == fractal_type::IFS3D ||
+                fractype == fractal_type::LSYSTEM)
             goto sel_type_restart;
         else
             ret = true;
@@ -1169,8 +1173,8 @@ void set_default_parms()
     for (int i = 0; i < 4; i++)
     {
         param[i] = curfractalspecific->paramvalue[i];
-        if (fractype != CELLULAR && fractype != FROTH && fractype != FROTHFP &&
-                fractype != ANT)
+        if (fractype != fractal_type::CELLULAR && fractype != fractal_type::FROTH && fractype != fractal_type::FROTHFP &&
+                fractype != fractal_type::ANT)
             roundfloatd(&param[i]); // don't round cellular, frothybasin or ant
     }
     int extra = find_extra_param(fractype);
@@ -1193,7 +1197,7 @@ int build_fractal_list(int fractals[], int *last_val, const char *nameptr[])
         if ((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*')
         {
             fractals[numfractals] = i;
-            if (i == neworbittype || i == fractalspecific[neworbittype].tofloat)
+            if (i == static_cast<int>(neworbittype) || i == static_cast<int>(fractalspecific[static_cast<int>(neworbittype)].tofloat))
                 *last_val = numfractals;
             nameptr[numfractals] = fractalspecific[i].name;
             numfractals++;
@@ -1275,7 +1279,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     const char *v2 = "To   cx (real part)";
     const char *v3 = "To   cy (imaginary part)";
     const char *juliorbitname = nullptr;
-    int curtype,numparams,numtrig;
+    int numparams,numtrig;
     fullscreenvalues paramvalues[30];
     const char *choices[30];
     long oldbailout = 0L;
@@ -1304,19 +1308,19 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     double oldparam[MAXPARAMS];
     int fkeymask = 0x40;
     oldbailout = bailout;
-    if (fractype == JULIBROT || fractype == JULIBROTFP)
+    if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
         julibrot = true;
     else
         julibrot = false;
-    curtype = fractype;
+    fractal_type curtype = fractype;
     {
         int i;
         if (curfractalspecific->name[0] == '*'
-                && (i = curfractalspecific->tofloat) != NOFRACTAL  // FIXED BUG HERE!!
+                && (i = static_cast<int>(curfractalspecific->tofloat)) != static_cast<int>(fractal_type::NOFRACTAL)
                 && fractalspecific[i].name[0] != '*')
-            curtype = i;
+            curtype = static_cast<fractal_type>(i);
     }
-    curfractalspecific = &fractalspecific[curtype];
+    curfractalspecific = &fractalspecific[static_cast<int>(curtype)];
     tstack[0] = 0;
     int help_formula = curfractalspecific->helpformula;
     if (help_formula < -1)
@@ -1345,7 +1349,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
         {
             load_entry_text(entryfile,tstack,17, 0, 0);
             fclose(entryfile);
-            if (fractype == FORMULA || fractype == FFORMULA)
+            if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
                 frm_get_param_stuff(entryname); // no error check, should be okay, from above
         }
     }
@@ -1397,8 +1401,8 @@ gfp_top:
     promptnum = 0;
     if (julibrot)
     {
-        int i = select_fracttype(neworbittype);
-        if (i < 0)
+        fractal_type i = select_fracttype(neworbittype);
+        if (i == fractal_type::NOFRACTAL)
         {
             if (ret == 0)
                 ret = -1;
@@ -1407,11 +1411,11 @@ gfp_top:
         }
         else
             neworbittype = i;
-        jborbit = &fractalspecific[neworbittype];
+        jborbit = &fractalspecific[static_cast<int>(neworbittype)];
         juliorbitname = jborbit->name;
     }
 
-    if (fractype == FORMULA || fractype == FFORMULA)
+    if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
         if (uses_p1)  // set first parameter
             firstparm = 0;
@@ -1440,14 +1444,14 @@ gfp_top:
     {
         curfractalspecific = jborbit;
         firstparm = 2; // in most case Julibrot does not need first two parms
-        if (neworbittype == QUATJULFP     ||   // all parameters needed
-                neworbittype == HYPERCMPLXJFP)
+        if (neworbittype == fractal_type::QUATJULFP     ||   // all parameters needed
+                neworbittype == fractal_type::HYPERCMPLXJFP)
         {
             firstparm = 0;
             lastparm = 4;
         }
-        if (neworbittype == QUATFP        ||   // no parameters needed
-                neworbittype == HYPERCMPLXFP)
+        if (neworbittype == fractal_type::QUATFP        ||   // no parameters needed
+                neworbittype == fractal_type::HYPERCMPLXFP)
             firstparm = 4;
     }
     numparams = 0;
@@ -1458,7 +1462,7 @@ gfp_top:
             char tmpbuf[30];
             if (!typehasparm(julibrot ? neworbittype : fractype, i, parmprompt[j]))
             {
-                if (curtype == FORMULA || curtype == FFORMULA)
+                if (curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA)
                     if (paramnotused(i))
                         continue;
                 break;
@@ -1483,11 +1487,11 @@ gfp_top:
     /* The following is a goofy kludge to make reading in the formula
      * parameters work.
      */
-    if (curtype == FORMULA || curtype == FFORMULA)
+    if (curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA)
         numparams = lastparm - firstparm;
 
     numtrig = (curfractalspecific->flags >> 6) & 7;
-    if (curtype == FORMULA || curtype == FFORMULA)
+    if (curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA)
     {
         numtrig = maxfn;
     }
@@ -1547,15 +1551,15 @@ gfp_top:
     {
         switch (neworbittype)
         {
-        case QUATFP:
-        case HYPERCMPLXFP:
+        case fractal_type::QUATFP:
+        case fractal_type::HYPERCMPLXFP:
             v0 = "From cj (3rd dim)";
             v1 = "From ck (4th dim)";
             v2 = "To   cj (3rd dim)";
             v3 = "To   ck (4th dim)";
             break;
-        case QUATJULFP:
-        case HYPERCMPLXJFP:
+        case fractal_type::QUATJULFP:
+        case fractal_type::HYPERCMPLXJFP:
             v0 = "From zj (3rd dim)";
             v1 = "From zk (4th dim)";
             v2 = "To   zj (3rd dim)";
@@ -1613,7 +1617,7 @@ gfp_top:
         choices[promptnum++] = "Distance to Screen";
     }
 
-    if (curtype == INVERSEJULIA || curtype == INVERSEJULIAFP)
+    if (curtype == fractal_type::INVERSEJULIA || curtype == fractal_type::INVERSEJULIAFP)
     {
         choices[promptnum] = JIIMstr1;
         paramvalues[promptnum].type = 'l';
@@ -1634,7 +1638,7 @@ gfp_top:
         paramvalues[promptnum++].uval.ch.val  = static_cast<int>(minor_method);
     }
 
-    if ((curtype == FORMULA || curtype == FFORMULA) && uses_ismand)
+    if ((curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA) && uses_ismand)
     {
         choices[promptnum] = "ismand";
         paramvalues[promptnum].type = 'y';
@@ -1683,7 +1687,7 @@ gfp_top:
     promptnum = 0;
     for (int i = firstparm; i < numparams+firstparm; i++)
     {
-        if (curtype == FORMULA || curtype == FFORMULA)
+        if (curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA)
             if (paramnotused(i))
                 continue;
         if (oldparam[i] != paramvalues[promptnum].uval.dval)
@@ -1755,7 +1759,7 @@ gfp_top:
         distfp     = (float)paramvalues[promptnum++].uval.dval;
         ret = 1;  // force new calc since not resumable anyway
     }
-    if (curtype == INVERSEJULIA || curtype == INVERSEJULIAFP)
+    if (curtype == fractal_type::INVERSEJULIA || curtype == fractal_type::INVERSEJULIAFP)
     {
         if (paramvalues[promptnum].uval.ch.val != static_cast<int>(major_method) ||
                 paramvalues[promptnum+1].uval.ch.val != static_cast<int>(minor_method))
@@ -1763,7 +1767,7 @@ gfp_top:
         major_method = static_cast<Major>(paramvalues[promptnum++].uval.ch.val);
         minor_method = static_cast<Minor>(paramvalues[promptnum++].uval.ch.val);
     }
-    if ((curtype == FORMULA || curtype == FFORMULA) && uses_ismand)
+    if ((curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA) && uses_ismand)
     {
         if (ismand != (paramvalues[promptnum].uval.ch.val != 0))
         {
@@ -1773,31 +1777,32 @@ gfp_top:
         ++promptnum;
     }
 gfp_exit:
-    curfractalspecific = &fractalspecific[fractype];
+    curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
     return ret;
 }
 
-int find_extra_param(int type)
+int find_extra_param(fractal_type type)
 {
-    int i,ret,curtyp;
+    int i,ret;
+    fractal_type curtyp;
     ret = -1;
     i = -1;
 
-    if (fractalspecific[type].flags&MORE)
+    if (fractalspecific[static_cast<int>(type)].flags & MORE)
     {
-        while ((curtyp = moreparams[++i].type) != type && curtyp != -1);
+        while ((curtyp = moreparams[++i].type) != type && curtyp != fractal_type::NOFRACTAL);
         if (curtyp == type)
             ret = i;
     }
     return ret;
 }
 
-void load_params(int fractype)
+void load_params(fractal_type fractype)
 {
     for (int i = 0; i < 4; ++i)
     {
-        param[i] = fractalspecific[fractype].paramvalue[i];
-        if (fractype != CELLULAR && fractype != ANT)
+        param[i] = fractalspecific[static_cast<int>(fractype)].paramvalue[i];
+        if (fractype != fractal_type::CELLULAR && fractype != fractal_type::ANT)
             roundfloatd(&param[i]); // don't round cellular or ant
     }
     int extra = find_extra_param(fractype);
@@ -1819,7 +1824,7 @@ bool check_orbit_name(char *orbitname)
     {
         if (strcmp(orbitname,nameptr[i]) == 0)
         {
-            neworbittype = fractals[i];
+            neworbittype = static_cast<fractal_type>(fractals[i]);
             bad = false;
             break;
         }
@@ -1882,8 +1887,8 @@ long get_file_entry(int type, const char *title,char *fmask,
         case GETIFS:
             if (ifsload() == 0)
             {
-                fractype = !ifs_type ? IFS : IFS3D;
-                curfractalspecific = &fractalspecific[fractype];
+                fractype = !ifs_type ? fractal_type::IFS : fractal_type::IFS3D;
+                curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
                 set_default_parms(); // to correct them if 3d
                 return 0;
             }
@@ -3018,7 +3023,7 @@ static bool get_funny_glasses_params()
         ZVIEWER = 150;
     if (g_eye_separation == 0)
     {
-        if (fractype == IFS3D || fractype == LLORENZ3D || fractype == FPLORENZ3D)
+        if (fractype == fractal_type::IFS3D || fractype == fractal_type::LLORENZ3D || fractype == fractal_type::FPLORENZ3D)
         {
             g_eye_separation =  2;
             xadjust       = -2;

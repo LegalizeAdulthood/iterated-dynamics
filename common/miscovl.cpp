@@ -541,7 +541,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
             ++sptr;
         put_parm(" %s=%s", "type",sptr);
 
-        if (fractype == JULIBROT || fractype == JULIBROTFP)
+        if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
         {
             put_parm(" %s=%.15g/%.15g/%.15g/%.15g",
                      "julibrotfromto", mxmaxfp,mxminfp,mymaxfp,myminfp);
@@ -552,10 +552,10 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
                          zdots, originfp, depthfp, heightfp, widthfp,distfp);
             if (eyesfp != 0)
                 put_parm(" %s=%g", "julibroteyes",eyesfp);
-            if (neworbittype != JULIA)
+            if (neworbittype != fractal_type::JULIA)
             {
                 const char *name;
-                name = fractalspecific[neworbittype].name;
+                name = fractalspecific[static_cast<int>(neworbittype)].name;
                 if (*name == '*')
                     name++;
                 put_parm(" %s=%s", "orbitname",name);
@@ -563,24 +563,24 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
             if (juli3Dmode != 0)
                 put_parm(" %s=%s", "3dmode",juli3Doptions[juli3Dmode]);
         }
-        if (fractype == FORMULA || fractype == FFORMULA)
+        if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
         {
             put_filename("formulafile",FormFileName);
             put_parm(" %s=%s", "formulaname",FormName);
             if (uses_ismand)
                 put_parm(" %s=%c", "ismand", ismand ? 'y' : 'n');
         }
-        if (fractype == LSYSTEM)
+        if (fractype == fractal_type::LSYSTEM)
         {
             put_filename("lfile",LFileName);
             put_parm(" %s=%s", "lname",LName);
         }
-        if (fractype == IFS || fractype == IFS3D)
+        if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
         {
             put_filename("ifsfile",IFSFileName);
             put_parm(" %s=%s", "ifs",IFSName);
         }
-        if (fractype == INVERSEJULIA || fractype == INVERSEJULIAFP)
+        if (fractype == fractal_type::INVERSEJULIA || fractype == fractal_type::INVERSEJULIAFP)
             put_parm(" %s=%s/%s", "miim", JIIMmethod[static_cast<int>(major_method)], JIIMleftright[static_cast<int>(minor_method)]);
 
         showtrig(buf); // this function is in miscres.c
@@ -677,12 +677,12 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
 
         int i;
         for (i = (MAXPARAMS-1); i >= 0; --i)
-            if (typehasparm((fractype == JULIBROT || fractype == JULIBROTFP)
+            if (typehasparm((fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
                             ?neworbittype:fractype,i,nullptr)) break;
 
         if (i >= 0)
         {
-            if (fractype == CELLULAR || fractype == ANT)
+            if (fractype == fractal_type::CELLULAR || fractype == fractal_type::ANT)
                 put_parm(" %s=%.1f", "params",param[0]);
             else
             {
@@ -692,7 +692,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
                     put_parm(" %s=%.17g", "params",param[0]);
             }
             for (int j = 1; j <= i; ++j)
-                if (fractype == CELLULAR || fractype == ANT)
+                if (fractype == fractal_type::CELLULAR || fractype == fractal_type::ANT)
                     put_parm("/%.1f",param[j]);
                 else
                 {

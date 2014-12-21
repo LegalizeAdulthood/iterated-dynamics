@@ -50,7 +50,7 @@ int     zrotate;                /* zoombox rotation         */
 double  zbx,zby;                /* topleft of zoombox       */
 double  zwidth,zdepth,zskew;    /* zoombox size & shape     */
 
-int     fractype;               /* if == 0, use Mandelbrot  */
+fractal_type fractype;               /* if == 0, use Mandelbrot  */
 char    stdcalcmode;            /* '1', '2', 'g', 'b'       */
 long    c_real, c_imag;           /* real, imag'ry parts of C */
 long    delx, dely;             /* screen pixel increments  */

@@ -433,7 +433,7 @@ static void initvars_fractal()          // init vars affecting calculation
     usr_floatflag = true;               // turn on the float flag
 #endif
     finattract = false;                 // disable finite attractor logic
-    fractype = 0;                        // initial type Set flag
+    fractype = fractal_type::MANDEL;    // initial type Set flag
     curfractalspecific = &fractalspecific[0];
     initcorners = false;
     initparams = false;
@@ -517,7 +517,7 @@ static void initvars_fractal()          // init vars affecting calculation
     distfp = 24;
     eyesfp = 2.5F;
     depthfp = 8;
-    neworbittype = JULIA;
+    neworbittype = fractal_type::JULIA;
     zdots = 128;
     initvars_3d();
     basehertz = 440;                     // basic hertz rate
@@ -1367,8 +1367,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        fractype = k;
-        curfractalspecific = &fractalspecific[fractype];
+        fractype = static_cast<fractal_type>(k);
+        curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
         if (!initcorners)
         {
             xxmin = curfractalspecific->xmin;
@@ -1995,7 +1995,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (strcmp(variable, "corners") == 0)       // corners=?,?,?,?
     {
         int dec;
-        if (fractype == CELLULAR)
+        if (fractype == fractal_type::CELLULAR)
         {
             return 1; // skip setting the corners
         }
@@ -2187,7 +2187,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 || (totparms != 0 && totparms < 3)
                 || (totparms >= 3 && floatval[2] == 0.0))
             goto badarg;
-        if (fractype == CELLULAR)
+        if (fractype == fractal_type::CELLULAR)
             return 1; // skip setting the corners
         usemag = true;
         if (totparms == 0)

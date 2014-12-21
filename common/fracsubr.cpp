@@ -162,14 +162,14 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
 
     if (!(curfractalspecific->flags & BF_MATH))
     {
-        int tofloat = curfractalspecific->tofloat;
-        if (tofloat == NOFRACTAL)
+        fractal_type tofloat = curfractalspecific->tofloat;
+        if (tofloat == fractal_type::NOFRACTAL)
             bf_math = bf_math_type::NONE;
-        else if (!(fractalspecific[tofloat].flags & BF_MATH))
+        else if (!(fractalspecific[static_cast<int>(tofloat)].flags & BF_MATH))
             bf_math = bf_math_type::NONE;
         else if (bf_math != bf_math_type::NONE)
         {
-            curfractalspecific = &fractalspecific[tofloat];
+            curfractalspecific = &fractalspecific[static_cast<int>(tofloat)];
             fractype = tofloat;
         }
     }
@@ -186,31 +186,31 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         else
             init_bf_dec(gotprec);
     }
-    else if ((fractype == MANDEL || fractype == MANDELFP) && debugflag == debug_flags::force_arbitrary_precision_math)
+    else if ((fractype == fractal_type::MANDEL || fractype == fractal_type::MANDELFP) && debugflag == debug_flags::force_arbitrary_precision_math)
     {
-        fractype = MANDELFP;
-        curfractalspecific = &fractalspecific[MANDELFP];
+        fractype = fractal_type::MANDELFP;
+        curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::MANDELFP)];
         fractal_floattobf();
         usr_floatflag = true;
     }
-    else if ((fractype == JULIA || fractype == JULIAFP) && debugflag == debug_flags::force_arbitrary_precision_math)
+    else if ((fractype == fractal_type::JULIA || fractype == fractal_type::JULIAFP) && debugflag == debug_flags::force_arbitrary_precision_math)
     {
-        fractype = JULIAFP;
-        curfractalspecific = &fractalspecific[JULIAFP];
+        fractype = fractal_type::JULIAFP;
+        curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::JULIAFP)];
         fractal_floattobf();
         usr_floatflag = true;
     }
-    else if ((fractype == LMANDELZPOWER || fractype == FPMANDELZPOWER) && debugflag == debug_flags::force_arbitrary_precision_math)
+    else if ((fractype == fractal_type::LMANDELZPOWER || fractype == fractal_type::FPMANDELZPOWER) && debugflag == debug_flags::force_arbitrary_precision_math)
     {
-        fractype = FPMANDELZPOWER;
-        curfractalspecific = &fractalspecific[FPMANDELZPOWER];
+        fractype = fractal_type::FPMANDELZPOWER;
+        curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::FPMANDELZPOWER)];
         fractal_floattobf();
         usr_floatflag = true;
     }
-    else if ((fractype == LJULIAZPOWER || fractype == FPJULIAZPOWER) && debugflag == debug_flags::force_arbitrary_precision_math)
+    else if ((fractype == fractal_type::LJULIAZPOWER || fractype == fractal_type::FPJULIAZPOWER) && debugflag == debug_flags::force_arbitrary_precision_math)
     {
-        fractype = FPJULIAZPOWER;
-        curfractalspecific = &fractalspecific[FPJULIAZPOWER];
+        fractype = fractal_type::FPJULIAZPOWER;
+        curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::FPJULIAZPOWER)];
         fractal_floattobf();
         usr_floatflag = true;
     }
@@ -228,11 +228,11 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
             floatflag = true;
     }
     // if floating pt only, set floatflag for TAB screen
-    if (!curfractalspecific->isinteger && curfractalspecific->tofloat == NOFRACTAL)
+    if (!curfractalspecific->isinteger && curfractalspecific->tofloat == fractal_type::NOFRACTAL)
         floatflag = true;
     if (usr_stdcalcmode == 's')
     {
-        if (fractype == MANDEL || fractype == MANDELFP)
+        if (fractype == fractal_type::MANDEL || fractype == fractal_type::MANDELFP)
             floatflag = true;
         else
             usr_stdcalcmode = '1';
@@ -271,34 +271,34 @@ init_restart:
     if (floatflag)
     { // ensure type matches floatflag
         if (curfractalspecific->isinteger != 0
-                && curfractalspecific->tofloat != NOFRACTAL)
+                && curfractalspecific->tofloat != fractal_type::NOFRACTAL)
             fractype = curfractalspecific->tofloat;
     }
     else
     {
         if (curfractalspecific->isinteger == 0
-                && curfractalspecific->tofloat != NOFRACTAL)
+                && curfractalspecific->tofloat != fractal_type::NOFRACTAL)
             fractype = curfractalspecific->tofloat;
     }
     // match Julibrot with integer mode of orbit
-    if (fractype == JULIBROTFP && fractalspecific[neworbittype].isinteger)
+    if (fractype == fractal_type::JULIBROTFP && fractalspecific[static_cast<int>(neworbittype)].isinteger)
     {
-        int i = fractalspecific[neworbittype].tofloat;
-        if (i != NOFRACTAL)
+        fractal_type i = fractalspecific[static_cast<int>(neworbittype)].tofloat;
+        if (i != fractal_type::NOFRACTAL)
             neworbittype = i;
         else
-            fractype = JULIBROT;
+            fractype = fractal_type::JULIBROT;
     }
-    else if (fractype == JULIBROT && fractalspecific[neworbittype].isinteger == 0)
+    else if (fractype == fractal_type::JULIBROT && fractalspecific[static_cast<int>(neworbittype)].isinteger == 0)
     {
-        int i = fractalspecific[neworbittype].tofloat;
-        if (i != NOFRACTAL)
+        fractal_type i = fractalspecific[static_cast<int>(neworbittype)].tofloat;
+        if (i != fractal_type::NOFRACTAL)
             neworbittype = i;
         else
-            fractype = JULIBROTFP;
+            fractype = fractal_type::JULIBROTFP;
     }
 
-    curfractalspecific = &fractalspecific[fractype];
+    curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
 
     integerfractal = curfractalspecific->isinteger;
 
@@ -339,17 +339,17 @@ init_restart:
         bitshift = integerfractal;
     if (integerfractal == 0)
     { // float?
-        int i = curfractalspecific->tofloat;
-        if (i != NOFRACTAL) // -> int?
+        fractal_type i = curfractalspecific->tofloat;
+        if (i != fractal_type::NOFRACTAL) // -> int?
         {
-            if (fractalspecific[i].isinteger > 1) // specific shift?
-                bitshift = fractalspecific[i].isinteger;
+            if (fractalspecific[static_cast<int>(i)].isinteger > 1) // specific shift?
+                bitshift = fractalspecific[static_cast<int>(i)].isinteger;
         }
         else
             bitshift = 16;  // to allow larger corners
     }
     // We want this code if we're using the assembler calcmand
-    if (fractype == MANDEL || fractype == JULIA)
+    if (fractype == fractal_type::MANDEL || fractype == fractal_type::JULIA)
     { // adust shift bits if..
         if (!potflag                                    // not using potential
                 && (param[0] > -2.0 && param[0] < 2.0)  // parameters not too large
@@ -382,7 +382,7 @@ init_restart:
         fill_dx_array();
     }
 
-    if (fractype != CELLULAR && fractype != ANT)  // fudgetolong fails w >10 digits in double
+    if (fractype != fractal_type::CELLULAR && fractype != fractal_type::ANT)  // fudgetolong fails w >10 digits in double
     {
         c_real = fudgetolong(param[0]); // integer equivs for it all
         c_imag = fudgetolong(param[1]);
@@ -402,8 +402,8 @@ init_restart:
     // skip if bf_math to avoid extraseg conflict with dx0 arrays
     // skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance
     // is set.  These types don't auto switch between float and integer math
-    if (fractype != PLASMA && bf_math == bf_math_type::NONE
-            && fractype != IFS && fractype != IFS3D && fractype != LSYSTEM)
+    if (fractype != fractal_type::PLASMA && bf_math == bf_math_type::NONE
+            && fractype != fractal_type::IFS && fractype != fractal_type::IFS3D && fractype != fractal_type::LSYSTEM)
     {
         if (integerfractal && !invert && use_grid)
         {
@@ -422,7 +422,7 @@ init_restart:
             {
 expand_retry:
                 if (integerfractal          // integer fractal type?
-                        && curfractalspecific->tofloat != NOFRACTAL)
+                        && curfractalspecific->tofloat != fractal_type::NOFRACTAL)
                     floatflag = true;       // switch to floating pt
                 else
                     adjust_to_limits(2.0);   // double the size
