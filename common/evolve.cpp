@@ -144,10 +144,10 @@ void param_history(int mode)
         oldhistory.invert0 = inversion[0];
         oldhistory.invert1 = inversion[1];
         oldhistory.invert2 = inversion[2];
-        oldhistory.trigndx0 = trigndx[0];
-        oldhistory.trigndx1 = trigndx[1];
-        oldhistory.trigndx2 = trigndx[2];
-        oldhistory.trigndx3 = trigndx[3];
+        oldhistory.trigndx0 = static_cast<BYTE>(trigndx[0]);
+        oldhistory.trigndx1 = static_cast<BYTE>(trigndx[1]);
+        oldhistory.trigndx2 = static_cast<BYTE>(trigndx[2]);
+        oldhistory.trigndx3 = static_cast<BYTE>(trigndx[3]);
         oldhistory.bailoutest = bailoutest;
         MoveToMemory((BYTE *)&oldhistory, (U16)sizeof(oldhistory), 1L, 0L, oldhistory_handle);
     }
@@ -171,10 +171,10 @@ void param_history(int mode)
         inversion[1] = oldhistory.invert1;
         inversion[2] = oldhistory.invert2;
         invert = (inversion[0] == 0.0) ? 0 : 3 ;
-        trigndx[0] = oldhistory.trigndx0;
-        trigndx[1] = oldhistory.trigndx1;
-        trigndx[2] = oldhistory.trigndx2;
-        trigndx[3] = oldhistory.trigndx3;
+        trigndx[0] = static_cast<trig_fn>(oldhistory.trigndx0);
+        trigndx[1] = static_cast<trig_fn>(oldhistory.trigndx1);
+        trigndx[2] = static_cast<trig_fn>(oldhistory.trigndx2);
+        trigndx[3] = static_cast<trig_fn>(oldhistory.trigndx3);
         bailoutest = static_cast<bailouts>(oldhistory.bailoutest);
     }
 }
@@ -305,11 +305,10 @@ void varypwr2(GENEBASE gene[], int randval, int i)
 void varytrig(GENEBASE gene[], int randval, int i)
 {
     if (gene[i].mutate)
-        // Changed following to BYTE since trigfn is an array of BYTEs and if one
-        // of the functions isn't varied, it's value was being zeroed by the high
-        // BYTE of the preceding function.
-        *(BYTE*)gene[i].addr = (BYTE)wrapped_positive_varyint(randval,numtrigfn,gene[i].mutate);
-    // replaced '30' with numtrigfn, set in prompts1.c
+    {
+        *static_cast<trig_fn *>(gene[i].addr) =
+            static_cast<trig_fn>(wrapped_positive_varyint(randval, numtrigfn, gene[i].mutate));
+    }
     set_trig_pointers(5); //set all trig ptrs up
     return;
 }

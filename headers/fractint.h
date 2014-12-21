@@ -852,7 +852,6 @@ struct dblcoords
     double x,y;
 };
 
-extern BYTE trigndx[];
 extern void (*ltrig0)(), (*ltrig1)(), (*ltrig2)(), (*ltrig3)();
 extern void (*dtrig0)(), (*dtrig1)(), (*dtrig2)(), (*dtrig3)();
 

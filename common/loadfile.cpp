@@ -176,10 +176,10 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         usr_floatflag   = read_info.floatflag != 0;
         bailout     = read_info.bailoutold;
         calctime    = read_info.calctime;
-        trigndx[0]  = read_info.trigndx[0];
-        trigndx[1]  = read_info.trigndx[1];
-        trigndx[2]  = read_info.trigndx[2];
-        trigndx[3]  = read_info.trigndx[3];
+        trigndx[0]  = static_cast<trig_fn>(read_info.trigndx[0]);
+        trigndx[1]  = static_cast<trig_fn>(read_info.trigndx[1]);
+        trigndx[2]  = static_cast<trig_fn>(read_info.trigndx[2]);
+        trigndx[3]  = static_cast<trig_fn>(read_info.trigndx[3]);
         finattract  = read_info.finattract != 0;
         initorbit.x = read_info.initorbit[0];
         initorbit.y = read_info.initorbit[1];
@@ -982,86 +982,87 @@ static void skip_ext_blk(int *block_len, int *data_len)
 // switch obsolete fractal types to new generalizations
 static void backwardscompat(FRACTAL_INFO *info)
 {
-    switch (fractype) {
+    switch (fractype)
+    {
     case LAMBDASINE:
         fractype = LAMBDATRIGFP;
-        trigndx[0] = SIN;
+        trigndx[0] = trig_fn::SIN;
         break;
     case LAMBDACOS    :
         fractype = LAMBDATRIGFP;
-        trigndx[0] = COS;
+        trigndx[0] = trig_fn::COS;
         break;
     case LAMBDAEXP    :
         fractype = LAMBDATRIGFP;
-        trigndx[0] = EXP;
+        trigndx[0] = trig_fn::EXP;
         break;
     case MANDELSINE   :
         fractype = MANDELTRIGFP;
-        trigndx[0] = SIN;
+        trigndx[0] = trig_fn::SIN;
         break;
     case MANDELCOS    :
         fractype = MANDELTRIGFP;
-        trigndx[0] = COS;
+        trigndx[0] = trig_fn::COS;
         break;
     case MANDELEXP    :
         fractype = MANDELTRIGFP;
-        trigndx[0] = EXP;
+        trigndx[0] = trig_fn::EXP;
         break;
     case MANDELSINH   :
         fractype = MANDELTRIGFP;
-        trigndx[0] = SINH;
+        trigndx[0] = trig_fn::SINH;
         break;
     case LAMBDASINH   :
         fractype = LAMBDATRIGFP;
-        trigndx[0] = SINH;
+        trigndx[0] = trig_fn::SINH;
         break;
     case MANDELCOSH   :
         fractype = MANDELTRIGFP;
-        trigndx[0] = COSH;
+        trigndx[0] = trig_fn::COSH;
         break;
     case LAMBDACOSH   :
         fractype = LAMBDATRIGFP;
-        trigndx[0] = COSH;
+        trigndx[0] = trig_fn::COSH;
         break;
     case LMANDELSINE  :
         fractype = MANDELTRIG;
-        trigndx[0] = SIN;
+        trigndx[0] = trig_fn::SIN;
         break;
     case LLAMBDASINE  :
         fractype = LAMBDATRIG;
-        trigndx[0] = SIN;
+        trigndx[0] = trig_fn::SIN;
         break;
     case LMANDELCOS   :
         fractype = MANDELTRIG;
-        trigndx[0] = COS;
+        trigndx[0] = trig_fn::COS;
         break;
     case LLAMBDACOS   :
         fractype = LAMBDATRIG;
-        trigndx[0] = COS;
+        trigndx[0] = trig_fn::COS;
         break;
     case LMANDELSINH  :
         fractype = MANDELTRIG;
-        trigndx[0] = SINH;
+        trigndx[0] = trig_fn::SINH;
         break;
     case LLAMBDASINH  :
         fractype = LAMBDATRIG;
-        trigndx[0] = SINH;
+        trigndx[0] = trig_fn::SINH;
         break;
     case LMANDELCOSH  :
         fractype = MANDELTRIG;
-        trigndx[0] = COSH;
+        trigndx[0] = trig_fn::COSH;
         break;
     case LLAMBDACOSH  :
         fractype = LAMBDATRIG;
-        trigndx[0] = COSH;
+        trigndx[0] = trig_fn::COSH;
         break;
     case LMANDELEXP   :
         fractype = MANDELTRIG;
-        trigndx[0] = EXP;
+        trigndx[0] = trig_fn::EXP;
         break;
     case LLAMBDAEXP   :
         fractype = LAMBDATRIG;
-        trigndx[0] = EXP;
+        trigndx[0] = trig_fn::EXP;
         break;
     case DEMM         :
         fractype = MANDELFP;
@@ -1217,7 +1218,7 @@ bool check_back()
             (fractype == LPOPCORNJUL && save_release <= 1960) ||
             (inside == FMODI && save_release <= 2000) ||
             ((inside == ATANI || outside == ATAN) && save_release <= 2002) ||
-            (fractype == LAMBDATRIGFP && trigndx[0] == EXP && save_release <= 2002) ||
+            (fractype == LAMBDATRIGFP && trigndx[0] == trig_fn::EXP && save_release <= 2002) ||
             ((fractype == JULIBROT || fractype == JULIBROTFP) &&
              (neworbittype == QUATFP || neworbittype == HYPERCMPLXFP) &&
              save_release <= 2002)
@@ -1974,8 +1975,9 @@ static bool paramsOK(FRACTAL_INFO *info)
 static bool functionOK(FRACTAL_INFO *info, int numfn)
 {
     int mzmatch = 0;
-    for (int i = 0; i < numfn; i++) {
-        if (info->trigndx[i] != trigndx[i])
+    for (int i = 0; i < numfn; i++)
+    {
+        if (static_cast<trig_fn>(info->trigndx[i]) != trigndx[i])
             mzmatch++;
     }
     if (mzmatch > 0)

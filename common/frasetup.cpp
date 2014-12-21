@@ -244,7 +244,7 @@ MandelfpSetup()
             symmetry = symmetry_type::X_AXIS;
         else
             symmetry = symmetry_type::NONE;
-        if ((trigndx[0] == LOG) || (trigndx[0] == 14)) // LOG or FLIP
+        if ((trigndx[0] == trig_fn::LOG) || (trigndx[0] == trig_fn::FLIP))
             symmetry = symmetry_type::NONE;
         break;
     case QUATFP:
@@ -258,15 +258,15 @@ MandelfpSetup()
         periodicitycheck = 0;
         if (param[2] != 0)
             symmetry = symmetry_type::NONE;
-        if (trigndx[0] == 14) // FLIP
+        if (trigndx[0] == trig_fn::FLIP)
             symmetry = symmetry_type::NONE;
         break;
     case TIMSERRORFP:
-        if (trigndx[0] == 14) // FLIP
+        if (trigndx[0] == trig_fn::FLIP)
             symmetry = symmetry_type::NONE;
         break;
     case MARKSMANDELPWRFP:
-        if (trigndx[0] == 14) // FLIP
+        if (trigndx[0] == trig_fn::FLIP)
             symmetry = symmetry_type::NONE;
         break;
     default:
@@ -350,14 +350,14 @@ JuliafpSetup()
             symmetry = symmetry_type::X_AXIS;
         else
             symmetry = symmetry_type::NONE;
-        if ((trigndx[0] == LOG) || (trigndx[0] == 14)) // LOG or FLIP
+        if ((trigndx[0] == trig_fn::LOG) || (trigndx[0] == trig_fn::FLIP))
             symmetry = symmetry_type::NONE;
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
     case HYPERCMPLXJFP:
         if (param[2] != 0)
             symmetry = symmetry_type::NONE;
-        if (trigndx[0] != SQR)
+        if (trigndx[0] != trig_fn::SQR)
             symmetry = symmetry_type::NONE;
     case QUATJULFP:
         attractors = 0;   // attractors broken since code checks r,i not j,k
@@ -369,10 +369,10 @@ JuliafpSetup()
     case FPPOPCORNJUL:
     {
         bool default_functions = false;
-        if (trigndx[0] == SIN &&
-                trigndx[1] == TAN &&
-                trigndx[2] == SIN &&
-                trigndx[3] == TAN &&
+        if (trigndx[0] == trig_fn::SIN &&
+                trigndx[1] == trig_fn::TAN &&
+                trigndx[2] == trig_fn::SIN &&
+                trigndx[3] == trig_fn::TAN &&
                 fabs(parm2.x - 3.0) < .0001 &&
                 parm2.y == 0 &&
                 parm.y == 0)
@@ -434,17 +434,17 @@ MandellongSetup()
             symmetry = symmetry_type::X_AXIS;
         else
             symmetry = symmetry_type::NONE;
-        if ((trigndx[0] == LOG) || (trigndx[0] == 14)) // LOG or FLIP
+        if ((trigndx[0] == trig_fn::LOG) || (trigndx[0] == trig_fn::FLIP))
             symmetry = symmetry_type::NONE;
     }
     if (fractype == TIMSERROR)
     {
-        if (trigndx[0] == 14) // FLIP
+        if (trigndx[0] == trig_fn::FLIP)
             symmetry = symmetry_type::NONE;
     }
     if (fractype == MARKSMANDELPWR)
     {
-        if (trigndx[0] == 14) // FLIP
+        if (trigndx[0] == trig_fn::FLIP)
             symmetry = symmetry_type::NONE;
     }
     return true;
@@ -479,7 +479,7 @@ JulialongSetup()
             symmetry = symmetry_type::X_AXIS;
         else
             symmetry = symmetry_type::NONE;
-        if ((trigndx[0] == LOG) || (trigndx[0] == 14)) // LOG or FLIP
+        if ((trigndx[0] == trig_fn::LOG) || (trigndx[0] == trig_fn::FLIP))
             symmetry = symmetry_type::NONE;
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
@@ -487,10 +487,10 @@ JulialongSetup()
     case LPOPCORNJUL:
     {
         bool default_functions = false;
-        if (trigndx[0] == SIN &&
-                trigndx[1] == TAN &&
-                trigndx[2] == SIN &&
-                trigndx[3] == TAN &&
+        if (trigndx[0] == trig_fn::SIN &&
+                trigndx[1] == trig_fn::TAN &&
+                trigndx[2] == trig_fn::SIN &&
+                trigndx[3] == trig_fn::TAN &&
                 fabs(parm2.x - 3.0) < .0001 &&
                 parm2.y == 0 &&
                 parm.y == 0)
@@ -549,7 +549,7 @@ bool
 TrigPlusTriglongSetup()
 {
     FnPlusFnSym();
-    if (trigndx[1] == SQR)
+    if (trigndx[1] == trig_fn::SQR)
         return TrigPlusSqrlongSetup();
     curfractalspecific->per_pixel =  long_julia_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusTrigFractal;
@@ -567,7 +567,7 @@ bool
 TrigPlusTrigfpSetup()
 {
     FnPlusFnSym();
-    if (trigndx[1] == SQR)
+    if (trigndx[1] == trig_fn::SQR)
         return TrigPlusSqrfpSetup();
     curfractalspecific->per_pixel =  otherjuliafp_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusTrigfpFractal;
@@ -596,9 +596,10 @@ FnPlusFnSym() // set symmetry matrix for fn+fn type
         /* sqr */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::XY_AXIS}
     };
     if (parm.y == 0.0 && parm2.y == 0.0)
-    {   if (trigndx[0] < 7 && trigndx[1] < 7)  // bounds of array
-            symmetry = fnplusfn[trigndx[0]][trigndx[1]];
-        if (trigndx[0] == 14 || trigndx[1] == 14) // FLIP
+    {
+        if (trigndx[0] <= trig_fn::SQR && trigndx[1] < trig_fn::SQR)  // bounds of array
+            symmetry = fnplusfn[static_cast<int>(trigndx[0])][static_cast<int>(trigndx[1])];
+        if (trigndx[0] == trig_fn::FLIP || trigndx[1] == trig_fn::FLIP)
             symmetry = symmetry_type::NONE;
     }                 // defaults to symmetry::X_AXIS symmetry
     else
@@ -612,9 +613,9 @@ LambdaTrigOrTrigSetup()
     // default symmetry is symmetry::ORIGIN
     longparm = &lparm;
     floatparm = &parm;
-    if ((trigndx[0] == EXP) || (trigndx[1] == EXP))
+    if ((trigndx[0] == trig_fn::EXP) || (trigndx[1] == trig_fn::EXP))
         symmetry = symmetry_type::NONE;
-    if ((trigndx[0] == LOG) || (trigndx[1] == LOG))
+    if ((trigndx[0] == trig_fn::LOG) || (trigndx[1] == trig_fn::LOG))
         symmetry = symmetry_type::X_AXIS;
     get_julia_attractor(0.0, 0.0);       // an attractor?
     return true;
@@ -628,7 +629,7 @@ JuliaTrigOrTrigSetup()
     floatparm = &parm;
     if (parm.y != 0.0)
         symmetry = symmetry_type::NONE;
-    if (trigndx[0] == 14 || trigndx[1] == 14) // FLIP
+    if (trigndx[0] == trig_fn::FLIP || trigndx[1] == trig_fn::FLIP)
         symmetry = symmetry_type::NONE;
     get_julia_attractor(0.0, 0.0);       // an attractor?
     return (1);
@@ -640,9 +641,9 @@ ManlamTrigOrTrigSetup()
     // default symmetry is symmetry::X_AXIS
     longparm = &linit;
     floatparm = &init;
-    if (trigndx[0] == SQR)
+    if (trigndx[0] == trig_fn::SQR)
         symmetry = symmetry_type::NONE;
-    if ((trigndx[0] == LOG) || (trigndx[1] == LOG))
+    if ((trigndx[0] == trig_fn::LOG) || (trigndx[1] == trig_fn::LOG))
         symmetry = symmetry_type::NONE;
     return true;
 }
@@ -653,7 +654,7 @@ MandelTrigOrTrigSetup()
     // default symmetry is symmetry::X_AXIS_NO_PARAM
     longparm = &linit;
     floatparm = &init;
-    if ((trigndx[0] == 14) || (trigndx[1] == 14)) // FLIP
+    if ((trigndx[0] == trig_fn::FLIP) || (trigndx[1] == trig_fn::FLIP))
         symmetry = symmetry_type::NONE;
     return true;
 }
@@ -673,16 +674,16 @@ ZXTrigPlusZSetup()
         //      symmetry = ZXTrigPlusZSym1[trigndx[0]];
         switch (trigndx[0])
         {
-        case COS:   // changed to two case statments and made any added
-        case COSH:  // functions default to symmetry::X_AXIS symmetry.
-        case SQR:
-        case 9:   // 'real' cos
+        case trig_fn::COS:
+        case trig_fn::COSH:
+        case trig_fn::SQR:
+        case trig_fn::REAL_COS:
             symmetry = symmetry_type::XY_AXIS;
             break;
-        case 14:   // FLIP
+        case trig_fn::FLIP:
             symmetry = symmetry_type::Y_AXIS;
             break;
-        case LOG:
+        case trig_fn::LOG:
             symmetry = symmetry_type::NONE;
             break;
         default:
@@ -693,13 +694,13 @@ ZXTrigPlusZSetup()
         //      symmetry = ZXTrigPlusZSym2[trigndx[0]];
         switch (trigndx[0])
         {
-        case COS:
-        case COSH:
-        case SQR:
-        case 9:   // 'real' cos
+        case trig_fn::COS:
+        case trig_fn::COSH:
+        case trig_fn::SQR:
+        case trig_fn::REAL_COS:
             symmetry = symmetry_type::ORIGIN;
             break;
-        case 14:   // FLIP
+        case trig_fn::FLIP:
             symmetry = symmetry_type::NONE;
             break;
         default:
@@ -742,34 +743,34 @@ LambdaTrigSetup()
         curfractalspecific->orbitcalc =  LambdaTrigfpFractal;
     switch (trigndx[0])
     {
-    case SIN:
-    case COS:
-    case 9:   // 'real' cos, added this and default for additional functions
+    case trig_fn::SIN:
+    case trig_fn::COS:
+    case trig_fn::REAL_COS:
         symmetry = symmetry_type::PI_SYM;
         if (isinteger)
             curfractalspecific->orbitcalc =  LambdaTrigFractal1;
         else
             curfractalspecific->orbitcalc =  LambdaTrigfpFractal1;
         break;
-    case SINH:
-    case COSH:
+    case trig_fn::SINH:
+    case trig_fn::COSH:
         symmetry = symmetry_type::ORIGIN;
         if (isinteger)
             curfractalspecific->orbitcalc =  LambdaTrigFractal2;
         else
             curfractalspecific->orbitcalc =  LambdaTrigfpFractal2;
         break;
-    case SQR:
+    case trig_fn::SQR:
         symmetry = symmetry_type::ORIGIN;
         break;
-    case EXP:
+    case trig_fn::EXP:
         if (isinteger)
             curfractalspecific->orbitcalc =  LongLambdaexponentFractal;
         else
             curfractalspecific->orbitcalc =  LambdaexponentFractal;
         symmetry = symmetry_type::NONE;
         break;
-    case LOG:
+    case trig_fn::LOG:
         symmetry = symmetry_type::NONE;
         break;
     default:   // default for additional functions
@@ -792,14 +793,18 @@ JuliafnPlusZsqrdSetup()
 
     switch (trigndx[0]) // fix sqr symmetry & add additional functions
     {
-    case COS: // cosxx
-    case COSH:
-    case SQR:
-    case 9:   // 'real' cos
-    case 10:  // tan
-    case 11:  // tanh
+    case trig_fn::COS: // cosxx
+    case trig_fn::COSH:
+    case trig_fn::SQR:
+    case trig_fn::REAL_COS:
+    case trig_fn::TAN:
+    case trig_fn::TANH:
         symmetry = symmetry_type::ORIGIN;
+        break;
         // default is for symmetry::NONE symmetry
+
+    default:
+        break;
     }
     if (curfractalspecific->isinteger)
         return JulialongSetup();
@@ -815,11 +820,15 @@ SqrTrigSetup()
     //           {symmetry::PI_SYM,symmetry::PI_SYM,symmetry::XY_AXIS,symmetry::XY_AXIS,symmetry::XY_AXIS,symmetry::X_AXIS,symmetry::X_AXIS};
     switch (trigndx[0]) // fix sqr symmetry & add additional functions
     {
-    case SIN:
-    case COS: // cosxx
-    case 9:   // 'real' cos
+    case trig_fn::SIN:
+    case trig_fn::COS: // cosxx
+    case trig_fn::REAL_COS:   // 'real' cos
         symmetry = symmetry_type::PI_SYM;
+        break;
         // default is for symmetry::X_AXIS symmetry
+
+    default:
+        break;
     }
     if (curfractalspecific->isinteger)
         return JulialongSetup();
@@ -841,19 +850,21 @@ FnXFnSetup()
         /* log */ {symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::X_AXIS, symmetry_type::NONE},
         /* sqr */ {symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::NONE,   symmetry_type::XY_AXIS},
     };
-    if (trigndx[0] < 7 && trigndx[1] < 7)  // bounds of array
-        symmetry = fnxfn[trigndx[0]][trigndx[1]];
+    if (trigndx[0] <= trig_fn::SQR && trigndx[1] <= trig_fn::SQR)  // bounds of array
+        symmetry = fnxfn[static_cast<int>(trigndx[0])][static_cast<int>(trigndx[1])];
     // defaults to symmetry::X_AXIS symmetry
-    else {
-        if (trigndx[0] == LOG || trigndx[1] == LOG)
+    else
+    {
+        if (trigndx[0] == trig_fn::LOG || trigndx[1] == trig_fn::LOG)
             symmetry = symmetry_type::NONE;
-        if (trigndx[0] == 9 || trigndx[1] == 9) { // 'real' cos
-            if (trigndx[0] == SIN || trigndx[1] == SIN)
+        if (trigndx[0] == trig_fn::REAL_COS || trigndx[1] == trig_fn::REAL_COS)
+        {
+            if (trigndx[0] == trig_fn::SIN || trigndx[1] == trig_fn::SIN)
                 symmetry = symmetry_type::PI_SYM;
-            if (trigndx[0] == COS || trigndx[1] == COS)
+            if (trigndx[0] == trig_fn::COS || trigndx[1] == trig_fn::COS)
                 symmetry = symmetry_type::PI_SYM;
         }
-        if (trigndx[0] == 9 && trigndx[1] == 9)
+        if (trigndx[0] == trig_fn::REAL_COS && trigndx[1] == trig_fn::REAL_COS)
             symmetry = symmetry_type::PI_SYM;
     }
     if (curfractalspecific->isinteger)
@@ -873,28 +884,28 @@ MandelTrigSetup()
     symmetry = symmetry_type::XY_AXIS_NO_PARAM;
     switch (trigndx[0])
     {
-    case SIN:
-    case COS:
+    case trig_fn::SIN:
+    case trig_fn::COS:
         if (isinteger)
             curfractalspecific->orbitcalc =  LambdaTrigFractal1;
         else
             curfractalspecific->orbitcalc =  LambdaTrigfpFractal1;
         break;
-    case SINH:
-    case COSH:
+    case trig_fn::SINH:
+    case trig_fn::COSH:
         if (isinteger)
             curfractalspecific->orbitcalc =  LambdaTrigFractal2;
         else
             curfractalspecific->orbitcalc =  LambdaTrigfpFractal2;
         break;
-    case EXP:
+    case trig_fn::EXP:
         symmetry = symmetry_type::X_AXIS_NO_PARAM;
         if (isinteger)
             curfractalspecific->orbitcalc =  LongLambdaexponentFractal;
         else
             curfractalspecific->orbitcalc =  LambdaexponentFractal;
         break;
-    case LOG:
+    case trig_fn::LOG:
         symmetry = symmetry_type::X_AXIS_NO_PARAM;
         break;
     default:

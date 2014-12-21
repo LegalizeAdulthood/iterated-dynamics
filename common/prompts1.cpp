@@ -1393,7 +1393,7 @@ gfp_top:
         trignameptr[i] = trigfn[i].name;
     for (int i = 0; i < numtrig; i++) {
         paramvalues[promptnum].type = 'l';
-        paramvalues[promptnum].uval.ch.val  = trigndx[i];
+        paramvalues[promptnum].uval.ch.val  = static_cast<int>(trigndx[i]);
         paramvalues[promptnum].uval.ch.llen = NUMTRIGFN;
         paramvalues[promptnum].uval.ch.vlen = 6;
         paramvalues[promptnum].uval.ch.list = trignameptr;

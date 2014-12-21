@@ -1,13 +1,23 @@
 #ifndef FRACTYPE_H
 #define FRACTYPE_H
-#define SIN             0
-#define COS             1   // Beware this is really COSXX
-#define SINH            2
-#define COSH            3
-#define EXP             4
-#define LOG             5
-#define SQR             6
-#define TAN            10
+
+enum class trig_fn
+{
+    SIN = 0,
+    COS = 1,    // Beware this is really COSXX
+    SINH = 2,
+    COSH = 3,
+    EXP = 4,
+    LOG = 5,
+    SQR = 6,
+    REAL_COS = 9,
+    TAN = 10,
+    TANH = 11,
+    FLIP = 14
+};
+
+extern trig_fn trigndx[];
+
 // These MUST match the corresponding fractalspecific record in fractals.c
 #define NOFRACTAL               -1
 #define MANDEL                   0

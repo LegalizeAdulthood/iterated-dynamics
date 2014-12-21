@@ -496,7 +496,6 @@ extern char                  tempdir[];
 extern double                toosmall;
 extern int                   totpasses;
 extern int                   transparent[];
-extern BYTE                  trigndx[];
 extern bool                  truecolor;
 extern int                   truemode;
 extern double                twopi;
