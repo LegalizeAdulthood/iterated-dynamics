@@ -82,7 +82,8 @@ static bool putstringwrap(int *row, int col1, int col2, int color, char *str, in
             str[col2-col1+2] = save2;
             str += col2-col1;
             (*row)++;
-        } else
+        }
+        else
             driver_put_string(*row,col1,color,str);
         length -= col2-col1;
         col1 = decpt; // align with decimal
@@ -1243,7 +1244,8 @@ static void area()
     if (inside > 0 && outside < 0 && maxit > inside)
     {
         msg = "Warning: inside may not be unique\n";
-    } else
+    }
+    else
     {
         msg = "";
     }

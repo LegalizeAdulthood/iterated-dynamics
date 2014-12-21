@@ -1297,7 +1297,8 @@ static int diffusion_engine()
     if (yybegin == iystart && workpass == 0)
     { // if restarting on pan:
         dif_counter =0l;
-    } else
+    }
+    else
     {
         // yybegin and passes contain data for resuming the type:
         dif_counter = (((long)((unsigned)yybegin)) << 16) | ((unsigned)workpass);
@@ -1353,7 +1354,8 @@ static int diffusion_engine()
             }
             dif_counter++;
         }
-    } else
+    }
+    else
     {
         /*********************************/
         // with progressive filling :
@@ -1956,7 +1958,8 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
     if (inside == PERIOD)
     {
         savedand = 16;           // begin checking every 16th cycle
-    } else
+    }
+    else
     {
 #ifdef MINSAVEDAND
         savedand = MINSAVEDAND;
@@ -2517,7 +2520,8 @@ plot_inside: // we're "inside"
             if (cyclelen > 0)
             {
                 coloriter = cyclelen;
-            } else
+            }
+            else
             {
                 coloriter = maxit;
             }

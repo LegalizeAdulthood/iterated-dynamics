@@ -69,7 +69,8 @@ bool isadirectory(char *s)
                 return true;  // we're SURE it's a directory
             else
                 return false;
-        } else
+        }
+        else
             return true;  // we're SURE it's a directory
     }
     return false;

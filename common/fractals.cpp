@@ -440,7 +440,8 @@ int NewtonFractal2()
                     if (basin == 2)
                     {
                         tmpcolor = 1+(i&7)+((coloriter&1) << 3);
-                    } else
+                    }
+                    else
                     {
                         tmpcolor = 1+i;
                     }
@@ -2045,7 +2046,8 @@ static int TryFloatFractal(int (*fpFractal)())
     { // for backwards compatibility
         lnew.x = (long)(g_new.x/fudge); // this error has been here a long time
         lnew.y = (long)(g_new.y/fudge);
-    } else
+    }
+    else
     {
         lnew.x = (long)(g_new.x*fudge);
         lnew.y = (long)(g_new.y*fudge);

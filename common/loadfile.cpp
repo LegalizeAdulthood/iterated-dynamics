@@ -750,7 +750,8 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
         decode_fractal_info(info,1);
 #endif
         hdr_offset = -1-fractinf_len;
-    } else
+    }
+    else
     {
         // didn't work 1st try, maybe an older vsn, maybe junk at eof, scan:
         int offset;

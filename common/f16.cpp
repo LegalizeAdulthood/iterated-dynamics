@@ -84,7 +84,8 @@ int t16_getline(FILE *fp, int hs, U16 *data)
                 state = 1;
                 count -= 127;
                 fread(rlebuf, 2, 1, fp);
-            } else
+            }
+            else
             {
                 state = 2;
                 ++count;

@@ -3373,7 +3373,8 @@ static int get_bf(bf_t bf, const char *curarg)
     {
         std::string buff(curarg, s);
         strtobf(bf, buff.c_str());
-    } else
+    }
+    else
     {
         strtobf(bf,curarg);
     }
@@ -3388,7 +3389,8 @@ int get_curarg_len(const char *curarg)
     if (s)
     {
         return s - curarg;
-    } else
+    }
+    else
     {
         return strlen(curarg);
     }

@@ -977,7 +977,8 @@ static bool compress(int rowlimit)
                 {
                     ent = codetab[i];
                     continue;
-                } else if ((long)htab[i] < 0)      // empty slot
+                }
+                else if ((long)htab[i] < 0)      // empty slot
                     goto nomatch;
                 disp = hsize_reg - i;           // secondary hash (after G. Knott)
                 if (i == 0)

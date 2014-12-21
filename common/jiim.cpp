@@ -618,7 +618,8 @@ void Jiim(int which)         // called by fractint
         if (actively_computing)
         {
             Cursor_CheckBlink();
-        } else
+        }
+        else
         {
             Cursor_WaitKey();
         }

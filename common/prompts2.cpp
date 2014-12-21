@@ -1300,14 +1300,16 @@ int  fr_findfirst(char *path)       // Find 1st file (or subdir) meeting path/fi
     if (searchdir[0] == '\0')
     {
         currdir = opendir(".");
-    } else
+    }
+    else
     {
         currdir = opendir(searchdir);
     }
     if (currdir == nullptr)
     {
         return -1;
-    } else
+    }
+    else
     {
         return fr_findnext();
     }
@@ -1340,7 +1342,8 @@ int  fr_findnext()              // Find next file (or subdir) meeting above path
             closedir(currdir);
             currdir = nullptr;
             return -1;
-        } else if (dirEntry->d_ino != 0)
+        }
+        else if (dirEntry->d_ino != 0)
         {
             splitpath(dirEntry->d_name,nullptr,nullptr,thisname,thisext);
             strncpy(DTA.filename,dirEntry->d_name,13);
@@ -1994,7 +1997,8 @@ gc_loop:
             values[nump].uval.dval = xxmax;
             prompts[++nump] = yprompt;
             values[nump].uval.dval = yymin;
-        } else
+        }
+        else
         {
             prompts[++nump] = "Top-Left Corner";
             values[nump].type = '*';
@@ -2090,7 +2094,8 @@ gc_loop:
             nump++;
             xxmax = values[nump++].uval.dval;
             yymin = values[nump++].uval.dval;
-        } else
+        }
+        else
         {
             nump = 1;
             xxmin = values[nump++].uval.dval;
@@ -2209,7 +2214,8 @@ gsc_loop:
         values[nump].type = '*';
         prompts[++nump] = "Press " FK_F7 " to switch to \"corners\" mode";
         values[nump].type = '*';
-    } else
+    }
+    else
     {
         prompts[++nump] = "Top-Left Corner";
         values[nump].type = '*';

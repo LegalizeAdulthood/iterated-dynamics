@@ -68,7 +68,8 @@ int keypressed()
         help(0);
         inside_help = false;
         return 0;
-    } else if (ch == FIK_TAB && tabmode)
+    }
+    else if (ch == FIK_TAB && tabmode)
     {
         keybuffer = 0;
         tab_display();
@@ -281,7 +282,8 @@ decode_fractal_info(FRACTAL_INFO *info, int dir)
         buf = &info_buff[0];
         bufPtr = buf;
         bcopy((char *)info,(char *)buf,FRACTAL_INFO_SIZE);
-    }  else
+    }
+    else
     {
         info_buff.resize(sizeof(FRACTAL_INFO));
         buf = &info_buff[0];
@@ -292,7 +294,8 @@ decode_fractal_info(FRACTAL_INFO *info, int dir)
     if (dir == 1)
     {
         strncpy(info->info_id,(char *)bufPtr,8);
-    } else
+    }
+    else
     {
         strncpy((char *)bufPtr,info->info_id,8);
     }
@@ -457,7 +460,8 @@ static void getChar(unsigned char *dst, unsigned char **src, int dir)
     if (dir == 1)
     {
         *dst = **src;
-    } else
+    }
+    else
     {
         **src = *dst;
     }
@@ -473,7 +477,8 @@ static void getInt(short *dst, unsigned char **src, int dir)
     if (dir == 1)
     {
         *dst = (*src)[0] + ((((char *)(*src))[1]) << 8);
-    } else
+    }
+    else
     {
         (*src)[0] = (*dst)&0xff;
         (*src)[1] = ((*dst)&0xff00) >> 8;
@@ -493,7 +498,8 @@ static void getLong(long *dst, unsigned char **src, int dir)
                (((unsigned long)((*src)[1])) << 8) +
                (((unsigned long)((*src)[2])) << 16) +
                (((long)(((char *)(*src))[3])) << 24);
-    } else
+    }
+    else
     {
         (*src)[0] = (*dst)&0xff;
         (*src)[1] = ((*dst)&0xff00) >> 8;
@@ -536,7 +542,8 @@ static void getDouble(double *dst, unsigned char **src, int dir)
         if (i == 8)
         {
             *dst = 0;
-        } else
+        }
+        else
         {
             e = (((*src)[7]&0x7f) << 4) + (((*src)[6]&0xf0) >> 4) - 1023;
             f = 1 + ((*src)[6]&0x0f)/P4 + (*src)[5]/P12 + (*src)[4]/P20 +
@@ -548,12 +555,14 @@ static void getDouble(double *dst, unsigned char **src, int dir)
             }
             *dst = f;
         }
-    } else
+    }
+    else
     {
         if (*dst == 0)
         {
             bzero((char *)(*src),8);
-        } else
+        }
+        else
         {
             int s = 0;
             f = *dst;
@@ -568,7 +577,8 @@ static void getDouble(double *dst, unsigned char **src, int dir)
             {
                 e--;
                 f = (f+1)*2-1;
-            } else if (f >= 1)
+            }
+            else if (f >= 1)
             {
                 e++;
                 f = (f+1)/2-1;
@@ -613,7 +623,8 @@ static void getFloat(float *dst, unsigned char **src, int dir)
         if (i == 4)
         {
             *dst = 0;
-        } else
+        }
+        else
         {
             e = ((((*src)[3]&0x7f) << 1) | (((*src)[2]&0x80) >> 7)) - 127;
             f = 1 + ((*src)[2]&0x7f)/P7 + (*src)[1]/P15 + (*src)[0]/P23;
@@ -624,12 +635,14 @@ static void getFloat(float *dst, unsigned char **src, int dir)
             }
             *dst = f;
         }
-    } else
+    }
+    else
     {
         if (*dst == 0)
         {
             bzero((char *)(*src),4);
-        } else
+        }
+        else
         {
             int s = 0;
             f = *dst;
@@ -644,7 +657,8 @@ static void getFloat(float *dst, unsigned char **src, int dir)
             {
                 e--;
                 f = (f+1)*2-1;
-            } else if (f >= 1)
+            }
+            else if (f >= 1)
             {
                 e++;
                 f = (f+1)/2-1;
@@ -678,7 +692,8 @@ fix_ranges(int *ranges, int num, int dir)
         buf = &ranges_buff[0];
         bufPtr = buf;
         bcopy((char *)ranges, (char *)buf, num*2);
-    } else
+    }
+    else
     {
         ranges_buff.resize(num*sizeof(int));
         buf = &ranges_buff[0];
@@ -706,7 +721,8 @@ decode_evolver_info(EVOLUTION_INFO *info, int dir)
         buf = &evolution_info_buff[0];
         bufPtr = buf;
         bcopy((char *)info,(char *)buf,EVOLVER_INFO_SIZE);
-    }  else
+    }
+    else
     {
         evolution_info_buff.resize(sizeof(EVOLUTION_INFO));
         buf = &evolution_info_buff[0];
@@ -765,7 +781,8 @@ decode_orbits_info(ORBITS_INFO *info, int dir)
         buf = &orbits_info_buff[0];
         bufPtr = buf;
         bcopy((char *)info,(char *)buf,ORBITS_INFO_SIZE);
-    }  else
+    }
+    else
     {
         orbits_info_buff.resize(sizeof(ORBITS_INFO));
         buf = &orbits_info_buff[0];

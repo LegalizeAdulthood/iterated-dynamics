@@ -2040,7 +2040,8 @@ int plotorbits2dsetup()
     {
         if (setup_orbits_to_screen(&o_cvt))
             return (-1);
-    } else
+    }
+    else
     {
         if (setup_convert_to_screen(&o_cvt))
             return (-1);

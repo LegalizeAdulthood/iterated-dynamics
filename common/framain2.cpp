@@ -1223,7 +1223,8 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
                 *kbdmore = false;
                 calc_status = calc_status_value::PARAMS_CHANGED;
                 break;
-            } else
+            }
+            else
                 return big_while_loop_result::CONTINUE;
         }
         clear_zoombox();
@@ -1595,7 +1596,8 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
                 *kbdmore = false;
                 calc_status = calc_status_value::PARAMS_CHANGED;
                 break;
-            } else
+            }
+            else
                 return big_while_loop_result::CONTINUE;
         }
         clear_zoombox();

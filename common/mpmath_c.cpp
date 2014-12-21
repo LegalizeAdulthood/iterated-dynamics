@@ -475,10 +475,12 @@ void SetupLogTable()
             if (lf >= (unsigned long)MaxLTSize)
                 lf = MaxLTSize - 1;
             mlf = (colors - (lf?2:1)) / log(static_cast<double>(MaxLTSize - lf));
-        } else if (LogFlag == -1)
+        }
+        else if (LogFlag == -1)
         { // old log function
             mlf = (colors - 1) / log(static_cast<double>(MaxLTSize));
-        } else if (LogFlag <= -2)
+        }
+        else if (LogFlag <= -2)
         { // sqrt function
             lf = 0 - LogFlag;
             if (lf >= (unsigned long)MaxLTSize)
@@ -522,7 +524,8 @@ void SetupLogTable()
             while (prev <= limit)
                 LogTable[prev++] = (BYTE)n;
         }
-    } else
+    }
+    else
     {
         lf = 0 - LogFlag;
         if (lf >= (unsigned long)MaxLTSize)
@@ -575,13 +578,15 @@ long logtablecalc(long citer)
         }
         else
             ret = (long)(mlf * log(static_cast<double>(citer - lf))) + 1;
-    } else if (LogFlag == -1)
+    }
+    else if (LogFlag == -1)
     { // old log function
         if (citer == 0)
             ret = 1;
         else
             ret = (long)(mlf * log(static_cast<double>(citer))) + 1;
-    } else if (LogFlag <= -2)
+    }
+    else if (LogFlag <= -2)
     { // sqrt function
         if ((unsigned long)citer <= lf)
             ret = 1;

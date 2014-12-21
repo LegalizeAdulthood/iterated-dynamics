@@ -188,7 +188,8 @@ UnixInit()
     {
         g_text_type = 1;
         standend();
-    } else
+    }
+    else
     {
         g_text_type = 1;
     }
@@ -439,7 +440,8 @@ initUnixWindow()
         Xwinheight &= -4;
         sxdots = Xwinwidth;
         sydots = Xwinheight;
-    } else
+    }
+    else
     {  // Use X window
         size_hints = XAllocSizeHints();
         if (size_hints == nullptr)
@@ -504,7 +506,8 @@ initUnixWindow()
         if (doesBacking)
         {
             Xwatt.backing_store = Always;
-        } else
+        }
+        else
         {
             Xwatt.backing_store = NotUseful;
         }
@@ -517,7 +520,8 @@ initUnixWindow()
             Xw = Xroot;
             XFillRectangle(Xdp, Xpixmap, Xgc, 0, 0, Xwinwidth, Xwinheight);
             XSetWindowBackgroundPixmap(Xdp, Xroot, Xpixmap);
-        } else
+        }
+        else
         {
             Xroot = DefaultRootWindow(Xdp);
             int Xwinx = 0;
@@ -628,7 +632,8 @@ clearXwindow()
             {
                 Ximage->data[i] = 0xff;
             }
-        } else
+        }
+        else
         {
             for (int i = 0; i < Ximage->bytes_per_line; i++)
             {
@@ -640,7 +645,8 @@ clearXwindow()
             bcopy(Ximage->data, Ximage->data+i*Ximage->bytes_per_line,
                   Ximage->bytes_per_line);
         }
-    } else
+    }
+    else
     {
         /*
          * Initialize image to 0's.
@@ -702,7 +708,8 @@ initdacbox()
                     g_dac_box[i][j] = (127 - k);
             }
         }
-    } else
+    }
+    else
     {
         for (int i = 0; i < 256; i++)
         {
@@ -778,7 +785,8 @@ resizeWindow()
         XResizeWindow(Xdp, Xw, width, height);
         XSync(Xdp, False);
         usleep(100000);
-    } else
+    }
+    else
         XGetGeometry(Xdp,Xw,&junkw,&junki, &junki, &width, &height,
                      &junkui, &junkui);
 
@@ -804,7 +812,8 @@ resizeWindow()
         {  // 15 or 16 bpp
             Xmwidth = 2*sxdots;
             Xpad = 16;
-        } else
+        }
+        else
         {  // 24 or 32 bpp
             Xmwidth = 4*sxdots;
             Xpad = 32;
@@ -833,7 +842,8 @@ resizeWindow()
         }
         clearXwindow();
         return 1;
-    } else
+    }
+    else
     {
         return 0;
     }
@@ -882,7 +892,8 @@ xcmapstuff()
     {
         Xcmap = XCreateColormap(Xdp, Xw, Xvi, AllocAll);
         XSetWindowColormap(Xdp, Xw, Xcmap);
-    } else
+    }
+    else
     {
         Xcmap = DefaultColormap(Xdp, Xdscreen);
         for (int powr = Xdepth; powr >= 1; powr--)
@@ -918,7 +929,8 @@ xcmapstuff()
     if (ipixtab[0] == 999)
     {
         ipixtab[0] = 0;
-    } else if (ipixtab[0] != 0)
+    }
+    else if (ipixtab[0] != 0)
     {
         int other;
         other = ipixtab[0];
@@ -976,7 +988,8 @@ writevideoline(int y, int x, int lastx, BYTE *pixels)
             pixbuf[i] = pixtab[pixels[i]];
         }
         pixline = pixbuf;
-    } else
+    }
+    else
     {
         pixline = pixels;
     }
@@ -990,7 +1003,8 @@ writevideoline(int y, int x, int lastx, BYTE *pixels)
         {
             schedulealarm(0);
         }
-    } else
+    }
+    else
     {
         XPutImage(Xdp,Xw,Xgc,Ximage,x,y,x,y,width,1);
         if (onroot)
@@ -1070,7 +1084,8 @@ void writevideo(int x, int y, int color)
         {
             schedulealarm(0);
         }
-    } else
+    }
+    else
     {
         XDrawPoint(Xdp,Xw,Xgc,x,y);
         if (onroot)
@@ -1110,7 +1125,8 @@ int readvideo(int x, int y)
             if (cmap_pixtab[i] == pixel)
                 return i;
         return 0;
-    } else
+    }
+    else
         return ipixtab[XGetPixel(Ximage, x, y)];
 }
 
@@ -1184,7 +1200,8 @@ int writevideopalette()
                     if (XAllocColor(Xdp, Xcmap, &cols[i]))
                     {
                         cmap_pixtab[i] = cols[i].pixel;
-                    } else
+                    }
+                    else
                     {
                         assert(1);
                         fprintf(stderr,"Allocating color %d failed.\n", i);
@@ -1203,7 +1220,8 @@ int writevideopalette()
             // !g_got_real_dac, !fake_lut => static color, static gray displays
             assert(1);
         }
-    } else
+    }
+    else
     {
         // g_got_real_dac => grayscale or pseudocolor displays
         for (int i = 0; i < colors; i++)
@@ -1257,7 +1275,8 @@ setlinemode(int mode)
     {
         XSetFunction(Xdp, Xgc, GXcopy);
         xlastfcn = GXcopy;
-    } else
+    }
+    else
     {
         XSetForeground(Xdp, Xgc, WhitePixel(Xdp, Xdscreen));
         xlastcolor = -1;
@@ -1333,7 +1352,8 @@ getachar()
     if (simple_input)
     {
         return getchar();
-    } else
+    }
+    else
     {
         char ch;
         int status;
@@ -1341,7 +1361,8 @@ getachar()
         if (status < 0)
         {
             return -1;
-        } else
+        }
+        else
         {
             return ch;
         }
@@ -1385,7 +1406,8 @@ xgetkey(int block)
             if (ch == FIK_ESC)
             {
                 return handleesc();
-            } else
+            }
+            else
             {
                 return translatekey(ch);
             }
@@ -1410,7 +1432,8 @@ xgetkey(int block)
             if (ch == FIK_ESC)
             {
                 return handleesc();
-            } else
+            }
+            else
             {
                 return translatekey(ch);
             }
@@ -1425,7 +1448,8 @@ xgetkey(int block)
         if (unixDisk)
         {
             status = select(1,&reads,nullptr,nullptr,&tout);
-        } else
+        }
+        else
         {
             // See http://llvm.org/bugs/show_bug.cgi?id=8920
 #if !defined(__clang_analyzer__)
@@ -1462,7 +1486,8 @@ translatekey(int ch)
     if (ch >= 'a' && ch <= 'z')
     {
         return ch;
-    } else
+    }
+    else
     {
         switch (ch)
         {
@@ -1615,10 +1640,12 @@ handleesc()
         default:
             return FIK_ESC;
         }
-    } else if (ch2 == -1)
+    }
+    else if (ch2 == -1)
     {
         return FIK_ESC;
-    } else
+    }
+    else
     {
         int ch3 = getachar();
         if (ch3 == -1)
@@ -1655,7 +1682,8 @@ handleesc()
             default:
                 return FIK_ESC;
             }
-        } else if (ch1 == '2')
+        }
+        else if (ch1 == '2')
         {
             switch (ch2)
             {
@@ -1666,7 +1694,8 @@ handleesc()
             default:
                 return FIK_ESC;
             }
-        } else
+        }
+        else
         {
             return FIK_ESC;
         }
@@ -1872,13 +1901,16 @@ xhandleevents()
                          xevent.xmotion.state&Button3Mask))
                 {
                     bnum = 3;
-                } else if (xevent.xmotion.state&Button1Mask)
+                }
+                else if (xevent.xmotion.state&Button1Mask)
                 {
                     bnum = 1;
-                } else if (xevent.xmotion.state&Button3Mask)
+                }
+                else if (xevent.xmotion.state&Button3Mask)
                 {
                     bnum = 2;
-                } else
+                }
+                else
                 {
                     bnum = 0;
                 }
@@ -1891,7 +1923,8 @@ xhandleevents()
                     dy += (xevent.xmotion.y-lasty)/MSCALE;
                     lastx = xevent.xmotion.x;
                     lasty = xevent.xmotion.y;
-                } else
+                }
+                else
                 {
                     Cursor_SetPos(xevent.xmotion.x, xevent.xmotion.y);
                     xbufkey = FIK_ENTER;
@@ -1937,7 +1970,8 @@ xhandleevents()
                     {
                         bandy1 = SIGN(bandy1-bandy0)*ABS(bandx1-bandx0)*
                                  finalaspectratio + bandy0;
-                    } else
+                    }
+                    else
                     {
                         bandx1 = SIGN(bandx1-bandx0)*ABS(bandy1-bandy0)/
                                  finalaspectratio + bandx0;
@@ -2062,18 +2096,21 @@ xhandleevents()
             {
                 xbufkey = mousefkey[bnum][0]; // right
                 dx--;
-            } else if (dx < 0)
+            }
+            else if (dx < 0)
             {
                 xbufkey = mousefkey[bnum][1]; // left
                 dx++;
             }
-        } else
+        }
+        else
         {
             if (dy > 0)
             {
                 xbufkey = mousefkey[bnum][2]; // down
                 dy--;
-            } else if (dy < 0)
+            }
+            else if (dy < 0)
             {
                 xbufkey = mousefkey[bnum][3]; // up
                 dy++;
@@ -2129,7 +2166,8 @@ pr_dwmroot(Display *dpy, Window pwin)
             }
         }
         return (pwin);
-    } else
+    }
+    else
     {
         printf("xfractint: failed to find root window\n");
         return RootWindow(dpy, scr);
@@ -2301,7 +2339,8 @@ xgetfont()
                     if (XGetPixel(font_image, j*width+l, k))
                     {
                         fontPtr[(i+j)*8+k] = (fontPtr[(i+j)*8+k] << 1) | 1;
-                    } else
+                    }
+                    else
                     {
                         fontPtr[(i+j)*8+k] = (fontPtr[(i+j)*8+k] << 1);
                     }
@@ -2425,7 +2464,8 @@ schedulealarm(int soon)
     if (soon)
     {
         alarm(1);
-    } else
+    }
+    else
     {
         alarm(DRAW_INTERVAL);
     }

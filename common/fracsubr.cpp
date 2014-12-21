@@ -1688,7 +1688,8 @@ void get_julia_attractor(double real, double imag)
                         break;
                     }
                 }
-            } else
+            }
+            else
             {
                 break;
             }

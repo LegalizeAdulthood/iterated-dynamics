@@ -1595,7 +1595,8 @@ int cellular()
     {
         n = (param[1]-0x7fffffff);
         n += 0x7fffffff;
-    } else
+    }
+    else
     {
         n = param[1];
     }
