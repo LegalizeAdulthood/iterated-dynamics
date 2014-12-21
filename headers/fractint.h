@@ -464,6 +464,7 @@ struct HISTORY
     short keep_scrn_coords;
     char drawmode;
 };
+
 struct formula_info         // for saving formula data in GIF file
 {
     char  form_name[40];
@@ -476,6 +477,7 @@ struct formula_info         // for saving formula data in GIF file
     short uses_p5;
     short future[6];       // for stuff we haven't thought of, yet
 };
+
 enum stored_at_values
 {
     NOWHERE,
@@ -844,20 +846,24 @@ struct coords
 {
     int x,y;
 };
+
 struct dblcoords
 {
     double x,y;
 };
+
 extern BYTE trigndx[];
 extern void (*ltrig0)(), (*ltrig1)(), (*ltrig2)(), (*ltrig3)();
 extern void (*dtrig0)(), (*dtrig1)(), (*dtrig2)(), (*dtrig3)();
+
 struct trig_funct_lst
 {
     const char *name;
     void (*lfunct)();
     void (*dfunct)();
     void (*mfunct)();
-} ;
+};
+
 extern trig_funct_lst trigfn[];
 // function prototypes
 extern  void (*plot)(int, int, int);
@@ -1037,6 +1043,7 @@ struct fullscreenvalues
 #define   HIDDEN         2
 #define   SYSTEM         4
 #define   SUBDIR         16
+
 struct DIR_SEARCH               // Allocate DTA and define structure
 {
     char path[FILE_MAX_PATH];       // DOS path and filespec
@@ -1046,7 +1053,9 @@ struct DIR_SEARCH               // Allocate DTA and define structure
     long size;                  // File size in bytes
     char filename[FILE_MAX_PATH];   // Filename and extension
 };
+
 extern DIR_SEARCH DTA;          // Disk Transfer Area
+
 struct Palettetype
 {
     BYTE red;
@@ -1055,18 +1064,21 @@ struct Palettetype
 };
 
 #define MAX_JUMPS 200  // size of JUMP_CONTROL array
+
 struct JUMP_PTRS_ST
 {
     int      JumpOpPtr;
     int      JumpLodPtr;
     int      JumpStoPtr;
 };
+
 struct JUMP_CONTROL_ST
 {
     int      type;
     JUMP_PTRS_ST ptrs;
     int      DestJumpIndex;
 };
+
 #if defined(_WIN32)
 #pragma pack(push, 1)
 #endif
@@ -1076,6 +1088,7 @@ struct ext_blk_2
     int length;
     int resume_data;
 };
+
 struct ext_blk_3
 {
     char got_data;
@@ -1089,18 +1102,21 @@ struct ext_blk_3
     short uses_p4;
     short uses_p5;
 };
+
 struct ext_blk_4
 {
     char got_data;
     int length;
     int *range_data;
 };
+
 struct ext_blk_5
 {
     char got_data;
     int length;
     char *apm_data;
 };
+
 // parameter evolution stuff
 struct ext_blk_6
 {
@@ -1125,6 +1141,7 @@ struct ext_blk_6
     short  ecount;
     short  mutate[NUMGENES];
 };
+
 struct ext_blk_7
 {
     char got_data;
@@ -1138,6 +1155,7 @@ struct ext_blk_7
     short keep_scrn_coords;
     char drawmode;
 };
+
 #if defined(_WIN32)
 #pragma pack(pop)
 #endif
@@ -1148,6 +1166,7 @@ struct SearchPath
     char ifs[FILE_MAX_PATH];
     char lsys[FILE_MAX_PATH];
 };
+
 struct affine
 {
     // weird order so a,b,e and c,d,f are vectors
