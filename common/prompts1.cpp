@@ -656,7 +656,8 @@ int fullscreen_prompt(      // full-screen prompting routine
         case FIK_PAGE_UP:
             curchoice = -1;
         case FIK_DOWN_ARROW:
-            do {
+            do
+            {
                 if (++curchoice >= numprompts)
                     curchoice = 0;
             }
@@ -665,7 +666,8 @@ int fullscreen_prompt(      // full-screen prompting routine
         case FIK_PAGE_DOWN:
             curchoice = numprompts;
         case FIK_UP_ARROW:
-            do {
+            do
+            {
                 if (--curchoice < 0)
                     curchoice = numprompts - 1;
             }

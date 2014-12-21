@@ -1272,7 +1272,8 @@ void sleepms_old(long ms)
         {
             scalems *= 2;
             ftimex(&t2);
-            do { // wait for the start of a new tick
+            do
+            { // wait for the start of a new tick
                 ftimex(&t1);
             }
             while (t2.time == t1.time && t2.millitm == t1.millitm);
@@ -1287,7 +1288,8 @@ void sleepms_old(long ms)
         }
         while ((elapsed = (int)(t2.time - t1.time)*1000 + t2.millitm - t1.millitm) < SLEEPINIT);
         // once more to see if faster (eg multi-tasking)
-        do { // wait for the start of a new tick
+        do
+        { // wait for the start of a new tick
             ftimex(&t1);
         }
         while (t2.time == t1.time && t2.millitm == t1.millitm);

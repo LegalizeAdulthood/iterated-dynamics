@@ -1317,10 +1317,12 @@ static int diffusion_engine()
 
             i = 0;
             col = ixstart + colo; // get the right tiles
-            do {
+            do
+            {
                 j = 0;
                 row = iystart + rowo ;
-                do {
+                do
+                {
                     calculate;
                     (*plot)(col,row,color);
                     j++;
@@ -1343,7 +1345,8 @@ static int diffusion_engine()
             {
                 row = iystart + rowo;
                 j = 0;
-                do {
+                do
+                {
                     calculate;
                     (*plot)(col,row,color);
                     j++;
@@ -1370,9 +1373,11 @@ static int diffusion_engine()
             count_to_int(dif_counter, colo, rowo);
 
             i = 0;
-            do {
+            do
+            {
                 j = 0;
-                do {
+                do
+                {
                     col = ixstart + colo + i * s; // get the right tiles
                     row = iystart + rowo + j * s;
 
@@ -1397,7 +1402,8 @@ static int diffusion_engine()
             {
                 col = ixstart + colo + nx * s;
                 j = 0;
-                do {
+                do
+                {
                     row = iystart + rowo + j * s; // get the right tiles
 
                     calculate;
@@ -1423,9 +1429,11 @@ static int diffusion_engine()
         count_to_int(dif_counter, colo, rowo);
 
         i = 0;
-        do {
+        do
+        {
             j = 0;
-            do {
+            do
+            {
                 col = ixstart + colo + i * s; // get the right tiles
                 row = iystart + rowo + j * s;
 
@@ -1450,7 +1458,8 @@ static int diffusion_engine()
         {
             col = ixstart + colo + nx * s;
             j = 0;
-            do {
+            do
+            {
                 row = iystart + rowo + j * s; // get the right tiles
 
                 calculate;
