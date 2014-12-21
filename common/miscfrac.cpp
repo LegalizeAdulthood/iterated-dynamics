@@ -64,7 +64,8 @@ int test()
                     return (-1);
                 }
                 color = testpt(init.x,init.y,parm.x,parm.y,maxit,inside);
-                if (color >= colors) { // avoid trouble if color is 0
+                if (color >= colors)
+                { // avoid trouble if color is 0
                     if (colors < 16)
                         color &= g_and_color;
                     else
@@ -329,7 +330,8 @@ int plasma()
     bool OldPot16bit = false;
     plasma_check = 0;
 
-    if (colors < 4) {
+    if (colors < 4)
+    {
         stopmsg(STOPMSG_NONE,
                 "Plasma Clouds can currently only be run in a 4-or-more-color video\n"
                 "mode (and color-cycled only on VGA adapters [or EGA adapters in their\n"
@@ -543,18 +545,21 @@ int diffusion()
     if (!rflag)
         ++rseed;
 
-    if (mode == 0) {
+    if (mode == 0)
+    {
         xmax = xdots / 2 + border;  // Initial box
         xmin = xdots / 2 - border;
         ymax = ydots / 2 + border;
         ymin = ydots / 2 - border;
     }
-    if (mode == 1) {
+    if (mode == 1)
+    {
         xmax = xdots / 2 + border;  // Initial box
         xmin = xdots / 2 - border;
         ymin = ydots - border;
     }
-    if (mode == 2) {
+    if (mode == 2)
+    {
         if (xdots > ydots)
             radius = (float)(ydots - border);
         else
@@ -572,7 +577,8 @@ int diffusion()
         end_resume();
     }
 
-    switch (mode) {
+    switch (mode)
+    {
     case 0: // Single seed point in the center
         putcolor(xdots / 2, ydots / 2,currentcolor);
         break;
@@ -582,14 +588,16 @@ int diffusion()
         break;
     case 2: // Large square that fills the screen
         if (xdots > ydots)
-            for (int i = 0; i < ydots; i++) {
+            for (int i = 0; i < ydots; i++)
+            {
                 putcolor(xdots/2-ydots/2 , i , currentcolor);
                 putcolor(xdots/2+ydots/2 , i , currentcolor);
                 putcolor(xdots/2-ydots/2+i , 0 , currentcolor);
                 putcolor(xdots/2-ydots/2+i , ydots-1 , currentcolor);
             }
         else
-            for (int i = 0; i < xdots; i++) {
+            for (int i = 0; i < xdots; i++)
+            {
                 putcolor(0 , ydots/2-xdots/2+i , currentcolor);
                 putcolor(xdots-1 , ydots/2-xdots/2+i , currentcolor);
                 putcolor(i , ydots/2-xdots/2 , currentcolor);
@@ -600,7 +608,8 @@ int diffusion()
 
     while (1)
     {
-        switch (mode) {
+        switch (mode)
+        {
         case 0: // Release new point on a circle inside the box
             angle = 2*(double)rand()/(RAND_MAX/PI);
             FPUsincos(&angle,&sine,&cosine);
@@ -637,7 +646,8 @@ int diffusion()
             if (show_orbit)
                 putcolor(x,y,0);
 
-            if (mode == 0) { // Make sure point is inside the box
+            if (mode == 0)
+            { // Make sure point is inside the box
                 if (x == xmax)
                     x--;
                 else if (x == xmin)
@@ -690,8 +700,10 @@ int diffusion()
         putcolor(x,y,colorshift?currentcolor:RANDOM(colors-1)+1);
 
         // If we're doing colorshifting then check to see if we need to shift
-        if (colorshift) {
-            if (!--colorcount) { // If the counter reaches zero then shift
+        if (colorshift)
+        {
+            if (!--colorcount)
+            { // If the counter reaches zero then shift
                 currentcolor++;      // Increase the current color and wrap
                 currentcolor %= colors;  // around skipping zero
                 if (!currentcolor)
@@ -704,7 +716,8 @@ int diffusion()
            some limits so that the limits expand to match the growing
            fractal. */
 
-        switch (mode) {
+        switch (mode)
+        {
         case 0:
             if (((x+border) > xmax) || ((x-border) < xmin)
                     || ((y-border) < ymin) || ((y+border) > ymax))
@@ -1217,22 +1230,26 @@ int lyapunov_cycles(int, double, double, double);
 
 int lyapunov_cycles_in_c(long, double, double);
 
-int lyapunov() {
+int lyapunov()
+{
     double a, b;
 
-    if (driver_key_pressed()) {
+    if (driver_key_pressed())
+    {
         return -1;
     }
     overflow = false;
     if (param[1] == 1)
         Population = (1.0+rand())/(2.0+RAND_MAX);
-    else if (param[1] == 0) {
+    else if (param[1] == 0)
+    {
         if (fabs(Population)>BIG || Population == 0 || Population == 1)
             Population = (1.0+rand())/(2.0+RAND_MAX);
     }
     else Population = param[1];
     (*plot)(col, row, 1);
-    if (invert) {
+    if (invert)
+    {
         invertz2(&init);
         a = init.y;
         b = init.x;
@@ -1320,17 +1337,20 @@ bool lya_setup()
     if (save_release < 1732)              // swap axes prior to 1732
         for (t = lyaLength; t >= 0; t--)
             lyaRxy[t] = !lyaRxy[t];
-    if (save_release < 1731) {            // ignore inside=, stdcalcmode
+    if (save_release < 1731)
+    {            // ignore inside=, stdcalcmode
         stdcalcmode = '1';
         if (inside == 1)
             inside = 0;
     }
-    if (inside < 0) {
+    if (inside < 0)
+    {
         stopmsg(STOPMSG_NONE,
             "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
         inside = 1;
     }
-    if (usr_stdcalcmode == 'o') { // Oops,lyapunov type
+    if (usr_stdcalcmode == 'o')
+    { // Oops,lyapunov type
         usr_stdcalcmode = '1';  // doesn't use new & breaks orbits
         stdcalcmode = '1';
     }
@@ -1347,34 +1367,43 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
     total = 1.0;
     lnadjust = 0;
     long i;
-    for (i = 0; i < filter_cycles; i++) {
-        for (int count = 0; count < lyaLength; count++) {
+    for (i = 0; i < filter_cycles; i++)
+    {
+        for (int count = 0; count < lyaLength; count++)
+        {
             Rate = lyaRxy[count] ? a : b;
-            if (curfractalspecific->orbitcalc()) {
+            if (curfractalspecific->orbitcalc())
+            {
                 overflow = true;
                 goto jumpout;
             }
         }
     }
-    for (i = 0; i < maxit/2; i++) {
-        for (int count = 0; count < lyaLength; count++) {
+    for (i = 0; i < maxit/2; i++)
+    {
+        for (int count = 0; count < lyaLength; count++)
+        {
             Rate = lyaRxy[count] ? a : b;
-            if (curfractalspecific->orbitcalc()) {
+            if (curfractalspecific->orbitcalc())
+            {
                 overflow = true;
                 goto jumpout;
             }
             temp = fabs(Rate-2.0*Rate*Population);
             total *= temp;
-            if (total == 0) {
+            if (total == 0)
+            {
                 overflow = true;
                 goto jumpout;
             }
         }
-        while (total > 22026.4657948) {
+        while (total > 22026.4657948)
+        {
             total *= 0.0000453999297625;
             lnadjust += 10;
         }
-        while (total < 0.0000453999297625) {
+        while (total < 0.0000453999297625)
+        {
             total *= 22026.4657948;
             lnadjust -= 10;
         }
@@ -1498,7 +1527,8 @@ int cellular()
     randparam = (S32)param[0];
     lnnmbr = (U32)param[3];
     kr = (U16)param[2];
-    switch (kr) {
+    switch (kr)
+    {
     case 21:
     case 31:
     case 41:
@@ -1526,20 +1556,24 @@ int cellular()
 
     if (!rflag && randparam == -1)
         --rseed;
-    if (randparam != 0 && randparam != -1) {
+    if (randparam != 0 && randparam != -1)
+    {
         n = param[0];
         sprintf(buf,"%.16g",n); // # of digits in initial string
         t = (S16)strlen(buf);
-        if (t>16 || t <= 0) {
+        if (t>16 || t <= 0)
+        {
             abort_cellular(STRING1, 0);
             return -1;
         }
         for (int i = 0; i < 16; i++)
             init_string[i] = 0; // zero the array
         t2 = (S16)((16 - t)/2);
-        for (int i = 0; i < t; i++) { // center initial string in array
+        for (int i = 0; i < t; i++)
+        { // center initial string in array
             init_string[i+t2] = (U16)(buf[i] - 48); // change character to number
-            if (init_string[i+t2]>(U16)k_1) {
+            if (init_string[i+t2]>(U16)k_1)
+            {
                 abort_cellular(STRING2, 0);
                 return -1;
             }
@@ -1555,16 +1589,19 @@ int cellular()
     n = param[1];
 #else
     // gcc can't manage to convert a big double to an unsigned long properly.
-    if (param[1]>0x7fffffff) {
+    if (param[1]>0x7fffffff)
+    {
         n = (param[1]-0x7fffffff);
         n += 0x7fffffff;
     } else {
         n = param[1];
     }
 #endif
-    if (n == 0) { // calculate a random rule
+    if (n == 0)
+    { // calculate a random rule
         n = rand()%(int)k;
-        for (int i = 1; i < rule_digits; i++) {
+        for (int i = 1; i < rule_digits; i++)
+        {
             n *= 10;
             n += rand()%(int)k;
         }
@@ -1572,15 +1609,18 @@ int cellular()
     }
     sprintf(buf,"%.*g",rule_digits ,n);
     t = (S16)strlen(buf);
-    if (rule_digits < t || t < 0) { // leading 0s could make t smaller
+    if (rule_digits < t || t < 0)
+    { // leading 0s could make t smaller
         abort_cellular(RULELENGTH, 0);
         return -1;
     }
     for (int i = 0; i < rule_digits; i++) // zero the table
         cell_table[i] = 0;
-    for (int i = 0; i < t; i++) { // reverse order
+    for (int i = 0; i < t; i++)
+    { // reverse order
         cell_table[i] = (U16)(buf[t-i-1] - 48); // change character to number
-        if (cell_table[i]>(U16)k_1) {
+        if (cell_table[i]>(U16)k_1)
+        {
             abort_cellular(TABLEK, 0);
             return -1;
         }
@@ -1616,7 +1656,8 @@ int cellular()
         end_resume();
         get_line(start_row, 0, ixstop, &cell_array[filled][0]);
     }
-    else if (nxtscreenflag && !lstscreenflag) {
+    else if (nxtscreenflag && !lstscreenflag)
+    {
         start_resume();
         end_resume();
         get_line(iystop, 0, ixstop, &cell_array[filled][0]);
@@ -1624,18 +1665,22 @@ int cellular()
         start_row = -1; // after 1st iteration its = 0
     }
     else {
-        if (rflag || randparam == 0 || randparam == -1) {
-            for (col = 0; col <= ixstop; col++) {
+        if (rflag || randparam == 0 || randparam == -1)
+        {
+            for (col = 0; col <= ixstop; col++)
+            {
                 cell_array[filled][col] = (BYTE)(rand()%(int)k);
             }
         } // end of if random
 
         else {
-            for (col = 0; col <= ixstop; col++) { // Clear from end to end
+            for (col = 0; col <= ixstop; col++)
+            { // Clear from end to end
                 cell_array[filled][col] = 0;
             }
             int i = 0;
-            for (col = (ixstop-16)/2; col < (ixstop+16)/2; col++) { // insert initial
+            for (col = (ixstop-16)/2; col < (ixstop+16)/2; col++)
+            { // insert initial
                 cell_array[filled][col] = (BYTE)init_string[i++];    // string
             }
         } // end of if not random
@@ -1652,18 +1697,22 @@ int cellular()
     // calculates the (lnnmbr - 1) generation
     if (lstscreenflag)   // line number != 0 & not resuming & not continuing
     {
-        for (U32 big_row = (U32)start_row; big_row < lnnmbr; big_row++) {
+        for (U32 big_row = (U32)start_row; big_row < lnnmbr; big_row++)
+        {
             thinking(1, "Cellular thinking (higher start row takes longer)");
-            if (rflag || randparam == 0 || randparam == -1) {
+            if (rflag || randparam == 0 || randparam == -1)
+            {
                 // Use a random border
-                for (int i = 0; i <= r; i++) {
+                for (int i = 0; i <= r; i++)
+                {
                     cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
                     cell_array[notfilled][ixstop-i] = (BYTE)(rand()%(int)k);
                 }
             }
             else {
                 // Use a zero border
-                for (int i = 0; i <= r; i++) {
+                for (int i = 0; i <= r; i++)
+                {
                     cell_array[notfilled][i] = 0;
                     cell_array[notfilled][ixstop-i] = 0;
                 }
@@ -1673,7 +1722,8 @@ int cellular()
             twor = (U16)(r+r);
             for (int i = 0; i <= twor; i++)
                 t = (S16)(t + (S16)cell_array[filled][i]);
-            if (t > rule_digits || t < 0) {
+            if (t > rule_digits || t < 0)
+            {
                 thinking(0, nullptr);
                 abort_cellular(BAD_T, t);
                 return (-1);
@@ -1681,9 +1731,11 @@ int cellular()
             cell_array[notfilled][r] = (BYTE)cell_table[t];
 
             // use a rolling sum in t
-            for (col = r+1; col < ixstop-r; col++) { // now do the rest
+            for (col = r+1; col < ixstop-r; col++)
+            { // now do the rest
                 t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
-                if (t > rule_digits || t < 0) {
+                if (t > rule_digits || t < 0)
+                {
                     thinking(0, nullptr);
                     abort_cellular(BAD_T, t);
                     return (-1);
@@ -1693,7 +1745,8 @@ int cellular()
 
             filled = notfilled;
             notfilled = (S16)(1-filled);
-            if (driver_key_pressed()) {
+            if (driver_key_pressed())
+            {
                 thinking(0, nullptr);
                 abort_cellular(INTERUPT, 0);
                 return -1;
@@ -1706,17 +1759,21 @@ int cellular()
 
     // This section does all the work
 contloop:
-    for (row = start_row; row <= iystop; row++) {
-        if (rflag || randparam == 0 || randparam == -1) {
+    for (row = start_row; row <= iystop; row++)
+    {
+        if (rflag || randparam == 0 || randparam == -1)
+        {
             // Use a random border
-            for (int i = 0; i <= r; i++) {
+            for (int i = 0; i <= r; i++)
+            {
                 cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
                 cell_array[notfilled][ixstop-i] = (BYTE)(rand()%(int)k);
             }
         }
         else {
             // Use a zero border
-            for (int i = 0; i <= r; i++) {
+            for (int i = 0; i <= r; i++)
+            {
                 cell_array[notfilled][i] = 0;
                 cell_array[notfilled][ixstop-i] = 0;
             }
@@ -1726,7 +1783,8 @@ contloop:
         twor = (U16)(r+r);
         for (int i = 0; i <= twor; i++)
             t = (S16)(t + (S16)cell_array[filled][i]);
-        if (t > rule_digits || t < 0) {
+        if (t > rule_digits || t < 0)
+        {
             thinking(0, nullptr);
             abort_cellular(BAD_T, t);
             return (-1);
@@ -1734,9 +1792,11 @@ contloop:
         cell_array[notfilled][r] = (BYTE)cell_table[t];
 
         // use a rolling sum in t
-        for (col = r+1; col < ixstop-r; col++) { // now do the rest
+        for (col = r+1; col < ixstop-r; col++)
+        { // now do the rest
             t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
-            if (t > rule_digits || t < 0) {
+            if (t > rule_digits || t < 0)
+            {
                 thinking(0, nullptr);
                 abort_cellular(BAD_T, t);
                 return (-1);
@@ -1747,14 +1807,16 @@ contloop:
         filled = notfilled;
         notfilled = (S16)(1-filled);
         put_line(row, 0, ixstop, &cell_array[filled][0]);
-        if (driver_key_pressed()) {
+        if (driver_key_pressed())
+        {
             abort_cellular(CELLULAR_DONE, 0);
             alloc_resume(10,1);
             put_resume(sizeof(row),&row,0);
             return -1;
         }
     }
-    if (nxtscreenflag) {
+    if (nxtscreenflag)
+    {
         param[3] += iystop + 1;
         start_row = 0;
         goto contloop;
@@ -2090,7 +2152,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     found_attractor = 1;
                 else if (old.x <= fsp.fl.f.top_x3)
                     found_attractor = 1;
-                else if (old.x >= fsp.fl.f.top_x4) {
+                else if (old.x >= fsp.fl.f.top_x4)
+                {
                     if (!fsp.repeat_mapping)
                         found_attractor = 1;
                     else
@@ -2104,13 +2167,15 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     found_attractor = 2;
                 else if (fsp.repeat_mapping && fsp.attractors == 3)
                     found_attractor = 3;
-                else if (old.x >= fsp.fl.f.right_x3) {
+                else if (old.x >= fsp.fl.f.right_x3)
+                {
                     if (!fsp.repeat_mapping)
                         found_attractor = 2;
                     else
                         found_attractor = 4;
                 }
-                else if (old.x <= fsp.fl.f.right_x4) {
+                else if (old.x <= fsp.fl.f.right_x4)
+                {
                     if (!fsp.repeat_mapping)
                         found_attractor = 3;
                     else
@@ -2124,13 +2189,15 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     found_attractor = 2;
                 else if (fsp.repeat_mapping && fsp.attractors == 3)
                     found_attractor = 2;
-                else if (old.x >= fsp.fl.f.left_x3) {
+                else if (old.x >= fsp.fl.f.left_x3)
+                {
                     if (!fsp.repeat_mapping)
                         found_attractor = 3;
                     else
                         found_attractor = 5;
                 }
-                else if (old.x <= fsp.fl.f.left_x4) {
+                else if (old.x <= fsp.fl.f.left_x4)
+                {
                     if (!fsp.repeat_mapping)
                         found_attractor = 2;
                     else
@@ -2177,7 +2244,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             }
             coloriter++;
 
-            if (show_orbit) {
+            if (show_orbit)
+            {
                 if (driver_key_pressed())
                     break;
                 iplot_orbit(lold.x, lold.y, -1);
@@ -2191,7 +2259,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     found_attractor = 1;
                 else if (lold.x <= fsp.fl.l.top_x3)
                     found_attractor = 1;
-                else if (lold.x >= fsp.fl.l.top_x4) {
+                else if (lold.x >= fsp.fl.l.top_x4)
+                {
                     if (!fsp.repeat_mapping)
                         found_attractor = 1;
                     else
@@ -2205,13 +2274,15 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     found_attractor = 2;
                 else if (fsp.repeat_mapping && fsp.attractors == 3)
                     found_attractor = 3;
-                else if (lold.x >= fsp.fl.l.right_x3) {
+                else if (lold.x >= fsp.fl.l.right_x3)
+                {
                     if (!fsp.repeat_mapping)
                         found_attractor = 2;
                     else
                         found_attractor = 4;
                 }
-                else if (lold.x <= fsp.fl.l.right_x4) {
+                else if (lold.x <= fsp.fl.l.right_x4)
+                {
                     if (!fsp.repeat_mapping)
                         found_attractor = 3;
                     else
@@ -2224,13 +2295,15 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     found_attractor = 2;
                 else if (fsp.repeat_mapping && fsp.attractors == 3)
                     found_attractor = 2;
-                else if (lold.x >= fsp.fl.l.left_x3) {
+                else if (lold.x >= fsp.fl.l.left_x3)
+                {
                     if (!fsp.repeat_mapping)
                         found_attractor = 3;
                     else
                         found_attractor = 5;
                 }
-                else if (lold.x <= fsp.fl.l.left_x4) {
+                else if (lold.x <= fsp.fl.l.left_x4)
+                {
                     if (!fsp.repeat_mapping)
                         found_attractor = 2;
                     else

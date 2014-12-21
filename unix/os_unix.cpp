@@ -57,8 +57,10 @@ bool isadirectory(char *s)
         else
             return false; // no slashes - we'll guess it's a file
     }
-    else if ((DTA.attribute & SUBDIR) != 0) {
-        if (sv == SLASHC) {
+    else if ((DTA.attribute & SUBDIR) != 0)
+    {
+        if (sv == SLASHC)
+        {
             // strip trailing slash and try again
             s[len-1] = 0;
             if (fr_findfirst(s) != 0) // couldn't find it

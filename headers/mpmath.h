@@ -163,10 +163,20 @@ extern void (*dtrig3)();
 #define CMPLXtimesreal(arg,real,out)   \
     (out).x = (arg).x*(real);\
     (out).y = (arg).y*(real)
-#define CMPLXrecip(arg,out)    \
-   { double denom; denom = sqr((arg).x) + sqr((arg).y);\
-     if(denom == 0.0) {(out).x = 1.0e10;(out).y = 1.0e10;}else\
-    { (out).x =  (arg).x/denom;\
-     (out).y = -(arg).y/denom;}}
+#define CMPLXrecip(arg,out)                     \
+    {                                           \
+        double denom;                           \
+        denom = sqr((arg).x) + sqr((arg).y);    \
+        if(denom == 0.0)                        \
+        {                                       \
+            (out).x = 1.0e10;                   \
+            (out).y = 1.0e10;                   \
+        }                                       \
+        else                                    \
+        {                                       \
+            (out).x =  (arg).x/denom;           \
+            (out).y = -(arg).y/denom;           \
+        }                                       \
+    }
 #define CMPLXneg(arg,out)  (out).x = -(arg).x; (out).y = -(arg).y
 #endif

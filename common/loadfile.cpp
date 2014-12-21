@@ -673,7 +673,8 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
     if (fp == nullptr)
         return (-1);
     fread(gifstart,13,1,fp);
-    if (strncmp((char *)gifstart,"GIF",3) != 0) { // not GIF, maybe old .tga?
+    if (strncmp((char *)gifstart,"GIF",3) != 0)
+    { // not GIF, maybe old .tga?
         fclose(fp);
         return (-1);
     }
@@ -683,7 +684,8 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
     GET16(gifstart[8],fileydots);
     filecolors = 2 << (gifstart[10] & 7);
     fileaspectratio = 0; // unknown
-    if (gifstart[12]) { // calc reasonably close value from gif header
+    if (gifstart[12])
+    { // calc reasonably close value from gif header
         fileaspectratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
                                   * (double)fileydots / (double)filexdots);
         if (fileaspectratio > screenaspect-0.03
@@ -698,7 +700,8 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
         for (int i = 0; i < filecolors; i++)
         {
             int k = 0;
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++)
+            {
                 k = getc(fp);
                 if (k < 0)
                     break;
@@ -741,7 +744,8 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
     /* TODO: revise this to read members one at a time so we get natural alignment
        of fields within the FRACTAL_INFO structure for the platform */
     fread(info,1,FRACTAL_INFO_SIZE,fp);
-    if (strcmp(INFO_ID,info->info_id) == 0) {
+    if (strcmp(INFO_ID,info->info_id) == 0)
+    {
 #ifdef XFRACT
         decode_fractal_info(info,1);
 #endif
@@ -752,12 +756,14 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
         char tmpbuf[110];
         hdr_offset = 0;
         offset = 80; // don't even check last 80 bytes of file for id
-        while (offset < fractinf_len+513) { // allow 512 garbage at eof
+        while (offset < fractinf_len+513)
+        { // allow 512 garbage at eof
             offset += 100; // go back 100 bytes at a time
             fseek(fp,(long)(0-offset),SEEK_END);
             fread(tmpbuf,1,110,fp); // read 10 extra for string compare
             for (int i = 0; i < 100; ++i)
-                if (!strcmp(INFO_ID,&tmpbuf[i])) { // found header?
+                if (!strcmp(INFO_ID,&tmpbuf[i]))
+                { // found header?
                     strcpy(info->info_id,INFO_ID);
                     fseek(fp,(long)(hdr_offset = i-offset),SEEK_END);
                     /* TODO: revise this to read members one at a time so we get natural alignment
@@ -772,16 +778,19 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
         }
     }
 
-    if (hdr_offset) { // we found INFO_ID
+    if (hdr_offset)
+    { // we found INFO_ID
 
-        if (info->version >= 4) {
+        if (info->version >= 4)
+        {
             /* first reload main extension block, reasons:
                  might be over 255 chars, and thus earlier load might be bad
                  find exact endpoint, so scan back to start of ext blks works
                */
             fseek(fp,(long)(hdr_offset-15),SEEK_END);
             int scan_extend = 1;
-            while (scan_extend) {
+            while (scan_extend)
+            {
                 if (fgetc(fp) != '!' // if not what we expect just give up
                         || fread(temp1,1,13,fp) != 13
                         || strncmp(&temp1[2],"fractint",8))
@@ -790,7 +799,8 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                 switch (atoi(&temp1[10]))   // e.g. "fractint002"
                 {
                 case 1: // "fractint001", the main extension block
-                    if (scan_extend == 2) { // we've been here before, done now
+                    if (scan_extend == 2)
+                    { // we've been here before, done now
                         scan_extend = 0;
                         break;
                     }
@@ -824,7 +834,8 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     strcpy(blk_3_info->form_name,fload_info.form_name);
                     blk_3_info->length = data_len;
                     blk_3_info->got_data = 1; // got data
-                    if (data_len < sizeof(fload_info)) { // must be old GIF
+                    if (data_len < sizeof(fload_info))
+                    { // must be old GIF
                         blk_3_info->uses_p1 = 1;
                         blk_3_info->uses_p2 = 1;
                         blk_3_info->uses_p3 = 1;
@@ -956,8 +967,10 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
 static void load_ext_blk(char *loadptr,int loadlen)
 {
     int len;
-    while ((len = fgetc(fp)) > 0) {
-        while (--len >= 0) {
+    while ((len = fgetc(fp)) > 0)
+    {
+        while (--len >= 0)
+        {
             if (--loadlen >= 0)
                 *(loadptr++) = (char)fgetc(fp);
             else
@@ -971,7 +984,8 @@ static void skip_ext_blk(int *block_len, int *data_len)
     int len;
     *data_len = 0;
     *block_len = 1;
-    while ((len = fgetc(fp)) > 0) {
+    while ((len = fgetc(fp)) > 0)
+    {
         fseek(fp,(long)len,SEEK_CUR);
         *data_len += len;
         *block_len += len + 1;
@@ -1085,7 +1099,8 @@ void set_if_old_bif()
     /* set functions if not set already, may need to check 'functionpreloaded'
        before calling this routine. */
 
-    switch (fractype) {
+    switch (fractype)
+    {
     case BIFURCATION:
     case LBIFURCATION:
     case BIFSTEWART:
@@ -1141,13 +1156,15 @@ void backwards_v18()
 
 void backwards_v19()
 {
-    if (fractype == MARKSJULIA && save_release < 1825) {
+    if (fractype == MARKSJULIA && save_release < 1825)
+    {
         if (param[2] == 0)
             param[2] = 2;
         else
             param[2] += 1;
     }
-    if (fractype == MARKSJULIAFP && save_release < 1825) {
+    if (fractype == MARKSJULIAFP && save_release < 1825)
+    {
         if (param[2] == 0)
             param[2] = 2;
         else
@@ -1318,7 +1335,8 @@ int fgetwindow()
 
     oldbf_math = bf_math;
     bf_math = bf_math_type::BIGFLT;
-    if (oldbf_math == bf_math_type::NONE) {
+    if (oldbf_math == bf_math_type::NONE)
+    {
         calc_status_value oldcalc_status = calc_status; // kludge because next sets it = 0
         fractal_floattobf();
         calc_status = oldcalc_status;
@@ -1348,7 +1366,8 @@ int fgetwindow()
         no_memory = true;
 
     // set up complex-plane-to-screen transformation
-    if (oldbf_math != bf_math_type::NONE) {
+    if (oldbf_math != bf_math_type::NONE)
+    {
         bfsetup_convert_to_screen();
     }
     else {
@@ -1448,7 +1467,8 @@ rescan:  // entry for changed browse parms
             while (!driver_key_pressed())
             {
                 time(&thistime);
-                if (difftime(thistime,lastime) > .2) {
+                if (difftime(thistime,lastime) > .2)
+                {
                     lastime = thistime;
                     toggle = 1- toggle;
                 }
@@ -1474,7 +1494,8 @@ rescan:  // entry for changed browse parms
             case FIK_UP_ARROW:
                 cleartempmsg();
                 drawindow(color_of_box,&winlist);// dim last window
-                if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW) {
+                if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW)
+                {
                     index++;                     // shift attention to next window
                     if (index >= wincount)
                         index = 0;
@@ -1493,7 +1514,8 @@ rescan:  // entry for changed browse parms
 #ifndef XFRACT
             case FIK_CTL_INSERT:
                 color_of_box += key_count(FIK_CTL_INSERT);
-                for (int i = 0; i < wincount ; i++) {
+                for (int i = 0; i < wincount ; i++)
+                {
                     MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)i,browsehandle);
                     drawindow(color_of_box,&winlist);
                 }
@@ -1503,7 +1525,8 @@ rescan:  // entry for changed browse parms
 
             case FIK_CTL_DEL:
                 color_of_box -= key_count(FIK_CTL_DEL);
-                for (int i = 0; i < wincount ; i++) {
+                for (int i = 0; i < wincount ; i++)
+                {
                     MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)i,browsehandle);
                     drawindow(color_of_box,&winlist);
                 }
@@ -1535,16 +1558,19 @@ rescan:  // entry for changed browse parms
                 driver_wait_key_pressed(0);
                 cleartempmsg();
                 c = driver_get_key();
-                if (c == 'Y' && doublecaution) {
+                if (c == 'Y' && doublecaution)
+                {
                     texttempmsg("ARE YOU SURE???? (Y/N)");
                     if (driver_get_key() != 'Y')
                         c = 'N';
                 }
-                if (c == 'Y') {
+                if (c == 'Y')
+                {
                     splitpath(readname,drive,dir,nullptr,nullptr);
                     splitpath(winlist.name,nullptr,nullptr,fname,ext);
                     makepath(tmpmask,drive,dir,fname,ext);
-                    if (!unlink(tmpmask)) {
+                    if (!unlink(tmpmask))
+                    {
                         // do a rescan
                         done = 3;
                         strcpy(oldname,winlist.name);
@@ -1552,7 +1578,8 @@ rescan:  // entry for changed browse parms
                         check_history(oldname,tmpmask);
                         break;
                     }
-                    else if (errno == EACCES) {
+                    else if (errno == EACCES)
+                    {
                         texttempmsg("Sorry...it's a read only file, can't del");
                         showtempmsg(winlist.name);
                         break;
@@ -1578,7 +1605,8 @@ rescan:  // entry for changed browse parms
                     int i = field_prompt(mesg,nullptr,newname,60,nullptr);
                     driver_unstack_screen();
                     if (i != -1)
-                        if (!rename(tmpmask,newname)) {
+                        if (!rename(tmpmask,newname))
+                        {
                             if (errno == EACCES)
                             {
                                 texttempmsg("Sorry....can't rename");
@@ -1621,7 +1649,8 @@ rescan:  // entry for changed browse parms
 
         // now clean up memory (and the screen if necessary)
         cleartempmsg();
-        if (done >= 1 && done < 4) {
+        if (done >= 1 && done < 4)
+        {
             for (int i = wincount-1; i >= 0; i--)
             {
                 MoveFromMemory(winlistptr,(U16)sizeof(window),1L,(long)i,browsehandle);
@@ -1639,7 +1668,8 @@ rescan:  // entry for changed browse parms
 #endif
             }
         }
-        if (done == 3) {
+        if (done == 3)
+        {
             goto rescan; // hey everybody I just used the g word!
         }
     }//if
@@ -1671,7 +1701,8 @@ static void drawindow(int colour, window *info)
 
     boxcolor = colour;
     boxcount = 0;
-    if (info->win_size >= minbox) {
+    if (info->win_size >= minbox)
+    {
         // big enough on screen to show up as a box so draw it
         // corner pixels
 #ifndef XFRACT
@@ -1767,7 +1798,8 @@ static bool is_visible_window(
     bt_x3rd = alloc_stack(two_len);
     bt_y3rd = alloc_stack(two_len);
 
-    if (info->bf_math) {
+    if (info->bf_math)
+    {
         bf_t   bt_t1, bt_t2, bt_t3, bt_t4, bt_t5, bt_t6;
         int di_bflength, two_di_len, two_rbf;
 
@@ -1813,8 +1845,10 @@ static bool is_visible_window(
 
     /* tranform maps real plane co-ords onto the current screen view
       see above */
-    if (oldbf_math != bf_math_type::NONE || info->bf_math != 0) {
-        if (!info->bf_math) {
+    if (oldbf_math != bf_math_type::NONE || info->bf_math != 0)
+    {
+        if (!info->bf_math)
+        {
             floattobf(bt_x, info->xmin);
             floattobf(bt_y, info->ymax);
         }
@@ -1831,8 +1865,10 @@ static bool is_visible_window(
     }
     list->itl.x = (int)(tl.x + 0.5);
     list->itl.y = (int)(tl.y + 0.5);
-    if (oldbf_math != bf_math_type::NONE || info->bf_math) {
-        if (!info->bf_math) {
+    if (oldbf_math != bf_math_type::NONE || info->bf_math)
+    {
+        if (!info->bf_math)
+        {
             floattobf(bt_x, (info->xmax)-(info->x3rd-info->xmin));
             floattobf(bt_y, (info->ymax)+(info->ymin-info->y3rd));
         }
@@ -1851,8 +1887,10 @@ static bool is_visible_window(
     }
     list->itr.x = (int)(tr.x + 0.5);
     list->itr.y = (int)(tr.y + 0.5);
-    if (oldbf_math != bf_math_type::NONE || info->bf_math) {
-        if (!info->bf_math) {
+    if (oldbf_math != bf_math_type::NONE || info->bf_math)
+    {
+        if (!info->bf_math)
+        {
             floattobf(bt_x, info->x3rd);
             floattobf(bt_y, info->y3rd);
         }
@@ -1869,8 +1907,10 @@ static bool is_visible_window(
     }
     list->ibl.x = (int)(bl.x + 0.5);
     list->ibl.y = (int)(bl.y + 0.5);
-    if (oldbf_math != bf_math_type::NONE || info->bf_math) {
-        if (!info->bf_math) {
+    if (oldbf_math != bf_math_type::NONE || info->bf_math)
+    {
+        if (!info->bf_math)
+        {
             floattobf(bt_x, info->xmax);
             floattobf(bt_y, info->ymin);
         }
@@ -1930,7 +1970,8 @@ static bool paramsOK(FRACTAL_INFO *info)
     double tmpparm9, tmpparm10;
 #define MINDIF 0.001
 
-    if (info->version > 6) {
+    if (info->version > 6)
+    {
         tmpparm3 = info->dparm3;
         tmpparm4 = info->dparm4;
     }
@@ -1940,7 +1981,8 @@ static bool paramsOK(FRACTAL_INFO *info)
         tmpparm4 = info->parm4;
         roundfloatd(&tmpparm4);
     }
-    if (info->version > 8) {
+    if (info->version > 8)
+    {
         tmpparm5 = info->dparm5;
         tmpparm6 = info->dparm6;
         tmpparm7 = info->dparm7;
@@ -2024,7 +2066,8 @@ static void check_history(char *oldname, char *newname)
     //  browser are used.
     // name_stack_ptr is also maintained in framain2.c.  It is the index into
     //  file_name_stack[].
-    for (int i = 0; i < name_stack_ptr; i++) {
+    for (int i = 0; i < name_stack_ptr; i++)
+    {
         if (stricmp(file_name_stack[i],oldname) == 0) // we have a match
             strcpy(file_name_stack[i],newname);    // insert the new name
     }

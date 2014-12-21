@@ -619,11 +619,13 @@ void Cursor_Move(int xoff, int yoff)
 }
 
 
-int Cursor_GetX()   {
+int Cursor_GetX()
+{
     return the_cursor->x;
 }
 
-int Cursor_GetY()   {
+int Cursor_GetY()
+{
     return the_cursor->y;
 }
 
@@ -756,23 +758,28 @@ static void MoveBox_Destroy(MoveBox *me)
 }
 
 
-static bool MoveBox_Moved(MoveBox *me) {
+static bool MoveBox_Moved(MoveBox *me)
+{
     return me->moved;
 }
 
-static bool MoveBox_ShouldHide(MoveBox *me) {
+static bool MoveBox_ShouldHide(MoveBox *me)
+{
     return me->should_hide;
 }
 
-static int MoveBox_X(MoveBox *me)      {
+static int MoveBox_X(MoveBox *me)
+{
     return me->x;
 }
 
-static int MoveBox_Y(MoveBox *me)      {
+static int MoveBox_Y(MoveBox *me)
+{
     return me->y;
 }
 
-static int MoveBox_CSize(MoveBox *me)  {
+static int MoveBox_CSize(MoveBox *me)
+{
     return me->csize;
 }
 
@@ -2629,9 +2636,11 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         driver_stack_screen();
         i = field_prompt("Enter gamma value",nullptr,buf,20,nullptr);
         driver_unstack_screen();
-        if (i != -1) {
+        if (i != -1)
+        {
             sscanf(buf,"%f",&gamma_val);
-            if (gamma_val == 0) {
+            if (gamma_val == 0)
+            {
                 gamma_val = 0.0000000001F;
             }
             gamma_val = (float)(1.0/gamma_val);

@@ -43,7 +43,8 @@ void SetAspect(double aspect)
     xAspect = 0;
     yAspect = 0;
     aspect = fabs(aspect);
-    if (aspect != 1.0) {
+    if (aspect != 1.0)
+    {
         if (aspect > 1.0)
             yAspect = (unsigned int)(65536.0 / aspect);
         else
@@ -614,7 +615,8 @@ void Jiim(int which)         // called by fractint
 
     while (still)
     {
-        if (actively_computing) {
+        if (actively_computing)
+        {
             Cursor_CheckBlink();
         } else {
             Cursor_WaitKey();
@@ -774,7 +776,8 @@ void Jiim(int which)         // called by fractint
                 col += dcol;
                 row += drow;
 #ifdef XFRACT
-                if (kbdchar == FIK_ENTER) {
+                if (kbdchar == FIK_ENTER)
+                {
                     // We want to use the position of the cursor
                     exact = false;
                     col = Cursor_GetX();
@@ -783,19 +786,23 @@ void Jiim(int which)         // called by fractint
 #endif
 
                 // keep cursor in logical screen
-                if (col >= xdots) {
+                if (col >= xdots)
+                {
                     col = xdots -1;
                     exact = false;
                 }
-                if (row >= ydots) {
+                if (row >= ydots)
+                {
                     row = ydots -1;
                     exact = false;
                 }
-                if (col < 0) {
+                if (col < 0)
+                {
                     col = 0;
                     exact = false;
                 }
-                if (row < 0) {
+                if (row < 0)
+                {
                     row = 0;
                     exact = false;
                 }
@@ -977,7 +984,8 @@ void Jiim(int which)         // called by fractint
                 g_new.y = sqrt(fabs((r - old.x)/2));
 
 
-                switch (SecretExperimentalMode) {
+                switch (SecretExperimentalMode)
+                {
                 case 0:                     // unmodified random walk
                 default:
                     if (rand() % 2)
@@ -1068,7 +1076,8 @@ void Jiim(int which)         // called by fractint
                     y = (int)(g_new.y * yfactor * zoom + yoff);
                     break;
                 case 9:                     // "random run"
-                    switch (randir) {
+                    switch (randir)
+                    {
                     case 0:             // go random direction for a while
                         if (rand() % 2)
                         {
@@ -1186,7 +1195,8 @@ finish:
 #endif
     delete(line_buff);
 
-    if (memory_handle != 0) {
+    if (memory_handle != 0)
+    {
         MemoryRelease(memory_handle);
         memory_handle = 0;
     }

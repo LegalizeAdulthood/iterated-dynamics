@@ -262,13 +262,15 @@ prompt_user:
             if (i > 0)
             {
                 i = check_vidmode_key(0, i);
-                if (i >= 0) {
+                if (i >= 0)
+                {
                     // get the resolution of this video mode
                     pxdots = g_video_table[i].xdots;
                     pydots = g_video_table[i].ydots;
                 }
             }
-            if (pxdots == 0 && (xm > 1 || ym > 1)) {
+            if (pxdots == 0 && (xm > 1 || ym > 1))
+            {
                 // no corresponding video mode!
                 stopmsg(STOPMSG_NONE, "Invalid video mode entry!");
                 goto prompt_user;
@@ -276,7 +278,8 @@ prompt_user:
 #endif
 
             // bounds range on xm, ym
-            if (xm < 1 || xm > 36 || ym < 1 || ym > 36) {
+            if (xm < 1 || xm > 36 || ym < 1 || ym > 36)
+            {
                 stopmsg(STOPMSG_NONE, "X and Y components must be 1 to 36");
                 goto prompt_user;
             }
@@ -286,7 +289,8 @@ prompt_user:
             ytotal = ym;
             xtotal *= pxdots;
             ytotal *= pydots;
-            if (xtotal > 65535L || ytotal > 65535L) {
+            if (xtotal > 65535L || ytotal > 65535L)
+            {
                 stopmsg(STOPMSG_NONE, "Total resolution (X or Y) cannot exceed 65535");
                 goto prompt_user;
             }
@@ -522,7 +526,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
 
     if (colorsonly)
         goto docolors;
-    if (display3d <= 0) { // a fractal was generated
+    if (display3d <= 0)
+    { // a fractal was generated
 
         //***** fractal only parameters in this section ******
         put_parm(" reset");
@@ -675,7 +680,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
             if (typehasparm((fractype == JULIBROT || fractype == JULIBROTFP)
                             ?neworbittype:fractype,i,nullptr)) break;
 
-        if (i >= 0) {
+        if (i >= 0)
+        {
             if (fractype == CELLULAR || fractype == ANT)
                 put_parm(" %s=%.1f", "params",param[0]);
             else
@@ -711,7 +717,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         if (bailout && (!potflag || potparam[2] == 0.0))
             put_parm(" %s=%ld", "bailout",bailout);
 
-        if (bailoutest != bailouts::Mod) {
+        if (bailoutest != bailouts::Mod)
+        {
             put_parm(" %s=", "bailoutest");
             if (bailoutest == bailouts::Real)
                 put_parm("real");
@@ -728,11 +735,13 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
             else
                 put_parm("mod"); // default, just in case
         }
-        if (fillcolor != -1) {
+        if (fillcolor != -1)
+        {
             put_parm(" %s=", "fillcolor");
             put_parm("%d",fillcolor);
         }
-        if (inside != 1) {
+        if (inside != 1)
+        {
             put_parm(" %s=", "inside");
             if (inside == -1)
                 put_parm("maxiter");
@@ -756,7 +765,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
                 put_parm("%d",inside);
         }
         if (closeprox != 0.01 && (inside == EPSCROSS || inside == FMODI
-                                  || outside == FMOD)) {
+                                  || outside == FMOD))
+        {
             put_parm(" %s=%.15g", "proximity",closeprox);
         }
         if (outside != -1)
@@ -780,7 +790,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
                 put_parm("%d",outside);
         }
 
-        if (LogFlag && !rangeslen) {
+        if (LogFlag && !rangeslen)
+        {
             put_parm(" %s=", "logmap");
             if (LogFlag == -1)
                 put_parm("old");
@@ -790,7 +801,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
                 put_parm("%ld", LogFlag);
         }
 
-        if (Log_Fly_Calc && LogFlag && !rangeslen) {
+        if (Log_Fly_Calc && LogFlag && !rangeslen)
+        {
             put_parm(" %s=", "logmode");
             if (Log_Fly_Calc == 1)
                 put_parm("fly");
@@ -798,7 +810,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
                 put_parm("table");
         }
 
-        if (potflag) {
+        if (potflag)
+        {
             put_parm(" %s=%d/%g/%d", "potential",
                      (int)potparam[0],potparam[1],(int)potparam[2]);
             if (pot16bit)
@@ -809,7 +822,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
                      inversion[0], inversion[1], inversion[2]);
         if (decomp[0])
             put_parm(" %s=%d", "decomp", decomp[0]);
-        if (distest) {
+        if (distest)
+        {
             put_parm(" %s=%ld/%d/%d/%d", "distest", distest, distestwidth,
                      pseudox?pseudox:xdots,pseudoy?pseudoy:ydots);
         }
@@ -820,7 +834,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         if (finattract)
             put_parm(" %s=y", "finattract");
 
-        if (forcesymmetry != symmetry_type::NOT_FORCED) {
+        if (forcesymmetry != symmetry_type::NOT_FORCED)
+        {
             if (forcesymmetry == static_cast<symmetry_type>(1000) && ii == 1 && jj == 1)
                 stopmsg(STOPMSG_NONE, "Regenerate before <b> to get correct symmetry");
             put_parm(" %s=", "symmetry");
@@ -844,13 +859,16 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         if (rflag)
             put_parm(" %s=%d", "rseed",rseed);
 
-        if (rangeslen) {
+        if (rangeslen)
+        {
             put_parm(" %s=", "ranges");
             i = 0;
-            while (i < rangeslen) {
+            while (i < rangeslen)
+            {
                 if (i)
                     put_parm("/");
-                if (ranges[i] == -1) {
+                if (ranges[i] == -1)
+                {
                     put_parm("-%d/",ranges[++i]);
                     ++i;
                 }
@@ -859,7 +877,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         }
     }
 
-    if (display3d >= 1) {
+    if (display3d >= 1)
+    {
         //**** 3d transform only parameters in this section ****
         if (display3d == 2)
             put_parm(" %s=%s", "3d", "overlay");
@@ -867,7 +886,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
             put_parm(" %s=%s", "3d", "yes");
         if (!loaded3d)
             put_filename("filename", readname);
-        if (SPHERE) {
+        if (SPHERE)
+        {
             put_parm(" %s=y", "sphere");
             put_parm(" %s=%d/%d", "latitude", THETA1, THETA2);
             put_parm(" %s=%d/%d", "longitude", PHI1, PHI2);
@@ -880,18 +900,21 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
             put_parm(" %s=%d", "filltype", FILLTYPE);
         if (transparent[0] || transparent[1])
             put_parm(" %s=%d/%d", "transparent", transparent[0],transparent[1]);
-        if (preview) {
+        if (preview)
+        {
             put_parm(" %s=%s", "preview", "yes");
             if (showbox)
                 put_parm(" %s=%s", "showbox", "yes");
             put_parm(" %s=%d", "coarse",previewfactor);
         }
-        if (RAY) {
+        if (RAY)
+        {
             put_parm(" %s=%d", "ray",RAY);
             if (BRIEF)
                 put_parm(" %s=y", "brief");
         }
-        if (FILLTYPE > 4) {
+        if (FILLTYPE > 4)
+        {
             put_parm(" %s=%d/%d/%d", "lightsource", XLIGHT, YLIGHT, ZLIGHT);
             if (LIGHTAVG)
                 put_parm(" %s=%d", "smoothing", LIGHTAVG);
@@ -911,7 +934,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
                      back_color[2]);
     }
 
-    if (display3d) {             // universal 3d
+    if (display3d)
+    {             // universal 3d
         //**** common (fractal & transform) 3d parameters in this section ****
         if (!SPHERE || display3d < 0)
             put_parm(" %s=%d/%d/%d", "rotation", XROT, YROT, ZROT);
@@ -919,7 +943,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         put_parm(" %s=%d/%d", "xyshift", XSHIFT, YSHIFT);
         if (xtrans || ytrans)
             put_parm(" %s=%d/%d", "xyadjust",xtrans,ytrans);
-        if (g_glasses_type) {
+        if (g_glasses_type)
+        {
             put_parm(" %s=%d", "stereo",g_glasses_type);
             put_parm(" %s=%d", "interocular",g_eye_separation);
             put_parm(" %s=%d", "converge",xadjust);
@@ -950,7 +975,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         if (basehertz != 440)
             put_parm(" %s=%d", "hertz",basehertz);
 
-        if (soundflag != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER)) {
+        if (soundflag != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
+        {
             if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
                 put_parm(" %s=%s", "sound", "off");
             else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
@@ -962,7 +988,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
             else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
                 put_parm(" %s=%s", "sound","z");
 #ifndef XFRACT
-            if ((soundflag & SOUNDFLAG_ORBITMASK) && (soundflag & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z) {
+            if ((soundflag & SOUNDFLAG_ORBITMASK) && (soundflag & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
+            {
                 if (soundflag & SOUNDFLAG_SPEAKER)
                     put_parm("/pc");
                 if (soundflag & SOUNDFLAG_OPL3_FM)
@@ -979,7 +1006,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         if (fm_vol != 63)
             put_parm(" %s=%d", "volume",fm_vol);
 
-        if (hi_atten != 0) {
+        if (hi_atten != 0)
+        {
             if (hi_atten == 1)
                 put_parm(" %s=%s", "attenuate", "low");
             else if (hi_atten == 2)
@@ -1008,7 +1036,8 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
         if (fm_release != 5)
             put_parm(" %s=%d", "srelease",fm_release);
 
-        if (soundflag & SOUNDFLAG_QUANTIZED) { // quantize turned on
+        if (soundflag & SOUNDFLAG_QUANTIZED)
+        { // quantize turned on
             int i;
             for (i = 0; i <= 11; i++)
                 if (scale_map[i] != i+1)
@@ -1083,9 +1112,11 @@ docolors:
             if (fake_lut && !truemode)
                 loaddac(); // stupid kludge
 #endif
-            while (1) {
+            while (1)
+            {
                 // emit color in rgb 3 char encoded form
-                for (int j = 0; j < 3; ++j) {
+                for (int j = 0; j < 3; ++j)
+                {
                     int k = g_dac_box[curc][j];
                     if (k < 10)
                         k += '0';
@@ -1110,7 +1141,8 @@ docolors:
                    a difference of 1 is tolerated and noted as an alternate
                    acceptable change.  When change is not one of the tolerated
                    values, loop exits. */
-                if (force) {
+                if (force)
+                {
                     --force;
                     continue;
                 }
@@ -1143,7 +1175,8 @@ docolors:
                                 diff2[k][j] = delta;
                                 diff1[k][j] = diff2[k][j];
                             }
-                            else if (delta != diff1[k][j] && delta != diff2[k][j]) {
+                            else if (delta != diff1[k][j] && delta != diff2[k][j])
+                            {
                                 diffmag = abs(delta - diff1[k][j]);
                                 if (diff1[k][j] != diff2[k][j] || diffmag != 1)
                                     break;
@@ -1158,18 +1191,23 @@ docolors:
                     ++scanc;
                 }
                 // now scanc-1 is next color which must be written explicitly
-                if (scanc - curc > 2) { // good, we have a shaded range
-                    if (scanc != maxcolor) {
-                        if (diffmag < 3) {  // not a sharp slope change?
+                if (scanc - curc > 2)
+                { // good, we have a shaded range
+                    if (scanc != maxcolor)
+                    {
+                        if (diffmag < 3)
+                        {  // not a sharp slope change?
                             force = 2;       // force more between ranges, to stop
                             --scanc;         // "drift" when load/store/load/store/
                         }
-                        if (k) {            // more of the same
+                        if (k)
+                        {            // more of the same
                             force += k;
                             --scanc;
                         }
                     }
-                    if (--scanc - curc > 1) {
+                    if (--scanc - curc > 1)
+                    {
                         put_parm("<%d>",scanc-curc);
                         curc = scanc;
                     }
@@ -1189,7 +1227,8 @@ docolors:
 static void put_filename(const char *keyword, const char *fname)
 {
     const char *p;
-    if (*fname && !endswithslash(fname)) {
+    if (*fname && !endswithslash(fname))
+    {
         p = strrchr(fname, SLASHC);
         if (p != nullptr)
         {
@@ -1225,13 +1264,19 @@ int maxlinelength = 72;
 static void put_parm_line()
 {
     int len = s_wbdata.len,c;
-    if (len > NICELINELEN) {
+    if (len > NICELINELEN)
+    {
         len = NICELINELEN+1;
-        while (--len != 0 && s_wbdata.buf[len] != ' ') { }
-        if (len == 0) {
+        while (--len != 0 && s_wbdata.buf[len] != ' ')
+        {
+        }
+        if (len == 0)
+        {
             len = NICELINELEN-1;
             while (++len < MAXLINELEN
-                    && s_wbdata.buf[len] && s_wbdata.buf[len] != ' ') { }
+                    && s_wbdata.buf[len] && s_wbdata.buf[len] != ' ')
+            {
+            }
         }
     }
     c = s_wbdata.buf[len];
@@ -1292,7 +1337,8 @@ static int getprec(double a,double b,double c)
     digits = 7;
     if (debugflag >= debug_flags::force_precision_0_digits && debugflag < debug_flags::force_precision_20_digits)
         digits = debugflag - debug_flags::force_precision_0_digits;
-    while (diff < 1.0 && digits <= DBL_DIG+1) {
+    while (diff < 1.0 && digits <= DBL_DIG+1)
+    {
         diff *= 10;
         ++digits;
     }
@@ -1417,7 +1463,8 @@ static void strip_zeros(char *buf)
     char *dptr, *bptr, *exptr;
     strlwr(buf);
     dptr = strchr(buf,'.');
-    if (dptr != nullptr) {
+    if (dptr != nullptr)
+    {
         ++dptr;
         exptr = strchr(buf,'e');
         if (exptr != nullptr)  // scientific notation with 'e'?
@@ -1593,21 +1640,27 @@ static int check_modekey(int curkey,int choice)
     i = entnums[choice];
     int ret = 0;
     if ((curkey == '-' || curkey == '+')
-            && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084)) {
+            && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084))
+    {
         if (g_bad_config)
             stopmsg(STOPMSG_NONE, "Missing or bad FRACTINT.CFG file. Can't reassign keys.");
         else {
-            if (curkey == '-') {                   // deassign key?
-                if (g_video_table[i].keynum >= 1084) {
+            if (curkey == '-')
+            {                   // deassign key?
+                if (g_video_table[i].keynum >= 1084)
+                {
                     g_video_table[i].keynum = 0;
                     modes_changed = true;
                 }
             }
             else {                                 // assign key?
                 int j = getakeynohelp();
-                if (j >= 1084 && j <= 1113) {
-                    for (int k = 0; k < g_video_table_len; ++k) {
-                        if (g_video_table[k].keynum == j) {
+                if (j >= 1084 && j <= 1113)
+                {
+                    for (int k = 0; k < g_video_table_len; ++k)
+                    {
+                        if (g_video_table[k].keynum == j)
+                        {
                             g_video_table[k].keynum = 0;
                             ret = -1; // force redisplay
                         }
@@ -1647,7 +1700,8 @@ static void update_fractint_cfg()
 
     findpath("fractint.cfg",cfgname);
 
-    if (access(cfgname,6)) {
+    if (access(cfgname,6))
+    {
         sprintf(buf,"Can't write %s",cfgname);
         stopmsg(STOPMSG_NONE, buf);
         return;
@@ -1658,7 +1712,8 @@ static void update_fractint_cfg()
         outname[i] = 0;
     strcat(outname,"fractint.tmp");
     outfile = fopen(outname,"w");
-    if (outfile == nullptr) {
+    if (outfile == nullptr)
+    {
         sprintf(buf,"Can't create %s",outname);
         stopmsg(STOPMSG_NONE, buf);
         return;
@@ -1668,10 +1723,12 @@ static void update_fractint_cfg()
     nextmode = 0;
     linenum = nextmode;
     nextlinenum = g_cfg_line_nums[0];
-    while (fgets(buf,120,cfgfile)) {
+    while (fgets(buf,120,cfgfile))
+    {
         char colorsbuf[10];
         ++linenum;
-        if (linenum == nextlinenum) { // replace this line
+        if (linenum == nextlinenum)
+        { // replace this line
             memcpy((char *)&vident,(char *)&g_video_table[nextmode],
                    sizeof(g_video_entry));
             vidmode_keyname(vident.keynum,kname);
@@ -1680,7 +1737,8 @@ static void update_fractint_cfg()
             while (i && buf[i-1] == ' ') // strip trailing spaces to compress
                 --i;
             j = i + 5;
-            while (j < 32) {               // tab to column 33
+            while (j < 32)
+            {               // tab to column 33
                 buf[i++] = '\t';
                 j += 8;
             }

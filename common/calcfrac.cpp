@@ -519,7 +519,8 @@ int calctypeshowdot()
     stopy = row;
     starty = stopy;
     width = showdot_width+1;
-    if (width > 0) {
+    if (width > 0)
+    {
         if (col+width <= ixstop && row+width <= iystop)
         {
             // preferred showdot shape
@@ -611,7 +612,8 @@ int calcfract()
     parm2.x  = param[2];
     parm2.y  = param[3];
 
-    if (LogFlag && colors < 16) {
+    if (LogFlag && colors < 16)
+    {
         stopmsg(STOPMSG_NONE, "Need at least 16 colors to use logmap");
         LogFlag = 0;
     }
@@ -634,16 +636,19 @@ int calcfract()
     // below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint.
     // Since 32767 is what was meant, replaced the instances of INT_MAX with 32767.
     if (LogFlag && (((maxit > 32767) && (save_release > 1920))
-                    || Log_Fly_Calc == 1)) {
+                    || Log_Fly_Calc == 1))
+    {
         Log_Calc = true; // calculate on the fly
         SetupLogTable();
     }
     else if (LogFlag && (((maxit > 32767) && (save_release <= 1920))
-                         || Log_Fly_Calc == 2)) {
+                         || Log_Fly_Calc == 2))
+    {
         MaxLTSize = 32767;
         Log_Calc = false; // use logtable
     }
-    else if (rangeslen && (maxit >= 32767)) {
+    else if (rangeslen && (maxit >= 32767))
+    {
         MaxLTSize = 32766;
     }
 
@@ -661,7 +666,8 @@ int calcfract()
 
         if (!resized)
         {
-            if (rangeslen || Log_Fly_Calc == 2) {
+            if (rangeslen || Log_Fly_Calc == 2)
+            {
                 stopmsg(STOPMSG_NONE, "Insufficient memory for logmap/ranges with this maxiter");
             }
             else {
@@ -671,7 +677,8 @@ int calcfract()
                 SetupLogTable();
             }
         }
-        else if (rangeslen) { // Can't do ranges if MaxLTSize > 32767
+        else if (rangeslen)
+        { // Can't do ranges if MaxLTSize > 32767
             int m;
             int numval;
             int flip;
@@ -680,20 +687,24 @@ int calcfract()
             int k = l;
             int i = k;
             LogFlag = 0; // ranges overrides logmap
-            while (i < rangeslen) {
+            while (i < rangeslen)
+            {
                 flip = 0;
                 m = flip;
                 altern = 32767;
                 numval = ranges[i++];
-                if (numval < 0) {
+                if (numval < 0)
+                {
                     altern = ranges[i++];    // sub-range iterations
                     numval = ranges[i++];
                 }
                 if (numval > (int)MaxLTSize || i >= rangeslen)
                     numval = (int)MaxLTSize;
-                while (l <= numval)  {
+                while (l <= numval)
+                {
                     LogTable[l++] = (BYTE)(k + flip);
-                    if (++m >= altern) {
+                    if (++m >= altern)
+                    {
                         flip ^= 1;            // Alternate colors
                         m = 0;
                     }
@@ -1279,7 +1290,8 @@ static int diffusion_engine()
     rem_x = (ixstop-ixstart+1) - nx * s;
     rem_y = (iystop-iystart+1) - ny * s;
 
-    if (yybegin == iystart && workpass == 0) { // if restarting on pan:
+    if (yybegin == iystart && workpass == 0)
+    { // if restarting on pan:
         dif_counter =0l;
     } else {
         // yybegin and passes contain data for resuming the type:
@@ -1291,8 +1303,10 @@ static int diffusion_engine()
 
     /*************************************/
     // only the points (dithering only) :
-    if (fillcolor == 0) {
-        while (dif_counter < (dif_limit >> 1)) {
+    if (fillcolor == 0)
+    {
+        while (dif_counter < (dif_limit >> 1))
+        {
             count_to_int(dif_counter, colo, rowo);
 
             i = 0;
@@ -1308,15 +1322,17 @@ static int diffusion_engine()
                 } while (j < ny);
                 /* in the last y tile we may not need to plot the point
                  */
-                if (rowo < rem_y) {
+                if (rowo < rem_y)
+                {
                     calculate;
                     (*plot)(col,row,color);
                 }
                 i++;
                 col += s;
             } while (i < nx);
-            /* in the last x tiles we may not need to plot the point */ if
-            (colo < rem_x) {
+            /* in the last x tiles we may not need to plot the point */
+            if (colo < rem_x)
+            {
                 row = iystart + rowo;
                 j = 0;
                 do {
@@ -1353,7 +1369,8 @@ static int diffusion_engine()
                     j++;
                 } while (j < ny);
                 // in the last tile we may not need to plot the point
-                if (rowo < rem_y) {
+                if (rowo < rem_y)
+                {
                     row = iystart + rowo + ny * s;
 
                     calculate;
@@ -1362,7 +1379,8 @@ static int diffusion_engine()
                 i++;
             } while (i < nx);
             // in the last tile we may not need to plot the point
-            if (colo < rem_x) {
+            if (colo < rem_x)
+            {
                 col = ixstart + colo + nx * s;
                 j = 0;
                 do {
@@ -1372,7 +1390,8 @@ static int diffusion_engine()
                     plot_block_lim(col,row,sqsz,color);
                     j++;
                 } while (j < ny);
-                if (rowo < rem_y) {
+                if (rowo < rem_y)
+                {
                     row = iystart + rowo + ny * s;
 
                     calculate;
@@ -1400,7 +1419,8 @@ static int diffusion_engine()
                 j++;
             } while (j < ny);
             // in the last tile we may not need to plot the point
-            if (rowo < rem_y) {
+            if (rowo < rem_y)
+            {
                 row = iystart + rowo + ny * s;
 
                 calculate;
@@ -1409,7 +1429,8 @@ static int diffusion_engine()
             i++;
         } while (i < nx);
         // in the last tile we may nnt need to plot the point
-        if (colo < rem_x) {
+        if (colo < rem_x)
+        {
             col = ixstart + colo + nx * s;
             j = 0;
             do {
@@ -1419,7 +1440,8 @@ static int diffusion_engine()
                 (*plot)(col,row,color);
                 j++;
             } while (j < ny);
-            if (rowo < rem_y) {
+            if (rowo < rem_y)
+            {
                 row = iystart + rowo + ny * s;
 
                 calculate;
@@ -1438,7 +1460,8 @@ static int sticky_orbits()
     got_status = 6; // for <tab> screen
     totpasses = 1;
 
-    if (plotorbits2dsetup() == -1) {
+    if (plotorbits2dsetup() == -1)
+    {
         stdcalcmode = 'g';
         return -1;
     }
@@ -1678,7 +1701,8 @@ static int StandardCalc(int passnum)
             if (quick_calc && !resuming)
             {
                 color = getcolor(col,row);
-                if (color != inside) {
+                if (color != inside)
+                {
                     ++col;
                     continue;
                 }
@@ -1723,8 +1747,10 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
                 && (realcoloriter < maxit || (inside < 0 && coloriter == maxit)))
             coloriter = logtablecalc(coloriter);
         color = abs((int)coloriter);
-        if (coloriter >= colors) { // don't use color 0 unless from inside/outside
-            if (save_release <= 1950) {
+        if (coloriter >= colors)
+        { // don't use color 0 unless from inside/outside
+            if (save_release <= 1950)
+            {
                 if (colors < 16)
                     color &= g_and_color;
                 else
@@ -1769,8 +1795,10 @@ int calcmandfp()
                 && (realcoloriter < maxit || (inside < 0 && coloriter == maxit)))
             coloriter = logtablecalc(coloriter);
         color = abs((int)coloriter);
-        if (coloriter >= colors) { // don't use color 0 unless from inside/outside
-            if (save_release <= 1950) {
+        if (coloriter >= colors)
+        { // don't use color 0 unless from inside/outside
+            if (save_release <= 1950)
+            {
                 if (colors < 16)
                     color &= g_and_color;
                 else
@@ -1915,7 +1943,8 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
     if (fractype == JULIAFP || fractype == JULIA)
         coloriter = -1;
     caught_a_cycle = false;
-    if (inside == PERIOD) {
+    if (inside == PERIOD)
+    {
         savedand = 16;           // begin checking every 16th cycle
     } else {
 #ifdef MINSAVEDAND
@@ -1938,7 +1967,8 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
 
     attracted = false;
 
-    if (outside == TDIS) {
+    if (outside == TDIS)
+    {
         if (integerfractal)
         {
             old.x = ((double)lold.x) / fudge;
@@ -1963,7 +1993,8 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
     {
         // calculation of one orbit goes here
         // input in "old" -- output in "new"
-        if (coloriter % check_freq == 0) {
+        if (coloriter % check_freq == 0)
+        {
             if (check_key())
                 return -1;
         }
@@ -1994,7 +2025,8 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 if (use_old_distest)
                 {
-                    if (dem_color < 0) {
+                    if (dem_color < 0)
+                    {
                         dem_color = coloriter;
                         dem_new = g_new;
                     }
@@ -2044,7 +2076,8 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
                         g_new.y /= fudge;
                     }
 
-                    if (save_release > 1824) {
+                    if (save_release > 1824)
+                    {
                         if (g_new.x > STARTRAILMAX)
                             g_new.x = STARTRAILMAX;
                         if (g_new.x < -STARTRAILMAX)
@@ -2369,13 +2402,15 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
             coloriter = (long)fabs(atan2(g_new.y,g_new.x)*atan_colors/PI);
         else if (outside == FMOD)
             coloriter = (long)(memvalue * colors / closeprox);
-        else if (outside == TDIS) {
+        else if (outside == TDIS)
+        {
             coloriter = (long)(totaldist);
         }
 
 
         // eliminate negative colors & wrap arounds
-        if ((coloriter <= 0 || coloriter > maxit) && outside != FMOD) {
+        if ((coloriter <= 0 || coloriter > maxit) && outside != FMOD)
+        {
             if (save_release < 1961)
                 coloriter = 0;
             else
@@ -2465,8 +2500,10 @@ plot_inside: // we're "inside"
                 }
             }
         }
-        else if (inside == PERIOD) {
-            if (cyclelen > 0) {
+        else if (inside == PERIOD)
+        {
+            if (cyclelen > 0)
+            {
                 coloriter = cyclelen;
             } else {
                 coloriter = maxit;
@@ -2488,7 +2525,8 @@ plot_inside: // we're "inside"
             coloriter = (long)(memvalue * colors / closeprox);
         }
         else if (inside == ATANI)          // "atan"
-            if (integerfractal) {
+            if (integerfractal)
+            {
                 g_new.x = ((double)lnew.x) / fudge;
                 g_new.y = ((double)lnew.y) / fudge;
                 coloriter = (long)fabs(atan2(g_new.y,g_new.x)*atan_colors/PI);
@@ -2522,8 +2560,10 @@ plot_inside: // we're "inside"
 plot_pixel:
 
     color = abs((int)coloriter);
-    if (coloriter >= colors) { // don't use color 0 unless from inside/outside
-        if (save_release <= 1950) {
+    if (coloriter >= colors)
+    { // don't use color 0 unless from inside/outside
+        if (save_release <= 1950)
+        {
             if (colors < 16)
                 color &= g_and_color;
             else
@@ -2798,7 +2838,8 @@ static void decomposition()
             coloriter = (1 << i) - 1 - coloriter;
         temp >>= 1;
     }
-    if (decomp[0] == 2 && save_release >= 1827) {
+    if (decomp[0] == 2 && save_release >= 1827)
+    {
         if (save_temp & 2)
             coloriter = 1;
         else
@@ -3469,7 +3510,8 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             if (guessed23 == 0 || guessed32 == 0 || guessed33 == 0)
                 *pfxptr |= pfxmask;
 
-        if (halfblock > 1) { // not last pass, check if something to display
+        if (halfblock > 1)
+        { // not last pass, check if something to display
             if (firstpass)  // display guessed corners, fill in block
             {
                 if (guessplot)
@@ -3985,7 +4027,8 @@ static int tesseral()
         tp->bot = tessrow(ixstart,ixstop,iystop);      // Do bottom row
         tp->lft = tesscol(ixstart,iystart+1,iystop-1); // Do left column
         tp->rgt = tesscol(ixstop,iystart+1,iystop-1);  // Do right column
-        if (check_key()) { // interrupt before we got properly rolling
+        if (check_key())
+        { // interrupt before we got properly rolling
             add_worklist(xxstart,xxstop,xxstart,yystart,yystop,yystart,0,worksym);
             return -1;
         }
@@ -4008,13 +4051,16 @@ static int tesseral()
         i = (unsigned)workpass >> 12;
         while (--i >= 0)
             xsize <<= 1;
-        while (1) {
+        while (1)
+        {
             tp2 = tp;
-            if (tp->x2 - tp->x1 > tp->y2 - tp->y1) { // next divide down middle
+            if (tp->x2 - tp->x1 > tp->y2 - tp->y1)
+            { // next divide down middle
                 if (tp->x1 == curx && (tp->x2 - tp->x1 - 2) < xsize)
                     break;
                 mid = (tp->x1 + tp->x2) >> 1;                // Find mid point
-                if (mid > curx) { // stack right part
+                if (mid > curx)
+                { // stack right part
                     memcpy(++tp,tp2,sizeof(*tp));
                     tp->x2 = mid;
                 }
@@ -4024,7 +4070,8 @@ static int tesseral()
                 if (tp->y1 == cury && (tp->y2 - tp->y1 - 2) < ysize)
                     break;
                 mid = (tp->y1 + tp->y2) >> 1;                // Find mid point
-                if (mid > cury) { // stack bottom part
+                if (mid > cury)
+                { // stack bottom part
                     memcpy(++tp,tp2,sizeof(*tp));
                     tp->y2 = mid;
                 }
@@ -4035,7 +4082,8 @@ static int tesseral()
 
     got_status = 4; // for tab_display
 
-    while (tp >= (tess *)&dstack[0]) { // do next box
+    while (tp >= (tess *)&dstack[0])
+    { // do next box
         curcol = tp->x1; // for tab_display
         currow = tp->y1;
 
@@ -4061,7 +4109,8 @@ static int tesseral()
 
         {
             int mid,midcolor;
-            if (tp->x2 - tp->x1 > tp->y2 - tp->y1) { // divide down the middle
+            if (tp->x2 - tp->x1 > tp->y2 - tp->y1)
+            { // divide down the middle
                 mid = (tp->x1 + tp->x2) >> 1;           // Find mid point
                 midcolor = tesscol(mid, tp->y1+1, tp->y2-1); // Do mid column
                 if (midcolor != tp->top)
@@ -4082,11 +4131,14 @@ static int tesseral()
             {
                 if (fillcolor > 0)
                     tp->top = fillcolor %colors;
-                if (guessplot || (j = tp->x2 - tp->x1 - 1) < 2) { // paint dots
+                if (guessplot || (j = tp->x2 - tp->x1 - 1) < 2)
+                { // paint dots
                     for (col = tp->x1 + 1; col < tp->x2; col++)
-                        for (row = tp->y1 + 1; row < tp->y2; row++) {
+                        for (row = tp->y1 + 1; row < tp->y2; row++)
+                        {
                             (*plot)(col,row,tp->top);
-                            if (++i > 500) {
+                            if (++i > 500)
+                            {
                                 if (check_key())
                                     goto tess_end;
                                 i = 0;
@@ -4095,7 +4147,8 @@ static int tesseral()
                 }
                 else { // use put_line for speed
                     memset(&dstack[OLDMAXPIXELS],tp->top,j);
-                    for (row = tp->y1 + 1; row < tp->y2; row++) {
+                    for (row = tp->y1 + 1; row < tp->y2; row++)
+                    {
                         put_line(row,tp->x1+1,tp->x2-1,&dstack[OLDMAXPIXELS]);
                         if (plot != putcolor) // symmetry
                         {
@@ -4103,7 +4156,8 @@ static int tesseral()
                             if (j > iystop && j < ydots)
                                 put_line(j,tp->x1+1,tp->x2-1,&dstack[OLDMAXPIXELS]);
                         }
-                        if (++i > 25) {
+                        if (++i > 25)
+                        {
                             if (check_key())
                                 goto tess_end;
                             i = 0;
@@ -4119,18 +4173,21 @@ tess_split:
         {   // box not surrounded by same color, sub-divide
             int mid,midcolor;
             tess *tp2;
-            if (tp->x2 - tp->x1 > tp->y2 - tp->y1) { // divide down the middle
+            if (tp->x2 - tp->x1 > tp->y2 - tp->y1)
+            { // divide down the middle
                 mid = (tp->x1 + tp->x2) >> 1;                // Find mid point
                 midcolor = tesscol(mid, tp->y1+1, tp->y2-1); // Do mid column
                 if (midcolor == -3)
                     goto tess_end;
-                if (tp->x2 - mid > 1) {    // right part >= 1 column
+                if (tp->x2 - mid > 1)
+                {    // right part >= 1 column
                     if (tp->top == -1)
                         tp->top = -2;
                     if (tp->bot == -1)
                         tp->bot = -2;
                     tp2 = tp;
-                    if (mid - tp->x1 > 1) { // left part >= 1 col, stack right
+                    if (mid - tp->x1 > 1)
+                    { // left part >= 1 col, stack right
                         memcpy(++tp,tp2,sizeof(*tp));
                         tp->x2 = mid;
                         tp->rgt = midcolor;
@@ -4146,13 +4203,15 @@ tess_split:
                 midcolor = tessrow(tp->x1+1, tp->x2-1, mid); // Do mid row
                 if (midcolor == -3)
                     goto tess_end;
-                if (tp->y2 - mid > 1) {    // bottom part >= 1 column
+                if (tp->y2 - mid > 1)
+                {    // bottom part >= 1 column
                     if (tp->lft == -1)
                         tp->lft = -2;
                     if (tp->rgt == -1)
                         tp->rgt = -2;
                     tp2 = tp;
-                    if (mid - tp->y1 > 1) { // top also >= 1 col, stack bottom
+                    if (mid - tp->y1 > 1)
+                    { // top also >= 1 col, stack bottom
                         memcpy(++tp,tp2,sizeof(*tp));
                         tp->y2 = mid;
                         tp->bot = midcolor;
@@ -4168,17 +4227,20 @@ tess_split:
     }
 
 tess_end:
-    if (tp >= (tess *)&dstack[0]) { // didn't complete
+    if (tp >= (tess *)&dstack[0])
+    { // didn't complete
         int i,xsize,ysize;
         ysize = 1;
         xsize = ysize;
         i = 2;
-        while (tp->x2 - tp->x1 - 2 >= i) {
+        while (tp->x2 - tp->x1 - 2 >= i)
+        {
             i <<= 1;
             ++xsize;
         }
         i = 2;
-        while (tp->y2 - tp->y1 - 2 >= i) {
+        while (tp->y2 - tp->y1 - 2 >= i)
+        {
             i <<= 1;
             ++ysize;
         }
@@ -4204,7 +4266,8 @@ static int tesschkrow(int x1,int x2,int y)
 {
     int i;
     i = getcolor(x1,y);
-    while (x2 > x1) {
+    while (x2 > x1)
+    {
         if (getcolor(x2,y) != i)
             return -1;
         --x2;
@@ -4220,7 +4283,8 @@ static int tesscol(int x,int y1,int y2)
     reset_periodicity = true;
     colcolor = (*calctype)();
     reset_periodicity = false;
-    while (++row <= y2) { // generate the column
+    while (++row <= y2)
+    { // generate the column
         i = (*calctype)();
         if (i < 0)
             return -3;
@@ -4238,7 +4302,8 @@ static int tessrow(int x1,int x2,int y)
     reset_periodicity = true;
     rowcolor = (*calctype)();
     reset_periodicity = false;
-    while (++col <= x2) { // generate the row
+    while (++col <= x2)
+    { // generate the row
         i = (*calctype)();
         if (i < 0)
             return -3;
@@ -4266,7 +4331,8 @@ static long autologmap()
         color = (*calctype)();
         if (color == -1)
             goto ack; // key pressed, bailout
-        if (realcoloriter < mincolour) {
+        if (realcoloriter < mincolour)
+        {
             mincolour = realcoloriter ;
             maxit = std::max(2L,mincolour); /*speedup for when edges overlap lakes */
         }
@@ -4282,7 +4348,8 @@ static long autologmap()
         color = (*calctype)();
         if (color == -1)
             goto ack; // key pressed, bailout
-        if (realcoloriter < mincolour) {
+        if (realcoloriter < mincolour)
+        {
             mincolour = realcoloriter ;
             maxit = std::max(2L,mincolour); /*speedup for when edges overlap lakes */
         }
@@ -4298,7 +4365,8 @@ static long autologmap()
         color = (*calctype)();
         if (color == -1)
             goto ack; // key pressed, bailout
-        if (realcoloriter < mincolour) {
+        if (realcoloriter < mincolour)
+        {
             mincolour = realcoloriter ;
             maxit = std::max(2L,mincolour); /*speedup for when edges overlap lakes */
         }
@@ -4314,7 +4382,8 @@ static long autologmap()
         color = (*calctype)();
         if (color == -1)
             goto ack; // key pressed, bailout
-        if (realcoloriter < mincolour) {
+        if (realcoloriter < mincolour)
+        {
             mincolour = realcoloriter ;
             maxit = std::max(2L,mincolour); /*speedup for when edges overlap lakes */
         }

@@ -82,11 +82,13 @@ void fill_dx_array()
         dy0[0] = yymax;
         dy1[0] = 0;
         dx1[0] = dy1[0];
-        for (int i = 1; i < xdots; i++) {
+        for (int i = 1; i < xdots; i++)
+        {
             dx0[i] = (double)(dx0[0] + i*delxx);
             dy1[i] = (double)(dy1[0] - i*delyy2);
         }
-        for (int i = 1; i < ydots; i++) {
+        for (int i = 1; i < ydots; i++)
+        {
             dy0[i] = (double)(dy0[0] - i*delyy);
             dx1[i] = (double)(dx1[0] + i*delxx2);
         }
@@ -102,11 +104,13 @@ void fill_lx_array()
         ly0[0] = ymax;
         ly1[0] = 0;
         lx1[0] = ly1[0];
-        for (int i = 1; i < xdots; i++) {
+        for (int i = 1; i < xdots; i++)
+        {
             lx0[i] = lx0[i-1] + delx;
             ly1[i] = ly1[i-1] - dely2;
         }
-        for (int i = 1; i < ydots; i++) {
+        for (int i = 1; i < ydots; i++)
+        {
             ly0[i] = ly0[i-1] - dely;
             lx1[i] = lx1[i-1] + delx2;
         }
@@ -216,7 +220,8 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         floatflag = true;
     else
         floatflag = usr_floatflag;
-    if (calc_status == calc_status_value::RESUMABLE) { // on resume, ensure floatflag correct
+    if (calc_status == calc_status_value::RESUMABLE)
+    { // on resume, ensure floatflag correct
         if (curfractalspecific->isinteger)
             floatflag = false;
         else
@@ -225,7 +230,8 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     // if floating pt only, set floatflag for TAB screen
     if (!curfractalspecific->isinteger && curfractalspecific->tofloat == NOFRACTAL)
         floatflag = true;
-    if (usr_stdcalcmode == 's') {
+    if (usr_stdcalcmode == 's')
+    {
         if (fractype == MANDEL || fractype == MANDELFP)
             floatflag = true;
         else
@@ -252,7 +258,8 @@ init_restart:
             && colors >= 64
             && (curfractalspecific->calctype == StandardFractal
                 || curfractalspecific->calctype == calcmand
-                || curfractalspecific->calctype == calcmandfp)) {
+                || curfractalspecific->calctype == calcmandfp))
+    {
         potflag = true;
         usr_distest = 0;
         distest = usr_distest;    // can't do distest too
@@ -261,7 +268,8 @@ init_restart:
     if (distest)
         floatflag = true;  // force floating point for dist est
 
-    if (floatflag) { // ensure type matches floatflag
+    if (floatflag)
+    { // ensure type matches floatflag
         if (curfractalspecific->isinteger != 0
                 && curfractalspecific->tofloat != NOFRACTAL)
             fractype = curfractalspecific->tofloat;
@@ -305,14 +313,17 @@ init_restart:
         if (rqlim > 127.0)
             rqlim = 127.0;
 
-    if ((curfractalspecific->flags&NOROTATE) != 0) {
+    if ((curfractalspecific->flags&NOROTATE) != 0)
+    {
         // ensure min<max and unrotated rectangle
-        if (xxmin > xxmax) {
+        if (xxmin > xxmax)
+        {
             double ftemp = xxmax;
             xxmax = xxmin;
             xxmin = ftemp;
         }
-        if (yymin > yymax) {
+        if (yymin > yymax)
+        {
             double ftemp = yymax;
             yymax = yymin;
             yymin = ftemp;
@@ -325,7 +336,8 @@ init_restart:
     bitshift = FUDGEFACTOR2; // by default, the smaller shift
     if (integerfractal > 1)  // use specific override from table
         bitshift = integerfractal;
-    if (integerfractal == 0) { // float?
+    if (integerfractal == 0)
+    { // float?
         int i = curfractalspecific->tofloat;
         if (i != NOFRACTAL) // -> int?
         {
@@ -336,7 +348,8 @@ init_restart:
             bitshift = 16;  // to allow larger corners
     }
     // We want this code if we're using the assembler calcmand
-    if (fractype == MANDEL || fractype == JULIA) { // adust shift bits if..
+    if (fractype == MANDEL || fractype == JULIA)
+    { // adust shift bits if..
         if (!potflag                                    // not using potential
                 && (param[0] > -2.0 && param[0] < 2.0)  // parameters not too large
                 && (param[1] > -2.0 && param[1] < 2.0)
@@ -666,7 +679,8 @@ void adjust_corner()
 
     ftemp = fabs(xx3rd-xxmin);
     ftemp2 = fabs(xxmax-xx3rd);
-    if (ftemp < ftemp2) {
+    if (ftemp < ftemp2)
+    {
         if (ftemp*10000 < ftemp2 && yy3rd != yymax)
             xx3rd = xxmin;
     }
@@ -733,14 +747,16 @@ static void adjust_to_limitsbf(double expand)
     half_a_bf(bcentery);
 
     // if (xxmin == centerx) {
-    if (cmp_bf(bfxmin,bcenterx) == 0) { // ohoh, infinitely thin, fix it
+    if (cmp_bf(bfxmin,bcenterx) == 0)
+    { // ohoh, infinitely thin, fix it
         smallest_add_bf(bfxmax);
         // bfxmin -= bfxmax-centerx;
         sub_a_bf(bfxmin,sub_bf(btmp1,bfxmax,bcenterx));
     }
 
     // if (bfymin == centery)
-    if (cmp_bf(bfymin,bcentery) == 0) {
+    if (cmp_bf(bfymin,bcentery) == 0)
+    {
         smallest_add_bf(bfymax);
         // bfymin -= bfymax-centery;
         sub_a_bf(bfymin,sub_bf(btmp1,bfymax,bcentery));
@@ -784,7 +800,8 @@ static void adjust_to_limitsbf(double expand)
     // if caller wants image size adjusted, do that first
     if (expand != 1.0)
     {
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < 4; ++i)
+        {
             // cornerx[i] = centerx + (cornerx[i]-centerx)*expand;
             sub_bf(btmp1,bcornerx[i],bcenterx);
             mult_bf(bcornerx[i],btmp1,bexpand);
@@ -806,7 +823,8 @@ static void adjust_to_limitsbf(double expand)
     copy_bf(blowy,bcornery[0]);
     copy_bf(bhighy,bcornery[0]);
 
-    for (int i = 1; i < 4; ++i) {
+    for (int i = 1; i < 4; ++i)
+    {
         // if (cornerx[i] < lowx)               lowx  = cornerx[i];
         if (cmp_bf(bcornerx[i],blowx) < 0)
             copy_bf(blowx,bcornerx[i]);
@@ -839,7 +857,8 @@ static void adjust_to_limitsbf(double expand)
     div_bf(bftemp,btmp1,btmp2);
     floattobf(btmp1,1.0);
     if (cmp_bf(bftemp,btmp1) < 0)
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < 4; ++i)
+        {
             // cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp;
             sub_bf(btmp1,bcornerx[i],bcenterx);
             mult_bf(bcornerx[i],btmp1,bftemp);
@@ -856,7 +875,8 @@ static void adjust_to_limitsbf(double expand)
     clear_bf(badjx);
     clear_bf(badjy);
 
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i)
+    {
         /* if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
            adjx = ftemp; */
         if (cmp_bf(bcornerx[i],blimit) > 0 &&
@@ -912,7 +932,8 @@ static void adjust_to_limits(double expand)
 
     limit = 32767.99;
 
-    if (integerfractal) {
+    if (integerfractal)
+    {
         if (save_release > 1940) // let user reproduce old GIF's and PAR's
             limit = 1023.99;
         if (bitshift >= 24)
@@ -924,12 +945,14 @@ static void adjust_to_limits(double expand)
     centerx = (xxmin+xxmax)/2;
     centery = (yymin+yymax)/2;
 
-    if (xxmin == centerx) { // ohoh, infinitely thin, fix it
+    if (xxmin == centerx)
+    { // ohoh, infinitely thin, fix it
         smallest_add(&xxmax);
         xxmin -= xxmax-centerx;
     }
 
-    if (yymin == centery) {
+    if (yymin == centery)
+    {
         smallest_add(&yymax);
         yymin -= yymax-centery;
     }
@@ -954,7 +977,8 @@ static void adjust_to_limits(double expand)
     // if caller wants image size adjusted, do that first
     if (expand != 1.0)
     {
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < 4; ++i)
+        {
             cornerx[i] = centerx + (cornerx[i]-centerx)*expand;
             cornery[i] = centery + (cornery[i]-centery)*expand;
         }
@@ -965,7 +989,8 @@ static void adjust_to_limits(double expand)
     highy = cornery[0];
     lowy = highy;
 
-    for (int i = 1; i < 4; ++i) {
+    for (int i = 1; i < 4; ++i)
+    {
         if (cornerx[i] < lowx)
             lowx  = cornerx[i];
         if (cornerx[i] > highx)
@@ -984,8 +1009,10 @@ static void adjust_to_limits(double expand)
 
     // if image is too large, downsize it maintaining center
     ftemp = limit*2/ftemp;
-    if (ftemp < 1.0) {
-        for (int i = 0; i < 4; ++i) {
+    if (ftemp < 1.0)
+    {
+        for (int i = 0; i < 4; ++i)
+        {
             cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp;
             cornery[i] = centery + (cornery[i]-centery)*ftemp;
         }
@@ -995,7 +1022,8 @@ static void adjust_to_limits(double expand)
     adjy = 0;
     adjx = adjy;
 
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i)
+    {
         if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
             adjx = ftemp;
         if (cornerx[i] < 0.0-limit && (ftemp = cornerx[i] + limit) < adjx)
@@ -1249,7 +1277,8 @@ void sleepms_old(long ms)
             while (t2.time == t1.time && t2.millitm == t1.millitm);
             sleepms_old(10L * SLEEPINIT); // about 1/4 sec
             ftimex(&t2);
-            if (driver_key_pressed()) {
+            if (driver_key_pressed())
+            {
                 scalems = 0L;
                 cleartempmsg();
                 goto sleepexit;
@@ -1269,10 +1298,12 @@ void sleepms_old(long ms)
         scalems = (long)((float)SLEEPINIT/(float)(elapsed) * scalems);
         cleartempmsg();
     }
-    if (ms > 10L * SLEEPINIT) { // using ftime is probably more accurate
+    if (ms > 10L * SLEEPINIT)
+    { // using ftime is probably more accurate
         ms /= 10;
         ftimex(&t1);
-        while (1) {
+        while (1)
+        {
             if (driver_key_pressed())
                 break;
             ftimex(&t2);
@@ -1280,7 +1311,8 @@ void sleepms_old(long ms)
                 break;
         }
     }
-    else if (!driver_key_pressed()) {
+    else if (!driver_key_pressed())
+    {
         ms *= scalems;
         while (ms-- >= 0)
         {
@@ -1371,11 +1403,13 @@ void w_snd(int tone)
             fprintf(snd_fp,"%-d\n",tone);
     }
     taborhelp = false;
-    if (!driver_key_pressed()) { // driver_key_pressed calls driver_sound_off() if TAB or F1 pressed
+    if (!driver_key_pressed())
+    { // driver_key_pressed calls driver_sound_off() if TAB or F1 pressed
         // must not then call driver_sound_off(), else indexes out of synch
         //   if (20 < tone && tone < 15000)  better limits?
         //   if (10 < tone && tone < 5000)  better limits?
-        if (driver_sound_on(tone)) {
+        if (driver_sound_on(tone))
+        {
             wait_until(0,orbit_delay);
             if (!taborhelp) // kludge because wait_until() calls driver_key_pressed
                 driver_sound_off();
@@ -1626,7 +1660,8 @@ void get_julia_attractor(double real, double imag)
             lresult = lnew;
         else
             result =  g_new;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++)
+        {
             overflow = false;
             if (!curfractalspecific->orbitcalc() && !overflow) // if it stays in the lake
             {   // and doesn't move far, probably

@@ -851,9 +851,11 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
             i = get_view_params(); // get the parameters
         else if (*kbdchar == FIK_CTL_B)
             i = get_browse_params();
-        else if (*kbdchar == FIK_CTL_E) {
+        else if (*kbdchar == FIK_CTL_E)
+        {
             i = get_evolve_Parms();
-            if (i > 0) {
+            if (i > 0)
+            {
                 start_showorbit = false;
                 soundflag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); // turn off only x,y,z
                 Log_Auto_Calc = false; // turn it off
@@ -1214,8 +1216,10 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
         }
         return big_while_loop_result::CONTINUE;
     case 'e':                    // switch to color editing
-        if (g_is_true_color && !initbatch) { // don't enter palette editor
-            if (!load_palette()) {
+        if (g_is_true_color && !initbatch)
+        { // don't enter palette editor
+            if (!load_palette())
+            {
                 *kbdmore = false;
                 calc_status = calc_status_value::PARAMS_CHANGED;
                 break;
@@ -1524,7 +1528,8 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         driver_unstack_screen();
         if (evolving && truecolor)
             truecolor = false;          // truecolor doesn't play well with the evolver
-        if (i > 0) {              // time to redraw?
+        if (i > 0)
+        {              // time to redraw?
             param_history(0); // save history
             *kbdmore = false;
             calc_status = calc_status_value::PARAMS_CHANGED;
@@ -1583,8 +1588,10 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         }
         return big_while_loop_result::CONTINUE;
     case 'e':                    // switch to color editing
-        if (g_is_true_color && !initbatch) { // don't enter palette editor
-            if (!load_palette()) {
+        if (g_is_true_color && !initbatch)
+        { // don't enter palette editor
+            if (!load_palette())
+            {
                 *kbdmore = false;
                 calc_status = calc_status_value::PARAMS_CHANGED;
                 break;
@@ -1716,21 +1723,27 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
     case FIK_CTL_DOWN_ARROW:           // Ctrl-cursor down
         // borrow ctrl cursor keys for moving selection box
         // in evolver mode
-        if (boxcount) {
+        if (boxcount)
+        {
             GENEBASE gene[NUMGENES];
             // get the gene array from memory
             MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-            if (evolving&1) {
-                if (*kbdchar == FIK_CTL_LEFT_ARROW) {
+            if (evolving&1)
+            {
+                if (*kbdchar == FIK_CTL_LEFT_ARROW)
+                {
                     px--;
                 }
-                if (*kbdchar == FIK_CTL_RIGHT_ARROW) {
+                if (*kbdchar == FIK_CTL_RIGHT_ARROW)
+                {
                     px++;
                 }
-                if (*kbdchar == FIK_CTL_UP_ARROW) {
+                if (*kbdchar == FIK_CTL_UP_ARROW)
+                {
                     py--;
                 }
-                if (*kbdchar == FIK_CTL_DOWN_ARROW) {
+                if (*kbdchar == FIK_CTL_DOWN_ARROW)
+                {
                     py++;
                 }
                 if (px <0)
@@ -1775,7 +1788,8 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         }
         break;
     case FIK_CTL_PAGE_UP:
-        if (prmboxcount) {
+        if (prmboxcount)
+        {
             parmzoom -= 1.0;
             if (parmzoom < 1.0)
                 parmzoom = 1.0;
@@ -1784,7 +1798,8 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         }
         break;
     case FIK_CTL_PAGE_DOWN:
-        if (prmboxcount) {
+        if (prmboxcount)
+        {
             parmzoom += 1.0;
             if (parmzoom > (double)gridsz/2.0)
                 parmzoom = (double)gridsz/2.0;
@@ -1806,7 +1821,8 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
                 zbx = zby;
                 find_special_colors();
                 boxcolor = g_color_bright;
-                if (evolving&1) {
+                if (evolving&1)
+                {
                     // set screen view params back (previously changed to allow full screen saves in viewwindow mode)
                     int grout = !((evolving & NOGROUT) / NOGROUT);
                     sxoffs = px * (int)(dxsize+1+grout);
@@ -1823,9 +1839,11 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
     case FIK_PAGE_DOWN:              // page down
         if (boxcount)
         {
-            if (zwidth >= .999 && zdepth >= 0.999) { // end zoombox
+            if (zwidth >= .999 && zdepth >= 0.999)
+            { // end zoombox
                 zwidth = 0;
-                if (evolving&1) {
+                if (evolving&1)
+                {
                     drawparmbox(1); // clear boxes off screen
                     ReleaseParamBox();
                 }
@@ -1878,7 +1896,8 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
     }
 
     case FIK_F4: //decrement  gridsize and regen
-        if (gridsz > 3) {
+        if (gridsz > 3)
+        {
             gridsz = gridsz - 2;  // gridsz must have odd value only
             *kbdmore = false;
             calc_status = calc_status_value::PARAMS_CHANGED;
@@ -1886,7 +1905,8 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         break;
 
     case FIK_F5: // increment gridsize and regen
-        if (gridsz < (sxdots / (MINPIXELS << 1))) {
+        if (gridsz < (sxdots / (MINPIXELS << 1)))
+        {
             gridsz = gridsz + 2;
             *kbdmore = false;
             calc_status = calc_status_value::PARAMS_CHANGED;
@@ -1898,8 +1918,10 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         GENEBASE gene[NUMGENES];
         // get the gene array from memory
         MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-        for (int i = 0; i < NUMGENES; i++) {
-            if (gene[i].mutate == 5) {
+        for (int i = 0; i < NUMGENES; i++)
+        {
+            if (gene[i].mutate == 5)
+            {
                 gene[i].mutate = 6;
                 continue;
             }
@@ -2009,8 +2031,10 @@ static void move_zoombox(int keynum)
     horizontal = 0;
     vertical = horizontal;
     getmore = 1;
-    while (getmore) {
-        switch (keynum) {
+    while (getmore)
+    {
+        switch (keynum)
+        {
         case FIK_LEFT_ARROW:               // cursor left
             --horizontal;
             break;
@@ -2038,14 +2062,16 @@ static void move_zoombox(int keynum)
         default:
             getmore = 0;
         }
-        if (getmore) {
+        if (getmore)
+        {
             if (getmore == 2)              // eat last key used
                 driver_get_key();
             getmore = 2;
             keynum = driver_key_pressed();         // next pending key
         }
     }
-    if (boxcount) {
+    if (boxcount)
+    {
         moveboxf((double)horizontal/dxsize,(double)vertical/dysize);
     }
 #ifndef XFRACT
@@ -2062,7 +2088,8 @@ int cmp_line(BYTE *pixels, int linelen)
     int row;
     int oldcolor;
     row = g_row_count++;
-    if (row == 0) {
+    if (row == 0)
+    {
         errcount = 0;
         cmp_fp = dir_fopen(workdir,"cmperr",(initbatch)?"a":"w");
         outln_cleanup = cmp_line_cleanup;
@@ -2073,7 +2100,8 @@ int cmp_line(BYTE *pixels, int linelen)
             return 0;
         row >>= 1;
     }
-    for (int col = 0; col < linelen; col++) {
+    for (int col = 0; col < linelen; col++)
+    {
         oldcolor = getcolor(col,row);
         if (oldcolor == (int)pixels[col])
             putcolor(col,row,0);
@@ -2093,7 +2121,8 @@ static void cmp_line_cleanup()
 {
     char *timestring;
     time_t ltime;
-    if (initbatch) {
+    if (initbatch)
+    {
         time(&ltime);
         timestring = ctime(&ltime);
         timestring[24] = 0; //clobber newline in time string
@@ -2134,7 +2163,8 @@ void reset_zoom_corners()
 int key_count(int keynum)
 {   int ctr;
     ctr = 1;
-    while (driver_key_pressed() == keynum) {
+    while (driver_key_pressed() == keynum)
+    {
         driver_get_key();
         ++ctr;
     }

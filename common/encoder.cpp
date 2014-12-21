@@ -470,7 +470,8 @@ bool encoder()
             EVOLUTION_INFO resume_e_info;
             GENEBASE gene[NUMGENES];
             MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-            if (evolve_handle == 0 || calc_status == calc_status_value::COMPLETED) {
+            if (evolve_handle == 0 || calc_status == calc_status_value::COMPLETED)
+            {
                 esave_info.paramrangex     = paramrangex;
                 esave_info.paramrangey     = paramrangey;
                 esave_info.opx             = opx;
@@ -1149,7 +1150,8 @@ static void char_out(int c)
  */
 static void flush_char()
 {
-    if (a_count > 0) {
+    if (a_count > 0)
+    {
         fputc(a_count, g_outfile);
         fwrite(accum, 1, a_count, g_outfile);
         a_count = 0;

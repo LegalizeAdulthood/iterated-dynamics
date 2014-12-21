@@ -137,9 +137,11 @@ static int check_for_mem(int stored_at, long howmuch)
     switch (stored_at)
     {
     case MEMORY: // check_for_mem
-        if (maxmem > howmuch) {
+        if (maxmem > howmuch)
+        {
             temp = (BYTE *)malloc(howmuch + FAR_RESERVE);
-            if (temp != nullptr) { // minimum free space + requested amount
+            if (temp != nullptr)
+            { // minimum free space + requested amount
                 free(temp);
                 use_this_type = MEMORY;
                 break;
@@ -148,7 +150,8 @@ static int check_for_mem(int stored_at, long howmuch)
 
     case DISK: // check_for_mem
     default: // just in case a nonsense number gets used
-        if (CheckDiskSpace(howmuch)) {
+        if (CheckDiskSpace(howmuch))
+        {
             use_this_type = DISK;
             break;
         }
@@ -247,7 +250,8 @@ void ExitCheck()
             "Error - not all memory released, I'll get it.");
         for (U16 i = 1; i < MAXHANDLES; i++)
         {
-            if (handletable[i].Nowhere.stored_at != NOWHERE) {
+            if (handletable[i].Nowhere.stored_at != NOWHERE)
+            {
                 char buf[MSGLEN];
                 sprintf(buf,"Memory type %s still allocated.  Handle = %i.",
                         memstr[handletable[i].Nowhere.stored_at],i);
@@ -276,7 +280,8 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
        sufficient amount is available to grant request */
 
     use_this_type = check_for_mem(stored_at, toallocate);
-    if (use_this_type == NOWHERE) {
+    if (use_this_type == NOWHERE)
+    {
         DisplayError(stored_at, toallocate);
         goodbye();
     }
@@ -285,7 +290,8 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 
     handle = next_handle();
 
-    if (handle >= MAXHANDLES || handle == 0) {
+    if (handle >= MAXHANDLES || handle == 0)
+    {
         DisplayHandle(handle);
         return 0U;
         // Oops, do something about this! ?????
@@ -320,7 +326,8 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         rewind(handletable[handle].Disk.file);
         if (fseek(handletable[handle].Disk.file,toallocate,SEEK_SET) != 0)
             handletable[handle].Disk.file = nullptr;
-        if (handletable[handle].Disk.file == nullptr) {
+        if (handletable[handle].Disk.file == nullptr)
+        {
             handletable[handle].Disk.stored_at = NOWHERE;
             use_this_type = NOWHERE;
             WhichDiskError(1);
@@ -342,7 +349,8 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         break;
     } // end of switch
 
-    if (stored_at != use_this_type && debugflag == debug_flags::display_memory_statistics) {
+    if (stored_at != use_this_type && debugflag == debug_flags::display_memory_statistics)
+    {
         char buf[MSGLEN];
         sprintf(buf,"Asked for %s, allocated %lu bytes of %s, handle = %u.",
                 memstr[stored_at],toallocate,memstr[use_this_type],handle);
@@ -425,7 +433,8 @@ bool MoveToMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
         {
             memcpy(diskbuf,buffer,(U16)DISKWRITELEN);
             numwritten = (U16)write1(diskbuf,(U16)DISKWRITELEN,1,handletable[handle].Disk.file);
-            if (numwritten != 1) {
+            if (numwritten != 1)
+            {
                 WhichDiskError(3);
                 goto diskerror;
             }
@@ -434,7 +443,8 @@ bool MoveToMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
         }
         memcpy(diskbuf,buffer,(U16)tomove);
         numwritten = (U16)write1(diskbuf,(U16)tomove,1,handletable[handle].Disk.file);
-        if (numwritten != 1) {
+        if (numwritten != 1)
+        {
             WhichDiskError(3);
             break;
         }
@@ -471,7 +481,8 @@ bool MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
         break;
 
     case MEMORY: // MoveFromMemory
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++)
+        {
             memcpy(buffer, handletable[handle].Linearmem.memory+start, (U16)count);
             start += count;
             buffer += count;
@@ -485,7 +496,8 @@ bool MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
         while (tomove > DISKWRITELEN)
         {
             numread = (U16)fread(diskbuf,(U16)DISKWRITELEN,1,handletable[handle].Disk.file);
-            if (numread != 1 && !feof(handletable[handle].Disk.file)) {
+            if (numread != 1 && !feof(handletable[handle].Disk.file))
+            {
                 WhichDiskError(4);
                 goto diskerror;
             }
@@ -494,7 +506,8 @@ bool MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
             buffer += DISKWRITELEN;
         }
         numread = (U16)fread(diskbuf,(U16)tomove,1,handletable[handle].Disk.file);
-        if (numread != 1 && !feof(handletable[handle].Disk.file)) {
+        if (numread != 1 && !feof(handletable[handle].Disk.file))
+        {
             WhichDiskError(4);
             break;
         }
@@ -532,7 +545,8 @@ bool SetMemory(int value,U16 size,long count,long offset,U16 handle)
         break;
 
     case MEMORY: // SetMemory
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++)
+        {
             memset(handletable[handle].Linearmem.memory+start, value, (U16)count);
             start += count;
         }
@@ -546,14 +560,16 @@ bool SetMemory(int value,U16 size,long count,long offset,U16 handle)
         while (tomove > DISKWRITELEN)
         {
             numwritten = (U16)write1(diskbuf,(U16)DISKWRITELEN,1,handletable[handle].Disk.file);
-            if (numwritten != 1) {
+            if (numwritten != 1)
+            {
                 WhichDiskError(2);
                 goto diskerror;
             }
             tomove -= DISKWRITELEN;
         }
         numwritten = (U16)write1(diskbuf,(U16)tomove,1,handletable[handle].Disk.file);
-        if (numwritten != 1) {
+        if (numwritten != 1)
+        {
             WhichDiskError(2);
             break;
         }

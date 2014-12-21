@@ -54,7 +54,8 @@ FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
         return nullptr;
 
     fread(header, HEADERSIZE, 1, fp);
-    if ((header[O_FILETYPE] != T_RLERGB) || (header[O_ESIZE] != 16)) {
+    if ((header[O_FILETYPE] != T_RLERGB) || (header[O_ESIZE] != 16))
+    {
         fclose(fp);
         return nullptr;
     }
@@ -72,11 +73,14 @@ FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
 
 int t16_getline(FILE *fp, int hs, U16 *data)
 {
-    for (int i = 0; i < hs; ++i) {
-        if (state == 0) {
+    for (int i = 0; i < hs; ++i)
+    {
+        if (state == 0)
+        {
             bufp = 0;
             count = getc(fp);
-            if (count > 127) {
+            if (count > 127)
+            {
                 state = 1;
                 count -= 127;
                 fread(rlebuf, 2, 1, fp);

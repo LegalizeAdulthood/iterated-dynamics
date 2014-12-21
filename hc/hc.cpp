@@ -659,7 +659,8 @@ int read_char()
 
 #ifdef XFRACT
         /* Convert graphics arrows into keyboard chars */
-        if (ch >= 24 && ch <= 27) {
+        if (ch >= 24 && ch <= 27)
+        {
             ch = "KJHL"[ch-24];
         }
 #endif

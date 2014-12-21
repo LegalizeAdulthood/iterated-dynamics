@@ -427,25 +427,30 @@ imagestart:                             /* calc/display a new image */
         if ('A' <= kbdchar && kbdchar <= 'Z')
             kbdchar = tolower(kbdchar);
 #endif
-        if (kbdchar == 'd') {                     /* shell to DOS */
+        if (kbdchar == 'd')
+        {                     /* shell to DOS */
             driver_set_clear();
             driver_shell();
             goto imagestart;
         }
 
 #ifndef XFRACT
-        if (kbdchar == '@' || kbdchar == '2') {    /* execute commands */
+        if (kbdchar == '@' || kbdchar == '2')
+        {    /* execute commands */
 #else
-        if (kbdchar == FIK_F2 || kbdchar == '@') {     /* We mapped @ to F2 */
+        if (kbdchar == FIK_F2 || kbdchar == '@')
+        {     /* We mapped @ to F2 */
 #endif
             if ((get_commands() & CMDARG_3D_YES) == 0)
                 goto imagestart;
             kbdchar = '3';                         /* 3d=y so fall thru '3' code */
         }
 #ifndef XFRACT
-        if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#') {
+        if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#')
+        {
 #else
-        if (kbdchar == 'r' || kbdchar == '3' || kbdchar == FIK_F3) {
+        if (kbdchar == 'r' || kbdchar == '3' || kbdchar == FIK_F3)
+        {
 #endif
             display3d = 0;
             if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
@@ -456,47 +461,57 @@ imagestart:                             /* calc/display a new image */
             showfile = -1;
             goto restorestart;
         }
-        if (kbdchar == 't') {                   /* set fractal type */
+        if (kbdchar == 't')
+        {                   /* set fractal type */
             julibrot = false;
             get_fracttype();
             goto imagestart;
         }
-        if (kbdchar == 'x') {                   /* generic toggle switch */
+        if (kbdchar == 'x')
+        {                   /* generic toggle switch */
             get_toggles();
             goto imagestart;
         }
-        if (kbdchar == 'y') {                   /* generic toggle switch */
+        if (kbdchar == 'y')
+        {                   /* generic toggle switch */
             get_toggles2();
             goto imagestart;
         }
-        if (kbdchar == 'z') {                   /* type specific parms */
+        if (kbdchar == 'z')
+        {                   /* type specific parms */
             get_fract_params(1);
             goto imagestart;
         }
-        if (kbdchar == 'v') {                   /* view parameters */
+        if (kbdchar == 'v')
+        {                   /* view parameters */
             get_view_params();
             goto imagestart;
         }
-        if (kbdchar == FIK_CTL_B) {             /* ctrl B = browse parms*/
+        if (kbdchar == FIK_CTL_B)
+        {             /* ctrl B = browse parms*/
             get_browse_params();
             goto imagestart;
         }
-        if (kbdchar == FIK_CTL_F) {             /* ctrl f = sound parms*/
+        if (kbdchar == FIK_CTL_F)
+        {             /* ctrl f = sound parms*/
             get_sound_params();
             goto imagestart;
         }
-        if (kbdchar == 'f') {                   /* floating pt toggle */
+        if (kbdchar == 'f')
+        {                   /* floating pt toggle */
             if (!usr_floatflag)
                 usr_floatflag = true;
             else
                 usr_floatflag = false;
             goto imagestart;
         }
-        if (kbdchar == 'i') {                     /* set 3d fractal parms */
+        if (kbdchar == 'i')
+        {                     /* set 3d fractal parms */
             get_fract3d_params(); /* get the parameters */
             goto imagestart;
         }
-        if (kbdchar == 'g') {
+        if (kbdchar == 'g')
+        {
             get_cmd_string(); /* get command string */
             goto imagestart;
         }
@@ -573,7 +588,8 @@ int timer(int timertype,int(*subrtn)(),...)
     if (do_bench)
         fp = dir_fopen(workdir,"bench","a");
     timer_start = clock_ticks();
-    switch (timertype) {
+    switch (timertype)
+    {
     case 0:
         out = (*(int(*)())subrtn)();
         break;
@@ -588,11 +604,13 @@ int timer(int timertype,int(*subrtn)(),...)
     /* next assumes CLOCKS_PER_SEC is 10^n, n>=2 */
     timer_interval = (clock_ticks() - timer_start) / (CLOCKS_PER_SEC/100);
 
-    if (do_bench) {
+    if (do_bench)
+    {
         time(&ltime);
         timestring = ctime(&ltime);
         timestring[24] = 0; /*clobber newline in time string */
-        switch (timertype) {
+        switch (timertype)
+        {
         case 1:
             fprintf(fp,"decode ");
             break;

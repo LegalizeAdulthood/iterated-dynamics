@@ -26,13 +26,15 @@ bool ValidateLuts(const char *fn)
         strcat(temp,".map");  // No? Then add .map
     findpath(temp, line);         // search the dos path
     f = fopen(line, "r");
-    if (f == nullptr) {
+    if (f == nullptr)
+    {
         sprintf(line,"Could not load color map %s",fn);
         stopmsg(STOPMSG_NONE, line);
         return true;
     }
     unsigned index;
-    for (index = 0; index < 256; index++) {
+    for (index = 0; index < 256; index++)
+    {
         if (fgets(line,100,f) == nullptr)
             break;
         sscanf(line, "%u %u %u", &r, &g, &b);
@@ -42,7 +44,8 @@ bool ValidateLuts(const char *fn)
         dac[index].blue  = (BYTE)((b%256) >> 2);
     }
     fclose(f);
-    while (index < 256)  { // zap unset entries
+    while (index < 256)
+    { // zap unset entries
         dac[index].green = 40;
         dac[index].blue = dac[index].green;
         dac[index].red = dac[index].blue;

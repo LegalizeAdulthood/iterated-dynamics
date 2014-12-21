@@ -368,7 +368,9 @@ static void sleep_secs(int secs)
 {
     long stop;
     stop = clock_ticks() + (long)secs*CLOCKS_PER_SEC;
-    while (clock_ticks() < stop && driver_key_pressed() == 0) { } // bailout if key hit
+    while (clock_ticks() < stop && driver_key_pressed() == 0)
+    {
+    } // bailout if key hit
 }
 
 static void slideshowerr(const char *msg)

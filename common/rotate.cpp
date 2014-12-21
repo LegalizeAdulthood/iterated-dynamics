@@ -68,7 +68,8 @@ void rotate(int direction)      // rotate-the-palette routine
     incr = 999;                          // ready to randomize
     srand((unsigned)time(nullptr));         // randomize things
 
-    if (direction == 0) {                // firing up in paused mode?
+    if (direction == 0)
+    {                // firing up in paused mode?
         pauserotate();                    // then force a pause
         direction = 1;                    // and set a rotate direction
     }
@@ -77,26 +78,34 @@ void rotate(int direction)      // rotate-the-palette routine
     rotate_size = rotate_max - rotate_lo + 1;
     last = rotate_max;                   // last box that was filled
     next = rotate_lo;                    // next box to be filled
-    if (direction < 0) {
+    if (direction < 0)
+    {
         last = rotate_lo;
         next = rotate_max;
     }
 
     bool more = true;
-    while (more) {
-        if (driver_diskp()) {
+    while (more)
+    {
+        if (driver_diskp())
+        {
             if (!paused)
                 pauserotate();
         }
-        else while (!driver_key_pressed()) { // rotate until key hit, at least once so step=oldstep ok
-                if (fkey > 0) {                // randomizing is on
-                    for (int istep = 0; istep < step; istep++) {
+        else
+            while (!driver_key_pressed())
+            { // rotate until key hit, at least once so step=oldstep ok
+                if (fkey > 0)
+                {                // randomizing is on
+                    for (int istep = 0; istep < step; istep++)
+                    {
                         jstep = next + (istep * direction);
                         while (jstep < rotate_lo)
                             jstep += rotate_size;
                         while (jstep > rotate_max)
                             jstep -= rotate_size;
-                        if (++incr > fstep) {    // time to randomize
+                        if (++incr > fstep)
+                        {    // time to randomize
                             incr = 1;
                             fstep = ((fsteps[fkey-1]* (rand15() >> 8)) >> 6) + 1;
                             fromred   = g_dac_box[last][0];
@@ -177,7 +186,8 @@ void rotate(int direction)      // rotate-the-palette routine
 #ifndef XFRACT
             fkey = kbdchar-1058;
 #else
-            switch (kbdchar) {
+            switch (kbdchar)
+            {
             case FIK_F1:
                 fkey = 1;
                 break;
@@ -245,7 +255,8 @@ void rotate(int direction)      // rotate-the-palette routine
                 changecolor = 2;
             if (changedirection == 0)
                 changedirection = 1;
-            for (int i = 1; i < 256; i++) {
+            for (int i = 1; i < 256; i++)
+            {
                 g_dac_box[i][changecolor] = (BYTE)(g_dac_box[i][changecolor] + changedirection);
                 if (g_dac_box[i][changecolor] == 64)
                     g_dac_box[i][changecolor] = 63;
@@ -264,7 +275,8 @@ void rotate(int direction)      // rotate-the-palette routine
         case '.':
         case '<':
         case ',':
-            if (kbdchar == '>' || kbdchar == '.') {
+            if (kbdchar == '>' || kbdchar == '.')
+            {
                 direction = -1;
                 last = rotate_lo;
                 next = rotate_max;
@@ -434,7 +446,8 @@ static void set_palette2(BYTE start[3], BYTE finish[3])
     g_dac_box[0][1] = g_dac_box[0][2];
     g_dac_box[0][0] = g_dac_box[0][1];
     for (int i = 1; i <= 128; i++)
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++)
+        {
             g_dac_box[i][j]     = (BYTE)((i*finish[j] + (128-i)*start[j])/128);
             g_dac_box[i+127][j] = (BYTE)((i*start[j]  + (128-i)*finish[j])/128);
         }
@@ -446,7 +459,8 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
     g_dac_box[0][1] = g_dac_box[0][2];
     g_dac_box[0][0] = g_dac_box[0][1];
     for (int i = 1; i <= 85; i++)
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++)
+        {
             g_dac_box[i][j]     = (BYTE)((i*middle[j] + (86-i)*start[j])/85);
             g_dac_box[i+85][j]  = (BYTE)((i*finish[j] + (86-i)*middle[j])/85);
             g_dac_box[i+170][j] = (BYTE)((i*start[j]  + (86-i)*finish[j])/85);
@@ -466,7 +480,8 @@ void save_palette()
     helpmode = HELPCOLORMAP;
     i = field_prompt("Name of map file to write",nullptr,temp1,60,nullptr);
     driver_unstack_screen();
-    if (i != -1 && temp1[0]) {
+    if (i != -1 && temp1[0])
+    {
         if (strchr(temp1,'.') == nullptr)
             strcat(temp1,".map");
         merge_pathnames(palname, temp1, cmd_file::AT_AFTER_STARTUP);

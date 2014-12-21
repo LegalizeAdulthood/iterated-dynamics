@@ -50,7 +50,9 @@ long clock_ticks()
 
 // stub
 void
-intdos() {}
+intdos()
+{
+}
 
 /*
  *----------------------------------------------------------------------
@@ -92,17 +94,20 @@ int stricmp(const char *s1, const char *s2)
 {
     int c1, c2;
 
-    while (1) {
+    while (1)
+    {
         c1 = *s1++;
         c2 = *s2++;
         if (isupper(c1))
             c1 = tolower(c1);
         if (isupper(c2))
             c2 = tolower(c2);
-        if (c1 != c2) {
+        if (c1 != c2)
+        {
             return c1 - c2;
         }
-        if (c1 == 0) {
+        if (c1 == 0)
+        {
             return 0;
         }
     }
@@ -126,17 +131,20 @@ int strnicmp(const char *s1, const char *s2, int numChars)
 {
     char c1, c2;
 
-    for (; numChars > 0; --numChars) {
+    for (; numChars > 0; --numChars)
+    {
         c1 = *s1++;
         c2 = *s2++;
         if (isupper(c1))
             c1 = tolower(c1);
         if (isupper(c2))
             c2 = tolower(c2);
-        if (c1 != c2) {
+        if (c1 != c2)
+        {
             return c1 - c2;
         }
-        if (c1 == '\0') {
+        if (c1 == '\0')
+        {
             return 0;
         }
     }
@@ -163,8 +171,10 @@ char *
 strlwr(char *s)
 {
     char *sptr = s;
-    while (*sptr != '\0') {
-        if (isupper(*sptr)) {
+    while (*sptr != '\0')
+    {
+        if (isupper(*sptr))
+        {
             *sptr = tolower(*sptr);
         }
         sptr++;
@@ -190,8 +200,10 @@ char *
 strupr(char *s)
 {
     char *sptr = s;
-    while (*sptr != '\0') {
-        if (islower(*sptr)) {
+    while (*sptr != '\0')
+    {
+        if (islower(*sptr))
+        {
             *sptr = toupper(*sptr);
         }
         sptr++;
@@ -222,21 +234,25 @@ void findpath(const char *filename, char *fullpathname)
     int fd;
     char *fractdir;
 
-    if (filename[0] == '/') {
+    if (filename[0] == '/')
+    {
         strcpy(fullpathname,filename);
         fd = open(fullpathname,O_RDONLY);
-        if (fd != -1) {
+        if (fd != -1)
+        {
             close(fd);
             return;
         }
     }
     fractdir = getenv("FRACTDIR");
-    if (fractdir != nullptr) {
+    if (fractdir != nullptr)
+    {
         strcpy(fullpathname,fractdir);
         strcat(fullpathname,"/");
         strcat(fullpathname,filename);
         fd = open(fullpathname,O_RDONLY);
-        if (fd != -1) {
+        if (fd != -1)
+        {
             close(fd);
             return;
         }
@@ -245,14 +261,16 @@ void findpath(const char *filename, char *fullpathname)
     strcat(fullpathname,"/");
     strcat(fullpathname,filename);
     fd = open(fullpathname,O_RDONLY);
-    if (fd != -1) {
+    if (fd != -1)
+    {
         close(fd);
         return;
     }
     strcpy(fullpathname,"./");
     strcat(fullpathname,filename);
     fd = open(fullpathname,O_RDONLY);
-    if (fd != -1) {
+    if (fd != -1)
+    {
         close(fd);
         return;
     }
@@ -419,7 +437,8 @@ void ftimex(struct timebx *tp)
     struct timeval  timep;
     struct timezone timezp;
 
-    if (gettimeofday(&timep,&timezp) != 0) {
+    if (gettimeofday(&timep,&timezp) != 0)
+    {
         perror("error in gettimeofday");
         exit(0);
     }

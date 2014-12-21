@@ -204,7 +204,8 @@ int get_toggles()
     uvalues[k].uval.ch.list = soundmodes;
     uvalues[k].uval.ch.val = (old_soundflag = soundflag) & SOUNDFLAG_ORBITMASK;
 
-    if (rangeslen == 0) {
+    if (rangeslen == 0)
+    {
         choices[++k] = "Log Palette (0=no,1=yes,-1=old,+n=cmprsd,-n=sqrt, 2=auto)";
         uvalues[k].type = 'L';
     }
@@ -242,7 +243,8 @@ int get_toggles()
     helpmode = HELPXOPTS;
     i = fullscreen_prompt("Basic Options\n(not all combinations make sense)",k+1,choices,uvalues,0,nullptr);
     helpmode = oldhelpmode;
-    if (i < 0) {
+    if (i < 0)
+    {
         return (-1);
     }
 
@@ -265,7 +267,8 @@ int get_toggles()
     if (old_stoppass != stoppass)
         j++;
 #ifndef XFRACT
-    if ((uvalues[++k].uval.ch.val != 0) != usr_floatflag) {
+    if ((uvalues[++k].uval.ch.val != 0) != usr_floatflag)
+    {
         usr_floatflag = uvalues[k].uval.ch.val != 0;
         j++;
     }
@@ -350,7 +353,8 @@ int get_toggles()
         j++;
 
     LogFlag = uvalues[++k].uval.Lval;
-    if (LogFlag != old_logflag) {
+    if (LogFlag != old_logflag)
+    {
         j++;
         Log_Auto_Calc = false;          // turn it off, use the supplied value
     }
@@ -437,7 +441,8 @@ int get_toggles2()
     choices[++k] = "          center X coordinate or \"auto\"";
     choices[++k] = "          center Y coordinate or \"auto\"";
     k = k - 3;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         uvalues[++k].type = 's';
         old_inversion[i] = inversion[i];
         if (inversion[i] == AUTOINVERT)
@@ -465,7 +470,8 @@ int get_toggles2()
                               "(not all combinations make sense)",
                               k+1,choices,uvalues,0,nullptr);
         helpmode = oldhelpmode;
-        if (i < 0) {
+        if (i < 0)
+        {
             return (-1);
         }
     }
@@ -474,7 +480,8 @@ int get_toggles2()
     k = -1;
     bool changed = false;
 
-    if ((uvalues[++k].uval.ch.val != 0) != finattract) {
+    if ((uvalues[++k].uval.ch.val != 0) != finattract)
+    {
         finattract = uvalues[k].uval.ch.val != 0;
         changed = true;
     }
@@ -491,7 +498,8 @@ int get_toggles2()
     if (potparam[0] != 0.0 && potparam[2] != old_potparam[2])
         changed = true;
 
-    if ((uvalues[++k].uval.ch.val != 0) != pot16bit) {
+    if ((uvalues[++k].uval.ch.val != 0) != pot16bit)
+    {
         pot16bit = uvalues[k].uval.ch.val != 0;
         if (pot16bit)                   // turned it on
         {
@@ -514,7 +522,8 @@ int get_toggles2()
     if (usr_distest && distestwidth != old_distestwidth)
         changed = true;
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         if (uvalues[++k].uval.sval[0] == 'a' || uvalues[k].uval.sval[0] == 'A')
             inversion[i] = AUTOINVERT;
         else
@@ -528,7 +537,8 @@ int get_toggles2()
 
     rotate_lo = uvalues[++k].uval.ival;
     rotate_hi = uvalues[++k].uval.ival;
-    if (rotate_lo < 0 || rotate_hi > 255 || rotate_lo > rotate_hi) {
+    if (rotate_lo < 0 || rotate_hi > 255 || rotate_lo > rotate_hi)
+    {
         rotate_lo = old_rotate_lo;
         rotate_hi = old_rotate_hi;
     }
@@ -597,7 +607,8 @@ pass_option_restart:
                           "(Press " FK_F2 " for corner parameters)\n"
                           "(Press " FK_F6 " for calculation parameters)",k+1,choices,uvalues,0x44,nullptr);
     helpmode = oldhelpmode;
-    if (i < 0) {
+    if (i < 0)
+    {
         return (-1);
     }
 
@@ -652,8 +663,10 @@ pass_option_restart:
     if (drawmode != old_drawmode)
         j = 1;
 
-    if (i == FIK_F2) {
-        if (get_screen_corners() > 0) {
+    if (i == FIK_F2)
+    {
+        if (get_screen_corners() > 0)
+        {
             ret = 1;
         }
         if (j)
@@ -661,8 +674,10 @@ pass_option_restart:
         goto pass_option_restart;
     }
 
-    if (i == FIK_F6) {
-        if (get_corners() > 0) {
+    if (i == FIK_F6)
+    {
+        if (get_corners() > 0)
+        {
             ret = 1;
         }
         if (j)
@@ -909,7 +924,8 @@ int get_cmd_string()
     helpmode = HELPCOMMANDS;
     i = field_prompt("Enter command string to use.",nullptr,cmdbuf,60,nullptr);
     helpmode = oldhelpmode;
-    if (i >= 0 && cmdbuf[0] != 0) {
+    if (i >= 0 && cmdbuf[0] != 0)
+    {
         i = cmdarg(cmdbuf, cmd_file::AT_AFTER_STARTUP);
         if (debugflag == debug_flags::write_formula_debug_information)
         {
@@ -963,9 +979,12 @@ int starfield()
         return (-1);
     }
     spindac(0,1);                 // load it, but don't spin
-    for (row = 0; row < ydots; row++) {
-        for (col = 0; col < xdots; col++) {
-            if (driver_key_pressed()) {
+    for (row = 0; row < ydots; row++)
+    {
+        for (col = 0; col < xdots; col++)
+        {
+            if (driver_key_pressed())
+            {
                 driver_buzzer(buzzer_codes::INTERRUPT);
                 busy = false;
                 return (1);
@@ -991,11 +1010,13 @@ int get_starfield_params()
         "Ratio of Dim stars to Bright"
     };
 
-    if (colors < 255) {
+    if (colors < 255)
+    {
         stopmsg(STOPMSG_NONE, "starfield requires 256 color mode");
         return (-1);
     }
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         uvalues[i].uval.dval = starfield_values[i];
         uvalues[i].type = 'f';
     }
@@ -1005,7 +1026,8 @@ int get_starfield_params()
     int const choice = fullscreen_prompt("Starfield Parameters",3,starfield_prompts,uvalues,0,nullptr);
     helpmode = oldhelpmode;
     driver_unstack_screen();
-    if (choice < 0) {
+    if (choice < 0)
+    {
         return (-1);
     }
     for (int i = 0; i < 3; i++)
@@ -1016,7 +1038,8 @@ int get_starfield_params()
 
 static const char *masks[] = {"*.pot","*.gif"};
 
-int get_rds_params() {
+int get_rds_params()
+{
     char rds6[60];
     const char *stereobars[] = {"none", "middle", "top"};
     fullscreenvalues uvalues[7];
@@ -1084,7 +1107,8 @@ int get_rds_params() {
         helpmode = HELPRDS;
         int const choice = fullscreen_prompt("Random Dot Stereogram Parameters",k,rds_prompts,uvalues,0,nullptr);
         helpmode = oldhelpmode;
-        if (choice < 0) {
+        if (choice < 0)
+        {
             ret = -1;
             break;
         }
@@ -1133,7 +1157,8 @@ int get_a_number(double *x, double *y)
     uvalues[k].uval.dval = *y;
 
     i = fullscreen_prompt("Set Cursor Coordinates",k+1,choices,uvalues,25,nullptr);
-    if (i < 0) {
+    if (i < 0)
+    {
         driver_unstack_screen();
         return (-1);
     }
@@ -1265,17 +1290,20 @@ int  fr_findfirst(char *path)       // Find 1st file (or subdir) meeting path/fi
     intdos(&regs, &regs);
     return (regs.x.ax);           // Return error code
 #else
-    if (currdir != nullptr) {
+    if (currdir != nullptr)
+    {
         closedir(currdir);
         currdir = nullptr;
     }
     splitpath(path,nullptr,searchdir,searchname,searchext);
-    if (searchdir[0] == '\0') {
+    if (searchdir[0] == '\0')
+    {
         currdir = opendir(".");
     } else {
         currdir = opendir(searchdir);
     }
-    if (currdir == nullptr) {
+    if (currdir == nullptr)
+    {
         return -1;
     } else {
         return fr_findnext();
@@ -1301,13 +1329,16 @@ int  fr_findnext()              // Find next file (or subdir) meeting above path
     char thisname[FILE_MAX_PATH];
     char tmpname[FILE_MAX_PATH];
     char thisext[FILE_MAX_EXT];
-    while (1) {
+    while (1)
+    {
         dirEntry = readdir(currdir);
-        if (dirEntry == nullptr) {
+        if (dirEntry == nullptr)
+        {
             closedir(currdir);
             currdir = nullptr;
             return -1;
-        } else if (dirEntry->d_ino != 0) {
+        } else if (dirEntry->d_ino != 0)
+        {
             splitpath(dirEntry->d_name,nullptr,nullptr,thisname,thisext);
             strncpy(DTA.filename,dirEntry->d_name,13);
             DTA.filename[12] = '\0';
@@ -1317,13 +1348,15 @@ int  fr_findnext()              // Find next file (or subdir) meeting above path
             DTA.size = sbuf.st_size;
             if ((sbuf.st_mode&S_IFMT) == S_IFREG &&
                     (searchname[0] == '*' || strcmp(searchname,thisname) == 0) &&
-                    (searchext[0] == '*' || strcmp(searchext,thisext) == 0)) {
+                    (searchext[0] == '*' || strcmp(searchext,thisext) == 0))
+            {
                 DTA.attribute = 0;
                 return 0;
             }
             else if (((sbuf.st_mode&S_IFMT) == S_IFDIR) &&
                      ((searchname[0] == '*' || searchext[0] == '*') ||
-                      (strcmp(searchname,thisname) == 0))) {
+                      (strcmp(searchname,thisname) == 0)))
+            {
                 DTA.attribute = SUBDIR;
                 return 0;
             }
@@ -1682,11 +1715,13 @@ static int filename_speedstr(int row, int col, int vid,
     const char *prompt;
     if (strchr(speedstring,':')
             || strchr(speedstring,'*') || strchr(speedstring,'*')
-            || strchr(speedstring,'?')) {
+            || strchr(speedstring,'?'))
+    {
         speedstate = TEMPLATE;  // template
         prompt = "File Template";
     }
-    else if (speed_match) {
+    else if (speed_match)
+    {
         speedstate = SEARCHPATH; // does not match list
         prompt = "Search Path for";
     }
@@ -1919,7 +1954,8 @@ gc_loop:
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
     nump = -1;
-    if (cmag) {
+    if (cmag)
+    {
         prompts[++nump] = "Center X";
         values[nump].uval.dval = Xctr;
         prompts[++nump] = "Center Y";
@@ -1939,7 +1975,8 @@ gc_loop:
     }
 
     else {
-        if (drawmode == 'l') {
+        if (drawmode == 'l')
+        {
             prompts[++nump] = "Left End Point";
             values[nump].type = '*';
             prompts[++nump] = xprompt;
@@ -1989,7 +2026,8 @@ gc_loop:
     prompt_ret = fullscreen_prompt("Image Coordinates",nump+1, prompts, values, 0x90, nullptr);
     helpmode = oldhelpmode;
 
-    if (prompt_ret < 0) {
+    if (prompt_ret < 0)
+    {
         usemag = ousemag;
         xxmin = oxxmin;
         xxmax = oxxmax;
@@ -2000,7 +2038,8 @@ gc_loop:
         return (-1);
     }
 
-    if (prompt_ret == FIK_F4) { // reset to type defaults
+    if (prompt_ret == FIK_F4)
+    { // reset to type defaults
         xxmin = curfractalspecific->xmin;
         xx3rd = xxmin;
         xxmax = curfractalspecific->xmax;
@@ -2014,7 +2053,8 @@ gc_loop:
         goto gc_loop;
     }
 
-    if (cmag) {
+    if (cmag)
+    {
         if (cmpdbl(Xctr         , values[0].uval.dval)
                 || cmpdbl(Yctr         , values[1].uval.dval)
                 || cmpdbl((double)Magnification, values[2].uval.dval)
@@ -2035,7 +2075,8 @@ gc_loop:
     }
 
     else {
-        if (drawmode == 'l') {
+        if (drawmode == 'l')
+        {
             nump = 1;
             xxmin = values[nump++].uval.dval;
             yymax = values[nump++].uval.dval;
@@ -2052,14 +2093,16 @@ gc_loop:
             nump++;
             xx3rd = values[nump++].uval.dval;
             yy3rd = values[nump++].uval.dval;
-            if (xx3rd == 0 && yy3rd == 0) {
+            if (xx3rd == 0 && yy3rd == 0)
+            {
                 xx3rd = xxmin;
                 yy3rd = yymin;
             }
         }
     }
 
-    if (prompt_ret == FIK_F7 && drawmode != 'l') { // toggle corners/center-mag mode
+    if (prompt_ret == FIK_F7 && drawmode != 'l')
+    { // toggle corners/center-mag mode
         if (!usemag)
         {
             cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -2140,7 +2183,8 @@ gsc_loop:
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
     nump = -1;
-    if (cmag) {
+    if (cmag)
+    {
         prompts[++nump] = "Center X";
         values[nump].uval.dval = Xctr;
         prompts[++nump] = "Center Y";
@@ -2193,7 +2237,8 @@ gsc_loop:
     prompt_ret = fullscreen_prompt("Screen Coordinates",nump+1, prompts, values, 0x90, nullptr);
     helpmode = oldhelpmode;
 
-    if (prompt_ret < 0) {
+    if (prompt_ret < 0)
+    {
         usemag = ousemag;
         oxmin = oxxmin;
         oxmax = oxxmax;
@@ -2211,7 +2256,8 @@ gsc_loop:
         return (-1);
     }
 
-    if (prompt_ret == FIK_F4) { // reset to type defaults
+    if (prompt_ret == FIK_F4)
+    { // reset to type defaults
         oxmin = curfractalspecific->xmin;
         ox3rd = oxmin;
         oxmax = curfractalspecific->xmax;
@@ -2236,7 +2282,8 @@ gsc_loop:
         goto gsc_loop;
     }
 
-    if (cmag) {
+    if (cmag)
+    {
         if (cmpdbl(Xctr         , values[0].uval.dval)
                 || cmpdbl(Yctr         , values[1].uval.dval)
                 || cmpdbl((double)Magnification, values[2].uval.dval)
@@ -2272,13 +2319,15 @@ gsc_loop:
         nump++;
         ox3rd = values[nump++].uval.dval;
         oy3rd = values[nump++].uval.dval;
-        if (ox3rd == 0 && oy3rd == 0) {
+        if (ox3rd == 0 && oy3rd == 0)
+        {
             ox3rd = oxmin;
             oy3rd = oymin;
         }
     }
 
-    if (prompt_ret == FIK_F7) { // toggle corners/center-mag mode
+    if (prompt_ret == FIK_F7)
+    { // toggle corners/center-mag mode
         if (!usemag)
         {
             cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -2388,11 +2437,13 @@ get_brws_restart:
     helpmode = HELPBRWSPARMS;
     i = fullscreen_prompt("Browse ('L'ook) Mode Options",k+1,choices,uvalues,16,nullptr);
     helpmode = oldhelpmode;     // re-enable HELP
-    if (i < 0) {
+    if (i < 0)
+    {
         return (0);
     }
 
-    if (i == FIK_F4) {
+    if (i == FIK_F4)
+    {
         toosmall = 6;
         autobrowse = false;
         askvideo = true;
@@ -2433,7 +2484,8 @@ get_brws_restart:
             !stricmp(browsemask,old_browsemask))
         i = -3;
 
-    if (evolving) { // can't browse
+    if (evolving)
+    { // can't browse
         autobrowse = false;
         i = 0;
     }
@@ -2485,14 +2537,16 @@ int merge_pathnames(char *oldfullpath, char *newfilename, cmd_file mode)
         isadir = true;
     // if drive, colon, with no slash, is a directory
     if ((int) strlen(newfilename) == 2 &&
-            newfilename[1] == ':') {
+            newfilename[1] == ':')
+    {
         newfilename[2] = SLASHC;
         newfilename[3] = 0;
         isadir = true;
     }
     // if dot, slash, '0', its the current directory, set up full path
     if (newfilename[0] == '.' &&
-            newfilename[1] == SLASHC && newfilename[2] == 0) {
+            newfilename[1] == SLASHC && newfilename[2] == 0)
+    {
         temp_path[0] = (char)('a' + _getdrive() - 1);
         temp_path[1] = ':';
         temp_path[2] = 0;
@@ -2503,7 +2557,8 @@ int merge_pathnames(char *oldfullpath, char *newfilename, cmd_file mode)
     }
     // if dot, slash, its relative to the current directory, set up full path
     if (newfilename[0] == '.' &&
-            newfilename[1] == SLASHC) {
+            newfilename[1] == SLASHC)
+    {
         bool test_dir = false;
         temp_path[0] = (char)('a' + _getdrive() - 1);
         temp_path[1] = ':';
@@ -2513,7 +2568,8 @@ int merge_pathnames(char *oldfullpath, char *newfilename, cmd_file mode)
         expand_dirname(newfilename,temp_path);
         strcat(temp_path,newfilename);
         strcpy(newfilename,temp_path);
-        if (!test_dir) {
+        if (!test_dir)
+        {
             int len = (int) strlen(newfilename);
             newfilename[len-1] = 0; // get rid of slash added by expand_dirname
         }
@@ -2525,7 +2581,8 @@ int merge_pathnames(char *oldfullpath, char *newfilename, cmd_file mode)
     // check existence
     if (!isadir || isafile)
     {
-        if (fr_findfirst(newfilename) == 0) {
+        if (fr_findfirst(newfilename) == 0)
+        {
             if (DTA.attribute & SUBDIR) // exists and is dir
             {
                 fix_dirname(newfilename);  // add trailing slash

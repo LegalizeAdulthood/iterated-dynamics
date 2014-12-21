@@ -87,10 +87,12 @@ int gifview()
         strcpy(temp1,stereomapname);
     else
         strcpy(temp1,readname);
-    if (has_ext(temp1) == nullptr) {
+    if (has_ext(temp1) == nullptr)
+    {
         strcat(temp1,DEFAULTFRACTALTYPE);
         fpin = fopen(temp1,"rb");
-        if (fpin != nullptr) {
+        if (fpin != nullptr)
+        {
             fclose(fpin);
         }
         else {
@@ -102,7 +104,8 @@ int gifview()
         }
     }
     fpin = fopen(temp1, "rb");
-    if (fpin == nullptr) {
+    if (fpin == nullptr)
+    {
         return (-1);
     }
 
@@ -139,13 +142,15 @@ int gifview()
     }
     numcolors = 1 << planes;
 
-    if (dither_flag && numcolors > 2 && colors == 2 && outln == out_line) {
+    if (dither_flag && numcolors > 2 && colors == 2 && outln == out_line)
+    {
         outln = out_line_dither;
     }
 
     for (int i = 0; i < (int)numcolors; i++)
     {
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++)
+        {
             int k = get_byte();
             if (k < 0)
             {
@@ -167,7 +172,8 @@ int gifview()
     }
     if (g_dac_box[0][0] != 255)
         spindac(0,1);       // update the DAC
-    if (driver_diskp()) { // disk-video
+    if (driver_diskp())
+    { // disk-video
         char fname[FILE_MAX_FNAME];
         char ext[FILE_MAX_EXT];
         char tmpname[15];
@@ -250,14 +256,18 @@ int gifview()
                 width >>= 1;
 
             // Skip local color palette
-            if ((buffer[8] & 0x80) == 0x80) {      // local map?
+            if ((buffer[8] & 0x80) == 0x80)
+            {      // local map?
                 int numcolors;    // make this local
                 planes = (buffer[8] & 0x0F) + 1;
                 numcolors = 1 << planes;
                 // skip local map
-                for (int i = 0; i < numcolors; i++) {
-                    for (int j = 0; j < 3; j++) {
-                        if (get_byte() < 0) {
+                for (int i = 0; i < numcolors; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (get_byte() < 0)
+                        {
                             close_file();
                             return (-1);
                         }
@@ -282,7 +292,8 @@ int gifview()
             if (calc_status == calc_status_value::IN_PROGRESS) // e.g., set by line3d
             {
                 calctime = timer_interval; // note how long it took
-                if (driver_key_pressed() != 0) {
+                if (driver_key_pressed() != 0)
+                {
                     calc_status = calc_status_value::NON_RESUMABLE; // interrupted, not resumable
                     finished = true;
                 }
@@ -290,7 +301,8 @@ int gifview()
                     calc_status = calc_status_value::COMPLETED; // complete
             }
             // Hey! the decoder doesn't read the last (0-length) block!!
-            if (get_byte() != 0) {
+            if (get_byte() != 0)
+            {
                 status = -1;
                 finished = true;
             }
@@ -302,7 +314,8 @@ int gifview()
         }
     }
     close_file();
-    if (driver_diskp()) { // disk-video
+    if (driver_diskp())
+    { // disk-video
         dvid_status(0,"Restore completed");
         dvid_status(1,"");
     }
@@ -338,11 +351,13 @@ static int out_line_dither(BYTE *pixels, int linelen)
     std::fill(ditherbuf.begin(), ditherbuf.end(), 0);
 
     nexterr = (rand()&0x1f)-16;
-    for (int i = 0; i < linelen; i++) {
+    for (int i = 0; i < linelen; i++)
+    {
         brt = (g_dac_box[pixels[i]][0]*5+g_dac_box[pixels[i]][1]*9 +
                g_dac_box[pixels[i]][2]*2) >> 4; // brightness from 0 to 63
         brt += nexterr;
-        if (brt > 32) {
+        if (brt > 32)
+        {
             pixels[i] = 1;
             err = brt-63;
         } else {

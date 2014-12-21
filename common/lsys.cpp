@@ -141,7 +141,8 @@ static bool readLSystemFile(char *str)
             word = strtok(inline1," =\t\n");
             if (!strcmp(word,"axiom"))
             {
-                if (save_rule(strtok(nullptr," \t\n"),&ruleptrs[0])) {
+                if (save_rule(strtok(nullptr," \t\n"),&ruleptrs[0]))
+                {
                     strcat(msgbuf,"Error:  out of memory\n");
                     ++err;
                     break;
@@ -183,7 +184,8 @@ static bool readLSystemFile(char *str)
                     strcpy(fixed,temp);
                     memerr = append_rule(fixed, index);
                 }
-                if (memerr) {
+                if (memerr)
+                {
                     strcat(msgbuf, "Error:  out of memory\n");
                     ++err;
                     break;
@@ -281,10 +283,12 @@ int Lsystem()
         stackoflow = ts.stackoflow;
     }
 
-    if (stackoflow) {
+    if (stackoflow)
+    {
         stopmsg(STOPMSG_NONE, "insufficient memory, try a lower order");
     }
-    else if (overflow) {
+    else if (overflow)
+    {
         lsys_turtlestatef ts;
 
         overflow = false;
@@ -299,7 +303,8 @@ int Lsystem()
         *sc = nullptr;
 
         lsysf_dosincos();
-        if (lsysf_findscale(rules2[0], &ts, &rules2[1], order)) {
+        if (lsysf_findscale(rules2[0], &ts, &rules2[1], order))
+        {
             ts.reverse = 0;
             ts.angle = ts.reverse;
             ts.realangle = ts.angle;
@@ -328,7 +333,8 @@ int Lsystem()
 
 bool LLoad()
 {
-    if (readLSystemFile(LName)) { // error occurred
+    if (readLSystemFile(LName))
+    { // error occurred
         free_rules_mem();
         loaded = false;
         return true;
@@ -358,7 +364,8 @@ static bool save_rule(char *rule, char **saveptr)
     char *tmpfar;
     i = (int) strlen(rule)+1;
     tmpfar = (char *) malloc(i);
-    if (tmpfar == nullptr) {
+    if (tmpfar == nullptr)
+    {
         return true;
     }
     *saveptr = tmpfar;
@@ -414,7 +421,8 @@ void lsys_donefpu(lsys_turtlestatef *x) { }
 #if defined(XFRACT) || defined(_WIN32)
 static void lsysi_doplus(lsys_turtlestatei *cmd)
 {
-    if (cmd->reverse) {
+    if (cmd->reverse)
+    {
         if (++cmd->angle == cmd->maxangle)
             cmd->angle = 0;
     }
@@ -433,7 +441,8 @@ extern void lsysi_doplus(lsys_turtlestatei *cmd);
 // This is the same as lsys_doplus, except maxangle is a power of 2.
 static void lsysi_doplus_pow2(lsys_turtlestatei *cmd)
 {
-    if (cmd->reverse) {
+    if (cmd->reverse)
+    {
         cmd->angle++;
         cmd->angle &= cmd->dmaxangle;
     }
@@ -449,7 +458,8 @@ extern void lsysi_doplus_pow2(lsys_turtlestatei *cmd);
 #if defined(XFRACT) || defined(_WIN32)
 static void lsysi_dominus(lsys_turtlestatei *cmd)
 {
-    if (cmd->reverse) {
+    if (cmd->reverse)
+    {
         if (cmd->angle)
             cmd->angle--;
         else
@@ -467,7 +477,8 @@ extern void lsysi_dominus(lsys_turtlestatei *cmd);
 #if defined(XFRACT) || defined(_WIN32)
 static void lsysi_dominus_pow2(lsys_turtlestatei *cmd)
 {
-    if (cmd->reverse) {
+    if (cmd->reverse)
+    {
         cmd->angle--;
         cmd->angle &= cmd->dmaxangle;
     }
@@ -659,34 +670,43 @@ findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
     if (overflow)     // integer math routines overflowed
         return nullptr;
 
-    if (stackavail() < 400) { // leave some margin for calling subrtns
+    if (stackavail() < 400)
+    { // leave some margin for calling subrtns
         ts->stackoflow = true;
         return nullptr;
     }
 
-    while (command->ch && command->ch != ']') {
-        if (!(ts->counter++)) {
+    while (command->ch && command->ch != ']')
+    {
+        if (!(ts->counter++))
+        {
             // let user know we're not dead
-            if (thinking(1, "L-System thinking (higher orders take longer)")) {
+            if (thinking(1, "L-System thinking (higher orders take longer)"))
+            {
                 ts->counter--;
                 return nullptr;
             }
         }
         tran = false;
-        if (depth) {
+        if (depth)
+        {
             for (lsys_cmd **rulind = rules; *rulind; rulind++)
-                if ((*rulind)->ch == command->ch) {
+                if ((*rulind)->ch == command->ch)
+                {
                     tran = true;
                     if (findsize((*rulind)+1,ts,rules,depth-1) == nullptr)
                         return (nullptr);
                 }
         }
-        if (!depth || !tran) {
-            if (command->f) {
+        if (!depth || !tran)
+        {
+            if (command->f)
+            {
                 ts->num = command->n;
                 (*command->f)(ts);
             }
-            else if (command->ch == '[') {
+            else if (command->ch == '[')
+            {
                 char saveang,saverev;
                 long savesize,savex,savey;
                 unsigned long saverang;
@@ -776,34 +796,43 @@ drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules,int depth)
     if (overflow)     // integer math routines overflowed
         return nullptr;
 
-    if (stackavail() < 400) { // leave some margin for calling subrtns
+    if (stackavail() < 400)
+    { // leave some margin for calling subrtns
         ts->stackoflow = true;
         return nullptr;
     }
 
 
-    while (command->ch && command->ch != ']') {
-        if (!(ts->counter++)) {
-            if (driver_key_pressed()) {
+    while (command->ch && command->ch != ']')
+    {
+        if (!(ts->counter++))
+        {
+            if (driver_key_pressed())
+            {
                 ts->counter--;
                 return nullptr;
             }
         }
         tran = false;
-        if (depth) {
+        if (depth)
+        {
             for (lsys_cmd **rulind = rules; *rulind; rulind++)
-                if ((*rulind)->ch == command->ch) {
+                if ((*rulind)->ch == command->ch)
+                {
                     tran = true;
                     if (drawLSysI((*rulind)+1,ts,rules,depth-1) == nullptr)
                         return nullptr;
                 }
         }
-        if (!depth || !tran) {
-            if (command->f) {
+        if (!depth || !tran)
+        {
+            if (command->f)
+            {
                 ts->num = command->n;
                 (*command->f)(ts);
             }
-            else if (command->ch == '[') {
+            else if (command->ch == '[')
+            {
                 char saveang,saverev,savecolor;
                 long savesize,savex,savey;
                 unsigned long saverang;
@@ -852,15 +881,18 @@ LSysISizeTransform(char *s, lsys_turtlestatei *ts)
     void (*dogf)(lsys_turtlestatei *) = lsysi_dosizegf_386;
 
     ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
-    if (ret == nullptr) {
+    if (ret == nullptr)
+    {
         ts->stackoflow = true;
         return nullptr;
     }
-    while (*s) {
+    while (*s)
+    {
         f = nullptr;
         num = 0;
         ret[n].ch = *s;
-        switch (*s) {
+        switch (*s)
+        {
         case '+':
             f = plus;
             break;
@@ -905,9 +937,11 @@ LSysISizeTransform(char *s, lsys_turtlestatei *ts)
         }
         ret[n].f = f;
         ret[n].n = num;
-        if (++n == maxval) {
+        if (++n == maxval)
+        {
             doub = (lsys_cmd *) malloc((long) maxval*2*sizeof(lsys_cmd));
-            if (doub == nullptr) {
+            if (doub == nullptr)
+            {
                 free(ret);
                 ts->stackoflow = true;
                 return nullptr;
@@ -925,7 +959,8 @@ LSysISizeTransform(char *s, lsys_turtlestatei *ts)
     n++;
 
     doub = (lsys_cmd *) malloc((long) n*sizeof(lsys_cmd));
-    if (doub == nullptr) {
+    if (doub == nullptr)
+    {
         free(ret);
         ts->stackoflow = true;
         return nullptr;
@@ -955,15 +990,18 @@ LSysIDrawTransform(char *s, lsys_turtlestatei *ts)
     void (*drawg)(lsys_turtlestatei *) = lsysi_dodrawg_386;
 
     ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
-    if (ret == nullptr) {
+    if (ret == nullptr)
+    {
         ts->stackoflow = true;
         return nullptr;
     }
-    while (*s) {
+    while (*s)
+    {
         f = nullptr;
         num = 0;
         ret[n].ch = *s;
-        switch (*s) {
+        switch (*s)
+        {
         case '+':
             f = plus;
             break;
@@ -1024,9 +1062,11 @@ LSysIDrawTransform(char *s, lsys_turtlestatei *ts)
         }
         ret[n].f = f;
         ret[n].n = num;
-        if (++n == maxval) {
+        if (++n == maxval)
+        {
             doub = (lsys_cmd *) malloc((long) maxval*2*sizeof(lsys_cmd));
-            if (doub == nullptr) {
+            if (doub == nullptr)
+            {
                 free(ret);
                 ts->stackoflow = true;
                 return nullptr;
@@ -1044,7 +1084,8 @@ LSysIDrawTransform(char *s, lsys_turtlestatei *ts)
     n++;
 
     doub = (lsys_cmd *) malloc((long) n*sizeof(lsys_cmd));
-    if (doub == nullptr) {
+    if (doub == nullptr)
+    {
         free(ret);
         ts->stackoflow = true;
         return nullptr;
@@ -1064,7 +1105,8 @@ static void lsysi_dosincos()
 
     locaspect = screenaspect*xdots/ydots;
     twopimax = TWOPI / maxangle;
-    for (int i = 0; i < maxangle; i++) {
+    for (int i = 0; i < maxangle; i++)
+    {
         twopimaxi = i * twopimax;
         FPUsincos(&twopimaxi, &s, &c);
         sins[i] = (long)(s * FIXEDLT1);

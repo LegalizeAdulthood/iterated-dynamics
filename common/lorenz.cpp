@@ -1142,7 +1142,8 @@ int dynamfloat(double *x, double *y, double * /*z*/)
     cp.y = 0;
     CMPLXtrig0(cp, tmp);
     newy = *y + dt*sin(*x + a*tmp.x);
-    if (euler) {
+    if (euler)
+    {
         *y = newy;
     }
 
@@ -1174,7 +1175,8 @@ int iconfloatorbit(double *x, double *y, double *z)
     zreal = oldx;
     zimag = oldy;
 
-    for (int i = 1; i <= DEGREE-2; i++) {
+    for (int i = 1; i <= DEGREE-2; i++)
+    {
         za = zreal * oldx - zimag * oldy;
         zb = zimag * oldx + zreal * oldy;
         zreal = za;
@@ -1769,7 +1771,8 @@ static int orbit3dfloatcalc()
             {
                 if (realtime)
                     g_which_image = 1;
-                if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) {
+                if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+                {
                     w_snd((int)(inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100+basehertz));
                 }
                 if (oldcol != -1 && connect)
@@ -1809,25 +1812,30 @@ bool dynam2dfloatsetup()
     connect = false;
     euler = false;
     d = param[0]; // number of intervals
-    if (d < 0) {
+    if (d < 0)
+    {
         d = -d;
         connect = true;
     }
-    else if (d == 0) {
+    else if (d == 0)
+    {
         d = 1;
     }
-    if (fractype == DYNAMICFP) {
+    if (fractype == DYNAMICFP)
+    {
         a = param[2]; // parameter
         b = param[3]; // parameter
         dt = param[1]; // step size
-        if (dt < 0) {
+        if (dt < 0)
+        {
             dt = -dt;
             euler = true;
         }
         if (dt == 0)
             dt = 0.01;
     }
-    if (outside == SUM) {
+    if (outside == SUM)
+    {
         plot = plothist;
     }
     return true;
@@ -1912,10 +1920,12 @@ int dynam2dfloat()
         }
 
         xstep ++;
-        if (xstep >= d) {
+        if (xstep >= d)
+        {
             xstep = 0;
             ystep ++;
-            if (ystep > d) {
+            if (ystep > d)
+            {
                 driver_mute();
                 ret = -1;
                 break;
@@ -1926,7 +1936,8 @@ int dynam2dfloat()
         ypixel = dysize*(ystep+.5)/d;
         x = (double)((xxmin+delxx*xpixel) + (delxx2*ypixel));
         y = (double)((yymax-delyy*ypixel) + (-delyy2*xpixel));
-        if (fractype == MANDELCLOUD) {
+        if (fractype == MANDELCLOUD)
+        {
             a = x;
             b = y;
         }
@@ -1935,7 +1946,8 @@ int dynam2dfloat()
         if (++color >= colors)   // another color to switch to?
             color = 1;    // (don't use the background color)
 
-        for (count = 0; count < maxit; count++) {
+        for (count = 0; count < maxit; count++)
+        {
             if (count % 2048L == 0)
                 if (driver_key_pressed())
                     break;
@@ -1947,7 +1959,8 @@ int dynam2dfloat()
                 if (soundvar && (soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                     w_snd((int)(*soundvar*100+basehertz));
 
-                if (count >= orbit_delay) {
+                if (count >= orbit_delay)
+                {
                     if (oldcol != -1 && connect)
                         driver_draw_line(col,row,oldcol,oldrow,color%colors);
                     else if (count > 0 || fractype != MANDELCLOUD)
@@ -2008,7 +2021,8 @@ int plotorbits2dsetup()
 {
 
 #ifndef XFRACT
-    if (curfractalspecific->isinteger != 0) {
+    if (curfractalspecific->isinteger != 0)
+    {
         int tofloat = curfractalspecific->tofloat;
         if (tofloat == NOFRACTAL)
             return (-1);
@@ -2039,7 +2053,8 @@ int plotorbits2dsetup()
 
     o_color = 1;
 
-    if (outside == SUM) {
+    if (outside == SUM)
+    {
         plot = plothist;
     }
     return (1);
@@ -2087,7 +2102,8 @@ int plotorbits2dfloat()
 
     PER_PIXEL(); // initialize the calculations
 
-    for (count = 0; count < maxit; count++) {
+    for (count = 0; count < maxit; count++)
+    {
         if (ORBITCALC() == 1 && periodicitycheck)
             continue;  // bailed out, don't plot
 
@@ -2136,7 +2152,8 @@ int funny_glasses_call(int (*calc)())
     }
     if (g_glasses_type && status == 0 && display3d)
     {
-        if (g_glasses_type == 3)  { // photographer's mode
+        if (g_glasses_type == 3)
+        { // photographer's mode
             stopmsg(STOPMSG_INFO_ONLY,
                     "First image (left eye) is ready.  Hit any key to see it,\n"
                     "then hit <s> to save, hit any other key to create second image.");

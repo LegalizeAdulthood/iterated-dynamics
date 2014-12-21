@@ -225,7 +225,8 @@ int  fpMANRbailout()
         return 1;
 
 #define LONGTRIGBAILOUT()  \
-    if (labs(lold.y) >= llimit2) { \
+    if (labs(lold.y) >= llimit2) \
+    { \
         return 1; \
     }
 
@@ -242,12 +243,14 @@ int  fpMANRbailout()
         return 1;
 
 #define LONGHTRIGBAILOUT()  \
-    if (labs(lold.x) >= llimit2) { \
+    if (labs(lold.x) >= llimit2) \
+    { \
         return 1; \
     }
 
 #define TRIG16CHECK(X)  \
-    if (labs((X)) > l16triglim) { \
+    if (labs((X)) > l16triglim) \
+    { \
         return 1; \
     }
 
@@ -314,7 +317,8 @@ static double xt, yt, t2;
 */
 void cpower(DComplex *base, int exp, DComplex *result)
 {
-    if (exp < 0) {
+    if (exp < 0)
+    {
         cpower(base,-exp,result);
         CMPLXrecip(*result,*result);
         return;
@@ -357,7 +361,8 @@ static long lxt, lyt, lt2;
 int
 lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
 {
-    if (exp < 0) {
+    if (exp < 0)
+    {
         overflow = lcpower(base,-exp,result,bitshift) != 0;
         LCMPLXrecip(*result,*result);
         return overflow ? 1 : 0;
@@ -432,7 +437,8 @@ int NewtonFractal2()
                    which root of 1 it converged to */
                 if (distance(roots[i],old) < threshold)
                 {
-                    if (basin == 2) {
+                    if (basin == 2)
+                    {
                         tmpcolor = 1+(i&7)+((coloriter&1) << 3);
                     } else {
                         tmpcolor = 1+i;
@@ -758,7 +764,8 @@ int
 LambdaexponentFractal()
 {
     // found this in  "Science of Fractal Images"
-    if (save_release > 2002) { // need braces since these are macros
+    if (save_release > 2002)
+    { // need braces since these are macros
         FLOATEXPBAILOUT();
     }
     else {
@@ -990,7 +997,8 @@ longCmplxZpowerFractal()
     y.x = (double)lparm2.x / fudge;
     y.y = (double)lparm2.y / fudge;
     x = ComplexPower(x, y);
-    if (fabs(x.x) < fgLimit && fabs(x.y) < fgLimit) {
+    if (fabs(x.x) < fgLimit && fabs(x.y) < fgLimit)
+    {
         lnew.x = (long)(x.x * fudge);
         lnew.y = (long)(x.y * fudge);
     }
@@ -1557,7 +1565,8 @@ LambdaTrigOrTrigFractal()
 #if !defined(XFRACT)
     /* z = trig0(z)*p1 if mod(old) < p2.x and
            trig1(z)*p1 if mod(old) >= p2.x */
-    if ((LCMPLXmod(lold)) < lparm2.x) {
+    if ((LCMPLXmod(lold)) < lparm2.x)
+    {
         LCMPLXtrig0(lold,ltmp);
         LCMPLXmult(*longparm,ltmp,lnew);
     }
@@ -1576,7 +1585,8 @@ LambdaTrigOrTrigfpFractal()
 {
     /* z = trig0(z)*p1 if mod(old) < p2.x and
            trig1(z)*p1 if mod(old) >= p2.x */
-    if (CMPLXmod(old) < parm2.x) {
+    if (CMPLXmod(old) < parm2.x)
+    {
         CMPLXtrig0(old,old);
         FPUcplxmul(floatparm,&old,&g_new);
     }
@@ -1593,7 +1603,8 @@ JuliaTrigOrTrigFractal()
 #if !defined(XFRACT)
     /* z = trig0(z)+p1 if mod(old) < p2.x and
            trig1(z)+p1 if mod(old) >= p2.x */
-    if (LCMPLXmod(lold) < lparm2.x) {
+    if (LCMPLXmod(lold) < lparm2.x)
+    {
         LCMPLXtrig0(lold,ltmp);
         LCMPLXadd(*longparm,ltmp,lnew);
     }
@@ -1612,7 +1623,8 @@ JuliaTrigOrTrigfpFractal()
 {
     /* z = trig0(z)+p1 if mod(old) < p2.x and
            trig1(z)+p1 if mod(old) >= p2.x */
-    if (CMPLXmod(old) < parm2.x) {
+    if (CMPLXmod(old) < parm2.x)
+    {
         CMPLXtrig0(old,old);
         CMPLXadd(*floatparm,old,g_new);
     }
@@ -1641,7 +1653,8 @@ int MPCHalleyFractal()
     MPOverflow = 0;
     mpcXtoAlessOne.x = mpcold.x;
     mpcXtoAlessOne.y = mpcold.y;
-    for (int ihal = 2; ihal < degree; ihal++) {
+    for (int ihal = 2; ihal < degree; ihal++)
+    {
         mpctmp.x = *pMPsub(*pMPmul(mpcXtoAlessOne.x,mpcold.x),*pMPmul(mpcXtoAlessOne.y,mpcold.y));
         mpctmp.y = *pMPadd(*pMPmul(mpcXtoAlessOne.x,mpcold.y),*pMPmul(mpcXtoAlessOne.y,mpcold.x));
         mpcXtoAlessOne.x = mpctmp.x;
@@ -1693,7 +1706,8 @@ HalleyFractal()
     DComplex relax;
 
     XtoAlessOne = old;
-    for (int ihal = 2; ihal < degree; ihal++) {
+    for (int ihal = 2; ihal < degree; ihal++)
+    {
         FPUcplxmul(&old, &XtoAlessOne, &XtoAlessOne);
     }
     FPUcplxmul(&old, &XtoAlessOne, &XtoA);
@@ -1782,7 +1796,8 @@ LongPhoenixPlusFractal()
     LComplex loldplus, lnewminus;
     loldplus = lold;
     ltmp = lold;
-    for (int i = 1; i < degree; i++) { // degree >= 2, degree=degree-1 in setup
+    for (int i = 1; i < degree; i++)
+    { // degree >= 2, degree=degree-1 in setup
         LCMPLXmult(lold,ltmp,ltmp); // = old^(degree-1)
     }
     loldplus.x += longparm->x;
@@ -1803,7 +1818,8 @@ PhoenixPlusFractal()
     DComplex oldplus, newminus;
     oldplus = old;
     tmp = old;
-    for (int i = 1; i < degree; i++) { // degree >= 2, degree=degree-1 in setup
+    for (int i = 1; i < degree; i++)
+    { // degree >= 2, degree=degree-1 in setup
         FPUcplxmul(&old, &tmp, &tmp); // = old^(degree-1)
     }
     oldplus.x += floatparm->x;
@@ -1822,7 +1838,8 @@ LongPhoenixMinusFractal()
     LComplex loldsqr, lnewminus;
     LCMPLXmult(lold,lold,loldsqr);
     ltmp = lold;
-    for (int i = 1; i < degree; i++) { // degree >= 3, degree=degree-2 in setup
+    for (int i = 1; i < degree; i++)
+    { // degree >= 3, degree=degree-2 in setup
         LCMPLXmult(lold,ltmp,ltmp); // = old^(degree-2)
     }
     loldsqr.x += longparm->x;
@@ -1843,7 +1860,8 @@ PhoenixMinusFractal()
     DComplex oldsqr, newminus;
     FPUcplxmul(&old, &old, &oldsqr);
     tmp = old;
-    for (int i = 1; i < degree; i++) { // degree >= 3, degree=degree-2 in setup
+    for (int i = 1; i < degree; i++)
+    { // degree >= 3, degree=degree-2 in setup
         FPUcplxmul(&old, &tmp, &tmp); // = old^(degree-2)
     }
     oldsqr.x += floatparm->x;
@@ -1862,7 +1880,8 @@ LongPhoenixCplxPlusFractal()
     LComplex loldplus, lnewminus;
     loldplus = lold;
     ltmp = lold;
-    for (int i = 1; i < degree; i++) { // degree >= 2, degree=degree-1 in setup
+    for (int i = 1; i < degree; i++)
+    { // degree >= 2, degree=degree-1 in setup
         LCMPLXmult(lold,ltmp,ltmp); // = old^(degree-1)
     }
     loldplus.x += longparm->x;
@@ -1885,7 +1904,8 @@ PhoenixCplxPlusFractal()
     DComplex oldplus, newminus;
     oldplus = old;
     tmp = old;
-    for (int i = 1; i < degree; i++) { // degree >= 2, degree=degree-1 in setup
+    for (int i = 1; i < degree; i++)
+    { // degree >= 2, degree=degree-1 in setup
         FPUcplxmul(&old, &tmp, &tmp); // = old^(degree-1)
     }
     oldplus.x += floatparm->x;
@@ -1906,7 +1926,8 @@ LongPhoenixCplxMinusFractal()
     LComplex loldsqr, lnewminus;
     LCMPLXmult(lold,lold,loldsqr);
     ltmp = lold;
-    for (int i = 1; i < degree; i++) { // degree >= 3, degree=degree-2 in setup
+    for (int i = 1; i < degree; i++)
+    { // degree >= 3, degree=degree-2 in setup
         LCMPLXmult(lold,ltmp,ltmp); // = old^(degree-2)
     }
     loldsqr.x += longparm->x;
@@ -1929,7 +1950,8 @@ PhoenixCplxMinusFractal()
     DComplex oldsqr, newminus;
     FPUcplxmul(&old, &old, &oldsqr);
     tmp = old;
-    for (int i = 1; i < degree; i++) { // degree >= 3, degree=degree-2 in setup
+    for (int i = 1; i < degree; i++)
+    { // degree >= 3, degree=degree-2 in setup
         FPUcplxmul(&old, &tmp, &tmp); // = old^(degree-2)
     }
     oldsqr.x += floatparm->x;
@@ -2013,7 +2035,8 @@ static int TryFloatFractal(int (*fpFractal)())
     tempsqrx = sqr(old.x);
     tempsqry = sqr(old.y);
     fpFractal();
-    if (save_release < 1900) { // for backwards compatibility
+    if (save_release < 1900)
+    { // for backwards compatibility
         lnew.x = (long)(g_new.x/fudge); // this error has been here a long time
         lnew.y = (long)(g_new.y/fudge);
     } else {
@@ -2686,14 +2709,16 @@ int marksmandel_per_pixel()
 
     if (c_exp > 3)
         lcpower(&lold,c_exp-1,&lcoefficient,bitshift);
-    else if (c_exp == 3) {
+    else if (c_exp == 3)
+    {
         lcoefficient.x = multiply(lold.x, lold.x, bitshift)
                          - multiply(lold.y, lold.y, bitshift);
         lcoefficient.y = multiply(lold.x, lold.y, bitshiftless1);
     }
     else if (c_exp == 2)
         lcoefficient = lold;
-    else if (c_exp < 2) {
+    else if (c_exp < 2)
+    {
         lcoefficient.x = 1L << bitshift;
         lcoefficient.y = 0L;
     }
@@ -2729,13 +2754,15 @@ int marksmandelfp_per_pixel()
 
     if (c_exp > 3)
         cpower(&old,c_exp-1,&coefficient);
-    else if (c_exp == 3) {
+    else if (c_exp == 3)
+    {
         coefficient.x = tempsqrx - tempsqry;
         coefficient.y = old.x * old.y * 2;
     }
     else if (c_exp == 2)
         coefficient = old;
-    else if (c_exp < 2) {
+    else if (c_exp < 2)
+    {
         coefficient.x = 1.0;
         coefficient.y = 0.0;
     }
@@ -3096,7 +3123,8 @@ QuaternionFPFractal()
     n3 = 2*a0*a3 + qck;
     // Check bailout
     magnitude = a0*a0+a1*a1+a2*a2+a3*a3;
-    if (magnitude > rqlim) {
+    if (magnitude > rqlim)
+    {
         return 1;
     }
     g_new.x = n0;
@@ -3133,7 +3161,8 @@ HyperComplexFPFractal()
 
     // Check bailout
     magnitude = sqr(old.x)+sqr(old.y)+sqr(floatparm->x)+sqr(floatparm->y);
-    if (magnitude > rqlim) {
+    if (magnitude > rqlim)
+    {
         return 1;
     }
     return 0;

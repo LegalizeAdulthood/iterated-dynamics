@@ -43,7 +43,8 @@ int testpt(double initreal,double initimag,double parm1,double parm2,
     oldimag = parm2;
     magnitude = 0.0;
     color = 0;
-    while ((magnitude < 4.0) && (color < maxit)) {
+    while ((magnitude < 4.0) && (color < maxit))
+    {
         newreal = oldreal * oldreal - oldimag * oldimag + initreal;
         newimag = 2 * oldreal * oldimag + initimag;
         color++;
