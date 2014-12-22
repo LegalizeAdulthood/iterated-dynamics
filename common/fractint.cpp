@@ -28,7 +28,7 @@ int helpmode;
 
 int lookatmouse = 0;  /* see notes at mouseread routine */
 
-long timer_start,timer_interval;        /* timer(...) start & total */
+long timer_start, timer_interval;        /* timer(...) start & total */
 int     g_adapter;                /* Video Adapter chosen from list in ...h */
 const char *fract_dir1 = "";
 const char *fract_dir2 = "";
@@ -39,16 +39,16 @@ const char *fract_dir2 = "";
 */
 int     dotmode;                /* video access method      */
 int     textsafe2;              /* textsafe override from g_video_table */
-int     sxdots,sydots;          /* # of dots on the physical screen    */
-int     sxoffs,syoffs;          /* physical top left of logical screen */
+int     sxdots, sydots;          /* # of dots on the physical screen    */
+int     sxoffs, syoffs;          /* physical top left of logical screen */
 int     xdots, ydots;           /* # of dots on the logical screen     */
 double  dxsize, dysize;         /* xdots-1, ydots-1         */
 int     colors = 256;           /* maximum colors available */
 long    maxit;                  /* try this many iterations */
 int     boxcount;               /* 0 if no zoom-box yet     */
 int     zrotate;                /* zoombox rotation         */
-double  zbx,zby;                /* topleft of zoombox       */
-double  zwidth,zdepth,zskew;    /* zoombox size & shape     */
+double  zbx, zby;                /* topleft of zoombox       */
+double  zwidth, zdepth, zskew;    /* zoombox size & shape     */
 
 fractal_type fractype;               /* if == 0, use Mandelbrot  */
 char    stdcalcmode;            /* '1', '2', 'g', 'b'       */
@@ -92,7 +92,7 @@ bool    viewwindow = false;     /* false for full screen, true for window */
 float   viewreduction;          /* window auto-sizing */
 bool    viewcrop = false;       /* true to crop default coords */
 float   finalaspectratio;       /* for view shape and rotation */
-int     viewxdots,viewydots;    /* explicit view sizing */
+int     viewxdots, viewydots;    /* explicit view sizing */
 bool    video_cutboth = false;  /* true to keep virtual aspect */
 bool    zscroll = false;        /* screen/zoombox false fixed, true relaxed */
 
@@ -112,10 +112,10 @@ bool    tabmode = true;                 /* tab display enabled */
 /*    top    left  corner of screen is (xxmin,yymax) */
 /*    bottom left  corner of screen is (xx3rd,yy3rd) */
 /*    bottom right corner of screen is (xxmax,yymin) */
-double  xxmin,xxmax,yymin,yymax,xx3rd,yy3rd; /* selected screen corners  */
+double  xxmin, xxmax, yymin, yymax, xx3rd, yy3rd; /* selected screen corners  */
 long    xmin, xmax, ymin, ymax, x3rd, y3rd;  /* integer equivs           */
-double  sxmin,sxmax,symin,symax,sx3rd,sy3rd; /* displayed screen corners */
-double  plotmx1,plotmx2,plotmy1,plotmy2;     /* real->screen multipliers */
+double  sxmin, sxmax, symin, symax, sx3rd, sy3rd; /* displayed screen corners */
+double  plotmx1, plotmx2, plotmy1, plotmy2;     /* real->screen multipliers */
 
 calc_status_value calc_status = calc_status_value::NO_FRACTAL;
 /* -1 no fractal                   */
@@ -140,7 +140,7 @@ bool doublecaution = false;
 bool brwscheckparms = false;
 bool brwschecktype = false;
 char browsemask[13];
-int scale_map[12] = {1,2,3,4,5,6,7,8,9,10,11,12}; /*RB, array for mapping notes to a (user defined) scale */
+int scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; /* array for mapping notes to a (user defined) scale */
 
 
 void check_samename()
@@ -150,11 +150,11 @@ void check_samename()
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
     char path[FILE_MAX_PATH];
-    splitpath(savename,drive,dir,fname,ext);
-    if (strcmp(fname,"fract001"))
+    splitpath(savename, drive, dir, fname, ext);
+    if (strcmp(fname, "fract001"))
     {
-        makepath(path,drive,dir,fname,"gif");
-        if (access(path,0) == 0)
+        makepath(path, drive, dir, fname, "gif");
+        if (access(path, 0) == 0)
             exit(0);
     }
 }
@@ -209,8 +209,8 @@ restart:   /* insert key re-starts here */
     no_sub_images = false;
     toosmall = 6;
     minbox   = 3;
-    strcpy(browsemask,"*.gif");
-    strcpy(browsename,"            ");
+    strcpy(browsemask, "*.gif");
+    strcpy(browsename, "            ");
     name_stack_ptr = -1; /* init loaded files stack */
 
     evolving = 0;
@@ -243,13 +243,13 @@ restart:   /* insert key re-starts here */
     fract_dir2 = ".";
 #endif
 
-    cmdfiles(argc,argv);         /* process the command-line */
+    cmdfiles(argc, argv);         /* process the command-line */
     dopause(0);                  /* pause for error msg if not batch */
     init_msg("", nullptr, cmd_file::AT_CMD_LINE);  /* this causes driver_get_key if init_msg called on runup */
 
     while (maxhistory > 0) /* decrease history if necessary */
     {
-        history = MemoryAlloc((U16) sizeof(HISTORY),(long) maxhistory, MEMORY);
+        history = MemoryAlloc((U16) sizeof(HISTORY), (long) maxhistory, MEMORY);
         if (history)
         {
             break;
@@ -262,7 +262,7 @@ restart:   /* insert key re-starts here */
         check_samename();
     }
     driver_window();
-    memcpy(olddacbox,g_dac_box,256*3);      /* save in case colors= present */
+    memcpy(olddacbox, g_dac_box, 256*3);      /* save in case colors= present */
 
     driver_set_for_text();                      /* switch to text mode */
     savedac = 0;                         /* don't save the VGA DAC */
@@ -302,7 +302,7 @@ restorestart:
 
     if (colorpreloaded)
     {
-        memcpy(g_dac_box,olddacbox,256*3);   /* restore in case colors= present */
+        memcpy(g_dac_box, olddacbox, 256*3);   /* restore in case colors= present */
     }
 
     lookatmouse = 0;                     /* ignore mouse */
@@ -328,7 +328,7 @@ restorestart:
                 hdg = "Select File to Restore";
                 helpmode = HELPSAVEREST;
             }
-            if (showfile < 0 && getafilename(hdg,gifmask,readname))
+            if (showfile < 0 && getafilename(hdg, gifmask, readname))
             {
                 showfile = 1;               /* cancelled */
                 g_init_mode = -1;
@@ -336,7 +336,7 @@ restorestart:
             }
 
             name_stack_ptr = 0; /* 'r' reads first filename for browsing */
-            strcpy(file_name_stack[name_stack_ptr],browsename);
+            strcpy(file_name_stack[name_stack_ptr], browsename);
         }
 
         evolving = 0;
@@ -420,7 +420,7 @@ imagestart:                             /* calc/display a new image */
             goto restart;      /* restart pgm on Insert Key */
         if (kbdchar == FIK_DELETE)                    /* select video mode list */
             kbdchar = select_video_mode(-1);
-        g_adapter = check_vidmode_key(0,kbdchar);
+        g_adapter = check_vidmode_key(0, kbdchar);
         if (g_adapter >= 0)
             break;                                 /* got a video mode now */
 #ifndef XFRACT
@@ -456,7 +456,7 @@ imagestart:                             /* calc/display a new image */
             if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
                 display3d = 1;
             if (colorpreloaded)
-                memcpy(olddacbox,g_dac_box,256*3); /* save in case colors= present */
+                memcpy(olddacbox, g_dac_box, 256*3); /* save in case colors= present */
             driver_set_for_text(); /* switch to text mode */
             showfile = -1;
             goto restorestart;
@@ -571,7 +571,7 @@ bool check_key()
      timer(1,nullptr,int width)         decoder
      timer(2)                           encoder
   */
-int timer(int timertype,int(*subrtn)(),...)
+int timer(int timertype, int(*subrtn)(), ...)
 {
     va_list arg_marker;  /* variable arg list */
     char *timestring;
@@ -580,13 +580,13 @@ int timer(int timertype,int(*subrtn)(),...)
     int out = 0;
     int i;
 
-    va_start(arg_marker,subrtn);
+    va_start(arg_marker, subrtn);
 
     bool do_bench = timerflag; /* record time? */
     if (timertype == 2)   /* encoder, record time only if debug flag set */
         do_bench = (debugflag == debug_flags::benchmark_encoder);
     if (do_bench)
-        fp = dir_fopen(workdir,"bench","a");
+        fp = dir_fopen(workdir, "bench", "a");
     timer_start = clock_ticks();
     switch (timertype)
     {
@@ -594,7 +594,7 @@ int timer(int timertype,int(*subrtn)(),...)
         out = (*(int(*)())subrtn)();
         break;
     case 1:
-        i = va_arg(arg_marker,int);
+        i = va_arg(arg_marker, int);
         out = (int)decoder((short)i); /* not indirect, safer with overlays */
         break;
     case 2:
@@ -612,19 +612,19 @@ int timer(int timertype,int(*subrtn)(),...)
         switch (timertype)
         {
         case 1:
-            fprintf(fp,"decode ");
+            fprintf(fp, "decode ");
             break;
         case 2:
-            fprintf(fp,"encode ");
+            fprintf(fp, "encode ");
             break;
         }
-        fprintf(fp,"%s type=%s resolution = %dx%d maxiter=%ld",
+        fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld",
                 timestring,
                 curfractalspecific->name,
                 xdots,
                 ydots,
                 maxit);
-        fprintf(fp," time= %ld.%02ld secs\n",timer_interval/100,timer_interval%100);
+        fprintf(fp, " time= %ld.%02ld secs\n", timer_interval/100, timer_interval%100);
         if (fp != nullptr)
             fclose(fp);
     }
