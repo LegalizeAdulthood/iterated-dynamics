@@ -12,7 +12,7 @@ typedef float FLOAT4;
 #if !defined(_MAX_EXT)
 #define _MAX_EXT 4
 #endif
-#define chsize(fd,len) ftruncate(fd,len)
+#define chsize(fd, en) ftruncate(fd, en)
 // We get a problem with connect, since it is used by X
 #define connect connect1
 // dysize may conflict with time.h
