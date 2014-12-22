@@ -9,8 +9,8 @@ public:
     int width() const { return 0; }
     int height() const { return 0; }
     Window window() const { return 0; }
-    int get_key_press(int option) { return 0; }
-    int pump_messages(bool wait_flag) { return 0; }
+    int get_key_press(int option);
+    int pump_messages(bool wait_flag);
 };
 
 #endif

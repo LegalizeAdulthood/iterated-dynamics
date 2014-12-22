@@ -35,6 +35,7 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
 else()
     set(OS_DRIVER_SOURCES
         unix/d_x11.cpp
+        unix/x11_frame.cpp
         unix/x11_text.cpp
         unix/general.cpp
         unix/os_unix.cpp
@@ -53,7 +54,7 @@ endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)")
     set(CMAKE_CXX_FLAGS "-std=c++11 -Werror")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
 endif()
 
 add_executable(id ${OS_ID_OPTIONS}
