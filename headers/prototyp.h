@@ -450,6 +450,7 @@ extern int timer(int, int (*subrtn)(), ...);
 extern void clear_zoombox();
 extern void flip_image(int kbdchar);
 extern void reset_zoom_corners();
+extern void history_init();
 // frasetup -- C file prototypes
 extern bool VLSetup();
 extern bool MandelSetup();

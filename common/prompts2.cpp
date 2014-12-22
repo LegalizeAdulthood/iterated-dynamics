@@ -1220,10 +1220,6 @@ void goodbye()                  // we done.  Bail out
     {
         ReleaseParamBox();
     }
-    if (history != 0)
-    {
-        MemoryRelease(history);
-    }
     if (oldhistory_handle != 0)
     {
         MemoryRelease(oldhistory_handle);

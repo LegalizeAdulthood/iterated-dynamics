@@ -96,10 +96,6 @@ int     viewxdots, viewydots;    /* explicit view sizing */
 bool    video_cutboth = false;  /* true to keep virtual aspect */
 bool    zscroll = false;        /* screen/zoombox false fixed, true relaxed */
 
-/*      HISTORY  *history = nullptr; */
-U16 history = 0;
-int maxhistory = 10;
-
 /* variables defined by the command line/files processor */
 bool    comparegif = false;             /* compare two gif files flag */
 int     timedsave = 0;                    /* when doing a timed save */
@@ -247,15 +243,7 @@ restart:   /* insert key re-starts here */
     dopause(0);                  /* pause for error msg if not batch */
     init_msg("", nullptr, cmd_file::AT_CMD_LINE);  /* this causes driver_get_key if init_msg called on runup */
 
-    while (maxhistory > 0) /* decrease history if necessary */
-    {
-        history = MemoryAlloc((U16) sizeof(HISTORY), (long) maxhistory, MEMORY);
-        if (history)
-        {
-            break;
-        }
-        maxhistory--;
-    }
+    history_init();
 
     if (debugflag == debug_flags::prevent_overwrite_savename && initbatch == 1)   /* abort if savename already exists */
     {

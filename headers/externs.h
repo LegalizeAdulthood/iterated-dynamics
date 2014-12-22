@@ -189,7 +189,6 @@ extern unsigned int          height;
 extern float                 heightfp;
 extern int                   helpmode;
 extern int                   hi_atten;
-extern U16                   history;
 extern char                  IFSFileName[];
 extern char                  IFSName[];
 extern std::vector<float>    ifs_defn;

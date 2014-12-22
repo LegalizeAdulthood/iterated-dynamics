@@ -2163,13 +2163,21 @@ int key_count(int keynum)
     return ctr;
 }
 
+static std::vector<HISTORY> history;
+int maxhistory = 10;
+
+void history_init()
+{
+    history.resize(maxhistory);
+}
+
 static void save_history_info()
 {
-    HISTORY current, last;
-    if (maxhistory <= 0 || bf_math != bf_math_type::NONE || history == 0)
+    if (maxhistory <= 0 || bf_math != bf_math_type::NONE)
         return;
-    CopyFromHandleToMemory((BYTE *)&last, (U16)sizeof(HISTORY), 1L, (long)saveptr, history);
+    HISTORY last = history[saveptr];
 
+    HISTORY current;
     memset((void *)&current, 0, sizeof(HISTORY));
     current.fractal_type         = (short)fractype                  ;
     current.xmin                 = xxmin                     ;
@@ -2316,7 +2324,7 @@ static void save_history_info()
     if (historyptr == -1)        // initialize the history file
     {
         for (int i = 0; i < maxhistory; i++)
-            CopyFromMemoryToHandle((BYTE *)&current, (U16)sizeof(HISTORY), 1L, (long)i, history);
+            history[i] = current;
         historyflag = false;
         historyptr = 0;
         saveptr = historyptr;   // initialize history ptr
@@ -2329,16 +2337,15 @@ static void save_history_info()
             saveptr = 0;
         if (++historyptr >= maxhistory)  // move user pointer in parallel
             historyptr = 0;
-        CopyFromMemoryToHandle((BYTE *)&current, (U16)sizeof(HISTORY), 1L, (long)saveptr, history);
+        history[saveptr] = current;
     }
 }
 
 static void restore_history_info(int i)
 {
-    HISTORY last;
-    if (maxhistory <= 0 || bf_math != bf_math_type::NONE || history == 0)
+    if (maxhistory <= 0 || bf_math != bf_math_type::NONE)
         return;
-    CopyFromHandleToMemory((BYTE *)&last, (U16)sizeof(HISTORY), 1L, (long)i, history);
+    HISTORY last = history[i];
     invert = 0;
     calc_status = calc_status_value::PARAMS_CHANGED;
     resuming = false;
