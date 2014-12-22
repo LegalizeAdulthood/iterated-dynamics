@@ -40,9 +40,9 @@ int get_byte()
     return (getc(fpin)); // EOF is -1, as desired
 }
 
-int get_bytes(BYTE *where,int how_many)
+int get_bytes(BYTE *where, int how_many)
 {
-    return (int) fread((char *)where,1,how_many,fpin); // EOF is -1, as desired
+    return (int) fread((char *)where, 1, how_many, fpin); // EOF is -1, as desired
 }
 
 /*
@@ -84,13 +84,13 @@ int gifview()
 
     // Open the file
     if (outln == outline_stereo)
-        strcpy(temp1,stereomapname);
+        strcpy(temp1, stereomapname);
     else
-        strcpy(temp1,readname);
+        strcpy(temp1, readname);
     if (has_ext(temp1) == nullptr)
     {
-        strcat(temp1,DEFAULTFRACTALTYPE);
-        fpin = fopen(temp1,"rb");
+        strcat(temp1, DEFAULTFRACTALTYPE);
+        fpin = fopen(temp1, "rb");
         if (fpin != nullptr)
         {
             fclose(fpin);
@@ -98,10 +98,10 @@ int gifview()
         else
         {
             if (outln == outline_stereo)
-                strcpy(temp1,stereomapname);
+                strcpy(temp1, stereomapname);
             else
-                strcpy(temp1,readname);
-            strcat(temp1,ALTERNATEFRACTALTYPE);
+                strcpy(temp1, readname);
+            strcat(temp1, ALTERNATEFRACTALTYPE);
         }
     }
     fpin = fopen(temp1, "rb");
@@ -122,7 +122,7 @@ int gifview()
         }
     }
 
-    if (strncmp((char *)buffer,"GIF87a",3) ||             // use updated GIF specs
+    if (strncmp((char *)buffer, "GIF87a", 3) ||             // use updated GIF specs
             buffer[3] < '0' || buffer[3] > '9' ||
             buffer[4] < '0' || buffer[4] > '9' ||
             buffer[5] < 'A' || buffer[5] > 'z')
@@ -169,20 +169,20 @@ int gifview()
     if (display3d && mapset && g_glasses_type != 1 && g_glasses_type != 2)
     {
         ValidateLuts(MAP_name);  // read the palette file
-        spindac(0,1); // load it, but don't spin
+        spindac(0, 1); // load it, but don't spin
     }
     if (g_dac_box[0][0] != 255)
-        spindac(0,1);       // update the DAC
+        spindac(0, 1);       // update the DAC
     if (driver_diskp())
     { // disk-video
         char fname[FILE_MAX_FNAME];
         char ext[FILE_MAX_EXT];
         char tmpname[15];
         char msg[40];
-        splitpath(temp1,nullptr,nullptr,fname,ext);
-        makepath(tmpname,nullptr,nullptr,fname,ext);
-        sprintf(msg,"restoring %s",tmpname);
-        dvid_status(1,msg);
+        splitpath(temp1, nullptr, nullptr, fname, ext);
+        makepath(tmpname, nullptr, nullptr, fname, ext);
+        sprintf(msg, "restoring %s", tmpname);
+        dvid_status(1, msg);
     }
     dontreadcolor = false;
 
@@ -287,8 +287,8 @@ int gifview()
              * Width is limited to DECODERLINE_WIDTH.
              */
             if (skipxdots == 0)
-                width = std::min(width,static_cast<unsigned>(DECODERLINE_WIDTH));
-            status = timer(1,nullptr,width);
+                width = std::min(width, static_cast<unsigned>(DECODERLINE_WIDTH));
+            status = timer(1, nullptr, width);
             busy = false;      // for slideshow CALCWAIT
             if (calc_status == calc_status_value::IN_PROGRESS) // e.g., set by line3d
             {
@@ -317,8 +317,8 @@ int gifview()
     close_file();
     if (driver_diskp())
     { // disk-video
-        dvid_status(0,"Restore completed");
-        dvid_status(1,"");
+        dvid_status(0, "Restore completed");
+        dvid_status(1, "");
     }
 
     return (status);
@@ -347,7 +347,7 @@ static int out_line_migs(BYTE *pixels, int linelen)
 
 static int out_line_dither(BYTE *pixels, int linelen)
 {
-    int nexterr,brt,err;
+    int nexterr, brt, err;
     ditherbuf.resize(linelen + 1);
     std::fill(ditherbuf.begin(), ditherbuf.end(), 0);
 
@@ -409,7 +409,7 @@ static bool put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 {
     for (int col = colstart; col <= colstop; col++)
     {
-        putcolor(col,row,*pixels);
+        putcolor(col, row, *pixels);
         if (orbit_delay > 0)
             sleepms(orbit_delay);
         w_snd((int)((int)(*pixels++)*3000/colors+basehertz));
@@ -469,9 +469,9 @@ int pot_line(BYTE *pixels, int linelen)
     if ((saverowcount & 1) != 0) // odd line
         row += ydots;
     else if (!driver_diskp()) // even line - display the line too
-        out_line(pixels,linelen);
+        out_line(pixels, linelen);
     for (int col = 0; col < xdots; ++col)
-        writedisk(col+sxoffs,row+syoffs,*(pixels+col));
+        writedisk(col+sxoffs, row+syoffs, *(pixels+col));
     g_row_count = saverowcount + 1;
     return (0);
 }
