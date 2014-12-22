@@ -28,7 +28,7 @@ int tgaview()
     for (int i = 0; i < (int)height; ++i)
     {
         t16_getline(fptarga, width, (U16 *)boxx);
-        if ((*outln)(reinterpret_cast<BYTE *>(boxx),width))
+        if ((*outln)(reinterpret_cast<BYTE *>(boxx), width))
         {
             fclose(fptarga);
             fptarga = nullptr;
@@ -47,11 +47,11 @@ int tgaview()
 }
 
 // Outline function for 16 bit data with 8 bit fudge
-int outlin16(BYTE *buffer,int linelen)
+int outlin16(BYTE *buffer, int linelen)
 {
     U16 *buf = (U16 *)buffer;
     for (int i = 0; i < linelen; i++)
-        putcolor(i,g_row_count,buf[i] >> 8);
+        putcolor(i, g_row_count, buf[i] >> 8);
     g_row_count++;
     return (0);
 }
