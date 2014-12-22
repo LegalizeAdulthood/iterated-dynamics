@@ -69,7 +69,7 @@ extern void lsys_prepfpu(lsys_turtlestatef *);
 extern void lsys_donefpu(lsys_turtlestatef *);
 // routines in lsysf.c
 struct lsys_cmd;
-extern lsys_cmd *drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules,int depth);
+extern lsys_cmd *drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth);
 extern bool lsysf_findscale(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth);
 extern lsys_cmd *LSysFSizeTransform(char *s, lsys_turtlestatef *ts);
 extern lsys_cmd *LSysFDrawTransform(char *s, lsys_turtlestatef *ts);
