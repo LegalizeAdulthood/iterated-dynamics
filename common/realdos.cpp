@@ -208,7 +208,7 @@ bool showtempmsg(const char *msgparm)
         for (int i = 0; i < textydots; ++i)
         {
             get_line(i, 0, textxdots-1, buffer);
-            MoveToMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
+            CopyFromMemoryToHandle(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
         }
     }
 
@@ -243,7 +243,7 @@ void cleartempmsg()
         }
         for (int i = 0; i < textydots; ++i)
         {
-            MoveFromMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
+            CopyFromHandleToMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
             put_line(i, 0, textxdots-1, buffer);
         }
         if (!using_jiim)                // jiim frees memory with freetempmsg()

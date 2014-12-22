@@ -284,7 +284,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     if (disktarga)
     {
         // Put header information in the file
-        MoveToMemory(membuf, (U16)headerlength, 1L, 0, dv_handle);
+        CopyFromMemoryToHandle(membuf, (U16)headerlength, 1L, 0, dv_handle);
     }
     else
     {
@@ -713,8 +713,8 @@ static void mem_seek(long offset)        // mem seek
     memoffset = offset >> BLOCKSHIFT;
     if (memoffset != oldmemoffset)
     {
-        MoveToMemory(membuf, (U16)BLOCKLEN, 1L, oldmemoffset, dv_handle);
-        MoveFromMemory(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
+        CopyFromMemoryToHandle(membuf, (U16)BLOCKLEN, 1L, oldmemoffset, dv_handle);
+        CopyFromHandleToMemory(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
     }
     oldmemoffset = memoffset;
     membufptr = membuf + (offset & (BLOCKLEN - 1));
@@ -724,9 +724,9 @@ static BYTE  mem_getc()                     // memory get_char
 {
     if (membufptr - membuf >= BLOCKLEN)
     {
-        MoveToMemory(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
+        CopyFromMemoryToHandle(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
         memoffset++;
-        MoveFromMemory(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
+        CopyFromHandleToMemory(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
         membufptr = membuf;
         oldmemoffset = memoffset;
     }
@@ -737,9 +737,9 @@ static void mem_putc(BYTE c)     // memory get_char
 {
     if (membufptr - membuf >= BLOCKLEN)
     {
-        MoveToMemory(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
+        CopyFromMemoryToHandle(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
         memoffset++;
-        MoveFromMemory(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
+        CopyFromHandleToMemory(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
         membufptr = membuf;
         oldmemoffset = memoffset;
     }

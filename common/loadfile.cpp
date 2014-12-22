@@ -527,7 +527,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             gene_handle = MemoryAlloc((U16) sizeof(gene), 1L, MEMORY);
         }
-        MoveFromMemory((BYTE *)&gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
+        CopyFromHandleToMemory((BYTE *)&gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
         if (read_info.version < 15)
         {
             // Increasing NUMGENES moves ecount in the data structure
@@ -560,7 +560,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             resume_e_info.this_gen_rseed = blk_6_info.this_gen_rseed;
             resume_e_info.fiddlefactor = blk_6_info.fiddlefactor;
             resume_e_info.ecount       = blk_6_info.ecount;
-            MoveToMemory((BYTE *) &resume_e_info, (U16) sizeof(resume_e_info), 1L, 0L, evolve_handle);
+            CopyFromMemoryToHandle((BYTE *) &resume_e_info, (U16) sizeof(resume_e_info), 1L, 0L, evolve_handle);
         }
         else
         {
@@ -616,7 +616,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
                 gene[i].mutate = static_cast<variations>(blk_6_info.mutate[i-4]);
             }
         }
-        MoveToMemory((BYTE *) &gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
+        CopyFromMemoryToHandle((BYTE *) &gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
         param_history(0); // store history
     }
     else
@@ -823,7 +823,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     {
                         fseek(fp, (long)(0-block_len), SEEK_CUR);
                         load_ext_blk((char *)block, data_len);
-                        MoveToMemory((BYTE *)block, (U16)1, (long)data_len, 0, (U16)blk_2_info->resume_data);
+                        CopyFromMemoryToHandle((BYTE *)block, (U16)1, (long)data_len, 0, (U16)blk_2_info->resume_data);
                         blk_2_info->length = data_len;
                         blk_2_info->got_data = 1; // got data
                     }
@@ -1429,10 +1429,10 @@ rescan:  // entry for changed browse parms
             drawindow(color_of_box, &winlist);
             boxcount *= 2; // double for byte count
             winlist.boxcount = boxcount;
-            MoveToMemory(winlistptr, (U16)sizeof(window), 1L, (long)wincount, browsehandle);
-            MoveToMemory((BYTE *)boxx, vidlength, 1L, (long)wincount, boxxhandle);
-            MoveToMemory((BYTE *)boxy, vidlength, 1L, (long)wincount, boxyhandle);
-            MoveToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)wincount, boxvalueshandle);
+            CopyFromMemoryToHandle(winlistptr, (U16)sizeof(window), 1L, (long)wincount, browsehandle);
+            CopyFromMemoryToHandle((BYTE *)boxx, vidlength, 1L, (long)wincount, boxxhandle);
+            CopyFromMemoryToHandle((BYTE *)boxy, vidlength, 1L, (long)wincount, boxyhandle);
+            CopyFromMemoryToHandle((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)wincount, boxvalueshandle);
             wincount++;
         }
 
@@ -1464,10 +1464,10 @@ rescan:  // entry for changed browse parms
         driver_buzzer(buzzer_codes::COMPLETE); //let user know we've finished
         int index = 0;
         done = 0;
-        MoveFromMemory(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
-        MoveFromMemory((BYTE *)boxx, vidlength, 1L, (long)index, boxxhandle);
-        MoveFromMemory((BYTE *)boxy, vidlength, 1L, (long)index, boxyhandle);
-        MoveFromMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
+        CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
+        CopyFromHandleToMemory((BYTE *)boxx, vidlength, 1L, (long)index, boxxhandle);
+        CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)index, boxyhandle);
+        CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
         showtempmsg(winlist.name);
         while (!done)  /* on exit done = 1 for quick exit,
                                  done = 2 for erase boxes and  exit
@@ -1519,10 +1519,10 @@ rescan:  // entry for changed browse parms
                     if (index < 0)
                         index = wincount -1 ;
                 }
-                MoveFromMemory(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
-                MoveFromMemory((BYTE *)boxx, vidlength, 1L, (long)index, boxxhandle);
-                MoveFromMemory((BYTE *)boxy, vidlength, 1L, (long)index, boxyhandle);
-                MoveFromMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
+                CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
+                CopyFromHandleToMemory((BYTE *)boxx, vidlength, 1L, (long)index, boxxhandle);
+                CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)index, boxyhandle);
+                CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
                 showtempmsg(winlist.name);
                 break;
 #ifndef XFRACT
@@ -1530,10 +1530,10 @@ rescan:  // entry for changed browse parms
                 color_of_box += key_count(FIK_CTL_INSERT);
                 for (int i = 0; i < wincount ; i++)
                 {
-                    MoveFromMemory(winlistptr, (U16)sizeof(window), 1L, (long)i, browsehandle);
+                    CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)i, browsehandle);
                     drawindow(color_of_box, &winlist);
                 }
-                MoveFromMemory(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
+                CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
                 drawindow(color_of_box, &winlist);
                 break;
 
@@ -1541,10 +1541,10 @@ rescan:  // entry for changed browse parms
                 color_of_box -= key_count(FIK_CTL_DEL);
                 for (int i = 0; i < wincount ; i++)
                 {
-                    MoveFromMemory(winlistptr, (U16)sizeof(window), 1L, (long)i, browsehandle);
+                    CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)i, browsehandle);
                     drawindow(color_of_box, &winlist);
                 }
-                MoveFromMemory(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
+                CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
                 drawindow(color_of_box, &winlist);
                 break;
 #endif
@@ -1634,7 +1634,7 @@ rescan:  // entry for changed browse parms
                                 strcpy(winlist.name, tmpmask);
                             }
                         }
-                    MoveToMemory(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
+                    CopyFromMemoryToHandle(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
                     showtempmsg(winlist.name);
                 }
                 break;
@@ -1668,11 +1668,11 @@ rescan:  // entry for changed browse parms
         {
             for (int i = wincount-1; i >= 0; i--)
             {
-                MoveFromMemory(winlistptr, (U16)sizeof(window), 1L, (long)i, browsehandle);
+                CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)i, browsehandle);
                 boxcount = winlist.boxcount;
-                MoveFromMemory((BYTE *)boxx, vidlength, 1L, (long)i, boxxhandle);
-                MoveFromMemory((BYTE *)boxy, vidlength, 1L, (long)i, boxyhandle);
-                MoveFromMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)i, boxvalueshandle);
+                CopyFromHandleToMemory((BYTE *)boxx, vidlength, 1L, (long)i, boxxhandle);
+                CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)i, boxyhandle);
+                CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)i, boxvalueshandle);
                 boxcount >>= 1;
                 if (boxcount > 0)
 #ifdef XFRACT

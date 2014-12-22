@@ -71,8 +71,8 @@ void InitMemory();
 void ExitCheck();
 U16 MemoryAlloc(U16 size, long count, int stored_at);
 void MemoryRelease(U16 handle);
-bool MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
-bool MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
+bool CopyFromMemoryToHandle(BYTE *buffer, U16 size, long count, long offset, U16 handle);
+bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
 bool SetMemory(int value, U16 size, long count, long offset, U16 handle);
 
 // Memory handling support routines
@@ -399,7 +399,7 @@ void MemoryRelease(U16 handle)
 // to start moving the contents of buffer to
 // size is the size of the unit, count is the number of units to move
 // Returns true if successful, false if failure
-bool MoveToMemory(BYTE const *buffer, U16 size, long count, long offset, U16 handle)
+bool CopyFromMemoryToHandle(BYTE const *buffer, U16 size, long count, long offset, U16 handle)
 {
     BYTE diskbuf[DISKWRITELEN];
     long start; // offset to first location to move to
@@ -462,7 +462,7 @@ diskerror:
 // offset is the number of units from the beginning of buffer to start moving
 // size is the size of the unit, count is the number of units to move
 // Returns true if successful, false if failure
-bool MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
+bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 {
     BYTE diskbuf[DISKWRITELEN];
     long start; // first location to move

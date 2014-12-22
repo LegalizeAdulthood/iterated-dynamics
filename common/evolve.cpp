@@ -114,7 +114,7 @@ void initgene()
     // TODO: MemoryAlloc, MoveToMemory
     if (gene_handle == 0)
         gene_handle = MemoryAlloc((U16)sizeof(gene), 1L, MEMORY);
-    MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+    CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 }
 
 void param_history(int mode)
@@ -150,12 +150,12 @@ void param_history(int mode)
         oldhistory.trigndx2 = static_cast<BYTE>(trigndx[2]);
         oldhistory.trigndx3 = static_cast<BYTE>(trigndx[3]);
         oldhistory.bailoutest = bailoutest;
-        MoveToMemory((BYTE *)&oldhistory, (U16)sizeof(oldhistory), 1L, 0L, oldhistory_handle);
+        CopyFromMemoryToHandle((BYTE *)&oldhistory, (U16)sizeof(oldhistory), 1L, 0L, oldhistory_handle);
     }
 
     if (mode == 1)
     { // restore the old parameter history
-        MoveFromMemory((BYTE *)&oldhistory, (U16)sizeof(oldhistory), 1L, 0L, oldhistory_handle);
+        CopyFromHandleToMemory((BYTE *)&oldhistory, (U16)sizeof(oldhistory), 1L, 0L, oldhistory_handle);
         param[0] = oldhistory.param0;
         param[1] = oldhistory.param1;
         param[2] = oldhistory.param2;
@@ -344,7 +344,7 @@ int get_the_rest()
     // TODO: allocate real memory, not reuse shared segment
 //  ptr = (char *) extraseg;
 
-    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+    CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
     numtrig = (curfractalspecific->flags >> 6) & 7;
     if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
@@ -429,7 +429,7 @@ choose_vars_restart:
             (curfractalspecific->flags & BAILTEST))
         gene[NUMGENES - 1].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
 
-    MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+    CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
     return (1); // if you were here, you want to regenerate
 }
 
@@ -447,7 +447,7 @@ int get_variations()
     // TODO: allocate real memory, not reuse shared segment
 //  ptr = (char *) extraseg;
 
-    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+    CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
     if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
@@ -534,9 +534,9 @@ choose_vars_restart:
             gene[num].mutate = static_cast<variations>(rand() % static_cast<int>(variations::NUM));
         goto choose_vars_restart;
     case FIK_F6: // go to second screen, put array away first
-        MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+        CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         chngd = get_the_rest();
-        MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+        CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         goto choose_vars_restart;
     case -1:
         return (chngd);
@@ -554,7 +554,7 @@ choose_vars_restart:
         gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
     }
 
-    MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+    CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
     return (1); // if you were here, you want to regenerate
 }
 
@@ -564,7 +564,7 @@ void set_mutation_level(int strength)
     // are suitable for this level of mutation
     GENEBASE gene[NUMGENES];
     // get the gene array from memory
-    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+    CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
     for (int i = 0; i < NUMGENES; i++)
     {
@@ -574,7 +574,7 @@ void set_mutation_level(int strength)
             gene[i].mutate = variations::NONE;
     }
     // now put the gene array back in memory
-    MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+    CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
     return;
 }
 
@@ -893,7 +893,7 @@ static bool explore_check()
     // needed
     bool nonrandom = false;
     GENEBASE gene[NUMGENES];
-    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+    CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
     for (int i = 0; i < NUMGENES && !nonrandom; i++)
         if ((gene[i].mutate != variations::NONE) && (gene[i].mutate < variations::RANDOM))
             nonrandom = true;
@@ -913,18 +913,18 @@ void drawparmbox(int mode)
     if (boxcount)
     {
         // stash normal zoombox pixels
-        MoveToMemory((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, imgboxhandle);
-        MoveToMemory((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, imgboxhandle);
-        MoveToMemory((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, imgboxhandle);
+        CopyFromMemoryToHandle((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, imgboxhandle);
+        CopyFromMemoryToHandle((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, imgboxhandle);
+        CopyFromMemoryToHandle((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, imgboxhandle);
         clearbox(); // to avoid probs when one box overlaps the other
     }
     if (prmboxcount != 0)
     {
         // clear last parmbox
         boxcount = prmboxcount;
-        MoveFromMemory((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, prmboxhandle);
-        MoveFromMemory((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, prmboxhandle);
-        MoveFromMemory((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, prmboxhandle);
+        CopyFromHandleToMemory((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, prmboxhandle);
+        CopyFromHandleToMemory((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, prmboxhandle);
+        CopyFromHandleToMemory((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, prmboxhandle);
         clearbox();
     }
 
@@ -967,18 +967,18 @@ void drawparmbox(int mode)
     {
         dispbox();
         // stash pixel values for later
-        MoveToMemory((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, prmboxhandle);
-        MoveToMemory((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, prmboxhandle);
-        MoveToMemory((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, prmboxhandle);
+        CopyFromMemoryToHandle((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, prmboxhandle);
+        CopyFromMemoryToHandle((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, prmboxhandle);
+        CopyFromMemoryToHandle((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, prmboxhandle);
     }
     prmboxcount = boxcount;
     boxcount = imgboxcount;
     if (imgboxcount)
     {
         // and move back old values so that everything can proceed as normal
-        MoveFromMemory((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, imgboxhandle);
-        MoveFromMemory((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, imgboxhandle);
-        MoveFromMemory((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, imgboxhandle);
+        CopyFromHandleToMemory((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, imgboxhandle);
+        CopyFromHandleToMemory((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, imgboxhandle);
+        CopyFromHandleToMemory((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, imgboxhandle);
         dispbox();
     }
     return;

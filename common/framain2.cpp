@@ -358,10 +358,10 @@ big_while_loop_result big_while_loop(bool *kbdmore, bool *stacked, bool resumefl
                 EVOLUTION_INFO resume_e_info;
                 GENEBASE gene[NUMGENES];
                 // get the gene array from memory
-                MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+                CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
                 if ((evolve_handle != 0) && (calc_status == calc_status_value::RESUMABLE))
                 {
-                    MoveFromMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
+                    CopyFromHandleToMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
                     paramrangex  = resume_e_info.paramrangex;
                     paramrangey  = resume_e_info.paramrangey;
                     newopx = resume_e_info.opx;
@@ -457,7 +457,7 @@ done:
                     resume_e_info.fiddlefactor    = fiddlefactor;
                     resume_e_info.evolving        = (short)evolving;
                     resume_e_info.ecount          = (short) ecount;
-                    MoveToMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
+                    CopyFromMemoryToHandle((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
                 }
                 syoffs = 0;
                 sxoffs = syoffs;
@@ -471,7 +471,7 @@ done:
                 param_history(1); // restore old history
                 fiddleparms(gene, 0);
                 // now put the gene array back in memory
-                MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+                CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
             }
             // end of evolution loop
             else
@@ -1613,7 +1613,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         if (driver_diskp() && disktarga)
             return big_while_loop_result::CONTINUE;  // disk video and targa, nothing to save
         // get the gene array from memory
-        MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+        CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         oldsxoffs = sxoffs;
         oldsyoffs = syoffs;
         oldxdots = xdots;
@@ -1638,7 +1638,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         syoffs = oldsyoffs;
         xdots = oldxdots;
         ydots = oldydots;
-        MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+        CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         return big_while_loop_result::CONTINUE;
     }
 
@@ -1718,7 +1718,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         {
             GENEBASE gene[NUMGENES];
             // get the gene array from memory
-            MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+            CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
             if (evolving&1)
             {
                 if (*kbdchar == FIK_CTL_LEFT_ARROW)
@@ -1757,7 +1757,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
                 drawparmbox(0);
             }
             // now put the gene array back in memory
-            MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+            CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         }
         else                       // if no zoombox, scroll by arrows
             move_zoombox(*kbdchar);
@@ -1908,7 +1908,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
     {
         GENEBASE gene[NUMGENES];
         // get the gene array from memory
-        MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+        CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         for (int i = 0; i < NUMGENES; i++)
         {
             if (gene[i].mutate == variations::RANDOM)
@@ -1920,7 +1920,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
                 gene[i].mutate = variations::RANDOM;
         }
         // now put the gene array back in memory
-        MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+        CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
     }
     *kbdmore = false;
     calc_status = calc_status_value::PARAMS_CHANGED;
@@ -2168,7 +2168,7 @@ static void save_history_info()
     HISTORY current, last;
     if (maxhistory <= 0 || bf_math != bf_math_type::NONE || history == 0)
         return;
-    MoveFromMemory((BYTE *)&last, (U16)sizeof(HISTORY), 1L, (long)saveptr, history);
+    CopyFromHandleToMemory((BYTE *)&last, (U16)sizeof(HISTORY), 1L, (long)saveptr, history);
 
     memset((void *)&current, 0, sizeof(HISTORY));
     current.fractal_type         = (short)fractype                  ;
@@ -2316,7 +2316,7 @@ static void save_history_info()
     if (historyptr == -1)        // initialize the history file
     {
         for (int i = 0; i < maxhistory; i++)
-            MoveToMemory((BYTE *)&current, (U16)sizeof(HISTORY), 1L, (long)i, history);
+            CopyFromMemoryToHandle((BYTE *)&current, (U16)sizeof(HISTORY), 1L, (long)i, history);
         historyflag = false;
         historyptr = 0;
         saveptr = historyptr;   // initialize history ptr
@@ -2329,7 +2329,7 @@ static void save_history_info()
             saveptr = 0;
         if (++historyptr >= maxhistory)  // move user pointer in parallel
             historyptr = 0;
-        MoveToMemory((BYTE *)&current, (U16)sizeof(HISTORY), 1L, (long)saveptr, history);
+        CopyFromMemoryToHandle((BYTE *)&current, (U16)sizeof(HISTORY), 1L, (long)saveptr, history);
     }
 }
 
@@ -2338,7 +2338,7 @@ static void restore_history_info(int i)
     HISTORY last;
     if (maxhistory <= 0 || bf_math != bf_math_type::NONE || history == 0)
         return;
-    MoveFromMemory((BYTE *)&last, (U16)sizeof(HISTORY), 1L, (long)i, history);
+    CopyFromHandleToMemory((BYTE *)&last, (U16)sizeof(HISTORY), 1L, (long)i, history);
     invert = 0;
     calc_status = calc_status_value::PARAMS_CHANGED;
     resuming = false;

@@ -428,7 +428,7 @@ bool encoder()
         {
             // resume info block, 002
             save_info.tot_extend_len += extend_blk_len(resume_len);
-            MoveFromMemory((BYTE *)block, (U16)1, (long)resume_len, 0, resume_info);
+            CopyFromHandleToMemory((BYTE *)block, (U16)1, (long)resume_len, 0, resume_info);
             if (!put_extend_blk(2, resume_len, (char *)block))
                 goto oops;
         }
@@ -469,7 +469,7 @@ bool encoder()
             EVOLUTION_INFO esave_info;
             EVOLUTION_INFO resume_e_info;
             GENEBASE gene[NUMGENES];
-            MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+            CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
             if (evolve_handle == 0 || calc_status == calc_status_value::COMPLETED)
             {
                 esave_info.paramrangex     = paramrangex;
@@ -493,7 +493,7 @@ bool encoder()
             else
             {
                 // we will need the resuming information
-                MoveFromMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
+                CopyFromHandleToMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
                 esave_info.paramrangex     = resume_e_info.paramrangex;
                 esave_info.paramrangey     = resume_e_info.paramrangey;
                 esave_info.opx             = resume_e_info.opx;

@@ -401,7 +401,7 @@ static void SaveRect(int x, int y, int width, int depth)
         {
             getrow(x, y+yoff, width, buff);
             putrow(x, y+yoff, width, (char *)dstack);
-            MoveToMemory((BYTE *)buff, (U16)width, 1L, (long)(yoff), memory_handle);
+            CopyFromMemoryToHandle((BYTE *)buff, (U16)width, 1L, (long)(yoff), memory_handle);
         }
         Cursor_Show();
     }
@@ -417,7 +417,7 @@ static void RestoreRect(int x, int y, int width, int depth)
     Cursor_Hide();
     for (int yoff = 0; yoff < depth; yoff++)
     {
-        MoveFromMemory((BYTE *)buff, (U16)width, 1L, (long)(yoff), memory_handle);
+        CopyFromHandleToMemory((BYTE *)buff, (U16)width, 1L, (long)(yoff), memory_handle);
         putrow(x, y+yoff, width, buff);
     }
     Cursor_Show();

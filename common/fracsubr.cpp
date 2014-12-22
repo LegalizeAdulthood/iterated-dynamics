@@ -1156,7 +1156,7 @@ int put_resume(int len, ...)
     {
         source_ptr = (BYTE *)va_arg(arg_marker, char *);
         //      memcpy(resume_info+resume_len,source_ptr,len);
-        MoveToMemory(source_ptr, (U16)1, (long)len, resume_len, resume_info);
+        CopyFromMemoryToHandle(source_ptr, (U16)1, (long)len, resume_len, resume_info);
         resume_len += len;
         len = va_arg(arg_marker, int);
     }
@@ -1196,7 +1196,7 @@ int get_resume(int len, ...)
     {
         dest_ptr = (BYTE *)va_arg(arg_marker, char *);
         //      memcpy(dest_ptr,resume_info+resume_offset,len);
-        MoveFromMemory(dest_ptr, (U16)1, (long)len, resume_offset, resume_info);
+        CopyFromHandleToMemory(dest_ptr, (U16)1, (long)len, resume_offset, resume_info);
         resume_offset += len;
         len = va_arg(arg_marker, int);
     }

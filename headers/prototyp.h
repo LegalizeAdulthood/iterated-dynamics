@@ -995,8 +995,8 @@ extern void InitMemory();
 extern void ExitCheck();
 extern U16 MemoryAlloc(U16 size, long count, int stored_at);
 extern void MemoryRelease(U16 handle);
-extern bool MoveToMemory(BYTE const *buffer, U16 size, long count, long offset, U16 handle);
-extern bool MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
+extern bool CopyFromMemoryToHandle(BYTE const *buffer, U16 size, long count, long offset, U16 handle);
+extern bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
 extern bool SetMemory(int value, U16 size, long count, long offset, U16 handle);
 // soi -- C file prototypes
 extern void soi();
