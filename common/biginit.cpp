@@ -254,7 +254,7 @@ static void init_bf_2()
     if (ptr + NUMVARS*(bflength+2) > maxstack)
     {
         char msg[80];
-        sprintf(msg,"Requested precision of %d too high, aborting",decimals);
+        sprintf(msg, "Requested precision of %d too high, aborting", decimals);
         stopmsg(STOPMSG_NONE, msg);
         goodbye();
     }
@@ -295,13 +295,13 @@ static void init_bf_2()
 
     // good citizens initialize variables
     if (bf_save_len > 0)  // leave save area
-        memset(bnroot+(bf_save_len+2)*22,0,(unsigned)(startstack-(bf_save_len+2)*22));
+        memset(bnroot+(bf_save_len+2)*22, 0, (unsigned)(startstack-(bf_save_len+2)*22));
     else // first time through - nothing saved
     {
         // high variables
-        memset(bnroot+maxstack,0,(bflength+2)*22);
+        memset(bnroot+maxstack, 0, (bflength+2)*22);
         // low variables
-        memset(bnroot,0,(unsigned)startstack);
+        memset(bnroot, 0, (unsigned)startstack);
     }
 
     restore_bf_vars();
@@ -324,9 +324,9 @@ static int save_bf_vars()
     {
         unsigned int mem = (bflength+2)*22;  // 6 corners + 6 save corners + 10 params
         bf_save_len = bflength;
-        memcpy(bnroot,bfxmin,mem);
+        memcpy(bnroot, bfxmin, mem);
         // scrub old high area
-        memset(bfxmin,0,mem);
+        memset(bfxmin, 0, mem);
         ret = 0;
     }
     else
@@ -345,37 +345,37 @@ static int restore_bf_vars()
     if (bf_save_len == 0)
         return (-1);
     ptr  = bnroot;
-    convert_bf(bfxmin,ptr,bflength,bf_save_len);
+    convert_bf(bfxmin, ptr, bflength, bf_save_len);
     ptr += bf_save_len+2;
-    convert_bf(bfxmax,ptr,bflength,bf_save_len);
+    convert_bf(bfxmax, ptr, bflength, bf_save_len);
     ptr += bf_save_len+2;
-    convert_bf(bfymin,ptr,bflength,bf_save_len);
+    convert_bf(bfymin, ptr, bflength, bf_save_len);
     ptr += bf_save_len+2;
-    convert_bf(bfymax,ptr,bflength,bf_save_len);
+    convert_bf(bfymax, ptr, bflength, bf_save_len);
     ptr += bf_save_len+2;
-    convert_bf(bfx3rd,ptr,bflength,bf_save_len);
+    convert_bf(bfx3rd, ptr, bflength, bf_save_len);
     ptr += bf_save_len+2;
-    convert_bf(bfy3rd,ptr,bflength,bf_save_len);
+    convert_bf(bfy3rd, ptr, bflength, bf_save_len);
     ptr += bf_save_len+2;
     for (int i = 0; i < 10; i++)
     {
-        convert_bf(bfparms[i],ptr,bflength,bf_save_len);
+        convert_bf(bfparms[i], ptr, bflength, bf_save_len);
         ptr += bf_save_len+2;
     }
-    convert_bf(bfsxmin,ptr,bflength,bf_save_len);
+    convert_bf(bfsxmin, ptr, bflength, bf_save_len);
     ptr += bf_save_len+2;
-    convert_bf(bfsxmax,ptr,bflength,bf_save_len);
+    convert_bf(bfsxmax, ptr, bflength, bf_save_len);
     ptr += bf_save_len+2;
-    convert_bf(bfsymin,ptr,bflength,bf_save_len);
+    convert_bf(bfsymin, ptr, bflength, bf_save_len);
     ptr += bf_save_len+2;
-    convert_bf(bfsymax,ptr,bflength,bf_save_len);
+    convert_bf(bfsymax, ptr, bflength, bf_save_len);
     ptr += bf_save_len+2;
-    convert_bf(bfsx3rd,ptr,bflength,bf_save_len);
+    convert_bf(bfsx3rd, ptr, bflength, bf_save_len);
     ptr += bf_save_len+2;
-    convert_bf(bfsy3rd,ptr,bflength,bf_save_len);
+    convert_bf(bfsy3rd, ptr, bflength, bf_save_len);
 
     // scrub save area
-    memset(bnroot,0,(bf_save_len+2)*22);
+    memset(bnroot, 0, (bf_save_len+2)*22);
     return (0);
 }
 
