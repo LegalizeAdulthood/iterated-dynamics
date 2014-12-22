@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <cassert>
 #include <vector>
 
@@ -151,7 +150,6 @@ bool showtempmsg(const char *msgparm)
 {
     static long size = 0;
     char msg[41];
-    BYTE buffer[640];
     int xrepeat = 0;
     int yrepeat = 0;
     int save_sxoffs, save_syoffs;
@@ -196,8 +194,7 @@ bool showtempmsg(const char *msgparm)
         temptextsave.resize(textxdots*textydots);
         for (int i = 0; i < textydots; ++i)
         {
-            get_line(i, 0, textxdots-1, buffer);
-            std::copy(&buffer[0], &buffer[textxdots], &temptextsave[textxdots*i]);
+            get_line(i, 0, textxdots-1, &temptextsave[textxdots*i]);
         }
     }
 
@@ -211,7 +208,6 @@ bool showtempmsg(const char *msgparm)
 
 void cleartempmsg()
 {
-    BYTE buffer[640];
     if (driver_diskp()) // disk video, easy
     {
         dvid_status(0, "");
@@ -232,8 +228,7 @@ void cleartempmsg()
         }
         for (int i = 0; i < textydots; ++i)
         {
-            std::copy(&temptextsave[textxdots*i], &temptextsave[textxdots*(i+1)], &buffer[0]);
-            put_line(i, 0, textxdots-1, buffer);
+            put_line(i, 0, textxdots-1, &temptextsave[textxdots*i]);
         }
         if (!using_jiim)                // jiim frees memory with freetempmsg()
         {
