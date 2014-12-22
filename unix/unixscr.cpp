@@ -51,7 +51,7 @@
 #endif
 
 // Check if there is a character waiting for us.
-#define input_pending() (ioctl(0,FIONREAD,&iocount),(int)iocount)
+#define input_pending() (ioctl(0, FIONREAD, &iocount), (int)iocount)
 
 // external variables (set in the FRACTINT.CFG file, but findable here
 
@@ -170,12 +170,12 @@ UnixInit()
      */
     if (sizeof(short) != 2)
     {
-        fprintf(stderr,"Error: need short to be 2 bytes\n");
+        fprintf(stderr, "Error: need short to be 2 bytes\n");
         exit(-1);
     }
     if (sizeof(long) < sizeof(FLOAT4))
     {
-        fprintf(stderr,"Error: need sizeof(long)>=sizeof(FLOAT4)\n");
+        fprintf(stderr, "Error: need sizeof(long)>=sizeof(FLOAT4)\n");
         exit(-1);
     }
 
@@ -198,20 +198,20 @@ UnixInit()
 
     if (!simple_input)
     {
-        signal(SIGINT,(SignalHandler)goodbye);
+        signal(SIGINT, (SignalHandler)goodbye);
     }
     signal(SIGFPE, fpe_handler);
     /*
-    signal(SIGTSTP,goodbye);
+    signal(SIGTSTP, goodbye);
     */
 #ifdef FPUERR
-    signal(SIGABRT,SIG_IGN);
+    signal(SIGABRT, SIG_IGN);
     /*
         setup the IEEE-handler to forget all common ( invalid,
         divide by zero, overflow ) signals. Here we test, if
         such ieee trapping is supported.
     */
-    if (ieee_handler("set","common",continue_hdl) != 0)
+    if (ieee_handler("set", "common", continue_hdl) != 0)
         printf("ieee trapping not supported here \n");
 #endif
 }
@@ -241,9 +241,9 @@ UnixDone()
     }
     if (!simple_input)
     {
-        fcntl(0,F_SETFL,old_fcntl);
+        fcntl(0, F_SETFL, old_fcntl);
     }
-    mvcur(0,COLS-1, LINES-1,0);
+    mvcur(0, COLS-1, LINES-1, 0);
     nocbreak();
     echo();
     endwin();
@@ -268,10 +268,10 @@ static int errhand(Display *dp, XErrorEvent *xe)
 {
     char buf[200];
     fflush(stdout);
-    printf("X Error: %d %d %d %d\n",xe->type,xe->error_code,
+    printf("X Error: %d %d %d %d\n", xe->type, xe->error_code,
            xe->request_code, xe->minor_code);
-    XGetErrorText(dp,xe->error_code,buf,200);
-    printf("%s\n",buf);
+    XGetErrorText(dp, xe->error_code, buf, 200);
+    printf("%s\n", buf);
     return (0);
 }
 
@@ -300,7 +300,7 @@ continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
     //  printf("ieee exception code %x occurred at pc %X\n",code,scp->sc_pc);
     //  clear all excaption flags
     char out[20];
-    ieee_flags("clear","exception","all",out);
+    ieee_flags("clear", "exception", "all", out);
 }
 #endif
 
@@ -318,7 +318,7 @@ static int Xdepth;
 static XImage *Ximage =nullptr;
 static int Xdscreen;
 static Pixmap   Xpixmap = 0;
-static int Xwinwidth = DEFX,Xwinheight = DEFY;
+static int Xwinwidth = DEFX, Xwinheight = DEFY;
 static XSizeHints *size_hints = nullptr;
 static int gravity;
 static Window Xroot;
@@ -328,10 +328,10 @@ static BYTE *pixbuf = nullptr;
 
 static int step = 0;
 static int cyclic[][3] = {
-    {1,3,5}, {1,5,3}, {3,1,5}, {3,5,1}, {5,1,3}, {5,3,1},
-    {1,3,7}, {1,7,3}, {3,1,7}, {3,7,1}, {7,1,3}, {7,3,1},
-    {1,5,7}, {1,7,5}, {5,1,7}, {5,7,1}, {7,1,5}, {7,5,1},
-    {3,5,7}, {3,7,5}, {5,3,7}, {5,7,3}, {7,3,5}, {7,5,3}
+    {1, 3, 5}, {1, 5, 3}, {3, 1, 5}, {3, 5, 1}, {5, 1, 3}, {5, 3, 1},
+    {1, 3, 7}, {1, 7, 3}, {3, 1, 7}, {3, 7, 1}, {7, 1, 3}, {7, 3, 1},
+    {1, 5, 7}, {1, 7, 5}, {5, 1, 7}, {5, 7, 1}, {7, 1, 5}, {7, 5, 1},
+    {3, 5, 7}, {3, 7, 5}, {5, 3, 7}, {5, 7, 3}, {7, 3, 5}, {7, 5, 3}
 };
 
 static void
@@ -579,11 +579,11 @@ doneXwindow()
     }
     if (Xgc)
     {
-        XFreeGC(Xdp,Xgc);
+        XFreeGC(Xdp, Xgc);
     }
     if (Xpixmap)
     {
-        XFreePixmap(Xdp,Xpixmap);
+        XFreePixmap(Xdp, Xpixmap);
         Xpixmap = (Pixmap)nullptr;
     }
     XFlush(Xdp);
@@ -787,7 +787,7 @@ resizeWindow()
         usleep(100000);
     }
     else
-        XGetGeometry(Xdp,Xw,&junkw,&junki, &junki, &width, &height,
+        XGetGeometry(Xdp, Xw, &junkw, &junki, &junki, &width, &height,
                      &junkui, &junkui);
 
     if (oldx != width || oldy != height)
@@ -829,14 +829,14 @@ resizeWindow()
                               sydots, Xpad, Xmwidth);
         if (Ximage == nullptr)
         {
-            fprintf(stderr,"XCreateImage failed\n");
+            fprintf(stderr, "XCreateImage failed\n");
             UnixDone();
             exit(-1);
         }
         Ximage->data = static_cast<char *>(malloc(Ximage->bytes_per_line * Ximage->height));
         if (Ximage->data == nullptr)
         {
-            fprintf(stderr,"Malloc failed: %d\n", Ximage->bytes_per_line *
+            fprintf(stderr, "Malloc failed: %d\n", Ximage->bytes_per_line *
                     Ximage->height);
             exit(-1);
         }
@@ -905,14 +905,14 @@ xcmapstuff()
                                  (unsigned int) ncells))
             {
                 colors = ncells;
-                fprintf(stderr,"%d colors\n", colors);
+                fprintf(stderr, "%d colors\n", colors);
                 usepixtab = 1;
                 break;
             }
         }
         if (!usepixtab)
         {
-            fprintf(stderr,"Couldn't allocate any colors\n");
+            fprintf(stderr, "Couldn't allocate any colors\n");
             g_got_real_dac = false;
         }
     }
@@ -977,7 +977,7 @@ writevideoline(int y, int x, int lastx, BYTE *pixels)
 #if 1
     if (x == lastx)
     {
-        writevideo(x,y,pixels[0]);
+        writevideo(x, y, pixels[0]);
         return;
     }
     width = lastx-x+1;
@@ -1006,17 +1006,17 @@ writevideoline(int y, int x, int lastx, BYTE *pixels)
     }
     else
     {
-        XPutImage(Xdp,Xw,Xgc,Ximage,x,y,x,y,width,1);
+        XPutImage(Xdp, Xw, Xgc, Ximage, x, y, x, y, width, 1);
         if (onroot)
         {
-            XPutImage(Xdp,Xpixmap,Xgc,Ximage,x,y,x,y,width,1);
+            XPutImage(Xdp, Xpixmap, Xgc, Ximage, x, y, x, y, width, 1);
         }
     }
 #else
     width = lastx-x+1;
     for (int i = 0; i < width; i++)
     {
-        writevideo(x+i,y,(int)pixels[i]);
+        writevideo(x+i, y, (int)pixels[i]);
     }
 #endif
 }
@@ -1041,7 +1041,7 @@ readvideoline(int y, int x, int lastx, BYTE *pixels)
     int width = lastx-x+1;
     for (int i = 0; i < width; i++)
     {
-        pixels[i] = (BYTE)readvideo(x+i,y);
+        pixels[i] = (BYTE)readvideo(x+i, y);
     }
 }
 
@@ -1065,11 +1065,11 @@ void writevideo(int x, int y, int color)
 #ifdef DEBUG // Debugging checks
     if (color >= colors || color < 0)
     {
-        fprintf(stderr,"Color %d too big %d\n", color, colors);
+        fprintf(stderr, "Color %d too big %d\n", color, colors);
     }
     if (x >= sxdots || x < 0 || y >= sydots || y < 0)
     {
-        fprintf(stderr,"Bad coord %d %d\n", x,y);
+        fprintf(stderr, "Bad coord %d %d\n", x, y);
     }
 #endif
     if (xlastcolor != color)
@@ -1087,10 +1087,10 @@ void writevideo(int x, int y, int color)
     }
     else
     {
-        XDrawPoint(Xdp,Xw,Xgc,x,y);
+        XDrawPoint(Xdp, Xw, Xgc, x, y);
         if (onroot)
         {
-            XDrawPoint(Xdp,Xpixmap,Xgc,x,y);
+            XDrawPoint(Xdp, Xpixmap, Xgc, x, y);
         }
     }
 }
@@ -1115,7 +1115,7 @@ int readvideo(int x, int y)
 #ifdef DEBUG // Debugging checks
     if (x >= sxdots || x < 0 || y >= sydots || y < 0)
     {
-        fprintf(stderr,"Bad coord %d %d\n", x,y);
+        fprintf(stderr, "Bad coord %d %d\n", x, y);
     }
 #endif
     if (fake_lut)
@@ -1204,7 +1204,7 @@ int writevideopalette()
                     else
                     {
                         assert(1);
-                        fprintf(stderr,"Allocating color %d failed.\n", i);
+                        fprintf(stderr, "Allocating color %d failed.\n", i);
                     }
 
                     last_dac[i][0] = g_dac_box[i][0];
@@ -1305,7 +1305,7 @@ drawline(int x1, int y1, int x2, int y2)
 {
     if (!unixDisk)
     {
-        XDrawLine(Xdp,Xw,Xgc,x1,y1,x2,y2);
+        XDrawLine(Xdp, Xw, Xgc, x1, y1, x2, y2);
     }
 }
 /*
@@ -1328,7 +1328,7 @@ xsync()
 {
     if (!unixDisk)
     {
-        XSync(Xdp,False);
+        XSync(Xdp, False);
     }
 }
 /*
@@ -1357,7 +1357,7 @@ getachar()
     {
         char ch;
         int status;
-        status = read(0,&ch,1);
+        status = read(0, &ch, 1);
         if (status < 0)
         {
             return -1;
@@ -1443,19 +1443,19 @@ xgetkey(int block)
         FD_ZERO(&reads);
         // See http://llvm.org/bugs/show_bug.cgi?id=8920
 #if !defined(__clang_analyzer__)
-        FD_SET(0,&reads);
+        FD_SET(0, &reads);
 #endif
         if (unixDisk)
         {
-            status = select(1,&reads,nullptr,nullptr,&tout);
+            status = select(1, &reads, nullptr, nullptr, &tout);
         }
         else
         {
             // See http://llvm.org/bugs/show_bug.cgi?id=8920
 #if !defined(__clang_analyzer__)
-            FD_SET(ConnectionNumber(Xdp),&reads);
+            FD_SET(ConnectionNumber(Xdp), &reads);
 #endif
-            status = select(ConnectionNumber(Xdp)+1,&reads,nullptr,nullptr,&tout);
+            status = select(ConnectionNumber(Xdp)+1, &reads, nullptr, nullptr, &tout);
         }
         if (status <= 0)
         {
@@ -1734,10 +1734,10 @@ xhandleevents()
     int drawn;
     static int ctl_mode = 0;
     static int shift_mode = 0;
-    int bandx0,bandy0,bandx1,bandy1;
+    int bandx0, bandy0, bandx1, bandy1;
     static int bnum = 0;
-    static int lastx,lasty;
-    static int dx,dy;
+    static int lastx, lasty;
+    static int dx, dy;
 
     if (doredraw)
     {
@@ -1746,7 +1746,7 @@ xhandleevents()
 
     while (XPending(Xdp) && !xbufkey)
     {
-        XNextEvent(Xdp,&xevent);
+        XNextEvent(Xdp, &xevent);
 
         switch (((XAnyEvent *)&xevent)->type)
         {
@@ -1754,7 +1754,7 @@ xhandleevents()
         {
             char buffer[1];
             KeySym keysym;
-            XLookupString(&xevent.xkey,buffer,1,&keysym,nullptr);
+            XLookupString(&xevent.xkey, buffer, 1, &keysym, nullptr);
             switch (keysym)
             {
             case XK_Control_L:
@@ -1773,7 +1773,7 @@ xhandleevents()
             int charcount;
             char buffer[1];
             KeySym keysym;
-            charcount = XLookupString(&xevent.xkey,buffer,1,&keysym,nullptr);
+            charcount = XLookupString(&xevent.xkey, buffer, 1, &keysym, nullptr);
             switch (keysym)
             {
             case XK_Control_L:
@@ -1891,7 +1891,7 @@ xhandleevents()
         {
             if (editpal_cursor && !inside_help)
             {
-                while (XCheckWindowEvent(Xdp,Xw,PointerMotionMask,
+                while (XCheckWindowEvent(Xdp, Xw, PointerMotionMask,
                                          &xevent))
                 {
                 }
@@ -1949,18 +1949,18 @@ xhandleevents()
             bandy1 = bandy0;
             while (!done)
             {
-                XNextEvent(Xdp,&xevent);
+                XNextEvent(Xdp, &xevent);
                 switch (xevent.type)
                 {
                 case MotionNotify:
-                    while (XCheckWindowEvent(Xdp,Xw,PointerMotionMask,
+                    while (XCheckWindowEvent(Xdp, Xw, PointerMotionMask,
                                              &xevent))
                     {
                     }
                     if (banding)
                     {
-                        XDrawRectangle(Xdp,Xw,Xgc,MIN(bandx0,bandx1),
-                                       MIN(bandy0,bandy1), ABS(bandx1-bandx0),
+                        XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
+                                       MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                                        ABS(bandy1-bandy0));
                     }
                     bandx1 = xevent.xmotion.x;
@@ -1991,8 +1991,8 @@ xhandleevents()
                     }
                     if (banding)
                     {
-                        XDrawRectangle(Xdp,Xw,Xgc,MIN(bandx0,bandx1),
-                                       MIN(bandy0,bandy1), ABS(bandx1-bandx0),
+                        XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
+                                       MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                                        ABS(bandy1-bandy0));
                     }
                     XFlush(Xdp);
@@ -2006,8 +2006,8 @@ xhandleevents()
             {
                 break;
             }
-            XDrawRectangle(Xdp,Xw,Xgc,MIN(bandx0,bandx1),
-                           MIN(bandy0,bandy1), ABS(bandx1-bandx0),
+            XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
+                           MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                            ABS(bandy1-bandy0));
             if (bandx1 == bandx0)
             {
@@ -2019,8 +2019,8 @@ xhandleevents()
             }
             zrotate = 0;
             zskew = 0;
-            zbx = (MIN(bandx0,bandx1)-sxoffs)/dxsize;
-            zby = (MIN(bandy0,bandy1)-syoffs)/dysize;
+            zbx = (MIN(bandx0, bandx1)-sxoffs)/dxsize;
+            zby = (MIN(bandy0, bandy1)-syoffs)/dysize;
             zwidth = ABS(bandx1-bandx0)/dxsize;
             zdepth = zwidth;
             if (!inside_help)
@@ -2037,7 +2037,7 @@ xhandleevents()
         }
         break;
         case ConfigureNotify:
-            XSelectInput(Xdp,Xw,KeyPressMask|KeyReleaseMask|ExposureMask|
+            XSelectInput(Xdp, Xw, KeyPressMask|KeyReleaseMask|ExposureMask|
                          ButtonPressMask|ButtonReleaseMask|PointerMotionMask);
             resize_flag = 1;
             drawn = drawing_or_drawn;
@@ -2049,14 +2049,14 @@ xhandleevents()
                     return;
                 }
             }
-            XSelectInput(Xdp,Xw,KeyPressMask|KeyReleaseMask|ExposureMask|
+            XSelectInput(Xdp, Xw, KeyPressMask|KeyReleaseMask|ExposureMask|
                          ButtonPressMask|ButtonReleaseMask|
                          PointerMotionMask|StructureNotifyMask);
             break;
         case Expose:
             if (!doesBacking)
             {
-                int x,y,w,h;
+                int x, y, w, h;
                 x = xevent.xexpose.x;
                 y = xevent.xexpose.y;
                 w = xevent.xexpose.width;
@@ -2072,7 +2072,7 @@ xhandleevents()
                 if (x < sxdots && y < sydots && w > 0 && h > 0)
                 {
 
-                    XPutImage(Xdp,Xw,Xgc,Ximage,xevent.xexpose.x,
+                    XPutImage(Xdp, Xw, Xgc, Ximage, xevent.xexpose.x,
                               xevent.xexpose.y, xevent.xexpose.x,
                               xevent.xexpose.y, xevent.xexpose.width,
                               xevent.xexpose.height);
@@ -2142,20 +2142,20 @@ static Window
 pr_dwmroot(Display *dpy, Window pwin)
 {
     // search for DEC Window Manager root
-    XWindowAttributes pxwa,cxwa;
-    Window  root,parent,*child;
+    XWindowAttributes pxwa, cxwa;
+    Window  root, parent, *child;
 
-    if (!XGetWindowAttributes(dpy,pwin,&pxwa))
+    if (!XGetWindowAttributes(dpy, pwin, &pxwa))
     {
         printf("Search for root: XGetWindowAttributes failed\n");
         return RootWindow(dpy, scr);
     }
     unsigned int nchild;
-    if (XQueryTree(dpy,pwin,&root,&parent,&child,&nchild))
+    if (XQueryTree(dpy, pwin, &root, &parent, &child, &nchild))
     {
         for (unsigned int i = 0U; i < nchild; i++)
         {
-            if (!XGetWindowAttributes(dpy,child[i],&cxwa))
+            if (!XGetWindowAttributes(dpy, child[i], &cxwa))
             {
                 printf("Search for root: XGetWindowAttributes failed\n");
                 return RootWindow(dpy, scr);
@@ -2192,7 +2192,7 @@ pr_dwmroot(Display *dpy, Window pwin)
 static Window
 FindRootWindow()
 {
-    w_root = RootWindow(dpy,scr);
+    w_root = RootWindow(dpy, scr);
     w_root = pr_dwmroot(dpy, w_root); // search for DEC wm root
 
     {   // search for swm/tvtwm root (from ssetroot by Tom LaStrange)
@@ -2239,19 +2239,19 @@ FindRootWindow()
 static void
 RemoveRootPixmap()
 {
-    Atom prop,type;
+    Atom prop, type;
     int format;
-    unsigned long nitems,after;
+    unsigned long nitems, after;
     Pixmap *pm;
 
-    prop = XInternAtom(Xdp,"_XSETROOT_ID",False);
-    if (XGetWindowProperty(Xdp,Xroot,prop, 0L, 1L, 1, AnyPropertyType,
+    prop = XInternAtom(Xdp, "_XSETROOT_ID", False);
+    if (XGetWindowProperty(Xdp, Xroot, prop, 0L, 1L, 1, AnyPropertyType,
                            &type, &format, &nitems, &after, (unsigned char **)&pm) ==
             Success && nitems == 1)
     {
         if (type == XA_PIXMAP && format == 32 && after == 0)
         {
-            XKillClient(Xdp,(XID)*pm);
+            XKillClient(Xdp, (XID)*pm);
             XFree((char *)pm);
         }
     }
@@ -2393,9 +2393,9 @@ shell_to_dos()
 
     if (!simple_input)
     {
-        fcntl(0,F_SETFL,old_fcntl);
+        fcntl(0, F_SETFL, old_fcntl);
     }
-    mvcur(0,COLS-1, LINES-1,0);
+    mvcur(0, COLS-1, LINES-1, 0);
     nocbreak();
     echo();
     endwin();
@@ -2431,8 +2431,8 @@ shell_to_dos()
     noecho();
     if (!simple_input)
     {
-        old_fcntl = fcntl(0,F_GETFL);
-        fcntl(0,F_SETFL,FNDELAY);
+        old_fcntl = fcntl(0, F_GETFL);
+        fcntl(0, F_SETFL, FNDELAY);
     }
 
     signal(SIGINT, (SignalHandler)sigint);
@@ -2522,7 +2522,7 @@ redrawscreen()
     }
     doredraw = 0;
     if (!unixDisk)
-        XSelectInput(Xdp,Xw,KeyPressMask|KeyReleaseMask|ExposureMask|
+        XSelectInput(Xdp, Xw, KeyPressMask|KeyReleaseMask|ExposureMask|
                      ButtonPressMask|ButtonReleaseMask|
                      PointerMotionMask|StructureNotifyMask);
 }
