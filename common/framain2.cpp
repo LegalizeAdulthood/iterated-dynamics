@@ -42,7 +42,7 @@ static bool historyflag = false;        // are we backing off in history?
 void (*outln_cleanup)();
 bool g_virtual_screens = false;
 
-big_while_loop_result big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
+big_while_loop_result big_while_loop(bool *const kbdmore, bool *const stacked, bool const resumeflag)
 {
     double  ftemp;                       // fp temp
     int     i = 0;                           // temporary loop counters
