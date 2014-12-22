@@ -268,18 +268,15 @@ void ExitCheck()
 U16 MemoryAlloc(U16 size, long count, int stored_at)
 {
     // Returns handle number if successful, 0 or nullptr if failure
-    U16 handle = 0;
-    int use_this_type;
-    long toallocate;
 
-    toallocate = count * size;
+    long toallocate = count * size;
     if (toallocate <= 0)    // we failed, can't allocate > 2,147,483,647
         return 0U;          // or it wraps around to negative
 
     /* check structure for requested memory type (add em up) to see if
        sufficient amount is available to grant request */
 
-    use_this_type = check_for_mem(stored_at, toallocate);
+    int use_this_type = check_for_mem(stored_at, toallocate);
     if (use_this_type == NOWHERE)
     {
         DisplayError(stored_at, toallocate);
@@ -288,7 +285,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 
     // get next available handle
 
-    handle = next_handle();
+    U16 handle = next_handle();
 
     if (handle >= MAXHANDLES || handle == 0)
     {
