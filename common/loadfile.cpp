@@ -32,7 +32,6 @@ static void backwardscompat(FRACTAL_INFO *info);
 static bool fix_bof();
 static bool fix_period_bof();
 
-int filetype;
 bool loaded3d = false;
 static FILE *fp;
 int fileydots, filexdots, filecolors;
@@ -680,7 +679,6 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
         return (-1);
     }
 
-    filetype = 0; // GIF
     GET16(gifstart[6], filexdots);
     GET16(gifstart[8], fileydots);
     filecolors = 2 << (gifstart[10] & 7);

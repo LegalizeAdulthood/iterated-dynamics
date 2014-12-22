@@ -417,7 +417,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 lv[0] = lv[0] << 16;
                 lv[1] = currow;
                 lv[1] = lv[1] << 16;
-                if (filetype || pot16bit)        // don't truncate fractional part
+                if (pot16bit)           // don't truncate fractional part
                     lv[2] = (long)(f_cur.color * 65536.0);
                 else                            // there IS no fractional part here!
                 {

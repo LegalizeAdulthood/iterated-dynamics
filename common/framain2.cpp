@@ -237,10 +237,6 @@ big_while_loop_result big_while_loop(bool *kbdmore, bool *stacked, bool resumefl
             {
                 outln = call_line3d;
             }
-            else if (filetype >= 1)         // old .tga format input file
-            {
-                outln = outlin16;
-            }
             else if (comparegif)            // debug 50
             {
                 outln = cmp_line;
@@ -268,20 +264,13 @@ big_while_loop_result big_while_loop(bool *kbdmore, bool *stacked, bool resumefl
             {
                 outln = out_line;        // regular decoding
             }
-            if (filetype == 0)
+            if (debugflag == debug_flags::show_float_flag)
             {
-                if (debugflag == debug_flags::show_float_flag)
-                {
-                    char msg[MSGLEN];
-                    sprintf(msg, "floatflag=%d", usr_floatflag ? 1 : 0);
-                    stopmsg(STOPMSG_NO_BUZZER, msg);
-                }
-                i = funny_glasses_call(gifview);
+                char msg[MSGLEN];
+                sprintf(msg, "floatflag=%d", usr_floatflag ? 1 : 0);
+                stopmsg(STOPMSG_NO_BUZZER, msg);
             }
-            else
-            {
-                i = funny_glasses_call(tgaview);
-            }
+            i = funny_glasses_call(gifview);
             if (outln_cleanup)              // cleanup routine defined?
             {
                 (*outln_cleanup)();

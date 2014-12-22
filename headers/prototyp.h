@@ -949,9 +949,6 @@ extern int outline_stereo(BYTE *, int);
 extern int teststart();
 extern void testend();
 extern int testpt(double, double, double, double, long, int);
-// tgaview -- C file prototypes
-extern int tgaview();
-extern int outlin16(BYTE*, int);
 // zoom -- C file prototypes
 extern void drawbox(int);
 extern void moveboxf(double, double);

@@ -87,7 +87,6 @@ add_executable(id ${OS_ID_OPTIONS}
     common/rotate.cpp
     common/slideshw.cpp
     common/stereo.cpp
-    common/tgaview.cpp
 
     common/bigflt.cpp
     common/biginit.cpp
@@ -177,7 +176,6 @@ source_group("Source Files\\common\\i/o" FILES
     common/rotate.cpp
     common/slideshw.cpp
     common/stereo.cpp
-    common/tgaview.cpp
 )
 source_group("Source Files\\common\\math" FILES
     common/bigflt.cpp
