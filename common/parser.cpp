@@ -304,11 +304,11 @@ static const char *ParseErrs(int which)
     static char e35[] = {"Invalid ParseErrs code"};
     static const char *ErrStrings[] =
     {
-        e0,e1,e2,e3,e4,e5,
-        e6,e7,e8,e9,e10,
-        e11,e12,e13,e14,e15,
-        e16,e17,e18,e19,e20,
-        e21,e22,e23,e24,e25,
+        e0, e1, e2, e3, e4, e5,
+        e6, e7, e8, e9, e10,
+        e11, e12, e13, e14, e15,
+        e16, e17, e18, e19, e20,
+        e21, e22, e23, e24, e25,
         e26, e27, e28, e29, e30,
         e31, e32, e33, e34, e35
     };
@@ -1081,8 +1081,8 @@ void lStkTan()
     SinhCosh086(y, &sinhy, &coshy);
     denom = cosx + coshy;
     ChkLongDenom(denom);
-    Arg1->l.x = divide(sinx,denom,bitshift);
-    Arg1->l.y = divide(sinhy,denom,bitshift);
+    Arg1->l.x = divide(sinx, denom, bitshift);
+    Arg1->l.y = divide(sinhy, denom, bitshift);
 }
 #endif
 
@@ -1118,8 +1118,8 @@ void lStkTanh()
     SinhCosh086(x, &sinhx, &coshx);
     denom = coshx + cosy;
     ChkLongDenom(denom);
-    Arg1->l.x = divide(sinhx,denom,bitshift);
-    Arg1->l.y = divide(siny,denom,bitshift);
+    Arg1->l.x = divide(sinhx, denom, bitshift);
+    Arg1->l.y = divide(siny, denom, bitshift);
 }
 #endif
 
@@ -1155,8 +1155,8 @@ void lStkCoTan()
     SinhCosh086(y, &sinhy, &coshy);
     denom = coshy - cosx;
     ChkLongDenom(denom);
-    Arg1->l.x = divide(sinx,denom,bitshift);
-    Arg1->l.y = -divide(sinhy,denom,bitshift);
+    Arg1->l.x = divide(sinx, denom, bitshift);
+    Arg1->l.y = -divide(sinhy, denom, bitshift);
 }
 #endif
 
@@ -1192,8 +1192,8 @@ void lStkCoTanh()
     SinhCosh086(x, &sinhx, &coshx);
     denom = coshx - cosy;
     ChkLongDenom(denom);
-    Arg1->l.x = divide(sinhx,denom,bitshift);
-    Arg1->l.y = -divide(siny,denom,bitshift);
+    Arg1->l.x = divide(sinhx, denom, bitshift);
+    Arg1->l.y = -divide(siny, denom, bitshift);
 }
 #endif
 
@@ -1219,30 +1219,30 @@ void dStkRecip()
 void mStkRecip()
 {
     MP mod;
-    mod = *MPadd(*MPmul(Arg1->m.x, Arg1->m.x),*MPmul(Arg1->m.y, Arg1->m.y));
+    mod = *MPadd(*MPmul(Arg1->m.x, Arg1->m.x), *MPmul(Arg1->m.y, Arg1->m.y));
     if (mod.Mant == 0L)
     {
         overflow = true;
         return;
     }
-    Arg1->m.x = *MPdiv(Arg1->m.x,mod);
-    Arg1->m.y = *MPdiv(Arg1->m.y,mod);
+    Arg1->m.x = *MPdiv(Arg1->m.x, mod);
+    Arg1->m.y = *MPdiv(Arg1->m.y, mod);
     Arg1->m.y.Exp ^= 0x8000;
 }
 
 void lStkRecip()
 {
     long mod;
-    mod = multiply(Arg1->l.x,Arg1->l.x,bitshift)
-          + multiply(Arg1->l.y,Arg1->l.y,bitshift);
+    mod = multiply(Arg1->l.x, Arg1->l.x, bitshift)
+          + multiply(Arg1->l.y, Arg1->l.y, bitshift);
     if (save_release > 1920)
     {
         ChkLongDenom(mod);
     }
     else if (mod <= 0L)
         return;
-    Arg1->l.x =  divide(Arg1->l.x,mod,bitshift);
-    Arg1->l.y = -divide(Arg1->l.y,mod,bitshift);
+    Arg1->l.x =  divide(Arg1->l.x, mod, bitshift);
+    Arg1->l.y = -divide(Arg1->l.y, mod, bitshift);
 }
 #endif
 
@@ -1954,7 +1954,7 @@ unsigned SkipWhiteSpace(char *Str)
 // detect if constant is part of a (a,b) construct
 static bool isconst_pair(char *Str)
 {
-    int n,j;
+    int n, j;
     bool answer = false;
     // skip past first number
     for (n = 0; isdigit(Str[n]) || Str[n] == '.'; n++)
@@ -2146,7 +2146,7 @@ FNCT_LIST FnctList[] =
     {"tan",   &StkTan},
     {"tanh",  &StkTanh},
     {"cotan", &StkCoTan},
-    {"cotanh",&StkCoTanh},
+    {"cotanh", &StkCoTanh},
     {"cosxx", &StkCosXX},
     {"srand", &StkSRand},
     {"asin",  &StkASin},
@@ -2199,7 +2199,7 @@ int whichfn(char *s, int len)
     int out;
     if (len != 3)
         out = 0;
-    else if (strnicmp(s,"fn",2))
+    else if (strnicmp(s, "fn", 2))
         out = 0;
     else
         out = atoi(s+2);
@@ -3322,7 +3322,7 @@ void is_complex_constant(FILE * openfile, token_st * tok)
     filepos = ftell(openfile);
     if (debugflag == debug_flags::write_formula_debug_information)
     {
-        debug_token = fopen("frmconst.txt","at");
+        debug_token = fopen("frmconst.txt", "at");
     }
 
     while (!done)
@@ -3695,7 +3695,7 @@ int frm_get_param_stuff(char * Name)
     {
         return 0;  //  and don't reset the pointers
     }
-    if (find_file_item(FormFileName,Name,&entry_file, 1))
+    if (find_file_item(FormFileName, Name, &entry_file, 1))
     {
         stopmsg(STOPMSG_NONE, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return 0;
@@ -3712,23 +3712,23 @@ int frm_get_param_stuff(char * Name)
 
     if (debugflag == debug_flags::write_formula_debug_information)
     {
-        debug_token = fopen("frmtokens.txt","at");
+        debug_token = fopen("frmtokens.txt", "at");
         if (debug_token != nullptr)
-            fprintf(debug_token,"%s\n", Name);
+            fprintf(debug_token, "%s\n", Name);
     }
     while (frmgettoken(entry_file, &current_token))
     {
         if (debug_token != nullptr)
         {
-            fprintf(debug_token,"%s\n", current_token.token_str);
-            fprintf(debug_token,"token_type is %d\n", current_token.token_type);
-            fprintf(debug_token,"token_id is %d\n", current_token.token_id);
+            fprintf(debug_token, "%s\n", current_token.token_str);
+            fprintf(debug_token, "token_type is %d\n", current_token.token_type);
+            fprintf(debug_token, "token_id is %d\n", current_token.token_id);
             if (current_token.token_type == REAL_CONSTANT || current_token.token_type == COMPLEX_CONSTANT)
             {
-                fprintf(debug_token,"Real value is %f\n", current_token.token_const.x);
-                fprintf(debug_token,"Imag value is %f\n", current_token.token_const.y);
+                fprintf(debug_token, "Real value is %f\n", current_token.token_const.x);
+                fprintf(debug_token, "Imag value is %f\n", current_token.token_const.y);
             }
-            fprintf(debug_token,"\n");
+            fprintf(debug_token, "\n");
         }
         switch (current_token.token_type)
         {
@@ -3843,10 +3843,10 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
                 return false;
             case '\r':
             case '\n':
-                stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+                stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
                 return false;
             case '{':
-                stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
+                stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
                 return false;
             case ' ':
             case '\t':
@@ -3887,11 +3887,11 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
             {
             case EOF:
             case '\032':
-                stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_UNEXPECTED_EOF));
+                stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_UNEXPECTED_EOF));
                 return false;
             case '\r':
             case '\n':
-                stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+                stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
                 return false;
             case '{':
                 done = true;
@@ -3942,17 +3942,17 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
 
     if (debugflag == debug_flags::write_formula_debug_information)
     {
-        debug_fp = fopen("debugfrm.txt","at");
+        debug_fp = fopen("debugfrm.txt", "at");
         if (debug_fp != nullptr)
         {
-            fprintf(debug_fp,"%s\n",FormName);
+            fprintf(debug_fp, "%s\n", FormName);
             if (symmetry != symmetry_type::NONE)
             {
                 auto it = std::find_if(std::begin(SymStr), std::end(SymStr),
                     [](SYMETRY const& item) { return item.n == symmetry; });
                 if (it != std::end(SymStr))
                 {
-                    fprintf(debug_fp,"%s\n", it->s);
+                    fprintf(debug_fp, "%s\n", it->s);
                 }
             }
         }
@@ -4015,7 +4015,7 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
     }
 
     if (debug_fp != nullptr && FormulaStr != nullptr)
-        fprintf(debug_fp,"   %s\n",FormulaStr);
+        fprintf(debug_fp, "   %s\n", FormulaStr);
     if (debug_fp != nullptr)
         fclose(debug_fp);
 
@@ -4043,7 +4043,7 @@ bool RunForm(char *Name, bool from_prompts1c)
         return true;  //  and don't reset the pointers
     }
 
-    if (find_file_item(FormFileName,Name,&entry_file, 1))
+    if (find_file_item(FormFileName, Name, &entry_file, 1))
     {
         stopmsg(STOPMSG_NONE, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return true;
@@ -4055,7 +4055,7 @@ bool RunForm(char *Name, bool from_prompts1c)
     if (FormStr)  //  No errors while making string
     {
         parser_allocate();  //  ParseStr() will test if this alloc worked
-        if (ParseStr(FormStr,1))
+        if (ParseStr(FormStr, 1))
             return true;   //  parse failed, don't change fn pointers
         else
         {
@@ -4117,7 +4117,7 @@ bool intFormulaSetup()
 
 void init_misc()
 {
-    static Arg argfirst,argsecond;
+    static Arg argfirst, argsecond;
     if (v.empty())
         v.resize(5);;
     Arg1 = &argfirst;
