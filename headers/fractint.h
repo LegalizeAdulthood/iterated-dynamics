@@ -812,6 +812,7 @@ inline double dot_product(VECTOR v1, VECTOR v2)
 #define DBL_EPSILON 2.2204460492503131e-16
 #endif
 #ifndef XFRACT
+// TODO: make sure X Window System font can render these chars
 #define UPARR "\x18"
 #define DNARR "\x19"
 #define RTARR "\x1A"
