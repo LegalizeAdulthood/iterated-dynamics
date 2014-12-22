@@ -13,7 +13,7 @@
 
 #ifndef XFRACT
 #define getint(ptr) (*(int *)(ptr))
-#define setint(ptr,n) (*(int *)(ptr)) = n
+#define setint(ptr, n) (*(int *)(ptr)) = n
 #else
 /* Get an int from an unaligned pointer
  * This routine is needed because this program uses unaligned 2 byte
@@ -23,14 +23,14 @@ int
 getint(char *ptr)
 {
     int s;
-    bcopy(ptr,&s,sizeof(int));
+    bcopy(ptr, &s, sizeof(int));
     return s;
 }
 
 /* Set an int to an unaligned pointer */
 void setint(char *ptr, int n)
 {
-    bcopy(&n,ptr,sizeof(int));
+    bcopy(&n, ptr, sizeof(int));
 }
 #endif
 
@@ -261,8 +261,8 @@ int find_line_width(int mode, char *curr, unsigned len)
 }
 
 
-#define DO_PRINTN(ch,n)  ( pd.s = &(ch), pd.i = (n), output(PD_PRINTN, &pd, info) )
-#define DO_PRINT(str,n)  ( pd.s = (str), pd.i = (n), output(PD_PRINT, &pd, info) )
+#define DO_PRINTN(ch, n)  ( pd.s = &(ch), pd.i = (n), output(PD_PRINTN, &pd, info) )
+#define DO_PRINT(str, n)  ( pd.s = (str), pd.i = (n), output(PD_PRINT, &pd, info) )
 
 
 bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
@@ -579,7 +579,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
                     break;
 
                 case TOK_CENTER:
-                    width = (PAGE_WIDTH - find_line_width(DOC,pd.curr,pd.len)) / 2;
+                    width = (PAGE_WIDTH - find_line_width(DOC, pd.curr, pd.len)) / 2;
                     if (!DO_PRINTN(sp, width))
                         return false;
                     break;
