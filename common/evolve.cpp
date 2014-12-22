@@ -919,7 +919,8 @@ void drawparmbox(int mode)
         clearbox(); // to avoid probs when one box overlaps the other
     }
     if (prmboxcount != 0)
-    { // clear last parmbox
+    {
+        // clear last parmbox
         boxcount = prmboxcount;
         MoveFromMemory((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, prmboxhandle);
         MoveFromMemory((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, prmboxhandle);
