@@ -925,7 +925,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             g_init_mode = yesnoval[0] ? 0 : -1; // skip credits for batch mode
 #endif
             initbatch = yesnoval[0];
-            return 3;
+            return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
         if (strcmp(variable, "maxhistory") == 0)       // maxhistory=?
         {
@@ -941,7 +941,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 maxhistory = numval;
             }
-            return 3;
+            return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
 
         // adapter= no longer used
@@ -954,13 +954,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 goto badarg;
             }
-            return 3;
+            return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
 
         // 8514 API no longer used; silently gobble any argument
         if (strcmp(variable, "afi") == 0)
         {
-            return 3;
+            return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
 
         if (strcmp(variable, "textsafe") == 0)   // textsafe==?
@@ -976,7 +976,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                     goto badarg;
                 }
             }
-            return 3;
+            return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
 
         if (strcmp(variable, "vesadetect") == 0)
@@ -986,7 +986,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 goto badarg;
             }
-            return 3;
+            return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
 
         // biospalette no longer used, do validity checks, but gobble argument
@@ -996,14 +996,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 goto badarg;
             }
-            return 3;
+            return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
 
         if (strcmp(variable, "fpu") == 0)
         {
             if (strcmp(value, "387") == 0)
             {
-                return 0;
+                return CMDARG_NONE;
             }
             goto badarg;
         }
@@ -1015,7 +1015,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 goto badarg;
             }
             escape_exit = yesnoval[0] != 0;
-            return 3;
+            return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
 
         if (strcmp(variable, "makedoc") == 0)
@@ -1110,7 +1110,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             save_release = 1730; // before start of lyapunov wierdness
         }
-        return 9;
+        return CMDARG_FRACTAL_PARAM | CMDARG_RESET;
     }
 
     if (strcmp(variable, "filename") == 0)      // filename=?
@@ -1125,7 +1125,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             gifmask[0] = '*';
             gifmask[1] = 0;
             strcat(gifmask, value);
-            return 0;
+            return CMDARG_NONE;
         }
         if (valuelen > (FILE_MAX_PATH-1))
         {
@@ -1149,7 +1149,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             extract_filename(browsename, readname);
         }
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "video") == 0)         // video=?
@@ -1172,7 +1172,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "map") == 0)         // map=, set default colors
@@ -1185,15 +1185,15 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         existdir = merge_pathnames(MAP_name, value, mode);
         if (existdir > 0)
         {
-            return 0;    // got a directory
+            return CMDARG_NONE;    // got a directory
         }
         else if (existdir < 0)
         {
             init_msg(variable, value, mode);
-            return 0;
+            return CMDARG_NONE;
         }
         SetColorPaletteName(MAP_name);
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "colors") == 0)       // colors=, set current colors
@@ -1202,7 +1202,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "recordcolors") == 0)       // recordcolors=
@@ -1212,7 +1212,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         recordcolors = *value;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "maxlinelength") == 0)  // maxlinelength=
@@ -1222,13 +1222,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         maxlinelength = numval;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "comment") == 0)       // comment=
     {
         parse_comments(value);
-        return 0;
+        return CMDARG_NONE;
     }
 
     // tplus no longer used, validate value and gobble argument
@@ -1238,7 +1238,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        return 0;
+        return CMDARG_NONE;
     }
 
     // noninterlaced no longer used, validate value and gobble argument
@@ -1248,7 +1248,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        return 0;
+        return CMDARG_NONE;
     }
 
     // maxcolorres no longer used, validate value and gobble argument
@@ -1257,7 +1257,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (numval == 1 || numval == 4 || numval == 8 ||
                 numval == 16 || numval == 24)
         {
-            return 0;
+            return CMDARG_NONE;
         }
         goto badarg;
     }
@@ -1269,7 +1269,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        return 0;
+        return CMDARG_NONE;
     }
 
     // keep this for backward compatibility
@@ -1280,7 +1280,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         fract_overwrite = (yesnoval[0] ^ 1) != 0;
-        return 0;
+        return CMDARG_NONE;
     }
     if (strcmp(variable, "overwrite") == 0)    // overwrite=?
     {
@@ -1289,7 +1289,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         fract_overwrite = yesnoval[0] != 0;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "gif87a") == 0)       // gif87a=?
@@ -1299,7 +1299,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         gif87a_flag = yesnoval[0] != 0;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "dither") == 0) // dither=?
@@ -1309,13 +1309,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         dither_flag = yesnoval[0] != 0;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "savetime") == 0)      // savetime=?
     {
         initsavetime = numval;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "autokey") == 0)       // autokey=?
@@ -1332,7 +1332,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "autokeyname") == 0)   // autokeyname=?
@@ -1341,7 +1341,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             init_msg(variable, value, mode);
         }
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "type") == 0)         // type=?
@@ -1382,7 +1382,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             load_params(fractype);
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "inside") == 0)       // inside=?
@@ -1409,7 +1409,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             if (strcmp(value, args[ii].arg) == 0)
             {
                 inside = args[ii].inside;
-                return 1;
+                return CMDARG_FRACTAL_PARAM;
             }
         }
         if (numval == NONNUMERIC)
@@ -1420,13 +1420,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             inside = numval;
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "proximity") == 0)       // proximity=?
     {
         closeprox = floatval[0];
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "fillcolor") == 0)       // fillcolor
@@ -1443,7 +1443,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             fillcolor = numval;
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "finattract") == 0)   // finattract=?
@@ -1453,7 +1453,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         finattract = yesnoval[0] != 0;
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "nobof") == 0)   // nobof=?
@@ -1463,7 +1463,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         nobof = yesnoval[0] != 0;
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "function") == 0)      // function=?,?
@@ -1483,7 +1483,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             ++value;
         }
         functionpreloaded = true; // for old bifs
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "outside") == 0)      // outside=?
@@ -1509,7 +1509,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             if (strcmp(value, args[ii].arg) == 0)
             {
                 outside = args[ii].outside;
-                return 1;
+                return CMDARG_FRACTAL_PARAM;
             }
         }
         if ((numval == NONNUMERIC) || (numval < TDIS || numval > 255))
@@ -1517,7 +1517,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         outside = numval;
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "bfdigits") == 0)      // bfdigits=?
@@ -1527,7 +1527,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         bfdigits = numval;
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "maxiter") == 0)       // maxiter=?
@@ -1537,12 +1537,12 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         maxit = (long) floatval[0];
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "iterincr") == 0)        // iterincr=?
     {
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "passes") == 0)        // passes=?
@@ -1563,7 +1563,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 stoppass = 0;
             }
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "ismand") == 0)        // ismand=?
@@ -1573,7 +1573,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         ismand = yesnoval[0] != 0;
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "cyclelimit") == 0)   // cyclelimit=?
@@ -1583,7 +1583,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         initcyclelimit = numval;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "makemig") == 0)
@@ -1616,7 +1616,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         rotate_lo = intval[0];
         rotate_hi = intval[1];
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "ranges") == 0)
@@ -1669,14 +1669,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (!resized)
         {
             stopmsg(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
-            return -1;
+            return CMDARG_ERROR;
         }
         rangeslen = entries;
         for (int i = 0; i < rangeslen; ++i)
         {
             ranges[i] = tmpranges[i];
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "savename") == 0)      // savename=?
@@ -1692,7 +1692,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 init_msg(variable, value, mode);
             }
         }
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "tweaklzw") == 0)      // tweaklzw=?
@@ -1705,7 +1705,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             lzw[1] = intval[1];
         }
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "minstack") == 0)      // minstack=?
@@ -1715,7 +1715,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         minstack = intval[0];
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "mathtolerance") == 0)      // mathtolerance=?
@@ -1732,7 +1732,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             math_tol[1] = floatval[1];
         }
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "tempdir") == 0)      // tempdir=?
@@ -1747,7 +1747,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         strcpy(tempdir, value);
         fix_dirname(tempdir);
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "workdir") == 0)      // workdir=?
@@ -1762,20 +1762,20 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         strcpy(workdir, value);
         fix_dirname(workdir);
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "exitmode") == 0)      // exitmode=?
     {
         sscanf(value, "%x", &numval);
         exitmode = (BYTE)numval;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "textcolors") == 0)
     {
         parse_textcolors(value);
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "potential") == 0)     // potential=?
@@ -1808,7 +1808,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             pot16bit = true;
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "params") == 0)        // params=?,?
@@ -1829,7 +1829,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 floattobf(bfparms[k], param[k]);
             }
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "miim") == 0)          // miim=?[/?[/?[/?]]]
@@ -1884,7 +1884,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
         }
 
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "initorbit") == 0)     // initorbit=?,?
@@ -1903,7 +1903,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             initorbit.y = floatval[1];
             useinitorbit = 1;
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "orbitname") == 0)         // orbitname=?
@@ -1912,7 +1912,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "3dmode") == 0)         // orbitname=?
@@ -1933,7 +1933,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             juli3Dmode = j;
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "julibrot3d") == 0)       // julibrot3d=?,?,?,?
@@ -1966,7 +1966,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             distfp = (float)floatval[5];
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "julibroteyes") == 0)       // julibroteyes=?,?,?,?
@@ -1976,7 +1976,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         eyesfp = (float)floatval[0];
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "julibrotfromto") == 0)       // julibrotfromto=?,?,?,?
@@ -1989,7 +1989,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         mxminfp = floatval[1];
         mymaxfp = floatval[2];
         myminfp = floatval[3];
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "corners") == 0)       // corners=?,?,?,?
@@ -1997,7 +1997,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         int dec;
         if (fractype == fractal_type::CELLULAR)
         {
-            return 1; // skip setting the corners
+            return CMDARG_FRACTAL_PARAM; // skip setting the corners
         }
         if (floatparms != totparms
                 || (totparms != 0 && totparms != 4 && totparms != 6))
@@ -2007,7 +2007,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         usemag = false;
         if (totparms == 0)
         {
-            return 0; // turns corners mode on
+            return CMDARG_NONE; // turns corners mode on
         }
         initcorners = true;
         // good first approx, but dec could be too big
@@ -2107,7 +2107,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             xx3rd =      floatval[4];
             yy3rd =      floatval[5];
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "orbitcorners") == 0)  // orbit corners=?,?,?,?
@@ -2132,7 +2132,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         set_orbit_corners = true;
         keep_scrn_coords = true;
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "screencoords") == 0)     // screencoords=?
@@ -2142,7 +2142,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         keep_scrn_coords = yesnoval[0] != 0;
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "orbitdrawmode") == 0)     // orbitdrawmode=?
@@ -2152,7 +2152,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         drawmode = charval[0];
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "viewwindows") == 0)
@@ -2176,7 +2176,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             viewxdots = intval[3];
         if ((totparms == 5) && (intval[4] > 0))
             viewydots = intval[4];
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "center-mag") == 0)
@@ -2188,10 +2188,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 || (totparms >= 3 && floatval[2] == 0.0))
             goto badarg;
         if (fractype == fractal_type::CELLULAR)
-            return 1; // skip setting the corners
+            return CMDARG_FRACTAL_PARAM; // skip setting the corners
         usemag = true;
         if (totparms == 0)
-            return 0; // turns center-mag mode on
+            return CMDARG_NONE; // turns center-mag mode on
         initcorners = true;
         // dec = get_max_curarg_len(floatvalstr, totparms);
         sscanf(floatvalstr[2], "%Lf", &Magnification);
@@ -2222,7 +2222,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 Skew = floatval[5];
             // calculate bounds
             cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
-            return 1;
+            return CMDARG_FRACTAL_PARAM;
         }
         else
         {
@@ -2258,7 +2258,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             cvtcornersbf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
             bfcornerstofloat();
             restore_stack(saved);
-            return 1;
+            return CMDARG_FRACTAL_PARAM;
         }
     }
 
@@ -2267,7 +2267,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (floatparms != 1 || floatval[0] < 0)
             goto badarg;
         aspectdrift = (float)floatval[0];
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "invert") == 0)
@@ -2281,7 +2281,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             inversion[1] = floatval[1];
             inversion[2] = floatval[2];
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "olddemmcolors") == 0)
@@ -2289,7 +2289,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (yesnoval[0] < 0)
             goto badarg;
         old_demm_colors = yesnoval[0] != 0;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "askvideo") == 0)
@@ -2297,11 +2297,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (yesnoval[0] < 0)
             goto badarg;
         askvideo = yesnoval[0] != 0;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "ramvideo") == 0)        // ramvideo=?
-        return 0; // just ignore and return, for old time's sake
+        return CMDARG_NONE; // just ignore and return, for old time's sake
 
     if (strcmp(variable, "float") == 0)
     {         // float=?
@@ -2312,7 +2312,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 #else
         usr_floatflag = true; // must use floating point
 #endif
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "fastrestore") == 0)
@@ -2320,7 +2320,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (yesnoval[0] < 0)
             goto badarg;
         fastrestore = yesnoval[0] != 0;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "orgfrmdir") == 0)
@@ -2332,13 +2332,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         orgfrmsearch = true;
         strcpy(orgfrmdir, value);
         fix_dirname(orgfrmdir);
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "biomorph") == 0)
     {      // biomorph=?
         usr_biomorph = numval;
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "orbitsave") == 0)
@@ -2348,7 +2348,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         else if (yesnoval[0] < 0)
             goto badarg;
         orbitsave |= yesnoval[0];
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "bailout") == 0)
@@ -2356,7 +2356,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (floatval[0] < 1 || floatval[0] > 2100000000L)
             goto badarg;
         bailout = (long)floatval[0];
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "bailoutest") == 0)
@@ -2378,7 +2378,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         else
             goto badarg;
         setbailoutformula(bailoutest);
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "symmetry") == 0)
@@ -2397,7 +2397,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             forcesymmetry = symmetry_type::NONE;
         else
             goto badarg;
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     // deprecated print parameters
@@ -2413,7 +2413,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             || (strcmp(variable, "linefeed") == 0)
             || (strcmp(variable, "comport") == 0))
     {
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "sound") == 0)
@@ -2469,19 +2469,19 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                     goto badarg;
             } // end for
         }    // end totparms > 1
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "hertz") == 0)
     {         // Hertz=?
         basehertz = numval;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "volume") == 0)
     {         // Volume =?
         fm_vol = numval & 0x3F; // 63
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "attenuate") == 0)
@@ -2496,7 +2496,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             hi_atten = 3;
         else
             goto badarg;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "polyphony") == 0)
@@ -2504,37 +2504,37 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (numval > 9)
             goto badarg;
         polyphony = abs(numval-1);
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "wavetype") == 0)
     { // wavetype = ?
         fm_wavetype = numval & 0x0F;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "attack") == 0)
     { // attack = ?
         fm_attack = numval & 0x0F;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "decay") == 0)
     { // decay = ?
         fm_decay = numval & 0x0F;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "sustain") == 0)
     { // sustain = ?
         fm_sustain = numval & 0x0F;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "srelease") == 0)
     { // release = ?
         fm_release = numval & 0x0F;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "scalemap") == 0)
@@ -2546,7 +2546,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                     && (intval[counter] < 13))
                 scale_map[counter] = intval[counter];
 #endif
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "periodicity") == 0)
@@ -2566,7 +2566,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             usr_periodicitycheck = 255;
         if (usr_periodicitycheck < -255)
             usr_periodicitycheck = -255;
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "logmap") == 0)
@@ -2580,7 +2580,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             LogFlag = -1;                          // old log palette
         else
             LogFlag = (long)floatval[0];
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "logmode") == 0)
@@ -2596,7 +2596,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             Log_Auto_Calc = true;       // force auto calc of logmap
         }
         else goto badarg;
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "debugflag") == 0
@@ -2605,20 +2605,20 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         debugflag = numval;
         timerflag = (debugflag & debug_flags::benchmark_timer) != 0;       // separate timer flag
         debugflag &= ~debug_flags::benchmark_timer;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "rseed") == 0)
     {
         rseed = numval;
         rflag = true;
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "orbitdelay") == 0)
     {
         orbit_delay = numval;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "orbitinterval") == 0)
@@ -2628,7 +2628,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             orbit_interval = 1;
         if (orbit_interval > 255)
             orbit_interval = 255;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "showdot") == 0)
@@ -2655,13 +2655,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             if (sizedot < 0)
                 sizedot = 0;
         }
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "showorbit") == 0) // showorbit=yes|no
     {
         start_showorbit = yesnoval[0] != 0;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "decomp") == 0)
@@ -2675,7 +2675,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             decomp[1] = intval[1];
             bailout = decomp[1];
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "distest") == 0)
@@ -2696,7 +2696,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             pseudoy = 0;
             pseudox = pseudoy;
         }
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "formulafile") == 0)
@@ -2705,7 +2705,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         if (merge_pathnames(FormFileName, value, mode) < 0)
             init_msg(variable, value, mode);
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "formulaname") == 0)
@@ -2713,7 +2713,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (valuelen > ITEMNAMELEN)
             goto badarg;
         strcpy(FormName, value);
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "lfile") == 0)
@@ -2722,7 +2722,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         if (merge_pathnames(LFileName, value, mode) < 0)
             init_msg(variable, value, mode);
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "lname") == 0)
@@ -2730,7 +2730,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (valuelen > ITEMNAMELEN)
             goto badarg;
         strcpy(LName, value);
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "ifsfile") == 0)
@@ -2743,7 +2743,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             reset_ifs_defn();
         else if (existdir < 0)
             init_msg(variable, value, mode);
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
 
@@ -2754,7 +2754,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         strcpy(IFSName, value);
         reset_ifs_defn();
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "parmfile") == 0)
@@ -2763,7 +2763,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         if (merge_pathnames(CommandFile, value, mode) < 0)
             init_msg(variable, value, mode);
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
     if (strcmp(variable, "stereo") == 0)
@@ -2771,7 +2771,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if ((numval < 0) || (numval > 4))
             goto badarg;
         g_glasses_type = numval;
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "rotation") == 0)
@@ -2781,7 +2781,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         XROT = intval[0];
         YROT = intval[1];
         ZROT = intval[2];
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "perspective") == 0)
@@ -2789,7 +2789,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (numval == NONNUMERIC)
             goto badarg;
         ZVIEWER = numval;
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "xyshift") == 0)
@@ -2798,19 +2798,19 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         XSHIFT = intval[0];
         YSHIFT = intval[1];
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "interocular") == 0)
     {   // interocular=?
         g_eye_separation = numval;
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "converge") == 0)
     {      // converg=?
         xadjust = numval;
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "crop") == 0)
@@ -2825,7 +2825,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         red_crop_right  = intval[1];
         blue_crop_left  = intval[2];
         blue_crop_right = intval[3];
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "bright") == 0)
@@ -2834,7 +2834,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         red_bright  = intval[0];
         blue_bright = intval[1];
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "xyadjust") == 0)
@@ -2843,7 +2843,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         xtrans = intval[0];
         ytrans = intval[1];
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "3d") == 0)
@@ -2858,7 +2858,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         display3d = yesnoval[0];
         initvars_3d();
-        return (display3d) ? 6 : 2;
+        return display3d ? (CMDARG_3D_PARAM | CMDARG_3D_YES) : CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "sphere") == 0)
@@ -2866,7 +2866,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (yesnoval[0] < 0)
             goto badarg;
         SPHERE = yesnoval[0];
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "scalexyz") == 0)
@@ -2877,14 +2877,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         YSCALE = intval[1];
         if (totparms > 2)
             ROUGH = intval[2];
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     // "rough" is really scale z, but we add it here for convenience
     if (strcmp(variable, "roughness") == 0)
     {     // roughness=?
         ROUGH = numval;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "waterline") == 0)
@@ -2892,7 +2892,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (numval < 0)
             goto badarg;
         WATERLINE = numval;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "filltype") == 0)
@@ -2900,7 +2900,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (numval < -1 || numval > 6)
             goto badarg;
         FILLTYPE = numval;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "lightsource") == 0)
@@ -2910,7 +2910,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         XLIGHT = intval[0];
         YLIGHT = intval[1];
         ZLIGHT = intval[2];
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "smoothing") == 0)
@@ -2918,7 +2918,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (numval < 0)
             goto badarg;
         LIGHTAVG = numval;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "latitude") == 0)
@@ -2927,7 +2927,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         THETA1 = intval[0];
         THETA2 = intval[1];
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "longitude") == 0)
@@ -2936,7 +2936,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         PHI1 = intval[0];
         PHI2 = intval[1];
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "radius") == 0)
@@ -2944,7 +2944,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (numval < 0)
             goto badarg;
         RADIUS = numval;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "transparent") == 0)
@@ -2955,7 +2955,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         transparent[1] = transparent[0];
         if (totparms > 1)
             transparent[1] = intval[1];
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "preview") == 0)
@@ -2963,7 +2963,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (yesnoval[0] < 0)
             goto badarg;
         preview = yesnoval[0] != 0;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "showbox") == 0)
@@ -2971,7 +2971,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (yesnoval[0] < 0)
             goto badarg;
         showbox = yesnoval[0] != 0;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "coarse") == 0)
@@ -2979,7 +2979,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (numval < 3 || numval > 2000)
             goto badarg;
         previewfactor = numval;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "randomize") == 0)
@@ -2987,7 +2987,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (numval < 0 || numval > 7)
             goto badarg;
         RANDOMIZE = numval;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "ambient") == 0)
@@ -2995,7 +2995,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (numval < 0 || numval > 100)
             goto badarg;
         Ambient = numval;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "haze") == 0)
@@ -3003,7 +3003,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (numval < 0 || numval > 100)
             goto badarg;
         haze = numval;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "fullcolor") == 0)
@@ -3011,7 +3011,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (yesnoval[0] < 0)
             goto badarg;
         Targa_Out = yesnoval[0] != 0;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "truecolor") == 0)
@@ -3019,7 +3019,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (yesnoval[0] < 0)
             goto badarg;
         truecolor = yesnoval[0] != 0;
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "truemode") == 0)
@@ -3033,7 +3033,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             truemode = 2;
         if (intval[0] == 3)
             truemode = 3;
-        return 3;
+        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "usegrayscale") == 0)
@@ -3041,7 +3041,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (yesnoval[0] < 0)
             goto badarg;
         grayflag = yesnoval[0] != 0;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "monitorwidth") == 0)
@@ -3049,7 +3049,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (totparms != 1 || floatparms != 1)
             goto badarg;
         AutoStereo_width  = floatval[0];
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "targa_overlay") == 0)
@@ -3057,7 +3057,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (yesnoval[0] < 0)
             goto badarg;
         Targa_Overlay = yesnoval[0] != 0;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "background") == 0)
@@ -3070,7 +3070,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         back_color[0] = (BYTE)intval[0];
         back_color[1] = (BYTE)intval[1];
         back_color[2] = (BYTE)intval[2];
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "lightname") == 0)
@@ -3079,7 +3079,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         if (first_init || mode == cmd_file::AT_AFTER_STARTUP)
             strcpy(light_name, value);
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "ray") == 0)
@@ -3087,7 +3087,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (numval < 0 || numval > 6)
             goto badarg;
         RAY = numval;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "brief") == 0)
@@ -3095,7 +3095,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (yesnoval[0] < 0)
             goto badarg;
         BRIEF = yesnoval[0] != 0;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "release") == 0)
@@ -3104,7 +3104,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
 
         save_release = numval;
-        return 2;
+        return CMDARG_3D_PARAM;
     }
 
     if (strcmp(variable, "curdir") == 0)
@@ -3112,7 +3112,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (yesnoval[0] < 0)
             goto badarg;
         checkcurdir = yesnoval[0] != 0;
-        return 0;
+        return CMDARG_NONE;
     }
 
     if (strcmp(variable, "virtual") == 0)         // virtual=
@@ -3122,12 +3122,12 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         g_virtual_screens = yesnoval[0] != 0;
-        return 1;
+        return CMDARG_FRACTAL_PARAM;
     }
 
 badarg:
     argerror(curarg);
-    return -1;
+    return CMDARG_ERROR;
 }
 
 // Some routines broken out of above so compiler doesn't run out of heap:
@@ -3290,7 +3290,7 @@ static int parse_colors(char *value)
     }
     colorpreloaded = true;
     memcpy(olddacbox, g_dac_box, 256*3);
-    return 0;
+    return CMDARG_NONE;
 badcolor:
     return -1;
 }
@@ -3449,7 +3449,7 @@ int init_msg(const char *cmdstr, char *badfilename, cmd_file mode)
         {
             driver_put_string(++row, 0, 15, "Press Escape to abort, any other key to continue");
             driver_move_cursor(row+1, 0);
-            dopause(2);  // defer getakeynohelp until after parseing
+            dopause(2);  // defer getakeynohelp until after parsing
         }
     }
     else if (badfilename)

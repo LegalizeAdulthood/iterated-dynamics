@@ -76,6 +76,8 @@ enum class calc_status_value
 
 enum cmdarg_flags
 {
+    CMDARG_ERROR            = -1,
+    CMDARG_NONE             = 0,
     CMDARG_FRACTAL_PARAM    = 1,
     CMDARG_3D_PARAM         = 2,
     CMDARG_3D_YES           = 4,
