@@ -135,7 +135,7 @@ struct DriverX11
     char const *x_font_name;    // = FONT;
     XFontStruct *font_info;     // = nullptr;
 
-    int xbufkey;                // = 0; Buffered X key
+    int key_buffer;             // = 0; Buffered X key
 
     unsigned char *fontPtr;     // = nullptr;
 
@@ -1058,101 +1058,101 @@ ev_key_press(DriverX11 *di, XKeyEvent *xevent)
         break;
     case XK_Home:
     case XK_R7:
-        di->xbufkey = di->ctl_mode ? FIK_CTL_HOME : FIK_HOME;
+        di->key_buffer = di->ctl_mode ? FIK_CTL_HOME : FIK_HOME;
         return 1;
     case XK_Left:
     case XK_R10:
-        di->xbufkey = di->ctl_mode ? FIK_CTL_LEFT_ARROW : FIK_LEFT_ARROW;
+        di->key_buffer = di->ctl_mode ? FIK_CTL_LEFT_ARROW : FIK_LEFT_ARROW;
         return 1;
     case XK_Right:
     case XK_R12:
-        di->xbufkey = di->ctl_mode ? FIK_CTL_RIGHT_ARROW : FIK_RIGHT_ARROW;
+        di->key_buffer = di->ctl_mode ? FIK_CTL_RIGHT_ARROW : FIK_RIGHT_ARROW;
         return 1;
     case XK_Down:
     case XK_R14:
-        di->xbufkey = di->ctl_mode ? FIK_CTL_DOWN_ARROW : FIK_DOWN_ARROW;
+        di->key_buffer = di->ctl_mode ? FIK_CTL_DOWN_ARROW : FIK_DOWN_ARROW;
         return 1;
     case XK_Up:
     case XK_R8:
-        di->xbufkey = di->ctl_mode ? FIK_CTL_UP_ARROW : FIK_UP_ARROW;
+        di->key_buffer = di->ctl_mode ? FIK_CTL_UP_ARROW : FIK_UP_ARROW;
         return 1;
     case XK_Insert:
-        di->xbufkey = di->ctl_mode ? FIK_CTL_INSERT : FIK_INSERT;
+        di->key_buffer = di->ctl_mode ? FIK_CTL_INSERT : FIK_INSERT;
         return 1;
     case XK_Delete:
-        di->xbufkey = di->ctl_mode ? FIK_CTL_DEL : FIK_DELETE;
+        di->key_buffer = di->ctl_mode ? FIK_CTL_DEL : FIK_DELETE;
         return 1;
     case XK_End:
     case XK_R13:
-        di->xbufkey = di->ctl_mode ? FIK_CTL_END : FIK_END;
+        di->key_buffer = di->ctl_mode ? FIK_CTL_END : FIK_END;
         return 1;
     case XK_Help:
-        di->xbufkey = FIK_F1;
+        di->key_buffer = FIK_F1;
         return 1;
     case XK_Prior:
     case XK_R9:
-        di->xbufkey = di->ctl_mode ? FIK_CTL_PAGE_UP : FIK_PAGE_UP;
+        di->key_buffer = di->ctl_mode ? FIK_CTL_PAGE_UP : FIK_PAGE_UP;
         return 1;
     case XK_Next:
     case XK_R15:
-        di->xbufkey = di->ctl_mode ? FIK_CTL_PAGE_DOWN : FIK_PAGE_DOWN;
+        di->key_buffer = di->ctl_mode ? FIK_CTL_PAGE_DOWN : FIK_PAGE_DOWN;
         return 1;
     case XK_F1:
     case XK_L1:
-        di->xbufkey = di->shift_mode ? FIK_SF1: FIK_F1;
+        di->key_buffer = di->shift_mode ? FIK_SF1: FIK_F1;
         return 1;
     case XK_F2:
     case XK_L2:
-        di->xbufkey = di->shift_mode ? FIK_SF2: FIK_F2;
+        di->key_buffer = di->shift_mode ? FIK_SF2: FIK_F2;
         return 1;
     case XK_F3:
     case XK_L3:
-        di->xbufkey = di->shift_mode ? FIK_SF3: FIK_F3;
+        di->key_buffer = di->shift_mode ? FIK_SF3: FIK_F3;
         return 1;
     case XK_F4:
     case XK_L4:
-        di->xbufkey = di->shift_mode ? FIK_SF4: FIK_F4;
+        di->key_buffer = di->shift_mode ? FIK_SF4: FIK_F4;
         return 1;
     case XK_F5:
     case XK_L5:
-        di->xbufkey = di->shift_mode ? FIK_SF5: FIK_F5;
+        di->key_buffer = di->shift_mode ? FIK_SF5: FIK_F5;
         return 1;
     case XK_F6:
     case XK_L6:
-        di->xbufkey = di->shift_mode ? FIK_SF6: FIK_F6;
+        di->key_buffer = di->shift_mode ? FIK_SF6: FIK_F6;
         return 1;
     case XK_F7:
     case XK_L7:
-        di->xbufkey = di->shift_mode ? FIK_SF7: FIK_F7;
+        di->key_buffer = di->shift_mode ? FIK_SF7: FIK_F7;
         return 1;
     case XK_F8:
     case XK_L8:
-        di->xbufkey = di->shift_mode ? FIK_SF8: FIK_F8;
+        di->key_buffer = di->shift_mode ? FIK_SF8: FIK_F8;
         return 1;
     case XK_F9:
     case XK_L9:
-        di->xbufkey = di->shift_mode ? FIK_SF9: FIK_F9;
+        di->key_buffer = di->shift_mode ? FIK_SF9: FIK_F9;
         return 1;
     case XK_F10:
     case XK_L10:
-        di->xbufkey = di->shift_mode ? FIK_SF10: FIK_F10;
+        di->key_buffer = di->shift_mode ? FIK_SF10: FIK_F10;
         return 1;
     case '+':
-        di->xbufkey = di->ctl_mode ? FIK_CTL_PLUS : '+';
+        di->key_buffer = di->ctl_mode ? FIK_CTL_PLUS : '+';
         return 1;
     case '-':
-        di->xbufkey = di->ctl_mode ? FIK_CTL_MINUS : '-';
+        di->key_buffer = di->ctl_mode ? FIK_CTL_MINUS : '-';
         return 1;
         break;
     case XK_Return:
     case XK_KP_Enter:
-        di->xbufkey = di->ctl_mode ? CTL('T') : '\n';
+        di->key_buffer = di->ctl_mode ? CTL('T') : '\n';
         return 1;
     }
     if (charcount == 1)
     {
-        di->xbufkey = buffer[0];
-        if (di->xbufkey == '\003')
+        di->key_buffer = buffer[0];
+        if (di->key_buffer == '\003')
         {
             goodbye();
         }
@@ -1297,7 +1297,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
     zoom_box_width = ABS(bandx1-bandx0)/x_size_d;
     zoom_box_height = zoom_box_width;
     if (!inside_help)
-        di->xbufkey = FIK_ENTER;
+        di->key_buffer = FIK_ENTER;
     if (di->xlastcolor != -1)
         XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, di->xlastcolor));
     XSetFunction(di->Xdp, di->Xgc, di->xlastfcn);
@@ -1341,7 +1341,7 @@ ev_motion_notify(DriverX11 *di, XEvent *xevent)
         else
         {
             Cursor_SetPos(xevent->xmotion.x, xevent->xmotion.y);
-            di->xbufkey = FIK_ENTER;
+            di->key_buffer = FIK_ENTER;
         }
     }
 }
@@ -1368,7 +1368,7 @@ handle_events(DriverX11 *di)
     if (di->doredraw)
         x11_redraw(&di->pub);
 
-    while (XPending(di->Xdp) && !di->xbufkey)
+    while (XPending(di->Xdp) && !di->key_buffer)
     {
         XNextEvent(di->Xdp, &xevent);
         switch (xevent.type)
@@ -1396,19 +1396,19 @@ handle_events(DriverX11 *di)
         }
     }
 
-    if (!di->xbufkey && editpal_cursor && !inside_help && lookatmouse == 3 &&
+    if (!di->key_buffer && editpal_cursor && !inside_help && lookatmouse == 3 &&
             (di->dx != 0 || di->dy != 0))
     {
         if (ABS(di->dx) > ABS(di->dy))
         {
             if (di->dx > 0)
             {
-                di->xbufkey = mousefkey[di->button_num][0]; // right
+                di->key_buffer = mousefkey[di->button_num][0]; // right
                 di->dx--;
             }
             else if (di->dx < 0)
             {
-                di->xbufkey = mousefkey[di->button_num][1]; // left
+                di->key_buffer = mousefkey[di->button_num][1]; // left
                 di->dx++;
             }
         }
@@ -1416,12 +1416,12 @@ handle_events(DriverX11 *di)
         {
             if (di->dy > 0)
             {
-                di->xbufkey = mousefkey[di->button_num][2]; // down
+                di->key_buffer = mousefkey[di->button_num][2]; // down
                 di->dy--;
             }
             else if (di->dy < 0)
             {
-                di->xbufkey = mousefkey[di->button_num][3]; // up
+                di->key_buffer = mousefkey[di->button_num][3]; // up
                 di->dy++;
             }
         }
@@ -2454,10 +2454,10 @@ x11_get_key(Driver *drv)
 
         handle_events(di);
 
-        if (di->xbufkey)
+        if (di->key_buffer)
         {
-            int ch = di->xbufkey;
-            di->xbufkey = 0;
+            int ch = di->key_buffer;
+            di->key_buffer = 0;
             skipcount = 9999; // If we got a key, check right away next time
             return translate_key(ch);
         }
@@ -2497,9 +2497,56 @@ static int x11_key_cursor(Driver *drv, int row, int col)
     return 0;
 }
 
+static void flush_output(DriverX11 *di)
+{
+    static time_t start = 0;
+    static long ticks_per_second = 0;
+    static long last = 0;
+    static long frames_per_second = 10;
+
+    if (!ticks_per_second)
+    {
+        if (!start)
+        {
+            time(&start);
+            last = readticker();
+        }
+        else
+        {
+            time_t now = time(nullptr);
+            long now_ticks = readticker();
+            if (now > start)
+            {
+                ticks_per_second = (now_ticks - last)/((long)(now - start));
+            }
+        }
+    }
+    else
+    {
+        long now = readticker();
+        if ((now - last)*frames_per_second > ticks_per_second)
+        {
+            driver_flush();
+            di->frame_.pump_messages(false);
+            last = now;
+        }
+    }
+}
+
 static int x11_key_pressed(Driver *drv)
 {
-    return 0;
+    DIX11(drv);
+
+    if (int const ch = di->key_buffer)
+    {
+        return ch;
+    }
+
+    flush_output(di);
+    int const ch = handle_special_keys(di->frame_.get_key_press(0));
+    di->key_buffer = ch;
+
+    return ch;
 }
 
 static int x11_wait_key_pressed(Driver *drv, int timeout)
@@ -2875,7 +2922,7 @@ static DriverX11 x11_driver_info = {
     false,                // XZoomWaiting
     FONT,                 // x_font_name
     nullptr,              // font_info
-    0,                    // xbufkey
+    0,                    // key_buffer
     nullptr,              // fontPtr
     { 0 },                // text_screen
     { 0 },                // text_attr
