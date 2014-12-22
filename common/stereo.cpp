@@ -110,7 +110,7 @@ static bool get_min_max()
             showtempmsg("Getting min and max");
         for (int xd = 0; xd < xdots; xd++)
         {
-            int ldepth = getdepth(xd,yd);
+            int ldepth = getdepth(xd, yd);
             if (ldepth < MINC)
                 MINC = ldepth;
             if (ldepth > MAXC)
@@ -297,7 +297,7 @@ bool do_AutoStereo()
             }
             for (int i = 0; i < xdots; i++)
                 buf[i] = (unsigned char)(rand()%colors);
-            outline_stereo(buf,xdots);
+            outline_stereo(buf, xdots);
         }
     }
 
@@ -349,6 +349,6 @@ exit_stereo:
     helpmode = oldhelpmode;
     driver_restore_graphics();
     memcpy(g_dac_box, savedacbox, 256 * 3);
-    spindac(0,1);
+    spindac(0, 1);
     return ret;
 }
