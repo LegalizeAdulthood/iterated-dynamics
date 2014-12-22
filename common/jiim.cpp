@@ -25,7 +25,7 @@
 #define delete(block)  block = nullptr
 
 int show_numbers =0;              // toggle for display of coords
-U16 memory_handle = 0;
+std::vector<char> screen_rect;
 FILE *file;
 int windows = 0;               // windows management system
 
@@ -381,44 +381,36 @@ DeQueueLong()
 
 static void SaveRect(int x, int y, int width, int depth)
 {
-    char buff[MAXRECT];
     if (!hasinverse)
         return;
     // first, do any de-allocationg
 
-    if (memory_handle != 0)
-        MemoryRelease(memory_handle);
+    screen_rect.clear();
 
     // allocate space and store the rect
 
     memset(dstack, g_color_dark, width);
     // TODO: MemoryAlloc
-    memory_handle = MemoryAlloc((U16)width, (long)depth, MEMORY);
-    if (memory_handle != 0)
+    screen_rect.resize(width*depth);
+    Cursor_Hide();
+    for (int yoff = 0; yoff < depth; yoff++)
     {
-        Cursor_Hide();
-        for (int yoff = 0; yoff < depth; yoff++)
-        {
-            getrow(x, y+yoff, width, buff);
-            putrow(x, y+yoff, width, (char *)dstack);
-            CopyFromMemoryToHandle((BYTE *)buff, (U16)width, 1L, (long)(yoff), memory_handle);
-        }
-        Cursor_Show();
+        getrow(x, y+yoff, width, &screen_rect[width*yoff]);
+        putrow(x, y+yoff, width, (char *)dstack);
     }
+    Cursor_Show();
 }
 
 
 static void RestoreRect(int x, int y, int width, int depth)
 {
-    char buff[MAXRECT];
     if (!hasinverse)
         return;
 
     Cursor_Hide();
     for (int yoff = 0; yoff < depth; yoff++)
     {
-        CopyFromHandleToMemory((BYTE *)buff, (U16)width, 1L, (long)(yoff), memory_handle);
-        putrow(x, y+yoff, width, buff);
+        putrow(x, y+yoff, width, &screen_rect[width*yoff]);
     }
     Cursor_Show();
 }
@@ -1196,13 +1188,7 @@ finish:
     Cursor_EndMouseTracking();
 #endif
     delete(line_buff);
-
-    if (memory_handle != 0)
-    {
-        MemoryRelease(memory_handle);
-        memory_handle = 0;
-    }
-
+    screen_rect.clear();
     lookatmouse = oldlookatmouse;
     using_jiim = false;
     calctype = oldcalctype;
