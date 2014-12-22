@@ -155,7 +155,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
 bool
 StandaloneSetup()
 {
-    timer(0,curfractalspecific->calctype);
+    timer(0, curfractalspecific->calctype);
     return false;               // effectively disable solid-guessing
 }
 
@@ -596,7 +596,7 @@ FnPlusFnSym() // set symmetry matrix for fn+fn type
         /* cos */ {symmetry_type::X_AXIS,  symmetry_type::PI_SYM,  symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
         /* sinh*/ {symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
         /* cosh*/ {symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
-        /* exp */ {symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::XY_AXIS,symmetry_type::X_AXIS, symmetry_type::X_AXIS},
+        /* exp */ {symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
         /* log */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
         /* sqr */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::XY_AXIS}
     };
@@ -606,7 +606,7 @@ FnPlusFnSym() // set symmetry matrix for fn+fn type
             symmetry = fnplusfn[static_cast<int>(trigndx[0])][static_cast<int>(trigndx[1])];
         if (trigndx[0] == trig_fn::FLIP || trigndx[1] == trig_fn::FLIP)
             symmetry = symmetry_type::NONE;
-    }                 // defaults to symmetry::X_AXIS symmetry
+    }                 // defaults to X_AXIS symmetry
     else
         symmetry = symmetry_type::NONE;
     return (0);
@@ -615,7 +615,7 @@ FnPlusFnSym() // set symmetry matrix for fn+fn type
 bool
 LambdaTrigOrTrigSetup()
 {
-    // default symmetry is symmetry::ORIGIN
+    // default symmetry is ORIGIN
     longparm = &lparm;
     floatparm = &parm;
     if ((trigndx[0] == trig_fn::EXP) || (trigndx[1] == trig_fn::EXP))
@@ -629,7 +629,7 @@ LambdaTrigOrTrigSetup()
 bool
 JuliaTrigOrTrigSetup()
 {
-    // default symmetry is symmetry::X_AXIS
+    // default symmetry is X_AXIS
     longparm = &lparm;
     floatparm = &parm;
     if (parm.y != 0.0)
@@ -643,7 +643,7 @@ JuliaTrigOrTrigSetup()
 bool
 ManlamTrigOrTrigSetup()
 {   // psuedo
-    // default symmetry is symmetry::X_AXIS
+    // default symmetry is X_AXIS
     longparm = &linit;
     floatparm = &init;
     if (trigndx[0] == trig_fn::SQR)
@@ -656,7 +656,7 @@ ManlamTrigOrTrigSetup()
 bool
 MandelTrigOrTrigSetup()
 {
-    // default symmetry is symmetry::X_AXIS_NO_PARAM
+    // default symmetry is X_AXIS_NO_PARAM
     longparm = &linit;
     floatparm = &init;
     if ((trigndx[0] == trig_fn::FLIP) || (trigndx[1] == trig_fn::FLIP))
@@ -670,10 +670,10 @@ ZXTrigPlusZSetup()
 {
     //   static char ZXTrigPlusZSym1[] =
     // fn1 ->  sin   cos    sinh  cosh exp   log   sqr
-    //           {symmetry::X_AXIS,symmetry::XY_AXIS,symmetry::X_AXIS,symmetry::XY_AXIS,symmetry::X_AXIS,symmetry::NONE,symmetry::XY_AXIS};
+    //           {X_AXIS,XY_AXIS,X_AXIS,XY_AXIS,X_AXIS,NONE,XY_AXIS};
     //   static char ZXTrigPlusZSym2[] =
     // fn1 ->  sin   cos    sinh  cosh exp   log   sqr
-    //           {symmetry::NONE,symmetry::ORIGIN,symmetry::NONE,symmetry::ORIGIN,symmetry::NONE,symmetry::NONE,symmetry::ORIGIN};
+    //           {NONE,ORIGIN,NONE,ORIGIN,NONE,NONE,ORIGIN};
 
     if (param[1] == 0.0 && param[3] == 0.0)
         //      symmetry = ZXTrigPlusZSym1[trigndx[0]];
@@ -794,7 +794,7 @@ JuliafnPlusZsqrdSetup()
 {
     //   static char fnpluszsqrd[] =
     // fn1 ->  sin   cos    sinh  cosh   sqr    exp   log
-    // sin    {symmetry::NONE,symmetry::ORIGIN,symmetry::NONE,symmetry::ORIGIN,symmetry::ORIGIN,symmetry::NONE,symmetry::NONE};
+    // sin    {NONE,ORIGIN,NONE,ORIGIN,ORIGIN,NONE,NONE};
 
     switch (trigndx[0]) // fix sqr symmetry & add additional functions
     {
@@ -806,7 +806,7 @@ JuliafnPlusZsqrdSetup()
     case trig_fn::TANH:
         symmetry = symmetry_type::ORIGIN;
         break;
-        // default is for symmetry::NONE symmetry
+        // default is for NONE symmetry
 
     default:
         break;
@@ -822,7 +822,7 @@ SqrTrigSetup()
 {
     //   static char SqrTrigSym[] =
     // fn1 ->  sin    cos    sinh   cosh   sqr    exp   log
-    //           {symmetry::PI_SYM,symmetry::PI_SYM,symmetry::XY_AXIS,symmetry::XY_AXIS,symmetry::XY_AXIS,symmetry::X_AXIS,symmetry::X_AXIS};
+    //           {PI_SYM,PI_SYM,XY_AXIS,XY_AXIS,XY_AXIS,X_AXIS,X_AXIS};
     switch (trigndx[0]) // fix sqr symmetry & add additional functions
     {
     case trig_fn::SIN:
@@ -830,7 +830,7 @@ SqrTrigSetup()
     case trig_fn::COS:   // 'real' cos
         symmetry = symmetry_type::PI_SYM;
         break;
-        // default is for symmetry::X_AXIS symmetry
+        // default is for X_AXIS symmetry
 
     default:
         break;
@@ -857,7 +857,7 @@ FnXFnSetup()
     };
     if (trigndx[0] <= trig_fn::SQR && trigndx[1] <= trig_fn::SQR)  // bounds of array
         symmetry = fnxfn[static_cast<int>(trigndx[0])][static_cast<int>(trigndx[1])];
-    // defaults to symmetry::X_AXIS symmetry
+    // defaults to X_AXIS symmetry
     else
     {
         if (trigndx[0] == trig_fn::LOG || trigndx[1] == trig_fn::LOG)
