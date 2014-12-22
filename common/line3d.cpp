@@ -1385,7 +1385,7 @@ bool startdisk1(char *File_Name2, FILE *Source, bool overlay)
     FILE *fps;
 
     // Open File for both reading and writing
-    fps = dir_fopen(workdir,File_Name2, "w+b");
+    fps = dir_fopen(workdir, File_Name2, "w+b");
     if (fps == nullptr)
     {
         File_Error(File_Name2, 1);
@@ -1447,7 +1447,7 @@ bool startdisk1(char *File_Name2, FILE *Source, bool overlay)
             fclose(fps);
             if (overlay)
                 fclose(Source);
-            dir_remove(workdir,File_Name2);
+            dir_remove(workdir, File_Name2);
             File_Error(File_Name2, 2);
             return true;
         }
@@ -1458,7 +1458,7 @@ bool startdisk1(char *File_Name2, FILE *Source, bool overlay)
     if (targa_startdisk(fps, T_header_24) != 0)
     {
         enddisk();
-        dir_remove(workdir,File_Name2);
+        dir_remove(workdir, File_Name2);
         return true;
     }
     return false;
@@ -1469,7 +1469,7 @@ bool targa_validate(char *File_Name)
     FILE *fp;
 
     // Attempt to open source file for reading
-    fp = dir_fopen(workdir,File_Name, "rb");
+    fp = dir_fopen(workdir, File_Name, "rb");
     if (fp == nullptr)
     {
         File_Error(File_Name, 1);
