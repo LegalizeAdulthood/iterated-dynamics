@@ -222,7 +222,7 @@ int getpower10(LDBL x)
 
 
 
-int cmdfiles(int argc, char **argv)
+int cmdfiles(int argc, char const *const *argv)
 {
     char    curarg[141];
     char    tempstring[101];

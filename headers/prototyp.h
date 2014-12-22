@@ -155,7 +155,7 @@ extern bool froth_setup();
 extern int logtable_in_extra_ok();
 extern int find_alternate_math(fractal_type type, bf_math_type math);
 // cmdfiles -- C file prototypes
-extern int cmdfiles(int, char **);
+extern int cmdfiles(int argc, char const *const *argv);
 extern int load_commands(FILE *);
 extern void set_3d_defaults();
 extern int get_curarg_len(const char *curarg);
