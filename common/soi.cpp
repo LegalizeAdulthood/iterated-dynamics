@@ -27,9 +27,9 @@
 /* the following needs to be changed back to frexpl once the portability
    issue has been addressed */
 #ifndef XFRACT
-#define FREXP(x,y) frexpl(x,y)
+#define FREXP(x, y) frexpl(x, y)
 #else
-#define FREXP(x,y) frexp(x,y)
+#define FREXP(x, y) frexp(x, y)
 #endif
 
 #define EVERY 15
@@ -55,7 +55,7 @@ long iteration(DBLS cr, DBLS ci,
     DBLS imn;
 #ifdef INTEL
     float mag;
-    unsigned long bail = 0x41800000,magi; // bail=16.0
+    unsigned long bail = 0x41800000, magi; // bail=16.0
     unsigned long eq = *(unsigned long *)&equal;
 #else
     DBLS mag;
@@ -281,7 +281,8 @@ long iteration(DBLS cr, DBLS ci,
     else
     {
         static char adjust[256] =
-        {   0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4,
+        {
+            0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4,
             5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
             6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
             6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
@@ -305,21 +306,21 @@ long iteration(DBLS cr, DBLS ci,
 #else
         DBLS d = mag;
 #endif
-        FREXP(d,&exponent);
+        FREXP(d, &exponent);
         return (maxit+offset-(((iter-1) << 3)+(long)adjust[exponent >> 3]));
     }
 }
 
-static void puthline(int x1,int y1,int x2,int color)
+static void puthline(int x1, int y1, int x2, int color)
 {
     for (int x = x1; x <= x2; x++)
-        (*plot)(x,y1,color);
+        (*plot)(x, y1, color);
 }
 
 static void putbox(int x1, int y1, int x2, int y2, int color)
 {
     for (; y1 <= y2; y1++)
-        puthline(x1,y1,x2,color);
+        puthline(x1, y1, x2, color);
 }
 
 /* maximum side length beyond which we start regular scanning instead of
@@ -330,54 +331,54 @@ static void putbox(int x1, int y1, int x2, int y2, int color)
 #define INTERLEAVE 4
 
 // compute the value of the interpolation polynomial at (x,y)
-#define GET_REAL(x,y) \
-interpolate(cim1,midi,cim2,\
-        interpolate(cre1,midr,cre2,zre1,zre5,zre2,x),\
-        interpolate(cre1,midr,cre2,zre6,zre9,zre7,x),\
-        interpolate(cre1,midr,cre2,zre3,zre8,zre4,x),y)
-#define GET_IMAG(x,y) \
-interpolate(cre1,midr,cre2,\
-        interpolate(cim1,midi,cim2,zim1,zim6,zim3,y),\
-        interpolate(cim1,midi,cim2,zim5,zim9,zim8,y),\
-        interpolate(cim1,midi,cim2,zim2,zim7,zim4,y),x)
+#define GET_REAL(x, y) \
+interpolate(cim1, midi, cim2, \
+        interpolate(cre1, midr, cre2, zre1, zre5, zre2, x), \
+        interpolate(cre1, midr, cre2, zre6, zre9, zre7, x), \
+        interpolate(cre1, midr, cre2, zre3, zre8, zre4, x), y)
+#define GET_IMAG(x, y) \
+interpolate(cre1, midr, cre2, \
+        interpolate(cim1, midi, cim2, zim1, zim6, zim3, y), \
+        interpolate(cim1, midi, cim2, zim5, zim9, zim8, y), \
+        interpolate(cim1, midi, cim2, zim2, zim7, zim4, y), x)
 
 /* compute the value of the interpolation polynomial at (x,y)
    from saved values before interpolation failed to stay within tolerance */
-#define GET_SAVED_REAL(x,y) \
-interpolate(cim1,midi,cim2,\
-        interpolate(cre1,midr,cre2,sr1,sr5,sr2,x),\
-        interpolate(cre1,midr,cre2,sr6,sr9,sr7,x),\
-        interpolate(cre1,midr,cre2,sr3,sr8,sr4,x),y)
-#define GET_SAVED_IMAG(x,y) \
-interpolate(cre1,midr,cre2,\
-        interpolate(cim1,midi,cim2,si1,si6,si3,y),\
-        interpolate(cim1,midi,cim2,si5,si9,si8,y),\
-        interpolate(cim1,midi,cim2,si2,si7,si4,y),x)
+#define GET_SAVED_REAL(x, y) \
+interpolate(cim1, midi, cim2, \
+        interpolate(cre1, midr, cre2, sr1, sr5, sr2, x), \
+        interpolate(cre1, midr, cre2, sr6, sr9, sr7, x), \
+        interpolate(cre1, midr, cre2, sr3, sr8, sr4, x), y)
+#define GET_SAVED_IMAG(x, y) \
+interpolate(cre1, midr, cre2, \
+        interpolate(cim1, midi, cim2, si1, si6, si3, y), \
+        interpolate(cim1, midi, cim2, si5, si9, si8, y), \
+        interpolate(cim1, midi, cim2, si2, si7, si4, y), x)
 
 /* compute the value of the interpolation polynomial at (x,y)
    during scanning. Here, key values do not change, so we can precompute
    coefficients in one direction and simply evaluate the polynomial
    during scanning. */
-#define GET_SCAN_REAL(x,y) \
-interpolate(cim1,midi,cim2,\
-        EVALUATE(cre1,midr,br10,br11,br12,x),\
-        EVALUATE(cre1,midr,br20,br21,br22,x),\
-        EVALUATE(cre1,midr,br30,br31,br32,x),y)
-#define GET_SCAN_IMAG(x,y) \
-interpolate(cre1,midr,cre2,\
-        EVALUATE(cim1,midi,bi10,bi11,bi12,y),\
-        EVALUATE(cim1,midi,bi20,bi21,bi22,y),\
-        EVALUATE(cim1,midi,bi30,bi31,bi32,y),x)
+#define GET_SCAN_REAL(x, y) \
+interpolate(cim1, midi, cim2, \
+        EVALUATE(cre1, midr, br10, br11, br12, x), \
+        EVALUATE(cre1, midr, br20, br21, br22, x), \
+        EVALUATE(cre1, midr, br30, br31, br32, x), y)
+#define GET_SCAN_IMAG(x, y) \
+interpolate(cre1, midr, cre2, \
+        EVALUATE(cim1, midi, bi10, bi11, bi12, y), \
+        EVALUATE(cim1, midi, bi20, bi21, bi22, y), \
+        EVALUATE(cim1, midi, bi30, bi31, bi32, y), x)
 
 /* compute coefficients of Newton polynomial (b0,..,b2) from
    (x0,w0),..,(x2,w2). */
-#define INTERPOLATE(x0,x1,x2,w0,w1,w2,b0,b1,b2) \
+#define INTERPOLATE(x0, x1, x2, w0, w1, w2, b0, b1, b2) \
 b0 = w0;\
 b1 = (w1-w0)/(LDBL)(x1-x0);\
 b2 = ((w2-w1)/(LDBL)(x2-x1)-b1)/(x2-x0)
 
 // evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t
-#define EVALUATE(x0,x1,b0,b1,b2,t) \
+#define EVALUATE(x0, x1, b0, b1, b2, t) \
 ((b2*(t-x1)+b1)*(t-x0)+b0)
 
 /* Newton Interpolation.
@@ -387,7 +388,7 @@ static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
                         DBLS w0, DBLS w1, DBLS w2,
                         DBLS t)
 {
-    DBLS b0 = w0,b1 = w1,b2 = w2,b;
+    DBLS b0 = w0, b1 = w1, b2 = w2, b;
 
     /*b0=(r0*b1-r1*b0)/(x1-x0);
     b1=(r1*b2-r2*b1)/(x2-x1);
@@ -431,8 +432,8 @@ static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
    under DOS is extremely limited.
 */
 
-#define RHOMBUS(CRE1,CRE2,CIM1,CIM2,X1,X2,Y1,Y2,ZRE1,ZIM1,ZRE2,ZIM2,ZRE3,ZIM3,  \
- ZRE4, ZIM4, ZRE5, ZIM5,ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9,ITER)    \
+#define RHOMBUS(CRE1, CRE2, CIM1, CIM2, X1, X2, Y1, Y2, ZRE1, ZIM1, ZRE2, ZIM2, ZRE3, ZIM3,  \
+ ZRE4, ZIM4, ZRE5, ZIM5, ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9, ITER)    \
  zre1 = (ZRE1);zim1 = (ZIM1);                                                       \
  zre2 = (ZRE2);zim2 = (ZIM2);                                                       \
  zre3 = (ZRE3);zim3 = (ZIM3);                                                       \
@@ -442,7 +443,7 @@ static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
  zre7 = (ZRE7);zim7 = (ZIM7);                                                       \
  zre8 = (ZRE8);zim8 = (ZIM8);                                                       \
  zre9 = (ZRE9);zim9 = (ZIM9);                                                       \
- status = rhombus((CRE1),(CRE2),(CIM1),(CIM2),(X1),(X2),(Y1),(Y2),(ITER)) != 0
+ status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0
 
 static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
                    int x1, int x2, int y1, int y2, long iter)
@@ -450,7 +451,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
     // The following variables do not need their values saved
     // used in scanning
     static long savecolor, color, helpcolor;
-    static int x,y,z,savex;
+    static int x, y, z, savex;
 
 #define re        mem_static[ 0]
 #define im        mem_static[ 1]
@@ -527,7 +528,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
     DBLS *mem;
     DBLS *mem_static;
     // center of rectangle
-    DBLS midr = (cre1+cre2)/2,midi = (cim1+cim2)/2;
+    DBLS midr = (cre1+cre2)/2, midi = (cim1+cim2)/2;
 
 #define sr1  mem[ 0]
 #define si1  mem[ 1]
@@ -607,7 +608,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
     }
     if (iter > maxit)
     {
-        putbox(x1,y1,x2,y2,0);
+        putbox(x1, y1, x2, y2, 0);
         status = false;
         goto rhombus_done;
     }
@@ -616,13 +617,13 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
     {
         // finish up the image by scanning the rectangle
 scan:
-        INTERPOLATE(cre1,midr,cre2,zre1,zre5,zre2,br10,br11,br12);
-        INTERPOLATE(cre1,midr,cre2,zre6,zre9,zre7,br20,br21,br22);
-        INTERPOLATE(cre1,midr,cre2,zre3,zre8,zre4,br30,br31,br32);
+        INTERPOLATE(cre1, midr, cre2, zre1, zre5, zre2, br10, br11, br12);
+        INTERPOLATE(cre1, midr, cre2, zre6, zre9, zre7, br20, br21, br22);
+        INTERPOLATE(cre1, midr, cre2, zre3, zre8, zre4, br30, br31, br32);
 
-        INTERPOLATE(cim1,midi,cim2,zim1,zim6,zim3,bi10,bi11,bi12);
-        INTERPOLATE(cim1,midi,cim2,zim5,zim9,zim8,bi20,bi21,bi22);
-        INTERPOLATE(cim1,midi,cim2,zim2,zim7,zim4,bi30,bi31,bi32);
+        INTERPOLATE(cim1, midi, cim2, zim1, zim6, zim3, bi10, bi11, bi12);
+        INTERPOLATE(cim1, midi, cim2, zim5, zim9, zim8, bi20, bi21, bi22);
+        INTERPOLATE(cim1, midi, cim2, zim2, zim7, zim4, bi30, bi31, bi32);
 
         restep = (cre2-cre1)/(x2-x1);
         imstep = (cim2-cim1)/(y2-y1);
@@ -636,9 +637,9 @@ scan:
                 goto rhombus_done;
             }
             // cppcheck-suppress duplicateExpression
-            zre = GET_SCAN_REAL(cre1,im);
-            zim = GET_SCAN_IMAG(cre1,im);
-            savecolor = iteration(cre1,im,zre,zim,iter);
+            zre = GET_SCAN_REAL(cre1, im);
+            zim = GET_SCAN_IMAG(cre1, im);
+            savecolor = iteration(cre1, im, zre, zim, iter);
             if (savecolor < 0)
             {
                 status = true;
@@ -648,10 +649,10 @@ scan:
             for (x = x1+INTERLEAVE, re = cre1+interstep; x < x2;
                     x += INTERLEAVE, re += interstep)
             {
-                zre = GET_SCAN_REAL(re,im);
-                zim = GET_SCAN_IMAG(re,im);
+                zre = GET_SCAN_REAL(re, im);
+                zim = GET_SCAN_IMAG(re, im);
 
-                color = iteration(re,im,zre,zim,iter);
+                color = iteration(re, im, zre, zim, iter);
                 if (color < 0)
                 {
                     status = true;
@@ -660,11 +661,11 @@ scan:
                 else if (color == savecolor)
                     continue;
 
-                for (z = x-1, helpre = re-restep; z > x-INTERLEAVE; z--,helpre -= restep)
+                for (z = x-1, helpre = re-restep; z > x-INTERLEAVE; z--, helpre -= restep)
                 {
-                    zre = GET_SCAN_REAL(helpre,im);
-                    zim = GET_SCAN_IMAG(helpre,im);
-                    helpcolor = iteration(helpre,im,zre,zim,iter);
+                    zre = GET_SCAN_REAL(helpre, im);
+                    zim = GET_SCAN_IMAG(helpre, im);
+                    helpcolor = iteration(helpre, im, zre, zim, iter);
                     if (helpcolor < 0)
                     {
                         status = true;
@@ -672,7 +673,7 @@ scan:
                     }
                     else if (helpcolor == savecolor)
                         break;
-                    (*plot)(z,y,(int)(helpcolor&255));
+                    (*plot)(z, y, (int)(helpcolor&255));
                 }
 
                 if (savex < z)
@@ -684,11 +685,11 @@ scan:
                 savecolor = color;
             }
 
-            for (z = x2-1, helpre = cre2-restep; z > savex; z--,helpre -= restep)
+            for (z = x2-1, helpre = cre2-restep; z > savex; z--, helpre -= restep)
             {
-                zre = GET_SCAN_REAL(helpre,im);
-                zim = GET_SCAN_IMAG(helpre,im);
-                helpcolor = iteration(helpre,im,zre,zim,iter);
+                zre = GET_SCAN_REAL(helpre, im);
+                zim = GET_SCAN_IMAG(helpre, im);
+                helpcolor = iteration(helpre, im, zre, zim, iter);
                 if (helpcolor < 0)
                 {
                     status = true;
@@ -697,7 +698,7 @@ scan:
                 else if (helpcolor == savecolor)
                     break;
 
-                (*plot)(z,y,(int)(helpcolor&255));
+                (*plot)(z, y, (int)(helpcolor&255));
             }
 
             if (savex < z)
@@ -733,17 +734,17 @@ scan:
     ci1 = 0.75*cim1+0.25*cim2;
     ci2 = 0.25*cim1+0.75*cim2;
 
-    tzr1 = GET_REAL(cr1,ci1);
-    tzi1 = GET_IMAG(cr1,ci1);
+    tzr1 = GET_REAL(cr1, ci1);
+    tzi1 = GET_IMAG(cr1, ci1);
 
-    tzr2 = GET_REAL(cr2,ci1);
-    tzi2 = GET_IMAG(cr2,ci1);
+    tzr2 = GET_REAL(cr2, ci1);
+    tzi2 = GET_IMAG(cr2, ci1);
 
-    tzr3 = GET_REAL(cr1,ci2);
-    tzi3 = GET_IMAG(cr1,ci2);
+    tzr3 = GET_REAL(cr1, ci2);
+    tzi3 = GET_IMAG(cr1, ci2);
 
-    tzr4 = GET_REAL(cr2,ci2);
-    tzi4 = GET_IMAG(cr2,ci2);
+    tzr4 = GET_REAL(cr2, ci2);
+    tzi4 = GET_IMAG(cr2, ci2);
 
     trq1 = tzr1*tzr1;
     tiq1 = tzi1*tzi1;
@@ -870,63 +871,63 @@ scan:
         of SOI, we seldomly get there */
         if (iter > maxit)
         {
-            putbox(x1,y1,x2,y2,0);
+            putbox(x1, y1, x2, y2, 0);
             status = false;
             goto rhombus_done;
         }
 
         /* now for all test points, check whether they exceed the
         allowed tolerance. if so, subdivide */
-        l1 = GET_REAL(cr1,ci1);
+        l1 = GET_REAL(cr1, ci1);
         l1 = (tzr1 == 0.0)?
            (l1 == 0.0)?1.0:1000.0:
            l1/tzr1;
         if (FABS(1.0-l1) > twidth)
             break;
 
-        l2 = GET_IMAG(cr1,ci1);
+        l2 = GET_IMAG(cr1, ci1);
         l2 = (tzi1 == 0.0)?
            (l2 == 0.0)?1.0:1000.0:
            l2/tzi1;
         if (FABS(1.0-l2) > twidth)
             break;
 
-        l1 = GET_REAL(cr2,ci1);
+        l1 = GET_REAL(cr2, ci1);
         l1 = (tzr2 == 0.0)?
            (l1 == 0.0)?1.0:1000.0:
            l1/tzr2;
         if (FABS(1.0-l1) > twidth)
             break;
 
-        l2 = GET_IMAG(cr2,ci1);
+        l2 = GET_IMAG(cr2, ci1);
         l2 = (tzi2 == 0.0)?
            (l2 == 0.0)?1.0:1000.0:
            l2/tzi2;
         if (FABS(1.0-l2) > twidth)
             break;
 
-        l1 = GET_REAL(cr1,ci2);
+        l1 = GET_REAL(cr1, ci2);
         l1 = (tzr3 == 0.0)?
            (l1 == 0.0)?1.0:1000.0:
            l1/tzr3;
         if (FABS(1.0-l1) > twidth)
             break;
 
-        l2 = GET_IMAG(cr1,ci2);
+        l2 = GET_IMAG(cr1, ci2);
         l2 = (tzi3 == 0.0)?
            (l2 == 0.0)?1.0:1000.0:
            l2/tzi3;
         if (FABS(1.0-l2) > twidth)
             break;
 
-        l1 = GET_REAL(cr2,ci2);
+        l1 = GET_REAL(cr2, ci2);
         l1 = (tzr4 == 0.0)?
            (l1 == 0.0)?1.0:1000.0:
            l1/tzr4;
         if (FABS(1.0-l1) > twidth)
             break;
 
-        l2 = GET_IMAG(cr2,ci2);
+        l2 = GET_IMAG(cr2, ci2);
         l2 = (tzi4 == 0.0)?
            (l2 == 0.0)?1.0:1000.0:
            l2/tzi4;
@@ -962,95 +963,95 @@ scan:
 
     // compute key values for subsequent rectangles
 
-    re10 = interpolate(cre1,midr,cre2,sr1,sr5,sr2,cr1);
-    im10 = interpolate(cre1,midr,cre2,si1,si5,si2,cr1);
+    re10 = interpolate(cre1, midr, cre2, sr1, sr5, sr2, cr1);
+    im10 = interpolate(cre1, midr, cre2, si1, si5, si2, cr1);
 
-    re11 = interpolate(cre1,midr,cre2,sr1,sr5,sr2,cr2);
-    im11 = interpolate(cre1,midr,cre2,si1,si5,si2,cr2);
+    re11 = interpolate(cre1, midr, cre2, sr1, sr5, sr2, cr2);
+    im11 = interpolate(cre1, midr, cre2, si1, si5, si2, cr2);
 
-    re20 = interpolate(cre1,midr,cre2,sr3,sr8,sr4,cr1);
-    im20 = interpolate(cre1,midr,cre2,si3,si8,si4,cr1);
+    re20 = interpolate(cre1, midr, cre2, sr3, sr8, sr4, cr1);
+    im20 = interpolate(cre1, midr, cre2, si3, si8, si4, cr1);
 
-    re21 = interpolate(cre1,midr,cre2,sr3,sr8,sr4,cr2);
-    im21 = interpolate(cre1,midr,cre2,si3,si8,si4,cr2);
+    re21 = interpolate(cre1, midr, cre2, sr3, sr8, sr4, cr2);
+    im21 = interpolate(cre1, midr, cre2, si3, si8, si4, cr2);
 
-    re15 = interpolate(cre1,midr,cre2,sr6,sr9,sr7,cr1);
-    im15 = interpolate(cre1,midr,cre2,si6,si9,si7,cr1);
+    re15 = interpolate(cre1, midr, cre2, sr6, sr9, sr7, cr1);
+    im15 = interpolate(cre1, midr, cre2, si6, si9, si7, cr1);
 
-    re16 = interpolate(cre1,midr,cre2,sr6,sr9,sr7,cr2);
-    im16 = interpolate(cre1,midr,cre2,si6,si9,si7,cr2);
+    re16 = interpolate(cre1, midr, cre2, sr6, sr9, sr7, cr2);
+    im16 = interpolate(cre1, midr, cre2, si6, si9, si7, cr2);
 
-    re12 = interpolate(cim1,midi,cim2,sr1,sr6,sr3,ci1);
-    im12 = interpolate(cim1,midi,cim2,si1,si6,si3,ci1);
+    re12 = interpolate(cim1, midi, cim2, sr1, sr6, sr3, ci1);
+    im12 = interpolate(cim1, midi, cim2, si1, si6, si3, ci1);
 
-    re14 = interpolate(cim1,midi,cim2,sr2,sr7,sr4,ci1);
-    im14 = interpolate(cim1,midi,cim2,si2,si7,si4,ci1);
+    re14 = interpolate(cim1, midi, cim2, sr2, sr7, sr4, ci1);
+    im14 = interpolate(cim1, midi, cim2, si2, si7, si4, ci1);
 
-    re17 = interpolate(cim1,midi,cim2,sr1,sr6,sr3,ci2);
-    im17 = interpolate(cim1,midi,cim2,si1,si6,si3,ci2);
+    re17 = interpolate(cim1, midi, cim2, sr1, sr6, sr3, ci2);
+    im17 = interpolate(cim1, midi, cim2, si1, si6, si3, ci2);
 
-    re19 = interpolate(cim1,midi,cim2,sr2,sr7,sr4,ci2);
-    im19 = interpolate(cim1,midi,cim2,si2,si7,si4,ci2);
+    re19 = interpolate(cim1, midi, cim2, sr2, sr7, sr4, ci2);
+    im19 = interpolate(cim1, midi, cim2, si2, si7, si4, ci2);
 
-    re13 = interpolate(cim1,midi,cim2,sr5,sr9,sr8,ci1);
-    im13 = interpolate(cim1,midi,cim2,si5,si9,si8,ci1);
+    re13 = interpolate(cim1, midi, cim2, sr5, sr9, sr8, ci1);
+    im13 = interpolate(cim1, midi, cim2, si5, si9, si8, ci1);
 
-    re18 = interpolate(cim1,midi,cim2,sr5,sr9,sr8,ci2);
-    im18 = interpolate(cim1,midi,cim2,si5,si9,si8,ci2);
+    re18 = interpolate(cim1, midi, cim2, sr5, sr9, sr8, ci2);
+    im18 = interpolate(cim1, midi, cim2, si5, si9, si8, ci2);
 
-    re91 = GET_SAVED_REAL(cr1,ci1);
-    re92 = GET_SAVED_REAL(cr2,ci1);
-    re93 = GET_SAVED_REAL(cr1,ci2);
-    re94 = GET_SAVED_REAL(cr2,ci2);
+    re91 = GET_SAVED_REAL(cr1, ci1);
+    re92 = GET_SAVED_REAL(cr2, ci1);
+    re93 = GET_SAVED_REAL(cr1, ci2);
+    re94 = GET_SAVED_REAL(cr2, ci2);
 
-    im91 = GET_SAVED_IMAG(cr1,ci1);
-    im92 = GET_SAVED_IMAG(cr2,ci1);
-    im93 = GET_SAVED_IMAG(cr1,ci2);
-    im94 = GET_SAVED_IMAG(cr2,ci2);
+    im91 = GET_SAVED_IMAG(cr1, ci1);
+    im92 = GET_SAVED_IMAG(cr2, ci1);
+    im93 = GET_SAVED_IMAG(cr1, ci2);
+    im94 = GET_SAVED_IMAG(cr2, ci2);
 
-    RHOMBUS(cre1,midr,cim1,midi,x1,((x1+x2) >> 1),y1,((y1+y2) >> 1),
-            sr1,si1,
-            sr5,si5,
-            sr6,si6,
-            sr9,si9,
-            re10,im10,
-            re12,im12,
-            re13,im13,
-            re15,im15,
-            re91,im91,
+    RHOMBUS(cre1, midr, cim1, midi, x1, ((x1+x2) >> 1), y1, ((y1+y2) >> 1),
+            sr1, si1,
+            sr5, si5,
+            sr6, si6,
+            sr9, si9,
+            re10, im10,
+            re12, im12,
+            re13, im13,
+            re15, im15,
+            re91, im91,
             iter);
-    RHOMBUS(midr,cre2,cim1,midi,(x1+x2) >> 1,x2,y1,(y1+y2) >> 1,
-            sr5,si5,
-            sr2,si2,
-            sr9,si9,
-            sr7,si7,
-            re11,im11,
-            re13,im13,
-            re14,im14,
-            re16,im16,
-            re92,im92,
+    RHOMBUS(midr, cre2, cim1, midi, (x1+x2) >> 1, x2, y1, (y1+y2) >> 1,
+            sr5, si5,
+            sr2, si2,
+            sr9, si9,
+            sr7, si7,
+            re11, im11,
+            re13, im13,
+            re14, im14,
+            re16, im16,
+            re92, im92,
             iter);
-    RHOMBUS(cre1,midr,midi,cim2,x1,(x1+x2) >> 1,(y1+y2) >> 1,y2,
-            sr6,si6,
-            sr9,si9,
-            sr3,si3,
-            sr8,si8,
-            re15,im15,
-            re17,im17,
-            re18,im18,
-            re20,im20,
-            re93,im93,
+    RHOMBUS(cre1, midr, midi, cim2, x1, (x1+x2) >> 1, (y1+y2) >> 1, y2,
+            sr6, si6,
+            sr9, si9,
+            sr3, si3,
+            sr8, si8,
+            re15, im15,
+            re17, im17,
+            re18, im18,
+            re20, im20,
+            re93, im93,
             iter);
-    RHOMBUS(midr,cre2,midi,cim2,(x1+x2) >> 1,x2,(y1+y2) >> 1,y2,
-            sr9,si9,
-            sr7,si7,
-            sr8,si8,
-            sr4,si4,
-            re16,im16,
-            re18,im18,
-            re19,im19,
-            re21,im21,
-            re94,im94,
+    RHOMBUS(midr, cre2, midi, cim2, (x1+x2) >> 1, x2, (y1+y2) >> 1, y2,
+            sr9, si9,
+            sr7, si7,
+            sr8, si8,
+            sr4, si4,
+            re16, im16,
+            re18, im18,
+            re19, im19,
+            re21, im21,
+            re94, im94,
             iter);
 rhombus_done:
     rhombus_depth--;
@@ -1086,16 +1087,16 @@ void soi_ldbl()
     stepy = (yyminl - yymaxl) / ydots;
     equal = (stepx < stepy ? stepx : stepy);
 
-    RHOMBUS(xxminl,xxmaxl,yymaxl,yyminl,
-            0,xdots,0,ydots,
-            xxminl,yymaxl,
-            xxmaxl,yymaxl,
-            xxminl,yyminl,
-            xxmaxl,yyminl,
-            (xxmaxl+xxminl)/2,yymaxl,
-            xxminl,(yymaxl+yyminl)/2,
-            xxmaxl,(yymaxl+yyminl)/2,
-            (xxmaxl+xxminl)/2,yyminl,
-            (xxminl+xxmaxl)/2,(yymaxl+yyminl)/2,
+    RHOMBUS(xxminl, xxmaxl, yymaxl, yyminl,
+            0, xdots, 0, ydots,
+            xxminl, yymaxl,
+            xxmaxl, yymaxl,
+            xxminl, yyminl,
+            xxmaxl, yyminl,
+            (xxmaxl+xxminl)/2, yymaxl,
+            xxminl, (yymaxl+yyminl)/2,
+            xxmaxl, (yymaxl+yyminl)/2,
+            (xxmaxl+xxminl)/2, yyminl,
+            (xxminl+xxmaxl)/2, (yymaxl+yyminl)/2,
             1);
 }
