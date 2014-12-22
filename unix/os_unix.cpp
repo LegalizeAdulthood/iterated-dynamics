@@ -40,7 +40,7 @@ bool isadirectory(char *s)
 {
     int len;
     char sv;
-    if (strchr(s,'*') || strchr(s,'?'))
+    if (strchr(s, '*') || strchr(s, '?'))
         return false; // for my purposes, not a directory
 
     len = (int) strlen(s);
