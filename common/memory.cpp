@@ -393,13 +393,14 @@ void MemoryRelease(U16 handle)
     } // end of switch
 }
 
-bool MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
-{   // buffer is a pointer to local memory
-    // Always start moving from the beginning of buffer
-    // offset is the number of units from the start of the allocated "Memory"
-    // to start moving the contents of buffer to
-    // size is the size of the unit, count is the number of units to move
-    // Returns true if successful, false if failure
+// buffer is a pointer to local memory
+// Always start moving from the beginning of buffer
+// offset is the number of units from the start of the allocated "Memory"
+// to start moving the contents of buffer to
+// size is the size of the unit, count is the number of units to move
+// Returns true if successful, false if failure
+bool MoveToMemory(BYTE const *buffer, U16 size, long count, long offset, U16 handle)
+{
     BYTE diskbuf[DISKWRITELEN];
     long start; // offset to first location to move to
     long tomove; // number of bytes to move
@@ -457,12 +458,12 @@ diskerror:
     return success;
 }
 
+// buffer points is the location to move the data to
+// offset is the number of units from the beginning of buffer to start moving
+// size is the size of the unit, count is the number of units to move
+// Returns true if successful, false if failure
 bool MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 {
-    // buffer points is the location to move the data to
-    // offset is the number of units from the beginning of buffer to start moving
-    // size is the size of the unit, count is the number of units to move
-    // Returns true if successful, false if failure
     BYTE diskbuf[DISKWRITELEN];
     long start; // first location to move
     long tomove; // number of bytes to move
