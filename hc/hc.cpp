@@ -277,7 +277,7 @@ void error(int diff, const char *format, ...)
     va_end(arg);
 
     if (++errors >= MAX_ERRORS && MAX_ERRORS > 0)
-        fatal(0,"Too many errors!");
+        fatal(0, "Too many errors!");
 }
 
 
@@ -290,7 +290,7 @@ void warn(int diff, const char *format, ...)
     va_end(arg);
 
     if (++warnings >= MAX_WARNINGS && MAX_WARNINGS > 0)
-        fatal(0,"Too many warnings!");
+        fatal(0, "Too many warnings!");
 }
 
 
@@ -369,7 +369,7 @@ VOIDPTR newx(unsigned size)
     ptr = malloc(size);
 
     if (ptr == nullptr)
-        fatal(0,"Out of memory!");
+        fatal(0, "Out of memory!");
 
     return (ptr);
 }
@@ -380,7 +380,7 @@ VOIDPTR renewx(VOIDPTR ptr, unsigned size)
     ptr = realloc(ptr, size);
 
     if (ptr == nullptr)
-        fatal(0,"Out of memory!");
+        fatal(0, "Out of memory!");
 
     return (ptr);
 }
@@ -520,7 +520,7 @@ void unread_char(int ch)
  */
 {
     if (read_char_buff_pos+1 >= READ_CHAR_BUFF_SIZE)
-        fatal(0,"Compiler Error -- Read char buffer overflow!");
+        fatal(0, "Compiler Error -- Read char buffer overflow!");
 
     read_char_buff[++read_char_buff_pos] = ch;
 
@@ -669,7 +669,7 @@ int read_char()
 
     if ((ch & 0xFF) == 0)
     {
-        error(0,"Null character (\'\\0\') not allowed!");
+        error(0, "Null character (\'\\0\') not allowed!");
         ch = 0x1FF; /* since we've had an error the file will not be written; */
         /*   the value we return doesn't really matter */
     }
@@ -814,7 +814,7 @@ void put_spaces(int how_many)
     {
         if (how_many > 255)
         {
-            error(0,"Too many spaces (over 255).");
+            error(0, "Too many spaces (over 255).");
             how_many = 255;
         }
 
@@ -838,7 +838,7 @@ bool get_next_item()
     ptr = read_until(cmd, 128, ",}");
     bool last = (*ptr == '}');
     --ptr;
-    while (ptr >= cmd && strchr(" \t\n",*ptr))     /* strip trailing spaces */
+    while (ptr >= cmd && strchr(" \t\n", *ptr))     /* strip trailing spaces */
         --ptr;
     *(++ptr) = '\0';
 
@@ -863,13 +863,13 @@ void process_contents()
     curr = buffer;
 
     c.flags = 0;
-    c.id = dupstr("",1);
-    c.name = dupstr("",1);
+    c.id = dupstr("", 1);
+    c.name = dupstr("", 1);
     c.doc_page = -1;
     c.page_num_pos = 0;
     c.num_topic = 1;
     c.is_label[0] = 0;
-    c.topic_name[0] = dupstr(DOCCONTENTS_TITLE,0);
+    c.topic_name[0] = dupstr(DOCCONTENTS_TITLE, 0);
     c.srcline = -1;
     add_content(&c);
 
@@ -887,14 +887,14 @@ void process_contents()
 
             if (get_next_item())
             {
-                error(0,"Unexpected end of DocContent entry.");
+                error(0, "Unexpected end of DocContent entry.");
                 continue;
             }
-            c.id = dupstr(cmd,0);
+            c.id = dupstr(cmd, 0);
 
             if (get_next_item())
             {
-                error(0,"Unexpected end of DocContent entry.");
+                error(0, "Unexpected end of DocContent entry.");
                 continue;
             }
             indent = atoi(cmd);
@@ -907,15 +907,15 @@ void process_contents()
                 if (ptr[(int) strlen(ptr)-1] == '\"')
                     ptr[(int) strlen(ptr)-1] = '\0';
                 else
-                    warn(0,"Missing ending quote.");
+                    warn(0, "Missing ending quote.");
 
                 c.is_label[c.num_topic] = 0;
-                c.topic_name[c.num_topic] = dupstr(ptr,0);
+                c.topic_name[c.num_topic] = dupstr(ptr, 0);
                 ++c.num_topic;
-                c.name = dupstr(ptr,0);
+                c.name = dupstr(ptr, 0);
             }
             else
-                c.name = dupstr(cmd,0);
+                c.name = dupstr(cmd, 0);
 
             /* now, make the entry in the buffer */
 
@@ -933,7 +933,7 @@ void process_contents()
                 if (stricmp(cmd, "FF") == 0)
                 {
                     if (c.flags & CF_NEW_PAGE)
-                        warn(0,"FF already present in this entry.");
+                        warn(0, "FF already present in this entry.");
                     c.flags |= CF_NEW_PAGE;
                     continue;
                 }
@@ -944,20 +944,20 @@ void process_contents()
                     if (ptr[(int) strlen(ptr)-1] == '\"')
                         ptr[(int) strlen(ptr)-1] = '\0';
                     else
-                        warn(0,"Missing ending quote.");
+                        warn(0, "Missing ending quote.");
 
                     c.is_label[c.num_topic] = 0;
-                    c.topic_name[c.num_topic] = dupstr(ptr,0);
+                    c.topic_name[c.num_topic] = dupstr(ptr, 0);
                 }
                 else
                 {
                     c.is_label[c.num_topic] = 1;
-                    c.topic_name[c.num_topic] = dupstr(cmd,0);
+                    c.topic_name[c.num_topic] = dupstr(cmd, 0);
                 }
 
                 if (++c.num_topic >= MAX_CONTENT_TOPIC)
                 {
-                    error(0,"Too many topics in DocContent entry.");
+                    error(0, "Too many topics in DocContent entry.");
                     break;
                 }
             }
@@ -999,14 +999,14 @@ int parse_link()   /* returns length of link or 0 on error */
 
     if (*end == '\0')
     {
-        error(0,"Unexpected EOF in hot-link.");
+        error(0, "Unexpected EOF in hot-link.");
         return (0);
     }
 
     if (*end == '\n')
     {
         err_off = 1;
-        warn(1,"Hot-link has no closing curly-brace (\'}\').");
+        warn(1, "Hot-link has no closing curly-brace (\'}\').");
     }
     else
         err_off = 0;
@@ -1042,7 +1042,7 @@ int parse_link()   /* returns length of link or 0 on error */
                 bad = true;
             }
             else
-                l.name = dupstr(cmd+1,0);
+                l.name = dupstr(cmd+1, 0);
         }
         if (len == 0)
             warn(err_off, "Explicit hot-link has no title.");
@@ -1057,7 +1057,7 @@ int parse_link()   /* returns length of link or 0 on error */
             error(err_off, "Implicit hot-link has no title.");
             bad = true;
         }
-        l.name = dupstr(ptr,len+1);
+        l.name = dupstr(ptr, len+1);
         l.name[len] = '\0';
     }
 
@@ -1066,7 +1066,7 @@ int parse_link()   /* returns length of link or 0 on error */
         CHK_BUFFER(1+3*sizeof(int)+len+1);
         int const lnum = add_link(&l);
         *curr++ = CMD_LINK;
-        setint(curr,lnum);
+        setint(curr, lnum);
         curr += 3*sizeof(int);
         memcpy(curr, ptr, len);
         curr += len;
@@ -1107,13 +1107,13 @@ int create_table()
 
     if (len < 3)
     {
-        error(1,"Too few arguments to Table.");
+        error(1, "Too few arguments to Table.");
         return (0);
     }
 
     if (width <= 0 || width > 78 || cols <= 0 || start_off < 0 || start_off > 78)
     {
-        error(1,"Argument out of range.");
+        error(1, "Argument out of range.");
         return (0);
     }
 
@@ -1137,18 +1137,18 @@ int create_table()
         switch (ch)
         {
         case -1:
-            error(0,"Unexpected EOF in a Table.");
+            error(0, "Unexpected EOF in a Table.");
             return (0);
 
         case '{':
             if (count >= MAX_TABLE_SIZE)
-                fatal(0,"Table is too large.");
+                fatal(0, "Table is too large.");
             len = parse_link();
             curr = table_start;   /* reset to the start... */
             title.push_back(std::string(curr+3*sizeof(int)+1, len+1));
             if (len >= width)
             {
-                warn(1,"Link is too long; truncating.");
+                warn(1, "Link is too long; truncating.");
                 len = width-1;
             }
             title[count][len] = '\0';
@@ -1178,8 +1178,8 @@ int create_table()
                 done = true;
             else
             {
-                error(1,"Unexpected command in table \"%s\"", cmd);
-                warn(1,"Command will be ignored.");
+                error(1, "Unexpected command in table \"%s\"", cmd);
+                warn(1, "Command will be ignored.");
             }
 
             if (ch == ',')
@@ -1192,7 +1192,7 @@ int create_table()
         break;
 
         default:
-            error(0,"Unexpected character %s.", pchar(ch));
+            error(0, "Unexpected character %s.", pchar(ch));
             break;
         }
     }
@@ -1214,7 +1214,7 @@ int create_table()
 
             len = title[lnum].length();
             *curr++ = CMD_LINK;
-            setint(curr,first_link+lnum);
+            setint(curr, first_link+lnum);
             curr += 3*sizeof(int);
             memcpy(curr, title[lnum].c_str(), len);
             curr += len;
@@ -1272,7 +1272,7 @@ void process_comment()
 
         else if (ch == -1)
         {
-            error(0,"Unexpected EOF in Comment");
+            error(0, "Unexpected EOF in Comment");
             break;
         }
     }
@@ -1287,7 +1287,7 @@ void process_bininc()
     handle = open(cmd+7, O_RDONLY|O_BINARY);
     if (handle == -1)
     {
-        error(0,"Unable to open \"%s\"", cmd+7);
+        error(0, "Unable to open \"%s\"", cmd+7);
         return ;
     }
 
@@ -1295,7 +1295,7 @@ void process_bininc()
 
     if (len >= BUFFER_SIZE)
     {
-        error(0,"File \"%s\" is too large to BinInc (%dK).", cmd+7, (int)(len >> 10));
+        error(0, "File \"%s\" is too large to BinInc (%dK).", cmd+7, (int)(len >> 10));
         close(handle);
         return ;
     }
@@ -1416,7 +1416,7 @@ void read_src(char *fname)
 
     srcfile = fopen(fname, "rt");
     if (srcfile == nullptr)
-        fatal(0,"Unable to open \"%s\"", fname);
+        fatal(0, "Unable to open \"%s\"", fname);
 
     msg("Compiling: %s", fname);
 
@@ -1446,7 +1446,7 @@ void read_src(char *fname)
                 if (in_topic)  /* if we're in a topic, finish it */
                     end_topic(&t);
                 if (num_topic == 0)
-                    warn(0,".SRC file has no topics.");
+                    warn(0, ".SRC file has no topics.");
                 break;
             }
         }
@@ -1485,7 +1485,7 @@ void read_src(char *fname)
 
                 if (*ptr == '\0')
                 {
-                    error(0,"Unexpected EOF in command.");
+                    error(0, "Unexpected EOF in command.");
                     break;
                 }
 
@@ -1493,13 +1493,13 @@ void read_src(char *fname)
                     ++eoff;
 
                 if (imbedded && *ptr == '\n')
-                    error(eoff,"Embedded command has no closing paren (\')\')");
+                    error(eoff, "Embedded command has no closing paren (\')\')");
 
                 done = (*ptr != ',');   /* we done if it's not a comma */
 
                 if (*ptr != '\n' && *ptr != ')' && *ptr != ',')
                 {
-                    error(0,"Command line too long.");
+                    error(0, "Command line too long.");
                     break;
                 }
 
@@ -1516,16 +1516,16 @@ void read_src(char *fname)
                         in_topic = true;
 
                     if (cmd[6] == '\0')
-                        warn(eoff,"Topic has no title.");
+                        warn(eoff, "Topic has no title.");
 
                     else if ((int)strlen(cmd+6) > 70)
-                        error(eoff,"Topic title is too long.");
+                        error(eoff, "Topic title is too long.");
 
                     else if ((int)strlen(cmd+6) > 60)
-                        warn(eoff,"Topic title is long.");
+                        warn(eoff, "Topic title is long.");
 
                     if (find_topic_title(cmd+6) != -1)
-                        error(eoff,"Topic title already exists.");
+                        error(eoff, "Topic title already exists.");
 
                     start_topic(&t, cmd+6, (unsigned)(ptr-(cmd+6)));
                     formatting = true;
@@ -1548,17 +1548,17 @@ void read_src(char *fname)
                         in_topic = true;
 
                     if (cmd[5] == '\0')
-                        warn(eoff,"Data topic has no label.");
+                        warn(eoff, "Data topic has no label.");
 
                     if (!validate_label_name(cmd+5))
                     {
-                        error(eoff,"Label \"%s\" contains illegal characters.", cmd+5);
+                        error(eoff, "Label \"%s\" contains illegal characters.", cmd+5);
                         continue;
                     }
 
                     if (find_label(cmd+5) != nullptr)
                     {
-                        error(eoff,"Label \"%s\" already exists", cmd+5);
+                        error(eoff, "Label \"%s\" already exists", cmd+5);
                         continue;
                     }
 
@@ -1569,7 +1569,7 @@ void read_src(char *fname)
                     t.flags |= TF_DATA;
 
                     if ((int)strlen(cmd+5) > 32)
-                        warn(eoff,"Label name is long.");
+                        warn(eoff, "Label name is long.");
 
                     lbl.name      = dupstr(cmd+5, 0);
                     lbl.topic_num = num_topic;
@@ -1623,39 +1623,39 @@ void read_src(char *fname)
                             if (lformat_exclude > 0)
                                 lformat_exclude = -lformat_exclude;
                             else
-                                warn(eoff,"\"FormatExclude-\" is already in effect.");
+                                warn(eoff, "\"FormatExclude-\" is already in effect.");
                         }
                         else
                         {
                             if (format_exclude > 0)
                                 format_exclude = -format_exclude;
                             else
-                                warn(eoff,"\"FormatExclude-\" is already in effect.");
+                                warn(eoff, "\"FormatExclude-\" is already in effect.");
                         }
                     }
                     else if (cmd[13] == '+')
                     {
-                        check_command_length(eoff,14);
+                        check_command_length(eoff, 14);
                         if (in_topic)
                         {
                             if (lformat_exclude < 0)
                                 lformat_exclude = -lformat_exclude;
                             else
-                                warn(eoff,"\"FormatExclude+\" is already in effect.");
+                                warn(eoff, "\"FormatExclude+\" is already in effect.");
                         }
                         else
                         {
                             if (format_exclude < 0)
                                 format_exclude = -format_exclude;
                             else
-                                warn(eoff,"\"FormatExclude+\" is already in effect.");
+                                warn(eoff, "\"FormatExclude+\" is already in effect.");
                         }
                     }
                     else if (cmd[13] == '=')
                     {
                         if (cmd[14] == 'n' || cmd[14] == 'N')
                         {
-                            check_command_length(eoff,15);
+                            check_command_length(eoff, 15);
                             if (in_topic)
                                 lformat_exclude = 0;
                             else
@@ -1671,7 +1671,7 @@ void read_src(char *fname)
 
                             if (lformat_exclude <= 0)
                             {
-                                error(eoff,"Invalid argument to FormatExclude=");
+                                error(eoff, "Invalid argument to FormatExclude=");
                                 lformat_exclude = 0;
                             }
 
@@ -1682,7 +1682,7 @@ void read_src(char *fname)
                         }
                     }
                     else
-                        error(eoff,"Invalid format for FormatExclude");
+                        error(eoff, "Invalid format for FormatExclude");
 
                     continue;
                 }
@@ -1705,7 +1705,7 @@ void read_src(char *fname)
                             error(eoff, "Unable to open \"%s\"", cmd+8);
                             srcfile = include_stack[include_stack_top--].file;
                         }
-                        src_cfname = dupstr(cmd+8,0);  /* never deallocate! */
+                        src_cfname = dupstr(cmd+8, 0);  /* never deallocate! */
                         srcline = 1;
                         srccol = 0;
                     }
@@ -1721,7 +1721,7 @@ void read_src(char *fname)
                     if (strnicmp(cmd, "HdrFile=", 8) == 0)
                     {
                         if (hdr_fname[0] != '\0')
-                            warn(eoff,"Header Filename has already been defined.");
+                            warn(eoff, "Header Filename has already been defined.");
                         strcpy(hdr_fname, cmd+8);
                         strupr(hdr_fname);
                     }
@@ -1729,7 +1729,7 @@ void read_src(char *fname)
                     else if (strnicmp(cmd, "HlpFile=", 8) == 0)
                     {
                         if (hlp_fname[0] != '\0')
-                            warn(eoff,"Help Filename has already been defined.");
+                            warn(eoff, "Help Filename has already been defined.");
                         strcpy(hlp_fname, cmd+8);
                         strupr(hlp_fname);
                     }
@@ -1737,12 +1737,12 @@ void read_src(char *fname)
                     else if (strnicmp(cmd, "Version=", 8) == 0)
                     {
                         if (version != -1)   /* an unlikely value */
-                            warn(eoff,"Help version has already been defined");
+                            warn(eoff, "Help version has already been defined");
                         version = atoi(cmd+8);
                     }
 
                     else
-                        error(eoff,"Bad or unexpected command \"%s\"", cmd);
+                        error(eoff, "Bad or unexpected command \"%s\"", cmd);
 
                     continue;
                 }
@@ -1754,7 +1754,7 @@ void read_src(char *fname)
                 {
                     if (strnicmp(cmd, "FF", 2) == 0)
                     {
-                        check_command_length(eoff,2);
+                        check_command_length(eoff, 2);
                         if (in_para)
                             *curr++ = '\n';  /* finish off current paragraph */
                         *curr++ = CMD_FF;
@@ -1765,7 +1765,7 @@ void read_src(char *fname)
 
                     else if (strnicmp(cmd, "DocFF", 5) == 0)
                     {
-                        check_command_length(eoff,5);
+                        check_command_length(eoff, 5);
                         if (in_para)
                             *curr++ = '\n';  /* finish off current paragraph */
                         if (!xonline)
@@ -1780,7 +1780,7 @@ void read_src(char *fname)
 
                     else if (strnicmp(cmd, "OnlineFF", 8) == 0)
                     {
-                        check_command_length(eoff,8);
+                        check_command_length(eoff, 8);
                         if (in_para)
                             *curr++ = '\n';  /* finish off current paragraph */
                         if (!xdoc)
@@ -1796,18 +1796,18 @@ void read_src(char *fname)
                     else if (strnicmp(cmd, "Label=", 6) == 0)
                     {
                         if ((int)strlen(cmd+6) <= 0)
-                            error(eoff,"Label has no name.");
+                            error(eoff, "Label has no name.");
 
                         else if (!validate_label_name(cmd+6))
-                            error(eoff,"Label \"%s\" contains illegal characters.", cmd+6);
+                            error(eoff, "Label \"%s\" contains illegal characters.", cmd+6);
 
                         else if (find_label(cmd+6) != nullptr)
-                            error(eoff,"Label \"%s\" already exists", cmd+6);
+                            error(eoff, "Label \"%s\" already exists", cmd+6);
 
                         else
                         {
                             if ((int)strlen(cmd+6) > 32)
-                                warn(eoff,"Label name is long.");
+                                warn(eoff, "Label name is long.");
 
                             if ((t.flags & TF_DATA) && cmd[6] == '@')
                                 warn(eoff, "Data topic has a local label.");
@@ -1845,29 +1845,29 @@ void read_src(char *fname)
                     {
                         if (cmd[13] == '-')
                         {
-                            check_command_length(eoff,14);
+                            check_command_length(eoff, 14);
                             if (lformat_exclude > 0)
                                 lformat_exclude = -lformat_exclude;
                             else
-                                warn(0,"\"FormatExclude-\" is already in effect.");
+                                warn(0, "\"FormatExclude-\" is already in effect.");
                         }
                         else if (cmd[13] == '+')
                         {
-                            check_command_length(eoff,14);
+                            check_command_length(eoff, 14);
                             if (lformat_exclude < 0)
                                 lformat_exclude = -lformat_exclude;
                             else
-                                warn(0,"\"FormatExclude+\" is already in effect.");
+                                warn(0, "\"FormatExclude+\" is already in effect.");
                         }
                         else
-                            error(eoff,"Unexpected or invalid argument to FormatExclude.");
+                            error(eoff, "Unexpected or invalid argument to FormatExclude.");
                     }
 
                     else if (strnicmp(cmd, "Format", 6) == 0)
                     {
                         if (cmd[6] == '+')
                         {
-                            check_command_length(eoff,7);
+                            check_command_length(eoff, 7);
                             if (!formatting)
                             {
                                 formatting = true;
@@ -1876,11 +1876,11 @@ void read_src(char *fname)
                                 state = S_Start;
                             }
                             else
-                                warn(eoff,"\"Format+\" is already in effect.");
+                                warn(eoff, "\"Format+\" is already in effect.");
                         }
                         else if (cmd[6] == '-')
                         {
-                            check_command_length(eoff,7);
+                            check_command_length(eoff, 7);
                             if (formatting)
                             {
                                 if (in_para)
@@ -1891,17 +1891,17 @@ void read_src(char *fname)
                                 state = S_Start;
                             }
                             else
-                                warn(eoff,"\"Format-\" is already in effect.");
+                                warn(eoff, "\"Format-\" is already in effect.");
                         }
                         else
-                            error(eoff,"Invalid argument to Format.");
+                            error(eoff, "Invalid argument to Format.");
                     }
 
                     else if (strnicmp(cmd, "Online", 6) == 0)
                     {
                         if (cmd[6] == '+')
                         {
-                            check_command_length(eoff,7);
+                            check_command_length(eoff, 7);
 
                             if (xonline)
                             {
@@ -1909,56 +1909,56 @@ void read_src(char *fname)
                                 xonline = false;
                             }
                             else
-                                warn(eoff,"\"Online+\" already in effect.");
+                                warn(eoff, "\"Online+\" already in effect.");
                         }
                         else if (cmd[6] == '-')
                         {
-                            check_command_length(eoff,7);
+                            check_command_length(eoff, 7);
                             if (!xonline)
                             {
                                 *curr++ = CMD_XONLINE;
                                 xonline = true;
                             }
                             else
-                                warn(eoff,"\"Online-\" already in effect.");
+                                warn(eoff, "\"Online-\" already in effect.");
                         }
                         else
-                            error(eoff,"Invalid argument to Online.");
+                            error(eoff, "Invalid argument to Online.");
                     }
 
                     else if (strnicmp(cmd, "Doc", 3) == 0)
                     {
                         if (cmd[3] == '+')
                         {
-                            check_command_length(eoff,4);
+                            check_command_length(eoff, 4);
                             if (xdoc)
                             {
                                 *curr++ = CMD_XDOC;
                                 xdoc = false;
                             }
                             else
-                                warn(eoff,"\"Doc+\" already in effect.");
+                                warn(eoff, "\"Doc+\" already in effect.");
                         }
                         else if (cmd[3] == '-')
                         {
-                            check_command_length(eoff,4);
+                            check_command_length(eoff, 4);
                             if (!xdoc)
                             {
                                 *curr++ = CMD_XDOC;
                                 xdoc = true;
                             }
                             else
-                                warn(eoff,"\"Doc-\" already in effect.");
+                                warn(eoff, "\"Doc-\" already in effect.");
                         }
                         else
-                            error(eoff,"Invalid argument to Doc.");
+                            error(eoff, "Invalid argument to Doc.");
                     }
 
                     else if (strnicmp(cmd, "Center", 6) == 0)
                     {
                         if (cmd[6] == '+')
                         {
-                            check_command_length(eoff,7);
+                            check_command_length(eoff, 7);
                             if (!centering)
                             {
                                 centering = true;
@@ -1970,55 +1970,55 @@ void read_src(char *fname)
                                 state = S_Start;  /* for centering FSM */
                             }
                             else
-                                warn(eoff,"\"Center+\" already in effect.");
+                                warn(eoff, "\"Center+\" already in effect.");
                         }
                         else if (cmd[6] == '-')
                         {
-                            check_command_length(eoff,7);
+                            check_command_length(eoff, 7);
                             if (centering)
                             {
                                 centering = false;
                                 state = S_Start;  /* for centering FSM */
                             }
                             else
-                                warn(eoff,"\"Center-\" already in effect.");
+                                warn(eoff, "\"Center-\" already in effect.");
                         }
                         else
-                            error(eoff,"Invalid argument to Center.");
+                            error(eoff, "Invalid argument to Center.");
                     }
 
                     else if (strnicmp(cmd, "CompressSpaces", 14) == 0)
                     {
-                        check_command_length(eoff,15);
+                        check_command_length(eoff, 15);
 
                         if (cmd[14] == '+')
                         {
                             if (compress_spaces)
-                                warn(eoff,"\"CompressSpaces+\" is already in effect.");
+                                warn(eoff, "\"CompressSpaces+\" is already in effect.");
                             else
                                 compress_spaces = true;
                         }
                         else if (cmd[14] == '-')
                         {
                             if (!compress_spaces)
-                                warn(eoff,"\"CompressSpaces-\" is already in effect.");
+                                warn(eoff, "\"CompressSpaces-\" is already in effect.");
                             else
                                 compress_spaces = false;
                         }
                         else
-                            error(eoff,"Invalid argument to CompressSpaces.");
+                            error(eoff, "Invalid argument to CompressSpaces.");
                     }
 
                     else if (strnicmp("BinInc ", cmd, 7) == 0)
                     {
                         if (!(t.flags & TF_DATA))
-                            error(eoff,"BinInc allowed only in Data topics.");
+                            error(eoff, "BinInc allowed only in Data topics.");
                         else
                             process_bininc();
                     }
 
                     else
-                        error(eoff,"Bad or unexpected command \"%s\".", cmd);
+                        error(eoff, "Bad or unexpected command \"%s\".", cmd);
                 } /* else */
 
             } /* while (!done) */
@@ -2033,7 +2033,7 @@ void read_src(char *fname)
             if (*ptr == '~')
                 unread_char('~');
             *ptr = '\0';
-            error(0,"Text outside of any topic \"%s\".", cmd);
+            error(0, "Text outside of any topic \"%s\".", cmd);
             continue;
         }
 
@@ -2346,7 +2346,7 @@ void make_hot_links()
                 {
                     src_cfname = c->srcfile;
                     srcline = c->srcline;
-                    error(0,"Cannot find DocContent label \"%s\".", c->topic_name[ctr]);
+                    error(0, "Cannot find DocContent label \"%s\".", c->topic_name[ctr]);
                     srcline = -1;
                 }
                 else
@@ -2355,14 +2355,14 @@ void make_hot_links()
                     {
                         src_cfname = c->srcfile;
                         srcline = c->srcline;
-                        error(0,"Label \"%s\" is a data-only topic.", c->topic_name[ctr]);
+                        error(0, "Label \"%s\" is a data-only topic.", c->topic_name[ctr]);
                         srcline = -1;
                     }
                     else
                     {
                         c->topic_num[ctr] = lbl->topic_num;
                         if (topic[lbl->topic_num].flags & TF_IN_DOC)
-                            warn(0,"Topic \"%s\" appears in document more than once.",
+                            warn(0, "Topic \"%s\" appears in document more than once.",
                                  topic[lbl->topic_num].title);
                         else
                             topic[lbl->topic_num].flags |= TF_IN_DOC;
@@ -2378,14 +2378,14 @@ void make_hot_links()
                 {
                     src_cfname = c->srcfile;
                     srcline = c->srcline;
-                    error(0,"Cannot find DocContent topic \"%s\".", c->topic_name[ctr]);
+                    error(0, "Cannot find DocContent topic \"%s\".", c->topic_name[ctr]);
                     srcline = -1;  /* back to reality */
                 }
                 else
                 {
                     c->topic_num[ctr] = t;
                     if (topic[t].flags & TF_IN_DOC)
-                        warn(0,"Topic \"%s\" appears in document more than once.",
+                        warn(0, "Topic \"%s\" appears in document more than once.",
                              topic[t].title);
                     else
                         topic[t].flags |= TF_IN_DOC;
@@ -2409,7 +2409,7 @@ void make_hot_links()
             {
                 src_cfname = l->srcfile;
                 srcline = l->srcline; /* pretend we are still in the source... */
-                error(0,"Cannot find implicit hot-link \"%s\".", l->name);
+                error(0, "Cannot find implicit hot-link \"%s\".", l->name);
                 srcline = -1;  /* back to reality */
             }
             else
@@ -2426,7 +2426,7 @@ void make_hot_links()
             {
                 src_cfname = l->srcfile;
                 srcline = l->srcline; /* pretend again */
-                error(0,"Cannot find explicit hot-link \"%s\".", l->name);
+                error(0, "Cannot find explicit hot-link \"%s\".", l->name);
                 srcline = -1;
             }
             else
@@ -2435,7 +2435,7 @@ void make_hot_links()
                 {
                     src_cfname = l->srcfile;
                     srcline = l->srcline;
-                    error(0,"Label \"%s\" is a data-only topic.", l->name);
+                    error(0, "Label \"%s\" is a data-only topic.", l->name);
                     srcline = -1;
                 }
                 else
@@ -2722,7 +2722,7 @@ void set_hot_link_doc_page()
             {
                 src_cfname = l->srcfile;
                 srcline = l->srcline; /* pretend we are still in the source... */
-                error(0,"Cannot find implicit hot-link \"%s\".", l->name);
+                error(0, "Cannot find implicit hot-link \"%s\".", l->name);
                 srcline = -1;  /* back to reality */
             }
             else
@@ -2735,7 +2735,7 @@ void set_hot_link_doc_page()
             {
                 src_cfname = l->srcfile;
                 srcline = l->srcline; /* pretend again */
-                error(0,"Cannot find explicit hot-link \"%s\".", l->name);
+                error(0, "Cannot find explicit hot-link \"%s\".", l->name);
                 srcline = -1;
             }
             else
@@ -2815,7 +2815,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
             {
                 src_cfname = link.srcfile;
                 srcline    = link.srcline;
-                warn(0,"Hot-link destination is not in the document.");
+                warn(0, "Hot-link destination is not in the document.");
                 srcline = -1;
             }
             return false;
@@ -2912,7 +2912,7 @@ int fcmp_LABEL(VOIDCONSTPTR a, VOIDCONSTPTR b)
     int   diff;
 
     /* compare the names, making sure that the index goes first */
-    diff = strcmp(an,bn);
+    diff = strcmp(an, bn);
     if (diff == 0)
         return (0);
 
@@ -2994,7 +2994,7 @@ void write_hdr(char *fname)
     {   /* if no prev. hdr file generate a new one */
         hdr = fopen(fname, "wt");
         if (hdr == nullptr)
-            fatal(0,"Cannot create \"%s\".", fname);
+            fatal(0, "Cannot create \"%s\".", fname);
         msg("Writing: %s", fname);
         _write_hdr(fname, hdr);
         fclose(hdr);
@@ -3007,7 +3007,7 @@ void write_hdr(char *fname)
     temp = fopen(TEMP_FNAME, "wt");
 
     if (temp == nullptr)
-        fatal(0,"Cannot create temporary file: \"%s\".", TEMP_FNAME);
+        fatal(0, "Cannot create temporary file: \"%s\".", TEMP_FNAME);
 
     _write_hdr(fname, temp);
 
@@ -3015,7 +3015,7 @@ void write_hdr(char *fname)
     temp = fopen(TEMP_FNAME, "rt");
 
     if (temp == nullptr)
-        fatal(0,"Cannot open temporary file: \"%s\".", TEMP_FNAME);
+        fatal(0, "Cannot open temporary file: \"%s\".", TEMP_FNAME);
 
     if (compare_files(temp, hdr))     /* if they are different... */
     {
@@ -3090,9 +3090,9 @@ void insert_real_link_info(char *curr, unsigned len)
         if (tok == TOK_LINK)
         {
             l = &a_link[ getint(curr+1) ];
-            setint(curr+1,l->topic_num);
-            setint(curr+1+sizeof(int),l->topic_off);
-            setint(curr+1+2*sizeof(int),l->doc_page);
+            setint(curr+1, l->topic_num);
+            setint(curr+1+sizeof(int), l->topic_off);
+            setint(curr+1+2*sizeof(int), l->doc_page);
         }
 
         len -= size;
@@ -3210,7 +3210,7 @@ void write_help(char *fname)
     hlp = fopen(fname, "wb");
 
     if (hlp == nullptr)
-        fatal(0,"Cannot create .HLP file: \"%s\".", fname);
+        fatal(0, "Cannot create .HLP file: \"%s\".", fname);
 
     msg("Writing: %s", fname);
 
@@ -3354,7 +3354,7 @@ void print_document(const char *fname)
     PRINT_DOC_INFO info;
 
     if (num_contents == 0)
-        fatal(0,".SRC has no DocContents.");
+        fatal(0, ".SRC has no DocContents.");
 
     msg("Printing to: %s", fname);
 
@@ -3364,7 +3364,7 @@ void print_document(const char *fname)
 
     info.file = fopen(fname, "wt");
     if (info.file == nullptr)
-        fatal(0,"Couldn't create \"%s\"", fname);
+        fatal(0, "Couldn't create \"%s\"", fname);
 
     info.margin = PAGE_INDENT;
     info.start_of_line = 1;
@@ -3491,11 +3491,11 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 
     exe = open(exe_fname, O_RDWR|O_BINARY);
     if (exe == -1)
-        fatal(0,"Unable to open \"%s\"", exe_fname);
+        fatal(0, "Unable to open \"%s\"", exe_fname);
 
     hlp = open(hlp_fname, O_RDONLY|O_BINARY);
     if (hlp == -1)
-        fatal(0,"Unable to open \"%s\"", hlp_fname);
+        fatal(0, "Unable to open \"%s\"", hlp_fname);
 
     msg("Appending %s to %s", hlp_fname, exe_fname);
 
@@ -3506,7 +3506,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
     read(exe, (char *)&hs, 10);
 
     if (hs.sig == HELP_SIG)
-        warn(0,"Overwriting previous help. (Version=%d)", hs.version);
+        warn(0, "Overwriting previous help. (Version=%d)", hs.version);
     else
         hs.base = filelength(exe);
 
@@ -3515,7 +3515,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
     read(hlp, (char *)&hs, sizeof(long)+sizeof(int));
 
     if (hs.sig != HELP_SIG)
-        fatal(0,"Help signature not found in %s", hlp_fname);
+        fatal(0, "Help signature not found in %s", hlp_fname);
 
     msg("Help file %s Version=%d", hlp_fname, hs.version);
 
@@ -3537,7 +3537,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 
     write(exe, (char *)&hs, 10);
 
-    chsize(exe, lseek(exe,0L,SEEK_CUR));/* truncate if old help was longer */
+    chsize(exe, lseek(exe, 0L, SEEK_CUR));/* truncate if old help was longer */
 
     close(exe);
     close(hlp);
@@ -3551,7 +3551,7 @@ void delete_hlp_from_exe(const char *exe_fname)
 
     exe = open(exe_fname, O_RDWR|O_BINARY);
     if (exe == -1)
-        fatal(0,"Unable to open \"%s\"", exe_fname);
+        fatal(0, "Unable to open \"%s\"", exe_fname);
 
     msg("Deleting help from %s", exe_fname);
 
@@ -3573,7 +3573,7 @@ void delete_hlp_from_exe(const char *exe_fname)
     else
     {
         close(exe);
-        fatal(0,"No help found in %s", exe_fname);
+        fatal(0, "No help found in %s", exe_fname);
     }
 }
 
@@ -3609,7 +3609,7 @@ int main(int argc, char *argv[])
     buffer = static_cast<char *>(malloc(BUFFER_SIZE));
 
     if (buffer == nullptr)
-        fatal(0,"Not enough memory to allocate buffer.");
+        fatal(0, "Not enough memory to allocate buffer.");
 
     for (arg = &argv[1]; argc > 1; argc--, arg++)
     {
@@ -3623,49 +3623,49 @@ int main(int argc, char *argv[])
                 if (mode == 0)
                     mode = MODE_COMPILE;
                 else
-                    fatal(0,"Cannot have /c with /a, /d or /p");
+                    fatal(0, "Cannot have /c with /a, /d or /p");
                 break;
 
             case 'a':
                 if (mode == 0)
                     mode = MODE_APPEND;
                 else
-                    fatal(0,"Cannot have /a with /c, /d or /p");
+                    fatal(0, "Cannot have /a with /c, /d or /p");
                 break;
 
             case 'd':
                 if (mode == 0)
                     mode = MODE_DELETE;
                 else
-                    fatal(0,"Cannot have /d with /c, /a or /p");
+                    fatal(0, "Cannot have /d with /c, /a or /p");
                 break;
 
             case 'p':
                 if (mode == 0)
                     mode = MODE_PRINT;
                 else
-                    fatal(0,"Cannot have /p with /c, /a or /d");
+                    fatal(0, "Cannot have /p with /c, /a or /d");
                 break;
 
             case 'm':
                 if (mode == MODE_COMPILE)
                     show_mem = true;
                 else
-                    fatal(0,"/m switch allowed only when compiling (/c)");
+                    fatal(0, "/m switch allowed only when compiling (/c)");
                 break;
 
             case 's':
                 if (mode == MODE_COMPILE)
                     show_stats = true;
                 else
-                    fatal(0,"/s switch allowed only when compiling (/c)");
+                    fatal(0, "/s switch allowed only when compiling (/c)");
                 break;
 
             case 'r':
                 if (mode == MODE_COMPILE || mode == MODE_PRINT)
                     strcpy(swappath, (*arg)+2);
                 else
-                    fatal(0,"/r switch allowed when compiling (/c) or printing (/p)");
+                    fatal(0, "/r switch allowed when compiling (/c) or printing (/p)");
                 break;
 
             case 'q':
@@ -3673,7 +3673,7 @@ int main(int argc, char *argv[])
                 break;
 
             default:
-                fatal(0,"Bad command-line switch /%c", (*arg)[1]);
+                fatal(0, "Bad command-line switch /%c", (*arg)[1]);
                 break;
             }
             break;
@@ -3684,7 +3684,7 @@ int main(int argc, char *argv[])
             else if (fname2[0] == '\0')
                 strcpy(fname2, *arg);
             else
-                fatal(0,"Unexpected command-line argument \"%s\"", *arg);
+                fatal(0, "Unexpected command-line argument \"%s\"", *arg);
             break;
         } /* switch */
     } /* for */
@@ -3721,7 +3721,7 @@ int main(int argc, char *argv[])
 
     case MODE_COMPILE:
         if (fname2[0] != '\0')
-            fatal(0,"Unexpected command-line argument \"%s\"", fname2);
+            fatal(0, "Unexpected command-line argument \"%s\"", fname2);
 
         strcpy(src_fname, (fname1[0] == '\0') ? DEFAULT_SRC_FNAME : fname1);
 
@@ -3729,17 +3729,17 @@ int main(int argc, char *argv[])
 
         swapfile = fopen(swappath, "w+b");
         if (swapfile == nullptr)
-            fatal(0,"Cannot create swap file \"%s\"", swappath);
+            fatal(0, "Cannot create swap file \"%s\"", swappath);
         swappos = 0;
 
         read_src(src_fname);
 
         if (hdr_fname[0] == '\0')
-            error(0,"No .H file defined.  (Use \"~HdrFile=\")");
+            error(0, "No .H file defined.  (Use \"~HdrFile=\")");
         if (hlp_fname[0] == '\0')
-            error(0,"No .HLP file defined.  (Use \"~HlpFile=\")");
+            error(0, "No .HLP file defined.  (Use \"~HlpFile=\")");
         if (version == -1)
-            warn(0,"No help version has been defined.  (Use \"~Version=\")");
+            warn(0, "No help version has been defined.  (Use \"~Version=\")");
 
         /* order of these is very important... */
 
@@ -3780,7 +3780,7 @@ int main(int argc, char *argv[])
 
         swapfile = fopen(swappath, "w+b");
         if (swapfile == nullptr)
-            fatal(0,"Cannot create swap file \"%s\"", swappath);
+            fatal(0, "Cannot create swap file \"%s\"", swappath);
         swappos = 0;
 
         read_src(src_fname);
@@ -3807,7 +3807,7 @@ int main(int argc, char *argv[])
 
     case MODE_DELETE:
         if (fname2[0] != '\0')
-            fatal(0,"Unexpected argument \"%s\"", fname2);
+            fatal(0, "Unexpected argument \"%s\"", fname2);
         delete_hlp_from_exe((fname1[0] == '\0') ? DEFAULT_EXE_FNAME : fname1);
         break;
     }
