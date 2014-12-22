@@ -50,8 +50,8 @@ typedef const void    *VOIDCONSTPTR;
 #define DOTDOTSLASH    "..\\"
 #define READMODE        "rb"    // Correct DOS text-mode
 #define WRITEMODE       "wb"    // file open "feature".
-#define write1(ptr,len,n,stream) fwrite(ptr,len,n,stream)
-#define write2(ptr,len,n,stream) fwrite(ptr,len,n,stream)
+#define write1(ptr, len, n, stream) fwrite(ptr, len, n, stream)
+#define write2(ptr, len, n, stream) fwrite(ptr, len, n, stream)
 #define rand15() rand()
 #ifndef BYTE_ORDER
 // change for little endians that don't have this defined elsewhere (endian.h)
@@ -98,21 +98,21 @@ typedef int sigfunc(int);
 #       define DOTDOTSLASH    "../"
 #       define READMODE       "r"
 #       define WRITEMODE        "w"
-#       define write1(ptr,len,n,stream) (fputc(*(ptr),stream),1)
-#       define write2(ptr,len,n,stream) (fputc((*(ptr))&255,stream),fputc((*(ptr)) >> 8,stream),1)
+#       define write1(ptr, len, n, stream) (fputc(*(ptr), stream), 1)
+#       define write2(ptr, len, n, stream) (fputc((*(ptr))&255, stream), fputc((*(ptr)) >> 8, stream), 1)
 #       define rand15() (rand()&0x7FFF)
 #       include "unix.h"
 #    endif // unix
 #endif // _WIN32
-// Uses big_access32(), big_set32(),... functions instead of macros.
+// Uses big_access32(), big_set32(), ... functions instead of macros.
 // Some little endian machines may require this as well.
 #if BYTE_ORDER == BIG_ENDIAN
 #define ACCESS_BY_BYTE
 #endif
 #ifdef LOBYTEFIRST
-#define GET16(c,i)              (i) = *((U16*)(&(c)))
+#define GET16(c, i)              (i) = *((U16*)(&(c)))
 #else
-#define GET16(c,i)              (i) = (*(unsigned char *)&(c))+\
+#define GET16(c, i)              (i) = (*(unsigned char *)&(c))+\
                                 ((*((unsigned char*)&(c)+1)) << 8)
 #endif
 typedef long double LDBL;
