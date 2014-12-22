@@ -125,7 +125,7 @@ driver_terminate()
 
 #define METHOD_VOID(name_) \
 void driver_##name_() { (*g_driver->name_)(g_driver); }
-#define METHOD(type_,name_) \
+#define METHOD(type_, name_) \
 type_ driver_##name_() { return (*g_driver->name_)(g_driver); }
 #define METHOD_INT(name_) METHOD(int, name_)
 
