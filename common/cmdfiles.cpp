@@ -595,7 +595,7 @@ static int cmdfile(FILE *handle, cmd_file mode)
         if ((mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME) && strcmp(cmdbuf, "}") == 0)
             break;
         i = cmdarg(cmdbuf, mode);
-        if (i < 0)
+        if (i == CMDARG_ERROR)
             break;
         changeflag |= i;
     }
