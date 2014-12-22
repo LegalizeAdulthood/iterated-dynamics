@@ -518,7 +518,6 @@ int main(int argc, char **argv)
     load_fractint_config();
     init_help();
 
-
 restart:   // insert key re-starts here
     main_restart(argc, argv, stacked);
 
@@ -548,7 +547,6 @@ resumeloop:
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
 #endif
-
     param_history(0); // save old history
     // this switch processes gotos that are now inside function
     switch (big_while_loop(&kbdmore, &stacked, resumeflag))
