@@ -56,25 +56,25 @@ void intro()
     botrow = 21;
 #else
     botrow = 20;
-    putstringcenter(21,0,80,C_TITLE,
+    putstringcenter(21, 0, 80, C_TITLE,
                     "Unix/X port of fractint by Ken Shirriff");
 #endif
-    putstringcenter(1,0,80,C_TITLE, PRESS_ENTER);
-    driver_put_string(2,0,C_CONTRIB,screen_text);
-    driver_set_attr(2,0,C_AUTHDIV1,80);
-    driver_set_attr(END_MAIN_AUTHOR,0,C_AUTHDIV1,80);
-    driver_set_attr(22,0,C_AUTHDIV2,80);
-    driver_set_attr(3,0,C_PRIMARY,80*(END_MAIN_AUTHOR-3));
-    driver_set_attr(23,0,C_TITLE_LOW,160);
+    putstringcenter(1, 0, 80, C_TITLE, PRESS_ENTER);
+    driver_put_string(2, 0, C_CONTRIB, screen_text);
+    driver_set_attr(2, 0, C_AUTHDIV1, 80);
+    driver_set_attr(END_MAIN_AUTHOR, 0, C_AUTHDIV1, 80);
+    driver_set_attr(22, 0, C_AUTHDIV2, 80);
+    driver_set_attr(3, 0, C_PRIMARY, 80*(END_MAIN_AUTHOR-3));
+    driver_set_attr(23, 0, C_TITLE_LOW, 160);
     for (int i = 3; i < END_MAIN_AUTHOR; ++i)
-        driver_set_attr(i,21,C_CONTRIB,58);
-    driver_set_attr(toprow,0,C_CONTRIB,(21-END_MAIN_AUTHOR)*80);
+        driver_set_attr(i, 21, C_CONTRIB, 58);
+    driver_set_attr(toprow, 0, C_CONTRIB, (21-END_MAIN_AUTHOR)*80);
     srand((unsigned int)clock_ticks());
     j = rand()%(j-(botrow-toprow)); // first to use
     i = j+botrow-toprow; // last to use
     oldchar = credits[authors.at(i+1)];
     credits[authors.at(i+1)] = 0;
-    driver_put_string(toprow,0,C_CONTRIB,credits+authors.at(j));
+    driver_put_string(toprow, 0, C_CONTRIB, credits+authors.at(j));
     credits[authors.at(i+1)] = oldchar;
     delaymax = 10;
     driver_hide_text_cursor();
@@ -101,8 +101,8 @@ void intro()
             i = 0;
         oldchar = credits[authors.at(i+1)];
         credits[authors.at(i+1)] = 0;
-        driver_put_string(botrow,0,C_CONTRIB,&credits[authors.at(i)]);
-        driver_set_attr(botrow,0,C_CONTRIB,80);
+        driver_put_string(botrow, 0, C_CONTRIB, &credits[authors.at(i)]);
+        driver_set_attr(botrow, 0, C_CONTRIB, 80);
         credits[authors.at(i+1)] = oldchar;
         driver_hide_text_cursor(); // turn it off
     }
