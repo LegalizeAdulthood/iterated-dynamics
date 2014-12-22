@@ -44,7 +44,7 @@ int iocount;
 long clock_ticks()
 {
     struct timeval tim;
-    gettimeofday(&tim,nullptr);
+    gettimeofday(&tim, nullptr);
     return tim.tv_sec*CLOCKS_PER_SEC + tim.tv_usec*CLOCKS_PER_SEC/1000000;
 }
 
@@ -236,8 +236,8 @@ void findpath(const char *filename, char *fullpathname)
 
     if (filename[0] == '/')
     {
-        strcpy(fullpathname,filename);
-        fd = open(fullpathname,O_RDONLY);
+        strcpy(fullpathname, filename);
+        fd = open(fullpathname, O_RDONLY);
         if (fd != -1)
         {
             close(fd);
@@ -247,28 +247,28 @@ void findpath(const char *filename, char *fullpathname)
     fractdir = getenv("FRACTDIR");
     if (fractdir != nullptr)
     {
-        strcpy(fullpathname,fractdir);
-        strcat(fullpathname,"/");
-        strcat(fullpathname,filename);
-        fd = open(fullpathname,O_RDONLY);
+        strcpy(fullpathname, fractdir);
+        strcat(fullpathname, "/");
+        strcat(fullpathname, filename);
+        fd = open(fullpathname, O_RDONLY);
         if (fd != -1)
         {
             close(fd);
             return;
         }
     }
-    strcpy(fullpathname,SRCDIR);
-    strcat(fullpathname,"/");
-    strcat(fullpathname,filename);
-    fd = open(fullpathname,O_RDONLY);
+    strcpy(fullpathname, SRCDIR);
+    strcat(fullpathname, "/");
+    strcat(fullpathname, filename);
+    fd = open(fullpathname, O_RDONLY);
     if (fd != -1)
     {
         close(fd);
         return;
     }
-    strcpy(fullpathname,"./");
-    strcat(fullpathname,filename);
-    fd = open(fullpathname,O_RDONLY);
+    strcpy(fullpathname, "./");
+    strcat(fullpathname, filename);
+    fd = open(fullpathname, O_RDONLY);
     if (fd != -1)
     {
         close(fd);
@@ -294,7 +294,7 @@ void findpath(const char *filename, char *fullpathname)
  */
 int ltoa(long num, char *str, int len)
 {
-    sprintf(str,"%10d",(int)num);
+    sprintf(str, "%10d", (int)num);
     return 0;
 }
 
@@ -316,7 +316,7 @@ int ltoa(long num, char *str, int len)
 int filelength(int fd)
 {
     struct stat buf;
-    fstat(fd,&buf);
+    fstat(fd, &buf);
     return buf.st_size;
 }
 
@@ -335,7 +335,7 @@ int filelength(int fd)
  *
  *----------------------------------------------------------------------
  */
-int splitpath(const char *file_template,char *drive,char *dir,char *fname,char *ext)
+int splitpath(const char *file_template, char *drive, char *dir, char *fname, char *ext)
 {
     int length;
     int len;
@@ -376,13 +376,13 @@ int splitpath(const char *file_template,char *drive,char *dir,char *fname,char *
     // get dir
     if (offset < length)
     {
-        tmp = strrchr(file_template,SLASHC);
+        tmp = strrchr(file_template, SLASHC);
         if (tmp)
         {
             tmp++;  // first character after slash
             len = tmp - &file_template[offset];
             if (len >=0 && len < FILE_MAX_DIR && dir)
-                        strncpy(dir,&file_template[offset],std::min(len,FILE_MAX_DIR));
+                        strncpy(dir, &file_template[offset], std::min(len, FILE_MAX_DIR));
             if (len < FILE_MAX_DIR && dir)
                         dir[len] = 0;
             offset += len;
@@ -394,8 +394,8 @@ int splitpath(const char *file_template,char *drive,char *dir,char *fname,char *
     // get fname
     if (offset < length)
     {
-        tmp = strrchr(file_template,'.');
-        if (tmp < strrchr(file_template,SLASHC) || tmp < strrchr(file_template,':'))
+        tmp = strrchr(file_template, '.');
+        if (tmp < strrchr(file_template, SLASHC) || tmp < strrchr(file_template, ':'))
                       tmp = 0; // in this case the '.' must be a directory
                 if (tmp)
         {
@@ -403,7 +403,7 @@ int splitpath(const char *file_template,char *drive,char *dir,char *fname,char *
             len = tmp - &file_template[offset];
             if ((len > 0) && (offset+len < length) && fname)
             {
-                strncpy(fname,&file_template[offset],std::min(len,FILE_MAX_FNAME));
+                strncpy(fname, &file_template[offset], std::min(len, FILE_MAX_FNAME));
                 if (len < FILE_MAX_FNAME)
                             fname[len] = 0;
                 else
@@ -412,13 +412,13 @@ int splitpath(const char *file_template,char *drive,char *dir,char *fname,char *
             offset += len;
             if ((offset < length) && ext)
             {
-                strncpy(ext,&file_template[offset],FILE_MAX_EXT);
+                strncpy(ext, &file_template[offset], FILE_MAX_EXT);
                 ext[FILE_MAX_EXT-1] = 0;
             }
         }
         else if ((offset < length) && fname)
         {
-            strncpy(fname,&file_template[offset],FILE_MAX_FNAME);
+            strncpy(fname, &file_template[offset], FILE_MAX_FNAME);
             fname[FILE_MAX_FNAME-1] = 0;
         }
     }
@@ -437,7 +437,7 @@ void ftimex(struct timebx *tp)
     struct timeval  timep;
     struct timezone timezp;
 
-    if (gettimeofday(&timep,&timezp) != 0)
+    if (gettimeofday(&timep, &timezp) != 0)
     {
         perror("error in gettimeofday");
         exit(0);
