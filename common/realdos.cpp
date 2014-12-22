@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <cassert>
+#include <vector>
 
 #include <ctype.h>
 #include <fcntl.h>
@@ -120,7 +122,7 @@ int stopmsg(int flags, const char *msg)
 }
 
 
-static U16 temptextsave = 0;
+static std::vector<BYTE> temptextsave;
 static int  textxdots, textydots;
 
 /* texttempmsg(msg) displays a text message of up to 40 characters, waits
@@ -142,11 +144,7 @@ int texttempmsg(const char *msgparm)
 
 void freetempmsg()
 {
-    if (temptextsave != 0)
-    {
-        MemoryRelease(temptextsave);
-    }
-    temptextsave = 0;
+    temptextsave.clear();
 }
 
 bool showtempmsg(const char *msgparm)
@@ -176,15 +174,11 @@ bool showtempmsg(const char *msgparm)
     textxdots = (int) strlen(msg) * xrepeat * 8;
     textydots = yrepeat * 8;
 
-    // worst case needs 10k
-    if (temptextsave != 0)
-    {
-        if (size != (long) textxdots * (long) textydots)
-        {
-            freetempmsg();
-        }
-    }
     size = (long) textxdots * (long) textydots;
+    if (temptextsave.size() != size)
+    {
+        temptextsave.clear();
+    }
     save_sxoffs = sxoffs;
     save_syoffs = syoffs;
     if (g_video_scroll)
@@ -197,18 +191,13 @@ bool showtempmsg(const char *msgparm)
         syoffs = 0;
         sxoffs = syoffs;
     }
-    if (temptextsave == 0) // only save screen first time called
+    if (temptextsave.empty()) // only save screen first time called
     {
-        // TODO: MemoryAlloc, MoveToMemory
-        temptextsave = MemoryAlloc((U16)textxdots, (long)textydots, MEMORY);
-        if (temptextsave == 0)
-        {
-            return true; // sorry, message not displayed
-        }
+        temptextsave.resize(textxdots*textydots);
         for (int i = 0; i < textydots; ++i)
         {
             get_line(i, 0, textxdots-1, buffer);
-            CopyFromMemoryToHandle(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
+            std::copy(&buffer[0], &buffer[textxdots], &temptextsave[textxdots*i]);
         }
     }
 
@@ -227,7 +216,7 @@ void cleartempmsg()
     {
         dvid_status(0, "");
     }
-    else if (temptextsave != 0)
+    else if (!temptextsave.empty())
     {
         int save_sxoffs = sxoffs;
         int save_syoffs = syoffs;
@@ -243,13 +232,12 @@ void cleartempmsg()
         }
         for (int i = 0; i < textydots; ++i)
         {
-            CopyFromHandleToMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
+            std::copy(&temptextsave[textxdots*i], &temptextsave[textxdots*(i+1)], &buffer[0]);
             put_line(i, 0, textxdots-1, buffer);
         }
         if (!using_jiim)                // jiim frees memory with freetempmsg()
         {
-            MemoryRelease(temptextsave);
-            temptextsave = 0;
+            temptextsave.clear();
         }
         sxoffs = save_sxoffs;
         syoffs = save_syoffs;
