@@ -77,4 +77,3 @@ int SetColorPaletteName(char * fn)
     memcpy((char *) mapdacbox, (char *) g_dac_box, 768);
     return 0;
 }
-

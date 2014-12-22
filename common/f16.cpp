@@ -100,4 +100,3 @@ int t16_getline(FILE *fp, int hs, U16 *data)
     }
     return 0;
 }
-

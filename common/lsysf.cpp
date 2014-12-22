@@ -791,5 +791,4 @@ void lsysf_dosincos()
         sins_f[i] = sinl(twopimaxi);
         coss_f[i] = locaspect * cosl(twopimaxi);
     }
-
 }

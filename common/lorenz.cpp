@@ -2869,4 +2869,3 @@ static void plothist(int x, int y, int color)
         color = 1;
     putcolor(x, y, color);
 }
-

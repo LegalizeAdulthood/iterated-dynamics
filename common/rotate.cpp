@@ -529,4 +529,3 @@ bool load_palette()
     helpmode = oldhelpmode;
     return i;
 }
-
