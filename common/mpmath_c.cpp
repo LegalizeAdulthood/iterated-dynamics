@@ -214,12 +214,12 @@ DComplex ComplexPower(DComplex xx, DComplex yy)
 
 */
 
-#define Sqrtz(z,rz) (*(rz) = ComplexSqrtFloat((z).x, (z).y))
+#define Sqrtz(z, rz) (*(rz) = ComplexSqrtFloat((z).x, (z).y))
 
 // rz=Arcsin(z)=-i*Log{i*z+sqrt(1-z*z)}
-void Arcsinz(DComplex z,DComplex *rz)
+void Arcsinz(DComplex z, DComplex *rz)
 {
-    DComplex tempz1,tempz2;
+    DComplex tempz1, tempz2;
 
     FPUcplxmul(&z, &z, &tempz1);
     tempz1.x = 1 - tempz1.x;
@@ -237,7 +237,7 @@ void Arcsinz(DComplex z,DComplex *rz)
 
 
 // rz=Arccos(z)=-i*Log{z+sqrt(z*z-1)}
-void Arccosz(DComplex z,DComplex *rz)
+void Arccosz(DComplex z, DComplex *rz)
 {
     DComplex temp;
 
@@ -253,7 +253,7 @@ void Arccosz(DComplex z,DComplex *rz)
     rz->y = -temp.x;              // rz = (-i)*tempz1
 }   // end. Arccosz
 
-void Arcsinhz(DComplex z,DComplex *rz)
+void Arcsinhz(DComplex z, DComplex *rz)
 {
     DComplex temp;
 
@@ -266,7 +266,7 @@ void Arcsinhz(DComplex z,DComplex *rz)
 }  // end. Arcsinhz
 
 // rz=Arccosh(z)=Log(z+sqrt(z*z-1)}
-void Arccoshz(DComplex z,DComplex *rz)
+void Arccoshz(DComplex z, DComplex *rz)
 {
     DComplex tempz;
     FPUcplxmul(&z, &z, &tempz);
@@ -278,9 +278,9 @@ void Arccoshz(DComplex z,DComplex *rz)
 }   // end. Arccoshz
 
 // rz=Arctanh(z)=1/2*Log{(1+z)/(1-z)}
-void Arctanhz(DComplex z,DComplex *rz)
+void Arctanhz(DComplex z, DComplex *rz)
 {
-    DComplex temp0,temp1,temp2;
+    DComplex temp0, temp1, temp2;
 
     if (z.x == 0.0)
     {
@@ -316,9 +316,9 @@ void Arctanhz(DComplex z,DComplex *rz)
 }   // end. Arctanhz
 
 // rz=Arctan(z)=i/2*Log{(1-i*z)/(1+i*z)}
-void Arctanz(DComplex z,DComplex *rz)
+void Arctanz(DComplex z, DComplex *rz)
 {
-    DComplex temp0,temp1,temp2,temp3;
+    DComplex temp0, temp1, temp2, temp3;
     if (z.x == 0.0 && z.y == 0.0)
     {
         rz->y = 0;
@@ -394,7 +394,7 @@ long lsqrt(long f)
     if (N % 2)
     {
         N++;
-        y0 = multiply(c,y0, bitshift);
+        y0 = multiply(c, y0, bitshift);
     }
     N /= 2;
     if (N >= 0)
@@ -410,11 +410,11 @@ LComplex ComplexSqrtLong(long x, long y)
     LComplex    result;
 
 #ifndef LONGSQRT
-    double mag = sqrt(sqrt(((double) multiply(x,x,bitshift))/fudge +
-                          ((double) multiply(y,y,bitshift))/ fudge));
+    double mag = sqrt(sqrt(((double) multiply(x, x, bitshift))/fudge +
+                          ((double) multiply(y, y, bitshift))/ fudge));
     maglong   = (long)(mag * fudge);
 #else
-    maglong   = lsqrt(lsqrt(multiply(x,x,bitshift)+multiply(y,y,bitshift)));
+    maglong   = lsqrt(lsqrt(multiply(x, x, bitshift)+multiply(y, y, bitshift)));
 #endif
     theta     = atan2((double) y/fudge, (double) x/fudge)/2;
     thetalong = (long)(theta * SinCosFudge);
