@@ -98,14 +98,14 @@ static void setpal(int pal, int r, int g, int b)
     g_dac_box[pal][0] = (BYTE)r;
     g_dac_box[pal][1] = (BYTE)g;
     g_dac_box[pal][2] = (BYTE)b;
-    spindac(0,1);
+    spindac(0, 1);
 }
 
 
 static void setpalrange(int first, int how_many, PALENTRY *pal)
 {
     memmove(g_dac_box+first, pal, how_many*3);
-    spindac(0,1);
+    spindac(0, 1);
 }
 
 
@@ -300,11 +300,11 @@ static void mkpalrange(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int 
         else
         {
             pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
-                                     (int)(p1->red   + pow(curr/(double)(num-1),static_cast<double>(gamma_val))*num*rm));
+                                     (int)(p1->red   + pow(curr/(double)(num-1), static_cast<double>(gamma_val))*num*rm));
             pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
-                                     (int)(p1->green + pow(curr/(double)(num-1),static_cast<double>(gamma_val))*num*gm));
+                                     (int)(p1->green + pow(curr/(double)(num-1), static_cast<double>(gamma_val))*num*gm));
             pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
-                                     (int)(p1->blue  + pow(curr/(double)(num-1),static_cast<double>(gamma_val))*num*bm));
+                                     (int)(p1->blue  + pow(curr/(double)(num-1), static_cast<double>(gamma_val))*num*bm));
         }
     }
 }
@@ -1031,8 +1031,8 @@ struct CEditor
 // public:
 
 static CEditor *CEditor_Construct(int x, int y, char letter,
-                                  void (*other_key)(int,CEditor*,void*),
-                                  void (*change)(CEditor*,void*), void *info);
+                                  void (*other_key)(int, CEditor*, void*),
+                                  void (*change)(CEditor*, void*), void *info);
 static void CEditor_Destroy(CEditor *me);
 static void CEditor_Draw(CEditor *me);
 static void CEditor_SetPos(CEditor *me, int x, int y);
@@ -1048,7 +1048,7 @@ static int  CEditor_Edit(CEditor *me);
 
 
 static CEditor *CEditor_Construct(int x, int y, char letter,
-                                  void (*other_key)(int,CEditor*,VOIDPTR),
+                                  void (*other_key)(int, CEditor*, VOIDPTR),
                                   void (*change)(CEditor*, VOIDPTR), void *info)
 {
     CEditor *me = allocate(CEditor);
@@ -1260,8 +1260,8 @@ static void      RGBEditor__change(CEditor *ceditor, void *info);
 // public:
 
 static RGBEditor *RGBEditor_Construct(int x, int y,
-                                      void (*other_key)(int,RGBEditor*,void*),
-                                      void (*change)(RGBEditor*,void*), void *info);
+                                      void (*other_key)(int, RGBEditor*, void*),
+                                      void (*change)(RGBEditor*, void*), void *info);
 
 static void     RGBEditor_Destroy(RGBEditor *me);
 static void     RGBEditor_SetPos(RGBEditor *me, int x, int y);
@@ -1282,8 +1282,8 @@ static PALENTRY RGBEditor_GetRGB(RGBEditor *me);
 
 
 
-static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int,RGBEditor*,void*),
-                                      void (*change)(RGBEditor*,void*), void *info)
+static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int, RGBEditor*, void*),
+                                      void (*change)(RGBEditor*, void*), void *info)
 {
     RGBEditor      *me     = allocate(RGBEditor);
     static char letter[] = "RGB";
@@ -1566,7 +1566,7 @@ struct PalTable
 
 
     PALENTRY      fs_color;
-    int           top,bottom; // top and bottom colours of freestyle band
+    int           top, bottom; // top and bottom colours of freestyle band
     int           bandwidth; //size of freestyle colour band
     bool freestyle;
 };
@@ -1627,7 +1627,7 @@ static void PalTable__CalcTopBottom(PalTable *me)
 
 static void PalTable__PutBand(PalTable *me, PALENTRY *pal)
 {
-    int r,b,a;
+    int r, b, a;
 
     // clip top and bottom values to stop them running off the end of the DAC
 
@@ -2070,7 +2070,7 @@ static void PalTable__SaveRect(PalTable *me)
         {
             getrow(me->x, me->y+yoff, width, buff);
             hline(me->x, me->y+yoff, width, bg_color);
-            memcpy(ptr,bufptr, width);
+            memcpy(ptr, bufptr, width);
             ptr += width;
         }
         Cursor_Show();
@@ -2082,7 +2082,7 @@ static void PalTable__SaveRect(PalTable *me)
 
         if (me->file == nullptr)
         {
-            me->file = dir_fopen(tempdir,scrnfile, "w+b");
+            me->file = dir_fopen(tempdir, scrnfile, "w+b");
             if (me->file == nullptr)
             {
                 me->stored_at = NOWHERE;
@@ -2351,7 +2351,7 @@ static void PalTable__UpdateDAC(PalTable *me)
         }
     }
 
-    spindac(0,1);
+    spindac(0, 1);
 }
 
 
@@ -2632,13 +2632,13 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     {
         int i;
         char buf[20];
-        sprintf(buf,"%.3f",1./gamma_val);
+        sprintf(buf, "%.3f", 1./gamma_val);
         driver_stack_screen();
-        i = field_prompt("Enter gamma value",nullptr,buf,20,nullptr);
+        i = field_prompt("Enter gamma value", nullptr, buf, 20, nullptr);
         driver_unstack_screen();
         if (i != -1)
         {
-            sscanf(buf,"%f",&gamma_val);
+            sscanf(buf, "%f", &gamma_val);
             if (gamma_val == 0)
             {
                 gamma_val = 0.0000000001F;
@@ -3004,7 +3004,7 @@ static PalTable *PalTable_Construct()
     me->rgb[1] = RGBEditor_Construct(0, 0, PalTable__other_key,
                                      PalTable__change, me);
 
-    me->movebox = MoveBox_Construct(0,0,0, PalTable_PALX+1, PalTable_PALY+1);
+    me->movebox = MoveBox_Construct(0, 0, 0, PalTable_PALX+1, PalTable_PALY+1);
 
     me->active      = 0;
     me->curr[0]     = 1;
@@ -3024,7 +3024,7 @@ static PalTable *PalTable_Construct()
     me->top            = 255;
     me->bottom         = 0 ;
 
-    me->undo_file    = dir_fopen(tempdir,undofile, "w+b");
+    me->undo_file    = dir_fopen(tempdir, undofile, "w+b");
     me->curr_changed = false;
     me->num_redo     = 0;
 
@@ -3090,13 +3090,13 @@ static void PalTable_Destroy(PalTable *me)
     if (me->file != nullptr)
     {
         fclose(me->file);
-        dir_remove(tempdir,scrnfile);
+        dir_remove(tempdir, scrnfile);
     }
 
     if (me->undo_file != nullptr)
     {
         fclose(me->undo_file);
-        dir_remove(tempdir,undofile);
+        dir_remove(tempdir, undofile);
     }
 
     if (me->memory != nullptr)
@@ -3184,7 +3184,7 @@ void EditPalette()       // called by fractint
 
     plot = putcolor;
 
-    line_buff = static_cast<BYTE *>(newx(std::max(sxdots,sydots)));
+    line_buff = static_cast<BYTE *>(newx(std::max(sxdots, sydots)));
 
     lookatmouse = 3;
     syoffs = 0;
