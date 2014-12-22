@@ -2,6 +2,7 @@
         FRACTINT - The Ultimate Fractal Generator
                         Main Routine
 */
+#include <cassert>
 #include <vector>
 
 #include <ctype.h>
@@ -170,31 +171,8 @@ void initasmvars()
     overflow = false;
 }
 
-int main(int argc, char **argv)
+static void main_restart(int const argc, char const *const argv[], bool &stacked)
 {
-    bool resumeflag = false;
-    int kbdchar;                        // keyboard key-hit value
-    bool kbdmore = false;               // continuation variable
-    bool stacked = false;               // flag to indicate screen stacked
-
-    // this traps non-math library floating point errors
-    signal(SIGFPE, my_floating_point_err);
-
-    initasmvars();                       // initialize ASM stuff
-    InitMemory();
-
-    // let drivers add their video modes
-    if (! init_drivers(&argc, argv))
-    {
-        init_failure("Sorry, I couldn't find any working video drivers for your system\n");
-        exit(-1);
-    }
-    // load fractint.cfg, match against driver supplied modes
-    load_fractint_config();
-    init_help();
-
-
-restart:   // insert key re-starts here
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
 #endif
@@ -281,9 +259,11 @@ restart:   // insert key re-starts here
     {
         set_if_old_bif();
     }
-    stacked = 0;
+    stacked = false;
+}
 
-restorestart:
+static bool main_restore_start(bool &stacked, bool &resumeflag)
+{
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
 #endif
@@ -336,7 +316,7 @@ restorestart:
         {
             driver_discard_screen();
             driver_set_for_text();
-            stacked = 0;
+            stacked = false;
         }
         if (read_overlay() == 0)       // read hdr, get video mode
         {
@@ -359,18 +339,30 @@ restorestart:
     if (((overlay3d && !initbatch) || stacked) && g_init_mode < 0)        // overlay command failed
     {
         driver_unstack_screen();                  // restore the graphics screen
-        stacked = 0;
+        stacked = false;
         overlay3d = false;              // forget overlays
         display3d = 0;                    // forget 3D
         if (calc_status == calc_status_value::NON_RESUMABLE)
             calc_status = calc_status_value::PARAMS_CHANGED;
         resumeflag = true;
-        goto resumeloop;                  // ooh, this is ugly
+        return true;
     }
 
     savedac = 0;                         // don't save the VGA DAC
 
-imagestart:                             // calc/display a new image
+    return false;
+}
+
+enum class main_state
+{
+    restore_start,
+    image_start,
+    restart,
+    resume_loop
+};
+
+static main_state main_image_start(bool &stacked, bool &resumeflag)
+{
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
 #endif
@@ -378,7 +370,7 @@ imagestart:                             // calc/display a new image
     if (stacked)
     {
         driver_discard_screen();
-        stacked = 0;
+        stacked = false;
     }
 #ifdef XFRACT
     usr_floatflag = true;
@@ -403,9 +395,9 @@ imagestart:                             // calc/display a new image
             initbatch = 4;                 // exit with error condition set
             goodbye();
         }
-        kbdchar = main_menu(0);
+        int kbdchar = main_menu(0);
         if (kbdchar == FIK_INSERT)
-            goto restart;      // restart pgm on Insert Key
+            return main_state::restart;      // restart pgm on Insert Key
         if (kbdchar == FIK_DELETE)                    // select video mode list
             kbdchar = select_video_mode(-1);
         g_adapter = check_vidmode_key(0, kbdchar);
@@ -419,7 +411,7 @@ imagestart:                             // calc/display a new image
         {                     // shell to DOS
             driver_set_clear();
             driver_shell();
-            goto imagestart;
+            return main_state::image_start;
         }
 
 #ifndef XFRACT
@@ -430,7 +422,7 @@ imagestart:                             // calc/display a new image
         {     // We mapped @ to F2
 #endif
             if ((get_commands() & CMDARG_3D_YES) == 0)
-                goto imagestart;
+                return main_state::image_start;
             kbdchar = '3';                         // 3d=y so fall thru '3' code
         }
 #ifndef XFRACT
@@ -447,43 +439,43 @@ imagestart:                             // calc/display a new image
                 memcpy(olddacbox, g_dac_box, 256*3); // save in case colors= present
             driver_set_for_text(); // switch to text mode
             showfile = -1;
-            goto restorestart;
+            return main_state::restore_start;
         }
         if (kbdchar == 't')
         {                   // set fractal type
             julibrot = false;
             get_fracttype();
-            goto imagestart;
+            return main_state::image_start;
         }
         if (kbdchar == 'x')
         {                   // generic toggle switch
             get_toggles();
-            goto imagestart;
+            return main_state::image_start;
         }
         if (kbdchar == 'y')
         {                   // generic toggle switch
             get_toggles2();
-            goto imagestart;
+            return main_state::image_start;
         }
         if (kbdchar == 'z')
         {                   // type specific parms
             get_fract_params(1);
-            goto imagestart;
+            return main_state::image_start;
         }
         if (kbdchar == 'v')
         {                   // view parameters
             get_view_params();
-            goto imagestart;
+            return main_state::image_start;
         }
         if (kbdchar == FIK_CTL_B)
         {             /* ctrl B = browse parms*/
             get_browse_params();
-            goto imagestart;
+            return main_state::image_start;
         }
         if (kbdchar == FIK_CTL_F)
         {             /* ctrl f = sound parms*/
             get_sound_params();
-            goto imagestart;
+            return main_state::image_start;
         }
         if (kbdchar == 'f')
         {                   // floating pt toggle
@@ -491,17 +483,17 @@ imagestart:                             // calc/display a new image
                 usr_floatflag = true;
             else
                 usr_floatflag = false;
-            goto imagestart;
+            return main_state::image_start;
         }
         if (kbdchar == 'i')
         {                     // set 3d fractal parms
             get_fract3d_params(); // get the parameters
-            goto imagestart;
+            return main_state::image_start;
         }
         if (kbdchar == 'g')
         {
             get_cmd_string(); // get command string
-            goto imagestart;
+            return main_state::image_start;
         }
         // buzzer(2); */                          /* unrecognized key
     }
@@ -509,6 +501,57 @@ imagestart:                             // calc/display a new image
     zoomoff = true;                     // zooming is enabled
     helpmode = HELPMAIN;                // now use this help mode
     resumeflag = false;                 // allows taking goto inside big_while_loop()
+
+    return main_state::resume_loop;
+}
+
+int main(int argc, char **argv)
+{
+    bool resumeflag = false;
+    bool kbdmore = false;               // continuation variable
+    bool stacked = false;               // flag to indicate screen stacked
+
+    // this traps non-math library floating point errors
+    signal(SIGFPE, my_floating_point_err);
+
+    initasmvars();                       // initialize ASM stuff
+    InitMemory();
+
+    // let drivers add their video modes
+    if (! init_drivers(&argc, argv))
+    {
+        init_failure("Sorry, I couldn't find any working video drivers for your system\n");
+        exit(-1);
+    }
+    // load fractint.cfg, match against driver supplied modes
+    load_fractint_config();
+    init_help();
+
+
+restart:   // insert key re-starts here
+    main_restart(argc, argv, stacked);
+
+restorestart:
+    if (main_restore_start(stacked, resumeflag))
+    {
+        goto resumeloop;                // ooh, this is ugly
+    }
+
+imagestart:                             // calc/display a new image
+    switch (main_image_start(stacked, resumeflag))
+    {
+    case main_state::restore_start:
+        goto restorestart;
+
+    case main_state::image_start:
+        goto imagestart;
+
+    case main_state::restart:
+        goto restart;
+
+    default:
+        break;
+    }
 
 resumeloop:
 #if defined(_WIN32)
