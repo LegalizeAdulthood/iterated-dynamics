@@ -22,8 +22,8 @@ static int rule_present(char symbol);
 static bool save_rule(char *rule, char **saveptr);
 static bool append_rule(char *rule, int index);
 static void free_lcmds();
-static lsys_cmd *findsize(lsys_cmd *, lsys_turtlestatei *, lsys_cmd **,int);
-static lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules,int depth);
+static lsys_cmd *findsize(lsys_cmd *, lsys_turtlestatei *, lsys_cmd **, int);
+static lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth);
 static bool lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth);
 static lsys_cmd *LSysISizeTransform(char *s, lsys_turtlestatei *ts);
 static lsys_cmd *LSysIDrawTransform(char *s, lsys_turtlestatei *ts);
@@ -60,11 +60,11 @@ LDBL getnumber(char **str)
 {
     char numstr[30];
     LDBL ret;
-    int i,root,inverse;
+    int i, root, inverse;
 
     root = 0;
     inverse = 0;
-    strcpy(numstr,"");
+    strcpy(numstr, "");
     (*str)++;
     switch (**str)
     {
@@ -112,11 +112,11 @@ static bool readLSystemFile(char *str)
     char **rulind;
     int err = 0;
     bool check = false;
-    char inline1[MAX_LSYS_LINE_LEN+1],fixed[MAX_LSYS_LINE_LEN+1],*word;
+    char inline1[MAX_LSYS_LINE_LEN+1], fixed[MAX_LSYS_LINE_LEN+1], *word;
     FILE *infile;
     char msgbuf[481]; // enough for 6 full lines
 
-    if (find_file_item(LFileName,str,&infile, 2))
+    if (find_file_item(LFileName, str, &infile, 2))
         return true;
     while ((c = fgetc(infile)) != '{')
         if (c == EOF)
@@ -128,33 +128,33 @@ static bool readLSystemFile(char *str)
     msgbuf[0] = 0;;
 
     int linenum = 0;
-    while (file_gets(inline1,MAX_LSYS_LINE_LEN,infile) > -1)  // Max line length chars
+    while (file_gets(inline1, MAX_LSYS_LINE_LEN, infile) > -1)  // Max line length chars
     {
         linenum++;
-        word = strchr(inline1,';');
+        word = strchr(inline1, ';');
         if (word != nullptr) // strip comment
             *word = 0;
         strlwr(inline1);
 
-        if ((int)strspn(inline1," \t\n") < (int)strlen(inline1)) // not a blank line
+        if ((int)strspn(inline1, " \t\n") < (int)strlen(inline1)) // not a blank line
         {
-            word = strtok(inline1," =\t\n");
-            if (!strcmp(word,"axiom"))
+            word = strtok(inline1, " =\t\n");
+            if (!strcmp(word, "axiom"))
             {
-                if (save_rule(strtok(nullptr," \t\n"),&ruleptrs[0]))
+                if (save_rule(strtok(nullptr, " \t\n"), &ruleptrs[0]))
                 {
-                    strcat(msgbuf,"Error:  out of memory\n");
+                    strcat(msgbuf, "Error:  out of memory\n");
                     ++err;
                     break;
                 }
                 check = true;
             }
-            else if (!strcmp(word,"angle"))
+            else if (!strcmp(word, "angle"))
             {
-                maxangle = (char)atoi(strtok(nullptr," \t\n"));
+                maxangle = (char)atoi(strtok(nullptr, " \t\n"));
                 check = true;
             }
-            else if (!strcmp(word,"}"))
+            else if (!strcmp(word, "}"))
                 break;
             else if (!word[1])
             {
@@ -165,23 +165,23 @@ static bool readLSystemFile(char *str)
                 if (strchr("+-/\\@|!c<>][", *word))
                 {
                     sprintf(&msgbuf[strlen(msgbuf)],
-                            "Syntax error line %d: Redefined reserved symbol %s\n",linenum,word);
+                            "Syntax error line %d: Redefined reserved symbol %s\n", linenum, word);
                     ++err;
                     break;
                 }
-                temp = strtok(nullptr," =\t\n");
+                temp = strtok(nullptr, " =\t\n");
                 index = rule_present(*word);
 
                 if (!index)
                 {
-                    strcpy(fixed,word);
+                    strcpy(fixed, word);
                     if (temp)
-                        strcat(fixed,temp);
-                    memerr = save_rule(fixed,rulind++);
+                        strcat(fixed, temp);
+                    memerr = save_rule(fixed, rulind++);
                 }
                 else if (temp)
                 {
-                    strcpy(fixed,temp);
+                    strcpy(fixed, temp);
                     memerr = append_rule(fixed, index);
                 }
                 if (memerr)
@@ -195,18 +195,18 @@ static bool readLSystemFile(char *str)
             else if (err < 6)
             {
                 sprintf(&msgbuf[strlen(msgbuf)],
-                        "Syntax error line %d: %s\n",linenum,word);
+                        "Syntax error line %d: %s\n", linenum, word);
                 ++err;
             }
             if (check)
             {
                 check = false;
-                word = strtok(nullptr," \t\n");
+                word = strtok(nullptr, " \t\n");
                 if (word != nullptr)
                     if (err < 6)
                     {
                         sprintf(&msgbuf[strlen(msgbuf)],
-                                "Extra text after command line %d: %s\n",linenum,word);
+                                "Extra text after command line %d: %s\n", linenum, word);
                         ++err;
                     }
             }
@@ -215,12 +215,12 @@ static bool readLSystemFile(char *str)
     fclose(infile);
     if (!ruleptrs[0] && err < 6)
     {
-        strcat(msgbuf,"Error:  no axiom\n");
+        strcat(msgbuf, "Error:  no axiom\n");
         ++err;
     }
     if ((maxangle < 3||maxangle > 50) && err < 6)
     {
-        strcat(msgbuf,"Error:  illegal or missing angle\n");
+        strcat(msgbuf, "Error:  illegal or missing angle\n");
         ++err;
     }
     if (err)
@@ -608,7 +608,7 @@ static void lsysi_dodrawd(lsys_turtlestatei *cmd)
     cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
     // xpos+=size*aspect*cos(realangle*PI/180);
     // ypos+=size*sin(realangle*PI/180);
-    driver_draw_line(lastx,lasty,(int)(cmd->xpos >> 19),(int)(cmd->ypos >> 19),cmd->curcolor);
+    driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
 }
 
 static void lsysi_dodrawm(lsys_turtlestatei *cmd)
@@ -643,7 +643,7 @@ static void lsysi_dodrawf(lsys_turtlestatei *cmd)
     cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
-    driver_draw_line(lastx,lasty,(int)(cmd->xpos >> 19),(int)(cmd->ypos >> 19),cmd->curcolor);
+    driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
 }
 
 static void lsysi_dodrawc(lsys_turtlestatei *cmd)
@@ -699,7 +699,7 @@ findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
                 if ((*rulind)->ch == command->ch)
                 {
                     tran = true;
-                    if (findsize((*rulind)+1,ts,rules,depth-1) == nullptr)
+                    if (findsize((*rulind)+1, ts, rules, depth-1) == nullptr)
                         return (nullptr);
                 }
         }
@@ -712,8 +712,8 @@ findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
             }
             else if (command->ch == '[')
             {
-                char saveang,saverev;
-                long savesize,savex,savey;
+                char saveang, saverev;
+                long savesize, savex, savey;
                 unsigned long saverang;
 
                 saveang = ts->angle;
@@ -741,7 +741,7 @@ findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
 static bool
 lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
 {
-    float horiz,vert;
+    float horiz, vert;
     double xmin, xmax, ymin, ymax;
     double locsize;
     double locaspect;
@@ -760,7 +760,7 @@ lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int 
     ts->ypos = ts->xmin;
     ts->xpos = ts->ypos;
     ts->size = FIXEDPT(1L);
-    fsret = findsize(command,ts,rules,depth);
+    fsret = findsize(command, ts, rules, depth);
     thinking(0, nullptr); // erase thinking message if any
     xmin = (double) ts->xmin / FIXEDMUL;
     xmax = (double) ts->xmax / FIXEDMUL;
@@ -794,7 +794,7 @@ lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int 
 }
 
 static lsys_cmd *
-drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules,int depth)
+drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
 {
     bool tran;
 
@@ -825,7 +825,7 @@ drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules,int depth)
                 if ((*rulind)->ch == command->ch)
                 {
                     tran = true;
-                    if (drawLSysI((*rulind)+1,ts,rules,depth-1) == nullptr)
+                    if (drawLSysI((*rulind)+1, ts, rules, depth-1) == nullptr)
                         return nullptr;
                 }
         }
@@ -838,8 +838,8 @@ drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules,int depth)
             }
             else if (command->ch == '[')
             {
-                char saveang,saverev,savecolor;
-                long savesize,savex,savey;
+                char saveang, saverev, savecolor;
+                long savesize, savex, savey;
                 unsigned long saverang;
 
                 saveang = ts->angle;
