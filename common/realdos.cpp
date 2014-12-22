@@ -20,7 +20,7 @@
 #include "drivers.h"
 #include "helpcom.h"
 
-static int menu_checkkey(int curkey,int choice);
+static int menu_checkkey(int curkey, int choice);
 
 int g_release = 2099;   // this has 2 implied decimals; increment it every synch
 int g_patch_level = 8;  // patchlevel for DOS version
@@ -45,17 +45,17 @@ int xrelease = 304;
    */
 int stopmsg(int flags, const char *msg)
 {
-    int ret,toprow,color,savelookatmouse;
+    int ret, toprow, color, savelookatmouse;
     static bool batchmode = false;
     if (debugflag != debug_flags::none || initbatch >= 1)
     {
         static FILE *fp = nullptr;
         if (fp == nullptr && initbatch == 0)
-            fp = dir_fopen(workdir,"stopmsg.txt","w");
+            fp = dir_fopen(workdir, "stopmsg.txt", "w");
         else
-            fp = dir_fopen(workdir,"stopmsg.txt","a");
+            fp = dir_fopen(workdir, "stopmsg.txt", "a");
         if (fp != nullptr)
-            fprintf(fp,"%s\n",msg);
+            fprintf(fp, "%s\n", msg);
         fclose(fp);
     }
     if (first_init)
@@ -63,16 +63,16 @@ int stopmsg(int flags, const char *msg)
 #ifdef XFRACT
         driver_set_for_text();
         driver_buzzer(buzzer_codes::PROBLEM);
-        driver_put_string(0,0,15, "*** Error during startup:");
-        driver_put_string(2,0,15,msg);
-        driver_move_cursor(8,0);
+        driver_put_string(0, 0, 15, "*** Error during startup:");
+        driver_put_string(2, 0, 15, msg);
+        driver_move_cursor(8, 0);
 #if !defined(WIN32)
         sleep(1);
 #endif
         close_drivers();
         exit(1);
 #else
-        printf("%s\n",msg);
+        printf("%s\n", msg);
         dopause(1); // pause deferred until after cmdfiles
         return (0);
 #endif
@@ -87,22 +87,22 @@ int stopmsg(int flags, const char *msg)
     savelookatmouse = lookatmouse;
     lookatmouse = -13;
     if ((flags & STOPMSG_NO_STACK))
-        blankrows(toprow = 12,10,7);
+        blankrows(toprow = 12, 10, 7);
     else
     {
         driver_stack_screen();
         toprow = 4;
-        driver_move_cursor(4,0);
+        driver_move_cursor(4, 0);
     }
     g_text_cbase = 2; // left margin is 2
-    driver_put_string(toprow,0,7,msg);
+    driver_put_string(toprow, 0, 7, msg);
     if (flags & STOPMSG_CANCEL)
-        driver_put_string(g_text_row+2,0,7, "Escape to cancel, any other key to continue...");
+        driver_put_string(g_text_row+2, 0, 7, "Escape to cancel, any other key to continue...");
     else
-        driver_put_string(g_text_row+2,0,7, "Any key to continue...");
+        driver_put_string(g_text_row+2, 0, 7, "Any key to continue...");
     g_text_cbase = 0; // back to full line
     color = (flags & STOPMSG_INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
-    driver_set_attr(toprow,0,color,(g_text_row+1-toprow)*80);
+    driver_set_attr(toprow, 0, color, (g_text_row+1-toprow)*80);
     driver_hide_text_cursor();   // cursor off
     if ((flags & STOPMSG_NO_BUZZER) == 0)
         driver_buzzer((flags & STOPMSG_INFO_ONLY) ? buzzer_codes::COMPLETE : buzzer_codes::PROBLEM);
@@ -112,7 +112,7 @@ int stopmsg(int flags, const char *msg)
         if (getakeynohelp() == FIK_ESC)
             ret = -1;
     if ((flags & STOPMSG_NO_STACK))
-        blankrows(toprow,10,7);
+        blankrows(toprow, 10, 7);
     else
         driver_unstack_screen();
     lookatmouse = savelookatmouse;
@@ -121,7 +121,7 @@ int stopmsg(int flags, const char *msg)
 
 
 static U16 temptextsave = 0;
-static int  textxdots,textydots;
+static int  textxdots, textydots;
 
 /* texttempmsg(msg) displays a text message of up to 40 characters, waits
       for a key press, restores the prior display, and returns (without
@@ -256,38 +256,38 @@ void cleartempmsg()
     }
 }
 
-void blankrows(int row,int rows,int attr)
+void blankrows(int row, int rows, int attr)
 {
     char buf[81];
-    memset(buf,' ',80);
+    memset(buf, ' ', 80);
     buf[80] = 0;
     while (--rows >= 0)
-        driver_put_string(row++,0,attr,buf);
+        driver_put_string(row++, 0, attr, buf);
 }
 
 void helptitle()
 {
-    char msg[MSGLEN],buf[MSGLEN];
+    char msg[MSGLEN], buf[MSGLEN];
     driver_set_clear(); // clear the screen
 #ifdef XFRACT
-    sprintf(msg,"XFRACTINT  Version %d.%02d (FRACTINT Version %d.%02d)",
-            xrelease/100,xrelease%100, g_release/100,g_release%100);
+    sprintf(msg, "XFRACTINT  Version %d.%02d (FRACTINT Version %d.%02d)",
+            xrelease/100, xrelease%100, g_release/100, g_release%100);
 #else
     *msg = 0;
 #endif
-    sprintf(buf,"FRACTINT Version %d.%01d",g_release/100,(g_release%100)/10);
-    strcat(msg,buf);
+    sprintf(buf, "FRACTINT Version %d.%01d", g_release/100, (g_release%100)/10);
+    strcat(msg, buf);
     if (g_release%10)
     {
-        sprintf(buf,"%01d",g_release%10);
-        strcat(msg,buf);
+        sprintf(buf, "%01d", g_release%10);
+        strcat(msg, buf);
     }
     if (g_patch_level)
     {
-        sprintf(buf,".%d",g_patch_level);
-        strcat(msg,buf);
+        sprintf(buf, ".%d", g_patch_level);
+        strcat(msg, buf);
     }
-    putstringcenter(0,0,80,C_TITLE,msg);
+    putstringcenter(0, 0, 80, C_TITLE, msg);
 }
 
 
@@ -305,7 +305,7 @@ void footer_msg(int *i, int options, char *speedstring)
 int putstringcenter(int row, int col, int width, int attr, const char *msg)
 {
     char buf[81];
-    int i,j,k;
+    int i, j, k;
     i = 0;
 #ifdef XFRACT
     if (width >= 80)
@@ -319,13 +319,13 @@ int putstringcenter(int row, int col, int width, int attr, const char *msg)
         i = width - 1; // sanity check
     j = (width - i) / 2;
     j -= (width + 10 - i) / 20; // when wide a bit left of center looks better
-    memset(buf,' ',width);
+    memset(buf, ' ', width);
     buf[width] = 0;
     i = 0;
     k = j;
     while (msg[i])
         buf[k++] = msg[i++]; // strcpy for a
-    driver_put_string(row,col,attr,buf);
+    driver_put_string(row, col, attr, buf);
     return j;
 }
 
@@ -345,34 +345,34 @@ static int isadirname(const char *name)
 
 void show_speedstring(int speedrow,
                       char *speedstring,
-                      int (*speedprompt)(int,int,int,char *,int))
+                      int (*speedprompt)(int, int, int, char *, int))
 {
     char buf[81];
-    memset(buf,' ',80);
+    memset(buf, ' ', 80);
     buf[80] = 0;
-    driver_put_string(speedrow,0,C_PROMPT_BKGRD,buf);
+    driver_put_string(speedrow, 0, C_PROMPT_BKGRD, buf);
     if (*speedstring)
     {                 // got a speedstring on the go
-        driver_put_string(speedrow,15,C_CHOICE_SP_INSTR," ");
+        driver_put_string(speedrow, 15, C_CHOICE_SP_INSTR, " ");
         int j;
         if (speedprompt)
         {
             int speed_match = 0;
-            j = speedprompt(speedrow,16,C_CHOICE_SP_INSTR,speedstring,speed_match);
+            j = speedprompt(speedrow, 16, C_CHOICE_SP_INSTR, speedstring, speed_match);
         }
         else
         {
-            driver_put_string(speedrow,16,C_CHOICE_SP_INSTR,speed_prompt);
+            driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, speed_prompt);
             j = sizeof(speed_prompt)-1;
         }
-        strcpy(buf,speedstring);
+        strcpy(buf, speedstring);
         int i = (int) strlen(buf);
         while (i < 30)
             buf[i++] = ' ';
         buf[i] = 0;
-        driver_put_string(speedrow,16+j,C_CHOICE_SP_INSTR," ");
-        driver_put_string(speedrow,17+j,C_CHOICE_SP_KEYIN,buf);
-        driver_move_cursor(speedrow,17+j+(int) strlen(speedstring));
+        driver_put_string(speedrow, 16+j, C_CHOICE_SP_INSTR, " ");
+        driver_put_string(speedrow, 17+j, C_CHOICE_SP_KEYIN, buf);
+        driver_move_cursor(speedrow, 17+j+(int) strlen(speedstring));
     }
     else
         driver_hide_text_cursor();
@@ -401,7 +401,7 @@ void process_speedstring(char    *speedstring,
         *pcurrent = 0;
         int comp_result;
         while (*pcurrent < numchoices
-                && (comp_result = strncasecmp(speedstring,choices[*pcurrent],i)) != 0)
+                && (comp_result = strncasecmp(speedstring, choices[*pcurrent], i)) != 0)
         {
             if (comp_result < 0 && !is_unsorted)
             {
@@ -470,10 +470,10 @@ int fullscreen_choice(
     int boxdepth,
     int colwidth,
     int current,
-    void (*formatitem)(int,char*),
+    void (*formatitem)(int, char*),
     char *speedstring,
-    int (*speedprompt)(int,int,int,char *,int),
-    int (*checkkey)(int,int)
+    int (*speedprompt)(int, int, int, char *, int),
+    int (*checkkey)(int, int)
 )
 {
     int titlelines, titlewidth;
@@ -1446,12 +1446,12 @@ static int menu_checkkey(int curkey, int /*choice*/)
 #endif
     if (testkey == '2')
         testkey = '@';
-    if (strchr("#@2txyzgvir3dj",testkey) || testkey == FIK_INSERT || testkey == FIK_CTL_B
+    if (strchr("#@2txyzgvir3dj", testkey) || testkey == FIK_INSERT || testkey == FIK_CTL_B
             || testkey == FIK_ESC || testkey == FIK_DELETE || testkey == FIK_CTL_F)
         return (0-testkey);
     if (menutype)
     {
-        if (strchr("\\sobpkrh",testkey) || testkey == FIK_TAB
+        if (strchr("\\sobpkrh", testkey) || testkey == FIK_TAB
                 || testkey == FIK_CTL_A || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
                 || testkey == FIK_CTL_P
                 || testkey == FIK_CTL_S || testkey == FIK_CTL_U) // ctrl-A, E, H, P, S, U
@@ -1463,7 +1463,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
                 return (0-testkey);
         if (g_got_real_dac && colors >= 16)
         {
-            if (strchr("c+-",testkey))
+            if (strchr("c+-", testkey))
                 return (0-testkey);
             if (colors > 16 && (testkey == 'a' || (testkey == 'e')))
                 return (0-testkey);
@@ -1472,7 +1472,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
         if (testkey == FIK_ALT_A || testkey == FIK_ALT_S)
             return (0-testkey);
     }
-    if (check_vidmode_key(0,testkey) >= 0)
+    if (check_vidmode_key(0, testkey) >= 0)
         return (0-testkey);
     return (0);
 }
@@ -1494,24 +1494,24 @@ int input_field(
     int savelookatmouse = lookatmouse;
     lookatmouse = 0;
     int ret = -1;
-    strcpy(savefld,fld);
+    strcpy(savefld, fld);
     int insert = 0;
     bool started = false;
     int offset = 0;
     bool display = true;
     while (1)
     {
-        strcpy(buf,fld);
+        strcpy(buf, fld);
         i = (int) strlen(buf);
         while (i < len)
             buf[i++] = ' ';
         buf[len] = 0;
         if (display)
         {                                // display current value
-            driver_put_string(row,col,attr,buf);
+            driver_put_string(row, col, attr, buf);
             display = false;
         }
-        curkey = driver_key_cursor(row+insert,col+offset);  // get a keystroke
+        curkey = driver_key_cursor(row+insert, col+offset);  // get a keystroke
         if (curkey == 1047)
             curkey = 47; // numeric slash
         switch (curkey)
@@ -1564,7 +1564,7 @@ int input_field(
             started = true;
             break;
         case FIK_F5:
-            strcpy(fld,savefld);
+            strcpy(fld, savefld);
             offset = 0;
             insert = offset;
             started = false;
@@ -1627,9 +1627,9 @@ int input_field(
                 {
                     if ((options & INPUTFIELD_DOUBLE) == 0)
                         roundfloatd(&tmpd);
-                    sprintf(tmpfld,"%.15g",tmpd);
+                    sprintf(tmpfld, "%.15g", tmpd);
                     tmpfld[len-1] = 0; // safety, field should be long enough
-                    strcpy(fld,tmpfld);
+                    strcpy(fld, tmpfld);
                     offset = 0;
                 }
             }
@@ -1651,12 +1651,12 @@ int field_prompt(
 )
 {
     const char *charptr;
-    int boxwidth,titlelines,titlecol,titlerow;
+    int boxwidth, titlelines, titlecol, titlerow;
     int promptcol;
-    int i,j;
+    int i, j;
     char buf[81] = { 0 };
     helptitle();                           // clear screen, display title
-    driver_set_attr(1,0,C_PROMPT_BKGRD,24*80);     // init rest to background
+    driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);     // init rest to background
     charptr = hdg;                         // count title lines, find widest
     boxwidth = 0;
     i = boxwidth;
@@ -1686,9 +1686,9 @@ int field_prompt(
     j -= i;
     boxwidth += i * 2;
     for (int i = -1; i < titlelines+3; ++i)    // draw empty box
-        driver_set_attr(titlerow+i,j,C_PROMPT_LO,boxwidth);
+        driver_set_attr(titlerow+i, j, C_PROMPT_LO, boxwidth);
     g_text_cbase = titlecol;                  // set left margin for putstring
-    driver_put_string(titlerow,0,C_PROMPT_HI,hdg); // display heading
+    driver_put_string(titlerow, 0, C_PROMPT_HI, hdg); // display heading
     g_text_cbase = 0;
     i = titlerow + titlelines + 4;
     if (instr)
@@ -1699,15 +1699,15 @@ int field_prompt(
             if (buf[j] == '\n')
             {
                 buf[j] = 0;
-                putstringcenter(i++,0,80,C_PROMPT_BKGRD,buf);
+                putstringcenter(i++, 0, 80, C_PROMPT_BKGRD, buf);
                 j = -1;
             }
-        putstringcenter(i,0,80,C_PROMPT_BKGRD,buf);
+        putstringcenter(i, 0, 80, C_PROMPT_BKGRD, buf);
     }
     else                                   // default instructions
-        putstringcenter(i,0,80,C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
-    return input_field(0,C_PROMPT_INPUT,fld,len,
-                       titlerow+titlelines+1,promptcol,checkkey);
+        putstringcenter(i, 0, 80, C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
+    return input_field(0, C_PROMPT_INPUT, fld, len,
+                       titlerow+titlelines+1, promptcol, checkkey);
 }
 
 
@@ -1722,7 +1722,7 @@ int field_prompt(
 bool thinking(int options, const char *msg)
 {
     static int thinkstate = -1;
-    const char *wheel[] = {"-","\\","|","/"};
+    const char *wheel[] = {"-", "\\", "|", "/"};
     static int thinkcol;
     static int count = 0;
     char buf[81];
@@ -1740,10 +1740,10 @@ bool thinking(int options, const char *msg)
         driver_stack_screen();
         thinkstate = 0;
         helptitle();
-        strcpy(buf,"  ");
-        strcat(buf,msg);
-        strcat(buf,"    ");
-        driver_put_string(4,10,C_GENERAL_HI,buf);
+        strcpy(buf, "  ");
+        strcat(buf, msg);
+        strcat(buf, "    ");
+        driver_put_string(4, 10, C_GENERAL_HI, buf);
         thinkcol = g_text_col - 3;
         count = 0;
     }
@@ -1752,7 +1752,7 @@ bool thinking(int options, const char *msg)
         return false;
     }
     count = 0;
-    driver_put_string(4,thinkcol,C_GENERAL_HI,wheel[thinkstate]);
+    driver_put_string(4, thinkcol, C_GENERAL_HI, wheel[thinkstate]);
     driver_hide_text_cursor(); // turn off cursor
     thinkstate = (thinkstate + 1) & 3;
     return driver_key_pressed() != 0;
@@ -1810,9 +1810,9 @@ void load_fractint_config()
     char tempstring[150];
     int truecolorbits;
 
-    findpath("fractint.cfg",tempstring);
+    findpath("fractint.cfg", tempstring);
     if (tempstring[0] == 0                            // can't find the file
-            || (cfgfile = fopen(tempstring,"r")) == nullptr)   // can't open it
+            || (cfgfile = fopen(tempstring, "r")) == nullptr)   // can't open it
     {
         goto bad_fractint_cfg;
     }
@@ -1821,7 +1821,7 @@ void load_fractint_config()
     while (g_video_table_len < MAXVIDEOMODES
             && fgets(tempstring, 120, cfgfile))
     {
-        if (strchr(tempstring,'\n') == nullptr)
+        if (strchr(tempstring, '\n') == nullptr)
         {
             // finish reading the line
             while (fgetc(cfgfile) != '\n' && !feof(cfgfile));
@@ -1854,10 +1854,10 @@ void load_fractint_config()
             }
         }
         keynum = check_vidmode_keyname(tempstring);
-        sscanf(fields[1],"%x",&ax);
-        sscanf(fields[2],"%x",&bx);
-        sscanf(fields[3],"%x",&cx);
-        sscanf(fields[4],"%x",&dx);
+        sscanf(fields[1], "%x", &ax);
+        sscanf(fields[2], "%x", &bx);
+        sscanf(fields[3], "%x", &cx);
+        sscanf(fields[4], "%x", &dx);
         assert(fields[5]);
         dotmode     = atoi(fields[5]);
         assert(fields[6]);
@@ -1866,22 +1866,22 @@ void load_fractint_config()
         ydots       = atol(fields[7]);
         assert(fields[8]);
         colors      = atoi(fields[8]);
-        if (colors == 4 && strchr(strlwr(fields[8]),'g'))
+        if (colors == 4 && strchr(strlwr(fields[8]), 'g'))
         {
             colors = 256;
             truecolorbits = 4; // 32 bits
         }
-        else if (colors == 16 && strchr(fields[8],'m'))
+        else if (colors == 16 && strchr(fields[8], 'm'))
         {
             colors = 256;
             truecolorbits = 3; // 24 bits
         }
-        else if (colors == 64 && strchr(fields[8],'k'))
+        else if (colors == 64 && strchr(fields[8], 'k'))
         {
             colors = 256;
             truecolorbits = 2; // 16 bits
         }
-        else if (colors == 32 && strchr(fields[8],'k'))
+        else if (colors == 32 && strchr(fields[8], 'k'))
         {
             colors = 256;
             truecolorbits = 1; // 15 bits
@@ -1969,7 +1969,7 @@ void bad_fractint_cfg_msg()
     g_bad_config = 1; // bad, message issued
 }
 
-int check_vidmode_key(int option,int k)
+int check_vidmode_key(int option, int k)
 {
     // returns g_video_table entry number if the passed keystroke is a
     // function key currently assigned to a video mode, -1 otherwise
@@ -2000,7 +2000,7 @@ int check_vidmode_key(int option,int k)
 int check_vidmode_keyname(char *kname)
 {
     // returns key number for the passed keyname, 0 if not a keyname
-    int i,keyset;
+    int i, keyset;
     keyset = 1058;
     if (*kname == 'S' || *kname == 's')
     {
@@ -2037,7 +2037,7 @@ int check_vidmode_keyname(char *kname)
     return (i);
 }
 
-void vidmode_keyname(int k,char *buf)
+void vidmode_keyname(int k, char *buf)
 {
     // set buffer to name of passed key number
     *buf = 0;
@@ -2060,6 +2060,6 @@ void vidmode_keyname(int k,char *buf)
         }
         else
             k -= 1058;
-        sprintf(buf,"F%d",k);
+        sprintf(buf, "F%d", k);
     }
 }
