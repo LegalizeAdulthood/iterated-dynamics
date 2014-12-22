@@ -20,28 +20,28 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 // routines in this module
 
 static void set_Plasma_palette();
-static U16 adjust(int xa,int ya,int x,int y,int xb,int yb);
-static void subDivide(int x1,int y1,int x2,int y2);
+static U16 adjust(int xa, int ya, int x, int y, int xb, int yb);
+static void subDivide(int x1, int y1, int x2, int y2);
 static void verhulst();
 static void Bif_Period_Init();
 static bool Bif_Periodic(long time);
 static void set_Cellular_palette();
 
-U16(*getpix)(int,int)  = (U16(*)(int,int))getcolor;
+U16(*getpix)(int, int)  = (U16(*)(int, int))getcolor;
 
-typedef void (*PLOT)(int,int,int);
+typedef void (*PLOT)(int, int, int);
 
 //**************** standalone engine for "test" *******************
 
 int test()
 {
-    int startrow,startpass,numpasses;
+    int startrow, startpass, numpasses;
     startpass = 0;
     startrow = startpass;
     if (resuming)
     {
         start_resume();
-        get_resume(sizeof(startrow),&startrow,sizeof(startpass),&startpass,0);
+        get_resume(sizeof(startrow), &startrow, sizeof(startpass), &startpass, 0);
         end_resume();
     }
     if (teststart()) // assume it was stand-alone, doesn't want passes logic
@@ -59,11 +59,11 @@ int test()
                 if (driver_key_pressed())
                 {
                     testend();
-                    alloc_resume(20,1);
-                    put_resume(sizeof(row),&row,sizeof(passes),&passes,0);
+                    alloc_resume(20, 1);
+                    put_resume(sizeof(row), &row, sizeof(passes), &passes, 0);
                     return (-1);
                 }
-                color = testpt(init.x,init.y,parm.x,parm.y,maxit,inside);
+                color = testpt(init.x, init.y, parm.x, parm.y, maxit, inside);
                 if (color >= colors)
                 { // avoid trouble if color is 0
                     if (colors < 16)
@@ -71,9 +71,9 @@ int test()
                     else
                         color = ((color-1) % g_and_color) + 1; // skip color zero
                 }
-                (*plot)(col,row,color);
+                (*plot)(col, row, color);
                 if (numpasses && (passes == 0))
-                    (*plot)(col,row+1,color);
+                    (*plot)(col, row+1, color);
             }
         }
         startrow = passes + 1;
@@ -111,8 +111,8 @@ void putpot(int x, int y, U16 color)
     /* we don't write this if driver_diskp() because the above putcolor
           was already a "writedisk" in that case */
     if (!driver_diskp())
-        writedisk(x+sxoffs,y+syoffs,color >> 8);    // upper 8 bits
-    writedisk(x+sxoffs,y+sydots+syoffs,color&255); // lower 8 bits
+        writedisk(x+sxoffs, y+syoffs, color >> 8);    // upper 8 bits
+    writedisk(x+sxoffs, y+sydots+syoffs, color&255); // lower 8 bits
 }
 
 // fixes border
@@ -120,7 +120,7 @@ void putpotborder(int x, int y, U16 color)
 {
     if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
         color = (U16)outside;
-    putpot(x,y,color);
+    putpot(x, y, color);
 }
 
 // fixes border
@@ -130,27 +130,27 @@ void putcolorborder(int x, int y, int color)
         color = outside;
     if (color < 1)
         color = 1;
-    putcolor(x,y,color);
+    putcolor(x, y, color);
 }
 
 U16 getpot(int x, int y)
 {
     U16 color;
 
-    color = (U16)readdisk(x+sxoffs,y+syoffs);
-    color = (U16)((color << 8) + (U16) readdisk(x+sxoffs,y+sydots+syoffs));
+    color = (U16)readdisk(x+sxoffs, y+syoffs);
+    color = (U16)((color << 8) + (U16) readdisk(x+sxoffs, y+sydots+syoffs));
     return (color);
 }
 
 static int plasma_check;                        // to limit kbd checking
 
-static U16 adjust(int xa,int ya,int x,int y,int xb,int yb)
+static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
 {
     S32 pseudorandom;
     pseudorandom = ((S32)iparmx)*((rand15()-16383));
     pseudorandom = pseudorandom * recur1;
     pseudorandom = pseudorandom >> shiftvalue;
-    pseudorandom = (((S32)getpix(xa,ya)+(S32)getpix(xb,yb)+1) >> 1)+pseudorandom;
+    pseudorandom = (((S32)getpix(xa, ya)+(S32)getpix(xb, yb)+1) >> 1)+pseudorandom;
     if (max_plasma == 0)
     {
         if (pseudorandom >= pcolors)
@@ -160,14 +160,14 @@ static U16 adjust(int xa,int ya,int x,int y,int xb,int yb)
         pseudorandom = max_plasma;
     if (pseudorandom < 1)
         pseudorandom = 1;
-    plot(x,y,(U16)pseudorandom);
+    plot(x, y, (U16)pseudorandom);
     return ((U16)pseudorandom);
 }
 
 
 static bool new_subD(int x1, int y1, int x2, int y2, int recur)
 {
-    int x,y;
+    int x, y;
     int nx1;
     int nx;
     int ny1, ny;
@@ -248,24 +248,24 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
 
             i = getpix(nx, y);
             if (i == 0)
-                i = adjust(nx,ny1,nx,y ,nx,ny);
+                i = adjust(nx, ny1, nx, y , nx, ny);
             // cppcheck-suppress AssignmentIntegerToAddress
             v = i;
             i = getpix(x, ny);
             if (i == 0)
-                i = adjust(nx1,ny,x ,ny,nx,ny);
+                i = adjust(nx1, ny, x , ny, nx, ny);
             v += i;
-            if (getpix(x,y) == 0)
+            if (getpix(x, y) == 0)
             {
                 i = getpix(x, ny1);
                 if (i == 0)
-                    i = adjust(nx1,ny1,x ,ny1,nx,ny1);
+                    i = adjust(nx1, ny1, x , ny1, nx, ny1);
                 v += i;
                 i = getpix(nx1, y);
                 if (i == 0)
-                    i = adjust(nx1,ny1,nx1,y ,nx1,ny);
+                    i = adjust(nx1, ny1, nx1, y , nx1, ny);
                 v += i;
-                plot(x,y,(U16)((v + 2) >> 2));
+                plot(x, y, (U16)((v + 2) >> 2));
             }
 
             if (subx.r[subx.t-1] == (BYTE)recur)
@@ -278,10 +278,10 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
     return false;
 }
 
-static void subDivide(int x1,int y1,int x2,int y2)
+static void subDivide(int x1, int y1, int x2, int y2)
 {
-    int x,y;
-    S32 v,i;
+    int x, y;
+    S32 v, i;
     if ((++plasma_check & 0x7f) == 1)
         if (driver_key_pressed())
         {
@@ -295,30 +295,30 @@ static void subDivide(int x1,int y1,int x2,int y2)
 
     x = (x1+x2) >> 1;
     y = (y1+y2) >> 1;
-    v = getpix(x,y1);
+    v = getpix(x, y1);
     if (v == 0)
-        v = adjust(x1,y1,x ,y1,x2,y1);
+        v = adjust(x1, y1, x , y1, x2, y1);
     i = v;
-    v = getpix(x2,y);
+    v = getpix(x2, y);
     if (v == 0)
-        v = adjust(x2,y1,x2,y ,x2,y2);
+        v = adjust(x2, y1, x2, y , x2, y2);
     i += v;
-    v = getpix(x,y2);
+    v = getpix(x, y2);
     if (v == 0)
-        v = adjust(x1,y2,x ,y2,x2,y2);
+        v = adjust(x1, y2, x , y2, x2, y2);
     i += v;
-    v = getpix(x1,y);
+    v = getpix(x1, y);
     if (v == 0)
-        v = adjust(x1,y1,x1,y ,x1,y2);
+        v = adjust(x1, y1, x1, y , x1, y2);
     i += v;
 
-    if (getpix(x,y) == 0)
-        plot(x,y,(U16)((i+2) >> 2));
+    if (getpix(x, y) == 0)
+        plot(x, y, (U16)((i+2) >> 2));
 
-    subDivide(x1,y1,x ,y);
-    subDivide(x ,y1,x2,y);
-    subDivide(x ,y ,x2,y2);
-    subDivide(x1,y ,x ,y2);
+    subDivide(x1, y1, x , y);
+    subDivide(x , y1, x2, y);
+    subDivide(x , y , x2, y2);
+    subDivide(x1, y , x , y2);
     recur_level--;
 }
 
@@ -384,7 +384,7 @@ int plasma()
                 plot    = putcolorborder;
             else
                 plot    = putcolor;
-            getpix  = (U16(*)(int,int))getcolor;
+            getpix  = (U16(*)(int, int))getcolor;
         }
     }
     else
@@ -393,7 +393,7 @@ int plasma()
             plot    = putcolorborder;
         else
             plot    = putcolor;
-        getpix  = (U16(*)(int,int))getcolor;
+        getpix  = (U16(*)(int, int))getcolor;
     }
     srand(rseed);
     if (!rflag)
@@ -434,22 +434,22 @@ int plasma()
 
     plot(0,      0,  rnd[0]);
     plot(xdots-1,      0,  rnd[1]);
-    plot(xdots-1,ydots-1,  rnd[2]);
-    plot(0,ydots-1,  rnd[3]);
+    plot(xdots-1, ydots-1,  rnd[2]);
+    plot(0, ydots-1,  rnd[3]);
 
     int n;
     recur_level = 0;
     if (param[1] == 0)
-        subDivide(0,0,xdots-1,ydots-1);
+        subDivide(0, 0, xdots-1, ydots-1);
     else
     {
         int i = 1;
         int k = 1;
         recur1 = 1;
-        while (new_subD(0,0,xdots-1,ydots-1,i) == 0)
+        while (new_subD(0, 0, xdots-1, ydots-1, i) == 0)
         {
             k = k * 2;
-            if (k  >(int)std::max(xdots-1,ydots-1))
+            if (k  >(int)std::max(xdots-1, ydots-1))
                 break;
             if (driver_key_pressed())
             {
@@ -470,7 +470,7 @@ done:
         pot16bit = OldPot16bit;
     }
     plot    = putcolor;
-    getpix  = (U16(*)(int,int))getcolor;
+    getpix  = (U16(*)(int, int))getcolor;
     return (n);
 }
 
@@ -479,7 +479,7 @@ static void set_Plasma_palette()
 {
     static Palettetype Red    = { 63, 0, 0 };
     static Palettetype Green  = { 0, 63, 0 };
-    static Palettetype Blue   = { 0,  0,63 };
+    static Palettetype Blue   = { 0,  0, 63 };
 
     if (mapdacbox || colorpreloaded)
         return;    // map= specified
@@ -500,7 +500,7 @@ static void set_Plasma_palette()
         dac[i+170].green = (BYTE)((i*Blue.green + (86-i)*Red.green)/85);
         dac[i+170].blue  = (BYTE)((i*Blue.blue  + (86-i)*Red.blue)/85);
     }
-    spindac(0,1);
+    spindac(0, 1);
 }
 
 //**************** standalone engine for "diffusion" *******************
@@ -509,15 +509,15 @@ static void set_Plasma_palette()
 
 int diffusion()
 {
-    int xmax,ymax,xmin,ymin;     // Current maximum coordinates
+    int xmax, ymax, xmin, ymin;     // Current maximum coordinates
     int border;   // Distance between release point and fractal
     int mode;     // Determines diffusion type:  0 = central (classic)
     //                             1 = falling particles
     //                             2 = square cavity
     int colorshift; // If zero, select colors at random, otherwise shift the color every colorshift points
-    int colorcount,currentcolor;
-    double cosine,sine,angle;
-    int x,y;
+    int colorcount, currentcolor;
+    double cosine, sine, angle;
+    int x, y;
     float r, radius;
 
     if (driver_diskp())
@@ -569,22 +569,22 @@ int diffusion()
     {
         start_resume();
         if (mode != 2)
-            get_resume(sizeof(xmax),&xmax,sizeof(xmin),&xmin,sizeof(ymax),&ymax,
-                       sizeof(ymin),&ymin,0);
+            get_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin, sizeof(ymax), &ymax,
+                       sizeof(ymin), &ymin, 0);
         else
-            get_resume(sizeof(xmax),&xmax,sizeof(xmin),&xmin,sizeof(ymax),&ymax,
-                       sizeof(radius),&radius,0);
+            get_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin, sizeof(ymax), &ymax,
+                       sizeof(radius), &radius, 0);
         end_resume();
     }
 
     switch (mode)
     {
     case 0: // Single seed point in the center
-        putcolor(xdots / 2, ydots / 2,currentcolor);
+        putcolor(xdots / 2, ydots / 2, currentcolor);
         break;
     case 1: // Line along the bottom
         for (int i = 0; i <= xdots; i++)
-            putcolor(i,ydots-1,currentcolor);
+            putcolor(i, ydots-1, currentcolor);
         break;
     case 2: // Large square that fills the screen
         if (xdots > ydots)
@@ -612,7 +612,7 @@ int diffusion()
         {
         case 0: // Release new point on a circle inside the box
             angle = 2*(double)rand()/(RAND_MAX/PI);
-            FPUsincos(&angle,&sine,&cosine);
+            FPUsincos(&angle, &sine, &cosine);
             x = (int)(cosine*(xmax-xmin) + xdots);
             y = (int)(sine  *(ymax-ymin) + ydots);
             x = x >> 1; // divide by 2
@@ -626,7 +626,7 @@ int diffusion()
         case 2: /* Release new point on a circle inside the box with radius
                  given by the radius variable */
             angle = 2*(double)rand()/(RAND_MAX/PI);
-            FPUsincos(&angle,&sine,&cosine);
+            FPUsincos(&angle, &sine, &cosine);
             x = (int)(cosine*radius + xdots);
             y = (int)(sine  *radius + ydots);
             x = x >> 1;
@@ -637,14 +637,14 @@ int diffusion()
         // Loop as long as the point (x,y) is surrounded by color 0
         // on all eight sides
 
-        while ((getcolor(x+1,y+1) == 0) && (getcolor(x+1,y) == 0) &&
-                (getcolor(x+1,y-1) == 0) && (getcolor(x  ,y+1) == 0) &&
-                (getcolor(x  ,y-1) == 0) && (getcolor(x-1,y+1) == 0) &&
-                (getcolor(x-1,y) == 0) && (getcolor(x-1,y-1) == 0))
+        while ((getcolor(x+1, y+1) == 0) && (getcolor(x+1, y) == 0) &&
+                (getcolor(x+1, y-1) == 0) && (getcolor(x  , y+1) == 0) &&
+                (getcolor(x  , y-1) == 0) && (getcolor(x-1, y+1) == 0) &&
+                (getcolor(x-1, y) == 0) && (getcolor(x-1, y-1) == 0))
         {
             // Erase moving point
             if (show_orbit)
-                putcolor(x,y,0);
+                putcolor(x, y, 0);
 
             if (mode == 0)
             { // Make sure point is inside the box
@@ -677,13 +677,13 @@ int diffusion()
             if ((++plasma_check & 0x7f) == 1)
                 if (check_key())
                 {
-                    alloc_resume(20,1);
+                    alloc_resume(20, 1);
                     if (mode != 2)
-                        put_resume(sizeof(xmax),&xmax,sizeof(xmin),&xmin,
-                                   sizeof(ymax),&ymax,sizeof(ymin),&ymin,0);
+                        put_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin,
+                                   sizeof(ymax), &ymax, sizeof(ymin), &ymin, 0);
                     else
-                        put_resume(sizeof(xmax),&xmax,sizeof(xmin),&xmin,
-                                   sizeof(ymax),&ymax,sizeof(radius),&radius,0);
+                        put_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin,
+                                   sizeof(ymax), &ymax, sizeof(radius), &radius, 0);
 
                     plasma_check--;
                     return 1;
@@ -691,13 +691,13 @@ int diffusion()
 
             // Show the moving point
             if (show_orbit)
-                putcolor(x,y,RANDOM(colors-1)+1);
+                putcolor(x, y, RANDOM(colors-1)+1);
 
         } // End of loop, now fix the point
 
         /* If we're doing colorshifting then use currentcolor, otherwise
            pick one at random */
-        putcolor(x,y,colorshift?currentcolor:RANDOM(colors-1)+1);
+        putcolor(x, y, colorshift?currentcolor:RANDOM(colors-1)+1);
 
         // If we're doing colorshifting then check to see if we need to shift
         if (colorshift)
@@ -803,7 +803,7 @@ int Bifurcation()
     if (resuming)
     {
         start_resume();
-        get_resume(sizeof(x),&x,0);
+        get_resume(sizeof(x), &x, 0);
         end_resume();
     }
     bool resized = false;
@@ -858,8 +858,8 @@ int Bifurcation()
         if (driver_key_pressed())
         {
             verhulst_array.clear();
-            alloc_resume(10,1);
-            put_resume(sizeof(x),&x,0);
+            alloc_resume(10, 1);
+            put_resume(sizeof(x), &x, 0);
             return (-1);
         }
 
@@ -880,7 +880,7 @@ int Bifurcation()
             else if (color>=colors)
                 color = colors-1;
             verhulst_array[y] = 0;
-            (*plot)(x,y,color); // was row-1, but that's not right?
+            (*plot)(x, y, color); // was row-1, but that's not right?
         }
         x++;
     }
@@ -1023,8 +1023,8 @@ int BifurcLambda() // Used by lyanupov
 }
 #endif
 
-#define LCMPLXtrig0(arg,out) Arg1->l = (arg); ltrig0(); (out) = Arg1->l
-#define  CMPLXtrig0(arg,out) Arg1->d = (arg); dtrig0(); (out) = Arg1->d
+#define LCMPLXtrig0(arg, out) Arg1->l = (arg); ltrig0(); (out) = Arg1->l
+#define  CMPLXtrig0(arg, out) Arg1->d = (arg); dtrig0(); (out) = Arg1->d
 
 int BifurcVerhulstTrig()
 {
@@ -1042,8 +1042,8 @@ int LongBifurcVerhulstTrig()
     ltmp.x = lPopulation;
     ltmp.y = 0;
     LCMPLXtrig0(ltmp, ltmp);
-    ltmp.y = ltmp.x - multiply(ltmp.x,ltmp.x,bitshift);
-    lPopulation += multiply(lRate,ltmp.y,bitshift);
+    ltmp.y = ltmp.x - multiply(ltmp.x, ltmp.x, bitshift);
+    lPopulation += multiply(lRate, ltmp.y, bitshift);
 #endif
     return (overflow);
 }
@@ -1064,8 +1064,8 @@ int LongBifurcStewartTrig()
     ltmp.x = lPopulation;
     ltmp.y = 0;
     LCMPLXtrig0(ltmp, ltmp);
-    lPopulation = multiply(ltmp.x,ltmp.x,bitshift);
-    lPopulation = multiply(lPopulation,lRate,      bitshift);
+    lPopulation = multiply(ltmp.x, ltmp.x, bitshift);
+    lPopulation = multiply(lPopulation, lRate,      bitshift);
     lPopulation -= fudge;
 #endif
     return (overflow);
@@ -1083,10 +1083,10 @@ int BifurcSetTrigPi()
 int LongBifurcSetTrigPi()
 {
 #if !defined(XFRACT)
-    ltmp.x = multiply(lPopulation,LPI,bitshift);
+    ltmp.x = multiply(lPopulation, LPI, bitshift);
     ltmp.y = 0;
     LCMPLXtrig0(ltmp, ltmp);
-    lPopulation = multiply(lRate,ltmp.x,bitshift);
+    lPopulation = multiply(lRate, ltmp.x, bitshift);
 #endif
     return (overflow);
 }
@@ -1103,10 +1103,10 @@ int BifurcAddTrigPi()
 int LongBifurcAddTrigPi()
 {
 #if !defined(XFRACT)
-    ltmp.x = multiply(lPopulation,LPI,bitshift);
+    ltmp.x = multiply(lPopulation, LPI, bitshift);
     ltmp.y = 0;
     LCMPLXtrig0(ltmp, ltmp);
-    lPopulation += multiply(lRate,ltmp.x,bitshift);
+    lPopulation += multiply(lRate, ltmp.x, bitshift);
 #endif
     return (overflow);
 }
@@ -1127,13 +1127,13 @@ int LongBifurcLambdaTrig()
     ltmp.x = lPopulation;
     ltmp.y = 0;
     LCMPLXtrig0(ltmp, ltmp);
-    ltmp.y = ltmp.x - multiply(ltmp.x,ltmp.x,bitshift);
-    lPopulation = multiply(lRate,ltmp.y,bitshift);
+    ltmp.y = ltmp.x - multiply(ltmp.x, ltmp.x, bitshift);
+    lPopulation = multiply(lRate, ltmp.y, bitshift);
 #endif
     return (overflow);
 }
 
-#define LCMPLXpwr(arg1,arg2,out)    Arg2->l = (arg1); Arg1->l = (arg2);\
+#define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
          lStkPwr(); Arg1++; Arg2++; (out) = Arg2->l
 
 long beta;
@@ -1154,8 +1154,8 @@ int LongBifurcMay()
     ltmp.y = 0;
     lparm2.x = beta * fudge;
     LCMPLXpwr(ltmp, lparm2, ltmp);
-    lPopulation = multiply(lRate,lPopulation,bitshift);
-    lPopulation = divide(lPopulation,ltmp.x,bitshift);
+    lPopulation = multiply(lRate, lPopulation, bitshift);
+    lPopulation = divide(lPopulation, ltmp.x, bitshift);
 #endif
     return (overflow);
 }
@@ -1168,7 +1168,7 @@ bool BifurcMaySetup()
         beta = 2;
     param[2] = (double)beta;
 
-    timer(0,curfractalspecific->calctype);
+    timer(0, curfractalspecific->calctype);
     return false;
 }
 
@@ -1186,7 +1186,7 @@ int popcorn()   // subset of std engine
     if (resuming)
     {
         start_resume();
-        get_resume(sizeof(start_row),&start_row,0);
+        get_resume(sizeof(start_row), &start_row, 0);
         end_resume();
     }
     kbdcount = max_kbdcount;
@@ -1200,8 +1200,8 @@ int popcorn()   // subset of std engine
         {
             if (StandardFractal() == -1) // interrupted
             {
-                alloc_resume(10,1);
-                put_resume(sizeof(row),&row,0);
+                alloc_resume(10, 1);
+                put_resume(sizeof(row), &row, 0);
                 return (-1);
             }
             reset_periodicity = false;
@@ -1452,7 +1452,7 @@ void abort_cellular(int err, int t)
     case BAD_T:
     {
         char msg[30];
-        sprintf(msg,"Bad t=%d, aborting\n", t);
+        sprintf(msg, "Bad t=%d, aborting\n", t);
         stopmsg(STOPMSG_NONE, msg);
     }
     break;
@@ -1561,7 +1561,7 @@ int cellular()
     if (randparam != 0 && randparam != -1)
     {
         n = param[0];
-        sprintf(buf,"%.16g",n); // # of digits in initial string
+        sprintf(buf, "%.16g", n); // # of digits in initial string
         t = (S16)strlen(buf);
         if (t>16 || t <= 0)
         {
@@ -1611,7 +1611,7 @@ int cellular()
         }
         param[1] = n;
     }
-    sprintf(buf,"%.*g",rule_digits ,n);
+    sprintf(buf, "%.*g", rule_digits , n);
     t = (S16)strlen(buf);
     if (rule_digits < t || t < 0)
     { // leading 0s could make t smaller
@@ -1656,7 +1656,7 @@ int cellular()
     if (resuming && !nxtscreenflag && !lstscreenflag)
     {
         start_resume();
-        get_resume(sizeof(start_row),&start_row,0);
+        get_resume(sizeof(start_row), &start_row, 0);
         end_resume();
         get_line(start_row, 0, ixstop, &cell_array[filled][0]);
     }
@@ -1818,8 +1818,8 @@ contloop:
         if (driver_key_pressed())
         {
             abort_cellular(CELLULAR_DONE, 0);
-            alloc_resume(10,1);
-            put_resume(sizeof(row),&row,0);
+            alloc_resume(10, 1);
+            put_resume(sizeof(row), &row, 0);
             return -1;
         }
     }
@@ -1839,17 +1839,17 @@ bool CellularSetup()
     {
         nxtscreenflag = false; // initialize flag
     }
-    timer(0,curfractalspecific->calctype);
+    timer(0, curfractalspecific->calctype);
     return false;
 }
 
 static void set_Cellular_palette()
 {
     static Palettetype Red    = { 42, 0, 0 };
-    static Palettetype Green  = { 10,35,10 };
-    static Palettetype Blue   = { 13,12,29 };
-    static Palettetype Yellow = { 60,58,18 };
-    static Palettetype Brown  = { 42,21, 0 };
+    static Palettetype Green  = { 10, 35, 10 };
+    static Palettetype Blue   = { 13, 12, 29 };
+    static Palettetype Yellow = { 60, 58, 18 };
+    static Palettetype Brown  = { 42, 21, 0 };
 
     if (mapdacbox && colorstate != 0)
         return;       // map= specified
@@ -1878,7 +1878,7 @@ static void set_Cellular_palette()
     dac[5].green = Brown.green;
     dac[5].blue  = Brown.blue;
 
-    spindac(0,1);
+    spindac(0, 1);
 }
 
 // frothy basin routines
@@ -1974,7 +1974,7 @@ static void set_Froth_palette()
         if (ValidateLuts(mapname))
             return;
         colorstate = 0; // treat map as default
-        spindac(0,1);
+        spindac(0, 1);
     }
 }
 
@@ -2056,7 +2056,7 @@ bool froth_setup()
     }
 
     // if 2 attractors, use same shades as 3 attractors
-    fsp.shades = (colors-1) / std::max(3,fsp.attractors);
+    fsp.shades = (colors-1) / std::max(3, fsp.attractors);
 
     // rqlim needs to be at least sq(1+sqrt(1+sq(a))),
     // which is never bigger than 6.93..., so we'll call it 7.0
@@ -2238,16 +2238,16 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         {
             // simple formula: z = z^2 + conj(z*(-1+ai))
             // but it's the attractor that makes this so interesting
-            lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a,lold.y,bitshift);
-            lold.y += (multiply(lold.x,lold.y,bitshift)<<1) - multiply(fsp.fl.l.a,lold.x,bitshift);
+            lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a, lold.y, bitshift);
+            lold.y += (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp.fl.l.a, lold.x, bitshift);
             lold.x = lnew.x;
             if (fsp.repeat_mapping)
             {
                 lmagnitud = (ltempsqrx = lsqr(lold.x)) + (ltempsqry = lsqr(lold.y));
                 if ((lmagnitud > llimit) || (lmagnitud < 0))
                     break;
-                lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a,lold.y,bitshift);
-                lold.y += (multiply(lold.x,lold.y,bitshift)<<1) - multiply(fsp.fl.l.a,lold.x,bitshift);
+                lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a, lold.y, bitshift);
+                lold.y += (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp.fl.l.a, lold.x, bitshift);
                 lold.x = lnew.x;
             }
             coloriter++;
@@ -2275,7 +2275,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                         found_attractor = 2;
                 }
             }
-            else if (labs(multiply(FROTH_LSLOPE,lold.x,bitshift)-fsp.fl.l.a-lold.y) < FROTH_LCLOSE
+            else if (labs(multiply(FROTH_LSLOPE, lold.x, bitshift)-fsp.fl.l.a-lold.y) < FROTH_LCLOSE
                      && lold.x <= fsp.fl.l.right_x1 && lold.x >= fsp.fl.l.right_x2)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
@@ -2297,7 +2297,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                         found_attractor = 6;
                 }
             }
-            else if (labs(multiply(-FROTH_LSLOPE,lold.x,bitshift)-fsp.fl.l.a-lold.y) < FROTH_LCLOSE)
+            else if (labs(multiply(-FROTH_LSLOPE, lold.x, bitshift)-fsp.fl.l.a-lold.y) < FROTH_LCLOSE)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
                     found_attractor = 2;
@@ -2444,8 +2444,8 @@ int froth_per_orbit()
     }
     else  // integer mode
     {
-        lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a,lold.y,bitshift);
-        lnew.y = lold.y + (multiply(lold.x,lold.y,bitshift)<<1) - multiply(fsp.fl.l.a,lold.x,bitshift);
+        lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a, lold.y, bitshift);
+        lnew.y = lold.y + (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp.fl.l.a, lold.x, bitshift);
         if (fsp.repeat_mapping)
         {
             ltempsqrx = lsqr(lnew.x);
@@ -2453,8 +2453,8 @@ int froth_per_orbit()
             if (ltempsqrx + ltempsqry >= llimit)
                 return 1;
             lold = lnew;
-            lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a,lold.y,bitshift);
-            lnew.y = lold.y + (multiply(lold.x,lold.y,bitshift)<<1) - multiply(fsp.fl.l.a,lold.x,bitshift);
+            lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a, lold.y, bitshift);
+            lnew.y = lold.y + (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp.fl.l.a, lold.x, bitshift);
         }
         ltempsqrx = lsqr(lnew.x);
         ltempsqry = lsqr(lnew.y);
