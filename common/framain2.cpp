@@ -1922,13 +1922,13 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         for (int i = 0; i < NUMGENES; i++)
         {
-            if (gene[i].mutate == 5)
+            if (gene[i].mutate == variations::RANDOM)
             {
-                gene[i].mutate = 6;
+                gene[i].mutate = variations::WEIGHTED_RANDOM;
                 continue;
             }
-            if (gene[i].mutate == 6)
-                gene[i].mutate = 5;
+            if (gene[i].mutate == variations::WEIGHTED_RANDOM)
+                gene[i].mutate = variations::RANDOM;
         }
         // now put the gene array back in memory
         MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);

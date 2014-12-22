@@ -16,8 +16,8 @@ int px, py, evolving, gridsz;
 static int ecountbox[MAXGRIDSZ][MAXGRIDSZ];
 
 unsigned int this_gen_rseed;
-/* used to replay random sequences to obtain correct values when selecting a
-   seed image for next generation */
+// used to replay random sequences to obtain correct values when selecting a
+// seed image for next generation
 
 double opx, opy, newopx, newopy, paramrangex, paramrangey, dpx, dpy, fiddlefactor;
 double fiddle_reduction;
@@ -25,19 +25,20 @@ double parmzoom;
 char odpx, odpy, newodpx, newodpy;
 // offset for discrete parameters x and y..
 // used for things like inside or outside types, bailout tests, trig fn etc
-/* variation factors, opx, opy, paramrangex/y dpx, dpy.. used in field mapping
-   for smooth variation across screen. opx =offset param x, dpx = delta param
-   per image, paramrangex = variation across grid of param ...likewise for py */
-/* fiddlefactor is amount of random mutation used in random modes ,
-   fiddle_reduction is used to decrease fiddlefactor from one generation to the
-   next to eventually produce a stable population */
+// variation factors, opx, opy, paramrangex/y dpx, dpy.. used in field mapping
+// for smooth variation across screen. opx =offset param x, dpx = delta param
+// per image, paramrangex = variation across grid of param ...likewise for py
+// fiddlefactor is amount of random mutation used in random modes ,
+// fiddle_reduction is used to decrease fiddlefactor from one generation to the
+// next to eventually produce a stable population
 
 U16 prmboxhandle = 0;
 U16 imgboxhandle = 0;
 int prmboxcount, imgboxcount;
 U16 oldhistory_handle = 0;
 
-struct PARAMHIST      // for saving evolution data of center image
+// for saving evolution data of center image
+struct PARAMHIST
 {
     double param0;
     double param1;
@@ -79,36 +80,35 @@ void set_mutation_level(int);
 void SetupParamBox();
 void ReleaseParamBox();
 
-void initgene() /* set up pointers and mutation params for all usable image
-                   control variables in fractint... revise as necessary when
-                   new vars come along... dont forget to increment NUMGENES
-                   (in fractint.h ) as well */
+// set up pointers and mutation params for all usable image
+// control variables in fractint... revise as necessary when
+// new vars come along... don't forget to increment NUMGENES
+// (in fractint.h ) as well
+void initgene()
 {
-    // 0 = dont vary, 1= with x axis, 2 = with y
-    // 3 = with x+y, 4 = with x-y, 5 = random, 6 = weighted random
-    //     Use only 15 letters below: 123456789012345
+    //                        Use only 15 letters below: 123456789012345
     GENEBASE gene[NUMGENES] = {
-        { &param[0],   varydbl,     5, "Param 1 real", 1 },
-        { &param[1],   varydbl,     5, "Param 1 imag", 1 },
-        { &param[2],   varydbl,     0, "Param 2 real", 1 },
-        { &param[3],   varydbl,     0, "Param 2 imag", 1 },
-        { &param[4],   varydbl,     0, "Param 3 real", 1 },
-        { &param[5],   varydbl,     0, "Param 3 imag", 1 },
-        { &param[6],   varydbl,     0, "Param 4 real", 1 },
-        { &param[7],   varydbl,     0, "Param 4 imag", 1 },
-        { &param[8],   varydbl,     0, "Param 5 real", 1 },
-        { &param[9],   varydbl,     0, "Param 5 imag", 1 },
-        { &inside,     varyinside,  0, "inside color", 2 },
-        { &outside,    varyoutside, 0, "outside color", 3 },
-        { &decomp[0],  varypwr2,    0, "decomposition", 4 },
-        { &inversion[0], varyinv,    0, "invert radius", 7 },
-        { &inversion[1], varyinv,    0, "invert center x", 7 },
-        { &inversion[2], varyinv,    0, "invert center y", 7 },
-        { &trigndx[0], varytrig,    0, "trig function 1", 5 },
-        { &trigndx[1], varytrig,    0, "trig fn 2", 5 },
-        { &trigndx[2], varytrig,    0, "trig fn 3", 5 },
-        { &trigndx[3], varytrig,    0, "trig fn 4", 5 },
-        { &bailoutest, varybotest,  0, "bailout test", 6 }
+        { &param[0], varydbl, variations::RANDOM,       "Param 1 real", 1 },
+        { &param[1], varydbl, variations::RANDOM,       "Param 1 imag", 1 },
+        { &param[2], varydbl, variations::NONE,         "Param 2 real", 1 },
+        { &param[3], varydbl, variations::NONE,         "Param 2 imag", 1 },
+        { &param[4], varydbl, variations::NONE,         "Param 3 real", 1 },
+        { &param[5], varydbl, variations::NONE,         "Param 3 imag", 1 },
+        { &param[6], varydbl, variations::NONE,         "Param 4 real", 1 },
+        { &param[7], varydbl, variations::NONE,         "Param 4 imag", 1 },
+        { &param[8], varydbl, variations::NONE,         "Param 5 real", 1 },
+        { &param[9], varydbl, variations::NONE,         "Param 5 imag", 1 },
+        { &inside, varyinside, variations::NONE,        "inside color", 2 },
+        { &outside, varyoutside, variations::NONE,      "outside color", 3 },
+        { &decomp[0], varypwr2, variations::NONE,       "decomposition", 4 },
+        { &inversion[0], varyinv, variations::NONE,     "invert radius", 7 },
+        { &inversion[1], varyinv, variations::NONE,     "invert center x", 7 },
+        { &inversion[2], varyinv, variations::NONE,     "invert center y", 7 },
+        { &trigndx[0], varytrig, variations::NONE,      "trig function 1", 5 },
+        { &trigndx[1], varytrig, variations::NONE,      "trig fn 2", 5 },
+        { &trigndx[2], varytrig, variations::NONE,      "trig fn 3", 5 },
+        { &trigndx[3], varytrig, variations::NONE,      "trig fn 4", 5 },
+        { &bailoutest, varybotest, variations::NONE,    "bailout test", 6 }
     };
 
     // TODO: MemoryAlloc, MoveToMemory
@@ -188,24 +188,24 @@ void varydbl(GENEBASE gene[], int randval, int i)
     switch (gene[i].mutate)
     {
     default:
-    case 0:
+    case variations::NONE:
         break;
-    case 1:
+    case variations::X:
         *(double *)gene[i].addr = px * dpx + opx; //paramspace x coord * per view delta px + offset
         break;
-    case 2:
+    case variations::Y:
         *(double *)gene[i].addr = lclpy * dpy + opy; //same for y
         break;
-    case   3:
+    case variations::X_PLUS_Y:
         *(double *)gene[i].addr = px*dpx+opx +(lclpy*dpy)+opy; //and x+y
         break;
-    case 4:
+    case variations::X_MINUS_Y:
         *(double *)gene[i].addr = (px*dpx+opx)-(lclpy*dpy+opy); //and x-y
         break;
-    case 5:
+    case variations::RANDOM:
         *(double *)gene[i].addr += (((double)randval / RAND_MAX) * 2 * fiddlefactor) - fiddlefactor;
         break;
-    case 6:  // weighted random mutation, further out = further change
+    case variations::WEIGHTED_RANDOM:
     {
         int mid = gridsz /2;
         double radius =  sqrt(static_cast<double>(sqr(px - mid) + sqr(lclpy - mid)));
@@ -216,43 +216,43 @@ void varydbl(GENEBASE gene[], int randval, int i)
     return;
 }
 
-int varyint(int randvalue, int limit, int mode)
+int varyint(int randvalue, int limit, variations mode)
 {
     int ret = 0;
     int lclpy = gridsz - py - 1;
     switch (mode)
     {
     default:
-    case 0:
+    case variations::NONE:
         break;
-    case 1: // vary with x
+    case variations::X:
         ret = (odpx+px)%limit;
         break;
-    case 2: // vary with y
+    case variations::Y:
         ret = (odpy+lclpy)%limit;
         break;
-    case 3: // vary with x+y
+    case variations::X_PLUS_Y:
         ret = (odpx+px+odpy+lclpy)%limit;
         break;
-    case 4: // vary with x-y
+    case variations::X_MINUS_Y:
         ret = (odpx+px)-(odpy+lclpy)%limit;
         break;
-    case 5: // random mutation
+    case variations::RANDOM:
         ret = randvalue % limit;
         break;
-    case 6:  // weighted random mutation, further out = further change
+    case variations::WEIGHTED_RANDOM:
     {
         int mid = gridsz /2;
         double radius =  sqrt(static_cast<double>(sqr(px - mid) + sqr(lclpy - mid)));
         ret = (int)((((randvalue / RAND_MAX) * 2 * fiddlefactor) - fiddlefactor) * radius);
         ret %= limit;
+        break;
     }
-    break;
     }
     return (ret);
 }
 
-int wrapped_positive_varyint(int randvalue, int limit, int mode)
+int wrapped_positive_varyint(int randvalue, int limit, variations mode)
 {
     int i;
     i = varyint(randvalue, limit, mode);
@@ -265,7 +265,7 @@ int wrapped_positive_varyint(int randvalue, int limit, int mode)
 void varyinside(GENEBASE gene[], int randval, int i)
 {
     int choices[9] = { ZMAG, BOF60, BOF61, EPSCROSS, STARTRAIL, PERIOD, FMODI, ATANI, ITER };
-    if (gene[i].mutate)
+    if (gene[i].mutate != variations::NONE)
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
     return;
 }
@@ -273,7 +273,7 @@ void varyinside(GENEBASE gene[], int randval, int i)
 void varyoutside(GENEBASE gene[], int randval, int i)
 {
     int choices[8] = { ITER, REAL, IMAG, MULT, SUM, ATAN, FMOD, TDIS };
-    if (gene[i].mutate)
+    if (gene[i].mutate != variations::NONE)
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 8, gene[i].mutate)];
     return;
 }
@@ -290,7 +290,7 @@ void varybotest(GENEBASE gene[], int randval, int i)
         static_cast<int>(bailouts::Manh),
         static_cast<int>(bailouts::Manr)
     };
-    if (gene[i].mutate)
+    if (gene[i].mutate != variations::NONE)
     {
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 7, gene[i].mutate)];
         // move this next bit to varybot where it belongs
@@ -302,14 +302,14 @@ void varybotest(GENEBASE gene[], int randval, int i)
 void varypwr2(GENEBASE gene[], int randval, int i)
 {
     int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
-    if (gene[i].mutate)
+    if (gene[i].mutate != variations::NONE)
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
     return;
 }
 
 void varytrig(GENEBASE gene[], int randval, int i)
 {
-    if (gene[i].mutate)
+    if (gene[i].mutate != variations::NONE)
     {
         *static_cast<trig_fn *>(gene[i].addr) =
             static_cast<trig_fn>(wrapped_positive_varyint(randval, numtrigfn, gene[i].mutate));
@@ -320,7 +320,7 @@ void varytrig(GENEBASE gene[], int randval, int i)
 
 void varyinv(GENEBASE gene[], int randval, int i)
 {
-    if (gene[i].mutate)
+    if (gene[i].mutate != variations::NONE)
         varydbl(gene, randval, i);
     invert = (inversion[0] == 0.0) ? 0 : 3 ;
 }
@@ -362,7 +362,7 @@ choose_vars_restart:
         uvalues[k].uval.ch.vlen = 7;
         uvalues[k].uval.ch.llen = 7;
         uvalues[k].uval.ch.list = evolvmodes;
-        uvalues[k].uval.ch.val =  gene[num].mutate;
+        uvalues[k].uval.ch.val =  static_cast<int>(gene[num].mutate);
     }
 
     for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
@@ -372,7 +372,7 @@ choose_vars_restart:
         uvalues[k].uval.ch.vlen = 7;
         uvalues[k].uval.ch.llen = 7;
         uvalues[k].uval.ch.list = evolvmodes;
-        uvalues[k].uval.ch.val =  gene[num].mutate;
+        uvalues[k].uval.ch.val =  static_cast<int>(gene[num].mutate);
     }
 
     if (curfractalspecific->calctype == StandardFractal &&
@@ -383,7 +383,7 @@ choose_vars_restart:
         uvalues[k].uval.ch.vlen = 7;
         uvalues[k].uval.ch.llen = 7;
         uvalues[k].uval.ch.list = evolvmodes;
-        uvalues[k].uval.ch.val =  gene[NUMGENES - 1].mutate;
+        uvalues[k].uval.ch.val = static_cast<int>(gene[NUMGENES - 1].mutate);
     }
 
     choices[++k] = "";
@@ -401,15 +401,15 @@ choose_vars_restart:
     {
     case FIK_F2: // set all off
         for (int num = MAXPARAMS; num < NUMGENES; num++)
-            gene[num].mutate = 0;
+            gene[num].mutate = variations::NONE;
         goto choose_vars_restart;
     case FIK_F3: // set all on..alternate x and y for field map
         for (int num = MAXPARAMS; num < NUMGENES; num ++)
-            gene[num].mutate = (char)((num % 2) + 1);
+            gene[num].mutate = static_cast<variations>((num % 2) + 1);
         goto choose_vars_restart;
     case FIK_F4: // Randomize all
         for (int num = MAXPARAMS; num < NUMGENES; num ++)
-            gene[num].mutate = (char)(rand() % 6);
+            gene[num].mutate = static_cast<variations>(rand() % static_cast<int>(variations::NUM));
         goto choose_vars_restart;
     case -1:
         return (-1);
@@ -420,14 +420,14 @@ choose_vars_restart:
     // read out values
     k = -1;
     for (int num = MAXPARAMS; num < (NUMGENES - 5); num++)
-        gene[num].mutate = (char)(uvalues[++k].uval.ch.val);
+        gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
 
     for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
-        gene[num].mutate = (char)(uvalues[++k].uval.ch.val);
+        gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
 
     if (curfractalspecific->calctype == StandardFractal &&
             (curfractalspecific->flags & BAILTEST))
-        gene[NUMGENES - 1].mutate = (char)(uvalues[++k].uval.ch.val);
+        gene[NUMGENES - 1].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
 
     MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
     return (1); // if you were here, you want to regenerate
@@ -503,7 +503,7 @@ choose_vars_restart:
         uvalues[k].uval.ch.vlen = 7;
         uvalues[k].uval.ch.llen = 7;
         uvalues[k].uval.ch.list = evolvmodes;
-        uvalues[k].uval.ch.val =  gene[num].mutate;
+        uvalues[k].uval.ch.val = static_cast<int>(gene[num].mutate);
     }
 
     choices[++k] = "";
@@ -523,15 +523,15 @@ choose_vars_restart:
     {
     case FIK_F2: // set all off
         for (int num = 0; num < MAXPARAMS; num++)
-            gene[num].mutate = 0;
+            gene[num].mutate = variations::NONE;
         goto choose_vars_restart;
     case FIK_F3: // set all on..alternate x and y for field map
         for (int num = 0; num < MAXPARAMS; num ++)
-            gene[num].mutate = (char)((num % 2) + 1);
+            gene[num].mutate = static_cast<variations>((num % 2) + 1);
         goto choose_vars_restart;
     case FIK_F4: // Randomize all
         for (int num =0; num < MAXPARAMS; num ++)
-            gene[num].mutate = (char)(rand() % 6);
+            gene[num].mutate = static_cast<variations>(rand() % static_cast<int>(variations::NUM));
         goto choose_vars_restart;
     case FIK_F6: // go to second screen, put array away first
         MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -551,7 +551,7 @@ choose_vars_restart:
         if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
             if (paramnotused(num))
                 continue;
-        gene[num].mutate = (char)(uvalues[++k].uval.ch.val);
+        gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
     }
 
     MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -569,9 +569,9 @@ void set_mutation_level(int strength)
     for (int i = 0; i < NUMGENES; i++)
     {
         if (gene[i].level <= strength)
-            gene[i].mutate = 5; // 5 = random mutation mode
+            gene[i].mutate = variations::RANDOM;
         else
-            gene[i].mutate = 0;
+            gene[i].mutate = variations::NONE;
     }
     // now put the gene array back in memory
     MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -895,7 +895,7 @@ static bool explore_check()
     GENEBASE gene[NUMGENES];
     MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
     for (int i = 0; i < NUMGENES && !nonrandom; i++)
-        if ((gene[i].mutate > 0) && (gene[i].mutate < 5))
+        if ((gene[i].mutate != variations::NONE) && (gene[i].mutate < variations::RANDOM))
             nonrandom = true;
     return nonrandom;
 }
@@ -1002,7 +1002,6 @@ void spiralmap(int count)
     // maps out a clockwise spiral for a prettier and possibly
     // more intuitively useful order of drawing the sub images.
     // All the malarky with count is to allow resuming
-
     int i, mid;
     i = 0;
     mid = gridsz / 2;

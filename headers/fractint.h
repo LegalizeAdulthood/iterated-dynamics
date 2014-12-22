@@ -1234,15 +1234,25 @@ struct affine
     double f;
 };
 
+enum class variations
+{
+    NONE = 0,       // don't vary
+    X,              // vary with x axis
+    Y,              // vary with y axis
+    X_PLUS_Y,       // vary with x+y
+    X_MINUS_Y,      // vary with x-y
+    RANDOM,         // vary randomly
+    WEIGHTED_RANDOM, // weighted random mutation, further out = further change
+    NUM             // number of variation schemes
+};
+
 // smallest part of a fractint 'gene'
 struct GENEBASE
 {
     void *addr;             // address of variable to be referenced
     void (*varyfunc)(GENEBASE *genes, int randval, int gene); // pointer to func used to vary it
                             // takes random number and pointer to var
-    int mutate;             // flag to switch on variation of this variable
-                            // 0 for no mutation, 1 for x axis, 2 for y axis
-                            // in steady field maps, either x or y=yes in random modes
+    variations mutate;      // flag to switch on variation of this variable
     char name[16];          // name of variable (for menu )
     char level;             // mutation level at which this should become active
 };

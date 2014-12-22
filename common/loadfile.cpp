@@ -599,22 +599,22 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             for (int i = 0; i < NUMGENES; i++)
             {
-                gene[i].mutate = (int) blk_6_info.mutate[i];
+                gene[i].mutate = static_cast<variations>(blk_6_info.mutate[i]);
             }
         }
         else
         {
             for (int i = 0; i < 6; i++)
             {
-                gene[i].mutate = (int) blk_6_info.mutate[i];
+                gene[i].mutate = static_cast<variations>(blk_6_info.mutate[i]);
             }
             for (int i = 6; i < 10; i++)
             {
-                gene[i].mutate = 0;
+                gene[i].mutate = variations::NONE;
             }
             for (int i = 10; i < NUMGENES; i++)
             {
-                gene[i].mutate = (int) blk_6_info.mutate[i-4];
+                gene[i].mutate = static_cast<variations>(blk_6_info.mutate[i-4]);
             }
         }
         MoveToMemory((BYTE *) &gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
