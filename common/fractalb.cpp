@@ -23,9 +23,9 @@ bf_math_type bf_math = bf_math_type::NONE;
 void show_var_bn(char *s, bn_t n)
 {
     char msg[200];
-    strcpy(msg,s);
-    strcat(msg," ");
-    bntostr(msg+strlen(s),40,n);
+    strcpy(msg, s);
+    strcat(msg, " ");
+    bntostr(msg+strlen(s), 40, n);
     msg[79] = 0;
     stopmsg(STOPMSG_NONE, msg);
 }
@@ -33,14 +33,14 @@ void show_var_bn(char *s, bn_t n)
 void showcornersdbl(char *s)
 {
     char msg[400];
-    sprintf(msg,"%s\n"
+    sprintf(msg, "%s\n"
             "xxmin= %.20f xxmax= %.20f\n"
             "yymin= %.20f yymax= %.20f\n"
             "xx3rd= %.20f yy3rd= %.20f\n"
             "delxx= %.20Lf delyy= %.20Lf\n"
             "delx2= %.20Lf dely2= %.20Lf",
-            s,xxmin,xxmax,yymin,yymax,xx3rd,yy3rd,
-            delxx, delyy,delxx2, delyy2);
+            s, xxmin, xxmax, yymin, yymax, xx3rd, yy3rd,
+            delxx, delyy, delxx2, delyy2);
     if (stopmsg(STOPMSG_NONE, msg) == -1)
         goodbye();
 }
@@ -49,27 +49,27 @@ void showcornersdbl(char *s)
 void showcorners(char *s)
 {
     int dec = 20;
-    char msg[100],msg1[100],msg3[100];
-    bntostr(msg,dec,bnxmin);
-    sprintf(msg1,"bnxmin=%s\nxxmin= %.20f\n\n",msg,xxmin);
-    strcpy(msg3,s);
-    strcat(msg3,"\n");
-    strcat(msg3,msg1);
-    bntostr(msg,dec,bnxmax);
-    sprintf(msg1,"bnxmax=%s\nxxmax= %.20f\n\n",msg,xxmax);
-    strcat(msg3,msg1);
-    bntostr(msg,dec,bnymin);
-    sprintf(msg1,"bnymin=%s\nyymin= %.20f\n\n",msg,yymin);
-    strcat(msg3,msg1);
-    bntostr(msg,dec,bnymax);
-    sprintf(msg1,"bnymax=%s\nyymax= %.20f\n\n",msg,yymax);
-    strcat(msg3,msg1);
-    bntostr(msg,dec,bnx3rd);
-    sprintf(msg1,"bnx3rd=%s\nxx3rd= %.20f\n\n",msg,xx3rd);
-    strcat(msg3,msg1);
-    bntostr(msg,dec,bny3rd);
-    sprintf(msg1,"bny3rd=%s\nyy3rd= %.20f\n\n",msg,yy3rd);
-    strcat(msg3,msg1);
+    char msg[100], msg1[100], msg3[100];
+    bntostr(msg, dec, bnxmin);
+    sprintf(msg1, "bnxmin=%s\nxxmin= %.20f\n\n", msg, xxmin);
+    strcpy(msg3, s);
+    strcat(msg3, "\n");
+    strcat(msg3, msg1);
+    bntostr(msg, dec, bnxmax);
+    sprintf(msg1, "bnxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
+    strcat(msg3, msg1);
+    bntostr(msg, dec, bnymin);
+    sprintf(msg1, "bnymin=%s\nyymin= %.20f\n\n", msg, yymin);
+    strcat(msg3, msg1);
+    bntostr(msg, dec, bnymax);
+    sprintf(msg1, "bnymax=%s\nyymax= %.20f\n\n", msg, yymax);
+    strcat(msg3, msg1);
+    bntostr(msg, dec, bnx3rd);
+    sprintf(msg1, "bnx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
+    strcat(msg3, msg1);
+    bntostr(msg, dec, bny3rd);
+    sprintf(msg1, "bny3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
+    strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3) == -1)
         goodbye();
 }
@@ -92,30 +92,30 @@ bfdecimals=%d ",
 void showcornersbf(char *s)
 {
     int dec = decimals;
-    char msg[100],msg1[100],msg3[600];
+    char msg[100], msg1[100], msg3[600];
     if (dec > 20)
         dec = 20;
-    bftostr(msg,dec,bfxmin);
-    sprintf(msg1,"bfxmin=%s\nxxmin= %.20f decimals %d bflength %d\n\n",
-            msg,xxmin,decimals,bflength);
-    strcpy(msg3,s);
-    strcat(msg3,"\n");
-    strcat(msg3,msg1);
-    bftostr(msg,dec,bfxmax);
-    sprintf(msg1,"bfxmax=%s\nxxmax= %.20f\n\n",msg,xxmax);
-    strcat(msg3,msg1);
-    bftostr(msg,dec,bfymin);
-    sprintf(msg1,"bfymin=%s\nyymin= %.20f\n\n",msg,yymin);
-    strcat(msg3,msg1);
-    bftostr(msg,dec,bfymax);
-    sprintf(msg1,"bfymax=%s\nyymax= %.20f\n\n",msg,yymax);
-    strcat(msg3,msg1);
-    bftostr(msg,dec,bfx3rd);
-    sprintf(msg1,"bfx3rd=%s\nxx3rd= %.20f\n\n",msg,xx3rd);
-    strcat(msg3,msg1);
-    bftostr(msg,dec,bfy3rd);
-    sprintf(msg1,"bfy3rd=%s\nyy3rd= %.20f\n\n",msg,yy3rd);
-    strcat(msg3,msg1);
+    bftostr(msg, dec, bfxmin);
+    sprintf(msg1, "bfxmin=%s\nxxmin= %.20f decimals %d bflength %d\n\n",
+            msg, xxmin, decimals, bflength);
+    strcpy(msg3, s);
+    strcat(msg3, "\n");
+    strcat(msg3, msg1);
+    bftostr(msg, dec, bfxmax);
+    sprintf(msg1, "bfxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
+    strcat(msg3, msg1);
+    bftostr(msg, dec, bfymin);
+    sprintf(msg1, "bfymin=%s\nyymin= %.20f\n\n", msg, yymin);
+    strcat(msg3, msg1);
+    bftostr(msg, dec, bfymax);
+    sprintf(msg1, "bfymax=%s\nyymax= %.20f\n\n", msg, yymax);
+    strcat(msg3, msg1);
+    bftostr(msg, dec, bfx3rd);
+    sprintf(msg1, "bfx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
+    strcat(msg3, msg1);
+    bftostr(msg, dec, bfy3rd);
+    sprintf(msg1, "bfy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
+    strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3) == -1)
         goodbye();
 }
@@ -123,48 +123,48 @@ void showcornersbf(char *s)
 void showcornersbfs(char *s)
 {
     int dec = 20;
-    char msg[100],msg1[100],msg3[500];
-    bftostr(msg,dec,bfsxmin);
-    sprintf(msg1,"bfsxmin=%s\nxxmin= %.20f\n\n",msg,xxmin);
-    strcpy(msg3,s);
-    strcat(msg3,"\n");
-    strcat(msg3,msg1);
-    bftostr(msg,dec,bfsxmax);
-    sprintf(msg1,"bfsxmax=%s\nxxmax= %.20f\n\n",msg,xxmax);
-    strcat(msg3,msg1);
-    bftostr(msg,dec,bfsymin);
-    sprintf(msg1,"bfsymin=%s\nyymin= %.20f\n\n",msg,yymin);
-    strcat(msg3,msg1);
-    bftostr(msg,dec,bfsymax);
-    sprintf(msg1,"bfsymax=%s\nyymax= %.20f\n\n",msg,yymax);
-    strcat(msg3,msg1);
-    bftostr(msg,dec,bfsx3rd);
-    sprintf(msg1,"bfsx3rd=%s\nxx3rd= %.20f\n\n",msg,xx3rd);
-    strcat(msg3,msg1);
-    bftostr(msg,dec,bfsy3rd);
-    sprintf(msg1,"bfsy3rd=%s\nyy3rd= %.20f\n\n",msg,yy3rd);
-    strcat(msg3,msg1);
+    char msg[100], msg1[100], msg3[500];
+    bftostr(msg, dec, bfsxmin);
+    sprintf(msg1, "bfsxmin=%s\nxxmin= %.20f\n\n", msg, xxmin);
+    strcpy(msg3, s);
+    strcat(msg3, "\n");
+    strcat(msg3, msg1);
+    bftostr(msg, dec, bfsxmax);
+    sprintf(msg1, "bfsxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
+    strcat(msg3, msg1);
+    bftostr(msg, dec, bfsymin);
+    sprintf(msg1, "bfsymin=%s\nyymin= %.20f\n\n", msg, yymin);
+    strcat(msg3, msg1);
+    bftostr(msg, dec, bfsymax);
+    sprintf(msg1, "bfsymax=%s\nyymax= %.20f\n\n", msg, yymax);
+    strcat(msg3, msg1);
+    bftostr(msg, dec, bfsx3rd);
+    sprintf(msg1, "bfsx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
+    strcat(msg3, msg1);
+    bftostr(msg, dec, bfsy3rd);
+    sprintf(msg1, "bfsy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
+    strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3) == -1)
         goodbye();
 }
 
-void show_two_bf(char *s1,bf_t t1,char *s2, bf_t t2, int digits)
+void show_two_bf(char *s1, bf_t t1, char *s2, bf_t t2, int digits)
 {
-    char msg1[200],msg2[200], msg3[400];
-    bftostr_e(msg1,digits,t1);
-    bftostr_e(msg2,digits,t2);
-    sprintf(msg3,"\n%s->%s\n%s->%s",s1,msg1,s2,msg2);
+    char msg1[200], msg2[200], msg3[400];
+    bftostr_e(msg1, digits, t1);
+    bftostr_e(msg2, digits, t2);
+    sprintf(msg3, "\n%s->%s\n%s->%s", s1, msg1, s2, msg2);
     if (stopmsg(STOPMSG_NONE, msg3) == -1)
         goodbye();
 }
 
-void show_three_bf(char *s1,bf_t t1,char *s2, bf_t t2, char *s3, bf_t t3, int digits)
+void show_three_bf(char *s1, bf_t t1, char *s2, bf_t t2, char *s3, bf_t t3, int digits)
 {
-    char msg1[200],msg2[200], msg3[200], msg4[600];
-    bftostr_e(msg1,digits,t1);
-    bftostr_e(msg2,digits,t2);
-    bftostr_e(msg3,digits,t3);
-    sprintf(msg4,"\n%s->%s\n%s->%s\n%s->%s",s1,msg1,s2,msg2,s3,msg3);
+    char msg1[200], msg2[200], msg3[200], msg4[600];
+    bftostr_e(msg1, digits, t1);
+    bftostr_e(msg2, digits, t2);
+    bftostr_e(msg3, digits, t3);
+    sprintf(msg4, "\n%s->%s\n%s->%s\n%s->%s", s1, msg1, s2, msg2, s3, msg3);
     if (stopmsg(STOPMSG_NONE, msg4) == -1)
         goodbye();
 }
@@ -172,18 +172,18 @@ void show_three_bf(char *s1,bf_t t1,char *s2, bf_t t2, char *s3, bf_t t3, int di
 // for aspect ratio debugging
 void showaspect(char *s)
 {
-    bf_t bt1,bt2,aspect;
-    char msg[100],str[100];
+    bf_t bt1, bt2, aspect;
+    char msg[100], str[100];
     int saved;
     saved = save_stack();
     bt1    = alloc_stack(rbflength+2);
     bt2    = alloc_stack(rbflength+2);
     aspect = alloc_stack(rbflength+2);
-    sub_bf(bt1,bfxmax,bfxmin);
-    sub_bf(bt2,bfymax,bfymin);
-    div_bf(aspect,bt2,bt1);
-    bftostr(str,10,aspect);
-    sprintf(msg,"aspect %s\nfloat %13.10f\nbf    %s\n\n",
+    sub_bf(bt1, bfxmax, bfxmin);
+    sub_bf(bt2, bfymax, bfymin);
+    div_bf(aspect, bt2, bt1);
+    bftostr(str, 10, aspect);
+    sprintf(msg, "aspect %s\nfloat %13.10f\nbf    %s\n\n",
             s,
             (yymax-yymin)/(xxmax-xxmin),
             str);
@@ -196,9 +196,9 @@ void showaspect(char *s)
 void comparevalues(char *s, LDBL x, bn_t bnx)
 {
     int dec = 40;
-    char msg[100],msg1[100];
-    bntostr(msg,dec,bnx);
-    sprintf(msg1,"%s\nbignum=%s\ndouble=%.20Lf\n\n",s,msg,x);
+    char msg[100], msg1[100];
+    bntostr(msg, dec, bnx);
+    sprintf(msg1, "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
     if (stopmsg(STOPMSG_NONE, msg1) == -1)
         goodbye();
 }
@@ -206,9 +206,9 @@ void comparevalues(char *s, LDBL x, bn_t bnx)
 void comparevaluesbf(char *s, LDBL x, bf_t bfx)
 {
     int dec = 40;
-    char msg[300],msg1[300];
-    bftostr_e(msg,dec,bfx);
-    sprintf(msg1,"%s\nbignum=%s\ndouble=%.20Lf\n\n",s,msg,x);
+    char msg[300], msg1[300];
+    bftostr_e(msg, dec, bfx);
+    sprintf(msg1, "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
     if (stopmsg(STOPMSG_NONE, msg1) == -1)
         goodbye();
 }
@@ -217,9 +217,9 @@ void comparevaluesbf(char *s, LDBL x, bf_t bfx)
 void show_var_bf(char *s, bf_t n)
 {
     char msg[200];
-    strcpy(msg,s);
-    strcat(msg," ");
-    bftostr_e(msg+strlen(s),40,n);
+    strcpy(msg, s);
+    strcat(msg, " ");
+    bftostr_e(msg+strlen(s), 40, n);
     msg[79] = 0;
     if (stopmsg(STOPMSG_NONE, msg) == -1)
         goodbye();
@@ -239,7 +239,7 @@ void bfcornerstofloat()
         yy3rd = (double)bftofloat(bfy3rd);
     }
     for (int i = 0; i < MAXPARAMS; i++)
-        if (typehasparm(fractype,i,nullptr))
+        if (typehasparm(fractype, i, nullptr))
             param[i] = (double)bftofloat(bfparms[i]);
 }
 
@@ -336,8 +336,8 @@ int  bnMANHbailout()
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
     // note: in next five lines, bnold is just used as a temporary variable
-    abs_bn(bnold.x,bnnew.x);
-    abs_bn(bnold.y,bnnew.y);
+    abs_bn(bnold.x, bnnew.x);
+    abs_bn(bnold.y, bnnew.y);
     add_bn(bntmp, bnold.x, bnold.y);
     square_bn(bnold.x, bntmp);
     longtempmag = bntoint(bnold.x+shiftfactor);
@@ -447,8 +447,8 @@ int  bfMANHbailout()
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
     // note: in next five lines, bfold is just used as a temporary variable
-    abs_bf(bfold.x,bfnew.x);
-    abs_bf(bfold.y,bfnew.y);
+    abs_bf(bfold.x, bfnew.x);
+    abs_bf(bfold.y, bfnew.y);
     add_bf(bftmp, bfold.x, bfold.y);
     square_bf(bfold.x, bftmp);
     longtempmag = bftoint(bfold.x);
@@ -485,12 +485,12 @@ bool MandelbnSetup()
     bntemp1 = alloc_stack(bnlength);
     bntemp2 = alloc_stack(bnlength);
 
-    bftobn(bnxmin,bfxmin);
-    bftobn(bnxmax,bfxmax);
-    bftobn(bnymin,bfymin);
-    bftobn(bnymax,bfymax);
-    bftobn(bnx3rd,bfx3rd);
-    bftobn(bny3rd,bfy3rd);
+    bftobn(bnxmin, bfxmin);
+    bftobn(bnxmax, bfxmax);
+    bftobn(bnymin, bfymin);
+    bftobn(bnymax, bfymax);
+    bftobn(bnx3rd, bfx3rd);
+    bftobn(bny3rd, bfy3rd);
 
     bf_math = bf_math_type::BIGNUM;
 
@@ -510,16 +510,16 @@ bool MandelbnSetup()
     sub_bn(bnydel2, bny3rd, bnymin);
     div_a_bn_int(bnydel2, (U16)(xdots - 1));
 
-    abs_bn(bnclosenuff,bnxdel);
-    if (cmp_bn(abs_bn(bntemp1,bnxdel2),bnclosenuff) > 0)
-        copy_bn(bnclosenuff,bntemp1);
-    if (cmp_bn(abs_bn(bntemp1,bnydel),abs_bn(bntemp2,bnydel2)) > 0)
+    abs_bn(bnclosenuff, bnxdel);
+    if (cmp_bn(abs_bn(bntemp1, bnxdel2), bnclosenuff) > 0)
+        copy_bn(bnclosenuff, bntemp1);
+    if (cmp_bn(abs_bn(bntemp1, bnydel), abs_bn(bntemp2, bnydel2)) > 0)
     {
-        if (cmp_bn(bntemp1,bnclosenuff) > 0)
-            copy_bn(bnclosenuff,bntemp1);
+        if (cmp_bn(bntemp1, bnclosenuff) > 0)
+            copy_bn(bnclosenuff, bntemp1);
     }
-    else if (cmp_bn(bntemp2,bnclosenuff) > 0)
-        copy_bn(bnclosenuff,bntemp2);
+    else if (cmp_bn(bntemp2, bnclosenuff) > 0)
+        copy_bn(bnclosenuff, bntemp2);
     {
         int t;
         t = abs(periodicitycheck);
@@ -583,16 +583,16 @@ bool MandelbfSetup()
     sub_bf(bfydel2, bfy3rd, bfymin);
     div_a_bf_int(bfydel2, (U16)(xdots - 1));
 
-    abs_bf(bfclosenuff,bfxdel);
-    if (cmp_bf(abs_bf(bftemp1,bfxdel2),bfclosenuff) > 0)
-        copy_bf(bfclosenuff,bftemp1);
-    if (cmp_bf(abs_bf(bftemp1,bfydel),abs_bf(bftemp2,bfydel2)) > 0)
+    abs_bf(bfclosenuff, bfxdel);
+    if (cmp_bf(abs_bf(bftemp1, bfxdel2), bfclosenuff) > 0)
+        copy_bf(bfclosenuff, bftemp1);
+    if (cmp_bf(abs_bf(bftemp1, bfydel), abs_bf(bftemp2, bfydel2)) > 0)
     {
-        if (cmp_bf(bftemp1,bfclosenuff) > 0)
-            copy_bf(bfclosenuff,bftemp1);
+        if (cmp_bf(bftemp1, bfclosenuff) > 0)
+            copy_bf(bfclosenuff, bftemp1);
     }
-    else if (cmp_bf(bftemp2,bfclosenuff) > 0)
-        copy_bf(bfclosenuff,bftemp2);
+    else if (cmp_bf(bftemp2, bfclosenuff) > 0)
+        copy_bf(bfclosenuff, bftemp2);
     {
         int t;
         t = abs(periodicitycheck);
@@ -652,16 +652,16 @@ int mandelbn_per_pixel()
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
-        floattobn(bnold.x,param[0]); // initial pertubation of parameters set
-        floattobn(bnold.y,param[1]);
+        floattobn(bnold.x, param[0]); // initial pertubation of parameters set
+        floattobn(bnold.y, param[1]);
         coloriter = -1;
     }
     else
     {
-        floattobn(bnnew.x,param[0]);
-        floattobn(bnnew.y,param[1]);
-        add_a_bn(bnold.x,bnnew.x);
-        add_a_bn(bnold.y,bnnew.y);
+        floattobn(bnnew.x, param[0]);
+        floattobn(bnnew.y, param[1]);
+        add_a_bn(bnold.x, bnnew.x);
+        add_a_bn(bnold.y, bnnew.y);
     }
 
     // square has side effect - must copy first
@@ -698,16 +698,16 @@ int mandelbf_per_pixel()
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
-        floattobf(bfold.x,param[0]); // initial pertubation of parameters set
-        floattobf(bfold.y,param[1]);
+        floattobf(bfold.x, param[0]); // initial pertubation of parameters set
+        floattobf(bfold.y, param[1]);
         coloriter = -1;
     }
     else
     {
-        floattobf(bfnew.x,param[0]);
-        floattobf(bfnew.y,param[1]);
-        add_a_bf(bfold.x,bfnew.x);
-        add_a_bf(bfold.y,bfnew.y);
+        floattobf(bfnew.x, param[0]);
+        floattobf(bfnew.y, param[1]);
+        add_a_bf(bfold.x, bfnew.x);
+        add_a_bf(bfold.y, bfnew.y);
     }
 
     // square has side effect - must copy first
@@ -822,11 +822,11 @@ JuliaZpowerbnFractal()
     parm2.x = alloc_stack(bnlength);
     parm2.y = alloc_stack(bnlength);
 
-    floattobn(parm2.x,param[2]);
-    floattobn(parm2.y,param[3]);
-    ComplexPower_bn(&bnnew,&bnold,&parm2);
-    add_bn(bnnew.x,bnparm.x,bnnew.x+shiftfactor);
-    add_bn(bnnew.y,bnparm.y,bnnew.y+shiftfactor);
+    floattobn(parm2.x, param[2]);
+    floattobn(parm2.y, param[3]);
+    ComplexPower_bn(&bnnew, &bnold, &parm2);
+    add_bn(bnnew.x, bnparm.x, bnnew.x+shiftfactor);
+    add_bn(bnnew.y, bnparm.y, bnnew.y+shiftfactor);
     restore_stack(saved);
     return bignumbailout();
 }
@@ -841,11 +841,11 @@ JuliaZpowerbfFractal()
     parm2.x = alloc_stack(bflength+2);
     parm2.y = alloc_stack(bflength+2);
 
-    floattobf(parm2.x,param[2]);
-    floattobf(parm2.y,param[3]);
-    ComplexPower_bf(&bfnew,&bfold,&parm2);
-    add_bf(bfnew.x,bfparm.x,bfnew.x);
-    add_bf(bfnew.y,bfparm.y,bfnew.y);
+    floattobf(parm2.x, param[2]);
+    floattobf(parm2.y, param[3]);
+    ComplexPower_bf(&bfnew, &bfold, &parm2);
+    add_bf(bfnew.x, bfparm.x, bfnew.x);
+    add_bf(bfnew.y, bfparm.y, bfnew.y);
     restore_stack(saved);
     return bigfltbailout();
 }
@@ -868,12 +868,12 @@ DComplex cmplxbftofloat(BFComplex *s)
 
 BFComplex *cmplxlog_bf(BFComplex *t, BFComplex *s)
 {
-    square_bf(t->x,s->x);
-    square_bf(t->y,s->y);
-    add_a_bf(t->x,t->y);
-    ln_bf(t->x,t->x);
+    square_bf(t->x, s->x);
+    square_bf(t->y, s->y);
+    add_a_bf(t->x, t->y);
+    ln_bf(t->x, t->x);
     half_a_bf(t->x);
-    atan2_bf(t->y,s->y,s->x);
+    atan2_bf(t->y, s->y, s->x);
     return (t);
 }
 
@@ -885,11 +885,11 @@ BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
     tmp1 = alloc_stack(rbflength+2);
     mult_bf(t->x, x->x, y->x);
     mult_bf(t->y, x->y, y->y);
-    sub_bf(t->x,t->x,t->y);
+    sub_bf(t->x, t->x, t->y);
 
     mult_bf(tmp1, x->x, y->y);
     mult_bf(t->y, x->y, y->x);
-    add_bf(t->y,tmp1,t->y);
+    add_bf(t->y, tmp1, t->y);
     restore_stack(saved);
     return (t);
 }
@@ -916,8 +916,8 @@ BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
 
     cmplxlog_bf(t, xx);
     cplxmul_bf(&tmp, t, yy);
-    exp_bf(e2x,tmp.x);
-    sincos_bf(siny,cosy,tmp.y);
+    exp_bf(e2x, tmp.x);
+    sincos_bf(siny, cosy, tmp.y);
     mult_bf(t->x, e2x, cosy);
     mult_bf(t->y, e2x, siny);
     restore_stack(saved);
@@ -926,12 +926,12 @@ BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
 
 BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s)
 {
-    square_bn(t->x,s->x);
-    square_bn(t->y,s->y);
-    add_a_bn(t->x+shiftfactor,t->y+shiftfactor);
-    ln_bn(t->x,t->x+shiftfactor);
+    square_bn(t->x, s->x);
+    square_bn(t->y, s->y);
+    add_a_bn(t->x+shiftfactor, t->y+shiftfactor);
+    ln_bn(t->x, t->x+shiftfactor);
     half_a_bn(t->x);
-    atan2_bn(t->y,s->y,s->x);
+    atan2_bn(t->y, s->y, s->x);
     return (t);
 }
 
@@ -943,11 +943,11 @@ BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
     tmp1 = alloc_stack(rlength);
     mult_bn(t->x, x->x, y->x);
     mult_bn(t->y, x->y, y->y);
-    sub_bn(t->x,t->x+shiftfactor,t->y+shiftfactor);
+    sub_bn(t->x, t->x+shiftfactor, t->y+shiftfactor);
 
     mult_bn(tmp1, x->x, y->y);
     mult_bn(t->y, x->y, y->x);
-    add_bn(t->y,tmp1+shiftfactor,t->y+shiftfactor);
+    add_bn(t->y, tmp1+shiftfactor, t->y+shiftfactor);
     restore_stack(saved);
     return (t);
 }
@@ -975,8 +975,8 @@ BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
 
     cmplxlog_bn(t, xx);
     cplxmul_bn(&tmp, t, yy);
-    exp_bn(e2x,tmp.x);
-    sincos_bn(siny,cosy,tmp.y);
+    exp_bn(e2x, tmp.x);
+    sincos_bn(siny, cosy, tmp.y);
     mult_bn(t->x, e2x, cosy);
     mult_bn(t->y, e2x, siny);
     restore_stack(saved);
