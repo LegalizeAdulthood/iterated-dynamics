@@ -1208,10 +1208,6 @@ void goodbye()                  // we done.  Bail out
     {
         end_resume();
     }
-    if (evolve_handle != 0)
-    {
-        MemoryRelease(evolve_handle);
-    }
     if (gene_handle != 0)
     {
         MemoryRelease(gene_handle);

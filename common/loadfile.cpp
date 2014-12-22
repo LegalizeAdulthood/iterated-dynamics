@@ -538,37 +538,28 @@ int read_overlay()      // read overlay/3D files, if reqr'd
                 && calc_status != calc_status_value::COMPLETED)
         {
             calc_status = calc_status_value::RESUMABLE;
-            // TODO: MemoryAlloc
-            if (evolve_handle == 0)
-            {
-                evolve_handle = MemoryAlloc((U16) sizeof(resume_e_info), 1L, MEMORY);
-            }
-            resume_e_info.paramrangex  = blk_6_info.paramrangex;
-            resume_e_info.paramrangey  = blk_6_info.paramrangey;
-            resume_e_info.opx          = blk_6_info.opx;
-            resume_e_info.opy          = blk_6_info.opy;
-            resume_e_info.odpx         = blk_6_info.odpx;
-            resume_e_info.odpy         = blk_6_info.odpy;
-            resume_e_info.px           = blk_6_info.px;
-            resume_e_info.py           = blk_6_info.py;
-            resume_e_info.sxoffs       = blk_6_info.sxoffs;
-            resume_e_info.syoffs       = blk_6_info.syoffs;
-            resume_e_info.xdots        = blk_6_info.xdots;
-            resume_e_info.ydots        = blk_6_info.ydots;
-            resume_e_info.gridsz       = blk_6_info.gridsz;
-            resume_e_info.evolving     = blk_6_info.evolving;
-            resume_e_info.this_gen_rseed = blk_6_info.this_gen_rseed;
-            resume_e_info.fiddlefactor = blk_6_info.fiddlefactor;
-            resume_e_info.ecount       = blk_6_info.ecount;
-            CopyFromMemoryToHandle((BYTE *) &resume_e_info, (U16) sizeof(resume_e_info), 1L, 0L, evolve_handle);
+            evolve_info.paramrangex  = blk_6_info.paramrangex;
+            evolve_info.paramrangey  = blk_6_info.paramrangey;
+            evolve_info.opx          = blk_6_info.opx;
+            evolve_info.opy          = blk_6_info.opy;
+            evolve_info.odpx         = blk_6_info.odpx;
+            evolve_info.odpy         = blk_6_info.odpy;
+            evolve_info.px           = blk_6_info.px;
+            evolve_info.py           = blk_6_info.py;
+            evolve_info.sxoffs       = blk_6_info.sxoffs;
+            evolve_info.syoffs       = blk_6_info.syoffs;
+            evolve_info.xdots        = blk_6_info.xdots;
+            evolve_info.ydots        = blk_6_info.ydots;
+            evolve_info.gridsz       = blk_6_info.gridsz;
+            evolve_info.evolving     = blk_6_info.evolving;
+            evolve_info.this_gen_rseed = blk_6_info.this_gen_rseed;
+            evolve_info.fiddlefactor = blk_6_info.fiddlefactor;
+            evolve_info.ecount       = blk_6_info.ecount;
+            have_evolve_info = true;
         }
         else
         {
-            if (evolve_handle != 0)  // Image completed, release it.
-            {
-                MemoryRelease(evolve_handle);
-            }
-            evolve_handle = 0;
+            have_evolve_info = false;
             calc_status = calc_status_value::COMPLETED;
         }
         paramrangex  = blk_6_info.paramrangex;

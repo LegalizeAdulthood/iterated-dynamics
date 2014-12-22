@@ -31,7 +31,8 @@ static void restore_history_info(int);
 static void save_history_info();
 
 int finishrow = 0;    // save when this row is finished
-U16 evolve_handle = 0;
+EVOLUTION_INFO evolve_info = { 0 };
+bool have_evolve_info = false;
 char old_stdcalcmode;
 static std::vector<int> save_boxx;
 static std::vector<int> save_boxy;
@@ -353,37 +354,34 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             {
                 // generate a set of images with varied parameters on each one
                 int grout, ecount, tmpxdots, tmpydots, gridsqr;
-                EVOLUTION_INFO resume_e_info;
                 GENEBASE gene[NUMGENES];
                 // get the gene array from memory
                 CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-                if ((evolve_handle != 0) && (calc_status == calc_status_value::RESUMABLE))
+                if (have_evolve_info && (calc_status == calc_status_value::RESUMABLE))
                 {
-                    CopyFromHandleToMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
-                    paramrangex  = resume_e_info.paramrangex;
-                    paramrangey  = resume_e_info.paramrangey;
-                    newopx = resume_e_info.opx;
+                    paramrangex  = evolve_info.paramrangex;
+                    paramrangey  = evolve_info.paramrangey;
+                    newopx = evolve_info.opx;
                     opx = newopx;
-                    newopy = resume_e_info.opy;
+                    newopy = evolve_info.opy;
                     opy = newopy;
-                    newodpx = (char)resume_e_info.odpx;
+                    newodpx = (char)evolve_info.odpx;
                     odpx = newodpx;
-                    newodpy = (char)resume_e_info.odpy;
+                    newodpy = (char)evolve_info.odpy;
                     odpy = newodpy;
-                    px           = resume_e_info.px;
-                    py           = resume_e_info.py;
-                    sxoffs       = resume_e_info.sxoffs;
-                    syoffs       = resume_e_info.syoffs;
-                    xdots        = resume_e_info.xdots;
-                    ydots        = resume_e_info.ydots;
-                    gridsz       = resume_e_info.gridsz;
-                    this_gen_rseed = resume_e_info.this_gen_rseed;
-                    fiddlefactor   = resume_e_info.fiddlefactor;
-                    evolving     = resume_e_info.evolving;
+                    px           = evolve_info.px;
+                    py           = evolve_info.py;
+                    sxoffs       = evolve_info.sxoffs;
+                    syoffs       = evolve_info.syoffs;
+                    xdots        = evolve_info.xdots;
+                    ydots        = evolve_info.ydots;
+                    gridsz       = evolve_info.gridsz;
+                    this_gen_rseed = evolve_info.this_gen_rseed;
+                    fiddlefactor   = evolve_info.fiddlefactor;
+                    evolving     = evolve_info.evolving;
                     viewwindow = evolving != 0;
-                    ecount       = resume_e_info.ecount;
-                    MemoryRelease(evolve_handle);  // We're done with it, release it.
-                    evolve_handle = 0;
+                    ecount       = evolve_info.ecount;
+                    have_evolve_info = false;
                 }
                 else
                 {   // not resuming, start from the beginning
@@ -432,30 +430,25 @@ done:
                     driver_buzzer(buzzer_codes::COMPLETE); // finished!!
                 }
                 else
-                {   // interrupted screen generation, save info
-                    // TODO: MemoryAlloc
-                    if (evolve_handle == 0)
-                    {
-                        evolve_handle = MemoryAlloc((U16)sizeof(resume_e_info), 1L, MEMORY);
-                    }
-                    resume_e_info.paramrangex     = paramrangex;
-                    resume_e_info.paramrangey     = paramrangey;
-                    resume_e_info.opx             = opx;
-                    resume_e_info.opy             = opy;
-                    resume_e_info.odpx            = (short)odpx;
-                    resume_e_info.odpy            = (short)odpy;
-                    resume_e_info.px              = (short)px;
-                    resume_e_info.py              = (short)py;
-                    resume_e_info.sxoffs          = (short)sxoffs;
-                    resume_e_info.syoffs          = (short)syoffs;
-                    resume_e_info.xdots           = (short)xdots;
-                    resume_e_info.ydots           = (short)ydots;
-                    resume_e_info.gridsz          = (short)gridsz;
-                    resume_e_info.this_gen_rseed  = (short)this_gen_rseed;
-                    resume_e_info.fiddlefactor    = fiddlefactor;
-                    resume_e_info.evolving        = (short)evolving;
-                    resume_e_info.ecount          = (short) ecount;
-                    CopyFromMemoryToHandle((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
+                {
+                    evolve_info.paramrangex     = paramrangex;
+                    evolve_info.paramrangey     = paramrangey;
+                    evolve_info.opx             = opx;
+                    evolve_info.opy             = opy;
+                    evolve_info.odpx            = (short)odpx;
+                    evolve_info.odpy            = (short)odpy;
+                    evolve_info.px              = (short)px;
+                    evolve_info.py              = (short)py;
+                    evolve_info.sxoffs          = (short)sxoffs;
+                    evolve_info.syoffs          = (short)syoffs;
+                    evolve_info.xdots           = (short)xdots;
+                    evolve_info.ydots           = (short)ydots;
+                    evolve_info.gridsz          = (short)gridsz;
+                    evolve_info.this_gen_rseed  = (short)this_gen_rseed;
+                    evolve_info.fiddlefactor    = fiddlefactor;
+                    evolve_info.evolving        = (short)evolving;
+                    evolve_info.ecount          = (short) ecount;
+                    have_evolve_info = true;
                 }
                 syoffs = 0;
                 sxoffs = syoffs;

@@ -464,13 +464,12 @@ bool encoder()
         }
 
         // Extended parameters block 006
-        if (evolving&1)
+        if (evolving & 1)
         {
             EVOLUTION_INFO esave_info;
-            EVOLUTION_INFO resume_e_info;
             GENEBASE gene[NUMGENES];
             CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-            if (evolve_handle == 0 || calc_status == calc_status_value::COMPLETED)
+            if (!have_evolve_info || calc_status == calc_status_value::COMPLETED)
             {
                 esave_info.paramrangex     = paramrangex;
                 esave_info.paramrangey     = paramrangey;
@@ -493,24 +492,23 @@ bool encoder()
             else
             {
                 // we will need the resuming information
-                CopyFromHandleToMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
-                esave_info.paramrangex     = resume_e_info.paramrangex;
-                esave_info.paramrangey     = resume_e_info.paramrangey;
-                esave_info.opx             = resume_e_info.opx;
-                esave_info.opy             = resume_e_info.opy;
-                esave_info.odpx            = (short)resume_e_info.odpx;
-                esave_info.odpy            = (short)resume_e_info.odpy;
-                esave_info.px              = (short)resume_e_info.px;
-                esave_info.py              = (short)resume_e_info.py;
-                esave_info.sxoffs          = (short)resume_e_info.sxoffs;
-                esave_info.syoffs          = (short)resume_e_info.syoffs;
-                esave_info.xdots           = (short)resume_e_info.xdots;
-                esave_info.ydots           = (short)resume_e_info.ydots;
-                esave_info.gridsz          = (short)resume_e_info.gridsz;
-                esave_info.evolving        = (short)resume_e_info.evolving;
-                esave_info.this_gen_rseed  = (unsigned short)resume_e_info.this_gen_rseed;
-                esave_info.fiddlefactor    = resume_e_info.fiddlefactor;
-                esave_info.ecount          = resume_e_info.ecount;
+                esave_info.paramrangex     = evolve_info.paramrangex;
+                esave_info.paramrangey     = evolve_info.paramrangey;
+                esave_info.opx             = evolve_info.opx;
+                esave_info.opy             = evolve_info.opy;
+                esave_info.odpx            = (short)evolve_info.odpx;
+                esave_info.odpy            = (short)evolve_info.odpy;
+                esave_info.px              = (short)evolve_info.px;
+                esave_info.py              = (short)evolve_info.py;
+                esave_info.sxoffs          = (short)evolve_info.sxoffs;
+                esave_info.syoffs          = (short)evolve_info.syoffs;
+                esave_info.xdots           = (short)evolve_info.xdots;
+                esave_info.ydots           = (short)evolve_info.ydots;
+                esave_info.gridsz          = (short)evolve_info.gridsz;
+                esave_info.evolving        = (short)evolve_info.evolving;
+                esave_info.this_gen_rseed  = (unsigned short)evolve_info.this_gen_rseed;
+                esave_info.fiddlefactor    = evolve_info.fiddlefactor;
+                esave_info.ecount          = evolve_info.ecount;
             }
             for (int i = 0; i < NUMGENES; i++)
                 esave_info.mutate[i] = (short)gene[i].mutate;
