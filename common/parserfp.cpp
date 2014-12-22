@@ -184,14 +184,14 @@ NEW_FN  fStkOne;   // to support new parser fn.
 #define MAX_STACK 8   // max # of stack register avail
 
 #ifdef TESTFP
-int pstopmsg(int x,char *msg)
+int pstopmsg(int x, char *msg)
 {
     static FILE *fp = nullptr;
     if (fp == nullptr)
-        fp = fopen("fpdebug.txt","w");
+        fp = fopen("fpdebug.txt", "w");
     if (fp)
     {
-        fprintf(fp,"%s\n",msg);
+        fprintf(fp, "%s\n", msg);
         fflush(fp);
     }
     return (x); // just to quiet warnings
@@ -204,7 +204,7 @@ int pstopmsg(int x,char *msg)
         || debugflag == debug_flags::prevent_formula_optimizer)     \
         stopmsg(STOPMSG_NONE, (y))
 
-#define DBUGMSG1(y,p)                                               \
+#define DBUGMSG1(y, p)                                               \
     if (debugflag == debug_flags::show_formula_info_after_compile   \
         || debugflag == debug_flags::prevent_formula_optimizer)     \
     {                                                               \
@@ -212,7 +212,7 @@ int pstopmsg(int x,char *msg)
         stopmsg(STOPMSG_NONE, cDbgMsg);                             \
     }
 
-#define DBUGMSG2(y,p,q)                                             \
+#define DBUGMSG2(y, p, q)                                             \
     if (debugflag == debug_flags::show_formula_info_after_compile   \
         || debugflag == debug_flags::prevent_formula_optimizer)     \
     {                                                               \
@@ -220,7 +220,7 @@ int pstopmsg(int x,char *msg)
         stopmsg(STOPMSG_NONE, cDbgMsg);                             \
     }
 
-#define DBUGMSG3(y,p,q,r)                                           \
+#define DBUGMSG3(y, p, q, r)                                           \
     if (debugflag == debug_flags::show_formula_info_after_compile   \
         || debugflag == debug_flags::prevent_formula_optimizer)     \
     {                                                               \
@@ -228,7 +228,7 @@ int pstopmsg(int x,char *msg)
         stopmsg(STOPMSG_NONE, cDbgMsg);                             \
     }
 
-#define DBUGMSG4(y,p,q,r,s)                                         \
+#define DBUGMSG4(y, p, q, r, s)                                         \
     if (debugflag == debug_flags::show_formula_info_after_compile   \
         || debugflag == debug_flags::prevent_formula_optimizer)     \
     {                                                               \
@@ -236,15 +236,15 @@ int pstopmsg(int x,char *msg)
         stopmsg(STOPMSG_NONE, cDbgMsg);                             \
     }
 
-#define FNAME(a,b,c,d,e,f) a,b,c,d,e,f    // use the function name string
+#define FNAME(a, b, c, d, e, f) a, b, c, d, e, f    // use the function name string
 #else
 
 #define DBUGMSG(y)
-#define DBUGMSG1(y,p)
-#define DBUGMSG2(y,p,q)
-#define DBUGMSG3(y,p,q,r)
-#define DBUGMSG4(y,p,q,r,s)
-#define FNAME(a,b,c,d,e,f) b,c,d,e,f    // don't use the function name string
+#define DBUGMSG1(y, p)
+#define DBUGMSG2(y, p, q)
+#define DBUGMSG3(y, p, q, r)
+#define DBUGMSG4(y, p, q, r, s)
+#define FNAME(a, b, c, d, e, f) b, c, d, e, f    // don't use the function name string
 #endif // TESTFP
 
 #define FN_LOD            0
@@ -363,7 +363,7 @@ static fn_entry afe[NUM_OLD_FNS] =
     {FNAME("/",       dStkDiv,     fStkDiv,    4, 2, -2) },          //  5
     {FNAME("Sto",     StkSto,      fStkSto,    2, 0,  0) },          //  6
     {FNAME("Sqr",     dStkSqr,     fStkSqr,    2, 2,  0) },          //  7
-    {FNAME(":",       EndInit,     fStkEndInit,0, 0,  CLEAR_STK) },  //  8
+    {FNAME(":",       EndInit,     fStkEndInit, 0, 0,  CLEAR_STK) },  //  8
     {FNAME("Mod",     dStkMod,     fStkMod,    2, 0,  0) },          //  9
     {FNAME("<=",      dStkLTE,     fStkLTE,    4, 0, -2) },          // 10
     {FNAME("Sin",     dStkSin,     fStkSin,    2, 2,  0) },          // 11
@@ -406,10 +406,10 @@ static fn_entry afe[NUM_OLD_FNS] =
     {FNAME("Ceil",    dStkCeil,    fStkCeil,   2, 0,  0) },          // 48
     {FNAME("Trunc",   dStkTrunc,   fStkTrunc,  2, 0,  0) },          // 49
     {FNAME("Round",   dStkRound,   fStkRound,  2, 0,  0) },          // 50
-    {FNAME("Jump",        StkJump,         fStkJump,       0, 0, 0)},// 51
-    {FNAME("JumpOnTrue",  dStkJumpOnTrue,  fStkJumpOnTrue, 2, 0, 0)},// 52
-    {FNAME("JumpOnFalse", dStkJumpOnFalse, fStkJumpOnFalse,2, 0, 0)},// 53
-    {FNAME("JumpLabel",   StkJumpLabel,    fStkJumpLabel,  0, 0, 0)},// 54
+    {FNAME("Jump",        StkJump,         fStkJump,       0, 0, 0)}, // 51
+    {FNAME("JumpOnTrue",  dStkJumpOnTrue,  fStkJumpOnTrue, 2, 0, 0)}, // 52
+    {FNAME("JumpOnFalse", dStkJumpOnFalse, fStkJumpOnFalse, 2, 0, 0)}, // 53
+    {FNAME("JumpLabel",   StkJumpLabel,    fStkJumpLabel,  0, 0, 0)}, // 54
     {FNAME("One",     dStkOne,     fStkOne,    2, 0,  0) }           // 55
 };
 
