@@ -11,9 +11,9 @@
 #endif
 // dysize may conflict with time.h
 #define dysize dysize1
-#define bcopy(src,dst,n) memcpy(dst,src,n)
-#define bzero(buf,siz) memset(buf,0,siz)
-#define bcmp(buf1,buf2,len) memcmp(buf1,buf2,len)
+#define bcopy(src, st, n) memcpy(dst, src, n)
+#define bzero(buf, siz) memset(buf, 0, siz)
+#define bcmp(buf1, buf2, len) memcmp(buf1, buf2, len)
 // ftime replacement
 #include <sys/types.h>
 struct timebx
