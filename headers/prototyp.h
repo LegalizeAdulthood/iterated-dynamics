@@ -443,7 +443,7 @@ extern big_while_loop_result big_while_loop(bool *kbdmore, bool *stacked, bool r
 extern bool check_key();
 extern int cmp_line(BYTE *, int);
 extern int key_count(int);
-extern big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked, int axmode);
+extern big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked);
 extern int pot_line(BYTE *, int);
 extern int sound_line(BYTE *, int);
 extern int timer(int, int (*subrtn)(), ...);

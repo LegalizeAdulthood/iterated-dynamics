@@ -44,7 +44,6 @@ bool g_virtual_screens = false;
 
 big_while_loop_result big_while_loop(bool *kbdmore, bool *stacked, bool resumeflag)
 {
-    int     axmode = 0; // video mode (BIOS ##)
     double  ftemp;                       // fp temp
     int     i = 0;                           // temporary loop counters
     int kbdchar;
@@ -67,7 +66,6 @@ big_while_loop_result big_while_loop(bool *kbdmore, bool *stacked, bool resumefl
         {
             memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
                    sizeof(g_video_entry));
-            axmode  = g_video_entry.videomodeax; // video mode (BIOS call)
             dotmode = g_video_entry.dotmode;     // assembler dot read/write
             xdots   = g_video_entry.xdots;       // # dots across the screen
             ydots   = g_video_entry.ydots;       // # dots down the screen
@@ -645,7 +643,7 @@ resumeloop:                             // return here on failed overlays
             }
             else
             {
-                mms_value = main_menu_switch(&kbdchar, &frommandel, kbdmore, stacked, axmode);
+                mms_value = main_menu_switch(&kbdchar, &frommandel, kbdmore, stacked);
             }
             if (quick_calc && (mms_value == big_while_loop_result::IMAGE_START ||
                                mms_value == big_while_loop_result::RESTORE_START ||
@@ -759,7 +757,7 @@ static bool look(bool *stacked)
     return false;
 }
 
-big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked, int axmode)
+big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i, k;
     static double  jxxmin, jxxmax, jyymin, jyymax; // "Julia mode" entry point
