@@ -70,7 +70,7 @@ struct help_sig_info
     unsigned long base;     // only if added to fractint.exe
 };
 
-void print_document(const char *outfname, bool (*msg_func)(int,int), int save_extraseg);
+void print_document(const char *outfname, bool (*msg_func)(int, int), int save_extraseg);
 static bool print_doc_msg_func(int pnum, int num_pages);
 
 // stuff from fractint
@@ -297,18 +297,18 @@ static void color_link(LINK *link, int color)
 }
 
 #if defined(_WIN32)
-#define PUT_KEY(name_,desc_) put_key(name_,desc_)
+#define PUT_KEY(name_, desc_) put_key(name_, desc_)
 #else
 #if !defined(XFRACT)
 #define PUT_KEY(name, descrip)                              \
-    driver_put_string(-1,-1,C_HELP_INSTR,name),             \
-    driver_put_string(-1,-1,C_HELP_INSTR,":" descrip "  ")
+    driver_put_string(-1, -1, C_HELP_INSTR, name),             \
+    driver_put_string(-1, -1, C_HELP_INSTR, ":" descrip "  ")
 #else
 #define PUT_KEY(name, descrip)                      \
-    driver_put_string(-1,-1,C_HELP_INSTR,name);     \
-    driver_put_string(-1,-1,C_HELP_INSTR,":");      \
-    driver_put_string(-1,-1,C_HELP_INSTR,descrip);  \
-    driver_put_string(-1,-1,C_HELP_INSTR,"  ")
+    driver_put_string(-1, -1, C_HELP_INSTR, name);     \
+    driver_put_string(-1, -1, C_HELP_INSTR, ":");      \
+    driver_put_string(-1, -1, C_HELP_INSTR, descrip);  \
+    driver_put_string(-1, -1, C_HELP_INSTR, "  ")
 #endif
 #endif
 
@@ -546,7 +546,7 @@ static int find_link_key(LINK * /*link*/, int num_link, int curr_link, int key)
     }
 }
 
-static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *,int,int,int), int val)
+static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, int, int, int), int val)
 {
     if (num_link > 1)
     {
@@ -923,7 +923,7 @@ static bool exe_path(const char *filename, char *path)
     {
         extern char **__argv;
         strcpy(path, __argv[0]);   // note: __argv may be undocumented in MSC
-        if (strcmp(filename,"FRACTINT.EXE") == 0)
+        if (strcmp(filename, "FRACTINT.EXE") == 0)
             if (can_read_file(path))
                 return true;
         ptr = strrchr(path, SLASHC);
@@ -937,9 +937,9 @@ static bool exe_path(const char *filename, char *path)
 
     return false;
 #else
-    strcpy(path,SRCDIR);
-    strcat(path,"/");
-    strcat(path,filename);
+    strcpy(path, SRCDIR);
+    strcat(path, "/");
+    strcat(path, filename);
     return true;
 #endif
 }
@@ -1184,7 +1184,7 @@ static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
         info->margin = 0;
 
         memset(line, ' ', 81);
-        sprintf(buff, "Fractint Version %d.%01d%c",g_release/100, (g_release%100)/10,
+        sprintf(buff, "Fractint Version %d.%01d%c", g_release/100, (g_release%100)/10,
                 ((g_release%10) ? '0'+(g_release%10) : ' '));
         memmove(line + ((width-(int)(strlen(buff))) / 2)-4, buff, strlen(buff));
 
@@ -1302,7 +1302,7 @@ bool makedoc_msg_func(int pnum, int num_pages)
     return result;
 }
 
-void print_document(const char *outfname, bool (*msg_func)(int,int), int save_extraseg)
+void print_document(const char *outfname, bool (*msg_func)(int, int), int save_extraseg)
 {
     PRINT_DOC_INFO info;
     bool success = false;
