@@ -19,7 +19,7 @@
 
 // routines in this module
 
-static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked);
+static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked);
 static void move_zoombox(int);
 static bool fromtext_flag = false;      // = true if we're in graphics mode
 static int call_line3d(BYTE *pixels, int linelen);
@@ -42,12 +42,12 @@ static bool historyflag = false;        // are we backing off in history?
 void (*outln_cleanup)();
 bool g_virtual_screens = false;
 
-big_while_loop_result big_while_loop(bool *const kbdmore, bool *const stacked, bool const resumeflag)
+main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const resumeflag)
 {
     double  ftemp;                       // fp temp
     int     i = 0;                           // temporary loop counters
     int kbdchar;
-    big_while_loop_result mms_value;
+    main_state mms_value;
 
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
@@ -102,7 +102,7 @@ big_while_loop_result big_while_loop(bool *const kbdmore, bool *const stacked, b
                     }
                     g_init_mode = -1;
                     driver_set_for_text(); // switch to text mode
-                    return big_while_loop_result::RESTORE_START;
+                    return main_state::RESTORE_START;
                 }
 
                 if (g_virtual_screens && (xdots > sxdots || ydots > sydots))
@@ -250,7 +250,7 @@ big_while_loop_result big_while_loop(bool *const kbdmore, bool *const stacked, b
                     calc_status = calc_status_value::RESUMABLE;         // "resume" without 16-bit
                     driver_set_for_text();
                     get_fracttype();
-                    return big_while_loop_result::IMAGE_START;
+                    return main_state::IMAGE_START;
                 }
                 outln = pot_line;
             }
@@ -645,9 +645,9 @@ resumeloop:                             // return here on failed overlays
             {
                 mms_value = main_menu_switch(&kbdchar, &frommandel, kbdmore, stacked);
             }
-            if (quick_calc && (mms_value == big_while_loop_result::IMAGE_START ||
-                               mms_value == big_while_loop_result::RESTORE_START ||
-                               mms_value == big_while_loop_result::RESTART))
+            if (quick_calc && (mms_value == main_state::IMAGE_START ||
+                               mms_value == main_state::RESTORE_START ||
+                               mms_value == main_state::RESTART))
             {
                 quick_calc = false;
                 usr_stdcalcmode = old_stdcalcmode;
@@ -658,13 +658,13 @@ resumeloop:                             // return here on failed overlays
             }
             switch (mms_value)
             {
-            case big_while_loop_result::IMAGE_START:
-                return big_while_loop_result::IMAGE_START;
-            case big_while_loop_result::RESTORE_START:
-                return big_while_loop_result::RESTORE_START;
-            case big_while_loop_result::RESTART:
-                return big_while_loop_result::RESTART;
-            case big_while_loop_result::CONTINUE:
+            case main_state::IMAGE_START:
+                return main_state::IMAGE_START;
+            case main_state::RESTORE_START:
+                return main_state::RESTORE_START;
+            case main_state::RESTART:
+                return main_state::RESTART;
+            case main_state::CONTINUE:
                 continue;
             default:
                 break;
@@ -757,7 +757,7 @@ static bool look(bool *stacked)
     return false;
 }
 
-big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
+main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i, k;
     static double  jxxmin, jxxmax, jyymin, jyymax; // "Julia mode" entry point
@@ -802,7 +802,7 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
             }
             else if (g_init_mode < 0) // it is supposed to be...
                 driver_set_for_text();     // reset to text mode
-            return big_while_loop_result::IMAGE_START;
+            return main_state::IMAGE_START;
         }
         driver_unstack_screen();
         break;
@@ -921,7 +921,7 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
         else if (stdcalcmode != 'o') // don't go there
             usr_floatflag = false;
         g_init_mode = g_adapter;
-        return big_while_loop_result::IMAGE_START;
+        return main_state::IMAGE_START;
     case 'i':                    // 3d fractal parms
         if (get_fract3d_params() >= 0)    // get the parameters
         {
@@ -959,7 +959,7 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
             for (int i = 0; i < MAXPARAMS; ++i)
                 param[i] = oldparm[i];
             if (err >= 0)
-                return big_while_loop_result::CONTINUE;
+                return main_state::CONTINUE;
         }
         break;
     case 'k':                    // ^s is irritating, give user a single key
@@ -969,7 +969,7 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
         {
             if (do_AutoStereo())
                 calc_status = calc_status_value::PARAMS_CHANGED;
-            return big_while_loop_result::CONTINUE;
+            return main_state::CONTINUE;
         }
         break;
     case 'a':                    // starfield parms
@@ -978,7 +978,7 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
         {
             if (starfield() >= 0)
                 calc_status = calc_status_value::PARAMS_CHANGED;
-            return big_while_loop_result::CONTINUE;
+            return main_state::CONTINUE;
         }
         break;
     case FIK_CTL_O:                     // ctrl-o
@@ -1161,7 +1161,7 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
                 driver_stack_screen();      // save graphics image
                 *stacked = true;
             }
-            return big_while_loop_result::RESTORE_START;
+            return main_state::RESTORE_START;
         }
         else if (maxhistory > 0 && bf_math == bf_math_type::NONE)
         {
@@ -1181,7 +1181,7 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
                     curfractalspecific->tofloat != fractal_type::NOFRACTAL)
                 usr_floatflag = true;
             historyflag = true;         // avoid re-store parms due to rounding errs
-            return big_while_loop_result::IMAGE_START;
+            return main_state::IMAGE_START;
         }
         break;
     case 'd':                    // shell to MS-DOS
@@ -1201,7 +1201,7 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
             colorstate = 1;
             save_history_info();
         }
-        return big_while_loop_result::CONTINUE;
+        return main_state::CONTINUE;
     case 'e':                    // switch to color editing
         if (g_is_true_color && !initbatch)
         { // don't enter palette editor
@@ -1212,7 +1212,7 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
                 break;
             }
             else
-                return big_while_loop_result::CONTINUE;
+                return main_state::CONTINUE;
         }
         clear_zoombox();
         if (g_dac_box[0][0] != 255 && colors >= 16 && !driver_diskp())
@@ -1229,14 +1229,14 @@ big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbd
                 save_history_info();
             }
         }
-        return big_while_loop_result::CONTINUE;
+        return main_state::CONTINUE;
     case 's':                    // save-to-disk
         if (driver_diskp() && disktarga)
-            return big_while_loop_result::CONTINUE;  // disk video and targa, nothing to save
+            return main_state::CONTINUE;  // disk video and targa, nothing to save
         note_zoom();
         savetodisk(savename);
         restore_zoom();
-        return big_while_loop_result::CONTINUE;
+        return main_state::CONTINUE;
     case '#':                    // 3D overlay
 #ifdef XFRACT
     case FIK_F3:                     // 3D overlay
@@ -1264,7 +1264,7 @@ do_3d_transform:
                     driver_stack_screen();   // save graphics image
                     strcpy(readname, savename);
                     showfile = 0;
-                    return big_while_loop_result::RESTORE_START;
+                    return main_state::RESTORE_START;
                 }
             }
             else
@@ -1286,7 +1286,7 @@ do_3d_transform:
             started_resaves = false;
         }
         showfile = -1;
-        return big_while_loop_result::RESTORE_START;
+        return main_state::RESTORE_START;
     case 'l':
     case 'L':                    // Look for other files within this view
         if ((zwidth != 0) || driver_diskp())
@@ -1296,7 +1296,7 @@ do_3d_transform:
         }
         else if (look(stacked))
         {
-            return big_while_loop_result::RESTORE_START;
+            return main_state::RESTORE_START;
         }
         break;
     case 'b':                    // make batch file
@@ -1304,7 +1304,7 @@ do_3d_transform:
         break;
     case FIK_CTL_P:                    // print current image
         driver_buzzer(buzzer_codes::INTERRUPT);
-        return big_while_loop_result::CONTINUE;
+        return main_state::CONTINUE;
     case FIK_ENTER:                  // Enter
     case FIK_ENTER_2:                // Numeric-Keypad Enter
 #ifdef XFRACT
@@ -1326,7 +1326,7 @@ do_3d_transform:
         break;
     case FIK_INSERT:         // insert
         driver_set_for_text();           // force text mode
-        return big_while_loop_result::RESTART;
+        return main_state::RESTART;
     case FIK_LEFT_ARROW:             // cursor left
     case FIK_RIGHT_ARROW:            // cursor right
     case FIK_UP_ARROW:               // cursor up
@@ -1443,14 +1443,14 @@ do_3d_transform:
                 savedac = 0;
             calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = false;
-            return big_while_loop_result::CONTINUE;
+            return main_state::CONTINUE;
         }
         break;
     }                            // end of the big switch
-    return big_while_loop_result::NOTHING;
+    return main_state::NOTHING;
 }
 
-static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
+static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i, k;
 
@@ -1485,7 +1485,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
             }
             else if (g_init_mode < 0) // it is supposed to be...
                 driver_set_for_text();     // reset to text mode
-            return big_while_loop_result::IMAGE_START;
+            return main_state::IMAGE_START;
         }
         driver_unstack_screen();
         break;
@@ -1537,7 +1537,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         else if (stdcalcmode != 'o') // don't go there
             usr_floatflag = false;
         g_init_mode = g_adapter;
-        return big_while_loop_result::IMAGE_START;
+        return main_state::IMAGE_START;
     case '\\':                   // return to prev image
     case FIK_CTL_BACKSLASH:
     case 'h':
@@ -1560,7 +1560,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
                     curfractalspecific->tofloat != fractal_type::NOFRACTAL)
                 usr_floatflag = true;
             historyflag = true;         // avoid re-store parms due to rounding errs
-            return big_while_loop_result::IMAGE_START;
+            return main_state::IMAGE_START;
         }
         break;
     case 'c':                    // switch to color cycling
@@ -1574,7 +1574,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
             colorstate = 1;
             save_history_info();
         }
-        return big_while_loop_result::CONTINUE;
+        return main_state::CONTINUE;
     case 'e':                    // switch to color editing
         if (g_is_true_color && !initbatch)
         { // don't enter palette editor
@@ -1585,7 +1585,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
                 break;
             }
             else
-                return big_while_loop_result::CONTINUE;
+                return main_state::CONTINUE;
         }
         clear_zoombox();
         if (g_dac_box[0][0] != 255 && colors >= 16 && !driver_diskp())
@@ -1602,14 +1602,14 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
                 save_history_info();
             }
         }
-        return big_while_loop_result::CONTINUE;
+        return main_state::CONTINUE;
     case 's':                    // save-to-disk
     {
         int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
         GENEBASE gene[NUMGENES];
 
         if (driver_diskp() && disktarga)
-            return big_while_loop_result::CONTINUE;  // disk video and targa, nothing to save
+            return main_state::CONTINUE;  // disk video and targa, nothing to save
         // get the gene array from memory
         CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         oldsxoffs = sxoffs;
@@ -1637,7 +1637,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         xdots = oldxdots;
         ydots = oldydots;
         CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-        return big_while_loop_result::CONTINUE;
+        return main_state::CONTINUE;
     }
 
     case 'r':                    // restore-from
@@ -1655,7 +1655,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
                     driver_stack_screen();   // save graphics image
                     strcpy(readname, savename);
                     showfile = 0;
-                    return big_while_loop_result::RESTORE_START;
+                    return main_state::RESTORE_START;
                 }
             }
             else
@@ -1677,7 +1677,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
             started_resaves = false;
         }
         showfile = -1;
-        return big_while_loop_result::RESTORE_START;
+        return main_state::RESTORE_START;
     case FIK_ENTER:                  // Enter
     case FIK_ENTER_2:                // Numeric-Keypad Enter
 #ifdef XFRACT
@@ -1699,7 +1699,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
         break;
     case FIK_INSERT:         // insert
         driver_set_for_text();           // force text mode
-        return big_while_loop_result::RESTART;
+        return main_state::RESTART;
     case FIK_LEFT_ARROW:             // cursor left
     case FIK_RIGHT_ARROW:            // cursor right
     case FIK_UP_ARROW:               // cursor up
@@ -1975,11 +1975,11 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
                 savedac = 0;
             calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = false;
-            return big_while_loop_result::CONTINUE;
+            return main_state::CONTINUE;
         }
         break;
     }                            // end of the big evolver switch
-    return big_while_loop_result::NOTHING;
+    return main_state::NOTHING;
 }
 
 static int call_line3d(BYTE *pixels, int linelen)

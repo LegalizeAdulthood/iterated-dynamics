@@ -353,14 +353,6 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
     return false;
 }
 
-enum class main_state
-{
-    restore_start,
-    image_start,
-    restart,
-    resume_loop
-};
-
 static main_state main_image_start(bool &stacked, bool &resumeflag)
 {
 #if defined(_WIN32)
@@ -397,7 +389,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         }
         int kbdchar = main_menu(0);
         if (kbdchar == FIK_INSERT)
-            return main_state::restart;      // restart pgm on Insert Key
+            return main_state::RESTART;      // restart pgm on Insert Key
         if (kbdchar == FIK_DELETE)                    // select video mode list
             kbdchar = select_video_mode(-1);
         g_adapter = check_vidmode_key(0, kbdchar);
@@ -411,7 +403,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         {                     // shell to DOS
             driver_set_clear();
             driver_shell();
-            return main_state::image_start;
+            return main_state::IMAGE_START;
         }
 
 #ifndef XFRACT
@@ -422,7 +414,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         {     // We mapped @ to F2
 #endif
             if ((get_commands() & CMDARG_3D_YES) == 0)
-                return main_state::image_start;
+                return main_state::IMAGE_START;
             kbdchar = '3';                         // 3d=y so fall thru '3' code
         }
 #ifndef XFRACT
@@ -439,43 +431,43 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
                 memcpy(olddacbox, g_dac_box, 256*3); // save in case colors= present
             driver_set_for_text(); // switch to text mode
             showfile = -1;
-            return main_state::restore_start;
+            return main_state::RESTORE_START;
         }
         if (kbdchar == 't')
         {                   // set fractal type
             julibrot = false;
             get_fracttype();
-            return main_state::image_start;
+            return main_state::IMAGE_START;
         }
         if (kbdchar == 'x')
         {                   // generic toggle switch
             get_toggles();
-            return main_state::image_start;
+            return main_state::IMAGE_START;
         }
         if (kbdchar == 'y')
         {                   // generic toggle switch
             get_toggles2();
-            return main_state::image_start;
+            return main_state::IMAGE_START;
         }
         if (kbdchar == 'z')
         {                   // type specific parms
             get_fract_params(1);
-            return main_state::image_start;
+            return main_state::IMAGE_START;
         }
         if (kbdchar == 'v')
         {                   // view parameters
             get_view_params();
-            return main_state::image_start;
+            return main_state::IMAGE_START;
         }
         if (kbdchar == FIK_CTL_B)
         {             /* ctrl B = browse parms*/
             get_browse_params();
-            return main_state::image_start;
+            return main_state::IMAGE_START;
         }
         if (kbdchar == FIK_CTL_F)
         {             /* ctrl f = sound parms*/
             get_sound_params();
-            return main_state::image_start;
+            return main_state::IMAGE_START;
         }
         if (kbdchar == 'f')
         {                   // floating pt toggle
@@ -483,26 +475,25 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
                 usr_floatflag = true;
             else
                 usr_floatflag = false;
-            return main_state::image_start;
+            return main_state::IMAGE_START;
         }
         if (kbdchar == 'i')
         {                     // set 3d fractal parms
             get_fract3d_params(); // get the parameters
-            return main_state::image_start;
+            return main_state::IMAGE_START;
         }
         if (kbdchar == 'g')
         {
             get_cmd_string(); // get command string
-            return main_state::image_start;
+            return main_state::IMAGE_START;
         }
-        // buzzer(2); */                          /* unrecognized key
     }
 
     zoomoff = true;                     // zooming is enabled
     helpmode = HELPMAIN;                // now use this help mode
     resumeflag = false;                 // allows taking goto inside big_while_loop()
 
-    return main_state::resume_loop;
+    return main_state::CONTINUE;
 }
 
 int main(int argc, char **argv)
@@ -540,13 +531,13 @@ restorestart:
 imagestart:                             // calc/display a new image
     switch (main_image_start(stacked, resumeflag))
     {
-    case main_state::restore_start:
+    case main_state::RESTORE_START:
         goto restorestart;
 
-    case main_state::image_start:
+    case main_state::IMAGE_START:
         goto imagestart;
 
-    case main_state::restart:
+    case main_state::RESTART:
         goto restart;
 
     default:
@@ -562,12 +553,15 @@ resumeloop:
     // this switch processes gotos that are now inside function
     switch (big_while_loop(&kbdmore, &stacked, resumeflag))
     {
-    case big_while_loop_result::RESTART:
+    case main_state::RESTART:
         goto restart;
-    case big_while_loop_result::IMAGE_START:
+
+    case main_state::IMAGE_START:
         goto imagestart;
-    case big_while_loop_result::RESTORE_START:
+
+    case main_state::RESTORE_START:
         goto restorestart;
+
     default:
         break;
     }

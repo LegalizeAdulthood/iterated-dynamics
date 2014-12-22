@@ -36,13 +36,13 @@ enum stopmsg_flags
 };
 
 // for gotos in former FRACTINT.C pieces
-enum class big_while_loop_result
+enum class main_state
 {
     NOTHING = 0,
     RESTART,
     IMAGE_START,
     RESTORE_START,
-    CONTINUE,
+    CONTINUE
 };
 
 enum class slides_mode
