@@ -63,9 +63,9 @@ struct ConstArg
     int len;
     Arg a;
 };
-extern Arg *Arg1,*Arg2;
-extern void lStkSin(),lStkCos(),lStkSinh(),lStkCosh(),lStkLog(),lStkExp(),lStkSqr();
-extern void dStkSin(),dStkCos(),dStkSinh(),dStkCosh(),dStkLog(),dStkExp(),dStkSqr();
+extern Arg *Arg1, *Arg2;
+extern void lStkSin(), lStkCos(), lStkSinh(), lStkCosh(), lStkLog(), lStkExp(), lStkSqr();
+extern void dStkSin(), dStkCos(), dStkSinh(), dStkCosh(), dStkLog(), dStkExp(), dStkSqr();
 extern void (*ltrig0)();
 extern void (*ltrig1)();
 extern void (*ltrig2)();
@@ -83,87 +83,87 @@ extern void (*dtrig3)();
 #define CMPLXconj(z)    ((z).y =  -((z).y))
 #define LCMPLXmod(z)       (lsqr((z).x)+lsqr((z).y))
 #define LCMPLXconj(z)   ((z).y =  -((z).y))
-#define LCMPLXtrig0(arg,out) Arg1->l = (arg); ltrig0(); (out) = Arg1->l
-#define LCMPLXtrig1(arg,out) Arg1->l = (arg); ltrig1(); (out) = Arg1->l
-#define LCMPLXtrig2(arg,out) Arg1->l = (arg); ltrig2(); (out) = Arg1->l
-#define LCMPLXtrig3(arg,out) Arg1->l = (arg); ltrig3(); (out) = Arg1->l
+#define LCMPLXtrig0(arg, out) Arg1->l = (arg); ltrig0(); (out) = Arg1->l
+#define LCMPLXtrig1(arg, out) Arg1->l = (arg); ltrig1(); (out) = Arg1->l
+#define LCMPLXtrig2(arg, out) Arg1->l = (arg); ltrig2(); (out) = Arg1->l
+#define LCMPLXtrig3(arg, out) Arg1->l = (arg); ltrig3(); (out) = Arg1->l
 #endif /* XFRACT */
-#define  CMPLXtrig0(arg,out) Arg1->d = (arg); dtrig0(); (out) = Arg1->d
-#define  CMPLXtrig1(arg,out) Arg1->d = (arg); dtrig1(); (out) = Arg1->d
-#define  CMPLXtrig2(arg,out) Arg1->d = (arg); dtrig2(); (out) = Arg1->d
-#define  CMPLXtrig3(arg,out) Arg1->d = (arg); dtrig3(); (out) = Arg1->d
+#define  CMPLXtrig0(arg, out) Arg1->d = (arg); dtrig0(); (out) = Arg1->d
+#define  CMPLXtrig1(arg, out) Arg1->d = (arg); dtrig1(); (out) = Arg1->d
+#define  CMPLXtrig2(arg, out) Arg1->d = (arg); dtrig2(); (out) = Arg1->d
+#define  CMPLXtrig3(arg, out) Arg1->d = (arg); dtrig3(); (out) = Arg1->d
 #if !defined(XFRACT)
-#define LCMPLXsin(arg,out)   Arg1->l = (arg); lStkSin();  (out) = Arg1->l
-#define LCMPLXcos(arg,out)   Arg1->l = (arg); lStkCos();  (out) = Arg1->l
-#define LCMPLXsinh(arg,out)  Arg1->l = (arg); lStkSinh(); (out) = Arg1->l
-#define LCMPLXcosh(arg,out)  Arg1->l = (arg); lStkCosh(); (out) = Arg1->l
-#define LCMPLXlog(arg,out)   Arg1->l = (arg); lStkLog();  (out) = Arg1->l
-#define LCMPLXexp(arg,out)   Arg1->l = (arg); lStkExp();  (out) = Arg1->l
+#define LCMPLXsin(arg, out)   Arg1->l = (arg); lStkSin();  (out) = Arg1->l
+#define LCMPLXcos(arg, out)   Arg1->l = (arg); lStkCos();  (out) = Arg1->l
+#define LCMPLXsinh(arg, out)  Arg1->l = (arg); lStkSinh(); (out) = Arg1->l
+#define LCMPLXcosh(arg, out)  Arg1->l = (arg); lStkCosh(); (out) = Arg1->l
+#define LCMPLXlog(arg, out)   Arg1->l = (arg); lStkLog();  (out) = Arg1->l
+#define LCMPLXexp(arg, out)   Arg1->l = (arg); lStkExp();  (out) = Arg1->l
 /*
-#define LCMPLXsqr(arg,out)   Arg1->l = (arg); lStkSqr();  (out) = Arg1->l
+#define LCMPLXsqr(arg, out)   Arg1->l = (arg); lStkSqr();  (out) = Arg1->l
 */
-#define LCMPLXsqr(arg,out)   \
+#define LCMPLXsqr(arg, out)   \
    (out).x = lsqr((arg).x) - lsqr((arg).y);\
    (out).y = multiply((arg).x, (arg).y, bitshiftless1)
 #define LCMPLXsqr_old(out)       \
    (out).y = multiply(lold.x, lold.y, bitshiftless1);\
    (out).x = ltempsqrx - ltempsqry
-#define LCMPLXpwr(arg1,arg2,out)    Arg2->l = (arg1); Arg1->l = (arg2);\
+#define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
          lStkPwr(); Arg1++; Arg2++; (out) = Arg2->l
-#define LCMPLXmult(arg1,arg2,out)    Arg2->l = (arg1); Arg1->l = (arg2);\
+#define LCMPLXmult(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
          lStkMul(); Arg1++; Arg2++; (out) = Arg2->l
-#define LCMPLXadd(arg1,arg2,out)    \
+#define LCMPLXadd(arg1, arg2, out)    \
     (out).x = (arg1).x + (arg2).x; (out).y = (arg1).y + (arg2).y
-#define LCMPLXsub(arg1,arg2,out)    \
+#define LCMPLXsub(arg1, arg2, out)    \
     (out).x = (arg1).x - (arg2).x; (out).y = (arg1).y - (arg2).y
-#define LCMPLXtimesreal(arg,real,out)   \
-    (out).x = multiply((arg).x,(real),bitshift);\
-    (out).y = multiply((arg).y,(real),bitshift)
-#define LCMPLXrecip(arg,out)                            \
+#define LCMPLXtimesreal(arg, real, out)   \
+    (out).x = multiply((arg).x, (real), bitshift);\
+    (out).y = multiply((arg).y, (real), bitshift)
+#define LCMPLXrecip(arg, out)                            \
     {                                                   \
         long denom = lsqr((arg).x) + lsqr((arg).y);     \
         if (denom == 0L)                                  \
             overflow = true;                            \
         else                                            \
         {                                               \
-            (out).x = divide((arg).x,denom,bitshift);   \
-            (out).y = -divide((arg).y,denom,bitshift);  \
+            (out).x = divide((arg).x, denom, bitshift);   \
+            (out).y = -divide((arg).y, denom, bitshift);  \
         }                                               \
     }
 #endif /* XFRACT */
-#define CMPLXsin(arg,out)    Arg1->d = (arg); dStkSin();  (out) = Arg1->d
-#define CMPLXcos(arg,out)    Arg1->d = (arg); dStkCos();  (out) = Arg1->d
-#define CMPLXsinh(arg,out)   Arg1->d = (arg); dStkSinh(); (out) = Arg1->d
-#define CMPLXcosh(arg,out)   Arg1->d = (arg); dStkCosh(); (out) = Arg1->d
-#define CMPLXlog(arg,out)    Arg1->d = (arg); dStkLog();  (out) = Arg1->d
-#define CMPLXexp(arg,out)    FPUcplxexp(&(arg), &(out))
+#define CMPLXsin(arg, out)    Arg1->d = (arg); dStkSin();  (out) = Arg1->d
+#define CMPLXcos(arg, out)    Arg1->d = (arg); dStkCos();  (out) = Arg1->d
+#define CMPLXsinh(arg, out)   Arg1->d = (arg); dStkSinh(); (out) = Arg1->d
+#define CMPLXcosh(arg, out)   Arg1->d = (arg); dStkCosh(); (out) = Arg1->d
+#define CMPLXlog(arg, out)    Arg1->d = (arg); dStkLog();  (out) = Arg1->d
+#define CMPLXexp(arg, out)    FPUcplxexp(&(arg), &(out))
 /*
-#define CMPLXsqr(arg,out)    Arg1->d = (arg); dStkSqr();  (out) = Arg1->d
+#define CMPLXsqr(arg, out)    Arg1->d = (arg); dStkSqr();  (out) = Arg1->d
 */
-#define CMPLXsqr(arg,out)    \
+#define CMPLXsqr(arg, out)    \
    (out).x = sqr((arg).x) - sqr((arg).y);\
    (out).y = ((arg).x+(arg).x) * (arg).y
 #define CMPLXsqr_old(out)       \
    (out).y = (old.x+old.x) * old.y;\
    (out).x = tempsqrx - tempsqry
-#define CMPLXpwr(arg1,arg2,out)   (out)= ComplexPower((arg1), (arg2))
-#define CMPLXmult1(arg1,arg2,out)    Arg2->d = (arg1); Arg1->d = (arg2);\
+#define CMPLXpwr(arg1, arg2, out)   (out)= ComplexPower((arg1), (arg2))
+#define CMPLXmult1(arg1, arg2, out)    Arg2->d = (arg1); Arg1->d = (arg2);\
          dStkMul(); Arg1++; Arg2++; (out) = Arg2->d
-#define CMPLXmult(arg1,arg2,out)  \
+#define CMPLXmult(arg1, arg2, out)  \
         {\
            DComplex TmP;\
            TmP.x = (arg1).x*(arg2).x - (arg1).y*(arg2).y;\
            TmP.y = (arg1).x*(arg2).y + (arg1).y*(arg2).x;\
            (out) = TmP;\
          }
-#define CMPLXadd(arg1,arg2,out)    \
+#define CMPLXadd(arg1, arg2, out)    \
     (out).x = (arg1).x + (arg2).x; (out).y = (arg1).y + (arg2).y
-#define CMPLXsub(arg1,arg2,out)    \
+#define CMPLXsub(arg1, arg2, out)    \
     (out).x = (arg1).x - (arg2).x; (out).y = (arg1).y - (arg2).y
-#define CMPLXtimesreal(arg,real,out)   \
+#define CMPLXtimesreal(arg, real, out)   \
     (out).x = (arg).x*(real);\
     (out).y = (arg).y*(real)
-#define CMPLXrecip(arg,out)                     \
+#define CMPLXrecip(arg, out)                     \
     {                                           \
         double denom;                           \
         denom = sqr((arg).x) + sqr((arg).y);    \
@@ -178,5 +178,5 @@ extern void (*dtrig3)();
             (out).y = -(arg).y/denom;           \
         }                                       \
     }
-#define CMPLXneg(arg,out)  (out).x = -(arg).x; (out).y = -(arg).y
+#define CMPLXneg(arg, out)  (out).x = -(arg).x; (out).y = -(arg).y
 #endif
