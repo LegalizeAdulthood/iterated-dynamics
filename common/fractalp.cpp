@@ -106,19 +106,19 @@ static char cell_strt[] = {"#Starting Row Number"};
 
 MOREPARAMS moreparams[] =
 {
-    {fractal_type::ICON             ,{ "Omega", "+Degree of symmetry",   "","","",""},{0,3,0,0,0,0}},
-    {fractal_type::ICON3D           ,{ "Omega", "+Degree of symmetry",   "","","",""},{0,3,0,0,0,0}},
-    {fractal_type::HYPERCMPLXJFP    ,{ "zj",      "zk",          "","","",""},{0,0,0,0,0,0}},
-    {fractal_type::QUATJULFP        ,{ "zj",      "zk",          "","","",""},{0,0,0,0,0,0}},
-    {fractal_type::PHOENIXCPLX      ,{ degreeZ, "",          "","","",""},{0,0,0,0,0,0}},
-    {fractal_type::PHOENIXFPCPLX    ,{ degreeZ, "",          "","","",""},{0,0,0,0,0,0}},
-    {fractal_type::MANDPHOENIXCPLX  ,{ degreeZ, "",          "","","",""},{0,0,0,0,0,0}},
-    {fractal_type::MANDPHOENIXFPCPLX,{ degreeZ, "",          "","","",""},{0,0,0,0,0,0}},
-    {fractal_type::FORMULA  ,{ p3real,p3imag,p4real,p4imag,p5real,p5imag},{0,0,0,0,0,0}},
-    {fractal_type::FFORMULA ,{ p3real,p3imag,p4real,p4imag,p5real,p5imag},{0,0,0,0,0,0}},
-    {fractal_type::ANT              ,{ "+Wrap?",s_randomseed,"","","",""},{1,0,0,0,0,0}},
-    {fractal_type::MANDELBROTMIX4   ,{ p3real,p3imag,        "","","",""},{0,0,0,0,0,0}},
-    {fractal_type::NOFRACTAL        ,{ nullptr,nullptr,nullptr,nullptr,nullptr,nullptr    },{0,0,0,0,0,0}}
+    {fractal_type::ICON             , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
+    {fractal_type::ICON3D           , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
+    {fractal_type::HYPERCMPLXJFP    , { "zj",      "zk",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {fractal_type::QUATJULFP        , { "zj",      "zk",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {fractal_type::PHOENIXCPLX      , { degreeZ, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {fractal_type::PHOENIXFPCPLX    , { degreeZ, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {fractal_type::MANDPHOENIXCPLX  , { degreeZ, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {fractal_type::MANDPHOENIXFPCPLX, { degreeZ, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {fractal_type::FORMULA  , { p3real, p3imag, p4real, p4imag, p5real, p5imag}, {0, 0, 0, 0, 0, 0}},
+    {fractal_type::FFORMULA , { p3real, p3imag, p4real, p4imag, p5real, p5imag}, {0, 0, 0, 0, 0, 0}},
+    {fractal_type::ANT              , { "+Wrap?", s_randomseed, "", "", "", ""}, {1, 0, 0, 0, 0, 0}},
+    {fractal_type::MANDELBROTMIX4   , { p3real, p3imag,        "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {fractal_type::NOFRACTAL        , { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr    }, {0, 0, 0, 0, 0, 0}}
 };
 
 /*
@@ -128,11 +128,11 @@ AlternateMath alternatemath[] =
 {
 #define USEBN
 #ifdef USEBN
-    {fractal_type::JULIAFP, bf_math_type::BIGNUM,JuliabnFractal,juliabn_per_pixel,  MandelbnSetup},
-    {fractal_type::MANDELFP,bf_math_type::BIGNUM,JuliabnFractal,mandelbn_per_pixel, MandelbnSetup},
+    {fractal_type::JULIAFP, bf_math_type::BIGNUM, JuliabnFractal, juliabn_per_pixel,  MandelbnSetup},
+    {fractal_type::MANDELFP, bf_math_type::BIGNUM, JuliabnFractal, mandelbn_per_pixel, MandelbnSetup},
 #else
-    {fractal_type::JULIAFP, bf_math_type::BIGFLT,JuliabfFractal,juliabf_per_pixel,  MandelbfSetup},
-    {fractal_type::MANDELFP,bf_math_type::BIGFLT,JuliabfFractal,mandelbf_per_pixel, MandelbfSetup},
+    {fractal_type::JULIAFP, bf_math_type::BIGFLT, JuliabfFractal, juliabf_per_pixel,  MandelbfSetup},
+    {fractal_type::MANDELFP, bf_math_type::BIGFLT, JuliabfFractal, mandelbf_per_pixel, MandelbfSetup},
 #endif
     /*
     NOTE: The default precision for bf_math=BIGNUM is not high enough
@@ -140,9 +140,9 @@ AlternateMath alternatemath[] =
           of the usual BIGFLT (2), then set bfdigits on the command to
           increase the precision.
     */
-    {fractal_type::FPJULIAZPOWER, bf_math_type::BIGFLT, JuliaZpowerbfFractal,juliabf_per_pixel, MandelbfSetup  },
-    {fractal_type::FPMANDELZPOWER, bf_math_type::BIGFLT ,JuliaZpowerbfFractal,mandelbf_per_pixel, MandelbfSetup},
-    {fractal_type::NOFRACTAL, bf_math_type::NONE,nullptr,                nullptr,               nullptr         }
+    {fractal_type::FPJULIAZPOWER, bf_math_type::BIGFLT, JuliaZpowerbfFractal, juliabf_per_pixel, MandelbfSetup  },
+    {fractal_type::FPMANDELZPOWER, bf_math_type::BIGFLT , JuliaZpowerbfFractal, mandelbf_per_pixel, MandelbfSetup},
+    {fractal_type::NOFRACTAL, bf_math_type::NONE, nullptr,                nullptr,               nullptr         }
 };
 
 // These are only needed for types with both integer and float variations
@@ -238,7 +238,7 @@ fractalspecificstuff fractalspecific[] =
         HT_MANDEL, HF_MANDEL, BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
         1, fractal_type::JULIA, fractal_type::NOFRACTAL, fractal_type::MANDELFP, symmetry_type::X_AXIS_NO_PARAM,
-        JuliaFractal, mandel_per_pixel,MandelSetup, StandardFractal,
+        JuliaFractal, mandel_per_pixel, MandelSetup, StandardFractal,
         STDBAILOUT
     },
 
@@ -330,7 +330,7 @@ fractalspecificstuff fractalspecific[] =
         HT_MANDFN, HF_MANDFN, TRIG1,
         -8.0F, 8.0F, -6.0F, 6.0F,
         0, fractal_type::LAMBDATRIGFP, fractal_type::NOFRACTAL, fractal_type::MANDELTRIG, symmetry_type::XY_AXIS_NO_PARAM,
-        LambdaTrigfpFractal,othermandelfp_per_pixel,MandelTrigSetup,
+        LambdaTrigfpFractal, othermandelfp_per_pixel, MandelTrigSetup,
         StandardFractal,
         LTRIGBAILOUT
     },
@@ -471,7 +471,7 @@ fractalspecificstuff fractalspecific[] =
         HT_MLAMBDA, HF_MLAMBDA, BAILTEST,
         -3.0F, 5.0F, -3.0F, 3.0F,
         1, fractal_type::LAMBDA, fractal_type::NOFRACTAL, fractal_type::MANDELLAMBDAFP, symmetry_type::X_AXIS_NO_PARAM,
-        LambdaFractal, mandel_per_pixel,MandellongSetup, StandardFractal,
+        LambdaFractal, mandel_per_pixel, MandellongSetup, StandardFractal,
         STDBAILOUT
     },
 
@@ -559,7 +559,7 @@ fractalspecificstuff fractalspecific[] =
         {0, 0, 0, 0},
         HT_BARNS, HF_BARNSM3, BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, fractal_type::BARNSLEYJ3,fractal_type::NOFRACTAL, fractal_type::BARNSLEYM3FP, symmetry_type::X_AXIS_NO_PARAM,
+        1, fractal_type::BARNSLEYJ3, fractal_type::NOFRACTAL, fractal_type::BARNSLEYM3FP, symmetry_type::X_AXIS_NO_PARAM,
         Barnsley3Fractal, long_mandel_per_pixel, MandellongSetup,
         StandardFractal,
         STDBAILOUT
@@ -1321,7 +1321,7 @@ fractalspecificstuff fractalspecific[] =
         HT_SCOTSKIN, HF_SPIDER, BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
         1, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::SPIDERFP, symmetry_type::X_AXIS_NO_PARAM,
-        SpiderFractal, mandel_per_pixel, MandellongSetup,StandardFractal,
+        SpiderFractal, mandel_per_pixel, MandellongSetup, StandardFractal,
         STDBAILOUT
     },
 
@@ -1343,7 +1343,7 @@ fractalspecificstuff fractalspecific[] =
         {0, 0, 0, 0},
         HT_MAGNET, HF_MAGM1, 0,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        0, fractal_type::MAGNET1J, fractal_type::NOFRACTAL,fractal_type::NOFRACTAL, symmetry_type::X_AXIS_NO_PARAM,
+        0, fractal_type::MAGNET1J, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::X_AXIS_NO_PARAM,
         Magnet1Fractal, mandelfp_per_pixel, MandelfpSetup, StandardFractal,
         100
     },
@@ -1443,7 +1443,7 @@ fractalspecificstuff fractalspecific[] =
         HT_POPCORN, HF_POPCJUL, TRIG4,
         -3.0F, 3.0F, -2.25F, 2.25F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::LPOPCORNJUL, symmetry_type::NONE,
-        PopcornFractalFn, otherjuliafp_per_pixel, JuliafpSetup,StandardFractal,
+        PopcornFractalFn, otherjuliafp_per_pixel, JuliafpSetup, StandardFractal,
         STDBAILOUT
     },
 
@@ -2053,7 +2053,7 @@ fractalspecificstuff fractalspecific[] =
         HT_MANDJUL4, HF_JULIA4, OKJB+BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::MANDEL4FP, fractal_type::JULIA4, symmetry_type::ORIGIN,
-        Mandel4fpFractal, juliafp_per_pixel, JuliafpSetup,StandardFractal,
+        Mandel4fpFractal, juliafp_per_pixel, JuliafpSetup, StandardFractal,
         STDBAILOUT
     },
 
@@ -2169,7 +2169,7 @@ fractalspecificstuff fractalspecific[] =
     {
         "chip",
         {"a", "b", "c", ""},
-        {-15,-19,1,0},
+        {-15, -19, 1, 0},
         HT_MARTIN, HF_CHIP, NOGUESS+NOTRACE+INFCALC,
         -760.0F, 760.0F, -570.0F, 570.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
@@ -2332,6 +2332,6 @@ bool typehasparm(fractal_type type, int parm, char *buf)
             ret = nullptr;
 
     if (ret && buf != nullptr)
-        strcpy(buf,ret);
+        strcpy(buf, ret);
     return ret != nullptr;
 }
