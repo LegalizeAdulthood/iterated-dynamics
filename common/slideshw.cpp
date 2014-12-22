@@ -13,6 +13,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+#include "helpcom.h"
 
 static void sleep_secs(int);
 static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt);
@@ -382,4 +383,56 @@ static void slideshowerr(char const *msg)
     stopslideshow();
     strcat(msgbuf, msg);
     stopmsg(STOPMSG_NONE, msgbuf);
+}
+
+// handle_special_keys
+//
+// First, do some slideshow processing.  Then handle F1 and TAB display.
+//
+// Because we want context sensitive help to work everywhere, with the
+// help to display indicated by a non-zero value in helpmode, we need
+// to trap the F1 key at a very low level.  The same is true of the
+// TAB display.
+//
+// What we do here is check for these keys and invoke their displays.
+// To avoid a recursive invoke of help(), a static is used to avoid
+// recursing on ourselves as help will invoke get key!
+//
+int handle_special_keys(int ch)
+{
+    if (slides_mode::PLAY == g_slides)
+    {
+        if (ch == FIK_ESC)
+        {
+            stopslideshow();
+            ch = 0;
+        }
+        else if (!ch)
+        {
+            ch = slideshw();
+        }
+    }
+    else if ((slides_mode::RECORD == g_slides) && ch)
+    {
+        recordshw(ch);
+    }
+
+    static bool inside_help = false;
+    if (FIK_F1 == ch && helpmode && !inside_help)
+    {
+        inside_help = true;
+        help(0);
+        inside_help = false;
+        ch = 0;
+    }
+    else if (FIK_TAB == ch && tabmode)
+    {
+        bool const old_tab = tabmode;
+        tabmode = false;
+        tab_display();
+        tabmode = old_tab;
+        ch = 0;
+    }
+
+    return ch;
 }

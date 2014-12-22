@@ -949,6 +949,7 @@ extern int slideshw();
 extern slides_mode startslideshow();
 extern void stopslideshow();
 extern void recordshw(int);
+extern int handle_special_keys(int ch);
 // stereo -- C file prototypes
 extern bool do_AutoStereo();
 extern int outline_stereo(BYTE *, int);
