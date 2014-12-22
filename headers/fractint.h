@@ -13,7 +13,7 @@
 #define clock_ticks() clock()
 #endif
 #ifdef XFRACT
-#define difftime(now,then) ((now)-(then))
+#define difftime(now, then) ((now)-(then))
 #endif
 #define NUM_BOXES 4096
 
@@ -873,12 +873,12 @@ struct WORKLIST     // work list entry for std escape time engines
 #define MAXCALCWORK 12
 struct coords
 {
-    int x,y;
+    int x, y;
 };
 
 struct dblcoords
 {
-    double x,y;
+    double x, y;
 };
 
 extern void (*ltrig0)(), (*ltrig1)(), (*ltrig2)(), (*ltrig3)();
