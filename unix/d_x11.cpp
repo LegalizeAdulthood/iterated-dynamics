@@ -198,7 +198,7 @@ static bool x11_resize(Driver *drv);
 static void x11_set_for_graphics(Driver *drv);
 
 static const VIDEOINFO x11_info = {
-    "xfractint mode           ","                         ",
+    "xfractint mode           ", "                         ",
     999, 0,    0,   0,   0,   19, 640, 480,  256
 };
 
@@ -207,7 +207,7 @@ do_fake_lut(DriverX11 *di, int idx)
 {
     return di->fake_lut ? di->cmap_pixtab[idx] : idx;
 }
-#define FAKE_LUT(_di,_idx) do_fake_lut(_di,_idx)
+#define FAKE_LUT(_di, _idx) do_fake_lut(_di, _idx)
 
 /*
  *----------------------------------------------------------------------
