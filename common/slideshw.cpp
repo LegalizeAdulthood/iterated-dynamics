@@ -14,7 +14,7 @@
 #include "drivers.h"
 
 static void sleep_secs(int);
-static int  showtempmsg_txt(int,int,int,int,char *);
+static int  showtempmsg_txt(int, int, int, int, char *);
 static void message(int secs, char *buf);
 static void slideshowerr(const char *msg);
 static int  get_scancode(char *mn);
@@ -58,19 +58,19 @@ static int get_scancode(char *mn)
 {
     int i;
     for (i = 0; i < stop; i++)
-        if (strcmp((char *)mn,scancodes[i].mnemonic) == 0)
+        if (strcmp((char *)mn, scancodes[i].mnemonic) == 0)
             break;
     // cppcheck-suppress uninitvar
     return (scancodes[i].code);
 }
 
-static void get_mnemonic(int code,char *mnemonic)
+static void get_mnemonic(int code, char *mnemonic)
 {
     *mnemonic = 0;
     for (int i = 0; i < stop; i++)
         if (code == scancodes[i].code)
         {
-            strcpy(mnemonic,scancodes[i].mnemonic);
+            strcpy(mnemonic, scancodes[i].mnemonic);
             break;
         }
 }
@@ -87,21 +87,21 @@ static int repeats = 0;
 static int last1 = 0;
 
 // places a temporary message on the screen in text mode
-static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
+static int showtempmsg_txt(int row, int col, int attr, int secs, char *txt)
 {
     int savescrn[80];
 
     for (int i = 0; i < 80; i++)
     {
-        driver_move_cursor(row,i);
+        driver_move_cursor(row, i);
         savescrn[i] = driver_get_char_attr();
     }
-    driver_put_string(row,col,attr,txt);
+    driver_put_string(row, col, attr, txt);
     driver_hide_text_cursor();
     sleep_secs(secs);
     for (int i = 0; i < 80; i++)
     {
-        driver_move_cursor(row,i);
+        driver_move_cursor(row, i);
         driver_put_char_attr(savescrn[i]);
     }
     return (0);
@@ -111,7 +111,7 @@ static void message(int secs, char *buf)
 {
     char nearbuf[41] = { 0 };
     strncpy(nearbuf, buf, NUM_OF(nearbuf)-1);
-    showtempmsg_txt(0,0,7,secs,nearbuf);
+    showtempmsg_txt(0, 0, 7, secs, nearbuf);
     if (!showtempmsg(nearbuf))
     {
         sleep_secs(secs);
@@ -122,7 +122,7 @@ static void message(int secs, char *buf)
 // this routine reads the file autoname and returns keystrokes
 int slideshw()
 {
-    int out,err,i;
+    int out, err, i;
     char buffer[81];
     if (calcwait)
     {
@@ -181,7 +181,7 @@ start:
         }
         goto start;
     case '*':
-        if (fscanf(fpss,"%d",&repeats) != 1
+        if (fscanf(fpss, "%d", &repeats) != 1
                 || repeats <= 1 || repeats >= 256 || feof(fpss))
         {
             slideshowerr("error in * argument");
@@ -207,10 +207,10 @@ start:
     out = -12345;
     if (isdigit(buffer[0]))       // an arbitrary scan code number - use it
         out = atoi(buffer);
-    else if (strcmp((char *)buffer,"MESSAGE") == 0)
+    else if (strcmp((char *)buffer, "MESSAGE") == 0)
     {
         int secs;
-        if (fscanf(fpss,"%d",&secs) != 1)
+        if (fscanf(fpss, "%d", &secs) != 1)
         {
             slideshowerr("MESSAGE needs argument");
         }
@@ -219,16 +219,16 @@ start:
             int len;
             char buf[41];
             buf[40] = 0;
-            fgets(buf,40,fpss);
+            fgets(buf, 40, fpss);
             len = (int) strlen(buf);
             buf[len-1] = 0; // zap newline
-            message(secs,(char *)buf);
+            message(secs, (char *)buf);
         }
         out = 0;
     }
-    else if (strcmp((char *)buffer,"GOTO") == 0)
+    else if (strcmp((char *)buffer, "GOTO") == 0)
     {
-        if (fscanf(fpss,"%s",buffer) != 1)
+        if (fscanf(fpss, "%s", buffer) != 1)
         {
             slideshowerr("GOTO needs target");
             out = 0;
@@ -237,12 +237,12 @@ start:
         {
             char buffer1[80];
             rewind(fpss);
-            strcat(buffer,":");
+            strcat(buffer, ":");
             do
             {
-                err = fscanf(fpss,"%s",buffer1);
+                err = fscanf(fpss, "%s", buffer1);
             }
-            while (err == 1 && strcmp(buffer1,buffer) != 0);
+            while (err == 1 && strcmp(buffer1, buffer) != 0);
             if (feof(fpss))
             {
                 slideshowerr("GOTO target not found");
@@ -253,10 +253,10 @@ start:
     }
     else if ((i = get_scancode(buffer)) > 0)
         out = i;
-    else if (strcmp("WAIT",(char *)buffer) == 0)
+    else if (strcmp("WAIT", (char *)buffer) == 0)
     {
         float fticks;
-        err = fscanf(fpss,"%f",&fticks); // how many ticks to wait
+        err = fscanf(fpss, "%f", &fticks); // how many ticks to wait
         driver_set_keyboard_timeout((int)(fticks*1000.f));
         fticks *= CLOCKS_PER_SEC;             // convert from seconds to ticks
         if (err == 1)
@@ -271,7 +271,7 @@ start:
         out = 0;
         slowcount = out;
     }
-    else if (strcmp("CALCWAIT",(char *)buffer) == 0) // wait for calc to finish
+    else if (strcmp("CALCWAIT", (char *)buffer) == 0) // wait for calc to finish
     {
         calcwait = true;
         out = 0;
@@ -292,7 +292,7 @@ start:
 slides_mode
 startslideshow()
 {
-    fpss = fopen(autoname,"r");
+    fpss = fopen(autoname, "r");
     if (fpss == nullptr)
         g_slides = slides_mode::OFF;
     ticks = 0;
@@ -318,7 +318,7 @@ void recordshw(int key)
     ticks = clock_ticks();  // current time
     if (fpss == nullptr)
     {
-        fpss = fopen(autoname,"w");
+        fpss = fopen(autoname, "w");
         if (fpss == nullptr)
             return;
     }
@@ -329,38 +329,38 @@ void recordshw(int key)
         if (quotes) // close quotes first
         {
             quotes = false;
-            fprintf(fpss,"\"\n");
+            fprintf(fpss, "\"\n");
         }
-        fprintf(fpss,"WAIT %4.1f\n",dt);
+        fprintf(fpss, "WAIT %4.1f\n", dt);
     }
     if (key >= 32 && key < 128)
     {
         if (!quotes)
         {
             quotes = true;
-            fputc('\"',fpss);
+            fputc('\"', fpss);
         }
-        fputc(key,fpss);
+        fputc(key, fpss);
     }
     else
     {
         if (quotes) // not an ASCII character - turn off quotes
         {
-            fprintf(fpss,"\"\n");
+            fprintf(fpss, "\"\n");
             quotes = false;
         }
-        get_mnemonic(key,mn);
+        get_mnemonic(key, mn);
         if (*mn)
-            fprintf(fpss,"%s",mn);
-        else if (check_vidmode_key(0,key) >= 0)
+            fprintf(fpss, "%s", mn);
+        else if (check_vidmode_key(0, key) >= 0)
         {
             char buf[10];
-            vidmode_keyname(key,buf);
+            vidmode_keyname(key, buf);
             fputs(buf, fpss);
         }
         else // not ASCII and not FN key
-            fprintf(fpss,"%4d",key);
-        fputc('\n',fpss);
+            fprintf(fpss, "%4d", key);
+        fputc('\n', fpss);
     }
 }
 
@@ -378,6 +378,6 @@ static void slideshowerr(const char *msg)
 {
     char msgbuf[300] = { "Slideshow error:\n" };
     stopslideshow();
-    strcat(msgbuf,msg);
+    strcat(msgbuf, msg);
     stopmsg(STOPMSG_NONE, msgbuf);
 }
