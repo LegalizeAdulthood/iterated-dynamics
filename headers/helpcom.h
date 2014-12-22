@@ -109,15 +109,15 @@ extern int find_token_length(int mode, char *curr, unsigned len, int *size, int 
 extern int find_line_width(int mode, char *curr, unsigned len);
 extern bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info);
 extern int help(int);
-extern int read_help_topic(int ,int ,int ,VOIDPTR);
+extern int read_help_topic(int , int , int , VOIDPTR);
 extern bool makedoc_msg_func(int pnum, int num_pages);
-extern void print_document(const char *outfname, bool (*msg_func)(int,int), int save_extraseg);
+extern void print_document(const char *outfname, bool (*msg_func)(int, int), int save_extraseg);
 extern int init_help();
 extern void end_help();
 extern bool is_hyphen(const char *ptr);
 #ifndef XFRACT
 #define getint(ptr) (*(int *)(ptr))
-#define setint(ptr,n) (*(int *)(ptr)) = n
+#define setint(ptr, n) (*(int *)(ptr)) = n
 #else
 extern int getint(char *ptr);
 extern void setint(char *ptr, int n);
