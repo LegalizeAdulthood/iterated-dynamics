@@ -83,7 +83,7 @@ void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
                             mat1[j][1]*mat2[1][i]+
                             mat1[j][2]*mat2[2][i]+
                             mat1[j][3]*mat2[3][i];
-    memcpy(mat3,newmat,sizeof(newmat));
+    memcpy(mat3, newmat, sizeof(newmat));
 }
 
 // multiply a matrix by a scalar
@@ -94,14 +94,14 @@ void scale(double sx, double sy, double sz, MATRIX m)
     scale[0][0] = sx;
     scale[1][1] = sy;
     scale[2][2] = sz;
-    mat_mul(m,scale,m);
+    mat_mul(m, scale, m);
 }
 
 // rotate about X axis
 void xrot(double theta, MATRIX m)
 {
     MATRIX rot;
-    double sintheta,costheta;
+    double sintheta, costheta;
     sintheta = sin(theta);
     costheta = cos(theta);
     identity(rot);
@@ -109,14 +109,14 @@ void xrot(double theta, MATRIX m)
     rot[1][2] = -sintheta;
     rot[2][1] = sintheta;
     rot[2][2] = costheta;
-    mat_mul(m,rot,m);
+    mat_mul(m, rot, m);
 }
 
 // rotate about Y axis
 void yrot(double theta, MATRIX m)
 {
     MATRIX rot;
-    double sintheta,costheta;
+    double sintheta, costheta;
     sintheta = sin(theta);
     costheta = cos(theta);
     identity(rot);
@@ -124,14 +124,14 @@ void yrot(double theta, MATRIX m)
     rot[0][2] = sintheta;
     rot[2][0] = -sintheta;
     rot[2][2] = costheta;
-    mat_mul(m,rot,m);
+    mat_mul(m, rot, m);
 }
 
 // rotate about Z axis
 void zrot(double theta, MATRIX m)
 {
     MATRIX rot;
-    double sintheta,costheta;
+    double sintheta, costheta;
     sintheta = sin(theta);
     costheta = cos(theta);
     identity(rot);
@@ -139,7 +139,7 @@ void zrot(double theta, MATRIX m)
     rot[0][1] = -sintheta;
     rot[1][0] = sintheta;
     rot[1][1] = costheta;
-    mat_mul(m,rot,m);
+    mat_mul(m, rot, m);
 }
 
 // translate
@@ -150,7 +150,7 @@ void trans(double tx, double ty, double tz, MATRIX m)
     trans[3][0] = tx;
     trans[3][1] = ty;
     trans[3][2] = tz;
-    mat_mul(m,trans,m);
+    mat_mul(m, trans, m);
 }
 
 // cross product  - useful because cross is perpendicular to v and w
@@ -170,7 +170,7 @@ int cross_product(VECTOR v, VECTOR w, VECTOR cross)
 bool normalize_vector(VECTOR v)
 {
     double vlength;
-    vlength = dot_product(v,v);
+    vlength = dot_product(v, v);
 
     // bailout if zero vlength
     if (vlength < FLT_MIN || vlength > FLT_MAX)
@@ -199,7 +199,7 @@ int vmult(VECTOR s, MATRIX m, VECTOR t)
         tmp[j] += m[3][j];
     }
     // set target = tmp. Necessary to use tmp in case source = target
-    memcpy(t,tmp,sizeof(tmp));
+    memcpy(t, tmp, sizeof(tmp));
     return 0;
 }
 
@@ -219,7 +219,7 @@ void mult_vec(VECTOR s)
         tmp[j] += m[3][j];
     }
     // set target = tmp. Necessary to use tmp in case source = target
-    memcpy(s,tmp,sizeof(tmp));
+    memcpy(s, tmp, sizeof(tmp));
 }
 
 // perspective projection of vector v with respect to viewpont vector view
@@ -266,7 +266,7 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
     {
         tmp[j] = 0;
         for (int i = 0; i < RMAX-1; i++)
-            tmp[j] += multiply(s[i],m[i][j],bitshift);
+            tmp[j] += multiply(s[i], m[i][j], bitshift);
         // vector is really four dimensional with last component always 1
         tmp[j] += m[3][j];
     }
@@ -294,18 +294,15 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
         }
 
         // doing math in this order helps prevent overflow
-        tmpview[0] = divide(lview[0],denom,bitshift);
-        tmpview[1] = divide(lview[1],denom,bitshift);
-        tmpview[2] = divide(lview[2],denom,bitshift);
+        tmpview[0] = divide(lview[0], denom, bitshift);
+        tmpview[1] = divide(lview[1], denom, bitshift);
+        tmpview[2] = divide(lview[2], denom, bitshift);
 
         tmp[0] = multiply(tmp[0], tmpview[2], bitshift) -
                  multiply(tmpview[0], tmp[2], bitshift);
 
         tmp[1] = multiply(tmp[1], tmpview[2], bitshift) -
                  multiply(tmpview[1], tmp[2], bitshift);
-
-        // z coordinate if needed
-        // tmp[2] = divide(lview[2],denom);
     }
 
     // set target = tmp. Necessary to use tmp in case source = target
@@ -335,9 +332,9 @@ longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
     }
 
     // doing math in this order helps prevent overflow
-    tmpview[0] = divide(lview[0],denom,bitshift);
-    tmpview[1] = divide(lview[1],denom,bitshift);
-    tmpview[2] = divide(lview[2],denom,bitshift);
+    tmpview[0] = divide(lview[0], denom, bitshift);
+    tmpview[1] = divide(lview[1], denom, bitshift);
+    tmpview[2] = divide(lview[2], denom, bitshift);
 
     lv[0] = multiply(lv[0], tmpview[2], bitshift) -
             multiply(tmpview[0], lv[2], bitshift);
@@ -345,12 +342,10 @@ longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
     lv[1] = multiply(lv[1], tmpview[2], bitshift) -
             multiply(tmpview[1], lv[2], bitshift);
 
-    // z coordinate if needed
-    // lv[2] = divide(lview[2],denom);
     return overflow ? 1 : 0;
 }
 
-int longvmult(LVECTOR s,LMATRIX m,LVECTOR t,int bitshift)
+int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int bitshift)
 {
     LVECTOR tmp;
     int k;
@@ -361,7 +356,7 @@ int longvmult(LVECTOR s,LMATRIX m,LVECTOR t,int bitshift)
     {
         tmp[j] = 0;
         for (int i = 0; i < RMAX-1; i++)
-            tmp[j] += multiply(s[i],m[i][j],bitshift);
+            tmp[j] += multiply(s[i], m[i][j], bitshift);
         // vector is really four dimensional with last component always 1
         tmp[j] += m[3][j];
     }
