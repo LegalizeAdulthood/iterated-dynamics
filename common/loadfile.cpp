@@ -519,7 +519,6 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (blk_6_info.got_data == 1)
     {
-        EVOLUTION_INFO resume_e_info;
         GENEBASE gene[NUMGENES];
 
         // TODO: MemoryAlloc
