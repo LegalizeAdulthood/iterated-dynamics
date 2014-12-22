@@ -176,9 +176,9 @@ restart:
         char buf[200];
         sprintf(buf, "Save of %s interrupted.\nCancel to ", openfile);
         if (newfile)
-            strcat(buf,"delete the file,\ncontinue to keep the partial image.");
+            strcat(buf, "delete the file,\ncontinue to keep the partial image.");
         else
-            strcat(buf,"retain the original file,\ncontinue to replace original with new partial image.");
+            strcat(buf, "retain the original file,\ncontinue to replace original with new partial image.");
         interrupted = 1;
         if (stopmsg(STOPMSG_CANCEL, buf) < 0)
         {
@@ -428,7 +428,7 @@ bool encoder()
         {
             // resume info block, 002
             save_info.tot_extend_len += extend_blk_len(resume_len);
-            MoveFromMemory((BYTE *)block,(U16)1,(long)resume_len,0,resume_info);
+            MoveFromMemory((BYTE *)block, (U16)1, (long)resume_len, 0, resume_info);
             if (!put_extend_blk(2, resume_len, (char *)block))
                 goto oops;
         }
@@ -493,7 +493,7 @@ bool encoder()
             else
             {
                 // we will need the resuming information
-                MoveFromMemory((BYTE *)&resume_e_info,(U16)sizeof(resume_e_info),1L,0L,evolve_handle);
+                MoveFromMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
                 esave_info.paramrangex     = resume_e_info.paramrangex;
                 esave_info.paramrangey     = resume_e_info.paramrangey;
                 esave_info.opx             = resume_e_info.opx;
@@ -949,7 +949,7 @@ static bool compress(int rowlimit)
         hshift++;
     hshift = 8 - hshift;                // set hash code range bound
 
-    memset(htab,0xff,(unsigned)HSIZE*sizeof(long));
+    memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
     hsize_reg = HSIZE;
 
     output((int)ClearCode);
@@ -1129,7 +1129,7 @@ static void output(int code)
  */
 static void cl_block()             // table clear for block compress
 {
-    memset(htab,0xff,(unsigned)HSIZE*sizeof(long));
+    memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
     free_ent = ClearCode + 2;
     clear_flg = true;
     output((int)ClearCode);
