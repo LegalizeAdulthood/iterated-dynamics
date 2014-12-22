@@ -28,7 +28,7 @@ struct lsys_cmd
 #define sins_f ((LDBL *)(boxy))
 #define coss_f (((LDBL *)(boxy)+50))
 
-static lsys_cmd *findsize(lsys_cmd *, lsys_turtlestatef *, lsys_cmd **,int);
+static lsys_cmd *findsize(lsys_cmd *, lsys_turtlestatef *, lsys_cmd **, int);
 
 #if defined(XFRACT) || defined(_WIN32)
 static void lsysf_doplus(lsys_turtlestatef *cmd)
@@ -264,7 +264,7 @@ static void lsysf_dodrawf(lsys_turtlestatef *cmd)
     int lasty = (int) cmd->ypos;
     cmd->xpos += cmd->size * coss_f[(int)cmd->angle];
     cmd->ypos += cmd->size * sins_f[(int)cmd->angle];
-    driver_draw_line(lastx,lasty,(int) cmd->xpos, (int) cmd->ypos, cmd->curcolor);
+    driver_draw_line(lastx, lasty, (int) cmd->xpos, (int) cmd->ypos, cmd->curcolor);
 }
 #else
 extern void lsysf_dodrawf(lsys_turtlestatef *cmd);
@@ -324,7 +324,7 @@ findsize(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
                 if ((*rulind)->ch == command->ch)
                 {
                     tran = true;
-                    if (findsize((*rulind)+1,ts,rules,depth-1) == nullptr)
+                    if (findsize((*rulind)+1, ts, rules, depth-1) == nullptr)
                         return (nullptr);
                 }
         }
@@ -347,8 +347,8 @@ findsize(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
             }
             else if (command->ch == '[')
             {
-                char saveang,saverev;
-                LDBL savesize,savex,savey,saverang;
+                char saveang, saverev;
+                LDBL savesize, savex, savey, saverang;
 
                 lsys_donefpu(ts);
                 saveang = ts->angle;
@@ -379,7 +379,7 @@ findsize(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
 bool
 lsysf_findscale(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
 {
-    float horiz,vert;
+    float horiz, vert;
     LDBL xmin, xmax, ymin, ymax;
     LDBL locsize;
     LDBL locaspect;
@@ -399,7 +399,7 @@ lsysf_findscale(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int 
     ts->realangle = 0;
     ts->size = 1;
     lsys_prepfpu(ts);
-    fsret = findsize(command,ts,rules,depth);
+    fsret = findsize(command, ts, rules, depth);
     lsys_donefpu(ts);
     thinking(0, nullptr); // erase thinking message if any
     xmin = ts->xmin;
@@ -432,7 +432,7 @@ lsysf_findscale(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int 
 }
 
 lsys_cmd *
-drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules,int depth)
+drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
 {
     bool tran;
 
@@ -464,7 +464,7 @@ drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules,int depth)
                 if ((*rulind)->ch == command->ch)
                 {
                     tran = true;
-                    if (drawLSysF((*rulind)+1,ts,rules,depth-1) == nullptr)
+                    if (drawLSysF((*rulind)+1, ts, rules, depth-1) == nullptr)
                         return nullptr;
                 }
         }
@@ -487,8 +487,8 @@ drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules,int depth)
             }
             else if (command->ch == '[')
             {
-                char saveang,saverev,savecolor;
-                LDBL savesize,savex,savey,saverang;
+                char saveang, saverev, savecolor;
+                LDBL savesize, savex, savey, saverang;
 
                 lsys_donefpu(ts);
                 saveang = ts->angle;
