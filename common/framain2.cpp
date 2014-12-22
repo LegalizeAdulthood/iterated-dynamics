@@ -772,7 +772,7 @@ static bool look(bool *stacked)
 
 big_while_loop_result main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked, int axmode)
 {
-    int i,k;
+    int i, k;
     static double  jxxmin, jxxmax, jyymin, jyymax; // "Julia mode" entry point
     static double  jxx3rd, jyy3rd;
     long old_maxit;
@@ -1392,7 +1392,7 @@ do_3d_transform:
                 boxcolor = g_color_bright;
                 py = gridsz/2;
                 px = py;
-                moveboxf(0.0,0.0); // force scrolling
+                moveboxf(0.0, 0.0); // force scrolling
             }
             else
                 resizebox(0 - key_count(FIK_PAGE_UP));
@@ -1465,7 +1465,7 @@ do_3d_transform:
 
 static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
-    int i,k;
+    int i, k;
 
     switch (*kbdchar)
     {
@@ -1764,7 +1764,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
                 fiddleparms(gene, unspiralmap()); // change all parameters
                 // to values appropriate to the image selected
                 set_evolve_ranges();
-                chgboxi(0,0);
+                chgboxi(0, 0);
                 drawparmbox(0);
             }
             // now put the gene array back in memory
@@ -1832,7 +1832,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
                     SetupParamBox();
                     drawparmbox(0);
                 }
-                moveboxf(0.0,0.0); // force scrolling
+                moveboxf(0.0, 0.0); // force scrolling
             }
             else
                 resizebox(0 - key_count(FIK_PAGE_UP));
@@ -1998,7 +1998,7 @@ static big_while_loop_result evolver_menu_switch(int *kbdchar, bool *frommandel,
 static int call_line3d(BYTE *pixels, int linelen)
 {
     // this routine exists because line3d might be in an overlay
-    return line3d(pixels,linelen);
+    return line3d(pixels, linelen);
 }
 
 static void note_zoom()
@@ -2074,11 +2074,11 @@ static void move_zoombox(int keynum)
     }
     if (boxcount)
     {
-        moveboxf((double)horizontal/dxsize,(double)vertical/dysize);
+        moveboxf((double)horizontal/dxsize, (double)vertical/dysize);
     }
 #ifndef XFRACT
     else                                 // if no zoombox, scroll by arrows
-        scroll_relative(horizontal,vertical);
+        scroll_relative(horizontal, vertical);
 #endif
 }
 
@@ -2093,7 +2093,7 @@ int cmp_line(BYTE *pixels, int linelen)
     if (row == 0)
     {
         errcount = 0;
-        cmp_fp = dir_fopen(workdir,"cmperr",(initbatch)?"a":"w");
+        cmp_fp = dir_fopen(workdir, "cmperr", (initbatch)?"a":"w");
         outln_cleanup = cmp_line_cleanup;
     }
     if (pot16bit)
@@ -2104,17 +2104,17 @@ int cmp_line(BYTE *pixels, int linelen)
     }
     for (int col = 0; col < linelen; col++)
     {
-        oldcolor = getcolor(col,row);
+        oldcolor = getcolor(col, row);
         if (oldcolor == (int)pixels[col])
-            putcolor(col,row,0);
+            putcolor(col, row, 0);
         else
         {
             if (oldcolor == 0)
-                putcolor(col,row,1);
+                putcolor(col, row, 1);
             ++errcount;
             if (initbatch == 0)
-                fprintf(cmp_fp,"#%5d col %3d row %3d old %3d new %3d\n",
-                        errcount,col,row,oldcolor,pixels[col]);
+                fprintf(cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
+                        errcount, col, row, oldcolor, pixels[col]);
         }
     }
     return 0;
@@ -2129,8 +2129,8 @@ static void cmp_line_cleanup()
         time(&ltime);
         timestring = ctime(&ltime);
         timestring[24] = 0; //clobber newline in time string
-        fprintf(cmp_fp,"%s compare to %s has %5d errs\n",
-                timestring,readname,errcount);
+        fprintf(cmp_fp, "%s compare to %s has %5d errs\n",
+                timestring, readname, errcount);
     }
     fclose(cmp_fp);
 }
@@ -2152,12 +2152,12 @@ void reset_zoom_corners()
     yy3rd = sy3rd;
     if (bf_math != bf_math_type::NONE)
     {
-        copy_bf(bfxmin,bfsxmin);
-        copy_bf(bfxmax,bfsxmax);
-        copy_bf(bfymin,bfsymin);
-        copy_bf(bfymax,bfsymax);
-        copy_bf(bfx3rd,bfsx3rd);
-        copy_bf(bfy3rd,bfsy3rd);
+        copy_bf(bfxmin, bfsxmin);
+        copy_bf(bfxmax, bfsxmax);
+        copy_bf(bfymin, bfsymin);
+        copy_bf(bfymax, bfsymax);
+        copy_bf(bfx3rd, bfsx3rd);
+        copy_bf(bfy3rd, bfsy3rd);
     }
 }
 
@@ -2176,12 +2176,12 @@ int key_count(int keynum)
 
 static void save_history_info()
 {
-    HISTORY current,last;
+    HISTORY current, last;
     if (maxhistory <= 0 || bf_math != bf_math_type::NONE || history == 0)
         return;
-    MoveFromMemory((BYTE *)&last,(U16)sizeof(HISTORY),1L,(long)saveptr,history);
+    MoveFromMemory((BYTE *)&last, (U16)sizeof(HISTORY), 1L, (long)saveptr, history);
 
-    memset((void *)&current,0,sizeof(HISTORY));
+    memset((void *)&current, 0, sizeof(HISTORY));
     current.fractal_type         = (short)fractype                  ;
     current.xmin                 = xxmin                     ;
     current.xmax                 = xxmax                     ;
@@ -2302,22 +2302,22 @@ static void save_history_info()
     current.oy3rd                = oy3rd;
     current.keep_scrn_coords     = (short) (keep_scrn_coords ? 1 : 0);
     current.drawmode             = drawmode;
-    memcpy(current.dac,g_dac_box,256*3);
+    memcpy(current.dac, g_dac_box, 256*3);
     switch (fractype)
     {
     case fractal_type::FORMULA:
     case fractal_type::FFORMULA:
-        strncpy(current.filename,FormFileName,FILE_MAX_PATH);
-        strncpy(current.itemname,FormName,ITEMNAMELEN+1);
+        strncpy(current.filename, FormFileName, FILE_MAX_PATH);
+        strncpy(current.itemname, FormName, ITEMNAMELEN+1);
         break;
     case fractal_type::IFS:
     case fractal_type::IFS3D:
-        strncpy(current.filename,IFSFileName,FILE_MAX_PATH);
-        strncpy(current.itemname,IFSName,ITEMNAMELEN+1);
+        strncpy(current.filename, IFSFileName, FILE_MAX_PATH);
+        strncpy(current.itemname, IFSName, ITEMNAMELEN+1);
         break;
     case fractal_type::LSYSTEM:
-        strncpy(current.filename,LFileName,FILE_MAX_PATH);
-        strncpy(current.itemname,LName,ITEMNAMELEN+1);
+        strncpy(current.filename, LFileName, FILE_MAX_PATH);
+        strncpy(current.itemname, LName, ITEMNAMELEN+1);
         break;
     default:
         *(current.filename) = 0;
@@ -2327,20 +2327,20 @@ static void save_history_info()
     if (historyptr == -1)        // initialize the history file
     {
         for (int i = 0; i < maxhistory; i++)
-            MoveToMemory((BYTE *)&current,(U16)sizeof(HISTORY),1L,(long)i,history);
+            MoveToMemory((BYTE *)&current, (U16)sizeof(HISTORY), 1L, (long)i, history);
         historyflag = false;
         historyptr = 0;
         saveptr = historyptr;   // initialize history ptr
     }
     else if (historyflag)
         historyflag = false;            // coming from user history command, don't save
-    else if (memcmp(&current,&last,sizeof(HISTORY)))
+    else if (memcmp(&current, &last, sizeof(HISTORY)))
     {
         if (++saveptr >= maxhistory)  // back to beginning of circular buffer
             saveptr = 0;
         if (++historyptr >= maxhistory)  // move user pointer in parallel
             historyptr = 0;
-        MoveToMemory((BYTE *)&current,(U16)sizeof(HISTORY),1L,(long)saveptr,history);
+        MoveToMemory((BYTE *)&current, (U16)sizeof(HISTORY), 1L, (long)saveptr, history);
     }
 }
 
@@ -2349,7 +2349,7 @@ static void restore_history_info(int i)
     HISTORY last;
     if (maxhistory <= 0 || bf_math != bf_math_type::NONE || history == 0)
         return;
-    MoveFromMemory((BYTE *)&last,(U16)sizeof(HISTORY),1L,(long)i,history);
+    MoveFromMemory((BYTE *)&last, (U16)sizeof(HISTORY), 1L, (long)i, history);
     invert = 0;
     calc_status = calc_status_value::PARAMS_CHANGED;
     resuming = false;
@@ -2484,11 +2484,11 @@ static void restore_history_info(int i)
         set_orbit_corners = true;
     drawmode = last.drawmode;
     usr_floatflag = curfractalspecific->isinteger ? false : true;
-    memcpy(g_dac_box,last.dac,256*3);
-    memcpy(olddacbox,last.dac,256*3);
+    memcpy(g_dac_box, last.dac, 256*3);
+    memcpy(olddacbox, last.dac, 256*3);
     if (mapdacbox)
-        memcpy(mapdacbox,last.dac,256*3);
-    spindac(0,1);
+        memcpy(mapdacbox, last.dac, 256*3);
+    spindac(0, 1);
     if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
         savedac = 0;
     else
@@ -2497,17 +2497,17 @@ static void restore_history_info(int i)
     {
     case fractal_type::FORMULA:
     case fractal_type::FFORMULA:
-        strncpy(FormFileName,last.filename,FILE_MAX_PATH);
-        strncpy(FormName,    last.itemname,ITEMNAMELEN+1);
+        strncpy(FormFileName, last.filename, FILE_MAX_PATH);
+        strncpy(FormName,    last.itemname, ITEMNAMELEN+1);
         break;
     case fractal_type::IFS:
     case fractal_type::IFS3D:
-        strncpy(IFSFileName,last.filename,FILE_MAX_PATH);
-        strncpy(IFSName    ,last.itemname,ITEMNAMELEN+1);
+        strncpy(IFSFileName, last.filename, FILE_MAX_PATH);
+        strncpy(IFSName    , last.itemname, ITEMNAMELEN+1);
         break;
     case fractal_type::LSYSTEM:
-        strncpy(LFileName,last.filename,FILE_MAX_PATH);
-        strncpy(LName    ,last.itemname,ITEMNAMELEN+1);
+        strncpy(LFileName, last.filename, FILE_MAX_PATH);
+        strncpy(LName    , last.itemname, ITEMNAMELEN+1);
         break;
     default:
         break;
