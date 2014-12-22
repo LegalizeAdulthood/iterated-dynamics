@@ -670,10 +670,10 @@ ZXTrigPlusZSetup()
 {
     //   static char ZXTrigPlusZSym1[] =
     // fn1 ->  sin   cos    sinh  cosh exp   log   sqr
-    //           {X_AXIS,XY_AXIS,X_AXIS,XY_AXIS,X_AXIS,NONE,XY_AXIS};
+    //           {X_AXIS, XY_AXIS, X_AXIS, XY_AXIS, X_AXIS, NONE, XY_AXIS};
     //   static char ZXTrigPlusZSym2[] =
     // fn1 ->  sin   cos    sinh  cosh exp   log   sqr
-    //           {NONE,ORIGIN,NONE,ORIGIN,NONE,NONE,ORIGIN};
+    //           {NONE, ORIGIN, NONE, ORIGIN, NONE, NONE, ORIGIN};
 
     if (param[1] == 0.0 && param[3] == 0.0)
         //      symmetry = ZXTrigPlusZSym1[trigndx[0]];
@@ -794,7 +794,7 @@ JuliafnPlusZsqrdSetup()
 {
     //   static char fnpluszsqrd[] =
     // fn1 ->  sin   cos    sinh  cosh   sqr    exp   log
-    // sin    {NONE,ORIGIN,NONE,ORIGIN,ORIGIN,NONE,NONE};
+    // sin    {NONE, ORIGIN, NONE, ORIGIN, ORIGIN, NONE, NONE};
 
     switch (trigndx[0]) // fix sqr symmetry & add additional functions
     {
@@ -822,7 +822,7 @@ SqrTrigSetup()
 {
     //   static char SqrTrigSym[] =
     // fn1 ->  sin    cos    sinh   cosh   sqr    exp   log
-    //           {PI_SYM,PI_SYM,XY_AXIS,XY_AXIS,XY_AXIS,X_AXIS,X_AXIS};
+    //           {PI_SYM, PI_SYM, XY_AXIS, XY_AXIS, XY_AXIS, X_AXIS, X_AXIS};
     switch (trigndx[0]) // fix sqr symmetry & add additional functions
     {
     case trig_fn::SIN:
@@ -933,11 +933,11 @@ MarksJuliaSetup()
     longparm = &lparm;
     lold = *longparm;
     if (c_exp > 3)
-        lcpower(&lold,c_exp-1,&lcoefficient,bitshift);
+        lcpower(&lold, c_exp-1, &lcoefficient, bitshift);
     else if (c_exp == 3)
     {
-        lcoefficient.x = multiply(lold.x,lold.x,bitshift) - multiply(lold.y,lold.y,bitshift);
-        lcoefficient.y = multiply(lold.x,lold.y,bitshiftless1);
+        lcoefficient.x = multiply(lold.x, lold.x, bitshift) - multiply(lold.y, lold.y, bitshift);
+        lcoefficient.y = multiply(lold.x, lold.y, bitshiftless1);
     }
     else if (c_exp == 2)
         lcoefficient = lold;
@@ -960,7 +960,7 @@ MarksJuliafpSetup()
     floatparm = &parm;
     old = *floatparm;
     if (c_exp > 3)
-        cpower(&old,c_exp-1,&coefficient);
+        cpower(&old, c_exp-1, &coefficient);
     else if (c_exp == 3)
     {
         coefficient.x = sqr(old.x) - sqr(old.y);
