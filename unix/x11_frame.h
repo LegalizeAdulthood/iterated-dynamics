@@ -22,6 +22,7 @@ public:
     }
 
     void initialize(Display *dpy);
+
     int width() const { return 0; }
     int height() const { return 0; }
     Window window() const { return window_; }

@@ -1,8 +1,16 @@
+#include <cassert>
+
 #include "port.h"
 #include "x11_text.h"
 
 x11_text_window::x11_text_window()
-    : parent_{},
+    : dpy_{},
+    font_{},
+    parent_{},
+    char_width_{},
+    char_height_{},
+    char_xchars_{},
+    char_ychars_{},
     max_width_{},
     max_height_{}
 {
@@ -69,12 +77,27 @@ x11_text_window::x11_text_window()
 
 x11_text_window::~x11_text_window()
 {
+    if (font_)
+    {
+        XUnloadFont(dpy_, font_->fid);
+        XFreeFont(nullptr, const_cast<XFontStruct*>(font_));
+        font_ = nullptr;
+    }
 }
 
 void x11_text_window::initialize(Display *dpy, Window parent)
 {
     dpy_ = dpy;
     parent_ = parent;
+    font_ = XLoadQueryFont(dpy_, "6x12");
+    char_width_ = font_->max_bounds.width;
+    char_height_ = font_->max_bounds.ascent + font_->max_bounds.descent;
+    char_xchars_ = X11_TEXT_MAX_COL;
+    char_ychars_ = X11_TEXT_MAX_ROW;
+    max_width_ = char_xchars_*char_width_;
+    max_height_ = char_ychars_*char_height_;
+    text_mode_ = 1;
+    alt_f4_hit_ = false;
 }
 
 int x11_text_window::text_on()

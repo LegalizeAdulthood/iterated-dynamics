@@ -5,9 +5,11 @@
 
 #include <X11/Xlib.h>
 
-#define KEYBUFMAX 80
-#define X11_TEXT_MAX_COL 80
-#define X11_TEXT_MAX_ROW 25
+enum
+{
+    X11_TEXT_MAX_COL = 80,
+    X11_TEXT_MAX_ROW = 25
+};
 
 class x11_text_window
 {
@@ -32,7 +34,12 @@ public:
 
 private:
     Display *dpy_;
+    XFontStruct const *font_;
     Window parent_;
+    int char_width_;
+    int char_height_;
+    int char_xchars_;
+    int char_ychars_;
     int max_width_;
     int max_height_;
     int text_mode_;
