@@ -48,7 +48,6 @@ int boxcolor = 0;
 void dispbox()
 {
     int boxc = (colors-1)&boxcolor;
-    unsigned char *values = (unsigned char *)boxvalues;
     int rgb[3];
     for (int i = 0; i < boxcount; i++)
     {
@@ -59,14 +58,14 @@ void dispbox()
                                  rgb[0]^255, rgb[1]^255, rgb[2]^255, 255);
         }
         else
-            values[i] = (unsigned char)getcolor(boxx[i]-sxoffs, boxy[i]-syoffs);
+            boxvalues[i] = getcolor(boxx[i]-sxoffs, boxy[i]-syoffs);
     }
     // There is an interaction between getcolor and putcolor, so separate them
     if (!(g_is_true_color && truemode)) // don't need this for truecolor with truemode set
         for (int i = 0; i < boxcount; i++)
         {
             if (colors == 2)
-                putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, (1 - values[i]));
+                putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, (1 - boxvalues[i]));
             else
                 putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, boxc);
         }
@@ -80,10 +79,9 @@ void clearbox()
     }
     else
     {
-        unsigned char *values = (unsigned char *)boxvalues;
         for (int i = 0; i < boxcount; i++)
         {
-            putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, values[i]);
+            putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, boxvalues[i]);
         }
     }
 }

@@ -35,8 +35,14 @@ double fiddle_reduction;
 double parmzoom;
 char odpx, odpy, newodpx, newodpy;
 
-U16 imgboxhandle = 0;
-int prmboxcount, imgboxcount;
+int prmboxcount;
+std::vector<int> param_box_x;
+std::vector<int> param_box_y;
+std::vector<int> param_box_values;
+int imgboxcount;
+std::vector<int> image_box_x;
+std::vector<int> image_box_y;
+std::vector<int> image_box_values;
 
 // for saving evolution data of center image
 struct PARAMHIST
@@ -810,10 +816,6 @@ get_evol_restart:
     return (i);
 }
 
-std::vector<int> param_box_x;
-std::vector<int> param_box_y;
-std::vector<BYTE> param_box_values;
-
 void SetupParamBox()
 {
     prmboxcount = 0;
@@ -821,19 +823,14 @@ void SetupParamBox()
     // need to allocate 2 int arrays for boxx and boxy plus 1 byte array for values
     int const num_box_values = (xdots + ydots)*2;
     int const num_values = xdots + ydots + 2;
-    int vidsize = num_box_values*2*sizeof(int) + num_values;
 
     param_box_x.resize(num_box_values);
     param_box_y.resize(num_box_values);
     param_box_values.resize(num_values);
 
-    // TODO: MemoryAlloc
-    if (imgboxhandle == 0)
-        imgboxhandle = MemoryAlloc((U16)(vidsize), 1L, MEMORY);
-    if (!imgboxhandle)
-    {
-        texttempmsg("Sorry...can't allocate mem for imagebox");
-    }
+    image_box_x.resize(num_box_values);
+    image_box_y.resize(num_box_values);
+    image_box_values.resize(num_values);
 }
 
 void ReleaseParamBox()
@@ -841,8 +838,9 @@ void ReleaseParamBox()
     param_box_x.clear();
     param_box_y.clear();
     param_box_values.clear();
-    MemoryRelease(imgboxhandle);
-    imgboxhandle = 0;
+    image_box_x.clear();
+    image_box_y.clear();
+    image_box_values.clear();
 }
 
 void set_current_params()
@@ -917,9 +915,9 @@ void drawparmbox(int mode)
     if (boxcount)
     {
         // stash normal zoombox pixels
-        CopyFromMemoryToHandle((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, imgboxhandle);
-        CopyFromMemoryToHandle((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, imgboxhandle);
-        CopyFromMemoryToHandle((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, imgboxhandle);
+        std::copy(&boxx[0], &boxx[boxcount*2], &image_box_x[0]);
+        std::copy(&boxy[0], &boxy[boxcount*2], &image_box_y[0]);
+        std::copy(&boxvalues[0], &boxvalues[boxcount], &image_box_values[0]);
         clearbox(); // to avoid probs when one box overlaps the other
     }
     if (prmboxcount != 0)
@@ -980,9 +978,9 @@ void drawparmbox(int mode)
     if (imgboxcount)
     {
         // and move back old values so that everything can proceed as normal
-        CopyFromHandleToMemory((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, imgboxhandle);
-        CopyFromHandleToMemory((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, imgboxhandle);
-        CopyFromHandleToMemory((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, imgboxhandle);
+        std::copy(&image_box_x[0], &image_box_x[boxcount*2], &boxx[0]);
+        std::copy(&image_box_y[0], &image_box_y[boxcount*2], &boxy[0]);
+        std::copy(&image_box_values[0], &image_box_values[boxcount], &boxvalues[0]);
         dispbox();
     }
     return;

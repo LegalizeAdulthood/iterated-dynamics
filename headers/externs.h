@@ -195,7 +195,6 @@ extern char                  IFSName[];
 extern std::vector<float>    ifs_defn;
 extern bool                  ifs_type;
 extern int                   imgboxcount;
-extern U16                   imgboxhandle;
 extern char                  image_map;
 extern int                   init3d[20];
 extern DComplex              init;

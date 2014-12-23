@@ -1208,10 +1208,7 @@ void goodbye()                  // we done.  Bail out
     {
         end_resume();
     }
-    if (imgboxhandle != 0)
-    {
-        ReleaseParamBox();
-    }
+    ReleaseParamBox();
     if (!ifs_defn.empty())
     {
         ifs_defn.clear();
