@@ -1516,8 +1516,7 @@ rescan:  // entry for changed browse parms
                 color_of_box += key_count(FIK_CTL_INSERT);
                 for (int i = 0; i < wincount ; i++)
                 {
-                    winlist = browse_windows[i];
-                    drawindow(color_of_box, &winlist);
+                    drawindow(color_of_box, &browse_windows[i]);
                 }
                 winlist = browse_windows[index];
                 drawindow(color_of_box, &winlist);
@@ -1527,8 +1526,7 @@ rescan:  // entry for changed browse parms
                 color_of_box -= key_count(FIK_CTL_DEL);
                 for (int i = 0; i < wincount ; i++)
                 {
-                    winlist = browse_windows[i];
-                    drawindow(color_of_box, &winlist);
+                    drawindow(color_of_box, &browse_windows[i]);
                 }
                 winlist = browse_windows[index];
                 drawindow(color_of_box, &winlist);
