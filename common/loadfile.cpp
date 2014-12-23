@@ -2,6 +2,7 @@
         loadfile.c - load an existing fractal image, control level
 */
 #include <algorithm>
+#include <vector>
 
 #include <errno.h>
 #include <string.h>
@@ -1286,7 +1287,10 @@ static void bfsetup_convert_to_screen();
 static void bftransform(bf_t, bf_t, dblcoords *);
 
 char browsename[13]; // name for browse file
-U16 browsehandle;
+namespace
+{
+std::vector<window> browse_windows;
+}
 U16 boxxhandle;
 U16 boxyhandle;
 U16 boxvalueshandle;
@@ -1326,7 +1330,6 @@ int fgetwindow()
     int vid_too_big = 0;
     bool no_memory = false;
     U16 vidlength;
-    BYTE *winlistptr = (BYTE *)&winlist;
     int saved;
 
     oldbf_math = bf_math;
@@ -1353,12 +1356,11 @@ int fgetwindow()
 #ifdef XFRACT
     vidlength = 4; // Xfractint only needs the 4 corners saved.
 #endif
-    // TODO: MemoryAlloc
-    browsehandle = MemoryAlloc((U16)sizeof(window), (long)MAX_WINDOWS_OPEN, MEMORY);
+    browse_windows.resize(MAX_WINDOWS_OPEN);
     boxxhandle = MemoryAlloc((U16)(vidlength), (long)MAX_WINDOWS_OPEN, MEMORY);
     boxyhandle = MemoryAlloc((U16)(vidlength), (long)MAX_WINDOWS_OPEN, MEMORY);
     boxvalueshandle = MemoryAlloc((U16)(vidlength >> 1), (long)MAX_WINDOWS_OPEN, MEMORY);
-    if (!browsehandle || !boxxhandle || !boxyhandle || !boxvalueshandle)
+    if (!boxxhandle || !boxyhandle || !boxvalueshandle)
         no_memory = true;
 
     // set up complex-plane-to-screen transformation
@@ -1413,7 +1415,7 @@ rescan:  // entry for changed browse parms
             drawindow(color_of_box, &winlist);
             boxcount *= 2; // double for byte count
             winlist.boxcount = boxcount;
-            CopyFromMemoryToHandle(winlistptr, (U16)sizeof(window), 1L, (long)wincount, browsehandle);
+            browse_windows[wincount] = winlist;
             CopyFromMemoryToHandle((BYTE *)boxx, vidlength, 1L, (long)wincount, boxxhandle);
             CopyFromMemoryToHandle((BYTE *)boxy, vidlength, 1L, (long)wincount, boxyhandle);
             CopyFromMemoryToHandle((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)wincount, boxvalueshandle);
@@ -1448,7 +1450,7 @@ rescan:  // entry for changed browse parms
         driver_buzzer(buzzer_codes::COMPLETE); //let user know we've finished
         int index = 0;
         done = 0;
-        CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
+        winlist = browse_windows[index];
         CopyFromHandleToMemory((BYTE *)boxx, vidlength, 1L, (long)index, boxxhandle);
         CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)index, boxyhandle);
         CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
@@ -1503,7 +1505,7 @@ rescan:  // entry for changed browse parms
                     if (index < 0)
                         index = wincount -1 ;
                 }
-                CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
+                winlist = browse_windows[index];
                 CopyFromHandleToMemory((BYTE *)boxx, vidlength, 1L, (long)index, boxxhandle);
                 CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)index, boxyhandle);
                 CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
@@ -1514,10 +1516,10 @@ rescan:  // entry for changed browse parms
                 color_of_box += key_count(FIK_CTL_INSERT);
                 for (int i = 0; i < wincount ; i++)
                 {
-                    CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)i, browsehandle);
+                    winlist = browse_windows[i];
                     drawindow(color_of_box, &winlist);
                 }
-                CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
+                winlist = browse_windows[index];
                 drawindow(color_of_box, &winlist);
                 break;
 
@@ -1525,10 +1527,10 @@ rescan:  // entry for changed browse parms
                 color_of_box -= key_count(FIK_CTL_DEL);
                 for (int i = 0; i < wincount ; i++)
                 {
-                    CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)i, browsehandle);
+                    winlist = browse_windows[i];
                     drawindow(color_of_box, &winlist);
                 }
-                CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
+                winlist = browse_windows[index];
                 drawindow(color_of_box, &winlist);
                 break;
 #endif
@@ -1618,7 +1620,7 @@ rescan:  // entry for changed browse parms
                                 strcpy(winlist.name, tmpmask);
                             }
                         }
-                    CopyFromMemoryToHandle(winlistptr, (U16)sizeof(window), 1L, (long)index, browsehandle);
+                    browse_windows[index] = winlist;
                     showtempmsg(winlist.name);
                 }
                 break;
@@ -1652,7 +1654,7 @@ rescan:  // entry for changed browse parms
         {
             for (int i = wincount-1; i >= 0; i--)
             {
-                CopyFromHandleToMemory(winlistptr, (U16)sizeof(window), 1L, (long)i, browsehandle);
+                winlist = browse_windows[i];
                 boxcount = winlist.boxcount;
                 CopyFromHandleToMemory((BYTE *)boxx, vidlength, 1L, (long)i, boxxhandle);
                 CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)i, boxyhandle);
@@ -1679,7 +1681,7 @@ rescan:  // entry for changed browse parms
         no_sub_images = true;
     }
 
-    MemoryRelease(browsehandle);
+    browse_windows.clear();
     MemoryRelease(boxxhandle);
     MemoryRelease(boxyhandle);
     MemoryRelease(boxvalueshandle);
