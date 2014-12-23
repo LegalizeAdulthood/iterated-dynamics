@@ -1291,6 +1291,17 @@ namespace
 {
 std::vector<window> browse_windows;
 std::vector<int> browse_box_x;
+
+inline void save_box(int num_dots, int which)
+{
+    std::copy(&boxx[num_dots*which], &boxx[num_dots*(which + 1)], &browse_box_x[num_dots*which]);
+}
+
+inline void restore_box(int num_dots, int which)
+{
+    std::copy(&browse_box_x[num_dots*which], &browse_box_x[num_dots*(which + 1)], &boxx[num_dots*which]);
+}
+
 }
 U16 boxyhandle;
 U16 boxvalueshandle;
@@ -1418,7 +1429,7 @@ rescan:  // entry for changed browse parms
             boxcount *= 2; // double for byte count
             winlist.boxcount = boxcount;
             browse_windows[wincount] = winlist;
-            std::copy(&boxx[num_dots*wincount], &boxx[num_dots*(wincount + 1)], &browse_box_x[num_dots*wincount]);
+            save_box(num_dots, wincount);
             CopyFromMemoryToHandle((BYTE *)boxy, vidlength, 1L, (long)wincount, boxyhandle);
             CopyFromMemoryToHandle((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)wincount, boxvalueshandle);
             wincount++;
@@ -1453,7 +1464,7 @@ rescan:  // entry for changed browse parms
         int index = 0;
         done = 0;
         winlist = browse_windows[index];
-        std::copy(&browse_box_x[num_dots*wincount], &browse_box_x[num_dots*(wincount + 1)], &boxx[num_dots*wincount]);
+        restore_box(num_dots, wincount);
         CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)index, boxyhandle);
         CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
         showtempmsg(winlist.name);
@@ -1508,7 +1519,7 @@ rescan:  // entry for changed browse parms
                         index = wincount -1 ;
                 }
                 winlist = browse_windows[index];
-                std::copy(&browse_box_x[num_dots*index], &browse_box_x[num_dots*(index + 1)], &boxx[num_dots*index]);
+                restore_box(num_dots, index);
                 CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)index, boxyhandle);
                 CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
                 showtempmsg(winlist.name);
@@ -1656,7 +1667,7 @@ rescan:  // entry for changed browse parms
             {
                 winlist = browse_windows[i];
                 boxcount = winlist.boxcount;
-                std::copy(&browse_box_x[num_dots*index], &browse_box_x[num_dots*(index + 1)], &boxx[num_dots*index]);
+                restore_box(num_dots, index);
                 CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)i, boxyhandle);
                 CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)i, boxvalueshandle);
                 boxcount >>= 1;
