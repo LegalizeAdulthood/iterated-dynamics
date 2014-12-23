@@ -37,7 +37,6 @@ char odpx, odpy, newodpx, newodpy;
 U16 prmboxhandle = 0;
 U16 imgboxhandle = 0;
 int prmboxcount, imgboxcount;
-U16 oldhistory_handle = 0;
 
 // for saving evolution data of center image
 struct PARAMHIST
@@ -127,67 +126,78 @@ void initgene()
     copy_genes_to_bank(gene);
 }
 
+namespace
+{
+
+PARAMHIST oldhistory = { 0 };
+
+void save_param_history()
+{
+    // save the old parameter history
+    oldhistory.param0 = param[0];
+    oldhistory.param1 = param[1];
+    oldhistory.param2 = param[2];
+    oldhistory.param3 = param[3];
+    oldhistory.param4 = param[4];
+    oldhistory.param5 = param[5];
+    oldhistory.param6 = param[6];
+    oldhistory.param7 = param[7];
+    oldhistory.param8 = param[8];
+    oldhistory.param9 = param[9];
+    oldhistory.inside = inside;
+    oldhistory.outside = outside;
+    oldhistory.decomp0 = decomp[0];
+    oldhistory.invert0 = inversion[0];
+    oldhistory.invert1 = inversion[1];
+    oldhistory.invert2 = inversion[2];
+    oldhistory.trigndx0 = static_cast<BYTE>(trigndx[0]);
+    oldhistory.trigndx1 = static_cast<BYTE>(trigndx[1]);
+    oldhistory.trigndx2 = static_cast<BYTE>(trigndx[2]);
+    oldhistory.trigndx3 = static_cast<BYTE>(trigndx[3]);
+    oldhistory.bailoutest = bailoutest;
+}
+
+void restore_param_history()
+{
+    // restore the old parameter history
+    param[0] = oldhistory.param0;
+    param[1] = oldhistory.param1;
+    param[2] = oldhistory.param2;
+    param[3] = oldhistory.param3;
+    param[4] = oldhistory.param4;
+    param[5] = oldhistory.param5;
+    param[6] = oldhistory.param6;
+    param[7] = oldhistory.param7;
+    param[8] = oldhistory.param8;
+    param[9] = oldhistory.param9;
+    inside = oldhistory.inside;
+    outside = oldhistory.outside;
+    decomp[0] = oldhistory.decomp0;
+    inversion[0] = oldhistory.invert0;
+    inversion[1] = oldhistory.invert1;
+    inversion[2] = oldhistory.invert2;
+    invert = (inversion[0] == 0.0) ? 0 : 3;
+    trigndx[0] = static_cast<trig_fn>(oldhistory.trigndx0);
+    trigndx[1] = static_cast<trig_fn>(oldhistory.trigndx1);
+    trigndx[2] = static_cast<trig_fn>(oldhistory.trigndx2);
+    trigndx[3] = static_cast<trig_fn>(oldhistory.trigndx3);
+    bailoutest = static_cast<bailouts>(oldhistory.bailoutest);
+}
+
+}
+
+// mode = 0 for save old history,
+// mode = 1 for restore old history
 void param_history(int mode)
-{   /* mode = 0 for save old history,
-       mode = 1 for restore old history */
-
-    PARAMHIST oldhistory;
-
-    // TODO: MemoryAlloc
-    if (oldhistory_handle == 0)
-        oldhistory_handle = MemoryAlloc((U16)sizeof(oldhistory), 1L, MEMORY);
-
+{
     if (mode == 0)
-    { // save the old parameter history
-        oldhistory.param0 = param[0];
-        oldhistory.param1 = param[1];
-        oldhistory.param2 = param[2];
-        oldhistory.param3 = param[3];
-        oldhistory.param4 = param[4];
-        oldhistory.param5 = param[5];
-        oldhistory.param6 = param[6];
-        oldhistory.param7 = param[7];
-        oldhistory.param8 = param[8];
-        oldhistory.param9 = param[9];
-        oldhistory.inside = inside;
-        oldhistory.outside = outside;
-        oldhistory.decomp0 = decomp[0];
-        oldhistory.invert0 = inversion[0];
-        oldhistory.invert1 = inversion[1];
-        oldhistory.invert2 = inversion[2];
-        oldhistory.trigndx0 = static_cast<BYTE>(trigndx[0]);
-        oldhistory.trigndx1 = static_cast<BYTE>(trigndx[1]);
-        oldhistory.trigndx2 = static_cast<BYTE>(trigndx[2]);
-        oldhistory.trigndx3 = static_cast<BYTE>(trigndx[3]);
-        oldhistory.bailoutest = bailoutest;
-        CopyFromMemoryToHandle((BYTE *)&oldhistory, (U16)sizeof(oldhistory), 1L, 0L, oldhistory_handle);
+    {
+        save_param_history();
     }
 
     if (mode == 1)
-    { // restore the old parameter history
-        CopyFromHandleToMemory((BYTE *)&oldhistory, (U16)sizeof(oldhistory), 1L, 0L, oldhistory_handle);
-        param[0] = oldhistory.param0;
-        param[1] = oldhistory.param1;
-        param[2] = oldhistory.param2;
-        param[3] = oldhistory.param3;
-        param[4] = oldhistory.param4;
-        param[5] = oldhistory.param5;
-        param[6] = oldhistory.param6;
-        param[7] = oldhistory.param7;
-        param[8] = oldhistory.param8;
-        param[9] = oldhistory.param9;
-        inside = oldhistory.inside;
-        outside = oldhistory.outside;
-        decomp[0] = oldhistory.decomp0;
-        inversion[0] = oldhistory.invert0;
-        inversion[1] = oldhistory.invert1;
-        inversion[2] = oldhistory.invert2;
-        invert = (inversion[0] == 0.0) ? 0 : 3 ;
-        trigndx[0] = static_cast<trig_fn>(oldhistory.trigndx0);
-        trigndx[1] = static_cast<trig_fn>(oldhistory.trigndx1);
-        trigndx[2] = static_cast<trig_fn>(oldhistory.trigndx2);
-        trigndx[3] = static_cast<trig_fn>(oldhistory.trigndx3);
-        bailoutest = static_cast<bailouts>(oldhistory.bailoutest);
+    {
+        restore_param_history();
     }
 }
 

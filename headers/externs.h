@@ -327,7 +327,6 @@ extern int                   Offset;
 extern DComplex              old;
 extern long                  oldcoloriter;
 extern BYTE                  olddacbox[256][3];
-extern U16                   oldhistory_handle;
 extern bool                  old_demm_colors;
 extern char                  old_stdcalcmode;
 extern char                  odpx;

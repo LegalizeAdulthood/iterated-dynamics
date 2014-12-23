@@ -1212,10 +1212,6 @@ void goodbye()                  // we done.  Bail out
     {
         ReleaseParamBox();
     }
-    if (oldhistory_handle != 0)
-    {
-        MemoryRelease(oldhistory_handle);
-    }
     if (!ifs_defn.empty())
     {
         ifs_defn.clear();
