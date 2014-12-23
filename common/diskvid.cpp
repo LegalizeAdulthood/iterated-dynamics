@@ -127,7 +127,6 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     unsigned int *fwd_link = nullptr;
     long longtmp;
     unsigned int cache_size;
-    BYTE *tempfar = nullptr;
     if (g_disk_flag)
     {
         enddisk();
@@ -188,7 +187,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     {
         longtmp = ((int)cache_size < freemem) ?
                   (long)cache_size << 11 : (long)(cache_size+freemem) << 10;
-        tempfar = static_cast<BYTE *>(malloc(longtmp));
+        BYTE *tempfar = static_cast<BYTE *>(malloc(longtmp));
         if (tempfar != nullptr)
         {
             free(tempfar);
