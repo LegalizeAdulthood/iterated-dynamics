@@ -122,7 +122,6 @@ int targa_startdisk(FILE *targafp, int overhead)
 
 int common_startdisk(long newrowsize, long newcolsize, int colors)
 {
-    int freemem;
     long memorysize;
     unsigned int *fwd_link = nullptr;
     long longtmp;
@@ -178,10 +177,6 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     }
     timetodisplay = bf_math != bf_math_type::NONE ? 10 : 1000;  // time-to-g_driver-status counter
 
-    /* allocate cache: try for the max; leave FREEMEMk free if we can get
-        that much or more; if we can't get that much leave 1/2 of whatever
-        there is free; demand a certain minimum or nogo at all */
-    freemem = FREEMEM;
     cache_size = CACHEMAX;
     longtmp = (long)cache_size << 10;
     cache_start = (cache *)malloc(longtmp);
