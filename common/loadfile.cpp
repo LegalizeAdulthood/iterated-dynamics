@@ -1334,7 +1334,6 @@ int fgetwindow()
     char tmpmask[FILE_MAX_PATH];
     int vid_too_big = 0;
     bool no_memory = false;
-    U16 vidlength;
     int saved;
 
     oldbf_math = bf_math;
@@ -1354,14 +1353,12 @@ int fgetwindow()
     bt_f = alloc_stack(rbflength+2);
 
     int num_dots = sxdots + sydots;
-    vidlength = (U16) num_dots;
-    if (vidlength > (U16)4096)
+    if (num_dots > (U16)4096)
         vid_too_big = 2;
     // 4096 based on 4096B in boxx... max 1/4 pixels plotted, and need words
     // 4096 = 10240/2.5 based on size of boxx+boxy+boxvalues
 #ifdef XFRACT
-    num_dots = 4;
-    vidlength = 4; // Xfractint only needs the 4 corners saved.
+    num_dots = 4;   // Xfractint only needs the 4 corners saved.
 #endif
     browse_windows.resize(MAX_WINDOWS_OPEN);
     browse_box_x.resize(num_dots*MAX_WINDOWS_OPEN);
