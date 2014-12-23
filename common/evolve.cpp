@@ -18,14 +18,10 @@ int px, py, evolving, gridsz;
 #define MAXGRIDSZ 51  // This is arbitrary, = 1024/20
 static int ecountbox[MAXGRIDSZ][MAXGRIDSZ];
 
-unsigned int this_gen_rseed;
 // used to replay random sequences to obtain correct values when selecting a
 // seed image for next generation
+unsigned int this_gen_rseed;
 
-double opx, opy, newopx, newopy, paramrangex, paramrangey, dpx, dpy, fiddlefactor;
-double fiddle_reduction;
-double parmzoom;
-char odpx, odpy, newodpx, newodpy;
 // offset for discrete parameters x and y..
 // used for things like inside or outside types, bailout tests, trig fn etc
 // variation factors, opx, opy, paramrangex/y dpx, dpy.. used in field mapping
@@ -34,6 +30,10 @@ char odpx, odpy, newodpx, newodpy;
 // fiddlefactor is amount of random mutation used in random modes ,
 // fiddle_reduction is used to decrease fiddlefactor from one generation to the
 // next to eventually produce a stable population
+double opx, opy, newopx, newopy, paramrangex, paramrangey, dpx, dpy, fiddlefactor;
+double fiddle_reduction;
+double parmzoom;
+char odpx, odpy, newodpx, newodpy;
 
 U16 imgboxhandle = 0;
 int prmboxcount, imgboxcount;
