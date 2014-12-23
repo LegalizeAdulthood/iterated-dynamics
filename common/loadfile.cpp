@@ -423,7 +423,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             if (blk_2_info.got_data == 1)
             {
-                MemoryRelease((U16) blk_2_info.resume_data);
+                blk_2_info.resume_data.clear();
                 blk_2_info.length = 0;
             }
             g_init_mode = -1;
@@ -447,15 +447,11 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
     }
 
-    if (resume_info != 0) // free the prior area if there is one
-    {
-        MemoryRelease(resume_info);
-        resume_info = 0;
-    }
+    resume_data.clear();
 
     if (blk_2_info.got_data == 1)
     {
-        resume_info = (U16) blk_2_info.resume_data;
+        resume_data = blk_2_info.resume_data;
         resume_len = blk_2_info.length;
     }
 
@@ -800,18 +796,12 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     break;
                 case 2: // resume info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
-                    // TODO: MemoryAlloc
-                    blk_2_info->resume_data = MemoryAlloc((U16)1, (long)data_len, MEMORY);
-                    if (blk_2_info->resume_data == 0)
-                        info->calc_status = static_cast<short>(calc_status_value::NON_RESUMABLE); // not resumable after all
-                    else
-                    {
-                        fseek(fp, (long)(0-block_len), SEEK_CUR);
-                        load_ext_blk((char *)block, data_len);
-                        CopyFromMemoryToHandle((BYTE *)block, (U16)1, (long)data_len, 0, (U16)blk_2_info->resume_data);
-                        blk_2_info->length = data_len;
-                        blk_2_info->got_data = 1; // got data
-                    }
+                    blk_2_info->resume_data.resize(data_len);
+                    fseek(fp, (long)(0-block_len), SEEK_CUR);
+                    load_ext_blk((char *)block, data_len);
+                    std::copy(&block[0], &block[data_len], &blk_2_info->resume_data[0]);
+                    blk_2_info->length = data_len;
+                    blk_2_info->got_data = 1; // got data
                     break;
                 case 3: // formula info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
@@ -1436,7 +1426,7 @@ rescan:  // entry for changed browse parms
         }
 
         if (blk_2_info.got_data == 1) // Clean up any memory allocated
-            MemoryRelease((U16)blk_2_info.resume_data);
+            blk_2_info.resume_data.clear();
         if (blk_4_info.got_data == 1) // Clean up any memory allocated
             free(blk_4_info.range_data);
         if (blk_5_info.got_data == 1) // Clean up any memory allocated

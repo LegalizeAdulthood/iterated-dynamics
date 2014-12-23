@@ -1,6 +1,7 @@
 // FRACTINT.H - common structures and values for the FRACTINT routines
 #ifndef FRACTINT_H
 #define FRACTINT_H
+#include <vector>
 
 #include "big.h"
 
@@ -1145,7 +1146,7 @@ struct ext_blk_2
 {
     char got_data;
     int length;
-    int resume_data;
+    std::vector<BYTE> resume_data;
 };
 
 struct ext_blk_3

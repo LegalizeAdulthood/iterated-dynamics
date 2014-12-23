@@ -1147,16 +1147,15 @@ static int ratio_bad(double actual, double desired)
 int put_resume(int len, ...)
 {
     va_list arg_marker;
-    BYTE *source_ptr;
 
-    if (resume_info == 0)
+    if (resume_data.empty())
         return (-1);
+
     va_start(arg_marker, len);
     while (len)
     {
-        source_ptr = (BYTE *)va_arg(arg_marker, char *);
-        //      memcpy(resume_info+resume_len,source_ptr,len);
-        CopyFromMemoryToHandle(source_ptr, (U16)1, (long)len, resume_len, resume_info);
+        BYTE const *source_ptr = va_arg(arg_marker, BYTE *);
+        std::copy(&source_ptr[0], &source_ptr[len], &resume_data[resume_len]);
         resume_len += len;
         len = va_arg(arg_marker, int);
     }
@@ -1165,19 +1164,9 @@ int put_resume(int len, ...)
 }
 
 int alloc_resume(int alloclen, int version)
-{   // WARNING! if alloclen > 4096B, problems may occur with GIF save/restore
-    if (resume_info != 0) // free the prior area if there is one
-        MemoryRelease(resume_info);
-    // TODO: MemoryAlloc
-    resume_info = MemoryAlloc((U16)sizeof(alloclen), (long)alloclen, MEMORY);
-    if (resume_info == 0)
-    {
-        stopmsg(STOPMSG_NONE,
-            "Warning - insufficient free memory to save status.\n"
-            "You will not be able to resume calculating this image.");
-        calc_status = calc_status_value::NON_RESUMABLE;
-        return (-1);
-    }
+{
+    resume_data.clear();
+    resume_data.resize(sizeof(int)*alloclen);
     resume_len = 0;
     put_resume(sizeof(version), &version, 0);
     calc_status = calc_status_value::RESUMABLE;
@@ -1186,17 +1175,15 @@ int alloc_resume(int alloclen, int version)
 
 int get_resume(int len, ...)
 {
-    va_list arg_marker;  // variable arg list
-    BYTE *dest_ptr;
+    va_list arg_marker;
 
-    if (resume_info == 0)
+    if (resume_data.empty())
         return (-1);
     va_start(arg_marker, len);
     while (len)
     {
-        dest_ptr = (BYTE *)va_arg(arg_marker, char *);
-        //      memcpy(dest_ptr,resume_info+resume_offset,len);
-        CopyFromHandleToMemory(dest_ptr, (U16)1, (long)len, resume_offset, resume_info);
+        BYTE *dest_ptr = va_arg(arg_marker, BYTE *);
+        std::copy(&resume_data[resume_offset], &resume_data[resume_offset + len], &dest_ptr[0]);
         resume_offset += len;
         len = va_arg(arg_marker, int);
     }
@@ -1207,7 +1194,7 @@ int get_resume(int len, ...)
 int start_resume()
 {
     int version;
-    if (resume_info == 0)
+    if (resume_data.empty())
         return (-1);
     resume_offset = 0;
     get_resume(sizeof(version), &version, 0);
@@ -1216,11 +1203,7 @@ int start_resume()
 
 void end_resume()
 {
-    if (resume_info != 0) // free the prior area if there is one
-    {
-        MemoryRelease(resume_info);
-        resume_info = 0;
-    }
+    resume_data.clear();
 }
 
 

@@ -144,7 +144,7 @@ bool reset_periodicity = false;         // true if escape time pixel rtn to rese
 int kbdcount = 0;
 int max_kbdcount = 0;                   // avoids checking keyboard too often
 
-U16 resume_info = 0;                    // handle to resume info if allocated
+std::vector<BYTE> resume_data;          // resume info
 bool resuming = false;                  // true if resuming after interrupt
 int num_worklist = 0;                   // resume worklist for standard engine
 WORKLIST worklist[MAXCALCWORK] = { 0 };

@@ -1204,10 +1204,7 @@ void goodbye()                  // we done.  Bail out
         free(mapdacbox);
         mapdacbox = nullptr;
     }
-    if (resume_info != 0)
-    {
-        end_resume();
-    }
+    end_resume();
     ReleaseParamBox();
     if (!ifs_defn.empty())
     {

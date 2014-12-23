@@ -424,11 +424,11 @@ bool encoder()
         if (interrupted)
             save_info.calc_status = static_cast<short>(calc_status_value::PARAMS_CHANGED);     // partial save is not resumable
         save_info.tot_extend_len = 0;
-        if (resume_info != 0 && save_info.calc_status == static_cast<short>(calc_status_value::RESUMABLE))
+        if (!resume_data.empty() && save_info.calc_status == static_cast<short>(calc_status_value::RESUMABLE))
         {
             // resume info block, 002
             save_info.tot_extend_len += extend_blk_len(resume_len);
-            CopyFromHandleToMemory((BYTE *)block, (U16)1, (long)resume_len, 0, resume_info);
+            std::copy(&resume_data[0], &resume_data[resume_len], &block[0]);
             if (!put_extend_blk(2, resume_len, (char *)block))
                 goto oops;
         }
