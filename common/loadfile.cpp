@@ -1292,21 +1292,23 @@ namespace
 std::vector<window> browse_windows;
 std::vector<int> browse_box_x;
 std::vector<int> browse_box_y;
+std::vector<int> browse_box_values;
 
 inline void save_box(int num_dots, int which)
 {
     std::copy(&boxx[num_dots*which], &boxx[num_dots*(which + 1)], &browse_box_x[num_dots*which]);
     std::copy(&boxy[num_dots*which], &boxy[num_dots*(which + 1)], &browse_box_y[num_dots*which]);
+    std::copy(&boxvalues[num_dots*which], &boxvalues[num_dots*(which + 1)], &browse_box_values[num_dots*which]);
 }
 
 inline void restore_box(int num_dots, int which)
 {
     std::copy(&browse_box_x[num_dots*which], &browse_box_x[num_dots*(which + 1)], &boxx[num_dots*which]);
     std::copy(&browse_box_y[num_dots*which], &browse_box_y[num_dots*(which + 1)], &boxy[num_dots*which]);
+    std::copy(&browse_box_values[num_dots*which], &browse_box_values[num_dots*(which + 1)], &boxvalues[num_dots*which]);
 }
 
 }
-U16 boxvalueshandle;
 
 // here because must be visible inside several routines
 static affine *cvt;
@@ -1374,9 +1376,7 @@ int fgetwindow()
     browse_windows.resize(MAX_WINDOWS_OPEN);
     browse_box_x.resize(num_dots*MAX_WINDOWS_OPEN);
     browse_box_y.resize(num_dots*MAX_WINDOWS_OPEN);
-    boxvalueshandle = MemoryAlloc((U16)(vidlength >> 1), (long)MAX_WINDOWS_OPEN, MEMORY);
-    if (!boxvalueshandle)
-        no_memory = true;
+    browse_box_values.resize(num_dots*MAX_WINDOWS_OPEN);
 
     // set up complex-plane-to-screen transformation
     if (oldbf_math != bf_math_type::NONE)
@@ -1432,7 +1432,6 @@ rescan:  // entry for changed browse parms
             winlist.boxcount = boxcount;
             browse_windows[wincount] = winlist;
             save_box(num_dots, wincount);
-            CopyFromMemoryToHandle((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)wincount, boxvalueshandle);
             wincount++;
         }
 
@@ -1466,7 +1465,6 @@ rescan:  // entry for changed browse parms
         done = 0;
         winlist = browse_windows[index];
         restore_box(num_dots, wincount);
-        CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
         showtempmsg(winlist.name);
         while (!done)  /* on exit done = 1 for quick exit,
                                  done = 2 for erase boxes and  exit
@@ -1520,7 +1518,6 @@ rescan:  // entry for changed browse parms
                 }
                 winlist = browse_windows[index];
                 restore_box(num_dots, index);
-                CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
                 showtempmsg(winlist.name);
                 break;
 #ifndef XFRACT
@@ -1667,7 +1664,6 @@ rescan:  // entry for changed browse parms
                 winlist = browse_windows[i];
                 boxcount = winlist.boxcount;
                 restore_box(num_dots, index);
-                CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)i, boxvalueshandle);
                 boxcount >>= 1;
                 if (boxcount > 0)
 #ifdef XFRACT
@@ -1693,7 +1689,7 @@ rescan:  // entry for changed browse parms
     browse_windows.clear();
     browse_box_x.clear();
     browse_box_y.clear();
-    MemoryRelease(boxvalueshandle);
+    browse_box_values.clear();
     restore_stack(saved);
     if (oldbf_math == bf_math_type::NONE)
         free_bf_vars();
