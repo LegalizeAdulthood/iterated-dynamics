@@ -1146,7 +1146,7 @@ static int ratio_bad(double actual, double desired)
 
 int put_resume(int len, ...)
 {
-    va_list arg_marker;  // variable arg list
+    va_list arg_marker;
     BYTE *source_ptr;
 
     if (resume_info == 0)
