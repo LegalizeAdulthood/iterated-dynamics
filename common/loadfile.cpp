@@ -1276,13 +1276,13 @@ struct window
 };
 
 // prototypes
-static void drawindow(int, window *);
-static bool is_visible_window(window *, FRACTAL_INFO *, ext_blk_5 *);
+static void drawindow(int colour, window const *info);
+static bool is_visible_window(window *list, FRACTAL_INFO const *info, ext_blk_5 const *blk_5_info);
 static void transform(dblcoords *);
-static bool paramsOK(FRACTAL_INFO *);
-static bool typeOK(FRACTAL_INFO *, ext_blk_3 *);
-static bool functionOK(FRACTAL_INFO *, int);
-static void check_history(char *, char *);
+static bool paramsOK(FRACTAL_INFO const *info);
+static bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info);
+static bool functionOK(FRACTAL_INFO const *info, int numfn);
+static void check_history(char const *oldname, char const *newname);
 static void bfsetup_convert_to_screen();
 static void bftransform(bf_t, bf_t, dblcoords *);
 
@@ -1695,7 +1695,7 @@ rescan:  // entry for changed browse parms
 }
 
 
-static void drawindow(int colour, window *info)
+static void drawindow(int colour, window const *info)
 {
 #ifndef XFRACT
     coords ibl, itr;
@@ -1753,10 +1753,10 @@ static void transform(dblcoords *point)
     point->x = tmp_pt_x;
 }
 
-static bool is_visible_window(
+bool is_visible_window(
     window *list,
-    FRACTAL_INFO *info,
-    ext_blk_5 *blk_5_info)
+    FRACTAL_INFO const *info,
+    ext_blk_5 const *blk_5_info)
 {
     dblcoords tl, tr, bl, br;
     bf_t bt_x, bt_y;
@@ -1973,7 +1973,7 @@ static bool is_visible_window(
         return false;
 }
 
-static bool paramsOK(FRACTAL_INFO *info)
+bool paramsOK(FRACTAL_INFO const *info)
 {
     double tmpparm3, tmpparm4;
     double tmpparm5, tmpparm6;
@@ -2027,7 +2027,7 @@ static bool paramsOK(FRACTAL_INFO *info)
         return false;
 }
 
-static bool functionOK(FRACTAL_INFO *info, int numfn)
+bool functionOK(FRACTAL_INFO const *info, int numfn)
 {
     int mzmatch = 0;
     for (int i = 0; i < numfn; i++)
@@ -2041,7 +2041,7 @@ static bool functionOK(FRACTAL_INFO *info, int numfn)
         return true; // they all match
 }
 
-static bool typeOK(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
+bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
 {
     int numfn;
     if ((fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&
@@ -2071,7 +2071,7 @@ static bool typeOK(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         return false; // no match
 }
 
-static void check_history(char *oldname, char *newname)
+void check_history(char const *oldname, char const *newname)
 {
     // file_name_stack[] is maintained in framain2.c.  It is the history
     //  file for the browser and holds a maximum of 16 images.  The history
