@@ -8,6 +8,8 @@
    Do timing tests for a variety of situations after any change.
 
 */
+#include <vector>
+
 #include <float.h>
 #include <string.h>
 
@@ -58,7 +60,7 @@ static int headerlength;
 static int rowsize = 0;   // doubles as a disk video not ok flag
 static int colsize;       // sydots, *2 when pot16bit
 
-static BYTE *membuf;
+static std::vector<BYTE> membuf;
 static U16 dv_handle = 0;
 static long memoffset = 0;
 static long oldmemoffset = 0;
@@ -205,8 +207,8 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     }
     cache_lru = cache_start;
     cache_end = cache_lru + longtmp/sizeof(*cache_start);
-    membuf = (BYTE *)malloc((long)BLOCKLEN);
-    if (cache_start == nullptr || membuf == nullptr)
+    membuf.resize(BLOCKLEN);
+    if (cache_start == nullptr)
     {
         stopmsg(STOPMSG_NONE,
             "*** insufficient free memory for cache buffers ***");
@@ -251,12 +253,10 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     if (disktarga)
     {
         // Retrieve the header information first
-        BYTE *tmpptr;
-        tmpptr = membuf;
         fseek(fp, 0L, SEEK_SET);
         for (int i = 0; i < headerlength; i++)
         {
-            *tmpptr++ = (BYTE)fgetc(fp);
+            membuf[i] = (BYTE)fgetc(fp);
         }
         fclose(fp);
         dv_handle = MemoryAlloc((U16)BLOCKLEN, memorysize, DISK);
@@ -279,12 +279,12 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
                           (MemoryType(dv_handle) == DISK) ? "Using your Disk Drive" : "Using your memory");
     }
 
-    membufptr = membuf;
+    membufptr = &membuf[0];
 
     if (disktarga)
     {
         // Put header information in the file
-        CopyFromMemoryToHandle(membuf, (U16)headerlength, 1L, 0, dv_handle);
+        CopyFromMemoryToHandle(&membuf[0], (U16)headerlength, 1L, 0, dv_handle);
     }
     else
     {
@@ -339,11 +339,7 @@ void enddisk()
         free((void *)cache_start);
         cache_start = nullptr;
     }
-    if (membuf != nullptr)
-    {
-        free((void *)membuf);
-        membuf = nullptr;
-    }
+    membuf.clear();
     g_disk_flag = false;
     rowsize = 0;
     disk16bit = false;
@@ -713,21 +709,21 @@ static void mem_seek(long offset)        // mem seek
     memoffset = offset >> BLOCKSHIFT;
     if (memoffset != oldmemoffset)
     {
-        CopyFromMemoryToHandle(membuf, (U16)BLOCKLEN, 1L, oldmemoffset, dv_handle);
-        CopyFromHandleToMemory(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
+        CopyFromMemoryToHandle(&membuf[0], (U16)BLOCKLEN, 1L, oldmemoffset, dv_handle);
+        CopyFromHandleToMemory(&membuf[0], (U16)BLOCKLEN, 1L, memoffset, dv_handle);
     }
     oldmemoffset = memoffset;
-    membufptr = membuf + (offset & (BLOCKLEN - 1));
+    membufptr = &membuf[0] + (offset & (BLOCKLEN - 1));
 }
 
 static BYTE  mem_getc()                     // memory get_char
 {
-    if (membufptr - membuf >= BLOCKLEN)
+    if (membufptr - &membuf[0] >= BLOCKLEN)
     {
-        CopyFromMemoryToHandle(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
+        CopyFromMemoryToHandle(&membuf[0], (U16)BLOCKLEN, 1L, memoffset, dv_handle);
         memoffset++;
-        CopyFromHandleToMemory(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
-        membufptr = membuf;
+        CopyFromHandleToMemory(&membuf[0], (U16)BLOCKLEN, 1L, memoffset, dv_handle);
+        membufptr = &membuf[0];
         oldmemoffset = memoffset;
     }
     return (*(membufptr++));
@@ -735,12 +731,12 @@ static BYTE  mem_getc()                     // memory get_char
 
 static void mem_putc(BYTE c)     // memory get_char
 {
-    if (membufptr - membuf >= BLOCKLEN)
+    if (membufptr - &membuf[0] >= BLOCKLEN)
     {
-        CopyFromMemoryToHandle(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
+        CopyFromMemoryToHandle(&membuf[0], (U16)BLOCKLEN, 1L, memoffset, dv_handle);
         memoffset++;
-        CopyFromHandleToMemory(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
-        membufptr = membuf;
+        CopyFromHandleToMemory(&membuf[0], (U16)BLOCKLEN, 1L, memoffset, dv_handle);
+        membufptr = &membuf[0];
         oldmemoffset = memoffset;
     }
     *(membufptr++) = c;
