@@ -37,6 +37,7 @@ else()
         unix/d_x11.cpp
         unix/x11_frame.cpp
         unix/x11_text.cpp
+        unix/x11_plot.cpp
         unix/general.cpp
         unix/os_unix.cpp
         unix/unix.cpp

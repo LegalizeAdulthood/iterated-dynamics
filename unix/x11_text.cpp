@@ -71,6 +71,12 @@ x11_text_window::~x11_text_window()
 {
 }
 
+void x11_text_window::initialize(Display *dpy, Window parent)
+{
+    dpy_ = dpy;
+    parent_ = parent;
+}
+
 int x11_text_window::text_on()
 {
     if (text_mode_ != 1)

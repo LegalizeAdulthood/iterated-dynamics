@@ -24,12 +24,13 @@ public:
     void initialize(Display *dpy);
     int width() const { return 0; }
     int height() const { return 0; }
-    Window window() const { return 0; }
+    Window window() const { return window_; }
     int get_key_press(int option);
     int pump_messages(bool wait_flag);
 
 private:
     Display *dpy_;
+    Window window_;
     bool timed_out_;
     int keypress_count_;
     int keypress_head_;

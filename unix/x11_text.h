@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <X11/X.h>
+#include <X11/Xlib.h>
 
 #define KEYBUFMAX 80
 #define X11_TEXT_MAX_COL 80
@@ -15,6 +15,7 @@ public:
     x11_text_window();
     ~x11_text_window();
 
+    void initialize(Display *dpy, Window parent);
     int max_width() const { return max_width_; }
     int max_height() const { return max_height_; }
     Window window() const { return 0; }
@@ -30,6 +31,7 @@ public:
     void add_key_press(unsigned key);
 
 private:
+    Display *dpy_;
     Window parent_;
     int max_width_;
     int max_height_;
