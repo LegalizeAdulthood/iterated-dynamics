@@ -1368,7 +1368,7 @@ static void File_Error(char *File_Name1, int ERROR)
 //   This function opens a TARGA_24 file for reading and writing. If
 //   its a new file, (overlay == 0) it writes a header. If it is to
 //   overlay an existing file (overlay == 1) it copies the original
-//   header whose lenght and validity was determined in
+//   header whose length and validity was determined in
 //   Targa_validate.
 //
 //   It Verifies there is enough disk space, and leaves the file
