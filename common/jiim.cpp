@@ -390,7 +390,6 @@ static void SaveRect(int x, int y, int width, int depth)
     // allocate space and store the rect
 
     memset(dstack, g_color_dark, width);
-    // TODO: MemoryAlloc
     screen_rect.resize(width*depth);
     Cursor_Hide();
     for (int yoff = 0; yoff < depth; yoff++)
