@@ -40,7 +40,7 @@ bool g_good_mode = false;        // if non-zero, OK to read/write pixels
 struct cache                // structure of each cache entry
 {
     long offset;            // pixel offset in image
-    BYTE pixel[BLOCKLEN];   // one pixel per byte (this *is* faster)
+    BYTE pixel[BLOCKLEN];   // one pixel per byte
     unsigned int hashlink;  // ptr to next cache entry with same hash
     bool dirty;             // changed since read?
     bool lru;               // recently used?
