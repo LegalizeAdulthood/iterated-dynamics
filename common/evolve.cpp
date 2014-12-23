@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <vector>
 
 #include <float.h>
 #include <stdlib.h>
@@ -34,7 +35,6 @@ char odpx, odpy, newodpx, newodpy;
 // fiddle_reduction is used to decrease fiddlefactor from one generation to the
 // next to eventually produce a stable population
 
-U16 prmboxhandle = 0;
 U16 imgboxhandle = 0;
 int prmboxcount, imgboxcount;
 
@@ -810,23 +810,22 @@ get_evol_restart:
     return (i);
 }
 
+std::vector<int> box_x_storage;
+std::vector<int> box_y_storage;
+std::vector<BYTE> box_values_storage;
+
 void SetupParamBox()
 {
-    int vidsize;
     prmboxcount = 0;
     parmzoom = ((double)gridsz-1.0)/2.0;
     // need to allocate 2 int arrays for boxx and boxy plus 1 byte array for values
-    vidsize = (xdots+ydots) * 4 * sizeof(int) ;
-    vidsize = vidsize + xdots + ydots + 2 ;
-    // TODO: MemoryAlloc
-    if (prmboxhandle == 0)
-        prmboxhandle = MemoryAlloc((U16)(vidsize), 1L, MEMORY);
-    if (prmboxhandle == 0)
-    {
-        texttempmsg("Sorry...can't allocate mem for parmbox");
-        evolving = 0;
-    }
-    prmboxcount = 0;
+    int const num_box_values = (xdots + ydots)*2;
+    int const num_values = xdots + ydots + 2;
+    int vidsize = num_box_values*2*sizeof(int) + num_values;
+
+    box_x_storage.resize(num_box_values);
+    box_y_storage.resize(num_box_values);
+    box_values_storage.resize(num_values);
 
     // TODO: MemoryAlloc
     if (imgboxhandle == 0)
@@ -839,9 +838,10 @@ void SetupParamBox()
 
 void ReleaseParamBox()
 {
-    MemoryRelease(prmboxhandle);
+    box_x_storage.clear();
+    box_y_storage.clear();
+    box_values_storage.clear();
     MemoryRelease(imgboxhandle);
-    prmboxhandle = 0;
     imgboxhandle = 0;
 }
 
@@ -926,9 +926,9 @@ void drawparmbox(int mode)
     {
         // clear last parmbox
         boxcount = prmboxcount;
-        CopyFromHandleToMemory((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, prmboxhandle);
-        CopyFromHandleToMemory((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, prmboxhandle);
-        CopyFromHandleToMemory((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, prmboxhandle);
+        std::copy(&box_x_storage[0], &box_x_storage[boxcount*2], &boxx[0]);
+        std::copy(&box_y_storage[0], &box_y_storage[boxcount*2], &boxy[0]);
+        std::copy(&box_values_storage[0], &box_values_storage[boxcount], &boxvalues[0]);
         clearbox();
     }
 
@@ -971,9 +971,9 @@ void drawparmbox(int mode)
     {
         dispbox();
         // stash pixel values for later
-        CopyFromMemoryToHandle((BYTE *)boxx, (U16)(boxcount*2), 1L, 0L, prmboxhandle);
-        CopyFromMemoryToHandle((BYTE *)boxy, (U16)(boxcount*2), 1L, 1L, prmboxhandle);
-        CopyFromMemoryToHandle((BYTE *)boxvalues, (U16)boxcount, 1L, 4L, prmboxhandle);
+        std::copy(&boxx[0], &boxx[boxcount*2], &box_x_storage[0]);
+        std::copy(&boxy[0], &boxy[boxcount*2], &box_y_storage[0]);
+        std::copy(&boxvalues[0], &boxvalues[boxcount], &box_values_storage[0]);
     }
     prmboxcount = boxcount;
     boxcount = imgboxcount;

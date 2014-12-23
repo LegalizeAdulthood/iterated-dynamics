@@ -379,7 +379,6 @@ extern bool                  preview;
 extern int                   previewfactor;
 extern int                   px;
 extern int                   py;
-extern U16                   prmboxhandle;
 extern int                   prmboxcount;
 extern int                   pseudox;
 extern int                   pseudoy;

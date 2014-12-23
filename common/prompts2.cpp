@@ -1208,7 +1208,7 @@ void goodbye()                  // we done.  Bail out
     {
         end_resume();
     }
-    if (imgboxhandle != 0 || prmboxhandle != 0)
+    if (imgboxhandle != 0)
     {
         ReleaseParamBox();
     }
