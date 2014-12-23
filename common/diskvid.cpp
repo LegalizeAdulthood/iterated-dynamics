@@ -182,22 +182,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         that much or more; if we can't get that much leave 1/2 of whatever
         there is free; demand a certain minimum or nogo at all */
     freemem = FREEMEM;
-
-    for (cache_size = CACHEMAX; cache_size >= CACHEMIN; --cache_size)
-    {
-        longtmp = ((int)cache_size < freemem) ?
-                  (long)cache_size << 11 : (long)(cache_size+freemem) << 10;
-        BYTE *tempfar = static_cast<BYTE *>(malloc(longtmp));
-        if (tempfar != nullptr)
-        {
-            free(tempfar);
-            break;
-        }
-    }
-    if (debugflag == debug_flags::force_disk_min_cache)
-    {
-        cache_size = CACHEMIN;
-    }
+    cache_size = CACHEMAX;
     longtmp = (long)cache_size << 10;
     cache_start = (cache *)malloc(longtmp);
     if (cache_size == 64)
