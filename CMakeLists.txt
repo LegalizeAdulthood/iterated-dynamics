@@ -45,8 +45,7 @@ else()
     set(OS_DRIVER_LIBRARIES X11 m)
     set(OS_DEFINITIONS "XFRACT" "NOBSTRING" "LINUX")
     set(HAVE_OS_DEFINITIONS true)
-    set_source_files_properties(unix/unix.cpp
-        PROPERTIES COMPILE_DEFINITIONS SRCDIR="${home_dir}")
+    set_src_dir(unix/unix.cpp)
     set(DISK_VID "")
     set(OS_HC_FILES "unix/unix.cpp")
     set(OS_ID_OPTIONS "")
@@ -217,8 +216,8 @@ source_group("Source Files\\common\\ui" FILES
 source_group("Header Files\\Win32" FILES ${OS_DRIVER_HEADERS})
 source_group("Source Files\\Win32" FILES ${OS_DRIVER_SOURCES})
 
-set_source_files_properties(common/help.cpp
-    PROPERTIES COMPILE_DEFINITIONS SRCDIR="${home_dir}")
+set_src_dir(common/help.cpp)
+set_src_dir(common/fractint.cpp)
 
 add_executable(hc hc/hc.cpp hc/helpcom.cpp ${OS_HC_FILES})
 target_include_directories(hc PRIVATE headers)
