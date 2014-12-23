@@ -810,9 +810,9 @@ get_evol_restart:
     return (i);
 }
 
-std::vector<int> box_x_storage;
-std::vector<int> box_y_storage;
-std::vector<BYTE> box_values_storage;
+std::vector<int> param_box_x;
+std::vector<int> param_box_y;
+std::vector<BYTE> param_box_values;
 
 void SetupParamBox()
 {
@@ -823,9 +823,9 @@ void SetupParamBox()
     int const num_values = xdots + ydots + 2;
     int vidsize = num_box_values*2*sizeof(int) + num_values;
 
-    box_x_storage.resize(num_box_values);
-    box_y_storage.resize(num_box_values);
-    box_values_storage.resize(num_values);
+    param_box_x.resize(num_box_values);
+    param_box_y.resize(num_box_values);
+    param_box_values.resize(num_values);
 
     // TODO: MemoryAlloc
     if (imgboxhandle == 0)
@@ -838,9 +838,9 @@ void SetupParamBox()
 
 void ReleaseParamBox()
 {
-    box_x_storage.clear();
-    box_y_storage.clear();
-    box_values_storage.clear();
+    param_box_x.clear();
+    param_box_y.clear();
+    param_box_values.clear();
     MemoryRelease(imgboxhandle);
     imgboxhandle = 0;
 }
@@ -926,9 +926,9 @@ void drawparmbox(int mode)
     {
         // clear last parmbox
         boxcount = prmboxcount;
-        std::copy(&box_x_storage[0], &box_x_storage[boxcount*2], &boxx[0]);
-        std::copy(&box_y_storage[0], &box_y_storage[boxcount*2], &boxy[0]);
-        std::copy(&box_values_storage[0], &box_values_storage[boxcount], &boxvalues[0]);
+        std::copy(&param_box_x[0], &param_box_x[boxcount*2], &boxx[0]);
+        std::copy(&param_box_y[0], &param_box_y[boxcount*2], &boxy[0]);
+        std::copy(&param_box_values[0], &param_box_values[boxcount], &boxvalues[0]);
         clearbox();
     }
 
@@ -971,9 +971,9 @@ void drawparmbox(int mode)
     {
         dispbox();
         // stash pixel values for later
-        std::copy(&boxx[0], &boxx[boxcount*2], &box_x_storage[0]);
-        std::copy(&boxy[0], &boxy[boxcount*2], &box_y_storage[0]);
-        std::copy(&boxvalues[0], &boxvalues[boxcount], &box_values_storage[0]);
+        std::copy(&boxx[0], &boxx[boxcount*2], &param_box_x[0]);
+        std::copy(&boxy[0], &boxy[boxcount*2], &param_box_y[0]);
+        std::copy(&boxvalues[0], &boxvalues[boxcount], &param_box_values[0]);
     }
     prmboxcount = boxcount;
     boxcount = imgboxcount;
