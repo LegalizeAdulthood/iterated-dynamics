@@ -1291,19 +1291,21 @@ namespace
 {
 std::vector<window> browse_windows;
 std::vector<int> browse_box_x;
+std::vector<int> browse_box_y;
 
 inline void save_box(int num_dots, int which)
 {
     std::copy(&boxx[num_dots*which], &boxx[num_dots*(which + 1)], &browse_box_x[num_dots*which]);
+    std::copy(&boxy[num_dots*which], &boxy[num_dots*(which + 1)], &browse_box_y[num_dots*which]);
 }
 
 inline void restore_box(int num_dots, int which)
 {
     std::copy(&browse_box_x[num_dots*which], &browse_box_x[num_dots*(which + 1)], &boxx[num_dots*which]);
+    std::copy(&browse_box_y[num_dots*which], &browse_box_y[num_dots*(which + 1)], &boxy[num_dots*which]);
 }
 
 }
-U16 boxyhandle;
 U16 boxvalueshandle;
 
 // here because must be visible inside several routines
@@ -1371,9 +1373,9 @@ int fgetwindow()
 #endif
     browse_windows.resize(MAX_WINDOWS_OPEN);
     browse_box_x.resize(num_dots*MAX_WINDOWS_OPEN);
-    boxyhandle = MemoryAlloc((U16)(vidlength), (long)MAX_WINDOWS_OPEN, MEMORY);
+    browse_box_y.resize(num_dots*MAX_WINDOWS_OPEN);
     boxvalueshandle = MemoryAlloc((U16)(vidlength >> 1), (long)MAX_WINDOWS_OPEN, MEMORY);
-    if (!boxyhandle || !boxvalueshandle)
+    if (!boxvalueshandle)
         no_memory = true;
 
     // set up complex-plane-to-screen transformation
@@ -1430,7 +1432,6 @@ rescan:  // entry for changed browse parms
             winlist.boxcount = boxcount;
             browse_windows[wincount] = winlist;
             save_box(num_dots, wincount);
-            CopyFromMemoryToHandle((BYTE *)boxy, vidlength, 1L, (long)wincount, boxyhandle);
             CopyFromMemoryToHandle((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)wincount, boxvalueshandle);
             wincount++;
         }
@@ -1465,7 +1466,6 @@ rescan:  // entry for changed browse parms
         done = 0;
         winlist = browse_windows[index];
         restore_box(num_dots, wincount);
-        CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)index, boxyhandle);
         CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
         showtempmsg(winlist.name);
         while (!done)  /* on exit done = 1 for quick exit,
@@ -1520,7 +1520,6 @@ rescan:  // entry for changed browse parms
                 }
                 winlist = browse_windows[index];
                 restore_box(num_dots, index);
-                CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)index, boxyhandle);
                 CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
                 showtempmsg(winlist.name);
                 break;
@@ -1668,7 +1667,6 @@ rescan:  // entry for changed browse parms
                 winlist = browse_windows[i];
                 boxcount = winlist.boxcount;
                 restore_box(num_dots, index);
-                CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)i, boxyhandle);
                 CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)i, boxvalueshandle);
                 boxcount >>= 1;
                 if (boxcount > 0)
@@ -1694,7 +1692,7 @@ rescan:  // entry for changed browse parms
 
     browse_windows.clear();
     browse_box_x.clear();
-    MemoryRelease(boxyhandle);
+    browse_box_y.clear();
     MemoryRelease(boxvalueshandle);
     restore_stack(saved);
     if (oldbf_math == bf_math_type::NONE)
