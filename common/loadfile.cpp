@@ -1290,8 +1290,8 @@ char browsename[13]; // name for browse file
 namespace
 {
 std::vector<window> browse_windows;
+std::vector<int> browse_box_x;
 }
-U16 boxxhandle;
 U16 boxyhandle;
 U16 boxvalueshandle;
 
@@ -1348,19 +1348,21 @@ int fgetwindow()
     bt_e = alloc_stack(rbflength+2);
     bt_f = alloc_stack(rbflength+2);
 
-    vidlength = (U16)(sxdots + sydots);
+    int num_dots = sxdots + sydots;
+    vidlength = (U16) num_dots;
     if (vidlength > (U16)4096)
         vid_too_big = 2;
     // 4096 based on 4096B in boxx... max 1/4 pixels plotted, and need words
     // 4096 = 10240/2.5 based on size of boxx+boxy+boxvalues
 #ifdef XFRACT
+    num_dots = 4;
     vidlength = 4; // Xfractint only needs the 4 corners saved.
 #endif
     browse_windows.resize(MAX_WINDOWS_OPEN);
-    boxxhandle = MemoryAlloc((U16)(vidlength), (long)MAX_WINDOWS_OPEN, MEMORY);
+    browse_box_x.resize(num_dots*MAX_WINDOWS_OPEN);
     boxyhandle = MemoryAlloc((U16)(vidlength), (long)MAX_WINDOWS_OPEN, MEMORY);
     boxvalueshandle = MemoryAlloc((U16)(vidlength >> 1), (long)MAX_WINDOWS_OPEN, MEMORY);
-    if (!boxxhandle || !boxyhandle || !boxvalueshandle)
+    if (!boxyhandle || !boxvalueshandle)
         no_memory = true;
 
     // set up complex-plane-to-screen transformation
@@ -1416,7 +1418,7 @@ rescan:  // entry for changed browse parms
             boxcount *= 2; // double for byte count
             winlist.boxcount = boxcount;
             browse_windows[wincount] = winlist;
-            CopyFromMemoryToHandle((BYTE *)boxx, vidlength, 1L, (long)wincount, boxxhandle);
+            std::copy(&boxx[num_dots*wincount], &boxx[num_dots*(wincount + 1)], &browse_box_x[num_dots*wincount]);
             CopyFromMemoryToHandle((BYTE *)boxy, vidlength, 1L, (long)wincount, boxyhandle);
             CopyFromMemoryToHandle((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)wincount, boxvalueshandle);
             wincount++;
@@ -1451,7 +1453,7 @@ rescan:  // entry for changed browse parms
         int index = 0;
         done = 0;
         winlist = browse_windows[index];
-        CopyFromHandleToMemory((BYTE *)boxx, vidlength, 1L, (long)index, boxxhandle);
+        std::copy(&browse_box_x[num_dots*wincount], &browse_box_x[num_dots*(wincount + 1)], &boxx[num_dots*wincount]);
         CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)index, boxyhandle);
         CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
         showtempmsg(winlist.name);
@@ -1506,7 +1508,7 @@ rescan:  // entry for changed browse parms
                         index = wincount -1 ;
                 }
                 winlist = browse_windows[index];
-                CopyFromHandleToMemory((BYTE *)boxx, vidlength, 1L, (long)index, boxxhandle);
+                std::copy(&browse_box_x[num_dots*index], &browse_box_x[num_dots*(index + 1)], &boxx[num_dots*index]);
                 CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)index, boxyhandle);
                 CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)index, boxvalueshandle);
                 showtempmsg(winlist.name);
@@ -1654,7 +1656,7 @@ rescan:  // entry for changed browse parms
             {
                 winlist = browse_windows[i];
                 boxcount = winlist.boxcount;
-                CopyFromHandleToMemory((BYTE *)boxx, vidlength, 1L, (long)i, boxxhandle);
+                std::copy(&browse_box_x[num_dots*index], &browse_box_x[num_dots*(index + 1)], &boxx[num_dots*index]);
                 CopyFromHandleToMemory((BYTE *)boxy, vidlength, 1L, (long)i, boxyhandle);
                 CopyFromHandleToMemory((BYTE *)boxvalues, (U16)(vidlength >> 1), 1L, (long)i, boxvalueshandle);
                 boxcount >>= 1;
@@ -1680,7 +1682,7 @@ rescan:  // entry for changed browse parms
     }
 
     browse_windows.clear();
-    MemoryRelease(boxxhandle);
+    browse_box_x.clear();
     MemoryRelease(boxyhandle);
     MemoryRelease(boxvalueshandle);
     restore_stack(saved);
