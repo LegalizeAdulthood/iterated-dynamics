@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <float.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,7 +9,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #define PARMBOX 128
-U16 gene_handle = 0;
+GENEBASE gene_bank[NUMGENES];
 
 // px and py are coordinates in the parameter grid (small images on screen)
 // evolving = flag, gridsz = dimensions of image grid (gridsz x gridsz)
@@ -80,6 +82,17 @@ void set_mutation_level(int);
 void SetupParamBox();
 void ReleaseParamBox();
 
+void copy_genes_from_bank(GENEBASE gene[NUMGENES])
+{
+    std::copy(&gene_bank[0], &gene_bank[NUMGENES], &gene[0]);
+}
+
+void copy_genes_to_bank(GENEBASE const gene[NUMGENES])
+{
+    // cppcheck-suppress arrayIndexOutOfBounds
+    std::copy(&gene[0], &gene[NUMGENES], &gene_bank[0]);
+}
+
 // set up pointers and mutation params for all usable image
 // control variables in fractint... revise as necessary when
 // new vars come along... don't forget to increment NUMGENES
@@ -111,10 +124,7 @@ void initgene()
         { &bailoutest, varybotest, variations::NONE,    "bailout test", 6 }
     };
 
-    // TODO: MemoryAlloc, MoveToMemory
-    if (gene_handle == 0)
-        gene_handle = MemoryAlloc((U16)sizeof(gene), 1L, MEMORY);
-    CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+    copy_genes_to_bank(gene);
 }
 
 void param_history(int mode)
@@ -341,10 +351,7 @@ int get_the_rest()
     fullscreenvalues uvalues[20];
     GENEBASE gene[NUMGENES];
 
-    // TODO: allocate real memory, not reuse shared segment
-//  ptr = (char *) extraseg;
-
-    CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+    copy_genes_from_bank(gene);
 
     numtrig = (curfractalspecific->flags >> 6) & 7;
     if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
@@ -429,7 +436,7 @@ choose_vars_restart:
             (curfractalspecific->flags & BAILTEST))
         gene[NUMGENES - 1].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
 
-    CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+    copy_genes_to_bank(gene);
     return (1); // if you were here, you want to regenerate
 }
 
@@ -444,10 +451,7 @@ int get_variations()
     int lastparm  = MAXPARAMS;
     int chngd = -1;
 
-    // TODO: allocate real memory, not reuse shared segment
-//  ptr = (char *) extraseg;
-
-    CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+    copy_genes_from_bank(gene);
 
     if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
@@ -534,9 +538,9 @@ choose_vars_restart:
             gene[num].mutate = static_cast<variations>(rand() % static_cast<int>(variations::NUM));
         goto choose_vars_restart;
     case FIK_F6: // go to second screen, put array away first
-        CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+        copy_genes_to_bank(gene);
         chngd = get_the_rest();
-        CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+        copy_genes_from_bank(gene);
         goto choose_vars_restart;
     case -1:
         return (chngd);
@@ -554,7 +558,7 @@ choose_vars_restart:
         gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
     }
 
-    CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+    copy_genes_to_bank(gene);
     return (1); // if you were here, you want to regenerate
 }
 
@@ -562,20 +566,13 @@ void set_mutation_level(int strength)
 {
     // scan through the gene array turning on random variation for all parms that
     // are suitable for this level of mutation
-    GENEBASE gene[NUMGENES];
-    // get the gene array from memory
-    CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-
     for (int i = 0; i < NUMGENES; i++)
     {
-        if (gene[i].level <= strength)
-            gene[i].mutate = variations::RANDOM;
+        if (gene_bank[i].level <= strength)
+            gene_bank[i].mutate = variations::RANDOM;
         else
-            gene[i].mutate = variations::NONE;
+            gene_bank[i].mutate = variations::NONE;
     }
-    // now put the gene array back in memory
-    CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-    return;
 }
 
 int get_evolve_Parms()
@@ -891,13 +888,10 @@ static bool explore_check()
     // checks through gene array to see if any of the parameters are set to
     // one of the non random variation modes. Used to see if parmzoom box is
     // needed
-    bool nonrandom = false;
-    GENEBASE gene[NUMGENES];
-    CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-    for (int i = 0; i < NUMGENES && !nonrandom; i++)
-        if ((gene[i].mutate != variations::NONE) && (gene[i].mutate < variations::RANDOM))
-            nonrandom = true;
-    return nonrandom;
+    for (int i = 0; i < NUMGENES; i++)
+        if ((gene_bank[i].mutate != variations::NONE) && (gene_bank[i].mutate < variations::RANDOM))
+            return true;
+    return false;
 }
 
 void drawparmbox(int mode)

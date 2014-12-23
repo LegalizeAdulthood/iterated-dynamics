@@ -467,8 +467,6 @@ bool encoder()
         if (evolving & 1)
         {
             EVOLUTION_INFO esave_info;
-            GENEBASE gene[NUMGENES];
-            CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
             if (!have_evolve_info || calc_status == calc_status_value::COMPLETED)
             {
                 esave_info.paramrangex     = paramrangex;
@@ -511,7 +509,7 @@ bool encoder()
                 esave_info.ecount          = evolve_info.ecount;
             }
             for (int i = 0; i < NUMGENES; i++)
-                esave_info.mutate[i] = (short)gene[i].mutate;
+                esave_info.mutate[i] = (short)gene_bank[i].mutate;
 
             for (int i = 0; i < sizeof(esave_info.future) / sizeof(short); i++)
                 esave_info.future[i] = 0;

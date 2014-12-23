@@ -355,8 +355,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 // generate a set of images with varied parameters on each one
                 int grout, ecount, tmpxdots, tmpydots, gridsqr;
                 GENEBASE gene[NUMGENES];
-                // get the gene array from memory
-                CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+                copy_genes_from_bank(gene);
                 if (have_evolve_info && (calc_status == calc_status_value::RESUMABLE))
                 {
                     paramrangex  = evolve_info.paramrangex;
@@ -461,8 +460,7 @@ done:
                 unspiralmap(); // first time called, w/above line sets up array
                 param_history(1); // restore old history
                 fiddleparms(gene, 0);
-                // now put the gene array back in memory
-                CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+                copy_genes_to_bank(gene);
             }
             // end of evolution loop
             else
@@ -1598,13 +1596,12 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         return main_state::CONTINUE;
     case 's':                    // save-to-disk
     {
-        int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
-        GENEBASE gene[NUMGENES];
-
         if (driver_diskp() && disktarga)
             return main_state::CONTINUE;  // disk video and targa, nothing to save
-        // get the gene array from memory
-        CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+
+        int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
+        GENEBASE gene[NUMGENES];
+        copy_genes_from_bank(gene);
         oldsxoffs = sxoffs;
         oldsyoffs = syoffs;
         oldxdots = xdots;
@@ -1629,7 +1626,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         syoffs = oldsyoffs;
         xdots = oldxdots;
         ydots = oldydots;
-        CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+        copy_genes_to_bank(gene);
         return main_state::CONTINUE;
     }
 
@@ -1708,9 +1705,8 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         if (boxcount)
         {
             GENEBASE gene[NUMGENES];
-            // get the gene array from memory
-            CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-            if (evolving&1)
+            copy_genes_from_bank(gene);
+            if (evolving & 1)
             {
                 if (*kbdchar == FIK_CTL_LEFT_ARROW)
                 {
@@ -1747,8 +1743,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 chgboxi(0, 0);
                 drawparmbox(0);
             }
-            // now put the gene array back in memory
-            CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+            copy_genes_to_bank(gene);
         }
         else                       // if no zoombox, scroll by arrows
             move_zoombox(*kbdchar);
@@ -1896,26 +1891,19 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         break;
 
     case FIK_F6: /* toggle all variables selected for random variation to center weighted variation and vice versa */
-    {
-        GENEBASE gene[NUMGENES];
-        // get the gene array from memory
-        CopyFromHandleToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         for (int i = 0; i < NUMGENES; i++)
         {
-            if (gene[i].mutate == variations::RANDOM)
+            if (gene_bank[i].mutate == variations::RANDOM)
             {
-                gene[i].mutate = variations::WEIGHTED_RANDOM;
+                gene_bank[i].mutate = variations::WEIGHTED_RANDOM;
                 continue;
             }
-            if (gene[i].mutate == variations::WEIGHTED_RANDOM)
-                gene[i].mutate = variations::RANDOM;
+            if (gene_bank[i].mutate == variations::WEIGHTED_RANDOM)
+                gene_bank[i].mutate = variations::RANDOM;
         }
-        // now put the gene array back in memory
-        CopyFromMemoryToHandle((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-    }
-    *kbdmore = false;
-    calc_status = calc_status_value::PARAMS_CHANGED;
-    break;
+        *kbdmore = false;
+        calc_status = calc_status_value::PARAMS_CHANGED;
+        break;
 
     case FIK_ALT_1: // alt + number keys set mutation level
     case FIK_ALT_2:

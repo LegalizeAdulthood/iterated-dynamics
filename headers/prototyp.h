@@ -203,6 +203,8 @@ extern int savetodisk(char *);
 extern bool encoder();
 extern int new_to_old(int new_fractype);
 // evolve -- C file prototypes
+extern void copy_genes_to_bank(GENEBASE const gene[NUMGENES]);
+extern void copy_genes_from_bank(GENEBASE gene[NUMGENES]);
 extern  void initgene();
 extern  void param_history(int);
 extern  int get_variations();

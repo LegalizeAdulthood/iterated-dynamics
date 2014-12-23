@@ -173,7 +173,7 @@ extern double                f_at_rad;
 extern double                f_radius;
 extern double                f_xcenter;
 extern double                f_ycenter;
-extern U16                   gene_handle;
+extern GENEBASE              gene_bank[NUMGENES];
 extern int                   get_corners();
 extern bool                  gif87a_flag;
 extern char                  gifmask[];

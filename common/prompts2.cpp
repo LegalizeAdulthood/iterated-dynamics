@@ -1208,10 +1208,6 @@ void goodbye()                  // we done.  Bail out
     {
         end_resume();
     }
-    if (gene_handle != 0)
-    {
-        MemoryRelease(gene_handle);
-    }
     if (imgboxhandle != 0 || prmboxhandle != 0)
     {
         ReleaseParamBox();

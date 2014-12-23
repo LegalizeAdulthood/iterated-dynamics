@@ -520,13 +520,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (blk_6_info.got_data == 1)
     {
         GENEBASE gene[NUMGENES];
-
-        // TODO: MemoryAlloc
-        if (gene_handle == 0)
-        {
-            gene_handle = MemoryAlloc((U16) sizeof(gene), 1L, MEMORY);
-        }
-        CopyFromHandleToMemory((BYTE *)&gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
+        copy_genes_from_bank(gene);
         if (read_info.version < 15)
         {
             // Increasing NUMGENES moves ecount in the data structure
@@ -606,7 +600,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
                 gene[i].mutate = static_cast<variations>(blk_6_info.mutate[i-4]);
             }
         }
-        CopyFromMemoryToHandle((BYTE *) &gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
+        copy_genes_to_bank(gene);
         param_history(0); // store history
     }
     else
