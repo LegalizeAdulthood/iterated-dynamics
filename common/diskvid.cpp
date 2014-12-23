@@ -216,7 +216,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         ptr1->dirty = false;
         ptr1->lru = false;
         longtmp += BLOCKLEN;
-        fwd_link = &hash_ptr[(((unsigned short)longtmp >> BLOCKSHIFT) & (HASHSIZE-1))];
+        fwd_link = &hash_ptr[((unsigned short)longtmp >> BLOCKSHIFT) & (HASHSIZE-1)];
         ptr1->offset = longtmp;
         ptr1->hashlink = *fwd_link;
         *fwd_link = (int)((char *)ptr1 - (char *)cache_start);
