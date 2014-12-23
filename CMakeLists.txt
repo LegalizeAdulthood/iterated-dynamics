@@ -1,6 +1,6 @@
 # Copyright 2014 Richard Thomson
 cmake_minimum_required(VERSION 2.8.11)
-project(iterated-dynamics CXX C)
+project(iterated-dynamics CXX)
 
 set(home_dir "${CMAKE_SOURCE_DIR}/home")
 
