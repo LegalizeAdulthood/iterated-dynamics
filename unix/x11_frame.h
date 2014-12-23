@@ -1,7 +1,7 @@
 #if !defined(X11_FRAME_H)
 #define X11_FRAME_H
 
-#include <X11/X.h>
+#include <X11/Xlib.h>
 
 enum
 {
@@ -21,6 +21,7 @@ public:
     {
     }
 
+    void initialize(Display *dpy);
     int width() const { return 0; }
     int height() const { return 0; }
     Window window() const { return 0; }
@@ -28,6 +29,7 @@ public:
     int pump_messages(bool wait_flag);
 
 private:
+    Display *dpy_;
     bool timed_out_;
     int keypress_count_;
     int keypress_head_;

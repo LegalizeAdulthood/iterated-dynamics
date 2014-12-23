@@ -1677,7 +1677,7 @@ x11_init(Driver *drv, int *argc, char **argv)
     // TODO: enumerate visuals here and build video modes for each
     add_video_mode(drv, &x11_video_table[0]);
 
-    //di->frame_->initialize(di->Xdp);
+    di->frame_.initialize(di->Xdp);
     //di->text_.initialize(di->Xdp, 0);
 
     erase_text_screen(di);

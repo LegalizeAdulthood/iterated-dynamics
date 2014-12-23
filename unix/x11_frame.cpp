@@ -2,6 +2,11 @@
 
 #include "x11_frame.h"
 
+void x11_frame_window::initialize(Display *dpy)
+{
+    dpy_ = dpy;
+}
+
 int x11_frame_window::get_key_press(int wait_for_key)
 {
     pump_messages(wait_for_key != 0);
