@@ -1381,18 +1381,15 @@ static void File_Error(char *File_Name1, int ERROR)
 
 bool startdisk1(char *File_Name2, FILE *Source, bool overlay)
 {
-    int inc;
-    FILE *fps;
-
     // Open File for both reading and writing
-    fps = dir_fopen(workdir, File_Name2, "w+b");
+    FILE *fps = dir_fopen(workdir, File_Name2, "w+b");
     if (fps == nullptr)
     {
         File_Error(File_Name2, 1);
-        return true;              // Oops, somethings wrong!
+        return true;            // Oops, somethings wrong!
     }
 
-    inc = 1;                     // Assume we are overlaying a file
+    int inc = 1;                // Assume we are overlaying a file
 
     // Write the header
     if (overlay)                 // We are overlaying a file
