@@ -123,7 +123,7 @@ b2 = ((w2-w1)/(x2-x1)-b1)/(x2-x0)
 
 // evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t
 #define EVALUATE(x0, x1, b0, b1, b2, t) \
-((b2*(t-x1)+b1)*(t-x0)+b0)
+((b2*(t-x1) + b1)*(t-x0) + b0)
 
 /* Newton Interpolation.
    It computes the value of the interpolation polynomial given by
@@ -140,7 +140,7 @@ static double interpolate(double x0, double x1, double x2,
 
     return (double)b0;*/
     b = (b1-b0)/(x1-x0);
-    return (double)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1)+b)*(t-x0)+b0;
+    return (double)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1) + b)*(t-x0) + b0;
     /*
     if (t<x1)
       return w0+((t-x0)/(x1-x0))*(w1-w0);
@@ -360,7 +360,7 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
 
     // the variables below need to have local copies for recursive calls
     // center of rectangle
-    double midr = (cre1+cre2)/2, midi = (cim1+cim2)/2;
+    double midr = (cre1 + cre2)/2, midi = (cim1 + cim2)/2;
 
     double sr1;
     double si1;
@@ -467,7 +467,7 @@ scan:
                 goto rhombus_done;
             }
             savex = x1;
-            for (x = x1+INTERLEAVE, state.re = cre1+interstep; x < x2;
+            for (x = x1 + INTERLEAVE, state.re = cre1 + interstep; x < x2;
                     x += INTERLEAVE, state.re += interstep)
             {
                 zre = GET_SCAN_REAL(state.re, im);
@@ -550,10 +550,10 @@ scan:
     rq9 = zre9*zre9;
     iq9 = zim9*zim9;
 
-    cr1 = 0.75*cre1+0.25*cre2;
-    cr2 = 0.25*cre1+0.75*cre2;
-    ci1 = 0.75*cim1+0.25*cim2;
-    ci2 = 0.25*cim1+0.75*cim2;
+    cr1 = 0.75*cre1 + 0.25*cre2;
+    cr2 = 0.25*cre1 + 0.75*cre2;
+    ci1 = 0.75*cim1 + 0.25*cim2;
+    ci2 = 0.25*cim1 + 0.75*cim2;
 
     tzr1 = GET_REAL(cr1, ci1);
     tzi1 = GET_IMAG(cr1, ci1);
@@ -617,11 +617,11 @@ scan:
         zi = new.y
 
 #define SOI_ORBIT(zr, rq, zi, iq, cr, ci, esc) \
-      zi = (zi+zi)*zr+ci;\
-      zr = rq-iq+cr;\
+      zi = (zi + zi)*zr + ci;\
+      zr = rq-iq + cr;\
       rq = zr*zr;\
       iq = zi*zi;\
-      esc = ((rq+iq) > 16.0)?1:0
+      esc = ((rq + iq) > 16.0)?1:0
 
         // iterate key values
         SOI_ORBIT(zre1, rq1, zim1, iq1, cre1, cim1, state.esc1);
@@ -883,7 +883,7 @@ scan:
     im93 = GET_SAVED_IMAG(cr1, ci2);
     im94 = GET_SAVED_IMAG(cr2, ci2);
 
-    RHOMBUS(cre1, midr, cim1, midi, x1, ((x1+x2) >> 1), y1, ((y1+y2) >> 1),
+    RHOMBUS(cre1, midr, cim1, midi, x1, ((x1 + x2) >> 1), y1, ((y1 + y2) >> 1),
             sr1, si1,
             sr5, si5,
             sr6, si6,
@@ -894,7 +894,7 @@ scan:
             re15, im15,
             re91, im91,
             iter);
-    RHOMBUS(midr, cre2, cim1, midi, (x1+x2) >> 1, x2, y1, (y1+y2) >> 1,
+    RHOMBUS(midr, cre2, cim1, midi, (x1 + x2) >> 1, x2, y1, (y1 + y2) >> 1,
             sr5, si5,
             sr2, si2,
             sr9, si9,
@@ -905,7 +905,7 @@ scan:
             re16, im16,
             re92, im92,
             iter);
-    RHOMBUS(cre1, midr, midi, cim2, x1, (x1+x2) >> 1, (y1+y2) >> 1, y2,
+    RHOMBUS(cre1, midr, midi, cim2, x1, (x1 + x2) >> 1, (y1 + y2) >> 1, y2,
             sr6, si6,
             sr9, si9,
             sr3, si3,
@@ -916,7 +916,7 @@ scan:
             re20, im20,
             re93, im93,
             iter);
-    RHOMBUS(midr, cre2, midi, cim2, (x1+x2) >> 1, x2, (y1+y2) >> 1, y2,
+    RHOMBUS(midr, cre2, midi, cim2, (x1 + x2) >> 1, x2, (y1 + y2) >> 1, y2,
             sr9, si9,
             sr7, si7,
             sr8, si8,
@@ -967,10 +967,10 @@ void soi()
             xxmaxl, yymaxl,
             xxminl, yyminl,
             xxmaxl, yyminl,
-            (xxmaxl+xxminl)/2, yymaxl,
-            xxminl, (yymaxl+yyminl)/2,
-            xxmaxl, (yymaxl+yyminl)/2,
-            (xxmaxl+xxminl)/2, yyminl,
-            (xxminl+xxmaxl)/2, (yymaxl+yyminl)/2,
+            (xxmaxl + xxminl)/2, yymaxl,
+            xxminl, (yymaxl + yyminl)/2,
+            xxmaxl, (yymaxl + yyminl)/2,
+            (xxmaxl + xxminl)/2, yyminl,
+            (xxminl + xxmaxl)/2, (yymaxl + yyminl)/2,
             1);
 }
