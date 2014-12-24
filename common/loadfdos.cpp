@@ -115,7 +115,6 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 
 #ifndef XFRACT
     const char *nameptr;
-    int  *attributes;
 #endif
 
     g_init_mode = -1;
@@ -214,11 +213,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 
         qsort(vid, g_video_table_len, sizeof(vid[0]), vidcompare); // sort modes
 
-        attributes = (int *)&dstack[1000];
-        for (int i = 0; i < g_video_table_len; ++i)
-        {
-            attributes[i] = 1;
-        }
+        std::vector<int> attributes(g_video_table_len, 1);
         vidptr = &vid[0]; // for format_item
 
         // format heading
@@ -302,7 +297,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         helpmode = HELPLOADFILE;
         int i = fullscreen_choice(0, (char *) dstack,
                               "key...name......................err...xdot..ydot.clr.comment..................",
-                              temp1, g_video_table_len, nullptr, attributes,
+                              temp1, g_video_table_len, nullptr, &attributes[0],
                               1, 13, 78, 0, format_item, nullptr, nullptr, check_modekey);
         helpmode = oldhelpmode;
         if (i == -1)
