@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define imstep    state.imstep
 #define interstep state.interstep
 #define helpre    state.helpre
 #define zre       state.zre
@@ -687,10 +686,10 @@ scan:
         INTERPOLATE(cim1, midi, cim2, zim2, zim7, zim4, bi30, bi31, bi32);
 
         state.restep = (cre2-cre1)/(x2-x1);
-        imstep = (cim2-cim1)/(y2-y1);
+        state.imstep = (cim2-cim1)/(y2-y1);
         interstep = INTERLEAVE*state.restep;
 
-        for (y = y1, state.im = cim1; y < y2; y++, state.im += imstep)
+        for (y = y1, state.im = cim1; y < y2; y++, state.im += state.imstep)
         {
             if (driver_key_pressed())
             {
