@@ -44,7 +44,14 @@ bool    taborhelp = false;    // kludge for sound and tab or help key press
 
 namespace
 {
-int save_orbit[1500] = { 0 };           // array to save orbit values
+
+enum
+{
+    NUM_SAVE_ORBIT = 1500
+};
+
+int save_orbit[NUM_SAVE_ORBIT] = { 0 };           // array to save orbit values
+
 }
 
 #define FUDGEFACTOR     29      // fudge all values up by 2**this
@@ -1429,7 +1436,7 @@ static void plotdorbit(double dx, double dy, int color)
     int i;
     int j;
     int save_sxoffs, save_syoffs;
-    if (orbit_ptr >= 1500-3)
+    if (orbit_ptr >= NUM_SAVE_ORBIT-3)
         return;
     i = (int)(dy * plotmx1 - dx * plotmx2);
     i += sxoffs;
