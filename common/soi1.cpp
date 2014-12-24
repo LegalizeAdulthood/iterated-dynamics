@@ -118,12 +118,12 @@ interpolate(cre1, midr, cre2, \
    (x0,w0),..,(x2,w2). */
 #define INTERPOLATE(x0, x1, x2, w0, w1, w2, b0, b1, b2) \
 b0 = w0;\
-b1 = (w1-w0)/(x1-x0);\
-b2 = ((w2-w1)/(x2-x1)-b1)/(x2-x0)
+b1 = (w1 - w0)/(x1 - x0);\
+b2 = ((w2 - w1)/(x2 - x1) - b1)/(x2 - x0)
 
 // evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t
 #define EVALUATE(x0, x1, b0, b1, b2, t) \
-((b2*(t-x1) + b1)*(t-x0) + b0)
+((b2*(t - x1) + b1)*(t - x0) + b0)
 
 /* Newton Interpolation.
    It computes the value of the interpolation polynomial given by
@@ -139,8 +139,8 @@ static double interpolate(double x0, double x1, double x2,
     b0=(r0*b1-r2*b0)/(x2-x0);
 
     return (double)b0;*/
-    b = (b1-b0)/(x1-x0);
-    return (double)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1) + b)*(t-x0) + b0;
+    b = (b1 - b0)/(x1 - x0);
+    return (double)((((b2 - b1)/(x2 - x1) - b)/(x2 - x0))*(t - x1) + b)*(t - x0) + b0;
     /*
     if (t<x1)
       return w0+((t-x0)/(x1-x0))*(w1-w0);
@@ -434,7 +434,7 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
         goto rhombus_done;
     }
 
-    if ((y2-y1 <= SCAN) || (avail < minstack))
+    if ((y2 - y1 <= SCAN) || (avail < minstack))
     {
         // finish up the image by scanning the rectangle
 scan:
@@ -446,8 +446,8 @@ scan:
         INTERPOLATE(cim1, midi, cim2, zim5, zim9, zim8, bi20, bi21, bi22);
         INTERPOLATE(cim1, midi, cim2, zim2, zim7, zim4, bi30, bi31, bi32);
 
-        restep = (cre2-cre1)/(x2-x1);
-        imstep = (cim2-cim1)/(y2-y1);
+        restep = (cre2 - cre1)/(x2 - x1);
+        imstep = (cim2 - cim1)/(y2 - y1);
         interstep = INTERLEAVE*restep;
 
         for (y = y1, im = cim1; y < y2; y++, im += imstep)
@@ -482,7 +482,7 @@ scan:
                 else if (color == savecolor)
                     continue;
 
-                for (z = x-1, helpre = state.re-restep; z > x-INTERLEAVE; z--, helpre -= restep)
+                for (z = x - 1, helpre = state.re - restep; z > x - INTERLEAVE; z--, helpre -= restep)
                 {
                     zre = GET_SCAN_REAL(helpre, im);
                     zim = GET_SCAN_IMAG(helpre, im);
@@ -506,7 +506,7 @@ scan:
                 savecolor = color;
             }
 
-            for (z = x2-1, helpre = cre2-restep; z > savex; z--, helpre -= restep)
+            for (z = x2 - 1, helpre = cre2 - restep; z > savex; z--, helpre -= restep)
             {
                 zre = GET_SCAN_REAL(helpre, im);
                 zim = GET_SCAN_IMAG(helpre, im);
@@ -618,7 +618,7 @@ scan:
 
 #define SOI_ORBIT(zr, rq, zi, iq, cr, ci, esc) \
       zi = (zi + zi)*zr + ci;\
-      zr = rq-iq + cr;\
+      zr = rq - iq + cr;\
       rq = zr*zr;\
       iq = zi*zi;\
       esc = ((rq + iq) > 16.0)?1:0
@@ -756,63 +756,63 @@ scan:
         l1 = (tzr1 == 0.0)?
            (l1 == 0.0)?1.0:1000.0:
            l1/tzr1;
-        if (FABS(1.0-l1) > twidth)
+        if (FABS(1.0 - l1) > twidth)
             break;
 
         l2 = GET_IMAG(cr1, ci1);
         l2 = (tzi1 == 0.0)?
            (l2 == 0.0)?1.0:1000.0:
            l2/tzi1;
-        if (FABS(1.0-l2) > twidth)
+        if (FABS(1.0 - l2) > twidth)
             break;
 
         l1 = GET_REAL(cr2, ci1);
         l1 = (tzr2 == 0.0)?
            (l1 == 0.0)?1.0:1000.0:
            l1/tzr2;
-        if (FABS(1.0-l1) > twidth)
+        if (FABS(1.0 - l1) > twidth)
             break;
 
         l2 = GET_IMAG(cr2, ci1);
         l2 = (tzi2 == 0.0)?
            (l2 == 0.0)?1.0:1000.0:
            l2/tzi2;
-        if (FABS(1.0-l2) > twidth)
+        if (FABS(1.0 - l2) > twidth)
             break;
 
         l1 = GET_REAL(cr1, ci2);
         l1 = (tzr3 == 0.0)?
            (l1 == 0.0)?1.0:1000.0:
            l1/tzr3;
-        if (FABS(1.0-l1) > twidth)
+        if (FABS(1.0 - l1) > twidth)
             break;
 
         l2 = GET_IMAG(cr1, ci2);
         l2 = (tzi3 == 0.0)?
            (l2 == 0.0)?1.0:1000.0:
            l2/tzi3;
-        if (FABS(1.0-l2) > twidth)
+        if (FABS(1.0 - l2) > twidth)
             break;
 
         l1 = GET_REAL(cr2, ci2);
         l1 = (tzr4 == 0.0)?
            (l1 == 0.0)?1.0:1000.0:
            l1/tzr4;
-        if (FABS(1.0-l1) > twidth)
+        if (FABS(1.0 - l1) > twidth)
             break;
 
         l2 = GET_IMAG(cr2, ci2);
         l2 = (tzi4 == 0.0)?
            (l2 == 0.0)?1.0:1000.0:
            l2/tzi4;
-        if (FABS(1.0-l2) > twidth)
+        if (FABS(1.0 - l2) > twidth)
             break;
     }
 
     iter--;
 
     // this is a little heuristic I tried to improve performance.
-    if (iter-before < 10)
+    if (iter - before < 10)
     {
         zre1 = sr1;
         zim1 = si1;
@@ -956,9 +956,9 @@ void soi()
         xxmaxl = xxmax;
         yymaxl = yymax;
     }
-    twidth = tolerance/(xdots-1);
-    stepx = (xxmaxl - xxminl) / xdots;
-    stepy = (yyminl - yymaxl) / ydots;
+    twidth = tolerance/(xdots - 1);
+    stepx = (xxmaxl - xxminl)/xdots;
+    stepy = (yyminl - yymaxl)/ydots;
     equal = (stepx < stepy ? stepx : stepy);
 
     RHOMBUS(xxminl, xxmaxl, yymaxl, yyminl,
