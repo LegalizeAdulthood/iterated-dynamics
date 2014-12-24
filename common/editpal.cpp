@@ -1560,7 +1560,7 @@ struct PalTable
     bool hidden;
     int           stored_at;
     FILE         *file;
-    char         *memory;
+    char         *saved_pixels;
 
     PALENTRY     save_pal[8][256];
 
@@ -2021,8 +2021,8 @@ static bool PalTable__MemoryAlloc(PalTable *me, long size)
         return false;   // can't do it
     }
 
-    me->memory = (char *)malloc(size);
-    if (me->memory == nullptr)
+    me->saved_pixels = (char *)malloc(size);
+    if (me->saved_pixels == nullptr)
     {
         me->stored_at = NOWHERE;
         return false;
@@ -2052,9 +2052,9 @@ static void PalTable__SaveRect(PalTable *me)
         break;
 
     case MEMORY:
-        if (me->memory != nullptr)
-            free(me->memory);
-        me->memory = nullptr;
+        if (me->saved_pixels != nullptr)
+            free(me->saved_pixels);
+        me->saved_pixels = nullptr;
         break;
     }
 
@@ -2062,7 +2062,7 @@ static void PalTable__SaveRect(PalTable *me)
 
     if (PalTable__MemoryAlloc(me, (long)width*depth))
     {
-        char  *ptr = me->memory;
+        char  *ptr = me->saved_pixels;
         char  *bufptr = buff; // MSC needs me indirection to get it right
 
         Cursor_Hide();
@@ -2137,7 +2137,7 @@ static void PalTable__RestoreRect(PalTable *me)
 
     case MEMORY:
     {
-        char  *ptr = me->memory;
+        char  *ptr = me->saved_pixels;
         char  *bufptr = buff; // MSC needs me indirection to get it right
 
         Cursor_Hide();
@@ -3014,7 +3014,7 @@ static PalTable *PalTable_Construct()
     me->hidden      = false;
     me->stored_at   = NOWHERE;
     me->file        = nullptr;
-    me->memory      = nullptr;
+    me->saved_pixels      = nullptr;
 
     me->fs_color.red   = 42;
     me->fs_color.green = 42;
@@ -3099,8 +3099,8 @@ static void PalTable_Destroy(PalTable *me)
         dir_remove(tempdir, undofile);
     }
 
-    if (me->memory != nullptr)
-        free(me->memory);
+    if (me->saved_pixels != nullptr)
+        free(me->saved_pixels);
 
     RGBEditor_Destroy(me->rgb[0]);
     RGBEditor_Destroy(me->rgb[1]);
