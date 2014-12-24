@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define zim       state.zim
 #define br10      state.br10
 #define br11      state.br11
 #define br12      state.br12
@@ -695,8 +694,8 @@ scan:
             }
             // cppcheck-suppress duplicateExpression
             state.zre = GET_SCAN_REAL(cre1, state.im);
-            zim = GET_SCAN_IMAG(cre1, state.im);
-            savecolor = iteration(cre1, state.im, state.zre, zim, iter);
+            state.zim = GET_SCAN_IMAG(cre1, state.im);
+            savecolor = iteration(cre1, state.im, state.zre, state.zim, iter);
             if (savecolor < 0)
             {
                 status = true;
@@ -707,9 +706,9 @@ scan:
                     x += INTERLEAVE, state.re += state.interstep)
             {
                 state.zre = GET_SCAN_REAL(state.re, state.im);
-                zim = GET_SCAN_IMAG(state.re, state.im);
+                state.zim = GET_SCAN_IMAG(state.re, state.im);
 
-                color = iteration(state.re, state.im, state.zre, zim, iter);
+                color = iteration(state.re, state.im, state.zre, state.zim, iter);
                 if (color < 0)
                 {
                     status = true;
@@ -723,8 +722,8 @@ scan:
                     z--, state.helpre -= state.restep)
                 {
                     state.zre = GET_SCAN_REAL(state.helpre, state.im);
-                    zim = GET_SCAN_IMAG(state.helpre, state.im);
-                    helpcolor = iteration(state.helpre, state.im, state.zre, zim, iter);
+                    state.zim = GET_SCAN_IMAG(state.helpre, state.im);
+                    helpcolor = iteration(state.helpre, state.im, state.zre, state.zim, iter);
                     if (helpcolor < 0)
                     {
                         status = true;
@@ -749,8 +748,8 @@ scan:
                 z--, state.helpre -= state.restep)
             {
                 state.zre = GET_SCAN_REAL(state.helpre, state.im);
-                zim = GET_SCAN_IMAG(state.helpre, state.im);
-                helpcolor = iteration(state.helpre, state.im, state.zre, zim, iter);
+                state.zim = GET_SCAN_IMAG(state.helpre, state.im);
+                helpcolor = iteration(state.helpre, state.im, state.zre, state.zim, iter);
                 if (helpcolor < 0)
                 {
                     status = true;
