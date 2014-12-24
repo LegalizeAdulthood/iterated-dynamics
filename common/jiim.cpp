@@ -463,7 +463,7 @@ void Jiim(jiim_types which)
     using_jiim = true;
     // TODO: Eliminate memory aliasing to strlocn
     mem_init(strlocn, 10*1024);
-    line_buff = static_cast<BYTE *>(mem_alloc(std::max(sxdots, sydots)));
+    line_buff.resize(std::max(sxdots, sydots));
     aspect = ((double)xdots*3)/((double)ydots*4);  // assumes 4:3
     actively_computing = true;
     SetAspect(aspect);
@@ -1181,7 +1181,7 @@ finish:
 #ifdef XFRACT
     Cursor_EndMouseTracking();
 #endif
-    delete(line_buff);
+    line_buff.clear();
     screen_rect.clear();
     lookatmouse = oldlookatmouse;
     using_jiim = false;
