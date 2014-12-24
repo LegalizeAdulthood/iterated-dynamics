@@ -1931,7 +1931,7 @@ void StkJumpLabel()
 }
 
 
-unsigned SkipWhiteSpace(char *Str)
+unsigned SkipWhiteSpace(char const *Str)
 {
     unsigned n;
     bool Done = false;
@@ -1952,7 +1952,7 @@ unsigned SkipWhiteSpace(char *Str)
 }
 
 // detect if constant is part of a (a,b) construct
-static bool isconst_pair(char *Str)
+static bool isconst_pair(char const *Str)
 {
     int n, j;
     bool answer = false;
@@ -1973,7 +1973,7 @@ static bool isconst_pair(char *Str)
     return answer;
 }
 
-ConstArg *isconst(char *Str, int Len)
+ConstArg *isconst(char const *Str, int Len)
 {
     DComplex z;
     // next line enforces variable vs constant naming convention
@@ -2106,15 +2106,15 @@ const char * JumpList[] =
 
 
 
-int isjump(char *Str, int Len)
+/* return values
+    0 - Not a jump
+    1 - if
+    2 - elseif
+    3 - else
+    4 - endif
+*/
+int isjump(char const *Str, int Len)
 {
-    /* return values
-        0 - Not a jump
-        1 - if
-        2 - elseif
-        3 - else
-        4 - endif
-    */
     for (int i = 0; *JumpList[i]; i++)
         if ((int) strlen(JumpList[i]) == Len)
             if (!strnicmp(JumpList[i], Str, Len))
@@ -2193,8 +2193,7 @@ void FnctNotFound()
 }
 
 // determine if s names a function and if so which one
-
-int whichfn(char *s, int len)
+int whichfn(char const *s, int len)
 {
     int out;
     if (len != 3)
@@ -2208,7 +2207,7 @@ int whichfn(char *s, int len)
     return out;
 }
 
-void (*isfunct(char *Str, int Len))()
+void (*isfunct(char const *Str, int Len))()
 {
     unsigned n = SkipWhiteSpace(&Str[Len]);
     if (Str[Len+n] == '(')
@@ -2288,7 +2287,7 @@ SYMETRY SymStr[] =
     { "",              symmetry_type::NONE }
 };
 
-static bool ParseStr(char *Str, int pass)
+static bool ParseStr(char const *Str, int pass)
 {
     ConstArg *c;
     int ModFlag = 999, Len, Equals = 0, Mods[20], mdstk = 0;
