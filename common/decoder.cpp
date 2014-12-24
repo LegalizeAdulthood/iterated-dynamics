@@ -108,7 +108,7 @@ static BYTE suffix[10000] = { 0 };
 
 namespace
 {
-BYTE decoderline1[MAXPIXELS];
+BYTE decoderline[MAXPIXELS];
 }
 
 /* The reason we have these separated like this instead of using
@@ -196,7 +196,7 @@ short decoder(short linewidth)
 
     // Set up the stack pointer and decode buffer pointer
     sp = dstack;
-    bufptr = decoderline1;
+    bufptr = decoderline;
     bufcnt = linewidth;
 
     /* This is the main loop.  For each code we get we pass through the linked
@@ -296,14 +296,14 @@ short decoder(short linewidth)
                     {
                         if (--yskip < 0)
                         {
-                            ret = (short)((*outln)(decoderline1, (int)(bufptr - decoderline1)));
+                            ret = (short)((*outln)(decoderline, (int)(bufptr - decoderline)));
                             if (ret < 0)
                                 return (ret);
                             yskip = skipydots;
                         }
                         if (driver_key_pressed())
                             return (-1);
-                        bufptr = decoderline1;
+                        bufptr = decoderline;
                         bufcnt = linewidth;
                         xskip = 0;
                     }
@@ -351,14 +351,14 @@ short decoder(short linewidth)
             {
                 if (--yskip < 0)
                 {
-                    ret = (short)((*outln)(decoderline1, (int)(bufptr - decoderline1)));
+                    ret = (short)((*outln)(decoderline, (int)(bufptr - decoderline)));
                     if (ret < 0)
                         return (ret);
                     yskip = skipydots;
                 }
                 if (driver_key_pressed())
                     return (-1);
-                bufptr = decoderline1;
+                bufptr = decoderline;
                 bufcnt = linewidth;
                 xskip = 0;
             }
