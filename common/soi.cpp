@@ -531,8 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define tiq4      state.tiq4
-
     // number of iterations before SOI iteration cycle
     static long before;
     static int avail;
@@ -759,7 +757,7 @@ scan:
     state.tiq3 = state.tzi3*state.tzi3;
 
     state.trq4 = state.tzr4*state.tzr4;
-    tiq4 = state.tzi4*state.tzi4;
+    state.tiq4 = state.tzi4*state.tzi4;
 
     before = iter;
 
@@ -847,9 +845,9 @@ scan:
         state.tiq3 = state.tzi3*state.tzi3;
 
         state.tzi4 = (state.tzi4 + state.tzi4)*state.tzr4 + state.ci2;
-        state.tzr4 = state.trq4 - tiq4 + state.cr2;
+        state.tzr4 = state.trq4 - state.tiq4 + state.cr2;
         state.trq4 = state.tzr4*state.tzr4;
-        tiq4 = state.tzi4*state.tzi4;
+        state.tiq4 = state.tzi4*state.tzi4;
 
         iter++;
 
@@ -866,7 +864,7 @@ scan:
                 (state.trq1 + state.tiq1) > 16.0 ||
                 (state.trq2 + state.tiq2) > 16.0 ||
                 (state.trq3 + state.tiq3) > 16.0 ||
-                (state.trq4 + tiq4) > 16.0)
+                (state.trq4 + state.tiq4) > 16.0)
             break;
 
         /* if maximum number of iterations is reached, the whole rectangle
