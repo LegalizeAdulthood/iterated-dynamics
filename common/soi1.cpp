@@ -288,7 +288,6 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define tzr3      state.tzr3
 #define tzi3      state.tzi3
 #define tzr4      state.tzr4
 #define tzi4      state.tzi4
@@ -508,7 +507,7 @@ scan:
     state.tzr2 = GET_REAL(state.cr2, state.ci1);
     state.tzi2 = GET_IMAG(state.cr2, state.ci1);
 
-    tzr3 = GET_REAL(state.cr1, state.ci2);
+    state.tzr3 = GET_REAL(state.cr1, state.ci2);
     tzi3 = GET_IMAG(state.cr1, state.ci2);
 
     tzr4 = GET_REAL(state.cr2, state.ci2);
@@ -520,7 +519,7 @@ scan:
     trq2 = state.tzr2*state.tzr2;
     tiq2 = state.tzi2*state.tzi2;
 
-    trq3 = tzr3*tzr3;
+    trq3 = state.tzr3*state.tzr3;
     tiq3 = tzi3*tzi3;
 
     trq4 = tzr4*tzr4;
@@ -650,7 +649,7 @@ scan:
               trq2=tzr2*tzr2;
               tiq2=tzi2*tzi2;
         */
-        SOI_ORBIT(tzr3, trq3, tzi3, tiq3, state.cr1, state.ci2, state.tesc3);
+        SOI_ORBIT(state.tzr3, trq3, tzi3, tiq3, state.cr1, state.ci2, state.tesc3);
         /*
               tzi3=(tzi3+tzi3)*tzr3+ci2;
               tzr3=trq3-tiq3+cr1;
@@ -728,9 +727,9 @@ scan:
             break;
 
         state.l1 = GET_REAL(state.cr1, state.ci2);
-        state.l1 = (tzr3 == 0.0)?
+        state.l1 = (state.tzr3 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
-           state.l1/tzr3;
+           state.l1/state.tzr3;
         if (FABS(1.0 - state.l1) > twidth)
             break;
 
