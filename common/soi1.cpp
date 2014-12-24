@@ -22,7 +22,6 @@
 #include "drivers.h"
 #include "fractype.h"
 
-#define DBLS double
 #define FABS(x)  fabs(x)
 #define FREXP(x, y) frexp(x, y)
 
@@ -34,11 +33,11 @@ extern int rhombus_depth;
 extern int max_rhombus_depth;
 extern int minstackavail;
 extern int minstack; // need this much stack to recurse
-static DBLS twidth;
-static DBLS equal;
+static double twidth;
+static double equal;
 
-static long iteration(DBLS cr, DBLS ci,
-                      DBLS re, DBLS im,
+static long iteration(double cr, double ci,
+                      double re, double im,
                       long start)
 {
     old.x = re;
@@ -129,19 +128,19 @@ b2 = ((w2-w1)/(x2-x1)-b1)/(x2-x0)
 /* Newton Interpolation.
    It computes the value of the interpolation polynomial given by
    (x0,w0)..(x2,w2) at x:=t */
-static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
-                        DBLS w0, DBLS w1, DBLS w2,
-                        DBLS t)
+static double interpolate(double x0, double x1, double x2,
+                        double w0, double w1, double w2,
+                        double t)
 {
-    DBLS b0 = w0, b1 = w1, b2 = w2, b;
+    double b0 = w0, b1 = w1, b2 = w2, b;
 
     /*b0=(r0*b1-r1*b0)/(x1-x0);
     b1=(r1*b2-r2*b1)/(x2-x1);
     b0=(r0*b1-r2*b0)/(x2-x0);
 
-    return (DBLS)b0;*/
+    return (double)b0;*/
     b = (b1-b0)/(x1-x0);
-    return (DBLS)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1)+b)*(t-x0)+b0;
+    return (double)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1)+b)*(t-x0)+b0;
     /*
     if (t<x1)
       return w0+((t-x0)/(x1-x0))*(w1-w0);
@@ -169,7 +168,7 @@ static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
 
       iter       : current number of iterations
       */
-static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
+static double zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
        zre6, zim6, zre7, zim7, zre8, zim8, zre9, zim9;
 /*
    The purpose of this macro is to reduce the number of parameters of the
@@ -190,7 +189,7 @@ static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
  zre9 = (ZRE9);zim9 = (ZIM9);\
  status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0
 
-static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
+static int rhombus(double cre1, double cre2, double cim1, double cim2,
                    int x1, int x2, int y1, int y2, long iter)
 {
     // The following variables do not need their values saved
@@ -271,10 +270,10 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 
     // the variables below need to have local copies for recursive calls
     int  *mem_int;
-    DBLS *mem;
-    DBLS *mem_static;
+    double *mem;
+    double *mem_static;
     // center of rectangle
-    DBLS midr = (cre1+cre2)/2, midi = (cim1+cim2)/2;
+    double midr = (cre1+cre2)/2, midi = (cim1+cim2)/2;
 
 #define esc1  mem_int[0]
 #define esc2  mem_int[1]
@@ -351,7 +350,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
        for each recursive call of rhombus() for the rest.
      */
     mem_int    = (int *)sizeofstring;
-    mem_static = (DBLS *)(mem_int + 13);
+    mem_static = (double *)(mem_int + 13);
     mem = mem_static+ 66 + 50*rhombus_depth;
 #endif
 
@@ -876,18 +875,18 @@ void soi()
 {
     // cppcheck-suppress unreadVariable
     bool status;
-    DBLS tolerance = 0.1;
-    DBLS stepx, stepy;
-    DBLS xxminl, xxmaxl, yyminl, yymaxl;
+    double tolerance = 0.1;
+    double stepx, stepy;
+    double xxminl, xxmaxl, yyminl, yymaxl;
     minstackavail = 30000;
     rhombus_depth = -1;
     max_rhombus_depth = 0;
     if (bf_math != bf_math_type::NONE)
     {
-        xxminl = (DBLS)bftofloat(bfxmin);
-        yyminl = (DBLS)bftofloat(bfymin);
-        xxmaxl = (DBLS)bftofloat(bfxmax);
-        yymaxl = (DBLS)bftofloat(bfymax);
+        xxminl = (double)bftofloat(bfxmin);
+        yyminl = (double)bftofloat(bfymin);
+        xxmaxl = (double)bftofloat(bfxmax);
+        yymaxl = (double)bftofloat(bfymax);
     }
     else
     {

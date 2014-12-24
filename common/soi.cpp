@@ -22,7 +22,6 @@
 #include "prototyp.h"
 #include "drivers.h"
 
-#define DBLS LDBL
 #define FABS(x)  fabsl(x)
 /* the following needs to be changed back to frexpl once the portability
    issue has been addressed */
@@ -40,32 +39,32 @@ int rhombus_depth = 0;
 int max_rhombus_depth;
 int minstackavail;
 int minstack = 2200; // and this much stack to not crash when <tab> is pressed
-static DBLS twidth;
-static DBLS equal;
+static LDBL twidth;
+static LDBL equal;
 static bool baxinxx = false;
 
 
-long iteration(DBLS cr, DBLS ci,
-               DBLS re, DBLS im,
+long iteration(LDBL cr, LDBL ci,
+               LDBL re, LDBL im,
                long start)
 {
     long iter;
     long offset = 0;
-    DBLS ren;
-    DBLS imn;
+    LDBL ren;
+    LDBL imn;
 #ifdef INTEL
     float mag;
     unsigned long bail = 0x41800000, magi; // bail=16.0
     unsigned long eq = *(unsigned long *)&equal;
 #else
-    DBLS mag;
+    LDBL mag;
 #endif
     int exponent;
 
     if (baxinxx)
     {
-        DBLS sre = re;
-        DBLS sim = im;
+        LDBL sre = re;
+        LDBL sim = im;
         ren = re*re;
         imn = im*im;
         if (start != 0)
@@ -302,9 +301,9 @@ long iteration(DBLS cr, DBLS ci,
 
         baxinxx = false;
 #ifdef INTEL
-        DBLS d = ren+imn;
+        LDBL d = ren+imn;
 #else
-        DBLS d = mag;
+        LDBL d = mag;
 #endif
         FREXP(d, &exponent);
         return (maxit+offset-(((iter-1) << 3)+(long)adjust[exponent >> 3]));
@@ -384,19 +383,19 @@ b2 = ((w2-w1)/(LDBL)(x2-x1)-b1)/(x2-x0)
 /* Newton Interpolation.
    It computes the value of the interpolation polynomial given by
    (x0,w0)..(x2,w2) at x:=t */
-static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
-                        DBLS w0, DBLS w1, DBLS w2,
-                        DBLS t)
+static LDBL interpolate(LDBL x0, LDBL x1, LDBL x2,
+                        LDBL w0, LDBL w1, LDBL w2,
+                        LDBL t)
 {
-    DBLS b0 = w0, b1 = w1, b2 = w2, b;
+    LDBL b0 = w0, b1 = w1, b2 = w2, b;
 
     /*b0=(r0*b1-r1*b0)/(x1-x0);
     b1=(r1*b2-r2*b1)/(x2-x1);
     b0=(r0*b1-r2*b0)/(x2-x0);
 
-    return (DBLS)b0;*/
+    return (LDBL)b0;*/
     b = (b1-b0)/(x1-x0);
-    return (DBLS)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1)+b)*(t-x0)+b0;
+    return (LDBL)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1)+b)*(t-x0)+b0;
     /*
     if (t<x1)
       return w0+((t-x0)/(LDBL)(x1-x0))*(w1-w0);
@@ -424,7 +423,7 @@ static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
 
       iter       : current number of iterations
       */
-static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
+static LDBL zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
        zre6, zim6, zre7, zim7, zre8, zim8, zre9, zim9;
 /*
    The purpose of this macro is to reduce the number of parameters of the
@@ -445,7 +444,7 @@ static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
  zre9 = (ZRE9);zim9 = (ZIM9);                                                       \
  status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0
 
-static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
+static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
                    int x1, int x2, int y1, int y2, long iter)
 {
     // The following variables do not need their values saved
@@ -525,10 +524,10 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
     static int avail;
 
     // the variables below need to have local copis for recursive calls
-    DBLS *mem;
-    DBLS *mem_static;
+    LDBL *mem;
+    LDBL *mem_static;
     // center of rectangle
-    DBLS midr = (cre1+cre2)/2, midi = (cim1+cim2)/2;
+    LDBL midr = (cre1+cre2)/2, midi = (cim1+cim2)/2;
 
 #define sr1  mem[ 0]
 #define si1  mem[ 1]
@@ -590,7 +589,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
        static variables, then we make our own "stack" with copies
        for each recursive call of rhombus() for the rest.
      */
-    mem_static = (DBLS *)sizeofstring;
+    mem_static = (LDBL *)sizeofstring;
     mem = mem_static+ 66 + 50*rhombus_depth;
 #endif
 
@@ -1062,9 +1061,9 @@ void soi_ldbl()
 {
     // cppcheck-suppress unreadVariable
     bool status;
-    DBLS tolerance = 0.1;
-    DBLS stepx, stepy;
-    DBLS xxminl, xxmaxl, yyminl, yymaxl;
+    LDBL tolerance = 0.1;
+    LDBL stepx, stepy;
+    LDBL xxminl, xxmaxl, yyminl, yymaxl;
     minstackavail = 30000;
     rhombus_depth = -1;
     max_rhombus_depth = 0;
