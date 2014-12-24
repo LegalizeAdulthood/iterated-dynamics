@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define restep    state.restep
 #define imstep    state.imstep
 #define interstep state.interstep
 #define helpre    state.helpre
@@ -687,9 +686,9 @@ scan:
         INTERPOLATE(cim1, midi, cim2, zim5, zim9, zim8, bi20, bi21, bi22);
         INTERPOLATE(cim1, midi, cim2, zim2, zim7, zim4, bi30, bi31, bi32);
 
-        restep = (cre2-cre1)/(x2-x1);
+        state.restep = (cre2-cre1)/(x2-x1);
         imstep = (cim2-cim1)/(y2-y1);
-        interstep = INTERLEAVE*restep;
+        interstep = INTERLEAVE*state.restep;
 
         for (y = y1, state.im = cim1; y < y2; y++, state.im += imstep)
         {
@@ -723,7 +722,7 @@ scan:
                 else if (color == savecolor)
                     continue;
 
-                for (z = x-1, helpre = state.re-restep; z > x-INTERLEAVE; z--, helpre -= restep)
+                for (z = x-1, helpre = state.re - state.restep; z > x-INTERLEAVE; z--, helpre -= state.restep)
                 {
                     zre = GET_SCAN_REAL(helpre, state.im);
                     zim = GET_SCAN_IMAG(helpre, state.im);
@@ -747,7 +746,7 @@ scan:
                 savecolor = color;
             }
 
-            for (z = x2-1, helpre = cre2-restep; z > savex; z--, helpre -= restep)
+            for (z = x2-1, helpre = cre2 - state.restep; z > savex; z--, helpre -= state.restep)
             {
                 zre = GET_SCAN_REAL(helpre, state.im);
                 zim = GET_SCAN_IMAG(helpre, state.im);
