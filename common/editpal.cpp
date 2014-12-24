@@ -1598,7 +1598,7 @@ static void    PalTable__change(RGBEditor *rgb, void *info);
 
 // public:
 
-static PalTable *PalTable_Construct();
+static void PalTable_Construct(PalTable *me);
 static void      PalTable_Destroy(PalTable *me);
 static void      PalTable_Process(PalTable *me);
 static void      PalTable_SetHidden(PalTable *me, bool hidden);
@@ -2885,9 +2885,8 @@ static void PalTable__MkDefaultPalettes(PalTable *me)  // creates default Fkey p
 
 
 
-static PalTable *PalTable_Construct()
+static void PalTable_Construct(PalTable *me)
 {
-    PalTable     *me = new PalTable;
     int           csize;
 
     me->rgb[0] = RGBEditor_Construct(0, 0, PalTable__other_key, PalTable__change, me);
@@ -2929,8 +2928,6 @@ static PalTable *PalTable_Construct()
     if (csize < CSIZE_MIN)
         csize = CSIZE_MIN;
     PalTable__SetCSize(me, csize);
-
-    return me;
 }
 
 
@@ -2970,7 +2967,6 @@ static void PalTable_Hide(PalTable *me, RGBEditor *rgb, bool hidden)
 
 static void PalTable_Destroy(PalTable *me)
 {
-
     if (me->file != nullptr)
     {
         fclose(me->file);
@@ -2986,7 +2982,6 @@ static void PalTable_Destroy(PalTable *me)
     RGBEditor_Destroy(me->rgb[0]);
     RGBEditor_Destroy(me->rgb[1]);
     MoveBox_Destroy(me->movebox);
-    delete me;
 }
 
 
@@ -3077,9 +3072,10 @@ void EditPalette()       // called by fractint
     bg_color = (BYTE)(fg_color-1);
 
     Cursor_Construct();
-    PalTable *pt = PalTable_Construct();
-    PalTable_Process(pt);
-    PalTable_Destroy(pt);
+    PalTable pt;
+    PalTable_Construct(&pt);
+    PalTable_Process(&pt);
+    PalTable_Destroy(&pt);
     Cursor_Destroy();
 
     lookatmouse = oldlookatmouse;
