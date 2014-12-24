@@ -22,7 +22,6 @@
 
 #define MAXRECT         1024      // largest width of SaveRect/RestoreRect
 
-#define newx(size)     mem_alloc(size)
 #define delete(block)  block = nullptr
 
 int show_numbers =0;              // toggle for display of coords
@@ -467,7 +466,7 @@ void Jiim(int which)         // called by fractint
     using_jiim = true;
     // TODO: Eliminate memory aliasing to strlocn
     mem_init(strlocn, 10*1024);
-    line_buff = static_cast<BYTE *>(newx(std::max(sxdots, sydots)));
+    line_buff = static_cast<BYTE *>(mem_alloc(std::max(sxdots, sydots)));
     aspect = ((double)xdots*3)/((double)ydots*4);  // assumes 4:3
     actively_computing = true;
     SetAspect(aspect);
