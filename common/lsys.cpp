@@ -45,8 +45,11 @@ static void lsysi_dodrawc(lsys_turtlestatei *cmd);
 static void lsysi_dodrawgt(lsys_turtlestatei *cmd);
 static void lsysi_dodrawlt(lsys_turtlestatei *cmd);
 
+namespace
+{
 std::vector<long> sins;
 std::vector<long> coss;
+}
 static char *ruleptrs[MAXRULES];
 static lsys_cmd *rules2[MAXRULES];
 char maxangle;
