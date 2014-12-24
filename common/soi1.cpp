@@ -189,6 +189,30 @@ static double zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
  zre9 = (ZRE9);zim9 = (ZIM9);\
  status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0
 
+namespace
+{
+
+struct soi_double_state
+{
+    int esc1;
+    int esc2;
+    int esc3;
+    int esc4;
+    int esc5;
+    int esc6;
+    int esc7;
+    int esc8;
+    int esc9;
+    int tesc1;
+    int tesc2;
+    int tesc3;
+    int tesc4;
+};
+
+soi_double_state state = { 0 };
+
+}
+
 static int rhombus(double cre1, double cre2, double cim1, double cim2,
                    int x1, int x2, int y1, int y2, long iter)
 {
@@ -269,25 +293,10 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     static int avail;
 
     // the variables below need to have local copies for recursive calls
-    int  *mem_int;
     double *mem;
     double *mem_static;
     // center of rectangle
     double midr = (cre1+cre2)/2, midi = (cim1+cim2)/2;
-
-#define esc1  mem_int[0]
-#define esc2  mem_int[1]
-#define esc3  mem_int[2]
-#define esc4  mem_int[3]
-#define esc5  mem_int[4]
-#define esc6  mem_int[5]
-#define esc7  mem_int[6]
-#define esc8  mem_int[7]
-#define esc9  mem_int[8]
-#define tesc1 mem_int[9]
-#define tesc2 mem_int[10]
-#define tesc3 mem_int[11]
-#define tesc4 mem_int[12]
 
 #define sr1  mem[ 0]
 #define si1  mem[ 1]
@@ -349,8 +358,7 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
        static variables, then we make our own "stack" with copies
        for each recursive call of rhombus() for the rest.
      */
-    mem_int    = (int *)sizeofstring;
-    mem_static = (double *)(mem_int + 13);
+    mem_static = (double *) sizeofstring;
     mem = mem_static+ 66 + 50*rhombus_depth;
 #endif
 
@@ -563,63 +571,63 @@ scan:
       esc = ((rq+iq) > 16.0)?1:0
 
         // iterate key values
-        SOI_ORBIT(zre1, rq1, zim1, iq1, cre1, cim1, esc1);
+        SOI_ORBIT(zre1, rq1, zim1, iq1, cre1, cim1, state.esc1);
         /*
               zim1=(zim1+zim1)*zre1+cim1;
               zre1=rq1-iq1+cre1;
               rq1=zre1*zre1;
               iq1=zim1*zim1;
         */
-        SOI_ORBIT(zre2, rq2, zim2, iq2, cre2, cim1, esc2);
+        SOI_ORBIT(zre2, rq2, zim2, iq2, cre2, cim1, state.esc2);
         /*
               zim2=(zim2+zim2)*zre2+cim1;
               zre2=rq2-iq2+cre2;
               rq2=zre2*zre2;
               iq2=zim2*zim2;
         */
-        SOI_ORBIT(zre3, rq3, zim3, iq3, cre1, cim2, esc3);
+        SOI_ORBIT(zre3, rq3, zim3, iq3, cre1, cim2, state.esc3);
         /*
               zim3=(zim3+zim3)*zre3+cim2;
               zre3=rq3-iq3+cre1;
               rq3=zre3*zre3;
               iq3=zim3*zim3;
         */
-        SOI_ORBIT(zre4, rq4, zim4, iq4, cre2, cim2, esc4);
+        SOI_ORBIT(zre4, rq4, zim4, iq4, cre2, cim2, state.esc4);
         /*
               zim4=(zim4+zim4)*zre4+cim2;
               zre4=rq4-iq4+cre2;
               rq4=zre4*zre4;
               iq4=zim4*zim4;
         */
-        SOI_ORBIT(zre5, rq5, zim5, iq5, midr, cim1, esc5);
+        SOI_ORBIT(zre5, rq5, zim5, iq5, midr, cim1, state.esc5);
         /*
               zim5=(zim5+zim5)*zre5+cim1;
               zre5=rq5-iq5+midr;
               rq5=zre5*zre5;
               iq5=zim5*zim5;
         */
-        SOI_ORBIT(zre6, rq6, zim6, iq6, cre1, midi, esc6);
+        SOI_ORBIT(zre6, rq6, zim6, iq6, cre1, midi, state.esc6);
         /*
               zim6=(zim6+zim6)*zre6+midi;
               zre6=rq6-iq6+cre1;
               rq6=zre6*zre6;
               iq6=zim6*zim6;
         */
-        SOI_ORBIT(zre7, rq7, zim7, iq7, cre2, midi, esc7);
+        SOI_ORBIT(zre7, rq7, zim7, iq7, cre2, midi, state.esc7);
         /*
               zim7=(zim7+zim7)*zre7+midi;
               zre7=rq7-iq7+cre2;
               rq7=zre7*zre7;
               iq7=zim7*zim7;
         */
-        SOI_ORBIT(zre8, rq8, zim8, iq8, midr, cim2, esc8);
+        SOI_ORBIT(zre8, rq8, zim8, iq8, midr, cim2, state.esc8);
         /*
               zim8=(zim8+zim8)*zre8+cim2;
               zre8=rq8-iq8+midr;
               rq8=zre8*zre8;
               iq8=zim8*zim8;
         */
-        SOI_ORBIT(zre9, rq9, zim9, iq9, midr, midi, esc9);
+        SOI_ORBIT(zre9, rq9, zim9, iq9, midr, midi, state.esc9);
         /*
               zim9=(zim9+zim9)*zre9+midi;
               zre9=rq9-iq9+midr;
@@ -627,7 +635,7 @@ scan:
               iq9=zim9*zim9;
         */
         // iterate test point
-        SOI_ORBIT(tzr1, trq1, tzi1, tiq1, cr1, ci1, tesc1);
+        SOI_ORBIT(tzr1, trq1, tzi1, tiq1, cr1, ci1, state.tesc1);
         /*
               tzi1=(tzi1+tzi1)*tzr1+ci1;
               tzr1=trq1-tiq1+cr1;
@@ -635,21 +643,21 @@ scan:
               tiq1=tzi1*tzi1;
         */
 
-        SOI_ORBIT(tzr2, trq2, tzi2, tiq2, cr2, ci1, tesc2);
+        SOI_ORBIT(tzr2, trq2, tzi2, tiq2, cr2, ci1, state.tesc2);
         /*
               tzi2=(tzi2+tzi2)*tzr2+ci1;
               tzr2=trq2-tiq2+cr2;
               trq2=tzr2*tzr2;
               tiq2=tzi2*tzi2;
         */
-        SOI_ORBIT(tzr3, trq3, tzi3, tiq3, cr1, ci2, tesc3);
+        SOI_ORBIT(tzr3, trq3, tzi3, tiq3, cr1, ci2, state.tesc3);
         /*
               tzi3=(tzi3+tzi3)*tzr3+ci2;
               tzr3=trq3-tiq3+cr1;
               trq3=tzr3*tzr3;
               tiq3=tzi3*tzi3;
         */
-        SOI_ORBIT(tzr4, trq4, tzi4, tiq4, cr2, ci2, tesc4);
+        SOI_ORBIT(tzr4, trq4, tzi4, tiq4, cr2, ci2, state.tesc4);
         /*
               tzi4=(tzi4+tzi4)*tzr4+ci2;
               tzr4=trq4-tiq4+cr2;
@@ -675,13 +683,13 @@ scan:
              (trq4+tiq4)>16.0)
             break;
         */
-        if (esc1||esc2||esc3||esc4||esc5||esc6||esc7||esc8||esc9||
-                tesc1||tesc2||tesc3||tesc4)
+        if (state.esc1||state.esc2||state.esc3||state.esc4||state.esc5||state.esc6||state.esc7||state.esc8||state.esc9||
+                state.tesc1||state.tesc2||state.tesc3||state.tesc4)
             break;
 
         /* if maximum number of iterations is reached, the whole rectangle
         can be assumed part of M. This is of course best case behavior
-        of SOI, we seldomly get there */
+        of SOI, we seldom get there */
         if (iter > maxit)
         {
             putbox(x1, y1, x2, y2, 0);
