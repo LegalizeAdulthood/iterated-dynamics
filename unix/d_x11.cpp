@@ -187,7 +187,7 @@ extern void Cursor_SetPos();
 
 extern void (*dotwrite)(int, int, int); // write-a-dot routine
 extern int (*dotread)(int, int);    // read-a-dot routine
-extern void (*linewrite)(int y, int x, int lastx, BYTE *pixels);     // write-a-line routine
+extern void (*linewrite)(int y, int x, int lastx, BYTE const *pixels);     // write-a-line routine
 extern void (*lineread)(int y, int x, int lastx, BYTE *pixels);      // read-a-line routine
 
 static void x11_terminate(Driver *drv);

@@ -967,10 +967,10 @@ xcmapstuff()
  *----------------------------------------------------------------------
  */
 void
-writevideoline(int y, int x, int lastx, BYTE *pixels)
+writevideoline(int y, int x, int lastx, BYTE const *pixels)
 {
     int width;
-    BYTE *pixline;
+    BYTE const *pixline;
 
     drawing_or_drawn = 1;
 

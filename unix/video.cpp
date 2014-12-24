@@ -22,7 +22,7 @@ int ShadowColors;
 void (*dotwrite)(int, int, int);
 // write-a-dot routine
 int (*dotread)(int, int);   // read-a-dot routine
-void (*linewrite)(int y, int x, int lastx, BYTE *pixels);        // write-a-line routine
+void (*linewrite)(int y, int x, int lastx, BYTE const *pixels);        // write-a-line routine
 void (*lineread)(int y, int x, int lastx, BYTE *pixels);         // read-a-line routine
 
 int videoflag = 0;      // special "your-own-video" flag
@@ -123,7 +123,7 @@ setnullvideo()
 }
 
 void normalineread(int y, int x, int lastx, BYTE *pixels);
-void normaline(int y, int x, int lastx, BYTE *pixels);
+void normaline(int y, int x, int lastx, BYTE const *pixels);
 
 void
 putprompt()
@@ -522,7 +522,7 @@ SetupShadowVideo()
 */
 
 void
-normaline(int y, int x, int lastx, BYTE *pixels)
+normaline(int y, int x, int lastx, BYTE const *pixels)
 {
     int width = lastx - x + 1;
     for (int i = 0; i < width; i++)
@@ -655,7 +655,7 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 */
 
 void
-put_line(int row, int startcol, int stopcol, BYTE *pixels)
+put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 {
     if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
         return;

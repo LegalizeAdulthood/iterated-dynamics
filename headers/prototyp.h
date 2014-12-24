@@ -17,7 +17,7 @@
 extern long multiply(long x, long y, int n);
 extern long divide(long x, long y, int n);
 extern void spindac(int dir, int inc);
-extern void put_line(int row, int startcol, int stopcol, BYTE *pixels);
+extern void put_line(int row, int startcol, int stopcol, BYTE const *pixels);
 extern void get_line(int row, int startcol, int stopcol, BYTE *pixels);
 extern void find_special_colors();
 extern int getakeynohelp();
@@ -182,7 +182,7 @@ extern bool ToMemDisk(long, int, void *);
 // editpal -- C file prototypes
 extern void EditPalette();
 extern void *mem_alloc(unsigned size);
-void putrow(int x, int y, int width, char *buff);
+void putrow(int x, int y, int width, char const *buff);
 void getrow(int x, int y, int width, char *buff);
 // TODO: Eliminate this function
 void mem_init(void *block, unsigned size);

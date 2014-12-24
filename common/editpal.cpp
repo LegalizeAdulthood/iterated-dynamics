@@ -142,7 +142,7 @@ static void rotatepal(PALENTRY *pal, int dir, int lo, int hi)
 }
 
 
-static void clip_put_line(int row, int start, int stop, BYTE *pixels)
+static void clip_put_line(int row, int start, int stop, BYTE const *pixels)
 {
     if (row < 0 || row >= sydots || start > sxdots || stop < 0)
         return ;
@@ -222,7 +222,7 @@ void getrow(int x, int y, int width, char *buff)
 }
 
 
-void putrow(int x, int y, int width, char *buff)
+void putrow(int x, int y, int width, char const *buff)
 {
     clip_put_line(y, x, x+width-1, (BYTE *)buff);
 }

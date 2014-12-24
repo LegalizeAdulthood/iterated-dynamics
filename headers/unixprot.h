@@ -39,7 +39,7 @@ void readvideoline(int y, int x, int lastx, BYTE *pixels);
 // reads a line of pixels from the screen.
 void writevideo(int x, int y, int color);
 // writes a pixel to the screen.
-void writevideoline(int y, int x, int lastx, BYTE *pixels);
+void writevideoline(int y, int x, int lastx, BYTE const *pixels);
 // writes a line of pixels to the screen.
 int readvideopalette();
 // reads the current colormap into dacbox.

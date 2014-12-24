@@ -30,7 +30,7 @@ HINSTANCE g_instance = nullptr;
 
 static void (*dotwrite)(int, int, int) = nullptr;
 static int (*dotread)(int, int) = nullptr;
-static void (*linewrite)(int, int, int, BYTE *) = nullptr;
+static void (*linewrite)(int, int, int, BYTE const *) = nullptr;
 static void (*lineread)(int, int, int, BYTE *) = nullptr;
 
 enum fractint_event
@@ -723,7 +723,7 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 ;       Called by the GIF decoder
 */
 
-void put_line(int row, int startcol, int stopcol, BYTE *pixels)
+void put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 {
     if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
         return;
@@ -736,7 +736,7 @@ void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 ;
 ;       These routines are called by out_line(), put_line() and get_line().
 */
-void normaline(int y, int x, int lastx, BYTE *pixels)
+void normaline(int y, int x, int lastx, BYTE const *pixels)
 {
     int width = lastx - x + 1;
     _ASSERTE(dotwrite);
