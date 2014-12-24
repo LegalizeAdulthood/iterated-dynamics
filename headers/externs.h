@@ -202,7 +202,6 @@ extern int                   g_init_mode;
 extern DComplex              initorbit;
 extern int                   initsavetime;
 extern int                   inside;
-extern char                  insufficient_ifs_mem[];
 extern int                   integerfractal;
 extern double                inversion[];
 extern int                   invert;

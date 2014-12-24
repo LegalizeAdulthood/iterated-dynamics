@@ -1286,7 +1286,6 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
     }
 }
 
-char insufficient_ifs_mem[] = {"Insufficient memory for IFS"};
 int numaffine;
 int ifsload()                   // read in IFS parameters
 {
