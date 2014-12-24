@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define helpre    state.helpre
 #define zre       state.zre
 #define zim       state.zim
 #define br10      state.br10
@@ -720,11 +719,13 @@ scan:
                 else if (color == savecolor)
                     continue;
 
-                for (z = x-1, helpre = state.re - state.restep; z > x-INTERLEAVE; z--, helpre -= state.restep)
+                for (z = x-1, state.helpre = state.re - state.restep;
+                    z > x-INTERLEAVE;
+                    z--, state.helpre -= state.restep)
                 {
-                    zre = GET_SCAN_REAL(helpre, state.im);
-                    zim = GET_SCAN_IMAG(helpre, state.im);
-                    helpcolor = iteration(helpre, state.im, zre, zim, iter);
+                    zre = GET_SCAN_REAL(state.helpre, state.im);
+                    zim = GET_SCAN_IMAG(state.helpre, state.im);
+                    helpcolor = iteration(state.helpre, state.im, zre, zim, iter);
                     if (helpcolor < 0)
                     {
                         status = true;
@@ -744,11 +745,13 @@ scan:
                 savecolor = color;
             }
 
-            for (z = x2-1, helpre = cre2 - state.restep; z > savex; z--, helpre -= state.restep)
+            for (z = x2-1, state.helpre = cre2 - state.restep;
+                z > savex;
+                z--, state.helpre -= state.restep)
             {
-                zre = GET_SCAN_REAL(helpre, state.im);
-                zim = GET_SCAN_IMAG(helpre, state.im);
-                helpcolor = iteration(helpre, state.im, zre, zim, iter);
+                zre = GET_SCAN_REAL(state.helpre, state.im);
+                zim = GET_SCAN_IMAG(state.helpre, state.im);
+                helpcolor = iteration(state.helpre, state.im, zre, zim, iter);
                 if (helpcolor < 0)
                 {
                     status = true;
