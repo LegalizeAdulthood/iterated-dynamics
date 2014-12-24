@@ -7,6 +7,7 @@
  *  The J-set is generated in a fixed-size window, a third of the screen.
  */
 #include <algorithm>
+#include <vector>
 
 #include <string.h>
 
@@ -387,14 +388,13 @@ static void SaveRect(int x, int y, int width, int depth)
     screen_rect.clear();
 
     // allocate space and store the rect
-
-    memset(dstack, g_color_dark, width);
+    std::vector<char> const background(width, char(g_color_dark));
     screen_rect.resize(width*depth);
     Cursor_Hide();
     for (int yoff = 0; yoff < depth; yoff++)
     {
         getrow(x, y+yoff, width, &screen_rect[width*yoff]);
-        putrow(x, y+yoff, width, (char *)dstack);
+        putrow(x, y+yoff, width, &background[0]);
     }
     Cursor_Show();
 }
