@@ -445,11 +445,16 @@ bool encoder()
         if (display3d <= 0 && rangeslen)
         {
             // ranges block, 004
-            save_info.tot_extend_len += extend_blk_len(rangeslen * 2);
-#ifdef XFRACT
-            fix_ranges(&ranges[0], rangeslen, 0);
-#endif
-            if (!put_extend_blk(4, rangeslen * 2, (char *) &ranges[0]))
+            int const num_bytes = rangeslen*2;
+            save_info.tot_extend_len += extend_blk_len(num_bytes);
+            std::vector<char> buffer;
+            for (int range : ranges)
+            {
+                // ranges are stored as 16-bit ints in little-endian byte order
+                buffer.push_back(range & 0xFF);
+                buffer.push_back(static_cast<unsigned>(range & 0xFFFF) >> 8);
+            }
+            if (!put_extend_blk(4, num_bytes, &buffer[0]))
                 goto oops;
 
         }

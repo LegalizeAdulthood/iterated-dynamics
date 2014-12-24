@@ -1172,7 +1172,7 @@ struct ext_blk_4
 {
     char got_data;
     int length;
-    int *range_data;
+    std::vector<int> range_data;
 };
 
 struct ext_blk_5

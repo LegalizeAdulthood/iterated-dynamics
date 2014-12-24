@@ -2,6 +2,7 @@
         loadfile.c - load an existing fractal image, control level
 */
 #include <algorithm>
+#include <cassert>
 #include <vector>
 
 #include <errno.h>
@@ -494,12 +495,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (blk_4_info.got_data == 1)
     {
         rangeslen = blk_4_info.length;
-        ranges.resize(rangeslen);
-        int const *range_data = blk_4_info.range_data;
-        std::copy(range_data, range_data + rangeslen, &ranges[0]);
-#ifdef XFRACT
-        fix_ranges(&ranges[0], rangeslen, 1);
-#endif
+        ranges = blk_4_info.range_data;
     }
 
     if (blk_5_info.got_data == 1)
@@ -835,14 +831,20 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     break;
                 case 4: // ranges info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
-                    blk_4_info->range_data = (int *)malloc((long)data_len);
-                    if (blk_4_info->range_data != nullptr)
+                    assert(data_len % 2 == 0);  // should specify an integral number of 16-bit ints
+                    blk_4_info->length = data_len/2;
+                    blk_4_info->range_data.resize(blk_4_info->length);
+                    fseek(fp, (long) -block_len, SEEK_CUR);
                     {
-                        fseek(fp, (long)(0-block_len), SEEK_CUR);
-                        load_ext_blk((char *)blk_4_info->range_data, data_len);
-                        blk_4_info->length = data_len/2;
-                        blk_4_info->got_data = 1; // got data
+                        std::vector<char> buffer(data_len, 0);
+                        load_ext_blk(&buffer[0], data_len);
+                        for (int i = 0; i < blk_4_info->length; ++i)
+                        {
+                            // int16 stored in little-endian byte order
+                            blk_4_info->range_data[i] = buffer[i*2 + 0] | (buffer[i*2 + 1] << 8);
+                        }
                     }
+                    blk_4_info->got_data = 1; // got data
                     break;
                 case 5: // extended precision parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
@@ -1425,8 +1427,6 @@ rescan:  // entry for changed browse parms
 
         if (blk_2_info.got_data == 1) // Clean up any memory allocated
             blk_2_info.resume_data.clear();
-        if (blk_4_info.got_data == 1) // Clean up any memory allocated
-            free(blk_4_info.range_data);
         if (blk_5_info.got_data == 1) // Clean up any memory allocated
             free(blk_5_info.apm_data);
 
