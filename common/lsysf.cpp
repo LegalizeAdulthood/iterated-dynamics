@@ -25,8 +25,11 @@ struct lsys_cmd
     char ch;
 };
 
-#define sins_f ((LDBL *)(boxy))
-#define coss_f (((LDBL *)(boxy)+50))
+namespace
+{
+std::vector<LDBL> sins_f;
+std::vector<LDBL> coss_f;
+}
 
 static lsys_cmd *findsize(lsys_cmd *, lsys_turtlestatef *, lsys_cmd **, int);
 
@@ -785,6 +788,8 @@ void lsysf_dosincos()
 
     locaspect = screenaspect*xdots/ydots;
     twopimax = TWOPI / maxangle;
+    sins_f.resize(maxangle);
+    coss_f.resize(maxangle);
     for (int i = 0; i < maxangle; i++)
     {
         twopimaxi = i * twopimax;
