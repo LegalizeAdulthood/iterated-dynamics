@@ -444,6 +444,83 @@ static LDBL zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
  zre9 = (ZRE9);zim9 = (ZIM9);                                                       \
  status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0
 
+namespace
+{
+
+struct rhombus_state
+{
+    LDBL re;
+    LDBL im;
+    LDBL restep;
+    LDBL imstep;
+    LDBL interstep;
+    LDBL helpre;
+    LDBL zre;
+    LDBL zim;
+    LDBL br10;
+    LDBL br11;
+    LDBL br12;
+    LDBL br20;
+    LDBL br21;
+    LDBL br22;
+    LDBL br30;
+    LDBL br31;
+    LDBL br32;
+    LDBL bi10;
+    LDBL bi11;
+    LDBL bi12;
+    LDBL bi20;
+    LDBL bi21;
+    LDBL bi22;
+    LDBL bi30;
+    LDBL bi31;
+    LDBL bi32;
+    LDBL l1;
+    LDBL l2;
+    LDBL rq1;
+    LDBL iq1;
+    LDBL rq2;
+    LDBL iq2;
+    LDBL rq3;
+    LDBL iq3;
+    LDBL rq4;
+    LDBL iq4;
+    LDBL rq5;
+    LDBL iq5;
+    LDBL rq6;
+    LDBL iq6;
+    LDBL rq7;
+    LDBL iq7;
+    LDBL rq8;
+    LDBL iq8;
+    LDBL rq9;
+    LDBL iq9;
+    LDBL cr1;
+    LDBL cr2;
+    LDBL ci1;
+    LDBL ci2;
+    LDBL tzr1;
+    LDBL tzi1;
+    LDBL tzr2;
+    LDBL tzi2;
+    LDBL tzr3;
+    LDBL tzi3;
+    LDBL tzr4;
+    LDBL tzi4;
+    LDBL trq1;
+    LDBL tiq1;
+    LDBL trq2;
+    LDBL tiq2;
+    LDBL trq3;
+    LDBL tiq3;
+    LDBL trq4;
+    LDBL tiq4;
+};
+
+rhombus_state state = { 0.0 };
+
+}
+
 static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
                    int x1, int x2, int y1, int y2, long iter)
 {
@@ -452,72 +529,72 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define re        mem_static[ 0]
-#define im        mem_static[ 1]
-#define restep    mem_static[ 2]
-#define imstep    mem_static[ 3]
-#define interstep mem_static[ 4]
-#define helpre    mem_static[ 5]
-#define zre       mem_static[ 6]
-#define zim       mem_static[ 7]
-#define br10      mem_static[ 8]
-#define br11      mem_static[ 9]
-#define br12      mem_static[10]
-#define br20      mem_static[11]
-#define br21      mem_static[12]
-#define br22      mem_static[13]
-#define br30      mem_static[14]
-#define br31      mem_static[15]
-#define br32      mem_static[16]
-#define bi10      mem_static[17]
-#define bi11      mem_static[18]
-#define bi12      mem_static[19]
-#define bi20      mem_static[20]
-#define bi21      mem_static[21]
-#define bi22      mem_static[22]
-#define bi30      mem_static[23]
-#define bi31      mem_static[24]
-#define bi32      mem_static[25]
-#define l1        mem_static[26]
-#define l2        mem_static[27]
-#define rq1       mem_static[28]
-#define iq1       mem_static[29]
-#define rq2       mem_static[30]
-#define iq2       mem_static[31]
-#define rq3       mem_static[32]
-#define iq3       mem_static[33]
-#define rq4       mem_static[34]
-#define iq4       mem_static[35]
-#define rq5       mem_static[36]
-#define iq5       mem_static[37]
-#define rq6       mem_static[38]
-#define iq6       mem_static[39]
-#define rq7       mem_static[40]
-#define iq7       mem_static[41]
-#define rq8       mem_static[42]
-#define iq8       mem_static[43]
-#define rq9       mem_static[44]
-#define iq9       mem_static[45]
-#define cr1       mem_static[46]
-#define cr2       mem_static[47]
-#define ci1       mem_static[48]
-#define ci2       mem_static[49]
-#define tzr1      mem_static[50]
-#define tzi1      mem_static[51]
-#define tzr2      mem_static[52]
-#define tzi2      mem_static[53]
-#define tzr3      mem_static[54]
-#define tzi3      mem_static[55]
-#define tzr4      mem_static[56]
-#define tzi4      mem_static[57]
-#define trq1      mem_static[58]
-#define tiq1      mem_static[59]
-#define trq2      mem_static[60]
-#define tiq2      mem_static[61]
-#define trq3      mem_static[62]
-#define tiq3      mem_static[63]
-#define trq4      mem_static[64]
-#define tiq4      mem_static[65]
+#define re        state.re
+#define im        state.im
+#define restep    state.restep
+#define imstep    state.imstep
+#define interstep state.interstep
+#define helpre    state.helpre
+#define zre       state.zre
+#define zim       state.zim
+#define br10      state.br10
+#define br11      state.br11
+#define br12      state.br12
+#define br20      state.br20
+#define br21      state.br21
+#define br22      state.br22
+#define br30      state.br30
+#define br31      state.br31
+#define br32      state.br32
+#define bi10      state.bi10
+#define bi11      state.bi11
+#define bi12      state.bi12
+#define bi20      state.bi20
+#define bi21      state.bi21
+#define bi22      state.bi22
+#define bi30      state.bi30
+#define bi31      state.bi31
+#define bi32      state.bi32
+#define l1        state.l1
+#define l2        state.l2
+#define rq1       state.rq1
+#define iq1       state.iq1
+#define rq2       state.rq2
+#define iq2       state.iq2
+#define rq3       state.rq3
+#define iq3       state.iq3
+#define rq4       state.rq4
+#define iq4       state.iq4
+#define rq5       state.rq5
+#define iq5       state.iq5
+#define rq6       state.rq6
+#define iq6       state.iq6
+#define rq7       state.rq7
+#define iq7       state.iq7
+#define rq8       state.rq8
+#define iq8       state.iq8
+#define rq9       state.rq9
+#define iq9       state.iq9
+#define cr1       state.cr1
+#define cr2       state.cr2
+#define ci1       state.ci1
+#define ci2       state.ci2
+#define tzr1      state.tzr1
+#define tzi1      state.tzi1
+#define tzr2      state.tzr2
+#define tzi2      state.tzi2
+#define tzr3      state.tzr3
+#define tzi3      state.tzi3
+#define tzr4      state.tzr4
+#define tzi4      state.tzi4
+#define trq1      state.trq1
+#define tiq1      state.tiq1
+#define trq2      state.trq2
+#define tiq2      state.tiq2
+#define trq3      state.trq3
+#define tiq3      state.tiq3
+#define trq4      state.trq4
+#define tiq4      state.tiq4
 
     // number of iterations before SOI iteration cycle
     static long before;
@@ -525,7 +602,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 
     // the variables below need to have local copis for recursive calls
     LDBL *mem;
-    LDBL *mem_static;
     // center of rectangle
     LDBL midr = (cre1+cre2)/2, midi = (cim1+cim2)/2;
 
@@ -589,8 +665,7 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
        static variables, then we make our own "stack" with copies
        for each recursive call of rhombus() for the rest.
      */
-    mem_static = (LDBL *)sizeofstring;
-    mem = mem_static+ 66 + 50*rhombus_depth;
+    mem = ((LDBL *)sizeofstring) + 50*rhombus_depth;
 #endif
 
     avail = stackavail();
