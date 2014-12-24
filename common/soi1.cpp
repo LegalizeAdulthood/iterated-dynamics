@@ -110,8 +110,8 @@ interpolate(cim1, midi, cim2, \
         EVALUATE(cre1, midr, state.br30, state.br31, state.br32, x), y)
 #define GET_SCAN_IMAG(x, y) \
 interpolate(cre1, midr, cre2, \
-        EVALUATE(cim1, midi, state.bi10, state.bi11, bi12, y), \
-        EVALUATE(cim1, midi, bi20, bi21, bi22, y), \
+        EVALUATE(cim1, midi, state.bi10, state.bi11, state.bi12, y), \
+        EVALUATE(cim1, midi, state.bi20, bi21, bi22, y), \
         EVALUATE(cim1, midi, bi30, bi31, bi32, y), x)
 
 /* compute coefficients of Newton polynomial (b0,..,b2) from
@@ -288,8 +288,6 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define bi12      state.bi12
-#define bi20      state.bi20
 #define bi21      state.bi21
 #define bi22      state.bi22
 #define bi30      state.bi30
@@ -424,8 +422,8 @@ scan:
         INTERPOLATE(cre1, midr, cre2, zre6, zre9, zre7, state.br20, state.br21, state.br22);
         INTERPOLATE(cre1, midr, cre2, zre3, zre8, zre4, state.br30, state.br31, state.br32);
 
-        INTERPOLATE(cim1, midi, cim2, zim1, zim6, zim3, state.bi10, state.bi11, bi12);
-        INTERPOLATE(cim1, midi, cim2, zim5, zim9, zim8, bi20, bi21, bi22);
+        INTERPOLATE(cim1, midi, cim2, zim1, zim6, zim3, state.bi10, state.bi11, state.bi12);
+        INTERPOLATE(cim1, midi, cim2, zim5, zim9, zim8, state.bi20, bi21, bi22);
         INTERPOLATE(cim1, midi, cim2, zim2, zim7, zim4, bi30, bi31, bi32);
 
         state.restep = (cre2 - cre1)/(x2 - x1);
