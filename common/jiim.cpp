@@ -382,11 +382,8 @@ static void SaveRect(int x, int y, int width, int depth)
 {
     if (!hasinverse)
         return;
-    // first, do any de-allocationg
 
     screen_rect.clear();
-
-    // allocate space and store the rect
     std::vector<char> const background(width, char(g_color_dark));
     screen_rect.resize(width*depth);
     Cursor_Hide();
