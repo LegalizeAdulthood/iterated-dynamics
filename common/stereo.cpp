@@ -3,7 +3,6 @@
     Written in Borland 'C++' by Paul de Leeuw.
     From an idea in "New Scientist" 9 October 1993 pages 26 - 29.
 */
-#include <memory>
 #include <vector>
 
 #include <stdlib.h>
@@ -217,7 +216,8 @@ bool do_AutoStereo()
     int barwidth;
     time_t ltime;
     unsigned char *buf = (unsigned char *)decoderline;
-    std::unique_ptr<int[]> colour(new int[xdots]);
+    std::vector<int> colour;
+    colour.resize(xdots);
     bool done = false;
 
     pv = &v;   // set static vars to stack structure
@@ -315,7 +315,7 @@ bool do_AutoStereo()
         bars = true;
     else
         bars = false;
-    toggle_bars(&bars, barwidth, colour.get());
+    toggle_bars(&bars, barwidth, &colour[0]);
     while (!done)
     {
         driver_wait_key_pressed(0);
@@ -324,7 +324,7 @@ bool do_AutoStereo()
         {
         case FIK_ENTER:   // toggle bars
         case FIK_SPACE:
-            toggle_bars(&bars, barwidth, colour.get());
+            toggle_bars(&bars, barwidth, &colour[0]);
             break;
         case 'c':
         case '+':
