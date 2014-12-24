@@ -14,23 +14,7 @@
  * which is similar, structurally, to the original routine by Steve Wilhite.
  * It is, however, somewhat noticeably faster in most cases.
  *
- == This routine was modified for use in FRACTINT in two ways.
- ==
- == 1) The original #includes were folded into the routine strictly to hold
- ==    down the number of files we were dealing with.
- ==
- == 2) The 'stack', 'suffix', 'prefix', and 'decoderline1' arrays were
- ==    changed from static and 'malloc()'ed to external only so that
- ==    the assembler program could use the same array space for several
- ==    independent chunks of code.  Also, 'stack' was renamed to 'dstack'
- ==    for TASM compatibility.
- ==
- == 3) The 'out_line()' external function has been changed to reference
- ==    '*outln()' for flexibility (in particular, 3D transformations)
- ==
- == 4) A call to 'driver_key_pressed()' has been added after the 'outln()' calls
- ==    to check for the presence of a key-press as a bail-out signal
- ==
+ * This routine was modified for use in FRACTINT.
  */
 #include <float.h>
 
@@ -195,7 +179,8 @@ short decoder(short linewidth)
      * happen, but we'll try and decode it anyway...) */
 
     // Set up the stack pointer and decode buffer pointer
-    sp = dstack;
+    BYTE decode_stack[4096] = { 0 };
+    sp = decode_stack;
     bufptr = decoderline;
     bufcnt = linewidth;
 
@@ -339,7 +324,7 @@ short decoder(short linewidth)
                     ++curr_size;
                 }
         }
-        while (sp > dstack)
+        while (sp > decode_stack)
         {
             --sp;
             if (--xskip < 0)

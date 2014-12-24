@@ -117,7 +117,6 @@ extern bool                  doublecaution;
 extern double                dpx;
 extern double                dpy;
 extern char                  drawmode;
-extern BYTE                  dstack[];
 extern std::vector<double>   dx0;
 extern std::vector<double>   dx1;
 extern double              (*dxpixel)();
