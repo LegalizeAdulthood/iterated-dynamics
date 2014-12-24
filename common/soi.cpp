@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define l1        state.l1
 #define l2        state.l2
 #define rq1       state.rq1
 #define iq1       state.iq1
@@ -920,11 +919,11 @@ scan:
 
         /* now for all test points, check whether they exceed the
         allowed tolerance. if so, subdivide */
-        l1 = GET_REAL(cr1, ci1);
-        l1 = (tzr1 == 0.0)?
-           (l1 == 0.0)?1.0:1000.0:
-           l1/tzr1;
-        if (FABS(1.0-l1) > twidth)
+        state.l1 = GET_REAL(cr1, ci1);
+        state.l1 = (tzr1 == 0.0)?
+           (state.l1 == 0.0)?1.0:1000.0:
+           state.l1/tzr1;
+        if (FABS(1.0-state.l1) > twidth)
             break;
 
         l2 = GET_IMAG(cr1, ci1);
@@ -934,11 +933,11 @@ scan:
         if (FABS(1.0-l2) > twidth)
             break;
 
-        l1 = GET_REAL(cr2, ci1);
-        l1 = (tzr2 == 0.0)?
-           (l1 == 0.0)?1.0:1000.0:
-           l1/tzr2;
-        if (FABS(1.0-l1) > twidth)
+        state.l1 = GET_REAL(cr2, ci1);
+        state.l1 = (tzr2 == 0.0)?
+           (state.l1 == 0.0)?1.0:1000.0:
+           state.l1/tzr2;
+        if (FABS(1.0-state.l1) > twidth)
             break;
 
         l2 = GET_IMAG(cr2, ci1);
@@ -948,11 +947,11 @@ scan:
         if (FABS(1.0-l2) > twidth)
             break;
 
-        l1 = GET_REAL(cr1, ci2);
-        l1 = (tzr3 == 0.0)?
-           (l1 == 0.0)?1.0:1000.0:
-           l1/tzr3;
-        if (FABS(1.0-l1) > twidth)
+        state.l1 = GET_REAL(cr1, ci2);
+        state.l1 = (tzr3 == 0.0)?
+           (state.l1 == 0.0)?1.0:1000.0:
+           state.l1/tzr3;
+        if (FABS(1.0-state.l1) > twidth)
             break;
 
         l2 = GET_IMAG(cr1, ci2);
@@ -962,11 +961,11 @@ scan:
         if (FABS(1.0-l2) > twidth)
             break;
 
-        l1 = GET_REAL(cr2, ci2);
-        l1 = (tzr4 == 0.0)?
-           (l1 == 0.0)?1.0:1000.0:
-           l1/tzr4;
-        if (FABS(1.0-l1) > twidth)
+        state.l1 = GET_REAL(cr2, ci2);
+        state.l1 = (tzr4 == 0.0)?
+           (state.l1 == 0.0)?1.0:1000.0:
+           state.l1/tzr4;
+        if (FABS(1.0-state.l1) > twidth)
             break;
 
         l2 = GET_IMAG(cr2, ci2);
