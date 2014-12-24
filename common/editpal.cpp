@@ -5,6 +5,7 @@
  *
  */
 #include <algorithm>
+#include <vector>
 
 #ifdef DEBUG_UNDO
 #include "mdisp.h"
@@ -682,10 +683,10 @@ struct MoveBox
     int      csize;
     bool moved;
     bool should_hide;
-    char    *t;
-    char    *b;
-    char    *l;
-    char    *r;
+    std::vector<char> t;
+    std::vector<char> b;
+    std::vector<char> l;
+    std::vector<char> r;
 };
 
 // private:
@@ -722,10 +723,10 @@ static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int b
     me->base_depth  = base_depth;
     me->moved       = false;
     me->should_hide = false;
-    me->t           = static_cast<char *>(mem_alloc(sxdots));
-    me->b           = static_cast<char *>(mem_alloc(sxdots));
-    me->l           = static_cast<char *>(mem_alloc(sydots));
-    me->r           = static_cast<char *>(mem_alloc(sydots));
+    me->t.resize(sxdots);
+    me->b.resize(sxdots);
+    me->l.resize(sydots);
+    me->r.resize(sydots);
 
     return me;
 }
@@ -733,10 +734,6 @@ static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int b
 
 static void MoveBox_Destroy(MoveBox *me)
 {
-    deallocate(me->t);
-    deallocate(me->b);
-    deallocate(me->l);
-    deallocate(me->r);
     delete me;
 }
 
@@ -788,11 +785,11 @@ static void MoveBox__Draw(MoveBox *me)  // private
         y     = me->y;
 
 
-    getrow(x, y,         width, me->t);
-    getrow(x, y+depth-1, width, me->b);
+    getrow(x, y,         width, &me->t[0]);
+    getrow(x, y+depth-1, width, &me->b[0]);
 
-    vgetrow(x,         y, depth, me->l);
-    vgetrow(x+width-1, y, depth, me->r);
+    vgetrow(x,         y, depth, &me->l[0]);
+    vgetrow(x+width-1, y, depth, &me->r[0]);
 
     hdline(x, y,         width);
     hdline(x, y+depth-1, width);
@@ -807,11 +804,11 @@ static void MoveBox__Erase(MoveBox *me)   // private
     int width = me->base_width + me->csize*16+1,
         depth = me->base_depth + me->csize*16+1;
 
-    vputrow(me->x,         me->y, depth, me->l);
-    vputrow(me->x+width-1, me->y, depth, me->r);
+    vputrow(me->x,         me->y, depth, &me->l[0]);
+    vputrow(me->x+width-1, me->y, depth, &me->r[0]);
 
-    putrow(me->x, me->y,         width, me->t);
-    putrow(me->x, me->y+depth-1, width, me->b);
+    putrow(me->x, me->y,         width, &me->t[0]);
+    putrow(me->x, me->y+depth-1, width, &me->b[0]);
 }
 
 
