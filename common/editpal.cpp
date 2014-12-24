@@ -45,7 +45,6 @@ char undofile[] = "FRACTINT.$$2";  // file where undo list is stored
 #define TITLE_LEN (8)
 
 
-#define allocate(class)     (class *)(mem_alloc(sizeof(class)))
 #define deallocate(block)  block = nullptr  // just for warning
 
 #ifdef XFRACT
@@ -491,10 +490,9 @@ static void draw_diamond(int x, int y, int color)
  *
  * Purpose:   Draw the blinking cross-hair cursor.
  *
- * Note:      Only one Cursor can exist (referenced through the_cursor).
+ * Note:      Only one Cursor exists (referenced through the_cursor).
  *            IMPORTANT: Call Cursor_Construct before you use any other
- *            Cursor_ function!  Call Cursor_Destroy before exiting to
- *            deallocate memory.
+ *            Cursor_ function!
  */
 
 struct Cursor
@@ -715,7 +713,7 @@ static void     MoveBox_SetCSize(MoveBox *me, int csize);
 
 static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int base_depth)
 {
-    MoveBox *me = allocate(MoveBox);
+    MoveBox *me = new MoveBox;
 
     me->x           = x;
     me->y           = y;
@@ -739,7 +737,7 @@ static void MoveBox_Destroy(MoveBox *me)
     deallocate(me->b);
     deallocate(me->l);
     deallocate(me->r);
-    deallocate(me);
+    delete me;
 }
 
 
@@ -1036,7 +1034,7 @@ static CEditor *CEditor_Construct(int x, int y, char letter,
                                   void (*other_key)(int, CEditor*, VOIDPTR),
                                   void (*change)(CEditor*, VOIDPTR), void *info)
 {
-    CEditor *me = allocate(CEditor);
+    CEditor *me = new CEditor;
 
     me->x         = x;
     me->y         = y;
@@ -1052,7 +1050,7 @@ static CEditor *CEditor_Construct(int x, int y, char letter,
 
 static void CEditor_Destroy(CEditor *me)
 {
-    deallocate(me);
+    delete me;
 }
 
 
@@ -1270,7 +1268,7 @@ static PALENTRY RGBEditor_GetRGB(RGBEditor *me);
 static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int, RGBEditor*, void*),
                                       void (*change)(RGBEditor*, void*), void *info)
 {
-    RGBEditor      *me     = allocate(RGBEditor);
+    RGBEditor *me = new RGBEditor;
     static char letter[] = "RGB";
 
     for (int ctr = 0; ctr < 3; ctr++)
@@ -1294,7 +1292,7 @@ static void RGBEditor_Destroy(RGBEditor *me)
     CEditor_Destroy(me->color[0]);
     CEditor_Destroy(me->color[1]);
     CEditor_Destroy(me->color[2]);
-    deallocate(me);
+    delete me;
 }
 
 
