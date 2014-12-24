@@ -288,9 +288,6 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define trq1      state.trq1
-#define tiq1      state.tiq1
-#define trq2      state.trq2
 #define tiq2      state.tiq2
 #define trq3      state.trq3
 #define tiq3      state.tiq3
@@ -510,10 +507,10 @@ scan:
     state.tzr4 = GET_REAL(state.cr2, state.ci2);
     state.tzi4 = GET_IMAG(state.cr2, state.ci2);
 
-    trq1 = state.tzr1*state.tzr1;
-    tiq1 = state.tzi1*state.tzi1;
+    state.trq1 = state.tzr1*state.tzr1;
+    state.tiq1 = state.tzi1*state.tzi1;
 
-    trq2 = state.tzr2*state.tzr2;
+    state.trq2 = state.tzr2*state.tzr2;
     tiq2 = state.tzi2*state.tzi2;
 
     trq3 = state.tzr3*state.tzr3;
@@ -631,7 +628,7 @@ scan:
               iq9=zim9*zim9;
         */
         // iterate test point
-        SOI_ORBIT(state.tzr1, trq1, state.tzi1, tiq1, state.cr1, state.ci1, state.tesc1);
+        SOI_ORBIT(state.tzr1, state.trq1, state.tzi1, state.tiq1, state.cr1, state.ci1, state.tesc1);
         /*
               tzi1=(tzi1+tzi1)*tzr1+ci1;
               tzr1=trq1-tiq1+cr1;
@@ -639,7 +636,7 @@ scan:
               tiq1=tzi1*tzi1;
         */
 
-        SOI_ORBIT(state.tzr2, trq2, state.tzi2, tiq2, state.cr2, state.ci1, state.tesc2);
+        SOI_ORBIT(state.tzr2, state.trq2, state.tzi2, tiq2, state.cr2, state.ci1, state.tesc2);
         /*
               tzi2=(tzi2+tzi2)*tzr2+ci1;
               tzr2=trq2-tiq2+cr2;
