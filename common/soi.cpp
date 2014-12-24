@@ -362,7 +362,7 @@ interpolate(cre1, midr, cre2, \
    during scanning. */
 #define GET_SCAN_REAL(x, y) \
 interpolate(cim1, midi, cim2, \
-        EVALUATE(cre1, midr, br10, br11, br12, x), \
+        EVALUATE(cre1, midr, state.br10, br11, br12, x), \
         EVALUATE(cre1, midr, br20, br21, br22, x), \
         EVALUATE(cre1, midr, br30, br31, br32, x), y)
 #define GET_SCAN_IMAG(x, y) \
@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define br10      state.br10
 #define br11      state.br11
 #define br12      state.br12
 #define br20      state.br20
@@ -673,7 +672,7 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     {
         // finish up the image by scanning the rectangle
 scan:
-        INTERPOLATE(cre1, midr, cre2, zre1, zre5, zre2, br10, br11, br12);
+        INTERPOLATE(cre1, midr, cre2, zre1, zre5, zre2, state.br10, br11, br12);
         INTERPOLATE(cre1, midr, cre2, zre6, zre9, zre7, br20, br21, br22);
         INTERPOLATE(cre1, midr, cre2, zre3, zre8, zre4, br30, br31, br32);
 
