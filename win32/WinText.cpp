@@ -190,7 +190,7 @@ bool wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
     strcpy(me->title_text, titletext);
     me->hWndParent = hWndParent;
 
-    bool return_value = GetClassInfo(hInstance, s_window_class, &wc) == TRUE;
+    bool return_value = GetClassInfo(hInstance, s_window_class, &wc) != 0;
     if (!return_value)
     {
         wc.style = 0;
