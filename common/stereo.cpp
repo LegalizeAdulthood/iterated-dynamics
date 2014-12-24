@@ -4,6 +4,7 @@
     From an idea in "New Scientist" 9 October 1993 pages 26 - 29.
 */
 #include <memory>
+#include <vector>
 
 #include <stdlib.h>
 #include <string.h>
@@ -144,13 +145,15 @@ static void toggle_bars(bool *bars, int barwidth, int const *colour)
 
 int outline_stereo(BYTE * pixels, int linelen)
 {
-    std::unique_ptr<int[]> same(new int[xdots]);
-    std::unique_ptr<int[]> colour(new int[xdots]);
     if ((Y) >= ydots)
         return (1);
 
+    std::vector<int> same;
+    same.resize(xdots);
     for (int x = 0; x < xdots; ++x)
         same[x] = x;
+    std::vector<int> colour;
+    colour.resize(xdots);
     for (int x = 0; x < xdots; ++x)
     {
         if (REVERSE)
@@ -188,7 +191,6 @@ int outline_stereo(BYTE * pixels, int linelen)
     for (int x = xdots - 1; x >= 0; x--)
     {
         if (same[x] == x)
-            // colour[x] = rand()%colors;
             colour[x] = (int)pixels[x%linelen];
         else
             colour[x] = colour[same[x]];
