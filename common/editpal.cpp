@@ -516,30 +516,21 @@ static  void    Cursor__Draw();
 static  void    Cursor__Save();
 static  void    Cursor__Restore();
 
-static Cursor *the_cursor = nullptr;
+static Cursor the_cursor;
 
 
 void Cursor_Construct()
 {
-    if (the_cursor != nullptr)
-        return;
-
-    the_cursor = allocate(Cursor);
-
-    the_cursor->x          = sxdots/2;
-    the_cursor->y          = sydots/2;
-    the_cursor->hidden     = 1;
-    the_cursor->blink      = false;
-    the_cursor->last_blink = 0;
+    the_cursor.x          = sxdots/2;
+    the_cursor.y          = sydots/2;
+    the_cursor.hidden     = 1;
+    the_cursor.blink      = false;
+    the_cursor.last_blink = 0;
 }
 
 
 void Cursor_Destroy()
 {
-    if (the_cursor != nullptr)
-        deallocate(the_cursor);
-
-    the_cursor = nullptr;
 }
 
 
@@ -549,46 +540,46 @@ static void Cursor__Draw()
     int color;
 
     find_special_colors();
-    color = the_cursor->blink ? g_color_medium : g_color_dark;
+    color = the_cursor.blink ? g_color_medium : g_color_dark;
 
-    vline(the_cursor->x, the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, color);
-    vline(the_cursor->x, the_cursor->y+2,             CURSOR_SIZE, color);
+    vline(the_cursor.x, the_cursor.y-CURSOR_SIZE-1, CURSOR_SIZE, color);
+    vline(the_cursor.x, the_cursor.y+2,             CURSOR_SIZE, color);
 
-    hline(the_cursor->x-CURSOR_SIZE-1, the_cursor->y, CURSOR_SIZE, color);
-    hline(the_cursor->x+2,             the_cursor->y, CURSOR_SIZE, color);
+    hline(the_cursor.x-CURSOR_SIZE-1, the_cursor.y, CURSOR_SIZE, color);
+    hline(the_cursor.x+2,             the_cursor.y, CURSOR_SIZE, color);
 }
 
 
 static void Cursor__Save()
 {
-    vgetrow(the_cursor->x, the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, the_cursor->t);
-    vgetrow(the_cursor->x, the_cursor->y+2,             CURSOR_SIZE, the_cursor->b);
+    vgetrow(the_cursor.x, the_cursor.y-CURSOR_SIZE-1, CURSOR_SIZE, the_cursor.t);
+    vgetrow(the_cursor.x, the_cursor.y+2,             CURSOR_SIZE, the_cursor.b);
 
-    getrow(the_cursor->x-CURSOR_SIZE-1, the_cursor->y,  CURSOR_SIZE, the_cursor->l);
-    getrow(the_cursor->x+2,             the_cursor->y,  CURSOR_SIZE, the_cursor->r);
+    getrow(the_cursor.x-CURSOR_SIZE-1, the_cursor.y,  CURSOR_SIZE, the_cursor.l);
+    getrow(the_cursor.x+2,             the_cursor.y,  CURSOR_SIZE, the_cursor.r);
 }
 
 
 static void Cursor__Restore()
 {
-    vputrow(the_cursor->x, the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, the_cursor->t);
-    vputrow(the_cursor->x, the_cursor->y+2,             CURSOR_SIZE, the_cursor->b);
+    vputrow(the_cursor.x, the_cursor.y-CURSOR_SIZE-1, CURSOR_SIZE, the_cursor.t);
+    vputrow(the_cursor.x, the_cursor.y+2,             CURSOR_SIZE, the_cursor.b);
 
-    putrow(the_cursor->x-CURSOR_SIZE-1, the_cursor->y,  CURSOR_SIZE, the_cursor->l);
-    putrow(the_cursor->x+2,             the_cursor->y,  CURSOR_SIZE, the_cursor->r);
+    putrow(the_cursor.x-CURSOR_SIZE-1, the_cursor.y,  CURSOR_SIZE, the_cursor.l);
+    putrow(the_cursor.x+2,             the_cursor.y,  CURSOR_SIZE, the_cursor.r);
 }
 
 
 
 void Cursor_SetPos(int x, int y)
 {
-    if (!the_cursor->hidden)
+    if (!the_cursor.hidden)
         Cursor__Restore();
 
-    the_cursor->x = x;
-    the_cursor->y = y;
+    the_cursor.x = x;
+    the_cursor.y = y;
 
-    if (!the_cursor->hidden)
+    if (!the_cursor.hidden)
     {
         Cursor__Save();
         Cursor__Draw();
@@ -597,22 +588,22 @@ void Cursor_SetPos(int x, int y)
 
 void Cursor_Move(int xoff, int yoff)
 {
-    if (!the_cursor->hidden)
+    if (!the_cursor.hidden)
         Cursor__Restore();
 
-    the_cursor->x += xoff;
-    the_cursor->y += yoff;
+    the_cursor.x += xoff;
+    the_cursor.y += yoff;
 
-    if (the_cursor->x < 0)
-        the_cursor->x = 0;
-    if (the_cursor->y < 0)
-        the_cursor->y = 0;
-    if (the_cursor->x >= sxdots)
-        the_cursor->x = sxdots-1;
-    if (the_cursor->y >= sydots)
-        the_cursor->y = sydots-1;
+    if (the_cursor.x < 0)
+        the_cursor.x = 0;
+    if (the_cursor.y < 0)
+        the_cursor.y = 0;
+    if (the_cursor.x >= sxdots)
+        the_cursor.x = sxdots-1;
+    if (the_cursor.y >= sydots)
+        the_cursor.y = sydots-1;
 
-    if (!the_cursor->hidden)
+    if (!the_cursor.hidden)
     {
         Cursor__Save();
         Cursor__Draw();
@@ -622,25 +613,25 @@ void Cursor_Move(int xoff, int yoff)
 
 int Cursor_GetX()
 {
-    return the_cursor->x;
+    return the_cursor.x;
 }
 
 int Cursor_GetY()
 {
-    return the_cursor->y;
+    return the_cursor.y;
 }
 
 
 void Cursor_Hide()
 {
-    if (the_cursor->hidden++ == 0)
+    if (the_cursor.hidden++ == 0)
         Cursor__Restore();
 }
 
 
 void Cursor_Show()
 {
-    if (--the_cursor->hidden == 0)
+    if (--the_cursor.hidden == 0)
     {
         Cursor__Save();
         Cursor__Draw();
@@ -665,15 +656,15 @@ void Cursor_CheckBlink()
     long tick;
     tick = readticker();
 
-    if ((tick - the_cursor->last_blink) > CURSOR_BLINK_RATE)
+    if ((tick - the_cursor.last_blink) > CURSOR_BLINK_RATE)
     {
-        the_cursor->blink = !the_cursor->blink;
-        the_cursor->last_blink = tick;
-        if (!the_cursor->hidden)
+        the_cursor.blink = !the_cursor.blink;
+        the_cursor.last_blink = tick;
+        if (!the_cursor.hidden)
             Cursor__Draw();
     }
-    else if (tick < the_cursor->last_blink)
-        the_cursor->last_blink = tick;
+    else if (tick < the_cursor.last_blink)
+        the_cursor.last_blink = tick;
 }
 
 int Cursor_WaitKey()   // blink cursor while waiting for a key
