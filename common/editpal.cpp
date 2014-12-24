@@ -409,7 +409,8 @@ static void drect(int x, int y, int width, int depth)
 }
 
 
-/*
+/* TODO: Eliminate this allocator
+ *
  * A very simple memory "allocator".
  *
  * Each call to mem_alloc() returns size bytes from the array mem_block.
@@ -418,17 +419,19 @@ static void drect(int x, int y, int width, int depth)
  *
  */
 
+// TODO: Eliminate mem_block
 static char     *mem_block;
+// TODO: Eliminate mem_avail
 static unsigned  mem_avail;
 
-
+// TODO: Eliminate this function
 void mem_init(void *block, unsigned size)
 {
     mem_block = (char *)block;
     mem_avail = size;
 }
 
-
+// TODO: Eliminate this function
 void *mem_alloc(unsigned size)
 {
     void *block;
@@ -1560,7 +1563,7 @@ struct PalTable
     bool hidden;
     int           stored_at;
     FILE         *file;
-    char         *saved_pixels;
+    std::vector<char> saved_pixels;
 
     PALENTRY     save_pal[8][256];
 
@@ -1577,7 +1580,6 @@ static void    PalTable__DrawStatus(PalTable *me, bool stripe_mode);
 static void    PalTable__HlPal(PalTable *me, int pnum, int color);
 static void    PalTable__Draw(PalTable *me);
 static void PalTable__SetCurr(PalTable *me, int which, int curr);
-static bool PalTable__MemoryAlloc(PalTable *me, long size);
 static void    PalTable__SaveRect(PalTable *me);
 static void    PalTable__RestoreRect(PalTable *me);
 static void    PalTable__SetPos(PalTable *me, int x, int y);
@@ -2013,147 +2015,36 @@ static void PalTable__SetCurr(PalTable *me, int which, int curr)
 }
 
 
-static bool PalTable__MemoryAlloc(PalTable *me, long size)
-{
-    if (debugflag == debug_flags::force_memory_from_disk)
-    {
-        me->stored_at = NOWHERE;
-        return false;   // can't do it
-    }
-
-    me->saved_pixels = (char *)malloc(size);
-    if (me->saved_pixels == nullptr)
-    {
-        me->stored_at = NOWHERE;
-        return false;
-    }
-    else
-    {
-        me->stored_at = MEMORY;
-        return true;
-    }
-}
-
-
 static void PalTable__SaveRect(PalTable *me)
 {
-    char buff[MAX_WIDTH];
-    int  width = PalTable_PALX + me->csize*16 + 1 + 1,
-         depth = PalTable_PALY + me->csize*16 + 1 + 1;
+    int const width = PalTable_PALX + me->csize*16 + 1 + 1;
+    int const depth = PalTable_PALY + me->csize*16 + 1 + 1;
 
-    // first, do any de-allocationg
-
-    switch (me->stored_at)
+    me->saved_pixels.resize(width*depth);
+    Cursor_Hide();
+    for (int yoff = 0; yoff < depth; yoff++)
     {
-    case NOWHERE:
-        break;
-
-    case DISK:
-        break;
-
-    case MEMORY:
-        if (me->saved_pixels != nullptr)
-            free(me->saved_pixels);
-        me->saved_pixels = nullptr;
-        break;
+        getrow(me->x, me->y+yoff, width, &me->saved_pixels[yoff*width]);
+        hline(me->x, me->y+yoff, width, bg_color);
     }
-
-    // allocate space and store the rect
-
-    if (PalTable__MemoryAlloc(me, (long)width*depth))
-    {
-        char  *ptr = me->saved_pixels;
-        char  *bufptr = buff; // MSC needs me indirection to get it right
-
-        Cursor_Hide();
-        for (int yoff = 0; yoff < depth; yoff++)
-        {
-            getrow(me->x, me->y+yoff, width, buff);
-            hline(me->x, me->y+yoff, width, bg_color);
-            memcpy(ptr, bufptr, width);
-            ptr += width;
-        }
-        Cursor_Show();
-    }
-
-    else // to disk
-    {
-        me->stored_at = DISK;
-
-        if (me->file == nullptr)
-        {
-            me->file = dir_fopen(tempdir, scrnfile, "w+b");
-            if (me->file == nullptr)
-            {
-                me->stored_at = NOWHERE;
-                driver_buzzer(buzzer_codes::PROBLEM);
-                return ;
-            }
-        }
-
-        rewind(me->file);
-        Cursor_Hide();
-        for (int yoff = 0; yoff < depth; yoff++)
-        {
-            getrow(me->x, me->y+yoff, width, buff);
-            hline(me->x, me->y+yoff, width, bg_color);
-            if (fwrite(buff, width, 1, me->file) != 1)
-            {
-                driver_buzzer(buzzer_codes::PROBLEM);
-                break;
-            }
-        }
-        Cursor_Show();
-    }
-
+    Cursor_Show();
 }
 
 
 static void PalTable__RestoreRect(PalTable *me)
 {
-    char buff[MAX_WIDTH];
     int  width = PalTable_PALX + me->csize*16 + 1 + 1,
          depth = PalTable_PALY + me->csize*16 + 1 + 1;
 
     if (me->hidden)
         return;
 
-    switch (me->stored_at)
+    Cursor_Hide();
+    for (int yoff = 0; yoff < depth; yoff++)
     {
-    case DISK:
-        rewind(me->file);
-        Cursor_Hide();
-        for (int yoff = 0; yoff < depth; yoff++)
-        {
-            if (fread(buff, width, 1, me->file) != 1)
-            {
-                driver_buzzer(buzzer_codes::PROBLEM);
-                break;
-            }
-            putrow(me->x, me->y+yoff, width, buff);
-        }
-        Cursor_Show();
-        break;
-
-    case MEMORY:
-    {
-        char  *ptr = me->saved_pixels;
-        char  *bufptr = buff; // MSC needs me indirection to get it right
-
-        Cursor_Hide();
-        for (int yoff = 0; yoff < depth; yoff++)
-        {
-            memcpy(bufptr, ptr, width);
-            putrow(me->x, me->y+yoff, width, buff);
-            ptr += width;
-        }
-        Cursor_Show();
-        break;
+        putrow(me->x, me->y+yoff, width, &me->saved_pixels[yoff*width]);
     }
-
-    case NOWHERE:
-        break;
-    } // switch
+    Cursor_Show();
 }
 
 
@@ -2996,16 +2887,12 @@ static void PalTable__MkDefaultPalettes(PalTable *me)  // creates default Fkey p
 
 static PalTable *PalTable_Construct()
 {
-    PalTable     *me = allocate(PalTable);
+    PalTable     *me = new PalTable;
     int           csize;
 
-    me->rgb[0] = RGBEditor_Construct(0, 0, PalTable__other_key,
-                                     PalTable__change, me);
-    me->rgb[1] = RGBEditor_Construct(0, 0, PalTable__other_key,
-                                     PalTable__change, me);
-
+    me->rgb[0] = RGBEditor_Construct(0, 0, PalTable__other_key, PalTable__change, me);
+    me->rgb[1] = RGBEditor_Construct(0, 0, PalTable__other_key, PalTable__change, me);
     me->movebox = MoveBox_Construct(0, 0, 0, PalTable_PALX+1, PalTable_PALY+1);
-
     me->active      = 0;
     me->curr[0]     = 1;
     me->curr[1]     = 1;
@@ -3014,8 +2901,6 @@ static PalTable *PalTable_Construct()
     me->hidden      = false;
     me->stored_at   = NOWHERE;
     me->file        = nullptr;
-    me->saved_pixels      = nullptr;
-
     me->fs_color.red   = 42;
     me->fs_color.green = 42;
     me->fs_color.blue  = 42;
@@ -3023,7 +2908,6 @@ static PalTable *PalTable_Construct()
     me->bandwidth      = 15;
     me->top            = 255;
     me->bottom         = 0 ;
-
     me->undo_file    = dir_fopen(tempdir, undofile, "w+b");
     me->curr_changed = false;
     me->num_redo     = 0;
@@ -3099,13 +2983,10 @@ static void PalTable_Destroy(PalTable *me)
         dir_remove(tempdir, undofile);
     }
 
-    if (me->saved_pixels != nullptr)
-        free(me->saved_pixels);
-
     RGBEditor_Destroy(me->rgb[0]);
     RGBEditor_Destroy(me->rgb[1]);
     MoveBox_Destroy(me->movebox);
-    deallocate(me);
+    delete me;
 }
 
 
@@ -3175,8 +3056,8 @@ void EditPalette()       // called by fractint
     int       oldlookatmouse = lookatmouse;
     int       oldsxoffs      = sxoffs;
     int       oldsyoffs      = syoffs;
-    PalTable *pt;
 
+    // TODO: Eliminate memory aliasing to strlocn
     mem_init(strlocn, 10*1024);
 
     if (sxdots < 133 || sydots < 174)
@@ -3196,7 +3077,7 @@ void EditPalette()       // called by fractint
     bg_color = (BYTE)(fg_color-1);
 
     Cursor_Construct();
-    pt = PalTable_Construct();
+    PalTable *pt = PalTable_Construct();
     PalTable_Process(pt);
     PalTable_Destroy(pt);
     Cursor_Destroy();

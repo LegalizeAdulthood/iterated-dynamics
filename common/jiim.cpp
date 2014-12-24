@@ -466,6 +466,7 @@ void Jiim(int which)         // called by fractint
     oldcalctype = calctype;
     show_numbers = 0;
     using_jiim = true;
+    // TODO: Eliminate memory aliasing to strlocn
     mem_init(strlocn, 10*1024);
     line_buff = static_cast<BYTE *>(newx(std::max(sxdots, sydots)));
     aspect = ((double)xdots*3)/((double)ydots*4);  // assumes 4:3

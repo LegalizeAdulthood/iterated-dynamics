@@ -184,6 +184,7 @@ extern void EditPalette();
 extern void *mem_alloc(unsigned size);
 void putrow(int x, int y, int width, char *buff);
 void getrow(int x, int y, int width, char *buff);
+// TODO: Eliminate this function
 void mem_init(void *block, unsigned size);
 int Cursor_WaitKey();
 void Cursor_CheckBlink();
