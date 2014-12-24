@@ -19,7 +19,7 @@
  == 1) The original #includes were folded into the routine strictly to hold
  ==    down the number of files we were dealing with.
  ==
- == 2) The 'stack', 'suffix', 'prefix', and 'decoderline' arrays were
+ == 2) The 'stack', 'suffix', 'prefix', and 'decoderline1' arrays were
  ==    changed from static and 'malloc()'ed to external only so that
  ==    the assembler program could use the same array space for several
  ==    independent chunks of code.  Also, 'stack' was renamed to 'dstack'
@@ -106,9 +106,10 @@ static BYTE suffix[10000] = { 0 };
  * corrupt in some way...
  */
 
-
+namespace
+{
 BYTE decoderline1[MAXPIXELS];
-#define decoderline decoderline1
+}
 
 /* The reason we have these separated like this instead of using
  * a structure like the original Wilhite code did, is because this
@@ -195,7 +196,7 @@ short decoder(short linewidth)
 
     // Set up the stack pointer and decode buffer pointer
     sp = dstack;
-    bufptr = decoderline;
+    bufptr = decoderline1;
     bufcnt = linewidth;
 
     /* This is the main loop.  For each code we get we pass through the linked
@@ -295,14 +296,14 @@ short decoder(short linewidth)
                     {
                         if (--yskip < 0)
                         {
-                            ret = (short)((*outln)(decoderline, (int)(bufptr - decoderline)));
+                            ret = (short)((*outln)(decoderline1, (int)(bufptr - decoderline1)));
                             if (ret < 0)
                                 return (ret);
                             yskip = skipydots;
                         }
                         if (driver_key_pressed())
                             return (-1);
-                        bufptr = decoderline;
+                        bufptr = decoderline1;
                         bufcnt = linewidth;
                         xskip = 0;
                     }
@@ -350,14 +351,14 @@ short decoder(short linewidth)
             {
                 if (--yskip < 0)
                 {
-                    ret = (short)((*outln)(decoderline, (int)(bufptr - decoderline)));
+                    ret = (short)((*outln)(decoderline1, (int)(bufptr - decoderline1)));
                     if (ret < 0)
                         return (ret);
                     yskip = skipydots;
                 }
                 if (driver_key_pressed())
                     return (-1);
-                bufptr = decoderline;
+                bufptr = decoderline1;
                 bufcnt = linewidth;
                 xskip = 0;
             }
