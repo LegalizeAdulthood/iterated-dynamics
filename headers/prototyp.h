@@ -181,11 +181,8 @@ extern int FromMemDisk(long, int, void *);
 extern bool ToMemDisk(long, int, void *);
 // editpal -- C file prototypes
 extern void EditPalette();
-extern void *mem_alloc(unsigned size);
 void putrow(int x, int y, int width, char const *buff);
 void getrow(int x, int y, int width, char *buff);
-// TODO: Eliminate this function
-void mem_init(void *block, unsigned size);
 int Cursor_WaitKey();
 void Cursor_CheckBlink();
 void clip_putcolor(int x, int y, int color);

@@ -406,55 +406,6 @@ static void drect(int x, int y, int width, int depth)
 }
 
 
-/* TODO: Eliminate this allocator
- *
- * A very simple memory "allocator".
- *
- * Each call to mem_alloc() returns size bytes from the array mem_block.
- *
- * Be sure to call mem_init() before using mem_alloc()!
- *
- */
-
-// TODO: Eliminate mem_block
-static char     *mem_block;
-// TODO: Eliminate mem_avail
-static unsigned  mem_avail;
-
-// TODO: Eliminate this function
-void mem_init(void *block, unsigned size)
-{
-    mem_block = (char *)block;
-    mem_avail = size;
-}
-
-// TODO: Eliminate this function
-void *mem_alloc(unsigned size)
-{
-    void *block;
-
-#ifndef XFRACT
-    if (size & 1)
-        ++size;   // allocate even sizes
-#else
-    size = (size+3)&~3; // allocate word-aligned memory
-#endif
-
-    if (mem_avail < size)   // don't let this happen!
-    {
-        stopmsg(STOPMSG_NONE, "editpal.c: Out of memory!\n");
-        exit(1);
-    }
-
-    block = mem_block;
-    mem_avail -= size;
-    mem_block += size;
-
-    return block;
-}
-
-
-
 /*
  * misc. routines
  *
@@ -3013,9 +2964,6 @@ void EditPalette()
     int       oldlookatmouse = lookatmouse;
     int       oldsxoffs      = sxoffs;
     int       oldsyoffs      = syoffs;
-
-    // TODO: Eliminate memory aliasing to strlocn
-    mem_init(strlocn, 10*1024);
 
     if (sxdots < 133 || sydots < 174)
         return; // prevents crash when physical screen is too small
