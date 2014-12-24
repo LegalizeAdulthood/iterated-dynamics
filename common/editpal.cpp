@@ -39,8 +39,6 @@
 
 #define MAX_WIDTH        1024     // palette editor cannot be wider than this
 
-char scrnfile[] = "FRACTINT.$$1";  // file where screen portion is
-// stored
 char undofile[] = "FRACTINT.$$2";  // file where undo list is stored
 #define TITLE   "FRACTINT"
 
@@ -1562,7 +1560,6 @@ struct PalTable
     int           num_redo;
     bool hidden;
     int           stored_at;
-    FILE         *file;
     std::vector<char> saved_pixels;
 
     PALENTRY     save_pal[8][256];
@@ -2899,7 +2896,6 @@ static void PalTable_Construct(PalTable *me)
     me->exclude     = 0;
     me->hidden      = false;
     me->stored_at   = NOWHERE;
-    me->file        = nullptr;
     me->fs_color.red   = 42;
     me->fs_color.green = 42;
     me->fs_color.blue  = 42;
@@ -2967,12 +2963,6 @@ static void PalTable_Hide(PalTable *me, RGBEditor *rgb, bool hidden)
 
 static void PalTable_Destroy(PalTable *me)
 {
-    if (me->file != nullptr)
-    {
-        fclose(me->file);
-        dir_remove(tempdir, scrnfile);
-    }
-
     if (me->undo_file != nullptr)
     {
         fclose(me->undo_file);
@@ -3039,14 +3029,7 @@ static void PalTable_Process(PalTable *me)
     setpalrange(0, colors, me->pal);
 }
 
-
-/*
- * interface to FRACTINT
- */
-
-
-
-void EditPalette()       // called by fractint
+void EditPalette()
 {
     int       oldlookatmouse = lookatmouse;
     int       oldsxoffs      = sxoffs;

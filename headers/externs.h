@@ -428,7 +428,6 @@ extern int                   save_release;
 extern int                   save_system;
 extern int                   scale_map[];
 extern float                 screenaspect;
-extern char                  scrnfile[];
 extern struct SearchPath     searchfor;
 extern bool                  set_orbit_corners;
 extern bool                  showbox;

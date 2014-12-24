@@ -26,7 +26,6 @@
 
 int show_numbers =0;              // toggle for display of coords
 std::vector<char> screen_rect;
-FILE *file;
 int windows = 0;               // windows management system
 
 int xc, yc;                       // corners of the window
@@ -1212,12 +1211,6 @@ finish:
     }
     else
         cleartempmsg();
-    if (file != nullptr)
-    {
-        fclose(file);
-        file = nullptr;
-        dir_remove(tempdir, scrnfile);
-    }
     show_numbers = 0;
     driver_unget_key(kbdchar);
 
