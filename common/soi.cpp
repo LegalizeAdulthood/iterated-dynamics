@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define iq8       state.iq8
 #define rq9       state.rq9
 #define iq9       state.iq9
 #define cr1       state.cr1
@@ -750,7 +749,7 @@ scan:
     state.rq7 = zre7*zre7;
     state.iq7 = zim7*zim7;
     state.rq8 = zre8*zre8;
-    iq8 = zim8*zim8;
+    state.iq8 = zim8*zim8;
     rq9 = zre9*zre9;
     iq9 = zim9*zim9;
 
@@ -843,9 +842,9 @@ scan:
         state.iq7 = zim7*zim7;
 
         zim8 = (zim8 + zim8)*zre8 + cim2;
-        zre8 = state.rq8 - iq8 + midr;
+        zre8 = state.rq8 - state.iq8 + midr;
         state.rq8 = zre8*zre8;
-        iq8 = zim8*zim8;
+        state.iq8 = zim8*zim8;
 
         zim9 = (zim9 + zim9)*zre9 + midi;
         zre9 = rq9 - iq9 + midr;
@@ -883,7 +882,7 @@ scan:
                 (state.rq5 + state.iq5) > 16.0 ||
                 (state.rq6 + state.iq6) > 16.0 ||
                 (state.rq7 + state.iq7) > 16.0 ||
-                (state.rq8 + iq8) > 16.0 ||
+                (state.rq8 + state.iq8) > 16.0 ||
                 (rq9 + iq9) > 16.0 ||
                 (trq1 + tiq1) > 16.0 ||
                 (trq2 + tiq2) > 16.0 ||
