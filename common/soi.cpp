@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define trq1      state.trq1
 #define tiq1      state.tiq1
 #define trq2      state.trq2
 #define tiq2      state.tiq2
@@ -756,7 +755,7 @@ scan:
     state.tzr4 = GET_REAL(state.cr2, state.ci2);
     state.tzi4 = GET_IMAG(state.cr2, state.ci2);
 
-    trq1 = state.tzr1*state.tzr1;
+    state.trq1 = state.tzr1*state.tzr1;
     tiq1 = state.tzi1*state.tzi1;
 
     trq2 = state.tzr2*state.tzr2;
@@ -839,8 +838,8 @@ scan:
 
         // iterate test point
         state.tzi1 = (state.tzi1 + state.tzi1)*state.tzr1 + state.ci1;
-        state.tzr1 = trq1 - tiq1 + state.cr1;
-        trq1 = state.tzr1*state.tzr1;
+        state.tzr1 = state.trq1 - tiq1 + state.cr1;
+        state.trq1 = state.tzr1*state.tzr1;
         tiq1 = state.tzi1*state.tzi1;
 
         state.tzi2 = (state.tzi2 + state.tzi2)*state.tzr2 + state.ci1;
@@ -870,7 +869,7 @@ scan:
                 (state.rq7 + state.iq7) > 16.0 ||
                 (state.rq8 + state.iq8) > 16.0 ||
                 (state.rq9 + state.iq9) > 16.0 ||
-                (trq1 + tiq1) > 16.0 ||
+                (state.trq1 + tiq1) > 16.0 ||
                 (trq2 + tiq2) > 16.0 ||
                 (trq3 + tiq3) > 16.0 ||
                 (trq4 + tiq4) > 16.0)
