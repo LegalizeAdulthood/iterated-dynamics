@@ -288,7 +288,6 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define re        state.re
 #define im        state.im
 #define restep    state.restep
 #define imstep    state.imstep
@@ -468,13 +467,13 @@ scan:
                 goto rhombus_done;
             }
             savex = x1;
-            for (x = x1+INTERLEAVE, re = cre1+interstep; x < x2;
-                    x += INTERLEAVE, re += interstep)
+            for (x = x1+INTERLEAVE, state.re = cre1+interstep; x < x2;
+                    x += INTERLEAVE, state.re += interstep)
             {
-                zre = GET_SCAN_REAL(re, im);
-                zim = GET_SCAN_IMAG(re, im);
+                zre = GET_SCAN_REAL(state.re, im);
+                zim = GET_SCAN_IMAG(state.re, im);
 
-                color = iteration(re, im, zre, zim, iter);
+                color = iteration(state.re, im, zre, zim, iter);
                 if (color < 0)
                 {
                     status = true;
@@ -483,7 +482,7 @@ scan:
                 else if (color == savecolor)
                     continue;
 
-                for (z = x-1, helpre = re-restep; z > x-INTERLEAVE; z--, helpre -= restep)
+                for (z = x-1, helpre = state.re-restep; z > x-INTERLEAVE; z--, helpre -= restep)
                 {
                     zre = GET_SCAN_REAL(helpre, im);
                     zim = GET_SCAN_IMAG(helpre, im);
