@@ -29,7 +29,10 @@
 #include "prototyp.h"
 #include "targa_lc.h"
 
+namespace
+{
 char rlebuf[258];    /* RLE-state variables */
+}
 static int state, count, bufp;
 
 /**************************************

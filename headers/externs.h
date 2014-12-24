@@ -403,7 +403,6 @@ extern std::vector<BYTE>     resume_data;
 extern int                   resume_len;
 extern bool                  resuming;
 extern bool                  rflag;
-extern char                  rlebuf[];
 extern int                   rhombus_stack[];
 extern int                   root;
 extern std::vector<DComplex> roots;
