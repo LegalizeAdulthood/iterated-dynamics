@@ -20,13 +20,13 @@
 
 // routines in this module
 
-static int  find_fractal_info(char *, FRACTAL_INFO *,
-                              ext_blk_2 *,
-                              ext_blk_3 *,
-                              ext_blk_4 *,
-                              ext_blk_5 *,
-                              ext_blk_6 *,
-                              ext_blk_7 *);
+static int  find_fractal_info(char *gif_file, FRACTAL_INFO *info,
+                             ext_blk_2 *blk_2_info,
+                             ext_blk_3 *blk_3_info,
+                             ext_blk_4 *blk_4_info,
+                             ext_blk_5 *blk_5_info,
+                             ext_blk_6 *blk_6_info,
+                             ext_blk_7 *blk_7_info);
 static void load_ext_blk(char *loadptr, int loadlen);
 static void skip_ext_blk(int *, int *);
 static void backwardscompat(FRACTAL_INFO *info);
@@ -665,7 +665,8 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
     filecolors = 2 << (gifstart[10] & 7);
     fileaspectratio = 0; // unknown
     if (gifstart[12])
-    { // calc reasonably close value from gif header
+    {
+        // calc reasonably close value from gif header
         fileaspectratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
                                   * (double)fileydots / (double)filexdots);
         if (fileaspectratio > screenaspect-0.03
