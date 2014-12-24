@@ -844,11 +844,10 @@ static int maxcode;                  // maximum code, given n_bits
 static int maxmaxcode = (int)1 << BITSF; // should NEVER generate this code
 # define MAXCODE(n_bits)        (((int) 1 << (n_bits)) - 1)
 
-unsigned int strlocn[10240] = { 0 };
 BYTE block[4096] = { 0 };
 
 static long htab[HSIZE];
-static unsigned short *codetab = (unsigned short *)strlocn;
+static unsigned short codetab[10240] = { 0 };
 
 /*
  * To save much memory, we overlay the table used by compress() with those
