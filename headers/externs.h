@@ -431,7 +431,6 @@ extern int                   showfile;
 extern bool                  show_orbit;
 extern double                sinx;
 extern int                   sizedot;
-extern short                 sizeofstring[];
 extern short                 skipxdots;
 extern short                 skipydots;
 extern slides_mode           g_slides;
