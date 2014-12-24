@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define trq2      state.trq2
 #define tiq2      state.tiq2
 #define trq3      state.trq3
 #define tiq3      state.tiq3
@@ -757,7 +756,7 @@ scan:
     state.trq1 = state.tzr1*state.tzr1;
     state.tiq1 = state.tzi1*state.tzi1;
 
-    trq2 = state.tzr2*state.tzr2;
+    state.trq2 = state.tzr2*state.tzr2;
     tiq2 = state.tzi2*state.tzi2;
 
     trq3 = state.tzr3*state.tzr3;
@@ -842,8 +841,8 @@ scan:
         state.tiq1 = state.tzi1*state.tzi1;
 
         state.tzi2 = (state.tzi2 + state.tzi2)*state.tzr2 + state.ci1;
-        state.tzr2 = trq2 - tiq2 + state.cr2;
-        trq2 = state.tzr2*state.tzr2;
+        state.tzr2 = state.trq2 - tiq2 + state.cr2;
+        state.trq2 = state.tzr2*state.tzr2;
         tiq2 = state.tzi2*state.tzi2;
 
         state.tzi3 = (state.tzi3 + state.tzi3)*state.tzr3 + state.ci2;
@@ -869,7 +868,7 @@ scan:
                 (state.rq8 + state.iq8) > 16.0 ||
                 (state.rq9 + state.iq9) > 16.0 ||
                 (state.trq1 + state.tiq1) > 16.0 ||
-                (trq2 + tiq2) > 16.0 ||
+                (state.trq2 + tiq2) > 16.0 ||
                 (trq3 + tiq3) > 16.0 ||
                 (trq4 + tiq4) > 16.0)
             break;
