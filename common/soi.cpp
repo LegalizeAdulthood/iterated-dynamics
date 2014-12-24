@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define iq3       state.iq3
 #define rq4       state.rq4
 #define iq4       state.iq4
 #define rq5       state.rq5
@@ -750,7 +749,7 @@ scan:
     state.rq2 = zre2*zre2;
     state.iq2 = zim2*zim2;
     state.rq3 = zre3*zre3;
-    iq3 = zim3*zim3;
+    state.iq3 = zim3*zim3;
     rq4 = zre4*zre4;
     iq4 = zim4*zim4;
     rq5 = zre5*zre5;
@@ -828,9 +827,9 @@ scan:
         state.iq2 = zim2*zim2;
 
         zim3 = (zim3 + zim3)*zre3 + cim2;
-        zre3 = state.rq3 - iq3 + cre1;
+        zre3 = state.rq3 - state.iq3 + cre1;
         state.rq3 = zre3*zre3;
-        iq3 = zim3*zim3;
+        state.iq3 = zim3*zim3;
 
         zim4 = (zim4 + zim4)*zre4 + cim2;
         zre4 = rq4 - iq4 + cre2;
@@ -888,7 +887,7 @@ scan:
         // if one of the iterated values bails out, subdivide
         if ((state.rq1 + state.iq1) > 16.0 ||
                 (state.rq2 + state.iq2) > 16.0 ||
-                (state.rq3 + iq3) > 16.0 ||
+                (state.rq3 + state.iq3) > 16.0 ||
                 (rq4 + iq4) > 16.0 ||
                 (rq5 + iq5) > 16.0 ||
                 (rq6 + iq6) > 16.0 ||
