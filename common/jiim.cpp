@@ -22,8 +22,6 @@
 
 #define MAXRECT         1024      // largest width of SaveRect/RestoreRect
 
-#define delete(block)  block = nullptr
-
 int show_numbers =0;              // toggle for display of coords
 std::vector<char> screen_rect;
 int windows = 0;               // windows management system

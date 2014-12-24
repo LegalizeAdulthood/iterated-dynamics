@@ -46,8 +46,6 @@ char undofile[] = "FRACTINT.$$2";  // file where undo list is stored
 #define TITLE_LEN (8)
 
 
-#define deallocate(block)  block = nullptr  // just for warning
-
 #ifdef XFRACT
 bool editpal_cursor = false;
 #endif
