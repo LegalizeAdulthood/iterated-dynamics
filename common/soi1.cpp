@@ -288,8 +288,6 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define rq9       state.rq9
-#define iq9       state.iq9
 #define cr1       state.cr1
 #define cr2       state.cr2
 #define ci1       state.ci1
@@ -504,8 +502,8 @@ scan:
     state.iq7 = zim7*zim7;
     state.rq8 = zre8*zre8;
     state.iq8 = zim8*zim8;
-    rq9 = zre9*zre9;
-    iq9 = zim9*zim9;
+    state.rq9 = zre9*zre9;
+    state.iq9 = zim9*zim9;
 
     cr1 = 0.75*cre1 + 0.25*cre2;
     cr2 = 0.25*cre1 + 0.75*cre2;
@@ -637,7 +635,7 @@ scan:
               rq8=zre8*zre8;
               iq8=zim8*zim8;
         */
-        SOI_ORBIT(zre9, rq9, zim9, iq9, midr, midi, state.esc9);
+        SOI_ORBIT(zre9, state.rq9, zim9, state.iq9, midr, midi, state.esc9);
         /*
               zim9=(zim9+zim9)*zre9+midi;
               zre9=rq9-iq9+midr;
