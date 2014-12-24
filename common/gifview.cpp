@@ -56,10 +56,8 @@ int get_bytes(BYTE *where, int how_many)
  * The skipxdots and skipydots logic assumes that the buffer holds one line.
  */
 
-BYTE decoderline[MAXPIXELS+1]; // write-line routines use this
 #define DECODERLINE_WIDTH MAXPIXELS
 
-extern BYTE *decoderline1;
 static std::vector<char> ditherbuf;
 
 // Main entry decoder

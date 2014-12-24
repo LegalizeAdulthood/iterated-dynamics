@@ -88,7 +88,6 @@ extern bool                  g_dac_learn;
 extern double                ddelmin;
 extern int                   debugflag;
 extern int                   decimals;
-extern BYTE                  decoderline[];
 extern int                   decomp[];
 extern int                   degree;
 extern long                  delmin;
