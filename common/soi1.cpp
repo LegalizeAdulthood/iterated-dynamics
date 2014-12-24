@@ -288,7 +288,6 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define trq4      state.trq4
 #define tiq4      state.tiq4
 
     // number of iterations before SOI iteration cycle
@@ -513,7 +512,7 @@ scan:
     state.trq3 = state.tzr3*state.tzr3;
     state.tiq3 = state.tzi3*state.tzi3;
 
-    trq4 = state.tzr4*state.tzr4;
+    state.trq4 = state.tzr4*state.tzr4;
     tiq4 = state.tzi4*state.tzi4;
 
     before = iter;
@@ -647,7 +646,7 @@ scan:
               trq3=tzr3*tzr3;
               tiq3=tzi3*tzi3;
         */
-        SOI_ORBIT(state.tzr4, trq4, state.tzi4, tiq4, state.cr2, state.ci2, state.tesc4);
+        SOI_ORBIT(state.tzr4, state.trq4, state.tzi4, tiq4, state.cr2, state.ci2, state.tesc4);
         /*
               tzi4=(tzi4+tzi4)*tzr4+ci2;
               tzr4=trq4-tiq4+cr2;
