@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define tzi4      state.tzi4
 #define trq1      state.trq1
 #define tiq1      state.tiq1
 #define trq2      state.trq2
@@ -755,7 +754,7 @@ scan:
     state.tzi3 = GET_IMAG(state.cr1, state.ci2);
 
     state.tzr4 = GET_REAL(state.cr2, state.ci2);
-    tzi4 = GET_IMAG(state.cr2, state.ci2);
+    state.tzi4 = GET_IMAG(state.cr2, state.ci2);
 
     trq1 = state.tzr1*state.tzr1;
     tiq1 = state.tzi1*state.tzi1;
@@ -767,7 +766,7 @@ scan:
     tiq3 = state.tzi3*state.tzi3;
 
     trq4 = state.tzr4*state.tzr4;
-    tiq4 = tzi4*tzi4;
+    tiq4 = state.tzi4*state.tzi4;
 
     before = iter;
 
@@ -854,10 +853,10 @@ scan:
         trq3 = state.tzr3*state.tzr3;
         tiq3 = state.tzi3*state.tzi3;
 
-        tzi4 = (tzi4 + tzi4)*state.tzr4 + state.ci2;
+        state.tzi4 = (state.tzi4 + state.tzi4)*state.tzr4 + state.ci2;
         state.tzr4 = trq4 - tiq4 + state.cr2;
         trq4 = state.tzr4*state.tzr4;
-        tiq4 = tzi4*tzi4;
+        tiq4 = state.tzi4*state.tzi4;
 
         iter++;
 
@@ -939,9 +938,9 @@ scan:
             break;
 
         state.l2 = GET_IMAG(state.cr2, state.ci2);
-        state.l2 = (tzi4 == 0.0)?
+        state.l2 = (state.tzi4 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
-           state.l2/tzi4;
+           state.l2/state.tzi4;
         if (FABS(1.0 - state.l2) > twidth)
             break;
     }
