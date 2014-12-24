@@ -215,8 +215,6 @@ bool do_AutoStereo()
     int barwidth;
     time_t ltime;
     unsigned char *buf = (unsigned char *)decoderline;
-    // following two lines re-use existing arrays in Fractint
-    std::unique_ptr<int[]> same(new int[xdots]);
     std::unique_ptr<int[]> colour(new int[xdots]);
     bool done = false;
 
