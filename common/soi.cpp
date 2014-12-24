@@ -364,7 +364,7 @@ interpolate(cre1, midr, cre2, \
 interpolate(cim1, midi, cim2, \
         EVALUATE(cre1, midr, state.br10, state.br11, state.br12, x), \
         EVALUATE(cre1, midr, state.br20, state.br21, state.br22, x), \
-        EVALUATE(cre1, midr, state.br30, br31, br32, x), y)
+        EVALUATE(cre1, midr, state.br30, state.br31, br32, x), y)
 #define GET_SCAN_IMAG(x, y) \
 interpolate(cre1, midr, cre2, \
         EVALUATE(cim1, midi, bi10, bi11, bi12, y), \
@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define br31      state.br31
 #define br32      state.br32
 #define bi10      state.bi10
 #define bi11      state.bi11
@@ -668,7 +667,7 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 scan:
         INTERPOLATE(cre1, midr, cre2, zre1, zre5, zre2, state.br10, state.br11, state.br12);
         INTERPOLATE(cre1, midr, cre2, zre6, zre9, zre7, state.br20, state.br21, state.br22);
-        INTERPOLATE(cre1, midr, cre2, zre3, zre8, zre4, state.br30, br31, br32);
+        INTERPOLATE(cre1, midr, cre2, zre3, zre8, zre4, state.br30, state.br31, br32);
 
         INTERPOLATE(cim1, midi, cim2, zim1, zim6, zim3, bi10, bi11, bi12);
         INTERPOLATE(cim1, midi, cim2, zim5, zim9, zim8, bi20, bi21, bi22);
