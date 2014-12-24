@@ -11,6 +11,8 @@
  * <URL:http://www.cs.tu-berlin.de/~rms/AlmondBread>.
  *
  */
+#include <vector>
+
 #include <float.h>
 #include <time.h>
 #include <string.h>
@@ -600,73 +602,61 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long before;
     static int avail;
 
-    // the variables below need to have local copis for recursive calls
-    LDBL *mem;
+    // the variables below need to have local copies for recursive calls
     // center of rectangle
     LDBL midr = (cre1+cre2)/2, midi = (cim1+cim2)/2;
-
-#define sr1  mem[ 0]
-#define si1  mem[ 1]
-#define sr2  mem[ 2]
-#define si2  mem[ 3]
-#define sr3  mem[ 4]
-#define si3  mem[ 5]
-#define sr4  mem[ 6]
-#define si4  mem[ 7]
-#define sr5  mem[ 8]
-#define si5  mem[ 9]
-#define sr6  mem[10]
-#define si6  mem[11]
-#define sr7  mem[12]
-#define si7  mem[13]
-#define sr8  mem[14]
-#define si8  mem[15]
-#define sr9  mem[16]
-#define si9  mem[17]
-#define re10 mem[18]
-#define re11 mem[19]
-#define re12 mem[20]
-#define re13 mem[21]
-#define re14 mem[22]
-#define re15 mem[23]
-#define re16 mem[24]
-#define re17 mem[25]
-#define re18 mem[26]
-#define re19 mem[27]
-#define re20 mem[28]
-#define re21 mem[29]
-#define im10 mem[30]
-#define im11 mem[31]
-#define im12 mem[32]
-#define im13 mem[33]
-#define im14 mem[34]
-#define im15 mem[35]
-#define im16 mem[36]
-#define im17 mem[37]
-#define im18 mem[38]
-#define im19 mem[39]
-#define im20 mem[40]
-#define im21 mem[41]
-#define re91 mem[42]
-#define re92 mem[43]
-#define re93 mem[44]
-#define re94 mem[45]
-#define im91 mem[46]
-#define im92 mem[47]
-#define im93 mem[48]
-#define im94 mem[49]
-
+    LDBL sr1;
+    LDBL si1;
+    LDBL sr2;
+    LDBL si2;
+    LDBL sr3;
+    LDBL si3;
+    LDBL sr4;
+    LDBL si4;
+    LDBL sr5;
+    LDBL si5;
+    LDBL sr6;
+    LDBL si6;
+    LDBL sr7;
+    LDBL si7;
+    LDBL sr8;
+    LDBL si8;
+    LDBL sr9;
+    LDBL si9;
+    LDBL re10;
+    LDBL re11;
+    LDBL re12;
+    LDBL re13;
+    LDBL re14;
+    LDBL re15;
+    LDBL re16;
+    LDBL re17;
+    LDBL re18;
+    LDBL re19;
+    LDBL re20;
+    LDBL re21;
+    LDBL im10;
+    LDBL im11;
+    LDBL im12;
+    LDBL im13;
+    LDBL im14;
+    LDBL im15;
+    LDBL im16;
+    LDBL im17;
+    LDBL im18;
+    LDBL im19;
+    LDBL im20;
+    LDBL im21;
+    LDBL re91;
+    LDBL re92;
+    LDBL re93;
+    LDBL re94;
+    LDBL im91;
+    LDBL im92;
+    LDBL im93;
+    LDBL im94;
     bool status = false;
     rhombus_depth++;
-
-#if 1
-    /* what we go through under DOS to deal with memory! We re-use
-       the sizeofstring array (8k). The first 660 bytes is for
-       static variables, then we make our own "stack" with copies
-       for each recursive call of rhombus() for the rest.
-     */
-    mem = ((LDBL *)sizeofstring) + 50*rhombus_depth;
-#endif
 
     avail = stackavail();
     if (avail < minstackavail)
