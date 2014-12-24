@@ -145,12 +145,12 @@ static void fillrect(int x, int y, int width, int depth, int color)
     // fast version of fillrect
     if (!hasinverse)
         return;
-    memset(dstack, color % colors, width);
+    std::vector<char> row(width, char(color % colors));
     while (depth-- > 0)
     {
         if (driver_key_pressed()) // we could do this less often when in fast modes
             return;
-        putrow(x, y++, width, (char *)dstack);
+        putrow(x, y++, width, &row[0]);
     }
 }
 
