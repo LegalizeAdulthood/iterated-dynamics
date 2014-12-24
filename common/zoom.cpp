@@ -2,6 +2,8 @@
     zoom.c - routines for zoombox manipulation and for panning
 
 */
+#include <vector>
+
 #include <float.h>
 #include <string.h>
 
@@ -649,10 +651,10 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     return (j);
 }
 
-static void move_row(int fromrow, int torow, int col)
 // move a row on the screen
+static void move_row(int fromrow, int torow, int col)
 {
-    memset(dstack, 0, xdots); // use dstack as a temp for the row; clear it
+    std::vector<BYTE> temp(xdots, 0);
     if (fromrow >= 0 && fromrow < ydots)
     {
         int startcol = 0;
@@ -665,9 +667,9 @@ static void move_row(int fromrow, int torow, int col)
         }
         if (col > 0)
             startcol += col;
-        get_line(fromrow, startcol, endcol, (BYTE *)&dstack[tocol]);
+        get_line(fromrow, startcol, endcol, &temp[tocol]);
     }
-    put_line(torow, 0, xdots-1, (BYTE *)dstack);
+    put_line(torow, 0, xdots-1, &temp[0]);
 }
 
 int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist & pan
