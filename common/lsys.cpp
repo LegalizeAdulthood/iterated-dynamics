@@ -1,3 +1,5 @@
+#include <vector>
+
 #include <float.h>
 #include <string.h>
 #if !defined(_WIN32)
@@ -43,8 +45,8 @@ static void lsysi_dodrawc(lsys_turtlestatei *cmd);
 static void lsysi_dodrawgt(lsys_turtlestatei *cmd);
 static void lsysi_dodrawlt(lsys_turtlestatei *cmd);
 
-#define sins ((long *)(boxy))
-#define coss (((long *)(boxy)+50)) // 50 after the start of sins
+std::vector<long> sins;
+std::vector<long> coss;
 static char *ruleptrs[MAXRULES];
 static lsys_cmd *rules2[MAXRULES];
 char maxangle;
@@ -1110,6 +1112,8 @@ static void lsysi_dosincos()
 
     locaspect = screenaspect*xdots/ydots;
     twopimax = TWOPI / maxangle;
+    sins.resize(maxangle);
+    coss.resize(maxangle);
     for (int i = 0; i < maxangle; i++)
     {
         twopimaxi = i * twopimax;
