@@ -449,7 +449,7 @@ static LDBL zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
 namespace
 {
 
-struct rhombus_state
+struct soi_long_double_state
 {
     LDBL re;
     LDBL im;
@@ -519,7 +519,7 @@ struct rhombus_state
     LDBL tiq4;
 };
 
-rhombus_state state = { 0.0 };
+soi_long_double_state state = { 0.0 };
 
 }
 
