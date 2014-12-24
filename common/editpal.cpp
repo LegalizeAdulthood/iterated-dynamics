@@ -529,12 +529,6 @@ void Cursor_Construct()
 }
 
 
-void Cursor_Destroy()
-{
-}
-
-
-
 static void Cursor__Draw()
 {
     int color;
@@ -3050,7 +3044,6 @@ void EditPalette()
     PalTable_Construct(&pt);
     PalTable_Process(&pt);
     PalTable_Destroy(&pt);
-    Cursor_Destroy();
 
     lookatmouse = oldlookatmouse;
     sxoffs = oldsxoffs;

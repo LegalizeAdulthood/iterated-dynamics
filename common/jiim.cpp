@@ -1178,7 +1178,6 @@ finish:
             hasinverse = savehasinverse;
         }
     }
-    Cursor_Destroy();
 #ifdef XFRACT
     Cursor_EndMouseTracking();
 #endif
