@@ -859,8 +859,13 @@ inline double dot_product(VECTOR v1, VECTOR v2)
 #define Fractint  "Xfractint"
 #define FRACTINT  "XFRACTINT"
 #endif
-#define JIIM  0
-#define ORBIT 1
+
+enum class jiim_types
+{
+    JIIM = 0,
+    ORBIT
+};
+
 struct WORKLIST     // work list entry for std escape time engines
 {
     int xxstart;    // screen window for this entry

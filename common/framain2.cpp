@@ -983,7 +983,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 !(g_is_true_color && truemode))
         {
             clear_zoombox();
-            Jiim(ORBIT);
+            Jiim(jiim_types::ORBIT);
         }
         break;
     case FIK_SPACE:                  // spacebar, toggle mand/julia
@@ -1022,7 +1022,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 else
                     hasinverse = false;
                 clear_zoombox();
-                Jiim(JIIM);
+                Jiim(jiim_types::JIIM);
                 key = driver_get_key();    // flush keyboard buffer
                 if (key != FIK_SPACE)
                 {

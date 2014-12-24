@@ -418,7 +418,7 @@ static void RestoreRect(int x, int y, int width, int depth)
 
 DComplex SaveC = {-3000.0, -3000.0};
 
-void Jiim(int which)         // called by fractint
+void Jiim(jiim_types which)
 {
     affine cvt;
     bool exact = false;
@@ -452,7 +452,7 @@ void Jiim(int which)         // called by fractint
             && fractalspecific[static_cast<int>(fractype)].calctype != calcfroth)
         return;
     oldhelpmode = helpmode;
-    if (which == JIIM)
+    if (which == jiim_types::JIIM)
         helpmode = HELP_JIIM;
     else
     {
@@ -472,7 +472,7 @@ void Jiim(int which)         // called by fractint
     SetAspect(aspect);
     lookatmouse = 3;
 
-    if (which == ORBIT)
+    if (which == jiim_types::ORBIT)
         (*PER_IMAGE)();
 
     Cursor_Construct();
@@ -482,11 +482,11 @@ void Jiim(int which)         // called by fractint
      * Grab memory for Queue/Stack before SaveRect gets it.
      */
     OKtoMIIM  = false;
-    if (which == JIIM && debugflag != debug_flags::prevent_miim)
+    if (which == jiim_types::JIIM && debugflag != debug_flags::prevent_miim)
         OKtoMIIM = Init_Queue(8*1024UL); // Queue Set-up Successful?
 
     maxhits = 1;
-    if (which == ORBIT)
+    if (which == jiim_types::ORBIT)
         plot = c_putcolor;                // for line with clipping
 
     /*
@@ -753,7 +753,7 @@ void Jiim(int which)         // called by fractint
                 case '7':
                 case '8':
                 case '9':
-                    if (which == JIIM)
+                    if (which == jiim_types::JIIM)
                     {
                         SecretExperimentalMode = kbdchar - '0';
                         break;
@@ -855,7 +855,7 @@ void Jiim(int which)         // called by fractint
              * MIIM code:
              * compute fixed points and use them as starting points of JIIM
              */
-            if (which == JIIM && OKtoMIIM)
+            if (which == jiim_types::JIIM && OKtoMIIM)
             {
                 DComplex f1, f2, Sqrt;        // Fixed points of Julia
 
@@ -873,7 +873,7 @@ void Jiim(int which)         // called by fractint
             /*
              * End MIIM code.
              */
-            if (which == ORBIT)
+            if (which == jiim_types::ORBIT)
             {
                 PER_PIXEL();
             }
@@ -898,7 +898,7 @@ void Jiim(int which)         // called by fractint
 
         } // end if (driver_key_pressed)
 
-        if (which == JIIM)
+        if (which == jiim_types::JIIM)
         {
             if (!hasinverse)
                 continue;
@@ -1129,7 +1129,7 @@ void Jiim(int which)         // called by fractint
                 actively_computing = false;
             }
         }
-        if (which == ORBIT || iter > 10)
+        if (which == jiim_types::ORBIT || iter > 10)
         {
             if (mode == 0)                  // pixels
                 c_putcolor(x, y, color);

@@ -509,7 +509,7 @@ extern int zlinefp(double, double);
 extern int Std4dFractal();
 extern int Std4dfpFractal();
 // jiim -- C file prototypes
-extern void Jiim(int);
+extern void Jiim(jiim_types which);
 extern LComplex PopLong();
 extern DComplex PopFloat();
 extern LComplex DeQueueLong();
