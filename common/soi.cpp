@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define rq1       state.rq1
 #define iq1       state.iq1
 #define rq2       state.rq2
 #define iq2       state.iq2
@@ -750,7 +749,7 @@ scan:
         goto rhombus_done;
     }
 
-    rq1 = zre1*zre1;
+    state.rq1 = zre1*zre1;
     iq1 = zim1*zim1;
     rq2 = zre2*zre2;
     iq2 = zim2*zim2;
@@ -823,8 +822,8 @@ scan:
 
         // iterate key values
         zim1 = (zim1+zim1)*zre1+cim1;
-        zre1 = rq1-iq1+cre1;
-        rq1 = zre1*zre1;
+        zre1 = state.rq1-iq1+cre1;
+        state.rq1 = zre1*zre1;
         iq1 = zim1*zim1;
 
         zim2 = (zim2+zim2)*zre2+cim1;
@@ -891,7 +890,7 @@ scan:
         iter++;
 
         // if one of the iterated values bails out, subdivide
-        if ((rq1+iq1) > 16.0||
+        if ((state.rq1+iq1) > 16.0||
                 (rq2+iq2) > 16.0||
                 (rq3+iq3) > 16.0||
                 (rq4+iq4) > 16.0||
