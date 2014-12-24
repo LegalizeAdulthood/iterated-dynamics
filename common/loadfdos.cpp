@@ -243,13 +243,14 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
                 sprintf(temp1, "Type: %s", nameptr);
             }
         }
-        sprintf((char *)dstack, "File: %-44s  %d x %d x %d\n%-52s",
+        char heading[256];  // big enough for more than a few lines
+        sprintf(heading, "File: %-44s  %d x %d x %d\n%-52s",
                 readname, filexdots, fileydots, filecolors, temp1);
         if (info->info_id[0] != 'G')
         {
             if (save_system)
             {
-                strcat((char *)dstack, "WinFract ");
+                strcat(heading, "WinFract ");
             }
             sprintf(temp1, "v%d.%01d", save_release/100, (save_release%100)/10);
             if (save_release%100)
@@ -262,27 +263,27 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             {
                 strcat(temp1, " or earlier");
             }
-            strcat((char *)dstack, temp1);
+            strcat(heading, temp1);
         }
-        strcat((char *)dstack, "\n");
+        strcat(heading, "\n");
         if (info->info_id[0] != 'G' && save_system == 0)
         {
             if (g_init_mode < 0)
             {
-                strcat((char *)dstack, "Saved in unknown video mode.");
+                strcat(heading, "Saved in unknown video mode.");
             }
             else
             {
                 format_vid_inf(g_init_mode, "", temp1);
-                strcat((char *)dstack, temp1);
+                strcat(heading, temp1);
             }
         }
         if (fileaspectratio != 0 && fileaspectratio != screenaspect)
         {
-            strcat((char *)dstack,
+            strcat(heading,
                    "\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings");
         }
-        strcat((char *)dstack, "\n");
+        strcat(heading, "\n");
         // set up instructions
         strcpy(temp1, "Select a video mode.  Use the cursor keypad to move the pointer.\n"
                "Press ENTER for selected mode, or use a video mode function key.\n"
@@ -295,7 +296,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 
         int oldhelpmode = helpmode;
         helpmode = HELPLOADFILE;
-        int i = fullscreen_choice(0, (char *) dstack,
+        int i = fullscreen_choice(0, heading,
                               "key...name......................err...xdot..ydot.clr.comment..................",
                               temp1, g_video_table_len, nullptr, &attributes[0],
                               1, 13, 78, 0, format_item, nullptr, nullptr, check_modekey);
