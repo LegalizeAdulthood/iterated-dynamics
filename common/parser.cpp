@@ -3105,7 +3105,7 @@ static bool fill_jump_struct()
     return i < 0;
 }
 
-static char *FormStr;
+static std::string FormStr;
 
 int frmgetchar(FILE * openfile)
 {
@@ -3904,19 +3904,17 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
 }
 
 
-static char *PrepareFormula(FILE * File, bool from_prompts1c)
+/* This function sets the
+    symmetry and converts a formula into a string  with no spaces,
+    and one comma after each expression except where the ':' is placed
+    and except the final expression in the formula. The open file passed
+    as an argument is open in "rb" mode and is positioned at the first
+    letter of the name of the formula to be prepared. This function
+    is called from RunForm() below.
+*/
+static std::string PrepareFormula(FILE * File, bool from_prompts1c)
 {
-    /* This function sets the
-       symmetry and converts a formula into a string  with no spaces,
-       and one comma after each expression except where the ':' is placed
-       and except the final expression in the formula. The open file passed
-       as an argument is open in "rb" mode and is positioned at the first
-       letter of the name of the formula to be prepared. This function
-       is called from RunForm() below.
-    */
-
     FILE *debug_fp = nullptr;
-    char *FormulaStr;
     token_st temp_tok;
     long filepos = ftell(File);
 
@@ -3957,8 +3955,7 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
         }
     }
 
-    FormulaStr = (char *)boxx;
-    FormulaStr[0] = (char) 0; // To permit concatenation later
+    std::string FormulaStr;
 
     bool Done = false;
 
@@ -3986,7 +3983,7 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
             ;
         else
         {
-            strcat(FormulaStr, temp_tok.token_str);
+            FormulaStr += temp_tok.token_str;
             Done = true;
         }
     }
@@ -4008,13 +4005,13 @@ static char *PrepareFormula(FILE * File, bool from_prompts1c)
             fseek(File, filepos, SEEK_SET);
             break;
         default:
-            strcat(FormulaStr, temp_tok.token_str);
+            FormulaStr += temp_tok.token_str;
             break;
         }
     }
 
-    if (debug_fp != nullptr && FormulaStr != nullptr)
-        fprintf(debug_fp, "   %s\n", FormulaStr);
+    if (debug_fp != nullptr && !FormulaStr.empty())
+        fprintf(debug_fp, "   %s\n", FormulaStr.c_str());
     if (debug_fp != nullptr)
         fclose(debug_fp);
 
@@ -4051,10 +4048,10 @@ bool RunForm(char *Name, bool from_prompts1c)
     FormStr = PrepareFormula(entry_file, from_prompts1c);
     fclose(entry_file);
 
-    if (FormStr)  //  No errors while making string
+    if (!FormStr.empty())  //  No errors while making string
     {
         parser_allocate();  //  ParseStr() will test if this alloc worked
-        if (ParseStr(FormStr, 1))
+        if (ParseStr(FormStr.c_str(), 1))
             return true;   //  parse failed, don't change fn pointers
         else
         {
@@ -4155,7 +4152,7 @@ static void parser_allocate()
 
         if (pass == 0)
         {
-            if (!ParseStr(FormStr, pass))
+            if (!ParseStr(FormStr.c_str(), pass))
             {
                 // per Chuck Ebbert, fudge these up a little
                 Max_Ops = posp + 4;
