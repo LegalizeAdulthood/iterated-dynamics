@@ -45,7 +45,6 @@ char undofile[] = "FRACTINT.$$2";  // file where undo list is stored
 #define TITLE_LEN (8)
 
 
-#define newx(size)     mem_alloc(size)
 #define allocate(class)     (class *)(mem_alloc(sizeof(class)))
 #define deallocate(block)  block = nullptr  // just for warning
 
@@ -725,10 +724,10 @@ static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int b
     me->base_depth  = base_depth;
     me->moved       = false;
     me->should_hide = false;
-    me->t           = static_cast<char *>(newx(sxdots));
-    me->b           = static_cast<char *>(newx(sxdots));
-    me->l           = static_cast<char *>(newx(sydots));
-    me->r           = static_cast<char *>(newx(sydots));
+    me->t           = static_cast<char *>(mem_alloc(sxdots));
+    me->b           = static_cast<char *>(mem_alloc(sxdots));
+    me->l           = static_cast<char *>(mem_alloc(sydots));
+    me->r           = static_cast<char *>(mem_alloc(sydots));
 
     return me;
 }
@@ -3028,7 +3027,7 @@ void EditPalette()
 
     plot = putcolor;
 
-    line_buff = static_cast<BYTE *>(newx(std::max(sxdots, sydots)));
+    line_buff = static_cast<BYTE *>(mem_alloc(std::max(sxdots, sydots)));
 
     lookatmouse = 3;
     syoffs = 0;
