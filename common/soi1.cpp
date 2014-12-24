@@ -288,7 +288,6 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define ci1       state.ci1
 #define ci2       state.ci2
 #define tzr1      state.tzr1
 #define tzi1      state.tzi1
@@ -505,14 +504,14 @@ scan:
 
     state.cr1 = 0.75*cre1 + 0.25*cre2;
     state.cr2 = 0.25*cre1 + 0.75*cre2;
-    ci1 = 0.75*cim1 + 0.25*cim2;
+    state.ci1 = 0.75*cim1 + 0.25*cim2;
     ci2 = 0.25*cim1 + 0.75*cim2;
 
-    tzr1 = GET_REAL(state.cr1, ci1);
-    tzi1 = GET_IMAG(state.cr1, ci1);
+    tzr1 = GET_REAL(state.cr1, state.ci1);
+    tzi1 = GET_IMAG(state.cr1, state.ci1);
 
-    tzr2 = GET_REAL(state.cr2, ci1);
-    tzi2 = GET_IMAG(state.cr2, ci1);
+    tzr2 = GET_REAL(state.cr2, state.ci1);
+    tzi2 = GET_IMAG(state.cr2, state.ci1);
 
     tzr3 = GET_REAL(state.cr1, ci2);
     tzi3 = GET_IMAG(state.cr1, ci2);
@@ -641,7 +640,7 @@ scan:
               iq9=zim9*zim9;
         */
         // iterate test point
-        SOI_ORBIT(tzr1, trq1, tzi1, tiq1, state.cr1, ci1, state.tesc1);
+        SOI_ORBIT(tzr1, trq1, tzi1, tiq1, state.cr1, state.ci1, state.tesc1);
         /*
               tzi1=(tzi1+tzi1)*tzr1+ci1;
               tzr1=trq1-tiq1+cr1;
@@ -649,7 +648,7 @@ scan:
               tiq1=tzi1*tzi1;
         */
 
-        SOI_ORBIT(tzr2, trq2, tzi2, tiq2, state.cr2, ci1, state.tesc2);
+        SOI_ORBIT(tzr2, trq2, tzi2, tiq2, state.cr2, state.ci1, state.tesc2);
         /*
               tzi2=(tzi2+tzi2)*tzr2+ci1;
               tzr2=trq2-tiq2+cr2;
@@ -705,28 +704,28 @@ scan:
 
         /* now for all test points, check whether they exceed the
         allowed tolerance. if so, subdivide */
-        state.l1 = GET_REAL(state.cr1, ci1);
+        state.l1 = GET_REAL(state.cr1, state.ci1);
         state.l1 = (tzr1 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/tzr1;
         if (FABS(1.0 - state.l1) > twidth)
             break;
 
-        state.l2 = GET_IMAG(state.cr1, ci1);
+        state.l2 = GET_IMAG(state.cr1, state.ci1);
         state.l2 = (tzi1 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/tzi1;
         if (FABS(1.0 - state.l2) > twidth)
             break;
 
-        state.l1 = GET_REAL(state.cr2, ci1);
+        state.l1 = GET_REAL(state.cr2, state.ci1);
         state.l1 = (tzr2 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/tzr2;
         if (FABS(1.0 - state.l1) > twidth)
             break;
 
-        state.l2 = GET_IMAG(state.cr2, ci1);
+        state.l2 = GET_IMAG(state.cr2, state.ci1);
         state.l2 = (tzi2 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/tzi2;
@@ -808,11 +807,11 @@ scan:
     re16 = interpolate(cre1, midr, cre2, sr6, sr9, sr7, state.cr2);
     im16 = interpolate(cre1, midr, cre2, si6, si9, si7, state.cr2);
 
-    re12 = interpolate(cim1, midi, cim2, sr1, sr6, sr3, ci1);
-    im12 = interpolate(cim1, midi, cim2, si1, si6, si3, ci1);
+    re12 = interpolate(cim1, midi, cim2, sr1, sr6, sr3, state.ci1);
+    im12 = interpolate(cim1, midi, cim2, si1, si6, si3, state.ci1);
 
-    re14 = interpolate(cim1, midi, cim2, sr2, sr7, sr4, ci1);
-    im14 = interpolate(cim1, midi, cim2, si2, si7, si4, ci1);
+    re14 = interpolate(cim1, midi, cim2, sr2, sr7, sr4, state.ci1);
+    im14 = interpolate(cim1, midi, cim2, si2, si7, si4, state.ci1);
 
     re17 = interpolate(cim1, midi, cim2, sr1, sr6, sr3, ci2);
     im17 = interpolate(cim1, midi, cim2, si1, si6, si3, ci2);
@@ -820,19 +819,19 @@ scan:
     re19 = interpolate(cim1, midi, cim2, sr2, sr7, sr4, ci2);
     im19 = interpolate(cim1, midi, cim2, si2, si7, si4, ci2);
 
-    re13 = interpolate(cim1, midi, cim2, sr5, sr9, sr8, ci1);
-    im13 = interpolate(cim1, midi, cim2, si5, si9, si8, ci1);
+    re13 = interpolate(cim1, midi, cim2, sr5, sr9, sr8, state.ci1);
+    im13 = interpolate(cim1, midi, cim2, si5, si9, si8, state.ci1);
 
     re18 = interpolate(cim1, midi, cim2, sr5, sr9, sr8, ci2);
     im18 = interpolate(cim1, midi, cim2, si5, si9, si8, ci2);
 
-    re91 = GET_SAVED_REAL(state.cr1, ci1);
-    re92 = GET_SAVED_REAL(state.cr2, ci1);
+    re91 = GET_SAVED_REAL(state.cr1, state.ci1);
+    re92 = GET_SAVED_REAL(state.cr2, state.ci1);
     re93 = GET_SAVED_REAL(state.cr1, ci2);
     re94 = GET_SAVED_REAL(state.cr2, ci2);
 
-    im91 = GET_SAVED_IMAG(state.cr1, ci1);
-    im92 = GET_SAVED_IMAG(state.cr2, ci1);
+    im91 = GET_SAVED_IMAG(state.cr1, state.ci1);
+    im92 = GET_SAVED_IMAG(state.cr2, state.ci1);
     im93 = GET_SAVED_IMAG(state.cr1, ci2);
     im94 = GET_SAVED_IMAG(state.cr2, ci2);
 
