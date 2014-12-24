@@ -782,9 +782,9 @@ static void restart_window(int wknum)
     int xto = worklist[wknum].xxstop;
     if (xto >= xdots)
         xto = xdots - 1;
-    memset(dstack, 0, xdots); // use dstack as a temp for the row; clear it
+    std::vector<BYTE> temp(xdots, 0);
     while (yfrom <= yto)
-        put_line(yfrom++, xfrom, xto, (BYTE *)dstack);
+        put_line(yfrom++, xfrom, xto, &temp[0]);
     worklist[wknum].pass = 0;
     worklist[wknum].sym = worklist[wknum].pass;
     worklist[wknum].yybegin = worklist[wknum].yystart;
