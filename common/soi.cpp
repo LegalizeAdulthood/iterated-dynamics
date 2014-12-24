@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define tzi1      state.tzi1
 #define tzr2      state.tzr2
 #define tzi2      state.tzi2
 #define tzr3      state.tzr3
@@ -752,7 +751,7 @@ scan:
     state.ci2 = 0.25*cim1 + 0.75*cim2;
 
     state.tzr1 = GET_REAL(state.cr1, state.ci1);
-    tzi1 = GET_IMAG(state.cr1, state.ci1);
+    state.tzi1 = GET_IMAG(state.cr1, state.ci1);
 
     tzr2 = GET_REAL(state.cr2, state.ci1);
     tzi2 = GET_IMAG(state.cr2, state.ci1);
@@ -764,7 +763,7 @@ scan:
     tzi4 = GET_IMAG(state.cr2, state.ci2);
 
     trq1 = state.tzr1*state.tzr1;
-    tiq1 = tzi1*tzi1;
+    tiq1 = state.tzi1*state.tzi1;
 
     trq2 = tzr2*tzr2;
     tiq2 = tzi2*tzi2;
@@ -845,10 +844,10 @@ scan:
         state.iq9 = zim9*zim9;
 
         // iterate test point
-        tzi1 = (tzi1 + tzi1)*state.tzr1 + state.ci1;
+        state.tzi1 = (state.tzi1 + state.tzi1)*state.tzr1 + state.ci1;
         state.tzr1 = trq1 - tiq1 + state.cr1;
         trq1 = state.tzr1*state.tzr1;
-        tiq1 = tzi1*tzi1;
+        tiq1 = state.tzi1*state.tzi1;
 
         tzi2 = (tzi2 + tzi2)*tzr2 + state.ci1;
         tzr2 = trq2 - tiq2 + state.cr2;
@@ -903,9 +902,9 @@ scan:
             break;
 
         state.l2 = GET_IMAG(state.cr1, state.ci1);
-        state.l2 = (tzi1 == 0.0)?
+        state.l2 = (state.tzi1 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
-           state.l2/tzi1;
+           state.l2/state.tzi1;
         if (FABS(1.0 - state.l2) > twidth)
             break;
 
