@@ -142,7 +142,7 @@ static void toggle_bars(bool *bars, int barwidth, int const *colour)
     *bars = !*bars;
 }
 
-int outline_stereo(BYTE * pixels, int linelen)
+int outline_stereo(BYTE *pixels, int linelen)
 {
     if ((Y) >= ydots)
         return (1);
@@ -215,7 +215,6 @@ bool do_AutoStereo()
     int kbdchar;
     int barwidth;
     time_t ltime;
-    unsigned char *buf = (unsigned char *)decoderline;
     std::vector<int> colour;
     colour.resize(xdots);
     bool done = false;
@@ -288,6 +287,8 @@ bool do_AutoStereo()
     }
     else
     {
+        std::vector<BYTE> buf;
+        buf.resize(xdots);
         while (Y < ydots)
         {
             if (driver_key_pressed())
@@ -297,7 +298,7 @@ bool do_AutoStereo()
             }
             for (int i = 0; i < xdots; i++)
                 buf[i] = (unsigned char)(rand()%colors);
-            outline_stereo(buf, xdots);
+            outline_stereo(&buf[0], xdots);
         }
     }
 
