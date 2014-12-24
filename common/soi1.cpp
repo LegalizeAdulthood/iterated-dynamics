@@ -360,73 +360,62 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     static int avail;
 
     // the variables below need to have local copies for recursive calls
-    double *mem;
     // center of rectangle
     double midr = (cre1+cre2)/2, midi = (cim1+cim2)/2;
 
-#define sr1  mem[ 0]
-#define si1  mem[ 1]
-#define sr2  mem[ 2]
-#define si2  mem[ 3]
-#define sr3  mem[ 4]
-#define si3  mem[ 5]
-#define sr4  mem[ 6]
-#define si4  mem[ 7]
-#define sr5  mem[ 8]
-#define si5  mem[ 9]
-#define sr6  mem[10]
-#define si6  mem[11]
-#define sr7  mem[12]
-#define si7  mem[13]
-#define sr8  mem[14]
-#define si8  mem[15]
-#define sr9  mem[16]
-#define si9  mem[17]
-#define re10 mem[18]
-#define re11 mem[19]
-#define re12 mem[20]
-#define re13 mem[21]
-#define re14 mem[22]
-#define re15 mem[23]
-#define re16 mem[24]
-#define re17 mem[25]
-#define re18 mem[26]
-#define re19 mem[27]
-#define re20 mem[28]
-#define re21 mem[29]
-#define im10 mem[30]
-#define im11 mem[31]
-#define im12 mem[32]
-#define im13 mem[33]
-#define im14 mem[34]
-#define im15 mem[35]
-#define im16 mem[36]
-#define im17 mem[37]
-#define im18 mem[38]
-#define im19 mem[39]
-#define im20 mem[40]
-#define im21 mem[41]
-#define re91 mem[42]
-#define re92 mem[43]
-#define re93 mem[44]
-#define re94 mem[45]
-#define im91 mem[46]
-#define im92 mem[47]
-#define im93 mem[48]
-#define im94 mem[49]
+    double sr1;
+    double si1;
+    double sr2;
+    double si2;
+    double sr3;
+    double si3;
+    double sr4;
+    double si4;
+    double sr5;
+    double si5;
+    double sr6;
+    double si6;
+    double sr7;
+    double si7;
+    double sr8;
+    double si8;
+    double sr9;
+    double si9;
+    double re10;
+    double re11;
+    double re12;
+    double re13;
+    double re14;
+    double re15;
+    double re16;
+    double re17;
+    double re18;
+    double re19;
+    double re20;
+    double re21;
+    double im10;
+    double im11;
+    double im12;
+    double im13;
+    double im14;
+    double im15;
+    double im16;
+    double im17;
+    double im18;
+    double im19;
+    double im20;
+    double im21;
+    double re91;
+    double re92;
+    double re93;
+    double re94;
+    double im91;
+    double im92;
+    double im93;
+    double im94;
 
     bool status = false;
     rhombus_depth++;
-
-#if 1
-    /* what we go through under DOS to deal with memory! We re-use
-       the sizeofstring array (8k). The first 660 bytes is for
-       static variables, then we make our own "stack" with copies
-       for each recursive call of rhombus() for the rest.
-     */
-    mem = ((double *) sizeofstring) + 50*rhombus_depth;
-#endif
-
     avail = stackavail();
     if (avail < minstackavail)
         minstackavail = avail;
