@@ -132,7 +132,6 @@ unsigned long lm = 0;                   // magnitude limit (CALCMAND)
 // ORBIT variables
 bool show_orbit = false;                // flag to turn on and off
 int     orbit_ptr = 0;                  // pointer into save_orbit array
-int save_orbit[1500] = { 0 };           // array to save orbit values
 int     orbit_color = 15;                 // XOR color
 
 int ixstart = 0;
