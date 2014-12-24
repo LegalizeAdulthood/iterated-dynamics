@@ -531,7 +531,6 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     static long savecolor, color, helpcolor;
     static int x, y, z, savex;
 
-#define l2        state.l2
 #define rq1       state.rq1
 #define iq1       state.iq1
 #define rq2       state.rq2
@@ -926,11 +925,11 @@ scan:
         if (FABS(1.0-state.l1) > twidth)
             break;
 
-        l2 = GET_IMAG(cr1, ci1);
-        l2 = (tzi1 == 0.0)?
-           (l2 == 0.0)?1.0:1000.0:
-           l2/tzi1;
-        if (FABS(1.0-l2) > twidth)
+        state.l2 = GET_IMAG(cr1, ci1);
+        state.l2 = (tzi1 == 0.0)?
+           (state.l2 == 0.0)?1.0:1000.0:
+           state.l2/tzi1;
+        if (FABS(1.0-state.l2) > twidth)
             break;
 
         state.l1 = GET_REAL(cr2, ci1);
@@ -940,11 +939,11 @@ scan:
         if (FABS(1.0-state.l1) > twidth)
             break;
 
-        l2 = GET_IMAG(cr2, ci1);
-        l2 = (tzi2 == 0.0)?
-           (l2 == 0.0)?1.0:1000.0:
-           l2/tzi2;
-        if (FABS(1.0-l2) > twidth)
+        state.l2 = GET_IMAG(cr2, ci1);
+        state.l2 = (tzi2 == 0.0)?
+           (state.l2 == 0.0)?1.0:1000.0:
+           state.l2/tzi2;
+        if (FABS(1.0-state.l2) > twidth)
             break;
 
         state.l1 = GET_REAL(cr1, ci2);
@@ -954,11 +953,11 @@ scan:
         if (FABS(1.0-state.l1) > twidth)
             break;
 
-        l2 = GET_IMAG(cr1, ci2);
-        l2 = (tzi3 == 0.0)?
-           (l2 == 0.0)?1.0:1000.0:
-           l2/tzi3;
-        if (FABS(1.0-l2) > twidth)
+        state.l2 = GET_IMAG(cr1, ci2);
+        state.l2 = (tzi3 == 0.0)?
+           (state.l2 == 0.0)?1.0:1000.0:
+           state.l2/tzi3;
+        if (FABS(1.0-state.l2) > twidth)
             break;
 
         state.l1 = GET_REAL(cr2, ci2);
@@ -968,11 +967,11 @@ scan:
         if (FABS(1.0-state.l1) > twidth)
             break;
 
-        l2 = GET_IMAG(cr2, ci2);
-        l2 = (tzi4 == 0.0)?
-           (l2 == 0.0)?1.0:1000.0:
-           l2/tzi4;
-        if (FABS(1.0-l2) > twidth)
+        state.l2 = GET_IMAG(cr2, ci2);
+        state.l2 = (tzi4 == 0.0)?
+           (state.l2 == 0.0)?1.0:1000.0:
+           state.l2/tzi4;
+        if (FABS(1.0-state.l2) > twidth)
             break;
     }
 
