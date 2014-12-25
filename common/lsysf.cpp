@@ -451,8 +451,7 @@ drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
     return command;
 }
 
-lsys_cmd *
-LSysFSizeTransform(char *s, lsys_turtlestatef *ts)
+lsys_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
 {
     lsys_cmd *ret;
     lsys_cmd *doub;
@@ -568,8 +567,7 @@ LSysFSizeTransform(char *s, lsys_turtlestatef *ts)
     return doub;
 }
 
-lsys_cmd *
-LSysFDrawTransform(char *s, lsys_turtlestatef *ts)
+lsys_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
 {
     lsys_cmd *ret;
     lsys_cmd *doub;

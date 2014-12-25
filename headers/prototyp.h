@@ -576,7 +576,7 @@ extern bool setup_convert_to_screen(affine *);
 extern int plotorbits2dsetup();
 extern int plotorbits2dfloat();
 // lsys -- C file prototypes
-extern LDBL  getnumber(char **);
+extern LDBL  getnumber(char const **str);
 extern bool ispow2(int);
 extern int Lsystem();
 extern bool LLoad();

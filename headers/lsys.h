@@ -58,7 +58,7 @@ extern char maxangle;
 struct lsys_cmd;
 extern lsys_cmd *drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth);
 extern bool lsysf_findscale(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth);
-extern lsys_cmd *LSysFSizeTransform(char *s, lsys_turtlestatef *ts);
-extern lsys_cmd *LSysFDrawTransform(char *s, lsys_turtlestatef *ts);
+extern lsys_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts);
+extern lsys_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts);
 extern void lsysf_dosincos();
 #endif

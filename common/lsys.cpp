@@ -18,7 +18,7 @@ struct lsys_cmd
     char ch;
 };
 
-static bool readLSystemFile(char *str);
+static bool readLSystemFile(char const *str);
 static void free_rules_mem();
 static int rule_present(char symbol);
 static bool save_rule(char *rule, char **saveptr);
@@ -111,7 +111,7 @@ LDBL getnumber(char const **str)
     return ret;
 }
 
-static bool readLSystemFile(char *str)
+static bool readLSystemFile(char const *str)
 {
     int c;
     char **rulind;
