@@ -951,9 +951,6 @@ lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts)
     auto const minus = ispow2(ts->maxangle) ? lsysi_dominus_pow2 : lsysi_dominus;
     auto const pipe = ispow2(ts->maxangle) ? lsysi_dopipe_pow2 : lsysi_dopipe;
 
-    auto const at = lsysi_doat;
-    auto const drawg = lsysi_dodrawg;
-
     ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
     if (ret == nullptr)
     {
@@ -982,7 +979,7 @@ lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts)
             num = (long)(getnumber(&s) * PI_DIV_180_L);
             break;
         case '@':
-            f = at;
+            f = lsysi_doat;
             num = FIXEDPT(getnumber(&s));
             break;
         case '|':
@@ -998,7 +995,7 @@ lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts)
             f = lsysi_dodrawm;
             break;
         case 'g':
-            f = drawg;
+            f = lsysi_dodrawg;
             break;
         case 'f':
             f = lsysi_dodrawf;
