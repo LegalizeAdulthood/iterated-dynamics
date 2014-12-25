@@ -473,7 +473,7 @@ void home()
     g_text_col = 0;
 }
 
-bool isadirectory(char *s)
+bool isadirectory(char const *s)
 {
     return PathIsDirectory(s) != 0;
 }

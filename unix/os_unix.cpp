@@ -1,3 +1,5 @@
+#include <string>
+
 #include <string.h>
 #include <sys/statvfs.h>
 
@@ -36,7 +38,7 @@ int g_vxdots = 0;
 // Global variables that should be phased out (old video mode stuff)
 int g_video_vram = 0;
 
-bool isadirectory(char *s)
+bool isadirectory(char const *s)
 {
     int len;
     char sv;
@@ -62,8 +64,8 @@ bool isadirectory(char *s)
         if (sv == SLASHC)
         {
             // strip trailing slash and try again
-            s[len-1] = 0;
-            if (fr_findfirst(s) != 0) // couldn't find it
+            std::string path{s, &s[len-1]};
+            if (fr_findfirst(path.c_str()) != 0) // couldn't find it
                 return false;
             else if ((DTA.attribute & SUBDIR) != 0)
                 return true;  // we're SURE it's a directory
