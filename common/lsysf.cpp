@@ -457,14 +457,14 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
     int n = 0;
     double PI180 = PI / 180.0;
 
-    void (*plus)(lsys_turtlestatef *) = (ispow2(ts->maxangle)) ? lsysf_doplus_pow2 : lsysf_doplus;
-    void (*minus)(lsys_turtlestatef *) = (ispow2(ts->maxangle)) ? lsysf_dominus_pow2 : lsysf_dominus;
-    void (*pipe)(lsys_turtlestatef *) = (ispow2(ts->maxangle)) ? lsysf_dopipe_pow2 : lsysf_dopipe;
+    auto const plus = ispow2(ts->maxangle) ? lsysf_doplus_pow2 : lsysf_doplus;
+    auto const minus = ispow2(ts->maxangle) ? lsysf_dominus_pow2 : lsysf_dominus;
+    auto const pipe = ispow2(ts->maxangle) ? lsysf_dopipe_pow2 : lsysf_dopipe;
 
-    void (*slash)(lsys_turtlestatef *) =  lsysf_doslash;
-    void (*bslash)(lsys_turtlestatef *) = lsysf_dobslash;
-    void (*at)(lsys_turtlestatef *) =     lsysf_doat;
-    void (*dogf)(lsys_turtlestatef *) =   lsysf_dosizegf;
+    auto const slash = lsysf_doslash;
+    auto const bslash = lsysf_dobslash;
+    auto const at = lsysf_doat;
+    auto const dogf = lsysf_dosizegf;
 
     lsysf_cmd *ret = (lsysf_cmd *) malloc((long) max * sizeof(lsysf_cmd));
     if (ret == nullptr)
