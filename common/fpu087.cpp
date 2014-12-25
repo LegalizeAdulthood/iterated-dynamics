@@ -25,7 +25,7 @@ double _2_ = 2.0;
 double _1_ = 1.0;
 double PointFive = 0.5;
 
-void FPUcplxmul(DComplex *x, DComplex *y, DComplex *z)
+void FPUcplxmul(DComplex const *x, DComplex const *y, DComplex *z)
 {
     double tx;
     tx = x->x * y->x - x->y * y->y;
@@ -33,7 +33,7 @@ void FPUcplxmul(DComplex *x, DComplex *y, DComplex *z)
     z->x = tx;
 }
 
-void FPUcplxdiv(DComplex *x, DComplex *y, DComplex *z)
+void FPUcplxdiv(DComplex const *x, DComplex const *y, DComplex *z)
 {
     double mod, tx, yxmod, yymod;
     mod = y->x * y->x + y->y * y->y;
@@ -49,19 +49,19 @@ void FPUcplxdiv(DComplex *x, DComplex *y, DComplex *z)
     z->x = tx;
 }
 
-void FPUsincos(double *Angle, double *Sin, double *Cos)
+void FPUsincos(double const *Angle, double *Sin, double *Cos)
 {
     *Sin = sin(*Angle);
     *Cos = cos(*Angle);
 }
 
-void FPUsinhcosh(double *Angle, double *Sinh, double *Cosh)
+void FPUsinhcosh(double const *Angle, double *Sinh, double *Cosh)
 {
     *Sinh = sinh(*Angle);
     *Cosh = cosh(*Angle);
 }
 
-void FPUcplxlog(DComplex *x, DComplex *z)
+void FPUcplxlog(DComplex const *x, DComplex *z)
 {
     double mod, zx, zy;
     mod = sqrt(x->x*x->x + x->y*x->y);

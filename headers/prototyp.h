@@ -30,13 +30,13 @@ extern long calcmandasm();
 extern void calcmandfpasmstart();
 extern long calcmandfpasm();
 // fpu087 -- assembler file prototypes
-extern void FPUcplxmul(DComplex *, DComplex *, DComplex *);
-extern void FPUcplxdiv(DComplex *, DComplex *, DComplex *);
-extern void FPUsincos(double *, double *, double *);
-extern void FPUsinhcosh(double *, double *, double *);
-extern void FPUcplxlog(DComplex *, DComplex *);
-extern void SinCos086(long, long *, long *);
-extern void SinhCosh086(long, long *, long *);
+extern void FPUcplxmul(DComplex const *x, DComplex const *y, DComplex *z);
+extern void FPUcplxdiv(DComplex const *x, DComplex const *y, DComplex *z);
+extern void FPUsincos(double const *Angle, double *Sin, double *Cos);
+extern void FPUsinhcosh(double const *Angle, double *Sin, double *Cos);
+extern void FPUcplxlog(DComplex const *x, DComplex *z);
+extern void SinCos086(long x, long *sinx, long *cosx);
+extern void SinhCosh086(long x, long *sinx, long *cosx);
 extern long r16Mul(long, long);
 extern long RegFloat2Fg(long, int);
 extern long Exp086(long);
@@ -69,27 +69,27 @@ extern int asmfpANDbailout();
 extern int asmfpMANHbailout();
 extern int asmfpMANRbailout();
 // mpmath_a -- assembler file prototypes
-extern MP * MPmul086(MP, MP);
-extern MP * MPdiv086(MP, MP);
-extern MP * MPadd086(MP, MP);
-extern int         MPcmp086(MP, MP);
-extern MP * d2MP086(double);
-extern double    * MP2d086(MP);
-extern MP * fg2MP086(long, int);
-extern MP * MPmul386(MP, MP);
-extern MP * MPdiv386(MP, MP);
-extern MP * MPadd386(MP, MP);
-extern int         MPcmp386(MP, MP);
-extern MP * d2MP386(double);
-extern double    * MP2d386(MP);
-extern MP * fg2MP386(long, int);
-extern double *    MP2d(MP);
-extern int         MPcmp(MP, MP);
-extern MP * MPmul(MP, MP);
-extern MP * MPadd(MP, MP);
-extern MP * MPdiv(MP, MP);
-extern MP * d2MP(double);   // Convert double to type MP
-extern MP * fg2MP(long, int);  // Convert fudged to type MP
+extern MP *MPmul086(MP, MP);
+extern MP *MPdiv086(MP, MP);
+extern MP *MPadd086(MP, MP);
+extern int MPcmp086(MP, MP);
+extern MP *d2MP086(double);
+extern double *MP2d086(MP);
+extern MP *fg2MP086(long, int);
+extern MP *MPmul386(MP, MP);
+extern MP *MPdiv386(MP, MP);
+extern MP *MPadd386(MP, MP);
+extern int MPcmp386(MP, MP);
+extern MP *d2MP386(double);
+extern double *MP2d386(MP);
+extern MP *fg2MP386(long, int);
+extern double *MP2d(MP);
+extern int MPcmp(MP, MP);
+extern MP *MPmul(MP, MP);
+extern MP *MPadd(MP, MP);
+extern MP *MPdiv(MP, MP);
+extern MP *d2MP(double);   // Convert double to type MP
+extern MP *fg2MP(long, int);  // Convert fudged to type MP
 // newton -- assembler file prototypes
 extern int NewtonFractal2();
 extern void invertz2(DComplex *);
