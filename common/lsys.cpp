@@ -66,31 +66,31 @@ LDBL getnumber(char const **str)
 {
     char numstr[30];
     LDBL ret;
-    int i, root, inverse;
+    int i;
+    bool root = false;
+    bool inverse = false;
 
-    root = 0;
-    inverse = 0;
     strcpy(numstr, "");
     (*str)++;
     switch (**str)
     {
     case 'q':
-        root = 1;
+        root = true;
         (*str)++;
         break;
     case 'i':
-        inverse = 1;
+        inverse = true;
         (*str)++;
         break;
     }
     switch (**str)
     {
     case 'q':
-        root = 1;
+        root = true;
         (*str)++;
         break;
     case 'i':
-        inverse = 1;
+        inverse = true;
         (*str)++;
         break;
     }
