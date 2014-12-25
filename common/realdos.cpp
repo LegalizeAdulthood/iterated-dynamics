@@ -274,7 +274,7 @@ void helptitle()
 }
 
 
-void footer_msg(int *i, int options, char *speedstring)
+void footer_msg(int *i, int options, char const *speedstring)
 {
     putstringcenter((*i)++, 0, 80, C_PROMPT_BKGRD,
                     (speedstring) ? "Use the cursor keys or type a value to make a selection"
