@@ -815,7 +815,6 @@ extern void (*mtrig1)();
 extern void (*mtrig2)();
 extern void (*mtrig3)();
 extern void EndInit();
-extern struct ConstArg *isconst(char *, int);
 extern void NotAFnct();
 extern void FnctNotFound();
 extern int whichfn(char *, int);

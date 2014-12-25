@@ -1977,6 +1977,9 @@ static bool isconst_pair(char const *Str)
     return answer;
 }
 
+namespace
+{
+
 ConstArg *isconst(char const *Str, int Len)
 {
     DComplex z;
@@ -2087,6 +2090,7 @@ ConstArg *isconst(char const *Str, int Len)
     return &v[vsp++];
 }
 
+}
 
 struct FNCT_LIST
 {
