@@ -56,11 +56,9 @@ struct lsys_turtlestatef
 extern char maxangle;
 // routines in lsysa.asm
 #if defined(XFRACT) || defined(_WIN32)
-#define lsysi_doat_386 lsys_doat
 #define lsysi_dosizegf_386 lsys_dosizegf
 #define lsysi_dodrawg_386 lsys_dodrawg
 #else
-extern void lsysi_doat_386(lsys_turtlestatei *cmd);
 extern void lsysi_dosizegf_386(lsys_turtlestatei *cmd);
 extern void lsysi_dodrawg_386(lsys_turtlestatei *cmd);
 #endif
