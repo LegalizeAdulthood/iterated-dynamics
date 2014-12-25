@@ -498,7 +498,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         ranges = blk_4_info.range_data;
     }
 
-    if (blk_5_info.got_data == 1)
+    if (blk_5_info.got_data)
     {
         bf_math = bf_math_type::BIGNUM;
         init_bf_length(read_info.bflength);
@@ -641,7 +641,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
     blk_2_info->got_data = false;
     blk_3_info->got_data = false;
     blk_4_info->got_data = false;
-    blk_5_info->got_data = 0; // initialize to no data
+    blk_5_info->got_data = false;
     blk_6_info->got_data = 0; // initialize to no data
     blk_7_info->got_data = 0; // initialize to no data
 
@@ -851,7 +851,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     fseek(fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk(&blk_5_info->apm_data[0], data_len);
                     blk_5_info->length = data_len;
-                    blk_5_info->got_data = 1; // got data
+                    blk_5_info->got_data = true;
                     break;
                 case 6: // evolver params
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
@@ -1421,9 +1421,9 @@ rescan:  // entry for changed browse parms
             wincount++;
         }
 
-        if (blk_2_info.got_data) // Clean up any memory allocated
+        if (blk_2_info.got_data)
             blk_2_info.resume_data.clear();
-        if (blk_5_info.got_data == 1) // Clean up any memory allocated
+        if (blk_5_info.got_data)
             blk_5_info.apm_data.clear();
 
         done = (fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
