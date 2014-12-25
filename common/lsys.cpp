@@ -113,36 +113,37 @@ LDBL getnumber(char const **str)
 
 static bool readLSystemFile(char const *str)
 {
-    int c;
-    char **rulind;
     int err = 0;
-    bool check = false;
-    char inline1[MAX_LSYS_LINE_LEN+1], fixed[MAX_LSYS_LINE_LEN+1], *word;
+    char inline1[MAX_LSYS_LINE_LEN+1];
     FILE *infile;
-    char msgbuf[481]; // enough for 6 full lines
 
     if (find_file_item(LFileName, str, &infile, 2))
         return true;
-    while ((c = fgetc(infile)) != '{')
-        if (c == EOF)
-            return true;
+    {
+        int c;
+        while ((c = fgetc(infile)) != '{')
+            if (c == EOF)
+                return true;
+    }
+
     maxangle = 0;
     for (int linenum = 0; linenum < MAXRULES; ++linenum)
         ruleptrs[linenum] = nullptr;
-    rulind = &ruleptrs[1];
-    msgbuf[0] = 0;;
+    char **rulind = &ruleptrs[1];
+    char msgbuf[481] = { 0 }; // enough for 6 full lines
 
     int linenum = 0;
     while (file_gets(inline1, MAX_LSYS_LINE_LEN, infile) > -1)  // Max line length chars
     {
         linenum++;
-        word = strchr(inline1, ';');
+        char *word = strchr(inline1, ';');
         if (word != nullptr) // strip comment
             *word = 0;
         strlwr(inline1);
 
         if ((int)strspn(inline1, " \t\n") < (int)strlen(inline1)) // not a blank line
         {
+            bool check = false;
             word = strtok(inline1, " =\t\n");
             if (!strcmp(word, "axiom"))
             {
@@ -163,8 +164,6 @@ static bool readLSystemFile(char const *str)
                 break;
             else if (!word[1])
             {
-                char *temp;
-                int index;
                 bool memerr = false;
 
                 if (strchr("+-/\\@|!c<>][", *word))
@@ -174,9 +173,9 @@ static bool readLSystemFile(char const *str)
                     ++err;
                     break;
                 }
-                temp = strtok(nullptr, " =\t\n");
-                index = rule_present(*word);
-
+                char const *temp = strtok(nullptr, " =\t\n");
+                int const index = rule_present(*word);
+                char fixed[MAX_LSYS_LINE_LEN+1];
                 if (!index)
                 {
                     strcpy(fixed, word);
@@ -205,7 +204,6 @@ static bool readLSystemFile(char const *str)
             }
             if (check)
             {
-                check = false;
                 word = strtok(nullptr, " \t\n");
                 if (word != nullptr)
                     if (err < 6)
