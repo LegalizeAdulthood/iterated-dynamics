@@ -273,6 +273,8 @@ void helptitle()
     putstringcenter(0, 0, 80, C_TITLE, msg);
 }
 
+namespace
+{
 
 void footer_msg(int *i, int options, char const *speedstring)
 {
@@ -283,6 +285,8 @@ void footer_msg(int *i, int options, char const *speedstring)
                     (options & CHOICE_MENU) ? "Press ENTER for highlighted choice, or " FK_F1 " for help"
                     : ((options & CHOICE_HELP) ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
                        : "Press ENTER for highlighted choice, or ESCAPE to back out"));
+}
+
 }
 
 int putstringcenter(int row, int col, int width, int attr, char const *msg)
