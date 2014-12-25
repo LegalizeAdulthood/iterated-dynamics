@@ -858,7 +858,7 @@ extern int prompt_valuestring(char *buf, fullscreenvalues const *val);
 extern void setbailoutformula(bailouts);
 extern int find_extra_param(fractal_type type);
 extern void load_params(fractal_type fractype);
-extern bool check_orbit_name(char *);
+extern bool check_orbit_name(char const *orbitname);
 struct entryinfo;
 extern int scan_entries(FILE *infile, struct entryinfo *ch, char const *itemname);
 // prompts2 -- C file prototypes

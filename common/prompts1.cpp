@@ -1815,7 +1815,7 @@ void load_params(fractal_type fractype)
             param[i+4] = moreparams[extra].paramvalue[i];
 }
 
-bool check_orbit_name(char *orbitname)
+bool check_orbit_name(char const *orbitname)
 {
     int numtypes;
     char const *nameptr[MAXFRACTALS];
