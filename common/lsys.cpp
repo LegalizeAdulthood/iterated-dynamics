@@ -361,13 +361,12 @@ static int rule_present(char symbol)
 
 static bool save_rule(char const *rule, int index)
 {
-    char **saveptr = &ruleptrs[index];
-    char *tmpfar = strdup(rule);
-    if (tmpfar == nullptr)
+    char *tmp = strdup(rule);
+    if (tmp == nullptr)
     {
         return true;
     }
-    *saveptr = tmpfar;
+    ruleptrs[index] = tmp;
     return false;
 }
 
