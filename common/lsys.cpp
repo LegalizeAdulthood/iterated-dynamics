@@ -51,7 +51,7 @@ void lsysi_dodrawlt(lsys_turtlestatei *cmd);
 
 std::vector<long> sins;
 std::vector<long> coss;
-long int scale_factor = 11930465L;
+long const scale_factor = 11930465L;
 std::string rules[MAXRULES];
 lsys_cmd *rules2[MAXRULES];
 bool loaded = false;
