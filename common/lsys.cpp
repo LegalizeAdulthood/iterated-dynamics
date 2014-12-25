@@ -22,7 +22,7 @@ static bool readLSystemFile(char const *str);
 static void free_rules_mem();
 static int rule_present(char symbol);
 static bool save_rule(char *rule, char **saveptr);
-static bool append_rule(char *rule, int index);
+static bool append_rule(char const *rule, int index);
 static void free_lcmds();
 static lsys_cmd *findsize(lsys_cmd *, lsys_turtlestatei *, lsys_cmd **, int);
 static lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth);
@@ -371,7 +371,7 @@ static bool save_rule(char *rule, char **saveptr)
     return false;
 }
 
-static bool append_rule(char *rule, int index)
+static bool append_rule(char const *rule, int index)
 {
     char *sav = ruleptrs[index];
     char *old = sav;
