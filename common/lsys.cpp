@@ -129,7 +129,7 @@ static bool readLSystemFile(char const *str)
     maxangle = 0;
     for (int linenum = 0; linenum < MAXRULES; ++linenum)
         ruleptrs[linenum] = nullptr;
-    char **rulind = &ruleptrs[1];
+    int rulind = 1;
     char msgbuf[481] = { 0 }; // enough for 6 full lines
 
     int linenum = 0;
@@ -181,7 +181,7 @@ static bool readLSystemFile(char const *str)
                     strcpy(fixed, word);
                     if (temp)
                         strcat(fixed, temp);
-                    memerr = save_rule(fixed, rulind++);
+                    memerr = save_rule(fixed, &ruleptrs[rulind++]);
                 }
                 else if (temp)
                 {
@@ -231,7 +231,7 @@ static bool readLSystemFile(char const *str)
         stopmsg(STOPMSG_NONE, msgbuf);
         return true;
     }
-    *rulind = nullptr;
+    ruleptrs[rulind] = nullptr;
     return false;
 }
 
