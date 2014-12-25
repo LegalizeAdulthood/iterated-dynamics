@@ -568,14 +568,14 @@ lsysf_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
     int ptype;
     LDBL PI180 = PI / 180.0;
 
-    void (*plus)(lsys_turtlestatef *) = (ispow2(ts->maxangle)) ? lsysf_doplus_pow2 : lsysf_doplus;
-    void (*minus)(lsys_turtlestatef *) = (ispow2(ts->maxangle)) ? lsysf_dominus_pow2 : lsysf_dominus;
-    void (*pipe)(lsys_turtlestatef *) = (ispow2(ts->maxangle)) ? lsysf_dopipe_pow2 : lsysf_dopipe;
+    auto const plus = ispow2(ts->maxangle) ? lsysf_doplus_pow2 : lsysf_doplus;
+    auto const minus = ispow2(ts->maxangle) ? lsysf_dominus_pow2 : lsysf_dominus;
+    auto const pipe = ispow2(ts->maxangle) ? lsysf_dopipe_pow2 : lsysf_dopipe;
 
-    void (*slash)(lsys_turtlestatef *) =  lsysf_doslash;
-    void (*bslash)(lsys_turtlestatef *) = lsysf_dobslash;
-    void (*at)(lsys_turtlestatef *) =     lsysf_doat;
-    void (*drawg)(lsys_turtlestatef *) =  lsysf_dodrawg;
+    auto const slash = lsysf_doslash;
+    auto const bslash = lsysf_dobslash;
+    auto const at = lsysf_doat;
+    auto const drawg =  lsysf_dodrawg;
 
     ret = (lsysf_cmd *) malloc((long) max * sizeof(lsysf_cmd));
     if (ret == nullptr)
