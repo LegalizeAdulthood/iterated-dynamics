@@ -139,9 +139,15 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             }
             else
             {   // reset DAC to defaults, which setvideomode has done for us
-                if (mapdacbox)
-                {   // but there's a map=, so load that
-                    memcpy((char *)g_dac_box, mapdacbox, 768);
+                if (map_specified)
+                {
+                    // but there's a map=, so load that
+                    for (int i = 0; i < 256; ++i)
+                    {
+                        g_dac_box[i][0] = map_clut[i][0];
+                        g_dac_box[i][1] = map_clut[i][1];
+                        g_dac_box[i][2] = map_clut[i][2];
+                    }
                     spindac(0, 1);
                 }
                 else if ((driver_diskp() && colors == 256) || !colors)
@@ -2461,8 +2467,15 @@ static void restore_history_info(int i)
     usr_floatflag = curfractalspecific->isinteger ? false : true;
     memcpy(g_dac_box, last.dac, 256*3);
     memcpy(olddacbox, last.dac, 256*3);
-    if (mapdacbox)
-        memcpy(mapdacbox, last.dac, 256*3);
+    if (map_specified)
+    {
+        for (int i = 0; i < 256; ++i)
+        {
+            map_clut[i][0] = last.dac[i][0];
+            map_clut[i][1] = last.dac[i][1];
+            map_clut[i][2] = last.dac[i][2];
+        }
+    }
     spindac(0, 1);
     if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
         savedac = 0;

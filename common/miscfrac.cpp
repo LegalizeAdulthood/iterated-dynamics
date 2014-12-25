@@ -480,7 +480,7 @@ static void set_Plasma_palette()
     static BYTE const Green[3] = { 0, 63, 0 };
     static BYTE const Blue[3]  = { 0,  0, 63 };
 
-    if (mapdacbox || colorpreloaded)
+    if (map_specified || colorpreloaded)
         return;    // map= specified
 
     g_dac_box[0][0] = 0;
@@ -1850,7 +1850,7 @@ static void set_Cellular_palette()
     static BYTE const Yellow[3] = { 60, 58, 18 };
     static BYTE const Brown[3]  = { 42, 21, 0 };
 
-    if (mapdacbox && colorstate != 0)
+    if (map_specified && colorstate != 0)
         return;       // map= specified
 
     g_dac_box[0][0] = 0;

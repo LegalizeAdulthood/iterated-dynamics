@@ -1199,11 +1199,6 @@ void goodbye()                  // we done.  Bail out
 {
     int ret;
 
-    if (mapdacbox)
-    {
-        free(mapdacbox);
-        mapdacbox = nullptr;
-    }
     end_resume();
     ReleaseParamBox();
     if (!ifs_defn.empty())

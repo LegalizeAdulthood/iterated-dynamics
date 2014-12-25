@@ -107,6 +107,8 @@ int     rotate_lo = 0;
 int     rotate_hi = 0;          // cycling color range
 std::vector<int> ranges;        // iter->color ranges mapping
 int     rangeslen = 0;          // size of ranges array
+BYTE map_clut[256][3];          // map= (default colors)
+bool map_specified = false;     // map= specified
 BYTE *mapdacbox = nullptr;      // map= (default colors)
 int     colorstate = 0;         // 0, g_dac_box matches default (bios or map=)
                                 // 1, g_dac_box matches no known defined map
@@ -401,12 +403,7 @@ static void initvars_restart()          // <ins> key init
     // next should perhaps be fractal re-init, not just <ins> ?
     initcyclelimit = 55;                   // spin-DAC default speed limit
     mapset = false;                     // no map= name active
-    if (mapdacbox)
-    {
-        free(mapdacbox);
-        mapdacbox = nullptr;
-    }
-
+    map_specified = false;
     major_method = Major::breadth_first;    // default inverse julia methods
     minor_method = Minor::left_first;       // default inverse julia methods
     truecolor = false;                  // truecolor output flag

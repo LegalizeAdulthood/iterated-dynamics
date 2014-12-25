@@ -109,7 +109,7 @@ void make_batch_file()
 
         if (colorstate == 0)
         {   // default colors
-            if (mapdacbox)
+            if (map_specified)
             {
                 colorspec[0] = '@';
                 sptr = MAP_name;

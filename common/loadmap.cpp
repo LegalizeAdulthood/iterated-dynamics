@@ -56,7 +56,6 @@ bool ValidateLuts(const char *fn)
     return false;
 }
 
-
 //*************************************************************************
 
 int SetColorPaletteName(char * fn)
@@ -65,15 +64,12 @@ int SetColorPaletteName(char * fn)
     {
         return 1;
     }
-    if (mapdacbox == nullptr)
+    for (int i = 0; i < 256; ++i)
     {
-        mapdacbox = (BYTE *) malloc(768L);
-        if (mapdacbox == nullptr)
-        {
-            stopmsg(STOPMSG_NONE, "Insufficient memory for color map.");
-            return 1;
-        }
+        map_clut[i][0] = g_dac_box[i][0];
+        map_clut[i][1] = g_dac_box[i][1];
+        map_clut[i][2] = g_dac_box[i][2];
     }
-    memcpy((char *) mapdacbox, (char *) g_dac_box, 768);
+    map_specified = true;
     return 0;
 }
