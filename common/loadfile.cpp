@@ -422,7 +422,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         floatflag = oldfloatflag;
         if (i)
         {
-            if (blk_2_info.got_data == 1)
+            if (blk_2_info.got_data)
             {
                 blk_2_info.resume_data.clear();
                 blk_2_info.length = 0;
@@ -450,7 +450,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     resume_data.clear();
 
-    if (blk_2_info.got_data == 1)
+    if (blk_2_info.got_data)
     {
         resume_data = blk_2_info.resume_data;
         resume_len = blk_2_info.length;
@@ -638,7 +638,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
     EVOLUTION_INFO eload_info;
     ORBITS_INFO oload_info;
 
-    blk_2_info->got_data = 0; // initialize to no data
+    blk_2_info->got_data = false;
     blk_3_info->got_data = 0; // initialize to no data
     blk_4_info->got_data = 0; // initialize to no data
     blk_5_info->got_data = 0; // initialize to no data
@@ -797,7 +797,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     load_ext_blk((char *)block, data_len);
                     std::copy(&block[0], &block[data_len], &blk_2_info->resume_data[0]);
                     blk_2_info->length = data_len;
-                    blk_2_info->got_data = 1; // got data
+                    blk_2_info->got_data = true;
                     break;
                 case 3: // formula info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
@@ -1421,7 +1421,7 @@ rescan:  // entry for changed browse parms
             wincount++;
         }
 
-        if (blk_2_info.got_data == 1) // Clean up any memory allocated
+        if (blk_2_info.got_data) // Clean up any memory allocated
             blk_2_info.resume_data.clear();
         if (blk_5_info.got_data == 1) // Clean up any memory allocated
             blk_5_info.apm_data.clear();

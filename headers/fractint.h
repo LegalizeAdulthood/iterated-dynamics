@@ -1149,7 +1149,7 @@ struct JUMP_CONTROL_ST
 #endif
 struct ext_blk_2
 {
-    char got_data;
+    bool got_data;
     int length;
     std::vector<BYTE> resume_data;
 };
