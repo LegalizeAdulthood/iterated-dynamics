@@ -132,8 +132,6 @@ bool readLSystemFile(char const *str)
     }
 
     maxangle = 0;
-    for (int linenum = 0; linenum < MAXRULES; ++linenum)
-        ruleptrs[linenum] = "";
     int rulind = 1;
     char msgbuf[481] = { 0 }; // enough for 6 full lines
 
