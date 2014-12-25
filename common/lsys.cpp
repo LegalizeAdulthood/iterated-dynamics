@@ -21,7 +21,7 @@ struct lsys_cmd
 static bool readLSystemFile(char const *str);
 static void free_rules_mem();
 static int rule_present(char symbol);
-static bool save_rule(char *rule, char **saveptr);
+static bool save_rule(char const *rule, char **saveptr);
 static bool append_rule(char const *rule, int index);
 static void free_lcmds();
 static lsys_cmd *findsize(lsys_cmd *, lsys_turtlestatei *, lsys_cmd **, int);
@@ -359,7 +359,7 @@ static int rule_present(char symbol)
     return (i < MAXRULES && ruleptrs[i]) ? i : 0;
 }
 
-static bool save_rule(char *rule, char **saveptr)
+static bool save_rule(char const *rule, char **saveptr)
 {
     char *tmpfar = strdup(rule);
     if (tmpfar == nullptr)
