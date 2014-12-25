@@ -572,8 +572,6 @@ lsysf_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
     auto const minus = ispow2(ts->maxangle) ? lsysf_dominus_pow2 : lsysf_dominus;
     auto const pipe = ispow2(ts->maxangle) ? lsysf_dopipe_pow2 : lsysf_dopipe;
 
-    auto const drawg =  lsysf_dodrawg;
-
     ret = (lsysf_cmd *) malloc((long) max * sizeof(lsysf_cmd));
     if (ret == nullptr)
     {
@@ -622,7 +620,7 @@ lsysf_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
             f = lsysf_dodrawm;
             break;
         case 'g':
-            f = drawg;
+            f = lsysf_dodrawg;
             break;
         case 'f':
             f = lsysf_dodrawf;
