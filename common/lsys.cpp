@@ -353,10 +353,14 @@ static void free_rules_mem()
 
 static int rule_present(char symbol)
 {
-    int i;
-    for (i = 1; i < MAXRULES && ruleptrs[i] && ruleptrs[i][0] != symbol; i++)
-        ;
-    return (i < MAXRULES && ruleptrs[i]) ? i : 0;
+    for (int i = 1; i < MAXRULES && ruleptrs[i]; ++i)
+    {
+        if (ruleptrs[i][0] == symbol)
+        {
+            return i;
+        }
+    }
+    return 0;
 }
 
 static bool save_rule(char const *rule, int index)
