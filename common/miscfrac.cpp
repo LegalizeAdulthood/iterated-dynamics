@@ -474,7 +474,6 @@ done:
     return (n);
 }
 
-#define dac ((Palettetype *)g_dac_box)
 static void set_Plasma_palette()
 {
     static Palettetype Red    = { 63, 0, 0 };
@@ -484,21 +483,21 @@ static void set_Plasma_palette()
     if (mapdacbox || colorpreloaded)
         return;    // map= specified
 
-    dac[0].red  = 0 ;
-    dac[0].green = 0 ;
-    dac[0].blue = 0 ;
+    ((Palettetype *)g_dac_box)[0].red  = 0 ;
+    ((Palettetype *)g_dac_box)[0].green = 0 ;
+    ((Palettetype *)g_dac_box)[0].blue = 0 ;
     for (int i = 1; i <= 85; i++)
     {
-        dac[i].red       = (BYTE)((i*Green.red   + (86-i)*Blue.red)/85);
-        dac[i].green     = (BYTE)((i*Green.green + (86-i)*Blue.green)/85);
-        dac[i].blue      = (BYTE)((i*Green.blue  + (86-i)*Blue.blue)/85);
+        ((Palettetype *)g_dac_box)[i].red       = (BYTE)((i*Green.red   + (86-i)*Blue.red)/85);
+        ((Palettetype *)g_dac_box)[i].green     = (BYTE)((i*Green.green + (86-i)*Blue.green)/85);
+        ((Palettetype *)g_dac_box)[i].blue      = (BYTE)((i*Green.blue  + (86-i)*Blue.blue)/85);
 
-        dac[i+85].red    = (BYTE)((i*Red.red   + (86-i)*Green.red)/85);
-        dac[i+85].green  = (BYTE)((i*Red.green + (86-i)*Green.green)/85);
-        dac[i+85].blue   = (BYTE)((i*Red.blue  + (86-i)*Green.blue)/85);
-        dac[i+170].red   = (BYTE)((i*Blue.red   + (86-i)*Red.red)/85);
-        dac[i+170].green = (BYTE)((i*Blue.green + (86-i)*Red.green)/85);
-        dac[i+170].blue  = (BYTE)((i*Blue.blue  + (86-i)*Red.blue)/85);
+        ((Palettetype *)g_dac_box)[i+85].red    = (BYTE)((i*Red.red   + (86-i)*Green.red)/85);
+        ((Palettetype *)g_dac_box)[i+85].green  = (BYTE)((i*Red.green + (86-i)*Green.green)/85);
+        ((Palettetype *)g_dac_box)[i+85].blue   = (BYTE)((i*Red.blue  + (86-i)*Green.blue)/85);
+        ((Palettetype *)g_dac_box)[i+170].red   = (BYTE)((i*Blue.red   + (86-i)*Red.red)/85);
+        ((Palettetype *)g_dac_box)[i+170].green = (BYTE)((i*Blue.green + (86-i)*Red.green)/85);
+        ((Palettetype *)g_dac_box)[i+170].blue  = (BYTE)((i*Blue.blue  + (86-i)*Red.blue)/85);
     }
     spindac(0, 1);
 }
@@ -1854,29 +1853,29 @@ static void set_Cellular_palette()
     if (mapdacbox && colorstate != 0)
         return;       // map= specified
 
-    dac[0].red  = 0 ;
-    dac[0].green = 0 ;
-    dac[0].blue = 0 ;
+    ((Palettetype *)g_dac_box)[0].red  = 0 ;
+    ((Palettetype *)g_dac_box)[0].green = 0 ;
+    ((Palettetype *)g_dac_box)[0].blue = 0 ;
 
-    dac[1].red    = Red.red;
-    dac[1].green = Red.green;
-    dac[1].blue  = Red.blue;
+    ((Palettetype *)g_dac_box)[1].red    = Red.red;
+    ((Palettetype *)g_dac_box)[1].green = Red.green;
+    ((Palettetype *)g_dac_box)[1].blue  = Red.blue;
 
-    dac[2].red   = Green.red;
-    dac[2].green = Green.green;
-    dac[2].blue  = Green.blue;
+    ((Palettetype *)g_dac_box)[2].red   = Green.red;
+    ((Palettetype *)g_dac_box)[2].green = Green.green;
+    ((Palettetype *)g_dac_box)[2].blue  = Green.blue;
 
-    dac[3].red   = Blue.red;
-    dac[3].green = Blue.green;
-    dac[3].blue  = Blue.blue;
+    ((Palettetype *)g_dac_box)[3].red   = Blue.red;
+    ((Palettetype *)g_dac_box)[3].green = Blue.green;
+    ((Palettetype *)g_dac_box)[3].blue  = Blue.blue;
 
-    dac[4].red   = Yellow.red;
-    dac[4].green = Yellow.green;
-    dac[4].blue  = Yellow.blue;
+    ((Palettetype *)g_dac_box)[4].red   = Yellow.red;
+    ((Palettetype *)g_dac_box)[4].green = Yellow.green;
+    ((Palettetype *)g_dac_box)[4].blue  = Yellow.blue;
 
-    dac[5].red   = Brown.red;
-    dac[5].green = Brown.green;
-    dac[5].blue  = Brown.blue;
+    ((Palettetype *)g_dac_box)[5].red   = Brown.red;
+    ((Palettetype *)g_dac_box)[5].green = Brown.green;
+    ((Palettetype *)g_dac_box)[5].blue  = Brown.blue;
 
     spindac(0, 1);
 }
