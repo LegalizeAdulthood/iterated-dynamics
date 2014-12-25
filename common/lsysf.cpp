@@ -320,9 +320,6 @@ findsize(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth
 bool
 lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth)
 {
-    float horiz, vert;
-    LDBL xmin, xmax, ymin, ymax;
-
     ts->aspect = screenaspect*xdots/ydots;
     ts->ymin = 0;
     ts->ymax = ts->ymin;
@@ -337,16 +334,18 @@ lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, in
     ts->size = 1;
     lsysf_cmd *fsret = findsize(command, ts, rules, depth);
     thinking(0, nullptr); // erase thinking message if any
-    xmin = ts->xmin;
-    xmax = ts->xmax;
-    ymin = ts->ymin;
-    ymax = ts->ymax;
+    LDBL xmin = ts->xmin;
+    LDBL xmax = ts->xmax;
+    LDBL ymin = ts->ymin;
+    LDBL ymax = ts->ymax;
     if (fsret == nullptr)
         return false;
+    float horiz;
     if (xmax == xmin)
         horiz = (float)1E37;
     else
         horiz = (float)((xdots-10)/(xmax-xmin));
+    float vert;
     if (ymax == ymin)
         vert = (float)1E37;
     else
