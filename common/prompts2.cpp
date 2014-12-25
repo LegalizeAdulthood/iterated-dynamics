@@ -34,7 +34,8 @@
 // Routines in this module
 
 static  int check_f6_key(int curkey, int choice);
-static  int filename_speedstr(int, int, int, char *, int);
+static  int filename_speedstr(int row, int col, int vid,
+                             char const *speedstring, int speed_match);
 static  int get_screen_corners();
 
 // speed key state values
@@ -1688,7 +1689,7 @@ static int check_f6_key(int curkey, int /*choice*/)
 }
 
 static int filename_speedstr(int row, int col, int vid,
-                             char *speedstring, int speed_match)
+                             char const *speedstring, int speed_match)
 {
     char const *prompt;
     if (strchr(speedstring, ':')

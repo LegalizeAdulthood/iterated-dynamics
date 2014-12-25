@@ -907,7 +907,7 @@ extern int fullscreen_choice(
     int current,
     void (*formatitem)(int, char*),
     char *speedstring,
-    int (*speedprompt)(int, int, int, char *, int),
+    int (*speedprompt)(int row, int col, int vid, char const *speedstring, int speed_match),
     int (*checkkey)(int, int)
 );
 extern bool showtempmsg(char const *);

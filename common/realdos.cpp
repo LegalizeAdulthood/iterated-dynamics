@@ -326,9 +326,10 @@ static int isadirname(char const *name)
         return 0;
 }
 
-void show_speedstring(int speedrow,
-                      char *speedstring,
-                      int (*speedprompt)(int, int, int, char *, int))
+void show_speedstring(
+    int speedrow,
+    char const *speedstring,
+    int (*speedprompt)(int row, int col, int vid, char const *speedstring, int speed_match))
 {
     char buf[81];
     memset(buf, ' ', 80);
@@ -455,7 +456,7 @@ int fullscreen_choice(
     int current,
     void (*formatitem)(int, char*),
     char *speedstring,
-    int (*speedprompt)(int, int, int, char *, int),
+    int (*speedprompt)(int row, int col, int vid, char const *speedstring, int speed_match),
     int (*checkkey)(int, int)
 )
 {
