@@ -55,6 +55,7 @@ std::vector<long> coss;
 long const scale_factor = 11930465L;
 std::vector<std::string> rules;
 lsys_cmd *rule_cmds[MAXRULES];
+lsysf_cmd *rulef_cmds[MAXRULES];
 bool loaded = false;
 
 }
@@ -243,7 +244,6 @@ bool readLSystemFile(char const *str)
 int Lsystem()
 {
     int order;
-    lsys_cmd **sc;
     bool stackoflow = false;
 
     if (!loaded && LLoad())
@@ -264,7 +264,7 @@ int Lsystem()
         ts.maxangle = maxangle;
         ts.dmaxangle = (char)(maxangle - 1);
 
-        sc = rule_cmds;
+        lsys_cmd **sc = rule_cmds;
         for (auto const &rulesc : rules)
         {
             if (!rulesc.empty())
@@ -310,7 +310,7 @@ int Lsystem()
         ts.maxangle = maxangle;
         ts.dmaxangle = (char)(maxangle - 1);
 
-        sc = rule_cmds;
+        lsysf_cmd **sc = rulef_cmds;
         for (auto const &rulesc : rules)
         {
             if (!rulesc.empty())
@@ -321,14 +321,14 @@ int Lsystem()
         *sc = nullptr;
 
         lsysf_dosincos();
-        if (lsysf_findscale(rule_cmds[0], &ts, &rule_cmds[1], order))
+        if (lsysf_findscale(rulef_cmds[0], &ts, &rulef_cmds[1], order))
         {
             ts.reverse = 0;
             ts.angle = ts.reverse;
             ts.realangle = ts.angle;
 
             free_lcmds();
-            sc = rule_cmds;
+            sc = rulef_cmds;
             for (auto const &rulesc : rules)
                 *sc++ = LSysFDrawTransform(rulesc.c_str(), &ts);
             *sc = nullptr;
@@ -337,7 +337,7 @@ int Lsystem()
             ts.curcolor = 15;
             if (ts.curcolor > colors)
                 ts.curcolor = (char)(colors-1);
-            drawLSysF(rule_cmds[0], &ts, &rule_cmds[1], order);
+            drawLSysF(rulef_cmds[0], &ts, &rulef_cmds[1], order);
         }
         overflow = false;
     }
@@ -414,10 +414,16 @@ bool append_rule(char const *rule, int index)
 
 void free_lcmds()
 {
-    lsys_cmd **sc = rule_cmds;
-
-    while (*sc)
-        free(*sc++);
+    {
+        lsys_cmd **sc = rule_cmds;
+        while (*sc)
+            free(*sc++);
+    }
+    {
+        lsysf_cmd **sc = rulef_cmds;
+        while (*sc)
+            free(*sc++);
+    }
 }
 
 // integer specific routines

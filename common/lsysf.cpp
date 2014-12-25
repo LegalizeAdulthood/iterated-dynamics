@@ -13,7 +13,7 @@
 #undef max
 #endif
 
-struct lsys_cmd
+struct lsysf_cmd
 {
     void (*f)(lsys_turtlestatef *);
     int ptype;
@@ -31,7 +31,7 @@ std::vector<LDBL> sins_f;
 std::vector<LDBL> coss_f;
 }
 
-static lsys_cmd *findsize(lsys_cmd *, lsys_turtlestatef *, lsys_cmd **, int);
+static lsysf_cmd *findsize(lsysf_cmd *, lsys_turtlestatef *, lsysf_cmd **, int);
 
 static void lsysf_doplus(lsys_turtlestatef *cmd)
 {
@@ -234,8 +234,8 @@ static void lsysf_dodrawlt(lsys_turtlestatef *cmd)
         cmd->curcolor = 1;
 }
 
-static lsys_cmd *
-findsize(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
+static lsysf_cmd *
+findsize(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth)
 {
     bool tran;
 
@@ -263,7 +263,7 @@ findsize(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
         tran = false;
         if (depth)
         {
-            for (lsys_cmd **rulind = rules; *rulind; rulind++)
+            for (lsysf_cmd **rulind = rules; *rulind; rulind++)
                 if ((*rulind)->ch == command->ch)
                 {
                     tran = true;
@@ -316,13 +316,13 @@ findsize(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
 }
 
 bool
-lsysf_findscale(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
+lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth)
 {
     float horiz, vert;
     LDBL xmin, xmax, ymin, ymax;
     LDBL locsize;
     LDBL locaspect;
-    lsys_cmd *fsret;
+    lsysf_cmd *fsret;
 
     locaspect = screenaspect*xdots/ydots;
     ts->aspect = locaspect;
@@ -368,8 +368,8 @@ lsysf_findscale(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int 
     return true;
 }
 
-lsys_cmd *
-drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
+lsysf_cmd *
+drawLSysF(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth)
 {
     bool tran;
 
@@ -397,7 +397,7 @@ drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
         tran = false;
         if (depth)
         {
-            for (lsys_cmd **rulind = rules; *rulind; rulind++)
+            for (lsysf_cmd **rulind = rules; *rulind; rulind++)
                 if ((*rulind)->ch == command->ch)
                 {
                     tran = true;
@@ -451,10 +451,10 @@ drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
     return command;
 }
 
-lsys_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
+lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
 {
-    lsys_cmd *ret;
-    lsys_cmd *doub;
+    lsysf_cmd *ret;
+    lsysf_cmd *doub;
     int max = 10;
     int n = 0;
     void (*f)(lsys_turtlestatef *);
@@ -471,7 +471,7 @@ lsys_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
     void (*at)(lsys_turtlestatef *) =     lsysf_doat;
     void (*dogf)(lsys_turtlestatef *) =   lsysf_dosizegf;
 
-    ret = (lsys_cmd *) malloc((long) max * sizeof(lsys_cmd));
+    ret = (lsysf_cmd *) malloc((long) max * sizeof(lsysf_cmd));
     if (ret == nullptr)
     {
         ts->stackoflow = true;
@@ -536,14 +536,14 @@ lsys_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
         ret[n].ptype = ptype;
         if (++n == max)
         {
-            doub = (lsys_cmd *) malloc((long) max*2*sizeof(lsys_cmd));
+            doub = (lsysf_cmd *) malloc((long) max*2*sizeof(lsysf_cmd));
             if (doub == nullptr)
             {
                 free(ret);
                 ts->stackoflow = true;
                 return nullptr;
             }
-            memcpy(doub, ret, max*sizeof(lsys_cmd));
+            memcpy(doub, ret, max*sizeof(lsysf_cmd));
             free(ret);
             ret = doub;
             max <<= 1;
@@ -555,22 +555,22 @@ lsys_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
     ret[n].parm.n = 0;
     n++;
 
-    doub = (lsys_cmd *) malloc((long) n*sizeof(lsys_cmd));
+    doub = (lsysf_cmd *) malloc((long) n*sizeof(lsysf_cmd));
     if (doub == nullptr)
     {
         free(ret);
         ts->stackoflow = true;
         return nullptr;
     }
-    memcpy(doub, ret, n*sizeof(lsys_cmd));
+    memcpy(doub, ret, n*sizeof(lsysf_cmd));
     free(ret);
     return doub;
 }
 
-lsys_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
+lsysf_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
 {
-    lsys_cmd *ret;
-    lsys_cmd *doub;
+    lsysf_cmd *ret;
+    lsysf_cmd *doub;
     int max = 10;
     int n = 0;
     void (*f)(lsys_turtlestatef *);
@@ -587,7 +587,7 @@ lsys_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
     void (*at)(lsys_turtlestatef *) =     lsysf_doat;
     void (*drawg)(lsys_turtlestatef *) =  lsysf_dodrawg;
 
-    ret = (lsys_cmd *) malloc((long) max * sizeof(lsys_cmd));
+    ret = (lsysf_cmd *) malloc((long) max * sizeof(lsysf_cmd));
     if (ret == nullptr)
     {
         ts->stackoflow = true;
@@ -668,14 +668,14 @@ lsys_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
         ret[n].ptype = ptype;
         if (++n == max)
         {
-            doub = (lsys_cmd *) malloc((long) max*2*sizeof(lsys_cmd));
+            doub = (lsysf_cmd *) malloc((long) max*2*sizeof(lsysf_cmd));
             if (doub == nullptr)
             {
                 free(ret);
                 ts->stackoflow = true;
                 return nullptr;
             }
-            memcpy(doub, ret, max*sizeof(lsys_cmd));
+            memcpy(doub, ret, max*sizeof(lsysf_cmd));
             free(ret);
             ret = doub;
             max <<= 1;
@@ -687,14 +687,14 @@ lsys_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
     ret[n].parm.n = 0;
     n++;
 
-    doub = (lsys_cmd *) malloc((long) n*sizeof(lsys_cmd));
+    doub = (lsysf_cmd *) malloc((long) n*sizeof(lsysf_cmd));
     if (doub == nullptr)
     {
         free(ret);
         ts->stackoflow = true;
         return nullptr;
     }
-    memcpy(doub, ret, n*sizeof(lsys_cmd));
+    memcpy(doub, ret, n*sizeof(lsysf_cmd));
     free(ret);
     return doub;
 }

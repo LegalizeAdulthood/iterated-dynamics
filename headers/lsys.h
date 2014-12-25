@@ -54,11 +54,11 @@ struct lsys_turtlestatef
 };
 extern char maxangle;
 
-// routines in lsysf.c
-struct lsys_cmd;
-extern lsys_cmd *drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth);
-extern bool lsysf_findscale(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth);
-extern lsys_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts);
-extern lsys_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts);
+struct lsysf_cmd;
+extern lsysf_cmd *drawLSysF(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth);
+extern bool lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth);
+extern lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts);
+extern lsysf_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts);
 extern void lsysf_dosincos();
+
 #endif
