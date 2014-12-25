@@ -325,9 +325,7 @@ int Lsystem()
             ts.curcolor = 15;
             if (ts.curcolor > colors)
                 ts.curcolor = (char)(colors-1);
-            lsys_prepfpu(&ts);
             drawLSysF(rules2[0], &ts, &rules2[1], order);
-            lsys_donefpu(&ts);
         }
         overflow = false;
     }
@@ -413,8 +411,6 @@ static void free_lcmds()
 #define lsys_doat lsysi_doat
 #define lsys_dosizegf lsysi_dosizegf
 #define lsys_dodrawg lsysi_dodrawg
-void lsys_prepfpu(lsys_turtlestatef *x) { }
-void lsys_donefpu(lsys_turtlestatef *x) { }
 #endif
 
 // integer specific routines

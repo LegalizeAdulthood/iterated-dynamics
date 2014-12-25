@@ -64,9 +64,7 @@ extern void lsysi_doat_386(lsys_turtlestatei *cmd);
 extern void lsysi_dosizegf_386(lsys_turtlestatei *cmd);
 extern void lsysi_dodrawg_386(lsys_turtlestatei *cmd);
 #endif
-// routines in lsysaf.asm
-extern void lsys_prepfpu(lsys_turtlestatef *);
-extern void lsys_donefpu(lsys_turtlestatef *);
+
 // routines in lsysf.c
 struct lsys_cmd;
 extern lsys_cmd *drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth);

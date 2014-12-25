@@ -353,25 +353,21 @@ findsize(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
                 char saveang, saverev;
                 LDBL savesize, savex, savey, saverang;
 
-                lsys_donefpu(ts);
                 saveang = ts->angle;
                 saverev = ts->reverse;
                 savesize = ts->size;
                 saverang = ts->realangle;
                 savex = ts->xpos;
                 savey = ts->ypos;
-                lsys_prepfpu(ts);
                 command = findsize(command+1, ts, rules, depth);
                 if (command == nullptr)
                     return (nullptr);
-                lsys_donefpu(ts);
                 ts->angle = saveang;
                 ts->reverse = saverev;
                 ts->size = savesize;
                 ts->realangle = saverang;
                 ts->xpos = savex;
                 ts->ypos = savey;
-                lsys_prepfpu(ts);
             }
         }
         command++;
@@ -401,9 +397,7 @@ lsysf_findscale(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int 
     ts->angle = ts->reverse;
     ts->realangle = 0;
     ts->size = 1;
-    lsys_prepfpu(ts);
     fsret = findsize(command, ts, rules, depth);
-    lsys_donefpu(ts);
     thinking(0, nullptr); // erase thinking message if any
     xmin = ts->xmin;
     xmax = ts->xmax;
@@ -493,7 +487,6 @@ drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
                 char saveang, saverev, savecolor;
                 LDBL savesize, savex, savey, saverang;
 
-                lsys_donefpu(ts);
                 saveang = ts->angle;
                 saverev = ts->reverse;
                 savesize = ts->size;
@@ -501,11 +494,9 @@ drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
                 savex = ts->xpos;
                 savey = ts->ypos;
                 savecolor = ts->curcolor;
-                lsys_prepfpu(ts);
                 command = drawLSysF(command+1, ts, rules, depth);
                 if (command == nullptr)
                     return (nullptr);
-                lsys_donefpu(ts);
                 ts->angle = saveang;
                 ts->reverse = saverev;
                 ts->size = savesize;
@@ -513,7 +504,6 @@ drawLSysF(lsys_cmd *command, lsys_turtlestatef *ts, lsys_cmd **rules, int depth)
                 ts->xpos = savex;
                 ts->ypos = savey;
                 ts->curcolor = savecolor;
-                lsys_prepfpu(ts);
             }
         }
         command++;
