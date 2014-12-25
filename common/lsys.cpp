@@ -660,7 +660,7 @@ lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, i
             }
         }
         tran = false;
-        if (depth)
+        if (depth > 0)
         {
             for (lsys_cmd **rulind = rules; *rulind; rulind++)
                 if ((*rulind)->ch == command->ch)
@@ -670,7 +670,7 @@ lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, i
                         return (nullptr);
                 }
         }
-        if (!depth || !tran)
+        if (depth == 0 || !tran)
         {
             if (command->f)
             {
