@@ -602,7 +602,7 @@ enum class fractal_type;
 struct fractalspecificstuff
 {
     char const  *name;                  // name of the fractal
-    // (leading "*" supresses name display)
+                                        // (leading "*" supresses name display)
     char const  *param[4];              // name of the parameters
     double paramvalue[4];               // default parameter values
     int   helptext;                     // helpdefs.h HT_xxxx, -1 for none
