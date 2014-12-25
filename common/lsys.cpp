@@ -841,12 +841,8 @@ lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, 
 
 lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
 {
-    lsys_cmd *ret;
-    lsys_cmd *doub;
     int maxval = 10;
     int n = 0;
-    void (*f)(lsys_turtlestatei *);
-    long num;
 
     void (*plus)(lsys_turtlestatei *) = (ispow2(ts->maxangle)) ? lsysi_doplus_pow2 : lsysi_doplus;
     void (*minus)(lsys_turtlestatei *) = (ispow2(ts->maxangle)) ? lsysi_dominus_pow2 : lsysi_dominus;
@@ -857,7 +853,7 @@ lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
     void (*at)(lsys_turtlestatei *) = lsysi_doat;
     void (*dogf)(lsys_turtlestatei *) = lsysi_dosizegf;
 
-    ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
+    lsys_cmd *ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
     if (ret == nullptr)
     {
         ts->stackoflow = true;
@@ -865,8 +861,8 @@ lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
     }
     while (*s)
     {
-        f = nullptr;
-        num = 0;
+        void (*f)(lsys_turtlestatei *) = nullptr;
+        long num = 0;
         ret[n].ch = *s;
         switch (*s)
         {
@@ -916,7 +912,7 @@ lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
         ret[n].n = num;
         if (++n == maxval)
         {
-            doub = (lsys_cmd *) malloc((long) maxval*2*sizeof(lsys_cmd));
+            lsys_cmd *doub = (lsys_cmd *) malloc((long) maxval*2*sizeof(lsys_cmd));
             if (doub == nullptr)
             {
                 free(ret);
@@ -935,7 +931,7 @@ lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
     ret[n].n = 0;
     n++;
 
-    doub = (lsys_cmd *) malloc((long) n*sizeof(lsys_cmd));
+    lsys_cmd *doub = (lsys_cmd *) malloc((long) n*sizeof(lsys_cmd));
     if (doub == nullptr)
     {
         free(ret);
