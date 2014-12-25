@@ -38,7 +38,7 @@ struct minmax
 // routines in this module
 int line3d(BYTE *, unsigned);
 int targa_color(int, int, int);
-bool targa_validate(char *file_name);
+bool targa_validate(char const *file_name);
 static int first_time(int, VECTOR);
 static int H_R(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned long);
 static int line3dmem();
@@ -53,7 +53,6 @@ static int RAY_Header();
 static int start_object();
 static void draw_light_box(double *, double *, MATRIX);
 static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, bool rect);
-static void File_Error(char *, int);
 static void line3d_cleanup();
 static void clipcolor(int, int, int);
 static void interpcolor(int, int, int);
@@ -87,7 +86,7 @@ static FILE *File_Ptr1 = nullptr;
 static unsigned int IAmbient;
 static int rand_factor;
 static int HAZE_MULT;
-static void File_Error(char *File_Name1, int ERROR);
+static void File_Error(char const *File_Name1, int ERROR);
 static BYTE T24 = 24;
 static BYTE T32 = 32;
 static BYTE upr_lwr[4];
@@ -1338,7 +1337,7 @@ static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
 
 **************************************************************************/
 
-static void File_Error(char *File_Name1, int ERROR)
+static void File_Error(char const *File_Name1, int ERROR)
 {
     char msgbuf[200];
 
@@ -1461,12 +1460,10 @@ bool startdisk1(char *File_Name2, FILE *Source, bool overlay)
     return false;
 }
 
-bool targa_validate(char *File_Name)
+bool targa_validate(char const *File_Name)
 {
-    FILE *fp;
-
     // Attempt to open source file for reading
-    fp = dir_fopen(workdir, File_Name, "rb");
+    FILE *fp = dir_fopen(workdir, File_Name, "rb");
     if (fp == nullptr)
     {
         File_Error(File_Name, 1);
