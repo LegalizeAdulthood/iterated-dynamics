@@ -29,6 +29,8 @@ namespace
 {
 std::vector<LDBL> sins_f;
 std::vector<LDBL> coss_f;
+
+LDBL const PI_DIV_180 = PI/180.0L;
 }
 
 static lsysf_cmd *findsize(lsysf_cmd *, lsys_turtlestatef *, lsysf_cmd **, int);
@@ -455,7 +457,6 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
 {
     int max = 10;
     int n = 0;
-    double PI180 = PI / 180.0;
 
     auto const plus = ispow2(ts->maxangle) ? lsysf_doplus_pow2 : lsysf_doplus;
     auto const minus = ispow2(ts->maxangle) ? lsysf_dominus_pow2 : lsysf_dominus;
@@ -484,12 +485,12 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
         case '/':
             f = lsysf_doslash;
             ptype = 10;
-            ret[n].parm.nf = getnumber(&s) * PI180;
+            ret[n].parm.nf = getnumber(&s) * PI_DIV_180;
             break;
         case '\\':
             f = lsysf_dobslash;
             ptype = 10;
-            ret[n].parm.nf = getnumber(&s) * PI180;
+            ret[n].parm.nf = getnumber(&s) * PI_DIV_180;
             break;
         case '@':
             f = lsysf_doat;
@@ -561,7 +562,6 @@ lsysf_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
 {
     int max = 10;
     int n = 0;
-    LDBL const PI180 = PI / 180.0;
 
     auto const plus = ispow2(ts->maxangle) ? lsysf_doplus_pow2 : lsysf_doplus;
     auto const minus = ispow2(ts->maxangle) ? lsysf_dominus_pow2 : lsysf_dominus;
@@ -590,12 +590,12 @@ lsysf_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
         case '/':
             f = lsysf_doslash;
             ptype = 10;
-            ret[n].parm.nf = getnumber(&s) * PI180;
+            ret[n].parm.nf = getnumber(&s) * PI_DIV_180;
             break;
         case '\\':
             f = lsysf_dobslash;
             ptype = 10;
-            ret[n].parm.nf = getnumber(&s) * PI180;
+            ret[n].parm.nf = getnumber(&s) * PI_DIV_180;
             break;
         case '@':
             f = lsysf_doat;
