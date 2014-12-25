@@ -1,3 +1,4 @@
+#include <string>
 #include <vector>
 
 #include <float.h>
@@ -50,7 +51,7 @@ namespace
 std::vector<long> sins;
 std::vector<long> coss;
 }
-static char *ruleptrs[MAXRULES];
+static std::string ruleptrs[MAXRULES];
 static lsys_cmd *rules2[MAXRULES];
 char maxangle;
 static bool loaded = false;
@@ -128,7 +129,7 @@ static bool readLSystemFile(char const *str)
 
     maxangle = 0;
     for (int linenum = 0; linenum < MAXRULES; ++linenum)
-        ruleptrs[linenum] = nullptr;
+        ruleptrs[linenum] = "";
     int rulind = 1;
     char msgbuf[481] = { 0 }; // enough for 6 full lines
 
@@ -215,7 +216,7 @@ static bool readLSystemFile(char const *str)
         }
     }
     fclose(infile);
-    if (!ruleptrs[0] && err < 6)
+    if (ruleptrs[0].empty() && err < 6)
     {
         strcat(msgbuf, "Error:  no axiom\n");
         ++err;
@@ -231,7 +232,7 @@ static bool readLSystemFile(char const *str)
         stopmsg(STOPMSG_NONE, msgbuf);
         return true;
     }
-    ruleptrs[rulind] = nullptr;
+    ruleptrs[rulind] = "";
     return false;
 }
 
@@ -260,8 +261,13 @@ int Lsystem()
         ts.dmaxangle = (char)(maxangle - 1);
 
         sc = rules2;
-        for (char **rulesc = ruleptrs; *rulesc; rulesc++)
-            *sc++ = LSysISizeTransform(*rulesc, &ts);
+        for (auto const &rulesc : ruleptrs)
+        {
+            if (!rulesc.empty())
+            {
+                *sc++ = LSysISizeTransform(rulesc.c_str(), &ts);
+            }
+        }
         *sc = nullptr;
 
         lsysi_dosincos();
@@ -273,8 +279,8 @@ int Lsystem()
 
             free_lcmds();
             sc = rules2;
-            for (char **rulesc = ruleptrs; *rulesc; rulesc++)
-                *sc++ = LSysIDrawTransform(*rulesc, &ts);
+            for (auto const &rulesc : ruleptrs)
+                *sc++ = LSysIDrawTransform(rulesc.c_str(), &ts);
             *sc = nullptr;
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
@@ -301,8 +307,13 @@ int Lsystem()
         ts.dmaxangle = (char)(maxangle - 1);
 
         sc = rules2;
-        for (char **rulesc = ruleptrs; *rulesc; rulesc++)
-            *sc++ = LSysFSizeTransform(*rulesc, &ts);
+        for (auto const &rulesc : ruleptrs)
+        {
+            if (!rulesc.empty())
+            {
+                *sc++ = LSysFSizeTransform(rulesc.c_str(), &ts);
+            }
+        }
         *sc = nullptr;
 
         lsysf_dosincos();
@@ -314,8 +325,8 @@ int Lsystem()
 
             free_lcmds();
             sc = rules2;
-            for (char **rulesc = ruleptrs; *rulesc; rulesc++)
-                *sc++ = LSysFDrawTransform(*rulesc, &ts);
+            for (auto const &rulesc : ruleptrs)
+                *sc++ = LSysFDrawTransform(rulesc.c_str(), &ts);
             *sc = nullptr;
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
@@ -346,14 +357,16 @@ bool LLoad()
 
 static void free_rules_mem()
 {
-    for (int i = 0; i < MAXRULES; ++i)
-        if (ruleptrs[i])
-            free(ruleptrs[i]);
+    for (auto &rule : ruleptrs)
+    {
+        rule.clear();
+        rule.shrink_to_fit();
+    }
 }
 
 static int rule_present(char symbol)
 {
-    for (int i = 1; i < MAXRULES && ruleptrs[i]; ++i)
+    for (int i = 1; i < MAXRULES && !ruleptrs[i].empty(); ++i)
     {
         if (ruleptrs[i][0] == symbol)
         {
@@ -365,29 +378,28 @@ static int rule_present(char symbol)
 
 static bool save_rule(char const *rule, int index)
 {
-    char *tmp = strdup(rule);
-    if (tmp == nullptr)
+    try
+    {
+        ruleptrs[index] = rule;
+        return false;
+    }
+    catch (std::bad_alloc const&)
     {
         return true;
     }
-    ruleptrs[index] = tmp;
-    return false;
 }
 
 static bool append_rule(char const *rule, int index)
 {
-    char *existing = ruleptrs[index];
-    int const total_length = strlen(existing) + strlen(rule) + 1;
-    char *dest = static_cast<char *>(malloc(total_length));
-    if (dest == nullptr)
+    try
+    {
+        ruleptrs[index] += rule;
+        return false;
+    }
+    catch (std::bad_alloc const &)
     {
         return true;
     }
-    strcpy(dest, existing);
-    strcat(dest, rule);
-    free(existing);
-    ruleptrs[index] = dest;
-    return false;
 }
 
 static void free_lcmds()
