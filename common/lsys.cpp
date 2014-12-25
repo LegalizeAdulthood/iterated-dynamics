@@ -64,13 +64,9 @@ bool ispow2(int n)
 
 LDBL getnumber(char const **str)
 {
-    char numstr[30];
-    LDBL ret;
-    int i;
     bool root = false;
     bool inverse = false;
 
-    strcpy(numstr, "");
     (*str)++;
     switch (**str)
     {
@@ -94,7 +90,9 @@ LDBL getnumber(char const **str)
         (*str)++;
         break;
     }
-    i = 0;
+    char numstr[30];
+    strcpy(numstr, "");
+    int i = 0;
     while ((**str <= '9' && **str >= '0') || **str == '.')
     {
         numstr[i++] = **str;
@@ -102,7 +100,7 @@ LDBL getnumber(char const **str)
     }
     (*str)--;
     numstr[i] = 0;
-    ret = atof(numstr);
+    LDBL ret = atof(numstr);
     if (ret <= 0.0) // this is a sanity check
         return 0;
     if (root)
