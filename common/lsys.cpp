@@ -27,8 +27,8 @@ static void free_lcmds();
 static lsys_cmd *findsize(lsys_cmd *, lsys_turtlestatei *, lsys_cmd **, int);
 static lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth);
 static bool lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth);
-static lsys_cmd *LSysISizeTransform(char *s, lsys_turtlestatei *ts);
-static lsys_cmd *LSysIDrawTransform(char *s, lsys_turtlestatei *ts);
+static lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts);
+static lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts);
 static void lsysi_dosincos();
 
 static void lsysi_doslash(lsys_turtlestatei *cmd);
@@ -61,7 +61,7 @@ bool ispow2(int n)
     return (n == (n & -n));
 }
 
-LDBL getnumber(char **str)
+LDBL getnumber(char const **str)
 {
     char numstr[30];
     LDBL ret;
@@ -820,8 +820,7 @@ drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
     return command;
 }
 
-static lsys_cmd *
-LSysISizeTransform(char *s, lsys_turtlestatei *ts)
+static lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
 {
     lsys_cmd *ret;
     lsys_cmd *doub;
@@ -929,8 +928,7 @@ LSysISizeTransform(char *s, lsys_turtlestatei *ts)
     return doub;
 }
 
-static lsys_cmd *
-LSysIDrawTransform(char *s, lsys_turtlestatei *ts)
+static lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts)
 {
     lsys_cmd *ret;
     lsys_cmd *doub;
