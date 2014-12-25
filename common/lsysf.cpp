@@ -322,7 +322,6 @@ lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, in
 {
     float horiz, vert;
     LDBL xmin, xmax, ymin, ymax;
-    LDBL locsize;
 
     ts->aspect = screenaspect*xdots/ydots;
     ts->ymin = 0;
@@ -352,7 +351,7 @@ lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, in
         vert = (float)1E37;
     else
         vert = (float)((ydots-6) /(ymax-ymin));
-    locsize = (vert < horiz) ? vert : horiz;
+    LDBL const locsize = (vert < horiz) ? vert : horiz;
 
     if (horiz == 1E37)
         ts->xpos = xdots/2;
