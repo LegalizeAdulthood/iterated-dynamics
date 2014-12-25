@@ -461,7 +461,6 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
     auto const minus = ispow2(ts->maxangle) ? lsysf_dominus_pow2 : lsysf_dominus;
     auto const pipe = ispow2(ts->maxangle) ? lsysf_dopipe_pow2 : lsysf_dopipe;
 
-    auto const bslash = lsysf_dobslash;
     auto const at = lsysf_doat;
     auto const dogf = lsysf_dosizegf;
 
@@ -491,7 +490,7 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
             ret[n].parm.nf = getnumber(&s) * PI180;
             break;
         case '\\':
-            f = bslash;
+            f = lsysf_dobslash;
             ptype = 10;
             ret[n].parm.nf = getnumber(&s) * PI180;
             break;
