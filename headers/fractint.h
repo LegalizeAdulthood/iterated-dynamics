@@ -1179,7 +1179,7 @@ struct ext_blk_5
 {
     char got_data;
     int length;
-    char *apm_data;
+    std::vector<char> apm_data;
 };
 
 // parameter evolution stuff

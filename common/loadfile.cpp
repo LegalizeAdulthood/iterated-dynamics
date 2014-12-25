@@ -502,8 +502,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         bf_math = bf_math_type::BIGNUM;
         init_bf_length(read_info.bflength);
-        memcpy((char *) bfxmin, blk_5_info.apm_data, blk_5_info.length);
-        free(blk_5_info.apm_data);
+        memcpy((char *) bfxmin, &blk_5_info.apm_data[0], blk_5_info.length);
     }
     else
     {
@@ -848,14 +847,11 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     break;
                 case 5: // extended precision parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
-                    blk_5_info->apm_data = (char *)malloc((long)data_len);
-                    if (blk_5_info->apm_data != nullptr)
-                    {
-                        fseek(fp, (long)(0-block_len), SEEK_CUR);
-                        load_ext_blk(blk_5_info->apm_data, data_len);
-                        blk_5_info->length = data_len;
-                        blk_5_info->got_data = 1; // got data
-                    }
+                    blk_5_info->apm_data.resize(data_len);
+                    fseek(fp, (long)(0-block_len), SEEK_CUR);
+                    load_ext_blk(&blk_5_info->apm_data[0], data_len);
+                    blk_5_info->length = data_len;
+                    blk_5_info->got_data = 1; // got data
                     break;
                 case 6: // evolver params
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
@@ -1428,7 +1424,7 @@ rescan:  // entry for changed browse parms
         if (blk_2_info.got_data == 1) // Clean up any memory allocated
             blk_2_info.resume_data.clear();
         if (blk_5_info.got_data == 1) // Clean up any memory allocated
-            free(blk_5_info.apm_data);
+            blk_5_info.apm_data.clear();
 
         done = (fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
     }
@@ -1824,12 +1820,12 @@ bool is_visible_window(
         bt_t5   = alloc_stack(two_di_len);
         bt_t6   = alloc_stack(two_di_len);
 
-        memcpy((char *)bt_t1, blk_5_info->apm_data, (two_di_len));
-        memcpy((char *)bt_t2, blk_5_info->apm_data+two_di_len, (two_di_len));
-        memcpy((char *)bt_t3, blk_5_info->apm_data+2*two_di_len, (two_di_len));
-        memcpy((char *)bt_t4, blk_5_info->apm_data+3*two_di_len, (two_di_len));
-        memcpy((char *)bt_t5, blk_5_info->apm_data+4*two_di_len, (two_di_len));
-        memcpy((char *)bt_t6, blk_5_info->apm_data+5*two_di_len, (two_di_len));
+        memcpy((char *)bt_t1, &blk_5_info->apm_data[0], (two_di_len));
+        memcpy((char *)bt_t2, &blk_5_info->apm_data[two_di_len], (two_di_len));
+        memcpy((char *)bt_t3, &blk_5_info->apm_data[2*two_di_len], (two_di_len));
+        memcpy((char *)bt_t4, &blk_5_info->apm_data[3*two_di_len], (two_di_len));
+        memcpy((char *)bt_t5, &blk_5_info->apm_data[4*two_di_len], (two_di_len));
+        memcpy((char *)bt_t6, &blk_5_info->apm_data[5*two_di_len], (two_di_len));
 
         convert_bf(bt_xmin, bt_t1, two_len, two_di_len);
         convert_bf(bt_xmax, bt_t2, two_len, two_di_len);
