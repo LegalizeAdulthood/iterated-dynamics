@@ -30,8 +30,6 @@
 
 int prompt_checkkey(int curkey);
 int prompt_checkkey_scroll(int curkey);
-long get_file_entry(int type, char const *title, char *fmask,
-                    char *filename, char *entryname);
 
 // Routines in this module
 
@@ -1843,7 +1841,7 @@ bool check_orbit_name(char *orbitname)
 
 static FILE *gfe_file;
 
-long get_file_entry(int type, char const *title, char *fmask,
+long get_file_entry(int type, char const *title, char const *fmask,
                     char *filename, char *entryname)
 {
     // Formula, LSystem, etc type structure, select from file

@@ -848,7 +848,7 @@ extern int fullscreen_prompt(
     fullscreenvalues *values,
     int fkeymask,
     char *extrainfo);
-extern long get_file_entry(int type, char const *title, char *fmask,
+extern long get_file_entry(int type, char const *title, char const *fmask,
                     char *filename, char *entryname);
 extern int get_fracttype();
 extern int get_fract_params(int);
