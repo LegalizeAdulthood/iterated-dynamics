@@ -1,3 +1,4 @@
+#include <cassert>
 #include <string>
 #include <vector>
 
@@ -52,7 +53,7 @@ void lsysi_dodrawlt(lsys_turtlestatei *cmd);
 std::vector<long> sins;
 std::vector<long> coss;
 long const scale_factor = 11930465L;
-std::string rules[MAXRULES];
+std::vector<std::string> rules;
 lsys_cmd *rule_cmds[MAXRULES];
 bool loaded = false;
 
@@ -218,7 +219,7 @@ bool readLSystemFile(char const *str)
         }
     }
     fclose(infile);
-    if (rules[0].empty() && err < 6)
+    if (rules.size() > 0 && rules[0].empty() && err < 6)
     {
         strcat(msgbuf, "Error:  no axiom\n");
         ++err;
@@ -234,7 +235,6 @@ bool readLSystemFile(char const *str)
         stopmsg(STOPMSG_NONE, msgbuf);
         return true;
     }
-    rules[rulind] = "";
     return false;
 }
 
@@ -373,7 +373,7 @@ void free_rules_mem()
 
 int rule_present(char symbol)
 {
-    for (int i = 1; i < MAXRULES && !rules[i].empty(); ++i)
+    for (std::size_t i = 1; i < rules.size(); ++i)
     {
         if (rules[i][0] == symbol)
         {
@@ -387,6 +387,8 @@ bool save_rule(char const *rule, int index)
 {
     try
     {
+        assert(index >= 0);
+        rules.resize(index + 1);
         rules[index] = rule;
         return false;
     }
@@ -400,6 +402,7 @@ bool append_rule(char const *rule, int index)
 {
     try
     {
+        assert(index > 0 && unsigned(index) < rules.size());
         rules[index] += rule;
         return false;
     }
