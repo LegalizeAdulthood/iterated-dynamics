@@ -1197,8 +1197,6 @@ int get_commands()              // execute commands from file
 
 void goodbye()                  // we done.  Bail out
 {
-    int ret;
-
     end_resume();
     ReleaseParamBox();
     if (!ifs_defn.empty())
@@ -1225,7 +1223,7 @@ void goodbye()                  // we done.  Bail out
     }
     stopslideshow();
     end_help();
-    ret = 0;
+    int ret = 0;
     if (initbatch == 3) // exit with error code for batch file
     {
         ret = 2;
