@@ -612,11 +612,11 @@ extern int tab_display();
 extern int endswithslash(char const *fl);
 extern int ifsload();
 extern bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int itemtype);
-extern int file_gets(char *, int, FILE *);
+extern int file_gets(char *buf, int maxlen, FILE *infile);
 extern void roundfloatd(double *);
 extern void fix_inversion(double *);
 extern int ungetakey(int);
-extern void get_calculation_time(char *, long);
+extern void get_calculation_time(char *msg, long ctime);
 // mpmath_c -- C file prototypes
 extern MP *MPsub(MP, MP);
 extern MP *MPsub086(MP, MP);
