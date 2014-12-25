@@ -24,7 +24,6 @@
 
 // routines in this module
 
-void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int i, int j);
 void expand_comments(char *target, char *source);
 
 static void put_parm(char const *parm, ...);
@@ -504,7 +503,7 @@ struct write_batch_data // buffer for parms to break lines nicely
 };
 static write_batch_data s_wbdata;
 
-void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, int jj)
+void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int ii, int jj)
 {
     double Xctr, Yctr;
     LDBL Magnification;
