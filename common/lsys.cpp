@@ -366,17 +366,12 @@ static int rule_present(char symbol)
 
 static bool save_rule(char *rule, char **saveptr)
 {
-    int i;
-    char *tmpfar;
-    i = (int) strlen(rule)+1;
-    tmpfar = (char *) malloc(i);
+    char *tmpfar = strdup(rule);
     if (tmpfar == nullptr)
     {
         return true;
     }
     *saveptr = tmpfar;
-    while (--i >= 0)
-        *(tmpfar++) = *(rule++);
     return false;
 }
 
