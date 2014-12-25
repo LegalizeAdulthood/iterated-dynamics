@@ -1170,7 +1170,7 @@ struct ext_blk_3
 
 struct ext_blk_4
 {
-    char got_data;
+    bool got_data;
     int length;
     std::vector<int> range_data;
 };

@@ -492,7 +492,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         rangeslen = 0;
     }
 
-    if (blk_4_info.got_data == 1)
+    if (blk_4_info.got_data)
     {
         rangeslen = blk_4_info.length;
         ranges = blk_4_info.range_data;
@@ -640,7 +640,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
 
     blk_2_info->got_data = false;
     blk_3_info->got_data = false;
-    blk_4_info->got_data = 0; // initialize to no data
+    blk_4_info->got_data = false;
     blk_5_info->got_data = 0; // initialize to no data
     blk_6_info->got_data = 0; // initialize to no data
     blk_7_info->got_data = 0; // initialize to no data
@@ -843,7 +843,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                             blk_4_info->range_data[i] = buffer[i*2 + 0] | (buffer[i*2 + 1] << 8);
                         }
                     }
-                    blk_4_info->got_data = 1; // got data
+                    blk_4_info->got_data = true;
                     break;
                 case 5: // extended precision parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
