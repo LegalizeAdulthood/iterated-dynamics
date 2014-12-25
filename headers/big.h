@@ -1,11 +1,7 @@
 // Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer
 #ifndef BIG_H
 #define BIG_H
-/*************************************************************
- The following allows the programmer to customize routines.
- They can be selected here or on the compiler command line.
-**************************************************************/
-#define BIG_ANSI_C
+
 // Number of bytes to use for integer part for fixed decimal math,
 // does not effect floating point math at all.
 #define BN_INT_LENGTH 4
@@ -24,14 +20,14 @@ enum class bf_math_type
     BIGNUM = 1,         // bf_math is being used with bn_t numbers
     BIGFLT = 2          // bf_math is being used with bf_t numbers
 };
-#ifdef BIG_ANSI_C
+
 #define USE_BIGNUM_C_CODE
 #define BIGDIST
 #define BIG_NULL            nullptr
 #define BIG_SIZE_T          size_t
 #define big_malloc(size)    malloc(size)
 #define big_free(ptr)       free(ptr)
-#endif
+
 typedef unsigned char BIGDIST * big_t;
 #define bn_t   big_t  // for clarification purposes
 #define bf_t   big_t

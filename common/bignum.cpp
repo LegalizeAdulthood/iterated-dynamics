@@ -139,9 +139,6 @@ double wide number can then be ignored.
 #include "port.h"
 #include "prototyp.h"
 #include "big.h"
-#ifndef BIG_ANSI_C
-#include <malloc.h>
-#endif
 
 /*************************************************************************
 * The original bignumber code was written specifically for a Little Endian
