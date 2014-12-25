@@ -22,13 +22,12 @@ enum class bf_math_type
 };
 
 #define USE_BIGNUM_C_CODE
-#define BIGDIST
 #define BIG_NULL            nullptr
 #define BIG_SIZE_T          size_t
 #define big_malloc(size)    malloc(size)
 #define big_free(ptr)       free(ptr)
 
-typedef unsigned char BIGDIST * big_t;
+typedef unsigned char * big_t;
 #define bn_t   big_t  // for clarification purposes
 #define bf_t   big_t
 #define bf10_t big_t
@@ -103,20 +102,20 @@ extern LDBL scale_256(LDBL f, int n);
 // functions defined in bignum.c
 #ifdef ACCESS_BY_BYTE
 // prototypes
-extern U32 big_access32(BYTE BIGDIST *addr);
-extern U16 big_access16(BYTE BIGDIST *addr);
-extern S16 big_accessS16(S16 BIGDIST *addr);
-extern U32 big_set32(BYTE BIGDIST *addr, U32 val);
-extern U16 big_set16(BYTE BIGDIST *addr, U16 val);
-extern S16 big_setS16(S16 BIGDIST *addr, S16 val);
+extern U32 big_access32(BYTE *addr);
+extern U16 big_access16(BYTE *addr);
+extern S16 big_accessS16(S16 *addr);
+extern U32 big_set32(BYTE *addr, U32 val);
+extern U16 big_set16(BYTE *addr, U16 val);
+extern S16 big_setS16(S16 *addr, S16 val);
 #else
 // equivalent defines
-#define big_access32(addr)   (*(U32 BIGDIST *)(addr))
-#define big_access16(addr)   (*(U16 BIGDIST *)(addr))
-#define big_accessS16(addr)   (*(S16 BIGDIST *)(addr))
-#define big_set32(addr, val) (*(U32 BIGDIST *)(addr) = (U32)(val))
-#define big_set16(addr, val) (*(U16 BIGDIST *)(addr) = (U16)(val))
-#define big_setS16(addr, val) (*(S16 BIGDIST *)(addr) = (S16)(val))
+#define big_access32(addr)   (*(U32 *)(addr))
+#define big_access16(addr)   (*(U16 *)(addr))
+#define big_accessS16(addr)   (*(S16 *)(addr))
+#define big_set32(addr, val) (*(U32 *)(addr) = (U32)(val))
+#define big_set16(addr, val) (*(U16 *)(addr) = (U16)(val))
+#define big_setS16(addr, val) (*(S16 *)(addr) = (S16)(val))
 #endif
 extern void bn_hexdump(bn_t r);
 extern bn_t strtobn(bn_t r, char *s);
