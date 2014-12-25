@@ -404,7 +404,6 @@ static void free_lcmds()
 }
 
 #if defined(XFRACT) || defined(_WIN32)
-#define lsys_doat lsysi_doat
 #define lsys_dosizegf lsysi_dosizegf
 #define lsys_dodrawg lsysi_dodrawg
 #endif
@@ -866,7 +865,7 @@ LSysISizeTransform(char *s, lsys_turtlestatei *ts)
 
     void (*slash)(lsys_turtlestatei *) = lsysi_doslash;
     void (*bslash)(lsys_turtlestatei *) = lsysi_dobslash;
-    void (*at)(lsys_turtlestatei *) = lsys_doat;
+    void (*at)(lsys_turtlestatei *) = lsysi_doat;
     void (*dogf)(lsys_turtlestatei *) = lsys_dosizegf;
 
     ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
@@ -975,7 +974,7 @@ LSysIDrawTransform(char *s, lsys_turtlestatei *ts)
 
     void (*slash)(lsys_turtlestatei *) = lsysi_doslash;
     void (*bslash)(lsys_turtlestatei *) = lsysi_dobslash;
-    void (*at)(lsys_turtlestatei *) = lsys_doat;
+    void (*at)(lsys_turtlestatei *) = lsysi_doat;
     void (*drawg)(lsys_turtlestatei *) = lsys_dodrawg;
 
     ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
