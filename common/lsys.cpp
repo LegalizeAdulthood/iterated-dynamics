@@ -372,8 +372,8 @@ static bool save_rule(char const *rule, int index)
 
 static bool append_rule(char const *rule, int index)
 {
-    char *sav = ruleptrs[index];
-    char *old = sav;
+    char *existing = ruleptrs[index];
+    char *old = existing;
     int i;
     for (i = 0; *(old++); i++)
         ;
@@ -382,13 +382,13 @@ static bool append_rule(char const *rule, int index)
     if (dst == nullptr)
         return true;
 
-    old = sav;
+    old = existing;
     ruleptrs[index] = dst;
     while (i-- > 0)
         *(dst++) = *(old++);
     while (j-- > 0)
         *(dst++) = *(rule++);
-    free(sav);
+    free(existing);
     return false;
 }
 
