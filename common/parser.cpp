@@ -3689,7 +3689,7 @@ CASE_TERMINATOR:
     }
 }
 
-int frm_get_param_stuff(char * Name)
+int frm_get_param_stuff(char const *Name)
 {
     FILE *debug_token = nullptr;
     int c;

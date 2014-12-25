@@ -823,7 +823,7 @@ extern void RecSortPrec();
 extern int Formula();
 extern int BadFormula();
 extern int form_per_pixel();
-extern int frm_get_param_stuff(char *);
+extern int frm_get_param_stuff(char const *Name);
 extern bool RunForm(char *Name, bool from_prompts1c);
 extern bool fpFormulaSetup();
 extern bool intFormulaSetup();
