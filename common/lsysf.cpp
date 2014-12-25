@@ -453,13 +453,8 @@ drawLSysF(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int dept
 
 lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
 {
-    lsysf_cmd *ret;
-    lsysf_cmd *doub;
     int max = 10;
     int n = 0;
-    void (*f)(lsys_turtlestatef *);
-    long num;
-    int ptype;
     double PI180 = PI / 180.0;
 
     void (*plus)(lsys_turtlestatef *) = (ispow2(ts->maxangle)) ? lsysf_doplus_pow2 : lsysf_doplus;
@@ -471,7 +466,7 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
     void (*at)(lsys_turtlestatef *) =     lsysf_doat;
     void (*dogf)(lsys_turtlestatef *) =   lsysf_dosizegf;
 
-    ret = (lsysf_cmd *) malloc((long) max * sizeof(lsysf_cmd));
+    lsysf_cmd *ret = (lsysf_cmd *) malloc((long) max * sizeof(lsysf_cmd));
     if (ret == nullptr)
     {
         ts->stackoflow = true;
@@ -479,9 +474,9 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
     }
     while (*s)
     {
-        f = nullptr;
-        num = 0;
-        ptype = 4;
+        void (*f)(lsys_turtlestatef *) = nullptr;
+        long num = 0;
+        int ptype = 4;
         ret[n].ch = *s;
         switch (*s)
         {
@@ -536,7 +531,7 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
         ret[n].ptype = ptype;
         if (++n == max)
         {
-            doub = (lsysf_cmd *) malloc((long) max*2*sizeof(lsysf_cmd));
+            lsysf_cmd *doub = (lsysf_cmd *) malloc((long) max*2*sizeof(lsysf_cmd));
             if (doub == nullptr)
             {
                 free(ret);
@@ -555,7 +550,7 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
     ret[n].parm.n = 0;
     n++;
 
-    doub = (lsysf_cmd *) malloc((long) n*sizeof(lsysf_cmd));
+    lsysf_cmd *doub = (lsysf_cmd *) malloc((long) n*sizeof(lsysf_cmd));
     if (doub == nullptr)
     {
         free(ret);
