@@ -2218,8 +2218,6 @@ int whichfn(char const *s, int len)
     return out;
 }
 
-}
-
 void (*isfunct(char const *Str, int Len))()
 {
     unsigned n = SkipWhiteSpace(&Str[Len]);
@@ -2243,6 +2241,8 @@ void (*isfunct(char const *Str, int Len))()
         return FnctNotFound;
     }
     return NotAFnct;
+}
+
 }
 
 void RecSortPrec()

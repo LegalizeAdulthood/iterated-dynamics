@@ -819,7 +819,6 @@ extern void NotAFnct();
 extern void FnctNotFound();
 extern int CvtStk();
 extern int fFormula();
-extern void (*isfunct(char *, int))();
 extern void RecSortPrec();
 extern int Formula();
 extern int BadFormula();
