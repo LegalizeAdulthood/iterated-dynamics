@@ -848,9 +848,6 @@ lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
     auto const minus = ispow2(ts->maxangle) ? lsysi_dominus_pow2 : lsysi_dominus;
     auto const pipe = ispow2(ts->maxangle) ? lsysi_dopipe_pow2 : lsysi_dopipe;
 
-    auto const at = lsysi_doat;
-    auto const dogf = lsysi_dosizegf;
-
     lsys_cmd *ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
     if (ret == nullptr)
     {
@@ -879,7 +876,7 @@ lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
             num = (long)(getnumber(&s) * PI_DIV_180_L);
             break;
         case '@':
-            f = at;
+            f = lsysi_doat;
             num = FIXEDPT(getnumber(&s));
             break;
         case '|':
@@ -894,7 +891,7 @@ lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
             break;
         case 'g':
         case 'f':
-            f = dogf;
+            f = lsysi_dosizegf;
             break;
         case '[':
             num = 1;
