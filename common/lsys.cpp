@@ -637,13 +637,12 @@ void lsysi_dodrawlt(lsys_turtlestatei *cmd)
 
 lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
 {
-    bool tran;
-
     if (overflow)     // integer math routines overflowed
         return nullptr;
 
     if (stackavail() < 400)
-    { // leave some margin for calling subrtns
+    {
+        // leave some margin for calling subrtns
         ts->stackoflow = true;
         return nullptr;
     }
@@ -659,7 +658,7 @@ lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, i
                 return nullptr;
             }
         }
-        tran = false;
+        bool tran = false;
         if (depth > 0)
         {
             for (lsys_cmd **rulind = rules; *rulind; rulind++)
