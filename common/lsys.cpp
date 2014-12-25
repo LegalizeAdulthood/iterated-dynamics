@@ -375,15 +375,13 @@ static bool save_rule(char *rule, char **saveptr)
 
 static bool append_rule(char *rule, int index)
 {
-    char *dst, *old, *sav;
-
-    sav = ruleptrs[index];
-    old = sav;
+    char *sav = ruleptrs[index];
+    char *old = sav;
     int i;
     for (i = 0; *(old++); i++)
         ;
     int j = (int) strlen(rule) + 1;
-    dst = (char *)malloc((long)(i + j));
+    char *dst = (char *)malloc((long)(i + j));
     if (dst == nullptr)
         return true;
 
