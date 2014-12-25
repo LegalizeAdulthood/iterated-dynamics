@@ -509,7 +509,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         bf_math = bf_math_type::NONE;
     }
 
-    if (blk_6_info.got_data == 1)
+    if (blk_6_info.got_data)
     {
         GENEBASE gene[NUMGENES];
         copy_genes_from_bank(gene);
@@ -642,7 +642,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
     blk_3_info->got_data = false;
     blk_4_info->got_data = false;
     blk_5_info->got_data = false;
-    blk_6_info->got_data = 0; // initialize to no data
+    blk_6_info->got_data = false;
     blk_7_info->got_data = 0; // initialize to no data
 
     fp = fopen(gif_file, "rb");
@@ -862,7 +862,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     decode_evolver_info(&eload_info, 1);
 #endif
                     blk_6_info->length = data_len;
-                    blk_6_info->got_data = 1; // got data
+                    blk_6_info->got_data = true;
 
                     blk_6_info->paramrangex     = eload_info.paramrangex;
                     blk_6_info->paramrangey     = eload_info.paramrangey;
@@ -1408,7 +1408,7 @@ rescan:  // entry for changed browse parms
                 (typeOK(&read_info, &blk_3_info) || !brwschecktype) &&
                 (paramsOK(&read_info) || !brwscheckparms) &&
                 stricmp(browsename, DTA.filename) &&
-                blk_6_info.got_data != 1 &&
+                !blk_6_info.got_data &&
                 is_visible_window(&winlist, &read_info, &blk_5_info)
            )
         {

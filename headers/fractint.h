@@ -1185,7 +1185,7 @@ struct ext_blk_5
 // parameter evolution stuff
 struct ext_blk_6
 {
-    char got_data;
+    bool got_data;
     int length;
     short evolving;
     short gridsz;
