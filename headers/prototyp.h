@@ -655,7 +655,6 @@ struct fls
     void (*function)();
     Arg *operand;
 };
-extern unsigned int SkipWhiteSpace(char *);
 extern unsigned long NewRandNum();
 extern void lRandom();
 extern void dRandom();

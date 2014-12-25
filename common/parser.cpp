@@ -1930,6 +1930,8 @@ void StkJumpLabel()
     jump_index++;
 }
 
+namespace
+{
 
 unsigned SkipWhiteSpace(char const *Str)
 {
@@ -1949,6 +1951,8 @@ unsigned SkipWhiteSpace(char const *Str)
         }
     }
     return n - 1;
+}
+
 }
 
 // detect if constant is part of a (a,b) construct
