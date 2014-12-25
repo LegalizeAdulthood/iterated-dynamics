@@ -50,6 +50,7 @@ namespace
 {
 std::vector<long> sins;
 std::vector<long> coss;
+long int scale_factor = 11930465L;
 }
 static std::string ruleptrs[MAXRULES];
 static lsys_cmd *rules2[MAXRULES];
@@ -864,11 +865,11 @@ static lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
             break;
         case '/':
             f = slash;
-            num = (long)(getnumber(&s) * 11930465L);
+            num = (long)(getnumber(&s) * scale_factor);
             break;
         case '\\':
             f = bslash;
-            num = (long)(getnumber(&s) * 11930465L);
+            num = (long)(getnumber(&s) * scale_factor);
             break;
         case '@':
             f = at;
@@ -972,11 +973,11 @@ static lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts)
             break;
         case '/':
             f = slash;
-            num = (long)(getnumber(&s) * 11930465L);
+            num = (long)(getnumber(&s) * scale_factor);
             break;
         case '\\':
             f = bslash;
-            num = (long)(getnumber(&s) * 11930465L);
+            num = (long)(getnumber(&s) * scale_factor);
             break;
         case '@':
             f = at;
