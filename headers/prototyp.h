@@ -603,15 +603,15 @@ extern void cvtcentermag(double *, double *, LDBL *, double *, double *, double 
 extern void cvtcorners(double, double, LDBL, double, double, double);
 extern void cvtcentermagbf(bf_t, bf_t, LDBL *, double *, double *, double *);
 extern void cvtcornersbf(bf_t, bf_t, LDBL, double, double, double);
-extern void updatesavename(char *);
+extern void updatesavename(char *filename);
 extern int check_writefile(char *name, char const *ext);
-extern void showtrig(char *);
+extern void showtrig(char *buf);
 extern int set_trig_array(int k, char const *name);
 extern void set_trig_pointers(int);
 extern int tab_display();
 extern int endswithslash(char const *fl);
 extern int ifsload();
-extern bool find_file_item(char *, char *, FILE **, int);
+extern bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int itemtype);
 extern int file_gets(char *, int, FILE *);
 extern void roundfloatd(double *);
 extern void fix_inversion(double *);
@@ -864,7 +864,7 @@ extern int find_extra_param(fractal_type type);
 extern void load_params(fractal_type fractype);
 extern bool check_orbit_name(char *);
 struct entryinfo;
-extern int scan_entries(FILE *infile, struct entryinfo *ch, char *itemname);
+extern int scan_entries(FILE *infile, struct entryinfo *ch, char const *itemname);
 // prompts2 -- C file prototypes
 extern int get_toggles();
 extern int get_toggles2();

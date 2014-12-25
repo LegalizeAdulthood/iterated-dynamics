@@ -533,7 +533,8 @@ void (*dtrig1)() = dStkSqr;
 void (*dtrig2)() = dStkSinh;
 void (*dtrig3)() = dStkCosh;
 
-void showtrig(char *buf) // return display form of active trig functions
+// return display form of active trig functions
+void showtrig(char *buf)
 {
     char tmpbuf[30];
     *buf = 0; // null string if none
@@ -1371,7 +1372,7 @@ int ifsload()                   // read in IFS parameters
     return (ret);
 }
 
-bool find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
+bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int itemtype)
 {
     FILE *infile = nullptr;
     bool found = false;

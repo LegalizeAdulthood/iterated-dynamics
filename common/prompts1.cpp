@@ -1942,7 +1942,7 @@ int skip_comment(FILE *infile, long *file_offset)
 
 #define MAXENTRIES 2000L
 
-int scan_entries(FILE * infile, entryinfo *choices, char *itemname)
+int scan_entries(FILE *infile, entryinfo *choices, char const *itemname)
 {
     /*
     function returns the number of entries found; if a
