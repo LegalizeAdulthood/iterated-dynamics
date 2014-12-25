@@ -185,8 +185,7 @@ static bool readLSystemFile(char const *str)
                 }
                 else if (temp)
                 {
-                    strcpy(fixed, temp);
-                    memerr = append_rule(fixed, index);
+                    memerr = append_rule(temp, index);
                 }
                 if (memerr)
                 {
