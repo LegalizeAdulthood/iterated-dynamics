@@ -844,14 +844,14 @@ lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
     int maxval = 10;
     int n = 0;
 
-    void (*plus)(lsys_turtlestatei *) = (ispow2(ts->maxangle)) ? lsysi_doplus_pow2 : lsysi_doplus;
-    void (*minus)(lsys_turtlestatei *) = (ispow2(ts->maxangle)) ? lsysi_dominus_pow2 : lsysi_dominus;
-    void (*pipe)(lsys_turtlestatei *) = (ispow2(ts->maxangle)) ? lsysi_dopipe_pow2 : lsysi_dopipe;
+    auto const plus = ispow2(ts->maxangle) ? lsysi_doplus_pow2 : lsysi_doplus;
+    auto const minus = ispow2(ts->maxangle) ? lsysi_dominus_pow2 : lsysi_dominus;
+    auto const pipe = ispow2(ts->maxangle) ? lsysi_dopipe_pow2 : lsysi_dopipe;
 
-    void (*slash)(lsys_turtlestatei *) = lsysi_doslash;
-    void (*bslash)(lsys_turtlestatei *) = lsysi_dobslash;
-    void (*at)(lsys_turtlestatei *) = lsysi_doat;
-    void (*dogf)(lsys_turtlestatei *) = lsysi_dosizegf;
+    auto const slash = lsysi_doslash;
+    auto const bslash = lsysi_dobslash;
+    auto const at = lsysi_doat;
+    auto const dogf = lsysi_dosizegf;
 
     lsys_cmd *ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
     if (ret == nullptr)
@@ -952,14 +952,14 @@ lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts)
     void (*f)(lsys_turtlestatei *);
     long num;
 
-    void (*plus)(lsys_turtlestatei *) = (ispow2(ts->maxangle)) ? lsysi_doplus_pow2 : lsysi_doplus;
-    void (*minus)(lsys_turtlestatei *) = (ispow2(ts->maxangle)) ? lsysi_dominus_pow2 : lsysi_dominus;
-    void (*pipe)(lsys_turtlestatei *) = (ispow2(ts->maxangle)) ? lsysi_dopipe_pow2 : lsysi_dopipe;
+    auto const plus = ispow2(ts->maxangle) ? lsysi_doplus_pow2 : lsysi_doplus;
+    auto const minus = ispow2(ts->maxangle) ? lsysi_dominus_pow2 : lsysi_dominus;
+    auto const pipe = ispow2(ts->maxangle) ? lsysi_dopipe_pow2 : lsysi_dopipe;
 
-    void (*slash)(lsys_turtlestatei *) = lsysi_doslash;
-    void (*bslash)(lsys_turtlestatei *) = lsysi_dobslash;
-    void (*at)(lsys_turtlestatei *) = lsysi_doat;
-    void (*drawg)(lsys_turtlestatei *) = lsysi_dodrawg;
+    auto const slash = lsysi_doslash;
+    auto const bslash = lsysi_dobslash;
+    auto const at = lsysi_doat;
+    auto const drawg = lsysi_dodrawg;
 
     ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
     if (ret == nullptr)
