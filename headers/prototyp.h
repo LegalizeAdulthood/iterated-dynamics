@@ -541,7 +541,7 @@ extern bool check_back();
 // loadmap -- C file prototypes
 //extern void SetTgaColors();
 extern bool ValidateLuts(const char *mapname);
-extern int SetColorPaletteName(char *);
+extern void SetColorPaletteName(char const *fn);
 // lorenz -- C file prototypes
 extern bool orbit3dlongsetup();
 extern bool orbit3dfloatsetup();

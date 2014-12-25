@@ -58,11 +58,11 @@ bool ValidateLuts(const char *fn)
 
 //*************************************************************************
 
-int SetColorPaletteName(char * fn)
+void SetColorPaletteName(char const *fn)
 {
     if (ValidateLuts(fn))
     {
-        return 1;
+        return;
     }
     for (int i = 0; i < 256; ++i)
     {
@@ -71,5 +71,4 @@ int SetColorPaletteName(char * fn)
         map_clut[i][2] = g_dac_box[i][2];
     }
     map_specified = true;
-    return 0;
 }
