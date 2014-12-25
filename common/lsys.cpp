@@ -951,7 +951,6 @@ lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts)
     auto const minus = ispow2(ts->maxangle) ? lsysi_dominus_pow2 : lsysi_dominus;
     auto const pipe = ispow2(ts->maxangle) ? lsysi_dopipe_pow2 : lsysi_dopipe;
 
-    auto const bslash = lsysi_dobslash;
     auto const at = lsysi_doat;
     auto const drawg = lsysi_dodrawg;
 
@@ -979,7 +978,7 @@ lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts)
             num = (long)(getnumber(&s) * PI_DIV_180_L);
             break;
         case '\\':
-            f = bslash;
+            f = lsysi_dobslash;
             num = (long)(getnumber(&s) * PI_DIV_180_L);
             break;
         case '@':
