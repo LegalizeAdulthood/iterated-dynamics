@@ -1868,7 +1868,7 @@ static void dir_name(char *target, char const *dir, char const *name)
 }
 
 // removes file in dir directory
-int dir_remove(char *dir, char *filename)
+int dir_remove(char const *dir, char const *filename)
 {
     char tmp[FILE_MAX_PATH];
     dir_name(tmp, dir, filename);

@@ -44,7 +44,7 @@ static int H_R(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned lo
 static int line3dmem();
 static int R_H(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
 static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
-bool startdisk1(char *File_Name2, FILE *Source, bool overlay);
+bool startdisk1(char const *File_Name2, FILE *Source, bool overlay);
 static void set_upr_lwr();
 static int end_object(bool triout);
 static int offscreen(point);
@@ -1378,7 +1378,7 @@ static void File_Error(char const *File_Name1, int ERROR)
 //
 // *********************************************************************
 
-bool startdisk1(char *File_Name2, FILE *Source, bool overlay)
+bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
 {
     // Open File for both reading and writing
     FILE *fps = dir_fopen(workdir, File_Name2, "w+b");

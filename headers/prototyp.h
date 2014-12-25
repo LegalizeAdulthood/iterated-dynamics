@@ -523,7 +523,7 @@ extern int    EnQueueFloat(float, float);
 extern int line3d(BYTE *, unsigned int);
 extern int targa_color(int, int, int);
 extern bool targa_validate(char const *File_Name);
-bool startdisk1(char *File_Name2, FILE *Source, bool overlay);
+bool startdisk1(char const *File_Name2, FILE *Source, bool overlay);
 // loadfdos -- C file prototypes
 extern int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info);
 // loadfile -- C file prototypes
@@ -888,7 +888,7 @@ extern int get_rds_params();
 extern int starfield();
 extern int get_a_number(double *, double *);
 extern int lccompare(VOIDPTR, VOIDPTR);
-extern int dir_remove(char *, char *);
+extern int dir_remove(char const *dir, char const *filename);
 extern FILE *dir_fopen(char const *dir, char const *filename, char const *mode);
 extern void extract_filename(char *, char *);
 extern char *has_ext(char *source);
