@@ -817,7 +817,6 @@ extern void (*mtrig3)();
 extern void EndInit();
 extern void NotAFnct();
 extern void FnctNotFound();
-extern int whichfn(char *, int);
 extern int CvtStk();
 extern int fFormula();
 extern void (*isfunct(char *, int))();

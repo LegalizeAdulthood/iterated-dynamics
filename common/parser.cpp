@@ -2200,6 +2200,9 @@ void FnctNotFound()
 {
 }
 
+namespace
+{
+
 // determine if s names a function and if so which one
 int whichfn(char const *s, int len)
 {
@@ -2213,6 +2216,8 @@ int whichfn(char const *s, int len)
     if (out < 1 || out > 4)
         out = 0;
     return out;
+}
+
 }
 
 void (*isfunct(char const *Str, int Len))()
