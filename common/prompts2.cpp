@@ -2615,7 +2615,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, cmd_file mode)
 }
 
 // extract just the filename/extension portion of a path
-void extract_filename(char *target, char *source)
+void extract_filename(char *target, char const *source)
 {
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
@@ -2625,11 +2625,11 @@ void extract_filename(char *target, char *source)
 
 // tells if filename has extension
 // returns pointer to period or nullptr
-char *has_ext(char *source)
+const char *has_ext(char const *source)
 {
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
-    char *ret = nullptr;
+    char const *ret = nullptr;
     splitpath(source, nullptr, nullptr, fname, ext);
     if (ext != nullptr)
         if (*ext != 0)

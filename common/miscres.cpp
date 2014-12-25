@@ -489,7 +489,7 @@ int check_writefile(char *name, char const *ext)
     // after v16 release, change encoder.c to also use this routine
     char openfile[FILE_MAX_DIR];
     char opentype[20];
-    char *period;
+    char const *period;
 nextname:
     strcpy(openfile, name);
     strcpy(opentype, ext);
@@ -497,7 +497,7 @@ nextname:
     if (period != nullptr)
     {
         strcpy(opentype, period);
-        *period = 0;
+        openfile[period - openfile] = 0;
     }
     strcat(openfile, opentype);
     if (access(openfile, 0) != 0) // file doesn't exist

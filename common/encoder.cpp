@@ -78,7 +78,7 @@ static int gif_savetodisk(char *filename)      // save-to-disk routine
     char tmpmsg[41];                 // before openfile in case of overrun
     char openfile[FILE_MAX_PATH], openfiletype[10];
     char tmpfile[FILE_MAX_PATH];
-    char *period;
+    char const *period;
     bool newfile = false;
     int interrupted;
 
@@ -96,7 +96,7 @@ restart:
     if (period != nullptr)
     {
         strcpy(openfiletype, period);
-        *period = 0;
+        openfile[period - openfile] = 0;
     }
     if (resave_flag != 1)
         updatesavename(filename); // for next time

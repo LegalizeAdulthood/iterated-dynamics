@@ -886,8 +886,8 @@ extern int get_a_number(double *, double *);
 extern int lccompare(VOIDPTR, VOIDPTR);
 extern int dir_remove(char const *dir, char const *filename);
 extern FILE *dir_fopen(char const *dir, char const *filename, char const *mode);
-extern void extract_filename(char *, char *);
-extern char *has_ext(char *source);
+extern void extract_filename(char *target, char const *source);
+extern const char *has_ext(char const *source);
 // realdos -- C file prototypes
 extern int showvidlength();
 extern int stopmsg(int flags, char const *msg);
