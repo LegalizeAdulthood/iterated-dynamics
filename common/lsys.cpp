@@ -405,7 +405,6 @@ static void free_lcmds()
 
 // integer specific routines
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysi_doplus(lsys_turtlestatei *cmd)
 {
     if (cmd->reverse)
@@ -421,11 +420,7 @@ static void lsysi_doplus(lsys_turtlestatei *cmd)
             cmd->angle = cmd->dmaxangle;
     }
 }
-#else
-extern void lsysi_doplus(lsys_turtlestatei *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 // This is the same as lsys_doplus, except maxangle is a power of 2.
 static void lsysi_doplus_pow2(lsys_turtlestatei *cmd)
 {
@@ -440,11 +435,7 @@ static void lsysi_doplus_pow2(lsys_turtlestatei *cmd)
         cmd->angle &= cmd->dmaxangle;
     }
 }
-#else
-extern void lsysi_doplus_pow2(lsys_turtlestatei *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysi_dominus(lsys_turtlestatei *cmd)
 {
     if (cmd->reverse)
@@ -460,11 +451,7 @@ static void lsysi_dominus(lsys_turtlestatei *cmd)
             cmd->angle = 0;
     }
 }
-#else
-extern void lsysi_dominus(lsys_turtlestatei *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysi_dominus_pow2(lsys_turtlestatei *cmd)
 {
     if (cmd->reverse)
@@ -478,9 +465,6 @@ static void lsysi_dominus_pow2(lsys_turtlestatei *cmd)
         cmd->angle &= cmd->dmaxangle;
     }
 }
-#else
-extern void lsysi_dominus_pow2(lsys_turtlestatei *cmd);
-#endif
 
 static void lsysi_doslash(lsys_turtlestatei *cmd)
 {
@@ -509,24 +493,16 @@ static void lsysi_dopipe(lsys_turtlestatei *cmd)
     cmd->angle %= cmd->maxangle;
 }
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysi_dopipe_pow2(lsys_turtlestatei *cmd)
 {
     cmd->angle += cmd->maxangle >> 1;
     cmd->angle &= cmd->dmaxangle;
 }
-#else
-extern void lsysi_dopipe_pow2(lsys_turtlestatei *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysi_dobang(lsys_turtlestatei *cmd)
 {
     cmd->reverse = ! cmd->reverse;
 }
-#else
-extern void lsysi_dobang(lsys_turtlestatei *cmd);
-#endif
 
 static void lsysi_dosizedm(lsys_turtlestatei *cmd)
 {
