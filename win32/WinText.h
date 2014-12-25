@@ -49,7 +49,7 @@ extern void         wintext_cursor(WinText *, int, int, int);
 extern void         wintext_destroy(WinText *);
 extern bool         wintext_initialize(WinText *, HINSTANCE, HWND, LPCSTR);
 extern void         wintext_paintscreen(WinText *, int, int, int, int);
-extern void         wintext_putstring(WinText *, int, int, int, const char *, int *, int *);
+extern void         wintext_putstring(WinText *, int, int, int, char const *, int *, int *);
 extern void         wintext_scroll_up(WinText *, int top, int bot);
 extern void         wintext_set_attr(WinText *, int row, int col, int attr, int count);
 extern int          wintext_textoff(WinText *);

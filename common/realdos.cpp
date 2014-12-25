@@ -44,7 +44,7 @@ int xrelease = 304;
        &8 for Fractint for Windows & parser - use a fixed pitch font
       &16 for info only message (green box instead of red in DOS vsn)
    */
-int stopmsg(int flags, const char *msg)
+int stopmsg(int flags, char const *msg)
 {
     int ret, toprow, color, savelookatmouse;
     static bool batchmode = false;
@@ -129,7 +129,7 @@ static int  textxdots, textydots;
       eating the key).
       It works in almost any video mode - does nothing in some very odd cases
       (HCGA hi-res with old bios), or when there isn't 10k of temp mem free. */
-int texttempmsg(const char *msgparm)
+int texttempmsg(char const *msgparm)
 {
     if (showtempmsg(msgparm))
     {
@@ -146,7 +146,7 @@ void freetempmsg()
     temptextsave.clear();
 }
 
-bool showtempmsg(const char *msgparm)
+bool showtempmsg(char const *msgparm)
 {
     static long size = 0;
     char msg[41];
@@ -285,7 +285,7 @@ void footer_msg(int *i, int options, char *speedstring)
                        : "Press ENTER for highlighted choice, or ESCAPE to back out"));
 }
 
-int putstringcenter(int row, int col, int width, int attr, const char *msg)
+int putstringcenter(int row, int col, int width, int attr, char const *msg)
 {
     char buf[81];
     int i, j, k;
@@ -318,7 +318,7 @@ char speed_prompt[] = "Speed key string";
 
 /* For file list purposes only, it's a directory name if first
    char is a dot or last char is a slash */
-static int isadirname(const char *name)
+static int isadirname(char const *name)
 {
     if (*name == '.' || endswithslash(name))
         return 1;
@@ -362,7 +362,7 @@ void show_speedstring(int speedrow,
 }
 
 void process_speedstring(char    *speedstring,
-                         const char **choices,         // array of choice strings
+                         char const **choices,         // array of choice strings
                          int       curkey,
                          int      *pcurrent,
                          int       numchoices,
@@ -443,11 +443,11 @@ void process_speedstring(char    *speedstring,
 */
 int fullscreen_choice(
     int options,
-    const char *hdg,
-    const char *hdg2,
-    const char *instr,
+    char const *hdg,
+    char const *hdg2,
+    char const *instr,
     int numchoices,
-    const char **choices,
+    char const **choices,
     int *attributes,
     int boxwidth,
     int boxdepth,
@@ -467,10 +467,10 @@ int fullscreen_choice(
     int boxitems;      // boxwidth*boxdepth
     int curkey, increment, rev_increment = 0;
     bool redisplay;
-    const char *charptr;
+    char const *charptr;
     char buf[81];
     char curitem[81];
-    const char *itemptr;
+    char const *itemptr;
     int ret, savelookatmouse;
     int scrunch;  // scrunch up a line
 
@@ -1076,7 +1076,7 @@ static int menutype;
 
 int main_menu(int fullmenu)
 {
-    const char *choices[44]; // 2 columns * 22 rows
+    char const *choices[44]; // 2 columns * 22 rows
     int attributes[44];
     int choicekey[44];
     int i;
@@ -1360,7 +1360,7 @@ top:
         }
         i = fullscreen_choice(CHOICE_MENU | CHOICE_CRUNCH,
                               "MAIN MENU",
-                              nullptr, nullptr, nextleft, (const char **) choices, attributes,
+                              nullptr, nullptr, nextleft, (char const **) choices, attributes,
                               2, nextleft/2, 29, 0, nullptr, nullptr, nullptr, menu_checkkey);
         if (i == -1)     // escape
         {
@@ -1626,14 +1626,14 @@ inpfld_end:
 }
 
 int field_prompt(
-    const char *hdg,        // heading, \n delimited lines
-    const char *instr,      // additional instructions or nullptr
+    char const *hdg,        // heading, \n delimited lines
+    char const *instr,      // additional instructions or nullptr
     char *fld,              // the field itself
     int len,                // field length (declare as 1 larger for \0)
     int (*checkkey)(int)    // routine to check non data keys, or nullptr
 )
 {
-    const char *charptr;
+    char const *charptr;
     int boxwidth, titlelines, titlecol, titlerow;
     int promptcol;
     int i, j;
@@ -1702,10 +1702,10 @@ int field_prompt(
       call this when thinking phase is done
    */
 
-bool thinking(int options, const char *msg)
+bool thinking(int options, char const *msg)
 {
     static int thinkstate = -1;
-    const char *wheel[] = {"-", "\\", "|", "/"};
+    char const *wheel[] = {"-", "\\", "|", "/"};
     static int thinkcol;
     static int count = 0;
     char buf[81];

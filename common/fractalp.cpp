@@ -2312,7 +2312,7 @@ bool paramnotused(int parm)
  */
 bool typehasparm(fractal_type type, int parm, char *buf)
 {
-    const char *ret = nullptr;
+    char const *ret = nullptr;
     if (0 <= parm && parm < 4)
         ret = fractalspecific[static_cast<int>(type)].param[parm];
     else if (parm >= 4 && parm < MAXPARAMS)

@@ -45,7 +45,7 @@ extern void plot_flush(Plot *p);
 extern void plot_schedule_alarm(Plot *me, int delay);
 extern void plot_clear(Plot *me);
 extern void plot_redraw(Plot *me);
-extern void plot_display_string(Plot *me, int x, int y, int fg, int bg, const char *text);
+extern void plot_display_string(Plot *me, int x, int y, int fg, int bg, char const *text);
 extern void plot_save_graphics(Plot *me);
 extern void plot_restore_graphics(Plot *me);
 

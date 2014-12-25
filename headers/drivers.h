@@ -39,8 +39,8 @@
  */
 struct Driver
 {
-    const char *name;                       // name of driver
-    const char *description;                // driver description
+    char const *name;                       // name of driver
+    char const *description;                // driver description
     bool (*init)(Driver *drv, int *argc, char **argv); // init the driver
     bool (*validate_mode)(Driver *drv, VIDEOINFO *mode); // validate a fractint.cfg mode
     void (*get_max_screen)(Driver *drv, int *xmax, int *ymax); // find max screen extents
@@ -61,7 +61,7 @@ struct Driver
     void (*put_truecolor)(Driver *drv, int x, int y, int r, int g, int b, int a);
     void (*set_line_mode)(Driver *drv, int mode); // set copy/xor line
     void (*draw_line)(Driver *drv, int x1, int y1, int x2, int y2, int color); // draw line
-    void (*display_string)(Driver *drv, int x, int y, int fg, int bg, const char *text); // draw string in graphics mode
+    void (*display_string)(Driver *drv, int x, int y, int fg, int bg, char const *text); // draw string in graphics mode
     void (*save_graphics)(Driver *drv);     // save graphics
     void (*restore_graphics)(Driver *drv);  // restore graphics
     int (*get_key)(Driver *drv);            // poll or block for a key
@@ -71,7 +71,7 @@ struct Driver
     void (*unget_key)(Driver *drv, int key);
     void (*shell)(Driver *drv);             // invoke a command shell
     void (*set_video_mode)(Driver *drv, VIDEOINFO *mode);
-    void (*put_string)(Driver *drv, int row, int col, int attr, const char *msg);
+    void (*put_string)(Driver *drv, int row, int col, int attr, char const *msg);
     void (*set_for_text)(Driver *drv);      // set for text mode & save gfx
     void (*set_for_graphics)(Driver *drv);  // restores graphics and data
     void (*set_clear)(Driver *drv);         // clears text screen
@@ -172,7 +172,7 @@ struct Driver
 extern int init_drivers(int *argc, char **argv);
 extern void add_video_mode(Driver *drv, VIDEOINFO *mode);
 extern void close_drivers();
-extern Driver *driver_find_by_name(const char *name);
+extern Driver *driver_find_by_name(char const *name);
 extern Driver *g_driver;            // current driver in use
 // always use a function for this one
 extern void driver_set_video_mode(VIDEOINFO *mode);
@@ -197,7 +197,7 @@ extern void driver_put_truecolor(int x, int y, int r, int g, int b, int a);
 extern void driver_set_line_mode(int mode);
 extern void driver_draw_line(int x1, int y1, int x2, int y2, int color);
 extern int driver_get_key();
-extern void driver_display_string(int x, int y, int fg, int bg, const char *text);
+extern void driver_display_string(int x, int y, int fg, int bg, char const *text);
 extern void driver_save_graphics();
 extern void driver_restore_graphics();
 extern int driver_key_cursor(int row, int col);
@@ -205,7 +205,7 @@ extern int driver_key_pressed();
 extern int driver_wait_key_pressed(int timeout);
 extern void driver_unget_key(int key);
 extern void driver_shell();
-extern void driver_put_string(int row, int col, int attr, const char *msg);
+extern void driver_put_string(int row, int col, int attr, char const *msg);
 extern void driver_set_for_text();
 extern void driver_set_for_graphics();
 extern void driver_set_clear();

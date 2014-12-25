@@ -92,7 +92,7 @@ close_drivers()
 }
 
 Driver *
-driver_find_by_name(const char *name)
+driver_find_by_name(char const *name)
 {
     for (int i = 0; i < num_drivers; i++)
     {
@@ -204,7 +204,7 @@ driver_wait_key_pressed(int timeout)
 METHOD_VOID(shell)
 
 void
-driver_put_string(int row, int col, int attr, const char *msg)
+driver_put_string(int row, int col, int attr, char const *msg)
 {
     (*g_driver->put_string)(g_driver, row, col, attr, msg);
 }
@@ -297,7 +297,7 @@ driver_put_truecolor(int x, int y, int r, int g, int b, int a)
 }
 
 void
-driver_display_string(int x, int y, int fg, int bg, const char *text)
+driver_display_string(int x, int y, int fg, int bg, char const *text)
 {
     (*g_driver->display_string)(g_driver, x, y, fg, bg, text);
 }

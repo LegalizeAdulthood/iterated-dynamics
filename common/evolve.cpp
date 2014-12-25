@@ -361,9 +361,9 @@ void varyinv(GENEBASE gene[], int randval, int i)
 */
 int get_the_rest()
 {
-    const char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
+    char const *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
     int i, k, numtrig;
-    const char *choices[20];
+    char const *choices[20];
     fullscreenvalues uvalues[20];
     GENEBASE gene[NUMGENES];
 
@@ -458,9 +458,9 @@ choose_vars_restart:
 
 int get_variations()
 {
-    const char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
+    char const *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
     int k, numparams;
-    const char *choices[20];
+    char const *choices[20];
     fullscreenvalues uvalues[20];
     GENEBASE gene[NUMGENES];
     int firstparm = 0;
@@ -593,7 +593,7 @@ void set_mutation_level(int strength)
 
 int get_evolve_Parms()
 {
-    const char *choices[20];
+    char const *choices[20];
     int oldhelpmode;
     fullscreenvalues uvalues[20];
     int i, j, k, tmp;

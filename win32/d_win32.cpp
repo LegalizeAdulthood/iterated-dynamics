@@ -344,7 +344,7 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 }
 
 void
-win32_put_string(Driver *drv, int row, int col, int attr, const char *msg)
+win32_put_string(Driver *drv, int row, int col, int attr, char const *msg)
 {
     DI(di);
     if (-1 != row)

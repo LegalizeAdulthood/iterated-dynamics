@@ -484,7 +484,7 @@ void updatesavename(char *filename) // go to the next file name
     makepath(filename, drive, dir, fname, ext);
 }
 
-int check_writefile(char *name, const char *ext)
+int check_writefile(char *name, char const *ext)
 {
     // after v16 release, change encoder.c to also use this routine
     char openfile[FILE_MAX_DIR];
@@ -567,7 +567,7 @@ static void trigdetails(char *buf)
 }
 
 // set array of trig function indices according to "function=" command
-int set_trig_array(int k, const char *name)
+int set_trig_array(int k, char const *name)
 {
     char trigname[10];
     char *slash;
@@ -648,7 +648,7 @@ void get_calculation_time(char *msg, long ctime)
         strcpy(msg, "A long time! (> 24.855 days)");
 }
 
-static void show_str_var(const char *name, const char *var, int *row, char *msg)
+static void show_str_var(char const *name, char const *var, int *row, char *msg)
 {
     if (var == nullptr)
         return;
@@ -660,7 +660,7 @@ static void show_str_var(const char *name, const char *var, int *row, char *msg)
 }
 
 static void
-write_row(int row, const char *format, ...)
+write_row(int row, char const *format, ...)
 {
     char text[78] = { 0 };
     va_list args;
@@ -771,7 +771,7 @@ int tab_display()       // display the status of the current image
     bf_t bfXctr = nullptr;
     bf_t bfYctr = nullptr;
     char msg[350];
-    const char *msgptr;
+    char const *msgptr;
     int key;
     int saved = 0;
     int k;
@@ -1223,7 +1223,7 @@ top:
 
 static void area()
 {
-    const char *msg;
+    char const *msg;
     char buf[160];
     long cnt = 0;
     if (inside < COLOR_BLACK)
@@ -1255,7 +1255,7 @@ static void area()
     stopmsg(STOPMSG_NO_BUZZER, buf);
 }
 
-int endswithslash(const char *fl)
+int endswithslash(char const *fl)
 {
     int len;
     len = (int) strlen(fl);

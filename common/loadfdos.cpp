@@ -114,7 +114,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     unsigned tmpflags;
 
 #ifndef XFRACT
-    const char *nameptr;
+    char const *nameptr;
 #endif
 
     g_init_mode = -1;

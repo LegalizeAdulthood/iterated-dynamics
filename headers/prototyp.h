@@ -158,9 +158,9 @@ extern int find_alternate_math(fractal_type type, bf_math_type math);
 extern int cmdfiles(int argc, char const *const *argv);
 extern int load_commands(FILE *);
 extern void set_3d_defaults();
-extern int get_curarg_len(const char *curarg);
-extern int get_max_curarg_len(const char *floatvalstr[], int totparm);
-extern int init_msg(const char *cmdstr, char *badfilename, cmd_file mode);
+extern int get_curarg_len(char const *curarg);
+extern int get_max_curarg_len(char const *floatvalstr[], int totparm);
+extern int init_msg(char const *cmdstr, char *badfilename, cmd_file mode);
 extern int cmdarg(char *curarg, cmd_file mode);
 extern int getpower10(LDBL x);
 extern void dopause(int);
@@ -175,7 +175,7 @@ extern int readdisk(int, int);
 extern void writedisk(int, int, int);
 extern void targa_readdisk(unsigned int, unsigned int, BYTE *, BYTE *, BYTE *);
 extern void targa_writedisk(unsigned int, unsigned int, BYTE, BYTE, BYTE);
-extern void dvid_status(int line, const char *msg);
+extern void dvid_status(int line, char const *msg);
 extern int  common_startdisk(long, long, int);
 extern int FromMemDisk(long, int, void *);
 extern bool ToMemDisk(long, int, void *);
@@ -540,7 +540,7 @@ extern void backwards_v20();
 extern bool check_back();
 // loadmap -- C file prototypes
 //extern void SetTgaColors();
-extern bool ValidateLuts(const char *mapname);
+extern bool ValidateLuts(char const *mapname);
 extern void SetColorPaletteName(char const *fn);
 // lorenz -- C file prototypes
 extern bool orbit3dlongsetup();
@@ -600,19 +600,19 @@ extern void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int
 extern void expand_comments(char *, char *);
 // miscres -- C file prototypes
 extern void restore_active_ovly();
-extern void findpath(const char *filename, char *fullpathname);
+extern void findpath(char const *filename, char *fullpathname);
 extern void notdiskmsg();
 extern void cvtcentermag(double *, double *, LDBL *, double *, double *, double *);
 extern void cvtcorners(double, double, LDBL, double, double, double);
 extern void cvtcentermagbf(bf_t, bf_t, LDBL *, double *, double *, double *);
 extern void cvtcornersbf(bf_t, bf_t, LDBL, double, double, double);
 extern void updatesavename(char *);
-extern int check_writefile(char *name, const char *ext);
+extern int check_writefile(char *name, char const *ext);
 extern void showtrig(char *);
-extern int set_trig_array(int k, const char *name);
+extern int set_trig_array(int k, char const *name);
 extern void set_trig_pointers(int);
 extern int tab_display();
-extern int endswithslash(const char *fl);
+extern int endswithslash(char const *fl);
 extern int ifsload();
 extern bool find_file_item(char *, char *, FILE **, int);
 extern int file_gets(char *, int, FILE *);
@@ -849,13 +849,13 @@ extern void Print_Screen();
 // prompts1 -- C file prototypes
 struct fullscreenvalues;
 extern int fullscreen_prompt(
-    const char *hdg,
+    char const *hdg,
     int numprompts,
-    const char **prompts,
+    char const **prompts,
     fullscreenvalues *values,
     int fkeymask,
     char *extrainfo);
-extern long get_file_entry(int type, const char *title, char *fmask,
+extern long get_file_entry(int type, char const *title, char *fmask,
                     char *filename, char *entryname);
 extern int get_fracttype();
 extern int get_fract_params(int);
@@ -877,9 +877,9 @@ extern int get_starfield_params();
 extern int get_commands();
 extern void goodbye();
 extern bool isadirectory(char *s);
-extern bool getafilename(const char *hdg, const char *file_template, char *flname);
-extern int splitpath(const char *file_template, char *drive, char *dir, char *fname, char *ext);
-extern int makepath(char *template_str, const char *drive, const char *dir, const char *fname, const char *ext);
+extern bool getafilename(char const *hdg, char const *file_template, char *flname);
+extern int splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext);
+extern int makepath(char *template_str, char const *drive, char const *dir, char const *fname, char const *ext);
 extern int fr_findfirst(char *path);
 extern int fr_findnext();
 extern void shell_sort(void *, int n, unsigned, int (*fct)(VOIDPTR, VOIDPTR));
@@ -892,21 +892,21 @@ extern int starfield();
 extern int get_a_number(double *, double *);
 extern int lccompare(VOIDPTR, VOIDPTR);
 extern int dir_remove(char *, char *);
-extern FILE *dir_fopen(const char *dir, const char *filename, const char *mode);
+extern FILE *dir_fopen(char const *dir, char const *filename, char const *mode);
 extern void extract_filename(char *, char *);
 extern char *has_ext(char *source);
 // realdos -- C file prototypes
 extern int showvidlength();
-extern int stopmsg(int flags, const char *msg);
+extern int stopmsg(int flags, char const *msg);
 extern void blankrows(int, int, int);
-extern int texttempmsg(const char *);
+extern int texttempmsg(char const *);
 extern int fullscreen_choice(
     int options,
-    const char *hdg,
-    const char *hdg2,
-    const char *instr,
+    char const *hdg,
+    char const *hdg2,
+    char const *instr,
     int numchoices,
-    const char **choices,
+    char const **choices,
     int *attributes,
     int boxwidth,
     int boxdepth,
@@ -917,14 +917,14 @@ extern int fullscreen_choice(
     int (*speedprompt)(int, int, int, char *, int),
     int (*checkkey)(int, int)
 );
-extern bool showtempmsg(const char *);
+extern bool showtempmsg(char const *);
 extern void cleartempmsg();
 extern void helptitle();
-extern int putstringcenter(int row, int col, int width, int attr, const char *msg);
+extern int putstringcenter(int row, int col, int width, int attr, char const *msg);
 extern int main_menu(int);
 extern int input_field(int, int, char *, int, int, int, int (*)(int));
-extern int field_prompt(const char *hdg, const char *instr, char *fld, int len, int (*checkkey)(int));
-extern bool thinking(int options, const char *msg);
+extern int field_prompt(char const *hdg, char const *instr, char *fld, int len, int (*checkkey)(int));
+extern bool thinking(int options, char const *msg);
 extern void discardgraphics();
 extern void load_fractint_config();
 extern int check_vidmode_key(int, int);
@@ -1010,7 +1010,7 @@ typedef unsigned long uclock_t;
 extern uclock_t usec_clock();
 extern void restart_uclock();
 extern void wait_until(int index, uclock_t wait_time);
-extern void init_failure(const char *message);
+extern void init_failure(char const *message);
 extern int expand_dirname(char *dirname, char *drive);
 extern int abortmsg(char *file, unsigned int line, int flags, char *msg);
 #define ABORT(flags_, msg_) abortmsg(__FILE__, __LINE__, flags_, msg_)

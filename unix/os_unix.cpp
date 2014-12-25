@@ -88,7 +88,7 @@ unsigned long get_disk_space()
     return 0x7FFFFFFF;
 }
 
-void init_failure(const char *message)
+void init_failure(char const *message)
 {
     fputs(message, stderr);
 }

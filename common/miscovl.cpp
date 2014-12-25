@@ -27,14 +27,14 @@
 void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int i, int j);
 void expand_comments(char *target, char *source);
 
-static void put_parm(const char *parm, ...);
+static void put_parm(char const *parm, ...);
 
 static void put_parm_line();
 static int getprec(double, double, double);
 int getprecbf(int);
 static void put_float(int, double, int);
 static void put_bf(int slash, bf_t r, int prec);
-static void put_filename(const char *keyword, const char *fname);
+static void put_filename(char const *keyword, char const *fname);
 static int check_modekey(int curkey, int choice);
 static int entcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2);
 static void update_fractint_cfg();
@@ -68,7 +68,7 @@ void make_batch_file()
     char inpcommandfile[80], inpcommandname[ITEMNAMELEN+1];
     char inpcomment[4][MAXCMT];
     fullscreenvalues paramvalues[18];
-    const char *choices[MAXPROMPTS];
+    char const *choices[MAXPROMPTS];
     char outname[FILE_MAX_PATH+1], buf[256], buf2[128];
     FILE *infile = nullptr;
     FILE *fpbat = nullptr;
@@ -509,7 +509,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
     double Xctr, Yctr;
     LDBL Magnification;
     double Xmagfactor, Rotation, Skew;
-    const char *sptr;
+    char const *sptr;
     char buf[81];
     bf_t bfXctr = nullptr, bfYctr = nullptr;
     int saved;
@@ -554,7 +554,7 @@ void write_batch_parms(char *colorinf, bool colorsonly, int maxcolor, int ii, in
                 put_parm(" %s=%g", "julibroteyes", eyesfp);
             if (neworbittype != fractal_type::JULIA)
             {
-                const char *name;
+                char const *name;
                 name = fractalspecific[static_cast<int>(neworbittype)].name;
                 if (*name == '*')
                     name++;
@@ -1225,9 +1225,9 @@ docolors:
     restore_stack(saved);
 }
 
-static void put_filename(const char *keyword, const char *fname)
+static void put_filename(char const *keyword, char const *fname)
 {
-    const char *p;
+    char const *p;
     if (*fname && !endswithslash(fname))
     {
         p = strrchr(fname, SLASHC);
@@ -1241,7 +1241,7 @@ static void put_filename(const char *keyword, const char *fname)
     }
 }
 
-static void put_parm(const char *parm, ...)
+static void put_parm(char const *parm, ...)
 {
     char *bufptr;
     va_list args;
@@ -2210,11 +2210,11 @@ void flip_image(int key)
     reset_zoom_corners();
     calc_status = calc_status_value::PARAMS_CHANGED;
 }
-static const char *expand_var(char *var, char *buf)
+static char const *expand_var(char *var, char *buf)
 {
     time_t ltime;
     char *str;
-    const char *out;
+    char const *out;
 
     time(&ltime);
     str = ctime(&ltime);
@@ -2311,7 +2311,7 @@ static const char *expand_var(char *var, char *buf)
 
 #define MAXVNAME  13
 
-static const char esc_char = '$';
+static char const esc_char = '$';
 
 // extract comments from the comments= command
 void expand_comments(char *target, char *source)
@@ -2344,7 +2344,7 @@ void expand_comments(char *target, char *source)
         else if (c == esc_char && escape == 0 && oldc != '\\')
         {
             char buf[100];
-            const char *varstr;
+            char const *varstr;
             varname[k] = 0;
             varstr = expand_var(varname, buf);
             strncpy(target+j, varstr, MAXCMT-j-1);

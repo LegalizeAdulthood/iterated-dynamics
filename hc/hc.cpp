@@ -30,11 +30,11 @@
 #include <unistd.h>
 
 #ifndef HAVESTRI
-extern int stricmp(const char *, const char *);
-extern int strnicmp(const char *, const char *, int);
+extern int stricmp(char const *, char const *);
+extern int strnicmp(char const *, char const *, int);
 #endif
 extern int filelength(int);
-extern int _splitpath(const char *file_template, char *drive, char *dir, char *fname, char *ext);
+extern int _splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext);
 #define strupr strlwr
 
 #else
@@ -240,7 +240,7 @@ void report_errors()
 }
 
 
-void print_msg(const char *type, int lnum, const char *format, va_list arg)
+void print_msg(char const *type, int lnum, char const *format, va_list arg)
 {
     if (type != nullptr)
     {
@@ -253,7 +253,7 @@ void print_msg(const char *type, int lnum, const char *format, va_list arg)
     printf("\n");
 }
 
-void fatal(int diff, const char *format, ...)
+void fatal(int diff, char const *format, ...)
 {
     va_list arg;
     va_start(arg, format);
@@ -268,7 +268,7 @@ void fatal(int diff, const char *format, ...)
 }
 
 
-void error(int diff, const char *format, ...)
+void error(int diff, char const *format, ...)
 {
     va_list arg;
     va_start(arg, format);
@@ -281,7 +281,7 @@ void error(int diff, const char *format, ...)
 }
 
 
-void warn(int diff, const char *format, ...)
+void warn(int diff, char const *format, ...)
 {
     va_list arg;
     va_start(arg, format);
@@ -294,7 +294,7 @@ void warn(int diff, const char *format, ...)
 }
 
 
-void notice(const char *format, ...)
+void notice(char const *format, ...)
 {
     va_list arg;
     va_start(arg, format);
@@ -303,7 +303,7 @@ void notice(const char *format, ...)
 }
 
 
-void msg(const char *format, ...)
+void msg(char const *format, ...)
 {
     va_list arg;
 
@@ -386,7 +386,7 @@ VOIDPTR renewx(VOIDPTR ptr, unsigned size)
 }
 
 
-char *dupstr(const char *s, unsigned len)
+char *dupstr(char const *s, unsigned len)
 {
     char *ptr;
 
@@ -704,7 +704,7 @@ LABEL *find_label(char *name)
 }
 
 
-int find_topic_title(const char *title)
+int find_topic_title(char const *title)
 {
     while (*title == ' ')
         ++title;
@@ -748,7 +748,7 @@ int validate_label_name(char *name)
 }
 
 
-char *read_until(char *buff, int len, const char *stop_chars)
+char *read_until(char *buff, int len, char const *stop_chars)
 {
     int ch;
 
@@ -775,7 +775,7 @@ char *read_until(char *buff, int len, const char *stop_chars)
 }
 
 
-void skip_over(const char *skip)
+void skip_over(char const *skip)
 {
     int ch;
 
@@ -1315,7 +1315,7 @@ void process_bininc()
 }
 
 
-void start_topic(TOPIC *t, const char *title, int title_len)
+void start_topic(TOPIC *t, char const *title, int title_len)
 {
     t->flags = 0;
     t->title_len = title_len;
@@ -3278,7 +3278,7 @@ void printerc(PRINT_DOC_INFO *info, int c, int n)
 }
 
 
-void printers(PRINT_DOC_INFO *info, const char *s, int n)
+void printers(PRINT_DOC_INFO *info, char const *s, int n)
 {
     if (n > 0)
     {
@@ -3349,7 +3349,7 @@ bool print_doc_output(int cmd, PD_INFO *pd, void *context)
 }
 
 
-void print_document(const char *fname)
+void print_document(char const *fname)
 {
     PRINT_DOC_INFO info;
 
@@ -3481,7 +3481,7 @@ void report_stats()
  */
 
 
-void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
+void add_hlp_to_exe(char const *hlp_fname, char const *exe_fname)
 {
     int                  exe,   /* handles */
                          hlp;
@@ -3544,7 +3544,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 }
 
 
-void delete_hlp_from_exe(const char *exe_fname)
+void delete_hlp_from_exe(char const *exe_fname)
 {
     int   exe;   /* file handle */
     help_sig_info hs;

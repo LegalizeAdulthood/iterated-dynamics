@@ -90,7 +90,7 @@ long stackavail()
  *
  *----------------------------------------------------------------------
  */
-int stricmp(const char *s1, const char *s2)
+int stricmp(char const *s1, char const *s2)
 {
     int c1, c2;
 
@@ -127,7 +127,7 @@ int stricmp(const char *s1, const char *s2)
  *
  *----------------------------------------------------------------------
  */
-int strnicmp(const char *s1, const char *s2, int numChars)
+int strnicmp(char const *s1, char const *s2, int numChars)
 {
     char c1, c2;
 
@@ -229,7 +229,7 @@ strupr(char *s)
  *
  *----------------------------------------------------------------------
  */
-void findpath(const char *filename, char *fullpathname)
+void findpath(char const *filename, char *fullpathname)
 {
     int fd;
     char *fractdir;
@@ -335,12 +335,12 @@ int filelength(int fd)
  *
  *----------------------------------------------------------------------
  */
-int splitpath(const char *file_template, char *drive, char *dir, char *fname, char *ext)
+int splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext)
 {
     int length;
     int len;
     int offset;
-    const char *tmp;
+    char const *tmp;
 
     if (drive)
         drive[0] = 0;
@@ -426,7 +426,7 @@ int splitpath(const char *file_template, char *drive, char *dir, char *fname, ch
 }
 
 int
-_splitpath(const char *file_template, char *drive, char *dir, char *fname, char *ext)
+_splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext)
 {
     return splitpath(file_template, drive, dir, fname, ext);
 }

@@ -30,19 +30,19 @@
 
 int prompt_checkkey(int curkey);
 int prompt_checkkey_scroll(int curkey);
-long get_file_entry(int type, const char *title, char *fmask,
+long get_file_entry(int type, char const *title, char *fmask,
                     char *filename, char *entryname);
 
 // Routines in this module
 
 int prompt_valuestring(char *buf, fullscreenvalues *val);
-static  int input_field_list(int attr, char *fld, int vlen, const char **list, int llen,
+static  int input_field_list(int attr, char *fld, int vlen, char const **list, int llen,
                              int row, int col, int (*checkkey)(int));
 static  fractal_type select_fracttype(fractal_type t);
 static  int sel_fractype_help(int curkey, int choice);
 static bool select_type_params(fractal_type newfractype, fractal_type oldfractype);
 void set_default_parms();
-static  long gfe_choose_entry(int, const char *, char *, char *);
+static  long gfe_choose_entry(int, char const *, char *, char *);
 static  int check_gfe_key(int curkey, int choice);
 static  void load_entry_text(FILE *entfile, char *buf, int maxlines, int startrow, int startcol);
 static  void format_parmfile_line(int, char *);
@@ -75,15 +75,15 @@ int scroll_column_status; /* will be set to first column of extra info to
                              be displayed ( 0 = leftmost column )*/
 
 int fullscreen_prompt(      // full-screen prompting routine
-    const char *hdg,        // heading, lines separated by \n
+    char const *hdg,        // heading, lines separated by \n
     int numprompts,         // there are this many prompts (max)
-    const char **prompts,   // array of prompting pointers
+    char const **prompts,   // array of prompting pointers
     fullscreenvalues *values, // array of values
     int fkeymask,           // bit n on if Fn to cause return
     char *extrainfo         // extra info box to display, \n separated
 )
 {
-    const char *hdgscan;
+    char const *hdgscan;
     int titlelines, titlewidth, titlerow;
     int maxpromptwidth, maxfldwidth, maxcomment;
     int boxrow, boxlines;
@@ -287,7 +287,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     {
         if (values[i].type == 'y')
         {
-            static const char *noyes[2] = {"no", "yes"};
+            static char const *noyes[2] = {"no", "yes"};
             values[i].type = 'l';
             values[i].uval.ch.vlen = 3;
             values[i].uval.ch.list = noyes;
@@ -874,7 +874,7 @@ static int input_field_list(
     int attr,             // display attribute
     char *fld,            // display form field value
     int vlen,             // field length
-    const char **list,          // list of values
+    char const **list,          // list of values
     int llen,             // number of entries in list
     int row,              // display row
     int col,              // display column
@@ -1037,7 +1037,7 @@ static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype,
     int done = fullscreen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
             julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
             nullptr, "Press " FK_F2 " for a description of the highlighted type", numtypes,
-            (const char **)choices, attributes, 0, 0, 0, j, nullptr, tname, nullptr, sel_fractype_help);
+            (char const **)choices, attributes, 0, 0, 0, j, nullptr, tname, nullptr, sel_fractype_help);
     fractal_type result = fractal_type::NOFRACTAL;
     if (done >= 0)
     {
@@ -1195,7 +1195,7 @@ void set_default_parms()
 
 #define MAXFRACTALS 25
 
-int build_fractal_list(int fractals[], int *last_val, const char *nameptr[])
+int build_fractal_list(int fractals[], int *last_val, char const *nameptr[])
 {
     int numfractals = 0;
     for (int i = 0; i < num_fractal_types; i++)
@@ -1215,24 +1215,24 @@ int build_fractal_list(int fractals[], int *last_val, const char *nameptr[])
     return numfractals;
 }
 
-const char *juli3Doptions[] = {"monocular", "lefteye", "righteye", "red-blue"};
+char const *juli3Doptions[] = {"monocular", "lefteye", "righteye", "red-blue"};
 
 // JIIM
 #ifdef RANDOM_RUN
 static char JIIMstr1[] = "Breadth first, Depth first, Random Walk, Random Run?";
-const char *JIIMmethod[] =
+char const *JIIMmethod[] =
 {
     "breadth", "depth", "walk", "run"
 };
 #else
 static char JIIMstr1[] = "Breadth first, Depth first, Random Walk";
-const char *JIIMmethod[] =
+char const *JIIMmethod[] =
 {
     "breadth", "depth", "walk"
 };
 #endif
 static char JIIMstr2[] = "Left first or Right first?";
-const char *JIIMleftright[] = {"left", "right"};
+char const *JIIMleftright[] = {"left", "right"};
 
 // The index into this array must correspond to enum trig_fn
 trig_funct_lst trigfn[] =
@@ -1281,34 +1281,34 @@ char tstack[4096] = { 0 };
 // ---------------------------------------------------------------------
 int get_fract_params(int caller)        // prompt for type-specific parms
 {
-    const char *v0 = "From cx (real part)";
-    const char *v1 = "From cy (imaginary part)";
-    const char *v2 = "To   cx (real part)";
-    const char *v3 = "To   cy (imaginary part)";
-    const char *juliorbitname = nullptr;
+    char const *v0 = "From cx (real part)";
+    char const *v1 = "From cy (imaginary part)";
+    char const *v2 = "To   cx (real part)";
+    char const *v3 = "To   cy (imaginary part)";
+    char const *juliorbitname = nullptr;
     int numparams, numtrig;
     fullscreenvalues paramvalues[30];
-    const char *choices[30];
+    char const *choices[30];
     long oldbailout = 0L;
     int promptnum;
     char msg[120];
-    const char *type_name;
-    const char *tmpptr;
+    char const *type_name;
+    char const *tmpptr;
     char bailoutmsg[50];
     int ret = 0;
     int oldhelpmode;
     char parmprompt[MAXPARAMS][55];
-    static const char *trg[] =
+    static char const *trg[] =
     {
         "First Function", "Second Function", "Third Function", "Fourth Function"
     };
     char *filename, *entryname;
     FILE *entryfile;
-    const char *trignameptr[NUMTRIGFN];
+    char const *trignameptr[NUMTRIGFN];
 #ifdef XFRACT
     static // Can't initialize aggregates on the stack
 #endif
-    const char *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
+    char const *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
     fractalspecificstuff *jborbit = nullptr;
     int firstparm = 0;
     int lastparm  = MAXPARAMS;
@@ -1821,7 +1821,7 @@ void load_params(fractal_type fractype)
 bool check_orbit_name(char *orbitname)
 {
     int numtypes;
-    const char *nameptr[MAXFRACTALS];
+    char const *nameptr[MAXFRACTALS];
     int fractals[MAXFRACTALS];
     int last_val;
 
@@ -1843,7 +1843,7 @@ bool check_orbit_name(char *orbitname)
 
 static FILE *gfe_file;
 
-long get_file_entry(int type, const char *title, char *fmask,
+long get_file_entry(int type, char const *title, char *fmask,
                     char *filename, char *entryname)
 {
     // Formula, LSystem, etc type structure, select from file
@@ -1912,7 +1912,7 @@ struct entryinfo
     long point; // points to the ( or the { following the name
 };
 static entryinfo **gfe_choices; // for format_getparm_line
-static const char *gfe_title;
+static char const *gfe_title;
 
 // skip to next non-white space character and return it
 int skip_white_space(FILE *infile, long *file_offset)
@@ -2066,13 +2066,13 @@ top:
 }
 
 // subrtn of get_file_entry, separated so that storage gets freed up
-static long gfe_choose_entry(int type, const char *title, char *filename, char *entryname)
+static long gfe_choose_entry(int type, char const *title, char *filename, char *entryname)
 {
 #ifdef XFRACT
-    const char *o_instr = "Press " FK_F6 " to select file, " FK_F2 " for details, " FK_F4 " to toggle sort ";
+    char const *o_instr = "Press " FK_F6 " to select file, " FK_F2 " for details, " FK_F4 " to toggle sort ";
     // keep the above line length < 80 characters
 #else
-    const char *o_instr = "Press " FK_F6 " to select different file, " FK_F2 " for details, " FK_F4 " to toggle sort ";
+    char const *o_instr = "Press " FK_F6 " to select different file, " FK_F2 " for details, " FK_F4 " to toggle sort ";
 #endif
     int numentries;
     char buf[101];
@@ -2130,7 +2130,7 @@ retry:
     }
 
     int i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-                          temp1, nullptr, instr, numentries, (const char **) choices,
+                          temp1, nullptr, instr, numentries, (char const **) choices,
                           attributes, boxwidth, boxdepth, colwidth, 0,
                           formatitem, buf, nullptr, check_gfe_key);
     if (i == -FIK_F4)
@@ -2497,7 +2497,7 @@ int get_fract3d_params() // prompt for 3D fractal parameters
 {
     int i, k, ret, oldhelpmode;
     fullscreenvalues uvalues[20];
-    const char *ifs3d_prompts[7] =
+    char const *ifs3d_prompts[7] =
     {
         "X-axis rotation in degrees",
         "Y-axis rotation in degrees",
@@ -2560,11 +2560,11 @@ get_f3d_exit:
 
 int get_3d_params()     // prompt for 3D parameters
 {
-    const char *choices[11];
+    char const *choices[11];
     int attributes[21];
     int sphere;
-    const char *s;
-    const char *prompts3d[21];
+    char const *s;
+    char const *prompts3d[21];
     fullscreenvalues uvalues[21];
     int k;
     int oldhelpmode;
@@ -2706,7 +2706,7 @@ restart_1:
             attributes[i] = 1;
         helpmode = HELP3DFILL;
         int i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type",
-                nullptr, nullptr, k, (const char **)choices, attributes,
+                nullptr, nullptr, k, (char const **)choices, attributes,
                 0, 0, 0, FILLTYPE+1, nullptr, nullptr, nullptr, nullptr);
         helpmode = oldhelpmode;
         if (i < 0)
@@ -2854,7 +2854,7 @@ restart_3:
 // ---------------------------------------------------------------------
 static bool get_light_params()
 {
-    const char *prompts3d[13];
+    char const *prompts3d[13];
     fullscreenvalues uvalues[13];
 
     int k;
@@ -3020,7 +3020,7 @@ static bool check_mapfile()
 
 static bool get_funny_glasses_params()
 {
-    const char *prompts3d[10];
+    char const *prompts3d[10];
 
     fullscreenvalues uvalues[10];
 

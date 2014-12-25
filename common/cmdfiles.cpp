@@ -34,7 +34,7 @@ static int  next_command(
     cmd_file mode);
 static bool next_line(FILE *handle, char *linebuf, cmd_file mode);
 int cmdarg(char *argument, cmd_file mode);
-static void argerror(const char *);
+static void argerror(char const *);
 static void initvars_run();
 static void initvars_restart();
 static void initvars_fractal();
@@ -42,7 +42,7 @@ static void initvars_3d();
 static void reset_ifs_defn();
 static void parse_textcolors(char *value);
 static int  parse_colors(char *value);
-static int  get_bf(bf_t, const char *);
+static int  get_bf(bf_t, char const *);
 static bool isabigfloat(char *str);
 
 // variables defined by the command line/files processor
@@ -738,7 +738,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     int     floatparms = 0;             // # of / delimited floats
     int     intval[64] = { 0 };         // pre-parsed integer parms
     double  floatval[16] = { 0.0 };     // pre-parsed floating parms
-    const char *floatvalstr[16];        // pointers to float vals
+    char const *floatvalstr[16];        // pointers to float vals
     char    tmpc = 0;
     int     lastarg = 0;
     double Xctr = 0.0;
@@ -1386,7 +1386,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         struct
         {
-            const char *arg;
+            char const *arg;
             int inside;
         }
         args[] =
@@ -1487,7 +1487,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         struct
         {
-            const char *arg;
+            char const *arg;
             int outside;
         }
         args[] =
@@ -3292,7 +3292,7 @@ badcolor:
     return -1;
 }
 
-static void argerror(const char *badarg)      // oops. couldn't decode this
+static void argerror(char const *badarg)      // oops. couldn't decode this
 {
     char msg[300];
     char spillover[71];
@@ -3362,9 +3362,9 @@ void set_3d_defaults()
 }
 
 // copy a big number from a string, up to slash
-static int get_bf(bf_t bf, const char *curarg)
+static int get_bf(bf_t bf, char const *curarg)
 {
-    const char *s;
+    char const *s;
     s = strchr(curarg, '/');
     if (s)
     {
@@ -3379,9 +3379,9 @@ static int get_bf(bf_t bf, const char *curarg)
 }
 
 // Get length of current args
-int get_curarg_len(const char *curarg)
+int get_curarg_len(char const *curarg)
 {
-    const char *s;
+    char const *s;
     s = strchr(curarg, '/');
     if (s)
     {
@@ -3394,7 +3394,7 @@ int get_curarg_len(const char *curarg)
 }
 
 // Get max length of current args
-int get_max_curarg_len(const char *floatvalstr[], int totparms)
+int get_max_curarg_len(char const *floatvalstr[], int totparms)
 {
     int tmp, max_str;
     max_str = 0;
@@ -3413,9 +3413,9 @@ int get_max_curarg_len(const char *floatvalstr[], int totparms)
 //        3 command line @filename/setname
 // this is like stopmsg() but can be used in cmdfiles()
 // call with NULL for badfilename to get pause for driver_get_key()
-int init_msg(const char *cmdstr, char *badfilename, cmd_file mode)
+int init_msg(char const *cmdstr, char *badfilename, cmd_file mode)
 {
-    const char *modestr[4] =
+    char const *modestr[4] =
     {"command line", "sstools.ini", "PAR file", "PAR file"};
     char msg[256];
     char cmd[80];

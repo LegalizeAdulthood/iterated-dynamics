@@ -16,7 +16,7 @@
 static void sleep_secs(int);
 static int  showtempmsg_txt(int, int, int, int, char *);
 static void message(int secs, char *buf);
-static void slideshowerr(const char *msg);
+static void slideshowerr(char const *msg);
 static int  get_scancode(char *mn);
 static void get_mnemonic(int code, char *mnemonic);
 
@@ -25,7 +25,7 @@ static void get_mnemonic(int code, char *mnemonic);
 struct scancodes
 {
     int code;
-    const char *mnemonic;
+    char const *mnemonic;
 };
 
 static scancodes scancodes[] =
@@ -374,7 +374,7 @@ static void sleep_secs(int secs)
     } // bailout if key hit
 }
 
-static void slideshowerr(const char *msg)
+static void slideshowerr(char const *msg)
 {
     char msgbuf[300] = { "Slideshow error:\n" };
     stopslideshow();

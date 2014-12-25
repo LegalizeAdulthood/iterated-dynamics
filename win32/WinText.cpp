@@ -49,7 +49,7 @@ int wintext_texton();
 int wintext_textoff();
     Removes the text window.  No parameters.
 
-void wintext_putstring(int xpos, int ypos, int attrib, const char *string);
+void wintext_putstring(int xpos, int ypos, int attrib, char const *string);
     Sends a character string to the screen starting at (xpos, ypos)
     using the (CGA-style and, yes, it should be a 'char') specified attribute.
 void wintext_paintscreen(int xmin, int xmax, int ymin, int ymax);
@@ -469,7 +469,7 @@ LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
         general routine to send a string to the screen
 */
 
-void wintext_putstring(WinText *me, int xpos, int ypos, int attrib, const char *string, int *end_row, int *end_col)
+void wintext_putstring(WinText *me, int xpos, int ypos, int attrib, char const *string, int *end_row, int *end_col)
 {
     int j, k, maxrow, maxcol;
     char xc, xa;

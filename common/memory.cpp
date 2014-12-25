@@ -87,7 +87,7 @@ static void WhichDiskError(int I_O)
     // Set I_O == 1 after a file create, I_O == 2 after a file set value
     // Set I_O == 3 after a file write, I_O == 4 after a file read
     char buf[MSGLEN];
-    const char *pats[4] =
+    char const *pats[4] =
     {
         "Create file error %d:  %s",
         "Set file error %d:  %s",

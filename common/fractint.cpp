@@ -31,8 +31,8 @@ int lookatmouse = 0;  // see notes at mouseread routine
 
 long timer_start, timer_interval;       // timer(...) start & total
 int     g_adapter;                      // Video Adapter chosen from list in ...h
-const char *fract_dir1 = "";
-const char *fract_dir2 = "";
+char const *fract_dir1 = "";
+char const *fract_dir2 = "";
 
 /*
    the following variables are out here only so
@@ -277,7 +277,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
 
     while (showfile <= 0)              // image is to be loaded
     {
-        const char *hdg;
+        char const *hdg;
         tabmode = false;
         if (!browsing)      /*RB*/
         {

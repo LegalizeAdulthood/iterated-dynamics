@@ -540,7 +540,7 @@ void plot_redraw(Plot *me)
     InvalidateRect(me->window, nullptr, FALSE);
 }
 
-void plot_display_string(Plot *me, int x, int y, int fg, int bg, const char *text)
+void plot_display_string(Plot *me, int x, int y, int fg, int bg, char const *text)
 {
     while (*text)
     {

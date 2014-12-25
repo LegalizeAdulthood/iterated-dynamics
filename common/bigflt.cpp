@@ -35,13 +35,13 @@ void bf_hexdump(bf_t r)
 //         It may use scientific notation.
 // USES: bftmp1
 
-bf_t strtobf(bf_t r, const char *s)
+bf_t strtobf(bf_t r, char const *s)
 {
     BYTE onesbyte;
     bool signflag = false;
-    const char *l;
-    const char *d;
-    const char *e; // pointer to s, ".", "[eE]"
+    char const *l;
+    char const *d;
+    char const *e; // pointer to s, ".", "[eE]"
     int powerten = 0;
 
     clear_bf(r);

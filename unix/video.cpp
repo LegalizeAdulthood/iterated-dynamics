@@ -86,7 +86,7 @@ int g_vesa_y_res;
 int chkd_vvs = 0;
 int video_vram = 0;
 
-void putstring(int row, int col, int attr, const char *msg);
+void putstring(int row, int col, int attr, char const *msg);
 
 /*
 
@@ -284,7 +284,7 @@ keycursor(int row, int col)
 ;         string = far pointer to the null terminated string to print.
 */
 void
-putstring(int row, int col, int attr, const char *msg)
+putstring(int row, int col, int attr, char const *msg)
 {
     int so = 0;
 
@@ -311,7 +311,7 @@ putstring(int row, int col, int attr, const char *msg)
         }
         else
         {
-            const char *ptr;
+            char const *ptr;
             ptr = strchr(msg, '\n');
             if (ptr == nullptr)
             {

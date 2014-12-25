@@ -210,7 +210,7 @@ static void win32_line_reader(int row, int col, int lastcol, BYTE *pixels)
 }
 
 static void
-parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
+parse_geometry(char const *spec, int *x, int *y, int *width, int *height)
 {
     // do something like XParseGeometry()
     if (2 == sscanf(spec, "%dx%d", width, height))
@@ -647,7 +647,7 @@ disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
 ;         string = pointer to the null terminated string to print.
 */
 static void
-disk_put_string(Driver *drv, int row, int col, int attr, const char *msg)
+disk_put_string(Driver *drv, int row, int col, int attr, char const *msg)
 {
     DI(di);
     if (-1 != row)
@@ -687,7 +687,7 @@ disk_scroll_up(Driver *drv, int top, int bot)
 }
 
 static void
-disk_display_string(Driver *drv, int x, int y, int fg, int bg, const char *text)
+disk_display_string(Driver *drv, int x, int y, int fg, int bg, char const *text)
 {
 }
 

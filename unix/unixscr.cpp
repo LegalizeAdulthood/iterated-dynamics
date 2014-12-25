@@ -91,7 +91,7 @@ static int simple_input = 0; // Use simple input (debugging)
 static int resize_flag = 0; // Main window being resized ?
 static int drawing_or_drawn = 0; // Is image (being) drawn ?
 
-static const char *Xdisplay = "";
+static char const *Xdisplay = "";
 static char *Xgeometry = nullptr;
 
 static int unixDisk = 0; // Flag if we use the disk video mode

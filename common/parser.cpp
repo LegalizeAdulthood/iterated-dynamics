@@ -263,7 +263,7 @@ unsigned int chars_in_formula;
 #define PE_SECOND_COLON                              34
 #define PE_INVALID_CALL_TO_PARSEERRS                 35
 
-static const char *ParseErrs(int which)
+static char const *ParseErrs(int which)
 {
     int lasterr;
     static char e0[] = {"Should be an Argument"};
@@ -302,7 +302,7 @@ static const char *ParseErrs(int which)
     static char e33[] = {"Variable or constant exceeds 32 character limit"};
     static char e34[] = {"Only one \":\" permitted in a formula"};
     static char e35[] = {"Invalid ParseErrs code"};
-    static const char *ErrStrings[] =
+    static char const *ErrStrings[] =
     {
         e0, e1, e2, e3, e4, e5,
         e6, e7, e8, e9, e10,
@@ -2086,7 +2086,7 @@ ConstArg *isconst(char const *Str, int Len)
 
 struct FNCT_LIST
 {
-    const char *s;
+    char const *s;
     void (**ptr)();
 };
 
@@ -2095,7 +2095,7 @@ void (*StkTrig1)() = dStkSqr;
 void (*StkTrig2)() = dStkSinh;
 void (*StkTrig3)() = dStkCosh;
 
-const char * JumpList[] =
+char const * JumpList[] =
 {
     "if",
     "elseif",
@@ -2163,7 +2163,7 @@ FNCT_LIST FnctList[] =
     {"round", &StkRound},
 };
 
-const char *OPList[] =
+char const *OPList[] =
 {
     ",",    //  0
     "!=",   //  1
@@ -2240,7 +2240,7 @@ void RecSortPrec()
     f[OpPtr++] = o[ThisOp].f;
 }
 
-static const char *Constants[] =
+static char const *Constants[] =
 {
     "pixel",        // v[0]
     "p1",           // v[1]
@@ -2265,7 +2265,7 @@ static const char *Constants[] =
 
 struct SYMETRY
 {
-    const char *s;
+    char const *s;
     symmetry_type n;
 };
 SYMETRY SymStr[] =

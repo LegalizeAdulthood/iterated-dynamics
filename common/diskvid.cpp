@@ -722,7 +722,7 @@ static void mem_putc(BYTE c)     // memory get_char
 }
 
 
-void dvid_status(int line, const char *msg)
+void dvid_status(int line, char const *msg)
 {
     char buf[41];
     int attrib;

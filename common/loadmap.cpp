@@ -8,7 +8,7 @@
 
 #define dac ((Palettetype *)g_dac_box)
 
-bool ValidateLuts(const char *fn)
+bool ValidateLuts(char const *fn)
 {
     FILE * f;
     unsigned        r, g, b;

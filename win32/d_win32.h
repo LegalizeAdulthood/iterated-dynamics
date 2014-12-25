@@ -34,7 +34,7 @@ extern int win32_get_key(Driver *drv);
 extern void win32_shell(Driver *drv);
 extern void win32_hide_text_cursor(Driver *drv);
 extern void win32_set_video_mode(Driver *drv, VIDEOINFO *mode);
-extern void win32_put_string(Driver *drv, int row, int col, int attr, const char *msg);
+extern void win32_put_string(Driver *drv, int row, int col, int attr, char const *msg);
 extern void win32_scroll_up(Driver *drv, int top, int bot);
 extern void win32_move_cursor(Driver *drv, int row, int col);
 extern void win32_set_attr(Driver *drv, int row, int col, int attr, int count);

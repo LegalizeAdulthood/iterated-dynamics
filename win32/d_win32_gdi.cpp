@@ -166,7 +166,7 @@ handle_special_keys(int ch)
 }
 
 static void
-parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
+parse_geometry(char const *spec, int *x, int *y, int *width, int *height)
 {
     // do something like XParseGeometry()
     if (2 == sscanf(spec, "%dx%d", width, height))
@@ -664,7 +664,7 @@ gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
 }
 
 static void
-gdi_put_string(Driver *drv, int row, int col, int attr, const char *msg)
+gdi_put_string(Driver *drv, int row, int col, int attr, char const *msg)
 {
     DI(di);
     _ASSERTE(di->text_not_graphics);
@@ -894,7 +894,7 @@ gdi_resume(Driver *drv)
 }
 
 static void
-gdi_display_string(Driver *drv, int x, int y, int fg, int bg, const char *text)
+gdi_display_string(Driver *drv, int x, int y, int fg, int bg, char const *text)
 {
     DI(di);
     _ASSERTE(!di->text_not_graphics);

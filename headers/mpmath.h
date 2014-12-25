@@ -59,7 +59,7 @@ union Arg
 };
 struct ConstArg
 {
-    const char *s;
+    char const *s;
     int len;
     Arg a;
 };

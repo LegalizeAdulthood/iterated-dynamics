@@ -17,8 +17,8 @@ extern void decode_orbits_info(ORBITS_INFO *, int);
  */
 extern long clock_ticks();
 #ifndef HAVESTRI
-extern int stricmp(const char *, const char *);
-extern int strnicmp(const char *, const char *, int);
+extern int stricmp(char const *, char const *);
+extern int strnicmp(char const *, char const *, int);
 #endif
 extern int ltoa(long, char *, int);
 extern void ftimex(timebx *);

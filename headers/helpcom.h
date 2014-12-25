@@ -111,10 +111,10 @@ extern bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info);
 extern int help(int);
 extern int read_help_topic(int , int , int , VOIDPTR);
 extern bool makedoc_msg_func(int pnum, int num_pages);
-extern void print_document(const char *outfname, bool (*msg_func)(int, int), int save_extraseg);
+extern void print_document(char const *outfname, bool (*msg_func)(int, int), int save_extraseg);
 extern int init_help();
 extern void end_help();
-extern bool is_hyphen(const char *ptr);
+extern bool is_hyphen(char const *ptr);
 #ifndef XFRACT
 #define getint(ptr) (*(int *)(ptr))
 #define setint(ptr, n) (*(int *)(ptr)) = n

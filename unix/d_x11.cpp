@@ -90,8 +90,8 @@ struct DriverX11
     int fixcolors;              // = 0;
     // Run X events synchronously (debugging)
     bool sync;                  // = false;
-    const char *Xdisplay;       // = "";
-    const char *Xgeometry;      // = nullptr;
+    char const *Xdisplay;       // = "";
+    char const *Xgeometry;      // = nullptr;
     int doesBacking;
 
     /*
@@ -129,7 +129,7 @@ struct DriverX11
 
     bool XZoomWaiting;          // = false;
 
-    const char *x_font_name;    // = FONT;
+    char const *x_font_name;    // = FONT;
     XFontStruct *font_info;     // = nullptr;
 
     int xbufkey;                // = 0; Buffered X key
@@ -2314,7 +2314,7 @@ x11_draw_line(Driver *drv, int x1, int y1, int x2, int y2, int color)
 }
 
 static void x11_display_string(Driver *drv,
-                               int x, int y, int fg, int bg, const char *text)
+                               int x, int y, int fg, int bg, char const *text)
 {
 }
 
@@ -2519,7 +2519,7 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
 }
 
 static void
-x11_put_string(Driver *drv, int row, int col, int attr, const char *msg)
+x11_put_string(Driver *drv, int row, int col, int attr, char const *msg)
 {
     DIX11(drv);
     int r, c;

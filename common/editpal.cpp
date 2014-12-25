@@ -256,7 +256,7 @@ static void rect(int x, int y, int width, int depth, int color)
 }
 
 
-static void displayf(int x, int y, int fg, int bg, const char *format, ...)
+static void displayf(int x, int y, int fg, int bg, char const *format, ...)
 {
     char buff[81];
 

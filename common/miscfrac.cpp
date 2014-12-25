@@ -1946,7 +1946,7 @@ froth_struct fsp;
 // color maps which attempt to replicate the images of James Alexander.
 static void set_Froth_palette()
 {
-    const char *mapname;
+    char const *mapname;
 
     if (colorstate != 0) // 0 means g_dac_box matches default
         return;

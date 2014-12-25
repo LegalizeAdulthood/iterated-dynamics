@@ -573,7 +573,7 @@ enum class fractal_type;
 struct MOREPARAMS
 {
     fractal_type type;                      // index in fractalname of the fractal
-    const char *param[MAXPARAMS-4];     // name of the parameters
+    char const *param[MAXPARAMS-4];     // name of the parameters
     double   paramvalue[MAXPARAMS-4];   // default parameter values
 };
 
@@ -601,9 +601,9 @@ enum class fractal_type;
 
 struct fractalspecificstuff
 {
-    const char  *name;                  // name of the fractal
+    char const  *name;                  // name of the fractal
     // (leading "*" supresses name display)
-    const char  *param[4];              // name of the parameters
+    char const  *param[4];              // name of the parameters
     double paramvalue[4];               // default parameter values
     int   helptext;                     // helpdefs.h HT_xxxx, -1 for none
     int   helpformula;                  // helpdefs.h HF_xxxx, -1 for none
@@ -894,7 +894,7 @@ extern void (*dtrig0)(), (*dtrig1)(), (*dtrig2)(), (*dtrig3)();
 
 struct trig_funct_lst
 {
-    const char *name;
+    char const *name;
     void (*lfunct)();
     void (*dfunct)();
     void (*mfunct)();
@@ -1099,7 +1099,7 @@ struct fullscreenvalues
         {
             int  val;       // selected choice
             int  vlen;      // char len per choice
-            const char **list;  // list of values
+            char const **list;  // list of values
             int  llen;      // number of values
         } ch;
     } uval;

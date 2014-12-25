@@ -683,7 +683,7 @@ int abortmsg(char *file, unsigned int line, int flags, char *msg)
  * varargs version of OutputDebugString with file and line markers.
  */
 void
-ods(const char *file, unsigned int line, const char *format, ...)
+ods(char const *file, unsigned int line, char const *format, ...)
 {
     char full_msg[MAX_PATH+1];
     char app_msg[MAX_PATH+1];
@@ -864,12 +864,12 @@ int out_line(BYTE *pixels, int linelen)
     return 0;
 }
 
-void init_failure(const char *message)
+void init_failure(char const *message)
 {
     MessageBox(nullptr, message, "FractInt: Fatal Error", MB_OK);
 }
 
-void findpath(const char *filename, char *fullpathname) // return full pathnames
+void findpath(char const *filename, char *fullpathname) // return full pathnames
 {
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
@@ -911,7 +911,7 @@ void findpath(const char *filename, char *fullpathname) // return full pathnames
 }
 
 // case independent version of strncmp
-int strncasecmp(const char *s, const char *t,int ct)
+int strncasecmp(char const *s, char const *t,int ct)
 {
     for (; (tolower(*s) == tolower(*t)) && --ct ; s++,t++)
         if (*s == '\0')

@@ -76,7 +76,7 @@ char commandmask[13] = {"*.par"};
 
 int get_toggles()
 {
-    const char *choices[20];
+    char const *choices[20];
     char prevsavename[FILE_MAX_DIR+1];
     char *savenameptr;
     fullscreenvalues uvalues[25];
@@ -88,12 +88,12 @@ int get_toggles()
     int old_fillcolor;
     int old_stoppass;
     double old_closeprox;
-    const char *calcmodes[] = {"1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o"};
-    const char *soundmodes[5] = {"off", "beep", "x", "y", "z"};
-    const char *insidemodes[] = {"numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross",
+    char const *calcmodes[] = {"1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o"};
+    char const *soundmodes[5] = {"off", "beep", "x", "y", "z"};
+    char const *insidemodes[] = {"numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross",
                           "startrail", "period", "atan", "fmod"
                          };
-    const char *outsidemodes[] = {"numb", "iter", "real", "imag", "mult", "summ", "atan",
+    char const *outsidemodes[] = {"numb", "iter", "real", "imag", "mult", "summ", "atan",
                            "fmod", "tdis"
                           };
 
@@ -395,7 +395,7 @@ int get_toggles()
 
 int get_toggles2()
 {
-    const char *choices[18];
+    char const *choices[18];
     fullscreenvalues uvalues[23];
     int old_rotate_lo, old_rotate_hi;
     int old_distestwidth;
@@ -554,8 +554,8 @@ int get_toggles2()
 
 int passes_options()
 {
-    const char *choices[20];
-    const char *passcalcmodes[] = {"rect", "line"};
+    char const *choices[20];
+    char const *passcalcmodes[] = {"rect", "line"};
 
     fullscreenvalues uvalues[25];
     int i, j, k;
@@ -707,7 +707,7 @@ pass_option_restart:
 
 int get_view_params()
 {
-    const char *choices[16];
+    char const *choices[16];
     fullscreenvalues uvalues[25];
     int i, k;
     float old_viewreduction, old_aspectratio;
@@ -775,7 +775,7 @@ get_view_restart:
     uvalues[k].uval.ch.val = video_cutboth ? 1 : 0;
 
     {
-        const char *scrolltypes[] = {"fixed", "relaxed"};
+        char const *scrolltypes[] = {"fixed", "relaxed"};
         choices[++k] = "Zoombox scrolling (f[ixed], r[elaxed])";
         uvalues[k].type = 'l';
         uvalues[k].uval.ch.vlen = 7;
@@ -1004,7 +1004,7 @@ int starfield()
 int get_starfield_params()
 {
     fullscreenvalues uvalues[3];
-    const char *starfield_prompts[3] =
+    char const *starfield_prompts[3] =
     {
         "Star Density in Pixels per Star",
         "Percent Clumpiness",
@@ -1037,14 +1037,14 @@ int get_starfield_params()
     return (0);
 }
 
-static const char *masks[] = {"*.pot", "*.gif"};
+static char const *masks[] = {"*.pot", "*.gif"};
 
 int get_rds_params()
 {
     char rds6[60];
-    const char *stereobars[] = {"none", "middle", "top"};
+    char const *stereobars[] = {"none", "middle", "top"};
     fullscreenvalues uvalues[7];
-    const char *rds_prompts[7] =
+    char const *rds_prompts[7] =
     {
         "Depth Effect (negative reverses front and back)",
         "Image width in inches",
@@ -1139,7 +1139,7 @@ int get_rds_params()
 
 int get_a_number(double *x, double *y)
 {
-    const char *choices[2];
+    char const *choices[2];
 
     fullscreenvalues uvalues[2];
     int i, k;
@@ -1360,7 +1360,7 @@ int lccompare(VOIDPTR arg1, VOIDPTR arg2) // for sort
 
 
 static int speedstate;
-bool getafilename(const char *hdg, const char *file_template, char *flname)
+bool getafilename(char const *hdg, char const *file_template, char *flname)
 {
     char user_file_template[FILE_MAX_PATH] = { 0 };
     int rds;  // if getting an RDS image map
@@ -1549,7 +1549,7 @@ retry_dir:
 
 
     i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-                          temp1, nullptr, instr, filecount, (const char **) choices,
+                          temp1, nullptr, instr, filecount, (char const **) choices,
                           attributes, 5, 99, 12, i, nullptr, speedstr, filename_speedstr, check_f6_key);
     if (i == -FIK_F4)
     {
@@ -1690,7 +1690,7 @@ static int check_f6_key(int curkey, int /*choice*/)
 static int filename_speedstr(int row, int col, int vid,
                              char *speedstring, int speed_match)
 {
-    const char *prompt;
+    char const *prompt;
     if (strchr(speedstring, ':')
             || strchr(speedstring, '*') || strchr(speedstring, '*')
             || strchr(speedstring, '?'))
@@ -1713,12 +1713,12 @@ static int filename_speedstr(int row, int col, int vid,
 }
 
 #ifndef XFRACT  // This routine moved to unix.c so we can use it in hc.c
-int splitpath(const char *file_template, char *drive, char *dir, char *fname, char *ext)
+int splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext)
 {
     int length;
     int len;
     int offset;
-    const char *tmp;
+    char const *tmp;
     if (drive)
     {
         drive[0] = 0;
@@ -1827,7 +1827,7 @@ int splitpath(const char *file_template, char *drive, char *dir, char *fname, ch
 }
 #endif
 
-int makepath(char *template_str, const char *drive, const char *dir, const char *fname, const char *ext)
+int makepath(char *template_str, char const *drive, char const *dir, char const *fname, char const *ext)
 {
     if (template_str)
         *template_str = 0;
@@ -1859,7 +1859,7 @@ void fix_dirname(char *dirname)
     strcat(dirname, SLASH);
 }
 
-static void dir_name(char *target, const char *dir, const char *name)
+static void dir_name(char *target, char const *dir, char const *name)
 {
     *target = 0;
     if (*dir != 0)
@@ -1876,7 +1876,7 @@ int dir_remove(char *dir, char *filename)
 }
 
 // fopens file in dir directory
-FILE *dir_fopen(const char *dir, const char *filename, const char *mode)
+FILE *dir_fopen(char const *dir, char const *filename, char const *mode)
 {
     char tmp[FILE_MAX_PATH];
     dir_name(tmp, dir, filename);
@@ -1906,7 +1906,7 @@ int cmpdbl(double old, double new_val)
 int get_corners()
 {
     fullscreenvalues values[15];
-    const char *prompts[15];
+    char const *prompts[15];
     char xprompt[] = "          X";
     char yprompt[] = "          Y";
     int i, nump, prompt_ret;
@@ -2117,7 +2117,7 @@ gc_loop:
 static int get_screen_corners()
 {
     fullscreenvalues values[15];
-    const char *prompts[15];
+    char const *prompts[15];
     char xprompt[] = "          X";
     char yprompt[] = "          Y";
     int nump, prompt_ret;
@@ -2365,7 +2365,7 @@ gsc_loop:
 
 int get_browse_params()
 {
-    const char *choices[10];
+    char const *choices[10];
     fullscreenvalues uvalues[25];
     int i, k;
     int old_minbox;

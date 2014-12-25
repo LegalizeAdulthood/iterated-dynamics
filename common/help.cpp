@@ -70,7 +70,7 @@ struct help_sig_info
     unsigned long base;     // only if added to fractint.exe
 };
 
-void print_document(const char *outfname, bool (*msg_func)(int, int), int save_extraseg);
+void print_document(char const *outfname, bool (*msg_func)(int, int), int save_extraseg);
 static bool print_doc_msg_func(int pnum, int num_pages);
 
 // stuff from fractint
@@ -352,7 +352,7 @@ static void printinstr()
 
 #undef PUT_KEY
 
-static void display_page(const char *title, char *text, unsigned text_len,
+static void display_page(char const *title, char *text, unsigned text_len,
                          int page, int num_pages, int start_margin,
                          int *num_link, LINK *link)
 {
@@ -900,7 +900,7 @@ int help(int action)
     return 0;
 }
 
-static bool can_read_file(const char *path)
+static bool can_read_file(char const *path)
 {
     int handle = open(path, O_RDONLY);
 
@@ -914,7 +914,7 @@ static bool can_read_file(const char *path)
 }
 
 
-static bool exe_path(const char *filename, char *path)
+static bool exe_path(char const *filename, char *path)
 {
 #if !defined(XFRACT) && !defined(_WIN32)
     char *ptr;
@@ -944,7 +944,7 @@ static bool exe_path(const char *filename, char *path)
 #endif
 }
 
-static bool find_file(const char *filename, char *path)
+static bool find_file(char const *filename, char *path)
 {
     if (exe_path(filename, path))
     {
@@ -1302,12 +1302,12 @@ bool makedoc_msg_func(int pnum, int num_pages)
     return result;
 }
 
-void print_document(const char *outfname, bool (*msg_func)(int, int), int save_extraseg)
+void print_document(char const *outfname, bool (*msg_func)(int, int), int save_extraseg)
 {
     PRINT_DOC_INFO info;
     bool success = false;
     FILE *temp_file = nullptr;
-    const char *msg = nullptr;
+    char const *msg = nullptr;
 
     help_seek(16L);
     fread(&info.num_contents, sizeof(int), 1, help_file);
