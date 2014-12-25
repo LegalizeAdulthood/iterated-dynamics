@@ -4039,7 +4039,7 @@ int BadFormula()
 }
 
 //  returns true if an error occurred
-bool RunForm(char *Name, bool from_prompts1c)
+bool RunForm(char const *Name, bool from_prompts1c)
 {
     FILE * entry_file = nullptr;
 
