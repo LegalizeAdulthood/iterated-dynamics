@@ -33,7 +33,6 @@ std::vector<LDBL> coss_f;
 
 static lsys_cmd *findsize(lsys_cmd *, lsys_turtlestatef *, lsys_cmd **, int);
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_doplus(lsys_turtlestatef *cmd)
 {
     if (cmd->reverse)
@@ -49,11 +48,7 @@ static void lsysf_doplus(lsys_turtlestatef *cmd)
             cmd->angle = cmd->dmaxangle;
     }
 }
-#else
-extern void lsysf_doplus(lsys_turtlestatef *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 // This is the same as lsys_doplus, except maxangle is a power of 2.
 static void lsysf_doplus_pow2(lsys_turtlestatef *cmd)
 {
@@ -68,11 +63,7 @@ static void lsysf_doplus_pow2(lsys_turtlestatef *cmd)
         cmd->angle &= cmd->dmaxangle;
     }
 }
-#else
-extern void lsysf_doplus_pow2(lsys_turtlestatef *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dominus(lsys_turtlestatef *cmd)
 {
     if (cmd->reverse)
@@ -88,11 +79,7 @@ static void lsysf_dominus(lsys_turtlestatef *cmd)
             cmd->angle = 0;
     }
 }
-#else
-extern void lsysf_dominus(lsys_turtlestatef *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dominus_pow2(lsys_turtlestatef *cmd)
 {
     if (cmd->reverse)
@@ -106,11 +93,7 @@ static void lsysf_dominus_pow2(lsys_turtlestatef *cmd)
         cmd->angle &= cmd->dmaxangle;
     }
 }
-#else
-extern void lsysf_dominus_pow2(lsys_turtlestatef *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_doslash(lsys_turtlestatef *cmd)
 {
     if (cmd->reverse)
@@ -118,11 +101,7 @@ static void lsysf_doslash(lsys_turtlestatef *cmd)
     else
         cmd->realangle += cmd->parm.nf;
 }
-#else
-extern void lsysf_doslash(lsys_turtlestatef *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dobslash(lsys_turtlestatef *cmd)
 {
     if (cmd->reverse)
@@ -130,18 +109,11 @@ static void lsysf_dobslash(lsys_turtlestatef *cmd)
     else
         cmd->realangle -= cmd->parm.nf;
 }
-#else
-extern void lsysf_dobslash(lsys_turtlestatef *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_doat(lsys_turtlestatef *cmd)
 {
     cmd->size *= cmd->parm.nf;
 }
-#else
-extern void lsysf_doat(lsys_turtlestatef *cmd, long n);
-#endif
 
 static void
 lsysf_dopipe(lsys_turtlestatef *cmd)
@@ -150,26 +122,17 @@ lsysf_dopipe(lsys_turtlestatef *cmd)
     cmd->angle %= cmd->maxangle;
 }
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dopipe_pow2(lsys_turtlestatef *cmd)
 {
     cmd->angle += cmd->maxangle >> 1;
     cmd->angle &= cmd->dmaxangle;
 }
-#else
-extern void lsysf_dopipe_pow2(lsys_turtlestatef *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dobang(lsys_turtlestatef *cmd)
 {
     cmd->reverse = ! cmd->reverse;
 }
-#else
-extern void lsysf_dobang(lsys_turtlestatef *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dosizedm(lsys_turtlestatef *cmd)
 {
     double angle = (double) cmd->realangle;
@@ -190,11 +153,7 @@ static void lsysf_dosizedm(lsys_turtlestatef *cmd)
     if (cmd->ypos < cmd->ymin)
         cmd->ymin = cmd->ypos;
 }
-#else
-extern void lsysf_dosizedm(lsys_turtlestatef *cmd, long n);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dosizegf(lsys_turtlestatef *cmd)
 {
     cmd->xpos += cmd->size * coss_f[(int)cmd->angle];
@@ -209,11 +168,7 @@ static void lsysf_dosizegf(lsys_turtlestatef *cmd)
     if (cmd->ypos < cmd->ymin)
         cmd->ymin = cmd->ypos;
 }
-#else
-extern void lsysf_dosizegf(lsys_turtlestatef *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dodrawd(lsys_turtlestatef *cmd)
 {
     double angle = (double) cmd->realangle;
@@ -230,11 +185,7 @@ static void lsysf_dodrawd(lsys_turtlestatef *cmd)
 
     driver_draw_line(lastx, lasty, (int) cmd->xpos, (int) cmd->ypos, cmd->curcolor);
 }
-#else
-extern void lsysf_dodrawd(lsys_turtlestatef *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dodrawm(lsys_turtlestatef *cmd)
 {
     double angle = (double) cmd->realangle;
@@ -246,21 +197,13 @@ static void lsysf_dodrawm(lsys_turtlestatef *cmd)
     cmd->xpos += cmd->size * cmd->aspect * c;
     cmd->ypos += cmd->size * s;
 }
-#else
-extern void lsysf_dodrawm(lsys_turtlestatef *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dodrawg(lsys_turtlestatef *cmd)
 {
     cmd->xpos += cmd->size * coss_f[(int)cmd->angle];
     cmd->ypos += cmd->size * sins_f[(int)cmd->angle];
 }
-#else
-extern void lsysf_dodrawg(lsys_turtlestatef *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dodrawf(lsys_turtlestatef *cmd)
 {
     int lastx = (int) cmd->xpos;
@@ -269,9 +212,6 @@ static void lsysf_dodrawf(lsys_turtlestatef *cmd)
     cmd->ypos += cmd->size * sins_f[(int)cmd->angle];
     driver_draw_line(lastx, lasty, (int) cmd->xpos, (int) cmd->ypos, cmd->curcolor);
 }
-#else
-extern void lsysf_dodrawf(lsys_turtlestatef *cmd);
-#endif
 
 static void lsysf_dodrawc(lsys_turtlestatef *cmd)
 {
@@ -591,11 +531,7 @@ LSysFSizeTransform(char *s, lsys_turtlestatef *ts)
             num = 3;
             break;
         }
-#if defined(XFRACT)
         ret[n].f = (void (*)(lsys_turtlestatef *))f;
-#else
-        ret[n].f = (void (*)(lsys_turtlestatef *))f;
-#endif
         if (ptype == 4)
             ret[n].parm.n = num;
         ret[n].ptype = ptype;
@@ -728,11 +664,7 @@ LSysFDrawTransform(char *s, lsys_turtlestatef *ts)
             num = 3;
             break;
         }
-#if defined(XFRACT)
         ret[n].f = (void (*)(lsys_turtlestatef *))f;
-#else
-        ret[n].f = (void (*)(lsys_turtlestatef *))f;
-#endif
         if (ptype == 4)
             ret[n].parm.n = (long)num;
         ret[n].ptype = ptype;
