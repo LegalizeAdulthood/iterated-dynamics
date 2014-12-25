@@ -531,7 +531,7 @@ LSysFSizeTransform(char *s, lsys_turtlestatef *ts)
             num = 3;
             break;
         }
-        ret[n].f = (void (*)(lsys_turtlestatef *))f;
+        ret[n].f = f;
         if (ptype == 4)
             ret[n].parm.n = num;
         ret[n].ptype = ptype;
@@ -664,7 +664,7 @@ LSysFDrawTransform(char *s, lsys_turtlestatef *ts)
             num = 3;
             break;
         }
-        ret[n].f = (void (*)(lsys_turtlestatef *))f;
+        ret[n].f = f;
         if (ptype == 4)
             ret[n].parm.n = (long)num;
         ret[n].ptype = ptype;
