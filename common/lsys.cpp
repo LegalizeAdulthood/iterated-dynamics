@@ -988,7 +988,7 @@ LSysIDrawTransform(char *s, lsys_turtlestatei *ts)
     void (*slash)(lsys_turtlestatei *) = lsysi_doslash_386;
     void (*bslash)(lsys_turtlestatei *) = lsysi_dobslash_386;
     void (*at)(lsys_turtlestatei *) = lsys_doat;
-    void (*drawg)(lsys_turtlestatei *) = lsysi_dodrawg_386;
+    void (*drawg)(lsys_turtlestatei *) = lsys_dodrawg;
 
     ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
     if (ret == nullptr)

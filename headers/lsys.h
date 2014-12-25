@@ -54,12 +54,6 @@ struct lsys_turtlestatef
     } parm;
 };
 extern char maxangle;
-// routines in lsysa.asm
-#if defined(XFRACT) || defined(_WIN32)
-#define lsysi_dodrawg_386 lsys_dodrawg
-#else
-extern void lsysi_dodrawg_386(lsys_turtlestatei *cmd);
-#endif
 
 // routines in lsysf.c
 struct lsys_cmd;
