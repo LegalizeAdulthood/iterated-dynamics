@@ -1209,7 +1209,7 @@ struct ext_blk_6
 
 struct ext_blk_7
 {
-    char got_data;
+    bool got_data;
     int length;
     double oxmin;
     double oxmax;

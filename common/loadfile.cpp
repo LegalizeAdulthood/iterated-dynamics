@@ -600,7 +600,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         evolving = 0;
     }
 
-    if (blk_7_info.got_data == 1)
+    if (blk_7_info.got_data)
     {
         oxmin       = blk_7_info.oxmin;
         oxmax       = blk_7_info.oxmax;
@@ -643,7 +643,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
     blk_4_info->got_data = false;
     blk_5_info->got_data = false;
     blk_6_info->got_data = false;
-    blk_7_info->got_data = 0; // initialize to no data
+    blk_7_info->got_data = false;
 
     fp = fopen(gif_file, "rb");
     if (fp == nullptr)
@@ -893,7 +893,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     decode_orbits_info(&oload_info, 1);
 #endif
                     blk_7_info->length = data_len;
-                    blk_7_info->got_data = 1; // got data
+                    blk_7_info->got_data = true;
                     blk_7_info->oxmin           = oload_info.oxmin;
                     blk_7_info->oxmax           = oload_info.oxmax;
                     blk_7_info->oymin           = oload_info.oymin;
