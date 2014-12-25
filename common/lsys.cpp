@@ -373,22 +373,16 @@ static bool save_rule(char const *rule, int index)
 static bool append_rule(char const *rule, int index)
 {
     char *existing = ruleptrs[index];
-    char *old = existing;
-    int i;
-    for (i = 0; *(old++); i++)
-        ;
-    int j = (int) strlen(rule) + 1;
-    char *dst = (char *)malloc((long)(i + j));
-    if (dst == nullptr)
+    int const total_length = strlen(existing) + strlen(rule) + 1;
+    char *dest = static_cast<char *>(malloc(total_length));
+    if (dest == nullptr)
+    {
         return true;
-
-    old = existing;
-    ruleptrs[index] = dst;
-    while (i-- > 0)
-        *(dst++) = *(old++);
-    while (j-- > 0)
-        *(dst++) = *(rule++);
+    }
+    strcpy(dest, existing);
+    strcat(dest, rule);
     free(existing);
+    ruleptrs[index] = dest;
     return false;
 }
 
