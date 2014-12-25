@@ -476,28 +476,28 @@ done:
 
 static void set_Plasma_palette()
 {
-    static Palettetype Red    = { 63, 0, 0 };
-    static Palettetype Green  = { 0, 63, 0 };
-    static Palettetype Blue   = { 0,  0, 63 };
+    static BYTE const Red[3]   = { 63, 0, 0 };
+    static BYTE const Green[3] = { 0, 63, 0 };
+    static BYTE const Blue[3]  = { 0,  0, 63 };
 
     if (mapdacbox || colorpreloaded)
         return;    // map= specified
 
-    ((Palettetype *)g_dac_box)[0].red  = 0 ;
-    ((Palettetype *)g_dac_box)[0].green = 0 ;
-    ((Palettetype *)g_dac_box)[0].blue = 0 ;
+    g_dac_box[0][0] = 0;
+    g_dac_box[0][1] = 0;
+    g_dac_box[0][2] = 0;
     for (int i = 1; i <= 85; i++)
     {
-        ((Palettetype *)g_dac_box)[i].red       = (BYTE)((i*Green.red   + (86-i)*Blue.red)/85);
-        ((Palettetype *)g_dac_box)[i].green     = (BYTE)((i*Green.green + (86-i)*Blue.green)/85);
-        ((Palettetype *)g_dac_box)[i].blue      = (BYTE)((i*Green.blue  + (86-i)*Blue.blue)/85);
+        g_dac_box[i][0] = (BYTE)((i*Green[0] + (86-i)*Blue[0])/85);
+        g_dac_box[i][1] = (BYTE)((i*Green[1] + (86-i)*Blue[1])/85);
+        g_dac_box[i][2] = (BYTE)((i*Green[2] + (86-i)*Blue[2])/85);
 
-        ((Palettetype *)g_dac_box)[i+85].red    = (BYTE)((i*Red.red   + (86-i)*Green.red)/85);
-        ((Palettetype *)g_dac_box)[i+85].green  = (BYTE)((i*Red.green + (86-i)*Green.green)/85);
-        ((Palettetype *)g_dac_box)[i+85].blue   = (BYTE)((i*Red.blue  + (86-i)*Green.blue)/85);
-        ((Palettetype *)g_dac_box)[i+170].red   = (BYTE)((i*Blue.red   + (86-i)*Red.red)/85);
-        ((Palettetype *)g_dac_box)[i+170].green = (BYTE)((i*Blue.green + (86-i)*Red.green)/85);
-        ((Palettetype *)g_dac_box)[i+170].blue  = (BYTE)((i*Blue.blue  + (86-i)*Red.blue)/85);
+        g_dac_box[i+85][0] = (BYTE)((i*Red[0] + (86-i)*Green[0])/85);
+        g_dac_box[i+85][1] = (BYTE)((i*Red[1] + (86-i)*Green[1])/85);
+        g_dac_box[i+85][2] = (BYTE)((i*Red[2] + (86-i)*Green[2])/85);
+        g_dac_box[i+170][0] = (BYTE)((i*Blue[0] + (86-i)*Red[0])/85);
+        g_dac_box[i+170][1] = (BYTE)((i*Blue[1] + (86-i)*Red[1])/85);
+        g_dac_box[i+170][2] = (BYTE)((i*Blue[2] + (86-i)*Red[2])/85);
     }
     spindac(0, 1);
 }
@@ -1844,38 +1844,34 @@ bool CellularSetup()
 
 static void set_Cellular_palette()
 {
-    static Palettetype Red    = { 42, 0, 0 };
-    static Palettetype Green  = { 10, 35, 10 };
-    static Palettetype Blue   = { 13, 12, 29 };
-    static Palettetype Yellow = { 60, 58, 18 };
-    static Palettetype Brown  = { 42, 21, 0 };
+    static BYTE const Red[3]    = { 42, 0, 0 };
+    static BYTE const Green[3]  = { 10, 35, 10 };
+    static BYTE const Blue[3]   = { 13, 12, 29 };
+    static BYTE const Yellow[3] = { 60, 58, 18 };
+    static BYTE const Brown[3]  = { 42, 21, 0 };
 
     if (mapdacbox && colorstate != 0)
         return;       // map= specified
 
-    ((Palettetype *)g_dac_box)[0].red  = 0 ;
-    ((Palettetype *)g_dac_box)[0].green = 0 ;
-    ((Palettetype *)g_dac_box)[0].blue = 0 ;
+    g_dac_box[0][0] = 0;
+    g_dac_box[0][1] = 0;
+    g_dac_box[0][2] = 0;
 
-    ((Palettetype *)g_dac_box)[1].red    = Red.red;
-    ((Palettetype *)g_dac_box)[1].green = Red.green;
-    ((Palettetype *)g_dac_box)[1].blue  = Red.blue;
-
-    ((Palettetype *)g_dac_box)[2].red   = Green.red;
-    ((Palettetype *)g_dac_box)[2].green = Green.green;
-    ((Palettetype *)g_dac_box)[2].blue  = Green.blue;
-
-    ((Palettetype *)g_dac_box)[3].red   = Blue.red;
-    ((Palettetype *)g_dac_box)[3].green = Blue.green;
-    ((Palettetype *)g_dac_box)[3].blue  = Blue.blue;
-
-    ((Palettetype *)g_dac_box)[4].red   = Yellow.red;
-    ((Palettetype *)g_dac_box)[4].green = Yellow.green;
-    ((Palettetype *)g_dac_box)[4].blue  = Yellow.blue;
-
-    ((Palettetype *)g_dac_box)[5].red   = Brown.red;
-    ((Palettetype *)g_dac_box)[5].green = Brown.green;
-    ((Palettetype *)g_dac_box)[5].blue  = Brown.blue;
+    g_dac_box[1][0] = Red[0];
+    g_dac_box[1][1] = Red[1];
+    g_dac_box[1][2] = Red[2];
+    g_dac_box[2][0] = Green[0];
+    g_dac_box[2][1] = Green[1];
+    g_dac_box[2][2] = Green[2];
+    g_dac_box[3][0] = Blue[0];
+    g_dac_box[3][1] = Blue[1];
+    g_dac_box[3][2] = Blue[2];
+    g_dac_box[4][0] = Yellow[0];
+    g_dac_box[4][1] = Yellow[1];
+    g_dac_box[4][2] = Yellow[2];
+    g_dac_box[5][0] = Brown[0];
+    g_dac_box[5][1] = Brown[1];
+    g_dac_box[5][2] = Brown[2];
 
     spindac(0, 1);
 }
