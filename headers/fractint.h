@@ -1156,7 +1156,7 @@ struct ext_blk_2
 
 struct ext_blk_3
 {
-    char got_data;
+    bool got_data;
     int length;
     char form_name[40];
     short uses_p1;

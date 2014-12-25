@@ -456,7 +456,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         resume_len = blk_2_info.length;
     }
 
-    if (blk_3_info.got_data == 1)
+    if (blk_3_info.got_data)
     {
         char *nameptr;
         switch (static_cast<fractal_type>(read_info.fractal_type))
@@ -639,7 +639,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
     ORBITS_INFO oload_info;
 
     blk_2_info->got_data = false;
-    blk_3_info->got_data = 0; // initialize to no data
+    blk_3_info->got_data = false;
     blk_4_info->got_data = 0; // initialize to no data
     blk_5_info->got_data = 0; // initialize to no data
     blk_6_info->got_data = 0; // initialize to no data
@@ -806,7 +806,7 @@ static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
                     load_ext_blk((char *)&fload_info, data_len);
                     strcpy(blk_3_info->form_name, fload_info.form_name);
                     blk_3_info->length = data_len;
-                    blk_3_info->got_data = 1; // got data
+                    blk_3_info->got_data = true;
                     if (data_len < sizeof(fload_info))
                     { // must be old GIF
                         blk_3_info->uses_p1 = 1;
