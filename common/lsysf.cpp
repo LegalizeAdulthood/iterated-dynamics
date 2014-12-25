@@ -323,11 +323,9 @@ lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, in
     float horiz, vert;
     LDBL xmin, xmax, ymin, ymax;
     LDBL locsize;
-    LDBL locaspect;
     lsysf_cmd *fsret;
 
-    locaspect = screenaspect*xdots/ydots;
-    ts->aspect = locaspect;
+    ts->aspect = screenaspect*xdots/ydots;
     ts->ymin = 0;
     ts->ymax = ts->ymin;
     ts->xmax = ts->ymax;
