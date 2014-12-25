@@ -52,7 +52,7 @@ void lsysi_dodrawlt(lsys_turtlestatei *cmd);
 
 std::vector<long> sins;
 std::vector<long> coss;
-long const scale_factor = 11930465L;
+long const PI_DIV_180_L = 11930465L;
 std::vector<std::string> rules;
 lsys_cmd *rule_cmds[MAXRULES];
 lsysf_cmd *rulef_cmds[MAXRULES];
@@ -874,11 +874,11 @@ lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
             break;
         case '/':
             f = slash;
-            num = (long)(getnumber(&s) * scale_factor);
+            num = (long)(getnumber(&s) * PI_DIV_180_L);
             break;
         case '\\':
             f = bslash;
-            num = (long)(getnumber(&s) * scale_factor);
+            num = (long)(getnumber(&s) * PI_DIV_180_L);
             break;
         case '@':
             f = at;
@@ -982,11 +982,11 @@ lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts)
             break;
         case '/':
             f = slash;
-            num = (long)(getnumber(&s) * scale_factor);
+            num = (long)(getnumber(&s) * PI_DIV_180_L);
             break;
         case '\\':
             f = bslash;
-            num = (long)(getnumber(&s) * scale_factor);
+            num = (long)(getnumber(&s) * PI_DIV_180_L);
             break;
         case '@':
             f = at;
