@@ -81,6 +81,7 @@ bool isadirectory(char const *s)
 // converts relative path to absolute path
 int expand_dirname(char *dirname, char *drive)
 {
+    // TODO
     return -1;
 }
 

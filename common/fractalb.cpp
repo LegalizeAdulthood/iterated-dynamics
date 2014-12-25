@@ -30,7 +30,7 @@ void show_var_bn(char *s, bn_t n)
     stopmsg(STOPMSG_NONE, msg);
 }
 
-void showcornersdbl(char *s)
+void showcornersdbl(char const *s)
 {
     char msg[400];
     sprintf(msg, "%s\n"
@@ -148,7 +148,7 @@ void showcornersbfs(char *s)
         goodbye();
 }
 
-void show_two_bf(char *s1, bf_t t1, char *s2, bf_t t2, int digits)
+void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
 {
     char msg1[200], msg2[200], msg3[400];
     bftostr_e(msg1, digits, t1);
@@ -193,7 +193,7 @@ void showaspect(char *s)
 }
 
 // compare a double and bignumber
-void comparevalues(char *s, LDBL x, bn_t bnx)
+void comparevalues(char const *s, LDBL x, bn_t bnx)
 {
     int dec = 40;
     char msg[100], msg1[100];
@@ -203,7 +203,7 @@ void comparevalues(char *s, LDBL x, bn_t bnx)
         goodbye();
 }
 // compare a double and bignumber
-void comparevaluesbf(char *s, LDBL x, bf_t bfx)
+void comparevaluesbf(char const *s, LDBL x, bf_t bfx)
 {
     int dec = 40;
     char msg[300], msg1[300];
@@ -214,7 +214,7 @@ void comparevaluesbf(char *s, LDBL x, bf_t bfx)
 }
 
 //********************************************************************
-void show_var_bf(char *s, bf_t n)
+void show_var_bf(char const *s, bf_t n)
 {
     char msg[200];
     strcpy(msg, s);

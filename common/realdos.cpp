@@ -1990,7 +1990,7 @@ int check_vidmode_key(int option, int k)
     return (-1);
 }
 
-int check_vidmode_keyname(char *kname)
+int check_vidmode_keyname(char const *kname)
 {
     // returns key number for the passed keyname, 0 if not a keyname
     int i, keyset;
