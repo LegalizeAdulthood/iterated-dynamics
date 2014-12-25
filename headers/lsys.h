@@ -3,10 +3,7 @@
  */
 #ifndef LSYS_H
 #define LSYS_H
-#define size    ssize
-/* Needed for use of asm -- helps decide which pointer to function
- * to put into the struct lsys_cmds.
- */
+
 /* Macro to take an FP number and turn it into a
  * 16/16-bit fixed-point number.
  */
