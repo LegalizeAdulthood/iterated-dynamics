@@ -21,7 +21,7 @@ struct lsys_cmd
 static bool readLSystemFile(char const *str);
 static void free_rules_mem();
 static int rule_present(char symbol);
-static bool save_rule(char const *rule, char **saveptr);
+static bool save_rule(char const *rule, int index);
 static bool append_rule(char const *rule, int index);
 static void free_lcmds();
 static lsys_cmd *findsize(lsys_cmd *, lsys_turtlestatei *, lsys_cmd **, int);
@@ -147,7 +147,7 @@ static bool readLSystemFile(char const *str)
             word = strtok(inline1, " =\t\n");
             if (!strcmp(word, "axiom"))
             {
-                if (save_rule(strtok(nullptr, " \t\n"), &ruleptrs[0]))
+                if (save_rule(strtok(nullptr, " \t\n"), 0))
                 {
                     strcat(msgbuf, "Error:  out of memory\n");
                     ++err;
@@ -181,7 +181,7 @@ static bool readLSystemFile(char const *str)
                     strcpy(fixed, word);
                     if (temp)
                         strcat(fixed, temp);
-                    memerr = save_rule(fixed, &ruleptrs[rulind++]);
+                    memerr = save_rule(fixed, rulind++);
                 }
                 else if (temp)
                 {
@@ -359,8 +359,9 @@ static int rule_present(char symbol)
     return (i < MAXRULES && ruleptrs[i]) ? i : 0;
 }
 
-static bool save_rule(char const *rule, char **saveptr)
+static bool save_rule(char const *rule, int index)
 {
+    char **saveptr = &ruleptrs[index];
     char *tmpfar = strdup(rule);
     if (tmpfar == nullptr)
     {
