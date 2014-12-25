@@ -3413,7 +3413,7 @@ int get_max_curarg_len(char const *floatvalstr[], int totparms)
 //        3 command line @filename/setname
 // this is like stopmsg() but can be used in cmdfiles()
 // call with NULL for badfilename to get pause for driver_get_key()
-int init_msg(char const *cmdstr, char *badfilename, cmd_file mode)
+int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
 {
     char const *modestr[4] =
     {"command line", "sstools.ini", "PAR file", "PAR file"};
