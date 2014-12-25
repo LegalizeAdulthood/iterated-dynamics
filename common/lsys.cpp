@@ -403,10 +403,6 @@ static void free_lcmds()
         free(*sc++);
 }
 
-#if defined(XFRACT) || defined(_WIN32)
-#define lsys_dodrawg lsysi_dodrawg
-#endif
-
 // integer specific routines
 
 #if defined(XFRACT) || defined(_WIN32)
@@ -974,7 +970,7 @@ LSysIDrawTransform(char *s, lsys_turtlestatei *ts)
     void (*slash)(lsys_turtlestatei *) = lsysi_doslash;
     void (*bslash)(lsys_turtlestatei *) = lsysi_dobslash;
     void (*at)(lsys_turtlestatei *) = lsysi_doat;
-    void (*drawg)(lsys_turtlestatei *) = lsys_dodrawg;
+    void (*drawg)(lsys_turtlestatei *) = lsysi_dodrawg;
 
     ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
     if (ret == nullptr)
