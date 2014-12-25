@@ -915,8 +915,10 @@ extern void cleartempmsg();
 extern void helptitle();
 extern int putstringcenter(int row, int col, int width, int attr, char const *msg);
 extern int main_menu(int);
-extern int input_field(int, int, char *, int, int, int, int (*)(int));
-extern int field_prompt(char const *hdg, char const *instr, char *fld, int len, int (*checkkey)(int));
+extern int input_field(int options, int attr, char *fld, int len, int row, int col,
+    int (*checkkey)(int curkey));
+extern int field_prompt(char const *hdg, char const *instr, char *fld, int len,
+    int (*checkkey)(int curkey));
 extern bool thinking(int options, char const *msg);
 extern void discardgraphics();
 extern void load_fractint_config();
