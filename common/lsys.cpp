@@ -404,7 +404,6 @@ static void free_lcmds()
 }
 
 #if defined(XFRACT) || defined(_WIN32)
-#define lsysi_doslash_386 lsysi_doslash
 #define lsysi_dobslash_386 lsysi_dobslash
 #define lsys_doat lsysi_doat
 #define lsys_dosizegf lsysi_dosizegf
@@ -497,10 +496,6 @@ static void lsysi_doslash(lsys_turtlestatei *cmd)
     else
         cmd->realangle += cmd->num;
 }
-
-#if !defined(XFRACT) && !defined(_WIN32)
-extern void lsysi_doslash_386(lsys_turtlestatei *cmd);
-#endif
 
 static void lsysi_dobslash(lsys_turtlestatei *cmd)
 {
@@ -874,7 +869,7 @@ LSysISizeTransform(char *s, lsys_turtlestatei *ts)
     void (*minus)(lsys_turtlestatei *) = (ispow2(ts->maxangle)) ? lsysi_dominus_pow2 : lsysi_dominus;
     void (*pipe)(lsys_turtlestatei *) = (ispow2(ts->maxangle)) ? lsysi_dopipe_pow2 : lsysi_dopipe;
 
-    void (*slash)(lsys_turtlestatei *) = lsysi_doslash_386;
+    void (*slash)(lsys_turtlestatei *) = lsysi_doslash;
     void (*bslash)(lsys_turtlestatei *) = lsysi_dobslash_386;
     void (*at)(lsys_turtlestatei *) = lsys_doat;
     void (*dogf)(lsys_turtlestatei *) = lsys_dosizegf;
@@ -983,7 +978,7 @@ LSysIDrawTransform(char *s, lsys_turtlestatei *ts)
     void (*minus)(lsys_turtlestatei *) = (ispow2(ts->maxangle)) ? lsysi_dominus_pow2 : lsysi_dominus;
     void (*pipe)(lsys_turtlestatei *) = (ispow2(ts->maxangle)) ? lsysi_dopipe_pow2 : lsysi_dopipe;
 
-    void (*slash)(lsys_turtlestatei *) = lsysi_doslash_386;
+    void (*slash)(lsys_turtlestatei *) = lsysi_doslash;
     void (*bslash)(lsys_turtlestatei *) = lsysi_dobslash_386;
     void (*at)(lsys_turtlestatei *) = lsys_doat;
     void (*drawg)(lsys_turtlestatei *) = lsys_dodrawg;
