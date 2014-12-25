@@ -52,7 +52,7 @@ void lsysi_dodrawlt(lsys_turtlestatei *cmd);
 std::vector<long> sins;
 std::vector<long> coss;
 long int scale_factor = 11930465L;
-std::string ruleptrs[MAXRULES];
+std::string rules[MAXRULES];
 lsys_cmd *rules2[MAXRULES];
 bool loaded = false;
 
@@ -218,7 +218,7 @@ bool readLSystemFile(char const *str)
         }
     }
     fclose(infile);
-    if (ruleptrs[0].empty() && err < 6)
+    if (rules[0].empty() && err < 6)
     {
         strcat(msgbuf, "Error:  no axiom\n");
         ++err;
@@ -234,7 +234,7 @@ bool readLSystemFile(char const *str)
         stopmsg(STOPMSG_NONE, msgbuf);
         return true;
     }
-    ruleptrs[rulind] = "";
+    rules[rulind] = "";
     return false;
 }
 
@@ -265,7 +265,7 @@ int Lsystem()
         ts.dmaxangle = (char)(maxangle - 1);
 
         sc = rules2;
-        for (auto const &rulesc : ruleptrs)
+        for (auto const &rulesc : rules)
         {
             if (!rulesc.empty())
             {
@@ -283,7 +283,7 @@ int Lsystem()
 
             free_lcmds();
             sc = rules2;
-            for (auto const &rulesc : ruleptrs)
+            for (auto const &rulesc : rules)
                 *sc++ = LSysIDrawTransform(rulesc.c_str(), &ts);
             *sc = nullptr;
 
@@ -311,7 +311,7 @@ int Lsystem()
         ts.dmaxangle = (char)(maxangle - 1);
 
         sc = rules2;
-        for (auto const &rulesc : ruleptrs)
+        for (auto const &rulesc : rules)
         {
             if (!rulesc.empty())
             {
@@ -329,7 +329,7 @@ int Lsystem()
 
             free_lcmds();
             sc = rules2;
-            for (auto const &rulesc : ruleptrs)
+            for (auto const &rulesc : rules)
                 *sc++ = LSysFDrawTransform(rulesc.c_str(), &ts);
             *sc = nullptr;
 
@@ -364,7 +364,7 @@ namespace
 
 void free_rules_mem()
 {
-    for (auto &rule : ruleptrs)
+    for (auto &rule : rules)
     {
         rule.clear();
         rule.shrink_to_fit();
@@ -373,9 +373,9 @@ void free_rules_mem()
 
 int rule_present(char symbol)
 {
-    for (int i = 1; i < MAXRULES && !ruleptrs[i].empty(); ++i)
+    for (int i = 1; i < MAXRULES && !rules[i].empty(); ++i)
     {
-        if (ruleptrs[i][0] == symbol)
+        if (rules[i][0] == symbol)
         {
             return i;
         }
@@ -387,7 +387,7 @@ bool save_rule(char const *rule, int index)
 {
     try
     {
-        ruleptrs[index] = rule;
+        rules[index] = rule;
         return false;
     }
     catch (std::bad_alloc const&)
@@ -400,7 +400,7 @@ bool append_rule(char const *rule, int index)
 {
     try
     {
-        ruleptrs[index] += rule;
+        rules[index] += rule;
         return false;
     }
     catch (std::bad_alloc const &)
