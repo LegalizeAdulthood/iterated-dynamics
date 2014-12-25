@@ -77,7 +77,6 @@ add_executable(id ${OS_ID_OPTIONS}
     common/editpal.cpp
     common/encoder.cpp
     common/evolve.cpp
-    common/f16.cpp
     common/gifview.cpp
     common/loadfdos.cpp
     common/loadfile.cpp

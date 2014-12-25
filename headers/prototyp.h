@@ -215,9 +215,6 @@ extern  void spiralmap(int);
 extern  int unspiralmap();
 extern  void SetupParamBox();
 extern  void ReleaseParamBox();
-// f16 -- C file prototypes
-extern FILE *t16_open(char *, int *, int *, int *, U8 *);
-extern int t16_getline(FILE *, int, U16 *);
 // fracsubr -- C file prototypes
 extern void free_grid_pointers();
 extern void calcfracinit();
