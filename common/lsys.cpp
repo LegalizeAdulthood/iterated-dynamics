@@ -354,7 +354,7 @@ static void free_rules_mem()
 static int rule_present(char symbol)
 {
     int i;
-    for (i = 1; i < MAXRULES && ruleptrs[i] && *ruleptrs[i] != symbol ; i++)
+    for (i = 1; i < MAXRULES && ruleptrs[i] && ruleptrs[i][0] != symbol; i++)
         ;
     return (i < MAXRULES && ruleptrs[i]) ? i : 0;
 }
