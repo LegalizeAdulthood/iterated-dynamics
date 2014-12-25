@@ -324,7 +324,7 @@ static void fill_dta()
  * matching the wildcard specification in path.  Return zero if a file
  * is found, or non-zero if a file was not found or an error occurred.
  */
-int fr_findfirst(char *path)       // Find 1st file (or subdir) meeting path/filespec
+int fr_findfirst(char const *path)       // Find 1st file (or subdir) meeting path/filespec
 {
     if (s_find_context != INVALID_HANDLE_VALUE)
     {

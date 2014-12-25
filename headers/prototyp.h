@@ -873,7 +873,7 @@ extern bool isadirectory(char *s);
 extern bool getafilename(char const *hdg, char const *file_template, char *flname);
 extern int splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext);
 extern int makepath(char *template_str, char const *drive, char const *dir, char const *fname, char const *ext);
-extern int fr_findfirst(char *path);
+extern int fr_findfirst(char const *path);
 extern int fr_findnext();
 extern void shell_sort(void *, int n, unsigned, int (*fct)(VOIDPTR, VOIDPTR));
 extern void fix_dirname(char *dirname);

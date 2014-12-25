@@ -1249,7 +1249,7 @@ static char searchname[FILE_MAX_PATH];
 static char searchext[FILE_MAX_EXT];
 static DIR *currdir = nullptr;
 #endif
-int  fr_findfirst(char *path)       // Find 1st file (or subdir) meeting path/filespec
+int  fr_findfirst(char const *path)       // Find 1st file (or subdir) meeting path/filespec
 {
 #ifndef XFRACT
     union REGS regs;
