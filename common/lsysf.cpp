@@ -461,8 +461,6 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
     auto const minus = ispow2(ts->maxangle) ? lsysf_dominus_pow2 : lsysf_dominus;
     auto const pipe = ispow2(ts->maxangle) ? lsysf_dopipe_pow2 : lsysf_dopipe;
 
-    auto const dogf = lsysf_dosizegf;
-
     lsysf_cmd *ret = (lsysf_cmd *) malloc((long) max * sizeof(lsysf_cmd));
     if (ret == nullptr)
     {
@@ -510,7 +508,7 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
             break;
         case 'g':
         case 'f':
-            f = dogf;
+            f = lsysf_dosizegf;
             break;
         case '[':
             num = 1;
