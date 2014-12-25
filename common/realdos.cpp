@@ -326,6 +326,9 @@ static int isadirname(char const *name)
         return 0;
 }
 
+namespace
+{
+
 void show_speedstring(
     int speedrow,
     char const *speedstring,
@@ -360,6 +363,8 @@ void show_speedstring(
     }
     else
         driver_hide_text_cursor();
+}
+
 }
 
 void process_speedstring(char    *speedstring,
