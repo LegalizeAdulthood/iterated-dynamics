@@ -53,7 +53,7 @@ std::vector<long> sins;
 std::vector<long> coss;
 long const scale_factor = 11930465L;
 std::string rules[MAXRULES];
-lsys_cmd *rules2[MAXRULES];
+lsys_cmd *rule_cmds[MAXRULES];
 bool loaded = false;
 
 }
@@ -264,7 +264,7 @@ int Lsystem()
         ts.maxangle = maxangle;
         ts.dmaxangle = (char)(maxangle - 1);
 
-        sc = rules2;
+        sc = rule_cmds;
         for (auto const &rulesc : rules)
         {
             if (!rulesc.empty())
@@ -275,14 +275,14 @@ int Lsystem()
         *sc = nullptr;
 
         lsysi_dosincos();
-        if (lsysi_findscale(rules2[0], &ts, &rules2[1], order))
+        if (lsysi_findscale(rule_cmds[0], &ts, &rule_cmds[1], order))
         {
             ts.reverse = 0;
             ts.angle = ts.reverse;
             ts.realangle = ts.angle;
 
             free_lcmds();
-            sc = rules2;
+            sc = rule_cmds;
             for (auto const &rulesc : rules)
                 *sc++ = LSysIDrawTransform(rulesc.c_str(), &ts);
             *sc = nullptr;
@@ -291,7 +291,7 @@ int Lsystem()
             ts.curcolor = 15;
             if (ts.curcolor > colors)
                 ts.curcolor = (char)(colors-1);
-            drawLSysI(rules2[0], &ts, &rules2[1], order);
+            drawLSysI(rule_cmds[0], &ts, &rule_cmds[1], order);
         }
         stackoflow = ts.stackoflow;
     }
@@ -310,7 +310,7 @@ int Lsystem()
         ts.maxangle = maxangle;
         ts.dmaxangle = (char)(maxangle - 1);
 
-        sc = rules2;
+        sc = rule_cmds;
         for (auto const &rulesc : rules)
         {
             if (!rulesc.empty())
@@ -321,14 +321,14 @@ int Lsystem()
         *sc = nullptr;
 
         lsysf_dosincos();
-        if (lsysf_findscale(rules2[0], &ts, &rules2[1], order))
+        if (lsysf_findscale(rule_cmds[0], &ts, &rule_cmds[1], order))
         {
             ts.reverse = 0;
             ts.angle = ts.reverse;
             ts.realangle = ts.angle;
 
             free_lcmds();
-            sc = rules2;
+            sc = rule_cmds;
             for (auto const &rulesc : rules)
                 *sc++ = LSysFDrawTransform(rulesc.c_str(), &ts);
             *sc = nullptr;
@@ -337,7 +337,7 @@ int Lsystem()
             ts.curcolor = 15;
             if (ts.curcolor > colors)
                 ts.curcolor = (char)(colors-1);
-            drawLSysF(rules2[0], &ts, &rules2[1], order);
+            drawLSysF(rule_cmds[0], &ts, &rule_cmds[1], order);
         }
         overflow = false;
     }
@@ -411,7 +411,7 @@ bool append_rule(char const *rule, int index)
 
 void free_lcmds()
 {
-    lsys_cmd **sc = rules2;
+    lsys_cmd **sc = rule_cmds;
 
     while (*sc)
         free(*sc++);
