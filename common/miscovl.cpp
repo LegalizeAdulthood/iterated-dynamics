@@ -24,8 +24,6 @@
 
 // routines in this module
 
-void expand_comments(char *target, char *source);
-
 static void put_parm(char const *parm, ...);
 
 static void put_parm_line();
@@ -2313,7 +2311,7 @@ static char const *expand_var(char *var, char *buf)
 static char const esc_char = '$';
 
 // extract comments from the comments= command
-void expand_comments(char *target, char *source)
+void expand_comments(char *target, char const *source)
 {
     int escape = 0;
     char c, oldc, varname[MAXVNAME];
