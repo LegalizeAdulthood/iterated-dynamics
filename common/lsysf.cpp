@@ -561,7 +561,7 @@ lsysf_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
 {
     int max = 10;
     int n = 0;
-    LDBL PI180 = PI / 180.0;
+    LDBL const PI180 = PI / 180.0;
 
     auto const plus = ispow2(ts->maxangle) ? lsysf_doplus_pow2 : lsysf_doplus;
     auto const minus = ispow2(ts->maxangle) ? lsysf_dominus_pow2 : lsysf_dominus;
