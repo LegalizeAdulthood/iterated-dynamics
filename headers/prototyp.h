@@ -854,7 +854,7 @@ extern int get_fracttype();
 extern int get_fract_params(int);
 extern int get_fract3d_params();
 extern int get_3d_params();
-extern int prompt_valuestring(char *buf, fullscreenvalues *val);
+extern int prompt_valuestring(char *buf, fullscreenvalues const *val);
 extern void setbailoutformula(bailouts);
 extern int find_extra_param(fractal_type type);
 extern void load_params(fractal_type fractype);

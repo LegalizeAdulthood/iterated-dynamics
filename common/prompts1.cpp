@@ -33,14 +33,13 @@ int prompt_checkkey_scroll(int curkey);
 
 // Routines in this module
 
-int prompt_valuestring(char *buf, fullscreenvalues *val);
 static  int input_field_list(int attr, char *fld, int vlen, char const **list, int llen,
                              int row, int col, int (*checkkey)(int));
 static  fractal_type select_fracttype(fractal_type t);
 static  int sel_fractype_help(int curkey, int choice);
 static bool select_type_params(fractal_type newfractype, fractal_type oldfractype);
 void set_default_parms();
-static  long gfe_choose_entry(int, char const *, char *, char *);
+static long gfe_choose_entry(int type, char const *title, char const *filename, char *entryname);
 static  int check_gfe_key(int curkey, int choice);
 static  void load_entry_text(FILE *entfile, char *buf, int maxlines, int startrow, int startcol);
 static  void format_parmfile_line(int, char *);
@@ -753,7 +752,7 @@ fullscreen_exit:
     return done;
 }
 
-int prompt_valuestring(char *buf, fullscreenvalues *val)
+int prompt_valuestring(char *buf, fullscreenvalues const *val)
 {   // format value into buf, return field width
     int i, ret;
     switch (val->type)
@@ -2064,7 +2063,7 @@ top:
 }
 
 // subrtn of get_file_entry, separated so that storage gets freed up
-static long gfe_choose_entry(int type, char const *title, char *filename, char *entryname)
+static long gfe_choose_entry(int type, char const *title, char const *filename, char *entryname)
 {
 #ifdef XFRACT
     char const *o_instr = "Press " FK_F6 " to select file, " FK_F2 " for details, " FK_F4 " to toggle sort ";
