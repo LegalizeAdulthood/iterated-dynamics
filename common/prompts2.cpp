@@ -2496,8 +2496,10 @@ get_brws_restart:
 #endif
 
 // copies the proposed new filename to the fullpath variable
-// does not copy directories for PAR files (modes 2 and 3)
-// attempts to extract directory and test for existence (modes 0 and 1)
+// does not copy directories for PAR files
+// (modes AT_AFTER_STARTUP and AT_CMD_LINE_SET_NAME)
+// attempts to extract directory and test for existence
+// (modes AT_CMD_LINE and SSTOOLS_INI)
 int merge_pathnames(char *oldfullpath, char *newfilename, cmd_file mode)
 {
     bool isadir_error = false;
