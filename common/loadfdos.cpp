@@ -28,6 +28,8 @@
       return 0
 
 */
+#include <sstream>
+
 #include <float.h>
 #include <string.h>
 
@@ -217,9 +219,10 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         vidptr = &vid[0]; // for format_item
 
         // format heading
+        std::ostringstream heading_detail;
         if (info->info_id[0] == 'G')
         {
-            strcpy(temp1, "      Non-fractal GIF");
+            heading_detail << "      Non-fractal GIF";
         }
         else
         {
@@ -232,20 +235,17 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             {
                 nameptr = "3D Transform";
             }
+            heading_detail << "Type: " << nameptr;
             if ((!strcmp(nameptr, "formula")) ||
                     (!strcmp(nameptr, "lsystem")) ||
                     (!strncmp(nameptr, "ifs", 3))) // for ifs and ifs3d
             {
-                sprintf(temp1, "Type: %s -> %s", nameptr, blk_3_info->form_name);
-            }
-            else
-            {
-                sprintf(temp1, "Type: %s", nameptr);
+                heading_detail << " -> " << blk_3_info->form_name;
             }
         }
         char heading[256];  // big enough for more than a few lines
         sprintf(heading, "File: %-44s  %d x %d x %d\n%-52s",
-                readname, filexdots, fileydots, filecolors, temp1);
+                readname, filexdots, fileydots, filecolors, heading_detail.str().c_str());
         if (info->info_id[0] != 'G')
         {
             if (save_system)
