@@ -108,16 +108,46 @@ static double vid_aspect(int tryxdots, int tryydots)
 static vidinf *vidptr;
 #endif
 
+namespace
+{
+
+std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
+{
+    std::ostringstream result;
+    if (info->info_id[0] == 'G')
+    {
+        result << "      Non-fractal GIF";
+    }
+    else
+    {
+        char const *nameptr = curfractalspecific->name;
+        if (*nameptr == '*')
+        {
+            ++nameptr;
+        }
+        if (display3d)
+        {
+            nameptr = "3D Transform";
+        }
+        result << "Type: " << nameptr;
+        if ((!strcmp(nameptr, "formula")) ||
+                (!strcmp(nameptr, "lsystem")) ||
+                (!strncmp(nameptr, "ifs", 3))) // for ifs and ifs3d
+        {
+            result << " -> " << blk_3_info->form_name;
+        }
+    }
+    return result.str();
+}
+
+}
+
 int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 {
     vidinf vid[MAXVIDEOMODES];
     bool gotrealmode;
     double ftemp;
     unsigned tmpflags;
-
-#ifndef XFRACT
-    char const *nameptr;
-#endif
 
     g_init_mode = -1;
 
@@ -219,33 +249,10 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         vidptr = &vid[0]; // for format_item
 
         // format heading
-        std::ostringstream heading_detail;
-        if (info->info_id[0] == 'G')
-        {
-            heading_detail << "      Non-fractal GIF";
-        }
-        else
-        {
-            nameptr = curfractalspecific->name;
-            if (*nameptr == '*')
-            {
-                ++nameptr;
-            }
-            if (display3d)
-            {
-                nameptr = "3D Transform";
-            }
-            heading_detail << "Type: " << nameptr;
-            if ((!strcmp(nameptr, "formula")) ||
-                    (!strcmp(nameptr, "lsystem")) ||
-                    (!strncmp(nameptr, "ifs", 3))) // for ifs and ifs3d
-            {
-                heading_detail << " -> " << blk_3_info->form_name;
-            }
-        }
         char heading[256];  // big enough for more than a few lines
         sprintf(heading, "File: %-44s  %d x %d x %d\n%-52s",
-                readname, filexdots, fileydots, filecolors, heading_detail.str().c_str());
+                readname, filexdots, fileydots, filecolors,
+                heading_detail(info, blk_3_info).c_str());
         if (info->info_id[0] != 'G')
         {
             if (save_system)
