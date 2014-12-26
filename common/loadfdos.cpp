@@ -140,6 +140,23 @@ std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info
     return result.str();
 }
 
+std::string save_release_detail()
+{
+    char buff[80];
+    sprintf(buff, "v%d.%01d", save_release/100, (save_release%100)/10);
+    if (save_release%100)
+    {
+        int i = (int) strlen(buff);
+        buff[i] = (char)((save_release%10) + '0');
+        buff[i+1] = 0;
+    }
+    if (save_system == 0 && save_release <= 1410)
+    {
+        strcat(buff, " or earlier");
+    }
+    return std::string(buff);
+}
+
 }
 
 int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
@@ -259,18 +276,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             {
                 strcat(heading, "WinFract ");
             }
-            sprintf(temp1, "v%d.%01d", save_release/100, (save_release%100)/10);
-            if (save_release%100)
-            {
-                int i = (int) strlen(temp1);
-                temp1[i] = (char)((save_release%10) + '0');
-                temp1[i+1] = 0;
-            }
-            if (save_system == 0 && save_release <= 1410)
-            {
-                strcat(temp1, " or earlier");
-            }
-            strcat(heading, temp1);
+            strcat(heading, save_release_detail().c_str());
         }
         strcat(heading, "\n");
         if (info->info_id[0] != 'G' && save_system == 0)
