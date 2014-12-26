@@ -287,8 +287,9 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             }
             else
             {
-                format_vid_inf(g_init_mode, "", temp1);
-                strcat(heading, temp1);
+                char buff[80];
+                format_vid_inf(g_init_mode, "", buff);
+                strcat(heading, buff);
             }
         }
         if (fileaspectratio != 0 && fileaspectratio != screenaspect)
