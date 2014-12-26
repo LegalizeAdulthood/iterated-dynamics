@@ -2114,7 +2114,8 @@ retry:
     }
 
     strcpy(buf, entryname); // preset to last choice made
-    sprintf(temp1, "%s Selection\nFile: %s", title, filename);
+    std::string const heading{std::string{title} + " Selection\n"
+        + "File: " + filename};
     formatitem = nullptr;
     boxdepth = 0;
     colwidth = boxdepth;
@@ -2128,9 +2129,9 @@ retry:
     }
 
     int i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-                          temp1, nullptr, instr, numentries, (char const **) choices,
-                          attributes, boxwidth, boxdepth, colwidth, 0,
-                          formatitem, buf, nullptr, check_gfe_key);
+        heading.c_str(), nullptr, instr, numentries, (char const **) choices,
+        attributes, boxwidth, boxdepth, colwidth, 0,
+        formatitem, buf, nullptr, check_gfe_key);
     if (i == -FIK_F4)
     {
         rewind(gfe_file);
