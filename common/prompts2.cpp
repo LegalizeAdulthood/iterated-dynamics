@@ -2503,7 +2503,6 @@ get_brws_restart:
 int merge_pathnames(char *oldfullpath, char *newfilename, cmd_file mode)
 {
     bool isadir_error = false;
-    bool isafile = false;
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
     char fname[FILE_MAX_FNAME];
@@ -2516,8 +2515,8 @@ int merge_pathnames(char *oldfullpath, char *newfilename, cmd_file mode)
     char ext1[FILE_MAX_EXT];
 
     // no dot or slash so assume a file
-    if (strchr(newfilename, '.') == nullptr && strchr(newfilename, SLASHC) == nullptr)
-        isafile = true;
+    bool isafile = strchr(newfilename, '.') == nullptr
+        && strchr(newfilename, SLASHC) == nullptr;
     bool isadir = isadirectory(newfilename);
     if (isadir)
         fix_dirname(newfilename);
