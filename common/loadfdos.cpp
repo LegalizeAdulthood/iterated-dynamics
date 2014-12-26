@@ -29,6 +29,7 @@
 
 */
 #include <sstream>
+#include <string>
 
 #include <float.h>
 #include <string.h>
@@ -299,21 +300,21 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
         strcat(heading, "\n");
         // set up instructions
-        strcpy(temp1, "Select a video mode.  Use the cursor keypad to move the pointer.\n"
+        std::string instructions{"Select a video mode.  Use the cursor keypad to move the pointer.\n"
                "Press ENTER for selected mode, or use a video mode function key.\n"
-               "Press F1 for help, ");
+               "Press F1 for help, "};
         if (info->info_id[0] != 'G')
         {
-            strcat(temp1, "TAB for fractal information, ");
+            instructions += "TAB for fractal information, ";
         }
-        strcat(temp1, "ESCAPE to back out.");
+        instructions += "ESCAPE to back out.";
 
         int oldhelpmode = helpmode;
         helpmode = HELPLOADFILE;
         int i = fullscreen_choice(0, heading,
-                              "key...name......................err...xdot..ydot.clr.comment..................",
-                              temp1, g_video_table_len, nullptr, &attributes[0],
-                              1, 13, 78, 0, format_item, nullptr, nullptr, check_modekey);
+            "key...name......................err...xdot..ydot.clr.comment..................",
+            instructions.c_str(), g_video_table_len, nullptr, &attributes[0],
+            1, 13, 78, 0, format_item, nullptr, nullptr, check_modekey);
         helpmode = oldhelpmode;
         if (i == -1)
         {
