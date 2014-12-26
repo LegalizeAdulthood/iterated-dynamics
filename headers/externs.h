@@ -462,7 +462,6 @@ extern bool                  tabmode;
 extern bool                  taborhelp;
 extern bool                  Targa_Out;
 extern bool                  Targa_Overlay;
-extern char                  temp1[];
 extern double                tempsqrx;
 extern double                tempsqry;
 extern BYTE                  teststring[];
