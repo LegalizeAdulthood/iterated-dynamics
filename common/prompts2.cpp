@@ -2,6 +2,7 @@
         Various routines that prompt for things.
 */
 #include <algorithm>
+#include <string>
 
 #include <ctype.h>
 #include <string.h>
@@ -1530,7 +1531,9 @@ retry_dir:
         strcat(tmpmask, " ");
         strcat(tmpmask, masks[0]);
     }
-    sprintf(temp1, "%s\nTemplate: %s", hdg, tmpmask);
+
+    std::string const heading{std::string{hdg} + "\n"
+        + "Template: " + tmpmask};
     strcpy(speedstr, filename);
     int i;
     if (speedstr[0] == 0)
@@ -1548,10 +1551,9 @@ retry_dir:
         }
     }
 
-
     i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-                          temp1, nullptr, instr, filecount, (char const **) choices,
-                          attributes, 5, 99, 12, i, nullptr, speedstr, filename_speedstr, check_f6_key);
+        heading.c_str(), nullptr, instr, filecount, (char const **) choices,
+        attributes, 5, 99, 12, i, nullptr, speedstr, filename_speedstr, check_f6_key);
     if (i == -FIK_F4)
     {
         dosort = !dosort;
