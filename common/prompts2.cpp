@@ -2373,7 +2373,6 @@ int get_browse_params()
     int i, k;
     int old_minbox;
     double old_toosmall;
-    char old_browsemask[13];
 
     bool old_autobrowse     = autobrowse;
     bool old_brwschecktype  = brwschecktype;
@@ -2381,7 +2380,7 @@ int get_browse_params()
     bool old_doublecaution  = doublecaution;
     old_minbox         = minbox;
     old_toosmall       = toosmall;
-    strcpy(old_browsemask, browsemask);
+    std::string old_browsemask = browsemask;
 
 get_brws_restart:
     // fill up the previous values arrays
@@ -2416,7 +2415,7 @@ get_brws_restart:
     uvalues[k].uval.ival = minbox;
     choices[++k] = "Browse search filename mask ";
     uvalues[k].type = 's';
-    strcpy(uvalues[k].uval.sval, browsemask);
+    strcpy(uvalues[k].uval.sval, browsemask.c_str());
 
     choices[++k] = "";
     uvalues[k].type = '*';
@@ -2442,7 +2441,7 @@ get_brws_restart:
         brwschecktype  = true;
         doublecaution  = true;
         minbox = 3;
-        strcpy(browsemask, "*.gif");
+        browsemask = "*.gif";
         goto get_brws_restart;
     }
 
@@ -2463,7 +2462,7 @@ get_brws_restart:
     if (minbox > 10)
         minbox = 10;
 
-    strcpy(browsemask, uvalues[++k].uval.sval);
+    browsemask = uvalues[++k].uval.sval;
 
     i = 0;
     if (autobrowse != old_autobrowse ||
@@ -2472,7 +2471,7 @@ get_brws_restart:
             doublecaution != old_doublecaution ||
             toosmall != old_toosmall ||
             minbox != old_minbox ||
-            !stricmp(browsemask, old_browsemask))
+            !stricmp(browsemask.c_str(), old_browsemask.c_str()))
         i = -3;
 
     if (evolving)

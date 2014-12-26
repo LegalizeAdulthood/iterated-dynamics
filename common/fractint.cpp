@@ -135,7 +135,7 @@ bool autobrowse = false;
 bool doublecaution = false;
 bool brwscheckparms = false;
 bool brwschecktype = false;
-char browsemask[13];
+std::string browsemask;
 int scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; // array for mapping notes to a (user defined) scale
 
 
@@ -182,7 +182,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     no_sub_images = false;
     toosmall = 6;
     minbox   = 3;
-    strcpy(browsemask, "*.gif");
+    browsemask = "*.gif";
     strcpy(browsename, "            ");
     name_stack_ptr = -1; // init loaded files stack
 

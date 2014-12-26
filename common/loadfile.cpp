@@ -1386,7 +1386,7 @@ rescan:  // entry for changed browse parms
     wincount = 0;
     no_sub_images = false;
     splitpath(readname, drive, dir, nullptr, nullptr);
-    splitpath(browsemask, nullptr, nullptr, fname, ext);
+    splitpath(browsemask.c_str(), nullptr, nullptr, fname, ext);
     makepath(tmpmask, drive, dir, fname, ext);
     done = (vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
     // draw all visible windows
