@@ -267,10 +267,7 @@ int Lsystem()
         lsys_cmd **sc = rule_cmds;
         for (auto const &rule : rules)
         {
-            if (!rule.empty())
-            {
-                *sc++ = LSysISizeTransform(rule.c_str(), &ts);
-            }
+            *sc++ = LSysISizeTransform(rule.c_str(), &ts);
         }
         *sc = nullptr;
 
@@ -313,10 +310,7 @@ int Lsystem()
         lsysf_cmd **sc = rulef_cmds;
         for (auto const &rule : rules)
         {
-            if (!rule.empty())
-            {
-                *sc++ = LSysFSizeTransform(rule.c_str(), &ts);
-            }
+            *sc++ = LSysFSizeTransform(rule.c_str(), &ts);
         }
         *sc = nullptr;
 
