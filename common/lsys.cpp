@@ -265,11 +265,11 @@ int Lsystem()
         ts.dmaxangle = (char)(maxangle - 1);
 
         lsys_cmd **sc = rule_cmds;
-        for (auto const &rulesc : rules)
+        for (auto const &rule : rules)
         {
-            if (!rulesc.empty())
+            if (!rule.empty())
             {
-                *sc++ = LSysISizeTransform(rulesc.c_str(), &ts);
+                *sc++ = LSysISizeTransform(rule.c_str(), &ts);
             }
         }
         *sc = nullptr;
@@ -283,8 +283,8 @@ int Lsystem()
 
             free_lcmds();
             sc = rule_cmds;
-            for (auto const &rulesc : rules)
-                *sc++ = LSysIDrawTransform(rulesc.c_str(), &ts);
+            for (auto const &rule : rules)
+                *sc++ = LSysIDrawTransform(rule.c_str(), &ts);
             *sc = nullptr;
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
@@ -311,11 +311,11 @@ int Lsystem()
         ts.dmaxangle = (char)(maxangle - 1);
 
         lsysf_cmd **sc = rulef_cmds;
-        for (auto const &rulesc : rules)
+        for (auto const &rule : rules)
         {
-            if (!rulesc.empty())
+            if (!rule.empty())
             {
-                *sc++ = LSysFSizeTransform(rulesc.c_str(), &ts);
+                *sc++ = LSysFSizeTransform(rule.c_str(), &ts);
             }
         }
         *sc = nullptr;
@@ -329,8 +329,8 @@ int Lsystem()
 
             free_lcmds();
             sc = rulef_cmds;
-            for (auto const &rulesc : rules)
-                *sc++ = LSysFDrawTransform(rulesc.c_str(), &ts);
+            for (auto const &rule : rules)
+                *sc++ = LSysFDrawTransform(rule.c_str(), &ts);
             *sc = nullptr;
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
