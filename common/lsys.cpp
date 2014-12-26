@@ -708,16 +708,12 @@ lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, i
             }
             else if (command->ch == '[')
             {
-                char saveang, saverev;
-                long savesize, savex, savey;
-                unsigned long saverang;
-
-                saveang = ts->angle;
-                saverev = ts->reverse;
-                savesize = ts->size;
-                saverang = ts->realangle;
-                savex = ts->xpos;
-                savey = ts->ypos;
+                char const saveang = ts->angle;
+                char const saverev = ts->reverse;
+                long const savesize = ts->size;
+                unsigned long const saverang = ts->realangle;
+                long const savex = ts->xpos;
+                long const savey = ts->ypos;
                 command = findsize(command+1, ts, rules, depth);
                 if (command == nullptr)
                     return (nullptr);

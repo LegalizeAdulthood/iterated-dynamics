@@ -292,15 +292,12 @@ findsize(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth
             }
             else if (command->ch == '[')
             {
-                char saveang, saverev;
-                LDBL savesize, savex, savey, saverang;
-
-                saveang = ts->angle;
-                saverev = ts->reverse;
-                savesize = ts->size;
-                saverang = ts->realangle;
-                savex = ts->xpos;
-                savey = ts->ypos;
+                char const saveang = ts->angle;
+                char const saverev = ts->reverse;
+                LDBL const savesize = ts->size;
+                LDBL const saverang = ts->realangle;
+                LDBL const savex = ts->xpos;
+                LDBL const savey = ts->ypos;
                 command = findsize(command+1, ts, rules, depth);
                 if (command == nullptr)
                     return (nullptr);
