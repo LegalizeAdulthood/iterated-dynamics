@@ -26,6 +26,7 @@ namespace
 bool readLSystemFile(char const *str);
 void free_rules_mem();
 int rule_present(char symbol);
+bool save_axiom(char const *axiom);
 bool save_rule(char const *rule, int index);
 bool append_rule(char const *rule, int index);
 void free_lcmds();
@@ -53,6 +54,7 @@ void lsysi_dodrawlt(lsys_turtlestatei *cmd);
 std::vector<long> sins;
 std::vector<long> coss;
 long const PI_DIV_180_L = 11930465L;
+std::string axiom;
 std::vector<std::string> rules;
 std::vector<lsys_cmd *> rule_cmds;
 std::vector<lsysf_cmd *> rulef_cmds;
@@ -134,7 +136,7 @@ bool readLSystemFile(char const *str)
     }
 
     maxangle = 0;
-    int rulind = 1;
+    int rulind = 0;
     char msgbuf[481] = { 0 }; // enough for 6 full lines
 
     int linenum = 0;
@@ -152,7 +154,7 @@ bool readLSystemFile(char const *str)
             word = strtok(inline1, " =\t\n");
             if (!strcmp(word, "axiom"))
             {
-                if (save_rule(strtok(nullptr, " \t\n"), 0))
+                if (save_axiom(strtok(nullptr, " \t\n")))
                 {
                     strcat(msgbuf, "Error:  out of memory\n");
                     ++err;
@@ -220,7 +222,7 @@ bool readLSystemFile(char const *str)
         }
     }
     fclose(infile);
-    if (rules.size() > 0 && rules[0].empty() && err < 6)
+    if (axiom.empty() && err < 6)
     {
         strcat(msgbuf, "Error:  no axiom\n");
         ++err;
@@ -264,6 +266,7 @@ int Lsystem()
         ts.maxangle = maxangle;
         ts.dmaxangle = (char)(maxangle - 1);
 
+        rule_cmds.push_back(LSysISizeTransform(axiom.c_str(), &ts));
         for (auto const &rule : rules)
         {
             rule_cmds.push_back(LSysISizeTransform(rule.c_str(), &ts));
@@ -278,6 +281,7 @@ int Lsystem()
             ts.realangle = ts.angle;
 
             free_lcmds();
+            rule_cmds.push_back(LSysIDrawTransform(axiom.c_str(), &ts));
             for (auto const &rule : rules)
             {
                 rule_cmds.push_back(LSysIDrawTransform(rule.c_str(), &ts));
@@ -307,6 +311,7 @@ int Lsystem()
         ts.maxangle = maxangle;
         ts.dmaxangle = (char)(maxangle - 1);
 
+        rulef_cmds.push_back(LSysFSizeTransform(axiom.c_str(), &ts));
         for (auto const &rule : rules)
         {
             rulef_cmds.push_back(LSysFSizeTransform(rule.c_str(), &ts));
@@ -321,6 +326,7 @@ int Lsystem()
             ts.realangle = ts.angle;
 
             free_lcmds();
+            rulef_cmds.push_back(LSysFDrawTransform(axiom.c_str(), &ts));
             for (auto const &rule : rules)
             {
                 rulef_cmds.push_back(LSysFDrawTransform(rule.c_str(), &ts));
@@ -363,6 +369,8 @@ void free_rules_mem()
         rule.clear();
         rule.shrink_to_fit();
     }
+    rules.clear();
+    rules.shrink_to_fit();
 }
 
 int rule_present(char symbol)
@@ -375,6 +383,19 @@ int rule_present(char symbol)
         }
     }
     return 0;
+}
+
+bool save_axiom(char const *text)
+{
+    try
+    {
+        axiom = text;
+        return false;
+    }
+    catch (std::bad_alloc const&)
+    {
+        return true;
+    }
 }
 
 bool save_rule(char const *rule, int index)
