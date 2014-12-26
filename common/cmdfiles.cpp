@@ -198,8 +198,6 @@ BYTE txtcolor[] = {
     BLACK*16+WHITE      // C_CONTRIB         contributing authors
 };
 
-char s_makepar[] =          "makepar";
-
 int lzw[2] = { 0 };
 
 /*
@@ -1021,7 +1019,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goodbye();
         }
 
-        if (strcmp(variable, s_makepar) == 0)
+        if (strcmp(variable, "makepar") == 0)
         {
             char *slash, *next = nullptr;
             if (totparms < 1 || totparms > 2)
@@ -1064,7 +1062,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 strncpy(CommandName, next, ITEMNAMELEN);
                 CommandName[ITEMNAMELEN] = 0;
             }
-            *s_makepar = 0; // used as a flag for makepar case
+            make_parameter_file = true;
             if (*readname != 0)
             {
                 if (read_overlay() != 0)
@@ -1074,7 +1072,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             else if (*MAP_name != 0)
             {
-                s_makepar[1] = 0; // second char is flag for map
+                make_parameter_file_map = true;
             }
             xdots = filexdots;
             ydots = fileydots;

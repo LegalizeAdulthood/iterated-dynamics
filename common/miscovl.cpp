@@ -38,6 +38,8 @@ static void update_fractint_cfg();
 static void strip_zeros(char *buf);
 
 bool g_is_true_color = false;
+bool make_parameter_file = false;
+bool make_parameter_file_map = false;
 
 char par_comment[4][MAXCMT];
 
@@ -75,7 +77,7 @@ void make_batch_file()
     char *sptr = nullptr, *sptr2;
     int oldhelpmode;
 
-    if (s_makepar[1] == 0) // makepar map case
+    if (make_parameter_file_map) // makepar map case
         colorsonly = true;
 
     driver_stack_screen();
@@ -146,7 +148,7 @@ void make_batch_file()
     pydots = ydots;
     ym = 1;
     xm = ym;
-    if (*s_makepar == 0)
+    if (make_parameter_file)
         goto skip_UI;
 
     vidmode_keyname(g_video_entry.keynum, vidmde);
@@ -213,7 +215,7 @@ prompt_user:
         if (fullscreen_prompt("Save Current Parameters", promptnum, choices, paramvalues, 0, nullptr) < 0)
             break;
 
-        if (*colorspec == 'o' || s_makepar[1] == 0)
+        if (*colorspec == 'o' || make_parameter_file_map)
         {
             strcpy(colorspec, "y");
             colorsonly = true;
@@ -293,13 +295,13 @@ prompt_user:
             }
         }
 skip_UI:
-        if (*s_makepar == 0)
+        if (make_parameter_file)
         {
             if (filecolors > 0)
                 strcpy(colorspec, "y");
             else
                 strcpy(colorspec, "n");
-            if (s_makepar[1] == 0)
+            if (make_parameter_file_map)
                 maxcolor = 256;
             else
                 maxcolor = filecolors;
@@ -340,7 +342,7 @@ skip_UI:
                         && stricmp(buf2, CommandName) == 0)
                 {   // entry with same name
                     _snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
-                              CommandName, (*s_makepar == 0) ?
+                              CommandName, make_parameter_file ?
                               "... Replacing ..." : "Continue to replace it, Cancel to back out");
                     if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
                     {   // cancel
