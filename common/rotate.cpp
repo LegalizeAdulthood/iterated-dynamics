@@ -477,15 +477,15 @@ void save_palette()
     strcpy(palname, MAP_name);
     oldhelpmode = helpmode;
     driver_stack_screen();
-    temp1[0] = 0;
+    char filename[256] = { 0 };
     helpmode = HELPCOLORMAP;
-    i = field_prompt("Name of map file to write", nullptr, temp1, 60, nullptr);
+    i = field_prompt("Name of map file to write", nullptr, filename, 60, nullptr);
     driver_unstack_screen();
-    if (i != -1 && temp1[0])
+    if (i != -1 && filename[0])
     {
-        if (strchr(temp1, '.') == nullptr)
-            strcat(temp1, ".map");
-        merge_pathnames(palname, temp1, cmd_file::AT_AFTER_STARTUP);
+        if (strchr(filename, '.') == nullptr)
+            strcat(filename, ".map");
+        merge_pathnames(palname, filename, cmd_file::AT_AFTER_STARTUP);
         dacfile = fopen(palname, "w");
         if (dacfile == nullptr)
             driver_buzzer(buzzer_codes::PROBLEM);
@@ -502,7 +502,7 @@ void save_palette()
                         g_dac_box[i][2] << 2);
             memcpy(olddacbox, g_dac_box, 256*3);
             colorstate = 2;
-            strcpy(colorfile, temp1);
+            strcpy(colorfile, filename);
         }
         fclose(dacfile);
     }
