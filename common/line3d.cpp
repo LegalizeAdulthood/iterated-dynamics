@@ -131,7 +131,7 @@ int xxadjust;
 int yyadjust;
 int xshift;
 int yshift;
-int bad_value = -10000;         // set bad values to this
+int const bad_value = -10000;       // set bad values to this
 int bad_check = -3000;          // check values against this to determine if good
 std::vector<point> lastrow; // this array remembers the previous line
 int RAY = 0;                    // Flag to generate Ray trace compatible files in 3d

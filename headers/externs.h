@@ -23,7 +23,7 @@ extern BYTE                  back_color[];
 extern int                   g_bad_config;
 extern int                   bad_code_count;
 extern bool                  bad_outside;
-extern int                   bad_value;
+extern int const             bad_value;
 extern long                  bailout;
 extern bailouts              bailoutest;
 extern int                   basehertz;
