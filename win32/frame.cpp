@@ -342,7 +342,7 @@ static void frame_adjust_size(int width, int height)
     g_frame.nc_width = width + GetSystemMetrics(SM_CXFRAME)*2;
     g_frame.height = height;
     g_frame.nc_height = height +
-                        GetSystemMetrics(SM_CYFRAME)*2 + GetSystemMetrics(SM_CYCAPTION) - 1;
+                        GetSystemMetrics(SM_CYFRAME)*4 + GetSystemMetrics(SM_CYCAPTION) - 1;
 }
 
 void frame_window(int width, int height)
