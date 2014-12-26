@@ -396,8 +396,6 @@ init_restart:
 
     if (fractype != fractal_type::CELLULAR && fractype != fractal_type::ANT)  // fudgetolong fails w >10 digits in double
     {
-        c_real = fudgetolong(param[0]); // integer equivs for it all
-        c_imag = fudgetolong(param[1]);
         xmin  = fudgetolong(xxmin);
         xmax  = fudgetolong(xxmax);
         x3rd  = fudgetolong(xx3rd);
