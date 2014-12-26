@@ -11,7 +11,8 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
         win32/os_win32.cpp
         win32/parsera.cpp
         win32/plot.cpp
-        win32/WinText.cpp)
+        win32/WinText.cpp
+        win32/fractint.rc)
     set(OS_DRIVER_HEADERS
         win32/d_win32.h
         win32/frame.h
