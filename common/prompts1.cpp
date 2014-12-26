@@ -2976,13 +2976,13 @@ static bool check_mapfile()
     int i, oldhelpmode;
     if (dontreadcolor)
         return false;
-    strcpy(temp1, "*");
+    char buff[256] = "*";
     if (mapset)
-        strcpy(temp1, MAP_name);
+        strcpy(buff, MAP_name);
     if (!(g_glasses_type == 1 || g_glasses_type == 2))
         askflag = true;
     else
-        merge_pathnames(temp1, funnyglasses_map_name, cmd_file::AT_CMD_LINE);
+        merge_pathnames(buff, funnyglasses_map_name, cmd_file::AT_CMD_LINE);
 
     while (1)
     {
@@ -2992,18 +2992,18 @@ static bool check_mapfile()
             helpmode = -1;
             i = field_prompt("Enter name of .MAP file to use,\n"
                              "or '*' to use palette from the image to be loaded.",
-                             nullptr, temp1, 60, nullptr);
+                             nullptr, buff, 60, nullptr);
             helpmode = oldhelpmode;
             if (i < 0)
                 return true;
-            if (temp1[0] == '*')
+            if (buff[0] == '*')
             {
                 mapset = false;
                 break;
             }
         }
         memcpy(olddacbox, g_dac_box, 256*3); // save the DAC
-        bool valid = ValidateLuts(temp1);
+        bool valid = ValidateLuts(buff);
         memcpy(g_dac_box, olddacbox, 256*3); // restore the DAC
         if (valid) // Oops, somethings wrong
         {
@@ -3011,7 +3011,7 @@ static bool check_mapfile()
             continue;
         }
         mapset = true;
-        merge_pathnames(MAP_name, temp1, cmd_file::AT_CMD_LINE);
+        merge_pathnames(MAP_name, buff, cmd_file::AT_CMD_LINE);
         break;
     }
     return false;
