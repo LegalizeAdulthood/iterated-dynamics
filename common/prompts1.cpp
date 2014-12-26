@@ -1,6 +1,8 @@
 /*
         Various routines that prompt for things.
 */
+#include <string>
+
 #include <assert.h>
 #include <ctype.h>
 #include <float.h>
@@ -1859,8 +1861,7 @@ long get_file_entry(int type, char const *title, char const *fmask,
             newfile = false;
             if (firsttry)
             {
-                sprintf(temp1, "Can't find %s", filename);
-                stopmsg(STOPMSG_NONE, temp1);
+                stopmsg(STOPMSG_NONE, (std::string{"Can't find "} + filename).c_str());
             }
             sprintf(buf, "Select %s File", title);
             if (getafilename(buf, fmask, filename))
