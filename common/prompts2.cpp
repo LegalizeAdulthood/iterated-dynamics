@@ -2500,8 +2500,10 @@ get_brws_restart:
 // (modes AT_AFTER_STARTUP and AT_CMD_LINE_SET_NAME)
 // attempts to extract directory and test for existence
 // (modes AT_CMD_LINE and SSTOOLS_INI)
-int merge_pathnames(char *oldfullpath, char *newfilename, cmd_file mode)
+int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
 {
+    char newfilename[FILE_MAX_PATH];
+    strcpy(newfilename, filename);
     bool isadir_error = false;
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
