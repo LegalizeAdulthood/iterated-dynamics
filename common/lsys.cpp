@@ -55,7 +55,7 @@ std::vector<long> coss;
 long const PI_DIV_180_L = 11930465L;
 std::vector<std::string> rules;
 lsys_cmd *rule_cmds[MAXRULES];
-lsysf_cmd *rulef_cmds[MAXRULES];
+std::vector<lsysf_cmd *> rulef_cmds;
 bool loaded = false;
 
 }
@@ -307,12 +307,11 @@ int Lsystem()
         ts.maxangle = maxangle;
         ts.dmaxangle = (char)(maxangle - 1);
 
-        lsysf_cmd **sc = rulef_cmds;
         for (auto const &rule : rules)
         {
-            *sc++ = LSysFSizeTransform(rule.c_str(), &ts);
+            rulef_cmds.push_back(LSysFSizeTransform(rule.c_str(), &ts));
         }
-        *sc = nullptr;
+        rulef_cmds.push_back(nullptr);
 
         lsysf_dosincos();
         if (lsysf_findscale(rulef_cmds[0], &ts, &rulef_cmds[1], order))
@@ -322,10 +321,11 @@ int Lsystem()
             ts.realangle = ts.angle;
 
             free_lcmds();
-            sc = rulef_cmds;
             for (auto const &rule : rules)
-                *sc++ = LSysFDrawTransform(rule.c_str(), &ts);
-            *sc = nullptr;
+            {
+                rulef_cmds.push_back(LSysFDrawTransform(rule.c_str(), &ts));
+            }
+            rulef_cmds.push_back(nullptr);
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
             ts.curcolor = 15;
@@ -413,11 +413,14 @@ void free_lcmds()
         while (*sc)
             free(*sc++);
     }
+    for (auto sc : rulef_cmds)
     {
-        lsysf_cmd **sc = rulef_cmds;
-        while (*sc)
-            free(*sc++);
+        if (sc != nullptr)
+        {
+            free(sc);
+        }
     }
+    rulef_cmds.clear();
 }
 
 // integer specific routines
