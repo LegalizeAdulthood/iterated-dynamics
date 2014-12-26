@@ -1,6 +1,8 @@
 #ifndef EXTERNS_H
 #define EXTERNS_H
+#include <string>
 #include <vector>
+
 // keep var names in column 30 for sorting via sort /+30 <in >out
 extern int                   g_adapter;         // index into g_video_table[]
 extern AlternateMath         alternatemath[];   // alternate math function pointers
@@ -15,7 +17,7 @@ extern int                   attractors;
 extern int                   attrperiod[];
 extern DComplex              attr[];
 extern bool                  autobrowse;
-extern char                  autoname[];
+extern std::string           autoname;
 extern char                  autoshowdot;
 extern int                   AutoStereo_depth;
 extern double                AutoStereo_width;

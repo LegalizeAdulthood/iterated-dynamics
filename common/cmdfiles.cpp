@@ -62,7 +62,7 @@ char    orgfrmdir[FILE_MAX_DIR] = {""};// name of directory for orgfrm files
 char    gifmask[13] = {""};
 char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; // Name for print-to-file
 char    savename[FILE_MAX_PATH] = {"fract001"}; // save files using this name
-char    autoname[FILE_MAX_PATH] = {"auto.key"}; // record auto keystrokes here
+std::string autoname{"auto.key"}; // record auto keystrokes here
 bool    potflag = false;        // continuous potential enabled?
 bool    pot16bit = false;               // store 16 bit continuous potential values
 bool    gif87a_flag = false;    // true if GIF87a format, false otherwise
@@ -1331,9 +1331,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (strcmp(variable, "autokeyname") == 0)   // autokeyname=?
     {
-        if (merge_pathnames(autoname, value, mode) < 0)
+        char buff[256];
+        if (merge_pathnames(buff, value, mode) < 0)
         {
             init_msg(variable, value, mode);
+        }
+        else
+        {
+            autoname = buff;
         }
         return CMDARG_NONE;
     }

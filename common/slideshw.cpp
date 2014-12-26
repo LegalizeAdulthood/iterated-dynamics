@@ -292,7 +292,7 @@ start:
 slides_mode
 startslideshow()
 {
-    fpss = fopen(autoname, "r");
+    fpss = fopen(autoname.c_str(), "r");
     if (fpss == nullptr)
         g_slides = slides_mode::OFF;
     ticks = 0;
@@ -318,7 +318,7 @@ void recordshw(int key)
     ticks = clock_ticks();  // current time
     if (fpss == nullptr)
     {
-        fpss = fopen(autoname, "w");
+        fpss = fopen(autoname.c_str(), "w");
         if (fpss == nullptr)
             return;
     }

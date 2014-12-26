@@ -704,7 +704,7 @@ bool tab_display_2(char *msg)
     show_str_var("savename",    savename,     &row, msg);
     show_str_var("parmfile",    CommandFile,  &row, msg);
     show_str_var("ifsfile",     IFSFileName,  &row, msg);
-    show_str_var("autokeyname", autoname,     &row, msg);
+    show_str_var("autokeyname", autoname.c_str(), &row, msg);
     show_str_var("lightname",   light_name,   &row, msg);
     show_str_var("map",         MAP_name,     &row, msg);
     write_row(row++, "Sizeof fractalspecific array %d",
