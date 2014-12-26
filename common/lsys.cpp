@@ -828,17 +828,13 @@ lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, 
             }
             else if (command->ch == '[')
             {
-                char saveang, saverev, savecolor;
-                long savesize, savex, savey;
-                unsigned long saverang;
-
-                saveang = ts->angle;
-                saverev = ts->reverse;
-                savesize = ts->size;
-                saverang = ts->realangle;
-                savex = ts->xpos;
-                savey = ts->ypos;
-                savecolor = ts->curcolor;
+                char const saveang = ts->angle;
+                char const saverev = ts->reverse;
+                long const savesize = ts->size;
+                unsigned long const saverang = ts->realangle;
+                long const savex = ts->xpos;
+                long const savey = ts->ypos;
+                char const savecolor = ts->curcolor;
                 command = drawLSysI(command+1, ts, rules, depth);
                 if (command == nullptr)
                     return (nullptr);
