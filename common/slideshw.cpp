@@ -17,7 +17,7 @@ static void sleep_secs(int);
 static int  showtempmsg_txt(int, int, int, int, char *);
 static void message(int secs, char *buf);
 static void slideshowerr(char const *msg);
-static int  get_scancode(char *mn);
+static int  get_scancode(char const *mn);
 static void get_mnemonic(int code, char *mnemonic);
 
 #define MAX_MNEMONIC    20   // max size of any mnemonic string
@@ -54,7 +54,7 @@ static scancodes scancodes[] =
 };
 #define stop sizeof(scancodes)/sizeof(scancodes)-1
 
-static int get_scancode(char *mn)
+static int get_scancode(char const *mn)
 {
     for (auto const &it : scancodes)
         if (it.code >= 0 && strcmp(mn, it.mnemonic) == 0)
