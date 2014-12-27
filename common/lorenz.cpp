@@ -223,7 +223,7 @@ bool setup_convert_to_screen(affine *scrn_cnvt)
     det = (xx3rd-xxmax)*(yymin-yymax) + (yymin-yy3rd)*(xxmax-xxmin);
     if (det == 0)
         return true;
-    yd = dysize/det;
+    yd = y_size_d/det;
     scrn_cnvt->c =  yd*(yymin-yy3rd);
     scrn_cnvt->d =  yd*(xx3rd-xxmax);
     scrn_cnvt->f = -scrn_cnvt->c*xxmin - scrn_cnvt->d*yymax;
@@ -1933,7 +1933,7 @@ int dynam2dfloat()
         }
 
         xpixel = x_size_d*(xstep+.5)/d;
-        ypixel = dysize*(ystep+.5)/d;
+        ypixel = y_size_d*(ystep+.5)/d;
         x = (double)((xxmin+delxx*xpixel) + (delxx2*ypixel));
         y = (double)((yymax-delyy*ypixel) + (-delyy2*xpixel));
         if (fractype == fractal_type::MANDELCLOUD)
@@ -2010,7 +2010,7 @@ int setup_orbits_to_screen(affine *scrn_cnvt)
     det = (ox3rd-oxmax)*(oymin-oymax) + (oymin-oy3rd)*(oxmax-oxmin);
     if (det == 0)
         return (-1);
-    yd = dysize/det;
+    yd = y_size_d/det;
     scrn_cnvt->c =  yd*(oymin-oy3rd);
     scrn_cnvt->d =  yd*(ox3rd-oxmax);
     scrn_cnvt->f = -scrn_cnvt->c*oxmin - scrn_cnvt->d*oymax;

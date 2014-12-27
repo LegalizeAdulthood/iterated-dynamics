@@ -941,11 +941,11 @@ void drawparmbox(int mode)
     //draw larger box to show parm zooming range
     bl.x = ((px -(int)parmzoom) * (int)(x_size_d+1+grout))-sxoffs-1;
     tl.x = bl.x;
-    tr.y = ((py -(int)parmzoom) * (int)(dysize+1+grout))-syoffs-1;
+    tr.y = ((py -(int)parmzoom) * (int)(y_size_d+1+grout))-syoffs-1;
     tl.y = tr.y;
     tr.x = ((px +1+(int)parmzoom) * (int)(x_size_d+1+grout))-sxoffs;
     br.x = tr.x;
-    bl.y = ((py +1+(int)parmzoom) * (int)(dysize+1+grout))-syoffs;
+    bl.y = ((py +1+(int)parmzoom) * (int)(y_size_d+1+grout))-syoffs;
     br.y = bl.y;
 #ifndef XFRACT
     addbox(br);

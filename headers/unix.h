@@ -15,8 +15,6 @@ typedef float FLOAT4;
 #define chsize(fd, en) ftruncate(fd, en)
 // We get a problem with connect, since it is used by X
 #define connect connect1
-// dysize may conflict with time.h
-#define dysize dysize1
 typedef void (*SignalHandler)(int);
 extern int iocount;
 char *strlwr(char *s);

@@ -1195,7 +1195,7 @@ finish:
         xdots = sxdots;
         ydots = sydots;
         x_size_d = xdots - 1;
-        dysize = ydots - 1;
+        y_size_d = ydots - 1;
         sxoffs = 0;
         syoffs = 0;
         freetempmsg();

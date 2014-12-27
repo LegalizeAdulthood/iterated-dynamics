@@ -1076,7 +1076,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             xdots = filexdots;
             ydots = fileydots;
             x_size_d = xdots - 1;
-            dysize = ydots - 1;
+            y_size_d = ydots - 1;
             calcfracinit();
             make_batch_file();
 #if !defined(XFRACT)
