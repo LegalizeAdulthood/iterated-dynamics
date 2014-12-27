@@ -668,7 +668,7 @@ resumeloop:                             // return here on failed overlays
             }
             if (zoomoff && *kbdmore) // draw/clear a zoom box?
             {
-                drawbox(1);
+                drawbox(true);
             }
             if (driver_resize())
             {
@@ -1996,7 +1996,7 @@ static void restore_zoom()
         std::copy(save_boxx.begin(), save_boxx.end(), &boxx[0]);
         std::copy(save_boxy.begin(), save_boxy.end(), &boxy[0]);
         std::copy(save_boxvalues.begin(), save_boxvalues.end(), &boxvalues[0]);
-        drawbox(1); // get the xxmin etc variables recalc'd by redisplaying
+        drawbox(true); // get the xxmin etc variables recalc'd by redisplaying
     }
 }
 
@@ -2112,7 +2112,7 @@ static void cmp_line_cleanup()
 void clear_zoombox()
 {
     zwidth = 0;
-    drawbox(0);
+    drawbox(false);
     reset_zoom_corners();
 }
 

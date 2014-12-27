@@ -945,7 +945,7 @@ extern int teststart();
 extern void testend();
 extern int testpt(double, double, double, double, long, int);
 // zoom -- C file prototypes
-extern void drawbox(int);
+extern void drawbox(bool draw_it);
 extern void moveboxf(double, double);
 extern void resizebox(int);
 extern void chgboxi(int, int);

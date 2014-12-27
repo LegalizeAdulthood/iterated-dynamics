@@ -89,7 +89,7 @@ void clearbox()
 }
 #endif
 
-void drawbox(int drawit)
+void drawbox(bool drawit)
 {
     coords tl, bl, tr, br; // dot addr of topleft, botleft, etc
     double tmpx, tmpy, dx, dy, rotcos, rotsin, ftemp1, ftemp2;
@@ -746,7 +746,7 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
                     "Cancel resumes old image, continue pans and calculates a new one."))
         {
             zwidth = 0; // cancel the zoombox
-            drawbox(1);
+            drawbox(true);
         }
         else
             calc_status = calc_status_value::PARAMS_CHANGED; // trigger recalc
