@@ -13,9 +13,9 @@
 
 #define PIXELROUND 0.00001
 
-int boxx[NUM_BOXES] = { 0 };
-int boxy[NUM_BOXES] = { 0 };
-int boxvalues[NUM_BOXES] = { 0 };
+int boxx[NUM_BOX_POINTS] = { 0 };
+int boxy[NUM_BOX_POINTS] = { 0 };
+int boxvalues[NUM_BOX_POINTS] = { 0 };
 bool g_video_scroll = false;
 
 static void zmo_calc(double, double, double *, double *, double);
@@ -303,7 +303,7 @@ void drawlines(coords fr, coords to, int dx, int dy)
 void addbox(coords point)
 {
 #if defined(_WIN32)
-    _ASSERTE(boxcount < NUM_BOXES);
+    _ASSERTE(boxcount < NUM_BOX_POINTS);
 #endif
     point.x += sxoffs;
     point.y += syoffs;

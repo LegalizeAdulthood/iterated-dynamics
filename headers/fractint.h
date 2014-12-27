@@ -16,7 +16,7 @@
 #ifdef XFRACT
 #define difftime(now, then) ((now)-(then))
 #endif
-#define NUM_BOXES 4096
+#define NUM_BOX_POINTS 4096
 
 enum class buzzer_codes
 {
