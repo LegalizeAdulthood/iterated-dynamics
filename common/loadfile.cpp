@@ -1309,13 +1309,6 @@ bf_math_type oldbf_math;
 int fgetwindow()
 {
     affine stack_cvt;
-    FRACTAL_INFO read_info;
-    ext_blk_2 blk_2_info;
-    ext_blk_3 blk_3_info;
-    ext_blk_4 blk_4_info;
-    ext_blk_5 blk_5_info;
-    ext_blk_6 blk_6_info;
-    ext_blk_7 blk_7_info;
     time_t thistime, lastime;
     char mesg[40];
     char newname[60];
@@ -1399,6 +1392,13 @@ rescan:  // entry for changed browse parms
         }
         splitpath(DTA.filename, nullptr, nullptr, fname, ext);
         makepath(tmpmask, drive, dir, fname, ext);
+        FRACTAL_INFO read_info;
+        ext_blk_2 blk_2_info;
+        ext_blk_3 blk_3_info;
+        ext_blk_4 blk_4_info;
+        ext_blk_5 blk_5_info;
+        ext_blk_6 blk_6_info;
+        ext_blk_7 blk_7_info;
         if (!find_fractal_info(tmpmask, &read_info, &blk_2_info, &blk_3_info,
                                &blk_4_info, &blk_5_info, &blk_6_info,
                                &blk_7_info) &&
@@ -1417,12 +1417,6 @@ rescan:  // entry for changed browse parms
             save_box(num_dots, wincount);
             wincount++;
         }
-
-        if (blk_2_info.got_data)
-            blk_2_info.resume_data.clear();
-        if (blk_5_info.got_data)
-            blk_5_info.apm_data.clear();
-
         done = (fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
     }
 
