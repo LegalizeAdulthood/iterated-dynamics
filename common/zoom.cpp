@@ -2,6 +2,7 @@
     zoom.c - routines for zoombox manipulation and for panning
 
 */
+#include <cassert>
 #include <vector>
 
 #include <float.h>
@@ -302,9 +303,7 @@ void drawlines(coords fr, coords to, int dx, int dy)
 
 void addbox(coords point)
 {
-#if defined(_WIN32)
-    _ASSERTE(boxcount < NUM_BOX_POINTS);
-#endif
+    assert(boxcount < NUM_BOX_POINTS);
     point.x += sxoffs;
     point.y += syoffs;
     if (point.x >= 0 && point.x < sxdots &&
