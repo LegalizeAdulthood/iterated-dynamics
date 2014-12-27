@@ -193,7 +193,8 @@ void drawbox(bool drawit)
     tr.y   = (int)(ftemp2*(dysize+PIXELROUND));
 
     if (boxcount != 0)
-    { // remove the old box from display
+    {
+        // remove the old box from display
         clearbox();
         boxcount = 0;
     }
@@ -217,7 +218,7 @@ void drawbox(bool drawit)
         boxy[2] = br.y + syoffs;
         boxx[3] = bl.x + sxoffs;
         boxy[3] = bl.y + syoffs;
-        boxcount = 1;
+        boxcount = 4;
 #endif
         dispbox();
     }

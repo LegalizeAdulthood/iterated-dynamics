@@ -1285,16 +1285,16 @@ std::vector<int> browse_box_values;
 
 inline void save_box(int num_dots, int which)
 {
-    std::copy(&boxx[num_dots*which], &boxx[num_dots*(which + 1)], &browse_box_x[num_dots*which]);
-    std::copy(&boxy[num_dots*which], &boxy[num_dots*(which + 1)], &browse_box_y[num_dots*which]);
-    std::copy(&boxvalues[num_dots*which], &boxvalues[num_dots*(which + 1)], &browse_box_values[num_dots*which]);
+    std::copy(&boxx[0], &boxx[num_dots], &browse_box_x[num_dots*which]);
+    std::copy(&boxy[0], &boxy[num_dots], &browse_box_y[num_dots*which]);
+    std::copy(&boxvalues[0], &boxvalues[num_dots], &browse_box_values[num_dots*which]);
 }
 
 inline void restore_box(int num_dots, int which)
 {
-    std::copy(&browse_box_x[num_dots*which], &browse_box_x[num_dots*(which + 1)], &boxx[num_dots*which]);
-    std::copy(&browse_box_y[num_dots*which], &browse_box_y[num_dots*(which + 1)], &boxy[num_dots*which]);
-    std::copy(&browse_box_values[num_dots*which], &browse_box_values[num_dots*(which + 1)], &boxvalues[num_dots*which]);
+    std::copy(&browse_box_x[num_dots*which], &browse_box_x[num_dots*(which + 1)], &boxx[0]);
+    std::copy(&browse_box_y[num_dots*which], &browse_box_y[num_dots*(which + 1)], &boxy[0]);
+    std::copy(&browse_box_values[num_dots*which], &browse_box_values[num_dots*(which + 1)], &boxvalues[0]);
 }
 
 }
@@ -1411,7 +1411,6 @@ rescan:  // entry for changed browse parms
         {
             strcpy(winlist.name, DTA.filename);
             drawindow(color_of_box, &winlist);
-            boxcount *= 2; // double for byte count
             winlist.boxcount = boxcount;
             browse_windows[wincount] = winlist;
             save_box(num_dots, wincount);
@@ -1439,7 +1438,7 @@ rescan:  // entry for changed browse parms
         int index = 0;
         done = 0;
         winlist = browse_windows[index];
-        restore_box(num_dots, wincount);
+        restore_box(num_dots, index);
         showtempmsg(winlist.name);
         while (!done)  /* on exit done = 1 for quick exit,
                                  done = 2 for erase boxes and  exit
@@ -1638,8 +1637,7 @@ rescan:  // entry for changed browse parms
             {
                 winlist = browse_windows[i];
                 boxcount = winlist.boxcount;
-                restore_box(num_dots, index);
-                boxcount >>= 1;
+                restore_box(num_dots, i);
                 if (boxcount > 0)
 #ifdef XFRACT
                     // Turn all boxes off
