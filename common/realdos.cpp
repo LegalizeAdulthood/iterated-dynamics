@@ -489,8 +489,8 @@ int fullscreen_choice(
     lookatmouse = 0;
     ret = -1;
     // preset current to passed string
-    int len = speedstring == nullptr ? 0 : (int) strlen(speedstring);
-    if (speedstring && len > 0)
+    int const len = (speedstring == nullptr) ? 0 : (int) strlen(speedstring);
+    if (len > 0)
     {
         current = 0;
         if (options & CHOICE_NOT_SORTED)
