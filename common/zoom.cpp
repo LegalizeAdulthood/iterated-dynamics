@@ -139,7 +139,7 @@ void drawbox(bool drawit)
 
     // calc co-ords of topleft & botright corners of box
     tmpx = zoom_box_width/-2+fxadj; // from zoombox center as origin, on xdots scale
-    tmpy = zdepth*finalaspectratio/2;
+    tmpy = zoom_box_height*finalaspectratio/2;
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx; // delta x to rotate topleft
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy); // delta y to rotate topleft
 
@@ -159,7 +159,7 @@ void drawbox(bool drawit)
 
     // calc co-ords of bottom right
     ftemp1 = zbx + zoom_box_width - dx - fxadj;
-    ftemp2 = zby - dy/finalaspectratio + zdepth;
+    ftemp2 = zby - dy/finalaspectratio + zoom_box_height;
     br.x   = (int)(ftemp1*(dxsize+PIXELROUND));
     br.y   = (int)(ftemp2*(dysize+PIXELROUND));
     xxmax  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
@@ -175,7 +175,7 @@ void drawbox(bool drawit)
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx;
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
     ftemp1 = zbx + dx - fxadj;
-    ftemp2 = zby + dy/finalaspectratio + zdepth;
+    ftemp2 = zby + dy/finalaspectratio + zoom_box_height;
     bl.x   = (int)(ftemp1*(dxsize+PIXELROUND));
     bl.y   = (int)(ftemp2*(dysize+PIXELROUND));
     xx3rd  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
@@ -336,10 +336,10 @@ void moveboxf(double dx, double dy)
     }
     if (dy != 0.0)
     {
-        if ((zby += dy) + zdepth/2 < 0)
-            zby = zdepth/-2;
-        if (zby + zdepth/2 > 1)
-            zby = 1.0 - zdepth/2;
+        if ((zby += dy) + zoom_box_height/2 < 0)
+            zby = zoom_box_height/-2;
+        if (zby + zoom_box_height/2 > 1)
+            zby = 1.0 - zoom_box_height/2;
         int row;
         if (align != 0
                 && ((row = (int)(zby*(dysize+PIXELROUND))) & (align-1)) != 0)
@@ -354,7 +354,7 @@ void moveboxf(double dx, double dy)
     if (g_video_scroll)                 // scroll screen center to the box center
     {
         int col = (int)((zbx + zoom_box_width/2)*(dxsize + PIXELROUND)) + sxoffs;
-        int row = (int)((zby + zdepth/2)*(dysize + PIXELROUND)) + syoffs;
+        int row = (int)((zby + zoom_box_height/2)*(dysize + PIXELROUND)) + syoffs;
         if (!zscroll)
         {
             // fixed - screen center fixed to the zoombox center
@@ -381,26 +381,26 @@ static void chgboxf(double dwidth, double ddepth)
     if (zoom_box_width+dwidth < 0.05)
         dwidth = 0.05-zoom_box_width;
     zoom_box_width += dwidth;
-    if (zdepth+ddepth > 1)
-        ddepth = 1.0-zdepth;
-    if (zdepth+ddepth < 0.05)
-        ddepth = 0.05-zdepth;
-    zdepth += ddepth;
+    if (zoom_box_height+ddepth > 1)
+        ddepth = 1.0-zoom_box_height;
+    if (zoom_box_height+ddepth < 0.05)
+        ddepth = 0.05-zoom_box_height;
+    zoom_box_height += ddepth;
     moveboxf(dwidth/-2, ddepth/-2); // keep it centered & check limits
 }
 
 void resizebox(int steps)
 {
     double deltax, deltay;
-    if (zdepth*screenaspect > zoom_box_width)
+    if (zoom_box_height*screenaspect > zoom_box_width)
     { // box larger on y axis
         deltay = steps * 0.036 / screenaspect;
-        deltax = zoom_box_width * deltay / zdepth;
+        deltax = zoom_box_width * deltay / zoom_box_height;
     }
     else
     {                              // box larger on x axis
         deltax = steps * 0.036;
-        deltay = zdepth * deltax / zoom_box_width;
+        deltay = zoom_box_height * deltax / zoom_box_width;
     }
     chgboxf(deltax, deltay);
 }
@@ -615,7 +615,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
             && curfractalspecific->calctype != lyapunov
             && curfractalspecific->calctype != calcfroth)
         return (0); // not a worklist-driven type
-    if (zoom_box_width != 1.0 || zdepth != 1.0 || zskew != 0.0 || zrotate != 0.0)
+    if (zoom_box_width != 1.0 || zoom_box_height != 1.0 || zskew != 0.0 || zrotate != 0.0)
         return (0); // not a full size unrotated unskewed zoombox
     if (stdcalcmode == 't')
         return (0); // tesselate, can't do it

@@ -563,7 +563,7 @@ extern int                   yystart;
 extern int                   yystop;
 extern double                zbx;
 extern double                zby;
-extern double                zdepth;
+extern double                zoom_box_height;
 extern int                   zdots;
 extern bool                  zoomoff;
 extern int                   zrotate;

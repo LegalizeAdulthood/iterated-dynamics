@@ -1293,7 +1293,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
     zbx = (MIN(bandx0, bandx1)-sxoffs)/dxsize;
     zby = (MIN(bandy0, bandy1)-syoffs)/dysize;
     zoom_box_width = ABS(bandx1-bandx0)/dxsize;
-    zdepth = zoom_box_width;
+    zoom_box_height = zoom_box_width;
     if (!inside_help)
         di->xbufkey = FIK_ENTER;
     if (di->xlastcolor != -1)
