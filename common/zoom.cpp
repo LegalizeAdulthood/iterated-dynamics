@@ -222,13 +222,14 @@ void drawbox(bool drawit)
     }
 }
 
-void drawlines(coords fr, coords to,
-                         int dx, int dy)
+void drawlines(coords fr, coords to, int dx, int dy)
 {
     if (abs(to.x-fr.x) > abs(to.y-fr.y))
-    { // delta.x > delta.y
+    {
+        // delta.x > delta.y
         if (fr.x > to.x)
-        { // swap so from.x is < to.x
+        {
+            // swap so from.x is < to.x
             coords const tmpp = fr;
             fr = to;
             to = tmpp;
@@ -260,11 +261,12 @@ void drawlines(coords fr, coords to,
             addbox(line2);
         }
     }
-
     else
-    { // delta.y > delta.x
+    {
+        // delta.y > delta.x
         if (fr.y > to.y)
-        { // swap so from.y is < to.y
+        {
+            // swap so from.y is < to.y
             coords const tmpp = fr;
             fr = to;
             to = tmpp;
