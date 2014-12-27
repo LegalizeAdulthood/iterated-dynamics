@@ -486,12 +486,12 @@ done:
         }
 #ifndef XFRACT
         boxcount = 0;                     // no zoom box yet
-        zwidth = 0;
+        zoom_box_width = 0;
 #else
         if (!XZoomWaiting)
         {
             boxcount = 0;                 // no zoom box yet
-            zwidth = 0;
+            zoom_box_width = 0;
         }
 #endif
 
@@ -528,11 +528,11 @@ resumeloop:                             // return here on failed overlays
             else if (initbatch == 0)      // not batch mode
             {
 #ifndef XFRACT
-                lookatmouse = (zwidth == 0 && !g_video_scroll) ? -FIK_PAGE_UP : 3;
+                lookatmouse = (zoom_box_width == 0 && !g_video_scroll) ? -FIK_PAGE_UP : 3;
 #else
-                lookatmouse = (zwidth == 0) ? -FIK_PAGE_UP : 3;
+                lookatmouse = (zoom_box_width == 0) ? -FIK_PAGE_UP : 3;
 #endif
-                if (calc_status == calc_status_value::RESUMABLE && zwidth == 0 && !driver_key_pressed())
+                if (calc_status == calc_status_value::RESUMABLE && zoom_box_width == 0 && !driver_key_pressed())
                 {
                     kbdchar = FIK_ENTER ;  // no visible reason to stop, continue
                 }
@@ -1286,7 +1286,7 @@ do_3d_transform:
         return main_state::RESTORE_START;
     case 'l':
     case 'L':                    // Look for other files within this view
-        if ((zwidth != 0) || driver_diskp())
+        if ((zoom_box_width != 0) || driver_diskp())
         {
             browsing = false;
             driver_buzzer(buzzer_codes::PROBLEM);             // can't browse if zooming or disk video
@@ -1307,7 +1307,7 @@ do_3d_transform:
 #ifdef XFRACT
         XZoomWaiting = false;
 #endif
-        if (zwidth != 0.0)
+        if (zoom_box_width != 0.0)
         {   // do a zoom
             init_pan_or_recalc(0);
             *kbdmore = false;
@@ -1364,10 +1364,10 @@ do_3d_transform:
     case FIK_PAGE_UP:                // page up
         if (zoomoff)
         {
-            if (zwidth == 0)
+            if (zoom_box_width == 0)
             {   // start zoombox
                 zdepth = 1;
-                zwidth = zdepth;
+                zoom_box_width = zdepth;
                 zrotate = 0;
                 zskew = zrotate;
                 zby = 0;
@@ -1385,8 +1385,8 @@ do_3d_transform:
     case FIK_PAGE_DOWN:              // page down
         if (boxcount)
         {
-            if (zwidth >= .999 && zdepth >= 0.999) // end zoombox
-                zwidth = 0;
+            if (zoom_box_width >= .999 && zdepth >= 0.999) // end zoombox
+                zoom_box_width = 0;
             else
                 resizebox(key_count(FIK_PAGE_DOWN));
         }
@@ -1679,7 +1679,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
 #ifdef XFRACT
         XZoomWaiting = false;
 #endif
-        if (zwidth != 0.0)
+        if (zoom_box_width != 0.0)
         {   // do a zoom
             init_pan_or_recalc(0);
             *kbdmore = false;
@@ -1794,10 +1794,10 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_PAGE_UP:                // page up
         if (zoomoff)
         {
-            if (zwidth == 0)
+            if (zoom_box_width == 0)
             {   // start zoombox
                 zdepth = 1;
-                zwidth = zdepth;
+                zoom_box_width = zdepth;
                 zrotate = 0;
                 zskew = zrotate;
                 zby = 0;
@@ -1822,9 +1822,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_PAGE_DOWN:              // page down
         if (boxcount)
         {
-            if (zwidth >= .999 && zdepth >= 0.999)
+            if (zoom_box_width >= .999 && zdepth >= 0.999)
             { // end zoombox
-                zwidth = 0;
+                zoom_box_width = 0;
                 if (evolving&1)
                 {
                     drawparmbox(1); // clear boxes off screen
@@ -2111,7 +2111,7 @@ static void cmp_line_cleanup()
 
 void clear_zoombox()
 {
-    zwidth = 0;
+    zoom_box_width = 0;
     drawbox(false);
     reset_zoom_corners();
 }

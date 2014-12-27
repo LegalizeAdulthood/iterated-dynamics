@@ -913,9 +913,9 @@ static void adjust_to_limitsbf(double expand)
             copy_bf(badjy, bftemp);
     }
 
-    /* if (calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zwidth == 1.0))
+    /* if (calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zoom_box_width == 1.0))
        calc_status = calc_status_value::PARAMS_CHANGED; */
-    if (calc_status == calc_status_value::RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (zwidth == 1.0))
+    if (calc_status == calc_status_value::RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (zoom_box_width == 1.0))
         calc_status = calc_status_value::PARAMS_CHANGED;
 
     // xxmin = cornerx[0] - adjx;
@@ -1044,7 +1044,7 @@ static void adjust_to_limits(double expand)
         if (cornery[i] < 0.0-limit && (ftemp = cornery[i] + limit) < adjy)
             adjy = ftemp;
     }
-    if (calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zwidth == 1.0))
+    if (calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zoom_box_width == 1.0))
         calc_status = calc_status_value::PARAMS_CHANGED;
     xxmin = cornerx[0] - adjx;
     xxmax = cornerx[1] - adjx;

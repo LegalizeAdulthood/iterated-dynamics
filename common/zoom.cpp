@@ -96,8 +96,9 @@ void drawbox(bool drawit)
     double fxwidth, fxskew, fydepth, fyskew, fxadj;
     bf_t bffxwidth, bffxskew, bffydepth, bffyskew, bffxadj;
     int saved = 0;
-    if (zwidth == 0)
-    { // no box to draw
+    if (zoom_box_width == 0)
+    {
+        // no box to draw
         if (boxcount != 0)
         { // remove the old box from display
             clearbox();
@@ -124,7 +125,7 @@ void drawbox(bool drawit)
     fxskew  = sx3rd-sxmin;
     fydepth = sy3rd-symax;
     fyskew  = symin-sy3rd;
-    fxadj   = zwidth*zskew;
+    fxadj   = zoom_box_width*zskew;
 
     if (bf_math != bf_math_type::NONE)
     {
@@ -137,7 +138,7 @@ void drawbox(bool drawit)
     }
 
     // calc co-ords of topleft & botright corners of box
-    tmpx = zwidth/-2+fxadj; // from zoombox center as origin, on xdots scale
+    tmpx = zoom_box_width/-2+fxadj; // from zoombox center as origin, on xdots scale
     tmpy = zdepth*finalaspectratio/2;
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx; // delta x to rotate topleft
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy); // delta y to rotate topleft
@@ -157,7 +158,7 @@ void drawbox(bool drawit)
     }
 
     // calc co-ords of bottom right
-    ftemp1 = zbx + zwidth - dx - fxadj;
+    ftemp1 = zbx + zoom_box_width - dx - fxadj;
     ftemp2 = zby - dy/finalaspectratio + zdepth;
     br.x   = (int)(ftemp1*(dxsize+PIXELROUND));
     br.y   = (int)(ftemp2*(dysize+PIXELROUND));
@@ -169,7 +170,7 @@ void drawbox(bool drawit)
         calc_corner(bfymin, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
     }
     // do the same for botleft & topright
-    tmpx = zwidth/-2 - fxadj;
+    tmpx = zoom_box_width/-2 - fxadj;
     tmpy = 0.0-tmpy;
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx;
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
@@ -185,7 +186,7 @@ void drawbox(bool drawit)
         calc_corner(bfy3rd, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
         restore_stack(saved);
     }
-    ftemp1 = zbx + zwidth - dx + fxadj;
+    ftemp1 = zbx + zoom_box_width - dx + fxadj;
     ftemp2 = zby - dy/finalaspectratio;
     tr.x   = (int)(ftemp1*(dxsize+PIXELROUND));
     tr.y   = (int)(ftemp2*(dysize+PIXELROUND));
@@ -319,10 +320,10 @@ void moveboxf(double dx, double dy)
     align = check_pan();
     if (dx != 0.0)
     {
-        if ((zbx += dx) + zwidth/2 < 0)  // center must stay onscreen
-            zbx = zwidth/-2;
-        if (zbx + zwidth/2 > 1)
-            zbx = 1.0 - zwidth/2;
+        if ((zbx += dx) + zoom_box_width/2 < 0)  // center must stay onscreen
+            zbx = zoom_box_width/-2;
+        if (zbx + zoom_box_width/2 > 1)
+            zbx = 1.0 - zoom_box_width/2;
         int col;
         if (align != 0
                 && ((col = (int)(zbx*(dxsize+PIXELROUND))) & (align-1)) != 0)
@@ -352,7 +353,7 @@ void moveboxf(double dx, double dy)
 #ifndef XFRACT
     if (g_video_scroll)                 // scroll screen center to the box center
     {
-        int col = (int)((zbx + zwidth/2)*(dxsize + PIXELROUND)) + sxoffs;
+        int col = (int)((zbx + zoom_box_width/2)*(dxsize + PIXELROUND)) + sxoffs;
         int row = (int)((zby + zdepth/2)*(dysize + PIXELROUND)) + syoffs;
         if (!zscroll)
         {
@@ -375,11 +376,11 @@ void moveboxf(double dx, double dy)
 
 static void chgboxf(double dwidth, double ddepth)
 {
-    if (zwidth+dwidth > 1)
-        dwidth = 1.0-zwidth;
-    if (zwidth+dwidth < 0.05)
-        dwidth = 0.05-zwidth;
-    zwidth += dwidth;
+    if (zoom_box_width+dwidth > 1)
+        dwidth = 1.0-zoom_box_width;
+    if (zoom_box_width+dwidth < 0.05)
+        dwidth = 0.05-zoom_box_width;
+    zoom_box_width += dwidth;
     if (zdepth+ddepth > 1)
         ddepth = 1.0-zdepth;
     if (zdepth+ddepth < 0.05)
@@ -391,15 +392,15 @@ static void chgboxf(double dwidth, double ddepth)
 void resizebox(int steps)
 {
     double deltax, deltay;
-    if (zdepth*screenaspect > zwidth)
+    if (zdepth*screenaspect > zoom_box_width)
     { // box larger on y axis
         deltay = steps * 0.036 / screenaspect;
-        deltax = zwidth * deltay / zdepth;
+        deltax = zoom_box_width * deltay / zdepth;
     }
     else
     {                              // box larger on x axis
         deltax = steps * 0.036;
-        deltay = zdepth * deltax / zwidth;
+        deltay = zdepth * deltax / zoom_box_width;
     }
     chgboxf(deltax, deltay);
 }
@@ -614,7 +615,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
             && curfractalspecific->calctype != lyapunov
             && curfractalspecific->calctype != calcfroth)
         return (0); // not a worklist-driven type
-    if (zwidth != 1.0 || zdepth != 1.0 || zskew != 0.0 || zrotate != 0.0)
+    if (zoom_box_width != 1.0 || zdepth != 1.0 || zskew != 0.0 || zrotate != 0.0)
         return (0); // not a full size unrotated unskewed zoombox
     if (stdcalcmode == 't')
         return (0); // tesselate, can't do it
@@ -678,7 +679,7 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     int col;
     int alignmask;
     int listfull;
-    if (zwidth == 0.0)
+    if (zoom_box_width == 0.0)
         return (0); // no zoombox, leave calc_status as is
     // got a zoombox
     alignmask = check_pan()-1;
@@ -745,7 +746,7 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
                     "Tables full, can't pan current image.\n"
                     "Cancel resumes old image, continue pans and calculates a new one."))
         {
-            zwidth = 0; // cancel the zoombox
+            zoom_box_width = 0; // cancel the zoombox
             drawbox(true);
         }
         else

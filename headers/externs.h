@@ -569,7 +569,7 @@ extern bool                  zoomoff;
 extern int                   zrotate;
 extern bool                  zscroll;
 extern double                zskew;
-extern double                zwidth;
+extern double                zoom_box_width;
 #if defined(XFRACT)
 extern bool                  fake_lut;
 extern bool                  XZoomWaiting;
