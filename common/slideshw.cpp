@@ -52,7 +52,6 @@ static scancodes scancodes[] =
     { FIK_CTL_HOME,         "CTRL_HOME" },
     { -1,                   nullptr        }
 };
-#define stop sizeof(scancodes)/sizeof(scancodes)-1
 
 static int get_scancode(char const *mn)
 {
@@ -66,14 +65,15 @@ static int get_scancode(char const *mn)
 static void get_mnemonic(int code, char *mnemonic)
 {
     *mnemonic = 0;
-    for (int i = 0; i < stop; i++)
-        if (code == scancodes[i].code)
+    for (auto const &it : scancodes)
+    {
+        if (code == it.code)
         {
-            strcpy(mnemonic, scancodes[i].mnemonic);
+            strcpy(mnemonic, it.mnemonic);
             break;
         }
+    }
 }
-#undef stop
 
 bool busy = false;
 static FILE *fpss = nullptr;
