@@ -49,14 +49,13 @@ static scancodes scancodes[] =
     { FIK_CTL_DOWN_ARROW,   "CTRL_DOWN" },
     { FIK_CTL_UP_ARROW,     "CTRL_UP"   },
     { FIK_CTL_END,          "CTRL_END"  },
-    { FIK_CTL_HOME,         "CTRL_HOME" },
-    { -1,                   nullptr        }
+    { FIK_CTL_HOME,         "CTRL_HOME" }
 };
 
 static int get_scancode(char const *mn)
 {
     for (auto const &it : scancodes)
-        if (it.code >= 0 && strcmp(mn, it.mnemonic) == 0)
+        if (strcmp(mn, it.mnemonic) == 0)
             return it.code;
 
     return -1;
