@@ -116,7 +116,7 @@ void drawbox(bool drawit)
         bffyskew  = alloc_stack(rbflength+2);
         bffxadj   = alloc_stack(rbflength+2);
     }
-    ftemp1 = PI*zrotate/72; // convert to radians
+    ftemp1 = PI*zoom_box_rotation/72; // convert to radians
     rotcos = cos(ftemp1);   // sin & cos of rotation
     rotsin = sin(ftemp1);
 
@@ -125,7 +125,7 @@ void drawbox(bool drawit)
     fxskew  = sx3rd-sxmin;
     fydepth = sy3rd-symax;
     fyskew  = symin-sy3rd;
-    fxadj   = zoom_box_width*zskew;
+    fxadj   = zoom_box_width*zoom_box_skew;
 
     if (bf_math != bf_math_type::NONE)
     {
@@ -615,7 +615,8 @@ static int check_pan() // return 0 if can't, alignment requirement if can
             && curfractalspecific->calctype != lyapunov
             && curfractalspecific->calctype != calcfroth)
         return (0); // not a worklist-driven type
-    if (zoom_box_width != 1.0 || zoom_box_height != 1.0 || zskew != 0.0 || zrotate != 0.0)
+    if (zoom_box_width != 1.0 || zoom_box_height != 1.0
+        || zoom_box_skew != 0.0 || zoom_box_rotation != 0.0)
         return (0); // not a full size unrotated unskewed zoombox
     if (stdcalcmode == 't')
         return (0); // tesselate, can't do it

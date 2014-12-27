@@ -2017,8 +2017,8 @@ xhandleevents()
             {
                 bandy1 = bandy0+1;
             }
-            zrotate = 0;
-            zskew = 0;
+            zoom_box_rotation = 0;
+            zoom_box_skew = 0;
             zbx = (MIN(bandx0, bandx1)-sxoffs)/dxsize;
             zby = (MIN(bandy0, bandy1)-syoffs)/dysize;
             zoom_box_width = ABS(bandx1-bandx0)/dxsize;

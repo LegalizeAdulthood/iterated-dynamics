@@ -1340,16 +1340,16 @@ do_3d_transform:
         if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_HOME);
-            if ((zskew -= 0.02 * i) < -0.48)
-                zskew = -0.48;
+            if ((zoom_box_skew -= 0.02 * i) < -0.48)
+                zoom_box_skew = -0.48;
         }
         break;
     case FIK_CTL_END:                // Ctrl-end
         if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_END);
-            if ((zskew += 0.02 * i) > 0.48)
-                zskew = 0.48;
+            if ((zoom_box_skew += 0.02 * i) > 0.48)
+                zoom_box_skew = 0.48;
         }
         break;
     case FIK_CTL_PAGE_UP:            // Ctrl-pgup
@@ -1368,8 +1368,8 @@ do_3d_transform:
             {   // start zoombox
                 zoom_box_height = 1;
                 zoom_box_width = zoom_box_height;
-                zrotate = 0;
-                zskew = zrotate;
+                zoom_box_rotation = 0;
+                zoom_box_skew = zoom_box_rotation;
                 zby = 0;
                 zbx = zby;
                 find_special_colors();
@@ -1393,11 +1393,11 @@ do_3d_transform:
         break;
     case FIK_CTL_MINUS:              // Ctrl-kpad-
         if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-            zrotate += key_count(FIK_CTL_MINUS);
+            zoom_box_rotation += key_count(FIK_CTL_MINUS);
         break;
     case FIK_CTL_PLUS:               // Ctrl-kpad+
         if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-            zrotate -= key_count(FIK_CTL_PLUS);
+            zoom_box_rotation -= key_count(FIK_CTL_PLUS);
         break;
     case FIK_CTL_INSERT:             // Ctrl-ins
         boxcolor += key_count(FIK_CTL_INSERT);
@@ -1758,16 +1758,16 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_HOME);
-            if ((zskew -= 0.02 * i) < -0.48)
-                zskew = -0.48;
+            if ((zoom_box_skew -= 0.02 * i) < -0.48)
+                zoom_box_skew = -0.48;
         }
         break;
     case FIK_CTL_END:                // Ctrl-end
         if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_END);
-            if ((zskew += 0.02 * i) > 0.48)
-                zskew = 0.48;
+            if ((zoom_box_skew += 0.02 * i) > 0.48)
+                zoom_box_skew = 0.48;
         }
         break;
     case FIK_CTL_PAGE_UP:
@@ -1798,8 +1798,8 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             {   // start zoombox
                 zoom_box_height = 1;
                 zoom_box_width = zoom_box_height;
-                zrotate = 0;
-                zskew = zrotate;
+                zoom_box_rotation = 0;
+                zoom_box_skew = zoom_box_rotation;
                 zby = 0;
                 zbx = zby;
                 find_special_colors();
@@ -1837,11 +1837,11 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         break;
     case FIK_CTL_MINUS:              // Ctrl-kpad-
         if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-            zrotate += key_count(FIK_CTL_MINUS);
+            zoom_box_rotation += key_count(FIK_CTL_MINUS);
         break;
     case FIK_CTL_PLUS:               // Ctrl-kpad+
         if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-            zrotate -= key_count(FIK_CTL_PLUS);
+            zoom_box_rotation -= key_count(FIK_CTL_PLUS);
         break;
     case FIK_CTL_INSERT:             // Ctrl-ins
         boxcolor += key_count(FIK_CTL_INSERT);

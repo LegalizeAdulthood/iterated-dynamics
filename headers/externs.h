@@ -566,9 +566,9 @@ extern double                zby;
 extern double                zoom_box_height;
 extern int                   zdots;
 extern bool                  zoomoff;
-extern int                   zrotate;
+extern int                   zoom_box_rotation;
 extern bool                  zscroll;
-extern double                zskew;
+extern double                zoom_box_skew;
 extern double                zoom_box_width;
 #if defined(XFRACT)
 extern bool                  fake_lut;

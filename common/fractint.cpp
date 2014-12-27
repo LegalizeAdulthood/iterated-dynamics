@@ -47,9 +47,9 @@ double  dxsize, dysize;         // xdots-1, ydots-1
 int     colors = 256;           // maximum colors available
 long    maxit;                  // try this many iterations
 int     boxcount;               // 0 if no zoom-box yet
-int     zrotate;                // zoombox rotation
+int     zoom_box_rotation;                // zoombox rotation
 double  zbx, zby;               // topleft of zoombox
-double  zoom_box_width, zoom_box_height, zskew;  // zoombox size & shape
+double  zoom_box_width, zoom_box_height, zoom_box_skew;  // zoombox size & shape
 
 fractal_type fractype;               // if == 0, use Mandelbrot
 char    stdcalcmode;            // '1', '2', 'g', 'b'
