@@ -23,8 +23,6 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
 static void move_zoombox(int);
 static bool fromtext_flag = false;      // = true if we're in graphics mode
 static int call_line3d(BYTE *pixels, int linelen);
-static  void note_zoom();
-static  void restore_zoom();
 static  void move_zoombox(int keynum);
 static  void cmp_line_cleanup();
 static void restore_history_info(int);
@@ -34,9 +32,6 @@ int finishrow = 0;    // save when this row is finished
 EVOLUTION_INFO evolve_info = { 0 };
 bool have_evolve_info = false;
 char old_stdcalcmode;
-static std::vector<int> save_boxx;
-static std::vector<int> save_boxy;
-static std::vector<int> save_boxvalues;
 static  int        historyptr = -1;     // user pointer into history tbl
 static  int        saveptr = 0;         // save ptr into history tbl
 static bool historyflag = false;        // are we backing off in history?
@@ -1230,9 +1225,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case 's':                    // save-to-disk
         if (driver_diskp() && disktarga)
             return main_state::CONTINUE;  // disk video and targa, nothing to save
-        note_zoom();
         savetodisk(savename);
-        restore_zoom();
         return main_state::CONTINUE;
     case '#':                    // 3D overlay
 #ifdef XFRACT
@@ -1973,31 +1966,6 @@ static int call_line3d(BYTE *pixels, int linelen)
 {
     // this routine exists because line3d might be in an overlay
     return line3d(pixels, linelen);
-}
-
-static void note_zoom()
-{
-    if (boxcount)  // save zoombox stuff in mem before encode (mem reused)
-    {
-        save_boxx.resize(boxcount);
-        save_boxy.resize(boxcount);
-        save_boxvalues.resize(boxcount);
-        reset_zoom_corners();   // reset these to overall image, not box
-        std::copy(&boxx[0], &boxx[boxcount], save_boxx.begin());
-        std::copy(&boxy[0], &boxy[boxcount], save_boxy.begin());
-        std::copy(&boxvalues[0], &boxvalues[boxcount], save_boxvalues.begin());
-    }
-}
-
-static void restore_zoom()
-{
-    if (boxcount) // restore zoombox arrays
-    {
-        std::copy(save_boxx.begin(), save_boxx.end(), &boxx[0]);
-        std::copy(save_boxy.begin(), save_boxy.end(), &boxy[0]);
-        std::copy(save_boxvalues.begin(), save_boxvalues.end(), &boxvalues[0]);
-        drawbox(true); // get the xxmin etc variables recalc'd by redisplaying
-    }
 }
 
 // do all pending movement at once for smooth mouse diagonal moves
