@@ -56,12 +56,11 @@ static scancodes scancodes[] =
 
 static int get_scancode(char *mn)
 {
-    int i;
-    for (i = 0; i < stop; i++)
-        if (strcmp((char *)mn, scancodes[i].mnemonic) == 0)
-            break;
-    // cppcheck-suppress uninitvar
-    return (scancodes[i].code);
+    for (auto const &it : scancodes)
+        if (it.code >= 0 && strcmp(mn, it.mnemonic) == 0)
+            return it.code;
+
+    return -1;
 }
 
 static void get_mnemonic(int code, char *mnemonic)
