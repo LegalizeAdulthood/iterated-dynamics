@@ -1451,7 +1451,7 @@ rescan:  // entry for changed browse parms
             while (!driver_key_pressed())
             {
                 time(&thistime);
-                if (difftime(thistime, lastime) > .2)
+                if (static_cast<double>(thistime - lastime) > 0.2)
                 {
                     lastime = thistime;
                     toggle = 1- toggle;
