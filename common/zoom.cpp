@@ -225,27 +225,25 @@ void drawbox(bool drawit)
 void drawlines(coords fr, coords to,
                          int dx, int dy)
 {
-    int xincr, yincr, ctr;
-    int altctr, altdec, altinc;
-    coords tmpp, line1, line2;
-
     if (abs(to.x-fr.x) > abs(to.y-fr.y))
     { // delta.x > delta.y
         if (fr.x > to.x)
         { // swap so from.x is < to.x
-            tmpp = fr;
+            coords const tmpp = fr;
             fr = to;
             to = tmpp;
         }
-        xincr = (to.x-fr.x)*4/sxdots+1; // do every 1st, 2nd, 3rd, or 4th dot
-        ctr = (to.x-fr.x-1)/xincr;
-        altdec = abs(to.y-fr.y)*xincr;
-        altinc = to.x-fr.x;
-        altctr = altinc/2;
-        yincr = (to.y > fr.y)?1:-1;
-        line1.x = fr.x;
-        line2.x = line1.x + dx;
+        int const xincr = (to.x-fr.x)*4/sxdots+1; // do every 1st, 2nd, 3rd, or 4th dot
+        int ctr = (to.x-fr.x-1)/xincr;
+        int const altdec = abs(to.y-fr.y)*xincr;
+        int const altinc = to.x-fr.x;
+        int altctr = altinc/2;
+        int const yincr = (to.y > fr.y)?1:-1;
+        coords line1;
         line1.y = fr.y;
+        line1.x = fr.x;
+        coords line2;
+        line2.x = line1.x + dx;
         line2.y = line1.y + dy;
         while (--ctr >= 0)
         {
@@ -267,19 +265,21 @@ void drawlines(coords fr, coords to,
     { // delta.y > delta.x
         if (fr.y > to.y)
         { // swap so from.y is < to.y
-            tmpp = fr;
+            coords const tmpp = fr;
             fr = to;
             to = tmpp;
         }
-        yincr = (to.y-fr.y)*4/sydots+1; // do every 1st, 2nd, 3rd, or 4th dot
-        ctr = (to.y-fr.y-1)/yincr;
-        altdec = abs(to.x-fr.x)*yincr;
-        altinc = to.y-fr.y;
-        altctr = altinc/2;
-        xincr = (to.x > fr.x) ? 1 : -1;
+        int const yincr = (to.y-fr.y)*4/sydots+1; // do every 1st, 2nd, 3rd, or 4th dot
+        int ctr = (to.y-fr.y-1)/yincr;
+        int const altdec = abs(to.x-fr.x)*yincr;
+        int const altinc = to.y-fr.y;
+        int altctr = altinc/2;
+        int const xincr = (to.x > fr.x) ? 1 : -1;
+        coords line1;
         line1.x = fr.x;
-        line2.x = line1.x + dx;
         line1.y = fr.y;
+        coords line2;
+        line2.x = line1.x + dx;
         line2.y = line1.y + dy;
         while (--ctr >= 0)
         {
