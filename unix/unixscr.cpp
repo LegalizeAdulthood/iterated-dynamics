@@ -2019,9 +2019,9 @@ xhandleevents()
             }
             zoom_box_rotation = 0;
             zoom_box_skew = 0;
-            zbx = (MIN(bandx0, bandx1)-sxoffs)/dxsize;
+            zbx = (MIN(bandx0, bandx1)-sxoffs)/x_size_d;
             zby = (MIN(bandy0, bandy1)-syoffs)/dysize;
-            zoom_box_width = ABS(bandx1-bandx0)/dxsize;
+            zoom_box_width = ABS(bandx1-bandx0)/x_size_d;
             zoom_box_height = zoom_box_width;
             if (!inside_help)
             {

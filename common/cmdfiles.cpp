@@ -1075,7 +1075,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             xdots = filexdots;
             ydots = fileydots;
-            dxsize = xdots - 1;
+            x_size_d = xdots - 1;
             dysize = ydots - 1;
             calcfracinit();
             make_batch_file();

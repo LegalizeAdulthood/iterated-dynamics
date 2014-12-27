@@ -2098,8 +2098,8 @@ static void bfsetup_convert_to_screen()
     // det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-yy3rd)*(xxmax-xxmin)
     add_bf(bt_det, bt_tmp1, bt_tmp2);
 
-    // xd = dxsize/det
-    floattobf(bt_tmp1, dxsize);
+    // xd = x_size_d/det
+    floattobf(bt_tmp1, x_size_d);
     div_bf(bt_xd, bt_tmp1, bt_det);
 
     // a =  xd*(yymax-yy3rd)

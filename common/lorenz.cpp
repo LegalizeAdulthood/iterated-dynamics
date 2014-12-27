@@ -215,7 +215,7 @@ bool setup_convert_to_screen(affine *scrn_cnvt)
     det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-yy3rd)*(xxmax-xxmin);
     if (det == 0)
         return true;
-    xd = dxsize/det;
+    xd = x_size_d/det;
     scrn_cnvt->a =  xd*(yymax-yy3rd);
     scrn_cnvt->b =  xd*(xx3rd-xxmin);
     scrn_cnvt->e = -scrn_cnvt->a*xxmin - scrn_cnvt->b*yymax;
@@ -1932,7 +1932,7 @@ int dynam2dfloat()
             }
         }
 
-        xpixel = dxsize*(xstep+.5)/d;
+        xpixel = x_size_d*(xstep+.5)/d;
         ypixel = dysize*(ystep+.5)/d;
         x = (double)((xxmin+delxx*xpixel) + (delxx2*ypixel));
         y = (double)((yymax-delyy*ypixel) + (-delyy2*xpixel));
@@ -2002,7 +2002,7 @@ int setup_orbits_to_screen(affine *scrn_cnvt)
     det = (ox3rd-oxmin)*(oymin-oymax) + (oymax-oy3rd)*(oxmax-oxmin);
     if (det == 0)
         return (-1);
-    xd = dxsize/det;
+    xd = x_size_d/det;
     scrn_cnvt->a =  xd*(oymax-oy3rd);
     scrn_cnvt->b =  xd*(ox3rd-oxmin);
     scrn_cnvt->e = -scrn_cnvt->a*oxmin - scrn_cnvt->b*oymax;

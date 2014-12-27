@@ -387,10 +387,10 @@ init_restart:
     else
     {
         adjust_to_limits(1.0); // make sure all corners in valid range
-        delxx  = (LDBL)(xxmax - xx3rd) / (LDBL)dxsize; // calculate stepsizes
+        delxx  = (LDBL)(xxmax - xx3rd) / (LDBL)x_size_d; // calculate stepsizes
         delyy  = (LDBL)(yymax - yy3rd) / (LDBL)dysize;
         delxx2 = (LDBL)(xx3rd - xxmin) / (LDBL)dysize;
-        delyy2 = (LDBL)(yy3rd - yymin) / (LDBL)dxsize;
+        delyy2 = (LDBL)(yy3rd - yymin) / (LDBL)x_size_d;
         fill_dx_array();
     }
 
@@ -559,13 +559,13 @@ expand_retry:
 
     // calculate factors which plot real values to screen co-ords
     // calcfrac.c plot_orbit routines have comments about this
-    double ftemp = (double)((0.0-delyy2) * delxx2 * dxsize * dysize
+    double ftemp = (double)((0.0-delyy2) * delxx2 * x_size_d * dysize
                      - (xxmax-xx3rd) * (yy3rd-yymax));
     if (ftemp != 0)
     {
-        plotmx1 = (double)(delxx2 * dxsize * dysize / ftemp);
-        plotmx2 = (yy3rd-yymax) * dxsize / ftemp;
-        plotmy1 = (double)((0.0-delyy2) * dxsize * dysize / ftemp);
+        plotmx1 = (double)(delxx2 * x_size_d * dysize / ftemp);
+        plotmx2 = (yy3rd-yymax) * x_size_d / ftemp;
+        plotmy1 = (double)((0.0-delyy2) * x_size_d * dysize / ftemp);
         plotmy2 = (xxmax-xx3rd) * dysize / ftemp;
     }
     if (bf_math == bf_math_type::NONE)

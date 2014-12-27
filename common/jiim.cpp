@@ -1194,7 +1194,7 @@ finish:
         finalaspectratio = screenaspect;
         xdots = sxdots;
         ydots = sydots;
-        dxsize = xdots - 1;
+        x_size_d = xdots - 1;
         dysize = ydots - 1;
         sxoffs = 0;
         syoffs = 0;

@@ -120,7 +120,7 @@ extern char                  drawmode;
 extern std::vector<double>   dx0;
 extern std::vector<double>   dx1;
 extern double              (*dxpixel)();
-extern double                dxsize;
+extern double                x_size_d;
 extern std::vector<double>   dy0;
 extern std::vector<double>   dy1;
 extern double              (*dypixel)();
