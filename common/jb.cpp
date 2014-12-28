@@ -154,7 +154,7 @@ JulibrotSetup()
         mapname = Glasses1Map.c_str();
     }
     else
-        mapname = GreyFile;
+        mapname = GreyFile.c_str();
     if (savedac != 1)
     {
         if (ValidateLuts(mapname))

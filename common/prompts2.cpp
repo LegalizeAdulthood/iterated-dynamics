@@ -952,7 +952,7 @@ double starfield_values[4] = {
     30.0, 100.0, 5.0, 0.0
 };
 
-char GreyFile[] = "altern.map";
+std::string const GreyFile{"altern.map"};
 
 int starfield()
 {
@@ -975,7 +975,7 @@ int starfield()
     con  = (long)(((starfield_values[1]) / 100.0) * (1L << 16));
     Slope = (int)(starfield_values[2]);
 
-    if (ValidateLuts(GreyFile))
+    if (ValidateLuts(GreyFile.c_str()))
     {
         stopmsg(STOPMSG_NONE, "Unable to load ALTERN.MAP");
         busy = false;
