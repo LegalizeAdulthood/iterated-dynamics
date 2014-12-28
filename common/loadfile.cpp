@@ -460,7 +460,6 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (blk_3_info.got_data)
     {
         blk_3_info.form_name[ITEMNAMELEN] = 0;
-        char *nameptr = nullptr;
         switch (static_cast<fractal_type>(read_info.fractal_type))
         {
         case fractal_type::LSYSTEM:
@@ -482,10 +481,6 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             uses_p4 = blk_3_info.uses_p4 != 0;
             uses_p5 = blk_3_info.uses_p5 != 0;
             break;
-        }
-        if (nameptr)
-        {
-            strcpy(nameptr, blk_3_info.form_name);
         }
         // perhaps in future add more here, check block_len for backward compatibility
     }
