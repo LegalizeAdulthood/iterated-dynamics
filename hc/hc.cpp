@@ -3599,6 +3599,15 @@ public:
     {
     }
 
+    ~compiler()
+    {
+        if (swapfile != nullptr)
+        {
+            fclose(swapfile);
+            remove(swappath.c_str());
+        }
+    }
+
     int process();
 
 private:
@@ -3833,9 +3842,6 @@ void compiler::compile()
 
     if (errors || warnings)
         report_errors();
-
-    fclose(swapfile);
-    remove(swappath.c_str());
 }
 
 void compiler::print()
@@ -3850,9 +3856,6 @@ void compiler::print()
 
     if (errors || warnings)
         report_errors();
-
-    fclose(swapfile);
-    remove(swappath.c_str());
 }
 
 void compiler::render_html()
