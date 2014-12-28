@@ -2648,7 +2648,7 @@ struct DOC_INFO
 {
     int cnum;
     int tnum;
-    int link_dest_warn;
+    bool link_dest_warn;
 };
 
 struct PAGINATE_DOC_INFO : public DOC_INFO
@@ -2885,7 +2885,7 @@ void paginate_document()
 
     info.tnum = -1;
     info.cnum = info.tnum;
-    info.link_dest_warn = 1;
+    info.link_dest_warn = true;
 
     process_document(pd_get_info, paginate_doc_output, &info);
 
@@ -3343,7 +3343,7 @@ void print_document(char const *fname)
 
     info.tnum = -1;
     info.cnum = info.tnum;
-    info.link_dest_warn = 0;
+    info.link_dest_warn = false;
 
     info.file = fopen(fname, "wt");
     if (info.file == nullptr)
@@ -3880,7 +3880,7 @@ void compiler::paginate_html_document()
 
     info.tnum = -1;
     info.cnum = info.tnum;
-    info.link_dest_warn = 1;
+    info.link_dest_warn = true;
 
     process_document(pd_get_info, paginate_doc_output, &info);
 
@@ -3954,7 +3954,7 @@ void compiler::print_html_document(std::string const &fname)
 
     info.tnum = -1;
     info.cnum = info.tnum;
-    info.link_dest_warn = 0;
+    info.link_dest_warn = false;
 
     info.file = fopen(fname.c_str(), "wt");
     if (info.file == nullptr)
