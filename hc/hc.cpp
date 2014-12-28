@@ -347,7 +347,7 @@ char *get_topic_text(TOPIC const *t)
 }
 
 
-void release_topic_text(TOPIC *t, int save)
+void release_topic_text(TOPIC const *t, int save)
 {
     if (save)
     {
@@ -421,7 +421,7 @@ int add_link(LINK *l)
 #define PAGE_ALLOC_SIZE (4)
 
 
-int add_page(TOPIC *t, PAGE *p)
+int add_page(TOPIC *t, PAGE const *p)
 {
     if (t->num_page == 0)
         t->page = static_cast<PAGE *>(newx(sizeof(PAGE)*PAGE_ALLOC_SIZE));
