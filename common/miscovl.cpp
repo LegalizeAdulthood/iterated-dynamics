@@ -888,7 +888,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         else
             put_parm(" %s=%s", "3d", "yes");
         if (!loaded3d)
-            put_filename("filename", readname);
+            put_filename("filename", readname.c_str());
         if (SPHERE)
         {
             put_parm(" %s=y", "sphere");

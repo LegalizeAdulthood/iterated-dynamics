@@ -391,7 +391,7 @@ extern std::vector<int>      ranges;
 extern int                   rangeslen;
 extern int                   RAY;
 extern std::string           ray_name;
-extern char                  readname[];
+extern std::string           readname;
 extern long                  realcoloriter;
 extern char                  recordcolors;
 extern int                   red_bright;

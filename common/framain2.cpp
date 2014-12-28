@@ -1253,7 +1253,7 @@ do_3d_transform:
                 if (initbatch == 2)
                 {
                     driver_stack_screen();   // save graphics image
-                    strcpy(readname, savename);
+                    readname = savename;
                     showfile = 0;
                     return main_state::RESTORE_START;
                 }
@@ -1643,7 +1643,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 if (initbatch == 2)
                 {
                     driver_stack_screen();   // save graphics image
-                    strcpy(readname, savename);
+                    readname = savename;
                     showfile = 0;
                     return main_state::RESTORE_START;
                 }
@@ -2073,7 +2073,7 @@ static void cmp_line_cleanup()
         timestring = ctime(&ltime);
         timestring[24] = 0; //clobber newline in time string
         fprintf(cmp_fp, "%s compare to %s has %5d errs\n",
-                timestring, readname, errcount);
+                timestring, readname.c_str(), errcount);
     }
     fclose(cmp_fp);
 }

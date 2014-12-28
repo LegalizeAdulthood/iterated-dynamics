@@ -1680,6 +1680,15 @@ retry_dir:
     return false;
 }
 
+bool getafilename(char const *hdg, char const *file_template, std::string &flname)
+{
+    char buff[FILE_MAX_PATH];
+    strncpy(buff, flname.c_str(), FILE_MAX_PATH);
+    bool const result = getafilename(hdg, file_template, buff);
+    flname = buff;
+    return result;
+}
+
 // choice is used by other routines called by fullscreen_choice()
 static int check_f6_key(int curkey, int /*choice*/)
 {

@@ -710,7 +710,7 @@ bool tab_display_2(char *msg)
     row++;
     show_str_var("tempdir",     tempdir,      &row, msg);
     show_str_var("workdir",     workdir,      &row, msg);
-    show_str_var("filename",    readname,     &row, msg);
+    show_str_var("filename",    readname.c_str(),     &row, msg);
     show_str_var("formulafile", FormFileName.c_str(), &row, msg);
     show_str_var("savename",    savename,     &row, msg);
     show_str_var("parmfile",    CommandFile.c_str(),  &row, msg);

@@ -56,7 +56,7 @@ int     sizedot = 0;            // size of dot crawling cursor
 char    recordcolors = 0;       // default PAR color-writing method
 char    autoshowdot = 0;        // dark, medium, bright
 bool    start_showorbit = false;        // show orbits on at start of fractal
-char    readname[FILE_MAX_PATH] = { 0 };// name of fractal input file
+std::string readname;           // name of fractal input file
 char    tempdir[FILE_MAX_DIR] = {""}; // name of temporary directory
 char    workdir[FILE_MAX_DIR] = {""}; // name of directory for misc files
 std::string orgfrmdir;          // name of directory for orgfrm files
@@ -266,8 +266,8 @@ int cmdfiles(int argc, char const *const *argv)
                             && tempstring[3] >= '8' && tempstring[3] <= '9'
                             && tempstring[4] >= '0' && tempstring[4] <= '9')
                     {
-                        strcpy(readname, curarg);
-                        browsename = extract_filename(readname);
+                        readname = curarg;
+                        browsename = extract_filename(readname.c_str());
                         curarg[0] = (char)(showfile = 0);
                     }
                     fclose(initfile);
@@ -396,7 +396,7 @@ static void initvars_restart()          // <ins> key init
     reset_ifs_defn();
     rflag = false;                      // not a fixed srand() seed
     rseed = init_rseed;
-    strcpy(readname, DOTSLASH);           // initially current directory
+    readname = DOTSLASH;                // initially current directory
     showfile = 1;
     // next should perhaps be fractal re-init, not just <ins> ?
     initcyclelimit = 55;                   // spin-DAC default speed limit
@@ -1038,15 +1038,15 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 CommandFile += ".par";
             }
-            if (strcmp(readname, DOTSLASH) == 0)
+            if (readname == DOTSLASH)
             {
-                *readname = 0;
+                readname = "";
             }
             if (next == nullptr)
             {
-                if (*readname != 0)
+                if (!readname.empty())
                 {
-                    CommandName = extract_filename(readname);
+                    CommandName = extract_filename(readname.c_str());
                 }
                 else if (!MAP_name.empty())
                 {
@@ -1067,7 +1067,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 }
             }
             make_parameter_file = true;
-            if (*readname != 0)
+            if (!readname.empty())
             {
                 if (read_overlay() != 0)
                 {
@@ -1145,7 +1145,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            browsename = extract_filename(readname);
+            browsename = extract_filename(readname.c_str());
         }
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }

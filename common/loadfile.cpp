@@ -22,7 +22,7 @@
 
 // routines in this module
 
-static int  find_fractal_info(char *gif_file, FRACTAL_INFO *info,
+static int  find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                              ext_blk_2 *blk_2_info,
                              ext_blk_3 *blk_3_info,
                              ext_blk_4 *blk_4_info,
@@ -62,16 +62,16 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         viewwindow = false;
     }
-    if (has_ext(readname) == nullptr)
+    if (has_ext(readname.c_str()) == nullptr)
     {
-        strcat(readname, ".gif");
+        readname += ".gif";
     }
 
-    if (find_fractal_info(readname, &read_info, &blk_2_info, &blk_3_info,
+    if (find_fractal_info(readname.c_str(), &read_info, &blk_2_info, &blk_3_info,
                           &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
     {
         // didn't find a useable file
-        sprintf(msg, "Sorry, %s isn't a file I can decode.", readname);
+        sprintf(msg, "Sorry, %s isn't a file I can decode.", readname.c_str());
         stopmsg(STOPMSG_NONE, msg);
         return -1;
     }
@@ -80,7 +80,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     int const read_fractype = read_info.fractal_type;
     if (read_fractype < 0 || read_fractype >= num_fractal_types)
     {
-        sprintf(msg, "Warning: %s has a bad fractal type; using 0", readname);
+        sprintf(msg, "Warning: %s has a bad fractal type; using 0", readname.c_str());
         fractype = fractal_type::MANDEL;
     }
     fractype = static_cast<fractal_type>(read_fractype);
@@ -624,7 +624,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     return 0;
 }
 
-static int find_fractal_info(char *gif_file, FRACTAL_INFO *info,
+static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                              ext_blk_2 *blk_2_info,
                              ext_blk_3 *blk_3_info,
                              ext_blk_4 *blk_4_info,
@@ -1383,7 +1383,7 @@ rescan:  // entry for changed browse parms
     toggle = 0;
     wincount = 0;
     no_sub_images = false;
-    splitpath(readname, drive, dir, nullptr, nullptr);
+    splitpath(readname.c_str(), drive, dir, nullptr, nullptr);
     splitpath(browsemask.c_str(), nullptr, nullptr, fname, ext);
     makepath(tmpmask, drive, dir, fname, ext);
     done = (vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
@@ -1552,7 +1552,7 @@ rescan:  // entry for changed browse parms
                 }
                 if (c == 'Y')
                 {
-                    splitpath(readname, drive, dir, nullptr, nullptr);
+                    splitpath(readname.c_str(), drive, dir, nullptr, nullptr);
                     splitpath(winlist.name, nullptr, nullptr, fname, ext);
                     makepath(tmpmask, drive, dir, fname, ext);
                     if (!unlink(tmpmask))
@@ -1582,7 +1582,7 @@ rescan:  // entry for changed browse parms
                 driver_stack_screen();
                 newname[0] = 0;
                 strcpy(mesg, "Enter the new filename for ");
-                splitpath(readname, drive, dir, nullptr, nullptr);
+                splitpath(readname.c_str(), drive, dir, nullptr, nullptr);
                 splitpath(winlist.name, nullptr, nullptr, fname, ext);
                 makepath(tmpmask, drive, dir, fname, ext);
                 strcpy(newname, tmpmask);

@@ -84,7 +84,7 @@ int gifview()
     if (outln == outline_stereo)
         strcpy(temp1, stereomapname);
     else
-        strcpy(temp1, readname);
+        strcpy(temp1, readname.c_str());
     if (has_ext(temp1) == nullptr)
     {
         strcat(temp1, DEFAULTFRACTALTYPE);
@@ -98,7 +98,7 @@ int gifview()
             if (outln == outline_stereo)
                 strcpy(temp1, stereomapname);
             else
-                strcpy(temp1, readname);
+                strcpy(temp1, readname.c_str());
             strcat(temp1, ALTERNATEFRACTALTYPE);
         }
     }
