@@ -62,7 +62,7 @@ extern double                closeprox;
 extern DComplex              coefficient;
 extern int                   col;
 extern int                   color;
-extern char                  colorfile[];
+extern std::string           colorfile;
 extern long                  coloriter;
 extern bool                  colorpreloaded;
 extern int                   colors;

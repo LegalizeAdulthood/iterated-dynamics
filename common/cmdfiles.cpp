@@ -119,7 +119,7 @@ double  math_tol[2] = {.05, .05}; // For math transition
 bool Targa_Out = false;                 // 3D fullcolor flag
 bool truecolor = false;                 // escape time truecolor flag
 int truemode = 0;               // truecolor coloring scheme
-char    colorfile[FILE_MAX_PATH] = { 0 };// from last <l> <s> or colors=@filename
+std::string colorfile;          // from last <l> <s> or colors=@filename
 bool functionpreloaded = false; // if function loaded for new bifs
 float   screenaspect = DEFAULTASPECT;   // aspect ratio of the screen
 float   aspectdrift = DEFAULTASPECTDRIFT;  // how much drift is allowed and

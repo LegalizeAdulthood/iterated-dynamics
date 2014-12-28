@@ -74,7 +74,8 @@ void make_batch_file()
     char colorspec[14];
     int maxcolor;
     int maxcolorindex = 0;
-    char *sptr = nullptr, *sptr2;
+    char const *sptr = nullptr;
+    char const *sptr2;
     int oldhelpmode;
 
     if (make_parameter_file_map) // makepar map case
@@ -117,7 +118,7 @@ void make_batch_file()
         else if (colorstate == 2)
         {   // colors match colorfile
             colorspec[0] = '@';
-            sptr = colorfile;
+            sptr = colorfile.c_str();
         }
         else                      // colors match no .map that we know of
             strcpy(colorspec, "y");

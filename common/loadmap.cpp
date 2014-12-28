@@ -52,7 +52,7 @@ bool ValidateLuts(char const *fn)
         ++index;
     }
     colorstate = 2;
-    strcpy(colorfile, fn);
+    colorfile = fn;
     return false;
 }
 

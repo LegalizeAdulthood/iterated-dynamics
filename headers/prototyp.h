@@ -878,6 +878,7 @@ extern int fr_findnext();
 extern void shell_sort(void *, int n, unsigned, int (*fct)(VOIDPTR, VOIDPTR));
 extern void fix_dirname(char *dirname);
 extern int merge_pathnames(char *oldfullpath, char const *newfilename, cmd_file mode);
+extern int merge_pathnames(std::string &oldfullpath, char const *newfilename, cmd_file mode);
 extern int get_browse_params();
 extern int get_cmd_string();
 extern int get_rds_params();

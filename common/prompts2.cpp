@@ -2618,6 +2618,15 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
     return isadir_error ? -1 : (isadir ? 1 : 0);
 }
 
+int merge_pathnames(std::string &oldfullpath, char const *filename, cmd_file mode)
+{
+    char buff[FILE_MAX_PATH];
+    strcpy(buff, oldfullpath.c_str());
+    int const result = merge_pathnames(buff, filename, mode);
+    oldfullpath = buff;
+    return result;
+}
+
 // extract just the filename/extension portion of a path
 void extract_filename(char *target, char const *source)
 {
