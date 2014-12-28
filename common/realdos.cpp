@@ -52,9 +52,9 @@ int stopmsg(int flags, char const *msg)
     {
         static FILE *fp = nullptr;
         if (fp == nullptr && initbatch == 0)
-            fp = dir_fopen(workdir, "stopmsg.txt", "w");
+            fp = dir_fopen(workdir.c_str(), "stopmsg.txt", "w");
         else
-            fp = dir_fopen(workdir, "stopmsg.txt", "a");
+            fp = dir_fopen(workdir.c_str(), "stopmsg.txt", "a");
         if (fp != nullptr)
             fprintf(fp, "%s\n", msg);
         fclose(fp);

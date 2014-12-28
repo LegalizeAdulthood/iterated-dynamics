@@ -2350,7 +2350,7 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
                 if (caught_a_cycle)
                 {
 #ifdef NUMSAVED
-                    static FILE *fp = dir_fopen(workdir, "cycles.txt", "w");
+                    static FILE *fp = dir_fopen(workdir.c_str(), "cycles.txt", "w");
 #endif
                     cyclelen = coloriter-savedcoloriter;
 #ifdef NUMSAVED

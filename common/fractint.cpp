@@ -608,7 +608,7 @@ int timer(int timertype, int(*subrtn)(), ...)
     if (timertype == 2)   // encoder, record time only if debug flag set
         do_bench = (debugflag == debug_flags::benchmark_encoder);
     if (do_bench)
-        fp = dir_fopen(workdir, "bench", "a");
+        fp = dir_fopen(workdir.c_str(), "bench", "a");
     timer_start = clock_ticks();
     switch (timertype)
     {

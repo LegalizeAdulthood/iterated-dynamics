@@ -523,7 +523,7 @@ extern unsigned              vsp;
 extern int                   g_vxdots;
 extern int                   g_which_image;
 extern float                 widthfp;
-extern char                  workdir[];
+extern std::string           workdir;
 extern WORKLIST              worklist[MAXCALCWORK];
 extern int                   workpass;
 extern int                   worksym;

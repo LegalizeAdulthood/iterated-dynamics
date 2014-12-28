@@ -1381,7 +1381,7 @@ static void File_Error(char const *File_Name1, int ERROR)
 bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
 {
     // Open File for both reading and writing
-    FILE *fps = dir_fopen(workdir, File_Name2, "w+b");
+    FILE *fps = dir_fopen(workdir.c_str(), File_Name2, "w+b");
     if (fps == nullptr)
     {
         File_Error(File_Name2, 1);
@@ -1443,7 +1443,7 @@ bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
             fclose(fps);
             if (overlay)
                 fclose(Source);
-            dir_remove(workdir, File_Name2);
+            dir_remove(workdir.c_str(), File_Name2);
             File_Error(File_Name2, 2);
             return true;
         }
@@ -1454,7 +1454,7 @@ bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
     if (targa_startdisk(fps, T_header_24) != 0)
     {
         enddisk();
-        dir_remove(workdir, File_Name2);
+        dir_remove(workdir.c_str(), File_Name2);
         return true;
     }
     return false;
@@ -1463,7 +1463,7 @@ bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
 bool targa_validate(char const *File_Name)
 {
     // Attempt to open source file for reading
-    FILE *fp = dir_fopen(workdir, File_Name, "rb");
+    FILE *fp = dir_fopen(workdir.c_str(), File_Name, "rb");
     if (fp == nullptr)
     {
         File_Error(File_Name, 1);
@@ -2016,11 +2016,11 @@ static void line3d_cleanup()
         enddisk();
         if (debugflag == debug_flags::none && (!T_Safe || error) && Targa_Overlay)
         {
-            dir_remove(workdir, light_name.c_str());
+            dir_remove(workdir.c_str(), light_name.c_str());
             rename(targa_temp, light_name.c_str());
         }
         if (debugflag == debug_flags::none && Targa_Overlay)
-            dir_remove(workdir, targa_temp);
+            dir_remove(workdir.c_str(), targa_temp);
     }
     error = 0;
     T_Safe = false;

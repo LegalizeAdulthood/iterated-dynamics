@@ -369,7 +369,7 @@ skip_UI:
                 have3rd = true;
             else
                 have3rd = false;
-            fpbat = dir_fopen(workdir, "makemig.bat", "w");
+            fpbat = dir_fopen(workdir.c_str(), "makemig.bat", "w");
             if (fpbat == nullptr)
             {
                 ym = 0;
