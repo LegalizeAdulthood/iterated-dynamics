@@ -82,7 +82,7 @@ int gifview()
 
     // Open the file
     if (outln == outline_stereo)
-        strcpy(temp1, stereomapname);
+        strcpy(temp1, stereomapname.c_str());
     else
         strcpy(temp1, readname.c_str());
     if (has_ext(temp1) == nullptr)
@@ -96,7 +96,7 @@ int gifview()
         else
         {
             if (outln == outline_stereo)
-                strcpy(temp1, stereomapname);
+                strcpy(temp1, stereomapname.c_str());
             else
                 strcpy(temp1, readname.c_str());
             strcat(temp1, ALTERNATEFRACTALTYPE);

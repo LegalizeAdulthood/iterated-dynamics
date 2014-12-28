@@ -442,7 +442,7 @@ extern void                (*standardplot)(int, int, int);
 extern bool                  start_showorbit;
 extern bool                  started_resaves;
 extern char                  stdcalcmode;
-extern char                  stereomapname[];
+extern std::string           stereomapname;
 extern int                   StoPtr;
 extern int                   stoppass;
 extern double                sx3rd;

@@ -1083,29 +1083,28 @@ int get_rds_params()
         uvalues[k++].type = 'y';
 
 
-        if (*stereomapname != 0 && image_map)
+        if (!stereomapname.empty() && image_map)
         {
-            char *p;
             uvalues[k].uval.ch.val = reuse;
             uvalues[k++].type = 'y';
 
             uvalues[k++].type = '*';
             for (int i = 0; i < sizeof(rds6); i++)
                 rds6[i] = ' ';
-            p = strrchr(stereomapname, SLASHC);
-            if (p == nullptr ||
-                    (int) strlen(stereomapname) < sizeof(rds6)-2)
-                p = strlwr(stereomapname);
+            auto p = stereomapname.find(SLASHC);
+            if (p == std::string::npos ||
+                    (int) stereomapname.length() < sizeof(rds6)-2)
+                p = 0;
             else
                 p++;
             // center file name
-            rds6[(sizeof(rds6)-(int) strlen(p)+2)/2] = 0;
+            rds6[(sizeof(rds6)-(int) (stereomapname.length() - p)+2)/2] = 0;
             strcat(rds6, "[");
-            strcat(rds6, p);
+            strcat(rds6, &stereomapname.c_str()[p]);
             strcat(rds6, "]");
         }
         else
-            *stereomapname = 0;
+            stereomapname.clear();
         int const oldhelpmode = helpmode;
         helpmode = HELPRDS;
         int const choice = fullscreen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, nullptr);
@@ -1123,7 +1122,7 @@ int get_rds_params()
             grayflag         = uvalues[k++].uval.ch.val != 0;
             calibrate        = (char)uvalues[k++].uval.ch.val;
             image_map        = uvalues[k++].uval.ch.val != 0;
-            if (*stereomapname && image_map)
+            if (!stereomapname.empty() && image_map)
                 reuse         = (char)uvalues[k++].uval.ch.val;
             else
                 reuse = 0;
