@@ -3602,6 +3602,9 @@ public:
 
 private:
     void parse_arguments();
+    void usage();
+    void compile();
+    void print();
 
     int argc;
     char **argv;
@@ -3711,108 +3714,15 @@ int compiler::process()
     switch (mode)
     {
     case modes::NONE:
-        printf("To compile a .SRC file:\n");
-        printf("      HC /c [/s] [/m] [/r[path]] [src_file]\n");
-        printf("         /s       = report statistics.\n");
-        printf("         /m       = report memory usage.\n");
-        printf("         /r[path] = set swap file path.\n");
-        printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
-        printf("To print a .SRC file:\n");
-        printf("      HC /p [/r[path]] [src_file] [out_file]\n");
-        printf("         /r[path] = set swap file path.\n");
-        printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
-        printf("         out_file = Filename to print to. Default is \"%s\"\n",
-               DEFAULT_DOC_FNAME);
-        printf("To append a .HLP file to an .EXE file:\n");
-        printf("      HC /a [hlp_file] [exe_file]\n");
-        printf("         hlp_file = .HLP file.  Default is \"%s\"\n", DEFAULT_HLP_FNAME);
-        printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
-        printf("To delete help info from an .EXE file:\n");
-        printf("      HC /d [exe_file]\n");
-        printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
-        printf("\n");
-        printf("Use \"/q\" for quiet mode. (No status messages.)\n");
+        usage();
         break;
 
     case modes::COMPILE:
-        if (!fname2.empty())
-            fatal(0, "Unexpected command-line argument \"%s\"", fname2.c_str());
-
-        strcpy(src_fname, fname1.empty() ? DEFAULT_SRC_FNAME : fname1.c_str());
-
-        swappath += SWAP_FNAME;
-
-        swapfile = fopen(swappath.c_str(), "w+b");
-        if (swapfile == nullptr)
-            fatal(0, "Cannot create swap file \"%s\"", swappath.c_str());
-        swappos = 0;
-
-        read_src(src_fname);
-
-        if (hdr_fname[0] == '\0')
-            error(0, "No .H file defined.  (Use \"~HdrFile=\")");
-        if (hlp_fname[0] == '\0')
-            error(0, "No .HLP file defined.  (Use \"~HlpFile=\")");
-        if (version == -1)
-            warn(0, "No help version has been defined.  (Use \"~Version=\")");
-
-        /* order of these is very important... */
-
-        make_hot_links();  /* do even if errors since it may report */
-        /* more... */
-
-        if (!errors)
-            paginate_online();
-        if (!errors)
-            paginate_document();
-        if (!errors)
-            calc_offsets();
-        if (!errors)
-            sort_labels();
-        if (!errors)
-            write_hdr(hdr_fname);
-        if (!errors)
-            write_help(hlp_fname);
-
-        if (show_stats)
-            report_stats();
-
-        if (show_mem)
-            report_memory();
-
-        if (errors || warnings)
-            report_errors();
-
-        fclose(swapfile);
-        remove(swappath.c_str());
-
+        compile();
         break;
 
     case modes::PRINT:
-        strcpy(src_fname, fname1.empty() ? DEFAULT_SRC_FNAME : fname1.c_str());
-
-        swappath += SWAP_FNAME;
-
-        swapfile = fopen(swappath.c_str(), "w+b");
-        if (swapfile == nullptr)
-            fatal(0, "Cannot create swap file \"%s\"", swappath.c_str());
-        swappos = 0;
-
-        read_src(src_fname);
-
-        make_hot_links();
-
-        if (!errors)
-            paginate_document();
-        if (!errors)
-            print_document(fname2.empty() ? DEFAULT_DOC_FNAME : fname2.c_str());
-
-        if (errors || warnings)
-            report_errors();
-
-        fclose(swapfile);
-        remove(swappath.c_str());
-
+        print();
         break;
 
     case modes::APPEND:
@@ -3828,6 +3738,112 @@ int compiler::process()
     }
 
     return (errors);     /* return the number of errors */
+}
+
+void compiler::usage()
+{
+    printf("To compile a .SRC file:\n");
+    printf("      HC /c [/s] [/m] [/r[path]] [src_file]\n");
+    printf("         /s       = report statistics.\n");
+    printf("         /m       = report memory usage.\n");
+    printf("         /r[path] = set swap file path.\n");
+    printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
+    printf("To print a .SRC file:\n");
+    printf("      HC /p [/r[path]] [src_file] [out_file]\n");
+    printf("         /r[path] = set swap file path.\n");
+    printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
+    printf("         out_file = Filename to print to. Default is \"%s\"\n",
+        DEFAULT_DOC_FNAME);
+    printf("To append a .HLP file to an .EXE file:\n");
+    printf("      HC /a [hlp_file] [exe_file]\n");
+    printf("         hlp_file = .HLP file.  Default is \"%s\"\n", DEFAULT_HLP_FNAME);
+    printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
+    printf("To delete help info from an .EXE file:\n");
+    printf("      HC /d [exe_file]\n");
+    printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
+    printf("\n");
+    printf("Use \"/q\" for quiet mode. (No status messages.)\n");
+}
+
+void compiler::compile()
+{
+    if (!fname2.empty())
+        fatal(0, "Unexpected command-line argument \"%s\"", fname2.c_str());
+
+    strcpy(src_fname, fname1.empty() ? DEFAULT_SRC_FNAME : fname1.c_str());
+
+    swappath += SWAP_FNAME;
+
+    swapfile = fopen(swappath.c_str(), "w+b");
+    if (swapfile == nullptr)
+        fatal(0, "Cannot create swap file \"%s\"", swappath.c_str());
+    swappos = 0;
+
+    read_src(src_fname);
+
+    if (hdr_fname[0] == '\0')
+        error(0, "No .H file defined.  (Use \"~HdrFile=\")");
+    if (hlp_fname[0] == '\0')
+        error(0, "No .HLP file defined.  (Use \"~HlpFile=\")");
+    if (version == -1)
+        warn(0, "No help version has been defined.  (Use \"~Version=\")");
+
+    /* order of these is very important... */
+
+    make_hot_links();  /* do even if errors since it may report */
+    /* more... */
+
+    if (!errors)
+        paginate_online();
+    if (!errors)
+        paginate_document();
+    if (!errors)
+        calc_offsets();
+    if (!errors)
+        sort_labels();
+    if (!errors)
+        write_hdr(hdr_fname);
+    if (!errors)
+        write_help(hlp_fname);
+
+    if (show_stats)
+        report_stats();
+
+    if (show_mem)
+        report_memory();
+
+    if (errors || warnings)
+        report_errors();
+
+    fclose(swapfile);
+    remove(swappath.c_str());
+}
+
+void compiler::print()
+{
+    strcpy(src_fname, fname1.empty() ? DEFAULT_SRC_FNAME : fname1.c_str());
+
+    swappath += SWAP_FNAME;
+
+    swapfile = fopen(swappath.c_str(), "w+b");
+    if (swapfile == nullptr)
+        fatal(0, "Cannot create swap file \"%s\"", swappath.c_str());
+    swappos = 0;
+
+    read_src(src_fname);
+
+    make_hot_links();
+
+    if (!errors)
+        paginate_document();
+    if (!errors)
+        print_document(fname2.empty() ? DEFAULT_DOC_FNAME : fname2.c_str());
+
+    if (errors || warnings)
+        report_errors();
+
+    fclose(swapfile);
+    remove(swappath.c_str());
 }
 
 #if defined(_WIN32)
