@@ -831,8 +831,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
         }
         j = 0;
-        if (sscanf(argptr, "%c%c", (char *) &j, &tmpc) > 0    // NULL entry
-                && ((char) j == '/' || (char) j == '=') && tmpc == '/')
+        char next = 0;
+        if (sscanf(argptr, "%c%c", &next, &tmpc) > 0    // NULL entry
+                && (next == '/' || next == '=') && tmpc == '/')
         {
             j = 0;
             ++floatparms;
