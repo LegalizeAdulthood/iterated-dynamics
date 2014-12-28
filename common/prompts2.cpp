@@ -1861,6 +1861,14 @@ void fix_dirname(char *dirname)
     strcat(dirname, SLASH);
 }
 
+void fix_dirname(std::string &dirname)
+{
+    char buff[FILE_MAX_PATH];
+    strcpy(buff, dirname.c_str());
+    fix_dirname(buff);
+    dirname = buff;
+}
+
 static void dir_name(char *target, char const *dir, char const *name)
 {
     *target = 0;

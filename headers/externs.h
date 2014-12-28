@@ -335,7 +335,7 @@ extern int                   orbit_color;
 extern int                   orbit_delay;
 extern long                  orbit_interval;
 extern int                   orbit_ptr;
-extern char                  orgfrmdir[];
+extern std::string           orgfrmdir;
 extern bool                  orgfrmsearch;
 extern float                 originfp;
 extern int                 (*outln)(BYTE *, int);
