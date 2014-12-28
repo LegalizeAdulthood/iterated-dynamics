@@ -390,7 +390,7 @@ extern int                   RANDOMIZE;
 extern std::vector<int>      ranges;
 extern int                   rangeslen;
 extern int                   RAY;
-extern char                  ray_name[];
+extern std::string           ray_name;
 extern char                  readname[];
 extern long                  realcoloriter;
 extern char                  recordcolors;

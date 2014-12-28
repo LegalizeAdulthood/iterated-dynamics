@@ -2677,7 +2677,7 @@ restart_1:
     check_writefile(ray_name, ".ray");
     prompts3d[++k] = "    Output File Name";
     uvalues[k].type = 's';
-    strcpy(uvalues[k].uval.sval, ray_name);
+    strcpy(uvalues[k].uval.sval, ray_name.c_str());
 
     prompts3d[++k] = "Targa output?";
     uvalues[k].type = 'y';
@@ -2714,7 +2714,7 @@ restart_1:
     }
     BRIEF = uvalues[k++].uval.ch.val != 0;
 
-    strcpy(ray_name, uvalues[k++].uval.sval);
+    ray_name = uvalues[k++].uval.sval;
 
     Targa_Out = uvalues[k++].uval.ch.val != 0;
     grayflag  = uvalues[k++].uval.ch.val != 0;
