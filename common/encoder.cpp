@@ -20,7 +20,7 @@
 static bool compress(int rowlimit);
 static int shftwrite(BYTE * color, int numcolors);
 static int extend_blk_len(int datalen);
-static int put_extend_blk(int block_id, int block_len, char * block_data);
+static int put_extend_blk(int block_id, int block_len, char const *block_data);
 static int store_item_name(char const *name);
 static void setup_save_info(FRACTAL_INFO *save_info);
 
@@ -610,7 +610,7 @@ static int extend_blk_len(int datalen)
     // data   +     1.per.block   + 14 for id + 1 for null at end
 }
 
-static int put_extend_blk(int block_id, int block_len, char * block_data)
+static int put_extend_blk(int block_id, int block_len, char const *block_data)
 {
     int i, j;
     char header[15];
