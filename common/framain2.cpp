@@ -109,7 +109,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     static char msgxy2[] = {"Not enough video memory for that many lines, height cut down."};
                     if (xdots > sxdots && ydots > sydots)
                     {
-                        sprintf(buf, "%s\n%s", (char *) msgxy1, (char *) msgxy2);
+                        sprintf(buf, "%s\n%s", msgxy1, msgxy2);
                         stopmsg(STOPMSG_NONE, buf);
                     }
                     else if (ydots > sydots)
