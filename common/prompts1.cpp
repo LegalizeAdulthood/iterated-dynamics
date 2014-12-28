@@ -1548,7 +1548,7 @@ gfp_top:
         paramvalues[promptnum].uval.ch.llen = NUMTRIGFN;
         paramvalues[promptnum].uval.ch.vlen = 6;
         paramvalues[promptnum].uval.ch.list = trignameptr;
-        choices[promptnum++] = (char *)trg[i];
+        choices[promptnum++] = trg[i];
     }
     type_name = curfractalspecific->name;
     if (*type_name == '*')
