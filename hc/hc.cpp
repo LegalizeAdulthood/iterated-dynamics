@@ -3593,13 +3593,12 @@ int main(int argc, char *argv[])
     modes mode = modes::NONE;
 
     char **arg;
-    char   fname1[81],
-           fname2[81];
+    std::string fname1;
+    char   fname2[81];
     char   swappath[81];
 
     swappath[0] = 0;
-    fname2[0] = swappath[0];
-    fname1[0] = fname2[0];
+    fname2[0] = 0;
 
     printf("HC - FRACTINT Help Compiler.\n\n");
 
@@ -3676,8 +3675,8 @@ int main(int argc, char *argv[])
             break;
 
         default:   /* assume it is a fname */
-            if (fname1[0] == '\0')
-                strcpy(fname1, *arg);
+            if (fname1.empty())
+                fname1 = *arg;
             else if (fname2[0] == '\0')
                 strcpy(fname2, *arg);
             else
@@ -3716,7 +3715,7 @@ int main(int argc, char *argv[])
         if (fname2[0] != '\0')
             fatal(0, "Unexpected command-line argument \"%s\"", fname2);
 
-        strcpy(src_fname, (fname1[0] == '\0') ? DEFAULT_SRC_FNAME : fname1);
+        strcpy(src_fname, fname1.empty() ? DEFAULT_SRC_FNAME : fname1.c_str());
 
         strcat(swappath, SWAP_FNAME);
 
@@ -3767,7 +3766,7 @@ int main(int argc, char *argv[])
         break;
 
     case modes::PRINT:
-        strcpy(src_fname, (fname1[0] == '\0') ? DEFAULT_SRC_FNAME : fname1);
+        strcpy(src_fname, fname1.empty() ? DEFAULT_SRC_FNAME : fname1.c_str());
 
         strcat(swappath, SWAP_FNAME);
 
@@ -3794,14 +3793,14 @@ int main(int argc, char *argv[])
         break;
 
     case modes::APPEND:
-        add_hlp_to_exe((fname1[0] == '\0') ? DEFAULT_HLP_FNAME : fname1,
+        add_hlp_to_exe(fname1.empty() ? DEFAULT_HLP_FNAME : fname1.c_str(),
                        (fname2[0] == '\0') ? DEFAULT_EXE_FNAME : fname2);
         break;
 
     case modes::DELETE:
         if (fname2[0] != '\0')
             fatal(0, "Unexpected argument \"%s\"", fname2);
-        delete_hlp_from_exe((fname1[0] == '\0') ? DEFAULT_EXE_FNAME : fname1);
+        delete_hlp_from_exe(fname1.empty() ? DEFAULT_EXE_FNAME : fname1.c_str());
         break;
     }
 
