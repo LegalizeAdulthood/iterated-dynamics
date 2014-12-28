@@ -205,7 +205,7 @@ start:
     out = -12345;
     if (isdigit(buffer[0]))       // an arbitrary scan code number - use it
         out = atoi(buffer);
-    else if (strcmp((char *)buffer, "MESSAGE") == 0)
+    else if (strcmp(buffer, "MESSAGE") == 0)
     {
         int secs;
         if (fscanf(fpss, "%d", &secs) != 1)
@@ -220,7 +220,7 @@ start:
             fgets(buf, 40, fpss);
             len = (int) strlen(buf);
             buf[len-1] = 0; // zap newline
-            message(secs, (char *)buf);
+            message(secs, buf);
         }
         out = 0;
     }
