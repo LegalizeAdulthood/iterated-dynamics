@@ -41,7 +41,7 @@ static void initvars_restart();
 static void initvars_fractal();
 static void initvars_3d();
 static void reset_ifs_defn();
-static void parse_textcolors(char *value);
+static void parse_textcolors(char const *value);
 static int  parse_colors(char *value);
 static int  get_bf(bf_t, char const *);
 static bool isabigfloat(char *str);
@@ -3135,7 +3135,7 @@ badarg:
 
 // Some routines broken out of above so compiler doesn't run out of heap:
 
-static void parse_textcolors(char *value)
+static void parse_textcolors(char const *value)
 {
     int hexval;
     if (strcmp(value, "mono") == 0)
