@@ -77,8 +77,7 @@ setwait(long *wait)
 /* turkmite from scientific american july 1994 pag 91
  * Tweaked by Luciano Genero & Fulvio Cappelli
  */
-void
-TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
+void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
 {
     int ix, iy, idir, pixel;
     int kbdchar, step;
@@ -241,8 +240,7 @@ unsigned rotate_left_one(unsigned value)
 }
 
 // this one ignore the color of the current cell is more like a white ant
-void
-TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
+void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
 {
     int ix, iy, idir, pixel, dir[MAX_ANTS + 1];
     int kbdchar, step;
