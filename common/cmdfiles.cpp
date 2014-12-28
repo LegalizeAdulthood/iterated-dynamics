@@ -339,10 +339,9 @@ int load_commands(FILE *infile)
 
 static void initvars_run()              // once per run init
 {
-    char *p;
     init_rseed = (int)time(nullptr);
     init_comments();
-    p = getenv("TMP");
+    char const *p = getenv("TMP");
     if (p == nullptr)
         p = getenv("TEMP");
     if (p != nullptr)
