@@ -267,7 +267,7 @@ extern Major                 major_method;
 extern bool map_specified;
 extern BYTE map_clut[256][3];
 extern bool                  mapset;
-extern char                  MAP_name[];
+extern std::string           MAP_name;
 extern double                math_tol[2];
 extern int                   maxcolor;
 extern long                  maxct;

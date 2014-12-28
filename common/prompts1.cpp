@@ -60,7 +60,7 @@ char ifsmask[13]     = {"*.ifs"};
 char formmask[13]    = {"*.frm"};
 char lsysmask[13]    = {"*.l"};
 std::string const Glasses1Map = "glasses1.map";
-char MAP_name[FILE_MAX_DIR] = "";
+std::string MAP_name;
 bool mapset = false;
 bool julibrot = false;                  // flag for julibrot
 
@@ -3043,7 +3043,7 @@ static bool check_mapfile()
         return false;
     char buff[256] = "*";
     if (mapset)
-        strcpy(buff, MAP_name);
+        strcpy(buff, MAP_name.c_str());
     if (!(g_glasses_type == 1 || g_glasses_type == 2))
         askflag = true;
     else

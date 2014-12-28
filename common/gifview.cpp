@@ -166,7 +166,7 @@ int gifview()
     // don't read if glasses
     if (display3d && mapset && g_glasses_type != 1 && g_glasses_type != 2)
     {
-        ValidateLuts(MAP_name);  // read the palette file
+        ValidateLuts(MAP_name.c_str());  // read the palette file
         spindac(0, 1); // load it, but don't spin
     }
     if (g_dac_box[0][0] != 255)

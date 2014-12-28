@@ -1048,9 +1048,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 {
                     CommandName = extract_filename(readname);
                 }
-                else if (*MAP_name != 0)
+                else if (!MAP_name.empty())
                 {
-                    CommandName = extract_filename(MAP_name);
+                    CommandName = extract_filename(MAP_name.c_str());
                 }
                 else
                 {
@@ -1074,7 +1074,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                     goodbye();
                 }
             }
-            else if (*MAP_name != 0)
+            else if (!MAP_name.empty())
             {
                 make_parameter_file_map = true;
             }
@@ -1190,7 +1190,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             init_msg(variable, value, mode);
             return CMDARG_NONE;
         }
-        SetColorPaletteName(MAP_name);
+        SetColorPaletteName(MAP_name.c_str());
         return CMDARG_NONE;
     }
 
@@ -3195,7 +3195,7 @@ static int parse_colors(char *value)
     {
         if (merge_pathnames(MAP_name, &value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
             init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
-        if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(MAP_name))
+        if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(MAP_name.c_str()))
             goto badcolor;
         if (display3d)
         {
