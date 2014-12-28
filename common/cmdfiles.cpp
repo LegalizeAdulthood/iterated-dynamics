@@ -1121,6 +1121,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 goto badarg;
             }
+            // cppcheck-suppress constStatement
             gifmask = std::string{"*"} + value;
             return CMDARG_NONE;
         }
