@@ -315,7 +315,7 @@ static char const *ParseErrs(int which)
     lasterr = sizeof(ErrStrings)/sizeof(ErrStrings[0]) - 1;
     if (which > lasterr)
         which = lasterr;
-    return (char *)ErrStrings[which];
+    return ErrStrings[which];
 }
 
 /* use the following when only float functions are implemented to
