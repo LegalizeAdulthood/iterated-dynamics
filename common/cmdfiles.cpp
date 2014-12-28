@@ -1335,7 +1335,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (strcmp(variable, "autokeyname") == 0)   // autokeyname=?
     {
-        char buff[256];
+        std::string buff;
         if (merge_pathnames(buff, value, mode) < 0)
         {
             init_msg(variable, value, mode);
