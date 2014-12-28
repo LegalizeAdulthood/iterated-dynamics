@@ -183,7 +183,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     toosmall = 6;
     minbox   = 3;
     browsemask = "*.gif";
-    strcpy(browsename, "            ");
+    browsename = "            ";
     name_stack_ptr = -1; // init loaded files stack
 
     evolving = 0;
@@ -303,7 +303,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
             }
 
             name_stack_ptr = 0; // 'r' reads first filename for browsing
-            strcpy(file_name_stack[name_stack_ptr], browsename);
+            strcpy(file_name_stack[name_stack_ptr], browsename.c_str());
         }
 
         evolving = 0;

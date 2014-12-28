@@ -1676,7 +1676,7 @@ retry_dir:
             }
         }
     }
-    makepath(browsename, "", "", fname, ext);
+    browsename = std::string{fname} + ext;
     return false;
 }
 
@@ -1848,7 +1848,6 @@ int makepath(char *template_str, char const *drive, char const *dir, char const 
         strcat(template_str, ext);
     return 0;
 }
-
 
 // fix up directory names
 void fix_dirname(char *dirname)
@@ -2626,6 +2625,13 @@ void extract_filename(char *target, char const *source)
     char ext[FILE_MAX_EXT];
     splitpath(source, nullptr, nullptr, fname, ext);
     makepath(target, "", "", fname, ext);
+}
+
+std::string extract_filename(char const *source)
+{
+    char target[FILE_MAX_FNAME];
+    extract_filename(target, source);
+    return target;
 }
 
 // tells if filename has extension

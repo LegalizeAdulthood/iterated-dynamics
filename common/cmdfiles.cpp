@@ -266,7 +266,7 @@ int cmdfiles(int argc, char const *const *argv)
                             && tempstring[4] >= '0' && tempstring[4] <= '9')
                     {
                         strcpy(readname, curarg);
-                        extract_filename(browsename, readname);
+                        browsename = extract_filename(readname);
                         curarg[0] = (char)(showfile = 0);
                     }
                     fclose(initfile);
@@ -1141,7 +1141,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            extract_filename(browsename, readname);
+            browsename = extract_filename(readname);
         }
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }

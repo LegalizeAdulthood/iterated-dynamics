@@ -47,7 +47,7 @@ extern int                   boxx[];
 extern int                   boxy[];
 extern bool                  BRIEF;
 extern std::string           browsemask;
-extern char                  browsename[];
+extern std::string           browsename;
 extern bool                  browsing;
 extern bool                  brwscheckparms;
 extern bool                  brwschecktype;
