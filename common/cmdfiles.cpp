@@ -3300,12 +3300,11 @@ badcolor:
 
 static void argerror(char const *badarg)      // oops. couldn't decode this
 {
-    char spillover[71];
+    std::string spillover;
     if ((int) strlen(badarg) > 70)
     {
-        strncpy(spillover, badarg, 70);
-        spillover[70] = 0;
-        badarg = spillover;
+        spillover = std::string(&badarg[0], &badarg[70]);
+        badarg = spillover.c_str();
     }
     std::string msg{"Oops. I couldn't understand the argument:\n  "};
     msg += badarg;
