@@ -189,7 +189,7 @@ int      errors           = 0,    // number of errors reported
 
 std::string src_fname;            // command-line .SRC filename
 std::string hdr_fname;            // .H filename
-char     hlp_fname[81]    = "";   // .HLP filename
+std::string hlp_fname;            // .HLP filename
 char const *src_cfname = nullptr; // current .SRC filename
 
 int      format_exclude   = 0;    // disable formatting at this col, 0 to
@@ -1724,9 +1724,9 @@ void read_src(char const *fname)
 
                     else if (strnicmp(cmd, "HlpFile=", 8) == 0)
                     {
-                        if (hlp_fname[0] != '\0')
+                        if (!hlp_fname.empty())
                             warn(eoff, "Help Filename has already been defined.");
-                        strcpy(hlp_fname, cmd+8);
+                        hlp_fname = &cmd[8];
                     }
 
                     else if (strnicmp(cmd, "Version=", 8) == 0)
@@ -3783,7 +3783,7 @@ void compiler::compile()
 
     if (hdr_fname.empty())
         error(0, "No .H file defined.  (Use \"~HdrFile=\")");
-    if (hlp_fname[0] == '\0')
+    if (hlp_fname.empty())
         error(0, "No .HLP file defined.  (Use \"~HlpFile=\")");
     if (version == -1)
         warn(0, "No help version has been defined.  (Use \"~Version=\")");
@@ -3804,7 +3804,7 @@ void compiler::compile()
     if (!errors)
         write_hdr(hdr_fname.c_str());
     if (!errors)
-        write_help(hlp_fname);
+        write_help(hlp_fname.c_str());
 
     if (show_stats)
         report_stats();
