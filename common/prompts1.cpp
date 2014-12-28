@@ -59,7 +59,7 @@ static char funnyglasses_map_name[16];
 char ifsmask[13]     = {"*.ifs"};
 char formmask[13]    = {"*.frm"};
 char lsysmask[13]    = {"*.l"};
-char Glasses1Map[] = "glasses1.map";
+std::string const Glasses1Map = "glasses1.map";
 char MAP_name[FILE_MAX_DIR] = "";
 bool mapset = false;
 bool julibrot = false;                  // flag for julibrot
@@ -3078,15 +3078,16 @@ static bool get_funny_glasses_params()
     }
 
     if (g_glasses_type == 1)
-        strcpy(funnyglasses_map_name, Glasses1Map);
+        strcpy(funnyglasses_map_name, Glasses1Map.c_str());
     else if (g_glasses_type == 2)
     {
         if (FILLTYPE == -1)
             strcpy(funnyglasses_map_name, "grid.map");
         else
         {
-            strcpy(funnyglasses_map_name, Glasses1Map);
-            funnyglasses_map_name[7] = '2';
+            std::string glasses2_map{Glasses1Map};
+            glasses2_map.replace(glasses2_map.find('1'), 1, "2");
+            strcpy(funnyglasses_map_name, glasses2_map.c_str());
         }
     }
 

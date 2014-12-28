@@ -63,7 +63,7 @@ bool
 JulibrotSetup()
 {
     int r = 0;
-    char *mapname;
+    char const *mapname;
 
 #ifndef XFRACT
     if (colors < 255)
@@ -151,7 +151,7 @@ JulibrotSetup()
     if (juli3Dmode == 3)
     {
         savedac = 0;
-        mapname = Glasses1Map;
+        mapname = Glasses1Map.c_str();
     }
     else
         mapname = GreyFile;
