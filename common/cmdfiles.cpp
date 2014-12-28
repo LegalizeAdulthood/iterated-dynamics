@@ -3422,7 +3422,6 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
 {
     char const *modestr[4] =
     {"command line", "sstools.ini", "PAR file", "PAR file"};
-    char msg[256];
     char cmd[80];
     static int row = 1;
 
@@ -3436,8 +3435,10 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
 
     if (*cmd)
         strcat(cmd, "=");
+    std::string msg;
     if (badfilename)
-        sprintf(msg, "Can't find %s%s, please check %s", cmd, badfilename, modestr[static_cast<int>(mode)]);
+        msg = std::string{"Can't find "} + cmd + badfilename
+            + ", please check " + modestr[static_cast<int>(mode)];
     if (first_init)
     {     // & cmdfiles hasn't finished 1st try
         if (row == 1 && badfilename)
@@ -3446,7 +3447,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
             driver_put_string(0, 0, 15, "Fractint found the following problems when parsing commands: ");
         }
         if (badfilename)
-            driver_put_string(row++, 0, 7, msg);
+            driver_put_string(row++, 0, 7, msg.c_str());
         else if (row > 1)
         {
             driver_put_string(++row, 0, 15, "Press Escape to abort, any other key to continue");
@@ -3455,7 +3456,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
         }
     }
     else if (badfilename)
-        stopmsg(STOPMSG_NONE, msg);
+        stopmsg(STOPMSG_NONE, msg.c_str());
     return 0;
 }
 
