@@ -136,14 +136,14 @@ void make_batch_file()
         }
     }
     strcpy(inpcommandfile, CommandFile.c_str());
-    strcpy(inpcommandname, CommandName);
+    strcpy(inpcommandname, CommandName.c_str());
     for (int i = 0; i < 4; i++)
     {
         CommandComment[i] = expand_comments(par_comment[i]);
         strcpy(inpcomment[i], CommandComment[i].c_str());
     }
 
-    if (CommandName[0] == 0)
+    if (CommandName.empty())
         strcpy(inpcommandname, "test");
     pxdots = xdots;
     pydots = ydots;
@@ -225,7 +225,7 @@ prompt_user:
         CommandFile = inpcommandfile;
         if (has_ext(CommandFile.c_str()) == nullptr)
             CommandFile += ".par";   // default extension .par
-        strcpy(CommandName, inpcommandname);
+        CommandName = inpcommandname;
         for (int i = 0; i < 4; i++)
             CommandComment[i] = inpcomment[i];
 #ifndef XFRACT
@@ -340,10 +340,10 @@ skip_UI:
             {
                 if (strchr(buf, '{')// entry heading?
                         && sscanf(buf, " %40[^ \t({]", buf2)
-                        && stricmp(buf2, CommandName) == 0)
+                        && stricmp(buf2, CommandName.c_str()) == 0)
                 {   // entry with same name
                     _snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
-                              CommandName, make_parameter_file ?
+                              CommandName.c_str(), make_parameter_file ?
                               "... Replacing ..." : "Continue to replace it, Cancel to back out");
                     if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
                     {   // cancel
@@ -392,7 +392,7 @@ skip_UI:
                     char c;
                     char PCommandName[80];
                     w = 0;
-                    while (w < (int)strlen(CommandName))
+                    while (w < (int)CommandName.length())
                     {
                         c = CommandName[w];
                         if (isspace(c) || c == 0)
@@ -425,7 +425,7 @@ skip_UI:
                     fprintf(fpbat, "If Errorlevel 2 goto oops\n");
                 }
                 else
-                    fprintf(parmfile, "%-19s{", CommandName);
+                    fprintf(parmfile, "%-19s{", CommandName.c_str());
                 {
                     /* guarantee that there are no blank comments above the last
                        non-blank par_comment */

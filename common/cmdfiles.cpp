@@ -1,6 +1,7 @@
 /*
         Command-line / Command-File Parser Routines
 */
+#include <cassert>
 #include <string>
 #include <vector>
 
@@ -154,7 +155,7 @@ char FormName[ITEMNAMELEN+1] = { 0 };    // Name of the Formula (if not null)
 char LFileName[FILE_MAX_PATH] = { 0 };   // file to find (type=)L-System's in
 char LName[ITEMNAMELEN+1] = { 0 };       // Name of L-System
 std::string CommandFile;                // file to find command sets in
-char CommandName[ITEMNAMELEN+1] = { 0 }; // Name of Command set
+std::string CommandName;                // Name of Command set
 std::string CommandComment[4];          // comments for command set
 char IFSFileName[FILE_MAX_PATH] = { 0 };// file to find (type=)IFS in
 char IFSName[ITEMNAMELEN+1] = { 0 };    // Name of the IFS def'n (if not null)
@@ -280,8 +281,8 @@ int cmdfiles(int argc, char const *const *argv)
             *sptr = 0;
             if (merge_pathnames(CommandFile, &curarg[1], cmd_file::AT_CMD_LINE) < 0)
                 init_msg("", CommandFile.c_str(), cmd_file::AT_CMD_LINE);
-            strcpy(CommandName, sptr+1);
-            if (find_file_item(CommandFile, CommandName, &initfile, 0) || initfile == nullptr)
+            CommandName = &sptr[1];
+            if (find_file_item(CommandFile, CommandName.c_str(), &initfile, 0) || initfile == nullptr)
                 argerror(curarg);
             cmdfile(initfile, cmd_file::AT_CMD_LINE_SET_NAME);
         }
@@ -387,7 +388,7 @@ static void initvars_restart()          // <ins> key init
     strcpy(LFileName, "fractint.l");
     LName[0] = 0;
     CommandFile = "fractint.par";
-    CommandName[0] = 0;
+    CommandName = "";
     for (int i = 0; i < 4; i++)
         CommandComment[i].clear();
     strcpy(IFSFileName, "fractint.ifs");
@@ -1045,11 +1046,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 if (*readname != 0)
                 {
-                    extract_filename(CommandName, readname);
+                    CommandName = extract_filename(readname);
                 }
                 else if (*MAP_name != 0)
                 {
-                    extract_filename(CommandName, MAP_name);
+                    CommandName = extract_filename(MAP_name);
                 }
                 else
                 {
@@ -1058,8 +1059,12 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             else
             {
-                strncpy(CommandName, next, ITEMNAMELEN);
-                CommandName[ITEMNAMELEN] = 0;
+                CommandName = next;
+                assert(CommandName.length() <= ITEMNAMELEN);
+                if (CommandName.length() > ITEMNAMELEN)
+                {
+                    CommandName.resize(ITEMNAMELEN);
+                }
             }
             make_parameter_file = true;
             if (*readname != 0)

@@ -1917,6 +1917,22 @@ long get_file_entry(int type, char const *title, char const *fmask,
     return result;
 }
 
+long get_file_entry(int type, char const *title, char const *fmask,
+                    std::string &filename, std::string &entryname)
+{
+    char buf[FILE_MAX_PATH];
+    assert(filename.size() < FILE_MAX_PATH);
+    strncpy(buf, filename.c_str(), FILE_MAX_PATH);
+    buf[FILE_MAX_PATH - 1] = 0;
+    char name_buf[ITEMNAMELEN];
+    strncpy(name_buf, entryname.c_str(), ITEMNAMELEN);
+    name_buf[ITEMNAMELEN - 1] = 0;
+    long const result = get_file_entry(type, title, fmask, buf, name_buf);
+    filename = buf;
+    entryname = name_buf;
+    return result;
+}
+
 struct entryinfo
 {
     char name[ITEMNAMELEN+2];

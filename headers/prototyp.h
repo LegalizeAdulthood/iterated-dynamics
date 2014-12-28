@@ -853,6 +853,8 @@ extern long get_file_entry(int type, char const *title, char const *fmask,
                     char *filename, char *entryname);
 extern long get_file_entry(int type, char const *title, char const *fmask,
                     std::string &filename, char *entryname);
+extern long get_file_entry(int type, char const *title, char const *fmask,
+                    std::string &filename, std::string &entryname);
 extern int get_fracttype();
 extern int get_fract_params(int);
 extern int get_fract3d_params();
