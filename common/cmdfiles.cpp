@@ -830,7 +830,6 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 yesnoval[totparms] = 1;
             }
         }
-        j = 0;
         char next = 0;
         if (sscanf(argptr, "%c%c", &next, &tmpc) > 0    // NULL entry
                 && (next == '/' || next == '=') && tmpc == '/')
