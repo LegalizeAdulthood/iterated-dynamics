@@ -121,7 +121,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     {
         if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
         {
-            find_file_item(FormFileName, FormName, &scroll_file, 1);
+            find_file_item(FormFileName, FormName.c_str(), &scroll_file, 1);
             in_scrolling_mode = true;
             scroll_file_start = ftell(scroll_file);
         }
@@ -1302,7 +1302,8 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     {
         "First Function", "Second Function", "Third Function", "Fourth Function"
     };
-    char *filename, *entryname;
+    char *filename;
+    char const *entryname;
     FILE *entryfile;
     char const *trignameptr[NUMTRIGFN];
 #ifdef XFRACT
@@ -1333,12 +1334,12 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     if (help_formula < -1)
     {
         bool use_string_ref = false;
-        std::string &string_ref = FormFileName;
+        std::string &filename_ref = FormFileName;
         if (help_formula == -2)
         {
             // special for formula
             use_string_ref = true;
-            entryname = FormName;
+            entryname = FormName.c_str();
         }
         else if (help_formula == -3)
         {       // special for lsystem
@@ -1356,7 +1357,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
             entryname = nullptr;
         }
         if ((!use_string_ref && find_file_item(filename, entryname, &entryfile, -1-help_formula) == 0)
-            || (use_string_ref && find_file_item(string_ref, entryname, &entryfile, -1-help_formula) == 0))
+            || (use_string_ref && find_file_item(filename_ref, entryname, &entryfile, -1-help_formula) == 0))
         {
             load_entry_text(entryfile, tstack, 17, 0, 0);
             fclose(entryfile);

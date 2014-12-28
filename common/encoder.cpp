@@ -2,6 +2,7 @@
         encoder.c - GIF Encoder and associated routines
 */
 #include <algorithm>
+#include <string>
 
 #include <limits.h>
 #include <string.h>
@@ -20,7 +21,7 @@ static bool compress(int rowlimit);
 static int shftwrite(BYTE * color, int numcolors);
 static int extend_blk_len(int datalen);
 static int put_extend_blk(int block_id, int block_len, char * block_data);
-static int store_item_name(char *);
+static int store_item_name(char const *name);
 static void setup_save_info(FRACTAL_INFO *save_info);
 
 /*
@@ -435,7 +436,7 @@ bool encoder()
         // save_info.fractal_type gets modified in setup_save_info() in float only version, so we need to use fractype.
         //    if (save_info.fractal_type == FORMULA || save_info.fractal_type == FFORMULA)
         if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
-            save_info.tot_extend_len += store_item_name(FormName);
+            save_info.tot_extend_len += store_item_name(FormName.c_str());
         //    if (save_info.fractal_type == LSYSTEM)
         if (fractype == fractal_type::LSYSTEM)
             save_info.tot_extend_len += store_item_name(LName);
@@ -622,7 +623,7 @@ static int put_extend_blk(int block_id, int block_len, char * block_data)
     return (1);
 }
 
-static int store_item_name(char *nameptr)
+static int store_item_name(char const *nameptr)
 {
     formula_info fsave_info;
     for (int i = 0; i < 40; i++)

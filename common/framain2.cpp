@@ -1,3 +1,4 @@
+#include <string>
 #include <vector>
 
 #include <string.h>
@@ -2258,7 +2259,7 @@ static void save_history_info()
     case fractal_type::FORMULA:
     case fractal_type::FFORMULA:
         strncpy(current.filename, FormFileName.c_str(), FILE_MAX_PATH);
-        strncpy(current.itemname, FormName, ITEMNAMELEN+1);
+        strncpy(current.itemname, FormName.c_str(), ITEMNAMELEN+1);
         break;
     case fractal_type::IFS:
     case fractal_type::IFS3D:
@@ -2454,7 +2455,11 @@ static void restore_history_info(int i)
     case fractal_type::FORMULA:
     case fractal_type::FFORMULA:
         FormFileName = last.filename;
-        strncpy(FormName,    last.itemname, ITEMNAMELEN+1);
+        FormName = last.itemname;
+        if (FormName.length() > ITEMNAMELEN)
+        {
+            FormName.resize(ITEMNAMELEN);
+        }
         break;
     case fractal_type::IFS:
     case fractal_type::IFS3D:

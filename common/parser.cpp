@@ -2821,7 +2821,7 @@ static bool ParseStr(char const *Str, int pass)
 
 int Formula()
 {
-    if (FormName[0] == 0 || overflow)
+    if (FormName.empty() || overflow)
         return 1;
 
     LodPtr = InitLodPtr;
@@ -2884,7 +2884,7 @@ int Formula()
 
 int form_per_pixel()
 {
-    if (FormName[0] == 0)
+    if (FormName.empty())
         return 1;
     overflow = false;
     jump_index = 0;
@@ -3703,7 +3703,7 @@ int frm_get_param_stuff(char const *Name)
     uses_p4 = false;
     uses_p5 = false;
 
-    if (FormName[0] == 0)
+    if (FormName.empty())
     {
         return 0;  //  and don't reset the pointers
     }
@@ -3955,7 +3955,7 @@ static std::string PrepareFormula(FILE * File, bool from_prompts1c)
         debug_fp = fopen("debugfrm.txt", "at");
         if (debug_fp != nullptr)
         {
-            fprintf(debug_fp, "%s\n", FormName);
+            fprintf(debug_fp, "%s\n", FormName.c_str());
             if (symmetry != symmetry_type::NONE)
             {
                 auto it = std::find_if(std::begin(SymStr), std::end(SymStr),
@@ -4047,7 +4047,7 @@ bool RunForm(char const *Name, bool from_prompts1c)
     curfractalspecific->per_pixel = BadFormula;
     curfractalspecific->orbitcalc = BadFormula;
 
-    if (FormName[0] == 0)
+    if (FormName.empty())
     {
         return true;  //  and don't reset the pointers
     }
@@ -4090,14 +4090,14 @@ bool fpFormulaSetup()
     // TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32)
 #if !defined(XFRACT) && !defined(_WIN32)
     MathType = D_MATH;
-    bool RunFormRes = !RunForm(FormName, false); // RunForm() returns true for failure
+    bool RunFormRes = !RunForm(FormName.c_str(), false); // RunForm() returns true for failure
     if (RunFormRes && fpu >=387 && debugflag != debug_flags::force_standard_fractal && (orbitsave&2) == 0
             && !Randomized)
         return CvtStk() != 0; // run fast assembler code in parsera.asm
     return RunFormRes;
 #else
     MathType = D_MATH;
-    return !RunForm(FormName, false); // RunForm() returns true for failure
+    return !RunForm(FormName.c_str(), false); // RunForm() returns true for failure
 #endif
 }
 
@@ -4118,7 +4118,7 @@ bool intFormulaSetup()
     fg = (double)(1L << bitshift);
     fgLimit = (double)0x7fffffffL / fg;
     ShiftBack = 32 - bitshift;
-    return !RunForm(FormName, false);
+    return !RunForm(FormName.c_str(), false);
 #endif
 }
 

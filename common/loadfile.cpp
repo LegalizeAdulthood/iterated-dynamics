@@ -3,6 +3,7 @@
 */
 #include <algorithm>
 #include <cassert>
+#include <string>
 #include <vector>
 
 #include <errno.h>
@@ -458,7 +459,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (blk_3_info.got_data)
     {
-        char *nameptr;
+        blk_3_info.form_name[ITEMNAMELEN] = 0;
+        char *nameptr = nullptr;
         switch (static_cast<fractal_type>(read_info.fractal_type))
         {
         case fractal_type::LSYSTEM:
@@ -471,7 +473,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             break;
 
         default:
-            nameptr = FormName;
+            FormName = blk_3_info.form_name;
             uses_p1 = blk_3_info.uses_p1 != 0;
             uses_p2 = blk_3_info.uses_p2 != 0;
             uses_p3 = blk_3_info.uses_p3 != 0;
@@ -481,8 +483,10 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             uses_p5 = blk_3_info.uses_p5 != 0;
             break;
         }
-        blk_3_info.form_name[ITEMNAMELEN] = 0;
-        strcpy(nameptr, blk_3_info.form_name);
+        if (nameptr)
+        {
+            strcpy(nameptr, blk_3_info.form_name);
+        }
         // perhaps in future add more here, check block_len for backward compatibility
     }
 
@@ -2026,7 +2030,7 @@ bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
     if ((fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&
             (info->fractal_type == static_cast<int>(fractal_type::FORMULA) || info->fractal_type == static_cast<int>(fractal_type::FFORMULA)))
     {
-        if (!stricmp(blk_3_info->form_name, FormName))
+        if (!stricmp(blk_3_info->form_name, FormName.c_str()))
         {
             numfn = maxfn;
             if (numfn > 0)

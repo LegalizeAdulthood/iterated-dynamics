@@ -31,6 +31,8 @@
 
 // Use startup parameter "debugflag=324" to show debug messages after
 //    compiling with above #define uncommented.
+#include <string>
+
 #include <ctype.h>
 #include <float.h>
 #include <string.h>
@@ -1337,7 +1339,7 @@ void (Img_Setup)();
 // convert the array of ptrs
 int CvtStk()
 {
-    extern char FormName[];
+    extern std::string FormName;
     void (*ftst)();
     void (*ntst)();
     Arg *testoperand;
@@ -1554,7 +1556,7 @@ skipfinalopt:  // -------------- end of final optimizations ------------
     LASTSQR.d.y = 0.0;  // do this once per image
 
     // now change the pointers
-    if (FormName[0] != 0 &&
+    if (!FormName.empty() &&
             (!uses_jump || fpfill_jump_struct() == 0))
     { // but only if parse succeeded
         curfractalspecific->per_pixel = fform_per_pixel;
