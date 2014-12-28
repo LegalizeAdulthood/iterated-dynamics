@@ -218,7 +218,7 @@ struct include_stack_entry
 include_stack_entry include_stack[MAX_INCLUDE_STACK];
 int include_stack_top = -1;
 
-void check_buffer(char *current, unsigned off, char *buffer);
+void check_buffer(char const *curr, unsigned off, char const *buffer);
 
 #define CHK_BUFFER(off) check_buffer(curr, off, buffer)
 
@@ -3821,7 +3821,7 @@ int main(int argc, char *argv[])
 #pragma warning(push)
 #pragma warning(disable : 4311)
 #endif
-void check_buffer(char *current, unsigned off, char *buffer)
+void check_buffer(char const *curr, unsigned off, char const *buffer)
 {
     if ((unsigned)(curr + off - buffer) >= (BUFFER_SIZE-1024))
     {
