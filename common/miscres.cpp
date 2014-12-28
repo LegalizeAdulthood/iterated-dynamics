@@ -702,7 +702,7 @@ bool tab_display_2(char *msg)
     show_str_var("tempdir",     tempdir,      &row, msg);
     show_str_var("workdir",     workdir,      &row, msg);
     show_str_var("filename",    readname,     &row, msg);
-    show_str_var("formulafile", FormFileName, &row, msg);
+    show_str_var("formulafile", FormFileName.c_str(), &row, msg);
     show_str_var("savename",    savename,     &row, msg);
     show_str_var("parmfile",    CommandFile.c_str(),  &row, msg);
     show_str_var("ifsfile",     IFSFileName,  &row, msg);
@@ -829,11 +829,11 @@ top:
             driver_put_string(s_row+1, 16, C_GENERAL_HI, FormName);
             i = (int) strlen(FormName)+1;
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
-            if ((int) strlen(FormFileName) >= 29)
+            if (FormFileName.length() >= 29)
             {
                 addrow = 1;
             }
-            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, FormFileName);
+            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, FormFileName.c_str());
         }
         trigdetails(msg);
         driver_put_string(s_row+1, 16+i, C_GENERAL_HI, msg);

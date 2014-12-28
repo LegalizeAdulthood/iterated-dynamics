@@ -2257,7 +2257,7 @@ static void save_history_info()
     {
     case fractal_type::FORMULA:
     case fractal_type::FFORMULA:
-        strncpy(current.filename, FormFileName, FILE_MAX_PATH);
+        strncpy(current.filename, FormFileName.c_str(), FILE_MAX_PATH);
         strncpy(current.itemname, FormName, ITEMNAMELEN+1);
         break;
     case fractal_type::IFS:
@@ -2453,7 +2453,7 @@ static void restore_history_info(int i)
     {
     case fractal_type::FORMULA:
     case fractal_type::FFORMULA:
-        strncpy(FormFileName, last.filename, FILE_MAX_PATH);
+        FormFileName = last.filename;
         strncpy(FormName,    last.itemname, ITEMNAMELEN+1);
         break;
     case fractal_type::IFS:

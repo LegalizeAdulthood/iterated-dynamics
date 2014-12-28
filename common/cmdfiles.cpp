@@ -150,7 +150,7 @@ static bool initcorners = false;
 static bool initparams = false;
 fractalspecificstuff *curfractalspecific = nullptr;
 
-char FormFileName[FILE_MAX_PATH] = { 0 };// file to find (type=)formulas in
+std::string FormFileName;               // file to find (type=)formulas in
 char FormName[ITEMNAMELEN+1] = { 0 };    // Name of the Formula (if not null)
 char LFileName[FILE_MAX_PATH] = { 0 };   // file to find (type=)L-System's in
 char LName[ITEMNAMELEN+1] = { 0 };       // Name of L-System
@@ -313,7 +313,7 @@ int cmdfiles(int argc, char const *const *argv)
 
     //set structure of search directories
     strcpy(searchfor.par, CommandFile.c_str());
-    strcpy(searchfor.frm, FormFileName);
+    strcpy(searchfor.frm, FormFileName.c_str());
     strcpy(searchfor.lsys, LFileName);
     strcpy(searchfor.ifs, IFSFileName);
     return 0;
@@ -383,7 +383,7 @@ static void initvars_restart()          // <ins> key init
     orbit_interval = 1;                 // plot all orbits
     debugflag = debug_flags::none;      // debugging flag(s) are off
     timerflag = false;                  // timer flags are off
-    strcpy(FormFileName, "fractint.frm"); // default formula file
+    FormFileName = "fractint.frm";      // default formula file
     FormName[0] = 0;
     strcpy(LFileName, "fractint.l");
     LName[0] = 0;

@@ -565,7 +565,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         }
         if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
         {
-            put_filename("formulafile", FormFileName);
+            put_filename("formulafile", FormFileName.c_str());
             put_parm(" %s=%s", "formulaname", FormName);
             if (uses_ismand)
                 put_parm(" %s=%c", "ismand", ismand ? 'y' : 'n');
