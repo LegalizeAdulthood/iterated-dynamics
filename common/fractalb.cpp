@@ -20,7 +20,7 @@ bf_math_type bf_math = bf_math_type::NONE;
 
 #ifdef DEBUG
 //********************************************************************
-void show_var_bn(char *s, bn_t n)
+void show_var_bn(char const *s, bn_t n)
 {
     char msg[200];
     strcpy(msg, s);
@@ -46,7 +46,7 @@ void showcornersdbl(char const *s)
 }
 
 // show floating point and bignumber corners
-void showcorners(char *s)
+void showcorners(char const *s)
 {
     int dec = 20;
     char msg[100], msg1[100], msg3[100];
@@ -75,7 +75,7 @@ void showcorners(char *s)
 }
 
 // show globals
-void showbfglobals(char *s)
+void showbfglobals(char const *s)
 {
     char msg[300];
     sprintf(msg, "%s\n\
@@ -89,7 +89,7 @@ bfdecimals=%d ",
         goodbye();
 }
 
-void showcornersbf(char *s)
+void showcornersbf(char const *s)
 {
     int dec = decimals;
     char msg[100], msg1[100], msg3[600];
@@ -120,7 +120,7 @@ void showcornersbf(char *s)
         goodbye();
 }
 
-void showcornersbfs(char *s)
+void showcornersbfs(char const *s)
 {
     int dec = 20;
     char msg[100], msg1[100], msg3[500];
@@ -158,7 +158,7 @@ void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
         goodbye();
 }
 
-void show_three_bf(char *s1, bf_t t1, char *s2, bf_t t2, char *s3, bf_t t3, int digits)
+void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const *s3, bf_t t3, int digits)
 {
     char msg1[200], msg2[200], msg3[200], msg4[600];
     bftostr_e(msg1, digits, t1);
@@ -170,7 +170,7 @@ void show_three_bf(char *s1, bf_t t1, char *s2, bf_t t2, char *s3, bf_t t3, int 
 }
 
 // for aspect ratio debugging
-void showaspect(char *s)
+void showaspect(char const *s)
 {
     bf_t bt1, bt2, aspect;
     char msg[100], str[100];
