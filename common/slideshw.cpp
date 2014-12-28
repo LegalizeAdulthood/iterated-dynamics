@@ -224,7 +224,7 @@ start:
         }
         out = 0;
     }
-    else if (strcmp((char *)buffer, "GOTO") == 0)
+    else if (strcmp(buffer, "GOTO") == 0)
     {
         if (fscanf(fpss, "%s", buffer) != 1)
         {
@@ -251,7 +251,7 @@ start:
     }
     else if ((i = get_scancode(buffer)) > 0)
         out = i;
-    else if (strcmp("WAIT", (char *)buffer) == 0)
+    else if (strcmp("WAIT", buffer) == 0)
     {
         float fticks;
         err = fscanf(fpss, "%f", &fticks); // how many ticks to wait
@@ -269,7 +269,7 @@ start:
         out = 0;
         slowcount = out;
     }
-    else if (strcmp("CALCWAIT", (char *)buffer) == 0) // wait for calc to finish
+    else if (strcmp("CALCWAIT", buffer) == 0) // wait for calc to finish
     {
         calcwait = true;
         out = 0;
