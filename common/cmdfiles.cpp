@@ -157,7 +157,7 @@ char LName[ITEMNAMELEN+1] = { 0 };       // Name of L-System
 std::string CommandFile;                // file to find command sets in
 std::string CommandName;                // Name of Command set
 std::string CommandComment[4];          // comments for command set
-char IFSFileName[FILE_MAX_PATH] = { 0 };// file to find (type=)IFS in
+std::string IFSFileName;                // file to find (type=)IFS in
 char IFSName[ITEMNAMELEN+1] = { 0 };    // Name of the IFS def'n (if not null)
 SearchPath searchfor = { 0 };
 std::vector<float> ifs_defn;            // ifs parameters
@@ -315,7 +315,7 @@ int cmdfiles(int argc, char const *const *argv)
     strcpy(searchfor.par, CommandFile.c_str());
     strcpy(searchfor.frm, FormFileName.c_str());
     strcpy(searchfor.lsys, LFileName);
-    strcpy(searchfor.ifs, IFSFileName);
+    strcpy(searchfor.ifs, IFSFileName.c_str());
     return 0;
 }
 
@@ -391,7 +391,7 @@ static void initvars_restart()          // <ins> key init
     CommandName = "";
     for (int i = 0; i < 4; i++)
         CommandComment[i].clear();
-    strcpy(IFSFileName, "fractint.ifs");
+    IFSFileName = "fractint.ifs";
     IFSName[0] = 0;
     reset_ifs_defn();
     rflag = false;                      // not a fixed srand() seed

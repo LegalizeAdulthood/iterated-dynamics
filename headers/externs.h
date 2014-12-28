@@ -188,7 +188,7 @@ extern unsigned int          height;
 extern float                 heightfp;
 extern int                   helpmode;
 extern int                   hi_atten;
-extern char                  IFSFileName[];
+extern std::string           IFSFileName;
 extern char                  IFSName[];
 extern std::vector<float>    ifs_defn;
 extern bool                  ifs_type;

@@ -1042,12 +1042,14 @@ static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype,
     if (done >= 0)
     {
         result = static_cast<fractal_type>(choices[done]->num);
-        if ((result == fractal_type::FORMULA || result == fractal_type::FFORMULA) && FormFileName == CommandFile)
+        if ((result == fractal_type::FORMULA || result == fractal_type::FFORMULA)
+            && FormFileName == CommandFile)
             FormFileName = searchfor.frm;
         if (result == fractal_type::LSYSTEM && !strcmp(LFileName, CommandFile.c_str()))
             strcpy(LFileName, searchfor.lsys);
-        if ((result == fractal_type::IFS || result == fractal_type::IFS3D) && !strcmp(IFSFileName, CommandFile.c_str()))
-            strcpy(IFSFileName, searchfor.ifs);
+        if ((result == fractal_type::IFS || result == fractal_type::IFS3D)
+            && IFSFileName == CommandFile)
+            IFSFileName = searchfor.ifs;
     }
 
 
@@ -1333,12 +1335,12 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     int help_formula = curfractalspecific->helpformula;
     if (help_formula < -1)
     {
-        bool use_string_ref = false;
+        bool use_filename_ref = false;
         std::string &filename_ref = FormFileName;
         if (help_formula == -2)
         {
             // special for formula
-            use_string_ref = true;
+            use_filename_ref = true;
             entryname = FormName.c_str();
         }
         else if (help_formula == -3)
@@ -1348,7 +1350,8 @@ int get_fract_params(int caller)        // prompt for type-specific parms
         }
         else if (help_formula == -4)
         {       // special for ifs
-            filename = IFSFileName;
+            use_filename_ref = true;
+            filename_ref = IFSFileName;
             entryname = IFSName;
         }
         else
@@ -1356,8 +1359,8 @@ int get_fract_params(int caller)        // prompt for type-specific parms
             filename = nullptr;
             entryname = nullptr;
         }
-        if ((!use_string_ref && find_file_item(filename, entryname, &entryfile, -1-help_formula) == 0)
-            || (use_string_ref && find_file_item(filename_ref, entryname, &entryfile, -1-help_formula) == 0))
+        if ((!use_filename_ref && find_file_item(filename, entryname, &entryfile, -1-help_formula) == 0)
+            || (use_filename_ref && find_file_item(filename_ref, entryname, &entryfile, -1-help_formula) == 0))
         {
             load_entry_text(entryfile, tstack, 17, 0, 0);
             fclose(entryfile);

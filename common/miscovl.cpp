@@ -578,7 +578,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         }
         if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
         {
-            put_filename("ifsfile", IFSFileName);
+            put_filename("ifsfile", IFSFileName.c_str());
             put_parm(" %s=%s", "ifs", IFSName);
         }
         if (fractype == fractal_type::INVERSEJULIA || fractype == fractal_type::INVERSEJULIAFP)
