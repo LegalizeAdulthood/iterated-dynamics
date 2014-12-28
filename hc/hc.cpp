@@ -3594,11 +3594,10 @@ int main(int argc, char *argv[])
 
     char **arg;
     std::string fname1;
-    char   fname2[81];
+    std::string fname2;
     char   swappath[81];
 
     swappath[0] = 0;
-    fname2[0] = 0;
 
     printf("HC - FRACTINT Help Compiler.\n\n");
 
@@ -3677,8 +3676,8 @@ int main(int argc, char *argv[])
         default:   /* assume it is a fname */
             if (fname1.empty())
                 fname1 = *arg;
-            else if (fname2[0] == '\0')
-                strcpy(fname2, *arg);
+            else if (fname2.empty())
+                fname2 = *arg;
             else
                 fatal(0, "Unexpected command-line argument \"%s\"", *arg);
             break;
@@ -3712,8 +3711,8 @@ int main(int argc, char *argv[])
         break;
 
     case modes::COMPILE:
-        if (fname2[0] != '\0')
-            fatal(0, "Unexpected command-line argument \"%s\"", fname2);
+        if (!fname2.empty())
+            fatal(0, "Unexpected command-line argument \"%s\"", fname2.c_str());
 
         strcpy(src_fname, fname1.empty() ? DEFAULT_SRC_FNAME : fname1.c_str());
 
@@ -3782,7 +3781,7 @@ int main(int argc, char *argv[])
         if (!errors)
             paginate_document();
         if (!errors)
-            print_document((fname2[0] == '\0') ? DEFAULT_DOC_FNAME : fname2);
+            print_document(fname2.empty() ? DEFAULT_DOC_FNAME : fname2.c_str());
 
         if (errors || warnings)
             report_errors();
@@ -3794,12 +3793,12 @@ int main(int argc, char *argv[])
 
     case modes::APPEND:
         add_hlp_to_exe(fname1.empty() ? DEFAULT_HLP_FNAME : fname1.c_str(),
-                       (fname2[0] == '\0') ? DEFAULT_EXE_FNAME : fname2);
+                       fname2.empty() ? DEFAULT_EXE_FNAME : fname2.c_str());
         break;
 
     case modes::DELETE:
-        if (fname2[0] != '\0')
-            fatal(0, "Unexpected argument \"%s\"", fname2);
+        if (!fname2.empty())
+            fatal(0, "Unexpected argument \"%s\"", fname2.c_str());
         delete_hlp_from_exe(fname1.empty() ? DEFAULT_EXE_FNAME : fname1.c_str());
         break;
     }
