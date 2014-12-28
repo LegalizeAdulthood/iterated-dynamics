@@ -464,7 +464,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         switch (static_cast<fractal_type>(read_info.fractal_type))
         {
         case fractal_type::LSYSTEM:
-            nameptr = LName;
+            LName = blk_3_info.form_name;
             break;
 
         case fractal_type::IFS:

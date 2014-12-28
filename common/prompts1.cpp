@@ -127,7 +127,7 @@ int fullscreen_prompt(      // full-screen prompting routine
         }
         else if (fractype == fractal_type::LSYSTEM)
         {
-            find_file_item(LFileName, LName, &scroll_file, 2);
+            find_file_item(LFileName, LName.c_str(), &scroll_file, 2);
             in_scrolling_mode = true;
             scroll_file_start = ftell(scroll_file);
         }
@@ -1374,7 +1374,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
         {       // special for lsystem
             use_filename_ref = true;
             filename_ref = LFileName;
-            entryname = LName;
+            entryname = LName.c_str();
         }
         else if (help_formula == -4)
         {       // special for ifs

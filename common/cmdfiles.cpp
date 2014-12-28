@@ -153,7 +153,7 @@ fractalspecificstuff *curfractalspecific = nullptr;
 std::string FormFileName;               // file to find (type=)formulas in
 std::string FormName;                   // Name of the Formula (if not null)
 std::string LFileName;                  // file to find (type=)L-System's in
-char LName[ITEMNAMELEN+1] = { 0 };       // Name of L-System
+std::string LName;                      // Name of L-System
 std::string CommandFile;                // file to find command sets in
 std::string CommandName;                // Name of Command set
 std::string CommandComment[4];          // comments for command set
@@ -386,7 +386,7 @@ static void initvars_restart()          // <ins> key init
     FormFileName = "fractint.frm";      // default formula file
     FormName = "";
     LFileName = "fractint.l";
-    LName[0] = 0;
+    LName = "";
     CommandFile = "fractint.par";
     CommandName = "";
     for (int i = 0; i < 4; i++)
@@ -2732,7 +2732,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (valuelen > ITEMNAMELEN)
             goto badarg;
-        strcpy(LName, value);
+        LName = value;
         return CMDARG_FRACTAL_PARAM;
     }
 

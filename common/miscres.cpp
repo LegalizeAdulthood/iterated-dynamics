@@ -849,7 +849,7 @@ top:
         if (fractype == fractal_type::LSYSTEM)
         {
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
-            driver_put_string(s_row+1, 16, C_GENERAL_HI, LName);
+            driver_put_string(s_row+1, 16, C_GENERAL_HI, LName.c_str());
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
             if ((int) LFileName.length() >= 28)
             {

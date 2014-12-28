@@ -236,7 +236,7 @@ extern long                  linity;
 extern long                  llimit2;
 extern long                  llimit;
 extern long                  lmagnitud;
-extern char                  LName[];
+extern std::string           LName;
 extern LComplex              lnew;
 extern bool                  loaded3d;
 extern int                   LodPtr;

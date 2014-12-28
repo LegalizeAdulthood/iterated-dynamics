@@ -2268,7 +2268,7 @@ static void save_history_info()
         break;
     case fractal_type::LSYSTEM:
         strncpy(current.filename, LFileName.c_str(), FILE_MAX_PATH);
-        strncpy(current.itemname, LName, ITEMNAMELEN+1);
+        strncpy(current.itemname, LName.c_str(), ITEMNAMELEN+1);
         break;
     default:
         *(current.filename) = 0;
@@ -2472,7 +2472,11 @@ static void restore_history_info(int i)
         break;
     case fractal_type::LSYSTEM:
         LFileName = last.filename;
-        strncpy(LName    , last.itemname, ITEMNAMELEN+1);
+        LName = last.itemname;
+        if (LName.length() > ITEMNAMELEN)
+        {
+            LName.resize(ITEMNAMELEN);
+        }
         break;
     default:
         break;
