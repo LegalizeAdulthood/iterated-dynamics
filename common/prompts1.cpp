@@ -45,7 +45,7 @@ void set_default_parms();
 static long gfe_choose_entry(int type, char const *title, char const *filename, char *entryname);
 static  int check_gfe_key(int curkey, int choice);
 static  void load_entry_text(FILE *entfile, char *buf, int maxlines, int startrow, int startcol);
-static  void format_parmfile_line(int, char *);
+static  void format_parmfile_line(int choice, char *buf);
 static  bool get_light_params();
 static  bool check_mapfile();
 static  bool get_funny_glasses_params();
