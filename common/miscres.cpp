@@ -842,11 +842,11 @@ top:
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(s_row+1, 16, C_GENERAL_HI, LName);
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
-            if ((int) strlen(LFileName) >= 28)
+            if ((int) LFileName.length() >= 28)
             {
                 addrow = 1;
             }
-            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, LFileName);
+            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, LFileName.c_str());
         }
         if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
         {

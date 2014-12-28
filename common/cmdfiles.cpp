@@ -152,7 +152,7 @@ fractalspecificstuff *curfractalspecific = nullptr;
 
 std::string FormFileName;               // file to find (type=)formulas in
 std::string FormName;                   // Name of the Formula (if not null)
-char LFileName[FILE_MAX_PATH] = { 0 };   // file to find (type=)L-System's in
+std::string LFileName;                  // file to find (type=)L-System's in
 char LName[ITEMNAMELEN+1] = { 0 };       // Name of L-System
 std::string CommandFile;                // file to find command sets in
 std::string CommandName;                // Name of Command set
@@ -314,7 +314,7 @@ int cmdfiles(int argc, char const *const *argv)
     //set structure of search directories
     strcpy(searchfor.par, CommandFile.c_str());
     strcpy(searchfor.frm, FormFileName.c_str());
-    strcpy(searchfor.lsys, LFileName);
+    strcpy(searchfor.lsys, LFileName.c_str());
     strcpy(searchfor.ifs, IFSFileName.c_str());
     return 0;
 }
@@ -385,7 +385,7 @@ static void initvars_restart()          // <ins> key init
     timerflag = false;                  // timer flags are off
     FormFileName = "fractint.frm";      // default formula file
     FormName = "";
-    strcpy(LFileName, "fractint.l");
+    LFileName = "fractint.l";
     LName[0] = 0;
     CommandFile = "fractint.par";
     CommandName = "";

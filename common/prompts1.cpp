@@ -1045,8 +1045,9 @@ static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype,
         if ((result == fractal_type::FORMULA || result == fractal_type::FFORMULA)
             && FormFileName == CommandFile)
             FormFileName = searchfor.frm;
-        if (result == fractal_type::LSYSTEM && !strcmp(LFileName, CommandFile.c_str()))
-            strcpy(LFileName, searchfor.lsys);
+        if (result == fractal_type::LSYSTEM
+            && LFileName == CommandFile)
+            LFileName = searchfor.lsys;
         if ((result == fractal_type::IFS || result == fractal_type::IFS3D)
             && IFSFileName == CommandFile)
             IFSFileName = searchfor.ifs;
@@ -1371,7 +1372,8 @@ int get_fract_params(int caller)        // prompt for type-specific parms
         }
         else if (help_formula == -3)
         {       // special for lsystem
-            filename = LFileName;
+            use_filename_ref = true;
+            filename_ref = LFileName;
             entryname = LName;
         }
         else if (help_formula == -4)
