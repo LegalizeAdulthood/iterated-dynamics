@@ -512,10 +512,10 @@ int  read_char_buff_pos = -1;
 int  read_char_sp       = 0;
 
 
-void unread_char(int ch)
 /*
  * Will not handle new-lines or tabs correctly!
  */
+void unread_char(int ch)
 {
     if (read_char_buff_pos+1 >= READ_CHAR_BUFF_SIZE)
         fatal(0, "Compiler Error -- Read char buffer overflow!");
@@ -2314,10 +2314,10 @@ void read_src(char const *fname)
  */
 
 
-void make_hot_links()
 /*
  * calculate topic_num/topic_off for each link.
  */
+void make_hot_links()
 {
     LINK    *l;
     LABEL   *lbl;
@@ -3068,11 +3068,11 @@ void calc_offsets()    // calc file offset to each topic
 }
 
 
-void insert_real_link_info(char *curr, unsigned len)
 /*
  * Replaces link indexes in the help text with topic_num, topic_off and
  * doc_page info.
  */
+void insert_real_link_info(char *curr, unsigned len)
 {
     int       size;
     int       tok;
@@ -3222,12 +3222,10 @@ void write_help(char const *fname)
 
 struct PRINT_DOC_INFO
 {
-
     /*
      * Note: Don't move these first three or pd_get_info will work not
      *       correctly.
      */
-
     int      cnum;
     int      tnum;
     int      link_dest_warn;   // = 0
