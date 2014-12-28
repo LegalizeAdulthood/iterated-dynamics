@@ -3603,15 +3603,11 @@ public:
 
 private:
     void parse_arguments();
+    void read_source_file();
     void usage();
     void compile();
     void print();
-
-    void render_html()
-    {
-        throw std::runtime_error("Method is not implemented.");
-    }
-
+    void render_html();
 
     int argc;
     char **argv;
@@ -3783,11 +3779,8 @@ void compiler::usage()
     printf("Use \"/q\" for quiet mode. (No status messages.)\n");
 }
 
-void compiler::compile()
+void compiler::read_source_file()
 {
-    if (!fname2.empty())
-        fatal(0, "Unexpected command-line argument \"%s\"", fname2.c_str());
-
     src_fname = fname1.empty() ? DEFAULT_SRC_FNAME : fname1;
 
     swappath += SWAP_FNAME;
@@ -3798,6 +3791,14 @@ void compiler::compile()
     swappos = 0;
 
     read_src(src_fname.c_str());
+}
+
+void compiler::compile()
+{
+    if (!fname2.empty())
+        fatal(0, "Unexpected command-line argument \"%s\"", fname2.c_str());
+
+    read_source_file();
 
     if (hdr_fname.empty())
         error(0, "No .H file defined.  (Use \"~HdrFile=\")");
@@ -3839,17 +3840,7 @@ void compiler::compile()
 
 void compiler::print()
 {
-    src_fname = fname1.empty() ? DEFAULT_SRC_FNAME : fname1;
-
-    swappath += SWAP_FNAME;
-
-    swapfile = fopen(swappath.c_str(), "w+b");
-    if (swapfile == nullptr)
-        fatal(0, "Cannot create swap file \"%s\"", swappath.c_str());
-    swappos = 0;
-
-    read_src(src_fname.c_str());
-
+    read_source_file();
     make_hot_links();
 
     if (!errors)
@@ -3862,6 +3853,11 @@ void compiler::print()
 
     fclose(swapfile);
     remove(swappath.c_str());
+}
+
+void compiler::render_html()
+{
+    throw std::runtime_error("Method is not implemented.");
 }
 
 #if defined(_WIN32)
