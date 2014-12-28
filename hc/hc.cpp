@@ -84,7 +84,7 @@ struct LINK
     unsigned topic_off;     /* offset into topic to link to */
     int      doc_page;      /* document page # to link to */
     char    *name;          /* name of label or title of topic to link to */
-    char    *srcfile;       /* .SRC file link appears in */
+    char const *srcfile;       /* .SRC file link appears in */
     int      srcline;       /* .SRC file line # link appears in */
 };
 
@@ -146,7 +146,7 @@ struct CONTENT
     char      is_label[MAX_CONTENT_TOPIC];
     char     *topic_name[MAX_CONTENT_TOPIC];
     int       topic_num[MAX_CONTENT_TOPIC];
-    char     *srcfile;
+    char const *srcfile;
     int       srcline;
 };
 
@@ -192,7 +192,7 @@ int      errors           = 0,    /* number of errors reported */
 char     src_fname[81]    = "";   /* command-line .SRC filename */
 char     hdr_fname[81]    = "";   /* .H filename */
 char     hlp_fname[81]    = "";   /* .HLP filename */
-char    *src_cfname       = nullptr; /* current .SRC filename */
+char const *src_cfname = nullptr; /* current .SRC filename */
 
 int      format_exclude   = 0;    /* disable formatting at this col, 0 to */
 /*    never disable formatting */
@@ -210,7 +210,7 @@ bool xdoc = false;
 
 struct include_stack_entry
 {
-    char *fname;
+    char const *fname;
     FILE *file;
     int   line;
     int   col;
@@ -1393,7 +1393,7 @@ void check_command_length(int eoff, int len)
 }
 
 
-void read_src(char *fname)
+void read_src(char const *fname)
 {
     int    ch;
     char  *ptr;
