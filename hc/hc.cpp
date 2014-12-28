@@ -1357,7 +1357,7 @@ void add_blank_for_split()   /* add space at curr for merging two lines */
 }
 
 
-void put_a_char(int ch, TOPIC *t)
+void put_a_char(int ch, TOPIC const *t)
 {
     if (ch == '{' && !(t->flags & TF_DATA))    /* is it a hot-link? */
         parse_link();
