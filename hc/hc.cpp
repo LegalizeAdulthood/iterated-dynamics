@@ -188,7 +188,7 @@ int      errors           = 0,    // number of errors reported
          warnings         = 0;    // number of warnings reported
 
 std::string src_fname;            // command-line .SRC filename
-char     hdr_fname[81]    = "";   // .H filename
+std::string hdr_fname;            // .H filename
 char     hlp_fname[81]    = "";   // .HLP filename
 char const *src_cfname = nullptr; // current .SRC filename
 
@@ -1717,9 +1717,9 @@ void read_src(char const *fname)
                 {
                     if (strnicmp(cmd, "HdrFile=", 8) == 0)
                     {
-                        if (hdr_fname[0] != '\0')
+                        if (!hdr_fname.empty())
                             warn(eoff, "Header Filename has already been defined.");
-                        strcpy(hdr_fname, cmd+8);
+                        hdr_fname = &cmd[8];
                     }
 
                     else if (strnicmp(cmd, "HlpFile=", 8) == 0)
@@ -3781,7 +3781,7 @@ void compiler::compile()
 
     read_src(src_fname.c_str());
 
-    if (hdr_fname[0] == '\0')
+    if (hdr_fname.empty())
         error(0, "No .H file defined.  (Use \"~HdrFile=\")");
     if (hlp_fname[0] == '\0')
         error(0, "No .HLP file defined.  (Use \"~HlpFile=\")");
@@ -3802,7 +3802,7 @@ void compiler::compile()
     if (!errors)
         sort_labels();
     if (!errors)
-        write_hdr(hdr_fname);
+        write_hdr(hdr_fname.c_str());
     if (!errors)
         write_help(hlp_fname);
 
