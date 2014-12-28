@@ -2702,10 +2702,10 @@ LABEL *find_next_label_by_topic(int t)
 }
 
 
-void set_hot_link_doc_page()
 /*
  * Find doc_page for all hot-links.
  */
+void set_hot_link_doc_page()
 {
     LINK  *l;
     LABEL *lbl;
@@ -2749,10 +2749,10 @@ void set_hot_link_doc_page()
 }
 
 
-void set_content_doc_page()
 /*
  * insert page #'s in the DocContents
  */
+void set_content_doc_page()
 {
     TOPIC   *t;
     char    *base;
