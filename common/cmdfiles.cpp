@@ -3422,7 +3422,6 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
 {
     char const *modestr[4] =
     {"command line", "sstools.ini", "PAR file", "PAR file"};
-    char cmd[80];
     static int row = 1;
 
     if (initbatch == 1)
@@ -3430,6 +3429,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
         if (badfilename)
             return -1;
     }
+    char cmd[80];
     strncpy(cmd, cmdstr, 30);
     cmd[29] = 0;
 
