@@ -174,7 +174,7 @@ extern double                f_ycenter;
 extern GENEBASE              gene_bank[NUMGENES];
 extern int                   get_corners();
 extern bool                  gif87a_flag;
-extern char                  gifmask[];
+extern std::string           gifmask;
 extern char                  Glasses1Map[];
 extern int                   g_glasses_type;
 extern bool                  g_good_mode;       // video mode ok?

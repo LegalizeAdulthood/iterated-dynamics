@@ -60,7 +60,7 @@ char    readname[FILE_MAX_PATH] = { 0 };// name of fractal input file
 char    tempdir[FILE_MAX_DIR] = {""}; // name of temporary directory
 char    workdir[FILE_MAX_DIR] = {""}; // name of directory for misc files
 char    orgfrmdir[FILE_MAX_DIR] = {""};// name of directory for orgfrm files
-char    gifmask[13] = {""};
+std::string gifmask;
 char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; // Name for print-to-file
 char    savename[FILE_MAX_PATH] = {"fract001"}; // save files using this name
 std::string autoname{"auto.key"}; // record auto keystrokes here
@@ -1121,9 +1121,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 goto badarg;
             }
-            gifmask[0] = '*';
-            gifmask[1] = 0;
-            strcat(gifmask, value);
+            gifmask = std::string{"*"} + value;
             return CMDARG_NONE;
         }
         if (valuelen > (FILE_MAX_PATH-1))
