@@ -3300,7 +3300,6 @@ badcolor:
 
 static void argerror(char const *badarg)      // oops. couldn't decode this
 {
-    char msg[300];
     char spillover[71];
     if ((int) strlen(badarg) > 70)
     {
@@ -3308,16 +3307,17 @@ static void argerror(char const *badarg)      // oops. couldn't decode this
         spillover[70] = 0;
         badarg = spillover;
     }
-    sprintf(msg, "Oops. I couldn't understand the argument:\n  %s", badarg);
+    std::string msg{"Oops. I couldn't understand the argument:\n  "};
+    msg += badarg;
 
     if (first_init)       // this is 1st call to cmdfiles
     {
-        strcat(msg, "\n"
+        msg += "\n"
                "\n"
                "(see the Startup Help screens or documentation for a complete\n"
-               " argument list with descriptions)");
+               " argument list with descriptions)";
     }
-    stopmsg(STOPMSG_NONE, msg);
+    stopmsg(STOPMSG_NONE, msg.c_str());
     if (initbatch)
     {
         initbatch = 4;
