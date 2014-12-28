@@ -35,8 +35,6 @@ extern int strnicmp(char const *, char const *, int);
 #endif
 extern int filelength(int);
 extern int _splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext);
-#define strupr strlwr
-
 #else
 
 /*
@@ -1698,7 +1696,6 @@ void read_src(char const *fname)
                         include_stack[include_stack_top].file = srcfile;
                         include_stack[include_stack_top].line = srcline;
                         include_stack[include_stack_top].col  = srccol;
-                        strupr(cmd+8);
                         srcfile = fopen(cmd+8, "rt");
                         if (srcfile == nullptr)
                         {
@@ -1723,7 +1720,6 @@ void read_src(char const *fname)
                         if (hdr_fname[0] != '\0')
                             warn(eoff, "Header Filename has already been defined.");
                         strcpy(hdr_fname, cmd+8);
-                        strupr(hdr_fname);
                     }
 
                     else if (strnicmp(cmd, "HlpFile=", 8) == 0)
@@ -1731,7 +1727,6 @@ void read_src(char const *fname)
                         if (hlp_fname[0] != '\0')
                             warn(eoff, "Help Filename has already been defined.");
                         strcpy(hlp_fname, cmd+8);
-                        strupr(hlp_fname);
                     }
 
                     else if (strnicmp(cmd, "Version=", 8) == 0)
@@ -3688,10 +3683,6 @@ int main(int argc, char *argv[])
             break;
         } /* switch */
     } /* for */
-
-    strupr(fname1);
-    strupr(fname2);
-    strupr(swappath);
 
     switch (mode)
     {
