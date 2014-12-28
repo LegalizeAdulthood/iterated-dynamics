@@ -3437,6 +3437,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
         strcat(cmd, "=");
     std::string msg;
     if (badfilename)
+        // cppcheck-suppress constStatement
         msg = std::string{"Can't find "} + cmd + badfilename
             + ", please check " + modestr[static_cast<int>(mode)];
     if (first_init)
