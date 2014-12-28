@@ -437,7 +437,7 @@ extern short                 skipydots;
 extern slides_mode           g_slides;
 extern int                   Slope;
 extern int                   soundflag;
-extern char                  speed_prompt[];
+extern std::string const     speed_prompt;
 extern void                (*standardplot)(int, int, int);
 extern bool                  start_showorbit;
 extern bool                  started_resaves;

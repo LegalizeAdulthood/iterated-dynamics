@@ -318,7 +318,7 @@ int putstringcenter(int row, int col, int width, int attr, char const *msg)
 
 // ------------------------------------------------------------------------
 
-char speed_prompt[] = "Speed key string";
+std::string const speed_prompt{"Speed key string"};
 
 /* For file list purposes only, it's a directory name if first
    char is a dot or last char is a slash */
@@ -353,8 +353,8 @@ void show_speedstring(
         }
         else
         {
-            driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, speed_prompt);
-            j = sizeof(speed_prompt)-1;
+            driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, speed_prompt.c_str());
+            j = speed_prompt.length();
         }
         strcpy(buf, speedstring);
         int i = (int) strlen(buf);
