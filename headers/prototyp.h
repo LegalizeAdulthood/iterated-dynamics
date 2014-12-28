@@ -605,6 +605,7 @@ extern void cvtcentermagbf(bf_t, bf_t, LDBL *, double *, double *, double *);
 extern void cvtcornersbf(bf_t, bf_t, LDBL, double, double, double);
 extern void updatesavename(char *filename);
 extern int check_writefile(char *name, char const *ext);
+extern int check_writefile(std::string &name, char const *ext);
 extern void showtrig(char *buf);
 extern int set_trig_array(int k, char const *name);
 extern void set_trig_pointers(int);

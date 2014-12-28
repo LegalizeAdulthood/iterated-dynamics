@@ -3081,7 +3081,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (valuelen > (FILE_MAX_PATH-1))
             goto badarg;
         if (first_init || mode == cmd_file::AT_AFTER_STARTUP)
-            strcpy(light_name, value);
+            light_name = value;
         return CMDARG_NONE;
     }
 

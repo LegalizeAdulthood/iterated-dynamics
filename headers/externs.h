@@ -227,7 +227,7 @@ extern long                  lclosenuff;
 extern LComplex              lcoefficient;
 extern bool                  ldcheck;
 extern std::string           LFileName;
-extern char                  light_name[];
+extern std::string           light_name;
 extern std::vector<BYTE>     line_buff;
 extern LComplex              linit;
 extern LComplex              linitorbit;

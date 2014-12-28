@@ -516,6 +516,15 @@ nextname:
     return 1;
 }
 
+int check_writefile(std::string &name, char const *ext)
+{
+    char buff[FILE_MAX_PATH];
+    strcpy(buff, name.c_str());
+    int const result = check_writefile(buff, ext);
+    name = buff;
+    return result;
+}
+
 trig_fn trigndx[] =
 {
     trig_fn::SIN, trig_fn::SQR, trig_fn::SINH, trig_fn::COSH
@@ -707,7 +716,7 @@ bool tab_display_2(char *msg)
     show_str_var("parmfile",    CommandFile.c_str(),  &row, msg);
     show_str_var("ifsfile",     IFSFileName.c_str(),  &row, msg);
     show_str_var("autokeyname", autoname.c_str(), &row, msg);
-    show_str_var("lightname",   light_name,   &row, msg);
+    show_str_var("lightname",   light_name.c_str(),   &row, msg);
     show_str_var("map",         MAP_name,     &row, msg);
     write_row(row++, "Sizeof fractalspecific array %d",
               num_fractal_types*(int)sizeof(fractalspecificstuff));
