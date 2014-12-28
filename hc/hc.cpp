@@ -3601,6 +3601,8 @@ public:
     int process();
 
 private:
+    void parse_arguments();
+
     int argc;
     char **argv;
     bool show_stats;
@@ -3617,15 +3619,8 @@ int main(int argc, char *argv[])
     return compiler(argc, argv).process();
 }
 
-int compiler::process()
+void compiler::parse_arguments()
 {
-    printf("HC - FRACTINT Help Compiler.\n\n");
-
-    buffer = static_cast<char *>(malloc(BUFFER_SIZE));
-
-    if (buffer == nullptr)
-        fatal(0, "Not enough memory to allocate buffer.");
-
     for (char **arg = &argv[1]; argc > 1; argc--, arg++)
     {
         switch ((*arg)[0])
@@ -3703,6 +3698,18 @@ int compiler::process()
             break;
         } /* switch */
     } /* for */
+}
+
+int compiler::process()
+{
+    printf("HC - FRACTINT Help Compiler.\n\n");
+
+    buffer = static_cast<char *>(malloc(BUFFER_SIZE));
+
+    if (buffer == nullptr)
+        fatal(0, "Not enough memory to allocate buffer.");
+
+    parse_arguments();
 
     switch (mode)
     {
