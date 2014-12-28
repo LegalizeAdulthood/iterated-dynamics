@@ -2790,7 +2790,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
         info[TNUM] = -1;
         pd->id       = c->id;
         pd->title    = c->name;
-        pd->new_page = (c->flags & CF_NEW_PAGE) ? 1 : 0;
+        pd->new_page = (c->flags & CF_NEW_PAGE) != 0;
         return true;
 
     case PD_GET_TOPIC:

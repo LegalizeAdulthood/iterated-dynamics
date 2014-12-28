@@ -76,7 +76,7 @@ struct PD_INFO
     // PD_GET_CONTENT is allowed to change these
     char *id;
     char *title;
-    int       new_page;
+    bool new_page;
     // general parameters
     char *s;
     int       i;
