@@ -352,7 +352,7 @@ static void printinstr()
 
 #undef PUT_KEY
 
-static void display_page(char const *title, char *text, unsigned text_len,
+static void display_page(char const *title, char const *text, unsigned text_len,
                          int page, int num_pages, int start_margin,
                          int *num_link, LINK *link)
 {
