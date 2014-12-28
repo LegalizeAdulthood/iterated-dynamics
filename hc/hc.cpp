@@ -55,22 +55,22 @@ extern int _splitpath(char const *file_template, char *drive, char *dir, char *f
 
 #endif
 
-#define DEFAULT_SRC_FNAME "help.src"
-#define DEFAULT_HLP_FNAME "fractint.hlp"
-#define DEFAULT_EXE_FNAME "fractint.exe"
-#define DEFAULT_DOC_FNAME "fractint.doc"
+char const *const DEFAULT_SRC_FNAME = "help.src";
+char const *const DEFAULT_HLP_FNAME = "fractint.hlp";
+char const *const DEFAULT_EXE_FNAME = "fractint.exe";
+char const *const DEFAULT_DOC_FNAME = "fractint.doc";
 
-#define TEMP_FNAME        "hc.tmp"
-#define SWAP_FNAME        "hcswap.tmp"
+char const *const TEMP_FNAME = "hc.tmp";
+char const *const SWAP_FNAME = "hcswap.tmp";
 
-#define MAX_ERRORS        (25)   // stop after this many errors
-#define MAX_WARNINGS      (25)   // stop after this many warnings
-                                 // 0 = never stop
+const int MAX_ERRORS = (25);            // stop after this many errors
+const int MAX_WARNINGS = (25);          // stop after this many warnings
+                                        // 0 = never stop
 
-#define INDEX_LABEL       "FIHELP_INDEX"
-#define DOCCONTENTS_TITLE "DocContent"
+char const *const INDEX_LABEL       = "FIHELP_INDEX";
+char const *const DOCCONTENTS_TITLE = "DocContent";
 
-#define BUFFER_SIZE   (30*1024)
+const int BUFFER_SIZE = (1024*1024);    // 1 MB
 
 
 struct LINK
