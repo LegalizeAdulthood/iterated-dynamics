@@ -197,7 +197,7 @@ int      format_exclude   = 0;    /* disable formatting at this col, 0 to */
 FILE    *swapfile;
 long     swappos;
 
-char    *buffer;                  /* alloc'ed as BUFFER_SIZE bytes */
+std::vector<char> buffer;         /* alloc'ed as BUFFER_SIZE bytes */
 char    *curr;                    /* current position in the buffer */
 char     cmd[128];                /* holds the current command */
 bool compress_spaces = false;
@@ -218,7 +218,7 @@ int include_stack_top = -1;
 
 void check_buffer(char const *curr, unsigned off, char const *buffer);
 
-#define CHK_BUFFER(off) check_buffer(curr, off, buffer)
+#define CHK_BUFFER(off) check_buffer(curr, off, &buffer[0])
 
 #ifdef XFRACT
 #define putw( x1, x2 )  fwrite( &(x1), 1, sizeof(int), x2);
@@ -333,15 +333,15 @@ void alloc_topic_text(TOPIC *t, unsigned size)
     t->text = swappos;
     swappos += size;
     fseek(swapfile, t->text, SEEK_SET);
-    fwrite(buffer, 1, t->text_len, swapfile);
+    fwrite(&buffer[0], 1, t->text_len, swapfile);
 }
 
 
 char *get_topic_text(TOPIC const *t)
 {
     fseek(swapfile, t->text, SEEK_SET);
-    fread(buffer, 1, t->text_len, swapfile);
-    return (buffer);
+    fread(&buffer[0], 1, t->text_len, swapfile);
+    return &buffer[0];
 }
 
 
@@ -350,7 +350,7 @@ void release_topic_text(TOPIC const *t, int save)
     if (save)
     {
         fseek(swapfile, t->text, SEEK_SET);
-        fwrite(buffer, 1, t->text_len, swapfile);
+        fwrite(&buffer[0], 1, t->text_len, swapfile);
     }
 }
 
@@ -858,7 +858,7 @@ void process_contents()
     t.doc_page  = -1;
     t.num_page  = 0;
 
-    curr = buffer;
+    curr = &buffer[0];
 
     c.flags = 0;
     c.id = dupstr("", 1);
@@ -921,7 +921,7 @@ void process_contents()
             ptr = curr + (int) strlen(curr);
             while ((ptr-curr) < PAGE_WIDTH-10)
                 *ptr++ = '.';
-            c.page_num_pos = (unsigned)((ptr-3) - buffer);
+            c.page_num_pos = (unsigned)((ptr-3) - &buffer[0]);
             curr = ptr;
 
             while (!last)
@@ -975,7 +975,7 @@ void process_contents()
         CHK_BUFFER(0);
     }
 
-    alloc_topic_text(&t, (unsigned)(curr - buffer));
+    alloc_topic_text(&t, (unsigned)(curr - &buffer[0]));
     add_topic(&t);
 }
 
@@ -1321,13 +1321,13 @@ void start_topic(TOPIC *t, char const *title, int title_len)
     t->title[title_len] = '\0';
     t->doc_page = -1;
     t->num_page = 0;
-    curr = buffer;
+    curr = &buffer[0];
 }
 
 
 void end_topic(TOPIC *t)
 {
-    alloc_topic_text(t, (unsigned)(curr - buffer));
+    alloc_topic_text(t, (unsigned)(curr - &buffer[0]));
     add_topic(t);
 }
 
@@ -1420,7 +1420,7 @@ void read_src(char const *fname)
 
     in_topic = false;
 
-    curr = buffer;
+    curr = &buffer[0];
 
     while (1)
     {
@@ -1809,7 +1809,7 @@ void read_src(char const *fname)
 
                             lbl.name      = dupstr(cmd+6, 0);
                             lbl.topic_num = num_topic;
-                            lbl.topic_off = (unsigned)(curr - buffer);
+                            lbl.topic_off = (unsigned)(curr - &buffer[0]);
                             lbl.doc_page  = -1;
                             add_label(&lbl);
                         }
@@ -3523,8 +3523,8 @@ void add_hlp_to_exe(char const *hlp_fname, char const *exe_fname)
     for (int count = 0; count < len;)
     {
         size = (int) std::min((long)BUFFER_SIZE, len-count);
-        read(hlp, buffer, size);
-        write(exe, buffer, size);
+        read(hlp, &buffer[0], size);
+        write(exe, &buffer[0], size);
         count += size;
     }
 
@@ -3704,10 +3704,7 @@ int compiler::process()
 {
     printf("HC - FRACTINT Help Compiler.\n\n");
 
-    buffer = static_cast<char *>(malloc(BUFFER_SIZE));
-
-    if (buffer == nullptr)
-        fatal(0, "Not enough memory to allocate buffer.");
+    buffer.resize(BUFFER_SIZE);
 
     parse_arguments();
 
@@ -3829,8 +3826,6 @@ int compiler::process()
         delete_hlp_from_exe(fname1.empty() ? DEFAULT_EXE_FNAME : fname1.c_str());
         break;
     }
-
-    free(buffer);
 
     return (errors);     /* return the number of errors */
 }
