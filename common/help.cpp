@@ -312,7 +312,7 @@ static void color_link(LINK *link, int color)
 #endif
 #endif
 
-static void put_key(char *name, char *descrip)
+static void put_key(char const *name, char const *descrip)
 {
     driver_put_string(-1, -1, C_HELP_INSTR, name);
     driver_put_string(-1, -1, C_HELP_INSTR, ":");
