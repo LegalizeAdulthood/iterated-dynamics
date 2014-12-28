@@ -232,7 +232,7 @@ static void vgetrow(int x, int y, int depth, char *buff)
 }
 
 
-static void vputrow(int x, int y, int depth, char *buff)
+static void vputrow(int x, int y, int depth, char const *buff)
 {
     while (depth-- > 0)
         clip_putcolor(x, y++, (BYTE)(*buff++));
