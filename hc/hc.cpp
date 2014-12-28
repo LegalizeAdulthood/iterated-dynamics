@@ -60,8 +60,8 @@ extern int _splitpath(char const *file_template, char *drive, char *dir, char *f
 #define DEFAULT_EXE_FNAME "fractint.exe"
 #define DEFAULT_DOC_FNAME "fractint.doc"
 
-#define TEMP_FNAME        "HC.$$$"
-#define SWAP_FNAME        "HCSWAP.$$$"
+#define TEMP_FNAME        "hc.tmp"
+#define SWAP_FNAME        "hcswap.tmp"
 
 #define MAX_ERRORS        (25)   // stop after this many errors
 #define MAX_WARNINGS      (25)   // stop after this many warnings
