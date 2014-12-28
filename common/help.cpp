@@ -1080,7 +1080,7 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
     }
 }
 
-static void printers(PRINT_DOC_INFO *info, char *s, int n)
+static void printers(PRINT_DOC_INFO *info, char const *s, int n)
 {
     if (n > 0)
     {
