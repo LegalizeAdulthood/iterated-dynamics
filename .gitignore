@@ -5,3 +5,4 @@ fractint.hlp
 headers/helpdefs.h
 *.gif
 *.tmp
+hc/fractint.doc
