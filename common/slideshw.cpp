@@ -14,7 +14,7 @@
 #include "drivers.h"
 
 static void sleep_secs(int);
-static int  showtempmsg_txt(int, int, int, int, char *);
+static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt);
 static void message(int secs, char *buf);
 static void slideshowerr(char const *msg);
 static int  get_scancode(char const *mn);
@@ -85,7 +85,7 @@ static int repeats = 0;
 static int last1 = 0;
 
 // places a temporary message on the screen in text mode
-static int showtempmsg_txt(int row, int col, int attr, int secs, char *txt)
+static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt)
 {
     int savescrn[80];
 

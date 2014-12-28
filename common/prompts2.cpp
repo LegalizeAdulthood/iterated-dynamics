@@ -2661,7 +2661,7 @@ std::string extract_filename(char const *source)
 
 // tells if filename has extension
 // returns pointer to period or nullptr
-const char *has_ext(char const *source)
+char const *has_ext(char const *source)
 {
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
