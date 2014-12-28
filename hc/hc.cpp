@@ -3580,10 +3580,10 @@ void delete_hlp_from_exe(char const *exe_fname)
 enum class modes
 {
     NONE = 0,
-    COMPILE = 1,
-    PRINT   = 2,
-    APPEND  = 3,
-    DELETE  = 4
+    COMPILE,
+    PRINT,
+    APPEND,
+    DELETE
 };
 
 int main(int argc, char *argv[])
