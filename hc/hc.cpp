@@ -3583,7 +3583,8 @@ enum class modes
     COMPILE,
     PRINT,
     APPEND,
-    DELETE
+    DELETE,
+    HTML
 };
 
 class compiler
@@ -3605,6 +3606,12 @@ private:
     void usage();
     void compile();
     void print();
+
+    void render_html()
+    {
+        throw std::runtime_error("Method is not implemented.");
+    }
+
 
     int argc;
     char **argv;
@@ -3632,6 +3639,13 @@ void compiler::parse_arguments()
         case '-':
             switch ((*arg)[1])
             {
+            case 'h':
+                if (mode == modes::NONE)
+                {
+                    mode = modes::HTML;
+                }
+                break;
+
             case 'c':
                 if (mode == modes::NONE)
                     mode = modes::COMPILE;
@@ -3734,6 +3748,10 @@ int compiler::process()
         if (!fname2.empty())
             fatal(0, "Unexpected argument \"%s\"", fname2.c_str());
         delete_hlp_from_exe(fname1.empty() ? DEFAULT_EXE_FNAME : fname1.c_str());
+        break;
+
+    case modes::HTML:
+        render_html();
         break;
     }
 
