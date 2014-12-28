@@ -18,7 +18,7 @@
 #include "drivers.h"
 
 static bool compress(int rowlimit);
-static int shftwrite(BYTE * color, int numcolors);
+static int shftwrite(BYTE const *color, int numcolors);
 static int extend_blk_len(int datalen);
 static int put_extend_blk(int block_id, int block_len, char const *block_data);
 static int store_item_name(char const *name);
@@ -590,7 +590,7 @@ oops:
 
 // TODO: should we be doing this?  We need to store full colors, not the VGA truncated business.
 // shift IBM colors to GIF
-static int shftwrite(BYTE * color, int numcolors)
+static int shftwrite(BYTE const *color, int numcolors)
 {
     for (int i = 0; i < numcolors; i++)
         for (int j = 0; j < 3; j++)
