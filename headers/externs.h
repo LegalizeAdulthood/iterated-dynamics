@@ -212,7 +212,7 @@ extern int                   ixstop;
 extern int                   iystart;
 extern int                   iystop;
 extern std::string const     JIIMleftright[];
-extern char const *          JIIMmethod[];
+extern std::string const     JIIMmethod[];
 extern int                   juli3Dmode;
 extern char const *          juli3Doptions[];
 extern bool                  julibrot;

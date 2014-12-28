@@ -1228,7 +1228,7 @@ char const *JIIMmethod[] =
 };
 #else
 static char JIIMstr1[] = "Breadth first, Depth first, Random Walk";
-char const *JIIMmethod[] =
+std::string const JIIMmethod[] =
 {
     "breadth", "depth", "walk"
 };
@@ -1286,6 +1286,11 @@ namespace
 char const *jiim_left_right_list[] =
 {
     JIIMleftright[0].c_str(), JIIMleftright[1].c_str()
+};
+
+char const *jiim_method_list[] =
+{
+    JIIMmethod[0].c_str(), JIIMmethod[1].c_str(), JIIMmethod[2].c_str()
 };
 
 }
@@ -1646,7 +1651,7 @@ gfp_top:
     {
         choices[promptnum] = JIIMstr1;
         paramvalues[promptnum].type = 'l';
-        paramvalues[promptnum].uval.ch.list = JIIMmethod;
+        paramvalues[promptnum].uval.ch.list = jiim_method_list;
         paramvalues[promptnum].uval.ch.vlen = 7;
 #ifdef RANDOM_RUN
         paramvalues[promptnum].uval.ch.llen = 4;
