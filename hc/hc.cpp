@@ -3586,16 +3586,39 @@ enum class modes
     DELETE
 };
 
-int main(int argc, char *argv[])
+class compiler
 {
-    bool show_stats = false;
-    bool show_mem = false;
-    modes mode = modes::NONE;
+public:
+    compiler(int argc_, char *argv_[])
+        : argc(argc_),
+        argv(argv_),
+        show_stats(false),
+        show_mem(false),
+        mode(modes::NONE)
+    {
+    }
+
+    int process();
+
+private:
+    int argc;
+    char **argv;
+    bool show_stats;
+    bool show_mem;
+    modes mode;
 
     std::string fname1;
     std::string fname2;
     std::string swappath;
+};
 
+int main(int argc, char *argv[])
+{
+    return compiler(argc, argv).process();
+}
+
+int compiler::process()
+{
     printf("HC - FRACTINT Help Compiler.\n\n");
 
     buffer = static_cast<char *>(malloc(BUFFER_SIZE));
