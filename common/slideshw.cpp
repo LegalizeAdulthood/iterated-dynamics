@@ -15,7 +15,7 @@
 
 static void sleep_secs(int);
 static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt);
-static void message(int secs, char *buf);
+static void message(int secs, char const *buf);
 static void slideshowerr(char const *msg);
 static int  get_scancode(char const *mn);
 static void get_mnemonic(int code, char *mnemonic);
@@ -105,7 +105,7 @@ static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt
     return (0);
 }
 
-static void message(int secs, char *buf)
+static void message(int secs, char const *buf)
 {
     char nearbuf[41] = { 0 };
     strncpy(nearbuf, buf, NUM_OF(nearbuf)-1);
