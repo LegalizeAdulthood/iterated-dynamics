@@ -2644,21 +2644,18 @@ void paginate_online()    // paginate the text for on-line help
  */
 
 
-#define CNUM           0
-#define TNUM           1
-#define LINK_DEST_WARN 2
-
-
-struct PAGINATE_DOC_INFO
+struct DOC_INFO
 {
-    int      cnum,  // must match above #defines so pd_get_info() will work
-             tnum,
-             link_dest_warn;
+    int cnum;
+    int tnum;
+    int link_dest_warn;
+};
 
+struct PAGINATE_DOC_INFO : public DOC_INFO
+{
     char *start;
     CONTENT  *c;
     LABEL    *lbl;
-
 };
 
 
@@ -2779,27 +2776,27 @@ void set_content_doc_page()
 // this funtion also used by print_document()
 bool pd_get_info(int cmd, PD_INFO *pd, void *context)
 {
-    int *info = static_cast<int *>(context);
+    DOC_INFO &info = *static_cast<DOC_INFO *>(context);
     CONTENT *c;
 
     switch (cmd)
     {
     case PD_GET_CONTENT:
-        if (++info[CNUM] >= num_contents)
+        if (++info.cnum >= num_contents)
             return false;
-        c = &contents[info[CNUM]];
-        info[TNUM] = -1;
+        c = &contents[info.cnum];
+        info.tnum = -1;
         pd->id       = c->id;
         pd->title    = c->name;
         pd->new_page = (c->flags & CF_NEW_PAGE) != 0;
         return true;
 
     case PD_GET_TOPIC:
-        c = &contents[info[CNUM]];
-        if (++info[TNUM] >= c->num_topic)
+        c = &contents[info.cnum];
+        if (++info.tnum >= c->num_topic)
             return false;
-        pd->curr = get_topic_text(&topic[c->topic_num[info[TNUM]]]);
-        pd->len = topic[c->topic_num[info[TNUM]]].text_len;
+        pd->curr = get_topic_text(&topic[c->topic_num[info.tnum]]);
+        pd->len = topic[c->topic_num[info.tnum]].text_len;
         return true;
 
     case PD_GET_LINK_PAGE:
@@ -2807,7 +2804,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
         LINK &link = a_link[getint(pd->s)];
         if (link.doc_page == -1)
         {
-            if (info[LINK_DEST_WARN])
+            if (info.link_dest_warn)
             {
                 src_cfname = link.srcfile;
                 srcline    = link.srcline;
@@ -2821,8 +2818,8 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
     }
 
     case PD_RELEASE_TOPIC:
-        c = &contents[info[CNUM]];
-        release_topic_text(&topic[c->topic_num[info[TNUM]]], 0);
+        c = &contents[info.cnum];
+        release_topic_text(&topic[c->topic_num[info.tnum]], 0);
         return true;
 
     default:
@@ -3221,16 +3218,8 @@ void write_help(char const *fname)
  */
 
 
-struct PRINT_DOC_INFO
+struct PRINT_DOC_INFO : public DOC_INFO
 {
-    /*
-     * Note: Don't move these first three or pd_get_info will work not
-     *       correctly.
-     */
-    int      cnum;
-    int      tnum;
-    int      link_dest_warn;   // = 0
-
     FILE    *file;
     int      margin;
     int      start_of_line;
