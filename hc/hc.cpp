@@ -2460,7 +2460,7 @@ void make_hot_links()
  */
 
 
-void add_page_break(TOPIC *t, int margin, char *text, char *start, char *curr, int num_links)
+void add_page_break(TOPIC *t, int margin, char const *text, char const *start, char const *curr, int num_links)
 {
     PAGE p;
 
