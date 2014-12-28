@@ -42,7 +42,7 @@ static void initvars_fractal();
 static void initvars_3d();
 static void reset_ifs_defn();
 static void parse_textcolors(char const *value);
-static int  parse_colors(char *value);
+static int  parse_colors(char const *value);
 static int  get_bf(bf_t, char const *);
 static bool isabigfloat(char *str);
 
@@ -3189,7 +3189,7 @@ static void parse_textcolors(char const *value)
     }
 }
 
-static int parse_colors(char *value)
+static int parse_colors(char const *value)
 {
     if (*value == '@')
     {
