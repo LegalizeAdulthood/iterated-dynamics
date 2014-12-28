@@ -186,7 +186,7 @@ NEW_FN  fStkOne;   // to support new parser fn.
 #define MAX_STACK 8   // max # of stack register avail
 
 #ifdef TESTFP
-int pstopmsg(int x, char *msg)
+int pstopmsg(int x, char const *msg)
 {
     static FILE *fp = nullptr;
     if (fp == nullptr)
