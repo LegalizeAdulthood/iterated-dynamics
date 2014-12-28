@@ -1217,7 +1217,10 @@ int build_fractal_list(int fractals[], int *last_val, char const *nameptr[])
     return numfractals;
 }
 
-char const *juli3Doptions[] = {"monocular", "lefteye", "righteye", "red-blue"};
+std::string const juli3Doptions[] =
+{
+    "monocular", "lefteye", "righteye", "red-blue"
+};
 
 // JIIM
 #ifdef RANDOM_RUN
@@ -1291,6 +1294,14 @@ char const *jiim_left_right_list[] =
 char const *jiim_method_list[] =
 {
     JIIMmethod[0].c_str(), JIIMmethod[1].c_str(), JIIMmethod[2].c_str()
+};
+
+char const *julia_3d_options_list[] =
+{
+    juli3Doptions[0].c_str(),
+    juli3Doptions[1].c_str(),
+    juli3Doptions[2].c_str(),
+    juli3Doptions[3].c_str()
 };
 
 }
@@ -1624,7 +1635,7 @@ gfp_top:
         paramvalues[promptnum].uval.ch.val  = juli3Dmode;
         paramvalues[promptnum].uval.ch.llen = 4;
         paramvalues[promptnum].uval.ch.vlen = 9;
-        paramvalues[promptnum].uval.ch.list = juli3Doptions;
+        paramvalues[promptnum].uval.ch.list = julia_3d_options_list;
         choices[promptnum++] = "3D Mode";
 
         paramvalues[promptnum].uval.dval = eyesfp;

@@ -214,7 +214,7 @@ extern int                   iystop;
 extern std::string const     JIIMleftright[];
 extern std::string const     JIIMmethod[];
 extern int                   juli3Dmode;
-extern char const *          juli3Doptions[];
+extern std::string const     juli3Doptions[];
 extern bool                  julibrot;
 extern int                   kbdcount;
 extern bool                  keep_scrn_coords;

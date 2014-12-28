@@ -1923,7 +1923,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         int j = -1;
         for (int i = 0; i < 4; i++)
         {
-            if (strcmp(value, juli3Doptions[i]) == 0)
+            if (juli3Doptions[i] == value)
             {
                 j = i;
             }
