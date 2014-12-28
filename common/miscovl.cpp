@@ -2213,7 +2213,8 @@ void flip_image(int key)
     reset_zoom_corners();
     calc_status = calc_status_value::PARAMS_CHANGED;
 }
-static char const *expand_var(char *var, char *buf)
+
+static char const *expand_var(char const *var, char *buf)
 {
     time_t ltime;
     char *str;
