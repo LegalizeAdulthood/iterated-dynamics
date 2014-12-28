@@ -1234,7 +1234,7 @@ char const *JIIMmethod[] =
 };
 #endif
 static char JIIMstr2[] = "Left first or Right first?";
-char const *JIIMleftright[] = {"left", "right"};
+std::string const JIIMleftright[] = {"left", "right"};
 
 // The index into this array must correspond to enum trig_fn
 trig_funct_lst trigfn[] =
@@ -1279,6 +1279,16 @@ trig_funct_lst trigfn[] =
 const int numtrigfn = NUMTRIGFN;
 
 char tstack[4096] = { 0 };
+
+namespace
+{
+
+char const *jiim_left_right_list[] =
+{
+    JIIMleftright[0].c_str(), JIIMleftright[1].c_str()
+};
+
+}
 
 // ---------------------------------------------------------------------
 int get_fract_params(int caller)        // prompt for type-specific parms
@@ -1647,7 +1657,7 @@ gfp_top:
 
         choices[promptnum] = JIIMstr2;
         paramvalues[promptnum].type = 'l';
-        paramvalues[promptnum].uval.ch.list = JIIMleftright;
+        paramvalues[promptnum].uval.ch.list = jiim_left_right_list;
         paramvalues[promptnum].uval.ch.vlen = 5;
         paramvalues[promptnum].uval.ch.llen = 2;
         paramvalues[promptnum++].uval.ch.val  = static_cast<int>(minor_method);
