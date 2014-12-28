@@ -3580,10 +3580,10 @@ void delete_hlp_from_exe(char const *exe_fname)
 enum class modes
 {
     NONE = 0,
-    MODE_COMPILE = 1,
-    MODE_PRINT   = 2,
-    MODE_APPEND  = 3,
-    MODE_DELETE  = 4
+    COMPILE = 1,
+    PRINT   = 2,
+    APPEND  = 3,
+    DELETE  = 4
 };
 
 int main(int argc, char *argv[])
@@ -3618,48 +3618,48 @@ int main(int argc, char *argv[])
             {
             case 'c':
                 if (mode == modes::NONE)
-                    mode = modes::MODE_COMPILE;
+                    mode = modes::COMPILE;
                 else
                     fatal(0, "Cannot have /c with /a, /d or /p");
                 break;
 
             case 'a':
                 if (mode == modes::NONE)
-                    mode = modes::MODE_APPEND;
+                    mode = modes::APPEND;
                 else
                     fatal(0, "Cannot have /a with /c, /d or /p");
                 break;
 
             case 'd':
                 if (mode == modes::NONE)
-                    mode = modes::MODE_DELETE;
+                    mode = modes::DELETE;
                 else
                     fatal(0, "Cannot have /d with /c, /a or /p");
                 break;
 
             case 'p':
                 if (mode == modes::NONE)
-                    mode = modes::MODE_PRINT;
+                    mode = modes::PRINT;
                 else
                     fatal(0, "Cannot have /p with /c, /a or /d");
                 break;
 
             case 'm':
-                if (mode == modes::MODE_COMPILE)
+                if (mode == modes::COMPILE)
                     show_mem = true;
                 else
                     fatal(0, "/m switch allowed only when compiling (/c)");
                 break;
 
             case 's':
-                if (mode == modes::MODE_COMPILE)
+                if (mode == modes::COMPILE)
                     show_stats = true;
                 else
                     fatal(0, "/s switch allowed only when compiling (/c)");
                 break;
 
             case 'r':
-                if (mode == modes::MODE_COMPILE || mode == modes::MODE_PRINT)
+                if (mode == modes::COMPILE || mode == modes::PRINT)
                     strcpy(swappath, (*arg)+2);
                 else
                     fatal(0, "/r switch allowed when compiling (/c) or printing (/p)");
@@ -3712,7 +3712,7 @@ int main(int argc, char *argv[])
         printf("Use \"/q\" for quiet mode. (No status messages.)\n");
         break;
 
-    case modes::MODE_COMPILE:
+    case modes::COMPILE:
         if (fname2[0] != '\0')
             fatal(0, "Unexpected command-line argument \"%s\"", fname2);
 
@@ -3766,7 +3766,7 @@ int main(int argc, char *argv[])
 
         break;
 
-    case modes::MODE_PRINT:
+    case modes::PRINT:
         strcpy(src_fname, (fname1[0] == '\0') ? DEFAULT_SRC_FNAME : fname1);
 
         strcat(swappath, SWAP_FNAME);
@@ -3793,12 +3793,12 @@ int main(int argc, char *argv[])
 
         break;
 
-    case modes::MODE_APPEND:
+    case modes::APPEND:
         add_hlp_to_exe((fname1[0] == '\0') ? DEFAULT_HLP_FNAME : fname1,
                        (fname2[0] == '\0') ? DEFAULT_EXE_FNAME : fname2);
         break;
 
-    case modes::MODE_DELETE:
+    case modes::DELETE:
         if (fname2[0] != '\0')
             fatal(0, "Unexpected argument \"%s\"", fname2);
         delete_hlp_from_exe((fname1[0] == '\0') ? DEFAULT_EXE_FNAME : fname1);
