@@ -3577,18 +3577,20 @@ void delete_hlp_from_exe(char const *exe_fname)
  * command-line parser, etc.
  */
 
-
-#define MODE_COMPILE 1
-#define MODE_PRINT   2
-#define MODE_APPEND  3
-#define MODE_DELETE  4
-
+enum class modes
+{
+    NONE = 0,
+    MODE_COMPILE = 1,
+    MODE_PRINT   = 2,
+    MODE_APPEND  = 3,
+    MODE_DELETE  = 4
+};
 
 int main(int argc, char *argv[])
 {
     bool show_stats = false;
     bool show_mem = false;
-    int    mode       = 0;
+    modes mode = modes::NONE;
 
     char **arg;
     char   fname1[81],
@@ -3615,49 +3617,49 @@ int main(int argc, char *argv[])
             switch ((*arg)[1])
             {
             case 'c':
-                if (mode == 0)
-                    mode = MODE_COMPILE;
+                if (mode == modes::NONE)
+                    mode = modes::MODE_COMPILE;
                 else
                     fatal(0, "Cannot have /c with /a, /d or /p");
                 break;
 
             case 'a':
-                if (mode == 0)
-                    mode = MODE_APPEND;
+                if (mode == modes::NONE)
+                    mode = modes::MODE_APPEND;
                 else
                     fatal(0, "Cannot have /a with /c, /d or /p");
                 break;
 
             case 'd':
-                if (mode == 0)
-                    mode = MODE_DELETE;
+                if (mode == modes::NONE)
+                    mode = modes::MODE_DELETE;
                 else
                     fatal(0, "Cannot have /d with /c, /a or /p");
                 break;
 
             case 'p':
-                if (mode == 0)
-                    mode = MODE_PRINT;
+                if (mode == modes::NONE)
+                    mode = modes::MODE_PRINT;
                 else
                     fatal(0, "Cannot have /p with /c, /a or /d");
                 break;
 
             case 'm':
-                if (mode == MODE_COMPILE)
+                if (mode == modes::MODE_COMPILE)
                     show_mem = true;
                 else
                     fatal(0, "/m switch allowed only when compiling (/c)");
                 break;
 
             case 's':
-                if (mode == MODE_COMPILE)
+                if (mode == modes::MODE_COMPILE)
                     show_stats = true;
                 else
                     fatal(0, "/s switch allowed only when compiling (/c)");
                 break;
 
             case 'r':
-                if (mode == MODE_COMPILE || mode == MODE_PRINT)
+                if (mode == modes::MODE_COMPILE || mode == modes::MODE_PRINT)
                     strcpy(swappath, (*arg)+2);
                 else
                     fatal(0, "/r switch allowed when compiling (/c) or printing (/p)");
@@ -3686,7 +3688,7 @@ int main(int argc, char *argv[])
 
     switch (mode)
     {
-    case 0:
+    case modes::NONE:
         printf("To compile a .SRC file:\n");
         printf("      HC /c [/s] [/m] [/r[path]] [src_file]\n");
         printf("         /s       = report statistics.\n");
@@ -3710,7 +3712,7 @@ int main(int argc, char *argv[])
         printf("Use \"/q\" for quiet mode. (No status messages.)\n");
         break;
 
-    case MODE_COMPILE:
+    case modes::MODE_COMPILE:
         if (fname2[0] != '\0')
             fatal(0, "Unexpected command-line argument \"%s\"", fname2);
 
@@ -3764,7 +3766,7 @@ int main(int argc, char *argv[])
 
         break;
 
-    case MODE_PRINT:
+    case modes::MODE_PRINT:
         strcpy(src_fname, (fname1[0] == '\0') ? DEFAULT_SRC_FNAME : fname1);
 
         strcat(swappath, SWAP_FNAME);
@@ -3791,12 +3793,12 @@ int main(int argc, char *argv[])
 
         break;
 
-    case MODE_APPEND:
+    case modes::MODE_APPEND:
         add_hlp_to_exe((fname1[0] == '\0') ? DEFAULT_HLP_FNAME : fname1,
                        (fname2[0] == '\0') ? DEFAULT_EXE_FNAME : fname2);
         break;
 
-    case MODE_DELETE:
+    case modes::MODE_DELETE:
         if (fname2[0] != '\0')
             fatal(0, "Unexpected argument \"%s\"", fname2);
         delete_hlp_from_exe((fname1[0] == '\0') ? DEFAULT_EXE_FNAME : fname1);
