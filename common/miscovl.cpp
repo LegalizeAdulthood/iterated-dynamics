@@ -139,8 +139,8 @@ void make_batch_file()
     strcpy(inpcommandname, CommandName);
     for (int i = 0; i < 4; i++)
     {
-        expand_comments(CommandComment[i], par_comment[i]);
-        strcpy(inpcomment[i], CommandComment[i]);
+        CommandComment[i] = expand_comments(par_comment[i]);
+        strcpy(inpcomment[i], CommandComment[i].c_str());
     }
 
     if (CommandName[0] == 0)
@@ -227,7 +227,7 @@ prompt_user:
             strcat(CommandFile, ".par");   // default extension .par
         strcpy(CommandName, inpcommandname);
         for (int i = 0; i < 4; i++)
-            strncpy(CommandComment[i], inpcomment[i], MAXCMT);
+            CommandComment[i] = inpcomment[i];
 #ifndef XFRACT
         if (g_got_real_dac || (g_is_true_color && !truemode))
 #else
@@ -434,11 +434,11 @@ skip_UI:
                         if (*par_comment[i])
                             last = i;
                     for (int i = 0; i < last; i++)
-                        if (*CommandComment[i] == '\0')
-                            strcpy(CommandComment[i], ";");
+                        if (CommandComment[i].empty())
+                            CommandComment[i] = ";";
                 }
-                if (CommandComment[0][0])
-                    fprintf(parmfile, " ; %s", CommandComment[0]);
+                if (!CommandComment[0].empty())
+                    fprintf(parmfile, " ; %s", CommandComment[0].c_str());
                 fputc('\n', parmfile);
                 {
                     char buf[25];
@@ -446,8 +446,8 @@ skip_UI:
                     buf[23] = 0;
                     buf[21] = ';';
                     for (int k = 1; k < 4; k++)
-                        if (CommandComment[k][0])
-                            fprintf(parmfile, "%s%s\n", buf, CommandComment[k]);
+                        if (!CommandComment[k].empty())
+                            fprintf(parmfile, "%s%s\n", buf, CommandComment[k].c_str());
                     if (g_patch_level != 0 && !colorsonly)
                         fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
                                 Fractint, g_release, g_patch_level);
@@ -2314,15 +2314,15 @@ static char const *expand_var(char *var, char *buf)
 static char const esc_char = '$';
 
 // extract comments from the comments= command
-void expand_comments(char *target, char const *source)
+std::string expand_comments(char const *source)
 {
     int escape = 0;
     char c, oldc, varname[MAXVNAME];
     int k = 0;
-    int j = k;
-    int i = j;
+    int i = 0;
     oldc = 0;
-    while (i < MAXCMT && j < MAXCMT && (c = *(source + i++)) != '\0')
+    std::string target;
+    while (i < MAXCMT && (c = *(source + i++)) != '\0')
     {
         if (c == '\\' && oldc != '\\')
         {
@@ -2344,20 +2344,16 @@ void expand_comments(char *target, char const *source)
         else if (c == esc_char && escape == 0 && oldc != '\\')
         {
             char buf[100];
-            char const *varstr;
             varname[k] = 0;
-            varstr = expand_var(varname, buf);
-            strncpy(target+j, varstr, MAXCMT-j-1);
-            j += (int) strlen(varstr);
+            target += expand_var(varname, buf);
         }
         else if (c == esc_char && escape != 0 && oldc != '\\')
             k = 0;
         else if ((c != esc_char || oldc == '\\') && escape == 0)
-            *(target+j++) = c;
+            target += c;
         oldc = c;
     }
-    if (*source != '\0')
-        *(target+std::min(j, MAXCMT-1)) = '\0';
+    return target;
 }
 
 // extract comments from the comments= command

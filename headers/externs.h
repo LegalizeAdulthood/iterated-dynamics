@@ -70,7 +70,7 @@ extern int                   colorstate;
 extern int                   g_color_bright;    // brightest color in palette
 extern int                   g_color_dark;      // darkest color in palette
 extern int                   g_color_medium;    // nearest to medbright grey in palette
-extern char                  CommandComment[4][MAXCMT];
+extern std::string           CommandComment[4];
 extern char                  CommandFile[FILE_MAX_PATH];
 extern char                  CommandName[ITEMNAMELEN + 1];
 extern bool                  comparegif;

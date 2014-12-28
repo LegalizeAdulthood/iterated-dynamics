@@ -155,7 +155,7 @@ char LFileName[FILE_MAX_PATH] = { 0 };   // file to find (type=)L-System's in
 char LName[ITEMNAMELEN+1] = { 0 };       // Name of L-System
 char CommandFile[FILE_MAX_PATH] = { 0 }; // file to find command sets in
 char CommandName[ITEMNAMELEN+1] = { 0 }; // Name of Command set
-char CommandComment[4][MAXCMT] = { 0 };    // comments for command set
+std::string CommandComment[4];          // comments for command set
 char IFSFileName[FILE_MAX_PATH] = { 0 };// file to find (type=)IFS in
 char IFSName[ITEMNAMELEN+1] = { 0 };    // Name of the IFS def'n (if not null)
 SearchPath searchfor = { 0 };
@@ -389,7 +389,7 @@ static void initvars_restart()          // <ins> key init
     strcpy(CommandFile, "fractint.par");
     CommandName[0] = 0;
     for (int i = 0; i < 4; i++)
-        CommandComment[i][0] = 0;
+        CommandComment[i].clear();
     strcpy(IFSFileName, "fractint.ifs");
     IFSName[0] = 0;
     reset_ifs_defn();
@@ -581,7 +581,7 @@ static int cmdfile(FILE *handle, cmd_file mode)
         {
         }
         for (int i = 0; i < 4; i++)
-            CommandComment[i][0] = 0;
+            CommandComment[i].clear();
     }
     linebuf[0] = 0;
     while (next_command(cmdbuf, 10000, handle, linebuf, &lineoffset, mode) > 0)
@@ -633,8 +633,8 @@ static int next_command(
             {
                 if (*lineptr == ';'
                         && (mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME)
-                        && (CommandComment[0][0] == 0 || CommandComment[1][0] == 0 ||
-                            CommandComment[2][0] == 0 || CommandComment[3][0] == 0))
+                        && (CommandComment[0].empty() || CommandComment[1].empty() ||
+                            CommandComment[2].empty() || CommandComment[3].empty()))
                 {
                     // save comment
                     while (*(++lineptr)
@@ -646,9 +646,9 @@ static int next_command(
                         if ((int)strlen(lineptr) >= MAXCMT)
                             *(lineptr+MAXCMT-1) = 0;
                         for (int i = 0; i < 4; i++)
-                            if (CommandComment[i][0] == 0)
+                            if (CommandComment[i].empty())
                             {
-                                strcpy(CommandComment[i], lineptr);
+                                CommandComment[i] = lineptr;
                                 break;
                             }
                     }

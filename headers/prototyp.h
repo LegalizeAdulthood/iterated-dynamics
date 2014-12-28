@@ -594,7 +594,7 @@ extern int getprecbf_mag();
 extern void parse_comments(char *value);
 extern void init_comments();
 extern void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int i, int j);
-extern void expand_comments(char *target, char const *source);
+extern std::string expand_comments(char const *source);
 // miscres -- C file prototypes
 extern void restore_active_ovly();
 extern void findpath(char const *filename, char *fullpathname);
