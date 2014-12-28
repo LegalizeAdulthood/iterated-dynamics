@@ -3595,9 +3595,7 @@ int main(int argc, char *argv[])
     char **arg;
     std::string fname1;
     std::string fname2;
-    char   swappath[81];
-
-    swappath[0] = 0;
+    std::string swappath;
 
     printf("HC - FRACTINT Help Compiler.\n\n");
 
@@ -3658,7 +3656,7 @@ int main(int argc, char *argv[])
 
             case 'r':
                 if (mode == modes::COMPILE || mode == modes::PRINT)
-                    strcpy(swappath, (*arg)+2);
+                    swappath = &(*arg)[2];
                 else
                     fatal(0, "/r switch allowed when compiling (/c) or printing (/p)");
                 break;
@@ -3716,11 +3714,11 @@ int main(int argc, char *argv[])
 
         strcpy(src_fname, fname1.empty() ? DEFAULT_SRC_FNAME : fname1.c_str());
 
-        strcat(swappath, SWAP_FNAME);
+        swappath += SWAP_FNAME;
 
-        swapfile = fopen(swappath, "w+b");
+        swapfile = fopen(swappath.c_str(), "w+b");
         if (swapfile == nullptr)
-            fatal(0, "Cannot create swap file \"%s\"", swappath);
+            fatal(0, "Cannot create swap file \"%s\"", swappath.c_str());
         swappos = 0;
 
         read_src(src_fname);
@@ -3760,18 +3758,18 @@ int main(int argc, char *argv[])
             report_errors();
 
         fclose(swapfile);
-        remove(swappath);
+        remove(swappath.c_str());
 
         break;
 
     case modes::PRINT:
         strcpy(src_fname, fname1.empty() ? DEFAULT_SRC_FNAME : fname1.c_str());
 
-        strcat(swappath, SWAP_FNAME);
+        swappath += SWAP_FNAME;
 
-        swapfile = fopen(swappath, "w+b");
+        swapfile = fopen(swappath.c_str(), "w+b");
         if (swapfile == nullptr)
-            fatal(0, "Cannot create swap file \"%s\"", swappath);
+            fatal(0, "Cannot create swap file \"%s\"", swappath.c_str());
         swappos = 0;
 
         read_src(src_fname);
@@ -3787,7 +3785,7 @@ int main(int argc, char *argv[])
             report_errors();
 
         fclose(swapfile);
-        remove(swappath);
+        remove(swappath.c_str());
 
         break;
 
