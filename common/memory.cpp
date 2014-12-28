@@ -96,7 +96,7 @@ static void WhichDiskError(int I_O)
     };
     sprintf(buf, pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
     if (debugflag == debug_flags::display_memory_statistics)
-        if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
+        if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, buf) == -1)
             goodbye(); // bailout if ESC
 }
 
@@ -228,7 +228,7 @@ void DisplayHandle(U16 handle)
 
     sprintf(buf, "Handle %u, type %s, size %li", handle, memstr[handletable[handle].Nowhere.stored_at],
             handletable[handle].Nowhere.size);
-    if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
+    if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, buf) == -1)
         goodbye(); // bailout if ESC, it's messy, but should work
 }
 
@@ -351,7 +351,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         char buf[MSGLEN];
         sprintf(buf, "Asked for %s, allocated %lu bytes of %s, handle = %u.",
                 memstr[stored_at], toallocate, memstr[use_this_type], handle);
-        stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, (char *)buf);
+        stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
         DisplayMemory();
     }
 
