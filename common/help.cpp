@@ -119,9 +119,9 @@ static void display_text(int row, int col, int color, char const *text, unsigned
     }
 }
 
-static void display_parse_text(char *text, unsigned len, int start_margin, int *num_link, LINK *link)
+static void display_parse_text(char const *text, unsigned len, int start_margin, int *num_link, LINK *link)
 {
-    char *curr;
+    char const *curr;
     int row, col;
     int tok;
     int size, width;

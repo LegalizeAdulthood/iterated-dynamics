@@ -19,8 +19,7 @@
  * This routine is needed because this program uses unaligned 2 byte
  * pointers all over the place.
  */
-int
-getint(char *ptr)
+int getint(char const *ptr)
 {
     int s;
     bcopy(ptr, &s, sizeof(int));
@@ -46,7 +45,7 @@ bool is_hyphen(char const *ptr)   /* true if ptr points to a real hyphen */
 }
 
 
-int _find_token_length(char *curr, unsigned len, int *size, int *width)
+int _find_token_length(char const *curr, unsigned len, int *size, int *width)
 {
     int _size  = 0;
     int _width = 0;
@@ -181,7 +180,7 @@ int _find_token_length(char *curr, unsigned len, int *size, int *width)
 }
 
 
-int find_token_length(int mode, char *curr, unsigned len, int *size, int *width)
+int find_token_length(int mode, char const *curr, unsigned len, int *size, int *width)
 {
     int tok;
     int t;
@@ -220,7 +219,7 @@ int find_token_length(int mode, char *curr, unsigned len, int *size, int *width)
 }
 
 
-int find_line_width(int mode, char *curr, unsigned len)
+int find_line_width(int mode, char const *curr, unsigned len)
 {
     int size   = 0;
     int width  = 0;
