@@ -1334,7 +1334,7 @@ void end_topic(TOPIC *t)
 }
 
 
-bool end_of_sentence(char *ptr)  /* true if ptr is at the end of a sentence */
+bool end_of_sentence(char const *ptr)  /* true if ptr is at the end of a sentence */
 {
     if (*ptr == ')')
         --ptr;
