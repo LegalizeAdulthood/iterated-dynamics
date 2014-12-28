@@ -144,7 +144,7 @@ extern float                 fileaspectratio;
 extern int                   filecolors;
 extern int                   filexdots;
 extern int                   fileydots;
-extern char                  file_name_stack[16][13];
+extern std::string           file_name_stack[16];
 extern int                   fillcolor;
 extern float                 finalaspectratio;
 extern bool                  finattract;

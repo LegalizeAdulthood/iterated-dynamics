@@ -690,12 +690,12 @@ static bool look(bool *stacked)
                 * make room, lose the 1st one */
             for (int tmp = 1; tmp < 16; tmp++)
             {
-                strcpy(file_name_stack[tmp - 1], file_name_stack[tmp]);
+                file_name_stack[tmp - 1] = file_name_stack[tmp];
             }
             name_stack_ptr = 14;
         }
         name_stack_ptr++;
-        strcpy(file_name_stack[name_stack_ptr], browsename.c_str());
+        file_name_stack[name_stack_ptr] = browsename;
         merge_pathnames(readname, browsename.c_str(), cmd_file::AT_AFTER_STARTUP);
         if (askvideo)
         {
@@ -709,7 +709,7 @@ static bool look(bool *stacked)
         {
             // go back one file if somewhere to go (ie. browsing)
             name_stack_ptr--;
-            while (file_name_stack[name_stack_ptr][0] == '\0'
+            while (file_name_stack[name_stack_ptr].empty()
                     && name_stack_ptr >= 0)
             {
                 name_stack_ptr--;
@@ -1138,7 +1138,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             // go back one file if somewhere to go (ie. browsing)
             name_stack_ptr--;
-            while (file_name_stack[name_stack_ptr][0] == '\0'
+            while (file_name_stack[name_stack_ptr].empty()
                     && name_stack_ptr >= 0)
                 name_stack_ptr--;
             if (name_stack_ptr < 0) // oops, must have deleted first one
