@@ -469,7 +469,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
         case fractal_type::IFS:
         case fractal_type::IFS3D:
-            nameptr = IFSName;
+            IFSName = blk_3_info.form_name;
             break;
 
         default:

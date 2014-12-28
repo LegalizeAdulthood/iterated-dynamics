@@ -2264,7 +2264,7 @@ static void save_history_info()
     case fractal_type::IFS:
     case fractal_type::IFS3D:
         strncpy(current.filename, IFSFileName.c_str(), FILE_MAX_PATH);
-        strncpy(current.itemname, IFSName, ITEMNAMELEN+1);
+        strncpy(current.itemname, IFSName.c_str(), ITEMNAMELEN+1);
         break;
     case fractal_type::LSYSTEM:
         strncpy(current.filename, LFileName, FILE_MAX_PATH);
@@ -2464,7 +2464,11 @@ static void restore_history_info(int i)
     case fractal_type::IFS:
     case fractal_type::IFS3D:
         IFSFileName = last.filename;
-        strncpy(IFSName    , last.itemname, ITEMNAMELEN+1);
+        IFSName = last.itemname;
+        if (IFSName.length() > ITEMNAMELEN)
+        {
+            IFSName.resize(ITEMNAMELEN);
+        }
         break;
     case fractal_type::LSYSTEM:
         strncpy(LFileName, last.filename, FILE_MAX_PATH);

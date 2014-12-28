@@ -579,7 +579,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
         {
             put_filename("ifsfile", IFSFileName.c_str());
-            put_parm(" %s=%s", "ifs", IFSName);
+            put_parm(" %s=%s", "ifs", IFSName.c_str());
         }
         if (fractype == fractal_type::INVERSEJULIA || fractype == fractal_type::INVERSEJULIAFP)
             put_parm(" %s=%s/%s", "miim", JIIMmethod[static_cast<int>(major_method)], JIIMleftright[static_cast<int>(minor_method)]);

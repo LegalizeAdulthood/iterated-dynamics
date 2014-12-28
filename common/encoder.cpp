@@ -442,7 +442,7 @@ bool encoder()
             save_info.tot_extend_len += store_item_name(LName);
         //    if (save_info.fractal_type == IFS || save_info.fractal_type == IFS3D)
         if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
-            save_info.tot_extend_len += store_item_name(IFSName);
+            save_info.tot_extend_len += store_item_name(IFSName.c_str());
         if (display3d <= 0 && rangeslen)
         {
             // ranges block, 004

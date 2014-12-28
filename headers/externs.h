@@ -189,7 +189,7 @@ extern float                 heightfp;
 extern int                   helpmode;
 extern int                   hi_atten;
 extern std::string           IFSFileName;
-extern char                  IFSName[];
+extern std::string           IFSName;
 extern std::vector<float>    ifs_defn;
 extern bool                  ifs_type;
 extern int                   imgboxcount;

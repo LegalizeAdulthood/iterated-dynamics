@@ -851,7 +851,7 @@ top:
         if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
         {
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
-            driver_put_string(s_row+1, 16, C_GENERAL_HI, IFSName);
+            driver_put_string(s_row+1, 16, C_GENERAL_HI, IFSName.c_str());
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
             if ((int) IFSFileName.length() >= 28)
             {
@@ -1304,7 +1304,7 @@ int ifsload()                   // read in IFS parameters
 
     ifs_type = false;
     rowsize = NUM_IFS_PARAMS;
-    if (find_file_item(IFSFileName, IFSName, &ifsfile, 3))
+    if (find_file_item(IFSFileName, IFSName.c_str(), &ifsfile, 3))
         return (-1);
 
     file_gets(buf, 200, ifsfile);
