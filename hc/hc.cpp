@@ -3592,7 +3592,6 @@ int main(int argc, char *argv[])
     bool show_mem = false;
     modes mode = modes::NONE;
 
-    char **arg;
     std::string fname1;
     std::string fname2;
     std::string swappath;
@@ -3604,7 +3603,7 @@ int main(int argc, char *argv[])
     if (buffer == nullptr)
         fatal(0, "Not enough memory to allocate buffer.");
 
-    for (arg = &argv[1]; argc > 1; argc--, arg++)
+    for (char **arg = &argv[1]; argc > 1; argc--, arg++)
     {
         switch ((*arg)[0])
         {
