@@ -261,6 +261,15 @@ int savetodisk(char *filename)
     }
 }
 
+int savetodisk(std::string &filename)
+{
+    char buff[FILE_MAX_PATH];
+    strncpy(buff, filename.c_str(), FILE_MAX_PATH);
+    int const result = savetodisk(buff);
+    filename = buff;
+    return result;
+}
+
 bool encoder()
 {
     bool interrupted;

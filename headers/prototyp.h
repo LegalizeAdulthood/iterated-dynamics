@@ -196,7 +196,8 @@ void Cursor_Hide();
 void Cursor_Show();
 extern void displayc(int, int, int, int, int);
 // encoder -- C file prototypes
-extern int savetodisk(char *);
+extern int savetodisk(char *filename);
+extern int savetodisk(std::string &filename);
 extern bool encoder();
 extern int new_to_old(int new_fractype);
 // evolve -- C file prototypes
@@ -604,6 +605,7 @@ extern void cvtcorners(double, double, LDBL, double, double, double);
 extern void cvtcentermagbf(bf_t, bf_t, LDBL *, double *, double *, double *);
 extern void cvtcornersbf(bf_t, bf_t, LDBL, double, double, double);
 extern void updatesavename(char *filename);
+extern void updatesavename(std::string &filename);
 extern int check_writefile(char *name, char const *ext);
 extern int check_writefile(std::string &name, char const *ext);
 extern void showtrig(char *buf);

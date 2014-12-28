@@ -62,7 +62,7 @@ char    workdir[FILE_MAX_DIR] = {""}; // name of directory for misc files
 std::string orgfrmdir;          // name of directory for orgfrm files
 std::string gifmask;
 char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; // Name for print-to-file
-char    savename[FILE_MAX_PATH] = {"fract001"}; // save files using this name
+std::string savename{"fract001"}; // save files using this name
 std::string autoname{"auto.key"}; // record auto keystrokes here
 bool    potflag = false;        // continuous potential enabled?
 bool    pot16bit = false;               // store 16 bit continuous potential values

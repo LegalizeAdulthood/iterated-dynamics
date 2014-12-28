@@ -486,6 +486,14 @@ void updatesavename(char *filename) // go to the next file name
     makepath(filename, drive, dir, fname, ext);
 }
 
+void updatesavename(std::string &filename)
+{
+    char buff[FILE_MAX_PATH];
+    strncpy(buff, filename.c_str(), FILE_MAX_PATH);
+    updatesavename(buff);
+    filename = buff;
+}
+
 int check_writefile(char *name, char const *ext)
 {
     // after v16 release, change encoder.c to also use this routine
@@ -712,7 +720,7 @@ bool tab_display_2(char *msg)
     show_str_var("workdir",     workdir,      &row, msg);
     show_str_var("filename",    readname.c_str(),     &row, msg);
     show_str_var("formulafile", FormFileName.c_str(), &row, msg);
-    show_str_var("savename",    savename,     &row, msg);
+    show_str_var("savename",    savename.c_str(),     &row, msg);
     show_str_var("parmfile",    CommandFile.c_str(),  &row, msg);
     show_str_var("ifsfile",     IFSFileName.c_str(),  &row, msg);
     show_str_var("autokeyname", autoname.c_str(), &row, msg);
@@ -948,7 +956,7 @@ top:
     }
     s_row += addrow;
     driver_put_string(s_row, 2, C_GENERAL_MED, "Savename: ");
-    driver_put_string(s_row, -1, C_GENERAL_HI, savename);
+    driver_put_string(s_row, -1, C_GENERAL_HI, savename.c_str());
 
     ++s_row;
 

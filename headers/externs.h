@@ -418,7 +418,7 @@ extern int                   rseed;
 extern long                  savebase;
 extern DComplex              SaveC;
 extern int                   savedac;
-extern char                  savename[];
+extern std::string           savename;
 extern long                  saveticks;
 extern int                   save_release;
 extern int                   save_system;

@@ -80,7 +80,7 @@ int get_toggles()
 {
     char const *choices[20];
     char prevsavename[FILE_MAX_DIR+1];
-    char *savenameptr;
+    char const *savenameptr;
     fullscreenvalues uvalues[25];
     int i, j, k;
     char old_usr_stdcalcmode;
@@ -187,10 +187,10 @@ int get_toggles()
 
     choices[++k] = "Savename (.GIF implied)";
     uvalues[k].type = 's';
-    strcpy(prevsavename, savename);
-    savenameptr = strrchr(savename, SLASHC);
+    strcpy(prevsavename, savename.c_str());
+    savenameptr = strrchr(savename.c_str(), SLASHC);
     if (savenameptr == nullptr)
-        savenameptr = savename;
+        savenameptr = savename.c_str();
     else
         savenameptr++; // point past slash
     strcpy(uvalues[k].uval.sval, savenameptr);
@@ -343,8 +343,8 @@ int get_toggles()
     if (outside != old_outside)
         j++;
 
-    strcpy(savenameptr, uvalues[++k].uval.sval);
-    if (strcmp(savename, prevsavename))
+    savename = std::string{savename.c_str(), savenameptr} + uvalues[++k].uval.sval;
+    if (strcmp(savename.c_str(), prevsavename))
     {
         resave_flag = 0;
         started_resaves = false; // forget pending increment
