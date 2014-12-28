@@ -20,7 +20,7 @@ int AutoStereo_depth = 100;
 double AutoStereo_width = 10;
 bool grayflag = false;          // flag to use gray value rather than color number
 char calibrate = 1;             // add calibration bars to image
-char image_map = 0;
+bool image_map = false;
 
 /* this structure permits variables to be temporarily static and visible
    to routines in this file without permanently hogging memory */

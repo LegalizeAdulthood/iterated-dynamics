@@ -1079,7 +1079,7 @@ int get_rds_params()
         uvalues[k].uval.ch.llen = 3;
         uvalues[k++].uval.ch.val  = calibrate;
 
-        uvalues[k].uval.ch.val = image_map;
+        uvalues[k].uval.ch.val = image_map ? 1 : 0;
         uvalues[k++].type = 'y';
 
 
@@ -1122,7 +1122,7 @@ int get_rds_params()
             AutoStereo_width = uvalues[k++].uval.dval;
             grayflag         = uvalues[k++].uval.ch.val != 0;
             calibrate        = (char)uvalues[k++].uval.ch.val;
-            image_map        = (char)uvalues[k++].uval.ch.val;
+            image_map        = uvalues[k++].uval.ch.val != 0;
             if (*stereomapname && image_map)
                 reuse         = (char)uvalues[k++].uval.ch.val;
             else

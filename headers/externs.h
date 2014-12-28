@@ -193,7 +193,7 @@ extern std::string           IFSName;
 extern std::vector<float>    ifs_defn;
 extern bool                  ifs_type;
 extern int                   imgboxcount;
-extern char                  image_map;
+extern bool                  image_map;
 extern int                   init3d[20];
 extern DComplex              init;
 extern int                   initbatch;
