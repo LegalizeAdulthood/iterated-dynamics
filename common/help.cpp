@@ -106,7 +106,7 @@ static void displaycc(int row, int col, int color, int ch)
     driver_put_string(row, col, color, s);
 }
 
-static void display_text(int row, int col, int color, char *text, unsigned len)
+static void display_text(int row, int col, int color, char const *text, unsigned len)
 {
     while (len-- != 0)
     {
