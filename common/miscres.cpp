@@ -24,7 +24,7 @@
 
 // routines in this module
 
-static  void trigdetails(char *);
+static void trigdetails(char *buf);
 static void area();
 
 void notdiskmsg()
