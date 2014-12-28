@@ -43,8 +43,8 @@ static void initvars_3d();
 static void reset_ifs_defn();
 static void parse_textcolors(char const *value);
 static int  parse_colors(char const *value);
-static int  get_bf(bf_t, char const *);
-static bool isabigfloat(char *str);
+static int  get_bf(bf_t bf, char const *curarg);
+static bool isabigfloat(char const *str);
 
 // variables defined by the command line/files processor
 int     stoppass = 0;           // stop at this guessing pass early
@@ -3491,11 +3491,11 @@ void dopause(int action)
    Crude function to detect a floating point number. Intended for
    use with arbitrary precision.
 */
-static bool isabigfloat(char *str)
+static bool isabigfloat(char const *str)
 {
     // [+|-]numbers][.]numbers[+|-][e|g]numbers
     bool result = true;
-    char *s = str;
+    char const *s = str;
     int numdot = 0;
     int nume = 0;
     int numsign = 0;
