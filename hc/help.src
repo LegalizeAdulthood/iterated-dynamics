@@ -1,9 +1,9 @@
 ;
-; HELP.SRC
+; help.src
 ;
 ;
-~HdrFile=HELPDEFS.H
-~HlpFile=FRACTINT.HLP
+~HdrFile=helpdefs.h
+~HlpFile=fractint.hlp
 ~Version=100
 ~FormatExclude=8
 ;
