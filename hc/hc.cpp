@@ -2983,7 +2983,7 @@ void _write_hdr(char const *fname, FILE *file)
 }
 
 
-void write_hdr(char *fname)
+void write_hdr(char const *fname)
 {
     FILE *temp,
          *hdr;
@@ -3203,7 +3203,7 @@ void _write_help(FILE *file)
 }
 
 
-void write_help(char *fname)
+void write_help(char const *fname)
 {
     FILE *hlp;
 
