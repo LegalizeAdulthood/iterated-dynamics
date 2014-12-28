@@ -339,7 +339,7 @@ void alloc_topic_text(TOPIC *t, unsigned size)
 }
 
 
-char *get_topic_text(TOPIC *t)
+char *get_topic_text(TOPIC const *t)
 {
     fseek(swapfile, t->text, SEEK_SET);
     fread(buffer, 1, t->text_len, swapfile);
