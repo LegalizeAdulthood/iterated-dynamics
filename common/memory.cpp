@@ -319,7 +319,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         if (disktarga)
             handletable[handle].Disk.file = dir_fopen(workdir, light_name.c_str(), "a+b");
         else
-            handletable[handle].Disk.file = dir_fopen(tempdir, memfile, "w+b");
+            handletable[handle].Disk.file = dir_fopen(tempdir.c_str(), memfile, "w+b");
         rewind(handletable[handle].Disk.file);
         if (fseek(handletable[handle].Disk.file, toallocate, SEEK_SET) != 0)
             handletable[handle].Disk.file = nullptr;
@@ -338,7 +338,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         if (disktarga)
             handletable[handle].Disk.file = dir_fopen(workdir, light_name.c_str(), "r+b");
         else
-            handletable[handle].Disk.file = dir_fopen(tempdir, memfile, "r+b"); // reopen
+            handletable[handle].Disk.file = dir_fopen(tempdir.c_str(), memfile, "r+b"); // reopen
         rewind(handletable[handle].Disk.file);
         handletable[handle].Disk.size = toallocate;
         handletable[handle].Disk.stored_at = DISK;
@@ -381,7 +381,7 @@ void MemoryRelease(U16 handle)
         memfile[8] = (char)((handle % 100) / 10 + (int)'0');
         memfile[7] = (char)((handle % 1000) / 100 + (int)'0');
         fclose(handletable[handle].Disk.file);
-        dir_remove(tempdir, memfile);
+        dir_remove(tempdir.c_str(), memfile);
         handletable[handle].Disk.file = nullptr;
         handletable[handle].Disk.size = 0;
         handletable[handle].Disk.stored_at = NOWHERE;

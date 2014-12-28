@@ -57,7 +57,7 @@ char    recordcolors = 0;       // default PAR color-writing method
 char    autoshowdot = 0;        // dark, medium, bright
 bool    start_showorbit = false;        // show orbits on at start of fractal
 std::string readname;           // name of fractal input file
-char    tempdir[FILE_MAX_DIR] = {""}; // name of temporary directory
+std::string tempdir;            // name of temporary directory
 char    workdir[FILE_MAX_DIR] = {""}; // name of directory for misc files
 std::string orgfrmdir;          // name of directory for orgfrm files
 std::string gifmask;
@@ -349,12 +349,12 @@ static void initvars_run()              // once per run init
     {
         if (isadirectory(p))
         {
-            strcpy(tempdir, p);
+            tempdir = p;
             fix_dirname(tempdir);
         }
     }
     else
-        *tempdir = 0;
+        tempdir.clear();
 }
 
 static void initvars_restart()          // <ins> key init
@@ -1748,7 +1748,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        strcpy(tempdir, value);
+        tempdir = value;
         fix_dirname(tempdir);
         return CMDARG_NONE;
     }

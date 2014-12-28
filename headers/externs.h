@@ -478,7 +478,7 @@ extern bool                  timerflag;
 extern long                  timer_interval;
 extern long                  timer_start;
 extern DComplex              tmp;
-extern char                  tempdir[];
+extern std::string           tempdir;
 extern double                toosmall;
 extern int                   totpasses;
 extern int                   transparent[];
