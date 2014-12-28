@@ -153,7 +153,7 @@ char FormFileName[FILE_MAX_PATH] = { 0 };// file to find (type=)formulas in
 char FormName[ITEMNAMELEN+1] = { 0 };    // Name of the Formula (if not null)
 char LFileName[FILE_MAX_PATH] = { 0 };   // file to find (type=)L-System's in
 char LName[ITEMNAMELEN+1] = { 0 };       // Name of L-System
-char CommandFile[FILE_MAX_PATH] = { 0 }; // file to find command sets in
+std::string CommandFile;                // file to find command sets in
 char CommandName[ITEMNAMELEN+1] = { 0 }; // Name of Command set
 std::string CommandComment[4];          // comments for command set
 char IFSFileName[FILE_MAX_PATH] = { 0 };// file to find (type=)IFS in
@@ -279,7 +279,7 @@ int cmdfiles(int argc, char const *const *argv)
         { // @filename/setname?
             *sptr = 0;
             if (merge_pathnames(CommandFile, &curarg[1], cmd_file::AT_CMD_LINE) < 0)
-                init_msg("", CommandFile, cmd_file::AT_CMD_LINE);
+                init_msg("", CommandFile.c_str(), cmd_file::AT_CMD_LINE);
             strcpy(CommandName, sptr+1);
             if (find_file_item(CommandFile, CommandName, &initfile, 0) || initfile == nullptr)
                 argerror(curarg);
@@ -311,7 +311,7 @@ int cmdfiles(int argc, char const *const *argv)
         dontreadcolor = false;   // read colors from GIF
 
     //set structure of search directories
-    strcpy(searchfor.par, CommandFile);
+    strcpy(searchfor.par, CommandFile.c_str());
     strcpy(searchfor.frm, FormFileName);
     strcpy(searchfor.lsys, LFileName);
     strcpy(searchfor.ifs, IFSFileName);
@@ -386,7 +386,7 @@ static void initvars_restart()          // <ins> key init
     FormName[0] = 0;
     strcpy(LFileName, "fractint.l");
     LName[0] = 0;
-    strcpy(CommandFile, "fractint.par");
+    CommandFile = "fractint.par";
     CommandName[0] = 0;
     for (int i = 0; i < 4; i++)
         CommandComment[i].clear();
@@ -1032,10 +1032,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 next = slash+1;
             }
 
-            strcpy(CommandFile, value);
-            if (strchr(CommandFile, '.') == nullptr)
+            CommandFile = value;
+            if (strchr(CommandFile.c_str(), '.') == nullptr)
             {
-                strcat(CommandFile, ".par");
+                CommandFile += ".par";
             }
             if (strcmp(readname, DOTSLASH) == 0)
             {

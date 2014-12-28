@@ -2,6 +2,8 @@
         Resident odds and ends that don't fit anywhere else.
 */
 #include <algorithm>
+#include <cassert>
+#include <string>
 
 #include <ctype.h>
 #include <stdarg.h>
@@ -702,7 +704,7 @@ bool tab_display_2(char *msg)
     show_str_var("filename",    readname,     &row, msg);
     show_str_var("formulafile", FormFileName, &row, msg);
     show_str_var("savename",    savename,     &row, msg);
-    show_str_var("parmfile",    CommandFile,  &row, msg);
+    show_str_var("parmfile",    CommandFile.c_str(),  &row, msg);
     show_str_var("ifsfile",     IFSFileName,  &row, msg);
     show_str_var("autokeyname", autoname.c_str(), &row, msg);
     show_str_var("lightname",   light_name,   &row, msg);
@@ -1387,7 +1389,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
 
     splitpath(filename, drive, dir, fname, ext);
     makepath(fullpath, "", "", fname, ext);
-    if (stricmp(filename, CommandFile))
+    if (stricmp(filename, CommandFile.c_str()))
     {
         infile = fopen(filename, "rb");
         if (infile != nullptr)
@@ -1456,12 +1458,12 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
 
     if (!found)
     {
-        infile = fopen(CommandFile, "rb");
+        infile = fopen(CommandFile.c_str(), "rb");
         if (infile != nullptr)
         {
             if (scan_entries(infile, nullptr, parsearchname) == -1)
             {
-                strcpy(filename, CommandFile);
+                strcpy(filename, CommandFile.c_str());
                 found = true;
             }
             else
@@ -1591,6 +1593,16 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
     return false;
 }
 
+bool find_file_item(std::string &filename, char const *itemname, FILE **fileptr, int itemtype)
+{
+    char buf[FILE_MAX_PATH];
+    assert(filename.size() < FILE_MAX_PATH);
+    strncpy(buf, filename.c_str(), FILE_MAX_PATH);
+    buf[FILE_MAX_PATH - 1] = 0;
+    bool const result = find_file_item(buf, itemname, fileptr, itemtype);
+    filename = buf;
+    return result;
+}
 
 int file_gets(char *buf, int maxlen, FILE *infile)
 {

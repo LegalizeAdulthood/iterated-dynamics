@@ -135,7 +135,7 @@ void make_batch_file()
             colorspec[13] = 0;
         }
     }
-    strcpy(inpcommandfile, CommandFile);
+    strcpy(inpcommandfile, CommandFile.c_str());
     strcpy(inpcommandname, CommandName);
     for (int i = 0; i < 4; i++)
     {
@@ -222,9 +222,9 @@ prompt_user:
             colorsonly = true;
         }
 
-        strcpy(CommandFile, inpcommandfile);
-        if (has_ext(CommandFile) == nullptr)
-            strcat(CommandFile, ".par");   // default extension .par
+        CommandFile = inpcommandfile;
+        if (has_ext(CommandFile.c_str()) == nullptr)
+            CommandFile += ".par";   // default extension .par
         strcpy(CommandName, inpcommandname);
         for (int i = 0; i < 4; i++)
             CommandComment[i] = inpcomment[i];
@@ -307,14 +307,14 @@ skip_UI:
             else
                 maxcolor = filecolors;
         }
-        strcpy(outname, CommandFile);
+        strcpy(outname, CommandFile.c_str());
         bool gotinfile = false;
-        if (access(CommandFile, 0) == 0)
+        if (access(CommandFile.c_str(), 0) == 0)
         {   // file exists
             gotinfile = true;
-            if (access(CommandFile, 6))
+            if (access(CommandFile.c_str(), 6))
             {
-                sprintf(buf, "Can't write %s", CommandFile);
+                sprintf(buf, "Can't write %s", CommandFile.c_str());
                 stopmsg(STOPMSG_NONE, buf);
                 continue;
             }
@@ -322,7 +322,7 @@ skip_UI:
             while (--i >= 0 && outname[i] != SLASHC)
                 outname[i] = 0;
             strcat(outname, "fractint.tmp");
-            infile = fopen(CommandFile, "rt");
+            infile = fopen(CommandFile.c_str(), "rt");
         }
         parmfile = fopen(outname, "wt");
         if (parmfile == nullptr)
@@ -421,7 +421,7 @@ skip_UI:
                         xx3rd = xxmin;
                         yy3rd = yymin;
                     }
-                    fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", CommandFile, PCommandName);
+                    fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", CommandFile.c_str(), PCommandName);
                     fprintf(fpbat, "If Errorlevel 2 goto oops\n");
                 }
                 else
@@ -488,8 +488,8 @@ skip_UI:
         fclose(parmfile);
         if (gotinfile)
         {   // replace the original file with the new
-            unlink(CommandFile);   // success assumed on these lines
-            rename(outname, CommandFile);  // since we checked earlier with access
+            unlink(CommandFile.c_str());   // success assumed on these lines
+            rename(outname, CommandFile.c_str());  // since we checked earlier with access
         }
         break;
     }

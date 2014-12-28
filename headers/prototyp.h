@@ -612,6 +612,7 @@ extern int tab_display();
 extern int endswithslash(char const *fl);
 extern int ifsload();
 extern bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int itemtype);
+extern bool find_file_item(std::string &filename, char const *itemname, FILE **fileptr, int itemtype);
 extern int file_gets(char *buf, int maxlen, FILE *infile);
 extern void roundfloatd(double *);
 extern void fix_inversion(double *);
@@ -850,6 +851,8 @@ extern int fullscreen_prompt(
     char *extrainfo);
 extern long get_file_entry(int type, char const *title, char const *fmask,
                     char *filename, char *entryname);
+extern long get_file_entry(int type, char const *title, char const *fmask,
+                    std::string &filename, char *entryname);
 extern int get_fracttype();
 extern int get_fract_params(int);
 extern int get_fract3d_params();

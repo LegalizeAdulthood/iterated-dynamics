@@ -1,6 +1,7 @@
 /*
         Various routines that prompt for things.
 */
+#include <cassert>
 #include <string>
 
 #include <assert.h>
@@ -1041,11 +1042,11 @@ static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype,
     if (done >= 0)
     {
         result = static_cast<fractal_type>(choices[done]->num);
-        if ((result == fractal_type::FORMULA || result == fractal_type::FFORMULA) && !strcmp(FormFileName, CommandFile))
+        if ((result == fractal_type::FORMULA || result == fractal_type::FFORMULA) && !strcmp(FormFileName, CommandFile.c_str()))
             strcpy(FormFileName, searchfor.frm);
-        if (result == fractal_type::LSYSTEM && !strcmp(LFileName, CommandFile))
+        if (result == fractal_type::LSYSTEM && !strcmp(LFileName, CommandFile.c_str()))
             strcpy(LFileName, searchfor.lsys);
-        if ((result == fractal_type::IFS || result == fractal_type::IFS3D) && !strcmp(IFSFileName, CommandFile))
+        if ((result == fractal_type::IFS || result == fractal_type::IFS3D) && !strcmp(IFSFileName, CommandFile.c_str()))
             strcpy(IFSFileName, searchfor.ifs);
     }
 
@@ -1902,6 +1903,18 @@ long get_file_entry(int type, char const *title, char const *fmask,
             return entry_pointer;
         }
     }
+}
+
+long get_file_entry(int type, char const *title, char const *fmask,
+                    std::string &filename, char *entryname)
+{
+    char buf[FILE_MAX_PATH];
+    assert(filename.size() < FILE_MAX_PATH);
+    strncpy(buf, filename.c_str(), FILE_MAX_PATH);
+    buf[FILE_MAX_PATH - 1] = 0;
+    long const result = get_file_entry(type, title, fmask, buf, entryname);
+    filename = buf;
+    return result;
 }
 
 struct entryinfo
