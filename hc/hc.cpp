@@ -438,7 +438,7 @@ int add_page(TOPIC *t, PAGE const *p)
 #define TOPIC_ALLOC_SIZE (16)
 
 
-int add_topic(TOPIC *t)
+int add_topic(TOPIC const *t)
 {
     if (num_topic == 0)
         topic = static_cast<TOPIC *>(newx(sizeof(TOPIC)*TOPIC_ALLOC_SIZE));
@@ -455,7 +455,7 @@ int add_topic(TOPIC *t)
 #define LABEL_ALLOC_SIZE (16)
 
 
-int add_label(LABEL *l)
+int add_label(LABEL const *l)
 {
     if (l->name[0] == '@')    /* if it's a private label... */
     {
@@ -487,7 +487,7 @@ int add_label(LABEL *l)
 #define CONTENTS_ALLOC_SIZE (16)
 
 
-int add_content(CONTENT *c)
+int add_content(CONTENT const *c)
 {
     if (num_contents == 0)
         contents = static_cast<CONTENT *>(newx(sizeof(CONTENT)*CONTENTS_ALLOC_SIZE));
@@ -528,7 +528,7 @@ void unread_char(int ch)
 }
 
 
-void unread_string(char *s)
+void unread_string(char const *s)
 {
     int p = (int) strlen(s);
 
@@ -683,7 +683,7 @@ int read_char()
  */
 
 
-LABEL *find_label(char *name)
+LABEL *find_label(char const *name)
 {
     if (*name == '@')
     {
@@ -735,7 +735,7 @@ int find_topic_title(char const *title)
  */
 
 
-int validate_label_name(char *name)
+int validate_label_name(char const *name)
 {
     if (!isalpha(*name) && *name != '@' && *name != '_')
         return (0);  /* invalid */
