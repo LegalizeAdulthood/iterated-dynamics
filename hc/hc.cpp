@@ -59,6 +59,7 @@ char const *const DEFAULT_SRC_FNAME = "help.src";
 char const *const DEFAULT_HLP_FNAME = "fractint.hlp";
 char const *const DEFAULT_EXE_FNAME = "fractint.exe";
 char const *const DEFAULT_DOC_FNAME = "fractint.doc";
+std::string const DEFAULT_HTML_FNAME{"index.html"};
 
 char const *const TEMP_FNAME = "hc.tmp";
 char const *const SWAP_FNAME = "hcswap.tmp";
@@ -3615,6 +3616,8 @@ private:
     void compile();
     void print();
     void render_html();
+    void paginate_html_document();
+    void print_html_document(std::string const &output_filename);
 
     int argc;
     char **argv;
@@ -3858,7 +3861,123 @@ void compiler::print()
 
 void compiler::render_html()
 {
-    throw std::runtime_error("Method is not implemented.");
+    read_source_file();
+    make_hot_links();
+
+    if (errors == 0)
+    {
+        paginate_html_document();
+    }
+
+    if (errors == 0)
+    {
+        print_html_document(fname2.empty() ? DEFAULT_HTML_FNAME : fname2);
+    }
+
+    if (errors > 0 || warnings > 0)
+    {
+        report_errors();
+    }
+}
+
+void compiler::paginate_html_document()
+{
+    PAGINATE_DOC_INFO info;
+
+    if (num_contents == 0)
+        return ;
+
+    msg("Paginating document.");
+
+    info.tnum = -1;
+    info.cnum = info.tnum;
+    info.link_dest_warn = 1;
+
+    process_document(pd_get_info, paginate_doc_output, &info);
+
+    set_hot_link_doc_page();
+    set_content_doc_page();
+}
+
+bool print_html_output(int cmd, PD_INFO *pd, void *context)
+{
+    PRINT_DOC_INFO *info = static_cast<PRINT_DOC_INFO *>(context);
+    switch (cmd)
+    {
+    case PD_HEADING:
+    {
+        char buff[20];
+
+        info->margin = 0;
+        printers(info, "\n                     Fractint Version xx.xx                     Page ", 0);
+        sprintf(buff, "%d\n\n", pd->pnum);
+        printers(info, buff, 0);
+        info->margin = PAGE_INDENT;
+        return true;
+    }
+
+    case PD_FOOTING:
+        info->margin = 0;
+        printerc(info, '\f', 1);
+        info->margin = PAGE_INDENT;
+        return true;
+
+    case PD_PRINT:
+        printers(info, pd->s, pd->i);
+        return true;
+
+    case PD_PRINTN:
+        printerc(info, *pd->s, pd->i);
+        return true;
+
+    case PD_PRINT_SEC:
+        info->margin = TITLE_INDENT;
+        if (pd->id[0] != '\0')
+        {
+            printers(info, pd->id, 0);
+            printerc(info, ' ', 1);
+        }
+        printers(info, pd->title, 0);
+        printerc(info, '\n', 1);
+        info->margin = PAGE_INDENT;
+        return true;
+
+    case PD_START_SECTION:
+    case PD_START_TOPIC:
+    case PD_SET_SECTION_PAGE:
+    case PD_SET_TOPIC_PAGE:
+    case PD_PERIODIC:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+void compiler::print_html_document(std::string const &fname)
+{
+    PRINT_DOC_INFO info;
+
+    if (num_contents == 0)
+        fatal(0, ".SRC has no DocContents.");
+
+    msg("Printing to: %s", fname.c_str());
+
+    info.tnum = -1;
+    info.cnum = info.tnum;
+    info.link_dest_warn = 0;
+
+    info.file = fopen(fname.c_str(), "wt");
+    if (info.file == nullptr)
+        fatal(0, "Couldn't create \"%s\"", fname.c_str());
+
+    info.margin = PAGE_INDENT;
+    info.start_of_line = 1;
+    info.spaces = 0;
+
+    process_document(pd_get_info, print_html_output, &info);
+
+    fclose(info.file);
 }
 
 #if defined(_WIN32)
