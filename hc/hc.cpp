@@ -2952,7 +2952,7 @@ bool compare_files(FILE *f1, FILE *f2)
 }
 
 
-void _write_hdr(char *fname, FILE *file)
+void _write_hdr(char const *fname, FILE *file)
 {
     char nfile[MAXFILE],
          next[MAXEXT];
