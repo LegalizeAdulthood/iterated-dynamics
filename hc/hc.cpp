@@ -735,16 +735,16 @@ int find_topic_title(char const *title)
  */
 
 
-int validate_label_name(char const *name)
+bool validate_label_name(char const *name)
 {
     if (!isalpha(*name) && *name != '@' && *name != '_')
-        return (0);  /* invalid */
+        return false;  /* invalid */
 
     while (*(++name) != '\0')
         if (!isalpha(*name) && !isdigit(*name) && *name != '_')
-            return (0); /* invalid */
+            return false; /* invalid */
 
-    return (1);  /* valid */
+    return true;  /* valid */
 }
 
 
