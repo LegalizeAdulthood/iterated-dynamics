@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 76</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page75.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 76 <a href="page77.html">Next &gt;</a></pre>
+</div>
+<pre>
+  orbit points are plotted individually, but for a negative spacing the
+  points are connected.
+
+  This fractal is similar to the Pickover Popcorn (p. 56).
+  A variant is the implicit Euler approximation:
+           y(n+1) = y(n) + dt*f(x(n))
+           x(n+1) = x(n) - dt*f(y(n+1))
+  This variant results in complex orbits.  The implicit Euler
+  approximation is selected by entering dt&lt;0.
+
+  There are two options that have unusual effects on these fractals.  The
+  Orbit Delay value controls how many initial points are computed before
+  the orbits are displayed on the screen.  This allows the orbit to settle
+  down.  The outside=summ option causes each pixel to increment color
+  every time an orbit touches it; the resulting display is a 2-d
+  histogram.
+
+  These fractals are discussed in Chapter 14 of Pickover's "Computers,
+  Pattern, Chaos, and Beauty".
+
+
+ 2.44 Mandelcloud
+
+  (type=mandelcloud)
+
+  This fractal computes the Mandelbrot function, but displays it
+  differently.  It starts with regularly spaced initial pixels and
+  displays the resulting orbits.  This idea is somewhat similar to the
+  Dynamic System (p. 75).
+
+  There are two options that have unusual effects on this fractal.  The
+  Orbit Delay value controls how many initial points are computed before
+  the orbits are displayed on the screen.  This allows the orbit to settle
+  down.  The outside=summ option causes each pixel to increment color
+  every time an orbit touches it; the resulting display is a 2-d
+  histogram.
+
+  This fractal was invented by Noel Giffin.
+
+
+ 2.45 Quaternion
+
+  (type=quat,quatjul)
+
+  These fractals are based on quaternions.  Quaternions are an extension
+  of complex numbers, with 4 parts instead of 2.  That is, a quaternion Q
+  equals a+ib+jc+kd, where a,b,c,d are reals.  Quaternions have rules for
+  addition and multiplication.  The normal Mandelbrot and Julia formulas
+  can be generalized to use quaternions instead of complex numbers.
+
+  There is one complication.  Complex numbers have 2 parts, so they can be
+  displayed on a plane.  Quaternions have 4 parts, so they require 4
+  dimensions to view.  That is, the quaternion Mandelbrot set is actually
+  a 4-dimensional object.  Each quaternion C generates a 4-dimensional
+  Julia set.
+</pre>
+</body>
+</html>

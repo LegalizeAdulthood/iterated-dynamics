@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 57</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page56.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 57 <a href="page58.html">Next &gt;</a></pre>
+</div>
+<pre>
+  spacebar toggle, if that method is used). The exponent is a positive
+  integer or a complex number. We call these "families" because each value
+  of the exponent yields a different MarksMandel set, which turns out to
+  be a kinda-polygon with (exponent) sides. The exponent value is the
+  third parameter, after the "initialization warping" values. Typically
+  one would use null warping values, and specify the exponent with
+  something like "PARAMS=0/0/5", which creates an unwarped, pentagonal
+  MarksMandel set.
+
+  In the process of coding MarksMandelPwr formula type, Tim Wegner created
+  the type "tim's_error" after making an interesting coding mistake.
+
+
+ 2.22 Unity
+
+  (type=unity)
+
+  This Peterson variation began with curiosity about other "Newton-style"
+  approximation processes. A simple one,
+
+     One = (x * x) + (y * y); y = (2 - One) * x;   x = (2 - One) * y;
+
+  produces the fractal called Unity.
+
+  One of its interesting features is the "ghost lines." The iteration loop
+  bails out when it reaches the number 1 to within the resolution of a
+  screen pixel. When you zoom a section of the image, the bailout
+  criterion is adjusted, causing some lines to become thinner and others
+  thicker.
+
+  Only one line in Unity that forms a perfect circle: the one at a radius
+  of 1 from the origin. This line is actually infinitely thin. Zooming on
+  it reveals only a thinner line, up (down?) to the limit of accuracy for
+  the algorithm. The same thing happens with other lines in the fractal,
+  such as those around |x| = |y| = (1/2)^(1/2) = .7071
+
+  Try some other tortuous approximations using the TEST stub (p. 64) and
+  let us know what you come up with!
+
+
+ 2.23 Scott Taylor / Lee Skinner Variations
+
+  (type=fn(z*z), fn*fn, fn*z+z, fn+fn, fn+fn(pix), sqr(1/fn), sqr(fn),
+  spider, tetrate, manowar)
+
+  Two of Fractint's faithful users went bonkers when we introduced the
+  "formula" type, and came up with all kinds of variations on escape-time
+  fractals using trig functions.  We decided to put them in as regular
+  types, but there were just too many! So we defined the types with
+  variable functions and let you, the overwhelmed user, specify what the
+  functions should be! Thus Scott Taylor's "z = sin(z) + z^2" formula type
+  is now the "fn+fn" regular type, and EITHER function can be one of sin,
+  cos, tan, cotan, sinh, cosh, tanh, cotanh, exp, log, sqr, recip, ident,
+  zero, one, conj, flip, cosxx, asin, asinh, acos, acosh, atan, atanh,
+  sqrt, abs, or cabs.
+</pre>
+</body>
+</html>

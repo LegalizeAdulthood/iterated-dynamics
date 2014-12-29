@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 123</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page122.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 123 <a href="page124.html">Next &gt;</a></pre>
+</div>
+<pre>
+  WORKDIR=[directory]
+  This command sets the directory where miscellaneous Fractint files get
+  written, including MAKEMIG.BAT and debugging files.
+
+  FILENAME=[name]
+  Causes Fractint to read the named file, which must either have been
+  saved from an earlier Fractint session or be a generic GIF file, and use
+  that as the starting point, bypassing the initial information screens.
+  The filetype is optional and defaults to .GIF. Non-Fractint GIF files
+  are restored as fractal type "plasma".
+
+  On the DOS command line you may omit FILENAME= and just give the file
+  name.
+
+  CURDIR=yes
+  Fractint uses directories set by various commands, possibly in the
+  SSTOOLS.INI file. If you want to try out some files in the current
+  directory, such as a modified copy of FRACTINT.FRM, you won't Fractint
+  to read the copy in your official FRM directory. Setting curdir=yes at
+  the command line will cause Fractint to look in the current directory
+  for requested files first before looking in the default directory set by
+  the other commands. Warning: &lt;tab&gt; screen may not reflect actual file
+  opened in cases where the file was opened in the DOS current directory.
+
+  MAKEPAR=parfile/entryname
+  This command invokes a batch facility to copy fractal and color
+  information stored in GIF files to PAR format. The syntax is:
+       fractint filename.gif makepar=parfile.par/entryname &gt;&gt; makepar.log
+  The entryname is optional and defaults to the name of the gif filename
+  if absent. Other parameters can appear before the makepar= command, but
+  anything after will ignored. If the parfile and entryname exist, the
+  entry will replace the previous entry. If the entry doesn't exist, it
+  will be added. If the parfile doesn't exist it will be created.
+  Redirection of output to a log file is possible in the DOS version
+  because all screen output is written to the standard output.
+
+  If you leave the GIF filename out of the command lime but add a map=
+  command, then the makepar command will write a PAR named for the color
+  map with only the colors in the PAR entry. This is a handy tool for
+  converting maps into compressed PAR colors entry. For example, you could
+  type:
+       fractint map=lyapunov.map makepar=mycolors &gt;&gt; makepar.log
+  This adds a colors-only PAR entry called lyapunov.map to mycolors.par.
+
+  MAXLINELENGTH=nnn
+  This command sets the maximum width of lines in a PAR entry.
+
+  COMMENT=[comment1]/[comment2]/[comment3]/[comment4]
+  Inserts comments into PAR files. These comments can include variables
+  that are expanded at the time the PAR file is created. Variables are
+  indicated by $varname$. Underscore characters are expanded to blanks.
+  If you want to include the special characters '$', '_', or '\' in a
+  comment, precede the character with '\'. Supported variables are:
+</pre>
+</body>
+</html>

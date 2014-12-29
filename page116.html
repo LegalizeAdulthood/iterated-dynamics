@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 116</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page115.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 116 <a href="page117.html">Next &gt;</a></pre>
+</div>
+<pre>
+  adjusting the contrast of the final image. Use the "Ambient= " variable.
+  In addition to being able to create scenes with light sources in
+  monochrome, you can now do it in full color as well. Setting fullcolor=1
+  will generate a Targa-24 file with a full color image which will be a
+  combination of the original colors of the source image (or map file if
+  you select map=something) and the amount of light which reflects off a
+  given point on the surface. Since there can be 256 different colors in
+  the original image and 256 levels of light, you can now generate an
+  image with *lots* of colors. To convert it to a GIF if you can't view
+  Targa files directly, you can use PICLAB (see Other Programs (p. 203)),
+  and the following commands:
+
+      SET PALETTE 256
+      SET CREZ 8
+      TLOAD yourfile.tga
+      MAKEPAL
+      MAP
+      GSAVE yourfile.gif
+      EXIT
+  Using the full color option allows you to also set a haze factor with
+  the "haze= " variable to make more distant objects more hazy.
+
+  As a default, full color files also have the background set to sky blue.
+  Warning, the files which are created with the full color option are very
+  large, 3 bytes per pixel. So be sure to use a disk with enough space.
+  The file is created using Fractint's disk-video caching, but is always
+  created on real disk (expanded or extended memory is not used.) Try the
+  following settings of the new variables in sequence to get a feel for
+  the effect of each one:
+      ;use this with any filltype
+      map=topo
+      randomize=3; adjusting this smooths color transitions
+
+      ;now add this using filltype 5 or 6
+      ambient=20; adjusting this changes the contrast
+      filltype=6
+      smoothing=2; makes the light not quite as granular as the terrain
+
+      ;now add the following, and this is where it gets slow
+      fullcolor=1; use PICLAB to reduce resulting lightfile to a GIF
+
+      ;and finally this
+      haze=20; sets the amount of haze for distant objects
+
+  When full color is being used, the image you see on the screen will
+  represent the amount of light being reflected, not the colors in the
+  final image. Don't be disturbed if the colors look weird, they are an
+  artifact of the process being used. The image being created in the
+  lightfile won't look like the screen.
+
+  However, if you are worried, hit ESC several times and when Fractint
+  gets to the end of the current line it will abort. Your partial image
+  will be there as LIGHT001.TGA or with whatever file name you selected
+  with the lightname option. Convert it as described above and adjust any
+  parameters you are not happy with. Its a little awkward, but we haven't
+  figured out a better way yet.
+</pre>
+</body>
+</html>

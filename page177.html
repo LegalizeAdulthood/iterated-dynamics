@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 177</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page176.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 177 <a href="page178.html">Next &gt;</a></pre>
+</div>
+<pre>
+  latoocarfian (p. 84)
+         Orbit in two dimensions defined by:
+         x(n+1) = fn1 (y(n) * b) + c * fn2(x(n) * b)
+         y(n+1) = fn3 (x(n) * a) + d * fn4(y(n) * a)
+         Parameters:  a, b, c, d fn1..4 (all sin=original)
+
+  lorenz, lorenz3d (p. 61)
+      Lorenz two lobe attractor - orbit in three dimensions.
+      In 2d the x and y components are projected to form the image.
+        z(0) = y(0) = z(0) = 1;
+        x(n+1) = x(n) + (-a*x(n)*dt) + (   a*y(n)*dt)
+        y(n+1) = y(n) + ( b*x(n)*dt) - (     y(n)*dt) - (z(n)*x(n)*dt)
+        z(n+1) = z(n) + (-c*z(n)*dt) + (x(n)*y(n)*dt)
+      Parameters are dt, a, b, and c.
+
+  lorenz3d1 (p. 61)
+      Lorenz one lobe attractor, 3D orbit (Rick Miranda and Emily Stone)
+        z(0) = y(0) = z(0) = 1; norm = sqrt(x(n)^2 + y(n)^2)
+        x(n+1) = x(n) + (-a*dt-dt)*x(n) + (a*dt-b*dt)*y(n)
+           + (dt-a*dt)*norm + y(n)*dt*z(n)
+        y(n+1) = y(n) + (b*dt-a*dt)*x(n) - (a*dt+dt)*y(n)
+           + (b*dt+a*dt)*norm - x(n)*dt*z(n) - norm*z(n)*dt
+        z(n+1) = z(n) +(y(n)*dt/2) - c*dt*z(n)
+      Parameters are dt, a, b, and c.
+
+  lorenz3d3 (p. 61)
+      Lorenz three lobe attractor, 3D orbit (Rick Miranda and Emily Stone)
+        z(0) = y(0) = z(0) = 1; norm = sqrt(x(n)^2 + y(n)^2)
+        x(n+1) = x(n) +(-(a*dt+dt)*x(n) + (a*dt-b*dt+z(n)*dt)*y(n))/3
+            + ((dt-a*dt)*(x(n)^2-y(n)^2)
+            + 2*(b*dt+a*dt-z(n)*dt)*x(n)*y(n))/(3*norm)
+        y(n+1) = y(n) +((b*dt-a*dt-z(n)*dt)*x(n) - (a*dt+dt)*y(n))/3
+            + (2*(a*dt-dt)*x(n)*y(n)
+            + (b*dt+a*dt-z(n)*dt)*(x(n)^2-y(n)^2))/(3*norm)
+        z(n+1) = z(n) +(3*x(n)*dt*x(n)*y(n)-y(n)*dt*y(n)^2)/2 - c*dt*z(n)
+      Parameters are dt, a, b, and c.
+
+  lorenz3d4 (p. 61)
+      Lorenz four lobe attractor, 3D orbit (Rick Miranda and Emily Stone)
+        z(0) = y(0) = z(0) = 1;
+        x(n+1) = x(n) +(-a*dt*x(n)^3
+           + (2*a*dt+b*dt-z(n)*dt)*x(n)^2*y(n) + (a*dt-2*dt)*x(n)*y(n)^2
+           + (z(n)*dt-b*dt)*y(n)^3) / (2 * (x(n)^2+y(n)^2))
+        y(n+1) = y(n) +((b*dt-z(n)*dt)*x(n)^3 + (a*dt-2*dt)*x(n)^2*y(n)
+           + (-2*a*dt-b*dt+z(n)*dt)*x(n)*y(n)^2
+           - a*dt*y(n)^3) / (2 * (x(n)^2+y(n)^2))
+        z(n+1) = z(n) +(2*x(n)*dt*x(n)^2*y(n) - 2*x(n)*dt*y(n)^3 - c*dt*z(n))
+      Parameters are dt, a, b, and c.
+
+  lsystem (p. 71)
+      Using a turtle-graphics control language and starting with
+      an initial axiom string, carries out string substitutions the
+      specified number of times (the order), and plots the result.
+</pre>
+</body>
+</html>

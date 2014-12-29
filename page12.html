@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 12</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page11.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 12 <a href="page13.html">Next &gt;</a></pre>
+</div>
+<pre>
+    Increased the usable bailout values when using arbitrary precision
+    math.  This is the best I can do with my minimal understanding of the
+    ap-math routines.  If you are seeing extraneous pixels on your ap-math
+    images when you use a high bailout, lower the bailout until they go
+    away.
+
+    Made a change to the tab display routine to correct a problem with
+    displaying parameters when returning from the F6 and control-tab
+    screens.
+
+  Patch 2
+  Backed out the changes to the savegraphics() and restoregraphics()
+  routines.
+
+  Patch 1
+  Fixed the &lt;TAB&gt; display screen so the video memory doesn't get
+    overwritten.  This clears up the problem with extraneous dots with
+    some fractal types.  It should be possible to remove the textsafe=save
+    from your sstools.ini file.
+
+    Added Iain Stirling to the scrolling credits screen for his
+    contribution of the inside=fmod and outside=fmod options.
+
+    Reworded the error message received when more memory is requested than
+    is available on your disk drive.
+
+    The background= parameter, for 3D TGA files, is now saved to a PAR
+    entry.
+
+    Fixed the error message that appears when a parsing error occurs on
+    startup.
+
+    Cleaned up the savegraphics() and restoregraphics() routines.  This
+    should make them faster.
+
+  Version 20.1.0
+  Incremented the version number to accommodate backwards compatibility
+    for the inside=fmod option.
+
+    Fixed the assignment of hotkeys to video modes so that the
+    fractint.cfg file is no longer corrupted.  Made the showdot= feature
+    reset with &lt;INS&gt; if it is entered using the &lt;g&gt; screen.  Added a check
+    for the video size before invoking the palette editor.  Too small a
+    size would crash Fractint.
+
+    Fixed an extraseg conflict which occurred with arbitrary precision
+    when the &lt;tab&gt; key was used with various screens open (x,y,b).  This
+    conflict also occurred when loading an ap math image at the video
+    selection screen.  Cleaned up some of the ap math initialization code.
+
+    Fixed an obscure bug that left memory allocated when an unfinished
+    image was being reloaded, but a video mode was not selected (escape
+    was pressed).
+</pre>
+</body>
+</html>

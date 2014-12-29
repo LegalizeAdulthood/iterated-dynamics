@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 90</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page89.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 90 <a href="page91.html">Next &gt;</a></pre>
+</div>
+<pre>
+        GOTO start
+    GOTO is mainly useful for writing continuous loop demonstrations. It
+    can also be useful when debugging an autokey file, to skip sections of
+    it.
+
+    ; -- A semi-colon indicates that the rest of the line containing it is
+    a comment.
+
+    MESSAGE nn &lt;Your message here&gt; -- Places a message on the top of the
+    screen for nn seconds
+
+  Making Fractint demos can be tricky. Here are some suggestions which may
+  help:
+
+    Start Fractint with "fractint autokeyname=mydemo.key autokey=record".
+    Use a unique name each time you run so that you don't overwrite prior
+    files.
+
+    When in record mode, avoid using the cursor keys to select filenames,
+    fractal types, formula names, etc. Instead, try to type in names. This
+    will ensure that the exact item you want gets chosen during playback
+    even if the list is different then.
+
+    Beware of video mode assumptions. It is safest to build a separate
+    demo for different resolution monitors.
+
+    When in the record mode, try to type names quickly, then pause. If you
+    pause partway through a name Fractint will break up the string in the
+    .KEY file. E.g. if you paused in the middle of typing fract001, you
+    might get:
+        "fract"
+        WAIT 2.2
+        "001"
+    No harm done, but messy to clean up. Fractint ignores pauses less than
+    about 1/2 second.
+
+    DO pause when you want the viewer to see what is happening during
+    playback.
+
+    When done recording, clean up your mydemo.key file. Insert a CALCWAIT
+    after each keystroke which triggers something that takes a variable
+    amount of time (calculating a fractal, restoring a file, saving a
+    file).
+
+    Add comments with ";" to the file so you know what is going on in
+    future.
+
+    It is a good idea to use INSERT before a GOTO which restarts the demo.
+    The &lt;insert&gt; key resets Fractint as if you exited the program and
+    restarted it.
+
+  Warning: an autokey file built for this version of Fractint will
+  probably require some retouching before it works with future releases of
+  Fractint.  We have no intention of making sure that the same sequence of
+  keystrokes will have exactly the same effect from one version of
+  Fractint to the next. That would require pretty much freezing Fractint
+</pre>
+</body>
+</html>

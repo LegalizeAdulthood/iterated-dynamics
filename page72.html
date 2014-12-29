@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 72</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page71.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 72 <a href="page73.html">Next &gt;</a></pre>
+</div>
+<pre>
+  wish to use a different lsystem file. After selecting an lsystem, you
+  are asked for one parameter - the "order", or number of times to execute
+  all the transformation rules.  It is wise to start with small orders,
+  because the size of the substituted command string grows exponentially
+  and it is very easy to exceed your resolution.  (Higher orders take
+  longer to generate too.)  The command line options "lname=" and "lfile="
+  can be used to over-ride the default file name and lsystem name.
+
+  Each L-System entry in the file contains a specification of the angle,
+  the axiom, and the transformation rules.  Each item must appear on its
+  own line and each line must be less than 160 characters long.
+
+  The statement "angle n" sets the angle to 360/n degrees; n must be an
+  integer greater than two and less than fifty.
+
+  "Axiom string" defines the axiom.
+
+  Transformation rules are specified as "a=string" and convert the single
+  character 'a' into "string."  If more than one rule is specified for a
+  single character all of the strings will be added together.  This allows
+  specifying transformations longer than the 160 character limit.
+  Transformation rules may operate on any characters except space, tab or
+  '}'.
+
+  Any information after a ; (semi-colon) on a line is treated as a
+  comment.
+
+  Here is a sample lsystem:
+
+  Dragon {         ; Name of lsystem, { indicates start
+    Angle 8        ; Specify the angle increment to 45 degrees
+    Axiom FX       ; Starting character string
+    F=             ; First rule:  Delete 'F'
+    y=+FX--FY+     ; Change 'y' into  "+fx--fy+"
+    x=-FX++FY-     ; Similar transformation on 'x'
+  }                ; final } indicates end
+
+  The standard drawing commands are:
+      F Draw forward
+      G Move forward (without drawing)
+      + Increase angle
+      - Decrease angle
+      | Try to turn 180 degrees. (If angle is odd, the turn
+        will be the largest possible turn less than 180 degrees.)
+
+  These commands increment angle by the user specified angle value. They
+  should be used when possible because they are fast. If greater
+  flexibility is needed, use the following commands which keep a
+  completely separate angle pointer which is specified in degrees.
+
+      D   Draw forward
+      M   Move forward
+      \nn Increase angle nn degrees
+      /nn Decrease angle nn degrees
+</pre>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 155</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page154.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 155 <a href="page156.html">Next &gt;</a></pre>
+</div>
+<pre>
+  color, if you do not have your 8514/A adapter loaded with its full
+  complement of memory you will actually be in 16-color mode. The hardware
+  register 16-color modes have not been tested.
+
+  If your 8514/A adapter is not truly register compatible and Fractint
+  does not detect this, use of the adapter interface can be forced by
+  using afi=y or afi=8514 in your SSTOOLS.INI file.
+
+  Finally, because IBM's adapter interface does not handle drawing single
+  pixels very well (we have to draw a 1x1 pixel "box"), generating the
+  zoom box when using the interface is excruciatingly slow. Still, it
+  works!
+
+  XGA MODES
+
+  The XGA adapter is supported using the VESA/SuperVGA Autodetect modes -
+  the XGA looks like just another SuperVGA adapter to Fractint.  The
+  supported XGA modes are 640x480x256, 1024x768x16, 1024x768x256,
+  800x600x16, and 800x600x256.  Note that the 1024x768x256 mode requires a
+  full 1MB of adapter memory, the 1024x768 modes require a high-rez
+  monitor, and the 800x600 modes require a multisynching monitor such as
+  the NEC 2A.
+
+  TARGA MODES
+
+  TARGA support for Fractint is provided courtesy of Joe McLain and has
+  been enhanced with the help of Bruce Goren and Richard Biddle.  To use a
+  TARGA board with Fractint, you must define two DOS environment
+  variables, "TARGA" and "TARGASET".  The definition of these variables is
+  standardized by Truevision; if you have a TARGA board you probably
+  already have added "SET" statements for these variables to your
+  AUTOEXEC.BAT file.  Be aware that there are a LOT of possible TARGA
+  configurations, and a LOT of opportunities for a TARGA board and a VGA
+  or EGA board to interfere with each other, and we may not have all of
+  them smoothed away yet.  Also, the TARGA boards have an entirely
+  different color-map scheme than the VGA cards, and at the moment they
+  cannot be run through the color-cycling menu. The "MAP=" argument (see
+  Color Parameters (p. 128)), however, works with both TARGA and VGA
+  boards and enables you to redefine the default color maps with either
+  board.
+
+  TARGA+ MODES
+
+  To use the special modes supported for TARGA+ adapters, the TARGAP.SYS
+  device driver has to be loaded, and the TPLUS.DAT file (included with
+  Fractint) must be in the same directory as Fractint.  The video modes
+  with names containing "True Color Autodetect" can be used with the
+  Targa+.  You might want to use the command line parameters "tplus=",
+  "noninterlaced=", "maxcolorres=", and "pixelzoom=" (see Video Parameters
+  (p. 134)) in your SSTOOLS.INI file to modify Fractint's use of the
+  adapter.
+</pre>
+</body>
+</html>

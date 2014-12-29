@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 231</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page230.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 231 <a href="page232.html">Next &gt;</a></pre>
+</div>
+<pre>
+    "filename=.xxx" can be used to set default &lt;r&gt; function file mask
+
+    Selection of type formula or lsys now goes directly to entry selection
+      (file selection step is now skipped); to change to a different file,
+      use &lt;F6&gt; from the entry selection screen
+
+    Three new values have been added to the textcolors= parameter; if you
+      use this parameter you should update it by inserting values for the
+      new 6th, 7th, 9th, and 13th positions; see "textcolors=" in Color
+      Parameters (p. 128)
+
+    The formula type's imag() function has changed to return the result as
+      a real number
+
+    Fractal type-specific parameters (entered after selecting a new
+      fractal type with &lt;T&gt;) now restart at their default values each time
+      you select a new fractal type
+
+    Floating point input fields can now be entered in scientific notation
+      (e.g.  11.234e-20). Entering the letters "e" and "p" in the first
+      column causes the numbers e=2.71828... and pi=3.14159... to be
+      entered.
+
+    New option "orbitsave=yes" to create files for Acrospin for some types
+      (see Barnsley IFS Fractals (p. 53), Orbit Fractals (p. 60),
+      Acrospin (p. 203))
+
+    Bug fixes:
+      Problem with Hercules adapter auto-detection repaired.
+      Problems with VESA video adapters repaired (we're not sure we've got
+        them all yet...)
+      3D transforms fixed to work at high resolutions (&gt; 1000 dots).
+      3D parameters no longer clobbered when restoring non-3D images.
+      L-Systems fixed to not crash when order too high for available
+      memory.
+      PostScript EPS file fixes.
+      Bad leftmost pixels with floating point at 2048 dot resolution
+      fixed.
+      3D transforms fixed to use current &lt;x&gt; screen float/integer setting.
+      Restore of images using inversion fixed.
+      Error in "cos" function (used with "fn" type fractals) fixed; prior
+        incorrect function still available as "cosxx" for compatibility
+
+    Old 3D=nn/nn/nn/... form of 3D transform parameters no longer
+    supported
+
+    Fractint source code now Microsoft C6.00A compatible.
+
+  Version 15.11, 3/91, companion to Fractal Creations, not for general
+  release
+
+    Autokey feature, IIT fpu support, and some bug fixes publicly released
+    in version 16.
+</pre>
+</body>
+</html>

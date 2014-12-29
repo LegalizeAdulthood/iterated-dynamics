@@ -1,0 +1,51 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 218</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page217.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 218 <a href="page219.html">Next &gt;</a></pre>
+</div>
+<pre>
+  Fixed Mandelbrot/Julia types with bailout less than 4 (try it, results
+    are interesting!)
+
+  Fixed browser delete feature which left a box on the screen after
+    deleting and exiting browser feature.
+
+  More changes in filename processing logic.  ".\" is now recognized as
+    the current directory and is expanded to its full path name.  It is
+    now possible, although not recommended, to designate the root
+    directory of a disk as the desired search directory.
+
+  Fixed integer math Mandelbrot bug for 286 or lower machines.
+
+  Fixed problem of reading some Lsys files incorrectly (distribution
+    PENROSE.L file was broken unless first line was commented.)
+
+  Fixed problem that caused endless loop in RDS with bad input values.
+
+  Made reading the current directory first optional, added the new
+    curdir=yes command for times when you want to use current directory
+    files.
+
+  Fixed problem with complexpower() function ("x^y" formula operator) in
+    the case where x == 0. (Note that formulas where 0^0 appears for every
+    every pixel are considered broken and no promises made.)
+
+  Prevented aspect ratio drift as you zoom. If you want to make tiny
+    adjustments, use new ASPECTDRIFT=0 command.
+
+  Inside=bof60 and bof61 options now work correctly with the formula
+  parser.
+
+  We discovered the calculation time is no good after 24 days, so instead
+    of the time you will now get the message "A Really Long Time!!! (&gt;
+    24.855 days)".  We thought you'd like to know ... A prize for the
+    first person who actually *sees* this message!
+
+  A summary of features new with 19.0 begins on next page.
+</pre>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 89</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page88.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 89 <a href="page90.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 3.3 Autokey Mode
+
+  The autokey feature allows you to set up beautiful self-running demo
+  "loops". You can set up hypnotic sequences to attract people to a booth,
+  to generate sequences for special effects, to teach how Fractal
+  exploring is done, etc.
+
+  A sample autokey file (DEMO.KEY) and a batch to run it (DEMO.BAT) are
+  included with Fractint. Type "demo" at the DOS prompt to run it.
+
+  Autokey record mode is enabled with the command line parameter
+  "AUTOKEY=RECORD". Keystrokes are saved in an intelligible text format in
+  a file called AUTO.KEY. You can change the file name with the
+  "AUTOKEYNAME=" parameter.
+
+  Playback is enabled with the parameter "AUTOKEY=PLAY". Playback can be
+  terminated by pressing the &lt;Esc&gt; key.
+
+  After using record mode to capture an autokey file, you'll probably want
+  to touch it up using your editor before playing it back.
+
+  Separate lines are not necessary but you'll probably find it easier to
+  understand an autokey file if you put each command on a separate line.
+  Autokey files can contain the following:
+
+    Quoted strings. Fractint reads whatever is between the quotes just as
+    if you had typed it. For example,
+        "t" "ifs" issues the "t" (type) command and then enters the
+    letters i", "f", and "s" to select the ifs type.
+
+    Symbols for function keys used to select a video mode. Examples:
+        F3  -- Function key 3
+        SF3 --&lt;Shift&gt; and &lt;F3&gt; together
+
+    Special keys: ENTER ESC F1 PAGEUP PAGEDOWN HOME END LEFT RIGHT UP DOWN
+    INSERT DELETE TAB CTRL_RIGHT CTRL_LEFT CTRL_DOWN CTRL_UP CTRL_HOME
+    CTRL_END
+
+    WAIT &lt;nnn.n&gt; -- wait nnn.n seconds before continuing
+
+    CALCWAIT -- pause until the current fractal calculation or file save
+    or restore is finished. This command makes demo files more robust
+    since calculation times depend on the  speed of the machine running
+    the demo - a "WAIT 10" command may allow enough time to complete a
+    fractal on one machine, but not on another. The record mode does not
+    generate this command - it should be added by hand to the autokey file
+    whenever there is a process that should be allowed to run to
+    completion.
+
+    GOTO target -- The autokey file continues to be read from the label
+    "target". The label can be any word that does not duplicate a key
+    word.  It must be present somewhere in the autokey file with a colon
+    after it.  Example:
+        MESSAGE 2 This is executed once
+        start:
+        MESSAGE 2 This is executed repeatedly
+</pre>
+</body>
+</html>

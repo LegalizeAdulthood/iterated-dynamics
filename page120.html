@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 120</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page119.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 120 <a href="page121.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 5. Command Line Parameters, Parameter Files, Batch Mode
+
+  Fractint accepts command-line parameters that allow you to start it with
+  a particular video mode, fractal type, starting coordinates, and just
+  about every other parameter and option.
+
+  These parameters can also be specified in a SSTOOLS.INI file, to set
+  them every time you run Fractint.
+
+  They can also be specified as named groups in a .PAR (parameter) file
+  which you can then call up while running Fractint by using the &lt;@&gt;
+  command.
+
+  In all three cases (DOS command line, SSTOOLS.INI, and parameter file)
+  the parameters use the same syntax, usually a series of keyword=value
+  commands like SOUND=OFF.  Each parameter is described in detail in
+  subsequent sections.
+
+
+ 5.1 Using the DOS Command Line
+
+  You can specify parameters when you start Fractint from DOS by using a
+  command like:
+
+      FRACTINT SOUND=OFF FILENAME=MYIMAGE.GIF
+
+  The individual parameters are separated by one or more spaces (an
+  parameter itself may not include spaces). Upper or lower case may be
+  used, and parameters can be in any order.
+
+  Since DOS commands are limited to 128 characters, Fractint has a special
+  command you can use when you have a lot of startup parameters (or have a
+  set of parameters you use frequently):
+
+      FRACTINT @MYFILE
+
+  When @filename is specified on the command line, Fractint reads
+  parameters from the specified file as if they were keyed on the command
+  line.  You can create the file with a text editor, putting one
+  "keyword=value" parameter on each line.
+
+
+ 5.2 Setting Defaults (SSTOOLS.INI File)
+
+  Every time Fractint runs, it searches the current directory, and then
+  the directories in your DOS PATH, for a file named SSTOOLS.INI.  If it
+  finds this file, it begins by reading parameters from it.  This file is
+  useful for setting parameters you always want, such as those defining
+  your printer setup.
+
+  SSTOOLS.INI is divided into sections belonging to particular programs.
+  Each section begins with a label in brackets. Fractint looks for the
+  label [fractint], and ignores any lines it finds in the file belonging
+  to any other label. If an SSTOOLS.INI file looks like this:
+</pre>
+</body>
+</html>

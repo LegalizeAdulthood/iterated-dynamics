@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 206</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page205.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 206 <a href="page207.html">Next &gt;</a></pre>
+</div>
+<pre>
+  Fixed inside=zmag and =fmod for arbitrary precision.
+
+  More mandel/julia FPU speedup by assembling the &gt; 8087 code without the
+    emulator fixups.  This was also used to speedup the FPU parser code.
+
+  The mandel/julia optimizations are a combination of contributions from
+    Rees Acheson (author of MANDELB), Damien Jones, Agner Fog, Terje
+    Mathisen, Thomas Jentzsch, and Daniele Paccaloni.  Although it would
+    be hard to identify any one person's contribution, they all played a
+    great part in the pentium optimizations.
+
+  Added inside=fmod and inside=atan. The inside=atan option should only be
+    used with periodicity=0.
+
+  Fixed a bug in loaddac() routine caused because bios doesn't zero top 8
+    entries when resetting the dac.
+
+  Added two new features to &lt;b&gt; command. You can now specify "only" at the
+     "Record colors?", and added a maxlinelen field to specify how wide
+     the parameter file can be.
+
+  Added support for maps to makepar command. Try something like:
+     fractint map=lyapunov makepar=mymaps
+
+  Improved color map compression in PAR files. Debug=910 uses old method,
+     otherwise uses Sylvie Gallet's fix. Debug=920 uses lossless
+     compression for critical use.
+
+  Removed a longstanding but unintended row limit of the encoder which
+    resulted in an "interrupted" message when saving long (&gt; 5000 rows)
+    files.
+
+  Fixed bug with LodRealPwr in formula parser.
+
+  Speedkey now works with unsorted lists.
+
+  Numbers in sound001.txt file names now increment.
+
+  Added new based data type PFCODE which is a pointer to FCODE. This saves
+     memory with the array of parser error messages.
+
+  Fixed bug that caused lockup when extended memory is used without any
+    expanded memory.
+
+  Fixed a bug in the spacing of file names in the file selection menu.
+
+  Added Rich Thomson's Xfractint fixes for Silicon Graphics.
+
+  Fixed Julia pointer bug.
+
+  Fixed a bug that caused the zoom box coordinates to be used if a doodad
+    was changed with a zoom box on the screen.
+
+  Formula type and inversion now work with large images. Fractint now does
+     everything simplgifd does - make an appropriate diskvideo mode, then
+     load and save a MIG!!
+</pre>
+</body>
+</html>

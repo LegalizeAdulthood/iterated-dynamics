@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 31</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page30.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 31 <a href="page32.html">Next &gt;</a></pre>
+</div>
+<pre>
+  After pressing &lt;@&gt; or &lt;2&gt;, highlight an entry and press &lt;Enter&gt; to load
+  it, or press &lt;F6&gt; to change to another parameter file.
+
+  Note that parameter file entries specify all calculation related
+  parameters, but do not specify things like the video mode - the image
+  will be plotted in your currently selected mode.
+
+  &lt;B&gt;
+
+  The &lt;B&gt; command saves the parameters required to describe the currently
+  displayed image, which can subsequently be used with the &lt;@&gt; or &lt;2&gt;
+  command to recreate it.
+
+  After you press &lt;B&gt;, Fractint prompts for:
+
+    Parameter file:  The name of the file to store the parameters in.  You
+    should use some name like "myimages" instead of fractint.par, so that
+    your images are kept separate from the ones released with new versions
+    of Fractint. You can use the PARMFILE= command in SSTOOLS.INI to set
+    the default parameter file name to "myimages" or whatever.  (See
+    "Setting Defaults (SSTOOLS.INI File)" (p. 120) and "parmfile=" in
+    "File Parameters" (p. 133).)
+
+    Name:  The name you want to assign to the entry, to be displayed when
+    the &lt;@&gt; or &lt;2&gt; command is used.
+
+    Main comment:  A comment to be shown beside the entry in the &lt;@&gt;
+    command display.
+
+    Second, Third, and Fourth comment:  Additional comments to store in
+    the file with the entry. These comments go in the file only, and are
+    not displayed by the &lt;@&gt; command. You can set these comments from the
+    command line - see Comment= Command (p. 122).
+
+    Record colors?:  Whether color information should be included in the
+    entry. Usually the default value displayed by Fractint is what you
+    want.  Allowed values are:
+    "no" - Don't record colors.
+    "@mapfilename" - When these parameters are used, load colors from the
+       named color map file. This is the default if you are currently
+       using colors from a color map file.
+    "yes" - Record the colors in detail. This is the default when you've
+       changed the display colors by using the palette editor or by color
+       cycling. The only reason that this isn't what Fractint always does
+       for the &lt;B&gt; command is that color information can be bulky - up to
+       nearly 3K of disk space per map - which adds up to a lot for many
+       images. Smooth-shaded ranges of colors are compressed, so if that's
+       used a lot in an image the color information won't be as bulky.
+    "only" - Record only the colors in the PAR file, without any other
+       parameters. This is useful for converting color maps to PAR
+       entries.
+
+    # of colors:  This only matters if "Record colors?" is set to "yes".
+    It specifies the number of colors to record. Recording less colors
+    will take less space. Usually the default value displayed by Fractint
+    is what you want. You might want to increase it in some cases, e.g. if
+</pre>
+</body>
+</html>

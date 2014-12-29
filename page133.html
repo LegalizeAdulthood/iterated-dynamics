@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 133</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page132.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 133 <a href="page134.html">Next &gt;</a></pre>
+</div>
+<pre>
+  EXITNOASK=yes
+  This option forces Fractint to bypass the final "are you sure?" exit
+  screen when the ESCAPE key is pressed from the main image-generation
+  screen.  Added at the request of Ward Christensen.  It's his funeral
+  &lt;grin&gt;.
+
+
+ 5.11 File Parameters
+
+  In Fractint you can use various filename variables to specify files, set
+  default directories, or both. For example, in the SAVENAME description
+  below, [name] can be a filename, a directory name, or a fully qualified
+  pathname plus filename. You can specify default directories using these
+  variables in your SSTOOLS.INI file.
+
+  SAVENAME=[&lt;path&gt;\][name]
+  Set the path and/or filename to use when you &lt;S&gt;ave a screen. The
+  default filename is FRACT001. The .GIF extension is optional (Example:
+  SAVENAME=myfile)
+
+  OVERWRITE=no|yes
+  Sets the savename overwrite flag (default is 'no'). If 'yes', saved
+  files will over-write existing files from previous sessions; otherwise
+  the automatic incrementing of FRACTnnn.GIF will find the first unused
+  filename.
+
+  SAVETIME=nnn
+  Tells Fractint to automatically do a save every nnn minutes while a
+  calculation is in progress.  This is mainly useful with long batches -
+  see Batch Mode (p. 148).
+
+  GIF87a=yes
+  Backward-compatibility switch to force creation of GIF files in the
+  GIF87a format. As of version 14, Fractint defaults to the new GIF89a
+  format which permits storage of fractal information within the format.
+  GIF87a=YES is only needed if you wish to view Fractint images with a GIF
+  decoder that cannot accept the newer format.  See GIF Save File Format
+  (p. 198).
+
+  DITHER=yes
+  Dither a color file into two colors for display on a b/w display.  This
+  give a poor-quality display of gray levels.  Note that if you have a 2-
+  color display, you can create a 256-color gif with disk video and then
+  read it back in dithered.
+
+  PARMFILE=[&lt;path&gt;\][parmfilename]
+  Specifies the default parameter path and/or file to be used by the &lt;@&gt;
+  (or &lt;2&gt;) and &lt;B&gt; commands.  If not specified, the default is
+  FRACTINT.PAR.
+
+  FORMULAFILE=[&lt;path&gt;\][formulafilename]
+  Specifies the formula path and/or file for type=formula fractals
+  (default is FRACTINT.FRM).  Handy if you want to generate one of these
+  fractal types in batch mode.
+</pre>
+</body>
+</html>

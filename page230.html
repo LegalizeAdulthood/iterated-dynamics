@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 230</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page229.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 230 <a href="page231.html">Next &gt;</a></pre>
+</div>
+<pre>
+    New L-Systems from Herb Savage
+    New IFS types from Alex Matulich
+    Many new formulas in fractint.frm, including a large group from JM
+      Collard-Richard
+    Generalized type manzpwr with complex exponent per Lee Skinner's
+    request
+    Initial orbit parameter added to Gingerbreadman fractal type
+
+    New color maps (neon, royal, volcano, blues, headache) from Daniel
+    Egnor
+
+    IFS type has changed to use a single file containing named entries
+      (instead of a separate xxx.ifs file per type); the &lt;z&gt; command
+      brings up IFS editor (used to be &lt;i&gt; command).  See Barnsley IFS
+      Fractals (p. 53).
+
+    Much improved support for PaintJet printers; see PaintJet Parameters
+    (p. 145)
+
+    From Scott Taylor:
+      Support for plotters using HP-GL; see Plotter Parameters (p. 146)
+      Lots of new PostScript halftones; see PostScript Parameters (p. 143)
+      "printer=PS[L]/0/..." for full page PostScript; see PostScript
+      Parameters (p. 143)
+      Option to drive printer ports directly (faster); see Printer
+      Parameters (p. 142)
+      Option to change printer end of line control chars; see Printer
+      Parameters (p. 142)
+
+    Support for XGA video adapter
+    Support for Targa+ video adapter
+    16 color VGA mode enhancements:
+      Now use the first 16 colors of .map files to be more predictable
+      Palette editor now works with these modes
+      Color cycling now works properly with these modes Targa video
+    adapter fixes; Fractint now uses (and requires) the "targa"
+      and "targaset" environment variables for Targa systems
+    "vesadetect=no" parameter to bypass use of VESA video driver; try
+      this if you encounter video problems with a VESA driver Upgraded
+    video adapter detect and handling from John Bridges; autodetect
+      added for NCR, Trident 8900, Tseng 4000, Genoa (this code is from a
+      beta release of VGAKIT, we're not sure it all works yet)
+
+    Zoom box is included in saved/printed images (but, is not recognized
+      as anything special when such an image is restored)
+
+    The colors numbers reserved by the palette editor are now selectable
+      with the new &lt;v&gt; palette editing mode command
+
+    Option to use IIT floating point chip's special matrix arithmetic for
+      faster 3D transforms; see "fpu=" in Startup Parameters (p. 122)
+
+    Disk video cache increased to 64k; disk video does less seeking when
+      running to real disk
+    Faster floating point code for 287 and higher fpus, for types mandel,
+      julia, barnsleyj1/m1/j2/m2, lambda, manowar, from Chuck Ebbert
+</pre>
+</body>
+</html>

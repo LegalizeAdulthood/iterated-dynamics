@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 179</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page178.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 179 <a href="page180.html">Next &gt;</a></pre>
+</div>
+<pre>
+  mandelcloud (p. 76)
+      Displays orbits of Mandelbrot set:
+        z(0) = c = pixel;
+        z(n+1) = z(n)^2 + c.
+      One parameter: number of intervals
+
+  mandel4 (p. 55)
+      Special case of mandelzpower kept for speed.
+        z(0) = c = pixel;
+        z(n+1) = z(n)^4 + c.
+      Parameters: real &amp; imaginary perturbations of z(0)
+
+  mandelfn (p. 52)
+        z(0) = c = pixel;
+        z(n+1) = c*fn(z(n)).
+      Parameters: real &amp; imaginary perturbations of z(0), and fn
+
+  manlam(fn||fn) (p. 74)
+        c = pixel;
+        z(0) = p1
+        if modulus(z(n)) &lt; shift value, then
+           z(n+1) = fn1(z(n)) * c, else
+           z(n+1) = fn2(z(n)) * c.
+      Five parameters: real, imaginary parts of p1, shift value, fn1, fn2.
+
+  Martin (p. 63)
+      Attractor fractal by Barry Martin - orbit in two dimensions.
+        z(0) = y(0) = 0;
+        x(n+1) = y(n) - sin(x(n))
+        y(n+1) = a - x(n)
+      Parameter is a (try a value near pi)
+
+  mandellambda (p. 49)
+        z(0) = .5; lambda = pixel;
+        z(n+1) = lambda*z(n)*(1 - z(n)).
+      Parameters: real &amp; imaginary perturbations of z(0)
+
+  mandphoenix (p. 80)
+      z(0) = c = pixel, y(0) = 0;
+      For degree = 0:
+        z(n+1) = z(n)^2 + c.x + c.y*y(n), y(n+1) = z(n)
+      For degree &gt;= 2:
+        z(n+1) = z(n)^degree + c.x*z(n)^(degree-1) + c.y*y(n)
+        y(n+1) = z(n)
+      For degree &lt;= -3:
+        z(n+1) = z(n)^|degree| + c.x*z(n)^(|degree|-2) + c.y*y(n)
+        y(n+1) = z(n)
+      Three parameters: real &amp; imaginary perturbations of z(0), and degree.
+
+  mandphoenixclx (p. 80)
+      z(0) = c = pixel, y(0) = 0;
+      For degree = 0:
+        z(n+1) = z(n)^2 + c + p2*y(n), y(n+1) = z(n)
+      For degree &gt;= 2:
+        z(n+1) = z(n)^degree + c*z(n)^(degree-1) + p2*y(n), y(n+1) = z(n)
+      For degree &lt;= -3:
+</pre>
+</body>
+</html>

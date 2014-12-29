@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 95</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page94.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 95 <a href="page96.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 3.8 Biomorphs
+
+  Related to Decomposition (p. 93) are the "biomorphs" invented by
+  Clifford Pickover, and discussed by A. K. Dewdney in the July 1989
+  "Scientific American", page 110.  These are so-named because this
+  coloring scheme makes many fractals look like one-celled animals.  The
+  idea is simple.  The escape-time algorithm terminates an iterating
+  formula when the size of the orbit value exceeds a predetermined bailout
+  value. Normally the pixel corresponding to that orbit is colored
+  according to the iteration when bailout happened. To create biomorphs,
+  this is modified so that if EITHER the real OR the imaginary component
+  is LESS than the bailout, then the pixel is set to the "biomorph" color.
+  The effect is a bit better with higher bailout values: the bailout is
+  automatically set to 100 when this option is in effect. You can try
+  other values with the "bailout=" option.
+
+  The biomorph option is turned on via the "biomorph=nnn" command-line
+  option (where "nnn" is the color to use on the affected pixels).  When
+  toggling to Julia sets, the default corners are three times bigger than
+  normal to allow seeing the biomorph appendages. Does not work with all
+  types - in particular it fails with any of the mandelsine family.
+  However, if you are stuck with monochrome graphics, try it - works great
+  in two-color modes. Try it with the marksmandel and marksjulia types.
+
+
+ 3.9 Continuous Potential
+
+  Note: This option can only be used with 256 color modes.
+
+  Fractint's images are usually calculated by the "level set" method,
+  producing bands of color corresponding to regions where the calculation
+  gives the same value. When "3D" transformed (see "3D" Images (p. 106)),
+  most images other than plasma clouds are like terraced landscapes: most
+  of the surface is either horizontal or vertical.
+
+  To get the best results with the "illuminated" 3D fill options 5 and 6,
+  there is an alternative approach that yields continuous changes in
+  colors.
+
+  Continuous potential is approximated by calculating
+
+           potential =  log(modulus)/2^iterations
+
+  where "modulus" is the orbit value (magnitude of the complex number)
+  when the modulus bailout was exceeded, at the "iterations" iteration.
+  Clear as mud, right?
+
+  Fortunately, you don't have to understand all the details. However,
+  there ARE a few points to understand. First, Fractint's criterion for
+  halting a fractal calculation, the "modulus bailout value", is generally
+  set to 4.  Continuous potential is inaccurate at such a low value.
+
+  The bad news is that the integer math which makes the "mandel" and
+  "julia" types so fast imposes a hard-wired maximum value of 127. You can
+  still make interesting images from those types, though, so don't avoid
+  them. You will see "ridges" in the "hillsides." Some folks like the
+</pre>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 80</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page79.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 80 <a href="page81.html">Next &gt;</a></pre>
+</div>
+<pre>
+  If the screen initially contains an image, the path of the ant changes.
+  To try this, generate a fractal, and press &lt;Ctrl-a&gt;. Note that images
+  seeded with an image are not (yet) reproducible in PAR files. When
+  started using the &lt;Ctrl-a&gt; keys, after the ant is finished the default
+  fractal type reverts to that of the underlying fractal.
+
+  Special keystrokes are in effect during the ant's march. The &lt;space&gt; key
+  toggles a step-by-step mode. When in this mode, press &lt;enter&gt; to see
+  each step of the ant's progress. When orbit delay (on &lt;p&gt; screen) is set
+  to 1, the step mode is the default.
+
+  If you press the right or left arrow during the ant's journey, you can
+  adjust the orbit delay factor with the arrow keys (increment by 10) or
+  ctrl-arrow keys (increment by 100). Press any other key to get out of
+  the orbit delay adjustment mode. Higher values cause slower motion.
+  Changed values are not saved after the ant is finished, but you can set
+  the orbit delay value in advance from the &lt;p&gt; screen.
+
+
+ 2.49 Phoenix
+
+  (type=phoenix, mandphoenix, phoenixcplx, mandphoenixclx)
+
+  The phoenix type defaults to the original phoenix curve discovered by
+  Shigehiro Ushiki, "Phoenix", IEEE Transactions on Circuits and Systems,
+  Vol. 35, No. 7, July 1988, pp. 788-789.  These images do not have the X
+  and Y axis swapped as is normal for this type.
+
+  The mandphoenix type is the corresponding Mandelbrot set image of the
+  phoenix type.  The spacebar toggles between the two as long as the
+  mandphoenix type has an initial z(0) of (0,0).  The mandphoenix is not
+  an effective index to the phoenix type, so explore the wild blue yonder.
+
+  To reproduce the Mandelbrot set image of the phoenix type as shown in
+  Stevens' book, "Fractal Programming in C", set initorbit=0/0 on the
+  command line or with the &lt;g&gt; key.  The colors need to be rotated one
+  position because Stevens uses the values from the previous calculation
+  instead of the current calculation to determine when to bailout.
+
+  The phoenixcplx type is implemented using complex constants instead of
+  the real constants that Stevens used.  This recreates the mapping as
+  originally presented by Ushiki.
+
+  The mandphoenixclx type is the corresponding Mandelbrot set image of the
+  phoenixcplx type.  The spacebar toggles between the two as long as the
+  mandphoenixclx type has a perturbation of z(0) = (0,0).  The
+  mandphoenixclx is an effective index to the phoenixcplx type.
+
+
+ 2.50 Frothy Basins
+
+  (type=frothybasin)
+
+  Frothy Basins, or Riddled Basins, were discovered by James C. Alexander
+  of the University of Maryland.  The discussion below is derived from a
+  two page article entitled "Basins of Froth" in Science News, November
+</pre>
+</body>
+</html>

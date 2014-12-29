@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 232</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page231.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 232 <a href="page233.html">Next &gt;</a></pre>
+</div>
+<pre>
+  Version 15 and 15.1, 12/90
+
+    New user interface! Enjoy! Some key assignments have changed and some
+      have been removed.
+    New palette editing from Ethan Nagel.
+    Reduced memory requirements - Fractint now uses overlays and will run
+      on a 512K machine.
+    New &lt;v&gt;iew command: use to get small window for fast preview, or to
+      setup an image which will eventually be rendered on hard copy with
+      different aspect ratio
+    L-System fractal type from Adrian Mariano
+    Postscript printer support from Scott Taylor
+    Better Tandy video support and faster CGA video from Joseph A Albrecht
+    16 bit continuous potential files have changed considerably;  see the
+      Continuous Potential section for details.  Continuous potential is
+      now resumable.
+    Mandelbrot calculation is faster again (thanks to Mike Gelvin) -
+      double speed in 8086 32 bit case
+    Compressed log palette and sqrt palette from Chuck Ebbert
+    Calculation automatically resumes whenever current image is resumable
+      and is not paused for a visible reason.
+    Auto increment of savename changed to be more predictable
+    New video modes:
+      trident 1024x768x256 mode
+      320x480x256 tweak mode (good for reduced 640x480 viewing)
+      changed NEC GB-1, hopefully it works now
+    Integer mandelbrot and julia now work with periodicitycheck
+    Initial zoombox color auto-picked for better contrast (usually)
+    New adapter=cga|ega|mcga|vga for systems having trouble with auto-
+    detect
+    New textsafe=no|yes for systems having trouble with garbled text mode
+    &lt;r&gt; and &lt;3&gt; commands now present list of video modes to pick from; &lt;r&gt;
+      can reduce a non-standard or unviewable image size.
+    Diffusion fractal type is now resumable after interrupt/save
+    Exitmode=n parameter, sets video mode to n when exiting from fractint
+    When savetime is used with 1 and 2 pass and solid guessing, saves are
+      deferred till the beginning of a new row, so that no calculation
+      time is lost.
+    3d photographer's mode now allows the first image to be saved to disk
+    textcolors=mono|12/34/56/... -- allows setting user interface colors
+    Code (again!) compilable under TC++ (we think!)
+    .TIW files (from v9.3) are no longer supported as input to 3D
+      transformations
+    bug fixes:
+      multiple restores (msc 6.0, fixed in 14.0r)
+      repeating 3d loads problem; slow 3d loads of images with float=yes
+      map= is now a real substitute for default colors
+      starfield and julibrot no longer cause permanent color map
+      replacement
+      starfield parameters bug fix - if you couldn't get the starfield
+      parameters to do anything interesting before, try again with this
+      release
+      Newton and newtbasin orbit display fixed Fixed startup and text
+    screen problems on systems with VESA compliant
+      video adapters.  New textsafe=save|bios options.
+    Fixes for EGA with monochrome monitor, and for Hercules Graphics Card.
+</pre>
+</body>
+</html>

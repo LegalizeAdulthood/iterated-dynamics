@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 157</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page156.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 157 <a href="page158.html">Next &gt;</a></pre>
+</div>
+<pre>
+  which are supposedly using extended or expanded memory.  This problem
+  can occur because, to multi-task, sometimes Windows must page an
+  application's expanded or extended memory to disk, in big chunks.
+  Fractint's own cached disk access may be faster in such cases.
+
+
+ 6.3 Customized Video Modes, FRACTINT.CFG
+
+  If you have a favorite adapter/video mode that you would like to add to
+  Fractint... if you want some new sizes of disk-video modes... if you
+  want to remove table entries that do not apply to your system... if you
+  want to specify different "textsafe=" options for different video
+  modes... relief is here, and without even learning "C"!
+
+  You can do these things by modifying the FRACTINT.CFG file with your
+  text editor. Saving a backup copy of FRACTINT.CFG first is of course
+  highly recommended!
+
+  Fractint uses a video adapter table for most of what it needs to know
+  about any particular adapter/mode combination. The table is loaded from
+  FRACTINT.CFG each time Fractint is run. It can contain information for
+  up to 300 adapter/mode combinations. The table entries, and the function
+  keys they are tied to, are displayed in the "select video mode" screen.
+
+  This table makes adding support for various third-party video cards and
+  their modes much easier, at least for the ones that pretend to be
+  standard with extra dots and/or colors. There is even a special "roll-
+  your-own" video mode (mode 19) enabling those of you with "C" compilers
+  and a copy of the Fractint source to generate video modes supporting
+  whatever adapter you may have.
+
+  The table as currently distributed begins with nine standard and several
+  non-standard IBM video modes that have been exercised successfully with
+  a PS/2 model 80. These entries, coupled with the descriptive comments in
+  the table definition and the information supplied (or that should have
+  been supplied!) with your video adapter, should be all you need to add
+  your own entries.
+
+  After the IBM and quasi-pseudo-demi-IBM modes, the table contains an
+  ever-increasing number of entries for other adapters. Almost all of
+  these entries have been added because someone like you sent us spec
+  sheets, or modified Fractint to support them and then informed us about
+  it.
+
+  Lines in FRACTINT.CFG which begin with a semi-colon are treated as
+  comments.  The rest of the lines must have eleven fields separated by
+  commas.  The fields are defined as:
+
+  1. Key assignment. F2 to F10, SF1 to SF10, CF1 to CF10, or AF1 to AF10.
+     Blank if no key is assigned to the mode.
+  2. The name of the adapter/video mode (25 chars max, no leading blanks).
+     The adapter is set up for that mode via INT 10H, with:
+  3. AX = this,
+  4. BX = this,
+  5. CX = this, and
+  6. DX = this (hey, having all these registers wasn't OUR idea!)
+</pre>
+</body>
+</html>

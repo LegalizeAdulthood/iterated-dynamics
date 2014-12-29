@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 29</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page28.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 29 <a href="page30.html">Next &gt;</a></pre>
+</div>
+<pre>
+  &lt;E&gt;
+  Redoes the undone palette editor commands.
+
+  &lt;F&gt;
+  Toggles "Freestyle mode" on and off (Freestyle mode changes a range of
+  palette values smoothly from a center value outward).  With your cursor
+  inside the palette box, press the &lt;F&gt; key to enter Freestyle mode.  A
+  default range of colors will be selected for you centered at the cursor
+  (the ends of the color range are noted by putting dashed lines around
+  the corresponding palette values). While in Freestyle mode:
+
+   Moving the mouse changes the location of the range of colors that are
+   affected.
+
+   Control-Insert/Delete or the shifted-right-mouse-button changes the
+   size of the affected palette range.
+
+   The normal color editing keys (R,G,B,1-6, etc) set the central color of
+   the affected palette range.
+
+   Pressing ENTER or double-clicking the left mouse button makes the
+   palette changes permanent (if you don't perform this step, any palette
+   changes disappear when you press the &lt;F&gt; key again to exit freestyle
+   mode).
+
+   For more details see Freestyle mode tutorial (p. 104)
+
+
+ 1.6 Image Save/Restore Commands
+
+  &lt;S&gt; saves the current image to disk. All parameters required to recreate
+  the image are saved with it. Progress is marked by colored lines moving
+  down the screen's edges.
+
+  The default filename for the first image saved after starting Fractint
+  is FRACT001.GIF;  subsequent saves in the same session are automatically
+  incremented 002, 003... Use the "savename=" parameter or &lt;X&gt; options
+  screen to change the name. By default, files left over from previous
+  sessions are not overwritten - the first unused FRACTnnn name is used.
+  Use the "overwrite=yes" parameter or &lt;X&gt; options screen) to overwrite
+  existing files.
+
+  A save operation can be interrupted by pressing any key. If you
+  interrupt, you'll be asked whether to keep or discard the partial file.
+
+  &lt;R&gt; restores an image previously saved with &lt;S&gt;, or an ordinary GIF
+  file.  After pressing &lt;R&gt; you are shown the file names in the current
+  directory which match the current file mask. To select a file to
+  restore, move the cursor to it (or type the first few letters of its
+  name) and press &lt;Enter&gt;.
+
+  Directories are shown in the file list with a "\" at the end of the
+  name.  When you select a directory, the contents of that directory are
+  shown. Or, you can type the name of a different directory (and
+  optionally a different drive) and press &lt;Enter&gt; for a new display. You
+  can also type a mask such as "*.XYZ" and press &lt;Enter&gt; to display files
+</pre>
+</body>
+</html>

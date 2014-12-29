@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 221</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page220.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 221 <a href="page222.html">Next &gt;</a></pre>
+</div>
+<pre>
+
+  Versions 18.1 and 18.2 are bug-fix releases for version 18.0.  Changes
+  from 18.1 to 18.2 include:
+
+   The &lt;b&gt; command now causes filenames only to be written in PAR files.
+
+   Fractint will now search directories in the PATH for files not found in
+   the requested the requested directory or the current directory. If you
+   place .MAP, .FRM, etc. in directories in your PATH, then Fractint will
+   find them.
+
+   Fixed bug that caused fractals using PI symmetry to fail at high
+   resolution.
+
+   Fractals interrupted with &lt;3&gt; or &lt;r&gt; can now resume.
+
+   The palette editor's &lt;u&gt; (undo) now works.
+
+   The &lt;s&gt; command in orbit/Julia window mode is no longer case sensitive.
+
+   Added warnings that the POV-Ray output is obsolete (but has been left
+   in).  Use POV-Ray's height field facility instead or create and convert
+   RAW files.
+
+   Fixed several IFS bugs.
+
+  Changes from 18.0 to 18.1 include:
+
+   Overlay tuning - the Mandelbrot/Julia Set fractals are now back up to
+   17.x speeds
+
+   Disk Video modes now work correctly with VESA video adapters (they used
+   to use the same array for different purposes, confusing each other)
+
+   1024x768x256 and 2048x2048x256 disk video modes work again
+
+   Parameter-file processing no longer crashes Fractint if it attempts to
+   run a formula requiring access to a non-existent FRM file
+
+   IFS arrays no longer overrun their array space
+
+   type=cellular fixes
+
+   "autologmap=2" now correctly picks up the minimum color
+
+   The use of disk-video mode with random-access fractal types is now
+   legal (it generates a warning message but lets you proceed if you
+   really want to)
+
+   The Lsystems "spinning-wheel" now spins slower (removing needless
+   overhead)
+
+   Changes to contributors' addresses in the Help screens
+</pre>
+</body>
+</html>

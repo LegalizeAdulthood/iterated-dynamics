@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 223</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page222.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 223 <a href="page224.html">Next &gt;</a></pre>
+</div>
+<pre>
+   Fractint's decoder now handles Multi-Image Gifs.
+
+   New SuperVGA/VESA Autodetect logic from the latest version of VGAKIT.
+   Sure hope we didn't break anything.
+
+   New register-compatible 8514/A code from Jonathan Osuch.  By default,
+   Fractint now looks first for the presence of an 8514/A register-
+   compatible adapter and then (and only if it doesn't find one) the
+   presence of the 8514/A API (IE, HDILOAD is no longer necessary for
+   register-compatible "8514/a" adapters).  Fractint can be forced to use
+   the 8514/A API by using a new command-line option, "afi=yes".  Jonathan
+   also added ATI's "8514/a-style" 800x600x256 and 1280x1024x16 modes.
+
+   New XGA-detection logic for ISA-based XGA-2 systems.
+
+   The palette editor now has a "freestyle" editing option.  See Palette
+   Editing Commands (p. 25) for details.
+
+
+   Fractint is now more "batch file" friendly.  When running Fractint from
+   a batch file, pressing any key will cause Fractint to exit with an
+   errorlevel = 2.  Any error that interrupts an image save to disk will
+   cause an exit with errorlevel = 2.  Any error that prevents an image
+   from being generated will cause an exit with errorlevel = 1.
+
+   New Control-X, Control-Y, and Control-Z options flip a fractal image
+   along the X-axis, Y-axis, and Origin, respectively.
+
+   New area calculation mode in TAB screen from Ken Shirriff (for accuracy
+   use inside=0).
+
+   The TAB screen now indicates when the Integer Math algorithms are in
+   use.
+
+   The palette must now be explicitly changed, it will not reset to the
+   default unexpectedly when doing things like switching video modes.
+
+   The Julibrot type has been generalized.  Julibrot fractals can now be
+   generated from PAR files.
+
+   Added &lt;b&gt; command support for viewwindows.
+
+   Added room for two additional PAR comments in the &lt;B&gt; command
+
+   New coloring method for IFS shows which parts of fractal came from
+   which transform.
+
+   Added attractor basin phase plotting for Julia sets from Ken Shirriff.
+
+   Improved finite attractor code to find more attractors from Ken
+   Shirriff.
+
+   New zero function, to be used in PAR files to replace old integer tan,
+   tanh
+</pre>
+</body>
+</html>

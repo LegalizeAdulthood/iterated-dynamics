@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 61</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page60.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 61 <a href="page62.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.27 Lorenz Attractors
+
+  (type=lorenz/lorenz3d)
+
+  The "Lorenz Attractor" is a "simple" set of three deterministic
+  equations developed by Edward Lorenz while studying the non-
+  repeatability of weather patterns.  The weather forecaster's basic
+  problem is that even very tiny changes in initial patterns ("the beating
+  of a butterfly's wings" - the official term is "sensitive dependence on
+  initial conditions") eventually reduces the best weather forecast to
+  rubble.
+
+  The lorenz attractor is the plot of the orbit of a dynamic system
+  consisting of three first order non-linear differential equations. The
+  solution to the differential equation is vector-valued function of one
+  variable.  If you think of the variable as time, the solution traces an
+  orbit.  The orbit is made up of two spirals at an angle to each other in
+  three dimensions. We change the orbit color as time goes on to add a
+  little dazzle to the image.  The equations are:
+
+                  dx/dt = -a*x + a*y
+                  dy/dt =  b*x - y   -z*x
+                  dz/dt = -c*z + x*y
+
+  We solve these differential equations approximately using a method known
+  as the first order taylor series.  Calculus teachers everywhere will
+  kill us for saying this, but you treat the notation for the derivative
+  dx/dt as though it really is a fraction, with "dx" the small change in x
+  that happens when the time changes "dt".  So multiply through the above
+  equations by dt, and you will have the change in the orbit for a small
+  time step. We add these changes to the old vector to get the new vector
+  after one step. This gives us:
+
+               xnew = x + (-a*x*dt) + (a*y*dt)
+               ynew = y + (b*x*dt) - (y*dt) - (z*x*dt)
+               znew = z + (-c*z*dt) + (x*y*dt)
+
+               (default values: dt = .02, a = 5, b = 15, c = 1)
+
+  We connect the successive points with a line, project the resulting 3D
+  orbit onto the screen, and voila! The Lorenz Attractor!
+
+  We have added two versions of the Lorenz Attractor.  "Type=lorenz" is
+  the Lorenz attractor as seen in everyday 2D.  "Type=lorenz3d" is the
+  same set of equations with the added twist that the results are run
+  through our perspective 3D routines, so that you get to view it from
+  different angles (you can modify your perspective "on the fly" by using
+  the &lt;I&gt; command.)  If you set the "stereo" option to "2", and have
+  red/blue funny glasses on, you will see the attractor orbit with depth
+  perception.
+
+  Hint: the default perspective values (x = 60, y = 30, z = 0) aren't the
+  best ones to use for fun Lorenz Attractor viewing.  Experiment a bit -
+  start with rotation values of 0/0/0 and then change to 20/0/0 and 40/0/0
+  to see the attractor from different angles.- and while you're at it, use
+  a non-zero perspective point Try 100 and see what happens when you get
+</pre>
+</body>
+</html>

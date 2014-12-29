@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 141</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page140.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 141 <a href="page142.html">Next &gt;</a></pre>
+</div>
+<pre>
+  The end result of this is that, for instance, using this sequence of
+  numbers as a scale map:
+  2,2,4,4,4,7,7,9,9,11,11,11
+  Will ensure that fractint uses only the black notes on the keyboard,
+  just the sharps and flats for a vaguely oriental feel (to my western
+  ears anyway :-) ).
+
+  The above probably appears to be sheer gobbledegook at first reading,
+  sorry, but if you keep at it you'll unlock this powerful feature for
+  keeping your fractals melodic.  (Unless you're totally turned on by
+  microtonal frequencies in which case forget all this quantisation
+  nonsense and tune in to the true sound of chaos!)
+
+  The passes=1 setting (Drawing Method (p. 86)) almost always works best
+  with sound.
+
+
+ 5.13.3 Envelopes
+
+  Here's some more information about the concept of a note envelope for
+  those unfamiliar with sound synthesis terminology, it's all about how
+  the dynamics of a note are defined (i.e the way in which the loudness
+  changes during the life of a note)
+
+   Graph of a note's volume during it's life cycle:
+
+      /\______                     /\_______
+  __/          \_____ ... _______/          \_________
+  0011111111110000000 ... 0000000111111111110000000000
+    A  D  S   R                  AAADSSSSSSSR
+
+  The string of 0's and 1's represents the keyon/off state of the voice,
+  1's indicate the key being held down. The attack, decay, sustain, and
+  release portions of the envelope are represented by ADSR, this is what
+  happens:
+
+  When the note is first triggered on the volume rises to peak volume at a
+  rate determined by the attack value.
+
+  Once at the full level the decay period starts and the volume dies down
+  (at a rate set by the decay value) to a level that is set by the sustain
+  value.
+
+  The note continues to sound at this volume until triggered off (the
+  'key' is released) whereupon it dies down to zero volume at the release
+  rate.
+
+  And so on.  Now, with the current voice assignment method, while orbits
+  are being generated continuously, timing looks like this (with four note
+  polyphony in this example)
+
+     Voice:
+       1 *111.....*111....
+       2 .*111.....*111...
+       3 ..*111.....*111..
+       4 ...*111.....*111.
+</pre>
+</body>
+</html>

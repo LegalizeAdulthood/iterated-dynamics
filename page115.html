@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 115</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page114.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 115 <a href="page116.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 4.8 3D Overlay Mode
+
+  While the &lt;3&gt; command (see "3D" Images (p. 106)) creates its image on a
+  blank screen, the &lt;#&gt; (or &lt;shift-3&gt; on some keyboards) command draws a
+  second image over an existing displayed image. This image can be any
+  restored image from a &lt;R&gt; command or the result of a just executed &lt;3&gt;
+  command. So you can do a landscape, then press &lt;#&gt; and choose spherical
+  projection to re-plot that image or another as a moon in the sky above
+  the landscape. &lt;#&gt; can be repeated as many times as you like.
+
+  It's worth noting that not all that many years ago, one of us watched
+  Benoit Mandelbrot and fractal-graphics wizard Dick Voss creating just
+  such a moon-over-landscape image at IBM's research center in Yorktown
+  Heights, NY. The system was a large and impressive mainframe with
+  floating-point facilities bigger than the average minicomputer, running
+  LBLGRAPH -- what Mandelbrot calls "an independent-minded and often very
+  ill-mannered heap of graphics programs that originated in work by Alex
+  Hurwitz and Jack Wright of IBM Los Angeles."
+
+  We'd like to salute LBLGRAPH, its successors, and their creators,
+  because it was their graphic output (like "Planetrise over Labelgraph
+  Hill," plate C9 in Mandelbrot's "Fractal Geometry of Nature") that
+  helped turn fractal geometry from a mathematical curiosity into a
+  phenomenon. We'd also like to point out that it wasn't as fast, flexible
+  or pretty as Fractint on a 386/16 PC with S-VGA graphics. Now, a lot of
+  the difference has to do with the incredible progress of micro-processor
+  power since then, so a lot of the credit should go to Intel rather than
+  to our highly tuned code. OK, twist our arms -- it IS awfully good code.
+
+
+ 4.9 Special Note for CGA or Hercules Users
+
+  If you are one of those unfortunates with a CGA or Hercules 2-color
+  monochrome graphics, it is now possible for you to make 3D projection
+  images.
+
+  Try the following unfortunately circuitous approach. Invoke Fractint,
+  making sure you have set askvideo=yes. Use a disk-video mode to create a
+  256 color fractal. You might want to edit the fractint.cfg file to make
+  a disk-video mode with the same pixel dimensions as your normal video.
+  Using the "3" command, enter the file name of the saved 256 color file,
+  then select your 2 or 4 color mode, and answer the other 3D prompts. You
+  will then see a 3D projection of the fractal. Another example of Stone
+  Soup responsiveness to our fan mail!
+
+
+ 4.10 Making Terrains
+
+  If you enjoy using Fractint for making landscapes, we have several new
+  features for you to work with. When doing 3d transformations banding
+  tends to occur because all pixels of a given height end up the same
+  color. Now, colors can be randomized to make the transitions between
+  different colors at different altitudes smoother. Use the new
+  "RANDOMIZE= " variable to accomplish this. If your light source images
+  all look like lunar landscapes since they are all monochrome and have
+  very dark shadows, we now allow you to set the ambient light for
+</pre>
+</body>
+</html>

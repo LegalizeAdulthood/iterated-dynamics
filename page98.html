@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 98</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page97.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 98 <a href="page99.html">Next &gt;</a></pre>
+</div>
+<pre>
+  Real starfields have many more dim stars than bright ones because very
+  few stars are close enough to appear bright.  To achieve this effect the
+  program will create a bell curve based on the value of ratio of Dim
+  stars to bright stars.  After calculating the bell curve the curve is
+  folded in half and the peak used to represent the number of dim stars.
+
+  Starfields can only be shown in 256 colors.  Fractint will automatically
+  try to load ALTERN.MAP and abort if the map file cannot be found.
+
+
+ 3.11 Bailout Test
+
+  The bailout test is used to determine if we should stop iterating before
+  the maximum iteration count is reached.  This test compares the value
+  determined by the test to the "bailout" value set via the &lt;Z&gt; screen.
+  The default bailout test compares the magnitude or modulus of a complex
+  variable to some bailout value:
+
+  bailout test = |z| = sqrt(x^2 + y^2) &gt;= 2
+
+  As a computational speedup, we square both sides of this equation and the
+  bailout test used by Fractint is:
+
+  bailout test = |z|^2 = x^2 + y^2 &gt;= 4
+
+  Using a "bailout" other than 4 allows us to change when the bailout will occur.
+
+  The following bailout tests have been implemented on the &lt;Z&gt; screen:
+
+     mod:     x^2 + y^2 &gt;= bailout
+
+     real:    x^2       &gt;= bailout
+
+     imag:    y^2       &gt;= bailout
+
+     or:      x^2 &gt;= bailout  or   y^2 &gt;= bailout
+
+     and:     x^2 &gt;= bailout  and  y^2 &gt;= bailout
+
+     manh:    (abs(x) + abs(y))^2 &gt;= bailout  (based on Manhattan metric)
+
+     manr:    (x + y)^2 &gt;= bailout
+
+  The bailout test feature has not been implemented for all applicable
+  fractal types.  This is due to the speedups used for these types.  Some
+  of these bailout tests show the limitations of the integer math routines
+  by clipping the spiked ends off of the protrusions.
+
+
+ 3.12 Parameter Explorer/Evolver
+
+   Since fractint is such a wonderfully complex program it has more than a
+   few parameters to tweak and options to select. To the inexperienced
+   user the choice is bewildering.  Even for the experts the chaotic
+   nature of the mathematical processes involved make it difficult to know
+   what to change in order to achieve the desired effect.
+</pre>
+</body>
+</html>

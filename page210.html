@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 210</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page209.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 210 <a href="page211.html">Next &gt;</a></pre>
+</div>
+<pre>
+     Run the following .key file with command line parameters
+     fastrestore=yes and askvideo=no (and, if you don't set your video
+     mode in sstools.ini, video=[your standard video mode]) and your
+     coworkers will get a continuous display of the .gif files in your
+     default .gif directory when you go to lunch (come on, we know you
+     have Fractint on your hard drive at work):
+
+           "r"
+            MORE:
+            ENTER
+            CALCWAIT
+            WAIT 30
+            "R"
+            CTRL_RIGHT
+            GOTO MORE
+
+  Added four new lsystem types to fractint.l.
+
+  When palette editing mode is entered, the original palette is now stored
+    in the area associated with F2.
+
+  Reduced the fractint.cfg resolution limit to 2x2 pixels.
+
+  Fixed bug which caused a lockup when ranges= was used with maxit &gt;=
+  32767.
+
+  Fixed arbitrary precision and decoder crashes.
+
+  Fixed an entry display scrolling bug.
+
+  Fixed the integer mode frothy basin "censored" bug.
+
+  Added backwards compatibility for inside=startrails.
+
+  Fixed the 16-color color cycling inside the palette editor.  Fixed color
+    cycling when used with a maxit &gt; 32767.  Pixels with iterations &gt;
+    32767 now cycle in the same direction as those with iterations &lt;=
+    32767.
+
+  Fixed bug which caused an apparent lockup when find finite attractor was
+    used with maxit &gt; 32767.
+
+  Fixed viewwindows bug that caused extra points to be written when ydots
+    was not divisible by 4.
+
+  Fixed Ant type so that it works with 16 digits.  Old pars will need to
+    be re-entered or have a decimal point added to the first two
+    parameters.
+
+  Changed MAXSTRING in the decoder from 64000 to 60000. This change
+    eliminates all the encoder bug examples we have, but we don't
+    understand why it works and we may not have fixed the problem.
+
+  Fixed the logmap routine when used with a par/gif release &lt;= 1920 and
+    memory for the LogTable is insufficient.
+</pre>
+</body>
+</html>

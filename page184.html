@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 184</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page183.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 184 <a href="page185.html">Next &gt;</a></pre>
+</div>
+<pre>
+        dx/dt =  x - xy = f(x,y)
+        dy/dt = -y + xy = g(x,y)
+        x(new) = x + h/2 * [ f(x,y) + f[x + pf(x,y), y + pg(x,y)] ]
+        y(new) = y + h/2 * [ g(x,y) + g[x + pf(x,y), y + pg(x,y)] ]
+      Two parameters: h and p
+      Recommended: zmag or bof60 inside coloring options
+
+
+  INSIDE=BOF60|BOF61|ZMAG|FMOD|PERIOD|ATAN
+
+  Here is an *ATTEMPTED* explanation of what the inside=bof60 and
+  inside=bof61 options do. This explanation is hereby dedicated to Adrian
+  Mariano, who badgered it out of us! For the *REAL* explanation, see
+  "Beauty of Fractals", page 62.
+
+  Let p(z) be the function that is repeatedly iterated to generate a
+  fractal using the escape-time algorithm.  For example, p(z) = z^2+c in
+  the case of a Julia set. Then let pk(z) be the result of iterating the
+  function p for k iterations. (The "k" should be shown as a superscript.)
+  We could also use the notation pkc(z) when the function p has a
+  parameter c, as it does in our example.  Now hold your breath and get
+  your thinking cap on. Define a(c) = inf{|pkc(0)|:k=1,2,3,...}. In
+  English - a(c) is the greatest lower bound of the images of zero of as
+  many iterations as you like. Put another way, a(c) is the closest to the
+  origin any point in the orbit starting with 0 gets. Then the index (c)
+  is the value of k (the iteration) when that closest point was achieved.
+  Since there may be more than one, index(c) is the least such. Got it?
+  Good, because the "Beauty of Fractals" explanation of this, is, ahhhh,
+  *TERSE* ! Now for the punch line. Inside=bof60 colors the lake
+  alternating shades according to the level sets of a(c).  Each band
+  represents solid areas of the fractal where the closest value of the
+  orbit to the origin is the same.  Inside=bof61 show domains where
+  index(c) is constant.  That is, areas where the iteration when the orbit
+  swooped closest to the origin has the same value.  Well, folks, that's
+  the best we can do! Improved explanations will be accepted for the next
+  edition!
+
+  In response to this request for lucidity, Herb Savage offers this
+  explanation the bof60 and bof61 options:
+
+   The picture on page 60 of The Beauty of Fractals shows the distance to
+   origin of the closest point to the origin in the sequence of points
+   generated from a given X,Y coordinate.  The picture on page 61 shows
+   the index (or number) in the sequence of the closest point.
+
+  inside=zmag is similar. This option colors inside pixels according to
+  the magnitude of the orbit point when maxiter was reached, using the
+  formula color = (x^2 + y^2) * maxiter/2 + 1.
+
+  inside=fmod colors inside pixels according to the magnitude of the last
+  orbit point which is within a set distance from the origin.  Then:
+    color = magnitude * colors / closeprox
+  The magnitude used for the comparison is now based on the same
+  calculation as is used for the bailout test.  The value of closeprox can
+  be varied interactively.  This feature was contributed by Iain Stirling.
+</pre>
+</body>
+</html>

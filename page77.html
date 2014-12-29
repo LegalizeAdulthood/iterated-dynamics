@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 77</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page76.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 77 <a href="page78.html">Next &gt;</a></pre>
+</div>
+<pre>
+  One method of displaying the 4-dimensional object is to take a 3-
+  dimensional slice and render the resulting object in 3-dimensional
+  perspective.  Fractint isn't that sophisticated, so it merely displays a
+  2-dimensional slice of the resulting object. (Note: Now Fractint is that
+  sophisticated!  See the Julibrot type!)
+
+  In fractint, for the Julia set, you can specify the four parameters of
+  the quaternion constant: c=(c1,ci,cj,ck), but the 2-dimensional slice of
+  the z-plane Julia set is fixed to (xpixel,ypixel,0,0).
+
+  For the Mandelbrot set, you can specify the position of the c-plane
+  slice: (xpixel,ypixel,cj,ck).
+
+  These fractals are discussed in Chapter 10 of Pickover's "Computers,
+  Pattern, Chaos, and Beauty".
+
+  See also HyperComplex (p. 77) and  Quaternion and Hypercomplex Algebra
+  (p. 189)
+
+
+ 2.46 HyperComplex
+
+  (type=hypercomplex,hypercomplexj)
+
+  These fractals are based on hypercomplex numbers, which like quaternions
+  are a four dimensional generalization of complex numbers. It is not
+  possible to fully generalize the complex numbers to four dimensions
+  without sacrificing some of the algebraic properties shared by real and
+  complex numbers. Quaternions violate the commutative law of
+  multiplication, which says z1*z2 = z2*z1. Hypercomplex numbers fail the
+  rule that says all non-zero elements have multiplicative inverses - that
+  is, if z is not 0, there should be a number 1/z such that (1/z)*(z) = 1.
+  This law holds most of the time but not all the time for hypercomplex
+  numbers.
+
+  However hypercomplex numbers have a wonderful property for fractal
+  purposes.  Every function defined for complex numbers has a simple
+  generalization to hypercomplex numbers. Fractint's implementation takes
+  advantage of this by using "fn" variables - the iteration formula is
+      h(n+1) = fn(h(n)) + C.
+  where "fn" is the hypercomplex generalization of sin, cos, log, sqr etc.
+  You can see 3D versions of these fractals using fractal type Julibrot.
+  Hypercomplex numbers were brought to our attention by Clyde Davenport,
+  author of "A Hypercomplex Calculus with Applications to Relativity",
+  ISBN 0-9623837-0-8.
+
+  See also Quaternion (p. 76) and  Quaternion and Hypercomplex Algebra
+  (p. 189)
+</pre>
+</body>
+</html>

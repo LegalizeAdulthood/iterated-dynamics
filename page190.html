@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 190</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page189.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 190 <a href="page191.html">Next &gt;</a></pre>
+</div>
+<pre>
+  Quaternions are not the only possible four dimensional supersets of the
+  complex numbers. William Rowan Hamilton, who discovered quaternions in
+  1843, considered the alternative called the hypercomplex number system.
+  Unlike quaternions, the hypercomplex numbers satisfy the commutative law
+  of multiplication. The law which fails is the field property that states
+  that all non-zero elements of a field have a multiplicative inverse. For
+  a non-zero hypercomplex number h, the multiplicative inverse 1/h does
+  not always exist.
+
+  As with quaternions, we will define multiplication in terms of the basis
+  vectors 1, i, j, and k, but with subtly different rules.
+
+  Multiplication rules for hypercomplex basis vectors:
+  ij = k  jk = -i ki = -j
+  ji = k  kj = -i ik = -j
+  ii = jj = -kk = -1
+  ijk = 1
+
+  Note that now ij = k and ji = k, and similarly for other products of pairs
+  of basis vectors, so the commutative law holds.
+
+  Hypercomplex multiplication formula:
+  Let h1 = x1 + y1i + z1j + w1k and h2 = x2 + y2i + z2j + w2k.
+  Then  h1h2 =  1(x1x2 - y1y2 - z1z2 + w1w2) +
+                i(y1x2 + x1y2 - w1z2 - z1w2) +
+                j(z1x2 - w1y2 + x1z2 - y1w2) +
+                k(w1x2 + z1y2 + y1z2 + x1w2)
+
+  As an added bonus, we'll give you the formula for the reciprocal.
+
+  Let det = [((x-w)^2+(y+z)^2)((x+w)^2+(y-z)^2)]
+  Then 1/h =   1[ x(x^2+y^2+z^2+w^2)-2w(xw-yz)]/det +
+               i[-y(x^2+y^2+z^2+w^2)-2z(xw-yz)]/det +
+               j[-z(x^2+y^2+z^2+w^2)-2y(xw-yz)]/det +
+               k[ w(x^2+y^2+z^2+w^2)-2x(xw-yz)]/det
+
+  A look at this formula shows the difficulty with hypercomplex numbers.
+  In order to calculate 1/h, you have to divide by the quantity det =
+  [((x-w)^2+(y+z)^2)((x+w)^2+(y-z)^2)]. So when this quantity is zero, the
+  multiplicative inverse will not exist.
+
+  Hypercomplex numbers have an elegant generalization of any unary complex
+  valued function defined on the complex numbers. First, note that
+  hypercomplex numbers can be represented as a pair of complex numbers in
+  the following way.
+  Let h = x + yi + zj + wk.
+      a = (x-w) + i(y+z)
+      b = (x+w) + i(y-z)
+  The numbers a and b are complex numbers. We can represent h as the pair
+  of complex numbers (a,b). Conversely, if we have a hypercomplex number
+  given to us in the form (a,b), we can solve for x, y, z, and w. The
+  solution to
+     c = (x-w) + i(y+z)
+     d = (x+w) + i(y-z)
+  is
+     x = (real(c) + real(d))/2
+</pre>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 63</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page62.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 63 <a href="page64.html">Next &gt;</a></pre>
+</div>
+<pre>
+  The default parameters are a=1.4 and b=.3.
+
+
+ 2.30 Pickover Attractors
+
+  (type=pickover)
+
+  Clifford A. Pickover of the IBM Thomas J. Watson Research center is such
+  a creative source for fractals that we attach his name to this one only
+  with great trepidation.  Probably tomorrow he'll come up with another
+  one and we'll be back to square one trying to figure out a name!
+
+  This one is the three dimensional orbit defined by:
+
+               xnew = sin(a*y) - z*cos(b*x)
+               ynew = z*sin(c*x) - cos(d*y)
+               znew = sin(x)
+
+  Default parameters are: a = 2.24, b = .43, c = -.65, d = -2.43
+
+
+ 2.31 Gingerbreadman
+
+  (type=gingerbreadman)
+
+  This simple fractal is a charming example stolen from "Science of
+  Fractal Images", p. 149.
+
+               xnew = 1 - y + |x|
+               ynew = x
+
+  The initial x and y values are set by parameters, defaults x=-.1, y = 0.
+
+
+ 2.32 Martin Attractors
+
+  (type=hopalong/martin)
+
+  These fractal types are from A. K. Dewdney's "Computer Recreations"
+  column in "Scientific American". They are attributed to Barry Martin of
+  Aston University in Birmingham, England.
+
+  Hopalong is an "orbit" type fractal like lorenz. The image is obtained
+  by iterating this formula after setting z(0) = y(0) = 0:
+        x(n+1) = y(n) - sign(x(n))*sqrt(abs(b*x(n)-c))
+        y(n+1) = a - x(n)
+  Parameters are a, b, and c. The function "sign()"  returns 1 if the
+  argument is positive, -1 if argument is negative.
+
+  This fractal continues to develop in surprising ways after many
+  iterations.
+
+  Another Martin fractal is simpler. The iterated formula is:
+        x(n+1) = y(n) - sin(x(n))
+        y(n+1) = a - x(n)
+  The parameter is "a". Try values near the number pi.
+</pre>
+</body>
+</html>

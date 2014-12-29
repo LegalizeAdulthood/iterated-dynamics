@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 174</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page173.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 174 <a href="page175.html">Next &gt;</a></pre>
+</div>
+<pre>
+  fn(z*z) (p. 57)
+        z(0) = pixel;
+        z(n+1) = fn(z(n)*z(n))
+      One parameter: the function fn.
+
+  fn*fn (p. 57)
+        z(0) = pixel; z(n+1) = fn1(n)*fn2(n)
+      Two parameters: the functions fn1 and fn2.
+
+  fn*z+z (p. 57)
+        z(0) = pixel; z(n+1) = p1*fn(z(n))*z(n) + p2*z(n)
+      Five parameters: the real and imaginary components of
+      p1 and p2, and the function fn.
+
+  fn+fn (p. 57)
+        z(0) = pixel;
+        z(n+1) = p1*fn1(z(n))+p2*fn2(z(n))
+      Six parameters: The real and imaginary components of
+      p1 and p2, and the functions fn1 and fn2.
+
+  formula (p. 65)
+      Formula interpreter - write your own formulas as text files!
+
+  frothybasin (p. 80)
+      Pixel color is determined by which attractor captures the orbit.  The
+      shade of color is determined by the number of iterations required to
+      capture the orbit.
+        Z(0) = pixel;  Z(n+1) = Z(n)^2 - C*conj(Z(n))
+        where C = 1 + A*i, critical value of A = 1.028713768218725...
+
+  gingerbread (p. 63)
+      Orbit in two dimensions defined by:
+        x(n+1) = 1 - y(n) + |x(n)|
+        y(n+1) = x(n)
+      Two parameters: initial values of x(0) and y(0).
+
+  halley (p. 75)
+        Halley map for the function: F = z(z^a - 1) = 0
+        z(0) = pixel;
+        z(n+1) = z(n) - R * F / [F' - (F" * F / 2 * F')]
+        bailout when: abs(mod(z(n+1)) - mod(z(n)) &lt; epsilon
+      Four parameters: order a, real part of R, epsilon,
+         and imaginary part of R.
+
+  henon (p. 62)
+      Orbit in two dimensions defined by:
+        x(n+1) = 1 + y(n) - a*x(n)*x(n)
+        y(n+1) = b*x(n)
+      Two parameters: a and b
+
+  hopalong (p. 63)
+      Hopalong attractor by Barry Martin - orbit in two dimensions.
+        z(0) = y(0) = 0;
+        x(n+1) = y(n) - sign(x(n))*sqrt(abs(b*x(n)-c))
+        y(n+1) = a - x(n)
+      Parameters are a, b, and c.
+</pre>
+</body>
+</html>

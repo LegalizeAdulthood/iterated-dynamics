@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 219</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page218.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 219 <a href="page220.html">Next &gt;</a></pre>
+</div>
+<pre>
+  New arbitrary precision math allows types mandelbrot, julia, manzpower,
+    and julzpower to zoom to 10^1600. See Arbitrary Precision and Deep
+    Zooming (p. 167)
+
+  New Random Dot Stereogram feature using &lt;Ctrl&gt;-&lt;S&gt;. Thanks to Paul De
+    Leeuw for contributing this feature. For more, see Random Dot
+    Stereograms (RDS) (p. 102).
+
+  New browser invoked by the &lt;l&gt; command allows you to see the
+    relationships of a family of images within the current corners values.
+    See Browse Commands (p. 37) and Browser Parameters (p. 149). Thanks
+    to Robin Bussell for contributing this feature.
+
+  Added four bailout tests: real, imag, or, and.  These are set on the &lt;Z&gt;
+    screen of the fractal types for which they work.  The default is still
+    mod.  See Bailout Test (p. 98).
+
+  New asin, asinh, acos, acosh, atan, atanh, sqrt, abs (abs(x)+i*abs(y)),
+    and cabs (sqrt(x*x + y*y)) functions added to function variables and
+    parser.
+
+  New fractal types types chip, quadruptwo, threeply, phoenixcplx,
+    mandphoenixclx, and ant automaton.
+
+  Increased maximum iterations to 2,147,483,647 and maximum bailout to
+    2,100,000,000 when using floating point math.
+
+  New path/directory management. Fractint now remembers the pathname of
+    command-line filenames. This means that you can specifiy directories
+    where your files reside in SSTOOLS.INI. In what follows, &lt;path&gt; can be
+    a directory, a filename, or a full path.
+
+    File                      SSTOOLS.INI Command       Comments
+
+    ==========================================================================
+    PAR directory             parmfile=&lt;path&gt;
+    GIF files for reading     filename=&lt;path&gt;
+    MAP files                 map=&lt;path&gt;
+    Autokey files             autokeyname=&lt;path&gt;
+    GIF files for saving      savename=&lt;path&gt;
+    Print file                printfile=&lt;path&gt;
+    Formula files             formulafile=&lt;path&gt;
+    Lsystem file              lfile=&lt;path&gt;
+    IFS file                  ifsfile=&lt;path&gt;
+    Miscellaneous files       workdir=&lt;path&gt;           new command
+    Temporary files           tempdir=&lt;path&gt;           new command
+
+    If the directories do not exist, Fractint gives an error message on
+    runup with the option to continue.
+
+  Fractint now searches all FRM, IFS, LSYS, and PAR files in the
+    designated directory for entries. The number of entries in files has
+    been greatly increased from 200 to 2000. Comment support in these
+    files is improved.
+</pre>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 129</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page128.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 129 <a href="page130.html">Next &gt;</a></pre>
+</div>
+<pre>
+  Note that the "Look for finite attractor" option on the &lt;Y&gt; options
+  screen will override the selected inside option if an attractor is found
+  - see Finite Attractors (p. 185).
+
+  OUTSIDE=nnn|iter|real|imag|summ|mult|atan|fmod|tdis
+  The classic method of coloring outside the fractal is to color according
+  to how many iterations were required before Z reached the bailout value,
+  usually 4. This is the method used when OUTSIDE=iter.
+
+  However, when Z reaches bailout the real and imaginary components can be
+  at very diferent values.  OUTSIDE=real and OUTSIDE=imag color using the
+  iteration value plus the real or imaginary values.  OUTSIDE=summ uses
+  the sum of all these values.  These options can give a startling 3d
+  quality to otherwise flat images and can change some boring images to
+  wonderful ones. OUTSIDE=mult colors by multiplying the iteration by real
+  divided by imaginary. There was no mathematical reason for this, it just
+  seemed like a good idea.  OUTSIDE=atan colors by determining the angle
+  in degrees the last iterated value has with respect to the real axis,
+  and using the absolute value.
+
+  OUTSIDE=fmod colors pixels according to the magnitude of the last orbit
+  point which is within a set distance from the origin.  Then:
+    color = magnitude * colors / closeprox
+  The magnitude used for the comparison is now based on the same
+  calculation as is used for the bailout test.  The value of closeprox can
+  be varied interactively.  This feature was contributed by Iain Stirling.
+  There is a problem with the mandel fractal type when outside=fmod is
+  used with inside=bof6x and bailoutest=real, imag, or manr.  This is
+  likely due to changes made in the code so that bof images could be
+  reproduced.  Select a different fractal type that produces the default
+  mandel image to explore using these parameters.
+
+  OUTSIDE=tdis colors the pixels according to the total distance traveled
+  by the orbit.  This feature was suggested by Steve Robinson.
+
+  Outside=nnn sets the color of the exterior to some number of your
+  choosing: for example, "OUTSIDE=1" makes all points not INSIDE the
+  fractal set to color 1 (blue). Note that defining an OUTSIDE color
+  forces any image to be a two-color one: either a point is INSIDE the
+  set, or it's OUTSIDE it.
+
+  MAP=[filename]
+  Reads in a replacement color map from [filename]. This map replaces the
+  default color map of your video adapter. Requires a VGA or higher
+  adapter.  The difference between this argument and an alternate map read
+  in via &lt;L&gt; in color-command mode is that this one applies to the entire
+  run.  See Palette Maps (p. 88).
+
+  COLORS=@filename|colorspecification
+  Sets colors for the current image, like the &lt;L&gt; function in color
+  cycling and palette editing modes. Unlike the MAP= parameter, colors set
+  with COLORS= do not replace the default - when you next select a new
+  fractal type, colors will revert to their defaults.
+</pre>
+</body>
+</html>

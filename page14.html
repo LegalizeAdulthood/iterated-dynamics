@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 14</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page13.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 14 <a href="page15.html">Next &gt;</a></pre>
+</div>
+<pre>
+    formula parser and multiple parameters are used.  Each parameter is
+    now checked.
+
+  Patch 12
+  Fixed a 3D error introduced with patch 11.  Fixed the stereogram screen
+    prompts to prevent out of bounds array accesses.
+
+  Patch 11
+  Fixed an off by one error in the Xfractint type=julia code.  Fixed the
+    case where the second image would not finish generating when the 3D
+    parameter Stereo=photo or stereo pair was used with an orbit type such
+    as Lorenz.
+
+  Patch 10
+  Fixed some user interface prompts that were wrong in Xfractint. Merged
+    the Xfractint version system with Fractint's. Thanks to Scott Boyd for
+    these changes.
+
+  Patch 9
+  Fixed a bug that occurred when maxhistory=0 was used.  Fixed a bug that
+    occurred when ismand was used in a formula and ctrl &lt;o&gt; was pressed.
+
+  Patch 8
+  Fixed a bug causing a lock up with lsystem and ifs fractal types when
+    using a disk video mode with an X or Y resolution greater than 2048.
+
+  Patch 7
+  Updated Xfractint, copyright notice.
+
+  Patch 6
+  Fixed fractint.cfg problems with extra commas or long lines. This allows
+    the output of makefcfg from certain video boards to be used without
+    editing.
+
+  Added center, magxmag, and rotskew constants to parser. See Center-Mag
+    Predefined Variables (p. 66)
+
+  Patch 5
+  Added new command truemode=iter, which is used to switch the ouput to
+    the truecolor Targa file to the number of iterates for each pixel.
+
+  Made selecting the evolver feature turn off truecolor=yes.  Each
+    subimage was being generated as a separate blank Targa file.
+
+  Patch 4
+  Fixed the type=test bug.
+
+  Patch 3
+  Fixed a bug in the pentium mandelbrot code that affected periodicity
+    checking.  Fixed a problem with skewed zoom boxes leaving dots on the
+    screen.  This also fixed browser boxes with the same problem.  Fixed
+    the zoom box so it is visible in 2-color modes.
+
+  Patch 2
+  Fixed a bug in the formula parser.
+</pre>
+</body>
+</html>

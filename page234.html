@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 234</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page233.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 234 <a href="page235.html">Next &gt;</a></pre>
+</div>
+<pre>
+      the new MAGNETic Fractal types.
+    Added Finite Attractor Bailout (FAB) logic to detect when iterations
+      are approaching a known finite attractor. This is required by the
+      new MAGNETic Fractal types.
+    Added Finite Attractor Detection (FAD) logic which can be used by
+      *SOME* Julia types prior to generating an image, to test for finite
+      attractors, and find their values, for use by FAB logic. Can be used
+      by the new MAGNETic Fractal Types, Lambda Sets, and some other Julia
+      types too.
+
+    Mike Burkey sent us new tweaked video modes:
+      VGA     - 400x600x256   376x564x256   400x564x256
+      ATI VGA - 832x612x256 New HP Paintjet support from Chris Martin
+    New "FUNCTION=" command to allow substition of different
+      transcendental functions for variables in types (allows one type
+      with four of these variables to represent 7*7*7*7 different types!
+    ALL KINDS of new fractal types, some using "FUNCTION=": fn(z*z),
+      fn*fn, fn*z+z, fn+fn, sqr(1/fn), sqr(fn), spider, tetrate, and
+      Manowar. Most of these are generalizations of formula fractal types
+      contributed by Scott Taylor and Lee Skinner.
+    Distance Estimator logic can now be applied to many fractal types
+      using distest= option. The types "demm" and "demj" have been
+      replaced by "type=mandel distest=nnn" and "type=julia distest=nnn"
+    Added extended memory support for diskvideo thanks to Paul Varner
+    Added support for "center and magnification" format for corners.
+    Color 0 is no longer generated except when specifically requested with
+      inside= or outside=.
+    Formula name is now included in &lt;Tab&gt; display and in &lt;S&gt;aved images.
+    Bug fixes - formula type and diskvideo, batch file outside=-1 problem.
+    Now you can produce your favorite fractal terrains in full color
+      instead of boring old monochrome! Use the fullcolor option in 3d!
+      Along with a few new 3D options.
+    New "INITORBIT=" command to allow alternate Mandelbrot set orbit
+      initialization.
+
+
+  Version 13.0, 5/90
+
+    F1 was made the help key.
+      Use F1 for help
+      Use F9 for EGA 320x200x16 video mode
+      Use CF4 for EGA 640x200x16 mode (if anybody uses that mode)
+    Super-Solid-guessing (three or more passes) from Pieter Branderhorst
+      (replaces the old solid-guessing mode)
+    Boundary Tracing option from David Guenther ("fractint passes=btm", or
+      use the new 'x' options screen)
+    "outside=nnn" option sets all points not "inside" the fractal to color
+      "nnn" (and generates a two-color image).
+    'x' option from the main menu brings up a full-screen menu of many
+      popular options and toggle switches
+    "Speed Key" feature for fractal type selection (either use the cursor
+      keys for point-and-shoot, or just start typing the name of your
+      favorite fractal type)
+    "Attractor" fractals (Henon, Rossler, Pickover, Gingerbread)
+    Diffusion fractal type by Adrian Mariano
+    "type=formula" formulas from Scott Taylor and Lee H. Skinner.
+</pre>
+</body>
+</html>

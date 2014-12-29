@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 135</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page134.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 135 <a href="page136.html">Next &gt;</a></pre>
+</div>
+<pre>
+  VESADETECT=yes|no
+  Specify no to bypass VESA video detection logic. Try this if you
+  encounter video problems with a VESA compliant video adapter or driver.
+
+  AFI=yes|8514|no
+  Normally, when you attempt to use an 8514/A-specific video mode,
+  Fractint first attempts to detect the presence of an 8514/A register-
+  compatible adapter.  If it fails to find one, it then attempts to detect
+  the presence of an 8514/A-compatible API (IE, IBM's HDILOAD or its
+  equivalent).  Fractint then uses either its register-compatible or its
+  API-compatible video logic based on the results of those tests.  If you
+  have an "8514/A-compatible" video adapter that passes Fractint's
+  register-compatible detection logic but doesn't work correctly with
+  Fractint's register-compatible video logic, setting "afi=yes" will force
+  Fractint to bypass the register-compatible code and look only for the
+  API interface.
+
+  TEXTSAFE=yes|no|bios|save
+  When you switch from a graphics image to text mode (e.g. when you use
+  &lt;F1&gt; while a fractal is on display), Fractint remembers the graphics
+  image, and restores it when you return from the text mode.  This should
+  be no big deal - there are a number of well-defined ways Fractint could
+  do this which *should* work on any video adapter.  They don't - every
+  fast approach we've tried runs into a bug on one video adapter or
+  another.  So, we've implemented a fast way which works on most adapters
+  in most modes as the default, and added this parameter for use when the
+  default approach doesn't work.
+  If you experience the following problems, please fool around with this
+  parameter to try to fix the problem:
+    o Garbled image, or lines or dashes on image, when returning to image
+      after going to menu, &lt;tab&gt; display, or help.
+    o Blank screen when starting Fractint.
+  The problems most often occur in higher resolution modes. We have not
+  encountered them at all in modes under 320x200x256 - for those modes
+  Fractint always uses a fast image save/restore approach.
+  Textsafe options:
+    yes: This is the default. When switching to/from graphics, Fractint
+      saves just that part of video memory which EGA/VGA adapters are
+      supposed to modify during the mode changes.
+    no: This forces use of monochrome 640x200x2 mode for text displays
+      (when there is a high resolution graphics image to be saved.) This
+      choice is fast but uses chunky and colorless characters. If it turns
+      out to be the best choice for you, you might want to also specify
+      "textcolors=mono" for a more consistent appearance in text screens.
+    bios: This saves memory in the same way as textsafe=yes, but uses the
+      adapter's BIOS routines to save/restore the graphics state.  This
+      approach is fast and ought to work on all adapters. Sadly, we've
+      found that very few adapters implement this function perfectly.
+    save: It should work on all adapters in all modes but it can be slow.
+      It tells Fractint to save/restore the entire image. Expanded or
+      extended memory is used for the save if you have enough available;
+      otherwise a temporary disk file is used. The speed of textsafe=save
+      will be acceptable on some machines but not others.  If this method
+      is too slow, try the other textsafe modes.  The speed depends on:
+        o Cpu and video adapter speed.
+        o Whether enough expanded or extended memory is available.
+</pre>
+</body>
+</html>

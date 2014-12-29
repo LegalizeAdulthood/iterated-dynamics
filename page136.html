@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 136</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page135.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 136 <a href="page137.html">Next &gt;</a></pre>
+</div>
+<pre>
+        o Video mode of image being remembered. A few special modes are
+        *very*
+          slow compared to the rest. The slow ones are: 2 and 4 color modes
+          with resolution higher than 640x480; custom modes for ATI EGA Wonder,
+          Paradise EGA-480, STB, Compaq portable 386, AT&amp;T 6300, and roll your
+          own video modes implemented with customized YOURVID.C code.
+  If you want to tune Fractint to use different "textsafe" options for
+  different video modes, see "Customized Video Modes, FRACTINT.CFG"
+  (p. 157).  (E.g. you might want to use the slower textsafe=save approach
+  just for a few high-resolution modes which have problems with
+  textsafe=yes.)
+
+  EXITMODE=nn
+  Sets the bios-supported videomode to use upon exit to the specified
+  value.  nn is in hexadecimal.  The default is 3, which resets to 80x25
+  color text mode on exit. With Hercules Graphics Cards, and with
+  monochrome EGA systems, the exit mode is always 7 and is unaffected by
+  this parameter.
+
+  TPLUS=yes|no
+  For TARGA+ adapters. Setting this to 'no' pretends a TARGA+ is NOT
+  installed.
+
+  NONINTERLACED=yes|no
+  For TARGA+ adapters. Setting this to 'yes' will configure the adapter to
+  a non-interlaced mode whenever possible.  It should only be used with a
+  multisynch monitor. The default is no, i.e. interlaced.
+
+  MAXCOLORRES=8|16|24
+  For TARGA+ adapters. This determines the number of bits to use for color
+  resolution.  8 bit color is equivalent to VGA color resolution. The 16
+  and 24 bit color resolutions are true color video modes.
+
+  PIXELZOOM=0|1|2|3
+  For TARGA+ adapters. Lowers the video mode resolution by powers of 2.
+  For example, the 320x200 video resolution on the TARGA+ is actually the
+  640x400 video mode with a pixel zoom of 1.  Using the 640x400 video mode
+  with a zoom of 3 would lower the resolution by 8, which is 2 raised to
+  the 3rd power, for a full screen resolution of 80x50 pixels.
+
+  VIEWWINDOWS=xx[/xx[/yes|no[/nn[/nn]]]]
+  Set the reduction factor, final media aspect ratio, crop starting
+  coordinates (y/n), explicit x size, and explicit y size, see "View
+  Window" (p. 34).
+
+  FASTRESTORE=yes|no
+  If YES, resets viewwindow to "no" prior to restoring a gif file.
+  Otherwise, images saved in full view will be drawn in reduced view if
+  viewwindows has been set to "yes" previously. Also, when YES, bypasses
+  the warning when restoring a gif in a video mode other than the one in
+  which the gif was saved. Default is NO. Feature will be useful when
+  cycling through a group of gifs in autokey mode.  When combined with
+  askvideo=no, allows loading images with the last successfully used video
+  mode.  This is handy when viewing 1600x1200 images when you only have
+  1024x768 available.
+</pre>
+</body>
+</html>

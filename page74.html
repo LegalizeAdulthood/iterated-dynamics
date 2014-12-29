@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 74</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page73.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 74 <a href="page75.html">Next &gt;</a></pre>
+</div>
+<pre>
+  An Example.  I like sonnets.  A sonnet is a poem with fourteen lines
+  that has the following rhyming sequence: abba abba abab cc.  Ignoring
+  the rhyming couplet at the end, let's calculate the Order parameter for
+  this pattern.
+
+    abbaabbaabab         doesn't start with at least 2 a's
+    aabbaabababb         rotate it
+    1001101010           drop the first and last, replace with 0's and 1's
+
+    512+64+32+8+2 = 618
+
+  An Order parameter of 618 gives the Lyapunov equivalent of a sonnet.
+  "How do I make thee? Let me count the ways..."
+
+  Population Seed.  When two parts of a Lyapunov overlap, which spike
+  overlaps which is strongly dependent on the initial value of the
+  population model.  Any changes from using a different starting value
+  between 0 and 1 may be subtle. The values 0 and 1 are interpreted in a
+  special manner. A Seed of 1 will choose a random number between 0 and 1
+  at the start of each pixel. A Seed of 0 will suppress resetting the seed
+  value between pixels unless the population model diverges in which case
+  a random seed will be used on the next pixel.
+
+  Filter Cycles.  Like the Bifurcation model, the Lyapunov allow you to
+  set the number of cycles that will be run to allow the model to approach
+  equilibrium before the lyapunov exponent calculation is begun. The
+  default value of 0 uses one half of the iterations before beginning the
+  calculation of the exponent.
+
+  Reference.  A.K. Dewdney, Mathematical Recreations, Scientific American,
+  Sept. 1991
+
+
+ 2.41 fn||fn Fractals
+
+  (type=lambda(fn||fn), manlam(fn||fn), julia(fn||fn), mandel(fn||fn))
+
+  Two functions=[sin|cos|sinh|cosh|exp|log|sqr|...]) are specified with
+  these types.  The two functions are alternately used in the calculation
+  based on a comparison between the modulus of the current Z and the shift
+  value.  The first function is used if the modulus of Z is less than the
+  shift value and the second function is used otherwise.
+
+  The lambda(fn||fn) type calculates the Julia set of the formula
+  lambda*fn(Z), for various values of the function "fn", where lambda and
+  Z are both complex.  Two values, the real and imaginary parts of lambda,
+  should be given in the "params=" option.  The third value is the shift
+  value.  The space bar will generate the corresponding "pseudo
+  Mandelbrot" set, manlam(fn||fn).
+
+  The manlam(fn||fn) type calculates the "pseudo Mandelbrot" set of the
+  formula fn(Z)*C, for various values of the function "fn", where C and Z
+  are both complex.  Two values, the real and imaginary parts of Z(0),
+  should be given in the "params=" option.  The third value is the shift
+  value.  The space bar will generate the corresponding julia set,
+  lamda(fn||fn).
+</pre>
+</body>
+</html>

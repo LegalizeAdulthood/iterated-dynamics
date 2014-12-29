@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 124</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page123.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 124 <a href="page125.html">Next &gt;</a></pre>
+</div>
+<pre>
+  Variable   Expands to   Example     Variable   Expands to   Example
+  ===============================     ===============================
+  $year$     time:year    1996        $date$     mo. day, yr  Aug 17, 1996
+  $month$    time:month   Aug         $calctime$ h:m:s        4:34:45.3
+  $day$      time:day     12          $version$  version      1940
+  $hour$     time:hour    21          $patch$    patch number 2
+  $min$      time:minute  34          $xdots$    horiz rez    640
+  $sec$      time:sec     14          $ydots$    vertical rez 480
+  $time$     time:h:m:s   21:34:14    $vidkey$   video key    SF4
+
+  You can leave any of the four comment fields unchanged by leaving that
+  position blank. For example, the command comment=//Created_$date$
+  inserts the text "Created Aug 17, 1996" into the third comment.
+
+  BATCH=yes
+  See Batch Mode (p. 148).
+
+  AUTOKEY=play|record
+  Specifying "play" runs Fractint in playback mode - keystrokes are read
+  from the autokey file (see next parameter) and interpreted as if they're
+  being entered from the keyboard.
+
+  Specifying "record" runs in recording mode - all keystrokes are recorded
+  in the autokey file.
+
+  See also Autokey Mode (p. 89).
+
+  AUTOKEYNAME=[filename]
+  Specifies the file name to be used in autokey mode. The default file
+  name is AUTO.KEY.
+
+  MAKEDOC[=filename]
+  Create Fractint documentation file (for printing or viewing with a text
+  editor) and then return to DOS.  Filename defaults to FRACTINT.DOC.
+  There's also a function in Fractint's online help which can be used to
+  produce the documentation file - use "Printing Fractint Documentation"
+  from the main help index.
+
+  MAXHISTORY=&lt;nnn&gt;
+  Fractint maintains a list of parameters of the past 10 images that you
+  generated in the current Fractint session. You can revisit these images
+  using the &lt;h&gt; and &lt;Ctrl-h&gt; commands. The maxhistory command allows you
+  to set the number of image parameter sets stored in memory. The tradeoff
+  is between the convenience of storing more images and memory use. Each
+  image in the circular history buffer takes up over 1200 bytes, so the
+  default value of ten images uses up 12,000 bytes of memory. If your
+  memory is very tight, and some memory-intensive Fractint operations are
+  giving "out of memory" messages, you can reduce maxistory to 2 or even
+  zero. Keep in mind that every time you color cycle or change from
+  integer to float or back, another image parameter set is saved, so the
+  default ten images are used up quickly.
+
+  FPU=387
+  This parameter is useful if you have an unusual coprocessor chip. If you
+  have a 80287 replacement chip with full 80387 functionality use
+  "FPU=387" to inform Fractint to take advantage of those extra 387
+</pre>
+</body>
+</html>

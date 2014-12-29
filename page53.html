@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 53</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page52.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 53 <a href="page54.html">Next &gt;</a></pre>
+</div>
+<pre>
+  J3, they are the values of C in the generating formulas.
+
+  Be sure to try the &lt;O&gt;rbit function while plotting these types.
+
+
+ 2.15 Barnsley IFS Fractals
+
+  (type=ifs)
+
+  One of the most remarkable spin-offs of fractal geometry is the ability
+  to "encode" realistic images in very small sets of numbers -- parameters
+  for a set of functions that map a region of two-dimensional space onto
+  itself.  In principle (and increasingly in practice), a scene of any
+  level of complexity and detail can be stored as a handful of numbers,
+  achieving amazing "compression" ratios... how about a super-VGA image of
+  a forest, more than 300,000 pixels at eight bits apiece, from a 1-KB
+  "seed" file?
+
+  Again, Michael Barnsley and his co-workers at the Georgia Institute of
+  Technology are to be thanked for pushing the development of these
+  iterated function systems (IFS).
+
+  When you select this fractal type, Fractint scans the current IFS file
+  (default is FRACTINT.IFS, a set of definitions supplied with Fractint)
+  for IFS definitions, then prompts you for the IFS name you wish to run.
+  Fern and 3dfern are good ones to start with. You can press &lt;F6&gt; at the
+  selection screen if you want to select a different .IFS file you've
+  written.
+
+  Note that some Barnsley IFS values generate images quite a bit smaller
+  than the initial (default) screen. Just bring up the zoom box, center it
+  on the small image, and hit &lt;Enter&gt; to get a full-screen image.
+
+  To change the number of dots Fractint generates for an IFS image before
+  stopping, you can change the "maximum iterations" parameter on the &lt;X&gt;
+  options screen.
+
+  Fractint supports two types of IFS images: 2D and 3D. In order to fully
+  appreciate 3D IFS images, since your monitor is presumably 2D, we have
+  added rotation, translation, and perspective capabilities. These share
+  values with the same variables used in Fractint's other 3D facilities;
+  for their meaning see "Rectangular Coordinate Transformation" (p. 111).
+  You can enter these values from the command line using:
+
+  rotation=xrot/yrot/zrot       (try 30/30/30)
+  shift=xshift/yshift           (shifts BEFORE applying perspective!)
+  perspective=viewerposition    (try 200)
+
+  Alternatively, entering &lt;I&gt; from main screen will allow you to modify
+  these values. The defaults are the same as for regular 3D, and are not
+  always optimum for 3D IFS. With the 3dfern IFS type, try
+  rotation=30/30/30. Note that applying shift when using perspective
+  changes the picture -- your "point of view" is moved.
+</pre>
+</body>
+</html>

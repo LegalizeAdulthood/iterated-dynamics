@@ -1,0 +1,62 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 88</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page87.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 88 <a href="page89.html">Next &gt;</a></pre>
+</div>
+<pre>
+  zooms, but only up to the limit of double precision. Within this narrow
+  magnification range, SOI can result in tremndous speedups. If you invoke
+  fractint with "debug=3444" on the command line, a long double (rather
+  than double) version will be used, which allows zooming about 1000 times
+  deeper. SOI really needs to be ported to fractint's arbitary precision.
+  This will likely happen only after Fractint is moved to a better
+  programming environment.
+
+
+ 3.2 Palette Maps
+
+  If you have a VGA, MCGA, Super-VGA, 8514/A, XGA, TARGA, or TARGA+ video
+  adapter, you can save and restore color palettes for use with any image.
+  To load a palette onto an existing image, use the &lt;L&gt; command in color-
+  cycling or palette-editing mode.  To save a palette, use the &lt;S&gt; command
+  in those modes.  To change the default palette for an entire run, use
+  the command line "map=" parameter.
+
+  The default filetype for color-map files is ".MAP".
+
+  These color-maps are ASCII text files set up as a series of RGB triplet
+  values (one triplet per line, encoded as the red, green, and blue [RGB]
+  components of the color).
+
+  Note that .MAP file color values are in GIF format - values go from 0
+  (low) to 255 (high), so for a VGA adapter they get divided by 4 before
+  being stuffed into the VGA's Video-DAC registers (so '6' and '7' end up
+  referring to the same color value).
+
+  Fractint is distributed with some sample .MAP files:
+     ALTERN.MAP    the famous "Peterson-Vigneau Pseudo-Grey Scale"
+     BLUES.MAP     for rainy days, by Daniel Egnor
+     CHROMA.MAP    general purpose, chromatic
+     DEFAULT.MAP   the VGA start-up values
+     FIRESTRM.MAP  general purpose, muted fire colors
+     GAMMA1.MAP and GAMMA2.MAP  Lee Crocker's response to ALTERN.MAP
+     GLASSES1.MAP  used with 3d glasses modes
+     GLASSES2.MAP  used with 3d glasses modes
+     GOODEGA.MAP   for EGA users
+     GREEN.MAP     shaded green
+     GREY.MAP      another grey variant
+     GRID.MAP      for stereo surface grid images
+     HEADACHE.MAP  major stripes, by D. Egnor (try cycling and hitting &lt;2&gt;)
+     LANDSCAP.MAP  Guruka Singh Khalsa's favorite map for plasma "landscapes"
+     NEON.MAP      a flashy map, by Daniel Egnor
+     PAINTJET.MAP  high resolution mode PaintJet colors
+     ROYAL.MAP     the royal purple, by Daniel Egnor
+     TOPO.MAP      Monte Davis's contribution to full color terrain
+     VOLCANO.MAP   an explosion of lava, by Daniel Egnor
+</pre>
+</body>
+</html>

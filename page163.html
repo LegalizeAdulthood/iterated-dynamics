@@ -1,0 +1,56 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 163</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page162.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 163 <a href="page164.html">Next &gt;</a></pre>
+</div>
+<pre>
+    will store the image in the older GIF87A format, without any fractal
+    parameters in it (so you won't be able to load the image back into
+    Fractint and zoom into it - the fractal type, coordinates, etc. are
+    not stored in this older format), and without an "aspect ratio" in the
+    GIF header (we've seen one utility which doesn't like that field.)
+
+  Disk video mode performance:
+    This won't be blindingly fast at the best of times, but there are
+    things which can slow it down and can be tuned.  See "Disk-Video"
+    Modes (p. 156) for details.
+
+  Sound card output isn't working:
+    If you get the message "FM hardware not present" when trying to switch
+    on output from your sound card then check that the drivers you
+    installed with the card have set the BLASTER environment variable. To
+    do this go to a DOS prompt and type SET, this command will list a
+    bunch of lines like this:
+    VARIABLE=VALUE
+    ANOTHERVARIABLE=ANOTHER VALUE
+
+    one of these should look like:
+    BLASTER=A:220 I:5 D:3
+    or similar, it's the A: entry that's important. If you don't have the
+    variable set then try putting the line:
+    SET BLASTER=A:220
+    in your autoexec.bat file, though be warned that if your sound
+    hardware isn't compatable or has its base i/o address set differently
+    to the 220H, then unexpected things may happen as fractint tries to
+    write to hardware that isn't there.
+
+    If you get no warning message but still can't hear anything then try
+    to alter the volume of your card's output using whatever utility came
+    with the card. For windows 95 doubleclick on the small loudspeaker
+    icon on your task bar and play with the sliders, you may have to go to
+    the mixer properties menu and enable the control for the FM output to
+    appear, this may be called 'synthesizer', 'FM', 'midi', or 'legacy'
+    depending on your hardware.  Also fractint is unlikely to be able to
+    continue sounding notes when running in the background under windows
+    95, so you'll need to keep switching back and forth until things are
+    set right.
+
+
+
+</pre>
+</body>
+</html>

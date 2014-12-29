@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 64</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page63.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 64 <a href="page65.html">Next &gt;</a></pre>
+</div>
+<pre>
+  Michael Peters has based the HOP program on variations of these Martin
+  types.  You will find three of these here: chip, quadruptwo, and
+  threeply.
+
+
+ 2.33 Icon
+
+  (type=icon/icon3d)
+
+    This fractal type was inspired by the book "Symmetry in Chaos" by
+    Michael Field and Martin Golubitsky (ISBN 0-19-853689-5, Oxford Press)
+
+    To quote from the book's jacket,
+
+      "Field and Golubitsky describe how a chaotic process eventually can
+      lead to symmetric patterns (in a river, for instance, photographs of
+      the turbulent movement of eddies, taken over time, often reveal
+      patterns on the average."
+
+    The Icon type implemented here maps the classic population logistic
+    map of bifurcation fractals onto the complex plane in Dn symmetry.
+
+    The initial points plotted are the more chaotic initial orbits, but as
+    you wait, delicate webs will begin to form as the orbits settle into a
+    more periodic pattern.  Since pixels are colored by the number of
+    times they are hit, the more periodic paths will become clarified with
+    time.  These fractals run continuously.
+
+  There are 6 parameters:  Lambda, Alpha, Beta, Gamma, Omega, and Degree
+      Omega  0 = Dn, or dihedral (rotation + reflectional) symmetry
+            !0 = Zn, or cyclic (rotational) symmetry
+      Degree = n, or Degree of symmetry
+
+
+ 2.34 Test
+
+  (type=test)
+
+  This is a stub that we (and you!) use for trying out new fractal types.
+  "Type=test" fractals make use of Fractint's structure and features for
+  whatever code is in the routine 'testpt()' (located in the small source
+  file TESTPT.C) to determine the color of a particular pixel.
+
+  If you have a favorite fractal type that you believe would fit nicely
+  into Fractint, just rewrite the C function in TESTPT.C (or use the
+  prototype function there, which is a simple M-set implementation) with
+  an algorithm that computes a color based on a point in the complex
+  plane.
+
+  After you get it working, send your code to one of the authors and we
+  might just add it to the next release of Fractint, with full credit to
+  you. Our criteria are: 1) an interesting image and 2) a formula
+  significantly different from types already supported. (Bribery may also
+  work. THIS author is completely honest, but I don't trust those other
+  guys.) Be sure to include an explanation of your algorithm and the
+  parameters supported, preferably formatted as you see here to simplify
+</pre>
+</body>
+</html>

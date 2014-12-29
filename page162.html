@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 162</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page161.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 162 <a href="page163.html">Next &gt;</a></pre>
+</div>
+<pre>
+    We've had one case where a video driver for Windows does not work
+    properly with Fractint.  If running under Windows, DesqView, or some
+    other layered environment, try running Fractint directly from DOS to
+    see if that avoids the problem.
+    We've also had one case of a problem co-existing with "386 to the
+    Max".
+
+    We've had one report of an EGA adapter which got scrambled images in
+    all modes until "textsafe=no" was used (see Video Parameters (p. 134)
+    ).
+
+    Also, see Video Adapter Notes (p. 153) for information about enhanced
+    video modes - Fractint makes only limited attempts to verify that a
+    video mode you request is actually supported by your adapter.
+
+  Other Hangs and Strange Behavior:
+    We've had some problems (hangs and solid beeps) on an FPU equipped
+    machine when running under Windows 3's enhanced mode.  The only ways
+    around the problem we can find are to either run the Fractint image
+    involved outside Windows, or to use the DOS command "SET NO87=nofpu"
+    before running Fractint.  (This SET command makes Fractint ignore your
+    fpu, so things might be a lot slower as a result.)
+
+  Insufficient memory:
+    Fractint requires a fair bit of memory to run.  Most machines with at
+    least 640k (ok sticklers, make that "PC-compatible machines") will
+    have no problem.  Machines with 512k and machines with many TSR
+    utilities and/or a LAN interface may have problems.  Some Fractint
+    features allocate memory when required during a run.  If you get a
+    message about insufficient memory, or suspect that some problem is due
+    to a memory shortage, you could try commenting out some TSR utilities
+    in your AUTOEXEC.BAT file, some non-critical drivers in your
+    CONFIG.SYS file, or reducing the BUFFERS parameter in your CONFIG.SYS.
+
+  "Cannot find FRACTINT.EXE" message:
+    Fractint is an overlayed program - some parts of it are brought from
+    disk into memory only when used.  The overlay manager needs to know
+    where to find the program.  It must be named FRACTINT.EXE (which it is
+    unless somebody renamed it), and you should either be in the directory
+    containing it when you start Fractint, or that directory should be in
+    your DOS PATH.
+
+  "File FRACTINT.CFG is missing or invalid" message:
+    You should either start Fractint while you are in the directory
+    containing it, or should have that directory in your DOS PATH
+    variable.  If that isn't the problem, maybe you have a FRACTINT.CFG
+    file from an older release of Fractint lying around? If so, best
+    rename or delete it.  If that isn't the problem either, then the
+    FRACTINT.CFG included in the FRAINT.EXE release file has probably been
+    changed or deleted. Best reinstall Fractint to get a fresh copy.
+
+  Some other program doesn't like GIF files created by Fractint:
+    Fractint generates nice clean GIF89A spec files, honest! But telling
+    this to the other program isn't likely to change its mind. Instead,
+    try an option which might get around the problem: run Fractint with
+    the command line option "gif87a=yes" and then save an image. Fractint
+</pre>
+</body>
+</html>

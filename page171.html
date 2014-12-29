@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 171</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page170.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 171 <a href="page172.html">Next &gt;</a></pre>
+</div>
+<pre>
+ Appendix A Mathematics of the Fractal Types
+
+  SUMMARY OF FRACTAL TYPES
+
+  ant (p. 79)
+      Generalized Ant Automaton as described in the July 1994 Scientific
+      American. Some ants wander around the screen. A rule string (the first
+      parameter) determines the ant's direction. When the type 1 ant leaves a
+      cell of color k, it turns right if the kth symbol in the first parameter
+      is a 1, or left otherwise. Then the color in the old cell is incremented.
+      The 2nd parameter is a maximum iteration to guarantee that the fractal
+      will terminate. The 3rd parameter is the number of ants. The 4th is the
+      ant type 1 or 2. The 5th parameter determines if the ants wrap the screen
+      or stop at the edge.  The 6th parameter is a random seed. You can slow
+      down the ants to see them better using the &lt;p&gt; screen Orbit Delay.
+
+  barnsleyj1 (p. 52)
+        z(0) = pixel;
+        if real(z) &gt;= 0
+          z(n+1) = (z-1)*c
+        else
+           z(n+1) = (z+1)*c
+      Two parameters: real and imaginary parts of c
+
+  barnsleyj2 (p. 52)
+        z(0) = pixel;
+        if real(z(n)) * imag(c) + real(c) * imag(z((n)) &gt;= 0
+           z(n+1) = (z(n)-1)*c
+        else
+           z(n+1) = (z(n)+1)*c
+      Two parameters: real and imaginary parts of c
+
+  barnsleyj3 (p. 52)
+        z(0) = pixel;
+        if real(z(n) &gt; 0 then z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1)
+           + i * (2*real(z((n)) * imag(z((n))) else
+        z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1 + real(c) * real(z(n))
+               + i * (2*real(z((n)) * imag(z((n)) + imag(c) * real(z(n))
+      Two parameters: real and imaginary parts of c.
+
+  barnsleym1 (p. 52)
+        z(0) = c = pixel;
+        if real(z) &gt;= 0 then
+          z(n+1) = (z-1)*c
+        else z(n+1) = (z+1)*c.
+      Parameters are perturbations of z(0)
+
+  barnsleym2 (p. 52)
+        z(0) = c = pixel;
+        if real(z)*imag(c) + real(c)*imag(z) &gt;= 0
+          z(n+1) = (z-1)*c
+        else
+          z(n+1) = (z+1)*c
+      Parameters are perturbations of z(0)
+</pre>
+</body>
+</html>

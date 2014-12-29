@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 71</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page70.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 71 <a href="page72.html">Next &gt;</a></pre>
+</div>
+<pre>
+  The formulae are a bit more complicated than the Z^2+C used for the
+  Mandelbrot Set, that's all.  They are :
+
+                    [               ] 2
+                    |  Z^2 + (C-1)  |
+          MAGNET1 : | ------------- |
+                    |  2*Z + (C-2)  |
+                    [               ]
+
+                    [                                         ] 2
+                    |      Z^3 + 3*(C-1)*Z + (C-1)*(C-2)      |
+          MAGNET2 : | --------------------------------------- |
+                    |  3*(Z^2) + 3*(C-2)*Z + (C-1)*(C-2) + 1  |
+                    [                                         ]
+
+  These aren't quite as horrific as they look (oh yeah ?!) as they only
+  involve two variables (Z and C), but cubing things, doing division, and
+  eventually squaring the result (all in Complex Numbers) don't exactly
+  spell S-p-e-e-d !  These are NOT the fastest fractals in Fractint !
+
+  As you might expect, for both formulae there is a single related
+  Mandelbrot-type set (magnet1m, magnet2m) and an infinite number of
+  related Julia-type sets (magnet1j, magnet2j), with the usual toggle
+  between the corresponding Ms and Js via the spacebar.
+
+  If you fancy delving into the Julia-types by hand, you will be prompted
+  for the Real and Imaginary parts of the parameter denoted by C.  The
+  result is symmetrical about the Real axis (and therefore the initial
+  image gets drawn in half the usual time) if you specify a value of Zero
+  for the Imaginary part of C.
+
+  Fractint Historical Note:  Another complication (besides the formulae)
+  in implementing these fractal types was that they all have a finite
+  attractor (1.0 + 0.0i), as well as the usual one (Infinity).  This fact
+  spurred the development of Finite Attractor logic in Fractint.  Without
+  this code you can still generate these fractals, but you usually end up
+  with a pretty boring image that is mostly deep blue "lake", courtesy of
+  Fractint's standard Periodicity Logic (p. 166).  See Finite Attractors
+  (p. 185) for more information on this aspect of Fractint internals.
+
+  (Thanks to Kevin Allen for Magnetic type documentation above).
+
+
+ 2.39 L-Systems
+
+  (type=lsystem)
+
+  These fractals are constructed from line segments using rules specified
+  in drawing commands.  Starting with an initial string, the axiom,
+  transformation rules are applied a specified number of times, to produce
+  the final command string which is used to draw the image.
+
+  Like the type=formula fractals, this type requires a separate data file.
+  A sample file, FRACTINT.L, is included with this distribution.  When you
+  select type lsystem, the current lsystem file is read and you are asked
+  for the lsystem name you wish to run. Press &lt;F6&gt; at this point if you
+</pre>
+</body>
+</html>

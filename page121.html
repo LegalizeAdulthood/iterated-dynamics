@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 121</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page120.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 121 <a href="page122.html">Next &gt;</a></pre>
+</div>
+<pre>
+    [fractint]
+    sound=off      ; (for home use only)
+    printer=hp     ; my printer is a LaserJet
+    inside=0       ; using "traditional" black
+    [startrek]
+    warp=9.5       ; Captain, I dinna think the engines can take it!
+
+  Fractint will use only the second, third, and fourth lines of the file.
+  (Why use a convention like that when Fractint is the only program you
+  know of that uses an SSTOOLS.INI file?  Because there are other programs
+  (such as Lee Crocker's PICLAB) that now use the same file, and there may
+  one day be other, sister programs to Fractint using that file.)
+
+
+ 5.3 Parameter Files and the &lt;@&gt; Command
+
+  You can change parameters on-the-fly while running Fractint by using the
+  &lt;@&gt; or &lt;2&gt; command and a parameter file. Parameter files contain named
+  groups of parameters, looking something like this:
+
+    quickdraw {      ; a set of parameters named quickdraw
+       maxiter=150
+       float=no
+       }
+    slowdraw {       ; another set of parameters
+       maxiter=2000
+       float=yes
+       }
+
+  If you use the &lt;@&gt; or &lt;2&gt; command and select a parameter file containing
+  the above example, Fractint will show two choices: quickdraw and
+  slowdraw. You move the cursor to highlight one of the choices and press
+  &lt;Enter&gt; to set the parameters specified in the file by that choice.
+
+  The default parameter file name is FRACTINT.PAR. A different file can be
+  selected with the "parmfile=" option, or by using &lt;@&gt; or &lt;2&gt; and then
+  hitting &lt;F6&gt;.
+
+  You can create parameter files with a text editor, or for some uses, by
+  using the &lt;B&gt; command. Parameter files can be used in a number of ways,
+  some examples:
+
+    o To save the parameters for a favorite image. Fractint can do this
+      for you with the &lt;B&gt; command.
+
+    o To save favorite sets of 3D transformation parameters. Fractint can
+      do this for you with the &lt;B&gt; command.
+
+    o To set up different sets of parameters you use occasionally. For
+      instance, if you have two printers, you might want to set up a group
+      of parameters describing each.
+
+    o To save image parameters for later use in batch mode - see Batch
+      Mode (p. 148).
+</pre>
+</body>
+</html>

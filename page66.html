@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 66</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page65.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 66 <a href="page67.html">Next &gt;</a></pre>
+</div>
+<pre>
+      ELSE
+        statements
+      ENDIF
+
+  where the expressions are evaluated and the statements executed are
+  those
+  immediately following the first "true" expression (the real part of the
+  complex variable being nonzero). Nesting of IF..ENDIF blocks is
+  permitted.
+
+            Predefined Variables (x, y)
+            --------------------------------------------
+            z          used for periodicity checking
+            p1         parameters 1 and 2
+            p2         parameters 3 and 4
+            p3         parameters 5 and 6
+            p4         parameters 7 and 8
+            p5         parameters 9 and 10
+            pixel      complex coordinates
+            LastSqr    Modulus from the last sqr() function
+            rand       Complex random number
+            pi         (3.14159..., 0.0)
+            e          (2.71828..., 0.0)
+            maxit      (maxit, 0) maximum iterations
+            scrnmax    (xdots, ydots) max horizontal/vertical resolution.
+                       e.g. for SF7 scrnmax = (1024,768)
+            scrnpix    (col, row) pixel screen coordinates. (col, row) ranges
+                       from (0,0) to (xdots-1, ydots-1)
+            whitesq    ((col+row) modulo 2, 0) i.e. thinking of the screen
+                       coordinates as a large checker board, whitesq is (1,0)
+                       for the white squares and (0,0) for the black ones.
+            Predefined Variables (Continued)
+            --------------------------------------------
+            ismand     1 (true) by default, changes to 0 when the Mandelbrot/
+                       Julia SPACE toggle is pressed. This allows writing
+                       formulas that have both "Mandelbrot" and "Julia" behavior.
+            center     Zoom box (Xcenter,  Ycenter)    (see center-mag (p. 126))
+            magxmag    Zoom box (Mag,      Xmagnitude) (see center-mag (p. 126))
+            rotskew    Zoom box (Rotation, Skew)       (see center-mag (p. 126))
+
+            Precedence
+            --------------------------------------------
+            1          sin(), cos(), sinh(), cosh(), cosxx(), tan(), cotan(),
+                       tanh(), cotanh(), sqr(), log(), exp(), abs(), conj(),
+                       real(), imag(), flip(), fn1(), fn2(), fn3(), fn4(),
+                       srand(), asin(), asinh(), acos(), acosh(), atan(),
+                       atanh(), sqrt(), cabs(), floor(), ceil(), trunc(),
+                       round()
+            2          - (negation), ^ (power)
+            3          * (multiplication), / (division)
+            4          + (addition), - (subtraction)
+            5          = (assignment)
+            Precedence (Continued)
+            --------------------------------------------
+            6          &lt; (less than), &lt;= (less than or equal to)
+                       &gt; (greater than), &gt;= (greater than or equal to)
+</pre>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 158</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page157.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 158 <a href="page159.html">Next &gt;</a></pre>
+</div>
+<pre>
+  7. An encoded value describing how to write to your video memory in that
+     mode. Currently available codes are:
+    1) Use the BIOS (INT 10H, AH=12/13, AL=color) (last resort - SLOW!)
+    2) Pretend it's a (perhaps super-res) EGA/VGA
+    3) Pretend it's an MCGA
+    4) SuperVGA 256-Color mode using the Tseng Labs chipset
+    5) SuperVGA 256-Color mode using the Paradise chipset
+    6) SuperVGA 256-Color mode using the Video-7 chipset
+    7) Non-Standard IBM VGA 360 x 480 x 256-Color mode
+    8) SuperVGA 1024x768x16 mode for the Everex chipset
+    9) TARGA video modes
+   10) HERCULES video mode
+   11) Non-Video, i.e. "disk-video"
+   12) 8514/A video modes
+   13) CGA 320x200x4-color and 640x200x2-color modes
+   14) Reserved for Tandy 1000 video modes
+   15) SuperVGA 256-Color mode using the Trident chipset
+   16) SuperVGA 256-Color mode using the Chips &amp; Tech chipset
+   17) SuperVGA 256-Color mode using the ATI VGA Wonder chipset
+   18) SuperVGA 256-Color mode using the EVEREX chipset
+   19) Roll-your-own video mode (as you've defined it in YOURVID.C)
+   20) SuperVGA 1024x768x16 mode for the ATI VGA Wonder chipset
+   21) SuperVGA 1024x768x16 mode for the Tseng Labs chipset
+   22) SuperVGA 1024x768x16 mode for the Trident chipset
+   23) SuperVGA 1024x768x16 mode for the Video 7 chipset
+   24) SuperVGA 1024x768x16 mode for the Paradise chipset
+   25) SuperVGA 1024x768x16 mode for the Chips &amp; Tech chipset
+   26) SuperVGA 1024x768x16 mode for the Everex Chipset
+   27) SuperVGA Auto-Detect mode (we poke around looking for your adapter)
+   28) VESA modes
+   29) True Color Auto-Detect (currently only Targa+ supported)
+  Add 100, 200, 300, or 400 to this code to specify an over-ride "textsafe="
+   option to be used with the mode.  100=yes, 200=no, 300=bios, 400=save.
+   E.g. 428 for a VESA mode with textsafe=save forced.
+  8. The number of pixels across the screen (X - 2 to 2048)
+  9. The number of pixels down the screen (Y - 2 to 2048)
+  10. The number of available colors (2, 4, 16, or 256)
+  11. A comment describing the mode (25 chars max, leading blanks are OK)
+
+  NOTE that the AX, BX, CX, and DX fields use hexadecimal notation
+  (fifteen ==&gt; 'f', sixteen ==&gt; '10'), because that's the way most adapter
+  documentation describes it. The other fields use standard decimal
+  notation.
+
+  If you look closely at the default entries, you will notice that the IBM
+  VGA entries labeled "tweaked" and "non standard" have entries in the
+  table with AX = BX = CX = 0, and DX = some other number. Those are
+  special flags that we used to tell the program to custom-program the VGA
+  adapter, and are NOT undocumented BIOS calls. Maybe they should be, but
+  they aren't.
+
+  If you have a fancy adapter and a new video mode that works on it, and
+  it is not currently supported, PLEASE GET THAT INFORMATION TO US!  We
+  will add the video mode to the list on our next release, and give you
+  credit for it. Which brings up another point: If you can confirm that a
+  particular video adapter/mode works (or that it doesn't), and the
+</pre>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 111</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page110.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 111 <a href="page112.html">Next &gt;</a></pre>
+</div>
+<pre>
+  When you look at an image with both eyes, each eye sees the image in
+  slightly different perspective because they see it from different
+  places.
+
+  The first selection you must make is ocular separation, the distance the
+  between the viewers eyes. This is measured as a % of screen and is an
+  important factor in setting the position of the final stereo image in
+  front of or behind the CRT Screen.
+
+  The second selection is convergence, also as a % of screen. This tends
+  to move the image forward and back to set where it floats. More positive
+  values move the image towards the viewer. The value of this parameter
+  needs to be set in conjunction with the setting of ocular separation and
+  the perspective distance. It directly adjusts the overall separation of
+  the two stereo images. Beginning anaglyphers love to create images
+  floating mystically in front of the screen, but grizzled old 3D veterans
+  look upon such antics with disdain, and believe the image should be
+  safely inside the monitor where it belongs!
+
+  Left and Right Red and Blue image crop (% of screen also) help keep the
+  visible part of the right image the same as the visible part of the left
+  by cropping them. If there is too much in the field of either eye that
+  the other doesn't see, the stereo effect can be ruined.
+
+  Red and Blue brightness factor. The generally available red/blue-green
+  glasses, made for viewing on ink on paper and not the light from a CRT,
+  let in more red light in the blue-green lens than we would like. This
+  leaves a ghost of the red image on the blue-green image (definitely not
+  desired in stereo images). We have countered this by adjusting the
+  intensity of the red and blue values on the CRT. In general you should
+  not have to adjust this.
+
+  The final entry is Map file name (present only if stereo=1 or stereo=2
+  was selected).  If you have a special map file you want to use for
+  Stereo 3D this is the place to enter its name. Generally glasses1.map is
+  for type 1 (alternating pixels), and glasses2.map is for type 2
+  (superimposed pixels). Grid.map is great for wire-frame images using 16
+  color modes.
+
+  This screen is not available if you have selected a ray tracing option.
+
+
+ 4.4 Rectangular Coordinate Transformation
+
+  The first entries are rotation values around the X, Y, and Z axes. Think
+  of your starting image as a flat map: the X value tilts the bottom of
+  your monitor towards you by X degrees, the Y value pulls the left side
+  of the monitor towards you, and the Z value spins it counter-clockwise.
+  Note that these are NOT independent rotations: the image is rotated
+  first along the X-axis, then along the Y-axis, and finally along the Z-
+  axis. Those are YOUR axes, not those of your (by now hopelessly skewed)
+  monitor. All rotations actually occur through the center of the original
+  image. Rotation parameters are not used when a ray tracing option has
+  been selected.
+</pre>
+</body>
+</html>

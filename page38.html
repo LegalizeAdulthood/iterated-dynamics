@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 38</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page37.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 38 <a href="page39.html">Next &gt;</a></pre>
+</div>
+<pre>
+  Esc backs out of image selecting mode.
+
+  The browser can now use expanded memory or extended memory.  If you have
+  more than 4 MB of expanded/extended memory available, you can use
+  either.  If you don't have 4 MB of expanded/extended memory available,
+  use expanded memory as it will allocate as much as possible.  The
+  extended memory support will silently fail and default to the use of far
+  memory if 4 MB of extended memory is not available.
+
+  Here's a tip on how to zoom out beyond your starting point when
+  browsing: Suppose you restore a fractal deeply-zoomed down in a
+  directory of related zoomed images, and then bring up the browser.  How
+  do you zoom out? You can't use "\" because you started with the zoomed
+  image, and there is no browser command to detect the next outer image.
+  What you can do is exit the browser, press PgUp until the zoom box won't
+  get any smaller, zoom out with Ctrl-Enter, and before any image starts
+  to develop, call up the browser again, locate your zoomed image that you
+  started with, and see if there is another image that contains it - if
+  so, restore it with the browser.  You can also use a view window &lt;v&gt; to
+  load the first image, and then use the browser.
+
+  POSSIBLE ERRORS:
+
+  "Sorry..I can't find anything"
+  The browser can't locate any files which match the file name mask.  See
+  Browser Parameters (p. 149)  This is also displayed if you have less
+  than 10K of far memory free when you run Fractint.
+
+  "Sorry....  no more space"
+  At the moment the browser can only cope with 450 sub images at one time.
+  Any subsequent images are ignored.  Make sure that the minimum image
+  size isn't set too small on the parameters screen.
+
+  "Sorry .... out of memory"
+  The browser has run out of far, expanded, or extended memory in which to
+  store the pixels covered by the sub image boxes.  Try again with the
+  main image at lower resolution, and/or reduce the number of TSRs
+  resident in memory when you start Fractint.  Make sure you have expanded
+  or extended memory available.
+
+  "Sorry...it's a read only file, can't del &lt;filename&gt;"
+  "Sorry....can't rename"
+  The file which you were trying to delete or rename has the read only
+  attribute set, you'll need to reset this with your operating system
+  before you can get rid of it.
+
+
+ 1.15 Evolver Commands
+
+     PageUp          When no Zoom Box is active, brings one up.
+                     When Zoom Box is active already, shrinks it.
+     PageDown        Expands the Zoom Box.
+                     Expanding past the screen size cancels the Zoom Box.
+     Arrow key       Pans (Moves) the Zoom Box.
+     Ctrl-Arrow key  Moves the Zoom Box to the next subimage.
+     Enter           Redraws the Screen or area inside the Zoom Box.
+</pre>
+</body>
+</html>

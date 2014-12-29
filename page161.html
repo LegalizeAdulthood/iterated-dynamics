@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 161</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page160.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 161 <a href="page162.html">Next &gt;</a></pre>
+</div>
+<pre>
+    Having more than 8M of RAM helps too, that way Windows and FractInt
+    aren't fighting over the same memory.
+
+  Hang during startup:
+    There might be a problem with Fractint's video detection logic and
+    your particular video adapter. Try running with "fractint adapter=xxx"
+    where xxx is cga, ega, egamono, mcga, or vga.  If "adapter=vga" works,
+    and you really have a SuperVGA adapter capable of higher video modes,
+    there are other "adapter=" options for a number of SuperVGA chipsets -
+    please see the full selection in Video Parameters (p. 134) for
+    details.  If this solves the problem, create an SSTOOLS.INI file with
+    the "adapter=xxx" command in it so that the fix will apply to every
+    run.
+    Another possible cause:  If you install the latest Fractint in say
+    directory "newfrac", then run it from another directory with the
+    command "\newfrac\fractint", *and* you have an older version of
+    fractint.exe somewhere in your DOS PATH, a silent hang is all you'll
+    get.  See the notes under the "Cannot find FRACTINT.EXE message"
+    problem for the reason.
+    Another possibility: try one of the "textsafe" parameter choices
+    described in Video Parameters (p. 134).
+
+  Scrambled image when returning from a text mode display:
+    If an image which has been partly or completely generated gets partly
+    destroyed when you return to it from the menu, help, or the
+    information display, please try the various "textsafe" parameter
+    options - see Video Parameters (p. 134) for details.  If this cures
+    the problem, create an SSTOOLS.INI file with the "textsafe=xxx"
+    command so that the fix will apply to every run.
+
+  "Holes" in an image while it is being drawn:
+    Little squares colored in your "inside" color, in a pattern of every
+    second square of that size, in solid guessing mode, both across and
+    down (i.e., 1 out of 4), are a symptom of an image which should be
+    calculated with more conservative periodicity checking than the
+    default.  See the Periodicity parameter under Image Calculation
+    Parameters (p. 126).
+
+  Black bar at top of screen during color cycling on 8086/8088 machines:
+    (This might happen intermittently, not every run.)
+    "fractint cyclelimit=10" might cure the problem.  If so, increase the
+    cyclelimit value (try increasing by 5 or 10 each time) until the
+    problem reappears, then back off one step and add that cyclelimit
+    value to your SSTOOLS.INI file.
+
+  Other video problems:
+
+    If you are using a VESA driver with your video adapter, the first
+    thing to try is the "vesadetect=no" parameter. If that fixes the
+    problem, add it to your SSTOOLS.INI file to make the fix permanent.
+
+    It may help to explicitly specify your type of adapter - see the
+    "adapter=" parameter in Video Parameters (p. 134).
+</pre>
+</body>
+</html>

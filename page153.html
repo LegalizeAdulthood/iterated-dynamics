@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 153</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page152.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 153 <a href="page154.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 6. Hardware Support
+
+
+ 6.1 Notes on Video Modes, "Standard" and Otherwise
+
+  Alas, in this day of Windows, video adapter manufacturers do not have
+  much incentive to support DOS video modes. Fractint can support any
+  video modes included in your board's VESA video bios. Many otherwise
+  good boards do not include the higher resolution modes in their bios
+  even though those modes are supported in the manufacturer's Windows
+  driver.
+
+  Fractint users are particularly fond of the 1600x1200 mode. If you want
+  to use this mode, make sure your video board supports it. Some boards
+  that have given good results are boards from STB, various versions of
+  Matrox Millennium, and boards from several manufacturers using Nvidia
+  Riva chip sets.
+
+  Using high resolution video modes poses a second challenge for fractint
+  users.  That is that the VESA standard does not have standard settings
+  for this mode, so you will have to edit the fractint.cfg file to support
+  your board. You can run the program makefcfg.exe that comes with
+  fractint to generate entries for your fractint.cfg file.
+
+  Finally, even if your video board VESA Bios supports high resolution
+  video modes, it probably doesn't come with a utility that allows you to
+  set the vertical refresh. If the vertical refresh is set for 60 Hz or
+  less, you may see flicker and be subject to headaches. Fortunately,
+  there is a wonderful freeware utility by Rob Muller that allows you to
+  control the vertical refresh for any VESA video mode. Of course your
+  monitor still needs to be able to support higher rates -- software can't
+  help that. To get Rob's unirefresh program, email Rob at
+  r.muller@student.utwente.nl or check out
+
+     http://home.student.utwente.nl/r.muller/unirefresh
+
+  True to the spirit of public-domain programming, Fractint makes only a
+  limited attempt to verify that your video adapter can run in the mode
+  you specify, or even that an adapter is present, before writing to it.
+  So if you use the "video=" command line parameter, check it before using
+  a new version of Fractint - the old key combo may now call an
+  ultraviolet holographic mode.
+
+  EGA
+
+  Fractint assumes that every EGA adapter has a full 256K of memory (and
+  can therefore display 640 x 350 x 16 colors), but does nothing to verify
+  that fact before slinging pixels.
+
+  "TWEAKED" VGA MODES
+
+  The IBM VGA adapter is a highly programmable device, and can be set up
+  to display many video-mode combinations beyond those "officially"
+  supported by the IBM BIOS. E.g. 320x400x256 and 360x480x256 (the latter
+  is one of our favorites).  These video modes are perfectly legal, but
+  temporarily reprogram the adapter (IBM or fully register-compatible) in
+</pre>
+</body>
+</html>

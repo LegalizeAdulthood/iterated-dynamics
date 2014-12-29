@@ -1,0 +1,62 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 49</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page48.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 49 <a href="page50.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.8 Lambda Sets
+
+  (type=lambda)
+
+  This type calculates the Julia set of the formula lambda*Z*(1-Z). That
+  is, the value Z[0] is initialized with the value corresponding to each
+  pixel position, and the formula iterated. The pixel is colored according
+  to the iteration when the sum of the squares of the real and imaginary
+  parts exceeds 4.
+
+  Two parameters, the real and imaginary parts of lambda, are required.
+  Try 0 and 1 to see the classical fractal "dragon". Then try 0.2 and 1
+  for a lot more detail to zoom in on.
+
+  It turns out that all quadratic Julia-type sets can be calculated using
+  just the formula z^2+c (the "classic" Julia"), so that this type is
+  redundant, but we include it for reason of it's prominence in the
+  history of fractals.
+
+
+ 2.9 Mandellambda Sets
+
+  (type=mandellambda)
+
+  This type is the "Mandelbrot equivalent" of the lambda (p. 49) set.  A
+  comment is in order here. Almost all the Fractint "Mandelbrot" sets are
+  created from orbits generated using formulas like z(n+1) = f(z(n),C),
+  with z(0) and C initialized to the complex value corresponding to the
+  current pixel. Our reasoning was that "Mandelbrots" are maps of the
+  corresponding "Julias".  Using this scheme each pixel of a "Mandelbrot"
+  is colored the same as the Julia set corresponding to that pixel.
+  However, Kevin Allen informs us that the MANDELLAMBDA set appears in the
+  literature with z(0) initialized to a critical point (a point where the
+  derivative of the formula is zero), which in this case happens to be the
+  point (.5,0). Since Kevin knows more about Dr. Mandelbrot than we do,
+  and Dr. Mandelbrot knows more about fractals than we do, we defer!
+  Starting with version 14 Fractint calculates MANDELAMBDA Dr.
+  Mandelbrot's way instead of our way. But ALL THE OTHER "Mandelbrot" sets
+  in Fractint are still calculated OUR way!  (Fortunately for us, for the
+  classic Mandelbrot Set these two methods are the same!)
+
+  Well now, folks, apart from questions of faithfulness to fractals named
+  in the literature (which we DO take seriously!), if a formula makes a
+  beautiful fractal, it is not wrong. In fact some of the best fractals in
+  Fractint are the results of mistakes! Nevertheless, thanks to Kevin for
+  keeping us accurate!
+
+  (See description of "initorbit=" command in Image Calculation Parameters
+  (p. 126) for a way to experiment with different orbit intializations).
+</pre>
+</body>
+</html>

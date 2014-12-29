@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 75</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page74.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 75 <a href="page76.html">Next &gt;</a></pre>
+</div>
+<pre>
+  The julia(fn||fn) type calculates the Julia set of the formula fn(Z)+C,
+  for various values of the function "fn", where C and Z are both complex.
+  Two values, the real and imaginary parts of C, should be given in the
+  "params=" option.  The third value is the shift value.  The space bar
+  will generate the corresponding mandelbrot set, mandel(fn||fn).
+
+  The mandel(fn||fn) type calculates the Mandelbrot set of the formula
+  fn(Z)+C, for various values of the function "fn", where C and Z are both
+  complex.  Two values, the real and imaginary parts of Z(0), should be
+  given in the "params=" option.  The third value is the shift value.  The
+  space bar will generate the corresponding julia set, julia(fn||fn).
+
+
+ 2.42 Halley
+
+  (type=halley)
+
+  The Halley map is an algorithm used to find the roots of polynomial
+  equations by successive "guesses" that converge on the correct value as
+  you feed the results of each approximation back into the formula. It
+  works very well -- unless you are unlucky enough to pick a value that is
+  on a line BETWEEN two actual roots. In that case, the sequence explodes
+  into chaos, with results that diverge more and more wildly as you
+  continue the iteration.
+
+  This fractal type shows the results for the polynomial Z(Z^a - 1), which
+  has a+1 roots in the complex plane. Use the &lt;T&gt;ype command and enter
+  "halley" in response to the prompt. You will be asked for a parameter,
+  the "order" of the equation (an integer from 2 through 10 -- 2 for Z(Z^2
+  - 1), 7 for Z(Z^7 - 1), etc.). A second parameter is the relaxation
+  coefficient, and is used to control the convergence stability. A number
+  greater than one increases the chaotic behavior and a number less than
+  one decreases the chaotic behavior. The third parameter is the value
+  used to determine when the formula has converged. The test for
+  convergence is ||Z(n+1)|^2 - |Z(n)|^2| &lt; epsilon. This convergence test
+  produces the whisker-like projections which generally point to a root.
+
+
+ 2.43 Dynamic System
+
+  (type=dynamic, dynamic2)
+
+  These fractals are based on a cyclic system of differential equations:
+           x'(t) = -f(y(t))
+           y'(t) = f(x(t))
+  These equations are approximated by using a small time step dt, forming
+  a time-discrete dynamic system:
+           x(n+1) = x(n) - dt*f(y(n))
+           y(n+1) = y(n) + dt*f(x(n))
+  The initial values x(0) and y(0) are set to various points in the plane,
+  the dynamic system is iterated, and the resulting orbit points are
+  plotted.
+
+  In fractint, the function f is restricted to: f(k) = sin(k + a*fn1(b*k))
+  The parameters are the spacing of the initial points, the time step dt,
+  and the parameters (a,b,fn1) that affect the function f.  Normally the
+</pre>
+</body>
+</html>

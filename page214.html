@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 214</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page213.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 214 <a href="page215.html">Next &gt;</a></pre>
+</div>
+<pre>
+  Added better math function error trapping for the formula parser. This
+    can change the rendering of some PAR files using type=formula. If
+    reset=1920 is included in the PAR file, the new error trapping is
+    disabled.
+
+  Fixed an old, rare, but nasty bug that stripped trailing zeros from the
+    exponents of floating point numbers written to PAR files.
+
+  Ctrl-ins and Ctrl-Del now change the browser frame colors.
+
+  Fixed bug that occurred when writing PAR files containing a video= line
+    with a four character video mode.
+
+  Added batch facility to copy fractal information and color in GIFs to
+    PAR format.
+
+  Added current column to the &lt;tab&gt; screen.
+
+  Removed support for reading Targa files.
+
+  Added backwards compatibility for the fractal type fn(z*z).
+
+  Added support for expanded and extended memory to the browser.  Use
+    expanded memory if you don't have at least 4 MB of extended memory.
+
+  Added pi and e to constants that the formula parser recognizes.  Fixed
+    parser so that constants are recognized correctly.
+
+  Added docs for freestyle mode in the colour editor.
+
+  Fixed bug involving comments between formula entries.
+
+  Allow renaming Fractint.exe without losing access to fractint's help
+  files.
+
+  Center-mag is now the default method for storing coordinates in PAR
+  files.
+
+  Increased limit on number of operations in a formula entry from 250 to
+    over 2000. In most cases memory use is actually less than before
+    because of use of existing memory arrays.
+
+  Fixed a bug that caused the image to regenerate when the &lt;y&gt; screen was
+    accessed, but nothing was changed (or color cycle range was changed).
+
+  Fixed a bug that caused saved partial images that used logmap to use the
+    incorrect logmap routine when restored (GIFs &amp; PARs).
+
+  Made the solid guessing stop pass parameter save to GIFs and PARS.
+
+  Added truecolor=yes command. This causes the iterations for each point
+    to be written to a 24-bit Targa truecolor file called iterates.tga.
+    Maxiter is also written to the file. This allows a simple outboard
+    program to assign truecolors to iterations. Passes=1 is forced, but
+    symmetry works.  (This function may go away in the future when real
+    truecolor support is implemented.)
+</pre>
+</body>
+</html>

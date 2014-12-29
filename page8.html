@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 8</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page7.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 8 <a href="page9.html">Next &gt;</a></pre>
+</div>
+<pre>
+    Fixed evolver parameter entry.
+
+    Fixed hypercomplex fractal type to turn off symmetry when a cj
+    parameter is used.
+
+    Fixed the plasma type to show the value of the parameter that is
+    actually used in the image generation.
+
+    Fixed the plasma type so that a parameter file uses the colors
+    included in the parameter entry instead of the default colors.
+
+    Revised the plasma type prompt to reflect the values that can actually
+    be used.
+
+    Increased the Lsystem line length from 160 characters to 255
+    characters.
+
+    Fixed the browser so that it recognized the fractal type stored in
+    images.
+
+    Fixed the Xfractint FPUcplxdiv and FPUcplxlog routines in fpu087.c to
+    match the Fractint assembler code.
+
+    Modified the Xfractint resume code to remove the Xfractint specific
+    sections since they are no longer needed (gcc macros match MSC
+    macros).
+
+  Patch 5
+  Made changes to allow Xfractint to find files that use upper case
+  letters.
+
+    Fixed a problem with the Cellular type that prevented entering an
+    initial row of greater than 32767 from working.  Added a message about
+    not being able to resume after interrupting prior to rows being
+    displayed on screen.
+
+    Fixed an evolver bug which caused setting evolver parameters to turn
+    evolving on, even though evolving was actually turned off.
+
+    Added Charlie Chernohorsky's truecolor speed up and his implementation
+    of virtual screen sizes for the VESA modes (dotmode=28).  This feature
+    does not work consistently between different video cards, so it may be
+    turned off by using the startup command "virtual=n".  Use the &lt;V&gt;
+    screen to set the desired virtual screen size.  See View Window
+    (p. 34).  Please remember that if either X or Y is greater than 2048,
+    solid guessing is turned off.  This is for multiple reasons, so it is
+    likely it will NOT get fixed soon.  There is also a problem with the
+    colorbars that appear when saving an image leaving bits of corruption
+    on the screen.  This occurs in all the VESA truecolor modes.
+
+    Added Charlie to the scrolling list of contributors.
+
+    Added Charlie's fix for the l-system type which occurred when a push-
+    pop combination was on two different lines.
+</pre>
+</body>
+</html>

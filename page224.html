@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 224</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page223.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 224 <a href="page225.html">Next &gt;</a></pre>
+</div>
+<pre>
+   Debugflag=10000 now reports video chipset in use as well as CPU/FPU
+   type and available memory
+
+   Added 6 additional parameters for params= for those fractal types that
+   need them.
+
+   New 'matherr()' logic lets Fractint get more aggressive when these
+   errors happen.
+
+   New autologmap option (log=+-2) from Robin Bussell that ensures that
+   all palette values are used by searching the screen border for the
+   lowest value and then setting log= to +- that color.
+
+   Two new diffusion options - falling and square cavity.
+
+   Three new Editpal commands: '!', '@' and '#' commands (that's &lt;shift-
+   1&gt;, &lt;shift-2&gt;, and &lt;shift-3&gt;) to swap R&lt;-&gt;G, G&lt;-&gt;B, R&lt;-&gt;B.
+
+   Parameter files now use a slightly shorter maximum line length, making
+   them a bit more readable when stuffed into messages on CompuServe.
+
+   Plasma now has 16-bit .POT output for use with Ray tracers. The "old"
+   algorithm has been modified so that the plasma effect is independent of
+   resolution.
+
+   Slight modification to the Raytrace code to make it compatible with
+   Rayshade 4.0 patch level 6.
+
+   Improved boundary-tracing logic from Wesley Loewer.
+
+   Command-line parameters can now be entered on-the-fly using the &lt;g&gt; key
+   thanks to Ken Shirriff.
+
+   Dithered gif images can now be loaded onto a b/w display.  Thanks to
+   Ken Shirriff.
+
+   Pictures can now be output as compressed PostScript.  Thanks to Ken
+   Shirriff.
+
+   Periodicity is a new inside coloring option.  Thanks to Ken Shirriff.
+
+   Fixes: symmetry values for the SQR functions, bailout for the floating-
+   pt versions of 'lambdafn' and 'mandelfn' fractals from Jonathan Osuch.
+
+   "Flip", "conj" operators are now selectable in the parser
+
+   New DXF Raytracing option from Dennis Bragg.
+
+   Improved boundary-tracing logic from Wesley Loewer.
+
+   New MSC7-style overlay structure is used if MAKEFRAC.BAT specifies
+   MSC7.  (with new FRACTINT.DEF and FRACTINT.LNK files for MSC7 users).
+   Several modules have been re-organized to take advantage of this new
+   overlay capability if compiled under MSC7.
+</pre>
+</body>
+</html>

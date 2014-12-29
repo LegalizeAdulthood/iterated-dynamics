@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 144</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page143.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 144 <a href="page145.html">Next &gt;</a></pre>
+</div>
+<pre>
+  These are the only three used when colorps=no. When color PS printing is
+  being used, the other nine options specify the red, green, then blue
+  screens. A negative number in any of these places will cause it to use
+  the previous (or default) value for that parameter. NOTE: Especially
+  when using color, the built-in screens in the printer's ROM may be the
+  best choice for printing.
+
+  The default values are as follows:
+  halftone=45/45/1/45/75/1/45/15/1/45/0/1 and these will be used if
+  Fractint's halftone is chosen over the printer's built-in screen.
+
+  Current halftone styles:
+      0 Dot
+      1 Dot (Smoother)
+      2 Dot (Inverted)
+      3 Ring (Black)
+      4 Ring (White)
+      5 Triangle (Right)
+      6 Triangle (Isosceles)
+      7 Grid
+      8 Diamond
+      9 Line
+     10 Microwaves
+     11 Ellipse
+     12 Rounded Box
+     13 Custom
+     14 Star
+     15 Random
+     16 Line (slightly different)
+
+  A note on device-resolution black and white printing
+  ----------------------------------------------------
+
+  This mode of printing can now be done much more quickly, and takes a lot
+  less file space. Just set EPSF=0 PRINTER=PSx/nnn COLORPS=NO RLEPS=YES
+  TRANSLATE=m, where x is P or L for portrait/landscape, nnn is your
+  printer's resolution, m is 2 or -2 for positive or negative printing
+  respectively. This combination of parameters will print exactly one
+  printer pixel per each image pixel and it will keep the proportions of
+  the picture, if both your screen and printer have square pixels (or the
+  same pixel-aspect). Choose a proper (read large) window size to fill as
+  much of the paper as possible for the most spectacular results.  2048 by
+  2048 is barely enough to fill the width of a letter size page with 300
+  dpi printer resolution.  For higher resolution printers, you can use
+  fractint's new larger disk video sizes, up to 32k x 32k.
+
+  A word from the author (Scott Taylor)
+  -------------------------------------
+
+  Color PostScript printing is new to me. I don't even have a color
+  printer to test it on. (Don't want money. Want a Color PostScript
+  printer!) The initial tests seem to have worked. I am still testing and
+  don't know whether or not some sort of gamma correction will be needed.
+  I'll have to wait and see about that one.
+</pre>
+</body>
+</html>

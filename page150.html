@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Iterated Dynamics: Page 150</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="page149.html">&lt; Prev</a>           Iterated Dynamics Version 1.0          Page 150 <a href="page151.html">Next &gt;</a></pre>
+</div>
+<pre>
+  "Smallest window"
+  This parameter determines how small the image would have to be onscreen
+  before the browser decides not to include it in the selection of files.
+  The size is entered in decimal pixels so, for instance, this could be
+  set to 0.2 to allow images that are up to around three maximum zooms
+  away (depending on the current video resolution) to be loaded instantly.
+  Set this to 0 to enable all sub images to be detected.  This can lead to
+  a very cluttered screen!  The primary use is in conjunction with the
+  search file mask (see below) to allow location of high magnification
+  images within an overall view (like the whole Mset).
+
+  "Smallest box"
+  This determines when the image location is shown as crosshairs rather
+  than a rather small box.  Set this according to how good your eyesight
+  is (probably worse than before you started staring at fractals all the
+  time :-)) or the resolution of your screen.  WARNING the crosshairs
+  routine centers the cursor on one corner of the image box at the moment
+  so this looks misleading if set too large.
+  "Search Mask"
+  Sets the file name pattern which the browser searches, this can be used
+  to search out the location of a file by setting this to the filename and
+  setting smallest image to 0 (see above).
+
+
+ 5.21 Passes Parameters
+
+  PERIODICITY=no|show|nnn
+  Controls periodicity checking (see Periodicity Logic (p. 166)).  "no"
+  turns it off, "show" lets you see which pixels were painted as "inside"
+  due to being caught by periodicity.  Specifying a number causes a more
+  conservative periodicity test (each increase of 1 divides test tolerance
+  by 2).  Entering a negative number lets you turn on "show" with that
+  number. Type lambdafn function=exp needs periodicity turned off to be
+  accurate -- there may be other cases.
+
+  A non-zero value of the "periodicity=" option causes "passes=o" to not
+  plot orbits that have reached the bailout conditions or where an orbit
+  goes off the visible area of the image.  A zero value of periodicity
+  will plot all orbits except as modified by orbitdelay and orbitinterval.
+
+  ORBITDELAY=&lt;nn&gt;
+  This option controls how many orbits are computed before the orbits are
+  displayed on the screen when using the "passes=o" option, or the fractal
+  types mandelcloud and dynamic.  This allows the orbits to settle down
+  before plotting starts.
+
+  This option also slows down the display of orbits using the &lt;O&gt; command
+  for folks with hot new computers. Units are in 1/10000 seconds per orbit
+  point.  ORBITDELAY=10 therefore allows you to see each pixel's orbit
+  point for about one millisecond. For best display of orbits, try
+  passes=1 and a moderate resolution such as 320x200.  Note that the first
+  time you press the 'O' key with the 'orbitdelay' function active, your
+  computer will pause for a half-second or so to calibrate a high-
+  resolution timer.
+</pre>
+</body>
+</html>
