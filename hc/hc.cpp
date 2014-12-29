@@ -3223,7 +3223,7 @@ struct PRINT_DOC_INFO : public DOC_INFO
 {
     FILE    *file;
     int      margin;
-    int      start_of_line;
+    bool     start_of_line;
     int      spaces;
 };
 
@@ -3236,7 +3236,7 @@ void printerc(PRINT_DOC_INFO *info, int c, int n)
 
         else if (c == '\n' || c == '\f')
         {
-            info->start_of_line = 1;
+            info->start_of_line = true;
             info->spaces = 0;   // strip spaces before a new-line
             putc(c, info->file);
         }
@@ -3246,7 +3246,7 @@ void printerc(PRINT_DOC_INFO *info, int c, int n)
             if (info->start_of_line)
             {
                 info->spaces += info->margin;
-                info->start_of_line = 0;
+                info->start_of_line = false;
             }
 
             while (info->spaces > 0)
@@ -3350,7 +3350,7 @@ void print_document(char const *fname)
         fatal(0, "Couldn't create \"%s\"", fname);
 
     info.margin = PAGE_INDENT;
-    info.start_of_line = 1;
+    info.start_of_line = true;
     info.spaces = 0;
 
     process_document(pd_get_info, print_doc_output, &info);
@@ -3897,6 +3897,9 @@ public:
         info.tnum = -1;
         info.cnum = -1;
         info.link_dest_warn = false;
+        info.margin = PAGE_INDENT;
+        info.start_of_line = true;
+        info.spaces = 0;
     }
 
     void process();
@@ -4040,7 +4043,7 @@ void html_processor::print_char(int c, int n)
         }
         else if (c == '\n' || c == '\f')
         {
-            info.start_of_line = 1;
+            info.start_of_line = true;
             info.spaces = 0;   // strip spaces before a new-line
             putc(c, info.file);
         }
@@ -4049,7 +4052,7 @@ void html_processor::print_char(int c, int n)
             if (info.start_of_line)
             {
                 info.spaces += info.margin;
-                info.start_of_line = 0;
+                info.start_of_line = false;
             }
             while (info.spaces > 0)
             {
