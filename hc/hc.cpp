@@ -8,6 +8,7 @@
  */
 #include <algorithm>
 #include <cstdarg>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -3226,7 +3227,6 @@ struct PRINT_DOC_INFO : public DOC_INFO
     int      spaces;
 };
 
-
 void printerc(PRINT_DOC_INFO *info, int c, int n)
 {
     while (n-- > 0)
@@ -3283,12 +3283,12 @@ bool print_doc_output(int cmd, PD_INFO *pd, void *context)
     {
     case PD_HEADING:
     {
-        char buff[20];
-
+        std::ostringstream buff;
         info->margin = 0;
-        printers(info, "\n                     Fractint Version xx.xx                     Page ", 0);
-        sprintf(buff, "%d\n\n", pd->pnum);
-        printers(info, buff, 0);
+        buff << "\n"
+            "                  Iterated Dynamics Version 1.0                 Page "
+            << pd->pnum << "\n\n";
+        printers(info, buff.str().c_str(), 0);
         info->margin = PAGE_INDENT;
         return true;
     }
@@ -3888,61 +3888,6 @@ void compiler::paginate_html_document()
     set_content_doc_page();
 }
 
-bool print_html_output(int cmd, PD_INFO *pd, void *context)
-{
-    PRINT_DOC_INFO *info = static_cast<PRINT_DOC_INFO *>(context);
-    switch (cmd)
-    {
-    case PD_HEADING:
-    {
-        char buff[20];
-
-        info->margin = 0;
-        printers(info, "\n                     Fractint Version xx.xx                     Page ", 0);
-        sprintf(buff, "%d\n\n", pd->pnum);
-        printers(info, buff, 0);
-        info->margin = PAGE_INDENT;
-        return true;
-    }
-
-    case PD_FOOTING:
-        info->margin = 0;
-        printerc(info, '\f', 1);
-        info->margin = PAGE_INDENT;
-        return true;
-
-    case PD_PRINT:
-        printers(info, pd->s, pd->i);
-        return true;
-
-    case PD_PRINTN:
-        printerc(info, *pd->s, pd->i);
-        return true;
-
-    case PD_PRINT_SEC:
-        info->margin = TITLE_INDENT;
-        if (pd->id[0] != '\0')
-        {
-            printers(info, pd->id, 0);
-            printerc(info, ' ', 1);
-        }
-        printers(info, pd->title, 0);
-        printerc(info, '\n', 1);
-        info->margin = PAGE_INDENT;
-        return true;
-
-    case PD_START_SECTION:
-    case PD_START_TOPIC:
-    case PD_SET_SECTION_PAGE:
-    case PD_SET_TOPIC_PAGE:
-    case PD_PERIODIC:
-        return true;
-
-    default:
-        return false;
-    }
-}
-
 void compiler::print_html_document(std::string const &fname)
 {
     PRINT_DOC_INFO info;
@@ -3953,18 +3898,25 @@ void compiler::print_html_document(std::string const &fname)
     msg("Printing to: %s", fname.c_str());
 
     info.tnum = -1;
-    info.cnum = info.tnum;
+    info.cnum = -1;
     info.link_dest_warn = false;
-
     info.file = fopen(fname.c_str(), "wt");
     if (info.file == nullptr)
         fatal(0, "Couldn't create \"%s\"", fname.c_str());
+    fputs("<html>\n"
+        "<head>\n"
+        "<title>Iterated Dynamics</title>\n"
+        "</head>\n"
+        "<body>\n"
+        "<pre>\n",
+        info.file);
 
-    info.margin = PAGE_INDENT;
-    info.start_of_line = 1;
-    info.spaces = 0;
+    process_document(pd_get_info, print_doc_output, &info);
 
-    process_document(pd_get_info, print_html_output, &info);
+    fputs("</pre>\n"
+        "</body>\n"
+        "</html>\n",
+        info.file);
 
     fclose(info.file);
 }
