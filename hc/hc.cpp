@@ -3888,21 +3888,219 @@ void compiler::paginate_html_document()
     set_content_doc_page();
 }
 
+class html_processor
+{
+public:
+    html_processor(std::string const &fname)
+        : fname_(fname)
+    {
+        info.tnum = -1;
+        info.cnum = -1;
+        info.link_dest_warn = false;
+    }
+
+    void process();
+
+private:
+    bool get_info(int cmd, PD_INFO *pd);
+    bool print_html(int cmd, PD_INFO *pd);
+    static bool get_info_(int cmd, PD_INFO *pd, void *info)
+    {
+        return static_cast<html_processor *>(info)->get_info(cmd, pd);
+    }
+    static bool print_html_(int cmd, PD_INFO *pd, void *info)
+    {
+        return static_cast<html_processor *>(info)->print_html(cmd, pd);
+    }
+    void print_char(int c, int n);
+    void print_string(char const *s, int n);
+
+    std::string const &fname_;
+    PRINT_DOC_INFO info;
+};
+
 void compiler::print_html_document(std::string const &fname)
 {
-    PRINT_DOC_INFO info;
+    html_processor(fname).process();
+}
 
+bool html_processor::get_info(int cmd, PD_INFO *pd)
+{
+    CONTENT *c;
+
+    switch (cmd)
+    {
+    case PD_GET_CONTENT:
+        if (++info.cnum >= num_contents)
+            return false;
+        c = &contents[info.cnum];
+        info.tnum = -1;
+        pd->id       = c->id;
+        pd->title    = c->name;
+        pd->new_page = (c->flags & CF_NEW_PAGE) != 0;
+        return true;
+
+    case PD_GET_TOPIC:
+        c = &contents[info.cnum];
+        if (++info.tnum >= c->num_topic)
+            return false;
+        pd->curr = get_topic_text(&topic[c->topic_num[info.tnum]]);
+        pd->len = topic[c->topic_num[info.tnum]].text_len;
+        return true;
+
+    case PD_GET_LINK_PAGE:
+    {
+        LINK &link = a_link[getint(pd->s)];
+        if (link.doc_page == -1)
+        {
+            if (info.link_dest_warn)
+            {
+                src_cfname = link.srcfile;
+                srcline    = link.srcline;
+                warn(0, "Hot-link destination is not in the document.");
+                srcline = -1;
+            }
+            return false;
+        }
+        pd->i = a_link[getint(pd->s)].doc_page;
+        return true;
+    }
+
+    case PD_RELEASE_TOPIC:
+        c = &contents[info.cnum];
+        release_topic_text(&topic[c->topic_num[info.tnum]], 0);
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+bool html_processor::print_html(int cmd, PD_INFO *pd)
+{
+    switch (cmd)
+    {
+    case PD_HEADING:
+    {
+        std::ostringstream buff;
+        info.margin = 0;
+        buff << "\n"
+            "                  Iterated Dynamics Version 1.0                 Page "
+            << pd->pnum << "\n\n";
+        print_string(buff.str().c_str(), 0);
+        info.margin = PAGE_INDENT;
+        return true;
+    }
+
+    case PD_FOOTING:
+        info.margin = 0;
+        print_char('\f', 1);
+        info.margin = PAGE_INDENT;
+        return true;
+
+    case PD_PRINT:
+        print_string(pd->s, pd->i);
+        return true;
+
+    case PD_PRINTN:
+        print_char(*pd->s, pd->i);
+        return true;
+
+    case PD_PRINT_SEC:
+        info.margin = TITLE_INDENT;
+        if (pd->id[0] != '\0')
+        {
+            print_string(pd->id, 0);
+            print_char(' ', 1);
+        }
+        print_string(pd->title, 0);
+        print_char('\n', 1);
+        info.margin = PAGE_INDENT;
+        return true;
+
+    case PD_START_SECTION:
+    case PD_START_TOPIC:
+    case PD_SET_SECTION_PAGE:
+    case PD_SET_TOPIC_PAGE:
+    case PD_PERIODIC:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+void html_processor::print_char(int c, int n)
+{
+    while (n-- > 0)
+    {
+        if (c == ' ')
+        {
+            ++info.spaces;
+        }
+        else if (c == '\n' || c == '\f')
+        {
+            info.start_of_line = 1;
+            info.spaces = 0;   // strip spaces before a new-line
+            putc(c, info.file);
+        }
+        else
+        {
+            if (info.start_of_line)
+            {
+                info.spaces += info.margin;
+                info.start_of_line = 0;
+            }
+            while (info.spaces > 0)
+            {
+                fputc(' ', info.file);
+                --info.spaces;
+            }
+
+            if (c == '&')
+            {
+                fputs("&amp;", info.file);
+            }
+            else if (c == '<')
+            {
+                fputs("&lt;", info.file);
+            }
+            else if (c == '>')
+            {
+                fputs("&gt;", info.file);
+            }
+            else
+            {
+                fputc(c, info.file);
+            }
+        }
+    }
+}
+
+void html_processor::print_string(char const *s, int n)
+{
+    if (n > 0)
+    {
+        while (n-- > 0)
+            print_char(*s++, 1);
+    }
+    else
+    {
+        while (*s != '\0')
+            print_char(*s++, 1);
+    }
+}
+
+void html_processor::process()
+{
     if (num_contents == 0)
         fatal(0, ".SRC has no DocContents.");
 
-    msg("Printing to: %s", fname.c_str());
+    msg("Printing to: %s", fname_.c_str());
 
-    info.tnum = -1;
-    info.cnum = -1;
-    info.link_dest_warn = false;
-    info.file = fopen(fname.c_str(), "wt");
+    info.file = fopen(fname_.c_str(), "wt");
     if (info.file == nullptr)
-        fatal(0, "Couldn't create \"%s\"", fname.c_str());
+        fatal(0, "Couldn't create \"%s\"", fname_.c_str());
     fputs("<html>\n"
         "<head>\n"
         "<title>Iterated Dynamics</title>\n"
@@ -3911,7 +4109,7 @@ void compiler::print_html_document(std::string const &fname)
         "<pre>\n",
         info.file);
 
-    process_document(pd_get_info, print_doc_output, &info);
+    process_document(get_info_, print_html_, this);
 
     fputs("</pre>\n"
         "</body>\n"
