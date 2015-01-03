@@ -1745,7 +1745,7 @@ x11_init(Driver *drv, int *argc, char **argv)
         }
     }
 
-    di->frame_.initialize(di->Xdp);
+    di->frame_.initialize(di->Xdp, DefaultScreen(di->Xdp), di->Xgeometry);
     di->plot_.initialize(di->Xdp, di->frame_.window());
     di->text_.initialize(di->Xdp, di->frame_.window());
 

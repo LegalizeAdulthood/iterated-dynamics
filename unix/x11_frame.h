@@ -17,17 +17,20 @@ public:
         keypress_count_{},
         keypress_head_{},
         keypress_tail_{},
-        keypress_buffer_{}
+        keypress_buffer_{},
+        width_{},
+        height_{}
     {
     }
 
-    void initialize(Display *dpy);
+    void initialize(Display *dpy, int screen, char const *geometry);
 
     int width() const { return 0; }
     int height() const { return 0; }
     Window window() const { return window_; }
     int get_key_press(int option);
     int pump_messages(bool wait_flag);
+    void resize(int width, int height);
 
 private:
     Display *dpy_;
@@ -37,6 +40,8 @@ private:
     int keypress_head_;
     int keypress_tail_;
     int keypress_buffer_[KEYBUFMAX];
+    int width_;
+    int height_;
 };
 
 #endif
