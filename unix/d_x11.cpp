@@ -1731,6 +1731,9 @@ x11_init(Driver *drv, int *argc, char **argv)
         return false;
     }
     di->Xdscreen = XDefaultScreen(di->Xdp);
+    if (di->sync)
+        XSynchronize(di->Xdp, True);
+    XSetErrorHandler(errhand);
 
     {
         int const width = WidthOfScreen(DefaultScreenOfDisplay(di->Xdp));
