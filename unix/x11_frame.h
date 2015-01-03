@@ -18,8 +18,8 @@ public:
         keypress_head_{},
         keypress_tail_{},
         keypress_buffer_{},
-        width_{},
-        height_{}
+        width_{800},
+        height_{600}
     {
     }
 
