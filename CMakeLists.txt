@@ -2,6 +2,13 @@
 cmake_minimum_required(VERSION 2.8.11)
 project(iterated-dynamics CXX C)
 
+set(home_dir "${CMAKE_SOURCE_DIR}/home")
+
+function(set_src_dir src_file)
+    set_source_files_properties(${src_file}
+        PROPERTIES COMPILE_DEFINITIONS SRCDIR="${home_dir}")
+endfunction()
+
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     set(OS_DRIVER_SOURCES
         win32/d_win32.cpp
@@ -37,7 +44,7 @@ else()
     set(OS_DEFINITIONS "XFRACT" "NOBSTRING" "LINUX")
     set(HAVE_OS_DEFINITIONS true)
     set_source_files_properties(unix/unix.cpp
-        PROPERTIES COMPILE_DEFINITIONS SRCDIR=".")
+        PROPERTIES COMPILE_DEFINITIONS SRCDIR="${home_dir}")
     set(DISK_VID "")
     set(OS_HC_FILES "unix/unix.cpp")
     set(OS_ID_OPTIONS "")
@@ -208,7 +215,7 @@ source_group("Header Files\\Win32" FILES ${OS_DRIVER_HEADERS})
 source_group("Source Files\\Win32" FILES ${OS_DRIVER_SOURCES})
 
 set_source_files_properties(common/help.cpp
-    PROPERTIES COMPILE_DEFINITIONS SRCDIR=".")
+    PROPERTIES COMPILE_DEFINITIONS SRCDIR="${home_dir}")
 
 add_executable(hc hc/hc.cpp hc/helpcom.cpp ${OS_HC_FILES})
 target_include_directories(hc PRIVATE headers)
@@ -226,11 +233,11 @@ add_dependencies(id hc)
 set(ID_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(HELP_SRC_DIR ${ID_DIR}/hc)
 add_custom_command(
-    OUTPUT ${ID_DIR}/headers/helpdefs.h ${ID_DIR}/fractint.hlp
+    OUTPUT ${ID_DIR}/headers/helpdefs.h ${home_dir}/fractint.hlp
     WORKING_DIRECTORY ${HELP_SRC_DIR}
     COMMAND hc /c
     COMMAND ${CMAKE_COMMAND} -E copy helpdefs.h ${ID_DIR}/headers
-    COMMAND ${CMAKE_COMMAND} -E copy fractint.hlp ${ID_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy fractint.hlp ${home_dir}
     COMMAND ${CMAKE_COMMAND} -E copy fractint.hlp ${CMAKE_CURRENT_BINARY_DIR}
     DEPENDS hc
         ${HELP_SRC_DIR}/help.src ${HELP_SRC_DIR}/help2.src
