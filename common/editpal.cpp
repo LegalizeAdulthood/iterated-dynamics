@@ -5,6 +5,7 @@
  *
  */
 #include <algorithm>
+#include <system_error>
 #include <vector>
 
 #ifdef DEBUG_UNDO
@@ -1663,7 +1664,10 @@ static void PalTable__UndoProcess(PalTable *me, int delta)   // undo/redo common
         mprintf("          Reading DATA from %d to %d", first, last);
 #endif
 
-        fread(temp, 3, num, me->undo_file);
+        if (fread(temp, 3, num, me->undo_file) != num)
+        {
+            throw std::system_error(errno, std::system_category(), "PalTable_UndoProcess  failed fread");
+        }
 
         fseek(me->undo_file, -(num*3), SEEK_CUR);  // go to start of undo/redo data
         fwrite(me->pal+first, 3, num, me->undo_file);  // write redo/undo data

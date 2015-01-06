@@ -1,3 +1,4 @@
+#include <system_error>
 #include <vector>
 
 #ifndef TEST // kills all those assert macros in production version
@@ -568,6 +569,15 @@ static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, in
     return (0);
 }
 
+inline void freader(void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+    if (fread(ptr, size, nmemb, stream) != nmemb)
+    {
+        throw std::system_error(errno, std::system_category(), "failed fread");
+    }
+}
+
+
 static int help_topic(HIST *curr, HIST *next, int flags)
 {
     int       len;
@@ -586,15 +596,15 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
     help_seek(where);
 
-    fread(&num_pages, sizeof(int), 1, help_file);
+    freader(&num_pages, sizeof(int), 1, help_file);
     assert(num_pages > 0 && num_pages <= max_pages);
 
-    fread(&page_table[0], 3*sizeof(int), num_pages, help_file);
+    freader(&page_table[0], 3*sizeof(int), num_pages, help_file);
 
-    fread(&ch, sizeof(char), 1, help_file);
+    freader(&ch, sizeof(char), 1, help_file);
     len = ch;
     assert(len < 81);
-    fread(title, sizeof(char), len, help_file);
+    freader(title, sizeof(char), len, help_file);
     title[len] = '\0';
 
     where += sizeof(int) + num_pages*3*sizeof(int) + 1 + len + sizeof(int);
@@ -615,7 +625,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
         if (draw_page)
         {
             help_seek(where+page_table[page].offset);
-            fread(&buffer[0], sizeof(char), page_table[page].len, help_file);
+            freader(&buffer[0], sizeof(char), page_table[page].len, help_file);
 
             num_link = 0;
             display_page(title, &buffer[0], page_table[page].len, page, num_pages,
@@ -976,18 +986,18 @@ static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
         curr_base += sizeof(int);                 // skip flags
 
         help_seek(curr_base);
-        fread(&t, sizeof(int), 1, help_file); // read num_pages
+        freader(&t, sizeof(int), 1, help_file); // read num_pages
         curr_base += sizeof(int) + t*3*sizeof(int); // skip page info
 
         if (t > 0)
             help_seek(curr_base);
-        fread(&ch, sizeof(char), 1, help_file);                  // read title_len
+        freader(&ch, sizeof(char), 1, help_file);   // read title_len
         t = ch;
         curr_base += 1 + t;                       // skip title
 
         if (t > 0)
             help_seek(curr_base);
-        fread(&curr_len, sizeof(int), 1, help_file); // read topic len
+        freader(&curr_len, sizeof(int), 1, help_file); // read topic len
         curr_base += sizeof(int);
     }
 
@@ -996,7 +1006,7 @@ static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
     if (read_len > 0)
     {
         help_seek(curr_base + off);
-        fread(buf, sizeof(char), read_len, help_file);
+        freader(buf, sizeof(char), read_len, help_file);
     }
 
     return (curr_len - (off+len));
@@ -1108,29 +1118,29 @@ static bool print_doc_get_info(int cmd, PD_INFO *pd, void *context)
 
         help_seek(info->content_pos);
 
-        fread(&t, sizeof(int), 1, help_file);      // read flags
+        freader(&t, sizeof(int), 1, help_file);      // read flags
         info->content_pos += sizeof(int);
         pd->new_page = (t & 1) ? 1 : 0;
 
-        fread(&ch, sizeof(char), 1, help_file);       // read id len
+        freader(&ch, sizeof(char), 1, help_file);       // read id len
 
         t = ch;
         assert(t < 80);
-        fread(info->id, sizeof(char), t, help_file);  // read the id
+        freader(info->id, sizeof(char), t, help_file);  // read the id
         info->content_pos += 1 + t;
         info->id[t] = '\0';
 
-        fread(&ch, sizeof(char), 1, help_file);       // read title len
+        freader(&ch, sizeof(char), 1, help_file);       // read title len
         t = ch;
         assert(t < 80);
-        fread(info->title, sizeof(char), t, help_file); // read the title
+        freader(info->title, sizeof(char), t, help_file); // read the title
         info->content_pos += 1 + t;
         info->title[t] = '\0';
 
-        fread(&ch, sizeof(char), 1, help_file);       // read num_topic
+        freader(&ch, sizeof(char), 1, help_file);       // read num_topic
         t = ch;
         assert(t < MAX_NUM_TOPIC_SEC);
-        fread(info->topic_num, sizeof(int), t, help_file);  // read topic_num[]
+        freader(info->topic_num, sizeof(int), t, help_file);  // read topic_num[]
         info->num_topic = t;
         info->content_pos += 1 + t*sizeof(int);
 
@@ -1310,8 +1320,8 @@ void print_document(char const *outfname, bool (*msg_func)(int, int), int save_e
     char const *msg = nullptr;
 
     help_seek(16L);
-    fread(&info.num_contents, sizeof(int), 1, help_file);
-    fread(&info.num_page, sizeof(int), 1, help_file);
+    freader(&info.num_contents, sizeof(int), 1, help_file);
+    freader(&info.num_page, sizeof(int), 1, help_file);
 
     info.tnum = -1;
     info.cnum = info.tnum;
@@ -1397,7 +1407,7 @@ int init_help()
         help_file = fopen(path, "rb");
         if (help_file != nullptr)
         {
-            fread(&hs, sizeof(long)+sizeof(int), 1, help_file);
+            freader(&hs, sizeof(long)+sizeof(int), 1, help_file);
 
             if (hs.sig != HELP_SIG)
             {
@@ -1430,10 +1440,10 @@ int init_help()
 
     help_seek(0L);
 
-    fread(&max_pages, sizeof(int), 1, help_file);
-    fread(&max_links, sizeof(int), 1, help_file);
-    fread(&num_topic, sizeof(int), 1, help_file);
-    fread(&num_label, sizeof(int), 1, help_file);
+    freader(&max_pages, sizeof(int), 1, help_file);
+    freader(&max_links, sizeof(int), 1, help_file);
+    freader(&num_topic, sizeof(int), 1, help_file);
+    freader(&num_label, sizeof(int), 1, help_file);
     help_seek(6L*sizeof(int));  // skip num_contents and num_doc_pages
 
     assert(max_pages > 0);
@@ -1464,8 +1474,8 @@ int init_help()
     }
 
     // read in the tables...
-    fread(&topic_offset[0], sizeof(long), num_topic, help_file);
-    fread(&label[0], sizeof(LABEL), num_label, help_file);
+    freader(&topic_offset[0], sizeof(long), num_topic, help_file);
+    freader(&label[0], sizeof(LABEL), num_label, help_file);
 
     // finished!
 

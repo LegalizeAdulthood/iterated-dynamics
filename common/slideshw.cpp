@@ -3,6 +3,7 @@
 // Fractint to be read from a file.
 //*********************************************************************
 #include <sstream>
+#include <system_error>
 
 #include <ctype.h>
 #include <float.h>
@@ -217,7 +218,10 @@ start:
             int len;
             char buf[41];
             buf[40] = 0;
-            fgets(buf, 40, fpss);
+            if (fgets(buf, 40, fpss) == nullptr)
+            {
+                throw std::system_error(errno, std::system_category(), "slideshw failed fgets");
+            }
             len = (int) strlen(buf);
             buf[len-1] = 0; // zap newline
             message(secs, buf);

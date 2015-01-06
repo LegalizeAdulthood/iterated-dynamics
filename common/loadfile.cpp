@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cassert>
 #include <string>
+#include <system_error>
 #include <vector>
 
 #include <errno.h>
@@ -619,6 +620,15 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     return 0;
 }
 
+inline void freader(void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+    if (fread(ptr, size, nmemb, stream) != nmemb)
+    {
+       throw std::system_error(errno, std::system_category(), "failed fread");
+    }
+}
+
+
 static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                              ext_blk_2 *blk_2_info,
                              ext_blk_3 *blk_3_info,
@@ -647,7 +657,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
     fp = fopen(gif_file, "rb");
     if (fp == nullptr)
         return (-1);
-    fread(gifstart, 13, 1, fp);
+    freader(gifstart, 13, 1, fp);
     if (strncmp((char *)gifstart, "GIF", 3) != 0)
     { // not GIF, maybe old .tga?
         fclose(fp);
@@ -718,7 +728,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
     fseek(fp, (long)(-1-fractinf_len), SEEK_END);
     /* TODO: revise this to read members one at a time so we get natural alignment
        of fields within the FRACTAL_INFO structure for the platform */
-    fread(info, 1, FRACTAL_INFO_SIZE, fp);
+    freader(info, 1, FRACTAL_INFO_SIZE, fp);
     if (strcmp(INFO_ID, info->info_id) == 0)
     {
 #ifdef XFRACT
@@ -737,7 +747,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
         { // allow 512 garbage at eof
             offset += 100; // go back 100 bytes at a time
             fseek(fp, (long)(0-offset), SEEK_END);
-            fread(tmpbuf, 1, 110, fp); // read 10 extra for string compare
+            freader(tmpbuf, 1, 110, fp); // read 10 extra for string compare
             for (int i = 0; i < 100; ++i)
                 if (!strcmp(INFO_ID, &tmpbuf[i]))
                 { // found header?
@@ -745,7 +755,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     fseek(fp, (long)(hdr_offset = i-offset), SEEK_END);
                     /* TODO: revise this to read members one at a time so we get natural alignment
                         of fields within the FRACTAL_INFO structure for the platform */
-                    fread(info, 1, FRACTAL_INFO_SIZE, fp);
+                    freader(info, 1, FRACTAL_INFO_SIZE, fp);
 #ifdef XFRACT
                     decode_fractal_info(info, 1);
 #endif

@@ -3,6 +3,7 @@
 */
 #include <cassert>
 #include <string>
+#include <system_error>
 #include <vector>
 
 #include <ctype.h>
@@ -258,7 +259,10 @@ void process_simple_command(char *curarg)
         if (FILE *initfile = fopen(filename.c_str(), "rb"))
         {
             char tempstring[101];
-            fread(tempstring, 6, 1, initfile);
+            if (fread(tempstring, 6, 1, initfile) != 6)
+            {
+                throw std::system_error(errno, std::system_category(), "process_simple_command failed fread");
+            }
             if (tempstring[0] == 'G'
                     && tempstring[1] == 'I'
                     && tempstring[2] == 'F'

@@ -7,9 +7,11 @@
  *
  */
 #include <algorithm>
+#include <cerrno>
 #include <cstdarg>
 #include <sstream>
 #include <string>
+#include <system_error>
 #include <vector>
 
 #include <assert.h>
@@ -342,7 +344,10 @@ void alloc_topic_text(TOPIC *t, unsigned size)
 char *get_topic_text(TOPIC const *t)
 {
     fseek(swapfile, t->text, SEEK_SET);
-    fread(&buffer[0], 1, t->text_len, swapfile);
+    if (fread(&buffer[0], 1, t->text_len, swapfile) != t->text_len)
+    {
+        throw std::system_error(errno, std::system_category(), "get_topic_text failed fread");
+    }
     return &buffer[0];
 }
 
@@ -1307,7 +1312,10 @@ void process_bininc()
 
     CHK_BUFFER((unsigned)len);
 
-    read(handle, curr, (unsigned)len);
+    if (read(handle, curr, (unsigned)len) != len)
+    {
+        throw std::system_error(errno, std::system_category(), "process_bininc failed read");
+    }
 
     curr += (unsigned)len;
 
@@ -3486,7 +3494,12 @@ void add_hlp_to_exe(char const *hlp_fname, char const *exe_fname)
 
     lseek(exe, filelength(exe) - sizeof(help_sig_info), SEEK_SET);
 
-    read(exe, (char *)&hs, 10);
+    if (read(exe, (char *)&hs, 10) != 10)
+    {
+        close(hlp);
+        close(exe);
+        throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read");
+    }
 
     if (hs.sig == HELP_SIG)
         warn(0, "Overwriting previous help. (Version=%d)", hs.version);
@@ -3495,7 +3508,13 @@ void add_hlp_to_exe(char const *hlp_fname, char const *exe_fname)
 
     // now, let's see if their help file is for real (and get the version)
 
-    read(hlp, (char *)&hs, sizeof(long)+sizeof(int));
+    auto const sig_len = sizeof(long) + sizeof(int);
+    if (read(hlp, (char *)&hs, sig_len) != sig_len)
+    {
+        close(hlp);
+        close(exe);
+        throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read2");
+    }
 
     if (hs.sig != HELP_SIG)
         fatal(0, "Help signature not found in %s", hlp_fname);
@@ -3511,16 +3530,33 @@ void add_hlp_to_exe(char const *hlp_fname, char const *exe_fname)
     for (int count = 0; count < len;)
     {
         size = (int) std::min((long)BUFFER_SIZE, len-count);
-        read(hlp, &buffer[0], size);
-        write(exe, &buffer[0], size);
+        if (read(hlp, &buffer[0], size) != size)
+        {
+            throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read3");
+        }
+        if (write(exe, &buffer[0], size) != size)
+        {
+            throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed write");
+        }
         count += size;
     }
 
     // add on the signature, version and offset
 
-    write(exe, (char *)&hs, 10);
+    if (write(exe, (char *)&hs, 10) != 10)
+    {
+        close(hlp);
+        close(exe);
+        throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed write2");
+    }
 
-    chsize(exe, lseek(exe, 0L, SEEK_CUR));// truncate if old help was longer
+    off_t offset = lseek(exe, 0L, SEEK_CUR);
+    if (chsize(exe, offset) != offset) // truncate if old help was longer
+    {
+        close(hlp);
+        close(exe);
+        throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed chsize");
+    }
 
     close(exe);
     close(hlp);
@@ -3545,12 +3581,18 @@ void delete_hlp_from_exe(char const *exe_fname)
     read(exe, (char *)&hs, 10);
 #else
     lseek(exe, filelength(exe) - 12, SEEK_SET);
-    read(exe, (char *)&hs, 12);
+    if (read(exe, (char *)&hs, 12) != 12)
+    {
+        throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read4");
+    }
 #endif
 
     if (hs.sig == HELP_SIG)
     {
-        chsize(exe, hs.base);   // truncate at the start of the help
+        if (chsize(exe, hs.base) != hs.base) // truncate at the start of the help
+        {
+            throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed chsize2");
+        }
         close(exe);
     }
     else
