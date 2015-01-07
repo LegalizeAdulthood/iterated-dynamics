@@ -462,6 +462,8 @@ int ant()
     case 2:
         TurkMite2(maxants, rule_len, rule, maxpts, wait);
         break;
+    default:
+        break;
     }
     helpmode = oldhelpmode;
     return 0;
