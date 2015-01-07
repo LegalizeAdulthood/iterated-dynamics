@@ -84,7 +84,7 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
     bool antwrap;
     int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
     int next_col[MAX_ANTS + 1], rule[MAX_ANTS + 1], dir[MAX_ANTS + 1];
-    antwrap = (param[4] == 0) ? false : true;
+    antwrap = param[4] != 0;
     step = (int) wait;
     if (step == 1)
         wait = 0;
@@ -246,7 +246,7 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
     int kbdchar, step;
     int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
     int rule[MAX_ANTS + 1];
-    bool antwrap = ((param[4] == 0) ? false : true);
+    bool antwrap = param[4] != 0;
 
     step = (int) wait;
     if (step == 1)

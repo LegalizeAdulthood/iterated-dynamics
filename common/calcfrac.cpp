@@ -1000,19 +1000,14 @@ static void perform_worklist()
         delxx2 = (xx3rd - xxmin) / dysize;
         delyy2 = (yy3rd - yymin) / dxsize;
 
-        if (save_release < 1827) // in case it's changed with <G>
-            use_old_distest = true;
-        else
-            use_old_distest = false;
+        use_old_distest = save_release < 1827;
         rqlim = rqlim_save; // just in case changed to DEM_BAILOUT earlier
         if (distest != 1 || colors == 2) // not doing regular outside colors
             if (rqlim < DEM_BAILOUT)         // so go straight for dem bailout
                 rqlim = DEM_BAILOUT;
-        if (curfractalspecific->tojulia != fractal_type::NOFRACTAL || use_old_distest
-                || fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
-            dem_mandel = true;  // must be mandel type, formula, or old PAR/GIF
-        else
-            dem_mandel = false;
+        // must be mandel type, formula, or old PAR/GIF
+        dem_mandel = curfractalspecific->tojulia != fractal_type::NOFRACTAL || use_old_distest
+            || fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA;
         dem_delta = sqr(delxx) + sqr(delyy2);
         ftemp = sqr(delyy) + sqr(delxx2);
         if (ftemp > dem_delta)
