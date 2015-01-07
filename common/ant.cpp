@@ -267,7 +267,7 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
     else
     {   /* the same rule the user wants for every
          * turkmite (max rule_len = 16 bit) */
-        rule_len = std::min(static_cast<size_t>(rule_len), 8*sizeof(int));
+        rule_len = static_cast<int>(std::min(static_cast<size_t>(rule_len), 8*sizeof(int)));
         rule[0] = 0;
         for (int i = 0; i < rule_len; i++)
             rule[0] = (rule[0] << 1) | ru[i];
