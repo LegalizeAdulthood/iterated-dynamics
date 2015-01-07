@@ -1210,7 +1210,7 @@ static int diffusion_scan()
 
     bits = (unsigned)(std::min(log(static_cast<double>(iystop-iystart+1)), log(static_cast<double>(ixstop-ixstart+1)))/log2);
     bits <<= 1; // double for two axes
-    dif_limit = 1l << bits;
+    dif_limit = 1UL << bits;
 
     if (diffusion_engine() == -1)
     {
