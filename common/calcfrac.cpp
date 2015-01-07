@@ -34,13 +34,13 @@ static int  potential(double, long);
 static void decomposition();
 static int  bound_trace_main();
 static void step_col_row();
-static int  solidguess();
+static int  solid_guess();
 static bool guessrow(bool firstpass, int y, int blocksize);
 static void plotblock(int, int, int, int);
 static void setsymmetry(symmetry_type sym, bool uselist);
 static bool xsym_split(int xaxis_row, bool xaxis_between);
 static bool ysym_split(int yaxis_col, bool yaxis_between);
-static void puttruecolor_disk(int, int, int);
+static void put_truecolor_disk(int, int, int);
 static int diffusion_engine();
 static int sticky_orbits();
 
@@ -176,7 +176,7 @@ unsigned bits = 0;        // number of bits in the counter
 unsigned long dif_counter = 0;  // the diffusion counter
 unsigned long dif_limit = 0;    // the diffusion counter
 
-// static vars for solidguess & its subroutines
+// static vars for solid_guess & its subroutines
 bool three_pass = false;
 static int maxblock = 0;
 static int halfblock = 0;
@@ -589,7 +589,7 @@ int calcfract()
             // Have to force passes = 1
             stdcalcmode = '1';
             usr_stdcalcmode = stdcalcmode;
-            putcolor = puttruecolor_disk;
+            putcolor = put_truecolor_disk;
         }
         else
             truecolor = false;
@@ -1161,7 +1161,7 @@ static void perform_worklist()
             bound_trace_main();
             break;
         case 'g':
-            solidguess();
+            solid_guess();
             break;
         case 'd':
             diffusion_scan();
@@ -3226,7 +3226,7 @@ static void step_col_row()
    faster, but is also more accurate. Harrumph!
 */
 
-static int solidguess()
+static int solid_guess()
 {
     int i;
     int xlim;
@@ -4582,7 +4582,7 @@ void symplot4basin(int x, int y, int color)
     }
 }
 
-static void puttruecolor_disk(int x, int y, int color)
+static void put_truecolor_disk(int x, int y, int color)
 {
     putcolor_a(x, y, color);
     targa_color(x, y, color);

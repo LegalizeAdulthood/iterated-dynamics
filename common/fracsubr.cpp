@@ -1145,7 +1145,7 @@ static int ratio_bad(double actual, double desired)
    directly set resume_info, resume_len, calc_status to avoid doubling
    transient memory needs by using these routines.
 
-   StandardFractal, calcmand, solidguess, and bound_trace_main are a related
+   StandardFractal, calcmand, solid_guess, and bound_trace_main are a related
    set of engines for escape-time fractals.  They use a common worklist
    structure for save/resume.  Fractals using these must specify calcmand
    or StandardFractal as the engine in fractalspecificinfo.
