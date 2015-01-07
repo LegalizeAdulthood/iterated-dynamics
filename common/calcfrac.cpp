@@ -411,14 +411,13 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 */
 static void sym_put_line(int row, int left, int right, BYTE *str)
 {
-    int length, i;
-    length = right-left+1;
+    int length = right-left+1;
     put_line(row, left, right, str);
     if (plot == putcolor)
         kbdcount -= length >> 4; // seems like a reasonable value
     else if (plot == symplot2) // X-axis symmetry
     {
-        i = yystop-(row-yystart);
+        int i = yystop-(row-yystart);
         if (i > iystop && i < ydots)
             put_line(i, left, right, str);
         kbdcount -= length >> 3;
