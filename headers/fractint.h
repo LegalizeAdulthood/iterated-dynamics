@@ -1010,26 +1010,29 @@ inline bool nonalpha(int c)
 #define FIK_CTL_KEYPAD_5    1143
 #define FIK_KEYPAD_5        1076
 
-// text colors
-#define BLACK      0
-#define BLUE       1
-#define GREEN      2
-#define CYAN       3
-#define RED        4
-#define MAGENTA    5
-#define BROWN      6 // dirty yellow on cga
-#define WHITE      7
-// use values below this for foreground only, they don't work background
-#define GRAY       8 // don't use this much - is black on cga
-#define L_BLUE     9
-#define L_GREEN   10
-#define L_CYAN    11
-#define L_RED     12
-#define L_MAGENTA 13
-#define YELLOW    14
-#define L_WHITE   15
-#define INVERSE 0x8000 // when 640x200x2 text or mode 7, inverse
-#define BRIGHT  0x4000 // when mode 7, bright
+enum text_colors
+{
+    BLACK = 0,
+    BLUE,
+    GREEN,
+    CYAN,
+    RED,
+    MAGENTA,
+    BROWN, // dirty yellow on cga
+    WHITE,
+
+    // use values below this for foreground only, they don't work background
+    GRAY, // don't use this much - is black on cga
+    L_BLUE,
+    L_GREEN,
+    L_CYAN,
+    L_RED,
+    L_MAGENTA,
+    YELLOW,
+    L_WHITE,
+    INVERSE = 0x8000, // when 640x200x2 text or mode 7, inverse
+    BRIGHT = 0x4000 // when mode 7, bright
+};
 // and their use:
 extern BYTE txtcolor[];
 #define C_TITLE           txtcolor[0]+BRIGHT
