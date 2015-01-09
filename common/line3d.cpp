@@ -2078,11 +2078,11 @@ static int first_time(int linelen, VECTOR v)
     set_upr_lwr();
     error = 0;
 
-    if (g_which_image < 2)
+    if (g_which_image < stereo_images::BLUE)
         T_Safe = false; // Not safe yet to mess with the source image
 
     if (Targa_Out && !((g_glasses_type == 1 || g_glasses_type == 2)
-                       && g_which_image == 2))
+                       && g_which_image == stereo_images::BLUE))
     {
         if (Targa_Overlay)
         {

@@ -2741,7 +2741,7 @@ restart_1:
     if (g_glasses_type > 4)
         g_glasses_type = 4;
     if (g_glasses_type)
-        g_which_image = 1;
+        g_which_image = stereo_images::RED;
 
     if (RAY < 0)
         RAY = 0;

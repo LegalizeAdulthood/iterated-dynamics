@@ -521,7 +521,7 @@ extern int                   viewydots;
 extern bool                  g_virtual_screens;
 extern unsigned              vsp;
 extern int                   g_vxdots;
-extern int                   g_which_image;
+extern stereo_images         g_which_image;
 extern float                 widthfp;
 extern std::string           workdir;
 extern WORKLIST              worklist[MAXCALCWORK];

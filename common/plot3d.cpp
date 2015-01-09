@@ -12,7 +12,7 @@
 #define PAL_RED 2
 #define PAL_MAGENTA 3
 
-int g_which_image;
+stereo_images g_which_image;
 int xxadjust1;
 int yyadjust1;
 int g_eye_separation = 0;
@@ -147,7 +147,7 @@ void plot3dsuperimpose16(int x, int y, int color)
 
     tmp = getcolor(x, y);
 
-    if (g_which_image == 1) // RED
+    if (g_which_image == stereo_images::RED) // RED
     {
         color = PAL_RED;
         if (tmp > 0 && tmp != color)
@@ -159,7 +159,7 @@ void plot3dsuperimpose16(int x, int y, int color)
                 targa_color(x, y, color);
         }
     }
-    else if (g_which_image == 2) // BLUE
+    else if (g_which_image == stereo_images::BLUE) // BLUE
         if (blue_local_left < x && x < blue_local_right)
         {
             color = PAL_BLUE;
@@ -190,7 +190,7 @@ void plot3dsuperimpose256(int x, int y, int color)
 
     tmp = getcolor(x, y);
     // map to 16 colors
-    if (g_which_image == 1) // RED
+    if (g_which_image == stereo_images::RED) // RED
     {
         if (red_local_left < x && x < red_local_right)
         {
@@ -205,7 +205,7 @@ void plot3dsuperimpose256(int x, int y, int color)
             }
         }
     }
-    else if (g_which_image == 2) // BLUE
+    else if (g_which_image == stereo_images::BLUE) // BLUE
         if (blue_local_left < x && x < blue_local_right)
         {
             // Overwrite previous blue, don't mess with existing red
@@ -243,7 +243,7 @@ void plotIFS3dsuperimpose256(int x, int y, int color)
 
     tmp = getcolor(x, y);
     // map to 16 colors
-    if (g_which_image == 1) // RED
+    if (g_which_image == stereo_images::RED) // RED
     {
         if (red_local_left < x && x < red_local_right)
         {
@@ -257,7 +257,7 @@ void plotIFS3dsuperimpose256(int x, int y, int color)
             }
         }
     }
-    else if (g_which_image == 2) // BLUE
+    else if (g_which_image == stereo_images::BLUE) // BLUE
         if (blue_local_left < x && x < blue_local_right)
         {
             color = color <<4;
@@ -285,7 +285,7 @@ void plot3dalternate(int x, int y, int color)
 
     // my mind is STILL fried - lower indices = darker colors is EASIER!
     color = colors - color;
-    if ((g_which_image == 1) && !((x+y)&1)) // - lower half palette
+    if ((g_which_image == stereo_images::RED) && !((x+y)&1)) // - lower half palette
     {
         if (red_local_left < x && x < red_local_right)
         {
@@ -299,7 +299,7 @@ void plot3dalternate(int x, int y, int color)
             }
         }
     }
-    else if ((g_which_image == 2) && ((x+y)&1))  // - upper half palette
+    else if ((g_which_image == stereo_images::BLUE) && ((x+y)&1))  // - upper half palette
     {
         if (blue_local_left < x && x < blue_local_right)
         {
@@ -319,7 +319,7 @@ void plot3dcrosseyedA(int x, int y, int color)
 {
     x /= 2;
     y /= 2;
-    if (g_which_image == 2)
+    if (g_which_image == stereo_images::BLUE)
         x += xdots/2;
     if (g_row_count >= ydots/2)
         // hidden surface kludge
@@ -332,7 +332,7 @@ void plot3dcrosseyedB(int x, int y, int color)
 {
     x /= 2;
     y /= 2;
-    if (g_which_image == 2)
+    if (g_which_image == stereo_images::BLUE)
         x += xdots/2;
     putcolor(x, y, color);
 }
@@ -403,7 +403,7 @@ void plot_setup()
 
         switch (g_which_image)
         {
-        case 1:
+        case stereo_images::RED:
             xshift  += (int)((g_eye_separation* (double)xdots)/200);
             xxadjust = (int)(((xtrans+xadjust)* (double)xdots)/100);
             xshift1 -= (int)((g_eye_separation* (double)xdots)/200);
@@ -412,11 +412,14 @@ void plot_setup()
                 sxoffs = sxdots / 2 - xdots;
             break;
 
-        case 2:
+        case stereo_images::BLUE:
             xshift  -= (int)((g_eye_separation* (double)xdots)/200);
             xxadjust = (int)(((xtrans-xadjust)* (double)xdots)/100);
             if (g_glasses_type == 4 && sxdots >= 2*xdots)
                 sxoffs = sxdots / 2;
+            break;
+
+        default:
             break;
         }
     }

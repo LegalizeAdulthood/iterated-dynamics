@@ -1667,7 +1667,7 @@ static int orbit3dlongcalc()
             if (inf.col >= 0)
             {
                 if (realtime)
-                    g_which_image = 1;
+                    g_which_image = stereo_images::RED;
                 if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                 {
                     double yy;
@@ -1686,7 +1686,7 @@ static int orbit3dlongcalc()
             oldrow = inf.row;
             if (realtime)
             {
-                g_which_image = 2;
+                g_which_image = stereo_images::BLUE;
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {
@@ -1770,7 +1770,7 @@ static int orbit3dfloatcalc()
             if (inf.col >= 0)
             {
                 if (realtime)
-                    g_which_image = 1;
+                    g_which_image = stereo_images::RED;
                 if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                 {
                     w_snd((int)(inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100+basehertz));
@@ -1786,7 +1786,7 @@ static int orbit3dfloatcalc()
             oldrow = inf.row;
             if (realtime)
             {
-                g_which_image = 2;
+                g_which_image = stereo_images::BLUE;
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {
@@ -2141,10 +2141,7 @@ int plotorbits2dfloat()
 // stuff so the code is not duplicated for ifs3d() and lorenz3d()
 int funny_glasses_call(int (*calc)())
 {
-    if (g_glasses_type)
-        g_which_image = 1;
-    else
-        g_which_image = 0;
+    g_which_image = g_glasses_type ? stereo_images::RED : stereo_images::NONE;
     plot_setup();
     plot = standardplot;
     int status = calc();
@@ -2167,7 +2164,7 @@ int funny_glasses_call(int (*calc)())
             // is there a better way to clear the screen in graphics mode?
             driver_set_video_mode(&g_video_entry);
         }
-        g_which_image = 2;
+        g_which_image = stereo_images::BLUE;
         if (curfractalspecific->flags & INFCALC)
             curfractalspecific->per_image(); // reset for 2nd image
         plot_setup();
@@ -2270,7 +2267,7 @@ static int ifs3dfloat()
             if (inf.col >= 0)
             {
                 if (realtime)
-                    g_which_image = 1;
+                    g_which_image = stereo_images::RED;
                 if (color_method)
                     color = (k%colors)+1;
                 else
@@ -2282,7 +2279,7 @@ static int ifs3dfloat()
                 return (ret);
             if (realtime)
             {
-                g_which_image = 2;
+                g_which_image = stereo_images::BLUE;
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {
@@ -2505,7 +2502,7 @@ static int ifs3dlong()
             if (inf.col >= 0)
             {
                 if (realtime)
-                    g_which_image = 1;
+                    g_which_image = stereo_images::RED;
                 if (color_method)
                     color = (k%colors)+1;
                 else
@@ -2515,7 +2512,7 @@ static int ifs3dlong()
             }
             if (realtime)
             {
-                g_which_image = 2;
+                g_which_image = stereo_images::BLUE;
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {

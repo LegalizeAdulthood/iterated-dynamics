@@ -112,6 +112,13 @@ enum sound_flags
     SOUNDFLAG_MASK      = 0x7F
 };
 
+enum class stereo_images
+{
+    NONE,
+    RED,
+    BLUE
+};
+
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH
