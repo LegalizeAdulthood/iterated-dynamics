@@ -917,11 +917,11 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
         }
 
         // Keep the box surrounding the fractal
-        for (int j = 0; j < 2; j++)
-            for (int i = 0; i < 4; ++i)
+        for (auto &elem : S)
+            for (auto &elem_i : elem)
             {
-                S[j][i][0] += xxadjust;
-                S[j][i][1] += yyadjust;
+                elem_i[0] += xxadjust;
+                elem_i[1] += yyadjust;
             }
 
         draw_rect(S[0][0], S[0][1], S[0][2], S[0][3], 2, true);      // Bottom
@@ -950,17 +950,17 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 
     S[1][0][2] = direct[2];
 
-    for (int i = 0; i < 2; i++)
+    for (auto &elem : S)
     {
-        S[i][1][0] = S[i][0][0];
-        S[i][1][1] = direct[1];
-        S[i][1][2] = S[i][0][2];
-        S[i][2][0] = direct[0];
-        S[i][2][1] = S[i][1][1];
-        S[i][2][2] = S[i][0][2];
-        S[i][3][0] = S[i][2][0];
-        S[i][3][1] = S[i][0][1];
-        S[i][3][2] = S[i][0][2];
+        elem[1][0] = elem[0][0];
+        elem[1][1] = direct[1];
+        elem[1][2] = elem[0][2];
+        elem[2][0] = direct[0];
+        elem[2][1] = elem[1][1];
+        elem[2][2] = elem[0][2];
+        elem[3][0] = elem[2][0];
+        elem[3][1] = elem[0][1];
+        elem[3][2] = elem[0][2];
     }
 
     // transform the corners if necessary
@@ -1411,8 +1411,8 @@ bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
                 fputc(0, fps);
         }
         // Write image size
-        for (int i = 0; i < 4; i++)
-            fputc(upr_lwr[i], fps);
+        for (auto &elem : upr_lwr)
+            fputc(elem, fps);
         fputc(T24, fps);          // Targa 24 file
         fputc(T32, fps);          // Image at upper left
         inc = 3;
@@ -1494,8 +1494,8 @@ bool targa_validate(char const *File_Name)
         fgetc(fp);
     }
     // Check Image specs
-    for (int i = 0; i < 4; i++)
-        if (fgetc(fp) != (int) upr_lwr[i])
+    for (auto &elem : upr_lwr)
+        if (fgetc(fp) != (int) elem)
         {
             File_Error(File_Name, 3);
             return true;

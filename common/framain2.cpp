@@ -1891,15 +1891,15 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         break;
 
     case FIK_F6: /* toggle all variables selected for random variation to center weighted variation and vice versa */
-        for (int i = 0; i < NUMGENES; i++)
+        for (auto &elem : gene_bank)
         {
-            if (gene_bank[i].mutate == variations::RANDOM)
+            if (elem.mutate == variations::RANDOM)
             {
-                gene_bank[i].mutate = variations::WEIGHTED_RANDOM;
+                elem.mutate = variations::WEIGHTED_RANDOM;
                 continue;
             }
-            if (gene_bank[i].mutate == variations::WEIGHTED_RANDOM)
-                gene_bank[i].mutate = variations::RANDOM;
+            if (elem.mutate == variations::WEIGHTED_RANDOM)
+                elem.mutate = variations::RANDOM;
         }
         *kbdmore = false;
         calc_status = calc_status_value::PARAMS_CHANGED;

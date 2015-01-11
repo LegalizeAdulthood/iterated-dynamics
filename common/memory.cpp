@@ -235,10 +235,10 @@ void DisplayHandle(U16 handle)
 void InitMemory()
 {
     numTOTALhandles = 0;
-    for (int counter = 0; counter < MAXHANDLES; counter++)
+    for (auto &elem : handletable)
     {
-        handletable[counter].Nowhere.stored_at = NOWHERE;
-        handletable[counter].Nowhere.size = 0;
+        elem.Nowhere.stored_at = NOWHERE;
+        elem.Nowhere.size = 0;
     }
 }
 

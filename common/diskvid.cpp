@@ -199,9 +199,9 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     }
 
     // preset cache to all invalid entries so we don't need free list logic
-    for (int i = 0; i < HASHSIZE; ++i)
+    for (auto &elem : hash_ptr)
     {
-        hash_ptr[i] = 0xffff; // 0xffff marks the end of a hash chain
+        elem = 0xffff; // 0xffff marks the end of a hash chain
     }
     longtmp = 100000000L;
     for (cache *ptr1 = cache_start; ptr1 < cache_end; ++ptr1)

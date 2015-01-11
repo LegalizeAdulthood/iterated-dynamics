@@ -1360,8 +1360,8 @@ void wait_until(int index, uclock_t wait_time)
 void reset_clock()
 {
     restart_uclock();
-    for (int i = 0; i < MAX_INDEX; i++)
-        next_time[i] = 0;
+    for (auto &elem : next_time)
+        elem = 0;
 }
 
 #define LOG2  0.693147180F

@@ -422,15 +422,15 @@ int plasma()
     if (max_plasma == 0)
     {
         pcolors = std::min(colors, max_colors);
-        for (int n = 0; n < 4; n++)
-            rnd[n] = (U16)(1+(((rand15()/pcolors)*(pcolors-1)) >> (shiftvalue-11)));
+        for (auto &elem : rnd)
+            elem = (U16)(1+(((rand15()/pcolors)*(pcolors-1)) >> (shiftvalue-11)));
     }
     else
-        for (int n = 0; n < 4; n++)
-            rnd[n] = rand16();
+        for (auto &elem : rnd)
+            elem = rand16();
     if (debugflag == debug_flags::prevent_plasma_random)
-        for (int n = 0; n < 4; n++)
-            rnd[n] = 1;
+        for (auto &elem : rnd)
+            elem = 1;
 
     plot(0,      0,  rnd[0]);
     plot(xdots-1,      0,  rnd[1]);
@@ -1567,8 +1567,8 @@ int cellular()
             abort_cellular(STRING1, 0);
             return -1;
         }
-        for (int i = 0; i < 16; i++)
-            init_string[i] = 0; // zero the array
+        for (auto &elem : init_string)
+            elem = 0; // zero the array
         t2 = (S16)((16 - t)/2);
         for (int i = 0; i < t; i++)
         { // center initial string in array

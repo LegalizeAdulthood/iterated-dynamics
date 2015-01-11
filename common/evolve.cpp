@@ -582,12 +582,12 @@ void set_mutation_level(int strength)
 {
     // scan through the gene array turning on random variation for all parms that
     // are suitable for this level of mutation
-    for (int i = 0; i < NUMGENES; i++)
+    for (auto &elem : gene_bank)
     {
-        if (gene_bank[i].level <= strength)
-            gene_bank[i].mutate = variations::RANDOM;
+        if (elem.level <= strength)
+            elem.mutate = variations::RANDOM;
         else
-            gene_bank[i].mutate = variations::NONE;
+            elem.mutate = variations::NONE;
     }
 }
 
@@ -896,8 +896,8 @@ static bool explore_check()
     // checks through gene array to see if any of the parameters are set to
     // one of the non random variation modes. Used to see if parmzoom box is
     // needed
-    for (int i = 0; i < NUMGENES; i++)
-        if ((gene_bank[i].mutate != variations::NONE) && (gene_bank[i].mutate < variations::RANDOM))
+    for (auto &elem : gene_bank)
+        if ((elem.mutate != variations::NONE) && (elem.mutate < variations::RANDOM))
             return true;
     return false;
 }

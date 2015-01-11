@@ -443,10 +443,10 @@ void plot_setup()
                 g_dac_box[PAL_MAGENTA][1] =    0;
                 g_dac_box[PAL_MAGENTA][2] = 63;
             }
-            for (int i = 0; i < 256; i++)
+            for (auto &elem : g_dac_box)
             {
-                g_dac_box[i][0] = (BYTE)(g_dac_box[i][0] * d_red_bright);
-                g_dac_box[i][2] = (BYTE)(g_dac_box[i][2] * d_blue_bright);
+                elem[0] = (BYTE)(elem[0] * d_red_bright);
+                elem[2] = (BYTE)(elem[2] * d_blue_bright);
             }
         }
         spindac(0, 1); // load it, but don't spin

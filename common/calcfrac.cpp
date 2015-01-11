@@ -1889,8 +1889,8 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
 #endif
     if (inside == STARTRAIL)
     {
-        for (int i = 0; i < 16; i++)
-            tantable[i] = 0.0;
+        for (auto &elem : tantable)
+            elem = 0.0;
         if (save_release > 1824)
             maxit = 16;
     }

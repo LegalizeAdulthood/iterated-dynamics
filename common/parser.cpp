@@ -4337,11 +4337,11 @@ bool frm_prescan(FILE * open_file)
 
     statement_pos = ftell(open_file);
     orig_pos = statement_pos;
-    for (int i = 0; i < 3; i++)
+    for (auto &error : errors)
     {
-        errors[i].start_pos    = 0L;
-        errors[i].error_pos    = 0L;
-        errors[i].error_number = 0;
+        error.start_pos    = 0L;
+        error.error_pos    = 0L;
+        error.error_number = 0;
     }
 
     while (!done)

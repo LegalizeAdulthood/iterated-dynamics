@@ -2364,7 +2364,7 @@ std::string expand_comments(char const *source)
 void parse_comments(char *value)
 {
     char *next, save;
-    for (int i = 0; i < 4; i++)
+    for (auto &elem : par_comment)
     {
         save = '\0';
         if (*value == 0)
@@ -2377,7 +2377,7 @@ void parse_comments(char *value)
                 save = *next;
                 *next = '\0';
             }
-            strncpy(par_comment[i], value, MAXCMT);
+            strncpy(elem, value, MAXCMT);
         }
         if (next == nullptr)
             break;
@@ -2389,6 +2389,6 @@ void parse_comments(char *value)
 
 void init_comments()
 {
-    for (int i = 0; i < 4; i++)
-        par_comment[i][0] = '\0';
+    for (auto &elem : par_comment)
+        elem[0] = '\0';
 }

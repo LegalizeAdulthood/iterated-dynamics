@@ -388,8 +388,8 @@ static void initvars_restart()          // <ins> key init
     LName = "";
     CommandFile = "fractint.par";
     CommandName = "";
-    for (int i = 0; i < 4; i++)
-        CommandComment[i].clear();
+    for (auto &elem : CommandComment)
+        elem.clear();
     IFSFileName = "fractint.ifs";
     IFSName = "";
     reset_ifs_defn();
@@ -438,8 +438,8 @@ static void initvars_fractal()          // init vars affecting calculation
         param[i] = 0.0;     // initial parameter values
     for (int i = 0; i < 3; i++)
         potparam[i]  = 0.0; // initial potential values
-    for (int i = 0; i < 3; i++)
-        inversion[i] = 0.0;  // initial invert values
+    for (auto &elem : inversion)
+        elem = 0.0;  // initial invert values
     initorbit.y = 0.0;
     initorbit.x = initorbit.y;     // initial orbit values
     invert = 0;
@@ -580,8 +580,8 @@ static int cmdfile(FILE *handle, cmd_file mode)
         while ((i = getc(handle)) != '{' && i != EOF)
         {
         }
-        for (int i = 0; i < 4; i++)
-            CommandComment[i].clear();
+        for (auto &elem : CommandComment)
+            elem.clear();
     }
     linebuf[0] = 0;
     while (next_command(cmdbuf, 10000, handle, linebuf, &lineoffset, mode) > 0)
@@ -645,10 +645,10 @@ static int next_command(
                     {
                         if ((int)strlen(lineptr) >= MAXCMT)
                             *(lineptr+MAXCMT-1) = 0;
-                        for (int i = 0; i < 4; i++)
-                            if (CommandComment[i].empty())
+                        for (auto &elem : CommandComment)
+                            if (elem.empty())
                             {
-                                CommandComment[i] = lineptr;
+                                elem = lineptr;
                                 break;
                             }
                     }
@@ -1394,7 +1394,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             char const *arg;
             int inside;
         }
-        args[] =
+        const args[] =
         {
             { "zmag", ZMAG },
             { "bof60", BOF60 },
@@ -1406,11 +1406,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             { "atan", ATANI },
             { "maxiter", -1 }
         };
-        for (int ii = 0; ii < NUM_OF(args); ii++)
+        for (auto &arg : args)
         {
-            if (strcmp(value, args[ii].arg) == 0)
+            if (strcmp(value, arg.arg) == 0)
             {
-                inside = args[ii].inside;
+                inside = arg.inside;
                 return CMDARG_FRACTAL_PARAM;
             }
         }
@@ -1506,11 +1506,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             { "fmod", FMOD },
             { "tdis", TDIS }
         };
-        for (int ii = 0; ii < NUM_OF(args); ii++)
+        for (auto &arg : args)
         {
-            if (strcmp(value, args[ii].arg) == 0)
+            if (strcmp(value, arg.arg) == 0)
             {
-                outside = args[ii].outside;
+                outside = arg.outside;
                 return CMDARG_FRACTAL_PARAM;
             }
         }
@@ -3139,8 +3139,8 @@ static void parse_textcolors(char const *value)
     int hexval;
     if (strcmp(value, "mono") == 0)
     {
-        for (int k = 0; k < sizeof(txtcolor); ++k)
-            txtcolor[k] = BLACK*16+WHITE;
+        for (auto & elem : txtcolor)
+            elem = BLACK*16+WHITE;
         /* C_HELP_CURLINK = C_PROMPT_INPUT = C_CHOICE_CURRENT = C_GENERAL_INPUT
                           = C_AUTHDIV1 = C_AUTHDIV2 = WHITE*16+BLACK; */
         txtcolor[28] = WHITE*16+BLACK;
