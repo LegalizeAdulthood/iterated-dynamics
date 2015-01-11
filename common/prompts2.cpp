@@ -1089,8 +1089,8 @@ int get_rds_params()
             uvalues[k++].type = 'y';
 
             uvalues[k++].type = '*';
-            for (int i = 0; i < sizeof(rds6); i++)
-                rds6[i] = ' ';
+            for (auto & elem : rds6)
+                elem = ' ';
             auto p = stereomapname.find(SLASHC);
             if (p == std::string::npos ||
                     (int) stereomapname.length() < sizeof(rds6)-2)
@@ -2180,8 +2180,8 @@ static int get_screen_corners()
     yy3rd = oy3rd;
 
 gsc_loop:
-    for (int i = 0; i < 15; ++i)
-        values[i].type = 'd'; // most values on this screen are type d
+    for (auto & value : values)
+        value.type = 'd'; // most values on this screen are type d
     cmag = usemag ? 1 : 0;
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
