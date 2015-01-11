@@ -2664,13 +2664,12 @@ std::string extract_filename(char const *source)
 char const *has_ext(char const *source)
 {
     char fname[FILE_MAX_FNAME];
-    char ext[FILE_MAX_EXT];
-    char const *ret = nullptr;
+    char ext[FILE_MAX_EXT] = { 0 };
     splitpath(source, nullptr, nullptr, fname, ext);
-    if (ext != nullptr)
-        if (*ext != 0)
-            ret = strrchr(source, '.');
-    return (ret);
+    char const *ret = nullptr;
+    if (ext[0] != 0)
+        ret = strrchr(source, '.');
+    return ret;
 }
 
 void shell_sort(void *v1, int n, unsigned sz, int (*fct)(VOIDPTR arg1, VOIDPTR arg2))
