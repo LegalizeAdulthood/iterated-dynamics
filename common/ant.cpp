@@ -5,10 +5,13 @@
  * rules.
  */
 #include <algorithm>
+#include <sstream>
+#include <string>
 #include <vector>
 
 #include <stdlib.h>
 #include <string.h>
+#include <iomanip>
 
 // see Fractint.c for a description of the "include"  hierarchy
 #include "port.h"
@@ -36,16 +39,13 @@ static int s_last_ydots = 0;
 void
 setwait(long *wait)
 {
-    char msg[30];
     int kbdchar;
 
     while (true)
     {
-        sprintf(msg, "Delay %4ld", *wait);
-        while ((int)strlen(msg) < 15)
-            strcat(msg, " ");
-        msg[15] = '\0';
-        showtempmsg(msg);
+        std::ostringstream msg;
+        msg << "Delay " << std::setw(4) << *wait << "     ";
+        showtempmsg(msg.str().c_str());
         kbdchar = driver_get_key();
         switch (kbdchar)
         {
@@ -370,6 +370,16 @@ void free_ant_storage()
     }
 }
 
+namespace
+{
+std::string get_rule()
+{
+    std::ostringstream buff;
+    buff << std::setprecision(17) << std::fixed << param[0];
+    return buff.str();
+}
+}
+
 int ant()
 {
     if (xdots != s_last_xdots || ydots != s_last_ydots)
@@ -417,9 +427,8 @@ int ant()
     helpmode = ANTCOMMANDS;
     long const maxpts = labs(static_cast<long>(param[1]));
     long const wait = abs(orbit_delay);
-    char rule[MAX_ANTS];
-    sprintf(rule, "%.17g", param[0]);
-    int rule_len = (int) strlen(rule);
+    std::string rule{get_rule()};
+    int rule_len = (int) rule.length();;
     if (rule_len > 1)
     {   // if rule_len == 0 random rule
         for (int i = 0; i < rule_len; i++)
@@ -457,10 +466,10 @@ int ant()
     switch (type)
     {
     case 1:
-        TurkMite1(maxants, rule_len, rule, maxpts, wait);
+        TurkMite1(maxants, rule_len, rule.c_str(), maxpts, wait);
         break;
     case 2:
-        TurkMite2(maxants, rule_len, rule, maxpts, wait);
+        TurkMite2(maxants, rule_len, rule.c_str(), maxpts, wait);
         break;
     default:
         break;
