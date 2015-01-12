@@ -10,6 +10,8 @@
 #include <math.h>
 #include <string.h>
 #include <time.h>
+#include <printf.h>
+#include <stdio.h>
 
 #include "port.h"
 #include "prototyp.h"
@@ -239,6 +241,38 @@ void process_sstools_ini()
             cmdfile(initfile, cmd_file::SSTOOLS_INI);           // process it
     }
 }
+
+void process_simple_command(char *curarg)
+{
+    if (strchr(curarg, '=') == nullptr)
+    {
+        // not xxx=yyy, so check for gif
+        char tempstring[101];
+        strcpy(tempstring, curarg);
+        if (has_ext(curarg) == nullptr)
+            strcat(tempstring, ".gif");
+        FILE *initfile = fopen(tempstring, "rb");
+        if (initfile != nullptr)
+        {
+            fread(tempstring, 6, 1, initfile);
+            if (tempstring[0] == 'G'
+                    && tempstring[1] == 'I'
+                    && tempstring[2] == 'F'
+                    && tempstring[3] >= '8' && tempstring[3] <= '9'
+                    && tempstring[4] >= '0' && tempstring[4] <= '9')
+            {
+                readname = curarg;
+                browsename = extract_filename(readname.c_str());
+                showfile = 0;
+                curarg[0] = 0;
+            }
+            fclose(initfile);
+        }
+    }
+    if (curarg[0])
+        cmdarg(curarg, cmd_file::AT_CMD_LINE);           // process simple command
+}
+
 }
 
 int cmdfiles(int argc, char const *const *argv)
@@ -260,34 +294,8 @@ int cmdfiles(int argc, char const *const *argv)
         if (curarg[0] == ';')             // start of comments?
             break;
         if (curarg[0] != '@')
-        {           // simple command?
-            if (strchr(curarg, '=') == nullptr)
-            {
-                // not xxx=yyy, so check for gif
-                char tempstring[101];
-                strcpy(tempstring, curarg);
-                if (has_ext(curarg) == nullptr)
-                    strcat(tempstring, ".gif");
-                FILE *initfile = fopen(tempstring, "rb");
-                if (initfile != nullptr)
-                {
-                    fread(tempstring, 6, 1, initfile);
-                    if (tempstring[0] == 'G'
-                            && tempstring[1] == 'I'
-                            && tempstring[2] == 'F'
-                            && tempstring[3] >= '8' && tempstring[3] <= '9'
-                            && tempstring[4] >= '0' && tempstring[4] <= '9')
-                    {
-                        readname = curarg;
-                        browsename = extract_filename(readname.c_str());
-                        showfile = 0;
-                        curarg[0] = 0;
-                    }
-                    fclose(initfile);
-                }
-            }
-            if (curarg[0])
-                cmdarg(curarg, cmd_file::AT_CMD_LINE);           // process simple command
+        {
+            process_simple_command(curarg);
         }
         else if ((sptr = strchr(curarg, '/')) != nullptr)
         { // @filename/setname?
