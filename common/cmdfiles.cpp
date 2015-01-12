@@ -273,6 +273,26 @@ void process_simple_command(char *curarg)
         cmdarg(curarg, cmd_file::AT_CMD_LINE);           // process simple command
 }
 
+void process_file_setname(char *curarg, char *sptr)
+{
+    *sptr = 0;
+    if (merge_pathnames(CommandFile, &curarg[1], cmd_file::AT_CMD_LINE) < 0)
+        init_msg("", CommandFile.c_str(), cmd_file::AT_CMD_LINE);
+    CommandName = &sptr[1];
+    FILE *initfile = nullptr;
+    if (find_file_item(CommandFile, CommandName.c_str(), &initfile, 0) || initfile == nullptr)
+        argerror(curarg);
+    cmdfile(initfile, cmd_file::AT_CMD_LINE_SET_NAME);
+}
+
+void process_file(char *curarg)
+{
+    FILE *initfile = fopen(&curarg[1], "r");
+    if (initfile == nullptr)
+        argerror(curarg);
+    cmdfile(initfile, cmd_file::AT_CMD_LINE);
+}
+
 }
 
 int cmdfiles(int argc, char const *const *argv)
@@ -287,7 +307,7 @@ int cmdfiles(int argc, char const *const *argv)
     // cycle through args
     for (int i = 1; i < argc; i++)
     {
-        char    curarg[141];
+        char curarg[141];
         strcpy(curarg, argv[i]);
         if (curarg[0] == ';')             // start of comments?
             break;
@@ -298,21 +318,12 @@ int cmdfiles(int argc, char const *const *argv)
         // @filename/setname?
         else if (char *sptr = strchr(curarg, '/'))
         {
-            *sptr = 0;
-            if (merge_pathnames(CommandFile, &curarg[1], cmd_file::AT_CMD_LINE) < 0)
-                init_msg("", CommandFile.c_str(), cmd_file::AT_CMD_LINE);
-            CommandName = &sptr[1];
-            FILE *initfile = nullptr;
-            if (find_file_item(CommandFile, CommandName.c_str(), &initfile, 0) || initfile == nullptr)
-                argerror(curarg);
-            cmdfile(initfile, cmd_file::AT_CMD_LINE_SET_NAME);
+            process_file_setname(curarg, sptr);
         }
+        // @filename
         else
-        {                            // @filename
-            FILE *initfile = fopen(&curarg[1], "r");
-            if (initfile == nullptr)
-                argerror(curarg);
-            cmdfile(initfile, cmd_file::AT_CMD_LINE);
+        {
+            process_file(curarg);
         }
     }
 
