@@ -238,7 +238,9 @@ void process_sstools_ini()
     {
         FILE *initfile = fopen(sstools_ini.c_str(), "r");
         if (initfile != nullptr)
+        {
             cmdfile(initfile, cmd_file::SSTOOLS_INI);           // process it
+        }
     }
 }
 
