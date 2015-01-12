@@ -243,7 +243,6 @@ void process_sstools_ini()
 
 int cmdfiles(int argc, char const *const *argv)
 {
-    char    curarg[141];
     char    *sptr;
 
     if (first_init)
@@ -256,6 +255,7 @@ int cmdfiles(int argc, char const *const *argv)
     // cycle through args
     for (int i = 1; i < argc; i++)
     {
+        char    curarg[141];
         strcpy(curarg, argv[i]);
         if (curarg[0] == ';')             // start of comments?
             break;
