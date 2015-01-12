@@ -247,13 +247,14 @@ void process_simple_command(char *curarg)
     if (strchr(curarg, '=') == nullptr)
     {
         // not xxx=yyy, so check for gif
-        char tempstring[101];
-        strcpy(tempstring, curarg);
+        std::string filename = curarg;
         if (has_ext(curarg) == nullptr)
-            strcat(tempstring, ".gif");
-        FILE *initfile = fopen(tempstring, "rb");
-        if (initfile != nullptr)
         {
+            filename += ".gif";
+        }
+        if (FILE *initfile = fopen(filename.c_str(), "rb"))
+        {
+            char tempstring[101];
             fread(tempstring, 6, 1, initfile);
             if (tempstring[0] == 'G'
                     && tempstring[1] == 'I'
