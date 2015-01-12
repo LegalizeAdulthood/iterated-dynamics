@@ -792,7 +792,6 @@ static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
 
 int cmdarg(char *curarg, cmd_file mode) // process a single argument
 {
-    std::string variable;               // variable name goes here
     int     valuelen = 0;               // length of value
     int     numval = 0;                 // numeric value of arg
     char    charval[16] = { 0 };        // first character of arg
@@ -851,9 +850,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     }
     if (j > 20)
     {
-        goto badarg;             // keyword too long
+        argerror(curarg);               // keyword too long
+        return CMDARG_ERROR;
     }
-    variable.assign(curarg, j);          // get the variable name
+    std::string const variable(curarg, j);
     valuelen = (int) strlen(value);            // note value's length
     charval[0] = value[0];               // first letter of value
     yesnoval[0] = -1;                    // note yes|no value
