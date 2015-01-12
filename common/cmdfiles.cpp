@@ -245,7 +245,6 @@ int cmdfiles(int argc, char const *const *argv)
 {
     char    curarg[141];
     char    *sptr;
-    FILE    *initfile;
 
     if (first_init)
         initvars_run();                 // once per run initialization
@@ -269,7 +268,7 @@ int cmdfiles(int argc, char const *const *argv)
                 strcpy(tempstring, curarg);
                 if (has_ext(curarg) == nullptr)
                     strcat(tempstring, ".gif");
-                initfile = fopen(tempstring, "rb");
+                FILE *initfile = fopen(tempstring, "rb");
                 if (initfile != nullptr)
                 {
                     fread(tempstring, 6, 1, initfile);
@@ -295,13 +294,14 @@ int cmdfiles(int argc, char const *const *argv)
             if (merge_pathnames(CommandFile, &curarg[1], cmd_file::AT_CMD_LINE) < 0)
                 init_msg("", CommandFile.c_str(), cmd_file::AT_CMD_LINE);
             CommandName = &sptr[1];
+            FILE *initfile = nullptr;
             if (find_file_item(CommandFile, CommandName.c_str(), &initfile, 0) || initfile == nullptr)
                 argerror(curarg);
             cmdfile(initfile, cmd_file::AT_CMD_LINE_SET_NAME);
         }
         else
         {                            // @filename
-            initfile = fopen(&curarg[1], "r");
+            FILE *initfile = fopen(&curarg[1], "r");
             if (initfile == nullptr)
                 argerror(curarg);
             cmdfile(initfile, cmd_file::AT_CMD_LINE);
