@@ -277,8 +277,6 @@ void process_simple_command(char *curarg)
 
 int cmdfiles(int argc, char const *const *argv)
 {
-    char    *sptr;
-
     if (first_init)
         initvars_run();                 // once per run initialization
     initvars_restart();                  // <ins> key initialization
@@ -297,8 +295,9 @@ int cmdfiles(int argc, char const *const *argv)
         {
             process_simple_command(curarg);
         }
-        else if ((sptr = strchr(curarg, '/')) != nullptr)
-        { // @filename/setname?
+        // @filename/setname?
+        else if (char *sptr = strchr(curarg, '/'))
+        {
             *sptr = 0;
             if (merge_pathnames(CommandFile, &curarg[1], cmd_file::AT_CMD_LINE) < 0)
                 init_msg("", CommandFile.c_str(), cmd_file::AT_CMD_LINE);
