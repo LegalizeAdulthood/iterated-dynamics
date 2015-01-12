@@ -13,7 +13,9 @@ x11_text_window::x11_text_window()
         char_xchars_{},
         char_ychars_{},
         max_width_{},
-        max_height_{}
+        max_height_{},
+        x_{},
+        y_{}
 {
 #if 0
     bool return_value = GetClassInfo(hInstance, s_window_class, &wc) == TRUE;
@@ -86,17 +88,18 @@ x11_text_window::~x11_text_window()
     }
 }
 
-void x11_text_window::initialize(Display *dpy, Window parent)
+void x11_text_window::initialize(Display *dpy, int screen_num, Window parent)
 {
     dpy_ = dpy;
+    screen_num_ = screen_num;
     parent_ = parent;
     font_ = XLoadQueryFont(dpy_, "6x12");
     char_width_ = font_->max_bounds.width;
     char_height_ = font_->max_bounds.ascent + font_->max_bounds.descent;
     char_xchars_ = X11_TEXT_MAX_COL;
     char_ychars_ = X11_TEXT_MAX_ROW;
-    max_width_ = char_xchars_*char_width_;
-    max_height_ = char_ychars_*char_height_;
+    max_width_ = static_cast<unsigned>(char_xchars_*char_width_);
+    max_height_ = static_cast<unsigned>(char_ychars_*char_height_);
     text_mode_ = 1;
     alt_f4_hit_ = false;
 }
@@ -113,11 +116,14 @@ int x11_text_window::text_on()
     cursor_type_ = 0;
     cursor_owned_ = false;
     showing_cursor_ = false;
-
-    // window_ = XCreateWindow(title_text, max_width, max_height, parent)
+    XSetWindowAttributes attrs;
+    window_ = XCreateWindow(dpy_, parent_,
+            x_, y_, max_width_, max_height_, 0, DefaultDepth(dpy_, screen_num_),
+            InputOutput, CopyFromParent,
+            /*CWBackPixel | CWBitGravity | CWBackingStore*/ 0, &attrs);
     text_mode_ = 2;
     alt_f4_hit_ = false;
-    // XMapWindow(window_)
+    XMapWindow(dpy_, window_);
 
     return 0;
 }
@@ -125,15 +131,16 @@ int x11_text_window::text_on()
 int x11_text_window::text_off()
 {
     alt_f4_hit_ = false;
-    // XUnmapWindow(window_);
+    XUnmapWindow(dpy_, window_);
     text_mode_ = 1;
     return 0;
 }
 
 void x11_text_window::set_position(int x, int y)
 {
-    int status = XMoveWindow(dpy_, window_, x, y);
-    assert(status == Success);
+    x_ = x;
+    y_ = y;
+    XMoveWindow(dpy_, window_, x, y);
 }
 
 #if 0

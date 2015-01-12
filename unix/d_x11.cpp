@@ -1752,7 +1752,7 @@ x11_init(Driver *drv, int *argc, char **argv)
     int screen_num = DefaultScreen(di->Xdp);
     di->frame_.initialize(di->Xdp, screen_num, di->Xgeometry);
     di->plot_.initialize(di->Xdp, screen_num, di->frame_.window());
-    di->text_.initialize(di->Xdp, di->frame_.window());
+    di->text_.initialize(di->Xdp, screen_num, di->frame_.window());
 
     return true;
 }

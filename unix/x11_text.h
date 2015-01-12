@@ -17,7 +17,7 @@ public:
     x11_text_window();
     ~x11_text_window();
 
-    void initialize(Display *dpy, Window parent);
+    void initialize(Display *dpy, int screen_num, Window parent);
 
     void set_position(int x, int y);
     unsigned max_width() const { return max_width_; }
@@ -36,6 +36,7 @@ public:
 
 private:
     Display *dpy_;
+    int screen_num_;
     XFontStruct const *font_;
     Window parent_;
     Window window_;
@@ -52,6 +53,8 @@ private:
     bool cursor_owned_;
     bool showing_cursor_;
     bool alt_f4_hit_;
+    int x_;
+    int y_;
 };
 
 #endif
