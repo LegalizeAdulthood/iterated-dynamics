@@ -371,10 +371,9 @@ int load_commands(FILE *infile)
     initparams = false; // reset flags for type=
     ret = cmdfile(infile, cmd_file::AT_AFTER_STARTUP);
 
-    if (colorpreloaded && showfile == 0) // PAR reads a file and sets color
-        dontreadcolor = true;   // don't read colors from GIF
-    else
-        dontreadcolor = false;   // read colors from GIF
+    // PAR reads a file and sets color, don't read colors from GIF
+    dontreadcolor = colorpreloaded && showfile == 0;
+
     return ret;
 }
 
