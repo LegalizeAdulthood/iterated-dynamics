@@ -1733,7 +1733,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             ranges.resize(entries);
             resized = true;
         }
-        catch (std::bad_alloc const&)
+        catch (std::bad_alloc const &)
         {
         }
         if (!resized)
