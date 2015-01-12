@@ -244,7 +244,6 @@ void process_sstools_ini()
 int cmdfiles(int argc, char const *const *argv)
 {
     char    curarg[141];
-    char    tempstring[101];
     char    *sptr;
     FILE    *initfile;
 
@@ -264,7 +263,9 @@ int cmdfiles(int argc, char const *const *argv)
         if (curarg[0] != '@')
         {           // simple command?
             if (strchr(curarg, '=') == nullptr)
-            { // not xxx=yyy, so check for gif
+            {
+                // not xxx=yyy, so check for gif
+                char tempstring[101];
                 strcpy(tempstring, curarg);
                 if (has_ext(curarg) == nullptr)
                     strcat(tempstring, ".gif");
