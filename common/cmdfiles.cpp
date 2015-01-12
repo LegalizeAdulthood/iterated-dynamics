@@ -220,7 +220,26 @@ int getpower10(LDBL x)
     return p;
 }
 
+namespace
+{
+std::string findpath(char const *filename)
+{
+    char buffer[FILE_MAX_PATH] = { 0 };
+    ::findpath(filename, buffer);
+    return buffer;
+}
 
+void process_sstools_ini()
+{
+    std::string const sstools_ini = findpath("sstools.ini"); // look for SSTOOLS.INI
+    if (!sstools_ini.empty())              // found it!
+    {
+        FILE *initfile = fopen(sstools_ini.c_str(), "r");
+        if (initfile != nullptr)
+            cmdfile(initfile, cmd_file::SSTOOLS_INI);           // process it
+    }
+}
+}
 
 int cmdfiles(int argc, char const *const *argv)
 {
@@ -234,14 +253,7 @@ int cmdfiles(int argc, char const *const *argv)
     initvars_restart();                  // <ins> key initialization
     initvars_fractal();                  // image initialization
 
-    strcpy(curarg, "sstools.ini");
-    findpath(curarg, tempstring); // look for SSTOOLS.INI
-    if (tempstring[0] != 0)              // found it!
-    {
-        initfile = fopen(tempstring, "r");
-        if (initfile != nullptr)
-            cmdfile(initfile, cmd_file::SSTOOLS_INI);           // process it
-    }
+    process_sstools_ini();
 
     // cycle through args
     for (int i = 1; i < argc; i++)
