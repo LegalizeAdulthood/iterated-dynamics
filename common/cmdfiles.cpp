@@ -384,7 +384,9 @@ static void initvars_run()              // once per run init
     init_comments();
     char const *p = getenv("TMP");
     if (p == nullptr)
+    {
         p = getenv("TEMP");
+    }
     if (p != nullptr)
     {
         if (isadirectory(p))
@@ -394,7 +396,9 @@ static void initvars_run()              // once per run init
         }
     }
     else
+    {
         tempdir.clear();
+    }
 }
 
 static void initvars_restart()          // <ins> key init
@@ -476,11 +480,17 @@ static void initvars_fractal()          // init vars affecting calculation
     nobof = false;                      // use normal bof initialization to make bof images
     useinitorbit = 0;
     for (int i = 0; i < MAXPARAMS; i++)
+    {
         param[i] = 0.0;     // initial parameter values
+    }
     for (int i = 0; i < 3; i++)
+    {
         potparam[i]  = 0.0; // initial potential values
+    }
     for (auto &elem : inversion)
+    {
         elem = 0.0;  // initial invert values
+    }
     initorbit.y = 0.0;
     initorbit.x = initorbit.y;     // initial orbit values
     invert = 0;
@@ -622,16 +632,22 @@ static int cmdfile(FILE *handle, cmd_file mode)
         {
         }
         for (auto &elem : CommandComment)
+        {
             elem.clear();
+        }
     }
     linebuf[0] = 0;
     while (next_command(cmdbuf, 10000, handle, linebuf, &lineoffset, mode) > 0)
     {
         if ((mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME) && strcmp(cmdbuf, "}") == 0)
+        {
             break;
+        }
         i = cmdarg(cmdbuf, mode);
         if (i == CMDARG_ERROR)
+        {
             break;
+        }
         changeflag |= i;
     }
     fclose(handle);
@@ -669,7 +685,9 @@ static int next_command(
                 return cmdlen;
             }
             while (*lineptr && *lineptr <= ' ')
+            {
                 ++lineptr;                  // skip spaces and tabs
+            }
             if (*lineptr == ';' || *lineptr == 0)
             {
                 if (*lineptr == ';'
@@ -685,17 +703,23 @@ static int next_command(
                     if (*lineptr)
                     {
                         if ((int)strlen(lineptr) >= MAXCMT)
+                        {
                             *(lineptr+MAXCMT-1) = 0;
+                        }
                         for (auto &elem : CommandComment)
+                        {
                             if (elem.empty())
                             {
                                 elem = lineptr;
                                 break;
                             }
+                        }
                     }
                 }
                 if (next_line(handle, linebuf, mode))
+                {
                     return -1; // eof
+                }
                 lineptr = linebuf; // start new line
             }
         }
@@ -709,7 +733,9 @@ static int next_command(
             }
             lineptr = linebuf;
             while (*lineptr && *lineptr <= ' ')
+            {
                 ++lineptr;                  // skip white space @ start next line
+            }
             continue;                      // loop to check end of line again
         }
         cmdbuf[cmdlen] = *(lineptr++);    // copy character to command buffer
@@ -744,7 +770,9 @@ static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
             continue;                              // skip tools section heading
         }
         if (toolssection == 0)
+        {
             return false;
+        }
     }
     return true;
 }
