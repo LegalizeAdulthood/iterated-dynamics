@@ -350,10 +350,8 @@ int cmdfiles(int argc, char const *const *argv)
         first_init = false;
     }
 
-    if (colorpreloaded && showfile == 0) // PAR reads a file and sets color
-        dontreadcolor = true;   // don't read colors from GIF
-    else
-        dontreadcolor = false;   // read colors from GIF
+    // PAR reads a file and sets color, don't read colors from GIF
+    dontreadcolor = colorpreloaded && showfile == 0;
 
     //set structure of search directories
     strcpy(searchfor.par, CommandFile.c_str());
