@@ -304,7 +304,9 @@ void process_file(char *curarg)
 int cmdfiles(int argc, char const *const *argv)
 {
     if (first_init)
+    {
         initvars_run();                 // once per run initialization
+    }
     initvars_restart();                  // <ins> key initialization
     initvars_fractal();                  // image initialization
 
@@ -316,7 +318,9 @@ int cmdfiles(int argc, char const *const *argv)
         char curarg[141];
         strcpy(curarg, argv[i]);
         if (curarg[0] == ';')             // start of comments?
+        {
             break;
+        }
         if (curarg[0] != '@')
         {
             process_simple_command(curarg);
@@ -342,7 +346,9 @@ int cmdfiles(int argc, char const *const *argv)
     init_msg("", nullptr, cmd_file::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
 
     if (debugflag != debug_flags::allow_init_commands_anytime)
+    {
         first_init = false;
+    }
 
     if (colorpreloaded && showfile == 0) // PAR reads a file and sets color
         dontreadcolor = true;   // don't read colors from GIF
