@@ -246,6 +246,7 @@ void process_sstools_ini()
 
 void process_simple_command(char *curarg)
 {
+    bool processed = false;
     if (strchr(curarg, '=') == nullptr)
     {
         // not xxx=yyy, so check for gif
@@ -267,13 +268,15 @@ void process_simple_command(char *curarg)
                 readname = curarg;
                 browsename = extract_filename(readname.c_str());
                 showfile = 0;
-                curarg[0] = 0;
+                processed = true;
             }
             fclose(initfile);
         }
     }
-    if (curarg[0])
+    if (!processed)
+    {
         cmdarg(curarg, cmd_file::AT_CMD_LINE);           // process simple command
+    }
 }
 
 void process_file_setname(char *curarg, char *sptr)
