@@ -14,8 +14,14 @@ void x11_frame_window::initialize(Display *dpy,
     int y = 0;
 
     if (geometry)
+    {
+        int w = 0;
+        int h = 0;
         XGeometry(dpy, screen_num, geometry, "800x600+0+0",
-            0, 1, 1, 0, 0, &x, &y, &width_, &height_);
+                0, 1, 1, 0, 0, &x, &y, &w, &h);
+        width_ = static_cast<unsigned>(w);
+        height_ = static_cast<unsigned>(h);
+    }
     Screen *screen = ScreenOfDisplay(dpy, screen_num);
     attrs.background_pixel = BlackPixelOfScreen(screen);
     attrs.bit_gravity = StaticGravity;
@@ -31,12 +37,19 @@ void x11_frame_window::initialize(Display *dpy,
     XSelectInput(dpy, window_, event_mask);
     attrs.background_pixel = BlackPixelOfScreen(screen);
     XChangeWindowAttributes(dpy, window_, CWBackPixel, &attrs);
-    XMapWindow(dpy, window_);
 }
 
-void x11_frame_window::resize(int width, int height)
+void x11_frame_window::window(unsigned width, unsigned height)
 {
+    width_ = width;
+    height_ = height;
     assert(window_ != 0);
+    XResizeWindow(dpy_, window_, width_, height_);
+    if (!mapped_)
+    {
+        XMapWindow(dpy_, window_);
+        mapped_ = true;
+    }
 }
 
 int x11_frame_window::get_key_press(int wait_for_key)

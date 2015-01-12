@@ -456,10 +456,11 @@ static int errhand(Display *dp, XErrorEvent *xe)
 {
     char buf[200];
     fflush(stdout);
-    printf("X Error: %d %d %d %d\n", xe->type, xe->error_code,
+    fprintf(stderr, "X Error: %d %d %d %d\n", xe->type, xe->error_code,
            xe->request_code, xe->minor_code);
     XGetErrorText(dp, xe->error_code, buf, 200);
-    printf("%s\n", buf);
+    fprintf(stderr, "%s\n", buf);
+    fflush(stderr);
     return 0;
 }
 
@@ -1748,8 +1749,9 @@ x11_init(Driver *drv, int *argc, char **argv)
         }
     }
 
-    di->frame_.initialize(di->Xdp, DefaultScreen(di->Xdp), di->Xgeometry);
-    di->plot_.initialize(di->Xdp, di->frame_.window());
+    int screen_num = DefaultScreen(di->Xdp);
+    di->frame_.initialize(di->Xdp, screen_num, di->Xgeometry);
+    di->plot_.initialize(di->Xdp, screen_num, di->frame_.window());
     di->text_.initialize(di->Xdp, di->frame_.window());
 
     return true;
@@ -1822,7 +1824,7 @@ x11_schedule_alarm(Driver *drv, int soon)
 }
 
 static void
-max_size(DriverX11 *di, int *width, int *height, bool *center_x, bool *center_y)
+max_size(DriverX11 *di, unsigned *width, unsigned *height, bool *center_x, bool *center_y)
 {
     *width = di->text_.max_width();
     *height = di->text_.max_height();
@@ -1866,10 +1868,8 @@ static void center_window(DriverX11 *di, bool center_x, bool center_y)
         text_pos.y = (di->frame_.height() - di->text_.max_height())/2;
     }
 
-    int status = XMoveWindow(di->Xdp, di->plot_.window(), plot_pos.x, plot_pos.y);
-    assert(status == Success);
-    status = XMoveWindow(di->Xdp, di->text_.window(), text_pos.x, text_pos.y);
-    assert(status == Success);
+    di->plot_.set_position(plot_pos.x, plot_pos.y);
+    di->text_.set_position(text_pos.x, text_pos.y);
 }
 
 void frame_window(int width, int height)
@@ -1894,14 +1894,20 @@ static void
 x11_window(Driver *drv)
 {
     DIX11(drv);
-    int width;
-    int height;
+    unsigned width;
+    unsigned height;
     bool center_x = true;
     bool center_y = true;
     max_size(di, &width, &height, &center_x, &center_y);
+    di->frame_.window(width, height);
     di->text_.text_on();
     center_window(di, center_x, center_y);
 #if 0
+    di->base.wintext.hWndParent = g_frame.window;
+    wintext_texton(&di->base.wintext);
+    plot_window(&di->plot, g_frame.window);
+    center_windows(di, center_x, center_y);
+
     XSetWindowAttributes Xwatt;
     XGCValues Xgcvals;
     int Xwinx = 0, Xwiny = 0;

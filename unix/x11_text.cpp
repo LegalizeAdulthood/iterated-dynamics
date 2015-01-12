@@ -4,15 +4,16 @@
 #include "x11_text.h"
 
 x11_text_window::x11_text_window()
-    : dpy_{},
-    font_{},
-    parent_{},
-    char_width_{},
-    char_height_{},
-    char_xchars_{},
-    char_ychars_{},
-    max_width_{},
-    max_height_{}
+        : dpy_{},
+        font_{},
+        parent_{},
+        window_{},
+        char_width_{},
+        char_height_{},
+        char_xchars_{},
+        char_ychars_{},
+        max_width_{},
+        max_height_{}
 {
 #if 0
     bool return_value = GetClassInfo(hInstance, s_window_class, &wc) == TRUE;
@@ -129,7 +130,14 @@ int x11_text_window::text_off()
     return 0;
 }
 
+void x11_text_window::set_position(int x, int y)
+{
+    int status = XMoveWindow(dpy_, window_, x, y);
+    assert(status == Success);
+}
+
 #if 0
+
 static int s_showing_cursor = FALSE;
 
 #if defined(RT_VERBOSE)

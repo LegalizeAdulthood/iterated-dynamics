@@ -18,9 +18,11 @@ public:
     ~x11_text_window();
 
     void initialize(Display *dpy, Window parent);
-    int max_width() const { return max_width_; }
-    int max_height() const { return max_height_; }
-    Window window() const { return 0; }
+
+    void set_position(int x, int y);
+    unsigned max_width() const { return max_width_; }
+    unsigned max_height() const { return max_height_; }
+    Window window() const { return window_; }
 
     int text_on();
     int text_off();
@@ -36,12 +38,13 @@ private:
     Display *dpy_;
     XFontStruct const *font_;
     Window parent_;
+    Window window_;
     int char_width_;
     int char_height_;
     int char_xchars_;
     int char_ychars_;
-    int max_width_;
-    int max_height_;
+    unsigned max_width_;
+    unsigned max_height_;
     int text_mode_;
     int cursor_x_;
     int cursor_y_;
