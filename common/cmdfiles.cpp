@@ -280,7 +280,8 @@ int cmdfiles(int argc, char const *const *argv)
                     {
                         readname = curarg;
                         browsename = extract_filename(readname.c_str());
-                        curarg[0] = (char)(showfile = 0);
+                        showfile = 0;
+                        curarg[0] = 0;
                     }
                     fclose(initfile);
                 }
