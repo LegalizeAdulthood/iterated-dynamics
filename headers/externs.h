@@ -113,7 +113,7 @@ extern int                   Distribution;
 extern bool                  dither_flag;
 extern bool                  dontreadcolor;
 extern int                   dotmode;
-extern bool                  doublecaution;
+extern bool confirm_file_deletes;
 extern double                dpx;
 extern double                dpy;
 extern char                  drawmode;

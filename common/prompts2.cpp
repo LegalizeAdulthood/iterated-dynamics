@@ -2392,7 +2392,7 @@ int get_browse_params()
     bool old_auto_browse = auto_browse;
     bool old_browse_check_fractal_type = browse_check_fractal_type;
     bool old_brwscheckparms = browse_check_fractal_params;
-    bool old_doublecaution  = doublecaution;
+    bool old_doublecaution  = confirm_file_deletes;
     old_minbox         = minbox;
     old_toosmall       = toosmall;
     std::string old_browsemask = browsemask;
@@ -2419,7 +2419,7 @@ get_brws_restart:
 
     choices[++k] = "Confirm file deletes (y/n)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = doublecaution ? 1 : 0;
+    uvalues[k].uval.ch.val = confirm_file_deletes ? 1 : 0;
 
     choices[++k] = "Smallest window to display (size in pixels)";
     uvalues[k].type = 'f';
@@ -2454,7 +2454,7 @@ get_brws_restart:
         askvideo = true;
         browse_check_fractal_params = true;
         browse_check_fractal_type = true;
-        doublecaution  = true;
+        confirm_file_deletes = true;
         minbox = 3;
         browsemask = "*.gif";
         goto get_brws_restart;
@@ -2467,7 +2467,7 @@ get_brws_restart:
     askvideo = uvalues[++k].uval.ch.val != 0;
     browse_check_fractal_type = uvalues[++k].uval.ch.val != 0;
     browse_check_fractal_params = uvalues[++k].uval.ch.val != 0;
-    doublecaution = uvalues[++k].uval.ch.val != 0;
+    confirm_file_deletes = uvalues[++k].uval.ch.val != 0;
     toosmall  = uvalues[++k].uval.dval;
     if (toosmall < 0)
         toosmall = 0 ;
@@ -2483,7 +2483,7 @@ get_brws_restart:
     if (auto_browse != old_auto_browse ||
             browse_check_fractal_type != old_browse_check_fractal_type ||
             browse_check_fractal_params != old_brwscheckparms ||
-            doublecaution != old_doublecaution ||
+            confirm_file_deletes != old_doublecaution ||
             toosmall != old_toosmall ||
             minbox != old_minbox ||
             !stricmp(browsemask.c_str(), old_browsemask.c_str()))

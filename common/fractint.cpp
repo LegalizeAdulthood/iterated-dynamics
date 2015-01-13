@@ -132,7 +132,7 @@ double toosmall;
 int  minbox;
 bool no_sub_images = false;
 bool auto_browse = false;
-bool doublecaution = false;
+bool confirm_file_deletes = false;
 bool browse_check_fractal_params = false;
 bool browse_check_fractal_type = false;
 std::string browsemask;
@@ -178,7 +178,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     auto_browse = false;
     browse_check_fractal_type = false;
     browse_check_fractal_params = true;
-    doublecaution  = true;
+    confirm_file_deletes = true;
     no_sub_images = false;
     toosmall = 6;
     minbox   = 3;
