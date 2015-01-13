@@ -351,7 +351,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             browsing = false;      // regenerate image, turn off browsing
             //rb
             name_stack_ptr = -1;   // reset pointer
-            browsename[0] = '\0';  // null
+            browse_name.clear();
             if (viewwindow && (evolving&1) && (calc_status != calc_status_value::COMPLETED))
             {
                 // generate a set of images with varied parameters on each one
@@ -696,8 +696,8 @@ static bool look(bool *stacked)
             name_stack_ptr = 14;
         }
         name_stack_ptr++;
-        file_name_stack[name_stack_ptr] = browsename;
-        merge_pathnames(readname, browsename.c_str(), cmd_file::AT_AFTER_STARTUP);
+        file_name_stack[name_stack_ptr] = browse_name;
+        merge_pathnames(readname, browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
         if (askvideo)
         {
             driver_stack_screen();   // save graphics image
@@ -719,8 +719,8 @@ static bool look(bool *stacked)
             {
                 break;
             }
-            browsename = file_name_stack[name_stack_ptr];
-            merge_pathnames(readname, browsename.c_str(), cmd_file::AT_AFTER_STARTUP);
+            browse_name = file_name_stack[name_stack_ptr];
+            merge_pathnames(readname, browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             browsing = true;
             showfile = 0;
             if (askvideo)
@@ -1144,8 +1144,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 name_stack_ptr--;
             if (name_stack_ptr < 0) // oops, must have deleted first one
                 break;
-            browsename = file_name_stack[name_stack_ptr];
-            merge_pathnames(readname, browsename.c_str(), cmd_file::AT_AFTER_STARTUP);
+            browse_name = file_name_stack[name_stack_ptr];
+            merge_pathnames(readname, browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             browsing = true;
             no_sub_images = false;
             showfile = 0;

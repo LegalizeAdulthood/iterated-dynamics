@@ -1675,7 +1675,7 @@ retry_dir:
             }
         }
     }
-    browsename = std::string{fname} + ext;
+    browse_name = std::string{fname} + ext;
     return false;
 }
 
