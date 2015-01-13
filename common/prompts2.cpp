@@ -2391,7 +2391,7 @@ int get_browse_params()
 
     bool old_auto_browse = auto_browse;
     bool old_browse_check_fractal_type = browse_check_fractal_type;
-    bool old_brwscheckparms = brwscheckparms;
+    bool old_brwscheckparms = browse_check_fractal_params;
     bool old_doublecaution  = doublecaution;
     old_minbox         = minbox;
     old_toosmall       = toosmall;
@@ -2415,7 +2415,7 @@ get_brws_restart:
 
     choices[++k] = "Check fractal parameters (y/n)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = brwscheckparms ? 1 : 0;
+    uvalues[k].uval.ch.val = browse_check_fractal_params ? 1 : 0;
 
     choices[++k] = "Confirm file deletes (y/n)";
     uvalues[k].type = 'y';
@@ -2452,7 +2452,7 @@ get_brws_restart:
         toosmall = 6;
         auto_browse = false;
         askvideo = true;
-        brwscheckparms = true;
+        browse_check_fractal_params = true;
         browse_check_fractal_type = true;
         doublecaution  = true;
         minbox = 3;
@@ -2466,7 +2466,7 @@ get_brws_restart:
     auto_browse = uvalues[++k].uval.ch.val != 0;
     askvideo = uvalues[++k].uval.ch.val != 0;
     browse_check_fractal_type = uvalues[++k].uval.ch.val != 0;
-    brwscheckparms = uvalues[++k].uval.ch.val != 0;
+    browse_check_fractal_params = uvalues[++k].uval.ch.val != 0;
     doublecaution = uvalues[++k].uval.ch.val != 0;
     toosmall  = uvalues[++k].uval.dval;
     if (toosmall < 0)
@@ -2482,7 +2482,7 @@ get_brws_restart:
     i = 0;
     if (auto_browse != old_auto_browse ||
             browse_check_fractal_type != old_browse_check_fractal_type ||
-            brwscheckparms != old_brwscheckparms ||
+            browse_check_fractal_params != old_brwscheckparms ||
             doublecaution != old_doublecaution ||
             toosmall != old_toosmall ||
             minbox != old_minbox ||

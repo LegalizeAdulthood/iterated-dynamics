@@ -1413,7 +1413,7 @@ rescan:  // entry for changed browse parms
                                &blk_4_info, &blk_5_info, &blk_6_info,
                                &blk_7_info) &&
                 (typeOK(&read_info, &blk_3_info) || !browse_check_fractal_type) &&
-                (paramsOK(&read_info) || !brwscheckparms) &&
+                (paramsOK(&read_info) || !browse_check_fractal_params) &&
                 stricmp(browsename.c_str(), DTA.filename) &&
                 !blk_6_info.got_data &&
                 is_visible_window(&winlist, &read_info, &blk_5_info)

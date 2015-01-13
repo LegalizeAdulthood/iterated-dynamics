@@ -49,7 +49,7 @@ extern bool                  BRIEF;
 extern std::string           browsemask;
 extern std::string           browsename;
 extern bool                  browsing;
-extern bool                  brwscheckparms;
+extern bool browse_check_fractal_params;
 extern bool browse_check_fractal_type;
 extern bool                  busy;
 extern long                  calctime;
