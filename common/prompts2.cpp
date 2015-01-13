@@ -2389,7 +2389,7 @@ int get_browse_params()
     int old_minbox;
     double old_toosmall;
 
-    bool old_autobrowse     = auto_browse;
+    bool old_auto_browse = auto_browse;
     bool old_brwschecktype  = brwschecktype;
     bool old_brwscheckparms = brwscheckparms;
     bool old_doublecaution  = doublecaution;
@@ -2480,7 +2480,7 @@ get_brws_restart:
     browsemask = uvalues[++k].uval.sval;
 
     i = 0;
-    if (auto_browse != old_autobrowse ||
+    if (auto_browse != old_auto_browse ||
             brwschecktype != old_brwschecktype ||
             brwscheckparms != old_brwscheckparms ||
             doublecaution != old_doublecaution ||
