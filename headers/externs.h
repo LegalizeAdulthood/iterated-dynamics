@@ -282,7 +282,7 @@ extern int                   max_colors;
 extern int                   max_kbdcount;
 extern int                   maxhistory;
 extern int                   max_rhombus_depth;
-extern int                   minbox;
+extern int smallest_box_size_shown;
 extern Minor                 minor_method;
 extern int                   minstack;
 extern int                   minstackavail;

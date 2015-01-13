@@ -2386,13 +2386,12 @@ int get_browse_params()
     char const *choices[10];
     fullscreenvalues uvalues[25];
     int i, k;
-    int old_minbox;
 
     bool old_auto_browse = auto_browse;
     bool old_browse_check_fractal_type = browse_check_fractal_type;
     bool old_brwscheckparms = browse_check_fractal_params;
     bool old_doublecaution  = confirm_file_deletes;
-    old_minbox         = minbox;
+    int old_smallest_box_size_shown = smallest_box_size_shown;
     double old_smallest_window_display_size = smallest_window_display_size;
     std::string old_browsemask = browsemask;
 
@@ -2426,7 +2425,7 @@ get_brws_restart:
 
     choices[++k] = "Smallest box size shown before crosshairs used (pix)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = minbox;
+    uvalues[k].uval.ival = smallest_box_size_shown;
     choices[++k] = "Browse search filename mask ";
     uvalues[k].type = 's';
     strcpy(uvalues[k].uval.sval, browsemask.c_str());
@@ -2454,7 +2453,7 @@ get_brws_restart:
         browse_check_fractal_params = true;
         browse_check_fractal_type = true;
         confirm_file_deletes = true;
-        minbox = 3;
+        smallest_box_size_shown = 3;
         browsemask = "*.gif";
         goto get_brws_restart;
     }
@@ -2470,11 +2469,11 @@ get_brws_restart:
     smallest_window_display_size = uvalues[++k].uval.dval;
     if (smallest_window_display_size < 0)
         smallest_window_display_size = 0 ;
-    minbox = uvalues[++k].uval.ival;
-    if (minbox < 1)
-        minbox = 1;
-    if (minbox > 10)
-        minbox = 10;
+    smallest_box_size_shown = uvalues[++k].uval.ival;
+    if (smallest_box_size_shown < 1)
+        smallest_box_size_shown = 1;
+    if (smallest_box_size_shown > 10)
+        smallest_box_size_shown = 10;
 
     browsemask = uvalues[++k].uval.sval;
 
@@ -2484,7 +2483,7 @@ get_brws_restart:
             browse_check_fractal_params != old_brwscheckparms ||
             confirm_file_deletes != old_doublecaution ||
             smallest_window_display_size != old_smallest_window_display_size ||
-            minbox != old_minbox ||
+            smallest_box_size_shown != old_smallest_box_size_shown ||
             !stricmp(browsemask.c_str(), old_browsemask.c_str()))
         i = -3;
 

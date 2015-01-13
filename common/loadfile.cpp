@@ -1691,7 +1691,7 @@ static void drawindow(int colour, window const *info)
 
     boxcolor = colour;
     boxcount = 0;
-    if (info->win_size >= minbox)
+    if (info->win_size >= smallest_box_size_shown)
     {
         // big enough on screen to show up as a box so draw it
         // corner pixels
