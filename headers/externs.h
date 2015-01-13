@@ -50,7 +50,7 @@ extern std::string           browsemask;
 extern std::string           browsename;
 extern bool                  browsing;
 extern bool                  brwscheckparms;
-extern bool                  brwschecktype;
+extern bool browse_check_fractal_type;
 extern bool                  busy;
 extern long                  calctime;
 extern int                 (*calctype)();

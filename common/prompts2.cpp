@@ -2390,7 +2390,7 @@ int get_browse_params()
     double old_toosmall;
 
     bool old_auto_browse = auto_browse;
-    bool old_brwschecktype  = brwschecktype;
+    bool old_browse_check_fractal_type = browse_check_fractal_type;
     bool old_brwscheckparms = brwscheckparms;
     bool old_doublecaution  = doublecaution;
     old_minbox         = minbox;
@@ -2411,7 +2411,7 @@ get_brws_restart:
 
     choices[++k] = "Check fractal type? (y/n)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = brwschecktype ? 1 : 0;
+    uvalues[k].uval.ch.val = browse_check_fractal_type ? 1 : 0;
 
     choices[++k] = "Check fractal parameters (y/n)";
     uvalues[k].type = 'y';
@@ -2453,7 +2453,7 @@ get_brws_restart:
         auto_browse = false;
         askvideo = true;
         brwscheckparms = true;
-        brwschecktype  = true;
+        browse_check_fractal_type = true;
         doublecaution  = true;
         minbox = 3;
         browsemask = "*.gif";
@@ -2465,7 +2465,7 @@ get_brws_restart:
 
     auto_browse = uvalues[++k].uval.ch.val != 0;
     askvideo = uvalues[++k].uval.ch.val != 0;
-    brwschecktype = uvalues[++k].uval.ch.val != 0;
+    browse_check_fractal_type = uvalues[++k].uval.ch.val != 0;
     brwscheckparms = uvalues[++k].uval.ch.val != 0;
     doublecaution = uvalues[++k].uval.ch.val != 0;
     toosmall  = uvalues[++k].uval.dval;
@@ -2481,7 +2481,7 @@ get_brws_restart:
 
     i = 0;
     if (auto_browse != old_auto_browse ||
-            brwschecktype != old_brwschecktype ||
+            browse_check_fractal_type != old_browse_check_fractal_type ||
             brwscheckparms != old_brwscheckparms ||
             doublecaution != old_doublecaution ||
             toosmall != old_toosmall ||
