@@ -27,3 +27,8 @@ void x11_plot_window::set_position(int x, int y)
     assert(dpy_ != nullptr && window_ != 0);
     XMoveWindow(dpy_, window_, x, y);
 }
+
+void x11_plot_window::clear()
+{
+
+}

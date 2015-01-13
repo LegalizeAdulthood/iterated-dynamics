@@ -144,7 +144,7 @@ struct DriverX11
 
     BYTE *font_table;           // = nullptr;
 
-    bool text_modep;            // true when displaying text
+    bool text_not_graphics;            // true when displaying text
 
     // rubber banding and event processing data
     bool ctl_mode;
@@ -1245,7 +1245,7 @@ ev_key_release(DriverX11 *di, XKeyEvent *xevent)
 static void
 ev_expose(DriverX11 *di, XExposeEvent *xevent)
 {
-    if (di->text_modep)
+    if (di->text_not_graphics)
     {
         // if text window, refresh text
     }
@@ -2735,39 +2735,21 @@ static void
 x11_put_string(Driver *drv, int row, int col, int attr, char const *msg)
 {
     DIX11(drv);
-    int r, c;
-
-    // TODO
-    fprintf(stderr, "x11_put_string(%d,%d, %u): ``%s''\n", row, col, attr, msg);
-
+    assert(di->text_not_graphics);
     if (row != -1)
-        g_text_row = row;
-    if (col != -1)
-        g_text_col = col;
-
-    r = g_text_row + g_text_rbase;
-    c = g_text_col + g_text_cbase;
-
-    while (*msg)
     {
-        if ('\n' == *msg)
-        {
-            g_text_row++;
-            r++;
-            g_text_col = 0;
-            c = g_text_cbase;
-        }
-        else
-        {
-            assert(r < TEXT_HEIGHT);
-            assert(c < TEXT_WIDTH);
-            di->text_screen[r][c] = *msg;
-            di->text_attr[r][c] = attr;
-            g_text_col++;
-            c++;
-        }
-        msg++;
+        g_text_row = row;
     }
+    if (col != -1)
+    {
+        g_text_col = col;
+    }
+
+    int r = g_text_rbase + g_text_row;
+    int c = g_text_cbase + g_text_col;
+    assert(r >= 0 && r < X11_TEXT_MAX_ROW);
+    assert(c >= 0 && c < X11_TEXT_MAX_COL);
+    di->text_.put_string(c, r, attr, msg, &g_text_row, &g_text_col);
 }
 
 
@@ -2775,34 +2757,32 @@ static void
 x11_set_for_text(Driver *drv)
 {
     DIX11(drv);
-    if (! di->font_info)
-        load_font(di);
-    // TODO:
-    // map text screen child window
-    // allocate text colors in window's colormap, save window's colors
-    // refresh window with last contents of text_screen
-    di->text_modep = true;
-    fprintf(stderr, "x11_set_for_text\n");
+    di->text_not_graphics = true;
+    di->text_.show();
+    di->plot_.hide();
 }
 
 static void
 x11_set_for_graphics(Driver *drv)
 {
     DIX11(drv);
-    // TODO:
-    // unmap text screen child window
-    // restore colormap from saved copy
-    // expose will be sent for newly visible area
-    di->text_modep = false;
-    fprintf(stderr, "x11_set_for_graphics\n");
+    di->text_not_graphics = false;
+    di->plot_.show();
+    di->text_.hide();
 }
 
 static void
 x11_set_clear(Driver *drv)
 {
     DIX11(drv);
-    erase_text_screen(di);
-    x11_set_for_text(drv);
+    if (di->text_not_graphics)
+    {
+        di->text_.clear();
+    }
+    else
+    {
+        di->plot_.clear();
+    }
 }
 
 static void
@@ -2998,7 +2978,7 @@ static DriverX11 x11_driver_info = {
     { 0 },                // text_screen
     { 0 },                // text_attr
     nullptr,              // font_table
-    false,                // text_modep
+    false,                // text_not_graphics
     false,                // ctl_mode
     false,                // shift_mode
     0,                    // button_num

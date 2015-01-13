@@ -23,6 +23,17 @@ public:
     int height() const { return 0; }
     Window window() const { return window_; }
 
+    void show()
+    {
+        XMapWindow(dpy_, window_);
+    }
+    void hide()
+    {
+        XUnmapWindow(dpy_, window_);
+    }
+
+    void clear();
+
 private:
     Display *dpy_;
     int x_;

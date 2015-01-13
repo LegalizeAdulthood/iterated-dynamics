@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cassert>
 
 #include "port.h"
@@ -15,7 +16,9 @@ x11_text_window::x11_text_window()
         max_width_{},
         max_height_{},
         x_{},
-        y_{}
+        y_{},
+        colormap_{},
+        buffer_init_{}
 {
 #if 0
     bool return_value = GetClassInfo(hInstance, s_window_class, &wc) == TRUE;
@@ -88,6 +91,39 @@ x11_text_window::~x11_text_window()
     }
 }
 
+namespace
+{
+inline XColor xcolor_from_rgb(int red, int green, int blue)
+{
+    return XColor{ 0UL,
+            static_cast<unsigned short>(red*256),
+            static_cast<unsigned short>(green*256),
+            static_cast<unsigned short>(blue*256),
+            DoRed | DoGreen | DoBlue
+    };
+}
+
+std::vector<XColor> text_colors =
+{
+    xcolor_from_rgb(0, 0, 0),
+    xcolor_from_rgb(0, 0, 128),
+    xcolor_from_rgb(0, 128, 0),
+    xcolor_from_rgb(0, 128, 128),
+    xcolor_from_rgb(128, 0, 0),
+    xcolor_from_rgb(128, 0, 128),
+    xcolor_from_rgb(128, 128, 0),
+    xcolor_from_rgb(192, 192, 192),
+    xcolor_from_rgb(0, 0, 0),
+    xcolor_from_rgb(0, 0, 255),
+    xcolor_from_rgb(0, 255, 0),
+    xcolor_from_rgb(0, 255, 255),
+    xcolor_from_rgb(255, 0, 0),
+    xcolor_from_rgb(255, 0, 255),
+    xcolor_from_rgb(255, 255, 0),
+    xcolor_from_rgb(255, 255, 255)
+};
+}
+
 void x11_text_window::initialize(Display *dpy, int screen_num, Window parent)
 {
     dpy_ = dpy;
@@ -102,6 +138,12 @@ void x11_text_window::initialize(Display *dpy, int screen_num, Window parent)
     max_height_ = static_cast<unsigned>(char_ychars_*char_height_);
     text_mode_ = 1;
     alt_f4_hit_ = false;
+    colormap_ = DefaultColormap(dpy, screen_num);
+    for (std::size_t i = 0; i < text_colors.size(); ++i)
+    {
+        Status const status = XAllocColor(dpy_, colormap_, &text_colors[i]);
+        assert(status);
+    }
 }
 
 int x11_text_window::text_on()
@@ -116,11 +158,21 @@ int x11_text_window::text_on()
     cursor_type_ = 0;
     cursor_owned_ = false;
     showing_cursor_ = false;
-    XSetWindowAttributes attrs;
-    window_ = XCreateWindow(dpy_, parent_,
-            x_, y_, max_width_, max_height_, 0, DefaultDepth(dpy_, screen_num_),
-            InputOutput, CopyFromParent,
-            /*CWBackPixel | CWBitGravity | CWBackingStore*/ 0, &attrs);
+
+    if (window_ == 0)
+    {
+        XSetWindowAttributes attrs;
+        Screen *screen = ScreenOfDisplay(dpy_, screen_num_);
+        attrs.background_pixel = BlackPixelOfScreen(screen);
+        attrs.bit_gravity = StaticGravity;
+        attrs.backing_store = DoesBackingStore(screen) != 0 ? Always : NotUseful;
+        window_ = XCreateWindow(dpy_, parent_,
+                x_, y_, max_width_, max_height_, 0, DefaultDepth(dpy_, screen_num_),
+                InputOutput, CopyFromParent,
+                CWBackPixel | CWBitGravity | CWBackingStore, &attrs);
+    }
+    assert(window_ != 0);
+
     text_mode_ = 2;
     alt_f4_hit_ = false;
     XMapWindow(dpy_, window_);
@@ -136,6 +188,17 @@ int x11_text_window::text_off()
     return 0;
 }
 
+
+void x11_text_window::clear()
+{
+    for (int y = 0; y < X11_TEXT_MAX_ROW; ++y)
+    {
+        std::fill(text_[y].begin(), text_[y].end(), ' ');
+        std::fill(attributes_[y].begin(), attributes_[y].end(), 0xf0);
+    }
+    // TODO: repaint
+}
+
 void x11_text_window::set_position(int x, int y)
 {
     x_ = x;
@@ -144,106 +207,6 @@ void x11_text_window::set_position(int x, int y)
 }
 
 #if 0
-
-static int s_showing_cursor = FALSE;
-
-#if defined(RT_VERBOSE)
-static int carrot_count = 0;
-#endif
-
-#define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
-
-/*
-        WINTEXT.C handles the character-based "prompt screens",
-        using a 24x80 character-window driver that I wrote originally
-        for the Windows port of the DOS-based "Screen Generator"
-        commercial package - Bert Tyler
-
-        Modified for Win32 by Richard Thomson
-
-        the subroutines and their functions are:
-
-bool wintext_initialize(HANDLE hInstance, LPSTR title);
-    Registers and initializes the text window - must be called
-    once (and only once).  Its parameters are the handle of the application
-    instance and a pointer to a string containing the title of the window.
-void wintext_destroy();
-    Destroys items like bitmaps that the initialization routine has
-    created.  Should be called once (and only once) as your program exits.
-
-int wintext_texton();
-    Brings up and blanks out the text window.  No parameters.
-int wintext_textoff();
-    Removes the text window.  No parameters.
-
-void wintext_putstring(int xpos, int ypos, int attrib, const char *string);
-    Sends a character string to the screen starting at (xpos, ypos)
-    using the (CGA-style and, yes, it should be a 'char') specified attribute.
-void wintext_paintscreen(int xmin, int xmax, int ymin, int ymax);
-    Repaints the rectangular portion of the text screen specified by
-    the four parameters, which are in character co-ordinates.  This
-    routine is called automatically by 'wintext_putstring()' as well as
-    other internal routines whenever Windows uncovers the window.  It can
-    also be called  manually by your program when it wants a portion
-    of the screen updated (the actual data is kept in two arrays, which
-    your program has presumably updated:)
-       char chars[WINTEXT_MAX_ROW][80]  holds the text
-       unsigned char attrs[WINTEXT_MAX_ROW][80]  holds the (CGA-style) attributes
-
-void wintext_cursor(int xpos, int ypos, int cursor_type);
-    Sets the cursor to character position (xpos, ypos) and switches to
-    a cursor type specified by 'cursor_type': 0 = none, 1 = underline,
-    2 = block cursor.  A cursor type of -1 means use whatever cursor
-    type (0, 1, or 2) was already active.
-
-unsigned int wintext_getkeypress(int option);
-    A simple keypress-retriever that, based on the parameter, either checks
-    for any keypress activity (option = 0) or waits for a keypress before
-    returning (option != 0).  Returns a 0 to indicate no keystroke, or the
-    keystroke itself.  Up to 80 keystrokes are queued in an internal buffer.
-    If the text window is not open, returns an ESCAPE keystroke (27).
-    The keystroke is returned as an integer value identical to that a
-    DOS program receives in AX when it invokes INT 16H, AX = 0 or 1.
-
-int wintext_look_for_activity(int option);
-    An internal routine that handles buffered keystrokes and lets
-    Windows messaging (multitasking) take place.  Called with option=0,
-    it returns without waiting for the presence of a keystroke.  Called
-    with option !=0, it waits for a keystroke before returning.  Returns
-    1 if a keystroke is pending, 0 if none pending.  Called internally
-    (and automatically) by 'wintext_getkeypress()'.
-void wintext_addkeypress(unsigned int);
-    An internal routine, called by 'wintext_look_for_activity()' and
-    'wintext_proc()', that adds keystrokes to an internal buffer.
-    Never called directly by the applications program.
-long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
-    An internal routine that handles all message functions while
-    the text window is on the screen.  Never called directly by
-    the applications program, but must be referenced as a call-back
-    routine by your ".DEF" file.
-
-        The 'me->textmode' flag tracks the current textmode status.
-        Note that pressing Alt-F4 closes and destroys the window *and*
-        resets this flag (to 1), so the main program should look at
-        this flag whenever it is possible that Alt-F4 has been hit!
-        ('wintext_getkeypress()' returns a 27 (ESCAPE) if this happens)
-        (Note that you can use an 'WM_CLOSE' case to handle this situation.)
-        The 'me->textmode' values are:
-                0 = the initialization routine has never been called!
-                1 = text mode is *not* active
-                2 = text mode *is* active
-        There is also a 'me->AltF4hit' flag that is non-zero if
-        the window has been closed (by an Alt-F4, or a WM_CLOSE sequence)
-        but the application program hasn't officially closed the window yet.
-*/
-
-// function prototypes
-
-static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
-
-static LPCSTR s_window_class = "FractIntText";
-static WinText *g_me = nullptr;
-
 
 // EGA/VGA 16-color palette (which doesn't match Windows palette exactly)
 /*
@@ -823,3 +786,146 @@ void wintext_resume(WinText *me)
     g_me = me;
 }
 #endif
+
+void x11_text_window::put_string(int xpos, int ypos, int attrib, std::string const &text, int *end_row, int *end_col)
+{
+    unsigned char const xa = static_cast<unsigned char>(attrib & 0x0ff);
+    int maxrow = ypos;
+    int j = maxrow;
+    int maxcol = xpos-1;
+    int k = maxcol;
+
+    bool stored = false;
+    for (char xc : text)
+    {
+        if (xc == '\n')
+        {
+            if (j < X11_TEXT_MAX_ROW-1)
+            {
+                j++;
+            }
+            k = xpos-1;
+        }
+        else
+        {
+            if ((++k) >= X11_TEXT_MAX_COL)
+            {
+                if (j < X11_TEXT_MAX_ROW-1)
+                {
+                    j++;
+                }
+                k = xpos;
+            }
+            maxrow = std::max(maxrow, j);
+            maxcol = std::max(maxcol, k);
+            text_[j][k] = xc;
+            attributes_[j][k] = xa;
+            stored = true;
+        }
+    }
+    if (stored)
+    {
+        repaint(xpos, ypos, maxcol, maxrow);
+        *end_row = j;
+        *end_col = k+1;
+    }
+}
+
+void x11_text_window::repaint(int xmin, int xmax, int ymin, int ymax)
+{
+    unsigned char oldbk;
+    unsigned char oldfg;
+
+    if (text_mode_ != 2)  // not in the right mode
+        return;
+
+    // first time through?  Initialize the 'screen'
+    if (!buffer_init_)
+    {
+        buffer_init_ = true;
+        oldbk = 0x00;
+        oldfg = 0x0f;
+        int k = (oldbk << 4) + oldfg;
+        for (int i = 0; i < char_xchars_; i++)
+        {
+            for (int j = 0; j < char_ychars_; j++)
+            {
+                text_[j][i] = ' ';
+                attributes_[j][i] = k;
+            }
+        }
+    }
+
+    if (xmin < 0)
+        xmin = 0;
+    if (xmax >= char_xchars_)
+        xmax = char_xchars_-1;
+    if (ymin < 0)
+        ymin = 0;
+    if (ymax >= char_ychars_)
+        ymax = char_ychars_-1;
+
+    XGCValues values;
+    unsigned long values_mask = 0;
+    GC gc = XCreateGC(dpy_, window_, values_mask, &values);
+
+//    SelectObject(hDC, hFont);
+//    SetBkMode(hDC, OPAQUE);
+//    SetTextAlign(hDC, TA_LEFT | TA_TOP);
+
+    if (showing_cursor_)
+    {
+//        ODS1("======================== Hide Caret %d", --carrot_count);
+//        HideCaret(hWndCopy);
+    }
+
+    /*
+    the following convoluted code minimizes the number of
+    discrete calls to the Windows interface by locating
+    'strings' of screen locations with common foreground
+    and background colors
+    */
+    int istart = 0;
+    int jstart = 0;
+    unsigned char foreground = 0;
+    unsigned char background = 0;
+    for (int j = ymin; j <= ymax; j++)
+    {
+        int length = 0;
+        oldbk = 99;
+        oldfg = 99;
+        for (int i = xmin; i <= xmax+1; i++)
+        {
+            int k = -1;
+            if (i <= xmax)
+            {
+                k = attributes_[j][i];
+            }
+            foreground = static_cast<unsigned char>(k & 15);
+            background = static_cast<unsigned char>(k >> 4);
+            if (i > xmax || foreground != (int)oldfg || background != (int)oldbk)
+            {
+                if (length > 0)
+                {
+                    XSetBackground(dpy_, gc, text_colors[oldbk].pixel);
+                    XSetForeground(dpy_, gc, text_colors[oldfg].pixel);
+                    XDrawImageString(dpy_, window_, gc, istart*char_width_, jstart*char_height_, &text_[jstart][istart], length);
+                }
+                oldbk = background;
+                oldfg = foreground;
+                istart = i;
+                jstart = j;
+                length = 0;
+            }
+            length++;
+        }
+    }
+
+    if (showing_cursor_)
+    {
+//        ODS1("======================== Show Caret %d", ++carrot_count);
+//        ShowCaret(hWndCopy);
+    }
+
+    XFreeGC(dpy_, gc);
+}

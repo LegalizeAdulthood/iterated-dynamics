@@ -8,7 +8,6 @@ void x11_frame_window::initialize(Display *dpy,
 {
     dpy_ = dpy;
 
-    XSetWindowAttributes attrs;
     XGCValues gc_vals;
     int x = 0;
     int y = 0;
@@ -23,6 +22,7 @@ void x11_frame_window::initialize(Display *dpy,
         height_ = static_cast<unsigned>(h);
     }
     Screen *screen = ScreenOfDisplay(dpy, screen_num);
+    XSetWindowAttributes attrs;
     attrs.background_pixel = BlackPixelOfScreen(screen);
     attrs.bit_gravity = StaticGravity;
     attrs.backing_store = DoesBackingStore(screen) != 0 ? Always : NotUseful;
