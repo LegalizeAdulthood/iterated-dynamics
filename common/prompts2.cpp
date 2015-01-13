@@ -2389,7 +2389,7 @@ int get_browse_params()
     int old_minbox;
     double old_toosmall;
 
-    bool old_autobrowse     = autobrowse;
+    bool old_autobrowse     = auto_browse;
     bool old_brwschecktype  = brwschecktype;
     bool old_brwscheckparms = brwscheckparms;
     bool old_doublecaution  = doublecaution;
@@ -2403,7 +2403,7 @@ get_brws_restart:
 
     choices[++k] = "Autobrowsing? (y/n)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = autobrowse ? 1 : 0;
+    uvalues[k].uval.ch.val = auto_browse ? 1 : 0;
 
     choices[++k] = "Ask about GIF video mode? (y/n)";
     uvalues[k].type = 'y';
@@ -2450,7 +2450,7 @@ get_brws_restart:
     if (i == FIK_F4)
     {
         toosmall = 6;
-        autobrowse = false;
+        auto_browse = false;
         askvideo = true;
         brwscheckparms = true;
         brwschecktype  = true;
@@ -2463,7 +2463,7 @@ get_brws_restart:
     // now check out the results (*hopefully* in the same order <grin>)
     k = -1;
 
-    autobrowse = uvalues[++k].uval.ch.val != 0;
+    auto_browse = uvalues[++k].uval.ch.val != 0;
     askvideo = uvalues[++k].uval.ch.val != 0;
     brwschecktype = uvalues[++k].uval.ch.val != 0;
     brwscheckparms = uvalues[++k].uval.ch.val != 0;
@@ -2480,7 +2480,7 @@ get_brws_restart:
     browsemask = uvalues[++k].uval.sval;
 
     i = 0;
-    if (autobrowse != old_autobrowse ||
+    if (auto_browse != old_autobrowse ||
             brwschecktype != old_brwschecktype ||
             brwscheckparms != old_brwscheckparms ||
             doublecaution != old_doublecaution ||
@@ -2491,7 +2491,7 @@ get_brws_restart:
 
     if (evolving)
     { // can't browse
-        autobrowse = false;
+        auto_browse = false;
         i = 0;
     }
 

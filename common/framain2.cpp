@@ -534,7 +534,7 @@ resumeloop:                             // return here on failed overlays
                 }
                 else      // wait for a real keystroke
                 {
-                    if (autobrowse && !no_sub_images)
+                    if (auto_browse && !no_sub_images)
                     {
                         kbdchar = 'l';
                     }

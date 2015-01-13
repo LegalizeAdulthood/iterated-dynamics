@@ -131,7 +131,7 @@ int name_stack_ptr ;
 double toosmall;
 int  minbox;
 bool no_sub_images = false;
-bool autobrowse = false;
+bool auto_browse = false;
 bool doublecaution = false;
 bool brwscheckparms = false;
 bool brwschecktype = false;
@@ -175,7 +175,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
 #endif
-    autobrowse     = false;
+    auto_browse = false;
     brwschecktype  = false;
     brwscheckparms = true;
     doublecaution  = true;

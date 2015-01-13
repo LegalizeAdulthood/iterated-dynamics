@@ -16,7 +16,7 @@ extern float                 aspectdrift;
 extern int                   attractors;
 extern int                   attrperiod[];
 extern DComplex              attr[];
-extern bool                  autobrowse;
+extern bool auto_browse;
 extern std::string           autoname;
 extern char                  autoshowdot;
 extern int                   AutoStereo_depth;
