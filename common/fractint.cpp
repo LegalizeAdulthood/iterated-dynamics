@@ -135,7 +135,7 @@ bool auto_browse = false;
 bool confirm_file_deletes = false;
 bool browse_check_fractal_params = false;
 bool browse_check_fractal_type = false;
-std::string browsemask;
+std::string browse_mask;
 int scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; // array for mapping notes to a (user defined) scale
 
 
@@ -182,7 +182,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     no_sub_images = false;
     smallest_window_display_size = 6;
     smallest_box_size_shown = 3;
-    browsemask = "*.gif";
+    browse_mask = "*.gif";
     browsename = "            ";
     name_stack_ptr = -1; // init loaded files stack
 

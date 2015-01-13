@@ -46,7 +46,7 @@ extern int                   boxvalues[];
 extern int                   boxx[];
 extern int                   boxy[];
 extern bool                  BRIEF;
-extern std::string           browsemask;
+extern std::string browse_mask;
 extern std::string           browsename;
 extern bool                  browsing;
 extern bool browse_check_fractal_params;
