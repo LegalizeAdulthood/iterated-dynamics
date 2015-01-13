@@ -479,7 +479,7 @@ extern long                  timer_interval;
 extern long                  timer_start;
 extern DComplex              tmp;
 extern std::string           tempdir;
-extern double                toosmall;
+extern double smallest_window_display_size;
 extern int                   totpasses;
 extern int                   transparent[];
 extern bool                  truecolor;

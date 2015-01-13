@@ -1930,7 +1930,7 @@ bool is_visible_window(
     tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
     list->win_size = tmp_sqrt; // used for box vs crosshair in drawindow()
     // reject anything too small or too big on screen
-    if ((tmp_sqrt < toosmall) || (tmp_sqrt > toobig))
+    if ((tmp_sqrt < smallest_window_display_size) || (tmp_sqrt > toobig))
         cant_see = true;
 
     // restore original values

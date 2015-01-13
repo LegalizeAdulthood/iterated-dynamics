@@ -2387,14 +2387,13 @@ int get_browse_params()
     fullscreenvalues uvalues[25];
     int i, k;
     int old_minbox;
-    double old_toosmall;
 
     bool old_auto_browse = auto_browse;
     bool old_browse_check_fractal_type = browse_check_fractal_type;
     bool old_brwscheckparms = browse_check_fractal_params;
     bool old_doublecaution  = confirm_file_deletes;
     old_minbox         = minbox;
-    old_toosmall       = toosmall;
+    double old_smallest_window_display_size = smallest_window_display_size;
     std::string old_browsemask = browsemask;
 
 get_brws_restart:
@@ -2423,7 +2422,7 @@ get_brws_restart:
 
     choices[++k] = "Smallest window to display (size in pixels)";
     uvalues[k].type = 'f';
-    uvalues[k].uval.dval = toosmall;
+    uvalues[k].uval.dval = smallest_window_display_size;
 
     choices[++k] = "Smallest box size shown before crosshairs used (pix)";
     uvalues[k].type = 'i';
@@ -2449,7 +2448,7 @@ get_brws_restart:
 
     if (i == FIK_F4)
     {
-        toosmall = 6;
+        smallest_window_display_size = 6;
         auto_browse = false;
         askvideo = true;
         browse_check_fractal_params = true;
@@ -2468,9 +2467,9 @@ get_brws_restart:
     browse_check_fractal_type = uvalues[++k].uval.ch.val != 0;
     browse_check_fractal_params = uvalues[++k].uval.ch.val != 0;
     confirm_file_deletes = uvalues[++k].uval.ch.val != 0;
-    toosmall  = uvalues[++k].uval.dval;
-    if (toosmall < 0)
-        toosmall = 0 ;
+    smallest_window_display_size = uvalues[++k].uval.dval;
+    if (smallest_window_display_size < 0)
+        smallest_window_display_size = 0 ;
     minbox = uvalues[++k].uval.ival;
     if (minbox < 1)
         minbox = 1;
@@ -2484,7 +2483,7 @@ get_brws_restart:
             browse_check_fractal_type != old_browse_check_fractal_type ||
             browse_check_fractal_params != old_brwscheckparms ||
             confirm_file_deletes != old_doublecaution ||
-            toosmall != old_toosmall ||
+            smallest_window_display_size != old_smallest_window_display_size ||
             minbox != old_minbox ||
             !stricmp(browsemask.c_str(), old_browsemask.c_str()))
         i = -3;

@@ -128,7 +128,7 @@ int        savedac;                     // save-the-Video DAC flag
 bool browsing = false;                  // browse mode flag
 std::string file_name_stack[16];        // array of file names used while browsing
 int name_stack_ptr ;
-double toosmall;
+double smallest_window_display_size;
 int  minbox;
 bool no_sub_images = false;
 bool auto_browse = false;
@@ -180,7 +180,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     browse_check_fractal_params = true;
     confirm_file_deletes = true;
     no_sub_images = false;
-    toosmall = 6;
+    smallest_window_display_size = 6;
     minbox   = 3;
     browsemask = "*.gif";
     browsename = "            ";
