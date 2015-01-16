@@ -46,7 +46,7 @@ int xrelease = 304;
    */
 int stopmsg(int flags, char const *msg)
 {
-    int ret, toprow, color, savelookatmouse;
+    int ret, toprow, color, old_look_at_mouse;
     static bool batchmode = false;
     if (debugflag != debug_flags::none || initbatch >= 1)
     {
@@ -85,8 +85,8 @@ int stopmsg(int flags, char const *msg)
         return (-1);
     }
     ret = 0;
-    savelookatmouse = lookatmouse;
-    lookatmouse = -13;
+    old_look_at_mouse = look_at_mouse;
+    look_at_mouse = -13;
     if ((flags & STOPMSG_NO_STACK))
         blankrows(toprow = 12, 10, 7);
     else
@@ -116,7 +116,7 @@ int stopmsg(int flags, char const *msg)
         blankrows(toprow, 10, 7);
     else
         driver_unstack_screen();
-    lookatmouse = savelookatmouse;
+    look_at_mouse = old_look_at_mouse;
     return ret;
 }
 
@@ -474,12 +474,12 @@ int fullscreen_choice(
     char buf[81];
     char curitem[81];
     char const *itemptr;
-    int ret, savelookatmouse;
+    int ret, old_look_at_mouse;
     int scrunch;  // scrunch up a line
 
     scrunch = (options & CHOICE_CRUNCH) ? 1 : 0;
-    savelookatmouse = lookatmouse;
-    lookatmouse = 0;
+    old_look_at_mouse = look_at_mouse;
+    look_at_mouse = 0;
     ret = -1;
     // preset current to passed string
     int const len = (speedstring == nullptr) ? 0 : (int) strlen(speedstring);
@@ -1069,7 +1069,7 @@ int fullscreen_choice(
     }
 
 fs_choice_end:
-    lookatmouse = savelookatmouse;
+    look_at_mouse = old_look_at_mouse;
     return ret;
 }
 
@@ -1477,8 +1477,8 @@ int input_field(
     char buf[81];
     int curkey;
     int i, j;
-    int savelookatmouse = lookatmouse;
-    lookatmouse = 0;
+    int old_look_at_mouse = look_at_mouse;
+    look_at_mouse = 0;
     int ret = -1;
     strcpy(savefld, fld);
     int insert = 0;
@@ -1624,7 +1624,7 @@ int input_field(
         }
     }
 inpfld_end:
-    lookatmouse = savelookatmouse;
+    look_at_mouse = old_look_at_mouse;
     return (ret);
 }
 

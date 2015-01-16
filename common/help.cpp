@@ -767,7 +767,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 int help(int action)
 {
     HIST      curr = { -1 };
-    int       oldlookatmouse;
+    int old_look_at_mouse;
     int       oldhelpmode;
     int       flags;
     HIST      next;
@@ -800,8 +800,8 @@ int help(int action)
         return 0;
     }
 
-    oldlookatmouse = lookatmouse;
-    lookatmouse = 0;
+    old_look_at_mouse = look_at_mouse;
+    look_at_mouse = 0;
     timer_start -= clock_ticks();
     driver_stack_screen();
 
@@ -903,7 +903,7 @@ int help(int action)
     while (action != ACTION_QUIT);
 
     driver_unstack_screen();
-    lookatmouse = oldlookatmouse;
+    look_at_mouse = old_look_at_mouse;
     helpmode = oldhelpmode;
     timer_start += clock_ticks();
 

@@ -247,7 +247,7 @@ extern long                  LogFlag;
 extern std::vector<BYTE>     LogTable;
 extern LComplex              lold;
 extern LComplex *            longparm;
-extern int                   lookatmouse;
+extern int look_at_mouse;
 extern LComplex              lparm2;
 extern LComplex              lparm;
 extern long                  ltempsqrx;

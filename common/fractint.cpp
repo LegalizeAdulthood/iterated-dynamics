@@ -27,7 +27,7 @@
 VIDEOINFO g_video_entry;
 int helpmode;
 
-int lookatmouse = 0;  // see notes at mouseread routine
+int look_at_mouse = 0;  // see notes at mouseread routine
 
 long timer_start, timer_interval;       // timer(...) start & total
 int     g_adapter;                      // Video Adapter chosen from list in ...h
@@ -272,7 +272,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         memcpy(g_dac_box, old_dac_box, 256*3);   // restore in case colors= present
     }
 
-    lookatmouse = 0;                     // ignore mouse
+    look_at_mouse = 0;                     // ignore mouse
 
     while (show_file <= 0)              // image is to be loaded
     {
@@ -333,7 +333,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
 
     helpmode = HELPMENU;                 // now use this help mode
     tabmode = true;
-    lookatmouse = 0;                     // ignore mouse
+    look_at_mouse = 0;                     // ignore mouse
 
     if (((overlay3d && !initbatch) || stacked) && g_init_mode < 0)        // overlay command failed
     {
@@ -373,7 +373,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
             calc_status = calc_status_value::PARAMS_CHANGED;
 
     if (initbatch == 0)
-        lookatmouse = -FIK_PAGE_UP;           // just mouse left button, == pgup
+        look_at_mouse = -FIK_PAGE_UP;           // just mouse left button, == pgup
 
     cyclelimit = initcyclelimit;         // default cycle limit
     g_adapter = g_init_mode;                  // set the video adapter up

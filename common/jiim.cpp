@@ -420,7 +420,7 @@ void Jiim(jiim_types which)
     int oldhelpmode;
     int count = 0;            // coloring julia
     static int mode = 0;      // point, circle, ...
-    int       oldlookatmouse = lookatmouse;
+    int       old_look_at_mouse = look_at_mouse;
     double cr, ci, r;
     int xfactor, yfactor;             // aspect ratio
 
@@ -463,7 +463,7 @@ void Jiim(jiim_types which)
     aspect = ((double)xdots*3)/((double)ydots*4);  // assumes 4:3
     actively_computing = true;
     SetAspect(aspect);
-    lookatmouse = 3;
+    look_at_mouse = 3;
 
     if (which == jiim_types::ORBIT)
         (*PER_IMAGE)();
@@ -1179,7 +1179,7 @@ finish:
 #endif
     line_buff.clear();
     screen_rect.clear();
-    lookatmouse = oldlookatmouse;
+    look_at_mouse = old_look_at_mouse;
     using_jiim = false;
     calctype = oldcalctype;
     debugflag = old_debugflag;

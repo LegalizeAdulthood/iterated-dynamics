@@ -2963,7 +2963,7 @@ static void PalTable_Process(PalTable *me)
 
 void EditPalette()
 {
-    int       oldlookatmouse = lookatmouse;
+    int       old_look_at_mouse = look_at_mouse;
     int       oldsxoffs      = sxoffs;
     int       oldsyoffs      = syoffs;
 
@@ -2974,7 +2974,7 @@ void EditPalette()
 
     line_buff.resize(std::max(sxdots, sydots));
 
-    lookatmouse = 3;
+    look_at_mouse = 3;
     syoffs = 0;
     sxoffs = syoffs;
 
@@ -2989,7 +2989,7 @@ void EditPalette()
     PalTable_Process(&pt);
     PalTable_Destroy(&pt);
 
-    lookatmouse = oldlookatmouse;
+    look_at_mouse = old_look_at_mouse;
     sxoffs = oldsxoffs;
     syoffs = oldsyoffs;
     line_buff.clear();
