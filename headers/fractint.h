@@ -15,6 +15,14 @@
 #endif
 #define NUM_BOX_POINTS 4096
 
+enum display_3d_modes
+{
+    MINUS_ONE = -1,
+    NONE = 0,
+    YES = 1,
+    B_COMMAND = 2
+};
+
 // for init_batch
 enum class batch_modes
 {

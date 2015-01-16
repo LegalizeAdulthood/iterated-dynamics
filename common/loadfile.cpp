@@ -129,7 +129,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version > 1)
     {
         save_release  = 1200;
-        if (!display_3d
+        if (!display_3d != display_3d_modes::NONE
                 && (read_info.version <= 4 || read_info.flag3d > 0
                     || (curfractalspecific->flags & PARMS3D)))
         {
@@ -213,7 +213,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             save_release = 1410;
             save_system = 0;
         }
-        if (!display_3d && read_info.flag3d > 0)
+        if (display_3d != display_3d_modes::NONE && read_info.flag3d > 0)
         {
             loaded3d       = true;
             Ambient        = read_info.ambient;
@@ -395,7 +395,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     backwards_v19();
     backwards_v20();
 
-    if (display_3d)
+    if (display_3d != display_3d_modes::NONE)
     {
         usr_floatflag = oldfloatflag;
     }
@@ -414,7 +414,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         int const olddisplay3d = display_3d;
         bool const oldfloatflag = floatflag;
-        display_3d = loaded3d ? 1 : 0;   // for <tab> display during next
+        display_3d = loaded3d ? display_3d_modes::YES : display_3d_modes::NONE;   // for <tab> display during next
         floatflag = usr_floatflag; // ditto
         int i = get_video_mode(&read_info, &blk_3_info);
 #if defined(_WIN32)
@@ -434,7 +434,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
     }
 
-    if (display_3d)
+    if (display_3d != display_3d_modes::NONE)
     {
         calc_status = calc_status_value::PARAMS_CHANGED;
         fractype = fractal_type::PLASMA;

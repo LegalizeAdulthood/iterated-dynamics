@@ -164,7 +164,7 @@ int gifview()
     colorstate = 1; // colors aren't default and not a known .map file
 
     // don't read if glasses
-    if (display_3d && mapset && g_glasses_type != 1 && g_glasses_type != 2)
+    if (display_3d != display_3d_modes::NONE && mapset && g_glasses_type != 1 && g_glasses_type != 2)
     {
         ValidateLuts(MAP_name.c_str());  // read the palette file
         spindac(0, 1); // load it, but don't spin

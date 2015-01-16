@@ -234,7 +234,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         if (show_file == 0)
         {   // loading an image
             outln_cleanup = nullptr;          // outln routine can set this
-            if (display_3d)                 // set up 3D decoding
+            if (display_3d != display_3d_modes::NONE)                 // set up 3D decoding
             {
                 outln = call_line3d;
             }
@@ -331,7 +331,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             }
             if (loaded3d)      // 'r' of image created with '3'
             {
-                display_3d = 1;  // so set flag for 'b' command
+                display_3d = display_3d_modes::YES;  // so set flag for 'b' command
             }
         }
         else
@@ -1237,9 +1237,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case '3':                    // restore-from (3d)
 do_3d_transform:
         if (overlay_3d)
-            display_3d = 2;         // for <b> command
+            display_3d = display_3d_modes::B_COMMAND;         // for <b> command
         else
-            display_3d = 1;
+            display_3d = display_3d_modes::YES;
     case 'r':                    // restore-from
         comparegif = false;
         *frommandel = false;
@@ -1263,7 +1263,7 @@ do_3d_transform:
                 comparegif = false;
                 overlay_3d = false;
             }
-            display_3d = 0;
+            display_3d = display_3d_modes::NONE;
         }
         driver_stack_screen();            // save graphics image
         if (overlay_3d)
@@ -1653,7 +1653,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 comparegif = false;
                 overlay_3d = false;
             }
-            display_3d = 0;
+            display_3d = display_3d_modes::NONE;
         }
         driver_stack_screen();            // save graphics image
         if (overlay_3d)
