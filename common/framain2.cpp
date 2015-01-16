@@ -360,10 +360,10 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 copy_genes_from_bank(gene);
                 if (have_evolve_info && (calc_status == calc_status_value::RESUMABLE))
                 {
-                    paramrangex  = evolve_info.paramrangex;
+                    evolve_x_parameter_range = evolve_info.paramrangex;
                     paramrangey  = evolve_info.paramrangey;
-                    newopx = evolve_info.opx;
-                    opx = newopx;
+                    evolve_new_x_parameter_offset = evolve_info.x_parameter_offset;
+                    evolve_x_parameter_offset = evolve_new_x_parameter_offset;
                     newopy = evolve_info.opy;
                     opy = newopy;
                     newodpx = (char)evolve_info.odpx;
@@ -394,13 +394,13 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     param_history(0); // save old history
                     ecount = 0;
                     fiddlefactor = fiddlefactor * fiddle_reduction;
-                    opx = newopx;
+                    evolve_x_parameter_offset = evolve_new_x_parameter_offset;
                     opy = newopy;
                     odpx = newodpx;
                     odpy = newodpy; // odpx used for discrete parms like inside, outside, trigfn etc
                 }
                 prmboxcount = 0;
-                dpx = paramrangex/(gridsz-1);
+                dpx = evolve_x_parameter_range /(gridsz-1);
                 dpy = paramrangey/(gridsz-1);
                 grout  = !((evolving & NOGROUT)/NOGROUT);
                 tmpxdots = xdots+grout;
@@ -432,9 +432,9 @@ done:
                 }
                 else
                 {
-                    evolve_info.paramrangex     = paramrangex;
+                    evolve_info.paramrangex     = evolve_x_parameter_range;
                     evolve_info.paramrangey     = paramrangey;
-                    evolve_info.opx             = opx;
+                    evolve_info.x_parameter_offset = evolve_x_parameter_offset;
                     evolve_info.opy             = opy;
                     evolve_info.odpx            = (short)odpx;
                     evolve_info.odpy            = (short)odpy;
@@ -1849,8 +1849,8 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
 
     case FIK_F2: // halve mutation params and regen
         fiddlefactor = fiddlefactor / 2;
-        paramrangex = paramrangex / 2;
-        newopx = opx + paramrangex / 2;
+        evolve_x_parameter_range = evolve_x_parameter_range / 2;
+        evolve_new_x_parameter_offset = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
         paramrangey = paramrangey / 2;
         newopy = opy + paramrangey / 2;
         *kbdmore = false;
@@ -1861,9 +1861,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     {
         double centerx, centery;
         fiddlefactor = fiddlefactor * 2;
-        centerx = opx + paramrangex / 2;
-        paramrangex = paramrangex * 2;
-        newopx = centerx - paramrangex / 2;
+        centerx = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
+        evolve_x_parameter_range = evolve_x_parameter_range * 2;
+        evolve_new_x_parameter_offset = centerx - evolve_x_parameter_range / 2;
         centery = opy + paramrangey / 2;
         paramrangey = paramrangey * 2;
         newopy = centery - paramrangey / 2;

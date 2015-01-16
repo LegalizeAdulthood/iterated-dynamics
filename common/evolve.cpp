@@ -24,13 +24,13 @@ unsigned int this_gen_rseed;
 
 // offset for discrete parameters x and y..
 // used for things like inside or outside types, bailout tests, trig fn etc
-// variation factors, opx, opy, paramrangex/y dpx, dpy.. used in field mapping
+// variation factors, opx, opy, evolve_x_parameter_range/y dpx, dpy.. used in field mapping
 // for smooth variation across screen. opx =offset param x, dpx = delta param
-// per image, paramrangex = variation across grid of param ...likewise for py
+// per image, evolve_x_parameter_range = variation across grid of param ...likewise for py
 // fiddlefactor is amount of random mutation used in random modes ,
 // fiddle_reduction is used to decrease fiddlefactor from one generation to the
 // next to eventually produce a stable population
-double opx, opy, newopx, newopy, paramrangex, paramrangey, dpx, dpy, fiddlefactor;
+double evolve_x_parameter_offset, opy, evolve_new_x_parameter_offset, newopy, evolve_x_parameter_range, paramrangey, dpx, dpy, fiddlefactor;
 double fiddle_reduction;
 double parmzoom;
 char odpx, odpy, newodpx, newodpy;
@@ -217,16 +217,16 @@ void varydbl(GENEBASE gene[], int randval, int i)
     case variations::NONE:
         break;
     case variations::X:
-        *(double *)gene[i].addr = px * dpx + opx; //paramspace x coord * per view delta px + offset
+        *(double *)gene[i].addr = px * dpx + evolve_x_parameter_offset; //paramspace x coord * per view delta px + offset
         break;
     case variations::Y:
         *(double *)gene[i].addr = lclpy * dpy + opy; //same for y
         break;
     case variations::X_PLUS_Y:
-        *(double *)gene[i].addr = px*dpx+opx +(lclpy*dpy)+opy; //and x+y
+        *(double *)gene[i].addr = px*dpx+ evolve_x_parameter_offset +(lclpy*dpy)+opy; //and x+y
         break;
     case variations::X_MINUS_Y:
-        *(double *)gene[i].addr = (px*dpx+opx)-(lclpy*dpy+opy); //and x-y
+        *(double *)gene[i].addr = (px*dpx+ evolve_x_parameter_offset)-(lclpy*dpy+opy); //and x-y
         break;
     case variations::RANDOM:
         *(double *)gene[i].addr += (((double)randval / RAND_MAX) * 2 * fiddlefactor) - fiddlefactor;
@@ -599,14 +599,14 @@ int get_evolve_Parms()
     int i, j, k, tmp;
     int old_evolving, old_gridsz;
     int old_variations = 0;
-    double old_paramrangex, old_paramrangey, old_opx, old_opy, old_fiddlefactor;
+    double old_x_parameter_range, old_paramrangey, old_x_parameter_offset, old_opy, old_fiddlefactor;
 
     // fill up the previous values arrays
     old_evolving      = evolving;
     old_gridsz        = gridsz;
-    old_paramrangex   = paramrangex;
+    old_x_parameter_range   = evolve_x_parameter_range;
     old_paramrangey   = paramrangey;
-    old_opx           = opx;
+    old_x_parameter_offset = evolve_x_parameter_offset;
     old_opy           = opy;
     old_fiddlefactor  = fiddlefactor;
 
@@ -617,8 +617,8 @@ get_evol_restart:
         // adjust field param to make some sense when changing from random modes
         // maybe should adjust for aspect ratio here?
         paramrangey = fiddlefactor * 2;
-        paramrangex = paramrangey;
-        opx = param[0] - fiddlefactor;
+        evolve_x_parameter_range = fiddlefactor * 2;
+        evolve_x_parameter_offset = param[0] - fiddlefactor;
         opy = param[1] - fiddlefactor;
         // set middle image to last selected and edges to +- fiddlefactor
     }
@@ -642,11 +642,11 @@ get_evol_restart:
 
         choices[++k] = "x parameter range (across screen)";
         uvalues[k].type = 'f';
-        uvalues[k].uval.dval = paramrangex;
+        uvalues[k].uval.dval = evolve_x_parameter_range;
 
         choices[++k] = "x parameter offset (left hand edge)";
         uvalues[k].type = 'f';
-        uvalues[k].uval.dval = opx;
+        uvalues[k].uval.dval = evolve_x_parameter_offset;
 
         choices[++k] = "y parameter range (up screen)";
         uvalues[k].type = 'f';
@@ -692,9 +692,9 @@ get_evol_restart:
         // in case this point has been reached after calling sub menu with F6
         evolving      = old_evolving;
         gridsz        = old_gridsz;
-        paramrangex   = old_paramrangex;
+        evolve_x_parameter_range = old_x_parameter_range;
         paramrangey   = old_paramrangey;
-        opx           = old_opx;
+        evolve_x_parameter_offset = old_x_parameter_offset;
         opy           = old_opy;
         fiddlefactor  = old_fiddlefactor;
 
@@ -710,9 +710,9 @@ get_evol_restart:
     }
     if (i == FIK_F2)
     {
-        paramrangex = paramrangex / 2;
-        newopx = opx + paramrangex/2;
-        opx = newopx;
+        evolve_x_parameter_range = evolve_x_parameter_range / 2;
+        evolve_new_x_parameter_offset = evolve_x_parameter_offset + evolve_x_parameter_range /2;
+        evolve_x_parameter_offset = evolve_new_x_parameter_offset;
         paramrangey = paramrangey / 2;
         newopy = opy + paramrangey / 2;
         opy = newopy;
@@ -722,10 +722,10 @@ get_evol_restart:
     if (i == FIK_F3)
     {
         double centerx, centery;
-        centerx = opx + paramrangex / 2;
-        paramrangex = paramrangex * 2;
-        newopx = centerx - paramrangex / 2;
-        opx = newopx;
+        centerx = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
+        evolve_x_parameter_range = evolve_x_parameter_range * 2;
+        evolve_new_x_parameter_offset = centerx - evolve_x_parameter_range / 2;
+        evolve_x_parameter_offset = evolve_new_x_parameter_offset;
         centery = opy + paramrangey / 2;
         paramrangey = paramrangey * 2;
         newopy = centery - paramrangey / 2;
@@ -762,9 +762,9 @@ get_evol_restart:
         tmp = (PARMBOX * uvalues[++k].uval.ch.val);
         if (evolving)
             evolving += tmp;
-        paramrangex = uvalues[++k].uval.dval;
-        opx = uvalues[++k].uval.dval;
-        newopx = opx;
+        evolve_x_parameter_range = uvalues[++k].uval.dval;
+        evolve_x_parameter_offset = uvalues[++k].uval.dval;
+        evolve_new_x_parameter_offset = evolve_x_parameter_offset;
         paramrangey = uvalues[++k].uval.dval;
         opy = uvalues[++k].uval.dval;
         newopy = opy;
@@ -788,8 +788,8 @@ get_evol_restart:
     i = 0;
 
     if (evolving != old_evolving
-            || (gridsz != old_gridsz) || (paramrangex != old_paramrangex)
-            || (opx != old_opx) || (paramrangey != old_paramrangey)
+            || (gridsz != old_gridsz) || (evolve_x_parameter_range != old_x_parameter_range)
+            || (evolve_x_parameter_offset != old_x_parameter_offset) || (paramrangey != old_paramrangey)
             || (opy != old_opy)  || (fiddlefactor != old_fiddlefactor)
             || (old_variations > 0))
         i = 1;
@@ -845,9 +845,9 @@ void ReleaseParamBox()
 
 void set_current_params()
 {
-    paramrangex = curfractalspecific->xmax - curfractalspecific->xmin;
-    newopx = - (paramrangex / 2);
-    opx = newopx;
+    evolve_x_parameter_range = curfractalspecific->xmax - curfractalspecific->xmin;
+    evolve_new_x_parameter_offset = - (evolve_x_parameter_range / 2);
+    evolve_x_parameter_offset = evolve_new_x_parameter_offset;
     paramrangey = curfractalspecific->ymax - curfractalspecific->ymin;
     newopy = - (paramrangey / 2);
     opy = newopy;
@@ -990,9 +990,9 @@ void set_evolve_ranges()
 {
     int lclpy = gridsz - py - 1;
     // set up ranges and offsets for parameter explorer/evolver
-    paramrangex = dpx*(parmzoom*2.0);
+    evolve_x_parameter_range = dpx*(parmzoom*2.0);
     paramrangey = dpy*(parmzoom*2.0);
-    newopx = opx+(((double)px-parmzoom)*dpx);
+    evolve_new_x_parameter_offset = evolve_x_parameter_offset +(((double)px-parmzoom)*dpx);
     newopy = opy+(((double)lclpy-parmzoom)*dpy);
 
     newodpx = (char)(odpx+(px-gridsz/2));

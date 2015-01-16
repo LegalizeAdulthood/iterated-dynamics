@@ -525,7 +525,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             calc_status = calc_status_value::RESUMABLE;
             evolve_info.paramrangex  = blk_6_info.paramrangex;
             evolve_info.paramrangey  = blk_6_info.paramrangey;
-            evolve_info.opx          = blk_6_info.opx;
+            evolve_info.x_parameter_offset = blk_6_info.x_parameter_offset;
             evolve_info.opy          = blk_6_info.opy;
             evolve_info.odpx         = blk_6_info.odpx;
             evolve_info.odpy         = blk_6_info.odpy;
@@ -547,10 +547,10 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             have_evolve_info = false;
             calc_status = calc_status_value::COMPLETED;
         }
-        paramrangex  = blk_6_info.paramrangex;
+        evolve_x_parameter_range = blk_6_info.paramrangex;
         paramrangey  = blk_6_info.paramrangey;
-        newopx = blk_6_info.opx;
-        opx = newopx;
+        evolve_new_x_parameter_offset = blk_6_info.x_parameter_offset;
+        evolve_x_parameter_offset = evolve_new_x_parameter_offset;
         newopy = blk_6_info.opy;
         opy = newopy;
         newodpx = (char) blk_6_info.odpx;
@@ -568,7 +568,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         fiddlefactor   = blk_6_info.fiddlefactor;
         evolving = (int) blk_6_info.evolving;
         viewwindow = evolving != 0;
-        dpx = paramrangex/(gridsz - 1);
+        dpx = evolve_x_parameter_range /(gridsz - 1);
         dpy = paramrangey/(gridsz - 1);
         if (read_info.version > 14)
         {
@@ -875,7 +875,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
 
                     blk_6_info->paramrangex     = eload_info.paramrangex;
                     blk_6_info->paramrangey     = eload_info.paramrangey;
-                    blk_6_info->opx             = eload_info.opx;
+                    blk_6_info->x_parameter_offset = eload_info.x_parameter_offset;
                     blk_6_info->opy             = eload_info.opy;
                     blk_6_info->odpx            = (char)eload_info.odpx;
                     blk_6_info->odpy            = (char)eload_info.odpy;

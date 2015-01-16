@@ -738,7 +738,7 @@ decode_evolver_info(EVOLUTION_INFO *info, int dir)
     getDouble(&info->fiddlefactor, &bufPtr, dir);
     getDouble(&info->paramrangex, &bufPtr, dir);
     getDouble(&info->paramrangey, &bufPtr, dir);
-    getDouble(&info->opx, &bufPtr, dir);
+    getDouble(&info->x_parameter_offset, &bufPtr, dir);
     getDouble(&info->opy, &bufPtr, dir);
     getInt(&info->odpx, &bufPtr, dir);
     getInt(&info->odpy, &bufPtr, dir);

@@ -524,7 +524,7 @@ struct EVOLUTION_INFO      // for saving evolution data in a GIF file
     double fiddlefactor;
     double paramrangex;
     double paramrangey;
-    double opx;
+    double x_parameter_offset;
     double opy;
     short odpx;
     short odpy;
@@ -1200,7 +1200,7 @@ struct ext_blk_6
     double fiddlefactor;
     double paramrangex;
     double paramrangey;
-    double opx;
+    double x_parameter_offset;
     double opy;
     short  odpx;
     short  odpy;

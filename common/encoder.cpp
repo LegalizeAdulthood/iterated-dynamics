@@ -484,9 +484,9 @@ bool encoder()
             EVOLUTION_INFO esave_info;
             if (!have_evolve_info || calc_status == calc_status_value::COMPLETED)
             {
-                esave_info.paramrangex     = paramrangex;
+                esave_info.paramrangex     = evolve_x_parameter_range;
                 esave_info.paramrangey     = paramrangey;
-                esave_info.opx             = opx;
+                esave_info.x_parameter_offset = evolve_x_parameter_offset;
                 esave_info.opy             = opy;
                 esave_info.odpx            = (short)odpx;
                 esave_info.odpy            = (short)odpy;
@@ -507,7 +507,7 @@ bool encoder()
                 // we will need the resuming information
                 esave_info.paramrangex     = evolve_info.paramrangex;
                 esave_info.paramrangey     = evolve_info.paramrangey;
-                esave_info.opx             = evolve_info.opx;
+                esave_info.x_parameter_offset = evolve_info.x_parameter_offset;
                 esave_info.opy             = evolve_info.opy;
                 esave_info.odpx            = (short)evolve_info.odpx;
                 esave_info.odpy            = (short)evolve_info.odpy;
