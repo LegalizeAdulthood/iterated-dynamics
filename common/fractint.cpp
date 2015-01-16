@@ -192,9 +192,9 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
     evolve_y_parameter_range = 3;
     newopy = -1.5;
-    opy = newopy;
+    opy = -1.5;
     odpy = 0;
-    odpx = odpy;
+    odpx = 0;
     gridsz = 9;
     fiddlefactor = 1;
     fiddle_reduction = 1.0;
