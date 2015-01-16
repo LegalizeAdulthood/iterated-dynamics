@@ -20,7 +20,7 @@ static int ecountbox[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
 
 // used to replay random sequences to obtain correct values when selecting a
 // seed image for next generation
-unsigned int this_gen_rseed;
+unsigned int evolve_this_generation_random_seed;
 
 // offset for discrete parameters x and y..
 // used for things like inside or outside types, bailout tests, trig fn etc
@@ -28,10 +28,10 @@ unsigned int this_gen_rseed;
 // for smooth variation across screen. opx =offset param x, dpx = delta param
 // per image, evolve_x_parameter_range = variation across grid of param ...likewise for py
 // evolve_max_random_mutation is amount of random mutation used in random modes ,
-// fiddle_reduction is used to decrease evolve_max_random_mutation from one generation to the
+// evolve_mutation_reduction_factor is used to decrease evolve_max_random_mutation from one generation to the
 // next to eventually produce a stable population
 double evolve_x_parameter_offset, evolve_y_parameter_offset, evolve_new_x_parameter_offset, evolve_new_y_parameter_offset, evolve_x_parameter_range, evolve_y_parameter_range, dpx, dpy, evolve_max_random_mutation;
-double fiddle_reduction;
+double evolve_mutation_reduction_factor;
 double parmzoom;
 char evolve_discrete_x_parameter_offset, evolve_discrete_y_parameter_offset, evolve_new_discrete_x_parameter_offset, evolve_new_discrete_y_parameter_offset;
 
@@ -663,7 +663,7 @@ get_evol_restart:
 
     choices[++k] = "Mutation reduction factor (between generations)";
     uvalues[k].type = 'f';
-    uvalues[k].uval.dval = fiddle_reduction;
+    uvalues[k].uval.dval = evolve_mutation_reduction_factor;
 
     choices[++k] = "Grouting? ";
     uvalues[k].type = 'y';
@@ -705,7 +705,7 @@ get_evol_restart:
     {
         set_current_params();
         evolve_max_random_mutation = 1;
-        fiddle_reduction = 1.0;
+        evolve_mutation_reduction_factor = 1.0;
         goto get_evol_restart;
     }
     if (i == FIK_F2)
@@ -772,7 +772,7 @@ get_evol_restart:
 
     evolve_max_random_mutation = uvalues[++k].uval.dval;
 
-    fiddle_reduction = uvalues[++k].uval.dval;
+    evolve_mutation_reduction_factor = uvalues[++k].uval.dval;
 
     if (!(uvalues[++k].uval.ch.val))
         evolving = evolving + NOGROUT;
@@ -810,7 +810,7 @@ get_evol_restart:
             evolving |= 1;   // leave other settings alone
         }
         evolve_max_random_mutation = 1;
-        fiddle_reduction = 1.0;
+        evolve_mutation_reduction_factor = 1.0;
         goto get_evol_restart;
     }
     return (i);
@@ -885,7 +885,7 @@ static void set_random(int ecount)
     // Call this routine to set the random # to the proper value
     // if it may have changed, before fiddleparms() is called.
     // Now called by fiddleparms().
-    srand(this_gen_rseed);
+    srand(evolve_this_generation_random_seed);
     for (int index = 0; index < ecount; index++)
         for (int i = 0; i < NUMGENES; i++)
             rand();

@@ -537,7 +537,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             evolve_info.ydots        = blk_6_info.ydots;
             evolve_info.image_grid_size = blk_6_info.image_grid_size;
             evolve_info.evolving     = blk_6_info.evolving;
-            evolve_info.this_gen_rseed = blk_6_info.this_gen_rseed;
+            evolve_info.this_generation_random_seed = blk_6_info.this_generation_random_seed;
             evolve_info.max_random_mutation = blk_6_info.max_random_mutation;
             evolve_info.ecount       = blk_6_info.ecount;
             have_evolve_info = true;
@@ -564,7 +564,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         xdots        = blk_6_info.xdots;
         ydots        = blk_6_info.ydots;
         evolve_image_grid_size = blk_6_info.image_grid_size;
-        this_gen_rseed = blk_6_info.this_gen_rseed;
+        evolve_this_generation_random_seed = blk_6_info.this_generation_random_seed;
         evolve_max_random_mutation = blk_6_info.max_random_mutation;
         evolving = (int) blk_6_info.evolving;
         viewwindow = evolving != 0;
@@ -887,7 +887,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     blk_6_info->ydots           = eload_info.ydots;
                     blk_6_info->image_grid_size = eload_info.image_grid_size;
                     blk_6_info->evolving        = eload_info.evolving;
-                    blk_6_info->this_gen_rseed  = eload_info.this_gen_rseed;
+                    blk_6_info->this_generation_random_seed = eload_info.this_generation_random_seed;
                     blk_6_info->max_random_mutation = eload_info.max_random_mutation;
                     blk_6_info->ecount          = eload_info.ecount;
                     for (int i = 0; i < NUMGENES; i++)

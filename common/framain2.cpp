@@ -377,7 +377,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     xdots        = evolve_info.xdots;
                     ydots        = evolve_info.ydots;
                     evolve_image_grid_size = evolve_info.image_grid_size;
-                    this_gen_rseed = evolve_info.this_gen_rseed;
+                    evolve_this_generation_random_seed = evolve_info.this_generation_random_seed;
                     evolve_max_random_mutation = evolve_info.max_random_mutation;
                     evolving     = evolve_info.evolving;
                     viewwindow = evolving != 0;
@@ -389,11 +389,11 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     int mid = evolve_image_grid_size / 2;
                     if ((px != mid) || (py != mid))
                     {
-                        this_gen_rseed = (unsigned int)clock_ticks(); // time for new set
+                        evolve_this_generation_random_seed = (unsigned int)clock_ticks(); // time for new set
                     }
                     param_history(0); // save old history
                     ecount = 0;
-                    evolve_max_random_mutation = evolve_max_random_mutation * fiddle_reduction;
+                    evolve_max_random_mutation = evolve_max_random_mutation * evolve_mutation_reduction_factor;
                     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
                     evolve_y_parameter_offset = evolve_new_y_parameter_offset;
                     evolve_discrete_x_parameter_offset = evolve_new_discrete_x_parameter_offset;
@@ -445,7 +445,7 @@ done:
                     evolve_info.xdots           = (short)xdots;
                     evolve_info.ydots           = (short)ydots;
                     evolve_info.image_grid_size = (short) evolve_image_grid_size;
-                    evolve_info.this_gen_rseed  = (short)this_gen_rseed;
+                    evolve_info.this_generation_random_seed = (short) evolve_this_generation_random_seed;
                     evolve_info.max_random_mutation = evolve_max_random_mutation;
                     evolve_info.evolving        = (short)evolving;
                     evolve_info.ecount          = (short) ecount;

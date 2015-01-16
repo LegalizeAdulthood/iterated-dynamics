@@ -139,7 +139,7 @@ extern long                  FgOne;
 extern long                  FgTwo;
 extern int evolve_image_grid_size;
 extern double evolve_max_random_mutation;
-extern double                fiddle_reduction;
+extern double evolve_mutation_reduction_factor;
 extern float                 fileaspectratio;
 extern int                   filecolors;
 extern int                   filexdots;
@@ -468,7 +468,7 @@ extern int                   g_text_cbase;      // g_text_col is relative to thi
 extern int                   g_text_col;        // current column in text mode
 extern int                   g_text_rbase;      // g_text_row is relative to this
 extern int                   g_text_row;        // current row in text mode
-extern unsigned int          this_gen_rseed;
+extern unsigned int evolve_this_generation_random_seed;
 extern unsigned *            tga16;
 extern long *                tga32;
 extern bool                  three_pass;
