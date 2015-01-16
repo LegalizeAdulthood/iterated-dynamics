@@ -15,6 +15,18 @@
 #endif
 #define NUM_BOX_POINTS 4096
 
+// for init_batch
+enum class batch_modes
+{
+    FINISH_CALC_BEFORE_SAVE = -1,
+    NONE,
+    NORMAL,
+    SAVE,
+    BAILOUT_ERROR_NO_SAVE,
+    BAILOUT_INTERRUPTED_TRY_SAVE,
+    BAILOUT_INTERRUPTED_SAVE
+};
+
 enum class buzzer_codes
 {
     COMPLETE = 0,

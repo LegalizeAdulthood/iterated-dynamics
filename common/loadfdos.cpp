@@ -257,7 +257,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 
 #ifndef XFRACT
     gotrealmode = false;
-    if ((g_init_mode < 0 || (askvideo && !init_batch)) && !make_parameter_file)
+    if ((g_init_mode < 0 || (askvideo && (init_batch == batch_modes::NONE))) && !make_parameter_file)
     {
         // no exact match or (askvideo=yes and batch=no), and not in makepar mode, talk to user
 
@@ -503,7 +503,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             viewreduction = tmpreduce; // ok, this works
         }
     }
-    if (!make_parameter_file && !fastrestore && !init_batch &&
+    if (!make_parameter_file && !fastrestore && (init_batch == batch_modes::NONE) &&
             (fabs(finalaspectratio - screenaspect) > .00001 || viewxdots != 0))
     {
         stopmsg(STOPMSG_NO_BUZZER,

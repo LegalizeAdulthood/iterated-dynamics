@@ -48,10 +48,10 @@ int stopmsg(int flags, char const *msg)
 {
     int ret, toprow, color, old_look_at_mouse;
     static bool batchmode = false;
-    if (debugflag != debug_flags::none || init_batch >= 1)
+    if (debugflag != debug_flags::none || init_batch >= batch_modes::NORMAL)
     {
         static FILE *fp = nullptr;
-        if (fp == nullptr && init_batch == 0)
+        if (fp == nullptr && init_batch == batch_modes::NONE)
             fp = dir_fopen(workdir.c_str(), "stopmsg.txt", "w");
         else
             fp = dir_fopen(workdir.c_str(), "stopmsg.txt", "a");
@@ -78,9 +78,9 @@ int stopmsg(int flags, char const *msg)
         return (0);
 #endif
     }
-    if (init_batch >= 1 || batchmode)
+    if (init_batch >= batch_modes::NORMAL || batchmode)
     { // in batch mode
-        init_batch = 4; // used to set errorlevel
+        init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE; // used to set errorlevel
         batchmode = true; // fixes *second* stopmsg in batch mode bug
         return (-1);
     }

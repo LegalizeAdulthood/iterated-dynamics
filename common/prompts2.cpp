@@ -1225,11 +1225,11 @@ void goodbye()                  // we done.  Bail out
     stopslideshow();
     end_help();
     int ret = 0;
-    if (init_batch == 3) // exit with error code for batch file
+    if (init_batch == batch_modes::BAILOUT_ERROR_NO_SAVE) // exit with error code for batch file
     {
         ret = 2;
     }
-    else if (init_batch == 4)
+    else if (init_batch == batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE)
     {
         ret = 1;
     }
