@@ -525,7 +525,7 @@ struct EVOLUTION_INFO      // for saving evolution data in a GIF file
     double x_parameter_range;
     double y_parameter_range;
     double x_parameter_offset;
-    double opy;
+    double y_parameter_offset;
     short odpx;
     short odpy;
     short px;

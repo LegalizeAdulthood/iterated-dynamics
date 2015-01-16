@@ -526,7 +526,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             evolve_info.x_parameter_range = blk_6_info.x_parameter_range;
             evolve_info.y_parameter_range = blk_6_info.y_parameter_range;
             evolve_info.x_parameter_offset = blk_6_info.x_parameter_offset;
-            evolve_info.opy          = blk_6_info.opy;
+            evolve_info.y_parameter_offset = blk_6_info.opy;
             evolve_info.odpx         = blk_6_info.odpx;
             evolve_info.odpy         = blk_6_info.odpy;
             evolve_info.px           = blk_6_info.px;
@@ -551,8 +551,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         evolve_y_parameter_range = blk_6_info.y_parameter_range;
         evolve_new_x_parameter_offset = blk_6_info.x_parameter_offset;
         evolve_x_parameter_offset = evolve_new_x_parameter_offset;
-        newopy = blk_6_info.opy;
-        opy = newopy;
+        evolve_new_y_parameter_offset = blk_6_info.opy;
+        evolve_y_parameter_offset = evolve_new_y_parameter_offset;
         newodpx = (char) blk_6_info.odpx;
         odpx = newodpx;
         newodpy = (char) blk_6_info.odpy;
@@ -876,7 +876,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     blk_6_info->x_parameter_range = eload_info.x_parameter_range;
                     blk_6_info->y_parameter_range = eload_info.y_parameter_range;
                     blk_6_info->x_parameter_offset = eload_info.x_parameter_offset;
-                    blk_6_info->opy             = eload_info.opy;
+                    blk_6_info->opy             = eload_info.y_parameter_offset;
                     blk_6_info->odpx            = (char)eload_info.odpx;
                     blk_6_info->odpy            = (char)eload_info.odpy;
                     blk_6_info->px              = eload_info.px;

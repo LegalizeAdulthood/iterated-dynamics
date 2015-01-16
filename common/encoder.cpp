@@ -487,7 +487,7 @@ bool encoder()
                 esave_info.x_parameter_range = evolve_x_parameter_range;
                 esave_info.y_parameter_range = evolve_y_parameter_range;
                 esave_info.x_parameter_offset = evolve_x_parameter_offset;
-                esave_info.opy             = opy;
+                esave_info.y_parameter_offset = evolve_y_parameter_offset;
                 esave_info.odpx            = (short)odpx;
                 esave_info.odpy            = (short)odpy;
                 esave_info.px              = (short)px;
@@ -508,7 +508,7 @@ bool encoder()
                 esave_info.x_parameter_range = evolve_info.x_parameter_range;
                 esave_info.y_parameter_range = evolve_info.y_parameter_range;
                 esave_info.x_parameter_offset = evolve_info.x_parameter_offset;
-                esave_info.opy             = evolve_info.opy;
+                esave_info.y_parameter_offset = evolve_info.y_parameter_offset;
                 esave_info.odpx            = (short)evolve_info.odpx;
                 esave_info.odpy            = (short)evolve_info.odpy;
                 esave_info.px              = (short)evolve_info.px;

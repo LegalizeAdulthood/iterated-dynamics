@@ -364,8 +364,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     evolve_y_parameter_range = evolve_info.y_parameter_range;
                     evolve_new_x_parameter_offset = evolve_info.x_parameter_offset;
                     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
-                    newopy = evolve_info.opy;
-                    opy = newopy;
+                    evolve_new_y_parameter_offset = evolve_info.y_parameter_offset;
+                    evolve_y_parameter_offset = evolve_new_y_parameter_offset;
                     newodpx = (char)evolve_info.odpx;
                     odpx = newodpx;
                     newodpy = (char)evolve_info.odpy;
@@ -395,7 +395,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     ecount = 0;
                     fiddlefactor = fiddlefactor * fiddle_reduction;
                     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
-                    opy = newopy;
+                    evolve_y_parameter_offset = evolve_new_y_parameter_offset;
                     odpx = newodpx;
                     odpy = newodpy; // odpx used for discrete parms like inside, outside, trigfn etc
                 }
@@ -435,7 +435,7 @@ done:
                     evolve_info.x_parameter_range = evolve_x_parameter_range;
                     evolve_info.y_parameter_range = evolve_y_parameter_range;
                     evolve_info.x_parameter_offset = evolve_x_parameter_offset;
-                    evolve_info.opy             = opy;
+                    evolve_info.y_parameter_offset = evolve_y_parameter_offset;
                     evolve_info.odpx            = (short)odpx;
                     evolve_info.odpy            = (short)odpy;
                     evolve_info.px              = (short)px;
@@ -1852,7 +1852,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         evolve_x_parameter_range = evolve_x_parameter_range / 2;
         evolve_new_x_parameter_offset = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
         evolve_y_parameter_range = evolve_y_parameter_range / 2;
-        newopy = opy + evolve_y_parameter_range / 2;
+        evolve_new_y_parameter_offset = evolve_y_parameter_offset + evolve_y_parameter_range / 2;
         *kbdmore = false;
         calc_status = calc_status_value::PARAMS_CHANGED;
         break;
@@ -1864,9 +1864,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         centerx = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
         evolve_x_parameter_range = evolve_x_parameter_range * 2;
         evolve_new_x_parameter_offset = centerx - evolve_x_parameter_range / 2;
-        centery = opy + evolve_y_parameter_range / 2;
+        centery = evolve_y_parameter_offset + evolve_y_parameter_range / 2;
         evolve_y_parameter_range = evolve_y_parameter_range * 2;
-        newopy = centery - evolve_y_parameter_range / 2;
+        evolve_new_y_parameter_offset = centery - evolve_y_parameter_range / 2;
         *kbdmore = false;
         calc_status = calc_status_value::PARAMS_CHANGED;
         break;
