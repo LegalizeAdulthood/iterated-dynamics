@@ -58,7 +58,7 @@ int     showdot = -1;           // color to show crawling graphics cursor
 int     sizedot = 0;            // size of dot crawling cursor
 char    recordcolors = 0;       // default PAR color-writing method
 char    autoshowdot = 0;        // dark, medium, bright
-bool    start_showorbit = false;        // show orbits on at start of fractal
+bool    start_show_orbit = false;        // show orbits on at start of fractal
 std::string readname;           // name of fractal input file
 std::string tempdir;            // name of temporary directory
 std::string workdir;            // name of directory for misc files
@@ -2731,7 +2731,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "showorbit") // showorbit=yes|no
     {
-        start_showorbit = yesnoval[0] != 0;
+        start_show_orbit = yesnoval[0] != 0;
         return CMDARG_NONE;
     }
 

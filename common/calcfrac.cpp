@@ -730,7 +730,7 @@ int calcfract()
         atan_colors = 180;
 
     // ORBIT stuff
-    show_orbit = start_showorbit;
+    show_orbit = start_show_orbit;
     orbit_ptr = 0;
     orbit_color = 15;
     if (colors < 16)

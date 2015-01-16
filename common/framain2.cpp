@@ -836,7 +836,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             i = get_evolve_Parms();
             if (i > 0)
             {
-                start_showorbit = false;
+                start_show_orbit = false;
                 soundflag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); // turn off only x,y,z
                 Log_Auto_Calc = false; // turn it off
             }

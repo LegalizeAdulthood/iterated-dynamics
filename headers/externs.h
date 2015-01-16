@@ -439,7 +439,7 @@ extern int                   Slope;
 extern int                   soundflag;
 extern std::string const     speed_prompt;
 extern void                (*standardplot)(int, int, int);
-extern bool                  start_showorbit;
+extern bool start_show_orbit;
 extern bool                  started_resaves;
 extern char                  stdcalcmode;
 extern std::string           stereomapname;
