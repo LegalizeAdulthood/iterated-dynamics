@@ -1225,11 +1225,11 @@ void goodbye()                  // we done.  Bail out
     stopslideshow();
     end_help();
     int ret = 0;
-    if (initbatch == 3) // exit with error code for batch file
+    if (init_batch == 3) // exit with error code for batch file
     {
         ret = 2;
     }
-    else if (initbatch == 4)
+    else if (init_batch == 4)
     {
         ret = 1;
     }

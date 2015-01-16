@@ -76,7 +76,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
 
             memcpy(old_dac_box, g_dac_box, 256*3); // save the DAC
 
-            if (overlay_3d && !initbatch)
+            if (overlay_3d && !init_batch)
             {
                 driver_unstack_screen();            // restore old graphics image
                 overlay_3d = false;
@@ -226,7 +226,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         }
         // assume we save next time (except jb)
         savedac = (savedac == 0) ? 2 : 1;
-        if (initbatch == 0)
+        if (init_batch == 0)
         {
             look_at_mouse = -FIK_PAGE_UP;        // mouse left button == pgup
         }
@@ -325,9 +325,9 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         if (show_file == 0)
         {   // image has been loaded
             show_file = 1;
-            if (initbatch == 1 && calc_status == calc_status_value::RESUMABLE)
+            if (init_batch == 1 && calc_status == calc_status_value::RESUMABLE)
             {
-                initbatch = -1; // flag to finish calc before save
+                init_batch = -1; // flag to finish calc before save
             }
             if (loaded3d)      // 'r' of image created with '3'
             {
@@ -521,7 +521,7 @@ resumeloop:                             // return here on failed overlays
                     kbdchar = FIK_ENTER;
                 }
             }
-            else if (initbatch == 0)      // not batch mode
+            else if (init_batch == 0)      // not batch mode
             {
 #ifndef XFRACT
                 look_at_mouse = (zoom_box_width == 0 && !g_video_scroll) ? -FIK_PAGE_UP : 3;
@@ -589,36 +589,36 @@ resumeloop:                             // return here on failed overlays
             }
             else          // batch mode, fake next keystroke
             {
-                // initbatch == -1  flag to finish calc before save
-                // initbatch == 0   not in batch mode
-                // initbatch == 1   normal batch mode
-                // initbatch == 2   was 1, now do a save
-                // initbatch == 3   bailout with errorlevel == 2, error occurred, no save
-                // initbatch == 4   bailout with errorlevel == 1, interrupted, try to save
-                // initbatch == 5   was 4, now do a save
+                // init_batch == -1  flag to finish calc before save
+                // init_batch == 0   not in batch mode
+                // init_batch == 1   normal batch mode
+                // init_batch == 2   was 1, now do a save
+                // init_batch == 3   bailout with errorlevel == 2, error occurred, no save
+                // init_batch == 4   bailout with errorlevel == 1, interrupted, try to save
+                // init_batch == 5   was 4, now do a save
 
-                if (initbatch == -1)       // finish calc
+                if (init_batch == -1)       // finish calc
                 {
                     kbdchar = FIK_ENTER;
-                    initbatch = 1;
+                    init_batch = 1;
                 }
-                else if (initbatch == 1 || initbatch == 4)         // save-to-disk
+                else if (init_batch == 1 || init_batch == 4)         // save-to-disk
                 {
                     kbdchar = (debugflag == debug_flags::force_disk_restore_not_save) ? 'r' : 's';
-                    if (initbatch == 1)
+                    if (init_batch == 1)
                     {
-                        initbatch = 2;
+                        init_batch = 2;
                     }
-                    if (initbatch == 4)
+                    if (init_batch == 4)
                     {
-                        initbatch = 5;
+                        init_batch = 5;
                     }
                 }
                 else
                 {
                     if (calc_status != calc_status_value::COMPLETED)
                     {
-                        initbatch = 3; // bailout with error
+                        init_batch = 3; // bailout with error
                     }
                     goodbye();               // done, exit
                 }
@@ -1196,7 +1196,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         return main_state::CONTINUE;
     case 'e':                    // switch to color editing
-        if (g_is_true_color && !initbatch)
+        if (g_is_true_color && !init_batch)
         { // don't enter palette editor
             if (!load_palette())
             {
@@ -1250,7 +1250,7 @@ do_3d_transform:
             {
                 comparegif = true;
                 overlay_3d = true;
-                if (initbatch == 2)
+                if (init_batch == 2)
                 {
                     driver_stack_screen();   // save graphics image
                     readname = savename;
@@ -1567,7 +1567,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         return main_state::CONTINUE;
     case 'e':                    // switch to color editing
-        if (g_is_true_color && !initbatch)
+        if (g_is_true_color && !init_batch)
         { // don't enter palette editor
             if (!load_palette())
             {
@@ -1640,7 +1640,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             {
                 comparegif = true;
                 overlay_3d = true;
-                if (initbatch == 2)
+                if (init_batch == 2)
                 {
                     driver_stack_screen();   // save graphics image
                     readname = savename;
@@ -2036,7 +2036,7 @@ int cmp_line(BYTE *pixels, int linelen)
     if (row == 0)
     {
         errcount = 0;
-        cmp_fp = dir_fopen(workdir.c_str(), "cmperr", (initbatch)?"a":"w");
+        cmp_fp = dir_fopen(workdir.c_str(), "cmperr", (init_batch)?"a":"w");
         outln_cleanup = cmp_line_cleanup;
     }
     if (pot16bit)
@@ -2055,7 +2055,7 @@ int cmp_line(BYTE *pixels, int linelen)
             if (oldcolor == 0)
                 putcolor(col, row, 1);
             ++errcount;
-            if (initbatch == 0)
+            if (init_batch == 0)
                 fprintf(cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
                         errcount, col, row, oldcolor, pixels[col]);
         }
@@ -2067,7 +2067,7 @@ static void cmp_line_cleanup()
 {
     char *timestring;
     time_t ltime;
-    if (initbatch)
+    if (init_batch)
     {
         time(&ltime);
         timestring = ctime(&ltime);

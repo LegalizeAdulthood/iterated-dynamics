@@ -96,7 +96,7 @@ int     display3d = 0;          // 3D display flag: 0 = OFF
 bool    overlay_3d = false;      // 3D overlay flag
 int     init3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
 bool    checkcurdir = false;    // flag to check current dir for files
-int     initbatch = 0;          // 1 if batch run (no kbd)
+int     init_batch = 0;          // 1 if batch run (no kbd)
 int     initsavetime = 0;       // autosave minutes
 DComplex  initorbit = { 0.0 };  // initial orbitvalue
 char    useinitorbit = 0;       // flag for initorbit
@@ -414,7 +414,7 @@ static void initvars_restart()          // <ins> key init
     askvideo = true;                    // turn on video-prompt flag
     fract_overwrite = false;            // don't overwrite
     soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // sound is on to PC speaker
-    initbatch = 0;                      // not in batch mode
+    init_batch = 0;                      // not in batch mode
     checkcurdir = false;                // flag to check current dire for files
     initsavetime = 0;                   // no auto-save
     g_init_mode = -1;                   // no initial video mode
@@ -987,7 +987,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 #ifdef XFRACT
             g_init_mode = yesnoval[0] ? 0 : -1; // skip credits for batch mode
 #endif
-            initbatch = yesnoval[0];
+            init_batch = yesnoval[0];
             return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
         if (variable == "maxhistory")       // maxhistory=?
@@ -3384,9 +3384,9 @@ static void argerror(char const *badarg)      // oops. couldn't decode this
                " argument list with descriptions)";
     }
     stopmsg(STOPMSG_NONE, msg.c_str());
-    if (initbatch)
+    if (init_batch)
     {
-        initbatch = 4;
+        init_batch = 4;
         goodbye();
     }
 }
@@ -3491,7 +3491,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
     {"command line", "sstools.ini", "PAR file", "PAR file"};
     static int row = 1;
 
-    if (initbatch == 1)
+    if (init_batch == 1)
     { // in batch mode
         if (badfilename)
             return -1;
@@ -3535,7 +3535,7 @@ void dopause(int action)
     switch (action)
     {
     case 0:
-        if (initbatch == 0)
+        if (init_batch == 0)
         {
             if (needpause == 1)
                 driver_get_key();

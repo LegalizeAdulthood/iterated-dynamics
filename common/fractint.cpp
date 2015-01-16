@@ -222,7 +222,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
 
     history_init();
 
-    if (debugflag == debug_flags::prevent_overwrite_savename && initbatch == 1)   // abort if savename already exists
+    if (debugflag == debug_flags::prevent_overwrite_savename && init_batch == 1)   // abort if savename already exists
     {
         check_samename();
     }
@@ -335,7 +335,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
     tab_mode = true;
     look_at_mouse = 0;                     // ignore mouse
 
-    if (((overlay_3d && !initbatch) || stacked) && g_init_mode < 0)        // overlay command failed
+    if (((overlay_3d && !init_batch) || stacked) && g_init_mode < 0)        // overlay command failed
     {
         driver_unstack_screen();                  // restore the graphics screen
         stacked = false;
@@ -372,7 +372,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         if (calc_status > calc_status_value::PARAMS_CHANGED)              // goto imagestart implies re-calc
             calc_status = calc_status_value::PARAMS_CHANGED;
 
-    if (initbatch == 0)
+    if (init_batch == 0)
         look_at_mouse = -FIK_PAGE_UP;           // just mouse left button, == pgup
 
     cyclelimit = initcyclelimit;         // default cycle limit
@@ -381,9 +381,9 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 
     while (g_adapter < 0)                // cycle through instructions
     {
-        if (initbatch)                          // batch, nothing to do
+        if (init_batch)                          // batch, nothing to do
         {
-            initbatch = 4;                 // exit with error condition set
+            init_batch = 4;                 // exit with error condition set
             goodbye();
         }
         int kbdchar = main_menu(0);

@@ -221,14 +221,14 @@ restart:
     if (interrupted)
     {
         texttempmsg(" *interrupted* save ");
-        if (initbatch >= 1)
-            initbatch = 3;         // if batch mode, set error level
+        if (init_batch >= 1)
+            init_batch = 3;         // if batch mode, set error level
         return -1;
     }
     if (timedsave == 0)
     {
         driver_buzzer(buzzer_codes::COMPLETE);
-        if (initbatch == 0)
+        if (init_batch == 0)
         {
             extract_filename(tmpfile, openfile);
             sprintf(tmpmsg, " File saved as %s ", tmpfile);
@@ -277,7 +277,7 @@ bool encoder()
     BYTE bitsperpixel, x;
     FRACTAL_INFO save_info;
 
-    if (initbatch)               // flush any impending keystrokes
+    if (init_batch)               // flush any impending keystrokes
         while (driver_key_pressed())
             driver_get_key();
 

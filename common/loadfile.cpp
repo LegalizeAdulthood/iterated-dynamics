@@ -440,7 +440,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         fractype = fractal_type::PLASMA;
         curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::PLASMA)];
         param[0] = 0;
-        if (!initbatch)
+        if (!init_batch)
         {
             if (get_3d_params() < 0)
             {

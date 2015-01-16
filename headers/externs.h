@@ -196,7 +196,7 @@ extern int                   imgboxcount;
 extern bool                  image_map;
 extern int                   init3d[20];
 extern DComplex              init;
-extern int                   initbatch;
+extern int init_batch;
 extern int                   initcyclelimit;
 extern int                   g_init_mode;
 extern DComplex              initorbit;
