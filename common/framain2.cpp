@@ -366,8 +366,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
                     evolve_new_y_parameter_offset = evolve_info.y_parameter_offset;
                     evolve_y_parameter_offset = evolve_new_y_parameter_offset;
-                    newodpx = (char)evolve_info.odpx;
-                    odpx = newodpx;
+                    evolve_new_discrete_x_parameter_offset = (char)evolve_info.discrete_x_parameter_offset;
+                    evolve_discrete_x_parameter_offset = evolve_new_discrete_x_parameter_offset;
                     evolve_new_discrete_y_parameter_offset = (char)evolve_info.discrete_y_paramter_offset;
                     evolve_discrete_y_parameter_offset = evolve_new_discrete_y_parameter_offset;
                     px           = evolve_info.px;
@@ -396,8 +396,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     fiddlefactor = fiddlefactor * fiddle_reduction;
                     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
                     evolve_y_parameter_offset = evolve_new_y_parameter_offset;
-                    odpx = newodpx;
-                    evolve_discrete_y_parameter_offset = evolve_new_discrete_y_parameter_offset; // odpx used for discrete parms like inside, outside, trigfn etc
+                    evolve_discrete_x_parameter_offset = evolve_new_discrete_x_parameter_offset;
+                    evolve_discrete_y_parameter_offset = evolve_new_discrete_y_parameter_offset; // evolve_discrete_x_parameter_offset used for discrete parms like inside, outside, trigfn etc
                 }
                 prmboxcount = 0;
                 dpx = evolve_x_parameter_range /(gridsz-1);
@@ -436,7 +436,7 @@ done:
                     evolve_info.y_parameter_range = evolve_y_parameter_range;
                     evolve_info.x_parameter_offset = evolve_x_parameter_offset;
                     evolve_info.y_parameter_offset = evolve_y_parameter_offset;
-                    evolve_info.odpx            = (short)odpx;
+                    evolve_info.discrete_x_parameter_offset = (short) evolve_discrete_x_parameter_offset;
                     evolve_info.discrete_y_paramter_offset = (short) evolve_discrete_y_parameter_offset;
                     evolve_info.px              = (short)px;
                     evolve_info.py              = (short)py;
@@ -782,9 +782,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             ldcheck = false;
             set_current_params();
             evolve_new_discrete_y_parameter_offset = 0;
-            newodpx = evolve_new_discrete_y_parameter_offset;
-            evolve_discrete_y_parameter_offset = newodpx;
-            odpx = evolve_discrete_y_parameter_offset;
+            evolve_new_discrete_x_parameter_offset = evolve_new_discrete_y_parameter_offset;
+            evolve_discrete_y_parameter_offset = evolve_new_discrete_x_parameter_offset;
+            evolve_discrete_x_parameter_offset = evolve_discrete_y_parameter_offset;
             fiddlefactor = 1;           // reset param evolution stuff
             set_orbit_corners = false;
             param_history(0); // save history
@@ -1463,9 +1463,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             ldcheck = false;
             set_current_params();
             evolve_new_discrete_y_parameter_offset = 0;
-            newodpx = evolve_new_discrete_y_parameter_offset;
-            evolve_discrete_y_parameter_offset = newodpx;
-            odpx = evolve_discrete_y_parameter_offset;
+            evolve_new_discrete_x_parameter_offset = evolve_new_discrete_y_parameter_offset;
+            evolve_discrete_y_parameter_offset = evolve_new_discrete_x_parameter_offset;
+            evolve_discrete_x_parameter_offset = evolve_discrete_y_parameter_offset;
             fiddlefactor = 1;           // reset param evolution stuff
             set_orbit_corners = false;
             param_history(0); // save history

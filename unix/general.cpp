@@ -740,7 +740,7 @@ decode_evolver_info(EVOLUTION_INFO *info, int dir)
     getDouble(&info->y_parameter_range, &bufPtr, dir);
     getDouble(&info->x_parameter_offset, &bufPtr, dir);
     getDouble(&info->y_parameter_offset, &bufPtr, dir);
-    getInt(&info->odpx, &bufPtr, dir);
+    getInt(&info->discrete_x_parameter_offset, &bufPtr, dir);
     getInt(&info->discrete_y_paramter_offset, &bufPtr, dir);
     getInt(&info->px, &bufPtr, dir);
     getInt(&info->py, &bufPtr, dir);
