@@ -33,7 +33,7 @@ unsigned int this_gen_rseed;
 double evolve_x_parameter_offset, evolve_y_parameter_offset, evolve_new_x_parameter_offset, evolve_new_y_parameter_offset, evolve_x_parameter_range, evolve_y_parameter_range, dpx, dpy, fiddlefactor;
 double fiddle_reduction;
 double parmzoom;
-char odpx, odpy, newodpx, newodpy;
+char odpx, evolve_discrete_y_parameter_offset, newodpx, evolve_new_discrete_y_parameter_offset;
 
 int prmboxcount;
 std::vector<int> param_box_x;
@@ -255,13 +255,13 @@ int varyint(int randvalue, int limit, variations mode)
         ret = (odpx+px)%limit;
         break;
     case variations::Y:
-        ret = (odpy+lclpy)%limit;
+        ret = (evolve_discrete_y_parameter_offset +lclpy)%limit;
         break;
     case variations::X_PLUS_Y:
-        ret = (odpx+px+odpy+lclpy)%limit;
+        ret = (odpx+px+ evolve_discrete_y_parameter_offset +lclpy)%limit;
         break;
     case variations::X_MINUS_Y:
-        ret = (odpx+px)-(odpy+lclpy)%limit;
+        ret = (odpx+px)-(evolve_discrete_y_parameter_offset +lclpy)%limit;
         break;
     case variations::RANDOM:
         ret = randvalue % limit;
@@ -996,7 +996,7 @@ void set_evolve_ranges()
     evolve_new_y_parameter_offset = evolve_y_parameter_offset +(((double)lclpy-parmzoom)*dpy);
 
     newodpx = (char)(odpx+(px-gridsz/2));
-    newodpy = (char)(odpy+(lclpy-gridsz/2));
+    evolve_new_discrete_y_parameter_offset = (char)(evolve_discrete_y_parameter_offset +(lclpy-gridsz/2));
     return;
 }
 

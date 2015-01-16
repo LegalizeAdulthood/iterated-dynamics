@@ -193,7 +193,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     evolve_y_parameter_range = 3;
     evolve_new_y_parameter_offset = -1.5;
     evolve_y_parameter_offset = -1.5;
-    odpy = 0;
+    evolve_discrete_y_parameter_offset = 0;
     odpx = 0;
     gridsz = 9;
     fiddlefactor = 1;
