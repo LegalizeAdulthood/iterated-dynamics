@@ -352,7 +352,7 @@ extern double                oymax;
 extern double                oymin;
 extern double                param[];
 extern double evolve_x_parameter_range;
-extern double                paramrangey;
+extern double evolve_y_parameter_range;
 extern double                parmzoom;
 extern DComplex              parm2;
 extern DComplex              parm;

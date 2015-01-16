@@ -522,8 +522,8 @@ struct EVOLUTION_INFO      // for saving evolution data in a GIF file
     short gridsz;
     unsigned short this_gen_rseed;
     double fiddlefactor;
-    double paramrangex;
-    double paramrangey;
+    double x_parameter_range;
+    double y_parameter_range;
     double x_parameter_offset;
     double opy;
     short odpx;
@@ -1198,8 +1198,8 @@ struct ext_blk_6
     short gridsz;
     unsigned short this_gen_rseed;
     double fiddlefactor;
-    double paramrangex;
-    double paramrangey;
+    double x_parameter_range;
+    double y_parameter_range;
     double x_parameter_offset;
     double opy;
     short  odpx;

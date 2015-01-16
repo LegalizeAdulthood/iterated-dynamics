@@ -30,7 +30,7 @@ unsigned int this_gen_rseed;
 // fiddlefactor is amount of random mutation used in random modes ,
 // fiddle_reduction is used to decrease fiddlefactor from one generation to the
 // next to eventually produce a stable population
-double evolve_x_parameter_offset, opy, evolve_new_x_parameter_offset, newopy, evolve_x_parameter_range, paramrangey, dpx, dpy, fiddlefactor;
+double evolve_x_parameter_offset, opy, evolve_new_x_parameter_offset, newopy, evolve_x_parameter_range, evolve_y_parameter_range, dpx, dpy, fiddlefactor;
 double fiddle_reduction;
 double parmzoom;
 char odpx, odpy, newodpx, newodpy;
@@ -599,13 +599,13 @@ int get_evolve_Parms()
     int i, j, k, tmp;
     int old_evolving, old_gridsz;
     int old_variations = 0;
-    double old_x_parameter_range, old_paramrangey, old_x_parameter_offset, old_opy, old_fiddlefactor;
+    double old_x_parameter_range, old_y_parameter_range, old_x_parameter_offset, old_opy, old_fiddlefactor;
 
     // fill up the previous values arrays
     old_evolving      = evolving;
     old_gridsz        = gridsz;
-    old_x_parameter_range   = evolve_x_parameter_range;
-    old_paramrangey   = paramrangey;
+    old_x_parameter_range = evolve_x_parameter_range;
+    old_y_parameter_range = evolve_y_parameter_range;
     old_x_parameter_offset = evolve_x_parameter_offset;
     old_opy           = opy;
     old_fiddlefactor  = fiddlefactor;
@@ -616,7 +616,7 @@ get_evol_restart:
     {
         // adjust field param to make some sense when changing from random modes
         // maybe should adjust for aspect ratio here?
-        paramrangey = fiddlefactor * 2;
+        evolve_y_parameter_range = fiddlefactor * 2;
         evolve_x_parameter_range = fiddlefactor * 2;
         evolve_x_parameter_offset = param[0] - fiddlefactor;
         opy = param[1] - fiddlefactor;
@@ -650,7 +650,7 @@ get_evol_restart:
 
         choices[++k] = "y parameter range (up screen)";
         uvalues[k].type = 'f';
-        uvalues[k].uval.dval = paramrangey;
+        uvalues[k].uval.dval = evolve_y_parameter_range;
 
         choices[++k] = "y parameter offset (lower edge)";
         uvalues[k].type = 'f';
@@ -693,7 +693,7 @@ get_evol_restart:
         evolving      = old_evolving;
         gridsz        = old_gridsz;
         evolve_x_parameter_range = old_x_parameter_range;
-        paramrangey   = old_paramrangey;
+        evolve_y_parameter_range = old_y_parameter_range;
         evolve_x_parameter_offset = old_x_parameter_offset;
         opy           = old_opy;
         fiddlefactor  = old_fiddlefactor;
@@ -713,8 +713,8 @@ get_evol_restart:
         evolve_x_parameter_range = evolve_x_parameter_range / 2;
         evolve_new_x_parameter_offset = evolve_x_parameter_offset + evolve_x_parameter_range /2;
         evolve_x_parameter_offset = evolve_new_x_parameter_offset;
-        paramrangey = paramrangey / 2;
-        newopy = opy + paramrangey / 2;
+        evolve_y_parameter_range = evolve_y_parameter_range / 2;
+        newopy = opy + evolve_y_parameter_range / 2;
         opy = newopy;
         fiddlefactor = fiddlefactor / 2;
         goto get_evol_restart;
@@ -726,9 +726,9 @@ get_evol_restart:
         evolve_x_parameter_range = evolve_x_parameter_range * 2;
         evolve_new_x_parameter_offset = centerx - evolve_x_parameter_range / 2;
         evolve_x_parameter_offset = evolve_new_x_parameter_offset;
-        centery = opy + paramrangey / 2;
-        paramrangey = paramrangey * 2;
-        newopy = centery - paramrangey / 2;
+        centery = opy + evolve_y_parameter_range / 2;
+        evolve_y_parameter_range = evolve_y_parameter_range * 2;
+        newopy = centery - evolve_y_parameter_range / 2;
         opy = newopy;
         fiddlefactor = fiddlefactor * 2;
         goto get_evol_restart;
@@ -765,7 +765,7 @@ get_evol_restart:
         evolve_x_parameter_range = uvalues[++k].uval.dval;
         evolve_x_parameter_offset = uvalues[++k].uval.dval;
         evolve_new_x_parameter_offset = evolve_x_parameter_offset;
-        paramrangey = uvalues[++k].uval.dval;
+        evolve_y_parameter_range = uvalues[++k].uval.dval;
         opy = uvalues[++k].uval.dval;
         newopy = opy;
     }
@@ -789,7 +789,7 @@ get_evol_restart:
 
     if (evolving != old_evolving
             || (gridsz != old_gridsz) || (evolve_x_parameter_range != old_x_parameter_range)
-            || (evolve_x_parameter_offset != old_x_parameter_offset) || (paramrangey != old_paramrangey)
+            || (evolve_x_parameter_offset != old_x_parameter_offset) || (evolve_y_parameter_range != old_y_parameter_range)
             || (opy != old_opy)  || (fiddlefactor != old_fiddlefactor)
             || (old_variations > 0))
         i = 1;
@@ -848,8 +848,8 @@ void set_current_params()
     evolve_x_parameter_range = curfractalspecific->xmax - curfractalspecific->xmin;
     evolve_new_x_parameter_offset = - (evolve_x_parameter_range / 2);
     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
-    paramrangey = curfractalspecific->ymax - curfractalspecific->ymin;
-    newopy = - (paramrangey / 2);
+    evolve_y_parameter_range = curfractalspecific->ymax - curfractalspecific->ymin;
+    newopy = - (evolve_y_parameter_range / 2);
     opy = newopy;
     return;
 }
@@ -991,7 +991,7 @@ void set_evolve_ranges()
     int lclpy = gridsz - py - 1;
     // set up ranges and offsets for parameter explorer/evolver
     evolve_x_parameter_range = dpx*(parmzoom*2.0);
-    paramrangey = dpy*(parmzoom*2.0);
+    evolve_y_parameter_range = dpy*(parmzoom*2.0);
     evolve_new_x_parameter_offset = evolve_x_parameter_offset +(((double)px-parmzoom)*dpx);
     newopy = opy+(((double)lclpy-parmzoom)*dpy);
 

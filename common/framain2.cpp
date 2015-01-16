@@ -360,8 +360,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 copy_genes_from_bank(gene);
                 if (have_evolve_info && (calc_status == calc_status_value::RESUMABLE))
                 {
-                    evolve_x_parameter_range = evolve_info.paramrangex;
-                    paramrangey  = evolve_info.paramrangey;
+                    evolve_x_parameter_range = evolve_info.x_parameter_range;
+                    evolve_y_parameter_range = evolve_info.y_parameter_range;
                     evolve_new_x_parameter_offset = evolve_info.x_parameter_offset;
                     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
                     newopy = evolve_info.opy;
@@ -401,7 +401,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 }
                 prmboxcount = 0;
                 dpx = evolve_x_parameter_range /(gridsz-1);
-                dpy = paramrangey/(gridsz-1);
+                dpy = evolve_y_parameter_range /(gridsz-1);
                 grout  = !((evolving & NOGROUT)/NOGROUT);
                 tmpxdots = xdots+grout;
                 tmpydots = ydots+grout;
@@ -432,8 +432,8 @@ done:
                 }
                 else
                 {
-                    evolve_info.paramrangex     = evolve_x_parameter_range;
-                    evolve_info.paramrangey     = paramrangey;
+                    evolve_info.x_parameter_range = evolve_x_parameter_range;
+                    evolve_info.y_parameter_range = evolve_y_parameter_range;
                     evolve_info.x_parameter_offset = evolve_x_parameter_offset;
                     evolve_info.opy             = opy;
                     evolve_info.odpx            = (short)odpx;
@@ -1851,8 +1851,8 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         fiddlefactor = fiddlefactor / 2;
         evolve_x_parameter_range = evolve_x_parameter_range / 2;
         evolve_new_x_parameter_offset = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
-        paramrangey = paramrangey / 2;
-        newopy = opy + paramrangey / 2;
+        evolve_y_parameter_range = evolve_y_parameter_range / 2;
+        newopy = opy + evolve_y_parameter_range / 2;
         *kbdmore = false;
         calc_status = calc_status_value::PARAMS_CHANGED;
         break;
@@ -1864,9 +1864,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         centerx = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
         evolve_x_parameter_range = evolve_x_parameter_range * 2;
         evolve_new_x_parameter_offset = centerx - evolve_x_parameter_range / 2;
-        centery = opy + paramrangey / 2;
-        paramrangey = paramrangey * 2;
-        newopy = centery - paramrangey / 2;
+        centery = opy + evolve_y_parameter_range / 2;
+        evolve_y_parameter_range = evolve_y_parameter_range * 2;
+        newopy = centery - evolve_y_parameter_range / 2;
         *kbdmore = false;
         calc_status = calc_status_value::PARAMS_CHANGED;
         break;

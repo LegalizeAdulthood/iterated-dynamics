@@ -523,8 +523,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
                 && calc_status != calc_status_value::COMPLETED)
         {
             calc_status = calc_status_value::RESUMABLE;
-            evolve_info.paramrangex  = blk_6_info.paramrangex;
-            evolve_info.paramrangey  = blk_6_info.paramrangey;
+            evolve_info.x_parameter_range = blk_6_info.x_parameter_range;
+            evolve_info.y_parameter_range = blk_6_info.y_parameter_range;
             evolve_info.x_parameter_offset = blk_6_info.x_parameter_offset;
             evolve_info.opy          = blk_6_info.opy;
             evolve_info.odpx         = blk_6_info.odpx;
@@ -547,8 +547,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             have_evolve_info = false;
             calc_status = calc_status_value::COMPLETED;
         }
-        evolve_x_parameter_range = blk_6_info.paramrangex;
-        paramrangey  = blk_6_info.paramrangey;
+        evolve_x_parameter_range = blk_6_info.x_parameter_range;
+        evolve_y_parameter_range = blk_6_info.y_parameter_range;
         evolve_new_x_parameter_offset = blk_6_info.x_parameter_offset;
         evolve_x_parameter_offset = evolve_new_x_parameter_offset;
         newopy = blk_6_info.opy;
@@ -569,7 +569,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         evolving = (int) blk_6_info.evolving;
         viewwindow = evolving != 0;
         dpx = evolve_x_parameter_range /(gridsz - 1);
-        dpy = paramrangey/(gridsz - 1);
+        dpy = evolve_y_parameter_range /(gridsz - 1);
         if (read_info.version > 14)
         {
             for (int i = 0; i < NUMGENES; i++)
@@ -873,8 +873,8 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     blk_6_info->length = data_len;
                     blk_6_info->got_data = true;
 
-                    blk_6_info->paramrangex     = eload_info.paramrangex;
-                    blk_6_info->paramrangey     = eload_info.paramrangey;
+                    blk_6_info->x_parameter_range = eload_info.x_parameter_range;
+                    blk_6_info->y_parameter_range = eload_info.y_parameter_range;
                     blk_6_info->x_parameter_offset = eload_info.x_parameter_offset;
                     blk_6_info->opy             = eload_info.opy;
                     blk_6_info->odpx            = (char)eload_info.odpx;
