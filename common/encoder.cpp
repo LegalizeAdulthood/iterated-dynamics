@@ -499,7 +499,7 @@ bool encoder()
                 esave_info.image_grid_size = (short) evolve_image_grid_size;
                 esave_info.evolving        = (short)evolving;
                 esave_info.this_gen_rseed  = (unsigned short)this_gen_rseed;
-                esave_info.fiddlefactor    = fiddlefactor;
+                esave_info.max_random_mutation = evolve_max_random_mutation;
                 esave_info.ecount          = (short)(evolve_image_grid_size * evolve_image_grid_size);  // flag for done
             }
             else
@@ -520,7 +520,7 @@ bool encoder()
                 esave_info.image_grid_size = (short)evolve_info.image_grid_size;
                 esave_info.evolving        = (short)evolve_info.evolving;
                 esave_info.this_gen_rseed  = (unsigned short)evolve_info.this_gen_rseed;
-                esave_info.fiddlefactor    = evolve_info.fiddlefactor;
+                esave_info.max_random_mutation = evolve_info.max_random_mutation;
                 esave_info.ecount          = evolve_info.ecount;
             }
             for (int i = 0; i < NUMGENES; i++)

@@ -735,7 +735,7 @@ decode_evolver_info(EVOLUTION_INFO *info, int dir)
     getInt((short *) &info->evolving, &bufPtr, dir);
     getInt(&info->image_grid_size, &bufPtr, dir);
     getInt((short *) &info->this_gen_rseed, &bufPtr, dir);
-    getDouble(&info->fiddlefactor, &bufPtr, dir);
+    getDouble(&info->max_random_mutation, &bufPtr, dir);
     getDouble(&info->x_parameter_range, &bufPtr, dir);
     getDouble(&info->y_parameter_range, &bufPtr, dir);
     getDouble(&info->x_parameter_offset, &bufPtr, dir);

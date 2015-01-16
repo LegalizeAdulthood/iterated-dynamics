@@ -27,10 +27,10 @@ unsigned int this_gen_rseed;
 // variation factors, opx, opy, evolve_x_parameter_range/y dpx, dpy.. used in field mapping
 // for smooth variation across screen. opx =offset param x, dpx = delta param
 // per image, evolve_x_parameter_range = variation across grid of param ...likewise for py
-// fiddlefactor is amount of random mutation used in random modes ,
-// fiddle_reduction is used to decrease fiddlefactor from one generation to the
+// evolve_max_random_mutation is amount of random mutation used in random modes ,
+// fiddle_reduction is used to decrease evolve_max_random_mutation from one generation to the
 // next to eventually produce a stable population
-double evolve_x_parameter_offset, evolve_y_parameter_offset, evolve_new_x_parameter_offset, evolve_new_y_parameter_offset, evolve_x_parameter_range, evolve_y_parameter_range, dpx, dpy, fiddlefactor;
+double evolve_x_parameter_offset, evolve_y_parameter_offset, evolve_new_x_parameter_offset, evolve_new_y_parameter_offset, evolve_x_parameter_range, evolve_y_parameter_range, dpx, dpy, evolve_max_random_mutation;
 double fiddle_reduction;
 double parmzoom;
 char evolve_discrete_x_parameter_offset, evolve_discrete_y_parameter_offset, evolve_new_discrete_x_parameter_offset, evolve_new_discrete_y_parameter_offset;
@@ -229,13 +229,13 @@ void varydbl(GENEBASE gene[], int randval, int i)
         *(double *)gene[i].addr = (px*dpx+ evolve_x_parameter_offset)-(lclpy*dpy+ evolve_y_parameter_offset); //and x-y
         break;
     case variations::RANDOM:
-        *(double *)gene[i].addr += (((double)randval / RAND_MAX) * 2 * fiddlefactor) - fiddlefactor;
+        *(double *)gene[i].addr += (((double)randval / RAND_MAX) * 2 * evolve_max_random_mutation) - evolve_max_random_mutation;
         break;
     case variations::WEIGHTED_RANDOM:
     {
         int mid = evolve_image_grid_size /2;
         double radius =  sqrt(static_cast<double>(sqr(px - mid) + sqr(lclpy - mid)));
-        *(double *)gene[i].addr += ((((double)randval / RAND_MAX) * 2 * fiddlefactor) - fiddlefactor) * radius;
+        *(double *)gene[i].addr += ((((double)randval / RAND_MAX) * 2 * evolve_max_random_mutation) - evolve_max_random_mutation) * radius;
     }
     break;
     }
@@ -270,7 +270,7 @@ int varyint(int randvalue, int limit, variations mode)
     {
         int mid = evolve_image_grid_size /2;
         double radius =  sqrt(static_cast<double>(sqr(px - mid) + sqr(lclpy - mid)));
-        ret = (int)((((randvalue / RAND_MAX) * 2 * fiddlefactor) - fiddlefactor) * radius);
+        ret = (int)((((randvalue / RAND_MAX) * 2 * evolve_max_random_mutation) - evolve_max_random_mutation) * radius);
         ret %= limit;
         break;
     }
@@ -599,7 +599,7 @@ int get_evolve_Parms()
     int i, j, k, tmp;
     int old_evolving, old_image_grid_size;
     int old_variations = 0;
-    double old_x_parameter_range, old_y_parameter_range, old_x_parameter_offset, old_y_parameter_offset, old_fiddlefactor;
+    double old_x_parameter_range, old_y_parameter_range, old_x_parameter_offset, old_y_parameter_offset, old_max_random_mutation;
 
     // fill up the previous values arrays
     old_evolving      = evolving;
@@ -608,7 +608,7 @@ int get_evolve_Parms()
     old_y_parameter_range = evolve_y_parameter_range;
     old_x_parameter_offset = evolve_x_parameter_offset;
     old_y_parameter_offset = evolve_y_parameter_offset;
-    old_fiddlefactor  = fiddlefactor;
+    old_max_random_mutation = evolve_max_random_mutation;
 
 get_evol_restart:
 
@@ -616,11 +616,11 @@ get_evol_restart:
     {
         // adjust field param to make some sense when changing from random modes
         // maybe should adjust for aspect ratio here?
-        evolve_y_parameter_range = fiddlefactor * 2;
-        evolve_x_parameter_range = fiddlefactor * 2;
-        evolve_x_parameter_offset = param[0] - fiddlefactor;
-        evolve_y_parameter_offset = param[1] - fiddlefactor;
-        // set middle image to last selected and edges to +- fiddlefactor
+        evolve_y_parameter_range = evolve_max_random_mutation * 2;
+        evolve_x_parameter_range = evolve_max_random_mutation * 2;
+        evolve_x_parameter_offset = param[0] - evolve_max_random_mutation;
+        evolve_y_parameter_offset = param[1] - evolve_max_random_mutation;
+        // set middle image to last selected and edges to +- evolve_max_random_mutation
     }
 
     k = -1;
@@ -659,7 +659,7 @@ get_evol_restart:
 
     choices[++k] = "Max random mutation";
     uvalues[k].type = 'f';
-    uvalues[k].uval.dval = fiddlefactor;
+    uvalues[k].uval.dval = evolve_max_random_mutation;
 
     choices[++k] = "Mutation reduction factor (between generations)";
     uvalues[k].type = 'f';
@@ -696,7 +696,7 @@ get_evol_restart:
         evolve_y_parameter_range = old_y_parameter_range;
         evolve_x_parameter_offset = old_x_parameter_offset;
         evolve_y_parameter_offset = old_y_parameter_offset;
-        fiddlefactor  = old_fiddlefactor;
+        evolve_max_random_mutation = old_max_random_mutation;
 
         return (-1);
     }
@@ -704,7 +704,7 @@ get_evol_restart:
     if (i == FIK_F4)
     {
         set_current_params();
-        fiddlefactor = 1;
+        evolve_max_random_mutation = 1;
         fiddle_reduction = 1.0;
         goto get_evol_restart;
     }
@@ -716,7 +716,7 @@ get_evol_restart:
         evolve_y_parameter_range = evolve_y_parameter_range / 2;
         evolve_new_y_parameter_offset = evolve_y_parameter_offset + evolve_y_parameter_range / 2;
         evolve_y_parameter_offset = evolve_new_y_parameter_offset;
-        fiddlefactor = fiddlefactor / 2;
+        evolve_max_random_mutation = evolve_max_random_mutation / 2;
         goto get_evol_restart;
     }
     if (i == FIK_F3)
@@ -730,7 +730,7 @@ get_evol_restart:
         evolve_y_parameter_range = evolve_y_parameter_range * 2;
         evolve_new_y_parameter_offset = centery - evolve_y_parameter_range / 2;
         evolve_y_parameter_offset = evolve_new_y_parameter_offset;
-        fiddlefactor = fiddlefactor * 2;
+        evolve_max_random_mutation = evolve_max_random_mutation * 2;
         goto get_evol_restart;
     }
 
@@ -770,7 +770,7 @@ get_evol_restart:
         evolve_new_y_parameter_offset = evolve_y_parameter_offset;
     }
 
-    fiddlefactor = uvalues[++k].uval.dval;
+    evolve_max_random_mutation = uvalues[++k].uval.dval;
 
     fiddle_reduction = uvalues[++k].uval.dval;
 
@@ -790,7 +790,7 @@ get_evol_restart:
     if (evolving != old_evolving
             || (evolve_image_grid_size != old_image_grid_size) || (evolve_x_parameter_range != old_x_parameter_range)
             || (evolve_x_parameter_offset != old_x_parameter_offset) || (evolve_y_parameter_range != old_y_parameter_range)
-            || (evolve_y_parameter_offset != old_y_parameter_offset)  || (fiddlefactor != old_fiddlefactor)
+            || (evolve_y_parameter_offset != old_y_parameter_offset)  || (evolve_max_random_mutation != old_max_random_mutation)
             || (old_variations > 0))
         i = 1;
 
@@ -809,7 +809,7 @@ get_evol_restart:
             viewwindow = true;
             evolving |= 1;   // leave other settings alone
         }
-        fiddlefactor = 1;
+        evolve_max_random_mutation = 1;
         fiddle_reduction = 1.0;
         goto get_evol_restart;
     }

@@ -378,7 +378,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     ydots        = evolve_info.ydots;
                     evolve_image_grid_size = evolve_info.image_grid_size;
                     this_gen_rseed = evolve_info.this_gen_rseed;
-                    fiddlefactor   = evolve_info.fiddlefactor;
+                    evolve_max_random_mutation = evolve_info.max_random_mutation;
                     evolving     = evolve_info.evolving;
                     viewwindow = evolving != 0;
                     ecount       = evolve_info.ecount;
@@ -393,7 +393,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     }
                     param_history(0); // save old history
                     ecount = 0;
-                    fiddlefactor = fiddlefactor * fiddle_reduction;
+                    evolve_max_random_mutation = evolve_max_random_mutation * fiddle_reduction;
                     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
                     evolve_y_parameter_offset = evolve_new_y_parameter_offset;
                     evolve_discrete_x_parameter_offset = evolve_new_discrete_x_parameter_offset;
@@ -446,7 +446,7 @@ done:
                     evolve_info.ydots           = (short)ydots;
                     evolve_info.image_grid_size = (short) evolve_image_grid_size;
                     evolve_info.this_gen_rseed  = (short)this_gen_rseed;
-                    evolve_info.fiddlefactor    = fiddlefactor;
+                    evolve_info.max_random_mutation = evolve_max_random_mutation;
                     evolve_info.evolving        = (short)evolving;
                     evolve_info.ecount          = (short) ecount;
                     have_evolve_info = true;
@@ -785,7 +785,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             evolve_new_discrete_x_parameter_offset = 0;
             evolve_discrete_y_parameter_offset = 0;
             evolve_discrete_x_parameter_offset = 0;
-            fiddlefactor = 1;           // reset param evolution stuff
+            evolve_max_random_mutation = 1;           // reset param evolution stuff
             set_orbit_corners = false;
             param_history(0); // save history
             if (i == 0)
@@ -1466,7 +1466,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             evolve_new_discrete_x_parameter_offset = 0;
             evolve_discrete_y_parameter_offset = 0;
             evolve_discrete_x_parameter_offset = 0;
-            fiddlefactor = 1;           // reset param evolution stuff
+            evolve_max_random_mutation = 1;           // reset param evolution stuff
             set_orbit_corners = false;
             param_history(0); // save history
             if (i == 0)
@@ -1848,7 +1848,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         delete and the menu if necessary */
 
     case FIK_F2: // halve mutation params and regen
-        fiddlefactor = fiddlefactor / 2;
+        evolve_max_random_mutation = evolve_max_random_mutation / 2;
         evolve_x_parameter_range = evolve_x_parameter_range / 2;
         evolve_new_x_parameter_offset = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
         evolve_y_parameter_range = evolve_y_parameter_range / 2;
@@ -1860,7 +1860,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_F3: //double mutation parameters and regenerate
     {
         double centerx, centery;
-        fiddlefactor = fiddlefactor * 2;
+        evolve_max_random_mutation = evolve_max_random_mutation * 2;
         centerx = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
         evolve_x_parameter_range = evolve_x_parameter_range * 2;
         evolve_new_x_parameter_offset = centerx - evolve_x_parameter_range / 2;

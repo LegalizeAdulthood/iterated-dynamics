@@ -196,7 +196,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     evolve_discrete_y_parameter_offset = 0;
     evolve_discrete_x_parameter_offset = 0;
     evolve_image_grid_size = 9;
-    fiddlefactor = 1;
+    evolve_max_random_mutation = 1;
     fiddle_reduction = 1.0;
     this_gen_rseed = (unsigned int)clock_ticks();
     srand(this_gen_rseed);

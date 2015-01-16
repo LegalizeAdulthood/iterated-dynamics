@@ -138,7 +138,7 @@ extern double                fgLimit;
 extern long                  FgOne;
 extern long                  FgTwo;
 extern int evolve_image_grid_size;
-extern double                fiddlefactor;
+extern double evolve_max_random_mutation;
 extern double                fiddle_reduction;
 extern float                 fileaspectratio;
 extern int                   filecolors;
