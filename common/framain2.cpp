@@ -127,11 +127,11 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 g_video_entry.ydots = ydots;
             }
 
-            if (savedac || colorpreloaded)
+            if (savedac || colors_preloaded)
             {
                 memcpy(g_dac_box, olddacbox, 256*3); // restore the DAC
                 spindac(0, 1);
-                colorpreloaded = false;
+                colors_preloaded = false;
             }
             else
             {   // reset DAC to defaults, which setvideomode has done for us
@@ -886,10 +886,10 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             i |= CMDARG_FRACTAL_PARAM;
             savedac = 0;
         }
-        else if (colorpreloaded)
+        else if (colors_preloaded)
         {   // colors= was specified
             spindac(0, 1);
-            colorpreloaded = false;
+            colors_preloaded = false;
         }
         else if (i & CMDARG_RESET)         // reset was specified
             savedac = 0;

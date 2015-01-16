@@ -116,7 +116,7 @@ BYTE *mapdacbox = nullptr;      // map= (default colors)
 int     colorstate = 0;         // 0, g_dac_box matches default (bios or map=)
                                 // 1, g_dac_box matches no known defined map
                                 // 2, g_dac_box matches the colorfile map
-bool    colorpreloaded = false; // if g_dac_box preloaded for next mode select
+bool    colors_preloaded = false; // if g_dac_box preloaded for next mode select
 int     save_release = 0;       // release creating PAR file
 bool    dontreadcolor = false;  // flag for reading color from GIF
 double  math_tol[2] = {.05, .05}; // For math transition
@@ -124,7 +124,7 @@ bool Targa_Out = false;                 // 3D fullcolor flag
 bool truecolor = false;                 // escape time truecolor flag
 int truemode = 0;               // truecolor coloring scheme
 std::string colorfile;          // from last <l> <s> or colors=@filename
-bool functionpreloaded = false; // if function loaded for new bifs
+bool new_bifurcation_functions_loaded = false; // if function loaded for new bifs
 float   screenaspect = DEFAULTASPECT;   // aspect ratio of the screen
 float   aspectdrift = DEFAULTASPECTDRIFT;  // how much drift is allowed and
                                 // still forced to screenaspect
@@ -355,7 +355,7 @@ int cmdfiles(int argc, char const *const *argv)
     }
 
     // PAR reads a file and sets color, don't read colors from GIF
-    dontreadcolor = colorpreloaded && show_file == 0;
+    dontreadcolor = colors_preloaded && show_file == 0;
 
     //set structure of search directories
     strcpy(searchfor.par, CommandFile.c_str());
@@ -376,7 +376,7 @@ int load_commands(FILE *infile)
     ret = cmdfile(infile, cmd_file::AT_AFTER_STARTUP);
 
     // PAR reads a file and sets color, don't read colors from GIF
-    dontreadcolor = colorpreloaded && show_file == 0;
+    dontreadcolor = colors_preloaded && show_file == 0;
 
     return ret;
 }
@@ -527,7 +527,7 @@ static void initvars_fractal()          // init vars affecting calculation
     usemag = true;                      // use center-mag, not corners
 
     colorstate = 0;
-    colorpreloaded = false;
+    colors_preloaded = false;
     rotate_lo = 1;
     rotate_hi = 255;      // color cycling default range
     orbit_delay = 0;                     // full speed orbits
@@ -555,7 +555,7 @@ static void initvars_fractal()          // init vars affecting calculation
     bignumbailout = bnMODbailout;
     bigfltbailout = bfMODbailout;
 
-    functionpreloaded = false; // for old bifs
+    new_bifurcation_functions_loaded = false; // for old bifs
     mxminfp = -.83;
     myminfp = -.25;
     mxmaxfp = -.83;
@@ -1553,7 +1553,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             ++value;
         }
-        functionpreloaded = true; // for old bifs
+        new_bifurcation_functions_loaded = true; // for old bifs
         return CMDARG_FRACTAL_PARAM;
     }
 
@@ -3358,7 +3358,7 @@ static int parse_colors(char const *value)
         }
         colorstate = 1;
     }
-    colorpreloaded = true;
+    colors_preloaded = true;
     memcpy(olddacbox, g_dac_box, 256*3);
     return CMDARG_NONE;
 badcolor:

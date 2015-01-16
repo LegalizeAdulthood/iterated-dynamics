@@ -64,7 +64,7 @@ extern int                   col;
 extern int                   color;
 extern std::string           colorfile;
 extern long                  coloriter;
-extern bool                  colorpreloaded;
+extern bool colors_preloaded;
 extern int                   colors;
 extern int                   colorstate;
 extern int                   g_color_bright;    // brightest color in palette
@@ -166,7 +166,7 @@ extern std::string           FormName;
 extern char const *          fract_dir1;
 extern char const *          fract_dir2;
 extern long                  fudge;
-extern bool                  functionpreloaded;
+extern bool new_bifurcation_functions_loaded;
 extern double                f_at_rad;
 extern double                f_radius;
 extern double                f_xcenter;

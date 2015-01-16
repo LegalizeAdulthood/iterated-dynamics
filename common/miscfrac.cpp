@@ -480,7 +480,7 @@ static void set_Plasma_palette()
     static BYTE const Green[3] = { 0, 63, 0 };
     static BYTE const Blue[3]  = { 0,  0, 63 };
 
-    if (map_specified || colorpreloaded)
+    if (map_specified || colors_preloaded)
         return;    // map= specified
 
     g_dac_box[0][0] = 0;

@@ -317,7 +317,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (save_release < 1725 && read_info.version != 0) // pre-version 17.25
     {
         set_if_old_bif(); // translate bifurcation types
-        functionpreloaded = true;
+        new_bifurcation_functions_loaded = true;
     }
 
     if (read_info.version > 9)
@@ -362,7 +362,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
                 fractype == fractal_type::FPPOPCORNJUL || fractype == fractal_type::LPOPCORNJUL ||
                 fractype == fractal_type::LATOO)
         {
-            functionpreloaded = true;
+            new_bifurcation_functions_loaded = true;
         }
     }
 
@@ -1084,7 +1084,7 @@ static void backwardscompat(FRACTAL_INFO *info)
 // switch old bifurcation fractal types to new generalizations
 void set_if_old_bif()
 {
-    /* set functions if not set already, may need to check 'functionpreloaded'
+    /* set functions if not set already, may need to check 'new_bifurcation_functions_loaded'
        before calling this routine. */
 
     switch (fractype)
@@ -1139,7 +1139,7 @@ void set_function_parm_defaults()
 
 void backwards_v18()
 {
-    if (!functionpreloaded)
+    if (!new_bifurcation_functions_loaded)
         set_if_old_bif(); // old bifs need function set
     if (fractype == fractal_type::MANDELTRIG && usr_floatflag
             && save_release < 1800 && bailout == 0)
@@ -1201,7 +1201,7 @@ void backwards_v20()
         ldcheck = false;
     if (inside == EPSCROSS && save_release < 1961)
         closeprox = 0.01;
-    if (!functionpreloaded)
+    if (!new_bifurcation_functions_loaded)
         set_function_parm_defaults();
 }
 

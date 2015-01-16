@@ -254,7 +254,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
 
     browsing = false;
 
-    if (!functionpreloaded)
+    if (!new_bifurcation_functions_loaded)
     {
         set_if_old_bif();
     }
@@ -267,7 +267,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
     _ASSERTE(_CrtCheckMemory());
 #endif
 
-    if (colorpreloaded)
+    if (colors_preloaded)
     {
         memcpy(g_dac_box, olddacbox, 256*3);   // restore in case colors= present
     }
@@ -426,7 +426,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
             display3d = 0;
             if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
                 display3d = 1;
-            if (colorpreloaded)
+            if (colors_preloaded)
                 memcpy(olddacbox, g_dac_box, 256*3); // save in case colors= present
             driver_set_for_text(); // switch to text mode
             show_file = -1;
