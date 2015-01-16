@@ -2634,7 +2634,7 @@ int get_3d_params()     // prompt for 3D parameters
     int old_help_mode;
 
 restart_1:
-    if (Targa_Out && overlay3d)
+    if (Targa_Out && overlay_3d)
         Targa_Overlay = true;
 
     k = -1;

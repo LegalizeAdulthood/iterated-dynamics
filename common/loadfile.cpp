@@ -400,7 +400,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         usr_floatflag = oldfloatflag;
     }
 
-    if (overlay3d)
+    if (overlay_3d)
     {
         g_init_mode = g_adapter;          // use previous adapter mode for overlays
         if (filexdots > xdots || fileydots > ydots)
