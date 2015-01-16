@@ -202,7 +202,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     srand(evolve_this_generation_random_seed);
     initgene(); /*initialise pointers to lots of fractint variables for the evolution engine*/
     start_show_orbit = false;
-    showdot = -1; // turn off showdot if entered with <g> command
+    show_dot = -1; // turn off show_dot if entered with <g> command
     calc_status = calc_status_value::NO_FRACTAL;                    // no active fractal image
 
     fract_dir1 = getenv("FRACTDIR");

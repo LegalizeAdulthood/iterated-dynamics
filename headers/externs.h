@@ -427,7 +427,7 @@ extern float                 screenaspect;
 extern struct SearchPath     searchfor;
 extern bool                  set_orbit_corners;
 extern bool                  showbox;
-extern int                   showdot;
+extern int show_dot;
 extern int                   showfile;
 extern bool                  show_orbit;
 extern double                sinx;

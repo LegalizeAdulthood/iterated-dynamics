@@ -54,7 +54,7 @@ int     stoppass = 0;           // stop at this guessing pass early
 int     pseudox = 0;            // xdots to use for video independence
 int     pseudoy = 0;            // ydots to use for video independence
 int     bfdigits = 0;           // digits to use (force) for bf_math
-int     showdot = -1;           // color to show crawling graphics cursor
+int     show_dot = -1;           // color to show crawling graphics cursor
 int     sizedot = 0;            // size of dot crawling cursor
 char    recordcolors = 0;       // default PAR color-writing method
 char    autoshowdot = 0;        // dark, medium, bright
@@ -2704,7 +2704,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "showdot")
     {
-        showdot = 15;
+        show_dot = 15;
         if (totparms > 0)
         {
             autoshowdot = (char)0;
@@ -2717,9 +2717,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             else
             {
-                showdot = numval;
-                if (showdot < 0)
-                    showdot = -1;
+                show_dot = numval;
+                if (show_dot < 0)
+                    show_dot = -1;
             }
             if (totparms > 1 && intparms > 0)
                 sizedot = intval[1];

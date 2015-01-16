@@ -2105,8 +2105,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
 
     orbit_ptr = 0;
     coloriter = 0;
-    if (showdot>0)
-        (*plot)(col, row, showdot%colors);
+    if (show_dot >0)
+        (*plot)(col, row, show_dot %colors);
     if (!integerfractal) // fp mode
     {
         if (invert)

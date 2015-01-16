@@ -343,7 +343,7 @@ double fmodtest()
 
 /*
    The sym_fill_line() routine was pulled out of the boundary tracing
-   code for re-use with showdot. It's purpose is to fill a line with a
+   code for re-use with show_dot. It's purpose is to fill a line with a
    solid color. This assumes that BYTE *str is already filled
    with the color. The routine does write the line using symmetry
    in all cases, however the symmetry logic assumes that the line
@@ -526,7 +526,7 @@ int calctypeshowdot()
     {
         if (col+width <= ixstop && row+width <= iystop)
         {
-            // preferred showdot shape
+            // preferred show_dot shape
             direction = show_dot_direction::UPPER_LEFT;
             startx = col;
             stopx  = col+width;
@@ -1056,7 +1056,7 @@ static void perform_worklist()
         calc_status = calc_status_value::IN_PROGRESS; // mark as in-progress
 
         curfractalspecific->per_image();
-        if (showdot >= 0)
+        if (show_dot >= 0)
         {
             find_special_colors();
             switch (autoshowdot)
@@ -1072,7 +1072,7 @@ static void perform_worklist()
                 showdotcolor = g_color_bright % colors;
                 break;
             default:
-                showdotcolor = showdot % colors;
+                showdotcolor = show_dot % colors;
                 break;
             }
             if (sizedot <= 0)
@@ -2010,7 +2010,7 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
         lastz.y = old.y;
     }
 
-    if (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || showdot >= 0) && orbit_delay > 0)
+    if (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || show_dot >= 0) && orbit_delay > 0)
         check_freq = 16;
     else
         check_freq = 2048;
@@ -3032,7 +3032,7 @@ int  bound_trace_main()
             col = curcol;
             if ((*calctype)() == -1) // color, row, col are global
             {
-                if (showdot != bkcolor) // remove showdot pixel
+                if (show_dot != bkcolor) // remove show_dot pixel
                     (*plot)(col, row, bkcolor);
                 if (iystop != yystop)
                     iystop = yystop - (currow - yystart); // allow for sym
@@ -3070,7 +3070,7 @@ int  bound_trace_main()
                     if (color == bkcolor && (*calctype)() == -1)
                         // color, row, col are global for (*calctype)()
                     {
-                        if (showdot != bkcolor) // remove showdot pixel
+                        if (show_dot != bkcolor) // remove show_dot pixel
                             (*plot)(col, row, bkcolor);
                         if (iystop != yystop)
                             iystop = yystop - (currow - yystart); // allow for sym
