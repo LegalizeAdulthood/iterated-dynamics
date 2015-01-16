@@ -782,9 +782,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             ldcheck = false;
             set_current_params();
             evolve_new_discrete_y_parameter_offset = 0;
-            evolve_new_discrete_x_parameter_offset = evolve_new_discrete_y_parameter_offset;
-            evolve_discrete_y_parameter_offset = evolve_new_discrete_x_parameter_offset;
-            evolve_discrete_x_parameter_offset = evolve_discrete_y_parameter_offset;
+            evolve_new_discrete_x_parameter_offset = 0;
+            evolve_discrete_y_parameter_offset = 0;
+            evolve_discrete_x_parameter_offset = 0;
             fiddlefactor = 1;           // reset param evolution stuff
             set_orbit_corners = false;
             param_history(0); // save history
@@ -1463,9 +1463,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             ldcheck = false;
             set_current_params();
             evolve_new_discrete_y_parameter_offset = 0;
-            evolve_new_discrete_x_parameter_offset = evolve_new_discrete_y_parameter_offset;
-            evolve_discrete_y_parameter_offset = evolve_new_discrete_x_parameter_offset;
-            evolve_discrete_x_parameter_offset = evolve_discrete_y_parameter_offset;
+            evolve_new_discrete_x_parameter_offset = 0;
+            evolve_discrete_y_parameter_offset = 0;
+            evolve_discrete_x_parameter_offset = 0;
             fiddlefactor = 1;           // reset param evolution stuff
             set_orbit_corners = false;
             param_history(0); // save history
