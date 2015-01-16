@@ -29,7 +29,7 @@ static BYTE Brown[3]  = {31, 31, 0};
 char mapmask[13] = {"*.map"};
 
 BYTE g_dac_box[256][3];
-BYTE olddacbox[256][3];
+BYTE old_dac_box[256][3];
 bool g_dac_learn = false;
 bool g_got_real_dac = false;            // true if loaddac has a dacbox
 
@@ -326,7 +326,7 @@ void rotate(int direction)      // rotate-the-palette routine
             more = false;                   // time to bail out
             break;
         case FIK_HOME:                     // restore palette
-            memcpy(g_dac_box, olddacbox, 256*3);
+            memcpy(g_dac_box, old_dac_box, 256*3);
             pauserotate();              // pause
             break;
         default:                       // maybe a new palette
@@ -500,7 +500,7 @@ void save_palette()
                         g_dac_box[i][0] << 2,
                         g_dac_box[i][1] << 2,
                         g_dac_box[i][2] << 2);
-            memcpy(olddacbox, g_dac_box, 256*3);
+            memcpy(old_dac_box, g_dac_box, 256*3);
             colorstate = 2;
             colorfile = filename;
         }
@@ -523,7 +523,7 @@ bool load_palette()
     if (!i)
     {
         if (!ValidateLuts(filename))
-            memcpy(olddacbox, g_dac_box, 256*3);
+            memcpy(old_dac_box, g_dac_box, 256*3);
         merge_pathnames(MAP_name, filename, cmd_file::AT_CMD_LINE);
     }
     helpmode = oldhelpmode;

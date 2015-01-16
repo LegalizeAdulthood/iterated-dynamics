@@ -74,7 +74,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             sxoffs = syoffs;
             rotate_hi = (rotate_hi < colors) ? rotate_hi : colors - 1;
 
-            memcpy(olddacbox, g_dac_box, 256*3); // save the DAC
+            memcpy(old_dac_box, g_dac_box, 256*3); // save the DAC
 
             if (overlay3d && !initbatch)
             {
@@ -129,7 +129,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
 
             if (savedac || colors_preloaded)
             {
-                memcpy(g_dac_box, olddacbox, 256*3); // restore the DAC
+                memcpy(g_dac_box, old_dac_box, 256*3); // restore the DAC
                 spindac(0, 1);
                 colors_preloaded = false;
             }
@@ -1187,9 +1187,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case '+':                    // rotate palette
     case '-':                    // rotate palette
         clear_zoombox();
-        memcpy(olddacbox, g_dac_box, 256 * 3);
+        memcpy(old_dac_box, g_dac_box, 256 * 3);
         rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
-        if (memcmp(olddacbox, g_dac_box, 256 * 3))
+        if (memcmp(old_dac_box, g_dac_box, 256 * 3))
         {
             colorstate = 1;
             save_history_info();
@@ -1212,11 +1212,11 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             int oldhelpmode;
             oldhelpmode = helpmode;
-            memcpy(olddacbox, g_dac_box, 256 * 3);
+            memcpy(old_dac_box, g_dac_box, 256 * 3);
             helpmode = HELPXHAIR;
             EditPalette();
             helpmode = oldhelpmode;
-            if (memcmp(olddacbox, g_dac_box, 256 * 3))
+            if (memcmp(old_dac_box, g_dac_box, 256 * 3))
             {
                 colorstate = 1;
                 save_history_info();
@@ -1558,9 +1558,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case '+':                    // rotate palette
     case '-':                    // rotate palette
         clear_zoombox();
-        memcpy(olddacbox, g_dac_box, 256 * 3);
+        memcpy(old_dac_box, g_dac_box, 256 * 3);
         rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
-        if (memcmp(olddacbox, g_dac_box, 256 * 3))
+        if (memcmp(old_dac_box, g_dac_box, 256 * 3))
         {
             colorstate = 1;
             save_history_info();
@@ -1583,11 +1583,11 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         {
             int oldhelpmode;
             oldhelpmode = helpmode;
-            memcpy(olddacbox, g_dac_box, 256 * 3);
+            memcpy(old_dac_box, g_dac_box, 256 * 3);
             helpmode = HELPXHAIR;
             EditPalette();
             helpmode = oldhelpmode;
-            if (memcmp(olddacbox, g_dac_box, 256 * 3))
+            if (memcmp(old_dac_box, g_dac_box, 256 * 3))
             {
                 colorstate = 1;
                 save_history_info();
@@ -2435,7 +2435,7 @@ static void restore_history_info(int i)
     drawmode = last.drawmode;
     usr_floatflag = curfractalspecific->isinteger ? false : true;
     memcpy(g_dac_box, last.dac, 256*3);
-    memcpy(olddacbox, last.dac, 256*3);
+    memcpy(old_dac_box, last.dac, 256*3);
     if (map_specified)
     {
         for (int i = 0; i < 256; ++i)

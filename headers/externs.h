@@ -323,7 +323,7 @@ extern bool                  nxtscreenflag;
 extern int                   Offset;
 extern DComplex              old;
 extern long                  oldcoloriter;
-extern BYTE                  olddacbox[256][3];
+extern BYTE                  old_dac_box[256][3];
 extern bool                  old_demm_colors;
 extern char                  old_stdcalcmode;
 extern char evolve_discrete_x_parameter_offset;

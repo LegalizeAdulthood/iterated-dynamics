@@ -3066,9 +3066,9 @@ static bool check_mapfile()
                 break;
             }
         }
-        memcpy(olddacbox, g_dac_box, 256*3); // save the DAC
+        memcpy(old_dac_box, g_dac_box, 256*3); // save the DAC
         bool valid = ValidateLuts(buff);
-        memcpy(g_dac_box, olddacbox, 256*3); // restore the DAC
+        memcpy(g_dac_box, old_dac_box, 256*3); // restore the DAC
         if (valid) // Oops, somethings wrong
         {
             askflag = true;
