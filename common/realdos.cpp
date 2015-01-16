@@ -1085,11 +1085,11 @@ int main_menu(int fullmenu)
     int i;
     int nextleft, nextright;
     bool showjuliatoggle;
-    bool const oldtabmode = tabmode;
+    bool const old_tab_mode = tab_mode;
 
 top:
     menutype = fullmenu;
-    tabmode = false;
+    tab_mode = false;
     showjuliatoggle = false;
     for (int i = 0; i < 44; ++i)
     {
@@ -1418,7 +1418,7 @@ top:
     {
         i = 0;                 // don't trigger new calc
     }
-    tabmode = oldtabmode;
+    tab_mode = old_tab_mode;
     return i;
 }
 

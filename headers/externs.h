@@ -458,7 +458,7 @@ extern symmetry_type         symmetry;
 extern int                   syoffs;
 extern bool make_parameter_file;
 extern bool make_parameter_file_map;
-extern bool                  tabmode;
+extern bool tab_mode;
 extern bool                  taborhelp;
 extern bool                  Targa_Out;
 extern bool                  Targa_Overlay;

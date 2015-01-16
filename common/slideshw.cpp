@@ -425,12 +425,12 @@ int handle_special_keys(int ch)
         inside_help = false;
         ch = 0;
     }
-    else if (FIK_TAB == ch && tabmode)
+    else if (FIK_TAB == ch && tab_mode)
     {
-        bool const old_tab = tabmode;
-        tabmode = false;
+        bool const old_tab_mode = tab_mode;
+        tab_mode = false;
         tab_display();
-        tabmode = old_tab;
+        tab_mode = old_tab_mode;
         ch = 0;
     }
 
