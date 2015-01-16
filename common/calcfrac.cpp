@@ -140,8 +140,8 @@ int iystart = 0;
 int iystop = 0;                         // start, stop here
 symmetry_type symmetry = symmetry_type::NONE; // symmetry flag
 bool reset_periodicity = false;         // true if escape time pixel rtn to reset
-int kbdcount = 0;
-int max_kbdcount = 0;                   // avoids checking keyboard too often
+int keyboard_check_interval = 0;
+int max_keyboard_check_interval = 0;                   // avoids checking keyboard too often
 
 std::vector<BYTE> resume_data;          // resume info
 bool resuming = false;                  // true if resuming after interrupt
@@ -357,20 +357,20 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
     put_line(row, left, right, str);
     // here's where all the symmetry goes
     if (plot == putcolor)
-        kbdcount -= length >> 4; // seems like a reasonable value
+        keyboard_check_interval -= length >> 4; // seems like a reasonable value
     else if (plot == symplot2) // X-axis symmetry
     {
         int i = yystop-(row-yystart);
         if (i > iystop && i < ydots)
         {
             put_line(i, left, right, str);
-            kbdcount -= length >> 3;
+            keyboard_check_interval -= length >> 3;
         }
     }
     else if (plot == symplot2Y) // Y-axis symmetry
     {
         put_line(row, xxstop-(right-xxstart), xxstop-(left-xxstart), str);
-        kbdcount -= length >> 3;
+        keyboard_check_interval -= length >> 3;
     }
     else if (plot == symplot2J)  // Origin symmetry
     {
@@ -379,7 +379,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
         int k = std::min(xxstop-(left -xxstart), xdots-1);
         if (i > iystop && i < ydots && j <= k)
             put_line(i, j, k, str);
-        kbdcount -= length >> 3;
+        keyboard_check_interval -= length >> 3;
     }
     else if (plot == symplot4) // X-axis and Y-axis symmetry
     {
@@ -394,13 +394,13 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
         }
         if (j <= k)
             put_line(row, j, k, str);
-        kbdcount -= length >> 2;
+        keyboard_check_interval -= length >> 2;
     }
     else    // cheap and easy way out
     {
         for (int i = left; i <= right; i++)
             (*plot)(i, row, str[i-left]);
-        kbdcount -= length >> 1;
+        keyboard_check_interval -= length >> 1;
     }
 }
 
@@ -414,19 +414,19 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
     int length = right-left+1;
     put_line(row, left, right, str);
     if (plot == putcolor)
-        kbdcount -= length >> 4; // seems like a reasonable value
+        keyboard_check_interval -= length >> 4; // seems like a reasonable value
     else if (plot == symplot2) // X-axis symmetry
     {
         int i = yystop-(row-yystart);
         if (i > iystop && i < ydots)
             put_line(i, left, right, str);
-        kbdcount -= length >> 3;
+        keyboard_check_interval -= length >> 3;
     }
     else
     {
         for (int i = left; i <= right; i++)
             (*plot)(i, row, str[i-left]);
-        kbdcount -= length >> 1;
+        keyboard_check_interval -= length >> 1;
     }
 }
 
@@ -1135,7 +1135,7 @@ static void perform_worklist()
         // some common initialization for escape-time pixel level routines
         closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
         lclosenuff = (long)(closenuff * fudge); // "close enough" value
-        kbdcount = max_kbdcount;
+        keyboard_check_interval = max_keyboard_check_interval;
 
         setsymmetry(symmetry, true);
 
@@ -1925,7 +1925,7 @@ int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
         if (bf_math != bf_math_type::NONE)
         {
             if (decimals > 200)
-                kbdcount = -1;
+                keyboard_check_interval = -1;
             if (bf_math == bf_math_type::BIGNUM)
             {
                 clear_bn(bnsaved.x);
@@ -2614,11 +2614,11 @@ plot_pixel:
     (*plot)(col, row, color);
 
     maxit = savemaxit;
-    if ((kbdcount -= abs((int)realcoloriter)) <= 0)
+    if ((keyboard_check_interval -= abs((int)realcoloriter)) <= 0)
     {
         if (check_key())
             return -1;
-        kbdcount = max_kbdcount;
+        keyboard_check_interval = max_keyboard_check_interval;
     }
     return color;
 }

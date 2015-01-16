@@ -240,7 +240,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
 #endif
 
     max_colors = 256;                   // the Windows version is lower
-    max_kbdcount = 80;                  // check the keyboard this often
+    max_keyboard_check_interval = 80;                  // check the keyboard this often
 
     if (showfile && g_init_mode < 0)
     {

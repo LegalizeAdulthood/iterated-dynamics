@@ -1188,7 +1188,7 @@ int popcorn()   // subset of std engine
         get_resume(sizeof(start_row), &start_row, 0);
         end_resume();
     }
-    kbdcount = max_kbdcount;
+    keyboard_check_interval = max_keyboard_check_interval;
     plot = noplot;
     ltempsqrx = 0;
     tempsqrx = ltempsqrx;
@@ -2322,11 +2322,11 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         scrub_orbit();
 
     realcoloriter = coloriter;
-    if ((kbdcount -= abs((int)realcoloriter)) <= 0)
+    if ((keyboard_check_interval -= abs((int)realcoloriter)) <= 0)
     {
         if (check_key())
             return (-1);
-        kbdcount = max_kbdcount;
+        keyboard_check_interval = max_keyboard_check_interval;
     }
 
     // inside - Here's where non-palette based images would be nice.  Instead,
