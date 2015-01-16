@@ -76,7 +76,7 @@ bool    floatflag = false;
 int     biomorph = 0;           // flag for biomorph
 int     usr_biomorph = 0;
 symmetry_type forcesymmetry = symmetry_type::NONE;      // force symmetry
-int     showfile = 0;           // zero if file display pending
+int     show_file = 0;           // zero if file display pending
 bool    rflag = false;
 int     rseed = 0;              // Random number seeding flag and value
 int     decomp[2] = { 0 };      // Decomposition coloring
@@ -271,7 +271,7 @@ void process_simple_command(char *curarg)
             {
                 readname = curarg;
                 browse_name = extract_filename(readname.c_str());
-                showfile = 0;
+                show_file = 0;
                 processed = true;
             }
             fclose(initfile);
@@ -344,7 +344,7 @@ int cmdfiles(int argc, char const *const *argv)
     if (!first_init)
     {
         g_init_mode = -1; // don't set video when <ins> key used
-        showfile = 1;  // nor startup image file
+        show_file = 1;  // nor startup image file
     }
 
     init_msg("", nullptr, cmd_file::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
@@ -355,7 +355,7 @@ int cmdfiles(int argc, char const *const *argv)
     }
 
     // PAR reads a file and sets color, don't read colors from GIF
-    dontreadcolor = colorpreloaded && showfile == 0;
+    dontreadcolor = colorpreloaded && show_file == 0;
 
     //set structure of search directories
     strcpy(searchfor.par, CommandFile.c_str());
@@ -376,7 +376,7 @@ int load_commands(FILE *infile)
     ret = cmdfile(infile, cmd_file::AT_AFTER_STARTUP);
 
     // PAR reads a file and sets color, don't read colors from GIF
-    dontreadcolor = colorpreloaded && showfile == 0;
+    dontreadcolor = colorpreloaded && show_file == 0;
 
     return ret;
 }
@@ -445,7 +445,7 @@ static void initvars_restart()          // <ins> key init
     rflag = false;                      // not a fixed srand() seed
     rseed = init_rseed;
     readname = DOTSLASH;                // initially current directory
-    showfile = 1;
+    show_file = 1;
     // next should perhaps be fractal re-init, not just <ins> ?
     initcyclelimit = 55;                   // spin-DAC default speed limit
     mapset = false;                     // no map= name active
@@ -1205,7 +1205,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         existdir = merge_pathnames(readname, value, mode);
         if (existdir == 0)
         {
-            showfile = 0;
+            show_file = 0;
         }
         else if (existdir < 0)
         {

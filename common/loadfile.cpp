@@ -55,7 +55,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     ext_blk_6 blk_6_info;
     ext_blk_7 blk_7_info;
 
-    showfile = 1;                // for any abort exit, pretend done
+    show_file = 1;                // for any abort exit, pretend done
     g_init_mode = -1;               // no viewing mode set yet
     bool oldfloatflag = usr_floatflag;
     loaded3d = false;
@@ -616,7 +616,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
     }
 
-    showfile = 0;                   // trigger the file load
+    show_file = 0;                   // trigger the file load
     return 0;
 }
 

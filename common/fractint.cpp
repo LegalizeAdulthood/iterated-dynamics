@@ -242,7 +242,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     max_colors = 256;                   // the Windows version is lower
     max_keyboard_check_interval = 80;                  // check the keyboard this often
 
-    if (showfile && g_init_mode < 0)
+    if (show_file && g_init_mode < 0)
     {
         intro();                          // display the credits screen
         if (driver_key_pressed() == FIK_ESC)
@@ -274,7 +274,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
 
     lookatmouse = 0;                     // ignore mouse
 
-    while (showfile <= 0)              // image is to be loaded
+    while (show_file <= 0)              // image is to be loaded
     {
         char const *hdg;
         tabmode = false;
@@ -295,9 +295,9 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
                 hdg = "Select File to Restore";
                 helpmode = HELPSAVEREST;
             }
-            if (showfile < 0 && getafilename(hdg, gifmask.c_str(), readname))
+            if (show_file < 0 && getafilename(hdg, gifmask.c_str(), readname))
             {
-                showfile = 1;               // cancelled
+                show_file = 1;               // cancelled
                 g_init_mode = -1;
                 break;
             }
@@ -308,7 +308,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
 
         evolving = 0;
         viewwindow = false;
-        showfile = 0;
+        show_file = 0;
         helpmode = -1;
         tabmode = true;
         if (stacked)
@@ -323,11 +323,11 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         }
         if (browsing) // break out of infinite loop, but lose your mind
         {
-            showfile = 1;
+            show_file = 1;
         }
         else
         {
-            showfile = -1;                 // retry
+            show_file = -1;                 // retry
         }
     }
 
@@ -368,7 +368,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 #endif
     got_status = -1;                     // for tab_display
 
-    if (showfile)
+    if (show_file)
         if (calc_status > calc_status_value::PARAMS_CHANGED)              // goto imagestart implies re-calc
             calc_status = calc_status_value::PARAMS_CHANGED;
 
@@ -429,7 +429,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
             if (colorpreloaded)
                 memcpy(olddacbox, g_dac_box, 256*3); // save in case colors= present
             driver_set_for_text(); // switch to text mode
-            showfile = -1;
+            show_file = -1;
             return main_state::RESTORE_START;
         }
         if (kbdchar == 't')

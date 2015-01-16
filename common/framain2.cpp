@@ -59,7 +59,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         _ASSERTE(_CrtCheckMemory());
 #endif
 
-        if (calc_status != calc_status_value::RESUMABLE || showfile == 0)
+        if (calc_status != calc_status_value::RESUMABLE || show_file == 0)
         {
             memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
                    sizeof(g_video_entry));
@@ -231,7 +231,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             lookatmouse = -FIK_PAGE_UP;        // mouse left button == pgup
         }
 
-        if (showfile == 0)
+        if (show_file == 0)
         {   // loading an image
             outln_cleanup = nullptr;          // outln routine can set this
             if (display3d)                 // set up 3D decoding
@@ -246,7 +246,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             {   // .pot format input file
                 if (pot_startdisk() < 0)
                 {   // pot file failed?
-                    showfile = 1;
+                    show_file = 1;
                     potflag  = false;
                     pot16bit = false;
                     g_init_mode = -1;
@@ -322,9 +322,9 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         }
         save_history_info();
 
-        if (showfile == 0)
+        if (show_file == 0)
         {   // image has been loaded
-            showfile = 1;
+            show_file = 1;
             if (initbatch == 1 && calc_status == calc_status_value::RESUMABLE)
             {
                 initbatch = -1; // flag to finish calc before save
@@ -683,7 +683,7 @@ static bool look(bool *stacked)
     {
     case FIK_ENTER:
     case FIK_ENTER_2:
-        showfile = 0;       // trigger load
+        show_file = 0;       // trigger load
         browsing = true;    // but don't ask for the file name as it's just been selected
         if (name_stack_ptr == 15)
         {   /* about to run off the end of the file
@@ -722,7 +722,7 @@ static bool look(bool *stacked)
             browse_name = file_name_stack[name_stack_ptr];
             merge_pathnames(readname, browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             browsing = true;
-            showfile = 0;
+            show_file = 0;
             if (askvideo)
             {
                 driver_stack_screen();// save graphics image
@@ -1148,7 +1148,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             merge_pathnames(readname, browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             browsing = true;
             no_sub_images = false;
-            showfile = 0;
+            show_file = 0;
             if (askvideo)
             {
                 driver_stack_screen();      // save graphics image
@@ -1254,7 +1254,7 @@ do_3d_transform:
                 {
                     driver_stack_screen();   // save graphics image
                     readname = savename;
-                    showfile = 0;
+                    show_file = 0;
                     return main_state::RESTORE_START;
                 }
             }
@@ -1276,7 +1276,7 @@ do_3d_transform:
             resave_flag = 0;
             started_resaves = false;
         }
-        showfile = -1;
+        show_file = -1;
         return main_state::RESTORE_START;
     case 'l':
     case 'L':                    // Look for other files within this view
@@ -1644,7 +1644,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 {
                     driver_stack_screen();   // save graphics image
                     readname = savename;
-                    showfile = 0;
+                    show_file = 0;
                     return main_state::RESTORE_START;
                 }
             }
@@ -1666,7 +1666,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             resave_flag = 0;
             started_resaves = false;
         }
-        showfile = -1;
+        show_file = -1;
         return main_state::RESTORE_START;
     case FIK_ENTER:                  // Enter
     case FIK_ENTER_2:                // Numeric-Keypad Enter

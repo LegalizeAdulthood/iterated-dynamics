@@ -428,7 +428,7 @@ extern struct SearchPath     searchfor;
 extern bool                  set_orbit_corners;
 extern bool                  showbox;
 extern int show_dot;
-extern int                   showfile;
+extern int show_file;
 extern bool                  show_orbit;
 extern double                sinx;
 extern int                   sizedot;
