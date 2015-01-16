@@ -234,7 +234,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         if (show_file == 0)
         {   // loading an image
             outln_cleanup = nullptr;          // outln routine can set this
-            if (display3d)                 // set up 3D decoding
+            if (display_3d)                 // set up 3D decoding
             {
                 outln = call_line3d;
             }
@@ -331,7 +331,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             }
             if (loaded3d)      // 'r' of image created with '3'
             {
-                display3d = 1;  // so set flag for 'b' command
+                display_3d = 1;  // so set flag for 'b' command
             }
         }
         else
@@ -1237,9 +1237,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case '3':                    // restore-from (3d)
 do_3d_transform:
         if (overlay_3d)
-            display3d = 2;         // for <b> command
+            display_3d = 2;         // for <b> command
         else
-            display3d = 1;
+            display_3d = 1;
     case 'r':                    // restore-from
         comparegif = false;
         *frommandel = false;
@@ -1263,7 +1263,7 @@ do_3d_transform:
                 comparegif = false;
                 overlay_3d = false;
             }
-            display3d = 0;
+            display_3d = 0;
         }
         driver_stack_screen();            // save graphics image
         if (overlay_3d)
@@ -1653,7 +1653,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 comparegif = false;
                 overlay_3d = false;
             }
-            display3d = 0;
+            display_3d = 0;
         }
         driver_stack_screen();            // save graphics image
         if (overlay_3d)
@@ -2210,7 +2210,7 @@ static void save_history_info()
     current.pot16bit             = (short) (disk16bit ? 1 : 0);
     current.release              = (short)g_release                   ;
     current.save_release         = (short)save_release              ;
-    current.flag3d               = (short)display3d                 ;
+    current.display_3d = (short) display_3d;
     current.ambient              = (short)Ambient                   ;
     current.randomize            = (short)RANDOMIZE                 ;
     current.haze                 = (short)haze                      ;
@@ -2384,7 +2384,7 @@ static void restore_history_info(int i)
     disk16bit             = last.pot16bit != 0;
     g_release             = last.release        ;
     save_release          = last.save_release   ;
-    display3d             = last.flag3d         ;
+    display_3d = last.display_3d;
     Ambient               = last.ambient        ;
     RANDOMIZE             = last.randomize      ;
     haze                  = last.haze           ;

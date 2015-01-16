@@ -452,7 +452,7 @@ bool encoder()
         //    if (save_info.fractal_type == IFS || save_info.fractal_type == IFS3D)
         if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
             save_info.tot_extend_len += store_item_name(IFSName.c_str());
-        if (display3d <= 0 && rangeslen)
+        if (display_3d <= 0 && rangeslen)
         {
             // ranges block, 004
             int const num_bytes = rangeslen*2;
@@ -769,7 +769,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     else
         save_info->release = (short) g_release;
 
-    save_info->flag3d = (short) display3d;
+    save_info->flag3d = (short) display_3d;
     save_info->ambient = (short) Ambient;
     save_info->randomize = (short) RANDOMIZE;
     save_info->haze = (short) haze;

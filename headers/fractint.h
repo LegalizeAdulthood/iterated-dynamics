@@ -432,7 +432,7 @@ struct HISTORY
     short pot16bit;
     short release;
     short save_release;
-    short flag3d;
+    short display_3d;
     short transparent[2];
     short ambient;
     short haze;

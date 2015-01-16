@@ -572,7 +572,7 @@ int calctypeshowdot()
 int calcfract()
 {
     attractors = 0;          // default to no known finite attractors
-    display3d = 0;
+    display_3d = 0;
     basin = 0;
     putcolor = putcolor_a;
     if (g_is_true_color && truemode)

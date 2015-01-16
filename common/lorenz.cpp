@@ -2150,7 +2150,7 @@ int funny_glasses_call(int (*calc)())
         realtime = false;
         goto done;
     }
-    if (g_glasses_type && status == 0 && display3d)
+    if (g_glasses_type && status == 0 && display_3d)
     {
         if (g_glasses_type == 3)
         { // photographer's mode
@@ -2547,7 +2547,7 @@ static void setupmatrix(MATRIX doublemat)
 
 int orbit3dfloat()
 {
-    display3d = -1;
+    display_3d = -1;
     if (0 < g_glasses_type && g_glasses_type < 3)
         realtime = true;
     else
@@ -2557,7 +2557,7 @@ int orbit3dfloat()
 
 int orbit3dlong()
 {
-    display3d = -1;
+    display_3d = -1;
     if (0 < g_glasses_type && g_glasses_type < 3)
         realtime = true;
     else
@@ -2567,7 +2567,7 @@ int orbit3dlong()
 
 static int ifs3d()
 {
-    display3d = -1;
+    display_3d = -1;
 
     if (0 < g_glasses_type && g_glasses_type < 3)
         realtime = true;
