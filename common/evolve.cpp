@@ -13,10 +13,10 @@
 GENEBASE gene_bank[NUMGENES];
 
 // px and py are coordinates in the parameter grid (small images on screen)
-// evolving = flag, gridsz = dimensions of image grid (gridsz x gridsz)
-int px, py, evolving, gridsz;
-#define MAXGRIDSZ 51  // This is arbitrary, = 1024/20
-static int ecountbox[MAXGRIDSZ][MAXGRIDSZ];
+// evolving = flag, evolve_image_grid_size = dimensions of image grid (evolve_image_grid_size x evolve_image_grid_size)
+int px, py, evolving, evolve_image_grid_size;
+#define EVOLVE_MAX_GRID_SIZE 51  // This is arbitrary, = 1024/20
+static int ecountbox[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
 
 // used to replay random sequences to obtain correct values when selecting a
 // seed image for next generation
@@ -210,7 +210,7 @@ void param_history(int mode)
 // routine to vary doubles
 void varydbl(GENEBASE gene[], int randval, int i)
 {
-    int lclpy = gridsz - py - 1;
+    int lclpy = evolve_image_grid_size - py - 1;
     switch (gene[i].mutate)
     {
     default:
@@ -233,7 +233,7 @@ void varydbl(GENEBASE gene[], int randval, int i)
         break;
     case variations::WEIGHTED_RANDOM:
     {
-        int mid = gridsz /2;
+        int mid = evolve_image_grid_size /2;
         double radius =  sqrt(static_cast<double>(sqr(px - mid) + sqr(lclpy - mid)));
         *(double *)gene[i].addr += ((((double)randval / RAND_MAX) * 2 * fiddlefactor) - fiddlefactor) * radius;
     }
@@ -245,7 +245,7 @@ void varydbl(GENEBASE gene[], int randval, int i)
 int varyint(int randvalue, int limit, variations mode)
 {
     int ret = 0;
-    int lclpy = gridsz - py - 1;
+    int lclpy = evolve_image_grid_size - py - 1;
     switch (mode)
     {
     default:
@@ -268,7 +268,7 @@ int varyint(int randvalue, int limit, variations mode)
         break;
     case variations::WEIGHTED_RANDOM:
     {
-        int mid = gridsz /2;
+        int mid = evolve_image_grid_size /2;
         double radius =  sqrt(static_cast<double>(sqr(px - mid) + sqr(lclpy - mid)));
         ret = (int)((((randvalue / RAND_MAX) * 2 * fiddlefactor) - fiddlefactor) * radius);
         ret %= limit;
@@ -597,13 +597,13 @@ int get_evolve_Parms()
     int oldhelpmode;
     fullscreenvalues uvalues[20];
     int i, j, k, tmp;
-    int old_evolving, old_gridsz;
+    int old_evolving, old_image_grid_size;
     int old_variations = 0;
     double old_x_parameter_range, old_y_parameter_range, old_x_parameter_offset, old_y_parameter_offset, old_fiddlefactor;
 
     // fill up the previous values arrays
     old_evolving      = evolving;
-    old_gridsz        = gridsz;
+    old_image_grid_size = evolve_image_grid_size;
     old_x_parameter_range = evolve_x_parameter_range;
     old_y_parameter_range = evolve_y_parameter_range;
     old_x_parameter_offset = evolve_x_parameter_offset;
@@ -631,7 +631,7 @@ get_evol_restart:
 
     choices[++k] = "Image grid size (odd numbers only)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = gridsz;
+    uvalues[k].uval.ival = evolve_image_grid_size;
 
     if (explore_check())
     {  // test to see if any parms are set to linear
@@ -691,7 +691,7 @@ get_evol_restart:
     {
         // in case this point has been reached after calling sub menu with F6
         evolving      = old_evolving;
-        gridsz        = old_gridsz;
+        evolve_image_grid_size = old_image_grid_size;
         evolve_x_parameter_range = old_x_parameter_range;
         evolve_y_parameter_range = old_y_parameter_range;
         evolve_x_parameter_offset = old_x_parameter_offset;
@@ -746,17 +746,17 @@ get_evol_restart:
     if (!evolving && i != FIK_F6)  // don't need any of the other parameters
         return (1);             // the following code can set evolving even if it's off
 
-    gridsz = uvalues[++k].uval.ival;
+    evolve_image_grid_size = uvalues[++k].uval.ival;
     tmp = sxdots / (MINPIXELS << 1);
     // (sxdots / 20), max # of subimages @ 20 pixels per subimage
-    // MAXGRIDSZ == 1024 / 20 == 51
-    if (gridsz > MAXGRIDSZ)
-        gridsz = MAXGRIDSZ;
-    if (gridsz > tmp)
-        gridsz = tmp;
-    if (gridsz < 3)
-        gridsz = 3;
-    gridsz |= 1; // make sure gridsz is odd
+    // EVOLVE_MAX_GRID_SIZE == 1024 / 20 == 51
+    if (evolve_image_grid_size > EVOLVE_MAX_GRID_SIZE)
+        evolve_image_grid_size = EVOLVE_MAX_GRID_SIZE;
+    if (evolve_image_grid_size > tmp)
+        evolve_image_grid_size = tmp;
+    if (evolve_image_grid_size < 3)
+        evolve_image_grid_size = 3;
+    evolve_image_grid_size |= 1; // make sure evolve_image_grid_size is odd
     if (explore_check())
     {
         tmp = (PARMBOX * uvalues[++k].uval.ch.val);
@@ -777,8 +777,8 @@ get_evol_restart:
     if (!(uvalues[++k].uval.ch.val))
         evolving = evolving + NOGROUT;
 
-    viewxdots = (sxdots / gridsz)-2;
-    viewydots = (sydots / gridsz)-2;
+    viewxdots = (sxdots / evolve_image_grid_size)-2;
+    viewydots = (sydots / evolve_image_grid_size)-2;
     if (!viewwindow)
     {
         viewydots = 0;
@@ -788,7 +788,7 @@ get_evol_restart:
     i = 0;
 
     if (evolving != old_evolving
-            || (gridsz != old_gridsz) || (evolve_x_parameter_range != old_x_parameter_range)
+            || (evolve_image_grid_size != old_image_grid_size) || (evolve_x_parameter_range != old_x_parameter_range)
             || (evolve_x_parameter_offset != old_x_parameter_offset) || (evolve_y_parameter_range != old_y_parameter_range)
             || (evolve_y_parameter_offset != old_y_parameter_offset)  || (fiddlefactor != old_fiddlefactor)
             || (old_variations > 0))
@@ -819,7 +819,7 @@ get_evol_restart:
 void SetupParamBox()
 {
     prmboxcount = 0;
-    parmzoom = ((double)gridsz-1.0)/2.0;
+    parmzoom = ((double) evolve_image_grid_size -1.0)/2.0;
     // need to allocate 2 int arrays for boxx and boxy plus 1 byte array for values
     int const num_box_values = (xdots + ydots)*2;
     int const num_values = xdots + ydots + 2;
@@ -869,7 +869,7 @@ void fiddleparms(GENEBASE gene[], int ecount)
      the variables referenced in the gene array and call the functions required
      to vary them, aren't pointers marvellous! */
 
-    if ((px == gridsz / 2) && (py == gridsz / 2)) // return if middle image
+    if ((px == evolve_image_grid_size / 2) && (py == evolve_image_grid_size / 2)) // return if middle image
         return;
 
     set_random(ecount);   // generate the right number of pseudo randoms
@@ -988,15 +988,15 @@ void drawparmbox(int mode)
 
 void set_evolve_ranges()
 {
-    int lclpy = gridsz - py - 1;
+    int lclpy = evolve_image_grid_size - py - 1;
     // set up ranges and offsets for parameter explorer/evolver
     evolve_x_parameter_range = dpx*(parmzoom*2.0);
     evolve_y_parameter_range = dpy*(parmzoom*2.0);
     evolve_new_x_parameter_offset = evolve_x_parameter_offset +(((double)px-parmzoom)*dpx);
     evolve_new_y_parameter_offset = evolve_y_parameter_offset +(((double)lclpy-parmzoom)*dpy);
 
-    evolve_new_discrete_x_parameter_offset = (char)(evolve_discrete_x_parameter_offset +(px-gridsz/2));
-    evolve_new_discrete_y_parameter_offset = (char)(evolve_discrete_y_parameter_offset +(lclpy-gridsz/2));
+    evolve_new_discrete_x_parameter_offset = (char)(evolve_discrete_x_parameter_offset +(px- evolve_image_grid_size /2));
+    evolve_new_discrete_y_parameter_offset = (char)(evolve_discrete_y_parameter_offset +(lclpy- evolve_image_grid_size /2));
     return;
 }
 
@@ -1007,7 +1007,7 @@ void spiralmap(int count)
     // All the malarky with count is to allow resuming
     int i, mid;
     i = 0;
-    mid = gridsz / 2;
+    mid = evolve_image_grid_size / 2;
     if (count == 0)
     { // start in the middle
         py = mid;
@@ -1054,20 +1054,20 @@ int unspiralmap()
     // All this malarky is to allow selecting different subimages
     // Returns the count from the center subimage to the current px & py
     int mid;
-    static int oldgridsz = 0;
+    static int old_image_grid_size = 0;
 
-    mid = gridsz / 2;
-    if ((px == mid && py == mid) || (oldgridsz != gridsz))
+    mid = evolve_image_grid_size / 2;
+    if ((px == mid && py == mid) || (old_image_grid_size != evolve_image_grid_size))
     {
         // set up array and return
-        int gridsqr = gridsz * gridsz;
+        int gridsqr = evolve_image_grid_size * evolve_image_grid_size;
         ecountbox[px][py] = 0;  // we know the first one, do the rest
         for (int i = 1; i < gridsqr; i++)
         {
             spiralmap(i);
             ecountbox[px][py] = i;
         }
-        oldgridsz = gridsz;
+        old_image_grid_size = evolve_image_grid_size;
         py = mid;
         px = py;
         return (0);

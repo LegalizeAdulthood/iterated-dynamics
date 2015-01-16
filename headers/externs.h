@@ -137,7 +137,7 @@ extern long                  FgHalf;
 extern double                fgLimit;
 extern long                  FgOne;
 extern long                  FgTwo;
-extern int                   gridsz;
+extern int evolve_image_grid_size;
 extern double                fiddlefactor;
 extern double                fiddle_reduction;
 extern float                 fileaspectratio;

@@ -519,7 +519,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             // We added 4 to NUMGENES, so ecount is at NUMGENES-4
             blk_6_info.ecount = blk_6_info.mutate[NUMGENES - 4];
         }
-        if (blk_6_info.ecount != blk_6_info.gridsz*blk_6_info.gridsz
+        if (blk_6_info.ecount != blk_6_info.image_grid_size *blk_6_info.image_grid_size
                 && calc_status != calc_status_value::COMPLETED)
         {
             calc_status = calc_status_value::RESUMABLE;
@@ -535,7 +535,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             evolve_info.syoffs       = blk_6_info.syoffs;
             evolve_info.xdots        = blk_6_info.xdots;
             evolve_info.ydots        = blk_6_info.ydots;
-            evolve_info.gridsz       = blk_6_info.gridsz;
+            evolve_info.image_grid_size = blk_6_info.image_grid_size;
             evolve_info.evolving     = blk_6_info.evolving;
             evolve_info.this_gen_rseed = blk_6_info.this_gen_rseed;
             evolve_info.fiddlefactor = blk_6_info.fiddlefactor;
@@ -563,13 +563,13 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         syoffs       = blk_6_info.syoffs;
         xdots        = blk_6_info.xdots;
         ydots        = blk_6_info.ydots;
-        gridsz       = blk_6_info.gridsz;
+        evolve_image_grid_size = blk_6_info.image_grid_size;
         this_gen_rseed = blk_6_info.this_gen_rseed;
         fiddlefactor   = blk_6_info.fiddlefactor;
         evolving = (int) blk_6_info.evolving;
         viewwindow = evolving != 0;
-        dpx = evolve_x_parameter_range /(gridsz - 1);
-        dpy = evolve_y_parameter_range /(gridsz - 1);
+        dpx = evolve_x_parameter_range /(evolve_image_grid_size - 1);
+        dpy = evolve_y_parameter_range /(evolve_image_grid_size - 1);
         if (read_info.version > 14)
         {
             for (int i = 0; i < NUMGENES; i++)
@@ -885,7 +885,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     blk_6_info->syoffs          = eload_info.syoffs;
                     blk_6_info->xdots           = eload_info.xdots;
                     blk_6_info->ydots           = eload_info.ydots;
-                    blk_6_info->gridsz          = eload_info.gridsz;
+                    blk_6_info->image_grid_size = eload_info.image_grid_size;
                     blk_6_info->evolving        = eload_info.evolving;
                     blk_6_info->this_gen_rseed  = eload_info.this_gen_rseed;
                     blk_6_info->fiddlefactor    = eload_info.fiddlefactor;

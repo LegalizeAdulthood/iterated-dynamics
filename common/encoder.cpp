@@ -496,11 +496,11 @@ bool encoder()
                 esave_info.syoffs          = (short)syoffs;
                 esave_info.xdots           = (short)xdots;
                 esave_info.ydots           = (short)ydots;
-                esave_info.gridsz          = (short)gridsz;
+                esave_info.image_grid_size = (short) evolve_image_grid_size;
                 esave_info.evolving        = (short)evolving;
                 esave_info.this_gen_rseed  = (unsigned short)this_gen_rseed;
                 esave_info.fiddlefactor    = fiddlefactor;
-                esave_info.ecount          = (short)(gridsz * gridsz);  // flag for done
+                esave_info.ecount          = (short)(evolve_image_grid_size * evolve_image_grid_size);  // flag for done
             }
             else
             {
@@ -517,7 +517,7 @@ bool encoder()
                 esave_info.syoffs          = (short)evolve_info.syoffs;
                 esave_info.xdots           = (short)evolve_info.xdots;
                 esave_info.ydots           = (short)evolve_info.ydots;
-                esave_info.gridsz          = (short)evolve_info.gridsz;
+                esave_info.image_grid_size = (short)evolve_info.image_grid_size;
                 esave_info.evolving        = (short)evolve_info.evolving;
                 esave_info.this_gen_rseed  = (unsigned short)evolve_info.this_gen_rseed;
                 esave_info.fiddlefactor    = evolve_info.fiddlefactor;

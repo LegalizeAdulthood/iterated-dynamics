@@ -519,7 +519,7 @@ enum stored_at_values
 struct EVOLUTION_INFO      // for saving evolution data in a GIF file
 {
     short evolving;
-    short gridsz;
+    short image_grid_size;
     unsigned short this_gen_rseed;
     double fiddlefactor;
     double x_parameter_range;
@@ -1195,7 +1195,7 @@ struct ext_blk_6
     bool got_data;
     int length;
     short evolving;
-    short gridsz;
+    short image_grid_size;
     unsigned short this_gen_rseed;
     double fiddlefactor;
     double x_parameter_range;

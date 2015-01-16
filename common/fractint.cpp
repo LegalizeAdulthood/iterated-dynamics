@@ -195,7 +195,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     evolve_y_parameter_offset = -1.5;
     evolve_discrete_y_parameter_offset = 0;
     evolve_discrete_x_parameter_offset = 0;
-    gridsz = 9;
+    evolve_image_grid_size = 9;
     fiddlefactor = 1;
     fiddle_reduction = 1.0;
     this_gen_rseed = (unsigned int)clock_ticks();

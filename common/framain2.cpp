@@ -210,9 +210,9 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 }
                 if (evolving & 1)
                 {
-                    xdots = (sxdots / gridsz)-!((evolving & NOGROUT)/NOGROUT);
+                    xdots = (sxdots / evolve_image_grid_size)-!((evolving & NOGROUT)/NOGROUT);
                     xdots = xdots - (xdots % 4); // trim to multiple of 4 for SSG
-                    ydots = (sydots / gridsz)-!((evolving & NOGROUT)/NOGROUT);
+                    ydots = (sydots / evolve_image_grid_size)-!((evolving & NOGROUT)/NOGROUT);
                     ydots = ydots - (ydots % 4);
                 }
                 else
@@ -376,7 +376,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     syoffs       = evolve_info.syoffs;
                     xdots        = evolve_info.xdots;
                     ydots        = evolve_info.ydots;
-                    gridsz       = evolve_info.gridsz;
+                    evolve_image_grid_size = evolve_info.image_grid_size;
                     this_gen_rseed = evolve_info.this_gen_rseed;
                     fiddlefactor   = evolve_info.fiddlefactor;
                     evolving     = evolve_info.evolving;
@@ -386,7 +386,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 }
                 else
                 {   // not resuming, start from the beginning
-                    int mid = gridsz / 2;
+                    int mid = evolve_image_grid_size / 2;
                     if ((px != mid) || (py != mid))
                     {
                         this_gen_rseed = (unsigned int)clock_ticks(); // time for new set
@@ -400,12 +400,12 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     evolve_discrete_y_parameter_offset = evolve_new_discrete_y_parameter_offset; // evolve_discrete_x_parameter_offset used for discrete parms like inside, outside, trigfn etc
                 }
                 prmboxcount = 0;
-                dpx = evolve_x_parameter_range /(gridsz-1);
-                dpy = evolve_y_parameter_range /(gridsz-1);
+                dpx = evolve_x_parameter_range /(evolve_image_grid_size -1);
+                dpy = evolve_y_parameter_range /(evolve_image_grid_size -1);
                 grout  = !((evolving & NOGROUT)/NOGROUT);
                 tmpxdots = xdots+grout;
                 tmpydots = ydots+grout;
-                gridsqr = gridsz * gridsz;
+                gridsqr = evolve_image_grid_size * evolve_image_grid_size;
                 while (ecount < gridsqr)
                 {
                     spiralmap(ecount); // sets px & py
@@ -444,7 +444,7 @@ done:
                     evolve_info.syoffs          = (short)syoffs;
                     evolve_info.xdots           = (short)xdots;
                     evolve_info.ydots           = (short)ydots;
-                    evolve_info.gridsz          = (short)gridsz;
+                    evolve_info.image_grid_size = (short) evolve_image_grid_size;
                     evolve_info.this_gen_rseed  = (short)this_gen_rseed;
                     evolve_info.fiddlefactor    = fiddlefactor;
                     evolve_info.evolving        = (short)evolving;
@@ -457,7 +457,7 @@ done:
                 ydots = sydots; // otherwise save only saves a sub image and boxes get clipped
 
                 // set up for 1st selected image, this reuses px and py
-                py = gridsz/2;
+                py = evolve_image_grid_size /2;
                 px = py;
                 unspiralmap(); // first time called, w/above line sets up array
                 param_history(1); // restore old history
@@ -1368,7 +1368,7 @@ do_3d_transform:
                 zbx = zby;
                 find_special_colors();
                 boxcolor = g_color_bright;
-                py = gridsz/2;
+                py = evolve_image_grid_size /2;
                 px = py;
                 moveboxf(0.0, 0.0); // force scrolling
             }
@@ -1612,7 +1612,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         sxoffs = syoffs;
         xdots = sxdots;
         ydots = sydots; // for full screen save and pointer move stuff
-        py = gridsz / 2;
+        py = evolve_image_grid_size / 2;
         px = py;
         param_history(1); // restore old history
         fiddleparms(gene, 0);
@@ -1725,12 +1725,12 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                     py++;
                 }
                 if (px <0)
-                    px = gridsz-1;
-                if (px > (gridsz-1))
+                    px = evolve_image_grid_size -1;
+                if (px > (evolve_image_grid_size -1))
                     px = 0;
                 if (py < 0)
-                    py = gridsz-1;
-                if (py > (gridsz-1))
+                    py = evolve_image_grid_size -1;
+                if (py > (evolve_image_grid_size -1))
                     py = 0;
                 int grout = !((evolving & NOGROUT)/NOGROUT) ;
                 sxoffs = px * (int)(x_size_d+1+grout);
@@ -1778,8 +1778,8 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         if (prmboxcount)
         {
             parmzoom += 1.0;
-            if (parmzoom > (double)gridsz/2.0)
-                parmzoom = (double)gridsz/2.0;
+            if (parmzoom > (double) evolve_image_grid_size /2.0)
+                parmzoom = (double) evolve_image_grid_size /2.0;
             drawparmbox(0);
             set_evolve_ranges();
         }
@@ -1873,18 +1873,18 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     }
 
     case FIK_F4: //decrement  gridsize and regen
-        if (gridsz > 3)
+        if (evolve_image_grid_size > 3)
         {
-            gridsz = gridsz - 2;  // gridsz must have odd value only
+            evolve_image_grid_size = evolve_image_grid_size - 2;  // evolve_image_grid_size must have odd value only
             *kbdmore = false;
             calc_status = calc_status_value::PARAMS_CHANGED;
         }
         break;
 
     case FIK_F5: // increment gridsize and regen
-        if (gridsz < (sxdots / (MINPIXELS << 1)))
+        if (evolve_image_grid_size < (sxdots / (MINPIXELS << 1)))
         {
-            gridsz = gridsz + 2;
+            evolve_image_grid_size = evolve_image_grid_size + 2;
             *kbdmore = false;
             calc_status = calc_status_value::PARAMS_CHANGED;
         }
