@@ -1244,13 +1244,13 @@ void end_resume()
 void sleepms_old(long ms)
 {
     static long scalems = 0L;
-    int savehelpmode;
+    int old_help_mode;
     timebx t1, t2;
 #define SLEEPINIT 250 // milliseconds for calibration
     bool const save_tab_mode = tab_mode;
-    savehelpmode = helpmode;
+    old_help_mode = help_mode;
     tab_mode = false;
-    helpmode = -1;
+    help_mode = -1;
     if (scalems == 0L) // calibrate
     {
         /* selects a value of scalems that makes the units
@@ -1316,7 +1316,7 @@ void sleepms_old(long ms)
     }
 sleepexit:
     tab_mode = save_tab_mode;
-    helpmode = savehelpmode;
+    help_mode = old_help_mode;
 }
 
 static void sleepms_new(long ms)

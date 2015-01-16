@@ -676,9 +676,9 @@ resumeloop:                             // return here on failed overlays
 
 static bool look(bool *stacked)
 {
-    int oldhelpmode;
-    oldhelpmode = helpmode;
-    helpmode = HELPBROWSE;
+    int old_help_mode;
+    old_help_mode = help_mode;
+    help_mode = HELPBROWSE;
     switch (fgetwindow())
     {
     case FIK_ENTER:
@@ -734,12 +734,12 @@ static bool look(bool *stacked)
     case 'l':              // turn it off
     case 'L':
         browsing = false;
-        helpmode = oldhelpmode;
+        help_mode = old_help_mode;
         break;
 
     case 's':
         browsing = false;
-        helpmode = oldhelpmode;
+        help_mode = old_help_mode;
         savetodisk(savename);
         break;
 
@@ -1210,12 +1210,12 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         clear_zoombox();
         if (g_dac_box[0][0] != 255 && colors >= 16 && !driver_diskp())
         {
-            int oldhelpmode;
-            oldhelpmode = helpmode;
+            int old_help_mode;
+            old_help_mode = help_mode;
             memcpy(old_dac_box, g_dac_box, 256 * 3);
-            helpmode = HELPXHAIR;
+            help_mode = HELPXHAIR;
             EditPalette();
-            helpmode = oldhelpmode;
+            help_mode = old_help_mode;
             if (memcmp(old_dac_box, g_dac_box, 256 * 3))
             {
                 colorstate = 1;
@@ -1581,12 +1581,12 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         clear_zoombox();
         if (g_dac_box[0][0] != 255 && colors >= 16 && !driver_diskp())
         {
-            int oldhelpmode;
-            oldhelpmode = helpmode;
+            int old_help_mode;
+            old_help_mode = help_mode;
             memcpy(old_dac_box, g_dac_box, 256 * 3);
-            helpmode = HELPXHAIR;
+            help_mode = HELPXHAIR;
             EditPalette();
-            helpmode = oldhelpmode;
+            help_mode = old_help_mode;
             if (memcmp(old_dac_box, g_dac_box, 256 * 3))
             {
                 colorstate = 1;

@@ -594,7 +594,7 @@ void set_mutation_level(int strength)
 int get_evolve_Parms()
 {
     char const *choices[20];
-    int oldhelpmode;
+    int old_help_mode;
     fullscreenvalues uvalues[20];
     int i, j, k, tmp;
     int old_evolving, old_image_grid_size;
@@ -683,10 +683,10 @@ get_evol_restart:
 
     choices[++k] = "Press F6 to control which parameters are varied";
     uvalues[k].type = '*';
-    oldhelpmode = helpmode;     // this prevents HELP from activating
-    helpmode = HELPEVOL;
+    old_help_mode = help_mode;     // this prevents HELP from activating
+    help_mode = HELPEVOL;
     i = fullscreen_prompt("Evolution Mode Options", k+1, choices, uvalues, 255, nullptr);
-    helpmode = oldhelpmode;     // re-enable HELP
+    help_mode = old_help_mode;     // re-enable HELP
     if (i < 0)
     {
         // in case this point has been reached after calling sub menu with F6

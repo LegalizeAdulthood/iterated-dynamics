@@ -39,7 +39,7 @@ void rotate(int direction)      // rotate-the-palette routine
     int fkey, step, fstep, jstep, oldstep;
     int incr, fromred = 0, fromblue = 0, fromgreen = 0, tored = 0, toblue = 0, togreen = 0;
     int changecolor, changedirection;
-    int oldhelpmode;
+    int old_help_mode;
     int rotate_max, rotate_size;
 
     static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; // (for Fkeys)
@@ -55,8 +55,8 @@ void rotate(int direction)      // rotate-the-palette routine
         return;
     }
 
-    oldhelpmode = helpmode;              // save the old help mode
-    helpmode = HELPCYCLING;              // new help mode
+    old_help_mode = help_mode;              // save the old help mode
+    help_mode = HELPCYCLING;              // new help mode
 
     paused = false;                      // not paused
     fkey = 0;                            // no random coloring
@@ -396,7 +396,7 @@ void rotate(int direction)      // rotate-the-palette routine
         }
     }
 
-    helpmode = oldhelpmode;              // return to previous help mode
+    help_mode = old_help_mode;              // return to previous help mode
 }
 
 static void pauserotate()               // pause-the-rotate routine
@@ -473,12 +473,12 @@ void save_palette()
 {
     char palname[FILE_MAX_PATH];
     FILE *dacfile;
-    int i, oldhelpmode;
+    int i, old_help_mode;
     strcpy(palname, MAP_name.c_str());
-    oldhelpmode = helpmode;
+    old_help_mode = help_mode;
     driver_stack_screen();
     char filename[256] = { 0 };
-    helpmode = HELPCOLORMAP;
+    help_mode = HELPCOLORMAP;
     i = field_prompt("Name of map file to write", nullptr, filename, 60, nullptr);
     driver_unstack_screen();
     if (i != -1 && filename[0])
@@ -506,18 +506,18 @@ void save_palette()
         }
         fclose(dacfile);
     }
-    helpmode = oldhelpmode;
+    help_mode = old_help_mode;
 }
 
 
 bool load_palette()
 {
-    int oldhelpmode;
+    int old_help_mode;
     char filename[FILE_MAX_PATH];
-    oldhelpmode = helpmode;
+    old_help_mode = help_mode;
     strcpy(filename, MAP_name.c_str());
     driver_stack_screen();
-    helpmode = HELPCOLORMAP;
+    help_mode = HELPCOLORMAP;
     bool i = getafilename("Select a MAP File", mapmask, filename);
     driver_unstack_screen();
     if (!i)
@@ -526,6 +526,6 @@ bool load_palette()
             memcpy(old_dac_box, g_dac_box, 256*3);
         merge_pathnames(MAP_name, filename, cmd_file::AT_CMD_LINE);
     }
-    helpmode = oldhelpmode;
+    help_mode = old_help_mode;
     return i;
 }

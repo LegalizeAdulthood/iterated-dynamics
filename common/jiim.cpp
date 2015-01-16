@@ -417,7 +417,7 @@ void Jiim(jiim_types which)
 {
     affine cvt;
     bool exact = false;
-    int oldhelpmode;
+    int old_help_mode;
     int count = 0;            // coloring julia
     static int mode = 0;      // point, circle, ...
     int       old_look_at_mouse = look_at_mouse;
@@ -446,12 +446,12 @@ void Jiim(jiim_types which)
     if (fractalspecific[static_cast<int>(fractype)].calctype != StandardFractal
             && fractalspecific[static_cast<int>(fractype)].calctype != calcfroth)
         return;
-    oldhelpmode = helpmode;
+    old_help_mode = help_mode;
     if (which == jiim_types::JIIM)
-        helpmode = HELP_JIIM;
+        help_mode = HELP_JIIM;
     else
     {
-        helpmode = HELP_ORBITS;
+        help_mode = HELP_ORBITS;
         hasinverse = true;
     }
     oldsxoffs = sxoffs;
@@ -1183,7 +1183,7 @@ finish:
     using_jiim = false;
     calctype = oldcalctype;
     debugflag = old_debugflag;
-    helpmode = oldhelpmode;
+    help_mode = old_help_mode;
     if (kbdchar == 's' || kbdchar == 'S')
     {
         viewwindow = false;

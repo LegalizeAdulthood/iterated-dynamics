@@ -423,8 +423,8 @@ int ant()
     for (int i = 1; i < ydots; i++)
         s_incy[2][i] = i - 1;
     s_incy[2][0] = ydots - 1; // wrap from the bottom of the screen to the top
-    int const oldhelpmode = helpmode;
-    helpmode = ANTCOMMANDS;
+    int const old_help_mode = help_mode;
+    help_mode = ANTCOMMANDS;
     long const maxpts = labs(static_cast<long>(param[1]));
     long const wait = abs(orbit_delay);
     std::string rule{get_rule()};
@@ -474,6 +474,6 @@ int ant()
     default:
         break;
     }
-    helpmode = oldhelpmode;
+    help_mode = old_help_mode;
     return 0;
 }

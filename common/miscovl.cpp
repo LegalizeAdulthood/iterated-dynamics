@@ -77,14 +77,14 @@ void make_batch_file()
     int maxcolorindex = 0;
     char const *sptr = nullptr;
     char const *sptr2;
-    int oldhelpmode;
+    int old_help_mode;
 
     if (make_parameter_file_map) // makepar map case
         colorsonly = true;
 
     driver_stack_screen();
-    oldhelpmode = helpmode;
-    helpmode = HELPPARMFILE;
+    old_help_mode = help_mode;
+    help_mode = HELPPARMFILE;
 
     maxcolor = colors;
     strcpy(colorspec, "y");
@@ -494,7 +494,7 @@ skip_UI:
         }
         break;
     }
-    helpmode = oldhelpmode;
+    help_mode = old_help_mode;
     driver_unstack_screen();
 }
 
@@ -1518,7 +1518,7 @@ int select_video_mode(int curmode)
 {
     int attributes[MAXVIDEOMODES];
     int ret;
-    int oldhelpmode;
+    int old_help_mode;
 
     for (int i = 0; i < g_video_table_len; ++i)  // init tables
     {
@@ -1555,17 +1555,17 @@ int select_video_mode(int curmode)
     }
 
     bool const old_tab_mode = tab_mode;
-    oldhelpmode = helpmode;
+    old_help_mode = help_mode;
     modes_changed = false;
     tab_mode = false;
-    helpmode = HELPVIDSEL;
+    help_mode = HELPVIDSEL;
     i = fullscreen_choice(CHOICE_HELP,
                           "Select Video Mode",
                           "key...name.......................xdot..ydot.colr.driver......comment......",
                           nullptr, g_video_table_len, nullptr, attributes,
                           1, 16, 74, i, format_vid_table, nullptr, nullptr, check_modekey);
     tab_mode = old_tab_mode;
-    helpmode = oldhelpmode;
+    help_mode = old_help_mode;
     if (i == -1)
     {
         // update fractint.cfg for new key assignments

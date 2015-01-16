@@ -186,7 +186,7 @@ extern bool                  hasinverse;
 extern int                   haze;
 extern unsigned int          height;
 extern float                 heightfp;
-extern int                   helpmode;
+extern int help_mode;
 extern int                   hi_atten;
 extern std::string           IFSFileName;
 extern std::string           IFSName;

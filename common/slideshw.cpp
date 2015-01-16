@@ -390,7 +390,7 @@ static void slideshowerr(char const *msg)
 // First, do some slideshow processing.  Then handle F1 and TAB display.
 //
 // Because we want context sensitive help to work everywhere, with the
-// help to display indicated by a non-zero value in helpmode, we need
+// help to display indicated by a non-zero value in help_mode, we need
 // to trap the F1 key at a very low level.  The same is true of the
 // TAB display.
 //
@@ -418,7 +418,7 @@ int handle_special_keys(int ch)
     }
 
     static bool inside_help = false;
-    if (FIK_F1 == ch && helpmode && !inside_help)
+    if (FIK_F1 == ch && help_mode && !inside_help)
     {
         inside_help = true;
         help(0);

@@ -25,7 +25,7 @@
 #include "helpcom.h"
 
 VIDEOINFO g_video_entry;
-int helpmode;
+int help_mode;
 
 int look_at_mouse = 0;  // see notes at mouseread routine
 
@@ -283,17 +283,17 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
             if (overlay3d)
             {
                 hdg = "Select File for 3D Overlay";
-                helpmode = HELP3DOVLY;
+                help_mode = HELP3DOVLY;
             }
             else if (display3d)
             {
                 hdg = "Select File for 3D Transform";
-                helpmode = HELP3D;
+                help_mode = HELP3D;
             }
             else
             {
                 hdg = "Select File to Restore";
-                helpmode = HELPSAVEREST;
+                help_mode = HELPSAVEREST;
             }
             if (show_file < 0 && getafilename(hdg, gifmask.c_str(), readname))
             {
@@ -309,7 +309,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         evolving = 0;
         viewwindow = false;
         show_file = 0;
-        helpmode = -1;
+        help_mode = -1;
         tab_mode = true;
         if (stacked)
         {
@@ -331,7 +331,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         }
     }
 
-    helpmode = HELPMENU;                 // now use this help mode
+    help_mode = HELPMENU;                 // now use this help mode
     tab_mode = true;
     look_at_mouse = 0;                     // ignore mouse
 
@@ -489,7 +489,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
     }
 
     zoomoff = true;                     // zooming is enabled
-    helpmode = HELPMAIN;                // now use this help mode
+    help_mode = HELPMAIN;                // now use this help mode
     resumeflag = false;                 // allows taking goto inside big_while_loop()
 
     return main_state::CONTINUE;
