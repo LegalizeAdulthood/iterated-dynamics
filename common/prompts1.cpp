@@ -1688,9 +1688,7 @@ gfp_top:
         paramvalues[promptnum++].uval.ch.val = ismand ? 1 : 0;
     }
 
-    if (caller                           // <z> command ?
-            //      && (display_3d > display_3d_modes::NONE || promptnum == 0))
-            && (display_3d > display_3d_modes::NONE))
+    if (caller && (display_3d > display_3d_modes::NONE))
     {
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Current type has no type-specific parameters");
         goto gfp_exit;
