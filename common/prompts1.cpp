@@ -1343,7 +1343,8 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     int firstparm = 0;
     int lastparm  = MAXPARAMS;
     double oldparam[MAXPARAMS];
-    int fkeymask = 0x40;
+    int fkeymask = 0;
+
     oldbailout = bailout;
     if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
         julibrot = true;
@@ -1700,9 +1701,8 @@ gfp_top:
     if (bf_math == bf_math_type::NONE)
     {
         strcat(msg, "\n(Press " FK_F6 " for corner parameters)");
+        fkeymask = 1U << 6;     // F6 exits
     }
-    else
-        fkeymask = 0;
     scroll_row_status = 0; // make sure we start at beginning of entry
     scroll_column_status = 0;
     while (1)
