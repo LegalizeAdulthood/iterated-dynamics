@@ -129,7 +129,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version > 1)
     {
         save_release  = 1200;
-        if (!display_3d != display_3d_modes::NONE
+        if ((display_3d == display_3d_modes::NONE)
                 && (read_info.version <= 4 || read_info.flag3d > 0
                     || (curfractalspecific->flags & PARMS3D)))
         {
@@ -213,7 +213,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             save_release = 1410;
             save_system = 0;
         }
-        if (display_3d != display_3d_modes::NONE && read_info.flag3d > 0)
+        if (display_3d == display_3d_modes::NONE && read_info.flag3d > 0)
         {
             loaded3d       = true;
             Ambient        = read_info.ambient;
@@ -412,7 +412,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     }
     else
     {
-        int const olddisplay3d = display_3d;
+        display_3d_modes const old_display_ed = display_3d;
         bool const oldfloatflag = floatflag;
         display_3d = loaded3d ? display_3d_modes::YES : display_3d_modes::NONE;   // for <tab> display during next
         floatflag = usr_floatflag; // ditto
@@ -420,7 +420,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 #if defined(_WIN32)
         _ASSERTE(_CrtCheckMemory());
 #endif
-        display_3d = olddisplay3d;
+        display_3d = old_display_ed;
         floatflag = oldfloatflag;
         if (i)
         {

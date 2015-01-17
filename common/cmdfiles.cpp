@@ -92,7 +92,7 @@ int     inside = 0;             // inside color: 1=blue
 int     fillcolor = 0;          // fillcolor: -1=normal
 int     outside = COLOR_BLACK;  // outside color
 bool finattract = false;        // finite attractor logic
-int     display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
+display_3d_modes display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
 bool    overlay_3d = false;      // 3D overlay flag
 int     init3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
 bool    checkcurdir = false;    // flag to check current dir for files

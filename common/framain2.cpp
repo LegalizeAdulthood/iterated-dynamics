@@ -2210,7 +2210,7 @@ static void save_history_info()
     current.pot16bit             = (short) (disk16bit ? 1 : 0);
     current.release              = (short)g_release                   ;
     current.save_release         = (short)save_release              ;
-    current.display_3d = (short) display_3d;
+    current.display_3d           = display_3d;
     current.ambient              = (short)Ambient                   ;
     current.randomize            = (short)RANDOMIZE                 ;
     current.haze                 = (short)haze                      ;

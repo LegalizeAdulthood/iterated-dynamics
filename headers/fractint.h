@@ -440,7 +440,7 @@ struct HISTORY
     short pot16bit;
     short release;
     short save_release;
-    short display_3d;
+    display_3d_modes display_3d;
     short transparent[2];
     short ambient;
     short haze;
