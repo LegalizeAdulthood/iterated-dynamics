@@ -49,7 +49,7 @@ char evolve_discrete_y_parameter_offset;
 char evolve_new_discrete_x_parameter_offset;
 char evolve_new_discrete_y_parameter_offset;
 
-int prmboxcount;
+int param_box_count;
 std::vector<int> param_box_x;
 std::vector<int> param_box_y;
 std::vector<int> param_box_values;
@@ -832,7 +832,7 @@ get_evol_restart:
 
 void SetupParamBox()
 {
-    prmboxcount = 0;
+    param_box_count = 0;
     parmzoom = ((double) evolve_image_grid_size -1.0)/2.0;
     // need to allocate 2 int arrays for boxx and boxy plus 1 byte array for values
     int const num_box_values = (xdots + ydots)*2;
@@ -934,10 +934,10 @@ void drawparmbox(int mode)
         std::copy(&boxvalues[0], &boxvalues[boxcount], &image_box_values[0]);
         clearbox(); // to avoid probs when one box overlaps the other
     }
-    if (prmboxcount != 0)
+    if (param_box_count != 0)
     {
         // clear last parmbox
-        boxcount = prmboxcount;
+        boxcount = param_box_count;
         std::copy(&param_box_x[0], &param_box_x[boxcount*2], &boxx[0]);
         std::copy(&param_box_y[0], &param_box_y[boxcount*2], &boxy[0]);
         std::copy(&param_box_values[0], &param_box_values[boxcount], &boxvalues[0]);
@@ -947,7 +947,7 @@ void drawparmbox(int mode)
     if (mode == 1)
     {
         boxcount = imgboxcount;
-        prmboxcount = 0;
+        param_box_count = 0;
         return;
     }
 
@@ -987,7 +987,7 @@ void drawparmbox(int mode)
         std::copy(&boxy[0], &boxy[boxcount*2], &param_box_y[0]);
         std::copy(&boxvalues[0], &boxvalues[boxcount], &param_box_values[0]);
     }
-    prmboxcount = boxcount;
+    param_box_count = boxcount;
     boxcount = imgboxcount;
     if (imgboxcount)
     {

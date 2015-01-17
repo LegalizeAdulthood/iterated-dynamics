@@ -376,7 +376,7 @@ extern bool                  preview;
 extern int                   previewfactor;
 extern int                   px;
 extern int                   py;
-extern int                   prmboxcount;
+extern int param_box_count;
 extern int                   pseudox;
 extern int                   pseudoy;
 extern void                (*putcolor)(int, int, int);
