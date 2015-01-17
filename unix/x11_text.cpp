@@ -17,9 +17,13 @@ x11_text_window::x11_text_window()
         max_height_{},
         x_{},
         y_{},
+        text_(25),
+        attributes_(25),
         colormap_{},
         buffer_init_{}
 {
+    std::fill(text_.begin(), text_.end(), std::vector<char>(80, ' '));
+    std::fill(attributes_.begin(), attributes_.end(), std::vector<unsigned char>(80, '\x00'));
 #if 0
     bool return_value = GetClassInfo(hInstance, s_window_class, &wc) == TRUE;
     if (!return_value)
@@ -869,22 +873,17 @@ void x11_text_window::repaint(int xmin, int xmax, int ymin, int ymax)
     unsigned long values_mask = 0;
     GC gc = XCreateGC(dpy_, window_, values_mask, &values);
 
-//    SelectObject(hDC, hFont);
-//    SetBkMode(hDC, OPAQUE);
-//    SetTextAlign(hDC, TA_LEFT | TA_TOP);
-
     if (showing_cursor_)
     {
 //        ODS1("======================== Hide Caret %d", --carrot_count);
 //        HideCaret(hWndCopy);
     }
 
-    /*
-    the following convoluted code minimizes the number of
-    discrete calls to the Windows interface by locating
-    'strings' of screen locations with common foreground
-    and background colors
-    */
+    // the following convoluted code minimizes the number of
+    // discrete calls to the Windows interface by locating
+    // 'strings' of screen locations with common foreground
+    // and background colors
+    //
     int istart = 0;
     int jstart = 0;
     unsigned char foreground = 0;
