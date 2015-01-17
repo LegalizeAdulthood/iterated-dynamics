@@ -274,7 +274,7 @@ init_restart:
     {
         potflag = true;
         usr_distest = 0;
-        distest = usr_distest;    // can't do distest too
+        distest = 0;    // can't do distest too
     }
 
     if (distest)

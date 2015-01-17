@@ -2066,9 +2066,9 @@ static int first_time(int linelen, VECTOR v)
     {
         RAY_Header();
         yyadjust = 0;
-        xxadjust = yyadjust;  // Disable shifting in ray tracing
+        xxadjust = 0;  // Disable shifting in ray tracing
         yshift = 0;
-        xshift = yshift;
+        xshift = 0;
     }
 
     RO = 0;

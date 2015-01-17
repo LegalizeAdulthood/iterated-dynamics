@@ -71,7 +71,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             sxdots  = xdots;
             sydots  = ydots;
             syoffs = 0;
-            sxoffs = syoffs;
+            sxoffs = 0;
             rotate_hi = (rotate_hi < colors) ? rotate_hi : colors - 1;
 
             memcpy(old_dac_box, g_dac_box, 256*3); // save the DAC
@@ -2281,7 +2281,7 @@ static void save_history_info()
             history[i] = current;
         historyflag = false;
         historyptr = 0;
-        saveptr = historyptr;   // initialize history ptr
+        saveptr = 0;   // initialize history ptr
     }
     else if (historyflag)
         historyflag = false;            // coming from user history command, don't save
