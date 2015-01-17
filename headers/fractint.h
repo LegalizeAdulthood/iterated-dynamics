@@ -1221,9 +1221,9 @@ struct ext_blk_6
     double x_parameter_range;
     double y_parameter_range;
     double x_parameter_offset;
-    double opy;
-    short  odpx;
-    short  odpy;
+    double y_parameter_offset;
+    short discrete_x_parameter_offset;
+    short discrete_y_parameter_offset;
     short  px;
     short  py;
     short  sxoffs;
