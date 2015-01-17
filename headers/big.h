@@ -16,6 +16,7 @@
 // 1 = bf_math is being used
 enum class bf_math_type
 {
+    // cppcheck-suppress variableHidingEnum
     NONE = 0,
     BIGNUM = 1,         // bf_math is being used with bn_t numbers
     BIGFLT = 2          // bf_math is being used with bf_t numbers
