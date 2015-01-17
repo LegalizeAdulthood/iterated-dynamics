@@ -22,18 +22,32 @@ static int ecountbox[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
 // seed image for next generation
 unsigned int evolve_this_generation_random_seed;
 
-// offset for discrete parameters x and y..
-// used for things like inside or outside types, bailout tests, trig fn etc
-// variation factors, opx, opy, evolve_x_parameter_range/y dpx, dpy.. used in field mapping
-// for smooth variation across screen. opx =offset param x, dpx = delta param
-// per image, evolve_x_parameter_range = variation across grid of param ...likewise for py
+// variation factors, opx, opy, paramrangex/y dpx, dpy.
+// used in field mapping for smooth variation across screen.
+// opx =offset param x,
+// dpx = delta param per image,
+// paramrangex = variation across grid of param ...likewise for py
 // evolve_max_random_mutation is amount of random mutation used in random modes ,
 // evolve_mutation_reduction_factor is used to decrease evolve_max_random_mutation from one generation to the
 // next to eventually produce a stable population
-double evolve_x_parameter_offset, evolve_y_parameter_offset, evolve_new_x_parameter_offset, evolve_new_y_parameter_offset, evolve_x_parameter_range, evolve_y_parameter_range, dpx, dpy, evolve_max_random_mutation;
+double evolve_x_parameter_offset;
+double evolve_y_parameter_offset;
+double evolve_new_x_parameter_offset;
+double evolve_new_y_parameter_offset;
+double evolve_x_parameter_range;
+double evolve_y_parameter_range;
+double dpx;
+double dpy;
+double evolve_max_random_mutation;
 double evolve_mutation_reduction_factor;
 double parmzoom;
-char evolve_discrete_x_parameter_offset, evolve_discrete_y_parameter_offset, evolve_new_discrete_x_parameter_offset, evolve_new_discrete_y_parameter_offset;
+
+// offset for discrete parameters x and y..
+// used for things like inside or outside types, bailout tests, trig fn etc
+char evolve_discrete_x_parameter_offset;
+char evolve_discrete_y_parameter_offset;
+char evolve_new_discrete_x_parameter_offset;
+char evolve_new_discrete_y_parameter_offset;
 
 int prmboxcount;
 std::vector<int> param_box_x;
