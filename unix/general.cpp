@@ -382,7 +382,7 @@ decode_fractal_info(FRACTAL_INFO *info, int dir)
     getFloat(&info->faspectratio, &bufPtr, dir);
     getInt(&info->system, &bufPtr, dir);
     getInt(&info->release, &bufPtr, dir);
-    getInt(&info->flag3d, &bufPtr, dir);
+    getInt(&info->display_3d, &bufPtr, dir);
     getInt(&info->transparent[0], &bufPtr, dir);
     getInt(&info->transparent[1], &bufPtr, dir);
     getInt(&info->ambient, &bufPtr, dir);

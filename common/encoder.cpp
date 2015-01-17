@@ -769,7 +769,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     else
         save_info->release = (short) g_release;
 
-    save_info->flag3d = (short) display_3d;
+    save_info->display_3d = (short) display_3d;
     save_info->ambient = (short) Ambient;
     save_info->randomize = (short) RANDOMIZE;
     save_info->haze = (short) haze;

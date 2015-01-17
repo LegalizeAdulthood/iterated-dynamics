@@ -336,7 +336,7 @@ struct FRACTAL_INFO         // for saving data in GIF file
     float faspectratio;   // finalaspectratio, y/x
     short system;         // 0 for dos, 1 for windows
     short release;        // release number, with 2 decimals implied
-    short flag3d;         // stored only for now, for future use
+    short display_3d;     // stored only for now, for future use
     short transparent[2];
     short ambient;
     short haze;

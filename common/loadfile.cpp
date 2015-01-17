@@ -130,7 +130,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         save_release  = 1200;
         if ((display_3d == display_3d_modes::NONE)
-                && (read_info.version <= 4 || read_info.flag3d > 0
+                && (read_info.version <= 4 || read_info.display_3d > 0
                     || (curfractalspecific->flags & PARMS3D)))
         {
             for (int i = 0; i < 16; i++)
@@ -213,7 +213,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             save_release = 1410;
             save_system = 0;
         }
-        if (display_3d == display_3d_modes::NONE && read_info.flag3d > 0)
+        if (display_3d == display_3d_modes::NONE && read_info.display_3d > 0)
         {
             loaded3d       = true;
             Ambient        = read_info.ambient;
