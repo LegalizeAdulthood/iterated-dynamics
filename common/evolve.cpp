@@ -53,7 +53,7 @@ int param_box_count;
 std::vector<int> param_box_x;
 std::vector<int> param_box_y;
 std::vector<int> param_box_values;
-int imgboxcount;
+int image_box_count;
 std::vector<int> image_box_x;
 std::vector<int> image_box_y;
 std::vector<int> image_box_values;
@@ -925,7 +925,7 @@ void drawparmbox(int mode)
     if (!(evolving & PARMBOX))
         return; // don't draw if not asked to!
     grout = !((evolving & NOGROUT)/NOGROUT) ;
-    imgboxcount = boxcount;
+    image_box_count = boxcount;
     if (boxcount)
     {
         // stash normal zoombox pixels
@@ -946,7 +946,7 @@ void drawparmbox(int mode)
 
     if (mode == 1)
     {
-        boxcount = imgboxcount;
+        boxcount = image_box_count;
         param_box_count = 0;
         return;
     }
@@ -988,8 +988,8 @@ void drawparmbox(int mode)
         std::copy(&boxvalues[0], &boxvalues[boxcount], &param_box_values[0]);
     }
     param_box_count = boxcount;
-    boxcount = imgboxcount;
-    if (imgboxcount)
+    boxcount = image_box_count;
+    if (image_box_count)
     {
         // and move back old values so that everything can proceed as normal
         std::copy(&image_box_x[0], &image_box_x[boxcount*2], &boxx[0]);
