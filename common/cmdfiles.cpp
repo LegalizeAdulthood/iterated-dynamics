@@ -778,7 +778,10 @@ static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
     return true;
 }
 
-/*
+
+#define NONNUMERIC -32767
+
+ /*
   cmdarg(string,mode) processes a single command-line/command-file argument
     return:
       -1 error, >= 0 ok
@@ -788,9 +791,6 @@ static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
         | 4 means 3d=yes specified
         | 8 means reset specified
 */
-
-#define NONNUMERIC -32767
-
 int cmdarg(char *curarg, cmd_file mode) // process a single argument
 {
     int     valuelen = 0;               // length of value
