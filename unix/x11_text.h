@@ -46,6 +46,12 @@ public:
 
     void clear();
 
+    void erase_screen();
+
+    void set_attr(int row, int col, int attr, int count);
+
+    void scroll_up(int top, int bot);
+
 private:
     Display *dpy_;
     int screen_num_;

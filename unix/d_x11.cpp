@@ -139,9 +139,6 @@ struct DriverX11
 
     unsigned char *fontPtr;     // = nullptr;
 
-    char text_screen[TEXT_HEIGHT][TEXT_WIDTH];
-    int text_attr[TEXT_HEIGHT][TEXT_WIDTH];
-
     BYTE *font_table;           // = nullptr;
 
     bool text_not_graphics;            // true when displaying text
@@ -429,12 +426,7 @@ initdacbox()
 static void
 erase_text_screen(DriverX11 *di)
 {
-    for (int r = 0; r < TEXT_HEIGHT; r++)
-        for (int c = 0; c < TEXT_WIDTH; c++)
-        {
-            di->text_attr[r][c] = 0;
-            di->text_screen[r][c] = ' ';
-        }
+    di->text_.erase_screen();
 }
 
 /*
@@ -2803,42 +2795,14 @@ static void
 x11_set_attr(Driver *drv, int row, int col, int attr, int count)
 {
     DIX11(drv);
-    int i = col;
-
-    while (count)
-    {
-        assert(row < TEXT_HEIGHT);
-        assert(i < TEXT_WIDTH);
-        di->text_attr[row][i] = attr;
-        if (++i == TEXT_WIDTH)
-        {
-            i = 0;
-            row++;
-        }
-        count--;
-    }
-    // TODO: refresh text
-    fprintf(stderr, "x11_set_attr(%d,%d, %d): %d\n", row, col, count, attr);
+    di->text_.set_attr(row, col, attr, count);
 }
 
 static void
 x11_scroll_up(Driver *drv, int top, int bot)
 {
     DIX11(drv);
-    assert(bot <= TEXT_HEIGHT);
-    for (int r = top; r < bot; r++)
-        for (int c = 0; c < TEXT_WIDTH; c++)
-        {
-            di->text_attr[r][c] = di->text_attr[r+1][c];
-            di->text_screen[r][c] = di->text_screen[r+1][c];
-        }
-    for (int c = 0; c < TEXT_WIDTH; c++)
-    {
-        di->text_attr[bot][c] = 0;
-        di->text_screen[bot][c] = ' ';
-    }
-    // TODO: draw text
-    fprintf(stderr, "x11_scroll_up(%d, %d)\n", top, bot);
+    di->text_.scroll_up(top, bot);
 }
 
 static void
@@ -2975,8 +2939,6 @@ static DriverX11 x11_driver_info = {
     nullptr,              // font_info
     0,                    // key_buffer
     nullptr,              // fontPtr
-    { 0 },                // text_screen
-    { 0 },                // text_attr
     nullptr,              // font_table
     false,                // text_not_graphics
     false,                // ctl_mode

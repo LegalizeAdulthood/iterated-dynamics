@@ -1,5 +1,8 @@
 #include <algorithm>
 #include <cassert>
+#include <X11/Xlib.h>
+#include <iostream>
+#include <iomanip>
 
 #include "port.h"
 #include "x11_text.h"
@@ -927,4 +930,58 @@ void x11_text_window::repaint(int xmin, int xmax, int ymin, int ymax)
     }
 
     XFreeGC(dpy_, gc);
+}
+
+void x11_text_window::erase_screen()
+{
+    for (int r = 0; r < X11_TEXT_MAX_ROW; r++)
+    {
+        for (int c = 0; c < X11_TEXT_MAX_COL; c++)
+        {
+            attributes_[r][c] = 0;
+            text_[r][c] = ' ';
+        }
+    }
+    repaint(0, X11_TEXT_MAX_COL-1, 0, X11_TEXT_MAX_ROW-1);
+}
+
+void x11_text_window::set_attr(int row, int col, int attr, int count)
+{
+    int exposed_min_row = row;
+    int exposed_min_col = col;
+    int exposed_max_row = row;
+    int exposed_max_col = col;
+    while (count)
+    {
+        assert(row < X11_TEXT_MAX_ROW);
+        assert(col < X11_TEXT_MAX_COL);
+        attributes_[row][col] = static_cast<unsigned char>(attr);
+        ++col;
+        exposed_max_col = std::max(col, exposed_max_col);
+        exposed_max_row = std::max(row, exposed_max_row);
+        if (col == X11_TEXT_MAX_COL)
+        {
+            col = 0;
+            row++;
+        }
+        count--;
+    }
+    repaint(exposed_min_col, exposed_max_col, exposed_min_row, exposed_max_row);
+}
+
+void x11_text_window::scroll_up(int top, int bot)
+{
+    assert(bot <= X11_TEXT_MAX_ROW);
+    for (int r = top; r < bot; r++)
+        for (int c = 0; c < X11_TEXT_MAX_COL; c++)
+        {
+            attributes_[r][c] = attributes_[r+1][c];
+            text_[r][c] = text_[r+1][c];
+        }
+    for (int c = 0; c < X11_TEXT_MAX_COL; c++)
+    {
+        attributes_[bot][c] = 0;
+        text_[bot][c] = ' ';
+    }
+    repaint(0, X11_TEXT_MAX_COL-1, top, bot);
 }
