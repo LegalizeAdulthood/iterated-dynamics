@@ -1,6 +1,7 @@
 /*
         Command-line / Command-File Parser Routines
 */
+#include <algorithm>
 #include <cassert>
 #include <string>
 #include <system_error>
@@ -781,7 +782,35 @@ static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
 class command_processor
 {
 public:
+    command_processor();
+
     int process(char *curarg, cmd_file mode);
+
+private:
+    int     valuelen;                   // length of value
+    int     numval;                     // numeric value of arg
+    char    charval[16];                // first character of arg
+    int     yesnoval[16];               // 0 if 'n', 1 if 'y', -1 if not
+    double  ftemp;
+    char    *argptr2;
+    int     totparms;                   // # of / delimited parms
+    int     intparms;                   // # of / delimited ints
+    int     floatparms;                 // # of / delimited floats
+    int     intval[64];                 // pre-parsed integer parms
+    double  floatval[16];               // pre-parsed floating parms
+    char const *floatvalstr[16];        // pointers to float vals
+    char    tmpc;
+    int     lastarg;
+    double Xctr;
+    double Yctr;
+    double Xmagfactor;
+    double Rotation;
+    double Skew;
+    LDBL Magnification;
+    bf_t bXctr;
+    bf_t bYctr;
+
+    char *argptr;
 };
 
 #define NONNUMERIC -32767
@@ -801,32 +830,36 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     return command_processor().process(curarg, mode);
 }
 
+command_processor::command_processor()
+    : valuelen(0),
+    numval(0),
+    ftemp(0.0),
+    argptr2(nullptr),
+    totparms(0),
+    intparms(0),
+    floatparms(0),
+    tmpc(0),
+    lastarg(0),
+    Xctr(0.0),
+    Yctr(0.0),
+    Xmagfactor(0.0),
+    Rotation(0.0),
+    Skew(0.0),
+    Magnification(0.0),
+    bXctr(nullptr),
+    bYctr(nullptr),
+    argptr(nullptr)
+{
+    std::fill_n(charval, 16, 0);
+    std::fill_n(yesnoval, 16, 0);
+    std::fill_n(intval, 64, 0 );
+    std::fill_n(floatval, 16, 0.0);
+    std::fill_n(floatvalstr, 16, nullptr);
+}
+
 int command_processor::process(char *curarg, cmd_file mode)
 {
-    int     valuelen = 0;               // length of value
-    int     numval = 0;                 // numeric value of arg
-    char    charval[16] = { 0 };        // first character of arg
-    int     yesnoval[16] = { 0 };       // 0 if 'n', 1 if 'y', -1 if not
-    double  ftemp = 0.0;
-    char    *argptr2 = nullptr;
-    int     totparms = 0;               // # of / delimited parms
-    int     intparms = 0;               // # of / delimited ints
-    int     floatparms = 0;             // # of / delimited floats
-    int     intval[64] = { 0 };         // pre-parsed integer parms
-    double  floatval[16] = { 0.0 };     // pre-parsed floating parms
-    char const *floatvalstr[16];        // pointers to float vals
-    char    tmpc = 0;
-    int     lastarg = 0;
-    double Xctr = 0.0;
-    double Yctr = 0.0;
-    double Xmagfactor = 0.0;
-    double Rotation = 0.0;
-    double Skew = 0.0;
-    LDBL Magnification = 0.0;
-    bf_t bXctr;
-    bf_t bYctr;
-
-    char *argptr = curarg;
+    argptr = curarg;
     while (*argptr)
     {   // convert to lower case
         if (*argptr >= 'A' && *argptr <= 'Z')
