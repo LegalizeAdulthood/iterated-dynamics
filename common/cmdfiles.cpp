@@ -778,6 +778,11 @@ static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
     return true;
 }
 
+class command_processor
+{
+public:
+    int process(char *curarg, cmd_file mode);
+};
 
 #define NONNUMERIC -32767
 
@@ -792,6 +797,11 @@ static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
         | 8 means reset specified
 */
 int cmdarg(char *curarg, cmd_file mode) // process a single argument
+{
+    return command_processor().process(curarg, mode);
+}
+
+int command_processor::process(char *curarg, cmd_file mode)
 {
     int     valuelen = 0;               // length of value
     int     numval = 0;                 // numeric value of arg
