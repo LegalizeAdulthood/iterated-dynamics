@@ -814,6 +814,8 @@ private:
     std::string variable;
 
     void convert_argument_to_lower_case();
+
+    int parse_command();
 };
 
 namespace
@@ -885,10 +887,8 @@ void command_processor::convert_argument_to_lower_case()
     }
 }
 
-int command_processor::process()
+int command_processor::parse_command()
 {
-    convert_argument_to_lower_case();
-
     int j;
     value = strchr(&curarg[1], '=');
     if (value != nullptr)
@@ -1028,6 +1028,18 @@ int command_processor::process()
         {
             ++argptr;
         }
+    }
+    return CMDARG_NONE;
+}
+
+int command_processor::process()
+{
+    convert_argument_to_lower_case();
+
+    int result = parse_command();
+    if (result != CMDARG_NONE)
+    {
+        return result;
     }
 
     if (mode != cmd_file::AT_AFTER_STARTUP || debugflag == debug_flags::allow_init_commands_anytime)
