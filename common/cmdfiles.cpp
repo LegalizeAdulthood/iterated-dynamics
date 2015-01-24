@@ -814,7 +814,7 @@ private:
 
 namespace
 {
-int const NONNUMERIC = -32767;
+int const NON_NUMERIC = -32767;
 }
 
  /*
@@ -933,7 +933,7 @@ int command_processor::process(char *curarg, cmd_file mode)
         }
         if (totparms == 0)
         {
-            numval = NONNUMERIC;
+            numval = NON_NUMERIC;
         }
         if (totparms < 16)
         {
@@ -1040,7 +1040,7 @@ int command_processor::process(char *curarg, cmd_file mode)
         }
         if (variable == "maxhistory")       // maxhistory=?
         {
-            if (numval == NONNUMERIC)
+            if (numval == NON_NUMERIC)
             {
                 goto badarg;
             }
@@ -1531,7 +1531,7 @@ int command_processor::process(char *curarg, cmd_file mode)
                 return CMDARG_FRACTAL_PARAM;
             }
         }
-        if (numval == NONNUMERIC)
+        if (numval == NON_NUMERIC)
         {
             goto badarg;
         }
@@ -1554,7 +1554,7 @@ int command_processor::process(char *curarg, cmd_file mode)
         {
             fillcolor = -1;
         }
-        else if (numval == NONNUMERIC)
+        else if (numval == NON_NUMERIC)
         {
             goto badarg;
         }
@@ -1631,7 +1631,7 @@ int command_processor::process(char *curarg, cmd_file mode)
                 return CMDARG_FRACTAL_PARAM;
             }
         }
-        if ((numval == NONNUMERIC) || (numval < TDIS || numval > 255))
+        if ((numval == NON_NUMERIC) || (numval < TDIS || numval > 255))
         {
             goto badarg;
         }
@@ -1641,7 +1641,7 @@ int command_processor::process(char *curarg, cmd_file mode)
 
     if (variable == "bfdigits")      // bfdigits=?
     {
-        if ((numval == NONNUMERIC) || (numval < 0 || numval > 2000))
+        if ((numval == NON_NUMERIC) || (numval < 0 || numval > 2000))
         {
             goto badarg;
         }
@@ -2677,7 +2677,7 @@ int command_processor::process(char *curarg, cmd_file mode)
             usr_periodicitycheck = 1;
         else if (charval[0] == 's')   // 's' for 'show'
             usr_periodicitycheck = -1;
-        else if (numval == NONNUMERIC)
+        else if (numval == NON_NUMERIC)
             goto badarg;
         else if (numval != 0)
             usr_periodicitycheck = numval;
@@ -2904,7 +2904,7 @@ int command_processor::process(char *curarg, cmd_file mode)
 
     if (variable == "perspective")
     {   // perspective=?
-        if (numval == NONNUMERIC)
+        if (numval == NON_NUMERIC)
             goto badarg;
         ZVIEWER = numval;
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
