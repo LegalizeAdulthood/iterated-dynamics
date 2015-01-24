@@ -919,9 +919,9 @@ int command_processor::process(char *curarg, cmd_file mode)
 
     argptr = value;
     floatparms = 0;
-    intparms = floatparms;
-    totparms = intparms;
-    numval = totparms;
+    intparms = 0;
+    totparms = 0;
+    numval = 0;
     while (*argptr)                    // count and pre-parse parms
     {
         long ll;
