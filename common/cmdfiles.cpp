@@ -2296,7 +2296,9 @@ int command_processor::process()
     if (variable == "viewwindows")
     {  // viewwindows=?,?,?,?,?
         if (totparms > 5 || floatparms-intparms > 2 || intparms > 4)
+        {
             goto badarg;
+        }
         viewwindow = true;
         viewreduction = 4.2F;  // reset default values
         finalaspectratio = screenaspect;
@@ -2324,7 +2326,9 @@ int command_processor::process()
         if ((totparms != floatparms)
                 || (totparms != 0 && totparms < 3)
                 || (totparms >= 3 && floatval[2] == 0.0))
+        {
             goto badarg;
+        }
         if (fractype == fractal_type::CELLULAR)
             return CMDARG_FRACTAL_PARAM; // skip setting the corners
         usemag = true;
@@ -2337,7 +2341,9 @@ int command_processor::process()
         // I don't know if this is portable, but something needs to
         // be used in case compiler's LDBL_MAX is not big enough
         if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
+        {
             goto badarg;     // ie: Magnification is +-1.#INF
+        }
 
         dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
 
@@ -2403,7 +2409,9 @@ int command_processor::process()
     if (variable == "aspectdrift")
     {   // aspectdrift=?
         if (floatparms != 1 || floatval[0] < 0)
+        {
             goto badarg;
+        }
         aspectdrift = (float)floatval[0];
         return CMDARG_FRACTAL_PARAM;
     }
@@ -2411,7 +2419,9 @@ int command_processor::process()
     if (variable == "invert")
     {        // invert=?,?,?
         if (totparms != floatparms || (totparms != 1 && totparms != 3))
+        {
             goto badarg;
+        }
         inversion[0] = floatval[0];
         invert = (inversion[0] != 0.0) ? totparms : 0;
         if (totparms == 3)
@@ -2425,7 +2435,9 @@ int command_processor::process()
     if (variable == "olddemmcolors")
     {      // olddemmcolors=?
         if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         old_demm_colors = yesnoval[0] != 0;
         return CMDARG_NONE;
     }
@@ -2433,7 +2445,9 @@ int command_processor::process()
     if (variable == "askvideo")
     {      // askvideo=?
         if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         askvideo = yesnoval[0] != 0;
         return CMDARG_NONE;
     }
@@ -2444,7 +2458,9 @@ int command_processor::process()
     if (variable == "float")
     {         // float=?
         if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
 #ifndef XFRACT
         usr_floatflag = yesnoval[0] != 0;
 #else
@@ -2456,7 +2472,9 @@ int command_processor::process()
     if (variable == "fastrestore")
     {    // fastrestore=?
         if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         fastrestore = yesnoval[0] != 0;
         return CMDARG_NONE;
     }
@@ -2464,9 +2482,13 @@ int command_processor::process()
     if (variable == "orgfrmdir")
     {    // orgfrmdir=?
         if (valuelen > (FILE_MAX_DIR-1))
+        {
             goto badarg;
+        }
         if (!isadirectory(value))
+        {
             goto badarg;
+        }
         orgfrmsearch = true;
         orgfrmdir = value;
         fix_dirname(orgfrmdir);
@@ -2484,7 +2506,9 @@ int command_processor::process()
         if (charval[0] == 's')
             orbitsave |= 2;
         else if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         orbitsave |= yesnoval[0];
         return CMDARG_FRACTAL_PARAM;
     }
@@ -2492,7 +2516,9 @@ int command_processor::process()
     if (variable == "bailout")
     {       // bailout=?
         if (floatval[0] < 1 || floatval[0] > 2100000000L)
+        {
             goto badarg;
+        }
         bailout = (long)floatval[0];
         return CMDARG_FRACTAL_PARAM;
     }
@@ -2514,7 +2540,9 @@ int command_processor::process()
         else if (strcmp(value, "manr") == 0)
             bailoutest = bailouts::Manr;
         else
+        {
             goto badarg;
+        }
         setbailoutformula(bailoutest);
         return CMDARG_FRACTAL_PARAM;
     }
@@ -2534,7 +2562,9 @@ int command_processor::process()
         else if (strcmp(value, "none") == 0)
             forcesymmetry = symmetry_type::NONE;
         else
+        {
             goto badarg;
+        }
         return CMDARG_FRACTAL_PARAM;
     }
 
@@ -2557,7 +2587,9 @@ int command_processor::process()
     if (variable == "sound")
     {         // sound=?,?,?
         if (totparms > 5)
+        {
             goto badarg;
+        }
         soundflag = SOUNDFLAG_OFF; // start with a clean slate, add bits as we go
         if (totparms == 1)
             soundflag = SOUNDFLAG_SPEAKER; // old command, default to PC speaker
@@ -2582,7 +2614,9 @@ int command_processor::process()
         else if (charval[0] == 'z')
             soundflag |= SOUNDFLAG_Z;
         else
+        {
             goto badarg;
+        }
 #if !defined(XFRACT)
         if (totparms > 1)
         {
@@ -2697,7 +2731,9 @@ int command_processor::process()
         else if (charval[0] == 's')   // 's' for 'show'
             usr_periodicitycheck = -1;
         else if (numval == NON_NUMERIC)
+        {
             goto badarg;
+        }
         else if (numval != 0)
             usr_periodicitycheck = numval;
         if (usr_periodicitycheck > 255)
@@ -2733,7 +2769,10 @@ int command_processor::process()
         {
             Log_Auto_Calc = true;       // force auto calc of logmap
         }
-        else goto badarg;
+        else
+        {
+            goto badarg;
+        }
         return CMDARG_FRACTAL_PARAM;
     }
 
@@ -2780,7 +2819,9 @@ int command_processor::process()
                 if (strchr("abdm", (int)charval[0]) != nullptr)
                     autoshowdot = charval[0];
                 else
+                {
                     goto badarg;
+                }
             }
             else
             {
@@ -2805,7 +2846,9 @@ int command_processor::process()
     if (variable == "decomp")
     {
         if (totparms != intparms || totparms < 1)
+        {
             goto badarg;
+        }
         decomp[0] = intval[0];
         decomp[1] = 0;
         if (totparms > 1) // backward compatibility
@@ -2819,7 +2862,9 @@ int command_processor::process()
     if (variable == "distest")
     {
         if (totparms != intparms || totparms < 1)
+        {
             goto badarg;
+        }
         usr_distest = (long)floatval[0];
         distestwidth = 71;
         if (totparms > 1)
@@ -2840,7 +2885,9 @@ int command_processor::process()
     if (variable == "formulafile")
     {   // formulafile=?
         if (valuelen > (FILE_MAX_PATH-1))
+        {
             goto badarg;
+        }
         if (merge_pathnames(FormFileName, value, mode) < 0)
             init_msg(variable.c_str(), value, mode);
         return CMDARG_FRACTAL_PARAM;
@@ -2849,7 +2896,9 @@ int command_processor::process()
     if (variable == "formulaname")
     {   // formulaname=?
         if (valuelen > ITEMNAMELEN)
+        {
             goto badarg;
+        }
         FormName = value;
         return CMDARG_FRACTAL_PARAM;
     }
@@ -2857,7 +2906,9 @@ int command_processor::process()
     if (variable == "lfile")
     {    // lfile=?
         if (valuelen > (FILE_MAX_PATH-1))
+        {
             goto badarg;
+        }
         if (merge_pathnames(LFileName, value, mode) < 0)
             init_msg(variable.c_str(), value, mode);
         return CMDARG_FRACTAL_PARAM;
@@ -2866,7 +2917,9 @@ int command_processor::process()
     if (variable == "lname")
     {
         if (valuelen > ITEMNAMELEN)
+        {
             goto badarg;
+        }
         LName = value;
         return CMDARG_FRACTAL_PARAM;
     }
@@ -2875,7 +2928,9 @@ int command_processor::process()
     {    // ifsfile=??
         int existdir;
         if (valuelen > (FILE_MAX_PATH-1))
+        {
             goto badarg;
+        }
         existdir = merge_pathnames(IFSFileName, value, mode);
         if (existdir == 0)
             reset_ifs_defn();
@@ -2888,7 +2943,9 @@ int command_processor::process()
     if (variable == "ifs" || variable == "ifs3d")
     {        // ifs3d for old time's sake
         if (valuelen > ITEMNAMELEN)
+        {
             goto badarg;
+        }
         IFSName = value;
         reset_ifs_defn();
         return CMDARG_FRACTAL_PARAM;
@@ -2897,7 +2954,9 @@ int command_processor::process()
     if (variable == "parmfile")
     {   // parmfile=?
         if (valuelen > (FILE_MAX_PATH-1))
+        {
             goto badarg;
+        }
         if (merge_pathnames(CommandFile, value, mode) < 0)
             init_msg(variable.c_str(), value, mode);
         return CMDARG_FRACTAL_PARAM;
@@ -2906,7 +2965,9 @@ int command_processor::process()
     if (variable == "stereo")
     {        // stereo=?
         if ((numval < 0) || (numval > 4))
+        {
             goto badarg;
+        }
         g_glasses_type = numval;
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
@@ -2914,7 +2975,9 @@ int command_processor::process()
     if (variable == "rotation")
     {      // rotation=?/?/?
         if (totparms != 3 || intparms != 3)
+        {
             goto badarg;
+        }
         XROT = intval[0];
         YROT = intval[1];
         ZROT = intval[2];
@@ -2924,7 +2987,9 @@ int command_processor::process()
     if (variable == "perspective")
     {   // perspective=?
         if (numval == NON_NUMERIC)
+        {
             goto badarg;
+        }
         ZVIEWER = numval;
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
@@ -2932,7 +2997,9 @@ int command_processor::process()
     if (variable == "xyshift")
     {       // xyshift=?/?
         if (totparms != 2 || intparms != 2)
+        {
             goto badarg;
+        }
         XSHIFT = intval[0];
         YSHIFT = intval[1];
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
@@ -2957,7 +3024,9 @@ int command_processor::process()
                 || intval[1] < 0 || intval[1] > 100
                 || intval[2] < 0 || intval[2] > 100
                 || intval[3] < 0 || intval[3] > 100)
+        {
             goto badarg;
+        }
         red_crop_left   = intval[0];
         red_crop_right  = intval[1];
         blue_crop_left  = intval[2];
@@ -2968,7 +3037,9 @@ int command_processor::process()
     if (variable == "bright")
     {        // bright=?
         if (totparms != 2 || intparms != 2)
+        {
             goto badarg;
+        }
         red_bright  = intval[0];
         blue_bright = intval[1];
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
@@ -2977,7 +3048,9 @@ int command_processor::process()
     if (variable == "xyadjust")
     {      // trans=?
         if (totparms != 2 || intparms != 2)
+        {
             goto badarg;
+        }
         xtrans = intval[0];
         ytrans = intval[1];
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
@@ -2992,7 +3065,9 @@ int command_processor::process()
                 overlay_3d = true;
         }
         else if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         display_3d = yesnoval[0] != 0 ? display_3d_modes::YES : display_3d_modes::NONE;
         initvars_3d();
         return display_3d != display_3d_modes::NONE ? (CMDARG_3D_PARAM | CMDARG_3D_YES) : CMDARG_3D_PARAM;
@@ -3001,7 +3076,9 @@ int command_processor::process()
     if (variable == "sphere")
     {        // sphere=?
         if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         SPHERE = yesnoval[0];
         return CMDARG_3D_PARAM;
     }
@@ -3009,7 +3086,9 @@ int command_processor::process()
     if (variable == "scalexyz")
     {      // scalexyz=?/?/?
         if (totparms < 2 || intparms != totparms)
+        {
             goto badarg;
+        }
         XSCALE = intval[0];
         YSCALE = intval[1];
         if (totparms > 2)
@@ -3027,7 +3106,9 @@ int command_processor::process()
     if (variable == "waterline")
     {     // waterline=?
         if (numval < 0)
+        {
             goto badarg;
+        }
         WATERLINE = numval;
         return CMDARG_3D_PARAM;
     }
@@ -3035,7 +3116,9 @@ int command_processor::process()
     if (variable == "filltype")
     {      // filltype=?
         if (numval < -1 || numval > 6)
+        {
             goto badarg;
+        }
         FILLTYPE = numval;
         return CMDARG_3D_PARAM;
     }
@@ -3043,7 +3126,9 @@ int command_processor::process()
     if (variable == "lightsource")
     {   // lightsource=?/?/?
         if (totparms != 3 || intparms != 3)
+        {
             goto badarg;
+        }
         XLIGHT = intval[0];
         YLIGHT = intval[1];
         ZLIGHT = intval[2];
@@ -3053,7 +3138,9 @@ int command_processor::process()
     if (variable == "smoothing")
     {     // smoothing=?
         if (numval < 0)
+        {
             goto badarg;
+        }
         LIGHTAVG = numval;
         return CMDARG_3D_PARAM;
     }
@@ -3061,7 +3148,9 @@ int command_processor::process()
     if (variable == "latitude")
     {      // latitude=?/?
         if (totparms != 2 || intparms != 2)
+        {
             goto badarg;
+        }
         THETA1 = intval[0];
         THETA2 = intval[1];
         return CMDARG_3D_PARAM;
@@ -3070,7 +3159,9 @@ int command_processor::process()
     if (variable == "longitude")
     {     // longitude=?/?
         if (totparms != 2 || intparms != 2)
+        {
             goto badarg;
+        }
         PHI1 = intval[0];
         PHI2 = intval[1];
         return CMDARG_3D_PARAM;
@@ -3079,7 +3170,9 @@ int command_processor::process()
     if (variable == "radius")
     {        // radius=?
         if (numval < 0)
+        {
             goto badarg;
+        }
         RADIUS = numval;
         return CMDARG_3D_PARAM;
     }
@@ -3087,7 +3180,9 @@ int command_processor::process()
     if (variable == "transparent")
     {   // transparent?
         if (totparms != intparms || totparms < 1)
+        {
             goto badarg;
+        }
         transparent[0] = intval[0];
         transparent[1] = transparent[0];
         if (totparms > 1)
@@ -3098,7 +3193,9 @@ int command_processor::process()
     if (variable == "preview")
     {       // preview?
         if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         preview = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
     }
@@ -3106,7 +3203,9 @@ int command_processor::process()
     if (variable == "showbox")
     {       // showbox?
         if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         showbox = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
     }
@@ -3114,7 +3213,9 @@ int command_processor::process()
     if (variable == "coarse")
     {        // coarse=?
         if (numval < 3 || numval > 2000)
+        {
             goto badarg;
+        }
         previewfactor = numval;
         return CMDARG_3D_PARAM;
     }
@@ -3122,7 +3223,9 @@ int command_processor::process()
     if (variable == "randomize")
     {     // RANDOMIZE=?
         if (numval < 0 || numval > 7)
+        {
             goto badarg;
+        }
         RANDOMIZE = numval;
         return CMDARG_3D_PARAM;
     }
@@ -3130,7 +3233,9 @@ int command_processor::process()
     if (variable == "ambient")
     {       // ambient=?
         if (numval < 0 || numval > 100)
+        {
             goto badarg;
+        }
         Ambient = numval;
         return CMDARG_3D_PARAM;
     }
@@ -3138,7 +3243,9 @@ int command_processor::process()
     if (variable == "haze")
     {          // haze=?
         if (numval < 0 || numval > 100)
+        {
             goto badarg;
+        }
         haze = numval;
         return CMDARG_3D_PARAM;
     }
@@ -3146,7 +3253,9 @@ int command_processor::process()
     if (variable == "fullcolor")
     {     // fullcolor=?
         if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         Targa_Out = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
     }
@@ -3154,7 +3263,9 @@ int command_processor::process()
     if (variable == "truecolor")
     {     // truecolor=?
         if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         truecolor = yesnoval[0] != 0;
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
@@ -3176,7 +3287,9 @@ int command_processor::process()
     if (variable == "usegrayscale")
     {     // usegrayscale?
         if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         grayflag = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
     }
@@ -3184,7 +3297,9 @@ int command_processor::process()
     if (variable == "monitorwidth")
     {     // monitorwidth=?
         if (totparms != 1 || floatparms != 1)
+        {
             goto badarg;
+        }
         AutoStereo_width  = floatval[0];
         return CMDARG_3D_PARAM;
     }
@@ -3192,7 +3307,9 @@ int command_processor::process()
     if (variable == "targa_overlay")
     {         // Targa Overlay?
         if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         Targa_Overlay = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
     }
@@ -3200,10 +3317,14 @@ int command_processor::process()
     if (variable == "background")
     {     // background=?/?
         if (totparms != 3 || intparms != 3)
+        {
             goto badarg;
+        }
         for (int i = 0; i < 3; i++)
             if (intval[i] & ~0xff)
+            {
                 goto badarg;
+            }
         back_color[0] = (BYTE)intval[0];
         back_color[1] = (BYTE)intval[1];
         back_color[2] = (BYTE)intval[2];
@@ -3213,7 +3334,9 @@ int command_processor::process()
     if (variable == "lightname")
     {     // lightname=?
         if (valuelen > (FILE_MAX_PATH-1))
+        {
             goto badarg;
+        }
         if (first_init || mode == cmd_file::AT_AFTER_STARTUP)
             light_name = value;
         return CMDARG_NONE;
@@ -3222,7 +3345,9 @@ int command_processor::process()
     if (variable == "ray")
     {           // RAY=?
         if (numval < 0 || numval > 6)
+        {
             goto badarg;
+        }
         RAY = numval;
         return CMDARG_3D_PARAM;
     }
@@ -3230,7 +3355,9 @@ int command_processor::process()
     if (variable == "brief")
     {         // BRIEF?
         if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         BRIEF = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
     }
@@ -3238,7 +3365,9 @@ int command_processor::process()
     if (variable == "release")
     {       // release
         if (numval < 0)
+        {
             goto badarg;
+        }
 
         save_release = numval;
         return CMDARG_3D_PARAM;
@@ -3247,7 +3376,9 @@ int command_processor::process()
     if (variable == "curdir")
     {         // curdir=
         if (yesnoval[0] < 0)
+        {
             goto badarg;
+        }
         checkcurdir = yesnoval[0] != 0;
         return CMDARG_NONE;
     }
