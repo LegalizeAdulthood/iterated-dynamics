@@ -792,7 +792,6 @@ private:
     char    charval[16];                // first character of arg
     int     yesnoval[16];               // 0 if 'n', 1 if 'y', -1 if not
     double  ftemp;
-    char    *argptr2;
     int     totparms;                   // # of / delimited parms
     int     intparms;                   // # of / delimited ints
     int     floatparms;                 // # of / delimited floats
@@ -836,7 +835,6 @@ command_processor::command_processor()
     : valuelen(0),
     numval(0),
     ftemp(0.0),
-    argptr2(nullptr),
     totparms(0),
     intparms(0),
     floatparms(0),
@@ -926,7 +924,7 @@ int command_processor::process(char *curarg, cmd_file mode)
     {
         long ll;
         lastarg = 0;
-        argptr2 = strchr(argptr, '/');
+        char *argptr2 = strchr(argptr, '/');
         if (argptr2 == nullptr)     // find next '/'
         {
             argptr2 = argptr + strlen(argptr);
