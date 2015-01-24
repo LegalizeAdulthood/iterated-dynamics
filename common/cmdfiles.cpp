@@ -810,6 +810,8 @@ private:
     bf_t bYctr;
     char *curarg;
     cmd_file mode;
+    char *value;
+    std::string variable;
 
     void convert_argument_to_lower_case();
 };
@@ -852,7 +854,8 @@ command_processor::command_processor(char *curarg_, cmd_file mode_)
     bXctr(nullptr),
     bYctr(nullptr),
     curarg(curarg_),
-    mode(mode_)
+    mode(mode_),
+    value(nullptr)
 {
     std::fill_n(charval, 16, 0);
     std::fill_n(yesnoval, 16, 0);
@@ -887,7 +890,7 @@ int command_processor::process()
     convert_argument_to_lower_case();
 
     int j;
-    char *value = strchr(&curarg[1], '=');
+    value = strchr(&curarg[1], '=');
     if (value != nullptr)
     {
         j = (int)((value++) - curarg);
@@ -906,7 +909,7 @@ int command_processor::process()
         argerror(curarg);               // keyword too long
         return CMDARG_ERROR;
     }
-    std::string const variable(curarg, j);
+    variable = std::string(curarg, j);
     valuelen = (int) strlen(value);            // note value's length
     charval[0] = value[0];               // first letter of value
     yesnoval[0] = -1;                    // note yes|no value
