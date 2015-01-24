@@ -782,9 +782,9 @@ static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
 class command_processor
 {
 public:
-    command_processor();
+    command_processor(char *curarg, cmd_file mode);
 
-    int process(char *curarg, cmd_file mode);
+    int process();
 
 private:
     int     valuelen;                   // length of value
@@ -808,8 +808,10 @@ private:
     LDBL Magnification;
     bf_t bXctr;
     bf_t bYctr;
+    char *curarg;
+    cmd_file mode;
 
-    void convert_argument_to_lower_case(char *curarg);
+    void convert_argument_to_lower_case();
 };
 
 namespace
@@ -829,10 +831,10 @@ int const NON_NUMERIC = -32767;
 */
 int cmdarg(char *curarg, cmd_file mode) // process a single argument
 {
-    return command_processor().process(curarg, mode);
+    return command_processor(curarg, mode).process();
 }
 
-command_processor::command_processor()
+command_processor::command_processor(char *curarg_, cmd_file mode_)
     : valuelen(0),
     numval(0),
     ftemp(0.0),
@@ -848,7 +850,9 @@ command_processor::command_processor()
     Skew(0.0),
     Magnification(0.0),
     bXctr(nullptr),
-    bYctr(nullptr)
+    bYctr(nullptr),
+    curarg(curarg_),
+    mode(mode_)
 {
     std::fill_n(charval, 16, 0);
     std::fill_n(yesnoval, 16, 0);
@@ -857,7 +861,7 @@ command_processor::command_processor()
     std::fill_n(floatvalstr, 16, nullptr);
 }
 
-void command_processor::convert_argument_to_lower_case(char *curarg)
+void command_processor::convert_argument_to_lower_case()
 {
     char *argptr = curarg;
     while (*argptr)
@@ -878,9 +882,9 @@ void command_processor::convert_argument_to_lower_case(char *curarg)
     }
 }
 
-int command_processor::process(char *curarg, cmd_file mode)
+int command_processor::process()
 {
-    convert_argument_to_lower_case(curarg);
+    convert_argument_to_lower_case();
 
     int j;
     char *value = strchr(&curarg[1], '=');
