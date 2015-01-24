@@ -859,6 +859,7 @@ command_processor::command_processor()
 
 void command_processor::convert_argument_to_lower_case(char *curarg)
 {
+    argptr = curarg;
     while (*argptr)
     {   // convert to lower case
         if (*argptr >= 'A' && *argptr <= 'Z')
@@ -879,7 +880,6 @@ void command_processor::convert_argument_to_lower_case(char *curarg)
 
 int command_processor::process(char *curarg, cmd_file mode)
 {
-    argptr = curarg;
     convert_argument_to_lower_case(curarg);
 
     int j;
