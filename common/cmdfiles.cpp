@@ -812,7 +812,10 @@ private:
     void convert_argument_to_lower_case(char *curarg);
 };
 
-#define NONNUMERIC -32767
+namespace
+{
+int const NONNUMERIC = -32767;
+}
 
  /*
   cmdarg(string,mode) processes a single command-line/command-file argument
