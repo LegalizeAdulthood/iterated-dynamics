@@ -818,6 +818,8 @@ private:
     int parse_command();
 
     int startup_command();
+
+    int command();
 };
 
 namespace
@@ -1249,6 +1251,11 @@ int command_processor::process()
         }
     }
 
+    return command();
+}
+
+int command_processor::command()
+{
     if (variable == "reset")
     {
         initvars_fractal();
