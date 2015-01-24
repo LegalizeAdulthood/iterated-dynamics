@@ -811,6 +811,8 @@ private:
     bf_t bYctr;
 
     char *argptr;
+
+    void convert_argument_to_lower_case(char *curarg);
 };
 
 #define NONNUMERIC -32767
@@ -857,9 +859,8 @@ command_processor::command_processor()
     std::fill_n(floatvalstr, 16, nullptr);
 }
 
-int command_processor::process(char *curarg, cmd_file mode)
+void command_processor::convert_argument_to_lower_case(char *curarg)
 {
-    argptr = curarg;
     while (*argptr)
     {   // convert to lower case
         if (*argptr >= 'A' && *argptr <= 'Z')
@@ -876,6 +877,12 @@ int command_processor::process(char *curarg, cmd_file mode)
         }
         ++argptr;
     }
+}
+
+int command_processor::process(char *curarg, cmd_file mode)
+{
+    argptr = curarg;
+    convert_argument_to_lower_case(curarg);
 
     int j;
     char *value = strchr(&curarg[1], '=');
