@@ -809,8 +809,6 @@ private:
     bf_t bXctr;
     bf_t bYctr;
 
-    char *argptr;
-
     void convert_argument_to_lower_case(char *curarg);
 };
 
@@ -847,8 +845,7 @@ command_processor::command_processor()
     Skew(0.0),
     Magnification(0.0),
     bXctr(nullptr),
-    bYctr(nullptr),
-    argptr(nullptr)
+    bYctr(nullptr)
 {
     std::fill_n(charval, 16, 0);
     std::fill_n(yesnoval, 16, 0);
@@ -859,7 +856,7 @@ command_processor::command_processor()
 
 void command_processor::convert_argument_to_lower_case(char *curarg)
 {
-    argptr = curarg;
+    char *argptr = curarg;
     while (*argptr)
     {   // convert to lower case
         if (*argptr >= 'A' && *argptr <= 'Z')
@@ -915,7 +912,7 @@ int command_processor::process(char *curarg, cmd_file mode)
         yesnoval[0] = 1;
     }
 
-    argptr = value;
+    char *argptr = value;
     floatparms = 0;
     intparms = 0;
     totparms = 0;
