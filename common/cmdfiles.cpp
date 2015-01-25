@@ -2770,7 +2770,6 @@ int command_processor::command()
         {
             return bad_command();
         }
-#if !defined(XFRACT)
         if (totparms > 1)
         {
             soundflag &= SOUNDFLAG_ORBITMASK; // reset options
@@ -2870,7 +2869,6 @@ int command_processor::command()
             if ((totparms > counter) && (intval[counter] > 0)
                     && (intval[counter] < 13))
                 scale_map[counter] = intval[counter];
-#endif
         return CMDARG_NONE;
     }
 
