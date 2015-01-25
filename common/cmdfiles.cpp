@@ -821,6 +821,15 @@ private:
 
     int command();
 
+    int command_batch();
+    int command_max_history();
+    int command_adapter();
+    int command_afi();
+    int command_text_safe();
+    int command_vesa_detect();
+    int command_bios_palette();
+    int command_fpu();
+    int command_exit_no_ask();
     int command_make_doc();
     int command_make_par();
 };
@@ -1039,118 +1048,51 @@ int command_processor::parse_command()
     return CMDARG_NONE;
 }
 
+// these commands are allowed only at startup
 int command_processor::startup_command()
-{// these commands are allowed only at startup
-    if (variable == "batch")     // batch=?
+{
+    if (variable == "batch")
     {
-        if (yesnoval[0] < 0)
-        {
-            argerror(curarg);
-            return CMDARG_ERROR;
-        }
-#ifdef XFRACT
-        g_init_mode = yesnoval[0] ? 0 : -1; // skip credits for batch mode
-#endif
-        init_batch = static_cast<batch_modes>(yesnoval[0]);
-        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+        return command_batch();
     }
-    if (variable == "maxhistory")       // maxhistory=?
+    if (variable == "maxhistory")
     {
-        if (numval == NON_NUMERIC)
-        {
-            argerror(curarg);
-            return CMDARG_ERROR;
-        }
-        else if (numval < 0)
-        {
-            argerror(curarg);
-            return CMDARG_ERROR;
-        }
-        else
-        {
-            maxhistory = numval;
-        }
-        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+        return command_max_history();
     }
 
-    // adapter= no longer used
-    if (variable == "adapter")    // adapter==?
+    if (variable == "adapter")
     {
-        // adapter parameter no longer used; check for bad argument anyway
-        if ((strcmp(value, "egamono") != 0) && (strcmp(value, "hgc") != 0) &&
-                (strcmp(value, "ega") != 0)     && (strcmp(value, "cga") != 0) &&
-                (strcmp(value, "mcga") != 0)    && (strcmp(value, "vga") != 0))
-        {
-            argerror(curarg);
-            return CMDARG_ERROR;
-        }
-        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+        return command_adapter();
     }
 
-    // 8514 API no longer used; silently gobble any argument
     if (variable == "afi")
     {
-        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+        return command_afi();
     }
 
     if (variable == "textsafe")   // textsafe==?
     {
-        // textsafe no longer used, do validity checking, but gobble argument
-        if (first_init)
-        {
-            if (!((charval[0] == 'n')   // no
-                    || (charval[0] == 'y')  // yes
-                    || (charval[0] == 'b')  // bios
-                    || (charval[0] == 's'))) // save
-            {
-                argerror(curarg);
-                return CMDARG_ERROR;
-            }
-        }
-        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+        return command_text_safe();
     }
 
     if (variable == "vesadetect")
     {
-        // vesadetect no longer used, do validity checks, but gobble argument
-        if (yesnoval[0] < 0)
-        {
-            argerror(curarg);
-            return CMDARG_ERROR;
-        }
-        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+        return command_vesa_detect();
     }
 
-    // biospalette no longer used, do validity checks, but gobble argument
     if (variable == "biospalette")
     {
-        if (yesnoval[0] < 0)
-        {
-            argerror(curarg);
-            return CMDARG_ERROR;
-        }
-        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+        return command_bios_palette();
     }
 
     if (variable == "fpu")
     {
-        if (strcmp(value, "387") == 0)
-        {
-            return CMDARG_NONE;
-        }
-        argerror(curarg);
-        return CMDARG_ERROR;
+        return command_fpu();
     }
 
     if (variable == "exitnoask")
     {
-        if (yesnoval[0] < 0)
-        {
-            argerror(curarg);
-            return CMDARG_ERROR;
-        }
-        escape_exit = yesnoval[0] != 0;
-        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+        return command_exit_no_ask();
     }
 
     if (variable == "makedoc")
@@ -1161,9 +1103,125 @@ int command_processor::startup_command()
     if (variable == "makepar")
     {
         return command_make_par();
-
     }
+
     return CMDARG_NONE;
+}
+
+// batch=?
+int command_processor::command_batch()
+{
+    if (yesnoval[0] < 0)
+    {
+        argerror(curarg);
+        return CMDARG_ERROR;
+    }
+#ifdef XFRACT
+    g_init_mode = yesnoval[0] ? 0 : -1; // skip credits for batch mode
+#endif
+    init_batch = static_cast<batch_modes>(yesnoval[0]);
+    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+}
+
+// maxhistory=?
+int command_processor::command_max_history()
+{
+    if (numval == NON_NUMERIC)
+    {
+        argerror(curarg);
+        return CMDARG_ERROR;
+    }
+    else if (numval < 0)
+    {
+        argerror(curarg);
+        return CMDARG_ERROR;
+    }
+    else
+    {
+        maxhistory = numval;
+    }
+    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+}
+
+// adapter==?
+// adapter= no longer used
+// adapter parameter no longer used; check for bad argument anyway
+int command_processor::command_adapter()
+{
+    if ((strcmp(value, "egamono") != 0) && (strcmp(value, "hgc") != 0) &&
+            (strcmp(value, "ega") != 0)     && (strcmp(value, "cga") != 0) &&
+            (strcmp(value, "mcga") != 0)    && (strcmp(value, "vga") != 0))
+    {
+        argerror(curarg);
+        return CMDARG_ERROR;
+    }
+    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+}
+
+// 8514 API no longer used; silently gobble any argument
+int command_processor::command_afi()
+{
+    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+}
+
+// textsafe no longer used, do validity checking, but gobble argument
+int command_processor::command_text_safe()
+{
+    if (first_init)
+    {
+        if (!((charval[0] == 'n')   // no
+                || (charval[0] == 'y')  // yes
+                || (charval[0] == 'b')  // bios
+                || (charval[0] == 's'))) // save
+        {
+            argerror(curarg);
+            return CMDARG_ERROR;
+        }
+    }
+    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+}
+
+// vesadetect no longer used, do validity checks, but gobble argument
+int command_processor::command_vesa_detect()
+{
+    if (yesnoval[0] < 0)
+    {
+        argerror(curarg);
+        return CMDARG_ERROR;
+    }
+    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+}
+
+// biospalette no longer used, do validity checks, but gobble argument
+int command_processor::command_bios_palette()
+{
+    if (yesnoval[0] < 0)
+    {
+        argerror(curarg);
+        return CMDARG_ERROR;
+    }
+    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+}
+
+int command_processor::command_fpu()
+{
+    if (strcmp(value, "387") == 0)
+    {
+        return CMDARG_NONE;
+    }
+    argerror(curarg);
+    return CMDARG_ERROR;
+}
+
+int command_processor::command_exit_no_ask()
+{
+    if (yesnoval[0] < 0)
+    {
+        argerror(curarg);
+        return CMDARG_ERROR;
+    }
+    escape_exit = yesnoval[0] != 0;
+    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 }
 
 int command_processor::command_make_doc()
