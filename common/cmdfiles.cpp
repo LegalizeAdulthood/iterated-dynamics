@@ -835,6 +835,87 @@ private:
     int command_make_par();
 
     int command();
+    int command_reset();
+    int command_filename();
+    int command_video();
+    int command_map();
+    int command_colors();
+    int command_record_colors();
+    int command_max_line_length();
+    int command_comment();
+    int command_tplus();
+    int command_non_interlaced();
+    int command_max_color_res();
+    int command_pixel_zoom();
+    int command_overwrite();
+    int command_gif87a();
+    int command_dither();
+    int command_save_time();
+    int command_auto_key();
+    int command_auto_key_name();
+    int command_type();
+    int command_inside();
+    int command_proximity();
+    int command_fill_color();
+    int command_fin_attract();
+    int command_no_bof();
+    int command_function();
+    int command_outside();
+    int command_bf_digits();
+    int command_max_iter();
+    int command_passes();
+    int command_is_mand();
+    int command_cycle_limit();
+    int command_make_mig();
+    int command_cycle_range();
+    int command_ranges();
+    int command_save_name();
+    int command_tweak_lzw();
+    int command_min_stack();
+    int command_math_tolerance();
+    int command_temp_dir();
+    int command_work_dir();
+    int command_exit_mode();
+    int command_text_colors();
+    int command_potential();
+    int command_params();
+    int command_miim();
+    int command_init_orbit();
+    int command_orbit_name();
+    int command_3d_mode();
+    int command_julibrot_3d();
+    int command_julibrot_eyes();
+    int command_julibrot_from_to();
+    int command_corners();
+    int command_orbit_corners();
+    int command_screen_coords();
+    int command_orbit_draw_mode();
+    int command_view_windows();
+    int command_center_mag();
+    int command_aspect_drift();
+    int command_invert();
+    int command_old_demm_colors();
+    int command_ask_video();
+    int command_float();
+    int command_fast_restore();
+    int command_org_frm_dir();
+    int command_biomorph();
+    int command_orbit_save();
+    int command_bailout();
+    int command_bailout_test();
+    int command_symmetry();
+    bool is_print_parameter();
+    int command_sound();
+    int command_hertz();
+    int command_volume();
+    int command_attenuate();
+    int command_polyphony();
+    int command_wave_type();
+    int command_attack();
+    int command_decay();
+    int command_sustain();
+    int command_s_release();
+    int command_scale_map();
     int command_periodicity();
     int command_log_map();
     int command_log_mode();
@@ -1382,1494 +1463,420 @@ int command_processor::command()
 {
     if (variable == "reset")
     {
-        initvars_fractal();
-
-        // PAR release unknown unless specified
-        if (numval >= 0)
-        {
-            save_release = numval;
-        }
-        else
-        {
-            return bad_command();
-        }
-        if (save_release == 0)
-        {
-            save_release = 1730; // before start of lyapunov wierdness
-        }
-        return CMDARG_FRACTAL_PARAM | CMDARG_RESET;
+        return command_reset();
     }
 
-    if (variable == "filename")      // filename=?
+    if (variable == "filename")
     {
-        int existdir;
-        if (charval[0] == '.' && value[1] != SLASHC)
-        {
-            if (valuelen > 4)
-            {
-                return bad_command();
-            }
-            // cppcheck-suppress constStatement
-            gifmask = std::string{"*"} + value;
-            return CMDARG_NONE;
-        }
-        if (valuelen > (FILE_MAX_PATH-1))
-        {
-            return bad_command();
-        }
-        if (mode == cmd_file::AT_AFTER_STARTUP && display_3d == display_3d_modes::NONE) // can't do this in @ command
-        {
-            return bad_command();
-        }
-
-        existdir = merge_pathnames(readname, value, mode);
-        if (existdir == 0)
-        {
-            show_file = 0;
-        }
-        else if (existdir < 0)
-        {
-            init_msg(variable.c_str(), value, mode);
-        }
-        else
-        {
-            browse_name = extract_filename(readname.c_str());
-        }
-        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+        return command_filename();
     }
 
-    if (variable == "video")         // video=?
+    if (variable == "video")
     {
-        int k = check_vidmode_keyname(value);
-        if (k == 0)
-        {
-            return bad_command();
-        }
-        g_init_mode = -1;
-        for (int i = 0; i < MAXVIDEOMODES; ++i)
-        {
-            if (g_video_table[i].keynum == k)
-            {
-                g_init_mode = i;
-                break;
-            }
-        }
-        if (g_init_mode == -1)
-        {
-            return bad_command();
-        }
-        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+        return command_video();
     }
 
-    if (variable == "map")         // map=, set default colors
+    if (variable == "map")
     {
-        int existdir;
-        if (valuelen > (FILE_MAX_PATH-1))
-        {
-            return bad_command();
-        }
-        existdir = merge_pathnames(MAP_name, value, mode);
-        if (existdir > 0)
-        {
-            return CMDARG_NONE;    // got a directory
-        }
-        else if (existdir < 0)
-        {
-            init_msg(variable.c_str(), value, mode);
-            return CMDARG_NONE;
-        }
-        SetColorPaletteName(MAP_name.c_str());
-        return CMDARG_NONE;
+        return command_map();
     }
 
-    if (variable == "colors")       // colors=, set current colors
+    if (variable == "colors")
     {
-        if (parse_colors(value) < 0)
-        {
-            return bad_command();
-        }
-        return CMDARG_NONE;
+        return command_colors();
     }
 
-    if (variable == "recordcolors")       // recordcolors=
+    if (variable == "recordcolors")
     {
-        if (*value != 'y' && *value != 'c' && *value != 'a')
-        {
-            return bad_command();
-        }
-        recordcolors = *value;
-        return CMDARG_NONE;
+        return command_record_colors();
     }
 
-    if (variable == "maxlinelength")  // maxlinelength=
+    if (variable == "maxlinelength")
     {
-        if (numval < MINMAXLINELENGTH || numval > MAXMAXLINELENGTH)
-        {
-            return bad_command();
-        }
-        maxlinelength = numval;
-        return CMDARG_NONE;
+        return command_max_line_length();
     }
 
-    if (variable == "comment")       // comment=
+    if (variable == "comment")
     {
-        parse_comments(value);
-        return CMDARG_NONE;
+        return command_comment();
     }
 
-    // tplus no longer used, validate value and gobble argument
     if (variable == "tplus")
     {
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        return CMDARG_NONE;
+        return command_tplus();
     }
 
-    // noninterlaced no longer used, validate value and gobble argument
     if (variable == "noninterlaced")
     {
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        return CMDARG_NONE;
+        return command_non_interlaced();
     }
 
-    // maxcolorres no longer used, validate value and gobble argument
-    if (variable == "maxcolorres") // Change default color resolution
+    if (variable == "maxcolorres")
     {
-        if (numval == 1 || numval == 4 || numval == 8 ||
-                numval == 16 || numval == 24)
-        {
-            return CMDARG_NONE;
-        }
-        return bad_command();
+        return command_max_color_res();
     }
 
-    // pixelzoom no longer used, validate value and gobble argument
     if (variable == "pixelzoom")
     {
-        if (numval >= 5)
-        {
-            return bad_command();
-        }
+        return command_pixel_zoom();
+    }
+
+    if ((variable == "warn")            // keep this for backward compatibility
+            || (variable == "overwrite"))
+    {
+        return command_overwrite();
+    }
+
+    if (variable == "gif87a")
+    {
+        return command_gif87a();
+    }
+
+    if (variable == "dither")
+    {
+        return command_dither();
+    }
+
+    if (variable == "savetime")
+    {
+        return command_save_time();
+    }
+
+    if (variable == "autokey")
+    {
+        return command_auto_key();
+    }
+
+    if (variable == "autokeyname")
+    {
+        return command_auto_key_name();
+    }
+
+    if (variable == "type")
+    {
+        return command_type();
+    }
+
+    if (variable == "inside")
+    {
+        return command_inside();
+    }
+
+    if (variable == "proximity")
+    {
+        return command_proximity();
+    }
+
+    if (variable == "fillcolor")
+    {
+        return command_fill_color();
+    }
+
+    if (variable == "finattract")
+    {
+        return command_fin_attract();
+    }
+
+    if (variable == "nobof")
+    {
+        return command_no_bof();
+    }
+
+    if (variable == "function")
+    {
+        return command_function();
+    }
+
+    if (variable == "outside")
+    {
+        return command_outside();
+    }
+
+    if (variable == "bfdigits")
+    {
+        return command_bf_digits();
+    }
+
+    if (variable == "maxiter")
+    {
+        return command_max_iter();
+    }
+
+    if (variable == "iterincr")
+    {
+        // iterincr=?
         return CMDARG_NONE;
     }
 
-    // keep this for backward compatibility
-    if (variable == "warn")         // warn=?
+    if (variable == "passes")
     {
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        fract_overwrite = (yesnoval[0] ^ 1) != 0;
-        return CMDARG_NONE;
-    }
-    if (variable == "overwrite")    // overwrite=?
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        fract_overwrite = yesnoval[0] != 0;
-        return CMDARG_NONE;
+        return command_passes();
     }
 
-    if (variable == "gif87a")       // gif87a=?
+    if (variable == "ismand")
     {
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        gif87a_flag = yesnoval[0] != 0;
-        return CMDARG_NONE;
+        return command_is_mand();
     }
 
-    if (variable == "dither") // dither=?
+    if (variable == "cyclelimit")
     {
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        dither_flag = yesnoval[0] != 0;
-        return CMDARG_NONE;
-    }
-
-    if (variable == "savetime")      // savetime=?
-    {
-        initsavetime = numval;
-        return CMDARG_NONE;
-    }
-
-    if (variable == "autokey")       // autokey=?
-    {
-        if (strcmp(value, "record") == 0)
-        {
-            g_slides = slides_mode::RECORD;
-        }
-        else if (strcmp(value, "play") == 0)
-        {
-            g_slides = slides_mode::PLAY;
-        }
-        else
-        {
-            return bad_command();
-        }
-        return CMDARG_NONE;
-    }
-
-    if (variable == "autokeyname")   // autokeyname=?
-    {
-        std::string buff;
-        if (merge_pathnames(buff, value, mode) < 0)
-        {
-            init_msg(variable.c_str(), value, mode);
-        }
-        else
-        {
-            autoname = buff;
-        }
-        return CMDARG_NONE;
-    }
-
-    if (variable == "type")         // type=?
-    {
-        if (value[valuelen-1] == '*')
-        {
-            value[--valuelen] = 0;
-        }
-        // kludge because type ifs3d has an asterisk in front
-        if (strcmp(value, "ifs3d") == 0)
-        {
-            value[3] = 0;
-        }
-        int k;
-        for (k = 0; fractalspecific[k].name != nullptr; k++)
-        {
-            if (strcmp(value, fractalspecific[k].name) == 0)
-            {
-                break;
-            }
-        }
-        if (fractalspecific[k].name == nullptr)
-        {
-            return bad_command();
-        }
-        fractype = static_cast<fractal_type>(k);
-        curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
-        if (!initcorners)
-        {
-            xxmin = curfractalspecific->xmin;
-            xx3rd = xxmin;
-            xxmax = curfractalspecific->xmax;
-            yymin = curfractalspecific->ymin;
-            yy3rd = yymin;
-            yymax = curfractalspecific->ymax;
-        }
-        if (!initparams)
-        {
-            load_params(fractype);
-        }
-        return CMDARG_FRACTAL_PARAM;
-    }
-
-    if (variable == "inside")       // inside=?
-    {
-        struct
-        {
-            char const *arg;
-            int inside;
-        }
-        const args[] =
-        {
-            { "zmag", ZMAG },
-            { "bof60", BOF60 },
-            { "bof61", BOF61 },
-            { "epsiloncross", EPSCROSS },
-            { "startrail", STARTRAIL },
-            { "period", PERIOD },
-            { "fmod", FMODI },
-            { "atan", ATANI },
-            { "maxiter", -1 }
-        };
-        for (auto &arg : args)
-        {
-            if (strcmp(value, arg.arg) == 0)
-            {
-                inside = arg.inside;
-                return CMDARG_FRACTAL_PARAM;
-            }
-        }
-        if (numval == NON_NUMERIC)
-        {
-            return bad_command();
-        }
-        else
-        {
-            inside = numval;
-        }
-        return CMDARG_FRACTAL_PARAM;
-    }
-
-    if (variable == "proximity")       // proximity=?
-    {
-        closeprox = floatval[0];
-        return CMDARG_FRACTAL_PARAM;
-    }
-
-    if (variable == "fillcolor")       // fillcolor
-    {
-        if (strcmp(value, "normal") == 0)
-        {
-            fillcolor = -1;
-        }
-        else if (numval == NON_NUMERIC)
-        {
-            return bad_command();
-        }
-        else
-        {
-            fillcolor = numval;
-        }
-        return CMDARG_FRACTAL_PARAM;
-    }
-
-    if (variable == "finattract")   // finattract=?
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        finattract = yesnoval[0] != 0;
-        return CMDARG_FRACTAL_PARAM;
-    }
-
-    if (variable == "nobof")   // nobof=?
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        nobof = yesnoval[0] != 0;
-        return CMDARG_FRACTAL_PARAM;
-    }
-
-    if (variable == "function")      // function=?,?
-    {
-        int k = 0;
-        while (*value && k < 4)
-        {
-            if (set_trig_array(k++, value))
-            {
-                return bad_command();
-            }
-            value = strchr(value, '/');
-            if (value == nullptr)
-            {
-                break;
-            }
-            ++value;
-        }
-        new_bifurcation_functions_loaded = true; // for old bifs
-        return CMDARG_FRACTAL_PARAM;
-    }
-
-    if (variable == "outside")      // outside=?
-    {
-        struct
-        {
-            char const *arg;
-            int outside;
-        }
-        args[] =
-        {
-            { "iter", ITER },
-            { "real", REAL },
-            { "imag", IMAG },
-            { "mult", MULT },
-            { "summ", SUM },
-            { "atan", ATAN },
-            { "fmod", FMOD },
-            { "tdis", TDIS }
-        };
-        for (auto &arg : args)
-        {
-            if (strcmp(value, arg.arg) == 0)
-            {
-                outside = arg.outside;
-                return CMDARG_FRACTAL_PARAM;
-            }
-        }
-        if ((numval == NON_NUMERIC) || (numval < TDIS || numval > 255))
-        {
-            return bad_command();
-        }
-        outside = numval;
-        return CMDARG_FRACTAL_PARAM;
-    }
-
-    if (variable == "bfdigits")      // bfdigits=?
-    {
-        if ((numval == NON_NUMERIC) || (numval < 0 || numval > 2000))
-        {
-            return bad_command();
-        }
-        bfdigits = numval;
-        return CMDARG_FRACTAL_PARAM;
-    }
-
-    if (variable == "maxiter")       // maxiter=?
-    {
-        if (floatval[0] < 2)
-        {
-            return bad_command();
-        }
-        maxit = (long) floatval[0];
-        return CMDARG_FRACTAL_PARAM;
-    }
-
-    if (variable == "iterincr")        // iterincr=?
-    {
-        return CMDARG_NONE;
-    }
-
-    if (variable == "passes")        // passes=?
-    {
-        if (charval[0] != '1' && charval[0] != '2' && charval[0] != '3'
-                && charval[0] != 'g' && charval[0] != 'b'
-                && charval[0] != 't' && charval[0] != 's'
-                && charval[0] != 'd' && charval[0] != 'o')
-        {
-            return bad_command();
-        }
-        usr_stdcalcmode = charval[0];
-        if (charval[0] == 'g')
-        {
-            stoppass = ((int)value[1] - (int)'0');
-            if (stoppass < 0 || stoppass > 6)
-            {
-                stoppass = 0;
-            }
-        }
-        return CMDARG_FRACTAL_PARAM;
-    }
-
-    if (variable == "ismand")        // ismand=?
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        ismand = yesnoval[0] != 0;
-        return CMDARG_FRACTAL_PARAM;
-    }
-
-    if (variable == "cyclelimit")   // cyclelimit=?
-    {
-        if (numval <= 1 || numval > 256)
-        {
-            return bad_command();
-        }
-        initcyclelimit = numval;
-        return CMDARG_NONE;
+        return command_cycle_limit();
     }
 
     if (variable == "makemig")
     {
-        int xmult, ymult;
-        if (totparms < 2)
-        {
-            return bad_command();
-        }
-        xmult = intval[0];
-        ymult = intval[1];
-        make_mig(xmult, ymult);
-        exit(0);
+        return command_make_mig();
     }
 
     if (variable == "cyclerange")
     {
-        if (totparms < 2)
-        {
-            intval[1] = 255;
-        }
-        if (totparms < 1)
-        {
-            intval[0] = 1;
-        }
-        if (totparms != intparms
-                || intval[0] < 0 || intval[1] > 255 || intval[0] > intval[1])
-        {
-            return bad_command();
-        }
-        rotate_lo = intval[0];
-        rotate_hi = intval[1];
-        return CMDARG_NONE;
+        return command_cycle_range();
     }
 
     if (variable == "ranges")
     {
-        int i, j, entries, prev;
-        int tmpranges[128];
-
-        if (totparms != intparms)
-        {
-            return bad_command();
-        }
-        i = 0;
-        prev = i;
-        entries = prev;
-        LogFlag = 0; // ranges overrides logmap
-        while (i < totparms)
-        {
-            j = intval[i++];
-            if (j < 0) // striping
-            {
-                j = -j;
-                if (j < 1 || j >= 16384 || i >= totparms)
-                {
-                    return bad_command();
-                }
-                tmpranges[entries++] = -1; // {-1,width,limit} for striping
-                tmpranges[entries++] = j;
-                j = intval[i++];
-            }
-            if (j < prev)
-            {
-                return bad_command();
-            }
-            prev = j;
-            tmpranges[entries++] = prev;
-        }
-        if (prev == 0)
-        {
-            return bad_command();
-        }
-        bool resized = false;
-        try
-        {
-            ranges.resize(entries);
-            resized = true;
-        }
-        catch (std::bad_alloc const &)
-        {
-        }
-        if (!resized)
-        {
-            stopmsg(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
-            return CMDARG_ERROR;
-        }
-        rangeslen = entries;
-        for (int i = 0; i < rangeslen; ++i)
-        {
-            ranges[i] = tmpranges[i];
-        }
-        return CMDARG_FRACTAL_PARAM;
+        return command_ranges();
     }
 
-    if (variable == "savename")      // savename=?
+    if (variable == "savename")
     {
-        if (valuelen > (FILE_MAX_PATH-1))
-        {
-            return bad_command();
-        }
-        if (first_init || mode == cmd_file::AT_AFTER_STARTUP)
-        {
-            if (merge_pathnames(savename, value, mode) < 0)
-            {
-                init_msg(variable.c_str(), value, mode);
-            }
-        }
-        return CMDARG_NONE;
+        return command_save_name();
     }
 
-    if (variable == "tweaklzw")      // tweaklzw=?
+    if (variable == "tweaklzw")
     {
-        if (totparms >= 1)
-        {
-            lzw[0] = intval[0];
-        }
-        if (totparms >= 2)
-        {
-            lzw[1] = intval[1];
-        }
-        return CMDARG_NONE;
+        return command_tweak_lzw();
     }
 
-    if (variable == "minstack")      // minstack=?
+    if (variable == "minstack")
     {
-        if (totparms != 1)
-        {
-            return bad_command();
-        }
-        minstack = intval[0];
-        return CMDARG_NONE;
+        return command_min_stack();
     }
 
-    if (variable == "mathtolerance")      // mathtolerance=?
+    if (variable == "mathtolerance")
     {
-        if (charval[0] == '/')
-        {
-            ; // leave math_tol[0] at the default value
-        }
-        else if (totparms >= 1)
-        {
-            math_tol[0] = floatval[0];
-        }
-        if (totparms >= 2)
-        {
-            math_tol[1] = floatval[1];
-        }
-        return CMDARG_NONE;
+        return command_math_tolerance();
     }
 
-    if (variable == "tempdir")      // tempdir=?
+    if (variable == "tempdir")
     {
-        if (valuelen > (FILE_MAX_DIR-1))
-        {
-            return bad_command();
-        }
-        if (!isadirectory(value))
-        {
-            return bad_command();
-        }
-        tempdir = value;
-        fix_dirname(tempdir);
-        return CMDARG_NONE;
+        return command_temp_dir();
     }
 
-    if (variable == "workdir")      // workdir=?
+    if (variable == "workdir")
     {
-        if (valuelen > (FILE_MAX_DIR-1))
-        {
-            return bad_command();
-        }
-        if (!isadirectory(value))
-        {
-            return bad_command();
-        }
-        workdir = value;
-        fix_dirname(workdir);
-        return CMDARG_NONE;
+        return command_work_dir();
     }
 
-    if (variable == "exitmode")      // exitmode=?
+    if (variable == "exitmode")
     {
-        sscanf(value, "%x", &numval);
-        exitmode = (BYTE)numval;
-        return CMDARG_NONE;
+        return command_exit_mode();
     }
 
     if (variable == "textcolors")
     {
-        parse_textcolors(value);
-        return CMDARG_NONE;
+        return command_text_colors();
     }
 
-    if (variable == "potential")     // potential=?
+    if (variable == "potential")
     {
-        int k = 0;
-        while (k < 3 && *value)
-        {
-            if (k == 1)
-            {
-                potparam[k] = atof(value);
-            }
-            else
-            {
-                potparam[k] = atoi(value);
-            }
-            k++;
-            value = strchr(value, '/');
-            if (value == nullptr)
-            {
-                k = 99;
-            }
-            ++value;
-        }
-        pot16bit = false;
-        if (k < 99)
-        {
-            if (strcmp(value, "16bit"))
-            {
-                return bad_command();
-            }
-            pot16bit = true;
-        }
-        return CMDARG_FRACTAL_PARAM;
+        return command_potential();
     }
 
-    if (variable == "params")        // params=?,?
+    if (variable == "params")
     {
-        if (totparms != floatparms || totparms > MAXPARAMS)
-        {
-            return bad_command();
-        }
-        initparams = true;
-        for (int k = 0; k < MAXPARAMS; ++k)
-        {
-            param[k] = (k < totparms) ? floatval[k] : 0.0;
-        }
-        if (bf_math != bf_math_type::NONE)
-        {
-            for (int k = 0; k < MAXPARAMS; k++)
-            {
-                floattobf(bfparms[k], param[k]);
-            }
-        }
-        return CMDARG_FRACTAL_PARAM;
+        return command_params();
     }
 
-    if (variable == "miim")          // miim=?[/?[/?[/?]]]
+    if (variable == "miim")
     {
-        if (totparms > 6)
-        {
-            return bad_command();
-        }
-        if (charval[0] == 'b')
-        {
-            major_method = Major::breadth_first;
-        }
-        else if (charval[0] == 'd')
-        {
-            major_method = Major::depth_first;
-        }
-        else if (charval[0] == 'w')
-        {
-            major_method = Major::random_walk;
-        }
-#ifdef RANDOM_RUN
-        else if (charval[0] == 'r')
-        {
-            major_method = Major::random_run;
-        }
-#endif
-        else
-        {
-            return bad_command();
-        }
-
-        if (charval[1] == 'l')
-        {
-            minor_method = Minor::left_first;
-        }
-        else if (charval[1] == 'r')
-        {
-            minor_method = Minor::right_first;
-        }
-        else
-        {
-            return bad_command();
-        }
-
-        // keep this next part in for backwards compatibility with old PARs ???
-
-        if (totparms > 2)
-        {
-            for (int k = 2; k < 6; ++k)
-            {
-                param[k-2] = (k < totparms) ? floatval[k] : 0.0;
-            }
-        }
-
-        return CMDARG_FRACTAL_PARAM;
+        return command_miim();
     }
 
-    if (variable == "initorbit")     // initorbit=?,?
+    if (variable == "initorbit")
     {
-        if (strcmp(value, "pixel") == 0)
-        {
-            useinitorbit = 2;
-        }
-        else
-        {
-            if (totparms != 2 || floatparms != 2)
-            {
-                return bad_command();
-            }
-            initorbit.x = floatval[0];
-            initorbit.y = floatval[1];
-            useinitorbit = 1;
-        }
-        return CMDARG_FRACTAL_PARAM;
+        return command_init_orbit();
     }
 
-    if (variable == "orbitname")         // orbitname=?
+    if (variable == "orbitname")
     {
-        if (check_orbit_name(value))
-        {
-            return bad_command();
-        }
-        return CMDARG_FRACTAL_PARAM;
+        return command_orbit_name();
     }
 
-    if (variable == "3dmode")         // orbitname=?
+    if (variable == "3dmode")
     {
-        int j = -1;
-        for (int i = 0; i < 4; i++)
-        {
-            if (juli3Doptions[i] == value)
-            {
-                j = i;
-            }
-        }
-        if (j < 0)
-        {
-            return bad_command();
-        }
-        else
-        {
-            juli3Dmode = j;
-        }
-        return CMDARG_FRACTAL_PARAM;
+        return command_3d_mode();
     }
 
-    if (variable == "julibrot3d")       // julibrot3d=?,?,?,?
+    if (variable == "julibrot3d")
     {
-        if (floatparms != totparms)
-        {
-            return bad_command();
-        }
-        if (totparms > 0)
-        {
-            zdots = (int)floatval[0];
-        }
-        if (totparms > 1)
-        {
-            originfp = (float)floatval[1];
-        }
-        if (totparms > 2)
-        {
-            depthfp = (float)floatval[2];
-        }
-        if (totparms > 3)
-        {
-            heightfp = (float)floatval[3];
-        }
-        if (totparms > 4)
-        {
-            widthfp = (float)floatval[4];
-        }
-        if (totparms > 5)
-        {
-            distfp = (float)floatval[5];
-        }
-        return CMDARG_FRACTAL_PARAM;
+        return command_julibrot_3d();
     }
 
-    if (variable == "julibroteyes")       // julibroteyes=?,?,?,?
+    if (variable == "julibroteyes")
     {
-        if (floatparms != totparms || totparms != 1)
-        {
-            return bad_command();
-        }
-        eyesfp = (float)floatval[0];
-        return CMDARG_FRACTAL_PARAM;
+        return command_julibrot_eyes();
     }
 
-    if (variable == "julibrotfromto")       // julibrotfromto=?,?,?,?
+    if (variable == "julibrotfromto")
     {
-        if (floatparms != totparms || totparms != 4)
-        {
-            return bad_command();
-        }
-        mxmaxfp = floatval[0];
-        mxminfp = floatval[1];
-        mymaxfp = floatval[2];
-        myminfp = floatval[3];
-        return CMDARG_FRACTAL_PARAM;
+        return command_julibrot_from_to();
     }
 
-    if (variable == "corners")       // corners=?,?,?,?
+    if (variable == "corners")
     {
-        int dec;
-        if (fractype == fractal_type::CELLULAR)
-        {
-            return CMDARG_FRACTAL_PARAM; // skip setting the corners
-        }
-        if (floatparms != totparms
-                || (totparms != 0 && totparms != 4 && totparms != 6))
-        {
-            return bad_command();
-        }
-        usemag = false;
-        if (totparms == 0)
-        {
-            return CMDARG_NONE; // turns corners mode on
-        }
-        initcorners = true;
-        // good first approx, but dec could be too big
-        dec = get_max_curarg_len(floatvalstr, totparms) + 1;
-        if ((dec > DBL_DIG+1 || debugflag == debug_flags::force_arbitrary_precision_math)
-            && debugflag != debug_flags::prevent_arbitrary_precision_math)
-        {
-            bf_math_type old_bf_math = bf_math;
-            if (bf_math == bf_math_type::NONE || dec > decimals)
-            {
-                init_bf_dec(dec);
-            }
-            if (old_bf_math == bf_math_type::NONE)
-            {
-                for (int k = 0; k < MAXPARAMS; k++)
-                {
-                    floattobf(bfparms[k], param[k]);
-                }
-            }
-
-            // xx3rd = xxmin = floatval[0];
-            get_bf(bfxmin, floatvalstr[0]);
-            get_bf(bfx3rd, floatvalstr[0]);
-
-            // xxmax = floatval[1];
-            get_bf(bfxmax, floatvalstr[1]);
-
-            // yy3rd = yymin = floatval[2];
-            get_bf(bfymin, floatvalstr[2]);
-            get_bf(bfy3rd, floatvalstr[2]);
-
-            // yymax = floatval[3];
-            get_bf(bfymax, floatvalstr[3]);
-
-            if (totparms == 6)
-            {
-                // xx3rd = floatval[4];
-                get_bf(bfx3rd, floatvalstr[4]);
-
-                // yy3rd = floatval[5];
-                get_bf(bfy3rd, floatvalstr[5]);
-            }
-
-            // now that all the corners have been read in, get a more
-            // accurate value for dec and do it all again
-
-            dec = getprecbf_mag();
-            if (dec < 0)
-            {
-                return bad_command();
-            }
-
-            if (dec > decimals)  // get corners again if need more precision
-            {
-                init_bf_dec(dec);
-
-                /* now get parameters and corners all over again at new
-                decimal setting */
-                for (int k = 0; k < MAXPARAMS; k++)
-                {
-                    floattobf(bfparms[k], param[k]);
-                }
-
-                // xx3rd = xxmin = floatval[0];
-                get_bf(bfxmin, floatvalstr[0]);
-                get_bf(bfx3rd, floatvalstr[0]);
-
-                // xxmax = floatval[1];
-                get_bf(bfxmax, floatvalstr[1]);
-
-                // yy3rd = yymin = floatval[2];
-                get_bf(bfymin, floatvalstr[2]);
-                get_bf(bfy3rd, floatvalstr[2]);
-
-                // yymax = floatval[3];
-                get_bf(bfymax, floatvalstr[3]);
-
-                if (totparms == 6)
-                {
-                    // xx3rd = floatval[4];
-                    get_bf(bfx3rd, floatvalstr[4]);
-
-                    // yy3rd = floatval[5];
-                    get_bf(bfy3rd, floatvalstr[5]);
-                }
-            }
-        }
-        xxmin = floatval[0];
-        xx3rd = xxmin;
-        xxmax = floatval[1];
-        yymin = floatval[2];
-        yy3rd = yymin;
-        yymax = floatval[3];
-
-        if (totparms == 6)
-        {
-            xx3rd =      floatval[4];
-            yy3rd =      floatval[5];
-        }
-        return CMDARG_FRACTAL_PARAM;
+        return command_corners();
     }
 
-    if (variable == "orbitcorners")  // orbit corners=?,?,?,?
+    if (variable == "orbitcorners")
     {
-        set_orbit_corners = false;
-        if (floatparms != totparms
-                || (totparms != 0 && totparms != 4 && totparms != 6))
-        {
-            return bad_command();
-        }
-        oxmin = floatval[0];
-        ox3rd = oxmin;
-        oxmax = floatval[1];
-        oymin = floatval[2];
-        oy3rd = oymin;
-        oymax = floatval[3];
-
-        if (totparms == 6)
-        {
-            ox3rd =      floatval[4];
-            oy3rd =      floatval[5];
-        }
-        set_orbit_corners = true;
-        keep_scrn_coords = true;
-        return CMDARG_FRACTAL_PARAM;
+        return command_orbit_corners();
     }
 
-    if (variable == "screencoords")     // screencoords=?
+    if (variable == "screencoords")
     {
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        keep_scrn_coords = yesnoval[0] != 0;
-        return CMDARG_FRACTAL_PARAM;
+        return command_screen_coords();
     }
 
-    if (variable == "orbitdrawmode")     // orbitdrawmode=?
+    if (variable == "orbitdrawmode")
     {
-        if (charval[0] != 'l' && charval[0] != 'r' && charval[0] != 'f')
-        {
-            return bad_command();
-        }
-        drawmode = charval[0];
-        return CMDARG_FRACTAL_PARAM;
+        return command_orbit_draw_mode();
     }
 
     if (variable == "viewwindows")
-    {  // viewwindows=?,?,?,?,?
-        if (totparms > 5 || floatparms-intparms > 2 || intparms > 4)
-        {
-            return bad_command();
-        }
-        viewwindow = true;
-        viewreduction = 4.2F;  // reset default values
-        finalaspectratio = screenaspect;
-        viewcrop = true;
-        viewydots = 0;
-        viewxdots = viewydots;
-
-        if ((totparms > 0) && (floatval[0] > 0.001))
-            viewreduction = (float)floatval[0];
-        if ((totparms > 1) && (floatval[1] > 0.001))
-            finalaspectratio = (float)floatval[1];
-        if ((totparms > 2) && (yesnoval[2] == 0))
-            viewcrop = yesnoval[2] != 0;
-        if ((totparms > 3) && (intval[3] > 0))
-            viewxdots = intval[3];
-        if ((totparms == 5) && (intval[4] > 0))
-            viewydots = intval[4];
-        return CMDARG_FRACTAL_PARAM;
+    {
+        return command_view_windows();
     }
 
     if (variable == "center-mag")
-    {    // center-mag=?,?,?[,?,?,?]
-        int dec;
-
-        if ((totparms != floatparms)
-                || (totparms != 0 && totparms < 3)
-                || (totparms >= 3 && floatval[2] == 0.0))
-        {
-            return bad_command();
-        }
-        if (fractype == fractal_type::CELLULAR)
-            return CMDARG_FRACTAL_PARAM; // skip setting the corners
-        usemag = true;
-        if (totparms == 0)
-            return CMDARG_NONE; // turns center-mag mode on
-        initcorners = true;
-        // dec = get_max_curarg_len(floatvalstr, totparms);
-        sscanf(floatvalstr[2], "%Lf", &Magnification);
-
-        // I don't know if this is portable, but something needs to
-        // be used in case compiler's LDBL_MAX is not big enough
-        if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
-        {
-            return bad_command();
-        }
-
-        dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
-
-        if ((dec <= DBL_DIG+1 && debugflag != debug_flags::force_arbitrary_precision_math)
-            || debugflag == debug_flags::prevent_arbitrary_precision_math)
-        {
-            // rough estimate that double is OK
-            Xctr = floatval[0];
-            Yctr = floatval[1];
-            Xmagfactor = 1;
-            Rotation = 0;
-            Skew = 0;
-            if (floatparms > 3)
-                Xmagfactor = floatval[3];
-            if (Xmagfactor == 0)
-                Xmagfactor = 1;
-            if (floatparms > 4)
-                Rotation = floatval[4];
-            if (floatparms > 5)
-                Skew = floatval[5];
-            // calculate bounds
-            cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
-            return CMDARG_FRACTAL_PARAM;
-        }
-        else
-        {
-            // use arbitrary precision
-            int saved;
-            initcorners = true;
-            bf_math_type old_bf_math = bf_math;
-            if (bf_math == bf_math_type::NONE || dec > decimals)
-                init_bf_dec(dec);
-            if (old_bf_math == bf_math_type::NONE)
-            {
-                for (int k = 0; k < MAXPARAMS; k++)
-                    floattobf(bfparms[k], param[k]);
-            }
-            usemag = true;
-            saved = save_stack();
-            bXctr            = alloc_stack(bflength+2);
-            bYctr            = alloc_stack(bflength+2);
-            get_bf(bXctr, floatvalstr[0]);
-            get_bf(bYctr, floatvalstr[1]);
-            Xmagfactor = 1;
-            Rotation = 0;
-            Skew = 0;
-            if (floatparms > 3)
-                Xmagfactor = floatval[3];
-            if (Xmagfactor == 0)
-                Xmagfactor = 1;
-            if (floatparms > 4)
-                Rotation = floatval[4];
-            if (floatparms > 5)
-                Skew = floatval[5];
-            // calculate bounds
-            cvtcornersbf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
-            bfcornerstofloat();
-            restore_stack(saved);
-            return CMDARG_FRACTAL_PARAM;
-        }
+    {
+        return command_center_mag();
     }
 
     if (variable == "aspectdrift")
-    {   // aspectdrift=?
-        if (floatparms != 1 || floatval[0] < 0)
-        {
-            return bad_command();
-        }
-        aspectdrift = (float)floatval[0];
-        return CMDARG_FRACTAL_PARAM;
+    {
+        return command_aspect_drift();
     }
 
     if (variable == "invert")
-    {        // invert=?,?,?
-        if (totparms != floatparms || (totparms != 1 && totparms != 3))
-        {
-            return bad_command();
-        }
-        inversion[0] = floatval[0];
-        invert = (inversion[0] != 0.0) ? totparms : 0;
-        if (totparms == 3)
-        {
-            inversion[1] = floatval[1];
-            inversion[2] = floatval[2];
-        }
-        return CMDARG_FRACTAL_PARAM;
+    {
+        return command_invert();
     }
 
     if (variable == "olddemmcolors")
-    {      // olddemmcolors=?
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        old_demm_colors = yesnoval[0] != 0;
-        return CMDARG_NONE;
+    {
+        return command_old_demm_colors();
     }
 
     if (variable == "askvideo")
-    {      // askvideo=?
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        askvideo = yesnoval[0] != 0;
-        return CMDARG_NONE;
+    {
+        return command_ask_video();
     }
 
-    if (variable == "ramvideo")        // ramvideo=?
+    if (variable == "ramvideo")
+    {
+        // ramvideo=?
         return CMDARG_NONE; // just ignore and return, for old time's sake
+    }
 
     if (variable == "float")
-    {         // float=?
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-#ifndef XFRACT
-        usr_floatflag = yesnoval[0] != 0;
-#else
-        usr_floatflag = true; // must use floating point
-#endif
-        return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+    {
+        return command_float();
     }
 
     if (variable == "fastrestore")
-    {    // fastrestore=?
-        if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        fastrestore = yesnoval[0] != 0;
-        return CMDARG_NONE;
+    {
+        return command_fast_restore();
     }
 
     if (variable == "orgfrmdir")
-    {    // orgfrmdir=?
-        if (valuelen > (FILE_MAX_DIR-1))
-        {
-            return bad_command();
-        }
-        if (!isadirectory(value))
-        {
-            return bad_command();
-        }
-        orgfrmsearch = true;
-        orgfrmdir = value;
-        fix_dirname(orgfrmdir);
-        return CMDARG_NONE;
+    {
+        return command_org_frm_dir();
     }
 
     if (variable == "biomorph")
-    {      // biomorph=?
-        usr_biomorph = numval;
-        return CMDARG_FRACTAL_PARAM;
+    {
+        return command_biomorph();
     }
 
     if (variable == "orbitsave")
-    {      // orbitsave=?
-        if (charval[0] == 's')
-            orbitsave |= 2;
-        else if (yesnoval[0] < 0)
-        {
-            return bad_command();
-        }
-        orbitsave |= yesnoval[0];
-        return CMDARG_FRACTAL_PARAM;
+    {
+        return command_orbit_save();
     }
 
     if (variable == "bailout")
-    {       // bailout=?
-        if (floatval[0] < 1 || floatval[0] > 2100000000L)
-        {
-            return bad_command();
-        }
-        bailout = (long)floatval[0];
-        return CMDARG_FRACTAL_PARAM;
+    {
+        return command_bailout();
     }
 
     if (variable == "bailoutest")
-    {    // bailoutest=?
-        if (strcmp(value, "mod") == 0)
-            bailoutest = bailouts::Mod;
-        else if (strcmp(value, "real") == 0)
-            bailoutest = bailouts::Real;
-        else if (strcmp(value, "imag") == 0)
-            bailoutest = bailouts::Imag;
-        else if (strcmp(value, "or") == 0)
-            bailoutest = bailouts::Or;
-        else if (strcmp(value, "and") == 0)
-            bailoutest = bailouts::And;
-        else if (strcmp(value, "manh") == 0)
-            bailoutest = bailouts::Manh;
-        else if (strcmp(value, "manr") == 0)
-            bailoutest = bailouts::Manr;
-        else
-        {
-            return bad_command();
-        }
-        setbailoutformula(bailoutest);
-        return CMDARG_FRACTAL_PARAM;
+    {
+        return command_bailout_test();
     }
 
     if (variable == "symmetry")
-    {      // symmetry=?
-        if (strcmp(value, "xaxis") == 0)
-            forcesymmetry = symmetry_type::X_AXIS;
-        else if (strcmp(value, "yaxis") == 0)
-            forcesymmetry = symmetry_type::Y_AXIS;
-        else if (strcmp(value, "xyaxis") == 0)
-            forcesymmetry = symmetry_type::XY_AXIS;
-        else if (strcmp(value, "origin") == 0)
-            forcesymmetry = symmetry_type::ORIGIN;
-        else if (strcmp(value, "pi") == 0)
-            forcesymmetry = symmetry_type::PI_SYM;
-        else if (strcmp(value, "none") == 0)
-            forcesymmetry = symmetry_type::NONE;
-        else
-        {
-            return bad_command();
-        }
-        return CMDARG_FRACTAL_PARAM;
+    {
+        return command_symmetry();
     }
 
-    // deprecated print parameters
-    if ((variable == "printer")
-            || (variable == "printfile")
-            || (variable == "rleps")
-            || (variable == "colorps")
-            || (variable == "epsf")
-            || (variable == "title")
-            || (variable == "translate")
-            || (variable == "plotstyle")
-            || (variable == "halftone")
-            || (variable == "linefeed")
-            || (variable == "comport"))
+    if (is_print_parameter())
     {
         return CMDARG_NONE;
     }
 
     if (variable == "sound")
-    {         // sound=?,?,?
-        if (totparms > 5)
-        {
-            return bad_command();
-        }
-        soundflag = SOUNDFLAG_OFF; // start with a clean slate, add bits as we go
-        if (totparms == 1)
-            soundflag = SOUNDFLAG_SPEAKER; // old command, default to PC speaker
-
-        /* soundflag is used as a bitfield... bit 0,1,2 used for whether sound
-           is modified by an orbits x,y,or z component. and also to turn it on
-           or off (0==off, 1==beep (or yes), 2==x, 3==y, 4==z),
-           Bit 3 is used for flagging the PC speaker sound,
-           Bit 4 for OPL3 FM soundcard output,
-           Bit 5 will be for midi output (not yet),
-           Bit 6 for whether the tone is quantised to the nearest 'proper' note
-            (according to the western, even tempered system anyway) */
-
-        if (charval[0] == 'n' || charval[0] == 'o')
-            soundflag &= ~SOUNDFLAG_ORBITMASK;
-        else if ((strncmp(value, "ye", 2) == 0) || (charval[0] == 'b'))
-            soundflag |= SOUNDFLAG_BEEP;
-        else if (charval[0] == 'x')
-            soundflag |= SOUNDFLAG_X;
-        else if (charval[0] == 'y' && strncmp(value, "ye", 2) != 0)
-            soundflag |= SOUNDFLAG_Y;
-        else if (charval[0] == 'z')
-            soundflag |= SOUNDFLAG_Z;
-        else
-        {
-            return bad_command();
-        }
-        if (totparms > 1)
-        {
-            soundflag &= SOUNDFLAG_ORBITMASK; // reset options
-            for (int i = 1; i < totparms; i++)
-            {
-                // this is for 2 or more options at the same time
-                if (charval[i] == 'f')
-                { // (try to)switch on opl3 fm synth
-                    if (driver_init_fm())
-                        soundflag |= SOUNDFLAG_OPL3_FM;
-                    else
-                        soundflag &= ~SOUNDFLAG_OPL3_FM;
-                }
-                else if (charval[i] == 'p')
-                    soundflag |= SOUNDFLAG_SPEAKER;
-                else if (charval[i] == 'm')
-                    soundflag |= SOUNDFLAG_MIDI;
-                else if (charval[i] == 'q')
-                    soundflag |= SOUNDFLAG_QUANTIZED;
-                else
-                    return bad_command();
-            } // end for
-        }    // end totparms > 1
-        return CMDARG_NONE;
+    {
+        return command_sound();
     }
 
     if (variable == "hertz")
-    {         // Hertz=?
-        basehertz = numval;
-        return CMDARG_NONE;
+    {
+        return command_hertz();
     }
 
     if (variable == "volume")
-    {         // Volume =?
-        fm_vol = numval & 0x3F; // 63
-        return CMDARG_NONE;
+    {
+        return command_volume();
     }
 
     if (variable == "attenuate")
     {
-        if (charval[0] == 'n')
-            hi_atten = 0;
-        else if (charval[0] == 'l')
-            hi_atten = 1;
-        else if (charval[0] == 'm')
-            hi_atten = 2;
-        else if (charval[0] == 'h')
-            hi_atten = 3;
-        else
-            return bad_command();
-        return CMDARG_NONE;
+        return command_attenuate();
     }
 
     if (variable == "polyphony")
     {
-        if (numval > 9)
-            return bad_command();
-        polyphony = abs(numval-1);
-        return CMDARG_NONE;
+        return command_polyphony();
     }
 
     if (variable == "wavetype")
-    { // wavetype = ?
-        fm_wavetype = numval & 0x0F;
-        return CMDARG_NONE;
+    {
+        return command_wave_type();
     }
 
     if (variable == "attack")
-    { // attack = ?
-        fm_attack = numval & 0x0F;
-        return CMDARG_NONE;
+    {
+        return command_attack();
     }
 
     if (variable == "decay")
-    { // decay = ?
-        fm_decay = numval & 0x0F;
-        return CMDARG_NONE;
+    {
+        return command_decay();
     }
 
     if (variable == "sustain")
-    { // sustain = ?
-        fm_sustain = numval & 0x0F;
-        return CMDARG_NONE;
+    {
+        return command_sustain();
     }
 
     if (variable == "srelease")
-    { // release = ?
-        fm_release = numval & 0x0F;
-        return CMDARG_NONE;
+    {
+        return command_s_release();
     }
 
     if (variable == "scalemap")
-    {      // Scalemap=?,?,?,?,?,?,?,?,?,?,?
-        if (totparms != intparms)
-            return bad_command();
-        for (int counter = 0; counter <= 11; counter++)
-            if ((totparms > counter) && (intval[counter] > 0)
-                    && (intval[counter] < 13))
-                scale_map[counter] = intval[counter];
-        return CMDARG_NONE;
+    {
+        return command_scale_map();
     }
 
     if (variable == "periodicity")
@@ -3022,7 +2029,6 @@ int command_processor::command()
         return command_scale_x_y_z();
     }
 
-    // "rough" is really scale z, but we add it here for convenience
     if (variable == "roughness")
     {
         return command_roughness();
@@ -3164,6 +2170,1553 @@ int command_processor::command()
     }
 
     return bad_command();
+}
+
+int command_processor::command_reset()
+{
+    initvars_fractal();
+
+    // PAR release unknown unless specified
+    if (numval >= 0)
+    {
+        save_release = numval;
+    }
+    else
+    {
+        return bad_command();
+    }
+    if (save_release == 0)
+    {
+        save_release = 1730; // before start of lyapunov wierdness
+    }
+    return CMDARG_FRACTAL_PARAM | CMDARG_RESET;
+}
+
+// filename=?
+int command_processor::command_filename()
+{
+    int existdir;
+    if (charval[0] == '.' && value[1] != SLASHC)
+    {
+        if (valuelen > 4)
+        {
+            return bad_command();
+        }
+        // cppcheck-suppress constStatement
+        gifmask = std::string{"*"} + value;
+        return CMDARG_NONE;
+    }
+    if (valuelen > (FILE_MAX_PATH-1))
+    {
+        return bad_command();
+    }
+    if (mode == cmd_file::AT_AFTER_STARTUP && display_3d == NONE) // can't do this in @ command
+    {
+        return bad_command();
+    }
+
+    existdir = merge_pathnames(readname, value, mode);
+    if (existdir == 0)
+    {
+        show_file = 0;
+    }
+    else if (existdir < 0)
+    {
+        init_msg(variable.c_str(), value, mode);
+    }
+    else
+    {
+        browse_name = extract_filename(readname.c_str());
+    }
+    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+}
+
+// video=?
+int command_processor::command_video()
+{
+    int k = check_vidmode_keyname(value);
+    if (k == 0)
+    {
+        return bad_command();
+    }
+    g_init_mode = -1;
+    for (int i = 0; i < MAXVIDEOMODES; ++i)
+    {
+        if (g_video_table[i].keynum == k)
+        {
+            g_init_mode = i;
+            break;
+        }
+    }
+    if (g_init_mode == -1)
+    {
+        return bad_command();
+    }
+    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+}
+
+// map=, set default colors
+int command_processor::command_map()
+{
+    int existdir;
+    if (valuelen > (FILE_MAX_PATH-1))
+    {
+        return bad_command();
+    }
+    existdir = merge_pathnames(MAP_name, value, mode);
+    if (existdir > 0)
+    {
+        return CMDARG_NONE;    // got a directory
+    }
+    else if (existdir < 0)
+    {
+        init_msg(variable.c_str(), value, mode);
+        return CMDARG_NONE;
+    }
+    SetColorPaletteName(MAP_name.c_str());
+    return CMDARG_NONE;
+}
+
+// colors=, set current colors
+int command_processor::command_colors()
+{
+    if (parse_colors(value) < 0)
+    {
+        return bad_command();
+    }
+    return CMDARG_NONE;
+}
+
+// recordcolors=
+int command_processor::command_record_colors()
+{
+    if (*value != 'y' && *value != 'c' && *value != 'a')
+    {
+        return bad_command();
+    }
+    recordcolors = *value;
+    return CMDARG_NONE;
+}
+
+// maxlinelength=
+int command_processor::command_max_line_length()
+{
+    if (numval < MINMAXLINELENGTH || numval > MAXMAXLINELENGTH)
+    {
+        return bad_command();
+    }
+    maxlinelength = numval;
+    return CMDARG_NONE;
+}
+
+// comment=
+int command_processor::command_comment()
+{
+    parse_comments(value);
+    return CMDARG_NONE;
+}
+
+// tplus no longer used, validate value and gobble argument
+int command_processor::command_tplus()
+{
+    if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+    return CMDARG_NONE;
+}
+
+// noninterlaced no longer used, validate value and gobble argument
+int command_processor::command_non_interlaced()
+{
+    if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+    return CMDARG_NONE;
+}
+
+// Change default color resolution
+// maxcolorres no longer used, validate value and gobble argument
+int command_processor::command_max_color_res()
+{
+    if (numval == 1 || numval == 4 || numval == 8 ||
+            numval == 16 || numval == 24)
+    {
+        return CMDARG_NONE;
+    }
+    return bad_command();
+}
+
+// pixelzoom no longer used, validate value and gobble argument
+int command_processor::command_pixel_zoom()
+{
+    if (numval >= 5)
+    {
+        return bad_command();
+    }
+    return CMDARG_NONE;
+}
+
+// warn=?
+// overwrite=?
+int command_processor::command_overwrite()
+{
+    if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+    fract_overwrite = yesnoval[0] != 0;
+    return CMDARG_NONE;
+}
+
+// gif87a=?
+int command_processor::command_gif87a()
+{
+    if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+    gif87a_flag = yesnoval[0] != 0;
+    return CMDARG_NONE;
+}
+
+// dither=?
+int command_processor::command_dither()
+{
+    if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+    dither_flag = yesnoval[0] != 0;
+    return CMDARG_NONE;
+}
+
+// savetime=?
+int command_processor::command_save_time()
+{
+    initsavetime = numval;
+    // TODO: restore periodic saving
+    return CMDARG_NONE;
+}
+
+// autokey=?
+int command_processor::command_auto_key()
+{
+    if (strcmp(value, "record") == 0)
+    {
+        g_slides = slides_mode::RECORD;
+    }
+    else if (strcmp(value, "play") == 0)
+    {
+        g_slides = slides_mode::PLAY;
+    }
+    else
+    {
+        return bad_command();
+    }
+    return CMDARG_NONE;
+}
+
+// autokeyname=?
+int command_processor::command_auto_key_name()
+{
+    std::string buff;
+    if (merge_pathnames(buff, value, mode) < 0)
+    {
+        init_msg(variable.c_str(), value, mode);
+    }
+    else
+    {
+        autoname = buff;
+    }
+    return CMDARG_NONE;
+}
+
+// type=?
+int command_processor::command_type()
+{
+    if (value[valuelen -1] == '*')
+    {
+        value[--valuelen] = 0;
+    }
+    // kludge because type ifs3d has an asterisk in front
+    if (strcmp(value, "ifs3d") == 0)
+    {
+        value[3] = 0;
+    }
+    int k;
+    for (k = 0; fractalspecific[k].name != nullptr; k++)
+    {
+        if (strcmp(value, fractalspecific[k].name) == 0)
+        {
+            break;
+        }
+    }
+    if (fractalspecific[k].name == nullptr)
+    {
+        return bad_command();
+    }
+    fractype = static_cast<fractal_type>(k);
+    curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
+    if (!initcorners)
+    {
+        xxmin = curfractalspecific->xmin;
+        xx3rd = xxmin;
+        xxmax = curfractalspecific->xmax;
+        yymin = curfractalspecific->ymin;
+        yy3rd = yymin;
+        yymax = curfractalspecific->ymax;
+    }
+    if (!initparams)
+    {
+        load_params(fractype);
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// inside=?
+int command_processor::command_inside()
+{
+    struct
+    {
+        char const *arg;
+        int inside;
+    }
+    const args[] =
+    {
+        { "zmag", ZMAG },
+        { "bof60", BOF60 },
+        { "bof61", BOF61 },
+        { "epsiloncross", EPSCROSS },
+        { "startrail", STARTRAIL },
+        { "period", PERIOD },
+        { "fmod", FMODI },
+        { "atan", ATANI },
+        { "maxiter", -1 }
+    };
+    for (auto &arg : args)
+    {
+        if (strcmp(value, arg.arg) == 0)
+        {
+            inside = arg.inside;
+            return CMDARG_FRACTAL_PARAM;
+        }
+    }
+    if (numval == NON_NUMERIC)
+    {
+        return bad_command();
+    }
+    else
+    {
+        inside = numval;
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// proximity=?
+int command_processor::command_proximity()
+{
+    closeprox = floatval[0];
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// fillcolor
+int command_processor::command_fill_color()
+{
+    if (strcmp(value, "normal") == 0)
+    {
+        fillcolor = -1;
+    }
+    else if (numval == NON_NUMERIC)
+    {
+        return bad_command();
+    }
+    else
+    {
+        fillcolor = numval;
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// finattract=?
+int command_processor::command_fin_attract()
+{
+    if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+    finattract = yesnoval[0] != 0;
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// nobof=?
+int command_processor::command_no_bof()
+{
+    if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+    nobof = yesnoval[0] != 0;
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// function=?,?
+int command_processor::command_function()
+{
+    int k = 0;
+    while (*value && k < 4)
+    {
+        if (set_trig_array(k++, value))
+        {
+            return bad_command();
+        }
+        value = strchr(value, '/');
+        if (value == nullptr)
+        {
+            break;
+        }
+        ++value;
+    }
+    new_bifurcation_functions_loaded = true; // for old bifs
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// outside=?
+int command_processor::command_outside()
+{
+    struct
+    {
+        char const *arg;
+        int outside;
+    }
+    args[] =
+    {
+        { "iter", ITER },
+        { "real", REAL },
+        { "imag", IMAG },
+        { "mult", MULT },
+        { "summ", SUM },
+        { "atan", ATAN },
+        { "fmod", FMOD },
+        { "tdis", TDIS }
+    };
+    for (auto &arg : args)
+    {
+        if (strcmp(value, arg.arg) == 0)
+        {
+            outside = arg.outside;
+            return CMDARG_FRACTAL_PARAM;
+        }
+    }
+    if ((numval == NON_NUMERIC) || (numval < TDIS || numval > 255))
+    {
+        return bad_command();
+    }
+    outside = numval;
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// bfdigits=?
+int command_processor::command_bf_digits()
+{
+    if ((numval == NON_NUMERIC) || (numval < 0 || numval > 2000))
+    {
+        return bad_command();
+    }
+    bfdigits = numval;
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// maxiter=?
+int command_processor::command_max_iter()
+{
+    if (floatval[0] < 2)
+    {
+        return bad_command();
+    }
+    maxit = (long) floatval[0];
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// passes=?
+int command_processor::command_passes()
+{
+    if (charval[0] != '1' && charval[0] != '2' && charval[0] != '3'
+            && charval[0] != 'g' && charval[0] != 'b'
+            && charval[0] != 't' && charval[0] != 's'
+            && charval[0] != 'd' && charval[0] != 'o')
+    {
+        return bad_command();
+    }
+    usr_stdcalcmode = charval[0];
+    if (charval[0] == 'g')
+    {
+        stoppass = ((int) value[1] - (int)'0');
+        if (stoppass < 0 || stoppass > 6)
+        {
+            stoppass = 0;
+        }
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// ismand=?
+int command_processor::command_is_mand()
+{
+    if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+    ismand = yesnoval[0] != 0;
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// cyclelimit=?
+int command_processor::command_cycle_limit()
+{
+    if (numval <= 1 || numval > 256)
+    {
+        return bad_command();
+    }
+    initcyclelimit = numval;
+    return CMDARG_NONE;
+}
+
+int command_processor::command_make_mig()
+{
+    int xmult, ymult;
+    if (totparms < 2)
+    {
+        return bad_command();
+    }
+    xmult = intval[0];
+    ymult = intval[1];
+    make_mig(xmult, ymult);
+    exit(0);
+    return CMDARG_NONE;
+}
+
+int command_processor::command_cycle_range()
+{
+    if (totparms < 2)
+    {
+        intval[1] = 255;
+    }
+    if (totparms < 1)
+    {
+        intval[0] = 1;
+    }
+    if (totparms != intparms
+            || intval[0] < 0 || intval[1] > 255 || intval[0] > intval[1])
+    {
+        return bad_command();
+    }
+    rotate_lo = intval[0];
+    rotate_hi = intval[1];
+    return CMDARG_NONE;
+}
+
+int command_processor::command_ranges()
+{
+    int i, j, entries, prev;
+    int tmpranges[128];
+
+    if (totparms != intparms)
+    {
+        return bad_command();
+    }
+    i = 0;
+    prev = i;
+    entries = prev;
+    LogFlag = 0; // ranges overrides logmap
+    while (i < totparms)
+    {
+        j = intval[i++];
+        if (j < 0) // striping
+        {
+            j = -j;
+            if (j < 1 || j >= 16384 || i >= totparms)
+            {
+                return bad_command();
+            }
+            tmpranges[entries++] = -1; // {-1,width,limit} for striping
+            tmpranges[entries++] = j;
+            j = intval[i++];
+        }
+        if (j < prev)
+        {
+            return bad_command();
+        }
+        prev = j;
+        tmpranges[entries++] = prev;
+    }
+    if (prev == 0)
+    {
+        return bad_command();
+    }
+    bool resized = false;
+    try
+    {
+        ranges.resize(entries);
+        resized = true;
+    }
+    catch (std::bad_alloc const &)
+    {
+    }
+    if (!resized)
+    {
+        stopmsg(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
+        return CMDARG_ERROR;
+    }
+    rangeslen = entries;
+    for (int i = 0; i < rangeslen; ++i)
+    {
+        ranges[i] = tmpranges[i];
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// savename=?
+int command_processor::command_save_name()
+{
+    if (valuelen > (FILE_MAX_PATH-1))
+    {
+        return bad_command();
+    }
+    if (first_init || mode == cmd_file::AT_AFTER_STARTUP)
+    {
+        if (merge_pathnames(savename, value, mode) < 0)
+        {
+            init_msg(variable.c_str(), value, mode);
+        }
+    }
+    return CMDARG_NONE;
+}
+
+// tweaklzw=?
+int command_processor::command_tweak_lzw()
+{
+    if (totparms >= 1)
+    {
+        lzw[0] = intval[0];
+    }
+    if (totparms >= 2)
+    {
+        lzw[1] = intval[1];
+    }
+    return CMDARG_NONE;
+}
+
+// minstack=?
+int command_processor::command_min_stack()
+{
+    if (totparms != 1)
+    {
+        return bad_command();
+    }
+    minstack = intval[0];
+    return CMDARG_NONE;
+}
+
+// mathtolerance=?
+int command_processor::command_math_tolerance()
+{
+    if (charval[0] == '/')
+    {
+        ; // leave math_tol[0] at the default value
+    }
+    else if (totparms >= 1)
+    {
+        math_tol[0] = floatval[0];
+    }
+    if (totparms >= 2)
+    {
+        math_tol[1] = floatval[1];
+    }
+    return CMDARG_NONE;
+}
+
+// tempdir=?
+int command_processor::command_temp_dir()
+{
+    if (valuelen > (FILE_MAX_DIR-1))
+    {
+        return bad_command();
+    }
+    if (!isadirectory(value))
+    {
+        return bad_command();
+    }
+    tempdir = value;
+    fix_dirname(tempdir);
+    return CMDARG_NONE;
+}
+
+// workdir=?
+int command_processor::command_work_dir()
+{
+    if (valuelen > (FILE_MAX_DIR-1))
+    {
+        return bad_command();
+    }
+    if (!isadirectory(value))
+    {
+        return bad_command();
+    }
+    workdir = value;
+    fix_dirname(workdir);
+    return CMDARG_NONE;
+}
+
+// exitmode=?
+int command_processor::command_exit_mode()
+{
+    sscanf(value, "%x", &numval);
+    exitmode = (BYTE) numval;
+    return CMDARG_NONE;
+}
+
+int command_processor::command_text_colors()
+{
+    parse_textcolors(value);
+    return CMDARG_NONE;
+}
+
+// potential=?
+int command_processor::command_potential()
+{
+    int k = 0;
+    while (k < 3 && *value)
+    {
+        if (k == 1)
+        {
+            potparam[k] = atof(value);
+        }
+        else
+        {
+            potparam[k] = atoi(value);
+        }
+        k++;
+        value = strchr(value, '/');
+        if (value == nullptr)
+        {
+            k = 99;
+        }
+        ++value;
+    }
+    pot16bit = false;
+    if (k < 99)
+    {
+        if (strcmp(value, "16bit"))
+        {
+            return bad_command();
+        }
+        pot16bit = true;
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// params=?,?
+int command_processor::command_params()
+{
+    if (totparms != floatparms || totparms > MAXPARAMS)
+    {
+        return bad_command();
+    }
+    initparams = true;
+    for (int k = 0; k < MAXPARAMS; ++k)
+    {
+        param[k] = (k < totparms) ? floatval[k] : 0.0;
+    }
+    if (bf_math != bf_math_type::NONE)
+    {
+        for (int k = 0; k < MAXPARAMS; k++)
+        {
+            floattobf(bfparms[k], param[k]);
+        }
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// miim=?[/?[/?[/?]]]
+int command_processor::command_miim()
+{
+    if (totparms > 6)
+    {
+        return bad_command();
+    }
+    if (charval[0] == 'b')
+    {
+        major_method = Major::breadth_first;
+    }
+    else if (charval[0] == 'd')
+    {
+        major_method = Major::depth_first;
+    }
+    else if (charval[0] == 'w')
+    {
+        major_method = Major::random_walk;
+    }
+#ifdef RANDOM_RUN
+    else if (charval[0] == 'r')
+    {
+        major_method = Major::random_run;
+    }
+#endif
+    else
+    {
+        return bad_command();
+    }
+
+    if (charval[1] == 'l')
+    {
+        minor_method = Minor::left_first;
+    }
+    else if (charval[1] == 'r')
+    {
+        minor_method = Minor::right_first;
+    }
+    else
+    {
+        return bad_command();
+    }
+
+    // keep this next part in for backwards compatibility with old PARs ???
+
+    if (totparms > 2)
+    {
+        for (int k = 2; k < 6; ++k)
+        {
+            param[k-2] = (k < totparms) ? floatval[k] : 0.0;
+        }
+    }
+
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// initorbit=?,?
+int command_processor::command_init_orbit()
+{
+    if (strcmp(value, "pixel") == 0)
+    {
+        useinitorbit = 2;
+    }
+    else
+    {
+        if (totparms != 2 || floatparms != 2)
+        {
+            return bad_command();
+        }
+        initorbit.x = floatval[0];
+        initorbit.y = floatval[1];
+        useinitorbit = 1;
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// orbitname=?
+int command_processor::command_orbit_name()
+{
+    if (check_orbit_name(value))
+    {
+        return bad_command();
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// orbitname=?
+int command_processor::command_3d_mode()
+{
+    int j = -1;
+    for (int i = 0; i < 4; i++)
+    {
+        if (juli3Doptions[i] == value)
+        {
+            j = i;
+        }
+    }
+    if (j < 0)
+    {
+        return bad_command();
+    }
+    else
+    {
+        juli3Dmode = j;
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// julibrot3d=?,?,?,?
+int command_processor::command_julibrot_3d()
+{
+    if (floatparms != totparms)
+    {
+        return bad_command();
+    }
+    if (totparms > 0)
+    {
+        zdots = (int) floatval[0];
+    }
+    if (totparms > 1)
+    {
+        originfp = (float) floatval[1];
+    }
+    if (totparms > 2)
+    {
+        depthfp = (float) floatval[2];
+    }
+    if (totparms > 3)
+    {
+        heightfp = (float) floatval[3];
+    }
+    if (totparms > 4)
+    {
+        widthfp = (float) floatval[4];
+    }
+    if (totparms > 5)
+    {
+        distfp = (float) floatval[5];
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// julibroteyes=?,?,?,?
+int command_processor::command_julibrot_eyes()
+{
+    if (floatparms != totparms || totparms != 1)
+    {
+        return bad_command();
+    }
+    eyesfp = (float) floatval[0];
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// julibrotfromto=?,?,?,?
+int command_processor::command_julibrot_from_to()
+{
+    if (floatparms != totparms || totparms != 4)
+    {
+        return bad_command();
+    }
+    mxmaxfp = floatval[0];
+    mxminfp = floatval[1];
+    mymaxfp = floatval[2];
+    myminfp = floatval[3];
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// corners=?,?,?,?
+int command_processor::command_corners()
+{
+    int dec;
+    if (fractype == fractal_type::CELLULAR)
+    {
+        return CMDARG_FRACTAL_PARAM; // skip setting the corners
+    }
+    if (floatparms != totparms
+            || (totparms != 0 && totparms != 4 && totparms != 6))
+    {
+        return bad_command();
+    }
+    usemag = false;
+    if (totparms == 0)
+    {
+        return CMDARG_NONE; // turns corners mode on
+    }
+    initcorners = true;
+    // good first approx, but dec could be too big
+    dec = get_max_curarg_len(floatvalstr, totparms) + 1;
+    if ((dec > DBL_DIG+1 || debugflag == debug_flags::force_arbitrary_precision_math)
+            && debugflag != debug_flags::prevent_arbitrary_precision_math)
+    {
+        bf_math_type old_bf_math = bf_math;
+        if (bf_math == bf_math_type::NONE || dec > decimals)
+        {
+            init_bf_dec(dec);
+        }
+        if (old_bf_math == bf_math_type::NONE)
+        {
+            for (int k = 0; k < MAXPARAMS; k++)
+            {
+                floattobf(bfparms[k], param[k]);
+            }
+        }
+
+        // xx3rd = xxmin = floatval[0];
+        get_bf(bfxmin, floatvalstr[0]);
+        get_bf(bfx3rd, floatvalstr[0]);
+
+        // xxmax = floatval[1];
+        get_bf(bfxmax, floatvalstr[1]);
+
+        // yy3rd = yymin = floatval[2];
+        get_bf(bfymin, floatvalstr[2]);
+        get_bf(bfy3rd, floatvalstr[2]);
+
+        // yymax = floatval[3];
+        get_bf(bfymax, floatvalstr[3]);
+
+        if (totparms == 6)
+        {
+            // xx3rd = floatval[4];
+            get_bf(bfx3rd, floatvalstr[4]);
+
+            // yy3rd = floatval[5];
+            get_bf(bfy3rd, floatvalstr[5]);
+        }
+
+        // now that all the corners have been read in, get a more
+        // accurate value for dec and do it all again
+
+        dec = getprecbf_mag();
+        if (dec < 0)
+        {
+            return bad_command();
+        }
+
+        if (dec > decimals)  // get corners again if need more precision
+        {
+            init_bf_dec(dec);
+
+            /* now get parameters and corners all over again at new
+            decimal setting */
+            for (int k = 0; k < MAXPARAMS; k++)
+            {
+                floattobf(bfparms[k], param[k]);
+            }
+
+            // xx3rd = xxmin = floatval[0];
+            get_bf(bfxmin, floatvalstr[0]);
+            get_bf(bfx3rd, floatvalstr[0]);
+
+            // xxmax = floatval[1];
+            get_bf(bfxmax, floatvalstr[1]);
+
+            // yy3rd = yymin = floatval[2];
+            get_bf(bfymin, floatvalstr[2]);
+            get_bf(bfy3rd, floatvalstr[2]);
+
+            // yymax = floatval[3];
+            get_bf(bfymax, floatvalstr[3]);
+
+            if (totparms == 6)
+            {
+                // xx3rd = floatval[4];
+                get_bf(bfx3rd, floatvalstr[4]);
+
+                // yy3rd = floatval[5];
+                get_bf(bfy3rd, floatvalstr[5]);
+            }
+        }
+    }
+    xxmin = floatval[0];
+    xx3rd = xxmin;
+    xxmax = floatval[1];
+    yymin = floatval[2];
+    yy3rd = yymin;
+    yymax = floatval[3];
+
+    if (totparms == 6)
+    {
+        xx3rd =      floatval[4];
+        yy3rd =      floatval[5];
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// orbit corners=?,?,?,?
+int command_processor::command_orbit_corners()
+{
+    set_orbit_corners = false;
+    if (floatparms != totparms
+            || (totparms != 0 && totparms != 4 && totparms != 6))
+    {
+        return bad_command();
+    }
+    oxmin = floatval[0];
+    ox3rd = oxmin;
+    oxmax = floatval[1];
+    oymin = floatval[2];
+    oy3rd = oymin;
+    oymax = floatval[3];
+
+    if (totparms == 6)
+    {
+        ox3rd =      floatval[4];
+        oy3rd =      floatval[5];
+    }
+    set_orbit_corners = true;
+    keep_scrn_coords = true;
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// screencoords=?
+int command_processor::command_screen_coords()
+{
+    if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+    keep_scrn_coords = yesnoval[0] != 0;
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// orbitdrawmode=?
+int command_processor::command_orbit_draw_mode()
+{
+    if (charval[0] != 'l' && charval[0] != 'r' && charval[0] != 'f')
+    {
+        return bad_command();
+    }
+    drawmode = charval[0];
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// viewwindows=?,?,?,?,?
+int command_processor::command_view_windows()
+{
+    if (totparms > 5 || floatparms - intparms > 2 || intparms > 4)
+    {
+        return bad_command();
+    }
+    viewwindow = true;
+    viewreduction = 4.2F;  // reset default values
+    finalaspectratio = screenaspect;
+    viewcrop = true;
+    viewydots = 0;
+    viewxdots = viewydots;
+
+    if ((totparms > 0) && (floatval[0] > 0.001))
+        viewreduction = (float) floatval[0];
+    if ((totparms > 1) && (floatval[1] > 0.001))
+        finalaspectratio = (float) floatval[1];
+    if ((totparms > 2) && (yesnoval[2] == 0))
+        viewcrop = yesnoval[2] != 0;
+    if ((totparms > 3) && (intval[3] > 0))
+        viewxdots = intval[3];
+    if ((totparms == 5) && (intval[4] > 0))
+        viewydots = intval[4];
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// center-mag=?,?,?[,?,?,?]
+int command_processor::command_center_mag()
+{
+    int dec;
+
+    if ((totparms != floatparms)
+            || (totparms != 0 && totparms < 3)
+            || (totparms >= 3 && floatval[2] == 0.0))
+    {
+        return bad_command();
+    }
+    if (fractype == fractal_type::CELLULAR)
+        return CMDARG_FRACTAL_PARAM; // skip setting the corners
+    usemag = true;
+    if (totparms == 0)
+        return CMDARG_NONE; // turns center-mag mode on
+    initcorners = true;
+    // dec = get_max_curarg_len(floatvalstr, totparms);
+    sscanf(floatvalstr[2], "%Lf", &Magnification);
+
+    // I don't know if this is portable, but something needs to
+    // be used in case compiler's LDBL_MAX is not big enough
+    if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
+    {
+        return bad_command();
+    }
+
+    dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
+
+    if ((dec <= DBL_DIG+1 && debugflag != debug_flags::force_arbitrary_precision_math)
+            || debugflag == debug_flags::prevent_arbitrary_precision_math)
+    {
+        // rough estimate that double is OK
+        Xctr = floatval[0];
+        Yctr = floatval[1];
+        Xmagfactor = 1;
+        Rotation = 0;
+        Skew = 0;
+        if (floatparms > 3)
+            Xmagfactor = floatval[3];
+        if (Xmagfactor == 0)
+            Xmagfactor = 1;
+        if (floatparms > 4)
+            Rotation = floatval[4];
+        if (floatparms > 5)
+            Skew = floatval[5];
+        // calculate bounds
+        cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+        return CMDARG_FRACTAL_PARAM;
+    }
+    else
+    {
+        // use arbitrary precision
+        int saved;
+        initcorners = true;
+        bf_math_type old_bf_math = bf_math;
+        if (bf_math == bf_math_type::NONE || dec > decimals)
+            init_bf_dec(dec);
+        if (old_bf_math == bf_math_type::NONE)
+        {
+            for (int k = 0; k < MAXPARAMS; k++)
+                floattobf(bfparms[k], param[k]);
+        }
+        usemag = true;
+        saved = save_stack();
+        bXctr            = alloc_stack(bflength+2);
+        bYctr            = alloc_stack(bflength+2);
+        get_bf(bXctr, floatvalstr[0]);
+        get_bf(bYctr, floatvalstr[1]);
+        Xmagfactor = 1;
+        Rotation = 0;
+        Skew = 0;
+        if (floatparms > 3)
+            Xmagfactor = floatval[3];
+        if (Xmagfactor == 0)
+            Xmagfactor = 1;
+        if (floatparms > 4)
+            Rotation = floatval[4];
+        if (floatparms > 5)
+            Skew = floatval[5];
+        // calculate bounds
+        cvtcornersbf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
+        bfcornerstofloat();
+        restore_stack(saved);
+        return CMDARG_FRACTAL_PARAM;
+    }
+}
+
+// aspectdrift=?
+int command_processor::command_aspect_drift()
+{
+    if (floatparms != 1 || floatval[0] < 0)
+    {
+        return bad_command();
+    }
+    aspectdrift = (float) floatval[0];
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// invert=?,?,?
+int command_processor::command_invert()
+{
+    if (totparms != floatparms || (totparms != 1 && totparms != 3))
+    {
+        return bad_command();
+    }
+    inversion[0] = floatval[0];
+    invert = (inversion[0] != 0.0) ? totparms : 0;
+    if (totparms == 3)
+    {
+        inversion[1] = floatval[1];
+        inversion[2] = floatval[2];
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// olddemmcolors=?
+int command_processor::command_old_demm_colors()
+{
+    if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+    old_demm_colors = yesnoval[0] != 0;
+    return CMDARG_NONE;
+}
+
+// askvideo=?
+int command_processor::command_ask_video()
+{
+    if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+    askvideo = yesnoval[0] != 0;
+    return CMDARG_NONE;
+}
+
+// float=?
+int command_processor::command_float()
+{
+    if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+#ifndef XFRACT
+    usr_floatflag = yesnoval[0] != 0;
+#else
+    usr_floatflag = true; // must use floating point
+#endif
+    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+}
+
+// fastrestore=?
+int command_processor::command_fast_restore()
+{
+    if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+    fastrestore = yesnoval[0] != 0;
+    return CMDARG_NONE;
+}
+
+// orgfrmdir=?
+int command_processor::command_org_frm_dir()
+{
+    if (valuelen > (FILE_MAX_DIR-1))
+    {
+        return bad_command();
+    }
+    if (!isadirectory(value))
+    {
+        return bad_command();
+    }
+    orgfrmsearch = true;
+    orgfrmdir = value;
+    fix_dirname(orgfrmdir);
+    return CMDARG_NONE;
+}
+
+// biomorph=?
+int command_processor::command_biomorph()
+{
+    usr_biomorph = numval;
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// orbitsave=?
+int command_processor::command_orbit_save()
+{
+    if (charval[0] == 's')
+        orbitsave |= 2;
+    else if (yesnoval[0] < 0)
+    {
+        return bad_command();
+    }
+    orbitsave |= yesnoval[0];
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// bailout=?
+int command_processor::command_bailout()
+{
+    if (floatval[0] < 1 || floatval[0] > 2100000000L)
+    {
+        return bad_command();
+    }
+    bailout = (long) floatval[0];
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// bailoutest=?
+int command_processor::command_bailout_test()
+{
+    if (strcmp(value, "mod") == 0)
+        bailoutest = bailouts::Mod;
+    else if (strcmp(value, "real") == 0)
+        bailoutest = bailouts::Real;
+    else if (strcmp(value, "imag") == 0)
+        bailoutest = bailouts::Imag;
+    else if (strcmp(value, "or") == 0)
+        bailoutest = bailouts::Or;
+    else if (strcmp(value, "and") == 0)
+        bailoutest = bailouts::And;
+    else if (strcmp(value, "manh") == 0)
+        bailoutest = bailouts::Manh;
+    else if (strcmp(value, "manr") == 0)
+        bailoutest = bailouts::Manr;
+    else
+    {
+        return bad_command();
+    }
+    setbailoutformula(bailoutest);
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// symmetry=?
+int command_processor::command_symmetry()
+{
+    if (strcmp(value, "xaxis") == 0)
+        forcesymmetry = symmetry_type::X_AXIS;
+    else if (strcmp(value, "yaxis") == 0)
+        forcesymmetry = symmetry_type::Y_AXIS;
+    else if (strcmp(value, "xyaxis") == 0)
+        forcesymmetry = symmetry_type::XY_AXIS;
+    else if (strcmp(value, "origin") == 0)
+        forcesymmetry = symmetry_type::ORIGIN;
+    else if (strcmp(value, "pi") == 0)
+        forcesymmetry = symmetry_type::PI_SYM;
+    else if (strcmp(value, "none") == 0)
+        forcesymmetry = symmetry_type::NONE;
+    else
+    {
+        return bad_command();
+    }
+    return CMDARG_FRACTAL_PARAM;
+}
+
+// deprecated print parameters
+bool command_processor::is_print_parameter()
+{
+    return (variable == "printer")
+            || (variable == "printfile")
+            || (variable == "rleps")
+            || (variable == "colorps")
+            || (variable == "epsf")
+            || (variable == "title")
+            || (variable == "translate")
+            || (variable == "plotstyle")
+            || (variable == "halftone")
+            || (variable == "linefeed")
+            || (variable == "comport");
+}
+
+// sound=?,?,?
+int command_processor::command_sound()
+{
+    if (totparms > 5)
+    {
+        return bad_command();
+    }
+    soundflag = SOUNDFLAG_OFF; // start with a clean slate, add bits as we go
+    if (totparms == 1)
+        soundflag = SOUNDFLAG_SPEAKER; // old command, default to PC speaker
+
+    /* soundflag is used as a bitfield... bit 0,1,2 used for whether sound
+       is modified by an orbits x,y,or z component. and also to turn it on
+       or off (0==off, 1==beep (or yes), 2==x, 3==y, 4==z),
+       Bit 3 is used for flagging the PC speaker sound,
+       Bit 4 for OPL3 FM soundcard output,
+       Bit 5 will be for midi output (not yet),
+       Bit 6 for whether the tone is quantised to the nearest 'proper' note
+        (according to the western, even tempered system anyway) */
+
+    if (charval[0] == 'n' || charval[0] == 'o')
+        soundflag &= ~SOUNDFLAG_ORBITMASK;
+    else if ((strncmp(value, "ye", 2) == 0) || (charval[0] == 'b'))
+        soundflag |= SOUNDFLAG_BEEP;
+    else if (charval[0] == 'x')
+        soundflag |= SOUNDFLAG_X;
+    else if (charval[0] == 'y' && strncmp(value, "ye", 2) != 0)
+        soundflag |= SOUNDFLAG_Y;
+    else if (charval[0] == 'z')
+        soundflag |= SOUNDFLAG_Z;
+    else
+    {
+        return bad_command();
+    }
+    if (totparms > 1)
+    {
+        soundflag &= SOUNDFLAG_ORBITMASK; // reset options
+        for (int i = 1; i < totparms; i++)
+        {
+            // this is for 2 or more options at the same time
+            if (charval[i] == 'f')
+            { // (try to)switch on opl3 fm synth
+                if (driver_init_fm())
+                    soundflag |= SOUNDFLAG_OPL3_FM;
+                else
+                    soundflag &= ~SOUNDFLAG_OPL3_FM;
+            }
+            else if (charval[i] == 'p')
+                soundflag |= SOUNDFLAG_SPEAKER;
+            else if (charval[i] == 'm')
+                soundflag |= SOUNDFLAG_MIDI;
+            else if (charval[i] == 'q')
+                soundflag |= SOUNDFLAG_QUANTIZED;
+            else
+                return bad_command();
+        }
+    }
+    return CMDARG_NONE;
+}
+
+// Hertz=?
+int command_processor::command_hertz()
+{
+    basehertz = numval;
+    return CMDARG_NONE;
+}
+
+// Volume =?
+int command_processor::command_volume()
+{
+    fm_vol = numval & 0x3F; // 63
+    return CMDARG_NONE;
+}
+
+int command_processor::command_attenuate()
+{
+    if (charval[0] == 'n')
+        hi_atten = 0;
+    else if (charval[0] == 'l')
+        hi_atten = 1;
+    else if (charval[0] == 'm')
+        hi_atten = 2;
+    else if (charval[0] == 'h')
+        hi_atten = 3;
+    else
+        return bad_command();
+    return CMDARG_NONE;
+}
+
+int command_processor::command_polyphony()
+{
+    if (numval > 9)
+        return bad_command();
+    polyphony = abs(numval -1);
+    return CMDARG_NONE;
+}
+
+// wavetype = ?
+int command_processor::command_wave_type()
+{
+    fm_wavetype = numval & 0x0F;
+    return CMDARG_NONE;
+}
+
+// attack = ?
+int command_processor::command_attack()
+{
+    fm_attack = numval & 0x0F;
+    return CMDARG_NONE;
+}
+
+// decay = ?
+int command_processor::command_decay()
+{
+    fm_decay = numval & 0x0F;
+    return CMDARG_NONE;
+}
+
+// sustain = ?
+int command_processor::command_sustain()
+{
+    fm_sustain = numval & 0x0F;
+    return CMDARG_NONE;
+}
+
+// srelease = ?
+int command_processor::command_s_release()
+{
+    fm_release = numval & 0x0F;
+    return CMDARG_NONE;
+}
+
+// Scalemap=?,?,?,?,?,?,?,?,?,?,?
+int command_processor::command_scale_map()
+{
+    if (totparms != intparms)
+        return bad_command();
+    for (int counter = 0; counter <= 11; counter++)
+        if ((totparms > counter) && (intval[counter] > 0)
+                && (intval[counter] < 13))
+            scale_map[counter] = intval[counter];
+    return CMDARG_NONE;
 }
 
 // periodicity=?
@@ -3564,6 +4117,7 @@ int command_processor::command_scale_x_y_z()
 // roughness=?
 int command_processor::command_roughness()
 {
+    // "rough" is really scale z, but we add it here for convenience
     ROUGH = numval;
     return CMDARG_3D_PARAM;
 }
@@ -4024,10 +4578,10 @@ static int parse_colors(char const *value)
                         {
                             while (++cnum < spread)
                                 g_dac_box[start+cnum][j] =
-                                    (BYTE)((cnum *g_dac_box[i][j]
-                                            + (i-(start+cnum))*g_dac_box[start][j]
-                                            + spread/2)
-                                           / (BYTE) spread);
+                                        (BYTE)((cnum *g_dac_box[i][j]
+                                                + (i-(start+cnum))*g_dac_box[start][j]
+                                                + spread/2)
+                                                / (BYTE) spread);
                         }
                     }
                 }
@@ -4049,7 +4603,7 @@ static int parse_colors(char const *value)
     colors_preloaded = true;
     memcpy(old_dac_box, g_dac_box, 256*3);
     return CMDARG_NONE;
-badcolor:
+    badcolor:
     return -1;
 }
 
@@ -4067,9 +4621,9 @@ static void argerror(char const *badarg)      // oops. couldn't decode this
     if (first_init)       // this is 1st call to cmdfiles
     {
         msg += "\n"
-               "\n"
-               "(see the Startup Help screens or documentation for a complete\n"
-               " argument list with descriptions)";
+                "\n"
+                "(see the Startup Help screens or documentation for a complete\n"
+                " argument list with descriptions)";
     }
     stopmsg(STOPMSG_NONE, msg.c_str());
     if (init_batch != batch_modes::NONE)
@@ -4176,7 +4730,7 @@ int get_max_curarg_len(char const *floatvalstr[], int totparms)
 int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
 {
     char const *modestr[4] =
-    {"command line", "sstools.ini", "PAR file", "PAR file"};
+            {"command line", "sstools.ini", "PAR file", "PAR file"};
     static int row = 1;
 
     if (init_batch == batch_modes::NORMAL)
@@ -4194,7 +4748,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
     if (badfilename)
         // cppcheck-suppress constStatement
         msg = std::string{"Can't find "} + cmd + badfilename
-            + ", please check " + modestr[static_cast<int>(mode)];
+                + ", please check " + modestr[static_cast<int>(mode)];
     if (first_init)
     {     // & cmdfiles hasn't finished 1st try
         if (row == 1 && badfilename)
@@ -4228,8 +4782,8 @@ void dopause(int action)
             if (needpause == 1)
                 driver_get_key();
             else if (needpause == 2)
-                if (getakeynohelp() == FIK_ESC)
-                    goodbye();
+            if (getakeynohelp() == FIK_ESC)
+                goodbye();
         }
         needpause = 0;
         break;
