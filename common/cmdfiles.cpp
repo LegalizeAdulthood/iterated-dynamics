@@ -820,6 +820,8 @@ private:
     int startup_command();
 
     int command();
+
+    int command_make_par();
 };
 
 namespace
@@ -1158,77 +1160,84 @@ int command_processor::startup_command()
 
     if (variable == "makepar")
     {
-        char *slash, *next = nullptr;
-        if (totparms < 1 || totparms > 2)
+        return command_make_par();
+
+    }
+    return CMDARG_NONE;
+}
+
+int command_processor::command_make_par()
+{
+    char *slash, *next = nullptr;
+    if (totparms < 1 || totparms > 2)
+    {
+        argerror(curarg);
+        return CMDARG_ERROR;
+    }
+    slash = strchr(value, '/');
+    if (slash != nullptr)
+    {
+        *slash = 0;
+        next = slash+1;
+    }
+
+    CommandFile = value;
+    if (strchr(CommandFile.c_str(), '.') == nullptr)
+    {
+        CommandFile += ".par";
+    }
+    if (readname == DOTSLASH)
+    {
+        readname = "";
+    }
+    if (next == nullptr)
+    {
+        if (!readname.empty())
+        {
+            CommandName = extract_filename(readname.c_str());
+        }
+        else if (!MAP_name.empty())
+        {
+            CommandName = extract_filename(MAP_name.c_str());
+        }
+        else
         {
             argerror(curarg);
             return CMDARG_ERROR;
         }
-        slash = strchr(value, '/');
-        if (slash != nullptr)
-        {
-            *slash = 0;
-            next = slash+1;
-        }
-
-        CommandFile = value;
-        if (strchr(CommandFile.c_str(), '.') == nullptr)
-        {
-            CommandFile += ".par";
-        }
-        if (readname == DOTSLASH)
-        {
-            readname = "";
-        }
-        if (next == nullptr)
-        {
-            if (!readname.empty())
-            {
-                CommandName = extract_filename(readname.c_str());
-            }
-            else if (!MAP_name.empty())
-            {
-                CommandName = extract_filename(MAP_name.c_str());
-            }
-            else
-            {
-                argerror(curarg);
-                return CMDARG_ERROR;
-            }
-        }
-        else
-        {
-            CommandName = next;
-            assert(CommandName.length() <= ITEMNAMELEN);
-            if (CommandName.length() > ITEMNAMELEN)
-            {
-                CommandName.resize(ITEMNAMELEN);
-            }
-        }
-        make_parameter_file = true;
-        if (!readname.empty())
-        {
-            if (read_overlay() != 0)
-            {
-                goodbye();
-            }
-        }
-        else if (!MAP_name.empty())
-        {
-            make_parameter_file_map = true;
-        }
-        xdots = filexdots;
-        ydots = fileydots;
-        x_size_d = xdots - 1;
-        y_size_d = ydots - 1;
-        calcfracinit();
-        make_batch_file();
-#if !defined(XFRACT)
-        ABORT(0, "Don't call standard I/O without a console on Windows");
-        _ASSERTE(0 && "Don't call standard I/O without a console on Windows");
-#endif
-        goodbye();
     }
+    else
+    {
+        CommandName = next;
+        assert(CommandName.length() <= ITEMNAMELEN);
+        if (CommandName.length() > ITEMNAMELEN)
+        {
+            CommandName.resize(ITEMNAMELEN);
+        }
+    }
+    make_parameter_file = true;
+    if (!readname.empty())
+    {
+        if (read_overlay() != 0)
+        {
+            goodbye();
+        }
+    }
+    else if (!MAP_name.empty())
+    {
+        make_parameter_file_map = true;
+    }
+    xdots = filexdots;
+    ydots = fileydots;
+    x_size_d = xdots - 1;
+    y_size_d = ydots - 1;
+    calcfracinit();
+    make_batch_file();
+#if !defined(XFRACT)
+    ABORT(0, "Don't call standard I/O without a console on Windows");
+    _ASSERTE(0 && "Don't call standard I/O without a console on Windows");
+#endif
+    goodbye();
     return CMDARG_NONE;
 }
 
