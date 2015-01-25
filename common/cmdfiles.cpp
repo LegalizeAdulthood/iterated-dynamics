@@ -1224,8 +1224,8 @@ int command_processor::startup_command()
         calcfracinit();
         make_batch_file();
 #if !defined(XFRACT)
-            ABORT(0, "Don't call standard I/O without a console on Windows");
-            _ASSERTE(0 && "Don't call standard I/O without a console on Windows");
+        ABORT(0, "Don't call standard I/O without a console on Windows");
+        _ASSERTE(0 && "Don't call standard I/O without a console on Windows");
 #endif
         goodbye();
     }
