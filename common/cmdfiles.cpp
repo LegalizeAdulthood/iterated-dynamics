@@ -2791,7 +2791,7 @@ int command_processor::command()
                 else if (charval[i] == 'q')
                     soundflag |= SOUNDFLAG_QUANTIZED;
                 else
-                    goto badarg;
+                    return bad_command();
             } // end for
         }    // end totparms > 1
         return CMDARG_NONE;
@@ -2820,14 +2820,14 @@ int command_processor::command()
         else if (charval[0] == 'h')
             hi_atten = 3;
         else
-            goto badarg;
+            return bad_command();
         return CMDARG_NONE;
     }
 
     if (variable == "polyphony")
     {
         if (numval > 9)
-            goto badarg;
+            return bad_command();
         polyphony = abs(numval-1);
         return CMDARG_NONE;
     }
@@ -2865,7 +2865,7 @@ int command_processor::command()
     if (variable == "scalemap")
     {      // Scalemap=?,?,?,?,?,?,?,?,?,?,?
         if (totparms != intparms)
-            goto badarg;
+            return bad_command();
         for (int counter = 0; counter <= 11; counter++)
             if ((totparms > counter) && (intval[counter] > 0)
                     && (intval[counter] < 13))
