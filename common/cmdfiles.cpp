@@ -821,6 +821,7 @@ private:
 
     int command();
 
+    int command_make_doc();
     int command_make_par();
 };
 
@@ -1154,8 +1155,7 @@ int command_processor::startup_command()
 
     if (variable == "makedoc")
     {
-        print_document(*value ? value : "fractint.doc", makedoc_msg_func, 0);
-        goodbye();
+        return command_make_doc();
     }
 
     if (variable == "makepar")
@@ -1163,6 +1163,13 @@ int command_processor::startup_command()
         return command_make_par();
 
     }
+    return CMDARG_NONE;
+}
+
+int command_processor::command_make_doc()
+{
+    print_document(*value ? value : "fractint.doc", makedoc_msg_func, 0);
+    goodbye();
     return CMDARG_NONE;
 }
 
