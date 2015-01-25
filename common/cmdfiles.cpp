@@ -815,10 +815,21 @@ private:
 
     void convert_argument_to_lower_case();
     int parse_parameter();
+
     int bad_parameter()
     {
         argerror(curarg);
         return CMDARG_ERROR;
+    }
+
+    int bool_param(bool &dest, int flags = CMDARG_FRACTAL_PARAM)
+    {
+        if (yesnoval[0] < 0)
+        {
+            return bad_parameter();
+        }
+        dest = yesnoval[0] != 0;
+        return flags;
     }
 
     int startup_parameter();
@@ -1320,21 +1331,15 @@ int parameter_processor::param_text_safe()
 // vesadetect no longer used, do validity checks, but gobble argument
 int parameter_processor::param_vesa_detect()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+    bool ignored = false;
+    return bool_param(ignored, CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM);
 }
 
 // biospalette no longer used, do validity checks, but gobble argument
 int parameter_processor::param_bios_palette()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+    bool ignored = false;
+    return bool_param(ignored, CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM);
 }
 
 int parameter_processor::param_fpu()
@@ -1348,12 +1353,7 @@ int parameter_processor::param_fpu()
 
 int parameter_processor::param_exit_no_ask()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    escape_exit = yesnoval[0] != 0;
-    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+    return bool_param(escape_exit, CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM);
 }
 
 int parameter_processor::param_make_doc()
@@ -2319,21 +2319,15 @@ int parameter_processor::param_comment()
 // tplus no longer used, validate value and gobble argument
 int parameter_processor::param_tplus()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    return CMDARG_NONE;
+    bool ignored = false;
+    return bool_param(ignored, CMDARG_NONE);
 }
 
 // noninterlaced no longer used, validate value and gobble argument
 int parameter_processor::param_non_interlaced()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    return CMDARG_NONE;
+    bool ignored = false;
+    return bool_param(ignored, CMDARG_NONE);
 }
 
 // Change default color resolution
@@ -2362,34 +2356,19 @@ int parameter_processor::param_pixel_zoom()
 // overwrite=?
 int parameter_processor::param_overwrite()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    fract_overwrite = yesnoval[0] != 0;
-    return CMDARG_NONE;
+    return bool_param(fract_overwrite, CMDARG_NONE);
 }
 
 // gif87a=?
 int parameter_processor::param_gif87a()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    gif87a_flag = yesnoval[0] != 0;
-    return CMDARG_NONE;
+    return bool_param(gif87a_flag, CMDARG_NONE);
 }
 
 // dither=?
 int parameter_processor::param_dither()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    dither_flag = yesnoval[0] != 0;
-    return CMDARG_NONE;
+    return bool_param(dither_flag, CMDARG_NONE);
 }
 
 // savetime=?
@@ -2542,23 +2521,13 @@ int parameter_processor::param_fill_color()
 // finattract=?
 int parameter_processor::param_fin_attract()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    finattract = yesnoval[0] != 0;
-    return CMDARG_FRACTAL_PARAM;
+    return bool_param(finattract);
 }
 
 // nobof=?
 int parameter_processor::param_no_bof()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    nobof = yesnoval[0] != 0;
-    return CMDARG_FRACTAL_PARAM;
+    return bool_param(nobof);
 }
 
 // function=?,?
@@ -2664,12 +2633,7 @@ int parameter_processor::param_passes()
 // ismand=?
 int parameter_processor::param_is_mand()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    ismand = yesnoval[0] != 0;
-    return CMDARG_FRACTAL_PARAM;
+    return bool_param(ismand);
 }
 
 // cyclelimit=?
@@ -3254,12 +3218,7 @@ int parameter_processor::param_orbit_corners()
 // screencoords=?
 int parameter_processor::param_screen_coords()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    keep_scrn_coords = yesnoval[0] != 0;
-    return CMDARG_FRACTAL_PARAM;
+    return bool_param(keep_scrn_coords);
 }
 
 // orbitdrawmode=?
@@ -3419,23 +3378,13 @@ int parameter_processor::param_invert()
 // olddemmcolors=?
 int parameter_processor::param_old_demm_colors()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    old_demm_colors = yesnoval[0] != 0;
-    return CMDARG_NONE;
+    return bool_param(old_demm_colors, CMDARG_NONE);
 }
 
 // askvideo=?
 int parameter_processor::param_ask_video()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    askvideo = yesnoval[0] != 0;
-    return CMDARG_NONE;
+    return bool_param(askvideo, CMDARG_NONE);
 }
 
 // float=?
@@ -3456,12 +3405,7 @@ int parameter_processor::param_float()
 // fastrestore=?
 int parameter_processor::param_fast_restore()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    fastrestore = yesnoval[0] != 0;
-    return CMDARG_NONE;
+    return bool_param(fastrestore, CMDARG_NONE);
 }
 
 // orgfrmdir=?
@@ -4220,23 +4164,13 @@ int parameter_processor::param_transparent()
 // preview?
 int parameter_processor::param_preview()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    preview = yesnoval[0] != 0;
-    return CMDARG_3D_PARAM;
+    return bool_param(preview, CMDARG_3D_PARAM);
 }
 
 // showbox?
 int parameter_processor::param_show_box()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    showbox = yesnoval[0] != 0;
-    return CMDARG_3D_PARAM;
+    return bool_param(showbox, CMDARG_3D_PARAM);
 }
 
 // coarse=?
@@ -4286,23 +4220,13 @@ int parameter_processor::param_haze()
 // fullcolor=?
 int parameter_processor::param_full_color()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    Targa_Out = yesnoval[0] != 0;
-    return CMDARG_3D_PARAM;
+    return bool_param(Targa_Out, CMDARG_3D_PARAM);
 }
 
 // truecolor=?
 int parameter_processor::param_true_color()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    truecolor = yesnoval[0] != 0;
-    return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
+    return bool_param(truecolor, CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM);
 }
 
 // truemode=?
@@ -4323,12 +4247,7 @@ int parameter_processor::param_true_mode()
 // usegrayscale?
 int parameter_processor::param_use_gray_scale()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    grayflag = yesnoval[0] != 0;
-    return CMDARG_3D_PARAM;
+    return bool_param(grayflag, CMDARG_3D_PARAM);
 }
 
 // monitorwidth=?
@@ -4345,12 +4264,7 @@ int parameter_processor::param_monitor_width()
 // Targa Overlay?
 int parameter_processor::param_targa_overlay()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    Targa_Overlay = yesnoval[0] != 0;
-    return CMDARG_3D_PARAM;
+    return bool_param(Targa_Overlay, CMDARG_3D_PARAM);
 }
 
 // background=?/?
@@ -4401,12 +4315,7 @@ int parameter_processor::param_ray()
 // BRIEF?
 int parameter_processor::param_brief()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    BRIEF = yesnoval[0] != 0;
-    return CMDARG_3D_PARAM;
+    return bool_param(BRIEF, CMDARG_3D_PARAM);
 }
 
 // release
@@ -4423,23 +4332,13 @@ int parameter_processor::param_release()
 // curdir=
 int parameter_processor::param_cur_dir()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    checkcurdir = yesnoval[0] != 0;
-    return CMDARG_NONE;
+    return bool_param(checkcurdir, CMDARG_NONE);
 }
 
 // virtual=
 int parameter_processor::param_virtual()
 {
-    if (yesnoval[0] < 0)
-    {
-        return bad_parameter();
-    }
-    g_virtual_screens = yesnoval[0] != 0;
-    return CMDARG_FRACTAL_PARAM;
+    return bool_param(g_virtual_screens);
 }
 
 // Some routines broken out of above so compiler doesn't run out of heap:
