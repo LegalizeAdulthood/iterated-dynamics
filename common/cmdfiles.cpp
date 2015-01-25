@@ -1222,7 +1222,7 @@ int parameter_processor::startup_parameter()
         return param_afi();
     }
 
-    if (variable == "textsafe")   // textsafe==?
+    if (variable == "textsafe")
     {
         return param_text_safe();
     }
@@ -1313,6 +1313,7 @@ int parameter_processor::param_afi()
 }
 
 // textsafe no longer used, do validity checking, but gobble argument
+// textsafe==?
 int parameter_processor::param_text_safe()
 {
     if (first_init)
