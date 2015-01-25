@@ -3,6 +3,7 @@
 */
 #include <algorithm>
 #include <cassert>
+#include <map>
 #include <string>
 #include <system_error>
 #include <vector>
@@ -1462,6 +1463,11 @@ int parameter_processor::process()
 
 int parameter_processor::parameter()
 {
+    std::map<std::string, int (parameter_processor::*)()> parameters
+    {
+        { "reset", &parameter_processor::param_reset }
+    };
+
     if (variable == "reset")
     {
         return param_reset();
