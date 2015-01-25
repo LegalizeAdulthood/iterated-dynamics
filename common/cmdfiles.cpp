@@ -779,10 +779,10 @@ static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
     return true;
 }
 
-class command_processor
+class parameter_processor
 {
 public:
-    command_processor(char *curarg, cmd_file mode);
+    parameter_processor(char *curarg, cmd_file mode);
 
     int process();
 
@@ -814,166 +814,166 @@ private:
     std::string variable;
 
     void convert_argument_to_lower_case();
-    int parse_command();
-    int bad_command()
+    int parse_parameter();
+    int bad_parameter()
     {
         argerror(curarg);
         return CMDARG_ERROR;
     }
 
-    int startup_command();
-    int command_batch();
-    int command_max_history();
-    int command_adapter();
-    int command_afi();
-    int command_text_safe();
-    int command_vesa_detect();
-    int command_bios_palette();
-    int command_fpu();
-    int command_exit_no_ask();
-    int command_make_doc();
-    int command_make_par();
+    int startup_parameter();
+    int param_batch();
+    int param_max_history();
+    int param_adapter();
+    int param_afi();
+    int param_text_safe();
+    int param_vesa_detect();
+    int param_bios_palette();
+    int param_fpu();
+    int param_exit_no_ask();
+    int param_make_doc();
+    int param_make_par();
 
-    int command();
-    int command_reset();
-    int command_filename();
-    int command_video();
-    int command_map();
-    int command_colors();
-    int command_record_colors();
-    int command_max_line_length();
-    int command_comment();
-    int command_tplus();
-    int command_non_interlaced();
-    int command_max_color_res();
-    int command_pixel_zoom();
-    int command_overwrite();
-    int command_gif87a();
-    int command_dither();
-    int command_save_time();
-    int command_auto_key();
-    int command_auto_key_name();
-    int command_type();
-    int command_inside();
-    int command_proximity();
-    int command_fill_color();
-    int command_fin_attract();
-    int command_no_bof();
-    int command_function();
-    int command_outside();
-    int command_bf_digits();
-    int command_max_iter();
-    int command_passes();
-    int command_is_mand();
-    int command_cycle_limit();
-    int command_make_mig();
-    int command_cycle_range();
-    int command_ranges();
-    int command_save_name();
-    int command_tweak_lzw();
-    int command_min_stack();
-    int command_math_tolerance();
-    int command_temp_dir();
-    int command_work_dir();
-    int command_exit_mode();
-    int command_text_colors();
-    int command_potential();
-    int command_params();
-    int command_miim();
-    int command_init_orbit();
-    int command_orbit_name();
-    int command_3d_mode();
-    int command_julibrot_3d();
-    int command_julibrot_eyes();
-    int command_julibrot_from_to();
-    int command_corners();
-    int command_orbit_corners();
-    int command_screen_coords();
-    int command_orbit_draw_mode();
-    int command_view_windows();
-    int command_center_mag();
-    int command_aspect_drift();
-    int command_invert();
-    int command_old_demm_colors();
-    int command_ask_video();
-    int command_float();
-    int command_fast_restore();
-    int command_org_frm_dir();
-    int command_biomorph();
-    int command_orbit_save();
-    int command_bailout();
-    int command_bailout_test();
-    int command_symmetry();
+    int parameter();
+    int param_reset();
+    int param_filename();
+    int param_video();
+    int param_map();
+    int param_colors();
+    int param_record_colors();
+    int param_max_line_length();
+    int param_comment();
+    int param_tplus();
+    int param_non_interlaced();
+    int param_max_color_res();
+    int param_pixel_zoom();
+    int param_overwrite();
+    int param_gif87a();
+    int param_dither();
+    int param_save_time();
+    int param_auto_key();
+    int param_auto_key_name();
+    int param_type();
+    int param_inside();
+    int param_proximity();
+    int param_fill_color();
+    int param_fin_attract();
+    int param_no_bof();
+    int param_function();
+    int param_outside();
+    int param_bf_digits();
+    int param_max_iter();
+    int param_passes();
+    int param_is_mand();
+    int param_cycle_limit();
+    int param_make_mig();
+    int param_cycle_range();
+    int param_ranges();
+    int param_save_name();
+    int param_tweak_lzw();
+    int param_min_stack();
+    int param_math_tolerance();
+    int param_temp_dir();
+    int param_work_dir();
+    int param_exit_mode();
+    int param_text_colors();
+    int param_potential();
+    int param_params();
+    int param_miim();
+    int param_init_orbit();
+    int param_orbit_name();
+    int param_3d_mode();
+    int param_julibrot_3d();
+    int param_julibrot_eyes();
+    int param_julibrot_from_to();
+    int param_corners();
+    int param_orbit_corners();
+    int param_screen_coords();
+    int param_orbit_draw_mode();
+    int param_view_windows();
+    int param_center_mag();
+    int param_aspect_drift();
+    int param_invert();
+    int param_old_demm_colors();
+    int param_ask_video();
+    int param_float();
+    int param_fast_restore();
+    int param_org_frm_dir();
+    int param_biomorph();
+    int param_orbit_save();
+    int param_bailout();
+    int param_bailout_test();
+    int param_symmetry();
     bool is_print_parameter();
-    int command_sound();
-    int command_hertz();
-    int command_volume();
-    int command_attenuate();
-    int command_polyphony();
-    int command_wave_type();
-    int command_attack();
-    int command_decay();
-    int command_sustain();
-    int command_s_release();
-    int command_scale_map();
-    int command_periodicity();
-    int command_log_map();
-    int command_log_mode();
-    int command_debug_flag();
-    int command_rseed();
-    int command_orbit_delay();
-    int command_orbit_interval();
-    int command_show_dot();
-    int command_show_orbit();
-    int command_decomp();
-    int command_dist_test();
-    int command_formula_file();
-    int command_formula_name();
-    int command_l_file();
-    int command_l_name();
-    int command_ifs_file();
-    int command_ifs();
-    int command_parm_file();
-    int command_stereo();
-    int command_rotation();
-    int command_perspective();
-    int command_x_y_shift();
-    int command_interocular();
-    int command_converge();
-    int command_crop();
-    int command_bright();
-    int command_x_y_adjust();
-    int command_3d();
-    int command_sphere();
-    int command_scale_x_y_z();
-    int command_roughness();
-    int command_waterline();
-    int command_fill_type();
-    int command_light_source();
-    int command_smoothing();
-    int command_latitude();
-    int command_longitude();
-    int command_radius();
-    int command_transparent();
-    int command_preview();
-    int command_show_box();
-    int command_coarse();
-    int command_randomize();
-    int command_ambient();
-    int command_haze();
-    int command_full_color();
-    int command_true_color();
-    int command_true_mode();
-    int command_use_gray_scale();
-    int command_monitor_width();
-    int command_targa_overlay();
-    int command_background();
-    int command_light_name();
-    int command_ray();
-    int command_brief();
-    int command_release();
-    int command_cur_dir();
-    int command_virtual();
+    int param_sound();
+    int param_hertz();
+    int param_volume();
+    int param_attenuate();
+    int param_polyphony();
+    int param_wave_type();
+    int param_attack();
+    int param_decay();
+    int param_sustain();
+    int param_s_release();
+    int param_scale_map();
+    int param_periodicity();
+    int param_log_map();
+    int param_log_mode();
+    int param_debug_flag();
+    int param_rseed();
+    int param_orbit_delay();
+    int param_orbit_interval();
+    int param_show_dot();
+    int param_show_orbit();
+    int param_decomp();
+    int param_dist_test();
+    int param_formula_file();
+    int param_formula_name();
+    int param_l_file();
+    int param_l_name();
+    int param_ifs_file();
+    int param_ifs();
+    int param_parm_file();
+    int param_stereo();
+    int param_rotation();
+    int param_perspective();
+    int param_x_y_shift();
+    int param_interocular();
+    int param_converge();
+    int param_crop();
+    int param_bright();
+    int param_x_y_adjust();
+    int param_3d();
+    int param_sphere();
+    int param_scale_x_y_z();
+    int param_roughness();
+    int param_waterline();
+    int param_fill_type();
+    int param_light_source();
+    int param_smoothing();
+    int param_latitude();
+    int param_longitude();
+    int param_radius();
+    int param_transparent();
+    int param_preview();
+    int param_show_box();
+    int param_coarse();
+    int param_randomize();
+    int param_ambient();
+    int param_haze();
+    int param_full_color();
+    int param_true_color();
+    int param_true_mode();
+    int param_use_gray_scale();
+    int param_monitor_width();
+    int param_targa_overlay();
+    int param_background();
+    int param_light_name();
+    int param_ray();
+    int param_brief();
+    int param_release();
+    int param_cur_dir();
+    int param_virtual();
 };
 
 namespace
@@ -993,10 +993,10 @@ int const NON_NUMERIC = -32767;
 */
 int cmdarg(char *curarg, cmd_file mode) // process a single argument
 {
-    return command_processor(curarg, mode).process();
+    return parameter_processor(curarg, mode).process();
 }
 
-command_processor::command_processor(char *curarg_, cmd_file mode_)
+parameter_processor::parameter_processor(char *curarg_, cmd_file mode_)
     : valuelen(0),
     numval(0),
     ftemp(0.0),
@@ -1024,7 +1024,7 @@ command_processor::command_processor(char *curarg_, cmd_file mode_)
     std::fill_n(floatvalstr, 16, nullptr);
 }
 
-void command_processor::convert_argument_to_lower_case()
+void parameter_processor::convert_argument_to_lower_case()
 {
     char *argptr = curarg;
     while (*argptr)
@@ -1045,7 +1045,7 @@ void command_processor::convert_argument_to_lower_case()
     }
 }
 
-int command_processor::parse_command()
+int parameter_processor::parse_parameter()
 {
     int j;
     value = strchr(&curarg[1], '=');
@@ -1064,7 +1064,7 @@ int command_processor::parse_command()
     }
     if (j > 20)
     {
-        return bad_command();               // keyword too long
+        return bad_parameter();               // keyword too long
     }
     variable = std::string(curarg, j);
     valuelen = (int) strlen(value);            // note value's length
@@ -1190,71 +1190,71 @@ int command_processor::parse_command()
 }
 
 // these commands are allowed only at startup
-int command_processor::startup_command()
+int parameter_processor::startup_parameter()
 {
     if (variable == "batch")
     {
-        return command_batch();
+        return param_batch();
     }
     if (variable == "maxhistory")
     {
-        return command_max_history();
+        return param_max_history();
     }
 
     if (variable == "adapter")
     {
-        return command_adapter();
+        return param_adapter();
     }
 
     if (variable == "afi")
     {
-        return command_afi();
+        return param_afi();
     }
 
     if (variable == "textsafe")   // textsafe==?
     {
-        return command_text_safe();
+        return param_text_safe();
     }
 
     if (variable == "vesadetect")
     {
-        return command_vesa_detect();
+        return param_vesa_detect();
     }
 
     if (variable == "biospalette")
     {
-        return command_bios_palette();
+        return param_bios_palette();
     }
 
     if (variable == "fpu")
     {
-        return command_fpu();
+        return param_fpu();
     }
 
     if (variable == "exitnoask")
     {
-        return command_exit_no_ask();
+        return param_exit_no_ask();
     }
 
     if (variable == "makedoc")
     {
-        return command_make_doc();
+        return param_make_doc();
     }
 
     if (variable == "makepar")
     {
-        return command_make_par();
+        return param_make_par();
     }
 
     return CMDARG_NONE;
 }
 
 // batch=?
-int command_processor::command_batch()
+int parameter_processor::param_batch()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
 #ifdef XFRACT
     g_init_mode = yesnoval[0] ? 0 : -1; // skip credits for batch mode
@@ -1264,15 +1264,15 @@ int command_processor::command_batch()
 }
 
 // maxhistory=?
-int command_processor::command_max_history()
+int parameter_processor::param_max_history()
 {
     if (numval == NON_NUMERIC)
     {
-        return bad_command();
+        return bad_parameter();
     }
     else if (numval < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     else
     {
@@ -1284,25 +1284,25 @@ int command_processor::command_max_history()
 // adapter==?
 // adapter= no longer used
 // adapter parameter no longer used; check for bad argument anyway
-int command_processor::command_adapter()
+int parameter_processor::param_adapter()
 {
     if ((strcmp(value, "egamono") != 0) && (strcmp(value, "hgc") != 0) &&
             (strcmp(value, "ega") != 0)     && (strcmp(value, "cga") != 0) &&
             (strcmp(value, "mcga") != 0)    && (strcmp(value, "vga") != 0))
     {
-        return bad_command();
+        return bad_parameter();
     }
     return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 }
 
 // 8514 API no longer used; silently gobble any argument
-int command_processor::command_afi()
+int parameter_processor::param_afi()
 {
     return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 }
 
 // textsafe no longer used, do validity checking, but gobble argument
-int command_processor::command_text_safe()
+int parameter_processor::param_text_safe()
 {
     if (first_init)
     {
@@ -1311,64 +1311,64 @@ int command_processor::command_text_safe()
                 || (charval[0] == 'b')  // bios
                 || (charval[0] == 's'))) // save
         {
-            return bad_command();
+            return bad_parameter();
         }
     }
     return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 }
 
 // vesadetect no longer used, do validity checks, but gobble argument
-int command_processor::command_vesa_detect()
+int parameter_processor::param_vesa_detect()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 }
 
 // biospalette no longer used, do validity checks, but gobble argument
-int command_processor::command_bios_palette()
+int parameter_processor::param_bios_palette()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 }
 
-int command_processor::command_fpu()
+int parameter_processor::param_fpu()
 {
     if (strcmp(value, "387") == 0)
     {
         return CMDARG_NONE;
     }
-    return bad_command();
+    return bad_parameter();
 }
 
-int command_processor::command_exit_no_ask()
+int parameter_processor::param_exit_no_ask()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     escape_exit = yesnoval[0] != 0;
     return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 }
 
-int command_processor::command_make_doc()
+int parameter_processor::param_make_doc()
 {
     print_document(*value ? value : "fractint.doc", makedoc_msg_func, 0);
     goodbye();
     return CMDARG_NONE;
 }
 
-int command_processor::command_make_par()
+int parameter_processor::param_make_par()
 {
     char *slash, *next = nullptr;
     if (totparms < 1 || totparms > 2)
     {
-        return bad_command();
+        return bad_parameter();
     }
     slash = strchr(value, '/');
     if (slash != nullptr)
@@ -1437,11 +1437,11 @@ int command_processor::command_make_par()
     return CMDARG_NONE;
 }
 
-int command_processor::process()
+int parameter_processor::process()
 {
     convert_argument_to_lower_case();
 
-    int result = parse_command();
+    int result = parse_parameter();
     if (result != CMDARG_NONE)
     {
         return result;
@@ -1449,157 +1449,157 @@ int command_processor::process()
 
     if (mode != cmd_file::AT_AFTER_STARTUP || debugflag == debug_flags::allow_init_commands_anytime)
     {
-        result = startup_command();
+        result = startup_parameter();
         if (result != CMDARG_NONE)
         {
             return result;
         }
     }
 
-    return command();
+    return parameter();
 }
 
-int command_processor::command()
+int parameter_processor::parameter()
 {
     if (variable == "reset")
     {
-        return command_reset();
+        return param_reset();
     }
 
     if (variable == "filename")
     {
-        return command_filename();
+        return param_filename();
     }
 
     if (variable == "video")
     {
-        return command_video();
+        return param_video();
     }
 
     if (variable == "map")
     {
-        return command_map();
+        return param_map();
     }
 
     if (variable == "colors")
     {
-        return command_colors();
+        return param_colors();
     }
 
     if (variable == "recordcolors")
     {
-        return command_record_colors();
+        return param_record_colors();
     }
 
     if (variable == "maxlinelength")
     {
-        return command_max_line_length();
+        return param_max_line_length();
     }
 
     if (variable == "comment")
     {
-        return command_comment();
+        return param_comment();
     }
 
     if (variable == "tplus")
     {
-        return command_tplus();
+        return param_tplus();
     }
 
     if (variable == "noninterlaced")
     {
-        return command_non_interlaced();
+        return param_non_interlaced();
     }
 
     if (variable == "maxcolorres")
     {
-        return command_max_color_res();
+        return param_max_color_res();
     }
 
     if (variable == "pixelzoom")
     {
-        return command_pixel_zoom();
+        return param_pixel_zoom();
     }
 
     if ((variable == "warn")            // keep this for backward compatibility
             || (variable == "overwrite"))
     {
-        return command_overwrite();
+        return param_overwrite();
     }
 
     if (variable == "gif87a")
     {
-        return command_gif87a();
+        return param_gif87a();
     }
 
     if (variable == "dither")
     {
-        return command_dither();
+        return param_dither();
     }
 
     if (variable == "savetime")
     {
-        return command_save_time();
+        return param_save_time();
     }
 
     if (variable == "autokey")
     {
-        return command_auto_key();
+        return param_auto_key();
     }
 
     if (variable == "autokeyname")
     {
-        return command_auto_key_name();
+        return param_auto_key_name();
     }
 
     if (variable == "type")
     {
-        return command_type();
+        return param_type();
     }
 
     if (variable == "inside")
     {
-        return command_inside();
+        return param_inside();
     }
 
     if (variable == "proximity")
     {
-        return command_proximity();
+        return param_proximity();
     }
 
     if (variable == "fillcolor")
     {
-        return command_fill_color();
+        return param_fill_color();
     }
 
     if (variable == "finattract")
     {
-        return command_fin_attract();
+        return param_fin_attract();
     }
 
     if (variable == "nobof")
     {
-        return command_no_bof();
+        return param_no_bof();
     }
 
     if (variable == "function")
     {
-        return command_function();
+        return param_function();
     }
 
     if (variable == "outside")
     {
-        return command_outside();
+        return param_outside();
     }
 
     if (variable == "bfdigits")
     {
-        return command_bf_digits();
+        return param_bf_digits();
     }
 
     if (variable == "maxiter")
     {
-        return command_max_iter();
+        return param_max_iter();
     }
 
     if (variable == "iterincr")
@@ -1610,167 +1610,167 @@ int command_processor::command()
 
     if (variable == "passes")
     {
-        return command_passes();
+        return param_passes();
     }
 
     if (variable == "ismand")
     {
-        return command_is_mand();
+        return param_is_mand();
     }
 
     if (variable == "cyclelimit")
     {
-        return command_cycle_limit();
+        return param_cycle_limit();
     }
 
     if (variable == "makemig")
     {
-        return command_make_mig();
+        return param_make_mig();
     }
 
     if (variable == "cyclerange")
     {
-        return command_cycle_range();
+        return param_cycle_range();
     }
 
     if (variable == "ranges")
     {
-        return command_ranges();
+        return param_ranges();
     }
 
     if (variable == "savename")
     {
-        return command_save_name();
+        return param_save_name();
     }
 
     if (variable == "tweaklzw")
     {
-        return command_tweak_lzw();
+        return param_tweak_lzw();
     }
 
     if (variable == "minstack")
     {
-        return command_min_stack();
+        return param_min_stack();
     }
 
     if (variable == "mathtolerance")
     {
-        return command_math_tolerance();
+        return param_math_tolerance();
     }
 
     if (variable == "tempdir")
     {
-        return command_temp_dir();
+        return param_temp_dir();
     }
 
     if (variable == "workdir")
     {
-        return command_work_dir();
+        return param_work_dir();
     }
 
     if (variable == "exitmode")
     {
-        return command_exit_mode();
+        return param_exit_mode();
     }
 
     if (variable == "textcolors")
     {
-        return command_text_colors();
+        return param_text_colors();
     }
 
     if (variable == "potential")
     {
-        return command_potential();
+        return param_potential();
     }
 
     if (variable == "params")
     {
-        return command_params();
+        return param_params();
     }
 
     if (variable == "miim")
     {
-        return command_miim();
+        return param_miim();
     }
 
     if (variable == "initorbit")
     {
-        return command_init_orbit();
+        return param_init_orbit();
     }
 
     if (variable == "orbitname")
     {
-        return command_orbit_name();
+        return param_orbit_name();
     }
 
     if (variable == "3dmode")
     {
-        return command_3d_mode();
+        return param_3d_mode();
     }
 
     if (variable == "julibrot3d")
     {
-        return command_julibrot_3d();
+        return param_julibrot_3d();
     }
 
     if (variable == "julibroteyes")
     {
-        return command_julibrot_eyes();
+        return param_julibrot_eyes();
     }
 
     if (variable == "julibrotfromto")
     {
-        return command_julibrot_from_to();
+        return param_julibrot_from_to();
     }
 
     if (variable == "corners")
     {
-        return command_corners();
+        return param_corners();
     }
 
     if (variable == "orbitcorners")
     {
-        return command_orbit_corners();
+        return param_orbit_corners();
     }
 
     if (variable == "screencoords")
     {
-        return command_screen_coords();
+        return param_screen_coords();
     }
 
     if (variable == "orbitdrawmode")
     {
-        return command_orbit_draw_mode();
+        return param_orbit_draw_mode();
     }
 
     if (variable == "viewwindows")
     {
-        return command_view_windows();
+        return param_view_windows();
     }
 
     if (variable == "center-mag")
     {
-        return command_center_mag();
+        return param_center_mag();
     }
 
     if (variable == "aspectdrift")
     {
-        return command_aspect_drift();
+        return param_aspect_drift();
     }
 
     if (variable == "invert")
     {
-        return command_invert();
+        return param_invert();
     }
 
     if (variable == "olddemmcolors")
     {
-        return command_old_demm_colors();
+        return param_old_demm_colors();
     }
 
     if (variable == "askvideo")
     {
-        return command_ask_video();
+        return param_ask_video();
     }
 
     if (variable == "ramvideo")
@@ -1781,42 +1781,42 @@ int command_processor::command()
 
     if (variable == "float")
     {
-        return command_float();
+        return param_float();
     }
 
     if (variable == "fastrestore")
     {
-        return command_fast_restore();
+        return param_fast_restore();
     }
 
     if (variable == "orgfrmdir")
     {
-        return command_org_frm_dir();
+        return param_org_frm_dir();
     }
 
     if (variable == "biomorph")
     {
-        return command_biomorph();
+        return param_biomorph();
     }
 
     if (variable == "orbitsave")
     {
-        return command_orbit_save();
+        return param_orbit_save();
     }
 
     if (variable == "bailout")
     {
-        return command_bailout();
+        return param_bailout();
     }
 
     if (variable == "bailoutest")
     {
-        return command_bailout_test();
+        return param_bailout_test();
     }
 
     if (variable == "symmetry")
     {
-        return command_symmetry();
+        return param_symmetry();
     }
 
     if (is_print_parameter())
@@ -1826,353 +1826,353 @@ int command_processor::command()
 
     if (variable == "sound")
     {
-        return command_sound();
+        return param_sound();
     }
 
     if (variable == "hertz")
     {
-        return command_hertz();
+        return param_hertz();
     }
 
     if (variable == "volume")
     {
-        return command_volume();
+        return param_volume();
     }
 
     if (variable == "attenuate")
     {
-        return command_attenuate();
+        return param_attenuate();
     }
 
     if (variable == "polyphony")
     {
-        return command_polyphony();
+        return param_polyphony();
     }
 
     if (variable == "wavetype")
     {
-        return command_wave_type();
+        return param_wave_type();
     }
 
     if (variable == "attack")
     {
-        return command_attack();
+        return param_attack();
     }
 
     if (variable == "decay")
     {
-        return command_decay();
+        return param_decay();
     }
 
     if (variable == "sustain")
     {
-        return command_sustain();
+        return param_sustain();
     }
 
     if (variable == "srelease")
     {
-        return command_s_release();
+        return param_s_release();
     }
 
     if (variable == "scalemap")
     {
-        return command_scale_map();
+        return param_scale_map();
     }
 
     if (variable == "periodicity")
     {
-        return command_periodicity();
+        return param_periodicity();
     }
 
     if (variable == "logmap")
     {
-        return command_log_map();
+        return param_log_map();
     }
 
     if (variable == "logmode")
     {
-        return command_log_mode();
+        return param_log_mode();
     }
 
     if (variable == "debugflag" || variable == "debug")
     {
-        return command_debug_flag();
+        return param_debug_flag();
     }
 
     if (variable == "rseed")
     {
-        return command_rseed();
+        return param_rseed();
     }
 
     if (variable == "orbitdelay")
     {
-        return command_orbit_delay();
+        return param_orbit_delay();
     }
 
     if (variable == "orbitinterval")
     {
-        return command_orbit_interval();
+        return param_orbit_interval();
     }
 
     if (variable == "showdot")
     {
-        return command_show_dot();
+        return param_show_dot();
     }
 
     if (variable == "showorbit")
     {
-        return command_show_orbit();
+        return param_show_orbit();
     }
 
     if (variable == "decomp")
     {
-        return command_decomp();
+        return param_decomp();
     }
 
     if (variable == "distest")
     {
-        return command_dist_test();
+        return param_dist_test();
     }
 
     if (variable == "formulafile")
     {
-        return command_formula_file();
+        return param_formula_file();
     }
 
     if (variable == "formulaname")
     {
-        return command_formula_name();
+        return param_formula_name();
     }
 
     if (variable == "lfile")
     {
-        return command_l_file();
+        return param_l_file();
     }
 
     if (variable == "lname")
     {
-        return command_l_name();
+        return param_l_name();
     }
 
     if (variable == "ifsfile")
     {
-        return command_ifs_file();
+        return param_ifs_file();
     }
 
     if (variable == "ifs" || variable == "ifs3d") // ifs3d for old time's sake
     {
-        return command_ifs();
+        return param_ifs();
     }
 
     if (variable == "parmfile")
     {
-        return command_parm_file();
+        return param_parm_file();
     }
 
     if (variable == "stereo")
     {
-        return command_stereo();
+        return param_stereo();
     }
 
     if (variable == "rotation")
     {
-        return command_rotation();
+        return param_rotation();
     }
 
     if (variable == "perspective")
     {
-        return command_perspective();
+        return param_perspective();
     }
 
     if (variable == "xyshift")
     {
-        return command_x_y_shift();
+        return param_x_y_shift();
     }
 
     if (variable == "interocular")
     {
-        return command_interocular();
+        return param_interocular();
     }
 
     if (variable == "converge")
     {
-        return command_converge();
+        return param_converge();
     }
 
     if (variable == "crop")
     {
-        return command_crop();
+        return param_crop();
     }
 
     if (variable == "bright")
     {
-        return command_bright();
+        return param_bright();
     }
 
     if (variable == "xyadjust")
     {
-        return command_x_y_adjust();
+        return param_x_y_adjust();
     }
 
     if (variable == "3d")
     {
-        return command_3d();
+        return param_3d();
     }
 
     if (variable == "sphere")
     {
-        return command_sphere();
+        return param_sphere();
     }
 
     if (variable == "scalexyz")
     {
-        return command_scale_x_y_z();
+        return param_scale_x_y_z();
     }
 
     if (variable == "roughness")
     {
-        return command_roughness();
+        return param_roughness();
     }
 
     if (variable == "waterline")
     {
-        return command_waterline();
+        return param_waterline();
     }
 
     if (variable == "filltype")
     {
-        return command_fill_type();
+        return param_fill_type();
     }
 
     if (variable == "lightsource")
     {
-        return command_light_source();
+        return param_light_source();
     }
 
     if (variable == "smoothing")
     {
-        return command_smoothing();
+        return param_smoothing();
     }
 
     if (variable == "latitude")
     {
-        return command_latitude();
+        return param_latitude();
     }
 
     if (variable == "longitude")
     {
-        return command_longitude();
+        return param_longitude();
     }
 
     if (variable == "radius")
     {
-        return command_radius();
+        return param_radius();
     }
 
     if (variable == "transparent")
     {
-        return command_transparent();
+        return param_transparent();
     }
 
     if (variable == "preview")
     {
-        return command_preview();
+        return param_preview();
     }
 
     if (variable == "showbox")
     {
-        return command_show_box();
+        return param_show_box();
     }
 
     if (variable == "coarse")
     {
-        return command_coarse();
+        return param_coarse();
     }
 
     if (variable == "randomize")
     {
-        return command_randomize();
+        return param_randomize();
     }
 
     if (variable == "ambient")
     {
-        return command_ambient();
+        return param_ambient();
     }
 
     if (variable == "haze")
     {
-        return command_haze();
+        return param_haze();
     }
 
     if (variable == "fullcolor")
     {
-        return command_full_color();
+        return param_full_color();
     }
 
     if (variable == "truecolor")
     {
-        return command_true_color();
+        return param_true_color();
     }
 
     if (variable == "truemode")
     {
-        return command_true_mode();
+        return param_true_mode();
     }
 
     if (variable == "usegrayscale")
     {
-        return command_use_gray_scale();
+        return param_use_gray_scale();
     }
 
     if (variable == "monitorwidth")
     {
-        return command_monitor_width();
+        return param_monitor_width();
     }
 
     if (variable == "targa_overlay")
     {
-        return command_targa_overlay();
+        return param_targa_overlay();
     }
 
     if (variable == "background")
     {
-        return command_background();
+        return param_background();
     }
 
     if (variable == "lightname")
     {
-        return command_light_name();
+        return param_light_name();
     }
 
     if (variable == "ray")
     {
-        return command_ray();
+        return param_ray();
     }
 
     if (variable == "brief")
     {
-        return command_brief();
+        return param_brief();
     }
 
     if (variable == "release")
     {
-        return command_release();
+        return param_release();
     }
 
     if (variable == "curdir")
     {
-        return command_cur_dir();
+        return param_cur_dir();
     }
 
     if (variable == "virtual")
     {
-        return command_virtual();
+        return param_virtual();
     }
 
-    return bad_command();
+    return bad_parameter();
 }
 
-int command_processor::command_reset()
+int parameter_processor::param_reset()
 {
     initvars_fractal();
 
@@ -2183,7 +2183,7 @@ int command_processor::command_reset()
     }
     else
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (save_release == 0)
     {
@@ -2193,14 +2193,14 @@ int command_processor::command_reset()
 }
 
 // filename=?
-int command_processor::command_filename()
+int parameter_processor::param_filename()
 {
     int existdir;
     if (charval[0] == '.' && value[1] != SLASHC)
     {
         if (valuelen > 4)
         {
-            return bad_command();
+            return bad_parameter();
         }
         // cppcheck-suppress constStatement
         gifmask = std::string{"*"} + value;
@@ -2208,11 +2208,11 @@ int command_processor::command_filename()
     }
     if (valuelen > (FILE_MAX_PATH-1))
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (mode == cmd_file::AT_AFTER_STARTUP && display_3d == NONE) // can't do this in @ command
     {
-        return bad_command();
+        return bad_parameter();
     }
 
     existdir = merge_pathnames(readname, value, mode);
@@ -2232,12 +2232,12 @@ int command_processor::command_filename()
 }
 
 // video=?
-int command_processor::command_video()
+int parameter_processor::param_video()
 {
     int k = check_vidmode_keyname(value);
     if (k == 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     g_init_mode = -1;
     for (int i = 0; i < MAXVIDEOMODES; ++i)
@@ -2250,18 +2250,18 @@ int command_processor::command_video()
     }
     if (g_init_mode == -1)
     {
-        return bad_command();
+        return bad_parameter();
     }
     return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 }
 
 // map=, set default colors
-int command_processor::command_map()
+int parameter_processor::param_map()
 {
     int existdir;
     if (valuelen > (FILE_MAX_PATH-1))
     {
-        return bad_command();
+        return bad_parameter();
     }
     existdir = merge_pathnames(MAP_name, value, mode);
     if (existdir > 0)
@@ -2278,122 +2278,122 @@ int command_processor::command_map()
 }
 
 // colors=, set current colors
-int command_processor::command_colors()
+int parameter_processor::param_colors()
 {
     if (parse_colors(value) < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     return CMDARG_NONE;
 }
 
 // recordcolors=
-int command_processor::command_record_colors()
+int parameter_processor::param_record_colors()
 {
     if (*value != 'y' && *value != 'c' && *value != 'a')
     {
-        return bad_command();
+        return bad_parameter();
     }
     recordcolors = *value;
     return CMDARG_NONE;
 }
 
 // maxlinelength=
-int command_processor::command_max_line_length()
+int parameter_processor::param_max_line_length()
 {
     if (numval < MINMAXLINELENGTH || numval > MAXMAXLINELENGTH)
     {
-        return bad_command();
+        return bad_parameter();
     }
     maxlinelength = numval;
     return CMDARG_NONE;
 }
 
 // comment=
-int command_processor::command_comment()
+int parameter_processor::param_comment()
 {
     parse_comments(value);
     return CMDARG_NONE;
 }
 
 // tplus no longer used, validate value and gobble argument
-int command_processor::command_tplus()
+int parameter_processor::param_tplus()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     return CMDARG_NONE;
 }
 
 // noninterlaced no longer used, validate value and gobble argument
-int command_processor::command_non_interlaced()
+int parameter_processor::param_non_interlaced()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     return CMDARG_NONE;
 }
 
 // Change default color resolution
 // maxcolorres no longer used, validate value and gobble argument
-int command_processor::command_max_color_res()
+int parameter_processor::param_max_color_res()
 {
     if (numval == 1 || numval == 4 || numval == 8 ||
             numval == 16 || numval == 24)
     {
         return CMDARG_NONE;
     }
-    return bad_command();
+    return bad_parameter();
 }
 
 // pixelzoom no longer used, validate value and gobble argument
-int command_processor::command_pixel_zoom()
+int parameter_processor::param_pixel_zoom()
 {
     if (numval >= 5)
     {
-        return bad_command();
+        return bad_parameter();
     }
     return CMDARG_NONE;
 }
 
 // warn=?
 // overwrite=?
-int command_processor::command_overwrite()
+int parameter_processor::param_overwrite()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     fract_overwrite = yesnoval[0] != 0;
     return CMDARG_NONE;
 }
 
 // gif87a=?
-int command_processor::command_gif87a()
+int parameter_processor::param_gif87a()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     gif87a_flag = yesnoval[0] != 0;
     return CMDARG_NONE;
 }
 
 // dither=?
-int command_processor::command_dither()
+int parameter_processor::param_dither()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     dither_flag = yesnoval[0] != 0;
     return CMDARG_NONE;
 }
 
 // savetime=?
-int command_processor::command_save_time()
+int parameter_processor::param_save_time()
 {
     initsavetime = numval;
     // TODO: restore periodic saving
@@ -2401,7 +2401,7 @@ int command_processor::command_save_time()
 }
 
 // autokey=?
-int command_processor::command_auto_key()
+int parameter_processor::param_auto_key()
 {
     if (strcmp(value, "record") == 0)
     {
@@ -2413,13 +2413,13 @@ int command_processor::command_auto_key()
     }
     else
     {
-        return bad_command();
+        return bad_parameter();
     }
     return CMDARG_NONE;
 }
 
 // autokeyname=?
-int command_processor::command_auto_key_name()
+int parameter_processor::param_auto_key_name()
 {
     std::string buff;
     if (merge_pathnames(buff, value, mode) < 0)
@@ -2434,7 +2434,7 @@ int command_processor::command_auto_key_name()
 }
 
 // type=?
-int command_processor::command_type()
+int parameter_processor::param_type()
 {
     if (value[valuelen -1] == '*')
     {
@@ -2455,7 +2455,7 @@ int command_processor::command_type()
     }
     if (fractalspecific[k].name == nullptr)
     {
-        return bad_command();
+        return bad_parameter();
     }
     fractype = static_cast<fractal_type>(k);
     curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
@@ -2476,7 +2476,7 @@ int command_processor::command_type()
 }
 
 // inside=?
-int command_processor::command_inside()
+int parameter_processor::param_inside()
 {
     struct
     {
@@ -2505,7 +2505,7 @@ int command_processor::command_inside()
     }
     if (numval == NON_NUMERIC)
     {
-        return bad_command();
+        return bad_parameter();
     }
     else
     {
@@ -2515,14 +2515,14 @@ int command_processor::command_inside()
 }
 
 // proximity=?
-int command_processor::command_proximity()
+int parameter_processor::param_proximity()
 {
     closeprox = floatval[0];
     return CMDARG_FRACTAL_PARAM;
 }
 
 // fillcolor
-int command_processor::command_fill_color()
+int parameter_processor::param_fill_color()
 {
     if (strcmp(value, "normal") == 0)
     {
@@ -2530,7 +2530,7 @@ int command_processor::command_fill_color()
     }
     else if (numval == NON_NUMERIC)
     {
-        return bad_command();
+        return bad_parameter();
     }
     else
     {
@@ -2540,36 +2540,36 @@ int command_processor::command_fill_color()
 }
 
 // finattract=?
-int command_processor::command_fin_attract()
+int parameter_processor::param_fin_attract()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     finattract = yesnoval[0] != 0;
     return CMDARG_FRACTAL_PARAM;
 }
 
 // nobof=?
-int command_processor::command_no_bof()
+int parameter_processor::param_no_bof()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     nobof = yesnoval[0] != 0;
     return CMDARG_FRACTAL_PARAM;
 }
 
 // function=?,?
-int command_processor::command_function()
+int parameter_processor::param_function()
 {
     int k = 0;
     while (*value && k < 4)
     {
         if (set_trig_array(k++, value))
         {
-            return bad_command();
+            return bad_parameter();
         }
         value = strchr(value, '/');
         if (value == nullptr)
@@ -2583,7 +2583,7 @@ int command_processor::command_function()
 }
 
 // outside=?
-int command_processor::command_outside()
+int parameter_processor::param_outside()
 {
     struct
     {
@@ -2611,43 +2611,43 @@ int command_processor::command_outside()
     }
     if ((numval == NON_NUMERIC) || (numval < TDIS || numval > 255))
     {
-        return bad_command();
+        return bad_parameter();
     }
     outside = numval;
     return CMDARG_FRACTAL_PARAM;
 }
 
 // bfdigits=?
-int command_processor::command_bf_digits()
+int parameter_processor::param_bf_digits()
 {
     if ((numval == NON_NUMERIC) || (numval < 0 || numval > 2000))
     {
-        return bad_command();
+        return bad_parameter();
     }
     bfdigits = numval;
     return CMDARG_FRACTAL_PARAM;
 }
 
 // maxiter=?
-int command_processor::command_max_iter()
+int parameter_processor::param_max_iter()
 {
     if (floatval[0] < 2)
     {
-        return bad_command();
+        return bad_parameter();
     }
     maxit = (long) floatval[0];
     return CMDARG_FRACTAL_PARAM;
 }
 
 // passes=?
-int command_processor::command_passes()
+int parameter_processor::param_passes()
 {
     if (charval[0] != '1' && charval[0] != '2' && charval[0] != '3'
             && charval[0] != 'g' && charval[0] != 'b'
             && charval[0] != 't' && charval[0] != 's'
             && charval[0] != 'd' && charval[0] != 'o')
     {
-        return bad_command();
+        return bad_parameter();
     }
     usr_stdcalcmode = charval[0];
     if (charval[0] == 'g')
@@ -2662,33 +2662,33 @@ int command_processor::command_passes()
 }
 
 // ismand=?
-int command_processor::command_is_mand()
+int parameter_processor::param_is_mand()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     ismand = yesnoval[0] != 0;
     return CMDARG_FRACTAL_PARAM;
 }
 
 // cyclelimit=?
-int command_processor::command_cycle_limit()
+int parameter_processor::param_cycle_limit()
 {
     if (numval <= 1 || numval > 256)
     {
-        return bad_command();
+        return bad_parameter();
     }
     initcyclelimit = numval;
     return CMDARG_NONE;
 }
 
-int command_processor::command_make_mig()
+int parameter_processor::param_make_mig()
 {
     int xmult, ymult;
     if (totparms < 2)
     {
-        return bad_command();
+        return bad_parameter();
     }
     xmult = intval[0];
     ymult = intval[1];
@@ -2697,7 +2697,7 @@ int command_processor::command_make_mig()
     return CMDARG_NONE;
 }
 
-int command_processor::command_cycle_range()
+int parameter_processor::param_cycle_range()
 {
     if (totparms < 2)
     {
@@ -2710,21 +2710,21 @@ int command_processor::command_cycle_range()
     if (totparms != intparms
             || intval[0] < 0 || intval[1] > 255 || intval[0] > intval[1])
     {
-        return bad_command();
+        return bad_parameter();
     }
     rotate_lo = intval[0];
     rotate_hi = intval[1];
     return CMDARG_NONE;
 }
 
-int command_processor::command_ranges()
+int parameter_processor::param_ranges()
 {
     int i, j, entries, prev;
     int tmpranges[128];
 
     if (totparms != intparms)
     {
-        return bad_command();
+        return bad_parameter();
     }
     i = 0;
     prev = i;
@@ -2738,7 +2738,7 @@ int command_processor::command_ranges()
             j = -j;
             if (j < 1 || j >= 16384 || i >= totparms)
             {
-                return bad_command();
+                return bad_parameter();
             }
             tmpranges[entries++] = -1; // {-1,width,limit} for striping
             tmpranges[entries++] = j;
@@ -2746,14 +2746,14 @@ int command_processor::command_ranges()
         }
         if (j < prev)
         {
-            return bad_command();
+            return bad_parameter();
         }
         prev = j;
         tmpranges[entries++] = prev;
     }
     if (prev == 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     bool resized = false;
     try
@@ -2778,11 +2778,11 @@ int command_processor::command_ranges()
 }
 
 // savename=?
-int command_processor::command_save_name()
+int parameter_processor::param_save_name()
 {
     if (valuelen > (FILE_MAX_PATH-1))
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (first_init || mode == cmd_file::AT_AFTER_STARTUP)
     {
@@ -2795,7 +2795,7 @@ int command_processor::command_save_name()
 }
 
 // tweaklzw=?
-int command_processor::command_tweak_lzw()
+int parameter_processor::param_tweak_lzw()
 {
     if (totparms >= 1)
     {
@@ -2809,18 +2809,18 @@ int command_processor::command_tweak_lzw()
 }
 
 // minstack=?
-int command_processor::command_min_stack()
+int parameter_processor::param_min_stack()
 {
     if (totparms != 1)
     {
-        return bad_command();
+        return bad_parameter();
     }
     minstack = intval[0];
     return CMDARG_NONE;
 }
 
 // mathtolerance=?
-int command_processor::command_math_tolerance()
+int parameter_processor::param_math_tolerance()
 {
     if (charval[0] == '/')
     {
@@ -2838,15 +2838,15 @@ int command_processor::command_math_tolerance()
 }
 
 // tempdir=?
-int command_processor::command_temp_dir()
+int parameter_processor::param_temp_dir()
 {
     if (valuelen > (FILE_MAX_DIR-1))
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (!isadirectory(value))
     {
-        return bad_command();
+        return bad_parameter();
     }
     tempdir = value;
     fix_dirname(tempdir);
@@ -2854,15 +2854,15 @@ int command_processor::command_temp_dir()
 }
 
 // workdir=?
-int command_processor::command_work_dir()
+int parameter_processor::param_work_dir()
 {
     if (valuelen > (FILE_MAX_DIR-1))
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (!isadirectory(value))
     {
-        return bad_command();
+        return bad_parameter();
     }
     workdir = value;
     fix_dirname(workdir);
@@ -2870,21 +2870,21 @@ int command_processor::command_work_dir()
 }
 
 // exitmode=?
-int command_processor::command_exit_mode()
+int parameter_processor::param_exit_mode()
 {
     sscanf(value, "%x", &numval);
     exitmode = (BYTE) numval;
     return CMDARG_NONE;
 }
 
-int command_processor::command_text_colors()
+int parameter_processor::param_text_colors()
 {
     parse_textcolors(value);
     return CMDARG_NONE;
 }
 
 // potential=?
-int command_processor::command_potential()
+int parameter_processor::param_potential()
 {
     int k = 0;
     while (k < 3 && *value)
@@ -2910,7 +2910,7 @@ int command_processor::command_potential()
     {
         if (strcmp(value, "16bit"))
         {
-            return bad_command();
+            return bad_parameter();
         }
         pot16bit = true;
     }
@@ -2918,11 +2918,11 @@ int command_processor::command_potential()
 }
 
 // params=?,?
-int command_processor::command_params()
+int parameter_processor::param_params()
 {
     if (totparms != floatparms || totparms > MAXPARAMS)
     {
-        return bad_command();
+        return bad_parameter();
     }
     initparams = true;
     for (int k = 0; k < MAXPARAMS; ++k)
@@ -2940,11 +2940,11 @@ int command_processor::command_params()
 }
 
 // miim=?[/?[/?[/?]]]
-int command_processor::command_miim()
+int parameter_processor::param_miim()
 {
     if (totparms > 6)
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (charval[0] == 'b')
     {
@@ -2966,7 +2966,7 @@ int command_processor::command_miim()
 #endif
     else
     {
-        return bad_command();
+        return bad_parameter();
     }
 
     if (charval[1] == 'l')
@@ -2979,7 +2979,7 @@ int command_processor::command_miim()
     }
     else
     {
-        return bad_command();
+        return bad_parameter();
     }
 
     // keep this next part in for backwards compatibility with old PARs ???
@@ -2996,7 +2996,7 @@ int command_processor::command_miim()
 }
 
 // initorbit=?,?
-int command_processor::command_init_orbit()
+int parameter_processor::param_init_orbit()
 {
     if (strcmp(value, "pixel") == 0)
     {
@@ -3006,7 +3006,7 @@ int command_processor::command_init_orbit()
     {
         if (totparms != 2 || floatparms != 2)
         {
-            return bad_command();
+            return bad_parameter();
         }
         initorbit.x = floatval[0];
         initorbit.y = floatval[1];
@@ -3016,17 +3016,17 @@ int command_processor::command_init_orbit()
 }
 
 // orbitname=?
-int command_processor::command_orbit_name()
+int parameter_processor::param_orbit_name()
 {
     if (check_orbit_name(value))
     {
-        return bad_command();
+        return bad_parameter();
     }
     return CMDARG_FRACTAL_PARAM;
 }
 
 // orbitname=?
-int command_processor::command_3d_mode()
+int parameter_processor::param_3d_mode()
 {
     int j = -1;
     for (int i = 0; i < 4; i++)
@@ -3038,7 +3038,7 @@ int command_processor::command_3d_mode()
     }
     if (j < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     else
     {
@@ -3048,11 +3048,11 @@ int command_processor::command_3d_mode()
 }
 
 // julibrot3d=?,?,?,?
-int command_processor::command_julibrot_3d()
+int parameter_processor::param_julibrot_3d()
 {
     if (floatparms != totparms)
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (totparms > 0)
     {
@@ -3082,22 +3082,22 @@ int command_processor::command_julibrot_3d()
 }
 
 // julibroteyes=?,?,?,?
-int command_processor::command_julibrot_eyes()
+int parameter_processor::param_julibrot_eyes()
 {
     if (floatparms != totparms || totparms != 1)
     {
-        return bad_command();
+        return bad_parameter();
     }
     eyesfp = (float) floatval[0];
     return CMDARG_FRACTAL_PARAM;
 }
 
 // julibrotfromto=?,?,?,?
-int command_processor::command_julibrot_from_to()
+int parameter_processor::param_julibrot_from_to()
 {
     if (floatparms != totparms || totparms != 4)
     {
-        return bad_command();
+        return bad_parameter();
     }
     mxmaxfp = floatval[0];
     mxminfp = floatval[1];
@@ -3107,7 +3107,7 @@ int command_processor::command_julibrot_from_to()
 }
 
 // corners=?,?,?,?
-int command_processor::command_corners()
+int parameter_processor::param_corners()
 {
     int dec;
     if (fractype == fractal_type::CELLULAR)
@@ -3117,7 +3117,7 @@ int command_processor::command_corners()
     if (floatparms != totparms
             || (totparms != 0 && totparms != 4 && totparms != 6))
     {
-        return bad_command();
+        return bad_parameter();
     }
     usemag = false;
     if (totparms == 0)
@@ -3172,7 +3172,7 @@ int command_processor::command_corners()
         dec = getprecbf_mag();
         if (dec < 0)
         {
-            return bad_command();
+            return bad_parameter();
         }
 
         if (dec > decimals)  // get corners again if need more precision
@@ -3226,13 +3226,13 @@ int command_processor::command_corners()
 }
 
 // orbit corners=?,?,?,?
-int command_processor::command_orbit_corners()
+int parameter_processor::param_orbit_corners()
 {
     set_orbit_corners = false;
     if (floatparms != totparms
             || (totparms != 0 && totparms != 4 && totparms != 6))
     {
-        return bad_command();
+        return bad_parameter();
     }
     oxmin = floatval[0];
     ox3rd = oxmin;
@@ -3252,33 +3252,33 @@ int command_processor::command_orbit_corners()
 }
 
 // screencoords=?
-int command_processor::command_screen_coords()
+int parameter_processor::param_screen_coords()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     keep_scrn_coords = yesnoval[0] != 0;
     return CMDARG_FRACTAL_PARAM;
 }
 
 // orbitdrawmode=?
-int command_processor::command_orbit_draw_mode()
+int parameter_processor::param_orbit_draw_mode()
 {
     if (charval[0] != 'l' && charval[0] != 'r' && charval[0] != 'f')
     {
-        return bad_command();
+        return bad_parameter();
     }
     drawmode = charval[0];
     return CMDARG_FRACTAL_PARAM;
 }
 
 // viewwindows=?,?,?,?,?
-int command_processor::command_view_windows()
+int parameter_processor::param_view_windows()
 {
     if (totparms > 5 || floatparms - intparms > 2 || intparms > 4)
     {
-        return bad_command();
+        return bad_parameter();
     }
     viewwindow = true;
     viewreduction = 4.2F;  // reset default values
@@ -3301,7 +3301,7 @@ int command_processor::command_view_windows()
 }
 
 // center-mag=?,?,?[,?,?,?]
-int command_processor::command_center_mag()
+int parameter_processor::param_center_mag()
 {
     int dec;
 
@@ -3309,7 +3309,7 @@ int command_processor::command_center_mag()
             || (totparms != 0 && totparms < 3)
             || (totparms >= 3 && floatval[2] == 0.0))
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (fractype == fractal_type::CELLULAR)
         return CMDARG_FRACTAL_PARAM; // skip setting the corners
@@ -3324,7 +3324,7 @@ int command_processor::command_center_mag()
     // be used in case compiler's LDBL_MAX is not big enough
     if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
     {
-        return bad_command();
+        return bad_parameter();
     }
 
     dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
@@ -3389,22 +3389,22 @@ int command_processor::command_center_mag()
 }
 
 // aspectdrift=?
-int command_processor::command_aspect_drift()
+int parameter_processor::param_aspect_drift()
 {
     if (floatparms != 1 || floatval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     aspectdrift = (float) floatval[0];
     return CMDARG_FRACTAL_PARAM;
 }
 
 // invert=?,?,?
-int command_processor::command_invert()
+int parameter_processor::param_invert()
 {
     if (totparms != floatparms || (totparms != 1 && totparms != 3))
     {
-        return bad_command();
+        return bad_parameter();
     }
     inversion[0] = floatval[0];
     invert = (inversion[0] != 0.0) ? totparms : 0;
@@ -3417,33 +3417,33 @@ int command_processor::command_invert()
 }
 
 // olddemmcolors=?
-int command_processor::command_old_demm_colors()
+int parameter_processor::param_old_demm_colors()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     old_demm_colors = yesnoval[0] != 0;
     return CMDARG_NONE;
 }
 
 // askvideo=?
-int command_processor::command_ask_video()
+int parameter_processor::param_ask_video()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     askvideo = yesnoval[0] != 0;
     return CMDARG_NONE;
 }
 
 // float=?
-int command_processor::command_float()
+int parameter_processor::param_float()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
 #ifndef XFRACT
     usr_floatflag = yesnoval[0] != 0;
@@ -3454,26 +3454,26 @@ int command_processor::command_float()
 }
 
 // fastrestore=?
-int command_processor::command_fast_restore()
+int parameter_processor::param_fast_restore()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     fastrestore = yesnoval[0] != 0;
     return CMDARG_NONE;
 }
 
 // orgfrmdir=?
-int command_processor::command_org_frm_dir()
+int parameter_processor::param_org_frm_dir()
 {
     if (valuelen > (FILE_MAX_DIR-1))
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (!isadirectory(value))
     {
-        return bad_command();
+        return bad_parameter();
     }
     orgfrmsearch = true;
     orgfrmdir = value;
@@ -3482,38 +3482,38 @@ int command_processor::command_org_frm_dir()
 }
 
 // biomorph=?
-int command_processor::command_biomorph()
+int parameter_processor::param_biomorph()
 {
     usr_biomorph = numval;
     return CMDARG_FRACTAL_PARAM;
 }
 
 // orbitsave=?
-int command_processor::command_orbit_save()
+int parameter_processor::param_orbit_save()
 {
     if (charval[0] == 's')
         orbitsave |= 2;
     else if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     orbitsave |= yesnoval[0];
     return CMDARG_FRACTAL_PARAM;
 }
 
 // bailout=?
-int command_processor::command_bailout()
+int parameter_processor::param_bailout()
 {
     if (floatval[0] < 1 || floatval[0] > 2100000000L)
     {
-        return bad_command();
+        return bad_parameter();
     }
     bailout = (long) floatval[0];
     return CMDARG_FRACTAL_PARAM;
 }
 
 // bailoutest=?
-int command_processor::command_bailout_test()
+int parameter_processor::param_bailout_test()
 {
     if (strcmp(value, "mod") == 0)
         bailoutest = bailouts::Mod;
@@ -3531,14 +3531,14 @@ int command_processor::command_bailout_test()
         bailoutest = bailouts::Manr;
     else
     {
-        return bad_command();
+        return bad_parameter();
     }
     setbailoutformula(bailoutest);
     return CMDARG_FRACTAL_PARAM;
 }
 
 // symmetry=?
-int command_processor::command_symmetry()
+int parameter_processor::param_symmetry()
 {
     if (strcmp(value, "xaxis") == 0)
         forcesymmetry = symmetry_type::X_AXIS;
@@ -3554,13 +3554,13 @@ int command_processor::command_symmetry()
         forcesymmetry = symmetry_type::NONE;
     else
     {
-        return bad_command();
+        return bad_parameter();
     }
     return CMDARG_FRACTAL_PARAM;
 }
 
 // deprecated print parameters
-bool command_processor::is_print_parameter()
+bool parameter_processor::is_print_parameter()
 {
     return (variable == "printer")
             || (variable == "printfile")
@@ -3576,11 +3576,11 @@ bool command_processor::is_print_parameter()
 }
 
 // sound=?,?,?
-int command_processor::command_sound()
+int parameter_processor::param_sound()
 {
     if (totparms > 5)
     {
-        return bad_command();
+        return bad_parameter();
     }
     soundflag = SOUNDFLAG_OFF; // start with a clean slate, add bits as we go
     if (totparms == 1)
@@ -3607,7 +3607,7 @@ int command_processor::command_sound()
         soundflag |= SOUNDFLAG_Z;
     else
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (totparms > 1)
     {
@@ -3629,27 +3629,27 @@ int command_processor::command_sound()
             else if (charval[i] == 'q')
                 soundflag |= SOUNDFLAG_QUANTIZED;
             else
-                return bad_command();
+                return bad_parameter();
         }
     }
     return CMDARG_NONE;
 }
 
 // Hertz=?
-int command_processor::command_hertz()
+int parameter_processor::param_hertz()
 {
     basehertz = numval;
     return CMDARG_NONE;
 }
 
 // Volume =?
-int command_processor::command_volume()
+int parameter_processor::param_volume()
 {
     fm_vol = numval & 0x3F; // 63
     return CMDARG_NONE;
 }
 
-int command_processor::command_attenuate()
+int parameter_processor::param_attenuate()
 {
     if (charval[0] == 'n')
         hi_atten = 0;
@@ -3660,58 +3660,58 @@ int command_processor::command_attenuate()
     else if (charval[0] == 'h')
         hi_atten = 3;
     else
-        return bad_command();
+        return bad_parameter();
     return CMDARG_NONE;
 }
 
-int command_processor::command_polyphony()
+int parameter_processor::param_polyphony()
 {
     if (numval > 9)
-        return bad_command();
+        return bad_parameter();
     polyphony = abs(numval -1);
     return CMDARG_NONE;
 }
 
 // wavetype = ?
-int command_processor::command_wave_type()
+int parameter_processor::param_wave_type()
 {
     fm_wavetype = numval & 0x0F;
     return CMDARG_NONE;
 }
 
 // attack = ?
-int command_processor::command_attack()
+int parameter_processor::param_attack()
 {
     fm_attack = numval & 0x0F;
     return CMDARG_NONE;
 }
 
 // decay = ?
-int command_processor::command_decay()
+int parameter_processor::param_decay()
 {
     fm_decay = numval & 0x0F;
     return CMDARG_NONE;
 }
 
 // sustain = ?
-int command_processor::command_sustain()
+int parameter_processor::param_sustain()
 {
     fm_sustain = numval & 0x0F;
     return CMDARG_NONE;
 }
 
 // srelease = ?
-int command_processor::command_s_release()
+int parameter_processor::param_s_release()
 {
     fm_release = numval & 0x0F;
     return CMDARG_NONE;
 }
 
 // Scalemap=?,?,?,?,?,?,?,?,?,?,?
-int command_processor::command_scale_map()
+int parameter_processor::param_scale_map()
 {
     if (totparms != intparms)
-        return bad_command();
+        return bad_parameter();
     for (int counter = 0; counter <= 11; counter++)
         if ((totparms > counter) && (intval[counter] > 0)
                 && (intval[counter] < 13))
@@ -3720,7 +3720,7 @@ int command_processor::command_scale_map()
 }
 
 // periodicity=?
-int command_processor::command_periodicity()
+int parameter_processor::param_periodicity()
 {
     usr_periodicitycheck = 1;
     if ((charval[0] == 'n') || (numval == 0))
@@ -3731,7 +3731,7 @@ int command_processor::command_periodicity()
         usr_periodicitycheck = -1;
     else if (numval == NON_NUMERIC)
     {
-        return bad_command();
+        return bad_parameter();
     }
     else if (numval != 0)
         usr_periodicitycheck = numval;
@@ -3743,7 +3743,7 @@ int command_processor::command_periodicity()
 }
 
 // logmap=?
-int command_processor::command_log_map()
+int parameter_processor::param_log_map()
 {
     Log_Auto_Calc = false;          // turn this off if loading a PAR
     if (charval[0] == 'y')
@@ -3758,7 +3758,7 @@ int command_processor::command_log_map()
 }
 
 // logmode=?
-int command_processor::command_log_mode()
+int parameter_processor::param_log_mode()
 {
     Log_Fly_Calc = 0;                         // turn off if error
     Log_Auto_Calc = false;
@@ -3772,13 +3772,13 @@ int command_processor::command_log_mode()
     }
     else
     {
-        return bad_command();
+        return bad_parameter();
     }
     return CMDARG_FRACTAL_PARAM;
 }
 
 // internal use only
-int command_processor::command_debug_flag()
+int parameter_processor::param_debug_flag()
 {
     debugflag = numval;
     timerflag = (debugflag & benchmark_timer) != 0;       // separate timer flag
@@ -3786,20 +3786,20 @@ int command_processor::command_debug_flag()
     return CMDARG_NONE;
 }
 
-int command_processor::command_rseed()
+int parameter_processor::param_rseed()
 {
     rseed = numval;
     rflag = true;
     return CMDARG_FRACTAL_PARAM;
 }
 
-int command_processor::command_orbit_delay()
+int parameter_processor::param_orbit_delay()
 {
     orbit_delay = numval;
     return CMDARG_NONE;
 }
 
-int command_processor::command_orbit_interval()
+int parameter_processor::param_orbit_interval()
 {
     orbit_interval = numval;
     if (orbit_interval < 1)
@@ -3809,7 +3809,7 @@ int command_processor::command_orbit_interval()
     return CMDARG_NONE;
 }
 
-int command_processor::command_show_dot()
+int parameter_processor::param_show_dot()
 {
     show_dot = 15;
     if (totparms > 0)
@@ -3821,7 +3821,7 @@ int command_processor::command_show_dot()
                 autoshowdot = charval[0];
             else
             {
-                return bad_command();
+                return bad_parameter();
             }
         }
         else
@@ -3839,17 +3839,17 @@ int command_processor::command_show_dot()
 }
 
 // showorbit=yes|no
-int command_processor::command_show_orbit()
+int parameter_processor::param_show_orbit()
 {
     start_show_orbit = yesnoval[0] != 0;
     return CMDARG_NONE;
 }
 
-int command_processor::command_decomp()
+int parameter_processor::param_decomp()
 {
     if (totparms != intparms || totparms < 1)
     {
-        return bad_command();
+        return bad_parameter();
     }
     decomp[0] = intval[0];
     decomp[1] = 0;
@@ -3861,11 +3861,11 @@ int command_processor::command_decomp()
     return CMDARG_FRACTAL_PARAM;
 }
 
-int command_processor::command_dist_test()
+int parameter_processor::param_dist_test()
 {
     if (totparms != intparms || totparms < 1)
     {
-        return bad_command();
+        return bad_parameter();
     }
     usr_distest = (long) floatval[0];
     distestwidth = 71;
@@ -3885,11 +3885,11 @@ int command_processor::command_dist_test()
 }
 
 // formulafile=?
-int command_processor::command_formula_file()
+int parameter_processor::param_formula_file()
 {
     if (valuelen > (FILE_MAX_PATH-1))
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (merge_pathnames(FormFileName, value, mode) < 0)
         init_msg(variable.c_str(), value, mode);
@@ -3897,45 +3897,45 @@ int command_processor::command_formula_file()
 }
 
 // formulaname=?
-int command_processor::command_formula_name()
+int parameter_processor::param_formula_name()
 {
     if (valuelen > ITEMNAMELEN)
     {
-        return bad_command();
+        return bad_parameter();
     }
     FormName = value;
     return CMDARG_FRACTAL_PARAM;
 }
 
 // lfile=?
-int command_processor::command_l_file()
+int parameter_processor::param_l_file()
 {
     if (valuelen > (FILE_MAX_PATH-1))
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (merge_pathnames(LFileName, value, mode) < 0)
         init_msg(variable.c_str(), value, mode);
     return CMDARG_FRACTAL_PARAM;
 }
 
-int command_processor::command_l_name()
+int parameter_processor::param_l_name()
 {
     if (valuelen > ITEMNAMELEN)
     {
-        return bad_command();
+        return bad_parameter();
     }
     LName = value;
     return CMDARG_FRACTAL_PARAM;
 }
 
 // ifsfile=??
-int command_processor::command_ifs_file()
+int parameter_processor::param_ifs_file()
 {
     int existdir;
     if (valuelen > (FILE_MAX_PATH-1))
     {
-        return bad_command();
+        return bad_parameter();
     }
     existdir = merge_pathnames(IFSFileName, value, mode);
     if (existdir == 0)
@@ -3945,11 +3945,11 @@ int command_processor::command_ifs_file()
     return CMDARG_FRACTAL_PARAM;
 }
 
-int command_processor::command_ifs()
+int parameter_processor::param_ifs()
 {
     if (valuelen > ITEMNAMELEN)
     {
-        return bad_command();
+        return bad_parameter();
     }
     IFSName = value;
     reset_ifs_defn();
@@ -3957,11 +3957,11 @@ int command_processor::command_ifs()
 }
 
 // parmfile=?
-int command_processor::command_parm_file()
+int parameter_processor::param_parm_file()
 {
     if (valuelen > (FILE_MAX_PATH-1))
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (merge_pathnames(CommandFile, value, mode) < 0)
         init_msg(variable.c_str(), value, mode);
@@ -3969,22 +3969,22 @@ int command_processor::command_parm_file()
 }
 
 // stereo=?
-int command_processor::command_stereo()
+int parameter_processor::param_stereo()
 {
     if ((numval < 0) || (numval > 4))
     {
-        return bad_command();
+        return bad_parameter();
     }
     g_glasses_type = numval;
     return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 }
 
 // rotation=?/?/?
-int command_processor::command_rotation()
+int parameter_processor::param_rotation()
 {
     if (totparms != 3 || intparms != 3)
     {
-        return bad_command();
+        return bad_parameter();
     }
     XROT = intval[0];
     YROT = intval[1];
@@ -3993,22 +3993,22 @@ int command_processor::command_rotation()
 }
 
 // perspective=?
-int command_processor::command_perspective()
+int parameter_processor::param_perspective()
 {
     if (numval == NON_NUMERIC)
     {
-        return bad_command();
+        return bad_parameter();
     }
     ZVIEWER = numval;
     return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 }
 
 // xyshift=?/?
-int command_processor::command_x_y_shift()
+int parameter_processor::param_x_y_shift()
 {
     if (totparms != 2 || intparms != 2)
     {
-        return bad_command();
+        return bad_parameter();
     }
     XSHIFT = intval[0];
     YSHIFT = intval[1];
@@ -4016,21 +4016,21 @@ int command_processor::command_x_y_shift()
 }
 
 // interocular=?
-int command_processor::command_interocular()
+int parameter_processor::param_interocular()
 {
     g_eye_separation = numval;
     return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 }
 
 // converg=?
-int command_processor::command_converge()
+int parameter_processor::param_converge()
 {
     xadjust = numval;
     return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 }
 
 // crop=?
-int command_processor::command_crop()
+int parameter_processor::param_crop()
 {
     if (totparms != 4 || intparms != 4
             || intval[0] < 0 || intval[0] > 100
@@ -4038,7 +4038,7 @@ int command_processor::command_crop()
             || intval[2] < 0 || intval[2] > 100
             || intval[3] < 0 || intval[3] > 100)
     {
-        return bad_command();
+        return bad_parameter();
     }
     red_crop_left   = intval[0];
     red_crop_right  = intval[1];
@@ -4048,11 +4048,11 @@ int command_processor::command_crop()
 }
 
 // bright=?
-int command_processor::command_bright()
+int parameter_processor::param_bright()
 {
     if (totparms != 2 || intparms != 2)
     {
-        return bad_command();
+        return bad_parameter();
     }
     red_bright  = intval[0];
     blue_bright = intval[1];
@@ -4060,11 +4060,11 @@ int command_processor::command_bright()
 }
 
 // xyadjust=?/?
-int command_processor::command_x_y_adjust()
+int parameter_processor::param_x_y_adjust()
 {
     if (totparms != 2 || intparms != 2)
     {
-        return bad_command();
+        return bad_parameter();
     }
     xtrans = intval[0];
     ytrans = intval[1];
@@ -4072,7 +4072,7 @@ int command_processor::command_x_y_adjust()
 }
 
 // 3d=?/?/..
-int command_processor::command_3d()
+int parameter_processor::param_3d()
 {
     if (strcmp(value, "overlay") == 0)
     {
@@ -4082,7 +4082,7 @@ int command_processor::command_3d()
     }
     else if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     display_3d = yesnoval[0] != 0 ? YES : NONE;
     initvars_3d();
@@ -4090,22 +4090,22 @@ int command_processor::command_3d()
 }
 
 // sphere=?
-int command_processor::command_sphere()
+int parameter_processor::param_sphere()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     SPHERE = yesnoval[0];
     return CMDARG_3D_PARAM;
 }
 
 // scalexyz=?/?/?
-int command_processor::command_scale_x_y_z()
+int parameter_processor::param_scale_x_y_z()
 {
     if (totparms < 2 || intparms != totparms)
     {
-        return bad_command();
+        return bad_parameter();
     }
     XSCALE = intval[0];
     YSCALE = intval[1];
@@ -4115,7 +4115,7 @@ int command_processor::command_scale_x_y_z()
 }
 
 // roughness=?
-int command_processor::command_roughness()
+int parameter_processor::param_roughness()
 {
     // "rough" is really scale z, but we add it here for convenience
     ROUGH = numval;
@@ -4123,33 +4123,33 @@ int command_processor::command_roughness()
 }
 
 // waterline=?
-int command_processor::command_waterline()
+int parameter_processor::param_waterline()
 {
     if (numval < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     WATERLINE = numval;
     return CMDARG_3D_PARAM;
 }
 
 // filltype=?
-int command_processor::command_fill_type()
+int parameter_processor::param_fill_type()
 {
     if (numval < -1 || numval > 6)
     {
-        return bad_command();
+        return bad_parameter();
     }
     FILLTYPE = numval;
     return CMDARG_3D_PARAM;
 }
 
 // lightsource=?/?/?
-int command_processor::command_light_source()
+int parameter_processor::param_light_source()
 {
     if (totparms != 3 || intparms != 3)
     {
-        return bad_command();
+        return bad_parameter();
     }
     XLIGHT = intval[0];
     YLIGHT = intval[1];
@@ -4158,22 +4158,22 @@ int command_processor::command_light_source()
 }
 
 // smoothing=?
-int command_processor::command_smoothing()
+int parameter_processor::param_smoothing()
 {
     if (numval < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     LIGHTAVG = numval;
     return CMDARG_3D_PARAM;
 }
 
 // latitude=?/?
-int command_processor::command_latitude()
+int parameter_processor::param_latitude()
 {
     if (totparms != 2 || intparms != 2)
     {
-        return bad_command();
+        return bad_parameter();
     }
     THETA1 = intval[0];
     THETA2 = intval[1];
@@ -4181,11 +4181,11 @@ int command_processor::command_latitude()
 }
 
 // longitude=?/?
-int command_processor::command_longitude()
+int parameter_processor::param_longitude()
 {
     if (totparms != 2 || intparms != 2)
     {
-        return bad_command();
+        return bad_parameter();
     }
     PHI1 = intval[0];
     PHI2 = intval[1];
@@ -4193,22 +4193,22 @@ int command_processor::command_longitude()
 }
 
 // radius=?
-int command_processor::command_radius()
+int parameter_processor::param_radius()
 {
     if (numval < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     RADIUS = numval;
     return CMDARG_3D_PARAM;
 }
 
 // transparent?
-int command_processor::command_transparent()
+int parameter_processor::param_transparent()
 {
     if (totparms != intparms || totparms < 1)
     {
-        return bad_command();
+        return bad_parameter();
     }
     transparent[0] = intval[0];
     transparent[1] = transparent[0];
@@ -4218,95 +4218,95 @@ int command_processor::command_transparent()
 }
 
 // preview?
-int command_processor::command_preview()
+int parameter_processor::param_preview()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     preview = yesnoval[0] != 0;
     return CMDARG_3D_PARAM;
 }
 
 // showbox?
-int command_processor::command_show_box()
+int parameter_processor::param_show_box()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     showbox = yesnoval[0] != 0;
     return CMDARG_3D_PARAM;
 }
 
 // coarse=?
-int command_processor::command_coarse()
+int parameter_processor::param_coarse()
 {
     if (numval < 3 || numval > 2000)
     {
-        return bad_command();
+        return bad_parameter();
     }
     previewfactor = numval;
     return CMDARG_3D_PARAM;
 }
 
 // RANDOMIZE=?
-int command_processor::command_randomize()
+int parameter_processor::param_randomize()
 {
     if (numval < 0 || numval > 7)
     {
-        return bad_command();
+        return bad_parameter();
     }
     RANDOMIZE = numval;
     return CMDARG_3D_PARAM;
 }
 
 // ambient=?
-int command_processor::command_ambient()
+int parameter_processor::param_ambient()
 {
     if (numval < 0 || numval > 100)
     {
-        return bad_command();
+        return bad_parameter();
     }
     Ambient = numval;
     return CMDARG_3D_PARAM;
 }
 
 // haze=?
-int command_processor::command_haze()
+int parameter_processor::param_haze()
 {
     if (numval < 0 || numval > 100)
     {
-        return bad_command();
+        return bad_parameter();
     }
     haze = numval;
     return CMDARG_3D_PARAM;
 }
 
 // fullcolor=?
-int command_processor::command_full_color()
+int parameter_processor::param_full_color()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     Targa_Out = yesnoval[0] != 0;
     return CMDARG_3D_PARAM;
 }
 
 // truecolor=?
-int command_processor::command_true_color()
+int parameter_processor::param_true_color()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     truecolor = yesnoval[0] != 0;
     return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 }
 
 // truemode=?
-int command_processor::command_true_mode()
+int parameter_processor::param_true_mode()
 {
     truemode = 0;                               // use default if error
     if (charval[0] == 'd')
@@ -4321,50 +4321,50 @@ int command_processor::command_true_mode()
 }
 
 // usegrayscale?
-int command_processor::command_use_gray_scale()
+int parameter_processor::param_use_gray_scale()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     grayflag = yesnoval[0] != 0;
     return CMDARG_3D_PARAM;
 }
 
 // monitorwidth=?
-int command_processor::command_monitor_width()
+int parameter_processor::param_monitor_width()
 {
     if (totparms != 1 || floatparms != 1)
     {
-        return bad_command();
+        return bad_parameter();
     }
     AutoStereo_width  = floatval[0];
     return CMDARG_3D_PARAM;
 }
 
 // Targa Overlay?
-int command_processor::command_targa_overlay()
+int parameter_processor::param_targa_overlay()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     Targa_Overlay = yesnoval[0] != 0;
     return CMDARG_3D_PARAM;
 }
 
 // background=?/?
-int command_processor::command_background()
+int parameter_processor::param_background()
 {
     if (totparms != 3 || intparms != 3)
     {
-        return bad_command();
+        return bad_parameter();
     }
     for (int i = 0; i < 3; i++)
     {
         if (intval[i] & ~0xff)
         {
-            return bad_command();
+            return bad_parameter();
         }
     }
     back_color[0] = (BYTE) intval[0];
@@ -4374,11 +4374,11 @@ int command_processor::command_background()
 }
 
 // lightname=?
-int command_processor::command_light_name()
+int parameter_processor::param_light_name()
 {
     if (valuelen > (FILE_MAX_PATH-1))
     {
-        return bad_command();
+        return bad_parameter();
     }
     if (first_init || mode == cmd_file::AT_AFTER_STARTUP)
     {
@@ -4388,55 +4388,55 @@ int command_processor::command_light_name()
 }
 
 // RAY=?
-int command_processor::command_ray()
+int parameter_processor::param_ray()
 {
     if (numval < 0 || numval > 6)
     {
-        return bad_command();
+        return bad_parameter();
     }
     RAY = numval;
     return CMDARG_3D_PARAM;
 }
 
 // BRIEF?
-int command_processor::command_brief()
+int parameter_processor::param_brief()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     BRIEF = yesnoval[0] != 0;
     return CMDARG_3D_PARAM;
 }
 
 // release
-int command_processor::command_release()
+int parameter_processor::param_release()
 {
     if (numval < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     save_release = numval;
     return CMDARG_3D_PARAM;
 }
 
 // curdir=
-int command_processor::command_cur_dir()
+int parameter_processor::param_cur_dir()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     checkcurdir = yesnoval[0] != 0;
     return CMDARG_NONE;
 }
 
 // virtual=
-int command_processor::command_virtual()
+int parameter_processor::param_virtual()
 {
     if (yesnoval[0] < 0)
     {
-        return bad_command();
+        return bad_parameter();
     }
     g_virtual_screens = yesnoval[0] != 0;
     return CMDARG_FRACTAL_PARAM;
