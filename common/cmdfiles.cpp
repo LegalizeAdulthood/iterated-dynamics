@@ -833,6 +833,15 @@ private:
         return flags;
     }
 
+    int ignore_param()
+    {
+        return CMDARG_NONE;
+    }
+
+    typedef int (parameter_processor::*handler_fn)();
+
+    typedef std::map<std::string, handler_fn> handler_map_t;
+
     int startup_parameter();
     int param_batch();
     int param_max_history();
@@ -916,7 +925,6 @@ private:
     int param_bailout();
     int param_bailout_test();
     int param_symmetry();
-    bool is_print_parameter();
     int param_sound();
     int param_hertz();
     int param_volume();
@@ -1204,58 +1212,25 @@ int parameter_processor::parse_parameter()
 // these commands are allowed only at startup
 int parameter_processor::startup_parameter()
 {
-    if (variable == "batch")
+    handler_map_t const handlers
     {
-        return param_batch();
-    }
-    if (variable == "maxhistory")
-    {
-        return param_max_history();
-    }
+        { "batch", &parameter_processor::param_batch },
+        { "maxhistory", &parameter_processor::param_max_history },
+        { "adapter", &parameter_processor::param_adapter },
+        { "afi", &parameter_processor::param_afi },
+        { "textsafe", &parameter_processor::param_text_safe },
+        { "vesadetect", &parameter_processor::param_vesa_detect },
+        { "biospalette", &parameter_processor::param_bios_palette },
+        { "fpu", &parameter_processor::param_fpu },
+        { "exitnoask", &parameter_processor::param_exit_no_ask },
+        { "makedoc", &parameter_processor::param_make_doc },
+        { "makepar", &parameter_processor::param_make_par },
+    };
 
-    if (variable == "adapter")
+    auto handler = handlers.find(variable);
+    if (handler != handlers.end())
     {
-        return param_adapter();
-    }
-
-    if (variable == "afi")
-    {
-        return param_afi();
-    }
-
-    if (variable == "textsafe")
-    {
-        return param_text_safe();
-    }
-
-    if (variable == "vesadetect")
-    {
-        return param_vesa_detect();
-    }
-
-    if (variable == "biospalette")
-    {
-        return param_bios_palette();
-    }
-
-    if (variable == "fpu")
-    {
-        return param_fpu();
-    }
-
-    if (variable == "exitnoask")
-    {
-        return param_exit_no_ask();
-    }
-
-    if (variable == "makedoc")
-    {
-        return param_make_doc();
-    }
-
-    if (variable == "makepar")
-    {
-        return param_make_par();
+        return (this->*handler->second)();
     }
 
     return CMDARG_NONE;
@@ -1463,717 +1438,172 @@ int parameter_processor::process()
 
 int parameter_processor::parameter()
 {
-    std::map<std::string, int (parameter_processor::*)()> parameters
+    handler_map_t const handlers
     {
-        { "reset", &parameter_processor::param_reset }
+        { "reset", &parameter_processor::param_reset },
+        { "filename", &parameter_processor::param_filename },
+        { "video", &parameter_processor::param_video },
+        { "map", &parameter_processor::param_map },
+        { "colors", &parameter_processor::param_colors },
+        { "recordcolors", &parameter_processor::param_record_colors },
+        { "maxlinelength", &parameter_processor::param_max_line_length },
+        { "comment", &parameter_processor::param_comment },
+        { "tplus", &parameter_processor::param_tplus },
+        { "noninterlaced", &parameter_processor::param_non_interlaced },
+        { "maxcolorres", &parameter_processor::param_max_color_res },
+        { "pixelzoom", &parameter_processor::param_pixel_zoom },
+        { "warn", &parameter_processor::param_overwrite },  // keep this for backward compatibility
+        { "overwrite", &parameter_processor::param_overwrite },
+        { "gif87a", &parameter_processor::param_gif87a },
+        { "dither", &parameter_processor::param_dither },
+        { "savetime", &parameter_processor::param_save_time },
+        { "autokey", &parameter_processor::param_auto_key },
+        { "autokeyname", &parameter_processor::param_auto_key_name },
+        { "type", &parameter_processor::param_type },
+        { "inside", &parameter_processor::param_inside },
+        { "proximity", &parameter_processor::param_proximity },
+        { "fillcolor", &parameter_processor::param_fill_color },
+        { "finattract", &parameter_processor::param_fin_attract },
+        { "nobof", &parameter_processor::param_no_bof },
+        { "function", &parameter_processor::param_function },
+        { "outside", &parameter_processor::param_outside },
+        { "bfdigits", &parameter_processor::param_bf_digits },
+        { "maxiter", &parameter_processor::param_max_iter },
+        { "passes", &parameter_processor::param_passes },
+        { "ismand", &parameter_processor::param_is_mand },
+        { "cyclelimit", &parameter_processor::param_cycle_limit },
+        { "makemig", &parameter_processor::param_make_mig },
+        { "cyclerange", &parameter_processor::param_cycle_range },
+        { "ranges", &parameter_processor::param_ranges },
+        { "savename", &parameter_processor::param_save_name },
+        { "tweaklzw", &parameter_processor::param_tweak_lzw },
+        { "minstack", &parameter_processor::param_min_stack },
+        { "mathtolerance", &parameter_processor::param_math_tolerance },
+        { "tempdir", &parameter_processor::param_temp_dir },
+        { "workdir", &parameter_processor::param_work_dir },
+        { "exitmode", &parameter_processor::param_exit_mode },
+        { "textcolors", &parameter_processor::param_text_colors },
+        { "potential", &parameter_processor::param_potential },
+        { "params", &parameter_processor::param_params },
+        { "miim", &parameter_processor::param_miim },
+        { "initorbit", &parameter_processor::param_init_orbit },
+        { "orbitname", &parameter_processor::param_orbit_name },
+        { "3dmode", &parameter_processor::param_3d_mode },
+        { "julibrot3d", &parameter_processor::param_julibrot_3d },
+        { "julibroteyes", &parameter_processor::param_julibrot_eyes },
+        { "julibrotfromto", &parameter_processor::param_julibrot_from_to },
+        { "corners", &parameter_processor::param_corners },
+        { "orbitcorners", &parameter_processor::param_orbit_corners },
+        { "screencoords", &parameter_processor::param_screen_coords },
+        { "orbitdrawmode", &parameter_processor::param_orbit_draw_mode },
+        { "viewwindows", &parameter_processor::param_view_windows },
+        { "center-mag", &parameter_processor::param_center_mag },
+        { "aspectdrift", &parameter_processor::param_aspect_drift },
+        { "invert", &parameter_processor::param_invert },
+        { "olddemmcolors", &parameter_processor::param_old_demm_colors },
+        { "askvideo", &parameter_processor::param_ask_video },
+        { "float", &parameter_processor::param_float },
+        { "fastrestore", &parameter_processor::param_fast_restore },
+        { "orgfrmdir", &parameter_processor::param_org_frm_dir },
+        { "biomorph", &parameter_processor::param_biomorph },
+        { "orbitsave", &parameter_processor::param_orbit_save },
+        { "bailout", &parameter_processor::param_bailout },
+        { "bailoutest", &parameter_processor::param_bailout_test },
+        { "symmetry", &parameter_processor::param_symmetry },
+        { "sound", &parameter_processor::param_sound },
+        { "hertz", &parameter_processor::param_hertz },
+        { "volume", &parameter_processor::param_volume },
+        { "attenuate", &parameter_processor::param_attenuate },
+        { "polyphony", &parameter_processor::param_polyphony },
+        { "wavetype", &parameter_processor::param_wave_type },
+        { "attack", &parameter_processor::param_attack },
+        { "decay", &parameter_processor::param_decay },
+        { "sustain", &parameter_processor::param_sustain },
+        { "srelease", &parameter_processor::param_s_release },
+        { "scalemap", &parameter_processor::param_scale_map },
+        { "periodicity", &parameter_processor::param_periodicity },
+        { "logmap", &parameter_processor::param_log_map },
+        { "logmode", &parameter_processor::param_log_mode },
+        { "debugflag", &parameter_processor::param_debug_flag },
+        { "debug", &parameter_processor::param_debug_flag },
+        { "rseed", &parameter_processor::param_rseed },
+        { "orbitdelay", &parameter_processor::param_orbit_delay },
+        { "orbitinterval", &parameter_processor::param_orbit_interval },
+        { "showdot", &parameter_processor::param_show_dot },
+        { "showorbit", &parameter_processor::param_show_orbit },
+        { "decomp", &parameter_processor::param_decomp },
+        { "distest", &parameter_processor::param_dist_test },
+        { "formulafile", &parameter_processor::param_formula_file },
+        { "formulaname", &parameter_processor::param_formula_name },
+        { "lfile", &parameter_processor::param_l_file },
+        { "lname", &parameter_processor::param_l_name },
+        { "ifsfile", &parameter_processor::param_ifs_file },
+        { "ifs", &parameter_processor::param_ifs },
+        { "ifs3d", &parameter_processor::param_ifs },
+        { "parmfile", &parameter_processor::param_parm_file },
+        { "stereo", &parameter_processor::param_stereo },
+        { "rotation", &parameter_processor::param_rotation },
+        { "perspective", &parameter_processor::param_perspective },
+        { "xyshift", &parameter_processor::param_x_y_shift },
+        { "interocular", &parameter_processor::param_interocular },
+        { "converge", &parameter_processor::param_converge },
+        { "crop", &parameter_processor::param_crop },
+        { "bright", &parameter_processor::param_bright },
+        { "xyadjust", &parameter_processor::param_x_y_adjust },
+        { "3d", &parameter_processor::param_3d },
+        { "sphere", &parameter_processor::param_sphere },
+        { "scalexyz", &parameter_processor::param_scale_x_y_z },
+        { "roughness", &parameter_processor::param_roughness },
+        { "waterline", &parameter_processor::param_waterline },
+        { "filltype", &parameter_processor::param_fill_type },
+        { "lightsource", &parameter_processor::param_light_source },
+        { "smoothing", &parameter_processor::param_smoothing },
+        { "latitude", &parameter_processor::param_latitude },
+        { "longitude", &parameter_processor::param_longitude },
+        { "radius", &parameter_processor::param_radius },
+        { "transparent", &parameter_processor::param_transparent },
+        { "preview", &parameter_processor::param_preview },
+        { "showbox", &parameter_processor::param_show_box },
+        { "coarse", &parameter_processor::param_coarse },
+        { "randomize", &parameter_processor::param_randomize },
+        { "ambient", &parameter_processor::param_ambient },
+        { "haze", &parameter_processor::param_haze },
+        { "fullcolor", &parameter_processor::param_full_color },
+        { "truecolor", &parameter_processor::param_true_color },
+        { "truemode", &parameter_processor::param_true_mode },
+        { "usegrayscale", &parameter_processor::param_use_gray_scale },
+        { "monitorwidth", &parameter_processor::param_monitor_width },
+        { "targa_overlay", &parameter_processor::param_targa_overlay },
+        { "background", &parameter_processor::param_background },
+        { "lightname", &parameter_processor::param_light_name },
+        { "ray", &parameter_processor::param_ray },
+        { "brief", &parameter_processor::param_brief },
+        { "release", &parameter_processor::param_release },
+        { "curdir", &parameter_processor::param_cur_dir },
+        { "virtual", &parameter_processor::param_virtual },
+
+        // deprecated parameters
+        { "iterincr", &parameter_processor::ignore_param },
+        { "ramvideo", &parameter_processor::ignore_param },
+
+        // deprecated print parameters
+        { "printer", &parameter_processor::ignore_param },
+        { "printfile", &parameter_processor::ignore_param },
+        { "rleps", &parameter_processor::ignore_param },
+        { "colorps", &parameter_processor::ignore_param },
+        { "epsf", &parameter_processor::ignore_param },
+        { "title", &parameter_processor::ignore_param },
+        { "translate", &parameter_processor::ignore_param },
+        { "plotstyle", &parameter_processor::ignore_param },
+        { "halftone", &parameter_processor::ignore_param },
+        { "linefeed", &parameter_processor::ignore_param },
+        { "comport", &parameter_processor::ignore_param }
     };
 
-    if (variable == "reset")
+    auto handler = handlers.find(variable);
+    if (handler != handlers.end())
     {
-        return param_reset();
-    }
-
-    if (variable == "filename")
-    {
-        return param_filename();
-    }
-
-    if (variable == "video")
-    {
-        return param_video();
-    }
-
-    if (variable == "map")
-    {
-        return param_map();
-    }
-
-    if (variable == "colors")
-    {
-        return param_colors();
-    }
-
-    if (variable == "recordcolors")
-    {
-        return param_record_colors();
-    }
-
-    if (variable == "maxlinelength")
-    {
-        return param_max_line_length();
-    }
-
-    if (variable == "comment")
-    {
-        return param_comment();
-    }
-
-    if (variable == "tplus")
-    {
-        return param_tplus();
-    }
-
-    if (variable == "noninterlaced")
-    {
-        return param_non_interlaced();
-    }
-
-    if (variable == "maxcolorres")
-    {
-        return param_max_color_res();
-    }
-
-    if (variable == "pixelzoom")
-    {
-        return param_pixel_zoom();
-    }
-
-    if ((variable == "warn")            // keep this for backward compatibility
-            || (variable == "overwrite"))
-    {
-        return param_overwrite();
-    }
-
-    if (variable == "gif87a")
-    {
-        return param_gif87a();
-    }
-
-    if (variable == "dither")
-    {
-        return param_dither();
-    }
-
-    if (variable == "savetime")
-    {
-        return param_save_time();
-    }
-
-    if (variable == "autokey")
-    {
-        return param_auto_key();
-    }
-
-    if (variable == "autokeyname")
-    {
-        return param_auto_key_name();
-    }
-
-    if (variable == "type")
-    {
-        return param_type();
-    }
-
-    if (variable == "inside")
-    {
-        return param_inside();
-    }
-
-    if (variable == "proximity")
-    {
-        return param_proximity();
-    }
-
-    if (variable == "fillcolor")
-    {
-        return param_fill_color();
-    }
-
-    if (variable == "finattract")
-    {
-        return param_fin_attract();
-    }
-
-    if (variable == "nobof")
-    {
-        return param_no_bof();
-    }
-
-    if (variable == "function")
-    {
-        return param_function();
-    }
-
-    if (variable == "outside")
-    {
-        return param_outside();
-    }
-
-    if (variable == "bfdigits")
-    {
-        return param_bf_digits();
-    }
-
-    if (variable == "maxiter")
-    {
-        return param_max_iter();
-    }
-
-    if (variable == "iterincr")
-    {
-        // iterincr=?
-        return CMDARG_NONE;
-    }
-
-    if (variable == "passes")
-    {
-        return param_passes();
-    }
-
-    if (variable == "ismand")
-    {
-        return param_is_mand();
-    }
-
-    if (variable == "cyclelimit")
-    {
-        return param_cycle_limit();
-    }
-
-    if (variable == "makemig")
-    {
-        return param_make_mig();
-    }
-
-    if (variable == "cyclerange")
-    {
-        return param_cycle_range();
-    }
-
-    if (variable == "ranges")
-    {
-        return param_ranges();
-    }
-
-    if (variable == "savename")
-    {
-        return param_save_name();
-    }
-
-    if (variable == "tweaklzw")
-    {
-        return param_tweak_lzw();
-    }
-
-    if (variable == "minstack")
-    {
-        return param_min_stack();
-    }
-
-    if (variable == "mathtolerance")
-    {
-        return param_math_tolerance();
-    }
-
-    if (variable == "tempdir")
-    {
-        return param_temp_dir();
-    }
-
-    if (variable == "workdir")
-    {
-        return param_work_dir();
-    }
-
-    if (variable == "exitmode")
-    {
-        return param_exit_mode();
-    }
-
-    if (variable == "textcolors")
-    {
-        return param_text_colors();
-    }
-
-    if (variable == "potential")
-    {
-        return param_potential();
-    }
-
-    if (variable == "params")
-    {
-        return param_params();
-    }
-
-    if (variable == "miim")
-    {
-        return param_miim();
-    }
-
-    if (variable == "initorbit")
-    {
-        return param_init_orbit();
-    }
-
-    if (variable == "orbitname")
-    {
-        return param_orbit_name();
-    }
-
-    if (variable == "3dmode")
-    {
-        return param_3d_mode();
-    }
-
-    if (variable == "julibrot3d")
-    {
-        return param_julibrot_3d();
-    }
-
-    if (variable == "julibroteyes")
-    {
-        return param_julibrot_eyes();
-    }
-
-    if (variable == "julibrotfromto")
-    {
-        return param_julibrot_from_to();
-    }
-
-    if (variable == "corners")
-    {
-        return param_corners();
-    }
-
-    if (variable == "orbitcorners")
-    {
-        return param_orbit_corners();
-    }
-
-    if (variable == "screencoords")
-    {
-        return param_screen_coords();
-    }
-
-    if (variable == "orbitdrawmode")
-    {
-        return param_orbit_draw_mode();
-    }
-
-    if (variable == "viewwindows")
-    {
-        return param_view_windows();
-    }
-
-    if (variable == "center-mag")
-    {
-        return param_center_mag();
-    }
-
-    if (variable == "aspectdrift")
-    {
-        return param_aspect_drift();
-    }
-
-    if (variable == "invert")
-    {
-        return param_invert();
-    }
-
-    if (variable == "olddemmcolors")
-    {
-        return param_old_demm_colors();
-    }
-
-    if (variable == "askvideo")
-    {
-        return param_ask_video();
-    }
-
-    if (variable == "ramvideo")
-    {
-        // ramvideo=?
-        return CMDARG_NONE; // just ignore and return, for old time's sake
-    }
-
-    if (variable == "float")
-    {
-        return param_float();
-    }
-
-    if (variable == "fastrestore")
-    {
-        return param_fast_restore();
-    }
-
-    if (variable == "orgfrmdir")
-    {
-        return param_org_frm_dir();
-    }
-
-    if (variable == "biomorph")
-    {
-        return param_biomorph();
-    }
-
-    if (variable == "orbitsave")
-    {
-        return param_orbit_save();
-    }
-
-    if (variable == "bailout")
-    {
-        return param_bailout();
-    }
-
-    if (variable == "bailoutest")
-    {
-        return param_bailout_test();
-    }
-
-    if (variable == "symmetry")
-    {
-        return param_symmetry();
-    }
-
-    if (is_print_parameter())
-    {
-        return CMDARG_NONE;
-    }
-
-    if (variable == "sound")
-    {
-        return param_sound();
-    }
-
-    if (variable == "hertz")
-    {
-        return param_hertz();
-    }
-
-    if (variable == "volume")
-    {
-        return param_volume();
-    }
-
-    if (variable == "attenuate")
-    {
-        return param_attenuate();
-    }
-
-    if (variable == "polyphony")
-    {
-        return param_polyphony();
-    }
-
-    if (variable == "wavetype")
-    {
-        return param_wave_type();
-    }
-
-    if (variable == "attack")
-    {
-        return param_attack();
-    }
-
-    if (variable == "decay")
-    {
-        return param_decay();
-    }
-
-    if (variable == "sustain")
-    {
-        return param_sustain();
-    }
-
-    if (variable == "srelease")
-    {
-        return param_s_release();
-    }
-
-    if (variable == "scalemap")
-    {
-        return param_scale_map();
-    }
-
-    if (variable == "periodicity")
-    {
-        return param_periodicity();
-    }
-
-    if (variable == "logmap")
-    {
-        return param_log_map();
-    }
-
-    if (variable == "logmode")
-    {
-        return param_log_mode();
-    }
-
-    if (variable == "debugflag" || variable == "debug")
-    {
-        return param_debug_flag();
-    }
-
-    if (variable == "rseed")
-    {
-        return param_rseed();
-    }
-
-    if (variable == "orbitdelay")
-    {
-        return param_orbit_delay();
-    }
-
-    if (variable == "orbitinterval")
-    {
-        return param_orbit_interval();
-    }
-
-    if (variable == "showdot")
-    {
-        return param_show_dot();
-    }
-
-    if (variable == "showorbit")
-    {
-        return param_show_orbit();
-    }
-
-    if (variable == "decomp")
-    {
-        return param_decomp();
-    }
-
-    if (variable == "distest")
-    {
-        return param_dist_test();
-    }
-
-    if (variable == "formulafile")
-    {
-        return param_formula_file();
-    }
-
-    if (variable == "formulaname")
-    {
-        return param_formula_name();
-    }
-
-    if (variable == "lfile")
-    {
-        return param_l_file();
-    }
-
-    if (variable == "lname")
-    {
-        return param_l_name();
-    }
-
-    if (variable == "ifsfile")
-    {
-        return param_ifs_file();
-    }
-
-    if (variable == "ifs" || variable == "ifs3d") // ifs3d for old time's sake
-    {
-        return param_ifs();
-    }
-
-    if (variable == "parmfile")
-    {
-        return param_parm_file();
-    }
-
-    if (variable == "stereo")
-    {
-        return param_stereo();
-    }
-
-    if (variable == "rotation")
-    {
-        return param_rotation();
-    }
-
-    if (variable == "perspective")
-    {
-        return param_perspective();
-    }
-
-    if (variable == "xyshift")
-    {
-        return param_x_y_shift();
-    }
-
-    if (variable == "interocular")
-    {
-        return param_interocular();
-    }
-
-    if (variable == "converge")
-    {
-        return param_converge();
-    }
-
-    if (variable == "crop")
-    {
-        return param_crop();
-    }
-
-    if (variable == "bright")
-    {
-        return param_bright();
-    }
-
-    if (variable == "xyadjust")
-    {
-        return param_x_y_adjust();
-    }
-
-    if (variable == "3d")
-    {
-        return param_3d();
-    }
-
-    if (variable == "sphere")
-    {
-        return param_sphere();
-    }
-
-    if (variable == "scalexyz")
-    {
-        return param_scale_x_y_z();
-    }
-
-    if (variable == "roughness")
-    {
-        return param_roughness();
-    }
-
-    if (variable == "waterline")
-    {
-        return param_waterline();
-    }
-
-    if (variable == "filltype")
-    {
-        return param_fill_type();
-    }
-
-    if (variable == "lightsource")
-    {
-        return param_light_source();
-    }
-
-    if (variable == "smoothing")
-    {
-        return param_smoothing();
-    }
-
-    if (variable == "latitude")
-    {
-        return param_latitude();
-    }
-
-    if (variable == "longitude")
-    {
-        return param_longitude();
-    }
-
-    if (variable == "radius")
-    {
-        return param_radius();
-    }
-
-    if (variable == "transparent")
-    {
-        return param_transparent();
-    }
-
-    if (variable == "preview")
-    {
-        return param_preview();
-    }
-
-    if (variable == "showbox")
-    {
-        return param_show_box();
-    }
-
-    if (variable == "coarse")
-    {
-        return param_coarse();
-    }
-
-    if (variable == "randomize")
-    {
-        return param_randomize();
-    }
-
-    if (variable == "ambient")
-    {
-        return param_ambient();
-    }
-
-    if (variable == "haze")
-    {
-        return param_haze();
-    }
-
-    if (variable == "fullcolor")
-    {
-        return param_full_color();
-    }
-
-    if (variable == "truecolor")
-    {
-        return param_true_color();
-    }
-
-    if (variable == "truemode")
-    {
-        return param_true_mode();
-    }
-
-    if (variable == "usegrayscale")
-    {
-        return param_use_gray_scale();
-    }
-
-    if (variable == "monitorwidth")
-    {
-        return param_monitor_width();
-    }
-
-    if (variable == "targa_overlay")
-    {
-        return param_targa_overlay();
-    }
-
-    if (variable == "background")
-    {
-        return param_background();
-    }
-
-    if (variable == "lightname")
-    {
-        return param_light_name();
-    }
-
-    if (variable == "ray")
-    {
-        return param_ray();
-    }
-
-    if (variable == "brief")
-    {
-        return param_brief();
-    }
-
-    if (variable == "release")
-    {
-        return param_release();
-    }
-
-    if (variable == "curdir")
-    {
-        return param_cur_dir();
-    }
-
-    if (variable == "virtual")
-    {
-        return param_virtual();
+        return (this->*handler->second)();
     }
 
     return bad_parameter();
@@ -3508,22 +2938,6 @@ int parameter_processor::param_symmetry()
         return bad_parameter();
     }
     return CMDARG_FRACTAL_PARAM;
-}
-
-// deprecated print parameters
-bool parameter_processor::is_print_parameter()
-{
-    return (variable == "printer")
-            || (variable == "printfile")
-            || (variable == "rleps")
-            || (variable == "colorps")
-            || (variable == "epsf")
-            || (variable == "title")
-            || (variable == "translate")
-            || (variable == "plotstyle")
-            || (variable == "halftone")
-            || (variable == "linefeed")
-            || (variable == "comport");
 }
 
 // sound=?,?,?
