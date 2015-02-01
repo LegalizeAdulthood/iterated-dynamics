@@ -72,15 +72,25 @@ static int vidcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
     ptr1 = (vidinf CONST *)p1;
     ptr2 = (vidinf CONST *)p2;
     if (ptr1->flags < ptr2->flags)
+    {
         return (-1);
+    }
     if (ptr1->flags > ptr2->flags)
+    {
         return (1);
+    }
     if (g_video_table[ptr1->entnum].keynum < g_video_table[ptr2->entnum].keynum)
+    {
         return (-1);
+    }
     if (g_video_table[ptr1->entnum].keynum > g_video_table[ptr2->entnum].keynum)
+    {
         return (1);
+    }
     if (ptr1->entnum < ptr2->entnum)
+    {
         return (-1);
+    }
     return (1);
 }
 
@@ -99,7 +109,8 @@ static void format_vid_inf(int i, char *err, char *buf)
 #endif
 
 static double vid_aspect(int tryxdots, int tryydots)
-{   // calc resulting aspect ratio for specified dots in current mode
+{
+    // calc resulting aspect ratio for specified dots in current mode
     return (double)tryydots / (double)tryxdots
            * (double)g_video_entry.xdots / (double)g_video_entry.ydots
            * screenaspect;
@@ -183,7 +194,9 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 
     // exit in makepar mode if no exact match of video mode in file
     if (make_parameter_file && g_init_mode == -1)
+    {
         return 0;
+    }
 
     if (g_init_mode == -1) // try to find very good match for vid mode
     {
@@ -521,17 +534,29 @@ static void format_item(int choice, char *buf)
     errbuf[0] = 0;
     tmpflags = vidptr[choice].flags;
     if (tmpflags & (VI_VSMALL+VI_CSMALL+VI_ASPECT))
+    {
         strcat(errbuf, "*");
+    }
     if (tmpflags & VI_VSMALL)
+    {
         strcat(errbuf, "R");
+    }
     if (tmpflags & VI_CSMALL)
+    {
         strcat(errbuf, "C");
+    }
     if (tmpflags & VI_ASPECT)
+    {
         strcat(errbuf, "A");
+    }
     if (tmpflags & VI_VBIG)
+    {
         strcat(errbuf, "v");
+    }
     if (tmpflags & VI_CBIG)
+    {
         strcat(errbuf, "c");
+    }
     format_vid_inf(vidptr[choice].entnum, errbuf, buf);
 }
 
