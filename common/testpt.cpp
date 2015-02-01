@@ -53,6 +53,8 @@ int testpt(double initreal, double initimag, double parm1, double parm2,
         magnitude = newreal * newreal + newimag * newimag;
     }
     if (color >= maxit)
+    {
         color = inside;
+    }
     return ((int)color);
 }
