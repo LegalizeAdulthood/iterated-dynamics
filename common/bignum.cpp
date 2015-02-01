@@ -228,7 +228,9 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
 void bn_hexdump(bn_t r)
 {
     for (int i = 0; i < bnlength; i++)
+    {
         printf("%02X ", r[i]);
+    }
     printf("\n");
     return;
 }
@@ -272,7 +274,8 @@ bn_t strtobn(bn_t r, char *s)
         {
             longval = atol(s);
             switch (intlength)
-            {   // only 1, 2, or 4 are allowed
+            {
+                // only 1, 2, or 4 are allowed
             case 1:
                 *onesbyte = (BYTE)longval;
                 break;
@@ -289,7 +292,8 @@ bn_t strtobn(bn_t r, char *s)
     {
         longval = atol(s);
         switch (intlength)
-        {   // only 1, 2, or 4 are allowed
+        {
+            // only 1, 2, or 4 are allowed
         case 1:
             *onesbyte = (BYTE)longval;
             break;
@@ -303,7 +307,9 @@ bn_t strtobn(bn_t r, char *s)
     }
 
     if (signflag)
+    {
         neg_a_bn(r);
+    }
 
     return r;
 }
@@ -349,7 +355,9 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
     long longval = 0;
 
     if (dec == 0)
+    {
         dec = decimals;
+    }
     onesbyte = r + bnlength - intlength;
 
     if (is_bn_neg(r))
@@ -358,7 +366,8 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
         *(s++) = '-';
     }
     switch (intlength)
-    {   // only 1, 2, or 4 are allowed
+    {
+        // only 1, 2, or 4 are allowed
     case 1:
         longval = *onesbyte;
         break;
@@ -377,7 +386,9 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
         *onesbyte = 0;  // clear out highest byte
         mult_a_bn_int(r, 10);
         if (is_bn_zero(r))
+        {
             break;
+        }
         s[l++] = (BYTE)(*onesbyte + '0');
     }
     s[l] = '\0'; // don't forget nul char
@@ -395,7 +406,8 @@ bn_t inttobn(bn_t r, long longval)
     clear_bn(r);
     onesbyte = r + bnlength - intlength;
     switch (intlength)
-    {   // only 1, 2, or 4 are allowed
+    {
+        // only 1, 2, or 4 are allowed
     case 1:
         *onesbyte = (BYTE)longval;
         break;
@@ -419,7 +431,8 @@ long bntoint(bn_t n)
 
     onesbyte = n + bnlength - intlength;
     switch (intlength)
-    {   // only 1, 2, or 4 are allowed
+    {
+        // only 1, 2, or 4 are allowed
     case 1:
         longval = *onesbyte;
         break;
@@ -451,7 +464,8 @@ bn_t floattobn(bn_t r, LDBL f)
     }
 
     switch (intlength)
-    {   // only 1, 2, or 4 are allowed
+    {
+        // only 1, 2, or 4 are allowed
     case 1:
         *onesbyte = (BYTE)f;
         break;
@@ -472,7 +486,9 @@ bn_t floattobn(bn_t r, LDBL f)
     }
 
     if (signflag)
+    {
         neg_a_bn(r);
+    }
 
     return r;
 }
@@ -490,7 +506,9 @@ bn_t abs_bn(bn_t r, bn_t n)
 {
     copy_bn(r, n);
     if (is_bn_neg(r))
+    {
         neg_a_bn(r);
+    }
     return r;
 }
 
@@ -499,7 +517,9 @@ bn_t abs_bn(bn_t r, bn_t n)
 bn_t abs_a_bn(bn_t r)
 {
     if (is_bn_neg(r))
+    {
         neg_a_bn(r);
+    }
     return r;
 }
 
@@ -522,7 +542,8 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 
     bool signflag = false;
     if (is_bn_neg(n))
-    {   // will be a lot easier to deal with just positives
+    {
+        // will be a lot easier to deal with just positives
         signflag = true;
         neg_a_bn(n);
     }
@@ -561,7 +582,9 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     // calculate new starting values
     bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
+    {
         bnlength = orig_bnlength;
+    }
     calc_lengths();
 
     // adjust pointers
@@ -576,7 +599,9 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
         // adjust lengths
         bnlength <<= 1; // double precision
         if (bnlength > orig_bnlength)
+        {
             bnlength = orig_bnlength;
+        }
         calc_lengths();
         r = orig_r + orig_bnlength - bnlength;
         n = orig_n + orig_bnlength - bnlength;
@@ -585,7 +610,9 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
         unsafe_mult_bn(bntmp1, r, n); // bntmp1=rn
         inttobn(bntmp2, 1);  // bntmp2 = 1.0
         if (bnlength == orig_bnlength && cmp_bn(bntmp2, bntmp1+shiftfactor) == 0)  // if not different
-            break;  // they must be the same
+        {
+            break;    // they must be the same
+        }
         inttobn(bntmp2, 2); // bntmp2 = 2.0
         sub_bn(bntmp3, bntmp2, bntmp1+shiftfactor); // bntmp3=2-rn
         unsafe_mult_bn(bntmp1, r, bntmp3); // bntmp1=r(2-rn)
@@ -663,16 +690,24 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
     // scale = (int)(log(1/fabs(a))/LOG_256) = LOG_256(1/|a|)
     i = bnlength-1;
     while (i >= 0 && n1[i] == 0)
+    {
         i--;
+    }
     scale1 = bnlength - i - 2;
     if (scale1 < 0)
+    {
         scale1 = 0;
+    }
     i = bnlength-1;
     while (i >= 0 && n2[i] == 0)
+    {
         i--;
+    }
     scale2 = bnlength - i - 2;
     if (scale2 < 0)
+    {
         scale2 = 0;
+    }
 
     // shift n1, n2
     // important!, use memmove(), not memcpy()
@@ -705,7 +740,9 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
     }
 
     if (sign)
+    {
         neg_a_bn(r);
+    }
 
     return r;
 }
@@ -728,7 +765,8 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     // use Newton's recursive method for zeroing in on sqrt(n): r=.5(r+n/r)
 
     if (is_bn_neg(n))
-    {   // sqrt of a neg, return 0
+    {
+        // sqrt of a neg, return 0
         clear_bn(r);
         return r;
     }
@@ -755,7 +793,9 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     // calculate new starting values
     bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
+    {
         bnlength = orig_bnlength;
+    }
     calc_lengths();
 
     // adjust pointers
@@ -769,7 +809,9 @@ bn_t sqrt_bn(bn_t r, bn_t n)
         // adjust lengths
         bnlength <<= 1; // double precision
         if (bnlength > orig_bnlength)
+        {
             bnlength = orig_bnlength;
+        }
         calc_lengths();
         r = orig_r + orig_bnlength - bnlength;
         n = orig_n + orig_bnlength - bnlength;
@@ -783,9 +825,13 @@ bn_t sqrt_bn(bn_t r, bn_t n)
         {
             if (comp < 4  // perfect or near perfect match
                     || almost_match == 1) // close enough for 2nd time
+            {
                 break;
+            }
             else // this is the first time they almost matched
+            {
                 almost_match++;
+            }
         }
     }
 
@@ -822,7 +868,9 @@ bn_t exp_bn(bn_t r, bn_t n)
         copy_bn(bntmp2, bntmp3+shiftfactor);
         div_a_bn_int(bntmp2, fact);
         if (!is_bn_not_zero(bntmp2))
-            break; // too small to register
+        {
+            break;    // too small to register
+        }
         add_a_bn(r, bntmp2);
         fact++;
     }
@@ -848,7 +896,8 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     // use Newton's recursive method for zeroing in on ln(n): r=r+n*exp(-r)-1
 
     if (is_bn_neg(n) || is_bn_zero(n))
-    {   // error, return largest neg value
+    {
+        // error, return largest neg value
         max_bn(r);
         neg_a_bn(r);
         return r;
@@ -887,7 +936,9 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     // calculate new starting values
     bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
+    {
         bnlength = orig_bnlength;
+    }
     calc_lengths();
 
     // adjust pointers
@@ -904,7 +955,9 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
         // adjust lengths
         bnlength <<= 1; // double precision
         if (bnlength > orig_bnlength)
+        {
             bnlength = orig_bnlength;
+        }
         calc_lengths();
         r = orig_r + orig_bnlength - bnlength;
         n = orig_n + orig_bnlength - bnlength;
@@ -919,9 +972,13 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
         {
             if (comp < 4  // perfect or near perfect match
                     || almost_match == 1) // close enough for 2nd time
+            {
                 break;
+            }
             else // this is the first time they almost matched
+            {
                 almost_match++;
+            }
         }
         copy_bn(bntmp5, r); // -r
     }
@@ -972,7 +1029,9 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
     double_bn(bntmp1, bn_pi); // 2*pi
     // this could be done with remainders, but it would probably be slower
     while (cmp_bn(n, bntmp1) >= 0) // while n >= 2*pi
+    {
         sub_a_bn(n, bntmp1);
+    }
     // 0 <= n < 2*pi
 
     copy_bn(bntmp1, bn_pi); // pi
@@ -1018,7 +1077,9 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
     // halves = bnlength / 10; */ /* this is experimental
     int halves = 1;
     for (int i = 0; i < halves; i++)
+    {
         half_a_bn(n);
+    }
 #endif
 
     // use Taylor Series (very slow convergence)
@@ -1033,22 +1094,34 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
         copy_bn(bntmp1, bntmp2+shiftfactor);
         div_a_bn_int(bntmp1, fact++);
         if (!is_bn_not_zero(bntmp1))
-            break; // too small to register
+        {
+            break;    // too small to register
+        }
         if (k) // alternate between adding and subtracting
+        {
             add_a_bn(c, bntmp1);
+        }
         else
+        {
             sub_a_bn(c, bntmp1);
+        }
 
         // odd terms for sine
         unsafe_mult_bn(bntmp2, bntmp1, n);
         copy_bn(bntmp1, bntmp2+shiftfactor);
         div_a_bn_int(bntmp1, fact++);
         if (!is_bn_not_zero(bntmp1))
-            break; // too small to register
+        {
+            break;    // too small to register
+        }
         if (k) // alternate between adding and subtracting
+        {
             add_a_bn(s, bntmp1);
+        }
         else
+        {
             sub_a_bn(s, bntmp1);
+        }
         k = !k; // toggle
 #ifdef CALCULATING_BIG_PI
         printf("."); // lets you know it's doing something
@@ -1074,9 +1147,13 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
         copy_bn(c, bntmp1);
     }
     if (signsin)
+    {
         neg_a_bn(s);
+    }
     if (signcos)
+    {
         neg_a_bn(c);
+    }
 #endif
 
     return s; // return sine I guess
@@ -1135,7 +1212,9 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     // calculate new starting values
     bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
+    {
         bnlength = orig_bnlength;
+    }
     calc_lengths();
 
     // adjust pointers
@@ -1154,7 +1233,9 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
         // adjust lengths
         bnlength <<= 1; // double precision
         if (bnlength > orig_bnlength)
+        {
             bnlength = orig_bnlength;
+        }
         calc_lengths();
         r = orig_r + orig_bnlength - bnlength;
         n = orig_n + orig_bnlength - bnlength;
@@ -1183,14 +1264,20 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 #endif
             if (comp < 4  // perfect or near perfect match
                     || almost_match == 1) // close enough for 2nd time
+            {
                 break;
+            }
             else // this is the first time they almost matched
+            {
                 almost_match++;
+            }
         }
 
 #ifdef CALCULATING_BIG_PI
         if (bnlength == orig_bnlength && comp >= 8)
+        {
             printf("atan() loop comp=%i\n", comp);
+        }
 #endif
 
         copy_bn(bntmp3, r); // make a copy for later comparison
@@ -1213,7 +1300,9 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     }
 
     if (signflag)
+    {
         neg_a_bn(r);
+    }
     return r;
 }
 
@@ -1230,9 +1319,13 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
     if (signy == 0)
     {
         if (signx < 0)
-            copy_bn(r, bn_pi); // negative x axis, 180 deg
+        {
+            copy_bn(r, bn_pi);    // negative x axis, 180 deg
+        }
         else    // signx >= 0    positive x axis, 0
+        {
             clear_bn(r);
+        }
         return (r);
     }
     if (signx == 0)
@@ -1240,20 +1333,30 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
         copy_bn(r, bn_pi); // y axis
         half_a_bn(r);      // +90 deg
         if (signy < 0)
+        {
             neg_a_bn(r);    // -90 deg
+        }
         return (r);
     }
 
     if (signy < 0)
+    {
         neg_a_bn(ny);
+    }
     if (signx < 0)
+    {
         neg_a_bn(nx);
+    }
     unsafe_div_bn(bntmp6, ny, nx);
     unsafe_atan_bn(r, bntmp6);
     if (signx < 0)
+    {
         sub_bn(r, bn_pi, r);
+    }
     if (signy < 0)
+    {
         neg_a_bn(r);
+    }
     return (r);
 }
 
@@ -1270,9 +1373,13 @@ bn_t full_mult_bn(bn_t r, bn_t n1, bn_t n2)
     bool sign2 = is_bn_neg(n2);
     unsafe_full_mult_bn(r, n1, n2);
     if (sign1)
+    {
         neg_a_bn(n1);
+    }
     if (sign2)
+    {
         neg_a_bn(n2);
+    }
     return r;
 }
 
@@ -1283,9 +1390,13 @@ bn_t mult_bn(bn_t r, bn_t n1, bn_t n2)
     bool sign2 = is_bn_neg(n2);
     unsafe_mult_bn(r, n1, n2);
     if (sign1)
+    {
         neg_a_bn(n1);
+    }
     if (sign2)
+    {
         neg_a_bn(n2);
+    }
     return r;
 }
 
@@ -1295,7 +1406,9 @@ bn_t full_square_bn(bn_t r, bn_t n)
     bool sign = is_bn_neg(n);
     unsafe_full_square_bn(r, n);
     if (sign)
+    {
         neg_a_bn(n);
+    }
     return r;
 }
 
@@ -1305,7 +1418,9 @@ bn_t square_bn(bn_t r, bn_t n)
     bool sign = is_bn_neg(n);
     unsafe_square_bn(r, n);
     if (sign)
+    {
         neg_a_bn(n);
+    }
     return r;
 }
 
@@ -1315,7 +1430,9 @@ bn_t div_bn_int(bn_t r, bn_t n, U16 u)
     bool sign = is_bn_neg(n);
     unsafe_div_bn_int(r, n, u);
     if (sign)
+    {
         neg_a_bn(n);
+    }
     return r;
 }
 
@@ -1331,7 +1448,9 @@ bn_t inv_bn(bn_t r, bn_t n)
     bool sign = is_bn_neg(n);
     unsafe_inv_bn(r, n);
     if (sign)
+    {
         neg_a_bn(n);
+    }
     return r;
 }
 
@@ -1363,7 +1482,9 @@ bn_t atan_bn(bn_t r, bn_t n)
     bool sign = is_bn_neg(n);
     unsafe_atan_bn(r, n);
     if (sign)
+    {
         neg_a_bn(n);
+    }
     return r;
 }
 
