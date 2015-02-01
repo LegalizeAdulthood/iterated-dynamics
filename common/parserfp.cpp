@@ -190,7 +190,9 @@ int pstopmsg(int x, char const *msg)
 {
     static FILE *fp = nullptr;
     if (fp == nullptr)
+    {
         fp = fopen("fpdebug.txt", "w");
+    }
     if (fp)
     {
         fprintf(fp, "%s\n", msg);
@@ -356,7 +358,8 @@ struct fn_entry
     // (legal values are -2, 0, +2)
 };
 static fn_entry afe[NUM_OLD_FNS] =
-{  // array of function entries
+{
+    // array of function entries
     {FNAME("Lod",     StkLod,      fStkLod,    0, 2, +2) },          //  0
     {FNAME("Clr",     StkClr,      fStkClr1,   0, 0,  CLEAR_STK) },  //  1
     {FNAME("+",       dStkAdd,     fStkAdd,    4, 0, -2) },          //  2
@@ -443,7 +446,8 @@ awful_error:
     // this if statement inserts a stack push or pull into the token array
     //   it would be much better to do this *after* optimization
     if ((int)stkcnt < MinStk)
-    {  // not enough operands on fpu stack
+    {
+        // not enough operands on fpu stack
         DBUGMSG2("Inserted pull.  Stack: %2d --> %2d", stkcnt, stkcnt+2);
         OPPTR(cvtptrx) = NO_OPERAND;
         FNPTR(cvtptrx++) = fStkPull2;  // so adjust the stack, pull operand
@@ -497,7 +501,8 @@ awful_error:
         OPPTR(cvtptrx) = Load[LodPtr++];
     }
     else
-    { // the optimizer will set the pointer for load fn.
+    {
+        // the optimizer will set the pointer for load fn.
         OPPTR(cvtptrx) = NO_OPERAND;
     }
 
@@ -517,23 +522,27 @@ awful_error:
 
     // ********************************************************************
     if (ffptr == fStkLod)
-    { // about to add Lod to the array
+    {
+        // about to add Lod to the array
 
         if (prevfptr == fStkLod && Load[LodPtr-1] == Load[LodPtr])
         {
             // previous non-adjust operator was Lod of same operand
             // ? lodx ? (*lodx)
             if (FNPTR(--cvtptrx) == fStkPush2)
-            {  // prev fn was push
+            {
+                // prev fn was push
                 // ? lod *push (lod)
                 --cvtptrx;  // found  *lod push (lod)
                 if (FNPTR(cvtptrx-1) == fStkPush2)
-                { // always more ops here
+                {
+                    // always more ops here
                     DBUGMSG("push *lod push (lod) -> push4 (*loddup)");
                     FNPTR(cvtptrx-1) = fStkPush4;
                 }
                 else
-                { // prev op not push
+                {
+                    // prev op not push
                     DBUGMSG("op *lod push (lod) -> op pusha(p=0) (*loddup)");
                     OPPTR(cvtptrx) = NO_OPERAND;  // use 'alternate' push fn.
                     FNPTR(cvtptrx++) = fStkPush2a;  // push w/2 free on stack
@@ -541,7 +550,8 @@ awful_error:
                 }
             }
             else
-            {  // never  push *lod (lod)  so must be
+            {
+                // never  push *lod (lod)  so must be
                 DBUGMSG("op *lod (lod) -> op (*loddup)");
             }
             ffptr = fStkLodDup;
@@ -590,7 +600,8 @@ awful_error:
     {
 
         if (prevfptr == fStkLodDup)
-        {  // there is never a push before add
+        {
+            // there is never a push before add
             --cvtptrx;  // found  ? *loddup (add)
             if (cvtptrx != 0 && FNPTR(cvtptrx-1) == fStkPush2a)
             {
@@ -619,7 +630,8 @@ awful_error:
             ffptr = fStkStoDbl;
         }
         else if (prevfptr == fStkLod)
-        {  // have found  lod (*add)
+        {
+            // have found  lod (*add)
             --cvtptrx;     //  ? *lod (add)
             if (FNPTR(cvtptrx-1) == fStkPush2)
             {
@@ -737,7 +749,8 @@ awful_error:
             ffptr = fStkLodSqr;
         }
         else if (prevfptr == fStkStoDup)
-        {  // no pushes here, 4 on stk.
+        {
+            // no pushes here, 4 on stk.
             DBUGMSG("stodup (mul) -> (*stosqr0)");
             --cvtptrx;
             ffptr = fStkStoSqr0;  // dont save lastsqr here ever
@@ -746,7 +759,8 @@ awful_error:
         {
             --cvtptrx;  //  lod *? (mul)
             if (FNPTR(cvtptrx) == fStkPush2)
-            {  //  lod *push (mul)
+            {
+                //  lod *push (mul)
                 --cvtptrx;  // ? *lod push (mul)
                 if (FNPTR(cvtptrx-1) == fStkPush2)
                 {
@@ -1274,7 +1288,8 @@ SkipOptimizer:  // -------------  end of optimizer -----------------------
 }
 
 int fpfill_jump_struct()
-{   // Completes all entries in jump structure. Returns 1 on error)
+{
+    // Completes all entries in jump structure. Returns 1 on error)
     // On entry, jump_index is the number of jump functions in the formula
     int i = 0;
     int checkforelse = 0;
@@ -1294,9 +1309,13 @@ int fpfill_jump_struct()
             case 2:
                 checkforelse = !checkforelse;
                 if (checkforelse)
+                {
                     JumpFunc = fStkJump;
+                }
                 else
+                {
                     JumpFunc = fStkJumpOnFalse;
+                }
                 break;
             case 3:
                 JumpFunc = fStkJump;
@@ -1558,7 +1577,8 @@ skipfinalopt:  // -------------- end of final optimizations ------------
     // now change the pointers
     if (!FormName.empty() &&
             (!uses_jump || fpfill_jump_struct() == 0))
-    { // but only if parse succeeded
+    {
+        // but only if parse succeeded
         curfractalspecific->per_pixel = fform_per_pixel;
         curfractalspecific->orbitcalc = fFormula;
     }
