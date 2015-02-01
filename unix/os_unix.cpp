@@ -45,21 +45,31 @@ bool isadirectory(char const *s)
     int len;
     char sv;
     if (strchr(s, '*') || strchr(s, '?'))
-        return false; // for my purposes, not a directory
+    {
+        return false;    // for my purposes, not a directory
+    }
 
     len = (int) strlen(s);
     if (len > 0)
-        sv = s[len-1];   // last char
+    {
+        sv = s[len-1];    // last char
+    }
     else
+    {
         sv = 0;
+    }
 
     if (fr_findfirst(s) != 0) // couldn't find it
     {
         // any better ideas??
         if (sv == SLASHC) // we'll guess it is a directory
+        {
             return true;
+        }
         else
-            return false; // no slashes - we'll guess it's a file
+        {
+            return false;    // no slashes - we'll guess it's a file
+        }
     }
     else if ((DTA.attribute & SUBDIR) != 0)
     {
@@ -68,14 +78,22 @@ bool isadirectory(char const *s)
             // strip trailing slash and try again
             std::string path{s, &s[len-1]};
             if (fr_findfirst(path.c_str()) != 0) // couldn't find it
+            {
                 return false;
+            }
             else if ((DTA.attribute & SUBDIR) != 0)
-                return true;  // we're SURE it's a directory
+            {
+                return true;    // we're SURE it's a directory
+            }
             else
+            {
                 return false;
+            }
         }
         else
-            return true;  // we're SURE it's a directory
+        {
+            return true;    // we're SURE it's a directory
+        }
     }
     return false;
 }

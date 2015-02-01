@@ -139,7 +139,8 @@ static void continue_hdl(int sig, int code, struct sigcontext *scp,
                          char *addr);
 #endif
 
-static int mousefkey[4][4] /* [button][dir] */ = {
+static int mousefkey[4][4] /* [button][dir] */ =
+{
     {FIK_RIGHT_ARROW, FIK_LEFT_ARROW, FIK_DOWN_ARROW, FIK_UP_ARROW},
     {0, 0, FIK_PAGE_DOWN, FIK_PAGE_UP},
     {FIK_CTL_PLUS, FIK_CTL_MINUS, FIK_CTL_DEL, FIK_CTL_INSERT},
@@ -212,7 +213,9 @@ UnixInit()
         such ieee trapping is supported.
     */
     if (ieee_handler("set", "common", continue_hdl) != 0)
+    {
         printf("ieee trapping not supported here \n");
+    }
 #endif
 }
 #endif
@@ -330,7 +333,8 @@ static int xlastfcn = GXcopy;
 static BYTE *pixbuf = nullptr;
 
 static int step = 0;
-static int cyclic[][3] = {
+static int cyclic[][3] =
+{
     {1, 3, 5}, {1, 5, 3}, {3, 1, 5}, {3, 5, 1}, {5, 1, 3}, {5, 3, 1},
     {1, 3, 7}, {1, 7, 3}, {3, 1, 7}, {3, 7, 1}, {7, 1, 3}, {7, 3, 1},
     {1, 5, 7}, {1, 7, 5}, {5, 1, 7}, {5, 7, 1}, {7, 1, 5}, {7, 5, 1},
@@ -375,7 +379,9 @@ select_visual()
         break;
     }
     if (colors > 256)
+    {
         colors = 256;
+    }
 }
 
 /*
@@ -445,7 +451,8 @@ initUnixWindow()
         sydots = Xwinheight;
     }
     else
-    {  // Use X window
+    {
+        // Use X window
         size_hints = XAllocSizeHints();
         if (size_hints == nullptr)
         {
@@ -537,7 +544,9 @@ initUnixWindow()
         }
         colors = xcmapstuff();
         if (rotate_hi == 255)
+        {
             rotate_hi = colors-1;
+        }
 
         XSetWMNormalHints(Xdp, Xw, size_hints);
 
@@ -622,7 +631,9 @@ clearXwindow()
     {
         for (int j = 0; j < Ximage->height; j++)
             for (int i = 0; i < Ximage->width; i++)
+            {
                 XPutPixel(Ximage, i, j, cmap_pixtab[pixtab[0]]);
+            }
     }
     else if (pixtab[0] != 0)
     {
@@ -706,9 +717,13 @@ initdacbox()
             {
                 int k = (i*(cyclic[sp][j])) & 127;
                 if (k < 64)
+                {
                     g_dac_box[i][j] = k;
+                }
                 else
+                {
                     g_dac_box[i][j] = (127 - k);
+                }
             }
         }
     }
@@ -733,7 +748,9 @@ initdacbox()
     if (s0)
         for (int i = 0; i < 256; i++)
             for (int j = 0; j < 3; j++)
+            {
                 g_dac_box[i][j] = 63 - g_dac_box[i][j];
+            }
 
 }
 
@@ -775,14 +792,18 @@ resizeWindow()
     unsigned int width, height;
 
     if (unixDisk)
+    {
         return 0;
+    }
     if (resize_flag)
     {
         Window root, parent, *children;
         resize_flag = 0;
         XQueryTree(Xdp, Xw, &root, &parent, &children, &junkui);
         if (!parent)
+        {
             return 0;
+        }
         XGetGeometry(Xdp, parent, &root, &junki, &junki,
                      &width, &height, &junkui, &junkui);
         XResizeWindow(Xdp, Xw, width, height);
@@ -808,16 +829,22 @@ resizeWindow()
         int Xpad = 8;  // default, unless changed below
         int Xmwidth;
         if (Xdepth == 1)
+        {
             Xmwidth = 1 + sxdots/8;
+        }
         else if (Xdepth <= 8)
+        {
             Xmwidth = sxdots;
+        }
         else if (Xdepth <= 16)
-        {  // 15 or 16 bpp
+        {
+            // 15 or 16 bpp
             Xmwidth = 2*sxdots;
             Xpad = 16;
         }
         else
-        {  // 24 or 32 bpp
+        {
+            // 24 or 32 bpp
             Xmwidth = 4*sxdots;
             Xpad = 32;
         }
@@ -827,7 +854,9 @@ resizeWindow()
         }
         pixbuf = (BYTE *) malloc(Xwinwidth *sizeof(BYTE));
         if (Ximage != nullptr)
+        {
             XDestroyImage(Ximage);
+        }
         Ximage = XCreateImage(Xdp, Xvi, Xdepth, ZPixmap, 0, nullptr, sxdots,
                               sydots, Xpad, Xmwidth);
         if (Ximage == nullptr)
@@ -885,7 +914,9 @@ xcmapstuff()
     {
         Xcmap = DefaultColormapOfScreen(Xsc);
         if (fake_lut)
+        {
             writevideopalette();
+        }
     }
     else if (sharecolor)
     {
@@ -903,7 +934,9 @@ xcmapstuff()
         {
             ncells = 1 << powr;
             if (ncells > colors)
+            {
                 continue;
+            }
             if (XAllocColorCells(Xdp, Xcmap, False, nullptr, 0, pixtab,
                                  (unsigned int) ncells))
             {
@@ -1126,11 +1159,15 @@ int readvideo(int x, int y)
         XPixel pixel = XGetPixel(Ximage, x, y);
         for (int i = 0; i < colors; i++)
             if (cmap_pixtab[i] == pixel)
+            {
                 return i;
+            }
         return 0;
     }
     else
+    {
         return ipixtab[XGetPixel(Ximage, x, y)];
+    }
 }
 
 XColor cols[256];
@@ -1153,7 +1190,9 @@ XColor cols[256];
 int readvideopalette()
 {
     if (!g_got_real_dac && g_is_true_color && truemode)
+    {
         return -1;
+    }
     for (int i = 0; i < colors; i++)
     {
         g_dac_box[i][0] = cols[i].red/1024;
@@ -1272,7 +1311,9 @@ void
 setlinemode(int mode)
 {
     if (unixDisk)
+    {
         return;
+    }
     xlastcolor = -1;
     if (mode == 0)
     {
@@ -1420,7 +1461,9 @@ xgetkey(int block)
         // Don't check X events every time, since that is expensive
         skipcount++;
         if (block == 0 && skipcount < 25)
+        {
             break;
+        }
         skipcount = 0;
 
         if (!unixDisk)
@@ -1442,7 +1485,9 @@ xgetkey(int block)
             }
         }
         if (!block)
+        {
             break;
+        }
         FD_ZERO(&reads);
         // See http://llvm.org/bugs/show_bug.cgi?id=8920
 #if !defined(__clang_analyzer__)
@@ -1596,7 +1641,8 @@ handleesc()
         ch1 = getachar();
     }
     if (ch1 != '[')
-    {       // See if we have esc [
+    {
+        // See if we have esc [
         return FIK_ESC;
     }
     ch1 = getachar();
@@ -1629,7 +1675,8 @@ handleesc()
         ch2 = getachar();
     }
     if (ch2 == '~')
-    {       // esc [ ch1 ~
+    {
+        // esc [ ch1 ~
         switch (ch1)
         {
         case '2':       // esc [ 2 ~
@@ -1657,7 +1704,8 @@ handleesc()
             ch3 = getachar();
         }
         if (ch3 != '~')
-        {   // esc [ ch1 ch2 ~
+        {
+            // esc [ ch1 ch2 ~
             return FIK_ESC;
         }
         if (ch1 == '1')
@@ -2198,7 +2246,8 @@ FindRootWindow()
     w_root = RootWindow(dpy, scr);
     w_root = pr_dwmroot(dpy, w_root); // search for DEC wm root
 
-    {   // search for swm/tvtwm root (from ssetroot by Tom LaStrange)
+    {
+        // search for swm/tvtwm root (from ssetroot by Tom LaStrange)
         Atom SWM_VROOT = None;
         Window rootReturn, parentReturn, *children;
         unsigned int numChildren;
@@ -2304,7 +2353,9 @@ xgetfont()
         font_info = XLoadQueryFont(Xdp, "6x12");
     }
     if (font_info == nullptr)
+    {
         return nullptr;
+    }
     width = font_info->max_bounds.width;
     if (font_info->max_bounds.width > 8 ||
             font_info->max_bounds.width != font_info->min_bounds.width)
@@ -2424,7 +2475,9 @@ shell_to_dos()
     {
         donepid = wait(0);
         if (donepid < 0 || donepid == pid)
+        {
             break;
+        }
     }
 
     // Go back to curses mode
@@ -2464,7 +2517,9 @@ void
 schedulealarm(int soon)
 {
     if (!fastmode)
+    {
         return;
+    }
     signal(SIGALRM, (SignalHandler)setredrawscreen);
     if (soon)
     {

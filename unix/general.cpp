@@ -59,7 +59,9 @@ int keypressed()
     int ch;
     ch = getkeynowait();
     if (!ch)
+    {
         return 0;
+    }
     keybuffer = ch;
     if (ch == FIK_F1 && help_mode)
     {
@@ -89,7 +91,9 @@ int waitkeypressed(int timeout)
     {
         keybuffer = getkeyint(1);
         if (timeout)
+        {
             break;
+        }
     }
     return keypressed();
 }
@@ -105,7 +109,9 @@ getakeynohelp()
     {
         ch = getakey();
         if (ch != FIK_F1)
+        {
             break;
+        }
     }
     return ch;
 }
@@ -539,7 +545,9 @@ static void getDouble(double *dst, unsigned char **src, int dir)
         for (i = 0; i < 8; i++)
         {
             if ((*src)[i] != 0)
+            {
                 break;
+            }
         }
         if (i == 8)
         {
@@ -620,7 +628,9 @@ static void getFloat(float *dst, unsigned char **src, int dir)
         for (i = 0; i < 4; i++)
         {
             if ((*src)[i] != 0)
+            {
                 break;
+            }
         }
         if (i == 4)
         {

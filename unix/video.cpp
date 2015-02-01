@@ -96,8 +96,10 @@ void putstring(int row, int col, int attr, char const *msg);
 ;       |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
 */
 
-VIDEOINFO x11_video_table[] = {
-    {   "xfractint mode           ", "                         ",
+VIDEOINFO x11_video_table[] =
+{
+    {
+        "xfractint mode           ", "                         ",
         999, 0, 0, 0, 0, 19, 640, 480, 256
     },
 };
@@ -222,7 +224,9 @@ getcolor(int xdot, int ydot)
     x1 = xdot + sxoffs;
     y1 = ydot + syoffs;
     if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
+    {
         return 0;
+    }
     return dotread(x1, y1);
 }
 
@@ -296,9 +300,13 @@ putstring(int row, int col, int attr, char const *msg)
     int so = 0;
 
     if (row != -1)
+    {
         g_text_row = row;
+    }
     if (col != -1)
+    {
         g_text_col = col;
+    }
 
     if (attr & INVERSE || attr & BRIGHT)
     {
@@ -309,7 +317,9 @@ putstring(int row, int col, int attr, char const *msg)
     while (1)
     {
         if (*msg == '\0')
+        {
             break;
+        }
         if (*msg == '\n')
         {
             g_text_col = 0;
@@ -404,9 +414,13 @@ spindac(int dir, int inc)
     unsigned char tmp[3];
     unsigned char *dacbot;
     if (colors < 16)
+    {
         return;
+    }
     if (g_is_true_color && truemode)
+    {
         return;
+    }
     if (dir != 0 && rotate_lo < colors && rotate_lo < rotate_hi)
     {
         int top = rotate_hi > colors ? colors - 1 : rotate_hi;
@@ -557,7 +571,9 @@ find_special_colors()
     }
 
     if (!(g_got_real_dac || fake_lut))
+    {
         return;
+    }
 
     for (int i = 0; i < colors; i++)
     {
@@ -630,7 +646,9 @@ put_a_char(int ch)
 void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
     if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
+    {
         return;
+    }
     lineread(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
 }
 
@@ -647,7 +665,9 @@ void
 put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 {
     if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
+    {
         return;
+    }
     linewrite(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
 }
 
@@ -662,7 +682,9 @@ int
 out_line(BYTE *pixels, int linelen)
 {
     if (g_row_count + syoffs >= sydots)
+    {
         return 0;
+    }
     linewrite(g_row_count + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
     g_row_count++;
     return 0;

@@ -99,9 +99,13 @@ int stricmp(char const *s1, char const *s2)
         c1 = *s1++;
         c2 = *s2++;
         if (isupper(c1))
+        {
             c1 = tolower(c1);
+        }
         if (isupper(c2))
+        {
             c2 = tolower(c2);
+        }
         if (c1 != c2)
         {
             return c1 - c2;
@@ -136,9 +140,13 @@ int strnicmp(char const *s1, char const *s2, int numChars)
         c1 = *s1++;
         c2 = *s2++;
         if (isupper(c1))
+        {
             c1 = tolower(c1);
+        }
         if (isupper(c2))
+        {
             c2 = tolower(c2);
+        }
         if (c1 != c2)
         {
             return c1 - c2;
@@ -343,17 +351,27 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
     char const *tmp;
 
     if (drive)
+    {
         drive[0] = 0;
+    }
     if (dir)
+    {
         dir[0]   = 0;
+    }
     if (fname)
+    {
         fname[0] = 0;
+    }
     if (ext)
+    {
         ext[0]   = 0;
+    }
 
     length = strlen(file_template);
     if (length == 0)
+    {
         return (0);
+    }
     offset = 0;
 
     // get drive
@@ -382,22 +400,30 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
             tmp++;  // first character after slash
             len = tmp - &file_template[offset];
             if (len >=0 && len < FILE_MAX_DIR && dir)
-                        strncpy(dir, &file_template[offset], std::min(len, FILE_MAX_DIR));
+            {
+                strncpy(dir, &file_template[offset], std::min(len, FILE_MAX_DIR));
+            }
             if (len < FILE_MAX_DIR && dir)
-                        dir[len] = 0;
+            {
+                dir[len] = 0;
+            }
             offset += len;
         }
     }
     else
+    {
         return (0);
+    }
 
     // get fname
     if (offset < length)
     {
         tmp = strrchr(file_template, '.');
         if (tmp < strrchr(file_template, SLASHC) || tmp < strrchr(file_template, ':'))
-                      tmp = 0; // in this case the '.' must be a directory
-                if (tmp)
+        {
+            tmp = 0;    // in this case the '.' must be a directory
+        }
+        if (tmp)
         {
             // tmp++; */ /* first character past "."
             len = tmp - &file_template[offset];
@@ -405,9 +431,13 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
             {
                 strncpy(fname, &file_template[offset], std::min(len, FILE_MAX_FNAME));
                 if (len < FILE_MAX_FNAME)
-                            fname[len] = 0;
+                {
+                    fname[len] = 0;
+                }
                 else
+                {
                     fname[FILE_MAX_FNAME-1] = 0;
+                }
             }
             offset += len;
             if ((offset < length) && ext)
