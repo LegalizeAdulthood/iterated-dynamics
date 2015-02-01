@@ -145,7 +145,9 @@ int  fpMODbailout()
     tempsqry = sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     if (magnitude >= rqlim)
+    {
         return 1;
+    }
     old = g_new;
     return 0;
 }
@@ -156,7 +158,9 @@ int  fpREALbailout()
     tempsqry = sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     if (tempsqrx >= rqlim)
+    {
         return 1;
+    }
     old = g_new;
     return 0;
 }
@@ -167,7 +171,9 @@ int  fpIMAGbailout()
     tempsqry = sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     if (tempsqry >= rqlim)
+    {
         return 1;
+    }
     old = g_new;
     return 0;
 }
@@ -178,7 +184,9 @@ int  fpORbailout()
     tempsqry = sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     if (tempsqrx >= rqlim || tempsqry >= rqlim)
+    {
         return 1;
+    }
     old = g_new;
     return 0;
 }
@@ -189,7 +197,9 @@ int  fpANDbailout()
     tempsqry = sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     if (tempsqrx >= rqlim && tempsqry >= rqlim)
+    {
         return 1;
+    }
     old = g_new;
     return 0;
 }
@@ -202,7 +212,9 @@ int  fpMANHbailout()
     magnitude = tempsqrx + tempsqry;
     manhmag = fabs(g_new.x) + fabs(g_new.y);
     if ((manhmag * manhmag) >= rqlim)
+    {
         return 1;
+    }
     old = g_new;
     return 0;
 }
@@ -215,7 +227,9 @@ int  fpMANRbailout()
     magnitude = tempsqrx + tempsqry;
     manrmag = g_new.x + g_new.y; // don't need abs() since we square it next
     if ((manrmag * manrmag) >= rqlim)
+    {
         return 1;
+    }
     old = g_new;
     return 0;
 }
@@ -350,7 +364,9 @@ int  fpMANRbailout()
 static int  Halleybailout()
 {
     if (fabs(modulus(g_new)-modulus(old)) < parm2.x)
+    {
         return 1;
+    }
     old = g_new;
     return 0;
 }
@@ -365,7 +381,9 @@ static int  MPCHalleybailout()
     static MP mptmpbailout;
     mptmpbailout = *MPabs(*pMPsub(MPCmod(mpcnew), MPCmod(mpcold)));
     if (pMPcmp(mptmpbailout, mptmpparm2x) < 0)
+    {
         return 1;
+    }
     mpcold = mpcnew;
     return 0;
 }
@@ -453,7 +471,9 @@ lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
         lt2 = multiply(lxt, lxt, bitshift) - multiply(lyt, lyt, bitshift);
         lyt = multiply(lxt, lyt, bitshiftless1);
         if (overflow)
+        {
             return overflow;
+        }
         lxt = lt2;
 
         if (exp & 1)
@@ -465,7 +485,9 @@ lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
         exp >>= 1;
     }
     if (result->x == 0 && result->y == 0)
+    {
         overflow = true;
+    }
     return overflow;
 }
 #endif
@@ -512,9 +534,13 @@ int NewtonFractal2()
                     break;
                 }
             if (tmpcolor == -1)
+            {
                 coloriter = maxcolor;
+            }
             else
+            {
                 coloriter = tmpcolor;
+            }
         }
         return 1;
     }
@@ -524,7 +550,9 @@ int NewtonFractal2()
     // Watch for divide underflow
     t2 = tmp.x*tmp.x + tmp.y*tmp.y;
     if (t2 < FLT_MIN)
+    {
         return 1;
+    }
     else
     {
         t2 = 1.0 / t2;
@@ -547,7 +575,9 @@ complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
 {
     double mod = modulus(denominator);
     if (mod < FLT_MIN)
+    {
         return 1;
+    }
     conjugate(&denominator);
     complex_mult(numerator, denominator, pout);
     pout->x = pout->x/mod;
@@ -581,15 +611,23 @@ int MPCNewtonFractal()
                 if (pMPcmp(MPdistance(MPCroots[i], mpcold), mpthreshold) < 0)
                 {
                     if (basin == 2)
+                    {
                         tmpcolor = 1+(i&7) + ((coloriter&1) << 3);
+                    }
                     else
+                    {
                         tmpcolor = 1+i;
+                    }
                     break;
                 }
             if (tmpcolor == -1)
+            {
                 coloriter = maxcolor;
+            }
             else
+            {
                 coloriter = tmpcolor;
+            }
         }
         return 1;
     }
@@ -735,8 +773,8 @@ JuliaFractal()
         if (!been_here)
         {
             stopmsg(STOPMSG_NONE,
-                "This integer fractal type is unimplemented;\n"
-                "Use float=yes to get a real image.");
+                    "This integer fractal type is unimplemented;\n"
+                    "Use float=yes to get a real image.");
             been_here = true;
         }
         return 0;
@@ -799,9 +837,13 @@ SierpinskiFractal()
     lnew.x = (lold.x << 1);              // new.x = 2 * old.x
     lnew.y = (lold.y << 1);              // new.y = 2 * old.y
     if (lold.y > ltmp.y)  // if old.y > .5
-        lnew.y = lnew.y - ltmp.x; // new.y = 2 * old.y - 1
+    {
+        lnew.y = lnew.y - ltmp.x;    // new.y = 2 * old.y - 1
+    }
     else if (lold.x > ltmp.y)     // if old.x > .5
-        lnew.x = lnew.x - ltmp.x; // new.x = 2 * old.x - 1
+    {
+        lnew.x = lnew.x - ltmp.x;    // new.x = 2 * old.x - 1
+    }
     // end barnsley code
     return longbailout();
 #else
@@ -818,9 +860,13 @@ SierpinskiFPFractal()
     g_new.x = old.x + old.x;
     g_new.y = old.y + old.y;
     if (old.y > .5)
+    {
         g_new.y = g_new.y - 1;
+    }
     else if (old.x > .5)
+    {
         g_new.x = g_new.x - 1;
+    }
 
     // end barnsley code
     return floatbailout();
@@ -831,7 +877,8 @@ LambdaexponentFractal()
 {
     // found this in  "Science of Fractal Images"
     if (save_release > 2002)
-    { // need braces since these are macros
+    {
+        // need braces since these are macros
         FLOATEXPBAILOUT();
     }
     else
@@ -841,7 +888,9 @@ LambdaexponentFractal()
     FPUsincos(&old.y, &siny, &cosy);
 
     if (old.x >= rqlim && cosy >= 0.0)
+    {
         return 1;
+    }
     tmpexp = exp(old.x);
     tmp.x = tmpexp*cosy;
     tmp.y = tmpexp*siny;
@@ -863,7 +912,9 @@ LongLambdaexponentFractal()
     SinCos086(lold.y, &lsiny,  &lcosy);
 
     if (lold.x >= llimit && lcosy >= 0L)
+    {
         return 1;
+    }
     longtmp = Exp086(lold.x);
 
     ltmp.x = multiply(longtmp,      lcosy,   bitshift);
@@ -887,7 +938,9 @@ FloatTrigPlusExponentFractal()
     // z(n+1) = e**z(n) + trig(z(n)) + C
 
     if (fabs(old.x) >= 6.4e2)
-        return 1; // DOMAIN errors
+    {
+        return 1;    // DOMAIN errors
+    }
     tmpexp = exp(old.x);
     FPUsincos(&old.y, &siny, &cosy);
     CMPLXtrig0(old, g_new);
@@ -964,7 +1017,9 @@ UnityFractal()
 #if !defined(XFRACT)
     XXOne = multiply(lold.x, lold.x, bitshift) + multiply(lold.y, lold.y, bitshift);
     if ((XXOne > FgTwo) || (labs(XXOne - FgOne) < delmin))
+    {
         return 1;
+    }
     lold.y = multiply(FgTwo - XXOne, lold.x, bitshift);
     lold.x = multiply(FgTwo - XXOne, lold.y, bitshift);
     lnew = lold;
@@ -980,7 +1035,9 @@ UnityfpFractal()
     double XXOne;
     XXOne = sqr(old.x) + sqr(old.y);
     if ((XXOne > 2.0) || (fabs(XXOne - 1.0) < ddelmin))
+    {
         return 1;
+    }
     old.y = (2.0 - XXOne)* old.x;
     old.x = (2.0 - XXOne)* old.y;
     g_new = old;
@@ -1000,7 +1057,9 @@ Mandel4Fractal()
     lnew.x  = ltempsqrx - ltempsqry;
     lnew.y = multiply(lold.x, lold.y, bitshiftless1);
     if (longbailout())
+    {
         return 1;
+    }
 
     // then, compute ((x + iy)**2)**2 + lambda
     lnew.x  = ltempsqrx - ltempsqry + longparm->x;
@@ -1018,7 +1077,9 @@ Mandel4fpFractal()
     g_new.x  = tempsqrx - tempsqry;
     g_new.y = old.x*old.y*2;
     if (floatbailout())
+    {
         return 1;
+    }
 
     // then, compute ((x + iy)**2)**2 + lambda
     g_new.x  = tempsqrx - tempsqry + floatparm->x;
@@ -1070,7 +1131,9 @@ longCmplxZpowerFractal()
         lnew.y = (long)(x.y * fudge);
     }
     else
+    {
         overflow = true;
+    }
     lnew.x += longparm->x;
     lnew.y += longparm->y;
     return longbailout();
@@ -1236,11 +1299,15 @@ PopcornFractal_Old()
         old = g_new;
     }
     else
+    {
         tempsqrx = sqr(g_new.x);
+    }
     tempsqry = sqr(g_new.y);
     magnitude = tempsqrx + tempsqry;
     if (magnitude >= rqlim)
+    {
         return 1;
+    }
     old = g_new;
     return 0;
 }
@@ -1269,7 +1336,9 @@ PopcornFractal()
     magnitude = tempsqrx + tempsqry;
     if (magnitude >= rqlim
             || fabs(g_new.x) > rqlim2 || fabs(g_new.y) > rqlim2)
+    {
         return 1;
+    }
     old = g_new;
     return 0;
 }
@@ -1306,7 +1375,9 @@ LPopcornFractal_Old()
     lmagnitud = ltempsqrx + ltempsqry;
     if (lmagnitud >= llimit || lmagnitud < 0 || labs(lnew.x) > llimit2
             || labs(lnew.y) > llimit2)
+    {
         return 1;
+    }
     lold = lnew;
     return 0;
 #else
@@ -1345,7 +1416,9 @@ LPopcornFractal()
     if (lmagnitud >= llimit || lmagnitud < 0
             || labs(lnew.x) > llimit2
             || labs(lnew.y) > llimit2)
+    {
         return 1;
+    }
     lold = lnew;
     return 0;
 #else
@@ -1390,7 +1463,9 @@ PopcornFractalFn()
     magnitude = tempsqrx + tempsqry;
     if (magnitude >= rqlim
             || fabs(g_new.x) > rqlim2 || fabs(g_new.y) > rqlim2)
+    {
         return 1;
+    }
     old = g_new;
     return 0;
 }
@@ -1443,7 +1518,9 @@ LPopcornFractalFn()
     if (lmagnitud >= llimit || lmagnitud < 0
             || labs(lnew.x) > llimit2
             || labs(lnew.y) > llimit2)
+    {
         return 1;
+    }
     lold = lnew;
     return 0;
 #else
@@ -1868,7 +1945,8 @@ LongPhoenixPlusFractal()
     loldplus = lold;
     ltmp = lold;
     for (int i = 1; i < degree; i++)
-    { // degree >= 2, degree=degree-1 in setup
+    {
+        // degree >= 2, degree=degree-1 in setup
         LCMPLXmult(lold, ltmp, ltmp); // = old^(degree-1)
     }
     loldplus.x += longparm->x;
@@ -1890,7 +1968,8 @@ PhoenixPlusFractal()
     oldplus = old;
     tmp = old;
     for (int i = 1; i < degree; i++)
-    { // degree >= 2, degree=degree-1 in setup
+    {
+        // degree >= 2, degree=degree-1 in setup
         FPUcplxmul(&old, &tmp, &tmp); // = old^(degree-1)
     }
     oldplus.x += floatparm->x;
@@ -1910,7 +1989,8 @@ LongPhoenixMinusFractal()
     LCMPLXmult(lold, lold, loldsqr);
     ltmp = lold;
     for (int i = 1; i < degree; i++)
-    { // degree >= 3, degree=degree-2 in setup
+    {
+        // degree >= 3, degree=degree-2 in setup
         LCMPLXmult(lold, ltmp, ltmp); // = old^(degree-2)
     }
     loldsqr.x += longparm->x;
@@ -1932,7 +2012,8 @@ PhoenixMinusFractal()
     FPUcplxmul(&old, &old, &oldsqr);
     tmp = old;
     for (int i = 1; i < degree; i++)
-    { // degree >= 3, degree=degree-2 in setup
+    {
+        // degree >= 3, degree=degree-2 in setup
         FPUcplxmul(&old, &tmp, &tmp); // = old^(degree-2)
     }
     oldsqr.x += floatparm->x;
@@ -1952,7 +2033,8 @@ LongPhoenixCplxPlusFractal()
     loldplus = lold;
     ltmp = lold;
     for (int i = 1; i < degree; i++)
-    { // degree >= 2, degree=degree-1 in setup
+    {
+        // degree >= 2, degree=degree-1 in setup
         LCMPLXmult(lold, ltmp, ltmp); // = old^(degree-1)
     }
     loldplus.x += longparm->x;
@@ -1976,7 +2058,8 @@ PhoenixCplxPlusFractal()
     oldplus = old;
     tmp = old;
     for (int i = 1; i < degree; i++)
-    { // degree >= 2, degree=degree-1 in setup
+    {
+        // degree >= 2, degree=degree-1 in setup
         FPUcplxmul(&old, &tmp, &tmp); // = old^(degree-1)
     }
     oldplus.x += floatparm->x;
@@ -1998,7 +2081,8 @@ LongPhoenixCplxMinusFractal()
     LCMPLXmult(lold, lold, loldsqr);
     ltmp = lold;
     for (int i = 1; i < degree; i++)
-    { // degree >= 3, degree=degree-2 in setup
+    {
+        // degree >= 3, degree=degree-2 in setup
         LCMPLXmult(lold, ltmp, ltmp); // = old^(degree-2)
     }
     loldsqr.x += longparm->x;
@@ -2022,7 +2106,8 @@ PhoenixCplxMinusFractal()
     FPUcplxmul(&old, &old, &oldsqr);
     tmp = old;
     for (int i = 1; i < degree; i++)
-    { // degree >= 3, degree=degree-2 in setup
+    {
+        // degree >= 3, degree=degree-2 in setup
         FPUcplxmul(&old, &tmp, &tmp); // = old^(degree-2)
     }
     oldsqr.x += floatparm->x;
@@ -2107,7 +2192,8 @@ static int TryFloatFractal(int (*fpFractal)())
     tempsqry = sqr(old.y);
     fpFractal();
     if (save_release < 1900)
-    { // for backwards compatibility
+    {
+        // for backwards compatibility
         lnew.x = (long)(g_new.x/fudge); // this error has been here a long time
         lnew.y = (long)(g_new.y/fudge);
     }
@@ -2130,7 +2216,9 @@ TrigXTrigFractal()
     LCMPLXtrig1(lold, ltmp2);
     LCMPLXmult(ltmp, ltmp2, lnew);
     if (overflow)
+    {
         TryFloatFractal(TrigXTrigfpFractal);
+    }
     return longbailout();
 #else
     return 0;
@@ -2236,13 +2324,17 @@ TrigZsqrdFractal() // this doesn't work very well
     LCMPLXsqr_old(ltmp);
     if ((labs(ltmp.x) > l16triglim_2 || labs(ltmp.y) > l16triglim_2) &&
             save_release > 1900)
+    {
         overflow = true;
+    }
     else
     {
         LCMPLXtrig0(ltmp, lnew);
     }
     if (overflow)
+    {
         TryFloatFractal(TrigZsqrdfpFractal);
+    }
     return longbailout();
 #else
     return 0;
@@ -2273,7 +2365,8 @@ SqrTrigfpFractal()
 
 int
 Magnet1Fractal()    //    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
-{   //  In "Beauty of Fractals", code by Kev Allen.
+{
+    //  In "Beauty of Fractals", code by Kev Allen.
     DComplex top, bot, tmp;
     double div;
 
@@ -2286,7 +2379,9 @@ Magnet1Fractal()    //    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
 
     div = bot.x*bot.x + bot.y*bot.y;                // tmp = top/bot
     if (div < FLT_MIN)
+    {
         return 1;
+    }
     tmp.x = (top.x*bot.x + top.y*bot.y)/div;
     tmp.y = (top.y*bot.x - top.x*bot.y)/div;
 
@@ -2300,7 +2395,8 @@ Magnet1Fractal()    //    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
 int
 Magnet2Fractal()  // Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)  ) /
 //       (3Z**2 + 3(C-2)Z + (C-1)(C-2)+1) )**2
-{   //   In "Beauty of Fractals", code by Kev Allen.
+{
+    //   In "Beauty of Fractals", code by Kev Allen.
     DComplex top, bot, tmp;
     double div;
 
@@ -2321,7 +2417,9 @@ Magnet2Fractal()  // Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)  ) /
 
     div = bot.x*bot.x + bot.y*bot.y;                // tmp = top/bot
     if (div < FLT_MIN)
+    {
         return 1;
+    }
     tmp.x = (top.x*bot.x + top.y*bot.y)/div;
     tmp.y = (top.y*bot.x - top.x*bot.y)/div;
 
@@ -2531,9 +2629,13 @@ void invertz2(DComplex *z)
 
     tempsqrx = sqr(z->x) + sqr(z->y);  // Get old radius
     if (fabs(tempsqrx) > FLT_MIN)
+    {
         tempsqrx = f_radius / tempsqrx;
+    }
     else
-        tempsqrx = FLT_MAX;   // a big number, but not TOO big
+    {
+        tempsqrx = FLT_MAX;    // a big number, but not TOO big
+    }
     z->x *= tempsqrx;
     z->y *= tempsqrx;      // Perform inversion
     z->x += f_xcenter;
@@ -2595,7 +2697,9 @@ int long_mandel_per_pixel()
     // barnsleym2
     linit.x = lxpixel();
     if (save_release >= 2004)
+    {
         linit.y = lypixel();
+    }
 
     if (invert)
     {
@@ -2615,9 +2719,13 @@ int long_mandel_per_pixel()
     }
 
     if (useinitorbit == 1)
+    {
         lold = linitorbit;
+    }
     else
+    {
         lold = linit;
+    }
 
     lold.x += lparm.x;    // initial pertubation of parameters set
     lold.y += lparm.y;
@@ -2710,7 +2818,9 @@ int mandel_per_pixel()
     {
         linit.x = lxpixel();
         if (save_release >= 2004)
+        {
             linit.y = lypixel();
+        }
     }
     switch (fractype)
     {
@@ -2725,9 +2835,13 @@ int mandel_per_pixel()
 
     // alter init value
     if (useinitorbit == 1)
+    {
         lold = linitorbit;
+    }
     else if (useinitorbit == 2)
+    {
         lold = linit;
+    }
 
     if ((inside == BOF60 || inside == BOF61) && !nobof)
     {
@@ -2771,19 +2885,27 @@ int marksmandel_per_pixel()
     {
         linit.x = lxpixel();
         if (save_release >= 2004)
+        {
             linit.y = lypixel();
+        }
     }
 
     if (useinitorbit == 1)
+    {
         lold = linitorbit;
+    }
     else
+    {
         lold = linit;
+    }
 
     lold.x += lparm.x;    // initial pertubation of parameters set
     lold.y += lparm.y;
 
     if (c_exp > 3)
+    {
         lcpower(&lold, c_exp-1, &lcoefficient, bitshift);
+    }
     else if (c_exp == 3)
     {
         lcoefficient.x = multiply(lold.x, lold.x, bitshift)
@@ -2791,7 +2913,9 @@ int marksmandel_per_pixel()
         lcoefficient.y = multiply(lold.x, lold.y, bitshiftless1);
     }
     else if (c_exp == 2)
+    {
         lcoefficient = lold;
+    }
     else if (c_exp < 2)
     {
         lcoefficient.x = 1L << bitshift;
@@ -2809,18 +2933,26 @@ int marksmandelfp_per_pixel()
     // marksmandel
 
     if (invert)
+    {
         invertz2(&init);
+    }
     else
     {
         init.x = dxpixel();
         if (save_release >= 2004)
+        {
             init.y = dypixel();
+        }
     }
 
     if (useinitorbit == 1)
+    {
         old = initorbit;
+    }
     else
+    {
         old = init;
+    }
 
     old.x += parm.x;      // initial pertubation of parameters set
     old.y += parm.y;
@@ -2829,14 +2961,18 @@ int marksmandelfp_per_pixel()
     tempsqry = sqr(old.y);
 
     if (c_exp > 3)
+    {
         cpower(&old, c_exp-1, &coefficient);
+    }
     else if (c_exp == 3)
     {
         coefficient.x = tempsqrx - tempsqry;
         coefficient.y = old.x * old.y * 2;
     }
     else if (c_exp == 2)
+    {
         coefficient = old;
+    }
     else if (c_exp < 2)
     {
         coefficient.x = 1.0;
@@ -2862,12 +2998,16 @@ int mandelfp_per_pixel()
     // mandelfp
 
     if (invert)
+    {
         invertz2(&init);
+    }
     else
     {
         init.x = dxpixel();
         if (save_release >= 2004)
+        {
             init.y = dypixel();
+        }
     }
     switch (fractype)
     {
@@ -2888,9 +3028,13 @@ int mandelfp_per_pixel()
 
     // alter init value
     if (useinitorbit == 1)
+    {
         old = initorbit;
+    }
     else if (useinitorbit == 2)
+    {
         old = init;
+    }
 
     if ((inside == BOF60 || inside == BOF61) && !nobof)
     {
@@ -2916,7 +3060,9 @@ int juliafp_per_pixel()
     // floating point julia
     // juliafp
     if (invert)
+    {
         invertz2(&old);
+    }
     else
     {
         old.x = dxpixel();
@@ -2934,7 +3080,9 @@ int MPCjulia_per_pixel()
     // floating point julia
     // juliafp
     if (invert)
+    {
         invertz2(&old);
+    }
     else
     {
         old.x = dxpixel();
@@ -2960,18 +3108,26 @@ otherrichard8fp_per_pixel()
 int othermandelfp_per_pixel()
 {
     if (invert)
+    {
         invertz2(&init);
+    }
     else
     {
         init.x = dxpixel();
         if (save_release >= 2004)
+        {
             init.y = dypixel();
+        }
     }
 
     if (useinitorbit == 1)
+    {
         old = initorbit;
+    }
     else
+    {
         old = init;
+    }
 
     old.x += parm.x;      // initial pertubation of parameters set
     old.y += parm.y;
@@ -2984,12 +3140,16 @@ int MPCHalley_per_pixel()
 #if !defined(XFRACT)
     // MPC halley
     if (invert)
+    {
         invertz2(&init);
+    }
     else
     {
         init.x = dxpixel();
         if (save_release >= 2004)
+        {
             init.y = dypixel();
+        }
     }
 
     mpcold.x = *pd2MP(init.x);
@@ -3004,12 +3164,16 @@ int MPCHalley_per_pixel()
 int Halley_per_pixel()
 {
     if (invert)
+    {
         invertz2(&init);
+    }
     else
     {
         init.x = dxpixel();
         if (save_release >= 2004)
+        {
             init.y = dypixel();
+        }
     }
 
     old = init;
@@ -3020,7 +3184,9 @@ int Halley_per_pixel()
 int otherjuliafp_per_pixel()
 {
     if (invert)
+    {
         invertz2(&old);
+    }
     else
     {
         old.x = dxpixel();
@@ -3061,12 +3227,16 @@ int quaternionfp_per_pixel()
 int MarksCplxMandperp()
 {
     if (invert)
+    {
         invertz2(&init);
+    }
     else
     {
         init.x = dxpixel();
         if (save_release >= 2004)
+        {
             init.y = dypixel();
+        }
     }
     old.x = init.x + parm.x; // initial pertubation of parameters set
     old.y = init.y + parm.y;
@@ -3113,7 +3283,9 @@ int long_phoenix_per_pixel()
 int phoenix_per_pixel()
 {
     if (invert)
+    {
         invertz2(&old);
+    }
     else
     {
         old.x = dxpixel();
@@ -3130,7 +3302,9 @@ int long_mandphoenix_per_pixel()
 #if !defined(XFRACT)
     linit.x = lxpixel();
     if (save_release >= 2004)
+    {
         linit.y = lypixel();
+    }
 
     if (invert)
     {
@@ -3150,9 +3324,13 @@ int long_mandphoenix_per_pixel()
     }
 
     if (useinitorbit == 1)
+    {
         lold = linitorbit;
+    }
     else
+    {
         lold = linit;
+    }
 
     lold.x += lparm.x;    // initial pertubation of parameters set
     lold.y += lparm.y;
@@ -3168,18 +3346,26 @@ int long_mandphoenix_per_pixel()
 int mandphoenix_per_pixel()
 {
     if (invert)
+    {
         invertz2(&init);
+    }
     else
     {
         init.x = dxpixel();
         if (save_release >= 2004)
+        {
             init.y = dypixel();
+        }
     }
 
     if (useinitorbit == 1)
+    {
         old = initorbit;
+    }
     else
+    {
         old = init;
+    }
 
     old.x += parm.x;      // initial pertubation of parameters set
     old.y += parm.y;
@@ -3291,7 +3477,9 @@ EscherfpFractal() // Science of Fractal Images pp. 185, 187
         testiter++;
     }
     if (testsize > rqlim)
-        return floatbailout(); // point not in target set
+    {
+        return floatbailout();    // point not in target set
+    }
     else // make distinct level sets if point stayed in target set
     {
         coloriter = ((3L * coloriter) % 255L) + 1L;
@@ -3351,21 +3539,29 @@ bool MandelbrotMix4Setup()
        kludge assumes that those signs determine the behavior.
      */
     if (A.x < 0.0)
+    {
         sign_array += 8;
+    }
     if (B.x < 0.0)
+    {
         sign_array += 4;
+    }
     if (G.x < 0.0)
+    {
         sign_array += 2;
+    }
     if (H.x < 0.0)
+    {
         sign_array += 1;
+    }
     if (tmp.y == 0.0) // we know tmp.y IS zero but ...
     {
         switch (sign_array)
         {
-        /*
-           Add to this list the magic numbers of any cases
-           in which the fractal does not match the formula version
-         */
+            /*
+               Add to this list the magic numbers of any cases
+               in which the fractal does not match the formula version
+             */
         case 15: // 1111
         case 10: // 1010
         case  6: // 0110
@@ -3378,13 +3574,17 @@ bool MandelbrotMix4Setup()
         }
         // in case our kludge failed, let the user fix it
         if (debugflag == debug_flags::mandelbrot_mix4_flip_sign)
+        {
             tmp.y = -tmp.y;
+        }
     }
 
     CMPLXpwr(tmp, J, tmp);   // note: z is old
     // in case our kludge failed, let the user fix it
     if (param[6] < 0.0)
+    {
         tmp.y = -tmp.y;
+    }
 
     if (bailout == 0)
     {
@@ -3397,7 +3597,9 @@ bool MandelbrotMix4Setup()
 int MandelbrotMix4fp_per_pixel()
 {
     if (invert)
+    {
         invertz2(&init);
+    }
     else
     {
         init.x = dxpixel();
