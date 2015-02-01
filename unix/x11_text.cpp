@@ -513,18 +513,30 @@ void wintext_putstring(WinText *me, int xpos, int ypos, int attrib, const char *
     {
         if (xc == 13 || xc == 10)
         {
-            if (j < WINTEXT_MAX_ROW-1) j++;
+            if (j < WINTEXT_MAX_ROW-1)
+            {
+                j++;
+            }
             k = xpos-1;
         }
         else
         {
             if ((++k) >= WINTEXT_MAX_COL)
             {
-                if (j < WINTEXT_MAX_ROW-1) j++;
+                if (j < WINTEXT_MAX_ROW-1)
+                {
+                    j++;
+                }
                 k = xpos;
             }
-            if (maxrow < j) maxrow = j;
-            if (maxcol < k) maxcol = k;
+            if (maxrow < j)
+            {
+                maxrow = j;
+            }
+            if (maxcol < k)
+            {
+                maxcol = k;
+            }
             me->chars[j][k] = xc;
             me->attrs[j][k] = xa;
         }
@@ -574,7 +586,9 @@ void wintext_paintscreen(WinText *me,
     ODS("wintext_paintscreen");
 
     if (me->textmode != 2)  // not in the right mode
+    {
         return;
+    }
 
     // first time through?  Initialize the 'screen'
     if (!me->buffer_init)
@@ -595,13 +609,21 @@ void wintext_paintscreen(WinText *me,
     }
 
     if (xmin < 0)
+    {
         xmin = 0;
+    }
     if (xmax >= me->char_xchars)
+    {
         xmax = me->char_xchars-1;
+    }
     if (ymin < 0)
+    {
         ymin = 0;
+    }
     if (ymax >= me->char_ychars)
+    {
         ymax = me->char_ychars-1;
+    }
 
     hDC=GetDC(me->hWndCopy);
     SelectObject(hDC, me->hFont);
@@ -677,9 +699,18 @@ void wintext_cursor(WinText *me, int xpos, int ypos, int cursor_type)
 
     me->cursor_x = xpos;
     me->cursor_y = ypos;
-    if (cursor_type >= 0) me->cursor_type = cursor_type;
-    if (me->cursor_type < 0) me->cursor_type = 0;
-    if (me->cursor_type > 2) me->cursor_type = 2;
+    if (cursor_type >= 0)
+    {
+        me->cursor_type = cursor_type;
+    }
+    if (me->cursor_type < 0)
+    {
+        me->cursor_type = 0;
+    }
+    if (me->cursor_type > 2)
+    {
+        me->cursor_type = 2;
+    }
     if (FALSE == me->showing_cursor)
     {
         x = me->cursor_x*me->char_width;
@@ -844,7 +875,9 @@ void x11_text_window::repaint(int xmin, int xmax, int ymin, int ymax)
     unsigned char oldfg;
 
     if (text_mode_ != 2)  // not in the right mode
+    {
         return;
+    }
 
     // first time through?  Initialize the 'screen'
     if (!buffer_init_)
@@ -864,13 +897,21 @@ void x11_text_window::repaint(int xmin, int xmax, int ymin, int ymax)
     }
 
     if (xmin < 0)
+    {
         xmin = 0;
+    }
     if (xmax >= char_xchars_)
+    {
         xmax = char_xchars_-1;
+    }
     if (ymin < 0)
+    {
         ymin = 0;
+    }
     if (ymax >= char_ychars_)
+    {
         ymax = char_ychars_-1;
+    }
 
     XGCValues values;
     unsigned long values_mask = 0;
