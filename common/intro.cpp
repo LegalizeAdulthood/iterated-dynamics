@@ -40,7 +40,9 @@ void intro()
     authors.push_back(0);               // find the start of each credit-line
     for (i = 0; credits[i] != 0; i++)
         if (credits[i] == '\n')
+        {
             authors.push_back(i+1);
+        }
     authors.push_back(i);
 
     helptitle();
@@ -56,7 +58,9 @@ void intro()
     driver_set_attr(23, 0, C_TITLE_LOW, 160);
 
     for (int i = 3; i < END_MAIN_AUTHOR; ++i)
+    {
         driver_set_attr(i, 21, C_CONTRIB, 58);
+    }
     driver_set_attr(toprow, 0, C_CONTRIB, (21-END_MAIN_AUTHOR)*80);
     srand((unsigned int)clock_ticks());
     j = rand()%(j-(botrow-toprow)); // first to use
@@ -71,21 +75,30 @@ void intro()
     while (! driver_key_pressed())
     {
         if (slowdisplay)
+        {
             delaymax *= 15;
+        }
         for (j = 0; j < delaymax && !(driver_key_pressed()); j++)
+        {
             driver_delay(100);
+        }
         if (driver_key_pressed() == FIK_SPACE)
-        {   // spacebar pauses
+        {
+            // spacebar pauses
             driver_get_key();
             driver_wait_key_pressed(0);
             if (driver_key_pressed() == FIK_SPACE)
+            {
                 driver_get_key();
+            }
         }
         delaymax = 15;
         driver_scroll_up(toprow, botrow);
         i++;
         if (credits[authors.at(i)] == 0)
+        {
             i = 0;
+        }
         oldchar = credits[authors.at(i+1)];
         credits[authors.at(i+1)] = 0;
         driver_put_string(botrow, 0, C_CONTRIB, &credits[authors.at(i)]);
