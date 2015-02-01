@@ -45,7 +45,9 @@ int test()
         end_resume();
     }
     if (teststart()) // assume it was stand-alone, doesn't want passes logic
+    {
         return (0);
+    }
     numpasses = (stdcalcmode == '1') ? 0 : 1;
     for (passes = startpass; passes <= numpasses ; passes++)
     {
@@ -65,15 +67,22 @@ int test()
                 }
                 color = testpt(init.x, init.y, parm.x, parm.y, maxit, inside);
                 if (color >= colors)
-                { // avoid trouble if color is 0
+                {
+                    // avoid trouble if color is 0
                     if (colors < 16)
+                    {
                         color &= g_and_color;
+                    }
                     else
-                        color = ((color-1) % g_and_color) + 1; // skip color zero
+                    {
+                        color = ((color-1) % g_and_color) + 1;    // skip color zero
+                    }
                 }
                 (*plot)(col, row, color);
                 if (numpasses && (passes == 0))
+                {
                     (*plot)(col, row+1, color);
+                }
             }
         }
         startrow = passes + 1;
@@ -99,19 +108,25 @@ U16 rand16()
     value <<= 1;
     value = (U16)(value + (rand15()&1));
     if (value < 1)
+    {
         value = 1;
+    }
     return (value);
 }
 
 void putpot(int x, int y, U16 color)
 {
     if (color < 1)
+    {
         color = 1;
+    }
     putcolor(x, y, (color >> 8) ? (color >> 8) : 1);  // don't write 0
     /* we don't write this if driver_diskp() because the above putcolor
           was already a "writedisk" in that case */
     if (!driver_diskp())
+    {
         writedisk(x+sxoffs, y+syoffs, color >> 8);    // upper 8 bits
+    }
     writedisk(x+sxoffs, y+sydots+syoffs, color&255); // lower 8 bits
 }
 
@@ -119,7 +134,9 @@ void putpot(int x, int y, U16 color)
 void putpotborder(int x, int y, U16 color)
 {
     if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
+    {
         color = (U16)outside;
+    }
     putpot(x, y, color);
 }
 
@@ -127,9 +144,13 @@ void putpotborder(int x, int y, U16 color)
 void putcolorborder(int x, int y, int color)
 {
     if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
+    {
         color = outside;
+    }
     if (color < 1)
+    {
         color = 1;
+    }
     putcolor(x, y, color);
 }
 
@@ -154,12 +175,18 @@ static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
     if (max_plasma == 0)
     {
         if (pseudorandom >= pcolors)
+        {
             pseudorandom = pcolors-1;
+        }
     }
     else if (pseudorandom >= (S32)max_plasma)
+    {
         pseudorandom = max_plasma;
+    }
     if (pseudorandom < 1)
+    {
         pseudorandom = 1;
+    }
     plot(x, y, (U16)pseudorandom);
     return ((U16)pseudorandom);
 }
@@ -248,32 +275,44 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
 
             i = getpix(nx, y);
             if (i == 0)
+            {
                 i = adjust(nx, ny1, nx, y , nx, ny);
+            }
             // cppcheck-suppress AssignmentIntegerToAddress
             v = i;
             i = getpix(x, ny);
             if (i == 0)
+            {
                 i = adjust(nx1, ny, x , ny, nx, ny);
+            }
             v += i;
             if (getpix(x, y) == 0)
             {
                 i = getpix(x, ny1);
                 if (i == 0)
+                {
                     i = adjust(nx1, ny1, x , ny1, nx, ny1);
+                }
                 v += i;
                 i = getpix(nx1, y);
                 if (i == 0)
+                {
                     i = adjust(nx1, ny1, nx1, y , nx1, ny);
+                }
                 v += i;
                 plot(x, y, (U16)((v + 2) >> 2));
             }
 
             if (subx.r[subx.t-1] == (BYTE)recur)
+            {
                 subx.t = (BYTE)(subx.t - 2);
+            }
         }
 
         if (suby.r[suby.t-1] == (BYTE)recur)
+        {
             suby.t = (BYTE)(suby.t - 2);
+        }
     }
     return false;
 }
@@ -289,7 +328,9 @@ static void subDivide(int x1, int y1, int x2, int y2)
             return;
         }
     if (x2-x1 < 2 && y2-y1 < 2)
+    {
         return;
+    }
     recur_level++;
     recur1 = (int)(320L >> recur_level);
 
@@ -297,23 +338,33 @@ static void subDivide(int x1, int y1, int x2, int y2)
     y = (y1+y2) >> 1;
     v = getpix(x, y1);
     if (v == 0)
+    {
         v = adjust(x1, y1, x , y1, x2, y1);
+    }
     i = v;
     v = getpix(x2, y);
     if (v == 0)
+    {
         v = adjust(x2, y1, x2, y , x2, y2);
+    }
     i += v;
     v = getpix(x, y2);
     if (v == 0)
+    {
         v = adjust(x1, y2, x , y2, x2, y2);
+    }
     i += v;
     v = getpix(x1, y);
     if (v == 0)
+    {
         v = adjust(x1, y1, x1, y , x1, y2);
+    }
     i += v;
 
     if (getpix(x, y) == 0)
+    {
         plot(x, y, (U16)((i+2) >> 2));
+    }
 
     subDivide(x1, y1, x , y);
     subDivide(x , y1, x2, y);
@@ -340,27 +391,47 @@ int plasma()
     }
     iparmx = (int)(param[0] * 8);
     if (parm.x <= 0.0)
+    {
         iparmx = 0;
+    }
     if (parm.x >= 100)
+    {
         iparmx = 800;
+    }
     param[0] = (double)iparmx / 8.0;  // let user know what was used
     if (param[1] < 0)
-        param[1] = 0;  // limit parameter values
+    {
+        param[1] = 0;    // limit parameter values
+    }
     if (param[1] > 1)
+    {
         param[1] = 1;
+    }
     if (param[2] < 0)
-        param[2] = 0;  // limit parameter values
+    {
+        param[2] = 0;    // limit parameter values
+    }
     if (param[2] > 1)
+    {
         param[2] = 1;
+    }
     if (param[3] < 0)
-        param[3] = 0;  // limit parameter values
+    {
+        param[3] = 0;    // limit parameter values
+    }
     if (param[3] > 1)
+    {
         param[3] = 1;
+    }
 
     if (!rflag && param[2] == 1)
+    {
         --rseed;
+    }
     if (param[2] != 0 && param[2] != 1)
+    {
         rseed = (int)param[2];
+    }
     max_plasma = (U16)param[3];  // max_plasma is used as a flag for potential
 
     if (max_plasma != 0)
@@ -369,9 +440,13 @@ int plasma()
         {
             max_plasma = 0xFFFF;
             if (outside >= COLOR_BLACK)
+            {
                 plot    = (PLOT)putpotborder;
+            }
             else
+            {
                 plot    = (PLOT)putpot;
+            }
             getpix =  getpot;
             OldPotFlag = potflag;
             OldPot16bit = pot16bit;
@@ -381,56 +456,84 @@ int plasma()
             max_plasma = 0;        // can't do potential (startdisk failed)
             param[3]   = 0;
             if (outside >= COLOR_BLACK)
+            {
                 plot    = putcolorborder;
+            }
             else
+            {
                 plot    = putcolor;
+            }
             getpix  = (U16(*)(int, int))getcolor;
         }
     }
     else
     {
         if (outside >= COLOR_BLACK)
+        {
             plot    = putcolorborder;
+        }
         else
+        {
             plot    = putcolor;
+        }
         getpix  = (U16(*)(int, int))getcolor;
     }
     srand(rseed);
     if (!rflag)
+    {
         ++rseed;
+    }
 
     if (colors == 256)                   // set the (256-color) palette
-        set_Plasma_palette();             // skip this if < 256 colors
+    {
+        set_Plasma_palette();    // skip this if < 256 colors
+    }
 
     if (colors > 16)
+    {
         shiftvalue = 18;
+    }
     else
     {
         if (colors > 4)
+        {
             shiftvalue = 22;
+        }
         else
         {
             if (colors > 2)
+            {
                 shiftvalue = 24;
+            }
             else
+            {
                 shiftvalue = 25;
+            }
         }
     }
     if (max_plasma != 0)
+    {
         shiftvalue = 10;
+    }
 
     if (max_plasma == 0)
     {
         pcolors = std::min(colors, max_colors);
         for (auto &elem : rnd)
+        {
             elem = (U16)(1+(((rand15()/pcolors)*(pcolors-1)) >> (shiftvalue-11)));
+        }
     }
     else
         for (auto &elem : rnd)
+        {
             elem = rand16();
+        }
     if (debugflag == debug_flags::prevent_plasma_random)
         for (auto &elem : rnd)
+        {
             elem = 1;
+        }
 
     plot(0,      0,  rnd[0]);
     plot(xdots-1,      0,  rnd[1]);
@@ -440,7 +543,9 @@ int plasma()
     int n;
     recur_level = 0;
     if (param[1] == 0)
+    {
         subDivide(0, 0, xdots-1, ydots-1);
+    }
     else
     {
         int i = 1;
@@ -450,7 +555,9 @@ int plasma()
         {
             k = k * 2;
             if (k  >(int)std::max(xdots-1, ydots-1))
+            {
                 break;
+            }
             if (driver_key_pressed())
             {
                 n = 1;
@@ -460,9 +567,13 @@ int plasma()
         }
     }
     if (!driver_key_pressed())
+    {
         n = 0;
+    }
     else
+    {
         n = 1;
+    }
 done:
     if (max_plasma != 0)
     {
@@ -481,7 +592,9 @@ static void set_Plasma_palette()
     static BYTE const Blue[3]  = { 0,  0, 63 };
 
     if (map_specified || colors_preloaded)
+    {
         return;    // map= specified
+    }
 
     g_dac_box[0][0] = 0;
     g_dac_box[0][1] = 0;
@@ -520,7 +633,9 @@ int diffusion()
     float r, radius;
 
     if (driver_diskp())
+    {
         notdiskmsg();
+    }
 
     y = -1;
     x = y;
@@ -535,14 +650,20 @@ int diffusion()
     currentcolor = 1;  // Start at color 1 (color 0 is probably invisible)
 
     if (mode > 2)
+    {
         mode = 0;
+    }
 
     if (border <= 0)
+    {
         border = 10;
+    }
 
     srand(rseed);
     if (!rflag)
+    {
         ++rseed;
+    }
 
     if (mode == 0)
     {
@@ -560,9 +681,13 @@ int diffusion()
     if (mode == 2)
     {
         if (xdots > ydots)
+        {
             radius = (float)(ydots - border);
+        }
         else
+        {
             radius = (float)(xdots - border);
+        }
     }
     if (resuming) // restore worklist, if we can't the above will stay in place
     {
@@ -583,7 +708,9 @@ int diffusion()
         break;
     case 1: // Line along the bottom
         for (int i = 0; i <= xdots; i++)
+        {
             putcolor(i, ydots-1, currentcolor);
+        }
         break;
     case 2: // Large square that fills the screen
         if (xdots > ydots)
@@ -643,29 +770,46 @@ int diffusion()
         {
             // Erase moving point
             if (show_orbit)
+            {
                 putcolor(x, y, 0);
+            }
 
             if (mode == 0)
-            { // Make sure point is inside the box
+            {
+                // Make sure point is inside the box
                 if (x == xmax)
+                {
                     x--;
+                }
                 else if (x == xmin)
+                {
                     x++;
+                }
                 if (y == ymax)
+                {
                     y--;
+                }
                 else if (y == ymin)
+                {
                     y++;
+                }
             }
 
             if (mode == 1) /* Make sure point is on the screen below ymin, but
                     we need a 1 pixel margin because of the next random step.*/
             {
                 if (x >= xdots-1)
+                {
                     x--;
+                }
                 else if (x <= 1)
+                {
                     x++;
+                }
                 if (y < ymin)
+                {
                     y++;
+                }
             }
 
             // Take one random step
@@ -690,7 +834,9 @@ int diffusion()
 
             // Show the moving point
             if (show_orbit)
+            {
                 putcolor(x, y, RANDOM(colors-1)+1);
+            }
 
         } // End of loop, now fix the point
 
@@ -702,11 +848,14 @@ int diffusion()
         if (colorshift)
         {
             if (!--colorcount)
-            { // If the counter reaches zero then shift
+            {
+                // If the counter reaches zero then shift
                 currentcolor++;      // Increase the current color and wrap
                 currentcolor %= colors;  // around skipping zero
                 if (!currentcolor)
+                {
                     currentcolor++;
+                }
                 colorcount = colorshift;  // and reset the counter
             }
         }
@@ -727,22 +876,32 @@ int diffusion()
                 xmin--;
                 xmax++;
                 if ((ymin == 0) || (xmin == 0))
+                {
                     return 0;
+                }
             }
             break;
         case 1: // Decrease ymin, but not past top of screen
             if (y-border < ymin)
+            {
                 ymin--;
+            }
             if (ymin == 0)
+            {
                 return 0;
+            }
             break;
         case 2: /* Decrease the radius where points are released to stay away
                  from the fractal.  It might be decreased by 1 or 2 */
             r = sqr((float)x-xdots/2) + sqr((float)y-ydots/2);
             if (r <= border*border)
+            {
                 return 0;
+            }
             while ((radius-border)*(radius-border) > r)
+            {
                 radius--;
+            }
             break;
         }
     }
@@ -823,11 +982,15 @@ int Bifurcation()
     LPI = (long)(PI * fudge);
 
     for (int y = 0; y <= iystop; y++) // should be iystop
+    {
         verhulst_array[y] = 0;
+    }
 
     mono = false;
     if (colors == 2)
+    {
         mono = true;
+    }
     if (mono)
     {
         if (inside != COLOR_BLACK)
@@ -836,7 +999,9 @@ int Bifurcation()
             inside = 1;
         }
         else
+        {
             outside_x = 1;
+        }
     }
 
     filter_cycles = (parm.x <= 0) ? DEFAULTFILTER : (long)parm.x;
@@ -848,9 +1013,13 @@ int Bifurcation()
     }
 
     if (integerfractal)
-        linit.y = ymax - iystop*dely;            // Y-value of
+    {
+        linit.y = ymax - iystop*dely;    // Y-value of
+    }
     else
-        init.y = (double)(yymax - iystop*delyy); // bottom pixels
+    {
+        init.y = (double)(yymax - iystop*delyy);    // bottom pixels
+    }
 
     while (x <= ixstop)
     {
@@ -863,9 +1032,13 @@ int Bifurcation()
         }
 
         if (integerfractal)
+        {
             lRate = xmin + x*delx;
+        }
         else
+        {
             Rate = (double)(xxmin + x*delxx);
+        }
         verhulst();        // calculate array once per column
 
         for (int y = iystop; y >= 0; y--) // should be iystop & >=0
@@ -873,11 +1046,17 @@ int Bifurcation()
             int color;
             color = verhulst_array[y];
             if (color && mono)
+            {
                 color = inside;
+            }
             else if ((!color) && mono)
+            {
                 color = outside_x;
+            }
             else if (color>=colors)
+            {
                 color = colors-1;
+            }
             verhulst_array[y] = 0;
             (*plot)(x, y, color); // was row-1, but that's not right?
         }
@@ -892,9 +1071,13 @@ static void verhulst()          // P. F. Verhulst (1845)
     unsigned int pixel_row;
 
     if (integerfractal)
+    {
         lPopulation = (parm.y == 0) ? (long)(SEED*fudge) : (long)(parm.y*fudge);
+    }
     else
+    {
         Population = (parm.y == 0) ? SEED : parm.y;
+    }
 
     overflow = false;
 
@@ -916,7 +1099,9 @@ static void verhulst()          // P. F. Verhulst (1845)
                 return;
             }
             if (periodicitycheck && Bif_Periodic(counter))
+            {
                 break;
+            }
         }
         if (counter >= (unsigned long)maxit)   // if not periodic, go the distance
         {
@@ -931,7 +1116,9 @@ static void verhulst()          // P. F. Verhulst (1845)
     }
 
     if (periodicitycheck)
+    {
         Bif_Period_Init();
+    }
     for (unsigned long counter = 0UL; counter < (unsigned long)maxit ; counter++)
     {
         if (curfractalspecific->orbitcalc())
@@ -941,17 +1128,25 @@ static void verhulst()          // P. F. Verhulst (1845)
 
         // assign population value to Y coordinate in pixels
         if (integerfractal)
-            pixel_row = iystop - (int)((lPopulation - linit.y) / dely); // iystop
+        {
+            pixel_row = iystop - (int)((lPopulation - linit.y) / dely);    // iystop
+        }
         else
+        {
             pixel_row = iystop - (int)((Population - init.y) / delyy);
+        }
 
         // if it's visible on the screen, save it in the column array
         if (pixel_row <= (unsigned int)iystop)
+        {
             verhulst_array[ pixel_row ] ++;
+        }
         if (periodicitycheck && Bif_Periodic(counter))
         {
             if (pixel_row <= (unsigned int)iystop)
+            {
                 verhulst_array[ pixel_row ] --;
+            }
             break;
         }
     }
@@ -984,9 +1179,13 @@ static bool Bif_Periodic(long time)
     if ((time & Bif_savedand) == 0)      // time to save a new value
     {
         if (integerfractal)
+        {
             lBif_savedpop = lPopulation;
+        }
         else
+        {
             Bif_savedpop =  Population;
+        }
         if (--Bif_savedinc == 0)
         {
             Bif_savedand = (Bif_savedand << 1) + 1;
@@ -998,12 +1197,16 @@ static bool Bif_Periodic(long time)
         if (integerfractal)
         {
             if (labs(lBif_savedpop-lPopulation) <= lBif_closenuf)
+            {
                 return true;
+            }
         }
         else
         {
             if (fabs(Bif_savedpop-Population) <= Bif_closenuf)
+            {
                 return true;
+            }
         }
     }
     return false;
@@ -1138,7 +1341,8 @@ int LongBifurcLambdaTrig()
 long beta;
 
 int BifurcMay()
-{   /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
+{
+    /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
             Computers, Pattern, Chaos, and Beauty, page 153 */
     tmp.x = 1.0 + Population;
     tmp.x = pow(tmp.x, -beta); // pow in math.h included with mpmath.h
@@ -1164,7 +1368,9 @@ bool BifurcMaySetup()
 
     beta = (long)param[2];
     if (beta < 2)
+    {
         beta = 2;
+    }
     param[2] = (double)beta;
 
     timer(0, curfractalspecific->calctype);
@@ -1239,13 +1445,20 @@ int lyapunov()
     }
     overflow = false;
     if (param[1] == 1)
+    {
         Population = (1.0+rand())/(2.0+RAND_MAX);
+    }
     else if (param[1] == 0)
     {
         if (fabs(Population)>BIG || Population == 0 || Population == 1)
+        {
             Population = (1.0+rand())/(2.0+RAND_MAX);
+        }
     }
-    else Population = param[1];
+    else
+    {
+        Population = param[1];
+    }
     (*plot)(col, row, 1);
     if (invert)
     {
@@ -1267,17 +1480,25 @@ int lyapunov()
     color = lyapunov_cycles(a, b);
 #else
     if (lyaSeedOK && a > 0 && b > 0 && a <= 4 && b <= 4)
+    {
         color = lyapunov_cycles(filter_cycles, Population, a, b);
+    }
     else
+    {
         color = lyapunov_cycles_in_c(filter_cycles, a, b);
+    }
 #endif
 #else
     color = lyapunov_cycles_in_c(filter_cycles, a, b);
 #endif
     if (inside > COLOR_BLACK && color == 0)
+    {
         color = inside;
+    }
     else if (color>=colors)
+    {
         color = colors-1;
+    }
     (*plot)(col, row, color);
     return color;
 }
@@ -1317,40 +1538,54 @@ bool lya_setup()
 
     filter_cycles = (long)param[2];
     if (filter_cycles == 0)
+    {
         filter_cycles = maxit/2;
+    }
     lyaSeedOK = param[1] > 0 && param[1] <= 1 && debugflag != debug_flags::force_standard_fractal;
     lyaLength = 1;
 
     i = (long)param[0];
 #if !defined(XFRACT)
     if (save_release < 1732)
-        i &= 0x0FFFFL; // make it a short to reproduce prior stuff
+    {
+        i &= 0x0FFFFL;    // make it a short to reproduce prior stuff
+    }
 #endif
     lyaRxy[0] = 1;
     int t;
     for (t = 31; t >= 0; t--)
         if (i & (1 << t))
+        {
             break;
+        }
     for (; t >= 0; t--)
+    {
         lyaRxy[lyaLength++] = (i & (1<<t)) != 0;
+    }
     lyaRxy[lyaLength++] = 0;
     if (save_release < 1732)              // swap axes prior to 1732
         for (t = lyaLength; t >= 0; t--)
+        {
             lyaRxy[t] = !lyaRxy[t];
+        }
     if (save_release < 1731)
-    {            // ignore inside=, stdcalcmode
+    {
+        // ignore inside=, stdcalcmode
         stdcalcmode = '1';
         if (inside == 1)
+        {
             inside = COLOR_BLACK;
+        }
     }
     if (inside < COLOR_BLACK)
     {
         stopmsg(STOPMSG_NONE,
-            "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
+                "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
         inside = 1;
     }
     if (usr_stdcalcmode == 'o')
-    { // Oops,lyapunov type
+    {
+        // Oops,lyapunov type
         usr_stdcalcmode = '1';  // doesn't use new & breaks orbits
         stdcalcmode = '1';
     }
@@ -1411,14 +1646,20 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
 
 jumpout:
     if (overflow || total <= 0 || (temp = log(total) + lnadjust) > 0)
+    {
         color = 0;
+    }
     else
     {
         double lyap;
         if (LogFlag)
+        {
             lyap = -temp/((double) lyaLength*i);
+        }
         else
+        {
             lyap = 1 - exp(temp/((double) lyaLength*i));
+        }
         color = 1 + (int)(lyap * (colors-1));
     }
     return color;
@@ -1482,7 +1723,7 @@ void abort_cellular(int err, int t)
     case TYPEKR:
     {
         stopmsg(STOPMSG_NONE,
-            "Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27");
+                "Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27");
     }
     break;
     case RULELENGTH:
@@ -1490,7 +1731,9 @@ void abort_cellular(int err, int t)
         static char msg[] = {"Rule must be    digits long" };
         i = rule_digits / 10;
         if (i == 0)
+        {
             msg[14] = (char)(rule_digits + 48);
+        }
         else
         {
             msg[13] = (char)(i+48);
@@ -1556,7 +1799,9 @@ int cellular()
     rule_digits = (S16)((r * 2 + 1) * k_1 + 1); // Number of digits in the rule
 
     if (!rflag && randparam == -1)
+    {
         --rseed;
+    }
     if (randparam != 0 && randparam != -1)
     {
         n = param[0];
@@ -1568,10 +1813,13 @@ int cellular()
             return -1;
         }
         for (auto &elem : init_string)
-            elem = 0; // zero the array
+        {
+            elem = 0;    // zero the array
+        }
         t2 = (S16)((16 - t)/2);
         for (int i = 0; i < t; i++)
-        { // center initial string in array
+        {
+            // center initial string in array
             init_string[i+t2] = (U16)(buf[i] - 48); // change character to number
             if (init_string[i+t2]>(U16)k_1)
             {
@@ -1583,7 +1831,9 @@ int cellular()
 
     srand(rseed);
     if (!rflag)
+    {
         ++rseed;
+    }
 
     // generate rule table from parameter 1
 #if !defined(XFRACT)
@@ -1601,7 +1851,8 @@ int cellular()
     }
 #endif
     if (n == 0)
-    { // calculate a random rule
+    {
+        // calculate a random rule
         n = rand()%(int)k;
         for (int i = 1; i < rule_digits; i++)
         {
@@ -1613,14 +1864,18 @@ int cellular()
     sprintf(buf, "%.*g", rule_digits , n);
     t = (S16)strlen(buf);
     if (rule_digits < t || t < 0)
-    { // leading 0s could make t smaller
+    {
+        // leading 0s could make t smaller
         abort_cellular(RULELENGTH, 0);
         return -1;
     }
     for (int i = 0; i < rule_digits; i++) // zero the table
+    {
         cell_table[i] = 0;
+    }
     for (int i = 0; i < t; i++)
-    { // reverse order
+    {
+        // reverse order
         cell_table[i] = (U16)(buf[t-i-1] - 48); // change character to number
         if (cell_table[i]>(U16)k_1)
         {
@@ -1680,19 +1935,25 @@ int cellular()
         else
         {
             for (col = 0; col <= ixstop; col++)
-            { // Clear from end to end
+            {
+                // Clear from end to end
                 cell_array[filled][col] = 0;
             }
             int i = 0;
             for (col = (ixstop-16)/2; col < (ixstop+16)/2; col++)
-            { // insert initial
+            {
+                // insert initial
                 cell_array[filled][col] = (BYTE)init_string[i++];    // string
             }
         } // end of if not random
         if (lnnmbr != 0)
+        {
             lstscreenflag = true;
+        }
         else
+        {
             lstscreenflag = false;
+        }
         put_line(start_row, 0, ixstop, &cell_array[filled][0]);
     }
     start_row++;
@@ -1727,7 +1988,9 @@ int cellular()
             t = 0; // do first cell
             twor = (U16)(r+r);
             for (int i = 0; i <= twor; i++)
+            {
                 t = (S16)(t + (S16)cell_array[filled][i]);
+            }
             if (t > rule_digits || t < 0)
             {
                 thinking(0, nullptr);
@@ -1738,7 +2001,8 @@ int cellular()
 
             // use a rolling sum in t
             for (col = r+1; col < ixstop-r; col++)
-            { // now do the rest
+            {
+                // now do the rest
                 t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
                 if (t > rule_digits || t < 0)
                 {
@@ -1789,7 +2053,9 @@ contloop:
         t = 0; // do first cell
         twor = (U16)(r+r);
         for (int i = 0; i <= twor; i++)
+        {
             t = (S16)(t + (S16)cell_array[filled][i]);
+        }
         if (t > rule_digits || t < 0)
         {
             thinking(0, nullptr);
@@ -1800,7 +2066,8 @@ contloop:
 
         // use a rolling sum in t
         for (col = r+1; col < ixstop-r; col++)
-        { // now do the rest
+        {
+            // now do the rest
             t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
             if (t > rule_digits || t < 0)
             {
@@ -1851,7 +2118,9 @@ static void set_Cellular_palette()
     static BYTE const Brown[3]  = { 42, 21, 0 };
 
     if (map_specified && colorstate != 0)
-        return;       // map= specified
+    {
+        return;    // map= specified
+    }
 
     g_dac_box[0][0] = 0;
     g_dac_box[0][1] = 0;
@@ -1949,25 +2218,37 @@ static void set_Froth_palette()
     char const *mapname;
 
     if (colorstate != 0) // 0 means g_dac_box matches default
+    {
         return;
+    }
     if (colors >= 16)
     {
         if (colors >= 256)
         {
             if (fsp.attractors == 6)
+            {
                 mapname = "froth6.map";
+            }
             else
+            {
                 mapname = "froth3.map";
+            }
         }
         else // colors >= 16
         {
             if (fsp.attractors == 6)
+            {
                 mapname = "froth616.map";
+            }
             else
+            {
                 mapname = "froth316.map";
+            }
         }
         if (ValidateLuts(mapname))
+        {
             return;
+        }
         colorstate = 0; // treat map as default
         spindac(0, 1);
     }
@@ -2015,15 +2296,19 @@ bool froth_setup()
     else // use new code
     {
         if (param[0] != 2)
+        {
             param[0] = 1;
+        }
         fsp.repeat_mapping = (int)param[0] == 2;
         if (param[1] != 0)
+        {
             param[1] = 1;
+        }
         fsp.altcolor = (int)param[1];
         fsp.fl.f.a = param[2];
 
         fsp.attractors = fabs(fsp.fl.f.a) <= FROTH_CRITICAL_A ? (!fsp.repeat_mapping ? 3 : 6)
-                          : (!fsp.repeat_mapping ? 2 : 3);
+                             : (!fsp.repeat_mapping ? 2 : 3);
 
         // new improved values
         // 0.5 is the value that causes the mapping to reach a minimum
@@ -2056,7 +2341,9 @@ bool froth_setup()
     // rqlim needs to be at least sq(1+sqrt(1+sq(a))),
     // which is never bigger than 6.93..., so we'll call it 7.0
     if (rqlim < 7.0)
+    {
         rqlim = 7.0;
+    }
     set_Froth_palette();
     // make the best of the .map situation
     orbit_color = fsp.attractors != 6 && colors >= 16 ? (fsp.shades<<1)+1 : colors-1;
@@ -2106,7 +2393,9 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
     orbit_ptr = 0;
     coloriter = 0;
     if (show_dot >0)
+    {
         (*plot)(col, row, show_dot %colors);
+    }
     if (!integerfractal) // fp mode
     {
         if (invert)
@@ -2143,7 +2432,9 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             if (show_orbit)
             {
                 if (driver_key_pressed())
+                {
                     break;
+                }
                 plot_orbit(old.x, old.y, -1);
             }
 
@@ -2152,59 +2443,91 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             {
                 if ((!fsp.repeat_mapping && fsp.attractors == 2)
                         || (fsp.repeat_mapping && fsp.attractors == 3))
+                {
                     found_attractor = 1;
+                }
                 else if (old.x <= fsp.fl.f.top_x3)
+                {
                     found_attractor = 1;
+                }
                 else if (old.x >= fsp.fl.f.top_x4)
                 {
                     if (!fsp.repeat_mapping)
+                    {
                         found_attractor = 1;
+                    }
                     else
+                    {
                         found_attractor = 2;
+                    }
                 }
             }
             else if (fabs(FROTH_SLOPE*old.x - fsp.fl.f.a - old.y) < FROTH_CLOSE
                      && old.x <= fsp.fl.f.right_x1 && old.x >= fsp.fl.f.right_x2)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
+                {
                     found_attractor = 2;
+                }
                 else if (fsp.repeat_mapping && fsp.attractors == 3)
+                {
                     found_attractor = 3;
+                }
                 else if (old.x >= fsp.fl.f.right_x3)
                 {
                     if (!fsp.repeat_mapping)
+                    {
                         found_attractor = 2;
+                    }
                     else
+                    {
                         found_attractor = 4;
+                    }
                 }
                 else if (old.x <= fsp.fl.f.right_x4)
                 {
                     if (!fsp.repeat_mapping)
+                    {
                         found_attractor = 3;
+                    }
                     else
+                    {
                         found_attractor = 6;
+                    }
                 }
             }
             else if (fabs(-FROTH_SLOPE*old.x - fsp.fl.f.a - old.y) < FROTH_CLOSE
                      && old.x <= fsp.fl.f.left_x1 && old.x >= fsp.fl.f.left_x2)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
+                {
                     found_attractor = 2;
+                }
                 else if (fsp.repeat_mapping && fsp.attractors == 3)
+                {
                     found_attractor = 2;
+                }
                 else if (old.x >= fsp.fl.f.left_x3)
                 {
                     if (!fsp.repeat_mapping)
+                    {
                         found_attractor = 3;
+                    }
                     else
+                    {
                         found_attractor = 5;
+                    }
                 }
                 else if (old.x <= fsp.fl.f.left_x4)
                 {
                     if (!fsp.repeat_mapping)
+                    {
                         found_attractor = 2;
+                    }
                     else
+                    {
                         found_attractor = 3;
+                    }
                 }
             }
             tempsqrx = sqr(old.x);
@@ -2240,7 +2563,9 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             {
                 lmagnitud = (ltempsqrx = lsqr(lold.x)) + (ltempsqry = lsqr(lold.y));
                 if ((lmagnitud > llimit) || (lmagnitud < 0))
+                {
                     break;
+                }
                 lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a, lold.y, bitshift);
                 lold.y += (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp.fl.l.a, lold.x, bitshift);
                 lold.x = lnew.x;
@@ -2250,7 +2575,9 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             if (show_orbit)
             {
                 if (driver_key_pressed())
+                {
                     break;
+                }
                 iplot_orbit(lold.x, lold.y, -1);
             }
 
@@ -2259,58 +2586,90 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             {
                 if ((!fsp.repeat_mapping && fsp.attractors == 2)
                         || (fsp.repeat_mapping && fsp.attractors == 3))
+                {
                     found_attractor = 1;
+                }
                 else if (lold.x <= fsp.fl.l.top_x3)
+                {
                     found_attractor = 1;
+                }
                 else if (lold.x >= fsp.fl.l.top_x4)
                 {
                     if (!fsp.repeat_mapping)
+                    {
                         found_attractor = 1;
+                    }
                     else
+                    {
                         found_attractor = 2;
+                    }
                 }
             }
             else if (labs(multiply(FROTH_LSLOPE, lold.x, bitshift)-fsp.fl.l.a-lold.y) < FROTH_LCLOSE
                      && lold.x <= fsp.fl.l.right_x1 && lold.x >= fsp.fl.l.right_x2)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
+                {
                     found_attractor = 2;
+                }
                 else if (fsp.repeat_mapping && fsp.attractors == 3)
+                {
                     found_attractor = 3;
+                }
                 else if (lold.x >= fsp.fl.l.right_x3)
                 {
                     if (!fsp.repeat_mapping)
+                    {
                         found_attractor = 2;
+                    }
                     else
+                    {
                         found_attractor = 4;
+                    }
                 }
                 else if (lold.x <= fsp.fl.l.right_x4)
                 {
                     if (!fsp.repeat_mapping)
+                    {
                         found_attractor = 3;
+                    }
                     else
+                    {
                         found_attractor = 6;
+                    }
                 }
             }
             else if (labs(multiply(-FROTH_LSLOPE, lold.x, bitshift)-fsp.fl.l.a-lold.y) < FROTH_LCLOSE)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
+                {
                     found_attractor = 2;
+                }
                 else if (fsp.repeat_mapping && fsp.attractors == 3)
+                {
                     found_attractor = 2;
+                }
                 else if (lold.x >= fsp.fl.l.left_x3)
                 {
                     if (!fsp.repeat_mapping)
+                    {
                         found_attractor = 3;
+                    }
                     else
+                    {
                         found_attractor = 5;
+                    }
                 }
                 else if (lold.x <= fsp.fl.l.left_x4)
                 {
                     if (!fsp.repeat_mapping)
+                    {
                         found_attractor = 2;
+                    }
                     else
+                    {
                         found_attractor = 3;
+                    }
                 }
             }
             ltempsqrx = lsqr(lold.x);
@@ -2319,13 +2678,17 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         }
     }
     if (show_orbit)
+    {
         scrub_orbit();
+    }
 
     realcoloriter = coloriter;
     if ((keyboard_check_interval -= abs((int)realcoloriter)) <= 0)
     {
         if (check_key())
+        {
             return (-1);
+        }
         keyboard_check_interval = max_keyboard_check_interval;
     }
 
@@ -2339,16 +2702,23 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             if (!fsp.altcolor)
             {
                 if (coloriter > fsp.shades)
+                {
                     coloriter = fsp.shades;
+                }
             }
             else
+            {
                 coloriter = fsp.shades * coloriter / maxit;
+            }
             if (coloriter == 0)
+            {
                 coloriter = 1;
+            }
             coloriter += fsp.shades * (found_attractor-1);
         }
         else if (colors >= 16)
-        {   // only alternate coloring scheme available for 16 colors
+        {
+            // only alternate coloring scheme available for 16 colors
             long lshade;
 
             // Trying to make a better 16 color distribution.
@@ -2358,32 +2728,50 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             if (fsp.attractors != 6) // either 2 or 3 attractors
             {
                 if (lshade < 2622)       // 0.04
+                {
                     coloriter = 1;
+                }
                 else if (lshade < 10486) // 0.16
+                {
                     coloriter = 2;
+                }
                 else if (lshade < 23593) // 0.36
+                {
                     coloriter = 3;
+                }
                 else if (lshade < 41943L) // 0.64
+                {
                     coloriter = 4;
+                }
                 else
+                {
                     coloriter = 5;
+                }
                 coloriter += 5 * (found_attractor-1);
             }
             else // 6 attractors
             {
                 if (lshade < 10486)      // 0.16
+                {
                     coloriter = 1;
+                }
                 else
+                {
                     coloriter = 2;
+                }
                 coloriter += 2 * (found_attractor-1);
             }
         }
         else // use a color corresponding to the attractor
+        {
             coloriter = found_attractor;
+        }
         oldcoloriter = coloriter;
     }
     else // outside, or inside but didn't get sucked in by attractor.
+    {
         coloriter = 0;
+    }
 
     color = abs((int)(coloriter));
 
@@ -2434,7 +2822,9 @@ int froth_per_orbit()
         tempsqrx = sqr(g_new.x);
         tempsqry = sqr(g_new.y);
         if (tempsqrx + tempsqry >= rqlim)
+        {
             return 1;
+        }
         old = g_new;
     }
     else  // integer mode
@@ -2446,7 +2836,9 @@ int froth_per_orbit()
             ltempsqrx = lsqr(lnew.x);
             ltempsqry = lsqr(lnew.y);
             if (ltempsqrx + ltempsqry >= llimit)
+            {
                 return 1;
+            }
             lold = lnew;
             lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a, lold.y, bitshift);
             lnew.y = lold.y + (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp.fl.l.a, lold.x, bitshift);
@@ -2454,7 +2846,9 @@ int froth_per_orbit()
         ltempsqrx = lsqr(lnew.x);
         ltempsqry = lsqr(lnew.y);
         if (ltempsqrx + ltempsqry >= llimit)
+        {
             return 1;
+        }
         lold = lnew;
     }
     return 0;
