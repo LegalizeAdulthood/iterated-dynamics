@@ -782,7 +782,8 @@ gdi_unstack_screen(Driver *drv)
     g_text_row = di->base.saved_cursor[di->base.screen_count] / 80;
     g_text_col = di->base.saved_cursor[di->base.screen_count] % 80;
     if (--di->base.screen_count >= 0)
-    {   // unstack
+    {
+        // unstack
         _ASSERTE(di->text_not_graphics);
         wintext_screen_set(&di->base.wintext, di->base.saved_screens[di->base.screen_count]);
         free(di->base.saved_screens[di->base.screen_count]);
@@ -801,7 +802,8 @@ gdi_discard_screen(Driver *drv)
     DI(di);
 
     if (--di->base.screen_count >= 0)
-    {   // unstack
+    {
+        // unstack
         _ASSERTE(di->text_not_graphics);
         if (di->base.saved_screens[di->base.screen_count])
         {

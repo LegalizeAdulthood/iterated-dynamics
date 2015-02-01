@@ -253,7 +253,9 @@ find_special_colors()
     }
 
     if (!(g_got_real_dac || fake_lut))
+    {
         return;
+    }
 
     for (int i = 0; i < colors; i++)
     {
@@ -399,9 +401,13 @@ void spindac(int dir, int inc)
     unsigned char tmp[3];
     unsigned char *dacbot;
     if (colors < 16)
+    {
         return;
+    }
     if (g_is_true_color && truemode)
+    {
         return;
+    }
     if (dir != 0 && rotate_lo < colors && rotate_lo < rotate_hi)
     {
         int top = rotate_hi > colors ? colors - 1 : rotate_hi;
@@ -709,7 +715,9 @@ ods(char const *file, unsigned int line, char const *format, ...)
 void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
     if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
+    {
         return;
+    }
     _ASSERTE(lineread);
     (*lineread)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
 }
@@ -726,7 +734,9 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 void put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 {
     if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
+    {
         return;
+    }
     _ASSERTE(linewrite);
     (*linewrite)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
 }
@@ -824,7 +834,9 @@ int getcolor(int xdot, int ydot)
     _ASSERTE(x1 >= 0 && x1 <= sxdots);
     _ASSERTE(y1 >= 0 && y1 <= sydots);
     if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
+    {
         return 0;
+    }
     _ASSERTE(dotread);
     return (*dotread)(x1, y1);
 }
@@ -915,6 +927,8 @@ int strncasecmp(char const *s, char const *t,int ct)
 {
     for (; (tolower(*s) == tolower(*t)) && --ct ; s++,t++)
         if (*s == '\0')
+        {
             return (0);
+        }
     return (tolower(*s) - tolower(*t));
 }

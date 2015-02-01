@@ -793,7 +793,8 @@ disk_unstack_screen(Driver *drv)
     g_text_row = di->base.saved_cursor[di->base.screen_count] / 80;
     g_text_col = di->base.saved_cursor[di->base.screen_count] % 80;
     if (--di->base.screen_count >= 0)
-    {   // unstack
+    {
+        // unstack
         wintext_screen_set(&di->base.wintext, di->base.saved_screens[di->base.screen_count]);
         free(di->base.saved_screens[di->base.screen_count]);
         di->base.saved_screens[di->base.screen_count] = nullptr;
@@ -812,7 +813,8 @@ disk_discard_screen(Driver *drv)
 
     _ASSERTE(di->base.screen_count > 0);
     if (--di->base.screen_count >= 0)
-    {   // unstack
+    {
+        // unstack
         if (di->base.saved_screens[di->base.screen_count])
         {
             free(di->base.saved_screens[di->base.screen_count]);
