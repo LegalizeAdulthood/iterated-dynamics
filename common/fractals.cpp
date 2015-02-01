@@ -220,68 +220,132 @@ int  fpMANRbailout()
     return 0;
 }
 
-#define FLOATTRIGBAILOUT()  \
-    if (fabs(old.y) >= rqlim2) \
-        return 1;
+#define FLOATTRIGBAILOUT()          \
+    do                              \
+    {                               \
+        if (fabs(old.y) >= rqlim2)  \
+        {                           \
+            return 1;               \
+        }                           \
+    }                               \
+    while (0)
 
-#define LONGTRIGBAILOUT()  \
-    if (labs(lold.y) >= llimit2) \
-    { \
-        return 1; \
-    }
+#define LONGTRIGBAILOUT()               \
+    do                                  \
+    {                                   \
+        if (labs(lold.y) >= llimit2)    \
+        {                               \
+            return 1;                   \
+        }                               \
+    }                                   \
+    while (0)
 
-#define LONGXYTRIGBAILOUT()  \
-    if (labs(lold.x) >= llimit2 || labs(lold.y) >= llimit2)\
-        { return 1;}
+#define LONGXYTRIGBAILOUT()                                     \
+    do                                                          \
+    {                                                           \
+        if (labs(lold.x) >= llimit2 || labs(lold.y) >= llimit2) \
+        {                                                       \
+            return 1;                                           \
+        }                                                       \
+    }                                                           \
+    while (0)
 
-#define FLOATXYTRIGBAILOUT()  \
-    if (fabs(old.x) >= rqlim2 || fabs(old.y) >= rqlim2) \
-        return 1;
+#define FLOATXYTRIGBAILOUT()                                \
+    do                                                      \
+    {                                                       \
+        if (fabs(old.x) >= rqlim2 || fabs(old.y) >= rqlim2) \
+        {                                                   \
+            return 1;                                       \
+        }                                                   \
+    }                                                       \
+    while (0)
 
-#define FLOATHTRIGBAILOUT()  \
-    if (fabs(old.x) >= rqlim2) \
-        return 1;
+#define FLOATHTRIGBAILOUT()         \
+    do                              \
+    {                               \
+        if (fabs(old.x) >= rqlim2)  \
+        {                           \
+            return 1;               \
+        }                           \
+    }                               \
+    while (0)
 
-#define LONGHTRIGBAILOUT()  \
-    if (labs(lold.x) >= llimit2) \
-    { \
-        return 1; \
-    }
+#define LONGHTRIGBAILOUT()              \
+    do                                  \
+    {                                   \
+        if (labs(lold.x) >= llimit2)    \
+        {                               \
+            return 1;                   \
+        }                               \
+    }                                   \
+    while (0)
 
-#define TRIG16CHECK(X)  \
-    if (labs((X)) > l16triglim) \
-    { \
-        return 1; \
-    }
+#define TRIG16CHECK(X)              \
+    do                              \
+    {                               \
+        if (labs((X)) > l16triglim) \
+        {                           \
+            return 1;               \
+        }                           \
+    }                               \
+    while (0)
 
-#define OLD_FLOATEXPBAILOUT()  \
-    if (fabs(old.y) >= 1.0e8) \
-        return 1;\
-    if (fabs(old.x) >= 6.4e2) \
-        return 1;
+#define OLD_FLOATEXPBAILOUT()       \
+    do                              \
+    {                               \
+        if (fabs(old.y) >= 1.0e8)   \
+        {                           \
+            return 1;               \
+        }                           \
+        if (fabs(old.x) >= 6.4e2)   \
+        {                           \
+            return 1;               \
+        }                           \
+    }                               \
+    while (0)
 
-#define FLOATEXPBAILOUT()  \
-    if (fabs(old.y) >= 1.0e3) \
-        return 1;\
-    if (fabs(old.x) >= 8) \
-        return 1;
+#define FLOATEXPBAILOUT()           \
+    do                              \
+    {                               \
+        if (fabs(old.y) >= 1.0e3)   \
+        {                           \
+            return 1;               \
+        }                           \
+        if (fabs(old.x) >= 8)       \
+        {                           \
+            return 1;               \
+        }                           \
+    }                               \
+    while (0)
 
-#define LONGEXPBAILOUT()  \
-    if (labs(lold.y) >= (1000L << bitshift)) \
-        return 1;\
-    if (labs(lold.x) >=    (8L << bitshift)) \
-        return 1;
+#define LONGEXPBAILOUT()                            \
+	do                                              \
+	{                                               \
+		if (labs(lold.y) >= (1000L << bitshift))    \
+		{                                           \
+			return 1;                               \
+		}                                           \
+		if (labs(lold.x) >=    (8L << bitshift))    \
+		{                                           \
+			return 1;                               \
+		}                                           \
+	}                                               \
+	while (0)
 
-#define LTRIGARG(X)    \
-    if (labs((X)) > l16triglim)\
-    {\
-        double tmp;\
-        tmp = (X);\
-        tmp /= fudge;\
-        tmp = fmod(tmp, twopi);\
-        tmp *= fudge;\
-        (X) = (long)tmp;\
-    }\
+#define LTRIGARG(X)                 \
+	do                              \
+	{                               \
+		if (labs((X)) > l16triglim) \
+		{                           \
+			double tmp;             \
+			tmp = (X);              \
+			tmp /= fudge;           \
+			tmp = fmod(tmp, twopi); \
+			tmp *= fudge;           \
+			(X) = (long)tmp;        \
+		}                           \
+	}                               \
+	while (0)
 
 static int  Halleybailout()
 {
