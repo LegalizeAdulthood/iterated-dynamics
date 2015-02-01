@@ -42,7 +42,9 @@ void showcornersdbl(char const *s)
             s, xxmin, xxmax, yymin, yymax, xx3rd, yy3rd,
             delxx, delyy, delxx2, delyy2);
     if (stopmsg(STOPMSG_NONE, msg) == -1)
+    {
         goodbye();
+    }
 }
 
 // show floating point and bignumber corners
@@ -71,7 +73,9 @@ void showcorners(char const *s)
     sprintf(msg1, "bny3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
     strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3) == -1)
+    {
         goodbye();
+    }
 }
 
 // show globals
@@ -86,7 +90,9 @@ bfdecimals=%d ",
             shiftfactor, decimals, bflength, rbflength,
             bfdecimals);
     if (stopmsg(STOPMSG_NONE, msg) == -1)
+    {
         goodbye();
+    }
 }
 
 void showcornersbf(char const *s)
@@ -94,7 +100,9 @@ void showcornersbf(char const *s)
     int dec = decimals;
     char msg[100], msg1[100], msg3[600];
     if (dec > 20)
+    {
         dec = 20;
+    }
     bftostr(msg, dec, bfxmin);
     sprintf(msg1, "bfxmin=%s\nxxmin= %.20f decimals %d bflength %d\n\n",
             msg, xxmin, decimals, bflength);
@@ -117,7 +125,9 @@ void showcornersbf(char const *s)
     sprintf(msg1, "bfy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
     strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3) == -1)
+    {
         goodbye();
+    }
 }
 
 void showcornersbfs(char const *s)
@@ -145,7 +155,9 @@ void showcornersbfs(char const *s)
     sprintf(msg1, "bfsy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
     strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3) == -1)
+    {
         goodbye();
+    }
 }
 
 void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
@@ -155,7 +167,9 @@ void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
     bftostr_e(msg2, digits, t2);
     sprintf(msg3, "\n%s->%s\n%s->%s", s1, msg1, s2, msg2);
     if (stopmsg(STOPMSG_NONE, msg3) == -1)
+    {
         goodbye();
+    }
 }
 
 void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const *s3, bf_t t3, int digits)
@@ -166,7 +180,9 @@ void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const 
     bftostr_e(msg3, digits, t3);
     sprintf(msg4, "\n%s->%s\n%s->%s\n%s->%s", s1, msg1, s2, msg2, s3, msg3);
     if (stopmsg(STOPMSG_NONE, msg4) == -1)
+    {
         goodbye();
+    }
 }
 
 // for aspect ratio debugging
@@ -188,7 +204,9 @@ void showaspect(char const *s)
             (yymax-yymin)/(xxmax-xxmin),
             str);
     if (stopmsg(STOPMSG_NONE, msg) == -1)
+    {
         goodbye();
+    }
     restore_stack(saved);
 }
 
@@ -200,7 +218,9 @@ void comparevalues(char const *s, LDBL x, bn_t bnx)
     bntostr(msg, dec, bnx);
     sprintf(msg1, "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
     if (stopmsg(STOPMSG_NONE, msg1) == -1)
+    {
         goodbye();
+    }
 }
 // compare a double and bignumber
 void comparevaluesbf(char const *s, LDBL x, bf_t bfx)
@@ -210,7 +230,9 @@ void comparevaluesbf(char const *s, LDBL x, bf_t bfx)
     bftostr_e(msg, dec, bfx);
     sprintf(msg1, "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
     if (stopmsg(STOPMSG_NONE, msg1) == -1)
+    {
         goodbye();
+    }
 }
 
 //********************************************************************
@@ -222,7 +244,9 @@ void show_var_bf(char const *s, bf_t n)
     bftostr_e(msg+strlen(s), 40, n);
     msg[79] = 0;
     if (stopmsg(STOPMSG_NONE, msg) == -1)
+    {
         goodbye();
+    }
 }
 
 #endif
@@ -240,7 +264,9 @@ void bfcornerstofloat()
     }
     for (int i = 0; i < MAXPARAMS; i++)
         if (typehasparm(fractype, i, nullptr))
+        {
             param[i] = (double)bftofloat(bfparms[i]);
+        }
 }
 
 // --------------------------------------------------------------------
@@ -264,7 +290,9 @@ int  bnMODbailout()
 
     longmagnitude = bntoint(bntmp);  // works with any fractal type
     if (longmagnitude >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bn(bnold.x, bnnew.x);
     copy_bn(bnold.y, bnnew.y);
     return 0;
@@ -278,7 +306,9 @@ int  bnREALbailout()
     square_bn(bntmpsqry, bnnew.y);
     longtempsqrx = bntoint(bntmpsqrx+shiftfactor);
     if (longtempsqrx >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bn(bnold.x, bnnew.x);
     copy_bn(bnold.y, bnnew.y);
     return 0;
@@ -293,7 +323,9 @@ int  bnIMAGbailout()
     square_bn(bntmpsqry, bnnew.y);
     longtempsqry = bntoint(bntmpsqry+shiftfactor);
     if (longtempsqry >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bn(bnold.x, bnnew.x);
     copy_bn(bnold.y, bnnew.y);
     return (0);
@@ -308,7 +340,9 @@ int  bnORbailout()
     longtempsqrx = bntoint(bntmpsqrx+shiftfactor);
     longtempsqry = bntoint(bntmpsqry+shiftfactor);
     if (longtempsqrx >= (long)rqlim || longtempsqry >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bn(bnold.x, bnnew.x);
     copy_bn(bnold.y, bnnew.y);
     return (0);
@@ -323,7 +357,9 @@ int  bnANDbailout()
     longtempsqrx = bntoint(bntmpsqrx+shiftfactor);
     longtempsqry = bntoint(bntmpsqry+shiftfactor);
     if (longtempsqrx >= (long)rqlim && longtempsqry >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bn(bnold.x, bnnew.x);
     copy_bn(bnold.y, bnnew.y);
     return (0);
@@ -342,7 +378,9 @@ int  bnMANHbailout()
     square_bn(bnold.x, bntmp);
     longtempmag = bntoint(bnold.x+shiftfactor);
     if (longtempmag >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bn(bnold.x, bnnew.x);
     copy_bn(bnold.y, bnnew.y);
     return (0);
@@ -359,7 +397,9 @@ int  bnMANRbailout()
     square_bn(bnold.x, bntmp);
     longtempmag = bntoint(bnold.x+shiftfactor);
     if (longtempmag >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bn(bnold.x, bnnew.x);
     copy_bn(bnold.y, bnnew.y);
     return (0);
@@ -375,7 +415,9 @@ int  bfMODbailout()
 
     longmagnitude = bftoint(bftmp);
     if (longmagnitude >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bf(bfold.x, bfnew.x);
     copy_bf(bfold.y, bfnew.y);
     return 0;
@@ -389,7 +431,9 @@ int  bfREALbailout()
     square_bf(bftmpsqry, bfnew.y);
     longtempsqrx = bftoint(bftmpsqrx);
     if (longtempsqrx >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bf(bfold.x, bfnew.x);
     copy_bf(bfold.y, bfnew.y);
     return 0;
@@ -404,7 +448,9 @@ int  bfIMAGbailout()
     square_bf(bftmpsqry, bfnew.y);
     longtempsqry = bftoint(bftmpsqry);
     if (longtempsqry >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bf(bfold.x, bfnew.x);
     copy_bf(bfold.y, bfnew.y);
     return (0);
@@ -419,7 +465,9 @@ int  bfORbailout()
     longtempsqrx = bftoint(bftmpsqrx);
     longtempsqry = bftoint(bftmpsqry);
     if (longtempsqrx >= (long)rqlim || longtempsqry >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bf(bfold.x, bfnew.x);
     copy_bf(bfold.y, bfnew.y);
     return (0);
@@ -434,7 +482,9 @@ int  bfANDbailout()
     longtempsqrx = bftoint(bftmpsqrx);
     longtempsqry = bftoint(bftmpsqry);
     if (longtempsqrx >= (long)rqlim && longtempsqry >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bf(bfold.x, bfnew.x);
     copy_bf(bfold.y, bfnew.y);
     return (0);
@@ -453,7 +503,9 @@ int  bfMANHbailout()
     square_bf(bfold.x, bftmp);
     longtempmag = bftoint(bfold.x);
     if (longtempmag >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bf(bfold.x, bfnew.x);
     copy_bf(bfold.y, bfnew.y);
     return (0);
@@ -470,7 +522,9 @@ int  bfMANRbailout()
     square_bf(bfold.x, bftmp);
     longtempmag = bftoint(bfold.x);
     if (longtempmag >= (long)rqlim)
+    {
         return 1;
+    }
     copy_bf(bfold.x, bfnew.x);
     copy_bf(bfold.y, bfnew.y);
     return (0);
@@ -512,19 +566,27 @@ bool MandelbnSetup()
 
     abs_bn(bnclosenuff, bnxdel);
     if (cmp_bn(abs_bn(bntemp1, bnxdel2), bnclosenuff) > 0)
+    {
         copy_bn(bnclosenuff, bntemp1);
+    }
     if (cmp_bn(abs_bn(bntemp1, bnydel), abs_bn(bntemp2, bnydel2)) > 0)
     {
         if (cmp_bn(bntemp1, bnclosenuff) > 0)
+        {
             copy_bn(bnclosenuff, bntemp1);
+        }
     }
     else if (cmp_bn(bntemp2, bnclosenuff) > 0)
+    {
         copy_bn(bnclosenuff, bntemp2);
+    }
     {
         int t;
         t = abs(periodicitycheck);
         while (t--)
+        {
             half_a_bn(bnclosenuff);
+        }
     }
 
     c_exp = (int)param[2];
@@ -537,16 +599,22 @@ bool MandelbnSetup()
     case fractal_type::FPMANDELZPOWER:
         init_big_pi();
         if ((double)c_exp == param[2] && (c_exp & 1)) // odd exponents
+        {
             symmetry = symmetry_type::XY_AXIS_NO_PARAM;
+        }
         if (param[3] != 0)
+        {
             symmetry = symmetry_type::NONE;
+        }
         break;
     case fractal_type::FPJULIAZPOWER:
         init_big_pi();
         bftobn(bnparm.x, bfparms[0]);
         bftobn(bnparm.y, bfparms[1]);
         if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
+        {
             symmetry = symmetry_type::NONE;
+        }
         break;
     default:
         break;
@@ -585,19 +653,27 @@ bool MandelbfSetup()
 
     abs_bf(bfclosenuff, bfxdel);
     if (cmp_bf(abs_bf(bftemp1, bfxdel2), bfclosenuff) > 0)
+    {
         copy_bf(bfclosenuff, bftemp1);
+    }
     if (cmp_bf(abs_bf(bftemp1, bfydel), abs_bf(bftemp2, bfydel2)) > 0)
     {
         if (cmp_bf(bftemp1, bfclosenuff) > 0)
+        {
             copy_bf(bfclosenuff, bftemp1);
+        }
     }
     else if (cmp_bf(bftemp2, bfclosenuff) > 0)
+    {
         copy_bf(bfclosenuff, bftemp2);
+    }
     {
         int t;
         t = abs(periodicitycheck);
         while (t--)
+        {
             half_a_bf(bfclosenuff);
+        }
     }
 
     c_exp = (int)param[2];
@@ -610,16 +686,22 @@ bool MandelbfSetup()
     case fractal_type::FPMANDELZPOWER:
         init_big_pi();
         if ((double)c_exp == param[2] && (c_exp & 1)) // odd exponents
+        {
             symmetry = symmetry_type::XY_AXIS_NO_PARAM;
+        }
         if (param[3] != 0)
+        {
             symmetry = symmetry_type::NONE;
+        }
         break;
     case fractal_type::FPJULIAZPOWER:
         init_big_pi();
         copy_bf(bfparm.x, bfparms[0]);
         copy_bf(bfparm.y, bfparms[1]);
         if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
+        {
             symmetry = symmetry_type::NONE;
+        }
         break;
     default:
         break;
