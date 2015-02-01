@@ -48,9 +48,13 @@ static long iteration(double cr, double ci,
     floatparm->x = cr;
     floatparm->y = ci;
     while (ORBITCALC() == 0 && start < maxit)
+    {
         start++;
+    }
     if (start >= maxit)
+    {
         start = BASIN_COLOR;
+    }
     return (start);
 }
 
@@ -58,13 +62,17 @@ static void puthline(int x1, int y1, int x2, int color)
 {
     int x;
     for (x = x1; x <= x2; x++)
+    {
         (*plot)(x, y1, color);
+    }
 }
 
 static void putbox(int x1, int y1, int x2, int y2, int color)
 {
     for (; y1 <= y2; y1++)
+    {
         puthline(x1, y1, x2, color);
+    }
 }
 
 /* maximum side length beyond which we start regular scanning instead of
@@ -351,9 +359,13 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     rhombus_depth++;
     avail = stackavail();
     if (avail < minstackavail)
+    {
         minstackavail = avail;
+    }
     if (rhombus_depth > max_rhombus_depth)
+    {
         max_rhombus_depth = rhombus_depth;
+    }
     rhombus_stack[rhombus_depth] = avail;
 
     if (driver_key_pressed())
@@ -414,7 +426,9 @@ scan:
                     goto rhombus_done;
                 }
                 else if (color == savecolor)
+                {
                     continue;
+                }
 
                 for (z = x - 1, state.helpre = state.re - state.restep; z > x - INTERLEAVE; z--, state.helpre -= state.restep)
                 {
@@ -427,14 +441,20 @@ scan:
                         goto rhombus_done;
                     }
                     else if (helpcolor == savecolor)
+                    {
                         break;
+                    }
                     (*plot)(z, y, (int)(helpcolor&255));
                 }
 
                 if (savex < z)
+                {
                     puthline(savex, y, z, (int)(savecolor&255));
+                }
                 else
+                {
                     (*plot)(savex, y, (int)(savecolor&255));
+                }
 
                 savex = x;
                 savecolor = color;
@@ -451,15 +471,21 @@ scan:
                     goto rhombus_done;
                 }
                 else if (helpcolor == savecolor)
+                {
                     break;
+                }
 
                 (*plot)(z, y, (int)(helpcolor&255));
             }
 
             if (savex < z)
+            {
                 puthline(savex, y, z, (int)(savecolor&255));
+            }
             else
+            {
                 (*plot)(savex, y, (int)(savecolor&255));
+            }
         }
         status = false;
         goto rhombus_done;
@@ -672,7 +698,9 @@ scan:
         */
         if (state.esc1||state.esc2||state.esc3||state.esc4||state.esc5||state.esc6||state.esc7||state.esc8||state.esc9||
                 state.tesc1||state.tesc2||state.tesc3||state.tesc4)
+        {
             break;
+        }
 
         /* if maximum number of iterations is reached, the whole rectangle
         can be assumed part of M. This is of course best case behavior
@@ -691,56 +719,72 @@ scan:
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/state.tzr1;
         if (FABS(1.0 - state.l1) > twidth)
+        {
             break;
+        }
 
         state.l2 = GET_IMAG(state.cr1, state.ci1);
         state.l2 = (state.tzi1 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/state.tzi1;
         if (FABS(1.0 - state.l2) > twidth)
+        {
             break;
+        }
 
         state.l1 = GET_REAL(state.cr2, state.ci1);
         state.l1 = (state.tzr2 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/state.tzr2;
         if (FABS(1.0 - state.l1) > twidth)
+        {
             break;
+        }
 
         state.l2 = GET_IMAG(state.cr2, state.ci1);
         state.l2 = (state.tzi2 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/state.tzi2;
         if (FABS(1.0 - state.l2) > twidth)
+        {
             break;
+        }
 
         state.l1 = GET_REAL(state.cr1, state.ci2);
         state.l1 = (state.tzr3 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/state.tzr3;
         if (FABS(1.0 - state.l1) > twidth)
+        {
             break;
+        }
 
         state.l2 = GET_IMAG(state.cr1, state.ci2);
         state.l2 = (state.tzi3 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/state.tzi3;
         if (FABS(1.0 - state.l2) > twidth)
+        {
             break;
+        }
 
         state.l1 = GET_REAL(state.cr2, state.ci2);
         state.l1 = (state.tzr4 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/state.tzr4;
         if (FABS(1.0 - state.l1) > twidth)
+        {
             break;
+        }
 
         state.l2 = GET_IMAG(state.cr2, state.ci2);
         state.l2 = (state.tzi4 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/state.tzi4;
         if (FABS(1.0 - state.l2) > twidth)
+        {
             break;
+        }
     }
 
     iter--;
