@@ -109,11 +109,17 @@ LDBL getnumber(char const **str)
     numstr[i] = 0;
     LDBL ret = atof(numstr);
     if (ret <= 0.0) // this is a sanity check
+    {
         return 0;
+    }
     if (root)
+    {
         ret = sqrtl(ret);
+    }
     if (inverse)
+    {
         ret = 1.0/ret;
+    }
     return ret;
 }
 
@@ -127,12 +133,16 @@ bool readLSystemFile(char const *str)
     FILE *infile;
 
     if (find_file_item(LFileName, str, &infile, 2))
+    {
         return true;
+    }
     {
         int c;
         while ((c = fgetc(infile)) != '{')
             if (c == EOF)
+            {
                 return true;
+            }
     }
 
     maxangle = 0;
@@ -145,7 +155,9 @@ bool readLSystemFile(char const *str)
         linenum++;
         char *word = strchr(inline1, ';');
         if (word != nullptr) // strip comment
+        {
             *word = 0;
+        }
         strlwr(inline1);
 
         if ((int)strspn(inline1, " \t\n") < (int)strlen(inline1)) // not a blank line
@@ -168,7 +180,9 @@ bool readLSystemFile(char const *str)
                 check = true;
             }
             else if (!strcmp(word, "}"))
+            {
                 break;
+            }
             else if (!word[1])
             {
                 bool memerr = false;
@@ -187,7 +201,9 @@ bool readLSystemFile(char const *str)
                 {
                     strcpy(fixed, word);
                     if (temp)
+                    {
                         strcat(fixed, temp);
+                    }
                     memerr = save_rule(fixed, rulind++);
                 }
                 else if (temp)
@@ -249,15 +265,21 @@ int Lsystem()
     bool stackoflow = false;
 
     if (!loaded && LLoad())
+    {
         return -1;
+    }
 
     overflow = false;           // reset integer math overflow flag
 
     order = (int)param[0];
     if (order <= 0)
+    {
         order = 0;
+    }
     if (usr_floatflag)
+    {
         overflow = true;
+    }
     else
     {
         lsys_turtlestatei ts;
@@ -291,7 +313,9 @@ int Lsystem()
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
             ts.curcolor = 15;
             if (ts.curcolor > colors)
+            {
                 ts.curcolor = (char)(colors-1);
+            }
             drawLSysI(rule_cmds[0], &ts, &rule_cmds[1], order);
         }
         stackoflow = ts.stackoflow;
@@ -336,7 +360,9 @@ int Lsystem()
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
             ts.curcolor = 15;
             if (ts.curcolor > colors)
+            {
                 ts.curcolor = (char)(colors-1);
+            }
             drawLSysF(rulef_cmds[0], &ts, &rulef_cmds[1], order);
         }
         overflow = false;
@@ -350,7 +376,8 @@ int Lsystem()
 bool LLoad()
 {
     if (readLSystemFile(LName.c_str()))
-    { // error occurred
+    {
+        // error occurred
         free_rules_mem();
         loaded = false;
         return true;
@@ -454,14 +481,20 @@ void lsysi_doplus(lsys_turtlestatei *cmd)
     if (cmd->reverse)
     {
         if (++cmd->angle == cmd->maxangle)
+        {
             cmd->angle = 0;
+        }
     }
     else
     {
         if (cmd->angle)
+        {
             cmd->angle--;
+        }
         else
+        {
             cmd->angle = cmd->dmaxangle;
+        }
     }
 }
 
@@ -485,14 +518,20 @@ void lsysi_dominus(lsys_turtlestatei *cmd)
     if (cmd->reverse)
     {
         if (cmd->angle)
+        {
             cmd->angle--;
+        }
         else
+        {
             cmd->angle = cmd->dmaxangle;
+        }
     }
     else
     {
         if (++cmd->angle == cmd->maxangle)
+        {
             cmd->angle = 0;
+        }
     }
 }
 
@@ -513,17 +552,25 @@ void lsysi_dominus_pow2(lsys_turtlestatei *cmd)
 void lsysi_doslash(lsys_turtlestatei *cmd)
 {
     if (cmd->reverse)
+    {
         cmd->realangle -= cmd->num;
+    }
     else
+    {
         cmd->realangle += cmd->num;
+    }
 }
 
 void lsysi_dobslash(lsys_turtlestatei *cmd)
 {
     if (cmd->reverse)
+    {
         cmd->realangle += cmd->num;
+    }
     else
+    {
         cmd->realangle -= cmd->num;
+    }
 }
 
 void lsysi_doat(lsys_turtlestatei *cmd)
@@ -564,13 +611,21 @@ void lsysi_dosizedm(lsys_turtlestatei *cmd)
     // xpos+=size*aspect*cos(realangle*PI/180);
     // ypos+=size*sin(realangle*PI/180);
     if (cmd->xpos > cmd->xmax)
+    {
         cmd->xmax = cmd->xpos;
+    }
     if (cmd->ypos > cmd->ymax)
+    {
         cmd->ymax = cmd->ypos;
+    }
     if (cmd->xpos < cmd->xmin)
+    {
         cmd->xmin = cmd->xpos;
+    }
     if (cmd->ypos < cmd->ymin)
+    {
         cmd->ymin = cmd->ypos;
+    }
 }
 
 void lsysi_dosizegf(lsys_turtlestatei *cmd)
@@ -580,13 +635,21 @@ void lsysi_dosizegf(lsys_turtlestatei *cmd)
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
     if (cmd->xpos > cmd->xmax)
+    {
         cmd->xmax = cmd->xpos;
+    }
     if (cmd->ypos > cmd->ymax)
+    {
         cmd->ymax = cmd->ypos;
+    }
     if (cmd->xpos < cmd->xmin)
+    {
         cmd->xmin = cmd->xpos;
+    }
     if (cmd->ypos < cmd->ymin)
+    {
         cmd->ymin = cmd->ypos;
+    }
 }
 
 void lsysi_dodrawd(lsys_turtlestatei *cmd)
@@ -654,7 +717,9 @@ void lsysi_dodrawgt(lsys_turtlestatei *cmd)
     cmd->curcolor = (char)(cmd->curcolor - (char)cmd->num);
     cmd->curcolor %= colors;
     if (cmd->curcolor == 0)
+    {
         cmd->curcolor = (char)(colors-1);
+    }
 }
 
 void lsysi_dodrawlt(lsys_turtlestatei *cmd)
@@ -662,13 +727,17 @@ void lsysi_dodrawlt(lsys_turtlestatei *cmd)
     cmd->curcolor = (char)(cmd->curcolor + (char)cmd->num);
     cmd->curcolor %= colors;
     if (cmd->curcolor == 0)
+    {
         cmd->curcolor = 1;
+    }
 }
 
 lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
 {
     if (overflow)     // integer math routines overflowed
+    {
         return nullptr;
+    }
 
     if (stackavail() < 400)
     {
@@ -696,7 +765,9 @@ lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, i
                 {
                     tran = true;
                     if (findsize((*rulind)+1, ts, rules, depth-1) == nullptr)
+                    {
                         return (nullptr);
+                    }
                 }
         }
         if (depth == 0 || !tran)
@@ -716,7 +787,9 @@ lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, i
                 long const savey = ts->ypos;
                 command = findsize(command+1, ts, rules, depth);
                 if (command == nullptr)
+                {
                     return (nullptr);
+                }
                 ts->angle = saveang;
                 ts->reverse = saverev;
                 ts->size = savesize;
@@ -758,27 +831,45 @@ bool lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules,
     ymin = (double) ts->ymin / FIXEDMUL;
     ymax = (double) ts->ymax / FIXEDMUL;
     if (fsret == nullptr)
+    {
         return false;
+    }
     if (xmax == xmin)
+    {
         horiz = (float)1E37;
+    }
     else
+    {
         horiz = (float)((xdots-10)/(xmax-xmin));
+    }
     if (ymax == ymin)
+    {
         vert = (float)1E37;
+    }
     else
+    {
         vert = (float)((ydots-6) /(ymax-ymin));
+    }
     locsize = (vert < horiz) ? vert : horiz;
 
     if (horiz == 1E37)
+    {
         ts->xpos = FIXEDPT(xdots/2);
+    }
     else
         //    ts->xpos = FIXEDPT(-xmin*(locsize)+5+((xdots-10)-(locsize)*(xmax-xmin))/2);
+    {
         ts->xpos = FIXEDPT((xdots-locsize*(xmax+xmin))/2);
+    }
     if (vert == 1E37)
+    {
         ts->ypos = FIXEDPT(ydots/2);
+    }
     else
         //    ts->ypos = FIXEDPT(-ymin*(locsize)+3+((ydots-6)-(locsize)*(ymax-ymin))/2);
+    {
         ts->ypos = FIXEDPT((ydots-locsize*(ymax+ymin))/2);
+    }
     ts->size = FIXEDPT(locsize);
 
     return true;
@@ -789,10 +880,13 @@ lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, 
     bool tran;
 
     if (overflow)     // integer math routines overflowed
+    {
         return nullptr;
+    }
 
     if (stackavail() < 400)
-    { // leave some margin for calling subrtns
+    {
+        // leave some margin for calling subrtns
         ts->stackoflow = true;
         return nullptr;
     }
@@ -816,7 +910,9 @@ lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, 
                 {
                     tran = true;
                     if (drawLSysI((*rulind)+1, ts, rules, depth-1) == nullptr)
+                    {
                         return nullptr;
+                    }
                 }
         }
         if (!depth || !tran)
@@ -837,7 +933,9 @@ lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, 
                 char const savecolor = ts->curcolor;
                 command = drawLSysI(command+1, ts, rules, depth);
                 if (command == nullptr)
+                {
                     return (nullptr);
+                }
                 ts->angle = saveang;
                 ts->reverse = saverev;
                 ts->size = savesize;
