@@ -219,7 +219,8 @@ enum debug_flags
 
 struct Driver;
 struct VIDEOINFO
-{                           // All we need to know about a Video Adapter
+{
+    // All we need to know about a Video Adapter
     char    name[26];       // Adapter name (IBM EGA, etc)
     char    comment[26];    // Comments (UNTESTED, etc)
     int     keynum;         // key number used to invoked this mode
