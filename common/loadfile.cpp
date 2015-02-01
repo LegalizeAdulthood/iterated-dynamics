@@ -24,12 +24,12 @@
 // routines in this module
 
 static int  find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
-                             ext_blk_2 *blk_2_info,
-                             ext_blk_3 *blk_3_info,
-                             ext_blk_4 *blk_4_info,
-                             ext_blk_5 *blk_5_info,
-                             ext_blk_6 *blk_6_info,
-                             ext_blk_7 *blk_7_info);
+                              ext_blk_2 *blk_2_info,
+                              ext_blk_3 *blk_3_info,
+                              ext_blk_4 *blk_4_info,
+                              ext_blk_5 *blk_5_info,
+                              ext_blk_6 *blk_6_info,
+                              ext_blk_7 *blk_7_info);
 static void load_ext_blk(char *loadptr, int loadlen);
 static void skip_ext_blk(int *, int *);
 static void backwardscompat(FRACTAL_INFO *info);
@@ -321,7 +321,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     }
 
     if (read_info.version > 9)
-    {   // post-version 18.22
+    {
+        // post-version 18.22
         bailout     = read_info.bailout; // use long bailout
         bailoutest = static_cast<bailouts>(read_info.bailoutest);
     }
@@ -624,7 +625,7 @@ inline void freader(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
     if (fread(ptr, size, nmemb, stream) != nmemb)
     {
-       throw std::system_error(errno, std::system_category(), "failed fread");
+        throw std::system_error(errno, std::system_category(), "failed fread");
     }
 }
 
@@ -656,10 +657,13 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
 
     fp = fopen(gif_file, "rb");
     if (fp == nullptr)
+    {
         return (-1);
+    }
     freader(gifstart, 13, 1, fp);
     if (strncmp((char *)gifstart, "GIF", 3) != 0)
-    { // not GIF, maybe old .tga?
+    {
+        // not GIF, maybe old .tga?
         fclose(fp);
         return (-1);
     }
@@ -675,10 +679,14 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                                   * (double)fileydots / (double)filexdots);
         if (fileaspectratio > screenaspect-0.03
                 && fileaspectratio < screenaspect+0.03)
+        {
             fileaspectratio = screenaspect;
+        }
     }
     else if (fileydots * 4 == filexdots * 3) // assume the common square pixels
+    {
         fileaspectratio = screenaspect;
+    }
 
     if (make_parameter_file && (gifstart[10] & 0x80) != 0)
     {
@@ -689,11 +697,15 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
             {
                 k = getc(fp);
                 if (k < 0)
+                {
                     break;
+                }
                 g_dac_box[i][j] = (BYTE)(k >> 2);
             }
             if (k < 0)
+            {
                 break;
+            }
         }
     }
 
@@ -744,13 +756,15 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
         hdr_offset = 0;
         offset = 80; // don't even check last 80 bytes of file for id
         while (offset < fractinf_len+513)
-        { // allow 512 garbage at eof
+        {
+            // allow 512 garbage at eof
             offset += 100; // go back 100 bytes at a time
             fseek(fp, (long)(0-offset), SEEK_END);
             freader(tmpbuf, 1, 110, fp); // read 10 extra for string compare
             for (int i = 0; i < 100; ++i)
                 if (!strcmp(INFO_ID, &tmpbuf[i]))
-                { // found header?
+                {
+                    // found header?
                     strcpy(info->info_id, INFO_ID);
                     fseek(fp, (long)(hdr_offset = i-offset), SEEK_END);
                     /* TODO: revise this to read members one at a time so we get natural alignment
@@ -766,7 +780,8 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
     }
 
     if (hdr_offset)
-    { // we found INFO_ID
+    {
+        // we found INFO_ID
 
         if (info->version >= 4)
         {
@@ -781,13 +796,16 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                 if (fgetc(fp) != '!' // if not what we expect just give up
                         || fread(temp1, 1, 13, fp) != 13
                         || strncmp(&temp1[2], "fractint", 8))
+                {
                     break;
+                }
                 temp1[13] = 0;
                 switch (atoi(&temp1[10]))   // e.g. "fractint002"
                 {
                 case 1: // "fractint001", the main extension block
                     if (scan_extend == 2)
-                    { // we've been here before, done now
+                    {
+                        // we've been here before, done now
                         scan_extend = 0;
                         break;
                     }
@@ -817,7 +835,8 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     blk_3_info->length = data_len;
                     blk_3_info->got_data = true;
                     if (data_len < sizeof(fload_info))
-                    { // must be old GIF
+                    {
+                        // must be old GIF
                         blk_3_info->uses_p1 = 1;
                         blk_3_info->uses_p2 = 1;
                         blk_3_info->uses_p3 = 1;
@@ -891,7 +910,9 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     blk_6_info->max_random_mutation = eload_info.max_random_mutation;
                     blk_6_info->ecount          = eload_info.ecount;
                     for (int i = 0; i < NUMGENES; i++)
+                    {
                         blk_6_info->mutate[i]    = eload_info.mutate[i];
+                    }
                     break;
                 case 7: // orbits parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
@@ -958,9 +979,13 @@ static void load_ext_blk(char *loadptr, int loadlen)
         while (--len >= 0)
         {
             if (--loadlen >= 0)
+            {
                 *(loadptr++) = (char)fgetc(fp);
+            }
             else
-                fgetc(fp); // discard excess characters
+            {
+                fgetc(fp);    // discard excess characters
+            }
         }
     }
 }
@@ -1140,13 +1165,19 @@ void set_function_parm_defaults()
 void backwards_v18()
 {
     if (!new_bifurcation_functions_loaded)
-        set_if_old_bif(); // old bifs need function set
+    {
+        set_if_old_bif();    // old bifs need function set
+    }
     if (fractype == fractal_type::MANDELTRIG && usr_floatflag
             && save_release < 1800 && bailout == 0)
+    {
         bailout = 2500;
+    }
     if (fractype == fractal_type::LAMBDATRIG && usr_floatflag
             && save_release < 1800 && bailout == 0)
+    {
         bailout = 2500;
+    }
 }
 
 void backwards_v19()
@@ -1154,16 +1185,24 @@ void backwards_v19()
     if (fractype == fractal_type::MARKSJULIA && save_release < 1825)
     {
         if (param[2] == 0)
+        {
             param[2] = 2;
+        }
         else
+        {
             param[2] += 1;
+        }
     }
     if (fractype == fractal_type::MARKSJULIAFP && save_release < 1825)
     {
         if (param[2] == 0)
+        {
             param[2] = 2;
+        }
         else
+        {
             param[2] += 1;
+        }
     }
     if ((fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) && save_release < 1824)
     {
@@ -1173,36 +1212,61 @@ void backwards_v19()
         inversion[0] = inversion[1];
     }
     if (fix_bof())
-        no_mag_calc = true; // fractal has old bof60/61 problem with magnitude
+    {
+        no_mag_calc = true;    // fractal has old bof60/61 problem with magnitude
+    }
     else
+    {
         no_mag_calc = false;
+    }
     if (fix_period_bof())
-        use_old_period = true; // fractal uses old periodicity method
+    {
+        use_old_period = true;    // fractal uses old periodicity method
+    }
     else
+    {
         use_old_period = false;
+    }
     if (save_release < 1827 && distest)
-        use_old_distest = true;         // use old distest code
+    {
+        use_old_distest = true;    // use old distest code
+    }
     else
-        use_old_distest = false;        // use new distest code
+    {
+        use_old_distest = false;    // use new distest code
+    }
 }
 
 void backwards_v20()
-{   // Fractype == FP type is not seen from PAR file ?????
+{
+    // Fractype == FP type is not seen from PAR file ?????
     if ((fractype == fractal_type::MANDELFP || fractype == fractal_type::JULIAFP ||
             fractype == fractal_type::MANDEL || fractype == fractal_type::JULIA) &&
             (outside <= REAL && outside >= SUM) && save_release <= 1960)
+    {
         bad_outside = true;
+    }
     else
+    {
         bad_outside = false;
+    }
     if ((fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&
             (save_release < 1900 || debugflag == debug_flags::force_ld_check))
+    {
         ldcheck = true;
+    }
     else
+    {
         ldcheck = false;
+    }
     if (inside == EPSCROSS && save_release < 1961)
+    {
         closeprox = 0.01;
+    }
     if (!new_bifurcation_functions_loaded)
+    {
         set_function_parm_defaults();
+    }
 }
 
 bool check_back()
@@ -1235,7 +1299,9 @@ bool check_back()
              (neworbittype == fractal_type::QUATFP || neworbittype == fractal_type::HYPERCMPLXFP) &&
              save_release <= 2002)
        )
+    {
         ret = true;
+    }
     return ret;
 }
 
@@ -1246,7 +1312,9 @@ static bool fix_bof()
         if ((curfractalspecific->calctype == StandardFractal &&
                 (curfractalspecific->flags & BAILTEST) == 0) ||
                 (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA))
+        {
             ret = true;
+        }
     return ret;
 }
 
@@ -1254,7 +1322,9 @@ static bool fix_period_bof()
 {
     bool ret = false;
     if (inside <= BOF60 && inside >= BOF61 && save_release < 1826)
+    {
         ret = true;
+    }
     return ret;
 }
 
@@ -1263,7 +1333,8 @@ static bool fix_period_bof()
 #define MAX_WINDOWS_OPEN 450
 
 struct window
-{                       // for fgetwindow on screen browser
+{
+    // for fgetwindow on screen browser
     coords itl;  // screen coordinates
     coords ibl;
     coords itr;
@@ -1434,7 +1505,8 @@ rescan:  // entry for changed browse parms
         texttempmsg("Sorry...not enough memory to browse.");// doesn't work if NO memory available, go figure
     }
     if (wincount >= MAX_WINDOWS_OPEN)
-    {   // hard code message at MAX_WINDOWS_OPEN = 450
+    {
+        // hard code message at MAX_WINDOWS_OPEN = 450
         texttempmsg("Sorry...no more space, 450 displayed.");
     }
     if (vid_too_big == 2)
@@ -1467,16 +1539,22 @@ rescan:  // entry for changed browse parms
                     toggle = 1- toggle;
                 }
                 if (toggle)
-                    drawindow(g_color_bright, &winlist);   // flash current window
+                {
+                    drawindow(g_color_bright, &winlist);    // flash current window
+                }
                 else
+                {
                     drawindow(g_color_dark, &winlist);
+                }
 #ifdef XFRACT
                 blinks++;
 #endif
             }
 #ifdef XFRACT
             if ((blinks & 1) == 1)   // Need an odd # of blinks, so next one leaves box turned off
+            {
                 drawindow(g_color_bright, &winlist);
+            }
 #endif
 
             c = driver_get_key();
@@ -1492,13 +1570,17 @@ rescan:  // entry for changed browse parms
                 {
                     index++;                     // shift attention to next window
                     if (index >= wincount)
+                    {
                         index = 0;
+                    }
                 }
                 else
                 {
                     index -- ;
                     if (index < 0)
+                    {
                         index = wincount -1 ;
+                    }
                 }
                 winlist = browse_windows[index];
                 restore_box(num_dots, index);
@@ -1553,7 +1635,9 @@ rescan:  // entry for changed browse parms
                 {
                     texttempmsg("ARE YOU SURE???? (Y/N)");
                     if (driver_get_key() != 'Y')
+                    {
                         c = 'N';
+                    }
                 }
                 if (c == 'Y')
                 {
@@ -1675,7 +1759,9 @@ rescan:  // entry for changed browse parms
     browse_box_values.clear();
     restore_stack(saved);
     if (oldbf_math == bf_math_type::NONE)
+    {
         free_bf_vars();
+    }
     bf_math = oldbf_math;
     floatflag = usr_floatflag;
 
@@ -1716,11 +1802,14 @@ static void drawindow(int colour, window const *info)
         dispbox();
     }
     else
-    { // draw crosshairs
+    {
+        // draw crosshairs
 #ifndef XFRACT
         int cross_size = ydots / 45;
         if (cross_size < 2)
+        {
             cross_size = 2;
+        }
         itr.x = info->itl.x - cross_size;
         itr.y = info->itl.y;
         ibl.y = info->itl.y - cross_size;
@@ -1931,7 +2020,9 @@ bool is_visible_window(
     list->win_size = tmp_sqrt; // used for box vs crosshair in drawindow()
     // reject anything too small or too big on screen
     if ((tmp_sqrt < smallest_window_display_size) || (tmp_sqrt > toobig))
+    {
         cant_see = true;
+    }
 
     // restore original values
     bflength      = orig_bflength;
@@ -1943,22 +2034,36 @@ bool is_visible_window(
 
     restore_stack(saved);
     if (cant_see) // do it this way so bignum stack is released
+    {
         return false;
+    }
 
     // now see how many corners are on the screen, accept if one or more
     if (tl.x >= (0-sxoffs) && tl.x <= (sxdots-sxoffs) && tl.y >= (0-syoffs) && tl.y <= (sydots-syoffs))
+    {
         cornercount++;
+    }
     if (bl.x >= (0-sxoffs) && bl.x <= (sxdots-sxoffs) && bl.y >= (0-syoffs) && bl.y <= (sydots-syoffs))
+    {
         cornercount++;
+    }
     if (tr.x >= (0-sxoffs) && tr.x <= (sxdots-sxoffs) && tr.y >= (0-syoffs) && tr.y <= (sydots-syoffs))
+    {
         cornercount++;
+    }
     if (br.x >= (0-sxoffs) && br.x <= (sxdots-sxoffs) && br.y >= (0-syoffs) && br.y <= (sydots-syoffs))
+    {
         cornercount++;
+    }
 
     if (cornercount >= 1)
+    {
         return true;
+    }
     else
+    {
         return false;
+    }
 }
 
 bool paramsOK(FRACTAL_INFO const *info)
@@ -2010,9 +2115,13 @@ bool paramsOK(FRACTAL_INFO const *info)
             fabs(tmpparm9 - param[8]) < MINDIF &&
             fabs(tmpparm10 - param[9]) < MINDIF &&
             info->invert[0] - inversion[0] < MINDIF)
-        return true; // parameters are in range
+    {
+        return true;    // parameters are in range
+    }
     else
+    {
         return false;
+    }
 }
 
 bool functionOK(FRACTAL_INFO const *info, int numfn)
@@ -2021,12 +2130,18 @@ bool functionOK(FRACTAL_INFO const *info, int numfn)
     for (int i = 0; i < numfn; i++)
     {
         if (static_cast<trig_fn>(info->trigndx[i]) != trigndx[i])
+        {
             mzmatch++;
+        }
     }
     if (mzmatch > 0)
+    {
         return false;
+    }
     else
-        return true; // they all match
+    {
+        return true;    // they all match
+    }
 }
 
 bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
@@ -2039,24 +2154,36 @@ bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
         {
             numfn = maxfn;
             if (numfn > 0)
+            {
                 return functionOK(info, numfn);
+            }
             else
-                return true; // match up formula names with no functions
+            {
+                return true;    // match up formula names with no functions
+            }
         }
         else
-            return false; // two formulas but names don't match
+        {
+            return false;    // two formulas but names don't match
+        }
     }
     else if (info->fractal_type == static_cast<int>(fractype) ||
              info->fractal_type == static_cast<int>(curfractalspecific->tofloat))
     {
         numfn = (curfractalspecific->flags >> 6) & 7;
         if (numfn > 0)
+        {
             return functionOK(info, numfn);
+        }
         else
-            return true; // match types with no functions
+        {
+            return true;    // match types with no functions
+        }
     }
     else
-        return false; // no match
+    {
+        return false;    // no match
+    }
 }
 
 void check_history(char const *oldname, char const *newname)
@@ -2070,7 +2197,9 @@ void check_history(char const *oldname, char const *newname)
     for (int i = 0; i < name_stack_ptr; i++)
     {
         if (stricmp(file_name_stack[i].c_str(), oldname) == 0) // we have a match
+        {
             file_name_stack[i] = newname;    // insert the new name
+        }
     }
 }
 
