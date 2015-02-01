@@ -119,7 +119,8 @@ void copy_genes_to_bank(GENEBASE const gene[NUMGENES])
 void initgene()
 {
     //                        Use only 15 letters below: 123456789012345
-    GENEBASE gene[NUMGENES] = {
+    GENEBASE gene[NUMGENES] =
+    {
         { &param[0], varydbl, variations::RANDOM,       "Param 1 real", 1 },
         { &param[1], varydbl, variations::RANDOM,       "Param 1 imag", 1 },
         { &param[2], varydbl, variations::NONE,         "Param 2 real", 1 },
@@ -297,16 +298,22 @@ int wrapped_positive_varyint(int randvalue, int limit, variations mode)
     int i;
     i = varyint(randvalue, limit, mode);
     if (i < 0)
+    {
         return (limit + i);
+    }
     else
+    {
         return (i);
+    }
 }
 
 void varyinside(GENEBASE gene[], int randval, int i)
 {
     int choices[9] = { ZMAG, BOF60, BOF61, EPSCROSS, STARTRAIL, PERIOD, FMODI, ATANI, ITER };
     if (gene[i].mutate != variations::NONE)
+    {
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
+    }
     return;
 }
 
@@ -314,7 +321,9 @@ void varyoutside(GENEBASE gene[], int randval, int i)
 {
     int choices[8] = { ITER, REAL, IMAG, MULT, SUM, ATAN, FMOD, TDIS };
     if (gene[i].mutate != variations::NONE)
+    {
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 8, gene[i].mutate)];
+    }
     return;
 }
 
@@ -343,7 +352,9 @@ void varypwr2(GENEBASE gene[], int randval, int i)
 {
     int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
     if (gene[i].mutate != variations::NONE)
+    {
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
+    }
     return;
 }
 
@@ -361,7 +372,9 @@ void varytrig(GENEBASE gene[], int randval, int i)
 void varyinv(GENEBASE gene[], int randval, int i)
 {
     if (gene[i].mutate != variations::NONE)
+    {
         varydbl(gene, randval, i);
+    }
     invert = (inversion[0] == 0.0) ? 0 : 3 ;
 }
 
@@ -438,15 +451,21 @@ choose_vars_restart:
     {
     case FIK_F2: // set all off
         for (int num = MAXPARAMS; num < NUMGENES; num++)
+        {
             gene[num].mutate = variations::NONE;
+        }
         goto choose_vars_restart;
     case FIK_F3: // set all on..alternate x and y for field map
         for (int num = MAXPARAMS; num < NUMGENES; num ++)
+        {
             gene[num].mutate = static_cast<variations>((num % 2) + 1);
+        }
         goto choose_vars_restart;
     case FIK_F4: // Randomize all
         for (int num = MAXPARAMS; num < NUMGENES; num ++)
+        {
             gene[num].mutate = static_cast<variations>(rand() % static_cast<int>(variations::NUM));
+        }
         goto choose_vars_restart;
     case -1:
         return (-1);
@@ -457,14 +476,20 @@ choose_vars_restart:
     // read out values
     k = -1;
     for (int num = MAXPARAMS; num < (NUMGENES - 5); num++)
+    {
         gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
+    }
 
     for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
+    {
         gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
+    }
 
     if (curfractalspecific->calctype == StandardFractal &&
             (curfractalspecific->flags & BAILTEST))
+    {
         gene[NUMGENES - 1].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
+    }
 
     copy_genes_to_bank(gene);
     return (1); // if you were here, you want to regenerate
@@ -486,26 +511,46 @@ int get_variations()
     if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
         if (uses_p1)  // set first parameter
+        {
             firstparm = 0;
+        }
         else if (uses_p2)
+        {
             firstparm = 2;
+        }
         else if (uses_p3)
+        {
             firstparm = 4;
+        }
         else if (uses_p4)
+        {
             firstparm = 6;
+        }
         else
-            firstparm = 8; // uses_p5 or no parameter
+        {
+            firstparm = 8;    // uses_p5 or no parameter
+        }
 
         if (uses_p5) // set last parameter
+        {
             lastparm = 10;
+        }
         else if (uses_p4)
+        {
             lastparm = 8;
+        }
         else if (uses_p3)
+        {
             lastparm = 6;
+        }
         else if (uses_p2)
+        {
             lastparm = 4;
+        }
         else
-            lastparm = 2; // uses_p1 or no parameter
+        {
+            lastparm = 2;    // uses_p1 or no parameter
+        }
     }
 
     numparams = 0;
@@ -515,14 +560,18 @@ int get_variations()
         {
             if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
                 if (paramnotused(i))
+                {
                     continue;
+                }
             break;
         }
         numparams++;
     }
 
     if (fractype != fractal_type::FORMULA && fractype != fractal_type::FFORMULA)
+    {
         lastparm = numparams;
+    }
 
 choose_vars_restart:
 
@@ -531,7 +580,9 @@ choose_vars_restart:
     {
         if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
             if (paramnotused(num))
+            {
                 continue;
+            }
         choices[++k] = gene[num].name;
         uvalues[k].type = 'l';
         uvalues[k].uval.ch.vlen = 7;
@@ -557,15 +608,21 @@ choose_vars_restart:
     {
     case FIK_F2: // set all off
         for (int num = 0; num < MAXPARAMS; num++)
+        {
             gene[num].mutate = variations::NONE;
+        }
         goto choose_vars_restart;
     case FIK_F3: // set all on..alternate x and y for field map
         for (int num = 0; num < MAXPARAMS; num ++)
+        {
             gene[num].mutate = static_cast<variations>((num % 2) + 1);
+        }
         goto choose_vars_restart;
     case FIK_F4: // Randomize all
         for (int num =0; num < MAXPARAMS; num ++)
+        {
             gene[num].mutate = static_cast<variations>(rand() % static_cast<int>(variations::NUM));
+        }
         goto choose_vars_restart;
     case FIK_F6: // go to second screen, put array away first
         copy_genes_to_bank(gene);
@@ -584,7 +641,9 @@ choose_vars_restart:
     {
         if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
             if (paramnotused(num))
+            {
                 continue;
+            }
         gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
     }
 
@@ -599,9 +658,13 @@ void set_mutation_level(int strength)
     for (auto &elem : gene_bank)
     {
         if (elem.level <= strength)
+        {
             elem.mutate = variations::RANDOM;
+        }
         else
+        {
             elem.mutate = variations::NONE;
+        }
     }
 }
 
@@ -648,7 +711,8 @@ get_evol_restart:
     uvalues[k].uval.ival = evolve_image_grid_size;
 
     if (explore_check())
-    {  // test to see if any parms are set to linear
+    {
+        // test to see if any parms are set to linear
         // variation 'explore mode'
         choices[++k] = "Show parameter zoom box?";
         uvalues[k].type = 'y';
@@ -758,24 +822,34 @@ get_evol_restart:
     viewwindow = evolving != 0;
 
     if (!evolving && i != FIK_F6)  // don't need any of the other parameters
-        return (1);             // the following code can set evolving even if it's off
+    {
+        return (1);    // the following code can set evolving even if it's off
+    }
 
     evolve_image_grid_size = uvalues[++k].uval.ival;
     tmp = sxdots / (MINPIXELS << 1);
     // (sxdots / 20), max # of subimages @ 20 pixels per subimage
     // EVOLVE_MAX_GRID_SIZE == 1024 / 20 == 51
     if (evolve_image_grid_size > EVOLVE_MAX_GRID_SIZE)
+    {
         evolve_image_grid_size = EVOLVE_MAX_GRID_SIZE;
+    }
     if (evolve_image_grid_size > tmp)
+    {
         evolve_image_grid_size = tmp;
+    }
     if (evolve_image_grid_size < 3)
+    {
         evolve_image_grid_size = 3;
+    }
     evolve_image_grid_size |= 1; // make sure evolve_image_grid_size is odd
     if (explore_check())
     {
         tmp = (PARMBOX * uvalues[++k].uval.ch.val);
         if (evolving)
+        {
             evolving += tmp;
+        }
         evolve_x_parameter_range = uvalues[++k].uval.dval;
         evolve_x_parameter_offset = uvalues[++k].uval.dval;
         evolve_new_x_parameter_offset = evolve_x_parameter_offset;
@@ -789,7 +863,9 @@ get_evol_restart:
     evolve_mutation_reduction_factor = uvalues[++k].uval.dval;
 
     if (!(uvalues[++k].uval.ch.val))
+    {
         evolving = evolving + NOGROUT;
+    }
 
     viewxdots = (sxdots / evolve_image_grid_size)-2;
     viewydots = (sydots / evolve_image_grid_size)-2;
@@ -806,13 +882,19 @@ get_evol_restart:
             || (evolve_x_parameter_offset != old_x_parameter_offset) || (evolve_y_parameter_range != old_y_parameter_range)
             || (evolve_y_parameter_offset != old_y_parameter_offset)  || (evolve_max_random_mutation != old_max_random_mutation)
             || (old_variations > 0))
+    {
         i = 1;
+    }
 
     if (evolving && !old_evolving)
-        param_history(0); // save old history
+    {
+        param_history(0);    // save old history
+    }
 
     if (!evolving && (evolving == old_evolving))
+    {
         i = 0;
+    }
 
     if (j == FIK_F6)
     {
@@ -884,12 +966,16 @@ void fiddleparms(GENEBASE gene[], int ecount)
      to vary them, aren't pointers marvellous! */
 
     if ((px == evolve_image_grid_size / 2) && (py == evolve_image_grid_size / 2)) // return if middle image
+    {
         return;
+    }
 
     set_random(ecount);   // generate the right number of pseudo randoms
 
     for (int i = 0; i < NUMGENES; i++)
+    {
         (*(gene[i].varyfunc))(gene, rand(), i);
+    }
 
 }
 
@@ -902,7 +988,9 @@ static void set_random(int ecount)
     srand(evolve_this_generation_random_seed);
     for (int index = 0; index < ecount; index++)
         for (int i = 0; i < NUMGENES; i++)
+        {
             rand();
+        }
 }
 
 static bool explore_check()
@@ -912,7 +1000,9 @@ static bool explore_check()
     // needed
     for (auto &elem : gene_bank)
         if ((elem.mutate != variations::NONE) && (elem.mutate < variations::RANDOM))
+        {
             return true;
+        }
     return false;
 }
 
@@ -923,7 +1013,9 @@ void drawparmbox(int mode)
     coords tl, tr, bl, br;
     int grout;
     if (!(evolving & PARMBOX))
-        return; // don't draw if not asked to!
+    {
+        return;    // don't draw if not asked to!
+    }
     grout = !((evolving & NOGROUT)/NOGROUT) ;
     image_box_count = boxcount;
     if (boxcount)
@@ -1023,7 +1115,8 @@ void spiralmap(int count)
     i = 0;
     mid = evolve_image_grid_size / 2;
     if (count == 0)
-    { // start in the middle
+    {
+        // start in the middle
         py = mid;
         px = py;
         return;
@@ -1036,28 +1129,36 @@ void spiralmap(int count)
         {
             i++;
             if (i == count)
+            {
                 return;
+            }
         }
         // then do the right hand column
         for (; py < mid + offset; py++)
         {
             i++;
             if (i == count)
+            {
                 return;
+            }
         }
         // then reverse along the bottom row
         for (; px > mid - offset; px--)
         {
             i++;
             if (i == count)
+            {
                 return;
+            }
         }
         // then up the left to finish
         for (; py >= mid - offset; py--)
         {
             i++;
             if (i == count)
+            {
                 return;
+            }
         }
     }
 }
