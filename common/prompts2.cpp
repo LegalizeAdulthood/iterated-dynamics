@@ -136,9 +136,13 @@ int get_toggles()
     choices[++k] = "Inside Color (0-# of colors, if Inside=numb)";
     uvalues[k].type = 'i';
     if (inside >= COLOR_BLACK)
+    {
         uvalues[k].uval.ival = inside;
+    }
     else
+    {
         uvalues[k].uval.ival = 0;
+    }
 
     choices[++k] = "Inside (numb,maxit,zmag,bof60,bof61,epscr,star,per,atan,fmod)";
     uvalues[k].type = 'l';
@@ -146,33 +150,57 @@ int get_toggles()
     uvalues[k].uval.ch.llen = sizeof(insidemodes)/sizeof(*insidemodes);
     uvalues[k].uval.ch.list = insidemodes;
     if (inside >= COLOR_BLACK)  // numb
+    {
         uvalues[k].uval.ch.val = 0;
+    }
     else if (inside == ITER)
+    {
         uvalues[k].uval.ch.val = 1;
+    }
     else if (inside == ZMAG)
+    {
         uvalues[k].uval.ch.val = 2;
+    }
     else if (inside == BOF60)
+    {
         uvalues[k].uval.ch.val = 3;
+    }
     else if (inside == BOF61)
+    {
         uvalues[k].uval.ch.val = 4;
+    }
     else if (inside == EPSCROSS)
+    {
         uvalues[k].uval.ch.val = 5;
+    }
     else if (inside == STARTRAIL)
+    {
         uvalues[k].uval.ch.val = 6;
+    }
     else if (inside == PERIOD)
+    {
         uvalues[k].uval.ch.val = 7;
+    }
     else if (inside == ATANI)
+    {
         uvalues[k].uval.ch.val = 8;
+    }
     else if (inside == FMODI)
+    {
         uvalues[k].uval.ch.val = 9;
+    }
     old_inside = inside;
 
     choices[++k] = "Outside Color (0-# of colors, if Outside=numb)";
     uvalues[k].type = 'i';
     if (outside >= COLOR_BLACK)
+    {
         uvalues[k].uval.ival = outside;
+    }
     else
+    {
         uvalues[k].uval.ival = 0;
+    }
 
     choices[++k] = "Outside (numb,iter,real,imag,mult,summ,atan,fmod,tdis)";
     uvalues[k].type = 'l';
@@ -180,9 +208,13 @@ int get_toggles()
     uvalues[k].uval.ch.llen = sizeof(outsidemodes)/sizeof(*outsidemodes);
     uvalues[k].uval.ch.list = outsidemodes;
     if (outside >= COLOR_BLACK)  // numb
+    {
         uvalues[k].uval.ch.val = 0;
+    }
     else
+    {
         uvalues[k].uval.ch.val = -outside;
+    }
     old_outside = outside;
 
     choices[++k] = "Savename (.GIF implied)";
@@ -190,9 +222,13 @@ int get_toggles()
     strcpy(prevsavename, savename.c_str());
     savenameptr = strrchr(savename.c_str(), SLASHC);
     if (savenameptr == nullptr)
+    {
         savenameptr = savename.c_str();
+    }
     else
-        savenameptr++; // point past slash
+    {
+        savenameptr++;    // point past slash
+    }
     strcpy(uvalues[k].uval.sval, savenameptr);
 
     choices[++k] = "File Overwrite ('overwrite=')";
@@ -232,9 +268,13 @@ int get_toggles()
     choices[++k] = "Fill Color (normal,#) (works with passes=t, b and d)";
     uvalues[k].type = 's';
     if (fillcolor < 0)
+    {
         strcpy(uvalues[k].uval.sval, "normal");
+    }
     else
+    {
         sprintf(uvalues[k].uval.sval, "%d", fillcolor);
+    }
     old_fillcolor = fillcolor;
 
     choices[++k] = "Proximity value for inside=epscross and fmod";
@@ -259,16 +299,24 @@ int get_toggles()
     stoppass = (int)calcmodes[uvalues[k].uval.ch.val][1] - (int)'0';
 
     if (stoppass < 0 || stoppass > 6 || usr_stdcalcmode != 'g')
+    {
         stoppass = 0;
+    }
 
     if (usr_stdcalcmode == 'o' && fractype == fractal_type::LYAPUNOV) // Oops,lyapunov type
         // doesn't use 'new' & breaks orbits
+    {
         usr_stdcalcmode = old_usr_stdcalcmode;
+    }
 
     if (old_usr_stdcalcmode != usr_stdcalcmode)
+    {
         j++;
+    }
     if (old_stoppass != stoppass)
+    {
         j++;
+    }
 #ifndef XFRACT
     if ((uvalues[++k].uval.ch.val != 0) != usr_floatflag)
     {
@@ -279,20 +327,31 @@ int get_toggles()
     ++k;
     maxit = uvalues[k].uval.Lval;
     if (maxit < 0)
+    {
         maxit = old_maxit;
+    }
     if (maxit < 2)
+    {
         maxit = 2;
+    }
 
     if (maxit != old_maxit)
+    {
         j++;
+    }
 
     inside = uvalues[++k].uval.ival;
     if (inside < COLOR_BLACK)
+    {
         inside = -inside;
+    }
     if (inside >= colors)
+    {
         inside = (inside % colors) + (inside / colors);
+    }
 
-    {   int tmp;
+    {
+        int tmp;
         tmp = uvalues[++k].uval.ch.val;
         if (tmp > 0)
             switch (tmp)
@@ -327,23 +386,34 @@ int get_toggles()
             }
     }
     if (inside != old_inside)
+    {
         j++;
+    }
 
     outside = uvalues[++k].uval.ival;
     if (outside < COLOR_BLACK)
+    {
         outside = -outside;
+    }
     if (outside >= colors)
+    {
         outside = (outside % colors) + (outside / colors);
+    }
 
-    {   int tmp;
+    {
+        int tmp;
         tmp = uvalues[++k].uval.ch.val;
         if (tmp > 0)
+        {
             outside = -tmp;
+        }
     }
     if (outside != old_outside)
+    {
         j++;
+    }
 
-    savename = std::string{savename.c_str(), savenameptr} + uvalues[++k].uval.sval;
+    savename = std::string {savename.c_str(), savenameptr} + uvalues[++k].uval.sval;
     if (strcmp(savename.c_str(), prevsavename))
     {
         resave_flag = 0;
@@ -353,7 +423,9 @@ int get_toggles()
 
     soundflag = ((soundflag >> 3) << 3) | (uvalues[++k].uval.ch.val);
     if (soundflag != old_soundflag && ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP || (old_soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP))
+    {
         j++;
+    }
 
     LogFlag = uvalues[++k].uval.Lval;
     if (LogFlag != old_logflag)
@@ -364,29 +436,47 @@ int get_toggles()
 
     usr_biomorph = uvalues[++k].uval.ival;
     if (usr_biomorph >= colors)
+    {
         usr_biomorph = (usr_biomorph % colors) + (usr_biomorph / colors);
+    }
     if (usr_biomorph != old_biomorph)
+    {
         j++;
+    }
 
     decomp[0] = uvalues[++k].uval.ival;
     if (decomp[0] != old_decomp)
+    {
         j++;
+    }
 
     if (strncmp(strlwr(uvalues[++k].uval.sval), "normal", 4) == 0)
+    {
         fillcolor = -1;
+    }
     else
+    {
         fillcolor = atoi(uvalues[k].uval.sval);
+    }
     if (fillcolor < 0)
+    {
         fillcolor = -1;
+    }
     if (fillcolor >= colors)
+    {
         fillcolor = (fillcolor % colors) + (fillcolor / colors);
+    }
     if (fillcolor != old_fillcolor)
+    {
         j++;
+    }
 
     ++k;
     closeprox = uvalues[k].uval.dval;
     if (closeprox != old_closeprox)
+    {
         j++;
+    }
 
     return (j);
 }
@@ -449,9 +539,13 @@ int get_toggles2()
         uvalues[++k].type = 's';
         old_inversion[i] = inversion[i];
         if (inversion[i] == AUTOINVERT)
+        {
             sprintf(uvalues[k].uval.sval, "auto");
+        }
         else
+        {
             sprintf(uvalues[k].uval.sval, "%-1.15lg", inversion[i]);
+        }
     }
     choices[++k] = "  (use fixed radius & center when zooming)";
     uvalues[k].type = '*';
@@ -491,15 +585,21 @@ int get_toggles2()
 
     potparam[0] = uvalues[++k].uval.ival;
     if (potparam[0] != old_potparam[0])
+    {
         changed = true;
+    }
 
     potparam[1] = uvalues[++k].uval.dval;
     if (potparam[0] != 0.0 && potparam[1] != old_potparam[1])
+    {
         changed = true;
+    }
 
     potparam[2] = uvalues[++k].uval.ival;
     if (potparam[0] != 0.0 && potparam[2] != old_potparam[2])
+    {
         changed = true;
+    }
 
     if ((uvalues[++k].uval.ch.val != 0) != pot16bit)
     {
@@ -507,33 +607,49 @@ int get_toggles2()
         if (pot16bit)                   // turned it on
         {
             if (potparam[0] != 0.0)
+            {
                 changed = true;
+            }
         }
         else // turned it off
             if (!driver_diskp()) // ditch the disk video
+            {
                 enddisk();
+            }
             else // keep disk video, but ditch the fraction part at end
+            {
                 disk16bit = false;
+            }
     }
 
     ++k;
     usr_distest = uvalues[k].uval.Lval;
     if (usr_distest != old_usr_distest)
+    {
         changed = true;
+    }
     ++k;
     distestwidth = uvalues[k].uval.ival;
     if (usr_distest && distestwidth != old_distestwidth)
+    {
         changed = true;
+    }
 
     for (int i = 0; i < 3; i++)
     {
         if (uvalues[++k].uval.sval[0] == 'a' || uvalues[k].uval.sval[0] == 'A')
+        {
             inversion[i] = AUTOINVERT;
+        }
         else
+        {
             inversion[i] = atof(uvalues[k].uval.sval);
+        }
         if (old_inversion[i] != inversion[i]
                 && (i == 0 || inversion[0] != 0.0))
+        {
             changed = true;
+        }
     }
     invert = (inversion[0] == 0.0) ? 0 : 3;
     ++k;
@@ -621,31 +737,49 @@ pass_option_restart:
 
     usr_periodicitycheck = uvalues[++k].uval.ival;
     if (usr_periodicitycheck > 255)
+    {
         usr_periodicitycheck = 255;
+    }
     if (usr_periodicitycheck < -255)
+    {
         usr_periodicitycheck = -255;
+    }
     if (usr_periodicitycheck != old_periodicity)
+    {
         j = 1;
+    }
 
 
     orbit_delay = uvalues[++k].uval.ival;
     if (orbit_delay != old_orbit_delay)
+    {
         j = 1;
+    }
 
 
     orbit_interval = uvalues[++k].uval.ival;
     if (orbit_interval > 255)
+    {
         orbit_interval = 255;
+    }
     if (orbit_interval < 1)
+    {
         orbit_interval = 1;
+    }
     if (orbit_interval != old_orbit_interval)
+    {
         j = 1;
+    }
 
     keep_scrn_coords = uvalues[++k].uval.ch.val != 0;
     if (keep_scrn_coords != old_keep_scrn_coords)
+    {
         j = 1;
+    }
     if (!keep_scrn_coords)
+    {
         set_orbit_corners = false;
+    }
 
     {
         int tmp = uvalues[++k].uval.ch.val;
@@ -664,7 +798,9 @@ pass_option_restart:
         }
     }
     if (drawmode != old_drawmode)
+    {
         j = 1;
+    }
 
     if (i == FIK_F2)
     {
@@ -673,7 +809,9 @@ pass_option_restart:
             ret = 1;
         }
         if (j)
+        {
             ret = 1;
+        }
         goto pass_option_restart;
     }
 
@@ -684,7 +822,9 @@ pass_option_restart:
             ret = 1;
         }
         if (j)
+        {
             ret = 1;
+        }
         goto pass_option_restart;
     }
 
@@ -948,28 +1088,43 @@ int Distribution = 30, Offset = 0, Slope = 25;
 long con;
 
 
-double starfield_values[4] = {
+double starfield_values[4] =
+{
     30.0, 100.0, 5.0, 0.0
 };
 
-std::string const GreyFile{"altern.map"};
+std::string const GreyFile
+{"altern.map"
+};
 
 int starfield()
 {
     int c;
     busy = true;
     if (starfield_values[0] <   1.0)
+    {
         starfield_values[0] =   1.0;
+    }
     if (starfield_values[0] > 100.0)
+    {
         starfield_values[0] = 100.0;
+    }
     if (starfield_values[1] <   1.0)
+    {
         starfield_values[1] =   1.0;
+    }
     if (starfield_values[1] > 100.0)
+    {
         starfield_values[1] = 100.0;
+    }
     if (starfield_values[2] <   1.0)
+    {
         starfield_values[2] =   1.0;
+    }
     if (starfield_values[2] > 100.0)
+    {
         starfield_values[2] = 100.0;
+    }
 
     Distribution = (int)(starfield_values[0]);
     con  = (long)(((starfield_values[1]) / 100.0) * (1L << 16));
@@ -994,7 +1149,9 @@ int starfield()
             }
             c = getcolor(col, row);
             if (c == inside)
+            {
                 c = colors-1;
+            }
             putcolor(col, row, GausianNumber(c, colors));
         }
     }
@@ -1034,7 +1191,9 @@ int get_starfield_params()
         return (-1);
     }
     for (int i = 0; i < 3; i++)
+    {
         starfield_values[i] = uvalues[i].uval.dval;
+    }
 
     return (0);
 }
@@ -1090,13 +1249,19 @@ int get_rds_params()
 
             uvalues[k++].type = '*';
             for (auto & elem : rds6)
+            {
                 elem = ' ';
+            }
             auto p = stereomapname.find(SLASHC);
             if (p == std::string::npos ||
                     (int) stereomapname.length() < sizeof(rds6)-2)
+            {
                 p = 0;
+            }
             else
+            {
                 p++;
+            }
             // center file name
             rds6[(sizeof(rds6)-(int) (stereomapname.length() - p)+2)/2] = 0;
             strcat(rds6, "[");
@@ -1104,7 +1269,9 @@ int get_rds_params()
             strcat(rds6, "]");
         }
         else
+        {
             stereomapname.clear();
+        }
         int const old_help_mode = help_mode;
         help_mode = HELPRDS;
         int const choice = fullscreen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, nullptr);
@@ -1123,13 +1290,19 @@ int get_rds_params()
             calibrate        = (char)uvalues[k++].uval.ch.val;
             image_map        = uvalues[k++].uval.ch.val != 0;
             if (!stereomapname.empty() && image_map)
+            {
                 reuse         = (char)uvalues[k++].uval.ch.val;
+            }
             else
+            {
                 reuse = 0;
+            }
             if (image_map && !reuse)
             {
                 if (getafilename("Select an Imagemap File", masks[1], stereomapname))
+                {
                     continue;
+                }
             }
         }
         break;
@@ -1665,7 +1838,8 @@ retry_dir:
                 strcpy(flname, fullpath);
             }
             else
-            {   // failed, make diagnostic useful:
+            {
+                // failed, make diagnostic useful:
                 strcpy(flname, speedstr);
                 if (strchr(speedstr, SLASHC) == nullptr)
                 {
@@ -1692,9 +1866,13 @@ bool getafilename(char const *hdg, char const *file_template, std::string &flnam
 static int check_f6_key(int curkey, int /*choice*/)
 {
     if (curkey == FIK_F6)
+    {
         return 0-FIK_F6;
+    }
     else if (curkey == FIK_F4)
+    {
         return 0-FIK_F4;
+    }
     return 0;
 }
 
@@ -1841,19 +2019,31 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
 int makepath(char *template_str, char const *drive, char const *dir, char const *fname, char const *ext)
 {
     if (template_str)
+    {
         *template_str = 0;
+    }
     else
+    {
         return (-1);
+    }
 #ifndef XFRACT
     if (drive)
+    {
         strcpy(template_str, drive);
+    }
 #endif
     if (dir)
+    {
         strcat(template_str, dir);
+    }
     if (fname)
+    {
         strcat(template_str, fname);
+    }
     if (ext)
+    {
         strcat(template_str, ext);
+    }
     return 0;
 }
 
@@ -1865,7 +2055,9 @@ void fix_dirname(char *dirname)
     // make sure dirname ends with a slash
     if (length > 0)
         if (dirname[length-1] == SLASHC)
+        {
             return;
+        }
     strcat(dirname, SLASH);
 }
 
@@ -1881,7 +2073,9 @@ static void dir_name(char *target, char const *dir, char const *name)
 {
     *target = 0;
     if (*dir != 0)
+    {
         strcpy(target, dir);
+    }
     strcat(target, name);
 }
 
@@ -1944,10 +2138,14 @@ int get_corners()
 
 gc_loop:
     for (i = 0; i < 15; ++i)
-        values[i].type = 'd'; // most values on this screen are type d
+    {
+        values[i].type = 'd';    // most values on this screen are type d
+    }
     cmag = usemag ? 1 : 0;
     if (drawmode == 'l')
+    {
         cmag = 0;
+    }
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
     nump = -1;
@@ -2039,7 +2237,8 @@ gc_loop:
     }
 
     if (prompt_ret == FIK_F4)
-    { // reset to type defaults
+    {
+        // reset to type defaults
         xxmin = curfractalspecific->xmin;
         xx3rd = xxmin;
         xxmax = curfractalspecific->xmax;
@@ -2047,9 +2246,13 @@ gc_loop:
         yy3rd = yymin;
         yymax = curfractalspecific->ymax;
         if (viewcrop && finalaspectratio != screenaspect)
+        {
             aspectratio_crop(screenaspect, finalaspectratio);
+        }
         if (bf_math != bf_math_type::NONE)
+        {
             fractal_floattobf();
+        }
         goto gc_loop;
     }
 
@@ -2069,7 +2272,9 @@ gc_loop:
             Rotation      = values[4].uval.dval;
             Skew          = values[5].uval.dval;
             if (Xmagfactor == 0)
+            {
                 Xmagfactor = 1;
+            }
             cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
         }
     }
@@ -2105,14 +2310,17 @@ gc_loop:
     }
 
     if (prompt_ret == FIK_F7 && drawmode != 'l')
-    { // toggle corners/center-mag mode
+    {
+        // toggle corners/center-mag mode
         if (!usemag)
         {
             cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
             usemag = true;
         }
         else
+        {
             usemag = false;
+        }
         goto gc_loop;
     }
 
@@ -2129,7 +2337,9 @@ gc_loop:
         return 0;
     }
     else
+    {
         return (1);
+    }
 }
 
 static int get_screen_corners()
@@ -2181,7 +2391,9 @@ static int get_screen_corners()
 
 gsc_loop:
     for (auto & value : values)
-        value.type = 'd'; // most values on this screen are type d
+    {
+        value.type = 'd';    // most values on this screen are type d
+    }
     cmag = usemag ? 1 : 0;
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
@@ -2262,7 +2474,8 @@ gsc_loop:
     }
 
     if (prompt_ret == FIK_F4)
-    { // reset to type defaults
+    {
+        // reset to type defaults
         oxmin = curfractalspecific->xmin;
         ox3rd = oxmin;
         oxmax = curfractalspecific->xmax;
@@ -2276,7 +2489,9 @@ gsc_loop:
         xx3rd = ox3rd;
         yy3rd = oy3rd;
         if (viewcrop && finalaspectratio != screenaspect)
+        {
             aspectratio_crop(screenaspect, finalaspectratio);
+        }
 
         oxmin = xxmin;
         oxmax = xxmax;
@@ -2303,7 +2518,9 @@ gsc_loop:
             Rotation      = values[4].uval.dval;
             Skew          = values[5].uval.dval;
             if (Xmagfactor == 0)
+            {
                 Xmagfactor = 1;
+            }
             cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
             // set screen corners
             oxmin = xxmin;
@@ -2333,14 +2550,17 @@ gsc_loop:
     }
 
     if (prompt_ret == FIK_F7)
-    { // toggle corners/center-mag mode
+    {
+        // toggle corners/center-mag mode
         if (!usemag)
         {
             cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
             usemag = true;
         }
         else
+        {
             usemag = false;
+        }
         goto gsc_loop;
     }
 
@@ -2468,12 +2688,18 @@ get_brws_restart:
     confirm_file_deletes = uvalues[++k].uval.ch.val != 0;
     smallest_window_display_size = uvalues[++k].uval.dval;
     if (smallest_window_display_size < 0)
+    {
         smallest_window_display_size = 0 ;
+    }
     smallest_box_size_shown = uvalues[++k].uval.ival;
     if (smallest_box_size_shown < 1)
+    {
         smallest_box_size_shown = 1;
+    }
     if (smallest_box_size_shown > 10)
+    {
         smallest_box_size_shown = 10;
+    }
 
     browse_mask = uvalues[++k].uval.sval;
 
@@ -2485,10 +2711,13 @@ get_brws_restart:
             smallest_window_display_size != old_smallest_window_display_size ||
             smallest_box_size_shown != old_smallest_box_size_shown ||
             !stricmp(browse_mask.c_str(), old_browse_mask.c_str()))
+    {
         i = -3;
+    }
 
     if (evolving)
-    { // can't browse
+    {
+        // can't browse
         auto_browse = false;
         i = 0;
     }
@@ -2531,16 +2760,20 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
 
     // no dot or slash so assume a file
     bool isafile = strchr(newfilename, '.') == nullptr
-        && strchr(newfilename, SLASHC) == nullptr;
+                   && strchr(newfilename, SLASHC) == nullptr;
     bool isadir = isadirectory(newfilename);
     if (isadir)
+    {
         fix_dirname(newfilename);
+    }
 #ifndef XFRACT
     // if drive, colon, slash, is a directory
     if ((int) strlen(newfilename) == 3 &&
             newfilename[1] == ':' &&
             newfilename[2] == SLASHC)
+    {
         isadir = true;
+    }
     // if drive, colon, with no slash, is a directory
     if ((int) strlen(newfilename) == 2 &&
             newfilename[1] == ':')
@@ -2570,7 +2803,9 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
         temp_path[1] = ':';
         temp_path[2] = 0;
         if (strrchr(newfilename, '.') == newfilename)
-            test_dir = true;  // only one '.' assume its a directory
+        {
+            test_dir = true;    // only one '.' assume its a directory
+        }
         expand_dirname(newfilename, temp_path);
         strcat(temp_path, newfilename);
         strcpy(newfilename, temp_path);
@@ -2596,22 +2831,32 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
                 isafile = false;
             }
             else
+            {
                 isafile = true;
+            }
         }
     }
 
     splitpath(newfilename, drive, dir, fname, ext);
     splitpath(oldfullpath, drive1, dir1, fname1, ext1);
     bool const get_path = (mode == cmd_file::AT_CMD_LINE)
-        || (mode == cmd_file::SSTOOLS_INI);
+                          || (mode == cmd_file::SSTOOLS_INI);
     if ((int) strlen(drive) != 0 && get_path)
+    {
         strcpy(drive1, drive);
+    }
     if ((int) strlen(dir) != 0 && get_path)
+    {
         strcpy(dir1, dir);
+    }
     if ((int) strlen(fname) != 0)
+    {
         strcpy(fname1, fname);
+    }
     if ((int) strlen(ext) != 0)
+    {
         strcpy(ext1, ext);
+    }
     if (!isadir && !isafile && get_path)
     {
         makepath(oldfullpath, drive1, dir1, nullptr, nullptr);
@@ -2622,9 +2867,13 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
             // strip trailing slash
             save = oldfullpath[len-1];
             if (save == SLASHC)
+            {
                 oldfullpath[len-1] = 0;
+            }
             if (access(oldfullpath, 0))
+            {
                 isadir_error = true;
+            }
             oldfullpath[len-1] = save;
         }
     }
@@ -2666,7 +2915,9 @@ char const *has_ext(char const *source)
     splitpath(source, nullptr, nullptr, fname, ext);
     char const *ret = nullptr;
     if (ext[0] != 0)
+    {
         ret = strrchr(source, '.');
+    }
     return ret;
 }
 
@@ -2680,7 +2931,9 @@ void shell_sort(void *v1, int n, unsigned sz, int (*fct)(VOIDPTR arg1, VOIDPTR a
             for (int j = i-gap; j >= 0; j -= gap)
             {
                 if (fct((char **)(v+j*sz), (char **)(v+(j+gap)*sz)) <= 0)
+                {
                     break;
+                }
                 temp = *(char **)(v+j*sz);
                 *(char **)(v+j*sz) = *(char **)(v+(j+gap)*sz);
                 *(char **)(v+(j+gap)*sz) = static_cast<char *>(temp);
