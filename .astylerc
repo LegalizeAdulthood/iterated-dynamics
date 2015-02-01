@@ -1,3 +1,4 @@
 --style=allman
 --pad-header
 --add-brackets
+--min-conditional-indent=2
