@@ -82,9 +82,13 @@ int gifview()
 
     // Open the file
     if (outln == outline_stereo)
+    {
         strcpy(temp1, stereomapname.c_str());
+    }
     else
+    {
         strcpy(temp1, readname.c_str());
+    }
     if (has_ext(temp1) == nullptr)
     {
         strcat(temp1, DEFAULTFRACTALTYPE);
@@ -96,9 +100,13 @@ int gifview()
         else
         {
             if (outln == outline_stereo)
+            {
                 strcpy(temp1, stereomapname.c_str());
+            }
             else
+            {
                 strcpy(temp1, readname.c_str());
+            }
             strcat(temp1, ALTERNATEFRACTALTYPE);
         }
     }
@@ -158,7 +166,9 @@ int gifview()
             }
             if ((!display_3d || (g_glasses_type != 1 && g_glasses_type != 2))
                     && !dontreadcolor)
-                g_dac_box[i][j] = (BYTE)(k >> 2); // TODO: don't right shift color table by 2
+            {
+                g_dac_box[i][j] = (BYTE)(k >> 2);    // TODO: don't right shift color table by 2
+            }
         }
     }
     colorstate = 1; // colors aren't default and not a known .map file
@@ -170,9 +180,12 @@ int gifview()
         spindac(0, 1); // load it, but don't spin
     }
     if (g_dac_box[0][0] != 255)
-        spindac(0, 1);       // update the DAC
+    {
+        spindac(0, 1);    // update the DAC
+    }
     if (driver_diskp())
-    { // disk-video
+    {
+        // disk-video
         char fname[FILE_MAX_FNAME];
         char ext[FILE_MAX_EXT];
         char tmpname[15];
@@ -202,7 +215,9 @@ int gifview()
                 int i;
                 while ((i = get_byte()) > 0)    // get the data length
                     for (int j = 0; j < i; j++)
-                        get_byte();     // flush the data
+                    {
+                        get_byte();    // flush the data
+                    }
             }
             break;
         case ',':
@@ -234,15 +249,20 @@ int gifview()
             // adjustments for handling MIGs
             gifview_image_top  = top;
             if (skipxdots > 0)
+            {
                 gifview_image_top /= (skipydots+1);
+            }
             gifview_image_left = left;
             if (skipydots > 0)
+            {
                 gifview_image_left /= (skipxdots+1);
+            }
             if (outln == out_line)
             {
                 // what about continuous potential????
                 if (width != gifview_image_twidth || top != 0)
-                {   // we're using normal decoding and we have a MIG
+                {
+                    // we're using normal decoding and we have a MIG
                     outln = out_line_migs;
                 }
                 else if (width > DECODERLINE_WIDTH && skipxdots == 0)
@@ -252,11 +272,14 @@ int gifview()
             }
 
             if (pot16bit)
+            {
                 width >>= 1;
+            }
 
             // Skip local color palette
             if ((buffer[8] & 0x80) == 0x80)
-            {      // local map?
+            {
+                // local map?
                 int numcolors;    // make this local
                 planes = (buffer[8] & 0x0F) + 1;
                 numcolors = 1 << planes;
@@ -278,14 +301,18 @@ int gifview()
             g_row_count = 0;
 
             if (calc_status == calc_status_value::IN_PROGRESS) // should never be so, but make sure
+            {
                 calc_status = calc_status_value::PARAMS_CHANGED;
+            }
             busy = true;      // for slideshow CALCWAIT
             /*
              * Call decoder(width) via timer.
              * Width is limited to DECODERLINE_WIDTH.
              */
             if (skipxdots == 0)
+            {
                 width = std::min(width, static_cast<unsigned>(DECODERLINE_WIDTH));
+            }
             status = timer(1, nullptr, width);
             busy = false;      // for slideshow CALCWAIT
             if (calc_status == calc_status_value::IN_PROGRESS) // e.g., set by line3d
@@ -297,7 +324,9 @@ int gifview()
                     finished = true;
                 }
                 else
-                    calc_status = calc_status_value::COMPLETED; // complete
+                {
+                    calc_status = calc_status_value::COMPLETED;    // complete
+                }
             }
             // Hey! the decoder doesn't read the last (0-length) block!!
             if (get_byte() != 0)
@@ -314,7 +343,8 @@ int gifview()
     }
     close_file();
     if (driver_diskp())
-    { // disk-video
+    {
+        // disk-video
         dvid_status(0, "Restore completed");
         dvid_status(1, "");
     }
@@ -409,7 +439,9 @@ static bool put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
     {
         putcolor(col, row, *pixels);
         if (orbit_delay > 0)
+        {
             sleepms(orbit_delay);
+        }
         w_snd((int)((int)(*pixels++)*3000/colors+basehertz));
         if (driver_key_pressed())
         {
@@ -431,7 +463,9 @@ int sound_line(BYTE *pixels, int linelen)
         if (extra > 0) // line wraps
         {
             if (put_sound_line(g_row_count, colcount, twidth-1, pixels))
+            {
                 break;
+            }
             pixels += twidth-colcount;
             linelen -= twidth-colcount;
             colcount = twidth;
@@ -439,7 +473,9 @@ int sound_line(BYTE *pixels, int linelen)
         else
         {
             if (put_sound_line(g_row_count, colcount, colcount+linelen-1, pixels))
+            {
                 break;
+            }
             colcount += linelen;
             linelen = 0;
         }
@@ -451,7 +487,9 @@ int sound_line(BYTE *pixels, int linelen)
     }
     driver_mute();
     if (driver_key_pressed())
+    {
         ret = -1;
+    }
     return (ret);
 }
 
@@ -460,16 +498,24 @@ int pot_line(BYTE *pixels, int linelen)
     int row, saverowcount;
     if (g_row_count == 0)
         if (pot_startdisk() < 0)
+        {
             return -1;
+        }
     saverowcount = g_row_count;
     g_row_count >>= 1;
     row = g_row_count;
     if ((saverowcount & 1) != 0) // odd line
+    {
         row += ydots;
+    }
     else if (!driver_diskp()) // even line - display the line too
+    {
         out_line(pixels, linelen);
+    }
     for (int col = 0; col < xdots; ++col)
+    {
         writedisk(col+sxoffs, row+syoffs, *(pixels+col));
+    }
     g_row_count = saverowcount + 1;
     return (0);
 }
