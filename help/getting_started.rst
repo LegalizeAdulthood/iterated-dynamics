@@ -1,9 +1,11 @@
+.. _getting-started:
+
 Getting Started
 ===============
 
 To start the program, enter Iterated Dynamics at the command prompt. The program
 displays an initial "credits" screen. If Iterated Dynamics doesn't start properly,
-please see {Common Problems}.
+please see :ref:`common-problems`.
 
 Hitting <Enter> gets you from the initial screen to the main menu. You can
 select options from the menu by moving the highlight with the cursor arrow
@@ -23,8 +25,8 @@ For a quick start, after starting Iterated Dynamics try one of the following:\
   Otherwise, monochrome:             <F6>
 
 After the initial Mandelbrot image has been displayed, try zooming
-into it (see {Zoom Box Commands}) and color cycling (see
-{Color Cycling Commands}).
+into it (see :ref:`zoom-box-commands`) and color cycling (see
+:ref:`color-cycling-commands`).
 Once you're comfortable with these basics, start exploring other
 functions from the main menu.
 
@@ -33,7 +35,7 @@ pressing the <F1> key.
 
 AT ANY TIME, you can hit
 ~Doc-
-one of the keys described in {Display Mode Commands}
+one of the keys described in :ref:`display-mode-commands`
 ~Doc+,Online-
 a command key
 ~Online+
@@ -46,7 +48,7 @@ lower case are equivalent, e.g. <B> and <b> have the same result.
 Many commands and parameters can be passed to Iterated Dynamics as command-line
 arguments or read from a configuration file;
 ~Doc-
-see {Startup Parameters\, Parameter Files} for details.
+see :ref:`startup-parameters-and-files` for details.
 ~Doc+,Online-
 see "Command Line Parameters, Parameter Files, Batch Mode" for details.
 ~Online+

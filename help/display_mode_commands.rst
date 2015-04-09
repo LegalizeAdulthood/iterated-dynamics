@@ -1,7 +1,7 @@
 Display Mode Commands
 =====================
 
-* :ref:`Summary of Commands`
+* :ref:`summary-of-commands`
 * :ref:`Plotting Commands`
 * :ref:`Zoom Box Commands`
 * :ref:`Image Save/Restore Commands`

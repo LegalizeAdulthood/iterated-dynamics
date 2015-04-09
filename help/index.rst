@@ -15,8 +15,9 @@ Contents:
    conditions_on_use
    getting_started
    new_features
-   display_mode_commands
    summary_of_commands
+   display_mode_commands
+   plotting_commands
    palette_editing_commands
    summary_of_fractal_types
    doodads_bells_and_whistles
