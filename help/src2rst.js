@@ -3,7 +3,6 @@ var split = require('split');
 var async = require('async');
 
 function processCommand(state, cmd) {
-console.log('command: ' + cmd);
     var matches;
     var command;
     var arg;
@@ -14,7 +13,8 @@ console.log('command: ' + cmd);
         state.formatting = matches[1] === '+';
         return;
     } else if (cmd.match(/^DocContents$/)) {
-        state.tableOfContents = true;
+        state.content = 'toc';
+        state.tableOfContents = [];
         return;
     } else if (cmd.match(/^OnlineFF$/)) {
         state.onlineFF = cmd;
@@ -30,6 +30,11 @@ console.log('command: ' + cmd);
     } else if (cmd.match(/^OnlineFF$/i)) {
         return;
     } else if (matches = cmd.match(/^Include (.+)$/)) {
+        parseFile(state, matches[1], function(err) {
+            if (err) {
+                throw err;
+            }
+        });
         return;
     } else if (matches = cmd.match(/^CompressSpaces([+-])/)) {
         state.compressSpaces = matches[1] === '+';
@@ -65,25 +70,34 @@ console.log('command: ' + cmd);
         break;
 
     case 'label':
-        state.labels[arg] = '??';
+        if (state.topic) {
+            state.labels[arg] = state.topic;
+        } else {
+            throw 'Label ' + arg + ' has no topic!';
+        }
         break;
 
     case 'topic':
-        state.tableOfContents = false;
+        state.content = 'topic';
         state.topic = arg;
         if (matches = arg.match(/^(.+), Label=(.+)$/)) {
             state.topic = matches[1];
             state.labels[matches[2]] = state.topic;
         }
         state.topics[state.topic] = [];
+        state.topicNames.push(arg);
         break;
 
     case 'table':
+        state.content = 'table';
         state.table = arg;
+        state.tables[state.table] = [];
         break;
 
     case 'data':
+        state.content = 'data';
         state.data = arg;
+        state.datas[state.data] = [];
         break;
 
     default:
@@ -104,46 +118,67 @@ function processLine(state, line) {
             processCommand(state, line.substr(1));
         }
     } else {
-        ++state.contentCount;
-        if (state.topic.length) {
-            state.topics[state.topic].push(line);
-        } else {
-            throw 'Content line "' + line + '" has no topic!';
+        // content line
+        switch (state.content) {
+        case 'toc':
+            state.tableOfContents.push(line);
+            break;
+        case 'topic':
+            ++state.contentCount;
+            if (state.topic.length) {
+                state.topics[state.topic].push(line);
+            } else {
+                throw 'Content line "' + line + '" has no topic!';
+            }
+            break;
+        case 'table':
+            state.tables[state.table].push(line);
+            break;
+        case 'data':
+            state.datas[state.data].push(line);
+            break;
+        default:
+            throw 'Unknown content state: ' + state.content;
         }
     }
 }
 
-function translateFile(file, next) {
-    var state = {
-        topics: {},
-        labels: {},
-        topic: '',
-        commandCount: 0,
-        contentCount: 0
-    };
+function writeRst(state) {
+    console.log('File ' + state.file + ': '
+        + state.contentCount + ' lines, '
+        + state.commandCount + ' commands, '
+        + Object.keys(state.topics).length + ' topics, '
+        + Object.keys(state.labels).length + ' labels, '
+        + Object.keys(state.datas).length + ' datas, '
+        + Object.keys(state.tables).length + ' tables.');
+}
+
+function parseFile(state, file, next) {
+    state.files.push(file);
+    state.file = file;
     fs.createReadStream(file)
         .pipe(split())
         .on('data', function(line) {
             processLine(state, line);
         })
         .on('end', function() {
-            console.log('File ' + file + ': '
-                + state.contentCount + ' lines, '
-                + state.commandCount + ' commands, '
-                + Object.keys(state.topics).length + ' topics, '
-                + Object.keys(state.labels).length + ' labels.');
+            writeRst(state);
             next(null);
         });
 }
 
-var files = [
-    '../hc/help.src',
-    '../hc/help2.src',
-    '../hc/help3.src',
-    '../hc/help4.src',
-    '../hc/help5.src'
-];
-async.eachSeries(files, translateFile, function(err) {
+var state = {
+    files: [],
+    topics: {},
+    topicNames: [],
+    datas: {},
+    tables: {},
+    labels: {},
+    topic: '',
+    commandCount: 0,
+    contentCount: 0
+};
+parseFile(state, '../hc/help.src', function(err) {
     if (err) {
         throw err;
     }
