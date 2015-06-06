@@ -136,6 +136,11 @@ function processLine(state, line) {
 }
 
 function writeRst(state) {
+    var i, fileName;
+    for (i = 0; i < state.topicNames.length; ++i) {
+        fileName = state.topicNames[i].toLowerCase().replace(/[^0-9a-z-]+/g, '_') + '.rst';
+        console.log('Topic: ' + state.topicNames[i] + ', file: ' + fileName);
+    }
     console.log(state.contentCount + ' lines, '
         + state.commandCount + ' commands, '
         + Object.keys(state.topics).length + ' topics, '
