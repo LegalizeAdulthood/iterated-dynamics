@@ -16,9 +16,6 @@ function processCommand(state, cmd) {
         state.content = 'toc';
         state.tableOfContents = [];
         return;
-    } else if (cmd.match(/^OnlineFF$/)) {
-        state.onlineFF = cmd;
-        return;
     } else if (matches = cmd.match(/^Doc([+-])$/)) {
         state.doc = matches[1] === '+';
         return;
