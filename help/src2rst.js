@@ -27,11 +27,6 @@ function processCommand(state, cmd) {
     } else if (cmd.match(/^OnlineFF$/i)) {
         return;
     } else if (matches = cmd.match(/^Include (.+)$/)) {
-        parseFile(state, matches[1], function(err) {
-            if (err) {
-                throw err;
-            }
-        });
         return;
     } else if (matches = cmd.match(/^CompressSpaces([+-])/)) {
         state.compressSpaces = matches[1] === '+';
@@ -82,7 +77,7 @@ function processCommand(state, cmd) {
             state.labels[matches[2]] = state.topic;
         }
         state.topics[state.topic] = [];
-        state.topicNames.push(arg);
+        state.topicNames.push(state.topic);
         break;
 
     case 'table':
@@ -141,8 +136,7 @@ function processLine(state, line) {
 }
 
 function writeRst(state) {
-    console.log('File ' + state.file + ': '
-        + state.contentCount + ' lines, '
+    console.log(state.contentCount + ' lines, '
         + state.commandCount + ' commands, '
         + Object.keys(state.topics).length + ' topics, '
         + Object.keys(state.labels).length + ' labels, '
@@ -159,7 +153,6 @@ function parseFile(state, file, next) {
             processLine(state, line);
         })
         .on('end', function() {
-            writeRst(state);
             next(null);
         });
 }
@@ -175,8 +168,13 @@ var state = {
     commandCount: 0,
     contentCount: 0
 };
-parseFile(state, '../hc/help.src', function(err) {
-    if (err) {
-        throw err;
-    }
-});
+async.forEachSeries(['help.src', 'help2.src', 'help3.src', 'help4.src', 'help5.src'],
+    function(file, next) {
+        parseFile(state, '../hc/' + file, next);
+    },
+    function(err) {
+        if (err) {
+            throw err;
+        }
+        writeRst(state);
+    });
