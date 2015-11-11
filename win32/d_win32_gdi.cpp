@@ -146,7 +146,7 @@ handle_special_keys(int ch)
         recordshw(ch);
     }
 
-    if (FIK_F1 == ch && helpmode && !inside_help)
+    if (FIK_F1 == ch && help_mode && !inside_help)
     {
         inside_help = true;
         help(0);
