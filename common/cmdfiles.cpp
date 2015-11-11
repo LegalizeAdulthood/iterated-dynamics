@@ -11,7 +11,6 @@
 #include <math.h>
 #include <string.h>
 #include <time.h>
-#include <printf.h>
 #include <stdio.h>
 
 #include "port.h"
