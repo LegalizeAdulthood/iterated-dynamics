@@ -443,7 +443,7 @@ void Jiim(jiim_types which)
 
     old_debugflag = debugflag;
     // must use standard fractal or be calcfroth
-    if (fractalspecific[static_cast<int>(fractype)].calctype != StandardFractal
+    if (fractalspecific[static_cast<int>(fractype)].calctype != standard_fractal
             && fractalspecific[static_cast<int>(fractype)].calctype != calcfroth)
         return;
     old_help_mode = help_mode;

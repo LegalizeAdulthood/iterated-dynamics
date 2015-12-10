@@ -849,7 +849,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         if (evolving && truecolor)
             truecolor = false;          // truecolor doesn't play well with the evolver
         if (maxit > old_maxit && inside >= COLOR_BLACK && calc_status == calc_status_value::COMPLETED &&
-                curfractalspecific->calctype == StandardFractal && !LogFlag &&
+                curfractalspecific->calctype == standard_fractal && !LogFlag &&
                 !truecolor &&    // recalc not yet implemented with truecolor
                 !(usr_stdcalcmode == 't' && fillcolor > -1) &&
                 // tesseral with fill doesn't work
@@ -977,7 +977,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case FIK_CTL_O:                     // ctrl-o
     case 'o':
         // must use standard fractal and have a float variant
-        if ((fractalspecific[static_cast<int>(fractype)].calctype == StandardFractal
+        if ((fractalspecific[static_cast<int>(fractype)].calctype == standard_fractal
                 || fractalspecific[static_cast<int>(fractype)].calctype == calcfroth) &&
                 (fractalspecific[static_cast<int>(fractype)].isinteger == 0 ||
                  fractalspecific[static_cast<int>(fractype)].tofloat != fractal_type::NOFRACTAL) &&

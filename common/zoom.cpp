@@ -611,7 +611,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 {
     if ((calc_status != calc_status_value::RESUMABLE && calc_status != calc_status_value::COMPLETED) || evolving)
         return (0); // not resumable, not complete
-    if (curfractalspecific->calctype != StandardFractal
+    if (curfractalspecific->calctype != standard_fractal
             && curfractalspecific->calctype != calcmand
             && curfractalspecific->calctype != calcmandfp
             && curfractalspecific->calctype != lyapunov

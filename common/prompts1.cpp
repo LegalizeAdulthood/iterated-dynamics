@@ -1556,7 +1556,7 @@ gfp_top:
         ++type_name;
 
     orbit_bailout = curfractalspecific->orbit_bailout;
-    if (orbit_bailout != 0 && curfractalspecific->calctype == StandardFractal &&
+    if (orbit_bailout != 0 && curfractalspecific->calctype == standard_fractal &&
             (curfractalspecific->flags & BAILTEST))
     {
         paramvalues[promptnum].type = 'l';
@@ -1755,7 +1755,7 @@ gfp_top:
     }
 
     orbit_bailout = curfractalspecific->orbit_bailout;
-    if (orbit_bailout != 0 && curfractalspecific->calctype == StandardFractal &&
+    if (orbit_bailout != 0 && curfractalspecific->calctype == standard_fractal &&
             (curfractalspecific->flags & BAILTEST))
     {
         if (paramvalues[promptnum].uval.ch.val != static_cast<int>(bailoutest))

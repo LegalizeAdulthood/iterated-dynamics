@@ -124,7 +124,7 @@ void init_big_pi();
 extern int calcfract();
 extern int calcmand();
 extern int calcmandfp();
-extern int StandardFractal();
+extern int standard_fractal();
 extern int test();
 extern int plasma();
 extern int diffusion();

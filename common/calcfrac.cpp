@@ -222,7 +222,7 @@ int trail_col = 0;
 
 int periodicitycheck = 0;
 
-// For periodicity testing, only in StandardFractal()
+// For periodicity testing, only in standard_fractal()
 int nextsavedincr = 0;
 long firstsavedand = 0;
 
@@ -808,7 +808,7 @@ int calcfract()
         calctime = 0;
     }
 
-    if (curfractalspecific->calctype != StandardFractal
+    if (curfractalspecific->calctype != standard_fractal
             && curfractalspecific->calctype != calcmand
             && curfractalspecific->calctype != calcmandfp
             && curfractalspecific->calctype != lyapunov
@@ -954,7 +954,7 @@ static void perform_worklist()
         stdcalcmode = '1';
     if (stdcalcmode == 'g' && (curfractalspecific->flags & NOGUESS))
         stdcalcmode = '1';
-    if (stdcalcmode == 'o' && (curfractalspecific->calctype != StandardFractal))
+    if (stdcalcmode == 'o' && (curfractalspecific->calctype != standard_fractal))
         stdcalcmode = '1';
 
     // default setup a new worklist
@@ -1731,7 +1731,7 @@ static int StandardCalc(int passnum)
             }
             if (passnum == 1 || stdcalcmode == '1' || (row&1) != 0 || (col&1) != 0)
             {
-                if ((*calctype)() == -1) // StandardFractal(), calcmand() or calcmandfp()
+                if ((*calctype)() == -1) // standard_fractal(), calcmand() or calcmandfp()
                     return -1;          // interrupted
                 resuming = false;       // reset so quick_calc works
                 reset_periodicity = false;
@@ -1847,7 +1847,7 @@ int calcmandfp()
 #define STARTRAILMAX FLT_MAX   // just a convenient large number
 #define green 2
 #define yellow 6
-int StandardFractal()       // per pixel 1/2/b/g, called with row & col set
+int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 {
 #ifdef NUMSAVED
     DComplex savedz[NUMSAVED] = { 0.0 };

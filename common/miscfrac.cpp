@@ -1197,7 +1197,7 @@ int popcorn()   // subset of std engine
         reset_periodicity = true;
         for (col = 0; col <= ixstop; col++)
         {
-            if (StandardFractal() == -1) // interrupted
+            if (standard_fractal() == -1) // interrupted
             {
                 alloc_resume(10, 1);
                 put_resume(sizeof(row), &row, 0);
@@ -2394,7 +2394,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
 
 /*
 These last two froth functions are for the orbit-in-window feature.
-Normally, this feature requires StandardFractal, but since it is the
+Normally, this feature requires standard_fractal, but since it is the
 attractor that makes the frothybasin type so unique, it is worth
 putting in as a stand-alone.
 */

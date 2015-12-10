@@ -412,7 +412,7 @@ choose_vars_restart:
         uvalues[k].uval.ch.val =  static_cast<int>(gene[num].mutate);
     }
 
-    if (curfractalspecific->calctype == StandardFractal &&
+    if (curfractalspecific->calctype == standard_fractal &&
             (curfractalspecific->flags & BAILTEST))
     {
         choices[++k] = gene[NUMGENES - 1].name;
@@ -462,7 +462,7 @@ choose_vars_restart:
     for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
         gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
 
-    if (curfractalspecific->calctype == StandardFractal &&
+    if (curfractalspecific->calctype == standard_fractal &&
             (curfractalspecific->flags & BAILTEST))
         gene[NUMGENES - 1].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
 

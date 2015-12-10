@@ -31,7 +31,7 @@ MandelSetup()           // Mandelbrot Routine
     else
     {
         // special case: use the main processing loop
-        calctype = StandardFractal;
+        calctype = standard_fractal;
         longparm = &linit;
     }
     return true;
@@ -50,7 +50,7 @@ JuliaSetup()            // Julia Routine
     else
     {
         // special case: use the main processing loop
-        calctype = StandardFractal;
+        calctype = standard_fractal;
         longparm = &lparm;
         get_julia_attractor(0.0, 0.0);    // another attractor?
     }
@@ -143,7 +143,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
     else
         symmetry = symmetry_type::X_AXIS;
 
-    calctype = StandardFractal;
+    calctype = standard_fractal;
 #if !defined(XFRACT)
     if (fractype == fractal_type::MPNEWTON || fractype == fractal_type::MPNEWTBASIN)
         setMPfunctions();
@@ -192,7 +192,7 @@ MandelfpSetup()
     case fractal_type::MANDELFP:
         /*
            floating point code could probably be altered to handle many of
-           the situations that otherwise are using StandardFractal().
+           the situations that otherwise are using standard_fractal().
            calcmandfp() can currently handle invert, any rqlim, potflag
            zmag, epsilon cross, and all the current outside options
         */
@@ -213,7 +213,7 @@ MandelfpSetup()
         else
         {
             // special case: use the main processing loop
-            calctype = StandardFractal;
+            calctype = standard_fractal;
         }
         break;
     case fractal_type::FPMANDELZPOWER:
@@ -293,7 +293,7 @@ JuliafpSetup()
     case fractal_type::JULIAFP:
         /*
            floating point code could probably be altered to handle many of
-           the situations that otherwise are using StandardFractal().
+           the situations that otherwise are using standard_fractal().
            calcmandfp() can currently handle invert, any rqlim, potflag
            zmag, epsilon cross, and all the current outside options
         */
@@ -315,7 +315,7 @@ JuliafpSetup()
         else
         {
             // special case: use the main processing loop
-            calctype = StandardFractal;
+            calctype = standard_fractal;
             get_julia_attractor(0.0, 0.0);    // another attractor?
         }
         break;

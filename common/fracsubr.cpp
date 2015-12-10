@@ -268,7 +268,7 @@ init_restart:
     potflag = false;
     if (potparam[0] != 0.0
             && colors >= 64
-            && (curfractalspecific->calctype == StandardFractal
+            && (curfractalspecific->calctype == standard_fractal
                 || curfractalspecific->calctype == calcmand
                 || curfractalspecific->calctype == calcmandfp))
     {
@@ -1145,10 +1145,10 @@ static int ratio_bad(double actual, double desired)
    directly set resume_info, resume_len, calc_status to avoid doubling
    transient memory needs by using these routines.
 
-   StandardFractal, calcmand, solid_guess, and bound_trace_main are a related
+   standard_fractal, calcmand, solid_guess, and bound_trace_main are a related
    set of engines for escape-time fractals.  They use a common worklist
    structure for save/resume.  Fractals using these must specify calcmand
-   or StandardFractal as the engine in fractalspecificinfo.
+   or standard_fractal as the engine in fractalspecificinfo.
    Other engines don't get btm nor ssg, don't get off-axis symmetry nor
    panning (the worklist stuff), and are on their own for save/resume.
 

@@ -1243,7 +1243,7 @@ static bool fix_bof()
 {
     bool ret = false;
     if (inside <= BOF60 && inside >= BOF61 && save_release < 1826)
-        if ((curfractalspecific->calctype == StandardFractal &&
+        if ((curfractalspecific->calctype == standard_fractal &&
                 (curfractalspecific->flags & BAILTEST) == 0) ||
                 (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA))
             ret = true;
