@@ -28,7 +28,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 
 // routines in this module
 static void perform_worklist();
-static int  OneOrTwoPass();
+static int  one_or_two_pass();
 static int  StandardCalc(int);
 static int  potential(double, long);
 static void decomposition();
@@ -1170,7 +1170,7 @@ static void perform_worklist()
             sticky_orbits();
             break;
         default:
-            OneOrTwoPass();
+            one_or_two_pass();
         }
         if (!savedots.empty())
         {
@@ -1670,7 +1670,7 @@ static int sticky_orbits()
     return 0;
 }
 
-static int OneOrTwoPass()
+static int one_or_two_pass()
 {
     int i;
 
