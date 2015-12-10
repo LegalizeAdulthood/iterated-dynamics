@@ -29,7 +29,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 // routines in this module
 static void perform_worklist();
 static int  one_or_two_pass();
-static int  StandardCalc(int);
+static int  standard_calc(int);
 static int  potential(double, long);
 static void decomposition();
 static int  bound_trace_main();
@@ -1679,7 +1679,7 @@ static int one_or_two_pass()
         totpasses = 2;
     if (stdcalcmode == '2' && workpass == 0) // do 1st pass of two
     {
-        if (StandardCalc(1) == -1)
+        if (standard_calc(1) == -1)
         {
             add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
             return -1;
@@ -1694,7 +1694,7 @@ static int one_or_two_pass()
         yybegin = yystart;
     }
     // second or only pass
-    if (StandardCalc(2) == -1)
+    if (standard_calc(2) == -1)
     {
         i = yystop;
         if (iystop != yystop) // must be due to symmetry
@@ -1706,7 +1706,7 @@ static int one_or_two_pass()
     return 0;
 }
 
-static int StandardCalc(int passnum)
+static int standard_calc(int passnum)
 {
     got_status = 0;
     curpass = passnum;
