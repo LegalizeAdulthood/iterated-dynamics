@@ -1845,10 +1845,13 @@ int calcmandfp()
     return color;
 }
 #define STARTRAILMAX FLT_MAX   // just a convenient large number
-#define green 2
-#define yellow 6
+
 int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 {
+    int const green = 2;    
+    int const yellow = 6;
+
+
 #ifdef NUMSAVED
     DComplex savedz[NUMSAVED] = { 0.0 };
     long caught[NUMSAVED] = { 0 };
@@ -2622,8 +2625,7 @@ plot_pixel:
     }
     return color;
 }
-#undef green
-#undef yellow
+
 
 #define cos45  sin45
 #define lcos45 lsin45
