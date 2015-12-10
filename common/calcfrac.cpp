@@ -279,6 +279,17 @@ long multiply(long x, long y, int n)
     return l;
 }
 
+
+double fmodtest_bailout_or()
+{
+    double const tmpx = sqr(g_new.x);
+    double const tmpy = sqr(g_new.y);
+    if (tmpx > tmpy)
+        return tmpx;
+    else
+        return tmpy;
+}
+
 // FMODTEST routine.
 /* Makes the test condition for the FMOD coloring type
    that of the current bailout method. 'or' and 'and'
@@ -315,15 +326,8 @@ double fmodtest()
         break;
 
     case bailouts::Or:
-    {
-        double const tmpx = sqr(g_new.x);
-        double const tmpy = sqr(g_new.y);
-        if (tmpx > tmpy)
-            result = tmpx;
-        else
-            result = tmpy;
+        result = fmodtest_bailout_or();
         break;
-    }
 
     case bailouts::Manh:
         result = sqr(fabs(g_new.x)+fabs(g_new.y));
