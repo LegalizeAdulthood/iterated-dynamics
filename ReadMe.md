@@ -1,3 +1,6 @@
+[![Travis Build Status](https://api.travis-ci.org/LegalizeAdulthood/iterated-dynamics.png?branch=master)](https://travis-ci.org/LegalizeAdulthood/iterated-dynamics)
+[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/0k69hj9n28u0c3rj?svg=true)](https://ci.appveyor.com/project/LegalizeAdulthood/iterated-dynamics)
+
 Iterated Dynamics is an open source fractal renderer that can generate
 the following fractal types:
 
