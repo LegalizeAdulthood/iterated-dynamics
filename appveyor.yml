@@ -1,0 +1,15 @@
+# Copyright (C) 2015, Richard Thomson
+#
+environment:
+  matrix:
+    - GENERATOR: "Visual Studio 12 2013"
+      CONFIG: Debug
+
+    - GENERATOR: "Visual Studio 12 2013"
+      CONFIG: Release
+
+build_script:
+  - mkdir build
+  - cd build
+  - cmake -G "%GENERATOR%" ..
+  - cmake --build . --config %CONFIG%
