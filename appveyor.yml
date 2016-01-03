@@ -9,7 +9,7 @@ environment:
       CONFIG: Release
 
 build_script:
-  - dir C:\Libraries
+  - dir C:\Libraries\boost_1_59_0
   - mkdir build
   - cd build
   - cmake -G "%GENERATOR%" ..
