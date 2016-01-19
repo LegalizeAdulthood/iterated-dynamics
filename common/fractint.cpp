@@ -470,10 +470,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         }
         if (kbdchar == 'f')
         {                   // floating pt toggle
-            if (!usr_floatflag)
-                usr_floatflag = true;
-            else
-                usr_floatflag = false;
+            usr_floatflag = !usr_floatflag;
             return main_state::IMAGE_START;
         }
         if (kbdchar == 'i')

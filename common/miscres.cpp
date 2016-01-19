@@ -66,10 +66,7 @@ static bool putstringwrap(int *row, int col1, int col2, int color, char *str, in
     {
         if (col2-col1 < length)
         {
-            if ((*row - startrow + 1) >= maxrow)
-                done = true;
-            else
-                done = false;
+            done = (*row - startrow + 1) >= maxrow;
             save1 = str[col2-col1+1];
             save2 = str[col2-col1+2];
             if (done)

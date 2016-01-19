@@ -631,10 +631,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
         first_section = false;
     } /* while */
 
-    if (!output(PD_FOOTING, &pd, info))
-        return false;
-
-    return true;
+    return output(PD_FOOTING, &pd, info);
 }
 
 #undef DO_PRINT

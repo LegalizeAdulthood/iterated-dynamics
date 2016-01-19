@@ -1689,10 +1689,7 @@ int cellular()
                 cell_array[filled][col] = (BYTE)init_string[i++];    // string
             }
         } // end of if not random
-        if (lnnmbr != 0)
-            lstscreenflag = true;
-        else
-            lstscreenflag = false;
+        lstscreenflag = lnnmbr != 0;
         put_line(start_row, 0, ixstop, &cell_array[filled][0]);
     }
     start_row++;

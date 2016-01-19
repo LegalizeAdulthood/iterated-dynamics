@@ -1346,10 +1346,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     int fkeymask = 0;
 
     oldbailout = bailout;
-    if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
-        julibrot = true;
-    else
-        julibrot = false;
+    julibrot = fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP;
     fractal_type curtype = fractype;
     {
         int i;

@@ -278,7 +278,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             LogFlag = 2;
         }
-        usr_floatflag = curfractalspecific->isinteger ? false : true;
+        usr_floatflag = curfractalspecific->isinteger == 0;
     }
 
     if (read_info.version < 5 && read_info.version != 0) // pre-version 15.0?
@@ -1188,17 +1188,11 @@ void backwards_v19()
 
 void backwards_v20()
 {   // Fractype == FP type is not seen from PAR file ?????
-    if ((fractype == fractal_type::MANDELFP || fractype == fractal_type::JULIAFP ||
+    bad_outside = (fractype == fractal_type::MANDELFP || fractype == fractal_type::JULIAFP ||
             fractype == fractal_type::MANDEL || fractype == fractal_type::JULIA) &&
-            (outside <= REAL && outside >= SUM) && save_release <= 1960)
-        bad_outside = true;
-    else
-        bad_outside = false;
-    if ((fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&
-            (save_release < 1900 || debugflag == debug_flags::force_ld_check))
-        ldcheck = true;
-    else
-        ldcheck = false;
+            (outside <= REAL && outside >= SUM) && save_release <= 1960;
+    ldcheck = (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&
+            (save_release < 1900 || debugflag == debug_flags::force_ld_check);
     if (inside == EPSCROSS && save_release < 1961)
         closeprox = 0.01;
     if (!new_bifurcation_functions_loaded)
@@ -1955,10 +1949,7 @@ bool is_visible_window(
     if (br.x >= (0-sxoffs) && br.x <= (sxdots-sxoffs) && br.y >= (0-syoffs) && br.y <= (sydots-syoffs))
         cornercount++;
 
-    if (cornercount >= 1)
-        return true;
-    else
-        return false;
+    return cornercount >= 1;
 }
 
 bool paramsOK(FRACTAL_INFO const *info)
@@ -2023,10 +2014,7 @@ bool functionOK(FRACTAL_INFO const *info, int numfn)
         if (static_cast<trig_fn>(info->trigndx[i]) != trigndx[i])
             mzmatch++;
     }
-    if (mzmatch > 0)
-        return false;
-    else
-        return true; // they all match
+    return mzmatch <= 0; // they all match
 }
 
 bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)

@@ -365,10 +365,7 @@ skip_UI:
         //**** start here
         if (xm > 1 || ym > 1)
         {
-            if (xxmin != xx3rd || yymin != yy3rd)
-                have3rd = true;
-            else
-                have3rd = false;
+            have3rd = xxmin != xx3rd || yymin != yy3rd;
             fpbat = dir_fopen(workdir.c_str(), "makemig.bat", "w");
             if (fpbat == nullptr)
             {

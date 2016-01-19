@@ -1164,7 +1164,7 @@ static bool print_doc_get_info(int cmd, PD_INFO *pd, void *context)
 
     case PD_GET_LINK_PAGE:
         pd->i = getint(pd->s+sizeof(long));
-        return ((pd->i == -1) ? false : true);
+        return (pd->i != -1);
 
     case PD_RELEASE_TOPIC:
         return true;

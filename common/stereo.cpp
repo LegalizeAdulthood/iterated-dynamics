@@ -312,10 +312,7 @@ bool do_AutoStereo()
             colour[ct++] = getcolor(i + (int)(AVG), j);
             colour[ct++] = getcolor(i - (int)(AVG), j);
         }
-    if (calibrate)
-        bars = true;
-    else
-        bars = false;
+    bars = calibrate != 0;
     toggle_bars(&bars, barwidth, &colour[0]);
     while (!done)
     {

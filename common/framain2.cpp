@@ -1019,10 +1019,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             {
                 // switch to corresponding Julia set
                 int key;
-                if ((fractype == fractal_type::MANDEL || fractype == fractal_type::MANDELFP) && bf_math == bf_math_type::NONE)
-                    hasinverse = true;
-                else
-                    hasinverse = false;
+                hasinverse = (fractype == fractal_type::MANDEL || fractype == fractal_type::MANDELFP) && bf_math == bf_math_type::NONE;
                 clear_zoombox();
                 Jiim(jiim_types::JIIM);
                 key = driver_get_key();    // flush keyboard buffer
@@ -2433,7 +2430,7 @@ static void restore_history_info(int i)
     if (keep_scrn_coords)
         set_orbit_corners = true;
     drawmode = last.drawmode;
-    usr_floatflag = curfractalspecific->isinteger ? false : true;
+    usr_floatflag = curfractalspecific->isinteger == 0;
     memcpy(g_dac_box, last.dac, 256*3);
     memcpy(old_dac_box, last.dac, 256*3);
     if (map_specified)

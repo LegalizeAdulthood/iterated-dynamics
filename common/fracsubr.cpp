@@ -234,10 +234,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         floatflag = usr_floatflag;
     if (calc_status == calc_status_value::RESUMABLE)
     { // on resume, ensure floatflag correct
-        if (curfractalspecific->isinteger)
-            floatflag = false;
-        else
-            floatflag = true;
+        floatflag = curfractalspecific->isinteger == 0;
     }
     // if floating pt only, set floatflag for TAB screen
     if (!curfractalspecific->isinteger && curfractalspecific->tofloat == fractal_type::NOFRACTAL)

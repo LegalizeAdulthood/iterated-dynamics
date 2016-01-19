@@ -2950,7 +2950,7 @@ bool compare_files(FILE *f1, FILE *f2)
         if (getc(f1) != getc(f2))
             return true;
 
-    return (feof(f1) && feof(f2)) ? false : true;
+    return !(feof(f1) && feof(f2));
 }
 
 

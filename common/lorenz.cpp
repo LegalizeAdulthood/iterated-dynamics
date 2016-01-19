@@ -2548,20 +2548,14 @@ static void setupmatrix(MATRIX doublemat)
 int orbit3dfloat()
 {
     display_3d = display_3d_modes::MINUS_ONE ;
-    if (0 < g_glasses_type && g_glasses_type < 3)
-        realtime = true;
-    else
-        realtime = false;
+    realtime = 0 < g_glasses_type && g_glasses_type < 3;
     return (funny_glasses_call(orbit3dfloatcalc));
 }
 
 int orbit3dlong()
 {
     display_3d = display_3d_modes::MINUS_ONE ;
-    if (0 < g_glasses_type && g_glasses_type < 3)
-        realtime = true;
-    else
-        realtime = false;
+    realtime = 0 < g_glasses_type && g_glasses_type < 3;
     return (funny_glasses_call(orbit3dlongcalc));
 }
 
@@ -2569,10 +2563,7 @@ static int ifs3d()
 {
     display_3d = display_3d_modes::MINUS_ONE;
 
-    if (0 < g_glasses_type && g_glasses_type < 3)
-        realtime = true;
-    else
-        realtime = false;
+    realtime = 0 < g_glasses_type && g_glasses_type < 3;
     if (floatflag)
         return (funny_glasses_call(ifs3dfloat)); // double version of ifs3d
     else
