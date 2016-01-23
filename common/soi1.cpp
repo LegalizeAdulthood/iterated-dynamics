@@ -125,13 +125,13 @@ static void putbox(int x1, int y1, int x2, int y2, int color)
 /* compute coefficients of Newton polynomial (b0,..,b2) from
    (x0,w0),..,(x2,w2). */
 #define INTERPOLATE(x0, x1, x2, w0, w1, w2, b0, b1, b2) \
-    b0 = w0;                                            \
-    b1 = (w1 - w0)/(x1 - x0);                           \
-    b2 = ((w2 - w1)/(x2 - x1) - b1)/(x2 - x0)
+    (b0) = (w0);                                        \
+    (b1) = ((w1) - (w0))/((x1) - (x0));                 \
+    (b2) = (((w2) - (w1))/((x2) - (x1)) - (b1))/((x2) - (x0))
 
 // evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t
 #define EVALUATE(x0, x1, b0, b1, b2, t) \
-    ((b2*(t - x1) + b1)*(t - x0) + b0)
+    (((b2)*((t) - (x1)) + (b1))*((t) - (x0)) + (b0))
 
 /* Newton Interpolation.
    It computes the value of the interpolation polynomial given by
@@ -570,18 +570,18 @@ scan:
     old.y = zi;                                 \
     floatparm->x = cr;                          \
     floatparm->y = ci;                          \
-    esc = ORBITCALC();                          \
-    rq = tempsqrx;                              \
-    iq = tempsqry;                              \
-    zr = new.x;                                 \
-    zi = new.y
+    (esc) = ORBITCALC();                        \
+    (rq) = tempsqrx;                            \
+    (iq) = tempsqry;                            \
+    (zr) = new.x;                               \
+    (zi) = new.y
 
 #define SOI_ORBIT(zr, rq, zi, iq, cr, ci, esc)  \
-    zi = (zi + zi)*zr + ci;                     \
-    zr = rq - iq + cr;                          \
-    rq = zr*zr;                                 \
-    iq = zi*zi;                                 \
-    esc = ((rq + iq) > 16.0)?1:0
+    (zi) = ((zi) + (zi))*(zr) + (ci);           \
+    (zr) = (rq) - (iq) + (cr);                  \
+    (rq) = (zr)*(zr);                           \
+    (iq) = (zi)*(zi);                           \
+    (esc) = (((rq) + (iq)) > 16.0)?1:0
 
         // iterate key values
         SOI_ORBIT(zre1, state.rq1, zim1, state.iq1, cre1, cim1, state.esc1);
