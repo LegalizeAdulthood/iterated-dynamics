@@ -69,18 +69,28 @@ int cmp_bn(bn_t n1, bn_t n2)
     Svalue1 = big_accessS16((S16 *)(n1+bnlength-2));
     Svalue2 = big_accessS16((S16 *)(n2+bnlength-2));
     if (Svalue1 > Svalue2)
-    {   // now determine which of the two bytes was different
-        if ((S16)(Svalue1&0xFF00) > (S16)(Svalue2&0xFF00))   // compare just high bytes
+    {
+        // now determine which of the two bytes was different
+        if ((S16)(Svalue1&0xFF00) > (S16)(Svalue2&0xFF00))     // compare just high bytes
+        {
             return (bnlength); // high byte was different
+        }
         else
+        {
             return (bnlength-1); // low byte was different
+        }
     }
     else if (Svalue1 < Svalue2)
-    {   // now determine which of the two bytes was different
-        if ((S16)(Svalue1&0xFF00) < (S16)(Svalue2&0xFF00))   // compare just high bytes
+    {
+        // now determine which of the two bytes was different
+        if ((S16)(Svalue1&0xFF00) < (S16)(Svalue2&0xFF00))     // compare just high bytes
+        {
             return -(bnlength); // high byte was different
+        }
         else
+        {
             return -(bnlength-1); // low byte was different
+        }
     }
 
     // unsigned comparison for the rest
@@ -89,18 +99,28 @@ int cmp_bn(bn_t n1, bn_t n2)
         value1 = big_access16(n1+i);
         value2 = big_access16(n2+i);
         if (value1 > value2)
-        {   // now determine which of the two bytes was different
-            if ((value1&0xFF00) > (value2&0xFF00))   // compare just high bytes
+        {
+            // now determine which of the two bytes was different
+            if ((value1&0xFF00) > (value2&0xFF00))     // compare just high bytes
+            {
                 return (i+2); // high byte was different
+            }
             else
+            {
                 return (i+1); // low byte was different
+            }
         }
         else if (value1 < value2)
-        {   // now determine which of the two bytes was different
-            if ((value1&0xFF00) < (value2&0xFF00))   // compare just high bytes
+        {
+            // now determine which of the two bytes was different
+            if ((value1&0xFF00) < (value2&0xFF00))     // compare just high bytes
+            {
                 return -(i+2); // high byte was different
+            }
             else
+            {
                 return -(i+1); // low byte was different
+            }
         }
     }
     return 0;
@@ -121,8 +141,12 @@ bool is_bn_not_zero(bn_t n)
 {
     // two bytes at a time
     for (int i = 0; i < bnlength; i += 2)
+    {
         if (big_access16(n+i) != 0)
+        {
             return true;
+        }
+    }
     return false;
 }
 
@@ -208,7 +232,8 @@ bn_t neg_bn(bn_t r, bn_t n)
     }
     // if neg was 0, then just "not" the rest
     for (; i < bnlength; i += 2)
-    {   // notice that big_access16() and big_set16() are not needed here
+    {
+        // notice that big_access16() and big_set16() are not needed here
         *(U16 *)(r+i) = ~*(U16 *)(n+i); // toggle all the bits
     }
     return r;
@@ -232,7 +257,8 @@ bn_t neg_a_bn(bn_t r)
     }
     // if neg was 0, then just "not" the rest
     for (; i < bnlength; i += 2)
-    {   // notice that big_access16() and big_set16() are not needed here
+    {
+        // notice that big_access16() and big_set16() are not needed here
         *(U16 *)(r+i) = ~*(U16 *)(r+i); // toggle all the bits
     }
     return r;
@@ -414,14 +440,18 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 
     bnl = bnlength;
     bool sign1 = is_bn_neg(n1);
-    if (sign1 != 0) // =, not ==
+    if (sign1 != 0)   // =, not ==
+    {
         neg_a_bn(n1);
+    }
     samevar = (n1 == n2);
     if (!samevar) // check to see if they're the same pointer
     {
         sign2 = is_bn_neg(n2);
-        if (sign2) // =, not ==
+        if (sign2)   // =, not ==
+        {
             neg_a_bn(n2);
+        }
     }
     n1p = n1;
     n2 += (bnlength << 1) - rlength;  // shift n2 over to where it is needed
@@ -502,8 +532,10 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
     bn_t rp1, rp2, rp3;
     U32 prod, sum;
 
-    if (is_bn_neg(n))  // don't need to keep track of sign since the
+    if (is_bn_neg(n))    // don't need to keep track of sign since the
+    {
         neg_a_bn(n);   // answer must be positive.
+    }
 
     bnlength <<= 1;
     clear_bn(r);        // zero out r, double width
@@ -606,11 +638,15 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
     // This whole procedure would be a great deal simpler if we could assume that
     // rlength < 2*bnlength (that is, not =).  Therefore, we will take the
     // easy way out and call full_square_bn() if it is.
-    if (rlength == (bnlength << 1)) // rlength == 2*bnlength
+    if (rlength == (bnlength << 1))   // rlength == 2*bnlength
+    {
         return unsafe_full_square_bn(r, n);    // call full_square_bn() and quit
+    }
 
-    if (is_bn_neg(n))  // don't need to keep track of sign since the
+    if (is_bn_neg(n))    // don't need to keep track of sign since the
+    {
         neg_a_bn(n);   // answer must be positive.
+    }
 
     bnl = bnlength;
     bnlength = rlength;
@@ -761,13 +797,17 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 
     bool sign = is_bn_neg(n);
     if (sign)
+    {
         neg_a_bn(n);
+    }
 
     if (u == 0) // division by zero
     {
         max_bn(r);
         if (sign)
+        {
             neg_a_bn(r);
+        }
         return r;
     }
 
@@ -781,7 +821,9 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
     }
 
     if (sign)
+    {
         neg_a_bn(r);
+    }
     return r;
 }
 
@@ -794,13 +836,17 @@ bn_t div_a_bn_int(bn_t r, U16 u)
 
     bool sign = is_bn_neg(r);
     if (sign)
+    {
         neg_a_bn(r);
+    }
 
     if (u == 0) // division by zero
     {
         max_bn(r);
         if (sign)
+        {
             neg_a_bn(r);
+        }
         return r;
     }
 
@@ -814,7 +860,9 @@ bn_t div_a_bn_int(bn_t r, U16 u)
     }
 
     if (sign)
+    {
         neg_a_bn(r);
+    }
     return r;
 }
 

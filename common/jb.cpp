@@ -84,9 +84,13 @@ JulibrotSetup()
     inch_per_ydotfp = heightfp / ydots;
     initzfp = originfp - (depthfp / 2);
     if (juli3Dmode == 0)
+    {
         RightEyefp.x = 0.0;
+    }
     else
+    {
         RightEyefp.x = eyesfp / 2;
+    }
     LeftEyefp.x = -RightEyefp.x;
     RightEyefp.y = 0;
     LeftEyefp.y = RightEyefp.y;
@@ -105,7 +109,9 @@ JulibrotSetup()
             stopmsg(STOPMSG_NONE, "Julibrot orbit type isinteger mismatch");
         }
         if (fractalspecific[static_cast<int>(neworbittype)].isinteger > 1)
+        {
             bitshift = fractalspecific[static_cast<int>(neworbittype)].isinteger;
+        }
         fg = (double)(1L << bitshift);
         fg16 = (double)(1L << 16);
         jxmin = (long)(xxmin * fg);
@@ -134,9 +140,13 @@ JulibrotSetup()
         inch_per_ydot = (long)((heightfp / ydots) * fg16);
         initz = origin - (depth / 2);
         if (juli3Dmode == 0)
+        {
             RightEye.x = 0L;
+        }
         else
+        {
             RightEye.x = eyes / 2;
+        }
         LeftEye.x = -RightEye.x;
         RightEye.y = 0L;
         LeftEye.y = RightEye.y;
@@ -154,14 +164,20 @@ JulibrotSetup()
         mapname = Glasses1Map.c_str();
     }
     else
+    {
         mapname = GreyFile.c_str();
+    }
     if (savedac != 1)
     {
         if (ValidateLuts(mapname))
+        {
             return false;
+        }
         spindac(0, 1);               // load it, but don't spin
         if (savedac == 2)
+        {
             savedac = 1;
+        }
     }
     return r >= 0;
 }
@@ -224,9 +240,13 @@ zline(long x, long y)
         break;
     case 3:
         if ((row + col) & 1)
+        {
             Per = &LeftEye;
+        }
         else
+        {
             Per = &RightEye;
+        }
         break;
     }
     jb_per_pixel();
@@ -237,12 +257,18 @@ zline(long x, long y)
         jbc.x = mx;
         jbc.y = my;
         if (driver_key_pressed())
+        {
             return (-1);
+        }
         ltempsqrx = multiply(lold.x, lold.x, bitshift);
         ltempsqry = multiply(lold.y, lold.y, bitshift);
         for (n = 0; n < maxit; n++)
+        {
             if (fractalspecific[static_cast<int>(neworbittype)].orbitcalc())
+            {
                 break;
+            }
+        }
         if (n == maxit)
         {
             if (juli3Dmode == 3)
@@ -257,9 +283,13 @@ zline(long x, long y)
                 {
                     color = (int)(multiply((long) color << 16, brratio, 16) >> 16);
                     if (color < 1)
+                    {
                         color = 1;
+                    }
                     if (color > 127)
+                    {
                         color = 127;
+                    }
                     (*plot)(col, row, 127 + bbase - color);
                 }
             }
@@ -300,9 +330,13 @@ zlinefp(double x, double y)
         break;
     case 3:
         if ((row + col) & 1)
+        {
             Perfp = &LeftEyefp;
+        }
         else
+        {
             Perfp = &RightEyefp;
+        }
         break;
     }
     jbfp_per_pixel();
@@ -337,32 +371,46 @@ zlinefp(double x, double y)
         {
             keychk = 0;
             if (driver_key_pressed())
+            {
                 return (-1);
+            }
         }
 #else
         if (driver_key_pressed())
+        {
             return (-1);
+        }
 #endif
         tempsqrx = sqr(old.x);
         tempsqry = sqr(old.y);
 
         for (n = 0; n < maxit; n++)
+        {
             if (fractalspecific[static_cast<int>(neworbittype)].orbitcalc())
+            {
                 break;
+            }
+        }
         if (n == maxit)
         {
             if (juli3Dmode == 3)
             {
                 color = (int)(128l * zpixel / zdots);
                 if ((row + col) & 1)
+                {
                     (*plot)(col, row, 127 - color);
+                }
                 else
                 {
                     color = (int)(color * brratiofp);
                     if (color < 1)
+                    {
                         color = 1;
+                    }
                     if (color > 127)
+                    {
                         color = 127;
+                    }
                     (*plot)(col, row, 127 + bbase - color);
                 }
             }
@@ -390,11 +438,17 @@ Std4dFractal()
     if (neworbittype == fractal_type::LJULIAZPOWER)
     {
         if (c_exp < 1)
+        {
             c_exp = 1;
+        }
         if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
+        {
             fractalspecific[static_cast<int>(neworbittype)].orbitcalc = longZpowerFractal;
+        }
         else
+        {
             fractalspecific[static_cast<int>(neworbittype)].orbitcalc = longCmplxZpowerFractal;
+        }
     }
 
     long y = 0;
@@ -407,18 +461,26 @@ Std4dFractal()
             col = xdot;
             row = ydot;
             if (zline(x, y) < 0)
+            {
                 return (-1);
+            }
             col = xdots - col - 1;
             row = ydots - row - 1;
             if (zline(-x, -y) < 0)
+            {
                 return (-1);
+            }
         }
         if (plotted == 0)
         {
             if (y == 0)
+            {
                 plotted = -1;  // no points first pass; don't give up
+            }
             else
+            {
                 break;
+            }
         }
     }
     return (0);
@@ -432,9 +494,13 @@ Std4dfpFractal()
     if (neworbittype == fractal_type::FPJULIAZPOWER)
     {
         if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
+        {
             fractalspecific[static_cast<int>(neworbittype)].orbitcalc = floatZpowerFractal;
+        }
         else
+        {
             fractalspecific[static_cast<int>(neworbittype)].orbitcalc = floatCmplxZpowerFractal;
+        }
         get_julia_attractor(param[0], param[1]);  // another attractor?
     }
 
@@ -448,18 +514,26 @@ Std4dfpFractal()
             col = xdot;
             row = ydot;
             if (zlinefp(x, y) < 0)
+            {
                 return (-1);
+            }
             col = xdots - col - 1;
             row = ydots - row - 1;
             if (zlinefp(-x, -y) < 0)
+            {
                 return (-1);
+            }
         }
         if (plotted == 0)
         {
             if (y == 0)
+            {
                 plotted = -1;  // no points first pass; don't give up
+            }
             else
+            {
                 break;
+            }
         }
     }
     return (0);

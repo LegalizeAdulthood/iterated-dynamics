@@ -51,7 +51,9 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
 #endif
     bool frommandel = false;            // if julia entered from mandel
     if (resumeflag)
+    {
         goto resumeloop;
+    }
 
     while (1)                    // eternal loop
     {
@@ -134,7 +136,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 colors_preloaded = false;
             }
             else
-            {   // reset DAC to defaults, which setvideomode has done for us
+            {
+                // reset DAC to defaults, which setvideomode has done for us
                 if (map_specified)
                 {
                     // but there's a map=, so load that
@@ -161,7 +164,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 ftemp = finalaspectratio*(((double) sydots)/((double) sxdots)/screenaspect);
                 xdots = viewxdots;
                 if (xdots != 0)
-                {   // xdots specified
+                {
+                    // xdots specified
                     ydots = viewydots;
                     if (ydots == 0) // calc ydots?
                     {
@@ -191,7 +195,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 else if (((xdots <= 1) // changed test to 1, so a 2x2 window will
                           || (ydots <= 1)) // work with the sound feature
                          && !(evolving&1))
-                {   // so ssg works
+                {
+                    // so ssg works
                     // but no check if in evolve mode to allow lots of small views
                     stopmsg(STOPMSG_NONE,
                         "View window too small; using full screen.");
@@ -232,7 +237,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         }
 
         if (show_file == 0)
-        {   // loading an image
+        {
+            // loading an image
             outln_cleanup = nullptr;          // outln routine can set this
             if (display_3d != display_3d_modes::NONE)                 // set up 3D decoding
             {
@@ -243,9 +249,11 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 outln = cmp_line;
             }
             else if (pot16bit)
-            {   // .pot format input file
+            {
+                // .pot format input file
                 if (pot_startdisk() < 0)
-                {   // pot file failed?
+                {
+                    // pot file failed?
                     show_file = 1;
                     potflag  = false;
                     pot16bit = false;
@@ -287,7 +295,9 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 {
                     driver_buzzer(buzzer_codes::INTERRUPT);
                     while (driver_key_pressed())
+                    {
                         driver_get_key();
+                    }
                     texttempmsg("*** load incomplete ***");
                 }
             }
@@ -323,7 +333,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         save_history_info();
 
         if (show_file == 0)
-        {   // image has been loaded
+        {
+            // image has been loaded
             show_file = 1;
             if (init_batch == batch_modes::NORMAL && calc_status == calc_status_value::RESUMABLE)
             {
@@ -335,7 +346,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             }
         }
         else
-        {   // draw an image
+        {
+            // draw an image
             if (initsavetime != 0          // autosave and resumable?
                     && (curfractalspecific->flags&NORESUME) == 0)
             {
@@ -385,7 +397,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     have_evolve_info = false;
                 }
                 else
-                {   // not resuming, start from the beginning
+                {
+                    // not resuming, start from the beginning
                     int mid = evolve_image_grid_size / 2;
                     if ((px != mid) || (py != mid))
                     {
@@ -504,18 +517,21 @@ resumeloop:                             // return here on failed overlays
 #endif
         *kbdmore = true;
         while (*kbdmore)
-        {   // loop through command keys
+        {
+            // loop through command keys
             if (timedsave != 0)
             {
                 if (timedsave == 1)
-                {   // woke up for timed save
+                {
+                    // woke up for timed save
                     driver_get_key();     // eat the dummy char
                     kbdchar = 's'; // do the save
                     resave_flag = 1;
                     timedsave = 2;
                 }
                 else
-                {   // save done, resume
+                {
+                    // save done, resume
                     timedsave = 0;
                     resave_flag = 2;
                     kbdchar = FIK_ENTER;
@@ -686,7 +702,8 @@ static bool look(bool *stacked)
         show_file = 0;       // trigger load
         browsing = true;    // but don't ask for the file name as it's just been selected
         if (name_stack_ptr == 15)
-        {   /* about to run off the end of the file
+        {
+            /* about to run off the end of the file
                 * history stack so shift it all back one to
                 * make room, lose the 1st one */
             for (int tmp = 1; tmp < 16; tmp++)
@@ -763,7 +780,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         usr_stdcalcmode = old_stdcalcmode;
     }
     if (quick_calc && calc_status != calc_status_value::COMPLETED)
+    {
         usr_stdcalcmode = old_stdcalcmode;
+    }
     switch (*kbdchar)
     {
     case 't':                    // new fractal type
@@ -793,8 +812,10 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 g_init_mode = g_adapter;
                 *frommandel = false;
             }
-            else if (g_init_mode < 0) // it is supposed to be...
+            else if (g_init_mode < 0)   // it is supposed to be...
+            {
                 driver_set_for_text();     // reset to text mode
+            }
             return main_state::IMAGE_START;
         }
         driver_unstack_screen();
@@ -816,21 +837,37 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         old_maxit = maxit;
         clear_zoombox();
         if (fromtext_flag)
+        {
             fromtext_flag = false;
+        }
         else
+        {
             driver_stack_screen();
+        }
         if (*kbdchar == 'x')
+        {
             i = get_toggles();
+        }
         else if (*kbdchar == 'y')
+        {
             i = get_toggles2();
+        }
         else if (*kbdchar == 'p')
+        {
             i = passes_options();
+        }
         else if (*kbdchar == 'z')
+        {
             i = get_fract_params(1);
+        }
         else if (*kbdchar == 'v')
+        {
             i = get_view_params(); // get the parameters
+        }
         else if (*kbdchar == FIK_CTL_B)
+        {
             i = get_browse_params();
+        }
         else if (*kbdchar == FIK_CTL_E)
         {
             i = get_evolve_Parms();
@@ -842,12 +879,18 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             }
         }
         else if (*kbdchar == FIK_CTL_F)
+        {
             i = get_sound_params();
+        }
         else
+        {
             i = get_cmd_string();
+        }
         driver_unstack_screen();
         if (evolving && truecolor)
+        {
             truecolor = false;          // truecolor doesn't play well with the evolver
+        }
         if (maxit > old_maxit && inside >= COLOR_BLACK && calc_status == calc_status_value::COMPLETED &&
                 curfractalspecific->calctype == standard_fractal && !LogFlag &&
                 !truecolor &&    // recalc not yet implemented with truecolor
@@ -864,7 +907,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             calc_status = calc_status_value::RESUMABLE;
         }
         else if (i > 0)
-        {                               // time to redraw?
+        {
+            // time to redraw?
             quick_calc = false;
             param_history(0);           // save history
             *kbdmore = false;
@@ -880,39 +924,51 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         driver_stack_screen();
         i = get_commands();
         if (g_init_mode != -1)
-        {   // video= was specified
+        {
+            // video= was specified
             g_adapter = g_init_mode;
             g_init_mode = -1;
             i |= CMDARG_FRACTAL_PARAM;
             savedac = 0;
         }
         else if (colors_preloaded)
-        {   // colors= was specified
+        {
+            // colors= was specified
             spindac(0, 1);
             colors_preloaded = false;
         }
-        else if (i & CMDARG_RESET)         // reset was specified
+        else if (i & CMDARG_RESET)           // reset was specified
+        {
             savedac = 0;
+        }
         if (i & CMDARG_3D_YES)
-        {   // 3d = was specified
+        {
+            // 3d = was specified
             *kbdchar = '3';
             driver_unstack_screen();
             goto do_3d_transform;  // pretend '3' was keyed
         }
         if (i & CMDARG_FRACTAL_PARAM)
-        {   // fractal parameter changed
+        {
+            // fractal parameter changed
             driver_discard_screen();
             *kbdmore = false;
             calc_status = calc_status_value::PARAMS_CHANGED;
         }
         else
+        {
             driver_unstack_screen();
+        }
         break;
     case 'f':                    // floating pt toggle
         if (!usr_floatflag)
+        {
             usr_floatflag = true;
-        else if (stdcalcmode != 'o') // don't go there
+        }
+        else if (stdcalcmode != 'o')     // don't go there
+        {
             usr_floatflag = false;
+        }
         g_init_mode = g_adapter;
         return main_state::IMAGE_START;
     case 'i':                    // 3d fractal parms
@@ -929,7 +985,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             double oldparm[MAXPARAMS];
             fractal_type oldtype = fractype;
             for (int i = 0; i < MAXPARAMS; ++i)
+            {
                 oldparm[i] = param[i];
+            }
             if (fractype != fractal_type::ANT)
             {
                 fractype = fractal_type::ANT;
@@ -937,22 +995,32 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 load_params(fractype);
             }
             if (!fromtext_flag)
+            {
                 driver_stack_screen();
+            }
             fromtext_flag = false;
             err = get_fract_params(2);
             if (err >= 0)
             {
                 driver_unstack_screen();
                 if (ant() >= 0)
+                {
                     calc_status = calc_status_value::PARAMS_CHANGED;
+                }
             }
             else
+            {
                 driver_unstack_screen();
+            }
             fractype = oldtype;
             for (int i = 0; i < MAXPARAMS; ++i)
+            {
                 param[i] = oldparm[i];
+            }
             if (err >= 0)
+            {
                 return main_state::CONTINUE;
+            }
         }
         break;
     case 'k':                    // ^s is irritating, give user a single key
@@ -961,7 +1029,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         if (get_rds_params() >= 0)
         {
             if (do_AutoStereo())
+            {
                 calc_status = calc_status_value::PARAMS_CHANGED;
+            }
             return main_state::CONTINUE;
         }
         break;
@@ -970,7 +1040,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         if (get_starfield_params() >= 0)
         {
             if (starfield() >= 0)
+            {
                 calc_status = calc_status_value::PARAMS_CHANGED;
+            }
             return main_state::CONTINUE;
         }
         break;
@@ -990,7 +1062,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         break;
     case FIK_SPACE:                  // spacebar, toggle mand/julia
         if (bf_math != bf_math_type::NONE || evolving)
+        {
             break;
+        }
         if (fractype == fractal_type::CELLULAR)
         {
             nxtscreenflag = !nxtscreenflag;
@@ -1100,7 +1174,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 *kbdmore = false;
             }
             else
+            {
                 driver_buzzer(buzzer_codes::PROBLEM);          // can't switch
+            }
         }                         // end of else for if == cellular
         break;
     case 'j':                    // inverse julia toggle
@@ -1116,9 +1192,13 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             else if (fractype == fractal_type::INVERSEJULIA)
             {
                 if (oldtype != fractal_type::NOFRACTAL)
+                {
                     fractype = oldtype;
+                }
                 else
+                {
                     fractype = fractal_type::JULIA;
+                }
             }
             curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
             zoomoff = true;
@@ -1126,7 +1206,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             *kbdmore = false;
         }
         else
+        {
             driver_buzzer(buzzer_codes::PROBLEM);
+        }
         break;
     case '\\':                   // return to prev image
     case FIK_CTL_BACKSLASH:
@@ -1138,9 +1220,13 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             name_stack_ptr--;
             while (file_name_stack[name_stack_ptr].empty()
                     && name_stack_ptr >= 0)
+            {
                 name_stack_ptr--;
-            if (name_stack_ptr < 0) // oops, must have deleted first one
+            }
+            if (name_stack_ptr < 0)   // oops, must have deleted first one
+            {
                 break;
+            }
             browse_name = file_name_stack[name_stack_ptr];
             merge_pathnames(readname, browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             browsing = true;
@@ -1156,20 +1242,32 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         else if (maxhistory > 0 && bf_math == bf_math_type::NONE)
         {
             if (*kbdchar == '\\' || *kbdchar == 'h')
+            {
                 if (--historyptr < 0)
+                {
                     historyptr = maxhistory - 1;
+                }
+            }
             if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == FIK_BACKSPACE)
+            {
                 if (++historyptr >= maxhistory)
+                {
                     historyptr = 0;
+                }
+            }
             restore_history_info(historyptr);
             zoomoff = true;
             g_init_mode = g_adapter;
             if (curfractalspecific->isinteger != 0 &&
                     curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+            {
                 usr_floatflag = false;
+            }
             if (curfractalspecific->isinteger == 0 &&
                     curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+            {
                 usr_floatflag = true;
+            }
             historyflag = true;         // avoid re-store parms due to rounding errs
             return main_state::IMAGE_START;
         }
@@ -1194,7 +1292,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         return main_state::CONTINUE;
     case 'e':                    // switch to color editing
         if (g_is_true_color && (init_batch == batch_modes::NONE))
-        { // don't enter palette editor
+        {
+            // don't enter palette editor
             if (!load_palette())
             {
                 *kbdmore = false;
@@ -1202,7 +1301,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 break;
             }
             else
+            {
                 return main_state::CONTINUE;
+            }
         }
         clear_zoombox();
         if (g_dac_box[0][0] != 255 && colors >= 16 && !driver_diskp())
@@ -1222,7 +1323,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         return main_state::CONTINUE;
     case 's':                    // save-to-disk
         if (driver_diskp() && disktarga)
+        {
             return main_state::CONTINUE;  // disk video and targa, nothing to save
+        }
         savetodisk(savename);
         return main_state::CONTINUE;
     case '#':                    // 3D overlay
@@ -1234,9 +1337,13 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case '3':                    // restore-from (3d)
 do_3d_transform:
         if (overlay_3d)
+        {
             display_3d = display_3d_modes::B_COMMAND;         // for <b> command
+        }
         else
+        {
             display_3d = display_3d_modes::YES;
+        }
     case 'r':                    // restore-from
         comparegif = false;
         *frommandel = false;
@@ -1264,9 +1371,13 @@ do_3d_transform:
         }
         driver_stack_screen();            // save graphics image
         if (overlay_3d)
+        {
             *stacked = false;
+        }
         else
+        {
             *stacked = true;
+        }
         if (resave_flag)
         {
             updatesavename(savename);      // do the pending increment
@@ -1299,12 +1410,15 @@ do_3d_transform:
         XZoomWaiting = false;
 #endif
         if (zoom_box_width != 0.0)
-        {   // do a zoom
+        {
+            // do a zoom
             init_pan_or_recalc(0);
             *kbdmore = false;
         }
-        if (calc_status != calc_status_value::COMPLETED)     // don't restart if image complete
+        if (calc_status != calc_status_value::COMPLETED)       // don't restart if image complete
+        {
             *kbdmore = false;
+        }
         break;
     case FIK_CTL_ENTER:              // control-Enter
     case FIK_CTL_ENTER_2:            // Control-Keypad Enter
@@ -1332,7 +1446,9 @@ do_3d_transform:
         {
             i = key_count(FIK_CTL_HOME);
             if ((zoom_box_skew -= 0.02 * i) < -0.48)
+            {
                 zoom_box_skew = -0.48;
+            }
         }
         break;
     case FIK_CTL_END:                // Ctrl-end
@@ -1340,23 +1456,30 @@ do_3d_transform:
         {
             i = key_count(FIK_CTL_END);
             if ((zoom_box_skew += 0.02 * i) > 0.48)
+            {
                 zoom_box_skew = 0.48;
+            }
         }
         break;
     case FIK_CTL_PAGE_UP:            // Ctrl-pgup
         if (boxcount)
+        {
             chgboxi(0, -2 * key_count(FIK_CTL_PAGE_UP));
+        }
         break;
     case FIK_CTL_PAGE_DOWN:          // Ctrl-pgdn
         if (boxcount)
+        {
             chgboxi(0, 2 * key_count(FIK_CTL_PAGE_DOWN));
+        }
         break;
 
     case FIK_PAGE_UP:                // page up
         if (zoomoff)
         {
             if (zoom_box_width == 0)
-            {   // start zoombox
+            {
+                // start zoombox
                 zoom_box_height = 1;
                 zoom_box_width = zoom_box_height;
                 zoom_box_rotation = 0;
@@ -1370,25 +1493,35 @@ do_3d_transform:
                 moveboxf(0.0, 0.0); // force scrolling
             }
             else
+            {
                 resizebox(0 - key_count(FIK_PAGE_UP));
+            }
         }
         break;
     case FIK_PAGE_DOWN:              // page down
         if (boxcount)
         {
-            if (zoom_box_width >= .999 && zoom_box_height >= 0.999) // end zoombox
+            if (zoom_box_width >= .999 && zoom_box_height >= 0.999)   // end zoombox
+            {
                 zoom_box_width = 0;
+            }
             else
+            {
                 resizebox(key_count(FIK_PAGE_DOWN));
+            }
         }
         break;
     case FIK_CTL_MINUS:              // Ctrl-kpad-
         if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+        {
             zoom_box_rotation += key_count(FIK_CTL_MINUS);
+        }
         break;
     case FIK_CTL_PLUS:               // Ctrl-kpad+
         if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+        {
             zoom_box_rotation -= key_count(FIK_CTL_PLUS);
+        }
         break;
     case FIK_CTL_INSERT:             // Ctrl-ins
         boxcolor += key_count(FIK_CTL_INSERT);
@@ -1416,10 +1549,14 @@ do_3d_transform:
     {
         driver_stack_screen();
         *kbdchar = select_video_mode(g_adapter);
-        if (check_vidmode_key(0, *kbdchar) >= 0)  // picked a new mode?
+        if (check_vidmode_key(0, *kbdchar) >= 0)    // picked a new mode?
+        {
             driver_discard_screen();
+        }
         else
+        {
             driver_unstack_screen();
+        }
         // fall through
     }
     default:                     // other (maybe a valid Fn key)
@@ -1428,7 +1565,9 @@ do_3d_transform:
         {
             g_adapter = k;
             if (g_video_table[g_adapter].colors != colors)
+            {
                 savedac = 0;
+            }
             calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = false;
             return main_state::CONTINUE;
@@ -1471,8 +1610,10 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 g_init_mode = g_adapter;
                 *frommandel = false;
             }
-            else if (g_init_mode < 0) // it is supposed to be...
+            else if (g_init_mode < 0)   // it is supposed to be...
+            {
                 driver_set_for_text();     // reset to text mode
+            }
             return main_state::IMAGE_START;
         }
         driver_unstack_screen();
@@ -1486,26 +1627,45 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_SPACE:
         clear_zoombox();
         if (fromtext_flag)
+        {
             fromtext_flag = false;
+        }
         else
+        {
             driver_stack_screen();
+        }
         if (*kbdchar == 'x')
+        {
             i = get_toggles();
+        }
         else if (*kbdchar == 'y')
+        {
             i = get_toggles2();
+        }
         else if (*kbdchar == 'p')
+        {
             i = passes_options();
+        }
         else if (*kbdchar == 'z')
+        {
             i = get_fract_params(1);
+        }
         else if (*kbdchar == FIK_CTL_E || *kbdchar == FIK_SPACE)
+        {
             i = get_evolve_Parms();
+        }
         else
+        {
             i = get_cmd_string();
+        }
         driver_unstack_screen();
         if (evolving && truecolor)
+        {
             truecolor = false;          // truecolor doesn't play well with the evolver
+        }
         if (i > 0)
-        {              // time to redraw?
+        {
+            // time to redraw?
             param_history(0); // save history
             *kbdmore = false;
             calc_status = calc_status_value::PARAMS_CHANGED;
@@ -1521,9 +1681,13 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
 
     case 'f':                    // floating pt toggle
         if (!usr_floatflag)
+        {
             usr_floatflag = true;
-        else if (stdcalcmode != 'o') // don't go there
+        }
+        else if (stdcalcmode != 'o')     // don't go there
+        {
             usr_floatflag = false;
+        }
         g_init_mode = g_adapter;
         return main_state::IMAGE_START;
     case '\\':                   // return to prev image
@@ -1533,20 +1697,32 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         if (maxhistory > 0 && bf_math == bf_math_type::NONE)
         {
             if (*kbdchar == '\\' || *kbdchar == 'h')
+            {
                 if (--historyptr < 0)
+                {
                     historyptr = maxhistory - 1;
+                }
+            }
             if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == 8)
+            {
                 if (++historyptr >= maxhistory)
+                {
                     historyptr = 0;
+                }
+            }
             restore_history_info(historyptr);
             zoomoff = true;
             g_init_mode = g_adapter;
             if (curfractalspecific->isinteger != 0 &&
                     curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+            {
                 usr_floatflag = false;
+            }
             if (curfractalspecific->isinteger == 0 &&
                     curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+            {
                 usr_floatflag = true;
+            }
             historyflag = true;         // avoid re-store parms due to rounding errs
             return main_state::IMAGE_START;
         }
@@ -1565,7 +1741,8 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         return main_state::CONTINUE;
     case 'e':                    // switch to color editing
         if (g_is_true_color && (init_batch == batch_modes::NONE))
-        { // don't enter palette editor
+        {
+            // don't enter palette editor
             if (!load_palette())
             {
                 *kbdmore = false;
@@ -1573,7 +1750,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 break;
             }
             else
+            {
                 return main_state::CONTINUE;
+            }
         }
         clear_zoombox();
         if (g_dac_box[0][0] != 255 && colors >= 16 && !driver_diskp())
@@ -1594,7 +1773,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case 's':                    // save-to-disk
     {
         if (driver_diskp() && disktarga)
+        {
             return main_state::CONTINUE;  // disk video and targa, nothing to save
+        }
 
         int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
         GENEBASE gene[NUMGENES];
@@ -1654,9 +1835,13 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         driver_stack_screen();            // save graphics image
         if (overlay_3d)
+        {
             *stacked = false;
+        }
         else
+        {
             *stacked = true;
+        }
         if (resave_flag)
         {
             updatesavename(savename);      // do the pending increment
@@ -1671,12 +1856,15 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         XZoomWaiting = false;
 #endif
         if (zoom_box_width != 0.0)
-        {   // do a zoom
+        {
+            // do a zoom
             init_pan_or_recalc(0);
             *kbdmore = false;
         }
-        if (calc_status != calc_status_value::COMPLETED)     // don't restart if image complete
+        if (calc_status != calc_status_value::COMPLETED)       // don't restart if image complete
+        {
             *kbdmore = false;
+        }
         break;
     case FIK_CTL_ENTER:              // control-Enter
     case FIK_CTL_ENTER_2:            // Control-Keypad Enter
@@ -1722,13 +1910,21 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                     py++;
                 }
                 if (px <0)
+                {
                     px = evolve_image_grid_size -1;
+                }
                 if (px > (evolve_image_grid_size -1))
+                {
                     px = 0;
+                }
                 if (py < 0)
+                {
                     py = evolve_image_grid_size -1;
+                }
                 if (py > (evolve_image_grid_size -1))
+                {
                     py = 0;
+                }
                 int grout = !((evolving & NOGROUT)/NOGROUT) ;
                 sxoffs = px * (int)(x_size_d+1+grout);
                 syoffs = py * (int)(y_size_d+1+grout);
@@ -1742,15 +1938,19 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             }
             copy_genes_to_bank(gene);
         }
-        else                       // if no zoombox, scroll by arrows
+        else                         // if no zoombox, scroll by arrows
+        {
             move_zoombox(*kbdchar);
+        }
         break;
     case FIK_CTL_HOME:               // Ctrl-home
         if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_HOME);
             if ((zoom_box_skew -= 0.02 * i) < -0.48)
+            {
                 zoom_box_skew = -0.48;
+            }
         }
         break;
     case FIK_CTL_END:                // Ctrl-end
@@ -1758,7 +1958,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         {
             i = key_count(FIK_CTL_END);
             if ((zoom_box_skew += 0.02 * i) > 0.48)
+            {
                 zoom_box_skew = 0.48;
+            }
         }
         break;
     case FIK_CTL_PAGE_UP:
@@ -1766,7 +1968,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         {
             parmzoom -= 1.0;
             if (parmzoom < 1.0)
+            {
                 parmzoom = 1.0;
+            }
             drawparmbox(0);
             set_evolve_ranges();
         }
@@ -1776,7 +1980,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         {
             parmzoom += 1.0;
             if (parmzoom > (double) evolve_image_grid_size /2.0)
+            {
                 parmzoom = (double) evolve_image_grid_size /2.0;
+            }
             drawparmbox(0);
             set_evolve_ranges();
         }
@@ -1786,7 +1992,8 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         if (zoomoff)
         {
             if (zoom_box_width == 0)
-            {   // start zoombox
+            {
+                // start zoombox
                 zoom_box_height = 1;
                 zoom_box_width = zoom_box_height;
                 zoom_box_rotation = 0;
@@ -1807,14 +2014,17 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 moveboxf(0.0, 0.0); // force scrolling
             }
             else
+            {
                 resizebox(0 - key_count(FIK_PAGE_UP));
+            }
         }
         break;
     case FIK_PAGE_DOWN:              // page down
         if (boxcount)
         {
             if (zoom_box_width >= .999 && zoom_box_height >= 0.999)
-            { // end zoombox
+            {
+                // end zoombox
                 zoom_box_width = 0;
                 if (evolving&1)
                 {
@@ -1823,16 +2033,22 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 }
             }
             else
+            {
                 resizebox(key_count(FIK_PAGE_DOWN));
+            }
         }
         break;
     case FIK_CTL_MINUS:              // Ctrl-kpad-
         if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+        {
             zoom_box_rotation += key_count(FIK_CTL_MINUS);
+        }
         break;
     case FIK_CTL_PLUS:               // Ctrl-kpad+
         if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+        {
             zoom_box_rotation -= key_count(FIK_CTL_PLUS);
+        }
         break;
     case FIK_CTL_INSERT:             // Ctrl-ins
         boxcolor += key_count(FIK_CTL_INSERT);
@@ -1896,7 +2112,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 continue;
             }
             if (elem.mutate == variations::WEIGHTED_RANDOM)
+            {
                 elem.mutate = variations::RANDOM;
+            }
         }
         *kbdmore = false;
         calc_status = calc_status_value::PARAMS_CHANGED;
@@ -1938,10 +2156,14 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_DELETE:         // select video mode from list
         driver_stack_screen();
         *kbdchar = select_video_mode(g_adapter);
-        if (check_vidmode_key(0, *kbdchar) >= 0)  // picked a new mode?
+        if (check_vidmode_key(0, *kbdchar) >= 0)    // picked a new mode?
+        {
             driver_discard_screen();
+        }
         else
+        {
             driver_unstack_screen();
+        }
         // fall through
 
     default:             // other (maybe valid Fn key
@@ -1950,7 +2172,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         {
             g_adapter = k;
             if (g_video_table[g_adapter].colors != colors)
+            {
                 savedac = 0;
+            }
             calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = false;
             return main_state::CONTINUE;
@@ -2006,8 +2230,10 @@ static void move_zoombox(int keynum)
         }
         if (getmore)
         {
-            if (getmore == 2)              // eat last key used
+            if (getmore == 2)                // eat last key used
+            {
                 driver_get_key();
+            }
             getmore = 2;
             keynum = driver_key_pressed();         // next pending key
         }
@@ -2018,7 +2244,9 @@ static void move_zoombox(int keynum)
     }
 #ifndef XFRACT
     else                                 // if no zoombox, scroll by arrows
+    {
         scroll_relative(horizontal, vertical);
+    }
 #endif
 }
 
@@ -2037,24 +2265,33 @@ int cmp_line(BYTE *pixels, int linelen)
         outln_cleanup = cmp_line_cleanup;
     }
     if (pot16bit)
-    {                                   // 16 bit info, ignore odd numbered rows
+    {
+        // 16 bit info, ignore odd numbered rows
         if ((row & 1) != 0)
+        {
             return 0;
+        }
         row >>= 1;
     }
     for (int col = 0; col < linelen; col++)
     {
         oldcolor = getcolor(col, row);
         if (oldcolor == (int)pixels[col])
+        {
             putcolor(col, row, 0);
+        }
         else
         {
             if (oldcolor == 0)
+            {
                 putcolor(col, row, 1);
+            }
             ++errcount;
             if (init_batch == batch_modes::NONE)
+            {
                 fprintf(cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
                         errcount, col, row, oldcolor, pixels[col]);
+            }
         }
     }
     return 0;
@@ -2104,7 +2341,8 @@ void reset_zoom_corners()
 // read keystrokes while = specified key, return 1+count;
 // used to catch up when moving zoombox is slower than keyboard
 int key_count(int keynum)
-{   int ctr;
+{
+    int ctr;
     ctr = 1;
     while (driver_key_pressed() == keynum)
     {
@@ -2125,7 +2363,9 @@ void history_init()
 static void save_history_info()
 {
     if (maxhistory <= 0 || bf_math != bf_math_type::NONE)
+    {
         return;
+    }
     HISTORY last = history[saveptr];
 
     HISTORY current;
@@ -2275,19 +2515,27 @@ static void save_history_info()
     if (historyptr == -1)        // initialize the history file
     {
         for (int i = 0; i < maxhistory; i++)
+        {
             history[i] = current;
+        }
         historyflag = false;
         historyptr = 0;
         saveptr = 0;   // initialize history ptr
     }
     else if (historyflag)
+    {
         historyflag = false;            // coming from user history command, don't save
+    }
     else if (memcmp(&current, &last, sizeof(HISTORY)))
     {
-        if (++saveptr >= maxhistory)  // back to beginning of circular buffer
+        if (++saveptr >= maxhistory)    // back to beginning of circular buffer
+        {
             saveptr = 0;
-        if (++historyptr >= maxhistory)  // move user pointer in parallel
+        }
+        if (++historyptr >= maxhistory)    // move user pointer in parallel
+        {
             historyptr = 0;
+        }
         history[saveptr] = current;
     }
 }
@@ -2295,7 +2543,9 @@ static void save_history_info()
 static void restore_history_info(int i)
 {
     if (maxhistory <= 0 || bf_math != bf_math_type::NONE)
+    {
         return;
+    }
     HISTORY last = history[i];
     invert = 0;
     calc_status = calc_status_value::PARAMS_CHANGED;
@@ -2413,7 +2663,9 @@ static void restore_history_info(int i)
     curfractalspecific    = &fractalspecific[static_cast<int>(fractype)];
     potflag               = (potparam[0] != 0.0);
     if (inversion[0] != 0.0)
+    {
         invert = 3;
+    }
     Log_Fly_Calc = last.logcalc;
     ismand = last.ismand != 0;
     closeprox = last.closeprox;
@@ -2428,7 +2680,9 @@ static void restore_history_info(int i)
     oy3rd = last.oy3rd;
     keep_scrn_coords = last.keep_scrn_coords != 0;
     if (keep_scrn_coords)
+    {
         set_orbit_corners = true;
+    }
     drawmode = last.drawmode;
     usr_floatflag = curfractalspecific->isinteger == 0;
     memcpy(g_dac_box, last.dac, 256*3);
@@ -2444,9 +2698,13 @@ static void restore_history_info(int i)
     }
     spindac(0, 1);
     if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
+    {
         savedac = 0;
+    }
     else
+    {
         savedac = 1;
+    }
     switch (fractype)
     {
     case fractal_type::FORMULA:

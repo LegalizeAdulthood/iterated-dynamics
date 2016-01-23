@@ -40,14 +40,20 @@ static void lsysf_doplus(lsys_turtlestatef *cmd)
     if (cmd->reverse)
     {
         if (++cmd->angle == cmd->maxangle)
+        {
             cmd->angle = 0;
+        }
     }
     else
     {
         if (cmd->angle)
+        {
             cmd->angle--;
+        }
         else
+        {
             cmd->angle = cmd->dmaxangle;
+        }
     }
 }
 
@@ -71,14 +77,20 @@ static void lsysf_dominus(lsys_turtlestatef *cmd)
     if (cmd->reverse)
     {
         if (cmd->angle)
+        {
             cmd->angle--;
+        }
         else
+        {
             cmd->angle = cmd->dmaxangle;
+        }
     }
     else
     {
         if (++cmd->angle == cmd->maxangle)
+        {
             cmd->angle = 0;
+        }
     }
 }
 
@@ -99,17 +111,25 @@ static void lsysf_dominus_pow2(lsys_turtlestatef *cmd)
 static void lsysf_doslash(lsys_turtlestatef *cmd)
 {
     if (cmd->reverse)
+    {
         cmd->realangle -= cmd->parm.nf;
+    }
     else
+    {
         cmd->realangle += cmd->parm.nf;
+    }
 }
 
 static void lsysf_dobslash(lsys_turtlestatef *cmd)
 {
     if (cmd->reverse)
+    {
         cmd->realangle += cmd->parm.nf;
+    }
     else
+    {
         cmd->realangle -= cmd->parm.nf;
+    }
 }
 
 static void lsysf_doat(lsys_turtlestatef *cmd)
@@ -147,13 +167,21 @@ static void lsysf_dosizedm(lsys_turtlestatef *cmd)
     cmd->ypos += cmd->size * s;
 
     if (cmd->xpos > cmd->xmax)
+    {
         cmd->xmax = cmd->xpos;
+    }
     if (cmd->ypos > cmd->ymax)
+    {
         cmd->ymax = cmd->ypos;
+    }
     if (cmd->xpos < cmd->xmin)
+    {
         cmd->xmin = cmd->xpos;
+    }
     if (cmd->ypos < cmd->ymin)
+    {
         cmd->ymin = cmd->ypos;
+    }
 }
 
 static void lsysf_dosizegf(lsys_turtlestatef *cmd)
@@ -162,13 +190,21 @@ static void lsysf_dosizegf(lsys_turtlestatef *cmd)
     cmd->ypos += cmd->size * sins_f[(int)cmd->angle];
 
     if (cmd->xpos > cmd->xmax)
+    {
         cmd->xmax = cmd->xpos;
+    }
     if (cmd->ypos > cmd->ymax)
+    {
         cmd->ymax = cmd->ypos;
+    }
     if (cmd->xpos < cmd->xmin)
+    {
         cmd->xmin = cmd->xpos;
+    }
     if (cmd->ypos < cmd->ymin)
+    {
         cmd->ymin = cmd->ypos;
+    }
 }
 
 static void lsysf_dodrawd(lsys_turtlestatef *cmd)
@@ -225,7 +261,9 @@ static void lsysf_dodrawgt(lsys_turtlestatef *cmd)
     cmd->curcolor = (char)(cmd->curcolor - cmd->parm.n);
     cmd->curcolor %= colors;
     if (cmd->curcolor == 0)
+    {
         cmd->curcolor = (char)(colors-1);
+    }
 }
 
 static void lsysf_dodrawlt(lsys_turtlestatef *cmd)
@@ -233,7 +271,9 @@ static void lsysf_dodrawlt(lsys_turtlestatef *cmd)
     cmd->curcolor = (char)(cmd->curcolor + cmd->parm.n);
     cmd->curcolor %= colors;
     if (cmd->curcolor == 0)
+    {
         cmd->curcolor = 1;
+    }
 }
 
 static lsysf_cmd *
@@ -241,11 +281,14 @@ findsize(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth
 {
     bool tran;
 
-    if (overflow)     // integer math routines overflowed
+    if (overflow)       // integer math routines overflowed
+    {
         return nullptr;
+    }
 
     if (stackavail() < 400)
-    { // leave some margin for calling subrtns
+    {
+        // leave some margin for calling subrtns
         ts->stackoflow = true;
         return nullptr;
     }
@@ -266,12 +309,16 @@ findsize(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth
         if (depth)
         {
             for (lsysf_cmd **rulind = rules; *rulind; rulind++)
+            {
                 if ((*rulind)->ch == command->ch)
                 {
                     tran = true;
                     if (findsize((*rulind)+1, ts, rules, depth-1) == nullptr)
+                    {
                         return (nullptr);
+                    }
                 }
+            }
         }
         if (!depth || !tran)
         {
@@ -300,7 +347,9 @@ findsize(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth
                 LDBL const savey = ts->ypos;
                 command = findsize(command+1, ts, rules, depth);
                 if (command == nullptr)
+                {
                     return (nullptr);
+                }
                 ts->angle = saveang;
                 ts->reverse = saverev;
                 ts->size = savesize;
@@ -336,27 +385,45 @@ lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, in
     LDBL ymin = ts->ymin;
     LDBL ymax = ts->ymax;
     if (fsret == nullptr)
+    {
         return false;
+    }
     float horiz;
     if (xmax == xmin)
+    {
         horiz = (float)1E37;
+    }
     else
+    {
         horiz = (float)((xdots-10)/(xmax-xmin));
+    }
     float vert;
     if (ymax == ymin)
+    {
         vert = (float)1E37;
+    }
     else
+    {
         vert = (float)((ydots-6) /(ymax-ymin));
+    }
     LDBL const locsize = (vert < horiz) ? vert : horiz;
 
     if (horiz == 1E37)
+    {
         ts->xpos = xdots/2;
+    }
     else
+    {
         ts->xpos = (xdots-locsize*(xmax+xmin))/2;
+    }
     if (vert == 1E37)
+    {
         ts->ypos = ydots/2;
+    }
     else
+    {
         ts->ypos = (ydots-locsize*(ymax+ymin))/2;
+    }
     ts->size = locsize;
 
     return true;
@@ -367,12 +434,15 @@ drawLSysF(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int dept
 {
     bool tran;
 
-    if (overflow)     // integer math routines overflowed
+    if (overflow)       // integer math routines overflowed
+    {
         return nullptr;
+    }
 
 
     if (stackavail() < 400)
-    { // leave some margin for calling subroutines
+    {
+        // leave some margin for calling subroutines
         ts->stackoflow = true;
         return nullptr;
     }
@@ -392,12 +462,16 @@ drawLSysF(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int dept
         if (depth)
         {
             for (lsysf_cmd **rulind = rules; *rulind; rulind++)
+            {
                 if ((*rulind)->ch == command->ch)
                 {
                     tran = true;
                     if (drawLSysF((*rulind)+1, ts, rules, depth-1) == nullptr)
+                    {
                         return nullptr;
+                    }
                 }
+            }
         }
         if (!depth || !tran)
         {
@@ -427,7 +501,9 @@ drawLSysF(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int dept
                 char const savecolor = ts->curcolor;
                 command = drawLSysF(command+1, ts, rules, depth);
                 if (command == nullptr)
+                {
                     return (nullptr);
+                }
                 ts->angle = saveang;
                 ts->reverse = saverev;
                 ts->size = savesize;
@@ -512,7 +588,9 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
         }
         ret[n].f = f;
         if (ptype == 4)
+        {
             ret[n].parm.n = num;
+        }
         ret[n].ptype = ptype;
         if (++n == max)
         {
@@ -633,7 +711,9 @@ lsysf_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
         }
         ret[n].f = f;
         if (ptype == 4)
+        {
             ret[n].parm.n = (long)num;
+        }
         ret[n].ptype = ptype;
         if (++n == max)
         {

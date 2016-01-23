@@ -33,7 +33,9 @@ int HComplexInv(DHyperComplex *arg, DHyperComplex *out)
           (sqr(arg->x + arg->t) + sqr(arg->y - arg->z));
 
     if (det == 0.0)
+    {
         return (-1);
+    }
     mod = sqr(arg->x) + sqr(arg->y) + sqr(arg->z) + sqr(arg->t);
     xt_minus_yz = arg->x * arg->t - arg->y * arg->z;
 

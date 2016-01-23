@@ -66,11 +66,17 @@ void calc_lengths()
     bnstep = 4;  // use 4 in all cases
 
     if (bnlength % bnstep != 0)
+    {
         bnlength = (bnlength / bnstep + 1) * bnstep;
+    }
     if (bnlength == bnstep)
+    {
         padding = bnlength;
+    }
     else
+    {
         padding = 2*bnstep;
+    }
     rlength = bnlength + padding;
 
     // This shiftfactor assumes non-full multiplications will be performed.
@@ -105,11 +111,17 @@ static void init_bf_2()
        multiple kinds of alternate math eg long double */
     i = find_alternate_math(fractype, bf_math_type::BIGNUM);
     if (i > -1)
+    {
         bf_math = alternatemath[i].math;
+    }
     else if ((i = find_alternate_math(fractype, bf_math_type::BIGFLT)) > -1)
+    {
         bf_math = alternatemath[i].math;
+    }
     else
+    {
         bf_math = bf_math_type::BIGNUM; // maybe called from cmdfiles.c and fractype not set
+    }
 
     floatflag = true;
 
@@ -294,9 +306,11 @@ static void init_bf_2()
     // end safe vars
 
     // good citizens initialize variables
-    if (bf_save_len > 0)  // leave save area
+    if (bf_save_len > 0)    // leave save area
+    {
         memset(bnroot+(bf_save_len+2)*22, 0, (unsigned)(startstack-(bf_save_len+2)*22));
-    else // first time through - nothing saved
+    }
+    else   // first time through - nothing saved
     {
         // high variables
         memset(bnroot+maxstack, 0, (bflength+2)*22);
@@ -343,7 +357,9 @@ static int restore_bf_vars()
 {
     bf_t ptr;
     if (bf_save_len == 0)
+    {
         return (-1);
+    }
     ptr  = bnroot;
     convert_bf(bfxmin, ptr, bflength, bf_save_len);
     ptr += bf_save_len+2;
@@ -410,7 +426,9 @@ bn_t alloc_stack(size_t size)
     }
     // keep track of max ptr
     if (stack_addr > maxptr)
+    {
         maxptr = stack_addr;
+    }
     stack_ptr += size;   // increment stack pointer
     return (stack_ptr - size);
 }
@@ -442,20 +460,32 @@ void restore_stack(int old_offset)
 void init_bf_dec(int dec)
 {
     if (bfdigits > 0)
+    {
         decimals = bfdigits;   // blindly force
+    }
     else
+    {
         decimals = dec;
-    if (bailout > 10)    // arbitrary value
+    }
+    if (bailout > 10)      // arbitrary value
+    {
         // using 2 doesn't gain much and requires another test
         intlength = 4;
+    }
     else if (fractype == fractal_type::FPMANDELZPOWER || fractype == fractal_type::FPJULIAZPOWER)
+    {
         intlength = 2;
-    // the bailout tests need greater dynamic range
+        // the bailout tests need greater dynamic range
+    }
     else if (bailoutest == bailouts::Real || bailoutest == bailouts::Imag || bailoutest == bailouts::And ||
              bailoutest == bailouts::Manr)
+    {
         intlength = 2;
+    }
     else
+    {
         intlength = 1;
+    }
     // conservative estimate
     bnlength = intlength + (int)(decimals/LOG10_256) + 1; // round up
     init_bf_2();
@@ -469,17 +499,25 @@ void init_bf_length(int bnl)
 {
     bnlength = bnl;
 
-    if (bailout > 10)    // arbitrary value
+    if (bailout > 10)      // arbitrary value
+    {
         // using 2 doesn't gain much and requires another test
         intlength = 4;
+    }
     else if (fractype == fractal_type::FPMANDELZPOWER || fractype == fractal_type::FPJULIAZPOWER)
+    {
         intlength = 2;
-    // the bailout tests need greater dynamic range
+        // the bailout tests need greater dynamic range
+    }
     else if (bailoutest == bailouts::Real || bailoutest == bailouts::Imag || bailoutest == bailouts::And ||
              bailoutest == bailouts::Manr)
+    {
         intlength = 2;
+    }
     else
+    {
         intlength = 1;
+    }
     // conservative estimate
     decimals = (int)((bnlength-intlength)*LOG10_256);
     init_bf_2();

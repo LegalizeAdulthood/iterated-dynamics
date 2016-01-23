@@ -57,8 +57,12 @@ static scancodes scancodes[] =
 static int get_scancode(char const *mn)
 {
     for (auto const &it : scancodes)
+    {
         if (strcmp(mn, it.mnemonic) == 0)
+        {
             return it.code;
+        }
+    }
 
     return -1;
 }
@@ -126,21 +130,27 @@ int slideshw()
     char buffer[81];
     if (calcwait)
     {
-        if (calc_status == calc_status_value::IN_PROGRESS || busy) // restart timer - process not done
+        if (calc_status == calc_status_value::IN_PROGRESS || busy)   // restart timer - process not done
+        {
             return (0); // wait for calc to finish before reading more keystrokes
+        }
         calcwait = false;
     }
-    if (fpss == nullptr)   // open files first time through
+    if (fpss == nullptr)     // open files first time through
+    {
         if (startslideshow() == slides_mode::OFF)
         {
             stopslideshow();
             return (0);
         }
+    }
 
     if (ticks) // if waiting, see if waited long enough
     {
-        if (clock_ticks() - starttick < ticks) // haven't waited long enough
+        if (clock_ticks() - starttick < ticks)   // haven't waited long enough
+        {
             return (0);
+        }
         ticks = 0;
     }
     if (++slowcount <= 18)
@@ -148,7 +158,9 @@ int slideshw()
         starttick = clock_ticks();
         ticks = CLOCKS_PER_SEC/5; // a slight delay so keystrokes are visible
         if (slowcount > 10)
+        {
             ticks /= 2;
+        }
     }
     if (repeats > 0)
     {
@@ -160,7 +172,9 @@ start:
     {
         out = fgetc(fpss);
         if (out != '\"' && out != EOF)
+        {
             return (last1 = out);
+        }
         quotes = false;
     }
     // skip white space:
@@ -196,17 +210,25 @@ start:
     while (1) // get a token
     {
         if (i < 80)
+        {
             buffer[i++] = (char)out;
+        }
         out = fgetc(fpss);
         if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
+        {
             break;
+        }
     }
     buffer[i] = 0;
     if (buffer[i-1] == ':')
+    {
         goto start;
+    }
     out = -12345;
-    if (isdigit(buffer[0]))       // an arbitrary scan code number - use it
+    if (isdigit(buffer[0]))         // an arbitrary scan code number - use it
+    {
         out = atoi(buffer);
+    }
     else if (strcmp(buffer, "MESSAGE") == 0)
     {
         int secs;
@@ -255,7 +277,9 @@ start:
         }
     }
     else if ((i = get_scancode(buffer)) > 0)
+    {
         out = i;
+    }
     else if (strcmp("WAIT", buffer) == 0)
     {
         float fticks;
@@ -281,7 +305,9 @@ start:
         slowcount = out;
     }
     else if ((i = check_vidmode_keyname(buffer)) != 0)
+    {
         out = i;
+    }
     if (out == -12345)
     {
         std::ostringstream msg;
@@ -297,7 +323,9 @@ startslideshow()
 {
     fpss = fopen(autoname.c_str(), "r");
     if (fpss == nullptr)
+    {
         g_slides = slides_mode::OFF;
+    }
     ticks = 0;
     quotes = false;
     calcwait = false;
@@ -308,7 +336,9 @@ startslideshow()
 void stopslideshow()
 {
     if (fpss)
+    {
         fclose(fpss);
+    }
     fpss = nullptr;
     g_slides = slides_mode::OFF;
 }
@@ -323,7 +353,9 @@ void recordshw(int key)
     {
         fpss = fopen(autoname.c_str(), "w");
         if (fpss == nullptr)
+        {
             return;
+        }
     }
     dt = ticks-dt;
     dt /= CLOCKS_PER_SEC;  // dt now in seconds
@@ -354,15 +386,19 @@ void recordshw(int key)
         }
         get_mnemonic(key, mn);
         if (*mn)
+        {
             fprintf(fpss, "%s", mn);
+        }
         else if (check_vidmode_key(0, key) >= 0)
         {
             char buf[10];
             vidmode_keyname(key, buf);
             fputs(buf, fpss);
         }
-        else // not ASCII and not FN key
+        else   // not ASCII and not FN key
+        {
             fprintf(fpss, "%4d", key);
+        }
         fputc('\n', fpss);
     }
 }

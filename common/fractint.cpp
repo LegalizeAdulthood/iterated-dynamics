@@ -151,7 +151,9 @@ void check_samename()
     {
         makepath(path, drive, dir, fname, "gif");
         if (access(path, 0) == 0)
+        {
             exit(0);
+        }
     }
 }
 
@@ -159,7 +161,9 @@ void check_samename()
 static void my_floating_point_err(int sig)
 {
     if (sig != 0)
+    {
         overflow = true;
+    }
 }
 
 /*
@@ -342,7 +346,9 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         overlay_3d = false;              // forget overlays
         display_3d = display_3d_modes::NONE;
         if (calc_status == calc_status_value::NON_RESUMABLE)
+        {
             calc_status = calc_status_value::PARAMS_CHANGED;
+        }
         resumeflag = true;
         return true;
     }
@@ -369,11 +375,17 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
     got_status = -1;                     // for tab_display
 
     if (show_file)
-        if (calc_status > calc_status_value::PARAMS_CHANGED)              // goto imagestart implies re-calc
+    {
+        if (calc_status > calc_status_value::PARAMS_CHANGED)                // goto imagestart implies re-calc
+        {
             calc_status = calc_status_value::PARAMS_CHANGED;
+        }
+    }
 
     if (init_batch == batch_modes::NONE)
+    {
         look_at_mouse = -FIK_PAGE_UP;           // just mouse left button, == pgup
+    }
 
     cyclelimit = initcyclelimit;         // default cycle limit
     g_adapter = g_init_mode;                  // set the video adapter up
@@ -388,18 +400,27 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         }
         int kbdchar = main_menu(0);
         if (kbdchar == FIK_INSERT)
+        {
             return main_state::RESTART;      // restart pgm on Insert Key
-        if (kbdchar == FIK_DELETE)                    // select video mode list
+        }
+        if (kbdchar == FIK_DELETE)                      // select video mode list
+        {
             kbdchar = select_video_mode(-1);
+        }
         g_adapter = check_vidmode_key(0, kbdchar);
         if (g_adapter >= 0)
+        {
             break;                                 // got a video mode now
+        }
 #ifndef XFRACT
         if ('A' <= kbdchar && kbdchar <= 'Z')
+        {
             kbdchar = tolower(kbdchar);
+        }
 #endif
         if (kbdchar == 'd')
-        {                     // shell to DOS
+        {
+            // shell to DOS
             driver_set_clear();
             driver_shell();
             return main_state::IMAGE_START;
@@ -407,13 +428,17 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 
 #ifndef XFRACT
         if (kbdchar == '@' || kbdchar == '2')
-        {    // execute commands
+        {
+            // execute commands
 #else
         if (kbdchar == FIK_F2 || kbdchar == '@')
-        {     // We mapped @ to F2
+        {
+            // We mapped @ to F2
 #endif
             if ((get_commands() & CMDARG_3D_YES) == 0)
+            {
                 return main_state::IMAGE_START;
+            }
             kbdchar = '3';                         // 3d=y so fall thru '3' code
         }
 #ifndef XFRACT
@@ -425,56 +450,69 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 #endif
             display_3d = display_3d_modes::NONE;
             if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
+            {
                 display_3d = display_3d_modes::YES;
+            }
             if (colors_preloaded)
+            {
                 memcpy(old_dac_box, g_dac_box, 256*3); // save in case colors= present
+            }
             driver_set_for_text(); // switch to text mode
             show_file = -1;
             return main_state::RESTORE_START;
         }
         if (kbdchar == 't')
-        {                   // set fractal type
+        {
+            // set fractal type
             julibrot = false;
             get_fracttype();
             return main_state::IMAGE_START;
         }
         if (kbdchar == 'x')
-        {                   // generic toggle switch
+        {
+            // generic toggle switch
             get_toggles();
             return main_state::IMAGE_START;
         }
         if (kbdchar == 'y')
-        {                   // generic toggle switch
+        {
+            // generic toggle switch
             get_toggles2();
             return main_state::IMAGE_START;
         }
         if (kbdchar == 'z')
-        {                   // type specific parms
+        {
+            // type specific parms
             get_fract_params(1);
             return main_state::IMAGE_START;
         }
         if (kbdchar == 'v')
-        {                   // view parameters
+        {
+            // view parameters
             get_view_params();
             return main_state::IMAGE_START;
         }
         if (kbdchar == FIK_CTL_B)
-        {             /* ctrl B = browse parms*/
+        {
+            /* ctrl B = browse parms*/
             get_browse_params();
             return main_state::IMAGE_START;
         }
         if (kbdchar == FIK_CTL_F)
-        {             /* ctrl f = sound parms*/
+        {
+            /* ctrl f = sound parms*/
             get_sound_params();
             return main_state::IMAGE_START;
         }
         if (kbdchar == 'f')
-        {                   // floating pt toggle
+        {
+            // floating pt toggle
             usr_floatflag = !usr_floatflag;
             return main_state::IMAGE_START;
         }
         if (kbdchar == 'i')
-        {                     // set 3d fractal parms
+        {
+            // set 3d fractal parms
             get_fract3d_params(); // get the parameters
             return main_state::IMAGE_START;
         }
@@ -602,10 +640,14 @@ int timer(int timertype, int(*subrtn)(), ...)
     va_start(arg_marker, subrtn);
 
     bool do_bench = timerflag; // record time?
-    if (timertype == 2)   // encoder, record time only if debug flag set
+    if (timertype == 2)     // encoder, record time only if debug flag set
+    {
         do_bench = (debugflag == debug_flags::benchmark_encoder);
+    }
     if (do_bench)
+    {
         fp = dir_fopen(workdir.c_str(), "bench", "a");
+    }
     timer_start = clock_ticks();
     switch (timertype)
     {
@@ -645,7 +687,9 @@ int timer(int timertype, int(*subrtn)(), ...)
                 maxit);
         fprintf(fp, " time= %ld.%02ld secs\n", timer_interval/100, timer_interval%100);
         if (fp != nullptr)
+        {
             fclose(fp);
+        }
     }
     return out;
 }

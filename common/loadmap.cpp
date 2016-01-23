@@ -22,8 +22,10 @@ bool ValidateLuts(char const *fn)
 #else
     merge_pathnames(temp, temp_fn, cmd_file::AT_CMD_LINE);
 #endif
-    if (has_ext(temp) == nullptr) // Did name have an extension?
+    if (has_ext(temp) == nullptr)   // Did name have an extension?
+    {
         strcat(temp, ".map");  // No? Then add .map
+    }
     findpath(temp, line);         // search the dos path
     f = fopen(line, "r");
     if (f == nullptr)
@@ -36,7 +38,9 @@ bool ValidateLuts(char const *fn)
     for (index = 0; index < 256; index++)
     {
         if (fgets(line, 100, f) == nullptr)
+        {
             break;
+        }
         sscanf(line, "%u %u %u", &r, &g, &b);
         //* load global dac values *
         dac[index].red   = (BYTE)((r%256) >> 2);// maps default to 8 bits
@@ -45,7 +49,8 @@ bool ValidateLuts(char const *fn)
     }
     fclose(f);
     while (index < 256)
-    { // zap unset entries
+    {
+        // zap unset entries
         dac[index].green = 40;
         dac[index].blue = dac[index].green;
         dac[index].red = dac[index].blue;

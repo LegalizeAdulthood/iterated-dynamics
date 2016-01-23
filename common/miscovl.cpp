@@ -79,8 +79,10 @@ void make_batch_file()
     char const *sptr2;
     int old_help_mode;
 
-    if (make_parameter_file_map) // makepar map case
+    if (make_parameter_file_map)   // makepar map case
+    {
         colorsonly = true;
+    }
 
     driver_stack_screen();
     old_help_mode = help_mode;
@@ -96,20 +98,33 @@ void make_batch_file()
     {
         --maxcolor;
         if (inside > COLOR_BLACK && inside > maxcolor)
+        {
             maxcolor = inside;
+        }
         if (outside > COLOR_BLACK && outside > maxcolor)
+        {
             maxcolor = outside;
+        }
         if (distest < COLOR_BLACK && -distest > maxcolor)
+        {
             maxcolor = (int)(0 - distest);
+        }
         if (decomp[0] > maxcolor)
+        {
             maxcolor = decomp[0] - 1;
+        }
         if (potflag && potparam[0] >= maxcolor)
+        {
             maxcolor = (int)potparam[0];
+        }
         if (++maxcolor > 256)
+        {
             maxcolor = 256;
+        }
 
         if (colorstate == 0)
-        {   // default colors
+        {
+            // default colors
             if (map_specified)
             {
                 colorspec[0] = '@';
@@ -117,21 +132,28 @@ void make_batch_file()
             }
         }
         else if (colorstate == 2)
-        {   // colors match colorfile
+        {
+            // colors match colorfile
             colorspec[0] = '@';
             sptr = colorfile.c_str();
         }
-        else                      // colors match no .map that we know of
+        else                        // colors match no .map that we know of
+        {
             strcpy(colorspec, "y");
+        }
 
         if (sptr && colorspec[0] == '@')
         {
             sptr2 = strrchr(sptr, SLASHC);
             if (sptr2 != nullptr)
+            {
                 sptr = sptr2 + 1;
+            }
             sptr2 = strrchr(sptr, ':');
             if (sptr2 != nullptr)
+            {
                 sptr = sptr2 + 1;
+            }
             strncpy(&colorspec[1], sptr, 12);
             colorspec[13] = 0;
         }
@@ -145,13 +167,17 @@ void make_batch_file()
     }
 
     if (CommandName.empty())
+    {
         strcpy(inpcommandname, "test");
+    }
     pxdots = xdots;
     pydots = ydots;
     ym = 1;
     xm = ym;
     if (make_parameter_file)
+    {
         goto skip_UI;
+    }
 
     vidmode_keyname(g_video_entry.keynum, vidmde);
     while (1)
@@ -215,7 +241,9 @@ prompt_user:
 #endif
 
         if (fullscreen_prompt("Save Current Parameters", promptnum, choices, paramvalues, 0, nullptr) < 0)
+        {
             break;
+        }
 
         if (*colorspec == 'o' || make_parameter_file_map)
         {
@@ -225,18 +253,28 @@ prompt_user:
 
         CommandFile = inpcommandfile;
         if (has_ext(CommandFile.c_str()) == nullptr)
+        {
             CommandFile += ".par";   // default extension .par
+
+        }
         CommandName = inpcommandname;
         for (int i = 0; i < 4; i++)
+        {
             CommandComment[i] = inpcomment[i];
+        }
 #ifndef XFRACT
         if (g_got_real_dac || (g_is_true_color && !truemode))
 #else
         if (g_got_real_dac || (g_is_true_color && !truemode) || fake_lut)
 #endif
+        {
             if (paramvalues[maxcolorindex].uval.ival > 0 &&
                     paramvalues[maxcolorindex].uval.ival <= 256)
+            {
                 maxcolor = paramvalues[maxcolorindex].uval.ival;
+            }
+        }
+
         promptnum = piecespromts;
         {
             int newmaxlinelength;
@@ -244,10 +282,11 @@ prompt_user:
             if (maxlinelength != newmaxlinelength &&
                     newmaxlinelength >= MINMAXLINELENGTH &&
                     newmaxlinelength <= MAXMAXLINELENGTH)
+            {
                 maxlinelength = newmaxlinelength;
+            }
         }
         xm = paramvalues[promptnum++].uval.ival;
-
         ym = paramvalues[promptnum++].uval.ival;
 
         // sanity checks
@@ -300,18 +339,27 @@ skip_UI:
         if (make_parameter_file)
         {
             if (filecolors > 0)
+            {
                 strcpy(colorspec, "y");
+            }
             else
+            {
                 strcpy(colorspec, "n");
+            }
             if (make_parameter_file_map)
+            {
                 maxcolor = 256;
+            }
             else
+            {
                 maxcolor = filecolors;
+            }
         }
         strcpy(outname, CommandFile.c_str());
         bool gotinfile = false;
         if (access(CommandFile.c_str(), 0) == 0)
-        {   // file exists
+        {
+            // file exists
             gotinfile = true;
             if (access(CommandFile.c_str(), 6))
             {
@@ -321,7 +369,9 @@ skip_UI:
             }
             int i = (int) strlen(outname);
             while (--i >= 0 && outname[i] != SLASHC)
+            {
                 outname[i] = 0;
+            }
             strcat(outname, "fractint.tmp");
             infile = fopen(CommandFile.c_str(), "rt");
         }
@@ -331,7 +381,9 @@ skip_UI:
             sprintf(buf, "Can't create %s", outname);
             stopmsg(STOPMSG_NONE, buf);
             if (gotinfile)
+            {
                 fclose(infile);
+            }
             continue;
         }
 
@@ -342,12 +394,14 @@ skip_UI:
                 if (strchr(buf, '{')// entry heading?
                         && sscanf(buf, " %40[^ \t({]", buf2)
                         && stricmp(buf2, CommandName.c_str()) == 0)
-                {   // entry with same name
+                {
+                    // entry with same name
                     _snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
                               CommandName.c_str(), make_parameter_file ?
                               "... Replacing ..." : "Continue to replace it, Cancel to back out");
                     if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
-                    {   // cancel
+                    {
+                        // cancel
                         fclose(infile);
                         fclose(parmfile);
                         unlink(outname);
@@ -355,7 +409,9 @@ skip_UI:
                     }
                     while (strchr(buf, '}') == nullptr
                             && file_gets(buf, 255, infile) > 0)
+                    {
                         ; // skip to end of set
+                    }
                     break;
                 }
                 fputs(buf, parmfile);
@@ -381,7 +437,8 @@ skip_UI:
             pxxmin = xxmin;
             pyymax = yymax;
         }
-        for (int i = 0; i < (int)xm; i++)  // columns
+        for (int i = 0; i < (int)xm; i++)    // columns
+        {
             for (int j = 0; j < (int)ym; j++)  // rows
             {
                 if (xm > 1 || ym > 1)
@@ -394,7 +451,9 @@ skip_UI:
                     {
                         c = CommandName[w];
                         if (isspace(c) || c == 0)
+                        {
                             break;
+                        }
                         PCommandName[w] = c;
                         w++;
                     }
@@ -423,20 +482,32 @@ skip_UI:
                     fprintf(fpbat, "If Errorlevel 2 goto oops\n");
                 }
                 else
+                {
                     fprintf(parmfile, "%-19s{", CommandName.c_str());
+                }
                 {
                     /* guarantee that there are no blank comments above the last
                        non-blank par_comment */
                     int last = -1;
                     for (int i = 0; i < 4; i++)
+                    {
                         if (*par_comment[i])
+                        {
                             last = i;
+                        }
+                    }
                     for (int i = 0; i < last; i++)
+                    {
                         if (CommandComment[i].empty())
+                        {
                             CommandComment[i] = ";";
+                        }
+                    }
                 }
                 if (!CommandComment[0].empty())
+                {
                     fprintf(parmfile, " ; %s", CommandComment[0].c_str());
+                }
                 fputc('\n', parmfile);
                 {
                     char buf[25];
@@ -444,11 +515,17 @@ skip_UI:
                     buf[23] = 0;
                     buf[21] = ';';
                     for (int k = 1; k < 4; k++)
+                    {
                         if (!CommandComment[k].empty())
+                        {
                             fprintf(parmfile, "%s%s\n", buf, CommandComment[k].c_str());
+                        }
+                    }
                     if (g_patch_level != 0 && !colorsonly)
+                    {
                         fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
                                 Fractint, g_release, g_patch_level);
+                    }
                 }
                 write_batch_parms(colorspec, colorsonly, maxcolor, i, j);
                 if (xm > 1 || ym > 1)
@@ -458,6 +535,7 @@ skip_UI:
                 }
                 fprintf(parmfile, "  }\n\n");
             }
+        }
         if (xm > 1 || ym > 1)
         {
             fprintf(fpbat, "Fractint makemig=%d/%d\n", xm, ym);
@@ -468,7 +546,8 @@ skip_UI:
         //******end here
 
         if (gotinfile)
-        {   // copy the rest of the file
+        {
+            // copy the rest of the file
             int i;
             do
             {
@@ -485,7 +564,8 @@ skip_UI:
         }
         fclose(parmfile);
         if (gotinfile)
-        {   // replace the original file with the new
+        {
+            // replace the original file with the new
             unlink(CommandFile.c_str());   // success assumed on these lines
             rename(outname, CommandFile.c_str());  // since we checked earlier with access
         }
@@ -523,20 +603,29 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
     // Using near string boxx for buffer after saving to extraseg
 
     if (colorsonly)
+    {
         goto docolors;
+    }
     if (display_3d <= display_3d_modes::NONE)
-    { // a fractal was generated
+    {
+        // a fractal was generated
 
         //***** fractal only parameters in this section ******
         put_parm(" reset");
         if (check_back())
+        {
             put_parm("=%d", std::min(save_release, g_release));
+        }
         else
+        {
             put_parm("=%d", g_release);
+        }
 
         sptr = curfractalspecific->name;
         if (*sptr == '*')
+        {
             ++sptr;
+        }
         put_parm(" %s=%s", "type", sptr);
 
         if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
@@ -546,27 +635,37 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             // these rarely change
             if (originfp != 8 || heightfp != 7 || widthfp != 10 || distfp != 24
                     || depthfp != 8 || zdots != 128)
+            {
                 put_parm(" %s=%d/%g/%g/%g/%g/%g", "julibrot3d",
                          zdots, originfp, depthfp, heightfp, widthfp, distfp);
+            }
             if (eyesfp != 0)
+            {
                 put_parm(" %s=%g", "julibroteyes", eyesfp);
+            }
             if (neworbittype != fractal_type::JULIA)
             {
                 char const *name;
                 name = fractalspecific[static_cast<int>(neworbittype)].name;
                 if (*name == '*')
+                {
                     name++;
+                }
                 put_parm(" %s=%s", "orbitname", name);
             }
             if (juli3Dmode != 0)
+            {
                 put_parm(" %s=%s", "3dmode", juli3Doptions[juli3Dmode].c_str());
+            }
         }
         if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
         {
             put_filename("formulafile", FormFileName.c_str());
             put_parm(" %s=%s", "formulaname", FormName.c_str());
             if (uses_ismand)
+            {
                 put_parm(" %s=%c", "ismand", ismand ? 'y' : 'n');
+            }
         }
         if (fractype == fractal_type::LSYSTEM)
         {
@@ -579,20 +678,28 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%s", "ifs", IFSName.c_str());
         }
         if (fractype == fractal_type::INVERSEJULIA || fractype == fractal_type::INVERSEJULIAFP)
+        {
             put_parm(" %s=%s/%s", "miim",
-                JIIMmethod[static_cast<int>(major_method)].c_str(),
-                JIIMleftright[static_cast<int>(minor_method)].c_str());
+                     JIIMmethod[static_cast<int>(major_method)].c_str(),
+                     JIIMleftright[static_cast<int>(minor_method)].c_str());
+        }
 
         showtrig(buf); // this function is in miscres.c
         if (buf[0])
+        {
             put_parm(buf);
+        }
 
         if (usr_stdcalcmode != 'g')
+        {
             put_parm(" %s=%c", "passes", usr_stdcalcmode);
+        }
 
 
         if (stoppass != 0)
+        {
             put_parm(" %s=%c%c", "passes", usr_stdcalcmode, (char)stoppass + '0');
+        }
 
         if (usemag)
         {
@@ -615,19 +722,26 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm("/%.7Lg", Magnification); // precision of magnification not critical, but magnitude is
             // Round to avoid ugly decimals, precision here is not critical
             // Don't round Xmagfactor if it's small
-            if (fabs(Xmagfactor) > 0.5) // or so, exact value isn't important
+            if (fabs(Xmagfactor) > 0.5)   // or so, exact value isn't important
+            {
                 Xmagfactor = (sign(Xmagfactor) * (long)(fabs(Xmagfactor) * 1e4 + 0.5)) / 1e4;
+            }
             // Just truncate these angles.  Who cares about 1/1000 of a degree
             // Somebody does.  Some rotated and/or skewed images are slightly
             // off when recreated from a PAR using 1/1000.
             if (Xmagfactor != 1 || Rotation != 0 || Skew != 0)
-            {   // Only put what is necessary
+            {
+                // Only put what is necessary
                 // The difference with Xmagfactor is that it is normally
                 // near 1 while the others are normally near 0
                 if (fabs(Xmagfactor) >= 1)
+                {
                     put_float(1, Xmagfactor, 5); // put_float() uses %g
-                else // abs(Xmagfactor) is < 1
+                }
+                else     // abs(Xmagfactor) is < 1
+                {
                     put_float(1, Xmagfactor, 4); // put_float() uses %g
+                }
                 if (Rotation != 0 || Skew != 0)
                 {
                     // Use precision=6 here.  These angle have already been rounded
@@ -677,63 +791,106 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
 
         int i;
         for (i = (MAXPARAMS-1); i >= 0; --i)
+        {
             if (typehasparm((fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
-                            ?neworbittype:fractype, i, nullptr)) break;
+                            ?neworbittype:fractype, i, nullptr))
+            {
+                break;
+            }
+        }
 
         if (i >= 0)
         {
             if (fractype == fractal_type::CELLULAR || fractype == fractal_type::ANT)
+            {
                 put_parm(" %s=%.1f", "params", param[0]);
+            }
             else
             {
                 if (debugflag == debug_flags::force_long_double_param_output)
+                {
                     put_parm(" %s=%.17Lg", "params", (long double)param[0]);
+                }
                 else
+                {
                     put_parm(" %s=%.17g", "params", param[0]);
+                }
             }
             for (int j = 1; j <= i; ++j)
+            {
                 if (fractype == fractal_type::CELLULAR || fractype == fractal_type::ANT)
+                {
                     put_parm("/%.1f", param[j]);
+                }
                 else
                 {
                     if (debugflag == debug_flags::force_long_double_param_output)
+                    {
                         put_parm("/%.17Lg", (long double)param[j]);
+                    }
                     else
+                    {
                         put_parm("/%.17g", param[j]);
+                    }
                 }
+            }
         }
 
         if (useinitorbit == 2)
+        {
             put_parm(" %s=pixel", "initorbit");
+        }
         else if (useinitorbit == 1)
+        {
             put_parm(" %s=%.15g/%.15g", "initorbit", initorbit.x, initorbit.y);
+        }
 
         if (floatflag)
+        {
             put_parm(" %s=y", "float");
+        }
 
         if (maxit != 150)
+        {
             put_parm(" %s=%ld", "maxiter", maxit);
+        }
 
         if (bailout && (!potflag || potparam[2] == 0.0))
+        {
             put_parm(" %s=%ld", "bailout", bailout);
+        }
 
         if (bailoutest != bailouts::Mod)
         {
             put_parm(" %s=", "bailoutest");
             if (bailoutest == bailouts::Real)
+            {
                 put_parm("real");
+            }
             else if (bailoutest == bailouts::Imag)
+            {
                 put_parm("imag");
+            }
             else if (bailoutest == bailouts::Or)
+            {
                 put_parm("or");
+            }
             else if (bailoutest == bailouts::And)
+            {
                 put_parm("and");
+            }
             else if (bailoutest == bailouts::Manh)
+            {
                 put_parm("manh");
+            }
             else if (bailoutest == bailouts::Manr)
+            {
                 put_parm("manr");
+            }
             else
+            {
                 put_parm("mod"); // default, just in case
+            }
         }
         if (fillcolor != -1)
         {
@@ -744,25 +901,45 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=", "inside");
             if (inside == ITER)
+            {
                 put_parm("maxiter");
+            }
             else if (inside == ZMAG)
+            {
                 put_parm("zmag");
+            }
             else if (inside == BOF60)
+            {
                 put_parm("bof60");
+            }
             else if (inside == BOF61)
+            {
                 put_parm("bof61");
+            }
             else if (inside == EPSCROSS)
+            {
                 put_parm("epsiloncross");
+            }
             else if (inside == STARTRAIL)
+            {
                 put_parm("startrail");
+            }
             else if (inside == PERIOD)
+            {
                 put_parm("period");
+            }
             else if (inside == FMODI)
+            {
                 put_parm("fmod");
+            }
             else if (inside == ATANI)
+            {
                 put_parm("atan");
+            }
             else
+            {
                 put_parm("%d", inside);
+            }
         }
         if (closeprox != 0.01 && (inside == EPSCROSS || inside == FMODI
                                   || outside == FMOD))
@@ -773,41 +950,67 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=", "outside");
             if (outside == REAL)
+            {
                 put_parm("real");
+            }
             else if (outside == IMAG)
+            {
                 put_parm("imag");
+            }
             else if (outside == MULT)
+            {
                 put_parm("mult");
+            }
             else if (outside == SUM)
+            {
                 put_parm("summ");
+            }
             else if (outside == ATAN)
+            {
                 put_parm("atan");
+            }
             else if (outside == FMOD)
+            {
                 put_parm("fmod");
+            }
             else if (outside == TDIS)
+            {
                 put_parm("tdis");
+            }
             else
+            {
                 put_parm("%d", outside);
+            }
         }
 
         if (LogFlag && !rangeslen)
         {
             put_parm(" %s=", "logmap");
             if (LogFlag == -1)
+            {
                 put_parm("old");
+            }
             else if (LogFlag == 1)
+            {
                 put_parm("yes");
+            }
             else
+            {
                 put_parm("%ld", LogFlag);
+            }
         }
 
         if (Log_Fly_Calc && LogFlag && !rangeslen)
         {
             put_parm(" %s=", "logmode");
             if (Log_Fly_Calc == 1)
+            {
                 put_parm("fly");
+            }
             else if (Log_Fly_Calc == 2)
+            {
                 put_parm("table");
+            }
         }
 
         if (potflag)
@@ -815,49 +1018,79 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%d/%g/%d", "potential",
                      (int)potparam[0], potparam[1], (int)potparam[2]);
             if (pot16bit)
+            {
                 put_parm("/%s", "16bit");
+            }
         }
         if (invert)
+        {
             put_parm(" %s=%-1.15lg/%-1.15lg/%-1.15lg", "invert",
                      inversion[0], inversion[1], inversion[2]);
+        }
         if (decomp[0])
+        {
             put_parm(" %s=%d", "decomp", decomp[0]);
+        }
         if (distest)
         {
             put_parm(" %s=%ld/%d/%d/%d", "distest", distest, distestwidth,
                      pseudox?pseudox:xdots, pseudoy?pseudoy:ydots);
         }
         if (old_demm_colors)
+        {
             put_parm(" %s=y", "olddemmcolors");
+        }
         if (usr_biomorph != -1)
+        {
             put_parm(" %s=%d", "biomorph", usr_biomorph);
+        }
         if (finattract)
+        {
             put_parm(" %s=y", "finattract");
+        }
 
         if (forcesymmetry != symmetry_type::NOT_FORCED)
         {
             if (forcesymmetry == static_cast<symmetry_type>(1000) && ii == 1 && jj == 1)
+            {
                 stopmsg(STOPMSG_NONE, "Regenerate before <b> to get correct symmetry");
+            }
             put_parm(" %s=", "symmetry");
             if (forcesymmetry == symmetry_type::X_AXIS)
+            {
                 put_parm("xaxis");
+            }
             else if (forcesymmetry == symmetry_type::Y_AXIS)
+            {
                 put_parm("yaxis");
+            }
             else if (forcesymmetry == symmetry_type::XY_AXIS)
+            {
                 put_parm("xyaxis");
+            }
             else if (forcesymmetry == symmetry_type::ORIGIN)
+            {
                 put_parm("origin");
+            }
             else if (forcesymmetry == symmetry_type::PI_SYM)
+            {
                 put_parm("pi");
+            }
             else
+            {
                 put_parm("none");
+            }
         }
 
         if (periodicitycheck != 1)
+        {
             put_parm(" %s=%d", "periodicity", periodicitycheck);
+        }
 
         if (rflag)
+        {
             put_parm(" %s=%d", "rseed", rseed);
+        }
 
         if (rangeslen)
         {
@@ -866,7 +1099,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             while (i < rangeslen)
             {
                 if (i)
+                {
                     put_parm("/");
+                }
                 if (ranges[i] == -1)
                 {
                     put_parm("-%d/", ranges[++i]);
@@ -881,11 +1116,17 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
     {
         //**** 3d transform only parameters in this section ****
         if (display_3d == display_3d_modes::B_COMMAND)
+        {
             put_parm(" %s=%s", "3d", "overlay");
+        }
         else
+        {
             put_parm(" %s=%s", "3d", "yes");
+        }
         if (!loaded3d)
+        {
             put_filename("filename", readname.c_str());
+        }
         if (SPHERE)
         {
             put_parm(" %s=y", "sphere");
@@ -897,52 +1138,79 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         put_parm(" %s=%d", "roughness", ROUGH);
         put_parm(" %s=%d", "waterline", WATERLINE);
         if (FILLTYPE)
+        {
             put_parm(" %s=%d", "filltype", FILLTYPE);
+        }
         if (transparent[0] || transparent[1])
+        {
             put_parm(" %s=%d/%d", "transparent", transparent[0], transparent[1]);
+        }
         if (preview)
         {
             put_parm(" %s=%s", "preview", "yes");
             if (showbox)
+            {
                 put_parm(" %s=%s", "showbox", "yes");
+            }
             put_parm(" %s=%d", "coarse", previewfactor);
         }
         if (RAY)
         {
             put_parm(" %s=%d", "ray", RAY);
             if (BRIEF)
+            {
                 put_parm(" %s=y", "brief");
+            }
         }
         if (FILLTYPE > 4)
         {
             put_parm(" %s=%d/%d/%d", "lightsource", XLIGHT, YLIGHT, ZLIGHT);
             if (LIGHTAVG)
+            {
                 put_parm(" %s=%d", "smoothing", LIGHTAVG);
+            }
         }
         if (RANDOMIZE)
+        {
             put_parm(" %s=%d", "randomize", RANDOMIZE);
+        }
         if (Targa_Out)
+        {
             put_parm(" %s=y", "fullcolor");
+        }
         if (grayflag)
+        {
             put_parm(" %s=y", "usegrayscale");
+        }
         if (Ambient)
+        {
             put_parm(" %s=%d", "ambient", Ambient);
+        }
         if (haze)
+        {
             put_parm(" %s=%d", "haze", haze);
+        }
         if (back_color[0] != 51 || back_color[1] != 153 || back_color[2] != 200)
+        {
             put_parm(" %s=%d/%d/%d", "background", back_color[0], back_color[1],
                      back_color[2]);
+        }
     }
 
     if (display_3d != display_3d_modes::NONE)
-    {             // universal 3d
+    {
+        // universal 3d
         //**** common (fractal & transform) 3d parameters in this section ****
         if (!SPHERE || display_3d < display_3d_modes::NONE)
+        {
             put_parm(" %s=%d/%d/%d", "rotation", XROT, YROT, ZROT);
+        }
         put_parm(" %s=%d", "perspective", ZVIEWER);
         put_parm(" %s=%d/%d", "xyshift", XSHIFT, YSHIFT);
         if (xtrans || ytrans)
+        {
             put_parm(" %s=%d/%d", "xyadjust", xtrans, ytrans);
+        }
         if (g_glasses_type)
         {
             put_parm(" %s=%d", "stereo", g_glasses_type);
@@ -961,109 +1229,173 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
     {
         put_parm(" %s=%g/%g", "viewwindows", viewreduction, finalaspectratio);
         if (viewcrop)
+        {
             put_parm("/%s", "yes");
+        }
         else
+        {
             put_parm("/%s", "no");
+        }
         put_parm("/%d/%d", viewxdots, viewydots);
     }
 
     if (!colorsonly)
     {
         if (rotate_lo != 1 || rotate_hi != 255)
+        {
             put_parm(" %s=%d/%d", "cyclerange", rotate_lo, rotate_hi);
+        }
 
         if (basehertz != 440)
+        {
             put_parm(" %s=%d", "hertz", basehertz);
+        }
 
         if (soundflag != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
         {
             if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
+            {
                 put_parm(" %s=%s", "sound", "off");
+            }
             else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
+            {
                 put_parm(" %s=%s", "sound", "beep");
+            }
             else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
+            {
                 put_parm(" %s=%s", "sound", "x");
+            }
             else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
+            {
                 put_parm(" %s=%s", "sound", "y");
+            }
             else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
+            {
                 put_parm(" %s=%s", "sound", "z");
+            }
 #ifndef XFRACT
             if ((soundflag & SOUNDFLAG_ORBITMASK) && (soundflag & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
             {
                 if (soundflag & SOUNDFLAG_SPEAKER)
+                {
                     put_parm("/pc");
+                }
                 if (soundflag & SOUNDFLAG_OPL3_FM)
+                {
                     put_parm("/fm");
+                }
                 if (soundflag & SOUNDFLAG_MIDI)
+                {
                     put_parm("/midi");
+                }
                 if (soundflag & SOUNDFLAG_QUANTIZED)
+                {
                     put_parm("/quant");
+                }
             }
 #endif
         }
 
 #ifndef XFRACT
         if (fm_vol != 63)
+        {
             put_parm(" %s=%d", "volume", fm_vol);
+        }
 
         if (hi_atten != 0)
         {
             if (hi_atten == 1)
+            {
                 put_parm(" %s=%s", "attenuate", "low");
+            }
             else if (hi_atten == 2)
+            {
                 put_parm(" %s=%s", "attenuate", "mid");
+            }
             else if (hi_atten == 3)
+            {
                 put_parm(" %s=%s", "attenuate", "high");
+            }
             else   // just in case
+            {
                 put_parm(" %s=%s", "attenuate", "none");
+            }
         }
 
         if (polyphony != 0)
+        {
             put_parm(" %s=%d", "polyphony", polyphony+1);
+        }
 
         if (fm_wavetype != 0)
+        {
             put_parm(" %s=%d", "wavetype", fm_wavetype);
+        }
 
         if (fm_attack != 5)
+        {
             put_parm(" %s=%d", "attack", fm_attack);
+        }
 
         if (fm_decay != 10)
+        {
             put_parm(" %s=%d", "decay", fm_decay);
+        }
 
         if (fm_sustain != 13)
+        {
             put_parm(" %s=%d", "sustain", fm_sustain);
+        }
 
         if (fm_release != 5)
+        {
             put_parm(" %s=%d", "srelease", fm_release);
+        }
 
         if (soundflag & SOUNDFLAG_QUANTIZED)
-        { // quantize turned on
+        {
+            // quantize turned on
             int i;
             for (i = 0; i <= 11; i++)
+            {
                 if (scale_map[i] != i+1)
+                {
                     i = 15;
+                }
+            }
             if (i > 12)
+            {
                 put_parm(" %s=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", "scalemap", scale_map[0], scale_map[1], scale_map[2], scale_map[3]
                          , scale_map[4], scale_map[5], scale_map[6], scale_map[7], scale_map[8]
                          , scale_map[9], scale_map[10], scale_map[11]);
+            }
         }
-
 #endif
 
         if (nobof)
+        {
             put_parm(" %s=%s", "nobof", "yes");
+        }
 
         if (orbit_delay > 0)
+        {
             put_parm(" %s=%d", "orbitdelay", orbit_delay);
+        }
 
         if (orbit_interval != 1)
+        {
             put_parm(" %s=%d", "orbitinterval", orbit_interval);
+        }
 
         if (start_show_orbit)
+        {
             put_parm(" %s=%s", "showorbit", "yes");
+        }
 
         if (keep_scrn_coords)
+        {
             put_parm(" %s=%s", "screencoords", "yes");
+        }
 
         if (usr_stdcalcmode == 'o' && set_orbit_corners && keep_scrn_coords)
         {
@@ -1083,10 +1415,14 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         }
 
         if (drawmode != 'r')
+        {
             put_parm(" %s=%c", "orbitdrawmode", drawmode);
+        }
 
         if (math_tol[0] != 0.05 || math_tol[1] != 0.05)
+        {
             put_parm(" %s=%g/%g", "mathtolerance", math_tol[0], math_tol[1]);
+        }
 
     }
 
@@ -1102,7 +1438,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
 docolors:
         put_parm(" %s=", "colors");
         if (recordcolors != 'c' && recordcolors != 'y' && *colorinf == '@')
+        {
             put_parm(colorinf);
+        }
         else
         {
             int curc, scanc, force, diffmag = -1;
@@ -1111,7 +1449,9 @@ docolors:
             curc = force;
 #ifdef XFRACT
             if (fake_lut && !truemode)
+            {
                 loaddac(); // stupid kludge
+            }
 #endif
             while (1)
             {
@@ -1120,19 +1460,29 @@ docolors:
                 {
                     int k = g_dac_box[curc][j];
                     if (k < 10)
+                    {
                         k += '0';
+                    }
                     else if (k < 36)
+                    {
                         k += ('A' - 10);
+                    }
                     else
+                    {
                         k += ('_' - 36);
+                    }
                     buf[j] = (char)k;
                 }
                 buf[3] = 0;
                 put_parm(buf);
-                if (++curc >= maxcolor)      // quit if done last color
+                if (++curc >= maxcolor)        // quit if done last color
+                {
                     break;
-                if (debugflag == debug_flags::force_lossless_colormap)  // lossless compression
+                }
+                if (debugflag == debug_flags::force_lossless_colormap)    // lossless compression
+                {
                     continue;
+                }
                 /* Next a P Branderhorst special, a tricky scan for smooth-shaded
                    ranges which can be written as <nn> to compress .par file entry.
                    Method used is to check net change in each color value over
@@ -1153,8 +1503,10 @@ docolors:
                 {
                     // scan while same diff to next
                     int i = scanc - curc;
-                    if (i > 3) // check spans up to 4 steps
+                    if (i > 3)   // check spans up to 4 steps
+                    {
                         i = 3;
+                    }
                     for (k = 0; k <= i; ++k)
                     {
                         int j;
@@ -1162,7 +1514,7 @@ docolors:
                         {
                             // check pattern of chg per color
                             if (debugflag != debug_flags::allow_large_colormap_changes
-                                && scanc > (curc+4) && scanc < maxcolor-5)
+                                    && scanc > (curc+4) && scanc < maxcolor-5)
                             {
                                 if (abs(2*g_dac_box[scanc][j] - g_dac_box[scanc-5][j]
                                         - g_dac_box[scanc+5][j]) >= 2)
@@ -1180,29 +1532,38 @@ docolors:
                             {
                                 diffmag = abs(delta - diff1[k][j]);
                                 if (diff1[k][j] != diff2[k][j] || diffmag != 1)
+                                {
                                     break;
+                                }
                                 diff2[k][j] = delta;
                             }
                         }
                         if (j < 3)
+                        {
                             break; // must've exited from inner loop above
+                        }
                     }
                     if (k <= i)
+                    {
                         break;   // must've exited from inner loop above
+                    }
                     ++scanc;
                 }
                 // now scanc-1 is next color which must be written explicitly
                 if (scanc - curc > 2)
-                { // good, we have a shaded range
+                {
+                    // good, we have a shaded range
                     if (scanc != maxcolor)
                     {
                         if (diffmag < 3)
-                        {  // not a sharp slope change?
+                        {
+                            // not a sharp slope change?
                             force = 2;       // force more between ranges, to stop
                             --scanc;         // "drift" when load/store/load/store/
                         }
                         if (k)
-                        {            // more of the same
+                        {
+                            // more of the same
                             force += k;
                             --scanc;
                         }
@@ -1212,15 +1573,19 @@ docolors:
                         put_parm("<%d>", scanc-curc);
                         curc = scanc;
                     }
-                    else                // changed our mind
+                    else                  // changed our mind
+                    {
                         force = 0;
+                    }
                 }
             }
         }
     }
 
-    while (s_wbdata.len) // flush the buffer
+    while (s_wbdata.len)   // flush the buffer
+    {
         put_parm_line();
+    }
 
     restore_stack(saved);
 }
@@ -1235,7 +1600,9 @@ static void put_filename(char const *keyword, char const *fname)
         {
             fname = p+1;
             if (*fname == 0)
+            {
                 return;
+            }
         }
         put_parm(" %s=%s", keyword, fname);
     }
@@ -1248,14 +1615,20 @@ static void put_parm(char const *parm, ...)
 
     va_start(args, parm);
     if (*parm == ' '             // starting a new parm
-    && s_wbdata.len == 0)       // skip leading space
+            && s_wbdata.len == 0)         // skip leading space
+    {
         ++parm;
+    }
     bufptr = s_wbdata.buf + s_wbdata.len;
     vsprintf(bufptr, parm, args);
     while (*(bufptr++))
+    {
         ++s_wbdata.len;
+    }
     while (s_wbdata.len > 200)
+    {
         put_parm_line();
+    }
 }
 
 int maxlinelength = 72;
@@ -1285,11 +1658,15 @@ static void put_parm_line()
     fputs("  ", parmfile);
     fputs(s_wbdata.buf, parmfile);
     if (c && c != ' ')
+    {
         fputc('\\', parmfile);
+    }
     fputc('\n', parmfile);
     s_wbdata.buf[len] = (char)c;
     if (c == ' ')
+    {
         ++len;
+    }
     s_wbdata.len -= len;
     strcpy(s_wbdata.buf, s_wbdata.buf+len);
 }
@@ -1311,7 +1688,9 @@ int getprecbf_mag()
     // I don't know if this is portable, but something needs to
     // be used in case compiler's LDBL_MAX is not big enough
     if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
+    {
         return (-1);
+    }
 
     dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
     return (dec);
@@ -1324,20 +1703,32 @@ static int getprec(double a, double b, double c)
     double highv = 1.0E20;
     diff = fabs(a - b);
     if (diff == 0.0)
+    {
         diff = highv;
+    }
     temp = fabs(a - c);
     if (temp == 0.0)
+    {
         temp = highv;
+    }
     if (temp < diff)
+    {
         diff = temp;
+    }
     temp = fabs(b - c);
     if (temp == 0.0)
+    {
         temp = highv;
+    }
     if (temp < diff)
+    {
         diff = temp;
+    }
     digits = 7;
     if (debugflag >= debug_flags::force_precision_0_digits && debugflag < debug_flags::force_precision_20_digits)
+    {
         digits = debugflag - debug_flags::force_precision_0_digits;
+    }
     while (diff < 1.0 && digits <= DBL_DIG+1)
     {
         diff *= 10;
@@ -1365,9 +1756,13 @@ int getprecbf(int rezflag)
     bfyydel2  = alloc_stack(bflength+2);
     floattobf(one, 1.0);
     if (rezflag == MAXREZ)
+    {
         rez = OLDMAXPIXELS -1;
+    }
     else
+    {
         rez = xdots-1;
+    }
 
     // bfxxdel = (bfxmax - bfx3rd)/(xdots-1)
     sub_bf(bfxxdel, bfxmax, bfx3rd);
@@ -1378,7 +1773,9 @@ int getprecbf(int rezflag)
     div_a_bf_int(bfyydel2, (U16)rez);
 
     if (rezflag == CURRENTREZ)
+    {
         rez = ydots-1;
+    }
 
     // bfyydel = (bfymax - bfy3rd)/(ydots-1)
     sub_bf(bfyydel, bfymax, bfy3rd);
@@ -1391,7 +1788,9 @@ int getprecbf(int rezflag)
     abs_a_bf(add_bf(del1, bfxxdel, bfxxdel2));
     abs_a_bf(add_bf(del2, bfyydel, bfyydel2));
     if (cmp_bf(del2, del1) < 0)
+    {
         copy_bf(del1, del2);
+    }
     if (cmp_bf(del1, clear_bf(del2)) == 0)
     {
         restore_stack(saved);
@@ -1418,15 +1817,21 @@ int getprecdbl(int rezflag)
     int digits;
     LDBL rez;
     if (rezflag == MAXREZ)
+    {
         rez = OLDMAXPIXELS -1;
+    }
     else
+    {
         rez = xdots-1;
+    }
 
     xdel = ((LDBL)xxmax - (LDBL)xx3rd)/rez;
     ydel2 = ((LDBL)yy3rd - (LDBL)yymin)/rez;
 
     if (rezflag == CURRENTREZ)
+    {
         rez = ydots-1;
+    }
 
     ydel = ((LDBL)yymax - (LDBL)yy3rd)/rez;
     xdel2 = ((LDBL)xx3rd - (LDBL)xxmin)/rez;
@@ -1434,7 +1839,9 @@ int getprecdbl(int rezflag)
     del1 = fabsl(xdel) + fabsl(xdel2);
     del2 = fabsl(ydel) + fabsl(ydel2);
     if (del2 < del1)
+    {
         del1 = del2;
+    }
     if (del1 == 0)
     {
 #ifdef DEBUG
@@ -1468,30 +1875,46 @@ static void strip_zeros(char *buf)
     {
         ++dptr;
         exptr = strchr(buf, 'e');
-        if (exptr != nullptr)  // scientific notation with 'e'?
+        if (exptr != nullptr)    // scientific notation with 'e'?
+        {
             bptr = exptr;
+        }
         else
+        {
             bptr = buf + strlen(buf);
+        }
         while (--bptr > dptr && *bptr == '0')
+        {
             *bptr = 0;
+        }
         if (exptr && bptr < exptr -1)
+        {
             strcat(buf, exptr);
+        }
     }
 }
 
 static void put_float(int slash, double fnum, int prec)
-{   char buf[40];
+{
+    char buf[40];
     char *bptr;
     bptr = buf;
     if (slash)
+    {
         *(bptr++) = '/';
+    }
     /* Idea of long double cast is to squeeze out another digit or two
        which might be needed (we have found cases where this digit makes
        a difference.) But lets not do this at lower precision */
+
     if (prec > 15)
+    {
         sprintf(bptr, "%1.*Lg", prec, (long double)fnum);
+    }
     else
+    {
         sprintf(bptr, "%1.*g", prec, (double)fnum);
+    }
     strip_zeros(bptr);
     put_parm(buf);
 }
@@ -1502,7 +1925,10 @@ static void put_bf(int slash, bf_t r, int prec)
     buf.resize(5000);
     char *bptr = &buf[0];
     if (slash)
+    {
         *(bptr++) = '/';
+
+    }
     bftostr(bptr, prec, r);
     strip_zeros(bptr);
     put_parm(&buf[0]);
@@ -1621,14 +2047,18 @@ void format_vid_table(int choice, char *buf)
             kname, g_video_entry.name, g_video_entry.xdots, g_video_entry.ydots);
     truecolorbits = g_video_entry.dotmode/1000;
     if (truecolorbits == 0)
+    {
         sprintf(local_buf, "%s%3d",  // 47 chars
                 buf, g_video_entry.colors);
+    }
     else
+    {
         sprintf(local_buf, "%s%3s",  // 47 chars
                 buf, (truecolorbits == 4)?" 4g":
                 (truecolorbits == 3)?"16m":
                 (truecolorbits == 2)?"64k":
                 (truecolorbits == 1)?"32k":"???");
+    }
     sprintf(buf, "%s %.12s %.12s",  // 74 chars
             local_buf, g_video_entry.driver->name, g_video_entry.comment);
 }
@@ -1637,18 +2067,23 @@ static int check_modekey(int curkey, int choice)
 {
     int i = check_vidmode_key(1, curkey);
     if (i >= 0)
+    {
         return (-1-i);
+    }
     i = entnums[choice];
     int ret = 0;
     if ((curkey == '-' || curkey == '+')
             && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084))
     {
         if (g_bad_config)
+        {
             stopmsg(STOPMSG_NONE, "Missing or bad FRACTINT.CFG file. Can't reassign keys.");
+        }
         else
         {
             if (curkey == '-')
-            {                   // deassign key?
+            {
+                // deassign key?
                 if (g_video_table[i].keynum >= 1084)
                 {
                     g_video_table[i].keynum = 0;
@@ -1656,7 +2091,8 @@ static int check_modekey(int curkey, int choice)
                 }
             }
             else
-            {                                 // assign key?
+            {
+                // assign key?
                 int j = getakeynohelp();
                 if (j >= 1084 && j <= 1113)
                 {
@@ -1682,12 +2118,18 @@ static int entcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
     int i, j;
     i = g_video_table[*((int *)p1)].keynum;
     if (i == 0)
+    {
         i = 9999;
+    }
     j = g_video_table[*((int *)p2)].keynum;
     if (j == 0)
+    {
         j = 9999;
+    }
     if (i < j || (i == j && *((int *)p1) < *((int *)p2)))
+    {
         return (-1);
+    }
     return (1);
 }
 
@@ -1712,7 +2154,9 @@ static void update_fractint_cfg()
     strcpy(outname, cfgname);
     i = (int) strlen(outname);
     while (--i >= 0 && outname[i] != SLASHC)
+    {
         outname[i] = 0;
+    }
     strcat(outname, "fractint.tmp");
     outfile = fopen(outname, "w");
     if (outfile == nullptr)
@@ -1731,30 +2175,38 @@ static void update_fractint_cfg()
         char colorsbuf[10];
         ++linenum;
         if (linenum == nextlinenum)
-        { // replace this line
+        {
+            // replace this line
             memcpy((char *)&vident, (char *)&g_video_table[nextmode],
                    sizeof(g_video_entry));
             vidmode_keyname(vident.keynum, kname);
             strcpy(buf, vident.name);
             i = (int) strlen(buf);
             while (i && buf[i-1] == ' ') // strip trailing spaces to compress
+            {
                 --i;
+            }
             j = i + 5;
             while (j < 32)
-            {               // tab to column 33
+            {
+                // tab to column 33
                 buf[i++] = '\t';
                 j += 8;
             }
             buf[i] = 0;
             int truecolorbits = vident.dotmode/1000;
             if (truecolorbits == 0)
+            {
                 sprintf(colorsbuf, "%3d", vident.colors);
+            }
             else
+            {
                 sprintf(colorsbuf, "%3s",
                         (truecolorbits == 4)?" 4g":
                         (truecolorbits == 3)?"16m":
                         (truecolorbits == 2)?"64k":
                         (truecolorbits == 1)?"32k":"???");
+            }
             fprintf(outfile, "%-4s,%s,%4x,%4x,%4x,%4x,%4d,%5d,%5d,%s,%s\n",
                     kname,
                     buf,
@@ -1768,12 +2220,18 @@ static void update_fractint_cfg()
                     colorsbuf,
                     vident.comment);
             if (++nextmode >= g_video_table_len)
+            {
                 nextlinenum = 32767;
+            }
             else
+            {
                 nextlinenum = g_cfg_line_nums[nextmode];
+            }
         }
         else
+        {
             fputs(buf, outfile);
+        }
     }
 
     fclose(cfgfile);
@@ -2109,9 +2567,13 @@ void flip_image(int key)
     if ((curfractalspecific->flags&NOROTATE) != 0
             || calc_status == calc_status_value::IN_PROGRESS
             || calc_status == calc_status_value::RESUMABLE)
+    {
         return;
+    }
     if (bf_math != bf_math_type::NONE)
+    {
         clear_zoombox(); // clear, don't copy, the zoombox
+    }
     ixhalf = xdots / 2;
     iyhalf = ydots / 2;
     switch (key)
@@ -2120,7 +2582,9 @@ void flip_image(int key)
         for (int i = 0; i < ixhalf; i++)
         {
             if (driver_key_pressed())
+            {
                 break;
+            }
             for (int j = 0; j < ydots; j++)
             {
                 tempdot = getcolor(i, j);
@@ -2150,7 +2614,9 @@ void flip_image(int key)
         for (int j = 0; j < iyhalf; j++)
         {
             if (driver_key_pressed())
+            {
                 break;
+            }
             for (int i = 0; i < xdots; i++)
             {
                 tempdot = getcolor(i, j);
@@ -2180,7 +2646,9 @@ void flip_image(int key)
         for (int i = 0; i < ixhalf; i++)
         {
             if (driver_key_pressed())
+            {
                 break;
+            }
             for (int j = 0; j < ydots; j++)
             {
                 tempdot = getcolor(i, j);
@@ -2332,14 +2800,20 @@ std::string expand_comments(char const *source)
         }
         // expand underscores to blanks
         if (c == '_' && oldc != '\\')
+        {
             c = ' ';
+        }
         // esc_char marks start and end of variable names
         if (c == esc_char && oldc != '\\')
+        {
             escape = 1 - escape;
+        }
         if (c != esc_char && escape != 0) // if true, building variable name
         {
             if (k < MAXVNAME-1)
+            {
                 varname[k++] = c;
+            }
         }
         // got variable name
         else if (c == esc_char && escape == 0 && oldc != '\\')
@@ -2349,9 +2823,13 @@ std::string expand_comments(char const *source)
             target += expand_var(varname, buf);
         }
         else if (c == esc_char && escape != 0 && oldc != '\\')
+        {
             k = 0;
+        }
         else if ((c != esc_char || oldc == '\\') && escape == 0)
+        {
             target += c;
+        }
         oldc = c;
     }
     return target;
@@ -2365,7 +2843,9 @@ void parse_comments(char *value)
     {
         save = '\0';
         if (*value == 0)
+        {
             break;
+        }
         next = strchr(value, '/');
         if (*value != '/')
         {
@@ -2377,9 +2857,13 @@ void parse_comments(char *value)
             strncpy(elem, value, MAXCMT);
         }
         if (next == nullptr)
+        {
             break;
+        }
         if (save != '\0')
+        {
             *next = save;
+        }
         value = next+1;
     }
 }
@@ -2387,5 +2871,8 @@ void parse_comments(char *value)
 void init_comments()
 {
     for (auto &elem : par_comment)
+    {
         elem[0] = '\0';
+
+    }
 }

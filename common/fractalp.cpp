@@ -310,7 +310,8 @@ fractalspecificstuff fractalspecific[] =
 
     {
         "plasma",
-        {   "Graininess Factor (0 or 0.125 to 100, default is 2)",
+        {
+            "Graininess Factor (0 or 0.125 to 100, default is 2)",
             "+Algorithm (0 = original, 1 = new)",
             "+Random Seed Value (0 = Random, 1 = Reuse Last)",
             "+Save as Pot File? (0 = No,     1 = Yes)"
@@ -359,7 +360,8 @@ fractalspecificstuff fractalspecific[] =
 
     {
         "test",
-        {   "(testpt Param #1)",
+        {
+            "(testpt Param #1)",
             "(testpt param #2)",
             "(testpt param #3)",
             "(testpt param #4)"
@@ -1279,7 +1281,8 @@ fractalspecificstuff fractalspecific[] =
 
     {
         "diffusion",
-        {   "+Border size",
+        {
+            "+Border size",
             "+Type (0=Central,1=Falling,2=Square Cavity)",
             "+Color change rate (0=Random)",
             ""
@@ -2153,7 +2156,8 @@ fractalspecificstuff fractalspecific[] =
 
     {
         "ant",
-        {   "#Rule String (1's and non-1's, 0 rand)",
+        {
+            "#Rule String (1's and non-1's, 0 rand)",
             "#Maxpts",
             "+Numants (max 256)",
             "+Ant type (1 or 2)"
@@ -2273,29 +2277,41 @@ bool paramnotused(int parm)
 
     // sanity check
     if (fractype != fractal_type::FORMULA && fractype != fractal_type::FFORMULA)
+    {
         return false;
+    }
 
     switch (parm/2)
     {
     case 0:
         if (!uses_p1)
+        {
             ret = true;
+        }
         break;
     case 1:
         if (!uses_p2)
+        {
             ret = true;
+        }
         break;
     case 2:
         if (!uses_p3)
+        {
             ret = true;
+        }
         break;
     case 3:
         if (!uses_p4)
+        {
             ret = true;
+        }
         break;
     case 4:
         if (!uses_p5)
+        {
             ret = true;
+        }
         break;
     default:
         ret = false;
@@ -2314,7 +2330,9 @@ bool typehasparm(fractal_type type, int parm, char *buf)
 {
     char const *ret = nullptr;
     if (0 <= parm && parm < 4)
+    {
         ret = fractalspecific[static_cast<int>(type)].param[parm];
+    }
     else if (parm >= 4 && parm < MAXPARAMS)
     {
         int const extra = find_extra_param(type);
@@ -2324,14 +2342,24 @@ bool typehasparm(fractal_type type, int parm, char *buf)
         }
     }
     if (ret)
+    {
         if (*ret == 0)
+        {
             ret = nullptr;
+        }
+    }
 
     if (type == fractal_type::FORMULA || type == fractal_type::FFORMULA)
+    {
         if (paramnotused(parm))
+        {
             ret = nullptr;
+        }
+    }
 
     if (ret && buf != nullptr)
+    {
         strcpy(buf, ret);
+    }
     return ret != nullptr;
 }

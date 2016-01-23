@@ -43,9 +43,13 @@ void SetAspect(double aspect)
     if (aspect != 1.0)
     {
         if (aspect > 1.0)
+        {
             yAspect = (unsigned int)(65536.0 / aspect);
+        }
         else
+        {
             xAspect = (unsigned int)(65536.0 * aspect);
+        }
     }
 }
 
@@ -53,12 +57,20 @@ void c_putcolor(int x, int y, int color)
 {
     // avoid writing outside window
     if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
+    {
         return ;
-    if (y >= sydots - show_numbers) // avoid overwriting coords
+    }
+    if (y >= sydots - show_numbers)   // avoid overwriting coords
+    {
         return;
-    if (windows == 2) // avoid overwriting fractal
+    }
+    if (windows == 2)   // avoid overwriting fractal
+    {
         if (0 <= x && x < xdots && 0 <= y && y < ydots)
+        {
             return;
+        }
+    }
     putcolor(x, y, color);
 }
 
@@ -67,24 +79,40 @@ int  c_getcolor(int x, int y)
 {
     // avoid reading outside window
     if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
+    {
         return 1000;
-    if (y >= sydots - show_numbers) // avoid overreading coords
+    }
+    if (y >= sydots - show_numbers)   // avoid overreading coords
+    {
         return 1000;
-    if (windows == 2) // avoid overreading fractal
+    }
+    if (windows == 2)   // avoid overreading fractal
+    {
         if (0 <= x && x < xdots && 0 <= y && y < ydots)
+        {
             return 1000;
+        }
+    }
     return getcolor(x, y);
 }
 
 void circleplot(int x, int y, int color)
 {
     if (xAspect == 0)
+    {
         if (yAspect == 0)
+        {
             c_putcolor(x+xbase, y+ybase, color);
+        }
         else
+        {
             c_putcolor(x+xbase, (short)(ybase + (((long) y * (long) yAspect) >> 16)), color);
+        }
+    }
     else
+    {
         c_putcolor((int)(xbase + (((long) x * (long) xAspect) >> 16)), y+ybase, color);
+    }
 }
 
 void plot8(int x, int y, int color)
@@ -109,8 +137,10 @@ void circle(int radius, int color)
 
     while (x <= y)
     {
-        if (!(x & 1))     // plot if x is even
+        if (!(x & 1))       // plot if x is even
+        {
             plot8(x >> 1, (y+1) >> 1, color);
+        }
         sum += (x << 1) + 1;
         x++;
         if (sum > 0)
@@ -142,12 +172,16 @@ static void fillrect(int x, int y, int width, int depth, int color)
 {
     // fast version of fillrect
     if (!hasinverse)
+    {
         return;
+    }
     std::vector<char> row(width, char(color % colors));
     while (depth-- > 0)
     {
-        if (driver_key_pressed()) // we could do this less often when in fast modes
+        if (driver_key_pressed())   // we could do this less often when in fast modes
+        {
             return;
+        }
         putrow(x, y++, width, &row[0]);
     }
 }
@@ -195,6 +229,7 @@ bool Init_Queue(unsigned long request)
     }
 
     for (ListSize = request; ListSize > 1024; ListSize /= 2)
+    {
         switch (common_startdisk(ListSize * 8, 1, 256))
         {
         case 0:                        // success
@@ -209,6 +244,7 @@ bool Init_Queue(unsigned long request)
             ListSize = 0;               // cancelled by user
             return false;
         }
+    }
 
     // failed to get memory for MIIM Queue
     ListSize = 0;
@@ -278,7 +314,9 @@ PopFloat()
     {
         ListFront--;
         if (ListFront < 0)
+        {
             ListFront = ListSize - 1;
+        }
         if (FromMemDisk(8*ListFront, sizeof(popx), &popx) &&
                 FromMemDisk(8*ListFront +sizeof(popx), sizeof(popy), &popy))
         {
@@ -302,10 +340,14 @@ PopLong()
     {
         ListFront--;
         if (ListFront < 0)
+        {
             ListFront = ListSize - 1;
+        }
         if (FromMemDisk(8*ListFront, sizeof(pop.x), &pop.x) &&
                 FromMemDisk(8*ListFront +sizeof(pop.x), sizeof(pop.y), &pop.y))
+        {
             --lsize;
+        }
         return pop;
     }
     pop.x = 0;
@@ -379,7 +421,9 @@ DeQueueLong()
 static void SaveRect(int x, int y, int width, int depth)
 {
     if (!hasinverse)
+    {
         return;
+    }
 
     screen_rect.clear();
     std::vector<char> const background(width, char(g_color_dark));
@@ -397,7 +441,9 @@ static void SaveRect(int x, int y, int width, int depth)
 static void RestoreRect(int x, int y, int width, int depth)
 {
     if (!hasinverse)
+    {
         return;
+    }
 
     Cursor_Hide();
     for (int yoff = 0; yoff < depth; yoff++)
@@ -445,10 +491,14 @@ void Jiim(jiim_types which)
     // must use standard fractal or be calcfroth
     if (fractalspecific[static_cast<int>(fractype)].calctype != standard_fractal
             && fractalspecific[static_cast<int>(fractype)].calctype != calcfroth)
+    {
         return;
+    }
     old_help_mode = help_mode;
     if (which == jiim_types::JIIM)
+    {
         help_mode = HELP_JIIM;
+    }
     else
     {
         help_mode = HELP_ORBITS;
@@ -466,7 +516,9 @@ void Jiim(jiim_types which)
     look_at_mouse = 3;
 
     if (which == jiim_types::ORBIT)
+    {
         (*PER_IMAGE)();
+    }
 
     Cursor_Construct();
 
@@ -476,11 +528,15 @@ void Jiim(jiim_types which)
      */
     OKtoMIIM  = false;
     if (which == jiim_types::JIIM && debugflag != debug_flags::prevent_miim)
+    {
         OKtoMIIM = Init_Queue(8*1024UL); // Queue Set-up Successful?
+    }
 
     maxhits = 1;
     if (which == jiim_types::ORBIT)
+    {
         plot = c_putcolor;                // for line with clipping
+    }
 
     /*
      * end MIIM code.
@@ -546,14 +602,18 @@ void Jiim(jiim_types which)
     yfactor = (int)(-yd/4);
 
     if (windows == 0)
+    {
         SaveRect(xc, yc, xd, yd);
-    else if (windows == 2)  // leave the fractal
+    }
+    else if (windows == 2)    // leave the fractal
     {
         fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
         fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
     }
-    else  // blank whole window
+    else    // blank whole window
+    {
         fillrect(xc, yc, xd, yd, g_color_dark);
+    }
 
     setup_convert_to_screen(&cvt);
 
@@ -580,9 +640,13 @@ void Jiim(jiim_types which)
 
     // possible extraseg arrays have been trashed, so set up again
     if (integerfractal)
+    {
         fill_lx_array();
+    }
     else
+    {
         fill_dx_array();
+    }
 
     Cursor_SetPos(col, row);
     Cursor_Show();
@@ -725,7 +789,9 @@ void Jiim(jiim_types which)
                 case 'h':   // hide fractal toggle
                 case 'H':   // hide fractal toggle
                     if (windows == 2)
+                    {
                         windows = 3;
+                    }
                     else if (windows == 3 && xd == g_vesa_x_res)
                     {
                         RestoreRect(g_video_start_x, g_video_start_y, xdots, ydots);
@@ -755,9 +821,13 @@ void Jiim(jiim_types which)
                     still = false;
                 }  // switch
                 if (kbdchar == 's' || kbdchar == 'S')
+                {
                     goto finish;
+                }
                 if (dcol > 0 || drow > 0)
+                {
                     exact = false;
+                }
                 col += dcol;
                 row += drow;
 #ifdef XFRACT
@@ -820,7 +890,9 @@ void Jiim(jiim_types which)
                     /* show temp msg will clear self if new msg is a
                        different length - pad to length 40*/
                     while ((int)strlen(str) < 40)
+                    {
                         strcat(str, " ");
+                    }
                     str[40] = 0;
                     Cursor_Hide();
                     actively_computing = true;
@@ -828,7 +900,9 @@ void Jiim(jiim_types which)
                     Cursor_Show();
                 }
                 else
+                {
                     driver_display_string(5, g_vesa_y_res-show_numbers, WHITE, BLACK, str);
+                }
             }
             iter = 1;
             lold.y = 0;
@@ -875,9 +949,13 @@ void Jiim(jiim_types which)
             {
                 RestoreRect(xc, yc, xd, yd);
                 if (xc == g_video_start_x + xd*2)
+                {
                     xc = g_video_start_x + 2;
+                }
                 else
+                {
                     xc = g_video_start_x + xd*2;
+                }
                 xoff = xc + xd /  2;
                 SaveRect(xc, yc, xd, yd);
             }
@@ -887,14 +965,18 @@ void Jiim(jiim_types which)
                 fillrect(xc   , ydots, xdots, yd-ydots-show_numbers, g_color_dark);
             }
             else
+            {
                 fillrect(xc, yc, xd, yd, g_color_dark);
+            }
 
         } // end if (driver_key_pressed)
 
         if (which == jiim_types::JIIM)
         {
             if (!hasinverse)
+            {
                 continue;
+            }
             /*
              * MIIM code:
              * If we have MIIM queue allocated, then use MIIM method.
@@ -924,7 +1006,9 @@ void Jiim(jiim_types which)
                         maxhits++;
                     }
                     else
+                    {
                         continue;             // loop while (still)
+                    }
                 }
 
                 old = DeQueueFloat();
@@ -958,13 +1042,17 @@ void Jiim(jiim_types which)
                 iter++;
                 color = ((count++) >> 5)%colors; // chg color every 32 pts
                 if (color == 0)
+                {
                     color = 1;
+                }
 
                 //       r = sqrt(old.x*old.x + old.y*old.y); calculated above
                 r = sqrt(r);
                 g_new.x = sqrt(fabs((r + old.x)/2));
                 if (old.y < 0)
+                {
                     g_new.x = -g_new.x;
+                }
 
                 g_new.y = sqrt(fabs((r - old.x)/2));
 
@@ -1031,9 +1119,11 @@ void Jiim(jiim_types which)
                     y = (int)(-g_new.y * yfactor * zoom + yoff);
                     if (iter > 10)
                     {
-                        if (mode == 0)                        // pixels
+                        if (mode == 0)                          // pixels
+                        {
                             c_putcolor(x, y, color);
-                        else if (mode & 1)            // circles
+                        }
+                        else if (mode & 1)              // circles
                         {
                             xbase = x;
                             ybase = y;
@@ -1051,7 +1141,9 @@ void Jiim(jiim_types which)
                     break;
                 case 8:                     // go in long zig zags
                     if (rancnt >= 300)
+                    {
                         rancnt = -300;
+                    }
                     if (rancnt < 0)
                     {
                         g_new.x = -g_new.x;
@@ -1073,15 +1165,19 @@ void Jiim(jiim_types which)
                         {
                             rancnt = 0;
                             if (rand() % 2)
+                            {
                                 randir =  1;
+                            }
                             else
+                            {
                                 randir = -1;
+                            }
                         }
                         break;
                     case 1:             // now go negative dir for a while
                         g_new.x = -g_new.x;
                         g_new.y = -g_new.y;
-                    // fall through
+                        // fall through
                     case -1:            // now go positive dir for a while
                         if (++rancnt > 512)
                         {
@@ -1111,9 +1207,13 @@ void Jiim(jiim_types which)
                 x = (int)((old.x - init.x) * xfactor * 3 * zoom + xoff);
                 y = (int)((old.y - init.y) * yfactor * 3 * zoom + yoff);
                 if ((*ORBITCALC)())
+                {
                     iter = maxit;
+                }
                 else
+                {
                     iter++;
+                }
             }
             else
             {
@@ -1124,9 +1224,11 @@ void Jiim(jiim_types which)
         }
         if (which == jiim_types::ORBIT || iter > 10)
         {
-            if (mode == 0)                  // pixels
+            if (mode == 0)                    // pixels
+            {
                 c_putcolor(x, y, color);
-            else if (mode & 1)            // circles
+            }
+            else if (mode & 1)              // circles
             {
                 xbase = x;
                 ybase = y;
@@ -1149,7 +1251,9 @@ finish:
     {
         Cursor_Hide();
         if (windows == 0)
+        {
             RestoreRect(xc, yc, xd, yd);
+        }
         else if (windows >= 2)
         {
             if (windows == 2)
@@ -1158,7 +1262,9 @@ finish:
                 fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
             }
             else
+            {
                 fillrect(xc, yc, xd, yd, g_color_dark);
+            }
             if (windows == 3 && xd == g_vesa_x_res) // unhide
             {
                 RestoreRect(0, 0, xdots, ydots);
@@ -1201,10 +1307,14 @@ finish:
         freetempmsg();
     }
     else
+    {
         cleartempmsg();
+    }
     show_numbers = 0;
     driver_unget_key(kbdchar);
 
     if (curfractalspecific->calctype == calcfroth)
+    {
         froth_cleanup();
+    }
 }

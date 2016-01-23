@@ -52,14 +52,24 @@ static bool putstringwrap(int *row, int col1, int col2, int color, char *str, in
     padding = 3; // space between col1 and decimal.
     // find decimal point
     for (decpt = 0; decpt < length; decpt++)
+    {
         if (str[decpt] == '.')
+        {
             break;
+        }
+    }
     if (decpt >= length)
+    {
         decpt = 0;
+    }
     if (decpt < padding)
+    {
         padding -= decpt;
+    }
     else
+    {
         padding = 0;
+    }
     col1 += padding;
     decpt += col1+1; // column just past where decimal is
     while (length > 0)
@@ -70,20 +80,29 @@ static bool putstringwrap(int *row, int col1, int col2, int color, char *str, in
             save1 = str[col2-col1+1];
             save2 = str[col2-col1+2];
             if (done)
+            {
                 str[col2-col1+1]   = '+';
+            }
             else
+            {
                 str[col2-col1+1]   = '\\';
+
+            }
             str[col2-col1+2] = 0;
             driver_put_string(*row, col1, color, str);
             if (done)
+            {
                 break;
+            }
             str[col2-col1+1] = save1;
             str[col2-col1+2] = save2;
             str += col2-col1;
             (*row)++;
         }
         else
+        {
             driver_put_string(*row, col1, color, str);
+        }
         length -= col2-col1;
         col1 = decpt; // align with decimal
     }
@@ -104,7 +123,8 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 
     // simple normal case first
     if (xx3rd == xxmin && yy3rd == yymin)
-    {   // no rotation or skewing, but stretching is allowed
+    {
+        // no rotation or skewing, but stretching is allowed
         double Width = xxmax - xxmin;
         Height = yymax - yymin;
         *Xctr = (xxmin + xxmax)/2.0;
@@ -147,7 +167,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
         // if vector_a cross vector_b is negative
         // then adjust for left-hand coordinate system
         if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0
-            && debugflag != debug_flags::allow_negative_cross_product)
+                && debugflag != debug_flags::allow_negative_cross_product)
         {
             *Skew = -*Skew;
             *Xmagfactor = -*Xmagfactor;
@@ -178,7 +198,9 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
                 sqr(tymax - yymax) +
                 sqr(ty3rd - yy3rd);
         if (error > .001)
+        {
             showcornersdbl("cvtcentermag problem");
+        }
         xxmin = txmin;
         xxmax = txmax;
         xx3rd = tx3rd;
@@ -199,13 +221,16 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
     double tanskew, sinrot, cosrot;
 
     if (Xmagfactor == 0.0)
+    {
         Xmagfactor = 1.0;
+    }
 
     h = (double)(1/Magnification);
     w = h / (DEFAULTASPECT * Xmagfactor);
 
     if (Rotation == 0.0 && Skew == 0.0)
-    {   // simple, faster case
+    {
+        // simple, faster case
         xxmin = Xctr - w;
         xx3rd = xxmin;
         xxmax = Xctr + w;
@@ -264,7 +289,8 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
     // simple normal case first
     // if (xx3rd == xxmin && yy3rd == yymin)
     if (!cmp_bf(bfx3rd, bfxmin) && !cmp_bf(bfy3rd, bfymin))
-    {   // no rotation or skewing, but stretching is allowed
+    {
+        // no rotation or skewing, but stretching is allowed
         bfWidth  = alloc_stack(bflength+2);
         bf_t bfHeight = alloc_stack(bflength+2);
         // Width  = xxmax - xxmin;
@@ -316,7 +342,9 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         int signx = sign(tmpx1);
         LDBL tmpy = 0.0;
         if (signx)
+        {
             tmpy = tmpy1/tmpx1 * signx;    // tmpy = tmpy / |tmpx|
+        }
         *Rotation = (double)(-rad_to_deg(atan2((double)tmpy, signx)));   // negative for image rotation
 
         // tmpx = xxmin - xx3rd;
@@ -346,7 +374,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         // if vector_a cross vector_b is negative
         // then adjust for left-hand coordinate system
         if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0
-            && debugflag != debug_flags::allow_negative_cross_product)
+                && debugflag != debug_flags::allow_negative_cross_product)
         {
             *Skew = -*Skew;
             *Xmagfactor = -*Xmagfactor;
@@ -379,7 +407,9 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
     bfw = alloc_stack(bflength+2);
 
     if (Xmagfactor == 0.0)
+    {
         Xmagfactor = 1.0;
+    }
 
     h = 1/Magnification;
     floattobf(bfh, h);
@@ -387,7 +417,8 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
     floattobf(bfw, w);
 
     if (Rotation == 0.0 && Skew == 0.0)
-    {   // simple, faster case
+    {
+        // simple, faster case
         // xx3rd = xxmin = Xctr - w;
         sub_bf(bfxmin, Xctr, bfw);
         copy_bf(bfx3rd, bfxmin);
@@ -462,23 +493,34 @@ void updatesavename(char *filename) // go to the next file name
     splitpath(filename , drive, dir, fname, ext);
 
     hold = fname + strlen(fname) - 1; // start at the end
-    while (hold >= fname && (*hold == ' ' || isdigit(*hold))) // skip backwards
+    while (hold >= fname && (*hold == ' ' || isdigit(*hold)))   // skip backwards
+    {
         hold--;
+    }
     hold++;                      // recover first digit
-    while (*hold == '0')         // skip leading zeros
+    while (*hold == '0')           // skip leading zeros
+    {
         hold++;
+    }
     save = hold;
     while (*save)
-    {              // check for all nines
+    {
+        // check for all nines
         if (*save != '9')
+        {
             break;
+        }
         save++;
     }
-    if (!*save)                  // if the whole thing is nines then back
+    if (!*save)                    // if the whole thing is nines then back
+    {
         save = hold - 1;          // up one place. Note that this will eat
+    }
     // your last letter if you go to far.
     else
+    {
         save = hold;
+    }
     sprintf(save, "%ld", atol(hold)+1); // increment the number
     makepath(filename, drive, dir, fname, ext);
 }
@@ -556,7 +598,9 @@ void showtrig(char *buf)
     *buf = 0; // null string if none
     trigdetails(tmpbuf);
     if (tmpbuf[0])
+    {
         sprintf(buf, " function=%s", tmpbuf);
+    }
 }
 
 static void trigdetails(char *buf)
@@ -564,12 +608,18 @@ static void trigdetails(char *buf)
     int numfn;
     char tmpbuf[20];
     if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
+    {
         numfn = (fractalspecific[static_cast<int>(neworbittype)].flags >> 6) & 7;
+    }
     else
+    {
         numfn = (curfractalspecific->flags >> 6) & 7;
+    }
     if (curfractalspecific == &fractalspecific[static_cast<int>(fractal_type::FORMULA)] ||
             curfractalspecific == &fractalspecific[static_cast<int>(fractal_type::FFORMULA)])
+    {
         numfn = maxfn;
+    }
     *buf = 0; // null string if none
     if (numfn > 0)
     {
@@ -593,7 +643,9 @@ int set_trig_array(int k, char const *name)
 
     slash = strchr(trigname, '/');
     if (slash != nullptr)
+    {
         *slash = 0;
+    }
 
     strlwr(trigname);
 
@@ -643,7 +695,9 @@ void set_trig_pointers(int which)
         break;
     default: // do 'em all
         for (int i = 0; i < 4; i++)
+        {
             set_trig_pointers(i);
+        }
         break;
     }
 }
@@ -662,13 +716,17 @@ void get_calculation_time(char *msg, long ctime)
                 (ctime%360000L)/6000, (ctime%6000)/100, ctime%100);
     }
     else
+    {
         strcpy(msg, "A long time! (> 24.855 days)");
+    }
 }
 
 static void show_str_var(char const *name, char const *var, int *row, char *msg)
 {
     if (var == nullptr)
+    {
         return;
+    }
     if (*var != 0)
     {
         sprintf(msg, "%s=%s", name, var);
@@ -1158,17 +1216,27 @@ top:
                     col = 9;
                 }
                 else
+                {
                     col = -1;
-                if (k == 0) // only true with first displayed parameter
+                }
+                if (k == 0)   // only true with first displayed parameter
+                {
                     driver_put_string(++s_row, 2, C_GENERAL_MED, "Params ");
+                }
                 sprintf(msg, "%3d: ", i+1);
                 driver_put_string(s_row, col, C_GENERAL_MED, msg);
                 if (*p == '+')
+                {
                     sprintf(msg, "%-12d", (int)param[i]);
+                }
                 else if (*p == '#')
+                {
                     sprintf(msg, "%-12lu", (U32)param[i]);
+                }
                 else
+                {
                     sprintf(msg, "%-12.9f", param[i]);
+                }
                 driver_put_string(-1, -1, C_GENERAL_HI, msg);
                 k++;
             }
@@ -1277,8 +1345,12 @@ int endswithslash(char const *fl)
     int len;
     len = (int) strlen(fl);
     if (len)
+    {
         if (fl[--len] == SLASHC)
+        {
             return (1);
+        }
+    }
     return (0);
 }
 
@@ -1290,15 +1362,21 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
     while (1)
     {
         if (file_gets(buf, 200, ifsfile) < 0)
+        {
             return (nullptr);
+        }
         else
         {
             bufptr = strchr(buf, ';');
-            if (bufptr != nullptr) // use ';' as comment to eol
+            if (bufptr != nullptr)   // use ';' as comment to eol
+            {
                 *bufptr = 0;
+            }
             bufptr = strtok(buf, seps);
             if (bufptr != nullptr)
+            {
                 return (bufptr);
+            }
         }
     }
 }
@@ -1312,19 +1390,24 @@ int ifsload()                   // read in IFS parameters
     int ret, rowsize;
 
     if (!ifs_defn.empty())
-    {                           // release prior parms
+    {
+        // release prior parms
         ifs_defn.clear();
     }
 
     ifs_type = false;
     rowsize = NUM_IFS_PARAMS;
     if (find_file_item(IFSFileName, IFSName.c_str(), &ifsfile, 3))
+    {
         return (-1);
+    }
 
     file_gets(buf, 200, ifsfile);
     bufptr = strchr(buf, ';');
-    if (bufptr != nullptr) // use ';' as comment to eol
+    if (bufptr != nullptr)   // use ';' as comment to eol
+    {
         *bufptr = 0;
+    }
 
     strlwr(buf);
     bufptr = &buf[0];
@@ -1345,7 +1428,9 @@ int ifsload()                   // read in IFS parameters
     {
         float value = 0.0f;
         if (sscanf(bufptr, " %f ", &value) != 1)
+        {
             break;
+        }
         ifs_defn.push_back(value);
         if (++i >= NUM_IFS_FUNCTIONS*rowsize)
         {
@@ -1364,9 +1449,13 @@ int ifsload()                   // read in IFS parameters
             }
         }
         if (ret == -1)
+        {
             break;
+        }
         if (*bufptr == '}')
+        {
             break;
+        }
     }
 
     if ((i % rowsize) != 0 || (bufptr && *bufptr != '}'))
@@ -1508,7 +1597,8 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
     }
 
     if (!found)
-    {  // search for file
+    {
+        // search for file
         int out;
         makepath(fullpath, drive, dir, "*", defaultextension);
         out = fr_findfirst(fullpath);
@@ -1601,9 +1691,13 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
     }
     // found file
     if (fileptr != nullptr)
+    {
         *fileptr = infile;
+    }
     else if (infile != nullptr)
+    {
         fclose(infile);
+    }
     return false;
 }
 
@@ -1624,7 +1718,9 @@ int file_gets(char *buf, int maxlen, FILE *infile)
     // similar to 'fgets', but file may be in either text or binary mode
     // returns -1 at eof, length of string otherwise
     if (feof(infile))
+    {
         return -1;
+    }
     len = 0;
     while (len < maxlen)
     {
@@ -1632,13 +1728,19 @@ int file_gets(char *buf, int maxlen, FILE *infile)
         if (c == EOF || c == '\032')
         {
             if (len)
+            {
                 break;
+            }
             return -1;
         }
         if (c == '\n')
+        {
             break;             // linefeed is end of line
+        }
         if (c != '\r')
+        {
             buf[len++] = (char)c;    // ignore c/r
+        }
     }
     buf[len] = 0;
     return len;

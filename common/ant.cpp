@@ -70,7 +70,9 @@ setwait(long *wait)
             return;
         }
         if (*wait < 0)
+        {
             *wait = 0;
+        }
     }
 }
 
@@ -87,13 +89,19 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
     antwrap = param[4] != 0;
     step = (int) wait;
     if (step == 1)
+    {
         wait = 0;
+    }
     else
+    {
         step = 0;
+    }
     if (rule_len == 0)
-    {   // random rule
+    {
+        // random rule
         for (color = 0; color < MAX_ANTS; color++)
-        {   /* init the rules and colors for the
+        {
+            /* init the rules and colors for the
              * turkmites: 1 turn left, -1 turn right */
             rule[color] = 1 - (RANDOM(2) * 2);
             next_col[color] = color + 1;
@@ -102,16 +110,19 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         next_col[color] = 0;
     }
     else
-    {   // user defined rule
+    {
+        // user defined rule
         for (color = 0; color < rule_len; color++)
-        {   /* init the rules and colors for the
+        {
+            /* init the rules and colors for the
              * turkmites: 1 turn left, -1 turn right */
             rule[color] = (ru[color] * 2) - 1;
             next_col[color] = color + 1;
         }
         // repeats to last color
         for (color = rule_len; color < MAX_ANTS; color++)
-        {   /* init the rules and colors for the
+        {
+            /* init the rules and colors for the
              * turkmites: 1 turn left, -1 turn right */
             rule[color] = rule[color % rule_len];
             next_col[color] = color + 1;
@@ -120,7 +131,8 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         next_col[color] = 0;
     }
     for (color = maxtur; color; color--)
-    {   /* init the various turmites N.B. non usa
+    {
+        /* init the various turmites N.B. non usa
          * x[0], y[0], dir[0] */
         if (rule_len)
         {
@@ -144,7 +156,9 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         {
             bool done = false;
             if (kbdchar == 0)
+            {
                 kbdchar = driver_get_key();
+            }
             switch (kbdchar)
             {
             case FIK_SPACE:
@@ -168,16 +182,21 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                 break;
             }
             if (done)
+            {
                 goto exit_ant;
+            }
             if (driver_key_pressed())
+            {
                 driver_get_key();
+            }
         }
         for (int i = INNER_LOOP; i; i--)
         {
             if (wait > 0 && step == 0)
             {
                 for (int color = maxtur; color; color--)
-                {   // move the various turmites
+                {
+                    // move the various turmites
                     ix = x[color];   // temp vars
                     iy = y[color];
                     idir = dir[color];
@@ -189,11 +208,15 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                     idir += rule[pixel];
                     idir &= 3;
                     if (!antwrap)
+                    {
                         if ((idir == 0 && iy == ydots - 1) ||
                                 (idir == 1 && ix == xdots - 1) ||
                                 (idir == 2 && iy == 0) ||
                                 (idir == 3 && ix == 0))
+                        {
                             goto exit_ant;
+                        }
+                    }
                     x[color] = s_incx[idir][ix];
                     y[color] = s_incy[idir][iy];
                     dir[color] = idir;
@@ -202,7 +225,8 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
             else
             {
                 for (int color = maxtur; color; color--)
-                {   // move the various turmites without delay
+                {
+                    // move the various turmites without delay
                     ix = x[color];   // temp vars
                     iy = y[color];
                     idir = dir[color];
@@ -211,11 +235,15 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                     idir += rule[pixel];
                     idir &= 3;
                     if (!antwrap)
+                    {
                         if ((idir == 0 && iy == ydots - 1) ||
                                 (idir == 1 && ix == xdots - 1) ||
                                 (idir == 2 && iy == 0) ||
                                 (idir == 3 && ix == 0))
+                        {
                             goto exit_ant;
+                        }
+                    }
                     x[color] = s_incx[idir][ix];
                     y[color] = s_incy[idir][iy];
                     dir[color] = idir;
@@ -250,13 +278,19 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
 
     step = (int) wait;
     if (step == 1)
+    {
         wait = 0;
+    }
     else
+    {
         step = 0;
+    }
     if (rule_len == 0)
-    {   // random rule
+    {
+        // random rule
         for (int color = MAX_ANTS-1; color; color--)
-        {   /* init the various turmites N.B. don't use
+        {
+            /* init the various turmites N.B. don't use
              * x[0], y[0], dir[0] */
             dir[color] = RANDOM(DIRS);
             rule[color] = (rand() << RANDOM(2)) | RANDOM(2);
@@ -265,14 +299,18 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         }
     }
     else
-    {   /* the same rule the user wants for every
+    {
+        /* the same rule the user wants for every
          * turkmite (max rule_len = 16 bit) */
         rule_len = static_cast<int>(std::min(static_cast<size_t>(rule_len), 8*sizeof(int)));
         rule[0] = 0;
         for (int i = 0; i < rule_len; i++)
+        {
             rule[0] = (rule[0] << 1) | ru[i];
+        }
         for (int color = MAX_ANTS-1; color; color--)
-        {   /* init the various turmites N.B. non usa
+        {
+            /* init the various turmites N.B. non usa
              * x[0], y[0], dir[0] */
             dir[color] = 0;
             rule[color] = rule[0];
@@ -292,7 +330,9 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         {
             bool done = false;
             if (kbdchar == 0)
+            {
                 kbdchar = driver_get_key();
+            }
             switch (kbdchar)
             {
             case FIK_SPACE:
@@ -316,14 +356,19 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                 break;
             }
             if (done)
+            {
                 goto exit_ant;
+            }
             if (driver_key_pressed())
+            {
                 driver_get_key();
+            }
         }
         for (int i = INNER_LOOP; i; i--)
         {
             for (int color = maxtur; color; color--)
-            {   // move the various turmites
+            {
+                // move the various turmites
                 ix = x[color];      // temp vars
                 iy = y[color];
                 idir = dir[color];
@@ -331,25 +376,33 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                 putcolor(ix, iy, 15);
 
                 if (wait > 0 && step == 0)
+                {
                     sleepms(wait);
+                }
 
                 if (rule[pixel] & rule_mask)
-                {   // turn right
+                {
+                    // turn right
                     idir--;
                     putcolor(ix, iy, 0);
                 }
                 else
-                {   // turn left
+                {
+                    // turn left
                     idir++;
                     putcolor(ix, iy, color);
                 }
                 idir &= 3;
                 if (!antwrap)
+                {
                     if ((idir == 0 && iy == ydots - 1) ||
                             (idir == 1 && ix == xdots - 1) ||
                             (idir == 2 && iy == 0) ||
                             (idir == 3 && ix == 0))
+                    {
                         goto exit_ant;
+                    }
+                }
                 x[color] = s_incx[idir][ix];
                 y[color] = s_incy[idir][iy];
                 dir[color] = idir;
@@ -405,11 +458,15 @@ int ant()
     }
 
     for (int i = 0; i < xdots; i++)
+    {
         s_incx[3][i] = i + 1;
+    }
     s_incx[3][xdots-1] = 0; // wrap from right of the screen to left
 
     for (int i = 1; i < xdots; i++)
+    {
         s_incx[1][i] = i - 1;
+    }
     s_incx[1][0] = xdots-1; // wrap from left of the screen to right
 
     for (int i = 0; i < ydots; i++)
@@ -418,10 +475,14 @@ int ant()
         s_incy[3][i] = i;
     }
     for (int i = 0; i < ydots; i++)
+    {
         s_incy[0][i] = i + 1;
+    }
     s_incy[0][ydots - 1] = 0; // wrap from the top of the screen to the bottom
     for (int i = 1; i < ydots; i++)
+    {
         s_incy[2][i] = i - 1;
+    }
     s_incy[2][0] = ydots - 1; // wrap from the bottom of the screen to the top
     int const old_help_mode = help_mode;
     help_mode = ANTCOMMANDS;
@@ -430,31 +491,46 @@ int ant()
     std::string rule{get_rule()};
     int rule_len = (int) rule.length();;
     if (rule_len > 1)
-    {   // if rule_len == 0 random rule
+    {
+        // if rule_len == 0 random rule
         for (int i = 0; i < rule_len; i++)
         {
             if (rule[i] != '1')
+            {
                 rule[i] = (char) 0;
+            }
             else
+            {
                 rule[i] = (char) 1;
+            }
         }
     }
     else
+    {
         rule_len = 0;
+    }
 
     // set random seed for reproducibility
     if (!rflag && param[5] == 1)
+    {
         --rseed;
+    }
     if (param[5] != 0 && param[5] != 1)
+    {
         rseed = (int)param[5];
+    }
 
     srand(rseed);
     if (!rflag)
+    {
         ++rseed;
+    }
 
     int maxants = static_cast<int>(param[2]);
-    if (maxants < 1)             // if maxants == 0 maxants random
+    if (maxants < 1)               // if maxants == 0 maxants random
+    {
         maxants = 2 + RANDOM(MAX_ANTS - 2);
+    }
     else if (maxants > MAX_ANTS)
     {
         maxants = MAX_ANTS;
@@ -462,7 +538,9 @@ int ant()
     }
     int type = static_cast<int>(param[3]);
     if (type < 1 || type > 2)
+    {
         type = RANDOM(2);         // if type == 0 choose a random type
+    }
     switch (type)
     {
     case 1:

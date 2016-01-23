@@ -18,7 +18,9 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 void bf_hexdump(bf_t r)
 {
     for (int i = 0; i < bflength; i++)
+    {
         printf("%02X ", *(r+i));
+    }
     printf(" e %04hX ", (S16)big_access16(r+bflength));
     printf("\n");
     return;
@@ -56,14 +58,18 @@ bf_t strtobf(bf_t r, char const *s)
     d = strchr(s, '.');
     e = strchr(s, 'e');
     if (e == nullptr)
+    {
         e = strchr(s, 'E');
+    }
     if (e != nullptr)
     {
         powerten = atoi(e+1);    // read in the e (x10^) part
         l = e - 1; // just before e
     }
     else
+    {
         l = s + strlen(s) - 1;  // last digit
+    }
 
     if (d != nullptr) // is there a decimal point?
     {
@@ -124,7 +130,9 @@ bf_t strtobf(bf_t r, char const *s)
         }
     }
     if (signflag)
+    {
         neg_a_bf(r);
+    }
 
     return r;
 }
@@ -172,10 +180,14 @@ char *unsafe_bftostr(char *s, int dec, bf_t r)
     copy_bf(bftmp1, r);
     unsafe_bftobf10(bf10tmp, dec, bftmp1);
     power = (S16)big_access16(bf10tmp+dec+2); // where the exponent is stored
-    if (power > -4 && power < 6) // tinker with this
+    if (power > -4 && power < 6)   // tinker with this
+    {
         bf10tostr_f(s, dec, bf10tmp);
+    }
     else
+    {
         bf10tostr_e(s, dec, bf10tmp);
+    }
     return s;
 }
 
@@ -230,10 +242,13 @@ bn_t bftobn(bn_t n, bf_t f)
 
     fexp = (S16)big_access16(f+bflength);
     if (fexp >= intlength)
-    {   // if it's too big, use max value
+    {
+        // if it's too big, use max value
         max_bn(n);
         if (is_bf_neg(f))
+        {
             neg_a_bn(n);
+        }
         return n;
     }
 
@@ -291,7 +306,9 @@ long bftoint(bf_t f)
     {
         longval = 0x7FFFFFFFL;
         if (is_bf_neg(f))
+        {
             longval = -longval;
+        }
         return longval;
     }
     longval = big_access32(f+bflength-5);
@@ -323,7 +340,9 @@ bf_t abs_bf(bf_t r, bf_t n)
 bf_t abs_a_bf(bf_t r)
 {
     if (is_bf_neg(r))
+    {
         neg_a_bf(r);
+    }
     return r;
 }
 
@@ -348,7 +367,8 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     // use Newton's recursive method for zeroing in on 1/n : r=r(2-rn)
 
     if (is_bf_neg(n))
-    {   // will be a lot easier to deal with just positives
+    {
+        // will be a lot easier to deal with just positives
         signflag = true;
         neg_a_bf(n);
     }
@@ -380,7 +400,9 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     // calculate new starting values
     bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
+    {
         bnlength = orig_bnlength;
+    }
     calc_lengths();
 
     // adjust pointers
@@ -394,7 +416,9 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
         // adjust lengths
         bnlength <<= 1; // double precision
         if (bnlength > orig_bnlength)
+        {
             bnlength = orig_bnlength;
+        }
         calc_lengths();
         r = orig_r + orig_bflength - bflength;
         n = orig_n + orig_bflength - bflength;
@@ -405,7 +429,9 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 
         // There seems to very little difficulty getting bftmp1 to be EXACTLY 1
         if (bflength == orig_bflength && cmp_bf(bftmp1, bftmp2) == 0)
+        {
             break;
+        }
 
         inttobf(bftmp2, 2); // will be used as 2.0
         unsafe_sub_a_bf(bftmp2, bftmp1); // bftmp2=2-rn
@@ -498,7 +524,8 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
     // use Newton's recursive method for zeroing in on sqrt(n): r=.5(r+n/r)
 
     if (is_bf_neg(n))
-    {   // sqrt of a neg, return 0
+    {
+        // sqrt of a neg, return 0
         clear_bf(r);
         return r;
     }
@@ -527,7 +554,9 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
     // calculate new starting values
     bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
+    {
         bnlength = orig_bnlength;
+    }
     calc_lengths();
 
     // adjust pointers
@@ -540,7 +569,9 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
         // adjust lengths
         bnlength <<= 1; // double precision
         if (bnlength > orig_bnlength)
+        {
             bnlength = orig_bnlength;
+        }
         calc_lengths();
         r = orig_r + orig_bflength - bflength;
         n = orig_n + orig_bflength - bflength;
@@ -551,10 +582,14 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
         if (bflength == orig_bflength && (comp = abs(cmp_bf(r, bftmp3))) < 8)  // if match or almost match
         {
             if (comp < 4  // perfect or near perfect match
-                    || almost_match == 1) // close enough for 2nd time
+                    || almost_match == 1)   // close enough for 2nd time
+            {
                 break;
-            else // this is the first time they almost matched
+            }
+            else     // this is the first time they almost matched
+            {
                 almost_match++;
+            }
         }
     }
 
@@ -596,7 +631,9 @@ bf_t exp_bf(bf_t r, bf_t n)
         unsafe_mult_bf(bftmp3, bftmp2, bftmp1);
         unsafe_div_bf_int(bftmp2, bftmp3, fact);
         if (big_accessS16(testexp) < big_accessS16(rexp)-(bflength-2))
+        {
             break; // too small to register
+        }
         unsafe_add_a_bf(r, bftmp2);
         fact++;
     }
@@ -624,7 +661,8 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     // use Newton's recursive method for zeroing in on ln(n): r=r+n*exp(-r)-1
 
     if (is_bf_neg(n) || is_bf_zero(n))
-    {   // error, return largest neg value
+    {
+        // error, return largest neg value
         max_bf(r);
         neg_a_bf(r);
         return r;
@@ -651,7 +689,9 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     // calculate new starting values
     bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
+    {
         bnlength = orig_bnlength;
+    }
     calc_lengths();
 
     // adjust pointers
@@ -667,7 +707,9 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
         // adjust lengths
         bnlength <<= 1; // double precision
         if (bnlength > orig_bnlength)
+        {
             bnlength = orig_bnlength;
+        }
         calc_lengths();
         r = orig_r + orig_bflength - bflength;
         n = orig_n + orig_bflength - bflength;
@@ -681,10 +723,14 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
         if (bflength == orig_bflength && (comp = abs(cmp_bf(r, bftmp5))) < 8)  // if match or almost match
         {
             if (comp < 4  // perfect or near perfect match
-                    || almost_match == 1) // close enough for 2nd time
+                    || almost_match == 1)   // close enough for 2nd time
+            {
                 break;
-            else // this is the first time they almost matched
+            }
+            else     // this is the first time they almost matched
+            {
                 almost_match++;
+            }
         }
         copy_bf(bftmp5, r); // -r
     }
@@ -795,7 +841,9 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     // halves = bflength / 10; */ /* this is experimental
     int halves = 1;
     for (int i = 0; i < halves; i++)
+    {
         half_a_bf(n);
+    }
 #endif
 
     // use Taylor Series (very slow convergence)
@@ -813,10 +861,14 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
             cos_done = (big_accessS16(testexp) < big_accessS16(cexp)-(bflength-2)); // too small to register
             if (!cos_done)
             {
-                if (k) // alternate between adding and subtracting
+                if (k)   // alternate between adding and subtracting
+                {
                     unsafe_add_a_bf(c, bftmp1);
+                }
                 else
+                {
                     unsafe_sub_a_bf(c, bftmp1);
+                }
             }
         }
 
@@ -829,10 +881,14 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
             sin_done = (big_accessS16(testexp) < big_accessS16(sexp)-(bflength-2)); // too small to register
             if (!sin_done)
             {
-                if (k) // alternate between adding and subtracting
+                if (k)   // alternate between adding and subtracting
+                {
                     unsafe_add_a_bf(s, bftmp1);
+                }
                 else
+                {
                     unsafe_sub_a_bf(s, bftmp1);
+                }
             }
         }
         k = !k; // toggle
@@ -861,9 +917,13 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
         copy_bf(c, bftmp1);
     }
     if (signsin)
+    {
         neg_a_bf(s);
+    }
     if (signcos)
+    {
         neg_a_bf(c);
+    }
 #endif
 
     return s; // return sine I guess
@@ -928,7 +988,9 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     // calculate new starting values
     bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
+    {
         bnlength = orig_bnlength;
+    }
     calc_lengths();
 
     // adjust pointers
@@ -947,7 +1009,9 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
         // adjust lengths
         bnlength <<= 1; // double precision
         if (bnlength > orig_bnlength)
+        {
             bnlength = orig_bnlength;
+        }
         calc_lengths();
         r = orig_r + orig_bflength - bflength;
         n = orig_n + orig_bflength - bflength;
@@ -975,15 +1039,21 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
             printf("atan() loop comp=%i\n", comp);
 #endif
             if (comp < 4  // perfect or near perfect match
-                    || almost_match == 1) // close enough for 2nd time
+                    || almost_match == 1)   // close enough for 2nd time
+            {
                 break;
-            else // this is the first time they almost matched
+            }
+            else     // this is the first time they almost matched
+            {
                 almost_match++;
+            }
         }
 
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
         if (bflength == orig_bflength && comp >= 8)
+        {
             printf("atan() loop comp=%i\n", comp);
+        }
 #endif
 
         copy_bf(bftmp3, r); // make a copy for later comparison
@@ -1008,7 +1078,9 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     }
 
     if (signflag)
+    {
         neg_a_bf(r);
+    }
     return r;
 }
 
@@ -1025,9 +1097,13 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
     if (signy == 0)
     {
         if (signx < 0)
+        {
             copy_bf(r, bf_pi); // negative x axis, 180 deg
-        else    // signx >= 0    positive x axis, 0
+        }
+        else        // signx >= 0    positive x axis, 0
+        {
             clear_bf(r);
+        }
         return (r);
     }
     if (signx == 0)
@@ -1035,20 +1111,30 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
         copy_bf(r, bf_pi); // y axis
         half_a_bf(r);      // +90 deg
         if (signy < 0)
+        {
             neg_a_bf(r);    // -90 deg
+        }
         return (r);
     }
 
     if (signy < 0)
+    {
         neg_a_bf(ny);
+    }
     if (signx < 0)
+    {
         neg_a_bf(nx);
+    }
     unsafe_div_bf(bftmp6, ny, nx);
     unsafe_atan_bf(r, bftmp6);
     if (signx < 0)
+    {
         sub_bf(r, bf_pi, r);
+    }
     if (signy < 0)
+    {
         neg_a_bf(r);
+    }
     return (r);
 }
 
@@ -1243,9 +1329,13 @@ int convert_bf(bf_t newnum, bf_t old, int newbflength, int oldbflength)
     bflength      = savebflength;
 
     if (newbflength > oldbflength)
+    {
         memcpy(newnum+newbflength-oldbflength, old, oldbflength+2);
+    }
     else
+    {
         memcpy(newnum, old+oldbflength-newbflength, newbflength+2);
+    }
     return (0);
 }
 
@@ -1273,9 +1363,13 @@ bf_t norm_bf(bf_t r)
     {
         int scale;
         for (scale = 2; scale < bflength && r[bflength-scale] == hi_byte; scale++)
+        {
             ; // do nothing
-        if (scale == bflength && hi_byte == 0) // zero
+        }
+        if (scale == bflength && hi_byte == 0)   // zero
+        {
             big_setS16(rexp, 0);
+        }
         else
         {
             scale -= 2;
@@ -1315,7 +1409,8 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
     n1exp = (S16 *)(n1+bflength);
     n2exp = (S16 *)(n2+bflength);
     if (big_accessS16(n1exp) > big_accessS16(n2exp))
-    {   // scale n2
+    {
+        // scale n2
         scale = big_accessS16(n1exp) - big_accessS16(n2exp); // n1exp - n2exp
         if (scale < bflength)
         {
@@ -1324,12 +1419,15 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
             memset(n2+bflength-scale, fill_byte, scale);
         }
         else
+        {
             clear_bf(n2);
+        }
         big_setS16(n2exp, big_accessS16(n1exp)); // *n2exp = *n1exp; set exp's =
         rexp = big_accessS16(n2exp);
     }
     else if (big_accessS16(n1exp) < big_accessS16(n2exp))
-    {   // scale n1
+    {
+        // scale n1
         scale = big_accessS16(n2exp) - big_accessS16(n1exp);  // n2exp - n1exp
         if (scale < bflength)
         {
@@ -1338,12 +1436,16 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
             memset(n1+bflength-scale, fill_byte, scale);
         }
         else
+        {
             clear_bf(n1);
+        }
         big_setS16(n1exp, big_accessS16(n2exp)); // *n1exp = *n2exp; set exp's =
         rexp = big_accessS16(n2exp);
     }
     else
+    {
         rexp = big_accessS16(n1exp);
+    }
     return rexp;
 }
 
@@ -1374,18 +1476,26 @@ int cmp_bf(bf_t n1, bf_t n2)
     sign1 = sign_bf(n1);
     sign2 = sign_bf(n2);
     if (sign1 > sign2)
+    {
         return bflength;
+    }
     else if (sign1 < sign2)
+    {
         return -bflength;
+    }
     // signs are the same
 
     // compare exponents, using signed comparisons
     n1exp = (S16 *)(n1+bflength);
     n2exp = (S16 *)(n2+bflength);
     if (big_accessS16(n1exp) > big_accessS16(n2exp))
+    {
         return sign1*(bflength);
+    }
     else if (big_accessS16(n1exp) < big_accessS16(n2exp))
+    {
         return -sign1*(bflength);
+    }
 
     // To get to this point, the signs must match
     // so unsigned comparison is ok.
@@ -1395,18 +1505,28 @@ int cmp_bf(bf_t n1, bf_t n2)
         value1 = big_access16(n1+i);
         value2 = big_access16(n2+i);
         if (value1 > value2)
-        {   // now determine which of the two bytes was different
-            if ((value1&0xFF00) > (value2&0xFF00))   // compare just high bytes
+        {
+            // now determine which of the two bytes was different
+            if ((value1&0xFF00) > (value2&0xFF00))     // compare just high bytes
+            {
                 return (i+2); // high byte was different
+            }
             else
+            {
                 return (i+1); // low byte was different
+            }
         }
         else if (value1 < value2)
-        {   // now determine which of the two bytes was different
-            if ((value1&0xFF00) < (value2&0xFF00))   // compare just high bytes
+        {
+            // now determine which of the two bytes was different
+            if ((value1&0xFF00) < (value2&0xFF00))     // compare just high bytes
+            {
                 return -(i+2); // high byte was different
+            }
             else
+            {
                 return -(i+1); // low byte was different
+            }
         }
     }
     return 0;
@@ -1855,7 +1975,8 @@ bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
     multiplication is performed.
     */
     if (u > 0x00FF)
-    {   // un-normalize n
+    {
+        // un-normalize n
         memmove(n, n+1, bflength-1);  // this sign extends as well
         big_setS16(rexp, big_accessS16(rexp)+(S16)1);
     }
@@ -1886,7 +2007,8 @@ bf_t mult_a_bf_int(bf_t r, U16 u)
     multiplication is performed.
     */
     if (u > 0x00FF)
-    {   // un-normalize n
+    {
+        // un-normalize n
         memmove(r, r+1, bflength-1);  // this sign extends as well
         big_setS16(rexp, big_accessS16(rexp)+(S16)1);
     }
@@ -1913,7 +2035,9 @@ bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u)
     {
         max_bf(r);
         if (is_bf_neg(n))
+        {
             neg_a_bf(r);
+        }
         return r;
     }
 
@@ -2000,7 +2124,9 @@ LDBL extract_value(LDBL f, LDBL b, int *exp_ptr)
         }
     }
     if (f < 0)
+    {
         ff = -ff;
+    }
     if (af < 1)
     {
         ff = orig_b/ff;
@@ -2019,25 +2145,35 @@ LDBL scale_value(LDBL f, LDBL b , int n)
     int an;
 
     if (b == 0 || f == 0)
+    {
         return 0;
+    }
 
     if (n == 0)
+    {
         return f;
+    }
 
     an = abs(n);
 
     while (an != 0)
     {
         if (an & 0x0001)
+        {
             total *= b;
+        }
         b *= b;
         an >>= 1;
     }
 
     if (n > 0)
+    {
         f *= total;
-    else // n < 0
+    }
+    else     // n < 0
+    {
         f /= total;
+    }
     return f;
 }
 
@@ -2102,7 +2238,8 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
     bf10_t power10;
 
     if (is_bf_zero(n))
-    {   // in scientific notation, the leading digit can't be zero
+    {
+        // in scientific notation, the leading digit can't be zero
         r[1] = (BYTE)0; // unless the number is zero
         return r;
     }
@@ -2111,7 +2248,9 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
     power256 = (S16)big_access16(n + bflength) + 1; // so adjust power256 by 1
 
     if (dec == 0)
+    {
         dec = decimals;
+    }
     dec++;  // one extra byte for rounding
     power10 = r + dec + 1;
 
@@ -2121,7 +2260,9 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
         r[0] = 1; // sign flag
     }
     else
+    {
         r[0] = 0;
+    }
 
     p = -1;  // multiply by 10 right away
     bnl = bnlength;
@@ -2145,12 +2286,19 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
 
     // the digits are all read in, now scale it by 256^power256
     if (power256 > 0)
+    {
         for (int d = 0; d < power256; d++)
+        {
             mult_a_bf10_int(r, dec, 256);
-
+        }
+    }
     else if (power256 < 0)
+    {
         for (int d = 0; d > power256; d--)
+        {
             div_a_bf10_int(r, dec, 256);
+        }
+    }
 
     // else power256 is zero, don't do anything
 
@@ -2292,7 +2440,9 @@ char *bf10tostr_e(char *s, int dec, bf10_t n)
     }
 
     if (dec == 0)
+    {
         dec = decimals;
+    }
     dec++;  // one extra byte for rounding
     power10 = n + dec + 1;
     p = (S16)big_access16(power10);
@@ -2301,12 +2451,16 @@ char *bf10tostr_e(char *s, int dec, bf10_t n)
     if (p < 0 && dec > 8) // 8 sounds like a reasonable value
     {
         dec = dec + p;
-        if (dec < 8) // let's keep at least a few
+        if (dec < 8)   // let's keep at least a few
+        {
             dec = 8;
+        }
     }
 
-    if (n[0] == 1) // sign flag
+    if (n[0] == 1)   // sign flag
+    {
         *(s++) = '-';
+    }
     *(s++) = (char)(n[1] + '0');
     *(s++) = '.';
     for (int d = 2; d <= dec; d++)
@@ -2315,9 +2469,13 @@ char *bf10tostr_e(char *s, int dec, bf10_t n)
     }
     // clean up trailing 0's
     while (*(s-1) == '0')
+    {
         s--;
-    if (*(s-1) == '.') // put at least one 0 after the decimal
+    }
+    if (*(s-1) == '.')   // put at least one 0 after the decimal
+    {
         *(s++) = '0';
+    }
     sprintf(s, "e%d", p);
     return s;
 }
@@ -2338,7 +2496,9 @@ char *bf10tostr_f(char *s, int dec, bf10_t n)
     }
 
     if (dec == 0)
+    {
         dec = decimals;
+    }
     dec++;  // one extra byte for rounding
     power10 = n + dec + 1;
     p = (S16)big_access16(power10);
@@ -2347,36 +2507,54 @@ char *bf10tostr_f(char *s, int dec, bf10_t n)
     if (p < 0 && dec > 8) // 8 sounds like a reasonable value
     {
         dec = dec + p;
-        if (dec < 8) // let's keep at least a few
+        if (dec < 8)   // let's keep at least a few
+        {
             dec = 8;
+        }
     }
 
-    if (n[0] == 1) // sign flag
+    if (n[0] == 1)   // sign flag
+    {
         *(s++) = '-';
+
+    }
     if (p >= 0)
     {
         int d;
         for (d = 1; d <= p+1; d++)
+        {
             *(s++) = (char)(n[d] + '0');
+        }
         *(s++) = '.';
         for (; d <= dec; d++)
+        {
             *(s++) = (char)(n[d] + '0');
+        }
     }
     else
     {
         *(s++) = '0';
         *(s++) = '.';
         for (int d = 0; d > p+1; d--)
+        {
             *(s++) = '0';
+        }
         for (int d = 1; d <= dec; d++)
+        {
             *(s++) = (char)(n[d] + '0');
+        }
     }
 
     // clean up trailing 0's
     while (*(s-1) == '0')
+    {
         s--;
-    if (*(s-1) == '.') // put at least one 0 after the decimal
+    }
+    if (*(s-1) == '.')   // put at least one 0 after the decimal
+    {
         *(s++) = '0';
+
+    }
     *s = '\0'; // terminating nul
     return s;
 }

@@ -140,8 +140,12 @@ void fractal_floattobf()
     floattobf(bfy3rd, yy3rd);
 
     for (int i = 0; i < MAXPARAMS; i++)
+    {
         if (typehasparm(fractype, i, nullptr))
+        {
             floattobf(bfparms[i], param[i]);
+        }
+    }
     calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
@@ -153,7 +157,9 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     oldcoloriter = 0L;
     coloriter = oldcoloriter;
     for (int i = 0; i < 10; i++)
+    {
         rhombus_stack[i] = 0;
+    }
 
     // set up grid array compactly leaving space at end
     // space req for grid is 2(xdots+ydots)*sizeof(long or double)
@@ -168,7 +174,9 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         usr_floatflag = true;
     }
     else
+    {
         use_grid = true;
+    }
 
     set_grid_pointers();
 
@@ -176,9 +184,13 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     {
         fractal_type tofloat = curfractalspecific->tofloat;
         if (tofloat == fractal_type::NOFRACTAL)
+        {
             bf_math = bf_math_type::NONE;
+        }
         else if (!(fractalspecific[static_cast<int>(tofloat)].flags & BF_MATH))
+        {
             bf_math = bf_math_type::NONE;
+        }
         else if (bf_math != bf_math_type::NONE)
         {
             curfractalspecific = &fractalspecific[static_cast<int>(tofloat)];
@@ -196,7 +208,9 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
             bf_math = bf_math_type::NONE;
         }
         else
+        {
             init_bf_dec(gotprec);
+        }
     }
     else if ((fractype == fractal_type::MANDEL || fractype == fractal_type::MANDELFP) && debugflag == debug_flags::force_arbitrary_precision_math)
     {
@@ -227,24 +241,38 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         usr_floatflag = true;
     }
     else
+    {
         free_bf_vars();
+    }
     if (bf_math != bf_math_type::NONE)
+    {
         floatflag = true;
+    }
     else
+    {
         floatflag = usr_floatflag;
+    }
     if (calc_status == calc_status_value::RESUMABLE)
-    { // on resume, ensure floatflag correct
+    {
+        // on resume, ensure floatflag correct
         floatflag = curfractalspecific->isinteger == 0;
     }
     // if floating pt only, set floatflag for TAB screen
     if (!curfractalspecific->isinteger && curfractalspecific->tofloat == fractal_type::NOFRACTAL)
+    {
         floatflag = true;
+    }
     if (usr_stdcalcmode == 's')
     {
         if (fractype == fractal_type::MANDEL || fractype == fractal_type::MANDELFP)
+        {
             floatflag = true;
+        }
         else
+        {
             usr_stdcalcmode = '1';
+
+        }
     }
 
     // cppcheck-suppress variableScope
@@ -275,36 +303,51 @@ init_restart:
     }
 
     if (distest)
+    {
         floatflag = true;  // force floating point for dist est
+    }
 
     if (floatflag)
-    { // ensure type matches floatflag
+    {
+        // ensure type matches floatflag
         if (curfractalspecific->isinteger != 0
                 && curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+        {
             fractype = curfractalspecific->tofloat;
+        }
     }
     else
     {
         if (curfractalspecific->isinteger == 0
                 && curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+        {
             fractype = curfractalspecific->tofloat;
+        }
     }
     // match Julibrot with integer mode of orbit
     if (fractype == fractal_type::JULIBROTFP && fractalspecific[static_cast<int>(neworbittype)].isinteger)
     {
         fractal_type i = fractalspecific[static_cast<int>(neworbittype)].tofloat;
         if (i != fractal_type::NOFRACTAL)
+        {
             neworbittype = i;
+        }
         else
+        {
             fractype = fractal_type::JULIBROT;
+        }
     }
     else if (fractype == fractal_type::JULIBROT && fractalspecific[static_cast<int>(neworbittype)].isinteger == 0)
     {
         fractal_type i = fractalspecific[static_cast<int>(neworbittype)].tofloat;
         if (i != fractal_type::NOFRACTAL)
+        {
             neworbittype = i;
+        }
         else
+        {
             fractype = fractal_type::JULIBROTFP;
+        }
     }
 
     curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
@@ -312,16 +355,28 @@ init_restart:
     integerfractal = curfractalspecific->isinteger;
 
     if (potflag && potparam[2] != 0.0)
+    {
         rqlim = potparam[2];
-    else if (bailout) // user input bailout
+    }
+    else if (bailout)     // user input bailout
+    {
         rqlim = bailout;
-    else if (biomorph != -1) // biomorph benefits from larger bailout
+    }
+    else if (biomorph != -1)     // biomorph benefits from larger bailout
+    {
         rqlim = 100;
+    }
     else
+    {
         rqlim = curfractalspecific->orbit_bailout;
-    if (integerfractal) // the bailout limit mustn't be too high here
+    }
+    if (integerfractal)   // the bailout limit mustn't be too high here
+    {
         if (rqlim > 127.0)
+        {
             rqlim = 127.0;
+        }
+    }
 
     if ((curfractalspecific->flags&NOROTATE) != 0)
     {
@@ -344,22 +399,30 @@ init_restart:
 
     // set up bitshift for integer math
     bitshift = FUDGEFACTOR2; // by default, the smaller shift
-    if (integerfractal > 1)  // use specific override from table
+    if (integerfractal > 1)    // use specific override from table
+    {
         bitshift = integerfractal;
+    }
     if (integerfractal == 0)
-    { // float?
+    {
+        // float?
         fractal_type i = curfractalspecific->tofloat;
         if (i != fractal_type::NOFRACTAL) // -> int?
         {
-            if (fractalspecific[static_cast<int>(i)].isinteger > 1) // specific shift?
+            if (fractalspecific[static_cast<int>(i)].isinteger > 1)   // specific shift?
+            {
                 bitshift = fractalspecific[static_cast<int>(i)].isinteger;
+            }
         }
         else
+        {
             bitshift = 16;  // to allow larger corners
+        }
     }
     // We want this code if we're using the assembler calcmand
     if (fractype == fractal_type::MANDEL || fractype == fractal_type::JULIA)
-    { // adjust shift bits if..
+    {
+        // adjust shift bits if..
         if (!potflag                                    // not using potential
                 && (param[0] > -2.0 && param[0] < 2.0)  // parameters not too large
                 && (param[1] > -2.0 && param[1] < 2.0)
@@ -369,8 +432,10 @@ init_restart:
                 && (outside > REAL || outside < ATAN)   // and no funny outside stuff
                 && debugflag != debug_flags::force_smaller_bitshift // and not debugging
                 && closeprox <= 2.0                     // and closeprox not too large
-                && bailoutest == bailouts::Mod)         // and bailout test = mod
+                && bailoutest == bailouts::Mod)           // and bailout test = mod
+        {
             bitshift = FUDGEFACTOR;                     // use the larger bitshift
+        }
     }
 
     fudge = 1L << bitshift;
@@ -380,7 +445,9 @@ init_restart:
 
     // now setup arrays of real coordinates corresponding to each pixel
     if (bf_math != bf_math_type::NONE)
+    {
         adjust_to_limitsbf(1.0); // make sure all corners in valid range
+    }
     else
     {
         adjust_to_limits(1.0); // make sure all corners in valid range
@@ -418,7 +485,9 @@ init_restart:
                     || (delx2 == 0 && delxx2 != 0.0)
                     || (dely  == 0 && delyy  != 0.0)
                     || (dely2 == 0 && delyy2 != 0.0))
+            {
                 goto expand_retry;
+            }
 
             fill_lx_array();   // fill up the x,y grids
             // past max res?  check corners within 10% of expected
@@ -430,11 +499,17 @@ init_restart:
 expand_retry:
                 if (integerfractal          // integer fractal type?
                         && curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+                {
                     floatflag = true;       // switch to floating pt
+                }
                 else
+                {
                     adjust_to_limits(2.0);   // double the size
-                if (calc_status == calc_status_value::RESUMABLE)       // due to restore of an old file?
+                }
+                if (calc_status == calc_status_value::RESUMABLE)         // due to restore of an old file?
+                {
                     calc_status = calc_status_value::PARAMS_CHANGED;         //   whatever, it isn't resumable
+                }
                 goto init_restart;
             } // end if ratio bad
 
@@ -483,7 +558,9 @@ expand_retry:
                 if (++tries < 2) // for safety
                 {
                     if (tries > 1)
+                    {
                         stopmsg(STOPMSG_NONE, "precision-detection error");
+                    }
                     /* Previously there were four tests of distortions in the
                        zoom box used to detect precision limitations. In some
                        cases of rotated/skewed zoom boxes, this causes the algorithm
@@ -544,14 +621,20 @@ expand_retry:
     //     min(max(delx,delx2),max(dely,dely2))
     ddelmin = fabs((double)delxx);
     if (fabs((double)delxx2) > ddelmin)
+    {
         ddelmin = fabs((double)delxx2);
+    }
     if (fabs((double)delyy) > fabs((double)delyy2))
     {
         if (fabs((double)delyy) < ddelmin)
+        {
             ddelmin = fabs((double)delyy);
+        }
     }
     else if (fabs((double)delyy2) < ddelmin)
+    {
         ddelmin = fabs((double)delyy2);
+    }
     delmin = fudgetolong(ddelmin);
 
     // calculate factors which plot real values to screen co-ords
@@ -566,15 +649,21 @@ expand_retry:
         plotmy2 = (xxmax-xx3rd) * y_size_d / ftemp;
     }
     if (bf_math == bf_math_type::NONE)
+    {
         free_bf_vars();
+    }
 }
 
 static long fudgetolong(double d)
 {
     if ((d *= fudge) > 0)
+    {
         d += 0.5;
+    }
     else
+    {
         d -= 0.5;
+    }
     return (long)d;
 }
 
@@ -629,15 +718,19 @@ void adjust_cornerbf()
         // if (ftemp*10000 < ftemp2 && yy3rd != yymax)
         if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
                 && cmp_bf(bfy3rd, bfymax) != 0)
+        {
             // xx3rd = xxmin;
             copy_bf(bfx3rd, bfxmin);
+        }
     }
 
     // else if (ftemp2*10000 < ftemp && yy3rd != yymin)
     if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
             && cmp_bf(bfy3rd, bfymin) != 0)
+    {
         // xx3rd = xxmax;
         copy_bf(bfx3rd, bfxmax);
+    }
 
     // ftemp=fabs(yy3rd-yymin);
     abs_a_bf(sub_bf(bftemp, bfy3rd, bfymin));
@@ -651,15 +744,19 @@ void adjust_cornerbf()
         // if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
         if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
                 && cmp_bf(bfx3rd, bfxmax) != 0)
+        {
             // yy3rd = yymin;
             copy_bf(bfy3rd, bfymin);
+        }
     }
 
     // else if (ftemp2*10000 < ftemp && xx3rd != xxmin)
     if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
             && cmp_bf(bfx3rd, bfxmin) != 0)
+    {
         // yy3rd = yymax;
         copy_bf(bfy3rd, bfymax);
+    }
 
 
     restore_stack(saved);
@@ -690,22 +787,30 @@ void adjust_corner()
     if (ftemp < ftemp2)
     {
         if (ftemp*10000 < ftemp2 && yy3rd != yymax)
+        {
             xx3rd = xxmin;
+        }
     }
 
     if (ftemp2*10000 < ftemp && yy3rd != yymin)
+    {
         xx3rd = xxmax;
+    }
 
     ftemp = fabs(yy3rd-yymin);
     ftemp2 = fabs(yymax-yy3rd);
     if (ftemp < ftemp2)
     {
         if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
+        {
             yy3rd = yymin;
+        }
     }
 
     if (ftemp2*10000 < ftemp && xx3rd != xxmin)
+    {
         yy3rd = yymax;
+    }
 
 }
 
@@ -756,7 +861,8 @@ static void adjust_to_limitsbf(double expand)
 
     // if (xxmin == centerx) {
     if (cmp_bf(bfxmin, bcenterx) == 0)
-    { // ohoh, infinitely thin, fix it
+    {
+        // ohoh, infinitely thin, fix it
         smallest_add_bf(bfxmax);
         // bfxmin -= bfxmax-centerx;
         sub_a_bf(bfxmin, sub_bf(btmp1, bfxmax, bcenterx));
@@ -772,11 +878,15 @@ static void adjust_to_limitsbf(double expand)
 
     // if (bfx3rd == centerx)
     if (cmp_bf(bfx3rd, bcenterx) == 0)
+    {
         smallest_add_bf(bfx3rd);
+    }
 
     // if (bfy3rd == centery)
     if (cmp_bf(bfy3rd, bcentery) == 0)
+    {
         smallest_add_bf(bfy3rd);
+    }
 
     // setup array for easier manipulation
     // cornerx[0] = xxmin;
@@ -835,19 +945,27 @@ static void adjust_to_limitsbf(double expand)
     {
         // if (cornerx[i] < lowx)               lowx  = cornerx[i];
         if (cmp_bf(bcornerx[i], blowx) < 0)
+        {
             copy_bf(blowx, bcornerx[i]);
+        }
 
         // if (cornerx[i] > highx)              highx = cornerx[i];
         if (cmp_bf(bcornerx[i], bhighx) > 0)
+        {
             copy_bf(bhighx, bcornerx[i]);
+        }
 
         // if (cornery[i] < lowy)               lowy  = cornery[i];
         if (cmp_bf(bcornery[i], blowy) < 0)
+        {
             copy_bf(blowy, bcornery[i]);
+        }
 
         // if (cornery[i] > highy)              highy = cornery[i];
         if (cmp_bf(bcornery[i], bhighy) > 0)
+        {
             copy_bf(bhighy, bcornery[i]);
+        }
     }
 
     // if image is too large, downsize it maintaining center
@@ -856,7 +974,9 @@ static void adjust_to_limitsbf(double expand)
 
     // if (highy-lowy > ftemp) ftemp = highy-lowy;
     if (cmp_bf(sub_bf(btmp1, bhighy, blowy), bftemp) > 0)
+    {
         copy_bf(bftemp, btmp1);
+    }
 
     // if image is too large, downsize it maintaining center
 
@@ -865,6 +985,7 @@ static void adjust_to_limitsbf(double expand)
     div_bf(bftemp, btmp1, btmp2);
     floattobf(btmp1, 1.0);
     if (cmp_bf(bftemp, btmp1) < 0)
+    {
         for (int i = 0; i < 4; ++i)
         {
             // cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp;
@@ -877,6 +998,7 @@ static void adjust_to_limitsbf(double expand)
             mult_bf(bcornery[i], btmp1, bftemp);
             add_a_bf(bcornery[i], bcentery);
         }
+    }
 
     // if any corner has x or y past limit, move the image
     // adjx = adjy = 0;
@@ -889,31 +1011,41 @@ static void adjust_to_limitsbf(double expand)
            adjx = ftemp; */
         if (cmp_bf(bcornerx[i], blimit) > 0 &&
                 cmp_bf(sub_bf(bftemp, bcornerx[i], blimit), badjx) > 0)
+        {
             copy_bf(badjx, bftemp);
+        }
 
         /* if (cornerx[i] < 0.0-limit && (ftemp = cornerx[i] + limit) < adjx)
            adjx = ftemp; */
         if (cmp_bf(bcornerx[i], neg_bf(btmp1, blimit)) < 0 &&
                 cmp_bf(add_bf(bftemp, bcornerx[i], blimit), badjx) < 0)
+        {
             copy_bf(badjx, bftemp);
+        }
 
         /* if (cornery[i] > limit  && (ftemp = cornery[i] - limit) > adjy)
            adjy = ftemp; */
         if (cmp_bf(bcornery[i], blimit) > 0 &&
                 cmp_bf(sub_bf(bftemp, bcornery[i], blimit), badjy) > 0)
+        {
             copy_bf(badjy, bftemp);
+        }
 
         /* if (cornery[i] < 0.0-limit && (ftemp = cornery[i] + limit) < adjy)
            adjy = ftemp; */
         if (cmp_bf(bcornery[i], neg_bf(btmp1, blimit)) < 0 &&
                 cmp_bf(add_bf(bftemp, bcornery[i], blimit), badjy) < 0)
+        {
             copy_bf(badjy, bftemp);
+        }
     }
 
     /* if (calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zoom_box_width == 1.0))
        calc_status = calc_status_value::PARAMS_CHANGED; */
     if (calc_status == calc_status_value::RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (zoom_box_width == 1.0))
+    {
         calc_status = calc_status_value::PARAMS_CHANGED;
+    }
 
     // xxmin = cornerx[0] - adjx;
     sub_bf(bfxmin, bcornerx[0], badjx);
@@ -942,19 +1074,26 @@ static void adjust_to_limits(double expand)
 
     if (integerfractal)
     {
-        if (save_release > 1940) // let user reproduce old GIF's and PAR's
+        if (save_release > 1940)   // let user reproduce old GIF's and PAR's
+        {
             limit = 1023.99;
+        }
         if (bitshift >= 24)
+        {
             limit = 31.99;
+        }
         if (bitshift >= 29)
+        {
             limit = 3.99;
+        }
     }
 
     centerx = (xxmin+xxmax)/2;
     centery = (yymin+yymax)/2;
 
     if (xxmin == centerx)
-    { // ohoh, infinitely thin, fix it
+    {
+        // ohoh, infinitely thin, fix it
         smallest_add(&xxmax);
         xxmin -= xxmax-centerx;
     }
@@ -966,10 +1105,14 @@ static void adjust_to_limits(double expand)
     }
 
     if (xx3rd == centerx)
+    {
         smallest_add(&xx3rd);
+    }
 
     if (yy3rd == centery)
+    {
         smallest_add(&yy3rd);
+    }
 
     // setup array for easier manipulation
     cornerx[0] = xxmin;
@@ -1000,20 +1143,30 @@ static void adjust_to_limits(double expand)
     for (int i = 1; i < 4; ++i)
     {
         if (cornerx[i] < lowx)
+        {
             lowx  = cornerx[i];
+        }
         if (cornerx[i] > highx)
+        {
             highx = cornerx[i];
+        }
         if (cornery[i] < lowy)
+        {
             lowy  = cornery[i];
+        }
         if (cornery[i] > highy)
+        {
             highy = cornery[i];
+        }
     }
 
     // if image is too large, downsize it maintaining center
     ftemp = highx-lowx;
 
     if (highy-lowy > ftemp)
+    {
         ftemp = highy-lowy;
+    }
 
     // if image is too large, downsize it maintaining center
     ftemp = limit*2/ftemp;
@@ -1033,16 +1186,26 @@ static void adjust_to_limits(double expand)
     for (int i = 0; i < 4; ++i)
     {
         if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
+        {
             adjx = ftemp;
+        }
         if (cornerx[i] < 0.0-limit && (ftemp = cornerx[i] + limit) < adjx)
+        {
             adjx = ftemp;
+        }
         if (cornery[i] > limit     && (ftemp = cornery[i] - limit) > adjy)
+        {
             adjy = ftemp;
+        }
         if (cornery[i] < 0.0-limit && (ftemp = cornery[i] + limit) < adjy)
+        {
             adjy = ftemp;
+        }
     }
     if (calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zoom_box_width == 1.0))
+    {
         calc_status = calc_status_value::PARAMS_CHANGED;
+    }
     xxmin = cornerx[0] - adjx;
     xxmax = cornerx[1] - adjx;
     xx3rd = cornerx[2] - adjx;
@@ -1073,18 +1236,28 @@ static int ratio_bad(double actual, double desired)
 {
     double tol;
     if (integerfractal)
+    {
         tol = math_tol[0];
+    }
     else
+    {
         tol = math_tol[1];
+    }
     if (tol <= 0.0)
+    {
         return (1);
+    }
     else if (tol >= 1.0)
+    {
         return (0);
+    }
     if (desired != 0 && debugflag != debug_flags::prevent_arbitrary_precision_math)
     {
         double ftemp = actual / desired;
         if (ftemp < (1.0-tol) || ftemp > (1.0+tol))
+        {
             return (1);
+        }
     }
     return (0);
 }
@@ -1156,7 +1329,9 @@ int put_resume(int len, ...)
     va_list arg_marker;
 
     if (resume_data.empty())
+    {
         return (-1);
+    }
 
     va_start(arg_marker, len);
     while (len)
@@ -1185,7 +1360,9 @@ int get_resume(int len, ...)
     va_list arg_marker;
 
     if (resume_data.empty())
+    {
         return (-1);
+    }
     va_start(arg_marker, len);
     while (len)
     {
@@ -1202,7 +1379,9 @@ int start_resume()
 {
     int version;
     if (resume_data.empty())
+    {
         return (-1);
+    }
     resume_offset = 0;
     get_resume(sizeof(version), &version, 0);
     return (version);
@@ -1254,8 +1433,10 @@ void sleepms_old(long ms)
            10000 per sec independent of CPU speed */
         int i, elapsed;
         scalems = 1L;
-        if (driver_key_pressed()) // check at start, hope to get start of timeslice
+        if (driver_key_pressed())   // check at start, hope to get start of timeslice
+        {
             goto sleepexit;
+        }
         // calibrate, assume slow computer first
         showtempmsg("Calibrating timer");
         do
@@ -1263,7 +1444,8 @@ void sleepms_old(long ms)
             scalems *= 2;
             ftimex(&t2);
             do
-            { // wait for the start of a new tick
+            {
+                // wait for the start of a new tick
                 ftimex(&t1);
             }
             while (t2.time == t1.time && t2.millitm == t1.millitm);
@@ -1279,7 +1461,8 @@ void sleepms_old(long ms)
         while ((elapsed = (int)(t2.time - t1.time)*1000 + t2.millitm - t1.millitm) < SLEEPINIT);
         // once more to see if faster (eg multi-tasking)
         do
-        { // wait for the start of a new tick
+        {
+            // wait for the start of a new tick
             ftimex(&t1);
         }
         while (t2.time == t1.time && t2.millitm == t1.millitm);
@@ -1287,21 +1470,28 @@ void sleepms_old(long ms)
         ftimex(&t2);
         i = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
         if (i < elapsed)
+        {
             elapsed = (i == 0) ? 1 : i;
+        }
         scalems = (long)((float)SLEEPINIT/(float)(elapsed) * scalems);
         cleartempmsg();
     }
     if (ms > 10L * SLEEPINIT)
-    { // using ftime is probably more accurate
+    {
+        // using ftime is probably more accurate
         ms /= 10;
         ftimex(&t1);
         while (1)
         {
             if (driver_key_pressed())
+            {
                 break;
+            }
             ftimex(&t2);
             if ((long)((t2.time-t1.time)*1000 + t2.millitm-t1.millitm) >= ms)
+            {
                 break;
+            }
         }
     }
     else if (!driver_key_pressed())
@@ -1322,16 +1512,24 @@ static void sleepms_new(long ms)
     uclock_t now = usec_clock();
     next_time = now + ms*100;
     while ((now = usec_clock()) < next_time)
+    {
         if (driver_key_pressed())
+        {
             break;
+        }
+    }
 }
 
 void sleepms(long ms)
 {
     if (debugflag == debug_flags::force_old_sleep)
+    {
         sleepms_old(ms);
+    }
     else
+    {
         sleepms_new(ms);
+    }
 }
 
 /*
@@ -1343,13 +1541,19 @@ static uclock_t next_time[MAX_INDEX];
 void wait_until(int index, uclock_t wait_time)
 {
     if (debugflag == debug_flags::force_old_sleep)
+    {
         sleepms_old(wait_time);
+    }
     else
     {
         uclock_t now;
         while ((now = usec_clock()) < next_time[index])
+        {
             if (driver_key_pressed())
+            {
                 break;
+            }
+        }
         next_time[index] = now + wait_time*100; // wait until this time next call
     }
 }
@@ -1358,7 +1562,9 @@ void reset_clock()
 {
     restart_uclock();
     for (auto &elem : next_time)
+    {
         elem = 0;
+    }
 }
 
 #define LOG2  0.693147180F
@@ -1393,19 +1599,24 @@ void w_snd(int tone)
     {
         // cppcheck-suppress leakNoVarFunctionCall
         if (snd_open())
+        {
             fprintf(snd_fp, "%-d\n", tone);
+        }
     }
     taborhelp = false;
     if (!driver_key_pressed())
-    { // driver_key_pressed calls driver_sound_off() if TAB or F1 pressed
+    {
+        // driver_key_pressed calls driver_sound_off() if TAB or F1 pressed
         // must not then call driver_sound_off(), else indexes out of synch
         //   if (20 < tone && tone < 15000)  better limits?
         //   if (10 < tone && tone < 5000)  better limits?
         if (driver_sound_on(tone))
         {
             wait_until(0, orbit_delay);
-            if (!taborhelp) // kludge because wait_until() calls driver_key_pressed
+            if (!taborhelp)   // kludge because wait_until() calls driver_key_pressed
+            {
                 driver_sound_off();
+            }
         }
     }
 }
@@ -1422,7 +1633,9 @@ void snd_time_write()
 void close_snd()
 {
     if (snd_fp)
+    {
         fclose(snd_fp);
+    }
     snd_fp = nullptr;
 }
 
@@ -1432,15 +1645,21 @@ static void plotdorbit(double dx, double dy, int color)
     int j;
     int save_sxoffs, save_syoffs;
     if (orbit_ptr >= NUM_SAVE_ORBIT-3)
+    {
         return;
+    }
     i = (int)(dy * plotmx1 - dx * plotmx2);
     i += sxoffs;
     if (i < 0 || i >= sxdots)
+    {
         return;
+    }
     j = (int)(dx * plotmy1 - dy * plotmy2);
     j += syoffs;
     if (j < 0 || j >= sydots)
+    {
         return;
+    }
     save_sxoffs = sxoffs;
     save_syoffs = syoffs;
     syoffs = 0;
@@ -1455,15 +1674,21 @@ static void plotdorbit(double dx, double dy, int color)
         putcolor(i, j, c^orbit_color);
     }
     else
+    {
         putcolor(i, j, color);
+    }
     sxoffs = save_sxoffs;
     syoffs = save_syoffs;
     if (debugflag == debug_flags::force_scaled_sound_formula)
     {
-        if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) // sound = x
+        if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)   // sound = x
+        {
             w_snd((int)(i*1000/xdots+basehertz));
-        else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) // sound = y or z
+        }
+        else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X)     // sound = y or z
+        {
             w_snd((int)(j*1000/ydots+basehertz));
+        }
         else if (orbit_delay > 0)
         {
             wait_until(0, orbit_delay);
@@ -1471,12 +1696,18 @@ static void plotdorbit(double dx, double dy, int color)
     }
     else
     {
-        if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) // sound = x
+        if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)   // sound = x
+        {
             w_snd((int)(i+basehertz));
-        else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) // sound = y
+        }
+        else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)     // sound = y
+        {
             w_snd((int)(j+basehertz));
-        else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) // sound = z
+        }
+        else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)     // sound = z
+        {
             w_snd((int)(i+j+basehertz));
+        }
         else if (orbit_delay > 0)
         {
             wait_until(0, orbit_delay);
@@ -1522,7 +1753,9 @@ int add_worklist(int xfrom, int xto, int xbegin,
                  int pass, int sym)
 {
     if (num_worklist >= MAXCALCWORK)
+    {
         return (-1);
+    }
     worklist[num_worklist].xxstart = xfrom;
     worklist[num_worklist].xxstop  = xto;
     worklist[num_worklist].xxbegin = xbegin;
@@ -1539,8 +1772,11 @@ int add_worklist(int xfrom, int xto, int xbegin,
 static int combine_worklist() // look for 2 entries which can freely merge
 {
     for (int i = 0; i < num_worklist; ++i)
+    {
         if (worklist[i].yystart == worklist[i].yybegin)
+        {
             for (int j = i+1; j < num_worklist; ++j)
+            {
                 if (worklist[j].sym == worklist[i].sym
                         && worklist[j].yystart == worklist[j].yybegin
                         && worklist[j].xxstart == worklist[j].xxbegin
@@ -1579,6 +1815,9 @@ static int combine_worklist() // look for 2 entries which can freely merge
                         }
                     }
                 }
+            }
+        }
+    }
     return (0); // nothing combined
 }
 
@@ -1588,24 +1827,32 @@ void tidy_worklist()
     {
         int i;
         while ((i = combine_worklist()) != 0)
-        {   // merged two, delete the gone one
+        {
+            // merged two, delete the gone one
             while (++i < num_worklist)
+            {
                 worklist[i-1] = worklist[i];
+            }
             --num_worklist;
         }
     }
     for (int i = 0; i < num_worklist; ++i)
+    {
         for (int j = i+1; j < num_worklist; ++j)
+        {
             if (worklist[j].pass < worklist[i].pass
                     || (worklist[j].pass == worklist[i].pass
                         && (worklist[j].yystart < worklist[i].yystart
                             || (worklist[j].yystart == worklist[i].yystart
                                 && worklist[j].xxstart <  worklist[i].xxstart))))
-            {   // dumb sort, swap 2 entries to correct order
+            {
+                // dumb sort, swap 2 entries to correct order
                 WORKLIST tempwork = worklist[i];
                 worklist[i] = worklist[j];
                 worklist[j] = tempwork;
             }
+        }
+    }
 }
 
 
@@ -1616,11 +1863,15 @@ void get_julia_attractor(double real, double imag)
     int savper;
     long savmaxit;
 
-    if (attractors == 0 && !finattract) // not magnet & not requested
+    if (attractors == 0 && !finattract)   // not magnet & not requested
+    {
         return;
+    }
 
-    if (attractors >= MAX_NUM_ATTRACTORS)     // space for more attractors ?
+    if (attractors >= MAX_NUM_ATTRACTORS)       // space for more attractors ?
+    {
         return;                  // Bad luck - no room left !
+    }
 
     savper = periodicitycheck;
     savmaxit = maxit;
@@ -1640,24 +1891,35 @@ void get_julia_attractor(double real, double imag)
     ltempsqrx = ltempsqrx << bitshift;
     ltempsqry = ltempsqry << bitshift;
 
-    if (maxit < 500)         // we're going to try at least this hard
+    if (maxit < 500)           // we're going to try at least this hard
+    {
         maxit = 500;
+    }
     coloriter = 0;
     overflow = false;
     while (++coloriter < maxit)
+    {
         if (curfractalspecific->orbitcalc() || overflow)
+        {
             break;
+        }
+    }
     if (coloriter >= maxit)      // if orbit stays in the lake
     {
-        if (integerfractal)   // remember where it went to
+        if (integerfractal)     // remember where it went to
+        {
             lresult = lnew;
+        }
         else
+        {
             result =  g_new;
+        }
         for (int i = 0; i < 10; i++)
         {
             overflow = false;
             if (!curfractalspecific->orbitcalc() && !overflow) // if it stays in the lake
-            {   // and doesn't move far, probably
+            {
+                // and doesn't move far, probably
                 if (integerfractal)   //   found a finite attractor
                 {
                     if (labs(lresult.x-lnew.x) < lclosenuff
@@ -1688,7 +1950,9 @@ void get_julia_attractor(double real, double imag)
         }
     }
     if (attractors == 0)
+    {
         periodicitycheck = savper;
+    }
     maxit = savmaxit;
 }
 
@@ -1708,6 +1972,8 @@ int ssg_blocksize() // used by solidguessing and by zoom panning
     }
     // increase blocksize if prefix array not big enough
     while (blocksize*(maxxblk-2) < xdots || blocksize*(maxyblk-2)*16 < ydots)
+    {
         blocksize += blocksize;
+    }
     return (blocksize);
 }

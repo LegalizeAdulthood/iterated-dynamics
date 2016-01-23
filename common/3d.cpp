@@ -64,11 +64,19 @@ ROTZ(i) =           cosi  sini    0     0
 void identity(MATRIX m)
 {
     for (int i = 0 ; i < CMAX; i++)
+    {
         for (int j = 0; j < RMAX; j++)
+        {
             if (i == j)
+            {
                 m[j][i] = 1.0;
+            }
             else
+            {
                 m[j][i] = 0.0;
+            }
+        }
+    }
 }
 
 // Multiply two matrices
@@ -78,11 +86,15 @@ void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
        in case parameter mat3 == mat2 or mat 1 */
     MATRIX newmat;
     for (int i = 0; i < 4; i++)
+    {
         for (int j = 0; j < 4; j++)
+        {
             newmat[j][i] =  mat1[j][0]*mat2[0][i]+
                             mat1[j][1]*mat2[1][i]+
                             mat1[j][2]*mat2[2][i]+
                             mat1[j][3]*mat2[3][i];
+        }
+    }
     memcpy(mat3, newmat, sizeof(newmat));
 }
 
@@ -174,10 +186,14 @@ bool normalize_vector(VECTOR v)
 
     // bailout if zero vlength
     if (vlength < FLT_MIN || vlength > FLT_MAX)
+    {
         return true;
+    }
     vlength = sqrt(vlength);
     if (vlength < FLT_MIN)
+    {
         return true;
+    }
 
     v[0] /= vlength;
     v[1] /= vlength;
@@ -194,7 +210,9 @@ int vmult(VECTOR s, MATRIX m, VECTOR t)
     {
         tmp[j] = 0.0;
         for (int i = 0; i < RMAX-1; i++)
+        {
             tmp[j] += s[i]*m[i][j];
+        }
         // vector is really four dimensional with last component always 1
         tmp[j] += m[3][j];
     }
@@ -214,7 +232,9 @@ void mult_vec(VECTOR s)
     {
         tmp[j] = 0.0;
         for (int i = 0; i < RMAX-1; i++)
+        {
             tmp[j] += s[i]*m[i][j];
+        }
         // vector is really four dimensional with last component always 1
         tmp[j] += m[3][j];
     }
@@ -260,13 +280,17 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
     overflow = false;
     k = CMAX-1;                  // shorten the math if non-perspective and non-illum
     if (lview[2] == 0 && t0[0] == 0)
+    {
         k--;
+    }
 
     for (int j = 0; j < k; j++)
     {
         tmp[j] = 0;
         for (int i = 0; i < RMAX-1; i++)
+        {
             tmp[j] += multiply(s[i], m[i][j], bitshift);
+        }
         // vector is really four dimensional with last component always 1
         tmp[j] += m[3][j];
     }
@@ -356,7 +380,9 @@ int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int bitshift)
     {
         tmp[j] = 0;
         for (int i = 0; i < RMAX-1; i++)
+        {
             tmp[j] += multiply(s[i], m[i][j], bitshift);
+        }
         // vector is really four dimensional with last component always 1
         tmp[j] += m[3][j];
     }

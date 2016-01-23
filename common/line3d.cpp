@@ -186,7 +186,9 @@ int line3d(BYTE * pixels, unsigned linelen)
 
     currow = g_row_count;           // use separate variable to allow for pot16bit files
     if (pot16bit)
+    {
         currow >>= 1;
+    }
 
     //**********************************************************************
     // This IF clause is executed ONCE per image. All precalculations are
@@ -198,9 +200,13 @@ int line3d(BYTE * pixels, unsigned linelen)
     {
         int err = first_time(linelen, v);
         if (err != 0)
+        {
             return err;
+        }
         if (xdots > OLDMAXPIXELS)
+        {
             return -1;
+        }
         crossavg[0] = 0;
         crossavg[1] = 0;
         crossavg[2] = 0;
@@ -217,9 +223,12 @@ int line3d(BYTE * pixels, unsigned linelen)
     if (pot16bit)
     {
         if (set_pixel_buff(pixels, &fraction[0], linelen))
+        {
             return 0;
+        }
     }
-    else if (grayflag)           // convert color numbers to grayscale values
+    else if (grayflag)             // convert color numbers to grayscale values
+    {
         for (col = 0; col < (int) linelen; col++)
         {
             int pal, colornum;
@@ -231,6 +240,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             pal >>= 6;
             pixels[col] = (BYTE) pal;
         }
+    }
     crossnotinit = true;
     col = 0;
 
@@ -247,6 +257,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     //***********************************************************************
     lastdot = std::min(xdots - 1, (int) linelen - 1);
     if (FILLTYPE >= 5)
+    {
         if (haze && Targa_Out)
         {
             HAZE_MULT = (int)(haze * (
@@ -255,9 +266,12 @@ int line3d(BYTE * pixels, unsigned linelen)
                                   (float)((long)(ydots - 1) * (long)(ydots - 1))));
             HAZE_MULT = 100 - HAZE_MULT;
         }
+    }
 
     if (previewfactor >= ydots || previewfactor > lastdot)
+    {
         previewfactor = std::min(ydots - 1, lastdot);
+    }
 
     localpreviewfactor = ydots / previewfactor;
 
@@ -266,8 +280,10 @@ int line3d(BYTE * pixels, unsigned linelen)
     if ((RAY || preview || FILLTYPE < 0) && (currow != ydots - 1) &&
             (currow % localpreviewfactor) && // Draw mod preview lines
             !(!RAY && (FILLTYPE > 4) && (currow == 1)))
+    {
         // Get init geometry in lightsource modes
         goto reallythebottom;     // skip over most of the line3d calcs
+    }
     if (driver_diskp())
     {
         char s[40];
@@ -276,7 +292,9 @@ int line3d(BYTE * pixels, unsigned linelen)
     }
 
     if (!col && RAY && currow != 0)
+    {
         start_object();
+    }
     // PROCESS ROW LOOP BEGINS HERE
     while (col < (int) linelen)
     {
@@ -285,7 +303,9 @@ int line3d(BYTE * pixels, unsigned linelen)
                 // if not the 1st or mod factor col
                 (col % (int)(aspect * localpreviewfactor)) &&
                 (!(!RAY && FILLTYPE > 4 && col == 1)))
+        {
             goto loopbottom;
+        }
 
         Real_Color = pixels[col];
         cur.color = Real_Color;
@@ -295,12 +315,18 @@ int line3d(BYTE * pixels, unsigned linelen)
         {
             next = (int)(col + aspect * localpreviewfactor);
             if (next == col)
+            {
                 next = col + 1;
+            }
         }
         else
+        {
             next = col + 1;
+        }
         if (next >= lastdot)
+        {
             next = lastdot;
+        }
 
         if (cur.color > 0 && cur.color < WATERLINE)
         {
@@ -309,7 +335,9 @@ int line3d(BYTE * pixels, unsigned linelen)
             f_cur.color = (float) cur.color;  // "lake"
         }
         else if (pot16bit)
+        {
             f_cur.color += ((float) fraction[col]) / (float)(1 << 8);
+        }
 
         if (SPHERE)            // sphere case
         {
@@ -335,11 +363,17 @@ int line3d(BYTE * pixels, unsigned linelen)
             //**********************************************************
 
             if (rscale < 0.0)
+            {
                 r = R + Rfactor * (double) f_cur.color * costheta;
+            }
             else if (rscale > 0.0)
+            {
                 r = R - rXrscale + Rfactor * (double) f_cur.color * costheta;
+            }
             else
+            {
                 r = R;
+            }
             // Allow Ray trace to go through so display ok
             if (persp || RAY)
             {   // how do lv[] and cur and f_cur all relate
@@ -395,8 +429,10 @@ int line3d(BYTE * pixels, unsigned linelen)
                 cur.x = (int) f_cur.x;
                 f_cur.y = (float)(ycenter + costheta*cosphi*scly*r + yyadjust);
                 cur.y = (int) f_cur.y;
-                if (FILLTYPE >= 5 || RAY)        // why do we do this for filltype>5?
+                if (FILLTYPE >= 5 || RAY)          // why do we do this for filltype>5?
+                {
                     f_cur.color = (float)(-r * costheta * sinphi * sclz);
+                }
                 v[2] = 0;               // Why do we do this?
                 v[1] = v[2];
                 v[0] = v[1];
@@ -406,19 +442,25 @@ int line3d(BYTE * pixels, unsigned linelen)
         {
             if (!usr_floatflag && !RAY)
             {
-                if (FILLTYPE >= 5)       // flag to save vector before perspective
+                if (FILLTYPE >= 5)         // flag to save vector before perspective
+                {
                     lv0[0] = 1;   // in longvmultpersp calculation
+                }
                 else
+                {
                     lv0[0] = 0;
+                }
 
                 // use 32-bit multiply math to snap this out
                 lv[0] = col;
                 lv[0] = lv[0] << 16;
                 lv[1] = currow;
                 lv[1] = lv[1] << 16;
-                if (pot16bit)           // don't truncate fractional part
+                if (pot16bit)             // don't truncate fractional part
+                {
                     lv[2] = (long)(f_cur.color * 65536.0);
-                else                            // there IS no fractional part here!
+                }
+                else                              // there IS no fractional part here!
                 {
                     lv[2] = (long) f_cur.color;
                     lv[2] = lv[2] << 16;
@@ -469,7 +511,9 @@ int line3d(BYTE * pixels, unsigned linelen)
                 }
 
                 if (persp && !RAY)
+                {
                     perspective(v);
+                }
                 cur.x = (int)(v[0] + xxadjust + .5);
                 cur.y = (int)(v[1] + yyadjust + .5);
 
@@ -482,22 +526,32 @@ int line3d(BYTE * pixels, unsigned linelen)
         }
 
         if (RANDOMIZE)
+        {
             if (cur.color > WATERLINE)
             {
                 RND = rand15() >> 8;     // 7-bit number
                 RND = RND * RND >> rand_factor;  // n-bit number
 
                 if (rand() & 1)
+                {
                     RND = -RND;   // Make +/- n-bit number
+                }
 
                 if ((int)(cur.color) + RND >= colors)
+                {
                     cur.color = colors - 2;
+                }
                 else if ((int)(cur.color) + RND <= WATERLINE)
+                {
                     cur.color = WATERLINE + 1;
+                }
                 else
+                {
                     cur.color = cur.color + RND;
+                }
                 Real_Color = (BYTE)cur.color;
             }
+        }
 
         if (RAY)
         {
@@ -514,11 +568,15 @@ int line3d(BYTE * pixels, unsigned linelen)
                 if (f_cur.color == f_water &&
                         f_lastrow[col].color == f_water &&
                         f_lastrow[next].color == f_water)
+                {
                     goto loopbottom;
+                }
 
-                if (RAY != 6)    // Output the vertex info
+                if (RAY != 6)      // Output the vertex info
+                {
                     out_triangle(f_cur, f_old, f_lastrow[col],
                                  cur.color, old.color, lastrow[col].color);
+                }
 
                 tout = true;
 
@@ -545,11 +603,15 @@ int line3d(BYTE * pixels, unsigned linelen)
                 if (f_cur.color == f_water &&
                         f_lastrow[col].color == f_water &&
                         f_lastrow[next].color == f_water)
+                {
                     goto loopbottom;
+                }
 
-                if (RAY != 6)    // Output the vertex info
+                if (RAY != 6)      // Output the vertex info
+                {
                     out_triangle(f_cur, f_lastrow[col], f_lastrow[next],
                                  cur.color, lastrow[col].color, lastrow[next].color);
+                }
 
                 tout = true;
 
@@ -567,7 +629,9 @@ int line3d(BYTE * pixels, unsigned linelen)
                 fprintf(File_Ptr1, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
                         f_cur.x, f_cur.y, f_cur.color, RO, CO);
                 if (CO > CO_MAX)
+                {
                     CO_MAX = CO;
+                }
                 CO++;
             }
             goto loopbottom;
@@ -579,14 +643,18 @@ int line3d(BYTE * pixels, unsigned linelen)
             if (col &&
                     old.x > bad_check &&
                     old.x < (xdots - bad_check))
+            {
                 driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
+            }
             if (currow &&
                     lastrow[col].x > bad_check &&
                     lastrow[col].y > bad_check &&
                     lastrow[col].x < (xdots - bad_check) &&
                     lastrow[col].y < (ydots - bad_check))
+            {
                 driver_draw_line(lastrow[col].x, lastrow[col].y, cur.x,
                                  cur.y, cur.color);
+            }
             break;
 
         case 0:
@@ -596,8 +664,10 @@ int line3d(BYTE * pixels, unsigned linelen)
         case 1:                // connect-a-dot
             if ((old.x < xdots) && (col) &&
                     old.x > bad_check &&
-                    old.y > bad_check)      // Don't draw from old to cur on col 0
+                    old.y > bad_check)        // Don't draw from old to cur on col 0
+            {
                 driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
+            }
             break;
 
         case 2:                // with interpolation
@@ -616,14 +686,20 @@ int line3d(BYTE * pixels, unsigned linelen)
             //***********************************************************
 
             if (currow && !col)
+            {
                 putatriangle(lastrow[next], lastrow[col], cur, cur.color);
+            }
             if (currow && col)  // skip first row and first column
             {
                 if (col == 1)
+                {
                     putatriangle(lastrow[col], oldlast, old, old.color);
+                }
 
                 if (col < lastdot)
+                {
                     putatriangle(lastrow[next], lastrow[col], cur, cur.color);
+                }
                 putatriangle(old, lastrow[col], cur, cur.color);
             }
             break;
@@ -665,13 +741,21 @@ int line3d(BYTE * pixels, unsigned linelen)
                 old.y = (int)((lv[1] + 32768L) >> 16);
             }
             if (old.x < 0)
+            {
                 old.x = 0;
+            }
             if (old.x >= xdots)
+            {
                 old.x = xdots - 1;
+            }
             if (old.y < 0)
+            {
                 old.y = 0;
+            }
             if (old.y >= ydots)
+            {
                 old.y = ydots - 1;
+            }
             driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             break;
 
@@ -682,7 +766,9 @@ int line3d(BYTE * pixels, unsigned linelen)
             {
                 if (f_cur.color < bad_check || f_old.color < bad_check ||
                         f_lastrow[col].color < bad_check)
+                {
                     break;
+                }
 
                 v1[0] = f_cur.x - f_old.x;
                 v1[1] = f_cur.y - f_old.y;
@@ -751,23 +837,33 @@ int line3d(BYTE * pixels, unsigned linelen)
                  * but avoid background index. This makes colors "opaque" so
                  * SOMETHING plots. These conditions shouldn't happen but just
                  * in case                                        */
-                if (cur.color < 1)       // prevent transparent colors
+                if (cur.color < 1)         // prevent transparent colors
+                {
                     cur.color = 1;// avoid background
+                }
                 if (cur.color > colors - 1)
+                {
                     cur.color = colors - 1;
+                }
 
                 // why "col < 2"? So we have sufficient geometry for the fill
                 // algorithm, which needs previous point in same row to have
                 // already been calculated (variable old)
                 // fix ragged left margin in preview
                 if (col == 1 && currow > 1)
+                {
                     putatriangle(lastrow[next], lastrow[col], cur, cur.color);
+                }
 
-                if (col < 2 || currow < 2)       // don't have valid colors yet
+                if (col < 2 || currow < 2)         // don't have valid colors yet
+                {
                     break;
+                }
 
                 if (col < lastdot)
+                {
                     putatriangle(lastrow[next], lastrow[col], cur, cur.color);
+                }
                 putatriangle(old, lastrow[col], cur, cur.color);
 
                 plot = standardplot;
@@ -853,11 +949,13 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
     *pxmax = *pymax;
 
     for (int j = 0; j < 4; ++j)
+    {
         for (int i = 0; i < 3; i++)
         {
             S[1][j][i] = 0;
             S[0][j][i] = S[1][j][i];
         }
+    }
 
     S[1][2][0] = xdots - 1;
     S[1][1][0] = S[1][2][0];
@@ -880,29 +978,53 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
 
         // update minimums and maximums
         if (S[0][i][0] <= *pxmin)
+        {
             *pxmin = S[0][i][0];
+        }
         if (S[0][i][0] >= *pxmax)
+        {
             *pxmax = S[0][i][0];
+        }
         if (S[1][i][0] <= *pxmin)
+        {
             *pxmin = S[1][i][0];
+        }
         if (S[1][i][0] >= *pxmax)
+        {
             *pxmax = S[1][i][0];
+        }
         if (S[0][i][1] <= *pymin)
+        {
             *pymin = S[0][i][1];
+        }
         if (S[0][i][1] >= *pymax)
+        {
             *pymax = S[0][i][1];
+        }
         if (S[1][i][1] <= *pymin)
+        {
             *pymin = S[1][i][1];
+        }
         if (S[1][i][1] >= *pymax)
+        {
             *pymax = S[1][i][1];
+        }
         if (S[0][i][2] <= *pzmin)
+        {
             *pzmin = S[0][i][2];
+        }
         if (S[0][i][2] >= *pzmax)
+        {
             *pzmax = S[0][i][2];
+        }
         if (S[1][i][2] <= *pzmin)
+        {
             *pzmin = S[1][i][2];
+        }
         if (S[1][i][2] >= *pzmax)
+        {
             *pzmax = S[1][i][2];
+        }
     }
 
     if (show)
@@ -918,11 +1040,13 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
 
         // Keep the box surrounding the fractal
         for (auto &elem : S)
+        {
             for (auto &elem_i : elem)
             {
                 elem_i[0] += xxadjust;
                 elem_i[1] += yyadjust;
             }
+        }
 
         draw_rect(S[0][0], S[0][1], S[0][2], S[0][3], 2, true);      // Bottom
 
@@ -965,11 +1089,13 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 
     // transform the corners if necessary
     if (FILLTYPE == 6)
+    {
         for (int i = 0; i < 4; i++)
         {
             vmult(S[0][i], light_m, S[0][i]);
             vmult(S[1][i], light_m, S[1][i]);
         }
+    }
 
     // always use perspective to aid viewing
     temp = view[2];              // save perspective distance for a later restore
@@ -1002,9 +1128,15 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 
     // Draw the "arrow head"
     for (int i = -3; i < 4; i++)
+    {
         for (int j = -3; j < 4; j++)
+        {
             if (abs(i) + abs(j) < 6)
+            {
                 plot((int)(S[1][2][0] + i), (int)(S[1][2][1] + j), 10);
+            }
+        }
+    }
 }
 
 static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, bool rect)
@@ -1022,17 +1154,25 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
     if (rect)                    // Draw a rectangle
     {
         for (int i = 0; i < 4; i++)
+        {
             if (fabs(V[i][0] - V[(i + 1) % 4][0]) < -2 * bad_check &&
                     fabs(V[i][1] - V[(i + 1) % 4][1]) < -2 * bad_check)
+            {
                 vdraw_line(V[i], V[(i + 1) % 4], color);
+            }
+        }
     }
     else
         // Draw 2 lines instead
     {
         for (int i = 0; i < 3; i += 2)
+        {
             if (fabs(V[i][0] - V[i + 1][0]) < -2 * bad_check &&
                     fabs(V[i][1] - V[i + 1][1]) < -2 * bad_check)
+            {
                 vdraw_line(V[i], V[i + 1], color);
+            }
+        }
     }
     return;
 }
@@ -1044,9 +1184,13 @@ static void putminmax(int x, int y, int /*color*/)
     if (y >= 0 && y < ydots)
     {
         if (x < minmax_x[y].minx)
+        {
             minmax_x[y].minx = x;
+        }
         if (x > minmax_x[y].maxx)
+        {
             minmax_x[y].maxx = x;
+        }
     }
 }
 
@@ -1064,7 +1208,9 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
 
     // Too many points off the screen?
     if ((offscreen(pt1) + offscreen(pt2) + offscreen(pt3)) > MAXOFFSCREEN)
+    {
         return;
+    }
 
     p1 = pt1;                    // needed by interpcolor
     p2 = pt2;
@@ -1075,9 +1221,13 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
     {
         plot = fillplot;
         if (p1.y == p3.y && p1.x == p3.x)
+        {
             (*plot)(p1.x, p1.y, color);
+        }
         else
+        {
             driver_draw_line(p1.x, p1.y, p3.x, p3.y, color);
+        }
         plot = normalplot;
         return;
     }
@@ -1093,19 +1243,31 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
     maxy = p1.y;
     miny = maxy;
     if (p2.y < miny)
+    {
         miny = p2.y;
+    }
     else
+    {
         maxy = p2.y;
+    }
     if (p3.y < miny)
+    {
         miny = p3.y;
+    }
     else if (p3.y > maxy)
+    {
         maxy = p3.y;
+    }
 
     // only worried about values on screen
     if (miny < 0)
+    {
         miny = 0;
+    }
     if (maxy >= ydots)
+    {
         maxy = ydots - 1;
+    }
 
     for (int y = miny; y <= maxy; y++)
     {
@@ -1125,7 +1287,9 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
     {
         xlim = minmax_x[y].maxx;
         for (int x = minmax_x[y].minx; x <= xlim; x++)
+        {
             (*fillplot)(x, y, color);
+        }
     }
     plot = normalplot;
 }
@@ -1133,12 +1297,22 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
 static int offscreen(point pt)
 {
     if (pt.x >= 0)
+    {
         if (pt.x < xdots)
+        {
             if (pt.y >= 0)
+            {
                 if (pt.y < ydots)
+                {
                     return 0;      // point is ok
+                }
+            }
+        }
+    }
     if (abs(pt.x) > 0 - bad_check || abs(pt.y) > 0 - bad_check)
+    {
         return 99;              // point is bad
+    }
     return 1;                  // point is off the screen
 }
 
@@ -1151,9 +1325,13 @@ static void clipcolor(int x, int y, int color)
         standardplot(x, y, color);
 
         if (Targa_Out)
+        {
             // standardplot modifies color in these types
             if (!(g_glasses_type == 1 || g_glasses_type == 2))
+            {
                 targa_color(x, y, color);
+            }
+        }
     }
 }
 
@@ -1173,9 +1351,13 @@ static void T_clipcolor(int x, int y, int color)
     {
         standardplot(x, y, color);// I guess we can plot then
         if (Targa_Out)
+        {
             // standardplot modifies color in these types
             if (!(g_glasses_type == 1 || g_glasses_type == 2))
+            {
                 targa_color(x, y, color);
+            }
+        }
     }
 }
 
@@ -1216,19 +1398,27 @@ static void interpcolor(int x, int y, int color)
              transparent[0] > (int) Real_Color))
     {
         if (Targa_Out)
+        {
             // standardplot modifies color in these types
             if (!(g_glasses_type == 1 || g_glasses_type == 2))
+            {
                 D = targa_color(x, y, color);
+            }
+        }
 
         if (FILLTYPE >= 5)
         {
             if (Real_V && Targa_Out)
+            {
                 color = D;
+            }
             else
             {
                 color = (1 + (unsigned) color * IAmbient) / 256;
                 if (color == 0)
+                {
                     color = 1;
+                }
             }
         }
         standardplot(x, y, color);
@@ -1250,7 +1440,9 @@ int targa_color(int x, int y, int color)
     BYTE RGB[3];
 
     if (FILLTYPE == 2 || g_glasses_type == 1 || g_glasses_type == 2 || truecolor)
+    {
         Real_Color = (BYTE)color;       // So Targa gets interpolated color
+    }
 
     switch (truemode)
     {
@@ -1276,8 +1468,10 @@ int targa_color(int x, int y, int color)
 
     // Modify original S and V components
     if (FILLTYPE > 4 && !(g_glasses_type == 1 || g_glasses_type == 2))
+    {
         // Adjust for Ambient
         V = (V * (65535L - (unsigned)(color * IAmbient))) / 65535L;
+    }
 
     if (haze)
     {
@@ -1300,7 +1494,9 @@ int targa_color(int x, int y, int color)
     H_R(&RGB[0], &RGB[1], &RGB[2], H, S, V);
 
     if (Real_V)
+    {
         V = (35 * (int) RGB[0] + 45 * (int) RGB[1] + 20 * (int) RGB[2]) / 100;
+    }
 
     // Now write the color triple to its transformed location
     // on the disk.
@@ -1313,8 +1509,10 @@ static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
 {
     if ((evenoddrow++ & 1) == 0) // even rows are color value
     {
-        for (int i = 0; i < (int) linelen; i++)       // add the fractional part in odd row
+        for (int i = 0; i < (int) linelen; i++)         // add the fractional part in odd row
+        {
             fraction[i] = pixels[i];
+        }
         return true;
     }
     else // swap
@@ -1391,9 +1589,13 @@ bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
     int inc = 1;                // Assume we are overlaying a file
 
     // Write the header
-    if (overlay)                 // We are overlaying a file
-        for (int i = 0; i < T_header_24; i++) // Copy the header from the Source
+    if (overlay)                   // We are overlaying a file
+    {
+        for (int i = 0; i < T_header_24; i++)   // Copy the header from the Source
+        {
             fputc(fgetc(Source), fps);
+        }
+    }
     else
     {   // Write header for a new file
         // ID field size = 0, No color map, Targa type 2 file
@@ -1406,13 +1608,19 @@ bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
                 T_header_24 = 18 + 4;
             }
             else if (i == 2)
+            {
                 fputc(i, fps);
+            }
             else
+            {
                 fputc(0, fps);
+            }
         }
         // Write image size
         for (auto &elem : upr_lwr)
+        {
             fputc(elem, fps);
+        }
         fputc(T24, fps);          // Targa 24 file
         fputc(T32, fps);          // Image at upper left
         inc = 3;
@@ -1432,23 +1640,33 @@ bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
         for (int j = 0; j < line_length1; j = j + inc)
         {
             if (overlay)
+            {
                 fputc(fgetc(Source), fps);
+            }
             else
+            {
                 for (int k = 2; k > -1; k--)
+                {
                     fputc(back_color[k], fps);       // Targa order (B, G, R)
+                }
+            }
         }
         if (ferror(fps))
         {
             // Almost certainly not enough disk space
             fclose(fps);
             if (overlay)
+            {
                 fclose(Source);
+            }
             dir_remove(workdir.c_str(), File_Name2);
             File_Error(File_Name2, 2);
             return true;
         }
         if (driver_key_pressed())
+        {
             return true;
+        }
     }
 
     if (targa_startdisk(fps, T_header_24) != 0)
@@ -1486,7 +1704,9 @@ bool targa_validate(char const *File_Name)
 
     // Skip color map specification
     for (int i = 0; i < 5; i++)
+    {
         fgetc(fp);
+    }
 
     for (int i = 0; i < 4; i++)
     {
@@ -1495,16 +1715,22 @@ bool targa_validate(char const *File_Name)
     }
     // Check Image specs
     for (auto &elem : upr_lwr)
+    {
         if (fgetc(fp) != (int) elem)
         {
             File_Error(File_Name, 3);
             return true;
         }
+    }
 
     if (fgetc(fp) != (int) T24)
+    {
         error = 4;                // Is it a targa 24 file?
+    }
     if (fgetc(fp) != (int) T32)
+    {
         error = 4;                // Is the origin at the upper left?
+    }
     if (error == 4)
     {
         File_Error(File_Name, 4);
@@ -1514,7 +1740,9 @@ bool targa_validate(char const *File_Name)
 
     // Now that we know its a good file, create a working copy
     if (startdisk1(targa_temp, fp, true))
+    {
         return true;
+    }
 
     fclose(fp);                  // Close the source
 
@@ -1534,16 +1762,24 @@ static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsig
         *V = G;
         MIN = R;
         if (G < B)
+        {
             *V = B;
+        }
         if (B < R)
+        {
             MIN = B;
+        }
     }
     else
     {
         if (B < G)
+        {
             MIN = B;
+        }
         if (R < B)
+        {
             *V = B;
+        }
     }
     DENOM = *V - MIN;
     if (*V != 0 && DENOM != 0)
@@ -1551,7 +1787,9 @@ static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsig
         *S = ((DENOM << 16) / *V) - 1;
     }
     else
+    {
         *S = 0;      // Color is black! and Sat has no meaning
+    }
     if (*S == 0)    // R=G=B => shade of grey and Hue has no meaning
     {
         *H = 0;
@@ -1570,23 +1808,35 @@ static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsig
     if (*V == R)
     {
         if (MIN == G)
+        {
             *H = (300 << 6) + B1;
+        }
         else
+        {
             *H = (60 << 6) - G1;
+        }
     }
     if (*V == G)
     {
         if (MIN == B)
+        {
             *H = (60 << 6) + R1;
+        }
         else
+        {
             *H = (180 << 6) - B1;
+        }
     }
     if (*V == B)
     {
         if (MIN == R)
+        {
             *H = (180 << 6) + G1;
+        }
         else
+        {
             *H = (300 << 6) - R1;
+        }
     }
     *V = *V << 8;
     return 0;
@@ -1598,7 +1848,9 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
     int RMD, I;
 
     if (H >= 23040)
+    {
         H = H % 23040;            // Makes h circular
+    }
     I = (int)(H / 3840);
     RMD = (int)(H % 3840);       // RMD = fractional part of H
 
@@ -1673,16 +1925,26 @@ static int RAY_Header()
     check_writefile(ray_name, ".ray");
     File_Ptr1 = fopen(ray_name.c_str(), "w");
     if (File_Ptr1 == nullptr)
+    {
         return -1;              // Oops, somethings wrong!
+    }
 
     if (RAY == 2)
+    {
         fprintf(File_Ptr1, "//");
+    }
     if (RAY == 4)
+    {
         fprintf(File_Ptr1, "#");
+    }
     if (RAY == 5)
+    {
         fprintf(File_Ptr1, "/*\n");
+    }
     if (RAY == 6)
+    {
         fprintf(File_Ptr1, "--");
+    }
     if (RAY == 7)
         fprintf(File_Ptr1, "  0\nSECTION\n  2\nTABLES\n  0\nTABLE\n  2\nLAYER\n\
  70\n     2\n  0\nLAYER\n  2\n0\n 70\n     0\n 62\n     7\n  6\nCONTINUOUS\n\
@@ -1690,10 +1952,14 @@ static int RAY_Header()
 ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
 
     if (RAY != 7)
+    {
         fprintf(File_Ptr1, "{ Created by FRACTINT Ver. %#4.2f }\n\n", g_release / 100.);
+    }
 
     if (RAY == 5)
+    {
         fprintf(File_Ptr1, "*/\n");
+    }
 
 
     // Set the default color
@@ -1712,20 +1978,28 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
             fprintf(File_Ptr1, "f 0.8 0.4 0.1 0.95 0.05 5 0 0\n");
         }
         if (RAY == 5)
+        {
             fprintf(File_Ptr1, "applysurf diffuse 0.8 0.4 0.1");
+        }
     }
     if (RAY != 7)
+    {
         fprintf(File_Ptr1, "\n");
+    }
 
     // open "grid" opject, a speedy way to do aggregates in rayshade
     if (RAY == 5)
+    {
         fprintf(File_Ptr1,
                 "/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
                 "/* make z grid = 1 always for landscapes. */\n\n"
                 "grid 33 25 1\n");
+    }
 
     if (RAY == 6)
+    {
         fprintf(File_Ptr1, "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
+    }
 
     return 0;
 }
@@ -1763,9 +2037,13 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
 
     // Color of triangle is average of colors of its verticies
     if (!BRIEF)
+    {
         for (int i = 0; i <= 2; i++)
+        {
             c[i] = (float)(g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
                    / (3 * 63);
+        }
+    }
 
     // get rid of degenerate triangles: any two points equal
     if ((pt_t[0][0] == pt_t[1][0] &&
@@ -1779,55 +2057,85 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
             (pt_t[2][0] == pt_t[1][0] &&
              pt_t[2][1] == pt_t[1][1] &&
              pt_t[2][2] == pt_t[1][2]))
+    {
         return 0;
+    }
 
     // Describe the triangle
     if (RAY == 1)
+    {
         fprintf(File_Ptr1, " OBJECT\n  TRIANGLE ");
+    }
     if (RAY == 2 && !BRIEF)
+    {
         fprintf(File_Ptr1, "surf={diff=");
+    }
     if (RAY == 4 && !BRIEF)
+    {
         fprintf(File_Ptr1, "f");
+    }
     if (RAY == 5 && !BRIEF)
+    {
         fprintf(File_Ptr1, "applysurf diffuse ");
+    }
 
     if (!BRIEF && RAY != 1 && RAY != 7)
+    {
         for (int i = 0; i <= 2; i++)
+        {
             fprintf(File_Ptr1, "% #4.4f ", c[i]);
+        }
+    }
 
     if (RAY == 2)
     {
         if (!BRIEF)
+        {
             fprintf(File_Ptr1, ";}\n");
+        }
         fprintf(File_Ptr1, "polygon={points=3;");
     }
     if (RAY == 4)
     {
         if (!BRIEF)
+        {
             fprintf(File_Ptr1, "0.95 0.05 5 0 0\n");
+        }
         fprintf(File_Ptr1, "p 3");
     }
     if (RAY == 5)
     {
         if (!BRIEF)
+        {
             fprintf(File_Ptr1, "\n");
+        }
         fprintf(File_Ptr1, "triangle");
     }
 
     if (RAY == 7)
+    {
         fprintf(File_Ptr1, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", std::min(255, std::max(1, c1)));
+    }
 
     for (int i = 0; i <= 2; i++)     // Describe each  Vertex
     {
         if (RAY != 7)
+        {
             fprintf(File_Ptr1, "\n");
+        }
 
         if (RAY == 1)
+        {
             fprintf(File_Ptr1, "      <");
+        }
         if (RAY == 2)
+        {
             fprintf(File_Ptr1, " vertex =  ");
+        }
         if (RAY > 3 && RAY != 7)
+        {
             fprintf(File_Ptr1, " ");
+        }
 
         for (int j = 0; j <= 2; j++)
         {
@@ -1835,20 +2143,30 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
             {
                 // write 3dface entity to dxf file
                 fprintf(File_Ptr1, "%3d\n%g\n", 10 * (j + 1) + i, pt_t[i][j]);
-                if (i == 2)         // 3dface needs 4 vertecies
+                if (i == 2)           // 3dface needs 4 vertecies
+                {
                     fprintf(File_Ptr1, "%3d\n%g\n", 10 * (j + 1) + i + 1,
                             pt_t[i][j]);
+                }
             }
             else if (!(RAY == 4 || RAY == 5))
+            {
                 fprintf(File_Ptr1, "% #4.4f ", pt_t[i][j]); // Right handed
+            }
             else
+            {
                 fprintf(File_Ptr1, "% #4.4f ", pt_t[2 - i][j]);     // Left handed
+            }
         }
 
         if (RAY == 1)
+        {
             fprintf(File_Ptr1, ">");
+        }
         if (RAY == 2)
+        {
             fprintf(File_Ptr1, ";");
+        }
     }
 
     if (RAY == 1)
@@ -1866,12 +2184,18 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
         triangle_bounds(pt_t);    // update bounding info
     }
     if (RAY == 2)
+    {
         fprintf(File_Ptr1, "}");
+    }
     if (RAY == 3 && !BRIEF)
+    {
         fprintf(File_Ptr1, "\n");
+    }
 
     if (RAY != 7)
+    {
         fprintf(File_Ptr1, "\n");
+    }
 
     return 0;
 }
@@ -1887,13 +2211,19 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
 static void triangle_bounds(float pt_t[3][3])
 {
     for (int i = 0; i <= 2; i++)
+    {
         for (int j = 0; j <= 2; j++)
         {
             if (pt_t[i][j] < min_xyz[j])
+            {
                 min_xyz[j] = pt_t[i][j];
+            }
             if (pt_t[i][j] > max_xyz[j])
+            {
                 max_xyz[j] = pt_t[i][j];
+            }
         }
+    }
     return;
 }
 
@@ -1906,7 +2236,9 @@ static void triangle_bounds(float pt_t[3][3])
 static int start_object()
 {
     if (RAY != 1)
+    {
         return 0;
+    }
 
     // Reset the min/max values, for bounding box
     min_xyz[2] = 999999.0F;
@@ -1932,7 +2264,9 @@ static int start_object()
 static int end_object(bool triout)
 {
     if (RAY == 7)
+    {
         return 0;
+    }
     if (RAY == 1)
     {
         if (triout)
@@ -1968,7 +2302,9 @@ static int end_object(bool triout)
     }
 
     if (RAY != 6 && RAY != 5)
+    {
         fprintf(File_Ptr1, "\n");
+    }
 
     return 0;
 }
@@ -1978,35 +2314,55 @@ static void line3d_cleanup()
     if (RAY && File_Ptr1)
     {   // Finish up the ray tracing files
         if (RAY != 5 && RAY != 7)
+        {
             fprintf(File_Ptr1, "\n");
+        }
         if (RAY == 2)
+        {
             fprintf(File_Ptr1, "\n\n//");
+        }
         if (RAY == 4)
+        {
             fprintf(File_Ptr1, "\n\n#");
+        }
 
         if (RAY == 5)
+        {
             // end grid aggregate
             fprintf(File_Ptr1, "end\n\n/*good landscape:*/\n%s%s\n/*",
                     "screen 640 480\neyep 0 2.1 0.8\nlookp 0 0 -0.95\nlight 1 point -2 1 1.5\n", "background .3 0 0\nreport verbose\n");
+        }
         if (RAY == 6)
         {
             fprintf(File_Ptr1, "LineList From To\n");
             for (int i = 0; i < RO; i++)
+            {
                 for (int j = 0; j <= CO_MAX; j++)
                 {
                     if (j < CO_MAX)
+                    {
                         fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i, j + 1);
+                    }
                     if (i < RO - 1)
+                    {
                         fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i + 1, j);
+                    }
                     if (i && i < RO && j < CO_MAX)
+                    {
                         fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i - 1, j + 1);
+                    }
                 }
+            }
             fprintf(File_Ptr1, "\n\n--");
         }
         if (RAY != 7)
+        {
             fprintf(File_Ptr1, "{ No. Of Triangles = %ld }*/\n\n", num_tris);
+        }
         if (RAY == 7)
+        {
             fprintf(File_Ptr1, "  0\nENDSEC\n  0\nEOF\n");
+        }
         fclose(File_Ptr1);
         File_Ptr1 = nullptr;
     }
@@ -2020,7 +2376,9 @@ static void line3d_cleanup()
             rename(targa_temp, light_name.c_str());
         }
         if (debugflag == debug_flags::none && Targa_Overlay)
+        {
             dir_remove(workdir.c_str(), targa_temp);
+        }
     }
     error = 0;
     T_Safe = false;
@@ -2057,7 +2415,9 @@ static int first_time(int linelen, VECTOR v)
 
     IAmbient = (unsigned int)(255 * (float)(100 - Ambient) / 100.0);
     if (IAmbient < 1)
+    {
         IAmbient = 1;
+    }
 
     num_tris = 0;
 
@@ -2079,7 +2439,9 @@ static int first_time(int linelen, VECTOR v)
     error = 0;
 
     if (g_which_image < stereo_images::BLUE)
+    {
         T_Safe = false; // Not safe yet to mess with the source image
+    }
 
     if (Targa_Out && !((g_glasses_type == 1 || g_glasses_type == 2)
                        && g_which_image == stereo_images::BLUE))
@@ -2088,13 +2450,17 @@ static int first_time(int linelen, VECTOR v)
         {
             // Make sure target file is a supportable Targa File
             if (targa_validate(light_name.c_str()))
+            {
                 return -1;
+            }
         }
         else
         {
             check_writefile(light_name, ".tga");
-            if (startdisk1(light_name.c_str(), nullptr, false))   // Open new file
+            if (startdisk1(light_name.c_str(), nullptr, false))     // Open new file
+            {
                 return -1;
+            }
         }
     }
 
@@ -2104,14 +2470,18 @@ static int first_time(int linelen, VECTOR v)
 
     err = line3dmem();
     if (err != 0)
+    {
         return err;
+    }
 
 
     // get scale factors
     sclx = XSCALE / 100.0;
     scly = YSCALE / 100.0;
     if (ROUGH)
+    {
         sclz = -ROUGH / 100.0;
+    }
     else
     {
         sclz = -0.0001;
@@ -2182,8 +2552,10 @@ static int first_time(int linelen, VECTOR v)
     if (ZVIEWER != 0)
     {
         persp = true;
-        if (ZVIEWER < 80)         // force float
+        if (ZVIEWER < 80)           // force float
+        {
             usr_floatflag = true;
+        }
     }
 
     // set up view vector, and put viewer in center of screen
@@ -2191,10 +2563,14 @@ static int first_time(int linelen, VECTOR v)
     lview[1] = ydots >> 1;
 
     // z value of user's eye - should be more negative than extreme negative part of image
-    if (SPHERE)                  // sphere case
+    if (SPHERE)                    // sphere case
+    {
         lview[2] = -(long)((double) ydots * (double) ZVIEWER / 100.0);
-    else                         // non-sphere case
+    }
+    else                             // non-sphere case
+    {
         lview[2] = (long)((zmin - zmax) * (double) ZVIEWER / 100.0);
+    }
 
     view[0] = lview[0];
     view[1] = lview[1];
@@ -2219,8 +2595,12 @@ static int first_time(int linelen, VECTOR v)
         /* matrix m now contains ALL those transforms composed together !!
          * convert m to long integers shifted 16 bits */
         for (int i = 0; i < 4; i++)
+        {
             for (int j = 0; j < 4; j++)
+            {
                 llm[i][j] = (long)(m[i][j] * 65536.0);
+            }
+        }
 
     }
     else
@@ -2295,7 +2675,9 @@ static int first_time(int linelen, VECTOR v)
 
         // affects how rough planet terrain is
         if (ROUGH)
+        {
             rscale = .3 * ROUGH / 100.0;
+        }
 
         // radius of planet
         R = (double)(ydots) / 2;
@@ -2338,14 +2720,18 @@ static int first_time(int linelen, VECTOR v)
 
     // set fill plot function
     if (FILLTYPE != 3)
+    {
         fillplot = interpcolor;
+    }
     else
     {
         fillplot = clipcolor;
 
         if (transparent[0] || transparent[1])
+        {
             // If transparent colors are set
             fillplot = T_clipcolor;// Use the transparent plot function
+        }
     }
 
     // Both Sphere and Normal 3D
@@ -2377,7 +2763,9 @@ static int first_time(int linelen, VECTOR v)
         vmult(light_direction, m, light_direction);
 
         for (int i = 0; i < 3; i++)
+        {
             light_direction[i] -= v[i];
+        }
     }
     normalize_vector(light_direction);
 
@@ -2389,18 +2777,24 @@ static int first_time(int linelen, VECTOR v)
         origin[0] = (3 * xdots) / 16;
         origin[1] = (3 * ydots) / 4;
         if (FILLTYPE == 6)
+        {
             origin[1] = (11 * ydots) / 16;
+        }
 
         origin[2] = 0.0;
 
         v_length = std::min(xdots, ydots) / 2;
         if (persp && ZVIEWER <= P)
+        {
             v_length *= (long)(P + 600) / ((long)(ZVIEWER + 600) * 2);
+        }
 
         /* Set direct[] to point from origin[] in direction of untransformed
          * light_direction (direct[]). */
         for (int i = 0; i < 3; i++)
+        {
             direct[i] = origin[i] + direct[i] * v_length;
+        }
 
         // center light box
         for (int i = 0; i < 2; i++)
@@ -2416,7 +2810,9 @@ static int first_time(int linelen, VECTOR v)
         /* draw box around original field of view to help visualize effect of
          * rotations 1 means show box - xmin etc. do nothing here */
         if (!SPHERE)
+        {
             corners(m, true, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
+        }
     }
 
     // bad has values caught by clipping
