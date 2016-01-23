@@ -443,7 +443,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
                     int       indent,
                               margin;
                     unsigned  holdlen = 0;
-                    char *holdcurr = 0;
+                    char *holdcurr = nullptr;
                     int       in_link = 0;
 
                     ++pd.curr;

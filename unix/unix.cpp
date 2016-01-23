@@ -396,8 +396,10 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
     {
         tmp = strrchr(file_template, '.');
         if (tmp < strrchr(file_template, SLASHC) || tmp < strrchr(file_template, ':'))
-                      tmp = 0; // in this case the '.' must be a directory
-                if (tmp)
+        {
+            tmp = nullptr; // in this case the '.' must be a directory
+        }
+        if (tmp)
         {
             // tmp++; */ /* first character past "."
             len = tmp - &file_template[offset];

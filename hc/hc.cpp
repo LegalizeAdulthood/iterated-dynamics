@@ -171,7 +171,7 @@ int      num_plabel       = 0;    // private labels
 LABEL   *plabel;
 
 int      num_link         = 0;    // all links
-LINK    *a_link           = 0;
+LINK    *a_link           = nullptr;
 
 int      num_contents     = 0;    // the table-of-contents
 CONTENT *contents;

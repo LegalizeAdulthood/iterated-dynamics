@@ -2675,7 +2675,7 @@ x11_shell(Driver * /*drv*/)
     // Wait for the shell to finish
     while (1)
     {
-        donepid = wait(0);
+        donepid = wait(nullptr);
         if (donepid < 0 || donepid == pid)
             break;
     }
