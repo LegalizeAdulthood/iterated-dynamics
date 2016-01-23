@@ -160,7 +160,7 @@ struct DriverX11
 
 /* convenience macro to declare local variable di pointing to private
    structure from public pointer */
-#define DIX11(arg_) DriverX11 *di = (DriverX11 *) arg_
+#define DIX11(arg_) DriverX11 *di = (DriverX11 *) (arg_)
 
 #ifdef FPUERR
 static void continue_hdl(int sig, int code, struct sigcontext *scp,
