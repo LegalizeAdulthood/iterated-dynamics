@@ -740,19 +740,23 @@ LABEL *find_label(char const *name)
     {
         LABEL *lp = plabel;
         for (int l = 0; l < num_plabel; l++, lp++)
+        {
             if (strcmp(name, lp->name) == 0)
             {
                 return (lp);
             }
+        }
     }
     else
     {
         LABEL *lp = label;
         for (int l = 0; l < num_label; l++, lp++)
+        {
             if (strcmp(name, lp->name) == 0)
             {
                 return (lp);
             }
+        }
     }
 
     return (nullptr);
@@ -781,11 +785,13 @@ int find_topic_title(char const *title)
     }
 
     for (int t = 0; t < num_topic; t++)
+    {
         if ((int) strlen(topic[t].title) == len &&
                 strnicmp(title, topic[t].title, len) == 0)
         {
             return (t);
         }
+    }
 
     return (-1);   // not found
 }
@@ -3016,6 +3022,7 @@ LABEL *find_next_label_by_topic(int t)
     g = p;
     temp = label;
     for (int ctr = 0; ctr < num_label; ctr++, temp++)
+    {
         if (temp->topic_num == t && temp->doc_page == -1)
         {
             g = temp;
@@ -3025,9 +3032,11 @@ LABEL *find_next_label_by_topic(int t)
         {
             break;
         }
+    }
 
     temp = plabel;
     for (int ctr = 0; ctr < num_plabel; ctr++, temp++)
+    {
         if (temp->topic_num == t && temp->doc_page == -1)
         {
             p = temp;
@@ -3037,6 +3046,7 @@ LABEL *find_next_label_by_topic(int t)
         {
             break;
         }
+    }
 
     if (p == nullptr)
     {
@@ -3344,6 +3354,7 @@ void _write_hdr(char const *fname, FILE *file)
     fprintf(file, "/* labels */\n\n");
 
     for (int ctr = 0; ctr < num_label; ctr++)
+    {
         if (label[ctr].name[0] != '@')  // if it's not a local label...
         {
             fprintf(file, "#define %-32s %3d", label[ctr].name, ctr);
@@ -3353,6 +3364,7 @@ void _write_hdr(char const *fname, FILE *file)
             }
             fprintf(file, "\n");
         }
+    }
 
     fprintf(file, "\n\n");
 }
@@ -3432,6 +3444,7 @@ void calc_offsets()    // calc file offset to each topic
 
     CONTENT *cp = contents;
     for (int c = 0; c < num_contents; c++, cp++)
+    {
         offset += sizeof(int) +       // flags
                   1 +                 // id length
                   (int) strlen(cp->id) +    // id text
@@ -3439,6 +3452,7 @@ void calc_offsets()    // calc file offset to each topic
                   (int) strlen(cp->name) +  // name text
                   1 +                 // number of topics
                   cp->num_topic*sizeof(int);    // topic numbers
+    }
 
     TOPIC *tp = topic;
     for (int t = 0; t < num_topic; t++, tp++)
