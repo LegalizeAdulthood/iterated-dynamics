@@ -84,12 +84,12 @@ static void putbox(int x1, int y1, int x2, int y2, int color)
 
 // compute the value of the interpolation polynomial at (x,y)
 #define GET_REAL(x, y) \
-interpolate(cim1, midi, cim2, \
+    interpolate(cim1, midi, cim2, \
         interpolate(cre1, midr, cre2, zre1, zre5, zre2, x), \
         interpolate(cre1, midr, cre2, zre6, zre9, zre7, x), \
         interpolate(cre1, midr, cre2, zre3, zre8, zre4, x), y)
 #define GET_IMAG(x, y) \
-interpolate(cre1, midr, cre2, \
+    interpolate(cre1, midr, cre2, \
         interpolate(cim1, midi, cim2, zim1, zim6, zim3, y), \
         interpolate(cim1, midi, cim2, zim5, zim9, zim8, y), \
         interpolate(cim1, midi, cim2, zim2, zim7, zim4, y), x)
@@ -97,12 +97,12 @@ interpolate(cre1, midr, cre2, \
 /* compute the value of the interpolation polynomial at (x,y)
    from saved values before interpolation failed to stay within tolerance */
 #define GET_SAVED_REAL(x, y) \
-interpolate(cim1, midi, cim2, \
+    interpolate(cim1, midi, cim2, \
         interpolate(cre1, midr, cre2, sr1, sr5, sr2, x), \
         interpolate(cre1, midr, cre2, sr6, sr9, sr7, x), \
         interpolate(cre1, midr, cre2, sr3, sr8, sr4, x), y)
 #define GET_SAVED_IMAG(x, y) \
-interpolate(cre1, midr, cre2, \
+    interpolate(cre1, midr, cre2, \
         interpolate(cim1, midi, cim2, si1, si6, si3, y), \
         interpolate(cim1, midi, cim2, si5, si9, si8, y), \
         interpolate(cim1, midi, cim2, si2, si7, si4, y), x)
@@ -112,12 +112,12 @@ interpolate(cre1, midr, cre2, \
    coefficients in one direction and simply evaluate the polynomial
    during scanning. */
 #define GET_SCAN_REAL(x, y) \
-interpolate(cim1, midi, cim2, \
+    interpolate(cim1, midi, cim2, \
         EVALUATE(cre1, midr, state.br10, state.br11, state.br12, x), \
         EVALUATE(cre1, midr, state.br20, state.br21, state.br22, x), \
         EVALUATE(cre1, midr, state.br30, state.br31, state.br32, x), y)
 #define GET_SCAN_IMAG(x, y) \
-interpolate(cre1, midr, cre2, \
+    interpolate(cre1, midr, cre2, \
         EVALUATE(cim1, midi, state.bi10, state.bi11, state.bi12, y), \
         EVALUATE(cim1, midi, state.bi20, state.bi21, state.bi22, y), \
         EVALUATE(cim1, midi, state.bi30, state.bi31, state.bi32, y), x)
@@ -125,13 +125,13 @@ interpolate(cre1, midr, cre2, \
 /* compute coefficients of Newton polynomial (b0,..,b2) from
    (x0,w0),..,(x2,w2). */
 #define INTERPOLATE(x0, x1, x2, w0, w1, w2, b0, b1, b2) \
-b0 = w0;\
-b1 = (w1 - w0)/(x1 - x0);\
-b2 = ((w2 - w1)/(x2 - x1) - b1)/(x2 - x0)
+    b0 = w0;                                            \
+    b1 = (w1 - w0)/(x1 - x0);                           \
+    b2 = ((w2 - w1)/(x2 - x1) - b1)/(x2 - x0)
 
 // evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t
 #define EVALUATE(x0, x1, b0, b1, b2, t) \
-((b2*(t - x1) + b1)*(t - x0) + b0)
+    ((b2*(t - x1) + b1)*(t - x0) + b0)
 
 /* Newton Interpolation.
    It computes the value of the interpolation polynomial given by
@@ -185,17 +185,17 @@ static double zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
 */
 
 #define RHOMBUS(CRE1, CRE2, CIM1, CIM2, X1, X2, Y1, Y2, ZRE1, ZIM1, ZRE2, ZIM2, ZRE3, ZIM3, \
- ZRE4, ZIM4, ZRE5, ZIM5, ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9, ITER) \
- zre1 = (ZRE1);zim1 = (ZIM1);\
- zre2 = (ZRE2);zim2 = (ZIM2);\
- zre3 = (ZRE3);zim3 = (ZIM3);\
- zre4 = (ZRE4);zim4 = (ZIM4);\
- zre5 = (ZRE5);zim5 = (ZIM5);\
- zre6 = (ZRE6);zim6 = (ZIM6);\
- zre7 = (ZRE7);zim7 = (ZIM7);\
- zre8 = (ZRE8);zim8 = (ZIM8);\
- zre9 = (ZRE9);zim9 = (ZIM9);\
- status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0
+    ZRE4, ZIM4, ZRE5, ZIM5, ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9, ITER) \
+    zre1 = (ZRE1);zim1 = (ZIM1);\
+    zre2 = (ZRE2);zim2 = (ZIM2);\
+    zre3 = (ZRE3);zim3 = (ZIM3);\
+    zre4 = (ZRE4);zim4 = (ZIM4);\
+    zre5 = (ZRE5);zim5 = (ZIM5);\
+    zre6 = (ZRE6);zim6 = (ZIM6);\
+    zre7 = (ZRE7);zim7 = (ZIM7);\
+    zre8 = (ZRE8);zim8 = (ZIM8);\
+    zre9 = (ZRE9);zim9 = (ZIM9);\
+    status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0
 
 namespace
 {
@@ -564,24 +564,24 @@ scan:
 
 
 #define SOI_ORBIT1(zr, rq, zi, iq, cr, ci, esc) \
-        tempsqrx = rq;\
-        tempsqry = iq;\
-        old.x = zr;\
-        old.y = zi;\
-        floatparm->x = cr;\
-        floatparm->y = ci;\
-        esc = ORBITCALC();\
-        rq = tempsqrx;\
-        iq = tempsqry;\
-        zr = new.x;\
-        zi = new.y
+    tempsqrx = rq;                              \
+    tempsqry = iq;                              \
+    old.x = zr;                                 \
+    old.y = zi;                                 \
+    floatparm->x = cr;                          \
+    floatparm->y = ci;                          \
+    esc = ORBITCALC();                          \
+    rq = tempsqrx;                              \
+    iq = tempsqry;                              \
+    zr = new.x;                                 \
+    zi = new.y
 
-#define SOI_ORBIT(zr, rq, zi, iq, cr, ci, esc) \
-      zi = (zi + zi)*zr + ci;\
-      zr = rq - iq + cr;\
-      rq = zr*zr;\
-      iq = zi*zi;\
-      esc = ((rq + iq) > 16.0)?1:0
+#define SOI_ORBIT(zr, rq, zi, iq, cr, ci, esc)  \
+    zi = (zi + zi)*zr + ci;                     \
+    zr = rq - iq + cr;                          \
+    rq = zr*zr;                                 \
+    iq = zi*zi;                                 \
+    esc = ((rq + iq) > 16.0)?1:0
 
         // iterate key values
         SOI_ORBIT(zre1, state.rq1, zim1, state.iq1, cre1, cim1, state.esc1);
