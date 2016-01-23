@@ -1,0 +1,6 @@
+--style=allman
+--indent=spaces=4
+--convert-tabs
+--lineend=linux
+--suffix=none
+--add-brackets
