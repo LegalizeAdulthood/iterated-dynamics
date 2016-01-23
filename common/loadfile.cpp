@@ -1213,30 +1213,11 @@ void backwards_v19()
         inversion[1] = inversion[2];
         inversion[0] = inversion[1];
     }
-    if (fix_bof())
-    {
-        no_mag_calc = true; // fractal has old bof60/61 problem with magnitude
-    }
-    else
-    {
-        no_mag_calc = false;
-    }
-    if (fix_period_bof())
-    {
-        use_old_period = true; // fractal uses old periodicity method
-    }
-    else
-    {
-        use_old_period = false;
-    }
-    if (save_release < 1827 && distest)
-    {
-        use_old_distest = true;         // use old distest code
-    }
-    else
-    {
-        use_old_distest = false;        // use new distest code
-    }
+    // fractal might have old bof60/61 problem with magnitude
+    no_mag_calc = fix_bof();
+    // fractal might use old periodicity method
+    use_old_period = fix_period_bof();
+    use_old_distest = (save_release < 1827 && distest);
 }
 
 void backwards_v20()
