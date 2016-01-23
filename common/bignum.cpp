@@ -274,7 +274,8 @@ bn_t strtobn(bn_t r, char *s)
         {
             longval = atol(s);
             switch (intlength)
-            {   // only 1, 2, or 4 are allowed
+            {
+                // only 1, 2, or 4 are allowed
             case 1:
                 *onesbyte = (BYTE)longval;
                 break;
@@ -291,7 +292,8 @@ bn_t strtobn(bn_t r, char *s)
     {
         longval = atol(s);
         switch (intlength)
-        {   // only 1, 2, or 4 are allowed
+        {
+            // only 1, 2, or 4 are allowed
         case 1:
             *onesbyte = (BYTE)longval;
             break;
@@ -364,7 +366,8 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
         *(s++) = '-';
     }
     switch (intlength)
-    {   // only 1, 2, or 4 are allowed
+    {
+        // only 1, 2, or 4 are allowed
     case 1:
         longval = *onesbyte;
         break;
@@ -403,7 +406,8 @@ bn_t inttobn(bn_t r, long longval)
     clear_bn(r);
     onesbyte = r + bnlength - intlength;
     switch (intlength)
-    {   // only 1, 2, or 4 are allowed
+    {
+        // only 1, 2, or 4 are allowed
     case 1:
         *onesbyte = (BYTE)longval;
         break;
@@ -427,7 +431,8 @@ long bntoint(bn_t n)
 
     onesbyte = n + bnlength - intlength;
     switch (intlength)
-    {   // only 1, 2, or 4 are allowed
+    {
+        // only 1, 2, or 4 are allowed
     case 1:
         longval = *onesbyte;
         break;
@@ -459,7 +464,8 @@ bn_t floattobn(bn_t r, LDBL f)
     }
 
     switch (intlength)
-    {   // only 1, 2, or 4 are allowed
+    {
+        // only 1, 2, or 4 are allowed
     case 1:
         *onesbyte = (BYTE)f;
         break;
@@ -536,7 +542,8 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 
     bool signflag = false;
     if (is_bn_neg(n))
-    {   // will be a lot easier to deal with just positives
+    {
+        // will be a lot easier to deal with just positives
         signflag = true;
         neg_a_bn(n);
     }
@@ -554,7 +561,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
         max_bn(r);
         return r;
     }
-    else if (f <= -maxval)
+    if (f <= -maxval)
     {
         max_bn(r);
         neg_a_bn(r);
@@ -659,7 +666,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
         max_bn(r);
         return r;
     }
-    else if (f <= -maxval)
+    if (f <= -maxval)
     {
         max_bn(r);
         neg_a_bn(r);
@@ -758,7 +765,8 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     // use Newton's recursive method for zeroing in on sqrt(n): r=.5(r+n/r)
 
     if (is_bn_neg(n))
-    {   // sqrt of a neg, return 0
+    {
+        // sqrt of a neg, return 0
         clear_bn(r);
         return r;
     }
@@ -888,7 +896,8 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     // use Newton's recursive method for zeroing in on ln(n): r=r+n*exp(-r)-1
 
     if (is_bn_neg(n) || is_bn_zero(n))
-    {   // error, return largest neg value
+    {
+        // error, return largest neg value
         max_bn(r);
         neg_a_bn(r);
         return r;
@@ -902,7 +911,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
         max_bn(r);
         return r;
     }
-    else if (f <= -maxval)
+    if (f <= -maxval)
     {
         max_bn(r);
         neg_a_bn(r);

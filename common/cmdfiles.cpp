@@ -1264,7 +1264,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             return CMDARG_NONE;    // got a directory
         }
-        else if (existdir < 0)
+        if (existdir < 0)
         {
             init_msg(variable.c_str(), value, mode);
             return CMDARG_NONE;
@@ -2336,54 +2336,54 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
             return CMDARG_FRACTAL_PARAM;
         }
-        else
+
+
+        // use arbitrary precision
+        int saved;
+        initcorners = true;
+        bf_math_type old_bf_math = bf_math;
+        if (bf_math == bf_math_type::NONE || dec > decimals)
         {
-            // use arbitrary precision
-            int saved;
-            initcorners = true;
-            bf_math_type old_bf_math = bf_math;
-            if (bf_math == bf_math_type::NONE || dec > decimals)
-            {
-                init_bf_dec(dec);
-            }
-            if (old_bf_math == bf_math_type::NONE)
-            {
-                for (int k = 0; k < MAXPARAMS; k++)
-                {
-                    floattobf(bfparms[k], param[k]);
-                }
-            }
-            usemag = true;
-            saved = save_stack();
-            bXctr            = alloc_stack(bflength+2);
-            bYctr            = alloc_stack(bflength+2);
-            get_bf(bXctr, floatvalstr[0]);
-            get_bf(bYctr, floatvalstr[1]);
-            Xmagfactor = 1;
-            Rotation = 0;
-            Skew = 0;
-            if (floatparms > 3)
-            {
-                Xmagfactor = floatval[3];
-            }
-            if (Xmagfactor == 0)
-            {
-                Xmagfactor = 1;
-            }
-            if (floatparms > 4)
-            {
-                Rotation = floatval[4];
-            }
-            if (floatparms > 5)
-            {
-                Skew = floatval[5];
-            }
-            // calculate bounds
-            cvtcornersbf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
-            bfcornerstofloat();
-            restore_stack(saved);
-            return CMDARG_FRACTAL_PARAM;
+            init_bf_dec(dec);
         }
+        if (old_bf_math == bf_math_type::NONE)
+        {
+            for (int k = 0; k < MAXPARAMS; k++)
+            {
+                floattobf(bfparms[k], param[k]);
+            }
+        }
+        usemag = true;
+        saved = save_stack();
+        bXctr            = alloc_stack(bflength+2);
+        bYctr            = alloc_stack(bflength+2);
+        get_bf(bXctr, floatvalstr[0]);
+        get_bf(bYctr, floatvalstr[1]);
+        Xmagfactor = 1;
+        Rotation = 0;
+        Skew = 0;
+        if (floatparms > 3)
+        {
+            Xmagfactor = floatval[3];
+        }
+        if (Xmagfactor == 0)
+        {
+            Xmagfactor = 1;
+        }
+        if (floatparms > 4)
+        {
+            Rotation = floatval[4];
+        }
+        if (floatparms > 5)
+        {
+            Skew = floatval[5];
+        }
+        // calculate bounds
+        cvtcornersbf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
+        bfcornerstofloat();
+        restore_stack(saved);
+        return CMDARG_FRACTAL_PARAM;
+
     }
 
     if (variable == "aspectdrift")
@@ -3869,10 +3869,10 @@ int get_curarg_len(char const *curarg)
     {
         return s - curarg;
     }
-    else
-    {
-        return strlen(curarg);
-    }
+
+
+    return strlen(curarg);
+
 }
 
 // Get max length of current args

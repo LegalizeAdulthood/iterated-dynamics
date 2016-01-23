@@ -1479,7 +1479,7 @@ int cmp_bf(bf_t n1, bf_t n2)
     {
         return bflength;
     }
-    else if (sign1 < sign2)
+    if (sign1 < sign2)
     {
         return -bflength;
     }
@@ -1492,7 +1492,7 @@ int cmp_bf(bf_t n1, bf_t n2)
     {
         return sign1*(bflength);
     }
-    else if (big_accessS16(n1exp) < big_accessS16(n2exp))
+    if (big_accessS16(n1exp) < big_accessS16(n2exp))
     {
         return -sign1*(bflength);
     }
@@ -1511,10 +1511,8 @@ int cmp_bf(bf_t n1, bf_t n2)
             {
                 return (i+2); // high byte was different
             }
-            else
-            {
-                return (i+1); // low byte was different
-            }
+
+            return (i+1); // low byte was different
         }
         else if (value1 < value2)
         {
@@ -1523,10 +1521,8 @@ int cmp_bf(bf_t n1, bf_t n2)
             {
                 return -(i+2); // high byte was different
             }
-            else
-            {
-                return -(i+1); // low byte was different
-            }
+
+            return -(i+1); // low byte was different
         }
     }
     return 0;

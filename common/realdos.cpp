@@ -894,7 +894,7 @@ int fullscreen_choice(
         }
 
         increment = 0;
-	// deal with input key
+        // deal with input key
         switch (curkey)
         {
         case FIK_ENTER:

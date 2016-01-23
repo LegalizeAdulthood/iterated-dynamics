@@ -288,10 +288,10 @@ double fmodtest_bailout_or()
     {
         return tmpx;
     }
-    else
-    {
-        return tmpy;
-    }
+
+
+    return tmpy;
+
 }
 
 // FMODTEST routine.
@@ -3550,7 +3550,7 @@ int  bound_trace_main()
                         add_worklist(xxstart, xxstop, curcol, currow, iystop, currow, 0, worksym);
                         return -1;
                     }
-                    else if (color == trail_color)
+                    if (color == trail_color)
                     {
                         if (matches_found < 4)   // to keep it from overflowing
                         {

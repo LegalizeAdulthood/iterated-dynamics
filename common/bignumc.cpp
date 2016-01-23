@@ -75,10 +75,10 @@ int cmp_bn(bn_t n1, bn_t n2)
         {
             return (bnlength); // high byte was different
         }
-        else
-        {
-            return (bnlength-1); // low byte was different
-        }
+
+
+        return (bnlength-1); // low byte was different
+
     }
     else if (Svalue1 < Svalue2)
     {
@@ -87,10 +87,10 @@ int cmp_bn(bn_t n1, bn_t n2)
         {
             return -(bnlength); // high byte was different
         }
-        else
-        {
-            return -(bnlength-1); // low byte was different
-        }
+
+
+        return -(bnlength-1); // low byte was different
+
     }
 
     // unsigned comparison for the rest
@@ -105,10 +105,10 @@ int cmp_bn(bn_t n1, bn_t n2)
             {
                 return (i+2); // high byte was different
             }
-            else
-            {
-                return (i+1); // low byte was different
-            }
+
+
+            return (i+1); // low byte was different
+
         }
         else if (value1 < value2)
         {
@@ -117,10 +117,10 @@ int cmp_bn(bn_t n1, bn_t n2)
             {
                 return -(i+2); // high byte was different
             }
-            else
-            {
-                return -(i+1); // low byte was different
-            }
+
+
+            return -(i+1); // low byte was different
+
         }
     }
     return 0;

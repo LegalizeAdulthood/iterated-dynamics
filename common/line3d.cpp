@@ -376,7 +376,8 @@ int line3d(BYTE * pixels, unsigned linelen)
             }
             // Allow Ray trace to go through so display ok
             if (persp || RAY)
-            {   // how do lv[] and cur and f_cur all relate
+            {
+                // how do lv[] and cur and f_cur all relate
                 // NOTE: fudge was pre-calculated above in r and R
                 // (almost) guarantee negative
                 lv[2] = (long)(-R - r * costheta * sinphi);      // z
@@ -390,7 +391,8 @@ int line3d(BYTE * pixels, unsigned linelen)
                 lv[1] = (long)(ycenter + costheta * cosphi * scly * r);  // y
 
                 if ((FILLTYPE >= 5) || RAY)
-                {   // calculate illumination normal before persp
+                {
+                    // calculate illumination normal before persp
 
                     r0 = r / 65536L;
                     f_cur.x = (float)(xcenter0 + sintheta * sclx * r0);
@@ -1384,7 +1386,8 @@ static void interpcolor(int x, int y, int color)
 
     D = (d1 + d2 + d3) << 1;
     if (D)
-    {   /* calculate a weighted average of colors long casts prevent integer
+    {
+        /* calculate a weighted average of colors long casts prevent integer
            overflow. This can evaluate to zero */
         color = (int)(((long)(d2 + d3) * (long) p1.color +
                        (long)(d1 + d3) * (long) p2.color +
@@ -1597,7 +1600,8 @@ bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
         }
     }
     else
-    {   // Write header for a new file
+    {
+        // Write header for a new file
         // ID field size = 0, No color map, Targa type 2 file
         for (int i = 0; i < 12; i++)
         {
@@ -2312,7 +2316,8 @@ static int end_object(bool triout)
 static void line3d_cleanup()
 {
     if (RAY && File_Ptr1)
-    {   // Finish up the ray tracing files
+    {
+        // Finish up the ray tracing files
         if (RAY != 5 && RAY != 7)
         {
             fprintf(File_Ptr1, "\n");
@@ -2367,7 +2372,8 @@ static void line3d_cleanup()
         File_Ptr1 = nullptr;
     }
     if (Targa_Out)
-    {   // Finish up targa files
+    {
+        // Finish up targa files
         T_header_24 = 18;         // Reset Targa header size
         enddisk();
         if (debugflag == debug_flags::none && (!T_Safe || error) && Targa_Overlay)
