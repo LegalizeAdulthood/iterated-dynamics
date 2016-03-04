@@ -649,7 +649,6 @@ scan:
                 status = true;
                 goto rhombus_done;
             }
-            // cppcheck-suppress duplicateExpression
             state.zre = GET_SCAN_REAL(cre1, state.im);
             state.zim = GET_SCAN_IMAG(cre1, state.im);
             savecolor = iteration(cre1, state.im, state.zre, state.zim, iter);
