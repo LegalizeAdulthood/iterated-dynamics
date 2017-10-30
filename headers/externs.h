@@ -50,7 +50,7 @@ extern int                   g_bad_config;
 extern bool                  g_bad_outside;
 extern int const             g_bad_value;
 extern long                  g_bail_out;
-extern bailouts              bailoutest;
+extern bailouts              g_bail_out_test;
 extern int                   basehertz;
 extern int                   basin;
 extern int                   bf_save_len;

@@ -103,7 +103,7 @@ int     g_init_mode = 0;        // initial video mode
 int     initcyclelimit = 0;     // initial cycle limit
 bool    usemag = false;         // use center-mag corners
 long    g_bail_out = 0;            // user input bailout value
-bailouts bailoutest;            // test used for determining bailout
+bailouts g_bail_out_test;            // test used for determining bailout
 double  inversion[3] = { 0.0 }; // radius, xcenter, ycenter
 int     rotate_lo = 0;
 int     rotate_hi = 0;          // cycling color range
@@ -557,7 +557,7 @@ static void initvars_fractal()          // init vars affecting calculation
     overlay_3d = false;                  // 3D overlay is off
 
     old_demm_colors = false;
-    bailoutest    = bailouts::Mod;
+    g_bail_out_test    = bailouts::Mod;
     floatbailout  = fpMODbailout;
     longbailout   = asmlMODbailout;
     bignumbailout = bnMODbailout;
@@ -2522,37 +2522,37 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // bailoutest=?
         if (strcmp(value, "mod") == 0)
         {
-            bailoutest = bailouts::Mod;
+            g_bail_out_test = bailouts::Mod;
         }
         else if (strcmp(value, "real") == 0)
         {
-            bailoutest = bailouts::Real;
+            g_bail_out_test = bailouts::Real;
         }
         else if (strcmp(value, "imag") == 0)
         {
-            bailoutest = bailouts::Imag;
+            g_bail_out_test = bailouts::Imag;
         }
         else if (strcmp(value, "or") == 0)
         {
-            bailoutest = bailouts::Or;
+            g_bail_out_test = bailouts::Or;
         }
         else if (strcmp(value, "and") == 0)
         {
-            bailoutest = bailouts::And;
+            g_bail_out_test = bailouts::And;
         }
         else if (strcmp(value, "manh") == 0)
         {
-            bailoutest = bailouts::Manh;
+            g_bail_out_test = bailouts::Manh;
         }
         else if (strcmp(value, "manr") == 0)
         {
-            bailoutest = bailouts::Manr;
+            g_bail_out_test = bailouts::Manr;
         }
         else
         {
             goto badarg;
         }
-        setbailoutformula(bailoutest);
+        setbailoutformula(g_bail_out_test);
         return CMDARG_FRACTAL_PARAM;
     }
 

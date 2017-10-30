@@ -324,13 +324,13 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         // post-version 18.22
         g_bail_out     = read_info.bailout; // use long bailout
-        bailoutest = static_cast<bailouts>(read_info.bailoutest);
+        g_bail_out_test = static_cast<bailouts>(read_info.bailoutest);
     }
     else
     {
-        bailoutest = bailouts::Mod;
+        g_bail_out_test = bailouts::Mod;
     }
-    setbailoutformula(bailoutest);
+    setbailoutformula(g_bail_out_test);
 
     if (read_info.version > 9)
     {

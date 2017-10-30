@@ -477,8 +477,8 @@ void init_bf_dec(int dec)
         intlength = 2;
         // the bailout tests need greater dynamic range
     }
-    else if (bailoutest == bailouts::Real || bailoutest == bailouts::Imag || bailoutest == bailouts::And ||
-             bailoutest == bailouts::Manr)
+    else if (g_bail_out_test == bailouts::Real || g_bail_out_test == bailouts::Imag || g_bail_out_test == bailouts::And ||
+             g_bail_out_test == bailouts::Manr)
     {
         intlength = 2;
     }
@@ -509,8 +509,8 @@ void init_bf_length(int bnl)
         intlength = 2;
         // the bailout tests need greater dynamic range
     }
-    else if (bailoutest == bailouts::Real || bailoutest == bailouts::Imag || bailoutest == bailouts::And ||
-             bailoutest == bailouts::Manr)
+    else if (g_bail_out_test == bailouts::Real || g_bail_out_test == bailouts::Imag || g_bail_out_test == bailouts::And ||
+             g_bail_out_test == bailouts::Manr)
     {
         intlength = 2;
     }

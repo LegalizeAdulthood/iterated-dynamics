@@ -976,7 +976,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->maxfn = maxfn;
     save_info->inversejulia = (short)((static_cast<int>(major_method) << 8) + static_cast<int>(minor_method));
     save_info->bailout = g_bail_out;
-    save_info->bailoutest = (short) bailoutest;
+    save_info->bailoutest = (short) g_bail_out_test;
     save_info->iterations = maxit;
     save_info->bflength = (short) bnlength;
     save_info->bf_math = (short) bf_math;

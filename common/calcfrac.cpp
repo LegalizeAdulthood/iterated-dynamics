@@ -316,7 +316,7 @@ double fmodtest()
         return result;
     }
 
-    switch (bailoutest)
+    switch (g_bail_out_test)
     {
     case bailouts::Mod:
         if (magnitude == 0.0 || !no_mag_calc || integerfractal)
@@ -4453,7 +4453,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
         forcesymmetry = sym;  // for backwards compatibility
     }
     else if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
-             || outside == ATAN || bailoutest == bailouts::Manr || outside == FMOD)
+             || outside == ATAN || g_bail_out_test == bailouts::Manr || outside == FMOD)
     {
         return;
     }

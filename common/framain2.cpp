@@ -2473,7 +2473,7 @@ static void save_history_info()
     current.major_method         = (short)major_method              ;
     current.minor_method         = (short)minor_method              ;
     current.bailout              = g_bail_out                   ;
-    current.bailoutest           = (short)bailoutest                ;
+    current.bailoutest           = (short)g_bail_out_test                ;
     current.iterations           = maxit                     ;
     current.old_demm_colors      = (short) (old_demm_colors ? 1 : 0);
     current.logcalc              = (short)Log_Fly_Calc;
@@ -2657,7 +2657,7 @@ static void restore_history_info(int i)
     major_method          = static_cast<Major>(last.major_method);
     minor_method          = static_cast<Minor>(last.minor_method);
     g_bail_out               = last.bailout        ;
-    bailoutest            = static_cast<bailouts>(last.bailoutest);
+    g_bail_out_test            = static_cast<bailouts>(last.bailoutest);
     maxit                 = last.iterations     ;
     old_demm_colors       = last.old_demm_colors != 0;
     curfractalspecific    = &fractalspecific[static_cast<int>(fractype)];

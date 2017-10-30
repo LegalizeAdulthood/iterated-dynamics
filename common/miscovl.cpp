@@ -860,30 +860,30 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%ld", "bailout", g_bail_out);
         }
 
-        if (bailoutest != bailouts::Mod)
+        if (g_bail_out_test != bailouts::Mod)
         {
             put_parm(" %s=", "bailoutest");
-            if (bailoutest == bailouts::Real)
+            if (g_bail_out_test == bailouts::Real)
             {
                 put_parm("real");
             }
-            else if (bailoutest == bailouts::Imag)
+            else if (g_bail_out_test == bailouts::Imag)
             {
                 put_parm("imag");
             }
-            else if (bailoutest == bailouts::Or)
+            else if (g_bail_out_test == bailouts::Or)
             {
                 put_parm("or");
             }
-            else if (bailoutest == bailouts::And)
+            else if (g_bail_out_test == bailouts::And)
             {
                 put_parm("and");
             }
-            else if (bailoutest == bailouts::Manh)
+            else if (g_bail_out_test == bailouts::Manh)
             {
                 put_parm("manh");
             }
-            else if (bailoutest == bailouts::Manr)
+            else if (g_bail_out_test == bailouts::Manr)
             {
                 put_parm("manr");
             }

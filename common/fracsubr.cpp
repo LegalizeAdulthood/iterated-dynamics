@@ -432,7 +432,7 @@ init_restart:
                 && (outside > REAL || outside < ATAN)   // and no funny outside stuff
                 && debugflag != debug_flags::force_smaller_bitshift // and not debugging
                 && closeprox <= 2.0                     // and closeprox not too large
-                && bailoutest == bailouts::Mod)           // and bailout test = mod
+                && g_bail_out_test == bailouts::Mod)           // and bailout test = mod
         {
             bitshift = FUDGEFACTOR;                     // use the larger bitshift
         }

@@ -1781,7 +1781,7 @@ gfp_top:
             (curfractalspecific->flags & BAILTEST))
     {
         paramvalues[promptnum].type = 'l';
-        paramvalues[promptnum].uval.ch.val  = static_cast<int>(bailoutest);
+        paramvalues[promptnum].uval.ch.val  = static_cast<int>(g_bail_out_test);
         paramvalues[promptnum].uval.ch.llen = 7;
         paramvalues[promptnum].uval.ch.vlen = 6;
         paramvalues[promptnum].uval.ch.list = bailnameptr;
@@ -1997,18 +1997,18 @@ gfp_top:
     if (orbit_bailout != 0 && curfractalspecific->calctype == standard_fractal &&
             (curfractalspecific->flags & BAILTEST))
     {
-        if (paramvalues[promptnum].uval.ch.val != static_cast<int>(bailoutest))
+        if (paramvalues[promptnum].uval.ch.val != static_cast<int>(g_bail_out_test))
         {
-            bailoutest = static_cast<bailouts>(paramvalues[promptnum].uval.ch.val);
+            g_bail_out_test = static_cast<bailouts>(paramvalues[promptnum].uval.ch.val);
             ret = 1;
         }
         promptnum++;
     }
     else
     {
-        bailoutest = bailouts::Mod;
+        g_bail_out_test = bailouts::Mod;
     }
-    setbailoutformula(bailoutest);
+    setbailoutformula(g_bail_out_test);
 
     if (orbit_bailout)
     {
