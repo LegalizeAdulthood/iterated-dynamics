@@ -131,7 +131,7 @@ int xxadjust;
 int yyadjust;
 int xshift;
 int yshift;
-int const bad_value = -10000;       // set bad values to this
+int const g_bad_value = -10000;       // set bad values to this
 static int const bad_check = -3000; // check values against this to determine if good
 std::vector<point> lastrow; // this array remembers the previous line
 int RAY = 0;                    // Flag to generate Ray trace compatible files in 3d
@@ -2822,11 +2822,11 @@ static int first_time(int linelen, VECTOR v)
     }
 
     // bad has values caught by clipping
-    bad.x = bad_value;
+    bad.x = g_bad_value;
     f_bad.x = (float) bad.x;
-    bad.y = bad_value;
+    bad.y = g_bad_value;
     f_bad.y = (float) bad.y;
-    bad.color = bad_value;
+    bad.color = g_bad_value;
     f_bad.color = (float) bad.color;
     for (int i = 0; i < (int) linelen; i++)
     {
