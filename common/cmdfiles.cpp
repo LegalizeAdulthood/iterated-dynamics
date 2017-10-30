@@ -65,7 +65,7 @@ std::string orgfrmdir;          // name of directory for orgfrm files
 std::string gifmask;
 char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; // Name for print-to-file
 std::string savename{"fract001"}; // save files using this name
-std::string autoname{"auto.key"}; // record auto keystrokes here
+std::string g_auto_name{"auto.key"}; // record auto keystrokes here
 bool    potflag = false;        // continuous potential enabled?
 bool    pot16bit = false;               // store 16 bit continuous potential values
 bool    gif87a_flag = false;    // true if GIF87a format, false otherwise
@@ -1421,7 +1421,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            autoname = buff;
+            g_auto_name = buff;
         }
         return CMDARG_NONE;
     }

@@ -41,7 +41,7 @@ extern int                   g_attractors;
 extern int                   g_attractor_period[];
 extern DComplex              g_attractor[];
 extern bool                  g_auto_browse;
-extern std::string           autoname;
+extern std::string           g_auto_name;
 extern char                  autoshowdot;
 extern int                   AutoStereo_depth;
 extern double                AutoStereo_width;

@@ -123,7 +123,7 @@ static void message(int secs, char const *buf)
     }
 }
 
-// this routine reads the file autoname and returns keystrokes
+// this routine reads the file g_auto_name and returns keystrokes
 int slideshw()
 {
     int out, err, i;
@@ -321,7 +321,7 @@ start:
 slides_mode
 startslideshow()
 {
-    fpss = fopen(autoname.c_str(), "r");
+    fpss = fopen(g_auto_name.c_str(), "r");
     if (fpss == nullptr)
     {
         g_slides = slides_mode::OFF;
@@ -351,7 +351,7 @@ void recordshw(int key)
     ticks = clock_ticks();  // current time
     if (fpss == nullptr)
     {
-        fpss = fopen(autoname.c_str(), "w");
+        fpss = fopen(g_auto_name.c_str(), "w");
         if (fpss == nullptr)
         {
             return;
