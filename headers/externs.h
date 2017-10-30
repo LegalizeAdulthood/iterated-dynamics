@@ -47,7 +47,7 @@ extern int                   g_auto_stereo_depth;
 extern double                g_auto_stereo_width;
 extern BYTE                  g_background_color[];
 extern int                   g_bad_config;
-extern bool                  bad_outside;
+extern bool                  g_bad_outside;
 extern int const             bad_value;
 extern long                  bailout;
 extern bailouts              bailoutest;

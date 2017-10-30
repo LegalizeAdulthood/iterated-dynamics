@@ -41,7 +41,7 @@ static FILE *fp;
 int fileydots, filexdots, filecolors;
 float fileaspectratio;
 short skipxdots, skipydots;      // for decoder, when reducing image
-bool bad_outside = false;
+bool g_bad_outside = false;
 bool ldcheck = false;
 
 int read_overlay()      // read overlay/3D files, if reqr'd
@@ -1223,7 +1223,7 @@ void backwards_v19()
 void backwards_v20()
 {
     // Fractype == FP type is not seen from PAR file ?????
-    bad_outside = (fractype == fractal_type::MANDELFP || fractype == fractal_type::JULIAFP ||
+    g_bad_outside = (fractype == fractal_type::MANDELFP || fractype == fractal_type::JULIAFP ||
             fractype == fractal_type::MANDEL || fractype == fractal_type::JULIA) &&
             (outside <= REAL && outside >= SUM) && save_release <= 1960;
     ldcheck = (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&

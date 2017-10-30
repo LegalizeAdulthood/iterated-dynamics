@@ -797,7 +797,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             save_release = g_release;
             no_mag_calc = false;
             use_old_period = false;
-            bad_outside = false;
+            g_bad_outside = false;
             ldcheck = false;
             set_current_params();
             evolve_new_discrete_y_parameter_offset = 0;
@@ -1595,7 +1595,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             save_release = g_release;
             no_mag_calc = false;
             use_old_period = false;
-            bad_outside = false;
+            g_bad_outside = false;
             ldcheck = false;
             set_current_params();
             evolve_new_discrete_y_parameter_offset = 0;
