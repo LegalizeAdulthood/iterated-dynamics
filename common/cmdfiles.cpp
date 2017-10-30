@@ -161,7 +161,7 @@ std::string CommandName;                // Name of Command set
 std::string CommandComment[4];          // comments for command set
 std::string IFSFileName;                // file to find (type=)IFS in
 std::string IFSName;                    // Name of the IFS def'n (if not null)
-SearchPath searchfor = { 0 };
+id::SearchPath searchfor = { 0 };
 std::vector<float> ifs_defn;            // ifs parameters
 bool ifs_type = false;                  // false=2d, true=3d
 slides_mode g_slides = slides_mode::OFF; // PLAY autokey=play, RECORD autokey=record

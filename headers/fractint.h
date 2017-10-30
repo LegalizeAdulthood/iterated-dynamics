@@ -1251,6 +1251,9 @@ struct ext_blk_7
 #if defined(_WIN32)
 #pragma pack(pop)
 #endif
+namespace id
+{
+
 struct SearchPath
 {
     char par[FILE_MAX_PATH];
@@ -1258,6 +1261,8 @@ struct SearchPath
     char ifs[FILE_MAX_PATH];
     char lsys[FILE_MAX_PATH];
 };
+
+} // namespace id
 
 struct affine
 {

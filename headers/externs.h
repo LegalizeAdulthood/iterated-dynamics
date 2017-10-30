@@ -3,6 +3,31 @@
 #include <string>
 #include <vector>
 
+struct AlternateMath;
+enum class bailouts;
+enum class batch_modes;
+enum class calc_status_value;
+struct DComplex;
+enum display_3d_modes;
+struct EVOLUTION_INFO;
+enum class fractal_type;
+struct GENEBASE;
+struct LComplex;
+enum class Major;
+enum class Minor;
+struct MOREPARAMS;
+struct MP;
+struct MPC;
+namespace id
+{
+struct SearchPath;
+}
+enum class slides_mode;
+enum class stereo_images;
+enum class symmetry_type;
+struct VIDEOINFO;
+struct WORKLIST;
+
 // keep var names in column 30 for sorting via sort /+30 <in >out
 extern int                   g_adapter;         // index into g_video_table[]
 extern AlternateMath         g_alternate_math[];   // alternate math function pointers
@@ -289,7 +314,7 @@ extern int                   minstackavail;
 extern MOREPARAMS            moreparams[];
 extern MP                    mpAp1deg;
 extern MP                    mpAplusOne;
-extern struct MPC            MPCone;
+extern MPC                   MPCone;
 extern std::vector<MPC>      MPCroots;
 extern MPC                   mpctmpparm;
 extern MP                    mpd1overd;
@@ -424,7 +449,7 @@ extern int                   save_release;
 extern int                   save_system;
 extern int                   scale_map[];
 extern float                 screenaspect;
-extern struct SearchPath     searchfor;
+extern id::SearchPath        searchfor;
 extern bool                  set_orbit_corners;
 extern bool                  showbox;
 extern int show_dot;
