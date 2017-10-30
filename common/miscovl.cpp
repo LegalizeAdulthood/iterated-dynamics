@@ -162,8 +162,8 @@ void make_batch_file()
     strcpy(inpcommandname, CommandName.c_str());
     for (int i = 0; i < 4; i++)
     {
-        CommandComment[i] = expand_comments(par_comment[i]);
-        strcpy(inpcomment[i], CommandComment[i].c_str());
+        g_command_comment[i] = expand_comments(par_comment[i]);
+        strcpy(inpcomment[i], g_command_comment[i].c_str());
     }
 
     if (CommandName.empty())
@@ -260,7 +260,7 @@ prompt_user:
         CommandName = inpcommandname;
         for (int i = 0; i < 4; i++)
         {
-            CommandComment[i] = inpcomment[i];
+            g_command_comment[i] = inpcomment[i];
         }
 #ifndef XFRACT
         if (g_got_real_dac || (g_is_true_color && !truemode))
@@ -498,15 +498,15 @@ skip_UI:
                     }
                     for (int i = 0; i < last; i++)
                     {
-                        if (CommandComment[i].empty())
+                        if (g_command_comment[i].empty())
                         {
-                            CommandComment[i] = ";";
+                            g_command_comment[i] = ";";
                         }
                     }
                 }
-                if (!CommandComment[0].empty())
+                if (!g_command_comment[0].empty())
                 {
-                    fprintf(parmfile, " ; %s", CommandComment[0].c_str());
+                    fprintf(parmfile, " ; %s", g_command_comment[0].c_str());
                 }
                 fputc('\n', parmfile);
                 {
@@ -516,9 +516,9 @@ skip_UI:
                     buf[21] = ';';
                     for (int k = 1; k < 4; k++)
                     {
-                        if (!CommandComment[k].empty())
+                        if (!g_command_comment[k].empty())
                         {
-                            fprintf(parmfile, "%s%s\n", buf, CommandComment[k].c_str());
+                            fprintf(parmfile, "%s%s\n", buf, g_command_comment[k].c_str());
                         }
                     }
                     if (g_patch_level != 0 && !colorsonly)

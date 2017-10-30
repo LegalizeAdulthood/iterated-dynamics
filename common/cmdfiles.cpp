@@ -158,7 +158,7 @@ std::string LFileName;                  // file to find (type=)L-System's in
 std::string LName;                      // Name of L-System
 std::string CommandFile;                // file to find command sets in
 std::string CommandName;                // Name of Command set
-std::string CommandComment[4];          // comments for command set
+std::string g_command_comment[4];          // comments for command set
 std::string IFSFileName;                // file to find (type=)IFS in
 std::string IFSName;                    // Name of the IFS def'n (if not null)
 id::SearchPath searchfor = { 0 };
@@ -443,7 +443,7 @@ static void initvars_restart()          // <ins> key init
     LName = "";
     CommandFile = "fractint.par";
     CommandName = "";
-    for (auto &elem : CommandComment)
+    for (auto &elem : g_command_comment)
     {
         elem.clear();
     }
@@ -645,7 +645,7 @@ static int cmdfile(FILE *handle, cmd_file mode)
         while ((i = getc(handle)) != '{' && i != EOF)
         {
         }
-        for (auto &elem : CommandComment)
+        for (auto &elem : g_command_comment)
         {
             elem.clear();
         }
@@ -703,8 +703,8 @@ static int next_command(
             {
                 if (*lineptr == ';'
                         && (mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME)
-                        && (CommandComment[0].empty() || CommandComment[1].empty() ||
-                            CommandComment[2].empty() || CommandComment[3].empty()))
+                        && (g_command_comment[0].empty() || g_command_comment[1].empty() ||
+                            g_command_comment[2].empty() || g_command_comment[3].empty()))
                 {
                     // save comment
                     while (*(++lineptr)
@@ -717,7 +717,7 @@ static int next_command(
                         {
                             *(lineptr+MAXCMT-1) = 0;
                         }
-                        for (auto &elem : CommandComment)
+                        for (auto &elem : g_command_comment)
                         {
                             if (elem.empty())
                             {
