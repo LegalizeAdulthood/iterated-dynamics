@@ -928,7 +928,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
         save_info->bailoutold = 0;
     }
 
-    save_info->calctime = calctime;
+    save_info->calctime = g_calc_time;
     save_info->trigndx[0] = static_cast<BYTE>(trigndx[0]);
     save_info->trigndx[1] = static_cast<BYTE>(trigndx[1]);
     save_info->trigndx[2] = static_cast<BYTE>(trigndx[2]);

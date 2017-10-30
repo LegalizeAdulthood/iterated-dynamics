@@ -870,7 +870,7 @@ int calcfract()
             resave_flag = 0;
             started_resaves = false;
         }
-        calctime = 0;
+        g_calc_time = 0;
     }
 
     if (curfractalspecific->calctype != standard_fractal
@@ -964,7 +964,7 @@ int calcfract()
             timer(0, (int(*)())perform_worklist);
         }
     }
-    calctime += timer_interval;
+    g_calc_time += timer_interval;
 
     if (!LogTable.empty() && !Log_Calc)
     {

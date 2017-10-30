@@ -2415,7 +2415,7 @@ static int first_time(int linelen, VECTOR v)
     outln_cleanup = line3d_cleanup;
 
     evenoddrow = 0;
-    calctime = evenoddrow;
+    g_calc_time = evenoddrow;
     // mark as in-progress, and enable <tab> timer display
     calc_status = calc_status_value::IN_PROGRESS;
 

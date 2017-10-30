@@ -120,7 +120,7 @@ calc_status_value calc_status = calc_status_value::NO_FRACTAL;
 //  2 interrupted, resumable
 //  3 interrupted, not resumable
 //  4 completed
-long calctime;
+long g_calc_time;
 
 int max_colors;                         // maximum palette size
 bool zoomoff = false;                   // false when zoom is disabled

@@ -162,7 +162,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     xx3rd = xxmin;
     yy3rd = yymin;
     usr_distest = 0;
-    calctime = 0;
+    g_calc_time = 0;
     if (read_info.version > 3)
     {
         save_release = 1400;
@@ -179,7 +179,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         usr_distest     = read_info.distestold;
         usr_floatflag   = read_info.floatflag != 0;
         g_bail_out     = read_info.bailoutold;
-        calctime    = read_info.calctime;
+        g_calc_time    = read_info.calctime;
         trigndx[0]  = static_cast<trig_fn>(read_info.trigndx[0]);
         trigndx[1]  = static_cast<trig_fn>(read_info.trigndx[1]);
         trigndx[2]  = static_cast<trig_fn>(read_info.trigndx[2]);

@@ -2738,7 +2738,7 @@ static char const *expand_var(char const *var, char *buf)
     }
     else if (strcmp(var, "calctime") == 0)
     {
-        get_calculation_time(buf, calctime);
+        get_calculation_time(buf, g_calc_time);
         out = buf;
     }
     else if (strcmp(var, "version") == 0)  // 4 chars

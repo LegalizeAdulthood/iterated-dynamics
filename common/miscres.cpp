@@ -858,7 +858,7 @@ int tab_display()       // display the status of the current image
     }
     if (calc_status == calc_status_value::IN_PROGRESS)        // next assumes CLOCKS_PER_SEC is 10^n, n>=2
     {
-        calctime += (clock_ticks() - timer_start) / (CLOCKS_PER_SEC/100);
+        g_calc_time += (clock_ticks() - timer_start) / (CLOCKS_PER_SEC/100);
     }
     driver_stack_screen();
     if (bf_math != bf_math_type::NONE)
@@ -1094,12 +1094,12 @@ top:
         }
     }
     driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
-    get_calculation_time(msg, calctime);
+    get_calculation_time(msg, g_calc_time);
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
     if ((got_status == 5) && (calc_status == calc_status_value::IN_PROGRESS))  // estimate total time
     {
         driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
-        get_calculation_time(msg, (long)(calctime*((dif_limit*1.0)/dif_counter)));
+        get_calculation_time(msg, (long)(g_calc_time*((dif_limit*1.0)/dif_counter)));
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 

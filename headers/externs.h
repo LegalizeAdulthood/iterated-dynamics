@@ -75,7 +75,7 @@ extern bool                  g_browsing;
 extern bool                  g_browse_check_fractal_params;
 extern bool                  g_browse_check_fractal_type;
 extern bool                  g_busy;
-extern long                  calctime;
+extern long                  g_calc_time;
 extern int                 (*calctype)();
 extern calc_status_value     calc_status;
 extern char                  calibrate;
