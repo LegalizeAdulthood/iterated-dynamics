@@ -1219,7 +1219,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%d/%d/%d/%d", "crop",
                      red_crop_left, red_crop_right, blue_crop_left, blue_crop_right);
             put_parm(" %s=%d/%d", "bright",
-                     red_bright, blue_bright);
+                     red_bright, g_blue_bright);
         }
     }
 

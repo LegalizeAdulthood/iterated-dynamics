@@ -60,7 +60,7 @@ extern unsigned int          g_diffusion_bits;
 extern int                   bitshift;
 extern int                   bitshiftless1;
 extern BYTE                  g_block[];
-extern int                   blue_bright;
+extern int                   g_blue_bright;
 extern int                   blue_crop_left;
 extern int                   blue_crop_right;
 extern int                   boxcolor;

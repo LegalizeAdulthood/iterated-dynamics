@@ -2423,7 +2423,7 @@ static void save_history_info()
     current.blue_crop_left       = (short)blue_crop_left            ;
     current.blue_crop_right      = (short)blue_crop_right           ;
     current.red_bright           = (short)red_bright                ;
-    current.blue_bright          = (short)blue_bright               ;
+    current.blue_bright          = (short)g_blue_bright               ;
     current.xadjust              = (short)xadjust                   ;
     current.yadjust              = (short)yadjust                   ;
     current.eyeseparation        = (short)g_eye_separation             ;
@@ -2604,7 +2604,7 @@ static void restore_history_info(int i)
     blue_crop_left        = last.blue_crop_left ;
     blue_crop_right       = last.blue_crop_right;
     red_bright            = last.red_bright     ;
-    blue_bright           = last.blue_bright    ;
+    g_blue_bright           = last.blue_bright    ;
     xadjust               = last.xadjust        ;
     yadjust               = last.yadjust        ;
     g_eye_separation      = last.eyeseparation  ;

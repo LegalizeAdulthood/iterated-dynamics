@@ -30,7 +30,7 @@ int red_crop_right  = 0;
 int blue_crop_left  = 0;
 int blue_crop_right = 4;
 int red_bright      = 80;
-int blue_bright     = 100;
+int g_blue_bright     = 100;
 
 BYTE T_RED;
 
@@ -488,7 +488,7 @@ void plot_setup()
         blue_local_left = (int)((blue_crop_left     * (double)xdots)/100.0);
         blue_local_right = (int)(((100 - blue_crop_right) * (double)xdots)/100.0);
         d_red_bright    = (double)red_bright/100.0;
-        d_blue_bright   = (double)blue_bright/100.0;
+        d_blue_bright   = (double)g_blue_bright/100.0;
 
         switch (g_which_image)
         {

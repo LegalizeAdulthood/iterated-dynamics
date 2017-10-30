@@ -611,7 +611,7 @@ static void initvars_3d()               // init vars affecting 3d
     blue_crop_left  = 0;
     blue_crop_right = 4;
     red_bright     = 80;
-    blue_bright   = 100;
+    g_blue_bright   = 100;
     transparent[1] = 0;
     transparent[0] = transparent[1]; // no min/max transparency
     set_3d_defaults();
@@ -3179,7 +3179,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         red_bright  = intval[0];
-        blue_bright = intval[1];
+        g_blue_bright = intval[1];
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 

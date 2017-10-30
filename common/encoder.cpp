@@ -900,7 +900,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->blue_crop_left = (short) blue_crop_left;
     save_info->blue_crop_right = (short) blue_crop_right;
     save_info->red_bright = (short) red_bright;
-    save_info->blue_bright = (short) blue_bright;
+    save_info->blue_bright = (short) g_blue_bright;
     save_info->xadjust = (short) xadjust;
     save_info->yadjust = (short) yadjust;
     save_info->eyeseparation = (short) g_eye_separation;
