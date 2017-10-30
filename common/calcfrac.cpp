@@ -860,7 +860,7 @@ int calcfract()
         linitorbit.x = (long)(initorbit.x * fudge);
         linitorbit.y = (long)(initorbit.y * fudge);
     }
-    resuming = (calc_status == calc_status_value::RESUMABLE);
+    resuming = (g_calc_status == calc_status_value::RESUMABLE);
     if (!resuming) // free resume_info memory if any is hanging around
     {
         end_resume();
@@ -892,7 +892,7 @@ int calcfract()
         iystop = yystop;
         xxstop = xdots-1;
         ixstop = xxstop;
-        calc_status = calc_status_value::IN_PROGRESS; // mark as in-progress
+        g_calc_status = calc_status_value::IN_PROGRESS; // mark as in-progress
         distest = 0; // only standard escape time engine supports distest
         // per_image routine is run here
         if (curfractalspecific->per_image())
@@ -906,14 +906,14 @@ int calcfract()
         }
         if (check_key())
         {
-            if (calc_status == calc_status_value::IN_PROGRESS)   // calctype didn't set this itself,
+            if (g_calc_status == calc_status_value::IN_PROGRESS)   // calctype didn't set this itself,
             {
-                calc_status = calc_status_value::NON_RESUMABLE;   // so mark it interrupted, non-resumable
+                g_calc_status = calc_status_value::NON_RESUMABLE;   // so mark it interrupted, non-resumable
             }
         }
         else
         {
-            calc_status = calc_status_value::COMPLETED; // no key, so assume it completed
+            g_calc_status = calc_status_value::COMPLETED; // no key, so assume it completed
         }
     }
     else // standard escape-time engine
@@ -927,7 +927,7 @@ int calcfract()
                 stdcalcmode = 'g';
                 three_pass = true;
                 timer(0, (int(*)())perform_worklist);
-                if (calc_status == calc_status_value::COMPLETED)
+                if (g_calc_status == calc_status_value::COMPLETED)
                 {
                     if (xdots >= 640)    // '2' is silly after 'g' for low rez
                     {
@@ -984,7 +984,7 @@ int calcfract()
     {
         enddisk();
     }
-    return (calc_status == calc_status_value::COMPLETED) ? 0 : -1;
+    return (g_calc_status == calc_status_value::COMPLETED) ? 0 : -1;
 }
 
 // locate alternate math record
@@ -1176,7 +1176,7 @@ static void perform_worklist()
             worklist[i] = worklist[i+1];
         }
 
-        calc_status = calc_status_value::IN_PROGRESS; // mark as in-progress
+        g_calc_status = calc_status_value::IN_PROGRESS; // mark as in-progress
 
         curfractalspecific->per_image();
         if (show_dot >= 0)
@@ -1331,7 +1331,7 @@ static void perform_worklist()
     }
     else
     {
-        calc_status = calc_status_value::COMPLETED; // completed
+        g_calc_status = calc_status_value::COMPLETED; // completed
     }
     if (sv_orbitcalc != nullptr)
     {

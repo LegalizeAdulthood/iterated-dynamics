@@ -81,7 +81,7 @@ enum choice_flags
     CHOICE_NOT_SORTED   = 32
 };
 
-// calc_status values
+// g_calc_status values
 enum class calc_status_value
 {
     NO_FRACTAL = -1,

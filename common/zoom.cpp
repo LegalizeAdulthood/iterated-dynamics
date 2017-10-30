@@ -649,7 +649,7 @@ void aspectratio_crop(float oldaspect, float newaspect)
 
 static int check_pan() // return 0 if can't, alignment requirement if can
 {
-    if ((calc_status != calc_status_value::RESUMABLE && calc_status != calc_status_value::COMPLETED) || evolving)
+    if ((g_calc_status != calc_status_value::RESUMABLE && g_calc_status != calc_status_value::COMPLETED) || evolving)
     {
         return (0); // not resumable, not complete
     }
@@ -681,7 +681,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 
     // can pan if we get this far
 
-    if (calc_status == calc_status_value::COMPLETED)
+    if (g_calc_status == calc_status_value::COMPLETED)
     {
         return (1); // image completed, align on any pixel
     }
@@ -752,20 +752,20 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     int listfull;
     if (zoom_box_width == 0.0)
     {
-        return (0); // no zoombox, leave calc_status as is
+        return (0); // no zoombox, leave g_calc_status as is
     }
     // got a zoombox
     alignmask = check_pan()-1;
     if (alignmask < 0 || evolving)
     {
-        calc_status = calc_status_value::PARAMS_CHANGED; // can't pan, trigger recalc
+        g_calc_status = calc_status_value::PARAMS_CHANGED; // can't pan, trigger recalc
         return (0);
     }
     if (zbx == 0.0 && zby == 0.0)
     {
         clearbox();
         return (0);
-    } // box is full screen, leave calc_status as is
+    } // box is full screen, leave g_calc_status as is
     col = (int)(zbx*(x_size_d+PIXELROUND)); // calc dest col,row of topleft pixel
     row = (int)(zby*(y_size_d+PIXELROUND));
     if (do_zoomout)
@@ -776,12 +776,12 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     }
     if ((row&alignmask) != 0 || (col&alignmask) != 0)
     {
-        calc_status = calc_status_value::PARAMS_CHANGED; // not on useable pixel alignment, trigger recalc
+        g_calc_status = calc_status_value::PARAMS_CHANGED; // not on useable pixel alignment, trigger recalc
         return (0);
     }
     // pan
     num_worklist = 0;
-    if (calc_status == calc_status_value::RESUMABLE)
+    if (g_calc_status == calc_status_value::RESUMABLE)
     {
         start_resume();
         get_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
@@ -829,12 +829,12 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
         }
         else
         {
-            calc_status = calc_status_value::PARAMS_CHANGED; // trigger recalc
+            g_calc_status = calc_status_value::PARAMS_CHANGED; // trigger recalc
         }
         return (0);
     }
     // now we're committed
-    calc_status = calc_status_value::RESUMABLE;
+    g_calc_status = calc_status_value::RESUMABLE;
     clearbox();
     if (row > 0)   // move image up
     {

@@ -146,7 +146,7 @@ void fractal_floattobf()
             floattobf(bfparms[i], param[i]);
         }
     }
-    calc_status = calc_status_value::PARAMS_CHANGED;
+    g_calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
 
@@ -252,7 +252,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     {
         floatflag = usr_floatflag;
     }
-    if (calc_status == calc_status_value::RESUMABLE)
+    if (g_calc_status == calc_status_value::RESUMABLE)
     {
         // on resume, ensure floatflag correct
         floatflag = curfractalspecific->isinteger == 0;
@@ -506,9 +506,9 @@ expand_retry:
                 {
                     adjust_to_limits(2.0);   // double the size
                 }
-                if (calc_status == calc_status_value::RESUMABLE)         // due to restore of an old file?
+                if (g_calc_status == calc_status_value::RESUMABLE)         // due to restore of an old file?
                 {
-                    calc_status = calc_status_value::PARAMS_CHANGED;         //   whatever, it isn't resumable
+                    g_calc_status = calc_status_value::PARAMS_CHANGED;         //   whatever, it isn't resumable
                 }
                 goto init_restart;
             } // end if ratio bad
@@ -1040,11 +1040,11 @@ static void adjust_to_limitsbf(double expand)
         }
     }
 
-    /* if (calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zoom_box_width == 1.0))
-       calc_status = calc_status_value::PARAMS_CHANGED; */
-    if (calc_status == calc_status_value::RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (zoom_box_width == 1.0))
+    /* if (g_calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zoom_box_width == 1.0))
+       g_calc_status = calc_status_value::PARAMS_CHANGED; */
+    if (g_calc_status == calc_status_value::RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (zoom_box_width == 1.0))
     {
-        calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
     }
 
     // xxmin = cornerx[0] - adjx;
@@ -1202,9 +1202,9 @@ static void adjust_to_limits(double expand)
             adjy = ftemp;
         }
     }
-    if (calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zoom_box_width == 1.0))
+    if (g_calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zoom_box_width == 1.0))
     {
-        calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
     }
     xxmin = cornerx[0] - adjx;
     xxmax = cornerx[1] - adjx;
@@ -1269,10 +1269,10 @@ static int ratio_bad(double actual, double desired)
 
    Before calling the (per_image,calctype) routines (engine), calcfract sets:
       "resuming" to false if new image, true if resuming a partially done image
-      "calc_status" to IN_PROGRESS
+      "g_calc_status" to IN_PROGRESS
    If an engine is interrupted and wants to be able to resume it must:
       store whatever status info it needs to be able to resume later
-      set calc_status to RESUMABLE and return
+      set g_calc_status to RESUMABLE and return
    If subsequently called with resuming true, the engine must restore status
    info and continue from where it left off.
 
@@ -1286,7 +1286,7 @@ static int ratio_bad(double actual, double desired)
          undersize is not checked and probably causes serious misbehaviour.
          Version is an arbitrary number so that subsequent revisions of the
          engine can be made backward compatible.
-         Alloc_resume sets calc_status to RESUMABLE if it succeeds;
+         Alloc_resume sets g_calc_status to RESUMABLE if it succeeds;
          to NON_RESUMABLE if it cannot allocate memory
          (and issues warning to user).
       put_resume({bytes,&argument,} ... 0)
@@ -1312,7 +1312,7 @@ static int ratio_bad(double actual, double desired)
       end_resume();
 
    Engines which allocate a large memory chunk of their own might
-   directly set resume_info, resume_len, calc_status to avoid doubling
+   directly set resume_info, resume_len, g_calc_status to avoid doubling
    transient memory needs by using these routines.
 
    standard_fractal, calcmand, solid_guess, and bound_trace_main are a related
@@ -1351,7 +1351,7 @@ int alloc_resume(int alloclen, int version)
     resume_data.resize(sizeof(int)*alloclen);
     resume_len = 0;
     put_resume(sizeof(version), &version, 0);
-    calc_status = calc_status_value::RESUMABLE;
+    g_calc_status = calc_status_value::RESUMABLE;
     return (0);
 }
 

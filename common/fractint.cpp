@@ -113,7 +113,7 @@ long    xmin, xmax, ymin, ymax, x3rd, y3rd;  // integer equivs
 double  sxmin, sxmax, symin, symax, sx3rd, sy3rd; // displayed screen corners
 double  plotmx1, plotmx2, plotmy1, plotmy2;     // real->screen multipliers
 
-calc_status_value calc_status = calc_status_value::NO_FRACTAL;
+calc_status_value g_calc_status = calc_status_value::NO_FRACTAL;
 // -1 no fractal
 //  0 parms changed, recalc reqd
 //  1 actively calculating
@@ -207,7 +207,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     initgene(); /*initialise pointers to lots of fractint variables for the evolution engine*/
     start_show_orbit = false;
     show_dot = -1; // turn off show_dot if entered with <g> command
-    calc_status = calc_status_value::NO_FRACTAL;                    // no active fractal image
+    g_calc_status = calc_status_value::NO_FRACTAL;                    // no active fractal image
 
     fract_dir1 = getenv("FRACTDIR");
     if (fract_dir1 == nullptr)
@@ -345,9 +345,9 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         stacked = false;
         overlay_3d = false;              // forget overlays
         display_3d = display_3d_modes::NONE;
-        if (calc_status == calc_status_value::NON_RESUMABLE)
+        if (g_calc_status == calc_status_value::NON_RESUMABLE)
         {
-            calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
         }
         resumeflag = true;
         return true;
@@ -376,9 +376,9 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 
     if (show_file)
     {
-        if (calc_status > calc_status_value::PARAMS_CHANGED)                // goto imagestart implies re-calc
+        if (g_calc_status > calc_status_value::PARAMS_CHANGED)                // goto imagestart implies re-calc
         {
-            calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
         }
     }
 

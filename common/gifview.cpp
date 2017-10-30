@@ -301,9 +301,9 @@ int gifview()
             // initialize the row count for write-lines
             g_row_count = 0;
 
-            if (calc_status == calc_status_value::IN_PROGRESS)   // should never be so, but make sure
+            if (g_calc_status == calc_status_value::IN_PROGRESS)   // should never be so, but make sure
             {
-                calc_status = calc_status_value::PARAMS_CHANGED;
+                g_calc_status = calc_status_value::PARAMS_CHANGED;
             }
             g_busy = true;      // for slideshow CALCWAIT
             /*
@@ -316,17 +316,17 @@ int gifview()
             }
             status = timer(1, nullptr, width);
             g_busy = false;      // for slideshow CALCWAIT
-            if (calc_status == calc_status_value::IN_PROGRESS) // e.g., set by line3d
+            if (g_calc_status == calc_status_value::IN_PROGRESS) // e.g., set by line3d
             {
                 g_calc_time = timer_interval; // note how long it took
                 if (driver_key_pressed() != 0)
                 {
-                    calc_status = calc_status_value::NON_RESUMABLE; // interrupted, not resumable
+                    g_calc_status = calc_status_value::NON_RESUMABLE; // interrupted, not resumable
                     finished = true;
                 }
                 else
                 {
-                    calc_status = calc_status_value::COMPLETED; // complete
+                    g_calc_status = calc_status_value::COMPLETED; // complete
                 }
             }
             // Hey! the decoder doesn't read the last (0-length) block!!

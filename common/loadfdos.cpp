@@ -381,9 +381,9 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             filexdots == g_video_entry.xdots && fileydots == g_video_entry.ydots)
     {
         // pull image into a view window
-        if (calc_status != calc_status_value::COMPLETED) // if not complete
+        if (g_calc_status != calc_status_value::COMPLETED) // if not complete
         {
-            calc_status = calc_status_value::PARAMS_CHANGED;  // can't resume anyway
+            g_calc_status = calc_status_value::PARAMS_CHANGED;  // can't resume anyway
         }
         if (viewxdots)
         {
@@ -402,9 +402,9 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     if (g_video_entry.xdots < filexdots || g_video_entry.ydots < fileydots)
     {
         // set up to load only every nth pixel to make image fit
-        if (calc_status != calc_status_value::COMPLETED) // if not complete
+        if (g_calc_status != calc_status_value::COMPLETED) // if not complete
         {
-            calc_status = calc_status_value::PARAMS_CHANGED;  // can't resume anyway
+            g_calc_status = calc_status_value::PARAMS_CHANGED;  // can't resume anyway
         }
         skipydots = 1;
         skipxdots = skipydots;

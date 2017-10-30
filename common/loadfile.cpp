@@ -158,7 +158,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         outside      = read_info.outside;
     }
 
-    calc_status = calc_status_value::PARAMS_CHANGED;       // defaults if version < 4
+    g_calc_status = calc_status_value::PARAMS_CHANGED;       // defaults if version < 4
     xx3rd = xxmin;
     yy3rd = yymin;
     usr_distest = 0;
@@ -168,7 +168,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         save_release = 1400;
         xx3rd       = read_info.x3rd;
         yy3rd       = read_info.y3rd;
-        calc_status = static_cast<calc_status_value>(read_info.calc_status);
+        g_calc_status = static_cast<calc_status_value>(read_info.calc_status);
         usr_stdcalcmode = read_info.stdcalcmode;
         three_pass = false;
         if (usr_stdcalcmode == 127)
@@ -437,7 +437,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (display_3d != display_3d_modes::NONE)
     {
-        calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
         fractype = fractal_type::PLASMA;
         curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::PLASMA)];
         param[0] = 0;
@@ -521,9 +521,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             blk_6_info.ecount = blk_6_info.mutate[NUMGENES - 4];
         }
         if (blk_6_info.ecount != blk_6_info.image_grid_size *blk_6_info.image_grid_size
-                && calc_status != calc_status_value::COMPLETED)
+                && g_calc_status != calc_status_value::COMPLETED)
         {
-            calc_status = calc_status_value::RESUMABLE;
+            g_calc_status = calc_status_value::RESUMABLE;
             evolve_info.x_parameter_range = blk_6_info.x_parameter_range;
             evolve_info.y_parameter_range = blk_6_info.y_parameter_range;
             evolve_info.x_parameter_offset = blk_6_info.x_parameter_offset;
@@ -546,7 +546,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         else
         {
             have_evolve_info = false;
-            calc_status = calc_status_value::COMPLETED;
+            g_calc_status = calc_status_value::COMPLETED;
         }
         evolve_x_parameter_range = blk_6_info.x_parameter_range;
         evolve_y_parameter_range = blk_6_info.y_parameter_range;
@@ -1384,9 +1384,9 @@ int fgetwindow()
     bf_math = bf_math_type::BIGFLT;
     if (oldbf_math == bf_math_type::NONE)
     {
-        calc_status_value oldcalc_status = calc_status; // kludge because next sets it = 0
+        calc_status_value oldcalc_status = g_calc_status; // kludge because next sets it = 0
         fractal_floattobf();
-        calc_status = oldcalc_status;
+        g_calc_status = oldcalc_status;
     }
     saved = save_stack();
     bt_a = alloc_stack(rbflength+2);

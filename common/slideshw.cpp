@@ -130,7 +130,7 @@ int slideshw()
     char buffer[81];
     if (calcwait)
     {
-        if (calc_status == calc_status_value::IN_PROGRESS || g_busy)   // restart timer - process not done
+        if (g_calc_status == calc_status_value::IN_PROGRESS || g_busy)   // restart timer - process not done
         {
             return (0); // wait for calc to finish before reading more keystrokes
         }

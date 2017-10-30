@@ -612,7 +612,7 @@ bool encoder()
         if (evolving & 1)
         {
             EVOLUTION_INFO esave_info;
-            if (!have_evolve_info || calc_status == calc_status_value::COMPLETED)
+            if (!have_evolve_info || g_calc_status == calc_status_value::COMPLETED)
             {
                 esave_info.x_parameter_range = evolve_x_parameter_range;
                 esave_info.y_parameter_range = evolve_y_parameter_range;
@@ -908,7 +908,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->outside = (short) outside;
     save_info->x3rd = xx3rd;
     save_info->y3rd = yy3rd;
-    save_info->calc_status = (short) calc_status;
+    save_info->calc_status = (short) g_calc_status;
     save_info->stdcalcmode = (char)((three_pass && stdcalcmode == '3') ? 127 : stdcalcmode);
     if (distest <= 32000)
     {

@@ -3201,7 +3201,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (strcmp(value, "overlay") == 0)
         {
             yesnoval[0] = 1;
-            if (calc_status > calc_status_value::NO_FRACTAL)   // if no image, treat same as 3D=yes
+            if (g_calc_status > calc_status_value::NO_FRACTAL)   // if no image, treat same as 3D=yes
             {
                 overlay_3d = true;
             }

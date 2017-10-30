@@ -2565,8 +2565,8 @@ void flip_image(int key)
 
     // fractal must be rotate-able and be finished
     if ((curfractalspecific->flags&NOROTATE) != 0
-            || calc_status == calc_status_value::IN_PROGRESS
-            || calc_status == calc_status_value::RESUMABLE)
+            || g_calc_status == calc_status_value::IN_PROGRESS
+            || g_calc_status == calc_status_value::RESUMABLE)
     {
         return;
     }
@@ -2676,7 +2676,7 @@ void flip_image(int key)
         break;
     }
     reset_zoom_corners();
-    calc_status = calc_status_value::PARAMS_CHANGED;
+    g_calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
 static char const *expand_var(char const *var, char *buf)

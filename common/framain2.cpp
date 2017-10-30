@@ -61,7 +61,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         _ASSERTE(_CrtCheckMemory());
 #endif
 
-        if (calc_status != calc_status_value::RESUMABLE || show_file == 0)
+        if (g_calc_status != calc_status_value::RESUMABLE || show_file == 0)
         {
             memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
                    sizeof(g_video_entry));
@@ -258,7 +258,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     potflag  = false;
                     pot16bit = false;
                     g_init_mode = -1;
-                    calc_status = calc_status_value::RESUMABLE;         // "resume" without 16-bit
+                    g_calc_status = calc_status_value::RESUMABLE;         // "resume" without 16-bit
                     driver_set_for_text();
                     get_fracttype();
                     return main_state::IMAGE_START;
@@ -290,7 +290,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             }
             else
             {
-                calc_status = calc_status_value::NO_FRACTAL;
+                g_calc_status = calc_status_value::NO_FRACTAL;
                 if (driver_key_pressed())
                 {
                     driver_buzzer(buzzer_codes::INTERRUPT);
@@ -336,7 +336,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         {
             // image has been loaded
             show_file = 1;
-            if (init_batch == batch_modes::NORMAL && calc_status == calc_status_value::RESUMABLE)
+            if (init_batch == batch_modes::NORMAL && g_calc_status == calc_status_value::RESUMABLE)
             {
                 init_batch = batch_modes::FINISH_CALC_BEFORE_SAVE;
             }
@@ -364,13 +364,13 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             //rb
             name_stack_ptr = -1;   // reset pointer
             g_browse_name.clear();
-            if (viewwindow && (evolving&1) && (calc_status != calc_status_value::COMPLETED))
+            if (viewwindow && (evolving&1) && (g_calc_status != calc_status_value::COMPLETED))
             {
                 // generate a set of images with varied parameters on each one
                 int grout, ecount, tmpxdots, tmpydots, gridsqr;
                 GENEBASE gene[NUMGENES];
                 copy_genes_from_bank(gene);
-                if (have_evolve_info && (calc_status == calc_status_value::RESUMABLE))
+                if (have_evolve_info && (g_calc_status == calc_status_value::RESUMABLE))
                 {
                     evolve_x_parameter_range = evolve_info.x_parameter_range;
                     evolve_y_parameter_range = evolve_info.y_parameter_range;
@@ -544,7 +544,7 @@ resumeloop:                             // return here on failed overlays
 #else
                 look_at_mouse = (zoom_box_width == 0) ? -FIK_PAGE_UP : 3;
 #endif
-                if (calc_status == calc_status_value::RESUMABLE && zoom_box_width == 0 && !driver_key_pressed())
+                if (g_calc_status == calc_status_value::RESUMABLE && zoom_box_width == 0 && !driver_key_pressed())
                 {
                     kbdchar = FIK_ENTER ;  // no visible reason to stop, continue
                 }
@@ -632,7 +632,7 @@ resumeloop:                             // return here on failed overlays
                 }
                 else
                 {
-                    if (calc_status != calc_status_value::COMPLETED)
+                    if (g_calc_status != calc_status_value::COMPLETED)
                     {
                         init_batch = batch_modes::BAILOUT_ERROR_NO_SAVE; // bailout with error
                     }
@@ -661,7 +661,7 @@ resumeloop:                             // return here on failed overlays
                 quick_calc = false;
                 usr_stdcalcmode = old_stdcalcmode;
             }
-            if (quick_calc && calc_status != calc_status_value::COMPLETED)
+            if (quick_calc && g_calc_status != calc_status_value::COMPLETED)
             {
                 usr_stdcalcmode = '1';
             }
@@ -684,7 +684,7 @@ resumeloop:                             // return here on failed overlays
             }
             if (driver_resize())
             {
-                calc_status = calc_status_value::NO_FRACTAL;
+                g_calc_status = calc_status_value::NO_FRACTAL;
             }
         }
     }
@@ -774,12 +774,12 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     static double  jxx3rd, jyy3rd;
     long old_maxit;
 
-    if (quick_calc && calc_status == calc_status_value::COMPLETED)
+    if (quick_calc && g_calc_status == calc_status_value::COMPLETED)
     {
         quick_calc = false;
         usr_stdcalcmode = old_stdcalcmode;
     }
-    if (quick_calc && calc_status != calc_status_value::COMPLETED)
+    if (quick_calc && g_calc_status != calc_status_value::COMPLETED)
     {
         usr_stdcalcmode = old_stdcalcmode;
     }
@@ -891,7 +891,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             truecolor = false;          // truecolor doesn't play well with the evolver
         }
-        if (maxit > old_maxit && inside >= COLOR_BLACK && calc_status == calc_status_value::COMPLETED &&
+        if (maxit > old_maxit && inside >= COLOR_BLACK && g_calc_status == calc_status_value::COMPLETED &&
                 curfractalspecific->calctype == standard_fractal && !LogFlag &&
                 !truecolor &&    // recalc not yet implemented with truecolor
                 !(usr_stdcalcmode == 't' && fillcolor > -1) &&
@@ -904,7 +904,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             old_stdcalcmode = usr_stdcalcmode;
             usr_stdcalcmode = '1';
             *kbdmore = false;
-            calc_status = calc_status_value::RESUMABLE;
+            g_calc_status = calc_status_value::RESUMABLE;
         }
         else if (i > 0)
         {
@@ -912,7 +912,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             quick_calc = false;
             param_history(0);           // save history
             *kbdmore = false;
-            calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
         }
         break;
 #ifndef XFRACT
@@ -953,7 +953,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             // fractal parameter changed
             driver_discard_screen();
             *kbdmore = false;
-            calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
         }
         else
         {
@@ -974,7 +974,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case 'i':                    // 3d fractal parms
         if (get_fract3d_params() >= 0)    // get the parameters
         {
-            calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = 0;    // time to redraw
         }
         break;
@@ -1005,7 +1005,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 driver_unstack_screen();
                 if (ant() >= 0)
                 {
-                    calc_status = calc_status_value::PARAMS_CHANGED;
+                    g_calc_status = calc_status_value::PARAMS_CHANGED;
                 }
             }
             else
@@ -1030,7 +1030,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             if (do_AutoStereo())
             {
-                calc_status = calc_status_value::PARAMS_CHANGED;
+                g_calc_status = calc_status_value::PARAMS_CHANGED;
             }
             return main_state::CONTINUE;
         }
@@ -1041,7 +1041,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             if (starfield() >= 0)
             {
-                calc_status = calc_status_value::PARAMS_CHANGED;
+                g_calc_status = calc_status_value::PARAMS_CHANGED;
             }
             return main_state::CONTINUE;
         }
@@ -1068,7 +1068,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         if (fractype == fractal_type::CELLULAR)
         {
             nxtscreenflag = !nxtscreenflag;
-            calc_status = calc_status_value::RESUMABLE;
+            g_calc_status = calc_status_value::RESUMABLE;
             *kbdmore = false;
         }
         else
@@ -1139,7 +1139,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     yy3rd *= 3.0;
                 }
                 zoomoff = true;
-                calc_status = calc_status_value::PARAMS_CHANGED;
+                g_calc_status = calc_status_value::PARAMS_CHANGED;
                 *kbdmore = false;
             }
             else if (curfractalspecific->tomandel != fractal_type::NOFRACTAL)
@@ -1170,7 +1170,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 param[0] = 0;
                 param[1] = 0;
                 zoomoff = true;
-                calc_status = calc_status_value::PARAMS_CHANGED;
+                g_calc_status = calc_status_value::PARAMS_CHANGED;
                 *kbdmore = false;
             }
             else
@@ -1202,7 +1202,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             }
             curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
             zoomoff = true;
-            calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = false;
         }
         else
@@ -1297,7 +1297,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             if (!load_palette())
             {
                 *kbdmore = false;
-                calc_status = calc_status_value::PARAMS_CHANGED;
+                g_calc_status = calc_status_value::PARAMS_CHANGED;
                 break;
             }
             else
@@ -1415,7 +1415,7 @@ do_3d_transform:
             init_pan_or_recalc(0);
             *kbdmore = false;
         }
-        if (calc_status != calc_status_value::COMPLETED)       // don't restart if image complete
+        if (g_calc_status != calc_status_value::COMPLETED)       // don't restart if image complete
         {
             *kbdmore = false;
         }
@@ -1542,7 +1542,7 @@ do_3d_transform:
         set_mutation_level(*kbdchar - FIK_ALT_1 + 1);
         param_history(0); // save parameter history
         *kbdmore = false;
-        calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
 
     case FIK_DELETE:         // select video mode from list
@@ -1568,7 +1568,7 @@ do_3d_transform:
             {
                 savedac = 0;
             }
-            calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = false;
             return main_state::CONTINUE;
         }
@@ -1668,7 +1668,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             // time to redraw?
             param_history(0); // save history
             *kbdmore = false;
-            calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
         }
         break;
     case 'b': // quick exit from evolve mode
@@ -1676,7 +1676,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         viewwindow = false;
         param_history(0); // save history
         *kbdmore = false;
-        calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
 
     case 'f':                    // floating pt toggle
@@ -1746,7 +1746,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             if (!load_palette())
             {
                 *kbdmore = false;
-                calc_status = calc_status_value::PARAMS_CHANGED;
+                g_calc_status = calc_status_value::PARAMS_CHANGED;
                 break;
             }
             else
@@ -1861,7 +1861,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             init_pan_or_recalc(0);
             *kbdmore = false;
         }
-        if (calc_status != calc_status_value::COMPLETED)       // don't restart if image complete
+        if (g_calc_status != calc_status_value::COMPLETED)       // don't restart if image complete
         {
             *kbdmore = false;
         }
@@ -2067,7 +2067,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         evolve_y_parameter_range = evolve_y_parameter_range / 2;
         evolve_new_y_parameter_offset = evolve_y_parameter_offset + evolve_y_parameter_range / 2;
         *kbdmore = false;
-        calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
 
     case FIK_F3: //double mutation parameters and regenerate
@@ -2081,7 +2081,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         evolve_y_parameter_range = evolve_y_parameter_range * 2;
         evolve_new_y_parameter_offset = centery - evolve_y_parameter_range / 2;
         *kbdmore = false;
-        calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
     }
 
@@ -2090,7 +2090,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         {
             evolve_image_grid_size = evolve_image_grid_size - 2;  // evolve_image_grid_size must have odd value only
             *kbdmore = false;
-            calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
         }
         break;
 
@@ -2099,7 +2099,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         {
             evolve_image_grid_size = evolve_image_grid_size + 2;
             *kbdmore = false;
-            calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
         }
         break;
 
@@ -2117,7 +2117,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             }
         }
         *kbdmore = false;
-        calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
 
     case FIK_ALT_1: // alt + number keys set mutation level
@@ -2130,7 +2130,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         set_mutation_level(*kbdchar-1119);
         param_history(1); // restore old history
         *kbdmore = false;
-        calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
 
     case '1':
@@ -2143,14 +2143,14 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         set_mutation_level(*kbdchar-(int)'0');
         param_history(1); // restore old history
         *kbdmore = false;
-        calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
 
     case '0': // mutation level 0 == turn off evolving
         evolving = 0;
         viewwindow = false;
         *kbdmore = false;
-        calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
 
     case FIK_DELETE:         // select video mode from list
@@ -2175,7 +2175,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             {
                 savedac = 0;
             }
-            calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = false;
             return main_state::CONTINUE;
         }
@@ -2548,7 +2548,7 @@ static void restore_history_info(int i)
     }
     HISTORY last = history[i];
     invert = 0;
-    calc_status = calc_status_value::PARAMS_CHANGED;
+    g_calc_status = calc_status_value::PARAMS_CHANGED;
     resuming = false;
     fractype              = static_cast<fractal_type>(last.fractal_type);
     xxmin                 = last.xmin           ;
