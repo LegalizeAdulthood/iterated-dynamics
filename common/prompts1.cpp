@@ -1174,17 +1174,17 @@ static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype,
     {
         result = static_cast<fractal_type>(choices[done]->num);
         if ((result == fractal_type::FORMULA || result == fractal_type::FFORMULA)
-                && FormFileName == CommandFile)
+                && FormFileName == g_command_file)
         {
             FormFileName = searchfor.frm;
         }
         if (result == fractal_type::LSYSTEM
-                && LFileName == CommandFile)
+                && LFileName == g_command_file)
         {
             LFileName = searchfor.lsys;
         }
         if ((result == fractal_type::IFS || result == fractal_type::IFS3D)
-                && IFSFileName == CommandFile)
+                && IFSFileName == g_command_file)
         {
             IFSFileName = searchfor.ifs;
         }

@@ -776,7 +776,7 @@ bool tab_display_2(char *msg)
     show_str_var("filename",    readname.c_str(),     &row, msg);
     show_str_var("formulafile", FormFileName.c_str(), &row, msg);
     show_str_var("savename",    savename.c_str(),     &row, msg);
-    show_str_var("parmfile",    CommandFile.c_str(),  &row, msg);
+    show_str_var("parmfile",    g_command_file.c_str(),  &row, msg);
     show_str_var("ifsfile",     IFSFileName.c_str(),  &row, msg);
     show_str_var("autokeyname", g_auto_name.c_str(), &row, msg);
     show_str_var("lightname",   light_name.c_str(),   &row, msg);
@@ -1492,7 +1492,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
 
     splitpath(filename, drive, dir, fname, ext);
     makepath(fullpath, "", "", fname, ext);
-    if (stricmp(filename, CommandFile.c_str()))
+    if (stricmp(filename, g_command_file.c_str()))
     {
         infile = fopen(filename, "rb");
         if (infile != nullptr)
@@ -1561,12 +1561,12 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
 
     if (!found)
     {
-        infile = fopen(CommandFile.c_str(), "rb");
+        infile = fopen(g_command_file.c_str(), "rb");
         if (infile != nullptr)
         {
             if (scan_entries(infile, nullptr, parsearchname) == -1)
             {
-                strcpy(filename, CommandFile.c_str());
+                strcpy(filename, g_command_file.c_str());
                 found = true;
             }
             else
