@@ -19,7 +19,7 @@ std::string stereomapname;
 int g_auto_stereo_depth = 100;
 double g_auto_stereo_width = 10;
 bool grayflag = false;          // flag to use gray value rather than color number
-char calibrate = 1;             // add calibration bars to image
+char g_calibrate = 1;             // add calibration bars to image
 bool image_map = false;
 
 /* this structure permits variables to be temporarily static and visible
@@ -293,7 +293,7 @@ bool do_AutoStereo()
     barwidth  = 1 + xdots / 200;
     BARHEIGHT = 1 + ydots / 20;
     XCEN = xdots/2;
-    if (calibrate > 1)
+    if (g_calibrate > 1)
     {
         YCEN = BARHEIGHT/2;
     }
@@ -352,7 +352,7 @@ bool do_AutoStereo()
             colour[ct++] = getcolor(i - (int)(AVG), j);
         }
     }
-    bars = calibrate != 0;
+    bars = g_calibrate != 0;
     toggle_bars(&bars, barwidth, &colour[0]);
     while (!done)
     {
