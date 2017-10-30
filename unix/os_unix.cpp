@@ -12,7 +12,6 @@
 #include "drivers.h"
 
 // Global variables (yuck!)
-struct MP Ans = { 0 };
 static char extrasegment[0x18000] = { 0 };
 void *extraseg = &extrasegment[0];
 int fm_attack = 0;

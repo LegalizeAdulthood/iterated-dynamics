@@ -22,6 +22,13 @@
 #include "port.h"
 #include "prototyp.h"
 
+namespace
+{
+
+struct MP Ans = { 0 };
+
+} // namespace
+
 int MPOverflow = 0;
 
 #if !defined(XFRACT)
