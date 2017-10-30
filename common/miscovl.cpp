@@ -1182,9 +1182,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=y", "usegrayscale");
         }
-        if (Ambient)
+        if (g_ambient)
         {
-            put_parm(" %s=%d", "ambient", Ambient);
+            put_parm(" %s=%d", "ambient", g_ambient);
         }
         if (haze)
         {

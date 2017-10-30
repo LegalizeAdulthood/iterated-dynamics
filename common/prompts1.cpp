@@ -3340,7 +3340,7 @@ static bool get_light_params()
 
             prompts3d[++k] = "Ambient";
             uvalues[k].type = 'i';
-            uvalues[k].uval.ival = Ambient;
+            uvalues[k].uval.ival = g_ambient;
         }
     }
 
@@ -3399,14 +3399,14 @@ static bool get_light_params()
         if (!RAY)
         {
             LIGHTAVG = uvalues[k++].uval.ival;
-            Ambient  = uvalues[k++].uval.ival;
-            if (Ambient >= 100)
+            g_ambient  = uvalues[k++].uval.ival;
+            if (g_ambient >= 100)
             {
-                Ambient = 100;
+                g_ambient = 100;
             }
-            if (Ambient <= 0)
+            if (g_ambient <= 0)
             {
-                Ambient = 0;
+                g_ambient = 0;
             }
         }
     }

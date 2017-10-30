@@ -216,7 +216,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         if (display_3d == display_3d_modes::NONE && read_info.display_3d > 0)
         {
             loaded3d       = true;
-            Ambient        = read_info.ambient;
+            g_ambient        = read_info.ambient;
             RANDOMIZE      = read_info.randomize;
             haze           = read_info.haze;
             transparent[0] = read_info.transparent[0];

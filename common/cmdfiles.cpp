@@ -3398,7 +3398,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        Ambient = numval;
+        g_ambient = numval;
         return CMDARG_3D_PARAM;
     }
 
@@ -3811,7 +3811,7 @@ void set_3d_defaults()
     xtrans    = 0;
     ytrans    = 0;
     LIGHTAVG  = 0;
-    Ambient   = 20;
+    g_ambient   = 20;
     RANDOMIZE = 0;
     haze      = 0;
     back_color[0] = 51;

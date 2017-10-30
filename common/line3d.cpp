@@ -111,7 +111,7 @@ static long num_tris; // number of triangles output to ray trace file
 std::vector<f_point> f_lastrow;
 void (* standardplot)(int, int, int);
 MATRIX m; // transformation matrix
-int Ambient;
+int g_ambient;
 int RANDOMIZE;
 int haze;
 int Real_V = 0; // Actual value of V for fillytpe>4 monochrome images
@@ -2419,7 +2419,7 @@ static int first_time(int linelen, VECTOR v)
     // mark as in-progress, and enable <tab> timer display
     calc_status = calc_status_value::IN_PROGRESS;
 
-    IAmbient = (unsigned int)(255 * (float)(100 - Ambient) / 100.0);
+    IAmbient = (unsigned int)(255 * (float)(100 - g_ambient) / 100.0);
     if (IAmbient < 1)
     {
         IAmbient = 1;

@@ -952,7 +952,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     }
 
     save_info->display_3d = (short) display_3d;
-    save_info->ambient = (short) Ambient;
+    save_info->ambient = (short) g_ambient;
     save_info->randomize = (short) RANDOMIZE;
     save_info->haze = (short) haze;
     save_info->transparent[0] = (short) transparent[0];
