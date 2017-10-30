@@ -2136,7 +2136,7 @@ static void set_Cellular_palette()
     static BYTE const Yellow[3] = { 60, 58, 18 };
     static BYTE const Brown[3]  = { 42, 21, 0 };
 
-    if (map_specified && colorstate != 0)
+    if (map_specified && g_color_state != 0)
     {
         return;       // map= specified
     }
@@ -2236,7 +2236,7 @@ static void set_Froth_palette()
 {
     char const *mapname;
 
-    if (colorstate != 0)   // 0 means g_dac_box matches default
+    if (g_color_state != 0)   // 0 means g_dac_box matches default
     {
         return;
     }
@@ -2270,7 +2270,7 @@ static void set_Froth_palette()
         {
             return;
         }
-        colorstate = 0; // treat map as default
+        g_color_state = 0; // treat map as default
         spindac(0, 1);
     }
 }

@@ -112,7 +112,7 @@ int     rangeslen = 0;          // size of ranges array
 BYTE map_clut[256][3];          // map= (default colors)
 bool map_specified = false;     // map= specified
 BYTE *mapdacbox = nullptr;      // map= (default colors)
-int     colorstate = 0;         // 0, g_dac_box matches default (bios or map=)
+int     g_color_state = 0;         // 0, g_dac_box matches default (bios or map=)
                                 // 1, g_dac_box matches no known defined map
                                 // 2, g_dac_box matches the colorfile map
 bool    g_colors_preloaded = false; // if g_dac_box preloaded for next mode select
@@ -534,7 +534,7 @@ static void initvars_fractal()          // init vars affecting calculation
     }
     usemag = true;                      // use center-mag, not corners
 
-    colorstate = 0;
+    g_color_state = 0;
     g_colors_preloaded = false;
     rotate_lo = 1;
     rotate_hi = 255;      // color cycling default range
@@ -3671,7 +3671,7 @@ static int parse_colors(char const *value)
             {
                 init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
             }
-            colorstate = 2;
+            g_color_state = 2;
         }
     }
     else
@@ -3766,7 +3766,7 @@ static int parse_colors(char const *value)
             g_dac_box[i][0] = g_dac_box[i][1];
             ++i;
         }
-        colorstate = 1;
+        g_color_state = 1;
     }
     g_colors_preloaded = true;
     memcpy(old_dac_box, g_dac_box, 256*3);

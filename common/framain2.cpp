@@ -156,7 +156,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     ValidateLuts("default"); // read the default palette file
 #endif
                 }
-                colorstate = 0;
+                g_color_state = 0;
             }
             if (viewwindow)
             {
@@ -1286,7 +1286,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
         if (memcmp(old_dac_box, g_dac_box, 256 * 3))
         {
-            colorstate = 1;
+            g_color_state = 1;
             save_history_info();
         }
         return main_state::CONTINUE;
@@ -1316,7 +1316,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             help_mode = old_help_mode;
             if (memcmp(old_dac_box, g_dac_box, 256 * 3))
             {
-                colorstate = 1;
+                g_color_state = 1;
                 save_history_info();
             }
         }
@@ -1735,7 +1735,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
         if (memcmp(old_dac_box, g_dac_box, 256 * 3))
         {
-            colorstate = 1;
+            g_color_state = 1;
             save_history_info();
         }
         return main_state::CONTINUE;
@@ -1765,7 +1765,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             help_mode = old_help_mode;
             if (memcmp(old_dac_box, g_dac_box, 256 * 3))
             {
-                colorstate = 1;
+                g_color_state = 1;
                 save_history_info();
             }
         }

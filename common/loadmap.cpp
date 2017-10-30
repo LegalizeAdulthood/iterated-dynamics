@@ -56,7 +56,7 @@ bool ValidateLuts(char const *fn)
         dac[index].red = dac[index].blue;
         ++index;
     }
-    colorstate = 2;
+    g_color_state = 2;
     g_color_file = fn;
     return false;
 }
