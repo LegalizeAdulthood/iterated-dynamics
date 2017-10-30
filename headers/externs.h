@@ -45,7 +45,7 @@ extern std::string           g_auto_name;
 extern char                  g_auto_show_dot;
 extern int                   g_auto_stereo_depth;
 extern double                g_auto_stereo_width;
-extern BYTE                  back_color[];
+extern BYTE                  g_background_color[];
 extern int                   g_bad_config;
 extern int                   bad_code_count;
 extern bool                  bad_outside;

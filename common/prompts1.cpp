@@ -3359,15 +3359,15 @@ static bool get_light_params()
 
         prompts3d[++k] = "   Red";
         uvalues[k].type = 'i';
-        uvalues[k].uval.ival = (int)back_color[0];
+        uvalues[k].uval.ival = (int)g_background_color[0];
 
         prompts3d[++k] = "   Green";
         uvalues[k].type = 'i';
-        uvalues[k].uval.ival = (int)back_color[1];
+        uvalues[k].uval.ival = (int)g_background_color[1];
 
         prompts3d[++k] = "   Blue";
         uvalues[k].type = 'i';
-        uvalues[k].uval.ival = (int)back_color[2];
+        uvalues[k].uval.ival = (int)g_background_color[2];
 
         prompts3d[++k] = "Overlay Targa File? (Y/N)";
         uvalues[k].type = 'y';
@@ -3421,9 +3421,9 @@ static bool get_light_params()
         light_name = uvalues[k++].uval.sval;
         /* In case light_name conflicts with an existing name it is checked again in line3d */
         k++;
-        back_color[0] = (char)(uvalues[k++].uval.ival % 255);
-        back_color[1] = (char)(uvalues[k++].uval.ival % 255);
-        back_color[2] = (char)(uvalues[k++].uval.ival % 255);
+        g_background_color[0] = (char)(uvalues[k++].uval.ival % 255);
+        g_background_color[1] = (char)(uvalues[k++].uval.ival % 255);
+        g_background_color[2] = (char)(uvalues[k++].uval.ival % 255);
         Targa_Overlay = uvalues[k].uval.ch.val != 0;
     }
     return false;

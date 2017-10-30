@@ -3505,9 +3505,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 goto badarg;
             }
         }
-        back_color[0] = (BYTE)intval[0];
-        back_color[1] = (BYTE)intval[1];
-        back_color[2] = (BYTE)intval[2];
+        g_background_color[0] = (BYTE)intval[0];
+        g_background_color[1] = (BYTE)intval[1];
+        g_background_color[2] = (BYTE)intval[2];
         return CMDARG_3D_PARAM;
     }
 
@@ -3814,9 +3814,9 @@ void set_3d_defaults()
     g_ambient   = 20;
     RANDOMIZE = 0;
     haze      = 0;
-    back_color[0] = 51;
-    back_color[1] = 153;
-    back_color[2] = 200;
+    g_background_color[0] = 51;
+    g_background_color[1] = 153;
+    g_background_color[2] = 200;
     if (SPHERE)
     {
         PHI1      =  180;

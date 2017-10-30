@@ -120,7 +120,7 @@ bool Targa_Overlay = false;
 int error;
 char targa_temp[14] = "fractemp.tga";
 int P = 250; // Perspective dist used when viewing light vector
-BYTE back_color[3];
+BYTE g_background_color[3];
 std::string ray_name{"fract001"};
 bool preview = false;
 bool showbox = false;
@@ -1651,7 +1651,7 @@ bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
             {
                 for (int k = 2; k > -1; k--)
                 {
-                    fputc(back_color[k], fps);       // Targa order (B, G, R)
+                    fputc(g_background_color[k], fps);       // Targa order (B, G, R)
                 }
             }
         }
