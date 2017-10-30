@@ -56,7 +56,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 LComplex lcoefficient, lold, lnew, lparm, linit, ltmp, ltmp2, lparm2;
 long ltempsqrx, ltempsqry;
 int maxcolor;
-int root, degree, basin;
+int root, degree, g_basin;
 double floatmin, floatmax;
 double roverd, d1overd, threshold;
 DComplex tmp2;
@@ -460,7 +460,7 @@ int NewtonFractal2()
                    which root of 1 it converged to */
                 if (distance(roots[i], old) < threshold)
                 {
-                    if (basin == 2)
+                    if (g_basin == 2)
                     {
                         tmpcolor = 1+(i&7)+((coloriter&1) << 3);
                     }
@@ -548,7 +548,7 @@ int MPCNewtonFractal()
             for (int i = 0; i < degree; i++)
                 if (pMPcmp(MPdistance(MPCroots[i], mpcold), mpthreshold) < 0)
                 {
-                    if (basin == 2)
+                    if (g_basin == 2)
                     {
                         tmpcolor = 1+(i&7) + ((coloriter&1) << 3);
                     }

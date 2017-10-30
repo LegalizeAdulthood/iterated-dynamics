@@ -617,7 +617,7 @@ int calcfract()
 {
     g_attractors = 0;          // default to no known finite attractors
     display_3d = display_3d_modes::NONE;
-    basin = 0;
+    g_basin = 0;
     putcolor = putcolor_a;
     if (g_is_true_color && truemode)
     {
@@ -4573,7 +4573,7 @@ xsym:
     case symmetry_type::X_AXIS:                       // X-axis Symmetry
         if (!xsym_split(xaxis_row, xaxis_between))
         {
-            if (basin)
+            if (g_basin)
             {
                 plot = symplot2basin;
             }
@@ -4605,7 +4605,7 @@ xsym:
         switch (worksym & 3)
         {
         case 1: // just xaxis symmetry
-            if (basin)
+            if (g_basin)
             {
                 plot = symplot2basin;
             }
@@ -4615,7 +4615,7 @@ xsym:
             }
             break;
         case 2: // just yaxis symmetry
-            if (basin) // got no routine for this case
+            if (g_basin) // got no routine for this case
             {
                 ixstop = xxstop; // fix what split should not have done
                 symmetry = symmetry_type::X_AXIS;
@@ -4626,7 +4626,7 @@ xsym:
             }
             break;
         case 3: // both axes
-            if (basin)
+            if (g_basin)
             {
                 plot = symplot4basin;
             }
@@ -5364,7 +5364,7 @@ void symplot2basin(int x, int y, int color)
 {
     int i, stripe;
     putcolor(x, y, color) ;
-    if (basin == 2 && color > 8)
+    if (g_basin == 2 && color > 8)
     {
         stripe = 8;
     }
@@ -5391,7 +5391,7 @@ void symplot4basin(int x, int y, int color)
         symplot4(x, y, color);
         return;
     }
-    if (basin == 2 && color > 8)
+    if (g_basin == 2 && color > 8)
     {
         stripe = 8;
     }

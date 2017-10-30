@@ -115,17 +115,17 @@ NewtonSetup()           // Newton/NewtBasin Routines
     floatmin = FLT_MIN;
     floatmax = FLT_MAX;
 
-    basin = 0;
+    g_basin = 0;
     roots.resize(16);
     if (fractype == fractal_type::NEWTBASIN)
     {
         if (parm.y)
         {
-            basin = 2; //stripes
+            g_basin = 2; //stripes
         }
         else
         {
-            basin = 1;
+            g_basin = 1;
         }
         roots.resize(degree);
 
@@ -141,11 +141,11 @@ NewtonSetup()           // Newton/NewtBasin Routines
     {
         if (parm.y)
         {
-            basin = 2;    //stripes
+            g_basin = 2;    //stripes
         }
         else
         {
-            basin = 1;
+            g_basin = 1;
         }
 
         MPCroots.resize(degree);

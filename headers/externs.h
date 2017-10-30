@@ -52,7 +52,7 @@ extern int const             g_bad_value;
 extern long                  g_bail_out;
 extern bailouts              g_bail_out_test;
 extern int                   g_base_hertz;
-extern int                   basin;
+extern int                   g_basin;
 extern int                   bf_save_len;
 extern int                   bfdigits;
 extern int                   biomorph;
