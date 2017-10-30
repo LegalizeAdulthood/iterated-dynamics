@@ -115,7 +115,7 @@ BYTE *mapdacbox = nullptr;      // map= (default colors)
 int     colorstate = 0;         // 0, g_dac_box matches default (bios or map=)
                                 // 1, g_dac_box matches no known defined map
                                 // 2, g_dac_box matches the colorfile map
-bool    colors_preloaded = false; // if g_dac_box preloaded for next mode select
+bool    g_colors_preloaded = false; // if g_dac_box preloaded for next mode select
 int     save_release = 0;       // release creating PAR file
 bool    dontreadcolor = false;  // flag for reading color from GIF
 double  math_tol[2] = {.05, .05}; // For math transition
@@ -361,7 +361,7 @@ int cmdfiles(int argc, char const *const *argv)
     }
 
     // PAR reads a file and sets color, don't read colors from GIF
-    dontreadcolor = colors_preloaded && show_file == 0;
+    dontreadcolor = g_colors_preloaded && show_file == 0;
 
     //set structure of search directories
     strcpy(searchfor.par, CommandFile.c_str());
@@ -382,7 +382,7 @@ int load_commands(FILE *infile)
     ret = cmdfile(infile, cmd_file::AT_AFTER_STARTUP);
 
     // PAR reads a file and sets color, don't read colors from GIF
-    dontreadcolor = colors_preloaded && show_file == 0;
+    dontreadcolor = g_colors_preloaded && show_file == 0;
 
     return ret;
 }
@@ -535,7 +535,7 @@ static void initvars_fractal()          // init vars affecting calculation
     usemag = true;                      // use center-mag, not corners
 
     colorstate = 0;
-    colors_preloaded = false;
+    g_colors_preloaded = false;
     rotate_lo = 1;
     rotate_hi = 255;      // color cycling default range
     orbit_delay = 0;                     // full speed orbits
@@ -3768,7 +3768,7 @@ static int parse_colors(char const *value)
         }
         colorstate = 1;
     }
-    colors_preloaded = true;
+    g_colors_preloaded = true;
     memcpy(old_dac_box, g_dac_box, 256*3);
     return CMDARG_NONE;
 badcolor:

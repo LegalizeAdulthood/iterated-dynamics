@@ -271,7 +271,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
     _ASSERTE(_CrtCheckMemory());
 #endif
 
-    if (colors_preloaded)
+    if (g_colors_preloaded)
     {
         memcpy(g_dac_box, old_dac_box, 256*3);   // restore in case colors= present
     }
@@ -453,7 +453,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
             {
                 display_3d = display_3d_modes::YES;
             }
-            if (colors_preloaded)
+            if (g_colors_preloaded)
             {
                 memcpy(old_dac_box, g_dac_box, 256*3); // save in case colors= present
             }

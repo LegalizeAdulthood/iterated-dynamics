@@ -129,11 +129,11 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 g_video_entry.ydots = ydots;
             }
 
-            if (savedac || colors_preloaded)
+            if (savedac || g_colors_preloaded)
             {
                 memcpy(g_dac_box, old_dac_box, 256*3); // restore the DAC
                 spindac(0, 1);
-                colors_preloaded = false;
+                g_colors_preloaded = false;
             }
             else
             {
@@ -931,11 +931,11 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             i |= CMDARG_FRACTAL_PARAM;
             savedac = 0;
         }
-        else if (colors_preloaded)
+        else if (g_colors_preloaded)
         {
             // colors= was specified
             spindac(0, 1);
-            colors_preloaded = false;
+            g_colors_preloaded = false;
         }
         else if (i & CMDARG_RESET)           // reset was specified
         {

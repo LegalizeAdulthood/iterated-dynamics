@@ -599,7 +599,7 @@ static void set_Plasma_palette()
     static BYTE const Green[3] = { 0, 63, 0 };
     static BYTE const Blue[3]  = { 0,  0, 63 };
 
-    if (map_specified || colors_preloaded)
+    if (map_specified || g_colors_preloaded)
     {
         return;    // map= specified
     }
