@@ -855,9 +855,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%ld", "maxiter", maxit);
         }
 
-        if (bailout && (!potflag || potparam[2] == 0.0))
+        if (g_bail_out && (!potflag || potparam[2] == 0.0))
         {
-            put_parm(" %s=%ld", "bailout", bailout);
+            put_parm(" %s=%ld", "bailout", g_bail_out);
         }
 
         if (bailoutest != bailouts::Mod)

@@ -178,7 +178,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
         usr_distest     = read_info.distestold;
         usr_floatflag   = read_info.floatflag != 0;
-        bailout     = read_info.bailoutold;
+        g_bail_out     = read_info.bailoutold;
         calctime    = read_info.calctime;
         trigndx[0]  = static_cast<trig_fn>(read_info.trigndx[0]);
         trigndx[1]  = static_cast<trig_fn>(read_info.trigndx[1]);
@@ -289,7 +289,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
         if (decomp[0] > 0 && decomp[1] > 0)
         {
-            bailout = decomp[1];
+            g_bail_out = decomp[1];
         }
     }
     if (potflag) // in version 15.x and 16.x logmap didn't work with pot
@@ -323,7 +323,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version > 9)
     {
         // post-version 18.22
-        bailout     = read_info.bailout; // use long bailout
+        g_bail_out     = read_info.bailout; // use long bailout
         bailoutest = static_cast<bailouts>(read_info.bailoutest);
     }
     else
@@ -1171,14 +1171,14 @@ void backwards_v18()
         set_if_old_bif(); // old bifs need function set
     }
     if (fractype == fractal_type::MANDELTRIG && usr_floatflag
-            && save_release < 1800 && bailout == 0)
+            && save_release < 1800 && g_bail_out == 0)
     {
-        bailout = 2500;
+        g_bail_out = 2500;
     }
     if (fractype == fractal_type::LAMBDATRIG && usr_floatflag
-            && save_release < 1800 && bailout == 0)
+            && save_release < 1800 && g_bail_out == 0)
     {
-        bailout = 2500;
+        g_bail_out = 2500;
     }
 }
 

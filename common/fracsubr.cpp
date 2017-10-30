@@ -358,9 +358,9 @@ init_restart:
     {
         rqlim = potparam[2];
     }
-    else if (bailout)     // user input bailout
+    else if (g_bail_out)     // user input bailout
     {
-        rqlim = bailout;
+        rqlim = g_bail_out;
     }
     else if (biomorph != -1)     // biomorph benefits from larger bailout
     {

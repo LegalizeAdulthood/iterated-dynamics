@@ -1516,7 +1516,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     double oldparam[MAXPARAMS];
     int fkeymask = 0;
 
-    oldbailout = bailout;
+    oldbailout = g_bail_out;
     julibrot = fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP;
     fractal_type curtype = fractype;
     {
@@ -1799,7 +1799,7 @@ gfp_top:
         {
             choices[promptnum] = "Bailout value (0 means use default)";
             paramvalues[promptnum].type = 'L';
-            oldbailout = bailout;
+            oldbailout = g_bail_out;
             paramvalues[promptnum++].uval.Lval = oldbailout;
             paramvalues[promptnum].type = '*';
             tmpptr = type_name;
@@ -2018,12 +2018,12 @@ gfp_top:
         }
         else
         {
-            bailout = paramvalues[promptnum++].uval.Lval;
-            if (bailout != 0 && (bailout < 1 || bailout > 2100000000L))
+            g_bail_out = paramvalues[promptnum++].uval.Lval;
+            if (g_bail_out != 0 && (g_bail_out < 1 || g_bail_out > 2100000000L))
             {
-                bailout = oldbailout;
+                g_bail_out = oldbailout;
             }
-            if (bailout != oldbailout)
+            if (g_bail_out != oldbailout)
             {
                 ret = 1;
             }

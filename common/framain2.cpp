@@ -2472,7 +2472,7 @@ static void save_history_info()
     current.maxfn                = maxfn                     ;
     current.major_method         = (short)major_method              ;
     current.minor_method         = (short)minor_method              ;
-    current.bailout              = bailout                   ;
+    current.bailout              = g_bail_out                   ;
     current.bailoutest           = (short)bailoutest                ;
     current.iterations           = maxit                     ;
     current.old_demm_colors      = (short) (old_demm_colors ? 1 : 0);
@@ -2656,7 +2656,7 @@ static void restore_history_info(int i)
     maxfn                 = last.maxfn          ;
     major_method          = static_cast<Major>(last.major_method);
     minor_method          = static_cast<Minor>(last.minor_method);
-    bailout               = last.bailout        ;
+    g_bail_out               = last.bailout        ;
     bailoutest            = static_cast<bailouts>(last.bailoutest);
     maxit                 = last.iterations     ;
     old_demm_colors       = last.old_demm_colors != 0;

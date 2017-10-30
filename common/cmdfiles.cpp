@@ -102,7 +102,7 @@ char    useinitorbit = 0;       // flag for initorbit
 int     g_init_mode = 0;        // initial video mode
 int     initcyclelimit = 0;     // initial cycle limit
 bool    usemag = false;         // use center-mag corners
-long    bailout = 0;            // user input bailout value
+long    g_bail_out = 0;            // user input bailout value
 bailouts bailoutest;            // test used for determining bailout
 double  inversion[3] = { 0.0 }; // radius, xcenter, ycenter
 int     rotate_lo = 0;
@@ -488,7 +488,7 @@ static void initvars_fractal()          // init vars affecting calculation
     curfractalspecific = &fractalspecific[0];
     initcorners = false;
     initparams = false;
-    bailout = 0;                        // no user-entered bailout
+    g_bail_out = 0;                        // no user-entered bailout
     nobof = false;                      // use normal bof initialization to make bof images
     useinitorbit = 0;
     for (int i = 0; i < MAXPARAMS; i++)
@@ -2513,7 +2513,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        bailout = (long)floatval[0];
+        g_bail_out = (long)floatval[0];
         return CMDARG_FRACTAL_PARAM;
     }
 
@@ -2966,7 +2966,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (totparms > 1) // backward compatibility
         {
             decomp[1] = intval[1];
-            bailout = decomp[1];
+            g_bail_out = decomp[1];
         }
         return CMDARG_FRACTAL_PARAM;
     }

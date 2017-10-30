@@ -3532,7 +3532,7 @@ bool MandelbrotMix4Setup()
         tmp.y = -tmp.y;
     }
 
-    if (bailout == 0)
+    if (g_bail_out == 0)
     {
         rqlim = L.x;
         rqlim2 = rqlim*rqlim;
