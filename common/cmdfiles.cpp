@@ -56,7 +56,7 @@ int     bfdigits = 0;           // digits to use (force) for bf_math
 int     show_dot = -1;           // color to show crawling graphics cursor
 int     sizedot = 0;            // size of dot crawling cursor
 char    recordcolors = 0;       // default PAR color-writing method
-char    autoshowdot = 0;        // dark, medium, bright
+char    g_auto_show_dot = 0;        // dark, medium, bright
 bool    start_show_orbit = false;        // show orbits on at start of fractal
 std::string readname;           // name of fractal input file
 std::string tempdir;            // name of temporary directory
@@ -2917,12 +2917,12 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         show_dot = 15;
         if (totparms > 0)
         {
-            autoshowdot = (char)0;
+            g_auto_show_dot = (char)0;
             if (isalpha(charval[0]))
             {
                 if (strchr("abdm", (int)charval[0]) != nullptr)
                 {
-                    autoshowdot = charval[0];
+                    g_auto_show_dot = charval[0];
                 }
                 else
                 {

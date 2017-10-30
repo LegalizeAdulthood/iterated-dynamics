@@ -1182,7 +1182,7 @@ static void perform_worklist()
         if (show_dot >= 0)
         {
             find_special_colors();
-            switch (autoshowdot)
+            switch (g_auto_show_dot)
             {
             case 'd':
                 showdotcolor = g_color_dark % colors;
