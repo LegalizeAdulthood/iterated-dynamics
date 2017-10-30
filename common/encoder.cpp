@@ -181,7 +181,7 @@ restart:
     }
 #endif
 
-    busy = true;
+    g_busy = true;
 
     if (debugflag != debug_flags::benchmark_encoder)
     {
@@ -192,7 +192,7 @@ restart:
         interrupted = timer(2, nullptr);     // invoke encoder() via timer
     }
 
-    busy = false;
+    g_busy = false;
 
     fclose(g_outfile);
 

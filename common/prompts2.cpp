@@ -1102,7 +1102,7 @@ std::string const GreyFile
 int starfield()
 {
     int c;
-    busy = true;
+    g_busy = true;
     if (starfield_values[0] <   1.0)
     {
         starfield_values[0] =   1.0;
@@ -1135,7 +1135,7 @@ int starfield()
     if (ValidateLuts(GreyFile.c_str()))
     {
         stopmsg(STOPMSG_NONE, "Unable to load ALTERN.MAP");
-        busy = false;
+        g_busy = false;
         return (-1);
     }
     spindac(0, 1);                 // load it, but don't spin
@@ -1146,7 +1146,7 @@ int starfield()
             if (driver_key_pressed())
             {
                 driver_buzzer(buzzer_codes::INTERRUPT);
-                busy = false;
+                g_busy = false;
                 return (1);
             }
             c = getcolor(col, row);
@@ -1158,7 +1158,7 @@ int starfield()
         }
     }
     driver_buzzer(buzzer_codes::COMPLETE);
-    busy = false;
+    g_busy = false;
     return (0);
 }
 

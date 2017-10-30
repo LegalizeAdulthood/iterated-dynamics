@@ -305,7 +305,7 @@ int gifview()
             {
                 calc_status = calc_status_value::PARAMS_CHANGED;
             }
-            busy = true;      // for slideshow CALCWAIT
+            g_busy = true;      // for slideshow CALCWAIT
             /*
              * Call decoder(width) via timer.
              * Width is limited to DECODERLINE_WIDTH.
@@ -315,7 +315,7 @@ int gifview()
                 width = std::min(width, static_cast<unsigned>(DECODERLINE_WIDTH));
             }
             status = timer(1, nullptr, width);
-            busy = false;      // for slideshow CALCWAIT
+            g_busy = false;      // for slideshow CALCWAIT
             if (calc_status == calc_status_value::IN_PROGRESS) // e.g., set by line3d
             {
                 calctime = timer_interval; // note how long it took
