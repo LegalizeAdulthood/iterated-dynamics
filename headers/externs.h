@@ -38,7 +38,7 @@ extern int                   g_halley_a_plus_one;
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern int                   g_attractors;
-extern int                   attrperiod[];
+extern int                   g_attractor_period[];
 extern DComplex              attr[];
 extern bool auto_browse;
 extern std::string           autoname;

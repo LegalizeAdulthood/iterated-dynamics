@@ -202,7 +202,7 @@ bool nxtscreenflag = false;             // for cellular next screen generation
 int g_attractors = 0;                     // number of finite attractors
 DComplex attr[MAX_NUM_ATTRACTORS] = { 0.0 };        // finite attractor vals (f.p)
 LComplex lattr[MAX_NUM_ATTRACTORS] = { 0 };         // finite attractor vals (int)
-int attrperiod[MAX_NUM_ATTRACTORS] = { 0 };         // period of the finite attractor
+int g_attractor_period[MAX_NUM_ATTRACTORS] = { 0 };         // period of the finite attractor
 
 /***** vars for new btm *****/
 enum class direction
@@ -2540,7 +2540,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                                 attracted = true;
                                 if (finattract)
                                 {
-                                    coloriter = (coloriter % attrperiod[i]) + 1;
+                                    coloriter = (coloriter % g_attractor_period[i]) + 1;
                                 }
                                 break;
                             }
@@ -2565,7 +2565,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                                 attracted = true;
                                 if (finattract)
                                 {
-                                    coloriter = (coloriter % attrperiod[i]) + 1;
+                                    coloriter = (coloriter % g_attractor_period[i]) + 1;
                                 }
                                 break;
                             }
